@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84136C02183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Jan 2025 16:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFC9C0218D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jan 2025 13:19:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEC9C40A75;
-	Thu, 16 Jan 2025 17:38:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 51DE8402E4;
+	Wed, 29 Jan 2025 14:19:17 +0100 (CET)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id 47EFD402F1;
- Thu, 16 Jan 2025 17:38:10 +0100 (CET)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id 1A8314026C
- for <announce@dpdk.org>; Thu, 16 Jan 2025 17:38:09 +0100 (CET)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal
- [10.202.2.49])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 4CFCA25401BA;
- Thu, 16 Jan 2025 11:38:08 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Thu, 16 Jan 2025 11:38:08 -0500
+ by mails.dpdk.org (Postfix) with ESMTP id A8AE6402AE;
+ Wed, 29 Jan 2025 14:19:15 +0100 (CET)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 0892340270
+ for <announce@dpdk.org>; Wed, 29 Jan 2025 14:19:13 +0100 (CET)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal
+ [10.202.2.48])
+ by mailfout.stl.internal (Postfix) with ESMTP id 1B4AA11401AF;
+ Wed, 29 Jan 2025 08:19:13 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-08.internal (MEProxy); Wed, 29 Jan 2025 08:19:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:content-transfer-encoding:content-type:content-type:date:date
  :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm2; t=1737045488; x=1737131888; bh=8D8plyrJ46
- DArRPoxLzaZ/0a/egYARsTGLlSUd3OxpI=; b=HmZLTW1v2k5tjgByPyuf2RqroT
- yhTRlI2zUAXVKDK5/hiUN5zNnmaAp9L24z6u19jUZo1Mz4+GcYc8dC6c0R2s67Ps
- QvC7H/FufXBPQS8hJpraRd/u1x90kyUhVRpD8BLUTAIf4XnTJSTf+/GgKoeQtdFa
- rPLGB2tLkPkDE4DcJuY3tgbihrE//X1VxT0MfEo+pZHd8cL3Vl0vfjgV92rhTt1+
- DoTXF/gAtKv7HS2Ho4osAx9p61gUf+Re7KgNKmjgZaagx0uyFOTYX4JC5PqBp+CU
- 3jRh/rx/k0BgfscT3tsDpwghS4btHqY5MoMGOTrG8EGd71ma+0NJCmxwvayA==
+ :subject:to:to; s=fm3; t=1738156752; x=1738243152; bh=GJhYqKUnx6
+ eSMnoMTPbmttOVCZSvuGleM6Q+xMW+eJk=; b=LhspKZbeyjcky2+E2JV9o8tnYk
+ JuBdxvprLKb4EOOkJ3EffvH7gwqtKz/t2sNwzUmd/KATiaXCCXv5aR5P53SlcNaQ
+ t64fK6Fy2DoRBk1fvQY6X3FrBtuAAZvHt+8MiUWTTrc1apZjy0/dF+rJog1BWelp
+ WE3X8i3r92W7m7KEt1bnN9cMk0qBiCtpajqcR89NDaLKgD1HeaO7+rVeSYi/f5zV
+ ei/nCadWeFde1N1VcxnN3I6Kq0TwBH6sEPEtXlTOZ77THcFeWIJiagDjUk88zJCY
+ bPBRFHiFqdU3gMPOO21MYDl/gRitXQrAOQ6EKjV4cUKZLQurMoAW8wW7oNIw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:content-transfer-encoding:content-type
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1737045488; x=1737131888; bh=8D8plyrJ46DArRPoxLzaZ/0a/egYARsTGLl
- SUd3OxpI=; b=LOK3RxX2K2HuBlIyqVgyYJSvfV+9FyGa+txD5MhoE5T0tXIo9dD
- Bd2tHbEx2o2bJc6jAtg3svDqlY4kEp04OisFN9zpu459pvEp0m39tQlwlSaz5m/4
- 95HT1mDsJiCxu0mEMrQ8JCYY5kHZRb4OwR6AdnsNQXehPdsclbulvKJq3AzTaIqi
- gHp1mj3yvaWL3Ir5oG8j0IBtC5IYmE/qUe4BfYSY8HmgE9VFw6Rh3gUO5Ir6x1hH
- g2MSJReX2W9x9MdlOuQFgvzKqjuOW5uDiHcE0MlQ9Af0aE16xQ5dPlTQ+4G3FE0B
- GI3D1FG/4GAvXRQjJjM61ywzE8mu8kTtnrg==
-X-ME-Sender: <xms:7zWJZ1zpWAh7fg7E2_GqSQVrzQxAeGX79gTfVP2FpNMIKoMnLQjhrA>
- <xme:7zWJZ1QgSqCqCLge7_j5X6SppdzkTHzxz269IMoo-iPuyR-Fn_093gEcLviYJjX-W
- P429aJ8vl3nFP8roA>
-X-ME-Received: <xmr:7zWJZ_WTa3VBtCUgFkqfUX7pkAmemCBZ75vZui9e5zEEIkFHfEr0cM6ov72QTRWmh0oA2nL1RvXRWs9nWNCyjzTkVQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeiuddgkeejucetufdoteggodetrfdotf
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+ 1738156752; x=1738243152; bh=GJhYqKUnx6eSMnoMTPbmttOVCZSvuGleM6Q
+ +xMW+eJk=; b=SNvPhe8sCEZWFKAZQCOiF8A+NCemwIbqRaSRgexqC1oJjx+uPeZ
+ yCwoVyGwxgym19fCTGcvuVHkLw3XcdoHKZLhPRl4f/offb6JAQR435Mop7b6koPt
+ 4B7Nv66dSEm/cMHV6KWX6I0y6E5rHHsAJXHD+F+TYlcXAz2KbXaYKXvuzFtTAGP/
+ ZQZquezNjn0r8Ak/vMX31IBaC4DGxGqAtCgqfCETMdkRGGxp3WgwWTn9ufA7Bb85
+ AgWJkuAvgaOgJof4SxRIHgv5ZOH0A4aWh7MeBvkNJ+bGm8kXa8oUJA8HaBMPG7u5
+ Ur8XElUtAEHdLJs7Kb23/U1j8YJUelIPb/g==
+X-ME-Sender: <xms:0CqaZ36y1wT8SpRnbRquUlviZas3sarrRH0ZoCDOBA2478Dsi7LYIg>
+ <xme:0CqaZ85PUvKvqrXzWSXqNRsfT_HvsoBTnc8ThceCaD7JWPTL6-AW_pfVyzPGjcwEn
+ sj0PqKHw9SYnEisLQ>
+X-ME-Received: <xmr:0CqaZ-dmB05dBozV8mGeifN1LwyFpE0kphNfMh5XKBY5GpW-rV6ryYWCvbiZeiR03T4IujuPSXe_GZajM4qZD5mw5g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdelucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
  rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffuff
  fkggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcu
- oehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeelff
- ehvdeuudfgffeuvdetheethfegleekkeefteefhfdtkeekkedukeevgfeitdenucevlhhu
- shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmh
- honhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedupdhmohguvgepshhmthhpohhu
- thdprhgtphhtthhopegrnhhnohhunhgtvgesughpughkrdhorhhg
-X-ME-Proxy: <xmx:7zWJZ3iJe8bLUynPPu-njuKYXKazlS_keuM3EQzM9X3-2-TPp-EdMw>
- <xmx:7zWJZ3Ac_4bHQ7NF7mLltebbu-VcGliAtKqNCVw-q6nOkwZxZj0QDw>
- <xmx:7zWJZwJYUoa2Iv8IAIsgC6AcQajGVNiqcp5Y3mcXrjMhuhL-7N8YPw>
- <xmx:7zWJZ2DWlnywdeghTPR6--OmiI0uyFWSpa385i6LzixBUSZm98nuuw>
- <xmx:8DWJZ85L_dGCoEyZSWLewOUX7NIgDR-rEGW5bOXtoPoL744TKYXCX2hn>
+ oehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeehud
+ eifefhkeekvddvveduffevuefgfeehleekjeekfeejkeehffdtueeifeffgeenucffohhm
+ rghinheplhhinhhugihfohhunhgurghtihhonhdrohhrghenucevlhhushhtvghrufhiii
+ gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhn
+ rdhnvghtpdhnsggprhgtphhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtth
+ hopegrnhhnohhunhgtvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:0CqaZ4LGcVM0Xgu6B5s7YY_pc3bLo9Zg20cTvmnmTlPqsVgfiqBg4g>
+ <xmx:0CqaZ7IV5rcYLh785t1G1D3pKmY_X9vfP3J6OGXNCuYnIMfg2A8vtw>
+ <xmx:0CqaZxzFc-HA7F1dIqFAxi3J7MfdomlkEDUybZ592NV0qNxg9V0uag>
+ <xmx:0CqaZ3Kmz3FfQm35OnS_o2k-Tyku8dGRAzl6M2tB0UtSJevaoBA41w>
+ <xmx:0CqaZxhgFvb3wxgxYdVnC6CK8FTM60_Keu8d54dFIWWmQtniIPdciA_2>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <announce@dpdk.org>; Thu, 16 Jan 2025 11:38:07 -0500 (EST)
+ <announce@dpdk.org>; Wed, 29 Jan 2025 08:19:12 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: announce@dpdk.org
-Subject: 2025 DPDK Summit in Prague
-Date: Thu, 16 Jan 2025 17:38:06 +0100
-Message-ID: <2582642.4XsnlVU6TS@thomas>
+Subject: CFP - DPDK Summit in Prague
+Date: Wed, 29 Jan 2025 14:19:10 +0100
+Message-ID: <2121297.K71DO8KEF6@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -85,21 +86,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+The next DPDK Summit will happen on May 8-9 in Prague, Czech Republic.
 
-The first DPDK Summit of the year is confirmed:
-	8 & 9 May 2025 in Prague
+The website is open for registrations and all venue details.
+Follow this link to submit a talk proposal:
 
-You can prepare your talk proposals now,
-the website with full instructions will be ready next week.
-It is planned to close the CFP period after the end of February,
-so the program will be announced in mid-March.
+https://events.linuxfoundation.org/dpdk-summit/program/cfp/
 
-The program committee will prefer selecting in-person speakers.
-We hope a lot of people will be able to join us in Prague.
-It will be a good opportunity for all the community to connect and discuss.
-Everybody is welcome: developers, users, architects, students, etc.
+There is one month remaining in the Call For Papers (CFP) period.
 
-See you in Czech Republic
+The DPDK Summit is welcoming anyone having an interest in DPDK
+and the technologies used in fast networking.
+This is a great opportunity to meet and discuss with the community.
+
+See you there
 
 
