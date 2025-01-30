@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EDBC0218A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jan 2025 21:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2CAC0218A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jan 2025 21:57:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA90841132;
-	Thu, 30 Jan 2025 22:56:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D9B1B41104;
+	Thu, 30 Jan 2025 22:56:06 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 63AFD40E4B
+ by mails.dpdk.org (Postfix) with ESMTP id 748154025A
  for <dev@dpdk.org>; Thu, 30 Jan 2025 22:55:45 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 0E7C0210C319; Thu, 30 Jan 2025 13:55:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0E7C0210C319
+ id A048D210C320; Thu, 30 Jan 2025 13:55:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A048D210C320
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738274144;
- bh=ZPS/L28btd1uIsyaf4eDFI/mEOlNgYYzcA0fTqjUX9s=;
+ bh=2gZTN5NtboxN05c2JZjqZJLFnw7QuVTpt5vaoocBKaY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=qZr69Q+WGm0CUdm54GFalQ3a0JWjwURVMx9sb65crAV0nEtJw89ADWnb2NlKqgYGF
- K80SlQZETDgnMO1/uvsQZ26O7RPQqnxLjjj5Gkh/19oFsuIy7+AYgOaR+05eiau/Tz
- vDu2NtTl/ksW+bs0EchQMXtUc+CJGSZR+iSyLNNg=
+ b=sM55VOWW4XHnBjY6oYEQ/wFzIPWlOTtHGBd7PSM0c2BO88Ph4HVfE8WPGV4tkbtRw
+ /ksnrsTdLuXnFaWMj/parwKieAmQbbqkvnPFuL8uGCdrWzO8tYeeMyB0GAikpNtpb3
+ 6uU8nTH3X22hgt6lIrex2b6ALgJJ0UBqypKQqjd4=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v18 17/26] net/mlx5: remove use of VLAs for Windows built code
-Date: Thu, 30 Jan 2025 13:55:26 -0800
-Message-Id: <1738274135-2086-18-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH v18 21/26] config: define no_vla_cflag
+Date: Thu, 30 Jan 2025 13:55:30 -0800
+Message-Id: <1738274135-2086-22-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738274135-2086-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,63 +44,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Tyler Retzlaff <roretzla@linux.microsoft.com>
+We define no_vla_cflag in a top directory so that it can be used by
+meson.build files in lower directories that are not yet VLA-free.
 
-MSVC does not support VLAs, replace VLAs with standard C arrays
-or alloca(). alloca() is available for all toolchain/platform
-combinations officially supported by DPDK.
-
-Signed-off-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- drivers/net/mlx5/mlx5.c      | 5 ++---
- drivers/net/mlx5/mlx5_flow.c | 6 +++---
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ config/meson.build | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index 6e4473e2f4..979e54686b 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -1598,14 +1598,13 @@ void
- mlx5_rt_timestamp_config(struct mlx5_dev_ctx_shared *sh,
- 			 struct mlx5_hca_attr *hca_attr)
- {
--	uint32_t dw_cnt = MLX5_ST_SZ_DW(register_mtutc);
--	uint32_t reg[dw_cnt];
-+	uint32_t reg[MLX5_ST_SZ_DW(register_mtutc)];
- 	int ret = ENOTSUP;
- 
- 	if (hca_attr->access_register_user)
- 		ret = mlx5_devx_cmd_register_read(sh->cdev->ctx,
- 						  MLX5_REGISTER_ID_MTUTC, 0,
--						  reg, dw_cnt);
-+						  reg, RTE_DIM(reg));
- 	if (!ret) {
- 		uint32_t ts_mode;
- 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 3e79754b83..bfc44f25bf 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -1479,8 +1479,8 @@ mlx5_flow_item_acceptable(const struct rte_eth_dev *dev,
- 					  "mask/last without a spec is not"
- 					  " supported");
- 	if (item->spec && item->last && !range_accepted) {
--		uint8_t spec[size];
--		uint8_t last[size];
-+		uint8_t *spec = alloca(size);
-+		uint8_t *last = alloca(size);
- 		unsigned int i;
- 		int ret;
- 
-@@ -8481,7 +8481,7 @@ mlx5_ctrl_flow_vlan(struct rte_eth_dev *dev,
- 			.type = RTE_FLOW_ITEM_TYPE_END,
- 		},
- 	};
--	uint16_t queue[priv->reta_idx_n];
-+	uint16_t *queue = alloca(sizeof(uint16_t) * priv->reta_idx_n);
- 	struct rte_flow_action_rss action_rss = {
- 		.func = RTE_ETH_HASH_FUNCTION_DEFAULT,
- 		.level = 0,
+diff --git a/config/meson.build b/config/meson.build
+index 6aaad6d8a4..6be928e04b 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -342,6 +342,14 @@ if cc.get_id() == 'intel'
+         warning_flags += '-diag-disable=@0@'.format(i)
+     endforeach
+ endif
++
++no_vla_cflag = []
++if cc.has_argument('-Wvla')
++    if not is_windows
++        no_vla_cflag = '-Wno-vla'
++    endif
++endif
++
+ foreach arg: warning_flags
+     if cc.has_argument(arg)
+         add_project_arguments(arg, language: 'c')
 -- 
 2.47.2.vfs.0.1
 
