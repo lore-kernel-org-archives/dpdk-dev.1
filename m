@@ -2,67 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A21AC0218A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jan 2025 22:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6A2C0218A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jan 2025 22:19:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC83E40DCE;
-	Thu, 30 Jan 2025 23:13:29 +0100 (CET)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
- [209.85.222.181])
- by mails.dpdk.org (Postfix) with ESMTP id 4580540275
- for <dev@dpdk.org>; Thu, 30 Jan 2025 23:13:28 +0100 (CET)
-Received: by mail-qk1-f181.google.com with SMTP id
- af79cd13be357-7b6e5ee6ac7so125337685a.0
- for <dev@dpdk.org>; Thu, 30 Jan 2025 14:13:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7587A40DCE;
+	Thu, 30 Jan 2025 23:19:10 +0100 (CET)
+Received: from mail-lf1-f99.google.com (mail-lf1-f99.google.com
+ [209.85.167.99]) by mails.dpdk.org (Postfix) with ESMTP id 6D1BC40275
+ for <dev@dpdk.org>; Thu, 30 Jan 2025 23:19:08 +0100 (CET)
+Received: by mail-lf1-f99.google.com with SMTP id
+ 2adb3069b0e04-54025432becso1451345e87.1
+ for <dev@dpdk.org>; Thu, 30 Jan 2025 14:19:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1738275207; x=1738880007; darn=dpdk.org;
+ d=6wind.com; s=google; t=1738275548; x=1738880348; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QYNhV+yKbhyfgQqZ6S8qOh49QVnNBO4AGb7BYFJK3GU=;
- b=OCnyGbrOG0/WXmjnuWqf+sGWG1yubVVRupIumVQ8QbSxm8cNto9N3LEcwHY7SUoV+m
- M9q0QA3ABzL8xTb49gjzPI5BycdMqZvUkeOD9vNU3eBkvvqTt0a+wuRpAl0vc44U7DI6
- yQjdrBKBwHeeQziaMCMtc0sG1qAidUVXqAp+c=
+ bh=NhorAvam/boCtfUQ64EFlkxq2P8yeQUNXouTbrDrpAA=;
+ b=FYdqVj6xa929k4bWsrSQLPP64woTSnNLLT/KRCk9QY7+anmvUIv4nYbsE58v6ZRWBo
+ FD+j+u+rvmOVu1SEpD85FgxB1KKO+NEsoUXJKWaj5isE0RP21q/MKJLx0YbVM+i6rw9S
+ S0RN12BiJc8pY+Skt+lDDvEpZ0PwCev3d62rd4Vw5ZTIk+lypTmzg5RdsHEy+GU7lVP7
+ BDuefS8cJjPVhLVCSjH+r5P9+AaKUFrZ1zdFXlxTBvsOsJtXA12kq4GdjhExNW1nid7g
+ lWhGNLrQ163RuqSlFdCuxBrN+sDer+2c8JQHuzSVafVUgDTzuj33ryET2LX39FOiEHLg
+ aWSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738275207; x=1738880007;
+ d=1e100.net; s=20230601; t=1738275548; x=1738880348;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=QYNhV+yKbhyfgQqZ6S8qOh49QVnNBO4AGb7BYFJK3GU=;
- b=hgbu/l36P4AJLJ9IdOZ767eaF14YqOxZwfeDrZBzcksRr3Ge7xC5VKIHQNP0rgOFJH
- jH46a5JEmyb7x+3r2jQ5m4Rx6QuY+7/55BljAFAbCY+UAJYX2ior3eJ2nBdXOrolrNwX
- qg2C5WeCgh4sA+q37pR0CQnQSyD2U0k9A48t2ZeTtV0qOMAEWfLFyfx2fs3ikwiTQt+N
- MNyC5YYMg42R3JsrR0YXPQTO/i5UyPbZ9n5ss4aZ2fLoqijrWXVe76XYgSpSCFRMjpL1
- R6PadabryT4bAPGU/4w5YoryAoBtJv1gmJpedf5lQGObnI6YKipNr57D7wot34HbVeg9
- Q4Ug==
-X-Gm-Message-State: AOJu0Yz1JrdpTcX+JSDQY3ASWig31rPkIgIfWBunGC7vzKcW1J7Qcy4J
- cAbcWvWTPl14HeWpEAcFIuPg8oBDWDf3lmb/RZtzBvx7YS1wXKSvYI2w9Kcsr8Y=
-X-Gm-Gg: ASbGncttl7xwGPov3lZRspdiZA9Z97/vOs24I2SqLe34ddbFieGRcSOxfWgiCsRWqsf
- 9jYQsxauTdv2pRHO7L4Vlu+xNNpVwZBH1vazctn/daqAPKIjXrwzjZkOLWRke9FXPh+Fujpmr7W
- 8pice1uYfNca6er3PAqrogEDj9JA3kAvD4p7OpDA6zHhajQY4lwXGV5L6YcVi2JR5YYY6iV1h8E
- sJVWYemWZKMnsHvoyLdGSLPTDtjtjIyaMFx5xrfHIb4D0jroman3An/Hi5Ib7IIXMlD3LProhGs
- FemM3lCa66seKVBwjpJGHmcXHgeCw/h4VQ+Kua7P00If8whdDP/0VeM=
-X-Google-Smtp-Source: AGHT+IHPge9CNwFp12kihAe5JZYRrGNgHMVg3yft6PqQfspkJo8kdFwqMznYynIhzBpKT3aEsHMNCg==
-X-Received: by 2002:a05:6214:3007:b0:6dd:d3b:de38 with SMTP id
- 6a1803df08f44-6e243bb8914mr146642596d6.16.1738275207374; 
- Thu, 30 Jan 2025 14:13:27 -0800 (PST)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:cf73:250f:b43e:342b])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6e254940c8bsm10549786d6.100.2025.01.30.14.13.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 30 Jan 2025 14:13:26 -0800 (PST)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, npratte@iol.unh.edu, luca.vizzarro@arm.com,
- yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
- paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2] dts: add SUT cleanup to framework
-Date: Thu, 30 Jan 2025 17:13:24 -0500
-Message-ID: <20250130221324.75711-1-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20241209205902.18321-2-dmarx@iol.unh.edu>
-References: <20241209205902.18321-2-dmarx@iol.unh.edu>
+ bh=NhorAvam/boCtfUQ64EFlkxq2P8yeQUNXouTbrDrpAA=;
+ b=Bm8aTUDIjCwskG7i8WlBFqYtfIA6U0nGwnIboImijBEw8ODwF7WbKCrgpjLUcm0BwB
+ OTvAxDMr9CAcoBblinQ6ZrTNU+qeRG+I/TTUFPjFuDhaaQ1IRiQzaJSdgHTrawzqCd7c
+ a2mOEyq5sRdSCS2CWm/9YqNpLHWvC/+NwZ9uvyCMvisIw4xzCEbvLCyMTo3BybnvMATY
+ BnSP3zGpyODgzRpSNr5+mDWM3zslwPKDkN5/FUV4P62pIoTyH949Zqt3YLx5EfSRepy3
+ CCIX7gDxXnVoGLaSBH9AxerqxlAeaiSnKAB4ojVrvWUrs4lZLj4HOJzd/dNy4pa72UMu
+ uTNw==
+X-Gm-Message-State: AOJu0YyKbq489B6I5Ky+V/xewCHzMLf7b1CpfvW/hhpzzu4iu7EY1uOa
+ GSlfxGmLg0KnyzBifDaoOQ3R4kD2IqVw0sCnu62TljcJMsQYLssn7wxD/vfZ5NNtreIq9JDqcjn
+ fR+qNu8ZV+QJIXV+NdrxY4zIQKlBZkBtDKXybPFC2
+X-Gm-Gg: ASbGncteTm+x6AKHGvGMtbjYinfaDhlyMXmMpl1SV5MjBT1IMSDGA4pqcwbVI6Obw1d
+ E5hpJmJnTqnx00y4uBGXvduyI+829fJ01RPQlocRz6HbjvqbCmSQdsls/zwRRjIEJM7DGVmVDtT
+ rFOBJ1LpBxXQR+B367puuqIpisHlP2cVm5goqUJ+l3EqM8g1GPQGibeaWngS7CL4I6YCT5BhBUX
+ j4kpUdkUZGH2bR9pwBGQ/alLYOdj1/5I1Je3QW9lIEAzMkFrNx/spBM2ZhviJKRwiDeDjHZF19v
+ oy5OJ+Pv38U+1Cy3yRD/gPWrhHdcTyAEhoImMg+78vJYMaR8ww==
+X-Google-Smtp-Source: AGHT+IG9dOUd8+78WmolHLZmKhYZ1w6d05E+I9+Za3KbM87UIhIJ9OUHAuVhRHlch3HXxkP5jKLDy/+1M1ZH
+X-Received: by 2002:a05:6512:118b:b0:543:bb21:4256 with SMTP id
+ 2adb3069b0e04-543e4c02dc0mr2299164e87.25.1738275547657; 
+ Thu, 30 Jan 2025 14:19:07 -0800 (PST)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ 2adb3069b0e04-543ebeb0459sm79677e87.89.2025.01.30.14.19.07; 
+ Thu, 30 Jan 2025 14:19:07 -0800 (PST)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
+ by smtpservice.6wind.com (Postfix) with ESMTP id 45750194F4;
+ Thu, 30 Jan 2025 23:19:07 +0100 (CET)
+From: Ariel Otilibili <ariel.otilibili@6wind.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ David Marchand <david.marchand@redhat.com>,
+ Ariel Otilibili <ariel.otilibili@6wind.com>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 0/2] Fix use after free, and refactor af_xdp_tx_zc
+Date: Thu, 30 Jan 2025 23:18:51 +0100
+Message-Id: <20250130221853.789366-1-ariel.otilibili@6wind.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,87 +85,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add method cleanup_sut to framework that removes a
-DPDK source from a SUT node at the conclusion of a testrun.
-This will only run when the DPDK source is being copied
-from the DTS engine node during the testrun
-(when remote=false in the conf.yaml).
+Hello,
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+The series addresses Bugzilla ID 1440 in two steps;
+
+1. Fix use after free.
+2. Refactor af_xdp_tx_zc().
+
+Thank you,
 ---
- dts/framework/runner.py                 |  2 +-
- dts/framework/testbed_model/sut_node.py | 21 ++++++++++++++++++---
- 2 files changed, 19 insertions(+), 4 deletions(-)
+v4
+* redid the refactor (Maryam Tahhan)
+* marked the fix as acked (Stephen Hemminger)
+* updated .mailmap, my main e-mail is @6wind.com (https://inbox.dpdk.org/dev/20250115121152.487360-4-otilibil@eurecom.fr/)
+v3 (https://inbox.dpdk.org/dev/20250128231152.249497-1-ariel.otilibili@6wind.com/)
+* reworded commit message of patch-1
+* addressed feedback of Maryam Tahhan
+v2 (https://inbox.dpdk.org/dev/20250116225151.188214-1-ariel.otilibili@6wind.com/)
+* reworded commit messages
+* addressed feedback from Stephen Hemminger
+v1 (http://inbox.dpdk.org/dev/20250116195640.68885-1-ariel.otilibili@6wind.com/)
 
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index 9f9789cf49..367034e038 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -336,7 +336,7 @@ def _run_test_run(
-         finally:
-             try:
-                 self._logger.set_stage(DtsStage.test_run_teardown)
--                sut_node.tear_down_test_run()
-+                sut_node.tear_down_test_run(test_run_config.dpdk_config.dpdk_location)
-                 tg_node.tear_down_test_run()
-                 test_run_result.update_teardown(Result.PASS)
-             except Exception as e:
-diff --git a/dts/framework/testbed_model/sut_node.py b/dts/framework/testbed_model/sut_node.py
-index 483733cede..c73500b146 100644
---- a/dts/framework/testbed_model/sut_node.py
-+++ b/dts/framework/testbed_model/sut_node.py
-@@ -188,6 +188,19 @@ def path_to_devbind_script(self) -> PurePath | str:
-             )
-         return self._path_to_devbind_script
- 
-+    def cleanup_sut(self, dpdk_build_location, remote_tree: str | PurePath | None) -> None:
-+        """Removes the DPDK tree and/or build directory/tarball depending on the configuration."""
-+        match dpdk_build_location:
-+            case LocalDPDKTreeLocation(dpdk_tree=dpdk_tree):
-+                tree_path = self.main_session.join_remote_path(self._remote_tmp_dir, dpdk_tree.name)
-+                self.main_session.remove_remote_dir(tree_path)
-+            case LocalDPDKTarballLocation(tarball=tarball):
-+                self.main_session.remove_remote_dir(str(remote_tree))
-+                tarball_path = self.main_session.join_remote_path(
-+                    self._remote_tmp_dir, tarball.name
-+                )
-+                self.main_session.remove_remote_file(tarball_path)
-+
-     def get_dpdk_build_info(self) -> DPDKBuildInfo:
-         """Get additional DPDK build information.
- 
-@@ -216,11 +229,11 @@ def set_up_test_run(
-             self.virtual_devices.append(VirtualDevice(vdev))
-         self._set_up_dpdk(dpdk_build_config)
- 
--    def tear_down_test_run(self) -> None:
-+    def tear_down_test_run(self, dpdk_build_location=None) -> None:
-         """Extend the test run teardown with virtual device teardown and DPDK teardown."""
-         super().tear_down_test_run()
-         self.virtual_devices = []
--        self._tear_down_dpdk()
-+        self._tear_down_dpdk(dpdk_build_location)
- 
-     def _set_up_dpdk(
-         self,
-@@ -256,14 +269,16 @@ def _set_up_dpdk(
- 
-         self.bind_ports_to_driver()
- 
--    def _tear_down_dpdk(self) -> None:
-+    def _tear_down_dpdk(self, dpdk_build_location) -> None:
-         """Reset DPDK variables and bind port driver to the OS driver."""
-         self._env_vars = {}
-+        remote_tree = self.__remote_dpdk_tree_path
-         self.__remote_dpdk_tree_path = None
-         self._remote_dpdk_build_dir = None
-         self._dpdk_version = None
-         self.compiler_version = None
-         self.bind_ports_to_driver(for_dpdk=False)
-+        self.cleanup_sut(dpdk_build_location, remote_tree)
- 
-     def _set_remote_dpdk_tree_path(self, dpdk_tree: PurePath):
-         """Set the path to the remote DPDK source tree based on the provided DPDK location.
+Ariel Otilibili (2):
+  net/af_xdp: Fix use after free in af_xdp_tx_zc
+  net/af_xdp: Refactor af_xdp_tx_zc
+
+ .mailmap                            |  2 +-
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 64 ++++++++++++++++-------------
+ 2 files changed, 36 insertions(+), 30 deletions(-)
+
 -- 
-2.48.1
+2.30.2
 
