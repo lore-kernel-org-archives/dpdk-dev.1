@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90708C02192
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2925C02192
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:03:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47A6C42E15;
-	Fri, 31 Jan 2025 14:00:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A712B42EC2;
+	Fri, 31 Jan 2025 14:00:18 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 21E8B42E7B;
- Fri, 31 Jan 2025 14:00:06 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7FDCF42E8F;
+ Fri, 31 Jan 2025 14:00:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738328408; x=1769864408;
+ t=1738328409; x=1769864409;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=1S2ffpMXypHD6YG2oIMQVMI2COlsTEWfj7Tml6FPnTE=;
- b=TIV0gafNNFg1LmEP6ov8SaBhq1RpW+JMj+zojeVhy1Kyq9N1O1aEtjZ3
- I3YzzJU80m+FVIJDUcGArS2GWco/7FLj3L1/lfbEAuaFrzLjuNmd6Iff3
- ykEKaPHs5mOiuNewAzFU3zR57e1Yrys3crh92jhXOF1zntwqIrLGhASVM
- ICvYmA20bbWDUhp5Jfnb4MW44CndeaImqDqJtqm7szmCvq0rxu/CVy6UM
- cICHVlJQsSkwpa/dlU3VXg5jBT+UjMtfMD5q5kBXVl/2VD4raaNx2BS6Q
- vveAsjhPRb/GyyKBCACFnaME/IneAX8VhBd2l3PWY1FyVGge5wimCRfIQ Q==;
-X-CSE-ConnectionGUID: aUd0B6H7Q7yxN0n4ta4mQQ==
-X-CSE-MsgGUID: Xg7tCeFCSnWz/KDTLDaGIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315679"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315679"
+ bh=eGnW4oL7/dqj0BdR+q6XHd0tPcHZZryuCc/sc/dEdTg=;
+ b=Y3lDgDSFgHd0neHZCN60685MUGJE9GViVU1fG4DwlItZFPAdgWyli3Tj
+ 2BvEdbIiomVvkr57ZzIH2BWqusJH+vIeevjJDax15tMrU0N452XgoF4aI
+ 36uZ/i3Ti96U0Yvy19kylDiC/aDgDMAKKjfzHb/PKgg0NOlorIFaaIDau
+ 75sEKXnemgkBMfcpUjNHMB/eadLSXPQxdUIK9OePEanlR+0QqjP2x9T60
+ pQnP1LCY9Y3i85awHuwzIEE4yw2uc1NEPQeu8QgnZIVHiWMhP6/2M5a3B
+ guQYN/n3J/brQdgg97ejPt0sOPzvSqVbtqGR4wW1ChcHkaJbmTHEHjG8E g==;
+X-CSE-ConnectionGUID: zSoFA0zYRhKuEQIcGIdSQQ==
+X-CSE-MsgGUID: 8gEexGyxTo6j3vXqbGuXsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315681"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315681"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Jan 2025 05:00:07 -0800
-X-CSE-ConnectionGUID: I4V4d0oXSmaV08spLfoCcA==
-X-CSE-MsgGUID: Vyi+5XnySF22HdOdkJ9mzw==
+ 31 Jan 2025 05:00:08 -0800
+X-CSE-ConnectionGUID: lU+qP/ndTcyOYb9AW+VINQ==
+X-CSE-MsgGUID: l7EdZBlrRki7JYFz8QAtwQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503486"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503493"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 05:00:06 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 05:00:07 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
+To: dev@dpdk.org,
+	Wenzhuo Lu <wenzhuo.lu@intel.com>
 Cc: stable@dpdk.org
-Subject: [PATCH v1 38/42] net/e1000/base: fix uninitialized variable usage
-Date: Fri, 31 Jan 2025 12:58:51 +0000
-Message-ID: <c43834b905a6ab1d3dbd3e5785522f9c9d2dadd2.1738328108.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 39/42] net/e1000/base: fix unchecked return
+Date: Fri, 31 Jan 2025 12:58:52 +0000
+Message-ID: <f15a88a376b9fb6ccbc569207e1141665bd6c749.1738328108.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -59,33 +60,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jakub Buchocki <101559614+jbuchocx@users.noreply.github.com>
+From: Dima Ruinskiy <dima.ruinskiy@intel.com>
 
-Coverity has detected potential usage of uninitialized values inside the
-array. Fix the warning by initializing array.
+Static analysis has detected a write that is not checked for errors,
+leading to ignored error return value. Add a check.
 
-Fixes: af75078fece3 ("first public release")
+Fixes: edcdb3c5f71b ("e1000/base: fix link flap on 82579")
 Cc: stable@dpdk.org
 
-Signed-off-by: Jakub Buchocki <jakubx.buchocki@intel.com>
+Signed-off-by: Dima Ruinskiy <dima.ruinskiy@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_vf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_ich8lan.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_vf.c b/drivers/net/intel/e1000/base/e1000_vf.c
-index bb314e2f12..e0c95aa130 100644
---- a/drivers/net/intel/e1000/base/e1000_vf.c
-+++ b/drivers/net/intel/e1000/base/e1000_vf.c
-@@ -374,7 +374,7 @@ STATIC void e1000_write_msg_read_ack(struct e1000_hw *hw,
- void e1000_update_mc_addr_list_vf(struct e1000_hw *hw,
- 				  u8 *mc_addr_list, u32 mc_addr_count)
- {
--	u32 msgbuf[E1000_VFMAILBOX_SIZE];
-+	u32 msgbuf[E1000_VFMAILBOX_SIZE] = {0};
- 	u16 *hash_list = (u16 *)&msgbuf[1];
- 	u32 hash_value;
- 	u32 i;
+diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+index c3449a3f45..6b7eb245a6 100644
+--- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
++++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+@@ -989,6 +989,8 @@ s32 e1000_set_eee_pchlan(struct e1000_hw *hw)
+ 		data &= ~I82579_LPI_100_PLL_SHUT;
+ 		ret_val = e1000_write_emi_reg_locked(hw, I82579_LPI_PLL_SHUT,
+ 						     data);
++		if (ret_val)
++			goto release;
+ 	}
+ 
+ 	/* R/Clr IEEE MMD 3.1 bits 11:10 - Tx/Rx LPI Received */
 -- 
 2.43.5
 
