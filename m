@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8F3C02192
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B67C02192
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:03:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57D3D42EA2;
-	Fri, 31 Jan 2025 14:00:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AA02C42EA7;
+	Fri, 31 Jan 2025 14:00:13 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id EE4E542E65;
- Fri, 31 Jan 2025 14:00:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CE1C142E37;
+ Fri, 31 Jan 2025 14:00:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738328403; x=1769864403;
+ t=1738328404; x=1769864404;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=hg1NlXt1k+QBIrbsHHfpCabUFZYxrAOXB+g49PxJITA=;
- b=UJonl/hnmPKevoHIGBKdk9aV0X4nZdShq7Zi3KXJUOhw6ms24tdwsSco
- Loin1kDPfXZi9KRQSOCH/Ef8CyjxJHDNx+wk1zp/0vo3DCm4yNqGnb9UB
- yD4hxE0JPKEGnPdZva34r0QYKWBHv0YbgKWae37py3A8FzCBXFxQzdCM/
- K220Sw+BnkOXZzUgfk8CSrcuyUrlmepMy6Ow0y0I4zmxNv1wJgLT5RulG
- R0t7Xpr5aAyopr57f0oArTPCsU9yfYIpl98CCQRyIkSvyDpAsVKwMeW03
- Cx/N0+4o4r2AZqdXUrtIISCt/ysVKv7GOGX/IFJLpwr2msFkhqCh+ZxxQ Q==;
-X-CSE-ConnectionGUID: IwZZTfL8R4+19w1iZUKMsg==
-X-CSE-MsgGUID: d3k+mJSjSLGAtA58BzkKMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315668"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315668"
+ bh=MLdbANrFt/W0CKy07PttwrJ0cPNPS70nUOpx7zwcICQ=;
+ b=VJq572SlDIFLLz94bcMiZVrWp1sR25ZnlEICsPsIx7V6nJo1yfqhZbf0
+ CBgVcp6F8grUvc0XMOYC1R3d5EJh6FPay9yQpubR+FWcdEQb5nLRWnW+y
+ qW30dsQIZRRW2QnrncNq2g9c4/24OgxfhmGAQjSIoleLrMEqGS0axvL1m
+ XGIsSQD3WKj/pcoDS0UzR7elxMre/l32rv5/BCgX+tk+6hGrIfohR2E6+
+ O1XUe/RTjsCQ12/lZyNEcH6stGTS7FBLwJFaSoS/NPJjW0vfzrv9mg1qd
+ ybf5D8kVhjg3/7jKGOOlOwKo/iVTvrP5HArQ3O+p9wk0kag/aIxwhpPZG Q==;
+X-CSE-ConnectionGUID: bkN7ap4HQdSraX3UFPwOnw==
+X-CSE-MsgGUID: JAE3/X7JR9+Up1IQjn76Dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315674"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315674"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Jan 2025 05:00:02 -0800
-X-CSE-ConnectionGUID: X7eQmyn8T2uqnnhLYXhQvw==
-X-CSE-MsgGUID: n2fqLRxeQjaus82DkaYuqw==
+ 31 Jan 2025 05:00:03 -0800
+X-CSE-ConnectionGUID: cYmwQPSVTiaMol8pzAdtdQ==
+X-CSE-MsgGUID: VLzJsa3yQC2SbuljJCAtAg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503453"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503455"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 05:00:01 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 05:00:02 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v1 34/42] net/e1000/base: fix iterator type
-Date: Fri, 31 Jan 2025 12:58:47 +0000
-Message-ID: <c93385556fc09104e50a69d3f2757856cbc137b3.1738328108.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 35/42] net/e1000/base: fix static analysis warnings
+Date: Fri, 31 Jan 2025 12:58:48 +0000
+Message-ID: <cd06498019cd319e874cb8ea6705b2a3cdda5ab7.1738328108.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -59,34 +60,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Amir Avivi <amir.avivi@intel.com>
+From: Przemysław Ciesielski <przemyslaw.ciesielski@intel.com>
 
-Fix static analysis warning about comparison between types of
-incompatible width, which might lead to an infinite loop due to overflow.
+There are some static analysis warnings due to wrong data types being used
+for various operations. Fix them with explicit typecasts.
 
-Fixes: af75078fece3 ("first public release")
+Fixes: 5a32a257f957 ("e1000: more NICs in base driver")
+Fixes: 38db3f7f50bd ("e1000: update base driver")
 Cc: stable@dpdk.org
 
-Signed-off-by: Amir Avivi <amir.avivi@intel.com>
+Signed-off-by: Przemysław Ciesielski <przemyslaw.ciesielski@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_phy.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_80003es2lan.c | 2 +-
+ drivers/net/intel/e1000/base/e1000_nvm.c         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
-index e9df7ec873..1fc7eb375e 100644
---- a/drivers/net/intel/e1000/base/e1000_phy.c
-+++ b/drivers/net/intel/e1000/base/e1000_phy.c
-@@ -2442,7 +2442,8 @@ s32 e1000_phy_has_link_generic(struct e1000_hw *hw, u32 iterations,
- 			       u32 usec_interval, bool *success)
- {
- 	s32 ret_val = E1000_SUCCESS;
--	u16 i, phy_status;
-+	u16 phy_status;
-+	u32 i;
+diff --git a/drivers/net/intel/e1000/base/e1000_80003es2lan.c b/drivers/net/intel/e1000/base/e1000_80003es2lan.c
+index b1f2df3803..1cbce5bedd 100644
+--- a/drivers/net/intel/e1000/base/e1000_80003es2lan.c
++++ b/drivers/net/intel/e1000/base/e1000_80003es2lan.c
+@@ -426,7 +426,7 @@ STATIC void e1000_release_swfw_sync_80003es2lan(struct e1000_hw *hw, u16 mask)
+ 		; /* Empty */
  
- 	DEBUGFUNC("e1000_phy_has_link_generic");
+ 	swfw_sync = E1000_READ_REG(hw, E1000_SW_FW_SYNC);
+-	swfw_sync &= ~mask;
++	swfw_sync &= ~(u32)mask;
+ 	E1000_WRITE_REG(hw, E1000_SW_FW_SYNC, swfw_sync);
  
+ 	e1000_put_hw_semaphore_generic(hw);
+diff --git a/drivers/net/intel/e1000/base/e1000_nvm.c b/drivers/net/intel/e1000/base/e1000_nvm.c
+index 2b38bbc117..1b49586c74 100644
+--- a/drivers/net/intel/e1000/base/e1000_nvm.c
++++ b/drivers/net/intel/e1000/base/e1000_nvm.c
+@@ -935,14 +935,14 @@ s32 e1000_read_pba_num_generic(struct e1000_hw *hw, u32 *pba_num)
+ 		DEBUGOUT("NVM Not Supported\n");
+ 		return -E1000_NOT_IMPLEMENTED;
+ 	}
+-	*pba_num = (u32)(nvm_data << 16);
++	*pba_num = ((u32)nvm_data << 16);
+ 
+ 	ret_val = hw->nvm.ops.read(hw, NVM_PBA_OFFSET_1, 1, &nvm_data);
+ 	if (ret_val) {
+ 		DEBUGOUT("NVM Read Error\n");
+ 		return ret_val;
+ 	}
+-	*pba_num |= nvm_data;
++	*pba_num |= (u32)nvm_data;
+ 
+ 	return E1000_SUCCESS;
+ }
 -- 
 2.43.5
 
