@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8492DC0218F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 08:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C77C0218F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 08:08:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 988F342D89;
-	Fri, 31 Jan 2025 09:07:19 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 972D842D3F
- for <dev@dpdk.org>; Fri, 31 Jan 2025 09:07:17 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50V14c1L019068
- for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:16 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 02EFF427DF;
+	Fri, 31 Jan 2025 09:07:22 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 154E0427DA
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 09:07:20 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50V70SGk004967
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:20 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
- YXx4JaZAJZ2ekz2bXTJKqHTanCHDJrQQB1gVPx3jr8=; b=jT91NqRbpZ77wk+VA
- OooV8EDFKeAvL052x69zzhsvmc3A6q3paeesSmxdssqtGAAR6pw308unsCzYVhtj
- tSTiH3ssau3HRYR2VtrT1vnt65l2ChnKWpNbYGNULyCqxJpF0GiJMUX6ik/SwURh
- //LWo3piIfEB78ClE1ZXekJhJybEBPh7QCcrzVoSttL1RhdyNwew17UiTPWjM/on
- 7clKTnZwN+Ergc/Txu4p/zxKrzs8/toz4c+pjpEetJfWCG7kZppjOkq0tchS329R
- PwKN25AZglIielobqr7GOporWDNqiohubze68rygjH4nlJQ7cmMKCHJubbvffkj3
- R7Iqg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
+ VVJwN0ApKnhXHwmtC5uT5XHWTST64zqSgxKuyDYhLc=; b=K+Fv+P9fD86LiXB1a
+ mwyvEi4q+fjcEAY2tT8bYIInGoTbDhUDfJ64VP8qh2SDlelHqm3Qp29sEI31X/cr
+ Jk8vsZOnydgh/w/dnLQUWj1gu7C7zGvkPkWVrBjcZsqTX0WAOPZO96LEc1gc3XOG
+ 9wZWYqD+tXyOzTdxZFI3JkJzSEPhCr2sUxGH5JyKm2AxUJq0K1Y9gTba1RyO98aU
+ addJ34tRO5RoSX8tQU11rMaYWGf1IxhF3exgKttO8iJCEydLPeqHPxNxgGmyMTB/
+ WswFuLxhtOpGtghBLEVA6u2IGZsY9T6/8pjWB8yRJOAAhMbC6nk+XmEYKn3AUWsl
+ eLwSA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44gmhnghpc-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44gsr3g38r-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:16 -0800 (PST)
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:20 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 31 Jan 2025 00:07:16 -0800
+ 15.2.1544.4; Fri, 31 Jan 2025 00:07:19 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 31 Jan 2025 00:07:16 -0800
+ Transport; Fri, 31 Jan 2025 00:07:18 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 65C4C3F704F;
- Fri, 31 Jan 2025 00:07:13 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 9DC523F7089;
+ Fri, 31 Jan 2025 00:07:16 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>, Srujana Challa <schalla@marvell.com>
-Subject: [PATCH 32/34] common/cnxk: change the error log to a debug log
-Date: Fri, 31 Jan 2025 13:35:27 +0530
-Message-ID: <20250131080530.3224977-32-ndabilpuram@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH 33/34] net/cnxk: update MC address list configure API
+Date: Fri, 31 Jan 2025 13:35:28 +0530
+Message-ID: <20250131080530.3224977-33-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: rccq2Iix_r8a6ZMQHfwRPBuzCujVPyUi
-X-Proofpoint-GUID: rccq2Iix_r8a6ZMQHfwRPBuzCujVPyUi
+X-Proofpoint-ORIG-GUID: rfzWsCpt4tQxLq5QkVLNiQ7zVARqUWD0
+X-Proofpoint-GUID: rfzWsCpt4tQxLq5QkVLNiQ7zVARqUWD0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-01-31_03,2025-01-30_01,2024-11-22_01
@@ -70,29 +70,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Srujana Challa <schalla@marvell.com>
+From: Satha Rao <skoteshwar@marvell.com>
 
-This patch updates the error log to a debug log since
-it is not needed.
+Return -ENOSPC when there is no space to update the complete MC address
+list, without flushing the existing list of addresses.
 
-Signed-off-by: Srujana Challa <schalla@marvell.com>
+Signed-off-by: Satha Rao <skoteshwar@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_inl_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/cnxk/cnxk_ethdev_ops.c | 32 ++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index 2e753440b7..376582f5db 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -1250,7 +1250,7 @@ roc_nix_inl_dev_qptr_get(uint8_t qid)
- 		inl_dev = idev->nix_inl_dev;
+diff --git a/drivers/net/cnxk/cnxk_ethdev_ops.c b/drivers/net/cnxk/cnxk_ethdev_ops.c
+index 5b0948e07a..9970c5ff5c 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_ops.c
++++ b/drivers/net/cnxk/cnxk_ethdev_ops.c
+@@ -1117,17 +1117,14 @@ cnxk_nix_rss_hash_conf_get(struct rte_eth_dev *eth_dev,
+ 	return 0;
+ }
  
- 	if (!inl_dev) {
--		plt_err("Inline Device could not be detected");
-+		plt_nix_dbg("Inline Device could not be detected");
- 		return NULL;
+-int
+-cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev,
+-				struct rte_ether_addr *mc_addr_set,
+-				uint32_t nb_mc_addr)
++static inline int
++nix_mc_addr_list_flush(struct rte_eth_dev *eth_dev)
+ {
+ 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+ 	struct rte_eth_dev_data *data = eth_dev->data;
+ 	struct rte_ether_addr null_mac_addr;
+ 	struct roc_nix *nix = &dev->nix;
+-	int rc, index;
+-	uint32_t i;
++	int i, rc = 0;
+ 
+ 	memset(&null_mac_addr, 0, sizeof(null_mac_addr));
+ 
+@@ -1148,15 +1145,34 @@ cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev,
+ 		}
  	}
- 	if (!inl_dev->attach_cptlf) {
+ 
++	return rc;
++}
++
++int
++cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev, struct rte_ether_addr *mc_addr_set,
++				uint32_t nb_mc_addr)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct rte_eth_dev_data *data = eth_dev->data;
++	struct roc_nix *nix = &dev->nix;
++	int index, mc_addr_cnt = 0;
++	uint32_t i;
++
+ 	if (!mc_addr_set || !nb_mc_addr)
+-		return 0;
++		return nix_mc_addr_list_flush(eth_dev);
++
++	/* Count multicast MAC addresses in list */
++	for (i = 0; i < dev->max_mac_entries; i++)
++		if (rte_is_multicast_ether_addr(&data->mac_addrs[i]))
++			mc_addr_cnt++;
+ 
+ 	/* Check for available space */
+ 	if (nb_mc_addr >
+-	    ((uint32_t)(dev->max_mac_entries - dev->dmac_filter_count))) {
++	    ((uint32_t)(dev->max_mac_entries - (dev->dmac_filter_count - mc_addr_cnt)))) {
+ 		plt_err("No space is available to add multicast filters");
+ 		return -ENOSPC;
+ 	}
++	nix_mc_addr_list_flush(eth_dev);
+ 
+ 	/* Multicast addresses are to be installed */
+ 	for (i = 0; i < nb_mc_addr; i++) {
 -- 
 2.34.1
 
