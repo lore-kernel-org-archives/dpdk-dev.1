@@ -2,50 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03958C02192
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE4FC0218F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:10:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3419042EA9;
-	Fri, 31 Jan 2025 14:00:22 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 99617427B6
- for <dev@dpdk.org>; Fri, 31 Jan 2025 14:00:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738328414; x=1769864414;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=mx6PV+nznPWHjE9wVam8RnH8ZRoEKZm81h5cNO6uhb4=;
- b=e2tA0pxmRWywg5Dq4G9SJB+rLuxTjCgvhPx8SlA1V2POzyj8EETO3enp
- nUwD0zny9oYiB7utqrbeY55GzmZ8eNvYrZo9tq9GI6ekEOHsGx7p4hZC7
- jOaqeYFmhPHJM4fObll7BYaaudoRgOMtUYS49L09c091Zdgh6HCigtlYq
- nhtV5+czkPqSO+UsmLkwnCiNZANwJwwoOyRACSo5O9+DoYF4U3cPxZasJ
- 2PDdCeecsOABgUdbUSA1tPoUNY0pBuVdwRkZBHiNDNNT1oEwiCwoxtXm+
- rKLu0uvpjQR/55n3xjKqLgubeR0OehA5m3AYR2tVDl065IBxsimfomu2f w==;
-X-CSE-ConnectionGUID: ImM7tmicSpuZAI87YdycYQ==
-X-CSE-MsgGUID: In5X2u3gTuOqcRaWsiGjfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315689"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315689"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Jan 2025 05:00:12 -0800
-X-CSE-ConnectionGUID: wN01MUcITYKRzyviGqqYjQ==
-X-CSE-MsgGUID: yksLWvKYQbCvjhkXUh8iHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503505"
-Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 05:00:10 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v1 42/42] net/e1000/base: update readme
-Date: Fri, 31 Jan 2025 12:58:55 +0000
-Message-ID: <6e23653f2972e5e60ff3b80fe0ca72000126d8c2.1738328108.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
-References: <cover.1738328106.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1BBC74060C;
+	Fri, 31 Jan 2025 14:10:09 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id EBF3940281
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 14:10:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1738329007;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=qmgS+x8WxmRvPTfipBqk3gG6p7zJtzp4bQWjSCpvAgQ=;
+ b=J+rKTh8xXUgdp9FrfpxVxksg28S99ZmmWWyLWHugr2GpBUss98UiBQZnKVfKx3Ar0rCkCl
+ xNgpYgSwBzyxCq/vq2NLFdXNL38Lnuf0/FCGxG1nH2dpNDt8gPTLuUcsX0sI/0+1ElHhq/
+ yKcOxlsNFM9zdoe7WZYFr4oiiTHs+gQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-492-kmqTPuMeM1CzV49Q059cXA-1; Fri,
+ 31 Jan 2025 08:10:04 -0500
+X-MC-Unique: kmqTPuMeM1CzV49Q059cXA-1
+X-Mimecast-MFC-AGG-ID: kmqTPuMeM1CzV49Q059cXA
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2D8441800370; Fri, 31 Jan 2025 13:10:03 +0000 (UTC)
+Received: from max-p1.redhat.com (unknown [10.39.208.23])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id F08561800268; Fri, 31 Jan 2025 13:10:00 +0000 (UTC)
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: dev@dpdk.org, otilibil@eurecom.fr, david.marchand@redhat.com,
+ chenbox@nvidia.com
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH] vhost: fix VDUSE devices registration
+Date: Fri, 31 Jan 2025 14:09:57 +0100
+Message-ID: <20250131130957.293562-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 51Mu3XuHEM2N-Iieg7anr69PKzVshL7s7hqNcPsLCcU_1738329003
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,39 +64,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update README with more up-to-date information.
+This patch fixes a regression in vhost_driver_register()
+causing VDUSE devices registration to fail systematically
+because the return value was initialized to -1 and not
+changed later on for this type of devices.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
+
+Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 ---
- drivers/net/intel/e1000/base/README | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ lib/vhost/socket.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/README b/drivers/net/intel/e1000/base/README
-index b84ee5ad6e..2a0696f3c4 100644
---- a/drivers/net/intel/e1000/base/README
-+++ b/drivers/net/intel/e1000/base/README
-@@ -2,9 +2,9 @@
-  * Copyright(c) 2010-2020 Intel Corporation
-  */
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+index 433a42bf80..894a0f0dcb 100644
+--- a/lib/vhost/socket.c
++++ b/lib/vhost/socket.c
+@@ -893,7 +893,6 @@ vhost_user_socket_mem_free(struct vhost_user_socket *vsocket)
+ int
+ rte_vhost_driver_register(const char *path, uint64_t flags)
+ {
+-	int ret = -1;
+ 	struct vhost_user_socket *vsocket;
  
--This directory contains source code of FreeBSD em & igb drivers of version
--cid-gigabit.2020.06.05.tar.gz released by ND. The sub-directory of base/
--contains the original source package.
-+This directory contains source code of FreeBSD em, igb, and igc drivers of
-+snapshot generated on 2025-01-24-09.44. The sub-directory of base/ contains the
-+original source package.
+ 	if (!path)
+@@ -997,7 +996,6 @@ rte_vhost_driver_register(const char *path, uint64_t flags)
+ 	} else {
+ #ifndef RTE_LIBRTE_VHOST_POSTCOPY
+ 		VHOST_CONFIG_LOG(path, ERR, "Postcopy requested but not compiled");
+-		ret = -1;
+ 		goto out_mutex;
+ #endif
+ 	}
+@@ -1012,15 +1010,14 @@ rte_vhost_driver_register(const char *path, uint64_t flags)
+ 		} else {
+ 			vsocket->is_server = true;
+ 		}
+-		ret = create_unix_socket(vsocket);
+-		if (ret < 0)
++		if (create_unix_socket(vsocket) < 0)
+ 			goto out_mutex;
+ 	}
  
- This driver is valid for the product(s) listed below
- * Intel® Ethernet Controller 82540
-@@ -24,6 +24,8 @@ This driver is valid for the product(s) listed below
- * Intel® Ethernet Controller I350 Series
- * Intel® Ethernet Controller I210 Series
- * Intel® Ethernet Controller I211
-+* Intel® Ethernet Controller I225
-+* Intel® Ethernet Controller I226
- * Intel® Ethernet Controller I354 Series
- * Intel® Ethernet Controller DH89XXCC Series
+ 	vhost_user.vsockets[vhost_user.vsocket_cnt++] = vsocket;
  
+ 	pthread_mutex_unlock(&vhost_user.mutex);
+-	return ret;
++	return 0;
+ 
+ out_mutex:
+ 	if (pthread_mutex_destroy(&vsocket->conn_mutex)) {
+@@ -1028,8 +1025,7 @@ rte_vhost_driver_register(const char *path, uint64_t flags)
+ 	}
+ out:
+ 	pthread_mutex_unlock(&vhost_user.mutex);
+-
+-	return ret;
++	return -1;
+ }
+ 
+ static bool
 -- 
-2.43.5
+2.48.1
 
