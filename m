@@ -2,40 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD234C0218F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 17:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F9AC0218F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 18:34:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93B4C40695;
-	Fri, 31 Jan 2025 18:34:47 +0100 (CET)
-Received: from smtp.eurecom.fr (smtp.eurecom.fr [193.55.113.210])
- by mails.dpdk.org (Postfix) with ESMTP id 6DF84402EE
- for <dev@dpdk.org>; Fri, 31 Jan 2025 18:34:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
- d=eurecom.fr; i=@eurecom.fr; q=dns/txt; s=default;
- t=1738344886; x=1769880886;
- h=from:date:cc:to:mime-version:message-id:subject:
- content-transfer-encoding;
- bh=wR6hjNAL1vi8jBS0gQb6lAv1lqgkBfsqdTAy9WUscuY=;
- b=Hir1I7KH3wLfs+QWbz0IWz+JFkIDrY7yre/bFwb6R4xMO8DHj6CCPCQa
- br4E1sVi1zsa2q7Jv9cDXtZrztIKqDfyZBc51qwRBGWDcElnvq5X7ywOw
- 4NpJTfbXWu1vldg2gRwGNk2331UeJ/QLhMdz7Tq6sh+KR0fn0x3pPdHcx g=;
-X-CSE-ConnectionGUID: AjW++uQCToaJyPvIzCTXfQ==
-X-CSE-MsgGUID: F94CZ2MhSqOnAo4YFKYLfQ==
-X-IronPort-AV: E=Sophos;i="6.13,249,1732575600"; d="scan'208";a="28800833"
-Received: from quovadis.eurecom.fr ([10.3.2.233])
- by drago1i.eurecom.fr with ESMTP; 31 Jan 2025 18:34:46 +0100
-From: "Ariel Otilibili-Anieli" <otilibil@eurecom.fr>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 185.13.181.2
-Date: Fri, 31 Jan 2025 18:34:46 +0100
-Cc: dev@dpdk.org, david.marchand@redhat.com, chenbox@nvidia.com
-To: "Maxime Coquelin" <maxime.coquelin@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6939A40274;
+	Fri, 31 Jan 2025 19:34:47 +0100 (CET)
+Received: from mail-ej1-f100.google.com (mail-ej1-f100.google.com
+ [209.85.218.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 0069E4026B
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 19:34:45 +0100 (CET)
+Received: by mail-ej1-f100.google.com with SMTP id
+ a640c23a62f3a-ab34a170526so372528766b.0
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 10:34:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1738348485; x=1738953285; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CmV/gtb4ls5Bv4dHfJnYf5cRxuInDYkWE9nZg1E9JG0=;
+ b=BR/0N+WS8qsPFTidIzG9MvpO++GG6Qfj2U6bWK4IRL0StwSatV916W2kZwBoHRn8yH
+ y4iE+z9m38MEz1qS9EjTkxoA9BbAmudsAQC/rd4kCPd4ML7lmp7bn4zEMI2Fsf+7MMXr
+ Yvf1ZHeyWljN4W5Hw5M+Hy3tmvF4qVKiLs11X8tfKE7BnH7tg5qtHHdgpcqTh+stOKgf
+ 3UdRktkoRCk27BsDDg9ozzANMkj6JiePs6QHwXqBeBNaeNVGEhJMNSJqBHsMbQPQ5dRN
+ LzGvP5RQ/6xWwJKsb/MzeYDZkqMTzN2jbxkiaU81vRMNh+xDd4hvIVjnt6QjAa3geaVF
+ 5IzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1738348485; x=1738953285;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=CmV/gtb4ls5Bv4dHfJnYf5cRxuInDYkWE9nZg1E9JG0=;
+ b=s+DhA85LCumuQpcQnwNl2f5lXiAapxkwfc5+jwloIbhE6ZCJ6DUr+Ewwi/H3IWgHFC
+ O9Mv5T8ILJcTNcPcG2g9HLsoXIoi+/fJXIcKdkJGAYncaLcGlm/woceH5o2HOvdQmVNa
+ dQqUSw02qFOmTEBH6kAurSpZdSTGfvmUqe/t4Vu/Ky1/MyVbLy8DHjNWNnwvdO+PMZRP
+ OkR8vjnBnOezjOIwL8uReWIRyijHWg2qNq5Ei4KhsIJLZO3FfuGvgi2Sv+Qp22K1vnjF
+ /vHuC2ttU6uV2nYZ7klpyaxUmpbzpZfa71MCO8qviuJQ5R4EzBzCitxFYUA6kMc0FQEe
+ yvzw==
+X-Gm-Message-State: AOJu0YyROCn3Pl7cbmOFvdhWxU5L4Zf/bHuDG0XLm+ZH8po1mG6ytvaV
+ 3RrxkwSLTvp/AtzEx1SzLhuEOfHGu07QjYmaGSHoayPoQ6JyotCjBNhn1ho4LoqnHDksk0XENEf
+ Grx6RZIdpCk7QgOBeAI4hgR2r95pV+WF121hNvg7c
+X-Gm-Gg: ASbGncvz7sHOWPX135F+XA4Kdd5oDwOr9CG9zGew82Rwo01y2iRvFoTK7NuCgmta68U
+ V+DY9xjKO78NrkM0vJ5snAbjOf4AYXR0l0MymO4mrnlvOsI2gwS0fvgLTZZhkM1hBDiyHxrNYAz
+ clDNDDRqUuO1zGcnxwxIzAcY5T3AEsbUsM130DH0SMUNHq7HU6wepFk+n4ErsN0P4mnJzoiXrfa
+ oygJKmkmyrRBXpEhFoe8Vom/jOseBuggj9cKEyUpFTQc6iEHwxAbMeqWzKpVILy+dPxtrBdSEh3
+ +Ps47GyAZnIgRMeTivpBltBH8f89ksoHIhBfBBtGb8A3RPXALQ==
+X-Google-Smtp-Source: AGHT+IHFIqPeXcacncIKqMLKL2JI/o45KBblfgnRTT4aUzXELTDnVBdAvVV8fWf4gbBujkTFAH1a86eOF33/
+X-Received: by 2002:a17:907:96a0:b0:aaf:1183:ec2c with SMTP id
+ a640c23a62f3a-ab6cfcb3ba8mr1284867166b.5.1738348485308; 
+ Fri, 31 Jan 2025 10:34:45 -0800 (PST)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ a640c23a62f3a-ab6e48ba162sm12494466b.116.2025.01.31.10.34.45; 
+ Fri, 31 Jan 2025 10:34:45 -0800 (PST)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
+ by smtpservice.6wind.com (Postfix) with ESMTP id 1BBE219C93;
+ Fri, 31 Jan 2025 19:34:44 +0100 (CET)
+From: Ariel Otilibili <ariel.otilibili@6wind.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ David Marchand <david.marchand@redhat.com>,
+ Ariel Otilibili <ariel.otilibili@6wind.com>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 0/2] Fix use after free, and refactor af_xdp_tx_zc
+Date: Fri, 31 Jan 2025 19:34:37 +0100
+Message-Id: <20250131183439.909831-1-ariel.otilibili@6wind.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
 MIME-Version: 1.0
-Message-ID: <11eea5-679d0980-397-2b71eb40@59612471>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?vhost=3A?= fix VDUSE devices  
- registration
-User-Agent: SOGoMail 5.11.2
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,43 +86,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Maxime,
+Hello,
 
-On Friday, January 31, 2025 14:09 CET, Maxime Coquelin <maxime.coquelin=
-@redhat.com> wrote:
+The series addresses Bugzilla ID 1440 in two steps;
 
-> This patch fixes a regression in vhost=5Fdriver=5Fregister()
-> causing VDUSE devices registration to fail systematically
-> because the return value was initialized to -1 and not
-> changed later on for this type of devices.
->=20
-> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
+1. Fix use after free.
+2. Refactor af_xdp_tx_zc().
 
-Thanks for the heads up. I indeed committed 4d2aa150769b ("vhost: remov=
-e check around mutex init"); and it contained a hunk for vhost=5Fdriver=
-=5Fregister().
+Thank you,
+---
+v5
+* fix style issues in the signature of reserve_and_fill() (Stephen Hemminger)
 
-I applied this patch against the tip of the main; from what I saw, ther=
-e is no overlap with 4d2aa150769b ("vhost: remove check around mutex in=
-it").
+v4 (https://inbox.dpdk.org/dev/20250130221853.789366-1-ariel.otilibili@6wind.com/)
+* redid the refactor (Maryam Tahhan)
+* marked the fix as acked (Stephen Hemminger)
+* updated .mailmap, my main e-mail is @6wind.com (https://inbox.dpdk.org/dev/20250115121152.487360-4-otilibil@eurecom.fr/)
 
-It looks 4d2aa150769b ("vhost: remove check around mutex init") came up=
- first, because I was the last person who edited the file.
+v3 (https://inbox.dpdk.org/dev/20250128231152.249497-1-ariel.otilibili@6wind.com/)
+* reworded commit message of patch-1
+* addressed feedback of Maryam Tahhan
 
-The tags should be rather these ones:
+v2 (https://inbox.dpdk.org/dev/20250116225151.188214-1-ariel.otilibili@6wind.com/)
+* reworded commit messages
+* addressed feedback from Stephen Hemminger
 
-Fixes: 0adb8eccc6a6 ("vhost: add VDUSE device creation and destruction"=
-)
-Fixes: 78b2e3bae1af ("vhost: fix initialization")
-Fixes: 64ab701c3d1e ("vhost: add vhost-user client mode")
-Fixes: 8f972312b8f4 ("vhost: support vhost-user")
+v1 (http://inbox.dpdk.org/dev/20250116195640.68885-1-ariel.otilibili@6wind.com/)
 
-Does my reasoning make sense? Let me know.
 
-:) For my understanding; now that 4d2aa150769b ("vhost: remove check ar=
-ound mutex init") needs a fix, is there a way by which I could have det=
-ect the regression?
+Ariel Otilibili (2):
+  net/af_xdp: Fix use after free in af_xdp_tx_zc
+  net/af_xdp: Refactor af_xdp_tx_zc
 
-Your help will be much appreciated,
-Ariel
+ .mailmap                            |  2 +-
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 64 ++++++++++++++++-------------
+ 2 files changed, 36 insertions(+), 30 deletions(-)
+
+-- 
+2.30.2
 
