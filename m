@@ -2,58 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C77C0218F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 08:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A842C0218D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 08:09:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02EFF427DF;
-	Fri, 31 Jan 2025 09:07:22 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 154E0427DA
- for <dev@dpdk.org>; Fri, 31 Jan 2025 09:07:20 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50V70SGk004967
- for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:20 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 2019842D92;
+	Fri, 31 Jan 2025 09:07:25 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B5FE042D97
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 09:07:23 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50V6Ct4B001600
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:23 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
- VVJwN0ApKnhXHwmtC5uT5XHWTST64zqSgxKuyDYhLc=; b=K+Fv+P9fD86LiXB1a
- mwyvEi4q+fjcEAY2tT8bYIInGoTbDhUDfJ64VP8qh2SDlelHqm3Qp29sEI31X/cr
- Jk8vsZOnydgh/w/dnLQUWj1gu7C7zGvkPkWVrBjcZsqTX0WAOPZO96LEc1gc3XOG
- 9wZWYqD+tXyOzTdxZFI3JkJzSEPhCr2sUxGH5JyKm2AxUJq0K1Y9gTba1RyO98aU
- addJ34tRO5RoSX8tQU11rMaYWGf1IxhF3exgKttO8iJCEydLPeqHPxNxgGmyMTB/
- WswFuLxhtOpGtghBLEVA6u2IGZsY9T6/8pjWB8yRJOAAhMbC6nk+XmEYKn3AUWsl
- eLwSA==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=6
+ +/IOZ7rL3dt2C3Xg5S6LHev5NfNsoa/eFCw+KS1pUE=; b=ThkWb0VS1HUIRJHGo
+ MGurdtzNZ5thUNTcMgsSFk7OxbGz5N/0XBFe6Ktmoc3B1Qh1af+AG6sLJFSdgQJs
+ CcvOsLXVO+JIwHzmBKqNGNYR9U0iJUBUwxzgEiBTY2pvLDH/p1hS5UqekTwu2dO+
+ o7NZ/d69lZVkrClZrYJBtoz6vhiKpRxfGmTnIAG6iLeIA9I+C/NmjNUuTpjOI+5u
+ YbcH2Pqqd+BQznYOF6tsCMFm839SaKRqU7aVCNNks2YR6RrW7mygTzOoCWqlCxUu
+ I0VMTVf5wGtt75C2XLhSyeuN4c0RYAwRhqSAvk91xQXxy3QLna5U2rbQp5EodDCV
+ isKuQ==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44gsr3g38r-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44gmhnghph-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:20 -0800 (PST)
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 00:07:22 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 31 Jan 2025 00:07:19 -0800
+ 15.2.1544.4; Fri, 31 Jan 2025 00:07:21 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 31 Jan 2025 00:07:18 -0800
+ Transport; Fri, 31 Jan 2025 00:07:21 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 9DC523F7089;
- Fri, 31 Jan 2025 00:07:16 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 92C5A3F7065;
+ Fri, 31 Jan 2025 00:07:19 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH 33/34] net/cnxk: update MC address list configure API
-Date: Fri, 31 Jan 2025 13:35:28 +0530
-Message-ID: <20250131080530.3224977-33-ndabilpuram@marvell.com>
+Subject: [PATCH 34/34] common/cnxk: move interrupt handling to
+ platform-specific
+Date: Fri, 31 Jan 2025 13:35:29 +0530
+Message-ID: <20250131080530.3224977-34-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: rfzWsCpt4tQxLq5QkVLNiQ7zVARqUWD0
-X-Proofpoint-GUID: rfzWsCpt4tQxLq5QkVLNiQ7zVARqUWD0
+X-Proofpoint-ORIG-GUID: 98-uBUY8aOYRrEeWU9L6KjmIIpMIwgQs
+X-Proofpoint-GUID: 98-uBUY8aOYRrEeWU9L6KjmIIpMIwgQs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-01-31_03,2025-01-30_01,2024-11-22_01
@@ -72,76 +73,561 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Satha Rao <skoteshwar@marvell.com>
 
-Return -ENOSPC when there is no space to update the complete MC address
-list, without flushing the existing list of addresses.
+This change refactors the interrupt handling to be platform-specific.
+Some platforms directly call ioctls, while others provide a library API
+for the same functionality. Moving the interrupt handling to
+platform-specific implementations enhances clarity and maintainability.
 
 Signed-off-by: Satha Rao <skoteshwar@marvell.com>
 ---
- drivers/net/cnxk/cnxk_ethdev_ops.c | 32 ++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ drivers/common/cnxk/roc_irq.c      | 239 +++--------------------------
+ drivers/common/cnxk/roc_platform.c | 231 ++++++++++++++++++++++++++++
+ drivers/common/cnxk/roc_platform.h |   7 +
+ 3 files changed, 259 insertions(+), 218 deletions(-)
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev_ops.c b/drivers/net/cnxk/cnxk_ethdev_ops.c
-index 5b0948e07a..9970c5ff5c 100644
---- a/drivers/net/cnxk/cnxk_ethdev_ops.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_ops.c
-@@ -1117,17 +1117,14 @@ cnxk_nix_rss_hash_conf_get(struct rte_eth_dev *eth_dev,
- 	return 0;
+diff --git a/drivers/common/cnxk/roc_irq.c b/drivers/common/cnxk/roc_irq.c
+index 0b21b9e2d9..b1d41346c0 100644
+--- a/drivers/common/cnxk/roc_irq.c
++++ b/drivers/common/cnxk/roc_irq.c
+@@ -7,243 +7,37 @@
+ 
+ #if defined(__linux__)
+ 
+-#include <inttypes.h>
+-#include <linux/vfio.h>
+-#include <sys/eventfd.h>
+-#include <sys/ioctl.h>
+-#include <unistd.h>
+-
+-#define MSIX_IRQ_SET_BUF_LEN                                                   \
+-	(sizeof(struct vfio_irq_set) + sizeof(int) *			       \
+-			((uint32_t)plt_intr_max_intr_get(intr_handle)))
+-
+-static int
+-irq_get_info(struct plt_intr_handle *intr_handle)
+-{
+-	struct vfio_irq_info irq = {.argsz = sizeof(irq)};
+-	int rc, vfio_dev_fd;
+-
+-	irq.index = VFIO_PCI_MSIX_IRQ_INDEX;
+-
+-	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
+-	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_GET_IRQ_INFO, &irq);
+-	if (rc < 0) {
+-		plt_err("Failed to get IRQ info rc=%d errno=%d", rc, errno);
+-		return rc;
+-	}
+-
+-	plt_base_dbg("Flags=0x%x index=0x%x count=0x%x max_intr_vec_id=0x%x",
+-		     irq.flags, irq.index, irq.count, PLT_MAX_RXTX_INTR_VEC_ID);
+-
+-	if (irq.count == 0) {
+-		plt_err("HW max=%d > PLT_MAX_RXTX_INTR_VEC_ID: %d", irq.count,
+-			PLT_MAX_RXTX_INTR_VEC_ID);
+-		plt_intr_max_intr_set(intr_handle, PLT_MAX_RXTX_INTR_VEC_ID);
+-	} else {
+-		if (plt_intr_max_intr_set(intr_handle, irq.count))
+-			return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-irq_config(struct plt_intr_handle *intr_handle, unsigned int vec)
+-{
+-	char irq_set_buf[MSIX_IRQ_SET_BUF_LEN];
+-	struct vfio_irq_set *irq_set;
+-	int len, rc, vfio_dev_fd;
+-	int32_t *fd_ptr;
+-
+-	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
+-		plt_err("vector=%d greater than max_intr=%d", vec,
+-			plt_intr_max_intr_get(intr_handle));
+-		return -EINVAL;
+-	}
+-
+-	len = sizeof(struct vfio_irq_set) + sizeof(int32_t);
+-
+-	irq_set = (struct vfio_irq_set *)irq_set_buf;
+-	irq_set->argsz = len;
+-
+-	irq_set->start = vec;
+-	irq_set->count = 1;
+-	irq_set->flags =
+-		VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
+-	irq_set->index = VFIO_PCI_MSIX_IRQ_INDEX;
+-
+-	/* Use vec fd to set interrupt vectors */
+-	fd_ptr = (int32_t *)&irq_set->data[0];
+-	fd_ptr[0] = plt_intr_efds_index_get(intr_handle, vec);
+-
+-	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
+-	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_SET_IRQS, irq_set);
+-	if (rc)
+-		plt_err("Failed to set_irqs vector=0x%x rc=%d", vec, rc);
+-
+-	return rc;
+-}
+-
+-static int
+-irq_init(struct plt_intr_handle *intr_handle)
+-{
+-	char irq_set_buf[MSIX_IRQ_SET_BUF_LEN];
+-	struct vfio_irq_set *irq_set;
+-	int len, rc, vfio_dev_fd;
+-	int32_t *fd_ptr;
+-	uint32_t i;
+-
+-	len = sizeof(struct vfio_irq_set) +
+-	      sizeof(int32_t) * plt_intr_max_intr_get(intr_handle);
+-
+-	irq_set = (struct vfio_irq_set *)irq_set_buf;
+-	irq_set->argsz = len;
+-	irq_set->start = 0;
+-	irq_set->count = plt_intr_max_intr_get(intr_handle);
+-	irq_set->flags =
+-		VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
+-	irq_set->index = VFIO_PCI_MSIX_IRQ_INDEX;
+-
+-	fd_ptr = (int32_t *)&irq_set->data[0];
+-	for (i = 0; i < irq_set->count; i++)
+-		fd_ptr[i] = -1;
+-
+-	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
+-	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_SET_IRQS, irq_set);
+-	if (rc)
+-		plt_err("Failed to set irqs vector rc=%d", rc);
+-
+-	return rc;
+-}
+-
+ int
+ dev_irqs_disable(struct plt_intr_handle *intr_handle)
+ {
+-	/* Clear max_intr to indicate re-init next time */
+-	plt_intr_max_intr_set(intr_handle, 0);
+-	return plt_intr_disable(intr_handle);
++	return plt_irq_disable(intr_handle);
  }
  
--int
--cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev,
--				struct rte_ether_addr *mc_addr_set,
--				uint32_t nb_mc_addr)
-+static inline int
-+nix_mc_addr_list_flush(struct rte_eth_dev *eth_dev)
+ int
+ dev_irq_reconfigure(struct plt_intr_handle *intr_handle, uint16_t max_intr)
  {
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
- 	struct rte_eth_dev_data *data = eth_dev->data;
- 	struct rte_ether_addr null_mac_addr;
- 	struct roc_nix *nix = &dev->nix;
--	int rc, index;
--	uint32_t i;
-+	int i, rc = 0;
+-	/* Disable interrupts if enabled. */
+-	if (plt_intr_max_intr_get(intr_handle))
+-		dev_irqs_disable(intr_handle);
+-
+-	plt_intr_max_intr_set(intr_handle, max_intr);
+-	return irq_init(intr_handle);
++	return plt_irq_reconfigure(intr_handle, max_intr);
+ }
  
- 	memset(&null_mac_addr, 0, sizeof(null_mac_addr));
+ int
+-dev_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
+-		 void *data, unsigned int vec)
++dev_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		 unsigned int vec)
+ {
+-	struct plt_intr_handle *tmp_handle;
+-	uint32_t nb_efd, tmp_nb_efd;
+-	int rc, fd;
+-
+-	/* If no max_intr read from VFIO */
+-	if (plt_intr_max_intr_get(intr_handle) == 0) {
+-		irq_get_info(intr_handle);
+-		irq_init(intr_handle);
+-	}
+-
+-	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
+-		plt_err("Vector=%d greater than max_intr=%d or ",
+-			vec, plt_intr_max_intr_get(intr_handle));
+-		return -EINVAL;
+-	}
+-
+-	tmp_handle = intr_handle;
+-	/* Create new eventfd for interrupt vector */
+-	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+-	if (fd == -1)
+-		return -ENODEV;
+-
+-	if (plt_intr_fd_set(tmp_handle, fd))
+-		return -errno;
+-
+-	/* Register vector interrupt callback */
+-	rc = plt_intr_callback_register(tmp_handle, cb, data);
+-	if (rc) {
+-		plt_err("Failed to register vector:0x%x irq callback.", vec);
+-		return rc;
+-	}
+-
+-	rc = plt_intr_efds_index_set(intr_handle, vec, fd);
+-	if (rc)
+-		return rc;
+-
+-	nb_efd = (vec > (uint32_t)plt_intr_nb_efd_get(intr_handle)) ?
+-		vec : (uint32_t)plt_intr_nb_efd_get(intr_handle);
+-	plt_intr_nb_efd_set(intr_handle, nb_efd);
+-
+-	tmp_nb_efd = plt_intr_nb_efd_get(intr_handle) + 1;
+-	if (tmp_nb_efd > (uint32_t)plt_intr_max_intr_get(intr_handle))
+-		plt_intr_max_intr_set(intr_handle, tmp_nb_efd);
+-	plt_base_dbg("Enable vector:0x%x for vfio (efds: %d, max:%d)", vec,
+-		     plt_intr_nb_efd_get(intr_handle),
+-		     plt_intr_max_intr_get(intr_handle));
+-
+-	/* Enable MSIX vectors to VFIO */
+-	return irq_config(intr_handle, vec);
++	return plt_irq_register(intr_handle, cb, data, vec);
+ }
  
-@@ -1148,15 +1145,34 @@ cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev,
- 		}
- 	}
+ void
+-dev_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
+-		   void *data, unsigned int vec)
++dev_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		   unsigned int vec)
+ {
+-	struct plt_intr_handle *tmp_handle;
+-	uint8_t retries = 5; /* 5 ms */
+-	int rc, fd;
+-
+-	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
+-		plt_err("Error unregistering MSI-X interrupts vec:%d > %d", vec,
+-			plt_intr_max_intr_get(intr_handle));
+-		return;
+-	}
+-
+-	tmp_handle = intr_handle;
+-	fd = plt_intr_efds_index_get(intr_handle, vec);
+-	if (fd == -1)
+-		return;
+-
+-	if (plt_intr_fd_set(tmp_handle, fd))
+-		return;
+-
+-	do {
+-		/* Un-register callback func from platform lib */
+-		rc = plt_intr_callback_unregister(tmp_handle, cb, data);
+-		/* Retry only if -EAGAIN */
+-		if (rc != -EAGAIN)
+-			break;
+-		plt_delay_ms(1);
+-		retries--;
+-	} while (retries);
+-
+-	if (rc < 0) {
+-		plt_err("Error unregistering MSI-X vec %d cb, rc=%d", vec, rc);
+-		return;
+-	}
+-
+-	plt_base_dbg("Disable vector:0x%x for vfio (efds: %d, max:%d)", vec,
+-		     plt_intr_nb_efd_get(intr_handle),
+-		     plt_intr_max_intr_get(intr_handle));
+-
+-	if (plt_intr_efds_index_get(intr_handle, vec) != -1)
+-		close(plt_intr_efds_index_get(intr_handle, vec));
+-	/* Disable MSIX vectors from VFIO */
+-	plt_intr_efds_index_set(intr_handle, vec, -1);
+-
+-	irq_config(intr_handle, vec);
++	plt_irq_unregister(intr_handle, cb, data, vec);
+ }
  
+ #else
+ 
+ int
+-dev_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
+-		 void *data, unsigned int vec)
++dev_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		 unsigned int vec)
+ {
+ 	PLT_SET_USED(intr_handle);
+ 	PLT_SET_USED(cb);
+@@ -254,8 +48,8 @@ dev_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
+ }
+ 
+ void
+-dev_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
+-		   void *data, unsigned int vec)
++dev_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		   unsigned int vec)
+ {
+ 	PLT_SET_USED(intr_handle);
+ 	PLT_SET_USED(cb);
+@@ -271,4 +65,13 @@ dev_irqs_disable(struct plt_intr_handle *intr_handle)
+ 	return -ENOTSUP;
+ }
+ 
++int
++dev_irq_reconfigure(struct plt_intr_handle *intr_handle, uint16_t max_intr)
++{
++	PLT_SET_USED(intr_handle);
++	PLT_SET_USED(max_intr);
++
++	return -ENOTSUP;
++}
++
+ #endif /* __linux__ */
+diff --git a/drivers/common/cnxk/roc_platform.c b/drivers/common/cnxk/roc_platform.c
+index f1e0a93d97..401f737ad4 100644
+--- a/drivers/common/cnxk/roc_platform.c
++++ b/drivers/common/cnxk/roc_platform.c
+@@ -5,6 +5,237 @@
+ #include <rte_log.h>
+ 
+ #include "roc_api.h"
++#include "roc_priv.h"
++
++#if defined(__linux__)
++
++#include <inttypes.h>
++#include <linux/vfio.h>
++#include <sys/eventfd.h>
++#include <sys/ioctl.h>
++#include <unistd.h>
++
++#define MSIX_IRQ_SET_BUF_LEN                                                                       \
++	(sizeof(struct vfio_irq_set) + sizeof(int) * (plt_intr_max_intr_get(intr_handle)))
++
++static int
++irq_get_info(struct plt_intr_handle *intr_handle)
++{
++	struct vfio_irq_info irq = {.argsz = sizeof(irq)};
++	int rc, vfio_dev_fd;
++
++	irq.index = VFIO_PCI_MSIX_IRQ_INDEX;
++
++	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
++	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_GET_IRQ_INFO, &irq);
++	if (rc < 0) {
++		plt_err("Failed to get IRQ info rc=%d errno=%d", rc, errno);
++		return rc;
++	}
++
++	plt_base_dbg("Flags=0x%x index=0x%x count=0x%x max_intr_vec_id=0x%x", irq.flags, irq.index,
++		     irq.count, PLT_MAX_RXTX_INTR_VEC_ID);
++
++	if (irq.count == 0) {
++		plt_err("HW max=%d > PLT_MAX_RXTX_INTR_VEC_ID: %d", irq.count,
++			PLT_MAX_RXTX_INTR_VEC_ID);
++		plt_intr_max_intr_set(intr_handle, PLT_MAX_RXTX_INTR_VEC_ID);
++	} else {
++		if (plt_intr_max_intr_set(intr_handle, irq.count))
++			return -1;
++	}
++
++	return 0;
++}
++
++static int
++irq_config(struct plt_intr_handle *intr_handle, unsigned int vec)
++{
++	char irq_set_buf[MSIX_IRQ_SET_BUF_LEN];
++	struct vfio_irq_set *irq_set;
++	int len, rc, vfio_dev_fd;
++	int32_t *fd_ptr;
++
++	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
++		plt_err("vector=%d greater than max_intr=%d", vec,
++			plt_intr_max_intr_get(intr_handle));
++		return -EINVAL;
++	}
++
++	len = sizeof(struct vfio_irq_set) + sizeof(int32_t);
++
++	irq_set = (struct vfio_irq_set *)irq_set_buf;
++	irq_set->argsz = len;
++
++	irq_set->start = vec;
++	irq_set->count = 1;
++	irq_set->flags = VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
++	irq_set->index = VFIO_PCI_MSIX_IRQ_INDEX;
++
++	/* Use vec fd to set interrupt vectors */
++	fd_ptr = (int32_t *)&irq_set->data[0];
++	fd_ptr[0] = plt_intr_efds_index_get(intr_handle, vec);
++
++	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
++	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_SET_IRQS, irq_set);
++	if (rc)
++		plt_err("Failed to set_irqs vector=0x%x rc=%d", vec, rc);
++
++	return rc;
++}
++
++static int
++irq_init(struct plt_intr_handle *intr_handle)
++{
++	char irq_set_buf[MSIX_IRQ_SET_BUF_LEN];
++	struct vfio_irq_set *irq_set;
++	int len, rc, vfio_dev_fd;
++	int32_t *fd_ptr;
++	uint32_t i;
++
++	len = sizeof(struct vfio_irq_set) + sizeof(int32_t) * plt_intr_max_intr_get(intr_handle);
++
++	irq_set = (struct vfio_irq_set *)irq_set_buf;
++	irq_set->argsz = len;
++	irq_set->start = 0;
++	irq_set->count = plt_intr_max_intr_get(intr_handle);
++	irq_set->flags = VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
++	irq_set->index = VFIO_PCI_MSIX_IRQ_INDEX;
++
++	fd_ptr = (int32_t *)&irq_set->data[0];
++	for (i = 0; i < irq_set->count; i++)
++		fd_ptr[i] = -1;
++
++	vfio_dev_fd = plt_intr_dev_fd_get(intr_handle);
++	rc = ioctl(vfio_dev_fd, VFIO_DEVICE_SET_IRQS, irq_set);
++	if (rc)
++		plt_err("Failed to set irqs vector rc=%d", rc);
++
 +	return rc;
 +}
 +
 +int
-+cnxk_nix_mc_addr_list_configure(struct rte_eth_dev *eth_dev, struct rte_ether_addr *mc_addr_set,
-+				uint32_t nb_mc_addr)
++plt_irq_disable(struct plt_intr_handle *intr_handle)
 +{
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	struct rte_eth_dev_data *data = eth_dev->data;
-+	struct roc_nix *nix = &dev->nix;
-+	int index, mc_addr_cnt = 0;
-+	uint32_t i;
++	/* Clear max_intr to indicate re-init next time */
++	plt_intr_max_intr_set(intr_handle, 0);
++	return plt_intr_disable(intr_handle);
++}
 +
- 	if (!mc_addr_set || !nb_mc_addr)
--		return 0;
-+		return nix_mc_addr_list_flush(eth_dev);
++int
++plt_irq_reconfigure(struct plt_intr_handle *intr_handle, uint16_t max_intr)
++{
++	/* Disable interrupts if enabled. */
++	if (plt_intr_max_intr_get(intr_handle))
++		dev_irqs_disable(intr_handle);
 +
-+	/* Count multicast MAC addresses in list */
-+	for (i = 0; i < dev->max_mac_entries; i++)
-+		if (rte_is_multicast_ether_addr(&data->mac_addrs[i]))
-+			mc_addr_cnt++;
++	plt_intr_max_intr_set(intr_handle, max_intr);
++	return irq_init(intr_handle);
++}
++
++int
++plt_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		 unsigned int vec)
++{
++	struct plt_intr_handle *tmp_handle;
++	uint32_t nb_efd, tmp_nb_efd;
++	int rc, fd;
++
++	/* If no max_intr read from VFIO */
++	if (plt_intr_max_intr_get(intr_handle) == 0) {
++		irq_get_info(intr_handle);
++		irq_init(intr_handle);
++	}
++
++	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
++		plt_err("Vector=%d greater than max_intr=%d or ", vec,
++			plt_intr_max_intr_get(intr_handle));
++		return -EINVAL;
++	}
++
++	tmp_handle = intr_handle;
++	/* Create new eventfd for interrupt vector */
++	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
++	if (fd == -1)
++		return -ENODEV;
++
++	if (plt_intr_fd_set(tmp_handle, fd))
++		return -errno;
++
++	/* Register vector interrupt callback */
++	rc = plt_intr_callback_register(tmp_handle, cb, data);
++	if (rc) {
++		plt_err("Failed to register vector:0x%x irq callback.", vec);
++		return rc;
++	}
++
++	rc = plt_intr_efds_index_set(intr_handle, vec, fd);
++	if (rc)
++		return rc;
++
++	nb_efd = (vec > (uint32_t)plt_intr_nb_efd_get(intr_handle)) ?
++			 vec :
++			 (uint32_t)plt_intr_nb_efd_get(intr_handle);
++	plt_intr_nb_efd_set(intr_handle, nb_efd);
++
++	tmp_nb_efd = plt_intr_nb_efd_get(intr_handle) + 1;
++	if (tmp_nb_efd > (uint32_t)plt_intr_max_intr_get(intr_handle))
++		plt_intr_max_intr_set(intr_handle, tmp_nb_efd);
++	plt_base_dbg("Enable vector:0x%x for vfio (efds: %d, max:%d)", vec,
++		     plt_intr_nb_efd_get(intr_handle), plt_intr_max_intr_get(intr_handle));
++
++	/* Enable MSIX vectors to VFIO */
++	return irq_config(intr_handle, vec);
++}
++
++void
++plt_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		   unsigned int vec)
++{
++	struct plt_intr_handle *tmp_handle;
++	uint8_t retries = 5; /* 5 ms */
++	int rc, fd;
++
++	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
++		plt_err("Error unregistering MSI-X interrupts vec:%d > %d", vec,
++			plt_intr_max_intr_get(intr_handle));
++		return;
++	}
++
++	tmp_handle = intr_handle;
++	fd = plt_intr_efds_index_get(intr_handle, vec);
++	if (fd == -1)
++		return;
++
++	if (plt_intr_fd_set(tmp_handle, fd))
++		return;
++
++	do {
++		/* Un-register callback func from platform lib */
++		rc = plt_intr_callback_unregister(tmp_handle, cb, data);
++		/* Retry only if -EAGAIN */
++		if (rc != -EAGAIN)
++			break;
++		plt_delay_ms(1);
++		retries--;
++	} while (retries);
++
++	if (rc < 0) {
++		plt_err("Error unregistering MSI-X vec %d cb, rc=%d", vec, rc);
++		return;
++	}
++
++	plt_base_dbg("Disable vector:0x%x for vfio (efds: %d, max:%d)", vec,
++		     plt_intr_nb_efd_get(intr_handle), plt_intr_max_intr_get(intr_handle));
++
++	if (plt_intr_efds_index_get(intr_handle, vec) != -1)
++		close(plt_intr_efds_index_get(intr_handle, vec));
++	/* Disable MSIX vectors from VFIO */
++	plt_intr_efds_index_set(intr_handle, vec, -1);
++
++	irq_config(intr_handle, vec);
++}
++#endif
  
- 	/* Check for available space */
- 	if (nb_mc_addr >
--	    ((uint32_t)(dev->max_mac_entries - dev->dmac_filter_count))) {
-+	    ((uint32_t)(dev->max_mac_entries - (dev->dmac_filter_count - mc_addr_cnt)))) {
- 		plt_err("No space is available to add multicast filters");
- 		return -ENOSPC;
- 	}
-+	nix_mc_addr_list_flush(eth_dev);
+ #define PLT_INIT_CB_MAX 8
  
- 	/* Multicast addresses are to be installed */
- 	for (i = 0; i < nb_mc_addr; i++) {
+diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
+index b5da615af6..ff3a25e57f 100644
+--- a/drivers/common/cnxk/roc_platform.h
++++ b/drivers/common/cnxk/roc_platform.h
+@@ -351,6 +351,13 @@ extern int cnxk_logtype_esw;
+ }
+ #endif
+ 
++int plt_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++		     unsigned int vec);
++void plt_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
++			unsigned int vec);
++int plt_irq_reconfigure(struct plt_intr_handle *intr_handle, uint16_t max_intr);
++int plt_irq_disable(struct plt_intr_handle *intr_handle);
++
+ /* Device memory does not support unaligned access, instruct compiler to
+  * not optimize the memory access when working with mailbox memory.
+  */
 -- 
 2.34.1
 
