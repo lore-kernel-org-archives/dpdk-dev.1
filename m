@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC68C0218F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 19:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11A3C0218F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 19:19:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2164402B2;
-	Fri, 31 Jan 2025 20:19:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 27D8A402DB;
+	Fri, 31 Jan 2025 20:19:42 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 581354026E
- for <dev@dpdk.org>; Fri, 31 Jan 2025 20:19:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AF48B40278
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 20:19:38 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 319C8497;
- Fri, 31 Jan 2025 11:20:02 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91134FEC;
+ Fri, 31 Jan 2025 11:20:03 -0800 (PST)
 Received: from localhost.localdomain (unknown [10.57.75.129])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BF4D73F694;
- Fri, 31 Jan 2025 11:19:35 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2796D3F694;
+ Fri, 31 Jan 2025 11:19:37 -0800 (PST)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Thomas Monjalon <thomas@monjalon.net>,
@@ -23,9 +23,9 @@ Cc: Thomas Monjalon <thomas@monjalon.net>,
  Jerin Jacob <jerinj@marvell.com>, Akhil Goyal <gakhil@marvell.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
  Paul Szczepanek <paul.szczepanek@arm.com>
-Subject: [PATCH 2/3] dts: stop using partial in enums
-Date: Fri, 31 Jan 2025 19:19:23 +0000
-Message-ID: <20250131191924.1936157-3-luca.vizzarro@arm.com>
+Subject: [PATCH 3/3] dts: bump up fabric version
+Date: Fri, 31 Jan 2025 19:19:24 +0000
+Message-ID: <20250131191924.1936157-4-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250131191924.1936157-1-luca.vizzarro@arm.com>
 References: <20250131191924.1936157-1-luca.vizzarro@arm.com>
@@ -44,295 +44,257 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Starting from Python 3.13 functools.partial is started to be treated as
-a method descriptor. As a consequence, any class attributes whose value
-is functools.partial is no longer treated as an attribute, but a class
-method instead.
+DTS was pinned to use the version 2 of Fabric which was still backwards
+compatible with Python 2. Many of the backwards-compatible modules have
+been officially dropped in recent versions of Python, e.g. imp was
+dropped in Python 3.12.
 
-NicCapability is an enum that expects to have methods as values, and
-functools.partial was used exactly for the purpose of turning them into
-attributes instead of being treated as descriptors. Python 3.11
-introduces enum.member which purpose is to make anything passed to it
-being always treated as an enum member. Which is exactly what it was
-being achieved with partial.
-
-While DTS still supports 3.10 and enum.member is not available, make
-NicCapability accept only decorator tuples, where the decorator can now
-be set to None when not in use.
-
-Bugzilla ID: 1617
+Given DTS does not support any version older than 3.10, bump up the
+version of fabric to 3, in order to support Python 3.12 and 3.13.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 ---
- dts/framework/remote_session/testpmd_shell.py | 145 +++++++++---------
- dts/framework/testbed_model/capability.py     |   6 +-
- 2 files changed, 77 insertions(+), 74 deletions(-)
+ dts/poetry.lock    | 165 +++++++++++++++++++++++++++++++++++----------
+ dts/pyproject.toml |   2 +-
+ 2 files changed, 129 insertions(+), 38 deletions(-)
 
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 9f07696aa2..8456120c9e 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -50,9 +50,7 @@
+diff --git a/dts/poetry.lock b/dts/poetry.lock
+index 29f9a18cd6..ecc8dc76b0 100644
+--- a/dts/poetry.lock
++++ b/dts/poetry.lock
+@@ -375,6 +375,34 @@ ssh = ["bcrypt (>=3.1.5)"]
+ test = ["certifi (>=2024)", "cryptography-vectors (==44.0.0)", "pretend (>=0.7)", "pytest (>=7.4.0)", "pytest-benchmark (>=4.0)", "pytest-cov (>=2.10.1)", "pytest-xdist (>=3.5.0)"]
+ test-randomorder = ["pytest-randomly"]
  
- TestPmdShellDecorator: TypeAlias = Callable[[TestPmdShellMethod], TestPmdShellMethod]
++[[package]]
++name = "decorator"
++version = "5.1.1"
++description = "Decorators for Humans"
++optional = false
++python-versions = ">=3.5"
++files = [
++    {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
++    {file = "decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330"},
++]
++
++[[package]]
++name = "deprecated"
++version = "1.2.18"
++description = "Python @deprecated decorator to deprecate old python classes, functions or methods."
++optional = false
++python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
++files = [
++    {file = "Deprecated-1.2.18-py2.py3-none-any.whl", hash = "sha256:bd5011788200372a32418f888e326a09ff80d0214bd961147cfed01b5c018eec"},
++    {file = "deprecated-1.2.18.tar.gz", hash = "sha256:422b6f6d859da6f2ef57857761bfb392480502a64c3028ca9bbe86085d72115d"},
++]
++
++[package.dependencies]
++wrapt = ">=1.10,<2"
++
++[package.extras]
++dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "setuptools", "tox"]
++
+ [[package]]
+ name = "docutils"
+ version = "0.19"
+@@ -388,23 +416,23 @@ files = [
  
--TestPmdShellNicCapability = (
--    TestPmdShellCapabilityMethod | tuple[TestPmdShellCapabilityMethod, TestPmdShellDecorator]
--)
-+TestPmdShellNicCapability = tuple[TestPmdShellCapabilityMethod, TestPmdShellDecorator | None]
+ [[package]]
+ name = "fabric"
+-version = "2.7.1"
++version = "3.2.2"
+ description = "High level SSH command execution"
+ optional = false
+ python-versions = "*"
+ files = [
+-    {file = "fabric-2.7.1-py2.py3-none-any.whl", hash = "sha256:7610362318ef2d391cc65d4befb684393975d889ed5720f23499394ec0e136fa"},
+-    {file = "fabric-2.7.1.tar.gz", hash = "sha256:76f8fef59cf2061dbd849bbce4fe49bdd820884385004b0ca59136ac3db129e4"},
++    {file = "fabric-3.2.2-py3-none-any.whl", hash = "sha256:91c47c0be68b14936c88b34da8a1f55e5710fd28397dac5d4ff2e21558113a6f"},
++    {file = "fabric-3.2.2.tar.gz", hash = "sha256:8783ca42e3b0076f08b26901aac6b9d9b1f19c410074e7accfab902c184ff4a3"},
+ ]
  
+ [package.dependencies]
+-invoke = ">=1.3,<2.0"
++decorator = ">=5"
++deprecated = ">=1.2"
++invoke = ">=2.0"
+ paramiko = ">=2.4"
+-pathlib2 = "*"
  
- class TestPmdDevice:
-@@ -1816,7 +1814,7 @@ def set_multicast_mac_addr(
-         if verify:
-             if (
-                 "Invalid multicast_addr" in output
--                or f'multicast address {"already" if add else "not"} filtered by port' in output
-+                or f"multicast address {'already' if add else 'not'} filtered by port" in output
-             ):
-                 self._logger.debug(f"Failed to {mcast_cmd} {multi_addr} on port {port_id}")
-                 raise InteractiveCommandExecutionError(
-@@ -1950,7 +1948,7 @@ def set_port_mtu(self, port_id: int, mtu: int, verify: bool = True) -> None:
-         set_mtu_output = self.send_command(f"port config mtu {port_id} {mtu}")
-         if verify and (f"MTU: {mtu}" not in self.send_command(f"show port info {port_id}")):
-             self._logger.debug(
--                f"Failed to set mtu to {mtu} on port {port_id}." f" Output was:\n{set_mtu_output}"
-+                f"Failed to set mtu to {mtu} on port {port_id}. Output was:\n{set_mtu_output}"
-             )
-             raise InteractiveCommandExecutionError(
-                 f"Test pmd failed to update mtu of port {port_id} to {mtu}"
-@@ -2018,11 +2016,11 @@ def set_vlan_filter(self, port: int, enable: bool, verify: bool = True) -> None:
-             vlan_settings = self.show_port_info(port_id=port).vlan_offload
-             if enable ^ (vlan_settings is not None and VLANOffloadFlag.FILTER in vlan_settings):
-                 self._logger.debug(
--                    f"""Failed to {'enable' if enable else 'disable'}
-+                    f"""Failed to {"enable" if enable else "disable"}
-                                    filter on port {port}: \n{filter_cmd_output}"""
-                 )
-                 raise InteractiveCommandExecutionError(
--                    f"""Failed to {'enable' if enable else 'disable'}
-+                    f"""Failed to {"enable" if enable else "disable"}
-                     filter on port {port}"""
-                 )
+ [package.extras]
+-pytest = ["mock (>=2.0.0,<3.0)", "pytest (>=3.2.5,<4.0)"]
+-testing = ["mock (>=2.0.0,<3.0)"]
++pytest = ["pytest (>=7)"]
  
-@@ -2109,7 +2107,7 @@ def rx_vlan(self, vlan: int, port: int, add: bool, verify: bool = True) -> None:
-                 or "Bad arguments" in rx_cmd_output
-             ):
-                 self._logger.debug(
--                    f"""Failed to {'add' if add else 'remove'} tag {vlan}
-+                    f"""Failed to {"add" if add else "remove"} tag {vlan}
-                     port {port}: \n{rx_cmd_output}"""
-                 )
-                 raise InteractiveCommandExecutionError(
-@@ -2135,7 +2133,7 @@ def set_vlan_strip(self, port: int, enable: bool, verify: bool = True) -> None:
-             vlan_settings = self.show_port_info(port_id=port).vlan_offload
-             if enable ^ (vlan_settings is not None and VLANOffloadFlag.STRIP in vlan_settings):
-                 self._logger.debug(
--                    f"""Failed to set strip {'on' if enable else 'off'}
-+                    f"""Failed to set strip {"on" if enable else "off"}
-                     port {port}: \n{strip_cmd_output}"""
-                 )
-                 raise InteractiveCommandExecutionError(
-@@ -2543,113 +2541,122 @@ class NicCapability(NoAliasEnum):
-         add_remove_mtu(9000),
-     )
-     #:
--    RX_OFFLOAD_VLAN_STRIP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_VLAN_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports L3 checksum offload.
--    RX_OFFLOAD_IPV4_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_UDP_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_TCP_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports Large Receive Offload.
--    RX_OFFLOAD_TCP_LRO: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
--    )
-+    RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-     #: Device supports QinQ (queue in queue) offload.
--    RX_OFFLOAD_QINQ_STRIP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_QINQ_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports inner packet L3 checksum.
--    RX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports MACsec.
--    RX_OFFLOAD_MACSEC_STRIP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_MACSEC_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports filtering of a VLAN Tag identifier.
--    RX_OFFLOAD_VLAN_FILTER: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_VLAN_FILTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports VLAN offload.
--    RX_OFFLOAD_VLAN_EXTEND: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_VLAN_EXTEND: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports receiving segmented mbufs.
--    RX_OFFLOAD_SCATTER: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
--    )
-+    RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-     #: Device supports Timestamp.
--    RX_OFFLOAD_TIMESTAMP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_TIMESTAMP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports crypto processing while packet is received in NIC.
--    RX_OFFLOAD_SECURITY: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports CRC stripping.
--    RX_OFFLOAD_KEEP_CRC: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_KEEP_CRC: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_SCTP_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports inner packet L4 checksum.
--    RX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports RSS hashing.
--    RX_OFFLOAD_RSS_HASH: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_RSS_HASH: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports scatter Rx packets to segmented mbufs.
--    RX_OFFLOAD_BUFFER_SPLIT: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_BUFFER_SPLIT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports all checksum capabilities.
--    RX_OFFLOAD_CHECKSUM: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
-+    RX_OFFLOAD_CHECKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-     )
-     #: Device supports all VLAN capabilities.
--    RX_OFFLOAD_VLAN: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_rx_offload
--    )
-+    RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-     #: Device supports Rx queue setup after device started.
--    RUNTIME_RX_QUEUE_SETUP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_show_port_info
-+    RUNTIME_RX_QUEUE_SETUP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_show_port_info,
-+        None,
-     )
-     #: Device supports Tx queue setup after device started.
--    RUNTIME_TX_QUEUE_SETUP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_show_port_info
-+    RUNTIME_TX_QUEUE_SETUP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_show_port_info,
-+        None,
-     )
-     #: Device supports shared Rx queue among ports within Rx domain and switch domain.
--    RXQ_SHARE: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_show_port_info
--    )
-+    RXQ_SHARE: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_show_port_info, None)
-     #: Device supports keeping flow rules across restart.
--    FLOW_RULE_KEEP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_show_port_info
--    )
-+    FLOW_RULE_KEEP: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_show_port_info, None)
-     #: Device supports keeping shared flow objects across restart.
--    FLOW_SHARED_OBJECT_KEEP: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_show_port_info
-+    FLOW_SHARED_OBJECT_KEEP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_show_port_info,
-+        None,
-     )
-     #: Device supports multicast address filtering.
--    MCAST_FILTERING: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_mcast_filtering
-+    MCAST_FILTERING: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_mcast_filtering,
-+        None,
-     )
-     #: Device supports flow ctrl.
--    FLOW_CTRL: TestPmdShellCapabilityMethod = functools.partial(
--        TestPmdShell.get_capabilities_flow_ctrl
--    )
-+    FLOW_CTRL: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_flow_ctrl, None)
+ [[package]]
+ name = "idna"
+@@ -433,13 +461,13 @@ files = [
  
-     def __call__(
-         self,
-diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-index 6a7a1f5b6c..ddfa3853df 100644
---- a/dts/framework/testbed_model/capability.py
-+++ b/dts/framework/testbed_model/capability.py
-@@ -186,11 +186,7 @@ def get_unique(cls, nic_capability: NicCapability) -> Self:
-         Returns:
-             The capability uniquely identified by `nic_capability`.
-         """
--        decorator_fn = None
--        if isinstance(nic_capability.value, tuple):
--            capability_fn, decorator_fn = nic_capability.value
--        else:
--            capability_fn = nic_capability.value
-+        capability_fn, decorator_fn = nic_capability.value
+ [[package]]
+ name = "invoke"
+-version = "1.7.3"
++version = "2.2.0"
+ description = "Pythonic task execution"
+ optional = false
+-python-versions = "*"
++python-versions = ">=3.6"
+ files = [
+-    {file = "invoke-1.7.3-py3-none-any.whl", hash = "sha256:d9694a865764dd3fd91f25f7e9a97fb41666e822bbb00e670091e3f43933574d"},
+-    {file = "invoke-1.7.3.tar.gz", hash = "sha256:41b428342d466a82135d5ab37119685a989713742be46e42a3a399d685579314"},
++    {file = "invoke-2.2.0-py3-none-any.whl", hash = "sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820"},
++    {file = "invoke-2.2.0.tar.gz", hash = "sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5"},
+ ]
  
-         if nic_capability not in cls._unique_capabilities:
-             cls._unique_capabilities[nic_capability] = cls(
+ [[package]]
+@@ -625,20 +653,6 @@ all = ["gssapi (>=1.4.1)", "invoke (>=2.0)", "pyasn1 (>=0.1.7)", "pywin32 (>=2.1
+ gssapi = ["gssapi (>=1.4.1)", "pyasn1 (>=0.1.7)", "pywin32 (>=2.1.8)"]
+ invoke = ["invoke (>=2.0)"]
+ 
+-[[package]]
+-name = "pathlib2"
+-version = "2.3.7.post1"
+-description = "Object-oriented filesystem paths"
+-optional = false
+-python-versions = "*"
+-files = [
+-    {file = "pathlib2-2.3.7.post1-py2.py3-none-any.whl", hash = "sha256:5266a0fd000452f1b3467d782f079a4343c63aaa119221fbdc4e39577489ca5b"},
+-    {file = "pathlib2-2.3.7.post1.tar.gz", hash = "sha256:9fe0edad898b83c0c3e199c842b27ed216645d2e177757b2dd67384d4113c641"},
+-]
+-
+-[package.dependencies]
+-six = "*"
+-
+ [[package]]
+ name = "pycparser"
+ version = "2.22"
+@@ -993,17 +1007,6 @@ all = ["cryptography (>=2.0)", "ipython", "matplotlib", "pyx"]
+ cli = ["ipython"]
+ doc = ["sphinx (>=7.0.0)", "sphinx-rtd-theme (>=1.3.0)", "tox (>=3.0.0)"]
+ 
+-[[package]]
+-name = "six"
+-version = "1.17.0"
+-description = "Python 2 and 3 compatibility utilities"
+-optional = false
+-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+-files = [
+-    {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
+-    {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
+-]
+-
+ [[package]]
+ name = "snowballstemmer"
+ version = "2.2.0"
+@@ -1292,7 +1295,95 @@ h2 = ["h2 (>=4,<5)"]
+ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
+ zstd = ["zstandard (>=0.18.0)"]
+ 
++[[package]]
++name = "wrapt"
++version = "1.17.2"
++description = "Module for decorators, wrappers and monkey patching."
++optional = false
++python-versions = ">=3.8"
++files = [
++    {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3d57c572081fed831ad2d26fd430d565b76aa277ed1d30ff4d40670b1c0dd984"},
++    {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b5e251054542ae57ac7f3fba5d10bfff615b6c2fb09abeb37d2f1463f841ae22"},
++    {file = "wrapt-1.17.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:80dd7db6a7cb57ffbc279c4394246414ec99537ae81ffd702443335a61dbf3a7"},
++    {file = "wrapt-1.17.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0a6e821770cf99cc586d33833b2ff32faebdbe886bd6322395606cf55153246c"},
++    {file = "wrapt-1.17.2-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b60fb58b90c6d63779cb0c0c54eeb38941bae3ecf7a73c764c52c88c2dcb9d72"},
++    {file = "wrapt-1.17.2-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b870b5df5b71d8c3359d21be8f0d6c485fa0ebdb6477dda51a1ea54a9b558061"},
++    {file = "wrapt-1.17.2-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:4011d137b9955791f9084749cba9a367c68d50ab8d11d64c50ba1688c9b457f2"},
++    {file = "wrapt-1.17.2-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:1473400e5b2733e58b396a04eb7f35f541e1fb976d0c0724d0223dd607e0f74c"},
++    {file = "wrapt-1.17.2-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:3cedbfa9c940fdad3e6e941db7138e26ce8aad38ab5fe9dcfadfed9db7a54e62"},
++    {file = "wrapt-1.17.2-cp310-cp310-win32.whl", hash = "sha256:582530701bff1dec6779efa00c516496968edd851fba224fbd86e46cc6b73563"},
++    {file = "wrapt-1.17.2-cp310-cp310-win_amd64.whl", hash = "sha256:58705da316756681ad3c9c73fd15499aa4d8c69f9fd38dc8a35e06c12468582f"},
++    {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:ff04ef6eec3eee8a5efef2401495967a916feaa353643defcc03fc74fe213b58"},
++    {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:4db983e7bca53819efdbd64590ee96c9213894272c776966ca6306b73e4affda"},
++    {file = "wrapt-1.17.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:9abc77a4ce4c6f2a3168ff34b1da9b0f311a8f1cfd694ec96b0603dff1c79438"},
++    {file = "wrapt-1.17.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0b929ac182f5ace000d459c59c2c9c33047e20e935f8e39371fa6e3b85d56f4a"},
++    {file = "wrapt-1.17.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f09b286faeff3c750a879d336fb6d8713206fc97af3adc14def0cdd349df6000"},
++    {file = "wrapt-1.17.2-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1a7ed2d9d039bd41e889f6fb9364554052ca21ce823580f6a07c4ec245c1f5d6"},
++    {file = "wrapt-1.17.2-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:129a150f5c445165ff941fc02ee27df65940fcb8a22a61828b1853c98763a64b"},
++    {file = "wrapt-1.17.2-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:1fb5699e4464afe5c7e65fa51d4f99e0b2eadcc176e4aa33600a3df7801d6662"},
++    {file = "wrapt-1.17.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:9a2bce789a5ea90e51a02dfcc39e31b7f1e662bc3317979aa7e5538e3a034f72"},
++    {file = "wrapt-1.17.2-cp311-cp311-win32.whl", hash = "sha256:4afd5814270fdf6380616b321fd31435a462019d834f83c8611a0ce7484c7317"},
++    {file = "wrapt-1.17.2-cp311-cp311-win_amd64.whl", hash = "sha256:acc130bc0375999da18e3d19e5a86403667ac0c4042a094fefb7eec8ebac7cf3"},
++    {file = "wrapt-1.17.2-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:d5e2439eecc762cd85e7bd37161d4714aa03a33c5ba884e26c81559817ca0925"},
++    {file = "wrapt-1.17.2-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:3fc7cb4c1c744f8c05cd5f9438a3caa6ab94ce8344e952d7c45a8ed59dd88392"},
++    {file = "wrapt-1.17.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:8fdbdb757d5390f7c675e558fd3186d590973244fab0c5fe63d373ade3e99d40"},
++    {file = "wrapt-1.17.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5bb1d0dbf99411f3d871deb6faa9aabb9d4e744d67dcaaa05399af89d847a91d"},
++    {file = "wrapt-1.17.2-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d18a4865f46b8579d44e4fe1e2bcbc6472ad83d98e22a26c963d46e4c125ef0b"},
++    {file = "wrapt-1.17.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bc570b5f14a79734437cb7b0500376b6b791153314986074486e0b0fa8d71d98"},
++    {file = "wrapt-1.17.2-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:6d9187b01bebc3875bac9b087948a2bccefe464a7d8f627cf6e48b1bbae30f82"},
++    {file = "wrapt-1.17.2-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:9e8659775f1adf02eb1e6f109751268e493c73716ca5761f8acb695e52a756ae"},
++    {file = "wrapt-1.17.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:e8b2816ebef96d83657b56306152a93909a83f23994f4b30ad4573b00bd11bb9"},
++    {file = "wrapt-1.17.2-cp312-cp312-win32.whl", hash = "sha256:468090021f391fe0056ad3e807e3d9034e0fd01adcd3bdfba977b6fdf4213ea9"},
++    {file = "wrapt-1.17.2-cp312-cp312-win_amd64.whl", hash = "sha256:ec89ed91f2fa8e3f52ae53cd3cf640d6feff92ba90d62236a81e4e563ac0e991"},
++    {file = "wrapt-1.17.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:6ed6ffac43aecfe6d86ec5b74b06a5be33d5bb9243d055141e8cabb12aa08125"},
++    {file = "wrapt-1.17.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:35621ae4c00e056adb0009f8e86e28eb4a41a4bfa8f9bfa9fca7d343fe94f998"},
++    {file = "wrapt-1.17.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:a604bf7a053f8362d27eb9fefd2097f82600b856d5abe996d623babd067b1ab5"},
++    {file = "wrapt-1.17.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5cbabee4f083b6b4cd282f5b817a867cf0b1028c54d445b7ec7cfe6505057cf8"},
++    {file = "wrapt-1.17.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:49703ce2ddc220df165bd2962f8e03b84c89fee2d65e1c24a7defff6f988f4d6"},
++    {file = "wrapt-1.17.2-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8112e52c5822fc4253f3901b676c55ddf288614dc7011634e2719718eaa187dc"},
++    {file = "wrapt-1.17.2-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:9fee687dce376205d9a494e9c121e27183b2a3df18037f89d69bd7b35bcf59e2"},
++    {file = "wrapt-1.17.2-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:18983c537e04d11cf027fbb60a1e8dfd5190e2b60cc27bc0808e653e7b218d1b"},
++    {file = "wrapt-1.17.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:703919b1633412ab54bcf920ab388735832fdcb9f9a00ae49387f0fe67dad504"},
++    {file = "wrapt-1.17.2-cp313-cp313-win32.whl", hash = "sha256:abbb9e76177c35d4e8568e58650aa6926040d6a9f6f03435b7a522bf1c487f9a"},
++    {file = "wrapt-1.17.2-cp313-cp313-win_amd64.whl", hash = "sha256:69606d7bb691b50a4240ce6b22ebb319c1cfb164e5f6569835058196e0f3a845"},
++    {file = "wrapt-1.17.2-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:4a721d3c943dae44f8e243b380cb645a709ba5bd35d3ad27bc2ed947e9c68192"},
++    {file = "wrapt-1.17.2-cp313-cp313t-macosx_10_13_x86_64.whl", hash = "sha256:766d8bbefcb9e00c3ac3b000d9acc51f1b399513f44d77dfe0eb026ad7c9a19b"},
++    {file = "wrapt-1.17.2-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:e496a8ce2c256da1eb98bd15803a79bee00fc351f5dfb9ea82594a3f058309e0"},
++    {file = "wrapt-1.17.2-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:40d615e4fe22f4ad3528448c193b218e077656ca9ccb22ce2cb20db730f8d306"},
++    {file = "wrapt-1.17.2-cp313-cp313t-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a5aaeff38654462bc4b09023918b7f21790efb807f54c000a39d41d69cf552cb"},
++    {file = "wrapt-1.17.2-cp313-cp313t-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9a7d15bbd2bc99e92e39f49a04653062ee6085c0e18b3b7512a4f2fe91f2d681"},
++    {file = "wrapt-1.17.2-cp313-cp313t-musllinux_1_2_aarch64.whl", hash = "sha256:e3890b508a23299083e065f435a492b5435eba6e304a7114d2f919d400888cc6"},
++    {file = "wrapt-1.17.2-cp313-cp313t-musllinux_1_2_i686.whl", hash = "sha256:8c8b293cd65ad716d13d8dd3624e42e5a19cc2a2f1acc74b30c2c13f15cb61a6"},
++    {file = "wrapt-1.17.2-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:4c82b8785d98cdd9fed4cac84d765d234ed3251bd6afe34cb7ac523cb93e8b4f"},
++    {file = "wrapt-1.17.2-cp313-cp313t-win32.whl", hash = "sha256:13e6afb7fe71fe7485a4550a8844cc9ffbe263c0f1a1eea569bc7091d4898555"},
++    {file = "wrapt-1.17.2-cp313-cp313t-win_amd64.whl", hash = "sha256:eaf675418ed6b3b31c7a989fd007fa7c3be66ce14e5c3b27336383604c9da85c"},
++    {file = "wrapt-1.17.2-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:5c803c401ea1c1c18de70a06a6f79fcc9c5acfc79133e9869e730ad7f8ad8ef9"},
++    {file = "wrapt-1.17.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:f917c1180fdb8623c2b75a99192f4025e412597c50b2ac870f156de8fb101119"},
++    {file = "wrapt-1.17.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:ecc840861360ba9d176d413a5489b9a0aff6d6303d7e733e2c4623cfa26904a6"},
++    {file = "wrapt-1.17.2-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bb87745b2e6dc56361bfde481d5a378dc314b252a98d7dd19a651a3fa58f24a9"},
++    {file = "wrapt-1.17.2-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:58455b79ec2661c3600e65c0a716955adc2410f7383755d537584b0de41b1d8a"},
++    {file = "wrapt-1.17.2-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b4e42a40a5e164cbfdb7b386c966a588b1047558a990981ace551ed7e12ca9c2"},
++    {file = "wrapt-1.17.2-cp38-cp38-musllinux_1_2_aarch64.whl", hash = "sha256:91bd7d1773e64019f9288b7a5101f3ae50d3d8e6b1de7edee9c2ccc1d32f0c0a"},
++    {file = "wrapt-1.17.2-cp38-cp38-musllinux_1_2_i686.whl", hash = "sha256:bb90fb8bda722a1b9d48ac1e6c38f923ea757b3baf8ebd0c82e09c5c1a0e7a04"},
++    {file = "wrapt-1.17.2-cp38-cp38-musllinux_1_2_x86_64.whl", hash = "sha256:08e7ce672e35efa54c5024936e559469436f8b8096253404faeb54d2a878416f"},
++    {file = "wrapt-1.17.2-cp38-cp38-win32.whl", hash = "sha256:410a92fefd2e0e10d26210e1dfb4a876ddaf8439ef60d6434f21ef8d87efc5b7"},
++    {file = "wrapt-1.17.2-cp38-cp38-win_amd64.whl", hash = "sha256:95c658736ec15602da0ed73f312d410117723914a5c91a14ee4cdd72f1d790b3"},
++    {file = "wrapt-1.17.2-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:99039fa9e6306880572915728d7f6c24a86ec57b0a83f6b2491e1d8ab0235b9a"},
++    {file = "wrapt-1.17.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:2696993ee1eebd20b8e4ee4356483c4cb696066ddc24bd70bcbb80fa56ff9061"},
++    {file = "wrapt-1.17.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:612dff5db80beef9e649c6d803a8d50c409082f1fedc9dbcdfde2983b2025b82"},
++    {file = "wrapt-1.17.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:62c2caa1585c82b3f7a7ab56afef7b3602021d6da34fbc1cf234ff139fed3cd9"},
++    {file = "wrapt-1.17.2-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c958bcfd59bacc2d0249dcfe575e71da54f9dcf4a8bdf89c4cb9a68a1170d73f"},
++    {file = "wrapt-1.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fc78a84e2dfbc27afe4b2bd7c80c8db9bca75cc5b85df52bfe634596a1da846b"},
++    {file = "wrapt-1.17.2-cp39-cp39-musllinux_1_2_aarch64.whl", hash = "sha256:ba0f0eb61ef00ea10e00eb53a9129501f52385c44853dbd6c4ad3f403603083f"},
++    {file = "wrapt-1.17.2-cp39-cp39-musllinux_1_2_i686.whl", hash = "sha256:1e1fe0e6ab7775fd842bc39e86f6dcfc4507ab0ffe206093e76d61cde37225c8"},
++    {file = "wrapt-1.17.2-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:c86563182421896d73858e08e1db93afdd2b947a70064b813d515d66549e15f9"},
++    {file = "wrapt-1.17.2-cp39-cp39-win32.whl", hash = "sha256:f393cda562f79828f38a819f4788641ac7c4085f30f1ce1a68672baa686482bb"},
++    {file = "wrapt-1.17.2-cp39-cp39-win_amd64.whl", hash = "sha256:36ccae62f64235cf8ddb682073a60519426fdd4725524ae38874adf72b5f2aeb"},
++    {file = "wrapt-1.17.2-py3-none-any.whl", hash = "sha256:b18f2d1533a71f069c7f82d524a52599053d4c7166e9dd374ae2136b7f40f7c8"},
++    {file = "wrapt-1.17.2.tar.gz", hash = "sha256:41388e9d4d1522446fe79d3213196bd9e3b301a336965b9e27ca2788ebd122f3"},
++]
++
+ [metadata]
+ lock-version = "2.0"
+ python-versions = "^3.10"
+-content-hash = "ef76008e3c2578b03a4360ca1b7bbf394c4fc7abbbef46ac1d52a6de0ff9ba88"
++content-hash = "5322fc07b798804fd55d8f513f3ea8c758891ff968424100fa147fc24645d7df"
+diff --git a/dts/pyproject.toml b/dts/pyproject.toml
+index c425e8c445..8df0a894dc 100644
+--- a/dts/pyproject.toml
++++ b/dts/pyproject.toml
+@@ -21,7 +21,7 @@ documentation = "https://doc.dpdk.org/guides/tools/dts.html"
+ [tool.poetry.dependencies]
+ python = "^3.10"
+ PyYAML = "^6.0"
+-fabric = "^2.7.1"
++fabric = "^3.2"
+ scapy = "^2.6.1"
+ typing-extensions = "^4.11.0"
+ aenum = "^3.1.15"
 -- 
 2.43.0
 
