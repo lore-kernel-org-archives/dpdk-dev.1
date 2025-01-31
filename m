@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F753C02193
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 19:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F9CC02193
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 19:38:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D06240278;
-	Fri, 31 Jan 2025 20:38:14 +0100 (CET)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
- [209.85.160.170])
- by mails.dpdk.org (Postfix) with ESMTP id E8364400D7
- for <dev@dpdk.org>; Fri, 31 Jan 2025 20:38:12 +0100 (CET)
-Received: by mail-qt1-f170.google.com with SMTP id
- d75a77b69052e-4674fc24130so766121cf.2
- for <dev@dpdk.org>; Fri, 31 Jan 2025 11:38:12 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F66540274;
+	Fri, 31 Jan 2025 20:38:18 +0100 (CET)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
+ [209.85.160.176])
+ by mails.dpdk.org (Postfix) with ESMTP id C740D402C3
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 20:38:15 +0100 (CET)
+Received: by mail-qt1-f176.google.com with SMTP id
+ d75a77b69052e-4677cbea36dso3588501cf.1
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 11:38:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1738352292; x=1738957092; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1738352295; x=1738957095; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ej5PwgI+UZ//bK1zplg+HkPMK9f2N2voiD12PS7r7Uk=;
- b=KOZIBtUeOkDOxtVY12Pg7cdspCnD4mFxQSLiilMod6UjmTkgwfClILLAKS1NC2n5sH
- EmM1VZ1gGzAU6j3HuQ8UJ9E3xoefOnjetFfcBvuKOP4ArVj/OdoV2RJvB9BdbZ7zIFw6
- gQ4bt0MJXjRtDnNxsklXG598M/f6ZXJuK2L/A=
+ bh=FTV2azMrxSAoPDTnOByYgix8h9/6Vj9GCNdVYzKWQqw=;
+ b=JaaL/w3BfkJIxM2AflcqMUgNN25TZWqPryOnRuSzp2tGGrVVXoQSxfHFctIyPqkgLZ
+ lhNJxi4+oeEEeb9ldW4AHru6NymaukJ8e91Rrr8hEhu4IqGE8BlOmJZjs/vSkyOTvapZ
+ hyhKmSFQKaUucIVdgBZkQXuiOK6Kv922XQnsU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738352292; x=1738957092;
+ d=1e100.net; s=20230601; t=1738352295; x=1738957095;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ej5PwgI+UZ//bK1zplg+HkPMK9f2N2voiD12PS7r7Uk=;
- b=xDmACjsP633HIZFlU510l1T68fbJdqowTNZIe7yAKshHFOSzmCz4cna4rLwVlahHeh
- ixJjh+NGIkTxDlMFAT7sm4nRi6yjE3eDXXs4fJCP4HCUjcTSDPbylQfst2g12geD9tfX
- bFP+JufGApyr2WOWC6XlB8HPORCM8ifZcM2TSkbhAs5lQiUsdjInnV2ks01EsQd0I8Gi
- S9dcRjvUrvb8gK0IYoJ1p7mQEWDHK/1Ir0Yw12pO8OInyIjHziond1alKMr2ak/4H2rA
- XTaBvnZB3yl2r9rErZZpcWZK8s/bZNArnvwFD03VPHKp+2jsKD+H1xvyTRHym2oBwjp8
- aOSQ==
-X-Gm-Message-State: AOJu0YwMNPB8z9ZOhMaLu7avDYh0keSekCo5ZZTOV9KIUiWU16KT9wiO
- zqVXK5uHR+jdvwxMIi8r5QTYXF/rzqR9dvksO6seoscKqiUW0eHG9yhfp8+byxM=
-X-Gm-Gg: ASbGncuIV6qslW1g6JUGwjRbYMZfevp46NAXawGvP1L0PvTEmvrl9v3mfGbN4CAgQEW
- EvyaRib/ywbBlrnKxilN1q5t6ViR974vBlXuuXl/xMrafZLdkECr/DJD6phh+Q0yykAawIvOWWL
- IzL3KvauF5RG3NaK3r7c9N/zfhGEFc1PFhRKQtSLcyUdTO9rbSM2Z5YdqBLF+VIR4JjtACJhV6E
- Pn88YSdR7KgJIbR0sG4LtogDJe1USFNSILkklmV07T69qhnt/pbEqHCp9GtRujxBdnd/Svb3mfp
- aDI6bwSrGr1ig5SXbSEr9d3IPGjVYtUrsnCbwnAMj6i35yDUVvc81dq0
-X-Google-Smtp-Source: AGHT+IFAzGq+zN9GO9MyWinA8E/lx00Y6gibbq+zmbcHzC6XCOIWYhG40RPNoIjd5aBxoAxIqH3SFw==
-X-Received: by 2002:a05:622a:190b:b0:467:5fd2:9963 with SMTP id
- d75a77b69052e-46fd0a81214mr63690791cf.6.1738352292297; 
- Fri, 31 Jan 2025 11:38:12 -0800 (PST)
+ bh=FTV2azMrxSAoPDTnOByYgix8h9/6Vj9GCNdVYzKWQqw=;
+ b=rd9FKrmjhj+8w0OWc4stcmgP2zQJQ7arIPVzY3jNeCFdCg5f39PrNqf171WgROIDVz
+ zfrP6h4Q467T0Z7x/QjXGYO7d9AIA2ty145EwMsHJrxeRvTGbLooTX6Qg73hAfXrD5nq
+ 4/dXOQU7ooOPxWY19C2KB1GGGqE2pKQ1Qidd13d8nFe6e1y+fZ2ETkK4gARGS8rZF9QN
+ 6mCRGZ8oqbiyThrh8yjt5VIJ/JUqSUzIoOuEqZBbV9UkN37rh2wHkviiwSHShnrUv/y5
+ YRc7jGFtYyvMp22LCQJbsn9PWENNBeN5wmJQz+R4xsCVnVSZiPnZt8SoVWETt5Z9FuHb
+ f6Hw==
+X-Gm-Message-State: AOJu0YzbxY24XfKku6qmXGKp8noxQk3F3ejkm/EDOar+EKu61Uw0IUMd
+ UCiLAzDIjTJpzgHYmmwfn51I/z+fLSZe9EXP4+Yyc1HW94TiicpGSMHC5WRE/PU=
+X-Gm-Gg: ASbGncsrI3PdpLodWKzeNkb9ocFyHI6zFsglZp2XT1Ji1E27suAQB8wPUiz3CE1cOHz
+ v63kCQQJ5o0T38uW9de64jhL6+QZ3qsOAbWzJU+qPZh3O+rd7dY1ugyP2gcZeKuSw0dnj+/gJKN
+ W627LZKyueeqYPPOl84JwTWSQeU3Ekc4p4WSeA+AJu+UXK262iiDwpIPSD47Zi+2YuwB2Q7CJj0
+ 1yW0TOcQhF65kWnflVCJ0qm3eUqf8ZCTZe0UUSBxlqyZB8/Br6bHU3ZD4O5ao7amzs0qjZc/Ht/
+ RY7drpiTrb783kvqOujjsn14REipbxhkVjJs/BPuFA1EISIVXFrZO83e
+X-Google-Smtp-Source: AGHT+IEJuRGJaeaR+g3cpLP2//vT5AEtA7biByzCwtzsFO8EDs5Y1JCRY2MmOD5/n+hC7NMwk+I2yQ==
+X-Received: by 2002:ac8:5a0a:0:b0:461:3cd2:390 with SMTP id
+ d75a77b69052e-46fd0b6885fmr68377911cf.12.1738352295112; 
+ Fri, 31 Jan 2025 11:38:15 -0800 (PST)
 Received: from localhost.unh.edu ([2606:4100:3880:1271:e2f8:4ec3:8bf3:864c])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-46fdf18a67dsm20743411cf.72.2025.01.31.11.38.10
+ d75a77b69052e-46fdf18a67dsm20743411cf.72.2025.01.31.11.38.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 31 Jan 2025 11:38:11 -0800 (PST)
+ Fri, 31 Jan 2025 11:38:14 -0800 (PST)
 From: Nicholas Pratte <npratte@iol.unh.edu>
 To: yoan.picchi@foss.arm.com, thomas@monjalon.net, luca.vizzarro@arm.com,
  probb@iol.unh.edu, Honnappa.Nagarahalli@arm.com,
@@ -58,9 +58,9 @@ To: yoan.picchi@foss.arm.com, thomas@monjalon.net, luca.vizzarro@arm.com,
  thomas.wilks@arm.com, ian.stokes@intel.com
 Cc: dev@dpdk.org,
 	Nicholas Pratte <npratte@iol.unh.edu>
-Subject: [PATCH 1/2] dts: remove 'requires_forwarding_restart' from framework
-Date: Fri, 31 Jan 2025 14:38:02 -0500
-Message-ID: <20250131193803.168498-2-npratte@iol.unh.edu>
+Subject: [PATCH 2/2] dts: rework run-time MTU adjustment test case
+Date: Fri, 31 Jan 2025 14:38:03 -0500
+Message-ID: <20250131193803.168498-3-npratte@iol.unh.edu>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250131193803.168498-1-npratte@iol.unh.edu>
 References: <20250131193803.168498-1-npratte@iol.unh.edu>
@@ -79,74 +79,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This implementation conflicts with other bug fixes implemented in
-earlier patches. The decorator was devised as a mean to make suite
-writing a bit simpler, semantically, but the addition of this adds too
-many complications for it to be worth implementing.
+Forwarding restarts in the run-time MTU adjustment test case have been
+explicitly added, given that the 'requires_forwarding_restart' decorator
+from a previous patch was removed.
 
 Signed-off-by: Nicholas Pratte <npratte@iol.unh.edu>
 ---
- dts/framework/remote_session/testpmd_shell.py | 26 +------------------
- 1 file changed, 1 insertion(+), 25 deletions(-)
+ dts/tests/TestSuite_mtu.py | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 9f07696aa2..e15fc0ee8f 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -1433,28 +1433,6 @@ def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
-     return _wrapper
+diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
+index 3c96a36fc9..d1d48c2c13 100644
+--- a/dts/tests/TestSuite_mtu.py
++++ b/dts/tests/TestSuite_mtu.py
+@@ -164,20 +164,26 @@ def test_runtime_mtu_updating_and_forwarding(self) -> None:
+             # Configure the new MTU.
  
+             # Start packet capturing.
+-            testpmd.start()
  
--def requires_forwarding_restart(func: TestPmdShellMethod) -> TestPmdShellMethod:
--    """Decorator for :class:`TestPmdShell` commands methods that requires forwarding restart.
--
--    If the decorated method is called while a :class:`TestPmdShell` is actively forwarding, then
--    forwarding is ceased, the wrapped function is executed, and forwarding is started again.
--
--    Args:
--        func: The :class:`TestPmdShell` method to decorate.
--    """
--
--    @functools.wraps(func)
--    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
--        if self.currently_forwarding:
--            self._logger.debug("Forwarding needs to be restarted to continue.")
--            self.stop()
--            retval = func(self, *args, **kwargs)
--            self.start()
--            return retval
--
--    return _wrapper
--
--
- def add_remove_mtu(mtu: int = 1500) -> Callable[[TestPmdShellMethod], TestPmdShellMethod]:
-     """Configure MTU to `mtu` on all ports, run the decorated function, then revert.
+             testpmd.set_port_mtu_all(1500, verify=True)
++            testpmd.start()
+             self.assess_mtu_boundary(testpmd, 1500)
  
-@@ -1503,7 +1481,6 @@ class TestPmdShell(DPDKShell):
-     _command_extra_chars: ClassVar[str] = "\n"
++            testpmd.stop()
+             testpmd.set_port_mtu_all(2400, verify=True)
++            testpmd.start()
+             self.assess_mtu_boundary(testpmd, 1500)
+             self.assess_mtu_boundary(testpmd, 2400)
  
-     ports_started: bool
--    currently_forwarding: bool
++            testpmd.stop()
+             testpmd.set_port_mtu_all(4800, verify=True)
++            testpmd.start()
+             self.assess_mtu_boundary(testpmd, 1500)
+             self.assess_mtu_boundary(testpmd, 4800)
  
-     def __init__(
-         self,
-@@ -1528,7 +1505,6 @@ def __init__(
-             name,
-         )
-         self.ports_started = not self._app_params.disable_device_start
--        self.currently_forwarding = not self._app_params.auto_start
-         self._ports = None
++            testpmd.stop()
+             testpmd.set_port_mtu_all(9000, verify=True)
++            testpmd.start()
+             self.assess_mtu_boundary(testpmd, 1500)
+             self.assess_mtu_boundary(testpmd, 9000)
  
-     @property
-@@ -1926,7 +1902,7 @@ def csum_set_hw(
-                                                            {port_id}:\n{csum_output}"""
-                     )
- 
--    @requires_forwarding_restart
-+    @requires_started_ports
-     @requires_stopped_ports
-     def set_port_mtu(self, port_id: int, mtu: int, verify: bool = True) -> None:
-         """Change the MTU of a port using testpmd.
 -- 
 2.47.1
 
