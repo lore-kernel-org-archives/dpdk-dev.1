@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE82BC02192
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6952FC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jan 2025 13:01:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC63B41611;
-	Fri, 31 Jan 2025 13:59:42 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C6E7A42E02;
+	Fri, 31 Jan 2025 13:59:44 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id D2F0B42D78
- for <dev@dpdk.org>; Fri, 31 Jan 2025 13:59:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A318E42D27
+ for <dev@dpdk.org>; Fri, 31 Jan 2025 13:59:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738328378; x=1769864378;
+ t=1738328379; x=1769864379;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=njBbgFDpVpMIMKK5ChWffa/Wy+SAsv4RtfiQudv0gQI=;
- b=myRrGabBK5d+VCo2BRRDsU49w/gPrDwxCsrl2h0KCATkfr8d1cwTXxLV
- wh9oeC/8Bo/1zCz4bfoemWlSKZSG4b+7tmJH/4hNUzRQpRylS7NMs7kfz
- J6LUoMOUyqGrAMrGqryQf19eapy4CqsB62JZpSzi5P4EH0LKNlkIs5DSH
- 8Umh8M1gExzeKZVs48UX4j3qwO8HRNHbJdlJxpVikGw66awhX/CGLof0I
- Xo+fddmlypUIOBQC/ux14FlPehPQTTN6g43YN0hIhTcczEvpC5UWBJmua
- +uFm0O2WlveosFv8hN9SA0wELgo49pIz88RnD4zZhKm9NvknCkD/8uLoM w==;
-X-CSE-ConnectionGUID: 30puqasnTJ2uDlSOUq0ZmA==
-X-CSE-MsgGUID: y8oONzcyR7adrt0Cnq9Vjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315629"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315629"
+ bh=6FT/77sjM0CEP3oRr+V+8i3r/vsnGbpdEaWPWAbkYj4=;
+ b=LNA5OPSSsOW6iy/co+C049okty7ZV5/YqTotdSwCU2vZw9edzznh7Tyw
+ dngmv9msyqZOzBe3lSdNjKOEsMabgGg4ddzS6alto3oJ2f9kXHOoIdzax
+ UprrCqlRLRu0Hhd+b5kMlK3RhZsbHouyldcSQ5atE5xyl24hYZocAH9U9
+ PQ+D1gLgXNViOmaQtQkNpYsKVbwbCjDKzYN0Bsk16lGcB6ki9ptCoM5HU
+ CAsqc3wsoFAj2jFz+3dsyDSZ1cUe2DV9E+28wSDm6aSRwU9Y622TvjmUU
+ e2LluY9TPixN8dZQmsNSW6eMQM2XlCATcQ7KT9uIgyIT9Xi6CgZkku8i+ w==;
+X-CSE-ConnectionGUID: Pd3iSO75ScOcczpHpdgEVw==
+X-CSE-MsgGUID: GUNs7WTuTQmuZsQPg43mIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="50315631"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="50315631"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Jan 2025 04:59:37 -0800
-X-CSE-ConnectionGUID: LK9XfpYZRbmiPIvFu2VfDQ==
-X-CSE-MsgGUID: pj0FzYlHRGuyTdBTwOHzlw==
+ 31 Jan 2025 04:59:38 -0800
+X-CSE-ConnectionGUID: X4SlnME8RyOAzbZKf54e5w==
+X-CSE-MsgGUID: rlFm4lSAR8SdptzS54KGkQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503378"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="140503381"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 04:59:36 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 31 Jan 2025 04:59:37 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v1 12/42] net/e1000: add support for more I219 devices
-Date: Fri, 31 Jan 2025 12:58:25 +0000
-Message-ID: <39c8e217ac9f03b963efa684b4fdcf3c47d16e9c.1738328107.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 13/42] net/e1000/base: correct minor formatting issues
+Date: Fri, 31 Jan 2025 12:58:26 +0000
+Message-ID: <0e5cdd0d1277a191083a616feadd5818b357ed7b.1738328107.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -58,292 +58,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vitaly Lifshits <vitaly.lifshits@intel.com>
+There are some mismatches between what's in the base driver, and what is
+in DPDK version of it. This patch fixes the following issues:
 
-Add support for new hardware ID's from the I219 series.
+- Unneeded #ifndef clause
+- Missing comments
+- Duplicate definitions
+- Missed definitions
+- Extraneous fall-through comments
+- Function comments not matching function names
 
-Signed-off-by: Lifshits, Vitaly <vitaly.lifshits@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_api.c     | 32 +++++++++++++++++
- drivers/net/intel/e1000/base/e1000_hw.h      | 36 +++++++++++++++++---
- drivers/net/intel/e1000/base/e1000_ich8lan.c | 21 ++++++++++++
- drivers/net/intel/e1000/em_ethdev.c          | 28 ++++++++++++++-
- 4 files changed, 112 insertions(+), 5 deletions(-)
+ drivers/net/intel/e1000/base/e1000_82575.c   |  8 ------
+ drivers/net/intel/e1000/base/e1000_82575.h   | 29 --------------------
+ drivers/net/intel/e1000/base/e1000_defines.h |  2 --
+ drivers/net/intel/e1000/base/e1000_mac.c     |  2 +-
+ drivers/net/intel/e1000/base/e1000_nvm.c     |  2 +-
+ drivers/net/intel/e1000/base/e1000_phy.c     |  4 +--
+ drivers/net/intel/e1000/base/e1000_regs.h    |  3 ++
+ 7 files changed, 7 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_api.c b/drivers/net/intel/e1000/base/e1000_api.c
-index 1a7a737637..bc7956cd01 100644
---- a/drivers/net/intel/e1000/base/e1000_api.c
-+++ b/drivers/net/intel/e1000/base/e1000_api.c
-@@ -278,6 +278,8 @@ s32 e1000_set_mac_type(struct e1000_hw *hw)
- 	case E1000_DEV_ID_PCH_SPT_I219_V4:
- 	case E1000_DEV_ID_PCH_SPT_I219_LM5:
- 	case E1000_DEV_ID_PCH_SPT_I219_V5:
-+	case E1000_DEV_ID_PCH_CMP_I219_LM12:
-+	case E1000_DEV_ID_PCH_CMP_I219_V12:
- 		mac->type = e1000_pch_spt;
- 		break;
- 	case E1000_DEV_ID_PCH_CNP_I219_LM6:
-@@ -288,8 +290,18 @@ s32 e1000_set_mac_type(struct e1000_hw *hw)
- 	case E1000_DEV_ID_PCH_ICP_I219_V8:
- 	case E1000_DEV_ID_PCH_ICP_I219_LM9:
- 	case E1000_DEV_ID_PCH_ICP_I219_V9:
-+	case E1000_DEV_ID_PCH_CMP_I219_LM10:
-+	case E1000_DEV_ID_PCH_CMP_I219_V10:
-+	case E1000_DEV_ID_PCH_CMP_I219_LM11:
-+	case E1000_DEV_ID_PCH_CMP_I219_V11:
- 		mac->type = e1000_pch_cnp;
- 		break;
-+	case E1000_DEV_ID_PCH_TGP_I219_LM13:
-+	case E1000_DEV_ID_PCH_TGP_I219_V13:
-+	case E1000_DEV_ID_PCH_TGP_I219_LM14:
-+	case E1000_DEV_ID_PCH_TGP_I219_V14:
-+	case E1000_DEV_ID_PCH_TGP_I219_LM15:
-+	case E1000_DEV_ID_PCH_TGP_I219_V15:
- 	case E1000_DEV_ID_PCH_ADL_I219_LM16:
- 	case E1000_DEV_ID_PCH_ADL_I219_V16:
- 	case E1000_DEV_ID_PCH_RPL_I219_LM23:
-@@ -302,6 +314,24 @@ s32 e1000_set_mac_type(struct e1000_hw *hw)
- 	case E1000_DEV_ID_PCH_RPL_I219_V22:
- 		mac->type = e1000_pch_adp;
- 		break;
-+	case E1000_DEV_ID_PCH_MTP_I219_LM18:
-+	case E1000_DEV_ID_PCH_MTP_I219_V18:
-+	case E1000_DEV_ID_PCH_MTP_I219_LM19:
-+	case E1000_DEV_ID_PCH_MTP_I219_V19:
-+	case E1000_DEV_ID_PCH_LNL_I219_LM20:
-+	case E1000_DEV_ID_PCH_LNL_I219_V20:
-+	case E1000_DEV_ID_PCH_ARL_I219_LM24:
-+	case E1000_DEV_ID_PCH_ARL_I219_V24:
-+		mac->type = e1000_pch_mtp;
-+		break;
-+	case E1000_DEV_ID_PCH_PTP_I219_LM25:
-+	case E1000_DEV_ID_PCH_PTP_I219_V25:
-+	case E1000_DEV_ID_PCH_WCL_I219_LM27:
-+	case E1000_DEV_ID_PCH_WCL_I219_V27:
-+	case E1000_DEV_ID_PCH_NVL_I219_LM29:
-+	case E1000_DEV_ID_PCH_NVL_I219_V29:
-+		mac->type = e1000_pch_ptp;
-+		break;
- 	case E1000_DEV_ID_82575EB_COPPER:
- 	case E1000_DEV_ID_82575EB_FIBER_SERDES:
- 	case E1000_DEV_ID_82575GB_QUAD_COPPER:
-@@ -474,6 +504,8 @@ s32 e1000_setup_init_funcs(struct e1000_hw *hw, bool init_device)
- 	case e1000_pch_cnp:
- 	case e1000_pch_adp:
- 	case e1000_pch_tgp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		e1000_init_function_pointers_ich8lan(hw);
- 		break;
- 	case e1000_82575:
-diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
-index c16dd1cbf7..e98413d4b2 100644
---- a/drivers/net/intel/e1000/base/e1000_hw.h
-+++ b/drivers/net/intel/e1000/base/e1000_hw.h
-@@ -124,14 +124,40 @@ struct e1000_hw;
- #define E1000_DEV_ID_PCH_ICP_I219_V8		0x15E0
- #define E1000_DEV_ID_PCH_ICP_I219_LM9		0x15E1
- #define E1000_DEV_ID_PCH_ICP_I219_V9		0x15E2
-+#define E1000_DEV_ID_PCH_CMP_I219_LM10		0x0D4E
-+#define E1000_DEV_ID_PCH_CMP_I219_V10		0x0D4F
-+#define E1000_DEV_ID_PCH_CMP_I219_LM11		0x0D4C
-+#define E1000_DEV_ID_PCH_CMP_I219_V11		0x0D4D
-+#define E1000_DEV_ID_PCH_CMP_I219_LM12		0x0D53
-+#define E1000_DEV_ID_PCH_CMP_I219_V12		0x0D55
-+#define E1000_DEV_ID_PCH_TGP_I219_LM13		0x15FB
-+#define E1000_DEV_ID_PCH_TGP_I219_V13		0x15FC
-+#define E1000_DEV_ID_PCH_TGP_I219_LM14		0x15F9
-+#define E1000_DEV_ID_PCH_TGP_I219_V14		0x15FA
-+#define E1000_DEV_ID_PCH_TGP_I219_LM15		0x15F4
-+#define E1000_DEV_ID_PCH_TGP_I219_V15		0x15F5
- #define E1000_DEV_ID_PCH_ADL_I219_LM16		0x1A1E
- #define E1000_DEV_ID_PCH_ADL_I219_V16		0x1A1F
- #define E1000_DEV_ID_PCH_ADL_I219_LM17		0x1A1C
- #define E1000_DEV_ID_PCH_ADL_I219_V17		0x1A1D
--#define E1000_DEV_ID_PCH_RPL_I219_LM23          0x0DC5
--#define E1000_DEV_ID_PCH_RPL_I219_V23           0x0DC6
--#define E1000_DEV_ID_PCH_RPL_I219_LM22          0x0DC7
--#define E1000_DEV_ID_PCH_RPL_I219_V22           0x0DC8
-+#define E1000_DEV_ID_PCH_MTP_I219_LM18		0x550A
-+#define E1000_DEV_ID_PCH_MTP_I219_V18		0x550B
-+#define E1000_DEV_ID_PCH_MTP_I219_LM19		0x550C
-+#define E1000_DEV_ID_PCH_MTP_I219_V19		0x550D
-+#define E1000_DEV_ID_PCH_LNL_I219_LM20		0x550E
-+#define E1000_DEV_ID_PCH_LNL_I219_V20		0x550F
-+#define E1000_DEV_ID_PCH_RPL_I219_LM22		0x0DC7
-+#define E1000_DEV_ID_PCH_RPL_I219_V22		0x0DC8
-+#define E1000_DEV_ID_PCH_RPL_I219_LM23		0x0DC5
-+#define E1000_DEV_ID_PCH_RPL_I219_V23		0x0DC6
-+#define E1000_DEV_ID_PCH_ARL_I219_LM24		0x57A0
-+#define E1000_DEV_ID_PCH_ARL_I219_V24		0x57A1
-+#define E1000_DEV_ID_PCH_PTP_I219_LM25		0x57B3
-+#define E1000_DEV_ID_PCH_PTP_I219_V25		0x57B4
-+#define E1000_DEV_ID_PCH_WCL_I219_LM27		0x57B7
-+#define E1000_DEV_ID_PCH_WCL_I219_V27		0x57B8
-+#define E1000_DEV_ID_PCH_NVL_I219_LM29		0x57B9
-+#define E1000_DEV_ID_PCH_NVL_I219_V29		0x57BA
- #define E1000_DEV_ID_82576			0x10C9
- #define E1000_DEV_ID_82576_FIBER		0x10E6
- #define E1000_DEV_ID_82576_SERDES		0x10E7
-@@ -237,6 +263,8 @@ enum e1000_mac_type {
- 	e1000_pch_spt,
- 	e1000_pch_cnp,
- 	e1000_pch_adp,
-+	e1000_pch_mtp,
-+	e1000_pch_ptp,
- 	e1000_pch_tgp,
- 	e1000_82575,
- 	e1000_82576,
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-index 14f86b7bdc..4ff213f2c4 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-@@ -314,7 +314,10 @@ STATIC s32 e1000_init_phy_workarounds_pchlan(struct e1000_hw *hw)
- 	case e1000_pch_lpt:
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		if (e1000_phy_is_accessible_pchlan(hw))
- 			break;
- 
-@@ -464,7 +467,10 @@ STATIC s32 e1000_init_phy_params_pchlan(struct e1000_hw *hw)
- 		case e1000_pch_lpt:
- 		case e1000_pch_spt:
- 		case e1000_pch_cnp:
-+		case e1000_pch_tgp:
- 		case e1000_pch_adp:
-+		case e1000_pch_mtp:
-+		case e1000_pch_ptp:
- 			/* In case the PHY needs to be in mdio slow mode,
- 			 * set slow mode and try to get the PHY id again.
- 			 */
-@@ -768,7 +774,10 @@ STATIC s32 e1000_init_mac_params_ich8lan(struct e1000_hw *hw)
- 	case e1000_pch_lpt:
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		/* multicast address update for pch2 */
- 		mac->ops.update_mc_addr_list =
- 			e1000_update_mc_addr_list_pch2lan;
-@@ -1755,7 +1764,10 @@ void e1000_init_function_pointers_ich8lan(struct e1000_hw *hw)
- 	case e1000_pch_lpt:
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		hw->phy.ops.init_params = e1000_init_phy_params_pchlan;
- 		break;
- 	default:
-@@ -2221,7 +2233,10 @@ STATIC s32 e1000_sw_lcd_config_ich8lan(struct e1000_hw *hw)
- 	case e1000_pch_lpt:
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		sw_cfg_mask = E1000_FEXTNVM_SW_CONFIG_ICH8M;
- 		break;
- 	default:
-@@ -3342,7 +3357,10 @@ STATIC s32 e1000_valid_nvm_bank_detect_ich8lan(struct e1000_hw *hw, u32 *bank)
- 	switch (hw->mac.type) {
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		bank1_offset = nvm->flash_bank_size;
- 		act_offset = E1000_ICH_NVM_SIG_WORD;
- 
-@@ -4314,7 +4332,10 @@ STATIC s32 e1000_validate_nvm_checksum_ich8lan(struct e1000_hw *hw)
- 	case e1000_pch_lpt:
- 	case e1000_pch_spt:
- 	case e1000_pch_cnp:
-+	case e1000_pch_tgp:
- 	case e1000_pch_adp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 		word = NVM_COMPAT;
- 		valid_csum_mask = NVM_COMPAT_VALID_CSUM;
- 		break;
-diff --git a/drivers/net/intel/e1000/em_ethdev.c b/drivers/net/intel/e1000/em_ethdev.c
-index 80ad360a23..bd3f7e44df 100644
---- a/drivers/net/intel/e1000/em_ethdev.c
-+++ b/drivers/net/intel/e1000/em_ethdev.c
-@@ -159,14 +159,34 @@ static const struct rte_pci_id pci_id_em_map[] = {
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ICP_I219_V8) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ICP_I219_LM9) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ICP_I219_V9) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_LM10) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_V10) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_LM11) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_V11) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_LM12) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_CMP_I219_V12) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_LM13) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_V13) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_LM14) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_V14) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_LM15) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_TGP_I219_V15) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ADL_I219_LM16) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ADL_I219_V16) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ADL_I219_LM17) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ADL_I219_V17) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_MTP_I219_LM18) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_MTP_I219_V18) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_MTP_I219_LM19) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_MTP_I219_V19) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_LNL_I219_LM20) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_LNL_I219_V20) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_LM22) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_V22) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_LM23) },
- 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_V23) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_LM24) },
-+	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_V24) },
- 	{ .vendor_id = 0, /* sentinel */ },
- };
- 
-@@ -501,6 +521,8 @@ em_set_pba(struct e1000_hw *hw)
- 		case e1000_pch_cnp:
- 		case e1000_pch_adp:
- 		case e1000_pch_tgp:
-+		case e1000_pch_mtp:
-+		case e1000_pch_ptp:
- 			pba = E1000_PBA_26K;
+diff --git a/drivers/net/intel/e1000/base/e1000_82575.c b/drivers/net/intel/e1000/base/e1000_82575.c
+index 53900cf8f1..c781085348 100644
+--- a/drivers/net/intel/e1000/base/e1000_82575.c
++++ b/drivers/net/intel/e1000/base/e1000_82575.c
+@@ -1497,21 +1497,14 @@ STATIC s32 e1000_setup_copper_link_82575(struct e1000_hw *hw)
+ 	}
+ 	switch (hw->phy.type) {
+ 	case e1000_phy_i210:
+-	/* Fall through */
+ 	case e1000_phy_m88:
+ 		switch (hw->phy.id) {
+ 		case I347AT4_E_PHY_ID:
+-		/* Fall through */
+ 		case M88E1112_E_PHY_ID:
+-		/* Fall through */
+ 		case M88E1340M_E_PHY_ID:
+-		/* Fall through */
+ 		case M88E1543_E_PHY_ID:
+-		/* Fall through */
+ 		case M88E1512_E_PHY_ID:
+-		/* Fall through */
+ 		case I210_I_PHY_ID:
+-		/* Fall through */
+ 			ret_val = e1000_copper_link_setup_m88_gen2(hw);
  			break;
  		default:
-@@ -873,7 +895,9 @@ em_hardware_init(struct e1000_hw *hw)
- 		   hw->mac.type == e1000_pch_spt ||
- 		   hw->mac.type == e1000_pch_cnp ||
- 		   hw->mac.type == e1000_pch_adp ||
--		   hw->mac.type == e1000_pch_tgp) {
-+		   hw->mac.type == e1000_pch_tgp ||
-+		   hw->mac.type == e1000_pch_mtp ||
-+		   hw->mac.type == e1000_pch_ptp) {
- 		hw->fc.requested_mode = e1000_fc_full;
- 	}
+@@ -1721,7 +1714,6 @@ STATIC s32 e1000_get_media_type_82575(struct e1000_hw *hw)
+ 			dev_spec->sgmii_active = true;
+ 			break;
+ 		}
+-		/* Fall through for I2C based SGMII */
+ 		/* Fall through */
+ 	case E1000_CTRL_EXT_LINK_MODE_PCIE_SERDES:
+ 		/* read media type from SFP EEPROM */
+diff --git a/drivers/net/intel/e1000/base/e1000_82575.h b/drivers/net/intel/e1000/base/e1000_82575.h
+index 006b37ae98..e2364606d5 100644
+--- a/drivers/net/intel/e1000/base/e1000_82575.h
++++ b/drivers/net/intel/e1000/base/e1000_82575.h
+@@ -90,11 +90,8 @@ struct e1000_adv_context_desc {
+ };
  
-@@ -1056,6 +1080,8 @@ em_get_max_pktlen(struct rte_eth_dev *dev)
- 	case e1000_pch_cnp:
- 	case e1000_pch_adp:
- 	case e1000_pch_tgp:
-+	case e1000_pch_mtp:
-+	case e1000_pch_ptp:
- 	case e1000_82574:
- 	case e1000_80003es2lan: /* 9K Jumbo Frame size */
- 	case e1000_82583:
+ /* SRRCTL bit definitions */
+-#define E1000_SRRCTL_BSIZEPKT_SHIFT		10 /* Shift _right_ */
+ #define E1000_SRRCTL_BSIZEHDRSIZE_MASK		0x00000F00
+-#define E1000_SRRCTL_BSIZEHDRSIZE_SHIFT		2  /* Shift _left_ */
+ #define E1000_SRRCTL_DESCTYPE_LEGACY		0x00000000
+-#define E1000_SRRCTL_DESCTYPE_ADV_ONEBUF	0x02000000
+ #define E1000_SRRCTL_DESCTYPE_HDR_SPLIT		0x04000000
+ #define E1000_SRRCTL_DESCTYPE_HDR_SPLIT_ALWAYS	0x0A000000
+ #define E1000_SRRCTL_DESCTYPE_HDR_REPLICATION	0x06000000
+@@ -210,36 +207,10 @@ struct e1000_adv_context_desc {
+ #define E1000_RXDADV_IPSEC_ERROR_INVALID_LENGTH		0x10000000
+ #define E1000_RXDADV_IPSEC_ERROR_AUTHENTICATION_FAILED	0x18000000
+ 
+-/* Adv Transmit Descriptor Config Masks */
+-#define E1000_ADVTXD_DTYP_CTXT	0x00200000 /* Advanced Context Descriptor */
+-#define E1000_ADVTXD_DTYP_DATA	0x00300000 /* Advanced Data Descriptor */
+-#define E1000_ADVTXD_DCMD_EOP	0x01000000 /* End of Packet */
+-#define E1000_ADVTXD_DCMD_IFCS	0x02000000 /* Insert FCS (Ethernet CRC) */
+-#define E1000_ADVTXD_DCMD_RS	0x08000000 /* Report Status */
+-#define E1000_ADVTXD_DCMD_DDTYP_ISCSI	0x10000000 /* DDP hdr type or iSCSI */
+-#define E1000_ADVTXD_DCMD_DEXT	0x20000000 /* Descriptor extension (1=Adv) */
+-#define E1000_ADVTXD_DCMD_VLE	0x40000000 /* VLAN pkt enable */
+-#define E1000_ADVTXD_DCMD_TSE	0x80000000 /* TCP Seg enable */
+-#define E1000_ADVTXD_MAC_LINKSEC	0x00040000 /* Apply LinkSec on pkt */
+-#define E1000_ADVTXD_MAC_TSTAMP		0x00080000 /* IEEE1588 Timestamp pkt */
+-#define E1000_ADVTXD_STAT_SN_CRC	0x00000002 /* NXTSEQ/SEED prsnt in WB */
+-#define E1000_ADVTXD_IDX_SHIFT		4  /* Adv desc Index shift */
+-#define E1000_ADVTXD_POPTS_ISCO_1ST	0x00000000 /* 1st TSO of iSCSI PDU */
+-#define E1000_ADVTXD_POPTS_ISCO_MDL	0x00000800 /* Middle TSO of iSCSI PDU */
+-#define E1000_ADVTXD_POPTS_ISCO_LAST	0x00001000 /* Last TSO of iSCSI PDU */
+-/* 1st & Last TSO-full iSCSI PDU*/
+-#define E1000_ADVTXD_POPTS_ISCO_FULL	0x00001800
+-#define E1000_ADVTXD_POPTS_IPSEC	0x00000400 /* IPSec offload request */
+-#define E1000_ADVTXD_PAYLEN_SHIFT	14 /* Adv desc PAYLEN shift */
+-
+-/* Additional Transmit Descriptor Control definitions */
+-#define E1000_TXDCTL_QUEUE_ENABLE	0x02000000 /* Ena specific Tx Queue */
+ #define E1000_TXDCTL_SWFLSH		0x04000000 /* Tx Desc. wbk flushing */
+ /* Tx Queue Arbitration Priority 0=low, 1=high */
+ #define E1000_TXDCTL_PRIORITY		0x08000000
+ 
+-/* Additional Receive Descriptor Control definitions */
+-#define E1000_RXDCTL_QUEUE_ENABLE	0x02000000 /* Ena specific Rx Queue */
+ #define E1000_RXDCTL_SWFLSH		0x04000000 /* Rx Desc. wbk flushing */
+ 
+ /* Direct Cache Access (DCA) definitions */
+diff --git a/drivers/net/intel/e1000/base/e1000_defines.h b/drivers/net/intel/e1000/base/e1000_defines.h
+index 44d6888824..4a5559d0ca 100644
+--- a/drivers/net/intel/e1000/base/e1000_defines.h
++++ b/drivers/net/intel/e1000/base/e1000_defines.h
+@@ -1117,9 +1117,7 @@
+ /* NVM Addressing bits based on type 0=small, 1=large */
+ #define E1000_EECD_ADDR_BITS	0x00000400
+ #define E1000_EECD_TYPE		0x00002000 /* NVM Type (1-SPI, 0-Microwire) */
+-#ifndef E1000_NVM_GRANT_ATTEMPTS
+ #define E1000_NVM_GRANT_ATTEMPTS	1000 /* NVM # attempts to gain grant */
+-#endif
+ #define E1000_EECD_AUTO_RD		0x00000200  /* NVM Auto Read done */
+ #define E1000_EECD_SIZE_EX_MASK		0x00007800  /* NVM Size */
+ #define E1000_EECD_SIZE_EX_SHIFT	11
+diff --git a/drivers/net/intel/e1000/base/e1000_mac.c b/drivers/net/intel/e1000/base/e1000_mac.c
+index ec012f1733..0db114c0df 100644
+--- a/drivers/net/intel/e1000/base/e1000_mac.c
++++ b/drivers/net/intel/e1000/base/e1000_mac.c
+@@ -1673,7 +1673,7 @@ s32 e1000_get_speed_and_duplex_copper_generic(struct e1000_hw *hw, u16 *speed,
+ }
+ 
+ /**
+- *  e1000_get_speed_and_duplex_fiber_generic - Retrieve current speed/duplex
++ *  e1000_get_speed_and_duplex_fiber_serdes_generic - return fiber defaults
+  *  @hw: pointer to the HW structure
+  *  @speed: stores the current speed
+  *  @duplex: stores the current duplex
+diff --git a/drivers/net/intel/e1000/base/e1000_nvm.c b/drivers/net/intel/e1000/base/e1000_nvm.c
+index aec5e80986..2b38bbc117 100644
+--- a/drivers/net/intel/e1000/base/e1000_nvm.c
++++ b/drivers/net/intel/e1000/base/e1000_nvm.c
+@@ -30,7 +30,7 @@ void e1000_init_nvm_ops_generic(struct e1000_hw *hw)
+ }
+ 
+ /**
+- *  e1000_null_nvm_read - No-op function, return 0
++ *  e1000_null_read_nvm - No-op function, return 0
+  *  @hw: pointer to the HW structure
+  *  @a: dummy variable
+  *  @b: dummy variable
+diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
+index 6fac341d71..60d6bdfa4e 100644
+--- a/drivers/net/intel/e1000/base/e1000_phy.c
++++ b/drivers/net/intel/e1000/base/e1000_phy.c
+@@ -770,7 +770,7 @@ s32 e1000_read_phy_reg_igp_locked(struct e1000_hw *hw, u32 offset, u16 *data)
+ }
+ 
+ /**
+- *  e1000_write_phy_reg_igp - Write igp PHY register
++ *  __e1000_write_phy_reg_igp - Write igp PHY register
+  *  @hw: pointer to the HW structure
+  *  @offset: register offset to write to
+  *  @data: data to write at register offset
+@@ -1014,7 +1014,7 @@ STATIC s32 e1000_set_master_slave_mode(struct e1000_hw *hw)
+ 		break;
+ 	case e1000_ms_auto:
+ 		phy_data &= ~CR_1000T_MS_ENABLE;
+-		/* fall-through */
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/drivers/net/intel/e1000/base/e1000_regs.h b/drivers/net/intel/e1000/base/e1000_regs.h
+index b30419d712..1a12940b9f 100644
+--- a/drivers/net/intel/e1000/base/e1000_regs.h
++++ b/drivers/net/intel/e1000/base/e1000_regs.h
+@@ -5,6 +5,7 @@
+ #ifndef _E1000_REGS_H_
+ #define _E1000_REGS_H_
+ 
++/* General Register Descriptions */
+ #define E1000_CTRL	0x00000  /* Device Control - RW */
+ #define E1000_CTRL_DUP	0x00004  /* Device Control Duplicate (Shadow) - RW */
+ #define E1000_STATUS	0x00008  /* Device Status - RO */
+@@ -13,6 +14,7 @@
+ #define E1000_EEWR	0x0102C  /* EEPROM Write Register - RW */
+ #define E1000_EERD_V2	0x12014  /* EEprom mode read - RW */
+ #define E1000_EEWR_V2	0x12018  /* EEprom mode write - RW */
++/* NVM  Register Descriptions */
+ #define E1000_CTRL_EXT	0x00018  /* Extended Device Control - RW */
+ #define E1000_FLA	0x0001C  /* Flash Access - RW */
+ #define E1000_MDIC	0x00020  /* MDI Control - RW */
+@@ -23,6 +25,7 @@
+ #define E1000_BARCTRL			0x5BBC /* BAR ctrl reg */
+ #define E1000_BARCTRL_FLSIZE		0x0700 /* BAR ctrl Flsize */
+ #define E1000_BARCTRL_CSRSIZE		0x2000 /* BAR ctrl CSR size */
++#define E1000_BARCTRL_CSRSIZE_SHIFT	13
+ #define E1000_MPHY_ADDR_CTRL	0x0024 /* GbE MPHY Address Control */
+ #define E1000_MPHY_DATA		0x0E10 /* GBE MPHY Data */
+ #define E1000_MPHY_STAT		0x0E0C /* GBE MPHY Statistics */
 -- 
 2.43.5
 
