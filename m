@@ -2,27 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E602CC0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA1BC0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:08:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43E884060F;
-	Mon,  3 Feb 2025 04:07:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 64CEE4060F;
+	Mon,  3 Feb 2025 04:08:48 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 5C7DC400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 04:07:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A79AB400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 04:08:46 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 54EB64617C; Mon,  3 Feb 2025 04:07:12 +0100 (CET)
+ id 9FD0C4617C; Mon,  3 Feb 2025 04:08:46 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: =?UTF-8?B?W0RQREsvb3RoZXIgQnVnIDE2MzldIEdDQyBtaWdodCBnZW5lcmF0?=
- =?UTF-8?B?ZSBJbnRlbMKuIEFWWCBpbnN0cnVjdGlvbnMgZm9yIHByb2Nlc3NvcnMgd2l0?=
- =?UTF-8?B?aG91dCBJbnRlbMKuIEFWWCBzdXBwb3J0?=
-Date: Mon, 03 Feb 2025 03:07:12 +0000
+Subject: [DPDK/ethdev Bug 1640] Ethertype filter could receive other packets
+ (non-assigned) in Niantic
+Date: Mon, 03 Feb 2025 03:08:46 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -36,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1639-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385520320.bA99A1de.2122894
+Message-ID: <bug-1640-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385521260.A497c.2123596
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -57,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385520320.bA99A1de.2122894
-Date: Mon, 3 Feb 2025 04:07:12 +0100
+--17385521260.A497c.2123596
+Date: Mon, 3 Feb 2025 04:08:46 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -66,11 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1639
+https://bugs.dpdk.org/show_bug.cgi?id=3D1640
 
-            Bug ID: 1639
-           Summary: GCC might generate Intel=C2=AE AVX instructions for
-                    processors without Intel=C2=AE AVX support
+            Bug ID: 1640
+           Summary: Ethertype filter could receive other packets
+                    (non-assigned) in Niantic
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -78,32 +77,48 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1639
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: other
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-When compiling DPDK (and any DPDK app), gcc may generate Intel=C2=AE AVX
-instructions, even when the processor does not support Intel=C2=AE AVX.
+On Intel=C2=AE Ethernet Controller 82599EB When Ethertype filter (priority =
+enable)
+was set, unmatched packets also could be received on the assigned queue, su=
+ch
+as ARP packets without 802.1q tags or with the user priority not equal to s=
+et
+value. Launch the testpmd by disabling RSS and with multiply queues, then a=
+dd
+the ethertype filter like the following and then start forwarding:
+
+add_ethertype_filter 0 ethertype 0x0806 priority enable 3 queue 2 index 1
+When sending ARP packets without 802.1q tag and with user priority as non-3=
+ by
+tester, all the ARP packets can be received on the assigned queue.
 
 Implication:
-Any DPDK app might crash while starting up.
+The user priority comparing in Ethertype filter cannot work probably. It is=
+ a
+NIC=E2=80=99s issue due to the following: =E2=80=9CIn fact, ETQF.UP is not =
+functional, and the
+information will be added in errata of 82599 and X540.=E2=80=9D
 
 Resolution/Workaround:
-Either compile using icc or set EXTRA_CFLAGS=3D'-O3' prior to compilation.
+None
 
 Affected Environment/Platform:
-Platforms which processor does not support Intel=C2=AE AVX.
+All.
 
 Driver/Module:
-Environment Abstraction Layer (EAL).
+Poll Mode Driver (PMD).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385520320.bA99A1de.2122894
-Date: Mon, 3 Feb 2025 04:07:12 +0100
+--17385521260.A497c.2123596
+Date: Mon, 3 Feb 2025 04:08:46 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -121,16 +136,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - GCC might generate Intel=C2=AE AVX instructions f=
-or processors without Intel=C2=AE AVX support"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1639">1639</a>
+   title=3D"UNCONFIRMED - Ethertype filter could receive other packets (non=
+-assigned) in Niantic"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1640">1640</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>GCC might generate Intel=C2=AE AVX instructions for processor=
-s without Intel=C2=AE AVX support
+          <td>Ethertype filter could receive other packets (non-assigned) i=
+n Niantic
           </td>
         </tr>
 
@@ -178,7 +193,7 @@ s without Intel=C2=AE AVX support
 
         <tr>
           <th>Component</th>
-          <td>other
+          <td>ethdev
           </td>
         </tr>
 
@@ -201,21 +216,36 @@ s without Intel=C2=AE AVX support
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">When compiling DPDK (and any DPDK =
-app), gcc may generate Intel=C2=AE AVX
-instructions, even when the processor does not support Intel=C2=AE AVX.
+          <pre class=3D"bz_comment_text">On Intel=C2=AE Ethernet Controller=
+ 82599EB When Ethertype filter (priority enable)
+was set, unmatched packets also could be received on the assigned queue, su=
+ch
+as ARP packets without 802.1q tags or with the user priority not equal to s=
+et
+value. Launch the testpmd by disabling RSS and with multiply queues, then a=
+dd
+the ethertype filter like the following and then start forwarding:
+
+add_ethertype_filter 0 ethertype 0x0806 priority enable 3 queue 2 index 1
+When sending ARP packets without 802.1q tag and with user priority as non-3=
+ by
+tester, all the ARP packets can be received on the assigned queue.
 
 Implication:
-Any DPDK app might crash while starting up.
+The user priority comparing in Ethertype filter cannot work probably. It is=
+ a
+NIC=E2=80=99s issue due to the following: =E2=80=9CIn fact, ETQF.UP is not =
+functional, and the
+information will be added in errata of 82599 and X540.=E2=80=9D
 
 Resolution/Workaround:
-Either compile using icc or set EXTRA_CFLAGS=3D'-O3' prior to compilation.
+None
 
 Affected Environment/Platform:
-Platforms which processor does not support Intel=C2=AE AVX.
+All.
 
 Driver/Module:
-Environment Abstraction Layer (EAL).
+Poll Mode Driver (PMD).
           </pre>
         </div>
       </p>
@@ -232,7 +262,7 @@ Environment Abstraction Layer (EAL).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1639">
+?id=3D1640">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -241,4 +271,4 @@ ication">
     </body>
 </html>=
 
---17385520320.bA99A1de.2122894--
+--17385521260.A497c.2123596--
