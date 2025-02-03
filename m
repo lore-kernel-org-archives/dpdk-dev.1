@@ -2,25 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FC5C0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD67C0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:32:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 301C8400EF;
-	Mon,  3 Feb 2025 03:31:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 900D7400EF;
+	Mon,  3 Feb 2025 03:32:45 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id E041F400D7
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:31:25 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BFA02400D7
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 03:32:43 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id AC55E4617B; Mon,  3 Feb 2025 03:31:25 +0100 (CET)
+ id B84954617B; Mon,  3 Feb 2025 03:32:43 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1624] The rte_malloc library is not fully implemented
-Date: Mon, 03 Feb 2025 02:31:24 +0000
+Subject: [DPDK/eventdev Bug 1625] HPET reading is slow
+Date: Mon, 03 Feb 2025 02:32:43 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: eventdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1624-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385498850.3C9c59B8.2102513
+Message-ID: <bug-1625-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385499630.0fb9B.2103114
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385498850.3C9c59B8.2102513
-Date: Mon, 3 Feb 2025 03:31:24 +0100
+--17385499630.0fb9B.2103114
+Date: Mon, 3 Feb 2025 03:32:43 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,10 +64,10 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1624
+https://bugs.dpdk.org/show_bug.cgi?id=3D1625
 
-            Bug ID: 1624
-           Summary: The rte_malloc library is not fully implemented
+            Bug ID: 1625
+           Summary: HPET reading is slow
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -75,30 +75,37 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1624
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: eventdev
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
 Description:
-The rte_malloc library is not fully implemented.
+Reading the HPET chip is slow.
 
 Implication:
-All debugging features of rte_malloc library described in architecture
-documentation are not yet implemented.
+An application that calls rte_get_hpet_cycles() or rte_timer_manage() runs
+slower.
 
 Resolution/Workaround:
-No workaround available.
+The application should not call these functions too often in the main loop.=
+ An
+alternative is to use the TSC register through rte_rdtsc() which is faster,=
+ but
+specific to an lcore and is a cycle reference, not a time reference.
 
 Affected Environment/Platform:
 All.
+
+Driver/Module:
+Environment Abstraction Layer (EAL).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385498850.3C9c59B8.2102513
-Date: Mon, 3 Feb 2025 03:31:25 +0100
+--17385499630.0fb9B.2103114
+Date: Mon, 3 Feb 2025 03:32:43 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -116,14 +123,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - The rte_malloc library is not fully implemented"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1624">1624</a>
+   title=3D"UNCONFIRMED - HPET reading is slow"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1625">1625</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>The rte_malloc library is not fully implemented
+          <td>HPET reading is slow
           </td>
         </tr>
 
@@ -171,7 +178,7 @@ bz_new_table">
 
         <tr>
           <th>Component</th>
-          <td>ethdev
+          <td>eventdev
           </td>
         </tr>
 
@@ -195,17 +202,24 @@ bz_new_table">
       <p>
         <div class=3D"bz_comment_block">
           <pre class=3D"bz_comment_text">Description:
-The rte_malloc library is not fully implemented.
+Reading the HPET chip is slow.
 
 Implication:
-All debugging features of rte_malloc library described in architecture
-documentation are not yet implemented.
+An application that calls rte_get_hpet_cycles() or rte_timer_manage() runs
+slower.
 
 Resolution/Workaround:
-No workaround available.
+The application should not call these functions too often in the main loop.=
+ An
+alternative is to use the TSC register through rte_rdtsc() which is faster,=
+ but
+specific to an lcore and is a cycle reference, not a time reference.
 
 Affected Environment/Platform:
 All.
+
+Driver/Module:
+Environment Abstraction Layer (EAL).
           </pre>
         </div>
       </p>
@@ -222,7 +236,7 @@ All.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1624">
+?id=3D1625">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -231,4 +245,4 @@ ication">
     </body>
 </html>=
 
---17385498850.3C9c59B8.2102513--
+--17385499630.0fb9B.2103114--
