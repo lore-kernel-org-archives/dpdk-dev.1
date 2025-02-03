@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6909AC02193
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 07:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9471C02193
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 07:42:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D04D40ED1;
-	Mon,  3 Feb 2025 08:42:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 05C5240ED9;
+	Mon,  3 Feb 2025 08:42:10 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 338BF40E7C
- for <dev@dpdk.org>; Mon,  3 Feb 2025 08:42:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3B89D40EA5
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 08:42:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738568525; x=1770104525;
+ t=1738568527; x=1770104527;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=nnTdGGsha1aba3XP+Ne52gLW0vZoadZTvxV7uBr5mwU=;
- b=NVcsMTX12f8i889fsHpxSduhmnX9ztzEvi8loHfhCASfbIBUnP40asvp
- +t54pzBANrMT/xIKKNSws9x42gOKRPQlslhrui1Yn46rpgB9GQAy4sE3B
- bJoLWOyN+wLMA0U631KwJb50wii66ofGv2T1W/Gu8Tn8Cpw0p+f0MullA
- L1he8+XbX9fklMJg2+Y8scNQOFFDekvplBzRIG25Tm3Ah1W8myhp7Dnou
- KNp0iOB5NINh1NavFGaVjP3mgS4BGdKAH5T1Drld0tBaGsYex7Rl5uOR9
- xPN5/HkoTFUdK9xZLR6vyXufpm6IeJRnrvnrISclTrOaRjg38DmhgAIS2 w==;
-X-CSE-ConnectionGUID: ntfNy2E+QK2xyqagGKnjSw==
-X-CSE-MsgGUID: 4WayRZnhTz6QfkwpRXwoQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11334"; a="56479581"
-X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; d="scan'208";a="56479581"
+ bh=ylcvCWzg/mb/9GbLfQV8KxGgkWc+o5I4qjt4ZU025p4=;
+ b=AKJcv+VbVOgKQEt4LUNn/LQErpGbpSxa9FYlVnweXRLqdcVbftl412Hm
+ dfVTNRJtHefry3Hq43Wn3mHi1HxolfeVVSMawY4hDrrjIiI15CsZ+SL/y
+ /nhVL0sE/nVt6TRB5BJtpkYNynBT+t1KZcrpgdPhZH4jmjhGxSgQ0QaYv
+ 5QETVq0cVnjwOZzp1wGOYke8MjNkMiqAGp5aXHxJ1UWfga6LQmJeSNhYR
+ LKeRIme6Ca7mVl/NmI2zS+x/fgVIqmKYyvZ/i5O97kVgT60qGMJ/5RrNB
+ xApKIRbzuFAXQGL9QHhOb4R/l3Q7wUBneY8pX8HQ1L7rnsGrGf6AhsJFI A==;
+X-CSE-ConnectionGUID: sftWuDlCQGezdUGG3BoV1w==
+X-CSE-MsgGUID: 7CO8iSoqSQaYKNxZ5NOJ1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11334"; a="56479583"
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; d="scan'208";a="56479583"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Feb 2025 23:42:04 -0800
-X-CSE-ConnectionGUID: OgG7c1TuT0+ZFDNVdeSY1g==
-X-CSE-MsgGUID: +tVp6ozsROmB04XEXmprvQ==
+ 02 Feb 2025 23:42:07 -0800
+X-CSE-ConnectionGUID: jDN5hi39QLGpzhme+w4+Fw==
+X-CSE-MsgGUID: hYhjcAJsTn+7iQx5gUMCMA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="133466625"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="133466629"
 Received: from npg-npf-wlpr-srv12.iind.intel.com ([10.190.212.205])
- by fmviesa002.fm.intel.com with ESMTP; 02 Feb 2025 23:42:03 -0800
+ by fmviesa002.fm.intel.com with ESMTP; 02 Feb 2025 23:42:05 -0800
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v5 1/2] common/idpf: enable AVX2 for single queue Rx
-Date: Mon,  3 Feb 2025 13:25:07 +0530
-Message-Id: <20250203075508.1304702-2-shaiq.wani@intel.com>
+Subject: [PATCH v5 2/2] common/idpf: enable AVX2 for single queue Tx
+Date: Mon,  3 Feb 2025 13:25:08 +0530
+Message-Id: <20250203075508.1304702-3-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250203075508.1304702-1-shaiq.wani@intel.com>
 References: <20250203052430.1243485-2-shaiq.wani@intel.com>
@@ -70,586 +70,353 @@ different queues for parallel processing and improved performance.
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
+ doc/guides/nics/idpf.rst                    |   8 +-
+ doc/guides/rel_notes/release_25_03.rst      |   7 +
  drivers/common/idpf/idpf_common_device.h    |   1 +
  drivers/common/idpf/idpf_common_rxtx.h      |   4 +
- drivers/common/idpf/idpf_common_rxtx_avx2.c | 480 ++++++++++++++++++++
- drivers/common/idpf/meson.build             |   7 +
+ drivers/common/idpf/idpf_common_rxtx_avx2.c | 224 ++++++++++++++++++++
  drivers/common/idpf/version.map             |   1 +
- drivers/net/intel/idpf/idpf_rxtx.c          |  11 +
- 6 files changed, 504 insertions(+)
- create mode 100644 drivers/common/idpf/idpf_common_rxtx_avx2.c
+ drivers/net/intel/idpf/idpf_rxtx.c          |  13 ++
+ 7 files changed, 255 insertions(+), 3 deletions(-)
 
+diff --git a/doc/guides/nics/idpf.rst b/doc/guides/nics/idpf.rst
+index 0370989a07..90b651d193 100644
+--- a/doc/guides/nics/idpf.rst
++++ b/doc/guides/nics/idpf.rst
+@@ -93,9 +93,11 @@ The paths are chosen based on 2 conditions:
+ 
+ - ``CPU``
+ 
+-  On the x86 platform, the driver checks if the CPU supports AVX512.
+-  If the CPU supports AVX512 and EAL argument ``--force-max-simd-bitwidth``
+-  is set to 512, AVX512 paths will be chosen.
++  On the x86 platform, the driver checks if the CPU supports AVX instruction set.
++  If the CPU supports AVX512 and EAL argument --force-max-simd-bitwidth is set to 512, AVX512 paths will be chosen
++  else if --force-max-simd-bitwidth is set to 256, AVX2 paths will be chosen.
++  Note that 256 is the default bitwidth if no specific value is provided.
++
+ 
+ - ``Offload features``
+ 
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index a88b04d958..905e8f363c 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -76,6 +76,13 @@ New Features
+ 
+   * Added support for virtual function (VF).
+ 
++* **Added support of AVX2 instructions on IDPF.**
++
++   Support for AVX2 instructions in IDPF single queue RX and TX path
++   added.The single queue model processes all packets in order within
++   one RX queue, while the split queue model separates packet data and
++   metadata into different queues for parallel processing and improved performance.
++
+ 
+ Removed Items
+ -------------
 diff --git a/drivers/common/idpf/idpf_common_device.h b/drivers/common/idpf/idpf_common_device.h
-index bfa927a5ff..734be1c88a 100644
+index 734be1c88a..5f3e4a4fcf 100644
 --- a/drivers/common/idpf/idpf_common_device.h
 +++ b/drivers/common/idpf/idpf_common_device.h
-@@ -123,6 +123,7 @@ struct idpf_vport {
- 
+@@ -124,6 +124,7 @@ struct idpf_vport {
  	bool rx_vec_allowed;
  	bool tx_vec_allowed;
-+	bool rx_use_avx2;
+ 	bool rx_use_avx2;
++	bool tx_use_avx2;
  	bool rx_use_avx512;
  	bool tx_use_avx512;
  
 diff --git a/drivers/common/idpf/idpf_common_rxtx.h b/drivers/common/idpf/idpf_common_rxtx.h
-index eeeeed12e2..f50cf5ef46 100644
+index f50cf5ef46..e19e1878f3 100644
 --- a/drivers/common/idpf/idpf_common_rxtx.h
 +++ b/drivers/common/idpf/idpf_common_rxtx.h
-@@ -302,5 +302,9 @@ uint16_t idpf_dp_splitq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pk
- __rte_internal
- uint16_t idpf_dp_singleq_recv_scatter_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			  uint16_t nb_pkts);
+@@ -306,5 +306,9 @@ __rte_internal
+ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
+ 					struct rte_mbuf **rx_pkts,
+ 					uint16_t nb_pkts);
 +__rte_internal
-+uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
-+					struct rte_mbuf **rx_pkts,
++uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
++					struct rte_mbuf **tx_pkts,
 +					uint16_t nb_pkts);
  
  #endif /* _IDPF_COMMON_RXTX_H_ */
 diff --git a/drivers/common/idpf/idpf_common_rxtx_avx2.c b/drivers/common/idpf/idpf_common_rxtx_avx2.c
-new file mode 100644
-index 0000000000..277b2a9469
---- /dev/null
+index 277b2a9469..7d292ff19e 100644
+--- a/drivers/common/idpf/idpf_common_rxtx_avx2.c
 +++ b/drivers/common/idpf/idpf_common_rxtx_avx2.c
-@@ -0,0 +1,480 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2023 Intel Corporation
-+ */
-+
-+#include <rte_vect.h>
-+
-+#include "idpf_common_rxtx.h"
-+#include "idpf_common_device.h"
-+
+@@ -478,3 +478,227 @@ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16
+ {
+ 	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
+ }
 +static __rte_always_inline void
-+idpf_singleq_rx_rearm(struct idpf_rx_queue *rxq)
++idpf_tx_backlog_entry(struct idpf_tx_entry *txep,
++		     struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
 +	int i;
-+	uint16_t rx_id;
-+	volatile union virtchnl2_rx_desc *rxdp = rxq->rx_ring;
-+	struct rte_mbuf **rxep = &rxq->sw_ring[rxq->rxrearm_start];
 +
-+	rxdp += rxq->rxrearm_start;
++	for (i = 0; i < (int)nb_pkts; ++i)
++		txep[i].mbuf = tx_pkts[i];
++}
 +
-+	/* Pull 'n' more MBUFs into the software ring */
-+	if (rte_mempool_get_bulk(rxq->mp,
-+				 (void *)rxep,
-+				 IDPF_RXQ_REARM_THRESH) < 0) {
-+		if (rxq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
-+		    rxq->nb_rx_desc) {
-+			__m128i dma_addr0;
++static __rte_always_inline int
++idpf_singleq_tx_free_bufs_vec(struct idpf_tx_queue *txq)
++{
++	struct idpf_tx_entry *txep;
++	uint32_t n;
++	uint32_t i;
++	int nb_free = 0;
++	struct rte_mbuf *m, *free[txq->rs_thresh];
 +
-+			dma_addr0 = _mm_setzero_si128();
-+			for (i = 0; i < IDPF_VPMD_DESCS_PER_LOOP; i++) {
-+				rxep[i] = &rxq->fake_mbuf;
-+				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i].read), dma_addr0);
++	/* check DD bits on threshold descriptor */
++	if ((txq->tx_ring[txq->next_dd].qw1 &
++			rte_cpu_to_le_64(IDPF_TXD_QW1_DTYPE_M)) !=
++			rte_cpu_to_le_64(IDPF_TX_DESC_DTYPE_DESC_DONE))
++		return 0;
++
++	n = txq->rs_thresh;
++
++	 /* first buffer to free from S/W ring is at index
++	  * next_dd - (rs_thresh-1)
++	  */
++	txep = &txq->sw_ring[txq->next_dd - (n - 1)];
++	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
++	if (likely(m)) {
++		free[0] = m;
++		nb_free = 1;
++		for (i = 1; i < n; i++) {
++			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
++			if (likely(m)) {
++				if (likely(m->pool == free[0]->pool)) {
++					free[nb_free++] = m;
++				} else {
++					rte_mempool_put_bulk(free[0]->pool,
++							     (void *)free,
++							     nb_free);
++					free[0] = m;
++					nb_free = 1;
++				}
 +			}
 +		}
-+		rte_atomic_fetch_add_explicit(&rxq->rx_stats.mbuf_alloc_failed,
-+				IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
-+		return;
++		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
++	} else {
++		for (i = 1; i < n; i++) {
++			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
++			if (m)
++				rte_mempool_put(m->pool, m);
++		}
 +	}
 +
-+	struct rte_mbuf *mb0, *mb1;
-+	__m128i dma_addr0, dma_addr1;
-+	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
-+			RTE_PKTMBUF_HEADROOM);
-+	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
-+	for (i = 0; i < IDPF_RXQ_REARM_THRESH; i += 2, rxep += 2) {
-+		__m128i vaddr0, vaddr1;
++	/* buffers were freed, update counters */
++	txq->nb_free = (uint16_t)(txq->nb_free + txq->rs_thresh);
++	txq->next_dd = (uint16_t)(txq->next_dd + txq->rs_thresh);
++	if (txq->next_dd >= txq->nb_tx_desc)
++		txq->next_dd = (uint16_t)(txq->rs_thresh - 1);
 +
-+		mb0 = rxep[0];
-+		mb1 = rxep[1];
++	return txq->rs_thresh;
++}
 +
-+		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-+				offsetof(struct rte_mbuf, buf_addr) + 8);
-+		vaddr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-+		vaddr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
++static inline void
++idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
++		  struct rte_mbuf *pkt, uint64_t flags)
++{
++	uint64_t high_qw =
++		(IDPF_TX_DESC_DTYPE_DATA |
++		 ((uint64_t)flags  << IDPF_TXD_QW1_CMD_S) |
++		 ((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S));
 +
-+		/* convert pa to dma_addr hdr/data */
-+		dma_addr0 = _mm_unpackhi_epi64(vaddr0, vaddr0);
-+		dma_addr1 = _mm_unpackhi_epi64(vaddr1, vaddr1);
++	__m128i descriptor = _mm_set_epi64x(high_qw,
++				pkt->buf_iova + pkt->data_off);
++	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
++}
 +
-+		/* add headroom to pa values */
-+		dma_addr0 = _mm_add_epi64(dma_addr0, hdr_room);
-+		dma_addr1 = _mm_add_epi64(dma_addr1, hdr_room);
++static inline void
++idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
++		 struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags)
++{
++	const uint64_t hi_qw_tmpl = (IDPF_TX_DESC_DTYPE_DATA |
++			((uint64_t)flags  << IDPF_TXD_QW1_CMD_S));
 +
-+		/* flush desc with pa dma_addr */
-+		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->read), dma_addr0);
-+		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->read), dma_addr1);
++	/* if unaligned on 32-bit boundary, do one to align */
++	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
++		idpf_singleq_vtx1(txdp, *pkt, flags);
++		nb_pkts--, txdp++, pkt++;
 +	}
 +
-+	rxq->rxrearm_start += IDPF_RXQ_REARM_THRESH;
-+	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
-+		rxq->rxrearm_start = 0;
++	/* do two at a time while possible, in bursts */
++	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
++		uint64_t hi_qw3 =
++			hi_qw_tmpl |
++			((uint64_t)pkt[3]->data_len <<
++			 IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw2 =
++			hi_qw_tmpl |
++			((uint64_t)pkt[2]->data_len <<
++			 IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw1 =
++			hi_qw_tmpl |
++			((uint64_t)pkt[1]->data_len <<
++			 IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw0 =
++			hi_qw_tmpl |
++			((uint64_t)pkt[0]->data_len <<
++			 IDPF_TXD_QW1_TX_BUF_SZ_S);
 +
-+	rxq->rxrearm_nb -= IDPF_RXQ_REARM_THRESH;
++		__m256i desc2_3 =
++			_mm256_set_epi64x
++				(hi_qw3,
++				 pkt[3]->buf_iova + pkt[3]->data_off,
++				 hi_qw2,
++				 pkt[2]->buf_iova + pkt[2]->data_off);
++		__m256i desc0_1 =
++			_mm256_set_epi64x
++				(hi_qw1,
++				 pkt[1]->buf_iova + pkt[1]->data_off,
++				 hi_qw0,
++				 pkt[0]->buf_iova + pkt[0]->data_off);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
++	}
 +
-+	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
-+			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
-+
-+	/* Update the tail pointer on the NIC */
-+	IDPF_PCI_REG_WRITE(rxq->qrx_tail, rx_id);
++	/* do any last ones */
++	while (nb_pkts) {
++		idpf_singleq_vtx1(txdp, *pkt, flags);
++		txdp++, pkt++, nb_pkts--;
++	}
 +}
 +
 +static inline uint16_t
-+_idpf_singleq_recv_raw_pkts_vec_avx2(struct idpf_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-+				     uint16_t nb_pkts)
++idpf_singleq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
++				       uint16_t nb_pkts)
 +{
-+#define IDPF_DESCS_PER_LOOP_AVX 8
++	struct idpf_tx_queue *txq = (struct idpf_tx_queue *)tx_queue;
++	volatile struct idpf_base_tx_desc *txdp;
++	struct idpf_tx_entry *txep;
++	uint16_t n, nb_commit, tx_id;
++	uint64_t flags = IDPF_TX_DESC_CMD_EOP;
++	uint64_t rs = IDPF_TX_DESC_CMD_RS | flags;
 +
-+	const uint32_t *ptype_tbl = rxq->adapter->ptype_tbl;
-+	const __m256i mbuf_init = _mm256_set_epi64x(0, 0,
-+			0, rxq->mbuf_initializer);
-+	struct rte_mbuf **sw_ring = &rxq->sw_ring[rxq->rx_tail];
-+	volatile union virtchnl2_rx_desc *rxdp = rxq->rx_ring;
-+	const int avx_aligned = ((rxq->rx_tail & 1) == 0);
++	/* cross rx_thresh boundary is not allowed */
++	nb_pkts = RTE_MIN(nb_pkts, txq->rs_thresh);
 +
-+	rxdp += rxq->rx_tail;
++	if (txq->nb_free < txq->free_thresh)
++		idpf_singleq_tx_free_bufs_vec(txq);
 +
-+	rte_prefetch0(rxdp);
-+
-+	/* nb_pkts has to be floor-aligned to IDPF_DESCS_PER_LOOP_AVX */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IDPF_DESCS_PER_LOOP_AVX);
-+
-+	/* See if we need to rearm the RX queue - gives the prefetch a bit
-+	 * of time to act
-+	 */
-+	if (rxq->rxrearm_nb > IDPF_RXQ_REARM_THRESH)
-+		idpf_singleq_rx_rearm(rxq);
-+
-+	/* Before we start moving massive data around, check to see if
-+	 * there is actually a packet available
-+	 */
-+	if (!(rxdp->flex_nic_wb.status_error0 &
-+			rte_cpu_to_le_32(1 << VIRTCHNL2_RX_FLEX_DESC_STATUS0_DD_S)))
++	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_free, nb_pkts);
++	if (unlikely(nb_pkts == 0))
 +		return 0;
 +
-+	/* 8 packets DD mask, LSB in each 32-bit value */
-+	const __m256i dd_check = _mm256_set1_epi32(1);
++	tx_id = txq->tx_tail;
++	txdp = &txq->tx_ring[tx_id];
++	txep = &txq->sw_ring[tx_id];
 +
-+	/* mask to shuffle from desc. to mbuf (2 descriptors)*/
-+	const __m256i shuf_msk =
-+		_mm256_set_epi8
-+			(/* first descriptor */
-+			 0xFF, 0xFF,
-+			 0xFF, 0xFF,	/* rss hash parsed separately */
-+			 11, 10,	/* octet 10~11, 16 bits vlan_macip */
-+			 5, 4,		/* octet 4~5, 16 bits data_len */
-+			 0xFF, 0xFF,	/* skip hi 16 bits pkt_len, zero out */
-+			 5, 4,		/* octet 4~5, 16 bits pkt_len */
-+			 0xFF, 0xFF,	/* pkt_type set as unknown */
-+			 0xFF, 0xFF,	/*pkt_type set as unknown */
-+			 /* second descriptor */
-+			 0xFF, 0xFF,
-+			 0xFF, 0xFF,	/* rss hash parsed separately */
-+			 11, 10,	/* octet 10~11, 16 bits vlan_macip */
-+			 5, 4,		/* octet 4~5, 16 bits data_len */
-+			 0xFF, 0xFF,	/* skip hi 16 bits pkt_len, zero out */
-+			 5, 4,		/* octet 4~5, 16 bits pkt_len */
-+			 0xFF, 0xFF,	/* pkt_type set as unknown */
-+			 0xFF, 0xFF	/*pkt_type set as unknown */
-+			);
-+	/**
-+	 * compile-time check the above crc and shuffle layout is correct.
-+	 * NOTE: the first field (lowest address) is given last in set_epi
-+	 * calls above.
-+	 */
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, vlan_tci) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 10);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, hash) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 12);
++	txq->nb_free = (uint16_t)(txq->nb_free - nb_pkts);
 +
-+	/* Status/Error flag masks */
-+	/**
-+	 * mask everything except Checksum Reports, RSS indication
-+	 * and VLAN indication.
-+	 * bit6:4 for IP/L4 checksum errors.
-+	 * bit12 is for RSS indication.
-+	 * bit13 is for VLAN indication.
-+	 */
-+	const __m256i flags_mask =
-+		 _mm256_set1_epi32((0xF << 4) | (1 << 12) | (1 << 13));
-+	/**
-+	 * data to be shuffled by the result of the flags mask shifted by 4
-+	 * bits.  This gives use the l3_l4 flags.
-+	 */
-+	const __m256i l3_l4_flags_shuf =
-+		_mm256_set_epi8((RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 |
-+		 RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+		  RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD  |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD  |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		/**
-+		 * second 128-bits
-+		 * shift right 20 bits to use the low two bits to indicate
-+		 * outer checksum status
-+		 * shift right 1 bit to make sure it not exceed 255
-+		 */
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD  |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD  |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
-+		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1);
-+	const __m256i cksum_mask =
-+		 _mm256_set1_epi32(RTE_MBUF_F_RX_IP_CKSUM_MASK |
-+				   RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+				   RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+				   RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK);
-+	/**
-+	 * data to be shuffled by result of flag mask, shifted down 12.
-+	 * If RSS(bit12)/VLAN(bit13) are set,
-+	 * shuffle moves appropriate flags in place.
-+	 */
-+	const __m256i rss_vlan_flags_shuf = _mm256_set_epi8(0, 0, 0, 0,
-+			0, 0, 0, 0,
-+			0, 0, 0, 0,
-+			RTE_MBUF_F_RX_RSS_HASH | RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			RTE_MBUF_F_RX_RSS_HASH, 0,
-+			/* end up 128-bits */
-+			0, 0, 0, 0,
-+			0, 0, 0, 0,
-+			0, 0, 0, 0,
-+			RTE_MBUF_F_RX_RSS_HASH | RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			RTE_MBUF_F_RX_RSS_HASH, 0);
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++	if (nb_commit >= n) {
++		idpf_tx_backlog_entry(txep, tx_pkts, n);
 +
-+	RTE_SET_USED(avx_aligned); /* for 32B descriptors we don't use this */
++		idpf_singleq_vtx(txdp, tx_pkts, n - 1, flags);
++		tx_pkts += (n - 1);
++		txdp += (n - 1);
 +
-+	uint16_t i, received;
++		idpf_singleq_vtx1(txdp, *tx_pkts++, rs);
 +
-+	for (i = 0, received = 0; i < nb_pkts;
-+	     i += IDPF_DESCS_PER_LOOP_AVX,
-+	     rxdp += IDPF_DESCS_PER_LOOP_AVX) {
-+		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
-+		_mm256_storeu_si256((void *)&rx_pkts[i],
-+				    _mm256_loadu_si256((void *)&sw_ring[i]));
-+#ifdef RTE_ARCH_X86_64
-+		_mm256_storeu_si256
-+			((void *)&rx_pkts[i + 4],
-+			 _mm256_loadu_si256((void *)&sw_ring[i + 4]));
-+#endif
++		nb_commit = (uint16_t)(nb_commit - n);
 +
-+		__m256i raw_desc0_1, raw_desc2_3, raw_desc4_5, raw_desc6_7;
++		tx_id = 0;
++		txq->next_rs = (uint16_t)(txq->rs_thresh - 1);
 +
-+		const __m128i raw_desc7 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 7));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc6 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 6));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc5 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 5));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc4 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 4));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc3 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 3));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc2 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 2));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc1 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 1));
-+		rte_compiler_barrier();
-+		const __m128i raw_desc0 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, rxdp + 0));
++		/* avoid reach the end of ring */
++		txdp = &txq->tx_ring[tx_id];
++		txep = &txq->sw_ring[tx_id];
++	}
 +
-+		raw_desc6_7 = _mm256_inserti128_si256(_mm256_castsi128_si256(raw_desc6),
-+		raw_desc7, 1);
-+		raw_desc4_5 = _mm256_inserti128_si256(_mm256_castsi128_si256(raw_desc4),
-+		raw_desc5, 1);
-+		raw_desc2_3 = _mm256_inserti128_si256(_mm256_castsi128_si256(raw_desc2),
-+		raw_desc3, 1);
-+		raw_desc0_1 = _mm256_inserti128_si256(_mm256_castsi128_si256(raw_desc0),
-+		raw_desc1, 1);
++	idpf_tx_backlog_entry(txep, tx_pkts, nb_commit);
 +
-+		/**
-+		 * convert descriptors 4-7 into mbufs, re-arrange fields.
-+		 * Then write into the mbuf.
-+		 */
-+		__m256i mb6_7 = _mm256_shuffle_epi8(raw_desc6_7, shuf_msk);
-+		__m256i mb4_5 = _mm256_shuffle_epi8(raw_desc4_5, shuf_msk);
++	idpf_singleq_vtx(txdp, tx_pkts, nb_commit, flags);
 +
-+		/**
-+		 * to get packet types, ptype is located in bit16-25
-+		 * of each 128bits
-+		 */
-+		const __m256i ptype_mask = _mm256_set1_epi16(VIRTCHNL2_RX_FLEX_DESC_PTYPE_M);
-+		const __m256i ptypes6_7 = _mm256_and_si256(raw_desc6_7, ptype_mask);
-+		const __m256i ptypes4_5 = _mm256_and_si256(raw_desc4_5, ptype_mask);
-+		const uint16_t ptype7 = _mm256_extract_epi16(ptypes6_7, 9);
-+		const uint16_t ptype6 = _mm256_extract_epi16(ptypes6_7, 1);
-+		const uint16_t ptype5 = _mm256_extract_epi16(ptypes4_5, 9);
-+		const uint16_t ptype4 = _mm256_extract_epi16(ptypes4_5, 1);
++	tx_id = (uint16_t)(tx_id + nb_commit);
++	if (tx_id > txq->next_rs) {
++		txq->tx_ring[txq->next_rs].qw1 |=
++			rte_cpu_to_le_64(((uint64_t)IDPF_TX_DESC_CMD_RS) <<
++					 IDPF_TXD_QW1_CMD_S);
++		txq->next_rs =
++			(uint16_t)(txq->next_rs + txq->rs_thresh);
++	}
 +
-+		mb6_7 = _mm256_insert_epi32(mb6_7, ptype_tbl[ptype7], 4);
-+		mb6_7 = _mm256_insert_epi32(mb6_7, ptype_tbl[ptype6], 0);
-+		mb4_5 = _mm256_insert_epi32(mb4_5, ptype_tbl[ptype5], 4);
-+		mb4_5 = _mm256_insert_epi32(mb4_5, ptype_tbl[ptype4], 0);
-+		/* merge the status bits into one register */
-+		const __m256i status4_7 = _mm256_unpackhi_epi32(raw_desc6_7,
-+			raw_desc4_5);
++	txq->tx_tail = tx_id;
 +
-+		/**
-+		 * convert descriptors 0-3 into mbufs, re-arrange fields.
-+		 * Then write into the mbuf.
-+		 */
-+		__m256i mb2_3 = _mm256_shuffle_epi8(raw_desc2_3, shuf_msk);
-+		__m256i mb0_1 = _mm256_shuffle_epi8(raw_desc0_1, shuf_msk);
++	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
 +
-+		/**
-+		 * to get packet types, ptype is located in bit16-25
-+		 * of each 128bits
-+		 */
-+		const __m256i ptypes2_3 = _mm256_and_si256(raw_desc2_3, ptype_mask);
-+		const __m256i ptypes0_1 = _mm256_and_si256(raw_desc0_1, ptype_mask);
-+		const uint16_t ptype3 = _mm256_extract_epi16(ptypes2_3, 9);
-+		const uint16_t ptype2 = _mm256_extract_epi16(ptypes2_3, 1);
-+		const uint16_t ptype1 = _mm256_extract_epi16(ptypes0_1, 9);
-+		const uint16_t ptype0 = _mm256_extract_epi16(ptypes0_1, 1);
++	return nb_pkts;
++}
 +
-+		mb2_3 = _mm256_insert_epi32(mb2_3, ptype_tbl[ptype3], 4);
-+		mb2_3 = _mm256_insert_epi32(mb2_3, ptype_tbl[ptype2], 0);
-+		mb0_1 = _mm256_insert_epi32(mb0_1, ptype_tbl[ptype1], 4);
-+		mb0_1 = _mm256_insert_epi32(mb0_1, ptype_tbl[ptype0], 0);
-+		/* merge the status bits into one register */
-+		const __m256i status0_3 = _mm256_unpackhi_epi32(raw_desc2_3,
-+			raw_desc0_1);
++uint16_t
++idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
++			       uint16_t nb_pkts)
++{
++	uint16_t nb_tx = 0;
++	struct idpf_tx_queue *txq = (struct idpf_tx_queue *)tx_queue;
 +
-+		/**
-+		 * take the two sets of status bits and merge to one
-+		 * After merge, the packets status flags are in the
-+		 * order (hi->lo): [1, 3, 5, 7, 0, 2, 4, 6]
-+		 */
-+		__m256i status0_7 = _mm256_unpacklo_epi64(status4_7,
-+			status0_3);
++	while (nb_pkts) {
++		uint16_t ret, num;
 +
-+		/* now do flag manipulation */
-+
-+		/* get only flag/error bits we want */
-+		const __m256i flag_bits = _mm256_and_si256(status0_7, flags_mask);
-+		/**
-+		 * l3_l4_error flags, shuffle, then shift to correct adjustment
-+		 * of flags in flags_shuf, and finally mask out extra bits
-+		 */
-+		__m256i l3_l4_flags = _mm256_shuffle_epi8(l3_l4_flags_shuf,
-+			_mm256_srli_epi32(flag_bits, 4));
-+		l3_l4_flags = _mm256_slli_epi32(l3_l4_flags, 1);
-+
-+		__m256i l4_outer_mask = _mm256_set1_epi32(0x6);
-+		__m256i l4_outer_flags = _mm256_and_si256(l3_l4_flags, l4_outer_mask);
-+		l4_outer_flags = _mm256_slli_epi32(l4_outer_flags, 20);
-+
-+		__m256i l3_l4_mask = _mm256_set1_epi32(~0x6);
-+		l3_l4_flags = _mm256_and_si256(l3_l4_flags, l3_l4_mask);
-+		l3_l4_flags = _mm256_or_si256(l3_l4_flags, l4_outer_flags);
-+		l3_l4_flags = _mm256_and_si256(l3_l4_flags, cksum_mask);
-+		/* set rss and vlan flags */
-+		const __m256i rss_vlan_flag_bits = _mm256_srli_epi32(flag_bits, 12);
-+		const __m256i rss_vlan_flags = _mm256_shuffle_epi8(rss_vlan_flags_shuf,
-+			rss_vlan_flag_bits);
-+
-+		/* merge flags */
-+		__m256i mbuf_flags = _mm256_or_si256(l3_l4_flags, rss_vlan_flags);
-+
-+		/**
-+		 * At this point, we have the 8 sets of flags in the low 16-bits
-+		 * of each 32-bit value in vlan0.
-+		 * We want to extract these, and merge them with the mbuf init
-+		 * data so we can do a single write to the mbuf to set the flags
-+		 * and all the other initialization fields. Extracting the
-+		 * appropriate flags means that we have to do a shift and blend
-+		 * for each mbuf before we do the write. However, we can also
-+		 * add in the previously computed rx_descriptor fields to
-+		 * make a single 256-bit write per mbuf
-+		 */
-+		/* check the structure matches expectations */
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, ol_flags) != offsetof(struct rte_mbuf,
-+			rearm_data) + 8);
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rearm_data) != RTE_ALIGN
-+			(offsetof(struct rte_mbuf, rearm_data), 16));
-+		/* build up data and do writes */
-+		__m256i rearm0, rearm1, rearm2, rearm3, rearm4, rearm5, rearm6, rearm7;
-+		rearm6 = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 8), 0x04);
-+		rearm4 = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 4), 0x04);
-+		rearm2 = _mm256_blend_epi32(mbuf_init, mbuf_flags, 0x04);
-+		rearm0 = _mm256_blend_epi32(mbuf_init, _mm256_srli_si256(mbuf_flags, 4), 0x04);
-+		/* permute to add in the rx_descriptor e.g. rss fields */
-+		rearm6 = _mm256_permute2f128_si256(rearm6, mb6_7, 0x20);
-+		rearm4 = _mm256_permute2f128_si256(rearm4, mb4_5, 0x20);
-+		rearm2 = _mm256_permute2f128_si256(rearm2, mb2_3, 0x20);
-+		rearm0 = _mm256_permute2f128_si256(rearm0, mb0_1, 0x20);
-+		/* write to mbuf */
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 6]->rearm_data, rearm6);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 4]->rearm_data, rearm4);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 2]->rearm_data, rearm2);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 0]->rearm_data, rearm0);
-+
-+		/* repeat for the odd mbufs */
-+		const __m256i odd_flags = _mm256_castsi128_si256(_mm256_extracti128_si256
-+			(mbuf_flags, 1));
-+		rearm7 = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(odd_flags, 8), 0x04);
-+		rearm5 = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(odd_flags, 4), 0x04);
-+		rearm3 = _mm256_blend_epi32(mbuf_init, odd_flags, 0x04);
-+		rearm1 = _mm256_blend_epi32(mbuf_init, _mm256_srli_si256(odd_flags, 4), 0x04);
-+		/* since odd mbufs are already in hi 128-bits use blend */
-+		rearm7 = _mm256_blend_epi32(rearm7, mb6_7, 0xF0);
-+		rearm5 = _mm256_blend_epi32(rearm5, mb4_5, 0xF0);
-+		rearm3 = _mm256_blend_epi32(rearm3, mb2_3, 0xF0);
-+		rearm1 = _mm256_blend_epi32(rearm1, mb0_1, 0xF0);
-+		/* again write to mbufs */
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 7]->rearm_data, rearm7);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 5]->rearm_data, rearm5);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 3]->rearm_data, rearm3);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 1]->rearm_data, rearm1);
-+
-+	    /* perform dd_check */
-+		status0_7 = _mm256_and_si256(status0_7, dd_check);
-+		status0_7 = _mm256_packs_epi32(status0_7, _mm256_setzero_si256());
-+
-+		uint64_t burst = rte_popcount64(_mm_cvtsi128_si64(_mm256_extracti128_si256
-+			(status0_7, 1)));
-+		burst += rte_popcount64(_mm_cvtsi128_si64(_mm256_castsi256_si128
-+			(status0_7)));
-+
-+		received += burst;
-+		if (burst != IDPF_DESCS_PER_LOOP_AVX)
++		num = (uint16_t)RTE_MIN(nb_pkts, txq->rs_thresh);
++		ret = idpf_singleq_xmit_fixed_burst_vec_avx2(tx_queue, &tx_pkts[nb_tx],
++						    num);
++		nb_tx += ret;
++		nb_pkts -= ret;
++		if (ret < num)
 +			break;
 +	}
 +
-+	/* update tail pointers */
-+	rxq->rx_tail += received;
-+	rxq->rx_tail &= (rxq->nb_rx_desc - 1);
-+	if ((rxq->rx_tail & 1) == 1 && received > 1) { /* keep avx2 aligned */
-+		rxq->rx_tail--;
-+		received--;
-+	}
-+	rxq->rxrearm_nb += received;
-+	return received;
++	return nb_tx;
 +}
-+
-+/**
-+ * Notice:
-+ * - nb_pkts < IDPF_DESCS_PER_LOOP, just return no packet
-+ */
-+uint16_t
-+idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
-+}
-diff --git a/drivers/common/idpf/meson.build b/drivers/common/idpf/meson.build
-index 46fd45c03b..0a30c7e601 100644
---- a/drivers/common/idpf/meson.build
-+++ b/drivers/common/idpf/meson.build
-@@ -16,6 +16,13 @@ sources = files(
- )
- 
- if arch_subdir == 'x86'
-+    idpf_avx2_lib = static_library('idpf_avx2_lib',
-+        'idpf_common_rxtx_avx2.c',
-+        dependencies: [static_rte_ethdev, static_rte_hash],
-+        include_directories: includes,
-+        c_args: [cflags, '-mavx2'])
-+    objs += idpf_avx2_lib.extract_objects('idpf_common_rxtx_avx2.c')
-+
-     if cc_has_avx512
-         cflags += ['-DCC_AVX512_SUPPORT']
-         avx512_args = cflags + cc_avx512_flags
 diff --git a/drivers/common/idpf/version.map b/drivers/common/idpf/version.map
-index 0729f6b912..22b689f5f5 100644
+index 22b689f5f5..0557321963 100644
 --- a/drivers/common/idpf/version.map
 +++ b/drivers/common/idpf/version.map
-@@ -6,6 +6,7 @@ INTERNAL {
- 
- 	idpf_dp_prep_pkts;
- 	idpf_dp_singleq_recv_pkts;
-+	idpf_dp_singleq_recv_pkts_avx2;
+@@ -10,6 +10,7 @@ INTERNAL {
  	idpf_dp_singleq_recv_pkts_avx512;
  	idpf_dp_singleq_recv_scatter_pkts;
  	idpf_dp_singleq_xmit_pkts;
++	idpf_dp_singleq_xmit_pkts_avx2;
+ 	idpf_dp_singleq_xmit_pkts_avx512;
+ 	idpf_dp_splitq_recv_pkts;
+ 	idpf_dp_splitq_recv_pkts_avx512;
 diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 858bbefe3b..a8377d3fee 100644
+index a8377d3fee..0c3ecd2765 100644
 --- a/drivers/net/intel/idpf/idpf_rxtx.c
 +++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -776,6 +776,10 @@ idpf_set_rx_function(struct rte_eth_dev *dev)
+@@ -887,6 +887,11 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ 	if (idpf_tx_vec_dev_check_default(dev) == IDPF_VECTOR_PATH &&
  	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
- 		vport->rx_vec_allowed = true;
- 
+ 		vport->tx_vec_allowed = true;
++
 +		if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1 &&
 +		    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256)
-+			vport->rx_use_avx2 = true;
++			vport->tx_use_avx2 = true;
 +
  		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512)
  #ifdef CC_AVX512_SUPPORT
- 			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1 &&
-@@ -827,6 +831,13 @@ idpf_set_rx_function(struct rte_eth_dev *dev)
+ 		{
+@@ -946,6 +951,14 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
  				return;
  			}
  #endif /* CC_AVX512_SUPPORT */
-+			if (vport->rx_use_avx2) {
++			if (vport->tx_use_avx2) {
 +				PMD_DRV_LOG(NOTICE,
-+					    "Using Single AVX2 Vector Rx (port %d).",
++					    "Using Single AVX2 Vector Tx (port %d).",
 +					    dev->data->port_id);
-+				dev->rx_pkt_burst = idpf_dp_singleq_recv_pkts_avx2;
++				dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts_avx2;
++				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
 +				return;
 +			}
  		}
- 
- 		if (dev->data->scattered_rx) {
+ 		PMD_DRV_LOG(NOTICE,
+ 			    "Using Single Scalar Tx (port %d).",
 -- 
 2.34.1
 
