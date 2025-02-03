@@ -2,36 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359F2C0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0C4C0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:09:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03BFA40E36;
-	Mon,  3 Feb 2025 05:07:36 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id AC69140696
- for <dev@dpdk.org>; Mon,  3 Feb 2025 05:06:49 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 195352054925; Sun,  2 Feb 2025 20:06:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 195352054925
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738555608;
- bh=bBEALmDcIF03E+dKLxkNyioMiu523vo1h0iVWmpwj28=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=nGTPiD75pJitHvvVDFo48ErGsMpHJ/TXVExhlwhwXOSiS2Ew5zVGTe+3NmIFeDAu7
- 72RBaBY2hAiNgnlzZAF2y91VvIPxeL1XwaUpFNuVY6aQKBJdYyRYVLNbgiEMjE6Opc
- pTZpCr3UoVsIR7zOkHXHzPcoj4ADDSOtXabiRA18=
-From: Andre Muezerie <andremue@linux.microsoft.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 12CAA40E4B;
+	Mon,  3 Feb 2025 05:07:41 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 56F8540DDA
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 05:07:26 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 4640F4617E; Mon,  3 Feb 2025 05:07:26 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v19 22/27] app: add no_wvla_cflag to directories that are not
- VLA-free
-Date: Sun,  2 Feb 2025 20:06:25 -0800
-Message-Id: <1738555590-12753-23-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1738555590-12753-1-git-send-email-andremue@linux.microsoft.com>
-References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
- <1738555590-12753-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [DPDK/vhost/virtio Bug 1642] Devices bound to igb_uio with VT-d
+ enabled do not work on Linux kernel 3.15-3.17
+Date: Mon, 03 Feb 2025 04:07:25 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: INVALID
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: cc bug_status resolution
+Message-ID: <bug-1642-3-68VA3vbRjH@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1642-3@http.bugs.dpdk.org/>
+References: <bug-1642-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385556460.96eB3.2155995
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,164 +55,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The no_wvla_cflag is added to meson.build files in directories that
-are not yet VLA-free.
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
----
- app/pdump/meson.build            |  2 ++
- app/proc-info/meson.build        |  2 ++
- app/test-acl/meson.build         |  2 ++
- app/test-bbdev/meson.build       |  2 ++
- app/test-crypto-perf/meson.build |  2 ++
- app/test-dma-perf/meson.build    |  2 ++
- app/test-eventdev/meson.build    |  2 ++
- app/test-flow-perf/meson.build   |  2 ++
- app/test-pmd/meson.build         | 10 +++++++++-
- app/test-sad/meson.build         |  2 ++
- app/test/meson.build             | 17 ++++++++++++-----
- 11 files changed, 39 insertions(+), 6 deletions(-)
+--17385556460.96eB3.2155995
+Date: Mon, 3 Feb 2025 05:07:26 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-diff --git a/app/pdump/meson.build b/app/pdump/meson.build
-index fb282bba1f..a4c7dd44e7 100644
---- a/app/pdump/meson.build
-+++ b/app/pdump/meson.build
-@@ -9,3 +9,5 @@ endif
- 
- sources = files('main.c')
- deps += ['ethdev', 'kvargs', 'pdump']
-+
-+cflags += no_wvla_cflag
-diff --git a/app/proc-info/meson.build b/app/proc-info/meson.build
-index 4f83f29a64..316253cd5d 100644
---- a/app/proc-info/meson.build
-+++ b/app/proc-info/meson.build
-@@ -12,3 +12,5 @@ deps += ['ethdev', 'security', 'eventdev']
- if dpdk_conf.has('RTE_LIB_METRICS')
-     deps += 'metrics'
- endif
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-acl/meson.build b/app/test-acl/meson.build
-index c0dc4b221a..7d8b707794 100644
---- a/app/test-acl/meson.build
-+++ b/app/test-acl/meson.build
-@@ -9,3 +9,5 @@ endif
- 
- sources = files('main.c')
- deps += ['acl', 'net']
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-bbdev/meson.build b/app/test-bbdev/meson.build
-index 926e0a5271..85b060edec 100644
---- a/app/test-bbdev/meson.build
-+++ b/app/test-bbdev/meson.build
-@@ -26,3 +26,5 @@ endif
- if dpdk_conf.has('RTE_BASEBAND_LA12XX')
-     deps += ['baseband_la12xx']
- endif
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-crypto-perf/meson.build b/app/test-crypto-perf/meson.build
-index 7b02b518f0..87dd3bc5f1 100644
---- a/app/test-crypto-perf/meson.build
-+++ b/app/test-crypto-perf/meson.build
-@@ -23,3 +23,5 @@ deps += ['cryptodev', 'net', 'security']
- if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
-     deps += 'crypto_scheduler'
- endif
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-dma-perf/meson.build b/app/test-dma-perf/meson.build
-index b1557b8125..40d6b7f8e4 100644
---- a/app/test-dma-perf/meson.build
-+++ b/app/test-dma-perf/meson.build
-@@ -13,3 +13,5 @@ sources = files(
-         'main.c',
-         'benchmark.c',
- )
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-eventdev/meson.build b/app/test-eventdev/meson.build
-index ab8769c755..f0da9fadf2 100644
---- a/app/test-eventdev/meson.build
-+++ b/app/test-eventdev/meson.build
-@@ -23,3 +23,5 @@ sources = files(
-         'test_pipeline_queue.c',
- )
- deps += 'eventdev'
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-flow-perf/meson.build b/app/test-flow-perf/meson.build
-index 766e4516ad..5758f8d9c6 100644
---- a/app/test-flow-perf/meson.build
-+++ b/app/test-flow-perf/meson.build
-@@ -15,3 +15,5 @@ sources = files(
- )
- 
- deps += ['ethdev']
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index f1c36529b4..8de1528428 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -3,7 +3,15 @@
- 
- # override default name to drop the hyphen
- name = 'testpmd'
--cflags += '-Wno-deprecated-declarations'
-+
-+extra_flags = ['-Wno-deprecated-declarations']
-+
-+foreach arg: extra_flags
-+    if cc.has_argument(arg)
-+        cflags += arg
-+    endif
-+endforeach
-+
- sources = files(
-         '5tswap.c',
-         'cmdline.c',
-diff --git a/app/test-sad/meson.build b/app/test-sad/meson.build
-index a50616a9c7..a1cbcc71d6 100644
---- a/app/test-sad/meson.build
-+++ b/app/test-sad/meson.build
-@@ -9,3 +9,5 @@ endif
- 
- sources = files('main.c')
- deps += ['ipsec', 'net']
-+
-+cflags += no_wvla_cflag
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 48cf77fda9..e68feda70a 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -250,12 +250,19 @@ foreach d:optional_deps
-     endif
- endforeach
- 
--if cc.has_argument('-Wno-format-truncation')
--    cflags += '-Wno-format-truncation'
--endif
-+cflags += no_wvla_cflag
-+
-+extra_flags = [
-+    # Strict-aliasing rules are violated by uint8_t[] to context size casts.
-+    '-fno-strict-aliasing',
-+    '-Wno-format-truncation',
-+]
- 
--# Strict-aliasing rules are violated by uint8_t[] to context size casts.
--cflags += '-fno-strict-aliasing'
-+foreach arg: extra_flags
-+    if cc.has_argument(arg)
-+        cflags += arg
-+    endif
-+endforeach
- 
- # Enable using internal APIs in unit tests
- cflags += '-DALLOW_INTERNAL_API'
--- 
-2.47.2.vfs.0.1
+https://bugs.dpdk.org/show_bug.cgi?id=3D1642
 
+Stephen Hemminger (stephen@networkplumber.org) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |stephen@networkplumber.org
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |INVALID
+
+--- Comment #1 from Stephen Hemminger (stephen@networkplumber.org) ---
+Why are you reporting a kernel bug in the DPDK?=20
+And 3.18 kernel is end of life.
+Currently the oldest kernel the upstream DPDK must support is the oldest LTS
+kernel (4.4).
+IF you are stuck with older kernel because of Enterprise or Embedded, then
+contact your vendor.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17385556460.96eB3.2155995
+Date: Mon, 3 Feb 2025 05:07:26 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:stephen&#=
+64;networkplumber.org" title=3D"Stephen Hemminger (stephen&#64;networkplumb=
+er.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
+o not work on Linux kernel 3.15-3.17"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642">bug 1642</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">CC</td>
+           <td>
+               &nbsp;
+           </td>
+           <td>stephen&#64;networkplumber.org
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>INVALID
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
+o not work on Linux kernel 3.15-3.17"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642#c1">Comment # 1</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
+o not work on Linux kernel 3.15-3.17"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642">bug 1642</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+stephen&#64;networkplumber.org" title=3D"Stephen Hemminger (stephen&#64;net=
+workplumber.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Why are you reporting a kernel bug=
+ in the DPDK?=20
+And 3.18 kernel is end of life.
+Currently the oldest kernel the upstream DPDK must support is the oldest LTS
+kernel (4.4).
+IF you are stuck with older kernel because of Enterprise or Embedded, then
+contact your vendor.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1642#c1">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17385556460.96eB3.2155995--
