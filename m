@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C501CC0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AF6C0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:39:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BAF6D400EF;
-	Mon,  3 Feb 2025 03:37:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EA7C1400EF;
+	Mon,  3 Feb 2025 03:39:46 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 12839400D7
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:37:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 19E69400D7
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 03:39:46 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id D02D94617B; Mon,  3 Feb 2025 03:37:15 +0100 (CET)
+ id F363E4617B; Mon,  3 Feb 2025 03:39:45 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/eventdev Bug 1626] HPET timers do not work on the Osage
- customer reference platform
-Date: Mon, 03 Feb 2025 02:37:15 +0000
+Subject: [DPDK/testpmd Bug 1627] Not all variants of supported NIC types have
+ been used in testing
+Date: Mon, 03 Feb 2025 02:39:45 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: eventdev
+X-Bugzilla-Component: testpmd
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1626-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385502350.1F14EA.2105094
+Message-ID: <bug-1627-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385503850.8FeDaF.2106775
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385502350.1F14EA.2105094
-Date: Mon, 3 Feb 2025 03:37:15 +0100
+--17385503850.8FeDaF.2106775
+Date: Mon, 3 Feb 2025 03:39:45 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1626
+https://bugs.dpdk.org/show_bug.cgi?id=3D1627
 
-            Bug ID: 1626
-           Summary: HPET timers do not work on the Osage customer
-                    reference platform
+            Bug ID: 1627
+           Summary: Not all variants of supported NIC types have been used
+                    in testing
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,41 +77,69 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1626
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: eventdev
+         Component: testpmd
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-HPET timers do not work on the Osage customer reference platform which incl=
-udes
-an Intel=C2=AE Xeon=C2=AE processor 5500 series processor) using the releas=
-ed BIOS from
-Intel.
+Description:
+The supported network interface cards can come in a number of variants with
+different device ID=E2=80=99s. Not all of these variants have been tested w=
+ith the
+DPDK.
+
+The NIC device identifiers used during testing:
+
+Intel=C2=AE Ethernet Controller XL710 for 40GbE QSFP+ [8086:1584]
+
+Intel=C2=AE Ethernet Controller XL710 for 40GbE QSFP+ [8086:1583]
+
+Intel=C2=AE Ethernet Controller X710 for 10GbE SFP+ [8086:1572]
+
+Intel=C2=AE 82576 Gigabit Ethernet Controller [8086:10c9]
+
+Intel=C2=AE 82576 Quad Copper Gigabit Ethernet Controller [8086:10e8]
+
+Intel=C2=AE 82580 Dual Copper Gigabit Ethernet Controller [8086:150e]
+
+Intel=C2=AE I350 Quad Copper Gigabit Ethernet Controller [8086:1521]
+
+Intel=C2=AE 82599 Dual Fibre 10 Gigabit Ethernet Controller [8086:10fb]
+
+Intel=C2=AE Ethernet Server Adapter X520-T2 [8086: 151c]
+
+Intel=C2=AE Ethernet Controller X540-T2 [8086:1528]
+
+Intel=C2=AE 82574L Gigabit Network Connection [8086:10d3]
+
+Emulated Intel=C2=AE 82540EM Gigabit Ethernet Controller [8086:100e]
+
+Emulated Intel=C2=AE 82545EM Gigabit Ethernet Controller [8086:100f]
+
+Intel=C2=AE Ethernet Server Adapter X520-4 [8086:154a]
+
+Intel=C2=AE Ethernet Controller I210 [8086:1533]
 
 Implication:
-On Osage boards, the implementation of the rte_delay_us() function must be
-changed to not use the HPET timer.
+Risk of issues with untested variants.
 
 Resolution/Workaround:
-This can be addressed by building the system with RTE_LIBEAL_USE_HPET unset=
- or
-by using the --no-hpet EAL option.
+Use tested NIC variants. For those supported Ethernet controllers, addition=
+al
+device IDs may be added to the software if required.
 
 Affected Environment/Platform:
-The Osage customer reference platform. Other vendor platforms with Intel=C2=
-=AE Xeon=C2=AE
-processor 5500 series processors should work correctly, provided the BIOS
-supports HPET.
+All.
 
 Driver/Module:
-lib/eal/include/rte_cycles.h
+Poll-mode drivers
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385502350.1F14EA.2105094
-Date: Mon, 3 Feb 2025 03:37:15 +0100
+--17385503850.8FeDaF.2106775
+Date: Mon, 3 Feb 2025 03:39:45 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -129,16 +157,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - HPET timers do not work on the Osage customer ref=
-erence platform"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1626">1626</a>
+   title=3D"UNCONFIRMED - Not all variants of supported NIC types have been=
+ used in testing"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1627">1627</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>HPET timers do not work on the Osage customer reference platf=
-orm
+          <td>Not all variants of supported NIC types have been used in tes=
+ting
           </td>
         </tr>
 
@@ -186,7 +214,7 @@ orm
 
         <tr>
           <th>Component</th>
-          <td>eventdev
+          <td>testpmd
           </td>
         </tr>
 
@@ -209,29 +237,57 @@ orm
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">HPET timers do not work on the Osa=
-ge customer reference platform which includes
-an Intel=C2=AE Xeon=C2=AE processor 5500 series processor) using the releas=
-ed BIOS from
-Intel.
+          <pre class=3D"bz_comment_text">Description:
+The supported network interface cards can come in a number of variants with
+different device ID=E2=80=99s. Not all of these variants have been tested w=
+ith the
+DPDK.
+
+The NIC device identifiers used during testing:
+
+Intel=C2=AE Ethernet Controller XL710 for 40GbE QSFP+ [8086:1584]
+
+Intel=C2=AE Ethernet Controller XL710 for 40GbE QSFP+ [8086:1583]
+
+Intel=C2=AE Ethernet Controller X710 for 10GbE SFP+ [8086:1572]
+
+Intel=C2=AE 82576 Gigabit Ethernet Controller [8086:10c9]
+
+Intel=C2=AE 82576 Quad Copper Gigabit Ethernet Controller [8086:10e8]
+
+Intel=C2=AE 82580 Dual Copper Gigabit Ethernet Controller [8086:150e]
+
+Intel=C2=AE I350 Quad Copper Gigabit Ethernet Controller [8086:1521]
+
+Intel=C2=AE 82599 Dual Fibre 10 Gigabit Ethernet Controller [8086:10fb]
+
+Intel=C2=AE Ethernet Server Adapter X520-T2 [8086: 151c]
+
+Intel=C2=AE Ethernet Controller X540-T2 [8086:1528]
+
+Intel=C2=AE 82574L Gigabit Network Connection [8086:10d3]
+
+Emulated Intel=C2=AE 82540EM Gigabit Ethernet Controller [8086:100e]
+
+Emulated Intel=C2=AE 82545EM Gigabit Ethernet Controller [8086:100f]
+
+Intel=C2=AE Ethernet Server Adapter X520-4 [8086:154a]
+
+Intel=C2=AE Ethernet Controller I210 [8086:1533]
 
 Implication:
-On Osage boards, the implementation of the rte_delay_us() function must be
-changed to not use the HPET timer.
+Risk of issues with untested variants.
 
 Resolution/Workaround:
-This can be addressed by building the system with RTE_LIBEAL_USE_HPET unset=
- or
-by using the --no-hpet EAL option.
+Use tested NIC variants. For those supported Ethernet controllers, addition=
+al
+device IDs may be added to the software if required.
 
 Affected Environment/Platform:
-The Osage customer reference platform. Other vendor platforms with Intel=C2=
-=AE Xeon=C2=AE
-processor 5500 series processors should work correctly, provided the BIOS
-supports HPET.
+All.
 
 Driver/Module:
-lib/eal/include/rte_cycles.h
+Poll-mode drivers
           </pre>
         </div>
       </p>
@@ -248,7 +304,7 @@ lib/eal/include/rte_cycles.h
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1626">
+?id=3D1627">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -257,4 +313,4 @@ ication">
     </body>
 </html>=
 
---17385502350.1F14EA.2105094--
+--17385503850.8FeDaF.2106775--
