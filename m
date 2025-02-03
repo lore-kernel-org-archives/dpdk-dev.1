@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E23C0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAA0C0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:06:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7D984060F;
-	Mon,  3 Feb 2025 05:01:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BE7A04060F;
+	Mon,  3 Feb 2025 05:06:40 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 33CF3400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 05:01:00 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A0476400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 05:06:39 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 13EA14617C; Mon,  3 Feb 2025 05:01:00 +0100 (CET)
+ id 93A284617C; Mon,  3 Feb 2025 05:06:39 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 1648] virtio tx_burst() function cannot do
- TSO on shared packets
-Date: Mon, 03 Feb 2025 04:01:00 +0000
+Subject: [DPDK/other Bug 1649] igb_uio legacy mode can not be used in
+ X710/XL710/XXV710
+Date: Mon, 03 Feb 2025 04:06:39 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Component: other
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1648-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385552590.B5abEB0Bf.2151910
+Message-ID: <bug-1649-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385555990.Bbff36dB6.2155555
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385552590.B5abEB0Bf.2151910
-Date: Mon, 3 Feb 2025 05:00:59 +0100
+--17385555990.Bbff36dB6.2155555
+Date: Mon, 3 Feb 2025 05:06:39 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1648
+https://bugs.dpdk.org/show_bug.cgi?id=3D1649
 
-            Bug ID: 1648
-           Summary: virtio tx_burst() function cannot do TSO on shared
-                    packets
+            Bug ID: 1649
+           Summary: igb_uio legacy mode can not be used in
+                    X710/XL710/XXV710
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,36 +77,29 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1648
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: vhost/virtio
+         Component: other
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-The standard TX function of virtio driver does not manage shared packets
-properly when doing TSO. These packets should be read-only but the driver
-modifies them.
-
-When doing TSO, the virtio standard expects that the L4 checksum is set to =
-the
-pseudo header checksum in the packet data, which is different than the DPDK
-API. The driver patches the L4 checksum to conform to the virtio standard, =
-but
-this solution is invalid when dealing with shared packets (clones), because=
- the
-packet data should not be modified.
+X710/XL710/XXV710 NICs lack support for indicating INTx is asserted via the
+interrupt bit in the PCI status register. Linux deleted them from INTx supp=
+ort
+table. The related commit.
 
 Implication:
-In this situation, the shared data will be modified by the driver, potentia=
-lly
-causing race conditions with the other users of the mbuf data.
+When insmod igb_uio with intr_mode=3Dlegacy and test link status interrupt.=
+ Since
+INTx interrupt is not supported by X710/XL710/XXV710, it will cause
+Input/Output error when reading file descriptor.
 
 Resolution/Workaround:
-The workaround in the application is to ensure that the network headers in =
-the
-packet data are not shared.
+Do not bind igb_uio with legacy mode in X710/XL710/XXV710 NICs, or do not u=
+se
+kernel version >4.7 when you bind igb_uio with legacy mode.
 
 Affected Environment/Platform:
-Virtual machines running a virtio driver.
+ALL.
 
 Driver/Module:
 Poll Mode Driver (PMD).
@@ -115,8 +108,8 @@ Poll Mode Driver (PMD).
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385552590.B5abEB0Bf.2151910
-Date: Mon, 3 Feb 2025 05:00:59 +0100
+--17385555990.Bbff36dB6.2155555
+Date: Mon, 3 Feb 2025 05:06:39 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -134,15 +127,15 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - virtio tx_burst() function cannot do TSO on share=
-d packets"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1648">1648</a>
+   title=3D"UNCONFIRMED - igb_uio legacy mode can not be used in X710/XL710=
+/XXV710"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1649">1649</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>virtio tx_burst() function cannot do TSO on shared packets
+          <td>igb_uio legacy mode can not be used in X710/XL710/XXV710
           </td>
         </tr>
 
@@ -190,7 +183,7 @@ d packets"
 
         <tr>
           <th>Component</th>
-          <td>vhost/virtio
+          <td>other
           </td>
         </tr>
 
@@ -213,32 +206,25 @@ d packets"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The standard TX function of virtio=
- driver does not manage shared packets
-properly when doing TSO. These packets should be read-only but the driver
-modifies them.
-
-When doing TSO, the virtio standard expects that the L4 checksum is set to =
-the
-pseudo header checksum in the packet data, which is different than the DPDK
-API. The driver patches the L4 checksum to conform to the virtio standard, =
-but
-this solution is invalid when dealing with shared packets (clones), because=
- the
-packet data should not be modified.
+          <pre class=3D"bz_comment_text">X710/XL710/XXV710 NICs lack suppor=
+t for indicating INTx is asserted via the
+interrupt bit in the PCI status register. Linux deleted them from INTx supp=
+ort
+table. The related commit.
 
 Implication:
-In this situation, the shared data will be modified by the driver, potentia=
-lly
-causing race conditions with the other users of the mbuf data.
+When insmod igb_uio with intr_mode=3Dlegacy and test link status interrupt.=
+ Since
+INTx interrupt is not supported by X710/XL710/XXV710, it will cause
+Input/Output error when reading file descriptor.
 
 Resolution/Workaround:
-The workaround in the application is to ensure that the network headers in =
-the
-packet data are not shared.
+Do not bind igb_uio with legacy mode in X710/XL710/XXV710 NICs, or do not u=
+se
+kernel version &gt;4.7 when you bind igb_uio with legacy mode.
 
 Affected Environment/Platform:
-Virtual machines running a virtio driver.
+ALL.
 
 Driver/Module:
 Poll Mode Driver (PMD).
@@ -258,7 +244,7 @@ Poll Mode Driver (PMD).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1648">
+?id=3D1649">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -267,4 +253,4 @@ ication">
     </body>
 </html>=
 
---17385552590.B5abEB0Bf.2151910--
+--17385555990.Bbff36dB6.2155555--
