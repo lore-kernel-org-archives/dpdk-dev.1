@@ -2,41 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0C4C0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A78DC0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:09:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12CAA40E4B;
-	Mon,  3 Feb 2025 05:07:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 10A3440DDD;
+	Mon,  3 Feb 2025 05:09:28 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 56F8540DDA
- for <dev@dpdk.org>; Mon,  3 Feb 2025 05:07:26 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C069F40A7F
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 05:09:16 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4640F4617E; Mon,  3 Feb 2025 05:07:26 +0100 (CET)
+ id B3AF04617C; Mon,  3 Feb 2025 05:09:16 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 1642] Devices bound to igb_uio with VT-d
- enabled do not work on Linux kernel 3.15-3.17
-Date: Mon, 03 Feb 2025 04:07:25 +0000
+Subject: [DPDK/meson Bug 1644] DPDK may not build on some Intel CPUs using
+ clang < 3.7.0
+Date: Mon, 03 Feb 2025 04:09:16 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Component: meson
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: INVALID
+X-Bugzilla-Resolution: WONTFIX
 X-Bugzilla-Priority: Normal
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: cc bug_status resolution
-Message-ID: <bug-1642-3-68VA3vbRjH@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1642-3@http.bugs.dpdk.org/>
-References: <bug-1642-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385556460.96eB3.2155995
+Message-ID: <bug-1644-3-VeAniwjNhj@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1644-3@http.bugs.dpdk.org/>
+References: <bug-1644-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385557560.88dA.2157052
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385556460.96eB3.2155995
-Date: Mon, 3 Feb 2025 05:07:26 +0100
+--17385557560.88dA.2157052
+Date: Mon, 3 Feb 2025 05:09:16 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,7 +65,7 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1642
+https://bugs.dpdk.org/show_bug.cgi?id=3D1644
 
 Stephen Hemminger (stephen@networkplumber.org) changed:
 
@@ -73,22 +73,18 @@ Stephen Hemminger (stephen@networkplumber.org) changed:
 ----------------------------------------------------------------------------
                  CC|                            |stephen@networkplumber.org
              Status|UNCONFIRMED                 |RESOLVED
-         Resolution|---                         |INVALID
+         Resolution|---                         |WONTFIX
 
 --- Comment #1 from Stephen Hemminger (stephen@networkplumber.org) ---
-Why are you reporting a kernel bug in the DPDK?=20
-And 3.18 kernel is end of life.
-Currently the oldest kernel the upstream DPDK must support is the oldest LTS
-kernel (4.4).
-IF you are stuck with older kernel because of Enterprise or Embedded, then
-contact your vendor.
+You are living in the past. Clang 3.7.0 was released over 10 years ago.
+DPDK doesn't need to worry about this.
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385556460.96eB3.2155995
-Date: Mon, 3 Feb 2025 05:07:26 +0100
+--17385557560.88dA.2157052
+Date: Mon, 3 Feb 2025 05:09:16 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -106,9 +102,9 @@ er.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
 </span> changed
           <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
-o not work on Linux kernel 3.15-3.17"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642">bug 1642</a>
+   title=3D"RESOLVED WONTFIX - DPDK may not build on some Intel CPUs using =
+clang &lt; 3.7.0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1644">bug 1644</a>
           <br>
              <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
 =3D"bz_diff_table">
@@ -139,33 +135,29 @@ o not work on Linux kernel 3.15-3.17"
            <td style=3D"text-align:right;">Resolution</td>
            <td>---
            </td>
-           <td>INVALID
+           <td>WONTFIX
            </td>
          </tr></table>
       <p>
         <div class=3D"bz_comment_block">
             <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
-o not work on Linux kernel 3.15-3.17"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642#c1">Comment # 1</a>
+   title=3D"RESOLVED WONTFIX - DPDK may not build on some Intel CPUs using =
+clang &lt; 3.7.0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1644#c1">Comment # 1</a>
               on <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Devices bound to igb_uio with VT-d enabled d=
-o not work on Linux kernel 3.15-3.17"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1642">bug 1642</a>
+   title=3D"RESOLVED WONTFIX - DPDK may not build on some Intel CPUs using =
+clang &lt; 3.7.0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1644">bug 1644</a>
               from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
 stephen&#64;networkplumber.org" title=3D"Stephen Hemminger (stephen&#64;net=
 workplumber.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
 </span>
             </b>
-          <pre class=3D"bz_comment_text">Why are you reporting a kernel bug=
- in the DPDK?=20
-And 3.18 kernel is end of life.
-Currently the oldest kernel the upstream DPDK must support is the oldest LTS
-kernel (4.4).
-IF you are stuck with older kernel because of Enterprise or Embedded, then
-contact your vendor.
+          <pre class=3D"bz_comment_text">You are living in the past. Clang =
+3.7.0 was released over 10 years ago.
+DPDK doesn't need to worry about this.
           </pre>
         </div>
       </p>
@@ -182,7 +174,7 @@ contact your vendor.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1642#c1">
+?id=3D1644#c1">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -191,4 +183,4 @@ ication">
     </body>
 </html>=
 
---17385556460.96eB3.2155995--
+--17385557560.88dA.2157052--
