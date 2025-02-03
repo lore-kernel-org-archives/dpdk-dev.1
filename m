@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE29C0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E23C0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:01:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 585844060F;
-	Mon,  3 Feb 2025 04:58:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E7D984060F;
+	Mon,  3 Feb 2025 05:01:00 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 488F4400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 04:58:52 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 33CF3400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 05:01:00 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 649644617C; Mon,  3 Feb 2025 04:58:51 +0100 (CET)
+ id 13EA14617C; Mon,  3 Feb 2025 05:01:00 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1647] uio_pci_generic module bind failed in
- X710/XL710/XXV710
-Date: Mon, 03 Feb 2025 03:58:51 +0000
+Subject: [DPDK/vhost/virtio Bug 1648] virtio tx_burst() function cannot do
+ TSO on shared packets
+Date: Mon, 03 Feb 2025 04:01:00 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: vhost/virtio
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1647-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385551310.D2B56.2150131
+Message-ID: <bug-1648-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385552590.B5abEB0Bf.2151910
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385551310.D2B56.2150131
-Date: Mon, 3 Feb 2025 04:58:51 +0100
+--17385552590.B5abEB0Bf.2151910
+Date: Mon, 3 Feb 2025 05:00:59 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1647
+https://bugs.dpdk.org/show_bug.cgi?id=3D1648
 
-            Bug ID: 1647
-           Summary: uio_pci_generic module bind failed in
-                    X710/XL710/XXV710
+            Bug ID: 1648
+           Summary: virtio tx_burst() function cannot do TSO on shared
+                    packets
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,32 +77,36 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1647
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: vhost/virtio
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-The uio_pci_generic module is not supported by XL710, since the errata of X=
-L710
-states that the Interrupt Status bit is not implemented. The errata is the =
-item
-#71 from the xl710 controller spec. The hw limitation is the same as other
-X710/XXV710 NICs.
+The standard TX function of virtio driver does not manage shared packets
+properly when doing TSO. These packets should be read-only but the driver
+modifies them.
+
+When doing TSO, the virtio standard expects that the L4 checksum is set to =
+the
+pseudo header checksum in the packet data, which is different than the DPDK
+API. The driver patches the L4 checksum to conform to the virtio standard, =
+but
+this solution is invalid when dealing with shared packets (clones), because=
+ the
+packet data should not be modified.
 
 Implication:
-When use --bind=3Duio_pci_generic, the uio_pci_generic module probes device=
- and
-check the Interrupt Status bit. Since it is not supported by X710/XL710/XXV=
-710,
-it return a failed value. The statement that these products don=E2=80=99t s=
-upport INTx
-masking, is indicated in the related linux kernel commit.
+In this situation, the shared data will be modified by the driver, potentia=
+lly
+causing race conditions with the other users of the mbuf data.
 
 Resolution/Workaround:
-Do not bind the uio_pci_generic module in X710/XL710/XXV710 NICs.
+The workaround in the application is to ensure that the network headers in =
+the
+packet data are not shared.
 
 Affected Environment/Platform:
-All.
+Virtual machines running a virtio driver.
 
 Driver/Module:
 Poll Mode Driver (PMD).
@@ -111,8 +115,8 @@ Poll Mode Driver (PMD).
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385551310.D2B56.2150131
-Date: Mon, 3 Feb 2025 04:58:51 +0100
+--17385552590.B5abEB0Bf.2151910
+Date: Mon, 3 Feb 2025 05:00:59 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -130,15 +134,15 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - uio_pci_generic module bind failed in X710/XL710/=
-XXV710"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1647">1647</a>
+   title=3D"UNCONFIRMED - virtio tx_burst() function cannot do TSO on share=
+d packets"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1648">1648</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>uio_pci_generic module bind failed in X710/XL710/XXV710
+          <td>virtio tx_burst() function cannot do TSO on shared packets
           </td>
         </tr>
 
@@ -186,7 +190,7 @@ XXV710"
 
         <tr>
           <th>Component</th>
-          <td>ethdev
+          <td>vhost/virtio
           </td>
         </tr>
 
@@ -209,27 +213,32 @@ XXV710"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The uio_pci_generic module is not =
-supported by XL710, since the errata of XL710
-states that the Interrupt Status bit is not implemented. The errata is the =
-item
-#71 from the xl710 controller spec. The hw limitation is the same as other
-X710/XXV710 NICs.
+          <pre class=3D"bz_comment_text">The standard TX function of virtio=
+ driver does not manage shared packets
+properly when doing TSO. These packets should be read-only but the driver
+modifies them.
+
+When doing TSO, the virtio standard expects that the L4 checksum is set to =
+the
+pseudo header checksum in the packet data, which is different than the DPDK
+API. The driver patches the L4 checksum to conform to the virtio standard, =
+but
+this solution is invalid when dealing with shared packets (clones), because=
+ the
+packet data should not be modified.
 
 Implication:
-When use --bind=3Duio_pci_generic, the uio_pci_generic module probes device=
- and
-check the Interrupt Status bit. Since it is not supported by X710/XL710/XXV=
-710,
-it return a failed value. The statement that these products don=E2=80=99t s=
-upport INTx
-masking, is indicated in the related linux kernel commit.
+In this situation, the shared data will be modified by the driver, potentia=
+lly
+causing race conditions with the other users of the mbuf data.
 
 Resolution/Workaround:
-Do not bind the uio_pci_generic module in X710/XL710/XXV710 NICs.
+The workaround in the application is to ensure that the network headers in =
+the
+packet data are not shared.
 
 Affected Environment/Platform:
-All.
+Virtual machines running a virtio driver.
 
 Driver/Module:
 Poll Mode Driver (PMD).
@@ -249,7 +258,7 @@ Poll Mode Driver (PMD).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1647">
+?id=3D1648">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -258,4 +267,4 @@ ication">
     </body>
 </html>=
 
---17385551310.D2B56.2150131--
+--17385552590.B5abEB0Bf.2151910--
