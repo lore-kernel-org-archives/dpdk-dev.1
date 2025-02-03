@@ -2,27 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38053C0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EC8C0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:05:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 634C14060F;
-	Mon,  3 Feb 2025 04:04:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 822524060F;
+	Mon,  3 Feb 2025 04:05:55 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id CEAA5400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 04:04:41 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 11ED3400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 04:05:55 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id C21B34617C; Mon,  3 Feb 2025 04:04:41 +0100 (CET)
+ id 0B61F4617C; Mon,  3 Feb 2025 04:05:55 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: =?UTF-8?B?W0RQREsvZXhhbXBsZXMgQnVnIDE2MzddIEludGVswq4gUXVpY2tB?=
- =?UTF-8?B?c3Npc3QgVGVjaG5vbG9neSBzYW1wbGUgYXBwbGljYXRpb24gZG9lcyBub3Qg?=
- =?UTF-8?B?d29yayBvbiBhIDMyLWJpdCBPUyBvbiBTaHVtd2F5?=
-Date: Mon, 03 Feb 2025 03:04:41 +0000
+Subject: [DPDK/ethdev Bug 1638] Differences in how different Intel NICs
+ handle maximum packet length for jumbo frame
+Date: Mon, 03 Feb 2025 03:05:55 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: examples
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -36,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1637-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385518810.deE8.2121660
+Message-ID: <bug-1638-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385519540.DB20A29Fb.2122258
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -57,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385518810.deE8.2121660
-Date: Mon, 3 Feb 2025 04:04:41 +0100
+--17385519540.DB20A29Fb.2122258
+Date: Mon, 3 Feb 2025 04:05:54 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -66,12 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1637
+https://bugs.dpdk.org/show_bug.cgi?id=3D1638
 
-            Bug ID: 1637
-           Summary: Intel=C2=AE QuickAssist Technology sample application d=
-oes
-                    not work on a 32-bit OS on Shumway
+            Bug ID: 1638
+           Summary: Differences in how different Intel NICs handle maximum
+                    packet length for jumbo frame
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -79,36 +77,41 @@ oes
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: examples
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-The Intel=C2=AE Communications Chipset 89xx Series device does not fully su=
-pport
-NUMA on a 32-bit OS. Consequently, the sample application cannot work prope=
-rly
-on Shumway, since it requires NUMA on both nodes.
+10 Gigabit Ethernet devices from Intel do not take VLAN tags into account w=
+hen
+calculating packet size while Gigabit Ethernet devices do so for jumbo fram=
+es.
 
 Implication:
-The sample application cannot work in 32-bit mode with emulated NUMA, on
-multi-socket boards.
+When receiving packets with VLAN tags, the actual maximum size of useful
+payload that Intel Gigabit Ethernet devices are able to receive is 4 bytes =
+(or
+8 bytes in the case of packets with extended VLAN tags) less than that of I=
+ntel
+10 Gigabit Ethernet devices.
 
 Resolution/Workaround:
-There is no workaround available.
+Increase the configured maximum packet size when using Intel Gigabit Ethern=
+et
+devices.
 
 Affected Environment/Platform:
-Shumway
+All.
 
 Driver/Module:
-All.
+Poll Mode Driver (PMD).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385518810.deE8.2121660
-Date: Mon, 3 Feb 2025 04:04:41 +0100
+--17385519540.DB20A29Fb.2122258
+Date: Mon, 3 Feb 2025 04:05:54 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -126,16 +129,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Intel=C2=AE QuickAssist Technology sample applica=
-tion does not work on a 32-bit OS on Shumway"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1637">1637</a>
+   title=3D"UNCONFIRMED - Differences in how different Intel NICs handle ma=
+ximum packet length for jumbo frame"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1638">1638</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Intel=C2=AE QuickAssist Technology sample application does no=
-t work on a 32-bit OS on Shumway
+          <td>Differences in how different Intel NICs handle maximum packet=
+ length for jumbo frame
           </td>
         </tr>
 
@@ -183,7 +186,7 @@ t work on a 32-bit OS on Shumway
 
         <tr>
           <th>Component</th>
-          <td>examples
+          <td>ethdev
           </td>
         </tr>
 
@@ -206,24 +209,29 @@ t work on a 32-bit OS on Shumway
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The Intel=C2=AE Communications Chi=
-pset 89xx Series device does not fully support
-NUMA on a 32-bit OS. Consequently, the sample application cannot work prope=
-rly
-on Shumway, since it requires NUMA on both nodes.
+          <pre class=3D"bz_comment_text">10 Gigabit Ethernet devices from I=
+ntel do not take VLAN tags into account when
+calculating packet size while Gigabit Ethernet devices do so for jumbo fram=
+es.
 
 Implication:
-The sample application cannot work in 32-bit mode with emulated NUMA, on
-multi-socket boards.
+When receiving packets with VLAN tags, the actual maximum size of useful
+payload that Intel Gigabit Ethernet devices are able to receive is 4 bytes =
+(or
+8 bytes in the case of packets with extended VLAN tags) less than that of I=
+ntel
+10 Gigabit Ethernet devices.
 
 Resolution/Workaround:
-There is no workaround available.
+Increase the configured maximum packet size when using Intel Gigabit Ethern=
+et
+devices.
 
 Affected Environment/Platform:
-Shumway
+All.
 
 Driver/Module:
-All.
+Poll Mode Driver (PMD).
           </pre>
         </div>
       </p>
@@ -240,7 +248,7 @@ All.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1637">
+?id=3D1638">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -249,4 +257,4 @@ ication">
     </body>
 </html>=
 
---17385518810.deE8.2121660--
+--17385519540.DB20A29Fb.2122258--
