@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29363C0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C30EC0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:08:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D3DB40DCA;
-	Mon,  3 Feb 2025 05:07:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5767940DD0;
+	Mon,  3 Feb 2025 05:07:15 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id B67DE4069D
+ by mails.dpdk.org (Postfix) with ESMTP id CA6A8406A2
  for <dev@dpdk.org>; Mon,  3 Feb 2025 05:06:48 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 90035203719A; Sun,  2 Feb 2025 20:06:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 90035203719A
+ id 83D9F203718D; Sun,  2 Feb 2025 20:06:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 83D9F203718D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738555607;
- bh=R3V4XamouzonlE20qOkBxm8ebIicgN8hHsgTyx8pLrg=;
+ bh=P2GILx611CmHWZQamm6DnO2lGy135vG+YjfFI9+sUH4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Osr4e7da2T90DycNvLSgZtKkUqyWwtEyHMS+oaczM9F/eFO86MAx8ZErc2Q4NT7fT
- Au9rqnXkWRc0NmFBSe9fIhXFKc90nUHXBJkYq7Bbil8jmtEd8V1/Sb6fSXOkCjiNLk
- fD5jnfb/pXYYeerl/31RYwHaNWYTqkOKwM7xT/CY=
+ b=YY56UZ6/kpFDxdIbr/MY4N2eigxyncWQWdPkcjBgJgkPvAvQ2JRL9F1a4sYbclmak
+ DUWso3hxLr2gZVqZ4UVHhjPSM6yJWIa4TXEOqJa+N28HfkARwYTinYT7+SDn6WGHQZ
+ zyyMQ4/GSNh9vopsSmpC9aRQlzxYFj+iyFvQpHy8=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v19 12/27] app/testpmd: remove use of VLAs for Windows built
-Date: Sun,  2 Feb 2025 20:06:15 -0800
-Message-Id: <1738555590-12753-13-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com
+Subject: [PATCH v19 11/27] net/ice: remove use of VLAs
+Date: Sun,  2 Feb 2025 20:06:14 -0800
+Message-Id: <1738555590-12753-12-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738555590-12753-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,135 +44,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Tyler Retzlaff <roretzla@linux.microsoft.com>
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-MSVC does not support VLAs, replace VLAs with standard C arrays
-or alloca(). alloca() is available for all toolchain/platform
-combinations officially supported by DPDK.
+../drivers/net/ice/ice_rxtx.c:1871:29: warning:
+    variable length array used [-Wvla]
 
-Signed-off-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Here VLA is used as a temp array for mbufs that will be used as a split
+RX data buffers.
+As at any given time only one thread can do RX from particular queue,
+at rx_queue_setup() we can allocate extra space for that array, and then
+safely use it at RX fast-path.
+
+Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test-pmd/cmdline.c      |  2 +-
- app/test-pmd/cmdline_flow.c | 15 ++++++++++-----
- app/test-pmd/config.c       | 16 +++++++++-------
- 3 files changed, 20 insertions(+), 13 deletions(-)
+ drivers/net/intel/ice/ice_rxtx.c | 18 ++++++++++++------
+ drivers/net/intel/ice/ice_rxtx.h |  2 ++
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7e0666e9f6..2897e44c34 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -13274,7 +13274,7 @@ cmd_set_port_ptypes_parsed(
- 		return;
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 8dd8644b16..437cf0d807 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -1172,7 +1172,7 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+ 	struct ice_vsi *vsi = pf->main_vsi;
+ 	struct ice_rx_queue *rxq;
+ 	const struct rte_memzone *rz;
+-	uint32_t ring_size;
++	uint32_t ring_size, tlen;
+ 	uint16_t len;
+ 	int use_def_burst_func = 1;
+ 	uint64_t offloads;
+@@ -1280,9 +1280,14 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+ 	/* always reserve more for bulk alloc */
+ 	len = (uint16_t)(nb_desc + ICE_RX_MAX_BURST);
+ 
++	/* allocate extra entries for SW split buffer */
++	tlen = ((rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) != 0) ?
++		rxq->rx_free_thresh : 0;
++	tlen += len;
++
+ 	/* Allocate the software ring. */
+ 	rxq->sw_ring = rte_zmalloc_socket(NULL,
+-					  sizeof(struct ice_rx_entry) * len,
++					  sizeof(struct ice_rx_entry) * tlen,
+ 					  RTE_CACHE_LINE_SIZE,
+ 					  socket_id);
+ 	if (!rxq->sw_ring) {
+@@ -1291,6 +1296,8 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+ 		return -ENOMEM;
  	}
  
--	uint32_t ptypes[ret];
-+	uint32_t *ptypes = alloca(sizeof(uint32_t) * ret);
++	rxq->sw_split_buf = (tlen == len) ? NULL : rxq->sw_ring + len;
++
+ 	ice_reset_rx_queue(rxq);
+ 	rxq->q_set = true;
+ 	dev->data->rx_queues[queue_idx] = rxq;
+@@ -1864,7 +1871,6 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
+ 	uint64_t dma_addr;
+ 	int diag, diag_pay;
+ 	uint64_t pay_addr;
+-	struct rte_mbuf *mbufs_pay[rxq->rx_free_thresh];
  
- 	ret = rte_eth_dev_set_ptypes(port_id, ptype_mask, ptypes, ret);
- 	if (ret < 0) {
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 9e4fc2d95d..e1720e54d7 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -11707,8 +11707,7 @@ parse_hex(struct context *ctx, const struct token *token,
- 	char tmp[16]; /* Ought to be enough. */
- 	int ret;
- 	unsigned int hexlen = len;
--	unsigned int length = 256;
--	uint8_t hex_tmp[length];
-+	uint8_t hex_tmp[256];
+ 	/* Allocate buffers in bulk */
+ 	alloc_idx = (uint16_t)(rxq->rx_free_trigger -
+@@ -1879,7 +1885,7 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
  
- 	/* Arguments are expected. */
- 	if (!arg_data)
-@@ -11735,7 +11734,7 @@ parse_hex(struct context *ctx, const struct token *token,
- 		str += 2;
- 		hexlen -= 2;
- 	}
--	if (hexlen > length)
-+	if (hexlen > RTE_DIM(hex_tmp))
- 		goto error;
- 	ret = parse_hex_string(str, hex_tmp, &hexlen);
- 	if (ret < 0)
-@@ -11868,10 +11867,13 @@ parse_ipv4_addr(struct context *ctx, const struct token *token,
- 		void *buf, unsigned int size)
- {
- 	const struct arg *arg = pop_args(ctx);
--	char str2[len + 1];
-+	char str2[INET_ADDRSTRLEN];
- 	struct in_addr tmp;
- 	int ret;
- 
-+	/* Length is longer than the max length an IPv4 address can have. */
-+	if (len >= INET_ADDRSTRLEN)
-+		return -1;
- 	/* Argument is expected. */
- 	if (!arg)
- 		return -1;
-@@ -11914,11 +11916,14 @@ parse_ipv6_addr(struct context *ctx, const struct token *token,
- 		void *buf, unsigned int size)
- {
- 	const struct arg *arg = pop_args(ctx);
--	char str2[len + 1];
-+	char str2[INET6_ADDRSTRLEN];
- 	struct rte_ipv6_addr tmp;
- 	int ret;
- 
- 	(void)token;
-+	/* Length is longer than the max length an IPv6 address can have. */
-+	if (len >= INET6_ADDRSTRLEN)
-+		return -1;
- 	/* Argument is expected. */
- 	if (!arg)
- 		return -1;
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 4e7fb69183..b19df95321 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -1802,7 +1802,8 @@ port_flow_configure(portid_t port_id,
- {
- 	struct rte_port *port;
- 	struct rte_flow_error error;
--	const struct rte_flow_queue_attr *attr_list[nb_queue];
-+	const struct rte_flow_queue_attr **attr_list =
-+	    alloca(sizeof(struct rte_flow_queue_attr *) * nb_queue);
- 	int std_queue;
- 
- 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
-@@ -2616,10 +2617,10 @@ port_flow_template_table_create(portid_t port_id, uint32_t id,
- 	int ret;
- 	uint32_t i;
- 	struct rte_flow_error error;
--	struct rte_flow_pattern_template
--			*flow_pattern_templates[nb_pattern_templates];
--	struct rte_flow_actions_template
--			*flow_actions_templates[nb_actions_templates];
-+	struct rte_flow_pattern_template **flow_pattern_templates =
-+	    alloca(sizeof(struct rte_flow_pattern_template *) * nb_pattern_templates);
-+	struct rte_flow_actions_template **flow_actions_templates =
-+	    alloca(sizeof(struct rte_flow_actions_template *) * nb_actions_templates);
- 
- 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
- 	    port_id == (portid_t)RTE_PORT_ALL)
-@@ -5551,7 +5552,7 @@ parse_port_list(const char *list, unsigned int *values, unsigned int maxsize)
- 	char *end = NULL;
- 	int min, max;
- 	int value, i;
--	unsigned int marked[maxsize];
-+	unsigned int *marked = alloca(sizeof(unsigned int) * maxsize);
- 
- 	if (list == NULL || values == NULL)
- 		return 0;
-@@ -7292,7 +7293,8 @@ show_macs(portid_t port_id)
- 	if (eth_dev_info_get_print_err(port_id, &dev_info))
- 		return;
- 
--	struct rte_ether_addr addr[dev_info.max_mac_addrs];
-+	struct rte_ether_addr *addr =
-+	    alloca(sizeof(struct rte_ether_addr) * dev_info.max_mac_addrs);
- 	rc = rte_eth_macaddrs_get(port_id, addr, dev_info.max_mac_addrs);
- 	if (rc < 0)
- 		return;
+ 	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) {
+ 		diag_pay = rte_mempool_get_bulk(rxq->rxseg[1].mp,
+-				(void *)mbufs_pay, rxq->rx_free_thresh);
++				(void *)rxq->sw_split_buf, rxq->rx_free_thresh);
+ 		if (unlikely(diag_pay != 0)) {
+ 			rte_mempool_put_bulk(rxq->mp, (void *)rxep,
+ 				    rxq->rx_free_thresh);
+@@ -1906,8 +1912,8 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
+ 			rxdp[i].read.hdr_addr = 0;
+ 			rxdp[i].read.pkt_addr = dma_addr;
+ 		} else {
+-			mb->next = mbufs_pay[i];
+-			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbufs_pay[i]));
++			mb->next = rxq->sw_split_buf[i].mbuf;
++			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mb->next));
+ 			rxdp[i].read.hdr_addr = dma_addr;
+ 			rxdp[i].read.pkt_addr = pay_addr;
+ 		}
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index f9293ac6f9..276d40b57f 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -139,6 +139,8 @@ struct ice_rx_queue {
+ 	uint32_t hw_time_high; /* high 32 bits of timestamp */
+ 	uint32_t hw_time_low; /* low 32 bits of timestamp */
+ 	uint64_t hw_time_update; /* SW time of HW record updating */
++	struct ice_rx_entry *sw_split_buf;
++	/* address of temp buffer for RX split mbufs */
+ 	struct rte_eth_rxseg_split rxseg[ICE_RX_MAX_NSEG];
+ 	uint32_t rxseg_nb;
+ 	bool ts_enable; /* if rxq timestamp is enabled */
 -- 
 2.47.2.vfs.0.1
 
