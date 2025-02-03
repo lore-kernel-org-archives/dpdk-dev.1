@@ -2,25 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BF6C02190
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B60C0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:27:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0125D40287;
-	Mon,  3 Feb 2025 05:26:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 38AF240287;
+	Mon,  3 Feb 2025 05:27:50 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9948040264
- for <dev@dpdk.org>; Mon,  3 Feb 2025 05:26:00 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1135540264
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 05:27:49 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8EE1E4617C; Mon,  3 Feb 2025 05:26:00 +0100 (CET)
+ id EE9D34617C; Mon,  3 Feb 2025 05:27:48 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1651] Linux kernel 4.10.0 iommu attribute read error
-Date: Mon, 03 Feb 2025 04:26:00 +0000
+Subject: [DPDK/ethdev Bug 1652] Netvsc driver and application restart
+Date: Mon, 03 Feb 2025 04:27:48 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1651-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385567600.F2C473.2166802
+Message-ID: <bug-1652-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385568680.d194B0dF.2167634
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385567600.F2C473.2166802
-Date: Mon, 3 Feb 2025 05:26:00 +0100
+--17385568680.d194B0dF.2167634
+Date: Mon, 3 Feb 2025 05:27:48 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,49 +64,45 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1651
+https://bugs.dpdk.org/show_bug.cgi?id=3D1652
 
-            Bug ID: 1651
-           Summary: Linux kernel 4.10.0 iommu attribute read error
+            Bug ID: 1652
+           Summary: Netvsc driver and application restart
            Product: DPDK
            Version: unspecified
           Hardware: All
-                OS: Linux
+                OS: All
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: testpmd
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-When VT-d is enabled (iommu=3Dpt intel_iommu=3Don), reading IOMMU attribute=
-s from
-/sys/devices/virtual/iommu/dmarXXX/intel-iommu/cap on Linux kernel 4.10.0
-error. This bug is fixed in Linux commit a7fdb6e648fb, This bug is introduc=
-ed
-in Linux commit 39ab9555c241,
+The Linux kernel uio_hv_generic driver does not completely shutdown and cle=
+an
+up resources properly if application using Netvsc PMD exits.
 
 Implication:
-When binding devices to VFIO and attempting to run testpmd application, tes=
-tpmd
-(and other DPDK applications) will not initialize.
+When application using Netvsc PMD is restarted it can not complete
+initialization handshake sequence with the host.
 
 Resolution/Workaround:
-Use other linux kernel version. It only happens in linux kernel 4.10.0.
+Either reboot the guest or remove and reinsert the uio_hv_generic module.
 
 Affected Environment/Platform:
-ALL OS of linux kernel 4.10.0.
+Linux Hyper-V.
 
 Driver/Module:
-vfio-pci module.
+uio_hv_generic module.
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385567600.F2C473.2166802
-Date: Mon, 3 Feb 2025 05:26:00 +0100
+--17385568680.d194B0dF.2167634
+Date: Mon, 3 Feb 2025 05:27:48 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -124,14 +120,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Linux kernel 4.10.0 iommu attribute read error"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1651">1651</a>
+   title=3D"UNCONFIRMED - Netvsc driver and application restart"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1652">1652</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Linux kernel 4.10.0 iommu attribute read error
+          <td>Netvsc driver and application restart
           </td>
         </tr>
 
@@ -155,7 +151,7 @@ bz_new_table">
 
         <tr>
           <th>OS</th>
-          <td>Linux
+          <td>All
           </td>
         </tr>
 
@@ -179,7 +175,7 @@ bz_new_table">
 
         <tr>
           <th>Component</th>
-          <td>testpmd
+          <td>ethdev
           </td>
         </tr>
 
@@ -202,26 +198,22 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">When VT-d is enabled (iommu=3Dpt i=
-ntel_iommu=3Don), reading IOMMU attributes from
-/sys/devices/virtual/iommu/dmarXXX/intel-iommu/cap on Linux kernel 4.10.0
-error. This bug is fixed in Linux commit a7fdb6e648fb, This bug is introduc=
-ed
-in Linux commit 39ab9555c241,
+          <pre class=3D"bz_comment_text">The Linux kernel uio_hv_generic dr=
+iver does not completely shutdown and clean
+up resources properly if application using Netvsc PMD exits.
 
 Implication:
-When binding devices to VFIO and attempting to run testpmd application, tes=
-tpmd
-(and other DPDK applications) will not initialize.
+When application using Netvsc PMD is restarted it can not complete
+initialization handshake sequence with the host.
 
 Resolution/Workaround:
-Use other linux kernel version. It only happens in linux kernel 4.10.0.
+Either reboot the guest or remove and reinsert the uio_hv_generic module.
 
 Affected Environment/Platform:
-ALL OS of linux kernel 4.10.0.
+Linux Hyper-V.
 
 Driver/Module:
-vfio-pci module.
+uio_hv_generic module.
           </pre>
         </div>
       </p>
@@ -238,7 +230,7 @@ vfio-pci module.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1651">
+?id=3D1652">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -247,4 +239,4 @@ ication">
     </body>
 </html>=
 
---17385567600.F2C473.2166802--
+--17385568680.d194B0dF.2167634--
