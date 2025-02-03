@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B48CC0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D986EC0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:44:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73C99400EF;
-	Mon,  3 Feb 2025 03:43:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C7F9400EF;
+	Mon,  3 Feb 2025 03:44:34 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id BE2B0400D7
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:43:20 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id EE6AE400D7
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 03:44:32 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B64FD4617B; Mon,  3 Feb 2025 03:43:20 +0100 (CET)
+ id E736E4617B; Mon,  3 Feb 2025 03:44:32 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1629] Packets are not sent by the 1 GbE/10 GbE
- SR-IOV driver when the source MAC is not the MAC assigned to the VF NIC
-Date: Mon, 03 Feb 2025 02:43:20 +0000
+Subject: [DPDK/ethdev Bug 1630] SR-IOV drivers do not fully implement the
+ rte_ethdev API
+Date: Mon, 03 Feb 2025 02:44:32 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1629-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385506000.b2Ec.2109337
+Message-ID: <bug-1630-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385506720.F0D1ce0.2110029
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385506000.b2Ec.2109337
-Date: Mon, 3 Feb 2025 03:43:20 +0100
+--17385506720.F0D1ce0.2110029
+Date: Mon, 3 Feb 2025 03:44:32 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,12 +65,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1629
+https://bugs.dpdk.org/show_bug.cgi?id=3D1630
 
-            Bug ID: 1629
-           Summary: Packets are not sent by the 1 GbE/10 GbE SR-IOV driver
-                    when the source MAC is not the MAC assigned to the VF
-                    NIC
+            Bug ID: 1630
+           Summary: SR-IOV drivers do not fully implement the rte_ethdev
+                    API
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -83,35 +82,52 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1629
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-The 1 GbE/10 GbE SR-IOV driver can only send packets when the Ethernet head=
-er=E2=80=99s
-source MAC address is the same as that of the VF NIC. The reason for this is
-that the Linux ixgbe driver module in the host OS has its anti-spoofing fea=
-ture
-enabled.
+The SR-IOV drivers only supports the following rte_ethdev API functions:
+
+rte_eth_dev_configure()
+
+rte_eth_tx_queue_setup()
+
+rte_eth_rx_queue_setup()
+
+rte_eth_dev_info_get()
+
+rte_eth_dev_start()
+
+rte_eth_tx_burst()
+
+rte_eth_rx_burst()
+
+rte_eth_dev_stop()
+
+rte_eth_stats_get()
+
+rte_eth_stats_reset()
+
+rte_eth_link_get()
+
+rte_eth_link_get_no_wait()
 
 Implication:
-Packets sent using the 1 GbE/10 GbE SR-IOV driver must have the source MAC
-address correctly set to that of the VF NIC. Packets with other source addr=
-ess
-values are dropped by the NIC if the application attempts to transmit them.
+Calling an unsupported function will result in an application error.
 
 Resolution/Workaround:
-Configure the Ethernet source address in each packet to match that of the VF
-NIC.
+Do not use other rte_ethdev API functions in applications that use the SR-I=
+OV
+drivers.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-1 GbE/10 GbE VF Poll Mode Driver (PMD).
+VF Poll Mode Driver (PMD).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385506000.b2Ec.2109337
-Date: Mon, 3 Feb 2025 03:43:20 +0100
+--17385506720.F0D1ce0.2110029
+Date: Mon, 3 Feb 2025 03:44:32 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -129,16 +145,15 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Packets are not sent by the 1 GbE/10 GbE SR-IOV d=
-river when the source MAC is not the MAC assigned to the VF NIC"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1629">1629</a>
+   title=3D"UNCONFIRMED - SR-IOV drivers do not fully implement the rte_eth=
+dev API"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1630">1630</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Packets are not sent by the 1 GbE/10 GbE SR-IOV driver when t=
-he source MAC is not the MAC assigned to the VF NIC
+          <td>SR-IOV drivers do not fully implement the rte_ethdev API
           </td>
         </tr>
 
@@ -209,28 +224,46 @@ he source MAC is not the MAC assigned to the VF NIC
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The 1 GbE/10 GbE SR-IOV driver can=
- only send packets when the Ethernet header=E2=80=99s
-source MAC address is the same as that of the VF NIC. The reason for this is
-that the Linux ixgbe driver module in the host OS has its anti-spoofing fea=
-ture
-enabled.
+          <pre class=3D"bz_comment_text">The SR-IOV drivers only supports t=
+he following rte_ethdev API functions:
+
+rte_eth_dev_configure()
+
+rte_eth_tx_queue_setup()
+
+rte_eth_rx_queue_setup()
+
+rte_eth_dev_info_get()
+
+rte_eth_dev_start()
+
+rte_eth_tx_burst()
+
+rte_eth_rx_burst()
+
+rte_eth_dev_stop()
+
+rte_eth_stats_get()
+
+rte_eth_stats_reset()
+
+rte_eth_link_get()
+
+rte_eth_link_get_no_wait()
 
 Implication:
-Packets sent using the 1 GbE/10 GbE SR-IOV driver must have the source MAC
-address correctly set to that of the VF NIC. Packets with other source addr=
-ess
-values are dropped by the NIC if the application attempts to transmit them.
+Calling an unsupported function will result in an application error.
 
 Resolution/Workaround:
-Configure the Ethernet source address in each packet to match that of the VF
-NIC.
+Do not use other rte_ethdev API functions in applications that use the SR-I=
+OV
+drivers.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-1 GbE/10 GbE VF Poll Mode Driver (PMD).
+VF Poll Mode Driver (PMD).
           </pre>
         </div>
       </p>
@@ -247,7 +280,7 @@ Driver/Module:
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1629">
+?id=3D1630">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -256,4 +289,4 @@ ication">
     </body>
 </html>=
 
---17385506000.b2Ec.2109337--
+--17385506720.F0D1ce0.2110029--
