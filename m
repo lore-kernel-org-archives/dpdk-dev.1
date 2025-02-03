@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A85DC02190
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25599C0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:03:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD4164060F;
-	Mon,  3 Feb 2025 03:59:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B84E4060F;
+	Mon,  3 Feb 2025 04:03:04 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id B6A11400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:59:14 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CD0E1400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 04:02:59 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8FB3A4617B; Mon,  3 Feb 2025 03:59:14 +0100 (CET)
+ id AD16D4617C; Mon,  3 Feb 2025 04:02:59 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1635] Discrepancies between statistics reported by
- different NICs
-Date: Mon, 03 Feb 2025 02:59:14 +0000
+Subject: [DPDK/core Bug 1636] Error reported opening files on DPDK
+ initialization
+Date: Mon, 03 Feb 2025 03:02:59 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: core
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1635-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385515540.fA80BeeD.2117321
+Message-ID: <bug-1636-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385517790.A8Eb.2120688
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385515540.fA80BeeD.2117321
-Date: Mon, 3 Feb 2025 03:59:14 +0100
+--17385517790.A8Eb.2120688
+Date: Mon, 3 Feb 2025 04:02:59 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,10 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1635
+https://bugs.dpdk.org/show_bug.cgi?id=3D1636
 
-            Bug ID: 1635
-           Summary: Discrepancies between statistics reported by different
-                    NICs
+            Bug ID: 1636
+           Summary: Error reported opening files on DPDK initialization
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,37 +76,40 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1635
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: core
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-Gigabit Ethernet devices from Intel include CRC bytes when calculating pack=
-et
-reception statistics regardless of hardware CRC stripping state, while
-10-Gigabit Ethernet devices from Intel do so only when hardware CRC strippi=
-ng
-is disabled.
+On DPDK application startup, errors may be reported when opening files as p=
+art
+of the initialization process. This occurs if a large number, for example, =
+500
+or more, or if hugepages are used, due to the per-process limit on the numb=
+er
+of open files.
 
 Implication:
-There may be a discrepancy in how different NICs display packet reception
-statistics.
+The DPDK application may fail to run.
 
 Resolution/Workaround:
-None
+If using 2 MB hugepages, consider switching to a fewer number of 1 GB pages.
+Alternatively, use the ulimit command to increase the number of files which=
+ can
+be opened by a process.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-Poll Mode Driver (PMD).
+Environment Abstraction Layer (EAL).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385515540.fA80BeeD.2117321
-Date: Mon, 3 Feb 2025 03:59:14 +0100
+--17385517790.A8Eb.2120688
+Date: Mon, 3 Feb 2025 04:02:59 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -125,15 +127,15 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Discrepancies between statistics reported by diff=
-erent NICs"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1635">1635</a>
+   title=3D"UNCONFIRMED - Error reported opening files on DPDK initializati=
+on"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1636">1636</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Discrepancies between statistics reported by different NICs
+          <td>Error reported opening files on DPDK initialization
           </td>
         </tr>
 
@@ -181,7 +183,7 @@ erent NICs"
 
         <tr>
           <th>Component</th>
-          <td>ethdev
+          <td>core
           </td>
         </tr>
 
@@ -204,25 +206,28 @@ erent NICs"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Gigabit Ethernet devices from Inte=
-l include CRC bytes when calculating packet
-reception statistics regardless of hardware CRC stripping state, while
-10-Gigabit Ethernet devices from Intel do so only when hardware CRC strippi=
-ng
-is disabled.
+          <pre class=3D"bz_comment_text">On DPDK application startup, error=
+s may be reported when opening files as part
+of the initialization process. This occurs if a large number, for example, =
+500
+or more, or if hugepages are used, due to the per-process limit on the numb=
+er
+of open files.
 
 Implication:
-There may be a discrepancy in how different NICs display packet reception
-statistics.
+The DPDK application may fail to run.
 
 Resolution/Workaround:
-None
+If using 2 MB hugepages, consider switching to a fewer number of 1 GB pages.
+Alternatively, use the ulimit command to increase the number of files which=
+ can
+be opened by a process.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-Poll Mode Driver (PMD).
+Environment Abstraction Layer (EAL).
           </pre>
         </div>
       </p>
@@ -239,7 +244,7 @@ Poll Mode Driver (PMD).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1635">
+?id=3D1636">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -248,4 +253,4 @@ ication">
     </body>
 </html>=
 
---17385515540.fA80BeeD.2117321--
+--17385517790.A8Eb.2120688--
