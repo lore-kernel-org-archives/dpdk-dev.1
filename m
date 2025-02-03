@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F52DC0218A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29363C0218A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 04:07:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57B2B40BA4;
-	Mon,  3 Feb 2025 05:07:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D3DB40DCA;
+	Mon,  3 Feb 2025 05:07:14 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id AE26640698
+ by mails.dpdk.org (Postfix) with ESMTP id B67DE4069D
  for <dev@dpdk.org>; Mon,  3 Feb 2025 05:06:48 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 6B4C7203718B; Sun,  2 Feb 2025 20:06:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B4C7203718B
+ id 90035203719A; Sun,  2 Feb 2025 20:06:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 90035203719A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738555607;
- bh=R1q3dWwl0t6YhWGgHYDG3ZXRsMth7Rdr4mn/KHJaCzs=;
+ bh=R3V4XamouzonlE20qOkBxm8ebIicgN8hHsgTyx8pLrg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=hlyLA4BWIDsD1GbFVi5R2G0nWgt6tciLonYnJHQ5PAFwf+esWJtxmRLHiRKZAFYA3
- roQp/OlHZOhtgchE+8znsfo2dwmPA6VmhrHSx5mGlTYM7b4wohBNV6R0vHch1ZbchT
- NgBbu/82rXcIpNGtowhmzbyC19nojvSI247Om0WU=
+ b=Osr4e7da2T90DycNvLSgZtKkUqyWwtEyHMS+oaczM9F/eFO86MAx8ZErc2Q4NT7fT
+ Au9rqnXkWRc0NmFBSe9fIhXFKc90nUHXBJkYq7Bbil8jmtEd8V1/Sb6fSXOkCjiNLk
+ fD5jnfb/pXYYeerl/31RYwHaNWYTqkOKwM7xT/CY=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com
-Subject: [PATCH v19 09/27] gro: remove use of VLAs
-Date: Sun,  2 Feb 2025 20:06:12 -0800
-Message-Id: <1738555590-12753-10-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v19 12/27] app/testpmd: remove use of VLAs for Windows built
+Date: Sun,  2 Feb 2025 20:06:15 -0800
+Message-Id: <1738555590-12753-13-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738555590-12753-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,148 +44,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+From: Tyler Retzlaff <roretzla@linux.microsoft.com>
 
-../lib/gro/rte_gro.c:182:34: warning:
-    variable length array used [-Wvla]
-../lib/gro/rte_gro.c:363:34: warning:
-    variable length array used [-Wvla]
+MSVC does not support VLAs, replace VLAs with standard C arrays
+or alloca(). alloca() is available for all toolchain/platform
+combinations officially supported by DPDK.
 
-In both cases the pattern is the same: we use unprocess_pkts[nb_pkts] to
-collect un-used by GRO packets, and then copy them to the start of
-input/output pkts[] array.
-In both cases, we can safely copy pkts[i] into already
-processed entry at the same array, i.e. into pkts[unprocess_num].
-Such change eliminates need of temporary VLA: unprocess_pkts[nb_pkts].
-
-Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Acked-by: Ferruh Yigit <ferruh.yigit@amd.com>
+Signed-off-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/gro/rte_gro.c | 40 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 26 deletions(-)
+ app/test-pmd/cmdline.c      |  2 +-
+ app/test-pmd/cmdline_flow.c | 15 ++++++++++-----
+ app/test-pmd/config.c       | 16 +++++++++-------
+ 3 files changed, 20 insertions(+), 13 deletions(-)
 
-diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
-index db86117609..6d5aadf32a 100644
---- a/lib/gro/rte_gro.c
-+++ b/lib/gro/rte_gro.c
-@@ -179,7 +179,6 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 	struct gro_vxlan_udp4_item vxlan_udp_items[RTE_GRO_MAX_BURST_ITEM_NUM]
- 			= {{{0}} };
- 
--	struct rte_mbuf *unprocess_pkts[nb_pkts];
- 	uint32_t item_num;
- 	int32_t ret;
- 	uint16_t i, unprocess_num = 0, nb_after_gro = nb_pkts;
-@@ -275,7 +274,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* Merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
- 				do_vxlan_udp_gro) {
- 			ret = gro_vxlan_udp4_reassemble(pkts[i],
-@@ -284,7 +283,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* Merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp4_gro) {
- 			ret = gro_tcp4_reassemble(pkts[i], &tcp_tbl, 0);
-@@ -292,7 +291,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
- 				do_udp4_gro) {
- 			ret = gro_udp4_reassemble(pkts[i], &udp_tbl, 0);
-@@ -300,7 +299,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp6_gro) {
- 			ret = gro_tcp6_reassemble(pkts[i], &tcp6_tbl, 0);
-@@ -308,21 +307,15 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else
--			unprocess_pkts[unprocess_num++] = pkts[i];
-+			pkts[unprocess_num++] = pkts[i];
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 7e0666e9f6..2897e44c34 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -13274,7 +13274,7 @@ cmd_set_port_ptypes_parsed(
+ 		return;
  	}
  
- 	if ((nb_after_gro < nb_pkts)
- 		 || (unprocess_num < nb_pkts)) {
--		i = 0;
--		/* Copy unprocessed packets */
--		if (unprocess_num > 0) {
--			memcpy(&pkts[i], unprocess_pkts,
--					sizeof(struct rte_mbuf *) *
--					unprocess_num);
--			i = unprocess_num;
--		}
-+
-+		i = unprocess_num;
+-	uint32_t ptypes[ret];
++	uint32_t *ptypes = alloca(sizeof(uint32_t) * ret);
  
- 		/* Flush all packets from the tables */
- 		if (do_vxlan_tcp_gro) {
-@@ -360,7 +353,6 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
- 		uint16_t nb_pkts,
- 		void *ctx)
+ 	ret = rte_eth_dev_set_ptypes(port_id, ptype_mask, ptypes, ret);
+ 	if (ret < 0) {
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index 9e4fc2d95d..e1720e54d7 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -11707,8 +11707,7 @@ parse_hex(struct context *ctx, const struct token *token,
+ 	char tmp[16]; /* Ought to be enough. */
+ 	int ret;
+ 	unsigned int hexlen = len;
+-	unsigned int length = 256;
+-	uint8_t hex_tmp[length];
++	uint8_t hex_tmp[256];
+ 
+ 	/* Arguments are expected. */
+ 	if (!arg_data)
+@@ -11735,7 +11734,7 @@ parse_hex(struct context *ctx, const struct token *token,
+ 		str += 2;
+ 		hexlen -= 2;
+ 	}
+-	if (hexlen > length)
++	if (hexlen > RTE_DIM(hex_tmp))
+ 		goto error;
+ 	ret = parse_hex_string(str, hex_tmp, &hexlen);
+ 	if (ret < 0)
+@@ -11868,10 +11867,13 @@ parse_ipv4_addr(struct context *ctx, const struct token *token,
+ 		void *buf, unsigned int size)
  {
--	struct rte_mbuf *unprocess_pkts[nb_pkts];
- 	struct gro_ctx *gro_ctx = ctx;
- 	void *tcp_tbl, *udp_tbl, *vxlan_tcp_tbl, *vxlan_udp_tbl, *tcp6_tbl;
- 	uint64_t current_time;
-@@ -396,33 +388,29 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
- 				do_vxlan_tcp_gro) {
- 			if (gro_vxlan_tcp4_reassemble(pkts[i], vxlan_tcp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
- 				do_vxlan_udp_gro) {
- 			if (gro_vxlan_udp4_reassemble(pkts[i], vxlan_udp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp4_gro) {
- 			if (gro_tcp4_reassemble(pkts[i], tcp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
- 				do_udp4_gro) {
- 			if (gro_udp4_reassemble(pkts[i], udp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp6_gro) {
- 			if (gro_tcp6_reassemble(pkts[i], tcp6_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else
--			unprocess_pkts[unprocess_num++] = pkts[i];
--	}
--	if (unprocess_num > 0) {
--		memcpy(pkts, unprocess_pkts, sizeof(struct rte_mbuf *) *
--				unprocess_num);
-+			pkts[unprocess_num++] = pkts[i];
- 	}
+ 	const struct arg *arg = pop_args(ctx);
+-	char str2[len + 1];
++	char str2[INET_ADDRSTRLEN];
+ 	struct in_addr tmp;
+ 	int ret;
  
- 	return unprocess_num;
++	/* Length is longer than the max length an IPv4 address can have. */
++	if (len >= INET_ADDRSTRLEN)
++		return -1;
+ 	/* Argument is expected. */
+ 	if (!arg)
+ 		return -1;
+@@ -11914,11 +11916,14 @@ parse_ipv6_addr(struct context *ctx, const struct token *token,
+ 		void *buf, unsigned int size)
+ {
+ 	const struct arg *arg = pop_args(ctx);
+-	char str2[len + 1];
++	char str2[INET6_ADDRSTRLEN];
+ 	struct rte_ipv6_addr tmp;
+ 	int ret;
+ 
+ 	(void)token;
++	/* Length is longer than the max length an IPv6 address can have. */
++	if (len >= INET6_ADDRSTRLEN)
++		return -1;
+ 	/* Argument is expected. */
+ 	if (!arg)
+ 		return -1;
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 4e7fb69183..b19df95321 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -1802,7 +1802,8 @@ port_flow_configure(portid_t port_id,
+ {
+ 	struct rte_port *port;
+ 	struct rte_flow_error error;
+-	const struct rte_flow_queue_attr *attr_list[nb_queue];
++	const struct rte_flow_queue_attr **attr_list =
++	    alloca(sizeof(struct rte_flow_queue_attr *) * nb_queue);
+ 	int std_queue;
+ 
+ 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
+@@ -2616,10 +2617,10 @@ port_flow_template_table_create(portid_t port_id, uint32_t id,
+ 	int ret;
+ 	uint32_t i;
+ 	struct rte_flow_error error;
+-	struct rte_flow_pattern_template
+-			*flow_pattern_templates[nb_pattern_templates];
+-	struct rte_flow_actions_template
+-			*flow_actions_templates[nb_actions_templates];
++	struct rte_flow_pattern_template **flow_pattern_templates =
++	    alloca(sizeof(struct rte_flow_pattern_template *) * nb_pattern_templates);
++	struct rte_flow_actions_template **flow_actions_templates =
++	    alloca(sizeof(struct rte_flow_actions_template *) * nb_actions_templates);
+ 
+ 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
+ 	    port_id == (portid_t)RTE_PORT_ALL)
+@@ -5551,7 +5552,7 @@ parse_port_list(const char *list, unsigned int *values, unsigned int maxsize)
+ 	char *end = NULL;
+ 	int min, max;
+ 	int value, i;
+-	unsigned int marked[maxsize];
++	unsigned int *marked = alloca(sizeof(unsigned int) * maxsize);
+ 
+ 	if (list == NULL || values == NULL)
+ 		return 0;
+@@ -7292,7 +7293,8 @@ show_macs(portid_t port_id)
+ 	if (eth_dev_info_get_print_err(port_id, &dev_info))
+ 		return;
+ 
+-	struct rte_ether_addr addr[dev_info.max_mac_addrs];
++	struct rte_ether_addr *addr =
++	    alloca(sizeof(struct rte_ether_addr) * dev_info.max_mac_addrs);
+ 	rc = rte_eth_macaddrs_get(port_id, addr, dev_info.max_mac_addrs);
+ 	if (rc < 0)
+ 		return;
 -- 
 2.47.2.vfs.0.1
 
