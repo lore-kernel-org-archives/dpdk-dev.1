@@ -2,52 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9471C02193
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 07:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1AFC02195
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 08:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05C5240ED9;
-	Mon,  3 Feb 2025 08:42:10 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 3B89D40EA5
- for <dev@dpdk.org>; Mon,  3 Feb 2025 08:42:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738568527; x=1770104527;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=ylcvCWzg/mb/9GbLfQV8KxGgkWc+o5I4qjt4ZU025p4=;
- b=AKJcv+VbVOgKQEt4LUNn/LQErpGbpSxa9FYlVnweXRLqdcVbftl412Hm
- dfVTNRJtHefry3Hq43Wn3mHi1HxolfeVVSMawY4hDrrjIiI15CsZ+SL/y
- /nhVL0sE/nVt6TRB5BJtpkYNynBT+t1KZcrpgdPhZH4jmjhGxSgQ0QaYv
- 5QETVq0cVnjwOZzp1wGOYke8MjNkMiqAGp5aXHxJ1UWfga6LQmJeSNhYR
- LKeRIme6Ca7mVl/NmI2zS+x/fgVIqmKYyvZ/i5O97kVgT60qGMJ/5RrNB
- xApKIRbzuFAXQGL9QHhOb4R/l3Q7wUBneY8pX8HQ1L7rnsGrGf6AhsJFI A==;
-X-CSE-ConnectionGUID: sftWuDlCQGezdUGG3BoV1w==
-X-CSE-MsgGUID: 7CO8iSoqSQaYKNxZ5NOJ1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11334"; a="56479583"
-X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; d="scan'208";a="56479583"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Feb 2025 23:42:07 -0800
-X-CSE-ConnectionGUID: jDN5hi39QLGpzhme+w4+Fw==
-X-CSE-MsgGUID: hYhjcAJsTn+7iQx5gUMCMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="133466629"
-Received: from npg-npf-wlpr-srv12.iind.intel.com ([10.190.212.205])
- by fmviesa002.fm.intel.com with ESMTP; 02 Feb 2025 23:42:05 -0800
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v5 2/2] common/idpf: enable AVX2 for single queue Tx
-Date: Mon,  3 Feb 2025 13:25:08 +0530
-Message-Id: <20250203075508.1304702-3-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250203075508.1304702-1-shaiq.wani@intel.com>
-References: <20250203052430.1243485-2-shaiq.wani@intel.com>
- <20250203075508.1304702-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3ED2640B91;
+	Mon,  3 Feb 2025 09:18:32 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 87C7C40264
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 09:18:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1738570710;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=/TNMkyd7u7UjHriDc/m9mc126BMj2QYhhog3E/8PdE0=;
+ b=cOvzPZiY/6nM7r3Oj+2sLUopXrz39N+EM69rjIdIUaviZ6pSPNIefFpmzuS3gs/TnsmCzA
+ bV+MAEDyyBfPBULOsbAlPOL0qlNCjL/uVYbkGbOYYTNKQbD1kHGSKEJT0C8TgQxOy6vxUy
+ geF4qZE75nfKivk3mK2dEkVD1MqGvF8=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-z4yByPs3PJeTdFuM02wzPg-1; Mon, 03 Feb 2025 03:18:28 -0500
+X-MC-Unique: z4yByPs3PJeTdFuM02wzPg-1
+X-Mimecast-MFC-AGG-ID: z4yByPs3PJeTdFuM02wzPg
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-53e1bddea1dso2148477e87.2
+ for <dev@dpdk.org>; Mon, 03 Feb 2025 00:18:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1738570707; x=1739175507;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=/TNMkyd7u7UjHriDc/m9mc126BMj2QYhhog3E/8PdE0=;
+ b=iYHvwKlPKKOnJx7glRzM3MGrCedmzrAKbeyDRv73drX2AH6/JIjd4aeudQc7gNb3Uo
+ KhHU5+lClHn0wRXnXTlw9x/GEbPJjP2QcJEO13PYQiRfTZWLGmvaB9088n05k4KkL1gi
+ R6/haka0DHhEYtDe833BE4woVkvKYJwPhNmd4sYVZrwaKwgDQyALR6F/skcts7E+S3T5
+ A401WNqDhlQnQw3DPgHPUypI1JPOF52boXmEbWhw7GDGwCKvkdRsyoOolu3K74ygDr6R
+ 0/c9fSaSq9h2rP/n5POKFWglK5uWhcS4AO9WvJjY39k83HbyycubFABFKAE7HaVBvWnc
+ YbNQ==
+X-Gm-Message-State: AOJu0YxWCPqur/X0CAusIPM4vK9DuemP7wcUkKjxZ6bOrahmHdHW4hzg
+ IM0s3rngnvEuvGeHrx2ZQ6feG6EELXau1UU/L7YA17jJHygcYC9n6kLYNSgKgX9G4jLhIIkFHtW
+ 1Pd+dcItTqLmKfa6AfPNgbIHiZU1PqX5GqGbqJvG4eA1Ei7yQgchWzH/9imR+Q8u+LR6ziX+ryc
+ Eg/nMbhhv5EGg/Ni8=
+X-Gm-Gg: ASbGnctNQvphn1CZnFFZp970TY80xtjTKFAyYbknSJKtvqRf6MrmB6uNal/80ZMLFYx
+ gjM03MgrzTgjCdDLtKbWDMfGTAQiPXwDN1R1LWDwXAwRA25j6q/I4Faqx4QblTmFP
+X-Received: by 2002:a05:6512:3b26:b0:540:1c6e:f040 with SMTP id
+ 2adb3069b0e04-543e4c3c355mr6674502e87.45.1738570706752; 
+ Mon, 03 Feb 2025 00:18:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwjZOStM9lIUn/ezS3El+bVpJPl5N5yn4tc/hCQYN9P4xdeu7lm0vRp2hYOLfz5lc4S1NePncUxpUaBjKmJuY=
+X-Received: by 2002:a05:6512:3b26:b0:540:1c6e:f040 with SMTP id
+ 2adb3069b0e04-543e4c3c355mr6674486e87.45.1738570706291; Mon, 03 Feb 2025
+ 00:18:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1738328106.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 3 Feb 2025 09:18:14 +0100
+X-Gm-Features: AWEUYZlVSuFUBKH7I7YGAZXbh_7fnNzcZLHUux5GKNeEz7HUvn6SmsgjNvyp3PQ
+Message-ID: <CAJFAV8yY+T7S49daG+yRedGzvhis3iUC2yznvae7ZW4WEE4n7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 00/42] Merge Intel IGC and E1000 drivers, and update
+ E1000 base code
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: XiKSGqJNWYRiCMmQGOhTzRUHGxQbGM4zwGEUBv4-M5k_1738570707
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,362 +84,211 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
+Hello Anatoly,
 
-The single queue model processes all packets in order while
-the split queue model separates packet data and metadata into
-different queues for parallel processing and improved performance.
+On Fri, Jan 31, 2025 at 1:59=E2=80=AFPM Anatoly Burakov
+<anatoly.burakov@intel.com> wrote:
+>
+> Intel IGC and E1000 drivers are distinct, but they are actually generated
+> from the same base code. This patchset will merge together all e1000-deri=
+ved
+> drivers into one common base, with three different ethdev driver
+> frontends (EM, IGB, and IGC).
+>
+> After the merge is done, base code is also updated to latest snapshot.
+>
+> Adam Ludkiewicz (1):
+>   net/e1000/base: add WoL definitions
+>
+> Aleksandr Loktionov (1):
+>   net/e1000/base: fix mac addr hash bit_shift
+>
+> Amir Avivi (1):
+>   net/e1000/base: fix iterator type
+>
+> Anatoly Burakov (13):
+>   net/e1000/base: add initial support for i225
+>   net/e1000/base: add link bringup support for i225
+>   net/e1000/base: add LED blink support for i225
+>   net/e1000/base: add NVM/EEPROM support for i225
+>   net/e1000/base: add LTR support in i225
+>   net/e1000/base: add eee support for i225
+>   net/e1000/base: add misc definitions for i225
+>   net/e1000: merge igc with e1000
+>   net/e1000: add missing i225 devices
+>   net/e1000: add missing hardware support
+>   net/e1000/base: correct minor formatting issues
+>   net/e1000/base: correct mPHY access logic
+>   net/e1000/base: update readme
+>
+> Barbara Skobiej (2):
+>   net/e1000/base: fix reset for 82580
+>   net/e1000/base: fix data type in MAC hash
+>
+> Carolyn Wyborny (1):
+>   net/e1000/base: skip MANC check for 82575
+>
+> Dima Ruinskiy (4):
+>   net/e1000/base: make e1000_access_phy_wakeup_reg_bm non-static
+>   net/e1000/base: make debug prints more informative
+>   net/e1000/base: hardcode bus parameters for ICH8
+>   net/e1000/base: fix unchecked return
+>
+> Evgeny Efimov (1):
+>   net/e1000/base: add EEE common API function
+>
+> Jakub Buchocki (1):
+>   net/e1000/base: fix uninitialized variable usage
+>
+> Marcin Jurczak (1):
+>   net/e1000/base: remove non-inclusive language
+>
+> Nir Efrati (6):
+>   net/e1000/base: workaround for packet loss
+>   net/e1000/base: add definition for EXFWSM register
+>   net/e1000/base: use longer ULP exit timeout on more HW
+>   net/e1000/base: remove redundant access to RO register
+>   net/e1000/base: introduce PHY ID retry mechanism
+>   net/e1000/base: add PHY read/write retry mechanism
+>
+> Pawel Malinowski (1):
+>   net/e1000/base: fix semaphore timeout value
+>
+> Piotr Kubaj (1):
+>   net/e1000/base: rename NVM version variable
+>
+> Piotr Pietruszewski (1):
+>   net/e1000/base: improve code flow in ICH8LAN
+>
+> Przemyslaw Ciesielski (1):
+>   net/e1000/base: fix static analysis warnings
+>
+> Sasha Neftin (4):
+>   net/e1000/base: add queue select definitions
+>   net/e1000/base: add profile information field
+>   net/e1000/base: add LPI counters
+>   net/e1000/base: improve NVM checksum handling
+>
+> Vitaly Lifshits (2):
+>   net/e1000: add support for more I219 devices
+>   net/e1000/base: correct disable k1 logic
+>
+>  drivers/net/intel/e1000/base/README           |    8 +-
+>  .../net/intel/e1000/base/e1000_80003es2lan.c  |   10 +-
+>  drivers/net/intel/e1000/base/e1000_82571.c    |    4 +-
+>  drivers/net/intel/e1000/base/e1000_82575.c    |   21 +-
+>  drivers/net/intel/e1000/base/e1000_82575.h    |   29 -
+>  drivers/net/intel/e1000/base/e1000_api.c      |   76 +-
+>  drivers/net/intel/e1000/base/e1000_api.h      |    4 +-
+>  drivers/net/intel/e1000/base/e1000_base.c     |    3 +-
+>  drivers/net/intel/e1000/base/e1000_defines.h  |  259 +-
+>  drivers/net/intel/e1000/base/e1000_hw.h       |   86 +-
+>  drivers/net/intel/e1000/base/e1000_i210.c     |   14 +-
+>  drivers/net/intel/e1000/base/e1000_i210.h     |    4 +
+>  drivers/net/intel/e1000/base/e1000_i225.c     | 1384 ++++++
+>  drivers/net/intel/e1000/base/e1000_i225.h     |  117 +
+>  drivers/net/intel/e1000/base/e1000_ich8lan.c  |  224 +-
+>  drivers/net/intel/e1000/base/e1000_ich8lan.h  |    3 +-
+>  drivers/net/intel/e1000/base/e1000_mac.c      |   62 +-
+>  drivers/net/intel/e1000/base/e1000_mac.h      |    2 +-
+>  drivers/net/intel/e1000/base/e1000_nvm.c      |    7 +-
+>  drivers/net/intel/e1000/base/e1000_osdep.h    |   33 +-
+>  drivers/net/intel/e1000/base/e1000_phy.c      |  447 +-
+>  drivers/net/intel/e1000/base/e1000_phy.h      |   21 +
+>  drivers/net/intel/e1000/base/e1000_regs.h     |   48 +-
+>  drivers/net/intel/e1000/base/e1000_vf.c       |   14 +-
+>  drivers/net/intel/e1000/base/meson.build      |    1 +
+>  drivers/net/intel/e1000/em_ethdev.c           |   36 +-
+>  drivers/net/intel/e1000/igb_ethdev.c          |    1 +
+>  drivers/net/intel/{igc =3D> e1000}/igc_ethdev.c |  914 ++--
+>  drivers/net/intel/{igc =3D> e1000}/igc_ethdev.h |   32 +-
+>  drivers/net/intel/{igc =3D> e1000}/igc_filter.c |   84 +-
+>  drivers/net/intel/{igc =3D> e1000}/igc_filter.h |    0
+>  drivers/net/intel/{igc =3D> e1000}/igc_flow.c   |    2 +-
+>  drivers/net/intel/{igc =3D> e1000}/igc_flow.h   |    0
+>  drivers/net/intel/{igc =3D> e1000}/igc_logs.c   |    2 +-
+>  drivers/net/intel/{igc =3D> e1000}/igc_txrx.c   |  376 +-
+>  drivers/net/intel/{igc =3D> e1000}/igc_txrx.h   |    6 +-
+>  drivers/net/intel/e1000/meson.build           |   11 +
+>  drivers/net/intel/igc/base/README             |   29 -
+>  drivers/net/intel/igc/base/igc_82571.h        |   36 -
+>  drivers/net/intel/igc/base/igc_82575.h        |  351 --
+>  drivers/net/intel/igc/base/igc_api.c          | 1853 -------
+>  drivers/net/intel/igc/base/igc_api.h          |  111 -
+>  drivers/net/intel/igc/base/igc_base.c         |  190 -
+>  drivers/net/intel/igc/base/igc_base.h         |  127 -
+>  drivers/net/intel/igc/base/igc_defines.h      | 1670 -------
+>  drivers/net/intel/igc/base/igc_hw.h           | 1059 ----
+>  drivers/net/intel/igc/base/igc_i225.c         | 1372 -----
+>  drivers/net/intel/igc/base/igc_i225.h         |  110 -
+>  drivers/net/intel/igc/base/igc_ich8lan.h      |  296 --
+>  drivers/net/intel/igc/base/igc_mac.c          | 2100 --------
+>  drivers/net/intel/igc/base/igc_mac.h          |   64 -
+>  drivers/net/intel/igc/base/igc_manage.c       |  547 --
+>  drivers/net/intel/igc/base/igc_manage.h       |   65 -
+>  drivers/net/intel/igc/base/igc_nvm.c          | 1324 -----
+>  drivers/net/intel/igc/base/igc_nvm.h          |   69 -
+>  drivers/net/intel/igc/base/igc_osdep.c        |   64 -
+>  drivers/net/intel/igc/base/igc_osdep.h        |  163 -
+>  drivers/net/intel/igc/base/igc_phy.c          | 4420 -----------------
+>  drivers/net/intel/igc/base/igc_phy.h          |  337 --
+>  drivers/net/intel/igc/base/igc_regs.h         |  732 ---
+>  drivers/net/intel/igc/base/meson.build        |   19 -
+>  drivers/net/intel/igc/igc_logs.h              |   43 -
+>  drivers/net/intel/igc/meson.build             |   21 -
+>  drivers/net/meson.build                       |    1 -
+>  64 files changed, 3300 insertions(+), 18218 deletions(-)
+>  create mode 100644 drivers/net/intel/e1000/base/e1000_i225.c
+>  create mode 100644 drivers/net/intel/e1000/base/e1000_i225.h
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_ethdev.c (73%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_ethdev.h (91%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_filter.c (81%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_filter.h (100%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_flow.c (99%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_flow.h (100%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_logs.c (90%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_txrx.c (87%)
+>  rename drivers/net/intel/{igc =3D> e1000}/igc_txrx.h (97%)
+>  delete mode 100644 drivers/net/intel/igc/base/README
+>  delete mode 100644 drivers/net/intel/igc/base/igc_82571.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_82575.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_api.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_api.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_base.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_base.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_defines.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_hw.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_i225.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_i225.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_ich8lan.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_mac.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_mac.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_manage.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_manage.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_nvm.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_nvm.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_osdep.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_osdep.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_phy.c
+>  delete mode 100644 drivers/net/intel/igc/base/igc_phy.h
+>  delete mode 100644 drivers/net/intel/igc/base/igc_regs.h
+>  delete mode 100644 drivers/net/intel/igc/base/meson.build
+>  delete mode 100644 drivers/net/intel/igc/igc_logs.h
+>  delete mode 100644 drivers/net/intel/igc/meson.build
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- doc/guides/nics/idpf.rst                    |   8 +-
- doc/guides/rel_notes/release_25_03.rst      |   7 +
- drivers/common/idpf/idpf_common_device.h    |   1 +
- drivers/common/idpf/idpf_common_rxtx.h      |   4 +
- drivers/common/idpf/idpf_common_rxtx_avx2.c | 224 ++++++++++++++++++++
- drivers/common/idpf/version.map             |   1 +
- drivers/net/intel/idpf/idpf_rxtx.c          |  13 ++
- 7 files changed, 255 insertions(+), 3 deletions(-)
+Consolidation is a good thing, there are two small issues with this
+series though:
+- the ABI check (as it tracks all .so) reports that librte_net_igc.so
+disappeared: this will need some waiving, like Bruce did in his
+series: https://patchwork.dpdk.org/project/dpdk/patch/20250130151222.944561=
+-2-bruce.richardson@intel.com/
+- with this merge, "users" can't select net/igc compilation anymore
+and need to be aware that igc support now requires enabling net/e1000,
+please update the release notes to make this visible,
 
-diff --git a/doc/guides/nics/idpf.rst b/doc/guides/nics/idpf.rst
-index 0370989a07..90b651d193 100644
---- a/doc/guides/nics/idpf.rst
-+++ b/doc/guides/nics/idpf.rst
-@@ -93,9 +93,11 @@ The paths are chosen based on 2 conditions:
- 
- - ``CPU``
- 
--  On the x86 platform, the driver checks if the CPU supports AVX512.
--  If the CPU supports AVX512 and EAL argument ``--force-max-simd-bitwidth``
--  is set to 512, AVX512 paths will be chosen.
-+  On the x86 platform, the driver checks if the CPU supports AVX instruction set.
-+  If the CPU supports AVX512 and EAL argument --force-max-simd-bitwidth is set to 512, AVX512 paths will be chosen
-+  else if --force-max-simd-bitwidth is set to 256, AVX2 paths will be chosen.
-+  Note that 256 is the default bitwidth if no specific value is provided.
-+
- 
- - ``Offload features``
- 
-diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
-index a88b04d958..905e8f363c 100644
---- a/doc/guides/rel_notes/release_25_03.rst
-+++ b/doc/guides/rel_notes/release_25_03.rst
-@@ -76,6 +76,13 @@ New Features
- 
-   * Added support for virtual function (VF).
- 
-+* **Added support of AVX2 instructions on IDPF.**
-+
-+   Support for AVX2 instructions in IDPF single queue RX and TX path
-+   added.The single queue model processes all packets in order within
-+   one RX queue, while the split queue model separates packet data and
-+   metadata into different queues for parallel processing and improved performance.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/common/idpf/idpf_common_device.h b/drivers/common/idpf/idpf_common_device.h
-index 734be1c88a..5f3e4a4fcf 100644
---- a/drivers/common/idpf/idpf_common_device.h
-+++ b/drivers/common/idpf/idpf_common_device.h
-@@ -124,6 +124,7 @@ struct idpf_vport {
- 	bool rx_vec_allowed;
- 	bool tx_vec_allowed;
- 	bool rx_use_avx2;
-+	bool tx_use_avx2;
- 	bool rx_use_avx512;
- 	bool tx_use_avx512;
- 
-diff --git a/drivers/common/idpf/idpf_common_rxtx.h b/drivers/common/idpf/idpf_common_rxtx.h
-index f50cf5ef46..e19e1878f3 100644
---- a/drivers/common/idpf/idpf_common_rxtx.h
-+++ b/drivers/common/idpf/idpf_common_rxtx.h
-@@ -306,5 +306,9 @@ __rte_internal
- uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
-+__rte_internal
-+uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
-+					struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts);
- 
- #endif /* _IDPF_COMMON_RXTX_H_ */
-diff --git a/drivers/common/idpf/idpf_common_rxtx_avx2.c b/drivers/common/idpf/idpf_common_rxtx_avx2.c
-index 277b2a9469..7d292ff19e 100644
---- a/drivers/common/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/common/idpf/idpf_common_rxtx_avx2.c
-@@ -478,3 +478,227 @@ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16
- {
- 	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
- }
-+static __rte_always_inline void
-+idpf_tx_backlog_entry(struct idpf_tx_entry *txep,
-+		     struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	int i;
-+
-+	for (i = 0; i < (int)nb_pkts; ++i)
-+		txep[i].mbuf = tx_pkts[i];
-+}
-+
-+static __rte_always_inline int
-+idpf_singleq_tx_free_bufs_vec(struct idpf_tx_queue *txq)
-+{
-+	struct idpf_tx_entry *txep;
-+	uint32_t n;
-+	uint32_t i;
-+	int nb_free = 0;
-+	struct rte_mbuf *m, *free[txq->rs_thresh];
-+
-+	/* check DD bits on threshold descriptor */
-+	if ((txq->tx_ring[txq->next_dd].qw1 &
-+			rte_cpu_to_le_64(IDPF_TXD_QW1_DTYPE_M)) !=
-+			rte_cpu_to_le_64(IDPF_TX_DESC_DTYPE_DESC_DONE))
-+		return 0;
-+
-+	n = txq->rs_thresh;
-+
-+	 /* first buffer to free from S/W ring is at index
-+	  * next_dd - (rs_thresh-1)
-+	  */
-+	txep = &txq->sw_ring[txq->next_dd - (n - 1)];
-+	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
-+	if (likely(m)) {
-+		free[0] = m;
-+		nb_free = 1;
-+		for (i = 1; i < n; i++) {
-+			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
-+			if (likely(m)) {
-+				if (likely(m->pool == free[0]->pool)) {
-+					free[nb_free++] = m;
-+				} else {
-+					rte_mempool_put_bulk(free[0]->pool,
-+							     (void *)free,
-+							     nb_free);
-+					free[0] = m;
-+					nb_free = 1;
-+				}
-+			}
-+		}
-+		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
-+	} else {
-+		for (i = 1; i < n; i++) {
-+			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
-+			if (m)
-+				rte_mempool_put(m->pool, m);
-+		}
-+	}
-+
-+	/* buffers were freed, update counters */
-+	txq->nb_free = (uint16_t)(txq->nb_free + txq->rs_thresh);
-+	txq->next_dd = (uint16_t)(txq->next_dd + txq->rs_thresh);
-+	if (txq->next_dd >= txq->nb_tx_desc)
-+		txq->next_dd = (uint16_t)(txq->rs_thresh - 1);
-+
-+	return txq->rs_thresh;
-+}
-+
-+static inline void
-+idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
-+		  struct rte_mbuf *pkt, uint64_t flags)
-+{
-+	uint64_t high_qw =
-+		(IDPF_TX_DESC_DTYPE_DATA |
-+		 ((uint64_t)flags  << IDPF_TXD_QW1_CMD_S) |
-+		 ((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S));
-+
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+				pkt->buf_iova + pkt->data_off);
-+	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
-+}
-+
-+static inline void
-+idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
-+		 struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = (IDPF_TX_DESC_DTYPE_DATA |
-+			((uint64_t)flags  << IDPF_TXD_QW1_CMD_S));
-+
-+	/* if unaligned on 32-bit boundary, do one to align */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_singleq_vtx1(txdp, *pkt, flags);
-+		nb_pkts--, txdp++, pkt++;
-+	}
-+
-+	/* do two at a time while possible, in bursts */
-+	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
-+		uint64_t hi_qw3 =
-+			hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len <<
-+			 IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 =
-+			hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len <<
-+			 IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 =
-+			hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len <<
-+			 IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw0 =
-+			hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len <<
-+			 IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc2_3 =
-+			_mm256_set_epi64x
-+				(hi_qw3,
-+				 pkt[3]->buf_iova + pkt[3]->data_off,
-+				 hi_qw2,
-+				 pkt[2]->buf_iova + pkt[2]->data_off);
-+		__m256i desc0_1 =
-+			_mm256_set_epi64x
-+				(hi_qw1,
-+				 pkt[1]->buf_iova + pkt[1]->data_off,
-+				 hi_qw0,
-+				 pkt[0]->buf_iova + pkt[0]->data_off);
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
-+	}
-+
-+	/* do any last ones */
-+	while (nb_pkts) {
-+		idpf_singleq_vtx1(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_singleq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts)
-+{
-+	struct idpf_tx_queue *txq = (struct idpf_tx_queue *)tx_queue;
-+	volatile struct idpf_base_tx_desc *txdp;
-+	struct idpf_tx_entry *txep;
-+	uint16_t n, nb_commit, tx_id;
-+	uint64_t flags = IDPF_TX_DESC_CMD_EOP;
-+	uint64_t rs = IDPF_TX_DESC_CMD_RS | flags;
-+
-+	/* cross rx_thresh boundary is not allowed */
-+	nb_pkts = RTE_MIN(nb_pkts, txq->rs_thresh);
-+
-+	if (txq->nb_free < txq->free_thresh)
-+		idpf_singleq_tx_free_bufs_vec(txq);
-+
-+	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_free, nb_pkts);
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	tx_id = txq->tx_tail;
-+	txdp = &txq->tx_ring[tx_id];
-+	txep = &txq->sw_ring[tx_id];
-+
-+	txq->nb_free = (uint16_t)(txq->nb_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		idpf_tx_backlog_entry(txep, tx_pkts, n);
-+
-+		idpf_singleq_vtx(txdp, tx_pkts, n - 1, flags);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_singleq_vtx1(txdp, *tx_pkts++, rs);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		tx_id = 0;
-+		txq->next_rs = (uint16_t)(txq->rs_thresh - 1);
-+
-+		/* avoid reach the end of ring */
-+		txdp = &txq->tx_ring[tx_id];
-+		txep = &txq->sw_ring[tx_id];
-+	}
-+
-+	idpf_tx_backlog_entry(txep, tx_pkts, nb_commit);
-+
-+	idpf_singleq_vtx(txdp, tx_pkts, nb_commit, flags);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	if (tx_id > txq->next_rs) {
-+		txq->tx_ring[txq->next_rs].qw1 |=
-+			rte_cpu_to_le_64(((uint64_t)IDPF_TX_DESC_CMD_RS) <<
-+					 IDPF_TXD_QW1_CMD_S);
-+		txq->next_rs =
-+			(uint16_t)(txq->next_rs + txq->rs_thresh);
-+	}
-+
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+uint16_t
-+idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+			       uint16_t nb_pkts)
-+{
-+	uint16_t nb_tx = 0;
-+	struct idpf_tx_queue *txq = (struct idpf_tx_queue *)tx_queue;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->rs_thresh);
-+		ret = idpf_singleq_xmit_fixed_burst_vec_avx2(tx_queue, &tx_pkts[nb_tx],
-+						    num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-diff --git a/drivers/common/idpf/version.map b/drivers/common/idpf/version.map
-index 22b689f5f5..0557321963 100644
---- a/drivers/common/idpf/version.map
-+++ b/drivers/common/idpf/version.map
-@@ -10,6 +10,7 @@ INTERNAL {
- 	idpf_dp_singleq_recv_pkts_avx512;
- 	idpf_dp_singleq_recv_scatter_pkts;
- 	idpf_dp_singleq_xmit_pkts;
-+	idpf_dp_singleq_xmit_pkts_avx2;
- 	idpf_dp_singleq_xmit_pkts_avx512;
- 	idpf_dp_splitq_recv_pkts;
- 	idpf_dp_splitq_recv_pkts_avx512;
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index a8377d3fee..0c3ecd2765 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -887,6 +887,11 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 	if (idpf_tx_vec_dev_check_default(dev) == IDPF_VECTOR_PATH &&
- 	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
- 		vport->tx_vec_allowed = true;
-+
-+		if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1 &&
-+		    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256)
-+			vport->tx_use_avx2 = true;
-+
- 		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512)
- #ifdef CC_AVX512_SUPPORT
- 		{
-@@ -946,6 +951,14 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (vport->tx_use_avx2) {
-+				PMD_DRV_LOG(NOTICE,
-+					    "Using Single AVX2 Vector Tx (port %d).",
-+					    dev->data->port_id);
-+				dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts_avx2;
-+				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
-+				return;
-+			}
- 		}
- 		PMD_DRV_LOG(NOTICE,
- 			    "Using Single Scalar Tx (port %d).",
--- 
-2.34.1
+There is also a strange build failure for mingw (see github test report).
+
+
+--=20
+David Marchand
 
