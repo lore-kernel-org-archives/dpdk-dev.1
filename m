@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D0EC0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B48CC0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:43:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1364C400EF;
-	Mon,  3 Feb 2025 03:40:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 73C99400EF;
+	Mon,  3 Feb 2025 03:43:27 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 55124400D7
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:40:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BE2B0400D7
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 03:43:20 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4E8E54617B; Mon,  3 Feb 2025 03:40:46 +0100 (CET)
+ id B64FD4617B; Mon,  3 Feb 2025 03:43:20 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/examples Bug 1628] Multi-process sample app requires exact
- memory mapping
-Date: Mon, 03 Feb 2025 02:40:46 +0000
+Subject: [DPDK/ethdev Bug 1629] Packets are not sent by the 1 GbE/10 GbE
+ SR-IOV driver when the source MAC is not the MAC assigned to the VF NIC
+Date: Mon, 03 Feb 2025 02:43:20 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: examples
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1628-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385504460.c459f4F.2107506
+Message-ID: <bug-1629-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385506000.b2Ec.2109337
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385504460.c459f4F.2107506
-Date: Mon, 3 Feb 2025 03:40:46 +0100
+--17385506000.b2Ec.2109337
+Date: Mon, 3 Feb 2025 03:43:20 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,10 +65,12 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1628
+https://bugs.dpdk.org/show_bug.cgi?id=3D1629
 
-            Bug ID: 1628
-           Summary: Multi-process sample app requires exact memory mapping
+            Bug ID: 1629
+           Summary: Packets are not sent by the 1 GbE/10 GbE SR-IOV driver
+                    when the source MAC is not the MAC assigned to the VF
+                    NIC
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -76,39 +78,40 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1628
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: examples
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-The multi-process example application assumes that it is possible to map the
-hugepage memory to the same virtual addresses in client and server
-applications. Occasionally, very rarely with 64-bit, this does not occur an=
-d a
-client application will fail on startup. The Linux =E2=80=9Caddress-space l=
-ayout
-randomization=E2=80=9D security feature can sometimes cause this to occur.
+The 1 GbE/10 GbE SR-IOV driver can only send packets when the Ethernet head=
+er=E2=80=99s
+source MAC address is the same as that of the VF NIC. The reason for this is
+that the Linux ixgbe driver module in the host OS has its anti-spoofing fea=
+ture
+enabled.
 
 Implication:
-A multi-process client application fails to initialize.
+Packets sent using the 1 GbE/10 GbE SR-IOV driver must have the source MAC
+address correctly set to that of the VF NIC. Packets with other source addr=
+ess
+values are dropped by the NIC if the application attempts to transmit them.
 
 Resolution/Workaround:
-See the =E2=80=9CMulti-process Limitations=E2=80=9D section in the DPDK Pro=
-grammer=E2=80=99s Guide for
-more information.
+Configure the Ethernet source address in each packet to match that of the VF
+NIC.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-Multi-process example application
+1 GbE/10 GbE VF Poll Mode Driver (PMD).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385504460.c459f4F.2107506
-Date: Mon, 3 Feb 2025 03:40:46 +0100
+--17385506000.b2Ec.2109337
+Date: Mon, 3 Feb 2025 03:43:20 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -126,15 +129,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Multi-process sample app requires exact memory ma=
-pping"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1628">1628</a>
+   title=3D"UNCONFIRMED - Packets are not sent by the 1 GbE/10 GbE SR-IOV d=
+river when the source MAC is not the MAC assigned to the VF NIC"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1629">1629</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Multi-process sample app requires exact memory mapping
+          <td>Packets are not sent by the 1 GbE/10 GbE SR-IOV driver when t=
+he source MAC is not the MAC assigned to the VF NIC
           </td>
         </tr>
 
@@ -182,7 +186,7 @@ pping"
 
         <tr>
           <th>Component</th>
-          <td>examples
+          <td>ethdev
           </td>
         </tr>
 
@@ -205,28 +209,28 @@ pping"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The multi-process example applicat=
-ion assumes that it is possible to map the
-hugepage memory to the same virtual addresses in client and server
-applications. Occasionally, very rarely with 64-bit, this does not occur an=
-d a
-client application will fail on startup. The Linux =E2=80=9Caddress-space l=
-ayout
-randomization=E2=80=9D security feature can sometimes cause this to occur.
+          <pre class=3D"bz_comment_text">The 1 GbE/10 GbE SR-IOV driver can=
+ only send packets when the Ethernet header=E2=80=99s
+source MAC address is the same as that of the VF NIC. The reason for this is
+that the Linux ixgbe driver module in the host OS has its anti-spoofing fea=
+ture
+enabled.
 
 Implication:
-A multi-process client application fails to initialize.
+Packets sent using the 1 GbE/10 GbE SR-IOV driver must have the source MAC
+address correctly set to that of the VF NIC. Packets with other source addr=
+ess
+values are dropped by the NIC if the application attempts to transmit them.
 
 Resolution/Workaround:
-See the =E2=80=9CMulti-process Limitations=E2=80=9D section in the DPDK Pro=
-grammer=E2=80=99s Guide for
-more information.
+Configure the Ethernet source address in each packet to match that of the VF
+NIC.
 
 Affected Environment/Platform:
 All.
 
 Driver/Module:
-Multi-process example application
+1 GbE/10 GbE VF Poll Mode Driver (PMD).
           </pre>
         </div>
       </p>
@@ -243,7 +247,7 @@ Multi-process example application
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1628">
+?id=3D1629">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -252,4 +256,4 @@ ication">
     </body>
 </html>=
 
---17385504460.c459f4F.2107506--
+--17385506000.b2Ec.2109337--
