@@ -2,26 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5E4C0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257C4C0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 02:51:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE232400EF;
-	Mon,  3 Feb 2025 03:49:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E96E400EF;
+	Mon,  3 Feb 2025 03:51:30 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 177D8400D7
- for <dev@dpdk.org>; Mon,  3 Feb 2025 03:49:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C00F5400D7
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 03:51:27 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id EAC5D4617B; Mon,  3 Feb 2025 03:49:35 +0100 (CET)
+ id E3B964617B; Mon,  3 Feb 2025 03:51:26 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 1632] Some hardware off-load functions are
- not supported by the VF Driver
-Date: Mon, 03 Feb 2025 02:49:35 +0000
+Subject: [DPDK/core Bug 1633] Kernel crash on IGB port unbinding
+Date: Mon, 03 Feb 2025 02:51:26 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Component: core
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1632-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385509750.A1AabD2.2112369
+Message-ID: <bug-1633-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385510860.62DBd.2113216
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385509750.A1AabD2.2112369
-Date: Mon, 3 Feb 2025 03:49:35 +0100
+--17385510860.62DBd.2113216
+Date: Mon, 3 Feb 2025 03:51:26 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +64,10 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1632
+https://bugs.dpdk.org/show_bug.cgi?id=3D1633
 
-            Bug ID: 1632
-           Summary: Some hardware off-load functions are not supported by
-                    the VF Driver
+            Bug ID: 1633
+           Summary: Kernel crash on IGB port unbinding
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,43 +75,32 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1632
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: vhost/virtio
+         Component: core
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-Currently, configuration of the following items is not supported by the VF
-driver:
-
-IP/UDP/TCP checksum offload
-
-Jumbo Frame Receipt
-
-HW Strip CRC
+Kernel crash may occur when unbinding 1G ports from the igb_uio driver, on
+2.6.3x kernels such as shipped with Fedora 14.
 
 Implication:
-Any configuration for these items in the VF register will be ignored. The
-behavior is dependent on the current PF setting.
+Kernel crash occurs.
 
 Resolution/Workaround:
-For the PF (Physical Function) status on which the VF driver depends, there=
- is
-an option item under PMD in the config file. For others, the VF will keep t=
-he
-same behavior as PF setting.
+Use newer kernels or do not unbind ports.
 
 Affected Environment/Platform:
-All.
+2.6.3x kernels such as shipped with Fedora 14
 
 Driver/Module:
-VF (SR-IOV) Poll Mode Driver (PMD).
+IGB Poll Mode Driver (PMD).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385509750.A1AabD2.2112369
-Date: Mon, 3 Feb 2025 03:49:35 +0100
+--17385510860.62DBd.2113216
+Date: Mon, 3 Feb 2025 03:51:26 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -131,16 +118,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Some hardware off-load functions are not supporte=
-d by the VF Driver"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1632">1632</a>
+   title=3D"UNCONFIRMED - Kernel crash on IGB port unbinding"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1633">1633</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Some hardware off-load functions are not supported by the VF =
-Driver
+          <td>Kernel crash on IGB port unbinding
           </td>
         </tr>
 
@@ -188,7 +173,7 @@ Driver
 
         <tr>
           <th>Component</th>
-          <td>vhost/virtio
+          <td>core
           </td>
         </tr>
 
@@ -211,32 +196,21 @@ Driver
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Currently, configuration of the fo=
-llowing items is not supported by the VF
-driver:
-
-IP/UDP/TCP checksum offload
-
-Jumbo Frame Receipt
-
-HW Strip CRC
+          <pre class=3D"bz_comment_text">Kernel crash may occur when unbind=
+ing 1G ports from the igb_uio driver, on
+2.6.3x kernels such as shipped with Fedora 14.
 
 Implication:
-Any configuration for these items in the VF register will be ignored. The
-behavior is dependent on the current PF setting.
+Kernel crash occurs.
 
 Resolution/Workaround:
-For the PF (Physical Function) status on which the VF driver depends, there=
- is
-an option item under PMD in the config file. For others, the VF will keep t=
-he
-same behavior as PF setting.
+Use newer kernels or do not unbind ports.
 
 Affected Environment/Platform:
-All.
+2.6.3x kernels such as shipped with Fedora 14
 
 Driver/Module:
-VF (SR-IOV) Poll Mode Driver (PMD).
+IGB Poll Mode Driver (PMD).
           </pre>
         </div>
       </p>
@@ -253,7 +227,7 @@ VF (SR-IOV) Poll Mode Driver (PMD).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1632">
+?id=3D1633">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -262,4 +236,4 @@ ication">
     </body>
 </html>=
 
---17385509750.A1AabD2.2112369--
+--17385510860.62DBd.2113216--
