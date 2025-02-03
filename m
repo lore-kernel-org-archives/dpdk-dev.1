@@ -2,26 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EC8C0218F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E602CC0218F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Feb 2025 03:07:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 822524060F;
-	Mon,  3 Feb 2025 04:05:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 43E884060F;
+	Mon,  3 Feb 2025 04:07:14 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 11ED3400EF
- for <dev@dpdk.org>; Mon,  3 Feb 2025 04:05:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5C7DC400EF
+ for <dev@dpdk.org>; Mon,  3 Feb 2025 04:07:12 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 0B61F4617C; Mon,  3 Feb 2025 04:05:55 +0100 (CET)
+ id 54EB64617C; Mon,  3 Feb 2025 04:07:12 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1638] Differences in how different Intel NICs
- handle maximum packet length for jumbo frame
-Date: Mon, 03 Feb 2025 03:05:55 +0000
+Subject: =?UTF-8?B?W0RQREsvb3RoZXIgQnVnIDE2MzldIEdDQyBtaWdodCBnZW5lcmF0?=
+ =?UTF-8?B?ZSBJbnRlbMKuIEFWWCBpbnN0cnVjdGlvbnMgZm9yIHByb2Nlc3NvcnMgd2l0?=
+ =?UTF-8?B?aG91dCBJbnRlbMKuIEFWWCBzdXBwb3J0?=
+Date: Mon, 03 Feb 2025 03:07:12 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: other
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,8 +36,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1638-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17385519540.DB20A29Fb.2122258
+Message-ID: <bug-1639-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17385520320.bA99A1de.2122894
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +57,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17385519540.DB20A29Fb.2122258
-Date: Mon, 3 Feb 2025 04:05:54 +0100
+--17385520320.bA99A1de.2122894
+Date: Mon, 3 Feb 2025 04:07:12 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +66,11 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1638
+https://bugs.dpdk.org/show_bug.cgi?id=3D1639
 
-            Bug ID: 1638
-           Summary: Differences in how different Intel NICs handle maximum
-                    packet length for jumbo frame
+            Bug ID: 1639
+           Summary: GCC might generate Intel=C2=AE AVX instructions for
+                    processors without Intel=C2=AE AVX support
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,41 +78,32 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1638
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: other
           Assignee: dev@dpdk.org
           Reporter: nandinipersad361@gmail.com
   Target Milestone: ---
 
-10 Gigabit Ethernet devices from Intel do not take VLAN tags into account w=
-hen
-calculating packet size while Gigabit Ethernet devices do so for jumbo fram=
-es.
+When compiling DPDK (and any DPDK app), gcc may generate Intel=C2=AE AVX
+instructions, even when the processor does not support Intel=C2=AE AVX.
 
 Implication:
-When receiving packets with VLAN tags, the actual maximum size of useful
-payload that Intel Gigabit Ethernet devices are able to receive is 4 bytes =
-(or
-8 bytes in the case of packets with extended VLAN tags) less than that of I=
-ntel
-10 Gigabit Ethernet devices.
+Any DPDK app might crash while starting up.
 
 Resolution/Workaround:
-Increase the configured maximum packet size when using Intel Gigabit Ethern=
-et
-devices.
+Either compile using icc or set EXTRA_CFLAGS=3D'-O3' prior to compilation.
 
 Affected Environment/Platform:
-All.
+Platforms which processor does not support Intel=C2=AE AVX.
 
 Driver/Module:
-Poll Mode Driver (PMD).
+Environment Abstraction Layer (EAL).
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17385519540.DB20A29Fb.2122258
-Date: Mon, 3 Feb 2025 04:05:54 +0100
+--17385520320.bA99A1de.2122894
+Date: Mon, 3 Feb 2025 04:07:12 +0100
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -129,16 +121,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Differences in how different Intel NICs handle ma=
-ximum packet length for jumbo frame"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1638">1638</a>
+   title=3D"UNCONFIRMED - GCC might generate Intel=C2=AE AVX instructions f=
+or processors without Intel=C2=AE AVX support"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1639">1639</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Differences in how different Intel NICs handle maximum packet=
- length for jumbo frame
+          <td>GCC might generate Intel=C2=AE AVX instructions for processor=
+s without Intel=C2=AE AVX support
           </td>
         </tr>
 
@@ -186,7 +178,7 @@ ximum packet length for jumbo frame"
 
         <tr>
           <th>Component</th>
-          <td>ethdev
+          <td>other
           </td>
         </tr>
 
@@ -209,29 +201,21 @@ ximum packet length for jumbo frame"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">10 Gigabit Ethernet devices from I=
-ntel do not take VLAN tags into account when
-calculating packet size while Gigabit Ethernet devices do so for jumbo fram=
-es.
+          <pre class=3D"bz_comment_text">When compiling DPDK (and any DPDK =
+app), gcc may generate Intel=C2=AE AVX
+instructions, even when the processor does not support Intel=C2=AE AVX.
 
 Implication:
-When receiving packets with VLAN tags, the actual maximum size of useful
-payload that Intel Gigabit Ethernet devices are able to receive is 4 bytes =
-(or
-8 bytes in the case of packets with extended VLAN tags) less than that of I=
-ntel
-10 Gigabit Ethernet devices.
+Any DPDK app might crash while starting up.
 
 Resolution/Workaround:
-Increase the configured maximum packet size when using Intel Gigabit Ethern=
-et
-devices.
+Either compile using icc or set EXTRA_CFLAGS=3D'-O3' prior to compilation.
 
 Affected Environment/Platform:
-All.
+Platforms which processor does not support Intel=C2=AE AVX.
 
 Driver/Module:
-Poll Mode Driver (PMD).
+Environment Abstraction Layer (EAL).
           </pre>
         </div>
       </p>
@@ -248,7 +232,7 @@ Poll Mode Driver (PMD).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1638">
+?id=3D1639">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -257,4 +241,4 @@ ication">
     </body>
 </html>=
 
---17385519540.DB20A29Fb.2122258--
+--17385520320.bA99A1de.2122894--
