@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014FFC02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC98C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:59:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B5EE40698;
-	Tue,  4 Feb 2025 21:57:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 60F99406FF;
+	Tue,  4 Feb 2025 21:57:45 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 08198400D6
+ by mails.dpdk.org (Postfix) with ESMTP id 5C1F3402E1
  for <dev@dpdk.org>; Tue,  4 Feb 2025 21:57:23 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 5E0E0210C33A; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E0E0210C33A
+ id E5294210D0C9; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E5294210D0C9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738702641;
- bh=R1q3dWwl0t6YhWGgHYDG3ZXRsMth7Rdr4mn/KHJaCzs=;
+ bh=5K8NnvBuKfNdoeRH2uHEHHTvXAo3jG0xU1HKYV9xnjU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=eFxqlScyLoifwktU0ic4z0p48CLTWjjOGwweRm7WA7l9M/2/dPI8Q4RHjEgFUzlQB
- PkUxmnpGnxHSmo1ilL7OnRE4S3WDHuLPkapt9FL4bNvaYkKHX0f1Q+RruhJFhbdt7z
- kCC44eMyqDOSc9hIhJWqV7VLlLMVR14Zq8L08z1o=
+ b=lWvD1KLJc1ox/wmOZbrnDTiygSGm9/Son120wFVqFT9GMybY2M8TKiJVojlMwQaCS
+ y3bXr2zOnB5s3P8dXwlF2aqyQb+t+3jpzA54gFEsnqromaKjk6hEthOV4ncD4Hlp0u
+ pwqK34fE+1MbFYbt6ldiKYGfiPWXAR7DEE1/hjBs=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com
-Subject: [PATCH v21 09/27] gro: remove use of VLAs
-Date: Tue,  4 Feb 2025 12:57:00 -0800
-Message-Id: <1738702638-22363-10-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH v21 20/27] hash: remove use of VLAs by using standard arrays
+Date: Tue,  4 Feb 2025 12:57:11 -0800
+Message-Id: <1738702638-22363-21-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,148 +44,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+MSVC does not support VLAs, replace VLAs with standard C arrays.
 
-../lib/gro/rte_gro.c:182:34: warning:
-    variable length array used [-Wvla]
-../lib/gro/rte_gro.c:363:34: warning:
-    variable length array used [-Wvla]
-
-In both cases the pattern is the same: we use unprocess_pkts[nb_pkts] to
-collect un-used by GRO packets, and then copy them to the start of
-input/output pkts[] array.
-In both cases, we can safely copy pkts[i] into already
-processed entry at the same array, i.e. into pkts[unprocess_num].
-Such change eliminates need of temporary VLA: unprocess_pkts[nb_pkts].
-
-Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Acked-by: Ferruh Yigit <ferruh.yigit@amd.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- lib/gro/rte_gro.c | 40 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 26 deletions(-)
+ lib/hash/rte_thash_gf2_poly_math.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
-index db86117609..6d5aadf32a 100644
---- a/lib/gro/rte_gro.c
-+++ b/lib/gro/rte_gro.c
-@@ -179,7 +179,6 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 	struct gro_vxlan_udp4_item vxlan_udp_items[RTE_GRO_MAX_BURST_ITEM_NUM]
- 			= {{{0}} };
+diff --git a/lib/hash/rte_thash_gf2_poly_math.c b/lib/hash/rte_thash_gf2_poly_math.c
+index 1c62974e71..825da4382f 100644
+--- a/lib/hash/rte_thash_gf2_poly_math.c
++++ b/lib/hash/rte_thash_gf2_poly_math.c
+@@ -8,6 +8,7 @@
+ #include <rte_thash.h>
+ #include <rte_log.h>
  
--	struct rte_mbuf *unprocess_pkts[nb_pkts];
- 	uint32_t item_num;
- 	int32_t ret;
- 	uint16_t i, unprocess_num = 0, nb_after_gro = nb_pkts;
-@@ -275,7 +274,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* Merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
- 				do_vxlan_udp_gro) {
- 			ret = gro_vxlan_udp4_reassemble(pkts[i],
-@@ -284,7 +283,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* Merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp4_gro) {
- 			ret = gro_tcp4_reassemble(pkts[i], &tcp_tbl, 0);
-@@ -292,7 +291,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
- 				do_udp4_gro) {
- 			ret = gro_udp4_reassemble(pkts[i], &udp_tbl, 0);
-@@ -300,7 +299,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp6_gro) {
- 			ret = gro_tcp6_reassemble(pkts[i], &tcp6_tbl, 0);
-@@ -308,21 +307,15 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
- 				/* merge successfully */
- 				nb_after_gro--;
- 			else if (ret < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else
--			unprocess_pkts[unprocess_num++] = pkts[i];
-+			pkts[unprocess_num++] = pkts[i];
- 	}
- 
- 	if ((nb_after_gro < nb_pkts)
- 		 || (unprocess_num < nb_pkts)) {
--		i = 0;
--		/* Copy unprocessed packets */
--		if (unprocess_num > 0) {
--			memcpy(&pkts[i], unprocess_pkts,
--					sizeof(struct rte_mbuf *) *
--					unprocess_num);
--			i = unprocess_num;
--		}
-+
-+		i = unprocess_num;
- 
- 		/* Flush all packets from the tables */
- 		if (do_vxlan_tcp_gro) {
-@@ -360,7 +353,6 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
- 		uint16_t nb_pkts,
- 		void *ctx)
++#define MAX_POLY_DEGREE 32
+ #define MAX_TOEPLITZ_KEY_LENGTH 64
+ RTE_LOG_REGISTER_SUFFIX(thash_poly_logtype, thash_poly, INFO);
+ #define RTE_LOGTYPE_HASH thash_poly_logtype
+@@ -149,7 +150,7 @@ gf2_pow(uint32_t a, uint32_t pow, uint32_t r, int degree)
+ static uint32_t
+ __thash_get_rand_poly(int poly_degree)
  {
--	struct rte_mbuf *unprocess_pkts[nb_pkts];
- 	struct gro_ctx *gro_ctx = ctx;
- 	void *tcp_tbl, *udp_tbl, *vxlan_tcp_tbl, *vxlan_udp_tbl, *tcp6_tbl;
- 	uint64_t current_time;
-@@ -396,33 +388,29 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
- 				do_vxlan_tcp_gro) {
- 			if (gro_vxlan_tcp4_reassemble(pkts[i], vxlan_tcp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
- 				do_vxlan_udp_gro) {
- 			if (gro_vxlan_udp4_reassemble(pkts[i], vxlan_udp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp4_gro) {
- 			if (gro_tcp4_reassemble(pkts[i], tcp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
- 				do_udp4_gro) {
- 			if (gro_udp4_reassemble(pkts[i], udp_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
- 				do_tcp6_gro) {
- 			if (gro_tcp6_reassemble(pkts[i], tcp6_tbl,
- 						current_time) < 0)
--				unprocess_pkts[unprocess_num++] = pkts[i];
-+				pkts[unprocess_num++] = pkts[i];
- 		} else
--			unprocess_pkts[unprocess_num++] = pkts[i];
--	}
--	if (unprocess_num > 0) {
--		memcpy(pkts, unprocess_pkts, sizeof(struct rte_mbuf *) *
--				unprocess_num);
-+			pkts[unprocess_num++] = pkts[i];
- 	}
+-	uint32_t roots[poly_degree];
++	uint32_t roots[MAX_POLY_DEGREE];
+ 	uint32_t rnd;
+ 	uint32_t ret_poly = 0;
+ 	int i, j;
+@@ -194,9 +195,7 @@ __thash_get_rand_poly(int poly_degree)
+ 	 * Get coefficients of the polynomial for
+ 	 * (x - roots[0])(x - roots[1])...(x - roots[n])
+ 	 */
+-	uint32_t poly_coefficients[poly_degree + 1];
+-	for (i = 0; i <= poly_degree; i++)
+-		poly_coefficients[i] = 0;
++	uint32_t poly_coefficients[MAX_POLY_DEGREE + 1] = {0};
  
- 	return unprocess_num;
+ 	poly_coefficients[0] = 1; /* highest degree term coefficient in the end */
+ 	for (i = 0; i < (int)poly_degree; i++) {
+@@ -247,7 +246,7 @@ thash_get_rand_poly(uint32_t poly_degree)
+ {
+ 	uint32_t ret_poly;
+ 
+-	if (poly_degree > 32) {
++	if (poly_degree > MAX_POLY_DEGREE) {
+ 		HASH_LOG(ERR, "Wrong polynomial degree %d, must be in range [1, 32]", poly_degree);
+ 		return 0;
+ 	}
 -- 
 2.47.2.vfs.0.1
 
