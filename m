@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9CEC02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4B9C02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:58:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA84A4066A;
-	Tue,  4 Feb 2025 21:57:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C01B140673;
+	Tue,  4 Feb 2025 21:57:38 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 0BED24029F
+ by mails.dpdk.org (Postfix) with ESMTP id 8D723402E6
  for <dev@dpdk.org>; Tue,  4 Feb 2025 21:57:23 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 76127210C33C; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 76127210C33C
+ id 2E5E7210D0CE; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2E5E7210D0CE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738702641;
- bh=P2GILx611CmHWZQamm6DnO2lGy135vG+YjfFI9+sUH4=;
+ s=default; t=1738702642;
+ bh=aPloZmRzPS81A3gM1BB1XitT4l4LD+nrXd/fISGnZUY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=NXCvQCRmpVfvgRhpWEkYpIxjUQVsTRXUy/gJqLamUu/0wLbHX1cER+jKlhOHjw6BO
- phh4++/2KUFiA5ZdxIO3ep+C7NXLKEz3h7njUboWEy+oFQusBex7XrvyGVnjN8BMzC
- 1xOwSSZkYPyTdyF9vhpdrKOi0GRzkU5NRpe8G5ic=
+ b=FveBpfbF5/PzXAJvK26MHFFTfjcp3rYUjS8hji9XNNHi59nd3y3Elr6/dvi56kQbq
+ aQdtU+VfktFBihh7C1v3I8E9t4jazgR/8tEGdIChfm6/CRtqIJBSGkguBVTyqO5VnD
+ EbW2XLI83i4wMAFJPpBAg1bqmDhswTFvP2umYgzM=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com
-Subject: [PATCH v21 11/27] net/ice: remove use of VLAs
-Date: Tue,  4 Feb 2025 12:57:02 -0800
-Message-Id: <1738702638-22363-12-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH v21 25/27] examples: add no_wvla_cflag to directories that are
+ not VLA-free
+Date: Tue,  4 Feb 2025 12:57:16 -0800
+Message-Id: <1738702638-22363-26-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,103 +45,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+The no_wvla_cflag is added to meson.build files in directories that
+are not yet VLA-free.
 
-../drivers/net/ice/ice_rxtx.c:1871:29: warning:
-    variable length array used [-Wvla]
-
-Here VLA is used as a temp array for mbufs that will be used as a split
-RX data buffers.
-As at any given time only one thread can do RX from particular queue,
-at rx_queue_setup() we can allocate extra space for that array, and then
-safely use it at RX fast-path.
-
-Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- drivers/net/intel/ice/ice_rxtx.c | 18 ++++++++++++------
- drivers/net/intel/ice/ice_rxtx.h |  2 ++
- 2 files changed, 14 insertions(+), 6 deletions(-)
+ examples/fips_validation/meson.build  | 2 ++
+ examples/ip_fragmentation/meson.build | 1 +
+ examples/ipsec-secgw/meson.build      | 3 +++
+ examples/l2fwd-crypto/meson.build     | 1 +
+ examples/l2fwd-jobstats/meson.build   | 1 +
+ examples/l3fwd-power/meson.build      | 1 +
+ examples/l3fwd/meson.build            | 1 +
+ examples/pipeline/meson.build         | 1 +
+ examples/qos_sched/meson.build        | 1 +
+ examples/vhost/meson.build            | 1 +
+ 10 files changed, 13 insertions(+)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 8dd8644b16..437cf0d807 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -1172,7 +1172,7 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
- 	struct ice_vsi *vsi = pf->main_vsi;
- 	struct ice_rx_queue *rxq;
- 	const struct rte_memzone *rz;
--	uint32_t ring_size;
-+	uint32_t ring_size, tlen;
- 	uint16_t len;
- 	int use_def_burst_func = 1;
- 	uint64_t offloads;
-@@ -1280,9 +1280,14 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
- 	/* always reserve more for bulk alloc */
- 	len = (uint16_t)(nb_desc + ICE_RX_MAX_BURST);
+diff --git a/examples/fips_validation/meson.build b/examples/fips_validation/meson.build
+index 7d4e440c6c..6c29b535cb 100644
+--- a/examples/fips_validation/meson.build
++++ b/examples/fips_validation/meson.build
+@@ -25,6 +25,8 @@ sources = files(
+         'main.c',
+ )
  
-+	/* allocate extra entries for SW split buffer */
-+	tlen = ((rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) != 0) ?
-+		rxq->rx_free_thresh : 0;
-+	tlen += len;
++cflags += no_wvla_cflag
 +
- 	/* Allocate the software ring. */
- 	rxq->sw_ring = rte_zmalloc_socket(NULL,
--					  sizeof(struct ice_rx_entry) * len,
-+					  sizeof(struct ice_rx_entry) * tlen,
- 					  RTE_CACHE_LINE_SIZE,
- 					  socket_id);
- 	if (!rxq->sw_ring) {
-@@ -1291,6 +1296,8 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
- 		return -ENOMEM;
- 	}
- 
-+	rxq->sw_split_buf = (tlen == len) ? NULL : rxq->sw_ring + len;
+ if dpdk_conf.has('RTE_HAS_JANSSON')
+     ext_deps += jansson_dep
+     cflags += '-DUSE_JANSSON'
+diff --git a/examples/ip_fragmentation/meson.build b/examples/ip_fragmentation/meson.build
+index cd84e9b143..750c3e4149 100644
+--- a/examples/ip_fragmentation/meson.build
++++ b/examples/ip_fragmentation/meson.build
+@@ -11,3 +11,4 @@ deps +=  ['ip_frag', 'lpm']
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/ipsec-secgw/meson.build b/examples/ipsec-secgw/meson.build
+index 023d9cf039..e6a0e18a73 100644
+--- a/examples/ipsec-secgw/meson.build
++++ b/examples/ipsec-secgw/meson.build
+@@ -23,6 +23,9 @@ sources = files(
+         'sp4.c',
+         'sp6.c',
+ )
 +
- 	ice_reset_rx_queue(rxq);
- 	rxq->q_set = true;
- 	dev->data->rx_queues[queue_idx] = rxq;
-@@ -1864,7 +1871,6 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
- 	uint64_t dma_addr;
- 	int diag, diag_pay;
- 	uint64_t pay_addr;
--	struct rte_mbuf *mbufs_pay[rxq->rx_free_thresh];
- 
- 	/* Allocate buffers in bulk */
- 	alloc_idx = (uint16_t)(rxq->rx_free_trigger -
-@@ -1879,7 +1885,7 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
- 
- 	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) {
- 		diag_pay = rte_mempool_get_bulk(rxq->rxseg[1].mp,
--				(void *)mbufs_pay, rxq->rx_free_thresh);
-+				(void *)rxq->sw_split_buf, rxq->rx_free_thresh);
- 		if (unlikely(diag_pay != 0)) {
- 			rte_mempool_put_bulk(rxq->mp, (void *)rxep,
- 				    rxq->rx_free_thresh);
-@@ -1906,8 +1912,8 @@ ice_rx_alloc_bufs(struct ice_rx_queue *rxq)
- 			rxdp[i].read.hdr_addr = 0;
- 			rxdp[i].read.pkt_addr = dma_addr;
- 		} else {
--			mb->next = mbufs_pay[i];
--			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbufs_pay[i]));
-+			mb->next = rxq->sw_split_buf[i].mbuf;
-+			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mb->next));
- 			rxdp[i].read.hdr_addr = dma_addr;
- 			rxdp[i].read.pkt_addr = pay_addr;
- 		}
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index f9293ac6f9..276d40b57f 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -139,6 +139,8 @@ struct ice_rx_queue {
- 	uint32_t hw_time_high; /* high 32 bits of timestamp */
- 	uint32_t hw_time_low; /* low 32 bits of timestamp */
- 	uint64_t hw_time_update; /* SW time of HW record updating */
-+	struct ice_rx_entry *sw_split_buf;
-+	/* address of temp buffer for RX split mbufs */
- 	struct rte_eth_rxseg_split rxseg[ICE_RX_MAX_NSEG];
- 	uint32_t rxseg_nb;
- 	bool ts_enable; /* if rxq timestamp is enabled */
++cflags += no_wvla_cflag
++
+ app_cflags = ['-Wno-address-of-packed-member']
+ foreach flag:app_cflags
+     if cc.has_argument(flag)
+diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
+index bb44c88882..c21722b85c 100644
+--- a/examples/l2fwd-crypto/meson.build
++++ b/examples/l2fwd-crypto/meson.build
+@@ -14,3 +14,4 @@ allow_experimental_apis = true
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l2fwd-jobstats/meson.build b/examples/l2fwd-jobstats/meson.build
+index bffcf35e8c..d59d3d6555 100644
+--- a/examples/l2fwd-jobstats/meson.build
++++ b/examples/l2fwd-jobstats/meson.build
+@@ -11,3 +11,4 @@ deps += ['jobstats', 'timer']
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd-power/meson.build b/examples/l3fwd-power/meson.build
+index 624ef5e947..5ff4466cac 100644
+--- a/examples/l3fwd-power/meson.build
++++ b/examples/l3fwd-power/meson.build
+@@ -12,3 +12,4 @@ sources = files(
+         'main.c',
+         'perf_core.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd/meson.build b/examples/l3fwd/meson.build
+index c25de77bba..74144c7979 100644
+--- a/examples/l3fwd/meson.build
++++ b/examples/l3fwd/meson.build
+@@ -21,3 +21,4 @@ sources = files(
+ if dpdk_conf.has('RTE_LIB_EVENTDEV')
+     deps += 'eventdev'
+ endif
++cflags += no_wvla_cflag
+diff --git a/examples/pipeline/meson.build b/examples/pipeline/meson.build
+index 50103f2e01..01f14dc2ae 100644
+--- a/examples/pipeline/meson.build
++++ b/examples/pipeline/meson.build
+@@ -20,3 +20,4 @@ sources = files(
+         'obj.c',
+         'thread.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
+index dc103e9556..92657ce8a5 100644
+--- a/examples/qos_sched/meson.build
++++ b/examples/qos_sched/meson.build
+@@ -17,3 +17,4 @@ sources = files(
+         'main.c',
+         'stats.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
+index 87a637f83f..e938be8f45 100644
+--- a/examples/vhost/meson.build
++++ b/examples/vhost/meson.build
+@@ -18,3 +18,4 @@ sources = files(
+         'main.c',
+         'virtio_net.c',
+ )
++cflags += no_wvla_cflag
 -- 
 2.47.2.vfs.0.1
 
