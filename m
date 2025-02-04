@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC97C02196
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E1FC02196
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:16:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BAE842E1D;
-	Tue,  4 Feb 2025 16:12:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 947BA4278F;
+	Tue,  4 Feb 2025 16:12:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id A3B5C42D45
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DBC3542794
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681937; x=1770217937;
+ t=1738681939; x=1770217939;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=lpblJrQlU7uGadTU63MAAhS1WOdPjZXReGJjc7+CCT8=;
- b=JBcIPaUFBC1NuNNDXd+RposgbVxjpN8CQ5Tpw7/LL1GGg+3dwqynivu4
- iwbNT654R5oPz1sNSPmpROwtwanBv752Zlg4ON4SAd+4Bh8/3B0QnVGCH
- M6kh5i0LG3sGBnFyRPneWvpTYOTnWDTcPFzvZwO/abYmfomzUlNhwBGab
- dKCgcKJ5vu7QT5tO3duDzLT/WYRAe7R9hj/TFwcL1Q/t9omH+r3sh7c44
- y24FTJJW56XkuiUIJ2QHcWEgFcd/v3fou2/0gZoDoBBOe16HLWpBKxLXZ
- zCgjnJ8HLWqZCyPuMkL+Quioe9UbwN1cVLMcs9W2FqD54J+fXwYK9EMJs A==;
-X-CSE-ConnectionGUID: v0SIEM5lSoagNQbJtHeMdg==
-X-CSE-MsgGUID: Shr720FCRTSgcNTWkPH85w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097166"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097166"
+ bh=azAKwRcwNrBUCY5htxOKb1/IGUcEcnAg+BiES5+1FTk=;
+ b=QWmVCowvLpH2ewPq1Zx0u+Fxb1dx3hloQEVgT1IOkDbA5i3feER9zJBc
+ zj/rRpOy4tyDDsndcPZ+uuLb+BDZIC/OX5CkTPYE9zMKH/WqQriENu+zo
+ CIn8RrqUtvzNOYZ7rxqGrq+p/ubQqvZYwkSOpQzCOZGlB9iUH6NZqGn5v
+ p8Fv56P7Leh9Z2f0h7RRiBkeSyECoqrpkPAypXaIsV8/VnVAXhLndawsq
+ TJQD+LPTkt8ZayIxHxIRZQJu03fSbKraCk6QFhc6mXPzywkkT/Y5fKXOl
+ 3nDFBe4wsEWWuLJYsCpXUagDzr+m6oXsABUY5IALJcclqabvKv/VxKHAE A==;
+X-CSE-ConnectionGUID: OstkR76EQ4ODqrDzoYER4g==
+X-CSE-MsgGUID: P7rSoDARTbeKmdKLcrlIUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097170"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097170"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:17 -0800
-X-CSE-ConnectionGUID: Y/13KUo7Sx+V2mVkFb6ElQ==
-X-CSE-MsgGUID: eSe3Af93SmqbWQlxcokwog==
+ 04 Feb 2025 07:12:18 -0800
+X-CSE-ConnectionGUID: QqGGx3W4Tjy5S1dPW6NILw==
+X-CSE-MsgGUID: y4BTxPEVQg+F1nj0yryZJA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792749"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792752"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:15 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:16 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 39/54] net/e1000/base: add WoL definitions
-Date: Tue,  4 Feb 2025 15:10:45 +0000
-Message-ID: <d0f32132d050798b1b2c34d7d74aec5615b31d93.1738681726.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 40/54] net/e1000/base: hardcode bus parameters for ICH8
+Date: Tue,  4 Feb 2025 15:10:46 +0000
+Message-ID: <81c2d95565ad5db455f74440bbb8ccd5aba3a514.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,36 +60,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Adam Ludkiewicz <adam.ludkiewicz@intel.com>
+From: Dima Ruinskiy <dima.ruinskiy@intel.com>
 
-Define constants for WoL control on i210 NICs.
+Current implementation of e1000_get_bus_info_ich8lan first attempts to
+call e1000_get_bus_info_pcie_generic, and hard codes the bus width if the
+latter does not return a valid value.
 
-Signed-off-by: Adam Ludkiewicz <adam.ludkiewicz@intel.com>
+However, e1000_get_bus_info_pcie_generic will always fail on an ICH
+device, since no PCIe capability is present in the ICH config space.
+Therefore, there is no need to call it at all. Instead, we set the bus
+parameters to their appropriate default values.
+
+Signed-off-by: Dima Ruinskiy <dima.ruinskiy@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_i210.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/intel/e1000/base/e1000_ich8lan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_i210.h b/drivers/net/intel/e1000/base/e1000_i210.h
-index b5cc84766e..950ff4ba7b 100644
---- a/drivers/net/intel/e1000/base/e1000_i210.h
-+++ b/drivers/net/intel/e1000/base/e1000_i210.h
-@@ -66,6 +66,7 @@ enum E1000_INVM_STRUCTURE_TYPE {
- /* PLL Defines */
- #define E1000_PCI_PMCSR			0x44
- #define E1000_PCI_PMCSR_D3		0x03
-+#define E1000_PCI_PMCSR_PME_EN		0x100
- #define E1000_MAX_PLL_TRIES		5
- #define E1000_PHY_PLL_UNCONF		0xFF
- #define E1000_PHY_PLL_FREQ_PAGE		0xFC0000
-@@ -74,4 +75,7 @@ enum E1000_INVM_STRUCTURE_TYPE {
- #define E1000_INVM_AUTOLOAD		0x0A
- #define E1000_INVM_PLL_WO_VAL		0x0010
+diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+index d55797f817..da36d4c098 100644
+--- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
++++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+@@ -4883,21 +4883,20 @@ STATIC s32 e1000_id_led_init_pchlan(struct e1000_hw *hw)
+ STATIC s32 e1000_get_bus_info_ich8lan(struct e1000_hw *hw)
+ {
+ 	struct e1000_bus_info *bus = &hw->bus;
+-	s32 ret_val;
  
-+#define E1000_NVM_CTRL_WORD_2		0x0F
-+#define E1000_NVM_APMPME_ENABLE		0x8000
-+
- #endif
+ 	DEBUGFUNC("e1000_get_bus_info_ich8lan");
+ 
+-	ret_val = e1000_get_bus_info_pcie_generic(hw);
+-
+ 	/* ICH devices are "PCI Express"-ish.  They have
+ 	 * a configuration space, but do not contain
+-	 * PCI Express Capability registers, so bus width
++	 * PCI Express Capability registers, so bus parameters
+ 	 * must be hardcoded.
+ 	 */
+-	if (bus->width == e1000_bus_width_unknown)
+-		bus->width = e1000_bus_width_pcie_x1;
++	bus->type = e1000_bus_type_pci_express;
++	bus->width = e1000_bus_width_pcie_x1;
++	bus->speed = e1000_bus_speed_unknown;
++	bus->func = 0;
+ 
+-	return ret_val;
++	return E1000_SUCCESS;
+ }
+ 
+ /**
 -- 
 2.43.5
 
