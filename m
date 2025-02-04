@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6D5C02194
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC14C02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:25:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BFF942790;
+	by mails.dpdk.org (Postfix) with ESMTP id EFE4D427BA;
 	Tue,  4 Feb 2025 17:23:15 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3B0834066F
+ by mails.dpdk.org (Postfix) with ESMTP id 26B514066C
  for <dev@dpdk.org>; Tue,  4 Feb 2025 17:22:50 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 74A39210D0C9; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 74A39210D0C9
+ id 4FBEC210D0C3; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4FBEC210D0C3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738686168;
- bh=aPloZmRzPS81A3gM1BB1XitT4l4LD+nrXd/fISGnZUY=;
+ bh=uChABuleYtCEmITg/Decau+IfCFFQhcm3c+EQS1t5FM=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ZwH8acyMvqGu6GlkUyZfhJSFxP/vMinjmlHMMN/s4gC2P3QyUWUHpRiwezB91O4Nw
- b8cZVJAroqoS/oROxjT9B0fACjCVG6MihiQBdVHcuYKY5w17mZ3cwzMPNoXwxEAQdZ
- et9/C0h5pkXjCTScX37W86fobSsEizaIL4U062JE=
+ b=RbbNue2LdwCJkNkRtepV6WBDdWzYrrjVCgua146g6/PF2pZtvGDFc9l19+5AxN/ko
+ wDfVchbk2g8i4u1lauBhX4OJfrlkJRL7yWPoDXT3dOLOpa7k/gJiJYde7Ii3HOFRqz
+ u8vwachgNYk2zBum1/XlwL9c5+JTs4WybxWDKJC8=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v20 25/27] examples: add no_wvla_cflag to directories that are
- not VLA-free
-Date: Tue,  4 Feb 2025 08:22:02 -0800
-Message-Id: <1738686124-16173-26-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v20 22/27] app: add no_wvla_cflag to directories that are not
+ VLA-free
+Date: Tue,  4 Feb 2025 08:21:59 -0800
+Message-Id: <1738686124-16173-23-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738686124-16173-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -50,117 +50,159 @@ are not yet VLA-free.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- examples/fips_validation/meson.build  | 2 ++
- examples/ip_fragmentation/meson.build | 1 +
- examples/ipsec-secgw/meson.build      | 3 +++
- examples/l2fwd-crypto/meson.build     | 1 +
- examples/l2fwd-jobstats/meson.build   | 1 +
- examples/l3fwd-power/meson.build      | 1 +
- examples/l3fwd/meson.build            | 1 +
- examples/pipeline/meson.build         | 1 +
- examples/qos_sched/meson.build        | 1 +
- examples/vhost/meson.build            | 1 +
- 10 files changed, 13 insertions(+)
+ app/pdump/meson.build            |  2 ++
+ app/proc-info/meson.build        |  2 ++
+ app/test-acl/meson.build         |  2 ++
+ app/test-bbdev/meson.build       |  2 ++
+ app/test-crypto-perf/meson.build |  2 ++
+ app/test-dma-perf/meson.build    |  2 ++
+ app/test-eventdev/meson.build    |  2 ++
+ app/test-flow-perf/meson.build   |  2 ++
+ app/test-pmd/meson.build         | 10 +++++++++-
+ app/test-sad/meson.build         |  2 ++
+ app/test/meson.build             | 17 ++++++++++++-----
+ 11 files changed, 39 insertions(+), 6 deletions(-)
 
-diff --git a/examples/fips_validation/meson.build b/examples/fips_validation/meson.build
-index 7d4e440c6c..6c29b535cb 100644
---- a/examples/fips_validation/meson.build
-+++ b/examples/fips_validation/meson.build
-@@ -25,6 +25,8 @@ sources = files(
+diff --git a/app/pdump/meson.build b/app/pdump/meson.build
+index fb282bba1f..a4c7dd44e7 100644
+--- a/app/pdump/meson.build
++++ b/app/pdump/meson.build
+@@ -9,3 +9,5 @@ endif
+ 
+ sources = files('main.c')
+ deps += ['ethdev', 'kvargs', 'pdump']
++
++cflags += no_wvla_cflag
+diff --git a/app/proc-info/meson.build b/app/proc-info/meson.build
+index 4f83f29a64..316253cd5d 100644
+--- a/app/proc-info/meson.build
++++ b/app/proc-info/meson.build
+@@ -12,3 +12,5 @@ deps += ['ethdev', 'security', 'eventdev']
+ if dpdk_conf.has('RTE_LIB_METRICS')
+     deps += 'metrics'
+ endif
++
++cflags += no_wvla_cflag
+diff --git a/app/test-acl/meson.build b/app/test-acl/meson.build
+index c0dc4b221a..7d8b707794 100644
+--- a/app/test-acl/meson.build
++++ b/app/test-acl/meson.build
+@@ -9,3 +9,5 @@ endif
+ 
+ sources = files('main.c')
+ deps += ['acl', 'net']
++
++cflags += no_wvla_cflag
+diff --git a/app/test-bbdev/meson.build b/app/test-bbdev/meson.build
+index 926e0a5271..85b060edec 100644
+--- a/app/test-bbdev/meson.build
++++ b/app/test-bbdev/meson.build
+@@ -26,3 +26,5 @@ endif
+ if dpdk_conf.has('RTE_BASEBAND_LA12XX')
+     deps += ['baseband_la12xx']
+ endif
++
++cflags += no_wvla_cflag
+diff --git a/app/test-crypto-perf/meson.build b/app/test-crypto-perf/meson.build
+index 7b02b518f0..87dd3bc5f1 100644
+--- a/app/test-crypto-perf/meson.build
++++ b/app/test-crypto-perf/meson.build
+@@ -23,3 +23,5 @@ deps += ['cryptodev', 'net', 'security']
+ if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
+     deps += 'crypto_scheduler'
+ endif
++
++cflags += no_wvla_cflag
+diff --git a/app/test-dma-perf/meson.build b/app/test-dma-perf/meson.build
+index b1557b8125..40d6b7f8e4 100644
+--- a/app/test-dma-perf/meson.build
++++ b/app/test-dma-perf/meson.build
+@@ -13,3 +13,5 @@ sources = files(
          'main.c',
+         'benchmark.c',
+ )
++
++cflags += no_wvla_cflag
+diff --git a/app/test-eventdev/meson.build b/app/test-eventdev/meson.build
+index ab8769c755..f0da9fadf2 100644
+--- a/app/test-eventdev/meson.build
++++ b/app/test-eventdev/meson.build
+@@ -23,3 +23,5 @@ sources = files(
+         'test_pipeline_queue.c',
+ )
+ deps += 'eventdev'
++
++cflags += no_wvla_cflag
+diff --git a/app/test-flow-perf/meson.build b/app/test-flow-perf/meson.build
+index 766e4516ad..5758f8d9c6 100644
+--- a/app/test-flow-perf/meson.build
++++ b/app/test-flow-perf/meson.build
+@@ -15,3 +15,5 @@ sources = files(
  )
  
-+cflags += no_wvla_cflag
-+
- if dpdk_conf.has('RTE_HAS_JANSSON')
-     ext_deps += jansson_dep
-     cflags += '-DUSE_JANSSON'
-diff --git a/examples/ip_fragmentation/meson.build b/examples/ip_fragmentation/meson.build
-index cd84e9b143..750c3e4149 100644
---- a/examples/ip_fragmentation/meson.build
-+++ b/examples/ip_fragmentation/meson.build
-@@ -11,3 +11,4 @@ deps +=  ['ip_frag', 'lpm']
- sources = files(
-         'main.c',
- )
-+cflags += no_wvla_cflag
-diff --git a/examples/ipsec-secgw/meson.build b/examples/ipsec-secgw/meson.build
-index 023d9cf039..e6a0e18a73 100644
---- a/examples/ipsec-secgw/meson.build
-+++ b/examples/ipsec-secgw/meson.build
-@@ -23,6 +23,9 @@ sources = files(
-         'sp4.c',
-         'sp6.c',
- )
+ deps += ['ethdev']
 +
 +cflags += no_wvla_cflag
+diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
+index f1c36529b4..8de1528428 100644
+--- a/app/test-pmd/meson.build
++++ b/app/test-pmd/meson.build
+@@ -3,7 +3,15 @@
+ 
+ # override default name to drop the hyphen
+ name = 'testpmd'
+-cflags += '-Wno-deprecated-declarations'
 +
- app_cflags = ['-Wno-address-of-packed-member']
- foreach flag:app_cflags
-     if cc.has_argument(flag)
-diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
-index bb44c88882..c21722b85c 100644
---- a/examples/l2fwd-crypto/meson.build
-+++ b/examples/l2fwd-crypto/meson.build
-@@ -14,3 +14,4 @@ allow_experimental_apis = true
++extra_flags = ['-Wno-deprecated-declarations']
++
++foreach arg: extra_flags
++    if cc.has_argument(arg)
++        cflags += arg
++    endif
++endforeach
++
  sources = files(
-         'main.c',
- )
+         '5tswap.c',
+         'cmdline.c',
+diff --git a/app/test-sad/meson.build b/app/test-sad/meson.build
+index a50616a9c7..a1cbcc71d6 100644
+--- a/app/test-sad/meson.build
++++ b/app/test-sad/meson.build
+@@ -9,3 +9,5 @@ endif
+ 
+ sources = files('main.c')
+ deps += ['ipsec', 'net']
++
 +cflags += no_wvla_cflag
-diff --git a/examples/l2fwd-jobstats/meson.build b/examples/l2fwd-jobstats/meson.build
-index bffcf35e8c..d59d3d6555 100644
---- a/examples/l2fwd-jobstats/meson.build
-+++ b/examples/l2fwd-jobstats/meson.build
-@@ -11,3 +11,4 @@ deps += ['jobstats', 'timer']
- sources = files(
-         'main.c',
- )
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 48cf77fda9..b6285a6b45 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -250,12 +250,19 @@ foreach d:optional_deps
+     endif
+ endforeach
+ 
+-if cc.has_argument('-Wno-format-truncation')
+-    cflags += '-Wno-format-truncation'
+-endif
 +cflags += no_wvla_cflag
-diff --git a/examples/l3fwd-power/meson.build b/examples/l3fwd-power/meson.build
-index 624ef5e947..5ff4466cac 100644
---- a/examples/l3fwd-power/meson.build
-+++ b/examples/l3fwd-power/meson.build
-@@ -12,3 +12,4 @@ sources = files(
-         'main.c',
-         'perf_core.c',
- )
-+cflags += no_wvla_cflag
-diff --git a/examples/l3fwd/meson.build b/examples/l3fwd/meson.build
-index c25de77bba..74144c7979 100644
---- a/examples/l3fwd/meson.build
-+++ b/examples/l3fwd/meson.build
-@@ -21,3 +21,4 @@ sources = files(
- if dpdk_conf.has('RTE_LIB_EVENTDEV')
-     deps += 'eventdev'
- endif
-+cflags += no_wvla_cflag
-diff --git a/examples/pipeline/meson.build b/examples/pipeline/meson.build
-index 50103f2e01..01f14dc2ae 100644
---- a/examples/pipeline/meson.build
-+++ b/examples/pipeline/meson.build
-@@ -20,3 +20,4 @@ sources = files(
-         'obj.c',
-         'thread.c',
- )
-+cflags += no_wvla_cflag
-diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
-index dc103e9556..92657ce8a5 100644
---- a/examples/qos_sched/meson.build
-+++ b/examples/qos_sched/meson.build
-@@ -17,3 +17,4 @@ sources = files(
-         'main.c',
-         'stats.c',
- )
-+cflags += no_wvla_cflag
-diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
-index 87a637f83f..e938be8f45 100644
---- a/examples/vhost/meson.build
-+++ b/examples/vhost/meson.build
-@@ -18,3 +18,4 @@ sources = files(
-         'main.c',
-         'virtio_net.c',
- )
-+cflags += no_wvla_cflag
++
++extra_flags = [
++        # Strict-aliasing rules are violated by uint8_t[] to context size casts.
++        '-fno-strict-aliasing',
++        '-Wno-format-truncation',
++]
+ 
+-# Strict-aliasing rules are violated by uint8_t[] to context size casts.
+-cflags += '-fno-strict-aliasing'
++foreach arg: extra_flags
++    if cc.has_argument(arg)
++        cflags += arg
++    endif
++endforeach
+ 
+ # Enable using internal APIs in unit tests
+ cflags += '-DALLOW_INTERNAL_API'
 -- 
 2.47.2.vfs.0.1
 
