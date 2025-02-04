@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38950C02198
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE08C02198
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:59:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D10AB40A7D;
-	Tue,  4 Feb 2025 21:57:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D937040A89;
+	Tue,  4 Feb 2025 21:57:52 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id C6C19402EE
+ by mails.dpdk.org (Postfix) with ESMTP id B77B2402EB
  for <dev@dpdk.org>; Tue,  4 Feb 2025 21:57:23 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 3A98B210D0CF; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A98B210D0CF
+ id F1ABC210D0CA; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1ABC210D0CA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738702642;
- bh=qoVQi9cS5sgnREgnU+YagZgmpgnf/GB1Wpawy3/JFjM=;
+ s=default; t=1738702641;
+ bh=XX83F6jTPPstTVxG2Fp3urWxYW1XMHKRIECZhjpTpOM=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=nM3sVSksenxkaVeqpsjIRZK3S/IHxjBBluC8zwIro53nvJW3oOT5fQ0hvZn4tf+qu
- wv8PDh6ti3T94jG9enN0roMyLAGQCKMiJYpnrE2NkRNYtmjir6vfObZyem2SG9gBrp
- cs+sjFNxTLUTuoZIKRSpMqqaYnGi6IdUWvRKvpos=
+ b=gsKkUyE8GNG0TB/kaV7Hs5e2Tv968oE9vEjSBoxPY5LNvumG+qWyv+QdZsCORur1O
+ anWMzjYo9jQWWdhsY9Zdi1sM3732k1Ie2VoghGSW3M6oNDDEeufArHSlRqOZrtMMiM
+ oUpyroH2Answgz2zvaJCK/cZHQ2K0wekGTGp9mh8=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v21 26/27] buildtools: add no_wvla_cflag to directories that
- are not VLA-free
-Date: Tue,  4 Feb 2025 12:57:17 -0800
-Message-Id: <1738702638-22363-27-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v21 21/27] config: define no_wvla_cflag
+Date: Tue,  4 Feb 2025 12:57:12 -0800
+Message-Id: <1738702638-22363-22-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -45,26 +44,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The no_wvla_cflag is added to meson.build files in directories that
-are not yet VLA-free.
+We define no_wvla_cflag in a top directory so that it can be used by
+meson.build files in lower directories that are not yet VLA-free.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- buildtools/chkincs/meson.build | 1 +
- 1 file changed, 1 insertion(+)
+ config/meson.build | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/buildtools/chkincs/meson.build b/buildtools/chkincs/meson.build
-index ed65105599..49dbc55254 100644
---- a/buildtools/chkincs/meson.build
-+++ b/buildtools/chkincs/meson.build
-@@ -12,6 +12,7 @@ gen_c_files = generator(gen_c_file_for_header,
-         arguments: ['@INPUT@', '@OUTPUT@'])
- 
- cflags = machine_args
-+cflags += no_wvla_cflag
- 
- sources = files('main.c')
- sources += gen_c_files.process(dpdk_chkinc_headers)
+diff --git a/config/meson.build b/config/meson.build
+index 6aaad6d8a4..a251ce49b1 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -342,6 +342,14 @@ if cc.get_id() == 'intel'
+         warning_flags += '-diag-disable=@0@'.format(i)
+     endforeach
+ endif
++
++no_wvla_cflag = []
++if cc.has_argument('-Wvla')
++    if not is_windows
++        no_wvla_cflag = '-Wno-vla'
++    endif
++endif
++
+ foreach arg: warning_flags
+     if cc.has_argument(arg)
+         add_project_arguments(arg, language: 'c')
 -- 
 2.47.2.vfs.0.1
 
