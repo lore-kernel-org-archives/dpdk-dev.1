@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D450C02196
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AEDC02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:15:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB1AE42DA7;
-	Tue,  4 Feb 2025 16:12:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A43C542DB1;
+	Tue,  4 Feb 2025 16:12:22 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id BF20A427B7
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:06 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3420E427C3
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681927; x=1770217927;
+ t=1738681929; x=1770217929;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=sn6fQTbSLjrlJwpwH2Hm0uDNEvq4acd6oze7Fw/D5ds=;
- b=CVBCARDEIPOBtkEi/wpGo79aTxAVVWEDAJ+EiyyKNg5pEb3A6dMWwTdB
- gg+G8SX2ctyhBeidOMVt2nzMXftSreomoev5uYiEbids0C7twhFkzQclw
- dxIfspAtTC4kbCiB/2XEx1ZAhLs3lobxPVp/346sYoNCXc+K/PggctUZf
- C0dVjiP1EshNJh9sStmAbGSPA+/Dy1i8g+cwPLcJjVc3IkxL4hfgVLDJ4
- +gY8cbBFst7NQHNSUdx7yPHQOpP1gGiZbz0OHnWH1HmFDs0ZyAfolda0a
- yAW1PCa7hRemplmMrsmniAIgt4AwKxQ5CeaVAT+TBZ19nZSfk/zdQLeE1 g==;
-X-CSE-ConnectionGUID: S7kZy04ZSEumiNBk6zFung==
-X-CSE-MsgGUID: FhXb7AaBSDCiuOMjQdyxjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097147"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097147"
+ bh=sO/Dw3E92ngpJrnKVWoxm1KWwiWZXKiQmZ6+unTDaG8=;
+ b=Aw3VoVTJArqE6puXTYkqenv/ej5SihUnBxFDYs4VHZ4Ay/HdTnLeZrnA
+ v8YSpmLKjRqTSTBWNXhCSX64ZAOz6QYUvrXpm4sdTRyQPf/IMb6StCRyl
+ NLsogQ9yM+unXrVZ5O3WnfZtZQVbYI3ubNT8YD4qkbclu/D9nFoqW0kFN
+ AOe0ElCegPlpCYb/8ZKrWkgvUrMA6i9PQwrtZq7eD1icawDkMoflAHgnW
+ kh+cILSc7R+VL/XaNF8ySzovwp9rvQPAlVduVkgy1s1iHhV7PmBWD74/b
+ eo1cESvIZKiKnIYQwF9X0DEN955MZADuFSg6/wQLQ9TpwP6KUErlCnNLm w==;
+X-CSE-ConnectionGUID: NqLxwV5UQDmbkb3/qT1HPg==
+X-CSE-MsgGUID: vBMRqCbGTCOZ9KANSjpGTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097150"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097150"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:07 -0800
-X-CSE-ConnectionGUID: i7H7J1LrRB+h8BsN1AZxog==
-X-CSE-MsgGUID: s0TDbpxjRhOX6e5jzN6wHg==
+ 04 Feb 2025 07:12:08 -0800
+X-CSE-ConnectionGUID: J5m4y/qTQK+5TgRaYWg9hg==
+X-CSE-MsgGUID: Dz6ufTcZTjKL5rQSuNf4gQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792710"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792717"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:05 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:06 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 31/54] net/e1000/base: add queue select definitions
-Date: Tue,  4 Feb 2025 15:10:37 +0000
-Message-ID: <24d29d54a9d90e9c6dc99c33b6e3a00266b800d0.1738681726.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 32/54] net/e1000/base: add profile information field
+Date: Tue,  4 Feb 2025 15:10:38 +0000
+Message-ID: <3f9abd90af71abf07871d69585dc6f1bb234409f.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -62,34 +62,26 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sasha Neftin <sasha.neftin@intel.com>
 
-Add definitions for address select mask (selects source address to be
-used in the address filtering), as well as queue select (indicates which
-Rx queue should get the packet matching this MAC address).
+Some tools require device profile information to be present, so add it.
 
 Signed-off-by: Sasha Neftin <sasha.neftin@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_defines.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/intel/e1000/base/e1000_hw.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_defines.h b/drivers/net/intel/e1000/base/e1000_defines.h
-index 2c3b806c92..c311858d35 100644
---- a/drivers/net/intel/e1000/base/e1000_defines.h
-+++ b/drivers/net/intel/e1000/base/e1000_defines.h
-@@ -685,6 +685,13 @@
-  */
- #define E1000_RAR_ENTRIES	15
- #define E1000_RAH_AV		0x80000000 /* Receive descriptor valid */
-+#define E1000_RAH_RAH_MASK	0x0000FFFF
-+#define E1000_RAH_ASEL_MASK	0x00030000
-+#define E1000_RAH_ASEL_SRC_ADD	0x00010000
-+#define E1000_RAH_QSEL_MASK	0x000C0000
-+#define E1000_RAH_QSEL_SHIFT	18
-+#define E1000_RAH_ASEL_SRC_ADDR	0x00010000
-+#define E1000_RAH_QSEL_ENABLE	0x10000000
- #define E1000_RAL_MAC_ADDR_LEN	4
- #define E1000_RAH_MAC_ADDR_LEN	2
- #define E1000_RAH_QUEUE_MASK_82575	0x000C0000
+diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
+index b3af96977c..7ef856226d 100644
+--- a/drivers/net/intel/e1000/base/e1000_hw.h
++++ b/drivers/net/intel/e1000/base/e1000_hw.h
+@@ -1056,6 +1056,7 @@ struct e1000_dev_spec_i225 {
+ struct e1000_hw {
+ 	void *back;
+ 
++	u8 pf_id;               /* device profile info */
+ 	u8 *hw_addr;
+ 	u8 *flash_address;
+ 	unsigned long io_base;
 -- 
 2.43.5
 
