@@ -2,61 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F07FC02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 17:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C4C02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 18:54:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 335CC4025D;
-	Tue,  4 Feb 2025 18:45:13 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 157B0400EF
- for <dev@dpdk.org>; Tue,  4 Feb 2025 18:45:12 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2166f1e589cso44362495ad.3
- for <dev@dpdk.org>; Tue, 04 Feb 2025 09:45:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1738691111; x=1739295911; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=+5MGi+xMT408L8LW7gYnsNMgOJuYaDtVUlGn/PzAYJY=;
- b=RpZb/g99njgCI+aB4IT9+i74WB0DdLC5gwmpI+qwm5SFTExlBpBRo0h5rc1Y44YLUq
- hOBf/qe51PmzVXGpNFxrMTYHGLKLT2SSrOKgNbwwqWZCBDJEZQue1671v1Va3M5bWMX3
- al/qpmPjGM46NYcBF5+nLiIkjHcaf61j122aM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738691111; x=1739295911;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=+5MGi+xMT408L8LW7gYnsNMgOJuYaDtVUlGn/PzAYJY=;
- b=onmRTepfwXh0Pt6qfkRPIyGS6tq/+PCBj9tvTOpbNfpPVzHOKGkW2ZTWey//VG93Ia
- oruIX0CS/KSKyKyaAmh5CpJ55GGqA8MRaKrR19lTb9qnGL13twTrU/0kgnQpteWz/X00
- aIQ4wFmT+wl2DEfTedLPKQIX5r9Ew36FGzC3JB9IojMQkxFNWVCYGVjshbGHwS5Rs/ul
- eS6Y+phmYCf/hxanMXPmtaJScYf4Ps+zA+Qb26rk9AjRd6uK37YS4RsjdrqGskvN5uYl
- 8qfDqz4B59xm5Z8Z/14Ggwu4QeE2WPhUjJdkni1OA0dUWEiZfjFGD/0SGetaujslpwev
- 8mwQ==
-X-Gm-Message-State: AOJu0YyiJZwJA0EACdWG3gEyiPnnvZXdSrqD37j8aNnloe3hvYsLtmOM
- moy9gb83iciAzRuTKOe/SvcPQi69om6QFENActuUNq0rw6dsIkGJaVX/O74yLv2bhng8jchSBL8
- asQvK1aS9F3m1GTSRF8LT+oEYZ9cGAv3f4kWf1Q==
-X-Gm-Gg: ASbGncsJKIv6Vq4ynMbBNKCjAwgJR3e9IO/ELHqQDjh/r2F5dlPYEVI231igBKIAfeb
- wMZSwmrvD5HYO2oaD84I6rDU1rx+xeS5zAVC1rBD7qKhGfuoL1vMzaIAxK7Z7J9f5TS8NFUicJ/
- zs4/9dGHIO1VY=
-X-Google-Smtp-Source: AGHT+IH4F6jBGS7p9dptMfJ11RQcnLOFhlIS/SP8DQLF6W3Iu1JrdFgkcPKqw4i7GuAbGqbx0jh+4CJC1xbiewyQt6E=
-X-Received: by 2002:a17:902:e94d:b0:21f:52e:939e with SMTP id
- d9443c01a7336-21f052e93f5mr47082765ad.28.1738691111222; Tue, 04 Feb 2025
- 09:45:11 -0800 (PST)
-MIME-Version: 1.0
-References: <1733848355-19048-1-git-send-email-andremue@linux.microsoft.com>
- <1738634318-12876-1-git-send-email-andremue@linux.microsoft.com>
- <1738634318-12876-3-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1738634318-12876-3-git-send-email-andremue@linux.microsoft.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 4 Feb 2025 12:42:04 -0500
-X-Gm-Features: AWEUYZkshCqAs-kI7TorIqeC2A3We_7Ug57Dp8ylr5B1Ukp2Izxv42wBcJXkFfw
-Message-ID: <CAJvnSUCPs17GEFBpOuJEnSLLh3exj_iTUNxOxBTjNmMpfbdyuA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] stack: enable build with MSVC
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, david.marchand@redhat.com
-Content-Type: multipart/alternative; boundary="0000000000000f180b062d54926a"
+	by mails.dpdk.org (Postfix) with ESMTP id B6C1A40288;
+	Tue,  4 Feb 2025 19:54:36 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id A4A4D400D6
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 19:54:35 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id C09F0205491F; Tue,  4 Feb 2025 10:54:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C09F0205491F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1738695274;
+ bh=oI5igbiKJ4u3yJHRsAkY4wJBz4x93bqxajNvJndiuec=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=aQUAKv71ltn6BAFD30qNZm2oY+M34atRyuJ46ZrZ+4b3C77xwglMhVMOmVYeRo9Qu
+ O570H7geMSDPoVcX/F+IRK/xXqj2xBCPU7EDv5khomJ6qMR4e5w9G214gm8f2w3638
+ XWVjhR5Z2DIhu3J/R+R4m2ezhCPW3syCM4RzvJYU=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: dev@dpdk.org
+Cc: Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH v4 1/7] eal: eliminate dependency on non-portable
+ __SIZEOF_LONG__
+Date: Tue,  4 Feb 2025 10:54:25 -0800
+Message-Id: <1738695271-29948-2-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1738695271-29948-1-git-send-email-andremue@linux.microsoft.com>
+References: <1733342995-3722-2-git-send-email-andremue@linux.microsoft.com>
+ <1738695271-29948-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,23 +44,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000000f180b062d54926a
-Content-Type: text/plain; charset="UTF-8"
+Macro __SIZEOF_LONG__ is not standardized and MSVC does not define it.
+Therefore the errors below are seen with MSVC:
 
-Recheck-request: iol-intel-Performance
+../lib/mldev/mldev_utils_scalar.c(465): error C2065:
+    '__SIZEOF_LONG__': undeclared identifier
+../lib/mldev/mldev_utils_scalar.c(478): error C2051:
+    case expression not constant
 
-Triggering a retest in CI for the failed performance result.
+../lib/mldev/mldev_utils_scalar_bfloat16.c(33): error C2065:
+    '__SIZEOF_LONG__': undeclared identifier
+../lib/mldev/mldev_utils_scalar_bfloat16.c(49): error C2051:
+    case expression not constant
 
---0000000000000f180b062d54926a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Turns out that the places where __SIZEOF_LONG__ is currently
+being used can equally well use sizeof(long) instead.
 
-<div dir=3D"ltr"><span style=3D"color:rgb(51,51,51);font-family:&quot;Helve=
-tica Neue&quot;,Helvetica,Arial,sans-serif;font-size:14px">Recheck-request:=
- iol-intel-Performance</span><div><span style=3D"color:rgb(51,51,51);font-f=
-amily:&quot;Helvetica Neue&quot;,Helvetica,Arial,sans-serif;font-size:14px"=
-><br></span></div><div><font color=3D"#333333" face=3D"Helvetica Neue, Helv=
-etica, Arial, sans-serif"><span style=3D"font-size:14px">Triggering a retes=
-t in CI for the failed performance result.</span></font></div></div>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ lib/eal/include/rte_common.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---0000000000000f180b062d54926a--
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 7a252c1997..47e3201006 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -679,6 +679,11 @@ rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
+  */
+ #define RTE_BUILD_BUG_ON(condition) do { static_assert(!(condition), #condition); } while (0)
+ 
++/*********** Data type size related macros ********/
++
++#define RTE_BITS_PER_LONG (sizeof(long) * 8)
++#define RTE_BITS_PER_LONG_LONG (sizeof(long long) * 8)
++
+ /*********** Cache line related macros ********/
+ 
+ /** Cache line mask. */
+-- 
+2.47.2.vfs.0.1
+
