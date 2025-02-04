@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4DAC02194
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39E8C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:18:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F087842E7E;
-	Tue,  4 Feb 2025 16:12:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E0E1F42E82;
+	Tue,  4 Feb 2025 16:12:44 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 0EDB142E3A;
- Tue,  4 Feb 2025 16:12:31 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5780542796;
+ Tue,  4 Feb 2025 16:12:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681953; x=1770217953;
+ t=1738681954; x=1770217954;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=1S2ffpMXypHD6YG2oIMQVMI2COlsTEWfj7Tml6FPnTE=;
- b=FArRFf78U/rEA0qL12AdRTXWB5HDLoiRXV8WoE2l58ORYc9kFqt8LtDU
- Ytbxu167W4B26haJvevnsI7K6E7J3xRGFy7SGCoXTGGZ++oQu6iaEKyO3
- BWNM1xGt8gHBGwp+iQQmnrirmaix3/bQD3he5QH6uZ0Ilqq1VOxwNyoza
- uIKfcjNsTRmXA8TgUZvYB0WaL1RCGVxAgFx6YGsG9OyvQE9utozfP6B9w
- BPdOIQWsY5xZq/ddCsQ34IsTlhoLToBWGl/TVUsTuXkQME3AymGjdNhjF
- WMuUHDbqNfR5QEz6tMul3EI7gqEbgvDum4iw6ZpjhAoPFyb0isn5HnzWD A==;
-X-CSE-ConnectionGUID: LM0RQdv0T/C2ZfRMwHhj4A==
-X-CSE-MsgGUID: CerYYWzXQ920KwDDOOwneg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097202"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097202"
+ bh=eGnW4oL7/dqj0BdR+q6XHd0tPcHZZryuCc/sc/dEdTg=;
+ b=V8egHEaaQVE5cClowxbocOgZaUaRh9qE+lYnxrLFWQ9ugxahQ35809er
+ G1GRSXpXqCEgEFtr8rx1dPqLSeW9uwkBRmKZTvtfFqD9zohtsAVXNVXtx
+ sRghuYLWdBWlVf5t3k8PCgEF4WRm+NlY1m1YVU2y3TK0gxq6gGaS6N6Pi
+ GmdO2QGlGoytjt159c4GFgdz6Fm9q4q4av6QL7B52EpfHOaMp4EFLu4Cd
+ LrrDu7Jf0kPNwkfiDpklkA+AoD7nQw1RlKbxWcXJtueh6iChR/R1Accxp
+ Fs55Nf5RYfw236k+qXzTuL9kUk87zfKgKa6Ywv0+1gdPd07zKFfbCIjNA Q==;
+X-CSE-ConnectionGUID: EDJR64gwQOWuGqSJFIzHeA==
+X-CSE-MsgGUID: To7gZXWCT1qVz1qN0nRfeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097206"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097206"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:32 -0800
-X-CSE-ConnectionGUID: KpUvJFyzRv6aEaxTGRQ0Ig==
-X-CSE-MsgGUID: NPAcYXvSSgiGQYiP8s3YHQ==
+ 04 Feb 2025 07:12:33 -0800
+X-CSE-ConnectionGUID: +x5p7AgVQNe50DiQ9hVDeQ==
+X-CSE-MsgGUID: 535m69h2RTGWmuCaFBSokw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792790"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792794"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:30 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:31 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
+To: dev@dpdk.org,
+	Wenzhuo Lu <wenzhuo.lu@intel.com>
 Cc: bruce.richardson@intel.com,
 	stable@dpdk.org
-Subject: [PATCH v2 50/54] net/e1000/base: fix uninitialized variable usage
-Date: Tue,  4 Feb 2025 15:10:56 +0000
-Message-ID: <784295875c8f8a2d765be0ed3f302a241b54bd06.1738681726.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 51/54] net/e1000/base: fix unchecked return
+Date: Tue,  4 Feb 2025 15:10:57 +0000
+Message-ID: <9f8001ea7728d68569bd54893e593b879d537a39.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -61,33 +62,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jakub Buchocki <101559614+jbuchocx@users.noreply.github.com>
+From: Dima Ruinskiy <dima.ruinskiy@intel.com>
 
-Coverity has detected potential usage of uninitialized values inside the
-array. Fix the warning by initializing array.
+Static analysis has detected a write that is not checked for errors,
+leading to ignored error return value. Add a check.
 
-Fixes: af75078fece3 ("first public release")
+Fixes: edcdb3c5f71b ("e1000/base: fix link flap on 82579")
 Cc: stable@dpdk.org
 
-Signed-off-by: Jakub Buchocki <jakubx.buchocki@intel.com>
+Signed-off-by: Dima Ruinskiy <dima.ruinskiy@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_vf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_ich8lan.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_vf.c b/drivers/net/intel/e1000/base/e1000_vf.c
-index bb314e2f12..e0c95aa130 100644
---- a/drivers/net/intel/e1000/base/e1000_vf.c
-+++ b/drivers/net/intel/e1000/base/e1000_vf.c
-@@ -374,7 +374,7 @@ STATIC void e1000_write_msg_read_ack(struct e1000_hw *hw,
- void e1000_update_mc_addr_list_vf(struct e1000_hw *hw,
- 				  u8 *mc_addr_list, u32 mc_addr_count)
- {
--	u32 msgbuf[E1000_VFMAILBOX_SIZE];
-+	u32 msgbuf[E1000_VFMAILBOX_SIZE] = {0};
- 	u16 *hash_list = (u16 *)&msgbuf[1];
- 	u32 hash_value;
- 	u32 i;
+diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+index c3449a3f45..6b7eb245a6 100644
+--- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
++++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
+@@ -989,6 +989,8 @@ s32 e1000_set_eee_pchlan(struct e1000_hw *hw)
+ 		data &= ~I82579_LPI_100_PLL_SHUT;
+ 		ret_val = e1000_write_emi_reg_locked(hw, I82579_LPI_PLL_SHUT,
+ 						     data);
++		if (ret_val)
++			goto release;
+ 	}
+ 
+ 	/* R/Clr IEEE MMD 3.1 bits 11:10 - Tx/Rx LPI Received */
 -- 
 2.43.5
 
