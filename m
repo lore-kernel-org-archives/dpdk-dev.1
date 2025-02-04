@@ -2,52 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1137AC02197
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D68C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:25:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4268C42E68;
-	Tue,  4 Feb 2025 16:12:48 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id CF46D42E51
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681958; x=1770217958;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=mx6PV+nznPWHjE9wVam8RnH8ZRoEKZm81h5cNO6uhb4=;
- b=LCznyFtGeJOx+sbc/+WvpfFels2FSOwuBWU9pyk7WuaOyAMxNbc9ymV1
- YtZTt0/bzCsh2PauZwbNCk8f+HAIl8P5RwY8qokSxlT2PoxTRWLAYaRTu
- E4KNg0RIdI413c/HA1nGuMoDxfedFlBVdEIbrNCNoWDt9JUHKHXISeeVk
- Uq4J5DI00Y9XG913ZTyVliU+S4qR3CLqGwhOVG5nGwKvFoDvQ92NlQfgc
- UI+NtHdqU3JReVM9vFtJdiDuveq59urcjsMGmPrTVxd5CC0GCixtYm5rO
- Iyy6qZwTa+eGnasXxFDKQzy3FYeYqWR7NR+Z+ifhHUuVcnWDUc2ztWO0o Q==;
-X-CSE-ConnectionGUID: r/yIyoJERtONqfNggjapwA==
-X-CSE-MsgGUID: YU2wF8IwRoKUG7iHoLLxsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097214"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097214"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:37 -0800
-X-CSE-ConnectionGUID: vH2mz41zQ+mEbQvZBvJnTw==
-X-CSE-MsgGUID: AD2wycWHT1eu0DhpuerRaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792803"
-Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:35 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 54/54] net/e1000/base: update readme
-Date: Tue,  4 Feb 2025 15:11:00 +0000
-Message-ID: <394cd6fa8f7ae6f376b74a3567838f28284fd0e3.1738681726.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
-References: <cover.1738328106.git.anatoly.burakov@intel.com>
- <cover.1738681725.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9830A4025F;
+	Tue,  4 Feb 2025 16:25:22 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id E2761400D6
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:25:20 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id EAB1D206AB97; Tue,  4 Feb 2025 07:25:19 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EAB1D206AB97
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1738682719;
+ bh=I7pxONnezt/Vjoy+4NzYl85h6ZfqBOUfKFLlqq29VXs=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=fNbxEzLBVsm9c0RThR5AWubyHm8hfr7RkbK4RTTQOXNt/RwAudxIK/HRNE5xMhKf7
+ kw8g8yZvE/1eTNLU1jKdF8y8PJlLkc4yFRPDn/odjIddfP6Z+q2mRDMcSl0kRhGaqK
+ UGFYSQ/A0fSj+dVsDbPgYUaXuD/jgEEDw4523rD8=
+Date: Tue, 4 Feb 2025 07:25:19 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com
+Subject: Re: [PATCH v3 2/2] stack: enable build with MSVC
+Message-ID: <20250204152519.GA32610@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1733848355-19048-1-git-send-email-andremue@linux.microsoft.com>
+ <1738634318-12876-1-git-send-email-andremue@linux.microsoft.com>
+ <1738634318-12876-3-git-send-email-andremue@linux.microsoft.com>
+ <Z6HsKwpeQKyA-dYv@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6HsKwpeQKyA-dYv@bricha3-mobl1.ger.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,39 +48,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update README with more up-to-date information.
+On Tue, Feb 04, 2025 at 10:30:03AM +0000, Bruce Richardson wrote:
+> On Mon, Feb 03, 2025 at 05:58:38PM -0800, Andre Muezerie wrote:
+> > An implementation compatible with MSVC is provided for
+> > atomic128_cmp_exchange in rte_stack_lf_c11.h.
+> > 
+> > Now that the issues preventing the code needed to build lib/stack
+> > have been addressed, it can be enabled so that it also gets built
+> > when using the MSVC compiler.
+> > 
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> > ---
+> >  lib/stack/meson.build        |  6 ------
+> >  lib/stack/rte_stack_lf_c11.h | 27 +++++++++++++++++++++++++++
+> >  2 files changed, 27 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/lib/stack/meson.build b/lib/stack/meson.build
+> > index 7631a14784..18177a742f 100644
+> > --- a/lib/stack/meson.build
+> > +++ b/lib/stack/meson.build
+> > @@ -1,12 +1,6 @@
+> >  # SPDX-License-Identifier: BSD-3-Clause
+> >  # Copyright(c) 2019 Intel Corporation
+> >  
+> > -if is_ms_compiler
+> > -    build = false
+> > -    reason = 'not supported building with Visual Studio Toolset'
+> > -    subdir_done()
+> > -endif
+> > -
+> >  sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c')
+> >  headers = files('rte_stack.h')
+> >  # subheaders, not for direct inclusion by apps
+> > diff --git a/lib/stack/rte_stack_lf_c11.h b/lib/stack/rte_stack_lf_c11.h
+> > index 60d46e963b..898d43edb2 100644
+> > --- a/lib/stack/rte_stack_lf_c11.h
+> > +++ b/lib/stack/rte_stack_lf_c11.h
+> > @@ -8,6 +8,33 @@
+> >  #include <rte_branch_prediction.h>
+> >  #include <rte_prefetch.h>
+> >  
+> > +#ifdef RTE_TOOLCHAIN_MSVC
+> > +/**
+> > + * The maximum lock-free data size that can be manipulated atomically using C11
+> > + * standard is limited to 8 bytes.
+> > + *
+> > + * This implementation for rte_atomic128_cmp_exchange operates on 16-byte
+> > + * data types and is made available here so that it can be used without the
+> > + * need to unnecessarily expose other non-C11 atomics present in
+> > + * rte_atomic_64.h when using MSVC.
+> > + */
+> > +static inline int
+> > +rte_atomic128_cmp_exchange(rte_int128_t *dst,
+> > +			   rte_int128_t *exp,
+> > +			   const rte_int128_t *src,
+> > +			   unsigned int weak,
+> > +			   int success,
+> > +			   int failure)
+> > +{
+> > +	return (int)_InterlockedCompareExchange128(
+> > +		(int64_t volatile *) dst,
+> > +		src->val[1], /* exchange high */
+> > +		src->val[0], /* exchange low */
+> > +		(int64_t *) exp /* comparand result */
+> > +	);
+> > +}
+> > +#endif /* RTE_TOOLCHAIN_MSVC */
+> > +
+> 
+> Is there a particular reason for having this only in the stack library,
+> more than more generically available?
+> 
+> /Bruce
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- drivers/net/intel/e1000/base/README | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+The PR history shows that the intention with MSVC (which is a new toolchain/platform)
+was to block visibility of the rte_atomic APIs from day 1.
 
-diff --git a/drivers/net/intel/e1000/base/README b/drivers/net/intel/e1000/base/README
-index b84ee5ad6e..2a0696f3c4 100644
---- a/drivers/net/intel/e1000/base/README
-+++ b/drivers/net/intel/e1000/base/README
-@@ -2,9 +2,9 @@
-  * Copyright(c) 2010-2020 Intel Corporation
-  */
- 
--This directory contains source code of FreeBSD em & igb drivers of version
--cid-gigabit.2020.06.05.tar.gz released by ND. The sub-directory of base/
--contains the original source package.
-+This directory contains source code of FreeBSD em, igb, and igc drivers of
-+snapshot generated on 2025-01-24-09.44. The sub-directory of base/ contains the
-+original source package.
- 
- This driver is valid for the product(s) listed below
- * Intel® Ethernet Controller 82540
-@@ -24,6 +24,8 @@ This driver is valid for the product(s) listed below
- * Intel® Ethernet Controller I350 Series
- * Intel® Ethernet Controller I210 Series
- * Intel® Ethernet Controller I211
-+* Intel® Ethernet Controller I225
-+* Intel® Ethernet Controller I226
- * Intel® Ethernet Controller I354 Series
- * Intel® Ethernet Controller DH89XXCC Series
- 
--- 
-2.43.5
+More details can be seen here:
+https://github.com/JoverZhang/dpdk/pull/21/commits/27da6a1234148fef43687d324ab2221df0631b5c
 
+If there's a strong need we could revert that decision, but for now it seems it
+would be better to follow the established direction.
+--
+Andre Muezerie
