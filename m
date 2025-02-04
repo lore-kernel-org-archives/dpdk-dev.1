@@ -2,34 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C84C02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E11C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:57:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FBAC40265;
-	Tue,  4 Feb 2025 21:57:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E00154029F;
+	Tue,  4 Feb 2025 21:57:25 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id CCB614025F
+ by mails.dpdk.org (Postfix) with ESMTP id DD7B540261
  for <dev@dpdk.org>; Tue,  4 Feb 2025 21:57:21 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id DFD58205491F; Tue,  4 Feb 2025 12:57:20 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DFD58205491F
+ id 1D7642109CE9; Tue,  4 Feb 2025 12:57:20 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1D7642109CE9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738702640;
- bh=j6Dy0rAhQQ+HR4o8f4ax+h485suGTsYv94JWHHOYUfw=;
+ s=default; t=1738702641;
+ bh=k7jdG7dFf2HwAk1Sk5hywytB3erCymZtHNKpmFOusg0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=aMX2hhCWZLOBwrQCBeC8A9jdsQKlqskC7dZ9Blhp4teL5qLDxIlwDtKan8I3jx749
- yu1iteTcU/wnR2aL1sRmD5gtTxAK5tHRrLXNCyHbbieHi/jX0OSDcW3wq+2oyfBDBB
- 3comE9QYl+Avb8U24gHnPLBeF6qBlKgqiBPrcVQA=
+ b=OPuDkMvGA/Q3crgkRZjjxd3P783xZ6jl2uwxSxMTU+PN2q4FXdd+4LeI76isS2RKf
+ HU7DHxBOlKh6MbaRTD4vwvqluLF9zAJuOLZldcCsAxDVs2FjBSKlG7d3i5JJTGGWvg
+ a5GUEIc2KCjVIR+ukNejeiqlTHH+6TLrs4ibOLvw=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v21 00/27] remove use of VLAs for Windows
-Date: Tue,  4 Feb 2025 12:56:51 -0800
-Message-Id: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com
+Subject: [PATCH v21 04/27] ethdev: remove use of VLAs for Windows built code
+Date: Tue,  4 Feb 2025 12:56:55 -0800
+Message-Id: <1738702638-22363-5-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
+In-Reply-To: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
+ <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,264 +47,345 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-As per guidance technical board meeting 2024/04/17. This series
-removes the use of VLAs from code built for Windows for all 3
-toolchains. If there are additional opportunities to convert VLAs
-to regular C arrays please provide the details for incorporation
-into the series.
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-MSVC does not support VLAs, replace VLAs with standard C arrays
-or alloca(). alloca() is available for all toolchain/platform
-combinations officially supported by DPDK.
+1) ./lib/ethdev/rte_ethdev.c:3244:16
+    : warning: ISO C90 forbids variable length array ‘xstats_names’
+2) ./lib/ethdev/rte_ethdev.c:3345:17
+    : warning: ISO C90 forbids variable length array ‘ids_copy’
+3) ./lib/ethdev/rte_ethdev.c:3538:16
+    : warning: ISO C90 forbids variable length array ‘xstats’
+4) ./lib/ethdev/rte_ethdev.c:3554:17
+    : warning: ISO C90 forbids variable length array ‘ids_copy’
 
-v21:
- * add no_wvla_cflag to
-     drivers/net/mvneta/meson.build
+For 1) and 3) - just replaced VLA with arrays allocated from heap.
+As I understand xstats extraction belongs to control-path, so extra
+calloc/free is hopefully acceptable.
+Also ethdev xstats already doing that within
+rte_eth_xstats_get_id_by_name().
+For 2) and 4) changed the code to use fixed size array and call
+appropriate devops function several times, if needed.
 
-v20:
- * fix incorrect indent in
-     app/test/meson.build
-     lib/vhost/meson.build
+Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+---
+ lib/ethdev/rte_ethdev.c | 183 +++++++++++++++++++++++++---------------
+ 1 file changed, 113 insertions(+), 70 deletions(-)
 
-v19:
- * rename no_vla_cflag to no_wvla_cflag
- * add no_wvla_cflag to
-     buildtools/chkincs/meson.build
-     drivers/crypto/ipsec_mb/meson.build
-     drivers/net/mana/meson.build
-
-v18:
- * add no_vla_cflag to examples directories that are not VLA-free
- * add no_vla_cflag to drivers directories that are not VLA-free and
-   were missed in v17 due to missing libs
-
-v17:
- * define no_vla_cflag in a top directory (config)
- * add no_vla_cflag to directories that are not VLA-free
- * add -Wvla project-wide (VLAs not allowed by default, except for
-   directories using no_vla_cflag)
-
-v16:
-  * remove -Wvla from drivers/common/mlx5/meson.build and
-    drivers/common/qat/meson.build
-
-v15:
-  * inverted some of the logic added during v14:
-    add -Wvla to meson build files in app and lib directories, adding
-    -Wno-vla to the few subdirectories which are not yet VLA free
-
-v14:
-  * add -Wvla to meson build for directories that are VLA free
-    under app, lib, drivers. This is to ensure that new VLAs are
-    not added to these directories in the future.
-
-v13:
-  * increase stack allocated buffer size in
-    ipv4_reassembly_interleaved_flows_perf and
-    ipv6_reassembly_interleaved_flows_perf to avoid
-    STATUS_STACK_BUFFER_OVERRUN on Windows using MSVC
-
-v12:
-  * update commit message for patch 06/21 to avoid warning
-
-v11:
-  * add include stdlib.h for alloca() declaration on FreeBSD
-  * zero-initialize array without code loop
-  * increase maximum tuple length
-
-v10:
- * add ifdef to scope gcc's diagnostic error down to gcc only
-
-v9:
- * fix sender's email address
- * fix gcc's diagnostic error string to make clang happy
-
-v8:
- * rebase
- * reduce scope for disabling error "-Warray-bounds=" to only
-   the place that needs it
- * remove parentesis around numbers from defines in test_bitset.c
-
-v7:
- * remove use of VLA from new file which sneaked in during review
-
-v6:
- * remove use of VLA from new test code added recently
- * fix title for patch 08/20
-
-v5:
- * add patches for net/ice, net/ixgbe and gro
-   from Konstantin Ananyev from
-https://patchwork.dpdk.org/project/dpdk/list/?series=31972&archive=both&state=*
- * address debug_autotest ASan failure
- * address array-bound error in bitset_autotest with gcc-13
-
-v4:
- * rebase and adapt for changes made in main since v3 was sent
- * use fixed maximum array size instead of VLA when doable
-
-v3:
- * address checkpatch/check git log warnings (minor typos)
-
-v2:
- * replace patches for ethdev, hash, rcu and include new
-   patches for eal from Konstantin Ananyev
-   from https://patchwork.dpdk.org/project/dpdk/list/?series=31781
-
-Andre Muezerie (10):
-  test: remove use of VLAs for Windows built code in bitset tests
-  app/testpmd: remove use of VLAs for Windows built code in
-    shared_rxq_fwd
-  hash: remove use of VLAs by using standard arrays
-  config: define no_wvla_cflag
-  app: add no_wvla_cflag to directories that are not VLA-free
-  drivers: add no_wvla_cflag to directories that are not VLA-free
-  lib: add no_wvla_cflag to directories that are not VLA-free
-  examples: add no_wvla_cflag to directories that are not VLA-free
-  buildtools: add no_wvla_cflag to directories that are not VLA-free
-  config: add -Wvla project-wide
-
-Konstantin Ananyev (10):
-  eal/linux: remove use of VLAs
-  eal/common: remove use of VLAs
-  ethdev: remove use of VLAs for Windows built code
-  hash: remove use of VLAs for Windows built code
-  hash/thash: remove use of VLAs for Windows built
-  rcu: remove use of VLAs for Windows built code
-  gro: fix overwrite unprocessed packets
-  gro: remove use of VLAs
-  net/ixgbe: remove use of VLAs
-  net/ice: remove use of VLAs
-
-Tyler Retzlaff (7):
-  eal: include header required for alloca
-  app/testpmd: remove use of VLAs for Windows built
-  test: remove use of VLAs for Windows built code
-  common/idpf: remove use of VLAs for Windows built code
-  net/i40e: remove use of VLAs for Windows built code
-  common/mlx5: remove use of VLAs for Windows built code
-  net/mlx5: remove use of VLAs for Windows built code
-
- app/pdump/meson.build                         |   2 +
- app/proc-info/meson.build                     |   2 +
- app/test-acl/meson.build                      |   2 +
- app/test-bbdev/meson.build                    |   2 +
- app/test-crypto-perf/meson.build              |   2 +
- app/test-dma-perf/meson.build                 |   2 +
- app/test-eventdev/meson.build                 |   2 +
- app/test-flow-perf/meson.build                |   2 +
- app/test-pmd/cmdline.c                        |   2 +-
- app/test-pmd/cmdline_flow.c                   |  15 +-
- app/test-pmd/config.c                         |  16 +-
- app/test-pmd/meson.build                      |  10 +-
- app/test-pmd/shared_rxq_fwd.c                 |   2 +-
- app/test-sad/meson.build                      |   2 +
- app/test/meson.build                          |  17 +-
- app/test/test.c                               |   2 +-
- app/test/test_bitset.c                        |  69 ++++---
- app/test/test_cmdline_string.c                |   2 +-
- app/test/test_cryptodev.c                     |  34 ++--
- app/test/test_cryptodev_blockcipher.c         |   4 +-
- app/test/test_cryptodev_crosscheck.c          |   2 +-
- app/test/test_dmadev.c                        |   9 +-
- app/test/test_hash.c                          |  14 +-
- app/test/test_lcore_var_perf.c                |   2 +-
- app/test/test_mempool.c                       |  25 +--
- app/test/test_reassembly_perf.c               |  22 ++-
- app/test/test_reorder.c                       |  48 ++---
- app/test/test_service_cores.c                 |   9 +-
- app/test/test_soring_stress_impl.h            |  13 +-
- app/test/test_thash.c                         |   7 +-
- buildtools/chkincs/meson.build                |   1 +
- config/meson.build                            |   9 +
- drivers/common/cnxk/meson.build               |   2 +
- drivers/common/idpf/idpf_common_rxtx.c        |   2 +-
- drivers/common/idpf/idpf_common_rxtx_avx512.c |   6 +-
- drivers/common/mlx5/meson.build               |   2 +
- drivers/common/mlx5/mlx5_common.h             |   4 +-
- drivers/common/mlx5/mlx5_devx_cmds.c          |   7 +-
- drivers/common/qat/meson.build                |   2 +
- drivers/crypto/ccp/meson.build                |   2 +
- drivers/crypto/cnxk/meson.build               |   2 +
- drivers/crypto/ipsec_mb/meson.build           |   2 +
- drivers/crypto/octeontx/meson.build           |   2 +
- drivers/crypto/openssl/meson.build            |   1 +
- drivers/crypto/scheduler/meson.build          |   2 +
- drivers/dma/dpaa/meson.build                  |   2 +
- drivers/event/cnxk/meson.build                |   2 +
- drivers/event/dsw/meson.build                 |   1 +
- drivers/event/opdl/meson.build                |   1 +
- drivers/event/sw/meson.build                  |   1 +
- drivers/net/af_xdp/meson.build                |   2 +
- drivers/net/bnxt/meson.build                  |   2 +
- drivers/net/bonding/meson.build               |   2 +
- drivers/net/cnxk/meson.build                  |   2 +
- drivers/net/cxgbe/meson.build                 |   2 +
- drivers/net/dpaa/meson.build                  |   2 +
- drivers/net/dpaa2/meson.build                 |   2 +
- drivers/net/failsafe/meson.build              |   1 +
- drivers/net/gve/meson.build                   |   2 +
- drivers/net/hns3/meson.build                  |   2 +
- drivers/net/intel/i40e/i40e_testpmd.c         |   5 +-
- drivers/net/intel/ice/ice_rxtx.c              |  18 +-
- drivers/net/intel/ice/ice_rxtx.h              |   2 +
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  21 +-
- drivers/net/mana/meson.build                  |   2 +
- drivers/net/mlx4/meson.build                  |   2 +
- drivers/net/mlx5/linux/meson.build            |   2 +
- drivers/net/mlx5/mlx5.c                       |   5 +-
- drivers/net/mlx5/mlx5_flow.c                  |   6 +-
- drivers/net/mvneta/meson.build                |   2 +
- drivers/net/netvsc/meson.build                |   2 +
- drivers/net/nfp/meson.build                   |   2 +
- drivers/net/ngbe/base/meson.build             |   1 +
- drivers/net/ntnic/meson.build                 |   2 +
- drivers/net/octeontx/meson.build              |   2 +
- drivers/net/sfc/meson.build                   |   1 +
- drivers/net/softnic/meson.build               |   1 +
- drivers/net/tap/meson.build                   |   1 +
- drivers/net/txgbe/meson.build                 |   2 +
- drivers/net/vdev_netvsc/meson.build           |   2 +
- drivers/net/virtio/meson.build                |   2 +
- drivers/vdpa/mlx5/meson.build                 |   3 +
- examples/fips_validation/meson.build          |   2 +
- examples/ip_fragmentation/meson.build         |   1 +
- examples/ipsec-secgw/meson.build              |   3 +
- examples/l2fwd-crypto/meson.build             |   1 +
- examples/l2fwd-jobstats/meson.build           |   1 +
- examples/l3fwd-power/meson.build              |   1 +
- examples/l3fwd/meson.build                    |   1 +
- examples/pipeline/meson.build                 |   1 +
- examples/qos_sched/meson.build                |   1 +
- examples/vhost/meson.build                    |   1 +
- lib/acl/meson.build                           |   2 +
- lib/bpf/meson.build                           |   2 +
- lib/dispatcher/meson.build                    |   2 +
- lib/eal/common/eal_common_proc.c              |   5 +-
- lib/eal/freebsd/include/rte_os.h              |   1 +
- lib/eal/linux/eal_interrupts.c                |  32 ++-
- lib/eal/linux/include/rte_os.h                |   1 +
- lib/eal/windows/include/rte_os.h              |   1 +
- lib/ethdev/rte_ethdev.c                       | 183 +++++++++++-------
- lib/eventdev/meson.build                      |   2 +
- lib/gro/rte_gro.c                             |  42 ++--
- lib/hash/rte_cuckoo_hash.c                    |   4 +-
- lib/hash/rte_thash.c                          |   2 +-
- lib/hash/rte_thash.h                          |   7 +
- lib/hash/rte_thash_gf2_poly_math.c            |   9 +-
- lib/ipsec/meson.build                         |   2 +
- lib/member/meson.build                        |   2 +
- lib/metrics/meson.build                       |   2 +
- lib/pdcp/meson.build                          |   2 +
- lib/pdump/meson.build                         |   2 +
- lib/pipeline/meson.build                      |   2 +
- lib/power/meson.build                         |   3 +
- lib/rcu/rte_rcu_qsbr.c                        |   7 +-
- lib/rcu/rte_rcu_qsbr.h                        |   5 +
- lib/table/meson.build                         |   2 +
- lib/vhost/meson.build                         |  11 +-
- 118 files changed, 563 insertions(+), 285 deletions(-)
-
---
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 6413c54e3b..09cc4764c3 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -36,6 +36,8 @@
+ #include "ethdev_trace.h"
+ #include "sff_telemetry.h"
+ 
++#define ETH_XSTATS_ITER_NUM	0x100
++
+ struct rte_eth_dev rte_eth_devices[RTE_MAX_ETHPORTS];
+ 
+ /* public fast-path API */
+@@ -3308,7 +3310,8 @@ int
+ rte_eth_xstats_get_id_by_name(uint16_t port_id, const char *xstat_name,
+ 		uint64_t *id)
+ {
+-	int cnt_xstats, idx_xstat;
++	int cnt_xstats, idx_xstat, rc;
++	struct rte_eth_xstat_name *xstats_names;
+ 
+ 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+ 
+@@ -3334,26 +3337,33 @@ rte_eth_xstats_get_id_by_name(uint16_t port_id, const char *xstat_name,
+ 	}
+ 
+ 	/* Get id-name lookup table */
+-	struct rte_eth_xstat_name xstats_names[cnt_xstats];
++	xstats_names = calloc(cnt_xstats, sizeof(xstats_names[0]));
++	if (xstats_names == NULL) {
++		RTE_ETHDEV_LOG_LINE(ERR, "Can't allocate memory");
++		return -ENOMEM;
++	}
+ 
+ 	if (cnt_xstats != rte_eth_xstats_get_names_by_id(
+ 			port_id, xstats_names, cnt_xstats, NULL)) {
+ 		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get xstats lookup");
++		free(xstats_names);
+ 		return -1;
+ 	}
+ 
++	rc = -EINVAL;
+ 	for (idx_xstat = 0; idx_xstat < cnt_xstats; idx_xstat++) {
+ 		if (!strcmp(xstats_names[idx_xstat].name, xstat_name)) {
+ 			*id = idx_xstat;
+ 
+ 			rte_eth_trace_xstats_get_id_by_name(port_id,
+ 							    xstat_name, *id);
+-
+-			return 0;
++			rc = 0;
++			break;
+ 		};
+ 	}
+ 
+-	return -EINVAL;
++	free(xstats_names);
++	return rc;
+ }
+ 
+ /* retrieve basic stats names */
+@@ -3399,6 +3409,38 @@ eth_basic_stats_get_names(struct rte_eth_dev *dev,
+ 	return cnt_used_entries;
+ }
+ 
++static int
++eth_xstats_get_by_name_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
++	struct rte_eth_xstat_name *xstats_names, uint32_t size,
++	uint32_t basic_count)
++{
++	int32_t rc;
++	uint32_t i, k, m, n;
++	uint64_t ids_copy[ETH_XSTATS_ITER_NUM];
++
++	m = 0;
++	for (n = 0; n != size; n += k) {
++
++		k = RTE_MIN(size - n, RTE_DIM(ids_copy));
++
++		/*
++		 * Convert ids to xstats ids that PMD knows.
++		 * ids known by user are basic + extended stats.
++		 */
++		for (i = 0; i < k; i++)
++			ids_copy[i] = ids[n + i] - basic_count;
++
++		rc = (*dev->dev_ops->xstats_get_names_by_id)(dev, ids_copy,
++					xstats_names + m, k);
++		if (rc < 0)
++			return rc;
++		m += rc;
++	}
++
++	return m;
++}
++
++
+ /* retrieve ethdev extended statistics names */
+ int
+ rte_eth_xstats_get_names_by_id(uint16_t port_id,
+@@ -3406,9 +3448,8 @@ rte_eth_xstats_get_names_by_id(uint16_t port_id,
+ 	uint64_t *ids)
+ {
+ 	struct rte_eth_xstat_name *xstats_names_copy;
+-	unsigned int no_basic_stat_requested = 1;
+-	unsigned int no_ext_stat_requested = 1;
+ 	unsigned int expected_entries;
++	unsigned int nb_basic_stats;
+ 	unsigned int basic_count;
+ 	struct rte_eth_dev *dev;
+ 	unsigned int i;
+@@ -3434,27 +3475,18 @@ rte_eth_xstats_get_names_by_id(uint16_t port_id,
+ 	if (ids && !xstats_names)
+ 		return -EINVAL;
+ 
+-	if (ids && dev->dev_ops->xstats_get_names_by_id != NULL && size > 0) {
+-		uint64_t ids_copy[size];
+-
+-		for (i = 0; i < size; i++) {
+-			if (ids[i] < basic_count) {
+-				no_basic_stat_requested = 0;
+-				break;
+-			}
+-
+-			/*
+-			 * Convert ids to xstats ids that PMD knows.
+-			 * ids known by user are basic + extended stats.
+-			 */
+-			ids_copy[i] = ids[i] - basic_count;
+-		}
+-
+-		if (no_basic_stat_requested)
+-			return (*dev->dev_ops->xstats_get_names_by_id)(dev,
+-					ids_copy, xstats_names, size);
++	nb_basic_stats = 0;
++	if (ids != NULL) {
++		for (i = 0; i < size; i++)
++			nb_basic_stats += (ids[i] < basic_count);
+ 	}
+ 
++	/* no basic stats requested, devops function provided */
++	if (nb_basic_stats == 0 && ids != NULL && size != 0 &&
++			dev->dev_ops->xstats_get_names_by_id != NULL)
++		return eth_xstats_get_by_name_by_id(dev, ids, xstats_names,
++				size, basic_count);
++
+ 	/* Retrieve all stats */
+ 	if (!ids) {
+ 		int num_stats = rte_eth_xstats_get_names(port_id, xstats_names,
+@@ -3473,17 +3505,8 @@ rte_eth_xstats_get_names_by_id(uint16_t port_id,
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (ids) {
+-		for (i = 0; i < size; i++) {
+-			if (ids[i] >= basic_count) {
+-				no_ext_stat_requested = 0;
+-				break;
+-			}
+-		}
+-	}
+-
+ 	/* Fill xstats_names_copy structure */
+-	if (ids && no_ext_stat_requested) {
++	if (ids && nb_basic_stats == size) {
+ 		eth_basic_stats_get_names(dev, xstats_names_copy);
+ 	} else {
+ 		ret = rte_eth_xstats_get_names(port_id, xstats_names_copy,
+@@ -3607,17 +3630,47 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
+ 	return count;
+ }
+ 
++static int
++eth_xtats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
++	uint64_t *values, uint32_t size, uint32_t basic_count)
++{
++	int32_t rc;
++	uint32_t i, k, m, n;
++	uint64_t ids_copy[ETH_XSTATS_ITER_NUM];
++
++	m = 0;
++	for (n = 0; n != size; n += k) {
++
++		k = RTE_MIN(size - n, RTE_DIM(ids_copy));
++
++		/*
++		 * Convert ids to xstats ids that PMD knows.
++		 * ids known by user are basic + extended stats.
++		 */
++		for (i = 0; i < k; i++)
++			ids_copy[i] = ids[n + i] - basic_count;
++
++		rc = (*dev->dev_ops->xstats_get_by_id)(dev, ids_copy,
++					values + m, k);
++		if (rc < 0)
++			return rc;
++		m += rc;
++	}
++
++	return m;
++}
++
+ /* retrieve ethdev extended statistics */
+ int
+ rte_eth_xstats_get_by_id(uint16_t port_id, const uint64_t *ids,
+ 			 uint64_t *values, unsigned int size)
+ {
+-	unsigned int no_basic_stat_requested = 1;
+-	unsigned int no_ext_stat_requested = 1;
++	unsigned int nb_basic_stats;
+ 	unsigned int num_xstats_filled;
+ 	unsigned int basic_count;
+ 	uint16_t expected_entries;
+ 	struct rte_eth_dev *dev;
++	struct rte_eth_xstat *xstats;
+ 	unsigned int i;
+ 	int ret;
+ 
+@@ -3628,7 +3681,6 @@ rte_eth_xstats_get_by_id(uint16_t port_id, const uint64_t *ids,
+ 	if (ret < 0)
+ 		return ret;
+ 	expected_entries = (uint16_t)ret;
+-	struct rte_eth_xstat xstats[expected_entries];
+ 	basic_count = eth_dev_get_xstats_basic_count(dev);
+ 
+ 	/* Return max number of stats if no ids given */
+@@ -3642,51 +3694,41 @@ rte_eth_xstats_get_by_id(uint16_t port_id, const uint64_t *ids,
+ 	if (ids && !values)
+ 		return -EINVAL;
+ 
+-	if (ids && dev->dev_ops->xstats_get_by_id != NULL && size) {
+-		unsigned int basic_count = eth_dev_get_xstats_basic_count(dev);
+-		uint64_t ids_copy[size];
+-
+-		for (i = 0; i < size; i++) {
+-			if (ids[i] < basic_count) {
+-				no_basic_stat_requested = 0;
+-				break;
+-			}
+-
+-			/*
+-			 * Convert ids to xstats ids that PMD knows.
+-			 * ids known by user are basic + extended stats.
+-			 */
+-			ids_copy[i] = ids[i] - basic_count;
+-		}
+-
+-		if (no_basic_stat_requested)
+-			return (*dev->dev_ops->xstats_get_by_id)(dev, ids_copy,
+-					values, size);
++	nb_basic_stats = 0;
++	if (ids != NULL) {
++		for (i = 0; i < size; i++)
++			nb_basic_stats += (ids[i] < basic_count);
+ 	}
+ 
+-	if (ids) {
+-		for (i = 0; i < size; i++) {
+-			if (ids[i] >= basic_count) {
+-				no_ext_stat_requested = 0;
+-				break;
+-			}
+-		}
++	/* no basic stats requested, devops function provided */
++	if (nb_basic_stats == 0 && ids != NULL && size != 0 &&
++			dev->dev_ops->xstats_get_by_id != NULL)
++		return eth_xtats_get_by_id(dev, ids, values, size, basic_count);
++
++	xstats = calloc(expected_entries, sizeof(xstats[0]));
++	if (xstats == NULL) {
++		RTE_ETHDEV_LOG_LINE(ERR, "Can't allocate memory");
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Fill the xstats structure */
+-	if (ids && no_ext_stat_requested)
++	if (ids && nb_basic_stats == size)
+ 		ret = eth_basic_stats_get(port_id, xstats);
+ 	else
+ 		ret = rte_eth_xstats_get(port_id, xstats, expected_entries);
+ 
+-	if (ret < 0)
++	if (ret < 0) {
++		free(xstats);
+ 		return ret;
++	}
+ 	num_xstats_filled = (unsigned int)ret;
+ 
+ 	/* Return all stats */
+ 	if (!ids) {
+ 		for (i = 0; i < num_xstats_filled; i++)
+ 			values[i] = xstats[i].value;
++
++		free(xstats);
+ 		return expected_entries;
+ 	}
+ 
+@@ -3694,14 +3736,15 @@ rte_eth_xstats_get_by_id(uint16_t port_id, const uint64_t *ids,
+ 	for (i = 0; i < size; i++) {
+ 		if (ids[i] >= expected_entries) {
+ 			RTE_ETHDEV_LOG_LINE(ERR, "Id value isn't valid");
+-			return -1;
++			break;
+ 		}
+ 		values[i] = xstats[ids[i]].value;
+ 	}
+ 
+ 	rte_eth_trace_xstats_get_by_id(port_id, ids, values, size);
+ 
+-	return size;
++	free(xstats);
++	return (i == size) ? (int32_t)size : -1;
+ }
+ 
+ int
+-- 
 2.47.2.vfs.0.1
 
