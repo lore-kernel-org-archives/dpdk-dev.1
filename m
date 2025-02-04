@@ -2,167 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625D7C02194
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096C8C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:11:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A79C740E0C;
-	Tue,  4 Feb 2025 16:00:59 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 8492C40265
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:00:58 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 514EEpPK007199
- for <dev@dpdk.org>; Tue, 4 Feb 2025 07:00:57 -0800
-Received: from nam11-co1-obe.outbound.protection.outlook.com
- (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44kmg4g2rp-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 04 Feb 2025 07:00:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A67iImLjLB0Qwuziugn4PPNUX88tVxmDyR/XICt+OW8a+UlchadhU6TyDK/SvDm9AFkV9QNElQW3RyuGm7pFzL9Zl2iv2ify3PFzIdO7a6nVOd8ogcMVoYCKt4mk+QfGKMIngIH+TTnViZP4t59jLRep+ldueHHj/W3PN/vevM0f8UoGFI012+6RsTn2CYnH1q33WkpGTW+mGUAocd+iiwJLTOU3pm2XLDKOuMGq2xiXE7qs+Oibm7k+8QMLcUm/oHiQR2jhJR2zPg6D8UL6/Cy7H4L39peP3Qh4EJss8EJn6CezUv42Fi0CrHnTC7EoOdrTwA2TK9l6qOHNrjtrhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nxs8t7W6+tb6kVtpppfbHjy29TJrtICnRU5NPsi0s5Q=;
- b=B9Z5O5kNtKj4X/Ojna6S1LOBY8xYE4Ac2/ItUTgcVe3QD39oWTlMEq3LIjTwfWbvHcRAHOAY2OZCf3W71nG/wK/UmUBPtgZNAXvulPqa0RHbKmjQjkl4qBsyu7tCtXv86RFcJfR6zMplK7jLThMk6VWTd85UFJ6Ney0Agm5uT6Y2jSu1gwIuOG9kwNOzqwbFEoFBic9URJy30TV25IbOeNOpIEz8ATvWB76NrtVtP/Q0TZxkwdMkb5A54OC8YzEL/shj9jGzsJpuIoWXrr6zp0Zvte4VE+OXod03JKSdW0TO5MAb459r51LGQ1LFjEIJhlBSSSe70IF7rxqCW2Z+wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nxs8t7W6+tb6kVtpppfbHjy29TJrtICnRU5NPsi0s5Q=;
- b=qap7+X6bpzs2bfULywLSRRnZ0NFZNdAL25gVLWMmpdTLQbwgdWgSNVjqJ/nW6yTSHhR94m/KHWPKwhFrw6BPDMS2PQQ7cRDo7W6GMBNXrmJL/WHUo/QkHGTtvVrHpFqPGNaijtOoOPVPM9TQQeRF2GCBYBIA8oQpRJ/7C/K9NxM=
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com (2603:10b6:a03:3cc::18)
- by CO1PR18MB4732.namprd18.prod.outlook.com (2603:10b6:303:eb::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.26; Tue, 4 Feb
- 2025 15:00:53 +0000
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576]) by BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576%4]) with mapi id 15.20.8398.018; Tue, 4 Feb 2025
- 15:00:53 +0000
-From: Jerin Jacob <jerinj@marvell.com>
-To: Satheesh Paul Antonysamy <psatheesh@marvell.com>, Nithin Kumar Dabilpuram
- <ndabilpuram@marvell.com>, Kiran Kumar Kokkilagadda
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
- Koteswara Rao Kottidi <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Satheesh Paul Antonysamy
- <psatheesh@marvell.com>
-Subject: RE: [EXTERNAL] [dpdk-dev] [PATCH v4 1/2] common/cnxk: support NPC
- flow on cn20k
-Thread-Topic: [EXTERNAL] [dpdk-dev] [PATCH v4 1/2] common/cnxk: support NPC
- flow on cn20k
-Thread-Index: AQHbbVsW1ZWvzBwyb0mHgq1az0C8zbM3UCDg
-Date: Tue, 4 Feb 2025 15:00:53 +0000
-Message-ID: <BY3PR18MB47852DF9E513C3EF192CBEDFC8F42@BY3PR18MB4785.namprd18.prod.outlook.com>
-References: <20241021040144.974453-1-psatheesh@marvell.com>
- <20250123055247.3784086-1-psatheesh@marvell.com>
-In-Reply-To: <20250123055247.3784086-1-psatheesh@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR18MB4785:EE_|CO1PR18MB4732:EE_
-x-ms-office365-filtering-correlation-id: 37785d01-fff3-4874-f504-08dd452cb8d8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700018|7053199007; 
-x-microsoft-antispam-message-info: =?utf-8?B?MXUrZ2MwcFNnNHhqREF2MzhKelliRTBuenBqUmFybU5KOTh5U0JHSFk1TnNy?=
- =?utf-8?B?aDg1OEdYSm1MeUlYOUgzSWFkZExYdUc2YzJpbHRHb0sxbmJ2K1VHWVdBaGVN?=
- =?utf-8?B?WTRVTzUvOTZLYjFVdXU4VTdDMXRUQVdoMEMvMGJIeTlGNEpEemNNWndqQ3ho?=
- =?utf-8?B?N1kzUUFFN1hzQkZiL0dKTUZ2NHZQdWNjcG91ZHdIUGZpVWE3SVVJVmlMM2lQ?=
- =?utf-8?B?U1pGeForMDcySGtzRXhrTG5UdkRqb1pCSWxlazk2b1lZV1VWZWk0dHEyQmw1?=
- =?utf-8?B?TVdycnFNNjJJRXpzMXhseWpNUVFVNFZiZ3RPY25PRnRPZVg5VjRFaU5MTURX?=
- =?utf-8?B?OGhrK0tZYVIvNWJ5eXNzczFUdjhob0F5NHo3RXBvNE53Unk0NjlhM3VFWTZ6?=
- =?utf-8?B?ZnBiRTRCdUU0c2hPdlphWEkzZjFObk5tY3BINWVXQUFpOElTWEFXWS9aZ0tp?=
- =?utf-8?B?ZTcrVUtjNnVIOXM5VmpyKzkzYTBpRXdVR29vYThXNFhjVHBBQnQyY1JBd1JP?=
- =?utf-8?B?NXFZVWhINHJ5eFVGWmVla0N5ak1yKzNGZ2hCUTJ3WUJkZ1ZiT3piOXdzVjFB?=
- =?utf-8?B?L3ZvUkdrdzhUbVZwZVhKOFlQOXlOcmhiV0JlYWttblArWFRlTENWQkVQREFI?=
- =?utf-8?B?YWhIbDloQlR3T3lsL2FCOE93bmJlOEZ6UUhoazJWOVdzMzJEM0hXNWFPbUZp?=
- =?utf-8?B?bXI0enp1U1c5bWsvMnc0VmxGZGxXRjQwMHhMTFBxTSt2S0ZLWjcyV1V4bTVj?=
- =?utf-8?B?MHpLOXFmc0c3ZE1ZYjgvZE85cEZuUTJ4UnBzKzQrUEJwOFNRL0tUT3RlQjBq?=
- =?utf-8?B?SjlpVjdKZ2JWbkhEa2lpMkprVTFZbHF1Qnd4bkN6cjUyK1B4QnBuWGdLb0ZO?=
- =?utf-8?B?b0h3djE2V1ptVXVWaFhBOHVwYW51RDZBK3dldHdCcnNjVmY5TCtwd3BQd0Jv?=
- =?utf-8?B?a3pqZ2o0QVNBeTlKWUpDSTZnSXFpczF6RU9JbGhsUGI2eXJjLzBDQWJsQ2ti?=
- =?utf-8?B?a3ZvaDcrUURpUEhqbEZjeWNYNEs0a2FTUFlyL2ozTjkrWWJ6NmcvdElMT2Vs?=
- =?utf-8?B?NEVHZVNna250YnNnV3BZSUF6ZVlURmFISkkyc3o3aE1oL0V1cDl6WTlQSEZj?=
- =?utf-8?B?VnZ4WnVodHZkT3VDc1VnbkhWYmpVcmNYU3lVei9pVENaNVo3dE94OUdJdW54?=
- =?utf-8?B?b2o0TFNZcy9vb1VzYnoxK0pLOHBEbG9Nek5hQjEwQkZmZ3BmQVFSeXU1YWVF?=
- =?utf-8?B?ekRjUjZUcEl6ektTR0MvSnUxcFBEa0tIZkwwSHBFL1hDRGNhd09ubU5iWE00?=
- =?utf-8?B?YUxzaHdHS0tXSGpMZ3NnaGVlMlFMWGk2THZLckFFeXgzQ0VKNnBOV29lNVgv?=
- =?utf-8?B?WERFZmN6aVJvemZPOThVbXlnNTlmcWtYQTdXUmtuUDIxdEZSVjhIQW5oc3gr?=
- =?utf-8?B?b1Y0dmFMejBVR3V6Y1FYWS9QeXpJazlRb0p0ald6ZHZTT2tpNFdjdUNhWlhn?=
- =?utf-8?B?WE9WcG5LdnBPMFpUNDZQNzIya1RPZTVKMnNrUXVSUE1sbldpQTZEYm5NNXlO?=
- =?utf-8?B?L00vQmJQMDU2SW50cFUzODV4aXBOYkhCTFUwaDdKbnRsZm9sREFFWTllUWd2?=
- =?utf-8?B?T0Q5c3QyeXNXSW83dVZyTmkrV1JwZjVvbkhHMTk1aGUwSEI0VXQ3RmJ1L1pB?=
- =?utf-8?B?T2xGSnQ2RWxidHh2TEJYcXhYdkxEQ2dDcCt5dUlKWGx5TTJNRTQ0Rk9iTUR5?=
- =?utf-8?B?SzVOb0pqTzkzN3dmQVEwcUZaMVpSc3BXK3VzWkpnZGNrRUdUU1JPYVBVN1Vw?=
- =?utf-8?B?N2YvZ2lwVEV4NnF5Z3VtV2UxdHZLcUt3OWQ0enF5SzJqSXBWanE4cUt0NFZ5?=
- =?utf-8?B?ZVRxK0V3TXhmbDdNV2JGQW9NdU51cHRPMGlTUVFCcStRckE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BY3PR18MB4785.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700018)(7053199007); DIR:OUT;
- SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?d1NPT1FtbXNOdkMvaVJvUlp2S0M1U0MzOE16MngrNzVkL3NEck1NRVh3QktR?=
- =?utf-8?B?d21hRWlOTDlVb244L1A2WGgwWElPemp6RFBpQXhmcVZxMFZzVlNkdzVOZ3BP?=
- =?utf-8?B?S0xOTVhMcVlFTVhLY00vc1pDQWptUFBreitZKzNkZS9HVFErN3hLc2QzSXBR?=
- =?utf-8?B?dTNuWHR0SlJibXlJVnlPc01EN2wwU0FiSFFOYitUZEJkQTIva3VwNWJLTmht?=
- =?utf-8?B?bkoyanpPVHo0ekhkTU5MaTJSV1UzYS9TVk15VGFlT0FKRkVWSzlOZU9wc2lz?=
- =?utf-8?B?TlpEMUU0aEtlbzQrSXRWSkkyRU1hVFhFYVl5V3NvaXphY3JzclVJRUUzR0p6?=
- =?utf-8?B?VzFkelJaMEtDWGZzZWtwbDJMd3NZeU93RlFmV3R5NUx3clFjZmxud0V0TTlj?=
- =?utf-8?B?eHhTdTc1b2lmSzVBLzZmN2l0M1JWSEJCMWFNV0dkaEdJVzZzeElCTmxhUkYv?=
- =?utf-8?B?OFdYZFZSc2RGR0NWdXcyNWErNENyZ0VtRGdSMXpDYS83bllFd05sMThmbEM1?=
- =?utf-8?B?WERTZjMwQ09McEV4MlRPTWwwcHFHTlcrUmc4MHJtMFRKRDNxd0J6R05OaCtY?=
- =?utf-8?B?ZTMvSCtUbkw0T21welBXblhQcnVMWHVCR1I1TlM4VXd0c0VPUllLb1BiZDds?=
- =?utf-8?B?L1RFMFB2TitwM0ZOcGpyTTdoTkFsTzdPM00yREtOUHlxd1R2dFVmd3RHNTdD?=
- =?utf-8?B?dTdMWWRXNXo1eEl6UnJiMVF2dGlqMDFUSUVsc1NvakRUaXp5ZTlkcDhkck00?=
- =?utf-8?B?L1BqcmVOSDZ0N0JzMnkvV0I5RU1HT2tSWEN6cVBqd1EwUm11ZFFxUHY0QXpQ?=
- =?utf-8?B?eGpkNzFXaGhjZUVNUllnVDJ5YTJQQ1haZGRNcEQ1QVlPREhtblEzWGpRSDlG?=
- =?utf-8?B?VTJiOU96MGxkSmp2YWsxVnhXcmJBNCsrTnpuRkdJdEI1NVFEYWh4K2F3K1R0?=
- =?utf-8?B?M0JlUlpyYUY2S2xUNWNPY0tSVmRjZTdTT0g4UmhqK0NpMkl2d2hOZDAyVVQ4?=
- =?utf-8?B?NnlXZlNwTGxFTGdwMXAwVFF4MUtBcXU4SE5lallGY3h6R3NBSjV2R0w0dHJj?=
- =?utf-8?B?WHdXNnhyMWcrbndGRzZyRmlabzNGV0p0WnJJcDlGV016a2dnbjh4TUhtWXJQ?=
- =?utf-8?B?SkZ4Sk15RHg0NE1tcTNRMjB2K2N6dlh5aEN5bCtneHRtVDR5RVJuVkRYZG1H?=
- =?utf-8?B?QkJoVkpXNEw4dGVualdkRlVWclJJQjRzZ2Q0eVVLTEpGaU55Nm1iUW1vZ0dE?=
- =?utf-8?B?clViMG5sUTR4L0Jtd01mQWd6VElJUU5MUy9OVkZBYWthMnVMMHhQZUZFT1Q2?=
- =?utf-8?B?ckZnTUgvTEZUaURjY3dHdmdoS3pvUUxwK2JybDJFV3AzWTVqWXRPQUQ5eXpQ?=
- =?utf-8?B?ZFRKYTR5NDBueHU0YUYvb2xJNWJKaS9Pdm9xbTRqVmlhMjBxZHNsZEVoSnhC?=
- =?utf-8?B?VzRqOG9YUi9TVzdFdjNlV1gzRFZyNU9UZ2xxMTIzV2FsWmE2SnVJK1JSOTUw?=
- =?utf-8?B?YndYRWFEN1ZoQkZRcE1HdUNzWTFQeFo1NS9MSHFCMzhXWUhCOFV4aElKR0Nk?=
- =?utf-8?B?ZGhzcHFXZi95SHl2UWNPa0lDbWpxbzcxcEh2T3JGVkFpVUZZS2dmTmhRRm5l?=
- =?utf-8?B?Sm0zSGQyRXFEVk9WNHFFeDNEQUJKRWFndVJOeC96eWFpOC9Yamd2bDNOZjh1?=
- =?utf-8?B?TUR0akxWRzFUL0U3Ny9rWGE5enRPV1Z6WHcyekJHQmp2dHZHRENwT0MrNmhl?=
- =?utf-8?B?RDNkcTdNNnZmK0NPcUxnaWJFTVpFaXhOUzlLdUNpSVFyL054Kzc0VjU5RXBr?=
- =?utf-8?B?bVF6U3Q3MUM0N0RRT25ETWFiTzNzcHprbW85b3cvS0p0b3NCZmVsWDdUZWlP?=
- =?utf-8?B?c0tsbFMxN0thK2VWRHpLbjBFdEF1ZStXU2RNa0kxazR6c3kvNWJ6WDlYS3JX?=
- =?utf-8?B?cG83ckREUVpEZTRMMkUzeGlOdmJJZ0ZmT1h4RXIxS1A3RkNlT0tlbU4rK1l0?=
- =?utf-8?B?V0VvaUduVFB3WlY1bDFvaTFWYitvYWZ2YzVGUDNpbEVOTlJraXhRUkJCVG9D?=
- =?utf-8?B?MkNwR0thRlFBVmN5dkEwNG82eXgzRXA3SFkrcEJPaHNDSC9CWGFFSTRNK1Fz?=
- =?utf-8?Q?Gcz0=3D?=
+	by mails.dpdk.org (Postfix) with ESMTP id 9A91640EF1;
+	Tue,  4 Feb 2025 16:11:32 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id CF37840265
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:11:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1738681892; x=1770217892;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=W5AaSNqn19YPGcE9nsSSa9ge79TfJU96Q+uZucIuX98=;
+ b=T1LMmSQORYToKUXIx1dXwLSxhbYFBvYIyToQQ877wLU35jR+mrQFiNi/
+ gRnIBllo4wiEkLzW8nUtgHMIKUOPjRSZw3z6JWVqliYW/B8xtT76d+wYE
+ yKHll5gTjmOMQjB6ldfrlG4B0HcnAiarKcMhzPs1OHAWpwGxeP/M2Ma1L
+ ET9Xk8FV2xQoUFbBGGSoLDpyjDUqZQuCFBzbIfB0u9jMLpz41WQNw1Nvm
+ s2hvy4TEwZDHXC/I0BBBQxTfDF0R4kdmrHu/e3BDCkLG3K5HmqRCD4eAy
+ /ThgAquxwrOwbSSq4WZup8EZiN6CAR+Hv6IP5djjDHF3j8DVp3wU7mOGx A==;
+X-CSE-ConnectionGUID: TM8wkX5aTxKI4tWNXjdwVA==
+X-CSE-MsgGUID: PbUyuQMhTwWduzTkZiOgfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097081"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097081"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Feb 2025 07:11:25 -0800
+X-CSE-ConnectionGUID: guN1kobaT6mOSKTGGsdmxg==
+X-CSE-MsgGUID: 5mkFwsDPSEOL4oeudBsIMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792535"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:11:23 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v2 00/54] Merge Intel IGC and E1000 drivers,
+ and update E1000 base code
+Date: Tue,  4 Feb 2025 15:10:06 +0000
+Message-ID: <cover.1738681725.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <cover.1738328106.git.anatoly.burakov@intel.com>
+References: <cover.1738328106.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4785.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37785d01-fff3-4874-f504-08dd452cb8d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2025 15:00:53.8139 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wqlw45vNJ2kkolAWf+f9EftqUMLj2kIC/mvEDztjDeabE2QcZSqzHwyDZQm/X2OoTifcW+L0bnknR2IHFDwn4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR18MB4732
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: eQrfZZH_zF_ZTSM5W0RgqN9n73YIQT44
-X-Proofpoint-ORIG-GUID: eQrfZZH_zF_ZTSM5W0RgqN9n73YIQT44
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-04_07,2025-02-04_01,2024-11-22_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,46 +61,212 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Intel IGC and E1000 drivers are distinct, but they are actually generated
+from the same base code. This patchset will merge together all e1000-derived
+drivers into one common base, with three different ethdev driver
+frontends (EM, IGB, and IGC).
 
+After the merge is done, base code is also updated to latest snapshot.
 
-> -----Original Message-----
-> From: psatheesh@marvell.com <psatheesh@marvell.com>
-> Sent: Thursday, January 23, 2025 11:23 AM
-> To: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>; Kiran Kumar
-> Kokkilagadda <kirankumark@marvell.com>; Sunil Kumar Kori
-> <skori@marvell.com>; Satha Koteswara Rao Kottidi
-> <skoteshwar@marvell.com>; Harman Kalra <hkalra@marvell.com>
-> Cc: dev@dpdk.org; Satheesh Paul Antonysamy <psatheesh@marvell.com>
-> Subject: [EXTERNAL] [dpdk-dev] [PATCH v4 1/2] common/cnxk: support NPC
-> flow on cn20k
->=20
-> From: Satheesh Paul <psatheesh@=E2=80=8Amarvell.=E2=80=8Acom> ROC changes=
- to support NPC
-> flow on cn20k. Signed-off-by: Satheesh Paul <psatheesh@=E2=80=8Amarvell.=
-=E2=80=8Acom>
-> Reviewed-by: Kiran Kumar K <kirankumark@=E2=80=8Amarvell.=E2=80=8Acom> --=
-- v2: * Fixed
-> generic platform
->=20
-> From: Satheesh Paul <psatheesh@marvell.com>
->=20
-> ROC changes to support NPC flow on cn20k.
->=20
-> Signed-off-by: Satheesh Paul <psatheesh@marvell.com>
-> Reviewed-by: Kiran Kumar K <kirankumark@marvell.com>
-> ---
-_LEN];
-> +};
-> +
-> +struct npc_get_field_hash_info_req {
-> +	struct mbox_msghdr hdr;
-> +	uint8_t intf;
+v1 -> v2:
+- igc code is now a direct copy from IGC rather than a rebuild-from-source
+- i225-related fixes are now separate, not squashed
+- removed unused args warning workaround
 
-1)Looks like __io tag is missing
-2)Please update the release note for this feature(rte_flow support for cn20=
-k)
+Adam Ludkiewicz (1):
+  net/e1000/base: add WoL definitions
 
-> +};
-> +
->
+Aleksandr Loktionov (1):
+  net/e1000/base: fix mac addr hash bit_shift
+
+Amir Avivi (1):
+  net/e1000/base: fix iterator type
+
+Anatoly Burakov (11):
+  net/e1000/base: copy i225 code into e1000
+  net/e1000: merge igc with e1000
+  net/igc: remove the driver
+  net/e1000/base: remove unused parameter workaround
+  net/e1000: add missing i225 devices
+  net/e1000: add missing hardware support
+  net/e1000/base: correct formatting differences
+  net/e1000/base: add missing definitions
+  net/e1000/base: correct mPHY access logic
+  net/e1000/base: add EEE common API function
+  net/e1000/base: update readme
+
+Barbara Skobiej (2):
+  net/e1000/base: fix reset for 82580
+  net/e1000/base: fix data type in MAC hash
+
+Carolyn Wyborny (1):
+  net/e1000/base: skip MANC check for 82575
+
+Dima Ruinskiy (9):
+  net/e1000/base: read PCIe bus info in i225
+  net/e1000/base: fix deadlock in i225
+  net/e1000/base: fix infinite loop
+  net/e1000/base: fix typo in LTR calculation
+  net/e1000/base: fix unused value
+  net/e1000/base: make e1000_access_phy_wakeup_reg_bm non-static
+  net/e1000/base: make debug prints more informative
+  net/e1000/base: hardcode bus parameters for ICH8
+  net/e1000/base: fix unchecked return
+
+Evgeny Efimov (1):
+  net/e1000/base: add PHY reset support for i225
+
+Jakub Buchocki (1):
+  net/e1000/base: fix uninitialized variable usage
+
+Marcin Jurczak (1):
+  net/e1000/base: remove non-inclusive language
+
+Menachem Fogel (1):
+  net/e1000/base: add LED blink support for i225
+
+Nir Efrati (8):
+  net/e1000/base: remove unused function
+  net/e1000/base: make set_ltr for i225 non-static
+  net/e1000/base: workaround for packet loss
+  net/e1000/base: add definition for EXFWSM register
+  net/e1000/base: use longer ULP exit timeout on more HW
+  net/e1000/base: remove redundant access to RO register
+  net/e1000/base: introduce PHY ID retry mechanism
+  net/e1000/base: add PHY read/write retry mechanism
+
+Pawel Malinowski (1):
+  net/e1000/base: fix semaphore timeout value
+
+Piotr Kubaj (1):
+  net/e1000/base: rename NVM version variable
+
+Piotr Pietruszewski (1):
+  net/e1000/base: improve code flow in ICH8LAN
+
+Przemyslaw Ciesielski (2):
+  net/e1000/base: fix bitwise op type mismatch
+  net/e1000/base: fix static analysis warnings
+
+Sasha Neftin (9):
+  net/e1000/base: rename VLAN PQF macros
+  net/e1000/base: add PHY power management control
+  net/e1000/base: increase PHY power up delay
+  net/e1000/base: reset loop variable
+  net/e1000/base: fix LTR for i225
+  net/e1000/base: add queue select definitions
+  net/e1000/base: add profile information field
+  net/e1000/base: add LPI counters
+  net/e1000/base: improve NVM checksum handling
+
+Vitaly Lifshits (2):
+  net/e1000: add support for more I219 devices
+  net/e1000/base: correct disable k1 logic
+
+ drivers/net/intel/e1000/base/README           |    8 +-
+ .../net/intel/e1000/base/e1000_80003es2lan.c  |   10 +-
+ drivers/net/intel/e1000/base/e1000_82571.c    |    4 +-
+ drivers/net/intel/e1000/base/e1000_82575.c    |   21 +-
+ drivers/net/intel/e1000/base/e1000_82575.h    |   29 -
+ drivers/net/intel/e1000/base/e1000_api.c      |   77 +-
+ drivers/net/intel/e1000/base/e1000_api.h      |    4 +-
+ drivers/net/intel/e1000/base/e1000_base.c     |    7 +-
+ drivers/net/intel/e1000/base/e1000_defines.h  |  262 +-
+ drivers/net/intel/e1000/base/e1000_hw.h       |   95 +-
+ drivers/net/intel/e1000/base/e1000_i210.c     |   14 +-
+ drivers/net/intel/e1000/base/e1000_i210.h     |    4 +
+ drivers/net/intel/e1000/base/e1000_i225.c     | 1372 +++++
+ drivers/net/intel/e1000/base/e1000_i225.h     |  117 +
+ drivers/net/intel/e1000/base/e1000_ich8lan.c  |  224 +-
+ drivers/net/intel/e1000/base/e1000_ich8lan.h  |    3 +-
+ drivers/net/intel/e1000/base/e1000_mac.c      |   62 +-
+ drivers/net/intel/e1000/base/e1000_mac.h      |    2 +-
+ drivers/net/intel/e1000/base/e1000_nvm.c      |   12 +-
+ drivers/net/intel/e1000/base/e1000_osdep.c    |   10 +-
+ drivers/net/intel/e1000/base/e1000_osdep.h    |   44 +-
+ drivers/net/intel/e1000/base/e1000_phy.c      |  456 +-
+ drivers/net/intel/e1000/base/e1000_phy.h      |   21 +
+ drivers/net/intel/e1000/base/e1000_regs.h     |   53 +-
+ drivers/net/intel/e1000/base/e1000_vf.c       |   14 +-
+ drivers/net/intel/e1000/base/meson.build      |   13 +-
+ drivers/net/intel/e1000/em_ethdev.c           |   36 +-
+ drivers/net/intel/e1000/igb_ethdev.c          |    1 +
+ drivers/net/intel/{igc => e1000}/igc_ethdev.c |  914 ++--
+ drivers/net/intel/{igc => e1000}/igc_ethdev.h |   32 +-
+ drivers/net/intel/{igc => e1000}/igc_filter.c |   84 +-
+ drivers/net/intel/{igc => e1000}/igc_filter.h |    0
+ drivers/net/intel/{igc => e1000}/igc_flow.c   |    2 +-
+ drivers/net/intel/{igc => e1000}/igc_flow.h   |    0
+ drivers/net/intel/{igc => e1000}/igc_logs.c   |    2 +-
+ drivers/net/intel/{igc => e1000}/igc_txrx.c   |  376 +-
+ drivers/net/intel/{igc => e1000}/igc_txrx.h   |    6 +-
+ drivers/net/intel/e1000/meson.build           |   11 +
+ drivers/net/intel/igc/base/README             |   29 -
+ drivers/net/intel/igc/base/igc_82571.h        |   36 -
+ drivers/net/intel/igc/base/igc_82575.h        |  351 --
+ drivers/net/intel/igc/base/igc_api.c          | 1853 -------
+ drivers/net/intel/igc/base/igc_api.h          |  111 -
+ drivers/net/intel/igc/base/igc_base.c         |  190 -
+ drivers/net/intel/igc/base/igc_base.h         |  127 -
+ drivers/net/intel/igc/base/igc_defines.h      | 1670 -------
+ drivers/net/intel/igc/base/igc_hw.h           | 1059 ----
+ drivers/net/intel/igc/base/igc_i225.c         | 1372 -----
+ drivers/net/intel/igc/base/igc_i225.h         |  110 -
+ drivers/net/intel/igc/base/igc_ich8lan.h      |  296 --
+ drivers/net/intel/igc/base/igc_mac.c          | 2100 --------
+ drivers/net/intel/igc/base/igc_mac.h          |   64 -
+ drivers/net/intel/igc/base/igc_manage.c       |  547 --
+ drivers/net/intel/igc/base/igc_manage.h       |   65 -
+ drivers/net/intel/igc/base/igc_nvm.c          | 1324 -----
+ drivers/net/intel/igc/base/igc_nvm.h          |   69 -
+ drivers/net/intel/igc/base/igc_osdep.c        |   64 -
+ drivers/net/intel/igc/base/igc_osdep.h        |  163 -
+ drivers/net/intel/igc/base/igc_phy.c          | 4420 -----------------
+ drivers/net/intel/igc/base/igc_phy.h          |  337 --
+ drivers/net/intel/igc/base/igc_regs.h         |  732 ---
+ drivers/net/intel/igc/base/meson.build        |   19 -
+ drivers/net/intel/igc/igc_logs.h              |   43 -
+ drivers/net/intel/igc/meson.build             |   21 -
+ drivers/net/meson.build                       |    1 -
+ 65 files changed, 3319 insertions(+), 18256 deletions(-)
+ create mode 100644 drivers/net/intel/e1000/base/e1000_i225.c
+ create mode 100644 drivers/net/intel/e1000/base/e1000_i225.h
+ rename drivers/net/intel/{igc => e1000}/igc_ethdev.c (73%)
+ rename drivers/net/intel/{igc => e1000}/igc_ethdev.h (91%)
+ rename drivers/net/intel/{igc => e1000}/igc_filter.c (81%)
+ rename drivers/net/intel/{igc => e1000}/igc_filter.h (100%)
+ rename drivers/net/intel/{igc => e1000}/igc_flow.c (99%)
+ rename drivers/net/intel/{igc => e1000}/igc_flow.h (100%)
+ rename drivers/net/intel/{igc => e1000}/igc_logs.c (90%)
+ rename drivers/net/intel/{igc => e1000}/igc_txrx.c (87%)
+ rename drivers/net/intel/{igc => e1000}/igc_txrx.h (97%)
+ delete mode 100644 drivers/net/intel/igc/base/README
+ delete mode 100644 drivers/net/intel/igc/base/igc_82571.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_82575.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_api.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_api.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_base.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_base.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_defines.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_hw.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_i225.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_i225.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_ich8lan.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_mac.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_mac.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_manage.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_manage.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_nvm.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_nvm.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_osdep.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_osdep.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_phy.c
+ delete mode 100644 drivers/net/intel/igc/base/igc_phy.h
+ delete mode 100644 drivers/net/intel/igc/base/igc_regs.h
+ delete mode 100644 drivers/net/intel/igc/base/meson.build
+ delete mode 100644 drivers/net/intel/igc/igc_logs.h
+ delete mode 100644 drivers/net/intel/igc/meson.build
+
+-- 
+2.43.5
 
