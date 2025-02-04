@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ACEC02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F23C02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:23:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36BF34066F;
-	Tue,  4 Feb 2025 17:22:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E2734066A;
+	Tue,  4 Feb 2025 17:22:56 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id F065F4029B
+ by mails.dpdk.org (Postfix) with ESMTP id F03754025F
  for <dev@dpdk.org>; Tue,  4 Feb 2025 17:22:48 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 8A15F2054921; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A15F2054921
+ id 71404205491F; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71404205491F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738686167;
- bh=VrdBdvJUUltk+ZXtsDAj7IT45LyJQnArjkgdKInocWM=;
+ bh=N4vguHG6PEsLbIgbNHV9UMQLsOxnQR/SrPuum4VvO50=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=CwFG709fBPisGLt4ASfcEYFH6WopT6fgvaQrzNSwtdzAeoeltx+tyRAS+cnIaLg6p
- kRZpg5dKLGjtGbX9yUJ+Wli/w4iU9/eydKqvAxZh6GGBwkLer3RlfSPBXNaHNMDAkG
- h5kfC5WNDfLuQJ8atstsY564GT+rUbG2CD8H1U8Y=
+ b=bHxb7rpmq6lZgkS1WdRO9nnjLiku4uyr84ewleb9hFgBltOtLJxyMtZAbuPGn+FsL
+ tYEOKPVAc9nE5L0AuQboO8ZXCtZXu/3DE50MxPWc40VCrlcVAEqLkyeDvkJXzfm876
+ /65M928iw238NjD7PxOrFlm7phgDkz9EPcqqTBWU=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com
-Subject: [PATCH v20 07/27] rcu: remove use of VLAs for Windows built code
-Date: Tue,  4 Feb 2025 08:21:44 -0800
-Message-Id: <1738686124-16173-8-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v20 05/27] hash: remove use of VLAs for Windows built code
+Date: Tue,  4 Feb 2025 08:21:42 -0800
+Message-Id: <1738686124-16173-6-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738686124-16173-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -49,76 +49,47 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-1) ./lib/rcu/rte_rcu_qsbr.c:359:9
-    : warning: ISO C90 forbids variable length array ‘data’ [-Wvla]
-2) ./lib/rcu/rte_rcu_qsbr.c:422:9
-    : warning: ISO C90 forbids variable length array ‘data’ [-Wvla]
+1) ./lib/hash/rte_cuckoo_hash.c:2362:9
+    : warning: ISO C90 forbids variable length array ‘positions’
+2) ../lib/hash/rte_cuckoo_hash.c:2478:9
+    : warning: ISO C90 forbids variable length array ‘positions’
 
-In both cases we allocate VLA for one element from RCU deferred queue.
-Right now, size of element in RCU queue is not limited by API.
-The approach is to introduce some reasonable limitation on RCU DQ
-element size.
-Choose 128B for now.
-With that in place we can replace both VLA occurencies with fixed size
+Both rte_hash_lookup_bulk_data() and
+rte_hash_lookup_with_hash_bulk_data() expect
+@num_keys <= RTE_HASH_LOOKUP_BULK_MAX.
+So, for both cases it should be safe to replace VLA with fixed size
 array.
 
-Note that such change need to be treated as API change.
-So can be applied only at 24.11.
-
 Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Reviewed-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/rcu/rte_rcu_qsbr.c | 7 ++++---
- lib/rcu/rte_rcu_qsbr.h | 5 +++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ lib/hash/rte_cuckoo_hash.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
-index dbf31501a6..fe68d16326 100644
---- a/lib/rcu/rte_rcu_qsbr.c
-+++ b/lib/rcu/rte_rcu_qsbr.c
-@@ -245,7 +245,8 @@ rte_rcu_qsbr_dq_create(const struct rte_rcu_qsbr_dq_parameters *params)
- 	if (params == NULL || params->free_fn == NULL ||
- 		params->v == NULL || params->name == NULL ||
- 		params->size == 0 || params->esize == 0 ||
--		(params->esize % 4 != 0)) {
-+		(params->esize % 4 != 0) ||
-+		params->esize > RTE_QSBR_ESIZE_MAX) {
- 		RCU_LOG(ERR, "Invalid input parameter");
- 		rte_errno = EINVAL;
+diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
+index 9575e8aa0c..fc93182efe 100644
+--- a/lib/hash/rte_cuckoo_hash.c
++++ b/lib/hash/rte_cuckoo_hash.c
+@@ -2418,7 +2418,7 @@ rte_hash_lookup_bulk_data(const struct rte_hash *h, const void **keys,
+ 			(num_keys > RTE_HASH_LOOKUP_BULK_MAX) ||
+ 			(hit_mask == NULL)), -EINVAL);
  
-@@ -323,7 +324,7 @@ int rte_rcu_qsbr_dq_enqueue(struct rte_rcu_qsbr_dq *dq, void *e)
- 		return 1;
- 	}
+-	int32_t positions[num_keys];
++	int32_t positions[RTE_HASH_LOOKUP_BULK_MAX];
  
--	char data[dq->esize];
-+	char data[RTE_QSBR_ESIZE_MAX + __RTE_QSBR_TOKEN_SIZE];
- 	dq_elem = (__rte_rcu_qsbr_dq_elem_t *)data;
- 	/* Start the grace period */
- 	dq_elem->token = rte_rcu_qsbr_start(dq->v);
-@@ -386,7 +387,7 @@ rte_rcu_qsbr_dq_reclaim(struct rte_rcu_qsbr_dq *dq, unsigned int n,
+ 	__rte_hash_lookup_bulk(h, keys, num_keys, positions, hit_mask, data);
  
- 	cnt = 0;
+@@ -2534,7 +2534,7 @@ rte_hash_lookup_with_hash_bulk_data(const struct rte_hash *h,
+ 			(num_keys > RTE_HASH_LOOKUP_BULK_MAX) ||
+ 			(hit_mask == NULL)), -EINVAL);
  
--	char data[dq->esize];
-+	char data[RTE_QSBR_ESIZE_MAX + __RTE_QSBR_TOKEN_SIZE];
- 	/* Check reader threads quiescent state and reclaim resources */
- 	while (cnt < n &&
- 		rte_ring_dequeue_bulk_elem_start(dq->r, &data,
-diff --git a/lib/rcu/rte_rcu_qsbr.h b/lib/rcu/rte_rcu_qsbr.h
-index 550fadf56a..abcbd78914 100644
---- a/lib/rcu/rte_rcu_qsbr.h
-+++ b/lib/rcu/rte_rcu_qsbr.h
-@@ -86,6 +86,11 @@ struct __rte_cache_aligned rte_rcu_qsbr_cnt {
- #define __RTE_QSBR_CNT_MAX ((uint64_t)~0)
- #define __RTE_QSBR_TOKEN_SIZE sizeof(uint64_t)
+-	int32_t positions[num_keys];
++	int32_t positions[RTE_HASH_LOOKUP_BULK_MAX];
  
-+/**
-+ * Max allowable size (in bytes) of each element in the defer queue
-+ */
-+#define RTE_QSBR_ESIZE_MAX	(2 * RTE_CACHE_LINE_MIN_SIZE)
-+
- /* RTE Quiescent State variable structure.
-  * This structure has two elements that vary in size based on the
-  * 'max_threads' parameter.
+ 	__rte_hash_lookup_with_hash_bulk(h, keys, sig, num_keys,
+ 			positions, hit_mask, data);
 -- 
 2.47.2.vfs.0.1
 
