@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABC7C02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014FFC02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 20:58:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CBC04068A;
-	Tue,  4 Feb 2025 21:57:42 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B5EE40698;
+	Tue,  4 Feb 2025 21:57:43 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 58421402DC
+ by mails.dpdk.org (Postfix) with ESMTP id 08198400D6
  for <dev@dpdk.org>; Tue,  4 Feb 2025 21:57:23 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id D8F32210D0C8; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D8F32210D0C8
+ id 5E0E0210C33A; Tue,  4 Feb 2025 12:57:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E0E0210C33A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738702641;
- bh=SRTZ560hU6hoVKD+Fkx5M+2z0vU/hDztzmfhWxbC+cE=;
+ bh=R1q3dWwl0t6YhWGgHYDG3ZXRsMth7Rdr4mn/KHJaCzs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=An79d0AvJwz4tjhy6oYasnMCinRnX44GOs2yZeoJgaJ8t0EP16HOMed21UYVp6nK2
- nbKdEck0HJsRYXrXNGHBBWvRy+IVozLnP9KCUcNdk7f01n9T4CdzabSUtL8p2SLNw0
- wFp3kV1w2nHUSzpM95mbWgf8VYZl4idxY1ylLhOI=
+ b=eFxqlScyLoifwktU0ic4z0p48CLTWjjOGwweRm7WA7l9M/2/dPI8Q4RHjEgFUzlQB
+ PkUxmnpGnxHSmo1ilL7OnRE4S3WDHuLPkapt9FL4bNvaYkKHX0f1Q+RruhJFhbdt7z
+ kCC44eMyqDOSc9hIhJWqV7VLlLMVR14Zq8L08z1o=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v21 19/27] app/testpmd: remove use of VLAs for Windows built
- code in shared_rxq_fwd
-Date: Tue,  4 Feb 2025 12:57:10 -0800
-Message-Id: <1738702638-22363-20-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com
+Subject: [PATCH v21 09/27] gro: remove use of VLAs
+Date: Tue,  4 Feb 2025 12:57:00 -0800
+Message-Id: <1738702638-22363-10-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -45,29 +44,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-MSVC does not support VLAs, replace VLAs with standard C arrays
-or alloca(). alloca() is available for all toolchain/platform
-combinations officially supported by DPDK.
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+../lib/gro/rte_gro.c:182:34: warning:
+    variable length array used [-Wvla]
+../lib/gro/rte_gro.c:363:34: warning:
+    variable length array used [-Wvla]
+
+In both cases the pattern is the same: we use unprocess_pkts[nb_pkts] to
+collect un-used by GRO packets, and then copy them to the start of
+input/output pkts[] array.
+In both cases, we can safely copy pkts[i] into already
+processed entry at the same array, i.e. into pkts[unprocess_num].
+Such change eliminates need of temporary VLA: unprocess_pkts[nb_pkts].
+
+Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Acked-by: Ferruh Yigit <ferruh.yigit@amd.com>
 ---
- app/test-pmd/shared_rxq_fwd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/gro/rte_gro.c | 40 ++++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 26 deletions(-)
 
-diff --git a/app/test-pmd/shared_rxq_fwd.c b/app/test-pmd/shared_rxq_fwd.c
-index 623d62da88..b85830b90e 100644
---- a/app/test-pmd/shared_rxq_fwd.c
-+++ b/app/test-pmd/shared_rxq_fwd.c
-@@ -92,7 +92,7 @@ forward_shared_rxq(struct fwd_stream *fs, uint16_t nb_rx,
- static bool
- shared_rxq_fwd(struct fwd_stream *fs)
- {
--	struct rte_mbuf *pkts_burst[nb_pkt_per_burst];
-+	struct rte_mbuf *pkts_burst[MAX_PKT_BURST];
- 	uint16_t nb_rx;
+diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
+index db86117609..6d5aadf32a 100644
+--- a/lib/gro/rte_gro.c
++++ b/lib/gro/rte_gro.c
+@@ -179,7 +179,6 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 	struct gro_vxlan_udp4_item vxlan_udp_items[RTE_GRO_MAX_BURST_ITEM_NUM]
+ 			= {{{0}} };
  
- 	nb_rx = common_fwd_stream_receive(fs, pkts_burst, nb_pkt_per_burst);
+-	struct rte_mbuf *unprocess_pkts[nb_pkts];
+ 	uint32_t item_num;
+ 	int32_t ret;
+ 	uint16_t i, unprocess_num = 0, nb_after_gro = nb_pkts;
+@@ -275,7 +274,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 				/* Merge successfully */
+ 				nb_after_gro--;
+ 			else if (ret < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
+ 				do_vxlan_udp_gro) {
+ 			ret = gro_vxlan_udp4_reassemble(pkts[i],
+@@ -284,7 +283,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 				/* Merge successfully */
+ 				nb_after_gro--;
+ 			else if (ret < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
+ 				do_tcp4_gro) {
+ 			ret = gro_tcp4_reassemble(pkts[i], &tcp_tbl, 0);
+@@ -292,7 +291,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 				/* merge successfully */
+ 				nb_after_gro--;
+ 			else if (ret < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
+ 				do_udp4_gro) {
+ 			ret = gro_udp4_reassemble(pkts[i], &udp_tbl, 0);
+@@ -300,7 +299,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 				/* merge successfully */
+ 				nb_after_gro--;
+ 			else if (ret < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
+ 				do_tcp6_gro) {
+ 			ret = gro_tcp6_reassemble(pkts[i], &tcp6_tbl, 0);
+@@ -308,21 +307,15 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 				/* merge successfully */
+ 				nb_after_gro--;
+ 			else if (ret < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else
+-			unprocess_pkts[unprocess_num++] = pkts[i];
++			pkts[unprocess_num++] = pkts[i];
+ 	}
+ 
+ 	if ((nb_after_gro < nb_pkts)
+ 		 || (unprocess_num < nb_pkts)) {
+-		i = 0;
+-		/* Copy unprocessed packets */
+-		if (unprocess_num > 0) {
+-			memcpy(&pkts[i], unprocess_pkts,
+-					sizeof(struct rte_mbuf *) *
+-					unprocess_num);
+-			i = unprocess_num;
+-		}
++
++		i = unprocess_num;
+ 
+ 		/* Flush all packets from the tables */
+ 		if (do_vxlan_tcp_gro) {
+@@ -360,7 +353,6 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
+ 		uint16_t nb_pkts,
+ 		void *ctx)
+ {
+-	struct rte_mbuf *unprocess_pkts[nb_pkts];
+ 	struct gro_ctx *gro_ctx = ctx;
+ 	void *tcp_tbl, *udp_tbl, *vxlan_tcp_tbl, *vxlan_udp_tbl, *tcp6_tbl;
+ 	uint64_t current_time;
+@@ -396,33 +388,29 @@ rte_gro_reassemble(struct rte_mbuf **pkts,
+ 				do_vxlan_tcp_gro) {
+ 			if (gro_vxlan_tcp4_reassemble(pkts[i], vxlan_tcp_tbl,
+ 						current_time) < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_VXLAN_UDP4_PKT(pkts[i]->packet_type) &&
+ 				do_vxlan_udp_gro) {
+ 			if (gro_vxlan_udp4_reassemble(pkts[i], vxlan_udp_tbl,
+ 						current_time) < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_TCP_PKT(pkts[i]->packet_type) &&
+ 				do_tcp4_gro) {
+ 			if (gro_tcp4_reassemble(pkts[i], tcp_tbl,
+ 						current_time) < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV4_UDP_PKT(pkts[i]->packet_type) &&
+ 				do_udp4_gro) {
+ 			if (gro_udp4_reassemble(pkts[i], udp_tbl,
+ 						current_time) < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else if (IS_IPV6_TCP_PKT(pkts[i]->packet_type) &&
+ 				do_tcp6_gro) {
+ 			if (gro_tcp6_reassemble(pkts[i], tcp6_tbl,
+ 						current_time) < 0)
+-				unprocess_pkts[unprocess_num++] = pkts[i];
++				pkts[unprocess_num++] = pkts[i];
+ 		} else
+-			unprocess_pkts[unprocess_num++] = pkts[i];
+-	}
+-	if (unprocess_num > 0) {
+-		memcpy(pkts, unprocess_pkts, sizeof(struct rte_mbuf *) *
+-				unprocess_num);
++			pkts[unprocess_num++] = pkts[i];
+ 	}
+ 
+ 	return unprocess_num;
 -- 
 2.47.2.vfs.0.1
 
