@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA8DC02193
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F37C02193
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:24:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB08040F16;
-	Tue,  4 Feb 2025 17:23:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A8E9341060;
+	Tue,  4 Feb 2025 17:23:04 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3FC294042C
+ by mails.dpdk.org (Postfix) with ESMTP id A33C54060A
  for <dev@dpdk.org>; Tue,  4 Feb 2025 17:22:49 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id AFC2F210C317; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AFC2F210C317
+ id 68356210D0C8; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 68356210D0C8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738686167;
- bh=oLu7UWExVKp69S7C/lob/OoLtIJfTcLoLkvoKiCP8Rs=;
+ s=default; t=1738686168;
+ bh=mbbtVwfgzb11vdz0XrZeWyhnAAjs7Fl/I0JR7/q09n0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Xam4frqYx22AckxF/L2QW0aOlJ3thawkIa0wnyU9ryc2AdyzIyA3ipfPqmXT3Cjw1
- w4jBviqfwSmH7a8ANqDDf24F5nx6TbDROMBYPTfwGpyjVo7r6+T6yBmi30kwkxDTwc
- Z2K4/FctWo9BjU7SRGVASdAXdmv/NED1vboIH210=
+ b=n8gKf39PJWCsLzdjzRQkk+wx4WEe0VtIsUTBdBq4WRgk+34hk7R4vZaiSUxU0E9n4
+ d3z5/neDI9KxN0o6GGFtg0i+QRo9FTDJ29XCxbc/9k1IZ8Jg0aoy6lPLV0plkuN0J5
+ MZ1e920G2jRj/OzQTWQgqRPuPNhNhcm89norLfAg=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com
-Subject: [PATCH v20 10/27] net/ixgbe: remove use of VLAs
-Date: Tue,  4 Feb 2025 08:21:47 -0800
-Message-Id: <1738686124-16173-11-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH v20 24/27] lib: add no_wvla_cflag to directories that are not
+ VLA-free
+Date: Tue,  4 Feb 2025 08:22:01 -0800
+Message-Id: <1738686124-16173-25-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738686124-16173-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,78 +45,206 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+The no_wvla_cflag is added to meson.build files in directories that
+are not yet VLA-free.
 
-1) ../drivers/net/ixgbe/ixgbe_ethdev.c:3556:46: warning:
-    variable length array used [-Wvla]
-2) ../drivers/net/ixgbe/ixgbe_ethdev.c:3739:23: warning:
-    variable length array used [-Wvla]
-3) ../drivers/net/ixgbe/ixgbe_rxtx_vec_common.h:17:24: warning:
-    variable length array used [-Wvla]
-
-For first two cases: in fact ixgbe_xstats_calc_num() always returns
-constant value, so it should be safe to replace that function invocation
-just with a macro that performs same calculations.
-
-For case #3: reassemble_packets() is invoked only by
-ixgbe_recv_scattered_burst_vec().
-And in turn, ixgbe_recv_scattered_burst_vec() operates only on fixed
-max amount of packets per call: RTE_IXGBE_MAX_RX_BURST.
-So, it should be safe to replace VLA with fixed size array.
-
-Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ lib/acl/meson.build        |  2 ++
+ lib/bpf/meson.build        |  2 ++
+ lib/dispatcher/meson.build |  2 ++
+ lib/eventdev/meson.build   |  2 ++
+ lib/ipsec/meson.build      |  2 ++
+ lib/member/meson.build     |  2 ++
+ lib/metrics/meson.build    |  2 ++
+ lib/pdcp/meson.build       |  2 ++
+ lib/pdump/meson.build      |  2 ++
+ lib/pipeline/meson.build   |  2 ++
+ lib/power/meson.build      |  3 +++
+ lib/table/meson.build      |  2 ++
+ lib/vhost/meson.build      | 11 ++++++++++-
+ 13 files changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 5f18fbaad5..c79ecd6eec 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -3437,11 +3437,16 @@ ixgbe_dev_stats_reset(struct rte_eth_dev *dev)
- }
+diff --git a/lib/acl/meson.build b/lib/acl/meson.build
+index 9cba08321a..fefe131a48 100644
+--- a/lib/acl/meson.build
++++ b/lib/acl/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
  
- /* This function calculates the number of xstats based on the current config */
++cflags += no_wvla_cflag
 +
-+#define IXGBE_XSTATS_CALC_NUM	\
-+	(IXGBE_NB_HW_STATS + IXGBE_NB_MACSEC_STATS + \
-+	(IXGBE_NB_RXQ_PRIO_STATS * IXGBE_NB_RXQ_PRIO_VALUES) + \
-+	(IXGBE_NB_TXQ_PRIO_STATS * IXGBE_NB_TXQ_PRIO_VALUES))
+ sources = files('acl_bld.c', 'acl_gen.c', 'acl_run_scalar.c',
+         'rte_acl.c', 'tb_mem.c')
+ headers = files('rte_acl.h', 'rte_acl_osdep.h')
+diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
+index aa258a9061..28df7f469a 100644
+--- a/lib/bpf/meson.build
++++ b/lib/bpf/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
+ 
++cflags += no_wvla_cflag
 +
- static unsigned
--ixgbe_xstats_calc_num(void) {
--	return IXGBE_NB_HW_STATS + IXGBE_NB_MACSEC_STATS +
--		(IXGBE_NB_RXQ_PRIO_STATS * IXGBE_NB_RXQ_PRIO_VALUES) +
--		(IXGBE_NB_TXQ_PRIO_STATS * IXGBE_NB_TXQ_PRIO_VALUES);
-+ixgbe_xstats_calc_num(void)
-+{
-+	return IXGBE_XSTATS_CALC_NUM;
- }
+ if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_32')
+     build = false
+     reason = 'not supported on 32-bit x86'
+diff --git a/lib/dispatcher/meson.build b/lib/dispatcher/meson.build
+index ffaef26a6d..5e269b2d40 100644
+--- a/lib/dispatcher/meson.build
++++ b/lib/dispatcher/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
  
- static int ixgbe_dev_xstats_get_names(__rte_unused struct rte_eth_dev *dev,
-@@ -3557,8 +3562,8 @@ static int ixgbe_dev_xstats_get_names_by_id(
- 	}
++cflags += no_wvla_cflag
++
+ sources = files('rte_dispatcher.c')
+ headers = files('rte_dispatcher.h')
  
- 	uint16_t i;
--	uint16_t size = ixgbe_xstats_calc_num();
--	struct rte_eth_xstat_name xstats_names_copy[size];
-+	struct rte_eth_xstat_name xstats_names_copy[IXGBE_XSTATS_CALC_NUM];
-+	const uint16_t size = RTE_DIM(xstats_names_copy);
+diff --git a/lib/eventdev/meson.build b/lib/eventdev/meson.build
+index a04bb86f0f..71dea91727 100644
+--- a/lib/eventdev/meson.build
++++ b/lib/eventdev/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
  
- 	ixgbe_dev_xstats_get_names_by_id(dev, NULL, xstats_names_copy,
- 			size);
-@@ -3740,8 +3745,8 @@ ixgbe_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
- 	}
++cflags += no_wvla_cflag
++
+ sources = files(
+         'eventdev_private.c',
+         'eventdev_trace_points.c',
+diff --git a/lib/ipsec/meson.build b/lib/ipsec/meson.build
+index 5c5a4aae78..02d18f5829 100644
+--- a/lib/ipsec/meson.build
++++ b/lib/ipsec/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
  
- 	uint16_t i;
--	uint16_t size = ixgbe_xstats_calc_num();
--	uint64_t values_copy[size];
-+	uint64_t values_copy[IXGBE_XSTATS_CALC_NUM];
-+	const uint16_t size = RTE_DIM(values_copy);
++cflags += no_wvla_cflag
++
+ sources = files('esp_inb.c', 'esp_outb.c',
+                 'sa.c', 'ses.c', 'ipsec_sad.c',
+                 'ipsec_telemetry.c')
+diff --git a/lib/member/meson.build b/lib/member/meson.build
+index 02ef59795e..f92cbb7f25 100644
+--- a/lib/member/meson.build
++++ b/lib/member/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
  
- 	ixgbe_dev_xstats_get_by_id(dev, NULL, values_copy, size);
++cflags += no_wvla_cflag
++
+ headers = files('rte_member.h')
  
+ sources = files(
+diff --git a/lib/metrics/meson.build b/lib/metrics/meson.build
+index 8c1c4b4b49..6722f666d2 100644
+--- a/lib/metrics/meson.build
++++ b/lib/metrics/meson.build
+@@ -9,3 +9,5 @@ if dpdk_conf.has('RTE_HAS_JANSSON')
+ endif
+ 
+ deps += ['ethdev', 'telemetry']
++
++cflags += no_wvla_cflag
+diff --git a/lib/pdcp/meson.build b/lib/pdcp/meson.build
+index f4f9246bcb..eef46dd55a 100644
+--- a/lib/pdcp/meson.build
++++ b/lib/pdcp/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
+ 
++cflags += no_wvla_cflag
++
+ sources = files(
+         'pdcp_cnt.c',
+         'pdcp_crypto.c',
+diff --git a/lib/pdump/meson.build b/lib/pdump/meson.build
+index da8d51b616..553dfdd5e6 100644
+--- a/lib/pdump/meson.build
++++ b/lib/pdump/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
+ 
++cflags += no_wvla_cflag
++
+ sources = files('rte_pdump.c')
+ headers = files('rte_pdump.h')
+ deps += ['ethdev', 'bpf', 'pcapng']
+diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
+index fd5e0dc6bb..823c7929a7 100644
+--- a/lib/pipeline/meson.build
++++ b/lib/pipeline/meson.build
+@@ -7,6 +7,8 @@ if is_windows
+     subdir_done()
+ endif
+ 
++cflags += no_wvla_cflag
++
+ sources = files(
+         'rte_pipeline.c',
+         'rte_port_in_action.c',
+diff --git a/lib/power/meson.build b/lib/power/meson.build
+index b3a7bc7b2e..56b59071ea 100644
+--- a/lib/power/meson.build
++++ b/lib/power/meson.build
+@@ -11,6 +11,9 @@ if not is_linux
+     build = false
+     reason = 'only supported on Linux'
+ endif
++
++cflags += no_wvla_cflag
++
+ sources = files(
+         'power_common.c',
+         'rte_power_cpufreq.c',
+diff --git a/lib/table/meson.build b/lib/table/meson.build
+index 9b3d9ac759..e27957fe89 100644
+--- a/lib/table/meson.build
++++ b/lib/table/meson.build
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
+ 
++cflags += no_wvla_cflag
++
+ sources = files(
+         'rte_swx_keycmp.c',
+         'rte_swx_table_em.c',
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 51bcf17244..af22f66793 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -16,11 +16,20 @@ elif (toolchain == 'icc' and cc.version().version_compare('>=16.0.0'))
+     cflags += '-DVHOST_ICC_UNROLL_PRAGMA'
+ endif
+ dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
+-cflags += [
++
++cflags += no_wvla_cflag
++
++extra_flags = [
+         '-fno-strict-aliasing',
+         '-Wno-address-of-packed-member',
+ ]
+ 
++foreach arg: extra_flags
++    if cc.has_argument(arg)
++        cflags += arg
++    endif
++endforeach
++
+ sources = files(
+         'fd_man.c',
+         'iotlb.c',
 -- 
 2.47.2.vfs.0.1
 
