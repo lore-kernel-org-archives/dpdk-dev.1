@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9B2C02196
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE459C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:15:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6532C427E6;
-	Tue,  4 Feb 2025 16:12:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E0995427D9;
+	Tue,  4 Feb 2025 16:12:14 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id BD5064279D
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:11:57 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 41E7B410FB;
+ Tue,  4 Feb 2025 16:11:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681918; x=1770217918;
+ t=1738681920; x=1770217920;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ke3W3JTLITkRJTMczt6OF/xb6JJm7WgzWR8ovCNgvCA=;
- b=A+yk8W1NPcHvteV8biWxaDTH2Km11KZlSsCLe8t2UQFZay0a7WwsHvaa
- g3pGLiVRAwRgT6DTrdn1bM7ciPDOp10aZZqjHzN5evwZKfeorO8amD7EI
- 0i+uCyixyMz/Vvcgkgq6VtT+UydnyyjITgqk3M4rovjHDzFjX/kyOVntV
- N9XVYAh1T9t87t6GbXcJlAWG+OrsNdMdLdTQO9RAYrUJIWjz3UMgnOgLC
- hZaPxrad3i3z2lLmyEfkqwCWla1vkUdYNan0+82f7C77TBlYY+fCuVEgL
- Ae8N+jObkiz7FtmsjsT8LAZ7RxSIhH1TjEox2JNg4DdLEl3Gz+actkJ8S Q==;
-X-CSE-ConnectionGUID: RBs70PlVTd6btjWTZ6NJ8Q==
-X-CSE-MsgGUID: v+l0+U4BRHunqVpsdlRw9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097134"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097134"
+ bh=+PLmudy1IlgEWBR9Bw3Ow6WGRzX7KZzgf8cPIhCUUTk=;
+ b=B99Z+WFjDVZXtBtzM4ZPy9HhRFrWTvKir5S81bOfvQ/pnSsUJtcCy8Ii
+ 8KR1LVvLlFcq0mjpZHuh9s+P3pMO0hwWJTNeaFKyUGVH9hPm7Mn3E+LLS
+ Q+kTdTG5PXYelMRGinUUxlu3fU7hCYnSNjN0d7N2cuY5+OWECWFapwKe5
+ NMdz0Jr6Oylr9xKGD9V1AAX/Nx9u4oVd36DPAGDqIhB/Jv1libqRncF1l
+ vFmizIwYGSS/Dv10ExK45qS19HnxB9rkqL+zN8DkErmCe6Im2A8MEnZzr
+ sg7bJK6k2iew57tqFDDZXYaPcPIQrpV2AtlTaPfUs4qzGT6wnWcsKLRZv A==;
+X-CSE-ConnectionGUID: C+4UVwtlSgO335rS07lWxA==
+X-CSE-MsgGUID: qiuplNFmSm65t1TszHGNVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097135"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097135"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:11:58 -0800
-X-CSE-ConnectionGUID: L16dKPvBTCW51cydShzXzA==
-X-CSE-MsgGUID: kj7WRPQDQhW5ARvw2RQ0Zw==
+ 04 Feb 2025 07:11:59 -0800
+X-CSE-ConnectionGUID: vR9DB6+kSGiSc98bACHDbQ==
+X-CSE-MsgGUID: lhgO6CStQt2namqky5KL9A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792671"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792681"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:11:56 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:11:57 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 24/54] net/e1000/base: make set_ltr for i225 non-static
-Date: Tue,  4 Feb 2025 15:10:30 +0000
-Message-ID: <604177d6753c32510e0eb91bc4901343fc1a3d2c.1738681726.git.anatoly.burakov@intel.com>
+Cc: bruce.richardson@intel.com,
+	stable@dpdk.org
+Subject: [PATCH v2 25/54] net/e1000/base: fix semaphore timeout value
+Date: Tue,  4 Feb 2025 15:10:31 +0000
+Message-ID: <df101d04f896a7fe27a2bee90cbadbcf8041c867.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,42 +61,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nir Efrati <nir.efrati@intel.com>
+From: Pawel Malinowski <pawel.malinowski@intel.com>
 
-Some tools need access to the function, so make it non-static.
+According to datasheet software ownership of SWSM.SWESMBI bit should not
+exceed 100ms. Current implementation caused incorrect timeout counter
+values, where each iteration equals 50us delay. Because of that driver was
+allowed to wait for semaphore even for 1,5s. This might trigger DPC
+timeout.
 
-Signed-off-by: Nir Efrati <nir.efrati@intel.com>
+This implementation hardcodes value to 2000, which multiplied by 50us,
+gives 100ms of possible wait time.
+
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
+
+Signed-off-by: Pawel Malinowski <pawel.malinowski@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_i225.c | 2 +-
- drivers/net/intel/e1000/base/e1000_i225.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_defines.h | 1 +
+ drivers/net/intel/e1000/base/e1000_i225.c    | 2 +-
+ drivers/net/intel/e1000/base/e1000_mac.c     | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/intel/e1000/base/e1000_defines.h b/drivers/net/intel/e1000/base/e1000_defines.h
+index 8dfdce7dad..2c3b806c92 100644
+--- a/drivers/net/intel/e1000/base/e1000_defines.h
++++ b/drivers/net/intel/e1000/base/e1000_defines.h
+@@ -521,6 +521,7 @@
+ /* SW Semaphore Register */
+ #define E1000_SWSM_SMBI		0x00000001 /* Driver Semaphore bit */
+ #define E1000_SWSM_SWESMBI	0x00000002 /* FW Semaphore bit */
++#define E1000_SWSM_TIMEOUT	2000       /* Driver Semaphore max timeout counter */
+ #define E1000_SWSM_DRV_LOAD	0x00000008 /* Driver Loaded Bit */
+ 
+ #define E1000_SWSM2_LOCK	0x00000002 /* Secondary driver semaphore bit */
 diff --git a/drivers/net/intel/e1000/base/e1000_i225.c b/drivers/net/intel/e1000/base/e1000_i225.c
-index ed4ac25a1c..a4f5b73724 100644
+index a4f5b73724..c8d3114c28 100644
 --- a/drivers/net/intel/e1000/base/e1000_i225.c
 +++ b/drivers/net/intel/e1000/base/e1000_i225.c
-@@ -908,7 +908,7 @@ s32 e1000_pool_flash_update_done_i225(struct e1000_hw *hw)
-  * Set the LTR thresholds based on the link speed (Mbps), EEE, and DMAC
-  * settings, otherwise specify that there is no LTR requirement.
-  */
--static s32 e1000_set_ltr_i225(struct e1000_hw *hw, bool link)
-+s32 e1000_set_ltr_i225(struct e1000_hw *hw, bool link)
+@@ -395,7 +395,7 @@ s32 e1000_setup_copper_link_i225(struct e1000_hw *hw)
+ static s32 e1000_get_hw_semaphore_i225(struct e1000_hw *hw)
  {
- 	u16 speed, duplex;
- 	u32 tw_system, ltrc, ltrv, ltr_min, ltr_max, scale_min, scale_max;
-diff --git a/drivers/net/intel/e1000/base/e1000_i225.h b/drivers/net/intel/e1000/base/e1000_i225.h
-index 61b049b1f4..33d8f7b630 100644
---- a/drivers/net/intel/e1000/base/e1000_i225.h
-+++ b/drivers/net/intel/e1000/base/e1000_i225.h
-@@ -20,6 +20,7 @@ s32 e1000_write_erase_flash_command_i225(struct e1000_hw *hw, u32 opcode,
- s32 e1000_id_led_init_i225(struct e1000_hw *hw);
- s32 e1000_blink_led_i225(struct e1000_hw *hw);
- s32 e1000_check_for_link_i225(struct e1000_hw *hw);
-+s32 e1000_set_ltr_i225(struct e1000_hw *hw, bool link);
- s32 e1000_acquire_swfw_sync_i225(struct e1000_hw *hw, u16 mask);
- void e1000_release_swfw_sync_i225(struct e1000_hw *hw, u16 mask);
- s32 e1000_init_hw_i225(struct e1000_hw *hw);
+ 	u32 swsm;
+-	s32 timeout = hw->nvm.word_size + 1;
++	s32 timeout = E1000_SWSM_TIMEOUT;
+ 	s32 i = 0;
+ 
+ 	DEBUGFUNC("e1000_get_hw_semaphore_i225");
+diff --git a/drivers/net/intel/e1000/base/e1000_mac.c b/drivers/net/intel/e1000/base/e1000_mac.c
+index 7e53da613c..0db114c0df 100644
+--- a/drivers/net/intel/e1000/base/e1000_mac.c
++++ b/drivers/net/intel/e1000/base/e1000_mac.c
+@@ -1702,7 +1702,7 @@ s32 e1000_get_speed_and_duplex_fiber_serdes_generic(struct e1000_hw E1000_UNUSED
+ s32 e1000_get_hw_semaphore_generic(struct e1000_hw *hw)
+ {
+ 	u32 swsm;
+-	s32 timeout = hw->nvm.word_size + 1;
++	s32 timeout = E1000_SWSM_TIMEOUT;
+ 	s32 i = 0;
+ 
+ 	DEBUGFUNC("e1000_get_hw_semaphore_generic");
 -- 
 2.43.5
 
