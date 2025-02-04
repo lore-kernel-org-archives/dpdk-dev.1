@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD332C02194
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6D6C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F2CC42E8E;
-	Tue,  4 Feb 2025 16:12:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3209342E90;
+	Tue,  4 Feb 2025 16:12:47 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id B5B6B427DA;
- Tue,  4 Feb 2025 16:12:34 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C912E427DA
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681956; x=1770217956;
+ t=1738681957; x=1770217957;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=pMigtNfhufy1sMcPxAL8ocGnnqnQkPoDFrNXq9LfbwU=;
- b=h54jaXvnhMDoJ7TgRuj7TuK2Z11Cl3uK8FHapq5zwhw8OL5zi9x/M6N8
- ZJI/DHzLsAiPu2IZqS7V+vfzZ4K1oz0nOVfFWz9/D2P2SbOkZ52/3zrJi
- r+o9WbwMvMr/PVppVU55rsEMy3OT7L/+bSKci+eGLL6UULX7uhQLXGqh/
- GxNUzxvND2aD3jAyZqwOgIvECAk+Gnh37OGbpUaen3NSTj28///1LzjV7
- Qk5eg98f4PHkoemZJqPYBi4iFF7Jovy5/DIKN39zgV+flue/BUn/6Mmss
- vOFq8yi8ZamHLQG7CReIY9VF3/MM1lA93FyoQFz6BJaAFeNokprq9riUZ w==;
-X-CSE-ConnectionGUID: SjzqjffGTEC+aL6dWedidg==
-X-CSE-MsgGUID: OKZiQv+KS0CBnaxMpm4VZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097210"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097210"
+ bh=klH9RBk2geLI9UPAicBBAiORActepHblHtUfJa2m/HI=;
+ b=QYn7vRq0kETFwhGCR+4PNna+z+5QVDnaVc8Lo4PvAUcV4KTAE5b44D1m
+ 5SGSC9ip6eMcTlFsbqBwAH8cSK0UXsgl8Mvuea3fn7b6LGa/Ga7c3mpzu
+ 67XNJ4OdBj9rX7zHvH7JLe5T7qAe7RE59Rzj+1SUGDtsIQeQ7ZkykwhiZ
+ IsVVtQF1Fe20LA2BdTPHayXx/Vl8pGvh5ydeNmfXKBquM5WGRHedyjzH+
+ ymzejFj3KB2Meilah8DiyEelEpJVSrmffFA0nu0VwfTtlWFZzdMwFnqqy
+ hVltWxpfgf/JrYEmLEpWB0mw5SUYZ619lg6fucmaCmdmYy0JBKOUwKn+E g==;
+X-CSE-ConnectionGUID: jOjSzldcQ+WG0X5s0YbC5A==
+X-CSE-MsgGUID: ltC+tsw0REeNNH6mz99VNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097213"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097213"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:35 -0800
-X-CSE-ConnectionGUID: n+JIcLmzRMahqVSq5vrpMw==
-X-CSE-MsgGUID: g/mGIfe4Qf+CQacNXvjiXQ==
+ 04 Feb 2025 07:12:36 -0800
+X-CSE-ConnectionGUID: rOON4QPgSGeQ+ekA3fmgSA==
+X-CSE-MsgGUID: cVqEPf1tQTal55P6Z14yGA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792797"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792800"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:33 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:34 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	stable@dpdk.org
-Subject: [PATCH v2 52/54] net/e1000/base: fix data type in MAC hash
-Date: Tue,  4 Feb 2025 15:10:58 +0000
-Message-ID: <e166fba269dc7d6a1ac2aa810f2ab7b1c1d4f400.1738681726.git.anatoly.burakov@intel.com>
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v2 53/54] net/e1000/base: rename NVM version variable
+Date: Tue,  4 Feb 2025 15:10:59 +0000
+Message-ID: <ea1d73bafbd5a051619cdc5aab21187ca677fa25.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -61,55 +60,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Barbara Skobiej <barbara.skobiej@intel.com>
+From: Piotr Kubaj <piotrx.kubaj@intel.com>
 
-One of the bit shifts in MAC hash calculation triggers a static analysis
-warning about a potential overflow. Fix the data type to avoid this.
+Rename version to nvm_version to avoid shadowing global variables on some
+systems.
 
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
-
-Signed-off-by: Barbara Skobiej <barbara.skobiej@intel.com>
+Signed-off-by: Piotr Kubaj <piotrx.kubaj@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_mac.c | 6 ++++--
- drivers/net/intel/e1000/base/e1000_vf.c  | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/intel/e1000/base/e1000_i210.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_mac.c b/drivers/net/intel/e1000/base/e1000_mac.c
-index 4ec7cab7ab..2fa97d12a9 100644
---- a/drivers/net/intel/e1000/base/e1000_mac.c
-+++ b/drivers/net/intel/e1000/base/e1000_mac.c
-@@ -541,8 +541,10 @@ u32 e1000_hash_mc_addr_generic(struct e1000_hw *hw, u8 *mc_addr)
- 		break;
+diff --git a/drivers/net/intel/e1000/base/e1000_i210.c b/drivers/net/intel/e1000/base/e1000_i210.c
+index 52800376e4..479d2dc2c2 100644
+--- a/drivers/net/intel/e1000/base/e1000_i210.c
++++ b/drivers/net/intel/e1000/base/e1000_i210.c
+@@ -479,7 +479,7 @@ s32 e1000_read_invm_version(struct e1000_hw *hw,
+ 					     E1000_INVM_RECORD_SIZE_IN_BYTES);
+ 	u32 buffer[E1000_INVM_SIZE];
+ 	s32 status = -E1000_ERR_INVM_VALUE_NOT_FOUND;
+-	u16 version = 0;
++	u16 nvm_version = 0;
+ 
+ 	DEBUGFUNC("e1000_read_invm_version");
+ 
+@@ -496,14 +496,14 @@ s32 e1000_read_invm_version(struct e1000_hw *hw,
+ 
+ 		/* Check if we have first version location used */
+ 		if ((i == 1) && ((*record & E1000_INVM_VER_FIELD_ONE) == 0)) {
+-			version = 0;
++			nvm_version = 0;
+ 			status = E1000_SUCCESS;
+ 			break;
+ 		}
+ 		/* Check if we have second version location used */
+ 		else if ((i == 1) &&
+ 			 ((*record & E1000_INVM_VER_FIELD_TWO) == 0)) {
+-			version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
++			nvm_version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
+ 			status = E1000_SUCCESS;
+ 			break;
+ 		}
+@@ -514,7 +514,7 @@ s32 e1000_read_invm_version(struct e1000_hw *hw,
+ 		else if ((((*record & E1000_INVM_VER_FIELD_ONE) == 0) &&
+ 			 ((*record & 0x3) == 0)) || (((*record & 0x3) != 0) &&
+ 			 (i != 1))) {
+-			version = (*next_record & E1000_INVM_VER_FIELD_TWO)
++			nvm_version = (*next_record & E1000_INVM_VER_FIELD_TWO)
+ 				  >> 13;
+ 			status = E1000_SUCCESS;
+ 			break;
+@@ -525,16 +525,16 @@ s32 e1000_read_invm_version(struct e1000_hw *hw,
+ 		 */
+ 		else if (((*record & E1000_INVM_VER_FIELD_TWO) == 0) &&
+ 			 ((*record & 0x3) == 0)) {
+-			version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
++			nvm_version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
+ 			status = E1000_SUCCESS;
+ 			break;
+ 		}
  	}
  
--	hash_value = hash_mask & (((mc_addr[4] >> (8 - bit_shift)) |
--				  (((u16) mc_addr[5]) << bit_shift)));
-+	hash_value = (u32)mc_addr[4];
-+	hash_value = hash_value >> (8 - bit_shift);
-+	hash_value |= (((u32)mc_addr[5]) << bit_shift);
-+	hash_value &= hash_mask;
- 
- 	return hash_value;
- }
-diff --git a/drivers/net/intel/e1000/base/e1000_vf.c b/drivers/net/intel/e1000/base/e1000_vf.c
-index e0c95aa130..b02459900b 100644
---- a/drivers/net/intel/e1000/base/e1000_vf.c
-+++ b/drivers/net/intel/e1000/base/e1000_vf.c
-@@ -345,8 +345,10 @@ STATIC u32 e1000_hash_mc_addr_vf(struct e1000_hw *hw, u8 *mc_addr)
- 	while (hash_mask >> bit_shift != 0xFF && bit_shift < 4)
- 		bit_shift++;
- 
--	hash_value = hash_mask & (((mc_addr[4] >> (8 - bit_shift)) |
--				  (((u16) mc_addr[5]) << bit_shift)));
-+	hash_value = (u32)mc_addr[4];
-+	hash_value = hash_value >> (8 - bit_shift);
-+	hash_value |= (((u32)mc_addr[5]) << bit_shift);
-+	hash_value &= hash_mask;
- 
- 	return hash_value;
- }
+ 	if (status == E1000_SUCCESS) {
+-		invm_ver->invm_major = (version & E1000_INVM_MAJOR_MASK)
++		invm_ver->invm_major = (nvm_version & E1000_INVM_MAJOR_MASK)
+ 					>> E1000_INVM_MAJOR_SHIFT;
+-		invm_ver->invm_minor = version & E1000_INVM_MINOR_MASK;
++		invm_ver->invm_minor = nvm_version & E1000_INVM_MINOR_MASK;
+ 	}
+ 	/* Read Image Type */
+ 	for (i = 1; i < invm_blocks; i++) {
 -- 
 2.43.5
 
