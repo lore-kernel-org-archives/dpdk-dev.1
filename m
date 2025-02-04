@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D558C02194
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6D5C02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 16:25:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28CE0402F1;
-	Tue,  4 Feb 2025 17:23:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BFF942790;
+	Tue,  4 Feb 2025 17:23:15 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 31B604066D
+ by mails.dpdk.org (Postfix) with ESMTP id 3B0834066F
  for <dev@dpdk.org>; Tue,  4 Feb 2025 17:22:50 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 8E3CC210D0CB; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8E3CC210D0CB
+ id 74A39210D0C9; Tue,  4 Feb 2025 08:22:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 74A39210D0C9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738686168;
- bh=aU95CxSQ32eGwxTs9PzkQr4sApQZ2NfhPJCOkkqcfpg=;
+ bh=aPloZmRzPS81A3gM1BB1XitT4l4LD+nrXd/fISGnZUY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=pLI6/OPH+CRduu6OK3xuRYEmzpBQ3iLzV7WwVKniA3WPWq10KI3cpMlaopZcN24Aw
- 4N5LA4Mm9vMtwW1ZpWA2JXsW23rr7+QZTGTSNUZ3lVKwtHfacHwjPGK3sn9RTqIyG/
- ZFQNfHqoypxxtJs647BwjU/8KxyvBc7GRbFT6GhE=
+ b=ZwH8acyMvqGu6GlkUyZfhJSFxP/vMinjmlHMMN/s4gC2P3QyUWUHpRiwezB91O4Nw
+ b8cZVJAroqoS/oROxjT9B0fACjCVG6MihiQBdVHcuYKY5w17mZ3cwzMPNoXwxEAQdZ
+ et9/C0h5pkXjCTScX37W86fobSsEizaIL4U062JE=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v20 27/27] config: add -Wvla project-wide
-Date: Tue,  4 Feb 2025 08:22:04 -0800
-Message-Id: <1738686124-16173-28-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v20 25/27] examples: add no_wvla_cflag to directories that are
+ not VLA-free
+Date: Tue,  4 Feb 2025 08:22:02 -0800
+Message-Id: <1738686124-16173-26-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738686124-16173-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -44,29 +45,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add -Wvla project-wide so that VLAs are not allowed by default. This
-is to avoid new VLAs from being introduced.
-
-Meson files in directories which are not yet VLA-free have already
-been updated with -Wno-vla to avoid build breaks.
+The no_wvla_cflag is added to meson.build files in directories that
+are not yet VLA-free.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- config/meson.build | 1 +
- 1 file changed, 1 insertion(+)
+ examples/fips_validation/meson.build  | 2 ++
+ examples/ip_fragmentation/meson.build | 1 +
+ examples/ipsec-secgw/meson.build      | 3 +++
+ examples/l2fwd-crypto/meson.build     | 1 +
+ examples/l2fwd-jobstats/meson.build   | 1 +
+ examples/l3fwd-power/meson.build      | 1 +
+ examples/l3fwd/meson.build            | 1 +
+ examples/pipeline/meson.build         | 1 +
+ examples/qos_sched/meson.build        | 1 +
+ examples/vhost/meson.build            | 1 +
+ 10 files changed, 13 insertions(+)
 
-diff --git a/config/meson.build b/config/meson.build
-index a251ce49b1..710206095b 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -345,6 +345,7 @@ endif
+diff --git a/examples/fips_validation/meson.build b/examples/fips_validation/meson.build
+index 7d4e440c6c..6c29b535cb 100644
+--- a/examples/fips_validation/meson.build
++++ b/examples/fips_validation/meson.build
+@@ -25,6 +25,8 @@ sources = files(
+         'main.c',
+ )
  
- no_wvla_cflag = []
- if cc.has_argument('-Wvla')
-+    add_project_arguments('-Wvla', language: 'c')
-     if not is_windows
-         no_wvla_cflag = '-Wno-vla'
-     endif
++cflags += no_wvla_cflag
++
+ if dpdk_conf.has('RTE_HAS_JANSSON')
+     ext_deps += jansson_dep
+     cflags += '-DUSE_JANSSON'
+diff --git a/examples/ip_fragmentation/meson.build b/examples/ip_fragmentation/meson.build
+index cd84e9b143..750c3e4149 100644
+--- a/examples/ip_fragmentation/meson.build
++++ b/examples/ip_fragmentation/meson.build
+@@ -11,3 +11,4 @@ deps +=  ['ip_frag', 'lpm']
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/ipsec-secgw/meson.build b/examples/ipsec-secgw/meson.build
+index 023d9cf039..e6a0e18a73 100644
+--- a/examples/ipsec-secgw/meson.build
++++ b/examples/ipsec-secgw/meson.build
+@@ -23,6 +23,9 @@ sources = files(
+         'sp4.c',
+         'sp6.c',
+ )
++
++cflags += no_wvla_cflag
++
+ app_cflags = ['-Wno-address-of-packed-member']
+ foreach flag:app_cflags
+     if cc.has_argument(flag)
+diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
+index bb44c88882..c21722b85c 100644
+--- a/examples/l2fwd-crypto/meson.build
++++ b/examples/l2fwd-crypto/meson.build
+@@ -14,3 +14,4 @@ allow_experimental_apis = true
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l2fwd-jobstats/meson.build b/examples/l2fwd-jobstats/meson.build
+index bffcf35e8c..d59d3d6555 100644
+--- a/examples/l2fwd-jobstats/meson.build
++++ b/examples/l2fwd-jobstats/meson.build
+@@ -11,3 +11,4 @@ deps += ['jobstats', 'timer']
+ sources = files(
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd-power/meson.build b/examples/l3fwd-power/meson.build
+index 624ef5e947..5ff4466cac 100644
+--- a/examples/l3fwd-power/meson.build
++++ b/examples/l3fwd-power/meson.build
+@@ -12,3 +12,4 @@ sources = files(
+         'main.c',
+         'perf_core.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd/meson.build b/examples/l3fwd/meson.build
+index c25de77bba..74144c7979 100644
+--- a/examples/l3fwd/meson.build
++++ b/examples/l3fwd/meson.build
+@@ -21,3 +21,4 @@ sources = files(
+ if dpdk_conf.has('RTE_LIB_EVENTDEV')
+     deps += 'eventdev'
+ endif
++cflags += no_wvla_cflag
+diff --git a/examples/pipeline/meson.build b/examples/pipeline/meson.build
+index 50103f2e01..01f14dc2ae 100644
+--- a/examples/pipeline/meson.build
++++ b/examples/pipeline/meson.build
+@@ -20,3 +20,4 @@ sources = files(
+         'obj.c',
+         'thread.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
+index dc103e9556..92657ce8a5 100644
+--- a/examples/qos_sched/meson.build
++++ b/examples/qos_sched/meson.build
+@@ -17,3 +17,4 @@ sources = files(
+         'main.c',
+         'stats.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
+index 87a637f83f..e938be8f45 100644
+--- a/examples/vhost/meson.build
++++ b/examples/vhost/meson.build
+@@ -18,3 +18,4 @@ sources = files(
+         'main.c',
+         'virtio_net.c',
+ )
++cflags += no_wvla_cflag
 -- 
 2.47.2.vfs.0.1
 
