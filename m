@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AD6C02197
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4976CC02194
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:17:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB8A142E48;
-	Tue,  4 Feb 2025 16:12:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8081342E4F;
+	Tue,  4 Feb 2025 16:12:36 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id EBFED427DE
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:21 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AA6E842DBE
+ for <dev@dpdk.org>; Tue,  4 Feb 2025 16:12:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681943; x=1770217943;
+ t=1738681944; x=1770217944;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=nDMjb8t3LzcEh0riSIKrngm16gfb3mFicEjEYd39URk=;
- b=Z7GhnvKhKx+8h9WwFWmcNtV/L3jgjsRfA/OB67wAejXXzfMuetoZQtJG
- fth49swtZ0+fQvfqbHbeTlDABukJPIDxSsPF0kWkrg+6CAJJArmQisqCF
- UfuQwhCVA0iZLuex5Wc76Umae7zcQf0PjM2mNJEjjM9hbGgoZAzTkE9P6
- QGsQe5aoybdD7JFkuB8sDiGLxAaFwVFLMFy+xSAJwybbwZF5zak1heSOx
- jOHA+16XYAd8h4Y+WmRAty/S6oma0Juu6uGFHity19W0FRTWqczzKsgZR
- KqDaAP8j55CTErWUJGjAMgXICnKYXrxQdt53kPNu1fnm5S1vkSoXvf4OC A==;
-X-CSE-ConnectionGUID: ODJ7vpq9QPm1U/R7muQ/Rg==
-X-CSE-MsgGUID: 4oxUHxiURVKGSqSjhq/12Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097176"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097176"
+ bh=E9WcT8nwVsgxSnWhSy4FliUWe45T7M65ZxXDkCqfRyA=;
+ b=Yu9OsPLeHsvSDmuqkYCTJASJqUtK8tSIdFVTNKKTgmbHaL7HgVx9I6n1
+ aI5K/NQx/ZCmzwA3rw0g3pkaTxCPuqfJgQKM3UgNo4oTTfELeNHZYNOF5
+ o6CConTrMFzxECwm6o8yS09hk5tIC4PaVEdTW0r0fcZNGTngXLJ88DjPS
+ GMt12TBarENGauGPzidKYDeSPrztrJV2H9rmIwnlwtpXapHcQoLrnUKX2
+ np2VlKzwvzYyhfQhZLSzk8dFg53UDQE6Rr2F2g5mhl/K8Bq24R6WoztDY
+ LZE2kfnbL96ztiHnRFRp/3BkptODb4M5CHgHG4+jIBRye3B8beusLazZf Q==;
+X-CSE-ConnectionGUID: VEypqF32T6+y2RUHf7vTPQ==
+X-CSE-MsgGUID: ROGg6cS0TS6mEnteqhCfOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097178"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097178"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:12:22 -0800
-X-CSE-ConnectionGUID: 9p/lDn4iR9GNaYgva0VY2Q==
-X-CSE-MsgGUID: W4lEsGkZQzSgxeho1oBrpw==
+ 04 Feb 2025 07:12:23 -0800
+X-CSE-ConnectionGUID: Kit7E+B6TFGG1huAnyQYjA==
+X-CSE-MsgGUID: 1kIXZr8bRX2MmVlGwCPqpQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792764"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792767"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:20 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:12:21 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 43/54] net/e1000/base: remove non-inclusive language
-Date: Tue,  4 Feb 2025 15:10:49 +0000
-Message-ID: <af3174754ba7a1336da260c3fe09886d259f1145.1738681726.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 44/54] net/e1000/base: introduce PHY ID retry mechanism
+Date: Tue,  4 Feb 2025 15:10:50 +0000
+Message-ID: <4bfb08aa63fe3a030befb18f591d8073d207411a.1738681726.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,555 +60,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Marcin Jurczak <marcin.jurczak@intel.com>
+From: Nir Efrati <nir.efrati@intel.com>
 
-This patch removes non-inclusive language from the e1000 shared code and
-comments.
+On some customer platforms it was observed that invalid PHY ID (0x0000) was
+returned on first try. This patch introduces PHY ID retry mechanism to
+perform retries on PHY ID read for up to a second. Because the original
+code was intentionally not checking PHY ID due to a different issue, this
+fix only checks if PHY ID is non-zero, but otherwise considers any PHY ID
+as valid.
 
-Signed-off-by: Marcin Jurczak <marcin.jurczak@intel.com>
+In addition, IEEE standard defines format of PHY ID, so extract these bits
+from PHY ID value.
+
+Signed-off-by: Sasha Neftin <sasha.neftin@intel.com>
+Signed-off-by: Nir Efrati <nir.efrati@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- .../net/intel/e1000/base/e1000_80003es2lan.c  |  8 ++--
- drivers/net/intel/e1000/base/e1000_82571.c    |  4 +-
- drivers/net/intel/e1000/base/e1000_82575.c    |  8 ++--
- drivers/net/intel/e1000/base/e1000_api.c      |  8 ++--
- drivers/net/intel/e1000/base/e1000_api.h      |  2 +-
- drivers/net/intel/e1000/base/e1000_defines.h  | 40 ++++++++--------
- drivers/net/intel/e1000/base/e1000_hw.h       |  4 +-
- drivers/net/intel/e1000/base/e1000_i225.c     |  4 +-
- drivers/net/intel/e1000/base/e1000_ich8lan.c  |  8 ++--
- drivers/net/intel/e1000/base/e1000_mac.c      | 22 ++++-----
- drivers/net/intel/e1000/base/e1000_mac.h      |  2 +-
- drivers/net/intel/e1000/base/e1000_phy.c      | 46 +++++++++----------
- drivers/net/intel/e1000/base/e1000_regs.h     |  2 +-
- drivers/net/intel/e1000/base/e1000_vf.c       |  2 +-
- 14 files changed, 81 insertions(+), 79 deletions(-)
+ drivers/net/intel/e1000/base/e1000_defines.h |  1 +
+ drivers/net/intel/e1000/base/e1000_hw.h      |  1 +
+ drivers/net/intel/e1000/base/e1000_i225.c    | 44 +++++++++++++++++++-
+ 3 files changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_80003es2lan.c b/drivers/net/intel/e1000/base/e1000_80003es2lan.c
-index 243bc6fe3e..b1f2df3803 100644
---- a/drivers/net/intel/e1000/base/e1000_80003es2lan.c
-+++ b/drivers/net/intel/e1000/base/e1000_80003es2lan.c
-@@ -797,9 +797,9 @@ STATIC s32 e1000_reset_hw_80003es2lan(struct e1000_hw *hw)
- 	/* Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	DEBUGOUT("Masking off all interrupts\n");
- 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-@@ -820,7 +820,7 @@ STATIC s32 e1000_reset_hw_80003es2lan(struct e1000_hw *hw)
- 	E1000_WRITE_REG(hw, E1000_CTRL, ctrl | E1000_CTRL_RST);
- 	e1000_release_phy_80003es2lan(hw);
- 
--	/* Disable IBIST slave mode (far-end loopback) */
-+	/* Disable IBIST secondary mode (far-end loopback) */
- 	ret_val = e1000_read_kmrn_reg_80003es2lan(hw,
- 				E1000_KMRNCTRLSTA_INBAND_PARAM, &kum_reg_data);
- 	if (!ret_val) {
-@@ -886,7 +886,7 @@ STATIC s32 e1000_init_hw_80003es2lan(struct e1000_hw *hw)
- 	if (ret_val)
- 		return ret_val;
- 
--	/* Disable IBIST slave mode (far-end loopback) */
-+	/* Disable IBIST secondary mode (far-end loopback) */
- 	ret_val =
- 	    e1000_read_kmrn_reg_80003es2lan(hw, E1000_KMRNCTRLSTA_INBAND_PARAM,
- 					    &kum_reg_data);
-diff --git a/drivers/net/intel/e1000/base/e1000_82571.c b/drivers/net/intel/e1000/base/e1000_82571.c
-index 9dc7f6025c..af5ea0af65 100644
---- a/drivers/net/intel/e1000/base/e1000_82571.c
-+++ b/drivers/net/intel/e1000/base/e1000_82571.c
-@@ -1042,9 +1042,9 @@ STATIC s32 e1000_reset_hw_82571(struct e1000_hw *hw)
- 	/* Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	DEBUGOUT("Masking off all interrupts\n");
- 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-diff --git a/drivers/net/intel/e1000/base/e1000_82575.c b/drivers/net/intel/e1000/base/e1000_82575.c
-index c781085348..ff5a5cad80 100644
---- a/drivers/net/intel/e1000/base/e1000_82575.c
-+++ b/drivers/net/intel/e1000/base/e1000_82575.c
-@@ -1361,9 +1361,9 @@ STATIC s32 e1000_reset_hw_82575(struct e1000_hw *hw)
- 	 * Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	/* set the completion timeout for interface */
- 	ret_val = e1000_set_pcie_completion_timeout(hw);
-@@ -2290,9 +2290,9 @@ STATIC s32 e1000_reset_hw_82580(struct e1000_hw *hw)
- 	 * Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	DEBUGOUT("Masking off all interrupts\n");
- 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-diff --git a/drivers/net/intel/e1000/base/e1000_api.c b/drivers/net/intel/e1000/base/e1000_api.c
-index e51e887f01..7ff63414a7 100644
---- a/drivers/net/intel/e1000/base/e1000_api.c
-+++ b/drivers/net/intel/e1000/base/e1000_api.c
-@@ -858,16 +858,16 @@ void e1000_update_adaptive(struct e1000_hw *hw)
- }
- 
- /**
-- *  e1000_disable_pcie_master - Disable PCI-Express master access
-+ *  e1000_disable_pcie_primary - Disable PCI-Express primary access
-  *  @hw: pointer to the HW structure
-  *
-- *  Disables PCI-Express master access and verifies there are no pending
-+ *  Disables PCI-Express primary access and verifies there are no pending
-  *  requests. Currently no func pointer exists and all implementations are
-  *  handled in the generic version of this function.
-  **/
--s32 e1000_disable_pcie_master(struct e1000_hw *hw)
-+s32 e1000_disable_pcie_primary(struct e1000_hw *hw)
- {
--	return e1000_disable_pcie_master_generic(hw);
-+	return e1000_disable_pcie_primary_generic(hw);
- }
- 
- /**
-diff --git a/drivers/net/intel/e1000/base/e1000_api.h b/drivers/net/intel/e1000/base/e1000_api.h
-index 591a3ddc3f..ca3248c214 100644
---- a/drivers/net/intel/e1000/base/e1000_api.h
-+++ b/drivers/net/intel/e1000/base/e1000_api.h
-@@ -37,7 +37,7 @@ s32 e1000_reset_hw(struct e1000_hw *hw);
- s32 e1000_init_hw(struct e1000_hw *hw);
- s32 e1000_setup_link(struct e1000_hw *hw);
- s32 e1000_get_speed_and_duplex(struct e1000_hw *hw, u16 *speed, u16 *duplex);
--s32 e1000_disable_pcie_master(struct e1000_hw *hw);
-+s32 e1000_disable_pcie_primary(struct e1000_hw *hw);
- void e1000_config_collision_dist(struct e1000_hw *hw);
- int e1000_rar_set(struct e1000_hw *hw, u8 *addr, u32 index);
- u32 e1000_hash_mc_addr(struct e1000_hw *hw, u8 *mc_addr);
 diff --git a/drivers/net/intel/e1000/base/e1000_defines.h b/drivers/net/intel/e1000/base/e1000_defines.h
-index 2b7d8631c9..51bc5a069b 100644
+index 51bc5a069b..eb93675823 100644
 --- a/drivers/net/intel/e1000/base/e1000_defines.h
 +++ b/drivers/net/intel/e1000/base/e1000_defines.h
-@@ -235,7 +235,7 @@
- /* Device Control */
- #define E1000_CTRL_FD		0x00000001  /* Full duplex.0=half; 1=full */
- #define E1000_CTRL_PRIOR	0x00000004  /* Priority on PCI. 0=rx,1=fair */
--#define E1000_CTRL_GIO_MASTER_DISABLE 0x00000004 /*Blocks new Master reqs */
-+#define E1000_CTRL_GIO_PRIMARY_DISABLE 0x00000004 /*Blocks new Primary reqs */
- #define E1000_CTRL_LRST		0x00000008  /* Link reset. 0=normal,1=reset */
- #define E1000_CTRL_ASDE		0x00000020  /* Auto-speed detect enable */
- #define E1000_CTRL_SLU		0x00000040  /* Set link up (Force Link) */
-@@ -313,7 +313,7 @@
- #define E1000_STATUS_SPEED_2500		0x00400000
- #define E1000_STATUS_LAN_INIT_DONE	0x00000200 /* Lan Init Compltn by NVM */
- #define E1000_STATUS_PHYRA		0x00000400 /* PHY Reset Asserted */
--#define E1000_STATUS_GIO_MASTER_ENABLE	0x00080000 /* Master request status */
-+#define E1000_STATUS_GIO_PRIMARY_ENABLE	0x00080000 /* Primary request status */
- #define E1000_STATUS_PCI66		0x00000800 /* In 66Mhz slot */
- #define E1000_STATUS_BUS64		0x00001000 /* In 64 bit slot */
- #define E1000_STATUS_2P5_SKU		0x00001000 /* Val of 2.5GBE SKU strap */
-@@ -707,7 +707,7 @@
- #define E1000_ERR_MAC_INIT		5
- #define E1000_ERR_PHY_TYPE		6
- #define E1000_ERR_RESET			9
--#define E1000_ERR_MASTER_REQUESTS_PENDING	10
-+#define E1000_ERR_PRIMARY_REQUESTS_PENDING	10
- #define E1000_ERR_HOST_INTERFACE_COMMAND	11
- #define E1000_BLK_PHY_RESET		12
- #define E1000_ERR_SWFW_SYNC		13
-@@ -724,8 +724,8 @@
- #define COPPER_LINK_UP_LIMIT		10
- #define PHY_AUTO_NEG_LIMIT		45
- #define PHY_FORCE_LIMIT			20
--/* Number of 100 microseconds we wait for PCI Express master disable */
--#define MASTER_DISABLE_TIMEOUT		800
-+/* Number of 100 microseconds we wait for PCI Express primary disable */
-+#define PRIMARY_DISABLE_TIMEOUT		800
- /* Number of milliseconds we wait for PHY configuration done after MAC reset */
- #define PHY_CFG_TIMEOUT			100
- /* Number of 2 milliseconds we wait for acquiring MDIO ownership. */
-@@ -936,7 +936,7 @@
- #define E1000_EEE_LP_ADV_ADDR_I350	0x040F     /* EEE LP Advertisement */
- #define E1000_M88E1543_PAGE_ADDR	0x16       /* Page Offset Register */
- #define E1000_M88E1543_EEE_CTRL_1	0x0
--#define E1000_M88E1543_EEE_CTRL_1_MS	0x0001     /* EEE Master/Slave */
-+#define E1000_M88E1543_EEE_CTRL_1_MS	0x0001     /* EEE Primary/Secondary */
- #define E1000_M88E1543_FIBER_CTRL	0x0        /* Fiber Control Register */
- #define E1000_EEE_ADV_DEV_I354		7
- #define E1000_EEE_ADV_ADDR_I354		60
-@@ -1063,14 +1063,16 @@
- #define CR_1000T_FD_CAPS	0x0200 /* Advertise 1000T FD capability  */
- /* 1=Repeater/switch device port 0=DTE device */
- #define CR_1000T_REPEATER_DTE	0x0400
--/* 1=Configure PHY as Master 0=Configure PHY as Slave */
-+/* 1=Configure PHY as Primary 0=Configure PHY as Secondary */
- #define CR_1000T_MS_VALUE	0x0800
--/* 1=Master/Slave manual config value 0=Automatic Master/Slave config */
-+/* 1=Primary/Secondary manual config value
-+ * 0=Automatic Primary/Secondary config
-+ */
- #define CR_1000T_MS_ENABLE	0x1000
- #define CR_1000T_TEST_MODE_NORMAL 0x0000 /* Normal Operation */
- #define CR_1000T_TEST_MODE_1	0x2000 /* Transmit Waveform test */
--#define CR_1000T_TEST_MODE_2	0x4000 /* Master Transmit Jitter test */
--#define CR_1000T_TEST_MODE_3	0x6000 /* Slave Transmit Jitter test */
-+#define CR_1000T_TEST_MODE_2	0x4000 /* Primary Transmit Jitter test */
-+#define CR_1000T_TEST_MODE_3	0x6000 /* Secondary Transmit Jitter test */
- #define CR_1000T_TEST_MODE_4	0x8000 /* Transmitter Distortion test */
+@@ -1382,6 +1382,7 @@
+ #define BCM54616_E_PHY_ID	0x03625D10
+ #define M88_VENDOR		0x0141
+ #define I225_I_PHY_ID		0x67C9DC00
++#define I225_I_PHY_ID_MASK	0xFFFFFC00
+ #define I226_LM_PHY_ID		0x67C9DC10
  
- /* 1000BASE-T Status Register */
-@@ -1080,8 +1082,8 @@
- #define SR_1000T_LP_FD_CAPS		0x0800 /* LP is 1000T FD capable */
- #define SR_1000T_REMOTE_RX_STATUS	0x1000 /* Remote receiver OK */
- #define SR_1000T_LOCAL_RX_STATUS	0x2000 /* Local receiver OK */
--#define SR_1000T_MS_CONFIG_RES		0x4000 /* 1=Local Tx Master, 0=Slave */
--#define SR_1000T_MS_CONFIG_FAULT	0x8000 /* Master/Slave config fault */
-+#define SR_1000T_MS_CONFIG_RES	0x4000 /* 1=Local Tx Primary, 0=Secondary */
-+#define SR_1000T_MS_CONFIG_FAULT 0x8000 /* Primary/Secondary config fault */
- 
- #define SR_1000T_PHY_EXCESSIVE_IDLE_ERR_COUNT	5
- 
-@@ -1426,15 +1428,15 @@
- #define M88E1000_PSSR_CABLE_LENGTH_SHIFT	7
- 
- /* Number of times we will attempt to autonegotiate before downshifting if we
-- * are the master
-+ * are the primary
-  */
--#define M88E1000_EPSCR_MASTER_DOWNSHIFT_MASK	0x0C00
--#define M88E1000_EPSCR_MASTER_DOWNSHIFT_1X	0x0000
-+#define M88E1000_EPSCR_PRIMARY_DOWNSHIFT_MASK	0x0C00
-+#define M88E1000_EPSCR_PRIMARY_DOWNSHIFT_1X	0x0000
- /* Number of times we will attempt to autonegotiate before downshifting if we
-- * are the slave
-+ * are the secondary
-  */
--#define M88E1000_EPSCR_SLAVE_DOWNSHIFT_MASK	0x0300
--#define M88E1000_EPSCR_SLAVE_DOWNSHIFT_1X	0x0100
-+#define M88E1000_EPSCR_SECONDARY_DOWNSHIFT_MASK	0x0300
-+#define M88E1000_EPSCR_SECONDARY_DOWNSHIFT_1X	0x0100
- #define M88E1000_EPSCR_TX_CLK_25	0x0070 /* 25  MHz TX_CLK */
- 
- /* Intel I347AT4 Registers */
-@@ -1445,7 +1447,7 @@
- /* I347AT4 Extended PHY Specific Control Register */
- 
- /* Number of times we will attempt to autonegotiate before downshifting if we
-- * are the master
-+ * are the primary
-  */
- #define I347AT4_PSCR_DOWNSHIFT_ENABLE	0x0800
- #define I347AT4_PSCR_DOWNSHIFT_MASK	0x7000
+ /* M88E1000 Specific Registers */
 diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
-index 0ab21ed669..d5dea74c22 100644
+index d5dea74c22..4bc5a8e0f2 100644
 --- a/drivers/net/intel/e1000/base/e1000_hw.h
 +++ b/drivers/net/intel/e1000/base/e1000_hw.h
-@@ -391,8 +391,8 @@ enum e1000_dsp_config {
- 
- enum e1000_ms_type {
- 	e1000_ms_hw_default = 0,
--	e1000_ms_force_master,
--	e1000_ms_force_slave,
-+	e1000_ms_force_primary,
-+	e1000_ms_force_secondary,
- 	e1000_ms_auto
- };
- 
+@@ -1049,6 +1049,7 @@ struct e1000_dev_spec_vf {
+ struct e1000_dev_spec_i225 {
+ 	bool global_device_reset;
+ 	bool eee_disable;
++	bool wait_for_valid_phy_id_read;
+ 	bool clear_semaphore_once;
+ 	bool module_plugged;
+ 	u8 media_port;
 diff --git a/drivers/net/intel/e1000/base/e1000_i225.c b/drivers/net/intel/e1000/base/e1000_i225.c
-index b4607538e0..062a195a66 100644
+index 062a195a66..a1f4c5524b 100644
 --- a/drivers/net/intel/e1000/base/e1000_i225.c
 +++ b/drivers/net/intel/e1000/base/e1000_i225.c
-@@ -209,9 +209,9 @@ static s32 e1000_reset_hw_i225(struct e1000_hw *hw)
- 	 * Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	DEBUGOUT("Masking off all interrupts\n");
- 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-index 0b5667fd01..01cda7ddeb 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-@@ -151,8 +151,8 @@ union ich8_hws_flash_regacc {
- 	struct ich8_flracc {
- 		u32 grra:8; /* 0:7 GbE region Read Access */
- 		u32 grwa:8; /* 8:15 GbE region Write Access */
--		u32 gmrag:8; /* 23:16 GbE Master Read Access Grant */
--		u32 gmwag:8; /* 31:24 GbE Master Write Access Grant */
-+		u32 gmrag:8; /* 23:16 GbE Primary Read Access Grant */
-+		u32 gmwag:8; /* 31:24 GbE Primary Write Access Grant */
- 	} hsf_flregacc;
- 	u16 regval;
- };
-@@ -4928,9 +4928,9 @@ STATIC s32 e1000_reset_hw_ich8lan(struct e1000_hw *hw)
- 	/* Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = e1000_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_primary_generic(hw);
- 	if (ret_val)
--		DEBUGOUT("PCI-E Master disable polling has failed.\n");
-+		DEBUGOUT("PCI-E Primary disable polling has failed.\n");
- 
- 	DEBUGOUT("Masking off all interrupts\n");
- 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-diff --git a/drivers/net/intel/e1000/base/e1000_mac.c b/drivers/net/intel/e1000/base/e1000_mac.c
-index 64486f4e4b..0ba03e6a04 100644
---- a/drivers/net/intel/e1000/base/e1000_mac.c
-+++ b/drivers/net/intel/e1000/base/e1000_mac.c
-@@ -2061,33 +2061,33 @@ void e1000_set_pcie_no_snoop_generic(struct e1000_hw *hw, u32 no_snoop)
- }
- 
- /**
-- *  e1000_disable_pcie_master_generic - Disables PCI-express master access
-+ *  e1000_disable_pcie_primary_generic - Disables PCI-express primary access
-  *  @hw: pointer to the HW structure
-  *
-  *  Returns E1000_SUCCESS if successful, else returns -10
-- *  (-E1000_ERR_MASTER_REQUESTS_PENDING) if master disable bit has not caused
-- *  the master requests to be disabled.
-+ *  (-E1000_ERR_PRIMARY_REQUESTS_PENDING) if primary disable bit has not caused
-+ *  the primary requests to be disabled.
-  *
-- *  Disables PCI-Express master access and verifies there are no pending
-+ *  Disables PCI-Express primary access and verifies there are no pending
-  *  requests.
-  **/
--s32 e1000_disable_pcie_master_generic(struct e1000_hw *hw)
-+s32 e1000_disable_pcie_primary_generic(struct e1000_hw *hw)
+@@ -143,8 +143,10 @@ static s32 e1000_init_mac_params_i225(struct e1000_hw *hw)
+ static s32 e1000_init_phy_params_i225(struct e1000_hw *hw)
  {
- 	u32 ctrl;
--	s32 timeout = MASTER_DISABLE_TIMEOUT;
-+	s32 timeout = PRIMARY_DISABLE_TIMEOUT;
+ 	struct e1000_phy_info *phy = &hw->phy;
++	u16 phy_id_retries = 1, phy_id_retries_interval_ms = 100;
+ 	s32 ret_val = E1000_SUCCESS;
+ 	u32 ctrl_ext;
++	u16 i = 0;
  
--	DEBUGFUNC("e1000_disable_pcie_master_generic");
-+	DEBUGFUNC("e1000_disable_pcie_primary_generic");
+ 	DEBUGFUNC("e1000_init_phy_params_i225");
  
- 	if (hw->bus.type != e1000_bus_type_pci_express)
- 		return E1000_SUCCESS;
+@@ -184,10 +186,48 @@ static s32 e1000_init_phy_params_i225(struct e1000_hw *hw)
+ 	phy->ops.read_reg = e1000_read_phy_reg_gpy;
+ 	phy->ops.write_reg = e1000_write_phy_reg_gpy;
  
- 	ctrl = E1000_READ_REG(hw, E1000_CTRL);
--	ctrl |= E1000_CTRL_GIO_MASTER_DISABLE;
-+	ctrl |= E1000_CTRL_GIO_PRIMARY_DISABLE;
- 	E1000_WRITE_REG(hw, E1000_CTRL, ctrl);
+-	ret_val = e1000_get_phy_id(hw);
+-	phy->type = e1000_phy_i225;
++	if (hw->dev_spec._i225.wait_for_valid_phy_id_read) {
++		phy_id_retries = 10;
++		DEBUGOUT1("Going to wait %d ms for a valid PHY ID read...\n",
++			  phy_id_retries * phy_id_retries_interval_ms);
++	}
  
- 	while (timeout) {
- 		if (!(E1000_READ_REG(hw, E1000_STATUS) &
--		      E1000_STATUS_GIO_MASTER_ENABLE) ||
-+		      E1000_STATUS_GIO_PRIMARY_ENABLE) ||
- 				E1000_REMOVED(hw->hw_addr))
- 			break;
- 		usec_delay(100);
-@@ -2095,8 +2095,8 @@ s32 e1000_disable_pcie_master_generic(struct e1000_hw *hw)
- 	}
++	for (i = 0; i < phy_id_retries; i++) {
++		ret_val = e1000_get_phy_id(hw);
++		phy->id &= I225_I_PHY_ID_MASK;
++		DEBUGOUT1("PHY ID value = 0x%08x\n", phy->id);
  
- 	if (!timeout) {
--		DEBUGOUT("Master requests are pending.\n");
--		return -E1000_ERR_MASTER_REQUESTS_PENDING;
-+		DEBUGOUT("Primary requests are pending.\n");
-+		return -E1000_ERR_PRIMARY_REQUESTS_PENDING;
- 	}
- 
- 	return E1000_SUCCESS;
-diff --git a/drivers/net/intel/e1000/base/e1000_mac.h b/drivers/net/intel/e1000/base/e1000_mac.h
-index 86fcad23bb..0b56178e5d 100644
---- a/drivers/net/intel/e1000/base/e1000_mac.h
-+++ b/drivers/net/intel/e1000/base/e1000_mac.h
-@@ -22,7 +22,7 @@ s32  e1000_cleanup_led_generic(struct e1000_hw *hw);
- s32  e1000_commit_fc_settings_generic(struct e1000_hw *hw);
- s32  e1000_poll_fiber_serdes_link_generic(struct e1000_hw *hw);
- s32  e1000_config_fc_after_link_up_generic(struct e1000_hw *hw);
--s32  e1000_disable_pcie_master_generic(struct e1000_hw *hw);
-+s32  e1000_disable_pcie_primary_generic(struct e1000_hw *hw);
- s32  e1000_force_mac_fc_generic(struct e1000_hw *hw);
- s32  e1000_get_auto_rd_done_generic(struct e1000_hw *hw);
- s32  e1000_get_bus_info_pci_generic(struct e1000_hw *hw);
-diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
-index cc1efddceb..b29f616b38 100644
---- a/drivers/net/intel/e1000/base/e1000_phy.c
-+++ b/drivers/net/intel/e1000/base/e1000_phy.c
-@@ -981,17 +981,17 @@ s32 e1000_write_kmrn_reg_locked(struct e1000_hw *hw, u32 offset, u16 data)
- }
- 
- /**
-- *  e1000_set_master_slave_mode - Setup PHY for Master/slave mode
-+ *  e1000_set_primary_secondary_mode - Setup PHY for Primary/Secondary mode
-  *  @hw: pointer to the HW structure
-  *
-- *  Sets up Master/slave mode
-+ *  Sets up Primary/Secondary mode
-  **/
--STATIC s32 e1000_set_master_slave_mode(struct e1000_hw *hw)
-+STATIC s32 e1000_set_primary_secondary_mode(struct e1000_hw *hw)
- {
- 	s32 ret_val;
- 	u16 phy_data;
- 
--	/* Resolve Master/Slave mode */
-+	/* Resolve Primary/Secondary mode */
- 	ret_val = hw->phy.ops.read_reg(hw, PHY_1000T_CTRL, &phy_data);
- 	if (ret_val)
- 		return ret_val;
-@@ -999,14 +999,14 @@ STATIC s32 e1000_set_master_slave_mode(struct e1000_hw *hw)
- 	/* load defaults for future use */
- 	hw->phy.original_ms_type = (phy_data & CR_1000T_MS_ENABLE) ?
- 				   ((phy_data & CR_1000T_MS_VALUE) ?
--				    e1000_ms_force_master :
--				    e1000_ms_force_slave) : e1000_ms_auto;
-+				    e1000_ms_force_primary :
-+				    e1000_ms_force_secondary) : e1000_ms_auto;
- 
- 	switch (hw->phy.ms_type) {
--	case e1000_ms_force_master:
-+	case e1000_ms_force_primary:
- 		phy_data |= (CR_1000T_MS_ENABLE | CR_1000T_MS_VALUE);
- 		break;
--	case e1000_ms_force_slave:
-+	case e1000_ms_force_secondary:
- 		phy_data |= CR_1000T_MS_ENABLE;
- 		phy_data &= ~(CR_1000T_MS_VALUE);
- 		break;
-@@ -1080,7 +1080,7 @@ s32 e1000_copper_link_setup_82577(struct e1000_hw *hw)
- 	if (ret_val)
- 		return ret_val;
- 
--	return e1000_set_master_slave_mode(hw);
-+	return e1000_set_primary_secondary_mode(hw);
- }
- 
- /**
-@@ -1186,11 +1186,11 @@ s32 e1000_copper_link_setup_m88(struct e1000_hw *hw)
- 			phy_data &= ~M88EC018_EPSCR_DOWNSHIFT_COUNTER_MASK;
- 			phy_data |= M88EC018_EPSCR_DOWNSHIFT_COUNTER_5X;
- 		} else {
--			/* Configure Master and Slave downshift values */
--			phy_data &= ~(M88E1000_EPSCR_MASTER_DOWNSHIFT_MASK |
--				     M88E1000_EPSCR_SLAVE_DOWNSHIFT_MASK);
--			phy_data |= (M88E1000_EPSCR_MASTER_DOWNSHIFT_1X |
--				     M88E1000_EPSCR_SLAVE_DOWNSHIFT_1X);
-+			/* Configure Primary and Secondary downshift values */
-+			phy_data &= ~(M88E1000_EPSCR_PRIMARY_DOWNSHIFT_MASK |
-+				     M88E1000_EPSCR_SECONDARY_DOWNSHIFT_MASK);
-+			phy_data |= (M88E1000_EPSCR_PRIMARY_DOWNSHIFT_1X |
-+				     M88E1000_EPSCR_SECONDARY_DOWNSHIFT_1X);
- 		}
- 		ret_val = phy->ops.write_reg(hw, M88E1000_EXT_PHY_SPEC_CTRL,
- 					     phy_data);
-@@ -1325,7 +1325,7 @@ s32 e1000_copper_link_setup_m88_gen2(struct e1000_hw *hw)
- 		return ret_val;
- 	}
- 
--	ret_val = e1000_set_master_slave_mode(hw);
-+	ret_val = e1000_set_primary_secondary_mode(hw);
- 	if (ret_val)
- 		return ret_val;
- 
-@@ -1336,8 +1336,8 @@ s32 e1000_copper_link_setup_m88_gen2(struct e1000_hw *hw)
-  *  e1000_copper_link_setup_igp - Setup igp PHY's for copper link
-  *  @hw: pointer to the HW structure
-  *
-- *  Sets up LPLU, MDI/MDI-X, polarity, Smartspeed and Master/Slave config for
-- *  igp PHY's.
-+ *  Sets up LPLU, MDI/MDI-X, polarity, Smartspeed
-+ *  and Primary/Secondary config for igp PHY's.
-  **/
- s32 e1000_copper_link_setup_igp(struct e1000_hw *hw)
- {
-@@ -1402,10 +1402,10 @@ s32 e1000_copper_link_setup_igp(struct e1000_hw *hw)
- 	if (ret_val)
- 		return ret_val;
- 
--	/* set auto-master slave resolution settings */
-+	/* set auto primary-secondary resolution settings */
- 	if (hw->mac.autoneg) {
- 		/* when autonegotiation advertisement is only 1000Mbps then we
--		 * should disable SmartSpeed and enable Auto MasterSlave
-+		 * should disable SmartSpeed and enable Auto Primary/Secondary
- 		 * resolution as hardware default.
- 		 */
- 		if (phy->autoneg_advertised == ADVERTISE_1000_FULL) {
-@@ -1423,7 +1423,7 @@ s32 e1000_copper_link_setup_igp(struct e1000_hw *hw)
- 			if (ret_val)
- 				return ret_val;
- 
--			/* Set auto Master/Slave resolution process */
-+			/* Set auto Primary/Secondary resolution process */
- 			ret_val = phy->ops.read_reg(hw, PHY_1000T_CTRL, &data);
- 			if (ret_val)
- 				return ret_val;
-@@ -1434,7 +1434,7 @@ s32 e1000_copper_link_setup_igp(struct e1000_hw *hw)
- 				return ret_val;
- 		}
- 
--		ret_val = e1000_set_master_slave_mode(hw);
-+		ret_val = e1000_set_primary_secondary_mode(hw);
- 	}
- 
++		/*
++		* IGC/IGB merge note: in base code, there was a PHY ID check for
++		* I225 at this point. However, in DPDK version of IGC this check
++		* was removed because it interfered with some i225-based NICs,
++		* and it was deemed unnecessary because only the i225 NIC
++		* would've called this code anyway because it was in the IGC
++		* driver.
++		*
++		* This code was then amended apparently because there were
++		* issues wih reading PHY ID on some platforms, and PHY ID read
++		* was to be retried multiple times. However, the original fix in
++		* the base code still had the PHY ID check, and it is now
++		* necessary because there is a chance to read an invalid PHY ID.
++		* So, in backport, it was decided to replace the equality check
++		* with a non-zero condition, because the "invalid" PHY ID as
++		* reported in the original issue, was 0. So, as long as we read
++		* a non-zero PHY ID, we consider it valid.
++		*/
++		if (phy->id != 0) {
++			phy->type = e1000_phy_i225;
++			phy->ops.set_d0_lplu_state = e1000_set_d0_lplu_state_i225;
++			phy->ops.set_d3_lplu_state = e1000_set_d3_lplu_state_i225;
++
++			return ret_val;
++		}
++
++		msec_delay(phy_id_retries_interval_ms);
++	}
++
++	DEBUGOUT("Failed to read PHY ID\n");
++	ret_val = E1000_ERR_PHY;
+ out:
  	return ret_val;
-@@ -3013,7 +3013,7 @@ s32 e1000_phy_init_script_igp3(struct e1000_hw *hw)
- 	hw->phy.ops.write_reg(hw, 0x1F72, 0x3FB0);
- 	/* AHT reset limit to 1 */
- 	hw->phy.ops.write_reg(hw, 0x1F76, 0xC0FF);
--	/* Set AHT master delay to 127 msec */
-+	/* Set AHT primary delay to 127 msec */
- 	hw->phy.ops.write_reg(hw, 0x1F77, 0x1DEC);
- 	/* Set scan bits for AHT */
- 	hw->phy.ops.write_reg(hw, 0x1F78, 0xF9EF);
-@@ -3029,7 +3029,7 @@ s32 e1000_phy_init_script_igp3(struct e1000_hw *hw)
- 	 * to 8 for channel A
- 	 */
- 	hw->phy.ops.write_reg(hw, 0x1898, 0xD918);
--	/* Disable AHT in Slave mode on channel A */
-+	/* Disable AHT in Secondary mode on channel A */
- 	hw->phy.ops.write_reg(hw, 0x187A, 0x0800);
- 	/* Enable LPLU and disable AN to 1000 in non-D0a states,
- 	 * Enable SPD+B2B
-diff --git a/drivers/net/intel/e1000/base/e1000_regs.h b/drivers/net/intel/e1000/base/e1000_regs.h
-index 643edbb9cb..55cc683e74 100644
---- a/drivers/net/intel/e1000/base/e1000_regs.h
-+++ b/drivers/net/intel/e1000/base/e1000_regs.h
-@@ -283,7 +283,7 @@
- #define E1000_FFMT_REG(_i)	(0x09000 + ((_i) * 8))
- #define E1000_FFVT_REG(_i)	(0x09800 + ((_i) * 8))
- #define E1000_FFLT_REG(_i)	(0x05F00 + ((_i) * 8))
--#define E1000_PBSLAC		0x03100  /* Pkt Buffer Slave Access Control */
-+#define E1000_PBSLAC	0x03100  /* Pkt Buffer Access Control */
- #define E1000_PBSLAD(_n)	(0x03110 + (0x4 * (_n)))  /* Pkt Buffer DWORD */
- #define E1000_TXPBS		0x03404  /* Tx Packet Buffer Size - RW */
- /* Same as TXPBS, renamed for newer Si - RW */
-diff --git a/drivers/net/intel/e1000/base/e1000_vf.c b/drivers/net/intel/e1000/base/e1000_vf.c
-index 44ebe07ee4..7d20150b59 100644
---- a/drivers/net/intel/e1000/base/e1000_vf.c
-+++ b/drivers/net/intel/e1000/base/e1000_vf.c
-@@ -175,7 +175,7 @@ STATIC s32 e1000_get_bus_info_pcie_vf(struct e1000_hw *hw)
- 
- 	DEBUGFUNC("e1000_get_bus_info_pcie_vf");
- 
--	/* Do not set type PCI-E because we don't want disable master to run */
-+	/* Do not set type PCI-E because we don't want disable primary to run */
- 	bus->type = e1000_bus_type_reserved;
- 	bus->speed = e1000_bus_speed_2500;
- 
+ }
 -- 
 2.43.5
 
