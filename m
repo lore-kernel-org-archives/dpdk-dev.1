@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAF4C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC81C02197
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:26:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45C2240A6D;
-	Wed,  5 Feb 2025 17:25:15 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id DCFDF4065B
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:08 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2f9d5f6df4cso2357389a91.1
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B13540A72;
+	Wed,  5 Feb 2025 17:25:16 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id AA0E040667
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:10 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-21f01fe1ce8so31206875ad.2
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772708;
- x=1739377508; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772710;
+ x=1739377510; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zB6hIMtxNUEA8p6kUttERH7GJP97SxLZf0I+dhffzHM=;
- b=aexkUW/yDg/OEtvAzCvWsr7kTH8cHTARmXnUMOvNOQJauYVKEU771NmjX4w0PbhxiT
- +xi6N/Xf8DvYTVyo4wsDsCpYaoW8qQ1y6HNwJjxH7q+5ie/89dbxn89BxpnSRTB0UFmr
- rAaqows5yAMiQTiywGoeuO8xXzsY0cE6S/xwyqcojRiirzHhCubkzMlAd0zNguyJ7o30
- zG6zH/dNeNB193nVCqvSrqWjr1CJqe6Z4wlP3bSqkAPQ1qUeSe6TQg6m6JOYZPlYsnSS
- ZODNXeclXzxmaQhS37IF94/inQNplXD1t+OjhbdvkI/BM6w+UK/cJ4GlQ8oNgTUQo9uX
- Mq2w==
+ bh=xyzifiWA3+VxTUYxCZpCy2nFQoPfapOrdzV288THeqw=;
+ b=Zt6fOe0dE70I9+3xWErzzGgv4STRYdSOo4bKF1zDotU7k6vF2yy6Z7IE5K1UTZQef0
+ b4j27OSV86uW9dQrSNlRKpxtvfjTOwZt3K9pikFxYxQAVK9w6PiU9aCoEzd1xVe/5Oxx
+ x3faoKvVv++GTDUQEuvImO1BB1bIb3O30AVgYNUCZYZogMxhLUMBeoKLkRixsa/UTSrY
+ TN/vPBK09jYMmHFadVnsX5wvBPrADcX5b0JsH2rqNdY+90BVbxBAiZf9jAiZdC9kYWTG
+ M/eyWQ2vZCpfN2y51spn3smls/l/Uj9IgL4gkU6TEcLmGr8NQQXfmFfohKeAWCKIqa9V
+ imxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738772708; x=1739377508;
+ d=1e100.net; s=20230601; t=1738772710; x=1739377510;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=zB6hIMtxNUEA8p6kUttERH7GJP97SxLZf0I+dhffzHM=;
- b=Jrt7l7kV9nXQ+AzhIW4ghXdB2E7d/UIkMvHnqYtu9WBLsBOHUkWcvBmxUbYF9aUh5S
- W6BLZgmeaddc1djEFSXxNDMW4BXKFD2YYSHg2oP01p4SS99zKX8fX8PMg5wi1q0C5FZy
- H6mr7kM53wo3fzcaaSkblxwCL2M3AxjGBTHu0hth/QH5VqMvLRfMF+79P1WdD06xVLdG
- l1Rxl/B30EWyUNszHVtY0jbUcd50yWjV+0+fS5Ru609pUJ5/Ia3JyjZaE49OWQzWC9N0
- jNGeHI/5Zaus+QD5TH4SLDJNeH1s1OTqYS8zbEdAbctK8InNMuLwaU+7/xDT51fwgc8o
- s6VQ==
-X-Gm-Message-State: AOJu0YwTtf73QH9udmY7Ijdu2BUprB7+fff77M+rHNcF2ZyCRweCaqzW
- nwFq0GwbUS0hozBjyAFD6EuigxjfN6lJ/deGoP0ldNIv/F1jxWl4WLcznirjvGkw4js3Kt8Gtbo
- l
-X-Gm-Gg: ASbGncu0pwvEB5n68Np3zU5dqVClBY6Yqze8vdxGI8Zy3ppOoAnvjx7wGQDXYkeWCoC
- NTgXUVQEBA3W1dlCzetahhE2kZ+3VFH8ciavmjBUhS8amS1vbKyLy3P7GXizsoCBVdW/pUQervz
- XKL1D/b/nfG1QqbCYwXaLxWpszNPgZVU2/NswsYSHHU/xNAKf6EmaqrVPGqYXqwBXTOgPuEqov7
- WgQYw/JhOc1ByzSPRsyn1BuIA/GgLtBqOxtSP9gnK4ICM+xIBh0pPH9a8hWxudga/LaGmv3YP7I
- SkgZQVvPgGZ+R5rbTlWmc2HmDkAIeHLIfntveWSFoU6BN/wPNLmH7y3oyuLWJPHufTHT
-X-Google-Smtp-Source: AGHT+IHOZIYwSOGWklF9gT/z6zxUTnxmaqPiYXrpkJ6BBKzS6sna/JPi3Mm+bBVXVphJ5NDZlhK9fg==
-X-Received: by 2002:a17:90b:4fcc:b0:2ee:8031:cdbc with SMTP id
- 98e67ed59e1d1-2f9e080004dmr4303528a91.23.1738772708002; 
+ bh=xyzifiWA3+VxTUYxCZpCy2nFQoPfapOrdzV288THeqw=;
+ b=P6xRvOVwsNpNdQ2i6tF6rx2vi6QgMioeaQsKO2oHCculGgzf8uRtQptVYGtg6HZJA2
+ Hb5RW1d4mjcTH+u2rZrSxsaTzejX4bFlcN4lm/jyKAMpaoDkhEuXfjudGo5GXFY3FAwi
+ 7QECAMEZDEHoMh1zYHnaw7/C9oFHqSzRbqLX8WaLY9woCSgcAJcRnWBcCL/CyRl+SKfz
+ uViUcQt/UEmdAiblg7NwCwyzB4SDUX9xrVx5w/uV1GIyuMMku5TjKji48OyP1KMskC3P
+ IZAUVCg0c5LpHXrhC4pP9BwRrmr67bHjE92hqBrNEPOvtVu+mmObLqT1JieGcr6d/wes
+ 069A==
+X-Gm-Message-State: AOJu0YxyYYpZSjXZnfYlO9H3kkrGPMRJtwtJYVdVWamGqy/aIyljGiXA
+ BOnLmREXRY0UCa+WenCFbj2fkIf3WMEjBoN7RssCUjFGQ1ERNGqh/HCnih4MPrLkM4K4+VPKfwO
+ 8
+X-Gm-Gg: ASbGncv79jskZ9f9jvRjvyYsFqnaeK/RETvgG7cr9x8FDq399s4lyDcZKVwrFW3XJ+u
+ PGNIvftI2iY/1EVHjVFW5hJfOPrUCmLsSLoGZy0TKuLHgBrPEjAolTrzJnghGsjVVTFwb90hkx3
+ snouOT5QHDiFBVGJhlaxlWFRIn7hox60Rj6ovxcQsqnK36qRgj13uArdB8UD7CnhiOxlcveuSHp
+ PRLfSn4F/ump6TyWnh7lOKV2WRAyan75FGfldcN0Cg62kJwlP16bzmYtEagpFlCE+JvA9LRl9DY
+ xQ03/1MdoAbNib10aN0u590VkZwsfKjNwz9rAXAtnYjtM10X9tnW3nR6M9f3UrJCcMWu
+X-Google-Smtp-Source: AGHT+IG44BrI+C01uRov8A7dmQEsfqkDF2YQ3w0rqW9HwiNgrlvWOSzDeX2Vela2qQF5gBy1JDdtBA==
+X-Received: by 2002:a17:903:2291:b0:21f:13a6:d424 with SMTP id
+ d9443c01a7336-21f17e6d3b7mr55843155ad.30.1738772708856; 
  Wed, 05 Feb 2025 08:25:08 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.07
+ 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 08:25:07 -0800 (PST)
+ Wed, 05 Feb 2025 08:25:08 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- danielx.t.mrzyglod@intel.com, stable@dpdk.org,
- Kirill Rybalchenko <kirill.rybalchenko@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- John McNamara <john.mcnamara@intel.com>
-Subject: [PATCH v3 09/19] examples/ptpclient: fix self memcmp
-Date: Wed,  5 Feb 2025 08:23:10 -0800
-Message-ID: <20250205162448.161161-10-stephen@networkplumber.org>
+ Vamsi Attunuru <vattunuru@marvell.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v3 10/19] net/octeon_ep: remove duplicate code
+Date: Wed,  5 Feb 2025 08:23:11 -0800
+Message-ID: <20250205162448.161161-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250205162448.161161-1-stephen@networkplumber.org>
 References: <20241115060738.313190-1-stephen@networkplumber.org>
@@ -84,33 +83,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Calling memcmp on same structure will always be true.
-Replace with same conditional used elsewhere.
+Both sides of the if in uninit are using same code.
 
 Link: https://pvs-studio.com/en/blog/posts/cpp/1183/
 
-Fixes: ab129e9065a5 ("examples/ptpclient: add minimal PTP client")
-Cc: danielx.t.mrzyglod@intel.com
-Cc: stable@dpdk.org
-
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/ptpclient/ptpclient.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/octeon_ep/otx_ep_ethdev.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 27d06dd91d..c344e7db1e 100644
---- a/examples/ptpclient/ptpclient.c
-+++ b/examples/ptpclient/ptpclient.c
-@@ -367,7 +367,7 @@ parse_sync(struct ptpv2_time_receiver_ordinary *ptp_data, uint16_t rx_tstamp_idx
- 		ptp_data->ptpset = 1;
- 	}
+diff --git a/drivers/net/octeon_ep/otx_ep_ethdev.c b/drivers/net/octeon_ep/otx_ep_ethdev.c
+index b4f8baf3b3..8b14734b0c 100644
+--- a/drivers/net/octeon_ep/otx_ep_ethdev.c
++++ b/drivers/net/octeon_ep/otx_ep_ethdev.c
+@@ -721,14 +721,9 @@ static const struct eth_dev_ops otx_ep_eth_dev_ops = {
+ static int
+ otx_ep_eth_dev_uninit(struct rte_eth_dev *eth_dev)
+ {
+-	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+-		eth_dev->dev_ops = NULL;
+-		eth_dev->rx_pkt_burst = NULL;
+-		eth_dev->tx_pkt_burst = NULL;
+-		return 0;
+-	}
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		otx_ep_mbox_uninit(eth_dev);
  
--	if (memcmp(&ptp_hdr->source_port_id.clock_id,
-+	if (memcmp(&ptp_data->transmitter_clock_id,
- 			&ptp_hdr->source_port_id.clock_id,
- 			sizeof(struct clock_id)) == 0) {
- 
+-	otx_ep_mbox_uninit(eth_dev);
+ 	eth_dev->dev_ops = NULL;
+ 	eth_dev->rx_pkt_burst = NULL;
+ 	eth_dev->tx_pkt_burst = NULL;
 -- 
 2.47.2
 
