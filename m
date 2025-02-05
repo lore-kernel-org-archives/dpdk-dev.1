@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC6AC02197
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC79C02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:27:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA8F440A7D;
-	Wed,  5 Feb 2025 17:25:48 +0100 (CET)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id C034140A67
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:46 +0100 (CET)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-2f9d5f6df4cso2358571a91.1
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 266DC40B9F;
+	Wed,  5 Feb 2025 17:25:50 +0100 (CET)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id A040F40A80
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:47 +0100 (CET)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-2f9cd8ecbceso3345148a91.0
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772746;
- x=1739377546; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772747;
+ x=1739377547; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gDhw28+EUF/HlEE2pqYuojbCu6BgdSQ5N3cpWGYIXsM=;
- b=23P19y7zEw8HbV6PUJ3T3xvFNtHgCu+DgYvKexFve8csvpe/hNAco6IVI67Zdle++0
- aLbLvJ6n80biltALANCtexMDS1bkV4d+XajLRTkGQhcOxWkLxt8NfhnnXf3+UHBoMfW1
- +1+NkxZRXAFylcp5e5xk11vscTc5z8sI76w3D+MDG0u0nZJIIT1n/S3Gz5MSMrlrgnbI
- IW52nyG3JsQ3bZrbk8B1JWBuqQSZwXJiho5gYc0tsXoUMwdZay0KQB40CaKT/CTIbXnc
- qs28Gax7E7N7uChWdGefA8nPKSv2StaUIwVw3RMwp4ur0J1nKvtZyJhvJ8XqCZAZntg+
- +YGA==
+ bh=w3LGmbm/VIgUuKqHEprS43HMDH8COHR0Pe88EqWZ1M0=;
+ b=ea9hg1SGdP7EeW9iQWDv2FUGyHp/cxDY18ODfY+WxUOLJVIjlqdkreTda8BF4RaFJ9
+ gMhU0RnOKE47txar5o++fPjzdEFQEhDgwMhrW063uWp4+rv3GFNKuZAEKBx4G0Fxg7sm
+ mq5giynzprqL/c7VX8fZ0gV+TGt8sn8aIvzXAHHDDsCF80v5//FJ229HVQqsaD1W+Y41
+ 5HwRtG2Hjho5J+fZq+fnBWRM8Egq/3/8sO6HTy7mPkcmwFF3gBP7VOzrfgSiQlQEHXGh
+ jzSopR5lB1cYl680kjW3cB1b7RIIkMtZ5tu0dS4JRRIJxo0eRJv0dLnrfGqnraIHK7es
+ pwAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738772746; x=1739377546;
+ d=1e100.net; s=20230601; t=1738772747; x=1739377547;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=gDhw28+EUF/HlEE2pqYuojbCu6BgdSQ5N3cpWGYIXsM=;
- b=Iivh9i85mS9tsGukDioAJ6T0A0BKuoxfs2b7SsI0Cga/b0GItMKQtsI1Sasgkns6MY
- 4k5tDwkb1UbpKbLV7QdGyMzXif1fMOquJnKRkAHj4nb1dSUlooA4pSkeBHKymYcnMVSx
- LyLysJeHqclmzf9Ekhdy/i/fgrALf/V5Fg2dtzoKVVS6fy0ZUEPvyUmFFGFUzcoMS8fs
- 6DWQrzRjb8e1ApMdFHHqU7sdtvR/IEQj+XGVl50DcgurXILW5/MdAARnOZemPUEESkqX
- dvae5g+bEIxHxuiwE15qIgDUJWpYIOlQj8t7yYeRrklw04vTG9uKGwHhtu0gIQO1e/dj
- yvxw==
-X-Gm-Message-State: AOJu0YxjV6OheQbd/A980OuJf6U4UjPz6PwhdJu2dyCkme831RdZqu5r
- SQ/EMt6LCm7tVjlpApytipvMC6zQrKkeKZi6lNL4rV2hjPRcKzlYWnEXTkL/LQMFIPx4DBtbySW
- R
-X-Gm-Gg: ASbGncs27tpqh2SQ3Xlnxf0/bO3xWlTYjYM5NHmLiLO3TM/oxhyBALDhFr7+AjSTZRO
- y8+ImmbTVXcXXyptI9r3rUBS3Lg4Dbk5jZS/fxku0XjPpPJ3C81+oaOo0zlnleCY0Y32DgFDo18
- igCRx1YmBPQw6VmCt+ESVlwxT26mC8gq7gx1eauIMifTn1Cl1O0dzF19IhN6NNUcKTG0awTs09C
- Ml+SqhdGh4XeBOV/TQfMS5fwzOx0heYnrLrv2WzmazMIXlYlRI3S+cFRbgxELVkgRjz+9Wnc2WF
- ECcsctWn4mOBdctB1VkbWSopLJI6ILXv93x5GTbFLfmE99dOx3vIyB+NzzH/0y6FkL8I
-X-Google-Smtp-Source: AGHT+IEd8jhjg8wFxDyRKd5aL2NRrQnVJtHT83KEm8SH0piHsHC039NnEn1jv5Jtdfofq/PD2hw+qQ==
-X-Received: by 2002:a17:90b:28c4:b0:2ea:61de:38f7 with SMTP id
- 98e67ed59e1d1-2f9e082dff0mr5324144a91.29.1738772745924; 
- Wed, 05 Feb 2025 08:25:45 -0800 (PST)
+ bh=w3LGmbm/VIgUuKqHEprS43HMDH8COHR0Pe88EqWZ1M0=;
+ b=kVX2LgrrAXLrl/yVi3NGLRNyG6QPC7u5ND0CquNN/kCjXeTTP2mHf3oBZPamoKH77+
+ 5UujgKalszD1MfJ0LBmfDtldrD9FTCfHdKLPldrQY3g5aBYSrdmMatebNJhfxlK4lPVb
+ pBJEGXYyTovoNLo+qAPZMWITDQkID+zaIV1c0SojqTv+RlAyHWvPm0sg0EYTgwOUcPTr
+ hyOR3TKp9RbZNPEkiJWg1IMb0Jpz7MdtINZBAwhOKQnNlHolUH3GhQR2tdae+DCc22td
+ G3OVtGWNm56GqHJp/YnSJZX64THruuaIWb4yeZJCZRHhJ55tTiu1CZQ88WduDJQk2oJn
+ G3Jw==
+X-Gm-Message-State: AOJu0Yy3CmnP8izf6natsTYi4WgzULAUFjH773aFkq8zGYkfpUmbLauk
+ S0Pvl4oB9yfq8jAHvaXa7l7ih1/Jw7SGx3PLbD+7T4fu6VOT/r7YaUq75pPVfjf5Qwf/HWBXPvn
+ m
+X-Gm-Gg: ASbGncvptfNgF0G7tTOW6hhj1mUB9mra9ErWzBanpw8ag2hbvh+e/nnpGcJRODm7Av0
+ AktAziEdK9f7gOe8P6Ld2mAup0LHmyIP5yGrGcyRB5eM+16MchZX7MhUbFFp0bOsLFaZa+JN8LD
+ wNeXw3vOSQPtv4DjqBX7G8Gqa9fimpx4TYMAtnfiWszqrKkOCDFx+0kPThNXdUKNiJ9wVfdmMYi
+ tmTQrh01jfJ6tbhQxZSw00RiEfxbg1XpxiIZ6es73FodOmMtu1k4nc++lY0koEAMxxiNsHj9y7j
+ ahIounv8aNNWHLamCIm+YUJRSe7lTf97DM/NpUPvdkPMkuOTOY7GFhUTfJxkneZUrhOw
+X-Google-Smtp-Source: AGHT+IGZhYLrGfACI0WM4NKtj4XhDdU2iW0H8hxXptxnIcjXSF4RPUDC6ik+k6k/aHXkYlulo9chUw==
+X-Received: by 2002:a17:90b:44:b0:2ee:7411:ca99 with SMTP id
+ 98e67ed59e1d1-2f9e075382dmr4886475a91.1.1738772746823; 
+ Wed, 05 Feb 2025 08:25:46 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.45
+ 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 08:25:45 -0800 (PST)
+ Wed, 05 Feb 2025 08:25:46 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, sunil.kori@nxp.com,
+Cc: Stephen Hemminger <stephen@networkplumber.org>, nipun.gupta@nxp.com,
  stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>, Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH v3 15/19] net/dpaa: fix bitmask truncation
-Date: Wed,  5 Feb 2025 08:23:16 -0800
-Message-ID: <20250205162448.161161-16-stephen@networkplumber.org>
+Subject: [PATCH v3 16/19] net/dpaa2: fix bitmask truncation
+Date: Wed,  5 Feb 2025 08:23:17 -0800
+Message-ID: <20250205162448.161161-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250205162448.161161-1-stephen@networkplumber.org>
 References: <20241115060738.313190-1-stephen@networkplumber.org>
@@ -88,45 +88,47 @@ type int (32 bit); therefore any value >= 32 would get truncated.
 
 Link: https://pvs-studio.com/en/blog/posts/cpp/1183/
 
-Fixes: 5e7455931442 ("net/dpaa: support Rx queue configurations with eventdev")
-Cc: sunil.kori@nxp.com
+Fixes: 2d3788631862 ("net/dpaa2: support atomic queues")
+Cc: nipun.gupta@nxp.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_rxtx.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/dpaa2/dpaa2_rxtx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_rxtx.c b/drivers/net/dpaa/dpaa_rxtx.c
-index 247e7b92ba..05bd73becf 100644
---- a/drivers/net/dpaa/dpaa_rxtx.c
-+++ b/drivers/net/dpaa/dpaa_rxtx.c
-@@ -842,7 +842,7 @@ dpaa_rx_cb_atomic(void *event,
- 	/* Save active dqrr entries */
- 	index = DQRR_PTR2IDX(dqrr);
- 	DPAA_PER_LCORE_DQRR_SIZE++;
--	DPAA_PER_LCORE_DQRR_HELD |= 1 << index;
-+	DPAA_PER_LCORE_DQRR_HELD |= UINT64_C(1) << index;
- 	DPAA_PER_LCORE_DQRR_MBUF(index) = mbuf;
- 	ev->impl_opaque = index + 1;
- 	*dpaa_seqn(mbuf) = (uint32_t)index + 1;
-@@ -1338,13 +1338,12 @@ dpaa_eth_queue_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
- 			seqn = *dpaa_seqn(mbuf);
- 			if (seqn != DPAA_INVALID_MBUF_SEQN) {
- 				index = seqn - 1;
--				if (DPAA_PER_LCORE_DQRR_HELD & (1 << index)) {
-+				if (DPAA_PER_LCORE_DQRR_HELD & (UINT64_C(1) << index)) {
- 					flags[loop] =
- 					   ((index & QM_EQCR_DCA_IDXMASK) << 8);
- 					flags[loop] |= QMAN_ENQUEUE_FLAG_DCA;
- 					DPAA_PER_LCORE_DQRR_SIZE--;
--					DPAA_PER_LCORE_DQRR_HELD &=
--								~(1 << index);
-+					DPAA_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << index);
- 				}
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index bfb5542bbc..cad15d8f75 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -933,7 +933,7 @@ dpaa2_dev_process_atomic_event(struct qbman_swp *swp __rte_unused,
+ 	dqrr_index = qbman_get_dqrr_idx(dq);
+ 	*dpaa2_seqn(ev->mbuf) = dqrr_index + 1;
+ 	DPAA2_PER_LCORE_DQRR_SIZE++;
+-	DPAA2_PER_LCORE_DQRR_HELD |= 1 << dqrr_index;
++	DPAA2_PER_LCORE_DQRR_HELD |= UINT64_C(1) << dqrr_index;
+ 	DPAA2_PER_LCORE_DQRR_MBUF(dqrr_index) = ev->mbuf;
+ }
+ 
+@@ -1317,7 +1317,7 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 				flags[loop] = QBMAN_ENQUEUE_FLAG_DCA |
+ 						dqrr_index;
+ 				DPAA2_PER_LCORE_DQRR_SIZE--;
+-				DPAA2_PER_LCORE_DQRR_HELD &= ~(1 << dqrr_index);
++				DPAA2_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << dqrr_index);
+ 				*dpaa2_seqn(*bufs) = DPAA2_INVALID_MBUF_SEQN;
  			}
  
+@@ -1575,7 +1575,7 @@ dpaa2_set_enqueue_descriptor(struct dpaa2_queue *dpaa2_q,
+ 		dq_idx = *dpaa2_seqn(m) - 1;
+ 		qbman_eq_desc_set_dca(eqdesc, 1, dq_idx, 0);
+ 		DPAA2_PER_LCORE_DQRR_SIZE--;
+-		DPAA2_PER_LCORE_DQRR_HELD &= ~(1 << dq_idx);
++		DPAA2_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << dq_idx);
+ 	}
+ 	*dpaa2_seqn(m) = DPAA2_INVALID_MBUF_SEQN;
+ }
 -- 
 2.47.2
 
