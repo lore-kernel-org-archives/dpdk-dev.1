@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2ACC0219B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 10:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B398AC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 10:46:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A8E840649;
-	Wed,  5 Feb 2025 11:46:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 26AAA40650;
+	Wed,  5 Feb 2025 11:46:09 +0100 (CET)
 Received: from egress-ip42a.ess.de.barracuda.com
  (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id F046740609
+ by mails.dpdk.org (Postfix) with ESMTP id A8E0F402EE
  for <dev@dpdk.org>; Wed,  5 Feb 2025 11:46:04 +0100 (CET)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com
- (mail-dbaeur03lp2169.outbound.protection.outlook.com [104.47.51.169]) by
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com
+ (mail-am7eur03lp2238.outbound.protection.outlook.com [104.47.51.238]) by
  mx-outbound43-8.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 05 Feb 2025 10:46:04 +0000
+ Wed, 05 Feb 2025 10:46:03 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ezylDBl0YyyiSYlwkxDlAb39W4pmYk5RAxwGJ30PIyLZN5AgXihAbLX+Dud0K4KK3FuZDB1tOQOx8esuxNsG1ObOKqZYiVqPWV/CueEIVbA8oTMT1SacT87fmj87G66C7hM7AMlhhqWhWQSJv2VrB0o3DG70ogCfyVrQnqprTOvY1yL71/DUaE9JoJWX24UZNh8I7j/JqeeFXZgj+F9P+kftRVLwjRGw3BlOJ4JfCvuvYDY6qyZ//AclWgNnfVclXeGrVDeGHjBVybMIcRly+MKEq6oXTkajqlQb7PtN/jauzrq+B1TERslseo+1JmdoBHEK1J/erHbghR5xlmNoFA==
+ b=d7zdjaNtk2+yQCff9Pu69LAFouc0H1uvbtlTgZWMO1H4f6cpGBmIfRHk05FlWL4GXr5/iaebeZZZXlxoFpGDIRZnO9B+ow3dcb8+mW2/ylR1EDDUOsbqcxCJfcj8yhhMDSKHzjigSbD+75/fm+acU4mixZ+i1AnOg/jfzoMKLXgsxfvEVdaEq9s2jFY60JTmmfLk0QVa4GRhrQaKvsvBLeaKEfnuN0MiuyWv8txCt+6bMxMzaGr/IG1Rilmrmnruq0awqLDqCgZ8h73KDT365lEdvftaQRmnLIzltV0mqd0yvTvLxEpgjHaW3sdZnCoEih72Uvrc8vTgK046xf8QRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zRKpFF+WF5+nMnuUeYLUsJI0Oo30HZfnbypT5I74Lr8=;
- b=hkjjaiwifGsgDX0dHGGghbKj8d1dezc6otbM7njehBxOm1mzZu7dkYve6wkybWz6TsenQBtC7EuY1tLtFrbkyri74kkX6u7MkTPurJIFJdzGcCS4mMjzVYaencfBXIA1zJDONaUI8mcM3p4vWppyVCzkJfd3ozoS58OW7ROTXl6K+CKFCEei5t89Udk4KX6/A9+gcdA6s5dPDyrciQAXY3DwtNUVcvo4A8q/FTno3c+s3zjSpBY6Pn1ckdSB1KVjrYpudW5ATyHxCIkVdHeKNFqvJvV0bv1eyrHQmTIH0skutMTYmScBugAbv9uijfFq6q356AjoiZYxv4HcpTpU8Q==
+ bh=eHOwN2j0QqqOHW43rmJ5SH1sjM3KFtjLJIZvD2VB2iE=;
+ b=X06TaX0zdHdQlhSgQl/iA2KNONq1sEHf7Hrxwmmiosl45w0jyZYwLJ4VjEmjGmTgM4I+9SzBgSJG6omFnnHdrzyBz3OAKcO217/rnLYU8ubsWHiw0ProRE+qtSLeamwVvM0sQiYZFcp8bSSvWYYuTrurSjVf2ENRt8kM8B2N6H+cmaXSnGmgSsukyops0Soosm+WZyChSVK3Pr6YNPtVWG5Ij8RWkmlLEOI4ueOka0FqtBXeKLcsIW1LCRQrdmVt605GCEswoExmZWFjiw60pyPTkF/iZrmtL5RUWqz6DuXO/XdRevKO7L1ImqZb2HzQQL9g+i6JEIozfi6lEh7eXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zRKpFF+WF5+nMnuUeYLUsJI0Oo30HZfnbypT5I74Lr8=;
- b=m0dwE1ZJtFG+1p5seZX+SPud5MhRWU66aa5EyJTI0o6e07UgP9G9SZ2/QsgIWJQ+ks667XPe0s4+eEaE/OMxqoUU548eIJheJFmwKuirVg4+uWS9ssWrUBE5Ix4/y2zwDihfpFPSWQkmpCPX6D55QjaKnkzJSAFBbiJcwD4Dr5A=
-Received: from CWLP265CA0357.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:5a::33)
- by PR3P190MB0953.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:87::12) with
+ bh=eHOwN2j0QqqOHW43rmJ5SH1sjM3KFtjLJIZvD2VB2iE=;
+ b=HOgCjp1QazbrAFV4sBV4oNK6gLVXDlELyAWfCnV0J3ro9PcmJlbdKj2LJqo0vuNH7VMFCkbGKDYtyE+svwUsy0q3uKxjtrn8ZolgaqXKVzQ4hnbaLB1koqYItnrn9JTI4G4XmFMDw5TvxUAFGJBl7SwoB411+ZKM9NZHv2caJNw=
+Received: from CWLP265CA0340.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:5a::16)
+ by PRAP190MB1737.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:29c::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.26; Wed, 5 Feb
- 2025 10:46:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.11; Wed, 5 Feb
+ 2025 10:46:01 +0000
 Received: from AMS0EPF000001A5.eurprd05.prod.outlook.com
- (2603:10a6:401:5a:cafe::33) by CWLP265CA0357.outlook.office365.com
- (2603:10a6:401:5a::33) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:401:5a:cafe::d1) by CWLP265CA0340.outlook.office365.com
+ (2603:10a6:401:5a::16) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.27 via Frontend Transport; Wed,
- 5 Feb 2025 10:46:02 +0000
+ 5 Feb 2025 10:46:01 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,16 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AMS0EPF000001A5.mail.protection.outlook.com (10.167.16.232) with Microsoft
- SMTP Server id 15.20.8398.14 via Frontend Transport; Wed, 5 Feb 2025 10:46:02
+ SMTP Server id 15.20.8398.14 via Frontend Transport; Wed, 5 Feb 2025 10:46:01
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
- stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>,
- Oleksandr Kolomeiets <okl-plv@napatech.com>
-Subject: [PATCH v2 07/34] net/ntnic: add var definition transparently
-Date: Wed,  5 Feb 2025 11:45:16 +0100
-Message-ID: <20250205104548.1533554-8-sil-plv@napatech.com>
+ stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
+Subject: [PATCH v2 06/34] net/ntnic: fix array index verification
+Date: Wed,  5 Feb 2025 11:45:15 +0100
+Message-ID: <20250205104548.1533554-7-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250205104548.1533554-1-sil-plv@napatech.com>
 References: <20250121170814.3252171-2-sil-plv@napatech.com>
@@ -68,63 +67,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF000001A5:EE_|PR3P190MB0953:EE_
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A5:EE_|PRAP190MB1737:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 9ebd61e4-6675-4d80-5aa5-08dd45d248e8
+X-MS-Office365-Filtering-Correlation-Id: c0ec9eea-51e3-4c68-8745-08dd45d24873
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?b9QtFm/Td89MMqOMs+if0T/nruQqDdwCo4XbWWeWvpzTVa5L3Otr0I8fa4ZA?=
- =?us-ascii?Q?wJjjnWqoVSBm6I5b3PxQYQUQWgmTi7KtGDq6twtMF3YOXWvy4tERINUuDD/l?=
- =?us-ascii?Q?THEaTV+bPSSETwQteqTUYL2aDjpcvXshAKAf/6jo/N7YaThnxMwWa6RflGK4?=
- =?us-ascii?Q?6/uDeOZ8gBvrQJDenuOlBMFRN1nsmNi09rV95ehVhZUMFSPZIDJk3QT9P5oT?=
- =?us-ascii?Q?imYxbKz5e9NhJwkreFrO1kojSUhf7veojyefAQgFyTw4CaZojPrJKvU/3Q5U?=
- =?us-ascii?Q?3Odl21GbgSwDUQMsD76HVpAN7bD9w65bT+tXK7lnPHn0N2o0xgT8uAIQzOwX?=
- =?us-ascii?Q?5O7ug10mpML7n64LIdfFQl5WqBeJPkVyruarfu6/Hp5MXhrxzlFJmBxE2Tg/?=
- =?us-ascii?Q?23HL6PiRRHCVZ5IFjiRjN4WFsA6L8HWHG6nKnpBA0roeO+j9Cw8yUDrEwd0k?=
- =?us-ascii?Q?vgSXb0fa2sHIrR3khoiZNod6o76GztjARDzpsedPyaCBRIuVUB1YJcEoALvm?=
- =?us-ascii?Q?boN3Sr/PFaKbkXXCmoMYNvJLerdBj9o6mNjEAB9wErC6EEo1Ux+ohMq4dSPX?=
- =?us-ascii?Q?QBLnjWFAj0S9MhAiYKvEs1N/mU/hV5op6mKKv1t2CBwfHT7uI3TmRPr1pUEb?=
- =?us-ascii?Q?gyHHW8uwD7o653dJbiJOw/x2K3G2urJcG280J1+vUsDsqEqfPGzN5Lmmc2ci?=
- =?us-ascii?Q?OuiGrQVIh6etO75AkfHmO5A3cY0SqPCUqaNZoAxResD7rZNiwb8fjFxpRqfm?=
- =?us-ascii?Q?Ah/4hqCKrbqlaDys2BE+Gi+QyeuTN5TX+PL0waQuPl4Mv9z7F4E6NDO/Buh/?=
- =?us-ascii?Q?Rpo1BWgAIOV/bO0mwC+tA16I79deJ3TK0iFkRfz8gz7GLTCPjd1OOaYfhhvX?=
- =?us-ascii?Q?6GEqUjqt5uZEbAcG95d3SFCgj8udp5p4Nm86Gud9asK+lzCxrHl1ihlX8B0s?=
- =?us-ascii?Q?dE6aE9SfGZXzG2PMIoSNi4SMDQbtJRbRDLMEiTcRbGf9j+da5/DztW2UFVIg?=
- =?us-ascii?Q?i2vU+Za0t9UL6/Epem1fOElU0Ikyv67p3Q5a3AMvp/Zvt3JChuHNvStlqSH3?=
- =?us-ascii?Q?nssI9W8RbupsPP6lYZ6ZBuR/2ZcMjq8YeF+iVRVj1tIan2Rgl6vl8VaR1OzL?=
- =?us-ascii?Q?4LgSq3TnYPUDf2dIhbfzywzBN81niuSt19OjrNeI9iRX4Jr0xJZFwPMt5HzO?=
- =?us-ascii?Q?hFjorEiokEvHu9xLroFZgE9wltynrLiEce5A/NceGlUCcnMT3vd1uQ/25EsK?=
- =?us-ascii?Q?jT9MljJA9/i2Lx9iRidAw1G70V9y1mPBgLPiIps5MrhXBFngd5SNzpeHk3U5?=
- =?us-ascii?Q?QyCFTz+hY/hiFCN0g8GFbJH4Se1MySbJ734RhZHT76WTlx448OI9zYYrUSZZ?=
- =?us-ascii?Q?hmebCXAooLeviRwPBlpGY/xvoIvMYCGvzbCF2FJ9hR6ppQ3+A4pfKaY93DMR?=
- =?us-ascii?Q?/PmVkEejC+K/al2skiceMez1DrKvDt7nfFCNd5ofhar2yfhDMrL5mg=3D=3D?=
+ ARA:13230040|1800799024|82310400026|36860700013|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KHBOL7xlB0twrpmojj3iMsn5aBnoNXUKGXPugrMpJSPxQsTU7feS3R/53pwW?=
+ =?us-ascii?Q?pQFUReezK3cgv+GLDBQADSiU5OickXqFPiVgkRoZpW2nNnC5G8JiVMny+McL?=
+ =?us-ascii?Q?HkY+rnsoBcP6XI2nQC/CpjyPvciZ/mdAnRDvkQIcwT7xjUQjhBHdp7IOwPAf?=
+ =?us-ascii?Q?H7IIJIHunCf75/iFurk/Tg5lwUXBflB76OxUhEjMWcwlF+E4augGVySPqxjp?=
+ =?us-ascii?Q?wwyqDWItt4Z9EFke2VvMxslNw77E/bygqE+d+HbxAVTqQ4pkiIiBkfcLYR2z?=
+ =?us-ascii?Q?m1jDKWY/Pzj7/GVijDeEj/Wjo/JLP99pnhR28EGGajEljScN6BAGpErR+onN?=
+ =?us-ascii?Q?mFP35p772rEgEtosniAmXXhbPPTAl141iG4UDOCbh7MxS1WPq5MY/vVYyXy6?=
+ =?us-ascii?Q?XRpH12sfDKVaozVRAaEScHpNaN7vy0DRzRJQLAeVUOzyrR3gIDMCe7xmEC2C?=
+ =?us-ascii?Q?lyNaIxS39CkdoVl2LW2wPPfo0Ml9//4/4kXS8W3VYSSyM+8IugJxlVfZdctF?=
+ =?us-ascii?Q?++xJ03SbkVBi4E4qDEuGt2/r8I/Zzxxuf/803uBXHcC4i1WcaXadtyjZG/ge?=
+ =?us-ascii?Q?bVSB7Wg/5FVCT7YiyERj1dfzL8Ef9mI0+25Ds7MRH7yaABaCS3668qwA6o5j?=
+ =?us-ascii?Q?tzJN4enqnXnJfoaBsUOEDiG30XL6YzrCBFnN9JCxKxtardhulkMdVY+mS3le?=
+ =?us-ascii?Q?2F6O6XNfR/t6kxaHMK4yGIKBSJUyHhScWMAChxNdazUb5N5IG+6jzFOJQXzC?=
+ =?us-ascii?Q?KlGDija62gi4WWaNSy6eCJZIZKgNjsXlmWS3SBUtyhUWwiXyCFK7P5pr6rct?=
+ =?us-ascii?Q?fHXCQ7fZuM0oMPEuTjzjVEc9IeTVa8FHjeAmO4gEWGnBENZLZrQRpkE0lS4Y?=
+ =?us-ascii?Q?psH1Taxpv737BdwZXUmIGFEZKQFIMMm+vHJvykkbCh9n7HZ2ZAFL4sqD8oeM?=
+ =?us-ascii?Q?9GTKncBYpU6ELidsfC1YiVhKJ4QHYFqSnrXPlQjUG2MUyYksj+o5ZRSLfz7I?=
+ =?us-ascii?Q?zP8Im/GKRNTsTwdAH6GvvR0+VtRMaX67BobFHcHViAYwzyDOeoOg3fa9zi61?=
+ =?us-ascii?Q?5R6830vpNHF2BCCZg4itOoSSS7tgujJd8Ek0MlnJK3jDiK6bDQnXhFjdgioD?=
+ =?us-ascii?Q?R8ev7amNkxcIpTAodC8tnmfWMAxSj6LSjnTENmCje1vNNp34KhXoJEcORAcL?=
+ =?us-ascii?Q?LZD6FGCe5jJigpidPDFtzg99B/PZuMlykvqpuKQl4760/GSr1o9uuPsivwc5?=
+ =?us-ascii?Q?27S5ER7arRk2V40wTJzJqP20A5xZsP5fS3EwdVwJ9IVBEP5PMVQNaMb3XjtK?=
+ =?us-ascii?Q?gYoK9Sx3qaR+A+9uneuALBqtjOlOUNEX+QS4dPm5bk30PM8YEwGUTqL65kba?=
+ =?us-ascii?Q?HTCgyi+3r+gXC2yoH0FEGAkMUbuBGPitBIGJhNHmXwO05haEtr3ma99DO8Fg?=
+ =?us-ascii?Q?rG+FdpzV/4s+9ZGN4fuK0RefZhJb0ciwyu4VCO9KXNJ5aSktT7r7B7J68ydN?=
+ =?us-ascii?Q?LVBgegH50jyfVjQ=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);
+ CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Kz4MgI2YIAOYU9KGzbJSjuLL+XYaGBh9tYr8faHlzTBDkSXtQK+nY2QBoWfgYwP6AAih+WMMEUnMGG5HpOwZAZQ/gjiAHh6nCGhmzLeW9Ch0CXgykWalA0vK/pq9nUahAn8UEqUGzrx8j0bUbv8mktflKJwSYwhwTgDCjriDXNke6d15vT24LZjKu4I4JG5QWLrCAOCYbsX+zKFrHwI1EMDn8t9yTHALpfipzArO8MNBy49GbdaTtmEdAEg4PRi2oKSQ0igtaA2zgWfOC3MnRS+ipEdmmkmWTERgGy5L8zG2eQ+ZG8v+1j7fi1GSzNbavyB0l/RvJ1ppHrhLGCfHl2NtADa3CKt2Fr5kybcyZcqu+/SEKqULfMM/DMYEz1XQgbfIazFCojbX7qvVDAM/my2s6onpW4vgVy6d+P/VclzC95hkCEWB5jFP+e1enx66SeLBGkR51OBebuEYmEY4p8uATasewuaT1a4VMMrDglrMNPjbdt5cS46Ujvm5mbItw9BftlbhSIXBAyGGjiCDJ8PiGJfXQBj3xd+oQF5/XBUq6Pc1yUsuGGeHb8aIKCTWnGFP0S54M0pgNdSZTcLjc5SbUMbidUbfnf1KCF0nZQzHfqJYjF80z3y7rQisebrx6h7/9A8WW48BI9fwtVoaeg==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: tmExKa5AUDAvygLjvE9avMfPh2Za5Swn/xzGeI5uXNblfPRKngl9g+W+CBUrpUy1QnaeeIMGbemijWmCxrHLcTP3BsJvmBOosng1SqAyqBcBlqEmXpAPVTUjaafRIXWU9gOY2ECcstQE2PgfEe/CPdLkIefsPVGy49ctXpMlIi8pLKJUGwVTB9fO3asxRjAVSXogVtGH3yaG8jGT3DXwgIZqy/odO6Q9RtgImqJIEaYWzFeKbkSx/UOtyBjqfjNaDZv/g98eibEudu59MevXg4p7xM+u5xhxc3Yf+XXznw17wkdf9Jju/i+2MF39lbVSVIvDvCiuu5EvZ0xBo0YbPHFUb9C4JFjNWxYlkyNoPlmFwy68PqWd7B+Vk8ptTWOEWli0qZBHbo5/HNgVKRGAmEy++HsRwTFZq6Ca1Wbgl6xbFt/aHj1AWnPSXDLBWBKUjOw029R5hfWS1RQsNw0929WmSVmOuAr7wkHhsuDOsZZGq3YLxJ0QLu4RsTFezkCezFlewDnHEI2aAJ3Px0IB0yJfAnRRa+SQBL74PBPEJ8PdPmyk/4aR8eZnoKs5Dtdauyv6YQmPDRuS4Zg40Ht+UUN9Xm3HNieNfJZuNCdIXq+vpLgs79CqpMNfkAcrUEVHcrdfRCmohLS7+odO7OQSAA==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 10:46:02.3395 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ebd61e4-6675-4d80-5aa5-08dd45d248e8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 10:46:01.6051 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0ec9eea-51e3-4c68-8745-08dd45d24873
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF000001A5.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P190MB0953
-X-BESS-ID: 1738752364-311016-7905-614-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAP190MB1737
+X-BESS-ID: 1738752363-311016-7904-613-1
 X-BESS-VER: 2019.1_20250203.2302
-X-BESS-Apparent-Source-IP: 104.47.51.169
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpbm5kBGBlDMIiXVJNXcwCglNd
- XELMXAMik12TLZ0sAwycQ4OdnCyFipNhYAHob84kAAAAA=
+X-BESS-Apparent-Source-IP: 104.47.51.238
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpYGRkBGBlAsySA1zdA4xcwk1d
+ IiJc3UPDU5ydjAItXC2DjV1NLU2EipNhYAaqoIgUAAAAA=
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262304 [from 
- cloudscan21-135.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan20-146.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -147,35 +147,33 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-set eth_base to NULL after freeing to prevent
-use-after-free
+CI found couple coverity problems which were fixed in this commit.
 
-CID: 446746 Use after free (USE_AFTER_FREE)
+CID: 448983 Out-of-bounds write (OVERRUN).
 
-Coverity issue: 446746
-Fixes: 1d3f62a0c4f1 ("net/ntnic: add base init and deinit of flow API")
+These issues were fixed with updating index verification statement.
+
+Coverity issue: 448983
+Fixes: 96c8249be53e ("net/ntnic: learn flow queue handling")
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/flow_api/flow_api.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ntnic/ntnic_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-index 82d4e34ae9..d25d1a3dd1 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-@@ -385,8 +385,10 @@ static void flow_ndev_reset(struct flow_nic_dev *ndev)
- 	}
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 620d023a71..28b086c009 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -140,7 +140,7 @@ store_pdrv(struct drv_s *p_drv)
  
- 	/* Delete all eth-port devices created on this NIC device */
--	while (ndev->eth_base)
-+	while (ndev->eth_base) {
- 		flow_delete_eth_dev(ndev->eth_base);
-+		ndev->eth_base = NULL;
-+	}
+ static void clear_pdrv(struct drv_s *p_drv)
+ {
+-	if (p_drv->adapter_no > NUM_ADAPTER_MAX)
++	if (p_drv->adapter_no >= NUM_ADAPTER_MAX)
+ 		return;
  
- 	/* Error check */
- 	while (ndev->flow_base) {
+ 	rte_spinlock_lock(&hwlock);
 -- 
 2.45.0
 
