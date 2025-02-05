@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65339C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 10:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B2C02194
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 10:49:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D00840E0F;
-	Wed,  5 Feb 2025 11:46:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D2EB40E17;
+	Wed,  5 Feb 2025 11:46:41 +0100 (CET)
 Received: from egress-ip42a.ess.de.barracuda.com
  (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id 9628440A6C
- for <dev@dpdk.org>; Wed,  5 Feb 2025 11:46:28 +0100 (CET)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com
- (mail-dbaeur03lp2174.outbound.protection.outlook.com [104.47.51.174]) by
+ by mails.dpdk.org (Postfix) with ESMTP id 1C23440A84
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 11:46:29 +0100 (CET)
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com
+ (mail-db5eur02lp2104.outbound.protection.outlook.com [104.47.11.104]) by
  mx-outbound43-8.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Wed, 05 Feb 2025 10:46:27 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lK3yQk0+XaAZ5uPAq69xWO6if92tfgPfF9Z5qUl8+YRbyS3zBBO4B2Yt9oG57u1OCXmME5C1Aq+pUCi2u7kpvnRvK2fW1i3+4rapr6tVd8QMpI/7Ry9Xr9lA/N/3sqao2AkKBKENi3ihQ4/Y2/3oSP3q2B6t0qeg2LTEfzCqCOD8F3cYgkDkGhZJZAv2S89j40hHq++kcnDNRBWwPOy/hTGD1js3RFSkKhA2ztUOYOLX6DLy6/9xTO1U4rsSqIW8AHLFhLb/OD9wqMf/jwMNP37vN77LB7023wwYgMSlfsP176vl7/1Pc8/7tbdpeHDRMeVlOp0ASv4Y+yHJiv/puA==
+ b=KGYQ+WA2dMpiECUVdaTzOn8UStHMwnQ7nZCPKA0e1OvwObdEDrb70SqRxm49ah8MWF01cK3Z2rm9ApWTpWkM9bDg2LoRk71exQBC1pK+7PlAnrXxjABUuzu0f2GWcIQbGZcCXSr+bpVqWbE6dmrjAnNhXrWz4YQqdfFThNBB7T12m/ABShpOgkRZAOS0tfNjxcUgH4vlJMvbLOMW/pwY8yN0vjKk/8bGoAwAbtdmpV4hzjqu+z4boyEZxUiqtHS2STRyaaodfUyyXSccKpp7177dXa2Imuen8hLFPxLZpQ/pDK4g72cfFjbcDJfipxfnxIiSvfGFvKt/vJY6RJSLIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zlBUzR/DMKNvuSvDqFx4bgWM0Sb0DSVMUj+OSjokHCQ=;
- b=QaOO5O/67S4aTRtD+2UabNuGK+Hs2WXNnvxj0xUO2A3cgCMXZixHm7rjlkMwO57Shryp/qPShGvjfb/4Yp9+8Cr687LoZxQ61qMOqDAEtbgngmspkL0VFnmz0SSkIWGaBvhsXHbdsFKrZgRi+f1+vq0Lz8x/dhSmRvHOizyrKW4jf3e72TNhKnXEibXnICWv8fX6EP06oRl17c3uFqxE08stPVq+OrF+QBRnPZuygB27BK3oYlioIjWvrgA+QrAQ5qcshyIvf26b8ZZW+DG0/+3kVgopLKN2vLXO4rsiU1KtxCgzzcR84sPhFUcDV7WYPQ32/cZy1Rb3pS0QsMGIyA==
+ bh=mrl55lT8g/p8kcpD9+ASdtD6PHkT/HAE0Ge+46xkYkc=;
+ b=ZMAAt+tlR+UT+W07WX5Kb5eJ8ugWpmRj1NTGGaJXl/Xdw72mwX/VxmKS1ECXtkQDrFAn2C1zOZWlVtK6CjlydE05HPgfYHjQHW5dhMIzadBO0jgoZGw/2piEZqZz6dPB2R7CZBoQ9pSVFDNbSxQHuAP1XKA6wu1X3Gvc+2iwmdIW2HubKYex+JYHJck7fwx5ir84EeyBfWU9qS9dcrveC2KzLX47fXed2cajZdI/mIr0xelc7RErhpE7YjIejniVsCN78O/ygFQ003v3Iwy/zA5mnMo3LuSN2n3VyXY7W7DjynlheHQyI6/gDS7J9dreE+bMkMhmo/4rl6IushV6Dg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zlBUzR/DMKNvuSvDqFx4bgWM0Sb0DSVMUj+OSjokHCQ=;
- b=Ywe7R6auqkW2dpGq4OypX6OFGOLAy4q9+qj+COdM/JsliREeEnCFpatuQjOWISRsCIHoFNqJ5D2VpXKqkNUKDRKWYKPwyGly8HFjb9W6cj/czsL4LLgkvqM/otLQwc7vWsx8r6VpnI4nvlPVouKQTEkYzNJ2oLg8QnBTb37kXJg=
-Received: from CWLP265CA0360.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:5a::36)
- by VI0P190MB2046.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:207::11) with
+ bh=mrl55lT8g/p8kcpD9+ASdtD6PHkT/HAE0Ge+46xkYkc=;
+ b=ai86bhikbbyAtP4aFXDLiUVOZ2dDL9OuBDKLwM6Wmy+rjOZ02XYbbKqlCZjVSzBxwPEhiDbO2jt6BsMDqCLFKZJcGP8p9I+kslf2hCJ2XvLGmNXpwOZFvS6f+JJF++x3FCeiREHOoW/lb/dJkbbaSdaW/zehdo/oN3iuonJI0bM=
+Received: from CWLP265CA0338.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:5a::14)
+ by PA2P190MB2101.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:40d::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Wed, 5 Feb
- 2025 10:46:24 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.12; Wed, 5 Feb
+ 2025 10:46:26 +0000
 Received: from AMS0EPF000001A5.eurprd05.prod.outlook.com
- (2603:10a6:401:5a:cafe::f6) by CWLP265CA0360.outlook.office365.com
- (2603:10a6:401:5a::36) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.26 via Frontend Transport; Wed,
- 5 Feb 2025 10:46:23 +0000
+ (2603:10a6:401:5a:cafe::2d) by CWLP265CA0338.outlook.office365.com
+ (2603:10a6:401:5a::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.27 via Frontend Transport; Wed,
+ 5 Feb 2025 10:46:25 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AMS0EPF000001A5.mail.protection.outlook.com (10.167.16.232) with Microsoft
- SMTP Server id 15.20.8398.14 via Frontend Transport; Wed, 5 Feb 2025 10:46:23
+ SMTP Server id 15.20.8398.14 via Frontend Transport; Wed, 5 Feb 2025 10:46:25
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v2 30/34] net/ntnic: refactoring of the FPGA initialization
-Date: Wed,  5 Feb 2025 11:45:39 +0100
-Message-ID: <20250205104548.1533554-31-sil-plv@napatech.com>
+Subject: [PATCH v2 32/34] net/ntnic: add checks for action modify
+Date: Wed,  5 Feb 2025 11:45:41 +0100
+Message-ID: <20250205104548.1533554-33-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250205104548.1533554-1-sil-plv@napatech.com>
 References: <20250121170814.3252171-2-sil-plv@napatech.com>
@@ -67,64 +67,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF000001A5:EE_|VI0P190MB2046:EE_
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A5:EE_|PA2P190MB2101:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 3eed3f4e-80bb-4b5b-4f21-08dd45d25589
+X-MS-Office365-Filtering-Correlation-Id: 3ea5bbe7-47cf-4254-3f45-08dd45d256de
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nBJykv1eLzScgzg+RFHNtbsZCPE5O5F79mcCgSNi7P8S6xbeHjPl0vjx1LRf?=
- =?us-ascii?Q?l9MlcK5nqZaF1R9tURR2dk2tI7tuJxCEw54hlejBCLCHVFCDUs1ocFiM7HtG?=
- =?us-ascii?Q?I5yzomMVuiuNd49203lenV4Nq0HLyGfk6z2nGqE2eTvQMqkZS4eqjeBPKltb?=
- =?us-ascii?Q?wGBF49+34zHP3wyHicainbFx3tIuxbdOPxHYxpTzLkUPihmo4ywemN8ucXAj?=
- =?us-ascii?Q?jyYqC60nwjVWLY7QIc6AOb4USBO9Tliima77FsjDi61x4db9cDOA5hlaWOYI?=
- =?us-ascii?Q?icphC5xE+MakuemGVM4GT7XX24TMTqoEIJn+4FghHzccuKI9jVBp18/wLHdp?=
- =?us-ascii?Q?73l1AuqiSdeaH8iL2+sYXOiP2AX6fR5uQl1qRTDr/k+KLszOs+cUaTtcy9dU?=
- =?us-ascii?Q?e7MrJwjIYR5EwmQMuG8WsZoxYJ4naR2N6VvG8YzfVy77BMQBzAdnQbYeiMbc?=
- =?us-ascii?Q?3sPqvR6BEmnXMiCECTXH4PIfGu1BJG02rm406VeC/3bcj6irQFbpkIkUSr8u?=
- =?us-ascii?Q?TUmAK7i++JgdCEUHKwLHbRV6O6txfFzATZZ2J11EY6HjAl2y7KiO1wPNgJwd?=
- =?us-ascii?Q?GHr3xehiUmj9pbT4FphUkYm/chmzPN1jw3rJ89+3wGWhv5MKECJjyfFW26cA?=
- =?us-ascii?Q?5q9AgJV37QhAR8lpO6XWeUGCKHnNZwkNaNtrj8O4Hrj4jh4uGVftzjHrP+yW?=
- =?us-ascii?Q?WbQOEO73rYeC2okfxYeehgOo6ymwqJD+8nhVmnkf8oa4qAqyry9HA3/XXgiJ?=
- =?us-ascii?Q?CeuGB2j1YWQXUcvriCaFR4m9HTAYqX/lMm9DkQi2zXpXqQasq1AG4r60nDO1?=
- =?us-ascii?Q?C+rfF68zVEaLH42Ghf+9r+mXNFtA0uP1qiN7fIbQ03A83D4tZSNtVGgKy+w5?=
- =?us-ascii?Q?e2aR5dp0o0rOhXVF8xgoaDzpAK3k6SttsAt+CNGWuo9fG1Eh9BgtXDzSqUh2?=
- =?us-ascii?Q?Z1oM3tXO3B2pGRkz/0tjqgufqsoxzO+bkv9jYwFkz/c6yY+GfdnMeL4Kvnb0?=
- =?us-ascii?Q?52qn0AcPuSPoc/pBUGRsGH2GC1tQG+/rkDdmlGNUYWb/Cuuq6E7buTaNb37F?=
- =?us-ascii?Q?FMaChB92dGllxMclsCdWsC6q3Anftej+AASKkTWU7XJOxGf0yoSc/Xk8hMpu?=
- =?us-ascii?Q?0CMtu+uvg7EMTatxqc8le4Q//yA/ER0dM8+bF4YvuxH/w9EligLc1vgZ/xNh?=
- =?us-ascii?Q?G+yloO5OPI+3s9vwxeA5UxQcHZjGabh6UAzyE8zv/xGwpAwkkRdZ5acTnsIj?=
- =?us-ascii?Q?Z3p4VmVSDg/wYdpr/As/3Au99VwuIWpWlaAUCYnzME8OovgIhq9GFw6C/fWr?=
- =?us-ascii?Q?zg0UJGF/YdQWeDe2xogPBcOLJIc5eRIPssBn2KE9pye0ppwbugnxJprucQUY?=
- =?us-ascii?Q?uCUSYn+NJ7km9ZuSIPwYezMY9mpmMbyTqGqyPwGjShlVG3a/UkFWt9u+buzz?=
- =?us-ascii?Q?MnLsN67xzmudugS8SBP6s2V9qfEqYhicWf74dKtC7gnwUQ3fQHiBlD4EOOVP?=
- =?us-ascii?Q?eyvuYQ746kWckds=3D?=
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?r9OMCFlQWEch/fUDAZLst1f4OXpIgESM83vhD7UISPHyvfgCNBxACk7O3dpO?=
+ =?us-ascii?Q?zATbIbopOU0E8PB5gvHjWbVWfJyG2gUewwDQEUooilHFx+S4/Cs3hXstcrZ/?=
+ =?us-ascii?Q?wDIiDJ6ciddRubNm0j7FMBkWSNGj0+XAOmnJ1M6tvfrIDxAMZbKLiKGctzVV?=
+ =?us-ascii?Q?pbbfjNznMUMI+DtOugeHVDB0dVtWfVTIoBzhpcsybeJU8/vfxzNGH85u1fyB?=
+ =?us-ascii?Q?nsQpZnb8om+U1UfmGxFmJ2xd7i7g7+DmxokAX+DKungdU03ZR6uI93KYdDcl?=
+ =?us-ascii?Q?EQPyYifYjb/KH6Puvx16QSk26GrRpLltJdSMMhL/A9Zw22QY0CKEUXgu4TJp?=
+ =?us-ascii?Q?Is+SoDqTpstHxwokPrgLmVVHurbZ4wGDfNgq+PbOo0rVVsx3wphQhr7zfCA5?=
+ =?us-ascii?Q?ZMlM+kiSGM/nIlBqVSNblm5Nt8P34/e4Zr/6VTmNVKYaW3IBRjDhf4UPrLxb?=
+ =?us-ascii?Q?pxuFosGoN6w6lv6jpl8qv8iBmV+279yBLuxRScVY2cWNIBhm7Axef/9Ciju+?=
+ =?us-ascii?Q?mlTxw1ShZ9NLrxCK+MW2irzi/x/jrOPdxvvMY2e+a85HAkvTqzQGxJZnP5h/?=
+ =?us-ascii?Q?EKkS98w+t8Qn2HWh9RpJp44TXVT5gnQ5zWy5XbztqT/Si33WPTPCQGgyu3nw?=
+ =?us-ascii?Q?kPQRakZUooD+nO4AAvpYBT85IuOE5HBtC/48Kj2lxrejsfr41JyLou7V8y5n?=
+ =?us-ascii?Q?PV0MO6BNRXrqgB+6eBVMUkr7DD1zmcjQNCtIdiUxitsXGSFb+/7mlaDUnI4O?=
+ =?us-ascii?Q?OXKR9nnyszD5uWZ2M0jPXr3phrmQIvqx7SX1FgZ8fdRI8BjyEfQNxUsOX42v?=
+ =?us-ascii?Q?ytfVlq7xdfd/UyjgDM3BPt8mbL+Bi1rT2eUV9tE8273QHVkbGW7YmrrLQb+w?=
+ =?us-ascii?Q?ka4oaQiM2Alr2/hheY2kNcr2N0KznSCbebwGbqPnY6ssWH9wPHl+hoXq8JPh?=
+ =?us-ascii?Q?HH+nqqElnjfCoR7tnnaEqbvCDNUnCRy01Oq49Qq51I/n9Qr6E0UwJ5xZWk9+?=
+ =?us-ascii?Q?O9Dm8vvRYGC1r1Vr3b9YaUcivpIe82zREywD2sZ3WPzu9URXp9MljL9GompV?=
+ =?us-ascii?Q?cWUia2F1fCd5ovrQ8Mq4zSCgz7fwZ33WhujjguKTmqIDLDCR1dbsuOSIeciB?=
+ =?us-ascii?Q?8MCMoxJ21utGfYsOfp8582CLxHBCwd/DIU88oVmOk+hM7V+Jyc6BJa/IWbuo?=
+ =?us-ascii?Q?EHgo5fLNkoDEcLSCQdkQc/Ea+WaNMvNvOYxIwZfRd78AXXmLCoLHv0t0en2e?=
+ =?us-ascii?Q?9CGxkCFiteO1JhckYax+VpysG+F5/m7AdEfEsGO53/C2y2xVP67CXiCKB6w7?=
+ =?us-ascii?Q?ccGKTcAu9bl2xCHKleSC/C3EqJ3c0I21LTNNyzmcDw+Sc+gHxL6nBVLg60Op?=
+ =?us-ascii?Q?yHrfAdxRQFO8/Tqc8cnlY9pxOZXwXrhnyemqrVzUqKcjfxHEHiqjaxD0aI3y?=
+ =?us-ascii?Q?la1LGPGaLX/IarKAkJ4FS/YbTlOE2aKY4WvdO3ucvjb515Lj48mqqvEBlnaF?=
+ =?us-ascii?Q?AJYAn04oCgEDcLA=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);
+ CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 9J60hEpE+9p4JFfkOplL1TCoAyRJmWe9NXRxpNi3wGvrzgdAh8tc7ak9xoD9QsBNofFjY7UIgptzqIP5a6CBGvNgMPTUceJgST5nR+c313yDvkkG3qmBz+FU5qNyBmQL81J56uOYi1eaF+4AuGHApkQ4blxvht7PobGnkS4Rg0jZI7yi7pdGt3Hh/Tk2ra/naTkUh6gjMXlBf5tXhyRQAOlc+IcZ1fuuzy1gpyy4F9gcB8ryMuLFadd6E+2utR1ykSeFYNfbBurdB5mkG0gJsvMAEf+X3WpW4c+zbcX9OuXS7IqiQkRDgFbk2CK9v6szEgnoaB5jrbyfcsUByPjy3ESNDMtzkOthyk++Pa/QTS6zZ5duekUCUf1hSToA5z1BMYob7dLWXg+ohXBwfcGpMDojk11u3a0CMBmS1uKulCtrYxxulIwMc7bfLCkVAm73PPqx8A/3LKMiLyZieYv8i4+81gejTbXUhAVSgmMmQmADTRN3Qp4tYhJq+rWp1FMzKZcUvcCRjcfRXGIGe4JyrGAD6d4ObJxsflAYd8iglkTkaSJVq24CdftAMcRNle73V4AjbO5fAU0AHM88hKRR+4v5GjYj2Vj2kwgAd2C2XwtdVkPx8QYI3uxubsQpLuN4sp0Tzze6r5EARt95AVeeBg==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 7JY25oWGO17GRAI7lL8SO7NtHnvGjKhVZMbvk9vmOGJo4mGQSKA+bjF3wnabOZd68p6N6IPoxTA9wmvDEBwzMQT+VyXxCVFWztrxYuQhQKGdxNYys53rXMsFBMqKgLBu9xb+2RePWsliVdnAHjlQDdwuNdie3wR5LKaLyOKFPUkOp/EDL5E9WqI2L4asJy3ccJrsmO6F2I0hhYR7F8Fkr8axkdkl/EVOtz0gOMoLeaPdbQHz5hFmLCQWhTAgAiFyzTO6iaw7Gmps1A8u8rKKSH/DqJu4dr+IrnkynvkumIJdbOpNCcyyI83zBl073AZoGQulepOuz1YAx1IRK289eorQ/Hq6X7BE+Pg9zXHZNCqhdNaRGeAF16WlVEXu+44z+Bxu+6ny/BYeqoX23lWHPbdtK7jOyrghr5bcTjv0dZd53YRnBmg2Uye68NfiYUPcfH0AWNJYC4oADcKaVIT8nAT9qOYqywkC3CpbjpOr6IHpFXc/LZ02GF5pVW6QyOXeE53j77dRIcwhkC+pGDmcMZxoKqvOZIBCX5VQy3St7u9oOOfnVDPSE1HIE2KskRCNoZ6MgkXTSlumul0gU2rezX8DOE/ogFjH5VdUkg0oPoCebfujaOa1nk8xw3fH1Ge5T9Ov0Jb5FeAMi4pRJ547KQ==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 10:46:23.5739 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3eed3f4e-80bb-4b5b-4f21-08dd45d25589
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 10:46:25.8082 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ea5bbe7-47cf-4254-3f45-08dd45d256de
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF000001A5.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P190MB2046
-X-BESS-ID: 1738752387-311016-7905-653-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2P190MB2101
+X-BESS-ID: 1738752387-311016-7902-653-1
 X-BESS-VER: 2019.1_20250203.2302
-X-BESS-Apparent-Source-IP: 104.47.51.174
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobGJmZAVgZQMC0xxdAizSw52c
- jQyCAxLdU4Oc3S1NTYMtEwJdXSxNJCqTYWAHxAtF1BAAAA
+X-BESS-Apparent-Source-IP: 104.47.11.104
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqbmZoZAVgZQ0MTYyMIw2SApOS
+ XNyDDFLMXQJNnAMi3J3NTM1DDFMs1cqTYWANWCCaJBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262304 [from 
- cloudscan14-159.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan17-75.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -145,50 +145,174 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unnecessary checks and logs.
+Following checks were added for `action modify`:
+* range check to trigger an error in case that value is too large
+* check for unsupported types of action modify for group 0
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/core/nthw_fpga.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ .../profile_inline/flow_api_profile_inline.c  | 89 ++++++++++++++++---
+ 1 file changed, 79 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-index 88641145ec..5ca186209a 100644
---- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-@@ -265,18 +265,14 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
- 	nthw_rac_rab_flush(p_nthw_rac);
- 	p_fpga_info->mp_nthw_rac = p_nthw_rac;
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index e911860c38..fe72865140 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -2990,7 +2990,36 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 	return 0;
+ }
  
--	bool included = true;
- 	struct nt200a0x_ops *nt200a0x_ops = get_nt200a0x_ops();
- 
- 	switch (p_fpga_info->n_nthw_adapter_id) {
- 	case NT_HW_ADAPTER_ID_NT200A02:
- 		if (nt200a0x_ops != NULL)
- 			res = nt200a0x_ops->nthw_fpga_nt200a0x_init(p_fpga_info);
--
--		else
--			included = false;
--
- 		break;
+-static void copy_fd_to_fh_flm(struct flow_handle *fh, const struct nic_flow_def *fd,
++static bool has_only_valid_bits_set(const uint8_t *byte_array, const uint16_t byte_array_len,
++	uint16_t bit_len)
++{
++	if (byte_array_len * 8 < bit_len)
++		bit_len = byte_array_len * 8;
 +
- 	default:
- 		NT_LOG(ERR, NTHW, "%s: Unsupported HW product id: %d", p_adapter_id_str,
- 			p_fpga_info->n_nthw_adapter_id);
-@@ -284,12 +280,6 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
- 		break;
- 	}
++	uint8_t mask;
++	uint16_t byte;
++
++	for (byte = 0; byte < byte_array_len; byte++) {
++		if (bit_len >= 8) {
++			bit_len -= 8;
++			mask = 0x00;
++
++		} else if (bit_len > 0) {
++			mask = 0xff >> bit_len << bit_len;
++			bit_len = 0;
++
++		} else {
++			mask = 0xFF;
++		}
++
++		if (byte_array[byte] & mask)
++			return false;
++	}
++
++	return true;
++}
++
++static int copy_fd_to_fh_flm(struct flow_handle *fh, const struct nic_flow_def *fd,
+ 	const uint32_t *packet_data, uint32_t flm_key_id, uint32_t flm_ft,
+ 	uint16_t rpl_ext_ptr, uint32_t flm_scrub __rte_unused, uint32_t priority)
+ {
+@@ -3056,23 +3085,47 @@ static void copy_fd_to_fh_flm(struct flow_handle *fh, const struct nic_flow_def
+ 		switch (fd->modify_field[i].select) {
+ 		case CPY_SELECT_DSCP_IPV4:
+ 		case CPY_SELECT_DSCP_IPV6:
++			if (!has_only_valid_bits_set(fd->modify_field[i].value8, 16, 8)) {
++				NT_LOG(ERR, FILTER, "IP DSCP value is out of the range");
++				return -1;
++			}
++
+ 			fh->flm_dscp = fd->modify_field[i].value8[0];
+ 			break;
  
--	if (!included) {
--		NT_LOG(ERR, NTHW, "%s: NOT INCLUDED HW product: %d", p_adapter_id_str,
--			p_fpga_info->n_nthw_adapter_id);
--		res = -1;
--	}
--
- 	if (res) {
- 		NT_LOG(ERR, NTHW, "%s: status: 0x%08X", p_adapter_id_str, res);
- 		return res;
+ 		case CPY_SELECT_RQI_QFI:
++			if (!has_only_valid_bits_set(fd->modify_field[i].value8, 16, 6)) {
++				NT_LOG(ERR, FILTER, "GTPU QFI value is out of the range");
++				return -1;
++			}
++
+ 			fh->flm_rqi = (fd->modify_field[i].value8[0] >> 6) & 0x1;
+ 			fh->flm_qfi = fd->modify_field[i].value8[0] & 0x3f;
+ 			break;
+ 
+ 		case CPY_SELECT_IPV4:
++			if (!has_only_valid_bits_set(fd->modify_field[i].value8, 16, 32)) {
++				NT_LOG(ERR, FILTER, "IPv4 address value is out of the range");
++				return -1;
++			}
++
+ 			fh->flm_nat_ipv4 = ntohl(fd->modify_field[i].value32[0]);
+ 			break;
+ 
+ 		case CPY_SELECT_PORT:
++			if (!has_only_valid_bits_set(fd->modify_field[i].value8, 16, 16)) {
++				NT_LOG(ERR, FILTER, "NAT port value is out of the range");
++				return -1;
++			}
++
+ 			fh->flm_nat_port = ntohs(fd->modify_field[i].value16[0]);
+ 			break;
+ 
+ 		case CPY_SELECT_TEID:
++			if (!has_only_valid_bits_set(fd->modify_field[i].value8, 16, 32)) {
++				NT_LOG(ERR, FILTER, "GTPU TEID value is out of the range");
++				return -1;
++			}
+ 			fh->flm_teid = ntohl(fd->modify_field[i].value32[0]);
+ 			break;
+ 
+@@ -3085,6 +3138,8 @@ static void copy_fd_to_fh_flm(struct flow_handle *fh, const struct nic_flow_def
+ 
+ 	fh->flm_mtu_fragmentation_recipe = fd->flm_mtu_fragmentation_recipe;
+ 	fh->context = fd->age.context;
++
++	return 0;
+ }
+ 
+ static int convert_fh_to_fh_flm(struct flow_handle *fh, const uint32_t *packet_data,
+@@ -3113,8 +3168,10 @@ static int convert_fh_to_fh_flm(struct flow_handle *fh, const uint32_t *packet_d
+ 	for (int i = 0; i < RES_COUNT; ++i)
+ 		fh->flm_db_idxs[i] = fh_copy.db_idxs[i];
+ 
+-	copy_fd_to_fh_flm(fh, fd, packet_data, flm_key_id, flm_ft, rpl_ext_ptr, flm_scrub,
+-		priority);
++	if (copy_fd_to_fh_flm(fh, fd, packet_data, flm_key_id, flm_ft, rpl_ext_ptr,
++		flm_scrub, priority) < 0) {
++		return -1;
++	}
+ 
+ 	free(fd);
+ 
+@@ -3476,8 +3533,11 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 		}
+ 
+ 		/* Program flow */
+-		convert_fh_to_fh_flm(fh, packet_data, flm_idx.id1 + 2, flm_ft, flm_rpl_ext_ptr,
+-			flm_scrub, attr->priority & 0x3);
++		if (convert_fh_to_fh_flm(fh, packet_data, flm_idx.id1 + 2, flm_ft, flm_rpl_ext_ptr,
++				flm_scrub, attr->priority & 0x3) != 0) {
++			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			goto error_out;
++		}
+ 		flm_flow_programming(fh, NT_FLM_OP_LEARN);
+ 
+ 		nic_insert_flow_flm(dev->ndev, fh);
+@@ -3512,6 +3572,13 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 			/* Action Set doesn't contain jump */
+ 			action_set_data.contains_jump = 0;
+ 
++			/* Group 0 supports only modify action for TTL/Hop limit. */
++			if (fd->modify_field_count > 0) {
++				NT_LOG(ERR, FILTER, "Unsupported MODIFY ACTION for group 0");
++				flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++				goto error_out;
++			}
++
+ 			/* Setup COT */
+ 			struct hw_db_inline_cot_data cot_data = {
+ 				.matcher_color_contrib = 0,
+@@ -5179,11 +5246,13 @@ struct flow_handle *flow_async_create_profile_inline(struct flow_eth_dev *dev,
+ 		fh->caller_id = template_table->caller_id;
+ 		fh->user_data = user_data;
+ 
+-		copy_fd_to_fh_flm(fh, fd, packet_data, pattern_action_pair->flm_key_id,
+-			pattern_action_pair->flm_ft,
+-			pattern_action_pair->flm_rpl_ext_ptr,
+-			pattern_action_pair->flm_scrub_prof,
+-			template_table->attr.priority & 0x3);
++		if (copy_fd_to_fh_flm(fh, fd, packet_data, pattern_action_pair->flm_key_id,
++				pattern_action_pair->flm_ft,
++				pattern_action_pair->flm_rpl_ext_ptr,
++				pattern_action_pair->flm_scrub_prof,
++				template_table->attr.priority & 0x3) != 0) {
++			goto err_exit;
++		}
+ 
+ 		free(fd);
+ 
 -- 
 2.45.0
 
