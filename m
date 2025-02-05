@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407A0C02197
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12316C02197
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:25:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 416324064A;
-	Wed,  5 Feb 2025 17:25:08 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 4EC3440608
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:03 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-2f9f5caa37cso722359a91.0
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 51EB14065B;
+	Wed,  5 Feb 2025 17:25:09 +0100 (CET)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 1778F4042E
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:04 +0100 (CET)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-2f9e415fa42so1379214a91.1
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772702;
- x=1739377502; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772703;
+ x=1739377503; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tQR7HMFBLn+vHlNygZ1YrWong0eA4S4pgzdM13oH2Qg=;
- b=xYBgxcnjoL7yg5Hw8R0Lx2T6qI6eqpdOnuDdK+06QFgs7mV1RI9tw6gE46zYEB88dL
- CgJoLeIZJhGPgI4I01I+C55dOJC3H93UsqDsIMA5SOvzTCy8eTaOJlE145N3GFWqD3lQ
- QZUtD3OsAFNz2oPJlaqwb1gNYa9woJK9wdqc9iDNCZPoq7JRSlVEouWhmtCravikO0JC
- fquGU/2ftvNsNRs0jtjH17lbUshHOPLzIeHq5Y0uj8HZxIsmadPP0WTuuWwE0nlGx6Yt
- vYjIvo76xnenRqzE0qLXN8matMvyYJasavMI2deg734nfxIMhNqcvK4sA0+Smt7yczRj
- DzWg==
+ bh=dyYQOw5yHwgfvcv4qIn/z4VM8/qbMnQvnHGhTrbkKlg=;
+ b=ZIrrUGOqEaGCe0XY93AcLchgW+e8ECS8m6AFsiW8JKaqxEALuaJy5R/9YKaFjSl+9J
+ 2XmPjFhP4sHIWitmybsbCP8maqiQ4Ibr0PDuZuYkwCpBacLWgTqMsJPwnwFaOziC131V
+ E3gDDddhCdlyBixPCOledlxIv8YKeFqXwpTsl1nWSuZiOzEW8ZqGMl3v2xdmucaAS5n4
+ R+cGpD0+Dz4nojjTt+Z9gHORyH966bDqNyWJWQBAzqmRQTnlunfw+cjMlCWdlplsWwpn
+ 3R7aEMI1fii9JN4rxk/uYrV/cDshj9VLo0E9SM2pGAdXJaAX9Q/EAAhfDbnIAdIhcVF5
+ wRSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738772702; x=1739377502;
+ d=1e100.net; s=20230601; t=1738772703; x=1739377503;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=tQR7HMFBLn+vHlNygZ1YrWong0eA4S4pgzdM13oH2Qg=;
- b=cNPmGTRXPoLV3Dra3H7rNoBmWNjqipHT3UCwy3SxnzJcHmsGCOkPvWtll9AJKLkU6m
- qlQ5KxOaXCQr7IYWG1vL2pde0jvQG5DqBVLpQ/qmwv5qFRSJn/fJjOsJ9yOK4SrhcBLo
- V22fDcky25aqOQsjex8Qn2XFkUhaNTdfjidJsXSS/KROIPolF11u0Wu+3ywbgIrZF0bm
- YVZDguaEqI0A11RZWKAH3GJkHZCc42iV7kWDsGTJwsl7NYlix6OksP/PEW5HYFD9un0v
- ju4ri6D5Y4PzxWSKZhi58w9C3Po5szQ6O94HFjXe39KG8JOhqztqI01spvAjt7A3Z+fw
- OA+g==
-X-Gm-Message-State: AOJu0YyFTK4ooAuhMfjflQq1pCQb8+sOMBe4OxSwNsfStn1kwk1+tMtY
- +NyPAKilYy0KRXyeNEnn/RxfghIygtgrB9cmsLHkqxWpjfc7IjHQgvF5LCcXxSWt3PF9NoufpOt
- 9
-X-Gm-Gg: ASbGnctfelQde7IG3cDYAhjwzYgyqN/ukvCbTUB0vIynGw/TKTtmpzh0QlNkdb++InN
- ci4wc03nRlDvXdO6+9pscTY9g7ygPx0ahFAPVkJp+dfqOlri1bz14sBvWycvBE/RkqOA6DIOzmb
- jRIzHEJeJygg+SY5eseoMO3HISuXNtk2xeDGdYurp9M1KnYfxFRNvBkNn0NAc5OUQ7pK+G48k4u
- Zy8LXPy/I3DXiACZpaNhF7xmXBySnUXnw569TW6d4W3xszKsq9MZrycK71+ArOmpulLdAlKaMu9
- 43I4p9Zin6UL0BZWXrKU9R2nBS6uMnIcuPCobbi8PzOj1R7+2UjMYdxkzcZeGk3wBS2z
-X-Google-Smtp-Source: AGHT+IEkXVgCaAp3Fud+979m5DDQ4vmW3r6bMjIc5fgQ/PI46BDwvpgM5tiqI+svOmZbtIGDg1L2oA==
-X-Received: by 2002:a17:90b:1d88:b0:2ee:823e:39c4 with SMTP id
- 98e67ed59e1d1-2f9fddd6945mr125358a91.7.1738772702491; 
- Wed, 05 Feb 2025 08:25:02 -0800 (PST)
+ bh=dyYQOw5yHwgfvcv4qIn/z4VM8/qbMnQvnHGhTrbkKlg=;
+ b=g6lIGyl4X2d8yUqnj7YH5wY9nEZgg8WQPupmKlpbI5c+W9pDT5wfE1H7q9iUQvoNsi
+ 2J5MpfCJtRXX3wsOzEm6amqsKLQ27BbKt5GJoBo8hd1nQRVX/548hggz7WgRjt03aQWx
+ SkzHa0eJHBycDleUwkZxuBN1gXTxXIIs5j/B/SHz7zvd1gmdjDTqH8U06zy0MHwgTjdL
+ FSU2Cy4Eim/6Hvi1Q1MnIAh+EY/+XIUAJZikaFKJ0+LSxOWyuq38ha3gmi4VCtEbI2w6
+ o56HqsvqD+BiwPeKDv1o+Q2huynFIOT1DoeoP/YmuHByYw1a5M4dGmmlUB1as5FzDOKi
+ p9Ig==
+X-Gm-Message-State: AOJu0Yxdub7b4m8B3cB9x2i1lGR/8FaWIuZkXGoYotKmi13t7HIi5rOQ
+ Mf9Kzsj8wJlLQaLkJAuNvUmbqBZVHu9W+B1bxfEGtsJOExWUMjulIkq3td+rrD7/cPnfNID/mos
+ 7
+X-Gm-Gg: ASbGncvqB0YhTjWUpMI9HgUABL61dFinf5T4LFoXC/xOG4X7ASxJpvh5/Jzd+0hOP4S
+ ygGlcABluCXeba/F5dIHuqav81GdZ8g8+VGXkzwiuVL6v/pqKFnue+Y9QT4f+edeBkw1rjaRjN3
+ XWm2bp536cPJJtuuc/TF+MBuDsZfT1OfFx1gDQv3hYG766MPLWDgl6w91bhIZB8hfX5hP+SmoV6
+ 2HS36YriNvZb9/RqGE9B/cHTYFmpfkMyEk+ePPUgVfYTyOUyRIcE6tL34rvt3oK39NxCgO69c7N
+ w3VF/eUtiBYQrviKciMKMMVA3RVVcUI1ipqXLOaAVziU3nSs4GCByRuZJ8oJyKYp3niU
+X-Google-Smtp-Source: AGHT+IGp4YxuaiKwVhSfXB0KRyKkfSWhVXZoXtDKqlJuOxJUEwlwIIRuIGtuLhaU93/T9f8cAXcgWg==
+X-Received: by 2002:a17:90b:4cc2:b0:2f5:63a:44f9 with SMTP id
+ 98e67ed59e1d1-2f9e0811e4bmr4253699a91.23.1738772703288; 
+ Wed, 05 Feb 2025 08:25:03 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.01
+ 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Wed, 05 Feb 2025 08:25:02 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, tduszynski@marvell.com,
- stable@dpdk.org, Jakub Palider <jpalider@marvell.com>
-Subject: [PATCH v3 03/19] raw/cnxk_gpio: fix file descriptor leak
-Date: Wed,  5 Feb 2025 08:23:04 -0800
-Message-ID: <20250205162448.161161-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>
+Subject: [PATCH v3 04/19] net/ntnic: remove dead code
+Date: Wed,  5 Feb 2025 08:23:05 -0800
+Message-ID: <20250205162448.161161-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250205162448.161161-1-stephen@networkplumber.org>
 References: <20241115060738.313190-1-stephen@networkplumber.org>
@@ -81,64 +82,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function would leak file if fscanf failed.
-There is a working version in other file, clone that.
+The loop to update speed would not work because num_port_speeds
+was always zero so it did nothing. And the array of pls_mbps
+was only used inside the loop but never set.
 
 Link: https://pvs-studio.com/en/blog/posts/cpp/1183/
 
-Fixes: 0e6557b448fa ("raw/cnxk_gpio: add self test")
-Cc: tduszynski@marvell.com
-Cc: stable@dpdk.org
-
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/raw/cnxk_gpio/cnxk_gpio_selftest.c | 24 ++++++++++++++--------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/net/ntnic/ntnic_ethdev.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/raw/cnxk_gpio/cnxk_gpio_selftest.c b/drivers/raw/cnxk_gpio/cnxk_gpio_selftest.c
-index 2f3973a7b5..a0d9942f20 100644
---- a/drivers/raw/cnxk_gpio/cnxk_gpio_selftest.c
-+++ b/drivers/raw/cnxk_gpio/cnxk_gpio_selftest.c
-@@ -34,24 +34,30 @@ cnxk_gpio_attr_exists(const char *attr)
- static int
- cnxk_gpio_read_attr(char *attr, char *val)
- {
-+	int ret, ret2;
- 	FILE *fp;
--	int ret;
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 2a2643a106..467fea4bf2 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -2037,8 +2037,6 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 	uint32_t exception_path = 0;
+ 	struct flow_queue_id_s queue_ids[MAX_QUEUES];
+ 	int n_phy_ports;
+-	struct port_link_speed pls_mbps[NUM_ADAPTER_PORTS_MAX] = { 0 };
+-	int num_port_speeds = 0;
+ 	enum flow_eth_dev_profile profile = FLOW_ETH_DEV_PROFILE_INLINE;
  
- 	fp = fopen(attr, "r");
- 	if (!fp)
- 		return -errno;
+ 	NT_LOG_DBGX(DBG, NTNIC, "Dev %s PF #%i Init : %02x:%02x:%i", pci_dev->name,
+@@ -2178,12 +2176,6 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 	p_nt_drv->b_shutdown = false;
+ 	p_nt_drv->adapter_info.pb_shutdown = &p_nt_drv->b_shutdown;
  
- 	ret = fscanf(fp, "%s", val);
--	if (ret < 0)
--		return -errno;
--	if (ret != 1)
--		return -EIO;
-+	if (ret < 0) {
-+		ret = -errno;
-+		goto out;
-+	}
-+	if (ret != 1) {
-+		ret = -EIO;
-+		goto out;
-+	}
+-	for (int i = 0; i < num_port_speeds; ++i) {
+-		struct adapter_info_s *p_adapter_info = &p_nt_drv->adapter_info;
+-		nt_link_speed_t link_speed = convert_link_speed(pls_mbps[i].link_speed);
+-		port_ops->set_link_speed(p_adapter_info, i, link_speed);
+-	}
+-
+ 	/* store context */
+ 	store_pdrv(p_drv);
  
--	ret = fclose(fp);
--	if (ret)
--		return -errno;
-+	ret = 0;
-+out:
-+	ret2 = fclose(fp);
-+	if (!ret)
-+		ret = ret2;
- 
--	return 0;
-+	return ret;
- }
- 
- #define CNXK_GPIO_ERR_STR(err, str, ...) do {                                  \
 -- 
 2.47.2
 
