@@ -2,62 +2,149 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81072C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 05:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989BEC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 07:27:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8F2BA402DB;
-	Wed,  5 Feb 2025 06:43:05 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 30380402DA
- for <dev@dpdk.org>; Wed,  5 Feb 2025 06:43:03 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5155Rrao016305
- for <dev@dpdk.org>; Tue, 4 Feb 2025 21:43:02 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=j
- kUci8PONByB0iLM5skl3YZbNcBU/rfWXloli4Wq614=; b=ZajwhHWjDFmHEXV5C
- +uWYlidY34C5ZGXED2I7LwVtshJVMl15WwqskFv2CZ9K/sENLCfofQud9o1r6DUI
- Z/59vs1cY6JghHH47E24XuI9V5KJCX4V6zLVf7CCrLBS+C+MQBSvk11Egpr04bMk
- hLlpQJy4KY7JZqKxuGi7KJqrkQ17fmt79CShnnzMn2Z/GyzaMfTxv0+F+ZhjR9s7
- YmfVAADiI3IFgzFC3+m36HrvrSiVU/CTzAB99TPQCS6dKA1vbNGiF3sBemBmoqFm
- raVFYp530fb0EfSIR2VqihliaV7wHGwtNniS6Btur83nK+Hl92ckemoHdg5wyRHk
- 3GNwg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44m1uvg0mg-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 04 Feb 2025 21:43:02 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 4 Feb 2025 21:43:00 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 4 Feb 2025 21:43:00 -0800
-Received: from cavium-OptiPlex-3070-BM17.. (unknown [10.28.34.33])
- by maili.marvell.com (Postfix) with ESMTP id 41F183F7078;
- Tue,  4 Feb 2025 21:42:58 -0800 (PST)
-From: <psatheesh@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>, Satheesh Paul <psatheesh@marvell.com>
-Subject: [dpdk-dev] [PATCH v5 2/2] net/cnxk: support rte flow on cn20k
-Date: Wed, 5 Feb 2025 11:12:47 +0530
-Message-ID: <20250205054247.1214565-2-psatheesh@marvell.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250205054247.1214565-1-psatheesh@marvell.com>
-References: <20241021040144.974453-1-psatheesh@marvell.com>
- <20250205054247.1214565-1-psatheesh@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2B7C040289;
+	Wed,  5 Feb 2025 08:27:18 +0100 (CET)
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
+ by mails.dpdk.org (Postfix) with ESMTP id B1B1A40270
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 08:27:16 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f2gUKSK5kGY9YRKBBZWu3imNgd90/pfE3f7uMelg6hSSEHrXQed9JowwXRkHG+xHO1JPGMw/EDG3RpFhtf21Ofpekb71hj7ybNTiMukrjSqj7aoy7/JlceXPYsempZU3h5N9r58+A3YYuZA7DJTjtjJHf1pLt9zHw4LA94QdasjFQfKdtRjD7Lr7LD+H7STPdTrV8oKyWbTktUJ/QO9L0SDlhuiK86CeoAKgv9cq3Y6bkanKlbV4oQj2jLr3vlrmXYAWz8719CoLSHZmGyxcsQPsLpC7kzWmWCwujDI5zvUGmjBt4KkmfrdRWRKo1drgfpc1lqQpGm9W/m2smLXkIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WMWk/kOHCj5s+USdSaEAQ/UxX/pn+JwFUAFxiPZt5jA=;
+ b=JSdHvcGAkFIj2VzydrZcFpT8eYbaUkNAsAwL76MRGbZBOvUmUckIOJzVxtjVdYPvPxhqPIZcopw6rRo0coiuZfh3kx8mjI85Wgx9Og1kCpOaWU1mKGkcel3RZ83q2RV+dftT7BuzEa6YSvIiGMmMqThHqvB2gQPdu5I3T/YDujBWOjWksmFUTcMLJ1XarwfuxYL9gzocZY9vw4FusBGhDAN8fwvjUxdSIcXuBih9IoLbqM6MPThxn7VBinpHiwguOp8UWaiPrJ72GgRNN783a4fimZ0G41LHz33+Tl3Vd66tpgRx/mctBYMXIOQk1tDvdsMmea1stnMLZ9KdFmE5Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WMWk/kOHCj5s+USdSaEAQ/UxX/pn+JwFUAFxiPZt5jA=;
+ b=QXYDwcIKGx02sMDEN6ZUBDtYyjQlLJpJBd+FOaZtvHa1bF7zE7KEWB3Cnb3qX6Jc30x+An3RprrbFCsMcFiV/eeDV1wWxuQmYFmx4tLZERh73xKVNwHrsc+WqXN40KN1E72AV20Re4iHv4gEGv0K+5H7/g5XmkqigMFxVAMtomQsXgkFSTPXnp9tsujLGfqxfKbw8uj+BSQlhnp4vx0nEV5EhELs90kEZoSDMVwQ25j0Alg8mDatoKGUbbtixnNIksu1T+yoVXqnYKOxcDk9QKMjjQKcoB1S6mGzjdr7Rdc7xvGBGSy2DVNp2wYR3R8rfhfpNToTWqlKj3DFmZzhlw==
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com (2603:10b6:208:3c9::19)
+ by MN0PR12MB6056.namprd12.prod.outlook.com (2603:10b6:208:3cc::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.10; Wed, 5 Feb
+ 2025 07:27:14 +0000
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8]) by MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8%3]) with mapi id 15.20.8398.021; Wed, 5 Feb 2025
+ 07:27:14 +0000
+From: Chenbo Xia <chenbox@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: Maxime Coquelin <maxime.coquelin@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [RFC 0/3] Vhost: fix FD entries cleanup
+Thread-Topic: [RFC 0/3] Vhost: fix FD entries cleanup
+Thread-Index: AQHbVhuD2TmdjYHFl0+X3WzF5AObBbM3YlwAgAEwIIA=
+Date: Wed, 5 Feb 2025 07:27:14 +0000
+Message-ID: <3EE665CF-8BD9-4F3E-8CF4-30F0A285A7CC@nvidia.com>
+References: <20241224154958.146852-1-maxime.coquelin@redhat.com>
+ <CAJFAV8zwCx+Xsa12TaLye3A9dSSSbt_T_-cc6Lc71oNyLv9=nw@mail.gmail.com>
+In-Reply-To: <CAJFAV8zwCx+Xsa12TaLye3A9dSSSbt_T_-cc6Lc71oNyLv9=nw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB6103:EE_|MN0PR12MB6056:EE_
+x-ms-office365-filtering-correlation-id: 7f2a7ea4-6cd6-4ce3-21f8-08dd45b6832e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?R25Lc1NhenRERHIyTG1GWmFqZUtsa0lLdFZBN29ETVdaU2hISklkT05TTXZO?=
+ =?utf-8?B?SXZNR0NPVk9UbjhNSm15cmx4dUFWWWtrb29nTitJbVRkczNiRi9reFkrRmFF?=
+ =?utf-8?B?c0dzdWFDTHNNaFpleTB0eUp1b1JoOEY1bjBjQnkzSm0wNFMrQTlxNzlQbHVG?=
+ =?utf-8?B?OXgyTko0UzU5cnVqTXM1VXRLV090RkpncTk3UWpjN2hnSVpiSjB4MjNGUUt1?=
+ =?utf-8?B?RXQrL3hHVkdrMFRBeHJQZ2o4UjhjQldDTFIyZzUyTEwvNWlMZiswMy9DVzBl?=
+ =?utf-8?B?VlpZeDZENjc4djhZSTg5WUdNdEp3NFk2cFRkRUc5MVd0VnA4SWNJUm9OKzNL?=
+ =?utf-8?B?Ri9RT2FuTUo3bDZlUkpSdFdDWmRhNFhHTWRFdndRWjZCWTRmK1NweWRUMjl5?=
+ =?utf-8?B?czI4aTYvZ01GS1ZyUGZ4VWc1NEFJRk9oa1hxd1RHOHE2OW1WSkhyR0NvM0FE?=
+ =?utf-8?B?NHE3U3lkQ1N0MFlscTN4b2RFZU1qeG1BWlA0TmZsdmRUaTVxR3RncDJyMmYv?=
+ =?utf-8?B?U0p5KytJWmVlaXp3OG9ZMTFTMFgyRDFCNG9Ed2lFOTJCUENSVFQwUjQ5cTZx?=
+ =?utf-8?B?TloyMG5iSEFuVTlPcnZobzFhU2l6Ukg4TjBLL1d2MmpRc3BaTWtQQXlEb2pl?=
+ =?utf-8?B?SWpObHArUHNOME5wU0xoK3I3RXlleHlHQzFUd3VXc05pRll2UjhyZlQwYXZu?=
+ =?utf-8?B?cDltQlNlUi9pcDNtVWlSZDlKRUVBU1d4YTNMVlZ2R1J3bkFMdDNaL1NMVUMx?=
+ =?utf-8?B?UTVWS3JUZUtCKzJjSGVHd21hUHNEc01NZWk0dUZHRW1sbSs5RnErdVdzSVJD?=
+ =?utf-8?B?WnI0aW1MNEFYeFpCdWEwWUpvM1J3ZzdjbVA0SlBnOTZCb0oxelpGZUYreG1D?=
+ =?utf-8?B?QzZvdURJOXk4WXhKODhveEN3Vk9IM3NjMEtvUW1ETzM4WXdvOVFKQlJscEtO?=
+ =?utf-8?B?UFJuV2haeWMwUCtvam1PUUhyRUlSbDRmYVVHejI1emYvby91alpLOHZYc1Bn?=
+ =?utf-8?B?eUlrQ0Rtc1ZKaEprenZqZ0RHV3RjOG1qVDJCbHBpTDg1UGNiZ3ZIMGdCMlA4?=
+ =?utf-8?B?Wnl6YUFsUTlWY3FTVG4xdjBFcWZ5QjA4bXZFQTJGbGxDSFRWa0JDbGVhaWtk?=
+ =?utf-8?B?L2RJeEhiYVRneDFHV1AvSWppWHJ4TDdBOVNYUlRiWlN6NFBoWVY5Vi82WFpy?=
+ =?utf-8?B?RGMzVG5PYzhiV0NxYkQrQmoxekczTFVoYVR5SXlFK2VTME0rUFEwRFhVZzFt?=
+ =?utf-8?B?cWhuNFFhMG0vRmR6aFA5SEU2WDFJeDdFcER1NXlVSDk0L1FpaGNaWFhUamxs?=
+ =?utf-8?B?RllnNTZ3eS9wSHlSTG9GcGJ3dGxCWm90WGdNMVp1aDhpanEwdjY2amdKMEVV?=
+ =?utf-8?B?UmRYR1RUN01NbVlKUkFoeDVwckFURFc0cDBEYktZU2l0ZjZqWFFjWm1HSTFU?=
+ =?utf-8?B?UDFidnlMWExDcjhjTlVVMWVHZ2p6b2dXVW13L2c1RkVEWm43enRPRGJRK000?=
+ =?utf-8?B?ODlnbjlncUJvYktKUTF0aEZ3OGZ1OUMrdEZGTk1oOExHcDA4WTYxM2ZHRkJX?=
+ =?utf-8?B?OUtwNU1pNTZ6bVZveXVSNkVMNWY0VmdLVEVZQmRKTUZvVFlTanJlTkNwOFdn?=
+ =?utf-8?B?VGdmUDFmUWYzVmExaWdWSHNnanJoeng4ZkV5cG5IUi82d2VSTitPNWZzZlRr?=
+ =?utf-8?B?eVlDTjIzK0VnaXBJVnZndjdhNitNMzRJcWVIYlFxZ2s2ZmN1TStKMHdtTUxi?=
+ =?utf-8?B?eGVyZWt5d2F0c0hCR0E2QVVEYUVqZU12SmxRaGVSY0dUeTA3TDAyVDJsUUlY?=
+ =?utf-8?B?NitqdGJUS2RHQ1V4MUt0STZUdml0eVF1T1VkUzFHUkRxVWZ4eDdnYnNqZmM2?=
+ =?utf-8?B?NCthdnlxQ0NEZHdSVW5RN3M0MGRyN2hXdzg2Yk5GMkVTYnM0NCtUTlk3elEy?=
+ =?utf-8?Q?/2i67sqmjLhwHL/TPabboexwx/Drn8fR?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MN0PR12MB6103.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RS80eFlSZStQUXBndkdudXZVY0J1L0xJQnNGMVd4T0E5M0NLa0VSZmpWOU5Y?=
+ =?utf-8?B?UkdTOVZoOG9pZzhqR3hoa05TUmJiYnJsZG9KSHBMOWpzZXlncHVLQTBjaXdX?=
+ =?utf-8?B?WWM3Ylg1dEl6TU0yYXIrV2hNK1NlNkh6a3E0emlKRVdHeUdxQzV4K0J4bHhq?=
+ =?utf-8?B?TjZ1eWNYNWh2NWg1cXRTZmdwZlVlYktIcExRYmdUQzRjZ0w1V1d0RjVEdjV0?=
+ =?utf-8?B?RXNPaSthSCtpRkFSUWNFTnZrVktDdS94OFo3UFJoYWg1YzlraVYzWDdzSUJB?=
+ =?utf-8?B?UVZkdnNCZ0REbXl4NThPbW5Xd3NSWmN5Ymt3dmFnQ3BQZzdjRExLZ2pML0V2?=
+ =?utf-8?B?dWozR29Pc3ExeUpWNk5aajVGZzBOUjVUNElNemtxS0NYalFuOHJUbXdRc0VI?=
+ =?utf-8?B?ZHVpdGcvVENPSFNJTTFCeU5GSHA2ek80cU50MlVqaXUvZkRTZDcxMDJxVENT?=
+ =?utf-8?B?Z2xmVFRqVlpjbEVINnJreWtpUFJPOExOQjFSSEZJRkRaVytscDU5UmNzZU9s?=
+ =?utf-8?B?TDBqQnJVUTNlZHFBMTByWlRjdGJ4OHliVFA1MndHVDkyNGw1VnlrTXprTG1h?=
+ =?utf-8?B?d3dTRlZFTXZoNjA5aFJSNms3aU90bTdoWUc3a21ja2dlWFVlcXVnK3lmR0pD?=
+ =?utf-8?B?bk5tRlNxOGlBMGh4TjB4NnZSbVNSMUVzS1JYNVRLSFp5Z1AvTTRUUndzaENr?=
+ =?utf-8?B?Rkd5clF2Qng4U2VmbUUySDI5K3E2aG1FNVVIUWhKc1RKSTF6K0g1c3hiNHhh?=
+ =?utf-8?B?d3p1L3ozVVNHYWpyQ0hlK0RNTWRzalpmcmJ0NTdFSFo2czhkYllYYXRPOXF1?=
+ =?utf-8?B?c21seXk5eXo1TWQzWmZqdDBkOEptRnhmMzR3Y0g5MXcrTDZ4WUlUQTJ3WWli?=
+ =?utf-8?B?a2hWZW1uOVN3dDZMSU12alo2eXFXV3B0MEhteHNqbVdEZjVXejZsZHlzWUZn?=
+ =?utf-8?B?ZDF0NkZDV0NXZmxqR1lQeGZ1VTJvbzBFNWlLNE01UkgxQXBuYVRDZ29xUnNK?=
+ =?utf-8?B?Y0h2MEJhNTZRZDMrdGlLQmk2Y3Z4OXpPMWZZNVluS2JMejJENHNLSlNCYjZl?=
+ =?utf-8?B?Nzc3T2MxaHplQ0FsR2t1ZzFPckp5NGdLQmJ6L3pJYXFYTzlpRG44UVNnNTMz?=
+ =?utf-8?B?cU93OXA3QlRMRFpBS0RoMHp1TGliZXRsWVBKemVralJiV29VRElSQkkzZHcr?=
+ =?utf-8?B?ZyswUWtnWWh2WTZrNXBXRk5iRDhxaFdnTzZvdHF3VlBhWlFVSTFoaFhORllt?=
+ =?utf-8?B?MW5mUmVDZGVzV2FsQndYVnkvQ1kwaTRLaFo0YUZ6U1Q3c1MweHRoUWlGMFQx?=
+ =?utf-8?B?WjdXemh4OXFJNU9PVDZZQVA5bUVpK21mUjYzV2J3ZzN2VFdXUXhZRCticHBJ?=
+ =?utf-8?B?MC9HWk5kZmtkVCtYNXlIajN0bSs1YnRoZVJjczhFeGJCMFVKaThBUHNDRGoz?=
+ =?utf-8?B?MkZBb3F4aTVZM2JzaDNwbWNIY2NmSHRqNXprUTZ1OFVESUVuSTJwUUVjRUwx?=
+ =?utf-8?B?aFdRZ1V2MDFJLzN2c0JLdmNhZkpuWHROWHQ5bTMvUGM2VThHamE3MDF4Y1Q1?=
+ =?utf-8?B?TlQ2SnYrckVjbEpkTG1KakJTREVyakd1UE8zNE5aUFI4TWVGZ1FkdnBMS0s5?=
+ =?utf-8?B?RWE3c29wcUlGVm1rV1VuNk5qUnlkOWlWUW4vc2tQSnpZejRoS1BjaTNLWkxQ?=
+ =?utf-8?B?OEMwSS9oNEJDZmg1UUJUZzhPcjZxSkhaU0JzeDJvK2RUbDl6K2dyRGJPSndn?=
+ =?utf-8?B?WFRmMGdJRllNRFU3Zko4QnJKaDRBdjhtZ25FM0k1Ky94dHNJNXJhTTdjbWVk?=
+ =?utf-8?B?cmlFMDZkWUtjaVJQMzNoK3JQdzJqNTJEMzdwK1cwcHdoRmxLdi96Y2FTUjBL?=
+ =?utf-8?B?MklSQ0dJR1ZCbWJHSWRMcy9Pd1RwTEM0OHdhVmZSK2ljL0JkbW9EODlSSkU3?=
+ =?utf-8?B?blYvOG0ybndyM2pieE1nR1llbnpGRFB2OHJ6VkEzR2lmd2daWU5BUURLOHFM?=
+ =?utf-8?B?ZkxMN0s4MlI4VEJ3YVFRdVNMUUxZbzZ3MEYzdzFsdVFDZ0JjSHovNGtUVnRL?=
+ =?utf-8?B?ditPMk0xRTlMMS80djEra2FIYTJ1WjRCdklrazNzSnVYQ1I5bzhNZG5qdDZO?=
+ =?utf-8?Q?WwtlRtlYnSLWgYmmIjjJurqzN?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <036C3DAC9429DE4B8B6FDE30BE8FF364@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: YqR_V5aqmHZjoW951JVIfvAL0pBW5tvA
-X-Proofpoint-GUID: YqR_V5aqmHZjoW951JVIfvAL0pBW5tvA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-05_02,2025-02-05_01,2024-11-22_01
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6103.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f2a7ea4-6cd6-4ce3-21f8-08dd45b6832e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2025 07:27:14.3252 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /DOtE6Fp1BVGDrsh/I55jwBfAeIXhqKRw3kespfrPFMf9eYvN8makbCHEFee6ubISuGV7NFIM7OYAH4mywx7Dw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6056
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,887 +158,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Satheesh Paul <psatheesh@marvell.com>
-
-Support for rte flow in cn20k.
-
-Signed-off-by: Satheesh Paul <psatheesh@marvell.com>
-Reviewed-by: Kiran Kumar K <kirankumark@marvell.com>
----
- doc/guides/rel_notes/release_25_03.rst |   4 +
- drivers/net/cnxk/cn10k_flow.c          | 227 ++-----------------------
- drivers/net/cnxk/cn10k_flow.h          |  10 +-
- drivers/net/cnxk/cn20k_ethdev.c        |   4 +
- drivers/net/cnxk/cn20k_flow.c          | 101 +++++++++++
- drivers/net/cnxk/cn20k_flow.h          |  21 +++
- drivers/net/cnxk/cn9k_flow.c           |   2 +-
- drivers/net/cnxk/cnxk_ethdev_devargs.c |  10 +-
- drivers/net/cnxk/cnxk_flow.c           |  18 +-
- drivers/net/cnxk/cnxk_flow.h           |   5 +-
- drivers/net/cnxk/cnxk_flow_common.c    | 213 +++++++++++++++++++++++
- drivers/net/cnxk/cnxk_flow_common.h    |  19 +++
- drivers/net/cnxk/meson.build           |   2 +
- 13 files changed, 399 insertions(+), 237 deletions(-)
- create mode 100644 drivers/net/cnxk/cn20k_flow.c
- create mode 100644 drivers/net/cnxk/cn20k_flow.h
- create mode 100644 drivers/net/cnxk/cnxk_flow_common.c
- create mode 100644 drivers/net/cnxk/cnxk_flow_common.h
-
-diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
-index 85986ffa61..18a675a6ef 100644
---- a/doc/guides/rel_notes/release_25_03.rst
-+++ b/doc/guides/rel_notes/release_25_03.rst
-@@ -63,6 +63,10 @@ New Features
-   and even substantial part of its code.
-   It can be viewed as an extension of rte_ring functionality.
- 
-+* **Updated Marvell cnxk net driver.**
-+
-+  * Added rte_flow support for CN20K SoC.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/cnxk/cn10k_flow.c b/drivers/net/cnxk/cn10k_flow.c
-index db5e427362..b95fb83f08 100644
---- a/drivers/net/cnxk/cn10k_flow.c
-+++ b/drivers/net/cnxk/cn10k_flow.c
-@@ -1,215 +1,29 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(C) 2020 Marvell.
-  */
--#include "cn10k_flow.h"
-+
- #include "cn10k_ethdev.h"
- #include "cn10k_rx.h"
- #include "cnxk_ethdev_mcs.h"
-+#include "cnxk_flow_common.h"
-+#include <cn10k_flow.h>
- #include <cnxk_flow.h>
- 
--static int
--cn10k_mtr_connect(struct rte_eth_dev *eth_dev, uint32_t mtr_id)
--{
--	return nix_mtr_connect(eth_dev, mtr_id);
--}
--
--static int
--cn10k_mtr_destroy(struct rte_eth_dev *eth_dev, uint32_t mtr_id)
--{
--	struct rte_mtr_error mtr_error;
--
--	return nix_mtr_destroy(eth_dev, mtr_id, &mtr_error);
--}
--
--static int
--cn10k_mtr_configure(struct rte_eth_dev *eth_dev,
--		    const struct rte_flow_action actions[])
--{
--	uint32_t mtr_id = 0xffff, prev_mtr_id = 0xffff, next_mtr_id = 0xffff;
--	const struct rte_flow_action_meter *mtr_conf;
--	const struct rte_flow_action_queue *q_conf;
--	const struct rte_flow_action_rss *rss_conf;
--	struct cnxk_mtr_policy_node *policy;
--	bool is_mtr_act = false;
--	int tree_level = 0;
--	int rc = -EINVAL, i;
--
--	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER) {
--			mtr_conf = (const struct rte_flow_action_meter
--					    *)(actions[i].conf);
--			mtr_id = mtr_conf->mtr_id;
--			is_mtr_act = true;
--		}
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_QUEUE) {
--			q_conf = (const struct rte_flow_action_queue
--					  *)(actions[i].conf);
--			if (is_mtr_act)
--				nix_mtr_rq_update(eth_dev, mtr_id, 1,
--						  &q_conf->index);
--		}
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_RSS) {
--			rss_conf = (const struct rte_flow_action_rss
--					    *)(actions[i].conf);
--			if (is_mtr_act)
--				nix_mtr_rq_update(eth_dev, mtr_id,
--						  rss_conf->queue_num,
--						  rss_conf->queue);
--		}
--	}
--
--	if (!is_mtr_act)
--		return rc;
--
--	prev_mtr_id = mtr_id;
--	next_mtr_id = mtr_id;
--	while (next_mtr_id != 0xffff) {
--		rc = nix_mtr_validate(eth_dev, next_mtr_id);
--		if (rc)
--			return rc;
--
--		rc = nix_mtr_policy_act_get(eth_dev, next_mtr_id, &policy);
--		if (rc)
--			return rc;
--
--		rc = nix_mtr_color_action_validate(eth_dev, mtr_id,
--						   &prev_mtr_id, &next_mtr_id,
--						   policy, &tree_level);
--		if (rc)
--			return rc;
--	}
--
--	return nix_mtr_configure(eth_dev, mtr_id);
--}
--
--static int
--cn10k_rss_action_validate(struct rte_eth_dev *eth_dev,
--			  const struct rte_flow_attr *attr,
--			  const struct rte_flow_action *act)
--{
--	const struct rte_flow_action_rss *rss;
--
--	if (act == NULL)
--		return -EINVAL;
--
--	rss = (const struct rte_flow_action_rss *)act->conf;
--
--	if (attr->egress) {
--		plt_err("No support of RSS in egress");
--		return -EINVAL;
--	}
--
--	if (eth_dev->data->dev_conf.rxmode.mq_mode != RTE_ETH_MQ_RX_RSS) {
--		plt_err("multi-queue mode is disabled");
--		return -ENOTSUP;
--	}
--
--	if (!rss || !rss->queue_num) {
--		plt_err("no valid queues");
--		return -EINVAL;
--	}
--
--	if (rss->func != RTE_ETH_HASH_FUNCTION_DEFAULT) {
--		plt_err("non-default RSS hash functions are not supported");
--		return -ENOTSUP;
--	}
--
--	if (rss->key_len && rss->key_len > ROC_NIX_RSS_KEY_LEN) {
--		plt_err("RSS hash key too large");
--		return -ENOTSUP;
--	}
--
--	return 0;
--}
--
- struct rte_flow *
- cn10k_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
--		  const struct rte_flow_item pattern[],
--		  const struct rte_flow_action actions[],
-+		  const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
- 		  struct rte_flow_error *error)
- {
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
--	const struct rte_flow_action *action_rss = NULL;
--	const struct rte_flow_action_meter *mtr = NULL;
--	const struct rte_flow_action *act_q = NULL;
- 	struct roc_npc *npc = &dev->npc;
- 	struct roc_npc_flow *flow;
--	void *mcs_flow = NULL;
- 	int vtag_actions = 0;
--	uint32_t req_act = 0;
- 	int mark_actions;
--	int i, rc;
--
--	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER)
--			req_act |= ROC_NPC_ACTION_TYPE_METER;
--
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_QUEUE) {
--			req_act |= ROC_NPC_ACTION_TYPE_QUEUE;
--			act_q = &actions[i];
--		}
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_RSS) {
--			req_act |= ROC_NPC_ACTION_TYPE_RSS;
--			action_rss = &actions[i];
--		}
--	}
--
--	if (req_act & ROC_NPC_ACTION_TYPE_METER) {
--		if ((req_act & ROC_NPC_ACTION_TYPE_RSS) &&
--		    ((req_act & ROC_NPC_ACTION_TYPE_QUEUE))) {
--			return NULL;
--		}
--		if (req_act & ROC_NPC_ACTION_TYPE_RSS) {
--			rc = cn10k_rss_action_validate(eth_dev, attr,
--						       action_rss);
--			if (rc)
--				return NULL;
--		} else if (req_act & ROC_NPC_ACTION_TYPE_QUEUE) {
--			const struct rte_flow_action_queue *act_queue;
--			act_queue = (const struct rte_flow_action_queue *)
--					    act_q->conf;
--			if (act_queue->index > eth_dev->data->nb_rx_queues)
--				return NULL;
--		} else {
--			return NULL;
--		}
--	}
--	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
--		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER) {
--			mtr = (const struct rte_flow_action_meter *)actions[i]
--				      .conf;
--			rc = cn10k_mtr_configure(eth_dev, actions);
--			if (rc) {
--				rte_flow_error_set(error, rc,
--					RTE_FLOW_ERROR_TYPE_ACTION, NULL,
--					"Failed to configure mtr ");
--				return NULL;
--			}
--			break;
--		}
--	}
--
--	if (actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY &&
--	    cnxk_eth_macsec_sess_get_by_sess(dev, actions[0].conf) != NULL) {
--		rc = cnxk_mcs_flow_configure(eth_dev, attr, pattern, actions, error, &mcs_flow);
--		if (rc) {
--			rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
--					   "Failed to configure mcs flow");
--			return NULL;
--		}
--		return (struct rte_flow *)mcs_flow;
--	}
- 
- 	flow = cnxk_flow_create(eth_dev, attr, pattern, actions, error);
--	if (!flow) {
--		if (mtr)
--			nix_mtr_chain_reset(eth_dev, mtr->mtr_id);
- 
-+	if (!flow)
- 		return NULL;
--	} else {
--		if (mtr)
--			cn10k_mtr_connect(eth_dev, mtr->mtr_id);
--	}
- 
- 	mark_actions = roc_npc_mark_actions_get(npc);
- 	if (mark_actions) {
-@@ -231,16 +45,7 @@ int
- cn10k_flow_info_get(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
- 		    struct rte_flow_queue_info *queue_info, struct rte_flow_error *err)
- {
--	RTE_SET_USED(dev);
--	RTE_SET_USED(err);
--
--	memset(port_info, 0, sizeof(*port_info));
--	memset(queue_info, 0, sizeof(*queue_info));
--
--	port_info->max_nb_counters = CN10K_NPC_COUNTERS_MAX;
--	port_info->max_nb_meters = CNXK_NIX_MTR_COUNT_MAX;
--
--	return 0;
-+	return cnxk_flow_info_get_common(dev, port_info, queue_info, err);
- }
- 
- int
-@@ -250,14 +55,12 @@ cn10k_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *rte_flow,
- 	struct roc_npc_flow *flow = (struct roc_npc_flow *)rte_flow;
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
- 	struct roc_npc *npc = &dev->npc;
--	int vtag_actions = 0;
-+	int vtag_actions = 0, rc = 0;
- 	int mark_actions;
- 	uint16_t match_id;
- 	uint32_t mtr_id;
--	int rc;
- 
--	match_id = (flow->npc_action >> NPC_RX_ACT_MATCH_OFFSET) &
--		   NPC_RX_ACT_MATCH_MASK;
-+	match_id = (flow->npc_action >> NPC_RX_ACT_MATCH_OFFSET) & NPC_RX_ACT_MATCH_MASK;
- 	if (match_id) {
- 		mark_actions = roc_npc_mark_actions_sub_return(npc, 1);
- 		if (mark_actions == 0) {
-@@ -271,8 +74,7 @@ cn10k_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *rte_flow,
- 		if (flow->nix_intf == ROC_NPC_INTF_RX) {
- 			vtag_actions = roc_npc_vtag_actions_sub_return(npc, 1);
- 			if (vtag_actions == 0) {
--				dev->rx_offload_flags &=
--					~NIX_RX_OFFLOAD_VLAN_STRIP_F;
-+				dev->rx_offload_flags &= ~NIX_RX_OFFLOAD_VLAN_STRIP_F;
- 				cn10k_eth_set_rx_function(eth_dev);
- 			}
- 		}
-@@ -281,19 +83,18 @@ cn10k_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *rte_flow,
- 	if (cnxk_eth_macsec_sess_get_by_sess(dev, (void *)flow) != NULL) {
- 		rc = cnxk_mcs_flow_destroy(dev, (void *)flow);
- 		if (rc < 0)
--			rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--					NULL, "Failed to free mcs flow");
-+			rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+					   "Failed to free mcs flow");
- 		return rc;
- 	}
- 
- 	mtr_id = flow->mtr_id;
- 	rc = cnxk_flow_destroy(eth_dev, flow, error);
- 	if (!rc && mtr_id != ROC_NIX_MTR_ID_INVALID) {
--		rc = cn10k_mtr_destroy(eth_dev, mtr_id);
-+		rc = cnxk_mtr_destroy(eth_dev, mtr_id);
- 		if (rc) {
--			rte_flow_error_set(error, ENXIO,
--				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
--				"Meter attached to this flow does not exist");
-+			rte_flow_error_set(error, ENXIO, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+					   "Meter attached to this flow does not exist");
- 		}
- 	}
- 	return rc;
-diff --git a/drivers/net/cnxk/cn10k_flow.h b/drivers/net/cnxk/cn10k_flow.h
-index 316b74e6a6..c9e8c86e96 100644
---- a/drivers/net/cnxk/cn10k_flow.h
-+++ b/drivers/net/cnxk/cn10k_flow.h
-@@ -1,8 +1,8 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(C) 2020 Marvell.
-+ * Copyright(C) 2024 Marvell.
-  */
--#ifndef __CN10K_RTE_FLOW_H__
--#define __CN10K_RTE_FLOW_H__
-+#ifndef __CN10K_FLOW_H__
-+#define __CN10K_FLOW_H__
- 
- #include <rte_flow_driver.h>
- 
-@@ -16,6 +16,6 @@ int cn10k_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *flow,
- int cn10k_flow_info_get(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
- 			struct rte_flow_queue_info *queue_info, struct rte_flow_error *err);
- 
--#define CN10K_NPC_COUNTERS_MAX 512
-+#define CNXK_NPC_COUNTERS_MAX 512
- 
--#endif /* __CN10K_RTE_FLOW_H__ */
-+#endif /* __CN10K_FLOW_H__ */
-diff --git a/drivers/net/cnxk/cn20k_ethdev.c b/drivers/net/cnxk/cn20k_ethdev.c
-index 37c372d80f..4e4337a6e5 100644
---- a/drivers/net/cnxk/cn20k_ethdev.c
-+++ b/drivers/net/cnxk/cn20k_ethdev.c
-@@ -2,6 +2,7 @@
-  * Copyright(C) 2024 Marvell.
-  */
- #include "cn20k_ethdev.h"
-+#include "cn20k_flow.h"
- #include "cn20k_rx.h"
- #include "cn20k_tx.h"
- 
-@@ -867,6 +868,9 @@ npc_flow_ops_override(void)
- 	init_once = 1;
- 
- 	/* Update platform specific ops */
-+	cnxk_flow_ops.create = cn20k_flow_create;
-+	cnxk_flow_ops.destroy = cn20k_flow_destroy;
-+	cnxk_flow_ops.info_get = cn20k_flow_info_get;
- }
- 
- static int
-diff --git a/drivers/net/cnxk/cn20k_flow.c b/drivers/net/cnxk/cn20k_flow.c
-new file mode 100644
-index 0000000000..fd50f516ee
---- /dev/null
-+++ b/drivers/net/cnxk/cn20k_flow.c
-@@ -0,0 +1,101 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2024 Marvell.
-+ */
-+
-+#include "cn20k_ethdev.h"
-+#include "cn20k_rx.h"
-+#include "cnxk_ethdev_mcs.h"
-+#include "cnxk_flow_common.h"
-+#include <cn20k_flow.h>
-+#include <cnxk_flow.h>
-+
-+struct rte_flow *
-+cn20k_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
-+		  const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
-+		  struct rte_flow_error *error)
-+{
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	struct roc_npc *npc = &dev->npc;
-+	struct roc_npc_flow *flow;
-+	int vtag_actions = 0;
-+	int mark_actions;
-+
-+	flow = cnxk_flow_create(eth_dev, attr, pattern, actions, error);
-+
-+	if (!flow)
-+		return NULL;
-+
-+	mark_actions = roc_npc_mark_actions_get(npc);
-+	if (mark_actions) {
-+		dev->rx_offload_flags |= NIX_RX_OFFLOAD_MARK_UPDATE_F;
-+		cn20k_eth_set_rx_function(eth_dev);
-+	}
-+
-+	vtag_actions = roc_npc_vtag_actions_get(npc);
-+
-+	if (vtag_actions) {
-+		dev->rx_offload_flags |= NIX_RX_OFFLOAD_VLAN_STRIP_F;
-+		cn20k_eth_set_rx_function(eth_dev);
-+	}
-+
-+	return (struct rte_flow *)flow;
-+}
-+
-+int
-+cn20k_flow_info_get(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
-+		    struct rte_flow_queue_info *queue_info, struct rte_flow_error *err)
-+{
-+	return cnxk_flow_info_get_common(dev, port_info, queue_info, err);
-+}
-+
-+int
-+cn20k_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *rte_flow,
-+		   struct rte_flow_error *error)
-+{
-+	struct roc_npc_flow *flow = (struct roc_npc_flow *)rte_flow;
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	struct roc_npc *npc = &dev->npc;
-+	int vtag_actions = 0, rc = 0;
-+	int mark_actions;
-+	uint16_t match_id;
-+	uint32_t mtr_id;
-+
-+	match_id = (flow->npc_action >> NPC_RX_ACT_MATCH_OFFSET) & NPC_RX_ACT_MATCH_MASK;
-+	if (match_id) {
-+		mark_actions = roc_npc_mark_actions_sub_return(npc, 1);
-+		if (mark_actions == 0) {
-+			dev->rx_offload_flags &= ~NIX_RX_OFFLOAD_MARK_UPDATE_F;
-+			cn20k_eth_set_rx_function(eth_dev);
-+		}
-+	}
-+
-+	vtag_actions = roc_npc_vtag_actions_get(npc);
-+	if (vtag_actions) {
-+		if (flow->nix_intf == ROC_NPC_INTF_RX) {
-+			vtag_actions = roc_npc_vtag_actions_sub_return(npc, 1);
-+			if (vtag_actions == 0) {
-+				dev->rx_offload_flags &= ~NIX_RX_OFFLOAD_VLAN_STRIP_F;
-+				cn20k_eth_set_rx_function(eth_dev);
-+			}
-+		}
-+	}
-+
-+	if (cnxk_eth_macsec_sess_get_by_sess(dev, (void *)flow) != NULL) {
-+		rc = cnxk_mcs_flow_destroy(dev, (void *)flow);
-+		if (rc < 0)
-+			rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+					   "Failed to free mcs flow");
-+		return rc;
-+	}
-+
-+	mtr_id = flow->mtr_id;
-+	rc = cnxk_flow_destroy(eth_dev, flow, error);
-+	if (!rc && mtr_id != ROC_NIX_MTR_ID_INVALID) {
-+		rc = cnxk_mtr_destroy(eth_dev, mtr_id);
-+		if (rc) {
-+			rte_flow_error_set(error, ENXIO, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+					   "Meter attached to this flow does not exist");
-+		}
-+	}
-+	return rc;
-+}
-diff --git a/drivers/net/cnxk/cn20k_flow.h b/drivers/net/cnxk/cn20k_flow.h
-new file mode 100644
-index 0000000000..1e4bd6214a
---- /dev/null
-+++ b/drivers/net/cnxk/cn20k_flow.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2024 Marvell.
-+ */
-+#ifndef __CN20K_FLOW_H__
-+#define __CN20K_FLOW_H__
-+
-+#include <rte_flow_driver.h>
-+
-+struct rte_flow *cn20k_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
-+				   const struct rte_flow_item pattern[],
-+				   const struct rte_flow_action actions[],
-+				   struct rte_flow_error *error);
-+int cn20k_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *flow,
-+		       struct rte_flow_error *error);
-+
-+int cn20k_flow_info_get(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
-+			struct rte_flow_queue_info *queue_info, struct rte_flow_error *err);
-+
-+#define CNXK_NPC_COUNTERS_MAX 512
-+
-+#endif /* __CN20K_FLOW_H__ */
-diff --git a/drivers/net/cnxk/cn9k_flow.c b/drivers/net/cnxk/cn9k_flow.c
-index dc5476a189..ae4629ea69 100644
---- a/drivers/net/cnxk/cn9k_flow.c
-+++ b/drivers/net/cnxk/cn9k_flow.c
-@@ -18,7 +18,7 @@ cn9k_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 	int vtag_actions = 0;
- 	int mark_actions;
- 
--	flow = cnxk_flow_create(eth_dev, attr, pattern, actions, error);
-+	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false);
- 	if (!flow)
- 		return NULL;
- 
-diff --git a/drivers/net/cnxk/cnxk_ethdev_devargs.c b/drivers/net/cnxk/cnxk_ethdev_devargs.c
-index ecc2ea8b77..aa2fe7dfe1 100644
---- a/drivers/net/cnxk/cnxk_ethdev_devargs.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_devargs.c
-@@ -88,8 +88,7 @@ parse_flow_max_priority(const char *key, const char *value, void *extra_args)
- 
- 	val = atoi(value);
- 
--	/* Limit the max priority to 32 */
--	if (val < 1 || val > 32)
-+	if (val < 1 || val > ROC_NPC_MAX_MCAM_PRIORITY)
- 		return -EINVAL;
- 
- 	*(uint16_t *)extra_args = val;
-@@ -390,7 +389,12 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
- 		dev->nix.meta_buf_sz = meta_buf_sz;
- 
- 	dev->npc.flow_prealloc_size = flow_prealloc_size;
--	dev->npc.flow_max_priority = flow_max_priority;
-+
-+	if (roc_model_is_cn20k())
-+		dev->npc.flow_max_priority = ROC_NPC_MAX_MCAM_PRIORITY;
-+	else
-+		dev->npc.flow_max_priority = flow_max_priority;
-+
- 	dev->npc.switch_header_type = switch_header_type;
- 	dev->npc.sdp_channel = sdp_chan.channel;
- 	dev->npc.sdp_channel_mask = sdp_chan.mask;
-diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
-index e42e2f8deb..fcc60cd4f0 100644
---- a/drivers/net/cnxk/cnxk_flow.c
-+++ b/drivers/net/cnxk/cnxk_flow.c
-@@ -977,14 +977,6 @@ cnxk_flow_create_common(struct rte_eth_dev *eth_dev, const struct rte_flow_attr
- 	return flow;
- }
- 
--struct roc_npc_flow *
--cnxk_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
--		 const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
--		 struct rte_flow_error *error)
--{
--	return cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false);
--}
--
- int
- cnxk_flow_destroy_common(struct rte_eth_dev *eth_dev, struct roc_npc_flow *flow,
- 			 struct rte_flow_error *error, bool is_rep)
-@@ -1083,10 +1075,14 @@ cnxk_flow_query_common(struct rte_eth_dev *eth_dev, struct rte_flow *flow,
- 		npc = &rep_dev->parent_dev->npc;
- 	}
- 
--	if (in_flow->use_pre_alloc)
-+	if (in_flow->use_pre_alloc) {
- 		rc = roc_npc_inl_mcam_read_counter(in_flow->ctr_id, &query->hits);
--	else
--		rc = roc_npc_mcam_read_counter(npc, in_flow->ctr_id, &query->hits);
-+	} else {
-+		if (roc_model_is_cn20k())
-+			rc = roc_npc_mcam_get_stats(npc, in_flow, &query->hits);
-+		else
-+			rc = roc_npc_mcam_read_counter(npc, in_flow->ctr_id, &query->hits);
-+	}
- 	if (rc != 0) {
- 		errcode = EIO;
- 		errmsg = "Error reading flow counter";
-diff --git a/drivers/net/cnxk/cnxk_flow.h b/drivers/net/cnxk/cnxk_flow.h
-index e51d04b2c9..80b8d2c36a 100644
---- a/drivers/net/cnxk/cnxk_flow.h
-+++ b/drivers/net/cnxk/cnxk_flow.h
-@@ -22,10 +22,6 @@ struct cnxk_rte_flow_action_info {
- 
- extern const struct cnxk_rte_flow_term_info term[];
- 
--struct roc_npc_flow *cnxk_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
--				      const struct rte_flow_item pattern[],
--				      const struct rte_flow_action actions[],
--				      struct rte_flow_error *error);
- int cnxk_flow_destroy(struct rte_eth_dev *dev, struct roc_npc_flow *flow,
- 		      struct rte_flow_error *error);
- 
-@@ -46,5 +42,6 @@ int cnxk_flow_query_common(struct rte_eth_dev *eth_dev, struct rte_flow *flow,
- 			   struct rte_flow_error *error, bool is_rep);
- int cnxk_flow_dev_dump_common(struct rte_eth_dev *eth_dev, struct rte_flow *flow, FILE *file,
- 			      struct rte_flow_error *error, bool is_rep);
-+int cnxk_mtr_destroy(struct rte_eth_dev *eth_dev, uint32_t mtr_id);
- 
- #endif /* __CNXK_RTE_FLOW_H__ */
-diff --git a/drivers/net/cnxk/cnxk_flow_common.c b/drivers/net/cnxk/cnxk_flow_common.c
-new file mode 100644
-index 0000000000..59aa920d91
---- /dev/null
-+++ b/drivers/net/cnxk/cnxk_flow_common.c
-@@ -0,0 +1,213 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2024 Marvell.
-+ */
-+
-+#include "cnxk_flow_common.h"
-+#include "cnxk_ethdev_mcs.h"
-+#include <cnxk_flow.h>
-+
-+static int
-+cnxk_mtr_connect(struct rte_eth_dev *eth_dev, uint32_t mtr_id)
-+{
-+	return nix_mtr_connect(eth_dev, mtr_id);
-+}
-+
-+int
-+cnxk_mtr_destroy(struct rte_eth_dev *eth_dev, uint32_t mtr_id)
-+{
-+	struct rte_mtr_error mtr_error;
-+
-+	return nix_mtr_destroy(eth_dev, mtr_id, &mtr_error);
-+}
-+
-+static int
-+cnxk_mtr_configure(struct rte_eth_dev *eth_dev, const struct rte_flow_action actions[])
-+{
-+	uint32_t mtr_id = 0xffff, prev_mtr_id = 0xffff, next_mtr_id = 0xffff;
-+	const struct rte_flow_action_meter *mtr_conf;
-+	const struct rte_flow_action_queue *q_conf;
-+	const struct rte_flow_action_rss *rss_conf;
-+	struct cnxk_mtr_policy_node *policy;
-+	bool is_mtr_act = false;
-+	int tree_level = 0;
-+	int rc = -EINVAL, i;
-+
-+	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER) {
-+			mtr_conf = (const struct rte_flow_action_meter *)(actions[i].conf);
-+			mtr_id = mtr_conf->mtr_id;
-+			is_mtr_act = true;
-+		}
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_QUEUE) {
-+			q_conf = (const struct rte_flow_action_queue *)(actions[i].conf);
-+			if (is_mtr_act)
-+				nix_mtr_rq_update(eth_dev, mtr_id, 1, &q_conf->index);
-+		}
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_RSS) {
-+			rss_conf = (const struct rte_flow_action_rss *)(actions[i].conf);
-+			if (is_mtr_act)
-+				nix_mtr_rq_update(eth_dev, mtr_id, rss_conf->queue_num,
-+						  rss_conf->queue);
-+		}
-+	}
-+
-+	if (!is_mtr_act)
-+		return rc;
-+
-+	prev_mtr_id = mtr_id;
-+	next_mtr_id = mtr_id;
-+	while (next_mtr_id != 0xffff) {
-+		rc = nix_mtr_validate(eth_dev, next_mtr_id);
-+		if (rc)
-+			return rc;
-+
-+		rc = nix_mtr_policy_act_get(eth_dev, next_mtr_id, &policy);
-+		if (rc)
-+			return rc;
-+
-+		rc = nix_mtr_color_action_validate(eth_dev, mtr_id, &prev_mtr_id, &next_mtr_id,
-+						   policy, &tree_level);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return nix_mtr_configure(eth_dev, mtr_id);
-+}
-+
-+static int
-+cnxk_rss_action_validate(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
-+			 const struct rte_flow_action *act)
-+{
-+	const struct rte_flow_action_rss *rss;
-+
-+	if (act == NULL)
-+		return -EINVAL;
-+
-+	rss = (const struct rte_flow_action_rss *)act->conf;
-+
-+	if (attr->egress) {
-+		plt_err("No support of RSS in egress");
-+		return -EINVAL;
-+	}
-+
-+	if (eth_dev->data->dev_conf.rxmode.mq_mode != RTE_ETH_MQ_RX_RSS) {
-+		plt_err("multi-queue mode is disabled");
-+		return -ENOTSUP;
-+	}
-+
-+	if (!rss || !rss->queue_num) {
-+		plt_err("no valid queues");
-+		return -EINVAL;
-+	}
-+
-+	if (rss->func != RTE_ETH_HASH_FUNCTION_DEFAULT) {
-+		plt_err("non-default RSS hash functions are not supported");
-+		return -ENOTSUP;
-+	}
-+
-+	if (rss->key_len && rss->key_len > ROC_NIX_RSS_KEY_LEN) {
-+		plt_err("RSS hash key too large");
-+		return -ENOTSUP;
-+	}
-+
-+	return 0;
-+}
-+
-+struct roc_npc_flow *
-+cnxk_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
-+		 const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
-+		 struct rte_flow_error *error)
-+{
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	const struct rte_flow_action *action_rss = NULL;
-+	const struct rte_flow_action_meter *mtr = NULL;
-+	const struct rte_flow_action *act_q = NULL;
-+	struct roc_npc_flow *flow;
-+	void *mcs_flow = NULL;
-+	uint32_t req_act = 0;
-+	int i, rc;
-+
-+	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER)
-+			req_act |= ROC_NPC_ACTION_TYPE_METER;
-+
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_QUEUE) {
-+			req_act |= ROC_NPC_ACTION_TYPE_QUEUE;
-+			act_q = &actions[i];
-+		}
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_RSS) {
-+			req_act |= ROC_NPC_ACTION_TYPE_RSS;
-+			action_rss = &actions[i];
-+		}
-+	}
-+
-+	if (req_act & ROC_NPC_ACTION_TYPE_METER) {
-+		if ((req_act & ROC_NPC_ACTION_TYPE_RSS) &&
-+		    ((req_act & ROC_NPC_ACTION_TYPE_QUEUE))) {
-+			return NULL;
-+		}
-+		if (req_act & ROC_NPC_ACTION_TYPE_RSS) {
-+			rc = cnxk_rss_action_validate(eth_dev, attr, action_rss);
-+			if (rc)
-+				return NULL;
-+		} else if (req_act & ROC_NPC_ACTION_TYPE_QUEUE) {
-+			const struct rte_flow_action_queue *act_queue;
-+			act_queue = (const struct rte_flow_action_queue *)act_q->conf;
-+			if (act_queue->index > eth_dev->data->nb_rx_queues)
-+				return NULL;
-+		} else {
-+			return NULL;
-+		}
-+	}
-+	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_METER) {
-+			mtr = (const struct rte_flow_action_meter *)actions[i].conf;
-+			rc = cnxk_mtr_configure(eth_dev, actions);
-+			if (rc) {
-+				rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
-+						   "Failed to configure mtr ");
-+				return NULL;
-+			}
-+			break;
-+		}
-+	}
-+
-+	if (actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY &&
-+	    cnxk_eth_macsec_sess_get_by_sess(dev, actions[0].conf) != NULL) {
-+		rc = cnxk_mcs_flow_configure(eth_dev, attr, pattern, actions, error, &mcs_flow);
-+		if (rc) {
-+			rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
-+					   "Failed to configure mcs flow");
-+			return NULL;
-+		}
-+		return mcs_flow;
-+	}
-+
-+	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false);
-+	if (!flow) {
-+		if (mtr)
-+			nix_mtr_chain_reset(eth_dev, mtr->mtr_id);
-+
-+	} else {
-+		if (mtr)
-+			cnxk_mtr_connect(eth_dev, mtr->mtr_id);
-+	}
-+
-+	return flow;
-+}
-+
-+int
-+cnxk_flow_info_get_common(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
-+			  struct rte_flow_queue_info *queue_info, struct rte_flow_error *err)
-+{
-+	RTE_SET_USED(dev);
-+	RTE_SET_USED(err);
-+
-+	memset(port_info, 0, sizeof(*port_info));
-+	memset(queue_info, 0, sizeof(*queue_info));
-+
-+	port_info->max_nb_counters = CNXK_NPC_COUNTERS_MAX;
-+	port_info->max_nb_meters = CNXK_NIX_MTR_COUNT_MAX;
-+
-+	return 0;
-+}
-diff --git a/drivers/net/cnxk/cnxk_flow_common.h b/drivers/net/cnxk/cnxk_flow_common.h
-new file mode 100644
-index 0000000000..21289d9daf
---- /dev/null
-+++ b/drivers/net/cnxk/cnxk_flow_common.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2024 Marvell.
-+ */
-+#ifndef __CNXK_FLOW_COMMON_H__
-+#define __CNXK_FLOW_COMMON_H__
-+
-+#include <rte_flow_driver.h>
-+
-+struct roc_npc_flow *cnxk_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
-+				      const struct rte_flow_item pattern[],
-+				      const struct rte_flow_action actions[],
-+				      struct rte_flow_error *error);
-+
-+int cnxk_flow_info_get_common(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
-+			      struct rte_flow_queue_info *queue_info, struct rte_flow_error *err);
-+
-+#define CNXK_NPC_COUNTERS_MAX 512
-+
-+#endif /* __CNXK_FLOW_COMMON_H__ */
-diff --git a/drivers/net/cnxk/meson.build b/drivers/net/cnxk/meson.build
-index 32ff8aadc0..733ee61c0a 100644
---- a/drivers/net/cnxk/meson.build
-+++ b/drivers/net/cnxk/meson.build
-@@ -32,6 +32,7 @@ sources = files(
-         'cnxk_eswitch_devargs.c',
-         'cnxk_eswitch_flow.c',
-         'cnxk_eswitch_rxtx.c',
-+        'cnxk_flow_common.c',
-         'cnxk_link.c',
-         'cnxk_lookup.c',
-         'cnxk_ptp.c',
-@@ -236,6 +237,7 @@ if soc_type == 'cn20k' or soc_type == 'all'
- # CN20K
- sources += files(
-         'cn20k_ethdev.c',
-+        'cn20k_flow.c',
-         'cn20k_rx_select.c',
-         'cn20k_tx_select.c',
- )
--- 
-2.39.2
-
+SGkgRGF2aWQsDQoNCj4gT24gRmViIDQsIDIwMjUsIGF0IDIxOjE4LCBEYXZpZCBNYXJjaGFuZCA8
+ZGF2aWQubWFyY2hhbmRAcmVkaGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBFeHRlcm5hbCBlbWFpbDog
+VXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiANCj4gDQo+IEhlbGxv
+IHZob3N0IG1haW50YWluZXJzLA0KPiANCj4gT24gVHVlLCBEZWMgMjQsIDIwMjQgYXQgNDo1MOKA
+r1BNIE1heGltZSBDb3F1ZWxpbg0KPiA8bWF4aW1lLmNvcXVlbGluQHJlZGhhdC5jb20+IHdyb3Rl
+Og0KPj4gDQo+PiBUaGUgdmhvc3QgRkQgbWFuYWdlciBwcm92aWRlcyBhIHdheSBmb3IgdGhlIHJl
+YWQvd3JpdGUNCj4+IGNhbGxiYWNrcyB0byByZXF1ZXN0IHJlbW92YWwgb2YgdGhlaXIgYXNzb2Np
+YXRlZCBGRCBmcm9tDQo+PiB0aGUgZXBvbGwgRkQgc2V0LiBQcm9ibGVtIGlzIHRoYXQgaXQgaXMg
+bWlzc2luZyBhIGNsZWFudXANCj4+IGNhbGxiYWNrLCBzbyB0aGUgcmVhZC93cml0ZSBjYWxsYmFj
+ayByZXF1ZXN0aW5nIHRoZSByZW1vdmFsDQo+PiBoYXZlIHRvIHBlcmZvcm0gY2xlYW51cHMgYmVm
+b3JlIHRoZSBGRCBpcyByZW1vdmVkIGZyb20gdGhlDQo+PiBGRCBzZXQuIEl0IGluY2x1ZGVzIGNs
+b3NpbmcgdGhlIEZEIGJlZm9yZSBpdCBpcyByZW1vdmVkDQo+PiBmcm9tIHRoZSBlcG9sbCBGRCBz
+ZXQuDQo+PiANCj4+IFRoaXMgc2VyaWVzIGludHJvZHVjZXMgYSBuZXcgY2xlYW51cCBjYWxsYmFj
+ayB3aGljaCwgaWYNCj4+IGltcGxlbWVudGVkLCBpcyBjbG9zZWQgcmlnaHQgYWZ0ZXIgdGhlIEZE
+IGlzIHJlbW92ZWQgZnJvbQ0KPj4gRkQgc2V0Lg0KPj4gDQo+PiBNYXhpbWUgQ29xdWVsaW4gKDMp
+Og0KPj4gIHZob3N0OiBhZGQgY2xlYW51cCBjYWxsYmFjayB0byBGRCBlbnRyaWVzDQo+PiAgdmhv
+c3Q6IGZpeCB2aG9zdC11c2VyIHNvY2tldCBjbGVhbnVwIG9yZGVyDQo+PiAgdmhvc3Q6IGltcHJv
+dmUgVkRVU0UgcmVjb25uZWN0IGhhbmRsZXIgY2xlYW51cA0KPj4gDQo+PiBsaWIvdmhvc3QvZmRf
+bWFuLmMgfCAxNiArKysrKysrKysrKystLS0tDQo+PiBsaWIvdmhvc3QvZmRfbWFuLmggfCAgMyAr
+Ky0NCj4+IGxpYi92aG9zdC9zb2NrZXQuYyB8IDQ2ICsrKysrKysrKysrKysrKysrKysrKysrKysr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+IGxpYi92aG9zdC92ZHVzZS5jICB8IDE2ICsrKysrKysr
+KysrLS0tLS0NCj4+IDQgZmlsZXMgY2hhbmdlZCwgNTEgaW5zZXJ0aW9ucygrKSwgMzAgZGVsZXRp
+b25zKC0pDQo+IA0KPiBJIHRyaWVkIHRoaXMgc2VyaWVzLCBhbmQgaXQgZml4ZXMgdGhlIGVycm9y
+IGxvZyBJIHJlcG9ydGVkLg0KPiANCj4gT24gdGhlIG90aGVyIGhhbmQsIEkgd29uZGVyIGlmIHdl
+IGNvdWxkIGRvIHNvbWV0aGluZyBzaW1wbGVyLg0KPiANCj4gVGhlIGZkIGlzIG9ubHkgdXNlZCBi
+eSB0aGUgcmVnaXN0ZXJlZCBoYW5kbGVycy4NCj4gSWYgYSBoYW5kbGVyIHJlcG9ydHMgdGhhdCBp
+dCBkb2VzIG5vdCB3YW50IHRvIHdhdGNoIHRoaXMgZmQgYW55bW9yZSwNCj4gdGhlbiB0aGVyZSBp
+cyBubyByZW1haW5pbmcgdXNlciBpbiB0aGUgdmhvc3QgbGlicmFyeSBmb3IgdGhpcyBmZC4NCj4g
+DQo+IFNvIG15IHByb3Bvc2FsIHdvdWxkIGJlIHRvIHJlbmFtZSB0aGUgInJlbW92ZSIgZmxhZyBh
+cyBhICJjbG9zZSIgZmxhZzoNCj4gDQo+IEBAIC0xMiw3ICsxMiw3IEBAIHN0cnVjdCBmZHNldDsN
+Cj4gDQo+ICNkZWZpbmUgTUFYX0ZEUyAxMDI0DQo+IA0KPiAtdHlwZWRlZiB2b2lkICgqZmRfY2Ip
+KGludCBmZCwgdm9pZCAqZGF0LCBpbnQgKnJlbW92ZSk7DQo+ICt0eXBlZGVmIHZvaWQgKCpmZF9j
+YikoaW50IGZkLCB2b2lkICpkYXQsIGludCAqY2xvc2UpOw0KPiANCj4gc3RydWN0IGZkc2V0ICpm
+ZHNldF9pbml0KGNvbnN0IGNoYXIgKm5hbWUpOw0KPiANCj4gQW5kIGRlZmVyIGNsb3NpbmcgdG8g
+ZmRfbWFuLg0KPiBTb21ldGhpbmcgbGlrZToNCj4gDQo+IEBAIC0zNjcsOSArMzY3LDkgQEAgZmRz
+ZXRfZXZlbnRfZGlzcGF0Y2godm9pZCAqYXJnKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgIHB0
+aHJlYWRfbXV0ZXhfdW5sb2NrKCZwZmRzZXQtPmZkX211dGV4KTsNCj4gDQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgaWYgKHJjYiAmJiBldmVudHNbaV0uZXZlbnRzICYgKEVQT0xMSU4gfA0KPiBF
+UE9MTEVSUiB8IEVQT0xMSFVQKSkNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBy
+Y2IoZmQsIGRhdCwgJnJlbW92ZTEpOw0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHJjYihmZCwgZGF0LCAmY2xvc2UxKTsNCj4gICAgICAgICAgICAgICAgICAgICAgICBpZiAod2Ni
+ICYmIGV2ZW50c1tpXS5ldmVudHMgJiAoRVBPTExPVVQgfA0KPiBFUE9MTEVSUiB8IEVQT0xMSFVQ
+KSkNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3Y2IoZmQsIGRhdCwgJnJlbW92
+ZTIpOw0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdjYihmZCwgZGF0LCAmY2xv
+c2UyKTsNCj4gICAgICAgICAgICAgICAgICAgICAgICBwZmRlbnRyeS0+YnVzeSA9IDA7DQo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgLyoNCj4gICAgICAgICAgICAgICAgICAgICAgICAgKiBmZHNl
+dF9kZWwgbmVlZHMgdG8gY2hlY2sgYnVzeSBmbGFnLg0KPiBAQCAtMzgxLDggKzM4MSwxMCBAQCBm
+ZHNldF9ldmVudF9kaXNwYXRjaCh2b2lkICphcmcpDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICogZmRlbnRyeSBub3QgdG8gYmUgYnVzeSwgc28gd2UgY2FuJ3QgY2FsbA0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAqIGZkc2V0X2RlbF9sb2NrZWQoKS4NCj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgKi8NCj4gLSAgICAgICAgICAgICAgICAgICAgICAgaWYgKHJlbW92ZTEgfHwgcmVtb3Zl
+MikNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKGNsb3NlMSB8fCBjbG9zZTIpIHsNCj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZkc2V0X2RlbChwZmRzZXQsIGZkKTsNCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbG9zZShmZCk7DQo+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIH0NCj4gICAgICAgICAgICAgICAgfQ0KPiANCj4gICAgICAgICAgICAgICAg
+aWYgKHBmZHNldC0+ZGVzdHJveSkNCj4gDQo+IA0KPiBBbmQgdGhlIG9ubHkgdGhpbmcgdG8gbW92
+ZSBvdXQgb2YgdGhlIHNvY2tldCBhbmQgdmR1c2UgaGFuZGxlcnMgaXMgdGhlDQo+IGNsb3NlKGZk
+KSBjYWxsLg0KPiANCj4gTGlrZToNCj4gDQo+IEBAIC0zMDMsNyArMzAzLDcgQEAgdmhvc3RfdXNl
+cl9zZXJ2ZXJfbmV3X2Nvbm5lY3Rpb24oaW50IGZkLCB2b2lkDQo+ICpkYXQsIGludCAqcmVtb3Zl
+IF9fcnRlX3VudXNlZCkNCj4gfQ0KPiANCj4gc3RhdGljIHZvaWQNCj4gLXZob3N0X3VzZXJfcmVh
+ZF9jYihpbnQgY29ubmZkLCB2b2lkICpkYXQsIGludCAqcmVtb3ZlKQ0KPiArdmhvc3RfdXNlcl9y
+ZWFkX2NiKGludCBjb25uZmQsIHZvaWQgKmRhdCwgaW50ICpjbG9zZSkNCj4gew0KPiAgICAgICAg
+c3RydWN0IHZob3N0X3VzZXJfY29ubmVjdGlvbiAqY29ubiA9IGRhdDsNCj4gICAgICAgIHN0cnVj
+dCB2aG9zdF91c2VyX3NvY2tldCAqdnNvY2tldCA9IGNvbm4tPnZzb2NrZXQ7DQo+IEBAIC0zMTMs
+OCArMzEzLDcgQEAgdmhvc3RfdXNlcl9yZWFkX2NiKGludCBjb25uZmQsIHZvaWQgKmRhdCwgaW50
+ICpyZW1vdmUpDQo+ICAgICAgICBpZiAocmV0IDwgMCkgew0KPiAgICAgICAgICAgICAgICBzdHJ1
+Y3QgdmlydGlvX25ldCAqZGV2ID0gZ2V0X2RldmljZShjb25uLT52aWQpOw0KPiANCj4gLSAgICAg
+ICAgICAgICAgIGNsb3NlKGNvbm5mZCk7DQo+IC0gICAgICAgICAgICAgICAqcmVtb3ZlID0gMTsN
+Cj4gKyAgICAgICAgICAgICAgICpjbG9zZSA9IDE7DQoNCkkgaGF2ZSBvbmUgY29uY2VybiBoZXJl
+IGlzIGNvbXBhcmVkIHdpdGggdGhpcyBSRkMsIHRoZSBwcm9wb3NhbCBjaGFuZ2VkIHRoZSB0aW1p
+bmcNCm9mIGNsb3NlIGNvbm5mZO+8jHdoaWNoIG1lYW5zIG9uIFFFTVUgc2lkZSwgY2xlYW5pbmcg
+dXAgcmVzb3VyY2VzIHdpbGwgaGFwcGVuIGxhdGVyLg0KDQpDdXJyZW50bHkgSSBjYW7igJl0IHRo
+aW5rIG9mIGlzc3VlcyBjb3VsZCBiZSBpbnRyb2R1Y2VkIGJ5IHRoaXMgY2hhbmdlIChtYXliZSB5
+b3UgYW5kDQpNYXhpbWUgY291bGQgcmVtaW5kIG1lIG9mIHNvbWV0aGluZyA6KQ0KDQpCZXNpZGVz
+IHRoaXMsIGRlZmluaXRlbHkgdGhpcyBwcm9wb3NhbCBpcyBjbGVhbmVyLg0KDQpUaGFua3MsDQpD
+aGVuYm8gDQoNCj4gDQo+ICAgICAgICAgICAgICAgIGlmIChkZXYpDQo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgdmhvc3RfZGVzdHJveV9kZXZpY2Vfbm90aWZ5KGRldik7DQo+IA0KPiANCj4gTWF4
+aW1lLCBDaGVuYm8sIG9waW5pb25zPw0KPiANCj4gDQo+IC0tDQo+IERhdmlkIE1hcmNoYW5kDQo+
+IA0KDQo=
