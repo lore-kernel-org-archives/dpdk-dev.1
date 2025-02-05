@@ -2,61 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B496AC02193
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 00:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA945C02196
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 01:55:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0021E402E1;
-	Wed,  5 Feb 2025 01:11:39 +0100 (CET)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
- [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id C4480402DB
- for <dev@dpdk.org>; Wed,  5 Feb 2025 01:11:37 +0100 (CET)
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-2f9d627b5fbso1368234a91.2
- for <dev@dpdk.org>; Tue, 04 Feb 2025 16:11:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1738714297; x=1739319097; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=GyuvM6TOjQOEUWuMoGgLNCcOou+IEohxO9pXf3WFw0g=;
- b=ECAqKI+7sZg61GXAWHbahbrU4lyz+3eugp0BhuN/+N3URx8Zi6c/3OSCYnsmjO7UpZ
- xY3fJyjwQHkjGQZE6NmO7BZs4zpM8HsoqZMFb8m2xbfH8KfphEAUSz1O6wWesu+rij+Z
- qYHKnVTsRsH9s9pigCxCpzHAedb12ngis8uSQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738714297; x=1739319097;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=GyuvM6TOjQOEUWuMoGgLNCcOou+IEohxO9pXf3WFw0g=;
- b=faUHoj5pOrXd8H0lw7Bvoh6Rrzx/j2qliBCpFuT1SQlg638C5yF7wcsxEfXLNkctVt
- ZTkP2dzego2ySUaOEjMpMrOYWfEMfYF/vNqHNl16bAemZ4URHLk+qP/IvApDQGNSgxnE
- rQADIU7bHV3EA1ONM9+GIlVcFbpkqG9Auqp+qtQt3ywUtdt2/xcq2YNtQz1hlmZ2xYBh
- Ye8JNiznApBG/HKjvi6S+qnQBXcDFbxF4p3163n5dHDMqgeQqEk3H8ndsq+KOoPJGgAO
- 1KgeQP1i+gMfkTNrN6I1BoxWgFIGtYYXZE62paWEQ54pO4EejVmIIYMfenbeF1SgXnY8
- FGvg==
-X-Gm-Message-State: AOJu0YzhMWGla2gmuv/Rel+5NkrxSiXKd1IpMtnTK66K5d+1krk0qtTn
- 8GtK6Y/ADFb5if/A/GYCsoqq/s5R1pabS9GnOhUK13FGlSGTwoyZqO79EHCMiTw4SOutzFconT1
- uwspRn5z8UzgNR1Ui5xjDI802aY6NFJGokjTImBtVIOqumUIoiWk=
-X-Gm-Gg: ASbGncu5+nmnDoyDNzmz1eEJekrg6rXanB6C4oxEHQCYQ86yaW0YW0QysKrKKZ7FaF0
- 5Z5+VcLNI4Ccg3hP1DDTG3N7HRp+j6On1SCJTCAiIBfIGOocCOykTwMcST8khKUCtmMB3CGj/Ki
- 8Zgmtx5bsMzIqMV4VNb8Ppf291L8Okuw==
-X-Google-Smtp-Source: AGHT+IEfBXYcnpF+gkmCG71aAkH6Y9ulKjRiQ5wOvQPdR/WPMKwuLFLulMoaKs8quP8a8hIjw6NC/lkKiDX/5usFadY=
-X-Received: by 2002:a17:90b:1e50:b0:2ee:9e06:7db0 with SMTP id
- 98e67ed59e1d1-2f9e07677cdmr1223010a91.11.1738714295462; Tue, 04 Feb 2025
- 16:11:35 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A7964021E;
+	Wed,  5 Feb 2025 02:55:44 +0100 (CET)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 49957400EF
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 02:55:42 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Ynjsb1pKGzgcTQ;
+ Wed,  5 Feb 2025 09:52:19 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8D2FF180088;
+ Wed,  5 Feb 2025 09:55:36 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Feb 2025 09:55:35 +0800
+Message-ID: <62c59ce2-6aab-409f-b44f-6b1faf0eaf2a@huawei.com>
+Date: Wed, 5 Feb 2025 09:55:34 +0800
 MIME-Version: 1.0
-References: <20250131191924.1936157-1-luca.vizzarro@arm.com>
- <20250131191924.1936157-4-luca.vizzarro@arm.com>
-In-Reply-To: <20250131191924.1936157-4-luca.vizzarro@arm.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 4 Feb 2025 19:08:27 -0500
-X-Gm-Features: AWEUYZnJ7vLevkSdpEZYNXivJODLnHnHC-KiwI4A5Dhaf_CSKOTw5qtQ6VnEwoQ
-Message-ID: <CAJvnSUBkU0GwUV66=caMObFUfwtYHgE1nnWJqYJHw6YMF+5XcQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dts: bump up fabric version
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Bruce Richardson <bruce.richardson@intel.com>, Jerin Jacob <jerinj@marvell.com>,
- Akhil Goyal <gakhil@marvell.com>, Paul Szczepanek <paul.szczepanek@arm.com>
-Content-Type: multipart/alternative; boundary="000000000000f286b2062d59f7db"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] bus: fix inconsistent representation of PCI numbers
+To: Bruce Richardson <bruce.richardson@intel.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+CC: Shani Peretz <shperetz@nvidia.com>, <dev@dpdk.org>, <thomas@monjalon.net>, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, Parav Pandit
+ <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>, Nipun Gupta
+ <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Hemant
+ Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
+ Rosen Xu <rosen.xu@intel.com>, Chenbo Xia <chenbox@nvidia.com>, Tomasz
+ Duszynski <tduszynski@marvell.com>, Long Li <longli@microsoft.com>, Wei Hu
+ <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>, Jan Blunck
+ <jblunck@infradead.org>
+References: <20240708165145.1405107-1-shperetz@nvidia.com>
+ <20250129085416.226718-1-shperetz@nvidia.com>
+ <20250129091738.681777f1@hermes.local>
+ <Z5puC3JYHR0LBxKH@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <Z5puC3JYHR0LBxKH@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,24 +61,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f286b2062d59f7db
-Content-Type: text/plain; charset="UTF-8"
+On 2025/1/30 2:06, Bruce Richardson wrote:
+> On Wed, Jan 29, 2025 at 09:17:38AM -0800, Stephen Hemminger wrote:
+>> On Wed, 29 Jan 2025 10:54:16 +0200
+>> Shani Peretz <shperetz@nvidia.com> wrote:
+>>
+>>> DPDK provides two formats for specifying PCI device numbers:
+>>> a full version ("0000:08:00.0") and a short version ("08:00.0").
+>>> Issues can occur when an application uses one format (e.g., short)
+>>> while running testpmd, then attempts to use the other format
+>>> (e.g., full) in a later command, resulting in a failure.
+>>>
+>>> The issue is that find_device goes over the list of devices and
+>>> compares the user-provided string to the rte_device structure's
+>>> device->name (device->name is just the string received from devargs
+>>> (i.e "08:00.0" or "0000:08:00.0")).
+>>> Notice that there's another field that represents the device name,
+>>> but this one is in the rte_pci_bus struct. This name is actually the result
+>>> of the PCI parse function ("0000:08:00.0").
+>>> If we want to accurately compare these names, we'll need to bring both
+>>> sides to the same representation by invoking the parse function on
+>>> the user input.
+>>>
+>>> To make the cmp_dev_name function applicable to all buses—not just PCI—
+>>> the proposed solution is to utilize the parse function implemented by
+>>> each bus. When comparing names, we will call parse on the supplied
+>>> string as well as on the device name itself and compare the results.
+>>> This will allow consistent comparisons between different representations
+>>> of same devices.
+>>>
+>>> Also, the pci_common_set function has been modified to improve naming
+>>> consistency for PCI buses.
+>>> Now, the name stored in rte_device for PCI buses will match the parsed
+>>> name that is also stored in rte_pci_device name,
+>>> rather than using the user-provided string from devargs.
+>>> As a result, when a new PCI device is registered, the name displayed in
+>>> the device list will be the parsed version.
+>>>
+>>> Added tests that compare and find devices in various forms of names
+>>> under test_devargs.
+>>>
+>>> Fixes: a3ee360f4440 ("eal: add hotplug add/remove device")
+>>
+>> Maybe just fix for now by normalizing the PCI device string when before
+>> storing and after parsing?  That would allow for simple fix that can be backported.
+>> The more complex generalization of bus address is too much to go to stable branch.
 
-Tested from a Fedora41/python3.13 container.
++1
 
-Tested-by: Patrick Robb <probb@iol.unh.edu>
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+> 
+> One idea for backport, perhaps?
+> 
+> https://patches.dpdk.org/project/dpdk/patch/20241119155723.2307189-1-bruce.richardson@intel.com/
 
-Applying to next-dts, thanks for the patch Luca.
+ack
 
---000000000000f286b2062d59f7db
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> 
 
-<div dir=3D"ltr">Tested from a Fedora41/python3.13 container.<div><br></div=
-><div>Tested-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">prob=
-b@iol.unh.edu</a>&gt;</div><div>Reviewed-by: Patrick Robb &lt;<a href=3D"ma=
-ilto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;=C2=A0</div><div><br></div=
-><div>Applying to next-dts, thanks for the patch Luca.</div></div>
-
---000000000000f286b2062d59f7db--
