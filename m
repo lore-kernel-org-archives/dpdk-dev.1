@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC79C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8755FC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:27:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 266DC40B9F;
-	Wed,  5 Feb 2025 17:25:50 +0100 (CET)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id A040F40A80
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:47 +0100 (CET)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-2f9cd8ecbceso3345148a91.0
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 62A2B40BA5;
+	Wed,  5 Feb 2025 17:25:51 +0100 (CET)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 990D440657
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:48 +0100 (CET)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-2f9bd7c480eso4125804a91.1
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772747;
- x=1739377547; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772748;
+ x=1739377548; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=w3LGmbm/VIgUuKqHEprS43HMDH8COHR0Pe88EqWZ1M0=;
- b=ea9hg1SGdP7EeW9iQWDv2FUGyHp/cxDY18ODfY+WxUOLJVIjlqdkreTda8BF4RaFJ9
- gMhU0RnOKE47txar5o++fPjzdEFQEhDgwMhrW063uWp4+rv3GFNKuZAEKBx4G0Fxg7sm
- mq5giynzprqL/c7VX8fZ0gV+TGt8sn8aIvzXAHHDDsCF80v5//FJ229HVQqsaD1W+Y41
- 5HwRtG2Hjho5J+fZq+fnBWRM8Egq/3/8sO6HTy7mPkcmwFF3gBP7VOzrfgSiQlQEHXGh
- jzSopR5lB1cYl680kjW3cB1b7RIIkMtZ5tu0dS4JRRIJxo0eRJv0dLnrfGqnraIHK7es
- pwAQ==
+ bh=5WEmMwDvQTZJAP5rJn4dTAdKUMhak8r26KimFBXN/Uc=;
+ b=Q2gKA6lJ45Y+0fRGJnEASGyTScXe6OjGV43yLqSTDSaSRY4wK3Cv4c1fuarN35S/Eh
+ l3A0dkEAqYwFx10UrYudOHQvhunYWZh9hCKWt2inAqtKeaig+EiFjyA5hMnAwKXjkiId
+ hVZ0ZGxZmltrxzWKkiMUj3BgEFEtBypvHXYFmd5HofzUcd37HOErmuRJGxXssBih7keM
+ OnAaZ6e6TRLefUgwKTxz8fx+K/3x0/s5lncjLc9I+Swa2SHOjhraggT4gJoY89W4RR3I
+ OXYni1+kUwl+tAZk24PLdqMzCgm6gTPDXoSneRmnhuKWG0pi1O3TuFyRqxpYuz/BS0dR
+ jEBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738772747; x=1739377547;
+ d=1e100.net; s=20230601; t=1738772748; x=1739377548;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=w3LGmbm/VIgUuKqHEprS43HMDH8COHR0Pe88EqWZ1M0=;
- b=kVX2LgrrAXLrl/yVi3NGLRNyG6QPC7u5ND0CquNN/kCjXeTTP2mHf3oBZPamoKH77+
- 5UujgKalszD1MfJ0LBmfDtldrD9FTCfHdKLPldrQY3g5aBYSrdmMatebNJhfxlK4lPVb
- pBJEGXYyTovoNLo+qAPZMWITDQkID+zaIV1c0SojqTv+RlAyHWvPm0sg0EYTgwOUcPTr
- hyOR3TKp9RbZNPEkiJWg1IMb0Jpz7MdtINZBAwhOKQnNlHolUH3GhQR2tdae+DCc22td
- G3OVtGWNm56GqHJp/YnSJZX64THruuaIWb4yeZJCZRHhJ55tTiu1CZQ88WduDJQk2oJn
- G3Jw==
-X-Gm-Message-State: AOJu0Yy3CmnP8izf6natsTYi4WgzULAUFjH773aFkq8zGYkfpUmbLauk
- S0Pvl4oB9yfq8jAHvaXa7l7ih1/Jw7SGx3PLbD+7T4fu6VOT/r7YaUq75pPVfjf5Qwf/HWBXPvn
- m
-X-Gm-Gg: ASbGncvptfNgF0G7tTOW6hhj1mUB9mra9ErWzBanpw8ag2hbvh+e/nnpGcJRODm7Av0
- AktAziEdK9f7gOe8P6Ld2mAup0LHmyIP5yGrGcyRB5eM+16MchZX7MhUbFFp0bOsLFaZa+JN8LD
- wNeXw3vOSQPtv4DjqBX7G8Gqa9fimpx4TYMAtnfiWszqrKkOCDFx+0kPThNXdUKNiJ9wVfdmMYi
- tmTQrh01jfJ6tbhQxZSw00RiEfxbg1XpxiIZ6es73FodOmMtu1k4nc++lY0koEAMxxiNsHj9y7j
- ahIounv8aNNWHLamCIm+YUJRSe7lTf97DM/NpUPvdkPMkuOTOY7GFhUTfJxkneZUrhOw
-X-Google-Smtp-Source: AGHT+IGZhYLrGfACI0WM4NKtj4XhDdU2iW0H8hxXptxnIcjXSF4RPUDC6ik+k6k/aHXkYlulo9chUw==
-X-Received: by 2002:a17:90b:44:b0:2ee:7411:ca99 with SMTP id
- 98e67ed59e1d1-2f9e075382dmr4886475a91.1.1738772746823; 
- Wed, 05 Feb 2025 08:25:46 -0800 (PST)
+ bh=5WEmMwDvQTZJAP5rJn4dTAdKUMhak8r26KimFBXN/Uc=;
+ b=CJ5Utz5nePmXAYVYnRhBroj0d0HgR7yXfdVo2zVGp2njBfSkr+nu7uTXr3gJ74f70Q
+ zlFvLZfha6FDA9ePV9OMk6i6WwrnoDuHpuZ+UDNbX9ZmWC2B7CmQtMYjWeQyDoX/8uEC
+ mpEb99d7a6a4F6WRfxhownrvfwCQ2E0t8xS6neJ9ZE3TUA+s5QJvEANBsB9NlQQrR1iF
+ bA2STUMrjQig0YJ9CrUNZgccVGPmLWcPXoY4kPtNLs8Bd3xxF26BFTMWEBN2xwiANc2V
+ KOF8RPviLAb4RvmaMOrWfAIQ4D281sMesimBxnEqJXXcPzalCJBqp8aPQjuyB7R07UVH
+ ZlhQ==
+X-Gm-Message-State: AOJu0YxEDxWnryC0Uouy6yInvkUKsIbK9LSgFptiHAbSUAEZDXt4M0P/
+ DPQD10LDb1+I5GCzkLc0fdCtDyDekG1b3HEFPq52Jnt/7/bp9vmKQzGGgBR0KYLjs2FUD06mA7L
+ p
+X-Gm-Gg: ASbGncuWh2bd75v1U1zh9jPHWTxocFDFN8LsNzPiYTbhmoBDxRZB/+ZO3pgAigLVT4x
+ yzLvOFk15JBThMEutdEN7iFhj8iA9aXQg6CqDJb8z77l6V37Rp+g8gR275O9CCm9HXZgHeBG8Lh
+ Zm6aNMgXwEt8CZ7G+SkZJV3EQu9XTmi3QAJBH8frELVr8FjrjAAa/c3HKswQIq2+TWf+pRDTG4m
+ FIfKUO+lE92R3qj5e8YkAejImg0myz9CiR5W3YdJpFhR/D6RD9RQFNidIraag/uT8XwpxTtrcxJ
+ Lf9ZqdOh5Nc40Gn/KfPPjDunR833AhL5ETMl0ALd3TJ9GXTbl6EDCSaAD/0/GrJVYSLi
+X-Google-Smtp-Source: AGHT+IGICEXF1eAs42nuOqiiu7LOKSySGbrVaRZA4UeVzjlmk29fVK9QszHKFP6v3WUBD1+h+Ew55Q==
+X-Received: by 2002:a17:90b:48cc:b0:2ee:aef4:2c5d with SMTP id
+ 98e67ed59e1d1-2f9e0810794mr4657992a91.26.1738772747765; 
+ Wed, 05 Feb 2025 08:25:47 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.46
+ 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 08:25:46 -0800 (PST)
+ Wed, 05 Feb 2025 08:25:47 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, nipun.gupta@nxp.com,
- stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH v3 16/19] net/dpaa2: fix bitmask truncation
-Date: Wed,  5 Feb 2025 08:23:17 -0800
-Message-ID: <20250205162448.161161-17-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, rasesh.mody@cavium.com,
+ stable@dpdk.org, Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>
+Subject: [PATCH v3 17/19] net/qede: don't use same loop variable twice
+Date: Wed,  5 Feb 2025 08:23:18 -0800
+Message-ID: <20250205162448.161161-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250205162448.161161-1-stephen@networkplumber.org>
 References: <20241115060738.313190-1-stephen@networkplumber.org>
@@ -82,53 +82,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The dqrr_held mask is 64 bit but updates were getting truncated
-because 1 is of type int (32 bit) and the result shift of int is of
-type int (32 bit); therefore any value >= 32 would get truncated.
+Using variable in outer loop, and inner loop is obvious bug.
+This bug is in base code, so likely on other platforms as well.
 
 Link: https://pvs-studio.com/en/blog/posts/cpp/1183/
-
-Fixes: 2d3788631862 ("net/dpaa2: support atomic queues")
-Cc: nipun.gupta@nxp.com
+Fixes: 81dba2b2ff61 ("net/qede/base: add LLDP support")
+Cc: rasesh.mody@cavium.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_rxtx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/qede/base/ecore_dcbx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index bfb5542bbc..cad15d8f75 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -933,7 +933,7 @@ dpaa2_dev_process_atomic_event(struct qbman_swp *swp __rte_unused,
- 	dqrr_index = qbman_get_dqrr_idx(dq);
- 	*dpaa2_seqn(ev->mbuf) = dqrr_index + 1;
- 	DPAA2_PER_LCORE_DQRR_SIZE++;
--	DPAA2_PER_LCORE_DQRR_HELD |= 1 << dqrr_index;
-+	DPAA2_PER_LCORE_DQRR_HELD |= UINT64_C(1) << dqrr_index;
- 	DPAA2_PER_LCORE_DQRR_MBUF(dqrr_index) = ev->mbuf;
- }
+diff --git a/drivers/net/qede/base/ecore_dcbx.c b/drivers/net/qede/base/ecore_dcbx.c
+index 31234f18cf..72bbedd65a 100644
+--- a/drivers/net/qede/base/ecore_dcbx.c
++++ b/drivers/net/qede/base/ecore_dcbx.c
+@@ -1363,7 +1363,7 @@ ecore_lldp_mib_update_event(struct ecore_hwfn *p_hwfn, struct ecore_ptt *p_ptt)
+ 	struct ecore_dcbx_mib_meta_data data;
+ 	enum _ecore_status_t rc = ECORE_SUCCESS;
+ 	struct lldp_received_tlvs_s tlvs;
+-	int i;
++	int i, j;
  
-@@ -1317,7 +1317,7 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 				flags[loop] = QBMAN_ENQUEUE_FLAG_DCA |
- 						dqrr_index;
- 				DPAA2_PER_LCORE_DQRR_SIZE--;
--				DPAA2_PER_LCORE_DQRR_HELD &= ~(1 << dqrr_index);
-+				DPAA2_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << dqrr_index);
- 				*dpaa2_seqn(*bufs) = DPAA2_INVALID_MBUF_SEQN;
- 			}
+ 	for (i = 0; i < LLDP_MAX_LLDP_AGENTS; i++) {
+ 		OSAL_MEM_ZERO(&data, sizeof(data));
+@@ -1381,9 +1381,9 @@ ecore_lldp_mib_update_event(struct ecore_hwfn *p_hwfn, struct ecore_ptt *p_ptt)
+ 		if (!tlvs.length)
+ 			continue;
  
-@@ -1575,7 +1575,7 @@ dpaa2_set_enqueue_descriptor(struct dpaa2_queue *dpaa2_q,
- 		dq_idx = *dpaa2_seqn(m) - 1;
- 		qbman_eq_desc_set_dca(eqdesc, 1, dq_idx, 0);
- 		DPAA2_PER_LCORE_DQRR_SIZE--;
--		DPAA2_PER_LCORE_DQRR_HELD &= ~(1 << dq_idx);
-+		DPAA2_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << dq_idx);
+-		for (i = 0; i < MAX_TLV_BUFFER; i++)
+-			tlvs.tlvs_buffer[i] =
+-				OSAL_CPU_TO_BE32(tlvs.tlvs_buffer[i]);
++		for (j = 0; j < MAX_TLV_BUFFER; j++)
++			tlvs.tlvs_buffer[j] =
++				OSAL_CPU_TO_BE32(tlvs.tlvs_buffer[j]);
+ 
+ 		OSAL_LLDP_RX_TLVS(p_hwfn, tlvs.tlvs_buffer, tlvs.length);
  	}
- 	*dpaa2_seqn(m) = DPAA2_INVALID_MBUF_SEQN;
- }
 -- 
 2.47.2
 
