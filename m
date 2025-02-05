@@ -2,76 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8FEC02197
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E94EC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:33:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A1D940DDB;
-	Wed,  5 Feb 2025 17:25:54 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id ADD3140BA2
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:25:50 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2f9ef7a3c3cso933074a91.1
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:25:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A17340289;
+	Wed,  5 Feb 2025 17:33:08 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id E7D0640270
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:33:07 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-216728b1836so321995ad.0
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 08:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738772750;
- x=1739377550; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738773187;
+ x=1739377987; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=m59IG++74hiOwfX6DwsbQqLgqP9dXqv2ZyoMq8Pyi64=;
- b=fTKLqN/CpIot8uAgiZAcVvgYnBRBeXnmAKEqSXwW8lZi3h4+r6jfnP+zjm7RIR3B8l
- SY8jV23AMeYpSqyBeW90oNWB3G32Mu8S5nC3UBwSIXwpovnbcCbwD5EXO0orJ/rqMQSj
- sGVUuBa5SX38Md/jSughgrfX9UepXurNVLkKj3BaVnV7TPzl1HUBn3CHQwQtQqhwBlxy
- YYSVcrNL2laaHwrO4qJ90zPaELuLQC5JiQTUoLKKPPji3r5yDbtWArOWgTcYtRhqw9oi
- FfFuPY9ti0WnMveXrRTvMtrdncFbQSmGdPkFP7vr4OJWHKiezstkpx5yt8lZU8agg5R4
- RbgA==
+ bh=KdHViYQDPmMOmyuFA7AzHNDjEtkLLedCui9Hh+s5r0o=;
+ b=reMbh6Q7kE+HkuzNd+BNf2oKTFspvqWSSh+e2WsOye3OzFs2Nj6jjVYvx8IvYDpBCG
+ QOpXamHjAoYHAajqO6mnxs2MSv/DjokOOSRnItt7W4dLGhD2Rh7+7mitIZA5/QlNJSIs
+ osoK3OZpRCvKtG8H2r/YH8AaKV8vHILq6xYraoVzcV84h+FipHDcnr+VMpMa2cTSjZBM
+ b4FXt5H2rLc2Kr7ilMJsUvKeB5vUVlQmRrxlAjtJfFl39+LhOwmuX4Yk5HAz+ti4KQOq
+ ac7ZwLtPJIBydhxVGggUYbRsURnyiYSh9l1shZkz1QJV8zYeOf3+tpAi1eL+T+Y00TtW
+ V6Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738772750; x=1739377550;
+ d=1e100.net; s=20230601; t=1738773187; x=1739377987;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=m59IG++74hiOwfX6DwsbQqLgqP9dXqv2ZyoMq8Pyi64=;
- b=Kn/T9L/u/m/CGr91M+xU8THs5Y11iq3eGkjVnVgPgnBW5+FMIEMlsotLYJYj4UHqRi
- Ckqbf0ynieaz7CvesR1LEabBhWpw7h6xhysHyHr1/m4WlL6yE0M+0afTJOFwZ44mCUtl
- sQc6Va5iY9FkTFYZ976//8WAsqUG6TXiswls7/0R2Y0MG8prHkHoqmn/Kc3NLhPUEz/y
- 6xGfk+TGC+pnclLcv2l1hLDGJHgpUmw0kvsxf0grp/qmNdTQML3ZG0qPdXULkvaFwYzE
- FGMsJbR55Inp/FDqXJeJEgb02zJUb8WCanhz5RffS9ab4MjQSVrf6Oq/80lkmjkM6j0E
- nJoA==
-X-Gm-Message-State: AOJu0YxVnDP2S/rrNZCPwdbQE8oVQ6GxDNUTh0qtjgoQs6Y9O6y8OQPi
- X1xiuiYTT8LLn8BNVkocyZypO1OtCEzw0IjRXgD/q1ZXoOOqiTtZ2cJN90e1abVKXGLc6hV0J74
- 5
-X-Gm-Gg: ASbGncuIFaQr08NbdC1acQPQuD5MnmmvTH4agkGHDEoTDPfCtSTIFUuIRPqoocaLxXO
- VTir+AJDPpDALzDYQnHSBCyy3I4IH6dpFbd1pk/y5w4i137mEnRMioosNNkP/DFYW0Aw4VbNArC
- DTSWi8aLf13AD2WIlxXUrGv2u8sKtbAddHcm2/djpStJlCPSW8SEh/1qzS6L3PO+B2jhwUUpyDf
- qYYajQy4D18BdSajrjhYz655YxkK9M96OVJna8hcD9589sgif4GB7sfd21kFchuZ07uGbSUHmb9
- 4dLY28egwFbddFUoW/oyHO+P5W6PnQ36tNaNstZyi3T50reTHzwwnLTiUAuJScpeK7d9
-X-Google-Smtp-Source: AGHT+IGJyV52MvRTWCTuYXTBJXKFEs/iQBMfI12zR9NJaG543CuivuCPH0qPfPd/iHn9OSD0W41rsg==
-X-Received: by 2002:a17:90b:4b10:b0:2f9:d0cd:3403 with SMTP id
- 98e67ed59e1d1-2f9fdf62111mr60457a91.16.1738772749896; 
- Wed, 05 Feb 2025 08:25:49 -0800 (PST)
+ bh=KdHViYQDPmMOmyuFA7AzHNDjEtkLLedCui9Hh+s5r0o=;
+ b=lsG4EB7OaZ1i1HY6F0oRKUBEX2XdBNiiMg6l00S9ZYaXklvu+HxhF0KIoC7uxYEisO
+ 7/aNLbnd1me1PxVZuN4MlC/uX2wYiUhCvfHnWvq1j2zmahlg2RRA7K8U/XCOYCX3oIrX
+ n606zfeX3D7E3JY4pwRcLKrhrRr6LevQ24TRpryGEbXC4vUUvNYDex/CGnOHX+A5R9je
+ 2RJRAC3Cdzk6KOKZR6RDLuL8VK69QUJi7YVbEZKIbJXERCyL+GLuIP6nGhlhmHo78OHA
+ ncy99PwqZUL9XrB3LBGSfseTTjLMGKMxeN2ewJZ6/bkyqfSYSnRYEDfE4m6B/3sCJYCn
+ pcZQ==
+X-Gm-Message-State: AOJu0Yy77DlY3dNd1jiYFFLqpHcg2+Pfy7RHca6McT7sAK1aNw41OsLK
+ xJC7m7/ycMyWTy9tPjRSKS4DF2xAeV7m78DibyWsgQNeUrJnZxtvdj1QURGl/hU=
+X-Gm-Gg: ASbGnctjfqvDZDUAxfuIyeacXx+Y/ynYZHbj/yRMTmR/+TV6LWivolU8C11d0WVAEzJ
+ c4mBU0Q32Iwc1+AlUoslS4yFPLphDDkdjF91WKYPjU0QU1NbhC9/YxkbLcDZ9Px3UgBarVTQu8W
+ o8b0Cr+BSyFyKHIRLcC8RR+tFDifwXUegXHfVpfNTHxfsXNbmKdAxv4Otm0ZMC4G5RptDoX4FvB
+ i4R0p8+6DB+3KDwsEcqR61JGjawtnjYGaKGm79QaVsT3qMP4dcuJjdoDquJKbczX3gTuqkxjXYD
+ 3jC6/4zJxCodNQD87OUYFEXdX96oQzpGTO9NUWICz9pLb0u0jvGisTXUb+EX8MmGHYx1
+X-Google-Smtp-Source: AGHT+IHhkVfBb0OIT+QeQQjDgDK9cQSxCjCy2BEol37WN5koXb3Brw1hydJJaMbKaEeb8kaqdBgyrA==
+X-Received: by 2002:a17:902:f68c:b0:21b:d105:26b9 with SMTP id
+ d9443c01a7336-21f17e45b7emr55226045ad.16.1738773186841; 
+ Wed, 05 Feb 2025 08:33:06 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9c314b64fsm2138965a91.1.2025.02.05.08.25.48
+ d9443c01a7336-21de3303cdbsm115876695ad.199.2025.02.05.08.33.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 08:25:49 -0800 (PST)
+ Wed, 05 Feb 2025 08:33:06 -0800 (PST)
+Date: Wed, 5 Feb 2025 08:33:04 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, tduszynski@marvell.com,
- stable@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
- Jakub Palider <jpalider@marvell.com>
-Subject: [PATCH v3 19/19] common/cnxk: fix null ptr check
-Date: Wed,  5 Feb 2025 08:23:20 -0800
-Message-ID: <20250205162448.161161-20-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250205162448.161161-1-stephen@networkplumber.org>
-References: <20241115060738.313190-1-stephen@networkplumber.org>
- <20250205162448.161161-1-stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com, vladimir.medvedkin@intel.com,
+ ian.stokes@intel.com, john.mcnamara@intel.com
+Subject: Re: [PATCH] build: remove support for icc compiler
+Message-ID: <20250205083304.7934758e@hermes.local>
+In-Reply-To: <20250205161823.2849595-1-bruce.richardson@intel.com>
+References: <20250205161823.2849595-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,49 +80,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The pointer mode is used then checked which is a bug reported
-by PVS studio.
+On Wed,  5 Feb 2025 16:18:19 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Fixes: bd2fd34ab86f ("common/cnxk: sync eth mode change command with firmware")
-Cc: tduszynski@marvell.com
-Cc: stable@dpdk.org
+> The Intel-produced compiler "icc" has been replaced by the newer
+> clang-based "icx" compiler. DPDK compilation has also not been tested
+> recently with the icc compiler, so let's remove doc and code references
+> to icc, and any special macros or build support that was added for it.
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/common/cnxk/roc_bphy_cgx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Probably should add a release note for this. But overall looks like a great idea.
 
-diff --git a/drivers/common/cnxk/roc_bphy_cgx.c b/drivers/common/cnxk/roc_bphy_cgx.c
-index 882cf65474..db70bafd9b 100644
---- a/drivers/common/cnxk/roc_bphy_cgx.c
-+++ b/drivers/common/cnxk/roc_bphy_cgx.c
-@@ -366,20 +366,20 @@ roc_bphy_cgx_set_link_mode(struct roc_bphy_cgx *roc_cgx, unsigned int lmac,
- {
- 	uint64_t scr1, scr0;
- 
-+	if (!mode)
-+		return -EINVAL;
-+
-+	if (!roc_cgx)
-+		return -EINVAL;
-+
- 	if (roc_model_is_cn9k() &&
- 	    (mode->use_portm_idx || mode->portm_idx || mode->mode_group_idx)) {
- 		return -ENOTSUP;
- 	}
- 
--	if (!roc_cgx)
--		return -EINVAL;
--
- 	if (!roc_bphy_cgx_lmac_exists(roc_cgx, lmac))
- 		return -ENODEV;
- 
--	if (!mode)
--		return -EINVAL;
--
- 	scr1 = FIELD_PREP(SCR1_ETH_CMD_ID, ETH_CMD_MODE_CHANGE) |
- 	       FIELD_PREP(SCR1_ETH_MODE_CHANGE_ARGS_SPEED, mode->speed) |
- 	       FIELD_PREP(SCR1_ETH_MODE_CHANGE_ARGS_DUPLEX, mode->full_duplex) |
--- 
-2.47.2
-
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
