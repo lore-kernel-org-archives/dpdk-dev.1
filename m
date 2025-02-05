@@ -2,39 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD964C02194
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 15:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A02AC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 15:45:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23E42402E9;
-	Wed,  5 Feb 2025 16:37:24 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 82E5C402E6
- for <dev@dpdk.org>; Wed,  5 Feb 2025 16:37:22 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id B17842037185; Wed,  5 Feb 2025 07:37:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B17842037185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738769841;
- bh=kX7PlsY2LRhHyjTtlzO2PIKd+A/wWXpS+f/bsuTvRSs=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=RV+YWqcsUd56R6tFyuWLadXfmwg6VNp3vwcZ5Nv5yp+qHWrXhxwBnr6dAyWYC6UCl
- kQ57Jx2r0j9Qpp2wslBwcGHqv0a0mKbeyls4PCPzp4/CbvC+x1GKfO/km7/NFaUmn/
- n7sFcYmwNi260hqStKDiv30C1UDUxI40mRLtfgZ4=
-Date: Wed, 5 Feb 2025 07:37:21 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/7] eliminate dependency on non-portable
- __SIZEOF_LONG__
-Message-ID: <20250205153721.GA9429@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1733342995-3722-2-git-send-email-andremue@linux.microsoft.com>
- <1738695271-29948-1-git-send-email-andremue@linux.microsoft.com>
- <Z6MsP35NONKe7wSb@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E347440289;
+	Wed,  5 Feb 2025 16:45:06 +0100 (CET)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id E782340270
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 16:45:05 +0100 (CET)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal
+ [10.202.2.49])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 617741140120;
+ Wed,  5 Feb 2025 10:45:05 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Wed, 05 Feb 2025 10:45:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1738770305;
+ x=1738856705; bh=qVk+poPMjLNsBluKBpr8mzNUYzLbhWeKhInYsZiUPzs=; b=
+ VzXepAAWGTeDNFoVshs1w/oU03wwTVLluHQ2c6GbMdvQQ3oeuuOtT4D/yJn5XwPq
+ e2+TTj/OcV1/KFOxDS4xCJ8ActmvXmt5WMBtm2UHDkBkf4vBHBATtGnW0H/KRZms
+ F3RAG3o07Vv49OoEDH06gIkQLCe+6PaUGtvRDZ0DsO5iG38MUL6EcuJmQ0Jv74r1
+ VngY/hcMKRlHFKZoOOGaCNrm4J5QJUwiV2b49IZFO1B0DqCpm1qZD8UfdjRGidgH
+ TURfpMXCD6MzAAXTNePEUiSg5VWmfqmkb1NXxsb+/OhoS4o49TZMEkOColwFt85/
+ 0yFvQb2bwsmRXESZnc1/Cw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738770305; x=
+ 1738856705; bh=qVk+poPMjLNsBluKBpr8mzNUYzLbhWeKhInYsZiUPzs=; b=Y
+ RDsBq1ByFyol0C6gKgWosrdKMTt101wGBLGiy2MKDP2XT3pOMiHGWzqUXD5XWfl+
+ iPYX9fK/7kxr6F/HLHyPIub6pj3NwG3Kt9TH/Xst1nQ3NTwwvWohV0AtO0rmUcyg
+ sKtsBZkpLkJPxTLO3YdUKL0hvZNw0B4toOYxLlAoNC+m5P35BlMezVBwwyI2oXyH
+ frRWOvGlSTYOj8w70OEcuKjuWXsa+XU0jAkd/7KjpQePf7Cuq6cu4g9OYof5uykA
+ e2fIcZl/0x/4oPi0HtHgdHSUYU2urPj9/DAZx1vXVZjvLnBOH+7puEaRAXm0B6CE
+ nPrA/zHK62IT3137Bq5ZQ==
+X-ME-Sender: <xms:gIejZ_YUJu7kIqU4HMd074bZt-5jAV45okn-MmsLykzaryxvmSCg-A>
+ <xme:gIejZ-YMyos6ABkj0EXnHBzxq2QMJSdswd-1VO8Ga2ds50PS3vLpmE_U0TVNorIEi
+ P_NNXApXz7ksfvz-A>
+X-ME-Received: <xmr:gIejZx96BlzOI7OrQ4QXkou4mgw2n99k7-1zN9vK0_KQHcyo73FYJxgOrd-pTGrLrrwmvaiHtMFvNdamwyTKjREmcw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvfeekiecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvve
+ fufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgr
+ lhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrh
+ hnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeen
+ ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomh
+ grshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddpmhhouggvpehs
+ mhhtphhouhhtpdhrtghpthhtohepfigrnhhrhieshihunhhsihhlihgtohhnrdgtohhmpd
+ hrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepfhgvrhhruhhhrdih
+ ihhgihhtsegrmhgurdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkh
+ hplhhumhgsvghrrdhorhhgpdhrtghpthhtohepqhhirghnrheshihunhhsihhlihgtohhn
+ rdgtohhmpdhrtghpthhtohepnhgrnhgrseihuhhnshhilhhitghonhdrtghomhdprhgtph
+ htthhopeiihhgrnhhggiigseihuhhnshhilhhitghonhdrtghomhdprhgtphhtthhopeig
+ uhgufieshihunhhsihhlihgtohhnrdgtohhmpdhrtghpthhtohepjhgrtghkhieshihunh
+ hsihhlihgtohhnrdgtohhm
+X-ME-Proxy: <xmx:gYejZ1pF8bvRGNysdGLrlXUcBx-cELDjZ-zEp7oEqdsFU6mz2uIemA>
+ <xmx:gYejZ6onRQGC9kmSgCU43yTme2wAJMSPVIs5vlevpn9_thamhaEmqA>
+ <xmx:gYejZ7Q7sykCgLzA2h0id_WNdg5HfKoE38z1VRJ1x2fPJKaM1kijBg>
+ <xmx:gYejZyq1gV1rMKqurqLtTSuxw_Rfd7OOQhJTbe0sqczjXch6qSiNeg>
+ <xmx:gYejZ3j4TCYn2SZ-0ncgs3NgpJyJk7TB8nVfz1OlfWfbAH8yG72UWacZ>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Feb 2025 10:45:03 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Renyong Wan <wanry@yunsilicon.com>
+Cc: dev@dpdk.org, ferruh.yigit@amd.com, stephen@networkplumber.org,
+ qianr@yunsilicon.com, nana@yunsilicon.com, zhangxx@yunsilicon.com,
+ xudw@yunsilicon.com, jacky@yunsilicon.com, weihg@yunsilicon.com
+Subject: Re: [PATCH v7 04/15] net/xsc: add xsc dev ops to support VFIO driver
+Date: Wed, 05 Feb 2025 16:45:02 +0100
+Message-ID: <3203749.TQGk6oTFT5@thomas>
+In-Reply-To: <cd6b3b85-1356-4b59-a36a-c5ddb6ab4f64@yunsilicon.com>
+References: <20250128144649.1956159-1-wanry@yunsilicon.com>
+ <2040007.zToM8qfIzz@thomas>
+ <cd6b3b85-1356-4b59-a36a-c5ddb6ab4f64@yunsilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6MsP35NONKe7wSb@bricha3-mobl1.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,62 +97,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 05, 2025 at 09:15:43AM +0000, Bruce Richardson wrote:
-> On Tue, Feb 04, 2025 at 10:54:24AM -0800, Andre Muezerie wrote:
-> > Macro __SIZEOF_LONG__ is not standardized and MSVC does not define it.
-> > Therefore the errors below are seen with MSVC:
-> > 
-> > ../lib/mldev/mldev_utils_scalar.c(465): error C2065:
-> >     '__SIZEOF_LONG__': undeclared identifier
-> > ../lib/mldev/mldev_utils_scalar.c(478): error C2051:
-> >     case expression not constant
-> > 
-> > ../lib/mldev/mldev_utils_scalar_bfloat16.c(33): error C2065:
-> >     '__SIZEOF_LONG__': undeclared identifier
-> > ../lib/mldev/mldev_utils_scalar_bfloat16.c(49): error C2051:
-> >     case expression not constant
-> > 
-> > Turns out that the places where __SIZEOF_LONG__ is currently
-> > being used can equally well use sizeof(long) instead.
-> > 
-> > v4:
-> >  * rebased on latest main as previous patch was not applying cleanly
-> >    anymore.
-> > 
-> > v3:
-> >  * added prefix RTE_ to BITS_PER_LONG* and moved them to rte_common.h
-> >  * defined PLT_BITS_PER_LONG* in drivers/common/cnxk/roc_platform.h to
-> >    avoid warnings from checkpatches.sh like:
-> > 
-> >    Warning in drivers/common/cnxk/roc_bits.h:
-> >    Warning in drivers/common/cnxk/roc_ie_ot.h:
-> >    Warning in drivers/common/cnxk/roc_ie_ot_tls.h:
-> >    Use plt_ symbols instead of rte_ API in cnxk base driver
-> > 
-> >    It can be seen that the same was done in the past for similar
-> >    macros like PLT_CACHE_LINE_SIZE
-> > 
-> > v2:
-> >  * fixed typo in commit message
-> > 
-> > Andre Muezerie (7):
-> >   eal: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   drivers/bus: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   drivers/common: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   drivers/dma: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   drivers/net: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   drivers/raw: eliminate dependency on non-portable __SIZEOF_LONG__
-> >   mldev: eliminate dependency on non-portable __SIZEOF_LONG__
-> > 
-> Just out of interest, is there are reason why the simple solution of just
-> putting "#define __SIZEOF_LONG__ (sizeof(long))" in a header file for MSVC
-> is not done? Should be a couple of lines in a single patch, rather than a
-> 7-patch series, no?
-> 
-> After all, just because something is non-standard, doesn't mean that we
-> can't use it if its widely available.
-> 
-> /Bruce
+05/02/2025 16:37, Renyong Wan:
+> On 2025/2/5 22:43, Thomas Monjalon wrote:
+> > 05/02/2025 15:37, Renyong Wan:
+> >> On 2025/2/5 19:44, Thomas Monjalon wrote:
+> >>> 28/01/2025 15:46, Renyong Wan:
+> >>>> XSC PMD is designed to support both VFIO and private kernel drivers.
+> >>> What's the benefit of private kernel drivers?
+> >>> Why are they private?
+> >> Hello Thomas,
+> >>
+> >> Thanks for your review.
+> >>
+> >> It can support the bifurcation model without unbinding the kernel
+> >> driver, by utilizing our private kernel driver in conjunction with
+> >> rdma-core. Currently, our kernel driver is not open-source, so it is
+> >> considered a private kernel driver. This patch series only supports the
+> >> VFIO driver. Our kernel driver is currently in the process of being
+> >> open-sourced on kernel.org, and once it is available there, we also plan
+> >> to submit the code that supports our kernel driver to DPDK.
+> > OK that's interesting, thank you.
+> >
+> > I think it would be the first DPDK driver to support both VFIO or bifurcated model.
+> > How will we choose which one to use? With devargs?
+> >
+> >
+> That's how we designed it.
+> We designed a low-level device operations framework named xsc_dev_ops to 
+> support both VFIO drivers and kernel drivers. Each xsc_dev_ops is 
+> registered before the main function runs. During the PCI device probe 
+> phase, the XSC PMD selects the corresponding xsc_dev_ops based on 
+> rte_pci_device->driver, therefore, there is no need for devargs.
 
-Yes, that can be done instead. I'll send out a new series with that approach.
+I don't understand.
+If both VFIO and the kernel driver are loaded,
+we'll scan the device twice?
+Will it be probed 2 times?
+
 
