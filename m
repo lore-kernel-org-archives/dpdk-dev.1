@@ -2,102 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F35C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 21:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EADC02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 21:21:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CA94402E7;
-	Wed,  5 Feb 2025 22:18:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A0D61402E7;
+	Wed,  5 Feb 2025 22:21:01 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 02CFA402B3
- for <dev@dpdk.org>; Wed,  5 Feb 2025 22:18:45 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8A56F402B3
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 22:21:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738790325;
+ s=mimecast20190719; t=1738790460;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Tn1/1sHSD2O5H1PiW1dnNMQU2hqSI/9OjCaUYw8nZ5M=;
- b=fF5a3seFgzvP2UnCbAkAwWHXcClxG7nDm7c8ScidIODNwnm7TEYJNdSuE9mIc8UTGbuxoB
- VlmV8cC0JP6FStWNj/kRpKheEwZaO4RFkZnRpw7kK0wUfYJBr3romspERQrlNCcUwFjLfw
- M9OaSh9GckzvW2fFzimvsJvBjCJtUTY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ in-reply-to:in-reply-to:references:references;
+ bh=65wgbHHwBJ28mxr99LZJLkbiGsrW4h6kpQ7M9GTSqkk=;
+ b=Fphs7LXdFub/bx1nq6JviMbUTNqfkbhihzM9BPfsokSY5FJ/YGpJeDkUBKPRJDpOsbrNd+
+ 3gVbqRapR6j7e2GWGUs9FyuoPXEENJka4qbNIqSq4ZJnEZ5LXY+8KO1oLdYzlSTdM7+YXV
+ Nl5mbY66ChdzbnMu15KgkVDtrl0mElY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-CytzGLxYPBmLFC4adBZobQ-1; Wed,
- 05 Feb 2025 16:18:42 -0500
-X-MC-Unique: CytzGLxYPBmLFC4adBZobQ-1
-X-Mimecast-MFC-AGG-ID: CytzGLxYPBmLFC4adBZobQ
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588--ZJQDwX_MWueK5YwFpmZSQ-1; Wed,
+ 05 Feb 2025 16:20:59 -0500
+X-MC-Unique: -ZJQDwX_MWueK5YwFpmZSQ-1
+X-Mimecast-MFC-AGG-ID: -ZJQDwX_MWueK5YwFpmZSQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 34B011800872; Wed,  5 Feb 2025 21:18:41 +0000 (UTC)
-Received: from [10.45.242.4] (unknown [10.45.242.4])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 71AE21800871; Wed,  5 Feb 2025 21:18:39 +0000 (UTC)
-Message-ID: <f80bf8d7-b57a-4816-b207-65bf22e436f5@redhat.com>
-Date: Wed, 5 Feb 2025 22:18:36 +0100
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A905E1800873; Wed,  5 Feb 2025 21:20:57 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.80.197])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id B96B9195608D; Wed,  5 Feb 2025 21:20:55 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: dev@dpdk.org,  David Marchand <david.marchand@redhat.com>,  Bruce
+ Richardson <bruce.richardson@intel.com>,  Anatoly Burakov
+ <anatoly.burakov@intel.com>,  Michael Santana <maicolgabriel@hotmail.com>
+Subject: Re: [RFC] ci: Add support for Cirrus-CI service to test FreeBSD.
+In-Reply-To: <CAJvnSUC0gSQ10P-Ddy0zjxzUPjD_+2PXO1WBESR5PUCm3KASkQ@mail.gmail.com>
+ (Patrick Robb's message of "Tue, 4 Feb 2025 12:33:44 -0500")
+References: <20250204160739.1603197-1-aconole@redhat.com>
+ <CAJvnSUC0gSQ10P-Ddy0zjxzUPjD_+2PXO1WBESR5PUCm3KASkQ@mail.gmail.com>
+Date: Wed, 05 Feb 2025 16:20:53 -0500
+Message-ID: <f7ta5b0f5qi.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix VDUSE devices registration
-To: Ariel Otilibili-Anieli <otilibil@eurecom.fr>
-Cc: dev@dpdk.org, david.marchand@redhat.com, chenbox@nvidia.com
-References: <11eea5-679d0980-397-2b71eb40@59612471>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <11eea5-679d0980-397-2b71eb40@59612471>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: KRaP2E6r6JVKN2NjNR99A0HyQuiIaQKVP88n02KMCtE_1738790321
+X-Mimecast-MFC-PROC-ID: xGKi6Vi4MrxPFoy1my4Zkz0QAnnJhiYM5daxQ_k7Doo_1738790457
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,59 +71,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Ariel,
+Patrick Robb <probb@iol.unh.edu> writes:
 
-On 1/31/25 6:34 PM, Ariel Otilibili-Anieli wrote:
-> Hello Maxime,
-> 
-> On Friday, January 31, 2025 14:09 CET, Maxime Coquelin <maxime.coquelin@redhat.com> wrote:
-> 
->> This patch fixes a regression in vhost_driver_register()
->> causing VDUSE devices registration to fail systematically
->> because the return value was initialized to -1 and not
->> changed later on for this type of devices.
->>
->> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
-> 
-> Thanks for the heads up. I indeed committed 4d2aa150769b ("vhost: remove check around mutex init"); and it contained a hunk for vhost_driver_register().
-> 
-> I applied this patch against the tip of the main; from what I saw, there is no overlap with 4d2aa150769b ("vhost: remove check around mutex init").
-> 
-> It looks 4d2aa150769b ("vhost: remove check around mutex init") came up first, because I was the last person who edited the file.
-> 
-> The tags should be rather these ones:
-> 
-> Fixes: 0adb8eccc6a6 ("vhost: add VDUSE device creation and destruction")
-> Fixes: 78b2e3bae1af ("vhost: fix initialization")
-> Fixes: 64ab701c3d1e ("vhost: add vhost-user client mode")
-> Fixes: 8f972312b8f4 ("vhost: support vhost-user")
-> 
-> Does my reasoning make sense? Let me know.
+> On Tue, Feb 4, 2025 at 11:07=E2=80=AFAM Aaron Conole <aconole@redhat.com>=
+ wrote:
+>
+>  This commit adds preliminary support for developer driven FreeBSD testin=
+g
+>  via the Cirrus-CI cloud continuous integration system.
+>
+>  NOTE: Currently, this does not successfully execute.  See the following
+>  build result:
+>    https://cirrus-ci.com/task/5626189961756672
+>
+>  Full Logs:
+>    https://api.cirrus-ci.com/v1/task/5626189961756672/logs/check.log
+>
+>  The tests themselves may need to be run as root.
+>
+>  Signed-off-by: Aaron Conole <aconole@redhat.com>
+>  ---
+>   .ci/freebsd-build.sh |  5 +++++
+>   .ci/freebsd-setup.sh |  3 +++
+>   .cirrus.yml          | 33 +++++++++++++++++++++++++++++++++
+>   MAINTAINERS          |  1 +
+>   4 files changed, 42 insertions(+)
+>   create mode 100755 .ci/freebsd-build.sh
+>   create mode 100755 .ci/freebsd-setup.sh
+>   create mode 100644 .cirrus.yml
+>
+>  diff --git a/.ci/freebsd-build.sh b/.ci/freebsd-build.sh
+>  new file mode 100755
+>  index 0000000000..099f9fd448
+>  --- /dev/null
+>  +++ b/.ci/freebsd-build.sh
+>  @@ -0,0 +1,5 @@
+>  +#!/bin/sh
+>  +
+>  +cd build
+>  +ninja
+>  +meson install
+>  diff --git a/.ci/freebsd-setup.sh b/.ci/freebsd-setup.sh
+>  new file mode 100755
+>  index 0000000000..762a8383c3
+>  --- /dev/null
+>  +++ b/.ci/freebsd-setup.sh
+>  @@ -0,0 +1,3 @@
+>  +#!/bin/sh
+>  +
+>  +meson setup build
+>  diff --git a/.cirrus.yml b/.cirrus.yml
+>  new file mode 100644
+>  index 0000000000..727dcb14f4
+>  --- /dev/null
+>  +++ b/.cirrus.yml
+>  @@ -0,0 +1,33 @@
+>  +freebsd_build_task:
+>  +
+>  +  freebsd_instance:
+>  +    matrix:
+>  +      image_family: freebsd-15-0-snap
+>  +      image_family: freebsd-14-2-snap
+>  +    cpu: 4
+>  +    memory: 4G
+>  +
+>  +  env:
+>  +    DEPENDENCIES: git gcc wget openssl python3 meson pkgconf
+>  +    PY_DEPS:      pyelftools
+>  +    matrix:
+>  +      COMPILER: gcc
+>  +      COMPILER: clang
+>  +
+>  +  prepare_script:
+>  +    - sysctl -w kern.coredump=3D0
+>  +    - pkg update -f
+>  +    - pkg install -y ${DEPENDENCIES}
+>  +        $(pkg search -xq "^py3[0-9]+-(${PY_DEPS})-[0-9]+" | xargs)
+>  +    - mkdir -p /usr/src
+>  +    - git clone --depth 1 https://git.freebsd.org/src.git /usr/src
+>
+> Sorry, do you mind explaining why this is needed? And should it be clonin=
+g to main or to the latest LTS tag? I think I am ignorant of what is
+> required for your build process.
 
-Not really :)
-Without your patch, ret was assigned by the pthread_mutex_init() return,
-so always 0. With your patch, this assignment is removed so ret will
-always be -1 for VDUSE devices.
+[1933/1938] Generating kernel/freebsd/contigmem with a custom command
+FAILED: kernel/freebsd/contigmem.ko=20
+/usr/bin/make -f ../kernel/freebsd/BSDmakefile.meson KMOD_OBJDIR=3Dkernel/f=
+reebsd KMOD_SRC=3D../kernel/freebsd/contigmem/contigmem.c KMOD=3Dcontigmem =
+'KMOD_CFLAGS=3D-I/tmp/cirrus-ci-build/build -I/tmp/cirrus-ci-build/config -=
+include rte_config.h' CC=3Dclang
+make: "/usr/share/mk/bsd.sysdir.mk" line 16: Unable to locate the kernel so=
+urce tree. Set SYSDIR to override.
+=09in /usr/share/mk/bsd.kmod.mk:4
+=09in ../kernel/freebsd/BSDmakefile.meson:18
 
-So before your patch, VDUSE devices registration was functional, with
-your patch it breaks systematically.
+without this, no contigmem support.
 
-We don't want to backport my patch to LTS that aren't imapcted, so
-tagging your patch as the one introducing the regression is the right
-thing to do.
+>  +
+>  +  configure_script:
+>  +    - ./.ci/freebsd-setup.sh
+>  +
+>  +  build_script:
+>  +    - ./.ci/freebsd-build.sh
+>  +
+>  +  check_script:
+>  +    - meson test -C build --suite fast-tests -t 3
+>
+> You might be interested in this thread: https://bugs.dpdk.org/show_bug.cg=
+i?id=3D761
+>
+> See Cody's comment from last April about unit tests being broken on FreeB=
+SD 13.0 and 14.0. My recollection is that there is no volunteer to
+> resolve these issues currently, which is why we are not targeting unit te=
+sts for FreeBSD at the Community Lab - only build tests.
 
-> :) For my understanding; now that 4d2aa150769b ("vhost: remove check around mutex init") needs a fix, is there a way by which I could have detect the regression?
+Hrrm... that's an interesting issue.  We probably do need some eyeballs
+on the FreeBSD support side.
 
-It could have been detected by testing VDUSE, that's how I noticed it.
-But VDUSE is still fairly recent, and it is not yet tested by the CI.
+Thanks for taking a look.
 
-Now that it is supported in at least Fedora without any kernel change,
-we should work on adding CI testing for it.
-
-> Your help will be much appreciated,
-> Ariel
-> 
-
-Thanks for your contribution,
-Maxime
+>  +            || { cat ./build/meson-logs/testlog.txt; exit 1; }
+>  diff --git a/MAINTAINERS b/MAINTAINERS
+>  index b86cdd266b..ed1df17f3c 100644
+>  --- a/MAINTAINERS
+>  +++ b/MAINTAINERS
+>  @@ -142,6 +142,7 @@ M: Aaron Conole <aconole@redhat.com>
+>   M: Michael Santana <maicolgabriel@hotmail.com>
+>   F: .github/workflows/build.yml
+>   F: .ci/
+>  +F: .cirrus.yml
+>
+>   Driver information
+>   M: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+>  --=20
+>  2.47.1
+>
+> Looks like it makes sense overall, thanks.
+>
+> Reviewed-by: Patrick Robb <probb@iol.unh.edu>=20
 
