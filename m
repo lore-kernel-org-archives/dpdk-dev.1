@@ -2,74 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A54C02198
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B264C02198
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 16:44:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52432402EE;
-	Wed,  5 Feb 2025 17:43:53 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 50CF640289
- for <dev@dpdk.org>; Wed,  5 Feb 2025 17:43:51 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-21f2f09865bso145795ad.0
- for <dev@dpdk.org>; Wed, 05 Feb 2025 08:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738773830;
- x=1739378630; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=FFzU73GA0BBUCP57hqUZILqJbhWk+5QCNEAvJa97ilA=;
- b=Eii12xrh4uBLLUgT4OD1yOK8fr5AjISPiU4zP8pXEVzVpzqdtbgmhDnu/XEv46EHZK
- ARQeNFLVqdXVL05BOKSnxPCh/hWoXfSooTbNgxXQJiGkxW/jgI9mdeh3T3/2m0Z7H8ev
- UQ7OQhShYzTLX7KRcUNErM3d/LedXmTAwIy/M3IrsVmcx1+7lkTrbx0h6/w2NiAy/XOE
- DSX/AnD2PLtVcc3GL8JNqW/nBxdcZ8HcLoyIDYRXkDPNnlsuOt/5GH4Ybp4PY16dyqw+
- NY7XZ7bxcS54cKvYlxZK1XJcJAcZOJHvCHbjMeUV7rv3DtVrscNp1tpRV6fOibaXOSw+
- 2wsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738773830; x=1739378630;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=FFzU73GA0BBUCP57hqUZILqJbhWk+5QCNEAvJa97ilA=;
- b=X3ujIUc9oeftjdYzZ2tU+/L9Eh4feGCi4MmhmA4R9H/xivsIaSH2if6BCnNmY4Tcl/
- RUdB8QD+slgjxMn5kSQHXphWkirs3eZNzrdtOXQ+Uka1/+DBfVZwlNAuJCxsRsvyJSI/
- PztS+1RPm0PXbd6gK1UAFeeIvB9MR1WFgKW5qTaJqfocCu0LVSJVzPUgNHR/hWH1bGf9
- iyhzkgmCxr7Z/tZGxVcS2nBsJ51JejE2Qw8ZT8D3j4DQwClo6B3kOXAGUip6suWKcPcQ
- n3gigrjP/xXLOyRxSFW+3iAKpQMkRMvH9lrLt5Mry4CcGlgO/xPU+XlMxT2W8e+AM6C/
- CoXg==
-X-Gm-Message-State: AOJu0Yw6+IQWtWlLuQbubQ+gfEfgWoH/1OYRZhVNGSx/ay/CG/Ml5RcA
- 9qONwadJbqGb2TVyEfFx9Xg4nOsqwV29lMla9Tifvpg7ywdpl8wsbx2Sn4GJ/80=
-X-Gm-Gg: ASbGncsl6SGyU96wF+NpqsVljX6kxkZEHpg7MhfAuMzUXjnFX3n9/pB/LSz57+94a9D
- HdST2mqcvLxIMIckokMd7rwebk13eqJ6rW5fq5EvArTWU7OCZnF8gKAOhZLABsOTc6FCF7z7jyI
- wmcfFRCr5atE10W5vih5IcmZfBN6Pk+fxJK3oJmidgZ089RBuqPfRBtVMqRsyrJ0fXMXe7yu3ID
- RKYvApYcvKg3/pTQS9RL3JY00Zr/8EbeD8kt5OxjPiBbtGe1eValfHp4drfoa2eRkh61iQJE5Ld
- BZhAQfS78Var76r+3BTMicXTdnvugQbLySlalXRmCQSE92Aoy+TGxfl3EPCNKptfDE7U
-X-Google-Smtp-Source: AGHT+IHV1RZM06cUJdhixiVhFsRUV5hvSVB4UBQ2d8sohuHtpPNKtXs99ZmhSGWVXOFla6pO9ZhMEg==
-X-Received: by 2002:a05:6a00:23ce:b0:729:1c0f:b94e with SMTP id
- d2e1a72fcca58-730423f6897mr268912b3a.6.1738773830419; 
- Wed, 05 Feb 2025 08:43:50 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-72fe69ba353sm12572993b3a.112.2025.02.05.08.43.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 08:43:50 -0800 (PST)
-Date: Wed, 5 Feb 2025 08:43:48 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com
-Subject: Re: [PATCH v21 18/27] test: remove use of VLAs for Windows built
- code in bitset tests
-Message-ID: <20250205084348.29f960ce@hermes.local>
-In-Reply-To: <1738702638-22363-19-git-send-email-andremue@linux.microsoft.com>
-References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
- <1738702638-22363-1-git-send-email-andremue@linux.microsoft.com>
- <1738702638-22363-19-git-send-email-andremue@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+	by mails.dpdk.org (Postfix) with ESMTP id 7C0DA402E4;
+	Wed,  5 Feb 2025 17:44:04 +0100 (CET)
+Received: from lf-1-19.ptr.blmpb.com (lf-1-19.ptr.blmpb.com [103.149.242.19])
+ by mails.dpdk.org (Postfix) with ESMTP id EEE4F40651
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 17:44:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=feishu2403070942; d=yunsilicon.com; t=1738773830; h=from:subject:
+ mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
+ mime-version:in-reply-to:message-id;
+ bh=5d5nfXEWc9IHVHB6Bu8tKib6hvzLwJatsyVQrpFYRvg=;
+ b=jXeBeyqeRYCGJEVA/F6uylcdIVGR1xtdSPfP7ZrK1igDRIW0vA+77foxzSNjWg/VONN27B
+ YaT68Gp15Xh+JD1GMkuTje/SNRWy2toEtIAXh8K1wwE3h1gFbujBKFDlzFzvMp+76CA1Fk
+ AP4g62FiiUtcb0GYUBz6pwBiulixZgPF410UM5wruS03F8MCoeHdW+WG7Q73GEq78uzfa3
+ KtTqxJCEIng08kLOSVqSsnDQnGM/UeMi22EDSPr7EYBrmozdlL+bs8XoOM1H+AC+cuPeYo
+ fW05MUhc7K15/bnI6uO9jb5wD6xzC/4bTFZ95O/YhUZDr8TXUZ//XqD+4VUF5g==
+Date: Thu, 6 Feb 2025 00:43:46 +0800
+X-Lms-Return-Path: <lba+267a39544+bbc1c7+dpdk.org+wanry@yunsilicon.com>
+User-Agent: Mozilla Thunderbird
+References: <20250128144649.1956159-1-wanry@yunsilicon.com>
+ <2040007.zToM8qfIzz@thomas>
+ <cd6b3b85-1356-4b59-a36a-c5ddb6ab4f64@yunsilicon.com>
+ <3203749.TQGk6oTFT5@thomas>
+To: "Thomas Monjalon" <thomas@monjalon.net>
+From: "Renyong Wan" <wanry@yunsilicon.com>
+Content-Type: text/plain; charset=UTF-8
+Message-Id: <71be3e4f-6411-48d4-bace-d27be9b94c17@yunsilicon.com>
+X-Original-From: Renyong Wan <wanry@yunsilicon.com>
 Content-Transfer-Encoding: 7bit
+In-Reply-To: <3203749.TQGk6oTFT5@thomas>
+Received: from [127.0.0.1] ([114.93.246.172]) by smtp.feishu.cn with ESMTPS;
+ Thu, 06 Feb 2025 00:43:47 +0800
+Cc: <dev@dpdk.org>, <ferruh.yigit@amd.com>, <stephen@networkplumber.org>, 
+ <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
+ <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>
+Subject: Re: [PATCH v7 04/15] net/xsc: add xsc dev ops to support VFIO driver
+Mime-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,22 +54,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  4 Feb 2025 12:57:09 -0800
-Andre Muezerie <andremue@linux.microsoft.com> wrote:
+On 2025/2/5 23:45, Thomas Monjalon wrote:
+> 05/02/2025 16:37, Renyong Wan:
+>> On 2025/2/5 22:43, Thomas Monjalon wrote:
+>>> 05/02/2025 15:37, Renyong Wan:
+>>>> On 2025/2/5 19:44, Thomas Monjalon wrote:
+>>>>> 28/01/2025 15:46, Renyong Wan:
+>>>>>> XSC PMD is designed to support both VFIO and private kernel drivers.
+>>>>> What's the benefit of private kernel drivers?
+>>>>> Why are they private?
+>>>> Hello Thomas,
+>>>>
+>>>> Thanks for your review.
+>>>>
+>>>> It can support the bifurcation model without unbinding the kernel
+>>>> driver, by utilizing our private kernel driver in conjunction with
+>>>> rdma-core. Currently, our kernel driver is not open-source, so it is
+>>>> considered a private kernel driver. This patch series only supports the
+>>>> VFIO driver. Our kernel driver is currently in the process of being
+>>>> open-sourced on kernel.org, and once it is available there, we also plan
+>>>> to submit the code that supports our kernel driver to DPDK.
+>>> OK that's interesting, thank you.
+>>>
+>>> I think it would be the first DPDK driver to support both VFIO or bifurcated model.
+>>> How will we choose which one to use? With devargs?
+>>>
+>>>
+>> That's how we designed it.
+>> We designed a low-level device operations framework named xsc_dev_ops to
+>> support both VFIO drivers and kernel drivers. Each xsc_dev_ops is
+>> registered before the main function runs. During the PCI device probe
+>> phase, the XSC PMD selects the corresponding xsc_dev_ops based on
+>> rte_pci_device->driver, therefore, there is no need for devargs.
+> I don't understand.
+> If both VFIO and the kernel driver are loaded,
+> we'll scan the device twice?
+> Will it be probed 2 times?
+>
+>
+No, it won't probe twice.
+I suppose that each PCI device will only be bound to either the VFIO 
+driver or a kernel driver. The drv_flags of the xsc_pmd PCI driver will 
+not preset with RTE_PCI_DRV_NEED_MAPPING. Therefore, in the 
+rte_pci_probe_one_driver function, rte_pci_map_device() will not be 
+called. After entering the probe phase of the xsc PMD PCI driver, 
+rte_pci_map_device() will be called in xsc_dev_ops->init() based on 
+whether it is a VFIO driver.
 
-> +#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 110000)
-> +#pragma GCC diagnostic push
-> +#pragma GCC diagnostic ignored "-Warray-bounds"
-> +#endif
->  
-> +		/* gcc is giving false positives here when code is optimized */
->  		rte_bitset_copy(reference, bitset, size);
->  
-> +#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 110000)
-> +#pragma GCC diagnostic pop
-> +#endif
-> +
->  
+Thank you.
 
-Any change requiring pragma workaround is suspect.
-What happens with Gcc 15? and ASAN
+-- 
+Best regards,
+Renyong Wan
