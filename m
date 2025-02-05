@@ -2,165 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94A8C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 14:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2107C02192
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 15:29:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 170394029A;
-	Wed,  5 Feb 2025 15:59:25 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id F2B9F40270
- for <dev@dpdk.org>; Wed,  5 Feb 2025 15:59:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738767563; x=1770303563;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=N0uptL4G31CKlwhreKc2+yoCYP25VvVh+VR6GxA/Y/k=;
- b=bAIHOLfdi2wGtPP12oFngO7pJ0ijl714A/SYheBeC8K8os2BfUA+IT9g
- 9p3VwhODKMvXE3WBAQITtwV1u+kIZ+FN1fCcSdnCUre/qLVi45R4P5ZcS
- EsynV41K1UzfCUT9Zl5A0wjU1uRCMOHmOne0ReNtM/V2IYqOTk60joO0X
- x5iMQDadhB/3H7uxTSbfR1ZW2IC7yJ07M+MjDoduPe2rCMGvl+NkXPE9q
- WDnMeXEnuFUT88U36mAdawNjwKqMcX7VurhZgAHZ8D6BCcBUPjZMnfRVa
- j38MmlmJSSgXsur+OQlLGo/SWG7I1Sp/hvk/SjkoO4LTsM+fjBzsLFfhT w==;
-X-CSE-ConnectionGUID: vy3eJDuYQKWguoQ8t+7Btw==
-X-CSE-MsgGUID: cau347OORZWe5SNQAvnejQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="56874302"
-X-IronPort-AV: E=Sophos;i="6.13,261,1732608000"; d="scan'208";a="56874302"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Feb 2025 06:59:22 -0800
-X-CSE-ConnectionGUID: 0avk03pwQVmXP0t1Sg8KqQ==
-X-CSE-MsgGUID: +GuBPTSiS2qMf6pkpQsyKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,261,1732608000"; d="scan'208";a="110911617"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
- by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 05 Feb 2025 06:59:22 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 5 Feb 2025 06:59:21 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Wed, 5 Feb 2025 06:59:21 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 5 Feb 2025 06:59:20 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r4W4bD3C2+OA3iO0tSqtGqvzN0ROjK1wtapMz/bZFe6eEBmZ9xGaHO+vT5DoKHjdzZ3K+QOoFYxchDO5ajD6F5WAyQuI4JqSU09TzwEYmIDVCMznb7DVY1StXIUAk6h+TFs6aO0INevdO/xYHteqBiiDZ8cvyXgfbL+NFecxVNPybPMQs1Qbtz3AgnfcqY9risV+2pISrBMmw071gM7pzTIhtnAsWqjvY+oRi7pf0KHB8Uz03pn5OqSp+sZzILkFafjBXM8r+KJJby2g9zsBXJoJF38T8Wqi8K9/Wz4yZl4PFwmBl3zYCptboAedmFDge6jHxczCojt/CYtPrwjw2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KnSyCirZ930yg673rNN7gwQw8sNs05xxHCFl0qFmN1Q=;
- b=q1nx/QXffuSEet2q0rORzA33tCdJVbkG50EptktQp6kbdFn3XAo/BoroblbZ4bGFVHRkzU5GYs+Zj5EDK224XI+VF0CUYPhDwi0gsd2e0wHk/XsLgM23KVqWYWtlIBvJ5k5Belaw9MqlbQLVDith0AR6jFLO9Cv5b2gcSXHz1NSlDDSBZWUxBzuj8+bMIbKILTUz+936Z3AZq12Ru/HccJI08MyKXrxqx+bGmNRoq0XqBz+8dyYb9zSNUFXtyNXaxQhRmsNhSgH2NUIF7PCTFjr7jSZm3vHmCHR5Tbad/6ksf8VHZhG6SL6/R0Zdxcw4rXdtFcOmKFVL85niPFWw7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SN7PR11MB7137.namprd11.prod.outlook.com (2603:10b6:806:2a0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Wed, 5 Feb
- 2025 14:59:17 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8398.025; Wed, 5 Feb 2025
- 14:59:17 +0000
-Date: Wed, 5 Feb 2025 14:59:09 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: Renyong Wan <wanry@yunsilicon.com>, <dev@dpdk.org>,
- <ferruh.yigit@amd.com>, <stephen@networkplumber.org>, <qianr@yunsilicon.com>, 
- <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>,
- <jacky@yunsilicon.com>, <weihg@yunsilicon.com>
-Subject: Re: [PATCH v7 04/15] net/xsc: add xsc dev ops to support VFIO driver
-Message-ID: <Z6N8vYkKc01RQu2p@bricha3-mobl1.ger.corp.intel.com>
-References: <20250128144649.1956159-1-wanry@yunsilicon.com>
- <1873236.BzM5BlMlMQ@thomas>
- <8fcb134d-3d79-447b-b673-6dae8186744a@yunsilicon.com>
- <2040007.zToM8qfIzz@thomas>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2040007.zToM8qfIzz@thomas>
-X-ClientProxiedBy: DU7P250CA0016.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:10:54f::24) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id BFC9240289;
+	Wed,  5 Feb 2025 16:29:36 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8242C40270
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 16:29:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1738769375;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=HeS0vv9wEncZBQlVj/+fvBOEk3Ncn9X4MUr0RyGgmsg=;
+ b=Zml1RTwYjArYSddF3PnDdF1uJfxFpbIZ26F+Vd01cCUJUmhcu1gm4TM9L7dmlUVAGhHYNP
+ ONUpTnwCxvEdwgykaNa/B5kd7gsnLNox7IYhPwom4ITTQAtaRhUCqxa9F9NCsWg26DwNDc
+ mCrt3amD5gBbb9qwnFQpiTgbPmGBzsk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-128-EtyxytSzMtSx5ULnoD696g-1; Wed,
+ 05 Feb 2025 10:29:32 -0500
+X-MC-Unique: EtyxytSzMtSx5ULnoD696g-1
+X-Mimecast-MFC-AGG-ID: EtyxytSzMtSx5ULnoD696g
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C262719560A7; Wed,  5 Feb 2025 15:29:30 +0000 (UTC)
+Received: from [10.39.208.34] (unknown [10.39.208.34])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7067C1800358; Wed,  5 Feb 2025 15:29:29 +0000 (UTC)
+Message-ID: <48f33e8b-8ba5-49f1-a38c-7e0f6efec30b@redhat.com>
+Date: Wed, 5 Feb 2025 16:29:26 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SN7PR11MB7137:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9d73bad-1558-4c6a-1f30-08dd45f5a96a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sgn7nKFRpWCEPvOvm2U/1kVS+YU59BfzSC9W2MsICfNwGeKkoFwUZWesrOHX?=
- =?us-ascii?Q?jYiKugTKPnpb6HxJDjT+Iw1HmFS+eMd9M7IxNCnfoiEyKlqXMq4/EanRmgvX?=
- =?us-ascii?Q?W11oWT2bwG4cWi3Ww3OUG4YpyNtvaIYRn0J0UfCkFDPmwPG+9h0ZE4tbcrN0?=
- =?us-ascii?Q?b7AIAtJikIQ8cAJeelOFlI4uGl52mGUckXQwL7EW+HPofcIrVgzgmCxLHgv/?=
- =?us-ascii?Q?Q1FTTj3dwFoqhADzYxZriUufhNvWmZ6vC4i/GibX9Rw5KfQIg4vSDZdygHsW?=
- =?us-ascii?Q?bDnIHSIXgRFYm4W5dkZ1UtP1JTpqRWxN8DVNN2AruS2xN+3yUxqtf5qMnCk/?=
- =?us-ascii?Q?K9i7prES4ergZXpOqRqWc7R49b8Tr4IbS77esgTxBBU8t2CYgOljDHCWqqQD?=
- =?us-ascii?Q?zPHAbGyhz4vaTbpFmQCX7yDZPg1zaqmSK4EEAwv0hxF3fDCTZZ7/zGu+1n6p?=
- =?us-ascii?Q?CMi5E/D1A6q4Xip+DrbEZehyDNt4GZ0mgVSRQjl2IWMHvhk0YhVEPlE4kk5r?=
- =?us-ascii?Q?RQlYwhINZVL3qVng04gfF/fXI2uv4bcRgltCxeNerEpjUBJd1kh8v2ekxS/0?=
- =?us-ascii?Q?qnpu11eixQNYWT3bmvvNnnSUdsdkKyYu1wgj6QLa/YTR6z9IKsNE1ruU9VpZ?=
- =?us-ascii?Q?XXy9f/3ZC5AGW3maYNgQ3zI8YQETCk/ALI9RDvT1tlfCCb5P77F28Omsa1EZ?=
- =?us-ascii?Q?yBey/E6Jp8TztMJqZBImhBLxv4Cj3YYiWUkxan6ZnCIeBYsVyCLj7N1V9yjD?=
- =?us-ascii?Q?vU1V6MuxHW9NSZCxOW+R6c30InmC3eFr1hNnK+CO5OX4MKV/BcbSQxMeL754?=
- =?us-ascii?Q?ex9QL5j2WDdNSXrWGZKm5Er3PrOELRca+zCBw5r1HekoJ1rj/e0swkLPCvLK?=
- =?us-ascii?Q?jEDr1FGOM4d30O7X94kJtOUS5LnCoaFZPEemneggFbYanP+hVw0ry7ag5fw+?=
- =?us-ascii?Q?SqC/TYDBmIWHH/816N3y6As7IQtfgeKj3gQk56PUApZQpW1P47fyVsIApqcc?=
- =?us-ascii?Q?lRc16PE2VoQiEfFPbRkqGVUS+oJOdUFhCJR/KEh/JkuLp5KczjPRE/o86rSX?=
- =?us-ascii?Q?g9ipMdh63fOGt+iECEgB9F8LBHHLjQPC1FmYMposcI/vA9N+W6dqnHkdj8Bt?=
- =?us-ascii?Q?N7ErnB9J7wNmt5le5Aa223nmzu91NtHCX9/NJpKKH5ATMB/pX03bQMxYwz2X?=
- =?us-ascii?Q?rTqAmVXt1D7Dl/1biF4PHWCjCC7/8vdb0uk/235JHr6VHu1CxvWiE1EJdG+s?=
- =?us-ascii?Q?lB4EN2mq9ivVlbB1bR0THfirCw9Ek4P5Gii6TW+g9wNx6xcS1VSmhkoV/cZc?=
- =?us-ascii?Q?44eZ6TVQKC6WNUvP8tIna6rFLKLh/ExkxV1U+PhQ4TSrojYTmO04dw53FmUs?=
- =?us-ascii?Q?DdSlNe9cGao+YD5qk8xSx/yE3eKB?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(7416014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zR4LZWiQMu0MrNJUypGd42lKgV7KDSZ4cWNdc1YDxZC0PkJAe57OXIMQCr75?=
- =?us-ascii?Q?3LsuaBzPRnA/sB/gWkO07Ea1HOlBpYUfsJPHcpIUCC4pSM/fOm/P9z1K9AjI?=
- =?us-ascii?Q?2UFz621Qt/gtFhjMplt/q8CjF6TWZug7Fpk1sUd8CT0riFq8BeZprsrSQfJc?=
- =?us-ascii?Q?bqXJU5v2AJdKg+9njXaHteCRWeviNmnHtebJNWgJ6aEyAWnfOQlS71K73FxE?=
- =?us-ascii?Q?SkCYE8TxLWMntFW4tYf79okXtM9GYwHTnJx0sG2maNP780GHxxGn9CBXGQ9I?=
- =?us-ascii?Q?9Kk/jpxK/WKQ+Owa9MeNrFzh46hg6vU+FcC99HwcvP93YWayRa8BKHXR5g6M?=
- =?us-ascii?Q?5Fq69Uxo5z3qFc8TARC0DcqVRAUYMFVeAWmPE8SjBGTNyR6ZRazjzTViMp9k?=
- =?us-ascii?Q?R1330LhT7XEIZzYjZwRbQfZfnU8lE6CvWJoUMIMArmVR4AkSgz6y60qCSPOH?=
- =?us-ascii?Q?8fIC0UpTC2s3+v9y6ver03+DL4ffLCJcTz6X/4XvmQCl1G/oKCXeGGT0NtRi?=
- =?us-ascii?Q?IZo+HGDRPA8sMJauJoz+TYqxcy4ySW/3ZasdGrcvo8+JIucaDpaog0Gybbaj?=
- =?us-ascii?Q?XPrzp4BANAezPqoaYO5xRnZmfKhi0TdQ1EtrWUemcQDKjsWCOmR5t8jOeVDb?=
- =?us-ascii?Q?z0ELQ7bz+kPhvHsx4J2Wl0tB5b4XpQYJpuiwBalR/X0F6P+21RpAfAmilPkD?=
- =?us-ascii?Q?d6ERGOivS+Ea1nQo5H/P7BGTqvBoCGWt5XlST9v55AO1/PGBPbudswgyw+Pz?=
- =?us-ascii?Q?pUBkw133y8iifQ2W9YNRr6syqsvECoGAlbXXSVZTUi/JLy7zvDVZHXxIAx3P?=
- =?us-ascii?Q?GfGxFb+xfgMXW/7fo7BvMJH0iPGf9Lq8+0mPt3hc3XA065s5ZiGJPkB3zVIf?=
- =?us-ascii?Q?bkx9ZGojJtAGlfMnWan50Q38+MlK/I/Y0aXCsLq+WyowXLWCFvQKxjbP5Bx0?=
- =?us-ascii?Q?jI0BGQd2hO2epp+Hj9eqcDJfuButFOp6C9pCNUSHKpZ3OGnP5cW8WccTrZ1u?=
- =?us-ascii?Q?WYw/1gZLmmw0tGfJ00WCx9gtI/sqw7oB+6HX6KmEV2TrrC1/DGFAfglIO/E/?=
- =?us-ascii?Q?G6s6+flCd6MdN327VCSYqlRsce8glUZHIUGp/oSEC8JGByHEYayUo/hxjQdf?=
- =?us-ascii?Q?gJWz7FgGG3UGA7jvyq9boOCVWENDXr1BIGxLKTRrh1ho2CYMSTaxO2A1LguS?=
- =?us-ascii?Q?CQNzhAuEN4C5TAc9DdtZ5b3Nxvqd6gcERGpsZ5xn1RJLD2BpstXe8xUncNqa?=
- =?us-ascii?Q?hSIPsnEuCQlFwjrOqDKGWAizvy2Su/d1blV25zH8+A2cvEeumH1Sdj2YTSNb?=
- =?us-ascii?Q?VivBf2UeexgZ4FQJdB0pxyGorJHvdz/Gb+vrhW8tD8WqnbdOIH56tx+ehuQG?=
- =?us-ascii?Q?vnt6i5mKtaxkr0C/ZqNh5vfj4pysLeyASSvs4pUPgxQr7ahG10zKldrRccxF?=
- =?us-ascii?Q?VE+GrjtcDuL+0fTkV1ukStPimrbd5vHk1hmO73wObcdpRn7KDN2Ed2+YHYeo?=
- =?us-ascii?Q?wfF4AAQ/EfG5qDiPcNOp5u44xg+z7RafKzYZ9HYLAmbFtfS+i+OKQQ7TFWOh?=
- =?us-ascii?Q?7UebhUmX+Lj+TAlqqu2Br28eFtO3YZ9eIJgZZYkbchGglNg1QD+QuI1jpHhn?=
- =?us-ascii?Q?xw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9d73bad-1558-4c6a-1f30-08dd45f5a96a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2025 14:59:16.9493 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NrezXhuZCDIoidycaQxYzLx9WccMDfIU09FKoros5SIV/4lYfWsZ0rYPAUO+gxtsw/95mBdf/pd82J1MSgJcew+axOw9Db/T2439UPhlW20=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7137
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/3] Vhost: fix FD entries cleanup
+To: Chenbo Xia <chenbox@nvidia.com>, David Marchand <david.marchand@redhat.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+References: <20241224154958.146852-1-maxime.coquelin@redhat.com>
+ <CAJFAV8zwCx+Xsa12TaLye3A9dSSSbt_T_-cc6Lc71oNyLv9=nw@mail.gmail.com>
+ <3EE665CF-8BD9-4F3E-8CF4-30F0A285A7CC@nvidia.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <3EE665CF-8BD9-4F3E-8CF4-30F0A285A7CC@nvidia.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: EsFuv1YXqIip5eLbrdhvw5deJTI2t1IAMs6qbiESUqE_1738769371
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -174,33 +113,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 05, 2025 at 03:43:30PM +0100, Thomas Monjalon wrote:
-> 05/02/2025 15:37, Renyong Wan:
-> > On 2025/2/5 19:44, Thomas Monjalon wrote:
-> > > 28/01/2025 15:46, Renyong Wan:
-> > >> XSC PMD is designed to support both VFIO and private kernel drivers.
-> > > What's the benefit of private kernel drivers?  Why are they private?
-> > 
-> > Hello Thomas,
-> > 
-> > Thanks for your review.
-> > 
-> > It can support the bifurcation model without unbinding the kernel
-> > driver, by utilizing our private kernel driver in conjunction with
-> > rdma-core. Currently, our kernel driver is not open-source, so it is
-> > considered a private kernel driver. This patch series only supports the
-> > VFIO driver. Our kernel driver is currently in the process of being
-> > open-sourced on kernel.org, and once it is available there, we also
-> > plan to submit the code that supports our kernel driver to DPDK.
+Hi Chenbo & David,
+
+On 2/5/25 8:27 AM, Chenbo Xia wrote:
+> Hi David,
 > 
-> OK that's interesting, thank you.
+>> On Feb 4, 2025, at 21:18, David Marchand <david.marchand@redhat.com> wrote:
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> Hello vhost maintainers,
+>>
+>> On Tue, Dec 24, 2024 at 4:50 PM Maxime Coquelin
+>> <maxime.coquelin@redhat.com> wrote:
+>>>
+>>> The vhost FD manager provides a way for the read/write
+>>> callbacks to request removal of their associated FD from
+>>> the epoll FD set. Problem is that it is missing a cleanup
+>>> callback, so the read/write callback requesting the removal
+>>> have to perform cleanups before the FD is removed from the
+>>> FD set. It includes closing the FD before it is removed
+>>> from the epoll FD set.
+>>>
+>>> This series introduces a new cleanup callback which, if
+>>> implemented, is closed right after the FD is removed from
+>>> FD set.
+>>>
+>>> Maxime Coquelin (3):
+>>>   vhost: add cleanup callback to FD entries
+>>>   vhost: fix vhost-user socket cleanup order
+>>>   vhost: improve VDUSE reconnect handler cleanup
+>>>
+>>> lib/vhost/fd_man.c | 16 ++++++++++++----
+>>> lib/vhost/fd_man.h |  3 ++-
+>>> lib/vhost/socket.c | 46 ++++++++++++++++++++++++++--------------------
+>>> lib/vhost/vduse.c  | 16 +++++++++++-----
+>>> 4 files changed, 51 insertions(+), 30 deletions(-)
+>>
+>> I tried this series, and it fixes the error log I reported.
+>>
+>> On the other hand, I wonder if we could do something simpler.
+>>
+>> The fd is only used by the registered handlers.
+>> If a handler reports that it does not want to watch this fd anymore,
+>> then there is no remaining user in the vhost library for this fd.
+>>
+>> So my proposal would be to rename the "remove" flag as a "close" flag:
+>>
+>> @@ -12,7 +12,7 @@ struct fdset;
+>>
+>> #define MAX_FDS 1024
+>>
+>> -typedef void (*fd_cb)(int fd, void *dat, int *remove);
+>> +typedef void (*fd_cb)(int fd, void *dat, int *close);
+>>
+>> struct fdset *fdset_init(const char *name);
+>>
+>> And defer closing to fd_man.
+>> Something like:
+>>
+>> @@ -367,9 +367,9 @@ fdset_event_dispatch(void *arg)
+>>                         pthread_mutex_unlock(&pfdset->fd_mutex);
+>>
+>>                         if (rcb && events[i].events & (EPOLLIN |
+>> EPOLLERR | EPOLLHUP))
+>> -                               rcb(fd, dat, &remove1);
+>> +                               rcb(fd, dat, &close1);
+>>                         if (wcb && events[i].events & (EPOLLOUT |
+>> EPOLLERR | EPOLLHUP))
+>> -                               wcb(fd, dat, &remove2);
+>> +                               wcb(fd, dat, &close2);
+>>                         pfdentry->busy = 0;
+>>                         /*
+>>                          * fdset_del needs to check busy flag.
+>> @@ -381,8 +381,10 @@ fdset_event_dispatch(void *arg)
+>>                          * fdentry not to be busy, so we can't call
+>>                          * fdset_del_locked().
+>>                          */
+>> -                       if (remove1 || remove2)
+>> +                       if (close1 || close2) {
+>>                                 fdset_del(pfdset, fd);
+>> +                               close(fd);
+>> +                       }
+>>                 }
+>>
+>>                 if (pfdset->destroy)
+>>
+>>
+>> And the only thing to move out of the socket and vduse handlers is the
+>> close(fd) call.
+>>
+>> Like:
+>>
+>> @@ -303,7 +303,7 @@ vhost_user_server_new_connection(int fd, void
+>> *dat, int *remove __rte_unused)
+>> }
+>>
+>> static void
+>> -vhost_user_read_cb(int connfd, void *dat, int *remove)
+>> +vhost_user_read_cb(int connfd, void *dat, int *close)
+>> {
+>>         struct vhost_user_connection *conn = dat;
+>>         struct vhost_user_socket *vsocket = conn->vsocket;
+>> @@ -313,8 +313,7 @@ vhost_user_read_cb(int connfd, void *dat, int *remove)
+>>         if (ret < 0) {
+>>                 struct virtio_net *dev = get_device(conn->vid);
+>>
+>> -               close(connfd);
+>> -               *remove = 1;
+>> +               *close = 1;
 > 
-> I think it would be the first DPDK driver to support both VFIO or
-> bifurcated model.
+> I have one concern here is compared with this RFC, the proposal changed the timing
+> of close connfd，which means on QEMU side, cleaning up resources will happen later.
+> 
+> Currently I can’t think of issues could be introduced by this change (maybe you and
+> Maxime could remind me of something :)
+
+That's a good point.
+I just tested David's suggestion with Vhost-user with OVS and QEMU:
+- guest shutdown + reconnect
+- live-migration
+- OVS restart
+
+It seems to behave very well.
+
+> Besides this, definitely this proposal is cleaner.
+
+I agree, I will send a new revision re-using David's proposal.
+
+Thanks,
+Maxime
+
+> 
+> Thanks,
+> Chenbo
+> 
+>>
+>>                 if (dev)
+>>                         vhost_destroy_device_notify(dev);
+>>
+>>
+>> Maxime, Chenbo, opinions?
+>>
+>>
+>> --
+>> David Marchand
+>>
 > 
 
-Not quite the first, but possibly the first net driver? :-). The idxd
-dmadev driver supports both. It can be used either with VFIO or the kernel
-idxd driver.
-
-/Bruce
