@@ -2,63 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B77C02198
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 17:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E94C02199
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 17:21:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AA3640A87;
-	Wed,  5 Feb 2025 18:20:21 +0100 (CET)
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com
- [209.85.210.48]) by mails.dpdk.org (Postfix) with ESMTP id 9CB81402E4
- for <dev@dpdk.org>; Wed,  5 Feb 2025 18:20:18 +0100 (CET)
-Received: by mail-ot1-f48.google.com with SMTP id
- 46e09a7af769-71e2766994bso25488a34.3
- for <dev@dpdk.org>; Wed, 05 Feb 2025 09:20:18 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 349DE40A6F;
+	Wed,  5 Feb 2025 18:20:22 +0100 (CET)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com
+ [209.85.210.49]) by mails.dpdk.org (Postfix) with ESMTP id D5C4440A6F
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 18:20:19 +0100 (CET)
+Received: by mail-ot1-f49.google.com with SMTP id
+ 46e09a7af769-71fbb0d035dso27791a34.2
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 09:20:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1738776018; x=1739380818; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1738776019; x=1739380819; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oLB4CC3ArJ9hP+1eRA9RDOx2WztzB52Bo0Il4K2Puik=;
- b=ZDT4cfFWtgh+XW3HO9gB98yWuhfuuyCH0QTKPKCeqke8dr3l+9Op9rX62wLwXma/a9
- Yux6XjyFpdchTDAXBbkh+CikDft7LHKJrIyjnxnz3LDFyYm34ZE1cf/qhChjYE8dfqeY
- LWQzHfOPVI/DPd4AyrQqBlWAut8Y8DCICMlgQ=
+ bh=Fxrq83+c3GumvxXC6lFTimV5QxFJheNg/bL0gLEcsTM=;
+ b=NZIENFegljxG1jkskTUJMh8purgD3bKrRctgdvpMCB0mUhoKw/IGLVR256B77YYESf
+ FbigEV2VqIxGRvgrnUVmWQzbV2ZjvIVuho45WY92Dla3O7kekmLNdckjlK/6DnNhA0Se
+ YVID1aFfyrjyLI5Y1iyMO0dnXrqDoFXyh2ltM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738776018; x=1739380818;
+ d=1e100.net; s=20230601; t=1738776019; x=1739380819;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=oLB4CC3ArJ9hP+1eRA9RDOx2WztzB52Bo0Il4K2Puik=;
- b=emMc0NPzW2Iw2enDdrSu1nDAf8h6AOz1AnuSYOAhGDXMWTHAENk7fLUsKFq/ExJB/s
- 4ZKg0h/IqvwMoBHUlhKx3Cq4UBT3fwGfEbbzZzEuoe1STxKo7SRrzANgD9z5WM2eg8+5
- WRGzeMaOQu3iVlExDKJmfvOqJupfsPrA8+loBBrfYljbQCZ72374rVZrv9bl2vE+xOgn
- BPQwxFo2E8qFM8ST3r0j0dstRxJ6eK6ZyT3EoCbuFD+IxpRB6kMs9H28H4GLNzrBnNAs
- vv5Fydktp//K/DDxTuqv9y83zbF3onf4T939BEF0KodnG2HooQ2u/oDN41ESP69AoIG/
- YsNw==
-X-Gm-Message-State: AOJu0YwZ+cmRu+g3/tbUNCDuTMCROepNsnBuPXoKAXYV46IrdDFKtDQb
- 6OgFNxFXzkobFa0KTRJBKrYlIHSsfOh5onUVysiyIA/6FcqlBvMJIdj9cFduuyCu0Iq8VaPMnCA
- sj8gFYnL8JIOj1JsmQj2WtycQRT4Uhq87I2Wp7Cts1ElkBYpkhm5MBxDTKKVhU+X0TxKT9ITQL5
- /7rCziY54oz1tRGfrPj1auCEd317AP
-X-Gm-Gg: ASbGncvQy9pzxKSzAcWgLWBhM01zuf/ekTwNLFtYfAwPq1H2lO8SmO7WGOl9gVMBg6I
- Xz79ct8mkOzQiEV4PcjlFQDvYkurBHs305tb2Ata58fA/Yq7Wikyv+pHYbXxeABfAQyk7ko/4oV
- ffqquc8mbKYRCOCOxf38AVR1O6HDD+z6Sqsg2Sn1WK/AuvacMfmCAz1IP8gUJzX6gYRhiBW0w9x
- 2G20NDBusfrpiXQEg2Gtqsx6lUlT3AaSUwbboaWtXauw+VO8bBX7vDFNJxD1OYUWSsZuVJ3MXDe
- 6oMYijRige+7GncmdCq3SocqaRCJPrE4GXBEtdBxrb7c05MQxTwgtiiUIoV+3nHao3d/x+eQGUI
- QMjOKK/G8
-X-Google-Smtp-Source: AGHT+IEOqnDQRjOhX+3Z5lrKx5fGXKMQQ3ZqBWmO+HtzwbPMwn2CYHvqvgpOLEcZI8S1vekNzsKnGQ==
-X-Received: by 2002:a05:6830:d16:b0:718:105b:1185 with SMTP id
- 46e09a7af769-726a41ba991mr2466863a34.14.1738776017557; 
- Wed, 05 Feb 2025 09:20:17 -0800 (PST)
+ bh=Fxrq83+c3GumvxXC6lFTimV5QxFJheNg/bL0gLEcsTM=;
+ b=OThSD+SmFaMsvDIQs7zRH1PhWEf+6YpElcjoScZUIHgTNDwgv+qC8fO+fO/QGh8EHE
+ 8zwk47K4JVXIaDfZPWTQOd3E0RK1U3TUtNiHF70+3aD1gObmgSp8J+Xf5bWnNUbFsLly
+ fiEyEh0JVXhB66+n4ehXK9UfUYKvRr+eJpHTAVi5muHMtYC0EczRmL9TQlkysPQfckOF
+ ccQQ1tKOzkGqUFcjoB1YSEjLIc3SjnPbH5s+gp1kYK8TDNqOuujwYJP6pu/Sxb72+P5l
+ aY5f1ziU4rF1VVB5/yWqiogp2KN658qjS3UvGgLGVrvmRtnGGvBTsh0+3PkvQA1rj10W
+ ZR9g==
+X-Gm-Message-State: AOJu0YwCetZDjzwNx9GJsHDlo0yzydcEVLCXCB3iJGhYkJQjby8BqygE
+ Q+JWrHZkk9YXAFLnRFjrNGcHEwLYfJBScAWyzZJNo+1iA0Qvw1WbmkKsk4lg1PQHMAfzq05wYB4
+ Z4deCdMBrAhipZET2WdqX79CO+JUSPiztdU7XiqR3k6unlKhw4WEv7lpE9lBU2Pr/jwIL6xhmtB
+ Ie3cQdqFw72JISlLdr1vgg9E/mBH3a
+X-Gm-Gg: ASbGncvFnBV9OojVLeUMOT40UfE0ZtI+NbL7pXfj4Bghoig7RcM72c8euC0Az3lbRXb
+ hB5g0KpK9oQlnG2CKldNJR8+HuPhaB9Oro2FflvsvI9YkMBugdjPGHr9Zh4sPyiX8JjG1SqgrII
+ wpMxQLR2AAh5o1U/BT9DkA3bOPj2+wdaMXl7BsmqMHmqOFDiaGBZlukCmVqDw6NKCyaubfqY5lN
+ 6z3A+6a1JRSYzwZdw/hQ+atmVddVdjlFT18jgbT2EzDFZI/jK6gnlJ3QLrgHn0QWJvOQz5hnE2H
+ y3btz2OEfYrjhuE5QHwP4EiodNuSIMPDUXaXlX+7hNUtForTzUoJPH4Qeh4XBOtpYbizg+iWXbk
+ ibDAh6NT7
+X-Google-Smtp-Source: AGHT+IHQYfChmKUlUlXc+P1TgY8hL1TTOZD24LykVN5Mrpe7vHmpLt13pKMLW1QAwONNITq8DKgwcA==
+X-Received: by 2002:a05:6830:6787:b0:71d:634a:e0d6 with SMTP id
+ 46e09a7af769-726a413e1b5mr2543074a34.6.1738776018984; 
+ Wed, 05 Feb 2025 09:20:18 -0800 (PST)
 Received: from C02GC2QQMD6T.wifi.broadcom.net ([192.19.223.252])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-726617cde49sm4004016a34.27.2025.02.05.09.20.16
+ 46e09a7af769-726617cde49sm4004016a34.27.2025.02.05.09.20.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 09:20:17 -0800 (PST)
+ Wed, 05 Feb 2025 09:20:18 -0800 (PST)
 From: Ajit Khaparde <ajit.khaparde@broadcom.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: [PATCH 07/11] net/bnxt: address coverity checked return issues
-Date: Wed,  5 Feb 2025 09:20:00 -0800
-Message-Id: <20250205172004.50395-8-ajit.khaparde@broadcom.com>
+Subject: [PATCH 08/11] net/bnxt: address coverity overflow issues
+Date: Wed,  5 Feb 2025 09:20:01 -0800
+Message-Id: <20250205172004.50395-9-ajit.khaparde@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250205172004.50395-1-ajit.khaparde@broadcom.com>
 References: <20250205172004.50395-1-ajit.khaparde@broadcom.com>
@@ -79,58 +79,29 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Peter Spreadborough <peter.spreadborough@broadcom.com>
 
-This change addresses the CID 449056:  Error handling issues (CHECKED_RETURN)
-reported by coverity. The changes add return code handling to
-address the issue.
+This change addresses the CID 449058: Integer handling issues
+(OVERFLOW_BEFORE_WIDEN) reported by coverity.
 
-Coverity issue: 449056
+Coverity issue: 449058
 Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_mapper.c     | 10 +++++++---
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.c |  8 +++++++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index 2429ac2f1a..1a68cf5dfd 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -3612,9 +3612,13 @@ ulp_mapper_func_cond_list_process(struct bnxt_ulp_mapper_parms *parms,
- 		}
- 	}
- 	/* write the value into result */
--	ulp_operand_read(val, res_local + res_size -
--			 ULP_BITS_2_BYTE_NR(oper_size),
--			 ULP_BITS_2_BYTE_NR(val_len));
-+	if (unlikely(ulp_operand_read(val, res_local + res_size -
-+				      ULP_BITS_2_BYTE_NR(oper_size),
-+				      ULP_BITS_2_BYTE_NR(val_len)))) {
-+		BNXT_DRV_DBG(ERR,
-+			     "field idx operand read failed\n");
-+		return -EINVAL;
-+	}
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
+index 1770069295..c29933b803 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
+@@ -468,7 +468,7 @@ static int alloc_link_pbl(struct tfc_ts_mem_cfg *mem_cfg, uint32_t page_size,
+ 	 * and page tables. The allocation will occur once only per backing
+ 	 * store and will located by name and reused on subsequent runs.
+ 	 */
+-	total_size = page_size * total_pages;
++	total_size = (uint64_t)page_size * (uint64_t)total_pages;
  
- 	/* convert the data to cpu format */
- 	*res = tfp_be_to_cpu_64(*res);
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-index dd5985cd7b..bf3a3deb18 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-@@ -517,7 +517,13 @@ ulp_rte_parser_svif_set(struct ulp_rte_parser_params *params,
- 		else
- 			svif_type = BNXT_ULP_DRV_FUNC_SVIF;
- 	}
--	ulp_port_db_svif_get(params->ulp_ctx, ifindex, svif_type, &svif);
-+
-+	if (ulp_port_db_svif_get(params->ulp_ctx, ifindex,
-+				 svif_type, &svif)) {
-+			BNXT_DRV_DBG(ERR, "ParseErr:ifindex is not valid\n");
-+			return BNXT_TF_RC_ERROR;
-+	}
-+
- 	svif = rte_cpu_to_be_16(svif);
- 	mask = rte_cpu_to_be_16(mask);
- 	hdr_field = &params->hdr_field[BNXT_ULP_PROTO_HDR_FIELD_SVIF_IDX];
+ 	if (total_size <= (1024 * 256))
+ 		mz_size = RTE_MEMZONE_256KB;
 -- 
 2.39.5 (Apple Git-154)
 
