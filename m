@@ -2,55 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3F5C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 11:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD7EC02194
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 12:47:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0F5040659;
-	Wed,  5 Feb 2025 12:55:56 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id EB12F40657
- for <dev@dpdk.org>; Wed,  5 Feb 2025 12:55:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738756555; x=1770292555;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=oVuHUbJdBxIFfTvqtHjLsdRwG19XavEANKRb+UjGySw=;
- b=P0JoB38dTQa5P6DPS8yADwHmtC4Hnu7rFm6fuq8NRihuFwQebKuaHieB
- 9D+XwwALoEl7jR1F5Eh9nwdHUL2G88tRETB8zuWJMYilV+grPm6jfeBzL
- TF5Nzdpnd9IjImWoeyOTz6oryZT1njLLERlNM86qJGBgAV4NpCdyqAnyO
- TR0cfs0UcPKDGnv4FWY4xee6UrpsqWuGzaL1uLRd19aBlRfDrYVwxtCaz
- eQy3sN1ODkxHYTbN3tugjCZdL8hssmm2+yUnNfNia/bnomTDQIjh0curF
- EgMkTbmEYXg+anV/eelW8apOpioghBu5171C87FJxZwBQPe68dGl5HuhT A==;
-X-CSE-ConnectionGUID: BIFpKoHsQwaLZXbpRVegWw==
-X-CSE-MsgGUID: 3qvX9QdTTpCq/8bozNIjmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="49568742"
-X-IronPort-AV: E=Sophos;i="6.13,261,1732608000"; d="scan'208";a="49568742"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Feb 2025 03:55:55 -0800
-X-CSE-ConnectionGUID: En0/gjE9TF6OBVX4088EDA==
-X-CSE-MsgGUID: 4CWbCPbwQpa/eV1btw5f0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="141781739"
-Received: from silpixa00401197coob.ir.intel.com (HELO
- silpixa00401385.ir.intel.com) ([10.237.214.45])
- by fmviesa001.fm.intel.com with ESMTP; 05 Feb 2025 03:55:53 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Ian Stokes <ian.stokes@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v4 4/4] net/intel: allow building ice driver without iavf
-Date: Wed,  5 Feb 2025 11:55:31 +0000
-Message-ID: <20250205115533.2746196-5-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250205115533.2746196-1-bruce.richardson@intel.com>
-References: <20250128163649.343336-1-bruce.richardson@intel.com>
- <20250205115533.2746196-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4D5AE402CE;
+	Wed,  5 Feb 2025 13:47:33 +0100 (CET)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id 20E5740270
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 13:47:32 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 929A513801AF;
+ Wed,  5 Feb 2025 07:47:31 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 05 Feb 2025 07:47:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1738759651;
+ x=1738846051; bh=QBuq/WLfpEJeGcf6mVZEiaURnKawcS3Ep3bBIXjiatg=; b=
+ D0P+lL7XguPpjRJ8MT5Cypn9JAVisEkPeaLsfTv6MGg5KHJ0EFsOA0D22tGN1W9f
+ IhgBy0zPx29xNi/1lfqJUIZ2RfzPQknDWfqxzRHKjJWsGBnn3Pcxe/9dIliAl0nb
+ iKqWG3Yive76TV6G6e6VLh5UyIsJ8qH7++AIy2Ex5rnEbfeOlQk2iJjmD96LbOnt
+ Us20kIM4iuJXW0UiRb3QOcgQnjPqEjJHHnyISnYGA3UhtF2dfEhPJI4iRnD86nef
+ T2m2fsK12ki6C/SXsQeD1LMFNj1mG3s7mbYcBrGHWwkuPo0Wz3wtshOP8gdccqiw
+ kN8Pm39oOsy2hrjJj1Eajg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738759651; x=
+ 1738846051; bh=QBuq/WLfpEJeGcf6mVZEiaURnKawcS3Ep3bBIXjiatg=; b=M
+ X70X7v7OHYl0Qf4AzdRYGQn1OaIUf4VgGvyH99oiD0qYxflnYY6SXlbBZCS+GZg5
+ hIGiCOEV+Dp6xO/ixCgNdlWaN0fgbPWr12wrpdDkvy40w3HZlPKONCEzkqIlsMGW
+ ZT9ftyN7tqAdukLzGrtG9EQ7L1DIMSG1gyu0GDssrlUbVZLXtyt74nY+lJOnXI3s
+ mHgJKvggxQaaw8jWAUyc5zaxizIjOpnxQd7FuLr6ekHBfpRpySKWXLdg1tcCKw/K
+ /xFbDtsq5irra18WlD+H/oD0d4yHyMAKxm4VNXub8z+4GONsuIqFtuqyPsbVorPI
+ oO5t81xFXTpTkyDAfBUBQ==
+X-ME-Sender: <xms:4l2jZwwYJiTfoKBVzgd6lqGi1yE9cmLJYMP0nQ3Kg2gd1d9jHwwv1A>
+ <xme:4l2jZ0Qh2XhMb8WAbAcbS_mLvQmX7-fAQWAdy3tozMZllMSMZFaB9ESleSYSu_Qwz
+ E74X8OEyqa0laQfxw>
+X-ME-Received: <xmr:4l2jZyWaZiLqPLtGfuYngSVCaJLYDikji_fcysTIO5KsiuG8puAho3js0s2sDwOSVSQQqZt3AfP351WJp0JGsPkXsw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvfeeglecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvg
+ hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepfigrnhhg
+ rdhjuhhnlhhonhhgudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepuggvvhesughpug
+ hkrdhorhhg
+X-ME-Proxy: <xmx:4l2jZ-hLLEnGKIWTsSqIG3mPrSgjjiFc1m9Yf6f5s7hQhv5jJ6p2cg>
+ <xmx:4l2jZyCGMlo0khADFJqwXPdepN_SrXyqL-PdjfxL2Ea1U847buZOZw>
+ <xmx:4l2jZ_J3arI1tMSBv2fhZZFEtlJni_gUBrRP2vckF4oKvAiJEKXckA>
+ <xmx:4l2jZ5APzoAtjl0AIwRuy9uyC28kqjl3xl16fbIFaWTB422OY4gD_g>
+ <xmx:412jZ9Mp26kULllpZj3DN5Ohx1WATZE6MV9WIBGlyUUnawATZN0W-1TH>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Feb 2025 07:47:29 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Junlong Wang <wang.junlong1@zte.com.cn>, dev@dpdk.org
+Subject: Re: [PATCH v9 03/15] net/zxdh: port tables init implementations
+Date: Wed, 05 Feb 2025 13:47:27 +0100
+Message-ID: <12977412.iMDcRRXYNz@thomas>
+In-Reply-To: <20250203183500.073abb2e@hermes.local>
+References: <20241210055333.782901-2-wang.junlong1@zte.com.cn>
+ <20250121034433.3033681-4-wang.junlong1@zte.com.cn>
+ <20250203183500.073abb2e@hermes.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,64 +91,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ice PMD relies on a number of functions from the iavf base code,
-which can be got by linking against that iavf driver. However, since
-only three C files are necessary here, we can allow ice to be built
-independently of iavf by including the base files directly in cases
-where iavf is not part of the build. If it is part of the build, the
-dependency remains as now.
+04/02/2025 03:35, Stephen Hemminger:
+> On Tue, 21 Jan 2025 11:44:21 +0800
+> Junlong Wang <wang.junlong1@zte.com.cn> wrote:
+> 
+> > insert port tables in host.
+> > 
+> > Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
+> > ---
+> >  drivers/net/zxdh/meson.build   |   1 +
+> >  drivers/net/zxdh/zxdh_ethdev.c |  24 ++
+> >  drivers/net/zxdh/zxdh_msg.c    |  65 ++++
+> >  drivers/net/zxdh/zxdh_msg.h    |  72 ++++
+> >  drivers/net/zxdh/zxdh_np.c     | 648 ++++++++++++++++++++++++++++++++-
+> >  drivers/net/zxdh/zxdh_np.h     | 210 +++++++++++
+> >  drivers/net/zxdh/zxdh_pci.h    |   2 +
+> >  drivers/net/zxdh/zxdh_tables.c | 105 ++++++
+> >  drivers/net/zxdh/zxdh_tables.h | 148 ++++++++
+> >  9 files changed, 1274 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/net/zxdh/zxdh_tables.c
+> >  create mode 100644 drivers/net/zxdh/zxdh_tables.h
+> 
+> 
+> This patch won't build if RTE_ASSERT's are enabled.
+> 
+>  $ CC=clang meson setup -Dc_args='-DRTE_ENABLE_ASSERT' build
+> 
+>  $ ninja -C build
+> 
+> ../drivers/net/zxdh/zxdh_msg.c:1094:33: error: use of undeclared identifier 'zxdh_msg_reply_info'; did you mean 'zxdh_msg_chan_init'?
+>  1094 |                 RTE_ASSERT(reply_len < sizeof(zxdh_msg_reply_info));
+>       |                                               ^~~~~~~~~~~~~~~~~~~
+>       |                                               zxdh_msg_chan_init
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/intel/iavf/base/iavf_prototype.h |  8 ++++++++
- drivers/net/intel/ice/meson.build            | 13 ++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+It is just a matter of adding "struct".
+I am fixing it while pulling in the main branch.
 
-diff --git a/drivers/net/intel/iavf/base/iavf_prototype.h b/drivers/net/intel/iavf/base/iavf_prototype.h
-index 7c43a817bb..5d2ee0a785 100644
---- a/drivers/net/intel/iavf/base/iavf_prototype.h
-+++ b/drivers/net/intel/iavf/base/iavf_prototype.h
-@@ -11,6 +11,14 @@
- 
- #include <rte_compat.h>
- 
-+/* functions only need exporting if this is being built into
-+ * iavf driver itself. If included in ice driver, then no export
-+ */
-+#ifndef RTE_NET_IAVF
-+#undef __rte_internal
-+#define __rte_internal
-+#endif
-+
- /* Prototypes for shared code functions that are not in
-  * the standard function pointer structures.  These are
-  * mostly because they are needed even before the init
-diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
-index 5faf887386..ff7f84597a 100644
---- a/drivers/net/intel/ice/meson.build
-+++ b/drivers/net/intel/ice/meson.build
-@@ -18,9 +18,20 @@ sources = files(
- 
- testpmd_sources = files('ice_testpmd.c')
- 
--deps += ['hash', 'net', 'net_iavf']
-+deps += ['hash', 'net']
- includes += include_directories('base')
- 
-+if dpdk_conf.has('RTE_NET_IAVF')
-+    deps += 'net_iavf'
-+else
-+    includes += include_directories('../iavf/base')
-+    sources += files(
-+            '../iavf/base/iavf_adminq.c',
-+            '../iavf/base/iavf_common.c',
-+            '../iavf/base/iavf_impl.c',
-+    )
-+endif
-+
- if arch_subdir == 'x86'
-     sources += files('ice_rxtx_vec_sse.c')
- 
--- 
-2.43.0
+
+
 
