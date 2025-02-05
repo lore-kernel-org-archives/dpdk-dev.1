@@ -2,45 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88B4C02192
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 15:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD964C02194
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Feb 2025 15:37:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12A0940289;
-	Wed,  5 Feb 2025 16:37:15 +0100 (CET)
-Received: from lf-2-19.ptr.blmpb.com (lf-2-19.ptr.blmpb.com [101.36.218.19])
- by mails.dpdk.org (Postfix) with ESMTP id 77ABB40270
- for <dev@dpdk.org>; Wed,  5 Feb 2025 16:37:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1738769822; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=MHM9jgvBUkJfsyIWi91gCuVLonEQCpUUlf0Ta5k4aNQ=;
- b=Cfy6Zw0D/Qi+m/YvL22O8MZfj/bVQcJ8lInmZ3PI0pS1y/BODVtpA5AKXWh9mkuYw+YElk
- vr5btfrEnuHlG7ADPvUht7L9lkgOuw8q6VB51EN6PKlzS7uxDRtXajJNXIKUx+Fk70M3t3
- QD0rekhcsaGTL8H6gVLBB7ApHi+EBM8NlpLQowDZC103Zgf21ahuvEUq6ZT6ivbuu4wgJU
- g15BKPd4cIdZMRIXJPEQ4ZdUIbcovX9trQdgT05q8T4faauzzcLPNHgz1TwrZkI5QVBuI0
- UnJG1sOmALIGz7JRXmBwYDsYfH1zoPKjha48XL7hEv+eqtA+rVlWmS0Wan+PjQ==
-Message-Id: <cd6b3b85-1356-4b59-a36a-c5ddb6ab4f64@yunsilicon.com>
-Mime-Version: 1.0
-User-Agent: Mozilla Thunderbird
-X-Lms-Return-Path: <lba+267a3859c+c992f4+dpdk.org+wanry@yunsilicon.com>
-References: <20250128144649.1956159-1-wanry@yunsilicon.com>
- <1873236.BzM5BlMlMQ@thomas>
- <8fcb134d-3d79-447b-b673-6dae8186744a@yunsilicon.com>
- <2040007.zToM8qfIzz@thomas>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: <dev@dpdk.org>, <ferruh.yigit@amd.com>, <stephen@networkplumber.org>, 
- <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
- <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>
-Subject: Re: [PATCH v7 04/15] net/xsc: add xsc dev ops to support VFIO driver
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
-Content-Type: text/plain; charset=UTF-8
-From: "Renyong Wan" <wanry@yunsilicon.com>
-Date: Wed, 5 Feb 2025 23:37:01 +0800
-Content-Transfer-Encoding: 7bit
-In-Reply-To: <2040007.zToM8qfIzz@thomas>
-Received: from [127.0.0.1] ([114.93.246.172]) by smtp.feishu.cn with ESMTPS;
- Wed, 05 Feb 2025 23:36:59 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 23E42402E9;
+	Wed,  5 Feb 2025 16:37:24 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 82E5C402E6
+ for <dev@dpdk.org>; Wed,  5 Feb 2025 16:37:22 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id B17842037185; Wed,  5 Feb 2025 07:37:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B17842037185
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1738769841;
+ bh=kX7PlsY2LRhHyjTtlzO2PIKd+A/wWXpS+f/bsuTvRSs=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=RV+YWqcsUd56R6tFyuWLadXfmwg6VNp3vwcZ5Nv5yp+qHWrXhxwBnr6dAyWYC6UCl
+ kQ57Jx2r0j9Qpp2wslBwcGHqv0a0mKbeyls4PCPzp4/CbvC+x1GKfO/km7/NFaUmn/
+ n7sFcYmwNi260hqStKDiv30C1UDUxI40mRLtfgZ4=
+Date: Wed, 5 Feb 2025 07:37:21 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v4 0/7] eliminate dependency on non-portable
+ __SIZEOF_LONG__
+Message-ID: <20250205153721.GA9429@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1733342995-3722-2-git-send-email-andremue@linux.microsoft.com>
+ <1738695271-29948-1-git-send-email-andremue@linux.microsoft.com>
+ <Z6MsP35NONKe7wSb@bricha3-mobl1.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6MsP35NONKe7wSb@bricha3-mobl1.ger.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,39 +48,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025/2/5 22:43, Thomas Monjalon wrote:
-> 05/02/2025 15:37, Renyong Wan:
->> On 2025/2/5 19:44, Thomas Monjalon wrote:
->>> 28/01/2025 15:46, Renyong Wan:
->>>> XSC PMD is designed to support both VFIO and private kernel drivers.
->>> What's the benefit of private kernel drivers?
->>> Why are they private?
->> Hello Thomas,
->>
->> Thanks for your review.
->>
->> It can support the bifurcation model without unbinding the kernel
->> driver, by utilizing our private kernel driver in conjunction with
->> rdma-core. Currently, our kernel driver is not open-source, so it is
->> considered a private kernel driver. This patch series only supports the
->> VFIO driver. Our kernel driver is currently in the process of being
->> open-sourced on kernel.org, and once it is available there, we also plan
->> to submit the code that supports our kernel driver to DPDK.
-> OK that's interesting, thank you.
->
-> I think it would be the first DPDK driver to support both VFIO or bifurcated model.
-> How will we choose which one to use? With devargs?
->
->
-That's how we designed it.
-We designed a low-level device operations framework named xsc_dev_ops to 
-support both VFIO drivers and kernel drivers. Each xsc_dev_ops is 
-registered before the main function runs. During the PCI device probe 
-phase, the XSC PMD selects the corresponding xsc_dev_ops based on 
-rte_pci_device->driver, therefore, there is no need for devargs.
+On Wed, Feb 05, 2025 at 09:15:43AM +0000, Bruce Richardson wrote:
+> On Tue, Feb 04, 2025 at 10:54:24AM -0800, Andre Muezerie wrote:
+> > Macro __SIZEOF_LONG__ is not standardized and MSVC does not define it.
+> > Therefore the errors below are seen with MSVC:
+> > 
+> > ../lib/mldev/mldev_utils_scalar.c(465): error C2065:
+> >     '__SIZEOF_LONG__': undeclared identifier
+> > ../lib/mldev/mldev_utils_scalar.c(478): error C2051:
+> >     case expression not constant
+> > 
+> > ../lib/mldev/mldev_utils_scalar_bfloat16.c(33): error C2065:
+> >     '__SIZEOF_LONG__': undeclared identifier
+> > ../lib/mldev/mldev_utils_scalar_bfloat16.c(49): error C2051:
+> >     case expression not constant
+> > 
+> > Turns out that the places where __SIZEOF_LONG__ is currently
+> > being used can equally well use sizeof(long) instead.
+> > 
+> > v4:
+> >  * rebased on latest main as previous patch was not applying cleanly
+> >    anymore.
+> > 
+> > v3:
+> >  * added prefix RTE_ to BITS_PER_LONG* and moved them to rte_common.h
+> >  * defined PLT_BITS_PER_LONG* in drivers/common/cnxk/roc_platform.h to
+> >    avoid warnings from checkpatches.sh like:
+> > 
+> >    Warning in drivers/common/cnxk/roc_bits.h:
+> >    Warning in drivers/common/cnxk/roc_ie_ot.h:
+> >    Warning in drivers/common/cnxk/roc_ie_ot_tls.h:
+> >    Use plt_ symbols instead of rte_ API in cnxk base driver
+> > 
+> >    It can be seen that the same was done in the past for similar
+> >    macros like PLT_CACHE_LINE_SIZE
+> > 
+> > v2:
+> >  * fixed typo in commit message
+> > 
+> > Andre Muezerie (7):
+> >   eal: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   drivers/bus: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   drivers/common: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   drivers/dma: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   drivers/net: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   drivers/raw: eliminate dependency on non-portable __SIZEOF_LONG__
+> >   mldev: eliminate dependency on non-portable __SIZEOF_LONG__
+> > 
+> Just out of interest, is there are reason why the simple solution of just
+> putting "#define __SIZEOF_LONG__ (sizeof(long))" in a header file for MSVC
+> is not done? Should be a couple of lines in a single patch, rather than a
+> 7-patch series, no?
+> 
+> After all, just because something is non-standard, doesn't mean that we
+> can't use it if its widely available.
+> 
+> /Bruce
 
-Thank you.
+Yes, that can be done instead. I'll send out a new series with that approach.
 
--- 
-Best regards,
-Renyong Wan
