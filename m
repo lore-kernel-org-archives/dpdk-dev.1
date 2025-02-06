@@ -2,136 +2,164 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD336C02194
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 10:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1957FC02194
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 11:07:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7A6140DD3;
-	Thu,  6 Feb 2025 11:55:17 +0100 (CET)
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam12on2071.outbound.protection.outlook.com [40.107.237.71])
- by mails.dpdk.org (Postfix) with ESMTP id 4DE0C40C35
- for <dev@dpdk.org>; Thu,  6 Feb 2025 11:55:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 69FCE402CE;
+	Thu,  6 Feb 2025 12:07:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CD784026C
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 12:07:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1738840064; x=1770376064;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=nLG0t/N4Lm9OEShqxGE84ez6NL+1uwtjsjJvzKJAzJs=;
+ b=N+Dq9PV1QSNuhpCQ6a4EuxiYKwzqwwGZP+5dRNIKq/Rehm1B4Im4fioq
+ 3WIURQ0oOY31Y8TgLlPMSwL3tUjNYiSqDjwz8z7tj/kATUX4Nbu433naL
+ BX6fwXBydf4yQWn6QQy2kEPMRcvspFupK1DwoSO2IokDOGL6i1XDk+Ih/
+ luJ3HBdqucXN3SkDvCs517j0bQbDykNur+VvhK/B+b8NNpO0beNKmV6BJ
+ kbUv0Cb9BRikbfPgvdqpjLPNArSETe/ZL3kohnROtqqluxi3798kFapqe
+ xqK5fInXCff4rHtwXGZBGo6ru2dSt/OK9YLaVJJ2FgRsxbHaanpIGV1h4 g==;
+X-CSE-ConnectionGUID: 0U1zGlQSQv+pMoQ4D0GiHg==
+X-CSE-MsgGUID: RdCO93S6TlymcrB/6MrceA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43361973"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="43361973"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Feb 2025 03:07:43 -0800
+X-CSE-ConnectionGUID: o7aF2ARlR7C6bo4qM51rqQ==
+X-CSE-MsgGUID: DUah8dzBT3mOflbhg5D9hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111759432"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 06 Feb 2025 03:07:42 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 6 Feb 2025 03:07:41 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 6 Feb 2025 03:07:41 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 6 Feb 2025 03:07:41 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sk+smbP+dqNj7S9R0j7PsDkGNkujX+oEag2n5YE2ly1DQzotTSz8OBAjb7YVH3sNN4/ILeIvfKN8PoEpy+KGvnTM1Y36HvAJA44IKGOF8ODYJ5ahCQ9Y3p3/nm1LUCrJZkCjdZTsxhwZuHJu/V8oMMuIMQ5cXFuL1ucPbzvTBfe1bz39sQCpTfRCby4Pxz+3Uyjxnz5Q0XaaPwOwzgy6owV7iJWOnFvABaLw3XHGy7KWQbCSs9TWGmMT3tGwqGjLEhfclkEZhJjAc6bT1Z3ih5jkbDlaIdyM2A8Ni7+yoEE0zdOuq61pFWesRYOjZACILvRIVa+M0pNTmML53dYDOQ==
+ b=wNGjfaD3XakSM6LoKklyXfVqxZKSsOswLV19dMSyE7+mBaAda2Z9GpZrfVmvn8pCiWV5gpDyqA4kvIKsuAL4ue+Nhvx/SzQPRsO45jwvwRtSGW2V+omPSmvhmSJ53VN06/Y1UAvwm/sNNkraiCLCGB2ycYRPTu8fbC0OI36Lcqxnlcx+TLAUOK7pfFFk9US7GEPU0GLSnNtU0/7Of6fxmk5qg8FqBnae7PnHCSLzH/9NFN1KwzSfBSseWXLPqdwf64xjK21c+4EZgwGafVFBT8q2l2J/Zi7NNyhOo2WCobhTlY/xAzHUV+7v/epkBoCPOwGEhnqYeIFqLY6gXWBDuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vSx68up67IYzooyln1BP7LQkG/2V31GpNEoTq6MktJA=;
- b=U5QerquoOX5LrDvLhK9g+poX2OjV0wAWlEURQAA16DkKflWQcFDQaz5tmy1X1MHfY4gGHbdv6eO6G++/VUSZWE26WLeL9/SlAMTE8XRDB5RcA9VJpNSG0HSnqt17MbovRyHLpw30UXLB13C3sVsuQN/ozNPNdlcfk8nXvRjnqaBDvwtz07OfXtXi2WbBajLxyfocPWphQAK8/iNZi6aFSjYZ/w0TwRpl/Npo29V1Smiwkw8s7FPikV2r5JOHtb3IiaZrzw+z/tL/aRHbo79o2XMCWKq2if5GDv2lCvNg0x8lCiWg8BuvRNhU4ruY91sybayVDlBRKyOU/ITs+xECYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vSx68up67IYzooyln1BP7LQkG/2V31GpNEoTq6MktJA=;
- b=eJT5dqeRjF51Sjy0iHABYjleAy5juahfBtzkT7a1E2njIPfXl5wc388hZSHJmEtDLgONyy/cSHhanSm1Niqcs36H46fQvfQdKi+3nVFL31qyOw7WNgMaODVmfDRkDLBwuWyYH09lknFADgLAcc+ukQhK0LhIADfVc3LlcVHZ2H0yChJ/RO6kdCh57zqmLlEexq/HUXLmy41qXemEYtX8yy0xmW4vzn/iBKclG9wD8Uqemfa1g9297rM9tZgseAfItRAfwJR0hqMcSruRHucqtLDNl3yCBLciF5oHc8gABjbXqilvFEeNGTM+/CCRS7Z9ezPqD2A717qJKKF4ZO2vMg==
-Received: from PH8PR02CA0025.namprd02.prod.outlook.com (2603:10b6:510:2da::15)
- by IA1PR12MB6602.namprd12.prod.outlook.com (2603:10b6:208:3a2::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.11; Thu, 6 Feb
- 2025 10:55:09 +0000
-Received: from CY4PEPF0000EDD5.namprd03.prod.outlook.com
- (2603:10b6:510:2da:cafe::ad) by PH8PR02CA0025.outlook.office365.com
- (2603:10b6:510:2da::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.28 via Frontend Transport; Thu,
- 6 Feb 2025 10:55:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EDD5.mail.protection.outlook.com (10.167.241.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8398.14 via Frontend Transport; Thu, 6 Feb 2025 10:55:08 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 6 Feb 2025
- 02:54:50 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 6 Feb
- 2025 02:54:49 -0800
-Received: from nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.8) with
+ bh=IxU4kqgumusf3ejYZKtRWqgQ5wGBx6S7+KKgiTUCv5I=;
+ b=cTJpF0MWTCAQ5XZYVQq4K/VJmhmUHZ/qqadzMrNcp63oABpkCNG9aa6QgsK+ag2vikhrlQ2/zsfNszbS6HouDD80EcAKsCyWKDyUi7d2wfT7Y8Fp+RLPTPhirMnVgZ8qzLynwWj4hv1K7Z2krlTwnGpY4mH0spP/25HqAE6vBPp3Xil2fNpnVGzFq2rN7FX7enrjuw71BolDkIdtWedUatqItgEOIwlJ4SnOI+kbnP5krNUZ73v1K2W5yuPKfyKab4LnQZCyrpjOlSJmsZOrjKvdS1fIy+hkPaEOizuAVell+SkbG+eiDWyduCQUx9O+bKajR2TzQSaUpOz97MTc0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM3PR11MB8684.namprd11.prod.outlook.com (2603:10b6:0:4a::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 6 Feb 2025 02:54:44 -0800
-From: Shani Peretz <shperetz@nvidia.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, Shani Peretz <shperetz@nvidia.com>, "Tyler
- Retzlaff" <roretzla@linux.microsoft.com>, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, "Nikhil
- Agarwal" <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, "Chenbo
- Xia" <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
- "Chengwen Feng" <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>, Bruce Richardson <bruce.richardson@intel.com>,
- "Kevin Laatz" <kevin.laatz@intel.com>, Chas Williams <chas3@att.com>, "Min Hu
- (Connor)" <humin29@huawei.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v6 4/4] lib: change find device and cmp dev name functions
-Date: Thu, 6 Feb 2025 12:54:27 +0200
-Message-ID: <20250206105428.237346-4-shperetz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250206105428.237346-1-shperetz@nvidia.com>
-References: <20250206000838.23428-5-shperetz@nvidia.com>
- <20250206105428.237346-1-shperetz@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Thu, 6 Feb
+ 2025 11:07:39 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8398.025; Thu, 6 Feb 2025
+ 11:07:39 +0000
+Date: Thu, 6 Feb 2025 11:07:32 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+CC: <anatoly.burakov@intel.com>, <dev@dpdk.org>, <ian.stokes@intel.com>,
+ <jochen.behrens@broadcom.com>, <vladimir.medvedkin@intel.com>,
+ <stephen@networkplumber.org>
+Subject: Re: [PATCH v4] drivers/net: use 64-bit shift and avoid
+ signed/unsigned mismatch
+Message-ID: <Z6SX9MGQC3f776nN@bricha3-mobl1.ger.corp.intel.com>
+References: <1735246770-731-1-git-send-email-andremue@linux.microsoft.com>
+ <1738783944-10172-1-git-send-email-andremue@linux.microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1738783944-10172-1-git-send-email-andremue@linux.microsoft.com>
+X-ClientProxiedBy: DU2PR04CA0075.eurprd04.prod.outlook.com
+ (2603:10a6:10:232::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD5:EE_|IA1PR12MB6602:EE_
-X-MS-Office365-Filtering-Correlation-Id: a75f88f7-c281-4b9c-fa15-08dd469cb896
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM3PR11MB8684:EE_
+X-MS-Office365-Filtering-Correlation-Id: c554c53e-58e0-4eaa-1bb3-08dd469e77ed
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|7416014|376014|82310400026|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mmD830Z07joXe1PyN4LXX0EWWq5LSB3+EW7V98epMgiZoJWaYxNS8902zU78?=
- =?us-ascii?Q?rVSRXwFbAKTpn3oGI9LKcwhmtiQMJB2MiQ5QHO1/ftO7Ng/3O+Kn/6pIaMol?=
- =?us-ascii?Q?m5g7wJZZ63CwgWFVx2H0emdxc2AOF7/1Lec80KLX+xkcmVdsPYtKGMr+LDH1?=
- =?us-ascii?Q?mpWry+z44L1WgXtcY/XWYAdpUb+9RvYXqr0V6mbyztBiyjrT5vf602QNREH5?=
- =?us-ascii?Q?cvqyRzCjtw/OwCbDKNOm91NZWHC4T5VjM7uMurVw53jdj3Sc444Oi+e0o53m?=
- =?us-ascii?Q?dAjsLT0kkhar/kZMPsbcZIzjyB+Ijw8tnU5IXn+EAtE9x+tGjdU6yeaWDdOC?=
- =?us-ascii?Q?rtdyMulUBi5WBnwvaetD3q/nRHbUvcyHf/krdKz42an9V8RO7CmAGUMc9voR?=
- =?us-ascii?Q?MVjkkXzqgFmk4OxiofvOZhP26LDE7zqkN6qk9kjkQBTaN05NqjHvSxJ9bslM?=
- =?us-ascii?Q?uzHxNKdbN89C3YGKNYuAJRtRPEtaYWt0tb7CmjxxBPnHONiZidBMTqpc4/2t?=
- =?us-ascii?Q?n7JVocMpbIcQX1Cfjk2YrBYqGZDZeH/IRlv5O+iThtGG7t62q5POuLsnUfhm?=
- =?us-ascii?Q?lTFD1Z+65buxRkaKwvTo3B/jrFqOSllTqml58pYDeO150DQapcMwYYz+YX7H?=
- =?us-ascii?Q?5nPzCG7takgOJOHxlxUv860tCAmlOs0jPYVo7N7W3QUsVU9tevRQEs6HdwOF?=
- =?us-ascii?Q?RnbM2ipfYQSOVx77mH3NNJ875n/pwy+995f2AFIIo4AA6JRnXBvCGE5rMzxU?=
- =?us-ascii?Q?zs4ErinR1NB2BUn0XxyK1CZ3x6q/h8v8Y/SnKI26hbDcFxVeRwT5Tr/VnIvl?=
- =?us-ascii?Q?tMBYvWNMHG0ivKa38FzT83Hl9sOtaz3IIfg64SyR+WDDoGuG1+iSDL3LDIXG?=
- =?us-ascii?Q?0ww+oQe9AhPQI2TXX99zpX1ycwdIuTP0cpaXfQpu3jVLha0PN9vndXEsUHVY?=
- =?us-ascii?Q?RSAtJWclM2+weyjq+yHXXqP4fOY4OR67MhRLCZd8f0pCWl9SzPd/fAiqx+zj?=
- =?us-ascii?Q?WUikjz0a3HTuESILFOIb3FGfuA+5mMP4mJvo9Bj2wZ60Z1sS6zAIiq1YC5We?=
- =?us-ascii?Q?u+KLrzA7YHL93co7Faj4wAKtCu2I1f72GRneWa9b+2CxXXsmtrvwZXjJpOoG?=
- =?us-ascii?Q?Du0La4kC9Ya0/PRv2P8bLKhOShf0ZGlKDwhbVI0KQwE3yqx5IHhsMP8K1/Dv?=
- =?us-ascii?Q?dWnNcgE9AJDg5Nch/4BAw/jrm3i4A9Rc/Xd8oaOJ/UZ35AyHi4rmufAIMpGI?=
- =?us-ascii?Q?jc/3aRdngFywpjvFqgVonNuQchWRyBokoUYzapb253yzuc+PDsKV7n3H0/vh?=
- =?us-ascii?Q?n0dZTTtntQyy8XbkmtyuUE33iop2V9griCgA8lB+eK+/CyruaDz1SAvNaMm4?=
- =?us-ascii?Q?Nazd4FFOUdkDd5T1g7MPLiFXMympIE1bcK7djVB2O6XEfB6wGbvEW4VZFlsL?=
- =?us-ascii?Q?BwEWEmnVvLtzK4dRaWMc6YPJgj5P0+PigcAzgHqmnQHZEPNOyXCWpCiQAGx+?=
- =?us-ascii?Q?5llaHteu14JhtXk=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2025 10:55:08.0660 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a75f88f7-c281-4b9c-fa15-08dd469cb896
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EDD5.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6602
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jIXlGNfvH9Hh1/ROCQYFeGjKL2EPa9lvUdunExatzOJxaSL9vYUPILUMMu2t?=
+ =?us-ascii?Q?nSAaQBI7LCEGZJLkYLjjAk45pqB/vjl0ILFruJM+l1BO2u2Ay9JqeQjQloGd?=
+ =?us-ascii?Q?WmS8VM6PFVQ1DqxCtITkfxEtkY0vK28zl5PJwhF//Kn8ynppj68qJxuRIq75?=
+ =?us-ascii?Q?6pO7I0McHN/sWAr5r6Q7gYELsH5y3ElNnBA88RdONDflJFnCZs5kJIUz8JDo?=
+ =?us-ascii?Q?lmvTAy19e3pdjgkpjAzBrqmr6q/syiy38gEeNtyBahH0WSPP2v8STxcZDcVV?=
+ =?us-ascii?Q?hJWvW/R05hIfu+C8c9xycicQkHQ7Hhd3qdjr6s0CUzwQNtGuh8ME+qrJl+tX?=
+ =?us-ascii?Q?VAJwBa0oFE4ANF+XHN+Fp+Kp5NtlFRPtvGrrQokr0BEXfA1s2VM4BbWzfGmE?=
+ =?us-ascii?Q?P4SsyDb//CDyTVqedxF2r9BSzo8PVYLzT6lrwu0Mz4ONPzknWIhj3LNwWO/k?=
+ =?us-ascii?Q?AHjpxWK8LY5vXwpnUHpVzBiQ/NolyPRC8PQsjEU4RZ3JvyhfvX+YiFoXOh56?=
+ =?us-ascii?Q?idsrNYbqLZjou7Odjg/nc842uK9EctHm+u2mTCvqrlR6UrFhuIWvRaUMHX1n?=
+ =?us-ascii?Q?0+CGYa5KdODj8BfR6eHMCYol8oGYqymnoygrRER1gueHnSaHmXsQtJxACRct?=
+ =?us-ascii?Q?Zc6EBy6cs3wNbmbHGqPpbocjH7BHpBU/PH0dD/wS9zvGLqrFAN/N19o45m65?=
+ =?us-ascii?Q?tyfK5ZD2aRLnJsa6LHFoLhPe7XhjqIcwzcBqlW3J6OnhHrsE2+tdqY8gIVdY?=
+ =?us-ascii?Q?dovjjGgnu1hSsYshnllxUFnZvrckwMz28Hq/c7zPJAZhVFtAvXAJiEvT/svQ?=
+ =?us-ascii?Q?nV5roUPGMPGwDivUe5QXvUYIB0lp7YyLMmWk+yOYkNDoReG4s3IQ8DfzD2yf?=
+ =?us-ascii?Q?Zjy7qjBpTYdCKgE20Z7N6m0YTCGiMUM7Z24fyFgHRT1KDbVs4/B2Ro4Owg7L?=
+ =?us-ascii?Q?rU8OPp1QqWofaIsGBUR98ZvISOOrnRfhLK3oWwImGBCTKqj1pFPsQPlVtbuB?=
+ =?us-ascii?Q?e14a61GS3ustprzTIDHvB3t4vbl8+oVG82NM33X1Oquz27aNOyBUFMCCP/qe?=
+ =?us-ascii?Q?UHvHONxpDg57DDUAqEuKJyxhQoClOe/M4J6G3UUPGVOt9FKrRvTBSw+QXO7r?=
+ =?us-ascii?Q?GyTtc6OD/C2LJwSDI9istzZIWo6Wt1pLfK9ghdxUsqe0+piS9My9eMrUUKwF?=
+ =?us-ascii?Q?hgmCzHkvOFP44p2RfxRFxQpY80HyoSaezpb8bEQ1HfZa5/zrmhhc0jrof/w2?=
+ =?us-ascii?Q?gS0JDIH/B+m7kq+gshYooMj/rbFU1nVh3EVbdw7FQzbg9ay+TIApnz9hIBEh?=
+ =?us-ascii?Q?YUxAia0HMIz06HE95WClzu7DDR3NtyN8SnFny2OtU+sAhYZGgR8IBYiN6Wb8?=
+ =?us-ascii?Q?s9SozyhUTQswk67m0AM3T7+wfJ6l?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XKTTBuZayRe7znSzBsNTTnw+9EUBfUNybBQJZQO7Z7kdv1JXSMvIOgSP+7mb?=
+ =?us-ascii?Q?x6Gk7c5lx54E0gDdZkVADdoUk51NK+bj69qEXemhRJ2jsM34XteMmGdw1zBB?=
+ =?us-ascii?Q?pGLe25UFJxmH4vRDvHXho/usASFbE6d17icsTVEVCw6eU/BUIk/7rwWVPCmS?=
+ =?us-ascii?Q?FJvTZy92wBZCniB1xY6DFKnjDovtd0mzlpANF8jiE0HkcB9rCcEyLnoRY7Tl?=
+ =?us-ascii?Q?0TIehfzX6FzI0wP6k4yklrzfZxshYZ3+Zp1nkM0IRyxko9LBiNEnnncB39yH?=
+ =?us-ascii?Q?l9H4mJe152bag9dbzomqssT4jATFR7DD28VswEPse/+l39lAIVHG5kE9Hzmw?=
+ =?us-ascii?Q?Q+IjjelJqpdH4CceNhOS28q6OfrEnh2TB0y0JyoQEibFllswj+rSOOb/zRwU?=
+ =?us-ascii?Q?8xOmkTGMK0/iN4t5pN0I4hZQpI/Pk/jYHSwMlDAyi0KZtldkOWYt5bpWEf9y?=
+ =?us-ascii?Q?EzR80p3y1qYIaDC44bJZ2VQHWW1lToP7hbNGqyVscvc7RvorFFFiNfNa9apC?=
+ =?us-ascii?Q?fntFqT3poIwBSmykDptDbxivjx9yOfdqOodZ5gcaTW3jI6lQGjvykVu87f/h?=
+ =?us-ascii?Q?VMQR0CsHgH/OEBSCMIM1wVKmfEpliiJRHFVYc7qlM6QnLA58Fg8iJ1DGNz2H?=
+ =?us-ascii?Q?SIjWhuEajVdWbxDnEKscykRkjzHeBPvwOJta5bUozhXmikrpfDG7NUUDPFVM?=
+ =?us-ascii?Q?hOKaZyrGGO5sr1lDSuXXxN8uciNZANdfDQZsM8/egEy25rP02Ut4PEJTP7iu?=
+ =?us-ascii?Q?kNnz8cJEZ3ydg0NhHvK/N5vjpchRmx1sSjxeYOGQNgeK+YFsMiI3v7nXB29s?=
+ =?us-ascii?Q?YdiMTgsEPfFc1ig0VqoGmRkIaPcCaemhHkczvvjXpHOe0RvuWfa9bW/PNm0R?=
+ =?us-ascii?Q?6lPg5ZYjRUUA9S63VmO4ucDmVcKgITgxZsmltAUhX3pABHdyL8Zc3dk1K7x3?=
+ =?us-ascii?Q?+XMUJd5/PiDc4k9sPn31YgV0kOQXWXNPf1xPKDJ6mI2DcPrs+Dl1L7UVs7zN?=
+ =?us-ascii?Q?YvmaiwclytNGJOrOGM6PoPABom2ZIKHzOyx9IEpbc/UuV8OZeO4er3fgnSX7?=
+ =?us-ascii?Q?UQ5yDUTJy0rbUbB3zWbsybY8B01dRKF+rz9vGKH4/QnvP2QQmXXEa9saoMFo?=
+ =?us-ascii?Q?n8Tf718L9KDxoONtajyg2M26BKiHouYSdYzorNipt4Vb69nls/Uyw1DCOQsf?=
+ =?us-ascii?Q?I7eXnj4sZxcJikajXOGBe46cDaZ6Ogzjym2zkfEsIzXntNxtgqHQPbRP9QQO?=
+ =?us-ascii?Q?+vMmc/7ER87492OqAYQpfNmr7/OJIcMJMnDS4IK7r0jiCJydhZgCbUfkpKuE?=
+ =?us-ascii?Q?VrYu/Q706DXNvIp+V5vYDVxS0A3gSbQ88il8l2ibWxVHb7oNdulU7vbxjvnJ?=
+ =?us-ascii?Q?IyEV9Fmd9hLw+hZ16lsFsg4XV4b+EYvbBXNIn2vTJQAIXk+J8q/0cOmbRayb?=
+ =?us-ascii?Q?MEZQPvqheMHTtnnWL/hoXJ/73NYkpVxj8cTyXl2tu72s9lfv2DeBJhST9a6/?=
+ =?us-ascii?Q?ao1JEjah/Gg/JKO0/XZdQ2I+OFLN5i059lGoLQYtCWMvVb1/07tNjbQ3KhC1?=
+ =?us-ascii?Q?QS1bvhftspbSNvBdtF1e8FiggFPONMualNipVPlxab46YukMHnRcjj3+vvhg?=
+ =?us-ascii?Q?Kw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c554c53e-58e0-4eaa-1bb3-08dd469e77ed
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2025 11:07:39.3498 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zH48O+Cibj6wJKyC/K+J1/Mu7g1qYg/QmUuNWlSYZuadb3wEfv9zit++2bO8+gLIWKtZWwC2TKep7rZRhvwhIDkqpemRPK7BVpKdqNXbxPE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8684
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -145,749 +173,312 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change find_device and rte_cmp_dev_name to accept a struct
-with pointer and size instead of a void* pointer.
+On Wed, Feb 05, 2025 at 11:32:24AM -0800, Andre Muezerie wrote:
+> This patch avoids warnings like the ones below emitted by MSVC:
+> 
+> 1)
+> ../drivers/net/ice/base/ice_flg_rd.c(71): warning C4334: '<<':
+>     result of 32-bit shift implicitly converted to 64 bits
+>     (was 64-bit shift intended?)
+> 
+> 2)
+> ../drivers/net/ice/ice_dcf_sched.c(177): warning C4018: '>=':
+>     signed/unsigned mismatch
+> 
+> The fix for (1) is to use 64-bit shifting when appropriate
+> (according to what the result is used for).
+> 
+> The fix for (2) is to explicitly cast the variables used in the
+> comparison.
+> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> ---
+>  drivers/net/intel/i40e/i40e_ethdev.c   | 22 +++++++++++-----------
+>  drivers/net/intel/iavf/iavf_ethdev.c   |  2 +-
+>  drivers/net/intel/iavf/iavf_rxtx.c     |  2 +-
+>  drivers/net/intel/iavf/iavf_vchnl.c    |  2 +-
+>  drivers/net/intel/ice/base/meson.build | 19 +++++++++++++------
+>  drivers/net/intel/ice/ice_dcf_sched.c  |  2 +-
+>  drivers/net/intel/ice/ice_ethdev.c     |  4 ++--
+>  drivers/net/intel/ice/ice_rxtx.c       |  2 +-
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.c |  2 +-
+>  drivers/net/vmxnet3/vmxnet3_ethdev.h   |  6 +++---
+>  10 files changed, 35 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+> index bf5560ccc8..7a962c239d 100644
+> --- a/drivers/net/intel/i40e/i40e_ethdev.c
+> +++ b/drivers/net/intel/i40e/i40e_ethdev.c
+> @@ -3094,7 +3094,7 @@ i40e_stat_update_48_in_64(struct i40e_hw *hw, uint32_t hireg,
+>  	/* enlarge the limitation when statistics counters overflowed */
+>  	if (offset_loaded) {
+>  		if (I40E_RXTX_BYTES_L_48_BIT(*prev_stat) > *stat)
+> -			*stat += (uint64_t)1 << I40E_48_BIT_WIDTH;
+> +			*stat += RTE_BIT64(I40E_48_BIT_WIDTH);
+>  		*stat += I40E_RXTX_BYTES_H_16_BIT(*prev_stat);
+>  	}
+>  	*prev_stat = *stat;
+> @@ -4494,7 +4494,7 @@ i40e_macaddr_remove(struct rte_eth_dev *dev, uint32_t index)
+>  	pool_sel = dev->data->mac_pool_sel[index];
+>  
+>  	for (i = 0; i < sizeof(pool_sel) * CHAR_BIT; i++) {
+> -		if (pool_sel & (1ULL << i)) {
+> +		if (pool_sel & RTE_BIT64(i)) {
+>  			if (i == 0)
+>  				vsi = pf->main_vsi;
+>  			else {
+> @@ -4630,7 +4630,7 @@ i40e_dev_rss_reta_update(struct rte_eth_dev *dev,
+>  	for (i = 0; i < reta_size; i++) {
+>  		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+>  		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+> -		if (reta_conf[idx].mask & (1ULL << shift))
+> +		if (reta_conf[idx].mask & RTE_BIT64(shift))
+>  			lut[i] = reta_conf[idx].reta[shift];
+>  	}
+>  	ret = i40e_set_rss_lut(pf->main_vsi, lut, reta_size);
+> @@ -4674,7 +4674,7 @@ i40e_dev_rss_reta_query(struct rte_eth_dev *dev,
+>  	for (i = 0; i < reta_size; i++) {
+>  		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+>  		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+> -		if (reta_conf[idx].mask & (1ULL << shift))
+> +		if (reta_conf[idx].mask & RTE_BIT64(shift))
+>  			reta_conf[idx].reta[shift] = lut[i];
+>  	}
+>  
+> @@ -6712,7 +6712,7 @@ i40e_vmdq_setup(struct rte_eth_dev *dev)
+>  	loop = sizeof(vmdq_conf->pool_map[0].pools) * CHAR_BIT;
+>  	for (i = 0; i < vmdq_conf->nb_pool_maps; i++) {
+>  		for (j = 0; j < loop && j < pf->nb_cfg_vmdq_vsi; j++) {
+> -			if (vmdq_conf->pool_map[i].pools & (1UL << j)) {
+> +			if (vmdq_conf->pool_map[i].pools & RTE_BIT64(j)) {
+>  				PMD_INIT_LOG(INFO, "Add vlan %u to vmdq pool %u",
+>  					vmdq_conf->pool_map[i].vlan_id, j);
+>  
+> @@ -6761,7 +6761,7 @@ i40e_stat_update_32(struct i40e_hw *hw,
+>  		*stat = (uint64_t)(new_data - *offset);
+>  	else
+>  		*stat = (uint64_t)((new_data +
+> -			((uint64_t)1 << I40E_32_BIT_WIDTH)) - *offset);
+> +			RTE_BIT64(I40E_32_BIT_WIDTH)) - *offset);
+>  }
+>  
+>  static void
+> @@ -6789,7 +6789,7 @@ i40e_stat_update_48(struct i40e_hw *hw,
+>  		*stat = new_data - *offset;
+>  	else
+>  		*stat = (uint64_t)((new_data +
+> -			((uint64_t)1 << I40E_48_BIT_WIDTH)) - *offset);
+> +			RTE_BIT64(I40E_48_BIT_WIDTH)) - *offset);
+>  
+>  	*stat &= I40E_48_BIT_MASK;
+>  }
+> @@ -7730,7 +7730,7 @@ i40e_config_hena(const struct i40e_adapter *adapter, uint64_t flags)
+>  		return hena;
+>  
+>  	for (i = RTE_ETH_FLOW_UNKNOWN + 1; i < I40E_FLOW_TYPE_MAX; i++) {
+> -		if (flags & (1ULL << i))
+> +		if (flags & RTE_BIT64(i))
+>  			hena |= adapter->pctypes_tbl[i];
+>  	}
+>  
+> @@ -7749,7 +7749,7 @@ i40e_parse_hena(const struct i40e_adapter *adapter, uint64_t flags)
+>  
+>  	for (i = RTE_ETH_FLOW_UNKNOWN + 1; i < I40E_FLOW_TYPE_MAX; i++) {
+>  		if (flags & adapter->pctypes_tbl[i])
+> -			rss_hf |= (1ULL << i);
+> +			rss_hf |= RTE_BIT64(i);
+>  	}
+>  	return rss_hf;
+>  }
+> @@ -10162,7 +10162,7 @@ i40e_flowtype_to_pctype(const struct i40e_adapter *adapter, uint16_t flow_type)
+>  	if (flow_type < I40E_FLOW_TYPE_MAX) {
+>  		pctype_mask = adapter->pctypes_tbl[flow_type];
+>  		for (i = I40E_FILTER_PCTYPE_MAX - 1; i > 0; i--) {
+> -			if (pctype_mask & (1ULL << i))
+> +			if (pctype_mask & RTE_BIT64(i))
+>  				return (enum i40e_filter_pctype)i;
+>  		}
+>  	}
+> @@ -10174,7 +10174,7 @@ i40e_pctype_to_flowtype(const struct i40e_adapter *adapter,
+>  			enum i40e_filter_pctype pctype)
+>  {
+>  	uint16_t flowtype;
+> -	uint64_t pctype_mask = 1ULL << pctype;
+> +	uint64_t pctype_mask = RTE_BIT64(pctype);
+>  
+>  	for (flowtype = RTE_ETH_FLOW_UNKNOWN + 1; flowtype < I40E_FLOW_TYPE_MAX;
+>  	     flowtype++) {
+> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+> index 328c224c93..9cd2b0c867 100644
+> --- a/drivers/net/intel/iavf/iavf_ethdev.c
+> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
+> @@ -2485,7 +2485,7 @@ iavf_init_proto_xtr(struct rte_eth_dev *dev)
+>  		if (!xtr_ol->required)
+>  			continue;
+>  
+> -		if (!(vf->supported_rxdid & BIT(rxdid))) {
+> +		if (!(vf->supported_rxdid & RTE_BIT64(rxdid))) {
+>  			PMD_DRV_LOG(ERR,
+>  				    "rxdid[%u] is not supported in hardware",
+>  				    rxdid);
+> diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+> index c48c98e5e6..657963750d 100644
+> --- a/drivers/net/intel/iavf/iavf_rxtx.c
+> +++ b/drivers/net/intel/iavf/iavf_rxtx.c
+> @@ -3871,7 +3871,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+>  			PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d] is legacy, "
+>  				"set rx_pkt_burst as legacy for all queues", rxq->rxdid, i);
+>  			use_flex = false;
+> -		} else if (!(vf->supported_rxdid & BIT(rxq->rxdid))) {
+> +		} else if (!(vf->supported_rxdid & RTE_BIT64(rxq->rxdid))) {
+>  			PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d] is not supported, "
+>  				"set rx_pkt_burst as legacy for all queues", rxq->rxdid, i);
+>  			use_flex = false;
+> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+> index c74466735d..6feca8435e 100644
+> --- a/drivers/net/intel/iavf/iavf_vchnl.c
+> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
+> @@ -1263,7 +1263,7 @@ iavf_configure_queues(struct iavf_adapter *adapter,
+>  #ifndef RTE_LIBRTE_IAVF_16BYTE_RX_DESC
+>  		if (vf->vf_res->vf_cap_flags &
+>  		    VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC) {
+> -			if (vf->supported_rxdid & BIT(rxq[i]->rxdid)) {
+> +			if (vf->supported_rxdid & RTE_BIT64(rxq[i]->rxdid)) {
+>  				vc_qp->rxq.rxdid = rxq[i]->rxdid;
+>  				PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d]",
+>  					    vc_qp->rxq.rxdid, i);
+> diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/ice/base/meson.build
+> index addb922ac9..dc5956f92c 100644
+> --- a/drivers/net/intel/ice/base/meson.build
+> +++ b/drivers/net/intel/ice/base/meson.build
+> @@ -31,18 +31,25 @@ sources = [
+>          'ice_vf_mbx.c',
+>  ]
+>  
+> -error_cflags = [
+> -        '-Wno-unused-but-set-variable',
+> -        '-Wno-unused-variable',
+> -        '-Wno-unused-parameter',
+> -]
+> +if is_ms_compiler
+> +    error_cflags = [
+> +            '/wd4101', # unreferenced local variable
+> +            '/wd4334', # result of 32-bit shift implicitly converted to 64 bits
+> +    ]
+> +else
+> +    error_cflags = [
+> +            '-Wno-unused-but-set-variable',
+> +            '-Wno-unused-variable',
+> +            '-Wno-unused-parameter',
+> +    ]
+> +endif
+>  
 
-Signed-off-by: Shani Peretz <shperetz@nvidia.com>
----
- app/test/test_devargs.c                  | 23 +++++++++++++++++++----
- app/test/test_vdev.c                     | 23 ++++++++++++++++++-----
- drivers/bus/auxiliary/auxiliary_common.c |  2 +-
- drivers/bus/auxiliary/auxiliary_params.c | 10 +++++++---
- drivers/bus/cdx/cdx.c                    | 12 ++++++++----
- drivers/bus/dpaa/dpaa_bus.c              |  2 +-
- drivers/bus/fslmc/fslmc_bus.c            |  2 +-
- drivers/bus/ifpga/ifpga_bus.c            |  2 +-
- drivers/bus/pci/pci_common.c             |  2 +-
- drivers/bus/pci/pci_params.c             | 10 +++++++---
- drivers/bus/platform/platform.c          |  3 ++-
- drivers/bus/platform/platform_params.c   | 10 +++++++---
- drivers/bus/uacce/uacce.c                | 13 +++++++++----
- drivers/bus/vdev/vdev.c                  |  2 +-
- drivers/bus/vdev/vdev_params.c           | 10 +++++++---
- drivers/bus/vdev/vdev_private.h          |  2 +-
- drivers/bus/vmbus/vmbus_common.c         |  2 +-
- drivers/dma/idxd/idxd_bus.c              |  4 ++--
- drivers/net/bonding/rte_eth_bond_args.c  | 15 +++++----------
- drivers/net/vdev_netvsc/vdev_netvsc.c    |  8 ++++++--
- drivers/raw/ifpga/ifpga_rawdev.c         |  6 +++++-
- lib/eal/common/eal_common_bus.c          | 10 +++++++---
- lib/eal/common/eal_common_dev.c          | 18 +++++++++++++-----
- lib/eal/common/hotplug_mp.c              | 12 ++++++++++--
- lib/eal/include/bus_driver.h             |  2 +-
- lib/eal/include/rte_dev.h                | 15 ++++++++++-----
- lib/eal/linux/eal_dev.c                  |  6 +++++-
- 27 files changed, 156 insertions(+), 70 deletions(-)
+Do we actually need these if-else blocks here? The way
+the code is structured is that we check if the flags work to the current
+compiler and use only those that are relevant. Therefore, we should just be
+able to have a list of error flags and leave meson to filter out the
+incorrect ones.
 
-diff --git a/app/test/test_devargs.c b/app/test/test_devargs.c
-index fab88b00ee..54dc4e122e 100644
---- a/app/test/test_devargs.c
-+++ b/app/test/test_devargs.c
-@@ -333,7 +333,12 @@ test_pci(struct rte_bus *pci_bus, const char *dev_name, const char *name2)
- 
- 	pci_dev->bus = pci_bus;
- 
--	if (rte_cmp_dev_name(pci_dev, name2) != 0) {
-+	struct rte_bus_address addr = {
-+		.addr = name2,
-+		.size = strlen(name2)
-+	};
-+
-+	if (rte_cmp_dev_name(pci_dev, &addr) != 0) {
- 		printf("rte_cmp_dev_name(%s, %s) device name (%s) not expected (%s)\n",
- 			       pci_dev->name, name2, pci_dev->name, name2);
- 		return -1;
-@@ -350,20 +355,30 @@ test_vdev(struct rte_bus *vdev_bus, const char *dev_name, const char *name2)
- 		return -1;
- 	}
- 
--	struct rte_device *vdev_dev = vdev_bus->find_device(NULL, rte_cmp_dev_name, dev_name);
-+	struct rte_bus_address dev_addr = {
-+		.addr = dev_name,
-+		.size = strlen(dev_name)
-+	};
-+
-+	struct rte_device *vdev_dev = vdev_bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 	if (vdev_dev == NULL) {
- 		printf("Cannot find %s vdev\n", dev_name);
- 		rte_vdev_uninit(dev_name);
- 		return -1;
- 	}
--	int ret = rte_cmp_dev_name(vdev_dev, name2);
-+
-+	struct rte_bus_address dev_addr2 = {
-+		.addr = name2,
-+		.size = strlen(name2)
-+	};
-+	int ret = rte_cmp_dev_name(vdev_dev, &dev_addr2);
- 	if (ret != 0) {
- 		printf("rte_cmp_dev_name(%s, %s) device name (%s) not expected (%s)\n",
- 			       vdev_dev->name, name2, vdev_dev->name, name2);
- 		return -1;
- 	}
- 
--	if (vdev_dev != vdev_bus->find_device(NULL, rte_cmp_dev_name, name2)) {
-+	if (vdev_dev != vdev_bus->find_device(NULL, rte_cmp_dev_name, &dev_addr2)) {
- 		printf("rte_cmp_dev_name(%s, %s) device name (%s) not expected (%s)\n",
- 			       vdev_dev->name, name2, vdev_dev->name, name2);
- 		return -1;
-diff --git a/app/test/test_vdev.c b/app/test/test_vdev.c
-index 860fa260af..568c16593e 100644
---- a/app/test/test_vdev.c
-+++ b/app/test/test_vdev.c
-@@ -21,9 +21,9 @@ static const char * const valid_keys[] = {
- };
- 
- static int
--cmp_dev_match(const struct rte_device *dev, const void *_kvlist)
-+cmp_dev_match(const struct rte_device *dev, const struct rte_bus_address *_kvlist)
- {
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *key = TEST_VDEV_KEY_NAME;
- 	const char *name;
- 
-@@ -54,7 +54,11 @@ get_matching_vdev(const char *match_str)
- 		}
- 	}
- 
--	dev = vdev_bus->find_device(NULL, cmp_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = vdev_bus->find_device(NULL, cmp_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 
- 	return dev;
-@@ -76,7 +80,12 @@ test_vdev_bus(void)
- 		printf("Failed to create vdev net_null_test0\n");
- 		goto fail;
- 	}
--	dev0 = vdev_bus->find_device(NULL, rte_cmp_dev_name, "net_null_test0");
-+
-+	struct rte_bus_address dev0_addr = {
-+		.addr = "net_null_test0",
-+		.size = strlen("net_null_test0")
-+	};
-+	dev0 = vdev_bus->find_device(NULL, rte_cmp_dev_name, &dev0_addr);
- 	if (dev0 == NULL) {
- 		printf("Cannot find net_null_test0 vdev\n");
- 		goto fail;
-@@ -87,7 +96,11 @@ test_vdev_bus(void)
- 		printf("Failed to create vdev net_null_test1\n");
- 		goto fail;
- 	}
--	dev1 = vdev_bus->find_device(NULL, rte_cmp_dev_name, "net_null_test1");
-+	struct rte_bus_address dev1_addr = {
-+		.addr = "net_null_test1",
-+		.size = strlen("net_null_test1")
-+	};
-+	dev1 = vdev_bus->find_device(NULL, rte_cmp_dev_name, &dev1_addr);
- 	if (dev1 == NULL) {
- 		printf("Cannot find net_null_test1 vdev\n");
- 		goto fail;
-diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index ba2f69e851..091e559c60 100644
---- a/drivers/bus/auxiliary/auxiliary_common.c
-+++ b/drivers/bus/auxiliary/auxiliary_common.c
-@@ -300,7 +300,7 @@ rte_auxiliary_remove_device(struct rte_auxiliary_device *auxiliary_dev)
- 
- static struct rte_device *
- auxiliary_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		      const void *data)
-+		      const struct rte_bus_address *data)
- {
- 	const struct rte_auxiliary_device *pstart;
- 	struct rte_auxiliary_device *adev;
-diff --git a/drivers/bus/auxiliary/auxiliary_params.c b/drivers/bus/auxiliary/auxiliary_params.c
-index e4c7ee0c3b..93f0bd46be 100644
---- a/drivers/bus/auxiliary/auxiliary_params.c
-+++ b/drivers/bus/auxiliary/auxiliary_params.c
-@@ -22,9 +22,9 @@ static const char * const auxiliary_params_keys[] = {
- 
- static int
- auxiliary_dev_match(const struct rte_device *dev,
--	      const void *_kvlist)
-+	      const struct rte_bus_address *_kvlist)
- {
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *key = auxiliary_params_keys[RTE_AUXILIARY_PARAM_NAME];
- 	const char *name;
- 
-@@ -59,7 +59,11 @@ auxiliary_dev_iterate(const void *start,
- 		}
- 	}
- 	find_device = auxiliary_bus.bus.find_device;
--	dev = find_device(start, auxiliary_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = find_device(start, auxiliary_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 	return dev;
- }
-diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-index b97f1ce1af..58596d1f71 100644
---- a/drivers/bus/cdx/cdx.c
-+++ b/drivers/bus/cdx/cdx.c
-@@ -500,7 +500,7 @@ rte_cdx_unregister(struct rte_cdx_driver *driver)
- 
- static struct rte_device *
- cdx_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		const void *data)
-+		const struct rte_bus_address *data)
- {
- 	const struct rte_cdx_device *cdx_start;
- 	struct rte_cdx_device *cdx_dev;
-@@ -613,9 +613,9 @@ cdx_get_iommu_class(void)
- 
- static int
- cdx_dev_match(const struct rte_device *dev,
--		const void *_kvlist)
-+		const struct rte_bus_address *_kvlist)
- {
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *key = cdx_params_keys[RTE_CDX_PARAM_NAME];
- 	const char *name;
- 
-@@ -649,7 +649,11 @@ cdx_dev_iterate(const void *start,
- 		}
- 	}
- 	find_device = rte_cdx_bus.bus.find_device;
--	dev = find_device(start, cdx_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = find_device(start, cdx_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 	return dev;
- }
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index f768fb9454..5a24fc2f47 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -745,7 +745,7 @@ rte_dpaa_bus_probe(void)
- 
- static struct rte_device *
- rte_dpaa_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		     const void *data)
-+		     const struct rte_bus_address *data)
- {
- 	struct rte_dpaa_device *dev;
- 	const struct rte_dpaa_device *dstart;
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index a525b5e245..7a80cb41f1 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -497,7 +497,7 @@ rte_fslmc_probe(void)
- 
- static struct rte_device *
- rte_fslmc_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		      const void *data)
-+		      const struct rte_bus_address *data)
- {
- 	const struct rte_dpaa2_device *dstart;
- 	struct rte_dpaa2_device *dev;
-diff --git a/drivers/bus/ifpga/ifpga_bus.c b/drivers/bus/ifpga/ifpga_bus.c
-index d5d9a86a97..195429c1d4 100644
---- a/drivers/bus/ifpga/ifpga_bus.c
-+++ b/drivers/bus/ifpga/ifpga_bus.c
-@@ -443,7 +443,7 @@ ifpga_unplug(struct rte_device *dev)
- 
- static struct rte_device *
- ifpga_find_device(const struct rte_device *start,
--	rte_dev_cmp_t cmp, const void *data)
-+	rte_dev_cmp_t cmp, const struct rte_bus_address *data)
- {
- 	struct rte_afu_device *afu_dev;
- 
-diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index 82632bc473..29cec5f588 100644
---- a/drivers/bus/pci/pci_common.c
-+++ b/drivers/bus/pci/pci_common.c
-@@ -540,7 +540,7 @@ rte_pci_remove_device(struct rte_pci_device *pci_dev)
- 
- static struct rte_device *
- pci_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		const void *data)
-+		const struct rte_bus_address *data)
- {
- 	const struct rte_pci_device *pstart;
- 	struct rte_pci_device *pdev;
-diff --git a/drivers/bus/pci/pci_params.c b/drivers/bus/pci/pci_params.c
-index 087ec38bb9..de7ea8f2f8 100644
---- a/drivers/bus/pci/pci_params.c
-+++ b/drivers/bus/pci/pci_params.c
-@@ -41,9 +41,9 @@ pci_addr_kv_cmp(const char *key __rte_unused,
- 
- static int
- pci_dev_match(const struct rte_device *dev,
--	      const void *_kvlist)
-+	      const struct rte_bus_address *_kvlist)
- {
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const struct rte_pci_device *pdev;
- 
- 	if (kvlist == NULL)
-@@ -76,7 +76,11 @@ rte_pci_dev_iterate(const void *start,
- 		}
- 	}
- 	find_device = rte_pci_bus.bus.find_device;
--	dev = find_device(start, pci_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = find_device(start, pci_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 	return dev;
- }
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 87ed7404e1..5b72418ad0 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -473,7 +473,8 @@ platform_bus_probe(void)
- }
- 
- static struct rte_device *
--platform_bus_find_device(const struct rte_device *start, rte_dev_cmp_t cmp, const void *data)
-+platform_bus_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
-+		const struct rte_bus_address *data)
- {
- 	struct rte_platform_device *pdev;
- 
-diff --git a/drivers/bus/platform/platform_params.c b/drivers/bus/platform/platform_params.c
-index 8a6214b97c..00f6774c8c 100644
---- a/drivers/bus/platform/platform_params.c
-+++ b/drivers/bus/platform/platform_params.c
-@@ -27,10 +27,10 @@ static const char * const platform_params_keys[] = {
- };
- 
- static int
--platform_dev_match(const struct rte_device *dev, const void *_kvlist)
-+platform_dev_match(const struct rte_device *dev, const struct rte_bus_address *_kvlist)
- {
- 	const char *key = platform_params_keys[RTE_PLATFORM_PARAM_NAME];
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *name;
- 
- 	/* no kvlist arg, all devices match */
-@@ -68,7 +68,11 @@ platform_bus_dev_iterate(const void *start, const char *str,
- 		return NULL;
- 	}
- 
--	dev = platform_bus.bus.find_device(start, platform_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = platform_bus.bus.find_device(start, platform_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 
- 	return dev;
-diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index b18fbe1103..76d4c3f467 100644
---- a/drivers/bus/uacce/uacce.c
-+++ b/drivers/bus/uacce/uacce.c
-@@ -508,7 +508,8 @@ uacce_unplug(struct rte_device *dev)
- }
- 
- static struct rte_device *
--uacce_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,  const void *data)
-+uacce_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
-+		const struct rte_bus_address *data)
- {
- 	const struct rte_uacce_device *uacce_start;
- 	struct rte_uacce_device *uacce_dev;
-@@ -549,10 +550,10 @@ uacce_parse(const char *name, void *addr, int *size)
- }
- 
- static int
--uacce_dev_match(const struct rte_device *dev, const void *_kvlist)
-+uacce_dev_match(const struct rte_device *dev, const struct rte_bus_address *_kvlist)
- {
- 	const char *key = uacce_params_keys[RTE_UACCE_PARAM_NAME];
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *name;
- 
- 	/* no kvlist arg, all devices match. */
-@@ -583,7 +584,11 @@ uacce_dev_iterate(const void *start, const char *str,
- 		}
- 	}
- 	find_device = uacce_bus.bus.find_device;
--	dev = find_device(start, uacce_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = find_device(start, uacce_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 	return dev;
- }
-diff --git a/drivers/bus/vdev/vdev.c b/drivers/bus/vdev/vdev.c
-index 0d3c8ca3c5..e287c8cf64 100644
---- a/drivers/bus/vdev/vdev.c
-+++ b/drivers/bus/vdev/vdev.c
-@@ -621,7 +621,7 @@ vdev_cleanup(void)
- 
- struct rte_device *
- rte_vdev_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		     const void *data)
-+		     const struct rte_bus_address *data)
- {
- 	const struct rte_vdev_device *vstart;
- 	struct rte_vdev_device *dev;
-diff --git a/drivers/bus/vdev/vdev_params.c b/drivers/bus/vdev/vdev_params.c
-index 68ae09e2e9..7197c0f350 100644
---- a/drivers/bus/vdev/vdev_params.c
-+++ b/drivers/bus/vdev/vdev_params.c
-@@ -24,9 +24,9 @@ static const char * const vdev_params_keys[] = {
- 
- static int
- vdev_dev_match(const struct rte_device *dev,
--	       const void *_kvlist)
-+	       const struct rte_bus_address *_kvlist)
- {
--	const struct rte_kvargs *kvlist = _kvlist;
-+	const struct rte_kvargs *kvlist = _kvlist->addr;
- 	const char *key = vdev_params_keys[RTE_VDEV_PARAM_NAME];
- 	const char *name;
- 
-@@ -58,7 +58,11 @@ rte_vdev_dev_iterate(const void *start,
- 			return NULL;
- 		}
- 	}
--	dev = rte_vdev_find_device(start, vdev_dev_match, kvargs);
-+	struct rte_bus_address dev_addr = {
-+		.addr = kvargs,
-+		.size = sizeof(struct rte_kvargs),
-+	};
-+	dev = rte_vdev_find_device(start, vdev_dev_match, &dev_addr);
- 	rte_kvargs_free(kvargs);
- 	return dev;
- }
-diff --git a/drivers/bus/vdev/vdev_private.h b/drivers/bus/vdev/vdev_private.h
-index e683f5f133..ef15266b16 100644
---- a/drivers/bus/vdev/vdev_private.h
-+++ b/drivers/bus/vdev/vdev_private.h
-@@ -14,7 +14,7 @@ extern "C" {
- struct rte_device *
- rte_vdev_find_device(const struct rte_device *start,
- 		     rte_dev_cmp_t cmp,
--		     const void *data);
-+		     const struct rte_bus_address *data);
- 
- void *
- rte_vdev_dev_iterate(const void *start,
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 18805aee0d..06aa64c20d 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -323,7 +323,7 @@ vmbus_remove_device(struct rte_vmbus_device *vmbus_dev)
- /* VMBUS doesn't support hotplug */
- static struct rte_device *
- vmbus_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--		  const void *data)
-+		  const struct rte_bus_address *data)
- {
- 	struct rte_vmbus_device *dev;
- 
-diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
-index d68e8b630e..ee33ddbfb4 100644
---- a/drivers/dma/idxd/idxd_bus.c
-+++ b/drivers/dma/idxd/idxd_bus.c
-@@ -45,7 +45,7 @@ struct dsa_bus;
- static int dsa_scan(void);
- static int dsa_probe(void);
- static struct rte_device *dsa_find_device(const struct rte_device *start,
--		rte_dev_cmp_t cmp,  const void *data);
-+		rte_dev_cmp_t cmp,  const struct rte_bus_address *data);
- static enum rte_iova_mode dsa_get_iommu_class(void);
- static int dsa_addr_parse(const char *name, void *addr, int *size);
- 
-@@ -366,7 +366,7 @@ dsa_scan(void)
- 
- static struct rte_device *
- dsa_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
--			 const void *data)
-+			 const struct rte_bus_address *data)
- {
- 	struct rte_dsa_device *dev = TAILQ_FIRST(&dsa_bus.device_list);
- 
-diff --git a/drivers/net/bonding/rte_eth_bond_args.c b/drivers/net/bonding/rte_eth_bond_args.c
-index bdec5d61d4..2ef42db796 100644
---- a/drivers/net/bonding/rte_eth_bond_args.c
-+++ b/drivers/net/bonding/rte_eth_bond_args.c
-@@ -23,15 +23,6 @@ const char *pmd_bond_init_valid_arguments[] = {
- 	NULL
- };
- 
--static inline int
--bond_pci_addr_cmp(const struct rte_device *dev, const void *_pci_addr)
--{
--	const struct rte_pci_device *pdev = RTE_DEV_TO_PCI_CONST(dev);
--	const struct rte_pci_addr *paddr = _pci_addr;
--
--	return rte_pci_addr_cmp(&pdev->addr, paddr);
--}
--
- static inline int
- find_port_id_by_pci_addr(const struct rte_pci_addr *pci_addr)
- {
-@@ -45,7 +36,11 @@ find_port_id_by_pci_addr(const struct rte_pci_addr *pci_addr)
- 		return -1;
- 	}
- 
--	dev = pci_bus->find_device(NULL, bond_pci_addr_cmp, pci_addr);
-+	struct rte_bus_address dev_addr = {
-+		.addr = pci_addr,
-+		.size = PCI_PRI_STR_SIZE
-+	};
-+	dev = pci_bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 	if (dev == NULL) {
- 		RTE_BOND_LOG(ERR, "unable to find PCI device");
- 		return -1;
-diff --git a/drivers/net/vdev_netvsc/vdev_netvsc.c b/drivers/net/vdev_netvsc/vdev_netvsc.c
-index f4a84783ce..020b703906 100644
---- a/drivers/net/vdev_netvsc/vdev_netvsc.c
-+++ b/drivers/net/vdev_netvsc/vdev_netvsc.c
-@@ -771,7 +771,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_vdev_netvsc,
- /** Compare function for vdev find device operation. */
- static int
- vdev_netvsc_cmp_rte_device(const struct rte_device *dev1,
--			   __rte_unused const void *_dev2)
-+			   __rte_unused const struct rte_bus_address *_dev2)
- {
- 	return strncmp(dev1->devargs->name, VDEV_NETVSC_DRIVER_NAME,
- 		       VDEV_NETVSC_DRIVER_NAME_LEN);
-@@ -794,8 +794,12 @@ vdev_netvsc_scan_callback(__rte_unused void *arg)
- 			     VDEV_NETVSC_DRIVER_NAME_LEN))
- 			return;
- 
-+	struct rte_bus_address dev_addr = {
-+		.addr = VDEV_NETVSC_DRIVER_NAME,
-+		.size = VDEV_NETVSC_DRIVER_NAME_LEN,
-+	};
- 	dev = vbus->find_device(NULL, vdev_netvsc_cmp_rte_device,
--				VDEV_NETVSC_DRIVER_NAME);
-+				&dev_addr);
- 	if (dev)
- 		return;
- 	if (rte_devargs_add(RTE_DEVTYPE_VIRTUAL, VDEV_NETVSC_DRIVER_NAME))
-diff --git a/drivers/raw/ifpga/ifpga_rawdev.c b/drivers/raw/ifpga/ifpga_rawdev.c
-index 7238246e1c..9a081fd5d8 100644
---- a/drivers/raw/ifpga/ifpga_rawdev.c
-+++ b/drivers/raw/ifpga/ifpga_rawdev.c
-@@ -1868,7 +1868,11 @@ ifpga_cfg_remove(struct rte_vdev_device *vdev)
- 		args.port, args.bdf);
- 	bus = rte_bus_find_by_name(RTE_STR(IFPGA_BUS_NAME));
- 	if (bus) {
--		if (bus->find_device(NULL, rte_cmp_dev_name, dev_name)) {
-+		struct rte_bus_address dev_addr = {
-+			.addr = dev_name,
-+			.size = RTE_RAWDEV_NAME_MAX_LEN
-+		};
-+		if (bus->find_device(NULL, rte_cmp_dev_name, &dev_addr)) {
- 			ret = rte_eal_hotplug_remove(RTE_STR(IFPGA_BUS_NAME),
- 				dev_name);
- 		}
-diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index b1bb5df5b7..15d3cfb29b 100644
---- a/lib/eal/common/eal_common_bus.c
-+++ b/lib/eal/common/eal_common_bus.c
-@@ -159,9 +159,9 @@ rte_bus_find(const struct rte_bus *start, rte_bus_cmp_t cmp,
- }
- 
- static int
--cmp_rte_device(const struct rte_device *dev1, const void *_dev2)
-+cmp_rte_device(const struct rte_device *dev1, const struct rte_bus_address *_dev2)
- {
--	const struct rte_device *dev2 = _dev2;
-+	const struct rte_device *dev2 = _dev2->addr;
- 
- 	return dev1 != dev2;
- }
-@@ -171,7 +171,11 @@ bus_find_device(const struct rte_bus *bus, const void *_dev)
- {
- 	struct rte_device *dev;
- 
--	dev = bus->find_device(NULL, cmp_rte_device, _dev);
-+	struct rte_bus_address dev_addr = {
-+		.addr = _dev,
-+		.size = 0,
-+	};
-+	dev = bus->find_device(NULL, cmp_rte_device, &dev_addr);
- 	return dev == NULL;
- }
- 
-diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index c0e2202482..4e4951a73f 100644
---- a/lib/eal/common/eal_common_dev.c
-+++ b/lib/eal/common/eal_common_dev.c
-@@ -108,7 +108,7 @@ struct dev_next_ctx {
- 	(((struct dev_next_ctx *)(intptr_t)ptr)->cls_str)
- 
- int
--rte_cmp_dev_name(const struct rte_device *dev1, const void *name2)
-+rte_cmp_dev_name(const struct rte_device *dev1, const struct rte_bus_address *dev2_addr)
- {
- 	void *parsed_name1;
- 	void *parsed_name2;
-@@ -117,7 +117,7 @@ rte_cmp_dev_name(const struct rte_device *dev1, const void *name2)
- 	int ret;
- 
- 	if (dev1->bus->parse(dev1->name, NULL, &size1) != 0 ||
--		dev1->bus->parse(name2, NULL, &size2) != 0)
-+		dev1->bus->parse(dev2_addr->addr, NULL, &size2) != 0)
- 		return 1;
- 
- 	if (size1 != size2)
-@@ -137,7 +137,7 @@ rte_cmp_dev_name(const struct rte_device *dev1, const void *name2)
- 	memset(parsed_name2, 0, size2);
- 
- 	dev1->bus->parse(dev1->name, parsed_name1, NULL);
--	dev1->bus->parse(name2, parsed_name2, NULL);
-+	dev1->bus->parse(dev2_addr->addr, parsed_name2, NULL);
- 
- 	ret = memcmp(parsed_name1, parsed_name2, size1);
- 	free(parsed_name1);
-@@ -228,7 +228,11 @@ local_dev_probe(const char *devargs, struct rte_device **new_dev)
- 	if (ret)
- 		goto err_devarg;
- 
--	dev = da->bus->find_device(NULL, rte_cmp_dev_name, da->name);
-+	struct rte_bus_address dev_addr = {
-+		.addr = da->name,
-+		.size = RTE_DEV_NAME_MAX_LEN
-+	};
-+	dev = da->bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 	if (dev == NULL) {
- 		EAL_LOG(ERR, "Cannot find device (%s)",
- 			da->name);
-@@ -366,7 +370,11 @@ rte_eal_hotplug_remove(const char *busname, const char *devname)
- 		return -ENOENT;
- 	}
- 
--	dev = bus->find_device(NULL, rte_cmp_dev_name, devname);
-+	struct rte_bus_address dev_addr = {
-+		.addr = devname,
-+		.size = strlen(devname)
-+	};
-+	dev = bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 	if (dev == NULL) {
- 		EAL_LOG(ERR, "Cannot find plugged device (%s)", devname);
- 		return -EINVAL;
-diff --git a/lib/eal/common/hotplug_mp.c b/lib/eal/common/hotplug_mp.c
-index a2623c96c3..f4cce7c2e5 100644
---- a/lib/eal/common/hotplug_mp.c
-+++ b/lib/eal/common/hotplug_mp.c
-@@ -128,7 +128,11 @@ __handle_secondary_request(void *param)
- 			goto finish;
- 		}
- 
--		dev = bus->find_device(NULL, rte_cmp_dev_name, da.name);
-+		struct rte_bus_address dev_addr = {
-+			.addr = da.name,
-+			.size = RTE_DEV_NAME_MAX_LEN
-+		};
-+		dev = bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 		if (dev == NULL) {
- 			EAL_LOG(ERR, "Cannot find plugged device (%s)", da.name);
- 			ret = -ENOENT;
-@@ -255,7 +259,11 @@ static void __handle_primary_request(void *param)
- 			goto quit;
- 		}
- 
--		dev = bus->find_device(NULL, rte_cmp_dev_name, da->name);
-+		struct rte_bus_address dev_addr = {
-+			.addr = da->name,
-+			.size = RTE_DEV_NAME_MAX_LEN
-+		};
-+		dev = bus->find_device(NULL, rte_cmp_dev_name, &dev_addr);
- 		if (dev == NULL) {
- 			EAL_LOG(ERR, "Cannot find plugged device (%s)", da->name);
- 			ret = -ENOENT;
-diff --git a/lib/eal/include/bus_driver.h b/lib/eal/include/bus_driver.h
-index 01447670de..16e8838868 100644
---- a/lib/eal/include/bus_driver.h
-+++ b/lib/eal/include/bus_driver.h
-@@ -70,7 +70,7 @@ typedef int (*rte_bus_probe_t)(void);
-  */
- typedef struct rte_device *
- (*rte_bus_find_device_t)(const struct rte_device *start, rte_dev_cmp_t cmp,
--			 const void *data);
-+			 const struct rte_bus_address *data);
- 
- /**
-  * Implementation specific probe function which is responsible for linking
-diff --git a/lib/eal/include/rte_dev.h b/lib/eal/include/rte_dev.h
-index 2df8143af1..47a6c22b53 100644
---- a/lib/eal/include/rte_dev.h
-+++ b/lib/eal/include/rte_dev.h
-@@ -171,19 +171,24 @@ int rte_dev_is_probed(const struct rte_device *dev);
- int rte_eal_hotplug_add(const char *busname, const char *devname,
- 			const char *drvargs);
- 
-+struct rte_bus_address {
-+	const void *addr;
-+	size_t size;
-+};
-+
- /**
-  * General device name comparison. Will compare by using the specific bus
-  * compare function or by comparing the names directly.
-  *
-  * @param dev
-  *   Device handle.
-- * @param name
-- *   Name to compare against.
-+ * @param addr
-+ *   Address to compare against.
-  * @return
-- *   0 if the device matches the name. Nonzero otherwise.
-+ *   0 if the device matches the address. Nonzero otherwise.
-  */
- __rte_internal
--int rte_cmp_dev_name(const struct rte_device *dev, const void *name);
-+int rte_cmp_dev_name(const struct rte_device *dev, const struct rte_bus_address *addr);
- 
- /**
-  * Add matching devices.
-@@ -245,7 +250,7 @@ int rte_dev_remove(struct rte_device *dev);
-  *   <0 if ordering is possible and the device is lower than the data.
-  *   >0 if ordering is possible and the device is greater than the data.
-  */
--typedef int (*rte_dev_cmp_t)(const struct rte_device *dev, const void *data);
-+typedef int (*rte_dev_cmp_t)(const struct rte_device *dev, const struct rte_bus_address *data);
- 
- #define RTE_PMD_EXPORT_NAME_ARRAY(n, idx) n##idx[]
- 
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index 3b68cda87f..22c126278b 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -272,8 +272,12 @@ dev_uev_handler(__rte_unused void *param)
- 				goto failure_handle_err;
- 			}
- 
-+			const struct rte_bus_address dev_addr = {
-+				.addr = uevent.devname,
-+				.size = strlen(uevent.devname)
-+			};
- 			dev = bus->find_device(NULL, rte_cmp_dev_name,
--					       uevent.devname);
-+					       &dev_addr);
- 			if (dev == NULL) {
- 				EAL_LOG(ERR, "Cannot find device (%s) on "
- 					"bus (%s)", uevent.devname, busname);
--- 
-2.34.1
+>  # Bugzilla ID: 678
+>  if (toolchain == 'gcc' and cc.version().version_compare('>=11.0.0'))
+>      error_cflags += ['-Wno-array-bounds']
+>  endif
+>  
+> -if is_windows and cc.get_id() != 'clang'
+> +if is_windows and not is_ms_compiler and cc.get_id() != 'clang'
 
+Are there other supported compiler options for windows other than MSVC and
+clang? For what compiler are we adding this flag?
+
+>      cflags += ['-fno-asynchronous-unwind-tables']
+>  endif
+>  
+> diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
+> index 7967c35533..2832d223d1 100644
+> --- a/drivers/net/intel/ice/ice_dcf_sched.c
+> +++ b/drivers/net/intel/ice/ice_dcf_sched.c
+> @@ -174,7 +174,7 @@ ice_dcf_node_param_check(struct ice_dcf_hw *hw, uint32_t node_id,
+>  	}
+>  
+>  	/* for non-leaf node */
+> -	if (node_id >= 8 * hw->num_vfs) {
+> +	if (node_id >= (uint32_t)(8 * hw->num_vfs)) {
+>  		if (params->nonleaf.wfq_weight_mode) {
+>  			error->type =
+>  				RTE_TM_ERROR_TYPE_NODE_PARAMS_WFQ_WEIGHT_MODE;
+> diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+> index 80eee03204..6f6f618a2f 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_ethdev.c
+> @@ -2469,13 +2469,13 @@ ice_get_supported_rxdid(struct ice_hw *hw)
+>  	uint32_t regval;
+>  	int i;
+>  
+> -	supported_rxdid |= BIT(ICE_RXDID_LEGACY_1);
+> +	supported_rxdid |= RTE_BIT64(ICE_RXDID_LEGACY_1);
+>  
+>  	for (i = ICE_RXDID_FLEX_NIC; i < ICE_FLEX_DESC_RXDID_MAX_NUM; i++) {
+>  		regval = ICE_READ_REG(hw, GLFLXP_RXDID_FLAGS(i, 0));
+>  		if ((regval >> GLFLXP_RXDID_FLAGS_FLEXIFLAG_4N_S)
+>  			& GLFLXP_RXDID_FLAGS_FLEXIFLAG_4N_M)
+> -			supported_rxdid |= BIT(i);
+> +			supported_rxdid |= RTE_BIT64(i);
+>  	}
+>  	return supported_rxdid;
+>  }
+> diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+> index 8dd8644b16..87a9d93e89 100644
+> --- a/drivers/net/intel/ice/ice_rxtx.c
+> +++ b/drivers/net/intel/ice/ice_rxtx.c
+> @@ -399,7 +399,7 @@ ice_program_hw_rx_queue(struct ice_rx_queue *rxq)
+>  	PMD_DRV_LOG(DEBUG, "Port (%u) - Rx queue (%u) is set with RXDID : %u",
+>  		    rxq->port_id, rxq->queue_id, rxdid);
+>  
+> -	if (!(pf->supported_rxdid & BIT(rxdid))) {
+> +	if (!(pf->supported_rxdid & RTE_BIT64(rxdid))) {
+>  		PMD_DRV_LOG(ERR, "currently package doesn't support RXDID (%u)",
+>  			    rxdid);
+>  		return -EINVAL;
+> diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> index 5f18fbaad5..078f7b47c3 100644
+> --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> @@ -2722,7 +2722,7 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
+>  					ixgbe_set_vf_rate_limit(
+>  						dev, vf,
+>  						vfinfo[vf].tx_rate[idx],
+> -						1 << idx);
+> +						RTE_BIT64(idx));
+>  	}
+>  
+>  	ixgbe_restore_statistics_mapping(dev);
+> diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.h b/drivers/net/vmxnet3/vmxnet3_ethdev.h
+> index e9ded6663d..e59cb285f4 100644
+> --- a/drivers/net/vmxnet3/vmxnet3_ethdev.h
+> +++ b/drivers/net/vmxnet3/vmxnet3_ethdev.h
+> @@ -186,14 +186,14 @@ static inline uint8_t
+>  vmxnet3_get_ring_idx(struct vmxnet3_hw *hw, uint32 rqID)
+>  {
+>  	return (rqID >= hw->num_rx_queues &&
+> -		rqID < 2 * hw->num_rx_queues) ? 1 : 0;
+> +		rqID < (uint32)2 * hw->num_rx_queues) ? 1 : 0;
+
+Why uint32 rather than uint32_t which are the normal types we use in DPDK?
+Could this also be simplified to just 2U?
+
+>  }
+>  
+>  static inline bool
+>  vmxnet3_rx_data_ring(struct vmxnet3_hw *hw, uint32 rqID)
+>  {
+> -	return (rqID >= 2 * hw->num_rx_queues &&
+> -		rqID < 3 * hw->num_rx_queues);
+> +	return (rqID >= (uint32)2 * hw->num_rx_queues &&
+> +		rqID < (uint32)3 * hw->num_rx_queues);
+>  }
+>  
+>  /*
+> -- 
+> 2.47.2.vfs.0.1
+> 
