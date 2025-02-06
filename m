@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C3BC02198
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FA2C02198
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:10:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64790410D4;
-	Thu,  6 Feb 2025 17:09:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 89A7E410E6;
+	Thu,  6 Feb 2025 17:09:19 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7946140FB5
- for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E1C1140E41
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738858156; x=1770394156;
+ t=1738858157; x=1770394157;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=/eXq3nBwZHgDAR+4l0uCTxC3ito6aXO3ibqbl/kr+8w=;
- b=ilh2rXbfvRr4p0kIUIF0wrtV2l7Ti7oQBpTf5K9bY8QHdLHCIjP+2bRU
- 2vu5sPaW97vAV43VjAAhjBFP7cykJo/7yyLEgMPKJNwqFSZVbkDAs83Qv
- OXJlNvn/U3E7ZaEKOlazFWCjs5gUSd/KY8fAN+Br8ekhzFJaXSsbiPAcY
- etmGsoMc+5Ub84AyVVeb8hYW4h8SakYqMgIw+p9TbIQEMWavF3yHenAlG
- l4CU4fiSBxx6E4+QdAdlqyp561Pg7pPAACerRgmrdrmZJsGF8dr88DI6S
- 17A8wlquJfEiaBKM4x5vjU85yOX6Lui0C6hfW39p4Cyw4oR7eHW+IkDhV A==;
-X-CSE-ConnectionGUID: sdKkv6FsT2CTsPiMIfUTnw==
-X-CSE-MsgGUID: k9nuhndeTQO/NS9fRTQMWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860727"
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860727"
+ bh=NrkprsQHEdVfbV0axmDkPA4fiUYReRoVnCmO3vdLZh0=;
+ b=DqK7GWJ2sxeAwx+Ud1vi6CoU5saXbONJN7iqGG39h0VVekV9qtMw5bff
+ FWGjPlABfKlQuUxu6AI+NYfTLvXjE3Vzq9O/UQ3TBiqtm886wMnZozSGy
+ FEBR+u9kcD4A9rPZy4r/tu8TmUhDAVhJ/ZLNkEGtjrJX1ZCbtPdols2oZ
+ anSk5sylCwXeqT1uEyhSH/yOx+mwE/E0gyNhpAoKilAAYXTru2M6z1EcP
+ Im/k+iMjv3gpoPWn8iztQmObE/AkUsR0KI2nmM5S+0GFxgegXrDYadxbJ
+ y41WxWu2QdJETN+BDxNasq0ogMJqoWeA4tW58bauEMlZEOY6vvBLgRVYL A==;
+X-CSE-ConnectionGUID: fZLbokRGSTGsI98us7/JLA==
+X-CSE-MsgGUID: MBz6BufNRSqoG7LffeB8nA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860733"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860733"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2025 08:09:15 -0800
-X-CSE-ConnectionGUID: GMrW/QihTdiQeiakdDJNKA==
-X-CSE-MsgGUID: Bn7ieBq1R3ih1H0tB34emg==
+ 06 Feb 2025 08:09:16 -0800
+X-CSE-ConnectionGUID: W0ondnBSQlWvZS2s8qqHow==
+X-CSE-MsgGUID: NTvdEjtuTUSl+XkOSBDIbw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166742"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166751"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:13 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:15 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Alvin Zhang <alvinx.zhang@intel.com>, Ferruh Yigit <ferruh.yigit@intel.com>
-Subject: [PATCH v1 10/24] net/igc/base: fix iterator type
-Date: Thu,  6 Feb 2025 16:08:33 +0000
-Message-ID: <a363061e183bcee5dc27cac684647b70be529fc5.1738858026.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Alvin Zhang <alvinx.zhang@intel.com>,
+ Ferruh Yigit <ferruh.yigit@intel.com>
+Subject: [PATCH v1 11/24] net/igc/base: fix MAC addr hash bit shift
+Date: Thu,  6 Feb 2025 16:08:34 +0000
+Message-ID: <d678a977b168d9970311a3ad3a0638504d8561a2.1738858026.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738858026.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,47 +60,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Amir Avivi <amir.avivi@intel.com>
+From: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
 
-Fix static analysis warning about comparison between types of
-incompatible width, which might lead to an infinite loop due to overflow.
+In e1000_hash_mc_addr_generic() the expression:
+
+        "mc_addr[4] >> 8 - bit_shift", right shifting "mc_addr[4]"
+
+shift by more than 7 bits always yields zero, so hash becomes not so
+different. Add initialization with bit_shift = 1, and add a loop condition
+to ensure bit_shift will be always in [1..8] range.
 
 Fixes: 8cb7c57d9b3c ("net/igc: support device initialization")
 Cc: stable@dpdk.org
 
-Signed-off-by: Amir Avivi <amir.avivi@intel.com>
+Signed-off-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- .mailmap                             | 1 +
- drivers/net/intel/igc/base/igc_phy.c | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/intel/igc/base/igc_mac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 3faff80f0e..23ec118ebc 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -84,6 +84,7 @@ Amaranath Somalapuram <asomalap@amd.com>
- Amine Kherbouche <amine.kherbouche@6wind.com>
- Amin Tootoonchian <amint@icsi.berkeley.edu>
- Ami Sabo <amis@radware.com>
-+Amir Avivi <amir.avivi@intel.com>
- Amit Bernstein <amitbern@amazon.com>
- Amit Gupta <agupta3@marvell.com>
- Amit Prakash Shukla <amitprakashs@marvell.com>
-diff --git a/drivers/net/intel/igc/base/igc_phy.c b/drivers/net/intel/igc/base/igc_phy.c
-index 706f037f0e..dd56b994af 100644
---- a/drivers/net/intel/igc/base/igc_phy.c
-+++ b/drivers/net/intel/igc/base/igc_phy.c
-@@ -2366,7 +2366,8 @@ s32 igc_phy_has_link_generic(struct igc_hw *hw, u32 iterations,
- 			       u32 usec_interval, bool *success)
+diff --git a/drivers/net/intel/igc/base/igc_mac.c b/drivers/net/intel/igc/base/igc_mac.c
+index 3cd6506e5e..c69f8ac73b 100644
+--- a/drivers/net/intel/igc/base/igc_mac.c
++++ b/drivers/net/intel/igc/base/igc_mac.c
+@@ -486,7 +486,7 @@ static int igc_rar_set_generic(struct igc_hw *hw, u8 *addr, u32 index)
+ u32 igc_hash_mc_addr_generic(struct igc_hw *hw, u8 *mc_addr)
  {
- 	s32 ret_val = IGC_SUCCESS;
--	u16 i, phy_status;
-+	u16 phy_status;
-+	u32 i;
+ 	u32 hash_value, hash_mask;
+-	u8 bit_shift = 0;
++	u8 bit_shift = 1;
  
- 	DEBUGFUNC("igc_phy_has_link_generic");
+ 	DEBUGFUNC("igc_hash_mc_addr_generic");
  
+@@ -496,7 +496,7 @@ u32 igc_hash_mc_addr_generic(struct igc_hw *hw, u8 *mc_addr)
+ 	/* For a mc_filter_type of 0, bit_shift is the number of left-shifts
+ 	 * where 0xFF would still fall within the hash mask.
+ 	 */
+-	while (hash_mask >> bit_shift != 0xFF)
++	while (hash_mask >> bit_shift != 0xFF && bit_shift < 4)
+ 		bit_shift++;
+ 
+ 	/* The portion of the address that is used for the hash table
 -- 
 2.43.5
 
