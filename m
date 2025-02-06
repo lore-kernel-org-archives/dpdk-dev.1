@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE54C02194
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C3BC02198
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:10:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1809840FDE;
-	Thu,  6 Feb 2025 17:09:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 64790410D4;
+	Thu,  6 Feb 2025 17:09:18 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 1689A40EF1
- for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:13 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7946140FB5
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738858154; x=1770394154;
+ t=1738858156; x=1770394156;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=wzonepda94RIkQrMNXeHca2qDdCmpyO4tEIhMhvSMUE=;
- b=nwsdqat67wT4B0+LC51P4P4PzKNniDUiRxMGB7UiofVdvNPpCk/CQroa
- P9/5bCdHCBCR+36YNQc5k+rv5DWljGJl66ToXPpnhPhIoyHAk+tsgm/yh
- XY22POtqDwNGOhXHB6r95rMA1/RxJHxo9ZN9jNiEhHLYUFFDS0PDs8Rty
- mvJxGdOlk8kMFq5WP5mWPbGfEOcxdNHB7BFGWVHPfKZ4iq7WZ9+a1sAgy
- 6aPtIVfclvZfb9KNZVqslYU/JOti8exVYrrT6fBzCO6zzqjvTxSLgrZ9B
- zFcX9BhraVmYY+t/APxF9KvVLO14VSKW4U1R0Cshd7/lgAwSP0mrwPJto g==;
-X-CSE-ConnectionGUID: oWFUdhWDR7K7gcB8sY9qbg==
-X-CSE-MsgGUID: o4ApCu7eS3iN1Ri48Efj0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860724"
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860724"
+ bh=/eXq3nBwZHgDAR+4l0uCTxC3ito6aXO3ibqbl/kr+8w=;
+ b=ilh2rXbfvRr4p0kIUIF0wrtV2l7Ti7oQBpTf5K9bY8QHdLHCIjP+2bRU
+ 2vu5sPaW97vAV43VjAAhjBFP7cykJo/7yyLEgMPKJNwqFSZVbkDAs83Qv
+ OXJlNvn/U3E7ZaEKOlazFWCjs5gUSd/KY8fAN+Br8ekhzFJaXSsbiPAcY
+ etmGsoMc+5Ub84AyVVeb8hYW4h8SakYqMgIw+p9TbIQEMWavF3yHenAlG
+ l4CU4fiSBxx6E4+QdAdlqyp561Pg7pPAACerRgmrdrmZJsGF8dr88DI6S
+ 17A8wlquJfEiaBKM4x5vjU85yOX6Lui0C6hfW39p4Cyw4oR7eHW+IkDhV A==;
+X-CSE-ConnectionGUID: sdKkv6FsT2CTsPiMIfUTnw==
+X-CSE-MsgGUID: k9nuhndeTQO/NS9fRTQMWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860727"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860727"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2025 08:09:13 -0800
-X-CSE-ConnectionGUID: NOe6OTurQq+GquAIR0mu5A==
-X-CSE-MsgGUID: 69aEmRhoQl6isn9SJYnYZg==
+ 06 Feb 2025 08:09:15 -0800
+X-CSE-ConnectionGUID: GMrW/QihTdiQeiakdDJNKA==
+X-CSE-MsgGUID: Bn7ieBq1R3ih1H0tB34emg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166739"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166742"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:12 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:13 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Alvin Zhang <alvinx.zhang@intel.com>,
- Ferruh Yigit <ferruh.yigit@intel.com>
-Subject: [PATCH v1 09/24] net/igc/base: fix semaphore timeout value
-Date: Thu,  6 Feb 2025 16:08:32 +0000
-Message-ID: <5c9fdb9467947a1f77eae339a33844907be9033d.1738858026.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Alvin Zhang <alvinx.zhang@intel.com>, Ferruh Yigit <ferruh.yigit@intel.com>
+Subject: [PATCH v1 10/24] net/igc/base: fix iterator type
+Date: Thu,  6 Feb 2025 16:08:33 +0000
+Message-ID: <a363061e183bcee5dc27cac684647b70be529fc5.1738858026.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738858026.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,52 +60,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pawel Malinowski <pawel.malinowski@intel.com>
+From: Amir Avivi <amir.avivi@intel.com>
 
-According to datasheet software ownership of SWSM.SWESMBI bit should not
-exceed 100ms. Current implementation caused incorrect timeout counter
-values, where each iteration equals 50us delay. Because of that driver was
-allowed to wait for semaphore even for 1,5s. This might trigger DPC
-timeout.
-
-This implementation hardcodes value to 2000, which multiplied by 50us,
-gives 100ms of possible wait time.
+Fix static analysis warning about comparison between types of
+incompatible width, which might lead to an infinite loop due to overflow.
 
 Fixes: 8cb7c57d9b3c ("net/igc: support device initialization")
 Cc: stable@dpdk.org
 
-Signed-off-by: Pawel Malinowski <pawel.malinowski@intel.com>
+Signed-off-by: Amir Avivi <amir.avivi@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/igc/base/igc_defines.h | 1 +
- drivers/net/intel/igc/base/igc_i225.c    | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ .mailmap                             | 1 +
+ drivers/net/intel/igc/base/igc_phy.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/igc/base/igc_defines.h b/drivers/net/intel/igc/base/igc_defines.h
-index 280570b157..3cb2f430c5 100644
---- a/drivers/net/intel/igc/base/igc_defines.h
-+++ b/drivers/net/intel/igc/base/igc_defines.h
-@@ -525,6 +525,7 @@
- /* SW Semaphore Register */
- #define IGC_SWSM_SMBI		0x00000001 /* Driver Semaphore bit */
- #define IGC_SWSM_SWESMBI	0x00000002 /* FW Semaphore bit */
-+#define IGC_SWSM_TIMEOUT	2000       /* Driver Semaphore max timeout counter */
- #define IGC_SWSM_DRV_LOAD	0x00000008 /* Driver Loaded Bit */
- 
- #define IGC_SWSM2_LOCK	0x00000002 /* Secondary driver semaphore bit */
-diff --git a/drivers/net/intel/igc/base/igc_i225.c b/drivers/net/intel/igc/base/igc_i225.c
-index 23c68a3948..7352ba240a 100644
---- a/drivers/net/intel/igc/base/igc_i225.c
-+++ b/drivers/net/intel/igc/base/igc_i225.c
-@@ -388,7 +388,7 @@ s32 igc_setup_copper_link_i225(struct igc_hw *hw)
- static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
+diff --git a/.mailmap b/.mailmap
+index 3faff80f0e..23ec118ebc 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -84,6 +84,7 @@ Amaranath Somalapuram <asomalap@amd.com>
+ Amine Kherbouche <amine.kherbouche@6wind.com>
+ Amin Tootoonchian <amint@icsi.berkeley.edu>
+ Ami Sabo <amis@radware.com>
++Amir Avivi <amir.avivi@intel.com>
+ Amit Bernstein <amitbern@amazon.com>
+ Amit Gupta <agupta3@marvell.com>
+ Amit Prakash Shukla <amitprakashs@marvell.com>
+diff --git a/drivers/net/intel/igc/base/igc_phy.c b/drivers/net/intel/igc/base/igc_phy.c
+index 706f037f0e..dd56b994af 100644
+--- a/drivers/net/intel/igc/base/igc_phy.c
++++ b/drivers/net/intel/igc/base/igc_phy.c
+@@ -2366,7 +2366,8 @@ s32 igc_phy_has_link_generic(struct igc_hw *hw, u32 iterations,
+ 			       u32 usec_interval, bool *success)
  {
- 	u32 swsm;
--	s32 timeout = hw->nvm.word_size + 1;
-+	s32 timeout = IGC_SWSM_TIMEOUT;
- 	s32 i = 0;
+ 	s32 ret_val = IGC_SUCCESS;
+-	u16 i, phy_status;
++	u16 phy_status;
++	u32 i;
  
- 	DEBUGFUNC("igc_get_hw_semaphore_i225");
+ 	DEBUGFUNC("igc_phy_has_link_generic");
+ 
 -- 
 2.43.5
 
