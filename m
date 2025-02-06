@@ -2,57 +2,105 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EA8C02198
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F734C02198
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:56:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 60EE9402CE;
-	Thu,  6 Feb 2025 09:42:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 11F4F402CE;
+	Thu,  6 Feb 2025 09:56:46 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D49744026C
- for <dev@dpdk.org>; Thu,  6 Feb 2025 09:42:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 867A34026C
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 09:56:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738831321;
+ s=mimecast20190719; t=1738832203;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=MFXZs8qN36asQKWZBtaLvBSXI9+mzsQTAJJ9YuzEgIU=;
- b=FDpVioGrJs6Ki+I8cwWblfh0wcpnDDF+eNUEb4092AK2eLXTd0phUOxktNOlkpob6Q/COO
- RDmCsKfXOSj9rw54ny07xdr3DmxXHk4g1ObNM3bTCzAjkhST8lxlUQgWi0GE+oFOTTnEYS
- wmWf7iVfAtbTZePMlrf36zSIw7nQEOM=
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=bvE2U3RUSiK6H1i3C9ucZOW5QrRRA6NVyEUk7SuczMU=;
+ b=jQRfHiDoPzdZKT9jZv5fHDBgeOoX0ryO1a7fP4cnP/4mJz6JmisPZU7hb+/zcNwfU+ZLjD
+ JKlfAVTEwqfnPNNox0YAEqPK2g1mJsZ+ZLExQf6fJhXTz39W0jfePjkMT3QiBukTjuQGyY
+ OvVqjPoZnvpxgdvEDaVfmNIUjanpvj0=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-ygHkuAfROqG4bEZkKTFVfQ-1; Thu,
- 06 Feb 2025 03:42:00 -0500
-X-MC-Unique: ygHkuAfROqG4bEZkKTFVfQ-1
-X-Mimecast-MFC-AGG-ID: ygHkuAfROqG4bEZkKTFVfQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-dkor7PpDO9qDAI_y0FL7Jw-1; Thu,
+ 06 Feb 2025 03:56:40 -0500
+X-MC-Unique: dkor7PpDO9qDAI_y0FL7Jw-1
+X-Mimecast-MFC-AGG-ID: dkor7PpDO9qDAI_y0FL7Jw
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 253A11800871; Thu,  6 Feb 2025 08:41:59 +0000 (UTC)
-Received: from max-p1.redhat.com (unknown [10.45.242.4])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id DA1CA19560A3; Thu,  6 Feb 2025 08:41:56 +0000 (UTC)
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: dev@dpdk.org,
-	david.marchand@redhat.com,
-	chenbox@nvidia.com
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
-	stable@dpdk.org
-Subject: [PATCH] vhost: fix FD entries cleanup
-Date: Thu,  6 Feb 2025 09:41:54 +0100
-Message-ID: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
+ id 31F37180087E; Thu,  6 Feb 2025 08:56:39 +0000 (UTC)
+Received: from [10.45.242.4] (unknown [10.45.242.4])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A81DA1800360; Thu,  6 Feb 2025 08:56:36 +0000 (UTC)
+Message-ID: <01e9c589-d22e-4e9a-8295-8d0c56b466ef@redhat.com>
+Date: Thu, 6 Feb 2025 09:56:33 +0100
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3] vhost: include AKCIPHER algorithms in crypto_config
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
+ Akhil Goyal <gakhil@marvell.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>
+Cc: jerinj@marvell.com, anoobj@marvell.com
+References: <20241119084145.1047-1-gmuthukrishn@marvell.com>
+ <20250107182551.2141-1-gmuthukrishn@marvell.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20250107182551.2141-1-gmuthukrishn@marvell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: YHRs9P1yL3ufhCjni9J5MHn0jbyksXVkeK1PZ1w0GZk_1738831319
+X-Mimecast-MFC-PROC-ID: NHb3t5J4jaAYbNUTZAEMvBQwpIOW37QoSJW-pGcHenU_1738832199
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,170 +114,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-With the recent rework of the FD manager to use epoll,
-an error message is emitted with Vhost-user at FD entry
-removal:
 
-ERR|VHOST_FDMAN: could not remove 102 fd from 101 epfd: No such file or directory
 
-It occurs because the read callback closes the file
-descriptor before it is removed from the FD set.
-This patch defers the close() after the FD entry is removed
-from the set.
+On 1/7/25 7:25 PM, Gowrishankar Muthukrishnan wrote:
+> Update virtio_crypto_config structure to include AKCIPHER algorithms,
+> as per VirtIO standard.
+> 
+> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+> Acked-by: Akhil Goyal <gakhil@marvell.com>
+> ---
+> v3:
+>   - rebased on main.
+> 
+>   lib/vhost/virtio_crypto.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/vhost/virtio_crypto.h b/lib/vhost/virtio_crypto.h
+> index e3b93573c8..28877a5da3 100644
+> --- a/lib/vhost/virtio_crypto.h
+> +++ b/lib/vhost/virtio_crypto.h
+> @@ -410,7 +410,7 @@ struct virtio_crypto_config {
+>   	uint32_t max_cipher_key_len;
+>   	/* Maximum length of authenticated key */
+>   	uint32_t max_auth_key_len;
+> -	uint32_t reserve;
+> +	uint32_t akcipher_algo;
+>   	/* Maximum size of each crypto request's content */
+>   	uint64_t max_size;
+>   };
 
-Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
-Cc: stable@dpdk.org
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
-Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
----
- lib/vhost/fd_man.c | 12 +++++++-----
- lib/vhost/fd_man.h |  2 +-
- lib/vhost/socket.c | 11 +++++------
- lib/vhost/vduse.c  |  9 ++++-----
- 4 files changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
-index 9bc7e50b93..f9147edee7 100644
---- a/lib/vhost/fd_man.c
-+++ b/lib/vhost/fd_man.c
-@@ -333,7 +333,7 @@ fdset_event_dispatch(void *arg)
- 	fd_cb rcb, wcb;
- 	void *dat;
- 	int fd, numfds;
--	int remove1, remove2;
-+	int close1, close2;
- 	struct fdset *pfdset = arg;
- 
- 	if (pfdset == NULL)
-@@ -357,7 +357,7 @@ fdset_event_dispatch(void *arg)
- 				continue;
- 			}
- 
--			remove1 = remove2 = 0;
-+			close1 = close2 = 0;
- 
- 			rcb = pfdentry->rcb;
- 			wcb = pfdentry->wcb;
-@@ -367,9 +367,9 @@ fdset_event_dispatch(void *arg)
- 			pthread_mutex_unlock(&pfdset->fd_mutex);
- 
- 			if (rcb && events[i].events & (EPOLLIN | EPOLLERR | EPOLLHUP))
--				rcb(fd, dat, &remove1);
-+				rcb(fd, dat, &close1);
- 			if (wcb && events[i].events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
--				wcb(fd, dat, &remove2);
-+				wcb(fd, dat, &close2);
- 			pfdentry->busy = 0;
- 			/*
- 			 * fdset_del needs to check busy flag.
-@@ -381,8 +381,10 @@ fdset_event_dispatch(void *arg)
- 			 * fdentry not to be busy, so we can't call
- 			 * fdset_del_locked().
- 			 */
--			if (remove1 || remove2)
-+			if (close1 || close2) {
- 				fdset_del(pfdset, fd);
-+				close(fd);
-+			}
- 		}
- 
- 		if (pfdset->destroy)
-diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
-index 6398343a6a..eadcc6fb42 100644
---- a/lib/vhost/fd_man.h
-+++ b/lib/vhost/fd_man.h
-@@ -12,7 +12,7 @@ struct fdset;
- 
- #define MAX_FDS 1024
- 
--typedef void (*fd_cb)(int fd, void *dat, int *remove);
-+typedef void (*fd_cb)(int fd, void *dat, int *close);
- 
- struct fdset *fdset_init(const char *name);
- 
-diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index 433a42bf80..b27020ae8d 100644
---- a/lib/vhost/socket.c
-+++ b/lib/vhost/socket.c
-@@ -84,8 +84,8 @@ struct vhost_user {
- 
- #define MAX_VIRTIO_BACKLOG 128
- 
--static void vhost_user_server_new_connection(int fd, void *data, int *remove);
--static void vhost_user_read_cb(int fd, void *dat, int *remove);
-+static void vhost_user_server_new_connection(int fd, void *data, int *close);
-+static void vhost_user_read_cb(int fd, void *dat, int *close);
- static int create_unix_socket(struct vhost_user_socket *vsocket);
- static int vhost_user_start_client(struct vhost_user_socket *vsocket);
- 
-@@ -290,7 +290,7 @@ vhost_user_add_connection(int fd, struct vhost_user_socket *vsocket)
- 
- /* call back when there is new vhost-user connection from client  */
- static void
--vhost_user_server_new_connection(int fd, void *dat, int *remove __rte_unused)
-+vhost_user_server_new_connection(int fd, void *dat, int *close __rte_unused)
- {
- 	struct vhost_user_socket *vsocket = dat;
- 
-@@ -303,7 +303,7 @@ vhost_user_server_new_connection(int fd, void *dat, int *remove __rte_unused)
- }
- 
- static void
--vhost_user_read_cb(int connfd, void *dat, int *remove)
-+vhost_user_read_cb(int connfd, void *dat, int *close)
- {
- 	struct vhost_user_connection *conn = dat;
- 	struct vhost_user_socket *vsocket = conn->vsocket;
-@@ -313,8 +313,7 @@ vhost_user_read_cb(int connfd, void *dat, int *remove)
- 	if (ret < 0) {
- 		struct virtio_net *dev = get_device(conn->vid);
- 
--		close(connfd);
--		*remove = 1;
-+		*close = 1;
- 
- 		if (dev)
- 			vhost_destroy_device_notify(dev);
-diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index 8ba58555f9..9d39e71c68 100644
---- a/lib/vhost/vduse.c
-+++ b/lib/vhost/vduse.c
-@@ -117,7 +117,7 @@ static struct vhost_backend_ops vduse_backend_ops = {
- };
- 
- static void
--vduse_control_queue_event(int fd, void *arg, int *remove __rte_unused)
-+vduse_control_queue_event(int fd, void *arg, int *close __rte_unused)
- {
- 	struct virtio_net *dev = arg;
- 	uint64_t buf;
-@@ -350,7 +350,7 @@ vduse_device_stop(struct virtio_net *dev)
- }
- 
- static void
--vduse_events_handler(int fd, void *arg, int *remove __rte_unused)
-+vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- {
- 	struct virtio_net *dev = arg;
- 	struct vduse_dev_request req;
-@@ -563,14 +563,13 @@ vduse_reconnect_log_check(struct virtio_net *dev, uint64_t features, uint32_t to
- }
- 
- static void
--vduse_reconnect_handler(int fd, void *arg, int *remove)
-+vduse_reconnect_handler(int fd __rte_unused, void *arg, int *close)
- {
- 	struct virtio_net *dev = arg;
- 
- 	vduse_device_start(dev, true);
- 
--	close(fd);
--	*remove = 1;
-+	*close = 1;
- }
- 
- static int
--- 
-2.48.1
+Thanks,
+Maxime
 
