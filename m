@@ -2,87 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A031CC02192
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 00:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EFEC02192
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:03:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 16846402A0;
-	Thu,  6 Feb 2025 01:40:18 +0100 (CET)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id DD3854029E
- for <dev@dpdk.org>; Thu,  6 Feb 2025 01:40:16 +0100 (CET)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-2161eb95317so7724215ad.1
- for <dev@dpdk.org>; Wed, 05 Feb 2025 16:40:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 71E65402A0;
+	Thu,  6 Feb 2025 02:03:28 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 768564029E
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 02:03:26 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-219f8263ae0so8468365ad.0
+ for <dev@dpdk.org>; Wed, 05 Feb 2025 17:03:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738802415;
- x=1739407215; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738803805;
+ x=1739408605; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dUp6TQs5o7R2S2PGtXTayqoK9jJHorMuKuFROFi6PIQ=;
- b=qKENEN6pO8SBk1dtlKmetras6SqJKFy05IwZulnJM4AIahAv1fDibA5G3XYXeLc92u
- dPAzKaSPJaagiu98y5szgZWeX1HmPYxHZps6PRrL8WgvDf9TNJT4YudMSO79TRhsDPU9
- Zbrth39KVkCk98rsqTn28A57W5Ft/ohaWgHJEY4zIwRsk29aOogGrliEyJuJ9nw23Xy2
- K5rD9YkmGoRrZK6NnytLbiwwJWiYA8E1J6zOjWlsbvt7vVg7of3/adkM/RGfFEL6tWlF
- JI56SpilZOCyt2G+xsAQLzSP14uf6g3Fw8tQ3UZ1E8J9AdVgcV3iymZzB6iV+vTzPpsm
- lvEg==
+ bh=aK4prp9uaO0gaujhtiwTZk+7Y5gIQ0po6LM2wfq7jfA=;
+ b=wb8qvLD4B0xpKrmycwNV7izY5KzH5zkZ7aYrEqa0/Dkj6mD+WOTzI3oEPaqyVgotG1
+ 9bz9y6NbIYuRqmT2jkWTgUqLSQqEe/lYKTB5HN63psBCmDVJYnn5REyjXxGgz9ZGINlu
+ H4PN0NtA3e82affUSf/Dz01vjGZO5dootS7mOOOANW5RBqzo3IqUVCIt4Kx+ME9caHh4
+ t/cmSlSMQHHbkpksBVqJJgZHiEZRjP79v1vvjFP5md81lK0COGSovfemDUE84FUVjxer
+ LCd4rmnLIpUsi2i71aIXOpbZNdiyknKdibxomh0YP19SWbcUao60KQLS4q0QBZ+0aJNX
+ WEeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738802415; x=1739407215;
+ d=1e100.net; s=20230601; t=1738803805; x=1739408605;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=dUp6TQs5o7R2S2PGtXTayqoK9jJHorMuKuFROFi6PIQ=;
- b=lurdig2ak45Qh050/nXV+VLfqjml4cYXFeKStBdvOYimbXCOAKr/Y3wsbU7ZqA7Q4W
- xTlyz+bGHhnoGK5UyFik/3ClJLUJJGd4SNpAr4PdCMzDscc9vQdeQfF8XlxD5piI9kxz
- ao7l+kRg4dOTnSQVPV0dsdMkpskIfUYaUU+7jFSV0N/SzlBaoEiFlx0bY5rlq2PLTJ9h
- OJn1vdFLpSvSWsnBjhfxrq2gBAKTgZCxQHcxf8uW+0ZFfCwSiyvkuOIKLVnam7aqLo+L
- aAYkZwor82LtXWWXyu3FnPhTwISke7CjAswa8DLqJZ83vlSOBzb9fO61IWwz6LDUCVhV
- UTcg==
-X-Gm-Message-State: AOJu0YyObQuO1zJu/CirJmE51ghebOFZC8b3LN9mLN6zoa5RJLosvBWi
- rpQZpet0c88GhaDRsvfM91MBV/BmSm8Vo+cTn+mvNg7zodcqHcKAD20DNoMJYsU=
-X-Gm-Gg: ASbGncsHh8IMe8Vwx7ZxyJ209gVFIXkvk2y7LKAYUkSk4f9Se2mzf+C+xd7O7azN8Jf
- +fogmNWzxDxKlIO6L6ouWmqHS5LWsSYK7y3qK4yviZntOuKoyzgWDUBKSha3Vf+AwI3nCTuQ4CH
- qWu1Cb40LCKA80pjocAl2b0+H939/r7UZzZup94iiNnugHK0aObfDJ7E9pWFucQzUV0nQT2PlA2
- f+tx7hzs4FqrIgEGXZRQPLacGzrCiGWFbhd0kWP4cGFqTaiptgNzJOyYdUtqv2mpwvOVkYbIE58
- ToXKKRNYhPN50zWplNbGB//NrIhZ5N4br8LPz3uJwqQdzkxTkOFmjlryfAfyuwyCDz50
-X-Google-Smtp-Source: AGHT+IGzBLoyvhNj13aWIV+yp6FoZnp69z+b5vf5vNpY8qqDWfviXbOIJ4VWWc5H5F1AJ9uHSMirbg==
-X-Received: by 2002:a17:902:f550:b0:208:d856:dbb7 with SMTP id
- d9443c01a7336-21f17ebac0bmr82215145ad.39.1738802415629; 
- Wed, 05 Feb 2025 16:40:15 -0800 (PST)
+ bh=aK4prp9uaO0gaujhtiwTZk+7Y5gIQ0po6LM2wfq7jfA=;
+ b=Z9m8UO8AcTpC6UkPtyExrv3A1ps526LSHJ0UPhUFs6k1OM6wz8sH3SVIzN20c9zKpN
+ aWCtBxjSxemGjkwPKnySnB7PEAkrBSXVIBmfzXsLbmH0oqrNg/IgwxoEPVE7iZ4ciOYc
+ FLZK3k/WLbztnUvJ8j2eXt2kbLfY3gKDSBqQSQWnzypJMDLVfIdYDthXEsTPhZbAUByN
+ 0cd8kOAdezXEGmpgFK9Oq/TMVCUIGhMSRgC3Knu25ZegpuzipzM8kUdsATFQF7BY5wMr
+ xBELjVfBz2BvNKchuLjBoaQcSev4fHe0nZt7b1UU1dBhRvS+iJGHuz5O/DY2lZ75dJnN
+ PB2w==
+X-Gm-Message-State: AOJu0YyJeHGuh2hFrorFuye3EzndwpY0PXriYTEOuSPGgQuLb6ymPCPJ
+ MZqGOzgX4+WMdQzfrBVNB91uStw9aEBHLKysfoj/Z/BZ4FPS45YPRGhf5edf7F8=
+X-Gm-Gg: ASbGncsrcu+UhuPTZehi7scd+AawiY6XfIBk0kVnpnvThBzjQ8DioXLiGLAQj1yjE+X
+ BY9Ye9QvQolaZaCP6TjuM3nXGsH9Fkp5WUJ8uPaQjoTZuvehhnCrLGNgjrmJ8gG/CTsiY9UqdwO
+ bv+Uo5QDwKwWh6ludw5+g+r4+KgdRJ2keACvKOeyuFyRfccZmg5EfZOcUw9HKoy9T8bvCfgLlIE
+ S33gi4ryk8t00EaBVhcm6IMUN3+98ZbVgvQL1Xiufspso1yyBD3RP15JQFhZQY1OYIcgbxyoG6D
+ UebCOttf1DG5VC2bmOPu5j+7uX80f4bvFmFajkA5hb4K+xwLBc/xTzB3vVVTVtPh7KcX
+X-Google-Smtp-Source: AGHT+IF1KuENiRRqyFd0qwS4GbNiAjVIgicUrSAg5DuUhXOgM40gSzYZHRkzPVlQhQvIpKzA9TvCAA==
+X-Received: by 2002:a17:902:ce03:b0:216:39fa:5cb4 with SMTP id
+ d9443c01a7336-21f17e6ff76mr90024305ad.25.1738803805385; 
+ Wed, 05 Feb 2025 17:03:25 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f3687c674sm62675ad.181.2025.02.05.16.40.14
+ d9443c01a7336-21f365446d7sm366235ad.82.2025.02.05.17.03.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Feb 2025 16:40:15 -0800 (PST)
-Date: Wed, 5 Feb 2025 16:40:13 -0800
+ Wed, 05 Feb 2025 17:03:25 -0800 (PST)
+Date: Wed, 5 Feb 2025 17:03:23 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Shani Peretz <shperetz@nvidia.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>, Tyler Retzlaff <roretzla@linux.microsoft.com>, Parav
- Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Hemant
- Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Rosen Xu <rosen.xu@intel.com>, Chenbo Xia <chenbox@nvidia.com>, Tomasz
- Duszynski <tduszynski@marvell.com>, Chengwen Feng
- <fengchengwen@huawei.com>, "NBU-Contact-longli (EXTERNAL)"
- <longli@microsoft.com>, Wei Hu <weh@microsoft.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Kevin Laatz <kevin.laatz@intel.com>, Jan
- Blunck <jblunck@infradead.org>
-Subject: Re: [PATCH v4] bus: fix inconsistent representation of PCI numbers
-Message-ID: <20250205164013.4e692f36@hermes.local>
-In-Reply-To: <SA1PR12MB9491CD983750DF0D7A15E453BFF72@SA1PR12MB9491.namprd12.prod.outlook.com>
-References: <20240708165145.1405107-1-shperetz@nvidia.com>
- <20250129085416.226718-1-shperetz@nvidia.com>
- <20250129082518.47630942@hermes.local>
- <SA1PR12MB94915F840D6A2D631AA02E1ABFF72@SA1PR12MB9491.namprd12.prod.outlook.com>
- <20250205084202.264d9781@hermes.local>
- <SA1PR12MB9491A6FDB9AD2FC28CC5A0BEBFF72@SA1PR12MB9491.namprd12.prod.outlook.com>
- <20250205104600.3bf2afdc@hermes.local>
- <SA1PR12MB9491CD983750DF0D7A15E453BFF72@SA1PR12MB9491.namprd12.prod.outlook.com>
+Cc: <dev@dpdk.org>, "Tyler Retzlaff" <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v5 3/4] app/test: add tests to find devices
+Message-ID: <20250205170323.026210bb@hermes.local>
+In-Reply-To: <20250206000838.23428-4-shperetz@nvidia.com>
+References: <20250129085416.226718-1-shperetz@nvidia.com>
+ <20250206000838.23428-1-shperetz@nvidia.com>
+ <20250206000838.23428-4-shperetz@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,170 +81,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 5 Feb 2025 20:16:48 +0000
+On Thu, 6 Feb 2025 02:08:37 +0200
 Shani Peretz <shperetz@nvidia.com> wrote:
 
-> > -----Original Message-----
-> > From: Stephen Hemminger <stephen@networkplumber.org>
-> > Sent: Wednesday, 5 February 2025 20:46
-> > To: Shani Peretz <shperetz@nvidia.com>
-> > Cc: dev@dpdk.org; NBU-Contact-Thomas Monjalon (EXTERNAL)
-> > <thomas@monjalon.net>; Tyler Retzlaff <roretzla@linux.microsoft.com>; P=
-arav
-> > Pandit <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>; Nipun Gupta
-> > <nipun.gupta@amd.com>; Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant
-> > Agrawal <hemant.agrawal@nxp.com>; Sachin Saxena
-> > <sachin.saxena@nxp.com>; Rosen Xu <rosen.xu@intel.com>; Chenbo Xia
-> > <chenbox@nvidia.com>; Tomasz Duszynski <tduszynski@marvell.com>;
-> > Chengwen Feng <fengchengwen@huawei.com>; NBU-Contact-longli
-> > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
-> > Richardson <bruce.richardson@intel.com>; Kevin Laatz
-> > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
-> > Subject: Re: [PATCH v4] bus: fix inconsistent representation of PCI num=
-bers
-> >=20
-> > External email: Use caution opening links or attachments
-> >=20
-> >=20
-> > On Wed, 5 Feb 2025 17:37:54 +0000
-> > Shani Peretz <shperetz@nvidia.com> wrote:
-> >  =20
-> > > > -----Original Message-----
-> > > > From: Stephen Hemminger <stephen@networkplumber.org>
-> > > > Sent: Wednesday, 5 February 2025 18:42
-> > > > To: Shani Peretz <shperetz@nvidia.com>
-> > > > Cc: dev@dpdk.org; NBU-Contact-Thomas Monjalon (EXTERNAL)
-> > > > <thomas@monjalon.net>; Tyler Retzlaff
-> > > > <roretzla@linux.microsoft.com>; Parav Pandit <parav@nvidia.com>;
-> > > > Xueming Li <xuemingl@nvidia.com>; Nipun Gupta =20
-> > <nipun.gupta@amd.com>; =20
-> > > > Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant Agrawal
-> > > > <hemant.agrawal@nxp.com>; Sachin Saxena <sachin.saxena@nxp.com>;
-> > > > Rosen Xu <rosen.xu@intel.com>; Chenbo Xia <chenbox@nvidia.com>;
-> > > > Tomasz Duszynski <tduszynski@marvell.com>; Chengwen Feng
-> > > > <fengchengwen@huawei.com>; NBU-Contact-longli
-> > > > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
-> > > > Richardson <bruce.richardson@intel.com>; Kevin Laatz
-> > > > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
-> > > > Subject: Re: [PATCH v4] bus: fix inconsistent representation of PCI
-> > > > numbers
-> > > >
-> > > > External email: Use caution opening links or attachments
-> > > >
-> > > >
-> > > > On Wed, 5 Feb 2025 16:36:11 +0000
-> > > > Shani Peretz <shperetz@nvidia.com> wrote:
-> > > > =20
-> > > > > > -----Original Message-----
-> > > > > > From: Stephen Hemminger <stephen@networkplumber.org>
-> > > > > > Sent: Wednesday, 29 January 2025 18:25
-> > > > > > To: Shani Peretz <shperetz@nvidia.com>
-> > > > > > Cc: dev@dpdk.org; NBU-Contact-Thomas Monjalon (EXTERNAL)
-> > > > > > <thomas@monjalon.net>; Tyler Retzlaff
-> > > > > > <roretzla@linux.microsoft.com>; Parav Pandit <parav@nvidia.com>;
-> > > > > > Xueming Li <xuemingl@nvidia.com>; Nipun Gupta =20
-> > > > <nipun.gupta@amd.com>; =20
-> > > > > > Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant Agrawal
-> > > > > > <hemant.agrawal@nxp.com>; Sachin Saxena <sachin.saxena@nxp.com>;
-> > > > > > Rosen Xu <rosen.xu@intel.com>; Chenbo Xia <chenbox@nvidia.com>;
-> > > > > > Tomasz Duszynski <tduszynski@marvell.com>; Chengwen Feng
-> > > > > > <fengchengwen@huawei.com>; NBU-Contact-longli
-> > > > > > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>;
-> > > > > > Bruce Richardson <bruce.richardson@intel.com>; Kevin Laatz
-> > > > > > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
-> > > > > > Subject: Re: [PATCH v4] bus: fix inconsistent representation of
-> > > > > > PCI numbers
-> > > > > >
-> > > > > > External email: Use caution opening links or attachments
-> > > > > >
-> > > > > >
-> > > > > > On Wed, 29 Jan 2025 10:54:16 +0200 Shani Peretz
-> > > > > > <shperetz@nvidia.com> wrote:
-> > > > > > =20
-> > > > > > > +create_pci_dev(const char *name) {
-> > > > > > > +     int port_id;
-> > > > > > > +     uint8_t slave_mac1[] =3D {0x00, 0xFF, 0x00, 0xFF, 0x00,=
- 0x00 };
-> > > > > > > +     struct rte_ether_addr *mac_addr =3D (struct rte_ether_a=
-ddr
-> > > > > > > +*)slave_mac1; =20
-> > > > > >
-> > > > > > Use different initializer and you can avoid the need for cast h=
-ere.
-> > > > > >
-> > > > > > =20
-> > > > > > >
-> > > > > > > +/**
-> > > > > > > + * General device name comparison. Will compare by using the
-> > > > > > > +specific bus
-> > > > > > > + * compare function or by comparing the names directly.
-> > > > > > > + *
-> > > > > > > + * @param dev
-> > > > > > > + *   Device handle.
-> > > > > > > + * @param name
-> > > > > > > + *   Name to compare against.
-> > > > > > > + * @return
-> > > > > > > + *   0 if the device matches the name. Nonzero otherwise.
-> > > > > > > + */
-> > > > > > > +__rte_internal
-> > > > > > > +int rte_cmp_dev_name(const struct rte_device *dev, const void
-> > > > > > > +*name); =20
-> > > > > >
-> > > > > > It would make more sense to me if name was a character not void=
- =20
-> > pointer. =20
-> > > > > >
-> > > > > > The design might be clearer if bus address was more of an
-> > > > > > typedef with a pointer and size together. Treat it more like an=
- object. =20
-> > > > >
-> > > > >
-> > > > > Okay so just to understand,
-> > > > > this is the struct I am adding:
-> > > > >
-> > > > >       struct rte_bus_address {
-> > > > >              const void *addr;
-> > > > >              size_t size;
-> > > > >       };
-> > > > >
-> > > > > This is how I pass it to find_device:
-> > > > >
-> > > > >       struct rte_bus_address dev_addr =3D {
-> > > > >                 .addr =3D da->name,
-> > > > >                 .size =3D RTE_DEV_NAME_MAX_LEN
-> > > > >       };
-> > > > >       dev =3D da->bus->find_device(NULL, rte_cmp_dev_name,
-> > > > > &dev_addr);
-> > > > >
-> > > > > And this is how I use it in rte_cmp_dev_name:
-> > > > >
-> > > > >       rte_cmp_dev_name(const struct rte_device *dev1, const void =
-*addr)
-> > > > >        {
-> > > > >              const struct rte_bus_address *dev2_addr =3D addr;
-> > > > >       =E2=80=A6
-> > > > >       }
-> > > > >
-> > > > > Is that what you meant?
-> > > > > Also, I'm not sure if the size is really needed, because we check
-> > > > > the size of the parsed name, which may be different than the size
-> > > > > of the original name
-> > > > > =20
-> > > >
-> > > > It would be best to pass rte_bus_address to rte_cmp_dev_name rather
-> > > > than having implied cast.
-> > > > Not sure if that is possible without breaking API though. =20
-> > >
-> > > I think you are right, also it will require to change the signature of
-> > > find_device which will make it even bigger change =20
-> >=20
-> > Could you post patch with something "good enough" that builds and passes
-> > tests? =20
->=20
-> You mean with the rte_bus_address change or without?
-> Without it it was tested and passed. With it I only ran few tests locally=
- and they passed
+> +static struct rte_device *
+> +create_pci_dev(const char *name)
+> +{
+> +	int port_id;
+> +	struct rte_ether_addr mac_addr = {
+> +		.addr_bytes = {
+> +				0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00
+> +			}
+> +		};
+> +
+> +	char pmd_name[RTE_ETH_NAME_MAX_LEN];
 
-With the bus address change how much impact? Not sure it really matter much=
- though
-both solutions are ok, it is more about dealing with other buses in future.
+Why hardcode a MAC address, which could lead to future issues.
+Instead use rte_eth_random_addr().
