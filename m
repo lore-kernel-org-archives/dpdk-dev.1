@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7823C02192
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C114DC02194
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:34:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 821D240A71;
-	Thu,  6 Feb 2025 02:33:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 89FEF40A76;
+	Thu,  6 Feb 2025 02:33:48 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3BBDD4065F
+ by mails.dpdk.org (Postfix) with ESMTP id 4356740666
  for <dev@dpdk.org>; Thu,  6 Feb 2025 02:33:38 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id C106D203F5A8; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C106D203F5A8
+ id B4517203F5A7; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B4517203F5A7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738805616;
- bh=VrdBdvJUUltk+ZXtsDAj7IT45LyJQnArjkgdKInocWM=;
+ bh=v1DHxZV1C0sGKMHWBH1Ir4BACtxlCv2pTOINU5xG0Hs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=gPUEOdRcQp1K96VzKFJyAeKaXvSRUHzG53Z69swFE5x7hYwuFmh9wuzdH9sRi5gQc
- nh0wOFCnKjfiGPvD9N7xtz/DJivkQaDSxRSlcdXhGQ/nF5lwdubqvHW6mG85CFkAJX
- P/pazC8301ZgufZVzGz8GT5pDWwiNrRnGiNBCZ78=
+ b=L0KIcdqg4zP7eggBHwYzlXjL+wss1mqdmx0wVOI3DHXkVgmAwwKvqfAkaxJWR2//l
+ Cid3yurERMCh+tImHfVKY0Z91syIIVSAiX8U4zv2n1achsi1DgYUyiDfj1VhXo3yTR
+ zNc8jSTyXrbdPkOe4aYNd3z41+94dBsw80LDYBk0=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com
-Subject: [PATCH v22 07/27] rcu: remove use of VLAs for Windows built code
-Date: Wed,  5 Feb 2025 17:33:10 -0800
-Message-Id: <1738805610-17507-8-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v22 06/27] hash/thash: remove use of VLAs for Windows built
+Date: Wed,  5 Feb 2025 17:33:09 -0800
+Message-Id: <1738805610-17507-7-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738805610-17507-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -49,76 +49,53 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-1) ./lib/rcu/rte_rcu_qsbr.c:359:9
-    : warning: ISO C90 forbids variable length array ‘data’ [-Wvla]
-2) ./lib/rcu/rte_rcu_qsbr.c:422:9
-    : warning: ISO C90 forbids variable length array ‘data’ [-Wvla]
+1) ./lib/hash/rte_thash.c:774:9
+    : warning: ISO C90 forbids variable length array ‘tmp_tuple’
 
-In both cases we allocate VLA for one element from RCU deferred queue.
-Right now, size of element in RCU queue is not limited by API.
-The approach is to introduce some reasonable limitation on RCU DQ
-element size.
-Choose 128B for now.
-With that in place we can replace both VLA occurencies with fixed size
-array.
+The tuple can exceed sizeof(union rte_thash_tuple), for example if any
+tunneling header is used in the RSS hash calculation.
 
-Note that such change need to be treated as API change.
-So can be applied only at 24.11.
+The longest RSS hash key currently supported is 52 bytes. Technically, the
+longest tuple with such a key should be (52 - sizeof(uint32_t)), so this
+can be used as a size of the tmp_tuple array.
 
 Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/rcu/rte_rcu_qsbr.c | 7 ++++---
- lib/rcu/rte_rcu_qsbr.h | 5 +++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ lib/hash/rte_thash.c | 2 +-
+ lib/hash/rte_thash.h | 7 +++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
-index dbf31501a6..fe68d16326 100644
---- a/lib/rcu/rte_rcu_qsbr.c
-+++ b/lib/rcu/rte_rcu_qsbr.c
-@@ -245,7 +245,8 @@ rte_rcu_qsbr_dq_create(const struct rte_rcu_qsbr_dq_parameters *params)
- 	if (params == NULL || params->free_fn == NULL ||
- 		params->v == NULL || params->name == NULL ||
- 		params->size == 0 || params->esize == 0 ||
--		(params->esize % 4 != 0)) {
-+		(params->esize % 4 != 0) ||
-+		params->esize > RTE_QSBR_ESIZE_MAX) {
- 		RCU_LOG(ERR, "Invalid input parameter");
- 		rte_errno = EINVAL;
- 
-@@ -323,7 +324,7 @@ int rte_rcu_qsbr_dq_enqueue(struct rte_rcu_qsbr_dq *dq, void *e)
- 		return 1;
- 	}
- 
--	char data[dq->esize];
-+	char data[RTE_QSBR_ESIZE_MAX + __RTE_QSBR_TOKEN_SIZE];
- 	dq_elem = (__rte_rcu_qsbr_dq_elem_t *)data;
- 	/* Start the grace period */
- 	dq_elem->token = rte_rcu_qsbr_start(dq->v);
-@@ -386,7 +387,7 @@ rte_rcu_qsbr_dq_reclaim(struct rte_rcu_qsbr_dq *dq, unsigned int n,
- 
- 	cnt = 0;
- 
--	char data[dq->esize];
-+	char data[RTE_QSBR_ESIZE_MAX + __RTE_QSBR_TOKEN_SIZE];
- 	/* Check reader threads quiescent state and reclaim resources */
- 	while (cnt < n &&
- 		rte_ring_dequeue_bulk_elem_start(dq->r, &data,
-diff --git a/lib/rcu/rte_rcu_qsbr.h b/lib/rcu/rte_rcu_qsbr.h
-index 550fadf56a..abcbd78914 100644
---- a/lib/rcu/rte_rcu_qsbr.h
-+++ b/lib/rcu/rte_rcu_qsbr.h
-@@ -86,6 +86,11 @@ struct __rte_cache_aligned rte_rcu_qsbr_cnt {
- #define __RTE_QSBR_CNT_MAX ((uint64_t)~0)
- #define __RTE_QSBR_TOKEN_SIZE sizeof(uint64_t)
+diff --git a/lib/hash/rte_thash.c b/lib/hash/rte_thash.c
+index 336c228e64..fa78787143 100644
+--- a/lib/hash/rte_thash.c
++++ b/lib/hash/rte_thash.c
+@@ -761,7 +761,7 @@ rte_thash_adjust_tuple(struct rte_thash_ctx *ctx,
+ 	uint32_t desired_value,	unsigned int attempts,
+ 	rte_thash_check_tuple_t fn, void *userdata)
+ {
+-	uint32_t tmp_tuple[tuple_len / sizeof(uint32_t)];
++	uint32_t tmp_tuple[RTE_THASH_TUPLE_LEN_MAX];
+ 	unsigned int i, j, ret = 0;
+ 	uint32_t hash, adj_bits;
+ 	const uint8_t *hash_key;
+diff --git a/lib/hash/rte_thash.h b/lib/hash/rte_thash.h
+index c0af5968df..04f9f1875c 100644
+--- a/lib/hash/rte_thash.h
++++ b/lib/hash/rte_thash.h
+@@ -121,6 +121,13 @@ __rte_internal
+ uint32_t
+ thash_get_rand_poly(uint32_t poly_degree);
  
 +/**
-+ * Max allowable size (in bytes) of each element in the defer queue
++ * Longest RSS hash key currently supported
 + */
-+#define RTE_QSBR_ESIZE_MAX	(2 * RTE_CACHE_LINE_MIN_SIZE)
++#define RTE_THASH_KEY_LEN_MAX	52
 +
- /* RTE Quiescent State variable structure.
-  * This structure has two elements that vary in size based on the
-  * 'max_threads' parameter.
++#define RTE_THASH_TUPLE_LEN_MAX (RTE_THASH_KEY_LEN_MAX - sizeof(uint32_t))
++
+ /**
+  * Prepare special converted key to use with rte_softrss_be()
+  * @param orig
 -- 
 2.47.2.vfs.0.1
 
