@@ -2,133 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFD2C02196
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EA8C02198
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:42:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDD394066D;
-	Thu,  6 Feb 2025 09:35:46 +0100 (CET)
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam04on2087.outbound.protection.outlook.com [40.107.102.87])
- by mails.dpdk.org (Postfix) with ESMTP id 0EC324026C
- for <dev@dpdk.org>; Thu,  6 Feb 2025 09:35:45 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UgHIOLVl0hQTm4d9n5VJXqfWb849ZBC/iZxEiETH2eLdYsuCTDtiTViqICBoZPGR7fI5ylHTyHnfdwIYcgcvRsLTelamqYkB5HXSkgEPwP8GQfM1cfX3fBejQtjDIwjSGriHRdhqfQOXLyp+BLjLMf8Jl0uoJ0OW3T5KLBJBWwIaCpAayqfe4BhuPy3yYAB8XuLDtQy5e/8gPquVxSOZ7HRzVReWVcvjJ8/V959CeFSYtsRNYY7ZtyYhVTjAcNfLCeZ9AKMY+V/vffe65OWCFIT0VIF1dJ6cry7AlVHegk6ly2w8MIbmRQloZ3dHFTOe2P2EJtRF8ly99Mfc+lCFQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KVigslLkY0cntmb75ZPNWWPvdLnTpLYLalcLzEnYUD0=;
- b=UYxTdGOAZhwLW4y3a/tHRAGuwXBJASJzplC4uJ6/ArVr1PStQ7D35gjk7jaMroYEvVB/BpNjHdC1lO82CIieZrnx+A1m8FmDKvvsj5ELlQNTw1ZcMrA1ZeSrALumniOMqzswYYOPYurzqRBWhExVC+RXa+SE6oBIb+a7Zpjhz59UqofShgVineaTL9r/fbwN3wKuoCOibgBlbMEdPWcGQYomiZ9n8qxLGCZwHhTjry6aDWfyQ2XeUR6YNC6RWDee4mthl8IHNU9vLT7IJ+x9HUBXmXBEpng9CSevHgxTDNMvMzMwXMLwrDoN5oBIN+4S43d525Wv28tdbMtG9H+3oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KVigslLkY0cntmb75ZPNWWPvdLnTpLYLalcLzEnYUD0=;
- b=iIpokHIPkoP9nC87YmIKXnhItYuoYJZVzCkHtxsEL/aOB2hI9XnPEvlTeEUbriqmlLAZhm8fvMWOrmoC7TqzifPwKnTsIThOQ98Ka+OhWDqmIbcBEQq0uHUKbuXDaLENw31JF/r6XD6WzH/t2VcBZKl/GY9Z7dI82f+Tl6S7UTqzoITATMcWnhfGLGIOY7JOoNPhBKQRRWWt8LUJkFLfjAk4owgu53sx2T/RGFsahDiVePKl4kImEX3QuCfA96co2CID3zTb0XU30Yl6ts/MnIQxS9bgI9fzA+X2B+52/03ozcO79ONoQ/uowLzQKpRKs5oBR7y74geHEG+jjiL3Hg==
-Received: from MN0PR12MB6103.namprd12.prod.outlook.com (2603:10b6:208:3c9::19)
- by PH7PR12MB5656.namprd12.prod.outlook.com (2603:10b6:510:13b::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.23; Thu, 6 Feb
- 2025 08:35:42 +0000
-Received: from MN0PR12MB6103.namprd12.prod.outlook.com
- ([fe80::3c6c:6f63:917e:98d8]) by MN0PR12MB6103.namprd12.prod.outlook.com
- ([fe80::3c6c:6f63:917e:98d8%3]) with mapi id 15.20.8398.021; Thu, 6 Feb 2025
- 08:35:41 +0000
-From: Chenbo Xia <chenbox@nvidia.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "otilibil@eurecom.fr"
- <otilibil@eurecom.fr>, "david.marchand@redhat.com"
- <david.marchand@redhat.com>
-Subject: Re: [PATCH] vhost: fix VDUSE devices registration
-Thread-Topic: [PATCH] vhost: fix VDUSE devices registration
-Thread-Index: AQHbc+F0E7b9MwIRKECa4C4BVWUunbM5/G8A
-Date: Thu, 6 Feb 2025 08:35:41 +0000
-Message-ID: <ABE5D435-146D-4D71-B824-A29A89D02B45@nvidia.com>
-References: <20250131130957.293562-1-maxime.coquelin@redhat.com>
-In-Reply-To: <20250131130957.293562-1-maxime.coquelin@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB6103:EE_|PH7PR12MB5656:EE_
-x-ms-office365-filtering-correlation-id: a4ad5ad8-376e-4a17-3103-08dd46893dc7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?Nxkbxs6sJE/ytCTzYCzYNW34fquxMxcaCGo3N8InSfWHRRIS0oJAcEtjLCaS?=
- =?us-ascii?Q?DWJ2EKbd+MAjZWs2FXaZKD2qx+twlEwi8ZJyqrBjHpVBzxzZiMBw9MTYIKM0?=
- =?us-ascii?Q?CaPlqu6QITS9TflMQ7UpsvXe8cUpFoK4/Hk96ae1EStAN3by615eteV5LnCf?=
- =?us-ascii?Q?i9ZKohjwNhf/vfDXtQ/bupq4nP0DqB19ridMqMeN6jNhWRThE/BfLWClQ6ku?=
- =?us-ascii?Q?Y6Y5MCV/zwoSI7VOEMEsywYoyKnPMhQxenzKKehuhHvKdoOn9/YiMsOUnYzo?=
- =?us-ascii?Q?dlPvpR0pDB4gfe9lxblfnC+b9906NOxpq5ixCvw2V3VbZzdqeOfalLMjoLZH?=
- =?us-ascii?Q?dQIgLu/Kd18X+8CYge1GZxhgtVEVe26LwSZl+A4lWkkehv8IgciX70DmFxP9?=
- =?us-ascii?Q?0D7+kGUX8HB6U8lsw1bD7Fi8RF23hVtweUCHfayyYuOSmP7pQCNql0fOPLRL?=
- =?us-ascii?Q?Z0MYj+jLjcCMU4PE9BAJ9ryEEwNgkxpyFZaMCGPwLK2/NOO0XozuCrEiblbW?=
- =?us-ascii?Q?PnFy+1ETEMI0HOh477sF7O1l15AfpuqNOqD4v4xP4U8PJ0+W0riLgJIlguLC?=
- =?us-ascii?Q?QFzF2LFvjldctvi0rMXHupprIIxm3fsd3RgVJ9nAjEs4UFR2eeejo++fEY/z?=
- =?us-ascii?Q?y8BRtLznhFoUVsefBdWTQmBibZ+kjwJASDibOnVQwfVcFiRenkxhEd6/+Rvl?=
- =?us-ascii?Q?i8Zrm9fk1gnttuQnLeSCQgU0aUB7o21qDDQvYcQiPEY+/jonrSwbFRCZ3irq?=
- =?us-ascii?Q?S7PPt6ZB/dwB3Rs75XvB7KDd+yfUyKKLK/rgF7RWhyLL7qOgjDXGtb+sao5M?=
- =?us-ascii?Q?MfBojlT6QG76uqp3+uVWLyf8FkryfkiHqSs3VwVZCISWgSVaorEYamfnvEhO?=
- =?us-ascii?Q?EIvUiT+/iqFarkE4/eTcR5cPFkuB6H8Lp/cYPO06Dk7D6EttvuulNLvMx83n?=
- =?us-ascii?Q?ft+GqsSIljJ3pPyJ7jUAPQsX/UcFb5Aon5toQkSa8V9koB+egnXQhYKz8rnn?=
- =?us-ascii?Q?EiNZdTjgKfabbBvkRXxHKrcrfq9vDKKWhrdtl3+TdJmW+Ai6SshaF9dFLuA7?=
- =?us-ascii?Q?bG85EbzknzHIkIXRphmrJkvB6YKsQr+rh3ZlH4AFVrJx+xJbJG/kZdjVG3QR?=
- =?us-ascii?Q?mAEpUQzkZwzoYznfmkKJiiTHD1ScSyJ49SwIbNPaCRZD7iuUTNyBCI7d0xKc?=
- =?us-ascii?Q?VK31GKAl2EOVZ98GesjaNx4f13fdM9fLHUFo0g77VmtrdIY7cyZO4raTrzcg?=
- =?us-ascii?Q?JSl+Z6/wKhLWl1tlTO8592CBBchVgClN3Izum/Mfga82+C80AdhGzBtykxJ2?=
- =?us-ascii?Q?RBuQuG/g0n6ZNZBUJvokerWlWCX6HHnfTKeYAF9ripJVxDErtLRnhFXwNOJ4?=
- =?us-ascii?Q?qpKCl4KGAmDcHjf+63/9gzgqE0+GHXMV/vXTpU7b2lNLLcaTLc8tXtv8rEA+?=
- =?us-ascii?Q?7jxPNsiJsX1tpCaGEYwvwX3pPy5Xx9ei?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MN0PR12MB6103.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?I1wxwE67kJo8z5x1S1FCyYBPQ/y+BR+NWkD3vyLr7lfTrRZint1MZWBZe0Ro?=
- =?us-ascii?Q?oRYHZ1OWaThlOpYq8VaEmNRxjjOcgL/q+h6Xv3y1TPaBE8vNiqpr6exWYz67?=
- =?us-ascii?Q?QILcbOJDsSxzwxj8fnDtikFTQRqs6ov1PpgmzN81tCV753eYcBQYSBddFCAy?=
- =?us-ascii?Q?bxP7yIlZbel77n1PA0rwvTdZ3KTUCMWeubS6oQdYg1nJKEdtCpwkAN28QESI?=
- =?us-ascii?Q?qqsNB1JBLOtR8rC23rSu6mNIfI8AA/O7DXw3GNEpFFPXqx6zr8E534+/DQIX?=
- =?us-ascii?Q?YDOoF84bIyYLGP34MFgRJgwDLj9LQxNnRCIax/Z6ItNln3ThxhCtZcY9g6nn?=
- =?us-ascii?Q?SPjhG4gukukdaybPASzKlRgt+8O+QfMvprPF+zY4Krffjp+Sv2OI8tArD+l3?=
- =?us-ascii?Q?m9BDgO/2MIR/nTL2FVhH4B5qiJ2BgUhTpw3KrH482y/eFCUJNEaBwD4fQAi1?=
- =?us-ascii?Q?eptcH3ne/1iI16qWxa3+QXHaNKwedn9aXx4u+nZqd05rKiCGS1qRPBSo/513?=
- =?us-ascii?Q?j/pwvr7VotmHzF9X//aZN/yzjQ7F2WauPFXH7F6i9v/Dbkl8kWTMifDH81EG?=
- =?us-ascii?Q?JGpRQMvtUWrDOYoU91a/FPILJQYDrIQ45/at3tZqA5/K789rE1VFcRVFg9m+?=
- =?us-ascii?Q?/i6L4e0eYZn1Mo1TparxTvs99Kd/Vxyy+6VyxSGNfLULeUliv+t9C+1u0tDJ?=
- =?us-ascii?Q?ozj2o7a/9ODg7rARECFiNUo4a9ke9FBpScVggb4TvMJtr/7WjX9ysW9RpUf9?=
- =?us-ascii?Q?ycS9k7yN7LjKtQNqW4w5xiAWc+WC/kYYiJT08hbtB8cqbgo/biWi14PAuOdm?=
- =?us-ascii?Q?B5zfXwMyK6/gosDW2Gx7ZykrmDdFGpm89vB6CTlqzoRFsVkmoUkzyzrEt/vg?=
- =?us-ascii?Q?osj9TFBKJK7LmxJVfOrKV22iD0IAQuxpmDUQSk1vtRs1GuzMlMBMG9BAmkfb?=
- =?us-ascii?Q?ybFgfz6yQmJvpitqtMgBGU+LACL/yoL+IshPzdurS6HxlzaVwEtaeUf7JgMy?=
- =?us-ascii?Q?rJTzSVrVEoOY8lK/enbRbceK2Iyd5ejIs2DE0IohIOV8X0MewqM6eh0xb+Q7?=
- =?us-ascii?Q?WQ8Qm2n41TjiGEsSXE+Vhagt3Ao70hy4svRqGV65WDST2rltoatqkl/tlX4s?=
- =?us-ascii?Q?PYXpZ9We3yDY+dnwz4T5/vSSn34L9QhbKo3yU8bCNAs2Zhq3/BgCJwVqAmCQ?=
- =?us-ascii?Q?3Eq22uQnZBa5IuzUFQvLzuGmoAXebk/HuRDDRw1H4p9fUrdLqjQy1TpmVsmi?=
- =?us-ascii?Q?ME6nCQW12DkXXaZUkQ8yoXtoB0POxG+qWqov0pygC1W7xkX/K4O1vf/e9m8n?=
- =?us-ascii?Q?UnXI6SXKpJcNuCvo0i0zYIKTz9U1sCIQMRFS2O5nCuAkWP54V/M0/XjEGDh1?=
- =?us-ascii?Q?jEqDG7XhXKb2kpsAEwbSfWnxhYsRrFKrx0Te2MBeSSsIEFEsTMfJXWToZeRR?=
- =?us-ascii?Q?0zQi0/tvG6ss5tjdeB7Vct1RIrh8UejsJtoS2oV+C+alXOe8IvuR9w64LTjc?=
- =?us-ascii?Q?80LtlL1DDtnXTrnTlGiYJxCy1SKWt5sFjST9qly+ePkHkiT8L6BBiImm5PXl?=
- =?us-ascii?Q?MF8b52U+BJ1yt/B5J0XHG5kMM4/a18CzPBW/rhH+?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <540A0D21165EA64D90ABEA08361296AF@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 60EE9402CE;
+	Thu,  6 Feb 2025 09:42:03 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D49744026C
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 09:42:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1738831321;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=MFXZs8qN36asQKWZBtaLvBSXI9+mzsQTAJJ9YuzEgIU=;
+ b=FDpVioGrJs6Ki+I8cwWblfh0wcpnDDF+eNUEb4092AK2eLXTd0phUOxktNOlkpob6Q/COO
+ RDmCsKfXOSj9rw54ny07xdr3DmxXHk4g1ObNM3bTCzAjkhST8lxlUQgWi0GE+oFOTTnEYS
+ wmWf7iVfAtbTZePMlrf36zSIw7nQEOM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-ygHkuAfROqG4bEZkKTFVfQ-1; Thu,
+ 06 Feb 2025 03:42:00 -0500
+X-MC-Unique: ygHkuAfROqG4bEZkKTFVfQ-1
+X-Mimecast-MFC-AGG-ID: ygHkuAfROqG4bEZkKTFVfQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 253A11800871; Thu,  6 Feb 2025 08:41:59 +0000 (UTC)
+Received: from max-p1.redhat.com (unknown [10.45.242.4])
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id DA1CA19560A3; Thu,  6 Feb 2025 08:41:56 +0000 (UTC)
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: dev@dpdk.org,
+	david.marchand@redhat.com,
+	chenbox@nvidia.com
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+	stable@dpdk.org
+Subject: [PATCH] vhost: fix FD entries cleanup
+Date: Thu,  6 Feb 2025 09:41:54 +0100
+Message-ID: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6103.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4ad5ad8-376e-4a17-3103-08dd46893dc7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2025 08:35:41.7075 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PfVDVsRJDqq1xtKff/c6QZWJ4wdOAaln93IrUZyGGDgCYZ+vNpJD7s83mkFE1up0grmx6hOFznWzH1xMIz0ktg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5656
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YHRs9P1yL3ufhCjni9J5MHn0jbyksXVkeK1PZ1w0GZk_1738831319
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,82 +66,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+With the recent rework of the FD manager to use epoll,
+an error message is emitted with Vhost-user at FD entry
+removal:
 
+ERR|VHOST_FDMAN: could not remove 102 fd from 101 epfd: No such file or directory
 
-> On Jan 31, 2025, at 21:09, Maxime Coquelin <maxime.coquelin@redhat.com> w=
-rote:
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> This patch fixes a regression in vhost_driver_register()
-> causing VDUSE devices registration to fail systematically
-> because the return value was initialized to -1 and not
-> changed later on for this type of devices.
->=20
-> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
->=20
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> ---
-> lib/vhost/socket.c | 10 +++-------
-> 1 file changed, 3 insertions(+), 7 deletions(-)
->=20
-> diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-> index 433a42bf80..894a0f0dcb 100644
-> --- a/lib/vhost/socket.c
-> +++ b/lib/vhost/socket.c
-> @@ -893,7 +893,6 @@ vhost_user_socket_mem_free(struct vhost_user_socket *=
-vsocket)
-> int
-> rte_vhost_driver_register(const char *path, uint64_t flags)
-> {
-> -       int ret =3D -1;
->        struct vhost_user_socket *vsocket;
->=20
->        if (!path)
-> @@ -997,7 +996,6 @@ rte_vhost_driver_register(const char *path, uint64_t =
-flags)
->        } else {
-> #ifndef RTE_LIBRTE_VHOST_POSTCOPY
->                VHOST_CONFIG_LOG(path, ERR, "Postcopy requested but not co=
-mpiled");
-> -               ret =3D -1;
->                goto out_mutex;
-> #endif
->        }
-> @@ -1012,15 +1010,14 @@ rte_vhost_driver_register(const char *path, uint6=
-4_t flags)
->                } else {
->                        vsocket->is_server =3D true;
->                }
-> -               ret =3D create_unix_socket(vsocket);
-> -               if (ret < 0)
-> +               if (create_unix_socket(vsocket) < 0)
->                        goto out_mutex;
->        }
->=20
->        vhost_user.vsockets[vhost_user.vsocket_cnt++] =3D vsocket;
->=20
->        pthread_mutex_unlock(&vhost_user.mutex);
-> -       return ret;
-> +       return 0;
->=20
-> out_mutex:
->        if (pthread_mutex_destroy(&vsocket->conn_mutex)) {
-> @@ -1028,8 +1025,7 @@ rte_vhost_driver_register(const char *path, uint64_=
-t flags)
->        }
-> out:
->        pthread_mutex_unlock(&vhost_user.mutex);
-> -
-> -       return ret;
-> +       return -1;
-> }
->=20
-> static bool
-> --
-> 2.48.1
->=20
+It occurs because the read callback closes the file
+descriptor before it is removed from the FD set.
+This patch defers the close() after the FD entry is removed
+from the set.
 
-Reviewed-by: Chenbo Xia <chenbox@nvidia.com>
+Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+---
+ lib/vhost/fd_man.c | 12 +++++++-----
+ lib/vhost/fd_man.h |  2 +-
+ lib/vhost/socket.c | 11 +++++------
+ lib/vhost/vduse.c  |  9 ++++-----
+ 4 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+index 9bc7e50b93..f9147edee7 100644
+--- a/lib/vhost/fd_man.c
++++ b/lib/vhost/fd_man.c
+@@ -333,7 +333,7 @@ fdset_event_dispatch(void *arg)
+ 	fd_cb rcb, wcb;
+ 	void *dat;
+ 	int fd, numfds;
+-	int remove1, remove2;
++	int close1, close2;
+ 	struct fdset *pfdset = arg;
+ 
+ 	if (pfdset == NULL)
+@@ -357,7 +357,7 @@ fdset_event_dispatch(void *arg)
+ 				continue;
+ 			}
+ 
+-			remove1 = remove2 = 0;
++			close1 = close2 = 0;
+ 
+ 			rcb = pfdentry->rcb;
+ 			wcb = pfdentry->wcb;
+@@ -367,9 +367,9 @@ fdset_event_dispatch(void *arg)
+ 			pthread_mutex_unlock(&pfdset->fd_mutex);
+ 
+ 			if (rcb && events[i].events & (EPOLLIN | EPOLLERR | EPOLLHUP))
+-				rcb(fd, dat, &remove1);
++				rcb(fd, dat, &close1);
+ 			if (wcb && events[i].events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
+-				wcb(fd, dat, &remove2);
++				wcb(fd, dat, &close2);
+ 			pfdentry->busy = 0;
+ 			/*
+ 			 * fdset_del needs to check busy flag.
+@@ -381,8 +381,10 @@ fdset_event_dispatch(void *arg)
+ 			 * fdentry not to be busy, so we can't call
+ 			 * fdset_del_locked().
+ 			 */
+-			if (remove1 || remove2)
++			if (close1 || close2) {
+ 				fdset_del(pfdset, fd);
++				close(fd);
++			}
+ 		}
+ 
+ 		if (pfdset->destroy)
+diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
+index 6398343a6a..eadcc6fb42 100644
+--- a/lib/vhost/fd_man.h
++++ b/lib/vhost/fd_man.h
+@@ -12,7 +12,7 @@ struct fdset;
+ 
+ #define MAX_FDS 1024
+ 
+-typedef void (*fd_cb)(int fd, void *dat, int *remove);
++typedef void (*fd_cb)(int fd, void *dat, int *close);
+ 
+ struct fdset *fdset_init(const char *name);
+ 
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+index 433a42bf80..b27020ae8d 100644
+--- a/lib/vhost/socket.c
++++ b/lib/vhost/socket.c
+@@ -84,8 +84,8 @@ struct vhost_user {
+ 
+ #define MAX_VIRTIO_BACKLOG 128
+ 
+-static void vhost_user_server_new_connection(int fd, void *data, int *remove);
+-static void vhost_user_read_cb(int fd, void *dat, int *remove);
++static void vhost_user_server_new_connection(int fd, void *data, int *close);
++static void vhost_user_read_cb(int fd, void *dat, int *close);
+ static int create_unix_socket(struct vhost_user_socket *vsocket);
+ static int vhost_user_start_client(struct vhost_user_socket *vsocket);
+ 
+@@ -290,7 +290,7 @@ vhost_user_add_connection(int fd, struct vhost_user_socket *vsocket)
+ 
+ /* call back when there is new vhost-user connection from client  */
+ static void
+-vhost_user_server_new_connection(int fd, void *dat, int *remove __rte_unused)
++vhost_user_server_new_connection(int fd, void *dat, int *close __rte_unused)
+ {
+ 	struct vhost_user_socket *vsocket = dat;
+ 
+@@ -303,7 +303,7 @@ vhost_user_server_new_connection(int fd, void *dat, int *remove __rte_unused)
+ }
+ 
+ static void
+-vhost_user_read_cb(int connfd, void *dat, int *remove)
++vhost_user_read_cb(int connfd, void *dat, int *close)
+ {
+ 	struct vhost_user_connection *conn = dat;
+ 	struct vhost_user_socket *vsocket = conn->vsocket;
+@@ -313,8 +313,7 @@ vhost_user_read_cb(int connfd, void *dat, int *remove)
+ 	if (ret < 0) {
+ 		struct virtio_net *dev = get_device(conn->vid);
+ 
+-		close(connfd);
+-		*remove = 1;
++		*close = 1;
+ 
+ 		if (dev)
+ 			vhost_destroy_device_notify(dev);
+diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+index 8ba58555f9..9d39e71c68 100644
+--- a/lib/vhost/vduse.c
++++ b/lib/vhost/vduse.c
+@@ -117,7 +117,7 @@ static struct vhost_backend_ops vduse_backend_ops = {
+ };
+ 
+ static void
+-vduse_control_queue_event(int fd, void *arg, int *remove __rte_unused)
++vduse_control_queue_event(int fd, void *arg, int *close __rte_unused)
+ {
+ 	struct virtio_net *dev = arg;
+ 	uint64_t buf;
+@@ -350,7 +350,7 @@ vduse_device_stop(struct virtio_net *dev)
+ }
+ 
+ static void
+-vduse_events_handler(int fd, void *arg, int *remove __rte_unused)
++vduse_events_handler(int fd, void *arg, int *close __rte_unused)
+ {
+ 	struct virtio_net *dev = arg;
+ 	struct vduse_dev_request req;
+@@ -563,14 +563,13 @@ vduse_reconnect_log_check(struct virtio_net *dev, uint64_t features, uint32_t to
+ }
+ 
+ static void
+-vduse_reconnect_handler(int fd, void *arg, int *remove)
++vduse_reconnect_handler(int fd __rte_unused, void *arg, int *close)
+ {
+ 	struct virtio_net *dev = arg;
+ 
+ 	vduse_device_start(dev, true);
+ 
+-	close(fd);
+-	*remove = 1;
++	*close = 1;
+ }
+ 
+ static int
+-- 
+2.48.1
 
