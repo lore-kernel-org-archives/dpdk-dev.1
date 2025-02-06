@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB3EC02198
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F40C02198
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 16:11:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9869A42792;
-	Thu,  6 Feb 2025 17:09:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E15A142799;
+	Thu,  6 Feb 2025 17:09:35 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 096CC410E8
- for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:28 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 392F64161A
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 17:09:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738858169; x=1770394169;
+ t=1738858170; x=1770394170;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=DZ4Cc5cBTVjxRA/SBLK0H0z704obdprj+pf92o8zV8w=;
- b=Is2GY+Z8M7F+07Arkd0VnHzjlrf+6KJnRxxwA9kCR/M7f1P6mCbwRg/9
- DdO65gznZOS2N9OpJjrBQ+oczVW+8tSoJQldi+p4t48W1gYBGFOR1q30U
- E3N15auwBwf7lLahLt0uxQi6UoiKt4rWU13+E4NYDJOnJxS8SnmGbb59c
- vk6Qo4uuXQUT3o278E2VwuDBsN7tyK4jWNr1/yG8wmMhWU2jrkEnrPsL2
- UERO3RXLK/Eee0YHv3lwsm4vcGkH3xUNPEJU0sdq8xTseRgJkRhYjpe5m
- GgQCOoPrI+Cp08GYwQRZF1kXuqaTWGEyMX64DWflX5h2Hj6RUbCRxa9Qz A==;
-X-CSE-ConnectionGUID: I5VB108uTWyZRMTkXwuVCw==
-X-CSE-MsgGUID: CMeEoe1BRXWTVwuf4fNPCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860770"
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860770"
+ bh=9gmzmfhLD1qwaxcpoGqZMrV7UNULtVQ4ryn4AkUmWY0=;
+ b=aL1OV34nXqPwnNuf2IsPYBjBbxcM9AkWWCfZMtJlEjBzCRfGyNbp0jkd
+ u1iTY8LTOhbV5mCrXHe1d1d/6WmdXPCFg8DXVInvcN/f7fVc3k0Be1UxK
+ iLSNMtGVngSbdpM/Rn+5Z2e+tIAo7EGiMhL7+kl4cu5h2LWUFzfIVTwUU
+ VCgLcj+y8NJvildGQv/XtBlD4f+ir33ze6lJU7hInxyH+gu+XyXgICAhL
+ ibB/i7kibgQ4bjD0qjEPQOpIDe4MjLSGu3wPEj7+cXpUEBtkd8dohelI8
+ BNKzkeDrTaQbztIcWjBic6ilM3v3Uej55BbIaVlwv5GQMzFzTztRhyWqJ Q==;
+X-CSE-ConnectionGUID: wYnPzqyMSCqgwU4c5FtvnA==
+X-CSE-MsgGUID: iP5+Al/kSh+Dgw2cEXtC5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50860771"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="50860771"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2025 08:09:28 -0800
-X-CSE-ConnectionGUID: nTQTmBPxTqatOTb93zPulw==
-X-CSE-MsgGUID: t/6LcX3QTlGZtHOgYHLQBQ==
+ 06 Feb 2025 08:09:30 -0800
+X-CSE-ConnectionGUID: fI1gT463SZ2lBuz07k5JVQ==
+X-CSE-MsgGUID: +VDgYl/tS+mGKtsSa/jJNg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166823"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="111166830"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:28 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 06 Feb 2025 08:09:29 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v1 21/24] net/e1000/base: fix static analysis warning
-Date: Thu,  6 Feb 2025 16:08:44 +0000
-Message-ID: <f53bdc46ff3a1f2cd50d061661043e59e466eeae.1738858026.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 22/24] net/e1000/base: fix reset for 82580
+Date: Thu,  6 Feb 2025 16:08:45 +0000
+Message-ID: <bf6a15965c5777781966b9c11d61953a02c84278.1738858026.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738858026.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -59,41 +59,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Przemyslaw Ciesielski <przemyslaw.ciesielski@intel.com>
+From: Barbara Skobiej <barbara.skobiej@intel.com>
 
-There is a static analysis warning due to wrong data types being used for
-NVM read data shifts. Fix it via explicit type cast.
+Fix setting device reset status bit in e1000_reset_hw_82580() function
+for 82580 by first reading the register value, and then setting the
+device reset bit.
 
-Fixes: 38db3f7f50bd ("e1000: update base driver")
+Fixes: af75078fece3 ("first public release")
 Cc: stable@dpdk.org
 
-Signed-off-by: Przemyslaw Ciesielski <przemyslaw.ciesielski@intel.com>
+Signed-off-by: Barbara Skobiej <barbara.skobiej@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_nvm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/intel/e1000/base/e1000_82575.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_nvm.c b/drivers/net/intel/e1000/base/e1000_nvm.c
-index 430fecaf6d..d171bea649 100644
---- a/drivers/net/intel/e1000/base/e1000_nvm.c
-+++ b/drivers/net/intel/e1000/base/e1000_nvm.c
-@@ -935,14 +935,14 @@ s32 e1000_read_pba_num_generic(struct e1000_hw *hw, u32 *pba_num)
- 		DEBUGOUT("NVM Not Supported\n");
- 		return -E1000_NOT_IMPLEMENTED;
- 	}
--	*pba_num = (u32)(nvm_data << 16);
-+	*pba_num = ((u32)nvm_data << 16);
+diff --git a/drivers/net/intel/e1000/base/e1000_82575.c b/drivers/net/intel/e1000/base/e1000_82575.c
+index 53900cf8f1..948c80f2fa 100644
+--- a/drivers/net/intel/e1000/base/e1000_82575.c
++++ b/drivers/net/intel/e1000/base/e1000_82575.c
+@@ -2280,7 +2280,7 @@ STATIC s32 e1000_reset_hw_82580(struct e1000_hw *hw)
+ 	s32 ret_val = E1000_SUCCESS;
+ 	/* BH SW mailbox bit in SW_FW_SYNC */
+ 	u16 swmbsw_mask = E1000_SW_SYNCH_MB;
+-	u32 ctrl;
++	u32 ctrl, status;
+ 	bool global_device_reset = hw->dev_spec._82575.global_device_reset;
  
- 	ret_val = hw->nvm.ops.read(hw, NVM_PBA_OFFSET_1, 1, &nvm_data);
- 	if (ret_val) {
- 		DEBUGOUT("NVM Read Error\n");
- 		return ret_val;
+ 	DEBUGFUNC("e1000_reset_hw_82580");
+@@ -2345,7 +2345,8 @@ STATIC s32 e1000_reset_hw_82580(struct e1000_hw *hw)
  	}
--	*pba_num |= nvm_data;
-+	*pba_num |= (u32)nvm_data;
  
- 	return E1000_SUCCESS;
- }
+ 	/* clear global device reset status bit */
+-	E1000_WRITE_REG(hw, E1000_STATUS, E1000_STAT_DEV_RST_SET);
++	status = E1000_READ_REG(hw, E1000_STATUS);
++	E1000_WRITE_REG(hw, E1000_STATUS, status | E1000_STAT_DEV_RST_SET);
+ 
+ 	/* Clear any pending interrupt events. */
+ 	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
 -- 
 2.43.5
 
