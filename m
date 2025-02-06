@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA4C02192
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF1AC02194
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:34:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14D1F40A89;
-	Thu,  6 Feb 2025 02:33:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4721740B8C;
+	Thu,  6 Feb 2025 02:33:52 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 6708240677
- for <dev@dpdk.org>; Thu,  6 Feb 2025 02:33:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6AC1640678;
+ Thu,  6 Feb 2025 02:33:38 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 23359203F5B1; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 23359203F5B1
+ id CD2A0203F5A9; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD2A0203F5A9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1738805617;
- bh=8ExafJgLh1IxftT5BWlc87g++0TfLbSnzKlAjZo3A/I=;
+ s=default; t=1738805616;
+ bh=Zaw3j4IpC+ev3dZ58fCpkMXxz+DLueTBX9Y4LIBnsoA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=kdG/zRCNhDh98HScKX0ujAMHLasi4/mgC9vi2OXiNQmXV2mpqDwdVTyiId2m3v1ib
- xBI67hsP07bw6BH81b8+pF/mijjDkXieS0kn7Bw6C0i6kHPon5iyyxKBLP+RyNEUvz
- 0/FAP0w8x1JOIrZ7cZla1pJ6PKy6+0qbnFTWfpR8=
+ b=kC0oySsZW4lxQuaUZcH4qHu6ZW4OTQNu52goWi636qlsmxYKIOsKlb/6nPXB7xwvA
+ qhr+JwgCQR5asA6OtPSid9WLLsjjxhoxOYNIVAMN0irn7kmhjkwL50+jyF8mGrvKEC
+ 9I68n/ghDFLCBIW6/4SQf42mylf2if3eNdWNLDRY=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
- david.marchand@redhat.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v22 14/27] common/idpf: remove use of VLAs for Windows built
- code
-Date: Wed,  5 Feb 2025 17:33:17 -0800
-Message-Id: <1738805610-17507-15-git-send-email-andremue@linux.microsoft.com>
+ david.marchand@redhat.com, stable@dpdk.org
+Subject: [PATCH v22 08/27] gro: fix overwrite unprocessed packets
+Date: Wed,  5 Feb 2025 17:33:11 -0800
+Message-Id: <1738805610-17507-9-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738805610-17507-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -45,56 +44,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Tyler Retzlaff <roretzla@linux.microsoft.com>
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-MSVC does not support VLAs, replace VLAs with standard C arrays
-or alloca(). alloca() is available for all toolchain/platform
-combinations officially supported by DPDK.
+gro_vxlan_tcp4_tbl_timeout_flush() is called without taking into account
+that first entries in pkts[] can be already occupied by
+un-processed packets.
 
-Signed-off-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Fixes: 74080d7dcf31 ("gro: support IPv6 for TCP")
+Cc: stable@dpdk.org
+
+Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Acked-by: Ferruh Yigit <ferruh.yigit@amd.com>
 ---
- drivers/common/idpf/idpf_common_rxtx.c        | 2 +-
- drivers/common/idpf/idpf_common_rxtx_avx512.c | 6 ++++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ lib/gro/rte_gro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/common/idpf/idpf_common_rxtx.c b/drivers/common/idpf/idpf_common_rxtx.c
-index a04e54ce26..e04ab40fa2 100644
---- a/drivers/common/idpf/idpf_common_rxtx.c
-+++ b/drivers/common/idpf/idpf_common_rxtx.c
-@@ -569,7 +569,7 @@ idpf_split_rx_bufq_refill(struct idpf_rx_queue *rx_bufq)
- 	uint16_t nb_refill = rx_bufq->rx_free_thresh;
- 	uint16_t nb_desc = rx_bufq->nb_rx_desc;
- 	uint16_t next_avail = rx_bufq->rx_tail;
--	struct rte_mbuf *nmb[rx_bufq->rx_free_thresh];
-+	struct rte_mbuf **nmb = alloca(sizeof(struct rte_mbuf *) * rx_bufq->rx_free_thresh);
- 	uint64_t dma_addr;
- 	uint16_t delta;
- 	int i;
-diff --git a/drivers/common/idpf/idpf_common_rxtx_avx512.c b/drivers/common/idpf/idpf_common_rxtx_avx512.c
-index 81052e72c1..6fbfee1b2d 100644
---- a/drivers/common/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/common/idpf/idpf_common_rxtx_avx512.c
-@@ -998,7 +998,8 @@ idpf_tx_singleq_free_bufs_avx512(struct idpf_tx_queue *txq)
- 	uint32_t n;
- 	uint32_t i;
- 	int nb_free = 0;
--	struct rte_mbuf *m, *free[txq->rs_thresh];
-+	struct rte_mbuf *m;
-+	struct rte_mbuf **free = alloca(sizeof(struct rte_mbuf *) * txq->rs_thresh);
+diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
+index d824eebd93..db86117609 100644
+--- a/lib/gro/rte_gro.c
++++ b/lib/gro/rte_gro.c
+@@ -327,7 +327,7 @@ rte_gro_reassemble_burst(struct rte_mbuf **pkts,
+ 		/* Flush all packets from the tables */
+ 		if (do_vxlan_tcp_gro) {
+ 			i += gro_vxlan_tcp4_tbl_timeout_flush(&vxlan_tcp_tbl,
+-					0, pkts, nb_pkts);
++					0, &pkts[i], nb_pkts - i);
+ 		}
  
- 	/* check DD bits on threshold descriptor */
- 	if ((txq->tx_ring[txq->next_dd].qw1 &
-@@ -1322,7 +1323,8 @@ idpf_tx_splitq_free_bufs_avx512(struct idpf_tx_queue *txq)
- 	uint32_t n;
- 	uint32_t i;
- 	int nb_free = 0;
--	struct rte_mbuf *m, *free[txq->rs_thresh];
-+	struct rte_mbuf *m;
-+	struct rte_mbuf **free = alloca(sizeof(struct rte_mbuf *) * txq->rs_thresh);
- 
- 	n = txq->rs_thresh;
- 
+ 		if (do_vxlan_udp_gro) {
 -- 
 2.47.2.vfs.0.1
 
