@@ -2,163 +2,133 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC09BC02196
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 07:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFD2C02196
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:35:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B303240697;
-	Thu,  6 Feb 2025 08:55:32 +0100 (CET)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
- (mail-am6eur05on2062.outbound.protection.outlook.com [40.107.22.62])
- by mails.dpdk.org (Postfix) with ESMTP id 54F844066D
- for <dev@dpdk.org>; Thu,  6 Feb 2025 08:55:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DDD394066D;
+	Thu,  6 Feb 2025 09:35:46 +0100 (CET)
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam04on2087.outbound.protection.outlook.com [40.107.102.87])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EC324026C
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 09:35:45 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q1fVWngH1WGmvzRSPSIm8DdyMQmbvildeWPqHAb4MH12dhKZpphdP/Bt9cv2IQHYP/Z47G8YRH8w/nUqr8hRMNEV6pGwTZEOQVrWJgwUY6MiZ7iIWFD17ZVp9FygRp6MP364E9ZyK+2E03i/Rg7Ozw7tVgRMSUmuAT6QMJ07bMH+ZOnvHd/t56ihhpkAYJWwkAI4SryKHp9qFHU9zrN2mdUtKwLjAlYjMqe2ZYGbEc96QgT2bqC8cIMeMK4XQzCZbmyL9GzPNnC/ZgMYtb6RxdnZeZQaQpA4o3UJG8IIGZW4EJjGMQWNQ3To+5CNXNth2uPoyzod6zPoYV14FowbMQ==
+ b=UgHIOLVl0hQTm4d9n5VJXqfWb849ZBC/iZxEiETH2eLdYsuCTDtiTViqICBoZPGR7fI5ylHTyHnfdwIYcgcvRsLTelamqYkB5HXSkgEPwP8GQfM1cfX3fBejQtjDIwjSGriHRdhqfQOXLyp+BLjLMf8Jl0uoJ0OW3T5KLBJBWwIaCpAayqfe4BhuPy3yYAB8XuLDtQy5e/8gPquVxSOZ7HRzVReWVcvjJ8/V959CeFSYtsRNYY7ZtyYhVTjAcNfLCeZ9AKMY+V/vffe65OWCFIT0VIF1dJ6cry7AlVHegk6ly2w8MIbmRQloZ3dHFTOe2P2EJtRF8ly99Mfc+lCFQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAFtrOosEH3RNUoND+j2fnfDpHJltwwBccjEzArmF4U=;
- b=YcfYWAQdfJ69fBjKTxzF9RxQVcIgvm8Sxtk7vMiG/DlmUQpgHSebXD4gR7lMuExf0gQNbSyLL3WFh3pXj09jMERegsdJ3f5wEKgRlPjQwnGuIVkGHMwXEB9vL3ENFwnTSitzNJ1dPQWuV7041/9ERwBfgwaqm4emwewbvxT/Yd765PhVuLM5djm/k+IHnoHixETceqppM1T/BFfvAh99E8WO6LK3AYwVKUddW6QELDKJ2bipYtyxXTGeqk+q0cMnBFbKfs93cZmhi2FZgCducfGWhyN4UC2D6iiUS4SwoKjzq/0yRStHe56bcsHe0yIUCtELxANt2dWwuU6WA51Hcg==
+ bh=KVigslLkY0cntmb75ZPNWWPvdLnTpLYLalcLzEnYUD0=;
+ b=UYxTdGOAZhwLW4y3a/tHRAGuwXBJASJzplC4uJ6/ArVr1PStQ7D35gjk7jaMroYEvVB/BpNjHdC1lO82CIieZrnx+A1m8FmDKvvsj5ELlQNTw1ZcMrA1ZeSrALumniOMqzswYYOPYurzqRBWhExVC+RXa+SE6oBIb+a7Zpjhz59UqofShgVineaTL9r/fbwN3wKuoCOibgBlbMEdPWcGQYomiZ9n8qxLGCZwHhTjry6aDWfyQ2XeUR6YNC6RWDee4mthl8IHNU9vLT7IJ+x9HUBXmXBEpng9CSevHgxTDNMvMzMwXMLwrDoN5oBIN+4S43d525Wv28tdbMtG9H+3oA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
- s=selector1-NXP1-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAFtrOosEH3RNUoND+j2fnfDpHJltwwBccjEzArmF4U=;
- b=XFVxDUmC5L0MqJGUTd4IoqTZWpNgjKsSNND3y41oDgHfaej8AZEY0lRIduZTto5doBFkQQJhCpmdMFDwiIgl1w2Mp9AtVFv84DsG0nQ+YqfkOltNdd9167YKapfJCDTgH7iH367xlqhRYxWRDc2a+SMpUYRBDxWBNL8oqwwOndagFg9kwxLoeKbWQGMgjZl5z5IF81O+Hhh72ARbWYsktU/dXMhBt5Ql/0ftY9N/lfBnbAfOD95I+v8X7E4G68OUHHbe/dC7F6rNrMM25QuflW57w7hkKLLCIs/+/aAp9rGT4vfc/Huv2/L/Au5fyn9D1cXO1NKf5+/rsyowRQbOPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
- by PAWPR04MB9815.eurprd04.prod.outlook.com (2603:10a6:102:381::19)
+ bh=KVigslLkY0cntmb75ZPNWWPvdLnTpLYLalcLzEnYUD0=;
+ b=iIpokHIPkoP9nC87YmIKXnhItYuoYJZVzCkHtxsEL/aOB2hI9XnPEvlTeEUbriqmlLAZhm8fvMWOrmoC7TqzifPwKnTsIThOQ98Ka+OhWDqmIbcBEQq0uHUKbuXDaLENw31JF/r6XD6WzH/t2VcBZKl/GY9Z7dI82f+Tl6S7UTqzoITATMcWnhfGLGIOY7JOoNPhBKQRRWWt8LUJkFLfjAk4owgu53sx2T/RGFsahDiVePKl4kImEX3QuCfA96co2CID3zTb0XU30Yl6ts/MnIQxS9bgI9fzA+X2B+52/03ozcO79ONoQ/uowLzQKpRKs5oBR7y74geHEG+jjiL3Hg==
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com (2603:10b6:208:3c9::19)
+ by PH7PR12MB5656.namprd12.prod.outlook.com (2603:10b6:510:13b::10)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Thu, 6 Feb
- 2025 07:55:29 +0000
-Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
- ([fe80::367:d59:375:fb87]) by PAXPR04MB9328.eurprd04.prod.outlook.com
- ([fe80::367:d59:375:fb87%4]) with mapi id 15.20.8422.010; Thu, 6 Feb 2025
- 07:55:29 +0000
-Message-ID: <75e4f0d3-c038-682c-f84b-db583e224e89@oss.nxp.com>
-Date: Thu, 6 Feb 2025 13:25:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v5 2/4] lib: fix comparison between devices
-To: Shani Peretz <shperetz@nvidia.com>, dev@dpdk.org
-Cc: stephen@networkplumber.org, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>,
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>, Bruce Richardson <bruce.richardson@intel.com>,
- Kevin Laatz <kevin.laatz@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Jan Blunck <jblunck@infradead.org>
-References: <20250129085416.226718-1-shperetz@nvidia.com>
- <20250206000838.23428-1-shperetz@nvidia.com>
- <20250206000838.23428-3-shperetz@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.23; Thu, 6 Feb
+ 2025 08:35:42 +0000
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8]) by MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8%3]) with mapi id 15.20.8398.021; Thu, 6 Feb 2025
+ 08:35:41 +0000
+From: Chenbo Xia <chenbox@nvidia.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "otilibil@eurecom.fr"
+ <otilibil@eurecom.fr>, "david.marchand@redhat.com"
+ <david.marchand@redhat.com>
+Subject: Re: [PATCH] vhost: fix VDUSE devices registration
+Thread-Topic: [PATCH] vhost: fix VDUSE devices registration
+Thread-Index: AQHbc+F0E7b9MwIRKECa4C4BVWUunbM5/G8A
+Date: Thu, 6 Feb 2025 08:35:41 +0000
+Message-ID: <ABE5D435-146D-4D71-B824-A29A89D02B45@nvidia.com>
+References: <20250131130957.293562-1-maxime.coquelin@redhat.com>
+In-Reply-To: <20250131130957.293562-1-maxime.coquelin@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <20250206000838.23428-3-shperetz@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR03CA0088.apcprd03.prod.outlook.com
- (2603:1096:4:7c::16) To PAXPR04MB9328.eurprd04.prod.outlook.com
- (2603:10a6:102:2b6::15)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB6103:EE_|PH7PR12MB5656:EE_
+x-ms-office365-filtering-correlation-id: a4ad5ad8-376e-4a17-3103-08dd46893dc7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Nxkbxs6sJE/ytCTzYCzYNW34fquxMxcaCGo3N8InSfWHRRIS0oJAcEtjLCaS?=
+ =?us-ascii?Q?DWJ2EKbd+MAjZWs2FXaZKD2qx+twlEwi8ZJyqrBjHpVBzxzZiMBw9MTYIKM0?=
+ =?us-ascii?Q?CaPlqu6QITS9TflMQ7UpsvXe8cUpFoK4/Hk96ae1EStAN3by615eteV5LnCf?=
+ =?us-ascii?Q?i9ZKohjwNhf/vfDXtQ/bupq4nP0DqB19ridMqMeN6jNhWRThE/BfLWClQ6ku?=
+ =?us-ascii?Q?Y6Y5MCV/zwoSI7VOEMEsywYoyKnPMhQxenzKKehuhHvKdoOn9/YiMsOUnYzo?=
+ =?us-ascii?Q?dlPvpR0pDB4gfe9lxblfnC+b9906NOxpq5ixCvw2V3VbZzdqeOfalLMjoLZH?=
+ =?us-ascii?Q?dQIgLu/Kd18X+8CYge1GZxhgtVEVe26LwSZl+A4lWkkehv8IgciX70DmFxP9?=
+ =?us-ascii?Q?0D7+kGUX8HB6U8lsw1bD7Fi8RF23hVtweUCHfayyYuOSmP7pQCNql0fOPLRL?=
+ =?us-ascii?Q?Z0MYj+jLjcCMU4PE9BAJ9ryEEwNgkxpyFZaMCGPwLK2/NOO0XozuCrEiblbW?=
+ =?us-ascii?Q?PnFy+1ETEMI0HOh477sF7O1l15AfpuqNOqD4v4xP4U8PJ0+W0riLgJIlguLC?=
+ =?us-ascii?Q?QFzF2LFvjldctvi0rMXHupprIIxm3fsd3RgVJ9nAjEs4UFR2eeejo++fEY/z?=
+ =?us-ascii?Q?y8BRtLznhFoUVsefBdWTQmBibZ+kjwJASDibOnVQwfVcFiRenkxhEd6/+Rvl?=
+ =?us-ascii?Q?i8Zrm9fk1gnttuQnLeSCQgU0aUB7o21qDDQvYcQiPEY+/jonrSwbFRCZ3irq?=
+ =?us-ascii?Q?S7PPt6ZB/dwB3Rs75XvB7KDd+yfUyKKLK/rgF7RWhyLL7qOgjDXGtb+sao5M?=
+ =?us-ascii?Q?MfBojlT6QG76uqp3+uVWLyf8FkryfkiHqSs3VwVZCISWgSVaorEYamfnvEhO?=
+ =?us-ascii?Q?EIvUiT+/iqFarkE4/eTcR5cPFkuB6H8Lp/cYPO06Dk7D6EttvuulNLvMx83n?=
+ =?us-ascii?Q?ft+GqsSIljJ3pPyJ7jUAPQsX/UcFb5Aon5toQkSa8V9koB+egnXQhYKz8rnn?=
+ =?us-ascii?Q?EiNZdTjgKfabbBvkRXxHKrcrfq9vDKKWhrdtl3+TdJmW+Ai6SshaF9dFLuA7?=
+ =?us-ascii?Q?bG85EbzknzHIkIXRphmrJkvB6YKsQr+rh3ZlH4AFVrJx+xJbJG/kZdjVG3QR?=
+ =?us-ascii?Q?mAEpUQzkZwzoYznfmkKJiiTHD1ScSyJ49SwIbNPaCRZD7iuUTNyBCI7d0xKc?=
+ =?us-ascii?Q?VK31GKAl2EOVZ98GesjaNx4f13fdM9fLHUFo0g77VmtrdIY7cyZO4raTrzcg?=
+ =?us-ascii?Q?JSl+Z6/wKhLWl1tlTO8592CBBchVgClN3Izum/Mfga82+C80AdhGzBtykxJ2?=
+ =?us-ascii?Q?RBuQuG/g0n6ZNZBUJvokerWlWCX6HHnfTKeYAF9ripJVxDErtLRnhFXwNOJ4?=
+ =?us-ascii?Q?qpKCl4KGAmDcHjf+63/9gzgqE0+GHXMV/vXTpU7b2lNLLcaTLc8tXtv8rEA+?=
+ =?us-ascii?Q?7jxPNsiJsX1tpCaGEYwvwX3pPy5Xx9ei?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MN0PR12MB6103.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?I1wxwE67kJo8z5x1S1FCyYBPQ/y+BR+NWkD3vyLr7lfTrRZint1MZWBZe0Ro?=
+ =?us-ascii?Q?oRYHZ1OWaThlOpYq8VaEmNRxjjOcgL/q+h6Xv3y1TPaBE8vNiqpr6exWYz67?=
+ =?us-ascii?Q?QILcbOJDsSxzwxj8fnDtikFTQRqs6ov1PpgmzN81tCV753eYcBQYSBddFCAy?=
+ =?us-ascii?Q?bxP7yIlZbel77n1PA0rwvTdZ3KTUCMWeubS6oQdYg1nJKEdtCpwkAN28QESI?=
+ =?us-ascii?Q?qqsNB1JBLOtR8rC23rSu6mNIfI8AA/O7DXw3GNEpFFPXqx6zr8E534+/DQIX?=
+ =?us-ascii?Q?YDOoF84bIyYLGP34MFgRJgwDLj9LQxNnRCIax/Z6ItNln3ThxhCtZcY9g6nn?=
+ =?us-ascii?Q?SPjhG4gukukdaybPASzKlRgt+8O+QfMvprPF+zY4Krffjp+Sv2OI8tArD+l3?=
+ =?us-ascii?Q?m9BDgO/2MIR/nTL2FVhH4B5qiJ2BgUhTpw3KrH482y/eFCUJNEaBwD4fQAi1?=
+ =?us-ascii?Q?eptcH3ne/1iI16qWxa3+QXHaNKwedn9aXx4u+nZqd05rKiCGS1qRPBSo/513?=
+ =?us-ascii?Q?j/pwvr7VotmHzF9X//aZN/yzjQ7F2WauPFXH7F6i9v/Dbkl8kWTMifDH81EG?=
+ =?us-ascii?Q?JGpRQMvtUWrDOYoU91a/FPILJQYDrIQ45/at3tZqA5/K789rE1VFcRVFg9m+?=
+ =?us-ascii?Q?/i6L4e0eYZn1Mo1TparxTvs99Kd/Vxyy+6VyxSGNfLULeUliv+t9C+1u0tDJ?=
+ =?us-ascii?Q?ozj2o7a/9ODg7rARECFiNUo4a9ke9FBpScVggb4TvMJtr/7WjX9ysW9RpUf9?=
+ =?us-ascii?Q?ycS9k7yN7LjKtQNqW4w5xiAWc+WC/kYYiJT08hbtB8cqbgo/biWi14PAuOdm?=
+ =?us-ascii?Q?B5zfXwMyK6/gosDW2Gx7ZykrmDdFGpm89vB6CTlqzoRFsVkmoUkzyzrEt/vg?=
+ =?us-ascii?Q?osj9TFBKJK7LmxJVfOrKV22iD0IAQuxpmDUQSk1vtRs1GuzMlMBMG9BAmkfb?=
+ =?us-ascii?Q?ybFgfz6yQmJvpitqtMgBGU+LACL/yoL+IshPzdurS6HxlzaVwEtaeUf7JgMy?=
+ =?us-ascii?Q?rJTzSVrVEoOY8lK/enbRbceK2Iyd5ejIs2DE0IohIOV8X0MewqM6eh0xb+Q7?=
+ =?us-ascii?Q?WQ8Qm2n41TjiGEsSXE+Vhagt3Ao70hy4svRqGV65WDST2rltoatqkl/tlX4s?=
+ =?us-ascii?Q?PYXpZ9We3yDY+dnwz4T5/vSSn34L9QhbKo3yU8bCNAs2Zhq3/BgCJwVqAmCQ?=
+ =?us-ascii?Q?3Eq22uQnZBa5IuzUFQvLzuGmoAXebk/HuRDDRw1H4p9fUrdLqjQy1TpmVsmi?=
+ =?us-ascii?Q?ME6nCQW12DkXXaZUkQ8yoXtoB0POxG+qWqov0pygC1W7xkX/K4O1vf/e9m8n?=
+ =?us-ascii?Q?UnXI6SXKpJcNuCvo0i0zYIKTz9U1sCIQMRFS2O5nCuAkWP54V/M0/XjEGDh1?=
+ =?us-ascii?Q?jEqDG7XhXKb2kpsAEwbSfWnxhYsRrFKrx0Te2MBeSSsIEFEsTMfJXWToZeRR?=
+ =?us-ascii?Q?0zQi0/tvG6ss5tjdeB7Vct1RIrh8UejsJtoS2oV+C+alXOe8IvuR9w64LTjc?=
+ =?us-ascii?Q?80LtlL1DDtnXTrnTlGiYJxCy1SKWt5sFjST9qly+ePkHkiT8L6BBiImm5PXl?=
+ =?us-ascii?Q?MF8b52U+BJ1yt/B5J0XHG5kMM4/a18CzPBW/rhH+?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <540A0D21165EA64D90ABEA08361296AF@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|PAWPR04MB9815:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72d16a9a-e8b8-499c-92e3-08dd46839f7e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|7416014|376014|366016|1800799024|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZVIxNWpvZUJLcGZ5TTVIRk5JaFN6VzMzNm9HZ3phdlMxNkMvWXFmZytRYTZU?=
- =?utf-8?B?K3lsZEFDZFlBb1pRUjNWL1drejMrV2F4aCt5aFlFeFVqTU8ySTQ4eWRwNEpk?=
- =?utf-8?B?SmczSFord1hURlg1RUNuUVplY3RYZkNERlQ1TkVoN1IybUdPdUNuclZiSnBn?=
- =?utf-8?B?NHVMb0xNdmEwRmc1TjN3VUtyYy9yMG9YZXVOVFVxZVpiekhwRFRlbmJzYXZN?=
- =?utf-8?B?aFR3WkdCWWZjZU9UZk8yMFRiRnhOSk04SlVmN3k4K1FSaXpQVlBOayt6UkF4?=
- =?utf-8?B?bVZtODFyMlRsYmdLTEZ2QWYvK3FPVEovVzRLcVd4UVE5cVJUWGM2RHRYZzZF?=
- =?utf-8?B?aGRub2RFcUNXWVpyanB0YlBWd0tNWEg4RXRzMUdMVitiMU5jNExBWUE4M1Nq?=
- =?utf-8?B?YW9ueUg1QlVOWk5CNGNFM0YyM1BoQm9tUnlEUmVlajRGMHJuNDZETU83NytV?=
- =?utf-8?B?RTlFOWErckpyTUNQOWkwYzJrRU42K3lBNW94MnVvNXhCZEhRRmlTeitzWVBV?=
- =?utf-8?B?cCtGTFpnVldJT0Q4ak5mck1lKzBOeEJFZGdaSDZJbXpjTEZxK05Ub1FmUEli?=
- =?utf-8?B?c0FFODI1NzZURnprQ1JFSFF6ZzhXM3lMa2ZNTWVkVWJld2tHbzlLSFZKMklj?=
- =?utf-8?B?WDdDaDBlODdzZG0xdTJIZXppdmVMN0lxVUhkQjArcHZpOFBPUm9RbGNVcWZz?=
- =?utf-8?B?Q0s4U1FBWWdvc1JqYkNtOWg4S0pJcFNmalBQOGN2TWRuUEcydElUR2xhNWk2?=
- =?utf-8?B?ekV4M1pUUHRpZFovV3RhTVNMTXNXL1JNdHg0b1lHWmhpUzJYem83dFVlSTln?=
- =?utf-8?B?TjVPYmZ5RElnSnJISVMveFZoeWJlTTRTSk5lUUE0SnNKZDdXajJxa1NwSXg3?=
- =?utf-8?B?b3ZKc083SkdYK1N0K1lROVRTaGxaU3U1TVhFN2daM3Qxd1BSdVhiRk5jdERw?=
- =?utf-8?B?RkZGdDllaUdSTDBsZVRlRnN5bDhyR1dUMjZpTDZWYURSS281TmNnRUs3bEx2?=
- =?utf-8?B?VHJSaTJ4S2svMTBrZUxFdEdaSmRtTWxnZ2c5RXJ4SnFkQzYyNk1DSDJzcy9P?=
- =?utf-8?B?MkJCR2RKSE14MFdTcGNuV0lYWGtHdFJaMkhTanMvYkdpQkd1T0pHQVRlZ251?=
- =?utf-8?B?ZW5TQzZGaFoyL1JxV1lwTm5PZlFuRVhYUFhUL0JvaCtkdU5VcUxyS3o1akdv?=
- =?utf-8?B?a3FsQ1NXbGxVNURqNFdTZGc3NTZNbjIrL1R5SEYrUlBsMVRxRTYvV0xEOU12?=
- =?utf-8?B?am50ZXpXaUo0TWVUSi9ScDBWSURhemNlUFN2ZGhoWTBZU05hYXA2UG9MSEta?=
- =?utf-8?B?SlBhbGtZMUFidUE0enkwTXp1L0lQdCt4MW5iamw3T3hWalFHK1RjcWZIaktB?=
- =?utf-8?B?TEtYeXdaQ2V3TCtnUFBsUnhWRjZUYVlPS1Z6YXlSK3VFMnpRT295YUVCZHZC?=
- =?utf-8?B?VzhxRVl5WlB0bWpPTitIOWtrQ1pxMnllREJkaDJpaDl2Y1NUall1M1d2NTND?=
- =?utf-8?B?UkF0OVZvNm5XNUlhSDFlWklVTUJNM2NCTnRDZzdzTUF1L255anRwa3pmTWUr?=
- =?utf-8?B?eFZ5SU5YN2cxMEtzcUJuYkdWczArSnkwTDRIVWRpQllBUXNEQlJrMzVQL2dr?=
- =?utf-8?B?WENnS1RORXcyWVhmYWNpbWRVcGRGYTNnYnBOcDQ2cmxtQUs4bUFSQy9hYWwy?=
- =?utf-8?B?ZENiSE9aNzNmRHhMRGJMSzM0cXFsS1pnelFQazZOWTMzbURZWjhoWGhEMWt6?=
- =?utf-8?B?bms4ZUYyWXBsUGJ4NEFnZ3ZLeW44VUhRcjNEcjFpVzJUR2tNMTZoVHNtU2g1?=
- =?utf-8?B?YUV4SXJoUUhYdDVISWJpUzV6eVM5UFdmSWcrT2FUVHNrNEc1RUFKR04xZ0cw?=
- =?utf-8?Q?8WWPFTQ2Rjstp?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eWlITTlXTmNGa2xmbGRPbTl0K05SdEVuNDVzMUtYUitwMDlCZ3ZYWFhFbDZL?=
- =?utf-8?B?UXBoYndtNjVtTEZzd1hDZ3hrY2IvUmpRVWIzYjM1VHVsNFJqamppWklPaUpK?=
- =?utf-8?B?MEZoYWdVSnJsK2dRQ3RUYWx2SjlsNnc0UTlKNngzcDU1NXB1ckhyZkZ1RDdo?=
- =?utf-8?B?bklSbjQ5Z3RQL2ZwUHp1NmVQSnkvVFFCZGRra3pZbEgwU2hSK28vREFRMzNI?=
- =?utf-8?B?aS9RSGJRaVNyZHp4aXdaRWRUSEh0bVlGZGsxaElCL2xpQldVbHJWMWppNitt?=
- =?utf-8?B?TjVvY3JnV3VSK2FVdzY4OUUyVi9vLzhlVEZ4UGJvRXBhS3BKbTJOWXJWY0tr?=
- =?utf-8?B?dUtSZ1RoSUZNV1Q0OUlhVmRmZnMxd3QrY1ozQzRYWk9ZU3BPM3l0dFM2MVgr?=
- =?utf-8?B?QVhvWFI0VU0ybGZtKzhwNGVVVlpORHF1bVBsQ2FaRWtNVFZtUHdhZFF0QUZS?=
- =?utf-8?B?aDlnc0doNVBYSGdBYlNxSDE3NU1FYWhPVXFXVm51UzJCL0Y4YU81YmNybGt5?=
- =?utf-8?B?eTBzRTI2eDM1THRhN29aWERkcm9ORE4vdlVXMm93dFF0ZU9GZi9VSUZ5bWdF?=
- =?utf-8?B?WmFzOExmaklZZFdPN0xEamdRWXVzLzJTbTl0cGNJK1lldmpDRUtHZ3JEZCto?=
- =?utf-8?B?NnZ4dzZ2SHVUaWxKcXJvSHlOeVN0eGFVS3RiRGVxSllzZHVsYW0weEpscEI0?=
- =?utf-8?B?TGY3TmU1YWJTUmZXVkFiMjNMV1BFVWtuTWRTTlFCOC96RzV1cGEySVVFN0tx?=
- =?utf-8?B?YTRYRWZMM2lqM0t0dE9ZdU9lZ0RZNEdYVE4wM0hiby9lK25hdHhUaFBMM2FR?=
- =?utf-8?B?TjBSS2s5dC9vSERadXR6R0xwR0hRNjZJb2tFSmhROU1IT2F2RmVRNUtaZWRP?=
- =?utf-8?B?aWlZd1N4K3NIcTgzUGpqY0w5c2czRG14UENpeHpMcS94ZnF3SWZvZExSTFNy?=
- =?utf-8?B?YTBQQjFFNHNFK05HZEl5L1o4MDFmL0lvRHU2R0hVbUFiaHg4aEN3WVBmN041?=
- =?utf-8?B?SXhQVU8vSHhwZEVTdkxPanYycndvWDFWVzdLNTkraHY2RlZ3czFWelNKWE5M?=
- =?utf-8?B?SnJDcnNDSDlheW9lSFBocXhkU0RQNW9MTHdzVGV1aEVPRk5QdnpoVkJkcW0x?=
- =?utf-8?B?c0Y4ekxPOXRKZWxmdEQvSWxhdjhZOWVnY2hVbGNWQXVCT0hRU2hyVzljSlhE?=
- =?utf-8?B?SDdiVm5RLzFMZnl2VUxLdFlHM3kvYThNVDFST3daODlGRjVCUGtBMnIyWEFG?=
- =?utf-8?B?NG9nR2hKL0wxWmlSREJFQVpyUm5LZFhtbDZFZEFCTnJVdVVVd2xXWW8ycmxE?=
- =?utf-8?B?RWxCQlhRTjZCN3A3OW91ZWs5a2FtNTIwa3VUN2pHNis3bGZlOWRPYzZmb3lx?=
- =?utf-8?B?VUloUnI1bGQ2Z1h5QWRDQ0VwMkFWbk1xanpPK2FDK2tCMzlRZTRjeG4yL3JJ?=
- =?utf-8?B?YW1mZi9oYmsyd1ZSWEEzUWxiL0hIUVR0SURDamFqdFN1d2V5V2tEcTlyM3M0?=
- =?utf-8?B?anZ4ZGtEZXdOb0czTnlDQlNxc3dFQkZHVVBQa2NiamN0RDVJdzIxWDJmdkVJ?=
- =?utf-8?B?VjJnb1B2Sy9UcU9yeGwxOVpRTzZaV29FbEtWTUM4WEZiQUV1dk9KVlptM0s3?=
- =?utf-8?B?eGM4SFFXcVRzemxpUnZxVDZPZnRIL1lldkxxNXZsdW0wcW9JRzhlYU9QbjZh?=
- =?utf-8?B?YXIwYVZGYjNyRFdZRzd3RTJUWHYwOTZyVmJuSStFZThHZHlaSVc0N1lveGsv?=
- =?utf-8?B?OW1PWEJ6WFdXOWVSYS9VMlpBU0cyVkp4cDZ3anBld1BqbzFiNVpyN3VoMEZs?=
- =?utf-8?B?RzZFR3JOUjFkTnA3RFZka2Z6U0M1MVpldFFnSXA1Rnd5TUtJYStMS3pRMngz?=
- =?utf-8?B?ZytUbmliZjJyRHFjdUpYMWdkRkE2cjF2SThrY3FEeWYvN2dCVjZOUk5welRl?=
- =?utf-8?B?U2lKbStUcEtRWHFGVld4LzJxUEpxZ2l1dGJYR04rQzhqZFc5L3FXeitRRVFU?=
- =?utf-8?B?U0tFNW5mRFBOdldkZzNWMjR2NS8zY3p0MEtocVlDTUFiZW51bWNHT3czb0wz?=
- =?utf-8?B?RTBiRWZPbjN5NHQyK24wT1IwNUl5dHVIUzhpK1FBcGdTK3RWbGdON2FlaXJ4?=
- =?utf-8?B?eGZ4dHFhbGswQm5ZSzR5dFJhNW9uajdBakZXeXZwdkpxS1lXT3dnOVRPWTMw?=
- =?utf-8?B?Y1E9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72d16a9a-e8b8-499c-92e3-08dd46839f7e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2025 07:55:29.1474 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vpSGi1qdoIcsc9TlqY5ENJ94iCIMsceHn5gcKOFiI475sDtG/vv4wArkJzii9rSmP3NrXTrwHqgxvmGzWKVW+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9815
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6103.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4ad5ad8-376e-4a17-3103-08dd46893dc7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2025 08:35:41.7075 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PfVDVsRJDqq1xtKff/c6QZWJ4wdOAaln93IrUZyGGDgCYZ+vNpJD7s83mkFE1up0grmx6hOFznWzH1xMIz0ktg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5656
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -173,227 +143,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
-On 06-02-2025 05:38, Shani Peretz wrote:
-> DPDK supports multiple formats for specifying buses,
-> (such as "0000:08:00.0" and "08:00.0" for PCI).
-> This flexibility can lead to inconsistencies when using one
-> format while running testpmd, then attempts to use the other
-> format in a later command, resulting in a failure.
->
-> The issue arises from the find_device function, which compares
-> the user-provided string directly with the device->name in
-> the rte_device structure.
-> If we want to accurately compare these names, we'll need to bring both
-> sides to the same representation by invoking the parse function
-> on the user input.
->
-> The proposed solution is to utilize the parse function implemented
-> by each bus. When comparing names, we will call parse on the supplied
-> string as well as on the device name itself and compare the results.
-> As part of the change the parse function will now return the size of the
-> parsed address.
->
-> This will allow consistent comparisons between different representations
-> of same devices.
->
-> In addition, fixed vdev test to use the rte_cmp_dev_name function
-> instead of the custom one.
->
-> Fixes: a3ee360f4440 ("eal: add hotplug add/remove device")
->
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+
+> On Jan 31, 2025, at 21:09, Maxime Coquelin <maxime.coquelin@redhat.com> w=
+rote:
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> This patch fixes a regression in vhost_driver_register()
+> causing VDUSE devices registration to fail systematically
+> because the return value was initialized to -1 and not
+> changed later on for this type of devices.
+>=20
+> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
+>=20
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 > ---
->   app/test/test_vdev.c                     | 10 ++----
->   drivers/bus/auxiliary/auxiliary_common.c | 17 +++++++---
->   drivers/bus/cdx/cdx.c                    | 13 +++++---
->   drivers/bus/dpaa/dpaa_bus.c              |  7 ++--
->   drivers/bus/fslmc/fslmc_bus.c            |  9 ++++--
->   drivers/bus/ifpga/ifpga_bus.c            | 14 +++++---
->   drivers/bus/pci/pci_common.c             |  7 ++--
->   drivers/bus/platform/platform.c          | 15 ++++++---
->   drivers/bus/uacce/uacce.c                | 14 +++++---
->   drivers/bus/vdev/vdev.c                  | 23 +++++++++++--
->   drivers/bus/vmbus/vmbus_common.c         |  9 ++++--
->   drivers/dma/idxd/idxd_bus.c              |  9 ++++--
->   drivers/raw/ifpga/ifpga_rawdev.c         |  8 +----
->   lib/eal/common/eal_common_bus.c          |  2 +-
->   lib/eal/common/eal_common_dev.c          | 41 +++++++++++++++++++++---
->   lib/eal/common/hotplug_mp.c              | 11 ++-----
->   lib/eal/include/bus_driver.h             | 24 +++++++++++++-
->   lib/eal/include/rte_dev.h                | 15 +++++++++
->   lib/eal/linux/eal_dev.c                  | 10 +-----
->   lib/eal/version.map                      |  1 +
->   20 files changed, 180 insertions(+), 79 deletions(-)
->
-> diff --git a/app/test/test_vdev.c b/app/test/test_vdev.c
-> index 3e262f30bc..860fa260af 100644
-> --- a/app/test/test_vdev.c
-> +++ b/app/test/test_vdev.c
-> @@ -20,12 +20,6 @@ static const char * const valid_keys[] = {
->   	NULL,
->   };
->   
-> -static int
-> -cmp_dev_name(const struct rte_device *dev, const void *name)
-> -{
-> -	return strcmp(rte_dev_name(dev), name);
-> -}
+> lib/vhost/socket.c | 10 +++-------
+> 1 file changed, 3 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+> index 433a42bf80..894a0f0dcb 100644
+> --- a/lib/vhost/socket.c
+> +++ b/lib/vhost/socket.c
+> @@ -893,7 +893,6 @@ vhost_user_socket_mem_free(struct vhost_user_socket *=
+vsocket)
+> int
+> rte_vhost_driver_register(const char *path, uint64_t flags)
+> {
+> -       int ret =3D -1;
+>        struct vhost_user_socket *vsocket;
+>=20
+>        if (!path)
+> @@ -997,7 +996,6 @@ rte_vhost_driver_register(const char *path, uint64_t =
+flags)
+>        } else {
+> #ifndef RTE_LIBRTE_VHOST_POSTCOPY
+>                VHOST_CONFIG_LOG(path, ERR, "Postcopy requested but not co=
+mpiled");
+> -               ret =3D -1;
+>                goto out_mutex;
+> #endif
+>        }
+> @@ -1012,15 +1010,14 @@ rte_vhost_driver_register(const char *path, uint6=
+4_t flags)
+>                } else {
+>                        vsocket->is_server =3D true;
+>                }
+> -               ret =3D create_unix_socket(vsocket);
+> -               if (ret < 0)
+> +               if (create_unix_socket(vsocket) < 0)
+>                        goto out_mutex;
+>        }
+>=20
+>        vhost_user.vsockets[vhost_user.vsocket_cnt++] =3D vsocket;
+>=20
+>        pthread_mutex_unlock(&vhost_user.mutex);
+> -       return ret;
+> +       return 0;
+>=20
+> out_mutex:
+>        if (pthread_mutex_destroy(&vsocket->conn_mutex)) {
+> @@ -1028,8 +1025,7 @@ rte_vhost_driver_register(const char *path, uint64_=
+t flags)
+>        }
+> out:
+>        pthread_mutex_unlock(&vhost_user.mutex);
 > -
->   static int
->   cmp_dev_match(const struct rte_device *dev, const void *_kvlist)
->   {
-> @@ -82,7 +76,7 @@ test_vdev_bus(void)
->   		printf("Failed to create vdev net_null_test0\n");
->   		goto fail;
->   	}
-> -	dev0 = vdev_bus->find_device(NULL, cmp_dev_name, "net_null_test0");
-> +	dev0 = vdev_bus->find_device(NULL, rte_cmp_dev_name, "net_null_test0");
->   	if (dev0 == NULL) {
->   		printf("Cannot find net_null_test0 vdev\n");
->   		goto fail;
-> @@ -93,7 +87,7 @@ test_vdev_bus(void)
->   		printf("Failed to create vdev net_null_test1\n");
->   		goto fail;
->   	}
-> -	dev1 = vdev_bus->find_device(NULL, cmp_dev_name, "net_null_test1");
-> +	dev1 = vdev_bus->find_device(NULL, rte_cmp_dev_name, "net_null_test1");
->   	if (dev1 == NULL) {
->   		printf("Cannot find net_null_test1 vdev\n");
->   		goto fail;
-> diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-> index e6cbc4d356..ba2f69e851 100644
-> --- a/drivers/bus/auxiliary/auxiliary_common.c
-> +++ b/drivers/bus/auxiliary/auxiliary_common.c
-> @@ -237,10 +237,9 @@ auxiliary_probe(void)
->   }
->   
->   static int
-> -auxiliary_parse(const char *name, void *addr)
-> +auxiliary_parse(const char *name, void *addr, int *size)
->   {
->   	struct rte_auxiliary_driver *drv = NULL;
-> -	const char **out = addr;
->   
->   	/* Allow empty device name "auxiliary:" to bypass entire bus scan. */
->   	if (strlen(name) == 0)
-> @@ -250,9 +249,17 @@ auxiliary_parse(const char *name, void *addr)
->   		if (drv->match(name))
->   			break;
->   	}
-> -	if (drv != NULL && addr != NULL)
-> -		*out = name;
-> -	return drv != NULL ? 0 : -1;
-> +
-> +	if (drv == NULL)
-> +		return -1;
-> +
-> +	if (size != NULL)
-> +		*size = strlen(name) + 1;
-> +
-> +	if (addr != NULL)
-> +		rte_strscpy(addr, name, strlen(name) + 1);
-> +
-> +	return 0;
->   }
->   
->   /* Register a driver */
-> diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-> index 62b108e082..b97f1ce1af 100644
-> --- a/drivers/bus/cdx/cdx.c
-> +++ b/drivers/bus/cdx/cdx.c
-> @@ -464,15 +464,20 @@ cdx_probe(void)
->   }
->   
->   static int
-> -cdx_parse(const char *name, void *addr)
-> +cdx_parse(const char *name, void *addr, int *size)
->   {
-> -	const char **out = addr;
->   	int ret;
->   
->   	ret = strncmp(name, CDX_DEV_PREFIX, strlen(CDX_DEV_PREFIX));
->   
-> -	if (ret == 0 && addr)
-> -		*out = name;
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	if (size != NULL)
-> +		*size = strlen(name) + 1;
-> +
-> +	if (addr != NULL)
-> +		rte_strscpy(addr, name, strlen(name) + 1);
->   
->   	return ret;
->   }
-> diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-> index 9ffbe07c93..f768fb9454 100644
-> --- a/drivers/bus/dpaa/dpaa_bus.c
-> +++ b/drivers/bus/dpaa/dpaa_bus.c
-> @@ -153,7 +153,7 @@ dpaa_devargs_lookup(struct rte_dpaa_device *dev)
->   	char dev_name[32];
->   
->   	RTE_EAL_DEVARGS_FOREACH("dpaa_bus", devargs) {
-> -		devargs->bus->parse(devargs->name, &dev_name);
-> +		devargs->bus->parse(devargs->name, &dev_name, NULL);
->   		if (strcmp(dev_name, dev->device.name) == 0) {
->   			DPAA_BUS_INFO("**Devargs matched %s", dev_name);
->   			return devargs;
-> @@ -447,7 +447,7 @@ dpaa_portal_finish(void *arg)
->   }
->   
->   static int
-> -rte_dpaa_bus_parse(const char *name, void *out)
-> +rte_dpaa_bus_parse(const char *name, void *out, int *size)
->   {
->   	unsigned int i, j;
->   	size_t delta, dev_delta;
-> @@ -494,6 +494,9 @@ rte_dpaa_bus_parse(const char *name, void *out)
->   		max_name_len = sizeof("fm.-mac..") - 1;
->   	}
->   
-> +	if (size != NULL)
-> +		*size = max_name_len + 1;
-> +
->   	if (out != NULL) {
->   		char *out_name = out;
->   
-> diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-> index 68ad2b801e..a525b5e245 100644
-> --- a/drivers/bus/fslmc/fslmc_bus.c
-> +++ b/drivers/bus/fslmc/fslmc_bus.c
-> @@ -103,7 +103,7 @@ fslmc_devargs_lookup(struct rte_dpaa2_device *dev)
->   	char dev_name[32];
->   
->   	RTE_EAL_DEVARGS_FOREACH("fslmc", devargs) {
-> -		devargs->bus->parse(devargs->name, &dev_name);
-> +		devargs->bus->parse(devargs->name, &dev_name, NULL);
->   		if (strcmp(dev_name, dev->device.name) == 0) {
->   			DPAA2_BUS_INFO("**Devargs matched %s", dev_name);
->   			return devargs;
-> @@ -235,7 +235,7 @@ scan_one_fslmc_device(char *dev_name)
->   }
->   
->   static int
-> -rte_fslmc_parse(const char *name, void *addr)
-> +rte_fslmc_parse(const char *name, void *addr, int *size)
->   {
->   	uint16_t dev_id;
->   	char *t_ptr;
-> @@ -298,7 +298,10 @@ rte_fslmc_parse(const char *name, void *addr)
->   		goto err_out;
->   	}
->   
-> -	if (addr)
-> +	if (size != NULL)
-> +		*size = strlen(sep) + 1;
-> +
-> +	if (addr != NULL)
->   		strcpy(addr, sep);
->   };
+> -       return ret;
+> +       return -1;
+> }
+>=20
+> static bool
+> --
+> 2.48.1
+>=20
 
-for DPAA/FSLMC:
-
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-
+Reviewed-by: Chenbo Xia <chenbox@nvidia.com>
 
