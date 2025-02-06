@@ -2,105 +2,136 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F734C02198
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 08:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FEEC0219B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 09:15:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 11F4F402CE;
-	Thu,  6 Feb 2025 09:56:46 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 867A34026C
- for <dev@dpdk.org>; Thu,  6 Feb 2025 09:56:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738832203;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=bvE2U3RUSiK6H1i3C9ucZOW5QrRRA6NVyEUk7SuczMU=;
- b=jQRfHiDoPzdZKT9jZv5fHDBgeOoX0ryO1a7fP4cnP/4mJz6JmisPZU7hb+/zcNwfU+ZLjD
- JKlfAVTEwqfnPNNox0YAEqPK2g1mJsZ+ZLExQf6fJhXTz39W0jfePjkMT3QiBukTjuQGyY
- OvVqjPoZnvpxgdvEDaVfmNIUjanpvj0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-dkor7PpDO9qDAI_y0FL7Jw-1; Thu,
- 06 Feb 2025 03:56:40 -0500
-X-MC-Unique: dkor7PpDO9qDAI_y0FL7Jw-1
-X-Mimecast-MFC-AGG-ID: dkor7PpDO9qDAI_y0FL7Jw
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 31F37180087E; Thu,  6 Feb 2025 08:56:39 +0000 (UTC)
-Received: from [10.45.242.4] (unknown [10.45.242.4])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id A81DA1800360; Thu,  6 Feb 2025 08:56:36 +0000 (UTC)
-Message-ID: <01e9c589-d22e-4e9a-8295-8d0c56b466ef@redhat.com>
-Date: Thu, 6 Feb 2025 09:56:33 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] vhost: include AKCIPHER algorithms in crypto_config
-To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
- Akhil Goyal <gakhil@marvell.com>, Chenbo Xia <chenbox@nvidia.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>
-Cc: jerinj@marvell.com, anoobj@marvell.com
-References: <20241119084145.1047-1-gmuthukrishn@marvell.com>
- <20250107182551.2141-1-gmuthukrishn@marvell.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250107182551.2141-1-gmuthukrishn@marvell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: NHb3t5J4jaAYbNUTZAEMvBQwpIOW37QoSJW-pGcHenU_1738832199
-X-Mimecast-Originator: redhat.com
+	by mails.dpdk.org (Postfix) with ESMTP id D6BE0402CE;
+	Thu,  6 Feb 2025 10:15:21 +0100 (CET)
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
+ by mails.dpdk.org (Postfix) with ESMTP id C6CA74026C
+ for <dev@dpdk.org>; Thu,  6 Feb 2025 10:15:20 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oTzPoFlcehW6cTr+1KlDaDpONiYaYjQewfy3WP3Y4SnRIG1r2ZjpQpsXuq1Dpp5Yyb7vBEQYIgwBwgi4SdzBFrBKiVv1oNxj0WaX4tXqrtky1IKwJKI59FiogqlVjH9XWb036F9d0qjsI0MlH40xetrqE/C7wxDdNu8V6mv9gnuamUkPZXBvAyQazTu/E2POs760VtIAoIEN6It3fjQbep68QMYwJX1iSEghIyLispqSblLpTGKZi3Wnyuj2s7Me2qVvBMQvoLHVVVXsOmMS/rgHWGuYlhLgG8CRikk8dqPiW5I8Cuf7nfInxYB+UH3AjnOoNCkEpJoeH/Fzuy3fDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DAzp5OhVknF9x/CpVIYwJ8A0r2Gsz6c8dpD0Mpzx9MQ=;
+ b=vYLUq6abgYGpMtMivnDWjWmDURnMBPY2KjDNdk3EZygTxi3mpeme1O9JARzrxM/2P9u1fwYNkeyljR77IhF9DCzLtSmVMHCU57BqJd2Q4wVvPoFtFSc1hge6mtn9XrWcqlHmIJeh2h7qZ4TL0Tx2blTE0PetEHsnmJkvinGKDNQkiPPm05r1VKofpeKABl0E////ax7dg6SVKUDBgRzYjzBS+d0ReD+WizGdlLoS4Psquuqs2d2YZ/zZy5b/VT8rjtlHWZq5+KCpMMDmxBssbrds9t79VzxvRLzOEHvwWdqV57isHcJgY9x37zBTHMyMXzRpR6cpgJ7UM6fBRW6Mqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DAzp5OhVknF9x/CpVIYwJ8A0r2Gsz6c8dpD0Mpzx9MQ=;
+ b=jPucs8XXjIDWgc1YGe2j4F3JqUVyOiLNMWnHJHPF2mtT2FnpzZzdew0IXADxtBYgzzzmyuWMjFlWbQdxzCxI/DtmZXrj8Kry9gTRDYzy+DKqrh9dM64fnnjZyt9lkkGtNMlj+17pah0aLUwPLSQ5Jt8fw8XncN2VOMv7yjMPERYUzaMjRQT2XrSnn/sFS4381Uk2OBBajnfUeYSVJ85+zTQLT1kXBfiDjf6d4KKqUDfUW47ux68Qa9QLZXt3Lv6VHKXEqwRfGH2f4qej/8MPE1Lkbq713LwoKhjWKXBrswN0RXrzUcCDiT8vWq2Ez7e0jp6b7bXQmoArIsmhznESTw==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by IA0PR12MB8982.namprd12.prod.outlook.com (2603:10b6:208:481::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.12; Thu, 6 Feb
+ 2025 09:15:18 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%6]) with mapi id 15.20.8422.012; Thu, 6 Feb 2025
+ 09:15:18 +0000
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: "Minggang(Gavin) Li" <gavinl@nvidia.com>, Matan Azrad <matan@nvidia.com>, 
+ Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH V1 0/7] port probe time optimization
+Thread-Topic: [PATCH V1 0/7] port probe time optimization
+Thread-Index: AQHbVSMKlGl1gGceekGwRwgOm8Kd7rM6RO2T
+Date: Thu, 6 Feb 2025 09:15:18 +0000
+Message-ID: <CH3PR12MB8460040BF991259F99B11830CFF62@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20241223101101.677449-1-gavinl@nvidia.com>
+In-Reply-To: <20241223101101.677449-1-gavinl@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|IA0PR12MB8982:EE_
+x-ms-office365-filtering-correlation-id: 7580fa76-bd19-46d8-672d-08dd468ec673
+x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?umvUHL5oH7a2Ojejrxr44fFBSOdrX2O+A74YXmWsp9VGRn/BzP/sVB26CZ?=
+ =?iso-8859-1?Q?xzB0GLkWAISCrkMdGdM7QU+Wi06HONDYisa9rv2H7TXNR2+LuLlRdwkYf7?=
+ =?iso-8859-1?Q?aHhBp1U3lm5je6XXkig8T7I1OfjrnnoRzqx4OqPwQ2J19Y9PA0TqKJbxPt?=
+ =?iso-8859-1?Q?/+c21rZ3Cxlxqwnuo84L6HKgwxOFUVVWiLCW5DXF3Ns+yx8+s8Jmuu+geq?=
+ =?iso-8859-1?Q?sYml26PemZP/c8V7IU3pvn6Q1FZZgtMSINGmxIA/01bHWFqKBxIZUFltP1?=
+ =?iso-8859-1?Q?lUpmT0TpQRT0yVZM26BWNMiq9nJFCho6Zuw2FJTsxQupBilqVVeB09eYDc?=
+ =?iso-8859-1?Q?MmI8g6vQ20yrtOOcvAkzsOx3ci9XaVa2trdt5YnIilP+tsfDLZzQb6/9tG?=
+ =?iso-8859-1?Q?Fon7Hlj7ttwsi1u40X+bgp5/wgIJ2NxlATTiSUwIQzUMcp2EGETr+jDglJ?=
+ =?iso-8859-1?Q?Z0PlH5vRgLQcOGHB1jGCMOJPy5XeUkxnQgdF1PwlrOAYRybkLA9y5xubKi?=
+ =?iso-8859-1?Q?Y7q4KJ/07V9VAidpDZ2w48yOdCDotJLHo96ssn7mBxNDaWHruDug2dCTiZ?=
+ =?iso-8859-1?Q?tKWG0Xbo60nT46O5Z4/oJ4nX5BSgKByG5uwPTBlXJ7Rmq0uBuj+87+d1e0?=
+ =?iso-8859-1?Q?oapy+aOmE2pmw262zuvBpgzHqw6zdMXuHK4y6+mRPIlj9NW5DcoCnXFXZC?=
+ =?iso-8859-1?Q?cr+TQhfs3qtTHmvYF9R/STJZfOMTNdk8alm71ZDumF4NJH72axahb55mjI?=
+ =?iso-8859-1?Q?aSQDrC8LV/Id+86JsiLCcWHlk00rTQIMlr0fSPXeTOeJab70pP6cRbOAFS?=
+ =?iso-8859-1?Q?KzuKCg7cNsTr+ie86Tr54KRKDxqLek8PzpetIZHD7TOm6VbR6GVHU6HhIA?=
+ =?iso-8859-1?Q?48VlwHaiddO//EHjjYp1sHt1DiX4IahwSLkxOvQ0JmExzhHmzfunLZPFUZ?=
+ =?iso-8859-1?Q?CL8E6wE9LyVxwSV3kNRmVl7/K2U+ZYidJ+JeX0w4DW1a/lswKtJ2Qvo8Ce?=
+ =?iso-8859-1?Q?DmXq6ybLt1tFo1WMH4YSW/yfe/4q3mmIdvT+nZ41xwcTjZK+XUpOwd6Uuz?=
+ =?iso-8859-1?Q?LwBzgS0UIvfv17n+hfjWQbnd3yduFT7u7w9xZCmKmNv7vm3zKL6cZHdt6e?=
+ =?iso-8859-1?Q?bd+07CxWOenKD99j47dW9+9nS1vsgvwSfPq0X9ZB6GJk1a2d8rWExAFW8H?=
+ =?iso-8859-1?Q?7Jw6EQbHg6fbaCjqjYNYt2OcwI9GuNYi3l/7tgNkgUvqIO8IXYoPC+YBBT?=
+ =?iso-8859-1?Q?QApOEFto2IuZN/K160J4zNEbETFzbDAW5m/eHSXJoAq4ROr9XIHpL+gRtv?=
+ =?iso-8859-1?Q?sfrSE6PMccXg/RlQlVYZ57iCN5/sLLJaezPh7kRo9Yx+LoSsf+Ie/PoOVY?=
+ =?iso-8859-1?Q?nfvnZ3XuYjj/ZLvuhFNP6stuySlZUDTGBX3RV02DzAw+Bh7QNyOUz/mf7C?=
+ =?iso-8859-1?Q?Vvk9ny1KzCTKnWJ/nk8zBqE1qx2LlmKgiJuqzd5/jK5Fy7SyWj5HGr/Clm?=
+ =?iso-8859-1?Q?6YUA60I++4oG9NNWjhBpY0?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?qy1O3hM84BTpByRPQyRYakP9noqUfCNTupVwL5CJmQAZrtmCNwoc/m3eX3?=
+ =?iso-8859-1?Q?7A5oegU/yXOOhg6FpcWyWNWVJOsMnEZO1eVqKT8alCNkFUvWPRTcp81+WW?=
+ =?iso-8859-1?Q?qKYTHd1wNoQbwU7fSN2uorbGKqWWzc49dSpclhnLZT/42W0gfsZ8UF+zwz?=
+ =?iso-8859-1?Q?T/67a4zjNM09GF13ZaaEkwbzOdS4d3nwyqEkZJ/izS4ySPUW7SMqlgMurr?=
+ =?iso-8859-1?Q?IEYnomDCvxXK0uCIb3Pn2bNOYDNXSosd1S/nnfHC5rkI3bk78E9bxVj/m9?=
+ =?iso-8859-1?Q?K7Y5NKPXssHC2fS/WBgWa1LOlrhhU4SmSRLGSzZl1QLuMdLWppkhk/p8rR?=
+ =?iso-8859-1?Q?mBZyDxiI+eyF6sP4U2DH/EO5dp2OdZV/DGIg6zOj06VJxZ5ZL6B9AhoPHH?=
+ =?iso-8859-1?Q?AOxlhXmVlmdKomE/0LGgDHU5yNW06J7xIZ212UdT917yfu0tnj/a1bd5UK?=
+ =?iso-8859-1?Q?xEk6Pcz5XyNlqARauBhjlXaTSbhoxOhZuOYI+YbSw/FMkWcc/EqzhPno/0?=
+ =?iso-8859-1?Q?gwryz17XR1xYncHtfc7ByyFiKstOEZzLCqw07z/lSUFwJ9ygQTbXdQaKa+?=
+ =?iso-8859-1?Q?3y8O9W00gn1GMtGUuJ+pe27dDD3kyejG8iH080Vhrmuw+CPMX+grQ2yQUp?=
+ =?iso-8859-1?Q?IDb2N11wmB4rX+V04iTfFhVHE4EioyFNq9JYB7Q5ylV/J9vXmeCene6ers?=
+ =?iso-8859-1?Q?UPhCzjDlMfRBwA1uPgk74ttFTSJoohacWacxqt0GGxQ13BhkTO+L2q7IQw?=
+ =?iso-8859-1?Q?rGyzifPUtQELXOGckpVIsdRBgcTHuePFEHWsY3I5mqvNxlx/xVMI236Ey5?=
+ =?iso-8859-1?Q?by07hVtptXyj03z2Sbq8UNJUfULXhy9rg3ZRwFZHR0bIMUoCPom7I1hcJN?=
+ =?iso-8859-1?Q?7WAOT96Igk1wUr6tjbcvnakXOaontK4XY11YotDaedQeOHPuaVfiVFHDGT?=
+ =?iso-8859-1?Q?SoLCTQyv8izh1QTUYgEtwW75rIYhEK3/IWqQtsuugw+ULtARg6K8bvYTft?=
+ =?iso-8859-1?Q?d0+7P9H72R2WSsEw16ur+2u8kCVkAEZgosiP0/oDCS7cXXRxdpsS/zC/wx?=
+ =?iso-8859-1?Q?njWOYj7YLa3cnCeBUwzmQxKeYLPorXI/rJhPRwzZ31eJsOIMiBQFSzOD26?=
+ =?iso-8859-1?Q?rXE077B1HnDsmEqEZPiOjd4sh/ZxYbQECT4DESGy3fLNajktvs02XBrbtS?=
+ =?iso-8859-1?Q?7XG3LhtjPMb4Wt8eeTHqht9KpKQmWwSiq67ZTCp2QNYL/heYrnjp5ej0rm?=
+ =?iso-8859-1?Q?oB1+GT4/kfDAwRpa0y/c48iI5FcZ6E9bjoQVOKT9JCKIFFdLG7GCw6bGcr?=
+ =?iso-8859-1?Q?7HuBIFjecmmVVPe2REwkyPvgBaN/WwQxIK5keWqs+41kWCLY9NBfwtijdf?=
+ =?iso-8859-1?Q?GGeXu7AvyQrZ60/vaQt/XIJRYGEXLtrD1tKH5M+8X7GnB4UxFjbRmKxlZ6?=
+ =?iso-8859-1?Q?ocMRy37bt5P2Fb8F/kJa/uKWPySTXgaTIYMsyTO6QvWJtcY0f5WJynpCE0?=
+ =?iso-8859-1?Q?eXZkz5+/u29SGG3atodR19R2Sju6JpwcjX8wGxyFVJ/hdShbH19dfwYGfo?=
+ =?iso-8859-1?Q?KFhwpd1l8WMSWMPi9wXyKQyIV6VtqTh/us7POgAyAn3eMw64DO/n64g0qy?=
+ =?iso-8859-1?Q?uTUxvPva06V5c=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7580fa76-bd19-46d8-672d-08dd468ec673
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2025 09:15:18.4668 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HTq3hOz1RCENioMVAZSckU1HuYUstaDg3tM003Wh41zLWlotvIS8rsq1See7TTj3Ac2myDwZza5BVwU3Q8vfBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8982
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,37 +145,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-On 1/7/25 7:25 PM, Gowrishankar Muthukrishnan wrote:
-> Update virtio_crypto_config structure to include AKCIPHER algorithms,
-> as per VirtIO standard.
-> 
-> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> Acked-by: Akhil Goyal <gakhil@marvell.com>
-> ---
-> v3:
->   - rebased on main.
-> 
->   lib/vhost/virtio_crypto.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/vhost/virtio_crypto.h b/lib/vhost/virtio_crypto.h
-> index e3b93573c8..28877a5da3 100644
-> --- a/lib/vhost/virtio_crypto.h
-> +++ b/lib/vhost/virtio_crypto.h
-> @@ -410,7 +410,7 @@ struct virtio_crypto_config {
->   	uint32_t max_cipher_key_len;
->   	/* Maximum length of authenticated key */
->   	uint32_t max_auth_key_len;
-> -	uint32_t reserve;
-> +	uint32_t akcipher_algo;
->   	/* Maximum size of each crypto request's content */
->   	uint64_t max_size;
->   };
-
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Thanks,
-Maxime
-
+Hi,=0A=
+=0A=
+From: Minggang(Gavin) Li <gavinl@nvidia.com>=0A=
+Sent: Monday, December 23, 2024 12:10 PM=0A=
+To: Matan Azrad; Slava Ovsiienko; Ori Kam; NBU-Contact-Thomas Monjalon (EXT=
+ERNAL)=0A=
+Cc: dev@dpdk.org; Raslan Darawsheh=0A=
+Subject: [PATCH V1 0/7] port probe time optimization=0A=
+=0A=
+This patch series introduced a feature that the time to probe a VF/SF will=
+=0A=
+be reduced greatly in large scale, eg hundreds of VF/SFs. This feature is=
+=0A=
+controlled through the "probe_opt_en" device argument. Setting it to a=0A=
+non-zero value indicates the application will enable this functionality=0A=
+when probing a device. This feature relies on a feature of RDMA driver to=
+=0A=
+be release in incoming upstream kernel 6.12 or the equivalent in=0A=
+OFED 24.10, ie. RDMA monitor. For further information on the devargs=0A=
+limitation, see "doc/guides/nics/mlx5.rst".=0A=
+=0A=
+Minggang Li(Gavin) (5):=0A=
+  mailmap: update user name=0A=
+  common/mlx5: fix Netlink socket leak=0A=
+  common/mlx5: add RDMA monitor event awareness=0A=
+  mlx5: use RDMA Netlink to update port information=0A=
+  mlx5: add backward compatibility for RDMA monitor=0A=
+=0A=
+Rongwei Liu (2):=0A=
+  net/mlx5: optimize device probing=0A=
+  net/mlx5: add new devargs to control probe optimization=0A=
+=0A=
+ .mailmap                                     |   2 +-=0A=
+ doc/guides/nics/mlx5.rst                     |  13 +=0A=
+ doc/guides/rel_notes/release_24_11.rst       |  14 +=0A=
+ drivers/common/mlx5/linux/meson.build        |  10 +=0A=
+ drivers/common/mlx5/linux/mlx5_common_os.h   |   6 +=0A=
+ drivers/common/mlx5/linux/mlx5_nl.c          | 262 ++++++++++++++++---=0A=
+ drivers/common/mlx5/linux/mlx5_nl.h          |  36 ++-=0A=
+ drivers/common/mlx5/mlx5_common.c            |  20 ++=0A=
+ drivers/common/mlx5/mlx5_common.h            |  15 ++=0A=
+ drivers/common/mlx5/version.map              |   3 +=0A=
+ drivers/common/mlx5/windows/mlx5_common_os.h |   5 +=0A=
+ drivers/net/mlx5/linux/mlx5_ethdev_os.c      | 136 ++++++++++=0A=
+ drivers/net/mlx5/linux/mlx5_os.c             | 144 ++++++++--=0A=
+ drivers/net/mlx5/linux/mlx5_os.h             |   6 -=0A=
+ drivers/net/mlx5/mlx5.h                      |   3 +=0A=
+ drivers/net/mlx5/windows/mlx5_os.h           |   5 -=0A=
+ 16 files changed, 605 insertions(+), 75 deletions(-)=0A=
+=0A=
+--=0A=
+2.34.1=0A=
+=0A=
+series applied to next-net-mlx,=0A=
+=0A=
+=0A=
+Kindest regards,=0A=
+Raslan Darawsheh=0A=
+=0A=
