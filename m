@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB50EC02192
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9801FC02192
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:35:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1215A40B9D;
-	Thu,  6 Feb 2025 02:33:58 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8EEE640DD0;
+	Thu,  6 Feb 2025 02:33:59 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5745C40672
+ by mails.dpdk.org (Postfix) with ESMTP id 97C0140684
  for <dev@dpdk.org>; Thu,  6 Feb 2025 02:33:38 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 09B9E20ACD7D; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 09B9E20ACD7D
+ id 3C528203F5B4; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C528203F5B4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738805617;
- bh=R3V4XamouzonlE20qOkBxm8ebIicgN8hHsgTyx8pLrg=;
+ bh=n3fSQnNofQakaC6d4g4JW0HciO7hBKP91yevfTvAgQw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KB+BtqvPZVr+Mo4kctNGVmylajEXP+ATAX1QU9QHBbgSRYhCKNMTg0NVQ3sM+4OkP
- 3IxojqV9HLH0e15X+APFcLnJIsJ+ARUQO9AJfjeVCUbvcXit5mdYpwcV3KqVCxQb0d
- iKm9WqoDvcpZOyL6WXjkkBovv1J+JjPPYyNA2pG0=
+ b=JgMvl3ct5Yv5QoWQat4m41lpHRZ3ADspFMV8dqVGz5bIF6IESPvnHzyYKLJJpOmzU
+ tJDnaG+SvvaA+GFljeq5vaLWy56MaqboVMZqkG4nX7y7zyM1BEN1WHSmPVfvKg/OXd
+ +pHshyLkhGG0aWhdRVeTlWaleW+btrgFiK8+dYMs=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v22 12/27] app/testpmd: remove use of VLAs for Windows built
-Date: Wed,  5 Feb 2025 17:33:15 -0800
-Message-Id: <1738805610-17507-13-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v22 16/27] common/mlx5: remove use of VLAs for Windows built
+ code
+Date: Wed,  5 Feb 2025 17:33:19 -0800
+Message-Id: <1738805610-17507-17-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738805610-17507-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -51,128 +52,54 @@ or alloca(). alloca() is available for all toolchain/platform
 combinations officially supported by DPDK.
 
 Signed-off-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/cmdline.c      |  2 +-
- app/test-pmd/cmdline_flow.c | 15 ++++++++++-----
- app/test-pmd/config.c       | 16 +++++++++-------
- 3 files changed, 20 insertions(+), 13 deletions(-)
+ drivers/common/mlx5/mlx5_common.h    | 4 ++--
+ drivers/common/mlx5/mlx5_devx_cmds.c | 7 +++----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7e0666e9f6..2897e44c34 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -13274,7 +13274,7 @@ cmd_set_port_ptypes_parsed(
- 		return;
- 	}
+diff --git a/drivers/common/mlx5/mlx5_common.h b/drivers/common/mlx5/mlx5_common.h
+index 1abd1e8239..f29f06a86e 100644
+--- a/drivers/common/mlx5/mlx5_common.h
++++ b/drivers/common/mlx5/mlx5_common.h
+@@ -125,10 +125,10 @@ mlx5_fp_debug_enabled(void)
+ /* Allocate a buffer on the stack and fill it with a printf format string. */
+ #define MKSTR(name, ...) \
+ 	int mkstr_size_##name = snprintf(NULL, 0, "" __VA_ARGS__); \
+-	char name[mkstr_size_##name + 1]; \
++	char *name = alloca(mkstr_size_##name + 1); \
+ 	\
+ 	memset(name, 0, mkstr_size_##name + 1); \
+-	snprintf(name, sizeof(name), "" __VA_ARGS__)
++	snprintf(name, mkstr_size_##name + 1, "" __VA_ARGS__)
  
--	uint32_t ptypes[ret];
-+	uint32_t *ptypes = alloca(sizeof(uint32_t) * ret);
- 
- 	ret = rte_eth_dev_set_ptypes(port_id, ptype_mask, ptypes, ret);
- 	if (ret < 0) {
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 9e4fc2d95d..e1720e54d7 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -11707,8 +11707,7 @@ parse_hex(struct context *ctx, const struct token *token,
- 	char tmp[16]; /* Ought to be enough. */
- 	int ret;
- 	unsigned int hexlen = len;
--	unsigned int length = 256;
--	uint8_t hex_tmp[length];
-+	uint8_t hex_tmp[256];
- 
- 	/* Arguments are expected. */
- 	if (!arg_data)
-@@ -11735,7 +11734,7 @@ parse_hex(struct context *ctx, const struct token *token,
- 		str += 2;
- 		hexlen -= 2;
- 	}
--	if (hexlen > length)
-+	if (hexlen > RTE_DIM(hex_tmp))
- 		goto error;
- 	ret = parse_hex_string(str, hex_tmp, &hexlen);
- 	if (ret < 0)
-@@ -11868,10 +11867,13 @@ parse_ipv4_addr(struct context *ctx, const struct token *token,
- 		void *buf, unsigned int size)
+ enum {
+ 	PCI_VENDOR_ID_MELLANOX = 0x15b3,
+diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
+index a75f011750..804ee67cd6 100644
+--- a/drivers/common/mlx5/mlx5_devx_cmds.c
++++ b/drivers/common/mlx5/mlx5_devx_cmds.c
+@@ -284,10 +284,9 @@ mlx5_devx_cmd_flow_counter_query(struct mlx5_devx_obj *dcs,
+ 				 void *cmd_comp,
+ 				 uint64_t async_id)
  {
- 	const struct arg *arg = pop_args(ctx);
--	char str2[len + 1];
-+	char str2[INET_ADDRSTRLEN];
- 	struct in_addr tmp;
- 	int ret;
+-	int out_len = MLX5_ST_SZ_BYTES(query_flow_counter_out) +
+-			MLX5_ST_SZ_BYTES(traffic_counter);
+-	uint32_t out[out_len];
++	uint32_t out[MLX5_ST_SZ_BYTES(query_flow_counter_out) + MLX5_ST_SZ_BYTES(traffic_counter)];
+ 	uint32_t in[MLX5_ST_SZ_DW(query_flow_counter_in)] = {0};
++	const int out_len = RTE_DIM(out);
+ 	void *stats;
+ 	int rc;
  
-+	/* Length is longer than the max length an IPv4 address can have. */
-+	if (len >= INET_ADDRSTRLEN)
-+		return -1;
- 	/* Argument is expected. */
- 	if (!arg)
- 		return -1;
-@@ -11914,11 +11916,14 @@ parse_ipv6_addr(struct context *ctx, const struct token *token,
- 		void *buf, unsigned int size)
- {
- 	const struct arg *arg = pop_args(ctx);
--	char str2[len + 1];
-+	char str2[INET6_ADDRSTRLEN];
- 	struct rte_ipv6_addr tmp;
- 	int ret;
- 
- 	(void)token;
-+	/* Length is longer than the max length an IPv6 address can have. */
-+	if (len >= INET6_ADDRSTRLEN)
-+		return -1;
- 	/* Argument is expected. */
- 	if (!arg)
- 		return -1;
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 4e7fb69183..b19df95321 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -1802,7 +1802,8 @@ port_flow_configure(portid_t port_id,
- {
- 	struct rte_port *port;
- 	struct rte_flow_error error;
--	const struct rte_flow_queue_attr *attr_list[nb_queue];
-+	const struct rte_flow_queue_attr **attr_list =
-+	    alloca(sizeof(struct rte_flow_queue_attr *) * nb_queue);
- 	int std_queue;
- 
- 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
-@@ -2616,10 +2617,10 @@ port_flow_template_table_create(portid_t port_id, uint32_t id,
- 	int ret;
- 	uint32_t i;
- 	struct rte_flow_error error;
--	struct rte_flow_pattern_template
--			*flow_pattern_templates[nb_pattern_templates];
--	struct rte_flow_actions_template
--			*flow_actions_templates[nb_actions_templates];
-+	struct rte_flow_pattern_template **flow_pattern_templates =
-+	    alloca(sizeof(struct rte_flow_pattern_template *) * nb_pattern_templates);
-+	struct rte_flow_actions_template **flow_actions_templates =
-+	    alloca(sizeof(struct rte_flow_actions_template *) * nb_actions_templates);
- 
- 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
- 	    port_id == (portid_t)RTE_PORT_ALL)
-@@ -5551,7 +5552,7 @@ parse_port_list(const char *list, unsigned int *values, unsigned int maxsize)
- 	char *end = NULL;
- 	int min, max;
- 	int value, i;
--	unsigned int marked[maxsize];
-+	unsigned int *marked = alloca(sizeof(unsigned int) * maxsize);
- 
- 	if (list == NULL || values == NULL)
- 		return 0;
-@@ -7292,7 +7293,8 @@ show_macs(portid_t port_id)
- 	if (eth_dev_info_get_print_err(port_id, &dev_info))
- 		return;
- 
--	struct rte_ether_addr addr[dev_info.max_mac_addrs];
-+	struct rte_ether_addr *addr =
-+	    alloca(sizeof(struct rte_ether_addr) * dev_info.max_mac_addrs);
- 	rc = rte_eth_macaddrs_get(port_id, addr, dev_info.max_mac_addrs);
- 	if (rc < 0)
- 		return;
+@@ -346,7 +345,7 @@ mlx5_devx_cmd_mkey_create(void *ctx,
+ 	int klm_num = attr->klm_num;
+ 	int in_size_dw = MLX5_ST_SZ_DW(create_mkey_in) +
+ 		     (klm_num ? RTE_ALIGN(klm_num, 4) : 0) * MLX5_ST_SZ_DW(klm);
+-	uint32_t in[in_size_dw];
++	uint32_t *in = alloca(sizeof(uint32_t) * in_size_dw);
+ 	uint32_t out[MLX5_ST_SZ_DW(create_mkey_out)] = {0};
+ 	void *mkc;
+ 	struct mlx5_devx_obj *mkey = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*mkey),
 -- 
 2.47.2.vfs.0.1
 
