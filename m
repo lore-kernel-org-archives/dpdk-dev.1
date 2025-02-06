@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8D0C0219B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E971CC02192
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 01:35:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B37A40E25;
-	Thu,  6 Feb 2025 02:34:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5EF0E40E2E;
+	Thu,  6 Feb 2025 02:34:11 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 27C9440677
+ by mails.dpdk.org (Postfix) with ESMTP id 38C4C40678
  for <dev@dpdk.org>; Thu,  6 Feb 2025 02:33:39 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id A34B1203F5BC; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A34B1203F5BC
+ id B1BB9203F5BD; Wed,  5 Feb 2025 17:33:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B1BB9203F5BD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738805617;
- bh=mbbtVwfgzb11vdz0XrZeWyhnAAjs7Fl/I0JR7/q09n0=;
+ bh=aPloZmRzPS81A3gM1BB1XitT4l4LD+nrXd/fISGnZUY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=m8Uv3FUuMP60YIjxTPbKlfqtoeCTQl+UHjv07oBxc3VILzuEnIE9fNlGiDRXNQXxO
- HlZU+xNLtIVIKxHYWShwR2jpyOm+H+CGVzsxvNl6fs0E5INHeFY/Pg3wWXBdJbmJV3
- tHmPh9wcbqDsM+oKQfturIN0Z7Jn7jBuGcBORMmQ=
+ b=AS16Z5r895oOzhTxlAih4+7XFhFgrLI/6rs/YuBw2KdHRSk/J2sAy/aXEKIgM7Zp6
+ WBK3skgCIgDQiYGfNEno8+3WhSVZgh84mwNE5RYvo9L0PAuV+v7b2VaTxjNXxNt5Co
+ NmSR6TLqvC2tv0zmoMtoYWSda+gUvZWh+TWibSA0=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: dev@dpdk.org
 Cc: konstantin.ananyev@huawei.com, thomas@monjalon.net,
  david.marchand@redhat.com, Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH v22 24/27] lib: add no_wvla_cflag to directories that are not
- VLA-free
-Date: Wed,  5 Feb 2025 17:33:27 -0800
-Message-Id: <1738805610-17507-25-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v22 25/27] examples: add no_wvla_cflag to directories that are
+ not VLA-free
+Date: Wed,  5 Feb 2025 17:33:28 -0800
+Message-Id: <1738805610-17507-26-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738805610-17507-1-git-send-email-andremue@linux.microsoft.com>
 References: <1713397319-26135-1-git-send-email-roretzla@linux.microsoft.com>
@@ -50,201 +50,117 @@ are not yet VLA-free.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- lib/acl/meson.build        |  2 ++
- lib/bpf/meson.build        |  2 ++
- lib/dispatcher/meson.build |  2 ++
- lib/eventdev/meson.build   |  2 ++
- lib/ipsec/meson.build      |  2 ++
- lib/member/meson.build     |  2 ++
- lib/metrics/meson.build    |  2 ++
- lib/pdcp/meson.build       |  2 ++
- lib/pdump/meson.build      |  2 ++
- lib/pipeline/meson.build   |  2 ++
- lib/power/meson.build      |  3 +++
- lib/table/meson.build      |  2 ++
- lib/vhost/meson.build      | 11 ++++++++++-
- 13 files changed, 35 insertions(+), 1 deletion(-)
+ examples/fips_validation/meson.build  | 2 ++
+ examples/ip_fragmentation/meson.build | 1 +
+ examples/ipsec-secgw/meson.build      | 3 +++
+ examples/l2fwd-crypto/meson.build     | 1 +
+ examples/l2fwd-jobstats/meson.build   | 1 +
+ examples/l3fwd-power/meson.build      | 1 +
+ examples/l3fwd/meson.build            | 1 +
+ examples/pipeline/meson.build         | 1 +
+ examples/qos_sched/meson.build        | 1 +
+ examples/vhost/meson.build            | 1 +
+ 10 files changed, 13 insertions(+)
 
-diff --git a/lib/acl/meson.build b/lib/acl/meson.build
-index 9cba08321a..fefe131a48 100644
---- a/lib/acl/meson.build
-+++ b/lib/acl/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
+diff --git a/examples/fips_validation/meson.build b/examples/fips_validation/meson.build
+index 7d4e440c6c..6c29b535cb 100644
+--- a/examples/fips_validation/meson.build
++++ b/examples/fips_validation/meson.build
+@@ -25,6 +25,8 @@ sources = files(
+         'main.c',
+ )
  
 +cflags += no_wvla_cflag
 +
- sources = files('acl_bld.c', 'acl_gen.c', 'acl_run_scalar.c',
-         'rte_acl.c', 'tb_mem.c')
- headers = files('rte_acl.h', 'rte_acl_osdep.h')
-diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
-index aa258a9061..28df7f469a 100644
---- a/lib/bpf/meson.build
-+++ b/lib/bpf/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
-+cflags += no_wvla_cflag
-+
- if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_32')
-     build = false
-     reason = 'not supported on 32-bit x86'
-diff --git a/lib/dispatcher/meson.build b/lib/dispatcher/meson.build
-index ffaef26a6d..5e269b2d40 100644
---- a/lib/dispatcher/meson.build
-+++ b/lib/dispatcher/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
-+cflags += no_wvla_cflag
-+
- sources = files('rte_dispatcher.c')
- headers = files('rte_dispatcher.h')
- 
-diff --git a/lib/eventdev/meson.build b/lib/eventdev/meson.build
-index a04bb86f0f..71dea91727 100644
---- a/lib/eventdev/meson.build
-+++ b/lib/eventdev/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
-+cflags += no_wvla_cflag
-+
+ if dpdk_conf.has('RTE_HAS_JANSSON')
+     ext_deps += jansson_dep
+     cflags += '-DUSE_JANSSON'
+diff --git a/examples/ip_fragmentation/meson.build b/examples/ip_fragmentation/meson.build
+index cd84e9b143..750c3e4149 100644
+--- a/examples/ip_fragmentation/meson.build
++++ b/examples/ip_fragmentation/meson.build
+@@ -11,3 +11,4 @@ deps +=  ['ip_frag', 'lpm']
  sources = files(
-         'eventdev_private.c',
-         'eventdev_trace_points.c',
-diff --git a/lib/ipsec/meson.build b/lib/ipsec/meson.build
-index 5c5a4aae78..02d18f5829 100644
---- a/lib/ipsec/meson.build
-+++ b/lib/ipsec/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/ipsec-secgw/meson.build b/examples/ipsec-secgw/meson.build
+index 023d9cf039..e6a0e18a73 100644
+--- a/examples/ipsec-secgw/meson.build
++++ b/examples/ipsec-secgw/meson.build
+@@ -23,6 +23,9 @@ sources = files(
+         'sp4.c',
+         'sp6.c',
+ )
++
 +cflags += no_wvla_cflag
 +
- sources = files('esp_inb.c', 'esp_outb.c',
-                 'sa.c', 'ses.c', 'ipsec_sad.c',
-                 'ipsec_telemetry.c')
-diff --git a/lib/member/meson.build b/lib/member/meson.build
-index 02ef59795e..f92cbb7f25 100644
---- a/lib/member/meson.build
-+++ b/lib/member/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
-+cflags += no_wvla_cflag
-+
- headers = files('rte_member.h')
- 
+ app_cflags = ['-Wno-address-of-packed-member']
+ foreach flag:app_cflags
+     if cc.has_argument(flag)
+diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
+index bb44c88882..c21722b85c 100644
+--- a/examples/l2fwd-crypto/meson.build
++++ b/examples/l2fwd-crypto/meson.build
+@@ -14,3 +14,4 @@ allow_experimental_apis = true
  sources = files(
-diff --git a/lib/metrics/meson.build b/lib/metrics/meson.build
-index 8c1c4b4b49..6722f666d2 100644
---- a/lib/metrics/meson.build
-+++ b/lib/metrics/meson.build
-@@ -9,3 +9,5 @@ if dpdk_conf.has('RTE_HAS_JANSSON')
- endif
- 
- deps += ['ethdev', 'telemetry']
-+
+         'main.c',
+ )
 +cflags += no_wvla_cflag
-diff --git a/lib/pdcp/meson.build b/lib/pdcp/meson.build
-index f4f9246bcb..eef46dd55a 100644
---- a/lib/pdcp/meson.build
-+++ b/lib/pdcp/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
-+cflags += no_wvla_cflag
-+
+diff --git a/examples/l2fwd-jobstats/meson.build b/examples/l2fwd-jobstats/meson.build
+index bffcf35e8c..d59d3d6555 100644
+--- a/examples/l2fwd-jobstats/meson.build
++++ b/examples/l2fwd-jobstats/meson.build
+@@ -11,3 +11,4 @@ deps += ['jobstats', 'timer']
  sources = files(
-         'pdcp_cnt.c',
-         'pdcp_crypto.c',
-diff --git a/lib/pdump/meson.build b/lib/pdump/meson.build
-index da8d51b616..553dfdd5e6 100644
---- a/lib/pdump/meson.build
-+++ b/lib/pdump/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
+         'main.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd-power/meson.build b/examples/l3fwd-power/meson.build
+index 624ef5e947..5ff4466cac 100644
+--- a/examples/l3fwd-power/meson.build
++++ b/examples/l3fwd-power/meson.build
+@@ -12,3 +12,4 @@ sources = files(
+         'main.c',
+         'perf_core.c',
+ )
++cflags += no_wvla_cflag
+diff --git a/examples/l3fwd/meson.build b/examples/l3fwd/meson.build
+index c25de77bba..74144c7979 100644
+--- a/examples/l3fwd/meson.build
++++ b/examples/l3fwd/meson.build
+@@ -21,3 +21,4 @@ sources = files(
+ if dpdk_conf.has('RTE_LIB_EVENTDEV')
+     deps += 'eventdev'
  endif
- 
 +cflags += no_wvla_cflag
-+
- sources = files('rte_pdump.c')
- headers = files('rte_pdump.h')
- deps += ['ethdev', 'bpf', 'pcapng']
-diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
-index fd5e0dc6bb..823c7929a7 100644
---- a/lib/pipeline/meson.build
-+++ b/lib/pipeline/meson.build
-@@ -7,6 +7,8 @@ if is_windows
-     subdir_done()
- endif
- 
+diff --git a/examples/pipeline/meson.build b/examples/pipeline/meson.build
+index 50103f2e01..01f14dc2ae 100644
+--- a/examples/pipeline/meson.build
++++ b/examples/pipeline/meson.build
+@@ -20,3 +20,4 @@ sources = files(
+         'obj.c',
+         'thread.c',
+ )
 +cflags += no_wvla_cflag
-+
- sources = files(
-         'rte_pipeline.c',
-         'rte_port_in_action.c',
-diff --git a/lib/power/meson.build b/lib/power/meson.build
-index b3a7bc7b2e..56b59071ea 100644
---- a/lib/power/meson.build
-+++ b/lib/power/meson.build
-@@ -11,6 +11,9 @@ if not is_linux
-     build = false
-     reason = 'only supported on Linux'
- endif
-+
+diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
+index dc103e9556..92657ce8a5 100644
+--- a/examples/qos_sched/meson.build
++++ b/examples/qos_sched/meson.build
+@@ -17,3 +17,4 @@ sources = files(
+         'main.c',
+         'stats.c',
+ )
 +cflags += no_wvla_cflag
-+
- sources = files(
-         'power_common.c',
-         'rte_power_cpufreq.c',
-diff --git a/lib/table/meson.build b/lib/table/meson.build
-index 9b3d9ac759..e27957fe89 100644
---- a/lib/table/meson.build
-+++ b/lib/table/meson.build
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
+diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
+index 87a637f83f..e938be8f45 100644
+--- a/examples/vhost/meson.build
++++ b/examples/vhost/meson.build
+@@ -18,3 +18,4 @@ sources = files(
+         'main.c',
+         'virtio_net.c',
+ )
 +cflags += no_wvla_cflag
-+
- sources = files(
-         'rte_swx_keycmp.c',
-         'rte_swx_table_em.c',
-diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
-index 51bcf17244..af22f66793 100644
---- a/lib/vhost/meson.build
-+++ b/lib/vhost/meson.build
-@@ -16,11 +16,20 @@ elif (toolchain == 'icc' and cc.version().version_compare('>=16.0.0'))
-     cflags += '-DVHOST_ICC_UNROLL_PRAGMA'
- endif
- dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
--cflags += [
-+
-+cflags += no_wvla_cflag
-+
-+extra_flags = [
-         '-fno-strict-aliasing',
-         '-Wno-address-of-packed-member',
- ]
- 
-+foreach arg: extra_flags
-+    if cc.has_argument(arg)
-+        cflags += arg
-+    endif
-+endforeach
-+
- sources = files(
-         'fd_man.c',
-         'iotlb.c',
 -- 
 2.47.2.vfs.0.1
 
