@@ -2,149 +2,165 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D792C02196
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 14:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A47C02196
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 14:49:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31607402F1;
-	Thu,  6 Feb 2025 15:21:21 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 073354029A
- for <dev@dpdk.org>; Thu,  6 Feb 2025 15:21:18 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 516E3SqF014866;
- Thu, 6 Feb 2025 06:21:18 -0800
-Received: from nam10-dm6-obe.outbound.protection.outlook.com
- (mail-dm6nam10lp2048.outbound.protection.outlook.com [104.47.58.48])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44mxgt0163-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 06 Feb 2025 06:21:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 29837402F1;
+	Thu,  6 Feb 2025 15:49:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F0434029A;
+ Thu,  6 Feb 2025 15:49:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1738853384; x=1770389384;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=x1X4ZBjEAOarXaipyKn3rO3CovpIPS1tXwUA3z6dbx4=;
+ b=jYNDe4Uzt/YsJrOYYSEC8zWWL1QRwMj07dW2QbZeJJAn85b/hKz1u0my
+ nEohpb5QU4/H7ZRIDG9Q41GQ97zSPz2ubLHhmbTT2miiBAK8xY23JpCqe
+ 7yfP0/LHmtXQoLsPTESd+Xe6HOkpzD1z5DAlBZLUka2s71+rC5uPb0kIy
+ 7wBXC86jRyet7oIPY1442KoXX+uuhQa0nAxXp0KIRT44mjNjtH5pyg1G4
+ 3BQZKGY1y0OHvJeTMjHDAvbAfCROp7ULL4rHHl6xCvZZ2/lKBdSo+aMcV
+ V0YNSI6rztx4EpUkoOMXWFRIV6AzqIr77f4cM8NWxDFq8QK3O5fVzc1o+ A==;
+X-CSE-ConnectionGUID: xmXPcEw4TJWMqSW1IQD/kg==
+X-CSE-MsgGUID: GwwJ9jN4TxCBQ3pFFfRBng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39154170"
+X-IronPort-AV: E=Sophos;i="6.13,264,1732608000"; d="scan'208";a="39154170"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Feb 2025 06:49:42 -0800
+X-CSE-ConnectionGUID: 1nwO0DMeSGevw4MYVXiUsg==
+X-CSE-MsgGUID: 1E9cYlulT+uAmgbai/y0vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; d="scan'208";a="116186754"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+ by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 06 Feb 2025 06:49:43 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 6 Feb 2025 06:49:41 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 6 Feb 2025 06:49:41 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 6 Feb 2025 06:49:41 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bT1Dm1fmUCobCzpuBWA4nRSCb4e7qlfp4aGVa0toSmSwN5MnGWsYlNvOYjNKILaV0uHirQsu96CiTS/7WT14zNkCgbE9bRwlF45c+DPkAJFlvvhyc0sCf7HsoItAkLeV2LdVk20jzOd4fF5qDeFKQRd2sZIqi8/pUaWxngxz5rVKh71siazMGhT9oA9rSufYSd1SeOrwvHfTI2XVSmiUBBvznPzs6f5yr3Is/3+kLUtbcQzuNlOWKiHW+b4IhzwGAYVnkcpjUue34FnAcTwv15pK1/26SjQW06oB6vo6MKs7y7rd37NLuswmgjUkpolyujPFNLYE5NZ0RprEkgUSXA==
+ b=hhc6IgZAUYeX8pPoblt3UdJUtzdzByyS6KMbm74gncvmREuJjsjVn6q1/ET6lbUZQsccCC9btJWrXUKozInza3PCRPG+s0vPahUyBxCAx9n/gqNhNoqfYGVi3dwAvenAKgVjzMMlhQzJgj/iZvknGMmdw5d6hWwt4ZsfpQPwjYLoTbb56S8+AXogFO14jvX4OqC2ybq7LnW1LbWiV1Jm/vtCwp/Ik4uibfrKr+bBzvjh3ry9gG6h9p5C+0AUutF/oqW/PuJHGeg+i4vdjO1R2/YLAJigsRu+PsERE5qoUsOdALHZ9/wmtEsRilI5bSxxgWSmpMjzb6N7SvN3lb7ljw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ULBJ51j0fZjDz2xrKxKDDirKe7RMgf30Tb2pJOr6doM=;
- b=GrMlEhqut2sxW+3JzrbMTEnJTe/oaf838e7e9ASl1xYlTCWuR08oixmUjW9M4nL4+gwegd11UKUBdur/ZTHh9lX/bheyRCEFu+eNuuqfYBTHU1dn7noY6LiSBxOYpDkdXJ6cnAwki/DW8jrZ/qfHyCHxl9rx6kXe6S6/3v2jFZGjKdXTZoHEnXfHHZQBpUTr15cP1SH2bgCIsGC7MwaqJ5bCc6z0+cfcgzxJ823aLjM4GkRYBIN2cYD5ibPLmGH8m06EBAWQgNqWD4x2dnMvxW0nT9bneSrKSlnvL++voPd+rh3Mrt1Z6UHZioai01NUVWNsm6gHnlgbGWTVE6ccsg==
+ bh=GE+iSZzM0Ea/xy6SrIKkyvJEmUSwnTVC5E1UmtBzvfU=;
+ b=Tq0+Dv6g3xbf1F+//K1f6DAuPc1/hA6NpTvwfzLKylc0p4JtFnJwHv9oj8hoprxsQ3pNE22ojCU+yDSkwx/lsXPTsKd+NZdIbFEX+1BsBJriBj3usu4JjXJiSp/DPZDNEKoa1fujSnsawGDfccKsHDm5umhhyFKcefflXEi8yxfL1fVtBZDRRH5GusIHVKZmdakr2Wx0WA1YKpYW8cl7eHwNt0etoGkFWhLUq8ym+36ERQi1VbCRTCx8T8QiTu9+aSR9rUXG3gUeQ0kk+1g0WOJhiqbN8P1mBcuKc3gndvbARklZ90J0zfsD1knh6ldJOYvh8a5FZ+ziYQ6EAC468w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ULBJ51j0fZjDz2xrKxKDDirKe7RMgf30Tb2pJOr6doM=;
- b=CutWh7P+JNsorMs7bfIBCxEcZ+in7F0j/Hzeql+U401EoMj791fQBZ69uGBabT309C5xVdLgoHN4Gw1PcZGkDKzksXXdt7+FGzQQ5gRKr9ouDJxt6se47MdxoL63f6qpST+hyQHWv/HnhsRT/EwKPIHMJc9l0sh9btAwS0hdvc4=
-Received: from BY3PR18MB4705.namprd18.prod.outlook.com (2603:10b6:a03:3c8::12)
- by DS1PR18MB6361.namprd18.prod.outlook.com (2603:10b6:8:213::7) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5461.namprd11.prod.outlook.com (2603:10b6:208:30b::17)
+ by DM4PR11MB5294.namprd11.prod.outlook.com (2603:10b6:5:391::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.12; Thu, 6 Feb
- 2025 14:21:14 +0000
-Received: from BY3PR18MB4705.namprd18.prod.outlook.com
- ([fe80::1a4d:d74:bbd0:57fe]) by BY3PR18MB4705.namprd18.prod.outlook.com
- ([fe80::1a4d:d74:bbd0:57fe%5]) with mapi id 15.20.8422.010; Thu, 6 Feb 2025
- 14:21:13 +0000
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Chenbo Xia
- <chenbox@nvidia.com>, Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou
- <jianjay.zhou@huawei.com>
-CC: Jerin Jacob <jerinj@marvell.com>, Anoob Joseph <anoobj@marvell.com>, David
- Marchand <david.marchand@redhat.com>
-Subject: RE: [EXTERNAL] Re: [v2 1/4] common/virtio: move vDPA to common
- directory
-Thread-Topic: [EXTERNAL] Re: [v2 1/4] common/virtio: move vDPA to common
- directory
-Thread-Index: AQHbYTQwEclQZ9eVpEa1meRbjAwagrM6NAgAgABMsrA=
-Date: Thu, 6 Feb 2025 14:21:13 +0000
-Message-ID: <BY3PR18MB47051AE835EB593EF33098CCCBF62@BY3PR18MB4705.namprd18.prod.outlook.com>
-References: <cover.1736270269.git.gmuthukrishn@marvell.com>
- <0951d143cd811aa8389a0c1eaf2cd70fe315f3f4.1736270269.git.gmuthukrishn@marvell.com>
- <4a529276-2d23-4486-873b-ecba155b78f6@redhat.com>
-In-Reply-To: <4a529276-2d23-4486-873b-ecba155b78f6@redhat.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.11; Thu, 6 Feb
+ 2025 14:49:36 +0000
+Received: from BL1PR11MB5461.namprd11.prod.outlook.com
+ ([fe80::8d83:7a30:43c4:835a]) by BL1PR11MB5461.namprd11.prod.outlook.com
+ ([fe80::8d83:7a30:43c4:835a%4]) with mapi id 15.20.8422.012; Thu, 6 Feb 2025
+ 14:49:35 +0000
+From: "Pathak, Pravin" <pravin.pathak@intel.com>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH] event/dlb2: fix event weight handling in SSE code path
+Thread-Topic: [PATCH] event/dlb2: fix event weight handling in SSE code path
+Thread-Index: AQHbbCeWssgX5viBJEiKgoV8YAYgbrM6c5IQ
+Date: Thu, 6 Feb 2025 14:49:35 +0000
+Message-ID: <BL1PR11MB5461221901E20DCF1892CBBFF4F62@BL1PR11MB5461.namprd11.prod.outlook.com>
+References: <20250121171135.2705818-1-bruce.richardson@intel.com>
+In-Reply-To: <20250121171135.2705818-1-bruce.richardson@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR18MB4705:EE_|DS1PR18MB6361:EE_
-x-ms-office365-filtering-correlation-id: 069099ff-2910-48aa-f226-08dd46b98311
+x-ms-traffictypediagnostic: BL1PR11MB5461:EE_|DM4PR11MB5294:EE_
+x-ms-office365-filtering-correlation-id: d2c1d815-3d47-4119-2642-08dd46bd7953
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?KnDv8LjNY0NSXOqgsJMoNKDge9jA6CeQXnPTlX8+NqbJgEOI094AlQ7q9KrJ?=
- =?us-ascii?Q?QLGCsL3DtF1CICFvicmrsHWiKcvjsCqUTe4eVsSA3jyE4+8iUXV3qqOWQ2Nf?=
- =?us-ascii?Q?/gj/euQ8e9wlJFbpiLvQoi7BaWIZvhyeOVwbASUHEenzOdAdvV7CUNBw5Los?=
- =?us-ascii?Q?AMtd0dtQYKuAjRUT7X1l79KJ6IuHX18H6wpkk2D/dNfTNc8SUQxsKYAq5rP4?=
- =?us-ascii?Q?woxmonwqwP1jpDTq0hzdKcjLnUdORZjVVJhuL5SACii244ymukiJxLcVSjgB?=
- =?us-ascii?Q?5BVdcQRHSZV/n8y7/LaHYZHzmHNvLIetNbCP2tCBDozkKNXjYTKWhnPU/biz?=
- =?us-ascii?Q?M9gxjoX/nYYRarFdzna4T+QS8xXOkymX5g7RRWWOhnKLn9RnRT5iyGHeHynE?=
- =?us-ascii?Q?Xfh1TCzWGBy5kskCKRU450CHSVfim2qglJxLR2/yAGnBVyOD+9UpTznyO1ra?=
- =?us-ascii?Q?9ONvC3rboqbzdHcqhhrjND7bqVH4QZaGzNH3FvotQQ5Br2j0If16bwIg6BQ0?=
- =?us-ascii?Q?E+JNelVWjzrUjK7h7SZtASqz90nibY8rl5y6pYVXhcLCVPZtCaEeIEbfFWYk?=
- =?us-ascii?Q?ocDMFL4oV2mVqzxfxIqlqtnXy7flP/qcDPIRspzZI2p0coTcMWwdtDGc6KK5?=
- =?us-ascii?Q?0nFVff/AnaXw4uZe+irpk/eC7DERmUMQMdL2e5Jbwdh6jQgtZBT5121tLMsK?=
- =?us-ascii?Q?8PiDhiLOS7YfITAEcWLcWBP8yj73VfKx5Xd3rTsjsc5ZplaDMKeVGFdQwpFC?=
- =?us-ascii?Q?3ZvoQHv7xAxT3RPaPqXqyZaLGp5ClcFk7qWgMT2JFosRJEB+YR74bYroMkES?=
- =?us-ascii?Q?gq9CF6Hb3en389FJg66gSkzc7qSGesFj9wz906OnVKp3WCIahfyOTZdmdjCh?=
- =?us-ascii?Q?SfQiAnAlkZ59/OQSyrVMj8Zs9DgGHxnWxLzmH9n1i0m1eDQ3bVYcix9JkLjn?=
- =?us-ascii?Q?yOK/Mcby6AUeUpGQ63CUEehAp5iRBX/iucJwVuiy0NUrGzgpiIkjVMEyI+9Q?=
- =?us-ascii?Q?yux8na98UWB+6O9renblioq38jzSNLlX83NrH5xNmKYK15tj8/t5RAAnSjzP?=
- =?us-ascii?Q?xp4v839SnPe0Ekn7SPTQ00PkPvLWyViipRuL5bn/0hj1x/QU61VNQ4fMqOYL?=
- =?us-ascii?Q?yeIRtz2+VrmOurjem66/3D9SxOqK2567rYSnbzeDoCUJC0Arcu9Y/MyhGRRO?=
- =?us-ascii?Q?tAAdJnmq0lbjf9ucJK1ea33SkjHHLB4bxwgQh29+OiY5qFfumlnc88mRW+Va?=
- =?us-ascii?Q?10OFYYbKEOduAI3pZa6azK3f1S1XDO4wi8i5rCfmrZrERJKNRz8ORvVs9Yfn?=
- =?us-ascii?Q?s/DPwZxl+KuozjSf0BboLNfmBaYI04LvidqMOVm92q359v4uSjdMeFSYfdTG?=
- =?us-ascii?Q?9ARenj5ANOcFupAC3UUmFg9LIZEVofDtu3IvtsBtqGTSTyM4vV4nWcMLdGct?=
- =?us-ascii?Q?Bah8JayNwHgb277GN+fJs+ytwMxL9FzN?=
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?Z772k9/TLqem4ojo+VOvycEptgZn+dv6EkCmEiNXk+9MvsmhDciE5e2Epssg?=
+ =?us-ascii?Q?IJneoVm3Muu7ausAPbmtWi763owHDN+G7DPpt9iMONXyTfwxrGgMYEQ62KIy?=
+ =?us-ascii?Q?BeN1FM+Rdh00enJGL+i/QZcXCRcgV7t9Sur1zGfHMAKrGI7jN/0Ofk5s7X72?=
+ =?us-ascii?Q?mPdYzPgchDlbLCDuLowtWf25Y6f36UxeHvVtrvLdWz5G3wOUR7YQqdHdYduD?=
+ =?us-ascii?Q?m3bOrh409NJmmRI1N7SQ5toftaw+nIfWalYAcahTv9oTMlas8CbVaQai8Zsy?=
+ =?us-ascii?Q?Hr/hlPSWOhPzB0sOTtJOqi/eGP8HZVh4AL6Mld3hKFEUDz7X7qN8P9gBnsG4?=
+ =?us-ascii?Q?aBFvvgyWTmbRg8Ze0oW3fIygtzNSwjEBfY6UDJlgy5isF81HPt9Rxj69OlV7?=
+ =?us-ascii?Q?jjY6/LW9rZISzt2+CPcUGY3JhAITgBOC5h85I14TYADOuekgImuAVR9NiYCW?=
+ =?us-ascii?Q?9u0niYaK6IJBRQ0fVUPo7Se1zu9QQBbgvezsOpn3jxFKy/Xu660dB24TQbv+?=
+ =?us-ascii?Q?jkSHpLv3e22CBUNFgOI6F3w3Vb9Klg5bs2mMVLRPGtUFeabSyXSPmiVNAgwV?=
+ =?us-ascii?Q?zqXNwUaeP3WW5C4aeyPKVa5NymDli8CM8yiIejP0pjx+y9HNd1UcUkwh2NIt?=
+ =?us-ascii?Q?1ZscPh7o3/XO9suIKJjR0vwlPREZol6qalv5+zZeqTJUTrdLBwRwMQHj6F5S?=
+ =?us-ascii?Q?YE4i9BIKWNNmX6LPjjJjYj1ZalIjQtwZeMW/2C3rNaRONEl8WqFvJ77jtgF2?=
+ =?us-ascii?Q?/6gMfRmlhR8MXqgGvQcytX91rTL7YYbti6uZXECqcsFvBvAcNfoi9nSBbLgU?=
+ =?us-ascii?Q?Dok55nmZBCut94F67ld0czf2DUD5uVd4D7VNdQFzVJ7OhNWslR/VM/5t01Sh?=
+ =?us-ascii?Q?jt0Ig4aULtzbnkRn/GGty5GpioKVCjuzntowvVLD/Xemr0sIY9SIzYMVa3BR?=
+ =?us-ascii?Q?Up7khHhQDRyMzSq33ooKHa0GN5TnNlF6rC2K2nm8ZHF1a9lDZ267W3TOvKmc?=
+ =?us-ascii?Q?CmTVJkvZq+T6b0/zFIFAw0focBJKS+jNIRfzyfcL6lBqOsWxqtBYAlZ0b418?=
+ =?us-ascii?Q?WCNin4JDZGdYUK6kmhkYK1qRMVpEKQPhPMijviAvqpEk2oR+aPHJtJtajLuF?=
+ =?us-ascii?Q?E/bWH/JzyB07SgwP/MqhG/jPekL1ifqYnmYKdTfnq1pcOwc6o8fdoAoLTsVb?=
+ =?us-ascii?Q?PgvHKtbC1q9ViH+OYyiS9/9bDC6X9oyh6C0jmlRf0d64ytST4W2tfwpC3+VB?=
+ =?us-ascii?Q?/HMpwpczip8qmzgqkwPoaBXZ19nU1sOiDH7mH/UJJ2UVnndWM3M6cnsiFuEO?=
+ =?us-ascii?Q?Oj0bIDTTxsdLRELEEqdJTAOTLGJsJYTU1UEpKubAaun+/+EbGlqoVzYj0PXN?=
+ =?us-ascii?Q?YScPSxymFjhm41047z8+BrJchqA4WCe3OWMFWz6yuz1n7TkoIR4r66URCfuY?=
+ =?us-ascii?Q?VH8rFIJi40JfwuIa6J7GkC3JdGYR2IJn?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BY3PR18MB4705.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1102; 
+ IPV:NLI; SFV:NSPM; H:BL1PR11MB5461.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(38070700018); DIR:OUT;
+ SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RNLeLbQvLdFhL54ydQorxiwN7ijYhA5UQhjR8pItVPiKrKAgzgcfBRpNKY6+?=
- =?us-ascii?Q?+4V4gD/8Og1evStSDufy9VHBmp9ZLi1Z45HQXYTfiEAhQ9+OVTX5A8B9Ydgp?=
- =?us-ascii?Q?XgSYiQ0B5NSChzBg0JNcoCWDqauZcEOmnFZ+iC+Qp1/zFy6CPJ+wJ9oIIT3X?=
- =?us-ascii?Q?dbPx07nrNNcWEKXt6aw6XupMBc/XOrPkA0/NyFb5cMAkVpPv7EfrwyY3tb+i?=
- =?us-ascii?Q?SiAZzU2qWxQB0lhCk2sVdJvAXdWJQIPwU7DOhB/cE1UOAf2QfGOTlHxXgH8v?=
- =?us-ascii?Q?p4bbc001AFA3gHnjzEDjJY/lNrmnDAegAp4lezzZy3WX1GpbWa0tQlJYrmJT?=
- =?us-ascii?Q?+5ZsAwhcno3nSQFASHt3+8WKOPAderx5qOQDg4+gw1mD5LXSeNHMB/xHTqMy?=
- =?us-ascii?Q?5HpSQZDhVLmX7RifWR8meDGrx+6i98jGjg+CrCIT+Xx3htD/an8QQCy0kr2b?=
- =?us-ascii?Q?5bk313WFmScD+Q4cXd7kwOOh4C1kpXQ/nJQcfDWWcP7gPcjSeyVKugl/3SMb?=
- =?us-ascii?Q?0ZA4EXC2OLcuEunmQH7XbkgwnBM6I4L0Fak+kdUP9ZUZ3Ms1yPl2QmrPiPVg?=
- =?us-ascii?Q?w6yO6AoZ0lPwMecjBNgUCrLzEE5UXEFqsCy9UAb/8qnjk1c7JvyJsUIXY1R4?=
- =?us-ascii?Q?tGn4aQzONfjTBrjf8Yhaec9/whA+ZD7R7hNeZ0DskipKFplHogsNC7jQ+ZtT?=
- =?us-ascii?Q?IWIBhgfjNMseFwERwq19gCyhuPOO+Y9jRUEqNnEMirxvP6isxKRoLGDxuoKg?=
- =?us-ascii?Q?W0oeGplMXGsph+gicg3yi/btz+ghf58TJhOaaHxWZH2jWppQtGgVNHP2+3mj?=
- =?us-ascii?Q?XJcfUr4611b8YgyK4k93hF2Qv8xSh3WjaZQbugh4Vvm2rgi/aYzeOhllNkLv?=
- =?us-ascii?Q?B2fdK0Sc7xKDUzDymJP13UNVJFVDG3PvAPzvVg8/SBpf8d2wpgsulvWE0/vL?=
- =?us-ascii?Q?+hBiSCd+S2TJ6XC6pzGRzQbvkCrTR5up38tUUbI2FWwcYzHg+zrqZlMsK1LL?=
- =?us-ascii?Q?l6E0jocY5nKJw7vda0Pb35qCPRuJkWz8Bry2tPObujWTeZYY5IoyHBecV3ki?=
- =?us-ascii?Q?4faKRrbnxg7awk5WRJ760wcjSxSRkwopMy5/HWGCBjdrmhkvdYr9gVAHm2ir?=
- =?us-ascii?Q?nSHmmnowFIAZpVDPdh8PTEN5uUqDFvRhkImZZvK4/g+YepKOEVf4Ws49zEfY?=
- =?us-ascii?Q?e63eqhlAYMpetNO0Xzwi4F0s/HE42xLPmw7GQ5G9j7qewcqb9CBgAbypblBF?=
- =?us-ascii?Q?x+IETy8qguSWc+b5ncl1sKOfxioUK1RoJ1p7vj+6QyTfVpklrWVCrPfDkzlA?=
- =?us-ascii?Q?ddXI5PbrityWWAEolSvORNRci+8vqEVDIkAfMHEJGVk4WcbFrKI51WR3y3L7?=
- =?us-ascii?Q?CjeZoLIGrD44KceTGJqjpDv5Myw2drIePuwN+X9ShiYHB+fu5B08YSGveFez?=
- =?us-ascii?Q?LDvNljmKFW8fmMMQnlXsUTK2n2pGs3D33nkRgGsYZcVefldUnLIIcEVsIW2q?=
- =?us-ascii?Q?dkFEwIg94B6+aPonbPrxppxfqFz3n04PWo4HOi3Cb8IKa0ePXde2bK6sV4IG?=
- =?us-ascii?Q?k55lNPYHyWI7sDotznH3JnlHUWQeyQmzrCT4JTeo?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wLTkY0otZtmqeRLB4k7iZYXNkMvNw1cbs/ruJJZ66gERyiIkZm78P7c4HQBb?=
+ =?us-ascii?Q?w2quq1QTaBvN4GMveYKTqEs5KlAMUpJJA1XDNVyXkNh6A/dQS0Lh15G1OTO7?=
+ =?us-ascii?Q?RkaVGJ0wUJE4e93PY+Fs7uEvhkASgpYaYrEdIqz5IR45stOjLH/oldarCOoi?=
+ =?us-ascii?Q?VFUp+UGTKJ8rKzPGJK9eDcTQvLGWjDgEn325MFO+khFToGWzVpv2ROg2PKMn?=
+ =?us-ascii?Q?8YxmHxK+ScB7YGXg1qb6Mk/cbE5fNJuvI04cc/hjgaLtaBjU3h0DL5nDsqOW?=
+ =?us-ascii?Q?DeB3ESzByA489d68vyOwGkziUZJioMHxRWb9VLg72GPhWoolXrBkEcBhY1E4?=
+ =?us-ascii?Q?UQIFL4wWcmOmweU+tb7QHhAbH66H6G2J5qXIVzfQtnWnmNDVp/FbzvisDuMM?=
+ =?us-ascii?Q?M+w35Smml4FvHZFhSHXtdAPEDy4AyFbm67NbGpXFVMhYiaH9/AN6x2raS7j8?=
+ =?us-ascii?Q?4gAkf7deF3BE9LqnbCEhR3y3Pdd8HUWmApGkelf5JyyMYMaCf4quU5GBTB9r?=
+ =?us-ascii?Q?uugvKbZ2KJLkshue9/r1mw64GJCCHltRuzPEOVk/fURIhySqY5b69t0rFv1h?=
+ =?us-ascii?Q?5ij2ibwuegv1G1sZ/AD5xZ7VwX8b48S4O0AkNnpS/InLohDajLICuBPc3kLL?=
+ =?us-ascii?Q?wKDRIqSIvQZxc225KTflHoEle3ygwKo/k1KMv6xkZ3ZqgVN/DOSe7Xa29Niq?=
+ =?us-ascii?Q?yzxi+O/2qHM9uiI0QI2P34eND0B7uIvFVJwj7iuDOG4/EL+rNaLouhX+OEyI?=
+ =?us-ascii?Q?2UAKBbwb0jNescRHsLruw5EsfOZvOKUH2SHoXBtongBGN/Cn+EMkQyfeoG4A?=
+ =?us-ascii?Q?9FQG0+qcl5ZZkZW7BcgMd3MjwRGTLfceFi7YAzY3yvr59gmKCQC8+TjLk+CL?=
+ =?us-ascii?Q?8qR57cTTv174F9hokkqlM1mHOhaQE6cfU8xpo95r9SGM5WKgbRbtUdhHRNd/?=
+ =?us-ascii?Q?1nhhkae09iT6pjJ5E61EeKaP7EhYS5fGLG3ZOI51oW01Vz1DlwXCL/7HYfSf?=
+ =?us-ascii?Q?kJEPD3VGXAErCG/VqC60e2fsMgmnH2OhQAPp/7e5kDYFuQBM1V83Snfj0ymG?=
+ =?us-ascii?Q?Pn0fpbl3RjcS0mI2/I2TCZfyXNAAhUzO+1vNe0Yyz39gsOkcVf8uFP0o3lEF?=
+ =?us-ascii?Q?2u61Cu895Ngyqs0/DI3Ou7fK+ysAlpwkQvxN85VbGhgF4aJXLhAcSDAkbVhF?=
+ =?us-ascii?Q?Dw0rKub0V5bacz3FzFnZtitu5z8mtb/2tG/i5k1VnpKsYU2s3d2QytaQ+5RN?=
+ =?us-ascii?Q?3aUb8ayIS4blpU8uLoFFbOqnv3dngqPYOotejvJFpSL8o8N5DiKK++qFEAUo?=
+ =?us-ascii?Q?pp6HBQXFjOXaRUs8DavX6PYGqthpQY+2I7DFw0vqI1Uo1Gj0wgG/UlcpZtPa?=
+ =?us-ascii?Q?fN5WrjOOXUrmiAkXDPr87MpS9cN4Wk/E7F12OOKpbavS71HraQeXFIeI4o7b?=
+ =?us-ascii?Q?42j26vI+Khs0BeTK9ZdC7djorCL4FiTDUh5WIRB1yioawLx1eclQ8BPFuah2?=
+ =?us-ascii?Q?0oxP+wG6kOOvC9jR90cOhWOAzt9NdHwL2N1h7lxRw9KK6LMgIT7J295gN8Lv?=
+ =?us-ascii?Q?wtw6JSQCKpZ3wbZPqreSfbkxJS+uMT0ESfYhuRkb?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4705.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 069099ff-2910-48aa-f226-08dd46b98311
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2025 14:21:13.7708 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5461.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2c1d815-3d47-4119-2642-08dd46bd7953
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2025 14:49:35.4213 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kZ9svbiHQnLakEumSOdFl0DZZAj/YaOHsNMR6CDGjyVgz5OPTsn0mNWsOvkFNmlsm53bqj+W+KyftSAvYmNUhO8UcCqyPJFSeNYp5OagfOc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR18MB6361
-X-Proofpoint-GUID: A0zjhJmkjZci_tvSzf1IhVLinX7J1LoZ
-X-Proofpoint-ORIG-GUID: A0zjhJmkjZci_tvSzf1IhVLinX7J1LoZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-06_03,2025-02-05_03,2024-11-22_01
+X-MS-Exchange-CrossTenant-userprincipalname: bcyionAvP+5gNRnnOvpcYdztKBj8AF/ytX+rJRtkR6uxt1P+Pyu3+JuL2PnnVjlflnoglt4e0WMI9dPb46p9bw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5294
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,357 +174,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Maxime,
+Reviewed-by: Pravin Pathak <pravin.pathak@intel.com>
 
-> On 1/7/25 7:44 PM, Gowrishankar Muthukrishnan wrote:
-> > Move vhost-vdpa backend implementation into common folder.
+> -----Original Message-----
+> From: Richardson, Bruce <bruce.richardson@intel.com>
+> Sent: Tuesday, January 21, 2025 12:12 PM
+> To: dev@dpdk.org
+> Cc: Pathak, Pravin <pravin.pathak@intel.com>; Richardson, Bruce
+> <bruce.richardson@intel.com>; stable@dpdk.org
+> Subject: [PATCH] event/dlb2: fix event weight handling in SSE code path
 >=20
-> If we decided to have a common base for Virtio devices, which I think is =
-a good
-> idea to avoid needless duplication, we should do a deeper refactoring by
-> sharing all transport layers: PCI and Virtio-user.
+> Commit 6e2e98d6775b ("event/dlb2: support independent enqueue")
+> updated the avx512 code path with support for the event, or "qe" weights.
+> However, the SSE code path looks to have been missed in the update.
+> Update the SSE "build_hcws" function to match the changes made to the
+> AVX-512 version.
 >=20
-
-Yes, but our initial proposal in this RFC is to start with vDPA first.
-
-> I understand it is not realistic to do this for v25.03 release, so in the=
- mean time
-> I prefer you duplicate what you need from Vhost-vDPA implementation than
-> having an half-baked solution.
+> Bugzilla ID: 1616
+> Fixes: 6e2e98d6775b ("event/dlb2: support independent enqueue")
+> Cc: stable@dpdk.org
 >=20
-
-Ack.
-
-Thanks,
-Gowrishankar
-
-> Maintainers, what do you think?
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  drivers/event/dlb2/dlb2_sse.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 >=20
-> Thanks,
-> Maxime
+> diff --git a/drivers/event/dlb2/dlb2_sse.c b/drivers/event/dlb2/dlb2_sse.=
+c
+> index 248d7519d5..f2e1f9fb7e 100644
+> --- a/drivers/event/dlb2/dlb2_sse.c
+> +++ b/drivers/event/dlb2/dlb2_sse.c
+> @@ -190,11 +190,11 @@ dlb2_event_build_hcws(struct dlb2_port
+> *qm_port,
+>  		qe[3].data =3D ev[3].u64;
 >=20
-> > Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> > ---
-> > Depends-on: patch-149672 ("vhost: include AKCIPHER algorithms in
-> > crypto_config")
-> > Depends-on: patch-148913 ("crypto/virtio: remove redundant crypto
-> > queue free")
-> > Depends-on: series-34293 ("crypto/virtio: add packed ring support")
-> > Depends-on: series-34291 ("crypto/virtio: add RSA support")
-> >
-> >
-> >   drivers/common/virtio/meson.build             | 13 +++++++++
-> >   drivers/common/virtio/version.map             |  8 ++++++
-> >   .../virtio/virtio_user/vhost.h                |  4 ---
-> >   .../common/virtio/virtio_user/vhost_logs.h    | 15 ++++++++++
-> >   .../virtio/virtio_user/vhost_vdpa.c           | 28 ++++++++++++++++++=
--
-> >   drivers/crypto/virtio/meson.build             |  2 +-
-> >   drivers/meson.build                           |  1 +
-> >   drivers/net/virtio/meson.build                |  3 +-
-> >   drivers/net/virtio/virtio_user/vhost_kernel.c |  3 +-
-> >   drivers/net/virtio/virtio_user/vhost_user.c   |  3 +-
-> >   .../net/virtio/virtio_user/virtio_user_dev.c  |  5 ++--
-> >   .../net/virtio/virtio_user/virtio_user_dev.h  | 24 +++++++++-------
-> >   12 files changed, 87 insertions(+), 22 deletions(-)
-> >   create mode 100644 drivers/common/virtio/meson.build
-> >   create mode 100644 drivers/common/virtio/version.map
-> >   rename drivers/{net =3D> common}/virtio/virtio_user/vhost.h (97%)
-> >   create mode 100644 drivers/common/virtio/virtio_user/vhost_logs.h
-> >   rename drivers/{net =3D> common}/virtio/virtio_user/vhost_vdpa.c (97%=
-)
-> >
-> > diff --git a/drivers/common/virtio/meson.build
-> > b/drivers/common/virtio/meson.build
-> > new file mode 100644
-> > index 0000000000..a19db9e088
-> > --- /dev/null
-> > +++ b/drivers/common/virtio/meson.build
-> > @@ -0,0 +1,13 @@
-> > +# SPDX-License-Identifier: BSD-3-Clause # Copyright(c) 2025 Marvell
-> > +
-> > +if is_windows
-> > +    build =3D false
-> > +    reason =3D 'not supported on Windows'
-> > +    subdir_done()
-> > +endif
-> > +
-> > +if is_linux
-> > +    sources +=3D files('virtio_user/vhost_vdpa.c')
-> > +    deps +=3D ['bus_vdev']
-> > +endif
-> > diff --git a/drivers/common/virtio/version.map
-> > b/drivers/common/virtio/version.map
-> > new file mode 100644
-> > index 0000000000..fb98a0ab2e
-> > --- /dev/null
-> > +++ b/drivers/common/virtio/version.map
-> > @@ -0,0 +1,8 @@
-> > +INTERNAL {
-> > +	global:
-> > +
-> > +	virtio_ops_vdpa;
-> > +	vhost_logtype_driver;
-> > +
-> > +	local: *;
-> > +};
-> > diff --git a/drivers/net/virtio/virtio_user/vhost.h
-> > b/drivers/common/virtio/virtio_user/vhost.h
-> > similarity index 97%
-> > rename from drivers/net/virtio/virtio_user/vhost.h
-> > rename to drivers/common/virtio/virtio_user/vhost.h
-> > index eee3a4bc47..adf6551681 100644
-> > --- a/drivers/net/virtio/virtio_user/vhost.h
-> > +++ b/drivers/common/virtio/virtio_user/vhost.h
-> > @@ -11,10 +11,6 @@
-> >
-> >   #include <rte_errno.h>
-> >
-> > -#include "../virtio.h"
-> > -#include "../virtio_logs.h"
-> > -#include "../virtqueue.h"
-> > -
-> >   struct vhost_vring_state {
-> >   	unsigned int index;
-> >   	unsigned int num;
-> > diff --git a/drivers/common/virtio/virtio_user/vhost_logs.h
-> > b/drivers/common/virtio/virtio_user/vhost_logs.h
-> > new file mode 100644
-> > index 0000000000..653d4d0b5e
-> > --- /dev/null
-> > +++ b/drivers/common/virtio/virtio_user/vhost_logs.h
-> > @@ -0,0 +1,15 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause
-> > + * Copyright(C) 2025 Marvell
-> > + */
-> > +
-> > +#ifndef _VHOST_LOGS_H_
-> > +#define _VHOST_LOGS_H_
-> > +
-> > +#include <rte_log.h>
-> > +
-> > +extern int vhost_logtype_driver;
-> > +#define RTE_LOGTYPE_VHOST_DRIVER vhost_logtype_driver #define
-> > +PMD_DRV_LOG(level, ...) \
-> > +	RTE_LOG_LINE_PREFIX(level, VHOST_DRIVER, "%s(): ", __func__,
-> > +__VA_ARGS__)
-> > +
-> > +#endif /* _VHOST_LOGS_H_ */
-> > diff --git a/drivers/net/virtio/virtio_user/vhost_vdpa.c
-> > b/drivers/common/virtio/virtio_user/vhost_vdpa.c
-> > similarity index 97%
-> > rename from drivers/net/virtio/virtio_user/vhost_vdpa.c
-> > rename to drivers/common/virtio/virtio_user/vhost_vdpa.c
-> > index bc3e2a9af5..af5c4cbf33 100644
-> > --- a/drivers/net/virtio/virtio_user/vhost_vdpa.c
-> > +++ b/drivers/common/virtio/virtio_user/vhost_vdpa.c
-> > @@ -9,11 +9,12 @@
-> >   #include <fcntl.h>
-> >   #include <stdlib.h>
-> >   #include <unistd.h>
-> > +#include <inttypes.h>
-> >
-> >   #include <rte_memory.h>
-> >
-> >   #include "vhost.h"
-> > -#include "virtio_user_dev.h"
-> > +#include "vhost_logs.h"
-> >
-> >   struct vhost_vdpa_data {
-> >   	int vhostfd;
-> > @@ -100,6 +101,29 @@ vhost_vdpa_ioctl(int fd, uint64_t request, void
-> *arg)
-> >   	return 0;
-> >   }
-> >
-> > +struct virtio_hw {
-> > +	struct virtqueue **vqs;
-> > +};
-> > +
-> > +struct virtio_user_dev {
-> > +	union {
-> > +		struct virtio_hw hw;
-> > +		uint8_t dummy[256];
-> > +	};
-> > +
-> > +	void		*backend_data;
-> > +	uint16_t	**notify_area;
-> > +	char		path[PATH_MAX];
-> > +	bool		hw_cvq;
-> > +	uint16_t	max_queue_pairs;
-> > +	uint64_t	device_features;
-> > +	bool		*qp_enabled;
-> > +};
-> > +
-> > +#define VIRTIO_NET_F_CTRL_VQ   17
-> > +#define VIRTIO_F_IOMMU_PLATFORM        33
-> > +#define VIRTIO_ID_NETWORK  0x01
-> > +
-> >   static int
-> >   vhost_vdpa_set_owner(struct virtio_user_dev *dev)
-> >   {
-> > @@ -715,3 +739,5 @@ struct virtio_user_backend_ops virtio_ops_vdpa =3D =
-{
-> >   	.map_notification_area =3D vhost_vdpa_map_notification_area,
-> >   	.unmap_notification_area =3D vhost_vdpa_unmap_notification_area,
-> >   };
-> > +
-> > +RTE_LOG_REGISTER_SUFFIX(vhost_logtype_driver, driver, NOTICE);
-> > diff --git a/drivers/crypto/virtio/meson.build
-> > b/drivers/crypto/virtio/meson.build
-> > index d2c3b3ad07..8181c8296f 100644
-> > --- a/drivers/crypto/virtio/meson.build
-> > +++ b/drivers/crypto/virtio/meson.build
-> > @@ -8,7 +8,7 @@ if is_windows
-> >   endif
-> >
-> >   includes +=3D include_directories('../../../lib/vhost')
-> > -deps +=3D 'bus_pci'
-> > +deps +=3D ['bus_pci', 'common_virtio']
-> >   sources =3D files(
-> >           'virtio_cryptodev.c',
-> >           'virtio_cvq.c',
-> > diff --git a/drivers/meson.build b/drivers/meson.build index
-> > 495e21b54a..2f0d312479 100644
-> > --- a/drivers/meson.build
-> > +++ b/drivers/meson.build
-> > @@ -17,6 +17,7 @@ subdirs =3D [
-> >           'common/nitrox',  # depends on bus.
-> >           'common/qat',     # depends on bus.
-> >           'common/sfc_efx', # depends on bus.
-> > +        'common/virtio',  # depends on bus.
-> >           'mempool',        # depends on common and bus.
-> >           'dma',            # depends on common and bus.
-> >           'net',            # depends on common, bus, mempool
-> > diff --git a/drivers/net/virtio/meson.build
-> > b/drivers/net/virtio/meson.build index 02742da5c2..bbd73741f0 100644
-> > --- a/drivers/net/virtio/meson.build
-> > +++ b/drivers/net/virtio/meson.build
-> > @@ -54,7 +54,6 @@ if is_linux
-> >           'virtio_user/vhost_kernel.c',
-> >           'virtio_user/vhost_kernel_tap.c',
-> >           'virtio_user/vhost_user.c',
-> > -        'virtio_user/vhost_vdpa.c',
-> >           'virtio_user/virtio_user_dev.c')
-> > -    deps +=3D ['bus_vdev']
-> > +    deps +=3D ['bus_vdev', 'common_virtio']
-> >   endif
-> > diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c
-> > b/drivers/net/virtio/virtio_user/vhost_kernel.c
-> > index e42bb35935..3a95ce34d6 100644
-> > --- a/drivers/net/virtio/virtio_user/vhost_kernel.c
-> > +++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
-> > @@ -11,9 +11,10 @@
-> >
-> >   #include <rte_memory.h>
-> >
-> > -#include "vhost.h"
-> > +#include "virtio_user/vhost.h"
-> >   #include "virtio_user_dev.h"
-> >   #include "vhost_kernel_tap.h"
-> > +#include "../virtqueue.h"
-> >
-> >   struct vhost_kernel_data {
-> >   	int *vhostfds;
-> > diff --git a/drivers/net/virtio/virtio_user/vhost_user.c
-> > b/drivers/net/virtio/virtio_user/vhost_user.c
-> > index c10252506b..2a158aff7e 100644
-> > --- a/drivers/net/virtio/virtio_user/vhost_user.c
-> > +++ b/drivers/net/virtio/virtio_user/vhost_user.c
-> > @@ -16,7 +16,8 @@
-> >   #include <rte_string_fns.h>
-> >   #include <rte_fbarray.h>
-> >
-> > -#include "vhost.h"
-> > +#include "virtio_user/vhost_logs.h"
-> > +#include "virtio_user/vhost.h"
-> >   #include "virtio_user_dev.h"
-> >
-> >   struct vhost_user_data {
-> > diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > index 2997d2bd26..7105c54b43 100644
-> > --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > @@ -20,10 +20,11 @@
-> >   #include <rte_malloc.h>
-> >   #include <rte_io.h>
-> >
-> > -#include "vhost.h"
-> > -#include "virtio.h"
-> > +#include "virtio_user/vhost.h"
-> >   #include "virtio_user_dev.h"
-> > +#include "../virtqueue.h"
-> >   #include "../virtio_ethdev.h"
-> > +#include "../virtio_logs.h"
-> >
-> >   #define VIRTIO_USER_MEM_EVENT_CLB_NAME
-> "virtio_user_mem_event_clb"
-> >
-> > diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.h
-> > b/drivers/net/virtio/virtio_user/virtio_user_dev.h
-> > index 66400b3b62..70604d6956 100644
-> > --- a/drivers/net/virtio/virtio_user/virtio_user_dev.h
-> > +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.h
-> > @@ -25,26 +25,36 @@ struct virtio_user_queue {
-> >   };
-> >
-> >   struct virtio_user_dev {
-> > -	struct virtio_hw hw;
-> > +	union {
-> > +		struct virtio_hw hw;
-> > +		uint8_t dummy[256];
-> > +	};
-> > +
-> > +	void		*backend_data;
-> > +	uint16_t	**notify_area;
-> > +	char		path[PATH_MAX];
-> > +	bool		hw_cvq;
-> > +	uint16_t	max_queue_pairs;
-> > +	uint64_t	device_features; /* supported features by device */
-> > +	bool		*qp_enabled;
-> > +
-> >   	enum virtio_user_backend_type backend_type;
-> >   	bool		is_server;  /* server or client mode */
-> >
-> >   	int		*callfds;
-> >   	int		*kickfds;
-> >   	int		mac_specified;
-> > -	uint16_t	max_queue_pairs;
-> > +
-> >   	uint16_t	queue_pairs;
-> >   	uint32_t	queue_size;
-> >   	uint64_t	features; /* the negotiated features with driver,
-> >   				   * and will be sync with device
-> >   				   */
-> > -	uint64_t	device_features; /* supported features by device */
-> >   	uint64_t	frontend_features; /* enabled frontend features */
-> >   	uint64_t	unsupported_features; /* unsupported features mask
-> */
-> >   	uint8_t		status;
-> >   	uint16_t	net_status;
-> >   	uint8_t		mac_addr[RTE_ETHER_ADDR_LEN];
-> > -	char		path[PATH_MAX];
-> >   	char		*ifname;
-> >
-> >   	union {
-> > @@ -54,18 +64,12 @@ struct virtio_user_dev {
-> >   	} vrings;
-> >
-> >   	struct virtio_user_queue *packed_queues;
-> > -	bool		*qp_enabled;
-> >
-> >   	struct virtio_user_backend_ops *ops;
-> >   	pthread_mutex_t	mutex;
-> >   	bool		started;
-> >
-> > -	bool			hw_cvq;
-> >   	struct virtqueue	*scvq;
-> > -
-> > -	void *backend_data;
-> > -
-> > -	uint16_t **notify_area;
-> >   };
-> >
-> >   int virtio_user_dev_set_features(struct virtio_user_dev *dev);
+>  		/* will only be set for DLB 2.5 + */
+> -		if (qm_port->cq_weight) {
+> -			qe[0].weight =3D ev[0].impl_opaque & 3;
+> -			qe[1].weight =3D ev[1].impl_opaque & 3;
+> -			qe[2].weight =3D ev[2].impl_opaque & 3;
+> -			qe[3].weight =3D ev[3].impl_opaque & 3;
+> +		if (qm_port->dlb2->enable_cq_weight) {
+> +			qe[0].weight =3D
+> RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[0]);
+> +			qe[1].weight =3D
+> RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[1]);
+> +			qe[2].weight =3D
+> RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[2]);
+> +			qe[3].weight =3D
+> RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[3]);
+>  		}
+>=20
+>  		break;
+> @@ -205,6 +205,7 @@ dlb2_event_build_hcws(struct dlb2_port *qm_port,
+>  			qe[i].cmd_byte =3D
+>  				cmd_byte_map[qm_port-
+> >is_directed][ev[i].op];
+>  			qe[i].sched_type =3D sched_type[i];
+> +			qe[i].weight =3D
+> RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[i]);
+>  			qe[i].data =3D ev[i].u64;
+>  			qe[i].qid =3D queue_id[i];
+>  			qe[i].priority =3D EV_TO_DLB2_PRIO(ev[i].priority);
+> --
+> 2.43.0
 
