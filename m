@@ -2,35 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61F8C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 17:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFBAC0219B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 17:41:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05BF442EC4;
-	Fri,  7 Feb 2025 18:41:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F9F642ECD;
+	Fri,  7 Feb 2025 18:41:18 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id DC30942EB1
+ by mails.dpdk.org (Postfix) with ESMTP id EA6C942EC4
  for <dev@dpdk.org>; Fri,  7 Feb 2025 18:41:14 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 350FF2107302; Fri,  7 Feb 2025 09:41:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 350FF2107302
+ id 4262C2107304; Fri,  7 Feb 2025 09:41:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4262C2107304
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1738950074;
- bh=tOqJXg1+eQV0axrTXB2zjREX/WfKCkDr/0GzqJ/pjhY=;
+ bh=7/kuUbVAqA97pwIQ6KNJJeHot65miygLafvd+upJJc0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=CcFBOcFCfkcPvcB3mijcXqIo3aVJ3sKG1bXHWbCh2fUi7FkNdbvPp/NXpjK0ZCO90
- YGEMEqBYFLR/R0gHePe0F5ZIZCanqevTmyJhfvvIvJ0JBEXRdfjv3Oev3a1UZivlrO
- EEBiGjuLXkBtQ4lTK2orHftDKRfEjVuVpU9qDBAw=
+ b=M97NIqaK8dWJrP/YAQ5t2yvk49oM9Ml9dU3wTDCIepljlQDEjdThsB/5wMWL239iZ
+ k9QDgoUnR95l2X6eSkB7G60Of7c/0Hv9PdFucA+M1okUI2yV7G0VQD5dE5QMwwZVjx
+ IyyXXb33Vm2bs5Tl4o6Qn10DMiaOSk7jqy7vOKEk=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: anatoly.burakov@intel.com, bruce.richardson@intel.com, dev@dpdk.org,
  ian.stokes@intel.com, jochen.behrens@broadcom.com,
  vladimir.medvedkin@intel.com, stephen@networkplumber.org
-Subject: [PATCH v5 0/1] use 64-bit shift, avoid signed/unsigned mismatch
-Date: Fri,  7 Feb 2025 09:41:08 -0800
-Message-Id: <1738950069-21059-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v5 1/1] drivers/net: use 64-bit shift and avoid
+ signed/unsigned mismatch
+Date: Fri,  7 Feb 2025 09:41:09 -0800
+Message-Id: <1738950069-21059-2-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1735246770-731-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1738950069-21059-1-git-send-email-andremue@linux.microsoft.com>
 References: <1735246770-731-1-git-send-email-andremue@linux.microsoft.com>
+ <1738950069-21059-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,17 +63,8 @@ The fix for (1) is to use 64-bit shifting when appropriate
 The fix for (2) is to explicitly cast the variables used in the
 comparison.
 
-v5:
- * rebase
- * use uint32_t instead of uint32, to better conform to DPDK standards
- * rename variable rqID to rq_id to better conform to DPDK standards
-   and avoid checkpatch warning
- * use 2U instead of (uint32)2, which is shorter
- * simplify expression in meson.build using compiler id "gcc"
-
-Andre Muezerie (1):
-  drivers/net: use 64-bit shift and avoid signed/unsigned mismatch
-
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
  drivers/net/intel/i40e/i40e_ethdev.c   | 22 +++++++++++-----------
  drivers/net/intel/iavf/iavf_ethdev.c   |  2 +-
  drivers/net/intel/iavf/iavf_rxtx.c     |  2 +-
@@ -83,6 +76,243 @@ Andre Muezerie (1):
  drivers/net/intel/ixgbe/ixgbe_ethdev.c |  2 +-
  9 files changed, 32 insertions(+), 25 deletions(-)
 
---
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index bf5560ccc8..7a962c239d 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -3094,7 +3094,7 @@ i40e_stat_update_48_in_64(struct i40e_hw *hw, uint32_t hireg,
+ 	/* enlarge the limitation when statistics counters overflowed */
+ 	if (offset_loaded) {
+ 		if (I40E_RXTX_BYTES_L_48_BIT(*prev_stat) > *stat)
+-			*stat += (uint64_t)1 << I40E_48_BIT_WIDTH;
++			*stat += RTE_BIT64(I40E_48_BIT_WIDTH);
+ 		*stat += I40E_RXTX_BYTES_H_16_BIT(*prev_stat);
+ 	}
+ 	*prev_stat = *stat;
+@@ -4494,7 +4494,7 @@ i40e_macaddr_remove(struct rte_eth_dev *dev, uint32_t index)
+ 	pool_sel = dev->data->mac_pool_sel[index];
+ 
+ 	for (i = 0; i < sizeof(pool_sel) * CHAR_BIT; i++) {
+-		if (pool_sel & (1ULL << i)) {
++		if (pool_sel & RTE_BIT64(i)) {
+ 			if (i == 0)
+ 				vsi = pf->main_vsi;
+ 			else {
+@@ -4630,7 +4630,7 @@ i40e_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+ 		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+-		if (reta_conf[idx].mask & (1ULL << shift))
++		if (reta_conf[idx].mask & RTE_BIT64(shift))
+ 			lut[i] = reta_conf[idx].reta[shift];
+ 	}
+ 	ret = i40e_set_rss_lut(pf->main_vsi, lut, reta_size);
+@@ -4674,7 +4674,7 @@ i40e_dev_rss_reta_query(struct rte_eth_dev *dev,
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+ 		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+-		if (reta_conf[idx].mask & (1ULL << shift))
++		if (reta_conf[idx].mask & RTE_BIT64(shift))
+ 			reta_conf[idx].reta[shift] = lut[i];
+ 	}
+ 
+@@ -6712,7 +6712,7 @@ i40e_vmdq_setup(struct rte_eth_dev *dev)
+ 	loop = sizeof(vmdq_conf->pool_map[0].pools) * CHAR_BIT;
+ 	for (i = 0; i < vmdq_conf->nb_pool_maps; i++) {
+ 		for (j = 0; j < loop && j < pf->nb_cfg_vmdq_vsi; j++) {
+-			if (vmdq_conf->pool_map[i].pools & (1UL << j)) {
++			if (vmdq_conf->pool_map[i].pools & RTE_BIT64(j)) {
+ 				PMD_INIT_LOG(INFO, "Add vlan %u to vmdq pool %u",
+ 					vmdq_conf->pool_map[i].vlan_id, j);
+ 
+@@ -6761,7 +6761,7 @@ i40e_stat_update_32(struct i40e_hw *hw,
+ 		*stat = (uint64_t)(new_data - *offset);
+ 	else
+ 		*stat = (uint64_t)((new_data +
+-			((uint64_t)1 << I40E_32_BIT_WIDTH)) - *offset);
++			RTE_BIT64(I40E_32_BIT_WIDTH)) - *offset);
+ }
+ 
+ static void
+@@ -6789,7 +6789,7 @@ i40e_stat_update_48(struct i40e_hw *hw,
+ 		*stat = new_data - *offset;
+ 	else
+ 		*stat = (uint64_t)((new_data +
+-			((uint64_t)1 << I40E_48_BIT_WIDTH)) - *offset);
++			RTE_BIT64(I40E_48_BIT_WIDTH)) - *offset);
+ 
+ 	*stat &= I40E_48_BIT_MASK;
+ }
+@@ -7730,7 +7730,7 @@ i40e_config_hena(const struct i40e_adapter *adapter, uint64_t flags)
+ 		return hena;
+ 
+ 	for (i = RTE_ETH_FLOW_UNKNOWN + 1; i < I40E_FLOW_TYPE_MAX; i++) {
+-		if (flags & (1ULL << i))
++		if (flags & RTE_BIT64(i))
+ 			hena |= adapter->pctypes_tbl[i];
+ 	}
+ 
+@@ -7749,7 +7749,7 @@ i40e_parse_hena(const struct i40e_adapter *adapter, uint64_t flags)
+ 
+ 	for (i = RTE_ETH_FLOW_UNKNOWN + 1; i < I40E_FLOW_TYPE_MAX; i++) {
+ 		if (flags & adapter->pctypes_tbl[i])
+-			rss_hf |= (1ULL << i);
++			rss_hf |= RTE_BIT64(i);
+ 	}
+ 	return rss_hf;
+ }
+@@ -10162,7 +10162,7 @@ i40e_flowtype_to_pctype(const struct i40e_adapter *adapter, uint16_t flow_type)
+ 	if (flow_type < I40E_FLOW_TYPE_MAX) {
+ 		pctype_mask = adapter->pctypes_tbl[flow_type];
+ 		for (i = I40E_FILTER_PCTYPE_MAX - 1; i > 0; i--) {
+-			if (pctype_mask & (1ULL << i))
++			if (pctype_mask & RTE_BIT64(i))
+ 				return (enum i40e_filter_pctype)i;
+ 		}
+ 	}
+@@ -10174,7 +10174,7 @@ i40e_pctype_to_flowtype(const struct i40e_adapter *adapter,
+ 			enum i40e_filter_pctype pctype)
+ {
+ 	uint16_t flowtype;
+-	uint64_t pctype_mask = 1ULL << pctype;
++	uint64_t pctype_mask = RTE_BIT64(pctype);
+ 
+ 	for (flowtype = RTE_ETH_FLOW_UNKNOWN + 1; flowtype < I40E_FLOW_TYPE_MAX;
+ 	     flowtype++) {
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 328c224c93..9cd2b0c867 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -2485,7 +2485,7 @@ iavf_init_proto_xtr(struct rte_eth_dev *dev)
+ 		if (!xtr_ol->required)
+ 			continue;
+ 
+-		if (!(vf->supported_rxdid & BIT(rxdid))) {
++		if (!(vf->supported_rxdid & RTE_BIT64(rxdid))) {
+ 			PMD_DRV_LOG(ERR,
+ 				    "rxdid[%u] is not supported in hardware",
+ 				    rxdid);
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index c48c98e5e6..657963750d 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3871,7 +3871,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 			PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d] is legacy, "
+ 				"set rx_pkt_burst as legacy for all queues", rxq->rxdid, i);
+ 			use_flex = false;
+-		} else if (!(vf->supported_rxdid & BIT(rxq->rxdid))) {
++		} else if (!(vf->supported_rxdid & RTE_BIT64(rxq->rxdid))) {
+ 			PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d] is not supported, "
+ 				"set rx_pkt_burst as legacy for all queues", rxq->rxdid, i);
+ 			use_flex = false;
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index c74466735d..6feca8435e 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -1263,7 +1263,7 @@ iavf_configure_queues(struct iavf_adapter *adapter,
+ #ifndef RTE_LIBRTE_IAVF_16BYTE_RX_DESC
+ 		if (vf->vf_res->vf_cap_flags &
+ 		    VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC) {
+-			if (vf->supported_rxdid & BIT(rxq[i]->rxdid)) {
++			if (vf->supported_rxdid & RTE_BIT64(rxq[i]->rxdid)) {
+ 				vc_qp->rxq.rxdid = rxq[i]->rxdid;
+ 				PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d]",
+ 					    vc_qp->rxq.rxdid, i);
+diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/ice/base/meson.build
+index addb922ac9..59202df661 100644
+--- a/drivers/net/intel/ice/base/meson.build
++++ b/drivers/net/intel/ice/base/meson.build
+@@ -31,18 +31,25 @@ sources = [
+         'ice_vf_mbx.c',
+ ]
+ 
+-error_cflags = [
+-        '-Wno-unused-but-set-variable',
+-        '-Wno-unused-variable',
+-        '-Wno-unused-parameter',
+-]
++if is_ms_compiler
++    error_cflags = [
++            '/wd4101', # unreferenced local variable
++            '/wd4334', # result of 32-bit shift implicitly converted to 64 bits
++    ]
++else
++    error_cflags = [
++            '-Wno-unused-but-set-variable',
++            '-Wno-unused-variable',
++            '-Wno-unused-parameter',
++    ]
++endif
+ 
+ # Bugzilla ID: 678
+ if (toolchain == 'gcc' and cc.version().version_compare('>=11.0.0'))
+     error_cflags += ['-Wno-array-bounds']
+ endif
+ 
+-if is_windows and cc.get_id() != 'clang'
++if is_windows and cc.get_id() == 'gcc'
+     cflags += ['-fno-asynchronous-unwind-tables']
+ endif
+ 
+diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
+index 7967c35533..2832d223d1 100644
+--- a/drivers/net/intel/ice/ice_dcf_sched.c
++++ b/drivers/net/intel/ice/ice_dcf_sched.c
+@@ -174,7 +174,7 @@ ice_dcf_node_param_check(struct ice_dcf_hw *hw, uint32_t node_id,
+ 	}
+ 
+ 	/* for non-leaf node */
+-	if (node_id >= 8 * hw->num_vfs) {
++	if (node_id >= (uint32_t)(8 * hw->num_vfs)) {
+ 		if (params->nonleaf.wfq_weight_mode) {
+ 			error->type =
+ 				RTE_TM_ERROR_TYPE_NODE_PARAMS_WFQ_WEIGHT_MODE;
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 80eee03204..6f6f618a2f 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -2469,13 +2469,13 @@ ice_get_supported_rxdid(struct ice_hw *hw)
+ 	uint32_t regval;
+ 	int i;
+ 
+-	supported_rxdid |= BIT(ICE_RXDID_LEGACY_1);
++	supported_rxdid |= RTE_BIT64(ICE_RXDID_LEGACY_1);
+ 
+ 	for (i = ICE_RXDID_FLEX_NIC; i < ICE_FLEX_DESC_RXDID_MAX_NUM; i++) {
+ 		regval = ICE_READ_REG(hw, GLFLXP_RXDID_FLAGS(i, 0));
+ 		if ((regval >> GLFLXP_RXDID_FLAGS_FLEXIFLAG_4N_S)
+ 			& GLFLXP_RXDID_FLAGS_FLEXIFLAG_4N_M)
+-			supported_rxdid |= BIT(i);
++			supported_rxdid |= RTE_BIT64(i);
+ 	}
+ 	return supported_rxdid;
+ }
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 437cf0d807..40ac01e782 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -399,7 +399,7 @@ ice_program_hw_rx_queue(struct ice_rx_queue *rxq)
+ 	PMD_DRV_LOG(DEBUG, "Port (%u) - Rx queue (%u) is set with RXDID : %u",
+ 		    rxq->port_id, rxq->queue_id, rxdid);
+ 
+-	if (!(pf->supported_rxdid & BIT(rxdid))) {
++	if (!(pf->supported_rxdid & RTE_BIT64(rxdid))) {
+ 		PMD_DRV_LOG(ERR, "currently package doesn't support RXDID (%u)",
+ 			    rxdid);
+ 		return -EINVAL;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index c79ecd6eec..6cb25778cc 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -2722,7 +2722,7 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
+ 					ixgbe_set_vf_rate_limit(
+ 						dev, vf,
+ 						vfinfo[vf].tx_rate[idx],
+-						1 << idx);
++						RTE_BIT64(idx));
+ 	}
+ 
+ 	ixgbe_restore_statistics_mapping(dev);
+-- 
 2.47.2.vfs.0.1
 
