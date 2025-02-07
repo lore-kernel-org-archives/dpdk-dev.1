@@ -2,49 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AE6C02199
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EE7C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8197242E6F;
-	Fri,  7 Feb 2025 15:10:29 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A0A1B42E45;
+	Fri,  7 Feb 2025 15:11:03 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id C8AE842E59
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:10:27 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5CFB142DC1
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:11:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738937427;
+ s=mimecast20190719; t=1738937461;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=qPaOopRWZbX2vvqxv/PIYwlsSck6FSktylViVBx91Hk=;
- b=e3Gv3ZgdsFsBzIMcnzvVuDdIX243ZyARwTVbGukqzH/aPR42bHsn/9p1iU4gNMyYnQuKl0
- S9V3LfxBYuNXWsx0WqP9DwrlF/HeB4qGGOpd7XDL4TiT5iHr/XtPvPw5SJZkfkZvVAlTP0
- JKM/7TQhz+cUgd7t6oQTXASYugBwOQ0=
+ bh=ivbzsLcrKKc/ngpQaYxl6ESi7c8D26wqmEWVGR5agLw=;
+ b=UFPkODrurFSpNO0lkV6TIoNXv/LqqH0YcSeylS/Cr1Ogrtoipfv6bF7vbMSIyXQFKMUrg+
+ 7sCme2Q8W14SzS92RAbj3LMsxETCwKHKxNfYXP+DKOP9RBklC4h0ah4fjvujl0sUEUFjWs
+ n3lZJgZk4oCkyBvO8h/NV3ASTqiwIas=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-152-FgcmjUXbMrOObD2q14Fuug-1; Fri,
- 07 Feb 2025 09:10:25 -0500
-X-MC-Unique: FgcmjUXbMrOObD2q14Fuug-1
-X-Mimecast-MFC-AGG-ID: FgcmjUXbMrOObD2q14Fuug
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-552-ct7ROTsEPJmSODxzfuPdaQ-1; Fri,
+ 07 Feb 2025 09:10:58 -0500
+X-MC-Unique: ct7ROTsEPJmSODxzfuPdaQ-1
+X-Mimecast-MFC-AGG-ID: ct7ROTsEPJmSODxzfuPdaQ
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CBAFA1801A1B; Fri,  7 Feb 2025 14:10:24 +0000 (UTC)
+ id 098CE1800871; Fri,  7 Feb 2025 14:10:57 +0000 (UTC)
 Received: from [10.45.242.29] (unknown [10.45.242.29])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 680131800570; Fri,  7 Feb 2025 14:10:20 +0000 (UTC)
-Message-ID: <af7cca5f-2797-4f1c-8af2-7974d698ea84@redhat.com>
-Date: Fri, 7 Feb 2025 15:10:17 +0100
+ id C7F7E1800360; Fri,  7 Feb 2025 14:10:53 +0000 (UTC)
+Message-ID: <c0459ff0-d7e9-4844-8053-932a873bd909@redhat.com>
+Date: Fri, 7 Feb 2025 15:10:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/vhost: improve devargs documentation
-To: dev@dpdk.org, chenbox@nvidia.com, david.marchand@redhat.com
-References: <20241220145802.3851767-1-maxime.coquelin@redhat.com>
+Subject: Re: [v3] vhost: include AKCIPHER algorithms in crypto_config
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
+ Akhil Goyal <gakhil@marvell.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>
+Cc: jerinj@marvell.com, anoobj@marvell.com
+References: <20241119084145.1047-1-gmuthukrishn@marvell.com>
+ <20250107182551.2141-1-gmuthukrishn@marvell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -89,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20241220145802.3851767-1-maxime.coquelin@redhat.com>
+In-Reply-To: <20250107182551.2141-1-gmuthukrishn@marvell.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2Fu1-trTlJtPTF1jOq0GQ9txmFQoSNZwu9ps4hDMLBw_1738937425
+X-Mimecast-MFC-PROC-ID: fLOrUuNewcanPF4gfQFyqbfuujkR8ZOEYYCaDy78HVo_1738937457
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -112,43 +116,32 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 12/20/24 3:58 PM, Maxime Coquelin wrote:
-> This patch adds missing 'client' devarg documentation and
-> improve other devargs.
+On 1/7/25 7:25 PM, Gowrishankar Muthukrishnan wrote:
+> Update virtio_crypto_config structure to include AKCIPHER algorithms,
+> as per VirtIO standard.
 > 
-> Bugzilla ID: 1603
-> 
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+> Acked-by: Akhil Goyal <gakhil@marvell.com>
 > ---
->   doc/guides/nics/vhost.rst | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
+> v3:
+>   - rebased on main.
 > 
-> diff --git a/doc/guides/nics/vhost.rst b/doc/guides/nics/vhost.rst
-> index 39c6fcff58..0013dc526f 100644
-> --- a/doc/guides/nics/vhost.rst
-> +++ b/doc/guides/nics/vhost.rst
-> @@ -32,13 +32,18 @@ The user can specify below arguments in `--vdev` option.
->   
->   #.  ``iface``:
->   
-> -    It is used to specify a path to connect to a QEMU virtio-net device.
-> +    It is used to specify a path to connect to a Vhost-user frontend or VDUSE device.
->   
->   #.  ``queues``:
->   
-> -    It is used to specify the number of queues virtio-net device has.
-> +    It is used to specify the number of queue pairs virtio-net device has.
->       (Default: 1)
->   
-> +#.  ``client``:
-> +
-> +   It is used to specify whether the Vhost PMD acts as client or server.
-> +   (Default: 0 (server))
-> +
->   #.  ``iommu-support``:
->   
->       It is used to enable iommu support in vhost library.
-
+>   lib/vhost/virtio_crypto.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/vhost/virtio_crypto.h b/lib/vhost/virtio_crypto.h
+> index e3b93573c8..28877a5da3 100644
+> --- a/lib/vhost/virtio_crypto.h
+> +++ b/lib/vhost/virtio_crypto.h
+> @@ -410,7 +410,7 @@ struct virtio_crypto_config {
+>   	uint32_t max_cipher_key_len;
+>   	/* Maximum length of authenticated key */
+>   	uint32_t max_auth_key_len;
+> -	uint32_t reserve;
+> +	uint32_t akcipher_algo;
+>   	/* Maximum size of each crypto request's content */
+>   	uint64_t max_size;
+>   };
 Applied to next-virtio/for-next-net.
 
 Thanks,
