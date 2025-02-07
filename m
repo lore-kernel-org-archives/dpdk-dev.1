@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF84C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC97C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:12:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A5F942E50;
-	Fri,  7 Feb 2025 15:11:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D25242E24;
+	Fri,  7 Feb 2025 15:12:34 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id A652742E50
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:11:53 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D492042DC1
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:12:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738937513;
+ s=mimecast20190719; t=1738937552;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=wGMuBY35pjwz6LnH0ilEmO5/lx6gdNiGu4bqLyczh7s=;
- b=JCzXKxw2PXVY9OqihFXAJqbFNPcqGkx88NgJXseL/sBO/EDizwtqMP21DEvQhhF9lj1xzH
- /QWslKUVyoLcQ2BlpXBaglT8s9eJLo8SmeRIF6v8NUEaB7oYHWCtoPu9F4Tl2DpKwNkScC
- zLGcfkqFM7o9AdAuHzay/sReNR9AK9k=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=cWk0iLon3I3sP3RVzc02Xo1qt++KmsH83aagtHzLxlA=;
+ b=flk0yAqErshup2awepE3bLy/BEVBkEok9M1IfhRddbCkHaFGxhRZR5vdZ53A6gvtaTThti
+ Q+u5WyCYJUiuTUQ+oCiToynSOlkCDzWoU+NIB5Xr6SHH5yIWBK1GFdavtUjcSly7SLO501
+ c8gCyqR2i0SjlfRL6DZ8ZNgJ5+iPEwI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-GpJhm5l9PpicLC1oOiWhzQ-1; Fri,
- 07 Feb 2025 09:11:50 -0500
-X-MC-Unique: GpJhm5l9PpicLC1oOiWhzQ-1
-X-Mimecast-MFC-AGG-ID: GpJhm5l9PpicLC1oOiWhzQ
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-mZARhSXSPvy1WosMCLO5UQ-1; Fri,
+ 07 Feb 2025 09:12:28 -0500
+X-MC-Unique: mZARhSXSPvy1WosMCLO5UQ-1
+X-Mimecast-MFC-AGG-ID: mZARhSXSPvy1WosMCLO5UQ
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5A3491800874; Fri,  7 Feb 2025 14:11:49 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 400DF1956095; Fri,  7 Feb 2025 14:12:27 +0000 (UTC)
 Received: from [10.45.242.29] (unknown [10.45.242.29])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 34A161800352; Fri,  7 Feb 2025 14:11:47 +0000 (UTC)
-Message-ID: <d471422d-0e9c-476c-bd06-5e88fb3dc8e2@redhat.com>
-Date: Fri, 7 Feb 2025 15:11:45 +0100
+ id 588D91800352; Fri,  7 Feb 2025 14:12:25 +0000 (UTC)
+Message-ID: <78d8dee1-7d77-4d95-948b-64da11e64ada@redhat.com>
+Date: Fri, 7 Feb 2025 15:12:22 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] vhost: add NULL callback checks
-To: Kevin Traynor <ktraynor@redhat.com>, dev@dpdk.org
-Cc: stable@dpdk.org
-References: <20250124141408.419674-1-ktraynor@redhat.com>
- <20250124141408.419674-2-ktraynor@redhat.com>
+Subject: Re: [PATCH] vhost: fix VDUSE devices registration
+To: dev@dpdk.org, otilibil@eurecom.fr, david.marchand@redhat.com,
+ chenbox@nvidia.com
+References: <20250131130957.293562-1-maxime.coquelin@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250124141408.419674-2-ktraynor@redhat.com>
+In-Reply-To: <20250131130957.293562-1-maxime.coquelin@redhat.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nl-v2EQY3Ai29O3odD4j0hcNMz0Jh7mhRYGbGMzYcX8_1738937509
+X-Mimecast-MFC-PROC-ID: E8W8Sc_5NRuGsQDXpeprPJ-rHKKr72KENZomHH8Gdoo_1738937547
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -114,25 +113,23 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 1/24/25 3:14 PM, Kevin Traynor wrote:
-> rte_vhost_driver_callback_register() does not specify
-> any mandatory callbacks in struct rte_vhost_device_ops.
+On 1/31/25 2:09 PM, Maxime Coquelin wrote:
+> This patch fixes a regression in vhost_driver_register()
+> causing VDUSE devices registration to fail systematically
+> because the return value was initialized to -1 and not
+> changed later on for this type of devices.
 > 
-> Add some missing NULL checks before calling rte_vhost_device_ops
-> callbacks.
+> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
 > 
-> Fixes: 4796ad63ba1f ("examples/vhost: import userspace vhost application")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 > ---
->   lib/vhost/vduse.c      | 3 ++-
->   lib/vhost/vhost.c      | 5 +++--
->   lib/vhost/vhost_user.c | 3 ++-
->   3 files changed, 7 insertions(+), 4 deletions(-
+>   lib/vhost/socket.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+> 
 
 Applied to next-virtio/for-next-net.
 
 Thanks,
 Maxime
+
 
