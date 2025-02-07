@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223EDC02199
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3C2C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D74442E88;
-	Fri,  7 Feb 2025 13:46:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1793442E37;
+	Fri,  7 Feb 2025 13:46:21 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 30E7E42E85
- for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 85A4842E89
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738932376; x=1770468376;
+ t=1738932377; x=1770468377;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=XmFnNEHA/AMXRYF8E3bpNsIpmp/EtzpYJJmUtDB9dwE=;
- b=DrkTRoUg72eKa79DQ69n2wT2/2x80vFSM+bKPgouNC+9T+n7m9vE8Wzd
- JRZR7AaHLsYMJc0NldT3X4PinsMysdfRnmFvUEIw/fC0iPj03sBJba2bA
- ZrnBtDU5BuAYAdBKtx4ULmqMr0R7U8xy6mpV5AG91/4FiF3i5Dt2MQxJr
- fgme9hFGZoG3moO0uHydAdqSoKEIOO8GQQ/FBFu33tV2YnvrHdk8ha76p
- A0FZ4vuldJ/fXrnleV9/Qsh7xQIfDNYQLhokXUL9lSQR3y+SW7Mt0GPar
- CD9O1J5z/ZFDt1TfbHvaC6B3B/hfgPf0aOFktx77+zn4pj0P/gtXTIB7W w==;
-X-CSE-ConnectionGUID: L6xEKOKCTBW5jFUR5h77lA==
-X-CSE-MsgGUID: qqERlfa2SiihIBvAGNoFpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331844"
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331844"
+ bh=vTh8zCRtYCL8Kexp2vUMcirUrRc0ZKRa3s5vnw2FGTE=;
+ b=GYaSbP0hEpR4Ii+IQSOkMKx/YcaDIl+X+/ptFbBgxLOfQpQN6kBP5Fst
+ /2cdBbf1oPUDL8BPAJuXvK2s+YndwHF4YA3Zt3kIU+R+ID276eF/QjgKT
+ XYKrT+hxc/txPCJHVHVcec0ClOoXSNyjpIT3IyFLRuL2n1iqo02ttgxu/
+ EdxMSp9BTN99ZFqLb3BQqDeJAEt3+wZMDNr+6vbgf90YuD+fCNFPgJ8wY
+ 8Wp2m9EK0/8RrGyKcOHYjp4Udg8/vC/sNaP9IDJOfG8MYQWNjBVmjnPRD
+ RpfhM2/h8VCPCDiJS4iRxeuX2+oDTIE9AqYAd62w3w+PEDq+/bw9coFXh A==;
+X-CSE-ConnectionGUID: Qex823srSYCL+n0RizUVPQ==
+X-CSE-MsgGUID: pIBJEobXRyqPwHoOtiAh9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331845"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331845"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2025 04:46:15 -0800
-X-CSE-ConnectionGUID: TVG3Ae35R4KIJ+0NkCjm0A==
-X-CSE-MsgGUID: /gaXNfx5T6Wqtst0Wyd7Lw==
+ 07 Feb 2025 04:46:17 -0800
+X-CSE-ConnectionGUID: vJPOqiaCTyOvMOsxCRfbMQ==
+X-CSE-MsgGUID: xczOPbm3R0yLW3ccyGHybw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953672"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953683"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:14 -0800
+ by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:15 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v3 18/36] net/e1000/base: workaround for packet loss
-Date: Fri,  7 Feb 2025 12:45:10 +0000
-Message-ID: <918bc29a0486b5136fc9bb86800d61ffa88706f3.1738932115.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 19/36] net/e1000/base: add EEE common API function
+Date: Fri,  7 Feb 2025 12:45:11 +0000
+Message-ID: <bbfc7d535e1615ab67469b5832c4a5bdb0183aa9.1738932115.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738932113.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -59,56 +59,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nir Efrati <nir.efrati@intel.com>
+From: Evgeny Efimov <evgeny.efimov@intel.com>
 
-On some MAC types, packet loss is observed due to wake DMA clock gating.
-Disable wake DMA clock for some MAC types to avoid packet loss.
+Add enable/disable EEE API to base code.
 
-Signed-off-by: Nir Efrati <nir.efrati@intel.com>
+Signed-off-by: Evgeny Efimov <evgeny.efimov@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_ich8lan.c | 7 +++++++
- drivers/net/intel/e1000/base/e1000_ich8lan.h | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_api.c  | 17 +++++++++++++++++
+ drivers/net/intel/e1000/base/e1000_api.h  |  1 +
+ drivers/net/intel/e1000/base/e1000_hw.h   |  1 +
+ drivers/net/intel/e1000/base/e1000_i225.c |  2 ++
+ 4 files changed, 21 insertions(+)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-index 18e193861e..927126b3ab 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-@@ -5050,6 +5050,7 @@ STATIC s32 e1000_init_hw_ich8lan(struct e1000_hw *hw)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	u32 ctrl_ext, txdctl, snoop;
-+	u32 mac_reg;
- 	s32 ret_val;
- 	u16 i;
+diff --git a/drivers/net/intel/e1000/base/e1000_api.c b/drivers/net/intel/e1000/base/e1000_api.c
+index 0d55f1b761..e51e887f01 100644
+--- a/drivers/net/intel/e1000/base/e1000_api.c
++++ b/drivers/net/intel/e1000/base/e1000_api.c
+@@ -1420,3 +1420,20 @@ void e1000_shutdown_fiber_serdes_link(struct e1000_hw *hw)
+ 	if (hw->mac.ops.shutdown_serdes)
+ 		hw->mac.ops.shutdown_serdes(hw);
+ }
++
++/**
++ *  e1000_set_eee - Set EEE
++ *  @hw: pointer to the HW structure
++ *  @adv2p5G: boolean flag enabling 2.5G EEE advertisement
++ *  @adv1G: boolean flag enabling 1G EEE advertisement
++ *  @adv100M: boolean flag enabling 100M EEE advertisement
++ *
++ *  Enable/disable EEE based on setting in dev_spec structure.
++ **/
++s32 e1000_set_eee(struct e1000_hw *hw, bool adv2p5G, bool adv1G, bool adv100M)
++{
++	if (hw->mac.ops.set_eee)
++		return hw->mac.ops.set_eee(hw, adv2p5G, adv1G, adv100M);
++
++	return -E1000_ERR_CONFIG;
++}
+diff --git a/drivers/net/intel/e1000/base/e1000_api.h b/drivers/net/intel/e1000/base/e1000_api.h
+index 2466c2fd48..591a3ddc3f 100644
+--- a/drivers/net/intel/e1000/base/e1000_api.h
++++ b/drivers/net/intel/e1000/base/e1000_api.h
+@@ -88,6 +88,7 @@ s32 e1000_mng_write_cmd_header(struct e1000_hw *hw,
+ 			       struct e1000_host_mng_command_header *hdr);
+ s32 e1000_mng_write_dhcp_info(struct e1000_hw *hw, u8 *buffer, u16 length);
+ u32  e1000_translate_register_82542(u32 reg);
++s32 e1000_set_eee(struct e1000_hw *hw, bool adv2p5G, bool adv1G, bool adv100M);
  
-@@ -5110,6 +5111,12 @@ STATIC s32 e1000_init_hw_ich8lan(struct e1000_hw *hw)
- 		snoop = (u32) ~(PCIE_NO_SNOOP_ALL);
- 	e1000_set_pcie_no_snoop_generic(hw, snoop);
  
-+	/* Enable workaround for packet loss issue on TGL/ADL platforms */
-+	if (mac->type == e1000_pch_tgp || mac->type == e1000_pch_adp) {
-+		mac_reg = E1000_READ_REG(hw, E1000_FFLT_DBG);
-+		mac_reg |= E1000_FFLT_DBG_DONT_GATE_WAKE_DMA_CLK;
-+		E1000_WRITE_REG(hw, E1000_FFLT_DBG, mac_reg);
-+	}
- 	ctrl_ext = E1000_READ_REG(hw, E1000_CTRL_EXT);
- 	ctrl_ext |= E1000_CTRL_EXT_RO_DIS;
- 	E1000_WRITE_REG(hw, E1000_CTRL_EXT, ctrl_ext);
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.h b/drivers/net/intel/e1000/base/e1000_ich8lan.h
-index e456e5132e..4780417bae 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.h
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.h
-@@ -277,7 +277,7 @@
- #define E1000_PCH_RAICC(_n)	(0x05F50 + ((_n) * 4))
  
- #define E1000_PCI_VENDOR_ID_REGISTER	0x00
--
-+#define E1000_FFLT_DBG_DONT_GATE_WAKE_DMA_CLK 0x1000
- #define E1000_PCI_REVISION_ID_REG	0x08
- void e1000_set_kmrn_lock_loss_workaround_ich8lan(struct e1000_hw *hw,
- 						 bool state);
+diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
+index a1fb94b63c..b3af96977c 100644
+--- a/drivers/net/intel/e1000/base/e1000_hw.h
++++ b/drivers/net/intel/e1000/base/e1000_hw.h
+@@ -748,6 +748,7 @@ struct e1000_mac_operations {
+ 	void (*update_mc_addr_list)(struct e1000_hw *, u8 *, u32);
+ 	s32  (*reset_hw)(struct e1000_hw *);
+ 	s32  (*init_hw)(struct e1000_hw *);
++	s32  (*set_eee)(struct e1000_hw *, bool, bool, bool);
+ 	void (*shutdown_serdes)(struct e1000_hw *);
+ 	void (*power_up_serdes)(struct e1000_hw *);
+ 	s32  (*setup_link)(struct e1000_hw *);
+diff --git a/drivers/net/intel/e1000/base/e1000_i225.c b/drivers/net/intel/e1000/base/e1000_i225.c
+index 490165acf0..4d3d65a6ef 100644
+--- a/drivers/net/intel/e1000/base/e1000_i225.c
++++ b/drivers/net/intel/e1000/base/e1000_i225.c
+@@ -94,6 +94,8 @@ static s32 e1000_init_mac_params_i225(struct e1000_hw *hw)
+ 	mac->mta_reg_count = 128;
+ 	/* Set rar entry count */
+ 	mac->rar_entry_count = E1000_RAR_ENTRIES_BASE;
++	/* Set EEE */
++	mac->ops.set_eee = e1000_set_eee_i225;
+ 	/* bus type/speed/width */
+ 	mac->ops.get_bus_info = e1000_get_bus_info_pcie_generic;
+ 	/* reset */
 -- 
 2.43.5
 
