@@ -2,71 +2,133 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B73C0219B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 01:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7CAC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 02:31:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72B44402D5;
-	Fri,  7 Feb 2025 02:55:47 +0100 (CET)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 5684C402A7
- for <dev@dpdk.org>; Fri,  7 Feb 2025 02:55:46 +0100 (CET)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2166651f752so34287345ad.3
- for <dev@dpdk.org>; Thu, 06 Feb 2025 17:55:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738893345;
- x=1739498145; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ev/E+yP5pYU6W6Ve3/puPXlFqBsmz6GcRbn+tGuEyKQ=;
- b=Wb2jpg9Kn5cWt5yaXA8Q4xqdVuJoFlHci3tmV1US1WGr1tVRcTNO5wBckUEyK+qWog
- A3d/P44lMmR6r53NV5LR+frmnpr/3JXLUBhJvvyGDNhhGz/bNX81RMkWmjJi2cndyB4n
- q7kHyDPJkJA/PpQ6y1sZZyN9g8aXLcmX+huLxbg5dM1qOuLuuD+622pdhH8gslWfHmLn
- og4ISsTE6LdRV5D+m3Ey0wVZnX9V0mpnJACpoeq9Awd09GnRt+nMlljAZFfjU9UtyG3Z
- zmgH3IpnutM7pyeeU8/wP5LnuDj2kvgVaKo8T96Jd0lEtb0vvCg6EEctCjihwuMcrPJX
- savQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738893345; x=1739498145;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=ev/E+yP5pYU6W6Ve3/puPXlFqBsmz6GcRbn+tGuEyKQ=;
- b=FHMp20OHlHEXPAYuCnLGcJBB9aOkkngYJgRKbaivDYtP6wiHxReUy6WoYMgeDrFZTL
- M7Wy/zwAUvojDMg7eDULnXjDnTrRkKMUhLpfE1RN1mlFUWcgUodK5FbQ4M/Txkmzaw0Z
- 9fCLRMFJ4sbWb/uTZCmcgXokctn6DzZUKRTnLGMSwGzBnsobqqDJ83un/5XrgXHR2kke
- jqHjQ5Kyxj1xHvwrDFtH3J9dEoZQ5SUKPShL4z+NhqRVwYpfzJEe2A6kiR8indZWr42D
- 6FYpBSqQQrB2/4P5rcuJTyiPHlDPXdKdsaxOR9IAk7SrAPIy1+7dCs/YSMX9qvt7x1QZ
- D4PA==
-X-Gm-Message-State: AOJu0Yzh0Si9WGpFxT5thA97/Jl4LwB9D4wLzkLkC+gdF2LmvYjZttzs
- hnO6Nj0dj4g3BGtdKJa6NDJS4sDGa7o4TfvzHlhdo8pp8+WE5+qSO/6YZunGdqjP7aKZnDkw0CV
- 8
-X-Gm-Gg: ASbGnctQFlPL3mW15IKTxu8HevNf2m65638bYdcVtm6TbH/PkQUkmk3w7ZV7fL+HgMj
- pM4X0l0Kt8F6a3D8gkFgIZyQXn1Nj2Whj0MtJjwZhhomrPFKsdh49pSXDO7wq2me9B51heZ9geL
- 8eVIoY0Ppf+mSvsaa7jLVnw7xUsrIlbjZTcET6+zcK3cRz1+nXURlq0s6yLdBTEE0jl43cD+At5
- 3F91C2Ud2x9+BX7baMSJgsncA7mTER85tuMdsQcQxM5k9IBIKlpMOsE0ZIp4C7/RCENQzQYkze5
- lFELC9XmakzRaAfVyd5Q2HSMpI0llFH38w1ySLgXxn/rTx3/L8vigGib0hQ5J2Hu4qTN
-X-Google-Smtp-Source: AGHT+IG2TPMxbfgvI+ZZM6G+/RoZgnIxrHF3hXzyFnfTVySNshINrKV+eDLh3f5Ec1qNCKIyoEU6VQ==
-X-Received: by 2002:a17:902:ce86:b0:21f:13a6:d432 with SMTP id
- d9443c01a7336-21f4e6b8f1bmr25681655ad.14.1738893345288; 
- Thu, 06 Feb 2025 17:55:45 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f368b1493sm19305395ad.226.2025.02.06.17.55.44
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Feb 2025 17:55:45 -0800 (PST)
-Date: Thu, 6 Feb 2025 17:55:42 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [RFC PATCH 0/5] Using shared mempools for zero-copy IO proxying
-Message-ID: <20250206175542.044244b7@hermes.local>
-In-Reply-To: <20230922081912.7090-1-bruce.richardson@intel.com>
-References: <20230922081912.7090-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1E6D0402D5;
+	Fri,  7 Feb 2025 03:31:14 +0100 (CET)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
+ by mails.dpdk.org (Postfix) with ESMTP id CF332402A7;
+ Fri,  7 Feb 2025 03:31:12 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J1Ldo8ZtQNenSJkPQnzDBQqQslc8DAuk8C9roObg61pkKLmuG919jW3/epvxO+n/7Dy2PyLFkHwl1z3GghYHDiyYKPFfEFBnXtnRS8re5dW+6uAHj8Vy2yLlCMZSEItsUXAo52+Q94P901HXK5xpI6F7RYt/nJ8Yq9/XKvHVJPAqc3bJnaa39e1V3mn6yUba7gwSgYoDg5MH5LOwh/NNX48YxApehqJ/o9M3EekspI+d21pAW+5FmlVUHHBdihhSxkB2fTEFZvBC3udGnKxuukU5iiSK4OXSX3dinQbrekTXQa6tsqFXPv8qoBFMeruv/gtvfr6CQB/TsMiwZGwL8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SVTYHni+qSK9S5km5xM6PZxi2P1PHSeuys/poKVMEeI=;
+ b=Cv1P1l8qN54zEAu88Xp1u/OiUBgaTWAINrAE0Xb+Z43E3GORF66TE083EIxKsoikIgwKHZV5CtU+gHdUcc1LTzhtd/g4DjUWQRyn8IvWYck7+weSwF6NPP5yReObDtJudijPRv8CAadR133tdWYHZraJp/fbAzreKRQ0E8TEAc5xd5pIk+99DG+Hqjx44JnY4PHsuCFK7cgGlqdr1QhhQ0WuLqFf/N06uFVFxkNIcLgm7ZCABP+m4Pdzr3aLk+S76yuFQm88r8Cr/2IlFH6ZsJEIf3Y0G/vyrjc5i//GnnbcfkO9moB3ewvwsK/FAdGwdjrnuIfBn6GzCSayJCVI3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SVTYHni+qSK9S5km5xM6PZxi2P1PHSeuys/poKVMEeI=;
+ b=gFgOM2udZiltRx/EHHwCBfaNgcDT9LOxQKhwAics3gg2BvPKzeZSm9ryW43+KXKfZDpPLZn0bhU8doorinLjOtG3JitgdZ1SVUNaOvXTyN4Q6pj/6ocTWThhWK+dBBp9fryd6R536xq1YXzFUyIYwjgsi+YXLsQ3qtz2YCiJDIsbYl10d50VpPE9rOHuFjbioNZKu7FaTNNd9vgYFSj9cYxdHGthO/dRV7YQbNA330QfWuRwTmfflY0oshIpLJ9QNgFjmu+/gRnYRq7HvrDQGMtgDrVihR13qA2sgaF+yOUCi+RJHKl0ZrQvERefZegci6cPSX3sriG87OEKesIE4Q==
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com (2603:10b6:208:3c9::19)
+ by PH8PR12MB7255.namprd12.prod.outlook.com (2603:10b6:510:224::22)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.23; Fri, 7 Feb
+ 2025 02:31:10 +0000
+Received: from MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8]) by MN0PR12MB6103.namprd12.prod.outlook.com
+ ([fe80::3c6c:6f63:917e:98d8%4]) with mapi id 15.20.8422.012; Fri, 7 Feb 2025
+ 02:31:10 +0000
+From: Chenbo Xia <chenbox@nvidia.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "david.marchand@redhat.com"
+ <david.marchand@redhat.com>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH] vhost: fix FD entries cleanup
+Thread-Topic: [PATCH] vhost: fix FD entries cleanup
+Thread-Index: AQHbeHMAHkLGy+KKfk6JDySnTNGBP7M7H7+A
+Date: Fri, 7 Feb 2025 02:31:09 +0000
+Message-ID: <343A31F4-DF95-48BB-8FA3-8BDBA1A2826D@nvidia.com>
+References: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
+In-Reply-To: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB6103:EE_|PH8PR12MB7255:EE_
+x-ms-office365-filtering-correlation-id: bda680f1-3a75-4e64-af76-08dd471f7b95
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?MMnLQCX9lCGRdDRldiFgY4VHJt2O34klNREvi5Bz/NXWw+epxONeMd2o09Dm?=
+ =?us-ascii?Q?8KEvRlfO0ScoBtLyJGGk1jjCAPL/ji2fQwUO8O8orvjiuZ+vhWZNUKMuWYkh?=
+ =?us-ascii?Q?OqIFJeMeylmqKMZoN5qbP2hZQvflP+HWziS6CspQBU/EXzwuLKFqoCG09mOK?=
+ =?us-ascii?Q?r0FMpGsjVBtFgj1O36tAXtWjh2E+LJNOgTFTXDBu5u2DLUyKQZWl0BIKMxay?=
+ =?us-ascii?Q?XgBIxGzNpRfPF6rj7TVd1QeLrqRV48mond5Wn3+N66J9q4x95l9m7vwpK3Tx?=
+ =?us-ascii?Q?duz4N3hk1CnHmcRWfC6urCHFqQ7b77VE/4yXymXPC+DoX33WSw7SgP6xuWGz?=
+ =?us-ascii?Q?fg5+dffw8MHyte3iOuH+wUGKPPqn8pXIeroyejoioWLnFLDuoGUzLJLyyIIS?=
+ =?us-ascii?Q?7cZ/jEl59YNGG1xKW+rqdmU42c+WkiAzVBk/mANqZSZo/UTi4pytDEH/g3+j?=
+ =?us-ascii?Q?MMoaBkoNgRfSyxx+z5mlTwHYryKZRHarCvhFY99sI1TakaminJQcyJ29bLpm?=
+ =?us-ascii?Q?AhcCgzwmgZLxL3TbUHGo4WN5seDb1a8gX30jZliziNjFfJ0Kj/C86wxcMb9f?=
+ =?us-ascii?Q?3/W6AVTFYkQ7J2wj7JhqX+GeGQZNUHmSGUnjxvAt9s2lZXfG919eyWzRLdrn?=
+ =?us-ascii?Q?qd3IY4DjGoV12giWTIr2suDa53TFOssvLBfo5lrXnHpKhK+iHqs0avYVbauo?=
+ =?us-ascii?Q?F80VXxnYNe0IrGSsG2bCa7m6z8/wKk5bvouLayalHHMamaNiz2xEU3tx0ECf?=
+ =?us-ascii?Q?xsFx52ROkSZm5z0r62hTjYzsAih0VxybmjV+Y9ZWVHKlkicGZnNcGD/W2GEU?=
+ =?us-ascii?Q?5crnFyOn5cCSlpHqxdwtKydi09f+0Rn6iZ77oz1MGuG0KPfqPSGBY+UThrEP?=
+ =?us-ascii?Q?NLMjDMXzz6Vt4sjewqAau0AukRYbfTvh4lJ56zzO8AWNtAFodVtKsrCk8vnw?=
+ =?us-ascii?Q?8N5h8T4hUX5G5euCMxmarLyQ/cs5B8tilzlWcWmQPIgOB2kJjrzVjyw0BiSC?=
+ =?us-ascii?Q?nEHidPzB2TivPG+xOrnicrK53kOmhTHXslzBfLl9xiA9xnW1yJ0rR/VU/E2L?=
+ =?us-ascii?Q?vlL1TGZLlRHMyJn/JT8zOeCx6rC34cWiGKdon89tVI5cXQGinzni/kBHufl0?=
+ =?us-ascii?Q?vd3MVsAr3StgX1Cefg2pjkvZT2EVE94d8fDoYb4XpnOQr6dYIxPmj8FCo1cg?=
+ =?us-ascii?Q?w40BEw8WRstDFYzD/oXkDEh99fT1vlfT8k4M9krCUwPSX60K+OM9kzgRfLMq?=
+ =?us-ascii?Q?9/x/0MAocjK647LeeScYAIxlOiSXf2XpF9SlaGG3yHi5j/nsgriKpgl569T+?=
+ =?us-ascii?Q?x2Tv8VqWurpux5Y2watnDbSAXg3YZj18FgM0F0jmFIhPjNRfffxiO6kj6c12?=
+ =?us-ascii?Q?U9Qqh/kVD3awWOKakzEF8uKwlkLHy/Hek8piAXvWNe6WEK/ufHyPBdAqibPe?=
+ =?us-ascii?Q?nH3ORwZZgAJzrmA2lUqrOvn1+uv6vg9B?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MN0PR12MB6103.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KcKhh317LeEHooU8c7dj6O6j+7+JhyFtZh+nLUXI+aMSsGHSE7Xmhw9vFQAe?=
+ =?us-ascii?Q?4e+PekDnVvHmkB9iqkzmO9VGRQ5b+ou17f9JZHuqF9Bsk65bmMcEkfeEEOi6?=
+ =?us-ascii?Q?frfets31lZrmTmwqcYgvsmWVJKpPbUuj2S8aJzVpE8RsOhyFWLMLxb64nP4k?=
+ =?us-ascii?Q?irhVdluxMqHlOBI2dsvGOK3RTbScgJhsn4rrGzhjLoQccT7B7fPxjsKfLwQ+?=
+ =?us-ascii?Q?BkAVQyHL2bhUw5DSRkWEj6uBsPnnK7VMAB7/qsRcsHbKQUlqnzZRKeddrEOQ?=
+ =?us-ascii?Q?zcEoWDdcMnk0h3kt60mqM0PeyIW8xtA2VT5CwUhD3IwF1k2R90OAXFS3rRXC?=
+ =?us-ascii?Q?TDk0OTGXvJ7Fj0wfzEFLbjjOs/C69hKpo+Rmu65fxAdIURoUVneffTt3Hj43?=
+ =?us-ascii?Q?ih82L9NUCXf0x6CZ9MBYOW2DXWI69WVdJ2JvucaFzlnqvFK7oGvzmgLIvJ3g?=
+ =?us-ascii?Q?TAkZyFmvpMyPPCpe9RNMYgIWZHnheFGRRJpw30Awwia7io23/FUMHo9896C/?=
+ =?us-ascii?Q?Rp/mkfi0uua//lbmLN3/HdvpFoAsySw+wa/FR0fyjDjC0V05WUAntZMA0OTd?=
+ =?us-ascii?Q?ZS/ASSY8f2tmyGIisfsjVkJud7OgbUUsx499J0GaGR1tWm2PsmruClOVIJQl?=
+ =?us-ascii?Q?0c6TfhD4ys9BvuI0UAjj8K/d1riT/IkjmK5snRcOieLQwae9pnrAMf0T3Ser?=
+ =?us-ascii?Q?rHTM4a1E42HWJgd2qT1PGQ85fCHPSoMN0mFGn3qg/QlTw2k8WvkbHEDcb1Om?=
+ =?us-ascii?Q?KjGiCYk416ic10dsNlbneg0892Zf/fiQtkbkWwVne+yQr8/b14T1+OLSiIhr?=
+ =?us-ascii?Q?rs8Xv5UdPV1DrdtvFm/DWMH/3ENlDkaRqpnd9QUCxYnqluLZAgcvfF2m75s0?=
+ =?us-ascii?Q?XBVjfdJHQ4YWnMM6xeDOoKXZUC/Lo1CXLckkpztxRkYoBIfFvKQsZZKRTQpR?=
+ =?us-ascii?Q?Fn2o3Aihi3vJow1IV6bU7PMjW49Y0hq3kq5gCP9EpSVMBvNfgpqx/t9EMbK6?=
+ =?us-ascii?Q?wpd9upoYgpvTCZ0uPI78xVKxaj3Y361tGa328Szao3laP9gBic4y1q16A9WP?=
+ =?us-ascii?Q?bLVy9RCY991wJ2wSWHt6ySNE61N+W7w9PGyMHD5+wrfFoNY0lczutJC9HxKM?=
+ =?us-ascii?Q?43vJ9zQfgcUqF6kpxfvjVbjSPfLFRmJDdIMDOuxJbLxBuZA9xhzXp9ysclAH?=
+ =?us-ascii?Q?8BRFpmNetmTLJexy7CYgZ7aZ402zKaWRD4aH0GeOl448vWrMzaLBM9d4+Mqd?=
+ =?us-ascii?Q?jBCdbes2/j+TXPVJmWCuCuNiSAGod72tXnLMPYs8//bvuH1gEAqJNYMuCufn?=
+ =?us-ascii?Q?YXv8vCMnx79XPpQhpVIExeSyYF7AncxMnKvDxGqUbYlTFUD6rjRac3YLEu59?=
+ =?us-ascii?Q?VwmdcWV90/YrVFn/zdtguVAFt02DoS6cX7LSJzdPzeJifZofneh3BALDPe33?=
+ =?us-ascii?Q?Das30RGnduBDu7X0kkM4BZPQo/hIGeANHcwgZAeEdfkzPryOOu3uyFyVo41G?=
+ =?us-ascii?Q?UKnE96G71WYxZGm76Cj/MYrMaxxbU2Q44aYc+UZlMBocmjoaHgsqSmxSvvbL?=
+ =?us-ascii?Q?aShLtYsOmZAicL6Ei3ZHalC0bb9VhBqH+Pj//WlMKCY8PGf5uAE5b5HpLJFY?=
+ =?us-ascii?Q?CA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <60389C5C7BA6EE44A2597FA67D200F2C@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6103.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bda680f1-3a75-4e64-af76-08dd471f7b95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2025 02:31:09.9117 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SjBZiWpVJeU5s6THnY2KNGe/psKNweF9ZtE8PCkpw451/gq67nXHZ6o8eifvaXGLzrhGr0Lw1GI0GuhOla7c/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7255
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,230 +142,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 22 Sep 2023 09:19:07 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-> Following my talk at the recent DPDK Summit [1], here is an RFC patchset
-> containing the prototypes I created which led to the talk.  This
-> patchset is simply to demonstrate:
-> 
-> * what is currently possible with DPDK in terms of zero-copy IPC
-> * where the big gaps, and general problem areas are
-> * what the performance is like doing zero-copy between processes
-> * how we may look to have new deployment models for DPDK apps.
-> 
-> This cover letter is quite long, as it covers how to run the demo app
-> and use the drivers included in this set. I felt it more accessible this
-> way than putting it in rst files in the patches. This patchset depends
-> upon patchsets [2] and [3]
-> 
-> [1] https://dpdksummit2023.sched.com/event/1P9wU
-> [2] http://patches.dpdk.org/project/dpdk/list/?series=29536
-> [3] http://patches.dpdk.org/project/dpdk/list/?series=29538
-> 
-> Overview
-> --------
-> 
-> The patchset contains at a high level the following parts: a proxy
-> application which performs packet IO and steers traffic on a per-queue
-> basis to other applications which connect to it via unix sockets, and a
-> set of drivers to be used by those applications so that they can
-> (hopefully) receive packets from the proxy app without any changes to
-> their own code. This all helps to demonstrate the feasibility of zero-
-> copy packet transfer between independent DPDK apps.
-> 
-> The drivers are:
-> * a bus driver, which makes the connection to the proxy app via
->   the unix socket. Thereafter it accepts the shared memory from the
->   proxy and maps it into the running process for use for buffers and
->   rings etc. It also handled communication with the proxy app on behalf
->   of the other two drivers
-> * a mempool driver, which simply manages a set of buffers on the basis
->   of offsets within the shared memory area rather than using pointers.
->   The big downside of its use is that it assumes all the objects stored
->   in the mempool are mbufs. (As described in my talk, this is a big
->   issue where I'm not sure we have a good solution available right now
->   to resolve it)
-> * an ethernet driver, which creates an rx and tx ring in shared memory
->   for use in communicating with the proxy app. All buffers sent/received
->   are converted to offsets within the shared memory area.
-> 
-> The proxy app itself implements all the other logic - mostly inside
-> datapath.c - to allow the connecting app to run. When an app connects to
-> the unix socket, the proxy app uses memfd to create a hugepage block to
-> be passed through to the "guest" app, and then sends/receives the
-> messages from the drivers until the app connection is up and running to
-> handle traffic. [Ideally, this IPC over unix socket mechanism should
-> probably be generalized into a library used by the app, but for now it's
-> just built-in]. As stated above, the steering of traffic is done
-> per-queue, that is, each app connects to a specific socket corresponding
-> to a NIC queue. For demo purposes, the traffic to the queues is just
-> distributed using RSS, but obviously it would be possible to use e.g.
-> rte_flow to do more interesting distribution in future.
-> 
-> Running the Apps
-> ----------------
-> 
-> To get things all working just do a DPDK build as normal. Then run the
-> io-proxy app. It only takes a single parameter of the core number to
-> use. For example, on my system I run it on lcore 25:
-> 
-> 	./build/app/dpdk-io-proxy 25
-> 
-> The sockets to be created and how they map to ports/queues is controlled
-> via commandline, but a startup script can be provided, which just needs
-> to be in the current directory and name "dpdk-io-proxy.cmds". Patch 5 of
-> this set contains an example setup that I use. Therefore it's
-> recommended that you run the proxy app from a directory containing that
-> file. If so, the proxy app will use two ports and create two queues on
-> each, mapping them to 4 unix socket files in /tmp. (Each socket is
-> created in its own directory to simplify use with docker containers as
-> described below in next section).
-> 
-> No traffic is handled by the app until other end-user apps connect to
-> it. Testpmd works as that second "guest" app without any changes to it.
-> To run multiple testpmd instances, each taking traffic from a unique RX
-> queue and forwarding it back, the following sequence of commands can be
-> used [in this case, doing forwarding on cores 26 through 29, and using
-> the 4 unix sockets configured using the startup file referenced above].
-> 
-> 	./build/app/dpdk-testpmd -l 24,26 --no-huge -m1 --no-shconf \
-> 		-a sock:/tmp/socket_0_0/sock  -- --forward-mode=macswap
-> 	./build/app/dpdk-testpmd -l 24,27 --no-huge -m1 --no-shconf \
-> 		-a sock:/tmp/socket_0_1/sock  -- --forward-mode=macswap
-> 	./build/app/dpdk-testpmd -l 24,28 --no-huge -m1 --no-shconf \
-> 		-a sock:/tmp/socket_1_0/sock  -- --forward-mode=macswap
-> 	./build/app/dpdk-testpmd -l 24,29 --no-huge -m1 --no-shconf \
-> 		-a sock:/tmp/socket_1_1/sock  -- --forward-mode=macswap
-> 
-> NOTE:
-> * the "--no-huge -m1" is present to guarantee that no regular DPDK
->   hugepage memory is being used by the app. It's all coming from the
->   proxy app's memfd
-> * the "--no-shconf" parameter is necessary just to avoid us needing to
->   specify a unix file-prefix for each instance
-> * the forwarding type to be used is optional, macswap is chosen just to
->   have some work done inside testpmd to prove it can touch the packet
->   payload, not just the mbuf header.
-> 
-> Using with docker containers
-> ----------------------------
-> 
-> The testpmd instances run above can also be run within a docker
-> container. Using a dockerfile like below we can run testpmd in a
-> container getting the packets in a zero-copy manner from the io-proxy
-> running on the host.
-> 
->    # syntax=docker/dockerfile:1-labs
->    FROM alpine
->    RUN apk add --update alpine-sdk \
->            py3-elftools meson ninja \
->            bsd-compat-headers \
->            linux-headers \
->            numactl-dev \
->            bash
->    ADD . dpdk
->    WORKDIR dpdk
->    RUN rm -rf build
->    RUN meson setup -Denable_drivers=*/shared_mem -Ddisable_libs=* \
->         -Denable_apps=test-pmd -Dtests=false build
->    RUN ninja -v -C build
->    ENTRYPOINT ["/dpdk/build/app/dpdk-testpmd"]
-> 
-> To access the proxy, all the container needs is access to the unix
-> socket on the filesystem. Since in the example startup script each
-> socket is placed in its own directory we can use "--volume" parameter to
-> give each instance it's own unique unix socket, and therefore proxied
-> NIC RX/TX queue. To run four testpmd instances as above, just in
-> containers the following commands can be used - assuming the dockerfile
-> above is built to an image called "testpmd".
-> 
-> 	docker run -it --volume=/tmp/socket_0_0:/run testpmd \
-> 		-l 24,26 --no-huge -a sock:/run/sock -- \
-> 		--no-mlockall --forward-mode=macswap
-> 	docker run -it --volume=/tmp/socket_0_1:/run testpmd \
-> 		-l 24,27 --no-huge -a sock:/run/sock -- \
-> 		--no-mlockall --forward-mode=macswap
-> 	docker run -it --volume=/tmp/socket_1_0:/run testpmd \
-> 		-l 24,28 --no-huge -a sock:/run/sock -- \
-> 		--no-mlockall --forward-mode=macswap
-> 	docker run -it --volume=/tmp/socket_1_1:/run testpmd \
-> 		-l 24,29 --no-huge -a sock:/run/sock -- \
-> 		--no-mlockall --forward-mode=macswap
-> 
-> NOTE: since these docker testpmd instances don't access IO or allocate
-> hugepages directly, they should be runable without extra privileges, so
-> long as they can connect to the unix socket.
-> 
-> Additional info
-> ---------------
-> 
-> * Stats are available via app commandline
-> * By default (#define in code), the proxy app only uses 2 queues per
->   port, so you can't configure more than that via cmdline
-> * Any ports used by the proxy script must support queue reconfiguration
->   at runtime without stopping the port.
-> * When a "guest" process connected to a socket terminates, all shared
->   memory used by that process is detroyed and a new memfd created on
->   reconnect.
-> * The above setups using testpmd are the only ways in which this app and
->   drivers have been tested. I would be hopeful that other apps would
->   work too, but there are quite a few limitations (see my DPDK summit
->   talk for some more details on those).
-> 
-> Congratulations on reading this far! :-)
-> All comments/feedback on this welcome.
-> 
-> Bruce Richardson (5):
->   bus: new driver to accept shared memory over unix socket
->   mempool: driver for mempools of mbufs on shared memory
->   net: new ethdev driver to communicate using shared mem
->   app: add IO proxy app using shared memory interfaces
->   app/io-proxy: add startup commands
-> 
->  app/io-proxy/command_fns.c                 | 160 ++++++
->  app/io-proxy/commands.list                 |   6 +
->  app/io-proxy/datapath.c                    | 595 +++++++++++++++++++++
->  app/io-proxy/datapath.h                    |  37 ++
->  app/io-proxy/datapath_mp.c                 |  78 +++
->  app/io-proxy/dpdk-io-proxy.cmds            |   6 +
->  app/io-proxy/main.c                        |  71 +++
->  app/io-proxy/meson.build                   |  12 +
->  app/meson.build                            |   1 +
->  drivers/bus/meson.build                    |   1 +
->  drivers/bus/shared_mem/meson.build         |  11 +
->  drivers/bus/shared_mem/shared_mem_bus.c    | 323 +++++++++++
->  drivers/bus/shared_mem/shared_mem_bus.h    |  75 +++
->  drivers/bus/shared_mem/version.map         |  11 +
->  drivers/mempool/meson.build                |   1 +
->  drivers/mempool/shared_mem/meson.build     |  10 +
->  drivers/mempool/shared_mem/shared_mem_mp.c |  94 ++++
->  drivers/net/meson.build                    |   1 +
->  drivers/net/shared_mem/meson.build         |  11 +
->  drivers/net/shared_mem/shared_mem_eth.c    | 295 ++++++++++
->  20 files changed, 1799 insertions(+)
->  create mode 100644 app/io-proxy/command_fns.c
->  create mode 100644 app/io-proxy/commands.list
->  create mode 100644 app/io-proxy/datapath.c
->  create mode 100644 app/io-proxy/datapath.h
->  create mode 100644 app/io-proxy/datapath_mp.c
->  create mode 100644 app/io-proxy/dpdk-io-proxy.cmds
->  create mode 100644 app/io-proxy/main.c
->  create mode 100644 app/io-proxy/meson.build
->  create mode 100644 drivers/bus/shared_mem/meson.build
->  create mode 100644 drivers/bus/shared_mem/shared_mem_bus.c
->  create mode 100644 drivers/bus/shared_mem/shared_mem_bus.h
->  create mode 100644 drivers/bus/shared_mem/version.map
->  create mode 100644 drivers/mempool/shared_mem/meson.build
->  create mode 100644 drivers/mempool/shared_mem/shared_mem_mp.c
->  create mode 100644 drivers/net/shared_mem/meson.build
->  create mode 100644 drivers/net/shared_mem/shared_mem_eth.c
-> 
+
+> On Feb 6, 2025, at 16:41, Maxime Coquelin <maxime.coquelin@redhat.com> wr=
+ote:
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> With the recent rework of the FD manager to use epoll,
+> an error message is emitted with Vhost-user at FD entry
+> removal:
+>=20
+> ERR|VHOST_FDMAN: could not remove 102 fd from 101 epfd: No such file or d=
+irectory
+>=20
+> It occurs because the read callback closes the file
+> descriptor before it is removed from the FD set.
+> This patch defers the close() after the FD entry is removed
+> from the set.
+>=20
+> Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> ---
+> lib/vhost/fd_man.c | 12 +++++++-----
+> lib/vhost/fd_man.h |  2 +-
+> lib/vhost/socket.c | 11 +++++------
+> lib/vhost/vduse.c  |  9 ++++-----
+> 4 files changed, 17 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+> index 9bc7e50b93..f9147edee7 100644
+> --- a/lib/vhost/fd_man.c
+> +++ b/lib/vhost/fd_man.c
+> @@ -333,7 +333,7 @@ fdset_event_dispatch(void *arg)
+>        fd_cb rcb, wcb;
+>        void *dat;
+>        int fd, numfds;
+> -       int remove1, remove2;
+> +       int close1, close2;
+>        struct fdset *pfdset =3D arg;
+>=20
+>        if (pfdset =3D=3D NULL)
+> @@ -357,7 +357,7 @@ fdset_event_dispatch(void *arg)
+>                                continue;
+>                        }
+>=20
+> -                       remove1 =3D remove2 =3D 0;
+> +                       close1 =3D close2 =3D 0;
+>=20
+>                        rcb =3D pfdentry->rcb;
+>                        wcb =3D pfdentry->wcb;
+> @@ -367,9 +367,9 @@ fdset_event_dispatch(void *arg)
+>                        pthread_mutex_unlock(&pfdset->fd_mutex);
+>=20
+>                        if (rcb && events[i].events & (EPOLLIN | EPOLLERR =
+| EPOLLHUP))
+> -                               rcb(fd, dat, &remove1);
+> +                               rcb(fd, dat, &close1);
+>                        if (wcb && events[i].events & (EPOLLOUT | EPOLLERR=
+ | EPOLLHUP))
+> -                               wcb(fd, dat, &remove2);
+> +                               wcb(fd, dat, &close2);
+>                        pfdentry->busy =3D 0;
+>                        /*
+>                         * fdset_del needs to check busy flag.
+> @@ -381,8 +381,10 @@ fdset_event_dispatch(void *arg)
+>                         * fdentry not to be busy, so we can't call
+>                         * fdset_del_locked().
+>                         */
+> -                       if (remove1 || remove2)
+> +                       if (close1 || close2) {
+>                                fdset_del(pfdset, fd);
+> +                               close(fd);
+> +                       }
+>                }
+>=20
+>                if (pfdset->destroy)
+> diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
+> index 6398343a6a..eadcc6fb42 100644
+> --- a/lib/vhost/fd_man.h
+> +++ b/lib/vhost/fd_man.h
+> @@ -12,7 +12,7 @@ struct fdset;
+>=20
+> #define MAX_FDS 1024
+>=20
+> -typedef void (*fd_cb)(int fd, void *dat, int *remove);
+> +typedef void (*fd_cb)(int fd, void *dat, int *close);
+>=20
+> struct fdset *fdset_init(const char *name);
+>=20
+> diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+> index 433a42bf80..b27020ae8d 100644
+> --- a/lib/vhost/socket.c
+> +++ b/lib/vhost/socket.c
+> @@ -84,8 +84,8 @@ struct vhost_user {
+>=20
+> #define MAX_VIRTIO_BACKLOG 128
+>=20
+> -static void vhost_user_server_new_connection(int fd, void *data, int *re=
+move);
+> -static void vhost_user_read_cb(int fd, void *dat, int *remove);
+> +static void vhost_user_server_new_connection(int fd, void *data, int *cl=
+ose);
+> +static void vhost_user_read_cb(int fd, void *dat, int *close);
+> static int create_unix_socket(struct vhost_user_socket *vsocket);
+> static int vhost_user_start_client(struct vhost_user_socket *vsocket);
+>=20
+> @@ -290,7 +290,7 @@ vhost_user_add_connection(int fd, struct vhost_user_s=
+ocket *vsocket)
+>=20
+> /* call back when there is new vhost-user connection from client  */
+> static void
+> -vhost_user_server_new_connection(int fd, void *dat, int *remove __rte_un=
+used)
+> +vhost_user_server_new_connection(int fd, void *dat, int *close __rte_unu=
+sed)
+> {
+>        struct vhost_user_socket *vsocket =3D dat;
+>=20
+> @@ -303,7 +303,7 @@ vhost_user_server_new_connection(int fd, void *dat, i=
+nt *remove __rte_unused)
+> }
+>=20
+> static void
+> -vhost_user_read_cb(int connfd, void *dat, int *remove)
+> +vhost_user_read_cb(int connfd, void *dat, int *close)
+> {
+>        struct vhost_user_connection *conn =3D dat;
+>        struct vhost_user_socket *vsocket =3D conn->vsocket;
+> @@ -313,8 +313,7 @@ vhost_user_read_cb(int connfd, void *dat, int *remove=
+)
+>        if (ret < 0) {
+>                struct virtio_net *dev =3D get_device(conn->vid);
+>=20
+> -               close(connfd);
+> -               *remove =3D 1;
+> +               *close =3D 1;
+>=20
+>                if (dev)
+>                        vhost_destroy_device_notify(dev);
+> diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+> index 8ba58555f9..9d39e71c68 100644
+> --- a/lib/vhost/vduse.c
+> +++ b/lib/vhost/vduse.c
+> @@ -117,7 +117,7 @@ static struct vhost_backend_ops vduse_backend_ops =3D=
+ {
+> };
+>=20
+> static void
+> -vduse_control_queue_event(int fd, void *arg, int *remove __rte_unused)
+> +vduse_control_queue_event(int fd, void *arg, int *close __rte_unused)
+> {
+>        struct virtio_net *dev =3D arg;
+>        uint64_t buf;
+> @@ -350,7 +350,7 @@ vduse_device_stop(struct virtio_net *dev)
+> }
+>=20
+> static void
+> -vduse_events_handler(int fd, void *arg, int *remove __rte_unused)
+> +vduse_events_handler(int fd, void *arg, int *close __rte_unused)
+> {
+>        struct virtio_net *dev =3D arg;
+>        struct vduse_dev_request req;
+> @@ -563,14 +563,13 @@ vduse_reconnect_log_check(struct virtio_net *dev, u=
+int64_t features, uint32_t to
+> }
+>=20
+> static void
+> -vduse_reconnect_handler(int fd, void *arg, int *remove)
+> +vduse_reconnect_handler(int fd __rte_unused, void *arg, int *close)
+> {
+>        struct virtio_net *dev =3D arg;
+>=20
+>        vduse_device_start(dev, true);
+>=20
+> -       close(fd);
+> -       *remove =3D 1;
+> +       *close =3D 1;
+> }
+>=20
+> static int
 > --
-> 2.39.2
-> 
+> 2.48.1
+>=20
 
-This looked interesting but appears to be a dead end.
-No more work, and never clear how it was different from memif.
-Would need more documentation etc to be a real NIC.
-If there is still interest resubmit it.
+Reviewed-by: Chenbo Xia <chenbox@nvidia.com>
+
