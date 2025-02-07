@@ -2,78 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C700C02196
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 10:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A44C02196
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 10:48:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9617042D7B;
-	Fri,  7 Feb 2025 11:46:07 +0100 (CET)
-Received: from mail-wr1-f100.google.com (mail-wr1-f100.google.com
- [209.85.221.100])
- by mails.dpdk.org (Postfix) with ESMTP id 43C3A42D27
- for <dev@dpdk.org>; Fri,  7 Feb 2025 11:46:05 +0100 (CET)
-Received: by mail-wr1-f100.google.com with SMTP id
- ffacd0b85a97d-38dae70f5d9so935429f8f.1
- for <dev@dpdk.org>; Fri, 07 Feb 2025 02:46:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EDB6D42D26;
+	Fri,  7 Feb 2025 11:48:48 +0100 (CET)
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com
+ [209.85.166.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 5413E42B71
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 11:48:47 +0100 (CET)
+Received: by mail-il1-f181.google.com with SMTP id
+ e9e14a558f8ab-3ce915a8a25so6187485ab.1
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 02:48:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1738925165; x=1739529965; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=16Rr/5wfajjGtupsp1PblW6UGJO9Qa9fGbpTsw3sxr4=;
- b=etd68FPc1/PJ28ZR6bHJ1NUbiooGFPeZK9avtA3/mOjgUclO6iH8IS8roXHmm93P7H
- NF/vwNh/87x4eE4TVvygdUENSGoSqIIAQ8e98FWKmaphrxHBZcG3QNXhCgV/6Anc1UCD
- TeGCbrFj4b/M0YJfb0L7aHc0lcyJHUQAejp8HdNIm9ASqyLaoG1365HBOaFaLdYrkMjk
- aTpGARD/qwOvE77yyJLV/nzdGuN2G/SSwmqDMDck68hGyI99E21vYPNgJvRP3G1rC1K6
- Zlo8nm7D00TE/WqqZEQhbpPe3VGeqdR9An7KQB7BtGOrpRtZESATZEtORK1ys0Cl4oBL
- IHLQ==
+ d=6wind.com; s=google; t=1738925326; x=1739530126; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=mW+bTkxVkogKB6jBkmw916TWdFgbh8PxbS80ausoG58=;
+ b=WfH0IacS5Pc9yO9hH4bj9Q4ckTOvGN7ey+VXOYA+S14IZtFakNCSNI5z4CNfb83rv4
+ CJsTyVifgXkxZLK5wxxBQRdv8T1RmeTiHh/wn0sqb1rD+OxCg05k1fiXxixnBMQWg6zU
+ Xbdl25va/IWuGCdQ8RYxm9bqb+R6RDYYrySDJI5rN6VDN9EZ5itibY2dK9nL214209uN
+ Y7QveI3WxNSxc+0lzEiQEfCk7olqzCxgcONeeWnju28bICU4E228tZWOsCkR+Ecdwjo5
+ TH1tZwlDWPxTcUcui2gdfR2wa3PEV/NMEJqW0QrbWhUVKLwAjGwLnuFT6GeTRokW6IaM
+ h+oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738925165; x=1739529965;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=16Rr/5wfajjGtupsp1PblW6UGJO9Qa9fGbpTsw3sxr4=;
- b=i/BBrfU6G6M/rZRH26uvmDooOWas25OLXWF+efLmVDtbBm7p89QLjIl3jYutTTF9FA
- vRVQd5FLFptQVDR7q0hyq453BhO1BrGYfELpWLxD0ENE+vWiO7FD0Bq0yW+b1qgdm/nB
- zpzB3q8ggN9R5LQNEqaWKAorl6DTiqpwnzeMzaiDp4T4mlGQY0fws0JxLpOJmDkOrUYq
- XzYyY7IObp8+aGfi89OEmQgODr1MVqrvEJxTTMhFT32M9FoDvUzOaUL4HWhIWJNGetkV
- 2Jin5rPLDPmvXZEEyiyi3TdVQrnAU2QxxkIxPuJlDiRD5QJ42dfZEPjv1Z4J56ZLamk3
- 8JxA==
-X-Gm-Message-State: AOJu0Yy/9Ucy641/RyhemNRYjXhcso6VWiIlkyC3kSDLbOWIoXCRM0Kb
- tt7U/W0UGI/SgXJyr/nA0h7O3mqnjyLMggtON9/3LWfJBW33VFBA/W2TQjcHdZgwiy+Fjhei6d3
- IMGNarFfw1Q4RYE00oj6A8FpR1A+wvB3UqyVfdK0h
-X-Gm-Gg: ASbGncv0fQwmnkkne2l/ScauA8sGAkHPPbCRh3xJ6mN6ZcoJG+JfGIm6zMJ8vQAUdVF
- eam71ezYAoWvTNp3jQjwGs2qf1dwbxEvugDaUpKxnmr/9wWpBr16ZrbcS37eplAYq0jiLyDv5eA
- H+otz5Ngr/nYRImoAFGi9uqG+ZqYpSe+leUAAFlxDWstyVYIejSEvTljXnhF94rrppVk9N5/UkS
- 9QhhBMFl1ySCttdl9sv4W/BLbpplozlWWGJK4pTDCspSG1iVQkShZbNt92nzEweuF1iXuGXjC3W
- gOcZBClGDHl+eBzQv12oogpJbFFwwrtvJUXr9A9nFH/gO1Go2A==
-X-Google-Smtp-Source: AGHT+IHebFeHoV7AeTYpjTfFChtcCugvvoNoz8ALznpf0MXr+Fb566QdanUauxeKLia5ORp4m7MNROpJ/UBg
-X-Received: by 2002:a5d:6c6d:0:b0:38d:c433:a97 with SMTP id
- ffacd0b85a97d-38dc935f7b6mr1431627f8f.47.1738925164723; 
- Fri, 07 Feb 2025 02:46:04 -0800 (PST)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- ffacd0b85a97d-38dbdd814a1sm71419f8f.50.2025.02.07.02.46.04; 
- Fri, 07 Feb 2025 02:46:04 -0800 (PST)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
- by smtpservice.6wind.com (Postfix) with ESMTP id 930261D387;
- Fri,  7 Feb 2025 11:46:04 +0100 (CET)
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Maryam Tahhan <mtahhan@redhat.com>, Ciara Loftus <ciara.loftus@intel.com>,
- Ariel Otilibili <ariel.otilibili@6wind.com>
-Subject: [PATCH v9 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-Date: Fri,  7 Feb 2025 11:45:52 +0100
-Message-Id: <20250207104552.1663519-3-ariel.otilibili@6wind.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250207104552.1663519-1-ariel.otilibili@6wind.com>
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250207104552.1663519-1-ariel.otilibili@6wind.com>
+ d=1e100.net; s=20230601; t=1738925326; x=1739530126;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=mW+bTkxVkogKB6jBkmw916TWdFgbh8PxbS80ausoG58=;
+ b=A1EmImGmxzhPMkZvFQBczqJq73GC+Jj5rMBhx7xroIv1G2q3oeKnzcfh90BNEj8JDy
+ m+s23KZMocLFX2LnvEjaxO2nzpnLpJsqTh6Ey5BraUxOhfClkJ/sjHHYJ/ZD+R1oxbQo
+ F+aqxtk1CkmVCT93tUjsxQW8tMqQfRR+6R/N+EWSC/noSOlJXYw2uhdLO1naJJbaey8P
+ KXTAiLDUQ1ozuG7Hv81u18oPaTJ5tj/wpthPSJb0aCUGwEXhoeSlzPvWq6e1B8LW5t5R
+ HPl7osLH5l8gFVa83KBGa9Xr93xCM7L+WPmRj9BTGaUFhbCpLVKscIhD0Xi7pPEJwNSS
+ 8pqA==
+X-Gm-Message-State: AOJu0YzEe/Q6xw1cmGMZbHw9x5TZEPN+gk+8AbUNQiydIb2mARcRgTRZ
+ 6w6qFKJ3nv0e6qGFtTaqi63I+e9Xr6LlP1KlvJkyf2xZzFlyH/Dj7y8XgFuiICy2S3h+WapcRaB
+ jDtJyxOspg9eTIX+UiOyZT64QsewpBk8mg32S4w==
+X-Gm-Gg: ASbGnctTRIJ+tvGqIpKVLYqvzayG6/2qGfk7cWRmdP/OaeVW5xcGfgw8tGqy7yByo1X
+ LNJ5SWbglDiYRihuzvIe+ZN5s1FhbP66Mv0RYURKwP1N35lNR7Dd1EhYK9Ktm7LbTMa4KCiun2N
+ eyR3uyQW1spWp3XJ8ZTQzFBY96rYzC
+X-Google-Smtp-Source: AGHT+IGDjw35fQJ9dPWTYTdDXed7HcPEV7lQdEtqgRuPLI7v1/6wxqJq+LFeHN2PmhwmPM8sDaNDMWvcToiXQYLIc6U=
+X-Received: by 2002:a05:6e02:3304:b0:3cf:c8ec:d375 with SMTP id
+ e9e14a558f8ab-3d13da20395mr22516045ab.0.1738925326584; Fri, 07 Feb 2025
+ 02:48:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+ <20250206204645.1564535-1-ariel.otilibili@6wind.com>
+ <20250206204645.1564535-3-ariel.otilibili@6wind.com>
+ <CAFdtZivFid2eN0j5=YDnA9DC5GZNAEJDq-RqmYt-Ns26iuDw3Q@mail.gmail.com>
+In-Reply-To: <CAFdtZivFid2eN0j5=YDnA9DC5GZNAEJDq-RqmYt-Ns26iuDw3Q@mail.gmail.com>
+From: Ariel Otilibili <ariel.otilibili@6wind.com>
+Date: Fri, 7 Feb 2025 11:48:35 +0100
+X-Gm-Features: AWEUYZlRJ8Xim6CRHsIionNz0XCw_f2-kYnIzJluBERXUAn1eViGXbFf7UUukUE
+Message-ID: <CAF1zDgZPcdz34iQRA1ASPZ6qrZhg+dh=h87G8X5an29Zk0D5qQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] net/af_xdp: Refactor af_xdp_tx_zc
+To: Maryam Tahhan <mtahhan@redhat.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
+ Thomas Monjalon <thomas@monjalon.net>, 
+ David Marchand <david.marchand@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, 
+ Ciara Loftus <ciara.loftus@intel.com>
+Content-Type: multipart/alternative; boundary="00000000000061ee19062d8b1a52"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,136 +78,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Both legs of the loop share the same logic: the common parts are about
-reserving and filling both address and length into the description.
+--00000000000061ee19062d8b1a52
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is moved into reserve_and_fill().
+Hi Maryam, hi Stephen;
 
-Bugzilla ID: 1440
-Suggested-by: Maryam Tahhan <mtahhan@redhat.com>
-Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com>
----
- drivers/net/af_xdp/rte_eth_af_xdp.c | 73 ++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 33 deletions(-)
+On Fri, Feb 7, 2025 at 10:14=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.com> =
+wrote:
 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 092bcb73aa0a..8d30d307fa0c 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -536,21 +536,49 @@ kick_tx(struct pkt_tx_queue *txq, struct xsk_ring_cons *cq)
- 		}
- }
- 
-+static inline struct xdp_desc *
-+reserve_and_fill(struct pkt_tx_queue *txq, struct rte_mbuf *mbuf,
-+		 struct xsk_umem_info *umem, void **pkt_ptr)
-+{
-+	struct xdp_desc *desc = NULL;
-+	uint64_t addr, offset;
-+	uint32_t idx_tx;
-+
-+	if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx))
-+		goto out;
-+
-+	desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
-+	desc->len = mbuf->pkt_len;
-+
-+	addr = (uint64_t)mbuf - (uint64_t)umem->buffer
-+		- umem->mb_pool->header_size;
-+	offset = rte_pktmbuf_mtod(mbuf, uint64_t) - (uint64_t)mbuf
-+		+ umem->mb_pool->header_size;
-+
-+	if (pkt_ptr)
-+		*pkt_ptr = xsk_umem__get_data(umem->buffer, addr + offset);
-+
-+	offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
-+	desc->addr = addr | offset;
-+
-+out:
-+	return desc;
-+}
-+
- #if defined(XDP_UMEM_UNALIGNED_CHUNK_FLAG)
- static uint16_t
- af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	struct pkt_tx_queue *txq = queue;
- 	struct xsk_umem_info *umem = txq->umem;
--	struct rte_mbuf *mbuf;
-+	struct rte_mbuf *mbuf, *local_mbuf = NULL;
- 	unsigned long tx_bytes = 0;
- 	int i;
--	uint32_t idx_tx;
- 	uint16_t count = 0;
- 	struct xdp_desc *desc;
--	uint64_t addr, offset;
- 	struct xsk_ring_cons *cq = &txq->pair->cq;
- 	uint32_t free_thresh = cq->size >> 1;
-+	void *pkt;
- 
- 	if (xsk_cons_nb_avail(cq, free_thresh) >= free_thresh)
- 		pull_umem_cq(umem, XSK_RING_CONS__DEFAULT_NUM_DESCS, cq);
-@@ -559,51 +587,30 @@ af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		mbuf = bufs[i];
- 
- 		if (mbuf->pool == umem->mb_pool) {
--			if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx)) {
-+		  if (!(desc = reserve_and_fill(txq, mbuf, umem, NULL))) {
- 				kick_tx(txq, cq);
--				if (!xsk_ring_prod__reserve(&txq->tx, 1,
--							    &idx_tx))
-+				desc = reserve_and_fill(txq, mbuf, umem, NULL);
-+				if (!desc)
- 					goto out;
- 			}
--			desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
--			desc->len = mbuf->pkt_len;
--			addr = (uint64_t)mbuf - (uint64_t)umem->buffer -
--					umem->mb_pool->header_size;
--			offset = rte_pktmbuf_mtod(mbuf, uint64_t) -
--					(uint64_t)mbuf +
--					umem->mb_pool->header_size;
--			offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
--			desc->addr = addr | offset;
-+
- 			tx_bytes += desc->len;
- 			count++;
- 		} else {
--			struct rte_mbuf *local_mbuf =
--					rte_pktmbuf_alloc(umem->mb_pool);
--			void *pkt;
--
--			if (local_mbuf == NULL)
-+			if (!(local_mbuf = rte_pktmbuf_alloc(umem->mb_pool)))
- 				goto out;
- 
--			if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx)) {
-+			desc = reserve_and_fill(txq, local_mbuf, umem, &pkt);
-+			if (!desc) {
- 				rte_pktmbuf_free(local_mbuf);
- 				goto out;
- 			}
- 
--			desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
- 			desc->len = mbuf->pkt_len;
--
--			addr = (uint64_t)local_mbuf - (uint64_t)umem->buffer -
--					umem->mb_pool->header_size;
--			offset = rte_pktmbuf_mtod(local_mbuf, uint64_t) -
--					(uint64_t)local_mbuf +
--					umem->mb_pool->header_size;
--			pkt = xsk_umem__get_data(umem->buffer, addr + offset);
--			offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
--			desc->addr = addr | offset;
- 			rte_memcpy(pkt, rte_pktmbuf_mtod(mbuf, void *),
--					desc->len);
--			tx_bytes += desc->len;
-+				   desc->len);
- 			rte_pktmbuf_free(mbuf);
-+			tx_bytes += desc->len;
- 			count++;
- 		}
- 	}
--- 
-2.30.2
+> Sorry if my remarks were confusing, it was just missing from the previous
+> patch and it needs to be:
+> desc->len =3D mbuf->pkt_len;
+>
+> We need to keep this the same as the original code. This is a scenario
+> where we need to copy the data from an mbuf that isn't in from the pool o=
+f
+> buffers allocated for the umem. So the desc->len needs to be set to that =
+of
+> the (non umem) mbuf.
+>
+> The other changes look good. Nearly there,
+>
+> Thanks again
+>
 
+Thanks for the feedback. There is it,
+http://inbox.dpdk.org/dev/20250207104552.1663519-1-ariel.otilibili@6wind.co=
+m/
+
+>
+> <snip>
+>
+
+--00000000000061ee19062d8b1a52
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr">Hi Maryam, hi Stephen;<br></div><br><div =
+class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail=
+_attr">On Fri, Feb 7, 2025 at 10:14=E2=80=AFAM Maryam Tahhan &lt;<a href=3D=
+"mailto:mtahhan@redhat.com">mtahhan@redhat.com</a>&gt; wrote:<br></div><blo=
+ckquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left=
+:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"auto"><div dir=3D=
+"auto"></div><div dir=3D"auto">Sorry if my remarks were confusing, it was j=
+ust missing from the previous patch and it needs to be:</div><div dir=3D"au=
+to">desc-&gt;len =3D mbuf-&gt;pkt_len;</div><div dir=3D"auto"><br></div><di=
+v dir=3D"auto">We need to keep this the same as the original code. This is =
+a scenario where we need to copy the data from an mbuf that isn&#39;t in fr=
+om the pool of buffers allocated for the umem. So the desc-&gt;len needs to=
+ be set to that of the (non umem) mbuf.=C2=A0</div><div dir=3D"auto"><br></=
+div><div dir=3D"auto">The other changes look good. Nearly there,</div><div =
+dir=3D"auto"><br></div><div dir=3D"auto">Thanks again</div></div></blockquo=
+te><div><br></div><div>Thanks for the feedback. There is it,=C2=A0<a href=
+=3D"http://inbox.dpdk.org/dev/20250207104552.1663519-1-ariel.otilibili@6win=
+d.com/">http://inbox.dpdk.org/dev/20250207104552.1663519-1-ariel.otilibili@=
+6wind.com/</a> </div><blockquote class=3D"gmail_quote" style=3D"margin:0px =
+0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div=
+ dir=3D"auto"><div dir=3D"auto"><br></div><div dir=3D"auto">&lt;snip&gt;</d=
+iv></div>
+</blockquote></div></div>
+
+--00000000000061ee19062d8b1a52--
