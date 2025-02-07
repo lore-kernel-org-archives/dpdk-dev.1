@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0629C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22CBC02199
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:46:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6B1D42E80;
-	Fri,  7 Feb 2025 15:44:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 14E3E42E80;
+	Fri,  7 Feb 2025 15:46:39 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2E41342DE3
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:44:29 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 46C3742DE3
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:46:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738939468;
+ s=mimecast20190719; t=1738939597;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=T9Wo45vttKxtpb0Sr8+0/n2Do31m5eQ5ZEhlC4STiAA=;
- b=gx4ILuKd5wzPmsaFRwxQU8xBbrXGhKMuzj1grmfQQ0n+kLIwUhhl7ZFHI2AyTTk2+7x2E8
- Bja+UAy1nn28RFtTwEvSRZmow2uEp6osG3CKKpujU0bzLcB/kHNmGFQEvhn3Ts4h1rfBRD
- KBtMrWU6YfClNudeVQQVO0T+oSld8Gg=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=pOSjcpxKAQURRqhHowNwCIOMunhHkxl1m2lP/Q6ALcE=;
+ b=h/ZD6CdYXDiZSCVg8rH1aJc6Tp5eEBo1m5pVzM4dEUNGMhqlDpTtm3C85KwAQezPs2q6cN
+ ua5Vc0Q4VaLS5kfC1tQwVWIPu3s2ZyluwlwAVnXd2iCqJ6JVHhmmOxT/8Cca6Rg/il/bi7
+ 6C845S0ayHDdXxAkWFOGncJxgpWjX0Q=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-7DTH0VAcPYOEXCpXXBNS9A-1; Fri, 07 Feb 2025 09:44:27 -0500
-X-MC-Unique: 7DTH0VAcPYOEXCpXXBNS9A-1
-X-Mimecast-MFC-AGG-ID: 7DTH0VAcPYOEXCpXXBNS9A
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-544103a1b71so1118592e87.3
- for <dev@dpdk.org>; Fri, 07 Feb 2025 06:44:27 -0800 (PST)
+ us-mta-106-ocw6IN8vPPOe77ajjbjFQg-1; Fri, 07 Feb 2025 09:46:36 -0500
+X-MC-Unique: ocw6IN8vPPOe77ajjbjFQg-1
+X-Mimecast-MFC-AGG-ID: ocw6IN8vPPOe77ajjbjFQg
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5440edfd42bso1282628e87.0
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 06:46:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738939466; x=1739544266;
+ d=1e100.net; s=20230601; t=1738939594; x=1739544394;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=T9Wo45vttKxtpb0Sr8+0/n2Do31m5eQ5ZEhlC4STiAA=;
- b=qzZuv/Z3qZHPFJp12KeAjveWcmo/bhkoFVNmJg+j6SoDNME55LIAlXL77WpDs/5vPH
- ydcYwcoKXmUXv7uPy6+daa/HxF1ejZ6Dfe0Cf14x+nDXuhbrK+DzJ53hDbhLnFLwy8xC
- jRLPUELEKk1gjlN5n+EKk/TFZkUk/iZKnuajs5E8/jIwfThYtyAcMar4Cxn49STj+AD+
- XeeRaYTIMXpxfRGouKr0pEBhf+ylNfyLX11TDcP1HItUkZw/3n3t5HzJkP4o5/5AyKI+
- u1M9KZD060b3A12rEXEEZ9D8qrHJQLjIjabkkhVqiHQE7g+2xr4/URVUOVtD7GRY068D
- bBMQ==
-X-Gm-Message-State: AOJu0Yyf4jzfidjq1HnFX/SLwlCxb74/Ibhr0A4GiHUiNjQI9gSc44+n
- +ER2JoF9NWAeyypqRN16OPbp0Zak8pOChd/8ohW93F0EM0nPq1A79cJNPDN5RLyB+Jm/SUd6GNT
- AYpbfH1JEsmCSzvqPg3p5qquj5Wqzi4W+cgAO+QMGehE+HeQQFDgYEY2+bwW2V/a/o+QtltS/nX
- 8FsHj8kqP209r+3RQ=
-X-Gm-Gg: ASbGnctA2R79G9rmsmqT4z6gYa1zaejHrJYtUHnmj08oKDFrsrySfCv5BOrEwe1umuG
- Yi8Amp/k1nqNoLukjuAw2B7vhUTauSJkcVz2VZ8nuvDciOqdz0v/i2nvh4OdWtPdE
-X-Received: by 2002:a05:6512:39cf:b0:544:f8e:ff98 with SMTP id
- 2adb3069b0e04-54414adfa4bmr1061541e87.42.1738939465991; 
- Fri, 07 Feb 2025 06:44:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFlz6s0EIqnhMifutmdWh7w9m7ZsQBk0nf6xxgINJYYr+iJ2jWd4BWRxX6ax/XD+4xcWm/w6S7IFFy5H09e5I8=
-X-Received: by 2002:a05:6512:39cf:b0:544:f8e:ff98 with SMTP id
- 2adb3069b0e04-54414adfa4bmr1061533e87.42.1738939465592; Fri, 07 Feb 2025
- 06:44:25 -0800 (PST)
+ bh=pOSjcpxKAQURRqhHowNwCIOMunhHkxl1m2lP/Q6ALcE=;
+ b=jghMWLc1er/lskaGKETE/vbaoEXBEJ39qGlPxkQRhAsRNnYi9HIG27DKPThgPzPw5X
+ 9SjfFwTVX2uUItkGXXRZkCbflqr/d+TTmc8B9iB8CSeoSMfCqvw+rGV3r54OinbmZXoX
+ Rqm17EaikGvlmheYr6ad++RhUKx0frl94aCfmO7X2dCKN3WoOBu57ODu6GvH7xvExc/q
+ ws1r38wcFtUe9cZUPuQ2iybJbCe6CdxUz5MxyahWRrE1pmk5jDVQCAoicFEj5QIDnoF7
+ z4rJafF8xXaroTrelBAz4Mn0YbnZqZrHHQNFx/EZv1EQb/Ya+SUKnWXnSHKaR9QdCbyr
+ f5tg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXAdYav7En2ZS0BvPVr4fMGGCopRC3vuamZC4z5Kw0xFLEoE1+s8HQP26ioR4ywZGFiJ+o=@dpdk.org
+X-Gm-Message-State: AOJu0Yy4G3iBvkPSNATKXbzMRGhb7mZSCdjBCqNnSu7CZT+gsmoZioOO
+ GuIvHIlpGWqpmn9/nTnNhDIUK/Jma9PvU/SpXN53AGQKYuQKLo6qoOr7D5Dn7q5U1bj5QEv85up
+ q9rI61zRkJJcc1Un2oboxu3FCerIVoRRzemJHxdlpGSBAKEBaqTKSNCR+4jGrWUuaO/Ar8V8ICI
+ pwoVB3ey6CJJPYYwc=
+X-Gm-Gg: ASbGncuutjGxzjVY1hkRnCNgD7MxfsKxUpNnYyTfBP0256KP3TqnST98RuPyl3qY1T3
+ 7QoJJeNs+sTx8Mng1NR9xuW0LzEktW+SoDYKwvozTTmDTnPTgs30ckvrnz5BMdhXV
+X-Received: by 2002:a05:6512:3ca9:b0:53e:385c:e86b with SMTP id
+ 2adb3069b0e04-54414abb09cmr1104179e87.27.1738939593877; 
+ Fri, 07 Feb 2025 06:46:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGO3wuyXYczbjFMHjC7RCjMzO3z9lpWGycNG8J3Ti7eNmvfshma32feRrq5RLioHSPMO3VOh5nB5pTZ+1Lstro=
+X-Received: by 2002:a05:6512:3ca9:b0:53e:385c:e86b with SMTP id
+ 2adb3069b0e04-54414abb09cmr1104160e87.27.1738939593484; Fri, 07 Feb 2025
+ 06:46:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20241208023022.777275-1-otilibil@eurecom.fr>
- <20241213144145.59916-1-otilibil@eurecom.fr>
- <20241213144145.59916-2-otilibil@eurecom.fr>
-In-Reply-To: <20241213144145.59916-2-otilibil@eurecom.fr>
+References: <20250128173132.1128023-1-ndabilpuram@marvell.com>
+In-Reply-To: <20250128173132.1128023-1-ndabilpuram@marvell.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 7 Feb 2025 15:44:13 +0100
-X-Gm-Features: AWEUYZmZAhODgJgfHKiljfkOYUaXLp28a5PbIO2yHg2-I4_V57GHXTDPMkWzR_M
-Message-ID: <CAJFAV8z0ZaH3_c5W_mU0TxL6NjHKRvQDhrT_voWKr2TKrPFUow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] buildtools: clear out regex syntax warnings
-To: Ariel Otilibili <otilibil@eurecom.fr>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Robin Jarry <rjarry@redhat.com>, stable@dpdk.org
+Date: Fri, 7 Feb 2025 15:46:21 +0100
+X-Gm-Features: AWEUYZl49VKPMc2F-yFHe6foBaqTewIDI3IMgIM9_zmSHe2N1TnBWsl1JRzc8J0
+Message-ID: <CAJFAV8wSuOcL4RFTatW7DirVQ9WeC2BxrGEBJ+g1kO2uTumY-w@mail.gmail.com>
+Subject: Re: [PATCH] ptr_compress: fix build for Arm SVE enabled SoC
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Cc: jerinj@marvell.com, Paul Szczepanek <paul.szczepanek@arm.com>, dev@dpdk.org,
+ stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: tTYhCgCNwEU6vsyA110cciXzcYtMpzBpBsZPwdexgpE_1738939466
+X-Mimecast-MFC-PROC-ID: AkjyLjH3U_cE2XhYplBewAn6i0022LRA87Rw7qUfhsY_1738939594
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,20 +86,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Dec 13, 2024 at 3:42=E2=80=AFPM Ariel Otilibili <otilibil@eurecom.f=
-r> wrote:
+On Tue, Jan 28, 2025 at 6:31=E2=80=AFPM Nithin Dabilpuram
+<ndabilpuram@marvell.com> wrote:
 >
-> * invalid escape sequences now generate SyntaxWarning
-> * therefore changed syntax to raw string noration.
+> Fix compilation issue with const conversion.
 >
-> Link: https://docs.python.org/3/library/re.html#module-re
-> Fixes: 0aeaf75df87 ("test: define unit tests suites based on test types")
-> Fixes: 25065ef1f6c ("test: emit warning for orphaned tests")
+> Fixes: 077596a4b077 ("ptr_compress: add pointer compression library")
 > Cc: stable@dpdk.org
-> Signed-off-by: Ariel Otilibili <otilibil@eurecom.fr>
+>
+> Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 
-Fixes: sha1 should mention 12 chars.
-Fixed, and applied, thanks.
+Checked ARM intrinsics manual, this fix seems valid.
+Applied, thanks.
 
 
 --=20
