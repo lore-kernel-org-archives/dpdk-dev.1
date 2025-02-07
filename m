@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC97C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C1FC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:18:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D25242E24;
-	Fri,  7 Feb 2025 15:12:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 66E1642DC1;
+	Fri,  7 Feb 2025 15:18:47 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D492042DC1
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:12:32 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 64983410E3
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:18:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738937552;
+ s=mimecast20190719; t=1738937926;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=cWk0iLon3I3sP3RVzc02Xo1qt++KmsH83aagtHzLxlA=;
- b=flk0yAqErshup2awepE3bLy/BEVBkEok9M1IfhRddbCkHaFGxhRZR5vdZ53A6gvtaTThti
- Q+u5WyCYJUiuTUQ+oCiToynSOlkCDzWoU+NIB5Xr6SHH5yIWBK1GFdavtUjcSly7SLO501
- c8gCyqR2i0SjlfRL6DZ8ZNgJ5+iPEwI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=Rkz+FT24z4kEmGQz8tS989e0EMSMMBoN9SLtMud/hV0=;
+ b=hbGmy++TBYqYh3GXu8Wq/7Sb/BHyajdosX7KBoAXNodlEweQ0zJW3IAOR4pgUFp8W75h5b
+ VnyR9QrPB+c5pb2B2/29HWenby0/N38nQODAz4qM8IBCnyyHPlg7R7XlmpF3gjiuNuDstR
+ OHlwLfMW3D+T+s63hv64qe1xg8lxmnE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-mZARhSXSPvy1WosMCLO5UQ-1; Fri,
- 07 Feb 2025 09:12:28 -0500
-X-MC-Unique: mZARhSXSPvy1WosMCLO5UQ-1
-X-Mimecast-MFC-AGG-ID: mZARhSXSPvy1WosMCLO5UQ
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-19-83iriFznOd2icApcrvoL6w-1; Fri,
+ 07 Feb 2025 09:18:45 -0500
+X-MC-Unique: 83iriFznOd2icApcrvoL6w-1
+X-Mimecast-MFC-AGG-ID: 83iriFznOd2icApcrvoL6w
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 400DF1956095; Fri,  7 Feb 2025 14:12:27 +0000 (UTC)
-Received: from [10.45.242.29] (unknown [10.45.242.29])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 588D91800352; Fri,  7 Feb 2025 14:12:25 +0000 (UTC)
-Message-ID: <78d8dee1-7d77-4d95-948b-64da11e64ada@redhat.com>
-Date: Fri, 7 Feb 2025 15:12:22 +0100
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C74581800873; Fri,  7 Feb 2025 14:18:38 +0000 (UTC)
+Received: from [10.45.242.25] (unknown [10.45.242.25])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D06B01800360; Fri,  7 Feb 2025 14:18:36 +0000 (UTC)
+Message-ID: <3365a7f6-ff22-417c-b39f-4d53ac2e6fc5@redhat.com>
+Date: Fri, 7 Feb 2025 15:18:33 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix VDUSE devices registration
-To: dev@dpdk.org, otilibil@eurecom.fr, david.marchand@redhat.com,
- chenbox@nvidia.com
-References: <20250131130957.293562-1-maxime.coquelin@redhat.com>
+Subject: Re: [PATCH] vhost: fix FD entries cleanup
+To: dev@dpdk.org, david.marchand@redhat.com, chenbox@nvidia.com
+Cc: stable@dpdk.org
+References: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250131130957.293562-1-maxime.coquelin@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250206084154.2230766-1-maxime.coquelin@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: E8W8Sc_5NRuGsQDXpeprPJ-rHKKr72KENZomHH8Gdoo_1738937547
+X-Mimecast-MFC-PROC-ID: 2r50gnSCxXTXBZhK_OfGuVqwLlcctplgSNoVSJfylYY_1738937919
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -113,18 +113,29 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 1/31/25 2:09 PM, Maxime Coquelin wrote:
-> This patch fixes a regression in vhost_driver_register()
-> causing VDUSE devices registration to fail systematically
-> because the return value was initialized to -1 and not
-> changed later on for this type of devices.
+On 2/6/25 9:41 AM, Maxime Coquelin wrote:
+> With the recent rework of the FD manager to use epoll,
+> an error message is emitted with Vhost-user at FD entry
+> removal:
 > 
-> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
+> ERR|VHOST_FDMAN: could not remove 102 fd from 101 epfd: No such file or directory
 > 
+> It occurs because the read callback closes the file
+> descriptor before it is removed from the FD set.
+> This patch defers the close() after the FD entry is removed
+> from the set.
+> 
+> Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 > Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 > ---
->   lib/vhost/socket.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
+>   lib/vhost/fd_man.c | 12 +++++++-----
+>   lib/vhost/fd_man.h |  2 +-
+>   lib/vhost/socket.c | 11 +++++------
+>   lib/vhost/vduse.c  |  9 ++++-----
+>   4 files changed, 17 insertions(+), 17 deletions(-)
 > 
 
 Applied to next-virtio/for-next-net.
