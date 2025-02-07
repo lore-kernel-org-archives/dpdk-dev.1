@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B6AC02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB86C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:46:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75E3342DC1;
-	Fri,  7 Feb 2025 13:45:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 305B742DD4;
+	Fri,  7 Feb 2025 13:45:53 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 34D3842798
- for <dev@dpdk.org>; Fri,  7 Feb 2025 13:45:48 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9B66D42DC5
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 13:45:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738932349; x=1770468349;
+ t=1738932351; x=1770468351;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=L+yVe0ajjMD9g7ROezOmWpgFNXWSAlfJAjDPH5zvbqc=;
- b=Wf3adPikGunmud4Hlrsk7Zf3gQMxBSIps90qTpUkpXm63ezRqmhly+OY
- SyQQfGaWj2GsPBM6Jrvtpre7LSceRyRBIMP0GonQtHR4vdZ9lB92B7k9U
- RB3DWYgsnfjbOKSXrmO8BUbwWjXHA/fXjFZpVat7uhTxYPd8apsx8Ct0v
- EDEhja1VqLCNRJ8LhBhBQ+7RvooiLX6q66b8u5/OQedNugcpCfQBGCq9C
- 2U3wcpJa19EKzCY6v3OopgbKgCqijdVCn+8C+1c83mIwSUtDW0qA6Dvjn
- t8WCuHHVn6wDB+llMHJftOXSj1OKTK4QoigMr/3MDP+MpbMYmYAEJNutZ w==;
-X-CSE-ConnectionGUID: KWUZH4XoQkaZ1PFNwYMMlw==
-X-CSE-MsgGUID: F0m79mctSr26SbLWAM9dlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331712"
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331712"
+ bh=Lo1MR7oLZblhemYQPOEjLp/scY0x5ivUZFS0mDHuxOA=;
+ b=mIW1jkKBrUK+zN50xAxD+20PcwCD3eWZBVMvXLg2GJIrhKzBnL1D7L2b
+ /CK2AD/U4JJDVlePP7i3Bdv66hPu8HWxEgAi+/j822KVq7Oejy6/oiZPR
+ QnqSF3V13zDjCjLAMoiTSqYDifBr8YNbpQEM73a4iXo25iDfsW0Qi5EJv
+ F5w9DtZcQg7NPhPagjIO1Or6UzLOan38dFVJZcT/HxvRL6CPik5/JjbmM
+ 7xs6EegrsLLbjvLfswPk8DZaK9AdXA1t+i/3nkk/yoIGljxdKCgnpMPDi
+ BhN73FARN7DH0uuUNJ3geIz5F4mUd326tHDVlr9WzM84HiU+lU35u1BlI w==;
+X-CSE-ConnectionGUID: yW9Z1K5oR4aQ1jhOzfQzgQ==
+X-CSE-MsgGUID: rG4kh+sPTHuhuH/Pgj2PUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331714"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331714"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2025 04:45:48 -0800
-X-CSE-ConnectionGUID: AxiXPdYLSs6Gz3MU0qfHdQ==
-X-CSE-MsgGUID: wjREoJpORwSgx0QM4XvJVw==
+ 07 Feb 2025 04:45:51 -0800
+X-CSE-ConnectionGUID: yXUTdEE9RKu30eqNSYw0IA==
+X-CSE-MsgGUID: CSJyYslQT3mkeRUVqamJcg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953388"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953413"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:45:46 -0800
+ by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:45:48 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v3 01/36] net/e1000/base: copy i225 code into e1000
-Date: Fri,  7 Feb 2025 12:44:53 +0000
-Message-ID: <c929880400890f131cb6a6e395ae63d5019b2b00.1738932114.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v3 02/36] net/igc: merge with net/e1000
+Date: Fri,  7 Feb 2025 12:44:54 +0000
+Message-ID: <584e6756c26d00accb6f39aa52889c7cdc016d76.1738932114.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738932113.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
  <cover.1738932113.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -59,2784 +61,3511 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Do a direct copy of i225 code into e1000 directory, replacing all symbol
-and definition names with e1000_/E1000_ prefix instead of igc_/IGC_ prefix.
-This is done in preparation for merging the two drivers together.
+IGC and E1000 drivers are derived from the same base code. Now that e1000
+code has enabled support for i225 devices, move IGC ethdev code to e1000
+directory (renaming references to base code from igc_* to e1000_*).
+
+This patch also disables build of igc driver, as it is no longer able to
+be built because the ethdev part was moved to e1000. It is effectively
+removed from DPDK at this point.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_api.c      |  19 +
- drivers/net/intel/e1000/base/e1000_api.h      |   1 +
- drivers/net/intel/e1000/base/e1000_defines.h  | 175 +++-
- drivers/net/intel/e1000/base/e1000_hw.h       |  46 +
- .../igc_i225.c => e1000/base/e1000_i225.c}    | 823 +++++++++---------
- drivers/net/intel/e1000/base/e1000_i225.h     | 110 +++
- drivers/net/intel/e1000/base/e1000_mac.c      |  24 +-
- drivers/net/intel/e1000/base/e1000_nvm.c      |   1 +
- drivers/net/intel/e1000/base/e1000_osdep.h    |   6 +
- drivers/net/intel/e1000/base/e1000_phy.c      | 137 ++-
- drivers/net/intel/e1000/base/e1000_phy.h      |  17 +
- drivers/net/intel/e1000/base/e1000_regs.h     |  59 ++
- drivers/net/intel/e1000/base/meson.build      |   1 +
- 13 files changed, 999 insertions(+), 420 deletions(-)
- copy drivers/net/intel/{igc/base/igc_i225.c => e1000/base/e1000_i225.c} (50%)
- create mode 100644 drivers/net/intel/e1000/base/e1000_i225.h
+ MAINTAINERS                                   |   8 +-
+ devtools/libabigail.abignore                  |   1 +
+ doc/guides/nics/igc.rst                       |   2 +-
+ doc/guides/rel_notes/release_25_03.rst        |  13 +-
+ drivers/net/intel/e1000/base/README           |   4 +-
+ drivers/net/intel/{igc => e1000}/igc_ethdev.c | 910 +++++++++---------
+ drivers/net/intel/{igc => e1000}/igc_ethdev.h |  32 +-
+ drivers/net/intel/{igc => e1000}/igc_filter.c |  84 +-
+ drivers/net/intel/{igc => e1000}/igc_filter.h |   0
+ drivers/net/intel/{igc => e1000}/igc_flow.c   |   2 +-
+ drivers/net/intel/{igc => e1000}/igc_flow.h   |   0
+ drivers/net/intel/{igc => e1000}/igc_logs.c   |   2 +-
+ drivers/net/intel/{igc => e1000}/igc_txrx.c   | 376 ++++----
+ drivers/net/intel/{igc => e1000}/igc_txrx.h   |   6 +-
+ drivers/net/intel/e1000/meson.build           |  11 +
+ drivers/net/meson.build                       |   1 -
+ 16 files changed, 736 insertions(+), 716 deletions(-)
+ rename drivers/net/intel/{igc => e1000}/igc_ethdev.c (73%)
+ rename drivers/net/intel/{igc => e1000}/igc_ethdev.h (91%)
+ rename drivers/net/intel/{igc => e1000}/igc_filter.c (81%)
+ rename drivers/net/intel/{igc => e1000}/igc_filter.h (100%)
+ rename drivers/net/intel/{igc => e1000}/igc_flow.c (99%)
+ rename drivers/net/intel/{igc => e1000}/igc_flow.h (100%)
+ rename drivers/net/intel/{igc => e1000}/igc_logs.c (90%)
+ rename drivers/net/intel/{igc => e1000}/igc_txrx.c (87%)
+ rename drivers/net/intel/{igc => e1000}/igc_txrx.h (97%)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_api.c b/drivers/net/intel/e1000/base/e1000_api.c
-index 6697b4b64f..bd7bb73030 100644
---- a/drivers/net/intel/e1000/base/e1000_api.c
-+++ b/drivers/net/intel/e1000/base/e1000_api.c
-@@ -354,6 +354,22 @@ s32 e1000_set_mac_type(struct e1000_hw *hw)
- 	case E1000_DEV_ID_82576_VF_HV:
- 		mac->type = e1000_vfadapt;
- 		break;
-+	case E1000_DEV_ID_I225_LM:
-+	case E1000_DEV_ID_I225_LMVP:
-+	case E1000_DEV_ID_I225_V:
-+	case E1000_DEV_ID_I225_K:
-+	case E1000_DEV_ID_I225_I:
-+	case E1000_DEV_ID_I225_IT:
-+	case E1000_DEV_ID_I220_V:
-+	case E1000_DEV_ID_I225_BLANK_NVM:
-+	case E1000_DEV_ID_I226_K:
-+	case E1000_DEV_ID_I226_LMVP:
-+	case E1000_DEV_ID_I226_LM:
-+	case E1000_DEV_ID_I226_V:
-+	case E1000_DEV_ID_I226_IT:
-+	case E1000_DEV_ID_I226_BLANK_NVM:
-+		mac->type = e1000_i225;
-+		break;
- 	case E1000_DEV_ID_I350_VF:
- 	case E1000_DEV_ID_I350_VF_HV:
- 		mac->type = e1000_vfadapt_i350;
-@@ -470,6 +486,9 @@ s32 e1000_setup_init_funcs(struct e1000_hw *hw, bool init_device)
- 	case e1000_i211:
- 		e1000_init_function_pointers_i210(hw);
- 		break;
-+	case e1000_i225:
-+		e1000_init_function_pointers_i225(hw);
-+		break;
- 	case e1000_vfadapt:
- 		e1000_init_function_pointers_vf(hw);
- 		break;
-diff --git a/drivers/net/intel/e1000/base/e1000_api.h b/drivers/net/intel/e1000/base/e1000_api.h
-index 6b38e2b7bb..2466c2fd48 100644
---- a/drivers/net/intel/e1000/base/e1000_api.h
-+++ b/drivers/net/intel/e1000/base/e1000_api.h
-@@ -19,6 +19,7 @@ extern void e1000_init_function_pointers_vf(struct e1000_hw *hw);
- extern void e1000_power_up_fiber_serdes_link(struct e1000_hw *hw);
- extern void e1000_shutdown_fiber_serdes_link(struct e1000_hw *hw);
- extern void e1000_init_function_pointers_i210(struct e1000_hw *hw);
-+extern void e1000_init_function_pointers_i225(struct e1000_hw *hw);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 766d9f1979..4faf7ce537 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -789,6 +789,8 @@ F: doc/guides/nics/e1000em.rst
+ F: doc/guides/nics/intel_vf.rst
+ F: doc/guides/nics/features/e1000.ini
+ F: doc/guides/nics/features/igb*.ini
++F: doc/guides/nics/features/igc.ini
++F: doc/guides/nics/igc.rst
  
- s32 e1000_set_obff_timer(struct e1000_hw *hw, u32 itr);
- s32 e1000_set_mac_type(struct e1000_hw *hw);
-diff --git a/drivers/net/intel/e1000/base/e1000_defines.h b/drivers/net/intel/e1000/base/e1000_defines.h
-index 97cc2797b2..4b02ac3a34 100644
---- a/drivers/net/intel/e1000/base/e1000_defines.h
-+++ b/drivers/net/intel/e1000/base/e1000_defines.h
-@@ -188,6 +188,15 @@
- #define E1000_RCTL_BSEX		0x02000000 /* Buffer size extension */
- #define E1000_RCTL_SECRC	0x04000000 /* Strip Ethernet CRC */
+ Intel ixgbe
+ M: Anatoly Burakov <anatoly.burakov@intel.com>
+@@ -846,12 +848,6 @@ F: drivers/net/intel/cpfl/
+ F: doc/guides/nics/cpfl.rst
+ F: doc/guides/nics/features/cpfl.ini
  
-+#define E1000_DTXMXPKTSZ_TSN     0x19 /* 1600 bytes of max TX DMA packet size */
-+#define E1000_TXPBSIZE_TSN       0x04145145 /* 5k bytes buffer for each queue */
-+
-+/* Transmit Scheduling */
-+#define E1000_TQAVCTRL_TRANSMIT_MODE_TSN 0x00000001
-+#define E1000_TQAVCTRL_ENHANCED_QAV      0x00000008
-+
-+#define E1000_TXQCTL_QUEUE_MODE_LAUNCHT  0x00000001
-+
- /* Use byte values for the following shift parameters
-  * Usage:
-  *     psrctl |= (((ROUNDUP(value0, 128) >> E1000_PSRCTL_BSIZE0_SHIFT) &
-@@ -300,6 +309,8 @@
- #define E1000_STATUS_SPEED_10		0x00000000 /* Speed 10Mb/s */
- #define E1000_STATUS_SPEED_100		0x00000040 /* Speed 100Mb/s */
- #define E1000_STATUS_SPEED_1000		0x00000080 /* Speed 1000Mb/s */
-+/* Speed 2.5Gb/s indication for I225 */
-+#define E1000_STATUS_SPEED_2500		0x00400000
- #define E1000_STATUS_LAN_INIT_DONE	0x00000200 /* Lan Init Compltn by NVM */
- #define E1000_STATUS_PHYRA		0x00000400 /* PHY Reset Asserted */
- #define E1000_STATUS_GIO_MASTER_ENABLE	0x00080000 /* Master request status */
-@@ -331,11 +342,16 @@
- #define ADVERTISE_100_FULL		0x0008
- #define ADVERTISE_1000_HALF		0x0010 /* Not used, just FYI */
- #define ADVERTISE_1000_FULL		0x0020
-+#define ADVERTISE_2500_HALF		0x0040 /* NOT used, just FYI */
-+#define ADVERTISE_2500_FULL		0x0080
+-Intel igc
+-T: git://dpdk.org/next/dpdk-next-net-intel
+-F: drivers/net/intel/igc/
+-F: doc/guides/nics/igc.rst
+-F: doc/guides/nics/features/igc.ini
+-
+ Intel ipn3ke
+ M: Rosen Xu <rosen.xu@intel.com>
+ T: git://dpdk.org/next/dpdk-next-net-intel
+diff --git a/devtools/libabigail.abignore b/devtools/libabigail.abignore
+index 21b8cd6113..9ae1a36c3a 100644
+--- a/devtools/libabigail.abignore
++++ b/devtools/libabigail.abignore
+@@ -25,6 +25,7 @@
+ ;
+ ; SKIP_LIBRARY=librte_common_mlx5_glue
+ ; SKIP_LIBRARY=librte_net_mlx4_glue
++; SKIP_LIBRARY=librte_net_igc
  
- /* 1000/H is not supported, nor spec-compliant. */
- #define E1000_ALL_SPEED_DUPLEX	( \
- 	ADVERTISE_10_HALF | ADVERTISE_10_FULL | ADVERTISE_100_HALF | \
- 	ADVERTISE_100_FULL | ADVERTISE_1000_FULL)
-+#define E1000_ALL_SPEED_DUPLEX_2500 ( \
-+	ADVERTISE_10_HALF | ADVERTISE_10_FULL | ADVERTISE_100_HALF | \
-+	ADVERTISE_100_FULL | ADVERTISE_1000_FULL | ADVERTISE_2500_FULL)
- #define E1000_ALL_NOT_GIG	( \
- 	ADVERTISE_10_HALF | ADVERTISE_10_FULL | ADVERTISE_100_HALF | \
- 	ADVERTISE_100_FULL)
-@@ -344,6 +360,7 @@
- #define E1000_ALL_HALF_DUPLEX	(ADVERTISE_10_HALF | ADVERTISE_100_HALF)
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ; Experimental APIs exceptions ;
+diff --git a/doc/guides/nics/igc.rst b/doc/guides/nics/igc.rst
+index c5af806b7b..c267431c5f 100644
+--- a/doc/guides/nics/igc.rst
++++ b/doc/guides/nics/igc.rst
+@@ -4,7 +4,7 @@
+ IGC Poll Mode Driver
+ ======================
  
- #define AUTONEG_ADVERTISE_SPEED_DEFAULT		E1000_ALL_SPEED_DUPLEX
-+#define AUTONEG_ADVERTISE_SPEED_DEFAULT_2500	E1000_ALL_SPEED_DUPLEX_2500
+-The IGC PMD (**librte_net_igc**) provides poll mode driver support for Foxville
++The IGC PMD (**librte_net_e1000**) provides poll mode driver support for Foxville
+ I225 and I226 Series Network Adapters.
  
- /* LED Control */
- #define E1000_PHY_LED0_MODE_MASK	0x00000007
-@@ -587,6 +604,8 @@
- #define E1000_IMS_VMMB		E1000_ICR_VMMB    /* Mail box activity */
- #define E1000_IMS_RXSEQ		E1000_ICR_RXSEQ   /* Rx sequence error */
- #define E1000_IMS_RXDMT0	E1000_ICR_RXDMT0  /* Rx desc min. threshold */
-+#define E1000_QVECTOR_MASK	0x7FFC		/* Q-vector mask */
-+#define E1000_ITR_VAL_MASK	0x04		/* ITR value mask */
- #define E1000_IMS_RXO		E1000_ICR_RXO     /* Rx overrun */
- #define E1000_IMS_RXT0		E1000_ICR_RXT0    /* Rx timer intr */
- #define E1000_IMS_TXD_LOW	E1000_ICR_TXD_LOW
-@@ -619,6 +638,7 @@
- #define E1000_ICS_LSC		E1000_ICR_LSC       /* Link Status Change */
- #define E1000_ICS_RXSEQ		E1000_ICR_RXSEQ     /* Rx sequence error */
- #define E1000_ICS_RXDMT0	E1000_ICR_RXDMT0    /* Rx desc min. threshold */
-+#define E1000_ICS_DRSTA		E1000_ICR_DRSTA     /* Device Reset Aserted */
+ - For information about I225, please refer to: `Intel® Ethernet Controller I225 Series
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index 269ab6f68a..341fdb9a37 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -93,6 +93,9 @@ New Features
  
- /* Extended Interrupt Cause Set */
- #define E1000_EICS_RX_QUEUE0	E1000_EICR_RX_QUEUE0 /* Rx Queue 0 Interrupt */
-@@ -771,6 +791,75 @@
- #define E1000_TIMINCA_INCPERIOD_SHIFT	24
- #define E1000_TIMINCA_INCVALUE_MASK	0x00FFFFFF
+   Added network driver for the Yunsilicon metaScale serials NICs.
  
-+/* Time Sync Interrupt Cause/Mask Register Bits */
-+#define TSINTR_SYS_WRAP	(1 << 0) /* SYSTIM Wrap around. */
-+#define TSINTR_TXTS	(1 << 1) /* Transmit Timestamp. */
-+#define TSINTR_TT0	(1 << 3) /* Target Time 0 Trigger. */
-+#define TSINTR_TT1	(1 << 4) /* Target Time 1 Trigger. */
-+#define TSINTR_AUTT0	(1 << 5) /* Auxiliary Timestamp 0 Taken. */
-+#define TSINTR_AUTT1	(1 << 6) /* Auxiliary Timestamp 1 Taken. */
++* **Updated Intel e1000 driver.**
 +
-+#define TSYNC_INTERRUPTS	TSINTR_TXTS
-+
-+/* Split Replication Receive Control */
-+#define E1000_SRRCTL_TIMESTAMP           0x40000000
-+#define E1000_SRRCTL_TIMER1SEL(timer)    (((timer) & 0x3) << 14)
-+#define E1000_SRRCTL_TIMER0SEL(timer)    (((timer) & 0x3) << 17)
-+
-+/* Sample RX tstamp in PHY sop */
-+#define E1000_TSYNCRXCTL_RXSYNSIG         0x00000400
-+
-+/* Sample TX tstamp in PHY sop */
-+#define E1000_TSYNCTXCTL_TXSYNSIG         0x00000020
-+
-+/* TSAUXC Configuration Bits */
-+#define TSAUXC_EN_TT0	(1 << 0)  /* Enable target time 0. */
-+#define TSAUXC_EN_TT1	(1 << 1)  /* Enable target time 1. */
-+#define TSAUXC_EN_CLK0	(1 << 2)  /* Enable Configurable Frequency Clock 0. */
-+#define TSAUXC_ST0	(1 << 4)  /* Start Clock 0 Toggle on Target Time 0. */
-+#define TSAUXC_EN_CLK1	(1 << 5)  /* Enable Configurable Frequency Clock 1. */
-+#define TSAUXC_ST1	(1 << 7)  /* Start Clock 1 Toggle on Target Time 1. */
-+#define TSAUXC_EN_TS0	(1 << 8)  /* Enable hardware timestamp 0. */
-+#define TSAUXC_EN_TS1	(1 << 10) /* Enable hardware timestamp 0. */
-+
-+/* SDP Configuration Bits */
-+#define AUX0_SEL_SDP0	(0u << 0)  /* Assign SDP0 to auxiliary time stamp 0. */
-+#define AUX0_SEL_SDP1	(1u << 0)  /* Assign SDP1 to auxiliary time stamp 0. */
-+#define AUX0_SEL_SDP2	(2u << 0)  /* Assign SDP2 to auxiliary time stamp 0. */
-+#define AUX0_SEL_SDP3	(3u << 0)  /* Assign SDP3 to auxiliary time stamp 0. */
-+#define AUX0_TS_SDP_EN	(1u << 2)  /* Enable auxiliary time stamp trigger 0. */
-+#define AUX1_SEL_SDP0	(0u << 3)  /* Assign SDP0 to auxiliary time stamp 1. */
-+#define AUX1_SEL_SDP1	(1u << 3)  /* Assign SDP1 to auxiliary time stamp 1. */
-+#define AUX1_SEL_SDP2	(2u << 3)  /* Assign SDP2 to auxiliary time stamp 1. */
-+#define AUX1_SEL_SDP3	(3u << 3)  /* Assign SDP3 to auxiliary time stamp 1. */
-+#define AUX1_TS_SDP_EN	(1u << 5)  /* Enable auxiliary time stamp trigger 1. */
-+#define TS_SDP0_EN	(1u << 8)  /* SDP0 is assigned to Tsync. */
-+#define TS_SDP1_EN	(1u << 11) /* SDP1 is assigned to Tsync. */
-+#define TS_SDP2_EN	(1u << 14) /* SDP2 is assigned to Tsync. */
-+#define TS_SDP3_EN	(1u << 17) /* SDP3 is assigned to Tsync. */
-+#define TS_SDP0_SEL_TT0	(0u << 6)  /* Target time 0 is output on SDP0. */
-+#define TS_SDP0_SEL_TT1	(1u << 6)  /* Target time 1 is output on SDP0. */
-+#define TS_SDP1_SEL_TT0	(0u << 9)  /* Target time 0 is output on SDP1. */
-+#define TS_SDP1_SEL_TT1	(1u << 9)  /* Target time 1 is output on SDP1. */
-+#define TS_SDP0_SEL_FC0	(2u << 6)  /* Freq clock  0 is output on SDP0. */
-+#define TS_SDP0_SEL_FC1	(3u << 6)  /* Freq clock  1 is output on SDP0. */
-+#define TS_SDP1_SEL_FC0	(2u << 9)  /* Freq clock  0 is output on SDP1. */
-+#define TS_SDP1_SEL_FC1	(3u << 9)  /* Freq clock  1 is output on SDP1. */
-+#define TS_SDP2_SEL_TT0	(0u << 12) /* Target time 0 is output on SDP2. */
-+#define TS_SDP2_SEL_TT1	(1u << 12) /* Target time 1 is output on SDP2. */
-+#define TS_SDP2_SEL_FC0	(2u << 12) /* Freq clock  0 is output on SDP2. */
-+#define TS_SDP2_SEL_FC1	(3u << 12) /* Freq clock  1 is output on SDP2. */
-+#define TS_SDP3_SEL_TT0	(0u << 15) /* Target time 0 is output on SDP3. */
-+#define TS_SDP3_SEL_TT1	(1u << 15) /* Target time 1 is output on SDP3. */
-+#define TS_SDP3_SEL_FC0	(2u << 15) /* Freq clock  0 is output on SDP3. */
-+#define TS_SDP3_SEL_FC1	(3u << 15) /* Freq clock  1 is output on SDP3. */
-+
-+#define E1000_CTRL_SDP0_DIR	0x00400000  /* SDP0 Data direction */
-+#define E1000_CTRL_SDP1_DIR	0x00800000  /* SDP1 Data direction */
-+
-+/* Extended Device Control */
-+#define E1000_CTRL_EXT_SDP2_DIR	0x00000400 /* SDP2 Data direction */
-+
- /* ETQF register bit definitions */
- #define E1000_ETQF_1588			(1 << 30)
- #define E1000_FTQF_VF_BP		0x00008000
-@@ -825,7 +914,8 @@
- #define E1000_THSTAT_PWR_DOWN		0x00000001 /* Power Down Event */
- #define E1000_THSTAT_LINK_THROTTLE	0x00000002 /* Link Spd Throttle Event */
++   * Added support for the Intel i225-series NICs (previously handled by net/igc).
  
--/* I350 EEE defines */
-+/* EEE defines */
-+#define E1000_IPCNFG_EEE_2_5G_AN	0x00000010 /* IPCNFG EEE Ena 2.5G AN */
- #define E1000_IPCNFG_EEE_1G_AN		0x00000008 /* IPCNFG EEE Ena 1G AN */
- #define E1000_IPCNFG_EEE_100M_AN	0x00000004 /* IPCNFG EEE Ena 100M AN */
- #define E1000_EEER_TX_LPI_EN		0x00010000 /* EEER Tx LPI Enable */
-@@ -855,6 +945,10 @@
- #define E1000_EEE_SU_LPI_CLK_STP	0x00800000 /* EEE LPI Clock Stop */
- #define E1000_EEE_LP_ADV_DEV_I210	7          /* EEE LP Adv Device */
- #define E1000_EEE_LP_ADV_ADDR_I210	61         /* EEE LP Adv Register */
-+#define E1000_EEE_SU_LPI_CLK_STP	0x00800000 /* EEE LPI Clock Stop */
-+#define E1000_EEE_LP_ADV_DEV_I225	7          /* EEE LP Adv Device */
-+#define E1000_EEE_LP_ADV_ADDR_I225	61         /* EEE LP Adv Register */
+ Removed Items
+ -------------
+@@ -126,12 +129,20 @@ API Changes
+   ``__rte_packed_begin`` / ``__rte_packed_end``.
+ 
+ * build: The Intel networking drivers:
+-  cpfl, e1000, fm10k, i40e, iavf, ice, idpf, igc, ipn3ke and ixgbe,
++  cpfl, e1000, fm10k, i40e, iavf, ice, idpf, ipn3ke and ixgbe,
+   have been moved from ``drivers/net`` to a new ``drivers/net/intel`` directory.
+   The resulting build output, including the driver filenames, is the same,
+   but to enable/disable these drivers via Meson option requires use of the new paths.
+   For example, ``-Denable_drivers=/net/i40e`` becomes ``-Denable_drivers=/net/intel/i40e``.
+ 
++* build: The Intel IGC networking driver was merged with e1000 driver and is no
++  longer provided as a separate driver. The resulting build output will not have
++  the ``librte_net_igc.*`` driver files any more, but the ``librte_net_e1000.*``
++  driver files will provide support all of the devices and features of the old
++  driver. In addition, to enable/disable the driver via Meson option, the path
++  has changed from ``-Denable_drivers=net/igc`` to
++  ``-Denable_drivers=net/intel/e1000``.
 +
- /* PCI Express Control */
- #define E1000_GCR_RXD_NO_SNOOP		0x00000001
- #define E1000_GCR_RXDSCW_NO_SNOOP	0x00000002
-@@ -993,6 +1087,12 @@
- #define PHY_1000T_STATUS	0x0A /* 1000Base-T Status Reg */
- #define PHY_EXT_STATUS		0x0F /* Extended Status Reg */
  
-+/* PHY GPY 211 registers */
-+#define STANDARD_AN_REG_MASK	0x0007 /* MMD */
-+#define ANEG_MULTIGBT_AN_CTRL	0x0020 /* MULTI GBT AN Control Register */
-+#define MMD_DEVADDR_SHIFT	16     /* Shift MMD to higher bits */
-+#define CR_2500T_FD_CAPS	0x0080 /* Advertise 2500T FD capability */
-+
- #define PHY_CONTROL_LB		0x4000 /* PHY Loopback bit */
- 
- /* NVM Control */
-@@ -1039,6 +1139,15 @@
- /* Firmware code revision field word offset*/
- #define E1000_I210_FW_VER_OFFSET	328
- 
-+#define E1000_EECD_FLUPD_I225		0x00800000 /* Update FLASH */
-+#define E1000_EECD_FLUDONE_I225		0x04000000 /* Update FLASH done */
-+#define E1000_EECD_FLASH_DETECTED_I225	0x00080000 /* FLASH detected */
-+#define E1000_FLUDONE_ATTEMPTS		20000
-+#define E1000_EERD_EEWR_MAX_COUNT	512 /* buffered EEPROM words rw */
-+#define E1000_EECD_SEC1VAL_I225		0x02000000 /* Sector One Valid */
-+#define E1000_FLSECU_BLK_SW_ACCESS_I225	0x00000004 /* Block SW access */
-+#define E1000_FWSM_FW_VALID_I225	0x8000 /* FW valid bit */
-+
- #define E1000_NVM_RW_REG_DATA	16  /* Offset to data in NVM read/write regs */
- #define E1000_NVM_RW_REG_DONE	2   /* Offset to READ/WRITE done bit */
- #define E1000_NVM_RW_REG_START	1   /* Start operation */
-@@ -1257,6 +1366,8 @@
- #define IGP04E1000_E_PHY_ID	0x02A80391
- #define BCM54616_E_PHY_ID	0x03625D10
- #define M88_VENDOR		0x0141
-+#define I225_I_PHY_ID		0x67C9DC00
-+#define I226_LM_PHY_ID          0x67C9DC10
- 
- /* M88E1000 Specific Registers */
- #define M88E1000_PHY_SPEC_CTRL		0x10  /* PHY Specific Control Reg */
-@@ -1379,6 +1490,8 @@
- #define GG82563_PHY_INBAND_CTRL		GG82563_REG(194, 18) /* Inband Ctrl */
- 
- /* MDI Control */
-+#define E1000_MDIC_DATA_MASK	0x0000FFFF
-+#define E1000_MDIC_INT_EN		0x20000000
- #define E1000_MDIC_REG_MASK	0x001F0000
- #define E1000_MDIC_REG_SHIFT	16
- #define E1000_MDIC_PHY_MASK	0x03E00000
-@@ -1389,6 +1502,14 @@
- #define E1000_MDIC_ERROR	0x40000000
- #define E1000_MDIC_DEST		0x80000000
- 
-+#define E1000_N0_QUEUE -1
-+
-+#define E1000_MAX_MAC_HDR_LEN	127
-+#define E1000_MAX_NETWORK_HDR_LEN	511
-+
-+#define E1000_VLAPQF_QUEUE_SEL(_n, q_idx) ((q_idx) << ((_n) * 4))
-+#define E1000_VLAPQF_P_VALID(_n)	(0x1 << (3 + (_n) * 4))
-+#define E1000_VLAPQF_QUEUE_MASK	0x03
- #define E1000_VFTA_BLOCK_SIZE	8
- /* SerDes Control */
- #define E1000_GEN_CTL_READY		0x80000000
-@@ -1465,6 +1586,57 @@
- #define I210_TXPBSIZE_DEFAULT		0x04000014 /* TXPBSIZE default */
- 
- 
-+#define I225_RXPBSIZE_DEFAULT		0x000000A2 /* RXPBSIZE default */
-+#define I225_TXPBSIZE_DEFAULT		0x04000014 /* TXPBSIZE default */
-+#define E1000_RXPBS_SIZE_I225_MASK	0x0000003F /* Rx packet buffer size */
-+#define E1000_TXPB0S_SIZE_I225_MASK	0x0000003F /* Tx packet buffer 0 size */
-+#define E1000_STM_OPCODE		0xDB00
-+#define E1000_EEPROM_FLASH_SIZE_WORD	0x11
-+#define INVM_DWORD_TO_RECORD_TYPE(invm_dword) \
-+	(u8)((invm_dword) & 0x7)
-+#define INVM_DWORD_TO_WORD_ADDRESS(invm_dword) \
-+	(u8)(((invm_dword) & 0x0000FE00) >> 9)
-+#define INVM_DWORD_TO_WORD_DATA(invm_dword) \
-+	(u16)(((invm_dword) & 0xFFFF0000) >> 16)
-+#define E1000_INVM_RSA_KEY_SHA256_DATA_SIZE_IN_DWORDS	8
-+#define E1000_INVM_CSR_AUTOLOAD_DATA_SIZE_IN_DWORDS	1
-+#define E1000_INVM_ULT_BYTES_SIZE		8
-+#define E1000_INVM_RECORD_SIZE_IN_BYTES	4
-+#define E1000_INVM_VER_FIELD_ONE		0x1FF8
-+#define E1000_INVM_VER_FIELD_TWO		0x7FE000
-+#define E1000_INVM_IMGTYPE_FIELD		0x1F800000
-+
-+#define E1000_INVM_MAJOR_MASK	0x3F0
-+#define E1000_INVM_MINOR_MASK	0xF
-+#define E1000_INVM_MAJOR_SHIFT	4
-+
-+/* PLL Defines */
-+#define E1000_PCI_PMCSR		0x44
-+#define E1000_PCI_PMCSR_D3		0x03
-+#define E1000_MAX_PLL_TRIES		5
-+#define E1000_PHY_PLL_UNCONF		0xFF
-+#define E1000_PHY_PLL_FREQ_PAGE	0xFC0000
-+#define E1000_PHY_PLL_FREQ_REG		0x000E
-+#define E1000_INVM_DEFAULT_AL		0x202F
-+#define E1000_INVM_AUTOLOAD		0x0A
-+#define E1000_INVM_PLL_WO_VAL		0x0010
-+
-+/* Proxy Filter Control Extended */
-+#define E1000_PROXYFCEX_MDNS		0x00000001 /* mDNS */
-+#define E1000_PROXYFCEX_MDNS_M		0x00000002 /* mDNS Multicast */
-+#define E1000_PROXYFCEX_MDNS_U		0x00000004 /* mDNS Unicast */
-+#define E1000_PROXYFCEX_IPV4_M		0x00000008 /* IPv4 Multicast */
-+#define E1000_PROXYFCEX_IPV6_M		0x00000010 /* IPv6 Multicast */
-+#define E1000_PROXYFCEX_IGMP		0x00000020 /* IGMP */
-+#define E1000_PROXYFCEX_IGMP_M		0x00000040 /* IGMP Multicast */
-+#define E1000_PROXYFCEX_ARPRES		0x00000080 /* ARP Response */
-+#define E1000_PROXYFCEX_ARPRES_D	0x00000100 /* ARP Response Directed */
-+#define E1000_PROXYFCEX_ICMPV4		0x00000200 /* ICMPv4 */
-+#define E1000_PROXYFCEX_ICMPV4_D	0x00000400 /* ICMPv4 Directed */
-+#define E1000_PROXYFCEX_ICMPV6		0x00000800 /* ICMPv6 */
-+#define E1000_PROXYFCEX_ICMPV6_D	0x00001000 /* ICMPv6 Directed */
-+#define E1000_PROXYFCEX_DNS		0x00002000 /* DNS */
-+
- /* Proxy Filter Control */
- #define E1000_PROXYFC_D0		0x00000001 /* Enable offload in D0 */
- #define E1000_PROXYFC_EX		0x00000004 /* Directed exact proxy */
-@@ -1474,6 +1646,7 @@
- #define E1000_PROXYFC_IPV4		0x00000040 /* Directed IPv4 Enable */
- #define E1000_PROXYFC_IPV6		0x00000080 /* Directed IPv6 Enable */
- #define E1000_PROXYFC_NS		0x00000200 /* IPv6 Neighbor Solicitation */
-+#define E1000_PROXYFC_NS_DIRECTED	0x00000400 /* Directed NS Proxy Ena */
- #define E1000_PROXYFC_ARP		0x00000800 /* ARP Request Proxy Ena */
- /* Proxy Status */
- #define E1000_PROXYS_CLEAR		0xFFFFFFFF /* Clear */
-diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
-index c7e6903ecc..e341c9fe68 100644
---- a/drivers/net/intel/e1000/base/e1000_hw.h
-+++ b/drivers/net/intel/e1000/base/e1000_hw.h
-@@ -168,6 +168,20 @@ struct e1000_hw;
- #define E1000_DEV_ID_I210_SERDES_FLASHLESS	0x157C
- #define E1000_DEV_ID_I210_SGMII_FLASHLESS	0x15F6
- #define E1000_DEV_ID_I211_COPPER		0x1539
-+#define E1000_DEV_ID_I225_LM			0x15F2
-+#define E1000_DEV_ID_I225_LMVP			0x5502
-+#define E1000_DEV_ID_I225_V			0x15F3
-+#define E1000_DEV_ID_I225_K			0x3100
-+#define E1000_DEV_ID_I225_I			0x15F8
-+#define E1000_DEV_ID_I225_IT			0x0D9F
-+#define E1000_DEV_ID_I220_V			0x15F7
-+#define E1000_DEV_ID_I225_BLANK_NVM		0x15FD
-+#define E1000_DEV_ID_I226_K           0x3102
-+#define E1000_DEV_ID_I226_LMVP        0x5503
-+#define E1000_DEV_ID_I226_LM          0x125B
-+#define E1000_DEV_ID_I226_V           0x125C
-+#define E1000_DEV_ID_I226_IT          0x125D
-+#define E1000_DEV_ID_I226_BLANK_NVM   0x125F
- #define E1000_DEV_ID_I354_BACKPLANE_1GBPS	0x1F40
- #define E1000_DEV_ID_I354_SGMII			0x1F41
- #define E1000_DEV_ID_I354_BACKPLANE_2_5GBPS	0x1F45
-@@ -229,6 +243,7 @@ enum e1000_mac_type {
- 	e1000_i354,
- 	e1000_i210,
- 	e1000_i211,
-+	e1000_i225,
- 	e1000_vfadapt,
- 	e1000_vfadapt_i350,
- 	e1000_num_macs  /* List is 1-based, so subtract 1 for true count. */
-@@ -277,6 +292,7 @@ enum e1000_phy_type {
- 	e1000_phy_82580,
- 	e1000_phy_vf,
- 	e1000_phy_i210,
-+	e1000_phy_i225,
- };
- 
- enum e1000_bus_type {
-@@ -363,6 +379,15 @@ enum e1000_serdes_link_state {
- 	e1000_serdes_link_forced_up
- };
- 
-+enum e1000_invm_structure_type {
-+	e1000_invm_uninitialized_structure		= 0x00,
-+	e1000_invm_word_autoload_structure		= 0x01,
-+	e1000_invm_csr_autoload_structure		= 0x02,
-+	e1000_invm_phy_register_autoload_structure	= 0x03,
-+	e1000_invm_rsa_key_sha256_structure		= 0x04,
-+	e1000_invm_invalidated_structure		= 0x0f,
-+};
-+
- #define __le16 u16
- #define __le32 u32
- #define __le64 u64
-@@ -762,6 +787,15 @@ struct e1000_nvm_operations {
- 	s32  (*write)(struct e1000_hw *, u16, u16, u16 *);
- };
- 
-+struct e1000_info {
-+	s32 (*get_invariants)(struct e1000_hw *hw);
-+	struct e1000_mac_operations *mac_ops;
-+	const struct e1000_phy_operations *phy_ops;
-+	struct e1000_nvm_operations *nvm_ops;
-+};
-+
-+extern const struct e1000_info e1000_i225_info;
-+
- struct e1000_mac_info {
- 	struct e1000_mac_operations ops;
- 	u8 addr[ETH_ADDR_LEN];
-@@ -978,6 +1012,16 @@ struct e1000_dev_spec_vf {
- 	u32 v2p_mailbox;
- };
- 
-+struct e1000_dev_spec_i225 {
-+	bool global_device_reset;
-+	bool eee_disable;
-+	bool clear_semaphore_once;
-+	bool module_plugged;
-+	u8 media_port;
-+	bool mas_capable;
-+	u32 mtu;
-+};
-+
- struct e1000_hw {
- 	void *back;
- 
-@@ -1002,6 +1046,7 @@ struct e1000_hw {
- 		struct e1000_dev_spec_ich8lan ich8lan;
- 		struct e1000_dev_spec_82575 _82575;
- 		struct e1000_dev_spec_vf vf;
-+		struct e1000_dev_spec_i225 _i225;
- 	} dev_spec;
- 
- 	u16 device_id;
-@@ -1019,6 +1064,7 @@ struct e1000_hw {
- #include "e1000_ich8lan.h"
- #include "e1000_82575.h"
- #include "e1000_i210.h"
-+#include "e1000_i225.h"
- #include "e1000_base.h"
- 
- /* These functions must be implemented by drivers */
-diff --git a/drivers/net/intel/igc/base/igc_i225.c b/drivers/net/intel/e1000/base/e1000_i225.c
-similarity index 50%
-copy from drivers/net/intel/igc/base/igc_i225.c
-copy to drivers/net/intel/e1000/base/e1000_i225.c
-index 7352ba240a..fac6f07473 100644
---- a/drivers/net/intel/igc/base/igc_i225.c
-+++ b/drivers/net/intel/e1000/base/e1000_i225.c
-@@ -2,34 +2,34 @@
-  * Copyright(c) 2001-2020 Intel Corporation
+ ABI Changes
+ -----------
+diff --git a/drivers/net/intel/e1000/base/README b/drivers/net/intel/e1000/base/README
+index b84ee5ad6e..5d083a0e48 100644
+--- a/drivers/net/intel/e1000/base/README
++++ b/drivers/net/intel/e1000/base/README
+@@ -2,7 +2,7 @@
+  * Copyright(c) 2010-2020 Intel Corporation
   */
  
--#include "igc_api.h"
-+#include "e1000_api.h"
+-This directory contains source code of FreeBSD em & igb drivers of version
++This directory contains source code of FreeBSD em, igb, and igc drivers of version
+ cid-gigabit.2020.06.05.tar.gz released by ND. The sub-directory of base/
+ contains the original source package.
  
--static s32 igc_init_nvm_params_i225(struct igc_hw *hw);
--static s32 igc_init_mac_params_i225(struct igc_hw *hw);
--static s32 igc_init_phy_params_i225(struct igc_hw *hw);
--static s32 igc_reset_hw_i225(struct igc_hw *hw);
--static s32 igc_acquire_nvm_i225(struct igc_hw *hw);
--static void igc_release_nvm_i225(struct igc_hw *hw);
--static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw);
--static s32 __igc_write_nvm_srwr(struct igc_hw *hw, u16 offset, u16 words,
-+static s32 e1000_init_nvm_params_i225(struct e1000_hw *hw);
-+static s32 e1000_init_mac_params_i225(struct e1000_hw *hw);
-+static s32 e1000_init_phy_params_i225(struct e1000_hw *hw);
-+static s32 e1000_reset_hw_i225(struct e1000_hw *hw);
-+static s32 e1000_acquire_nvm_i225(struct e1000_hw *hw);
-+static void e1000_release_nvm_i225(struct e1000_hw *hw);
-+static s32 e1000_get_hw_semaphore_i225(struct e1000_hw *hw);
-+static s32 __e1000_write_nvm_srwr(struct e1000_hw *hw, u16 offset, u16 words,
- 				  u16 *data);
--static s32 igc_pool_flash_update_done_i225(struct igc_hw *hw);
--static s32 igc_valid_led_default_i225(struct igc_hw *hw, u16 *data);
-+static s32 e1000_pool_flash_update_done_i225(struct e1000_hw *hw);
-+static s32 e1000_valid_led_default_i225(struct e1000_hw *hw, u16 *data);
+@@ -24,6 +24,8 @@ This driver is valid for the product(s) listed below
+ * Intel® Ethernet Controller I350 Series
+ * Intel® Ethernet Controller I210 Series
+ * Intel® Ethernet Controller I211
++* Intel® Ethernet Controller I225
++* Intel® Ethernet Controller I226
+ * Intel® Ethernet Controller I354 Series
+ * Intel® Ethernet Controller DH89XXCC Series
  
- /**
-- *  igc_init_nvm_params_i225 - Init NVM func ptrs.
-+ *  e1000_init_nvm_params_i225 - Init NVM func ptrs.
-  *  @hw: pointer to the HW structure
-  **/
--static s32 igc_init_nvm_params_i225(struct igc_hw *hw)
-+static s32 e1000_init_nvm_params_i225(struct e1000_hw *hw)
+diff --git a/drivers/net/intel/igc/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+similarity index 73%
+rename from drivers/net/intel/igc/igc_ethdev.c
+rename to drivers/net/intel/e1000/igc_ethdev.c
+index 87d7f7caa0..5563cee09c 100644
+--- a/drivers/net/intel/igc/igc_ethdev.c
++++ b/drivers/net/intel/e1000/igc_ethdev.c
+@@ -13,7 +13,7 @@
+ #include <rte_malloc.h>
+ #include <rte_alarm.h>
+ 
+-#include "igc_logs.h"
++#include "e1000_logs.h"
+ #include "igc_txrx.h"
+ #include "igc_filter.h"
+ #include "igc_flow.h"
+@@ -106,18 +106,18 @@ static const struct rte_eth_desc_lim tx_desc_lim = {
+ };
+ 
+ static const struct rte_pci_id pci_id_igc_map[] = {
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_LM) },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_LMVP) },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_V)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_I)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_IT)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I225_K)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_K)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_LMVP)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_LM)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_V)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_IT)  },
+-	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, IGC_DEV_ID_I226_BLANK_NVM)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_LM) },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_LMVP) },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_V)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_I)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_IT)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I225_K)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_K)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_LMVP)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_LM)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_V)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_IT)  },
++	{ RTE_PCI_DEVICE(IGC_INTEL_VENDOR_ID, E1000_DEV_ID_I226_BLANK_NVM)  },
+ 	{ .vendor_id = 0, /* sentinel */ },
+ };
+ 
+@@ -128,64 +128,64 @@ struct rte_igc_xstats_name_off {
+ };
+ 
+ static const struct rte_igc_xstats_name_off rte_igc_stats_strings[] = {
+-	{"rx_crc_errors", offsetof(struct igc_hw_stats, crcerrs)},
+-	{"rx_align_errors", offsetof(struct igc_hw_stats, algnerrc)},
+-	{"rx_errors", offsetof(struct igc_hw_stats, rxerrc)},
+-	{"rx_missed_packets", offsetof(struct igc_hw_stats, mpc)},
+-	{"tx_single_collision_packets", offsetof(struct igc_hw_stats, scc)},
+-	{"tx_multiple_collision_packets", offsetof(struct igc_hw_stats, mcc)},
+-	{"tx_excessive_collision_packets", offsetof(struct igc_hw_stats,
++	{"rx_crc_errors", offsetof(struct e1000_hw_stats, crcerrs)},
++	{"rx_align_errors", offsetof(struct e1000_hw_stats, algnerrc)},
++	{"rx_errors", offsetof(struct e1000_hw_stats, rxerrc)},
++	{"rx_missed_packets", offsetof(struct e1000_hw_stats, mpc)},
++	{"tx_single_collision_packets", offsetof(struct e1000_hw_stats, scc)},
++	{"tx_multiple_collision_packets", offsetof(struct e1000_hw_stats, mcc)},
++	{"tx_excessive_collision_packets", offsetof(struct e1000_hw_stats,
+ 		ecol)},
+-	{"tx_late_collisions", offsetof(struct igc_hw_stats, latecol)},
+-	{"tx_total_collisions", offsetof(struct igc_hw_stats, colc)},
+-	{"tx_deferred_packets", offsetof(struct igc_hw_stats, dc)},
+-	{"tx_no_carrier_sense_packets", offsetof(struct igc_hw_stats, tncrs)},
+-	{"tx_discarded_packets", offsetof(struct igc_hw_stats, htdpmc)},
+-	{"rx_length_errors", offsetof(struct igc_hw_stats, rlec)},
+-	{"rx_xon_packets", offsetof(struct igc_hw_stats, xonrxc)},
+-	{"tx_xon_packets", offsetof(struct igc_hw_stats, xontxc)},
+-	{"rx_xoff_packets", offsetof(struct igc_hw_stats, xoffrxc)},
+-	{"tx_xoff_packets", offsetof(struct igc_hw_stats, xofftxc)},
+-	{"rx_flow_control_unsupported_packets", offsetof(struct igc_hw_stats,
++	{"tx_late_collisions", offsetof(struct e1000_hw_stats, latecol)},
++	{"tx_total_collisions", offsetof(struct e1000_hw_stats, colc)},
++	{"tx_deferred_packets", offsetof(struct e1000_hw_stats, dc)},
++	{"tx_no_carrier_sense_packets", offsetof(struct e1000_hw_stats, tncrs)},
++	{"tx_discarded_packets", offsetof(struct e1000_hw_stats, htdpmc)},
++	{"rx_length_errors", offsetof(struct e1000_hw_stats, rlec)},
++	{"rx_xon_packets", offsetof(struct e1000_hw_stats, xonrxc)},
++	{"tx_xon_packets", offsetof(struct e1000_hw_stats, xontxc)},
++	{"rx_xoff_packets", offsetof(struct e1000_hw_stats, xoffrxc)},
++	{"tx_xoff_packets", offsetof(struct e1000_hw_stats, xofftxc)},
++	{"rx_flow_control_unsupported_packets", offsetof(struct e1000_hw_stats,
+ 		fcruc)},
+-	{"rx_size_64_packets", offsetof(struct igc_hw_stats, prc64)},
+-	{"rx_size_65_to_127_packets", offsetof(struct igc_hw_stats, prc127)},
+-	{"rx_size_128_to_255_packets", offsetof(struct igc_hw_stats, prc255)},
+-	{"rx_size_256_to_511_packets", offsetof(struct igc_hw_stats, prc511)},
+-	{"rx_size_512_to_1023_packets", offsetof(struct igc_hw_stats,
++	{"rx_size_64_packets", offsetof(struct e1000_hw_stats, prc64)},
++	{"rx_size_65_to_127_packets", offsetof(struct e1000_hw_stats, prc127)},
++	{"rx_size_128_to_255_packets", offsetof(struct e1000_hw_stats, prc255)},
++	{"rx_size_256_to_511_packets", offsetof(struct e1000_hw_stats, prc511)},
++	{"rx_size_512_to_1023_packets", offsetof(struct e1000_hw_stats,
+ 		prc1023)},
+-	{"rx_size_1024_to_max_packets", offsetof(struct igc_hw_stats,
++	{"rx_size_1024_to_max_packets", offsetof(struct e1000_hw_stats,
+ 		prc1522)},
+-	{"rx_broadcast_packets", offsetof(struct igc_hw_stats, bprc)},
+-	{"rx_multicast_packets", offsetof(struct igc_hw_stats, mprc)},
+-	{"rx_undersize_errors", offsetof(struct igc_hw_stats, ruc)},
+-	{"rx_fragment_errors", offsetof(struct igc_hw_stats, rfc)},
+-	{"rx_oversize_errors", offsetof(struct igc_hw_stats, roc)},
+-	{"rx_jabber_errors", offsetof(struct igc_hw_stats, rjc)},
+-	{"rx_no_buffers", offsetof(struct igc_hw_stats, rnbc)},
+-	{"rx_management_packets", offsetof(struct igc_hw_stats, mgprc)},
+-	{"rx_management_dropped", offsetof(struct igc_hw_stats, mgpdc)},
+-	{"tx_management_packets", offsetof(struct igc_hw_stats, mgptc)},
+-	{"rx_total_packets", offsetof(struct igc_hw_stats, tpr)},
+-	{"tx_total_packets", offsetof(struct igc_hw_stats, tpt)},
+-	{"rx_total_bytes", offsetof(struct igc_hw_stats, tor)},
+-	{"tx_total_bytes", offsetof(struct igc_hw_stats, tot)},
+-	{"tx_size_64_packets", offsetof(struct igc_hw_stats, ptc64)},
+-	{"tx_size_65_to_127_packets", offsetof(struct igc_hw_stats, ptc127)},
+-	{"tx_size_128_to_255_packets", offsetof(struct igc_hw_stats, ptc255)},
+-	{"tx_size_256_to_511_packets", offsetof(struct igc_hw_stats, ptc511)},
+-	{"tx_size_512_to_1023_packets", offsetof(struct igc_hw_stats,
++	{"rx_broadcast_packets", offsetof(struct e1000_hw_stats, bprc)},
++	{"rx_multicast_packets", offsetof(struct e1000_hw_stats, mprc)},
++	{"rx_undersize_errors", offsetof(struct e1000_hw_stats, ruc)},
++	{"rx_fragment_errors", offsetof(struct e1000_hw_stats, rfc)},
++	{"rx_oversize_errors", offsetof(struct e1000_hw_stats, roc)},
++	{"rx_jabber_errors", offsetof(struct e1000_hw_stats, rjc)},
++	{"rx_no_buffers", offsetof(struct e1000_hw_stats, rnbc)},
++	{"rx_management_packets", offsetof(struct e1000_hw_stats, mgprc)},
++	{"rx_management_dropped", offsetof(struct e1000_hw_stats, mgpdc)},
++	{"tx_management_packets", offsetof(struct e1000_hw_stats, mgptc)},
++	{"rx_total_packets", offsetof(struct e1000_hw_stats, tpr)},
++	{"tx_total_packets", offsetof(struct e1000_hw_stats, tpt)},
++	{"rx_total_bytes", offsetof(struct e1000_hw_stats, tor)},
++	{"tx_total_bytes", offsetof(struct e1000_hw_stats, tot)},
++	{"tx_size_64_packets", offsetof(struct e1000_hw_stats, ptc64)},
++	{"tx_size_65_to_127_packets", offsetof(struct e1000_hw_stats, ptc127)},
++	{"tx_size_128_to_255_packets", offsetof(struct e1000_hw_stats, ptc255)},
++	{"tx_size_256_to_511_packets", offsetof(struct e1000_hw_stats, ptc511)},
++	{"tx_size_512_to_1023_packets", offsetof(struct e1000_hw_stats,
+ 		ptc1023)},
+-	{"tx_size_1023_to_max_packets", offsetof(struct igc_hw_stats,
++	{"tx_size_1023_to_max_packets", offsetof(struct e1000_hw_stats,
+ 		ptc1522)},
+-	{"tx_multicast_packets", offsetof(struct igc_hw_stats, mptc)},
+-	{"tx_broadcast_packets", offsetof(struct igc_hw_stats, bptc)},
+-	{"tx_tso_packets", offsetof(struct igc_hw_stats, tsctc)},
+-	{"rx_sent_to_host_packets", offsetof(struct igc_hw_stats, rpthc)},
+-	{"tx_sent_by_host_packets", offsetof(struct igc_hw_stats, hgptc)},
+-	{"interrupt_assert_count", offsetof(struct igc_hw_stats, iac)},
++	{"tx_multicast_packets", offsetof(struct e1000_hw_stats, mptc)},
++	{"tx_broadcast_packets", offsetof(struct e1000_hw_stats, bptc)},
++	{"tx_tso_packets", offsetof(struct e1000_hw_stats, tsctc)},
++	{"rx_sent_to_host_packets", offsetof(struct e1000_hw_stats, rpthc)},
++	{"tx_sent_by_host_packets", offsetof(struct e1000_hw_stats, hgptc)},
++	{"interrupt_assert_count", offsetof(struct e1000_hw_stats, iac)},
+ 	{"rx_descriptor_lower_threshold",
+-		offsetof(struct igc_hw_stats, icrxdmtc)},
++		offsetof(struct e1000_hw_stats, icrxdmtc)},
+ };
+ 
+ #define IGC_NB_XSTATS (sizeof(rte_igc_stats_strings) / \
+@@ -391,24 +391,24 @@ eth_igc_configure(struct rte_eth_dev *dev)
+ static int
+ eth_igc_set_link_up(struct rte_eth_dev *dev)
  {
--	struct igc_nvm_info *nvm = &hw->nvm;
--	u32 eecd = IGC_READ_REG(hw, IGC_EECD);
-+	struct e1000_nvm_info *nvm = &hw->nvm;
-+	u32 eecd = E1000_READ_REG(hw, E1000_EECD);
- 	u16 size;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
--	DEBUGFUNC("igc_init_nvm_params_i225");
-+	DEBUGFUNC("e1000_init_nvm_params_i225");
+-	if (hw->phy.media_type == igc_media_type_copper)
+-		igc_power_up_phy(hw);
++	if (hw->phy.media_type == e1000_media_type_copper)
++		e1000_power_up_phy(hw);
+ 	else
+-		igc_power_up_fiber_serdes_link(hw);
++		e1000_power_up_fiber_serdes_link(hw);
+ 	return 0;
+ }
  
--	size = (u16)((eecd & IGC_EECD_SIZE_EX_MASK) >>
--		     IGC_EECD_SIZE_EX_SHIFT);
-+	size = (u16)((eecd & E1000_EECD_SIZE_EX_MASK) >>
-+		     E1000_EECD_SIZE_EX_SHIFT);
- 	/*
- 	 * Added to a constant, "size" becomes the left-shift value
- 	 * for setting word_size.
-@@ -45,122 +45,122 @@ static s32 igc_init_nvm_params_i225(struct igc_hw *hw)
- 	nvm->word_size = 1 << size;
- 	nvm->opcode_bits = 8;
- 	nvm->delay_usec = 1;
--	nvm->type = igc_nvm_eeprom_spi;
-+	nvm->type = e1000_nvm_eeprom_spi;
+ static int
+ eth_igc_set_link_down(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
+-	if (hw->phy.media_type == igc_media_type_copper)
+-		igc_power_down_phy(hw);
++	if (hw->phy.media_type == e1000_media_type_copper)
++		e1000_power_down_phy(hw);
+ 	else
+-		igc_shutdown_fiber_serdes_link(hw);
++		e1000_shutdown_fiber_serdes_link(hw);
+ 	return 0;
+ }
  
--	nvm->page_size = eecd & IGC_EECD_ADDR_BITS ? 32 : 8;
--	nvm->address_bits = eecd & IGC_EECD_ADDR_BITS ?
-+	nvm->page_size = eecd & E1000_EECD_ADDR_BITS ? 32 : 8;
-+	nvm->address_bits = eecd & E1000_EECD_ADDR_BITS ?
- 			    16 : 8;
+@@ -418,17 +418,17 @@ eth_igc_set_link_down(struct rte_eth_dev *dev)
+ static void
+ igc_intr_other_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
  
- 	if (nvm->word_size == (1 << 15))
- 		nvm->page_size = 128;
+ 	if (rte_intr_allow_others(intr_handle) &&
+ 		dev->data->dev_conf.intr_conf.lsc) {
+-		IGC_WRITE_REG(hw, IGC_EIMC, 1u << IGC_MSIX_OTHER_INTR_VEC);
++		E1000_WRITE_REG(hw, E1000_EIMC, 1u << IGC_MSIX_OTHER_INTR_VEC);
+ 	}
  
--	nvm->ops.acquire = igc_acquire_nvm_i225;
--	nvm->ops.release = igc_release_nvm_i225;
--	nvm->ops.valid_led_default = igc_valid_led_default_i225;
--	if (igc_get_flash_presence_i225(hw)) {
--		hw->nvm.type = igc_nvm_flash_hw;
--		nvm->ops.read    = igc_read_nvm_srrd_i225;
--		nvm->ops.write   = igc_write_nvm_srwr_i225;
--		nvm->ops.validate = igc_validate_nvm_checksum_i225;
--		nvm->ops.update   = igc_update_nvm_checksum_i225;
-+	nvm->ops.acquire = e1000_acquire_nvm_i225;
-+	nvm->ops.release = e1000_release_nvm_i225;
-+	nvm->ops.valid_led_default = e1000_valid_led_default_i225;
-+	if (e1000_get_flash_presence_i225(hw)) {
-+		hw->nvm.type = e1000_nvm_flash_hw;
-+		nvm->ops.read    = e1000_read_nvm_srrd_i225;
-+		nvm->ops.write   = e1000_write_nvm_srwr_i225;
-+		nvm->ops.validate = e1000_validate_nvm_checksum_i225;
-+		nvm->ops.update   = e1000_update_nvm_checksum_i225;
+-	IGC_WRITE_REG(hw, IGC_IMC, ~0);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_IMC, ~0);
++	E1000_WRITE_FLUSH(hw);
+ }
+ 
+ /*
+@@ -438,17 +438,17 @@ static inline void
+ igc_intr_other_enable(struct rte_eth_dev *dev)
+ {
+ 	struct igc_interrupt *intr = IGC_DEV_PRIVATE_INTR(dev);
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 
+ 	if (rte_intr_allow_others(intr_handle) &&
+ 		dev->data->dev_conf.intr_conf.lsc) {
+-		IGC_WRITE_REG(hw, IGC_EIMS, 1u << IGC_MSIX_OTHER_INTR_VEC);
++		E1000_WRITE_REG(hw, E1000_EIMS, 1u << IGC_MSIX_OTHER_INTR_VEC);
+ 	}
+ 
+-	IGC_WRITE_REG(hw, IGC_IMS, intr->mask);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_IMS, intr->mask);
++	E1000_WRITE_FLUSH(hw);
+ }
+ 
+ /*
+@@ -459,14 +459,14 @@ static void
+ eth_igc_interrupt_get_status(struct rte_eth_dev *dev)
+ {
+ 	uint32_t icr;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_interrupt *intr = IGC_DEV_PRIVATE_INTR(dev);
+ 
+ 	/* read-on-clear nic registers here */
+-	icr = IGC_READ_REG(hw, IGC_ICR);
++	icr = E1000_READ_REG(hw, E1000_ICR);
+ 
+ 	intr->flags = 0;
+-	if (icr & IGC_ICR_LSC)
++	if (icr & E1000_ICR_LSC)
+ 		intr->flags |= IGC_FLAG_NEED_LINK_UPDATE;
+ }
+ 
+@@ -474,7 +474,7 @@ eth_igc_interrupt_get_status(struct rte_eth_dev *dev)
+ static int
+ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_eth_link link;
+ 	int link_check, count;
+ 
+@@ -485,20 +485,20 @@ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 	for (count = 0; count < IGC_LINK_UPDATE_CHECK_TIMEOUT; count++) {
+ 		/* Read the real link status */
+ 		switch (hw->phy.media_type) {
+-		case igc_media_type_copper:
++		case e1000_media_type_copper:
+ 			/* Do the work to read phy */
+-			igc_check_for_link(hw);
++			e1000_check_for_link(hw);
+ 			link_check = !hw->mac.get_link_status;
+ 			break;
+ 
+-		case igc_media_type_fiber:
+-			igc_check_for_link(hw);
+-			link_check = (IGC_READ_REG(hw, IGC_STATUS) &
+-				      IGC_STATUS_LU);
++		case e1000_media_type_fiber:
++			e1000_check_for_link(hw);
++			link_check = (E1000_READ_REG(hw, E1000_STATUS) &
++				      E1000_STATUS_LU);
+ 			break;
+ 
+-		case igc_media_type_internal_serdes:
+-			igc_check_for_link(hw);
++		case e1000_media_type_internal_serdes:
++			e1000_check_for_link(hw);
+ 			link_check = hw->mac.serdes_has_link;
+ 			break;
+ 
+@@ -524,11 +524,11 @@ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 				RTE_ETH_LINK_SPEED_FIXED);
+ 
+ 		if (speed == SPEED_2500) {
+-			uint32_t tipg = IGC_READ_REG(hw, IGC_TIPG);
+-			if ((tipg & IGC_TIPG_IPGT_MASK) != 0x0b) {
+-				tipg &= ~IGC_TIPG_IPGT_MASK;
++			uint32_t tipg = E1000_READ_REG(hw, E1000_TIPG);
++			if ((tipg & E1000_TIPG_IPGT_MASK) != 0x0b) {
++				tipg &= ~E1000_TIPG_IPGT_MASK;
+ 				tipg |= 0x0b;
+-				IGC_WRITE_REG(hw, IGC_TIPG, tipg);
++				E1000_WRITE_REG(hw, E1000_TIPG, tipg);
+ 			}
+ 		}
  	} else {
--		hw->nvm.type = igc_nvm_invm;
--		nvm->ops.write    = igc_null_write_nvm;
--		nvm->ops.validate = igc_null_ops_generic;
--		nvm->ops.update   = igc_null_ops_generic;
-+		hw->nvm.type = e1000_nvm_invm;
-+		nvm->ops.write    = e1000_null_write_nvm;
-+		nvm->ops.validate = e1000_null_ops_generic;
-+		nvm->ops.update   = e1000_null_ops_generic;
+@@ -622,24 +622,24 @@ igc_update_queue_stats_handler(void *param)
+ static void
+ eth_igc_rxtx_control(struct rte_eth_dev *dev, bool enable)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t tctl, rctl;
+ 
+-	tctl = IGC_READ_REG(hw, IGC_TCTL);
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
++	tctl = E1000_READ_REG(hw, E1000_TCTL);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
+ 
+ 	if (enable) {
+ 		/* enable Tx/Rx */
+-		tctl |= IGC_TCTL_EN;
+-		rctl |= IGC_RCTL_EN;
++		tctl |= E1000_TCTL_EN;
++		rctl |= E1000_RCTL_EN;
+ 	} else {
+ 		/* disable Tx/Rx */
+-		tctl &= ~IGC_TCTL_EN;
+-		rctl &= ~IGC_RCTL_EN;
++		tctl &= ~E1000_TCTL_EN;
++		rctl &= ~E1000_RCTL_EN;
+ 	}
+-	IGC_WRITE_REG(hw, IGC_TCTL, tctl);
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_TCTL, tctl);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
++	E1000_WRITE_FLUSH(hw);
+ }
+ 
+ /*
+@@ -650,7 +650,7 @@ static int
+ eth_igc_stop(struct rte_eth_dev *dev)
+ {
+ 	struct igc_adapter *adapter = IGC_DEV_PRIVATE(dev);
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct rte_eth_link link;
+@@ -662,11 +662,11 @@ eth_igc_stop(struct rte_eth_dev *dev)
+ 	eth_igc_rxtx_control(dev, false);
+ 
+ 	/* disable all MSI-X interrupts */
+-	IGC_WRITE_REG(hw, IGC_EIMC, 0x1f);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_EIMC, 0x1f);
++	E1000_WRITE_FLUSH(hw);
+ 
+ 	/* clear all MSI-X interrupts */
+-	IGC_WRITE_REG(hw, IGC_EICR, 0x1f);
++	E1000_WRITE_REG(hw, E1000_EICR, 0x1f);
+ 
+ 	igc_intr_other_disable(dev);
+ 
+@@ -675,17 +675,17 @@ eth_igc_stop(struct rte_eth_dev *dev)
+ 	/* disable intr eventfd mapping */
+ 	rte_intr_disable(intr_handle);
+ 
+-	igc_reset_hw(hw);
++	e1000_reset_hw(hw);
+ 
+ 	/* disable all wake up */
+-	IGC_WRITE_REG(hw, IGC_WUC, 0);
++	E1000_WRITE_REG(hw, E1000_WUC, 0);
+ 
+ 	/* disable checking EEE operation in MAC loopback mode */
+-	igc_read_reg_check_clear_bits(hw, IGC_EEER, IGC_EEER_EEE_FRC_AN);
++	igc_read_reg_check_clear_bits(hw, E1000_EEER, IGC_EEER_EEE_FRC_AN);
+ 
+ 	/* Set bit for Go Link disconnect */
+-	igc_read_reg_check_set_bits(hw, IGC_82580_PHY_POWER_MGMT,
+-			IGC_82580_PM_GO_LINKD);
++	igc_read_reg_check_set_bits(hw, E1000_82580_PHY_POWER_MGMT,
++			E1000_82580_PM_GO_LINKD);
+ 
+ 	/* Power down the phy. Needed to make the link go Down */
+ 	eth_igc_set_link_down(dev);
+@@ -721,7 +721,7 @@ eth_igc_stop(struct rte_eth_dev *dev)
+  *  msix-vector, valid 0,1,2,3,4
+  */
+ static void
+-igc_write_ivar(struct igc_hw *hw, uint8_t queue_index,
++igc_write_ivar(struct e1000_hw *hw, uint8_t queue_index,
+ 		bool tx, uint8_t msix_vector)
+ {
+ 	uint8_t offset = 0;
+@@ -744,15 +744,15 @@ igc_write_ivar(struct igc_hw *hw, uint8_t queue_index,
+ 	if (queue_index & 1)
+ 		offset += 16;
+ 
+-	val = IGC_READ_REG_ARRAY(hw, IGC_IVAR0, reg_index);
++	val = E1000_READ_REG_ARRAY(hw, E1000_IVAR0, reg_index);
+ 
+ 	/* clear bits */
+ 	val &= ~((uint32_t)0xFF << offset);
+ 
+ 	/* write vector and valid bit */
+-	val |= (uint32_t)(msix_vector | IGC_IVAR_VALID) << offset;
++	val |= (uint32_t)(msix_vector | E1000_IVAR_VALID) << offset;
+ 
+-	IGC_WRITE_REG_ARRAY(hw, IGC_IVAR0, reg_index, val);
++	E1000_WRITE_REG_ARRAY(hw, E1000_IVAR0, reg_index, val);
+ }
+ 
+ /* Sets up the hardware to generate MSI-X interrupts properly
+@@ -762,7 +762,7 @@ igc_write_ivar(struct igc_hw *hw, uint8_t queue_index,
+ static void
+ igc_configure_msix_intr(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 
+@@ -785,9 +785,9 @@ igc_configure_msix_intr(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	/* turn on MSI-X capability first */
+-	IGC_WRITE_REG(hw, IGC_GPIE, IGC_GPIE_MSIX_MODE |
+-				IGC_GPIE_PBA | IGC_GPIE_EIAME |
+-				IGC_GPIE_NSICR);
++	E1000_WRITE_REG(hw, E1000_GPIE, E1000_GPIE_MSIX_MODE |
++				E1000_GPIE_PBA | E1000_GPIE_EIAME |
++				E1000_GPIE_NSICR);
+ 
+ 	nb_efd = rte_intr_nb_efd_get(intr_handle);
+ 	if (nb_efd < 0)
+@@ -799,14 +799,14 @@ igc_configure_msix_intr(struct rte_eth_dev *dev)
+ 		intr_mask |= (1u << IGC_MSIX_OTHER_INTR_VEC);
+ 
+ 	/* enable msix auto-clear */
+-	igc_read_reg_check_set_bits(hw, IGC_EIAC, intr_mask);
++	igc_read_reg_check_set_bits(hw, E1000_EIAC, intr_mask);
+ 
+ 	/* set other cause interrupt vector */
+-	igc_read_reg_check_set_bits(hw, IGC_IVAR_MISC,
+-		(uint32_t)(IGC_MSIX_OTHER_INTR_VEC | IGC_IVAR_VALID) << 8);
++	igc_read_reg_check_set_bits(hw, E1000_IVAR_MISC,
++		(uint32_t)(IGC_MSIX_OTHER_INTR_VEC | E1000_IVAR_VALID) << 8);
+ 
+ 	/* enable auto-mask */
+-	igc_read_reg_check_set_bits(hw, IGC_EIAM, intr_mask);
++	igc_read_reg_check_set_bits(hw, E1000_EIAM, intr_mask);
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+ 		igc_write_ivar(hw, i, 0, vec);
+@@ -815,7 +815,7 @@ igc_configure_msix_intr(struct rte_eth_dev *dev)
+ 			vec++;
+ 	}
+ 
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_FLUSH(hw);
+ }
+ 
+ /**
+@@ -832,9 +832,9 @@ igc_lsc_interrupt_setup(struct rte_eth_dev *dev, uint8_t on)
+ 	struct igc_interrupt *intr = IGC_DEV_PRIVATE_INTR(dev);
+ 
+ 	if (on)
+-		intr->mask |= IGC_ICR_LSC;
++		intr->mask |= E1000_ICR_LSC;
+ 	else
+-		intr->mask &= ~IGC_ICR_LSC;
++		intr->mask &= ~E1000_ICR_LSC;
+ }
+ 
+ /*
+@@ -845,7 +845,7 @@ static void
+ igc_rxq_interrupt_setup(struct rte_eth_dev *dev)
+ {
+ 	uint32_t mask;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	int misc_shift = rte_intr_allow_others(intr_handle) ? 1 : 0;
+@@ -862,16 +862,16 @@ igc_rxq_interrupt_setup(struct rte_eth_dev *dev)
+ 		return;
+ 
+ 	mask = RTE_LEN2MASK(nb_efd, uint32_t) << misc_shift;
+-	IGC_WRITE_REG(hw, IGC_EIMS, mask);
++	E1000_WRITE_REG(hw, E1000_EIMS, mask);
+ }
+ 
+ /*
+  *  Get hardware rx-buffer size.
+  */
+ static inline int
+-igc_get_rx_buffer_size(struct igc_hw *hw)
++igc_get_rx_buffer_size(struct e1000_hw *hw)
+ {
+-	return (IGC_READ_REG(hw, IGC_RXPBS) & 0x3f) << 10;
++	return (E1000_READ_REG(hw, E1000_RXPBS) & 0x3f) << 10;
+ }
+ 
+ /*
+@@ -880,13 +880,13 @@ igc_get_rx_buffer_size(struct igc_hw *hw)
+  * that the driver is loaded.
+  */
+ static void
+-igc_hw_control_acquire(struct igc_hw *hw)
++igc_hw_control_acquire(struct e1000_hw *hw)
+ {
+ 	uint32_t ctrl_ext;
+ 
+ 	/* Let firmware know the driver has taken over */
+-	ctrl_ext = IGC_READ_REG(hw, IGC_CTRL_EXT);
+-	IGC_WRITE_REG(hw, IGC_CTRL_EXT, ctrl_ext | IGC_CTRL_EXT_DRV_LOAD);
++	ctrl_ext = E1000_READ_REG(hw, E1000_CTRL_EXT);
++	E1000_WRITE_REG(hw, E1000_CTRL_EXT, ctrl_ext | E1000_CTRL_EXT_DRV_LOAD);
+ }
+ 
+ /*
+@@ -895,18 +895,18 @@ igc_hw_control_acquire(struct igc_hw *hw)
+  * driver is no longer loaded.
+  */
+ static void
+-igc_hw_control_release(struct igc_hw *hw)
++igc_hw_control_release(struct e1000_hw *hw)
+ {
+ 	uint32_t ctrl_ext;
+ 
+ 	/* Let firmware taken over control of h/w */
+-	ctrl_ext = IGC_READ_REG(hw, IGC_CTRL_EXT);
+-	IGC_WRITE_REG(hw, IGC_CTRL_EXT,
+-			ctrl_ext & ~IGC_CTRL_EXT_DRV_LOAD);
++	ctrl_ext = E1000_READ_REG(hw, E1000_CTRL_EXT);
++	E1000_WRITE_REG(hw, E1000_CTRL_EXT,
++			ctrl_ext & ~E1000_CTRL_EXT_DRV_LOAD);
+ }
+ 
+ static int
+-igc_hardware_init(struct igc_hw *hw)
++igc_hardware_init(struct e1000_hw *hw)
+ {
+ 	uint32_t rx_buf_size;
+ 	int diag;
+@@ -915,10 +915,10 @@ igc_hardware_init(struct igc_hw *hw)
+ 	igc_hw_control_acquire(hw);
+ 
+ 	/* Issue a global reset */
+-	igc_reset_hw(hw);
++	e1000_reset_hw(hw);
+ 
+ 	/* disable all wake up */
+-	IGC_WRITE_REG(hw, IGC_WUC, 0);
++	E1000_WRITE_REG(hw, E1000_WUC, 0);
+ 
+ 	/*
+ 	 * Hardware flow control
+@@ -937,14 +937,14 @@ igc_hardware_init(struct igc_hw *hw)
+ 	hw->fc.low_water = hw->fc.high_water - 1500;
+ 	hw->fc.pause_time = IGC_FC_PAUSE_TIME;
+ 	hw->fc.send_xon = 1;
+-	hw->fc.requested_mode = igc_fc_full;
++	hw->fc.requested_mode = e1000_fc_full;
+ 
+-	diag = igc_init_hw(hw);
++	diag = e1000_init_hw(hw);
+ 	if (diag < 0)
+ 		return diag;
+ 
+-	igc_get_phy_info(hw);
+-	igc_check_for_link(hw);
++	e1000_get_phy_info(hw);
++	e1000_check_for_link(hw);
+ 
+ 	return 0;
+ }
+@@ -952,7 +952,7 @@ igc_hardware_init(struct igc_hw *hw)
+ static int
+ eth_igc_start(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *adapter = IGC_DEV_PRIVATE(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+@@ -967,11 +967,11 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 	PMD_INIT_FUNC_TRACE();
+ 
+ 	/* disable all MSI-X interrupts */
+-	IGC_WRITE_REG(hw, IGC_EIMC, 0x1f);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_EIMC, 0x1f);
++	E1000_WRITE_FLUSH(hw);
+ 
+ 	/* clear all MSI-X interrupts */
+-	IGC_WRITE_REG(hw, IGC_EICR, 0x1f);
++	E1000_WRITE_REG(hw, E1000_EICR, 0x1f);
+ 
+ 	/* disable uio/vfio intr/eventfd mapping */
+ 	if (!adapter->stopped)
+@@ -981,7 +981,7 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 	eth_igc_set_link_up(dev);
+ 
+ 	/* Put the address into the Receive Address Array */
+-	igc_rar_set(hw, hw->mac.addr, 0);
++	e1000_rar_set(hw, hw->mac.addr, 0);
+ 
+ 	/* Initialize the hardware */
+ 	if (igc_hardware_init(hw)) {
+@@ -1025,36 +1025,36 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 		adapter->base_time = 0;
+ 		adapter->cycle_time = NSEC_PER_SEC;
+ 
+-		IGC_WRITE_REG(hw, IGC_TSSDP, 0);
+-		IGC_WRITE_REG(hw, IGC_TSIM, TSINTR_TXTS);
+-		IGC_WRITE_REG(hw, IGC_IMS, IGC_ICR_TS);
++		E1000_WRITE_REG(hw, E1000_TSSDP, 0);
++		E1000_WRITE_REG(hw, E1000_TSIM, TSINTR_TXTS);
++		E1000_WRITE_REG(hw, E1000_IMS, E1000_ICR_TS);
+ 
+-		IGC_WRITE_REG(hw, IGC_TSAUXC, 0);
+-		IGC_WRITE_REG(hw, IGC_I350_DTXMXPKTSZ, IGC_DTXMXPKTSZ_TSN);
+-		IGC_WRITE_REG(hw, IGC_TXPBS, IGC_TXPBSIZE_TSN);
++		E1000_WRITE_REG(hw, E1000_TSAUXC, 0);
++		E1000_WRITE_REG(hw, E1000_I350_DTXMXPKTSZ, E1000_DTXMXPKTSZ_TSN);
++		E1000_WRITE_REG(hw, E1000_TXPBS, E1000_TXPBSIZE_TSN);
+ 
+-		tqavctrl = IGC_READ_REG(hw, IGC_I210_TQAVCTRL);
+-		tqavctrl |= IGC_TQAVCTRL_TRANSMIT_MODE_TSN |
+-			    IGC_TQAVCTRL_ENHANCED_QAV;
+-		IGC_WRITE_REG(hw, IGC_I210_TQAVCTRL, tqavctrl);
++		tqavctrl = E1000_READ_REG(hw, E1000_I210_TQAVCTRL);
++		tqavctrl |= E1000_TQAVCTRL_TRANSMIT_MODE_TSN |
++			    E1000_TQAVCTRL_ENHANCED_QAV;
++		E1000_WRITE_REG(hw, E1000_I210_TQAVCTRL, tqavctrl);
+ 
+-		IGC_WRITE_REG(hw, IGC_QBVCYCLET_S, adapter->cycle_time);
+-		IGC_WRITE_REG(hw, IGC_QBVCYCLET, adapter->cycle_time);
++		E1000_WRITE_REG(hw, E1000_QBVCYCLET_S, adapter->cycle_time);
++		E1000_WRITE_REG(hw, E1000_QBVCYCLET, adapter->cycle_time);
+ 
+ 		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-			IGC_WRITE_REG(hw, IGC_STQT(i), 0);
+-			IGC_WRITE_REG(hw, IGC_ENDQT(i), NSEC_PER_SEC);
++			E1000_WRITE_REG(hw, E1000_STQT(i), 0);
++			E1000_WRITE_REG(hw, E1000_ENDQT(i), NSEC_PER_SEC);
+ 
+-			txqctl |= IGC_TXQCTL_QUEUE_MODE_LAUNCHT;
+-			IGC_WRITE_REG(hw, IGC_TXQCTL(i), txqctl);
++			txqctl |= E1000_TXQCTL_QUEUE_MODE_LAUNCHT;
++			E1000_WRITE_REG(hw, E1000_TXQCTL(i), txqctl);
+ 		}
+ 
+ 		clock_gettime(CLOCK_REALTIME, &system_time);
+-		IGC_WRITE_REG(hw, IGC_SYSTIML, system_time.tv_nsec);
+-		IGC_WRITE_REG(hw, IGC_SYSTIMH, system_time.tv_sec);
++		E1000_WRITE_REG(hw, E1000_SYSTIML, system_time.tv_nsec);
++		E1000_WRITE_REG(hw, E1000_SYSTIMH, system_time.tv_sec);
+ 
+-		nsec = IGC_READ_REG(hw, IGC_SYSTIML);
+-		sec = IGC_READ_REG(hw, IGC_SYSTIMH);
++		nsec = E1000_READ_REG(hw, E1000_SYSTIML);
++		sec = E1000_READ_REG(hw, E1000_SYSTIMH);
+ 		systime = (int64_t)sec * NSEC_PER_SEC + (int64_t)nsec;
+ 
+ 		if (systime > adapter->base_time) {
+@@ -1066,11 +1066,11 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 
+ 		baset_h = adapter->base_time / NSEC_PER_SEC;
+ 		baset_l = adapter->base_time % NSEC_PER_SEC;
+-		IGC_WRITE_REG(hw, IGC_BASET_H, baset_h);
+-		IGC_WRITE_REG(hw, IGC_BASET_L, baset_l);
++		E1000_WRITE_REG(hw, E1000_BASET_H, baset_h);
++		E1000_WRITE_REG(hw, E1000_BASET_L, baset_l);
+ 	}
+ 
+-	igc_clear_hw_cntrs_base_generic(hw);
++	e1000_clear_hw_cntrs_base_generic(hw);
+ 
+ 	/* VLAN Offload Settings */
+ 	eth_igc_vlan_offload_set(dev,
+@@ -1080,7 +1080,7 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 	/* Setup link speed and duplex */
+ 	speeds = &dev->data->dev_conf.link_speeds;
+ 	if (*speeds == RTE_ETH_LINK_SPEED_AUTONEG) {
+-		hw->phy.autoneg_advertised = IGC_ALL_SPEED_DUPLEX_2500;
++		hw->phy.autoneg_advertised = E1000_ALL_SPEED_DUPLEX_2500;
+ 		hw->mac.autoneg = 1;
+ 	} else {
+ 		int num_speeds = 0;
+@@ -1129,7 +1129,7 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 			goto error_invalid_config;
+ 	}
+ 
+-	igc_setup_link(hw);
++	e1000_setup_link(hw);
+ 
+ 	if (rte_intr_allow_others(intr_handle)) {
+ 		/* check if lsc interrupt is enabled */
+@@ -1167,13 +1167,13 @@ eth_igc_start(struct rte_eth_dev *dev)
+ 	if (dev->data->dev_conf.lpbk_mode == 1) {
+ 		uint32_t reg_val;
+ 
+-		reg_val = IGC_READ_REG(hw, IGC_CTRL);
++		reg_val = E1000_READ_REG(hw, E1000_CTRL);
+ 		reg_val &= ~IGC_CTRL_SPEED_MASK;
+-		reg_val |= IGC_CTRL_SLU | IGC_CTRL_FRCSPD |
+-			IGC_CTRL_FRCDPX | IGC_CTRL_FD | IGC_CTRL_SPEED_2500;
+-		IGC_WRITE_REG(hw, IGC_CTRL, reg_val);
++		reg_val |= E1000_CTRL_SLU | E1000_CTRL_FRCSPD |
++			E1000_CTRL_FRCDPX | E1000_CTRL_FD | IGC_CTRL_SPEED_2500;
++		E1000_WRITE_REG(hw, E1000_CTRL, reg_val);
+ 
+-		igc_read_reg_check_set_bits(hw, IGC_EEER, IGC_EEER_EEE_FRC_AN);
++		igc_read_reg_check_set_bits(hw, E1000_EEER, IGC_EEER_EEE_FRC_AN);
+ 	}
+ 
+ 	return 0;
+@@ -1186,7 +1186,7 @@ eth_igc_start(struct rte_eth_dev *dev)
+ }
+ 
+ static int
+-igc_reset_swfw_lock(struct igc_hw *hw)
++igc_reset_swfw_lock(struct e1000_hw *hw)
+ {
+ 	int ret_val;
+ 
+@@ -1194,7 +1194,7 @@ igc_reset_swfw_lock(struct igc_hw *hw)
+ 	 * Do mac ops initialization manually here, since we will need
+ 	 * some function pointers set by this call.
+ 	 */
+-	ret_val = igc_init_mac_params(hw);
++	ret_val = e1000_init_mac_params(hw);
+ 	if (ret_val)
+ 		return ret_val;
+ 
+@@ -1203,10 +1203,10 @@ igc_reset_swfw_lock(struct igc_hw *hw)
+ 	 * it is due to an improper exit of the application.
+ 	 * So force the release of the faulty lock.
+ 	 */
+-	if (igc_get_hw_semaphore_generic(hw) < 0)
++	if (e1000_get_hw_semaphore_generic(hw) < 0)
+ 		PMD_DRV_LOG(DEBUG, "SMBI lock released");
+ 
+-	igc_put_hw_semaphore_generic(hw);
++	e1000_put_hw_semaphore_generic(hw);
+ 
+ 	if (hw->mac.ops.acquire_swfw_sync != NULL) {
+ 		uint16_t mask;
+@@ -1216,7 +1216,7 @@ igc_reset_swfw_lock(struct igc_hw *hw)
+ 		 * If this is the case, it is due to an improper exit of the
+ 		 * application. So force the release of the faulty lock.
+ 		 */
+-		mask = IGC_SWFW_PHY0_SM;
++		mask = E1000_SWFW_PHY0_SM;
+ 		if (hw->mac.ops.acquire_swfw_sync(hw, mask) < 0) {
+ 			PMD_DRV_LOG(DEBUG, "SWFW phy%d lock released",
+ 				    hw->bus.func);
+@@ -1229,14 +1229,14 @@ igc_reset_swfw_lock(struct igc_hw *hw)
+ 		 * that if lock can not be taken it is due to an improper lock
+ 		 * of the semaphore.
+ 		 */
+-		mask = IGC_SWFW_EEP_SM;
++		mask = E1000_SWFW_EEP_SM;
+ 		if (hw->mac.ops.acquire_swfw_sync(hw, mask) < 0)
+ 			PMD_DRV_LOG(DEBUG, "SWFW common locks released");
+ 
+ 		hw->mac.ops.release_swfw_sync(hw, mask);
  	}
  
 -	return IGC_SUCCESS;
 +	return E1000_SUCCESS;
  }
  
- /**
-- *  igc_init_mac_params_i225 - Init MAC func ptrs.
-+ *  e1000_init_mac_params_i225 - Init MAC func ptrs.
-  *  @hw: pointer to the HW structure
-  **/
--static s32 igc_init_mac_params_i225(struct igc_hw *hw)
-+static s32 e1000_init_mac_params_i225(struct e1000_hw *hw)
+ /*
+@@ -1265,7 +1265,7 @@ eth_igc_close(struct rte_eth_dev *dev)
  {
--	struct igc_mac_info *mac = &hw->mac;
--	struct igc_dev_spec_i225 *dev_spec = &hw->dev_spec._i225;
-+	struct e1000_mac_info *mac = &hw->mac;
-+	struct e1000_dev_spec_i225 *dev_spec = &hw->dev_spec._i225;
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *adapter = IGC_DEV_PRIVATE(dev);
+ 	int retry = 0;
+ 	int ret = 0;
+@@ -1291,7 +1291,7 @@ eth_igc_close(struct rte_eth_dev *dev)
+ 		DELAY(200 * 1000); /* delay 200ms */
+ 	} while (retry++ < 5);
  
--	DEBUGFUNC("igc_init_mac_params_i225");
-+	DEBUGFUNC("e1000_init_mac_params_i225");
+-	igc_phy_hw_reset(hw);
++	e1000_phy_hw_reset(hw);
+ 	igc_hw_control_release(hw);
+ 	igc_dev_free_queues(dev);
  
- 	/* Initialize function pointer */
--	igc_init_mac_ops_generic(hw);
-+	e1000_init_mac_ops_generic(hw);
- 
- 	/* Set media type */
--	hw->phy.media_type = igc_media_type_copper;
-+	hw->phy.media_type = e1000_media_type_copper;
- 	/* Set mta register count */
- 	mac->mta_reg_count = 128;
- 	/* Set rar entry count */
--	mac->rar_entry_count = IGC_RAR_ENTRIES_BASE;
-+	mac->rar_entry_count = E1000_RAR_ENTRIES_BASE;
- 
- 	/* reset */
--	mac->ops.reset_hw = igc_reset_hw_i225;
-+	mac->ops.reset_hw = e1000_reset_hw_i225;
- 	/* hw initialization */
--	mac->ops.init_hw = igc_init_hw_i225;
-+	mac->ops.init_hw = e1000_init_hw_i225;
- 	/* link setup */
--	mac->ops.setup_link = igc_setup_link_generic;
-+	mac->ops.setup_link = e1000_setup_link_generic;
- 	/* check for link */
--	mac->ops.check_for_link = igc_check_for_link_i225;
-+	mac->ops.check_for_link = e1000_check_for_link_i225;
- 	/* link info */
--	mac->ops.get_link_up_info = igc_get_speed_and_duplex_copper_generic;
-+	mac->ops.get_link_up_info = e1000_get_speed_and_duplex_copper_generic;
- 	/* acquire SW_FW sync */
--	mac->ops.acquire_swfw_sync = igc_acquire_swfw_sync_i225;
-+	mac->ops.acquire_swfw_sync = e1000_acquire_swfw_sync_i225;
- 	/* release SW_FW sync */
--	mac->ops.release_swfw_sync = igc_release_swfw_sync_i225;
-+	mac->ops.release_swfw_sync = e1000_release_swfw_sync_i225;
- 
- 	/* Allow a single clear of the SW semaphore on I225 */
- 	dev_spec->clear_semaphore_once = true;
--	mac->ops.setup_physical_interface = igc_setup_copper_link_i225;
-+	mac->ops.setup_physical_interface = e1000_setup_copper_link_i225;
- 
- 	/* Set if part includes ASF firmware */
- 	mac->asf_firmware_present = true;
- 
- 	/* multicast address update */
--	mac->ops.update_mc_addr_list = igc_update_mc_addr_list_generic;
-+	mac->ops.update_mc_addr_list = e1000_update_mc_addr_list_generic;
- 
--	mac->ops.write_vfta = igc_write_vfta_generic;
-+	mac->ops.write_vfta = e1000_write_vfta_generic;
- 
- 	/* Disable EEE by default */
- 	dev_spec->eee_disable = true;
- 
--	return IGC_SUCCESS;
-+	return E1000_SUCCESS;
- }
- 
- /**
-- *  igc_init_phy_params_i225 - Init PHY func ptrs.
-+ *  e1000_init_phy_params_i225 - Init PHY func ptrs.
-  *  @hw: pointer to the HW structure
-  **/
--static s32 igc_init_phy_params_i225(struct igc_hw *hw)
-+static s32 e1000_init_phy_params_i225(struct e1000_hw *hw)
+@@ -1304,7 +1304,7 @@ eth_igc_close(struct rte_eth_dev *dev)
+ static void
+ igc_identify_hardware(struct rte_eth_dev *dev, struct rte_pci_device *pci_dev)
  {
--	struct igc_phy_info *phy = &hw->phy;
--	s32 ret_val = IGC_SUCCESS;
-+	struct e1000_phy_info *phy = &hw->phy;
-+	s32 ret_val = E1000_SUCCESS;
- 	u32 ctrl_ext;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
--	DEBUGFUNC("igc_init_phy_params_i225");
-+	DEBUGFUNC("e1000_init_phy_params_i225");
+ 	hw->vendor_id = pci_dev->id.vendor_id;
+ 	hw->device_id = pci_dev->id.device_id;
+@@ -1317,7 +1317,7 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ {
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	int i, error = 0;
  
--	phy->ops.read_i2c_byte = igc_read_i2c_byte_generic;
--	phy->ops.write_i2c_byte = igc_write_i2c_byte_generic;
-+	phy->ops.read_i2c_byte = e1000_read_i2c_byte_generic;
-+	phy->ops.write_i2c_byte = e1000_write_i2c_byte_generic;
+ 	PMD_INIT_FUNC_TRACE();
+@@ -1348,50 +1348,50 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ 	hw->hw_addr = (void *)pci_dev->mem_resource[0].addr;
  
--	if (hw->phy.media_type != igc_media_type_copper) {
--		phy->type = igc_phy_none;
-+	if (hw->phy.media_type != e1000_media_type_copper) {
-+		phy->type = e1000_phy_none;
- 		goto out;
+ 	igc_identify_hardware(dev, pci_dev);
+-	if (igc_setup_init_funcs(hw, false) != IGC_SUCCESS) {
++	if (e1000_setup_init_funcs(hw, false) != E1000_SUCCESS) {
+ 		error = -EIO;
+ 		goto err_late;
  	}
  
--	phy->ops.power_up   = igc_power_up_phy_copper;
--	phy->ops.power_down = igc_power_down_phy_copper_base;
-+	phy->ops.power_up   = e1000_power_up_phy_copper;
-+	phy->ops.power_down = e1000_power_down_phy_copper_base;
+-	igc_get_bus_info(hw);
++	e1000_get_bus_info(hw);
  
- 	phy->autoneg_mask = AUTONEG_ADVERTISE_SPEED_DEFAULT_2500;
+ 	/* Reset any pending lock */
+-	if (igc_reset_swfw_lock(hw) != IGC_SUCCESS) {
++	if (igc_reset_swfw_lock(hw) != E1000_SUCCESS) {
+ 		error = -EIO;
+ 		goto err_late;
+ 	}
  
- 	phy->reset_delay_us	= 100;
+ 	/* Finish initialization */
+-	if (igc_setup_init_funcs(hw, true) != IGC_SUCCESS) {
++	if (e1000_setup_init_funcs(hw, true) != E1000_SUCCESS) {
+ 		error = -EIO;
+ 		goto err_late;
+ 	}
  
--	phy->ops.acquire	= igc_acquire_phy_base;
--	phy->ops.check_reset_block = igc_check_reset_block_generic;
--	phy->ops.commit		= igc_phy_sw_reset_generic;
--	phy->ops.release	= igc_release_phy_base;
-+	phy->ops.acquire	= e1000_acquire_phy_base;
-+	phy->ops.check_reset_block = e1000_check_reset_block_generic;
-+	phy->ops.commit		= e1000_phy_sw_reset_generic;
-+	phy->ops.release	= e1000_release_phy_base;
+ 	hw->mac.autoneg = 1;
+ 	hw->phy.autoneg_wait_to_complete = 0;
+-	hw->phy.autoneg_advertised = IGC_ALL_SPEED_DUPLEX_2500;
++	hw->phy.autoneg_advertised = E1000_ALL_SPEED_DUPLEX_2500;
+ 
+ 	/* Copper options */
+-	if (hw->phy.media_type == igc_media_type_copper) {
++	if (hw->phy.media_type == e1000_media_type_copper) {
+ 		hw->phy.mdix = 0; /* AUTO_ALL_MODES */
+ 		hw->phy.disable_polarity_correction = 0;
+-		hw->phy.ms_type = igc_ms_hw_default;
++		hw->phy.ms_type = e1000_ms_hw_default;
+ 	}
+ 
+ 	/*
+ 	 * Start from a known state, this is important in reading the nvm
+ 	 * and mac from that.
+ 	 */
+-	igc_reset_hw(hw);
++	e1000_reset_hw(hw);
+ 
+ 	/* Make sure we have a good EEPROM before we read from it */
+-	if (igc_validate_nvm_checksum(hw) < 0) {
++	if (e1000_validate_nvm_checksum(hw) < 0) {
+ 		/*
+ 		 * Some PCI-E parts fail the first check due to
+ 		 * the link being in sleep state, call it again,
+ 		 * if it fails a second time its a real issue.
+ 		 */
+-		if (igc_validate_nvm_checksum(hw) < 0) {
++		if (e1000_validate_nvm_checksum(hw) < 0) {
+ 			PMD_INIT_LOG(ERR, "EEPROM checksum invalid");
+ 			error = -EIO;
+ 			goto err_late;
+@@ -1399,7 +1399,7 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	/* Read the permanent MAC address out of the EEPROM */
+-	if (igc_read_mac_addr(hw) != 0) {
++	if (e1000_read_mac_addr(hw) != 0) {
+ 		PMD_INIT_LOG(ERR, "EEPROM error while reading MAC address");
+ 		error = -EIO;
+ 		goto err_late;
+@@ -1432,7 +1432,7 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ 	igc->stopped = 0;
+ 
+ 	/* Indicate SOL/IDER usage */
+-	if (igc_check_reset_block(hw) < 0)
++	if (e1000_check_reset_block(hw) < 0)
+ 		PMD_INIT_LOG(ERR,
+ 			"PHY reset is blocked due to SOL/IDER session.");
+ 
+@@ -1489,55 +1489,55 @@ eth_igc_reset(struct rte_eth_dev *dev)
+ static int
+ eth_igc_promiscuous_enable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t rctl;
+ 
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
+-	rctl |= (IGC_RCTL_UPE | IGC_RCTL_MPE);
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
++	rctl |= (E1000_RCTL_UPE | E1000_RCTL_MPE);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 	return 0;
+ }
+ 
+ static int
+ eth_igc_promiscuous_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t rctl;
+ 
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
+-	rctl &= (~IGC_RCTL_UPE);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
++	rctl &= (~E1000_RCTL_UPE);
+ 	if (dev->data->all_multicast == 1)
+-		rctl |= IGC_RCTL_MPE;
++		rctl |= E1000_RCTL_MPE;
+ 	else
+-		rctl &= (~IGC_RCTL_MPE);
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++		rctl &= (~E1000_RCTL_MPE);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 	return 0;
+ }
+ 
+ static int
+ eth_igc_allmulticast_enable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t rctl;
+ 
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
+-	rctl |= IGC_RCTL_MPE;
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
++	rctl |= E1000_RCTL_MPE;
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 	return 0;
+ }
+ 
+ static int
+ eth_igc_allmulticast_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t rctl;
+ 
+ 	if (dev->data->promiscuous == 1)
+ 		return 0;	/* must remain in all_multicast mode */
+ 
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
+-	rctl &= (~IGC_RCTL_MPE);
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
++	rctl &= (~E1000_RCTL_MPE);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 	return 0;
+ }
+ 
+@@ -1545,11 +1545,11 @@ static int
+ eth_igc_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
+ 		       size_t fw_size)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	struct igc_fw_version fw;
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_fw_version fw;
+ 	int ret;
+ 
+-	igc_get_fw_version(hw, &fw);
++	e1000_get_fw_version(hw, &fw);
+ 
+ 	/* if option rom is valid, display its version too */
+ 	if (fw.or_valid) {
+@@ -1584,7 +1584,7 @@ eth_igc_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
+ static int
+ eth_igc_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+ 	dev_info->min_rx_bufsize = 256; /* See BSIZE field of RCTL register. */
+ 	dev_info->max_rx_pktlen = MAX_RX_JUMBO_FRAME_SIZE;
+@@ -1637,17 +1637,17 @@ eth_igc_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ static int
+ eth_igc_led_on(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	return igc_led_on(hw) == IGC_SUCCESS ? 0 : -ENOTSUP;
++	return e1000_led_on(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
+ }
+ 
+ static int
+ eth_igc_led_off(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	return igc_led_off(hw) == IGC_SUCCESS ? 0 : -ENOTSUP;
++	return e1000_led_off(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
+ }
+ 
+ static const uint32_t *
+@@ -1678,12 +1678,12 @@ eth_igc_supported_ptypes_get(__rte_unused struct rte_eth_dev *dev,
+ static int
+ eth_igc_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t frame_size = mtu + IGC_ETH_OVERHEAD;
+ 	uint32_t rctl;
+ 
+ 	/* if extend vlan has been enabled */
+-	if (IGC_READ_REG(hw, IGC_CTRL_EXT) & IGC_CTRL_EXT_EXT_VLAN)
++	if (E1000_READ_REG(hw, E1000_CTRL_EXT) & IGC_CTRL_EXT_EXT_VLAN)
+ 		frame_size += VLAN_TAG_SIZE;
+ 
+ 	/*
+@@ -1696,14 +1696,14 @@ eth_igc_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+ 		return -EINVAL;
+ 	}
+ 
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
+ 	if (mtu > RTE_ETHER_MTU)
+-		rctl |= IGC_RCTL_LPE;
++		rctl |= E1000_RCTL_LPE;
+ 	else
+-		rctl &= ~IGC_RCTL_LPE;
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++		rctl &= ~E1000_RCTL_LPE;
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 
+-	IGC_WRITE_REG(hw, IGC_RLPML, frame_size);
++	E1000_WRITE_REG(hw, E1000_RLPML, frame_size);
+ 
+ 	return 0;
+ }
+@@ -1712,9 +1712,9 @@ static int
+ eth_igc_rar_set(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr,
+ 		uint32_t index, uint32_t pool)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	igc_rar_set(hw, mac_addr->addr_bytes, index);
++	e1000_rar_set(hw, mac_addr->addr_bytes, index);
+ 	RTE_SET_USED(pool);
+ 	return 0;
+ }
+@@ -1723,18 +1723,18 @@ static void
+ eth_igc_rar_clear(struct rte_eth_dev *dev, uint32_t index)
+ {
+ 	uint8_t addr[RTE_ETHER_ADDR_LEN];
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+ 	memset(addr, 0, sizeof(addr));
+-	igc_rar_set(hw, addr, index);
++	e1000_rar_set(hw, addr, index);
+ }
+ 
+ static int
+ eth_igc_default_mac_addr_set(struct rte_eth_dev *dev,
+ 			struct rte_ether_addr *addr)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	igc_rar_set(hw, addr->addr_bytes, 0);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	e1000_rar_set(hw, addr->addr_bytes, 0);
+ 	return 0;
+ }
+ 
+@@ -1743,8 +1743,8 @@ eth_igc_set_mc_addr_list(struct rte_eth_dev *dev,
+ 			 struct rte_ether_addr *mc_addr_set,
+ 			 uint32_t nb_mc_addr)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	igc_update_mc_addr_list(hw, (u8 *)mc_addr_set, nb_mc_addr);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	e1000_update_mc_addr_list(hw, (u8 *)mc_addr_set, nb_mc_addr);
+ 	return 0;
+ }
+ 
+@@ -1752,7 +1752,7 @@ eth_igc_set_mc_addr_list(struct rte_eth_dev *dev,
+  * Read hardware registers
+  */
+ static void
+-igc_read_stats_registers(struct igc_hw *hw, struct igc_hw_stats *stats)
++igc_read_stats_registers(struct e1000_hw *hw, struct e1000_hw_stats *stats)
+ {
+ 	int pause_frames;
+ 
+@@ -1763,119 +1763,119 @@ igc_read_stats_registers(struct igc_hw *hw, struct igc_hw_stats *stats)
+ 	uint64_t old_rpthc = stats->rpthc;
+ 	uint64_t old_hgptc = stats->hgptc;
+ 
+-	stats->crcerrs += IGC_READ_REG(hw, IGC_CRCERRS);
+-	stats->algnerrc += IGC_READ_REG(hw, IGC_ALGNERRC);
+-	stats->rxerrc += IGC_READ_REG(hw, IGC_RXERRC);
+-	stats->mpc += IGC_READ_REG(hw, IGC_MPC);
+-	stats->scc += IGC_READ_REG(hw, IGC_SCC);
+-	stats->ecol += IGC_READ_REG(hw, IGC_ECOL);
++	stats->crcerrs += E1000_READ_REG(hw, E1000_CRCERRS);
++	stats->algnerrc += E1000_READ_REG(hw, E1000_ALGNERRC);
++	stats->rxerrc += E1000_READ_REG(hw, E1000_RXERRC);
++	stats->mpc += E1000_READ_REG(hw, E1000_MPC);
++	stats->scc += E1000_READ_REG(hw, E1000_SCC);
++	stats->ecol += E1000_READ_REG(hw, E1000_ECOL);
+ 
+-	stats->mcc += IGC_READ_REG(hw, IGC_MCC);
+-	stats->latecol += IGC_READ_REG(hw, IGC_LATECOL);
+-	stats->colc += IGC_READ_REG(hw, IGC_COLC);
++	stats->mcc += E1000_READ_REG(hw, E1000_MCC);
++	stats->latecol += E1000_READ_REG(hw, E1000_LATECOL);
++	stats->colc += E1000_READ_REG(hw, E1000_COLC);
+ 
+-	stats->dc += IGC_READ_REG(hw, IGC_DC);
+-	stats->tncrs += IGC_READ_REG(hw, IGC_TNCRS);
+-	stats->htdpmc += IGC_READ_REG(hw, IGC_HTDPMC);
+-	stats->rlec += IGC_READ_REG(hw, IGC_RLEC);
+-	stats->xonrxc += IGC_READ_REG(hw, IGC_XONRXC);
+-	stats->xontxc += IGC_READ_REG(hw, IGC_XONTXC);
++	stats->dc += E1000_READ_REG(hw, E1000_DC);
++	stats->tncrs += E1000_READ_REG(hw, E1000_TNCRS);
++	stats->htdpmc += E1000_READ_REG(hw, E1000_HTDPMC);
++	stats->rlec += E1000_READ_REG(hw, E1000_RLEC);
++	stats->xonrxc += E1000_READ_REG(hw, E1000_XONRXC);
++	stats->xontxc += E1000_READ_REG(hw, E1000_XONTXC);
+ 
+ 	/*
+ 	 * For watchdog management we need to know if we have been
+ 	 * paused during the last interval, so capture that here.
+ 	 */
+-	pause_frames = IGC_READ_REG(hw, IGC_XOFFRXC);
++	pause_frames = E1000_READ_REG(hw, E1000_XOFFRXC);
+ 	stats->xoffrxc += pause_frames;
+-	stats->xofftxc += IGC_READ_REG(hw, IGC_XOFFTXC);
+-	stats->fcruc += IGC_READ_REG(hw, IGC_FCRUC);
+-	stats->prc64 += IGC_READ_REG(hw, IGC_PRC64);
+-	stats->prc127 += IGC_READ_REG(hw, IGC_PRC127);
+-	stats->prc255 += IGC_READ_REG(hw, IGC_PRC255);
+-	stats->prc511 += IGC_READ_REG(hw, IGC_PRC511);
+-	stats->prc1023 += IGC_READ_REG(hw, IGC_PRC1023);
+-	stats->prc1522 += IGC_READ_REG(hw, IGC_PRC1522);
+-	stats->gprc += IGC_READ_REG(hw, IGC_GPRC);
+-	stats->bprc += IGC_READ_REG(hw, IGC_BPRC);
+-	stats->mprc += IGC_READ_REG(hw, IGC_MPRC);
+-	stats->gptc += IGC_READ_REG(hw, IGC_GPTC);
++	stats->xofftxc += E1000_READ_REG(hw, E1000_XOFFTXC);
++	stats->fcruc += E1000_READ_REG(hw, E1000_FCRUC);
++	stats->prc64 += E1000_READ_REG(hw, E1000_PRC64);
++	stats->prc127 += E1000_READ_REG(hw, E1000_PRC127);
++	stats->prc255 += E1000_READ_REG(hw, E1000_PRC255);
++	stats->prc511 += E1000_READ_REG(hw, E1000_PRC511);
++	stats->prc1023 += E1000_READ_REG(hw, E1000_PRC1023);
++	stats->prc1522 += E1000_READ_REG(hw, E1000_PRC1522);
++	stats->gprc += E1000_READ_REG(hw, E1000_GPRC);
++	stats->bprc += E1000_READ_REG(hw, E1000_BPRC);
++	stats->mprc += E1000_READ_REG(hw, E1000_MPRC);
++	stats->gptc += E1000_READ_REG(hw, E1000_GPTC);
+ 
+ 	/* For the 64-bit byte counters the low dword must be read first. */
+ 	/* Both registers clear on the read of the high dword */
+ 
+ 	/* Workaround CRC bytes included in size, take away 4 bytes/packet */
+-	stats->gorc += IGC_READ_REG(hw, IGC_GORCL);
+-	stats->gorc += ((uint64_t)IGC_READ_REG(hw, IGC_GORCH) << 32);
++	stats->gorc += E1000_READ_REG(hw, E1000_GORCL);
++	stats->gorc += ((uint64_t)E1000_READ_REG(hw, E1000_GORCH) << 32);
+ 	stats->gorc -= (stats->gprc - old_gprc) * RTE_ETHER_CRC_LEN;
+-	stats->gotc += IGC_READ_REG(hw, IGC_GOTCL);
+-	stats->gotc += ((uint64_t)IGC_READ_REG(hw, IGC_GOTCH) << 32);
++	stats->gotc += E1000_READ_REG(hw, E1000_GOTCL);
++	stats->gotc += ((uint64_t)E1000_READ_REG(hw, E1000_GOTCH) << 32);
+ 	stats->gotc -= (stats->gptc - old_gptc) * RTE_ETHER_CRC_LEN;
+ 
+-	stats->rnbc += IGC_READ_REG(hw, IGC_RNBC);
+-	stats->ruc += IGC_READ_REG(hw, IGC_RUC);
+-	stats->rfc += IGC_READ_REG(hw, IGC_RFC);
+-	stats->roc += IGC_READ_REG(hw, IGC_ROC);
+-	stats->rjc += IGC_READ_REG(hw, IGC_RJC);
++	stats->rnbc += E1000_READ_REG(hw, E1000_RNBC);
++	stats->ruc += E1000_READ_REG(hw, E1000_RUC);
++	stats->rfc += E1000_READ_REG(hw, E1000_RFC);
++	stats->roc += E1000_READ_REG(hw, E1000_ROC);
++	stats->rjc += E1000_READ_REG(hw, E1000_RJC);
+ 
+-	stats->mgprc += IGC_READ_REG(hw, IGC_MGTPRC);
+-	stats->mgpdc += IGC_READ_REG(hw, IGC_MGTPDC);
+-	stats->mgptc += IGC_READ_REG(hw, IGC_MGTPTC);
+-	stats->b2ospc += IGC_READ_REG(hw, IGC_B2OSPC);
+-	stats->b2ogprc += IGC_READ_REG(hw, IGC_B2OGPRC);
+-	stats->o2bgptc += IGC_READ_REG(hw, IGC_O2BGPTC);
+-	stats->o2bspc += IGC_READ_REG(hw, IGC_O2BSPC);
++	stats->mgprc += E1000_READ_REG(hw, E1000_MGTPRC);
++	stats->mgpdc += E1000_READ_REG(hw, E1000_MGTPDC);
++	stats->mgptc += E1000_READ_REG(hw, E1000_MGTPTC);
++	stats->b2ospc += E1000_READ_REG(hw, E1000_B2OSPC);
++	stats->b2ogprc += E1000_READ_REG(hw, E1000_B2OGPRC);
++	stats->o2bgptc += E1000_READ_REG(hw, E1000_O2BGPTC);
++	stats->o2bspc += E1000_READ_REG(hw, E1000_O2BSPC);
+ 
+-	stats->tpr += IGC_READ_REG(hw, IGC_TPR);
+-	stats->tpt += IGC_READ_REG(hw, IGC_TPT);
++	stats->tpr += E1000_READ_REG(hw, E1000_TPR);
++	stats->tpt += E1000_READ_REG(hw, E1000_TPT);
+ 
+-	stats->tor += IGC_READ_REG(hw, IGC_TORL);
+-	stats->tor += ((uint64_t)IGC_READ_REG(hw, IGC_TORH) << 32);
++	stats->tor += E1000_READ_REG(hw, E1000_TORL);
++	stats->tor += ((uint64_t)E1000_READ_REG(hw, E1000_TORH) << 32);
+ 	stats->tor -= (stats->tpr - old_tpr) * RTE_ETHER_CRC_LEN;
+-	stats->tot += IGC_READ_REG(hw, IGC_TOTL);
+-	stats->tot += ((uint64_t)IGC_READ_REG(hw, IGC_TOTH) << 32);
++	stats->tot += E1000_READ_REG(hw, E1000_TOTL);
++	stats->tot += ((uint64_t)E1000_READ_REG(hw, E1000_TOTH) << 32);
+ 	stats->tot -= (stats->tpt - old_tpt) * RTE_ETHER_CRC_LEN;
+ 
+-	stats->ptc64 += IGC_READ_REG(hw, IGC_PTC64);
+-	stats->ptc127 += IGC_READ_REG(hw, IGC_PTC127);
+-	stats->ptc255 += IGC_READ_REG(hw, IGC_PTC255);
+-	stats->ptc511 += IGC_READ_REG(hw, IGC_PTC511);
+-	stats->ptc1023 += IGC_READ_REG(hw, IGC_PTC1023);
+-	stats->ptc1522 += IGC_READ_REG(hw, IGC_PTC1522);
+-	stats->mptc += IGC_READ_REG(hw, IGC_MPTC);
+-	stats->bptc += IGC_READ_REG(hw, IGC_BPTC);
+-	stats->tsctc += IGC_READ_REG(hw, IGC_TSCTC);
++	stats->ptc64 += E1000_READ_REG(hw, E1000_PTC64);
++	stats->ptc127 += E1000_READ_REG(hw, E1000_PTC127);
++	stats->ptc255 += E1000_READ_REG(hw, E1000_PTC255);
++	stats->ptc511 += E1000_READ_REG(hw, E1000_PTC511);
++	stats->ptc1023 += E1000_READ_REG(hw, E1000_PTC1023);
++	stats->ptc1522 += E1000_READ_REG(hw, E1000_PTC1522);
++	stats->mptc += E1000_READ_REG(hw, E1000_MPTC);
++	stats->bptc += E1000_READ_REG(hw, E1000_BPTC);
++	stats->tsctc += E1000_READ_REG(hw, E1000_TSCTC);
+ 
+-	stats->iac += IGC_READ_REG(hw, IGC_IAC);
+-	stats->rpthc += IGC_READ_REG(hw, IGC_RPTHC);
+-	stats->hgptc += IGC_READ_REG(hw, IGC_HGPTC);
+-	stats->icrxdmtc += IGC_READ_REG(hw, IGC_ICRXDMTC);
++	stats->iac += E1000_READ_REG(hw, E1000_IAC);
++	stats->rpthc += E1000_READ_REG(hw, E1000_RPTHC);
++	stats->hgptc += E1000_READ_REG(hw, E1000_HGPTC);
++	stats->icrxdmtc += E1000_READ_REG(hw, E1000_ICRXDMTC);
+ 
+ 	/* Host to Card Statistics */
+-	stats->hgorc += IGC_READ_REG(hw, IGC_HGORCL);
+-	stats->hgorc += ((uint64_t)IGC_READ_REG(hw, IGC_HGORCH) << 32);
++	stats->hgorc += E1000_READ_REG(hw, E1000_HGORCL);
++	stats->hgorc += ((uint64_t)E1000_READ_REG(hw, E1000_HGORCH) << 32);
+ 	stats->hgorc -= (stats->rpthc - old_rpthc) * RTE_ETHER_CRC_LEN;
+-	stats->hgotc += IGC_READ_REG(hw, IGC_HGOTCL);
+-	stats->hgotc += ((uint64_t)IGC_READ_REG(hw, IGC_HGOTCH) << 32);
++	stats->hgotc += E1000_READ_REG(hw, E1000_HGOTCL);
++	stats->hgotc += ((uint64_t)E1000_READ_REG(hw, E1000_HGOTCH) << 32);
+ 	stats->hgotc -= (stats->hgptc - old_hgptc) * RTE_ETHER_CRC_LEN;
+-	stats->lenerrs += IGC_READ_REG(hw, IGC_LENERRS);
++	stats->lenerrs += E1000_READ_REG(hw, E1000_LENERRS);
+ }
+ 
+ /*
+  * Write 0 to all queue status registers
+  */
+ static void
+-igc_reset_queue_stats_register(struct igc_hw *hw)
++igc_reset_queue_stats_register(struct e1000_hw *hw)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < IGC_QUEUE_PAIRS_NUM; i++) {
+-		IGC_WRITE_REG(hw, IGC_PQGPRC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_PQGPTC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_PQGORC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_PQGOTC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_PQMPRC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_RQDPC(i), 0);
+-		IGC_WRITE_REG(hw, IGC_TQDPC(i), 0);
++		E1000_WRITE_REG(hw, IGC_PQGPRC(i), 0);
++		E1000_WRITE_REG(hw, E1000_PQGPTC(i), 0);
++		E1000_WRITE_REG(hw, IGC_PQGORC(i), 0);
++		E1000_WRITE_REG(hw, IGC_PQGOTC(i), 0);
++		E1000_WRITE_REG(hw, IGC_PQMPRC(i), 0);
++		E1000_WRITE_REG(hw, E1000_RQDPC(i), 0);
++		E1000_WRITE_REG(hw, IGC_TQDPC(i), 0);
+ 	}
+ }
+ 
+@@ -1885,7 +1885,7 @@ igc_reset_queue_stats_register(struct igc_hw *hw)
+ static void
+ igc_read_queue_stats_register(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_hw_queue_stats *queue_stats =
+ 				IGC_DEV_PRIVATE_QUEUE_STATS(dev);
+ 	int i;
+@@ -1908,49 +1908,49 @@ igc_read_queue_stats_register(struct rte_eth_dev *dev)
+ 		 * then we add the high 4 bytes by 1 and replace the low 4
+ 		 * bytes by the new value.
+ 		 */
+-		tmp = IGC_READ_REG(hw, IGC_PQGPRC(i));
++		tmp = E1000_READ_REG(hw, IGC_PQGPRC(i));
+ 		value.ddword = queue_stats->pqgprc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->pqgprc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_PQGPTC(i));
++		tmp = E1000_READ_REG(hw, E1000_PQGPTC(i));
+ 		value.ddword = queue_stats->pqgptc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->pqgptc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_PQGORC(i));
++		tmp = E1000_READ_REG(hw, IGC_PQGORC(i));
+ 		value.ddword = queue_stats->pqgorc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->pqgorc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_PQGOTC(i));
++		tmp = E1000_READ_REG(hw, IGC_PQGOTC(i));
+ 		value.ddword = queue_stats->pqgotc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->pqgotc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_PQMPRC(i));
++		tmp = E1000_READ_REG(hw, IGC_PQMPRC(i));
+ 		value.ddword = queue_stats->pqmprc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->pqmprc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_RQDPC(i));
++		tmp = E1000_READ_REG(hw, E1000_RQDPC(i));
+ 		value.ddword = queue_stats->rqdpc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+ 		value.dword[U32_0_IN_U64] = tmp;
+ 		queue_stats->rqdpc[i] = value.ddword;
+ 
+-		tmp = IGC_READ_REG(hw, IGC_TQDPC(i));
++		tmp = E1000_READ_REG(hw, IGC_TQDPC(i));
+ 		value.ddword = queue_stats->tqdpc[i];
+ 		if (value.dword[U32_0_IN_U64] > tmp)
+ 			value.dword[U32_1_IN_U64]++;
+@@ -1963,8 +1963,8 @@ static int
+ eth_igc_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *rte_stats)
+ {
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	struct igc_hw_stats *stats = IGC_DEV_PRIVATE_STATS(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw_stats *stats = IGC_DEV_PRIVATE_STATS(dev);
+ 	struct igc_hw_queue_stats *queue_stats =
+ 			IGC_DEV_PRIVATE_QUEUE_STATS(dev);
+ 	int i;
+@@ -2025,8 +2025,8 @@ static int
+ eth_igc_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 		   unsigned int n)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	struct igc_hw_stats *hw_stats =
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw_stats *hw_stats =
+ 			IGC_DEV_PRIVATE_STATS(dev);
+ 	unsigned int i;
+ 
+@@ -2054,8 +2054,8 @@ eth_igc_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ static int
+ eth_igc_xstats_reset(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	struct igc_hw_stats *hw_stats = IGC_DEV_PRIVATE_STATS(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw_stats *hw_stats = IGC_DEV_PRIVATE_STATS(dev);
+ 	struct igc_hw_queue_stats *queue_stats =
+ 			IGC_DEV_PRIVATE_QUEUE_STATS(dev);
+ 
+@@ -2124,8 +2124,8 @@ static int
+ eth_igc_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		uint64_t *values, unsigned int n)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	struct igc_hw_stats *hw_stats = IGC_DEV_PRIVATE_STATS(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw_stats *hw_stats = IGC_DEV_PRIVATE_STATS(dev);
+ 	unsigned int i;
+ 
+ 	igc_read_stats_registers(hw, hw_stats);
+@@ -2185,7 +2185,7 @@ eth_igc_queue_stats_mapping_set(struct rte_eth_dev *dev,
+ static int
+ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	uint32_t vec = IGC_MISC_VEC_ID;
+@@ -2195,8 +2195,8 @@ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+ 
+ 	uint32_t mask = 1u << (queue_id + vec);
+ 
+-	IGC_WRITE_REG(hw, IGC_EIMC, mask);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_EIMC, mask);
++	E1000_WRITE_FLUSH(hw);
+ 
+ 	return 0;
+ }
+@@ -2204,7 +2204,7 @@ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+ static int
+ eth_igc_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	uint32_t vec = IGC_MISC_VEC_ID;
+@@ -2214,8 +2214,8 @@ eth_igc_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+ 
+ 	uint32_t mask = 1u << (queue_id + vec);
+ 
+-	IGC_WRITE_REG(hw, IGC_EIMS, mask);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_EIMS, mask);
++	E1000_WRITE_FLUSH(hw);
+ 
+ 	rte_intr_enable(intr_handle);
+ 
+@@ -2225,7 +2225,7 @@ eth_igc_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+ static int
+ eth_igc_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t ctrl;
+ 	int tx_pause;
+ 	int rx_pause;
+@@ -2240,13 +2240,13 @@ eth_igc_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ 	 * Return rx_pause and tx_pause status according to actual setting of
+ 	 * the TFCE and RFCE bits in the CTRL register.
+ 	 */
+-	ctrl = IGC_READ_REG(hw, IGC_CTRL);
+-	if (ctrl & IGC_CTRL_TFCE)
++	ctrl = E1000_READ_REG(hw, E1000_CTRL);
++	if (ctrl & E1000_CTRL_TFCE)
+ 		tx_pause = 1;
+ 	else
+ 		tx_pause = 0;
+ 
+-	if (ctrl & IGC_CTRL_RFCE)
++	if (ctrl & E1000_CTRL_RFCE)
+ 		rx_pause = 1;
+ 	else
+ 		rx_pause = 0;
+@@ -2266,7 +2266,7 @@ eth_igc_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ static int
+ eth_igc_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t rx_buf_size;
+ 	uint32_t max_high_water;
+ 	uint32_t rctl;
+@@ -2291,16 +2291,16 @@ eth_igc_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ 
+ 	switch (fc_conf->mode) {
+ 	case RTE_ETH_FC_NONE:
+-		hw->fc.requested_mode = igc_fc_none;
++		hw->fc.requested_mode = e1000_fc_none;
+ 		break;
+ 	case RTE_ETH_FC_RX_PAUSE:
+-		hw->fc.requested_mode = igc_fc_rx_pause;
++		hw->fc.requested_mode = e1000_fc_rx_pause;
+ 		break;
+ 	case RTE_ETH_FC_TX_PAUSE:
+-		hw->fc.requested_mode = igc_fc_tx_pause;
++		hw->fc.requested_mode = e1000_fc_tx_pause;
+ 		break;
+ 	case RTE_ETH_FC_FULL:
+-		hw->fc.requested_mode = igc_fc_full;
++		hw->fc.requested_mode = e1000_fc_full;
+ 		break;
+ 	default:
+ 		PMD_DRV_LOG(ERR, "unsupported fc mode: %u", fc_conf->mode);
+@@ -2312,23 +2312,23 @@ eth_igc_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ 	hw->fc.low_water      = fc_conf->low_water;
+ 	hw->fc.send_xon	      = fc_conf->send_xon;
+ 
+-	err = igc_setup_link_generic(hw);
+-	if (err == IGC_SUCCESS) {
++	err = e1000_setup_link_generic(hw);
++	if (err == E1000_SUCCESS) {
+ 		/**
+ 		 * check if we want to forward MAC frames - driver doesn't have
+ 		 * native capability to do that, so we'll write the registers
+ 		 * ourselves
+ 		 **/
+-		rctl = IGC_READ_REG(hw, IGC_RCTL);
++		rctl = E1000_READ_REG(hw, E1000_RCTL);
+ 
+ 		/* set or clear MFLCN.PMCF bit depending on configuration */
+ 		if (fc_conf->mac_ctrl_frame_fwd != 0)
+-			rctl |= IGC_RCTL_PMCF;
++			rctl |= E1000_RCTL_PMCF;
+ 		else
+-			rctl &= ~IGC_RCTL_PMCF;
++			rctl &= ~E1000_RCTL_PMCF;
+ 
+-		IGC_WRITE_REG(hw, IGC_RCTL, rctl);
+-		IGC_WRITE_FLUSH(hw);
++		E1000_WRITE_REG(hw, E1000_RCTL, rctl);
++		E1000_WRITE_FLUSH(hw);
+ 
+ 		return 0;
+ 	}
+@@ -2342,7 +2342,7 @@ eth_igc_rss_reta_update(struct rte_eth_dev *dev,
+ 			struct rte_eth_rss_reta_entry64 *reta_conf,
+ 			uint16_t reta_size)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint16_t i;
+ 
+ 	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
+@@ -2374,8 +2374,8 @@ eth_igc_rss_reta_update(struct rte_eth_dev *dev,
+ 		if (mask == IGC_RSS_RDT_REG_SIZE_MASK)
+ 			reg.dword = 0;
+ 		else
+-			reg.dword = IGC_READ_REG_LE_VALUE(hw,
+-					IGC_RETA(i / IGC_RSS_RDT_REG_SIZE));
++			reg.dword = E1000_READ_REG_LE_VALUE(hw,
++					E1000_RETA(i / IGC_RSS_RDT_REG_SIZE));
+ 
+ 		/* update the register */
+ 		RTE_BUILD_BUG_ON(sizeof(reta.bytes) != IGC_RSS_RDT_REG_SIZE);
+@@ -2386,8 +2386,8 @@ eth_igc_rss_reta_update(struct rte_eth_dev *dev,
+ 			else
+ 				reta.bytes[j] = reg.bytes[j];
+ 		}
+-		IGC_WRITE_REG_LE_VALUE(hw,
+-			IGC_RETA(i / IGC_RSS_RDT_REG_SIZE), reta.dword);
++		E1000_WRITE_REG_LE_VALUE(hw,
++			E1000_RETA(i / IGC_RSS_RDT_REG_SIZE), reta.dword);
+ 	}
+ 
+ 	return 0;
+@@ -2398,7 +2398,7 @@ eth_igc_rss_reta_query(struct rte_eth_dev *dev,
+ 		       struct rte_eth_rss_reta_entry64 *reta_conf,
+ 		       uint16_t reta_size)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint16_t i;
+ 
+ 	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
+@@ -2428,8 +2428,8 @@ eth_igc_rss_reta_query(struct rte_eth_dev *dev,
+ 
+ 		/* read register and get the queue index */
+ 		RTE_BUILD_BUG_ON(sizeof(reta.bytes) != IGC_RSS_RDT_REG_SIZE);
+-		reta.dword = IGC_READ_REG_LE_VALUE(hw,
+-				IGC_RETA(i / IGC_RSS_RDT_REG_SIZE));
++		reta.dword = E1000_READ_REG_LE_VALUE(hw,
++				E1000_RETA(i / IGC_RSS_RDT_REG_SIZE));
+ 		for (j = 0; j < IGC_RSS_RDT_REG_SIZE; j++) {
+ 			if (mask & (1u << j))
+ 				reta_conf[idx].reta[shift + j] = reta.bytes[j];
+@@ -2443,7 +2443,7 @@ static int
+ eth_igc_rss_hash_update(struct rte_eth_dev *dev,
+ 			struct rte_eth_rss_conf *rss_conf)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	igc_hw_rss_hash_set(hw, rss_conf);
+ 	return 0;
+ }
+@@ -2452,7 +2452,7 @@ static int
+ eth_igc_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 			struct rte_eth_rss_conf *rss_conf)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t *hash_key = (uint32_t *)rss_conf->rss_key;
+ 	uint32_t mrqc;
+ 	uint64_t rss_hf;
+@@ -2470,32 +2470,32 @@ eth_igc_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 
+ 		/* read RSS key from register */
+ 		for (i = 0; i < IGC_HKEY_MAX_INDEX; i++)
+-			hash_key[i] = IGC_READ_REG_LE_VALUE(hw, IGC_RSSRK(i));
++			hash_key[i] = E1000_READ_REG_LE_VALUE(hw, E1000_RSSRK(i));
+ 	}
+ 
+ 	/* get RSS functions configured in MRQC register */
+-	mrqc = IGC_READ_REG(hw, IGC_MRQC);
+-	if ((mrqc & IGC_MRQC_ENABLE_RSS_4Q) == 0)
++	mrqc = E1000_READ_REG(hw, E1000_MRQC);
++	if ((mrqc & E1000_MRQC_ENABLE_RSS_4Q) == 0)
+ 		return 0;
+ 
+ 	rss_hf = 0;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV4)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV4)
+ 		rss_hf |= RTE_ETH_RSS_IPV4;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV4_TCP)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV4_TCP)
+ 		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6)
+ 		rss_hf |= RTE_ETH_RSS_IPV6;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6_EX)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6_EX)
+ 		rss_hf |= RTE_ETH_RSS_IPV6_EX;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6_TCP)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6_TCP)
+ 		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6_TCP_EX)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6_TCP_EX)
+ 		rss_hf |= RTE_ETH_RSS_IPV6_TCP_EX;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV4_UDP)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV4_UDP)
+ 		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6_UDP)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6_UDP)
+ 		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
+-	if (mrqc & IGC_MRQC_RSS_FIELD_IPV6_UDP_EX)
++	if (mrqc & E1000_MRQC_RSS_FIELD_IPV6_UDP_EX)
+ 		rss_hf |= RTE_ETH_RSS_IPV6_UDP_EX;
+ 
+ 	rss_conf->rss_hf |= rss_hf;
+@@ -2505,20 +2505,20 @@ eth_igc_rss_hash_conf_get(struct rte_eth_dev *dev,
+ static int
+ eth_igc_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_vfta *shadow_vfta = IGC_DEV_PRIVATE_VFTA(dev);
+ 	uint32_t vfta;
+ 	uint32_t vid_idx;
+ 	uint32_t vid_bit;
+ 
+-	vid_idx = (vlan_id >> IGC_VFTA_ENTRY_SHIFT) & IGC_VFTA_ENTRY_MASK;
+-	vid_bit = 1u << (vlan_id & IGC_VFTA_ENTRY_BIT_SHIFT_MASK);
++	vid_idx = (vlan_id >> E1000_VFTA_ENTRY_SHIFT) & E1000_VFTA_ENTRY_MASK;
++	vid_bit = 1u << (vlan_id & E1000_VFTA_ENTRY_BIT_SHIFT_MASK);
+ 	vfta = shadow_vfta->vfta[vid_idx];
+ 	if (on)
+ 		vfta |= vid_bit;
+ 	else
+ 		vfta &= ~vid_bit;
+-	IGC_WRITE_REG_ARRAY(hw, IGC_VFTA, vid_idx, vfta);
++	E1000_WRITE_REG_ARRAY(hw, E1000_VFTA, vid_idx, vfta);
+ 
+ 	/* update local VFTA copy */
+ 	shadow_vfta->vfta[vid_idx] = vfta;
+@@ -2529,54 +2529,54 @@ eth_igc_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ static void
+ igc_vlan_hw_filter_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	igc_read_reg_check_clear_bits(hw, IGC_RCTL,
+-			IGC_RCTL_CFIEN | IGC_RCTL_VFE);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	igc_read_reg_check_clear_bits(hw, E1000_RCTL,
++			E1000_RCTL_CFIEN | E1000_RCTL_VFE);
+ }
+ 
+ static void
+ igc_vlan_hw_filter_enable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_vfta *shadow_vfta = IGC_DEV_PRIVATE_VFTA(dev);
+ 	uint32_t reg_val;
+ 	int i;
+ 
+ 	/* Filter Table Enable, CFI not used for packet acceptance */
+-	reg_val = IGC_READ_REG(hw, IGC_RCTL);
+-	reg_val &= ~IGC_RCTL_CFIEN;
+-	reg_val |= IGC_RCTL_VFE;
+-	IGC_WRITE_REG(hw, IGC_RCTL, reg_val);
++	reg_val = E1000_READ_REG(hw, E1000_RCTL);
++	reg_val &= ~E1000_RCTL_CFIEN;
++	reg_val |= E1000_RCTL_VFE;
++	E1000_WRITE_REG(hw, E1000_RCTL, reg_val);
+ 
+ 	/* restore VFTA table */
+ 	for (i = 0; i < IGC_VFTA_SIZE; i++)
+-		IGC_WRITE_REG_ARRAY(hw, IGC_VFTA, i, shadow_vfta->vfta[i]);
++		E1000_WRITE_REG_ARRAY(hw, E1000_VFTA, i, shadow_vfta->vfta[i]);
+ }
+ 
+ static void
+ igc_vlan_hw_strip_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	igc_read_reg_check_clear_bits(hw, IGC_CTRL, IGC_CTRL_VME);
++	igc_read_reg_check_clear_bits(hw, E1000_CTRL, E1000_CTRL_VME);
+ }
+ 
+ static void
+ igc_vlan_hw_strip_enable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	igc_read_reg_check_set_bits(hw, IGC_CTRL, IGC_CTRL_VME);
++	igc_read_reg_check_set_bits(hw, E1000_CTRL, E1000_CTRL_VME);
+ }
+ 
+ static int
+ igc_vlan_hw_extend_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t frame_size = dev->data->mtu + IGC_ETH_OVERHEAD;
+ 	uint32_t ctrl_ext;
  
 -	ctrl_ext = IGC_READ_REG(hw, IGC_CTRL_EXT);
 +	ctrl_ext = E1000_READ_REG(hw, E1000_CTRL_EXT);
  
- 	/* Make sure the PHY is in a good state. Several people have reported
- 	 * firmware leaving the PHY's page select register set to something
-@@ -171,12 +171,12 @@ static s32 igc_init_phy_params_i225(struct igc_hw *hw)
- 	if (ret_val)
- 		goto out;
+ 	/* if extend vlan hasn't been enabled */
+ 	if ((ctrl_ext & IGC_CTRL_EXT_EXT_VLAN) == 0)
+@@ -2588,20 +2588,20 @@ igc_vlan_hw_extend_disable(struct rte_eth_dev *dev)
+ 			frame_size, VLAN_TAG_SIZE + RTE_ETHER_MIN_MTU);
+ 		return -EINVAL;
+ 	}
+-	IGC_WRITE_REG(hw, IGC_RLPML, frame_size - VLAN_TAG_SIZE);
++	E1000_WRITE_REG(hw, E1000_RLPML, frame_size - VLAN_TAG_SIZE);
  
--	IGC_WRITE_REG(hw, IGC_CTRL_EXT, ctrl_ext);
--	phy->ops.read_reg = igc_read_phy_reg_gpy;
--	phy->ops.write_reg = igc_write_phy_reg_gpy;
-+	E1000_WRITE_REG(hw, E1000_CTRL_EXT, ctrl_ext);
-+	phy->ops.read_reg = e1000_read_phy_reg_gpy;
-+	phy->ops.write_reg = e1000_write_phy_reg_gpy;
- 
--	ret_val = igc_get_phy_id(hw);
--	phy->type = igc_phy_i225;
-+	ret_val = e1000_get_phy_id(hw);
-+	phy->type = e1000_phy_i225;
- 
- 
- out:
-@@ -184,41 +184,41 @@ static s32 igc_init_phy_params_i225(struct igc_hw *hw)
+-	IGC_WRITE_REG(hw, IGC_CTRL_EXT, ctrl_ext & ~IGC_CTRL_EXT_EXT_VLAN);
++	E1000_WRITE_REG(hw, E1000_CTRL_EXT, ctrl_ext & ~IGC_CTRL_EXT_EXT_VLAN);
+ 	return 0;
  }
  
- /**
-- *  igc_reset_hw_i225 - Reset hardware
-+ *  e1000_reset_hw_i225 - Reset hardware
-  *  @hw: pointer to the HW structure
-  *
-  *  This resets the hardware into a known state.
-  **/
--static s32 igc_reset_hw_i225(struct igc_hw *hw)
-+static s32 e1000_reset_hw_i225(struct e1000_hw *hw)
+ static int
+ igc_vlan_hw_extend_enable(struct rte_eth_dev *dev)
  {
- 	u32 ctrl;
- 	s32 ret_val;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t frame_size = dev->data->mtu + IGC_ETH_OVERHEAD;
+ 	uint32_t ctrl_ext;
  
--	DEBUGFUNC("igc_reset_hw_i225");
-+	DEBUGFUNC("e1000_reset_hw_i225");
+-	ctrl_ext = IGC_READ_REG(hw, IGC_CTRL_EXT);
++	ctrl_ext = E1000_READ_REG(hw, E1000_CTRL_EXT);
  
- 	/*
- 	 * Prevent the PCI-E bus from sticking if there is no TLP connection
- 	 * on the last TLP read/write transaction when MAC is reset.
- 	 */
--	ret_val = igc_disable_pcie_master_generic(hw);
-+	ret_val = e1000_disable_pcie_master_generic(hw);
- 	if (ret_val)
- 		DEBUGOUT("PCI-E Master disable polling has failed.\n");
+ 	/* if extend vlan has been enabled */
+ 	if (ctrl_ext & IGC_CTRL_EXT_EXT_VLAN)
+@@ -2613,9 +2613,9 @@ igc_vlan_hw_extend_enable(struct rte_eth_dev *dev)
+ 			frame_size, MAX_RX_JUMBO_FRAME_SIZE);
+ 		return -EINVAL;
+ 	}
+-	IGC_WRITE_REG(hw, IGC_RLPML, frame_size);
++	E1000_WRITE_REG(hw, E1000_RLPML, frame_size);
  
- 	DEBUGOUT("Masking off all interrupts\n");
--	IGC_WRITE_REG(hw, IGC_IMC, 0xffffffff);
-+	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
+-	IGC_WRITE_REG(hw, IGC_CTRL_EXT, ctrl_ext | IGC_CTRL_EXT_EXT_VLAN);
++	E1000_WRITE_REG(hw, E1000_CTRL_EXT, ctrl_ext | IGC_CTRL_EXT_EXT_VLAN);
+ 	return 0;
+ }
  
--	IGC_WRITE_REG(hw, IGC_RCTL, 0);
--	IGC_WRITE_REG(hw, IGC_TCTL, IGC_TCTL_PSP);
+@@ -2654,15 +2654,15 @@ eth_igc_vlan_tpid_set(struct rte_eth_dev *dev,
+ 		      enum rte_vlan_type vlan_type,
+ 		      uint16_t tpid)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t reg_val;
+ 
+ 	/* only outer TPID of double VLAN can be configured*/
+ 	if (vlan_type == RTE_ETH_VLAN_TYPE_OUTER) {
+-		reg_val = IGC_READ_REG(hw, IGC_VET);
++		reg_val = E1000_READ_REG(hw, E1000_VET);
+ 		reg_val = (reg_val & (~IGC_VET_EXT)) |
+ 			((uint32_t)tpid << IGC_VET_EXT_SHIFT);
+-		IGC_WRITE_REG(hw, IGC_VET, reg_val);
++		E1000_WRITE_REG(hw, E1000_VET, reg_val);
+ 
+ 		return 0;
+ 	}
+@@ -2675,42 +2675,42 @@ eth_igc_vlan_tpid_set(struct rte_eth_dev *dev,
+ static int
+ eth_igc_timesync_enable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct timespec system_time;
+ 	struct igc_rx_queue *rxq;
+ 	uint32_t val;
+ 	uint16_t i;
+ 
+-	IGC_WRITE_REG(hw, IGC_TSAUXC, 0x0);
++	E1000_WRITE_REG(hw, E1000_TSAUXC, 0x0);
+ 
+ 	clock_gettime(CLOCK_REALTIME, &system_time);
+-	IGC_WRITE_REG(hw, IGC_SYSTIML, system_time.tv_nsec);
+-	IGC_WRITE_REG(hw, IGC_SYSTIMH, system_time.tv_sec);
++	E1000_WRITE_REG(hw, E1000_SYSTIML, system_time.tv_nsec);
++	E1000_WRITE_REG(hw, E1000_SYSTIMH, system_time.tv_sec);
+ 
+ 	/* Enable timestamping of received PTP packets. */
+-	val = IGC_READ_REG(hw, IGC_RXPBS);
+-	val |= IGC_RXPBS_CFG_TS_EN;
+-	IGC_WRITE_REG(hw, IGC_RXPBS, val);
++	val = E1000_READ_REG(hw, E1000_RXPBS);
++	val |= E1000_RXPBS_CFG_TS_EN;
++	E1000_WRITE_REG(hw, E1000_RXPBS, val);
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+-		val = IGC_READ_REG(hw, IGC_SRRCTL(i));
++		val = E1000_READ_REG(hw, E1000_SRRCTL(i));
+ 		/* For now, only support retrieving Rx timestamp from timer0. */
+-		val |= IGC_SRRCTL_TIMER1SEL(0) | IGC_SRRCTL_TIMER0SEL(0) |
+-		       IGC_SRRCTL_TIMESTAMP;
+-		IGC_WRITE_REG(hw, IGC_SRRCTL(i), val);
++		val |= E1000_SRRCTL_TIMER1SEL(0) | E1000_SRRCTL_TIMER0SEL(0) |
++		       E1000_SRRCTL_TIMESTAMP;
++		E1000_WRITE_REG(hw, E1000_SRRCTL(i), val);
+ 	}
+ 
+-	val = IGC_TSYNCRXCTL_ENABLED | IGC_TSYNCRXCTL_TYPE_ALL |
+-	      IGC_TSYNCRXCTL_RXSYNSIG;
+-	IGC_WRITE_REG(hw, IGC_TSYNCRXCTL, val);
++	val = E1000_TSYNCRXCTL_ENABLED | E1000_TSYNCRXCTL_TYPE_ALL |
++	      E1000_TSYNCRXCTL_RXSYNSIG;
++	E1000_WRITE_REG(hw, E1000_TSYNCRXCTL, val);
+ 
+ 	/* Enable Timestamping of transmitted PTP packets. */
+-	IGC_WRITE_REG(hw, IGC_TSYNCTXCTL, IGC_TSYNCTXCTL_ENABLED |
+-		      IGC_TSYNCTXCTL_TXSYNSIG);
++	E1000_WRITE_REG(hw, E1000_TSYNCTXCTL, E1000_TSYNCTXCTL_ENABLED |
++		      E1000_TSYNCTXCTL_TXSYNSIG);
+ 
+ 	/* Read TXSTMP registers to discard any timestamp previously stored. */
+-	IGC_READ_REG(hw, IGC_TXSTMPL);
+-	IGC_READ_REG(hw, IGC_TXSTMPH);
++	E1000_READ_REG(hw, E1000_TXSTMPL);
++	E1000_READ_REG(hw, E1000_TXSTMPH);
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+ 		rxq = dev->data->rx_queues[i];
+@@ -2723,10 +2723,10 @@ eth_igc_timesync_enable(struct rte_eth_dev *dev)
+ static int
+ eth_igc_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	ts->tv_nsec = IGC_READ_REG(hw, IGC_SYSTIML);
+-	ts->tv_sec = IGC_READ_REG(hw, IGC_SYSTIMH);
++	ts->tv_nsec = E1000_READ_REG(hw, E1000_SYSTIML);
++	ts->tv_sec = E1000_READ_REG(hw, E1000_SYSTIMH);
+ 
+ 	return 0;
+ }
+@@ -2734,10 +2734,10 @@ eth_igc_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
+ static int
+ eth_igc_timesync_write_time(struct rte_eth_dev *dev, const struct timespec *ts)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 
+-	IGC_WRITE_REG(hw, IGC_SYSTIML, ts->tv_nsec);
+-	IGC_WRITE_REG(hw, IGC_SYSTIMH, ts->tv_sec);
++	E1000_WRITE_REG(hw, E1000_SYSTIML, ts->tv_nsec);
++	E1000_WRITE_REG(hw, E1000_SYSTIMH, ts->tv_sec);
+ 
+ 	return 0;
+ }
+@@ -2745,20 +2745,20 @@ eth_igc_timesync_write_time(struct rte_eth_dev *dev, const struct timespec *ts)
+ static int
+ eth_igc_timesync_adjust_time(struct rte_eth_dev *dev, int64_t delta)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t nsec, sec;
+ 	uint64_t systime, ns;
+ 	struct timespec ts;
+ 
+-	nsec = (uint64_t)IGC_READ_REG(hw, IGC_SYSTIML);
+-	sec = (uint64_t)IGC_READ_REG(hw, IGC_SYSTIMH);
++	nsec = (uint64_t)E1000_READ_REG(hw, E1000_SYSTIML);
++	sec = (uint64_t)E1000_READ_REG(hw, E1000_SYSTIMH);
+ 	systime = sec * NSEC_PER_SEC + nsec;
+ 
+ 	ns = systime + delta;
+ 	ts = rte_ns_to_timespec(ns);
+ 
+-	IGC_WRITE_REG(hw, IGC_SYSTIML, ts.tv_nsec);
+-	IGC_WRITE_REG(hw, IGC_SYSTIMH, ts.tv_sec);
++	E1000_WRITE_REG(hw, E1000_SYSTIML, ts.tv_nsec);
++	E1000_WRITE_REG(hw, E1000_SYSTIMH, ts.tv_sec);
+ 
+ 	return 0;
+ }
+@@ -2803,18 +2803,18 @@ static int
+ eth_igc_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 			       struct timespec *timestamp)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct rte_eth_link link;
+ 	uint32_t val, nsec, sec;
+ 	uint64_t tx_timestamp;
+ 	int adjust = 0;
+ 
+-	val = IGC_READ_REG(hw, IGC_TSYNCTXCTL);
+-	if (!(val & IGC_TSYNCTXCTL_VALID))
++	val = E1000_READ_REG(hw, E1000_TSYNCTXCTL);
++	if (!(val & E1000_TSYNCTXCTL_VALID))
+ 		return -EINVAL;
+ 
+-	nsec = (uint64_t)IGC_READ_REG(hw, IGC_TXSTMPL);
+-	sec = (uint64_t)IGC_READ_REG(hw, IGC_TXSTMPH);
++	nsec = (uint64_t)E1000_READ_REG(hw, E1000_TXSTMPL);
++	sec = (uint64_t)E1000_READ_REG(hw, E1000_TXSTMPH);
+ 	tx_timestamp = sec * NSEC_PER_SEC + nsec;
+ 
+ 	/* Get current link speed. */
+@@ -2845,22 +2845,22 @@ eth_igc_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ static int
+ eth_igc_timesync_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t val;
+ 
+ 	/* Disable timestamping of transmitted PTP packets. */
+-	IGC_WRITE_REG(hw, IGC_TSYNCTXCTL, 0);
++	E1000_WRITE_REG(hw, E1000_TSYNCTXCTL, 0);
+ 
+ 	/* Disable timestamping of received PTP packets. */
+-	IGC_WRITE_REG(hw, IGC_TSYNCRXCTL, 0);
++	E1000_WRITE_REG(hw, E1000_TSYNCRXCTL, 0);
+ 
+-	val = IGC_READ_REG(hw, IGC_RXPBS);
+-	val &= ~IGC_RXPBS_CFG_TS_EN;
+-	IGC_WRITE_REG(hw, IGC_RXPBS, val);
++	val = E1000_READ_REG(hw, E1000_RXPBS);
++	val &= ~E1000_RXPBS_CFG_TS_EN;
++	E1000_WRITE_REG(hw, E1000_RXPBS, val);
+ 
+-	val = IGC_READ_REG(hw, IGC_SRRCTL(0));
+-	val &= ~IGC_SRRCTL_TIMESTAMP;
+-	IGC_WRITE_REG(hw, IGC_SRRCTL(0), val);
++	val = E1000_READ_REG(hw, E1000_SRRCTL(0));
++	val &= ~E1000_SRRCTL_TIMESTAMP;
++	E1000_WRITE_REG(hw, E1000_SRRCTL(0), val);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/intel/igc/igc_ethdev.h b/drivers/net/intel/e1000/igc_ethdev.h
+similarity index 91%
+rename from drivers/net/intel/igc/igc_ethdev.h
+rename to drivers/net/intel/e1000/igc_ethdev.h
+index d3d3ddd6f6..7fa7877adf 100644
+--- a/drivers/net/intel/igc/igc_ethdev.h
++++ b/drivers/net/intel/e1000/igc_ethdev.h
+@@ -9,10 +9,10 @@
+ #include <rte_flow.h>
+ #include <rte_time.h>
+ 
+-#include "base/igc_osdep.h"
+-#include "base/igc_hw.h"
+-#include "base/igc_i225.h"
+-#include "base/igc_api.h"
++#include "base/e1000_osdep.h"
++#include "base/e1000_hw.h"
++#include "base/e1000_i225.h"
++#include "base/e1000_api.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -55,13 +55,13 @@ extern "C" {
+ #define IGC_RX_DESCRIPTOR_MULTIPLE	8
+ 
+ #define IGC_RXD_ALIGN	((uint16_t)(IGC_ALIGN / \
+-		sizeof(union igc_adv_rx_desc)))
++		sizeof(union e1000_adv_rx_desc)))
+ #define IGC_TXD_ALIGN	((uint16_t)(IGC_ALIGN / \
+-		sizeof(union igc_adv_tx_desc)))
++		sizeof(union e1000_adv_tx_desc)))
+ #define IGC_MIN_TXD	IGC_TX_DESCRIPTOR_MULTIPLE
+-#define IGC_MAX_TXD	((uint16_t)(0x80000 / sizeof(union igc_adv_tx_desc)))
++#define IGC_MAX_TXD	((uint16_t)(0x80000 / sizeof(union e1000_adv_tx_desc)))
+ #define IGC_MIN_RXD	IGC_RX_DESCRIPTOR_MULTIPLE
+-#define IGC_MAX_RXD	((uint16_t)(0x80000 / sizeof(union igc_adv_rx_desc)))
++#define IGC_MAX_RXD	((uint16_t)(0x80000 / sizeof(union e1000_adv_rx_desc)))
+ 
+ #define IGC_TX_MAX_SEG		UINT8_MAX
+ #define IGC_TX_MAX_MTU_SEG	UINT8_MAX
+@@ -224,8 +224,8 @@ TAILQ_HEAD(igc_flow_list, rte_flow);
+  * Structure to store private data for each driver instance (for each port).
+  */
+ struct igc_adapter {
+-	struct igc_hw		hw;
+-	struct igc_hw_stats	stats;
++	struct e1000_hw		hw;
++	struct e1000_hw_stats	stats;
+ 	struct igc_hw_queue_stats queue_stats;
+ 	int16_t txq_stats_map[IGC_QUEUE_PAIRS_NUM];
+ 	int16_t rxq_stats_map[IGC_QUEUE_PAIRS_NUM];
+@@ -268,27 +268,27 @@ struct igc_adapter {
+ 	(&((struct igc_adapter *)(_dev)->data->dev_private)->flow_list)
+ 
+ static inline void
+-igc_read_reg_check_set_bits(struct igc_hw *hw, uint32_t reg, uint32_t bits)
++igc_read_reg_check_set_bits(struct e1000_hw *hw, uint32_t reg, uint32_t bits)
+ {
+-	uint32_t reg_val = IGC_READ_REG(hw, reg);
++	uint32_t reg_val = E1000_READ_REG(hw, reg);
+ 
+ 	bits |= reg_val;
+ 	if (bits == reg_val)
+ 		return;	/* no need to write back */
+ 
+-	IGC_WRITE_REG(hw, reg, bits);
++	E1000_WRITE_REG(hw, reg, bits);
+ }
+ 
+ static inline void
+-igc_read_reg_check_clear_bits(struct igc_hw *hw, uint32_t reg, uint32_t bits)
++igc_read_reg_check_clear_bits(struct e1000_hw *hw, uint32_t reg, uint32_t bits)
+ {
+-	uint32_t reg_val = IGC_READ_REG(hw, reg);
++	uint32_t reg_val = E1000_READ_REG(hw, reg);
+ 
+ 	bits = reg_val & ~bits;
+ 	if (bits == reg_val)
+ 		return;	/* no need to write back */
+ 
+-	IGC_WRITE_REG(hw, reg, bits);
++	E1000_WRITE_REG(hw, reg, bits);
+ }
+ 
+ #ifdef __cplusplus
+diff --git a/drivers/net/intel/igc/igc_filter.c b/drivers/net/intel/e1000/igc_filter.c
+similarity index 81%
+rename from drivers/net/intel/igc/igc_filter.c
+rename to drivers/net/intel/e1000/igc_filter.c
+index bff98df200..3df7183dbb 100644
+--- a/drivers/net/intel/igc/igc_filter.c
++++ b/drivers/net/intel/e1000/igc_filter.c
+@@ -3,7 +3,7 @@
+  */
+ 
+ #include "rte_malloc.h"
+-#include "igc_logs.h"
++#include "e1000_logs.h"
+ #include "igc_txrx.h"
+ #include "igc_filter.h"
+ #include "igc_flow.h"
+@@ -57,7 +57,7 @@ int
+ igc_del_ethertype_filter(struct rte_eth_dev *dev,
+ 			const struct igc_ethertype_filter *filter)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+ 	int ret;
+ 
+@@ -77,8 +77,8 @@ igc_del_ethertype_filter(struct rte_eth_dev *dev,
+ 
+ 	igc->ethertype_filters[ret].ether_type = 0;
+ 
+-	IGC_WRITE_REG(hw, IGC_ETQF(ret), 0);
 -	IGC_WRITE_FLUSH(hw);
-+	E1000_WRITE_REG(hw, E1000_RCTL, 0);
-+	E1000_WRITE_REG(hw, E1000_TCTL, E1000_TCTL_PSP);
++	E1000_WRITE_REG(hw, E1000_ETQF(ret), 0);
++	E1000_WRITE_FLUSH(hw);
+ 	return 0;
+ }
+ 
+@@ -86,7 +86,7 @@ int
+ igc_add_ethertype_filter(struct rte_eth_dev *dev,
+ 			const struct igc_ethertype_filter *filter)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+ 	uint32_t etqf;
+ 	int ret, empty;
+@@ -114,13 +114,13 @@ igc_add_ethertype_filter(struct rte_eth_dev *dev,
+ 	ret = empty;
+ 
+ 	etqf = filter->ether_type;
+-	etqf |= IGC_ETQF_FILTER_ENABLE | IGC_ETQF_QUEUE_ENABLE;
++	etqf |= E1000_ETQF_FILTER_ENABLE | E1000_ETQF_QUEUE_ENABLE;
+ 	etqf |= (uint32_t)filter->queue << IGC_ETQF_QUEUE_SHIFT;
+ 
+ 	memcpy(&igc->ethertype_filters[ret], filter, sizeof(*filter));
+ 
+-	IGC_WRITE_REG(hw, IGC_ETQF(ret), etqf);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_ETQF(ret), etqf);
++	E1000_WRITE_FLUSH(hw);
+ 	return 0;
+ }
+ 
+@@ -128,13 +128,13 @@ igc_add_ethertype_filter(struct rte_eth_dev *dev,
+ static void
+ igc_clear_all_ethertype_filter(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+ 	int i;
+ 
+ 	for (i = 0; i < IGC_MAX_ETQF_FILTERS; i++)
+-		IGC_WRITE_REG(hw, IGC_ETQF(i), 0);
+-	IGC_WRITE_FLUSH(hw);
++		E1000_WRITE_REG(hw, E1000_ETQF(i), 0);
 +	E1000_WRITE_FLUSH(hw);
  
- 	msec_delay(10);
+ 	memset(&igc->ethertype_filters, 0, sizeof(igc->ethertype_filters));
+ }
+@@ -196,59 +196,59 @@ static void
+ igc_enable_tuple_filter(struct rte_eth_dev *dev,
+ 			const struct igc_adapter *igc, uint8_t index)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	const struct igc_ntuple_filter *filter = &igc->ntuple_filters[index];
+ 	const struct igc_ntuple_info *info = &filter->tuple_info;
+-	uint32_t ttqf, imir, imir_ext = IGC_IMIREXT_SIZE_BP;
++	uint32_t ttqf, imir, imir_ext = E1000_IMIREXT_SIZE_BP;
  
--	ctrl = IGC_READ_REG(hw, IGC_CTRL);
-+	ctrl = E1000_READ_REG(hw, E1000_CTRL);
+ 	imir = info->dst_port;
+-	imir |= (uint32_t)info->priority << IGC_IMIR_PRIORITY_SHIFT;
++	imir |= (uint32_t)info->priority << E1000_IMIR_PRIORITY_SHIFT;
  
- 	DEBUGOUT("Issuing a global reset to MAC\n");
--	IGC_WRITE_REG(hw, IGC_CTRL, ctrl | IGC_CTRL_RST);
-+	E1000_WRITE_REG(hw, E1000_CTRL, ctrl | E1000_CTRL_RST);
+ 	/* 0b means not compare. */
+ 	if (info->dst_port_mask == 0)
+-		imir |= IGC_IMIR_PORT_BP;
++		imir |= E1000_IMIR_PORT_BP;
  
--	ret_val = igc_get_auto_rd_done_generic(hw);
-+	ret_val = e1000_get_auto_rd_done_generic(hw);
- 	if (ret_val) {
- 		/*
- 		 * When auto config read does not complete, do not
-@@ -229,174 +229,174 @@ static s32 igc_reset_hw_i225(struct igc_hw *hw)
+-	ttqf = IGC_TTQF_DISABLE_MASK | IGC_TTQF_QUEUE_ENABLE;
+-	ttqf |= (uint32_t)filter->queue << IGC_TTQF_QUEUE_SHIFT;
++	ttqf = E1000_TTQF_DISABLE_MASK | E1000_TTQF_QUEUE_ENABLE;
++	ttqf |= (uint32_t)filter->queue << E1000_TTQF_QUEUE_SHIFT;
+ 	ttqf |= info->proto;
+ 
+ 	if (info->proto_mask)
+-		ttqf &= ~IGC_TTQF_MASK_ENABLE;
++		ttqf &= ~E1000_TTQF_MASK_ENABLE;
+ 
+ 	/* TCP flags bits setting. */
+ 	if (info->tcp_flags & RTE_NTUPLE_TCP_FLAGS_MASK) {
+ 		if (info->tcp_flags & RTE_TCP_URG_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_URG;
++			imir_ext |= E1000_IMIREXT_CTRL_URG;
+ 		if (info->tcp_flags & RTE_TCP_ACK_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_ACK;
++			imir_ext |= E1000_IMIREXT_CTRL_ACK;
+ 		if (info->tcp_flags & RTE_TCP_PSH_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_PSH;
++			imir_ext |= E1000_IMIREXT_CTRL_PSH;
+ 		if (info->tcp_flags & RTE_TCP_RST_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_RST;
++			imir_ext |= E1000_IMIREXT_CTRL_RST;
+ 		if (info->tcp_flags & RTE_TCP_SYN_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_SYN;
++			imir_ext |= E1000_IMIREXT_CTRL_SYN;
+ 		if (info->tcp_flags & RTE_TCP_FIN_FLAG)
+-			imir_ext |= IGC_IMIREXT_CTRL_FIN;
++			imir_ext |= E1000_IMIREXT_CTRL_FIN;
+ 	} else {
+-		imir_ext |= IGC_IMIREXT_CTRL_BP;
++		imir_ext |= E1000_IMIREXT_CTRL_BP;
  	}
  
- 	/* Clear any pending interrupt events. */
--	IGC_WRITE_REG(hw, IGC_IMC, 0xffffffff);
--	IGC_READ_REG(hw, IGC_ICR);
-+	E1000_WRITE_REG(hw, E1000_IMC, 0xffffffff);
-+	E1000_READ_REG(hw, E1000_ICR);
- 
- 	/* Install any alternate MAC address into RAR0 */
--	ret_val = igc_check_alt_mac_addr_generic(hw);
-+	ret_val = e1000_check_alt_mac_addr_generic(hw);
- 
- 	return ret_val;
+-	IGC_WRITE_REG(hw, IGC_IMIR(index), imir);
+-	IGC_WRITE_REG(hw, IGC_TTQF(index), ttqf);
+-	IGC_WRITE_REG(hw, IGC_IMIREXT(index), imir_ext);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_IMIR(index), imir);
++	E1000_WRITE_REG(hw, E1000_TTQF(index), ttqf);
++	E1000_WRITE_REG(hw, E1000_IMIREXT(index), imir_ext);
++	E1000_WRITE_FLUSH(hw);
  }
  
--/* igc_acquire_nvm_i225 - Request for access to EEPROM
-+/* e1000_acquire_nvm_i225 - Request for access to EEPROM
-  * @hw: pointer to the HW structure
-  *
-  * Acquire the necessary semaphores for exclusive access to the EEPROM.
-  * Set the EEPROM access request bit and wait for EEPROM access grant bit.
-  * Return successful if access grant bit set, else clear the request for
-- * EEPROM access and return -IGC_ERR_NVM (-1).
-+ * EEPROM access and return -E1000_ERR_NVM (-1).
-  */
--static s32 igc_acquire_nvm_i225(struct igc_hw *hw)
-+static s32 e1000_acquire_nvm_i225(struct e1000_hw *hw)
+ /* Reset hardware register values */
+ static void
+ igc_disable_tuple_filter(struct rte_eth_dev *dev, uint8_t index)
  {
- 	s32 ret_val;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
--	DEBUGFUNC("igc_acquire_nvm_i225");
-+	DEBUGFUNC("e1000_acquire_nvm_i225");
- 
--	ret_val = igc_acquire_swfw_sync_i225(hw, IGC_SWFW_EEP_SM);
-+	ret_val = e1000_acquire_swfw_sync_i225(hw, E1000_SWFW_EEP_SM);
- 
- 	return ret_val;
+-	IGC_WRITE_REG(hw, IGC_TTQF(index), IGC_TTQF_DISABLE_MASK);
+-	IGC_WRITE_REG(hw, IGC_IMIR(index), 0);
+-	IGC_WRITE_REG(hw, IGC_IMIREXT(index), 0);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_TTQF(index), E1000_TTQF_DISABLE_MASK);
++	E1000_WRITE_REG(hw, E1000_IMIR(index), 0);
++	E1000_WRITE_REG(hw, E1000_IMIREXT(index), 0);
++	E1000_WRITE_FLUSH(hw);
  }
  
--/* igc_release_nvm_i225 - Release exclusive access to EEPROM
-+/* e1000_release_nvm_i225 - Release exclusive access to EEPROM
-  * @hw: pointer to the HW structure
-  *
-  * Stop any current commands to the EEPROM and clear the EEPROM request bit,
-  * then release the semaphores acquired.
-  */
--static void igc_release_nvm_i225(struct igc_hw *hw)
-+static void e1000_release_nvm_i225(struct e1000_hw *hw)
+ int
+@@ -310,7 +310,7 @@ int
+ igc_set_syn_filter(struct rte_eth_dev *dev,
+ 		const struct igc_syn_filter *filter)
  {
--	DEBUGFUNC("igc_release_nvm_i225");
-+	DEBUGFUNC("e1000_release_nvm_i225");
+-	struct igc_hw *hw;
++	struct e1000_hw *hw;
+ 	struct igc_adapter *igc;
+ 	uint32_t synqf, rfctl;
  
--	igc_release_swfw_sync_i225(hw, IGC_SWFW_EEP_SM);
-+	e1000_release_swfw_sync_i225(hw, E1000_SWFW_EEP_SM);
+@@ -331,7 +331,7 @@ igc_set_syn_filter(struct rte_eth_dev *dev,
+ 	synqf = (uint32_t)filter->queue << IGC_SYN_FILTER_QUEUE_SHIFT;
+ 	synqf |= IGC_SYN_FILTER_ENABLE;
+ 
+-	rfctl = IGC_READ_REG(hw, IGC_RFCTL);
++	rfctl = E1000_READ_REG(hw, E1000_RFCTL);
+ 	if (filter->hig_pri)
+ 		rfctl |= IGC_RFCTL_SYNQFP;
+ 	else
+@@ -340,9 +340,9 @@ igc_set_syn_filter(struct rte_eth_dev *dev,
+ 	memcpy(&igc->syn_filter, filter, sizeof(igc->syn_filter));
+ 	igc->syn_filter.enable = 1;
+ 
+-	IGC_WRITE_REG(hw, IGC_RFCTL, rfctl);
+-	IGC_WRITE_REG(hw, IGC_SYNQF(0), synqf);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_RFCTL, rfctl);
++	E1000_WRITE_REG(hw, E1000_SYNQF(0), synqf);
++	E1000_WRITE_FLUSH(hw);
+ 	return 0;
  }
  
--/* igc_acquire_swfw_sync_i225 - Acquire SW/FW semaphore
-+/* e1000_acquire_swfw_sync_i225 - Acquire SW/FW semaphore
-  * @hw: pointer to the HW structure
-  * @mask: specifies which semaphore to acquire
-  *
-  * Acquire the SW/FW semaphore to access the PHY or NVM.  The mask
-  * will also specify which port we're acquiring the lock for.
-  */
--s32 igc_acquire_swfw_sync_i225(struct igc_hw *hw, u16 mask)
-+s32 e1000_acquire_swfw_sync_i225(struct e1000_hw *hw, u16 mask)
+@@ -350,11 +350,11 @@ igc_set_syn_filter(struct rte_eth_dev *dev,
+ void
+ igc_clear_syn_filter(struct rte_eth_dev *dev)
  {
- 	u32 swfw_sync;
- 	u32 swmask = mask;
- 	u32 fwmask = mask << 16;
--	s32 ret_val = IGC_SUCCESS;
-+	s32 ret_val = E1000_SUCCESS;
- 	s32 i = 0, timeout = 200; /* FIXME: find real value to use here */
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
  
--	DEBUGFUNC("igc_acquire_swfw_sync_i225");
-+	DEBUGFUNC("e1000_acquire_swfw_sync_i225");
+-	IGC_WRITE_REG(hw, IGC_SYNQF(0), 0);
+-	IGC_WRITE_FLUSH(hw);
++	E1000_WRITE_REG(hw, E1000_SYNQF(0), 0);
++	E1000_WRITE_FLUSH(hw);
  
- 	while (i < timeout) {
--		if (igc_get_hw_semaphore_i225(hw)) {
--			ret_val = -IGC_ERR_SWFW_SYNC;
-+		if (e1000_get_hw_semaphore_i225(hw)) {
-+			ret_val = -E1000_ERR_SWFW_SYNC;
- 			goto out;
+ 	memset(&igc->syn_filter, 0, sizeof(igc->syn_filter));
+ }
+diff --git a/drivers/net/intel/igc/igc_filter.h b/drivers/net/intel/e1000/igc_filter.h
+similarity index 100%
+rename from drivers/net/intel/igc/igc_filter.h
+rename to drivers/net/intel/e1000/igc_filter.h
+diff --git a/drivers/net/intel/igc/igc_flow.c b/drivers/net/intel/e1000/igc_flow.c
+similarity index 99%
+rename from drivers/net/intel/igc/igc_flow.c
+rename to drivers/net/intel/e1000/igc_flow.c
+index b778ac2613..b947cf8b08 100644
+--- a/drivers/net/intel/igc/igc_flow.c
++++ b/drivers/net/intel/e1000/igc_flow.c
+@@ -3,7 +3,7 @@
+  */
+ 
+ #include "rte_malloc.h"
+-#include "igc_logs.h"
++#include "e1000_logs.h"
+ #include "igc_txrx.h"
+ #include "igc_filter.h"
+ #include "igc_flow.h"
+diff --git a/drivers/net/intel/igc/igc_flow.h b/drivers/net/intel/e1000/igc_flow.h
+similarity index 100%
+rename from drivers/net/intel/igc/igc_flow.h
+rename to drivers/net/intel/e1000/igc_flow.h
+diff --git a/drivers/net/intel/igc/igc_logs.c b/drivers/net/intel/e1000/igc_logs.c
+similarity index 90%
+rename from drivers/net/intel/igc/igc_logs.c
+rename to drivers/net/intel/e1000/igc_logs.c
+index 9cb8da527e..df91d173dd 100644
+--- a/drivers/net/intel/igc/igc_logs.c
++++ b/drivers/net/intel/e1000/igc_logs.c
+@@ -4,7 +4,7 @@
+ 
+ #include <rte_common.h>
+ 
+-#include "igc_logs.h"
++#include "e1000_logs.h"
+ 
+ RTE_LOG_REGISTER_SUFFIX(igc_logtype_init, init, INFO);
+ RTE_LOG_REGISTER_SUFFIX(igc_logtype_driver, driver, INFO);
+diff --git a/drivers/net/intel/igc/igc_txrx.c b/drivers/net/intel/e1000/igc_txrx.c
+similarity index 87%
+rename from drivers/net/intel/igc/igc_txrx.c
+rename to drivers/net/intel/e1000/igc_txrx.c
+index fabab5b1a3..9b2eb343ef 100644
+--- a/drivers/net/intel/igc/igc_txrx.c
++++ b/drivers/net/intel/e1000/igc_txrx.c
+@@ -8,7 +8,7 @@
+ #include <ethdev_driver.h>
+ #include <rte_net.h>
+ 
+-#include "igc_logs.h"
++#include "e1000_logs.h"
+ #include "igc_txrx.h"
+ 
+ #ifdef RTE_PMD_USE_PREFETCH
+@@ -24,16 +24,16 @@
+ #endif
+ 
+ /* Multicast / Unicast table offset mask. */
+-#define IGC_RCTL_MO_MSK			(3u << IGC_RCTL_MO_SHIFT)
++#define E1000_RCTL_MO_MSK			(3u << E1000_RCTL_MO_SHIFT)
+ 
+ /* Loopback mode. */
+-#define IGC_RCTL_LBM_SHIFT		6
+-#define IGC_RCTL_LBM_MSK		(3u << IGC_RCTL_LBM_SHIFT)
++#define E1000_RCTL_LBM_SHIFT		6
++#define E1000_RCTL_LBM_MSK		(3u << E1000_RCTL_LBM_SHIFT)
+ 
+ /* Hash select for MTA */
+-#define IGC_RCTL_HSEL_SHIFT		8
+-#define IGC_RCTL_HSEL_MSK		(3u << IGC_RCTL_HSEL_SHIFT)
+-#define IGC_RCTL_PSP			(1u << 21)
++#define E1000_RCTL_HSEL_SHIFT		8
++#define E1000_RCTL_HSEL_MSK		(3u << E1000_RCTL_HSEL_SHIFT)
++#define E1000_RCTL_PSP			(1u << 21)
+ 
+ /* Receive buffer size for header buffer */
+ #define IGC_SRRCTL_BSIZEHEADER_SHIFT	8
+@@ -109,14 +109,14 @@ rx_desc_statuserr_to_pkt_flags(uint32_t statuserr)
+ 	uint64_t pkt_flags = 0;
+ 	uint32_t tmp;
+ 
+-	if (statuserr & IGC_RXD_STAT_VP)
++	if (statuserr & E1000_RXD_STAT_VP)
+ 		pkt_flags |= RTE_MBUF_F_RX_VLAN_STRIPPED;
+ 
+-	tmp = !!(statuserr & (IGC_RXD_STAT_L4CS | IGC_RXD_STAT_UDPCS));
++	tmp = !!(statuserr & (IGC_RXD_STAT_L4CS | E1000_RXD_STAT_UDPCS));
+ 	tmp = (tmp << 1) | (uint32_t)!!(statuserr & IGC_RXD_EXT_ERR_L4E);
+ 	pkt_flags |= l4_chksum_flags[tmp];
+ 
+-	tmp = !!(statuserr & IGC_RXD_STAT_IPCS);
++	tmp = !!(statuserr & E1000_RXD_STAT_IPCS);
+ 	tmp = (tmp << 1) | (uint32_t)!!(statuserr & IGC_RXD_EXT_ERR_IPE);
+ 	pkt_flags |= l3_chksum_flags[tmp];
+ 
+@@ -193,7 +193,7 @@ rx_desc_pkt_info_to_pkt_type(uint32_t pkt_info)
+ 		[IGC_PACKET_TYPE_IPV4_EXT_SCTP] = RTE_PTYPE_L2_ETHER |
+ 			RTE_PTYPE_L3_IPV4_EXT | RTE_PTYPE_L4_SCTP,
+ 	};
+-	if (unlikely(pkt_info & IGC_RXDADV_PKTTYPE_ETQF))
++	if (unlikely(pkt_info & E1000_RXDADV_PKTTYPE_ETQF))
+ 		return RTE_PTYPE_UNKNOWN;
+ 
+ 	pkt_info = (pkt_info >> IGC_PACKET_TYPE_SHIFT) & IGC_PACKET_TYPE_MASK;
+@@ -203,7 +203,7 @@ rx_desc_pkt_info_to_pkt_type(uint32_t pkt_info)
+ 
+ static inline void
+ rx_desc_get_pkt_info(struct igc_rx_queue *rxq, struct rte_mbuf *rxm,
+-		union igc_adv_rx_desc *rxd, uint32_t staterr)
++		union e1000_adv_rx_desc *rxd, uint32_t staterr)
+ {
+ 	uint64_t pkt_flags;
+ 	uint32_t hlen_type_rss;
+@@ -237,18 +237,18 @@ uint16_t
+ igc_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ {
+ 	struct igc_rx_queue * const rxq = rx_queue;
+-	volatile union igc_adv_rx_desc * const rx_ring = rxq->rx_ring;
++	volatile union e1000_adv_rx_desc * const rx_ring = rxq->rx_ring;
+ 	struct igc_rx_entry * const sw_ring = rxq->sw_ring;
+ 	uint16_t rx_id = rxq->rx_tail;
+ 	uint16_t nb_rx = 0;
+ 	uint16_t nb_hold = 0;
+ 
+ 	while (nb_rx < nb_pkts) {
+-		volatile union igc_adv_rx_desc *rxdp;
++		volatile union e1000_adv_rx_desc *rxdp;
+ 		struct igc_rx_entry *rxe;
+ 		struct rte_mbuf *rxm;
+ 		struct rte_mbuf *nmb;
+-		union igc_adv_rx_desc rxd;
++		union e1000_adv_rx_desc rxd;
+ 		uint32_t staterr;
+ 		uint16_t data_len;
+ 
+@@ -262,14 +262,14 @@ igc_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		 */
+ 		rxdp = &rx_ring[rx_id];
+ 		staterr = rte_cpu_to_le_32(rxdp->wb.upper.status_error);
+-		if (!(staterr & IGC_RXD_STAT_DD))
++		if (!(staterr & E1000_RXD_STAT_DD))
+ 			break;
+ 		rxd = *rxdp;
+ 
+ 		/*
+ 		 * End of packet.
+ 		 *
+-		 * If the IGC_RXD_STAT_EOP flag is not set, the RX packet is
++		 * If the E1000_RXD_STAT_EOP flag is not set, the RX packet is
+ 		 * likely to be invalid and to be dropped by the various
+ 		 * validation checks performed by the network stack.
+ 		 *
+@@ -391,7 +391,7 @@ igc_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 			"port_id=%u queue_id=%u rx_tail=%u nb_hold=%u nb_rx=%u",
+ 			rxq->port_id, rxq->queue_id, rx_id, nb_hold, nb_rx);
+ 		rx_id = (rx_id == 0) ? (rxq->nb_rx_desc - 1) : (rx_id - 1);
+-		IGC_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
++		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
+ 		nb_hold = 0;
+ 	}
+ 	rxq->nb_rx_hold = nb_hold;
+@@ -403,7 +403,7 @@ igc_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			uint16_t nb_pkts)
+ {
+ 	struct igc_rx_queue * const rxq = rx_queue;
+-	volatile union igc_adv_rx_desc * const rx_ring = rxq->rx_ring;
++	volatile union e1000_adv_rx_desc * const rx_ring = rxq->rx_ring;
+ 	struct igc_rx_entry * const sw_ring = rxq->sw_ring;
+ 	struct rte_mbuf *first_seg = rxq->pkt_first_seg;
+ 	struct rte_mbuf *last_seg = rxq->pkt_last_seg;
+@@ -413,11 +413,11 @@ igc_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	uint16_t nb_hold = 0;
+ 
+ 	while (nb_rx < nb_pkts) {
+-		volatile union igc_adv_rx_desc *rxdp;
++		volatile union e1000_adv_rx_desc *rxdp;
+ 		struct igc_rx_entry *rxe;
+ 		struct rte_mbuf *rxm;
+ 		struct rte_mbuf *nmb;
+-		union igc_adv_rx_desc rxd;
++		union e1000_adv_rx_desc rxd;
+ 		uint32_t staterr;
+ 		uint16_t data_len;
+ 
+@@ -432,7 +432,7 @@ igc_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		 */
+ 		rxdp = &rx_ring[rx_id];
+ 		staterr = rte_cpu_to_le_32(rxdp->wb.upper.status_error);
+-		if (!(staterr & IGC_RXD_STAT_DD))
++		if (!(staterr & E1000_RXD_STAT_DD))
+ 			break;
+ 		rxd = *rxdp;
+ 
+@@ -559,7 +559,7 @@ igc_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		 * update the pointer to the last mbuf of the current scattered
+ 		 * packet and continue to parse the RX ring.
+ 		 */
+-		if (!(staterr & IGC_RXD_STAT_EOP)) {
++		if (!(staterr & E1000_RXD_STAT_EOP)) {
+ 			last_seg = rxm;
+ 			goto next_desc;
+ 		}
+@@ -631,7 +631,7 @@ igc_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			"port_id=%u queue_id=%u rx_tail=%u nb_hold=%u nb_rx=%u",
+ 			rxq->port_id, rxq->queue_id, rx_id, nb_hold, nb_rx);
+ 		rx_id = (rx_id == 0) ? (rxq->nb_rx_desc - 1) : (rx_id - 1);
+-		IGC_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
++		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
+ 		nb_hold = 0;
+ 	}
+ 	rxq->nb_rx_hold = nb_hold;
+@@ -676,7 +676,7 @@ uint32_t eth_igc_rx_queue_count(void *rx_queue)
+ 	 */
+ #define IGC_RXQ_SCAN_INTERVAL 4
+ 
+-	volatile union igc_adv_rx_desc *rxdp;
++	volatile union e1000_adv_rx_desc *rxdp;
+ 	struct igc_rx_queue *rxq;
+ 	uint16_t desc = 0;
+ 
+@@ -685,7 +685,7 @@ uint32_t eth_igc_rx_queue_count(void *rx_queue)
+ 
+ 	while (desc < rxq->nb_rx_desc - rxq->rx_tail) {
+ 		if (unlikely(!(rxdp->wb.upper.status_error &
+-				IGC_RXD_STAT_DD)))
++				E1000_RXD_STAT_DD)))
+ 			return desc;
+ 		desc += IGC_RXQ_SCAN_INTERVAL;
+ 		rxdp += IGC_RXQ_SCAN_INTERVAL;
+@@ -693,7 +693,7 @@ uint32_t eth_igc_rx_queue_count(void *rx_queue)
+ 	rxdp = &rxq->rx_ring[rxq->rx_tail + desc - rxq->nb_rx_desc];
+ 
+ 	while (desc < rxq->nb_rx_desc &&
+-		(rxdp->wb.upper.status_error & IGC_RXD_STAT_DD)) {
++		(rxdp->wb.upper.status_error & E1000_RXD_STAT_DD)) {
+ 		desc += IGC_RXQ_SCAN_INTERVAL;
+ 		rxdp += IGC_RXQ_SCAN_INTERVAL;
+ 	}
+@@ -718,7 +718,7 @@ int eth_igc_rx_descriptor_status(void *rx_queue, uint16_t offset)
+ 		desc -= rxq->nb_rx_desc;
+ 
+ 	status = &rxq->rx_ring[desc].wb.upper.status_error;
+-	if (*status & rte_cpu_to_le_32(IGC_RXD_STAT_DD))
++	if (*status & rte_cpu_to_le_32(E1000_RXD_STAT_DD))
+ 		return RTE_ETH_RX_DESC_DONE;
+ 
+ 	return RTE_ETH_RX_DESC_AVAIL;
+@@ -733,7 +733,7 @@ igc_alloc_rx_queue_mbufs(struct igc_rx_queue *rxq)
+ 
+ 	/* Initialize software ring entries. */
+ 	for (i = 0; i < rxq->nb_rx_desc; i++) {
+-		volatile union igc_adv_rx_desc *rxd;
++		volatile union e1000_adv_rx_desc *rxd;
+ 		struct rte_mbuf *mbuf = rte_mbuf_raw_alloc(rxq->mb_pool);
+ 
+ 		if (mbuf == NULL) {
+@@ -769,16 +769,16 @@ static uint8_t default_rss_key[40] = {
+ void
+ igc_rss_disable(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint32_t mrqc;
+ 
+-	mrqc = IGC_READ_REG(hw, IGC_MRQC);
+-	mrqc &= ~IGC_MRQC_ENABLE_MASK;
+-	IGC_WRITE_REG(hw, IGC_MRQC, mrqc);
++	mrqc = E1000_READ_REG(hw, E1000_MRQC);
++	mrqc &= ~E1000_MRQC_ENABLE_MASK;
++	E1000_WRITE_REG(hw, E1000_MRQC, mrqc);
+ }
+ 
+ void
+-igc_hw_rss_hash_set(struct igc_hw *hw, struct rte_eth_rss_conf *rss_conf)
++igc_hw_rss_hash_set(struct e1000_hw *hw, struct rte_eth_rss_conf *rss_conf)
+ {
+ 	uint32_t *hash_key = (uint32_t *)rss_conf->rss_key;
+ 	uint32_t mrqc;
+@@ -789,38 +789,38 @@ igc_hw_rss_hash_set(struct igc_hw *hw, struct rte_eth_rss_conf *rss_conf)
+ 
+ 		/* Fill in RSS hash key */
+ 		for (i = 0; i < IGC_HKEY_MAX_INDEX; i++)
+-			IGC_WRITE_REG_LE_VALUE(hw, IGC_RSSRK(i), hash_key[i]);
++			E1000_WRITE_REG_LE_VALUE(hw, E1000_RSSRK(i), hash_key[i]);
+ 	}
+ 
+ 	/* Set configured hashing protocols in MRQC register */
+ 	rss_hf = rss_conf->rss_hf;
+-	mrqc = IGC_MRQC_ENABLE_RSS_4Q; /* RSS enabled. */
++	mrqc = E1000_MRQC_ENABLE_RSS_4Q; /* RSS enabled. */
+ 	if (rss_hf & RTE_ETH_RSS_IPV4)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV4;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV4;
+ 	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV4_TCP;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV4_TCP;
+ 	if (rss_hf & RTE_ETH_RSS_IPV6)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6;
+ 	if (rss_hf & RTE_ETH_RSS_IPV6_EX)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6_EX;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6_EX;
+ 	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6_TCP;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6_TCP;
+ 	if (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6_TCP_EX;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6_TCP_EX;
+ 	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV4_UDP;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV4_UDP;
+ 	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6_UDP;
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6_UDP;
+ 	if (rss_hf & RTE_ETH_RSS_IPV6_UDP_EX)
+-		mrqc |= IGC_MRQC_RSS_FIELD_IPV6_UDP_EX;
+-	IGC_WRITE_REG(hw, IGC_MRQC, mrqc);
++		mrqc |= E1000_MRQC_RSS_FIELD_IPV6_UDP_EX;
++	E1000_WRITE_REG(hw, E1000_MRQC, mrqc);
+ }
+ 
+ static void
+ igc_rss_configure(struct rte_eth_dev *dev)
+ {
+ 	struct rte_eth_rss_conf rss_conf;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint16_t i;
+ 
+ 	/* Fill in redirection table. */
+@@ -833,8 +833,8 @@ igc_rss_configure(struct rte_eth_dev *dev)
+ 		reta_idx = i % sizeof(reta);
+ 		reta.bytes[reta_idx] = q_idx;
+ 		if (reta_idx == sizeof(reta) - 1)
+-			IGC_WRITE_REG_LE_VALUE(hw,
+-				IGC_RETA(i / sizeof(reta)), reta.dword);
++			E1000_WRITE_REG_LE_VALUE(hw,
++				E1000_RETA(i / sizeof(reta)), reta.dword);
+ 	}
+ 
+ 	/*
+@@ -903,7 +903,7 @@ igc_add_rss_filter(struct rte_eth_dev *dev, struct igc_rss_filter *rss)
+ 		.rss_key_len = rss->conf.key_len,
+ 		.rss_hf = rss->conf.types,
+ 	};
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_rss_filter *rss_filter = IGC_DEV_PRIVATE_RSS_FILTER(dev);
+ 	uint32_t i, j;
+ 
+@@ -950,8 +950,8 @@ igc_add_rss_filter(struct rte_eth_dev *dev, struct igc_rss_filter *rss)
+ 		reta_idx = i % sizeof(reta);
+ 		reta.bytes[reta_idx] = q_idx;
+ 		if (reta_idx == sizeof(reta) - 1)
+-			IGC_WRITE_REG_LE_VALUE(hw,
+-				IGC_RETA(i / sizeof(reta)), reta.dword);
++			E1000_WRITE_REG_LE_VALUE(hw,
++				E1000_RETA(i / sizeof(reta)), reta.dword);
+ 	}
+ 
+ 	if (rss_conf.rss_key == NULL)
+@@ -1008,7 +1008,7 @@ int
+ igc_rx_init(struct rte_eth_dev *dev)
+ {
+ 	struct igc_rx_queue *rxq;
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint64_t offloads = dev->data->dev_conf.rxmode.offloads;
+ 	uint32_t max_rx_pktlen;
+ 	uint32_t rctl;
+@@ -1024,21 +1024,21 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 	 * Make sure receives are disabled while setting
+ 	 * up the descriptor ring.
+ 	 */
+-	rctl = IGC_READ_REG(hw, IGC_RCTL);
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl & ~IGC_RCTL_EN);
++	rctl = E1000_READ_REG(hw, E1000_RCTL);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl & ~E1000_RCTL_EN);
+ 
+ 	/* Configure support of jumbo frames, if any. */
+ 	if (dev->data->mtu > RTE_ETHER_MTU)
+-		rctl |= IGC_RCTL_LPE;
++		rctl |= E1000_RCTL_LPE;
+ 	else
+-		rctl &= ~IGC_RCTL_LPE;
++		rctl &= ~E1000_RCTL_LPE;
+ 
+ 	max_rx_pktlen = dev->data->mtu + IGC_ETH_OVERHEAD;
+ 	/*
+ 	 * Set maximum packet length by default, and might be updated
+ 	 * together with enabling/disabling dual VLAN.
+ 	 */
+-	IGC_WRITE_REG(hw, IGC_RLPML, max_rx_pktlen);
++	E1000_WRITE_REG(hw, E1000_RLPML, max_rx_pktlen);
+ 
+ 	/* Configure and enable each RX queue. */
+ 	rctl_bsize = 0;
+@@ -1066,16 +1066,16 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 				RTE_ETHER_CRC_LEN : 0;
+ 
+ 		bus_addr = rxq->rx_ring_phys_addr;
+-		IGC_WRITE_REG(hw, IGC_RDLEN(rxq->reg_idx),
++		E1000_WRITE_REG(hw, E1000_RDLEN(rxq->reg_idx),
+ 				rxq->nb_rx_desc *
+-				sizeof(union igc_adv_rx_desc));
+-		IGC_WRITE_REG(hw, IGC_RDBAH(rxq->reg_idx),
++				sizeof(union e1000_adv_rx_desc));
++		E1000_WRITE_REG(hw, E1000_RDBAH(rxq->reg_idx),
+ 				(uint32_t)(bus_addr >> 32));
+-		IGC_WRITE_REG(hw, IGC_RDBAL(rxq->reg_idx),
++		E1000_WRITE_REG(hw, E1000_RDBAL(rxq->reg_idx),
+ 				(uint32_t)bus_addr);
+ 
+ 		/* set descriptor configuration */
+-		srrctl = IGC_SRRCTL_DESCTYPE_ADV_ONEBUF;
++		srrctl = E1000_SRRCTL_DESCTYPE_ADV_ONEBUF;
+ 
+ 		srrctl |= (uint32_t)(RTE_PKTMBUF_HEADROOM / 64) <<
+ 				IGC_SRRCTL_BSIZEHEADER_SHIFT;
+@@ -1093,11 +1093,11 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 			 * determines the RX packet buffer size.
+ 			 */
+ 
+-			srrctl |= ((buf_size >> IGC_SRRCTL_BSIZEPKT_SHIFT) &
+-				   IGC_SRRCTL_BSIZEPKT_MASK);
++			srrctl |= ((buf_size >> E1000_SRRCTL_BSIZEPKT_SHIFT) &
++				   E1000_SRRCTL_BSIZEPKT_MASK);
+ 			buf_size = (uint16_t)((srrctl &
+-					IGC_SRRCTL_BSIZEPKT_MASK) <<
+-					IGC_SRRCTL_BSIZEPKT_SHIFT);
++					E1000_SRRCTL_BSIZEPKT_MASK) <<
++					E1000_SRRCTL_BSIZEPKT_SHIFT);
+ 
+ 			/* It adds dual VLAN length for supporting dual VLAN */
+ 			if (max_rx_pktlen > buf_size)
+@@ -1113,19 +1113,19 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 
+ 		/* Set if packets are dropped when no descriptors available */
+ 		if (rxq->drop_en)
+-			srrctl |= IGC_SRRCTL_DROP_EN;
++			srrctl |= E1000_SRRCTL_DROP_EN;
+ 
+-		IGC_WRITE_REG(hw, IGC_SRRCTL(rxq->reg_idx), srrctl);
++		E1000_WRITE_REG(hw, E1000_SRRCTL(rxq->reg_idx), srrctl);
+ 
+ 		/* Enable this RX queue. */
+-		rxdctl = IGC_RXDCTL_QUEUE_ENABLE;
++		rxdctl = E1000_RXDCTL_QUEUE_ENABLE;
+ 		rxdctl |= ((uint32_t)rxq->pthresh << IGC_RXDCTL_PTHRESH_SHIFT) &
+ 				IGC_RXDCTL_PTHRESH_MSK;
+ 		rxdctl |= ((uint32_t)rxq->hthresh << IGC_RXDCTL_HTHRESH_SHIFT) &
+ 				IGC_RXDCTL_HTHRESH_MSK;
+ 		rxdctl |= ((uint32_t)rxq->wthresh << IGC_RXDCTL_WTHRESH_SHIFT) &
+ 				IGC_RXDCTL_WTHRESH_MSK;
+-		IGC_WRITE_REG(hw, IGC_RXDCTL(rxq->reg_idx), rxdctl);
++		E1000_WRITE_REG(hw, E1000_RXDCTL(rxq->reg_idx), rxdctl);
+ 	}
+ 
+ 	if (offloads & RTE_ETH_RX_OFFLOAD_SCATTER)
+@@ -1141,19 +1141,19 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 	 * register, since the code above configures the SRRCTL register of
+ 	 * the RX queue in such a case.
+ 	 * All configurable sizes are:
+-	 * 16384: rctl |= (IGC_RCTL_SZ_16384 | IGC_RCTL_BSEX);
+-	 *  8192: rctl |= (IGC_RCTL_SZ_8192  | IGC_RCTL_BSEX);
+-	 *  4096: rctl |= (IGC_RCTL_SZ_4096  | IGC_RCTL_BSEX);
+-	 *  2048: rctl |= IGC_RCTL_SZ_2048;
+-	 *  1024: rctl |= IGC_RCTL_SZ_1024;
+-	 *   512: rctl |= IGC_RCTL_SZ_512;
+-	 *   256: rctl |= IGC_RCTL_SZ_256;
++	 * 16384: rctl |= (E1000_RCTL_SZ_16384 | E1000_RCTL_BSEX);
++	 *  8192: rctl |= (E1000_RCTL_SZ_8192  | E1000_RCTL_BSEX);
++	 *  4096: rctl |= (E1000_RCTL_SZ_4096  | E1000_RCTL_BSEX);
++	 *  2048: rctl |= E1000_RCTL_SZ_2048;
++	 *  1024: rctl |= E1000_RCTL_SZ_1024;
++	 *   512: rctl |= E1000_RCTL_SZ_512;
++	 *   256: rctl |= E1000_RCTL_SZ_256;
+ 	 */
+ 	if (rctl_bsize > 0) {
+ 		if (rctl_bsize >= 512) /* 512 <= buf_size < 1024 - use 512 */
+-			rctl |= IGC_RCTL_SZ_512;
++			rctl |= E1000_RCTL_SZ_512;
+ 		else /* 256 <= buf_size < 512 - use 256 */
+-			rctl |= IGC_RCTL_SZ_256;
++			rctl |= E1000_RCTL_SZ_256;
+ 	}
+ 
+ 	/*
+@@ -1162,61 +1162,61 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 	igc_dev_mq_rx_configure(dev);
+ 
+ 	/* Update the rctl since igc_dev_mq_rx_configure may change its value */
+-	rctl |= IGC_READ_REG(hw, IGC_RCTL);
++	rctl |= E1000_READ_REG(hw, E1000_RCTL);
+ 
+ 	/*
+ 	 * Setup the Checksum Register.
+ 	 * Receive Full-Packet Checksum Offload is mutually exclusive with RSS.
+ 	 */
+-	rxcsum = IGC_READ_REG(hw, IGC_RXCSUM);
+-	rxcsum |= IGC_RXCSUM_PCSD;
++	rxcsum = E1000_READ_REG(hw, E1000_RXCSUM);
++	rxcsum |= E1000_RXCSUM_PCSD;
+ 
+ 	/* Enable both L3/L4 rx checksum offload */
+ 	if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
+-		rxcsum |= IGC_RXCSUM_IPOFL;
++		rxcsum |= E1000_RXCSUM_IPOFL;
+ 	else
+-		rxcsum &= ~IGC_RXCSUM_IPOFL;
++		rxcsum &= ~E1000_RXCSUM_IPOFL;
+ 
+ 	if (offloads &
+ 		(RTE_ETH_RX_OFFLOAD_TCP_CKSUM | RTE_ETH_RX_OFFLOAD_UDP_CKSUM)) {
+-		rxcsum |= IGC_RXCSUM_TUOFL;
++		rxcsum |= E1000_RXCSUM_TUOFL;
+ 		offloads |= RTE_ETH_RX_OFFLOAD_SCTP_CKSUM;
+ 	} else {
+-		rxcsum &= ~IGC_RXCSUM_TUOFL;
++		rxcsum &= ~E1000_RXCSUM_TUOFL;
+ 	}
+ 
+ 	if (offloads & RTE_ETH_RX_OFFLOAD_SCTP_CKSUM)
+-		rxcsum |= IGC_RXCSUM_CRCOFL;
++		rxcsum |= E1000_RXCSUM_CRCOFL;
+ 	else
+-		rxcsum &= ~IGC_RXCSUM_CRCOFL;
++		rxcsum &= ~E1000_RXCSUM_CRCOFL;
+ 
+-	IGC_WRITE_REG(hw, IGC_RXCSUM, rxcsum);
++	E1000_WRITE_REG(hw, E1000_RXCSUM, rxcsum);
+ 
+ 	/* Setup the Receive Control Register. */
+ 	if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
+-		rctl &= ~IGC_RCTL_SECRC; /* Do not Strip Ethernet CRC. */
++		rctl &= ~E1000_RCTL_SECRC; /* Do not Strip Ethernet CRC. */
+ 	else
+-		rctl |= IGC_RCTL_SECRC; /* Strip Ethernet CRC. */
++		rctl |= E1000_RCTL_SECRC; /* Strip Ethernet CRC. */
+ 
+-	rctl &= ~IGC_RCTL_MO_MSK;
+-	rctl &= ~IGC_RCTL_LBM_MSK;
+-	rctl |= IGC_RCTL_EN | IGC_RCTL_BAM | IGC_RCTL_LBM_NO |
+-			IGC_RCTL_DPF |
+-			(hw->mac.mc_filter_type << IGC_RCTL_MO_SHIFT);
++	rctl &= ~E1000_RCTL_MO_MSK;
++	rctl &= ~E1000_RCTL_LBM_MSK;
++	rctl |= E1000_RCTL_EN | E1000_RCTL_BAM | E1000_RCTL_LBM_NO |
++			E1000_RCTL_DPF |
++			(hw->mac.mc_filter_type << E1000_RCTL_MO_SHIFT);
+ 
+ 	if (dev->data->dev_conf.lpbk_mode == 1)
+-		rctl |= IGC_RCTL_LBM_MAC;
++		rctl |= E1000_RCTL_LBM_MAC;
+ 
+-	rctl &= ~(IGC_RCTL_HSEL_MSK | IGC_RCTL_CFIEN | IGC_RCTL_CFI |
+-			IGC_RCTL_PSP | IGC_RCTL_PMCF);
++	rctl &= ~(E1000_RCTL_HSEL_MSK | E1000_RCTL_CFIEN | E1000_RCTL_CFI |
++			E1000_RCTL_PSP | E1000_RCTL_PMCF);
+ 
+ 	/* Make sure VLAN Filters are off. */
+-	rctl &= ~IGC_RCTL_VFE;
++	rctl &= ~E1000_RCTL_VFE;
+ 	/* Don't store bad packets. */
+-	rctl &= ~IGC_RCTL_SBP;
++	rctl &= ~E1000_RCTL_SBP;
+ 
+ 	/* Enable Receives. */
+-	IGC_WRITE_REG(hw, IGC_RCTL, rctl);
++	E1000_WRITE_REG(hw, E1000_RCTL, rctl);
+ 
+ 	/*
+ 	 * Setup the HW Rx Head and Tail Descriptor Pointers.
+@@ -1226,21 +1226,21 @@ igc_rx_init(struct rte_eth_dev *dev)
+ 		uint32_t dvmolr;
+ 
+ 		rxq = dev->data->rx_queues[i];
+-		IGC_WRITE_REG(hw, IGC_RDH(rxq->reg_idx), 0);
+-		IGC_WRITE_REG(hw, IGC_RDT(rxq->reg_idx), rxq->nb_rx_desc - 1);
++		E1000_WRITE_REG(hw, E1000_RDH(rxq->reg_idx), 0);
++		E1000_WRITE_REG(hw, E1000_RDT(rxq->reg_idx), rxq->nb_rx_desc - 1);
+ 
+-		dvmolr = IGC_READ_REG(hw, IGC_DVMOLR(rxq->reg_idx));
++		dvmolr = E1000_READ_REG(hw, E1000_DVMOLR(rxq->reg_idx));
+ 		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
+-			dvmolr |= IGC_DVMOLR_STRVLAN;
++			dvmolr |= E1000_DVMOLR_STRVLAN;
+ 		else
+-			dvmolr &= ~IGC_DVMOLR_STRVLAN;
++			dvmolr &= ~E1000_DVMOLR_STRVLAN;
+ 
+ 		if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
+-			dvmolr &= ~IGC_DVMOLR_STRCRC;
++			dvmolr &= ~E1000_DVMOLR_STRCRC;
+ 		else
+-			dvmolr |= IGC_DVMOLR_STRCRC;
++			dvmolr |= E1000_DVMOLR_STRCRC;
+ 
+-		IGC_WRITE_REG(hw, IGC_DVMOLR(rxq->reg_idx), dvmolr);
++		E1000_WRITE_REG(hw, E1000_DVMOLR(rxq->reg_idx), dvmolr);
+ 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+ 	}
+ 
+@@ -1250,7 +1250,7 @@ igc_rx_init(struct rte_eth_dev *dev)
+ static void
+ igc_reset_rx_queue(struct igc_rx_queue *rxq)
+ {
+-	static const union igc_adv_rx_desc zeroed_desc = { {0} };
++	static const union e1000_adv_rx_desc zeroed_desc = { {0} };
+ 	unsigned int i;
+ 
+ 	/* Zero out HW ring memory */
+@@ -1270,7 +1270,7 @@ eth_igc_rx_queue_setup(struct rte_eth_dev *dev,
+ 			 const struct rte_eth_rxconf *rx_conf,
+ 			 struct rte_mempool *mp)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	const struct rte_memzone *rz;
+ 	struct igc_rx_queue *rxq;
+ 	unsigned int size;
+@@ -1317,17 +1317,17 @@ eth_igc_rx_queue_setup(struct rte_eth_dev *dev,
+ 	 *  handle the maximum ring size is allocated in order to allow for
+ 	 *  resizing in later calls to the queue setup function.
+ 	 */
+-	size = sizeof(union igc_adv_rx_desc) * IGC_MAX_RXD;
++	size = sizeof(union e1000_adv_rx_desc) * IGC_MAX_RXD;
+ 	rz = rte_eth_dma_zone_reserve(dev, "rx_ring", queue_idx, size,
+ 				      IGC_ALIGN, socket_id);
+ 	if (rz == NULL) {
+ 		igc_rx_queue_release(rxq);
+ 		return -ENOMEM;
+ 	}
+-	rxq->rdt_reg_addr = IGC_PCI_REG_ADDR(hw, IGC_RDT(rxq->reg_idx));
+-	rxq->rdh_reg_addr = IGC_PCI_REG_ADDR(hw, IGC_RDH(rxq->reg_idx));
++	rxq->rdt_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_RDT(rxq->reg_idx));
++	rxq->rdh_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_RDH(rxq->reg_idx));
+ 	rxq->rx_ring_phys_addr = rz->iova;
+-	rxq->rx_ring = (union igc_adv_rx_desc *)rz->addr;
++	rxq->rx_ring = (union e1000_adv_rx_desc *)rz->addr;
+ 
+ 	/* Allocate software ring. */
+ 	rxq->sw_ring = rte_zmalloc("rxq->sw_ring",
+@@ -1457,7 +1457,7 @@ static uint32_t igc_tx_launchtime(uint64_t txtime, uint16_t port_id)
+  */
+ static inline void
+ igc_set_xmit_ctx(struct igc_tx_queue *txq,
+-		volatile struct igc_adv_tx_context_desc *ctx_txd,
++		volatile struct e1000_adv_tx_context_desc *ctx_txd,
+ 		uint64_t ol_flags, union igc_tx_offload tx_offload,
+ 		uint64_t txtime)
+ {
+@@ -1475,7 +1475,7 @@ igc_set_xmit_ctx(struct igc_tx_queue *txq,
+ 	type_tucmd_mlhl = 0;
+ 
+ 	/* Specify which HW CTX to upload. */
+-	mss_l4len_idx = (ctx_curr << IGC_ADVTXD_IDX_SHIFT);
++	mss_l4len_idx = (ctx_curr << E1000_ADVTXD_IDX_SHIFT);
+ 
+ 	if (ol_flags & RTE_MBUF_F_TX_VLAN)
+ 		tx_offload_mask.vlan_tci = 0xffff;
+@@ -1484,51 +1484,51 @@ igc_set_xmit_ctx(struct igc_tx_queue *txq,
+ 	if (ol_flags & IGC_TX_OFFLOAD_SEG) {
+ 		/* implies IP cksum in IPv4 */
+ 		if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM)
+-			type_tucmd_mlhl = IGC_ADVTXD_TUCMD_IPV4 |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++			type_tucmd_mlhl = E1000_ADVTXD_TUCMD_IPV4 |
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 		else
+-			type_tucmd_mlhl = IGC_ADVTXD_TUCMD_IPV6 |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++			type_tucmd_mlhl = E1000_ADVTXD_TUCMD_IPV6 |
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 
+ 		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+-			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_TCP;
++			type_tucmd_mlhl |= E1000_ADVTXD_TUCMD_L4T_TCP;
+ 		else
+-			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_UDP;
++			type_tucmd_mlhl |= E1000_ADVTXD_TUCMD_L4T_UDP;
+ 
+ 		tx_offload_mask.data |= TX_TSO_CMP_MASK;
+ 		mss_l4len_idx |= (uint32_t)tx_offload.tso_segsz <<
+-				IGC_ADVTXD_MSS_SHIFT;
++				E1000_ADVTXD_MSS_SHIFT;
+ 		mss_l4len_idx |= (uint32_t)tx_offload.l4_len <<
+-				IGC_ADVTXD_L4LEN_SHIFT;
++				E1000_ADVTXD_L4LEN_SHIFT;
+ 	} else { /* no TSO, check if hardware checksum is needed */
+ 		if (ol_flags & (RTE_MBUF_F_TX_IP_CKSUM | RTE_MBUF_F_TX_L4_MASK))
+ 			tx_offload_mask.data |= TX_MACIP_LEN_CMP_MASK;
+ 
+ 		if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM)
+-			type_tucmd_mlhl = IGC_ADVTXD_TUCMD_IPV4;
++			type_tucmd_mlhl = E1000_ADVTXD_TUCMD_IPV4;
+ 
+ 		switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
+ 		case RTE_MBUF_F_TX_TCP_CKSUM:
+-			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_TCP |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++			type_tucmd_mlhl |= E1000_ADVTXD_TUCMD_L4T_TCP |
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 			mss_l4len_idx |= (uint32_t)sizeof(struct rte_tcp_hdr)
+-				<< IGC_ADVTXD_L4LEN_SHIFT;
++				<< E1000_ADVTXD_L4LEN_SHIFT;
+ 			break;
+ 		case RTE_MBUF_F_TX_UDP_CKSUM:
+-			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_UDP |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++			type_tucmd_mlhl |= E1000_ADVTXD_TUCMD_L4T_UDP |
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 			mss_l4len_idx |= (uint32_t)sizeof(struct rte_udp_hdr)
+-				<< IGC_ADVTXD_L4LEN_SHIFT;
++				<< E1000_ADVTXD_L4LEN_SHIFT;
+ 			break;
+ 		case RTE_MBUF_F_TX_SCTP_CKSUM:
+-			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_SCTP |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++			type_tucmd_mlhl |= E1000_ADVTXD_TUCMD_L4T_SCTP |
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 			mss_l4len_idx |= (uint32_t)sizeof(struct rte_sctp_hdr)
+-				<< IGC_ADVTXD_L4LEN_SHIFT;
++				<< E1000_ADVTXD_L4LEN_SHIFT;
+ 			break;
+ 		default:
+ 			type_tucmd_mlhl |= IGC_ADVTXD_TUCMD_L4T_RSV |
+-				IGC_ADVTXD_DTYP_CTXT | IGC_ADVTXD_DCMD_DEXT;
++				E1000_ADVTXD_DTYP_CTXT | E1000_ADVTXD_DCMD_DEXT;
+ 			break;
+ 		}
+ 	}
+@@ -1556,8 +1556,8 @@ static inline uint32_t
+ tx_desc_vlan_flags_to_cmdtype(uint64_t ol_flags)
+ {
+ 	uint32_t cmdtype;
+-	static uint32_t vlan_cmd[2] = {0, IGC_ADVTXD_DCMD_VLE};
+-	static uint32_t tso_cmd[2] = {0, IGC_ADVTXD_DCMD_TSE};
++	static uint32_t vlan_cmd[2] = {0, E1000_ADVTXD_DCMD_VLE};
++	static uint32_t tso_cmd[2] = {0, E1000_ADVTXD_DCMD_TSE};
+ 	cmdtype = vlan_cmd[(ol_flags & RTE_MBUF_F_TX_VLAN) != 0];
+ 	cmdtype |= tso_cmd[(ol_flags & IGC_TX_OFFLOAD_SEG) != 0];
+ 	return cmdtype;
+@@ -1582,8 +1582,8 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	struct igc_tx_queue * const txq = tx_queue;
+ 	struct igc_tx_entry * const sw_ring = txq->sw_ring;
+ 	struct igc_tx_entry *txe, *txn;
+-	volatile union igc_adv_tx_desc * const txr = txq->tx_ring;
+-	volatile union igc_adv_tx_desc *txd;
++	volatile union e1000_adv_tx_desc * const txr = txq->tx_ring;
++	volatile union e1000_adv_tx_desc *txd;
+ 	struct rte_mbuf *tx_pkt;
+ 	struct rte_mbuf *m_seg;
+ 	uint64_t buf_dma_addr;
+@@ -1691,7 +1691,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		/*
+ 		 * Check that this descriptor is free.
+ 		 */
+-		if (!(txr[tx_end].wb.status & IGC_TXD_STAT_DD)) {
++		if (!(txr[tx_end].wb.status & E1000_TXD_STAT_DD)) {
+ 			if (nb_tx == 0)
+ 				return 0;
+ 			goto end_of_tx;
+@@ -1701,43 +1701,43 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 * Set common flags of all TX Data Descriptors.
+ 		 *
+ 		 * The following bits must be set in all Data Descriptors:
+-		 *   - IGC_ADVTXD_DTYP_DATA
+-		 *   - IGC_ADVTXD_DCMD_DEXT
++		 *   - E1000_ADVTXD_DTYP_DATA
++		 *   - E1000_ADVTXD_DCMD_DEXT
+ 		 *
+ 		 * The following bits must be set in the first Data Descriptor
+ 		 * and are ignored in the other ones:
+-		 *   - IGC_ADVTXD_DCMD_IFCS
+-		 *   - IGC_ADVTXD_MAC_1588
+-		 *   - IGC_ADVTXD_DCMD_VLE
++		 *   - E1000_ADVTXD_DCMD_IFCS
++		 *   - E1000_ADVTXD_MAC_1588
++		 *   - E1000_ADVTXD_DCMD_VLE
+ 		 *
+ 		 * The following bits must only be set in the last Data
+ 		 * Descriptor:
+-		 *   - IGC_TXD_CMD_EOP
++		 *   - E1000_TXD_CMD_EOP
+ 		 *
+ 		 * The following bits can be set in any Data Descriptor, but
+ 		 * are only set in the last Data Descriptor:
+-		 *   - IGC_TXD_CMD_RS
++		 *   - E1000_TXD_CMD_RS
+ 		 */
+ 		cmd_type_len = txq->txd_type |
+-			IGC_ADVTXD_DCMD_IFCS | IGC_ADVTXD_DCMD_DEXT;
++			E1000_ADVTXD_DCMD_IFCS | E1000_ADVTXD_DCMD_DEXT;
+ 		if (tx_ol_req & IGC_TX_OFFLOAD_SEG)
+ 			pkt_len -= (tx_pkt->l2_len + tx_pkt->l3_len +
+ 					tx_pkt->l4_len);
+-		olinfo_status = (pkt_len << IGC_ADVTXD_PAYLEN_SHIFT);
++		olinfo_status = (pkt_len << E1000_ADVTXD_PAYLEN_SHIFT);
+ 
+ 		/*
+ 		 * Timer 0 should be used to for packet timestamping,
+ 		 * sample the packet timestamp to reg 0
+ 		 */
+ 		if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
+-			cmd_type_len |= IGC_ADVTXD_MAC_TSTAMP;
++			cmd_type_len |= E1000_ADVTXD_MAC_TSTAMP;
+ 
+ 		if (tx_ol_req) {
+ 			/* Setup TX Advanced context descriptor if required */
+ 			if (new_ctx) {
+-				volatile struct igc_adv_tx_context_desc *
++				volatile struct e1000_adv_tx_context_desc *
+ 					ctx_txd = (volatile struct
+-					igc_adv_tx_context_desc *)&txr[tx_id];
++					e1000_adv_tx_context_desc *)&txr[tx_id];
+ 
+ 				txn = &sw_ring[txe->next_id];
+ 				RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+@@ -1769,7 +1769,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 			olinfo_status |=
+ 				tx_desc_cksum_flags_to_olinfo(tx_ol_req);
+ 			olinfo_status |= (uint32_t)txq->ctx_curr <<
+-					IGC_ADVTXD_IDX_SHIFT;
++					E1000_ADVTXD_IDX_SHIFT;
  		}
  
--		swfw_sync = IGC_READ_REG(hw, IGC_SW_FW_SYNC);
-+		swfw_sync = E1000_READ_REG(hw, E1000_SW_FW_SYNC);
- 		if (!(swfw_sync & (fwmask | swmask)))
- 			break;
- 
- 		/* Firmware currently using resource (fwmask)
- 		 * or other software thread using resource (swmask)
+ 		m_seg = tx_pkt;
+@@ -1803,7 +1803,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 * and Report Status (RS).
  		 */
--		igc_put_hw_semaphore_generic(hw);
-+		e1000_put_hw_semaphore_generic(hw);
- 		msec_delay_irq(5);
- 		i++;
+ 		txd->read.cmd_type_len |=
+-			rte_cpu_to_le_32(IGC_TXD_CMD_EOP | IGC_TXD_CMD_RS);
++			rte_cpu_to_le_32(E1000_TXD_CMD_EOP | E1000_TXD_CMD_RS);
+ 	}
+ end_of_tx:
+ 	rte_wmb();
+@@ -1811,7 +1811,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	/*
+ 	 * Set the Transmit Descriptor Tail (TDT).
+ 	 */
+-	IGC_PCI_REG_WRITE_RELAXED(txq->tdt_reg_addr, tx_id);
++	E1000_PCI_REG_WRITE_RELAXED(txq->tdt_reg_addr, tx_id);
+ 	PMD_TX_LOG(DEBUG, "port_id=%u queue_id=%u tx_tail=%u nb_tx=%u",
+ 		txq->port_id, txq->queue_id, tx_id, nb_tx);
+ 	txq->tx_tail = tx_id;
+@@ -1833,7 +1833,7 @@ int eth_igc_tx_descriptor_status(void *tx_queue, uint16_t offset)
+ 		desc -= txq->nb_tx_desc;
+ 
+ 	status = &txq->tx_ring[desc].wb.status;
+-	if (*status & rte_cpu_to_le_32(IGC_TXD_STAT_DD))
++	if (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD))
+ 		return RTE_ETH_TX_DESC_DONE;
+ 
+ 	return RTE_ETH_TX_DESC_FULL;
+@@ -1887,16 +1887,16 @@ igc_reset_tx_queue(struct igc_tx_queue *txq)
+ 	/* Initialize ring entries */
+ 	prev = (uint16_t)(txq->nb_tx_desc - 1);
+ 	for (i = 0; i < txq->nb_tx_desc; i++) {
+-		volatile union igc_adv_tx_desc *txd = &txq->tx_ring[i];
++		volatile union e1000_adv_tx_desc *txd = &txq->tx_ring[i];
+ 
+-		txd->wb.status = IGC_TXD_STAT_DD;
++		txd->wb.status = E1000_TXD_STAT_DD;
+ 		txe[i].mbuf = NULL;
+ 		txe[i].last_id = i;
+ 		txe[prev].next_id = i;
+ 		prev = i;
  	}
  
- 	if (i == timeout) {
- 		DEBUGOUT("Driver can't access resource, SW_FW_SYNC timeout.\n");
--		ret_val = -IGC_ERR_SWFW_SYNC;
-+		ret_val = -E1000_ERR_SWFW_SYNC;
- 		goto out;
- 	}
- 
- 	swfw_sync |= swmask;
--	IGC_WRITE_REG(hw, IGC_SW_FW_SYNC, swfw_sync);
-+	E1000_WRITE_REG(hw, E1000_SW_FW_SYNC, swfw_sync);
- 
--	igc_put_hw_semaphore_generic(hw);
-+	e1000_put_hw_semaphore_generic(hw);
- 
- out:
- 	return ret_val;
+-	txq->txd_type = IGC_ADVTXD_DTYP_DATA;
++	txq->txd_type = E1000_ADVTXD_DTYP_DATA;
+ 	igc_reset_tx_queue_stat(txq);
  }
  
--/* igc_release_swfw_sync_i225 - Release SW/FW semaphore
-+/* e1000_release_swfw_sync_i225 - Release SW/FW semaphore
-  * @hw: pointer to the HW structure
-  * @mask: specifies which semaphore to acquire
-  *
-  * Release the SW/FW semaphore used to access the PHY or NVM.  The mask
-  * will also specify which port we're releasing the lock for.
-  */
--void igc_release_swfw_sync_i225(struct igc_hw *hw, u16 mask)
-+void e1000_release_swfw_sync_i225(struct e1000_hw *hw, u16 mask)
+@@ -1935,7 +1935,7 @@ int eth_igc_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
  {
- 	u32 swfw_sync;
+ 	const struct rte_memzone *tz;
+ 	struct igc_tx_queue *txq;
+-	struct igc_hw *hw;
++	struct e1000_hw *hw;
+ 	uint32_t size;
  
--	DEBUGFUNC("igc_release_swfw_sync_i225");
-+	DEBUGFUNC("e1000_release_swfw_sync_i225");
- 
- 	/* Releasing the resource requires first getting the HW semaphore.
- 	 * If we fail to get the semaphore, there is nothing we can do,
- 	 * except log an error and quit. We are not allowed to hang here
- 	 * indefinitely, as it may cause denial of service or system crash.
+ 	if (nb_desc % IGC_TX_DESCRIPTOR_MULTIPLE != 0 ||
+@@ -1980,7 +1980,7 @@ int eth_igc_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	 * handle the maximum ring size is allocated in order to allow for
+ 	 * resizing in later calls to the queue setup function.
  	 */
--	if (igc_get_hw_semaphore_i225(hw) != IGC_SUCCESS) {
-+	if (e1000_get_hw_semaphore_i225(hw) != E1000_SUCCESS) {
- 		DEBUGOUT("Failed to release SW_FW_SYNC.\n");
+-	size = sizeof(union igc_adv_tx_desc) * IGC_MAX_TXD;
++	size = sizeof(union e1000_adv_tx_desc) * IGC_MAX_TXD;
+ 	tz = rte_eth_dma_zone_reserve(dev, "tx_ring", queue_idx, size,
+ 				      IGC_ALIGN, socket_id);
+ 	if (tz == NULL) {
+@@ -1997,10 +1997,10 @@ int eth_igc_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	txq->reg_idx = queue_idx;
+ 	txq->port_id = dev->data->port_id;
+ 
+-	txq->tdt_reg_addr = IGC_PCI_REG_ADDR(hw, IGC_TDT(txq->reg_idx));
++	txq->tdt_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_TDT(txq->reg_idx));
+ 	txq->tx_ring_phys_addr = tz->iova;
+ 
+-	txq->tx_ring = (union igc_adv_tx_desc *)tz->addr;
++	txq->tx_ring = (union e1000_adv_tx_desc *)tz->addr;
+ 	/* Allocate software ring */
+ 	txq->sw_ring = rte_zmalloc("txq->sw_ring",
+ 				   sizeof(struct igc_tx_entry) * nb_desc,
+@@ -2026,7 +2026,7 @@ eth_igc_tx_done_cleanup(void *txqueue, uint32_t free_cnt)
+ {
+ 	struct igc_tx_queue *txq = txqueue;
+ 	struct igc_tx_entry *sw_ring;
+-	volatile union igc_adv_tx_desc *txr;
++	volatile union e1000_adv_tx_desc *txr;
+ 	uint16_t tx_first; /* First segment analyzed. */
+ 	uint16_t tx_id;    /* Current segment being processed. */
+ 	uint16_t tx_last;  /* Last segment in the current packet. */
+@@ -2067,7 +2067,7 @@ eth_igc_tx_done_cleanup(void *txqueue, uint32_t free_cnt)
+ 
+ 		if (sw_ring[tx_last].mbuf) {
+ 			if (!(txr[tx_last].wb.status &
+-					rte_cpu_to_le_32(IGC_TXD_STAT_DD)))
++					rte_cpu_to_le_32(E1000_TXD_STAT_DD)))
+ 				break;
+ 
+ 			/* Get the start of the next packet. */
+@@ -2139,7 +2139,7 @@ eth_igc_tx_done_cleanup(void *txqueue, uint32_t free_cnt)
+ void
+ igc_tx_init(struct rte_eth_dev *dev)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint64_t offloads = dev->data->dev_conf.txmode.offloads;
+ 	uint32_t tctl;
+ 	uint32_t txdctl;
+@@ -2151,17 +2151,17 @@ igc_tx_init(struct rte_eth_dev *dev)
+ 		struct igc_tx_queue *txq = dev->data->tx_queues[i];
+ 		uint64_t bus_addr = txq->tx_ring_phys_addr;
+ 
+-		IGC_WRITE_REG(hw, IGC_TDLEN(txq->reg_idx),
++		E1000_WRITE_REG(hw, E1000_TDLEN(txq->reg_idx),
+ 				txq->nb_tx_desc *
+-				sizeof(union igc_adv_tx_desc));
+-		IGC_WRITE_REG(hw, IGC_TDBAH(txq->reg_idx),
++				sizeof(union e1000_adv_tx_desc));
++		E1000_WRITE_REG(hw, E1000_TDBAH(txq->reg_idx),
+ 				(uint32_t)(bus_addr >> 32));
+-		IGC_WRITE_REG(hw, IGC_TDBAL(txq->reg_idx),
++		E1000_WRITE_REG(hw, E1000_TDBAL(txq->reg_idx),
+ 				(uint32_t)bus_addr);
+ 
+ 		/* Setup the HW Tx Head and Tail descriptor pointers. */
+-		IGC_WRITE_REG(hw, IGC_TDT(txq->reg_idx), 0);
+-		IGC_WRITE_REG(hw, IGC_TDH(txq->reg_idx), 0);
++		E1000_WRITE_REG(hw, E1000_TDT(txq->reg_idx), 0);
++		E1000_WRITE_REG(hw, E1000_TDH(txq->reg_idx), 0);
+ 
+ 		/* Setup Transmit threshold registers. */
+ 		txdctl = ((uint32_t)txq->pthresh << IGC_TXDCTL_PTHRESH_SHIFT) &
+@@ -2170,8 +2170,8 @@ igc_tx_init(struct rte_eth_dev *dev)
+ 				IGC_TXDCTL_HTHRESH_MSK;
+ 		txdctl |= ((uint32_t)txq->wthresh << IGC_TXDCTL_WTHRESH_SHIFT) &
+ 				IGC_TXDCTL_WTHRESH_MSK;
+-		txdctl |= IGC_TXDCTL_QUEUE_ENABLE;
+-		IGC_WRITE_REG(hw, IGC_TXDCTL(txq->reg_idx), txdctl);
++		txdctl |= E1000_TXDCTL_QUEUE_ENABLE;
++		E1000_WRITE_REG(hw, E1000_TXDCTL(txq->reg_idx), txdctl);
+ 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+ 	}
+ 
+@@ -2185,16 +2185,16 @@ igc_tx_init(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-	igc_config_collision_dist(hw);
++	e1000_config_collision_dist(hw);
+ 
+ 	/* Program the Transmit Control Register. */
+-	tctl = IGC_READ_REG(hw, IGC_TCTL);
+-	tctl &= ~IGC_TCTL_CT;
+-	tctl |= (IGC_TCTL_PSP | IGC_TCTL_RTLC | IGC_TCTL_EN |
+-		 ((uint32_t)IGC_COLLISION_THRESHOLD << IGC_CT_SHIFT));
++	tctl = E1000_READ_REG(hw, E1000_TCTL);
++	tctl &= ~E1000_TCTL_CT;
++	tctl |= (E1000_TCTL_PSP | E1000_TCTL_RTLC | E1000_TCTL_EN |
++		 ((uint32_t)E1000_COLLISION_THRESHOLD << E1000_CT_SHIFT));
+ 
+ 	/* This write will effectively turn on the transmit unit. */
+-	IGC_WRITE_REG(hw, IGC_TCTL, tctl);
++	E1000_WRITE_REG(hw, E1000_TCTL, tctl);
+ }
+ 
+ void
+@@ -2237,7 +2237,7 @@ void
+ eth_igc_vlan_strip_queue_set(struct rte_eth_dev *dev,
+ 			uint16_t rx_queue_id, int on)
+ {
+-	struct igc_hw *hw = IGC_DEV_PRIVATE_HW(dev);
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct igc_rx_queue *rxq = dev->data->rx_queues[rx_queue_id];
+ 	uint32_t reg_val;
+ 
+@@ -2247,14 +2247,14 @@ eth_igc_vlan_strip_queue_set(struct rte_eth_dev *dev,
  		return;
  	}
  
--	swfw_sync = IGC_READ_REG(hw, IGC_SW_FW_SYNC);
-+	swfw_sync = E1000_READ_REG(hw, E1000_SW_FW_SYNC);
- 	swfw_sync &= ~(u32)mask;
--	IGC_WRITE_REG(hw, IGC_SW_FW_SYNC, swfw_sync);
-+	E1000_WRITE_REG(hw, E1000_SW_FW_SYNC, swfw_sync);
- 
--	igc_put_hw_semaphore_generic(hw);
-+	e1000_put_hw_semaphore_generic(hw);
- }
- 
- /*
-- * igc_setup_copper_link_i225 - Configure copper link settings
-+ * e1000_setup_copper_link_i225 - Configure copper link settings
-  * @hw: pointer to the HW structure
-  *
-  * Configures the link for auto-neg or forced speed and duplex.  Then we check
-  * for link, once link is established calls to configure collision distance
-  * and flow control are called.
-  */
--s32 igc_setup_copper_link_i225(struct igc_hw *hw)
-+s32 e1000_setup_copper_link_i225(struct e1000_hw *hw)
- {
- 	u32 phpm_reg;
- 	s32 ret_val;
- 	u32 ctrl;
- 
--	DEBUGFUNC("igc_setup_copper_link_i225");
-+	DEBUGFUNC("e1000_setup_copper_link_i225");
- 
--	ctrl = IGC_READ_REG(hw, IGC_CTRL);
--	ctrl |= IGC_CTRL_SLU;
--	ctrl &= ~(IGC_CTRL_FRCSPD | IGC_CTRL_FRCDPX);
--	IGC_WRITE_REG(hw, IGC_CTRL, ctrl);
-+	ctrl = E1000_READ_REG(hw, E1000_CTRL);
-+	ctrl |= E1000_CTRL_SLU;
-+	ctrl &= ~(E1000_CTRL_FRCSPD | E1000_CTRL_FRCDPX);
-+	E1000_WRITE_REG(hw, E1000_CTRL, ctrl);
- 
--	phpm_reg = IGC_READ_REG(hw, IGC_I225_PHPM);
--	phpm_reg &= ~IGC_I225_PHPM_GO_LINKD;
--	IGC_WRITE_REG(hw, IGC_I225_PHPM, phpm_reg);
-+	phpm_reg = E1000_READ_REG(hw, E1000_I225_PHPM);
-+	phpm_reg &= ~E1000_I225_PHPM_GO_LINKD;
-+	E1000_WRITE_REG(hw, E1000_I225_PHPM, phpm_reg);
- 
--	ret_val = igc_setup_copper_link_generic(hw);
-+	ret_val = e1000_setup_copper_link_generic(hw);
- 
- 	return ret_val;
- }
- 
--/* igc_get_hw_semaphore_i225 - Acquire hardware semaphore
-+/* e1000_get_hw_semaphore_i225 - Acquire hardware semaphore
-  * @hw: pointer to the HW structure
-  *
-  * Acquire the HW semaphore to access the PHY or NVM
-  */
--static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
-+static s32 e1000_get_hw_semaphore_i225(struct e1000_hw *hw)
- {
- 	u32 swsm;
--	s32 timeout = IGC_SWSM_TIMEOUT;
-+	s32 timeout = hw->nvm.word_size + 1;
- 	s32 i = 0;
- 
--	DEBUGFUNC("igc_get_hw_semaphore_i225");
-+	DEBUGFUNC("e1000_get_hw_semaphore_i225");
- 
- 	/* Get the SW semaphore */
- 	while (i < timeout) {
--		swsm = IGC_READ_REG(hw, IGC_SWSM);
--		if (!(swsm & IGC_SWSM_SMBI))
-+		swsm = E1000_READ_REG(hw, E1000_SWSM);
-+		if (!(swsm & E1000_SWSM_SMBI))
- 			break;
- 
- 		usec_delay(50);
-@@ -409,10 +409,10 @@ static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
- 		 */
- 		if (hw->dev_spec._i225.clear_semaphore_once) {
- 			hw->dev_spec._i225.clear_semaphore_once = false;
--			igc_put_hw_semaphore_generic(hw);
-+			e1000_put_hw_semaphore_generic(hw);
- 			for (i = 0; i < timeout; i++) {
--				swsm = IGC_READ_REG(hw, IGC_SWSM);
--				if (!(swsm & IGC_SWSM_SMBI))
-+				swsm = E1000_READ_REG(hw, E1000_SWSM);
-+				if (!(swsm & E1000_SWSM_SMBI))
- 					break;
- 
- 				usec_delay(50);
-@@ -423,17 +423,17 @@ static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
- 		if (i == timeout) {
- 			DEBUGOUT("Driver can't access device -\n");
- 			DEBUGOUT("SMBI bit is set.\n");
--			return -IGC_ERR_NVM;
-+			return -E1000_ERR_NVM;
- 		}
- 	}
- 
- 	/* Get the FW semaphore. */
- 	for (i = 0; i < timeout; i++) {
--		swsm = IGC_READ_REG(hw, IGC_SWSM);
--		IGC_WRITE_REG(hw, IGC_SWSM, swsm | IGC_SWSM_SWESMBI);
-+		swsm = E1000_READ_REG(hw, E1000_SWSM);
-+		E1000_WRITE_REG(hw, E1000_SWSM, swsm | E1000_SWSM_SWESMBI);
- 
- 		/* Semaphore acquired if bit latched */
--		if (IGC_READ_REG(hw, IGC_SWSM) & IGC_SWSM_SWESMBI)
-+		if (E1000_READ_REG(hw, E1000_SWSM) & E1000_SWSM_SWESMBI)
- 			break;
- 
- 		usec_delay(50);
-@@ -441,15 +441,15 @@ static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
- 
- 	if (i == timeout) {
- 		/* Release semaphores */
--		igc_put_hw_semaphore_generic(hw);
-+		e1000_put_hw_semaphore_generic(hw);
- 		DEBUGOUT("Driver can't access the NVM\n");
--		return -IGC_ERR_NVM;
-+		return -E1000_ERR_NVM;
- 	}
- 
--	return IGC_SUCCESS;
-+	return E1000_SUCCESS;
- }
- 
--/* igc_read_nvm_srrd_i225 - Reads Shadow Ram using EERD register
-+/* e1000_read_nvm_srrd_i225 - Reads Shadow Ram using EERD register
-  * @hw: pointer to the HW structure
-  * @offset: offset of word in the Shadow Ram to read
-  * @words: number of words to read
-@@ -458,37 +458,37 @@ static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
-  * Reads a 16 bit word from the Shadow Ram using the EERD register.
-  * Uses necessary synchronization semaphores.
-  */
--s32 igc_read_nvm_srrd_i225(struct igc_hw *hw, u16 offset, u16 words,
-+s32 e1000_read_nvm_srrd_i225(struct e1000_hw *hw, u16 offset, u16 words,
- 			     u16 *data)
- {
--	s32 status = IGC_SUCCESS;
-+	s32 status = E1000_SUCCESS;
- 	u16 i, count;
- 
--	DEBUGFUNC("igc_read_nvm_srrd_i225");
-+	DEBUGFUNC("e1000_read_nvm_srrd_i225");
- 
- 	/* We cannot hold synchronization semaphores for too long,
- 	 * because of forceful takeover procedure. However it is more efficient
- 	 * to read in bursts than synchronizing access for each word.
- 	 */
--	for (i = 0; i < words; i += IGC_EERD_EEWR_MAX_COUNT) {
--		count = (words - i) / IGC_EERD_EEWR_MAX_COUNT > 0 ?
--			IGC_EERD_EEWR_MAX_COUNT : (words - i);
--		if (hw->nvm.ops.acquire(hw) == IGC_SUCCESS) {
--			status = igc_read_nvm_eerd(hw, offset, count,
-+	for (i = 0; i < words; i += E1000_EERD_EEWR_MAX_COUNT) {
-+		count = (words - i) / E1000_EERD_EEWR_MAX_COUNT > 0 ?
-+			E1000_EERD_EEWR_MAX_COUNT : (words - i);
-+		if (hw->nvm.ops.acquire(hw) == E1000_SUCCESS) {
-+			status = e1000_read_nvm_eerd(hw, offset, count,
- 						     data + i);
- 			hw->nvm.ops.release(hw);
- 		} else {
--			status = IGC_ERR_SWFW_SYNC;
-+			status = E1000_ERR_SWFW_SYNC;
- 		}
- 
--		if (status != IGC_SUCCESS)
-+		if (status != E1000_SUCCESS)
- 			break;
- 	}
- 
- 	return status;
- }
- 
--/* igc_write_nvm_srwr_i225 - Write to Shadow RAM using EEWR
-+/* e1000_write_nvm_srwr_i225 - Write to Shadow RAM using EEWR
-  * @hw: pointer to the HW structure
-  * @offset: offset within the Shadow RAM to be written to
-  * @words: number of words to write
-@@ -496,44 +496,44 @@ s32 igc_read_nvm_srrd_i225(struct igc_hw *hw, u16 offset, u16 words,
-  *
-  * Writes data to Shadow RAM at offset using EEWR register.
-  *
-- * If igc_update_nvm_checksum is not called after this function , the
-+ * If e1000_update_nvm_checksum is not called after this function , the
-  * data will not be committed to FLASH and also Shadow RAM will most likely
-  * contain an invalid checksum.
-  *
-  * If error code is returned, data and Shadow RAM may be inconsistent - buffer
-  * partially written.
-  */
--s32 igc_write_nvm_srwr_i225(struct igc_hw *hw, u16 offset, u16 words,
-+s32 e1000_write_nvm_srwr_i225(struct e1000_hw *hw, u16 offset, u16 words,
- 			      u16 *data)
- {
--	s32 status = IGC_SUCCESS;
-+	s32 status = E1000_SUCCESS;
- 	u16 i, count;
- 
--	DEBUGFUNC("igc_write_nvm_srwr_i225");
-+	DEBUGFUNC("e1000_write_nvm_srwr_i225");
- 
- 	/* We cannot hold synchronization semaphores for too long,
- 	 * because of forceful takeover procedure. However it is more efficient
- 	 * to write in bursts than synchronizing access for each word.
- 	 */
--	for (i = 0; i < words; i += IGC_EERD_EEWR_MAX_COUNT) {
--		count = (words - i) / IGC_EERD_EEWR_MAX_COUNT > 0 ?
--			IGC_EERD_EEWR_MAX_COUNT : (words - i);
--		if (hw->nvm.ops.acquire(hw) == IGC_SUCCESS) {
--			status = __igc_write_nvm_srwr(hw, offset, count,
-+	for (i = 0; i < words; i += E1000_EERD_EEWR_MAX_COUNT) {
-+		count = (words - i) / E1000_EERD_EEWR_MAX_COUNT > 0 ?
-+			E1000_EERD_EEWR_MAX_COUNT : (words - i);
-+		if (hw->nvm.ops.acquire(hw) == E1000_SUCCESS) {
-+			status = __e1000_write_nvm_srwr(hw, offset, count,
- 							data + i);
- 			hw->nvm.ops.release(hw);
- 		} else {
--			status = IGC_ERR_SWFW_SYNC;
-+			status = E1000_ERR_SWFW_SYNC;
- 		}
- 
--		if (status != IGC_SUCCESS)
-+		if (status != E1000_SUCCESS)
- 			break;
- 	}
- 
- 	return status;
- }
- 
--/* __igc_write_nvm_srwr - Write to Shadow Ram using EEWR
-+/* __e1000_write_nvm_srwr - Write to Shadow Ram using EEWR
-  * @hw: pointer to the HW structure
-  * @offset: offset within the Shadow Ram to be written to
-  * @words: number of words to write
-@@ -541,18 +541,18 @@ s32 igc_write_nvm_srwr_i225(struct igc_hw *hw, u16 offset, u16 words,
-  *
-  * Writes data to Shadow Ram at offset using EEWR register.
-  *
-- * If igc_update_nvm_checksum is not called after this function , the
-+ * If e1000_update_nvm_checksum is not called after this function , the
-  * Shadow Ram will most likely contain an invalid checksum.
-  */
--static s32 __igc_write_nvm_srwr(struct igc_hw *hw, u16 offset, u16 words,
-+static s32 __e1000_write_nvm_srwr(struct e1000_hw *hw, u16 offset, u16 words,
- 				  u16 *data)
- {
--	struct igc_nvm_info *nvm = &hw->nvm;
-+	struct e1000_nvm_info *nvm = &hw->nvm;
- 	u32 i, k, eewr = 0;
- 	u32 attempts = 100000;
--	s32 ret_val = IGC_SUCCESS;
-+	s32 ret_val = E1000_SUCCESS;
- 
--	DEBUGFUNC("__igc_write_nvm_srwr");
-+	DEBUGFUNC("__e1000_write_nvm_srwr");
- 
- 	/* A check for invalid values:  offset too large, too many words,
- 	 * too many words for the offset, and not enough words.
-@@ -560,28 +560,27 @@ static s32 __igc_write_nvm_srwr(struct igc_hw *hw, u16 offset, u16 words,
- 	if (offset >= nvm->word_size || words > (nvm->word_size - offset) ||
- 			words == 0) {
- 		DEBUGOUT("nvm parameter(s) out of bounds\n");
--		ret_val = -IGC_ERR_NVM;
-+		ret_val = -E1000_ERR_NVM;
- 		goto out;
- 	}
- 
- 	for (i = 0; i < words; i++) {
--		ret_val = -IGC_ERR_NVM;
--		eewr = ((offset + i) << IGC_NVM_RW_ADDR_SHIFT) |
--			(data[i] << IGC_NVM_RW_REG_DATA) |
--			IGC_NVM_RW_REG_START;
-+		eewr = ((offset + i) << E1000_NVM_RW_ADDR_SHIFT) |
-+			(data[i] << E1000_NVM_RW_REG_DATA) |
-+			E1000_NVM_RW_REG_START;
- 
--		IGC_WRITE_REG(hw, IGC_SRWR, eewr);
-+		E1000_WRITE_REG(hw, E1000_SRWR, eewr);
- 
- 		for (k = 0; k < attempts; k++) {
--			if (IGC_NVM_RW_REG_DONE &
--			    IGC_READ_REG(hw, IGC_SRWR)) {
--				ret_val = IGC_SUCCESS;
-+			if (E1000_NVM_RW_REG_DONE &
-+			    E1000_READ_REG(hw, E1000_SRWR)) {
-+				ret_val = E1000_SUCCESS;
- 				break;
- 			}
- 			usec_delay(5);
- 		}
- 
--		if (ret_val != IGC_SUCCESS) {
-+		if (ret_val != E1000_SUCCESS) {
- 			DEBUGOUT("Shadow RAM write EEWR timed out\n");
- 			break;
- 		}
-@@ -591,30 +590,30 @@ static s32 __igc_write_nvm_srwr(struct igc_hw *hw, u16 offset, u16 words,
- 	return ret_val;
- }
- 
--/* igc_read_invm_version_i225 - Reads iNVM version and image type
-+/* e1000_read_invm_version_i225 - Reads iNVM version and image type
-  * @hw: pointer to the HW structure
-  * @invm_ver: version structure for the version read
-  *
-  * Reads iNVM version and image type.
-  */
--s32 igc_read_invm_version_i225(struct igc_hw *hw,
--				 struct igc_fw_version *invm_ver)
-+s32 e1000_read_invm_version_i225(struct e1000_hw *hw,
-+				 struct e1000_fw_version *invm_ver)
- {
- 	u32 *record = NULL;
- 	u32 *next_record = NULL;
- 	u32 i = 0;
- 	u32 invm_dword = 0;
--	u32 invm_blocks = IGC_INVM_SIZE - (IGC_INVM_ULT_BYTES_SIZE /
--					     IGC_INVM_RECORD_SIZE_IN_BYTES);
--	u32 buffer[IGC_INVM_SIZE];
--	s32 status = -IGC_ERR_INVM_VALUE_NOT_FOUND;
-+	u32 invm_blocks = E1000_INVM_SIZE - (E1000_INVM_ULT_BYTES_SIZE /
-+					     E1000_INVM_RECORD_SIZE_IN_BYTES);
-+	u32 buffer[E1000_INVM_SIZE];
-+	s32 status = -E1000_ERR_INVM_VALUE_NOT_FOUND;
- 	u16 version = 0;
- 
--	DEBUGFUNC("igc_read_invm_version_i225");
-+	DEBUGFUNC("e1000_read_invm_version_i225");
- 
- 	/* Read iNVM memory */
--	for (i = 0; i < IGC_INVM_SIZE; i++) {
--		invm_dword = IGC_READ_REG(hw, IGC_INVM_DATA_REG(i));
-+	for (i = 0; i < E1000_INVM_SIZE; i++) {
-+		invm_dword = E1000_READ_REG(hw, E1000_INVM_DATA_REG(i));
- 		buffer[i] = invm_dword;
- 	}
- 
-@@ -624,44 +623,44 @@ s32 igc_read_invm_version_i225(struct igc_hw *hw,
- 		next_record = &buffer[invm_blocks - i + 1];
- 
- 		/* Check if we have first version location used */
--		if (i == 1 && (*record & IGC_INVM_VER_FIELD_ONE) == 0) {
-+		if (i == 1 && (*record & E1000_INVM_VER_FIELD_ONE) == 0) {
- 			version = 0;
--			status = IGC_SUCCESS;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 		/* Check if we have second version location used */
- 		else if ((i == 1) &&
--			 ((*record & IGC_INVM_VER_FIELD_TWO) == 0)) {
--			version = (*record & IGC_INVM_VER_FIELD_ONE) >> 3;
--			status = IGC_SUCCESS;
-+			 ((*record & E1000_INVM_VER_FIELD_TWO) == 0)) {
-+			version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 		/* Check if we have odd version location
- 		 * used and it is the last one used
- 		 */
--		else if ((((*record & IGC_INVM_VER_FIELD_ONE) == 0) &&
-+		else if ((((*record & E1000_INVM_VER_FIELD_ONE) == 0) &&
- 			  ((*record & 0x3) == 0)) || (((*record & 0x3) != 0) &&
- 			   (i != 1))) {
--			version = (*next_record & IGC_INVM_VER_FIELD_TWO)
-+			version = (*next_record & E1000_INVM_VER_FIELD_TWO)
- 				  >> 13;
--			status = IGC_SUCCESS;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 		/* Check if we have even version location
- 		 * used and it is the last one used
- 		 */
--		else if (((*record & IGC_INVM_VER_FIELD_TWO) == 0) &&
-+		else if (((*record & E1000_INVM_VER_FIELD_TWO) == 0) &&
- 			 ((*record & 0x3) == 0)) {
--			version = (*record & IGC_INVM_VER_FIELD_ONE) >> 3;
--			status = IGC_SUCCESS;
-+			version = (*record & E1000_INVM_VER_FIELD_ONE) >> 3;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 	}
- 
--	if (status == IGC_SUCCESS) {
--		invm_ver->invm_major = (version & IGC_INVM_MAJOR_MASK)
--					>> IGC_INVM_MAJOR_SHIFT;
--		invm_ver->invm_minor = version & IGC_INVM_MINOR_MASK;
-+	if (status == E1000_SUCCESS) {
-+		invm_ver->invm_major = (version & E1000_INVM_MAJOR_MASK)
-+					>> E1000_INVM_MAJOR_SHIFT;
-+		invm_ver->invm_minor = version & E1000_INVM_MINOR_MASK;
- 	}
- 	/* Read Image Type */
- 	for (i = 1; i < invm_blocks; i++) {
-@@ -669,92 +668,92 @@ s32 igc_read_invm_version_i225(struct igc_hw *hw,
- 		next_record = &buffer[invm_blocks - i + 1];
- 
- 		/* Check if we have image type in first location used */
--		if (i == 1 && (*record & IGC_INVM_IMGTYPE_FIELD) == 0) {
-+		if (i == 1 && (*record & E1000_INVM_IMGTYPE_FIELD) == 0) {
- 			invm_ver->invm_img_type = 0;
--			status = IGC_SUCCESS;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 		/* Check if we have image type in first location used */
- 		else if ((((*record & 0x3) == 0) &&
--			  ((*record & IGC_INVM_IMGTYPE_FIELD) == 0)) ||
-+			  ((*record & E1000_INVM_IMGTYPE_FIELD) == 0)) ||
- 			    ((((*record & 0x3) != 0) && (i != 1)))) {
- 			invm_ver->invm_img_type =
--				(*next_record & IGC_INVM_IMGTYPE_FIELD) >> 23;
--			status = IGC_SUCCESS;
-+				(*next_record & E1000_INVM_IMGTYPE_FIELD) >> 23;
-+			status = E1000_SUCCESS;
- 			break;
- 		}
- 	}
- 	return status;
- }
- 
--/* igc_validate_nvm_checksum_i225 - Validate EEPROM checksum
-+/* e1000_validate_nvm_checksum_i225 - Validate EEPROM checksum
-  * @hw: pointer to the HW structure
-  *
-  * Calculates the EEPROM checksum by reading/adding each word of the EEPROM
-  * and then verifies that the sum of the EEPROM is equal to 0xBABA.
-  */
--s32 igc_validate_nvm_checksum_i225(struct igc_hw *hw)
-+s32 e1000_validate_nvm_checksum_i225(struct e1000_hw *hw)
- {
--	s32 status = IGC_SUCCESS;
--	s32 (*read_op_ptr)(struct igc_hw *hw, u16 offset,
-+	s32 status = E1000_SUCCESS;
-+	s32 (*read_op_ptr)(struct e1000_hw *hw, u16 offset,
- 			u16 count, u16 *data);
- 
--	DEBUGFUNC("igc_validate_nvm_checksum_i225");
-+	DEBUGFUNC("e1000_validate_nvm_checksum_i225");
- 
--	if (hw->nvm.ops.acquire(hw) == IGC_SUCCESS) {
-+	if (hw->nvm.ops.acquire(hw) == E1000_SUCCESS) {
- 		/* Replace the read function with semaphore grabbing with
- 		 * the one that skips this for a while.
- 		 * We have semaphore taken already here.
- 		 */
- 		read_op_ptr = hw->nvm.ops.read;
--		hw->nvm.ops.read = igc_read_nvm_eerd;
-+		hw->nvm.ops.read = e1000_read_nvm_eerd;
- 
--		status = igc_validate_nvm_checksum_generic(hw);
-+		status = e1000_validate_nvm_checksum_generic(hw);
- 
- 		/* Revert original read operation. */
- 		hw->nvm.ops.read = read_op_ptr;
- 
- 		hw->nvm.ops.release(hw);
+-	reg_val = IGC_READ_REG(hw, IGC_DVMOLR(rx_queue_id));
++	reg_val = E1000_READ_REG(hw, E1000_DVMOLR(rx_queue_id));
+ 	if (on) {
+-		reg_val |= IGC_DVMOLR_STRVLAN;
++		reg_val |= E1000_DVMOLR_STRVLAN;
+ 		rxq->offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
  	} else {
--		status = IGC_ERR_SWFW_SYNC;
-+		status = E1000_ERR_SWFW_SYNC;
+-		reg_val &= ~(IGC_DVMOLR_STRVLAN | IGC_DVMOLR_HIDVLAN);
++		reg_val &= ~(E1000_DVMOLR_STRVLAN | E1000_DVMOLR_HIDVLAN);
+ 		rxq->offloads &= ~RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
  	}
  
- 	return status;
+-	IGC_WRITE_REG(hw, IGC_DVMOLR(rx_queue_id), reg_val);
++	E1000_WRITE_REG(hw, E1000_DVMOLR(rx_queue_id), reg_val);
  }
- 
--/* igc_update_nvm_checksum_i225 - Update EEPROM checksum
-+/* e1000_update_nvm_checksum_i225 - Update EEPROM checksum
-  * @hw: pointer to the HW structure
-  *
-  * Updates the EEPROM checksum by reading/adding each word of the EEPROM
-  * up to the checksum.  Then calculates the EEPROM checksum and writes the
-  * value to the EEPROM. Next commit EEPROM data onto the Flash.
+diff --git a/drivers/net/intel/igc/igc_txrx.h b/drivers/net/intel/e1000/igc_txrx.h
+similarity index 97%
+rename from drivers/net/intel/igc/igc_txrx.h
+rename to drivers/net/intel/e1000/igc_txrx.h
+index ad7d3b4ca5..1e63ddb5aa 100644
+--- a/drivers/net/intel/igc/igc_txrx.h
++++ b/drivers/net/intel/e1000/igc_txrx.h
+@@ -23,7 +23,7 @@ struct igc_rx_entry {
   */
--s32 igc_update_nvm_checksum_i225(struct igc_hw *hw)
-+s32 e1000_update_nvm_checksum_i225(struct e1000_hw *hw)
- {
- 	s32 ret_val;
- 	u16 checksum = 0;
- 	u16 i, nvm_data;
- 
--	DEBUGFUNC("igc_update_nvm_checksum_i225");
-+	DEBUGFUNC("e1000_update_nvm_checksum_i225");
- 
- 	/* Read the first word from the EEPROM. If this times out or fails, do
- 	 * not continue or we could be in for a very long wait while every
- 	 * EEPROM read fails
- 	 */
--	ret_val = igc_read_nvm_eerd(hw, 0, 1, &nvm_data);
--	if (ret_val != IGC_SUCCESS) {
-+	ret_val = e1000_read_nvm_eerd(hw, 0, 1, &nvm_data);
-+	if (ret_val != E1000_SUCCESS) {
- 		DEBUGOUT("EEPROM read failed\n");
- 		goto out;
- 	}
- 
--	if (hw->nvm.ops.acquire(hw) == IGC_SUCCESS) {
-+	if (hw->nvm.ops.acquire(hw) == E1000_SUCCESS) {
- 		/* Do not use hw->nvm.ops.write, hw->nvm.ops.read
- 		 * because we do not want to take the synchronization
- 		 * semaphores twice here.
- 		 */
- 
- 		for (i = 0; i < NVM_CHECKSUM_REG; i++) {
--			ret_val = igc_read_nvm_eerd(hw, i, 1, &nvm_data);
-+			ret_val = e1000_read_nvm_eerd(hw, i, 1, &nvm_data);
- 			if (ret_val) {
- 				hw->nvm.ops.release(hw);
- 				DEBUGOUT("NVM Read Error while updating\n");
-@@ -764,9 +763,9 @@ s32 igc_update_nvm_checksum_i225(struct igc_hw *hw)
- 			checksum += nvm_data;
- 		}
- 		checksum = (u16)NVM_SUM - checksum;
--		ret_val = __igc_write_nvm_srwr(hw, NVM_CHECKSUM_REG, 1,
-+		ret_val = __e1000_write_nvm_srwr(hw, NVM_CHECKSUM_REG, 1,
- 						 &checksum);
--		if (ret_val != IGC_SUCCESS) {
-+		if (ret_val != E1000_SUCCESS) {
- 			hw->nvm.ops.release(hw);
- 			DEBUGOUT("NVM Write Error while updating checksum.\n");
- 			goto out;
-@@ -774,102 +773,102 @@ s32 igc_update_nvm_checksum_i225(struct igc_hw *hw)
- 
- 		hw->nvm.ops.release(hw);
- 
--		ret_val = igc_update_flash_i225(hw);
-+		ret_val = e1000_update_flash_i225(hw);
- 	} else {
--		ret_val = IGC_ERR_SWFW_SYNC;
-+		ret_val = E1000_ERR_SWFW_SYNC;
- 	}
- out:
- 	return ret_val;
- }
- 
--/* igc_get_flash_presence_i225 - Check if flash device is detected.
-+/* e1000_get_flash_presence_i225 - Check if flash device is detected.
-  * @hw: pointer to the HW structure
+ struct igc_rx_queue {
+ 	struct rte_mempool  *mb_pool;   /**< mbuf pool to populate RX ring. */
+-	volatile union igc_adv_rx_desc *rx_ring;
++	volatile union e1000_adv_rx_desc *rx_ring;
+ 	/**< RX ring virtual address. */
+ 	uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
+ 	volatile uint32_t   *rdt_reg_addr; /**< RDT register address. */
+@@ -107,7 +107,7 @@ struct igc_tx_entry {
+  * Structure associated with each TX queue.
   */
--bool igc_get_flash_presence_i225(struct igc_hw *hw)
-+bool e1000_get_flash_presence_i225(struct e1000_hw *hw)
- {
- 	u32 eec = 0;
- 	bool ret_val = false;
- 
--	DEBUGFUNC("igc_get_flash_presence_i225");
-+	DEBUGFUNC("e1000_get_flash_presence_i225");
- 
--	eec = IGC_READ_REG(hw, IGC_EECD);
-+	eec = E1000_READ_REG(hw, E1000_EECD);
- 
--	if (eec & IGC_EECD_FLASH_DETECTED_I225)
-+	if (eec & E1000_EECD_FLASH_DETECTED_I225)
- 		ret_val = true;
- 
- 	return ret_val;
- }
- 
--/* igc_set_flsw_flash_burst_counter_i225 - sets FLSW NVM Burst
-+/* e1000_set_flsw_flash_burst_counter_i225 - sets FLSW NVM Burst
-  * Counter in FLSWCNT register.
-  *
-  * @hw: pointer to the HW structure
-  * @burst_counter: size in bytes of the Flash burst to read or write
-  */
--s32 igc_set_flsw_flash_burst_counter_i225(struct igc_hw *hw,
-+s32 e1000_set_flsw_flash_burst_counter_i225(struct e1000_hw *hw,
- 					    u32 burst_counter)
- {
--	s32 ret_val = IGC_SUCCESS;
-+	s32 ret_val = E1000_SUCCESS;
- 
--	DEBUGFUNC("igc_set_flsw_flash_burst_counter_i225");
-+	DEBUGFUNC("e1000_set_flsw_flash_burst_counter_i225");
- 
- 	/* Validate input data */
--	if (burst_counter < IGC_I225_SHADOW_RAM_SIZE) {
-+	if (burst_counter < E1000_I225_SHADOW_RAM_SIZE) {
- 		/* Write FLSWCNT - burst counter */
--		IGC_WRITE_REG(hw, IGC_I225_FLSWCNT, burst_counter);
-+		E1000_WRITE_REG(hw, E1000_I225_FLSWCNT, burst_counter);
- 	} else {
--		ret_val = IGC_ERR_INVALID_ARGUMENT;
-+		ret_val = E1000_ERR_INVALID_ARGUMENT;
- 	}
- 
- 	return ret_val;
- }
- 
--/* igc_write_erase_flash_command_i225 - write/erase to a sector
-+/* e1000_write_erase_flash_command_i225 - write/erase to a sector
-  * region on a given address.
-  *
-  * @hw: pointer to the HW structure
-  * @opcode: opcode to be used for the write command
-  * @address: the offset to write into the FLASH image
-  */
--s32 igc_write_erase_flash_command_i225(struct igc_hw *hw, u32 opcode,
-+s32 e1000_write_erase_flash_command_i225(struct e1000_hw *hw, u32 opcode,
- 					 u32 address)
- {
- 	u32 flswctl = 0;
--	s32 timeout = IGC_NVM_GRANT_ATTEMPTS;
--	s32 ret_val = IGC_SUCCESS;
-+	s32 timeout = E1000_NVM_GRANT_ATTEMPTS;
-+	s32 ret_val = E1000_SUCCESS;
- 
--	DEBUGFUNC("igc_write_erase_flash_command_i225");
-+	DEBUGFUNC("e1000_write_erase_flash_command_i225");
- 
--	flswctl = IGC_READ_REG(hw, IGC_I225_FLSWCTL);
-+	flswctl = E1000_READ_REG(hw, E1000_I225_FLSWCTL);
- 	/* Polling done bit on FLSWCTL register */
- 	while (timeout) {
--		if (flswctl & IGC_FLSWCTL_DONE)
-+		if (flswctl & E1000_FLSWCTL_DONE)
- 			break;
- 		usec_delay(5);
--		flswctl = IGC_READ_REG(hw, IGC_I225_FLSWCTL);
-+		flswctl = E1000_READ_REG(hw, E1000_I225_FLSWCTL);
- 		timeout--;
- 	}
- 
- 	if (!timeout) {
- 		DEBUGOUT("Flash transaction was not done\n");
--		return -IGC_ERR_NVM;
-+		return -E1000_ERR_NVM;
- 	}
- 
- 	/* Build and issue command on FLSWCTL register */
- 	flswctl = address | opcode;
--	IGC_WRITE_REG(hw, IGC_I225_FLSWCTL, flswctl);
-+	E1000_WRITE_REG(hw, E1000_I225_FLSWCTL, flswctl);
- 
- 	/* Check if issued command is valid on FLSWCTL register */
--	flswctl = IGC_READ_REG(hw, IGC_I225_FLSWCTL);
--	if (!(flswctl & IGC_FLSWCTL_CMDV)) {
-+	flswctl = E1000_READ_REG(hw, E1000_I225_FLSWCTL);
-+	if (!(flswctl & E1000_FLSWCTL_CMDV)) {
- 		DEBUGOUT("Write flash command failed\n");
--		ret_val = IGC_ERR_INVALID_ARGUMENT;
-+		ret_val = E1000_ERR_INVALID_ARGUMENT;
- 	}
- 
- 	return ret_val;
- }
- 
--/* igc_update_flash_i225 - Commit EEPROM to the flash
-+/* e1000_update_flash_i225 - Commit EEPROM to the flash
-  * if fw_valid_bit is set, FW is active. setting FLUPD bit in EEC
-  * register makes the FW load the internal shadow RAM into the flash.
-  * Otherwise, fw_valid_bit is 0. if FL_SECU.block_prtotected_sw = 0
-@@ -877,7 +876,7 @@ s32 igc_write_erase_flash_command_i225(struct igc_hw *hw, u32 opcode,
-  *
-  * @hw: pointer to the HW structure
-  */
--s32 igc_update_flash_i225(struct igc_hw *hw)
-+s32 e1000_update_flash_i225(struct e1000_hw *hw)
- {
- 	u16 current_offset_data = 0;
- 	u32 block_sw_protect = 1;
-@@ -887,24 +886,24 @@ s32 igc_update_flash_i225(struct igc_hw *hw)
- 	s32 ret_val = 0;
- 	u32 flup;
- 
--	DEBUGFUNC("igc_update_flash_i225");
-+	DEBUGFUNC("e1000_update_flash_i225");
- 
--	block_sw_protect = IGC_READ_REG(hw, IGC_I225_FLSECU) &
--					  IGC_FLSECU_BLK_SW_ACCESS_I225;
--	fw_valid_bit = IGC_READ_REG(hw, IGC_FWSM) &
--				      IGC_FWSM_FW_VALID_I225;
-+	block_sw_protect = E1000_READ_REG(hw, E1000_I225_FLSECU) &
-+					  E1000_FLSECU_BLK_SW_ACCESS_I225;
-+	fw_valid_bit = E1000_READ_REG(hw, E1000_FWSM) &
-+				      E1000_FWSM_FW_VALID_I225;
- 	if (fw_valid_bit) {
--		ret_val = igc_pool_flash_update_done_i225(hw);
--		if (ret_val == -IGC_ERR_NVM) {
-+		ret_val = e1000_pool_flash_update_done_i225(hw);
-+		if (ret_val == -E1000_ERR_NVM) {
- 			DEBUGOUT("Flash update time out\n");
- 			goto out;
- 		}
- 
--		flup = IGC_READ_REG(hw, IGC_EECD) | IGC_EECD_FLUPD_I225;
--		IGC_WRITE_REG(hw, IGC_EECD, flup);
-+		flup = E1000_READ_REG(hw, E1000_EECD) | E1000_EECD_FLUPD_I225;
-+		E1000_WRITE_REG(hw, E1000_EECD, flup);
- 
--		ret_val = igc_pool_flash_update_done_i225(hw);
--		if (ret_val == IGC_SUCCESS)
-+		ret_val = e1000_pool_flash_update_done_i225(hw);
-+		if (ret_val == E1000_SUCCESS)
- 			DEBUGOUT("Flash update complete\n");
- 		else
- 			DEBUGOUT("Flash update time out\n");
-@@ -915,12 +914,12 @@ s32 igc_update_flash_i225(struct igc_hw *hw)
- 		 * base address remains 0x0. otherwise, sector 1 is
- 		 * valid and it's base address is 0x1000
- 		 */
--		if (IGC_READ_REG(hw, IGC_EECD) & IGC_EECD_SEC1VAL_I225)
-+		if (E1000_READ_REG(hw, E1000_EECD) & E1000_EECD_SEC1VAL_I225)
- 			base_address = 0x1000;
- 
- 		/* Valid sector erase */
--		ret_val = igc_write_erase_flash_command_i225(hw,
--						  IGC_I225_ERASE_CMD_OPCODE,
-+		ret_val = e1000_write_erase_flash_command_i225(hw,
-+						  E1000_I225_ERASE_CMD_OPCODE,
- 						  base_address);
- 		if (!ret_val) {
- 			DEBUGOUT("Sector erase failed\n");
-@@ -930,21 +929,21 @@ s32 igc_update_flash_i225(struct igc_hw *hw)
- 		current_offset = base_address;
- 
- 		/* Write */
--		for (i = 0; i < IGC_I225_SHADOW_RAM_SIZE / 2; i++) {
-+		for (i = 0; i < E1000_I225_SHADOW_RAM_SIZE / 2; i++) {
- 			/* Set burst write length */
--			ret_val = igc_set_flsw_flash_burst_counter_i225(hw,
-+			ret_val = e1000_set_flsw_flash_burst_counter_i225(hw,
- 									  0x2);
--			if (ret_val != IGC_SUCCESS)
-+			if (ret_val != E1000_SUCCESS)
- 				break;
- 
- 			/* Set address and opcode */
--			ret_val = igc_write_erase_flash_command_i225(hw,
--						IGC_I225_WRITE_CMD_OPCODE,
-+			ret_val = e1000_write_erase_flash_command_i225(hw,
-+						E1000_I225_WRITE_CMD_OPCODE,
- 						2 * current_offset);
--			if (ret_val != IGC_SUCCESS)
-+			if (ret_val != E1000_SUCCESS)
- 				break;
- 
--			ret_val = igc_read_nvm_eerd(hw, current_offset,
-+			ret_val = e1000_read_nvm_eerd(hw, current_offset,
- 						      1, &current_offset_data);
- 			if (ret_val) {
- 				DEBUGOUT("Failed to read from EEPROM\n");
-@@ -952,13 +951,13 @@ s32 igc_update_flash_i225(struct igc_hw *hw)
- 			}
- 
- 			/* Write CurrentOffseData to FLSWDATA register */
--			IGC_WRITE_REG(hw, IGC_I225_FLSWDATA,
-+			E1000_WRITE_REG(hw, E1000_I225_FLSWDATA,
- 					current_offset_data);
- 			current_offset++;
- 
- 			/* Wait till operation has finished */
--			ret_val = igc_poll_eerd_eewr_done(hw,
--						IGC_NVM_POLL_READ);
-+			ret_val = e1000_poll_eerd_eewr_done(hw,
-+						E1000_NVM_POLL_READ);
- 			if (ret_val)
- 				break;
- 
-@@ -969,20 +968,20 @@ s32 igc_update_flash_i225(struct igc_hw *hw)
- 	return ret_val;
- }
- 
--/* igc_pool_flash_update_done_i225 - Pool FLUDONE status.
-+/* e1000_pool_flash_update_done_i225 - Pool FLUDONE status.
-  * @hw: pointer to the HW structure
-  */
--s32 igc_pool_flash_update_done_i225(struct igc_hw *hw)
-+s32 e1000_pool_flash_update_done_i225(struct e1000_hw *hw)
- {
--	s32 ret_val = -IGC_ERR_NVM;
-+	s32 ret_val = -E1000_ERR_NVM;
- 	u32 i, reg;
- 
--	DEBUGFUNC("igc_pool_flash_update_done_i225");
-+	DEBUGFUNC("e1000_pool_flash_update_done_i225");
- 
--	for (i = 0; i < IGC_FLUDONE_ATTEMPTS; i++) {
--		reg = IGC_READ_REG(hw, IGC_EECD);
--		if (reg & IGC_EECD_FLUDONE_I225) {
--			ret_val = IGC_SUCCESS;
-+	for (i = 0; i < E1000_FLUDONE_ATTEMPTS; i++) {
-+		reg = E1000_READ_REG(hw, E1000_EECD);
-+		if (reg & E1000_EECD_FLUDONE_I225) {
-+			ret_val = E1000_SUCCESS;
- 			break;
- 		}
- 		usec_delay(5);
-@@ -991,20 +990,20 @@ s32 igc_pool_flash_update_done_i225(struct igc_hw *hw)
- 	return ret_val;
- }
- 
--/* igc_set_ltr_i225 - Set Latency Tolerance Reporting thresholds.
-+/* e1000_set_ltr_i225 - Set Latency Tolerance Reporting thresholds.
-  * @hw: pointer to the HW structure
-  * @link: bool indicating link status
-  *
-  * Set the LTR thresholds based on the link speed (Mbps), EEE, and DMAC
-  * settings, otherwise specify that there is no LTR requirement.
-  */
--static s32 igc_set_ltr_i225(struct igc_hw *hw, bool link)
-+static s32 e1000_set_ltr_i225(struct e1000_hw *hw, bool link)
- {
- 	u16 speed, duplex;
- 	u32 tw_system, ltrc, ltrv, ltr_min, ltr_max, scale_min, scale_max;
- 	s32 size;
- 
--	DEBUGFUNC("igc_set_ltr_i225");
-+	DEBUGFUNC("e1000_set_ltr_i225");
- 
- 	/* If we do not have link, LTR thresholds are zero. */
- 	if (link) {
-@@ -1013,35 +1012,35 @@ static s32 igc_set_ltr_i225(struct igc_hw *hw, bool link)
- 		/* Check if using copper interface with EEE enabled or if the
- 		 * link speed is 10 Mbps.
- 		 */
--		if (hw->phy.media_type == igc_media_type_copper &&
-+		if (hw->phy.media_type == e1000_media_type_copper &&
- 				!hw->dev_spec._i225.eee_disable &&
- 				speed != SPEED_10) {
- 			/* EEE enabled, so send LTRMAX threshold. */
--			ltrc = IGC_READ_REG(hw, IGC_LTRC) |
--				IGC_LTRC_EEEMS_EN;
--			IGC_WRITE_REG(hw, IGC_LTRC, ltrc);
-+			ltrc = E1000_READ_REG(hw, E1000_LTRC) |
-+				E1000_LTRC_EEEMS_EN;
-+			E1000_WRITE_REG(hw, E1000_LTRC, ltrc);
- 
- 			/* Calculate tw_system (nsec). */
- 			if (speed == SPEED_100)
--				tw_system = ((IGC_READ_REG(hw, IGC_EEE_SU) &
--					IGC_TW_SYSTEM_100_MASK) >>
--					IGC_TW_SYSTEM_100_SHIFT) * 500;
-+				tw_system = ((E1000_READ_REG(hw, E1000_EEE_SU) &
-+					E1000_TW_SYSTEM_100_MASK) >>
-+					E1000_TW_SYSTEM_100_SHIFT) * 500;
- 			else
--				tw_system = (IGC_READ_REG(hw, IGC_EEE_SU) &
--					IGC_TW_SYSTEM_1000_MASK) * 500;
-+				tw_system = (E1000_READ_REG(hw, E1000_EEE_SU) &
-+					E1000_TW_SYSTEM_1000_MASK) * 500;
- 		} else {
- 			tw_system = 0;
- 		}
- 
- 		/* Get the Rx packet buffer size. */
--		size = IGC_READ_REG(hw, IGC_RXPBS) &
--			IGC_RXPBS_SIZE_I225_MASK;
-+		size = E1000_READ_REG(hw, E1000_RXPBS) &
-+			E1000_RXPBS_SIZE_I225_MASK;
- 
- 		/* Calculations vary based on DMAC settings. */
--		if (IGC_READ_REG(hw, IGC_DMACR) & IGC_DMACR_DMAC_EN) {
--			size -= (IGC_READ_REG(hw, IGC_DMACR) &
--				 IGC_DMACR_DMACTHR_MASK) >>
--				 IGC_DMACR_DMACTHR_SHIFT;
-+		if (E1000_READ_REG(hw, E1000_DMACR) & E1000_DMACR_DMAC_EN) {
-+			size -= (E1000_READ_REG(hw, E1000_DMACR) &
-+				 E1000_DMACR_DMACTHR_MASK) >>
-+				 E1000_DMACR_DMACTHR_SHIFT;
- 			/* Convert size to bits. */
- 			size *= 1024 * 8;
- 		} else {
-@@ -1056,7 +1055,7 @@ static s32 igc_set_ltr_i225(struct igc_hw *hw, bool link)
- 		if (size < 0) {
- 			DEBUGOUT1("Invalid effective Rx buffer size %d\n",
- 				  size);
--			return -IGC_ERR_CONFIG;
-+			return -E1000_ERR_CONFIG;
- 		}
- 
- 		/* Calculate the thresholds. Since speed is in Mbps, simplify
-@@ -1066,62 +1065,62 @@ static s32 igc_set_ltr_i225(struct igc_hw *hw, bool link)
- 		 */
- 		ltr_min = (1000 * size) / speed;
- 		ltr_max = ltr_min + tw_system;
--		scale_min = (ltr_min / 1024) < 1024 ? IGC_LTRMINV_SCALE_1024 :
--			    IGC_LTRMINV_SCALE_32768;
--		scale_max = (ltr_max / 1024) < 1024 ? IGC_LTRMAXV_SCALE_1024 :
--			    IGC_LTRMAXV_SCALE_32768;
--		ltr_min /= scale_min == IGC_LTRMINV_SCALE_1024 ? 1024 : 32768;
--		ltr_min -= 1;
--		ltr_max /= scale_max == IGC_LTRMAXV_SCALE_1024 ? 1024 : 32768;
--		ltr_max -= 1;
-+		scale_min = (ltr_min / 1024) < 1024 ? E1000_LTRMINV_SCALE_1024 :
-+			    E1000_LTRMINV_SCALE_32768;
-+		scale_max = (ltr_max / 1024) < 1024 ? E1000_LTRMAXV_SCALE_1024 :
-+			    E1000_LTRMAXV_SCALE_32768;
-+		ltr_min /= scale_min == E1000_LTRMINV_SCALE_1024 ? 1024 : 32768;
-+		ltr_max /= scale_max == E1000_LTRMAXV_SCALE_1024 ? 1024 : 32768;
- 
- 		/* Only write the LTR thresholds if they differ from before. */
--		ltrv = IGC_READ_REG(hw, IGC_LTRMINV);
--		if (ltr_min != (ltrv & IGC_LTRMINV_LTRV_MASK)) {
--			ltrv = IGC_LTRMINV_LSNP_REQ | ltr_min |
--			      (scale_min << IGC_LTRMINV_SCALE_SHIFT);
--			IGC_WRITE_REG(hw, IGC_LTRMINV, ltrv);
-+		ltrv = E1000_READ_REG(hw, E1000_LTRMINV);
-+		if (ltr_min != (ltrv & E1000_LTRMINV_LTRV_MASK)) {
-+			ltrv = E1000_LTRMINV_LSNP_REQ | ltr_min |
-+			      (scale_min << E1000_LTRMINV_SCALE_SHIFT);
-+			E1000_WRITE_REG(hw, E1000_LTRMINV, ltrv);
- 		}
- 
--		ltrv = IGC_READ_REG(hw, IGC_LTRMAXV);
--		if (ltr_max != (ltrv & IGC_LTRMAXV_LTRV_MASK)) {
--			ltrv = IGC_LTRMAXV_LSNP_REQ | ltr_max |
--			      (scale_max << IGC_LTRMAXV_SCALE_SHIFT);
--			IGC_WRITE_REG(hw, IGC_LTRMAXV, ltrv);
-+		ltrv = E1000_READ_REG(hw, E1000_LTRMAXV);
-+		if (ltr_max != (ltrv & E1000_LTRMAXV_LTRV_MASK)) {
-+			ltrv = E1000_LTRMAXV_LSNP_REQ | ltr_max |
-+			      (scale_min << E1000_LTRMAXV_SCALE_SHIFT);
-+			E1000_WRITE_REG(hw, E1000_LTRMAXV, ltrv);
- 		}
- 	}
- 
--	return IGC_SUCCESS;
-+	return E1000_SUCCESS;
- }
- 
--/* igc_check_for_link_i225 - Check for link
-+/* e1000_check_for_link_i225 - Check for link
-  * @hw: pointer to the HW structure
-  *
-  * Checks to see of the link status of the hardware has changed.  If a
-  * change in link status has been detected, then we read the PHY registers
-  * to get the current speed/duplex if link exists.
-  */
--s32 igc_check_for_link_i225(struct igc_hw *hw)
-+s32 e1000_check_for_link_i225(struct e1000_hw *hw)
- {
--	struct igc_mac_info *mac = &hw->mac;
-+	struct e1000_mac_info *mac = &hw->mac;
- 	s32 ret_val;
- 	bool link = false;
- 
--	DEBUGFUNC("igc_check_for_link_i225");
-+	DEBUGFUNC("e1000_check_for_link_i225");
- 
- 	/* We only want to go out to the PHY registers to see if
- 	 * Auto-Neg has completed and/or if our link status has
- 	 * changed.  The get_link_status flag is set upon receiving
- 	 * a Link Status Change or Rx Sequence Error interrupt.
- 	 */
--	if (!mac->get_link_status)
-+	if (!mac->get_link_status) {
-+		ret_val = E1000_SUCCESS;
- 		goto out;
-+	}
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
- 	 * of the PHY.
- 	 */
--	ret_val = igc_phy_has_link_generic(hw, 1, 0, &link);
-+	ret_val = e1000_phy_has_link_generic(hw, 1, 0, &link);
- 	if (ret_val)
- 		goto out;
- 
-@@ -1133,7 +1132,7 @@ s32 igc_check_for_link_i225(struct igc_hw *hw)
- 	/* Check if there was DownShift, must be checked
- 	 * immediately after link-up
- 	 */
--	igc_check_downshift_generic(hw);
-+	e1000_check_downshift_generic(hw);
- 
- 	/* If we are forcing speed/duplex, then we simply return since
- 	 * we have already determined whether we have link or not.
-@@ -1152,45 +1151,45 @@ s32 igc_check_for_link_i225(struct igc_hw *hw)
- 	 * settings because we may have had to re-autoneg with a
- 	 * different link partner.
- 	 */
--	ret_val = igc_config_fc_after_link_up_generic(hw);
-+	ret_val = e1000_config_fc_after_link_up_generic(hw);
- 	if (ret_val)
- 		DEBUGOUT("Error configuring flow control\n");
- out:
- 	/* Now that we are aware of our link settings, we can set the LTR
- 	 * thresholds.
- 	 */
--	ret_val = igc_set_ltr_i225(hw, link);
-+	ret_val = e1000_set_ltr_i225(hw, link);
- 
- 	return ret_val;
- }
- 
--/* igc_init_function_pointers_i225 - Init func ptrs.
-+/* e1000_init_function_pointers_i225 - Init func ptrs.
-  * @hw: pointer to the HW structure
-  *
-  * Called to initialize all function pointers and parameters.
-  */
--void igc_init_function_pointers_i225(struct igc_hw *hw)
-+void e1000_init_function_pointers_i225(struct e1000_hw *hw)
- {
--	igc_init_mac_ops_generic(hw);
--	igc_init_phy_ops_generic(hw);
--	igc_init_nvm_ops_generic(hw);
--	hw->mac.ops.init_params = igc_init_mac_params_i225;
--	hw->nvm.ops.init_params = igc_init_nvm_params_i225;
--	hw->phy.ops.init_params = igc_init_phy_params_i225;
-+	e1000_init_mac_ops_generic(hw);
-+	e1000_init_phy_ops_generic(hw);
-+	e1000_init_nvm_ops_generic(hw);
-+	hw->mac.ops.init_params = e1000_init_mac_params_i225;
-+	hw->nvm.ops.init_params = e1000_init_nvm_params_i225;
-+	hw->phy.ops.init_params = e1000_init_phy_params_i225;
- }
- 
--/* igc_valid_led_default_i225 - Verify a valid default LED config
-+/* e1000_valid_led_default_i225 - Verify a valid default LED config
-  * @hw: pointer to the HW structure
-  * @data: pointer to the NVM (EEPROM)
-  *
-  * Read the EEPROM for the current default LED configuration.  If the
-  * LED configuration is not valid, set to a valid LED configuration.
-  */
--static s32 igc_valid_led_default_i225(struct igc_hw *hw, u16 *data)
-+static s32 e1000_valid_led_default_i225(struct e1000_hw *hw, u16 *data)
- {
- 	s32 ret_val;
- 
--	DEBUGFUNC("igc_valid_led_default_i225");
-+	DEBUGFUNC("e1000_valid_led_default_i225");
- 
- 	ret_val = hw->nvm.ops.read(hw, NVM_ID_LED_SETTINGS, 1, data);
- 	if (ret_val) {
-@@ -1200,10 +1199,10 @@ static s32 igc_valid_led_default_i225(struct igc_hw *hw, u16 *data)
- 
- 	if (*data == ID_LED_RESERVED_0000 || *data == ID_LED_RESERVED_FFFF) {
- 		switch (hw->phy.media_type) {
--		case igc_media_type_internal_serdes:
-+		case e1000_media_type_internal_serdes:
- 			*data = ID_LED_DEFAULT_I225_SERDES;
- 			break;
--		case igc_media_type_copper:
-+		case e1000_media_type_copper:
- 		default:
- 			*data = ID_LED_DEFAULT_I225;
- 			break;
-@@ -1213,24 +1212,24 @@ static s32 igc_valid_led_default_i225(struct igc_hw *hw, u16 *data)
- 	return ret_val;
- }
- 
--/* igc_get_cfg_done_i225 - Read config done bit
-+/* e1000_get_cfg_done_i225 - Read config done bit
-  * @hw: pointer to the HW structure
-  *
-  * Read the management control register for the config done bit for
-  * completion status.  NOTE: silicon which is EEPROM-less will fail trying
-  * to read the config done bit, so an error is *ONLY* logged and returns
-- * IGC_SUCCESS.  If we were to return with error, EEPROM-less silicon
-+ * E1000_SUCCESS.  If we were to return with error, EEPROM-less silicon
-  * would not be able to be reset or change link.
-  */
--static s32 igc_get_cfg_done_i225(struct igc_hw *hw)
-+static s32 e1000_get_cfg_done_i225(struct e1000_hw *hw)
- {
- 	s32 timeout = PHY_CFG_TIMEOUT;
--	u32 mask = IGC_NVM_CFG_DONE_PORT_0;
-+	u32 mask = E1000_NVM_CFG_DONE_PORT_0;
- 
--	DEBUGFUNC("igc_get_cfg_done_i225");
-+	DEBUGFUNC("e1000_get_cfg_done_i225");
- 
- 	while (timeout) {
--		if (IGC_READ_REG(hw, IGC_EEMNGCTL_I225) & mask)
-+		if (E1000_READ_REG(hw, E1000_EEMNGCTL_I225) & mask)
- 			break;
- 		msec_delay(1);
- 		timeout--;
-@@ -1238,86 +1237,86 @@ static s32 igc_get_cfg_done_i225(struct igc_hw *hw)
- 	if (!timeout)
- 		DEBUGOUT("MNG configuration cycle has not completed.\n");
- 
--	return IGC_SUCCESS;
-+	return E1000_SUCCESS;
- }
- 
--/* igc_init_hw_i225 - Init hw for I225
-+/* e1000_init_hw_i225 - Init hw for I225
-  * @hw: pointer to the HW structure
-  *
-  * Called to initialize hw for i225 hw family.
-  */
--s32 igc_init_hw_i225(struct igc_hw *hw)
-+s32 e1000_init_hw_i225(struct e1000_hw *hw)
- {
- 	s32 ret_val;
- 
--	DEBUGFUNC("igc_init_hw_i225");
-+	DEBUGFUNC("e1000_init_hw_i225");
- 
--	hw->phy.ops.get_cfg_done = igc_get_cfg_done_i225;
--	ret_val = igc_init_hw_base(hw);
--	igc_set_eee_i225(hw, false, false, false);
-+	hw->phy.ops.get_cfg_done = e1000_get_cfg_done_i225;
-+	ret_val = e1000_init_hw_base(hw);
-+	e1000_set_eee_i225(hw, false, false, false);
- 	return ret_val;
- }
- 
- /*
-- * igc_set_d0_lplu_state_i225 - Set Low-Power-Link-Up (LPLU) D0 state
-+ * e1000_set_d0_lplu_state_i225 - Set Low-Power-Link-Up (LPLU) D0 state
-  * @hw: pointer to the HW structure
-  * @active: true to enable LPLU, false to disable
-  *
-  * Note: since I225 does not actually support LPLU, this function
-  * simply enables/disables 1G and 2.5G speeds in D0.
-  */
--s32 igc_set_d0_lplu_state_i225(struct igc_hw *hw, bool active)
-+s32 e1000_set_d0_lplu_state_i225(struct e1000_hw *hw, bool active)
- {
- 	u32 data;
- 
--	DEBUGFUNC("igc_set_d0_lplu_state_i225");
-+	DEBUGFUNC("e1000_set_d0_lplu_state_i225");
- 
--	data = IGC_READ_REG(hw, IGC_I225_PHPM);
-+	data = E1000_READ_REG(hw, E1000_I225_PHPM);
- 
- 	if (active) {
--		data |= IGC_I225_PHPM_DIS_1000;
--		data |= IGC_I225_PHPM_DIS_2500;
-+		data |= E1000_I225_PHPM_DIS_1000;
-+		data |= E1000_I225_PHPM_DIS_2500;
- 	} else {
--		data &= ~IGC_I225_PHPM_DIS_1000;
--		data &= ~IGC_I225_PHPM_DIS_2500;
-+		data &= ~E1000_I225_PHPM_DIS_1000;
-+		data &= ~E1000_I225_PHPM_DIS_2500;
- 	}
- 
--	IGC_WRITE_REG(hw, IGC_I225_PHPM, data);
--	return IGC_SUCCESS;
-+	E1000_WRITE_REG(hw, E1000_I225_PHPM, data);
-+	return E1000_SUCCESS;
- }
- 
- /*
-- * igc_set_d3_lplu_state_i225 - Set Low-Power-Link-Up (LPLU) D3 state
-+ * e1000_set_d3_lplu_state_i225 - Set Low-Power-Link-Up (LPLU) D3 state
-  * @hw: pointer to the HW structure
-  * @active: true to enable LPLU, false to disable
-  *
-  * Note: since I225 does not actually support LPLU, this function
-  * simply enables/disables 100M, 1G and 2.5G speeds in D3.
-  */
--s32 igc_set_d3_lplu_state_i225(struct igc_hw *hw, bool active)
-+s32 e1000_set_d3_lplu_state_i225(struct e1000_hw *hw, bool active)
- {
- 	u32 data;
- 
--	DEBUGFUNC("igc_set_d3_lplu_state_i225");
-+	DEBUGFUNC("e1000_set_d3_lplu_state_i225");
- 
--	data = IGC_READ_REG(hw, IGC_I225_PHPM);
-+	data = E1000_READ_REG(hw, E1000_I225_PHPM);
- 
- 	if (active) {
--		data |= IGC_I225_PHPM_DIS_100_D3;
--		data |= IGC_I225_PHPM_DIS_1000_D3;
--		data |= IGC_I225_PHPM_DIS_2500_D3;
-+		data |= E1000_I225_PHPM_DIS_100_D3;
-+		data |= E1000_I225_PHPM_DIS_1000_D3;
-+		data |= E1000_I225_PHPM_DIS_2500_D3;
- 	} else {
--		data &= ~IGC_I225_PHPM_DIS_100_D3;
--		data &= ~IGC_I225_PHPM_DIS_1000_D3;
--		data &= ~IGC_I225_PHPM_DIS_2500_D3;
-+		data &= ~E1000_I225_PHPM_DIS_100_D3;
-+		data &= ~E1000_I225_PHPM_DIS_1000_D3;
-+		data &= ~E1000_I225_PHPM_DIS_2500_D3;
- 	}
- 
--	IGC_WRITE_REG(hw, IGC_I225_PHPM, data);
--	return IGC_SUCCESS;
-+	E1000_WRITE_REG(hw, E1000_I225_PHPM, data);
-+	return E1000_SUCCESS;
- }
- 
- /**
-- *  igc_set_eee_i225 - Enable/disable EEE support
-+ *  e1000_set_eee_i225 - Enable/disable EEE support
-  *  @hw: pointer to the HW structure
-  *  @adv2p5G: boolean flag enabling 2.5G EEE advertisement
-  *  @adv1G: boolean flag enabling 1G EEE advertisement
-@@ -1326,55 +1325,55 @@ s32 igc_set_d3_lplu_state_i225(struct igc_hw *hw, bool active)
-  *  Enable/disable EEE based on setting in dev_spec structure.
-  *
-  **/
--s32 igc_set_eee_i225(struct igc_hw *hw, bool adv2p5G, bool adv1G,
-+s32 e1000_set_eee_i225(struct e1000_hw *hw, bool adv2p5G, bool adv1G,
- 		       bool adv100M)
- {
- 	u32 ipcnfg, eeer;
- 
--	DEBUGFUNC("igc_set_eee_i225");
-+	DEBUGFUNC("e1000_set_eee_i225");
- 
--	if (hw->mac.type != igc_i225 ||
--	    hw->phy.media_type != igc_media_type_copper)
-+	if (hw->mac.type != e1000_i225 ||
-+	    hw->phy.media_type != e1000_media_type_copper)
- 		goto out;
--	ipcnfg = IGC_READ_REG(hw, IGC_IPCNFG);
--	eeer = IGC_READ_REG(hw, IGC_EEER);
-+	ipcnfg = E1000_READ_REG(hw, E1000_IPCNFG);
-+	eeer = E1000_READ_REG(hw, E1000_EEER);
- 
- 	/* enable or disable per user setting */
- 	if (!(hw->dev_spec._i225.eee_disable)) {
--		u32 eee_su = IGC_READ_REG(hw, IGC_EEE_SU);
-+		u32 eee_su = E1000_READ_REG(hw, E1000_EEE_SU);
- 
- 		if (adv100M)
--			ipcnfg |= IGC_IPCNFG_EEE_100M_AN;
-+			ipcnfg |= E1000_IPCNFG_EEE_100M_AN;
- 		else
--			ipcnfg &= ~IGC_IPCNFG_EEE_100M_AN;
-+			ipcnfg &= ~E1000_IPCNFG_EEE_100M_AN;
- 
- 		if (adv1G)
--			ipcnfg |= IGC_IPCNFG_EEE_1G_AN;
-+			ipcnfg |= E1000_IPCNFG_EEE_1G_AN;
- 		else
--			ipcnfg &= ~IGC_IPCNFG_EEE_1G_AN;
-+			ipcnfg &= ~E1000_IPCNFG_EEE_1G_AN;
- 
- 		if (adv2p5G)
--			ipcnfg |= IGC_IPCNFG_EEE_2_5G_AN;
-+			ipcnfg |= E1000_IPCNFG_EEE_2_5G_AN;
- 		else
--			ipcnfg &= ~IGC_IPCNFG_EEE_2_5G_AN;
-+			ipcnfg &= ~E1000_IPCNFG_EEE_2_5G_AN;
- 
--		eeer |= (IGC_EEER_TX_LPI_EN | IGC_EEER_RX_LPI_EN |
--			IGC_EEER_LPI_FC);
-+		eeer |= (E1000_EEER_TX_LPI_EN | E1000_EEER_RX_LPI_EN |
-+			E1000_EEER_LPI_FC);
- 
- 		/* This bit should not be set in normal operation. */
--		if (eee_su & IGC_EEE_SU_LPI_CLK_STP)
-+		if (eee_su & E1000_EEE_SU_LPI_CLK_STP)
- 			DEBUGOUT("LPI Clock Stop Bit should not be set!\n");
- 	} else {
--		ipcnfg &= ~(IGC_IPCNFG_EEE_2_5G_AN | IGC_IPCNFG_EEE_1G_AN |
--			IGC_IPCNFG_EEE_100M_AN);
--		eeer &= ~(IGC_EEER_TX_LPI_EN | IGC_EEER_RX_LPI_EN |
--			IGC_EEER_LPI_FC);
-+		ipcnfg &= ~(E1000_IPCNFG_EEE_2_5G_AN | E1000_IPCNFG_EEE_1G_AN |
-+			E1000_IPCNFG_EEE_100M_AN);
-+		eeer &= ~(E1000_EEER_TX_LPI_EN | E1000_EEER_RX_LPI_EN |
-+			E1000_EEER_LPI_FC);
- 	}
--	IGC_WRITE_REG(hw, IGC_IPCNFG, ipcnfg);
--	IGC_WRITE_REG(hw, IGC_EEER, eeer);
--	IGC_READ_REG(hw, IGC_IPCNFG);
--	IGC_READ_REG(hw, IGC_EEER);
-+	E1000_WRITE_REG(hw, E1000_IPCNFG, ipcnfg);
-+	E1000_WRITE_REG(hw, E1000_EEER, eeer);
-+	E1000_READ_REG(hw, E1000_IPCNFG);
-+	E1000_READ_REG(hw, E1000_EEER);
- out:
- 
--	return IGC_SUCCESS;
-+	return E1000_SUCCESS;
- }
-diff --git a/drivers/net/intel/e1000/base/e1000_i225.h b/drivers/net/intel/e1000/base/e1000_i225.h
-new file mode 100644
-index 0000000000..b0414b6a36
---- /dev/null
-+++ b/drivers/net/intel/e1000/base/e1000_i225.h
-@@ -0,0 +1,110 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2001-2020 Intel Corporation
-+ */
+ struct igc_tx_queue {
+-	volatile union igc_adv_tx_desc *tx_ring; /**< TX ring address */
++	volatile union e1000_adv_tx_desc *tx_ring; /**< TX ring address */
+ 	uint64_t               tx_ring_phys_addr; /**< TX ring DMA address. */
+ 	struct igc_tx_entry    *sw_ring; /**< virtual address of SW ring. */
+ 	volatile uint32_t      *tdt_reg_addr; /**< Address of TDT register. */
+@@ -156,7 +156,7 @@ int igc_rx_init(struct rte_eth_dev *dev);
+ void igc_tx_init(struct rte_eth_dev *dev);
+ void igc_rss_disable(struct rte_eth_dev *dev);
+ void
+-igc_hw_rss_hash_set(struct igc_hw *hw, struct rte_eth_rss_conf *rss_conf);
++igc_hw_rss_hash_set(struct e1000_hw *hw, struct rte_eth_rss_conf *rss_conf);
+ int igc_del_rss_filter(struct rte_eth_dev *dev);
+ void igc_rss_conf_set(struct igc_rss_filter *out,
+ 		const struct rte_flow_action_rss *rss);
+diff --git a/drivers/net/intel/e1000/meson.build b/drivers/net/intel/e1000/meson.build
+index 296ec25f2c..cd42c0042a 100644
+--- a/drivers/net/intel/e1000/meson.build
++++ b/drivers/net/intel/e1000/meson.build
+@@ -14,4 +14,15 @@ sources = files(
+         'igb_rxtx.c',
+ )
+ 
++# do not build IGC on Windows
++if not is_windows
++        sources += files(
++                'igc_ethdev.c',
++                'igc_logs.c',
++                'igc_filter.c',
++                'igc_flow.c',
++                'igc_txrx.c',
++        )
++endif
 +
-+#ifndef _E1000_I225_H_
-+#define _E1000_I225_H_
-+
-+bool e1000_get_flash_presence_i225(struct e1000_hw *hw);
-+s32 e1000_update_flash_i225(struct e1000_hw *hw);
-+s32 e1000_update_nvm_checksum_i225(struct e1000_hw *hw);
-+s32 e1000_validate_nvm_checksum_i225(struct e1000_hw *hw);
-+s32 e1000_write_nvm_srwr_i225(struct e1000_hw *hw, u16 offset,
-+			      u16 words, u16 *data);
-+s32 e1000_read_nvm_srrd_i225(struct e1000_hw *hw, u16 offset,
-+			     u16 words, u16 *data);
-+s32 e1000_read_invm_version_i225(struct e1000_hw *hw,
-+				 struct e1000_fw_version *invm_ver);
-+s32 e1000_set_flsw_flash_burst_counter_i225(struct e1000_hw *hw,
-+					    u32 burst_counter);
-+s32 e1000_write_erase_flash_command_i225(struct e1000_hw *hw, u32 opcode,
-+					 u32 address);
-+s32 e1000_check_for_link_i225(struct e1000_hw *hw);
-+s32 e1000_acquire_swfw_sync_i225(struct e1000_hw *hw, u16 mask);
-+void e1000_release_swfw_sync_i225(struct e1000_hw *hw, u16 mask);
-+s32 e1000_init_hw_i225(struct e1000_hw *hw);
-+s32 e1000_setup_copper_link_i225(struct e1000_hw *hw);
-+s32 e1000_set_d0_lplu_state_i225(struct e1000_hw *hw, bool active);
-+s32 e1000_set_d3_lplu_state_i225(struct e1000_hw *hw, bool active);
-+s32 e1000_set_eee_i225(struct e1000_hw *hw, bool adv2p5G, bool adv1G,
-+		       bool adv100M);
-+
-+#define ID_LED_DEFAULT_I225		((ID_LED_OFF1_ON2  << 8) | \
-+					 (ID_LED_DEF1_DEF2 <<  4) | \
-+					 (ID_LED_OFF1_OFF2))
-+#define ID_LED_DEFAULT_I225_SERDES	((ID_LED_DEF1_DEF2 << 8) | \
-+					 (ID_LED_DEF1_DEF2 <<  4) | \
-+					 (ID_LED_OFF1_ON2))
-+
-+/* NVM offset defaults for I225 devices */
-+#define NVM_INIT_CTRL_2_DEFAULT_I225	0X7243
-+#define NVM_INIT_CTRL_4_DEFAULT_I225	0x00C1
-+#define NVM_LED_1_CFG_DEFAULT_I225	0x0184
-+#define NVM_LED_0_2_CFG_DEFAULT_I225	0x200C
-+
-+#define E1000_MRQC_ENABLE_RSS_4Q		0x00000002
-+#define E1000_MRQC_ENABLE_VMDQ			0x00000003
-+#define E1000_MRQC_ENABLE_VMDQ_RSS_2Q		0x00000005
-+#define E1000_MRQC_RSS_FIELD_IPV4_UDP		0x00400000
-+#define E1000_MRQC_RSS_FIELD_IPV6_UDP		0x00800000
-+#define E1000_MRQC_RSS_FIELD_IPV6_UDP_EX	0x01000000
-+#define E1000_I225_SHADOW_RAM_SIZE		4096
-+#define E1000_I225_ERASE_CMD_OPCODE		0x02000000
-+#define E1000_I225_WRITE_CMD_OPCODE		0x01000000
-+#define E1000_FLSWCTL_DONE			0x40000000
-+#define E1000_FLSWCTL_CMDV			0x10000000
-+
-+/* SRRCTL bit definitions */
-+#define E1000_SRRCTL_BSIZEHDRSIZE_MASK		0x00000F00
-+#define E1000_SRRCTL_DESCTYPE_LEGACY		0x00000000
-+#define E1000_SRRCTL_DESCTYPE_HDR_SPLIT		0x04000000
-+#define E1000_SRRCTL_DESCTYPE_HDR_SPLIT_ALWAYS	0x0A000000
-+#define E1000_SRRCTL_DESCTYPE_HDR_REPLICATION	0x06000000
-+#define E1000_SRRCTL_DESCTYPE_HDR_REPLICATION_LARGE_PKT 0x08000000
-+#define E1000_SRRCTL_DESCTYPE_MASK		0x0E000000
-+#define E1000_SRRCTL_DROP_EN			0x80000000
-+#define E1000_SRRCTL_BSIZEPKT_MASK		0x0000007F
-+#define E1000_SRRCTL_BSIZEHDR_MASK		0x00003F00
-+
-+#define E1000_RXDADV_RSSTYPE_MASK	0x0000000F
-+#define E1000_RXDADV_RSSTYPE_SHIFT	12
-+#define E1000_RXDADV_HDRBUFLEN_MASK	0x7FE0
-+#define E1000_RXDADV_HDRBUFLEN_SHIFT	5
-+#define E1000_RXDADV_SPLITHEADER_EN	0x00001000
-+#define E1000_RXDADV_SPH		0x8000
-+#define E1000_RXDADV_STAT_TS		0x10000 /* Pkt was time stamped */
-+#define E1000_RXDADV_ERR_HBO		0x00800000
-+
-+/* RSS Hash results */
-+#define E1000_RXDADV_RSSTYPE_NONE	0x00000000
-+#define E1000_RXDADV_RSSTYPE_IPV4_TCP	0x00000001
-+#define E1000_RXDADV_RSSTYPE_IPV4	0x00000002
-+#define E1000_RXDADV_RSSTYPE_IPV6_TCP	0x00000003
-+#define E1000_RXDADV_RSSTYPE_IPV6_EX	0x00000004
-+#define E1000_RXDADV_RSSTYPE_IPV6	0x00000005
-+#define E1000_RXDADV_RSSTYPE_IPV6_TCP_EX 0x00000006
-+#define E1000_RXDADV_RSSTYPE_IPV4_UDP	0x00000007
-+#define E1000_RXDADV_RSSTYPE_IPV6_UDP	0x00000008
-+#define E1000_RXDADV_RSSTYPE_IPV6_UDP_EX 0x00000009
-+
-+/* RSS Packet Types as indicated in the receive descriptor */
-+#define E1000_RXDADV_PKTTYPE_ILMASK	0x000000F0
-+#define E1000_RXDADV_PKTTYPE_TLMASK	0x00000F00
-+#define E1000_RXDADV_PKTTYPE_NONE	0x00000000
-+#define E1000_RXDADV_PKTTYPE_IPV4	0x00000010 /* IPV4 hdr present */
-+#define E1000_RXDADV_PKTTYPE_IPV4_EX	0x00000020 /* IPV4 hdr + extensions */
-+#define E1000_RXDADV_PKTTYPE_IPV6	0x00000040 /* IPV6 hdr present */
-+#define E1000_RXDADV_PKTTYPE_IPV6_EX	0x00000080 /* IPV6 hdr + extensions */
-+#define E1000_RXDADV_PKTTYPE_TCP	0x00000100 /* TCP hdr present */
-+#define E1000_RXDADV_PKTTYPE_UDP	0x00000200 /* UDP hdr present */
-+#define E1000_RXDADV_PKTTYPE_SCTP	0x00000400 /* SCTP hdr present */
-+#define E1000_RXDADV_PKTTYPE_NFS	0x00000800 /* NFS hdr present */
-+
-+#define E1000_RXDADV_PKTTYPE_IPSEC_ESP	0x00001000 /* IPSec ESP */
-+#define E1000_RXDADV_PKTTYPE_IPSEC_AH	0x00002000 /* IPSec AH */
-+#define E1000_RXDADV_PKTTYPE_LINKSEC	0x00004000 /* LinkSec Encap */
-+#define E1000_RXDADV_PKTTYPE_ETQF	0x00008000 /* PKTTYPE is ETQF index */
-+#define E1000_RXDADV_PKTTYPE_ETQF_MASK	0x00000070 /* ETQF has 8 indices */
-+#define E1000_RXDADV_PKTTYPE_ETQF_SHIFT	4 /* Right-shift 4 bits */
-+
-+#endif
-diff --git a/drivers/net/intel/e1000/base/e1000_mac.c b/drivers/net/intel/e1000/base/e1000_mac.c
-index 5bb77d9e09..20d5922ef0 100644
---- a/drivers/net/intel/e1000/base/e1000_mac.c
-+++ b/drivers/net/intel/e1000/base/e1000_mac.c
-@@ -989,9 +989,13 @@ s32 e1000_setup_link_generic(struct e1000_hw *hw)
- 	 * based on the EEPROM flow control settings.
- 	 */
- 	if (hw->fc.requested_mode == e1000_fc_default) {
--		ret_val = e1000_set_default_fc_generic(hw);
--		if (ret_val)
--			return ret_val;
-+		if (hw->mac.type == e1000_i225) {
-+			hw->fc.requested_mode = e1000_fc_full;
-+		} else {
-+			ret_val = e1000_set_default_fc_generic(hw);
-+			if (ret_val)
-+				return ret_val;
-+		}
- 	}
- 
- 	/* Save off the requested flow control mode for use later.  Depending
-@@ -1639,8 +1643,18 @@ s32 e1000_get_speed_and_duplex_copper_generic(struct e1000_hw *hw, u16 *speed,
- 
- 	status = E1000_READ_REG(hw, E1000_STATUS);
- 	if (status & E1000_STATUS_SPEED_1000) {
--		*speed = SPEED_1000;
--		DEBUGOUT("1000 Mbs, ");
-+		/* For I225, STATUS will indicate 1G speed in both 1 Gbps
-+		 * and 2.5 Gbps link modes. An additional bit is used
-+		 * to differentiate between 1 Gbps and 2.5 Gbps.
-+		 */
-+		if (hw->mac.type == e1000_i225 &&
-+		    (status & E1000_STATUS_SPEED_2500)) {
-+			*speed = SPEED_2500;
-+			DEBUGOUT("2500 Mbs, ");
-+		} else {
-+			*speed = SPEED_1000;
-+			DEBUGOUT("1000 Mbs, ");
-+		}
- 	} else if (status & E1000_STATUS_SPEED_100) {
- 		*speed = SPEED_100;
- 		DEBUGOUT("100 Mbs, ");
-diff --git a/drivers/net/intel/e1000/base/e1000_nvm.c b/drivers/net/intel/e1000/base/e1000_nvm.c
-index d171bea649..00051c5faf 100644
---- a/drivers/net/intel/e1000/base/e1000_nvm.c
-+++ b/drivers/net/intel/e1000/base/e1000_nvm.c
-@@ -1295,6 +1295,7 @@ void e1000_get_fw_version(struct e1000_hw *hw, struct e1000_fw_version *fw_vers)
- 			return;
- 		}
- 		/* fall through */
-+	case e1000_i225:
- 	case e1000_i350:
- 		hw->nvm.ops.read(hw, NVM_ETRACK_HIWORD, 1, &etrack_test);
- 		/* find combo image version */
-diff --git a/drivers/net/intel/e1000/base/e1000_osdep.h b/drivers/net/intel/e1000/base/e1000_osdep.h
-index 46565d05e7..0cf6da1545 100644
---- a/drivers/net/intel/e1000/base/e1000_osdep.h
-+++ b/drivers/net/intel/e1000/base/e1000_osdep.h
-@@ -117,9 +117,15 @@ static inline uint16_t e1000_read_addr16(volatile void *addr)
- #define E1000_READ_REG(hw, reg) \
- 	e1000_read_addr(E1000_PCI_REG_ADDR((hw), (reg)))
- 
-+#define E1000_READ_REG_LE_VALUE(hw, reg) \
-+	rte_read32(E1000_PCI_REG_ADDR((hw), (reg)))
-+
- #define E1000_WRITE_REG(hw, reg, value) \
- 	E1000_PCI_REG_WRITE(E1000_PCI_REG_ADDR((hw), (reg)), (value))
- 
-+#define E1000_WRITE_REG_LE_VALUE(hw, reg, value) \
-+	rte_write32(value, E1000_PCI_REG_ADDR((hw), (reg)))
-+
- #define E1000_READ_REG_ARRAY(hw, reg, index) \
- 	E1000_PCI_REG(E1000_PCI_REG_ARRAY_ADDR((hw), (reg), (index)))
- 
-diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
-index b4aba9e4e3..5770b7f1be 100644
---- a/drivers/net/intel/e1000/base/e1000_phy.c
-+++ b/drivers/net/intel/e1000/base/e1000_phy.c
-@@ -1457,6 +1457,7 @@ s32 e1000_phy_setup_autoneg(struct e1000_hw *hw)
- 	s32 ret_val;
- 	u16 mii_autoneg_adv_reg;
- 	u16 mii_1000t_ctrl_reg = 0;
-+	u16 aneg_multigbt_an_ctrl = 0;
- 
- 	DEBUGFUNC("e1000_phy_setup_autoneg");
- 
-@@ -1475,6 +1476,32 @@ s32 e1000_phy_setup_autoneg(struct e1000_hw *hw)
- 			return ret_val;
- 	}
- 
-+	/*
-+	 * IGC/IGB merge note: in base code, there was a PHY ID check for I225
-+	 * at this point. However, in DPDK version of IGC this check was
-+	 * removed because it interfered with some i225-based NICs, and it was
-+	 * deemed unnecessary because only the i225 NIC would've called this
-+	 * code anyway because it was in the IGC driver.
-+	 *
-+	 * In IGB, it is no longer the case that this code is only called by
-+	 * i225 NICs, so it could be argued that the check should've been added
-+	 * back. However, as evidenced in the original commit removing the
-+	 * check, the removal was causing problems with some i225-based NICs,
-+	 * adding it back would've introduced the issue again. It is assumed
-+	 * that only i225 will attempt to advertise 2.5G speed anyway, so it is
-+	 * hoped that not adding the check will not cause problems.
-+	 */
-+	if (phy->autoneg_mask & ADVERTISE_2500_FULL) {
-+	/* Read the MULTI GBT AN Control Register - reg 7.32 */
-+		ret_val = phy->ops.read_reg(hw, (STANDARD_AN_REG_MASK <<
-+					    MMD_DEVADDR_SHIFT) |
-+					    ANEG_MULTIGBT_AN_CTRL,
-+					    &aneg_multigbt_an_ctrl);
-+
-+		if (ret_val)
-+			return ret_val;
-+	}
-+
- 	/* Need to parse both autoneg_advertised and fc and set up
- 	 * the appropriate PHY registers.  First we will parse for
- 	 * autoneg_advertised software override.  Since we can advertise
-@@ -1528,6 +1555,18 @@ s32 e1000_phy_setup_autoneg(struct e1000_hw *hw)
- 		mii_1000t_ctrl_reg |= CR_1000T_FD_CAPS;
- 	}
- 
-+	/* We do not allow the Phy to advertise 2500 Mb Half Duplex */
-+	if (phy->autoneg_advertised & ADVERTISE_2500_HALF)
-+		DEBUGOUT("Advertise 2500mb Half duplex request denied!\n");
-+
-+	/* Do we want to advertise 2500 Mb Full Duplex? */
-+	if (phy->autoneg_advertised & ADVERTISE_2500_FULL) {
-+		DEBUGOUT("Advertise 2500mb Full duplex\n");
-+		aneg_multigbt_an_ctrl |= CR_2500T_FD_CAPS;
-+	} else {
-+		aneg_multigbt_an_ctrl &= ~CR_2500T_FD_CAPS;
-+	}
-+
- 	/* Check for a software override of the flow control settings, and
- 	 * setup the PHY advertisement registers accordingly.  If
- 	 * auto-negotiation is enabled, then software will have to set the
-@@ -1592,6 +1631,28 @@ s32 e1000_phy_setup_autoneg(struct e1000_hw *hw)
- 		ret_val = phy->ops.write_reg(hw, PHY_1000T_CTRL,
- 					     mii_1000t_ctrl_reg);
- 
-+	/*
-+	 * IGC/IGB merge note: in base code, there was a PHY ID check for I225
-+	 * at this point. However, in DPDK version of IGC this check was
-+	 * removed because it interfered with some i225-based NICs, and it was
-+	 * deemed unnecessary because only the i225 NIC would've called this
-+	 * code anyway because it was in the IGC driver.
-+	 *
-+	 * In IGB, it is no longer the case that this code is only called by
-+	 * i225 NICs, so it could be argued that the check should've been added
-+	 * back. However, as evidenced in the original commit removing the
-+	 * check, the removal was causing problems with some i225-based NICs,
-+	 * adding it back would've introduced the issue again. It is assumed
-+	 * that only i225 will attempt to advertise 2.5G speed anyway, so it is
-+	 * hoped that not adding the check will not cause problems.
-+	 */
-+	if (phy->autoneg_mask & ADVERTISE_2500_FULL)
-+		ret_val = phy->ops.write_reg(hw,
-+					     (STANDARD_AN_REG_MASK <<
-+					     MMD_DEVADDR_SHIFT) |
-+					     ANEG_MULTIGBT_AN_CTRL,
-+					     aneg_multigbt_an_ctrl);
-+
- 	return ret_val;
- }
- 
-@@ -1848,6 +1909,7 @@ s32 e1000_phy_force_speed_duplex_m88(struct e1000_hw *hw)
- 			case M88E1543_E_PHY_ID:
- 			case M88E1512_E_PHY_ID:
- 			case I210_I_PHY_ID:
-+			case I225_I_PHY_ID:
- 				reset_dsp = false;
- 				break;
- 			default:
-@@ -1889,6 +1951,8 @@ s32 e1000_phy_force_speed_duplex_m88(struct e1000_hw *hw)
- 		return E1000_SUCCESS;
- 	if (hw->phy.id == I210_I_PHY_ID)
- 		return E1000_SUCCESS;
-+	if (hw->phy.id == I225_I_PHY_ID)
-+		return E1000_SUCCESS;
- 	if ((hw->phy.id == M88E1543_E_PHY_ID) ||
- 	    (hw->phy.id == M88E1512_E_PHY_ID))
- 		return E1000_SUCCESS;
-@@ -2417,7 +2481,7 @@ s32 e1000_get_cable_length_m88(struct e1000_hw *hw)
- s32 e1000_get_cable_length_m88_gen2(struct e1000_hw *hw)
- {
- 	struct e1000_phy_info *phy = &hw->phy;
--	s32 ret_val;
-+	s32 ret_val  = 0;
- 	u16 phy_data, phy_data2, is_cm;
- 	u16 index, default_page;
- 
-@@ -2445,6 +2509,8 @@ s32 e1000_get_cable_length_m88_gen2(struct e1000_hw *hw)
- 		phy->max_cable_length = phy_data / (is_cm ? 100 : 1);
- 		phy->cable_length = phy_data / (is_cm ? 100 : 1);
- 		break;
-+	case I225_I_PHY_ID:
-+		break;
- 	case M88E1543_E_PHY_ID:
- 	case M88E1512_E_PHY_ID:
- 	case M88E1340M_E_PHY_ID:
-@@ -3024,6 +3090,9 @@ enum e1000_phy_type e1000_get_phy_type_from_id(u32 phy_id)
- 	case I210_I_PHY_ID:
- 		phy_type = e1000_phy_i210;
- 		break;
-+	case I225_I_PHY_ID:
-+		phy_type = e1000_phy_i225;
-+		break;
- 	default:
- 		phy_type = e1000_phy_unknown;
- 		break;
-@@ -3483,6 +3552,7 @@ void e1000_power_up_phy_copper(struct e1000_hw *hw)
- 	hw->phy.ops.read_reg(hw, PHY_CONTROL, &mii_reg);
- 	mii_reg &= ~MII_CR_POWER_DOWN;
- 	hw->phy.ops.write_reg(hw, PHY_CONTROL, mii_reg);
-+	usec_delay(300);
- }
- 
- /**
-@@ -3891,7 +3961,7 @@ s32 e1000_phy_force_speed_duplex_82577(struct e1000_hw *hw)
- 	struct e1000_phy_info *phy = &hw->phy;
- 	s32 ret_val;
- 	u16 phy_data;
--	bool link;
-+	bool link = false;
- 
- 	DEBUGFUNC("e1000_phy_force_speed_duplex_82577");
- 
-@@ -4084,6 +4154,69 @@ s32 e1000_read_phy_reg_gs40g(struct e1000_hw *hw, u32 offset, u16 *data)
- 	return ret_val;
- }
- 
-+/**
-+ *  e1000_write_phy_reg_gpy - Write GPY PHY register
-+ *  @hw: pointer to the HW structure
-+ *  @offset: register offset to write to
-+ *  @data: data to write at register offset
-+ *
-+ *  Acquires semaphore, if necessary, then writes the data to PHY register
-+ *  at the offset.  Release any acquired semaphores before exiting.
-+ **/
-+s32 e1000_write_phy_reg_gpy(struct e1000_hw *hw, u32 offset, u16 data)
-+{
-+	s32 ret_val;
-+	u8 dev_addr = (offset & GPY_MMD_MASK) >> GPY_MMD_SHIFT;
-+
-+	DEBUGFUNC("e1000_write_phy_reg_gpy");
-+
-+	offset = offset & GPY_REG_MASK;
-+
-+	if (!dev_addr) {
-+		ret_val = hw->phy.ops.acquire(hw);
-+		if (ret_val)
-+			return ret_val;
-+		ret_val = e1000_write_phy_reg_mdic(hw, offset, data);
-+		hw->phy.ops.release(hw);
-+	} else {
-+		ret_val = e1000_write_xmdio_reg(hw, (u16)offset, dev_addr,
-+						data);
-+	}
-+	return ret_val;
-+}
-+
-+/**
-+ *  e1000_read_phy_reg_gpy - Read GPY PHY register
-+ *  @hw: pointer to the HW structure
-+ *  @offset: lower half is register offset to read to
-+ *     upper half is MMD to use.
-+ *  @data: data to read at register offset
-+ *
-+ *  Acquires semaphore, if necessary, then reads the data in the PHY register
-+ *  at the offset.  Release any acquired semaphores before exiting.
-+ **/
-+s32 e1000_read_phy_reg_gpy(struct e1000_hw *hw, u32 offset, u16 *data)
-+{
-+	s32 ret_val;
-+	u8 dev_addr = (offset & GPY_MMD_MASK) >> GPY_MMD_SHIFT;
-+
-+	DEBUGFUNC("e1000_read_phy_reg_gpy");
-+
-+	offset = offset & GPY_REG_MASK;
-+
-+	if (!dev_addr) {
-+		ret_val = hw->phy.ops.acquire(hw);
-+		if (ret_val)
-+			return ret_val;
-+		ret_val = e1000_read_phy_reg_mdic(hw, offset, data);
-+		hw->phy.ops.release(hw);
-+	} else {
-+		ret_val = e1000_read_xmdio_reg(hw, (u16)offset, dev_addr,
-+					       data);
-+	}
-+	return ret_val;
-+}
-+
- /**
-  *  e1000_read_phy_reg_mphy - Read mPHY control register
-  *  @hw: pointer to the HW structure
-diff --git a/drivers/net/intel/e1000/base/e1000_phy.h b/drivers/net/intel/e1000/base/e1000_phy.h
-index 81c5308589..a7834240e0 100644
---- a/drivers/net/intel/e1000/base/e1000_phy.h
-+++ b/drivers/net/intel/e1000/base/e1000_phy.h
-@@ -86,6 +86,8 @@ s32  e1000_phy_force_speed_duplex_82577(struct e1000_hw *hw);
- s32  e1000_get_cable_length_82577(struct e1000_hw *hw);
- s32  e1000_write_phy_reg_gs40g(struct e1000_hw *hw, u32 offset, u16 data);
- s32  e1000_read_phy_reg_gs40g(struct e1000_hw *hw, u32 offset, u16 *data);
-+s32  e1000_write_phy_reg_gpy(struct e1000_hw *hw, u32 offset, u16 data);
-+s32  e1000_read_phy_reg_gpy(struct e1000_hw *hw, u32 offset, u16 *data);
- s32 e1000_read_phy_reg_mphy(struct e1000_hw *hw, u32 address, u32 *data);
- s32 e1000_write_phy_reg_mphy(struct e1000_hw *hw, u32 address, u32 data,
- 			     bool line_override);
-@@ -120,6 +122,21 @@ s32 e1000_write_xmdio_reg(struct e1000_hw *hw, u16 addr, u8 dev_addr,
- #define GS40G_MAC_SPEED_1G		0X0006
- #define GS40G_COPPER_SPEC		0x0010
- 
-+#define E1000_I225_PHPM			0x0E14 /* I225 PHY Power Management */
-+#define E1000_I225_PHPM_DIS_1000_D3	0x0008 /* Disable 1G in D3 */
-+#define E1000_I225_PHPM_LINK_ENERGY	0x0010 /* Link Energy Detect */
-+#define E1000_I225_PHPM_GO_LINKD	0x0020 /* Go Link Disconnect */
-+#define E1000_I225_PHPM_DIS_1000	0x0040 /* Disable 1G globally */
-+#define E1000_I225_PHPM_SPD_B2B_EN	0x0080 /* Smart Power Down Back2Back */
-+#define E1000_I225_PHPM_RST_COMPL	0x0100 /* PHY Reset Completed */
-+#define E1000_I225_PHPM_DIS_100_D3	0x0200 /* Disable 100M in D3 */
-+#define E1000_I225_PHPM_ULP		0x0400 /* Ultra Low-Power Mode */
-+#define E1000_I225_PHPM_DIS_2500	0x0800 /* Disable 2.5G globally */
-+#define E1000_I225_PHPM_DIS_2500_D3	0x1000 /* Disable 2.5G in D3 */
-+/* GPY211 - I225 defines */
-+#define GPY_MMD_MASK			0xFFFF0000
-+#define GPY_MMD_SHIFT			16
-+#define GPY_REG_MASK			0x0000FFFF
- /* BM/HV Specific Registers */
- #define BM_PORT_CTRL_PAGE		769
- #define BM_WUC_PAGE			800
-diff --git a/drivers/net/intel/e1000/base/e1000_regs.h b/drivers/net/intel/e1000/base/e1000_regs.h
-index 092d9d71e6..32acbb4789 100644
---- a/drivers/net/intel/e1000/base/e1000_regs.h
-+++ b/drivers/net/intel/e1000/base/e1000_regs.h
-@@ -30,6 +30,10 @@
- #define E1000_FCAL	0x00028  /* Flow Control Address Low - RW */
- #define E1000_FCAH	0x0002C  /* Flow Control Address High -RW */
- #define E1000_FEXT	0x0002C  /* Future Extended - RW */
-+#define E1000_I225_FLSWCTL	0x12048 /* FLASH control register */
-+#define E1000_I225_FLSWDATA	0x1204C /* FLASH data register */
-+#define E1000_I225_FLSWCNT	0x12050 /* FLASH Access Counter */
-+#define E1000_I225_FLSECU	0x12114 /* FLASH Security */
- #define E1000_FEXTNVM	0x00028  /* Future Extended NVM - RW */
- #define E1000_FEXTNVM3	0x0003C  /* Future Extended NVM 3 - RW */
- #define E1000_FEXTNVM4	0x00024  /* Future Extended NVM 4 - RW */
-@@ -87,8 +91,10 @@
- #define E1000_IOSFPC	0x00F28  /* TX corrupted data  */
- #define E1000_EEMNGCTL	0x01010  /* MNG EEprom Control */
- #define E1000_EEMNGCTL_I210	0x01010  /* i210 MNG EEprom Mode Control */
-+#define E1000_EEMNGCTL_I225	0x01010  /* i225 MNG EEprom Mode Control */
- #define E1000_EEARBC	0x01024  /* EEPROM Auto Read Bus Control */
- #define E1000_EEARBC_I210	0x12024 /* EEPROM Auto Read Bus Control */
-+#define E1000_EEARBC_I225	0x12024 /* EEPROM Auto Read Bus Control */
- #define E1000_FLASHT	0x01028  /* FLASH Timer Register */
- #define E1000_EEWR	0x0102C  /* EEPROM Write Register - RW */
- #define E1000_FLSWCTL	0x01030  /* FLASH control register */
-@@ -261,6 +267,9 @@
- 				 (0x054E0 + ((_i - 16) * 8)))
- #define E1000_RAH(_i)		(((_i) <= 15) ? (0x05404 + ((_i) * 8)) : \
- 				 (0x054E4 + ((_i - 16) * 8)))
-+
-+#define E1000_VLAPQF		0x055B0  /* VLAN Priority Queue Filter VLAPQF */
-+
- #define E1000_SHRAL(_i)		(0x05438 + ((_i) * 8))
- #define E1000_SHRAH(_i)		(0x0543C + ((_i) * 8))
- #define E1000_IP4AT_REG(_i)	(0x05840 + ((_i) * 8))
-@@ -482,6 +491,17 @@
- #define E1000_IP6AT	0x05880  /* IPv6 Address Table - RW Array */
- #define E1000_WUPL	0x05900  /* Wakeup Packet Length - RW */
- #define E1000_WUPM	0x05A00  /* Wakeup Packet Memory - RO A */
-+#define E1000_WUPM_EXT	0x0B800  /* Wakeup Packet Memory Extended - RO Array */
-+#define E1000_WUFC_EXT	0x0580C  /* Wakeup Filter Control Extended - RW */
-+#define E1000_WUS_EXT	0x05814  /* Wakeup Status Extended - RW1C */
-+#define E1000_FHFTSL	0x05804  /* Flex Filter Indirect Table Select - RW */
-+#define E1000_PROXYFCEX	0x05590  /* Proxy Filter Control Extended - RW1C */
-+#define E1000_PROXYEXS	0x05594  /* Proxy Extended Status - RO */
-+#define E1000_WFUTPF	0x05500  /* Wake Flex UDP TCP Port Filter - RW Array */
-+#define E1000_RFUTPF	0x05580  /* Range Flex UDP TCP Port Filter - RW */
-+#define E1000_RWPFC	0x05584  /* Range Wake Port Filter Control - RW */
-+#define E1000_WFUTPS	0x05588  /* Wake Filter UDP TCP Status - RW1C */
-+#define E1000_WCS	0x0558C  /* Wake Control Status - RW1C */
- /* MSI-X Table Register Descriptions */
- #define E1000_PBACL	0x05B68  /* MSIx PBA Clear - Read/Write 1's to clear */
- #define E1000_FFLT	0x05F00  /* Flexible Filter Length Table - RW Array */
-@@ -593,6 +613,14 @@
- #define E1000_RXMTRL	0x0B634 /* Time sync Rx EtherType and Msg Type - RW */
- #define E1000_RXUDP	0x0B638 /* Time Sync Rx UDP Port - RW */
- 
-+#define E1000_QBVCYCLET	0x331C
-+#define E1000_QBVCYCLET_S 0x3320
-+#define E1000_STQT(_n)	(0x3324 + 0x4 * (_n))
-+#define E1000_ENDQT(_n)	(0x3334 + 0x4 * (_n))
-+#define E1000_TXQCTL(_n)	(0x3344 + 0x4 * (_n))
-+#define E1000_BASET_L	0x3314
-+#define E1000_BASET_H	0x3318
-+
- /* Filtering Registers */
- #define E1000_SAQF(_n)	(0x05980 + (4 * (_n))) /* Source Address Queue Fltr */
- #define E1000_DAQF(_n)	(0x059A0 + (4 * (_n))) /* Dest Address Queue Fltr */
-@@ -678,6 +706,7 @@
- #define E1000_LTRC	0x01A0 /* Latency Tolerance Reporting Control */
- #define E1000_EEER	0x0E30 /* Energy Efficient Ethernet "EEE"*/
- #define E1000_EEE_SU	0x0E34 /* EEE Setup */
-+#define E1000_EEE_SU_2P5	0x0E3C /* EEE 2.5G Setup */
- #define E1000_TLPIC	0x4148 /* EEE Tx LPI Count - TLPIC */
- #define E1000_RLPIC	0x414C /* EEE Rx LPI Count - RLPIC */
- 
-@@ -687,6 +716,36 @@
- #define E1000_O2BGPTC	0x08FE4 /* OS2BMC packets received by BMC */
- #define E1000_O2BSPC	0x0415C /* OS2BMC packets transmitted by host */
- 
-+#define E1000_LTRMINV	0x5BB0 /* LTR Minimum Value */
-+#define E1000_LTRMAXV	0x5BB4 /* LTR Maximum Value */
- 
- 
-+/* IEEE 1588 TIMESYNCH */
-+#define E1000_TRGTTIML0	0x0B644 /* Target Time Register 0 Low  - RW */
-+#define E1000_TRGTTIMH0	0x0B648 /* Target Time Register 0 High - RW */
-+#define E1000_TRGTTIML1	0x0B64C /* Target Time Register 1 Low  - RW */
-+#define E1000_TRGTTIMH1	0x0B650 /* Target Time Register 1 High - RW */
-+#define E1000_FREQOUT0	0x0B654 /* Frequency Out 0 Control Register - RW */
-+#define E1000_FREQOUT1	0x0B658 /* Frequency Out 1 Control Register - RW */
-+#define E1000_TSSDP	0x0003C  /* Time Sync SDP Configuration Register - RW */
-+
-+#define E1000_LTRC_EEEMS_EN			(1 << 5)
-+#define E1000_TW_SYSTEM_100_MASK		0xff00
-+#define E1000_TW_SYSTEM_100_SHIFT	8
-+#define E1000_TW_SYSTEM_1000_MASK	0xff
-+#define E1000_LTRMINV_SCALE_1024		0x02
-+#define E1000_LTRMINV_SCALE_32768	0x03
-+#define E1000_LTRMAXV_SCALE_1024		0x02
-+#define E1000_LTRMAXV_SCALE_32768	0x03
-+#define E1000_LTRMINV_LTRV_MASK		0x1ff
-+#define E1000_LTRMINV_LSNP_REQ		0x80
-+#define E1000_LTRMINV_SCALE_SHIFT	10
-+#define E1000_LTRMAXV_LTRV_MASK		0x1ff
-+#define E1000_LTRMAXV_LSNP_REQ		0x80
-+#define E1000_LTRMAXV_SCALE_SHIFT	10
-+
-+#define E1000_MRQC_ENABLE_MASK		0x00000007
-+#define E1000_MRQC_RSS_FIELD_IPV6_EX	0x00080000
-+#define E1000_RCTL_DTYP_MASK		0x00000C00 /* Descriptor type mask */
-+
- #endif
-diff --git a/drivers/net/intel/e1000/base/meson.build b/drivers/net/intel/e1000/base/meson.build
-index e73f3d6d55..033b3af2e2 100644
---- a/drivers/net/intel/e1000/base/meson.build
-+++ b/drivers/net/intel/e1000/base/meson.build
-@@ -12,6 +12,7 @@ sources = [
-         'e1000_82575.c',
-         'e1000_api.c',
-         'e1000_i210.c',
-+        'e1000_i225.c',
-         'e1000_ich8lan.c',
-         'e1000_mac.c',
-         'e1000_manage.c',
+ includes += include_directories('base')
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index bbcd8b229a..cdc3e7e664 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -31,7 +31,6 @@ drivers = [
+         'intel/iavf',
+         'intel/ice',
+         'intel/idpf',
+-        'intel/igc',
+         'intel/ipn3ke',
+         'intel/ixgbe',
+         'ionic',
 -- 
 2.43.5
 
