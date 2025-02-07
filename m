@@ -2,109 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733B0C02196
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 09:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 296A7C02196
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 09:58:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69ED1427D0;
-	Fri,  7 Feb 2025 10:53:04 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 84E13427B8
- for <dev@dpdk.org>; Fri,  7 Feb 2025 10:53:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738921982;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=mAlrQywA02l2I2NARLT0HeJ+970a0szb9DefT0uD2k0=;
- b=iizzqscloVFFqt7uj/GtAYgLGRLRYfh/US+vt/D/bHuP1vT5aqEnaaDsvjWNOscV+mcGgP
- z0GpeyGMKpTBfAHlXNHJEkECJLNDT7MhurJQ+bhHHFmbNVqGgXsz6NHUaRGX5wjHVlg3Ul
- TFPkdsbKns5V3JzSLUMoNPecsIS6ZFY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-230-nNdZNb5MPpqdXAJ7Wqj0jQ-1; Fri,
- 07 Feb 2025 04:52:58 -0500
-X-MC-Unique: nNdZNb5MPpqdXAJ7Wqj0jQ-1
-X-Mimecast-MFC-AGG-ID: nNdZNb5MPpqdXAJ7Wqj0jQ
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4167C1801A1D; Fri,  7 Feb 2025 09:52:57 +0000 (UTC)
-Received: from [10.44.22.21] (unknown [10.44.22.21])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 249871800570; Fri,  7 Feb 2025 09:52:54 +0000 (UTC)
-Message-ID: <0df7deea-a6f9-4078-9dee-de42a1e647f8@redhat.com>
-Date: Fri, 7 Feb 2025 10:52:51 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 10861427DC;
+	Fri,  7 Feb 2025 10:58:43 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 8915A427B8;
+ Fri,  7 Feb 2025 10:58:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1738922322; x=1770458322;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=iKfhYu8SFn8AOLEn4bgacb4p6AVZh3t1J7gZ4abolp0=;
+ b=JpNpPBwEHQz2EtiAtbXLeX135+bpmOpbQYmiPGFX4/GODtILwvYV2OOg
+ m3XdqwK/5FrzTu44hay/y1Ec0QNBIz47fn/gYKJ4C/ghHip2076yVmMrL
+ NL7RHMbM5sxovVe6DlqvDilTfHMF8n9VjN5Err7x0W2b7te9NXAa52tVo
+ G9vIN63wmZgxMW+r8RFM3ctjwYm4JmZk9YAs6er4cgHhEBD12bBBOxIgs
+ qvLEZPQF9HPDx+nxHR1+1xNQ+7ltjjEjK5s1l5c/WKcZSxKBWqiZ1rnFm
+ wfaBYAuQCW3gRFUf/Otfx65W1224wdQhZmZB0qkq8QcSKgGn8hhcX/anL w==;
+X-CSE-ConnectionGUID: 3mHi9PKNT4mh4c0ihJzUTA==
+X-CSE-MsgGUID: UQSd1+mlR7emjchwDLPwsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39432609"
+X-IronPort-AV: E=Sophos;i="6.13,266,1732608000"; d="scan'208";a="39432609"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Feb 2025 01:58:41 -0800
+X-CSE-ConnectionGUID: hwWv/oteTWWfm6iomzFDVQ==
+X-CSE-MsgGUID: h73kTILqTrKohpHdWrv0vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,266,1732608000"; d="scan'208";a="111447510"
+Received: from silpixa00401012.ir.intel.com ([10.243.23.14])
+ by orviesa006.jf.intel.com with ESMTP; 07 Feb 2025 01:58:39 -0800
+From: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+To: dev@dpdk.org
+Cc: gakhil@marvell.com, brian.dooley@intel.com,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>, stable@dpdk.org
+Subject: [PATCH] common/qat: fix incorrect size in the parser
+Date: Fri,  7 Feb 2025 09:58:32 +0000
+Message-Id: <20250207095832.4032332-1-arkadiuszx.kusztal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] baseband/acc: add internal logging
-To: Stephen Hemminger <stephen@networkplumber.org>,
- "Chautru, Nicolas" <nicolas.chautru@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
- "Vargas, Hernan" <hernan.vargas@intel.com>
-References: <20250123225519.2469167-1-nicolas.chautru@intel.com>
- <20250123225519.2469167-4-nicolas.chautru@intel.com>
- <20250123152425.0663a626@hermes.local>
- <SJ0PR11MB6694A42B032D97C9D9CF0D77F8E32@SJ0PR11MB6694.namprd11.prod.outlook.com>
- <20250124100058.5b4de64f@hermes.local>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250124100058.5b4de64f@hermes.local>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hZ-bV17BqFExr5QPQJujo14e4eccIWAM5TWduydYEaU_1738921977
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -118,63 +58,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Nicolas,
+The function `strlen` returns the size of the string without a terminating
+null-character, therefore a request to allocate memory space for a parsed
+argument is too small by 1.
 
-On 1/24/25 7:00 PM, Stephen Hemminger wrote:
-> On Fri, 24 Jan 2025 17:52:43 +0000
-> "Chautru, Nicolas" <nicolas.chautru@intel.com> wrote:
-> 
->> Hi Stephen,
->>
->> The commit message may be misleading, the logging interface doesn't change here. Note also that I reuse existing trace point framework for some of the error logging when relevant (see previous commit).
->> Here the scope for that buffer is more limited, not a new logging method really (the commit message is misleading).
->> The queue_ops_dump() already provides api to dump device specific information related to queue into file (logging in real time is not an option) based on information already in PMD memory.
->> This new buffer is purely there to add storage for the string out of rte_bbdev_ops_param_string() for failed operation on that queue, so that extend that capture as this info is not stored by PMD.
->> The name of the buffer could be renamed probably, or I could store copy of the actual operation instead of the string in case that makes a difference for you.
->>
->> I guess it would possible to move this to trace point but I thought it would be quite convoluted. That information would fits nicely in the queue dump capture, and this would require adding trace point for each operation type (I don't believe it can manage arbitrary string) and would be a bit of an unconventional use of trace point.
->>
->> Any thought?
+Fixes: 99ab2806687b ("common/qat: isolate parser arguments configuration")
+Cc: stable@dpdk.org
 
-I think the introduction of trace points in patch 2 is a good addition,
-and could be extended further to not just emit a simple string but also
-the necessary values to enable debugging (basically what you write in
-the buffers).
+Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+---
+ drivers/common/qat/qat_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It would have the advantage of having the different traces to be
-synchronized (bbdev and acc ones), and also would have less performance
-impact.
-
->> Thanks
->> Nic
->>
->>
->>> -----Original Message-----
->>> From: Stephen Hemminger <stephen@networkplumber.org>
->>> Sent: Thursday, January 23, 2025 3:24 PM
->>> To: Chautru, Nicolas <nicolas.chautru@intel.com>
->>> Cc: dev@dpdk.org; maxime.coquelin@redhat.com;
->>> hemant.agrawal@nxp.com; Vargas, Hernan <hernan.vargas@intel.com>
->>> Subject: Re: [PATCH v2 3/3] baseband/acc: add internal logging
->>>
->>> On Thu, 23 Jan 2025 14:55:19 -0800
->>> Nicolas Chautru <nicolas.chautru@intel.com> wrote:
->>>    
->>>> Adds internal buffer for more flexible logging.
->>>>
->>>> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
->>>
->>> Inventing another device specific error log seems like a short sighted
->>> concept.
->>> Why doesn't existing DPDK logging work well enough?
->>
-> 
-> My feedback is that why can't you just use DEBUG logging for this.
-
-Or indeed could use the existing logging mechanism.
-
-> 
-
-Thanks,
-Maxime
+diff --git a/drivers/common/qat/qat_device.c b/drivers/common/qat/qat_device.c
+index bca88fd9bd..746d8a28bb 100644
+--- a/drivers/common/qat/qat_device.c
++++ b/drivers/common/qat/qat_device.c
+@@ -226,7 +226,7 @@ qat_dev_parse_command_line(struct qat_pci_device *qat_dev,
+ 	if (!devargs)
+ 		return 0;
+ 
+-	len = strlen(devargs->drv_str);
++	len = strlen(devargs->drv_str) + 1;
+ 	if (len == 0)
+ 		return 0;
+ 	/* Allocate per-device command line */
+-- 
+2.34.1
 
