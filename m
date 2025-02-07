@@ -2,45 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C568AC02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 11:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B403C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 11:13:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9788442798;
-	Fri,  7 Feb 2025 12:12:16 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 306DF40DFD
- for <dev@dpdk.org>; Fri,  7 Feb 2025 12:12:15 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1A4E7461BD; Fri,  7 Feb 2025 12:12:15 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/other Bug 1656] AVX-512 support disabled
-Date: Fri, 07 Feb 2025 11:12:14 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
-X-Bugzilla-Version: 18.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: ktraynor@redhat.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: WONTFIX
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status cc resolution
-Message-ID: <bug-1656-3-Pr1IsHY2Tu@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1656-3@http.bugs.dpdk.org/>
-References: <bug-1656-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17389267350.Bb68ECE9F.921733
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id C5CED42798;
+	Fri,  7 Feb 2025 12:13:28 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id EB58940DFD
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 12:13:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1738926806;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=CALkzed+iZRbLuLDO8x+Xq35ymNbsRNL9Ns6P3B+/wc=;
+ b=cD49D+K3AXpeJ87+z4tZjHsHcTBaGqw/EvODRkgNe494HdtayYnxZqMKlkeJp/DkAB/H+r
+ IzywEeNpn4r0Zm7IBH5fhbc1UZjm3RYo8BxwtMEC2q5zXt7N/vvqJP7/F1P4y/gwEUAUEu
+ Fk7nyBGEcaKFxWvbhG7GQG4RKIZTEew=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-2KJmdWQCO3itHHbpfVsIdA-1; Fri, 07 Feb 2025 06:13:25 -0500
+X-MC-Unique: 2KJmdWQCO3itHHbpfVsIdA-1
+X-Mimecast-MFC-AGG-ID: 2KJmdWQCO3itHHbpfVsIdA
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-4361d4e8359so15195725e9.3
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 03:13:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1738926804; x=1739531604;
+ h=in-reply-to:from:content-language:references:cc:to:subject
+ :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=CALkzed+iZRbLuLDO8x+Xq35ymNbsRNL9Ns6P3B+/wc=;
+ b=jil87RrDNTC0Kz+PRq400SxJSva2fGeC5VAuLc8RGmAsRapGFLJx+fogU6Eksj0VfC
+ tfNXjlZ3N5Qd3+px2J56lvTUjWU5bhALeow6MOwUw4tqnwYOPbLzP2I51R4+wi8VSQO5
+ E2WcMbFhhWT5ldk9HWww0u3rc8pSPdV3FpVqFhqUN9UU7bJJAlwM6chdKuhg6Ypf8jDE
+ McJK3/1JCX7A93Vpot7gPn+azk5qhKtG8s3WI3P9HIFQgAI0E0EsVYjVSCokOz38p0R5
+ 29bi/2oCuXM8W+Dq+8/CL5XnhZMRUa2tAuvgUGrP6O75piL8Z/MbVCmwWtvfxUV0tNH9
+ DHHw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU4dH/8WdNCJ0GglhMUvJH37yL0pEqVFMvdnfy+cYXCKnFg9m2rMmXJ5e3LwfcZGBNDSjo=@dpdk.org
+X-Gm-Message-State: AOJu0YwUpzGbD47V0BILgzlDa0QnWTU6f90T3ruq7UFd90Fq1NGS07KI
+ RH01M23JD6UkZSzqOOJzmuP6w/FEDIMkHNF0n/lkbj03qheCXA3kW2dGKshbwNtfDdc5d/UvvAQ
+ oFwGS75zFZpvW8O8V1NMus++C1ntOyotzR63LrvPL
+X-Gm-Gg: ASbGnctYWmjUA+CJTBrOJszIQuMnS2i/wAi0D8V11AtICVuSUpIz22l6jMcjVyFYZix
+ 0+reOyzoqVBIYEtroY76MQR/J68Z5cr0q4QF3xkl/jr+55T8Rb9ZwDJixJMsmBYyrwhEdJ9SV9/
+ 4cTCnMNoXkJVdo8OGamYigUYIOD1N4fLH29JXSQ+HxD4E0ZFuJFn/KsDpf2fBscM8RTQ3PNTVyz
+ 3WQD3b9HM9ITBI08nk+4Z4z2QSbG0NJUPoQnzjqSYwY1OqN72gWbqLHOcg5ICKE+2ZIjCVzOyzv
+ LdgVEO53QLhb1GmBCBX0VdsbS4xyAyWLxYHAT6rpnk1y5M7Ek6PAJUuQG7xwQr+MEBo5
+X-Received: by 2002:a05:600c:19c9:b0:434:a90b:94fe with SMTP id
+ 5b1f17b1804b1-43924988858mr25414215e9.10.1738926803861; 
+ Fri, 07 Feb 2025 03:13:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHNvQjT1Wq37HGeTon6eOybk1TWLs2UCuM1Km/jmG5s8Q2xKPLoz5iCFGyIgaep4LfS3YGMEg==
+X-Received: by 2002:a05:600c:19c9:b0:434:a90b:94fe with SMTP id
+ 5b1f17b1804b1-43924988858mr25413985e9.10.1738926803432; 
+ Fri, 07 Feb 2025 03:13:23 -0800 (PST)
+Received: from ?IPV6:2a06:5900:c00c:9000:256d:904:9b40:6d8b?
+ ([2a06:5900:c00c:9000:256d:904:9b40:6d8b])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4391dcae129sm50616655e9.17.2025.02.07.03.13.22
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 07 Feb 2025 03:13:23 -0800 (PST)
+Message-ID: <2b6e60c0-4436-44dd-bba2-335c1b22a7e9@redhat.com>
+Date: Fri, 7 Feb 2025 11:13:22 +0000
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/2] net/af_xdp: Refactor af_xdp_tx_zc
+To: Ariel Otilibili <ariel.otilibili@6wind.com>, dev@dpdk.org
+Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ David Marchand <david.marchand@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Ciara Loftus <ciara.loftus@intel.com>
+References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+ <20250207104552.1663519-1-ariel.otilibili@6wind.com>
+ <20250207104552.1663519-3-ariel.otilibili@6wind.com>
+From: Maryam Tahhan <mtahhan@redhat.com>
+In-Reply-To: <20250207104552.1663519-3-ariel.otilibili@6wind.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 7JIYX23_nAhy275UxoKpQX2CYA_BBQDqMUxwcEBcrkw_1738926804
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative;
+ boundary="------------gL0P9kDMwsOksuKi263CRjF6"
+Content-Language: en-US
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,135 +98,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This is a multi-part message in MIME format.
+--------------gL0P9kDMwsOksuKi263CRjF6
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---17389267350.Bb68ECE9F.921733
-Date: Fri, 7 Feb 2025 12:12:15 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1656
+On 07/02/2025 10:45, Ariel Otilibili wrote:
+> Both legs of the loop share the same logic: the common parts are about
+> reserving and filling both address and length into the description.
+>
+> This is moved into reserve_and_fill().
+>
+> Bugzilla ID: 1440
+> Suggested-by: Maryam Tahhan<mtahhan@redhat.com>
+> Signed-off-by: Ariel Otilibili<ariel.otilibili@6wind.com>
 
-Kevin Traynor (ktraynor@redhat.com) changed:
+Acked-by: Maryam Tahhan<mtahhan@redhat.com>
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|UNCONFIRMED                 |RESOLVED
-                 CC|                            |ktraynor@redhat.com
-         Resolution|---                         |WONTFIX
-
---- Comment #1 from Kevin Traynor (ktraynor@redhat.com) ---
-Thanks for logging this issue, it is good to have a record of it. 18.11 is =
-no
-longer supported [1], so any issues on it will not be fixed.
-
-[1] http://core.dpdk.org/roadmap/#stable
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17389267350.Bb68ECE9F.921733
-Date: Fri, 7 Feb 2025 12:12:15 +0100
-MIME-Version: 1.0
+--------------gL0P9kDMwsOksuKi263CRjF6
 Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Content-Transfer-Encoding: 7bit
 
+<!DOCTYPE html>
 <html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:ktraynor&=
-#64;redhat.com" title=3D"Kevin Traynor (ktraynor&#64;redhat.com)"> <span cl=
-ass=3D"fn">Kevin Traynor</span></a>
-</span> changed
-          <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - AVX-512 support disabled"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1656">bug 1656</a>
-          <br>
-             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
-=3D"bz_diff_table">
-          <tr>
-            <th>What</th>
-            <th>Removed</th>
-            <th>Added</th>
-          </tr>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p><br>
+    </p>
+    <div class="moz-cite-prefix">On 07/02/2025 10:45, Ariel Otilibili
+      wrote:<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:20250207104552.1663519-3-ariel.otilibili@6wind.com">
+      <pre wrap="" class="moz-quote-pre">Both legs of the loop share the same logic: the common parts are about
+reserving and filling both address and length into the description.
 
-         <tr>
-           <td style=3D"text-align:right;">Status</td>
-           <td>UNCONFIRMED
-           </td>
-           <td>RESOLVED
-           </td>
-         </tr>
+This is moved into reserve_and_fill().
 
-         <tr>
-           <td style=3D"text-align:right;">CC</td>
-           <td>
-               &nbsp;
-           </td>
-           <td>ktraynor&#64;redhat.com
-           </td>
-         </tr>
+Bugzilla ID: 1440
+Suggested-by: Maryam Tahhan <a class="moz-txt-link-rfc2396E" href="mailto:mtahhan@redhat.com">&lt;mtahhan@redhat.com&gt;</a>
+Signed-off-by: Ariel Otilibili <a class="moz-txt-link-rfc2396E" href="mailto:ariel.otilibili@6wind.com">&lt;ariel.otilibili@6wind.com&gt;</a>
+</pre>
+    </blockquote>
+    <pre>Acked-by: Maryam Tahhan <a class="moz-txt-link-rfc2396E" href="mailto:mtahhan@redhat.com">&lt;mtahhan@redhat.com&gt;</a></pre>
+  </body>
+</html>
 
-         <tr>
-           <td style=3D"text-align:right;">Resolution</td>
-           <td>---
-           </td>
-           <td>WONTFIX
-           </td>
-         </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - AVX-512 support disabled"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1656#c1">Comment # 1</a>
-              on <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - AVX-512 support disabled"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1656">bug 1656</a>
-              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
-ktraynor&#64;redhat.com" title=3D"Kevin Traynor (ktraynor&#64;redhat.com)">=
- <span class=3D"fn">Kevin Traynor</span></a>
-</span>
-            </b>
-          <pre class=3D"bz_comment_text">Thanks for logging this issue, it =
-is good to have a record of it. 18.11 is no
-longer supported [1], so any issues on it will not be fixed.
+--------------gL0P9kDMwsOksuKi263CRjF6--
 
-[1] <a href=3D"http://core.dpdk.org/roadmap/#stable">http://core.dpdk.org/r=
-oadmap/#stable</a>
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1656#c1">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17389267350.Bb68ECE9F.921733--
