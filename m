@@ -2,55 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14554C02196
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A587C02196
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03609427DE;
-	Fri,  7 Feb 2025 09:33:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 46B5C427BF;
+	Fri,  7 Feb 2025 09:33:43 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 19D2A427C8
- for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:36 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 7AB17427A7
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738917215;
+ s=mimecast20190719; t=1738917222;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=N1a/c5V3rC6pgqbnBf0794Ia5qR/AJEFM7kzeTOpTDw=;
- b=O5L/+BX0RgtkdZbDuttJOh7KFEO8WsCe8bHAFjSTgNKUkS79CncKS6/mRBArXvfkmEC4mo
- l1sUMBf4jsI+AcoCc8siHA3Yu42OS7DryxLH6NzZrS0bzi05B7gXSC5WzAy/SDOfpCja/1
- OTd/2+0Wqbu9x5XuAUv65pE/GwQE0rc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ bh=Labvj+3reRIKOL8ZnrJ1W6+3fBeXSM8oHjWD8F65t/4=;
+ b=HvVKtJVhrdNtOyS3kl9XAp+FzWmRKcG5SuxADGOjsioSZkdruiIOb+0J1sAEwYG5yL24eu
+ 3kYWdQj6pWTDhiqtZON4gMQ3o4R0EuqAcdqzvoY/3QuumOHg/YCmj2azqumAT1Zl2vDkwQ
+ ShpR2q3dIOUd2LkRnqQr+Z8rd8JuOKA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-246-FzKFPPXBPFGN_muQC2Jzjg-1; Fri,
- 07 Feb 2025 03:33:34 -0500
-X-MC-Unique: FzKFPPXBPFGN_muQC2Jzjg-1
-X-Mimecast-MFC-AGG-ID: FzKFPPXBPFGN_muQC2Jzjg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-225-f6V_cerRO6ydSFUXeGWLcQ-1; Fri,
+ 07 Feb 2025 03:33:38 -0500
+X-MC-Unique: f6V_cerRO6ydSFUXeGWLcQ-1
+X-Mimecast-MFC-AGG-ID: f6V_cerRO6ydSFUXeGWLcQ
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id BD7E81955D82; Fri,  7 Feb 2025 08:33:32 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C4D5919560BB; Fri,  7 Feb 2025 08:33:37 +0000 (UTC)
 Received: from dmarchan.com (unknown [10.45.224.27])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id D07B230001AB; Fri,  7 Feb 2025 08:33:30 +0000 (UTC)
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 920841800360; Fri,  7 Feb 2025 08:33:35 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com, Chaoyong He <chaoyong.he@corigine.com>
-Subject: [RFC 07/10] net/nfp: remove weak symbols
-Date: Fri,  7 Feb 2025 09:32:47 +0100
-Message-ID: <20250207083252.3131588-8-david.marchand@redhat.com>
+ andremue@linux.microsoft.com, Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [RFC 08/10] net/virtio: remove weak symbols
+Date: Fri,  7 Feb 2025 09:32:48 +0100
+Message-ID: <20250207083252.3131588-9-david.marchand@redhat.com>
 In-Reply-To: <20250207083252.3131588-1-david.marchand@redhat.com>
 References: <20250207083252.3131588-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 23GF5y1Y5_y3VOP7kOU2tTAVT5iB-qN9LF43ZYd5Sqg_1738917212
+X-Mimecast-MFC-PROC-ID: Tpi2GL2yra0x5yognkt5RLjdG-0bhqrrGQT4q3fJElo_1738917217
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -67,80 +68,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than use weak symbols, link stubs code when needed.
+Rather than use weak symbols, expose stubs symbols when needed.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/nfp/meson.build              | 7 +++++--
- drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c | 2 +-
- drivers/net/nfp/nfp_rxtx_vec_stub.c      | 4 ++--
- 3 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/virtio/meson.build          | 5 +++++
+ drivers/net/virtio/virtio_rxtx.c        | 6 ++++--
+ drivers/net/virtio/virtio_rxtx_simple.c | 4 +++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/nfp/meson.build b/drivers/net/nfp/meson.build
-index 4052846dc2..39762bd45a 100644
---- a/drivers/net/nfp/meson.build
-+++ b/drivers/net/nfp/meson.build
-@@ -17,7 +17,6 @@ sources = files(
-         'flower/nfp_flower_service.c',
-         'nfd3/nfp_nfd3_dp.c',
-         'nfdk/nfp_nfdk_dp.c',
--        'nfdk/nfp_nfdk_vec_stub.c',
-         'nfpcore/nfp_cppcore.c',
-         'nfpcore/nfp_crc.c',
-         'nfpcore/nfp_elf.c',
-@@ -45,7 +44,6 @@ sources = files(
-         'nfp_net_flow.c',
-         'nfp_net_meta.c',
-         'nfp_rxtx.c',
--        'nfp_rxtx_vec_stub.c',
-         'nfp_service.c',
- )
- 
-@@ -67,6 +65,11 @@ if arch_subdir == 'x86'
-         )
- 
-         objs += nfp_avx2_lib.extract_all_objects(recursive: true)
-+else
-+        sources += files(
-+                'nfp_rxtx_vec_stub.c',
-+                'nfdk/nfp_nfdk_vec_stub.c',
-+        )
+diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+index c708ea5258..56c763e96f 100644
+--- a/drivers/net/virtio/meson.build
++++ b/drivers/net/virtio/meson.build
+@@ -28,6 +28,7 @@ cflags += no_wvla_cflag
+ if arch_subdir == 'x86'
+     if cc_has_avx512
+         cflags += ['-DCC_AVX512_SUPPORT']
++        cflags += ['-DVIRTIO_RXTX_PACKED_VEC']
+         virtio_avx512_lib = static_library('virtio_avx512_lib',
+                 'virtio_rxtx_packed.c',
+                 dependencies: [static_rte_ethdev,
+@@ -43,11 +44,15 @@ if arch_subdir == 'x86'
+             cflags += '-DVIRTIO_ICC_UNROLL_PRAGMA'
+         endif
+     endif
++    cflags += ['-DVIRTIO_RXTX_VEC']
+     sources += files('virtio_rxtx_simple_sse.c')
+ elif arch_subdir == 'ppc'
++    cflags += ['-DVIRTIO_RXTX_VEC']
+     sources += files('virtio_rxtx_simple_altivec.c')
+ elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
++    cflags += ['-DVIRTIO_RXTX_PACKED_VEC']
+     sources += files('virtio_rxtx_packed.c')
++    cflags += ['-DVIRTIO_RXTX_VEC']
+     sources += files('virtio_rxtx_simple_neon.c')
  endif
  
- deps += ['hash', 'security', 'common_nfp']
-diff --git a/drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c b/drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c
-index 146ec21d51..4f905bce6b 100644
---- a/drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c
-+++ b/drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c
-@@ -5,7 +5,7 @@
- 
- #include "nfp_nfdk_vec.h"
- 
--uint16_t __rte_weak
-+uint16_t
- nfp_net_nfdk_vec_avx2_xmit_pkts(__rte_unused void *tx_queue,
- 		__rte_unused struct rte_mbuf **tx_pkts,
- 		__rte_unused uint16_t nb_pkts)
-diff --git a/drivers/net/nfp/nfp_rxtx_vec_stub.c b/drivers/net/nfp/nfp_rxtx_vec_stub.c
-index c480f61ef0..201965afbe 100644
---- a/drivers/net/nfp/nfp_rxtx_vec_stub.c
-+++ b/drivers/net/nfp/nfp_rxtx_vec_stub.c
-@@ -10,13 +10,13 @@
- 
- #include "nfp_rxtx_vec.h"
- 
--bool __rte_weak
-+bool
- nfp_net_get_avx2_supported(void)
- {
- 	return false;
+diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
+index b67f063b31..2a0d1b6101 100644
+--- a/drivers/net/virtio/virtio_rxtx.c
++++ b/drivers/net/virtio/virtio_rxtx.c
+@@ -2045,7 +2045,8 @@ virtio_xmit_pkts_inorder(void *tx_queue,
+ 	return nb_tx;
  }
  
--uint16_t __rte_weak
+-__rte_weak uint16_t
++#ifndef VIRTIO_RXTX_PACKED_VEC
 +uint16_t
- nfp_net_vec_avx2_recv_pkts(__rte_unused void *rx_queue,
- 		__rte_unused struct rte_mbuf **rx_pkts,
- 		__rte_unused uint16_t nb_pkts)
+ virtio_recv_pkts_packed_vec(void *rx_queue __rte_unused,
+ 			    struct rte_mbuf **rx_pkts __rte_unused,
+ 			    uint16_t nb_pkts __rte_unused)
+@@ -2053,10 +2054,11 @@ virtio_recv_pkts_packed_vec(void *rx_queue __rte_unused,
+ 	return 0;
+ }
+ 
+-__rte_weak uint16_t
++uint16_t
+ virtio_xmit_pkts_packed_vec(void *tx_queue __rte_unused,
+ 			    struct rte_mbuf **tx_pkts __rte_unused,
+ 			    uint16_t nb_pkts __rte_unused)
+ {
+ 	return 0;
+ }
++#endif /* DVIRTIO_RXTX_PACKED_VEC */
+diff --git a/drivers/net/virtio/virtio_rxtx_simple.c b/drivers/net/virtio/virtio_rxtx_simple.c
+index 439e00a7e1..aa96c9c488 100644
+--- a/drivers/net/virtio/virtio_rxtx_simple.c
++++ b/drivers/net/virtio/virtio_rxtx_simple.c
+@@ -43,8 +43,9 @@ virtio_rxq_vec_setup(struct virtnet_rx *rxq)
+ 	return 0;
+ }
+ 
++#ifndef VIRTIO_RXTX_VEC
+ /* Stub for linkage when arch specific implementation is not available */
+-__rte_weak uint16_t
++uint16_t
+ virtio_recv_pkts_vec(void *rx_queue __rte_unused,
+ 		     struct rte_mbuf **rx_pkts __rte_unused,
+ 		     uint16_t nb_pkts __rte_unused)
+@@ -52,3 +53,4 @@ virtio_recv_pkts_vec(void *rx_queue __rte_unused,
+ 	rte_panic("Wrong weak function linked by linker\n");
+ 	return 0;
+ }
++#endif /* VIRTIO_RXTX_VEC */
 -- 
 2.48.1
 
