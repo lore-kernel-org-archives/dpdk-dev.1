@@ -2,56 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A587C02196
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4025DC02196
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46B5C427BF;
-	Fri,  7 Feb 2025 09:33:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 76934427CD;
+	Fri,  7 Feb 2025 09:33:48 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7AB17427A7
- for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:42 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 43366427C0
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738917222;
+ s=mimecast20190719; t=1738917226;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Labvj+3reRIKOL8ZnrJ1W6+3fBeXSM8oHjWD8F65t/4=;
- b=HvVKtJVhrdNtOyS3kl9XAp+FzWmRKcG5SuxADGOjsioSZkdruiIOb+0J1sAEwYG5yL24eu
- 3kYWdQj6pWTDhiqtZON4gMQ3o4R0EuqAcdqzvoY/3QuumOHg/YCmj2azqumAT1Zl2vDkwQ
- ShpR2q3dIOUd2LkRnqQr+Z8rd8JuOKA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=jkmQ6ytYlhPphvZ88SaLAQNi9Dkj4O4QflVcyt4FkOE=;
+ b=WFReGEtyKx3kPLfp03iKpjBb00OGedUPuUXgwXYqHw4H9e3Sl1TM8XLrGIU40rK19Z/0dj
+ P18bdtBLJwf5rfpk7AqOjFDvAupVkoxI9/+fpx+ZCfN58xPj//qffe/ggDChfTN9bpsiSn
+ JSgbfrka7MPDmnFW7evZlnDU5yb8sNM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-225-f6V_cerRO6ydSFUXeGWLcQ-1; Fri,
- 07 Feb 2025 03:33:38 -0500
-X-MC-Unique: f6V_cerRO6ydSFUXeGWLcQ-1
-X-Mimecast-MFC-AGG-ID: f6V_cerRO6ydSFUXeGWLcQ
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-NzZvrbkmMRyex-aeW1bcYA-1; Fri,
+ 07 Feb 2025 03:33:43 -0500
+X-MC-Unique: NzZvrbkmMRyex-aeW1bcYA-1
+X-Mimecast-MFC-AGG-ID: NzZvrbkmMRyex-aeW1bcYA
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C4D5919560BB; Fri,  7 Feb 2025 08:33:37 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 596ED1800874; Fri,  7 Feb 2025 08:33:42 +0000 (UTC)
 Received: from dmarchan.com (unknown [10.45.224.27])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 920841800360; Fri,  7 Feb 2025 08:33:35 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id B69D51800871; Fri,  7 Feb 2025 08:33:40 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com, Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [RFC 08/10] net/virtio: remove weak symbols
-Date: Fri,  7 Feb 2025 09:32:48 +0100
-Message-ID: <20250207083252.3131588-9-david.marchand@redhat.com>
+ andremue@linux.microsoft.com
+Subject: [RFC 09/10] app/compress-perf: remove weak symbols
+Date: Fri,  7 Feb 2025 09:32:49 +0100
+Message-ID: <20250207083252.3131588-10-david.marchand@redhat.com>
 In-Reply-To: <20250207083252.3131588-1-david.marchand@redhat.com>
 References: <20250207083252.3131588-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Tpi2GL2yra0x5yognkt5RLjdG-0bhqrrGQT4q3fJElo_1738917217
+X-Mimecast-MFC-PROC-ID: uyzHM4lWFnEvM8Vwj6dGemIO4cgHUxBqsfwxwE9sV5c_1738917222
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,90 +67,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than use weak symbols, expose stubs symbols when needed.
+Remove dead code, those symbols are never used as the "strong" symbols
+are always linked in.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/virtio/meson.build          | 5 +++++
- drivers/net/virtio/virtio_rxtx.c        | 6 ++++--
- drivers/net/virtio/virtio_rxtx_simple.c | 4 +++-
- 3 files changed, 12 insertions(+), 3 deletions(-)
+ app/test-compress-perf/main.c | 62 -----------------------------------
+ 1 file changed, 62 deletions(-)
 
-diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
-index c708ea5258..56c763e96f 100644
---- a/drivers/net/virtio/meson.build
-+++ b/drivers/net/virtio/meson.build
-@@ -28,6 +28,7 @@ cflags += no_wvla_cflag
- if arch_subdir == 'x86'
-     if cc_has_avx512
-         cflags += ['-DCC_AVX512_SUPPORT']
-+        cflags += ['-DVIRTIO_RXTX_PACKED_VEC']
-         virtio_avx512_lib = static_library('virtio_avx512_lib',
-                 'virtio_rxtx_packed.c',
-                 dependencies: [static_rte_ethdev,
-@@ -43,11 +44,15 @@ if arch_subdir == 'x86'
-             cflags += '-DVIRTIO_ICC_UNROLL_PRAGMA'
-         endif
-     endif
-+    cflags += ['-DVIRTIO_RXTX_VEC']
-     sources += files('virtio_rxtx_simple_sse.c')
- elif arch_subdir == 'ppc'
-+    cflags += ['-DVIRTIO_RXTX_VEC']
-     sources += files('virtio_rxtx_simple_altivec.c')
- elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
-+    cflags += ['-DVIRTIO_RXTX_PACKED_VEC']
-     sources += files('virtio_rxtx_packed.c')
-+    cflags += ['-DVIRTIO_RXTX_VEC']
-     sources += files('virtio_rxtx_simple_neon.c')
- endif
- 
-diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
-index b67f063b31..2a0d1b6101 100644
---- a/drivers/net/virtio/virtio_rxtx.c
-+++ b/drivers/net/virtio/virtio_rxtx.c
-@@ -2045,7 +2045,8 @@ virtio_xmit_pkts_inorder(void *tx_queue,
- 	return nb_tx;
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index fa366123ed..70ce4316cc 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -521,65 +521,3 @@ main(int argc, char **argv)
+ 	}
+ 	return ret;
  }
- 
--__rte_weak uint16_t
-+#ifndef VIRTIO_RXTX_PACKED_VEC
-+uint16_t
- virtio_recv_pkts_packed_vec(void *rx_queue __rte_unused,
- 			    struct rte_mbuf **rx_pkts __rte_unused,
- 			    uint16_t nb_pkts __rte_unused)
-@@ -2053,10 +2054,11 @@ virtio_recv_pkts_packed_vec(void *rx_queue __rte_unused,
- 	return 0;
- }
- 
--__rte_weak uint16_t
-+uint16_t
- virtio_xmit_pkts_packed_vec(void *tx_queue __rte_unused,
- 			    struct rte_mbuf **tx_pkts __rte_unused,
- 			    uint16_t nb_pkts __rte_unused)
- {
- 	return 0;
- }
-+#endif /* DVIRTIO_RXTX_PACKED_VEC */
-diff --git a/drivers/net/virtio/virtio_rxtx_simple.c b/drivers/net/virtio/virtio_rxtx_simple.c
-index 439e00a7e1..aa96c9c488 100644
---- a/drivers/net/virtio/virtio_rxtx_simple.c
-+++ b/drivers/net/virtio/virtio_rxtx_simple.c
-@@ -43,8 +43,9 @@ virtio_rxq_vec_setup(struct virtnet_rx *rxq)
- 	return 0;
- }
- 
-+#ifndef VIRTIO_RXTX_VEC
- /* Stub for linkage when arch specific implementation is not available */
--__rte_weak uint16_t
-+uint16_t
- virtio_recv_pkts_vec(void *rx_queue __rte_unused,
- 		     struct rte_mbuf **rx_pkts __rte_unused,
- 		     uint16_t nb_pkts __rte_unused)
-@@ -52,3 +53,4 @@ virtio_recv_pkts_vec(void *rx_queue __rte_unused,
- 	rte_panic("Wrong weak function linked by linker\n");
- 	return 0;
- }
-+#endif /* VIRTIO_RXTX_VEC */
+-
+-__rte_weak void *
+-cperf_cyclecount_test_constructor(uint8_t dev_id __rte_unused,
+-				 uint16_t qp_id __rte_unused,
+-				 struct comp_test_data *options __rte_unused)
+-{
+-	RTE_LOG(INFO, USER1, "Cycle count test is not supported yet\n");
+-	return NULL;
+-}
+-
+-__rte_weak void
+-cperf_cyclecount_test_destructor(void *arg __rte_unused)
+-{
+-	RTE_LOG(INFO, USER1, "Something wrong happened!!!\n");
+-}
+-
+-__rte_weak int
+-cperf_cyclecount_test_runner(void *test_ctx __rte_unused)
+-{
+-	return 0;
+-}
+-
+-__rte_weak void *
+-cperf_throughput_test_constructor(uint8_t dev_id __rte_unused,
+-				 uint16_t qp_id __rte_unused,
+-				 struct comp_test_data *options __rte_unused)
+-{
+-	RTE_LOG(INFO, USER1, "Benchmark test is not supported yet\n");
+-	return NULL;
+-}
+-
+-__rte_weak void
+-cperf_throughput_test_destructor(void *arg __rte_unused)
+-{
+-
+-}
+-
+-__rte_weak int
+-cperf_throughput_test_runner(void *test_ctx __rte_unused)
+-{
+-	return 0;
+-}
+-__rte_weak void *
+-cperf_verify_test_constructor(uint8_t dev_id __rte_unused,
+-				 uint16_t qp_id __rte_unused,
+-				 struct comp_test_data *options __rte_unused)
+-{
+-	RTE_LOG(INFO, USER1, "Verify test is not supported yet\n");
+-	return NULL;
+-}
+-
+-__rte_weak void
+-cperf_verify_test_destructor(void *arg __rte_unused)
+-{
+-
+-}
+-
+-__rte_weak int
+-cperf_verify_test_runner(void *test_ctx __rte_unused)
+-{
+-	return 0;
+-}
 -- 
 2.48.1
 
