@@ -2,82 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975B6C02192
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C53C02192
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:51:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 808B4427C0;
-	Fri,  7 Feb 2025 09:49:54 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DECB4427B5
- for <dev@dpdk.org>; Fri,  7 Feb 2025 09:49:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738918192;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=hMyoiL2/PJGyKcT1nTqZvPNUQAXAxOShkcd3VOsO2vM=;
- b=e9AJX99aGbARkCeaZcUbqhK/G6TvVFcFgpCTWWkfP9c301w5+k7tCBDcA7bQgcm+J5SMY0
- kP4gCMn8eh2Qe2CHrtlZ1AAuCYQsQOCMK0zWTtgQO0IiH/KxumYqY9fVIsTJyF7j0qNWFi
- 1MuOJAr/y49Ia2jqXce9NnNmIbfcWUg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-389-uNdr-yOvOi2hCFToJaFArA-1; Fri, 07 Feb 2025 03:49:49 -0500
-X-MC-Unique: uNdr-yOvOi2hCFToJaFArA-1
-X-Mimecast-MFC-AGG-ID: uNdr-yOvOi2hCFToJaFArA
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5440b4eb6b6so1031845e87.2
- for <dev@dpdk.org>; Fri, 07 Feb 2025 00:49:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738918188; x=1739522988;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=hMyoiL2/PJGyKcT1nTqZvPNUQAXAxOShkcd3VOsO2vM=;
- b=Cj5VVEOgkdhsalKtdVFTn5WPiirC7noNdY/NHSox07ZOXcT7gc5cisblOyEAP7yhWZ
- sF52OtyNGyHExxu46FFOG10fVtgsHpZQ0/hyqcLYloy0ZfOsNT/XUIj/A+TLm9/e3tWm
- B5QSveaul6ZonrUdeyrOCoKAertrohmmYwg3CDFPRlP/OBPxEmwBRTE6uhSOZpb37m7i
- AN1IzRKDaWwQLHdz0N/+0NZTiQpChFDG+VEzyaPXHvOnjQEojdcDmZpTVjnpOH1SRLkR
- Ok8Xv7s/lMXfRYIvGUx1CNK5u6BTEQwBlUbGu+9EQqtR/s6axDezVgi4BLP/47AaW5p0
- TUiA==
-X-Gm-Message-State: AOJu0YzgNjbAbkHuGoskBmVq3AsTkoqO15LOd+3VWcYC+ZMp7f/NcsrC
- p3yHDyf4f/5RpU0RewWPt58tGQ2aiovhRDQTa6HvmEjWQAXaCRxHBxYBqM7eHeVHDzom7d1X1AG
- 1M4OTvPunkjSVJYz8dUHo6EwKFSXt1MghXJd+uWMUKxbkOyIPp0cMqpzhw0loWtitqeTrKz4wI6
- 3IBcBm3KHqbw2EHkc=
-X-Gm-Gg: ASbGncvpuDIccdTqX/F3JkYC8dzYZdRE0Sj2Q8JFwhPKhFUIKIMDUfuvv8bQZUY2Z4o
- 9i/QeDKJC4xB+MssvNqsVIhvwFt6ikAXeXysALEyi0NRPc3MFP2JLfvzs6/dRFG8s
-X-Received: by 2002:ac2:58ea:0:b0:542:6f78:2ace with SMTP id
- 2adb3069b0e04-54414ae6368mr537370e87.47.1738918187727; 
- Fri, 07 Feb 2025 00:49:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFhrbqa3rqwSUeECLPLQu7V2S0CDAH4iWftOGL/Qt1yFZZzKUZNFEYEHjnt2AtuHg6wWcc6VFc0Ud7AcnmvsHE=
-X-Received: by 2002:ac2:58ea:0:b0:542:6f78:2ace with SMTP id
- 2adb3069b0e04-54414ae6368mr537357e87.47.1738918187357; Fri, 07 Feb 2025
- 00:49:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 64024427C0;
+	Fri,  7 Feb 2025 09:51:31 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 31171427B5
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 09:51:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1738918290; x=1770454290;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=hp7VbqhsmwD4hmZPC8rw/21lkDqb6mpjJ6OH6SY6AMc=;
+ b=RGFpg6d6814RQ14dSsR/hRI3DsmXoe60IUM+9KKpBdNWpnIZj/sg/2zV
+ YHK2U17p1E6IukOanw5uMCE0vwKOZKTsg95tzGTkhlcxqi3/E0pkOsk3z
+ w5aPgbIS5vWrsmieShsYYaJnedqNf0C74RjtBbilUCcOnBsz0L2X8EL4k
+ QzNP0pUJ3IhAS8Msy7f4SBAWvOso9tc12IwSc6Hra5yjpUfhSyenuVB9h
+ qbTBRSzAwvswl5hlV1XLVjbQFzwBxn5PVrqie545kVwpcBLjUTrgRY6/3
+ SvGJbz1HvKnJ4aWwQ08iviHVkPYR2koQ8yiwAMn1Ud9DZ7j+e+J2hSs2L g==;
+X-CSE-ConnectionGUID: SIqtiagHTjCjvTTL39Gp/w==
+X-CSE-MsgGUID: 6bqofspYS1uIR0Wf0S8X2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39426739"
+X-IronPort-AV: E=Sophos;i="6.13,266,1732608000"; d="scan'208";a="39426739"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Feb 2025 00:51:30 -0800
+X-CSE-ConnectionGUID: pomv7bK7RcGOXL9lk9hbQg==
+X-CSE-MsgGUID: mCemwg3DRSWKfiHvNtGhBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; d="scan'208";a="116408528"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+ by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 07 Feb 2025 00:51:29 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 7 Feb 2025 00:51:29 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Fri, 7 Feb 2025 00:51:29 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 7 Feb 2025 00:51:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ktcd4XxTgTHqku2JQNRbyOhNvq8QKQh4Q8gMmAC7lTp+f8XF3Y6mlBrne2rbK4VU0xeDkvmj9EbiPKPmHvAW9mZn+JScv0IbBpeiSNexi3Qd3jfztod9hiwl+XJ4Sb/6Qz4Zk2RR9nxKcLxo9qYFi51LBOTNPAVwF4addwWUrhcHIZlNC4tQ1maoNLwUt4mkxtGkgwYtWDnWwnOJxAZlSYMp2NUq7PLcG6OVr+BGDszTH+wIyz8Zjruj5AjznGRoJUxpg49rTeo4GXbfi7NI2LNXa4LeZCpuWG9UP3OQrhshUxKBo1oVvBsdmFAEHZC6rDlUHmdLV+EkhHMFKyUTaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aQGSbEUzErBXzKLZD57Ert9Z6oL0PLLO9n+Dy2zQ0gw=;
+ b=VtfEKVkwFjfY6Ru6r0Ox6QenkbPWFer2/8sAqj61t8QA8AR7OdfTXWdgS5o1PMnA/rzIH+ktbi6G7p0Nw7IZEWZpf/aV/lzOAOGot+NerHYRYveFp8YCqO32nW4zVufaAkkPLCnwpFxy/Tlu+M5of8wloPJKF9rExcrmTWcqPWJjmZOZA33EWQj7wpcOVEWacgSsS2fbuFeYQH1fnXC3PTpmn4hXiZZCNB3Tp3Fdtwz1eZ/oQuNi6n1LxdPijWM1JtzzRL8GTgU6HYQI/6bpiUxHp5LTkgHLNNiZnRvZGVmUqttiHnoXt/hp+c8RTrO4AhqOq7LVrrlAsaGgEjj4qA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS0PR11MB7412.namprd11.prod.outlook.com (2603:10b6:8:152::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.10; Fri, 7 Feb
+ 2025 08:51:22 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8398.025; Fri, 7 Feb 2025
+ 08:51:21 +0000
+Date: Fri, 7 Feb 2025 08:51:17 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <andremue@linux.microsoft.com>
+Subject: Re: [RFC 06/10] net/fm10k: remove weak symbols
+Message-ID: <Z6XJhSeiZSmNQNSN@bricha3-mobl1.ger.corp.intel.com>
+References: <20250207083252.3131588-1-david.marchand@redhat.com>
+ <20250207083252.3131588-7-david.marchand@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250207083252.3131588-7-david.marchand@redhat.com>
+X-ClientProxiedBy: DUZPR01CA0278.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b9::23) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <20250124161408.310581-1-david.marchand@redhat.com>
- <20250130145849.82003-1-david.marchand@redhat.com>
- <20250130145849.82003-3-david.marchand@redhat.com>
-In-Reply-To: <20250130145849.82003-3-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 7 Feb 2025 09:49:36 +0100
-X-Gm-Features: AWEUYZm5VveiqlsWMRWJg5YCOSD7QZkMO9KjL0iKk0wOQGXbyvvgSTeFzofPUVM
-Message-ID: <CAJFAV8yvVXqnK0mwngjroV-HgtnBpfG50co-3cMgq3AsPLnzgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] trace: fix undefined behavior in register
-To: Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
-Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>, 
- Kevin Laatz <kevin.laatz@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>, 
- Andre Muezerie <andremue@linux.microsoft.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- Stephen Hemminger <stephen@networkplumber.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pNaU6wDO957i3RcAtZcccsCWo027e7occftGQTwUurc_1738918188
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7412:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1d3c844-9ced-4b91-fd63-08dd4754987a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dqMAHYK6enS1DbpaIcyMJYyd5XH5C0HGoOYcPSKz3D8Z0VVFg0hVIy9ip/HI?=
+ =?us-ascii?Q?7GvJ2coculO55Uf9/fgCV+e/CutRz38qHN7NQTuP2p9kZEM2upoyw3uow5qP?=
+ =?us-ascii?Q?ewMChJMwZD+IAdupy9U7TRtWQvoPfXcn2+3MA6twVyyRx6VvCq4PT42ipABh?=
+ =?us-ascii?Q?e93F86K3DYcy9Fpv/k62uOjat5Clbfhqib5QbAzt0q99a0prLItNdHwlzRln?=
+ =?us-ascii?Q?p0jhRWLdorBCyz+bLw0P9FQZpRkNzi2iD56FF+slEgvcaiO4up8tvnvb6Rfl?=
+ =?us-ascii?Q?H8n103xQGMakavrI5d//1YpVCSeADoh5BUn7d57NFYdxOhiDyTvKYxcM9Bq1?=
+ =?us-ascii?Q?xm0bXiqRn2LWA17X8AoverkkNodNB7ghjmL9XkIfK3CjyIrdbZGkoKXn+8R+?=
+ =?us-ascii?Q?6nJsmy1LVvnt3mcP+cazZG3tPypnJ0sje/jb1O+YgXwH15+M29d/ZVJLpI4D?=
+ =?us-ascii?Q?y4eFMGFUBKEtJ/Nxi3LoP4rPFkghRdsY+EbEBKy1sKTb5pAzbTBj7GZpMHP1?=
+ =?us-ascii?Q?M9JCJbOO+mQ7r7J8uicatAJgQ7HrjxQqWsDYXOeD5wdhvxHYj8sRnsTktWec?=
+ =?us-ascii?Q?y4U0Ridyhnr40HwNwJ3iTDafOlSzcj3UzDCjQC6sPJrMqDm7FoeNOsL8BDpe?=
+ =?us-ascii?Q?ZqRJM4cP91PnUVMONYbL9k1A5DUFHQGWX5IF7MRNbXqdf6wvugQxpSGoWhqT?=
+ =?us-ascii?Q?zncPD4VVRZAj2sNoLO+OUNaigfAiDF2MXLGAYEMw04LxSUsNS0eEDH138HYJ?=
+ =?us-ascii?Q?8WcyO9cPCFZsBo0qHWMZF9xGimrAVa31nu8LJh9ls7nCPNLYZ4HBuXy/bMoY?=
+ =?us-ascii?Q?xnrir7MvCwuQY83q5kelX5WP3IMda1eS980EcjzBGeV2dc/ozna/6+gL0rx9?=
+ =?us-ascii?Q?tJI0jKo+57CzOYn3dtC2Ol2YCUujGr3Svu5cEKGwa2LD869Zo56WPETz4qnr?=
+ =?us-ascii?Q?T9vMfrK2a/LSePctjAqResJj6eo3nMkT5k7RGyAvjIkmsjfjNdFFaO2SGcdR?=
+ =?us-ascii?Q?M+lYAoMXt0/qK6Ke+OBtOpUz8zN00bp7LKTLj+vDH67QXSlrzjA/fBZvnrZp?=
+ =?us-ascii?Q?Jhl75HDKgo0jaPzL9y32wQN8HdNVUbx7ZkLmaiZFPofTDgCuz/cWeu+asjWr?=
+ =?us-ascii?Q?klxrxirDMLlgdQawYKu4Xu/BRRzi08KeCQmJjuqlzROthiiApZ0brZlHNL8j?=
+ =?us-ascii?Q?spM+Zk11xSRjDixGEMB9R1ISmAu/z3HhjBsDniiSYLnzDP84fbH+q67ubFO2?=
+ =?us-ascii?Q?CJK16pd5VmwVVmSIrpNLd+iNPvq+/wfMQ9zXEOyXdevyt4nQMkGwdh95Kn4H?=
+ =?us-ascii?Q?T/2k3b/w4/1fALDiUsfEmBeYJoaYq9c+KSLEjrz5SHu029bKf2Amdm8j/oGM?=
+ =?us-ascii?Q?uTNeCjwQSH4lSS95lhXGEQQkPT1V?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?l+vv90QUjLRDGwnRxigXyabfOIsjk3k2JvUdGYZK9hqhoR0DmObaK2LwtVa0?=
+ =?us-ascii?Q?bNMok7HVBi6x6xphRmlKk0e0n1eW8sh/v766Aq8p/iylZLshvaeGMOP6FtxM?=
+ =?us-ascii?Q?qKw6JFDd41pJ6AVZAc9V91jn7woFWBr1iKEqhg9+hfUHzS5Bw3lIKGdlojk6?=
+ =?us-ascii?Q?4+t0Fsvn1OfPZkHN/rCsYyxN1j2YIfo6zZ5UHtE0f2oNLiYex/4PnHZm4iAl?=
+ =?us-ascii?Q?PgmoknBOPKXR4N8BwGdUx5/6xUgkGWxQmL3eR71BdRhkB0Qret9XlIf72ZOB?=
+ =?us-ascii?Q?XBw9U6Mg8jyWxHXAY0Au/ukzmWMYMq0wtZmHEHbwzYk3QNNMf+CshIXIV+b/?=
+ =?us-ascii?Q?XHM1ydTlABM3s55hYjx/nqkwCaTEIAP1Ft4SszpR2GdIbb45zmvPgAqCwzfa?=
+ =?us-ascii?Q?itmJatieHZYmO7i72mqOyhOynF8bS1tLsr51pVD8RnSh73eXNptoEBzV2/CX?=
+ =?us-ascii?Q?cgitSPsHZopgITUScPW+SaVCOLH6bBZB/F63zMprNCv/bLryeIZoHz0kNGNT?=
+ =?us-ascii?Q?loP43ui3MZqCOWscXZxmlh7/ZKBA8Vat9EbBLdo0Udog+ijQ44wQ5sOyD0bM?=
+ =?us-ascii?Q?aqjlpKhmR6IblM07i7sdgqEmdjpsJfZxKHuw8MeCI0gCLZiKbr+1F9P4BbE0?=
+ =?us-ascii?Q?t6iYgGbvLbD4T6DEiqEIvPuuc+J3VdDzYogGXGzDyVpQfH5SSrP9dStZQ8N0?=
+ =?us-ascii?Q?2XMQVf007e1QNe2FpALvm/10haZNyrWM952nWaX2RT5Hh/9CUk7wpExpu1WS?=
+ =?us-ascii?Q?Y1QacTe+Fpw/QKJCNetjAN7dqoKrjnaa/pQe8NhYeYfm4nnPgMF1MY1cbNmW?=
+ =?us-ascii?Q?+7IWn0zHy31Rn6/L+n5vEB/c5VzK2MS1idKWnkgkozBgfkDiAN+ugH0poQlw?=
+ =?us-ascii?Q?0W836gqLkovcYmK4xXlyTCZjy+Py1DXh1YH8Xfw5ZxzAi+4hp1PJqwGTYhPm?=
+ =?us-ascii?Q?4iRhOzlFT9qTHQRipOHl2y5UVB2ewmlVEhAKNZ8gqOzzjc9pu9oZM1I0hFIH?=
+ =?us-ascii?Q?1mkkHaIEv6sIAD7KYXB/pctyI47pwAyPoe/xGDGwIaeNCHFM54FZenrlUXza?=
+ =?us-ascii?Q?urgZzuTQlZh1b/u4EjRNSmiM1RwCUWVkT8tQMHkAgOAIMSGMDQW/u7o+8+VM?=
+ =?us-ascii?Q?VFeBfmWZ6p8iozvD98yafNnCjKWU4BYEgF/sXtw+UGwJsVKO81RvaqV6J/67?=
+ =?us-ascii?Q?C+WqbaN95vzWQU2JREFad6gU+2ch3G+z7PpS86Yvp7IKrqqE+rUKiMobVFWE?=
+ =?us-ascii?Q?oz19kzh4iM1tkhu9kRhZ7FpAf9nQPw1hQWKXl4I+W+QroLE2tI3/xevoUqtl?=
+ =?us-ascii?Q?jo85R980WGGvEdqlVjFYEPUQ70N+IauEgAH05o88AdkbxdIM9cA2du7h0W0k?=
+ =?us-ascii?Q?z1LRWbWDdZRTAsVsRE4xt/vMCyE1CmL9AnumybhEEoBS6DZerGfjvTohhuq5?=
+ =?us-ascii?Q?SnWriISEO2iTT7ZLhVSIeXrMS5XmIw9SIyghniINo82zN0GCirBvXNCfWWWj?=
+ =?us-ascii?Q?F2EHf7NDnDGiXypcwK3YpiSfTr06D44EjQjlnbGXH0yomiaQ1MF9OXI9PS3S?=
+ =?us-ascii?Q?KiZy1uNjFBxYis6V3JVVytNkUL11jFjZprjUM7lGWZA08ekpx5Mn0vHUVnWY?=
+ =?us-ascii?Q?ow=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1d3c844-9ced-4b91-fd63-08dd4754987a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2025 08:51:21.8637 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AkDWDyEj3pWXHluSIZ9tWHRmE8gO4+pweMG9cIbzwflXBMwiKABH5UWufozh+bBTDbPwkXvdRuahHMg3MEyaVPHyFgR9TRAsQtWPsMvbpVw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7412
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,38 +170,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Jerin, Sunil,
-
-On Thu, Jan 30, 2025 at 3:59=E2=80=AFPM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> Registering a tracepoint handler was resulting so far in undefined
-> behavior at runtime.
->
-> The RTE_TRACE_POINT_REGISTER() macro was casting the tracepoint handler
-> (which expects arguments) to a void (*)(void).
-> At runtime, calling this handler while registering resulted in
-> reading the current stack with no relation to this function prototype.
->
-> Instead, declare an additional inline _register() handler for each
-> tracepoint and make sure that the emitting macros in
-> rte_trace_point_register.h only work on arguments name and type.
->
-> The original tracepoint handler prototype is adjusted by adding a
-> __rte_unused for each argument (since emitting macros do nothing
-> with them).
-> This last part introduces an implementation limit of 15 arguments.
->
-> With this change in place, the workaround in dmadev tracepoints can be
-> removed.
->
+On Fri, Feb 07, 2025 at 09:32:46AM +0100, David Marchand wrote:
+> Rather than use weak symbols, expose stubs symbols when needed.
+> 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
-
-Can I have your opinion and review on this patch?
-
-Thanks.
-
-
---=20
-David Marchand
+> ---
+>  drivers/net/intel/fm10k/fm10k_ethdev.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+> 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
