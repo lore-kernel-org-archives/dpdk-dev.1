@@ -2,72 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF78C0219B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 17:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9795CC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 17:57:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C13042ED5;
-	Fri,  7 Feb 2025 18:56:06 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 432A842E90
- for <dev@dpdk.org>; Fri,  7 Feb 2025 18:56:05 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-2f9b9c0088fso3886091a91.0
- for <dev@dpdk.org>; Fri, 07 Feb 2025 09:56:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B59B242ED5;
+	Fri,  7 Feb 2025 18:57:23 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id A6A3642E90
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 18:57:22 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-2163dc5155fso49797605ad.0
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 09:57:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738950964;
- x=1739555764; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738951042;
+ x=1739555842; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RKqjIeKz13kM2E1IP04h480zBz5TUlBqaHFwJkPeFYU=;
- b=LsgQLNnHYOwIwTkGb8WX/LgopRFmpzmuEWL4hcejzIYASJnW8bbH+ICjYlXxWtfMzr
- 1oBVuEVqaFh6sb3HZD0NP+SMjdxTh9fRys3mQty2vggw/mewXKx7LSTUIcT6mMHtNTSW
- LjcY9tF7vqvMRTS4w51+W6nlKbQg+oQ0N2rK+LNfG/s1qJWpjUw8ttdp3vYqlDGRokbR
- 9hmSwOnze2vlXNjw8Rck6Ui+hoS7QZd7YTrB0RvNoA0NfuKc2XOgrnJnqxkf0qC6sJNI
- jrQK4eQ4DGTdeym1dbQncnFhrQzcyHEJTD6sftgcuz8HiIF9E5EGkycksctXPPPNMIwF
- fmqw==
+ bh=MWmDyj0j21yC/NexwBGI/0buXeigP8Y5ZltEr/piolI=;
+ b=Fv/g0UJZWNBZReCmU6ZQYttGKQpJyCwlUZ61Yeab7AjRYBD+XspK8782z8gTp3smC+
+ 5mn0ASoz3Hr7VZTgfGD59QItU/9bD6iFaS15dxt78dvfaAb+ndndk5ET9vVgE8zq8sQU
+ 25/sacuzwsCJC66Nq9QUG/pJGGVihtQVGKN59ce/b8J/W8XoVxUgUD5inQg86oOEFWhf
+ JLZeQCiPNiGhlGHtBpYXJiLXiJO3AwIR9euJ7ROPdcGBJYb6mDI7ps9FGCBKIzfa5JDZ
+ rPeQDKvmPTB1QMROrjSO/9FVYxUG9RUxT9iHf4IYWUMbT+JhYyeZs/m++5HO2l/jICma
+ idmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738950964; x=1739555764;
+ d=1e100.net; s=20230601; t=1738951042; x=1739555842;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=RKqjIeKz13kM2E1IP04h480zBz5TUlBqaHFwJkPeFYU=;
- b=Oqlwwhy0Le0VpDo1YSmRUvwyp3gvxxVa70xDAOys7xf2dhUz+fIlCHrvY/Xq+Ou47r
- Ymygl/fE43e/dK8Qn5erY7lFskp3Dpq6GZG021V5vAUDHrZSinPFXQiY30IQ6eKfg+iQ
- tErBTDQxSOtxNg30NwvhO5A3L4ruACLwa4O0AK4S1uLwSLfdBfozEkO6L0wi/0+Zo3Aq
- QL8JdJlNyBT8ylFx6A0r4vEhX2KPG3tb0kLs4S7jMiofFQCBOVZ5ziOO0+pM1loIKLps
- ruSSSWAbPUTL/ibT4gXv+3izKEgNbmUqLFVQH8QvdocfkJXXK0wkZ0qrulvZw2VR/ACj
- QIRg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWsOiTWa/0avNd+OUgt65BmQF9Zz+Ny13T17HtVe1Z7+sPZf4kbxwQ602ptHnqDyOe+mt4=@dpdk.org
-X-Gm-Message-State: AOJu0Yy4GAWj0l0NC3soNSgkKvZ8Dr7DB8fUzd3LY5wV+tIrNfMSUKTG
- 4qkDoejY9OsYfHn2RlSvWgzL3FCDinKOS890dbN2jd8seNDiiCLKB3ye1Dv12Ts=
-X-Gm-Gg: ASbGncvf+b5uJLUzx3zn7HV0RA6ZbuCQIBJIxc909/rm+mYFnX4PiBTtzrEoyNXRwOS
- s4fb0L9nYFx/Y4dDDm9IBLU+wPkSdjOs/ZbcaYfl9k3RAdLKmxqVEeIKS51DkzlJA1wc9MNnNDB
- ks1Y3HFRuBZcDfxOf9EUm5rQGXeNo6OI1vks9WzFbyu+zM9EqB59DRAdZW2Evs/bQ5g76EebItr
- lOocczAZOk3MsQ+OGVnWHHNACxAPiqT/T7KkCCZNVhfkh3qOvN2j1Pc1Roj5eJsjn4mL8IEthiO
- fUBIWSt3rXZhFqedWxIqyIq/EED5QlzM5+7v0Se3dDCXzuPv8Sq+yEyp0pxEmRrbDKEx
-X-Google-Smtp-Source: AGHT+IHzKqnOhdFh0XzmXNYMpTCCFrvNF5P1pqKtd33wt8c36v0W0wKqyD1C2Yg64jKNuMp4uwumrA==
-X-Received: by 2002:a17:90b:2e48:b0:2fa:30e9:2051 with SMTP id
- 98e67ed59e1d1-2fa30e9213bmr3202640a91.5.1738950964448; 
- Fri, 07 Feb 2025 09:56:04 -0800 (PST)
+ bh=MWmDyj0j21yC/NexwBGI/0buXeigP8Y5ZltEr/piolI=;
+ b=D9IIir6uVKd8ZkWiOHXLx0hA4sNNZIyVSf1+Qx3qqnb0G40LUfqVAqIyqwTHbKdzw4
+ pnid963tnrFIpgUi1u6owRa6UD5dDRSdAbh7nMGoSNyoDrWfdWe0H0UBGUfwsF7NfFrX
+ vlkmzHnyEEG/ZJb2cm1x8CtKvOdNP25XcSXjvC0iq6sZ48e3YW1iVXkLePStyYrtgrIE
+ t7YCxv4gWVtfPBg4IryQ5WMM326GrXkV8WbxABrihi5pMjZXaInSlcyxVdzAI2xv3HYe
+ x1uAoVojtj/gyHlC+SrPCAx74Uozk4sQ1e8H7dJFwuEIRnxyxj/Q1LvLOoLp7spoYbuS
+ V8Tw==
+X-Gm-Message-State: AOJu0Yxlfl9bodb6XhHtW+4GNht/0CXF7ZBGB/cXkBghCe31X2RAJJu8
+ HsAGhzBgongMvpLziWo932nTdnSVbu43AEk587AAqjKhSz1upS8Pn0Kxkk7pIEg=
+X-Gm-Gg: ASbGnctjkWDH7ayAVK4uNQjHipt2WAd1ce4aP0ey42d2+8FxvcFEVRCiJ8cOPx4omAF
+ m2MC/jolsdg7WVDvk2TlMQKGF0hYX06I3xc3HwRMIprTO5b5cLapqtYOAktcBrTt/T640KSfSa7
+ 4ve246kTdtJCMnNNqTahSmG/WD94wppcEvFDViFK5r4356MbmHCyDX+DTW09/e33TlG0FQTNwLd
+ 8v03gZT7CiiTMqxp+F+A02dp4fIa+syQcW1R2gYFLISArzrdDwZYVsgUENT/NQM0hP7LTVkug3q
+ tFOSyDK+Pl8MZbbgYUWB3gHKRb/q7Dcb4HrCdPAH2NvMW7bH3RejIE4fEoXND2NoXrsf
+X-Google-Smtp-Source: AGHT+IHvKY7Adw4iaBexc2YW6SJGH+wO0Gm3v5veDsZNoswnU+JanCRzGpV+LWsdX6qNGhpa0MbJIg==
+X-Received: by 2002:a17:902:e143:b0:216:50fb:5dfc with SMTP id
+ d9443c01a7336-21f4e1cc2c1mr45371165ad.9.1738951041819; 
+ Fri, 07 Feb 2025 09:57:21 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2f9e1d60b71sm5864780a91.8.2025.02.07.09.56.03
+ d9443c01a7336-21f36511106sm33430035ad.5.2025.02.07.09.57.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 07 Feb 2025 09:56:04 -0800 (PST)
-Date: Fri, 7 Feb 2025 09:56:01 -0800
+ Fri, 07 Feb 2025 09:57:21 -0800 (PST)
+Date: Fri, 7 Feb 2025 09:57:19 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: anatoly.burakov@intel.com, bruce.richardson@intel.com, dev@dpdk.org,
- ian.stokes@intel.com, jochen.behrens@broadcom.com,
- vladimir.medvedkin@intel.com
-Subject: Re: [PATCH v4] drivers/net: use 64-bit shift and avoid
- signed/unsigned mismatch
-Message-ID: <20250207095601.49aa82a8@hermes.local>
-In-Reply-To: <1738783944-10172-1-git-send-email-andremue@linux.microsoft.com>
-References: <1735246770-731-1-git-send-email-andremue@linux.microsoft.com>
- <1738783944-10172-1-git-send-email-andremue@linux.microsoft.com>
+To: Tudor Cornea <tudor.cornea@gmail.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] net/af_packet: fix socket close on device stop
+Message-ID: <20250207095719.2c7a75f9@hermes.local>
+In-Reply-To: <20250204164508.864080-1-tudor.cornea@gmail.com>
+References: <20250204164508.864080-1-tudor.cornea@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,26 +79,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  5 Feb 2025 11:32:24 -0800
-Andre Muezerie <andremue@linux.microsoft.com> wrote:
+On Tue,  4 Feb 2025 18:45:08 +0200
+Tudor Cornea <tudor.cornea@gmail.com> wrote:
 
-> This patch avoids warnings like the ones below emitted by MSVC:
+> Currently, if we call rte_eth_dev_stop(), the sockets are closed.
+> If we attempt to start the port again, socket related operations
+> will not work correctly.
 > 
-> 1)
-> ../drivers/net/ice/base/ice_flg_rd.c(71): warning C4334: '<<':
->     result of 32-bit shift implicitly converted to 64 bits
->     (was 64-bit shift intended?)
+> This can be alleviated by closing the socket at the same place in
+> which we currently free the memory, in eth_dev_close().
 > 
-> 2)
-> ../drivers/net/ice/ice_dcf_sched.c(177): warning C4018: '>=':
->     signed/unsigned mismatch
+> If an application calls rte_eth_dev_stop() on a port managed
+> by the af_packet PMD, the port becomes unusable. This is in contrast
+> with ports managed by other drivers (e.g virtio).
 > 
-> The fix for (1) is to use 64-bit shifting when appropriate
-> (according to what the result is used for).
+> I also managed to reproduce the issue using testpmd.
 > 
-> The fix for (2) is to explicitly cast the variables used in the
-> comparison.
+> sudo ip link add test-veth0 type veth peer name test-veth1
 > 
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> sudo ip link set test-veth0 up
+> sudo ip link set test-veth1 up
+> 
+> AF_PACKET_ARGS=\
+> "blocksz=4096,framesz=2048,framecnt=512,qpairs=1,qdisc_bypass=0"
+> 
+> sudo ./dpdk-testpmd \
+>         -l 0-3 \
+>         -m 1024 \
+>         --no-huge \
+>         --no-shconf \
+>         --no-pci \
+>         --vdev=net_af_packet0,iface=test-veth0,${AF_PACKET_ARGS} \
+>         --vdev=net_af_packet1,iface=test-veth1,${AF_PACKET_ARGS} \
+>         -- \
+>         -i
+> 
+> testpmd> start tx_first  
+> 
+> Forwarding will start, and we will see traffic on the interfaces.
+> 
+> testpmd> stop
+> testpmd> port stop 0  
+> Stopping ports...
+> Checking link statuses...
+> Done
+> testpmd> port stop 1  
+> Stopping ports...
+> Checking link statuses...
+> Done
+> 
+> testpmd> port start 0  
+> AFPACKET: eth_dev_macaddr_set(): receive socket not found
+> Port 0: CA:65:81:63:81:B2
+> Checking link statuses...
+> Done
+> testpmd> port start 1  
+> AFPACKET: eth_dev_macaddr_set(): receive socket not found
+> Port 1: CA:12:D0:BE:93:3F
+> Checking link statuses...
+> Done
+> 
+> testpmd> start tx_first  
+> 
+> When we start forwarding again, we can see that there is no traffic
+> on the interfaces. This does not happen when testing with other PMD
+> drivers (e.g virtio).
+> 
+> With the patch, the port should re-initialize correctly.
+> 
+> testpmd> port start 0  
+> Port 0: CA:65:81:63:81:B2
+> Checking link statuses...
+> Done
+> 
+> Fixes: 364e08f2bbc0 ("af_packet: add PMD for AF_PACKET-based virtual devices")
+> 
+> Signed-off-by: Tudor Cornea <tudor.cornea@gmail.com>
 
-Applied to next-net with some rewording of commit title.
+
+Applied to next-net
+Should this go to stable as well
