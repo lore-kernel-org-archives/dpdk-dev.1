@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89003C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A5AC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:41:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A82942E78;
-	Fri,  7 Feb 2025 15:40:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E3F1A42E86;
+	Fri,  7 Feb 2025 15:41:24 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 679A8410E3
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:40:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0104B410E3
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:41:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738939233;
+ s=mimecast20190719; t=1738939282;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=h2qeg2WUMUbzl2yAihIgOfj3PYfLEQGrS70hKJm5e8w=;
- b=HyDNxCqoMduDnaqc8iTR7y5K/pxovk+PsLbLhG9Oj7cNXxItZiwRGJrMnHqmvybJU664xf
- QUM71EvqQuwB+dJHrJLGstEfFpUKbxtgV7CtHAJOIGjl86LALOUpJRN/4l51Y3kwsu920G
- TYuxRlREn7D8kwTzv6sC5PJdlL/eZFY=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=mNlWZVG6V1O4Elg6eLB35ubsz91znETIwE1eCauRS/o=;
+ b=Wg8lNctpuQjmXztJBtKCxdTDd6SYMT3uTnvHw+aHyTkOqkoia7G2/TLF0oDpN+rnPuTJEN
+ 88Mx8leLg8VVyl2VhFkFeRhy347mhQW8UiWz5TaPu0WCEBINGNMQdFj6RItyyWATWp9sXC
+ fvwwk7riARtTe7/kzuK1Wblq2XJdsNg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-4Ejh-tp7Om-fhT0aV564JQ-1; Fri, 07 Feb 2025 09:40:31 -0500
-X-MC-Unique: 4Ejh-tp7Om-fhT0aV564JQ-1
-X-Mimecast-MFC-AGG-ID: 4Ejh-tp7Om-fhT0aV564JQ
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-544fe4c948cso294539e87.3
- for <dev@dpdk.org>; Fri, 07 Feb 2025 06:40:31 -0800 (PST)
+ us-mta-426-NL-h5jRYOL6vRqALboHKqA-1; Fri, 07 Feb 2025 09:41:20 -0500
+X-MC-Unique: NL-h5jRYOL6vRqALboHKqA-1
+X-Mimecast-MFC-AGG-ID: NL-h5jRYOL6vRqALboHKqA
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-545014aea84so75649e87.2
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 06:41:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738939230; x=1739544030;
+ d=1e100.net; s=20230601; t=1738939279; x=1739544079;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=h2qeg2WUMUbzl2yAihIgOfj3PYfLEQGrS70hKJm5e8w=;
- b=Tne6WC02tXrXVfxlKBDarddqCxJs9bhU1aIBGHNaNtbZwD22r7AHqw1La1ul/yucO7
- C3HxOcH0w4ngtdcK9dxyqM0BRpThyQdwSmIxvFPo1j9eXRasTwn59+ndig0z93g2jrXe
- hOS0qFLEWPB4GBSXBlvYMGOmW08ABPvu5cyFSzJDf1JUSS2bbIiQU7Qa6E+9DpgRKAAT
- 5V3aSXl89dpRq56Pe0robeMkZwWPYMTvoAPq7FJMsuOA0h9uLKf9EBFOMAom//vxJ6OS
- ls+nOJXT8xjQ2A+IxZoAZFmCHmK5NqxvH+Tt+o74ewJnf2n1F7R55622jaIBdRYbmDlp
- babg==
-X-Gm-Message-State: AOJu0YzPVlSQAZpRBhwIbvasggHCKISMwowWqzgNxHi03GIGhft92Mbh
- 0zyOZcWj7XFLRJoy2OjBjmfm6L5m9XLjvoxq1+3vyDcrYXUJGxCnMZJWSKi4nWyO2uHJ2SYq1eF
- qBTGvD0NVnkj0Om1FrMo5Q1YXpNeIMOarDIWD6fagbMMotPW6rFhO5G42jW/7AFRD1fEAaG0qR9
- m19/rRD9oDy1LcJ07l6flR2QM=
-X-Gm-Gg: ASbGncutQrbOX3HhxXJXQxW7JWuskwhIQo2cFSVVStYduoCo+JMbB0cc0CYqTiHy6qY
- i7GqMTz9Iya6JhEMlkD3/EfM4339ZEjix7XZQVEvvbB95TLTa3AQ/rbZyXu845RIo
-X-Received: by 2002:a05:6512:754:b0:542:213f:78fd with SMTP id
- 2adb3069b0e04-54414af572cmr639679e87.40.1738939230308; 
- Fri, 07 Feb 2025 06:40:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFEm2O8uQoCrU+ti2lUV8v5Ppxixz3HBBSg/mubzvlx8H17As1Ka3CDg8JLpWwaGv0NAGk2KrcR/axYUobe/Ew=
-X-Received: by 2002:a05:6512:754:b0:542:213f:78fd with SMTP id
- 2adb3069b0e04-54414af572cmr639671e87.40.1738939229879; Fri, 07 Feb 2025
- 06:40:29 -0800 (PST)
+ bh=mNlWZVG6V1O4Elg6eLB35ubsz91znETIwE1eCauRS/o=;
+ b=tYFZ+buPyNwt00RZl0M+2ROKMNLeudOV2FL3snhVCisOpzhr6DAWg6Ro6jyvK89BYK
+ bSgIknc/Xg3SfElRw6bJCzf8XF/kVHrV1rzRC5UILc3EGKeqR1Xr1ZJiR2atQEtYIe5c
+ sZz3G9j7RvEJpM/0yO2VnQ7dvYg1Py3uEJmq3EU+08XrxLrUMH5O3Lrl8OIzWJ8YDqp3
+ yTIXgzFHNKa5tkg+cac7+5ai/zYzXNaNP8rDakd7z4aOZayxRCMecR0Om/1jBqN8SgIA
+ PYoQMERW59jdRZo1eHuyAjbSXomn5T6jk9S3oj75al9B2QptI7HoiWYpBE5tNOa0aheA
+ 35Gw==
+X-Gm-Message-State: AOJu0YydiHbjdl1wTLx5ue9FVv/NmJv+CgCjHzeAB3IvFRPjtLTSCL0R
+ Fa9HCR3SLZmB67pEBcfX53PAXexvl00d70smqS/M3lPgw4QD53kbzrXGgMP8TpVZSZkeLP86E8I
+ yWCsgPNpFeZPi6mC9P6bGBI52tt/+ebGxhSA7hm2Mj6pwfSWGprhDG/+OTrVtMLwautxzkfC0YX
+ xMDl1kpuclGx4uHnA=
+X-Gm-Gg: ASbGncvsRKCdbZWujkNeh3nno19YuT+EJ9qn+PiYsBeyK7UNe9BAmrI1WtdCQj1JIBf
+ zcYlhf8OEf44GQXTcwBb5aEW7VQSM7LbMN8rJdr4Y+rQPIgOUCmhgCboFLYx6cxKN
+X-Received: by 2002:a05:6512:718:b0:544:11e4:d53e with SMTP id
+ 2adb3069b0e04-54414b06e0fmr990116e87.48.1738939279059; 
+ Fri, 07 Feb 2025 06:41:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHncPa5Rh7OH4JeNZcLbFhs5BAjt3qXZ0WKlPuTvmY7IQ37Z+rKvmTNY+nfm2iQDVuqXgNJhxwEaDmM60/oTHk=
+X-Received: by 2002:a05:6512:718:b0:544:11e4:d53e with SMTP id
+ 2adb3069b0e04-54414b06e0fmr990109e87.48.1738939278669; Fri, 07 Feb 2025
+ 06:41:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20250205161518.143865-1-stephen@networkplumber.org>
-In-Reply-To: <20250205161518.143865-1-stephen@networkplumber.org>
+References: <20241226081020.3479-1-ming.1.yang@nokia-sbell.com>
+ <20250102085838.991-1-ming.1.yang@nokia-sbell.com>
+In-Reply-To: <20250102085838.991-1-ming.1.yang@nokia-sbell.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 7 Feb 2025 15:40:17 +0100
-X-Gm-Features: AWEUYZm2iqIsaX8aVzCdYydhQFXk73yDr2akc_j8g1rVO3WpqgTEdczR8PopVxw
-Message-ID: <CAJFAV8xFN==8TmTMW0mRL3Nc7HmQ0HyCU1VAiBrtnKH=j3YbHg@mail.gmail.com>
-Subject: Re: [PATCH] log: avoid call close with negative value
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
+Date: Fri, 7 Feb 2025 15:41:06 +0100
+X-Gm-Features: AWEUYZny6B2wnTYn7c2w8azRUUyl1CWrh3vFR7c1zthrAc6Lc2Bhixw_WPfVK2Y
+Message-ID: <CAJFAV8w3Dh9Axgo6Gr68qBKh+rc+vqyfByKRhSekydJqVtWD5Q@mail.gmail.com>
+Subject: Re: [PATCH v2] eal: fix unused memseg length
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com, stable@dpdk.org, 
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Zi_-LMz-3wm54e8-NspBVxBIUN3-b5frBhHy7cwUcc0_1738939230
+X-Mimecast-MFC-PROC-ID: 2s-UHrgihYRYgiz9mHq2jcZKybPih_WoM75vInOZJIg_1738939279
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -83,18 +85,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 5, 2025 at 5:15=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
+On Thu, Jan 2, 2025 at 9:59=E2=80=AFAM Yang Ming <ming.1.yang@nokia-sbell.c=
+om> wrote:
 >
-> On error path, the journal socket code would call close
-> with -1 which caused Coverity warning.
+> Fix the issue where OS memory is mistakenly freed with rte_free
+> by setting the length (len) of unused memseg to 0.
 >
-> Coverity issue: 448872
-> Fixes: 9da0dc6c0331 ("log: support systemd journal")
+> When `eal_legacy_hugepage_init()` releases the VA space for
+> unused memseg lists(MSLs), it does not reset MSLs' length to 0.
+> As a result, `mlx5_mem_is_rte()` may incorrectly identify OS
+> memory as rte memory.
+> This can lead to `mlx_free()` calling `rte_free()` on OS memory,
+> causing an "EAL: Error: Invalid memory" log and failing to free
+> the OS memory.
 >
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> This issue is occasional and occurs when the DPDK program=E2=80=99s
+> memory map places the heap address range between 0 and len(32G).
+> In such cases, malloc may return an address less than len,
+> causing `mlx5_mem_is_rte()` to incorrectly treat it as rte
+> memory.
+>
+> Also, consider how the MSL with `base_va =3D=3D NULL` ends up in
+> `mlx5_mem_is_rte()`. It comes from `rte_mem_virt2memseg_list()`
+> which iterates MSLs and checks that an address belongs to
+> [`base_va`; `base_va+len`) without checking whether
+> `base_va =3D=3D NULL` i.e. that the MSL is inactive. So this patch
+> also corrects `rte_mem_virt2memseg_list()` behavior.
+>
+> Fixes: 66cc45e293ed ("mem: replace memseg with memseg lists")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
+> Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 
-Applied, thanks.
+Applied, thanks for the fix.
 
 
 --=20
