@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0693C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 177E9C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 60D3642EA8;
-	Fri,  7 Feb 2025 13:46:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F09C42EAA;
+	Fri,  7 Feb 2025 13:46:32 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id C3D7142E4C
- for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:24 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1EBBB42E1D
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738932385; x=1770468385;
+ t=1738932387; x=1770468387;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=CwOargFnItzjVc6RZkLQq/11jzNp+yt1HgdtpHhxE0E=;
- b=RU46EVIZEje+09yK206MR3yNygItuzsPdy68l1d7ri/MkktvX5UCh3zK
- twTmb9TWBAb8Y4q0rHXEMFolACIP+W5VIkF5nkyMUPUfs5zZqW2hZM/PS
- xkNMIB2hBxPByldNfeWssqeTl4aMjOdKBzutrfMgNbDqDu/IUp07FiUjt
- drUUM0Cs6fXBXiTwM+eYU9lnCxxquxO9pkuyQ3tcGWpmHMZfxnymZHuMG
- p62wnDLQ/FSRcbj/MT59FkXBcCD/2yTiXY06gGIcRutdmkD5GSKPdwUC7
- 2mqN3nf1519DUXRfScQOWvMkjYfVosXQ5UwHvsRv1TfDDOir4fyH/zlCr w==;
-X-CSE-ConnectionGUID: FD93rDzkR0SQk66QjQ6YcQ==
-X-CSE-MsgGUID: gHkpSj4qQiurtHVV+wZACw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331865"
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331865"
+ bh=7qYxkkBXAqm2w+lCvn2VStadO15WcA9PM5Vvai5FLRE=;
+ b=Z0RRC4Wa9b2FGRn/HqvUcXPwzqNsoOhzqlJlQ4HkJ7PfKX914U9wxo3i
+ 1tzmWLllaZ5kyBtwL3hB5xrzjcxSQVIuZsRSgaNKbNAtc2P9vXzFDhrHC
+ DDwbIKPvv3PRN4FjMWIDFlFcIytO4OGc5z4WbaypXR0wyspCr1u/GbC4v
+ dysKT1PDUYVNODrIE8cJAmbcnZF1JxC3tjs1rsN8uZz+6v36KjiGJU09C
+ ca8Zr8ftsgmXYcmaqrkBKbuE3mR06GzTzu8Vzna5Mo4tOkywE0yBKRIPI
+ QAzG+qNlCrnyLHsCZ+k4J9CTiq1BB3tGT6+y+cdRAQRIw3pqLL/zeoM5m A==;
+X-CSE-ConnectionGUID: WPccFo5nRE+OSe4/VWwy/A==
+X-CSE-MsgGUID: TDpXAVuZTmWjAqNsfCShJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331871"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331871"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2025 04:46:25 -0800
-X-CSE-ConnectionGUID: IeLNro7jS0KhQXC4V93mcg==
-X-CSE-MsgGUID: Z7CvkLxwT3uFxlNNeoi/Xg==
+ 07 Feb 2025 04:46:26 -0800
+X-CSE-ConnectionGUID: 37jm1SR0RFOGUI/CIiz00w==
+X-CSE-MsgGUID: wLQhqkh4SLiDMtVEKY3XiQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953770"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953780"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:23 -0800
+ by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:24 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v3 26/36] net/e1000/base: make PHY wakeup access non-static
-Date: Fri,  7 Feb 2025 12:45:18 +0000
-Message-ID: <c9ece4974ba3e313f6ce88e51a25ba51cb567f89.1738932115.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 27/36] net/e1000/base: make debug prints more informative
+Date: Fri,  7 Feb 2025 12:45:19 +0000
+Message-ID: <e87ca654f63bbd5bbc8ab7cf5567b8159686d4bb.1738932115.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738932113.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -61,52 +61,79 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Dima Ruinskiy <dima.ruinskiy@intel.com>
 
-Mark e1000_access_phy_wakeup_reg_bm function as non-static.
+PHY page and register notation traditionally uses decimal numbering. This
+patch aligns the debug prints to this notation, as well as moves prints
+to after we get a value of interest to us.
 
 Signed-off-by: Dima Ruinskiy <dima.ruinskiy@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_phy.c | 6 ++----
- drivers/net/intel/e1000/base/e1000_phy.h | 2 ++
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/intel/e1000/base/e1000_phy.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
-index d3d7ff6ba8..93a0b02998 100644
+index 93a0b02998..d74bb2fd6e 100644
 --- a/drivers/net/intel/e1000/base/e1000_phy.c
 +++ b/drivers/net/intel/e1000/base/e1000_phy.c
-@@ -5,8 +5,6 @@
- #include "e1000_api.h"
- 
- STATIC s32 e1000_wait_autoneg(struct e1000_hw *hw);
--STATIC s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
--					  u16 *data, bool read, bool page_set);
- STATIC u32 e1000_get_phy_addr_for_hv_page(u32 page);
- STATIC s32 e1000_access_phy_debug_regs_hv(struct e1000_hw *hw, u32 offset,
- 					  u16 *data, bool read);
-@@ -3498,8 +3496,8 @@ s32 e1000_disable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg)
-  *  the PHY page is set to BM_WUC_PAGE (i.e. a function in the call stack
-  *  is responsible for calls to e1000_[enable|disable]_phy_wakeup_reg_bm()).
-  **/
--STATIC s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
--					  u16 *data, bool read, bool page_set)
-+s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
-+				   u16 *data, bool read, bool page_set)
+@@ -690,7 +690,7 @@ s32 e1000_set_page_igp(struct e1000_hw *hw, u16 page)
  {
- 	s32 ret_val;
- 	u16 reg = BM_PHY_REG_NUM(offset);
-diff --git a/drivers/net/intel/e1000/base/e1000_phy.h b/drivers/net/intel/e1000/base/e1000_phy.h
-index a7834240e0..f15f45011f 100644
---- a/drivers/net/intel/e1000/base/e1000_phy.h
-+++ b/drivers/net/intel/e1000/base/e1000_phy.h
-@@ -62,6 +62,8 @@ s32  e1000_write_phy_reg_bm(struct e1000_hw *hw, u32 offset, u16 data);
- s32  e1000_read_phy_reg_bm(struct e1000_hw *hw, u32 offset, u16 *data);
- s32  e1000_enable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg);
- s32  e1000_disable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg);
-+s32  e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
-+				    u16 *data, bool read, bool page_set);
- s32  e1000_read_phy_reg_bm2(struct e1000_hw *hw, u32 offset, u16 *data);
- s32  e1000_write_phy_reg_bm2(struct e1000_hw *hw, u32 offset, u16 data);
- void e1000_power_up_phy_copper(struct e1000_hw *hw);
+ 	DEBUGFUNC("e1000_set_page_igp");
+ 
+-	DEBUGOUT1("Setting page 0x%x\n", page);
++	DEBUGOUT2("Setting page %d (0x%x)\n", page >> IGP_PAGE_SHIFT, page);
+ 
+ 	hw->phy.addr = 1;
+ 
+@@ -3521,8 +3521,6 @@ s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
+ 		}
+ 	}
+ 
+-	DEBUGOUT2("Accessing PHY page %d reg 0x%x\n", page, reg);
+-
+ 	/* Write the Wakeup register page offset value using opcode 0x11 */
+ 	ret_val = e1000_write_phy_reg_mdic(hw, BM_WUC_ADDRESS_OPCODE, reg);
+ 	if (ret_val) {
+@@ -3534,10 +3532,14 @@ s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
+ 		/* Read the Wakeup register page value using opcode 0x12 */
+ 		ret_val = e1000_read_phy_reg_mdic(hw, BM_WUC_DATA_OPCODE,
+ 						  data);
++		DEBUGOUT3("Read PHY page %d reg %d value 0x%04x\n",
++			  page, reg, *data);
+ 	} else {
+ 		/* Write the Wakeup register page value using opcode 0x12 */
+ 		ret_val = e1000_write_phy_reg_mdic(hw, BM_WUC_DATA_OPCODE,
+ 						   *data);
++		DEBUGOUT3("Wrote PHY page %d reg %d value 0x%04x\n",
++			  page, reg, *data);
+ 	}
+ 
+ 	if (ret_val) {
+@@ -3645,11 +3647,11 @@ STATIC s32 __e1000_read_phy_reg_hv(struct e1000_hw *hw, u32 offset, u16 *data,
+ 		}
+ 	}
+ 
+-	DEBUGOUT3("reading PHY page %d (or 0x%x shifted) reg 0x%x\n", page,
+-		  page << IGP_PAGE_SHIFT, reg);
+-
+ 	ret_val = e1000_read_phy_reg_mdic(hw, MAX_PHY_REG_ADDRESS & reg,
+ 					  data);
++	DEBUGOUT3("read PHY page %d reg %d value 0x%04x\n",
++		  page, reg, *data);
++
+ out:
+ 	if (!locked)
+ 		hw->phy.ops.release(hw);
+@@ -3771,8 +3773,8 @@ STATIC s32 __e1000_write_phy_reg_hv(struct e1000_hw *hw, u32 offset, u16 data,
+ 		}
+ 	}
+ 
+-	DEBUGOUT3("writing PHY page %d (or 0x%x shifted) reg 0x%x\n", page,
+-		  page << IGP_PAGE_SHIFT, reg);
++	DEBUGOUT3("writing PHY page %d reg %d value 0x%04x\n",
++		  page, reg, data);
+ 
+ 	ret_val = e1000_write_phy_reg_mdic(hw, MAX_PHY_REG_ADDRESS & reg,
+ 					   data);
 -- 
 2.43.5
 
