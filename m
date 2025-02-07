@@ -2,45 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8FCC02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0693C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:48:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3404F42EA1;
-	Fri,  7 Feb 2025 13:46:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 60D3642EA8;
+	Fri,  7 Feb 2025 13:46:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 8C0B642E4C
- for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:23 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C3D7142E4C
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 13:46:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738932384; x=1770468384;
+ t=1738932385; x=1770468385;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=wwoEvfKGF+I7+P3IjkDHruwWOc7gdoxGS+K1khBq0yI=;
- b=dsR1nFIYNAgNkjpc9RyBEU6xsU9TndMYr9R1zJ4yDFmMORQ3NRamSd79
- ijzVymN5JgkU1SYsQlT1qsPNfHhF+a5gGz+CFvWxETq6e5328kQ3yJt9Z
- HWNQbMZykDPdXdvyhv+ExB50YQysRG8nJGzFIjisDl3giBegWVmd/F1cN
- 6C1mJONUmNFYGEdNEQfXA2BPLODo2Papl8JeaaQfS1sctKVL448iZ0gzH
- swMLeUmR3W9R82gFP0zjBfFtq0Cnyg1SXAtFOzzyqBQPH1NfE0lf1pm0L
- tBOxrN4xUjmWZxwoeSOwu1O6kUW3/F5ORfAeBwRuRRKoCMEBiRcmoh/26 g==;
-X-CSE-ConnectionGUID: GI/Z3JqiRwK4FPsnpUmbyQ==
-X-CSE-MsgGUID: cZH2hDWeQduleg4ukvXr6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331861"
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331861"
+ bh=CwOargFnItzjVc6RZkLQq/11jzNp+yt1HgdtpHhxE0E=;
+ b=RU46EVIZEje+09yK206MR3yNygItuzsPdy68l1d7ri/MkktvX5UCh3zK
+ twTmb9TWBAb8Y4q0rHXEMFolACIP+W5VIkF5nkyMUPUfs5zZqW2hZM/PS
+ xkNMIB2hBxPByldNfeWssqeTl4aMjOdKBzutrfMgNbDqDu/IUp07FiUjt
+ drUUM0Cs6fXBXiTwM+eYU9lnCxxquxO9pkuyQ3tcGWpmHMZfxnymZHuMG
+ p62wnDLQ/FSRcbj/MT59FkXBcCD/2yTiXY06gGIcRutdmkD5GSKPdwUC7
+ 2mqN3nf1519DUXRfScQOWvMkjYfVosXQ5UwHvsRv1TfDDOir4fyH/zlCr w==;
+X-CSE-ConnectionGUID: FD93rDzkR0SQk66QjQ6YcQ==
+X-CSE-MsgGUID: gHkpSj4qQiurtHVV+wZACw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331865"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331865"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2025 04:46:24 -0800
-X-CSE-ConnectionGUID: LSyzNBPDQ6CHzxiHG0knhw==
-X-CSE-MsgGUID: XkKx+8lGTTqk6kGh2FlXnQ==
+ 07 Feb 2025 04:46:25 -0800
+X-CSE-ConnectionGUID: IeLNro7jS0KhQXC4V93mcg==
+X-CSE-MsgGUID: Z7CvkLxwT3uFxlNNeoi/Xg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953758"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953770"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:22 -0800
+ by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:46:23 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v3 25/36] net/e1000/base: use longer ULP exit timeout on more
- HW
-Date: Fri,  7 Feb 2025 12:45:17 +0000
-Message-ID: <2333ec9b90b1468ac642d005f23d889292e6bff9.1738932115.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 26/36] net/e1000/base: make PHY wakeup access non-static
+Date: Fri,  7 Feb 2025 12:45:18 +0000
+Message-ID: <c9ece4974ba3e313f6ce88e51a25ba51cb567f89.1738932115.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1738932113.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
@@ -60,56 +59,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nir Efrati <nir.efrati@intel.com>
+From: Dima Ruinskiy <dima.ruinskiy@intel.com>
 
-Add some definitions related to ULP WoL, and set longer ULP exit timeout on
-more MAC types.
+Mark e1000_access_phy_wakeup_reg_bm function as non-static.
 
-Signed-off-by: Nir Efrati <nir.efrati@intel.com>
+Signed-off-by: Dima Ruinskiy <dima.ruinskiy@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/e1000/base/e1000_hw.h      | 1 +
- drivers/net/intel/e1000/base/e1000_ich8lan.c | 2 +-
- drivers/net/intel/e1000/base/e1000_ich8lan.h | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/intel/e1000/base/e1000_phy.c | 6 ++----
+ drivers/net/intel/e1000/base/e1000_phy.h | 2 ++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
-index 1b8292191a..0ab21ed669 100644
---- a/drivers/net/intel/e1000/base/e1000_hw.h
-+++ b/drivers/net/intel/e1000/base/e1000_hw.h
-@@ -1021,6 +1021,7 @@ struct e1000_dev_spec_ich8lan {
- 	u16 eee_lp_ability;
- 	enum e1000_ulp_state ulp_state;
- 	bool ulp_capability_disabled;
-+	bool wake_on_ulp_exit;
- 	bool during_suspend_flow;
- 	bool during_dpg_exit;
- 	u16 lat_enc;
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.c b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-index 57c724523c..0bb67ca621 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.c
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.c
-@@ -1293,7 +1293,7 @@ s32 e1000_disable_ulp_lpt_lp(struct e1000_hw *hw, bool force)
- 			E1000_WRITE_REG(hw, E1000_H2ME, mac_reg);
- 		}
+diff --git a/drivers/net/intel/e1000/base/e1000_phy.c b/drivers/net/intel/e1000/base/e1000_phy.c
+index d3d7ff6ba8..93a0b02998 100644
+--- a/drivers/net/intel/e1000/base/e1000_phy.c
++++ b/drivers/net/intel/e1000/base/e1000_phy.c
+@@ -5,8 +5,6 @@
+ #include "e1000_api.h"
  
--		if (hw->mac.type == e1000_pch_cnp)
-+		if (hw->mac.type >= e1000_pch_cnp)
- 			ulp_exit_timeout = 100;
- 
- 		while (E1000_READ_REG(hw, E1000_FWSM) &
-diff --git a/drivers/net/intel/e1000/base/e1000_ich8lan.h b/drivers/net/intel/e1000/base/e1000_ich8lan.h
-index 4780417bae..fbe118723c 100644
---- a/drivers/net/intel/e1000/base/e1000_ich8lan.h
-+++ b/drivers/net/intel/e1000/base/e1000_ich8lan.h
-@@ -48,6 +48,7 @@
- 
- #define E1000_H2ME		0x05B50    /* Host to ME */
- #define E1000_H2ME_ULP		0x00000800 /* ULP Indication Bit */
-+#define E1000_H2ME_HOST_WOL_ON_ULP_EXIT	0x00000008 /* Host WOL on ULP exit */
- #define E1000_H2ME_ENFORCE_SETTINGS	0x00001000 /* Enforce Settings */
- 
- #define ID_LED_DEFAULT_ICH8LAN	((ID_LED_DEF1_DEF2 << 12) | \
+ STATIC s32 e1000_wait_autoneg(struct e1000_hw *hw);
+-STATIC s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
+-					  u16 *data, bool read, bool page_set);
+ STATIC u32 e1000_get_phy_addr_for_hv_page(u32 page);
+ STATIC s32 e1000_access_phy_debug_regs_hv(struct e1000_hw *hw, u32 offset,
+ 					  u16 *data, bool read);
+@@ -3498,8 +3496,8 @@ s32 e1000_disable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg)
+  *  the PHY page is set to BM_WUC_PAGE (i.e. a function in the call stack
+  *  is responsible for calls to e1000_[enable|disable]_phy_wakeup_reg_bm()).
+  **/
+-STATIC s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
+-					  u16 *data, bool read, bool page_set)
++s32 e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
++				   u16 *data, bool read, bool page_set)
+ {
+ 	s32 ret_val;
+ 	u16 reg = BM_PHY_REG_NUM(offset);
+diff --git a/drivers/net/intel/e1000/base/e1000_phy.h b/drivers/net/intel/e1000/base/e1000_phy.h
+index a7834240e0..f15f45011f 100644
+--- a/drivers/net/intel/e1000/base/e1000_phy.h
++++ b/drivers/net/intel/e1000/base/e1000_phy.h
+@@ -62,6 +62,8 @@ s32  e1000_write_phy_reg_bm(struct e1000_hw *hw, u32 offset, u16 data);
+ s32  e1000_read_phy_reg_bm(struct e1000_hw *hw, u32 offset, u16 *data);
+ s32  e1000_enable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg);
+ s32  e1000_disable_phy_wakeup_reg_access_bm(struct e1000_hw *hw, u16 *phy_reg);
++s32  e1000_access_phy_wakeup_reg_bm(struct e1000_hw *hw, u32 offset,
++				    u16 *data, bool read, bool page_set);
+ s32  e1000_read_phy_reg_bm2(struct e1000_hw *hw, u32 offset, u16 *data);
+ s32  e1000_write_phy_reg_bm2(struct e1000_hw *hw, u32 offset, u16 data);
+ void e1000_power_up_phy_copper(struct e1000_hw *hw);
 -- 
 2.43.5
 
