@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D90C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0629C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:44:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F70742E80;
-	Fri,  7 Feb 2025 15:42:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D6B1D42E80;
+	Fri,  7 Feb 2025 15:44:30 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2161842DDC
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:42:21 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2E41342DE3
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:44:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738939340;
+ s=mimecast20190719; t=1738939468;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=K8xlu+uy1z+McKp6uzZRdS6DM/jUN5gB0hyB54gey+c=;
- b=ANbfKFrQs0QNg1e5Fhyfmm7IGX4tj9m9glwnTOVCuQf5kZl8SqoHrPxMiyKmiMFPIf5TLe
- VGl9gBlSYzeGABGt3xQ5UXZm2l450woDlo0HvSuBZN0cO53Kz1eJZlUO5prqfP8EAqrw8m
- 0bAxRNkit1DLXLynnrRQhjVwoYWF7B8=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=T9Wo45vttKxtpb0Sr8+0/n2Do31m5eQ5ZEhlC4STiAA=;
+ b=gx4ILuKd5wzPmsaFRwxQU8xBbrXGhKMuzj1grmfQQ0n+kLIwUhhl7ZFHI2AyTTk2+7x2E8
+ Bja+UAy1nn28RFtTwEvSRZmow2uEp6osG3CKKpujU0bzLcB/kHNmGFQEvhn3Ts4h1rfBRD
+ KBtMrWU6YfClNudeVQQVO0T+oSld8Gg=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-13-LCawxz_vMG-o7t5XY6DrCw-1; Fri, 07 Feb 2025 09:42:19 -0500
-X-MC-Unique: LCawxz_vMG-o7t5XY6DrCw-1
-X-Mimecast-MFC-AGG-ID: LCawxz_vMG-o7t5XY6DrCw
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3022598e2b4so10584521fa.1
- for <dev@dpdk.org>; Fri, 07 Feb 2025 06:42:19 -0800 (PST)
+ us-mta-629-7DTH0VAcPYOEXCpXXBNS9A-1; Fri, 07 Feb 2025 09:44:27 -0500
+X-MC-Unique: 7DTH0VAcPYOEXCpXXBNS9A-1
+X-Mimecast-MFC-AGG-ID: 7DTH0VAcPYOEXCpXXBNS9A
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-544103a1b71so1118592e87.3
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 06:44:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738939338; x=1739544138;
+ d=1e100.net; s=20230601; t=1738939466; x=1739544266;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=K8xlu+uy1z+McKp6uzZRdS6DM/jUN5gB0hyB54gey+c=;
- b=mpHrrZ5mN2AXBztWP842NBYgCtuEUGSp3F1THnKbMZJw8MWm5LSAnZqf6ym8CRFoKI
- gilFgmQBX4vN0XKEnNu9z4JGbuI482OXOl23RzHxX9O1mrYiOj96CXgJRsPMVEptEH6c
- BGHfG56t5SdJxvK8UFXi2cshY103z8D9EOwdvl0Cq7AJGWSLAD5IdEGK2nKVrFInQfPQ
- 5LwpmuvpEeGAPpLnmgB273zOAdLGJq9+6RfJOhr8kBbU5aelCL5a3lA3lNjlac37Stjy
- 7ycK4fDWNZnUKffqvCxhXbjRuAcIlHwrnS/5ILGOflSesMLGRf+p7xZd0ruWclji66qu
- Exig==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVDEtcXSkMbhvaq2ovyigPiZDGCtjzg4k5RAm5Kix8Pq+mlO2f0c5AS1ryc7zrHRGEIsWs=@dpdk.org
-X-Gm-Message-State: AOJu0Yxl/MdHPX0GatScY9Er9EGBh6clTC55B371XyjBVxVUm/u9GtEe
- s7G0tqKwCFdv0SBWTfzqv5/102ArF+yPTPOw5m+grA1xe2FAHQOzezDuGDEg9DqqgNk79r0AWRc
- KCoaTfzr4hCOvFi1IByHUY8AIXlcmZEHMn0eK46dJm6TedXpJsW6GLGDZ7IcC+nX8BgYrOmK533
- IXZrJEhbL/nPGc9Tk=
-X-Gm-Gg: ASbGncs9Tikr2aLQAuZGPpHywDSxZmPgeCr04Db3bfomjx5CUTsrAJbC2JkfsMzvmBM
- R/jejt5jRmdaEv5brtLZMQN7Ihhb2k6uP1XfbKTESz5XK5NTyR6g8O9w61vfLfpW/
-X-Received: by 2002:a05:6512:3b81:b0:543:e411:cc49 with SMTP id
- 2adb3069b0e04-54414ae5236mr835917e87.38.1738939337625; 
- Fri, 07 Feb 2025 06:42:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGwfbPT9+SmMymeSCsCbACLHOH1kfcWwg3VdGXacc0mLNfsmJcUutCMKNrQ3/XFYQjT7hePhNRw4T7X4QfYKp8=
-X-Received: by 2002:a05:6512:3b81:b0:543:e411:cc49 with SMTP id
- 2adb3069b0e04-54414ae5236mr835906e87.38.1738939337207; Fri, 07 Feb 2025
- 06:42:17 -0800 (PST)
+ bh=T9Wo45vttKxtpb0Sr8+0/n2Do31m5eQ5ZEhlC4STiAA=;
+ b=qzZuv/Z3qZHPFJp12KeAjveWcmo/bhkoFVNmJg+j6SoDNME55LIAlXL77WpDs/5vPH
+ ydcYwcoKXmUXv7uPy6+daa/HxF1ejZ6Dfe0Cf14x+nDXuhbrK+DzJ53hDbhLnFLwy8xC
+ jRLPUELEKk1gjlN5n+EKk/TFZkUk/iZKnuajs5E8/jIwfThYtyAcMar4Cxn49STj+AD+
+ XeeRaYTIMXpxfRGouKr0pEBhf+ylNfyLX11TDcP1HItUkZw/3n3t5HzJkP4o5/5AyKI+
+ u1M9KZD060b3A12rEXEEZ9D8qrHJQLjIjabkkhVqiHQE7g+2xr4/URVUOVtD7GRY068D
+ bBMQ==
+X-Gm-Message-State: AOJu0Yyf4jzfidjq1HnFX/SLwlCxb74/Ibhr0A4GiHUiNjQI9gSc44+n
+ +ER2JoF9NWAeyypqRN16OPbp0Zak8pOChd/8ohW93F0EM0nPq1A79cJNPDN5RLyB+Jm/SUd6GNT
+ AYpbfH1JEsmCSzvqPg3p5qquj5Wqzi4W+cgAO+QMGehE+HeQQFDgYEY2+bwW2V/a/o+QtltS/nX
+ 8FsHj8kqP209r+3RQ=
+X-Gm-Gg: ASbGnctA2R79G9rmsmqT4z6gYa1zaejHrJYtUHnmj08oKDFrsrySfCv5BOrEwe1umuG
+ Yi8Amp/k1nqNoLukjuAw2B7vhUTauSJkcVz2VZ8nuvDciOqdz0v/i2nvh4OdWtPdE
+X-Received: by 2002:a05:6512:39cf:b0:544:f8e:ff98 with SMTP id
+ 2adb3069b0e04-54414adfa4bmr1061541e87.42.1738939465991; 
+ Fri, 07 Feb 2025 06:44:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFlz6s0EIqnhMifutmdWh7w9m7ZsQBk0nf6xxgINJYYr+iJ2jWd4BWRxX6ax/XD+4xcWm/w6S7IFFy5H09e5I8=
+X-Received: by 2002:a05:6512:39cf:b0:544:f8e:ff98 with SMTP id
+ 2adb3069b0e04-54414adfa4bmr1061533e87.42.1738939465592; Fri, 07 Feb 2025
+ 06:44:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20241220142938.1300646-1-piotr.krzewinski@ericsson.com>
-In-Reply-To: <20241220142938.1300646-1-piotr.krzewinski@ericsson.com>
+References: <20241208023022.777275-1-otilibil@eurecom.fr>
+ <20241213144145.59916-1-otilibil@eurecom.fr>
+ <20241213144145.59916-2-otilibil@eurecom.fr>
+In-Reply-To: <20241213144145.59916-2-otilibil@eurecom.fr>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 7 Feb 2025 15:42:05 +0100
-X-Gm-Features: AWEUYZnrHJLm3i5h7aT8-FWe__i0Krgs6IzOgp3tE3-QCWuFtS0R5WZi2SqRJ3o
-Message-ID: <CAJFAV8x8j10kTF4Lb09CzT=d8=MTwV2jTAQ5w4aNw+yRBXqtwQ@mail.gmail.com>
-Subject: Re: [PATCH] service: fix getting service lcore attributes
-To: Piotr Krzewinski <piotr.krzewinski@ericsson.com>
-Cc: harry.van.haaren@intel.com, dev@dpdk.org, mattias.ronnblom@ericsson.com, 
- stable@dpdk.org
+Date: Fri, 7 Feb 2025 15:44:13 +0100
+X-Gm-Features: AWEUYZmZAhODgJgfHKiljfkOYUaXLp28a5PbIO2yHg2-I4_V57GHXTDPMkWzR_M
+Message-ID: <CAJFAV8z0ZaH3_c5W_mU0TxL6NjHKRvQDhrT_voWKr2TKrPFUow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] buildtools: clear out regex syntax warnings
+To: Ariel Otilibili <otilibil@eurecom.fr>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Robin Jarry <rjarry@redhat.com>, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: FD-SwQ26MvICecRuPsDdqOj83cKCNJYTM-eETQ3ka-E_1738939338
+X-Mimecast-MFC-PROC-ID: tTYhCgCNwEU6vsyA110cciXzcYtMpzBpBsZPwdexgpE_1738939466
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,19 +86,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Dec 20, 2024 at 3:30=E2=80=AFPM Piotr Krzewinski
-<piotr.krzewinski@ericsson.com> wrote:
+On Fri, Dec 13, 2024 at 3:42=E2=80=AFPM Ariel Otilibili <otilibil@eurecom.f=
+r> wrote:
 >
-> Perf test service_perf_autotest was failing after introduction
-> of lcore variables. Fixed getting of idle_ and error_ service
-> call statistics.
+> * invalid escape sequences now generate SyntaxWarning
+> * therefore changed syntax to raw string noration.
 >
-> Fixes: b24bbaedbba2 ("service: keep per-lcore state in lcore variable")
+> Link: https://docs.python.org/3/library/re.html#module-re
+> Fixes: 0aeaf75df87 ("test: define unit tests suites based on test types")
+> Fixes: 25065ef1f6c ("test: emit warning for orphaned tests")
 > Cc: stable@dpdk.org
->
-> Signed-off-by: Piotr Krzewinski <piotr.krzewinski@ericsson.com>
+> Signed-off-by: Ariel Otilibili <otilibil@eurecom.fr>
 
-Applied, thanks for the fix.
+Fixes: sha1 should mention 12 chars.
+Fixed, and applied, thanks.
 
 
 --=20
