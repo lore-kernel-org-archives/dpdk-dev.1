@@ -1,48 +1,47 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8F4C02196
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Feb 2025 15:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EA4C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 12:46:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6487441141;
-	Tue,  4 Feb 2025 16:11:40 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 1E730410D3
- for <dev@dpdk.org>; Tue,  4 Feb 2025 16:11:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1510042E00;
+	Fri,  7 Feb 2025 13:45:58 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 7984C42DD6
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 13:45:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738681894; x=1770217894;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=iQpxr+GP6TuLmg/buhBoTTghQwmf7tGytd6Jse2VkvQ=;
- b=ilQTjYYo9V4F/9FMeyo85OXx9RxsuWwEAJk4kb/mzzn8ZQ3diPcbyUhg
- OXDLSZP72baeqLjvOkKd0+bMiLAgQ31HyCiVMblnZVjc+5ocOIOvjPP2E
- Q7NKVpUcXWleiq0RmKTRAhceEyNIBPIHj9mk/jtYbmPUlEtmNK1pVMVvp
- U4Z3f82wRiinu8QVU+W06RfLgt3orJwbcmRzn9W2SfUs7Zbi6F2je7HbZ
- iRY8GLf4+vVfmM6tUYj3zdcuAGxysgBUYfsDliBWvdCciHn9ZWsZnWy1P
- 1itTdKv/njilVzGDGC8jxEHrnAxY6+NcioMeHup4fiCo4A5tZCRJuC9ma Q==;
-X-CSE-ConnectionGUID: P85KGg0OSZyZHx5XO/iZ8g==
-X-CSE-MsgGUID: A68jcXTMSmSexQBUdsk2jQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="39097093"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="39097093"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2025 07:11:32 -0800
-X-CSE-ConnectionGUID: oBqYrtQ2S0CkQ5ybAu2xpQ==
-X-CSE-MsgGUID: agDrj0+tTvqE7NVBn9caiA==
+ t=1738932354; x=1770468354;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=C4VYZMptZ0iF7ugvLSuzclHBEiwVt7GLtZLac074Ikw=;
+ b=n3Kzn63qItaDeflZIGyqfLECxXyO5hwKbqJrqgCWAid/XeG5yO4bTZCB
+ oCOqmNlHg6bV8rfHxx0+jBz/mE7y7dPd0DIBtC9zNslHPGvt6++k1/nj8
+ 2Kcow5HLXDzkSoI/KDgHsiNAbny6CvC/Z9X8JErE3/nTS0X/g+zftCMLp
+ bg4u5lk0Pv11CdxazdKHpQmGX9wFz49QTaOhwD41A0sW310Y4TjJcVESO
+ KLkDWKLurk0wIsziQi9J7oUhjElgvHsaoCjGQYZlqLSpQm5CZAr2rgKHa
+ RxEWxfR09PthQaLYcuswl9RIM67rtDUrdosAPWaSpOZxmDaK2pdgEEWAM Q==;
+X-CSE-ConnectionGUID: QXDgZQA8TvuWftfUEHVQsw==
+X-CSE-MsgGUID: ExCvnNBgS9+ioTlFtjqR4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="43331717"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="43331717"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Feb 2025 04:45:53 -0800
+X-CSE-ConnectionGUID: ZG0qsSl9RbqAWP9HHFJCbQ==
+X-CSE-MsgGUID: Ytu5P1y+QB+17JS/Q9VU8g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; d="scan'208";a="110792557"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="111953430"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa008.fm.intel.com with ESMTP; 04 Feb 2025 07:11:29 -0800
+ by orviesa007.jf.intel.com with ESMTP; 07 Feb 2025 04:45:50 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v2 03/54] net/igc: remove the driver
-Date: Tue,  4 Feb 2025 15:10:09 +0000
-Message-ID: <96ac05f1590ccf25f99f57a98961dc7bb6bd1774.1738681726.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 03/36] net/igc: remove the driver
+Date: Fri,  7 Feb 2025 12:44:55 +0000
+Message-ID: <bec3473215051849c85678d755d74dfd546eb3e5.1738932115.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1738681725.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1738932113.git.anatoly.burakov@intel.com>
 References: <cover.1738328106.git.anatoly.burakov@intel.com>
- <cover.1738681725.git.anatoly.burakov@intel.com>
+ <cover.1738932113.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -76,12 +75,12 @@ Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
  drivers/net/intel/igc/base/igc_api.h     |  111 -
  drivers/net/intel/igc/base/igc_base.c    |  190 -
  drivers/net/intel/igc/base/igc_base.h    |  127 -
- drivers/net/intel/igc/base/igc_defines.h | 1670 --------
+ drivers/net/intel/igc/base/igc_defines.h | 1671 --------
  drivers/net/intel/igc/base/igc_hw.h      | 1059 ------
- drivers/net/intel/igc/base/igc_i225.c    | 1372 -------
+ drivers/net/intel/igc/base/igc_i225.c    | 1380 -------
  drivers/net/intel/igc/base/igc_i225.h    |  110 -
  drivers/net/intel/igc/base/igc_ich8lan.h |  296 --
- drivers/net/intel/igc/base/igc_mac.c     | 2100 ----------
+ drivers/net/intel/igc/base/igc_mac.c     | 2102 ----------
  drivers/net/intel/igc/base/igc_mac.h     |   64 -
  drivers/net/intel/igc/base/igc_manage.c  |  547 ---
  drivers/net/intel/igc/base/igc_manage.h  |   65 -
@@ -89,13 +88,13 @@ Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
  drivers/net/intel/igc/base/igc_nvm.h     |   69 -
  drivers/net/intel/igc/base/igc_osdep.c   |   64 -
  drivers/net/intel/igc/base/igc_osdep.h   |  163 -
- drivers/net/intel/igc/base/igc_phy.c     | 4420 ----------------------
+ drivers/net/intel/igc/base/igc_phy.c     | 4418 ----------------------
  drivers/net/intel/igc/base/igc_phy.h     |  337 --
  drivers/net/intel/igc/base/igc_regs.h    |  732 ----
  drivers/net/intel/igc/base/meson.build   |   19 -
  drivers/net/intel/igc/igc_logs.h         |   43 -
  drivers/net/intel/igc/meson.build        |   21 -
- 26 files changed, 17172 deletions(-)
+ 26 files changed, 17181 deletions(-)
  delete mode 100644 drivers/net/intel/igc/base/README
  delete mode 100644 drivers/net/intel/igc/base/igc_82571.h
  delete mode 100644 drivers/net/intel/igc/base/igc_82575.h
@@ -2864,10 +2863,10 @@ index 5f342af7ee..0000000000
 -#endif /* _IGC_BASE_H_ */
 diff --git a/drivers/net/intel/igc/base/igc_defines.h b/drivers/net/intel/igc/base/igc_defines.h
 deleted file mode 100644
-index 280570b157..0000000000
+index 3cb2f430c5..0000000000
 --- a/drivers/net/intel/igc/base/igc_defines.h
 +++ /dev/null
-@@ -1,1670 +0,0 @@
+@@ -1,1671 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2001-2020 Intel Corporation
 - */
@@ -3395,6 +3394,7 @@ index 280570b157..0000000000
 -/* SW Semaphore Register */
 -#define IGC_SWSM_SMBI		0x00000001 /* Driver Semaphore bit */
 -#define IGC_SWSM_SWESMBI	0x00000002 /* FW Semaphore bit */
+-#define IGC_SWSM_TIMEOUT	2000       /* Driver Semaphore max timeout counter */
 -#define IGC_SWSM_DRV_LOAD	0x00000008 /* Driver Loaded Bit */
 -
 -#define IGC_SWSM2_LOCK	0x00000002 /* Secondary driver semaphore bit */
@@ -5605,10 +5605,10 @@ index f779bac094..0000000000
 -#endif
 diff --git a/drivers/net/intel/igc/base/igc_i225.c b/drivers/net/intel/igc/base/igc_i225.c
 deleted file mode 100644
-index 17a1573064..0000000000
+index 7352ba240a..0000000000
 --- a/drivers/net/intel/igc/base/igc_i225.c
 +++ /dev/null
-@@ -1,1372 +0,0 @@
+@@ -1,1380 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2001-2020 Intel Corporation
 - */
@@ -5944,11 +5944,18 @@ index 17a1573064..0000000000
 -
 -	DEBUGFUNC("igc_release_swfw_sync_i225");
 -
--	while (igc_get_hw_semaphore_i225(hw) != IGC_SUCCESS)
--		; /* Empty */
+-	/* Releasing the resource requires first getting the HW semaphore.
+-	 * If we fail to get the semaphore, there is nothing we can do,
+-	 * except log an error and quit. We are not allowed to hang here
+-	 * indefinitely, as it may cause denial of service or system crash.
+-	 */
+-	if (igc_get_hw_semaphore_i225(hw) != IGC_SUCCESS) {
+-		DEBUGOUT("Failed to release SW_FW_SYNC.\n");
+-		return;
+-	}
 -
 -	swfw_sync = IGC_READ_REG(hw, IGC_SW_FW_SYNC);
--	swfw_sync &= ~mask;
+-	swfw_sync &= ~(u32)mask;
 -	IGC_WRITE_REG(hw, IGC_SW_FW_SYNC, swfw_sync);
 -
 -	igc_put_hw_semaphore_generic(hw);
@@ -5992,7 +5999,7 @@ index 17a1573064..0000000000
 -static s32 igc_get_hw_semaphore_i225(struct igc_hw *hw)
 -{
 -	u32 swsm;
--	s32 timeout = hw->nvm.word_size + 1;
+-	s32 timeout = IGC_SWSM_TIMEOUT;
 -	s32 i = 0;
 -
 -	DEBUGFUNC("igc_get_hw_semaphore_i225");
@@ -6169,6 +6176,7 @@ index 17a1573064..0000000000
 -	}
 -
 -	for (i = 0; i < words; i++) {
+-		ret_val = -IGC_ERR_NVM;
 -		eewr = ((offset + i) << IGC_NVM_RW_ADDR_SHIFT) |
 -			(data[i] << IGC_NVM_RW_REG_DATA) |
 -			IGC_NVM_RW_REG_START;
@@ -6674,7 +6682,9 @@ index 17a1573064..0000000000
 -		scale_max = (ltr_max / 1024) < 1024 ? IGC_LTRMAXV_SCALE_1024 :
 -			    IGC_LTRMAXV_SCALE_32768;
 -		ltr_min /= scale_min == IGC_LTRMINV_SCALE_1024 ? 1024 : 32768;
+-		ltr_min -= 1;
 -		ltr_max /= scale_max == IGC_LTRMAXV_SCALE_1024 ? 1024 : 32768;
+-		ltr_max -= 1;
 -
 -		/* Only write the LTR thresholds if they differ from before. */
 -		ltrv = IGC_READ_REG(hw, IGC_LTRMINV);
@@ -6687,7 +6697,7 @@ index 17a1573064..0000000000
 -		ltrv = IGC_READ_REG(hw, IGC_LTRMAXV);
 -		if (ltr_max != (ltrv & IGC_LTRMAXV_LTRV_MASK)) {
 -			ltrv = IGC_LTRMAXV_LSNP_REQ | ltr_max |
--			      (scale_min << IGC_LTRMAXV_SCALE_SHIFT);
+-			      (scale_max << IGC_LTRMAXV_SCALE_SHIFT);
 -			IGC_WRITE_REG(hw, IGC_LTRMAXV, ltrv);
 -		}
 -	}
@@ -6715,10 +6725,8 @@ index 17a1573064..0000000000
 -	 * changed.  The get_link_status flag is set upon receiving
 -	 * a Link Status Change or Rx Sequence Error interrupt.
 -	 */
--	if (!mac->get_link_status) {
--		ret_val = IGC_SUCCESS;
+-	if (!mac->get_link_status)
 -		goto out;
--	}
 -
 -	/* First we want to see if the MII Status Register reports
 -	 * link.  If so, then we want to get the current speed/duplex
@@ -7401,10 +7409,10 @@ index ff32fc687c..0000000000
 -void igc_demote_ltr(struct igc_hw *hw, bool demote, bool link);
 diff --git a/drivers/net/intel/igc/base/igc_mac.c b/drivers/net/intel/igc/base/igc_mac.c
 deleted file mode 100644
-index 3cd6506e5e..0000000000
+index cfb74a6443..0000000000
 --- a/drivers/net/intel/igc/base/igc_mac.c
 +++ /dev/null
-@@ -1,2100 +0,0 @@
+@@ -1,2102 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2001-2020 Intel Corporation
 - */
@@ -7893,7 +7901,7 @@ index 3cd6506e5e..0000000000
 -u32 igc_hash_mc_addr_generic(struct igc_hw *hw, u8 *mc_addr)
 -{
 -	u32 hash_value, hash_mask;
--	u8 bit_shift = 0;
+-	u8 bit_shift = 1;
 -
 -	DEBUGFUNC("igc_hash_mc_addr_generic");
 -
@@ -7903,7 +7911,7 @@ index 3cd6506e5e..0000000000
 -	/* For a mc_filter_type of 0, bit_shift is the number of left-shifts
 -	 * where 0xFF would still fall within the hash mask.
 -	 */
--	while (hash_mask >> bit_shift != 0xFF)
+-	while (hash_mask >> bit_shift != 0xFF && bit_shift < 4)
 -		bit_shift++;
 -
 -	/* The portion of the address that is used for the hash table
@@ -7946,8 +7954,10 @@ index 3cd6506e5e..0000000000
 -		break;
 -	}
 -
--	hash_value = hash_mask & (((mc_addr[4] >> (8 - bit_shift)) |
--				  (((u16)mc_addr[5]) << bit_shift)));
+-	hash_value = (u32)mc_addr[4];
+-	hash_value = hash_value >> (8 - bit_shift);
+-	hash_value |= (((u32)mc_addr[5]) << bit_shift);
+-	hash_value &= hash_mask;
 -
 -	return hash_value;
 -}
@@ -10201,7 +10211,7 @@ index 10cae6d7f8..0000000000
 -#endif
 diff --git a/drivers/net/intel/igc/base/igc_nvm.c b/drivers/net/intel/igc/base/igc_nvm.c
 deleted file mode 100644
-index a7c901ab56..0000000000
+index d37a3ffb0e..0000000000
 --- a/drivers/net/intel/igc/base/igc_nvm.c
 +++ /dev/null
 @@ -1,1324 +0,0 @@
@@ -11133,14 +11143,14 @@ index a7c901ab56..0000000000
 -		DEBUGOUT("NVM Not Supported\n");
 -		return -IGC_NOT_IMPLEMENTED;
 -	}
--	*pba_num = (u32)(nvm_data << 16);
+-	*pba_num = ((u32)nvm_data << 16);
 -
 -	ret_val = hw->nvm.ops.read(hw, NVM_PBA_OFFSET_1, 1, &nvm_data);
 -	if (ret_val) {
 -		DEBUGOUT("NVM Read Error\n");
 -		return ret_val;
 -	}
--	*pba_num |= nvm_data;
+-	*pba_num |= (u32)nvm_data;
 -
 -	return IGC_SUCCESS;
 -}
@@ -11845,10 +11855,10 @@ index 92a41bb051..0000000000
 -#endif /* _IGC_OSDEP_H_ */
 diff --git a/drivers/net/intel/igc/base/igc_phy.c b/drivers/net/intel/igc/base/igc_phy.c
 deleted file mode 100644
-index 2906bae21a..0000000000
+index dd56b994af..0000000000
 --- a/drivers/net/intel/igc/base/igc_phy.c
 +++ /dev/null
-@@ -1,4420 +0,0 @@
+@@ -1,4418 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2001-2020 Intel Corporation
 - */
@@ -14217,7 +14227,8 @@ index 2906bae21a..0000000000
 -			       u32 usec_interval, bool *success)
 -{
 -	s32 ret_val = IGC_SUCCESS;
--	u16 i, phy_status;
+-	u16 phy_status;
+-	u32 i;
 -
 -	DEBUGFUNC("igc_phy_has_link_generic");
 -
@@ -15374,6 +15385,7 @@ index 2906bae21a..0000000000
 -	hw->phy.ops.read_reg(hw, PHY_CONTROL, &mii_reg);
 -	mii_reg &= ~MII_CR_POWER_DOWN;
 -	hw->phy.ops.write_reg(hw, PHY_CONTROL, mii_reg);
+-	usec_delay(300);
 -}
 -
 -/**
@@ -15999,8 +16011,6 @@ index 2906bae21a..0000000000
 -		if (ret_val)
 -			return ret_val;
 -		ret_val = igc_write_phy_reg_mdic(hw, offset, data);
--		if (ret_val)
--			return ret_val;
 -		hw->phy.ops.release(hw);
 -	} else {
 -		ret_val = igc_write_xmdio_reg(hw, (u16)offset, dev_addr,
@@ -16033,8 +16043,6 @@ index 2906bae21a..0000000000
 -		if (ret_val)
 -			return ret_val;
 -		ret_val = igc_read_phy_reg_mdic(hw, offset, data);
--		if (ret_val)
--			return ret_val;
 -		hw->phy.ops.release(hw);
 -	} else {
 -		ret_val = igc_read_xmdio_reg(hw, (u16)offset, dev_addr,
