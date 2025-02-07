@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4025DC02196
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A5CC02192
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:34:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76934427CD;
-	Fri,  7 Feb 2025 09:33:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 83FD7427C7;
+	Fri,  7 Feb 2025 09:33:53 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 43366427C0
- for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:47 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BBDCE427D5
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738917226;
+ s=mimecast20190719; t=1738917231;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=jkmQ6ytYlhPphvZ88SaLAQNi9Dkj4O4QflVcyt4FkOE=;
- b=WFReGEtyKx3kPLfp03iKpjBb00OGedUPuUXgwXYqHw4H9e3Sl1TM8XLrGIU40rK19Z/0dj
- P18bdtBLJwf5rfpk7AqOjFDvAupVkoxI9/+fpx+ZCfN58xPj//qffe/ggDChfTN9bpsiSn
- JSgbfrka7MPDmnFW7evZlnDU5yb8sNM=
+ bh=XWi87dT+F1rY9eq1BWA6Osh7DSwIWepghWFCnBrv6P4=;
+ b=cWQfxvkeW5vdwKQG3uNuX+DSCCNhoG4+eUUYa4T3mhJjjNsUh6t3gVPLTKozlKLY/bpmwT
+ AJ06LQIq5U+8XJ8fPMcDKhlvAcVPcVxqlj29q35Y9hrbI7xdJEPNrly3KYLHT9uYjdTb79
+ rX4/hea9r0ceXAGysEgCPDE+kxMb8G8=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-NzZvrbkmMRyex-aeW1bcYA-1; Fri,
- 07 Feb 2025 03:33:43 -0500
-X-MC-Unique: NzZvrbkmMRyex-aeW1bcYA-1
-X-Mimecast-MFC-AGG-ID: NzZvrbkmMRyex-aeW1bcYA
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-SUcy5lzLMLayJc4GJvgAYg-1; Fri,
+ 07 Feb 2025 03:33:48 -0500
+X-MC-Unique: SUcy5lzLMLayJc4GJvgAYg-1
+X-Mimecast-MFC-AGG-ID: SUcy5lzLMLayJc4GJvgAYg
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 596ED1800874; Fri,  7 Feb 2025 08:33:42 +0000 (UTC)
+ id 1633F180087C; Fri,  7 Feb 2025 08:33:47 +0000 (UTC)
 Received: from dmarchan.com (unknown [10.45.224.27])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id B69D51800871; Fri,  7 Feb 2025 08:33:40 +0000 (UTC)
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 2DA48180087A; Fri,  7 Feb 2025 08:33:44 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com
-Subject: [RFC 09/10] app/compress-perf: remove weak symbols
-Date: Fri,  7 Feb 2025 09:32:49 +0100
-Message-ID: <20250207083252.3131588-10-david.marchand@redhat.com>
+ andremue@linux.microsoft.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [RFC 10/10] eal: deprecate weak symbols
+Date: Fri,  7 Feb 2025 09:32:50 +0100
+Message-ID: <20250207083252.3131588-11-david.marchand@redhat.com>
 In-Reply-To: <20250207083252.3131588-1-david.marchand@redhat.com>
 References: <20250207083252.3131588-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uyzHM4lWFnEvM8Vwj6dGemIO4cgHUxBqsfwxwE9sV5c_1738917222
+X-Mimecast-MFC-PROC-ID: iJbpLKwPYy08tYfxpmiTMBDsf4wGk-7JtD0-OrtQMdc_1738917227
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -67,84 +67,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove dead code, those symbols are never used as the "strong" symbols
-are always linked in.
+Mark __rte_weak as deprecated.
+It will avoid having to support such feature with other linkers,
+plus this was never really needed.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- app/test-compress-perf/main.c | 62 -----------------------------------
- 1 file changed, 62 deletions(-)
+ doc/guides/rel_notes/release_25_03.rst | 2 ++
+ lib/eal/include/rte_common.h           | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
-index fa366123ed..70ce4316cc 100644
---- a/app/test-compress-perf/main.c
-+++ b/app/test-compress-perf/main.c
-@@ -521,65 +521,3 @@ main(int argc, char **argv)
- 	}
- 	return ret;
- }
--
--__rte_weak void *
--cperf_cyclecount_test_constructor(uint8_t dev_id __rte_unused,
--				 uint16_t qp_id __rte_unused,
--				 struct comp_test_data *options __rte_unused)
--{
--	RTE_LOG(INFO, USER1, "Cycle count test is not supported yet\n");
--	return NULL;
--}
--
--__rte_weak void
--cperf_cyclecount_test_destructor(void *arg __rte_unused)
--{
--	RTE_LOG(INFO, USER1, "Something wrong happened!!!\n");
--}
--
--__rte_weak int
--cperf_cyclecount_test_runner(void *test_ctx __rte_unused)
--{
--	return 0;
--}
--
--__rte_weak void *
--cperf_throughput_test_constructor(uint8_t dev_id __rte_unused,
--				 uint16_t qp_id __rte_unused,
--				 struct comp_test_data *options __rte_unused)
--{
--	RTE_LOG(INFO, USER1, "Benchmark test is not supported yet\n");
--	return NULL;
--}
--
--__rte_weak void
--cperf_throughput_test_destructor(void *arg __rte_unused)
--{
--
--}
--
--__rte_weak int
--cperf_throughput_test_runner(void *test_ctx __rte_unused)
--{
--	return 0;
--}
--__rte_weak void *
--cperf_verify_test_constructor(uint8_t dev_id __rte_unused,
--				 uint16_t qp_id __rte_unused,
--				 struct comp_test_data *options __rte_unused)
--{
--	RTE_LOG(INFO, USER1, "Verify test is not supported yet\n");
--	return NULL;
--}
--
--__rte_weak void
--cperf_verify_test_destructor(void *arg __rte_unused)
--{
--
--}
--
--__rte_weak int
--cperf_verify_test_runner(void *test_ctx __rte_unused)
--{
--	return 0;
--}
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index 269ab6f68a..e9a9abbb13 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -125,6 +125,8 @@ API Changes
+ * eal: The ``__rte_packed`` macro for packing data is replaced with
+   ``__rte_packed_begin`` / ``__rte_packed_end``.
+ 
++* eal: The ``__rte_weak`` macro is deprecated and will be removed in a future release.
++
+ * build: The Intel networking drivers:
+   cpfl, e1000, fm10k, i40e, iavf, ice, idpf, igc, ipn3ke and ixgbe,
+   have been moved from ``drivers/net`` to a new ``drivers/net/intel`` directory.
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 7a252c1997..2e0ee9dc7e 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -181,7 +181,11 @@ typedef uint16_t unaligned_uint16_t;
+ /**
+  * Mark a function or variable to a weak reference.
+  */
+-#define __rte_weak __attribute__((__weak__))
++#ifdef RTE_TOOLCHAIN_MSVC
++#define __rte_weak RTE_DEPRECATED(__rte_weak)
++#else
++#define __rte_weak RTE_DEPRECATED(__rte_weak) __attribute__((__weak__))
++#endif
+ 
+ /**
+  * Mark a function to be pure.
 -- 
 2.48.1
 
