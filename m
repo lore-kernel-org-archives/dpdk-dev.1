@@ -2,53 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EE7C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF84C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:11:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0A1B42E45;
-	Fri,  7 Feb 2025 15:11:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A5F942E50;
+	Fri,  7 Feb 2025 15:11:55 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5CFB142DC1
- for <dev@dpdk.org>; Fri,  7 Feb 2025 15:11:02 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A652742E50
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 15:11:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738937461;
+ s=mimecast20190719; t=1738937513;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=ivbzsLcrKKc/ngpQaYxl6ESi7c8D26wqmEWVGR5agLw=;
- b=UFPkODrurFSpNO0lkV6TIoNXv/LqqH0YcSeylS/Cr1Ogrtoipfv6bF7vbMSIyXQFKMUrg+
- 7sCme2Q8W14SzS92RAbj3LMsxETCwKHKxNfYXP+DKOP9RBklC4h0ah4fjvujl0sUEUFjWs
- n3lZJgZk4oCkyBvO8h/NV3ASTqiwIas=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=wGMuBY35pjwz6LnH0ilEmO5/lx6gdNiGu4bqLyczh7s=;
+ b=JCzXKxw2PXVY9OqihFXAJqbFNPcqGkx88NgJXseL/sBO/EDizwtqMP21DEvQhhF9lj1xzH
+ /QWslKUVyoLcQ2BlpXBaglT8s9eJLo8SmeRIF6v8NUEaB7oYHWCtoPu9F4Tl2DpKwNkScC
+ zLGcfkqFM7o9AdAuHzay/sReNR9AK9k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-552-ct7ROTsEPJmSODxzfuPdaQ-1; Fri,
- 07 Feb 2025 09:10:58 -0500
-X-MC-Unique: ct7ROTsEPJmSODxzfuPdaQ-1
-X-Mimecast-MFC-AGG-ID: ct7ROTsEPJmSODxzfuPdaQ
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-GpJhm5l9PpicLC1oOiWhzQ-1; Fri,
+ 07 Feb 2025 09:11:50 -0500
+X-MC-Unique: GpJhm5l9PpicLC1oOiWhzQ-1
+X-Mimecast-MFC-AGG-ID: GpJhm5l9PpicLC1oOiWhzQ
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 098CE1800871; Fri,  7 Feb 2025 14:10:57 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 5A3491800874; Fri,  7 Feb 2025 14:11:49 +0000 (UTC)
 Received: from [10.45.242.29] (unknown [10.45.242.29])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C7F7E1800360; Fri,  7 Feb 2025 14:10:53 +0000 (UTC)
-Message-ID: <c0459ff0-d7e9-4844-8053-932a873bd909@redhat.com>
-Date: Fri, 7 Feb 2025 15:10:50 +0100
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 34A161800352; Fri,  7 Feb 2025 14:11:47 +0000 (UTC)
+Message-ID: <d471422d-0e9c-476c-bd06-5e88fb3dc8e2@redhat.com>
+Date: Fri, 7 Feb 2025 15:11:45 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] vhost: include AKCIPHER algorithms in crypto_config
-To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
- Akhil Goyal <gakhil@marvell.com>, Chenbo Xia <chenbox@nvidia.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>
-Cc: jerinj@marvell.com, anoobj@marvell.com
-References: <20241119084145.1047-1-gmuthukrishn@marvell.com>
- <20250107182551.2141-1-gmuthukrishn@marvell.com>
+Subject: Re: [PATCH 1/1] vhost: add NULL callback checks
+To: Kevin Traynor <ktraynor@redhat.com>, dev@dpdk.org
+Cc: stable@dpdk.org
+References: <20250124141408.419674-1-ktraynor@redhat.com>
+ <20250124141408.419674-2-ktraynor@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -93,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250107182551.2141-1-gmuthukrishn@marvell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250124141408.419674-2-ktraynor@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fLOrUuNewcanPF4gfQFyqbfuujkR8ZOEYYCaDy78HVo_1738937457
+X-Mimecast-MFC-PROC-ID: nl-v2EQY3Ai29O3odD4j0hcNMz0Jh7mhRYGbGMzYcX8_1738937509
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -116,32 +114,23 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 1/7/25 7:25 PM, Gowrishankar Muthukrishnan wrote:
-> Update virtio_crypto_config structure to include AKCIPHER algorithms,
-> as per VirtIO standard.
+On 1/24/25 3:14 PM, Kevin Traynor wrote:
+> rte_vhost_driver_callback_register() does not specify
+> any mandatory callbacks in struct rte_vhost_device_ops.
 > 
-> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> Acked-by: Akhil Goyal <gakhil@marvell.com>
+> Add some missing NULL checks before calling rte_vhost_device_ops
+> callbacks.
+> 
+> Fixes: 4796ad63ba1f ("examples/vhost: import userspace vhost application")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 > ---
-> v3:
->   - rebased on main.
-> 
->   lib/vhost/virtio_crypto.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/vhost/virtio_crypto.h b/lib/vhost/virtio_crypto.h
-> index e3b93573c8..28877a5da3 100644
-> --- a/lib/vhost/virtio_crypto.h
-> +++ b/lib/vhost/virtio_crypto.h
-> @@ -410,7 +410,7 @@ struct virtio_crypto_config {
->   	uint32_t max_cipher_key_len;
->   	/* Maximum length of authenticated key */
->   	uint32_t max_auth_key_len;
-> -	uint32_t reserve;
-> +	uint32_t akcipher_algo;
->   	/* Maximum size of each crypto request's content */
->   	uint64_t max_size;
->   };
+>   lib/vhost/vduse.c      | 3 ++-
+>   lib/vhost/vhost.c      | 5 +++--
+>   lib/vhost/vhost_user.c | 3 ++-
+>   3 files changed, 7 insertions(+), 4 deletions(-
+
 Applied to next-virtio/for-next-net.
 
 Thanks,
