@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3F4C02194
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AE9C02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 14:32:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 299C142E62;
-	Fri,  7 Feb 2025 15:31:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 35B0542DC1;
+	Fri,  7 Feb 2025 15:32:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id BDCC6410E3;
- Fri,  7 Feb 2025 15:31:22 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 42040410E3;
+ Fri,  7 Feb 2025 15:32:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1738938683; x=1770474683;
+ t=1738938759; x=1770474759;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
  bh=L5j5LvKJ7F1665oV/aKLDcZGyxr15Ca1j7Lqwpti6cs=;
- b=bKC/ZrlQTLLsl944LtewzM8TsIQda8STRjHAngOkPE5Z5s6gTgTQNzS/
- KHOVp6jQXRjUnQBMewIP++qIgl1oT147kbT2zarsMjHKpeQMacokg7BZ4
- XHKDENQa8jfyXLSr8hq/yEFfsYPKE+3yfOs9fcWgJOv7AZsj3POe3JrvT
- 6hTcqGdhGet5Hk/hNSXrPq+JA3SkeIXwa9LZrIlvEkdfBOONoimnthECw
- iarvnEKLGu8XXFFVMC+lxdwU6hVmpuNgN59UkaNF+KroimxWqoKF+dFwS
- a9lIwQ64bMXM5bRBWAYkPelHNFRbURzJi6jS0YQQmsqyZj3jYtUkobRx/ w==;
-X-CSE-ConnectionGUID: +z4e4hNRTNGdJjM/2KTqag==
-X-CSE-MsgGUID: xto4j9C9QoyXkQEF+H+kLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11338"; a="64936452"
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="64936452"
+ b=YxaPN9dEUf7Ei+q8sqfW6mhRD7tUu81f6gNgLuxINYvc29zSVL075pa5
+ gGF/y6Omf+wxce+GWPaplBYY2XxN/aFS/hF5xYAeTXp2mAPFvuHRSYl0Z
+ mf864PE1GpykYq6cRgo1TfdnX7QdUBdGxQAz7Fa4bdA0SgyahVzDL2/Oj
+ gfKSx1KttSONzuP2HqHxvr/IW62zzP41UQxONTJ3cxB/MDr2x7TFmzNfl
+ mTLhjX5ScDlkJYjWNR8XXiTH9ED9zeUhRe8Jswr2yxJRAJorV0KjdNzOr
+ Pr6J4eIsTB1+cJ/dVK8x+MucLwkWzfE44JLMSGwrGFWF7jVUnAwTVwf0x Q==;
+X-CSE-ConnectionGUID: wa64PpOySluPtkw16VIG5Q==
+X-CSE-MsgGUID: ZVebc2WNQtiuAdGbXXFgtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11338"; a="64936559"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="64936559"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2025 06:31:22 -0800
-X-CSE-ConnectionGUID: wMakghNjSaygx/rjzlZ+uQ==
-X-CSE-MsgGUID: yHNTwGOXSnSDfS3TKNwDGg==
+ 07 Feb 2025 06:32:38 -0800
+X-CSE-ConnectionGUID: ecLv5+ouRG6wD+MVuepjhQ==
+X-CSE-MsgGUID: BCNylDLgREiMKQrwageOeg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="111322404"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; d="scan'208";a="111322579"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.141])
- by orviesa009.jf.intel.com with ESMTP; 07 Feb 2025 06:31:21 -0800
+ by orviesa009.jf.intel.com with ESMTP; 07 Feb 2025 06:32:37 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
 	stable@dpdk.org
-Subject: [PATCH] test: improve resiliency of malloc autotest
-Date: Fri,  7 Feb 2025 14:31:11 +0000
-Message-ID: <20250207143111.850421-1-bruce.richardson@intel.com>
+Subject: [PATCH v4] test: improve resiliency of malloc autotest
+Date: Fri,  7 Feb 2025 14:32:34 +0000
+Message-ID: <20250207143234.850682-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250117125912.985475-1-bruce.richardson@intel.com>
 References: <20250117125912.985475-1-bruce.richardson@intel.com>
