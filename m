@@ -2,56 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F8CC0219B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7346BC02196
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 08:33:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CEDD8427B8;
-	Fri,  7 Feb 2025 09:33:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C8FC7427C1;
+	Fri,  7 Feb 2025 09:33:15 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 891AE427B7
- for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 174CE427C0
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 09:33:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1738917189;
+ s=mimecast20190719; t=1738917193;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pgGdQIfzfTGXcmt33fxUK3CQYs1OJyllsC6ileAvHyM=;
- b=PwWHIkBHCX4g9WJwKMLQMRU+t1QaRSTcEhcgTmst6Wf7zJG4WwNAfdUTtkNuLYtb7BByyR
- JiJgpdonTDRPaoUReA5E11cAOJ2BdVPsEyVY62rhQoabN2bV/bDFtsKZb3WQzxnIY/vFse
- xcqjGuDn1olQzrfvpowYAu9XR0XKPbs=
+ bh=pRyfhKpU327LAZSKwaKAzat/YlIjCz55Lm6lAfubx7A=;
+ b=MgxGS387nmPWiGgBdyVaFSfuepxahE4JuW+4Nt8W68vkHUkWu/RQ2999Qt++iYOs8Fw04B
+ 9aAKudPqZi2dI3ZkGR3KHLeRSMqhalPkmp9Z5SRE8Eygc2hrNGM/SwMnyrr9H2R5+bR2k3
+ NXNlFRW+un19Z8w0PFTuXm7SY+ZUJQ0=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-OukGO2QZMGqQNAJGIGLy0w-1; Fri,
- 07 Feb 2025 03:33:03 -0500
-X-MC-Unique: OukGO2QZMGqQNAJGIGLy0w-1
-X-Mimecast-MFC-AGG-ID: OukGO2QZMGqQNAJGIGLy0w
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-343-XeV1UI8EP466LW1mxhQHFg-1; Fri,
+ 07 Feb 2025 03:33:08 -0500
+X-MC-Unique: XeV1UI8EP466LW1mxhQHFg-1
+X-Mimecast-MFC-AGG-ID: XeV1UI8EP466LW1mxhQHFg
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5B52B180087B; Fri,  7 Feb 2025 08:33:02 +0000 (UTC)
+ id 5D2661800878; Fri,  7 Feb 2025 08:33:07 +0000 (UTC)
 Received: from dmarchan.com (unknown [10.45.224.27])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EC0071955BCB; Fri,  7 Feb 2025 08:32:59 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 3F2C31800570; Fri,  7 Feb 2025 08:33:04 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>
-Subject: [RFC 01/10] bus/auxiliary: remove weak symbols
-Date: Fri,  7 Feb 2025 09:32:41 +0100
-Message-ID: <20250207083252.3131588-2-david.marchand@redhat.com>
+ andremue@linux.microsoft.com, Kai Ji <kai.ji@intel.com>
+Subject: [RFC 02/10] common/qat: remove weak symbols
+Date: Fri,  7 Feb 2025 09:32:42 +0100
+Message-ID: <20250207083252.3131588-3-david.marchand@redhat.com>
 In-Reply-To: <20250207083252.3131588-1-david.marchand@redhat.com>
 References: <20250207083252.3131588-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1eXQIqwCuOzUK4a2V1rTR2mvga5eLLGTxNrLYV-tM9k_1738917182
+X-Mimecast-MFC-PROC-ID: AFoga6Nybf8LXOSK77nTlfv02l7C2KhiV4YWjGEYSQ4_1738917187
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,59 +67,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than use weak symbols, expose stubs symbols when needed.
+Remove dead code, those symbols are never used as the "strong" symbols
+are always linked in.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/bus/auxiliary/auxiliary_common.c | 6 ++++--
- drivers/bus/auxiliary/meson.build        | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/common/qat/qat_qp.c | 8 --------
+ drivers/common/qat/qat_qp.h | 5 -----
+ 2 files changed, 13 deletions(-)
 
-diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index e6cbc4d356..b444eb43ef 100644
---- a/drivers/bus/auxiliary/auxiliary_common.c
-+++ b/drivers/bus/auxiliary/auxiliary_common.c
-@@ -36,12 +36,13 @@ auxiliary_devargs_lookup(const char *name)
- 	return NULL;
+diff --git a/drivers/common/qat/qat_qp.c b/drivers/common/qat/qat_qp.c
+index 4bf9bac23e..0d2bbdb8a5 100644
+--- a/drivers/common/qat/qat_qp.c
++++ b/drivers/common/qat/qat_qp.c
+@@ -944,11 +944,3 @@ qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp)
+ 	return ret;
  }
- 
-+#ifndef AUXILIARY_OS_SUPPORTED
- /*
-  * Test whether the auxiliary device exist.
-  *
-  * Stub for OS not supporting auxiliary bus.
-  */
--__rte_weak bool
-+bool
- auxiliary_dev_exists(const char *name)
- {
- 	RTE_SET_USED(name);
-@@ -53,11 +54,12 @@ auxiliary_dev_exists(const char *name)
-  *
-  * Stub for OS not supporting auxiliary bus.
-  */
+ #endif
+-
 -__rte_weak int
-+int
- auxiliary_scan(void)
- {
- 	return 0;
- }
-+#endif /* AUXILIARY_OS_SUPPORTED */
+-qat_comp_process_response(void **op __rte_unused, uint8_t *resp __rte_unused,
+-			  void *op_cookie __rte_unused,
+-			  uint64_t *dequeue_err_count __rte_unused)
+-{
+-	return  0;
+-}
+diff --git a/drivers/common/qat/qat_qp.h b/drivers/common/qat/qat_qp.h
+index f0ea907503..5ccaedefa7 100644
+--- a/drivers/common/qat/qat_qp.h
++++ b/drivers/common/qat/qat_qp.h
+@@ -156,11 +156,6 @@ int
+ qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp);
+ #endif
  
- /*
-  * Update a device's devargs being scanned.
-diff --git a/drivers/bus/auxiliary/meson.build b/drivers/bus/auxiliary/meson.build
-index 10468fd130..38d2f05d4b 100644
---- a/drivers/bus/auxiliary/meson.build
-+++ b/drivers/bus/auxiliary/meson.build
-@@ -7,6 +7,7 @@ sources = files(
-         'auxiliary_params.c',
- )
- if is_linux
-+    cflags += '-DAUXILIARY_OS_SUPPORTED'
-     sources += files(
-             'linux/auxiliary.c',
-     )
+-/* Needed for weak function*/
+-int
+-qat_comp_process_response(void **op __rte_unused, uint8_t *resp __rte_unused,
+-			  void *op_cookie __rte_unused,
+-			  uint64_t *dequeue_err_count __rte_unused);
+ int
+ qat_read_qp_config(struct qat_pci_device *qat_dev);
+ 
 -- 
 2.48.1
 
