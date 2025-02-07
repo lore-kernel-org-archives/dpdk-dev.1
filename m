@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229F2C02196
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Feb 2025 21:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1114FC02194
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 01:23:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A29C641133;
-	Thu,  6 Feb 2025 22:42:49 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id EA30D40EE2
- for <dev@dpdk.org>; Thu,  6 Feb 2025 22:42:48 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-21f20666e72so30394105ad.1
- for <dev@dpdk.org>; Thu, 06 Feb 2025 13:42:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CF637402D5;
+	Fri,  7 Feb 2025 02:23:03 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id CEE28402D5
+ for <dev@dpdk.org>; Fri,  7 Feb 2025 02:23:01 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-21f2f386cbeso27074705ad.0
+ for <dev@dpdk.org>; Thu, 06 Feb 2025 17:23:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738878168;
- x=1739482968; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738891381;
+ x=1739496181; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=o33Muht/DwEhftmXABDYXIeCSdwYG/QWNul/FYJI1e8=;
- b=WNj3nhA9IB+ytCaeJyp/8UoO8hkagEBOte1xSf0OA58XRPIOMKmbrS6B4/VCQ3nOdg
- M8se7d1LSEAvV9BS+AkfaK1r8q0f4TL4icqM7tESVkRoG74IyeBe60Y9S1Q9oqGUafSS
- rsmEOWxsoHohsS/Gk7nklM0irgTTgj72LQGZY37wnntAgT37nMbjkbPNwAhBA8GrSsRx
- SY9O9fOeXPOBTOXHfjzr+oKF3HUZ057SHC/6xawmMA0uAvAZmsk9DauFSNLdkslZoSFR
- oK29x+V4be2IF6+SATBLpiuei4HtIgdXefHEIK+ukOxg97sL13Ogd9MW1K8HzBxpoD5e
- bcRA==
+ bh=1q2D/wsl6nt5vv2pTOfDxMsPFqf4QB3Z6VpGvo2vCQE=;
+ b=bLYsj4mfqqwUs0uXq93E3dpk96m3tF85FTKYbqRY68O2yNbDWdqLClVfg02J3kG544
+ 0++xAY5Bh3NSXr1Sdmm+zNjvfeLApgj5OlcaYlUpCyNuKdPTfg30pY0m9d/Iaho4kF2W
+ ccoewysesfQZqmuaJwDOZD/nzcmY8TM4QIbR3yh/i94vrj0qrS4tLx62SEAd35waUYEB
+ iym6T5gjwrK1O/qGiGQC09AA8JbwnqRZk7SPNEcoi7c7PynDxYqSPMi8L5yskk7AMwIv
+ HDyoFZto6vF2tlAJPoVzeiWyJ4qf5gIJ8/CooPxTmqJqSAX3K89byGzR+lZqXQwraMOP
+ RtNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1738878168; x=1739482968;
+ d=1e100.net; s=20230601; t=1738891381; x=1739496181;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=o33Muht/DwEhftmXABDYXIeCSdwYG/QWNul/FYJI1e8=;
- b=n4oeAh6uOMWpo9IBjxSab+kPzDKQIxvlX8adwoKS3gWComxaUAtlHfqHW7fjd/RA3r
- 5qpOe3AezBLROX60CC6nGL7bLqrg8d5ApCOzFOJDd4xHd7IgDNhvsQfzVs3wfGj2BT2k
- offABneHoK8DWdliLM5S6kRFo8wFYgOe2tFXlXmFE31PU8u5bE10/ne2LXkYUPJ3HeVF
- cjvEbmcjs5HMNlkJH0v2QCyZKR5gkrcJM5Q/wRaodTG0Lr82P4NTifMBzF6p4f20UpQY
- BDoXFkYUwp8WSTrRm2lW2KqGqjq6gNlXPP0ikGgrIuji7ZwEl3m8K0j889HlfDvenFUO
- DbVQ==
-X-Gm-Message-State: AOJu0Yxq1QmfX8KuHbl4frje64aVkjI2A3EOs4Q5VAWNB/Sm3R06EqFZ
- UFmjtRtoqqCh/X0ytfaRkuNqP7UeAiTbFLbqDLp/EZTMkgw1Mhni5cT4EVbgSRc=
-X-Gm-Gg: ASbGnctr9sjXG3EhbvW8dF4i6+ZZMa6OOFSJ8/sFci8RvLkjzFHg1BKjR2gGreCWcb/
- kYU6cYAGAap/o1bjTZHWy6kYb/39nMB6PbI9+3/w0b4femVcjVEmca1ohGjhnHFMvlcBw09wot2
- msBJzfbNcu/avOfUnJ3GhX1vmx6FfiRMfoZ4j1XT++cMOa8S0RFPEcGR4gFz9zV0fOAeGlTBQMH
- kVoW4QeP7DRAfpFu8mplAct5iXkF7TYYlfDUN4gzbjEUg3VcCwRuTWROViodYsj+3rjeALlUsuC
- cbYMF0Qp8gZdqkYKS5bsb2x0AYd1/QBxP3JPzJqEUqUhBVQoQCpaerdyAtHn6KDNzsUp
-X-Google-Smtp-Source: AGHT+IEWxpHWDvpbhOvn19pWZ6hivmCB3EhgBJwlD2lP3t/4mGHLw5Pe2rb2Xb50upRhUUDqmo7JAQ==
-X-Received: by 2002:a17:902:da90:b0:21e:ff31:531 with SMTP id
- d9443c01a7336-21f4e6e8d6amr13399375ad.22.1738878167826; 
- Thu, 06 Feb 2025 13:42:47 -0800 (PST)
+ bh=1q2D/wsl6nt5vv2pTOfDxMsPFqf4QB3Z6VpGvo2vCQE=;
+ b=hDpEIvUj5iPTEPyIaDfNoc1330vcZtwpxtfKOkFOazHkle/yDx2U0GLgfPIHwfyjx1
+ PM7zKyT08rZD46vWW9Qzf6s59Q6nPZm6OKBeEVmiFndPOjqk9aMsNYqyS7/hmwXX4dCf
+ 6aLjhpFP2GcmWHxAv5FyvwbHdMtZt3dQr6Qd/+GUC5uugbcT/I0I2C9EljmowZfonpMz
+ YFI2IVvq+lo9k5mp9x+cwAkSPwEIwNPpfQTUxlnBGTBf2ArOXFShi+cxA4GuTzSdZqq3
+ s7v82FDzvu4pF+cDFwDRmkd80eFxygtq5WO5kArIisH6vd1Ob5+wSP4fYn0riPXwXE82
+ /j2g==
+X-Gm-Message-State: AOJu0Yxk7me9WG5r0fHG+rpiBKSzZBfoDKMYTTjQgfTbXmgniAHfIN/9
+ uDuD2MN3OGN7eDQu66no5TvP4yJtTSMeQWkiT6gwMQn8mJilwM7oDWqNhQUZZoA=
+X-Gm-Gg: ASbGnctcF65v9xj5SEv4yyARLFB2m2TAj6XgRtEpXdCbDYiWrw0J6UA6wAwwGmcGwJA
+ DYlszT0pdrGEgaIGX+ym/gOC+KVrBVKUqPHhiZgQEZHEDhlwcwV/A1lRmNVZ+zNSkr5KZOxH7tf
+ a3t9NNP6qDaIJp6ie1yIlnZb9a8GVPJuSHTQhZh2N2p0xkFyraPb0S0aKBYaNeh4QeMCTDqfCR2
+ VHXbAntNEd5t18bEwC1bVbRW05Qi/F40wYUi1Eof9DAMMMSuusGeps9DtoI0BjqKjVZQ0p6PfLK
+ 5Wq2J86Whw+a0IbD/KGN2OSq86zzw3bdsX3HwTu9/mChXwnr+eAXNFECQFEqXy6Y4+z9
+X-Google-Smtp-Source: AGHT+IGKk82OyiZ8IZEagroHXcADadLIZGeV1lObIc5ypuPcmmhhx5FYmpECjIp+Q1JSWuTELPB78Q==
+X-Received: by 2002:a17:903:2311:b0:21f:3e2d:7d50 with SMTP id
+ d9443c01a7336-21f4e6a0110mr20863015ad.8.1738891380736; 
+ Thu, 06 Feb 2025 17:23:00 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f363df2b4sm17711685ad.0.2025.02.06.13.42.47
+ d9443c01a7336-21f3687df02sm19319855ad.208.2025.02.06.17.23.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Feb 2025 13:42:47 -0800 (PST)
-Date: Thu, 6 Feb 2025 13:42:45 -0800
+ Thu, 06 Feb 2025 17:23:00 -0800 (PST)
+Date: Thu, 6 Feb 2025 17:22:58 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ariel Otilibili <ariel.otilibili@6wind.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>, Maryam Tahhan
- <mtahhan@redhat.com>, Ciara Loftus <ciara.loftus@intel.com>
-Subject: Re: [PATCH v8 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-Message-ID: <20250206134245.0989988f@hermes.local>
-In-Reply-To: <20250206204645.1564535-3-ariel.otilibili@6wind.com>
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250206204645.1564535-1-ariel.otilibili@6wind.com>
- <20250206204645.1564535-3-ariel.otilibili@6wind.com>
+To: Wei Hu <weh@microsoft.com>
+Cc: dev@dpdk.org, ferruh.yigit@amd.com, andrew.rybchenko@oktetlabs.ru, Long
+ Li <longli@microsoft.com>, stable@dpdk.org
+Subject: Re: [PATCH 1/1] net/mana: do not ring short doorbell for every mbuf
+ allocation
+Message-ID: <20250206172258.20ca9bf3@hermes.local>
+In-Reply-To: <20250206100744.734612-1-weh@microsoft.com>
+References: <20250206100744.734612-1-weh@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,26 +81,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  6 Feb 2025 21:46:45 +0100
-Ariel Otilibili <ariel.otilibili@6wind.com> wrote:
+On Thu,  6 Feb 2025 02:07:43 -0800
+Wei Hu <weh@microsoft.com> wrote:
 
->  
-> +static inline struct xdp_desc *
-> +reserve_and_fill(struct pkt_tx_queue *txq, struct rte_mbuf *mbuf,
-> +		 struct xsk_umem_info *umem, void **pkt_ptr)
-> +{
-> +	struct xdp_desc *desc = NULL;
-> +	uint64_t addr, offset;
-> +	uint32_t idx_tx;
-> +
-> +	if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx))
-> +		goto out;
-> +
-> +	desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
-> +	desc->len = mbuf->pkt_len;
-> +
-> +	addr = (uint64_t)mbuf - (uint64_t)umem->buffer
-> +		- umem->mb_pool->header_size;
+> In the 32bit rx path, it rings short doorbell after receiving
+> one packet and alocating the new mbuf. This significantly
+> impacets the rx performance. Fix this problem by ringing the
+> short doorbell in batch.
+> 
+> Fixes: eeb37809601b ("net/mana: use bulk mbuf allocation for Rx WQEs")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Wei Hu <weh@microsoft.com>
 
-addr (and the cast of mbuf) should probably be uintptr_t since the
-intent is to do calculations with pointers.
+Applied to next-net with spelling fixes to the commit message.
