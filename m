@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23255C02199
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 02:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C69DC0219B
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 02:46:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D52B8406BB;
-	Sat,  8 Feb 2025 03:45:04 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EC6EF406B4;
+	Sat,  8 Feb 2025 03:45:05 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 2B8064067E
+ by mails.dpdk.org (Postfix) with ESMTP id 2B8C840684
  for <dev@dpdk.org>; Sat,  8 Feb 2025 03:44:57 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 9BFB0A3EE1; Sat,  8 Feb 2025 10:44:21 +0800 (CST)
+ id C2A8AA3246; Sat,  8 Feb 2025 10:44:21 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v7 17/28] net/rnp: add Rx scatter segment version
-Date: Sat,  8 Feb 2025 10:43:54 +0800
-Message-Id: <1738982645-34550-18-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v7 18/28] net/rnp: add Tx multiple segment version
+Date: Sat,  8 Feb 2025 10:43:55 +0800
+Message-Id: <1738982645-34550-19-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1738982645-34550-1-git-send-email-caowenbo@mucse.com>
 References: <1738982645-34550-1-git-send-email-caowenbo@mucse.com>
@@ -36,205 +36,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support scatter multi segment received.
+add support multiple segs mbuf send.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini |   2 +
- doc/guides/nics/rnp.rst          |   2 +
- drivers/net/rnp/rnp_rxtx.c       | 131 ++++++++++++++++++++++++++++++++++++++-
- drivers/net/rnp/rnp_rxtx.h       |   2 +
- 4 files changed, 135 insertions(+), 2 deletions(-)
+ drivers/net/rnp/rnp_rxtx.c | 126 ++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.h |   3 +-
+ 2 files changed, 126 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 6d13370..c68d6fb 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -15,5 +15,7 @@ RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
- Inner RSS            = Y
-+Jumbo frame          = Y
-+Scattered Rx         = Y
- Linux                = Y
- x86-64               = Y
-diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 9fa7ad9..db64104 100644
---- a/doc/guides/nics/rnp.rst
-+++ b/doc/guides/nics/rnp.rst
-@@ -17,6 +17,8 @@ Features
- - Promiscuous mode
- - Link state information
- - MTU update
-+- Jumbo frames
-+- Scatter-Gather IO support
- 
- Prerequisites
- -------------
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index e8c1444..c80cc8b 100644
+index c80cc8b..777ce7b 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -830,7 +830,6 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
- 		if (txq->tx_next_rs > txq->attr.nb_desc)
- 			txq->tx_next_rs = txq->tx_rs_thresh - 1;
+@@ -374,9 +374,11 @@ static int rnp_alloc_txbdr(struct rte_eth_dev *dev,
+ 		sw_ring[prev].next_id = idx;
+ 		prev = idx;
  	}
--
- 	txq->tx_tail = i;
++	txq->last_desc_cleaned = txq->attr.nb_desc - 1;
+ 	txq->nb_tx_free = txq->attr.nb_desc - 1;
+ 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
+ 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
++	txq->nb_tx_used = 0;
+ 	txq->tx_tail = 0;
  
- 	rte_wmb();
-@@ -839,9 +838,137 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
- 	return start;
+ 	size = (txq->attr.nb_desc + RNP_TX_MAX_BURST_SIZE);
+@@ -860,6 +862,7 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
+ 		rxe->mbuf = nmb;
+ 		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
+ 	}
++	rxq->rxrearm_nb++;
+ 	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
+ 		rxq->rxrearm_nb -= rxq->rx_free_thresh;
+ 		rxq->rxrearm_start += rxq->rx_free_thresh;
+@@ -927,7 +930,6 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
+ 			first_seg->nb_segs++;
+ 			last_seg->next = rxm;
+ 		}
+-		rxq->rxrearm_nb++;
+ 		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
+ 			last_seg = rxm;
+ 			continue;
+@@ -950,6 +952,106 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
+ 	return nb_rx;
  }
  
-+static int
-+rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
-+		   volatile struct rnp_rx_desc *rxbd,
-+		   struct rnp_rxsw_entry *rxe,
-+		   bool bulk_alloc)
++static __rte_always_inline uint16_t
++rnp_multiseg_clean_txq(struct rnp_tx_queue *txq)
 +{
-+	struct rte_mbuf *nmb = NULL;
-+	uint16_t update_tail;
++	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
++	struct rnp_txsw_entry *sw_ring = txq->sw_ring;
++	volatile struct rnp_tx_desc *txbd;
++	uint16_t desc_to_clean_to;
++	uint16_t nb_tx_to_clean;
 +
-+	if (!bulk_alloc) {
-+		nmb = rte_mbuf_raw_alloc(rxq->mb_pool);
-+		if (unlikely(!nmb)) {
-+			rte_eth_devices[rxq->attr.port_id].data->
-+				rx_mbuf_alloc_failed++;
-+			return -ENOMEM;
-+		}
-+		rxbd->d.pkt_addr = 0;
-+		rxbd->d.cmd = 0;
-+		rxe->mbuf = NULL;
-+		rxe->mbuf = nmb;
-+		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
-+	}
-+	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
-+		rxq->rxrearm_nb -= rxq->rx_free_thresh;
-+		rxq->rxrearm_start += rxq->rx_free_thresh;
-+		if (rxq->rxrearm_start >= rxq->attr.nb_desc)
-+			rxq->rxrearm_start = 0;
-+		update_tail = (uint16_t)((rxq->rxrearm_start == 0) ?
-+				(rxq->attr.nb_desc - 1) : (rxq->rxrearm_start - 1));
-+		rte_io_wmb();
-+		RNP_REG_WR(rxq->rx_tailreg, 0, update_tail);
-+	}
++	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
++	desc_to_clean_to = desc_to_clean_to & (txq->attr.nb_desc - 1);
 +
-+	return 0;
++	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
++	txbd = &txq->tx_bdr[desc_to_clean_to];
++	if (!(txbd->d.cmd & RNP_CMD_DD))
++		return txq->nb_tx_free;
++
++	if (last_desc_cleaned > desc_to_clean_to)
++		nb_tx_to_clean = (uint16_t)((txq->attr.nb_desc -
++					last_desc_cleaned) + desc_to_clean_to);
++	else
++		nb_tx_to_clean = (uint16_t)(desc_to_clean_to -
++				last_desc_cleaned);
++
++	txbd->d.cmd = 0;
++
++	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
++
++	return txq->nb_tx_free;
 +}
 +
 +static __rte_always_inline uint16_t
-+rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
-+		 uint16_t nb_pkts)
++rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct rnp_rx_queue *rxq = (struct rnp_rx_queue *)rx_queue;
-+	volatile struct rnp_rx_desc *bd_ring = rxq->rx_bdr;
-+	struct rte_mbuf *first_seg = rxq->pkt_first_seg;
-+	struct rte_mbuf *last_seg = rxq->pkt_last_seg;
-+	struct rnp_rxsw_entry *sw_ring = rxq->sw_ring;
-+	volatile struct rnp_rx_desc *rxbd;
-+	volatile struct rnp_rx_desc rxd;
-+	struct rnp_rxsw_entry *rxe;
-+	struct rte_mbuf *rxm;
-+	uint16_t rx_pkt_len;
-+	uint16_t nb_rx = 0;
-+	uint16_t rx_status;
-+	uint16_t rx_id;
++	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *txe, *txn;
++	struct rte_mbuf *tx_pkt, *m_seg;
++	uint16_t send_pkts = 0;
++	uint16_t nb_used_bd;
++	uint16_t tx_last;
++	uint16_t nb_tx;
++	uint16_t tx_id;
 +
-+	if (unlikely(!rxq->rxq_started || !rxq->rx_link))
++	if (unlikely(!txq->txq_started || !txq->tx_link))
 +		return 0;
-+	rx_id = rxq->rx_tail;
-+	while (nb_rx < nb_pkts) {
-+		rxbd = &bd_ring[rx_id];
-+		rx_status = rxbd->wb.qword1.cmd;
-+		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_DD)))
-+			break;
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+		rxd = *rxbd;
-+		rxe = &sw_ring[rx_id];
-+		rxm = rxe->mbuf;
-+		if (rnp_rxq_bulk_alloc(rxq, rxbd, rxe, false))
-+			break;
-+		rx_id = (rx_id + 1) & rxq->attr.nb_desc_mask;
-+		rte_prefetch0(sw_ring[rx_id].mbuf);
-+		if ((rx_id & 0x3) == 0) {
-+			rte_prefetch0(&bd_ring[rx_id]);
-+			rte_prefetch0(&sw_ring[rx_id]);
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		rnp_multiseg_clean_txq(txq);
++	if (unlikely(txq->nb_tx_free == 0))
++		return 0;
++	tx_id = txq->tx_tail;
++	txbd = &txq->tx_bdr[tx_id];
++	txe = &txq->sw_ring[tx_id];
++	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		tx_pkt = tx_pkts[nb_tx];
++		nb_used_bd = tx_pkt->nb_segs;
++		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
++		if (tx_last >= txq->attr.nb_desc)
++			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
++		if (nb_used_bd > txq->nb_tx_free)
++			if (nb_used_bd > rnp_multiseg_clean_txq(txq))
++				break;
++		m_seg = tx_pkt;
++		do {
++			txbd = &txq->tx_bdr[tx_id];
++			txn = &txq->sw_ring[txe->next_id];
++			if (txe->mbuf) {
++				rte_pktmbuf_free_seg(txe->mbuf);
++				txe->mbuf = NULL;
++			}
++			txe->mbuf = m_seg;
++			txe->last_id = tx_last;
++			txbd->d.addr = rnp_get_dma_addr(&txq->attr, m_seg);
++			txbd->d.blen = rte_cpu_to_le_32(m_seg->data_len);
++			txbd->d.cmd &= ~RNP_CMD_EOP;
++			txbd->d.cmd |= RNP_DATA_DESC;
++			m_seg = m_seg->next;
++			tx_id = txe->next_id;
++			txe = txn;
++		} while (m_seg != NULL);
++		txbd->d.cmd |= RNP_CMD_EOP;
++		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
++		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
++		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
++			txq->nb_tx_used = 0;
++			txbd->d.cmd |= RNP_CMD_RS;
 +		}
-+		rx_pkt_len = rxd.wb.qword1.lens;
-+		rxm->data_len = rx_pkt_len;
-+		rxm->data_off = RTE_PKTMBUF_HEADROOM;
-+		if (!first_seg) {
-+			/* first segment pkt */
-+			first_seg = rxm;
-+			first_seg->nb_segs = 1;
-+			first_seg->pkt_len = rx_pkt_len;
-+		} else {
-+			/* follow-up segment pkt */
-+			first_seg->pkt_len =
-+				(uint16_t)(first_seg->pkt_len + rx_pkt_len);
-+			first_seg->nb_segs++;
-+			last_seg->next = rxm;
-+		}
-+		rxq->rxrearm_nb++;
-+		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
-+			last_seg = rxm;
-+			continue;
-+		}
-+		rxm->next = NULL;
-+		first_seg->port = rxq->attr.port_id;
-+		/* this the end of packet the large pkt has been recv finish */
-+		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
-+					first_seg->data_off));
-+		rx_pkts[nb_rx++] = first_seg;
-+		first_seg = NULL;
++		send_pkts++;
 +	}
-+	if (!nb_rx)
++	if (!send_pkts)
 +		return 0;
-+	/* update sw record point */
-+	rxq->rx_tail = rx_id;
-+	rxq->pkt_first_seg = first_seg;
-+	rxq->pkt_last_seg = last_seg;
++	txq->tx_tail = tx_id;
 +
-+	return nb_rx;
++	rte_wmb();
++	RNP_REG_WR(txq->tx_tailreg, 0, tx_id);
++
++	return send_pkts;
 +}
 +
+ static int
+ rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
+ {
+@@ -973,9 +1075,29 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
 +static int
-+rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
++rnp_check_tx_simple_valid(struct rte_eth_dev *dev, struct rnp_tx_queue *txq)
 +{
-+	uint64_t rx_offloads = dev->data->dev_conf.rxmode.offloads;
-+
-+	if (dev->data->scattered_rx || rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER)
++	RTE_SET_USED(txq);
++	if (dev->data->scattered_rx)
 +		return -ENOTSUP;
 +	return 0;
 +}
 +
- int rnp_rx_func_select(struct rte_eth_dev *dev)
+ int rnp_tx_func_select(struct rte_eth_dev *dev)
  {
--	dev->rx_pkt_burst = rnp_recv_pkts;
+-	dev->tx_pkt_burst = rnp_xmit_simple;
 +	bool simple_allowed = false;
++	struct rnp_tx_queue *txq;
++	int idx = 0;
 +
-+	simple_allowed = rnp_check_rx_simple_valid(dev) == 0;
++	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
++		txq = dev->data->tx_queues[idx];
++		simple_allowed = rnp_check_tx_simple_valid(dev, txq) == 0;
++	}
 +	if (simple_allowed)
-+		dev->rx_pkt_burst = rnp_recv_pkts;
++		dev->tx_pkt_burst = rnp_xmit_simple;
 +	else
-+		dev->rx_pkt_burst = rnp_scattered_rx;
++		dev->tx_pkt_burst = rnp_multiseg_xmit_pkts;
+ 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
  
  	return 0;
- }
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index a8fd8d0..973b667 100644
+index 973b667..f631285 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -76,6 +76,8 @@ struct rnp_rx_queue {
- 	uint64_t rx_offloads; /* user set hw offload features */
- 	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
- 	struct rte_mbuf fake_mbuf; /* dummy mbuf */
-+	struct rte_mbuf	*pkt_first_seg; /**< First segment of current packet. */
-+	struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
- };
+@@ -98,7 +98,8 @@ struct rnp_tx_queue {
+ 	struct rnp_queue_attr attr;
  
- struct rnp_txsw_entry {
+ 	uint16_t nb_tx_free; /* avail desc to set pkts */
+-	uint16_t nb_tx_used;
++	uint16_t nb_tx_used; /* multiseg mbuf used num */
++	uint16_t last_desc_cleaned;
+ 	uint16_t tx_tail;
+ 
+ 	uint16_t tx_next_dd; /* next to scan writeback dd bit */
 -- 
 1.8.3.1
 
