@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B3EC02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB84AC02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:33:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CC6D4065C;
-	Sat,  8 Feb 2025 21:32:10 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id D296440655
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:06 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-21f40deb941so60975405ad.2
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 591EC40663;
+	Sat,  8 Feb 2025 21:32:11 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2905A4065A
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:08 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-21f6022c2c3so19259555ad.0
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046726;
- x=1739651526; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046727;
+ x=1739651527; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ic1SPNNb1AgPRNP3Om3M4+kD0f1b1EuoCgAXb69+MYE=;
- b=E0GZ5AzNN/4mKdkYhj2X09Vjcm0JlANcn2UsIAqpDaVpKa+0LZ4qQEs2/hkoXcwwX6
- vhu9FMLrTGBw0QfHfF6FAB+AT1sca1FzsnWL7Q3C3uciHpiTq80gNmyrSL4D9vSRpULn
- afOAFBormSX+boHwKJrTCxzq2S5NfIdlGeDO2334HsgCEoaXH+4ZKOMejj5fuNUiW/vA
- aCJA00HgjxRbMdEoVoaHWeBD8RZS9sSYWh+XdUlICvsLIdPq2gfswE3VMh2vrBCe01m5
- 0tPYyuD/tUFakODHi1hjQTvIUyZHi7YFGG9hQc4FXl/Yt82hhLFsqsJz7yMOh0DEHRg4
- 1X2A==
+ bh=ZlVZN3TZ6YdSqh7cxKl5CdD2TINyVAMFiqe3mirEtSk=;
+ b=vlx4cSjLcWwUV/OGh5u4+INc5gM6j/2Y65II/QOt0eFLO/qc9APM7ukZocFH7AwgWA
+ BoIQ75Nutwy5vuznK/CB4Yoq8G3hwy36gvBfOqNvkHUem30k8z/CDsc1e1xozb50kxKH
+ 2larEL50SfZtlNUYBw6S40YKvrOc5a3Dc1MxTXTS0ovUswVMySSvYx3FOz60CqBPAHUL
+ 8Ixych9g2b3ubSka8eNcmwUpTrP5xJVogE5pG9mK5blvsAixo96H1Dw1BTdgg/fZo0oD
+ JHiBDD7Wma9X31UQqqk45lagNHCie1h09iboU/S2wR05Sn0fzUeKXXMmbdrU7tK0GSG2
+ FPDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046726; x=1739651526;
+ d=1e100.net; s=20230601; t=1739046727; x=1739651527;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ic1SPNNb1AgPRNP3Om3M4+kD0f1b1EuoCgAXb69+MYE=;
- b=gqXgRYkfxVAsjbWB6kuVEBFXENbZDwSD3O4853vMWOwLB4Tk3jG7+56fZCGO4nUjKU
- JzbtUx98WgFB0wOpffQytNyAfNQrNu7RFdSa+zK9YOSfMXAnIi3sMDws8MYjQZK57+2W
- dVOSkJdxoY2bySpePdhhr96wd9W2NV6mmmnfELjbW0iry0KLuAvDIHWGJxmdb1Y2AVYO
- qBaRc8hDiUWRv4miOTfHXinphgfD6gCbzLfR4XvzU5eu0qYgHJrKamYKlmyCclS93+ef
- pmMnvJ+AU/UvipwVjI+opqPbOVJDFgtLWIsiOItqAYsY1JaIVXOis6gimdRqaD0KYMuO
- a1Tg==
-X-Gm-Message-State: AOJu0Yx55C+cZGcv/Zh5y+YpPFR2BCtWO03XfCJJg/AFvhaiF1eWC6F1
- 69PLASWseCOy6IE31a6y6oVXxgoc6yVk2hRm5uHE2pPeIkxyDIe2pMX4xgxFdv73huoX8EiwWv8
- /AVk=
-X-Gm-Gg: ASbGnctrBJnxFoibtcc5f86JEosuZM6hFCPVPVe/FeUGi/qEAzX3NjwpYhA2YWYirJD
- Cwj3Qc6HRyPAQBqritFg4vYRWdiXQNDyFTuS7jONrQeEb0Ri40v0rS5zHgMCbOpQXBAUw3qqlc0
- UeNBy+F6LafBYuHoqbe+53ov8WrnS2K1mC3LnSmMzb5HMjkUia99tdOi9hv/NJbN/q3+ciOlXZj
- 3YdE0OFPPPCHE3q6O4f6YKL69V6n2dIo9LSJzP7RNqI9uN5zAsJcg/o1Fdy1ls15lh43gsEJX7z
- RVE9Bdb03Q7uDA9ea84IbGyh4qQx/SzyjbrtHEepW3dY79X5XSZN+2k7upI5v7qxXVKY
-X-Google-Smtp-Source: AGHT+IHHz6J5jCvXuR5CqcMBzfDsgIVCNoHaI8azXqqJFbJsVzEoWZSt9GO/XwBRlUmUYVofElVYFQ==
-X-Received: by 2002:a05:6a20:c909:b0:1e1:9ba5:80d8 with SMTP id
- adf61e73a8af0-1ee03b20a10mr13958929637.33.1739046726017; 
- Sat, 08 Feb 2025 12:32:06 -0800 (PST)
+ bh=ZlVZN3TZ6YdSqh7cxKl5CdD2TINyVAMFiqe3mirEtSk=;
+ b=f2lVRX/4PxHoixkKVfdPWquh9VCYHEAOq10DTeUQcp1qr2NthjdPg4i7w9UFLtCv5f
+ IlpTpXyVK3BU11n9kMCm309mQuEaRfEv03EGYHSVqauNX3k9LSfnwObVocf3JD+smGce
+ 9vsEjRM2Rgpkny7HDVZhIEZBHclSgZxDgLtEAoQZOBBYmKOsAA/Q9K7t3Hv2OdTFiFg5
+ 1m1sUAQm2g5CX7j8OMIy/zq32Mlyc/Gg0Qqctf5n4bJygHUSuMGXUPnyv3GGFcJgXs1e
+ H56dQeIhfOLkhc6NEwYIeHLcCH4693fmgfKSSeGJl0ZkhopX80ecxao+pcAx+WxD+qBA
+ +y+Q==
+X-Gm-Message-State: AOJu0Yx6Q5FNsetgn8kKw6zKLb8xHcS1U8Sg0X9ZKqWYeS6vCRA1pUrf
+ j6j5NxXZdo+Wri+KZBZNZvoz5XULtEWWgGNIFsl3dr7V99auz8Z0ML8cZmDZpnPzLpf7uczw/LA
+ u2u4=
+X-Gm-Gg: ASbGncuMyhJiAHyRx2fV3aXb+KxkTmbYaqg4EUTA/pJf8wXxXfXwd9eiAEG2dQERQWi
+ nbqLbqXwJ3sJ2a2PFV351SvyKUHwOkidVodCAeIp1qlD0cipS0bjqVuPN/CCw7POi1C0QbQlvMO
+ Lgjin+303jJ9JeLl5oH7EDC4tLcK0+mc6oi2uL9K/LExWZzBBGCb4EkoJE5VnQ4ey1jpHreVhYu
+ KT7VbI8cf3C5eP9a8Fwxp54ms/6F9N2jkIk28+FDFJulynjIvCAP/+WLWc4nJbHarYv+Eh1ZhJC
+ XHhH5GeSu9CL3t/KnxroqsP14w8TYQqzemAVhtIOT2OuPDwtmQLREfN54OsRJ3SY9VZL
+X-Google-Smtp-Source: AGHT+IFQ6vL8OJoN886TVC/UqLT0fdHuAj3N3DAPl/dt+X2SKZ1tpMcdF2DgC9q5p2dGdD1ueFmpnQ==
+X-Received: by 2002:a05:6a00:4603:b0:725:f1e9:5334 with SMTP id
+ d2e1a72fcca58-73042c73aeamr25042514b3a.8.1739046727272; 
+ Sat, 08 Feb 2025 12:32:07 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.05
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:05 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:06 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>
-Subject: [PATCH 09/32] ml/cnxk: replace memcpy with assignment
-Date: Sat,  8 Feb 2025 12:22:01 -0800
-Message-ID: <20250208203142.242284-10-stephen@networkplumber.org>
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Tomasz Kantecki <tomasz.kantecki@intel.com>,
+ Kirill Rybalchenko <kirill.rybalchenko@intel.com>
+Subject: [PATCH 10/32] examples: replace memcpy with assignment
+Date: Sat,  8 Feb 2025 12:22:02 -0800
+Message-ID: <20250208203142.242284-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -86,22 +88,53 @@ Found by cocci/struct_assign.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/ml/cnxk/cnxk_ml_ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ examples/bbdev_app/main.c      | 2 +-
+ examples/l2fwd-cat/cat.c       | 3 +--
+ examples/ptpclient/ptpclient.c | 4 +---
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/ml/cnxk/cnxk_ml_ops.c b/drivers/ml/cnxk/cnxk_ml_ops.c
-index d93c31535d..9958945670 100644
---- a/drivers/ml/cnxk/cnxk_ml_ops.c
-+++ b/drivers/ml/cnxk/cnxk_ml_ops.c
-@@ -1398,7 +1398,7 @@ cnxk_ml_model_info_get(struct rte_ml_dev *dev, uint16_t model_id,
- 	}
+diff --git a/examples/bbdev_app/main.c b/examples/bbdev_app/main.c
+index 46f20238db..03f15f91cc 100644
+--- a/examples/bbdev_app/main.c
++++ b/examples/bbdev_app/main.c
+@@ -360,7 +360,7 @@ add_ether_hdr(struct rte_mbuf *pkt_src, struct rte_mbuf *pkt_dst)
+ 	eth_to = rte_pktmbuf_mtod(pkt_dst, struct rte_ether_hdr *);
  
- 	info = (struct rte_ml_model_info *)model->info;
--	rte_memcpy(model_info, info, sizeof(struct rte_ml_model_info));
-+	*model_info = *info;
- 	model_info->input_info = info->input_info;
- 	model_info->output_info = info->output_info;
+ 	/* copy header */
+-	rte_memcpy(eth_to, eth_from, sizeof(struct rte_ether_hdr));
++	*eth_to = *eth_from;
+ }
  
+ static inline void
+diff --git a/examples/l2fwd-cat/cat.c b/examples/l2fwd-cat/cat.c
+index 00e4cde48b..ac8feaec8e 100644
+--- a/examples/l2fwd-cat/cat.c
++++ b/examples/l2fwd-cat/cat.c
+@@ -314,8 +314,7 @@ parse_l3ca(const char *l3ca)
+ 		if (cmask != 0 && is_contiguous(cmask) == 0)
+ 			goto err;
+ 
+-		rte_memcpy(&m_config[idx].cpumask,
+-			&cpuset, sizeof(rte_cpuset_t));
++		m_config[idx].cpumask = cpuset;
+ 
+ 		if (cmask != 0) {
+ 			m_config[idx].cdp = 1;
+diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
+index def8de29ff..2f9764bf07 100644
+--- a/examples/ptpclient/ptpclient.c
++++ b/examples/ptpclient/ptpclient.c
+@@ -470,9 +470,7 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
+ 		client_clkid->id[6] = eth_hdr->src_addr.addr_bytes[4];
+ 		client_clkid->id[7] = eth_hdr->src_addr.addr_bytes[5];
+ 
+-		rte_memcpy(&ptp_data->client_clock_id,
+-			   client_clkid,
+-			   sizeof(struct clock_id));
++		ptp_data->client_clock_id = *client_clkid;
+ 
+ 		/* Enable flag for hardware timestamping. */
+ 		created_pkt->ol_flags |= RTE_MBUF_F_TX_IEEE1588_TMST;
 -- 
 2.47.2
 
