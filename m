@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63141C0219B
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0713C0219B
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:32:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FF414060F;
-	Sat,  8 Feb 2025 21:32:01 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 49689402C9
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:31:59 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-21f50895565so26204275ad.2
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:31:59 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7B7FF40647;
+	Sat,  8 Feb 2025 21:32:02 +0100 (CET)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id AF23640395
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:00 +0100 (CET)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-219f8263ae0so58988505ad.0
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046718;
- x=1739651518; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046720;
+ x=1739651520; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tcYIAyKKPVd2crCbWEA0Sl9FDyUYM+KXlQOy5mPq3wg=;
- b=r7ICHBuxG26ffu33e2YFROW0c6oWBVrxqLf55ZQPA6I8usP1xc+W2b6pW4MMB62XNC
- ZOgf6htMFxW2jeN8LeBB141eoGCgyGgU1acFxkLfXl90HrY5sCI6+wfPfxF+wfBIZ9cE
- QGYsQpfUDJATiLcY4ZSYX1gH9zRdrSyvONfFI2B0uQenZi5WIhnugHCi3cfWf64asogK
- C634isqy9mA7w3JRqLvK/AU7XKhvBI1pxF8/DfCipEpJ7gGAwEDm3Y9cMK7fS6QP3PXv
- YlJeYmWwflyERpDhTvNQjiOaIoBdtFRGsn8WuG10xlzMye15AwYU+qsYSt35lYQCVpuH
- ywlQ==
+ bh=U0tjkpHfiRhAmYxF1UXjjZsXNUmjuuO0FwTDnZIaCO8=;
+ b=ejykypiXZrYdjHLIqX+LEh1YnvaFMtfdN5Srw4eDe3LalARLj9DLIKihEExgVAAkdi
+ xPwdSqNaJxKXIG403IwR4zxu/ZTi9ld9LrCUWUcvnEk28onO1jz1T58saLXB5rnTwb18
+ YBKmBcT5IjlzlB4vgqMcoFkwH/aihu6Mzg7qnxh4N2Axj8kIGND28BBZ56MTgnCjo8cf
+ QckcKgAnrQvnV+8wmDr6/kEcreQORkhaOjHjMMbefhKSdCwCV6oT/tmlTkNuP5i1GYAF
+ +NFuh664UWrNXxXRlG9XKEsts5ZWJALJt7cP/hiC+02smDfJPTM8P2Scl2HIqjlQIx7Q
+ lwaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046718; x=1739651518;
+ d=1e100.net; s=20230601; t=1739046720; x=1739651520;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=tcYIAyKKPVd2crCbWEA0Sl9FDyUYM+KXlQOy5mPq3wg=;
- b=KfWXdSaA9GbsenPhVN4u4Lx0uBtULvBwnrcim9r5dnvj9itkEmB8tYMnLVHBddIvSM
- 7mepWhfbj3Czl7dFkDi5dhP5ShYCR8pYyq0bXd0ybpPkSgL9xxM+25+xwg3XEtWIFAq7
- EZBpugrJPSNrLbHuZizct/uGzUMZBoEu4YsIpnxoANsbihsvKabJFfc0C4m7k11wLzyH
- ewTWiMdqHBJvrUhcsYrFnT74MMB6V5MMd6SIv7a8KRxG5ZrvuEk2kuWRNRSC13ToLO2W
- o5nVp5hJ28sQ/lEHAG/HviYnU7rcfyKuG6aXkZltTOdoIu6V82lppGa73PKbFzafaw4/
- fbEw==
-X-Gm-Message-State: AOJu0YxLCf5xSpnadn736QuVqEz7inBVCaDRzbKlKClZwJ0h72qNfZoU
- 9rZHIOP7C8rndYbZnNIb+eLZCy1/t6SwD+huXxzcHp4ShOG25l52nOO45dhz4Et+H4O5Ljl2tcz
- 5T8U=
-X-Gm-Gg: ASbGnctWF7qxh0OjNrBj2HtfL8PbHSB2Yg1goLorLNu8mfZzWN5Qz2eAI8C9/PCXcSD
- lXNF+Vzz5BNuo7NeqSopV23dfU1kY9kVLfbabLJxNhX5In7GseNfh0cyN2E9d16cT/jShkmhorL
- o35PET/Q4QgNepdbo2zYHXi9xbuueLq8brhB5BSYfyc1Pm51OcnqmE0/kDODwNXud/qBPjnKUkL
- cwKBsZPmCIR3hl/zqmntTFettBLihdzsB/KdAFJ5ZZh8gbTgXaF1CTu3hi8x25yI+zBMmBgXxz2
- XUecDcc5ZyFj1H9Scze3UrKL/eAuy67YQn0RDgnF+jWxv5Dtf8ta+QMaC1keBpXSrCRa
-X-Google-Smtp-Source: AGHT+IGvrN15lSmnanXOIUSA6dnRmeT0MsVmIkzHasV1FzR0Ow05GEiaS0ekxcTIaClquoaA2P6xQQ==
-X-Received: by 2002:a05:6a21:918b:b0:1e1:ce4d:a144 with SMTP id
- adf61e73a8af0-1ee038c2641mr14307607637.0.1739046718512; 
- Sat, 08 Feb 2025 12:31:58 -0800 (PST)
+ bh=U0tjkpHfiRhAmYxF1UXjjZsXNUmjuuO0FwTDnZIaCO8=;
+ b=vMOYuD0NHUbLRmO6QDp/XqFjuKExO7+zO3PiVgXw/GviQfYkVQlf3BB8vcdXfRlAvZ
+ HX+6dAa/BynHjQwtK9sEf1hYfmj9LtzAprrL9QeluUcsNbFdyIV2osfLyMsquzsbxUGu
+ O5+loy3cLHcpqrbUzncanCsCA4nfn9XIzXED8WjPLNnV2MbIxa1evAoSXTR2hdyAvsDa
+ k6Cipd2PTmMAYWEcNy2TeVM0NDe3HI0nuC0y8u4XBFiISfju7meq3/d+ir5wqDfeWRVA
+ qav6/XetxHCqd12I4jhBgNKCvLmn6z0mSv69g2TQqRo1MQEYfu9eENjQg/BLUrUYYtoA
+ yqNw==
+X-Gm-Message-State: AOJu0Yyq0OCcIQNPKfGoEcQH5VPjoVNTrjYB7uTiEDGk9GK8cjHhndCp
+ Z4Lfk6J/vMJDGIOKWn5tZ452oa5sxFNRWopcPpdne1OjUN1RuURnbrqCpykfBBmVC7QUAS+H0jI
+ 0YOw=
+X-Gm-Gg: ASbGncsOIJ2icd33OnwwBJHDgP4XDU3aZZlYhKx//ETBs5rQ3QX2OD+YU+p5u/3VJ/g
+ v4oMZ/QQNdYjAXWFn9mK9sBR0EemvwXEakypiQwEzuyoDvAUZeDY0XrOcs7oW2j3weYVnxAfikb
+ UvgSS2FlkT9tiMl3KTjyZKsL0WS5vjzWwRa70SzG0KHr3O3hIdEoYCqidTF2bvdM8WDqrjxqnQV
+ 3xfbGZCRH2KXhx0/3WmHoyyZpl0I64gwcf7zx0LkF/hw2u+PX5Zgdea2HVOuB2KIo0XeQms6UBn
+ r4bkhhhuUth5N274lxiE/pA+Ni2ZEj7w8f9nQrXuaR70QPBUvaeQOvgjXRfv1ysU1pp7
+X-Google-Smtp-Source: AGHT+IFuE5fWxLlMabN2U+NxqhVzCP/u2uHCyAie6dospH6TVrLUnHRhjqDkr2e0UTCysMAiG0TR7Q==
+X-Received: by 2002:a05:6a00:23c8:b0:730:7d3f:8c80 with SMTP id
+ d2e1a72fcca58-7307d3f92acmr3222709b3a.20.1739046719882; 
+ Sat, 08 Feb 2025 12:31:59 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.31.57
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.31.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:31:57 -0800 (PST)
+ Sat, 08 Feb 2025 12:31:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH 04/32] crypto/dpaa_sec: replace memcpy with assignment
-Date: Sat,  8 Feb 2025 12:21:56 -0800
-Message-ID: <20250208203142.242284-5-stephen@networkplumber.org>
+Subject: [PATCH 05/32] dma/dpaa2: replace memcpy with assignment
+Date: Sat,  8 Feb 2025 12:21:57 -0800
+Message-ID: <20250208203142.242284-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -86,22 +86,24 @@ Found by cocci/struct_assign.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/dpaa_sec/dpaa_sec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/dpaa2/dpaa2_qdma.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index 3fa88ca968..af605d2025 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
-@@ -680,7 +680,7 @@ dpaa_sec_dump(struct dpaa_sec_op_ctx *ctx, struct dpaa_sec_qp *qp, FILE *f)
+diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
+index 3c9a7b5485..c0e0a44e84 100644
+--- a/drivers/dma/dpaa2/dpaa2_qdma.c
++++ b/drivers/dma/dpaa2/dpaa2_qdma.c
+@@ -171,9 +171,7 @@ dpaa2_qdma_multi_eq(struct qdma_virt_queue *qdma_vq)
+ 	if (unlikely(num_tx != qdma_vq->fd_idx)) {
+ 		dst_idx = 0;
+ 		for (idx = num_tx; idx < qdma_vq->fd_idx; idx++) {
+-			rte_memcpy(&qdma_vq->fd[dst_idx],
+-				&qdma_vq->fd[idx],
+-				sizeof(struct qbman_fd));
++			qdma_vq->fd[dst_idx] = qdma_vq->fd[idx];
+ 			dst_idx++;
+ 		}
  	}
- 
- 	cdb = &sess->cdb;
--	rte_memcpy(&c_cdb, cdb, sizeof(struct sec_cdb));
-+	c_cdb = *cdb;
- #ifdef RTE_LIB_SECURITY
- 	fprintf(f, "\nsession protocol type = %d\n", sess->proto_alg);
- #endif
 -- 
 2.47.2
 
