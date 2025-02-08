@@ -2,65 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07E5C02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A550C02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:33:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47A29406B8;
-	Sat,  8 Feb 2025 21:32:19 +0100 (CET)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 133B340689
+	by mails.dpdk.org (Postfix) with ESMTP id 71C1840676;
+	Sat,  8 Feb 2025 21:32:20 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id EFA4A4068A
  for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:16 +0100 (CET)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-2fa2c1ab145so2932750a91.3
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:15 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-219f8263ae0so58989945ad.0
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046735;
- x=1739651535; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046736;
+ x=1739651536; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=a0dGiUsM7XPLY76vdWYlKm0vJV6dsaLMqLz9vbQrmaY=;
- b=vy2JTmyISfBmtawhzK1c4e8w/yQZhtWPWIpKx2HOqYHIjOB+K5dyJ1apFu0vlEFHxW
- T7zkZ+15iYxieMf6XcoOEX3t70xsTj/Yg38kj2viUY7dCMBQhn2V6VA0IA6UQ/cLsc1J
- MqRjlxnHviRAK0a4CsyNAhM/RcMgJcaZlvB4qMsnnMBUB0Yf9W114PuFYJOqwycPgf6w
- uMnRg99wARzlomYflLdpEZj4Ear9U1OQwbYlvG+wCvbCLt+iWJVOcZZTjIXQz8y2ZFc2
- gwcifdQmGMBIqmmIVj73cZ6Rt6NrznQlt/wuoSgEdDHphUDJRvUHhU7bb5DfMcaZm0Ou
- KXSw==
+ bh=TcXARBxuSrL/585OvNO6UlgMWVw5mWFsybo55mU5d9s=;
+ b=iwU0urylU0Wk2cVmg9iJTrGVSl7hT5zMO7sKyYep3r8+DOImWUwDffn56QqBh3NbQn
+ 4+TMb7iFvdN8oI0jySOWgIfWiS0MMxSui/WUnFK3UeIJl+QFBUhqhewuq5ZwmxUI7zFJ
+ GtoF3FbgAi2oTKKmRL/4tdXP9w9XdYXL5OEpWm0WLLifponAhnCftxaQ8xx+Z3+QaX40
+ kYS/+SkaZbIMbk0FfDIai8JIg84rZVcVT85J2gunAaBePqb0dGQF/+os1y1vB8whplCP
+ 97c4cPXmyk7fyDQDWkzU6lPTaXccHCz7vd6yFGi3Mc3/xXYMkeqEFOmN80VaKOG4E7Ig
+ 64OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046735; x=1739651535;
+ d=1e100.net; s=20230601; t=1739046736; x=1739651536;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=a0dGiUsM7XPLY76vdWYlKm0vJV6dsaLMqLz9vbQrmaY=;
- b=JW8+YEG8pAeDD3WsBulzldazqjPSFqA+EaiIf8mruyz0Yoica/uWoyr7+85rTi9rsa
- 7jtpBhcpWyZWjm2TIbKPCWewCZHHfKqxqPoO9pTH70l++uRpAAnNGnghAjNBisMVDQLe
- Myb4H5ISFwXc/GgRygDkJvRP7WIOdrw8TGs/7q1NFBC6R4dnqG8odj6c2kEXiP6dwpt/
- MwLuVRhm3cPMJdoIwuJda3VcKZqF/3051E6OtF0o/ZEwm4ldK2eDPvZn4ueokDVIXScQ
- lP/csYPpBZhCYjj5CgWBfUiQ5IPQtJejbiPS+ifEv2IH1hi8+Ra8xgeakQ0BzJ6OH9+o
- JVqg==
-X-Gm-Message-State: AOJu0YwgGpsyFf06q7ahc+SmAtsqqWbKx3m3Eyruj77Okc0sK0MJJE1L
- XRbi2HOuppIAe9X6E9QoMCgroRWZaWt7HHEQm7GwHp2vsYd9Pbv0O4FI4NnEt7DUToTgk4frsx6
- y9xw=
-X-Gm-Gg: ASbGncsmh5ALq8WH7iZfaZpmbIL8WMFKPawoQd7t4IhejPDYmcF6LEagfq6lzfV2d7H
- ck4tkBeFcAAU1+JqnvkQmj52cBPWDLu3SWaEmOKYYFj/fhpxb5KNJni43bEv/WRZgg/iUYx/dWS
- vnQZ48kPoqOon9nEBsuXLekJ/1/fhibljEXJIdXE/BHB2U4GaAiH6v1r/yAShlNMJKPY8Ljosl8
- ICk7GU7tzYKTJqFHkEhPHz6IG/genBuoIZiXPTRKzinBr04ESvYh35CqBpgIVp4yqDVB7gInKad
- z5B528uztKcPpjDX6FH+1pWUG6K++Az44o46wUeG4CF3wG93tvhsVsr3LEhJaym58rzm
-X-Google-Smtp-Source: AGHT+IEd+kZnKcES+bAzyOyWl8EjDHm+7L3FRFBTJzLBIsWpUA99gQZmUWNfyNQe5ycf7/2K0v3aIg==
-X-Received: by 2002:a05:6a00:f9b:b0:72a:8bb6:2963 with SMTP id
- d2e1a72fcca58-7305d49d1bcmr10657874b3a.13.1739046735280; 
- Sat, 08 Feb 2025 12:32:15 -0800 (PST)
+ bh=TcXARBxuSrL/585OvNO6UlgMWVw5mWFsybo55mU5d9s=;
+ b=AGZNQklnNNeYXiMQQN0XUHbuihnMwy2fKA9RSLytM+HK+RChSPVXCNNbNLYqtGnfgr
+ aZTb5GDFZxnPTtEwxNiW2Yv18cw9vbAU67tDWRZlsL5pucrXnGG5NyvfqOPWDS5LzStz
+ ydQo2+tWx4BuQCbqEwzNYvS8bEeQrae7JIEmlfJb9QUVxQUtN3DBaPH8XSD8H8QEdk89
+ yTUgW3GokBWt9dWVz9rRdkXS4MSHqENGjNAj5Nqjs4+ZfJSJMjWm8qRoVU4lXLF2TLK3
+ 5yLaU+beVv2zGfFj/lr7c+SiHGkYVW2FS4CSweSlAliQzSMdbSOqbDKBCBFTmVpnqqpT
+ 0jsA==
+X-Gm-Message-State: AOJu0YwHixG29rZ/c6RdRaetdatRWKlUCSwX5tGCCsE1vHpU47il1hwB
+ t7wu8EAoCdn8KFJau/Ej0Rry3jroY1a11pB++j9+VAUicEtaLyEnEv6XeCPEZqpQb1+S8k9gc4B
+ Vwj0=
+X-Gm-Gg: ASbGncvyRz2MqU+/upF3XqFZEvnBmLsB1l+WCsgpvvbST0x0elGHIIRCXb94a18jSzt
+ kdma8j+N+p+ZlSJs7WzcNPGUCu19E20UMDnk6MnapllBXUAtTZK8yqjVzYACVW7oJzayAeQ6KE0
+ mGzV3AYopxifaRHW14G53kcvbVDowa6Z1CYDoEsB9PzgKjGrp9/LBhzxVYsodQEO/nUl/4L9BGs
+ U9xro3Wr0X4BcdUeF3GBA8OMuYUD4UIfiGcIlBadOhWOTGOvF8wG/+CQoPxn0N8pbJt9hfJIpK6
+ uaDtEGtSxC3+0FwK2zm34SysdriYFkkSSbWoju0MduTZTDNfYFQ/qGPOW6bBRsXXoveB
+X-Google-Smtp-Source: AGHT+IGlexey7GFBFcP0HXdTpDklaxXeys7jAQTw06BxIufurGMLDced7r4t29b311ig48uxRkv8lg==
+X-Received: by 2002:a05:6a00:3029:b0:724:592d:aa5f with SMTP id
+ d2e1a72fcca58-7305d4ef721mr14390058b3a.19.1739046736191; 
+ Sat, 08 Feb 2025 12:32:16 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.14
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:14 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Kai Ji <kai.ji@intel.com>
-Subject: [PATCH 17/32] crypto/qat: replace memcpy with structure assignment
-Date: Sat,  8 Feb 2025 12:22:09 -0800
-Message-ID: <20250208203142.242284-18-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Ashwin Sekhar T K <asekhar@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH 18/32] mempool/cnxk: replace memcpy with structure assignment
+Date: Sat,  8 Feb 2025 12:22:10 -0800
+Message-ID: <20250208203142.242284-19-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -84,38 +87,22 @@ Found by struct-assign.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 3 +--
- drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/mempool/cnxk/cnxk_mempool_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-index af664fb9b9..478e766b97 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-@@ -277,8 +277,7 @@ qat_sym_crypto_cap_get_gen3(struct qat_cryptodev_private *internals,
- 				RTE_CRYPTO_CIPHER_DES_DOCSISBPI)))
- 			continue;
+diff --git a/drivers/mempool/cnxk/cnxk_mempool_ops.c b/drivers/mempool/cnxk/cnxk_mempool_ops.c
+index bb35e2d1d2..5c7fcea487 100644
+--- a/drivers/mempool/cnxk/cnxk_mempool_ops.c
++++ b/drivers/mempool/cnxk/cnxk_mempool_ops.c
+@@ -103,7 +103,7 @@ cnxk_mempool_alloc(struct rte_mempool *mp)
+ 		struct npa_aura_s *paura;
  
--		memcpy(addr + curr_capa, capabilities + iter,
--			sizeof(struct rte_cryptodev_capabilities));
-+		*(addr + curr_capa) = *(capabilities + iter);
- 
- 		if (internals->qat_dev->options.has_wireless_slice && (
- 			check_auth_capa(&capabilities[iter],
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-index e1302e9b36..7d2d234959 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-@@ -203,8 +203,7 @@ qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
- 			continue;
- 		}
- 
--		memcpy(addr + curr_capa, capabilities + iter,
--			sizeof(struct rte_cryptodev_capabilities));
-+		*(addr + curr_capa) = *(capabilities + iter);
- 		curr_capa++;
+ 		paura = CNXK_MEMPOOL_CONFIG(mp);
+-		memcpy(&aura, paura, sizeof(struct npa_aura_s));
++		aura = *paura;
  	}
- 	internals->qat_dev_capabilities = internals->capa_mz->addr;
+ 
+ 	rc = roc_npa_pool_create(&aura_handle, block_size, block_count, &aura,
 -- 
 2.47.2
 
