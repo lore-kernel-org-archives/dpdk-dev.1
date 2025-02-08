@@ -2,70 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6117C0219B
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24461C0219B
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:34:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52A0A40A7D;
-	Sat,  8 Feb 2025 21:32:36 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 81A0340B9F
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:31 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2166651f752so71917915ad.3
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6DF8740DDC;
+	Sat,  8 Feb 2025 21:32:37 +0100 (CET)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 12AA140608
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:33 +0100 (CET)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-2fa1e25e337so3373285a91.1
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046751;
- x=1739651551; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046752;
+ x=1739651552; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fUR6XHuFBoNaJfR2km4oqUrluHfeQKp4ZjjOi5tuAj0=;
- b=iWxA2kz64D4pBkGrGE/RlVVlgSTKWwynw6J8pkFEh96Anm6yiB/W9d1xG8C1UHoWQL
- Ah7sFvscIugpYZBdKiC7Fu7qJGHiXZbMkOtP+lyx8Q+hmgU556a3QQgZJyLGj9v+Egu9
- TUOptubeddqGDpNycHTlOBtTEK2WtbQg9duNK9vtpECYV3UWwalfRcRwrTT7F0RAievi
- UZymzveBBUnwiUHanWMY906jyF1pQkfrMo/7JRkAVjVMHLCdCVr1OL1fbP9++y5qogYw
- qsV8ENV0k14YPdIHgbB8+4mPRunrEl1RQ41BpUQspSNJVaIwFa+NESEWGatvZE2VV+Nk
- cKzw==
+ bh=jamikUKVHIVt/j0Nj9txcipDyZKo2sG2vntbFoi2xdU=;
+ b=PawEj+V6Jxk3cuKHzivYAPoJpZWGi73oXes44rRQC1QPI6Zl6/CaVRsjBMp5f2bEdC
+ uUCJScwSHiu/8+xv6D1gfBR8HdcdaB4xj9wyzrl1n+D2IdojnoNDe/eGnPyRcgYR69G6
+ lT/RZ+wq2e1LvWeTjZAoGyB1zaLjfy1E/SQzRrLtmaLbiwkI8YzboytX8eVvGzlhnRfn
+ pf3nm7++pPvPvdzoCntQFQO46kl2R7sbw+cKSJn4fe9z48y42qBKBMOtt7H575TvPv43
+ QQSxTEwHPNcp4+YoH+Fk4zdioVMpcAH66yOGTstZ7qkbPkkr+uL4cvMYC1hziBarn5Ca
+ 6CVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046751; x=1739651551;
+ d=1e100.net; s=20230601; t=1739046752; x=1739651552;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=fUR6XHuFBoNaJfR2km4oqUrluHfeQKp4ZjjOi5tuAj0=;
- b=T4cfFD6vSuIPOS6ghVuNMsbw1VRLqakJzJzBdO6mYbgSLxkBsOpTBS/vPLqDdZKql8
- 5zaOr8Hgt90A+kPF+c8JLdkcQNW/t9dlF+JQ8r8MkreEKWlafufTFGOQSeBaHGG93rvN
- wruItVKAzNRNn00jEO4hStFxRDH3w3H82pdI8hICuU3PSqaXcpxkHC0s6HsYyiWd3Ruh
- SJ308I1w6GU+BsXQVnk13YjeMcqsQ3fW1tOa/WiqxUTp3mVa/KEn2XaRYc4n3b2ZFWtw
- RV8Pb08rgJ8YFFndBp/U/OYbI9mOAfwAhZSiypsSZddrtgHe1Z9RLH7GVXuebCRZWsBv
- fIJg==
-X-Gm-Message-State: AOJu0YxKUPrXptFXszEiZHYUAXpCFI6/rARD0UBM/BV3wKhe0i7wNTFX
- 9g6jQG53zp0fCrAMRq+lSPGUurghRsA9jOxIQOOJwdk3GBNUhwAXt1RU9XYkE0soSurjPZR1hzc
- vfGM=
-X-Gm-Gg: ASbGncstPeCyhmGzKn/hIl+e6Eh0eKUZ3yPrqUpKkTKKYaY41pWdBUD3M3Lt+evIby/
- e05DLfrwTMgf9FYiFppY8uly4Lgnls/WIoMiFHfJqimqW5UTx2+uOHU+1lInvuyI+gobinr7wWS
- xpHYSZpmxIn9uXd34mM0jG+8SWTaCqy4VoRhb1So3JeJd7YFhx/T3rVv6mj8YRUVV9Ztkpzr/f5
- z544deekq7XIFZBGymOMzNMWhvqN9864rkZVci4lvKQzPojV7142/MjObVQCQGkI1/fkj3BX3Gl
- T7RZR/EUL4OM6XhtP0a8iZbr+TYm3YuV1qi0m3nl04ty2XneOBH4dup7SV2bEomQn8iD
-X-Google-Smtp-Source: AGHT+IFPx9A1InrMjgl4jGbs0IQFhjx2RVCI22vOM5aqcqnDCPIzORqIZ+zgad7TaUv1RBroONfPjg==
-X-Received: by 2002:a05:6a20:6f88:b0:1e1:becc:1c91 with SMTP id
- adf61e73a8af0-1ee03b42a5cmr13811063637.28.1739046750753; 
- Sat, 08 Feb 2025 12:32:30 -0800 (PST)
+ bh=jamikUKVHIVt/j0Nj9txcipDyZKo2sG2vntbFoi2xdU=;
+ b=AxMoGM9AUaqTE1ys3cZBYCjLS5hvmuN7Ko9byXXX1G/JJBRJUy6NVgPrvJ6MsJEdrW
+ 0rcB5hu/nId6m5rOyGW7K5ixUkr/Aefub6kgbX6rRwyU6VY88xvYtSN2EHr4qyiqdUS7
+ UML4B/aNT9TFWoT0vl2pJ6FIZa14XcJsAlNAf3mhmHT1QBDhXuJJcSjMDpZPgQ4pJizo
+ EppaM0CxC8PERnUl8/BGegoeGhEMvPMFt+Hk1D44DR9B8ObwEhPEBqwtvyrux7jjzL5m
+ z1MppwdF48TZMdSdn4B/LBMTbYfmUq/ojbbEbMDdhU+fvBYM+pLY8U+9pv1g+2rU0ZQF
+ wiaA==
+X-Gm-Message-State: AOJu0YwWh9qDFMWg/Q7G3R4cVr8VcrJFyJDGjpfjTKHn9DcQAVu4xL/O
+ qgvWA3tohBwh2JAj96/LAoyWH69A9e14ZaTFDg9DnrKTEp0OC6EzZVW0QczfOVqGFzq9lyrIdHB
+ JOLs=
+X-Gm-Gg: ASbGnctvIzN2ViP1GVZPYlCaWiuM5PNdYN6dPdhOe2CP8Kw0+8hPXvcIkVCqCnD8eg6
+ OWczRxg9mT0DErxb6NU2SzWBq+Jfn7cJjSBLgUSBaUsSSwW90wWJxdIIyMZf+E9VgSOISTCx418
+ /HCB/LTvIRwktaMkad19X9kFMtO4+fPAkjHNVMZZl6JBChv1ZjPt/qqGqRLlqjll1Hxvd7AA1MN
+ ULYEzN0HVRW1D8kSvC/hyRkz/ax7AlRm2lcOrvuQl8F/9GPi96l2alc+AQ63a74mOKCV2brJyt2
+ CP3sfERdvJ0VoraY4eDR7poGX7J4/DVNUKLBDoKK3MyE1Mswe3uFxrpsWM5MVjQL4usw
+X-Google-Smtp-Source: AGHT+IGIs6F9q9yQq+qfs6tzwtlf/jwdYYUwmsFhX90bJeWMnxA1sYd3mCXb7++Q0kaOafZEU2vrBA==
+X-Received: by 2002:a05:6a00:2d10:b0:72a:bc54:be9e with SMTP id
+ d2e1a72fcca58-7305d549e4emr13009005b3a.15.1739046752166; 
+ Sat, 08 Feb 2025 12:32:32 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.29
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:29 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:31 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Fan Zhang <fanzhang.oss@gmail.com>,
- Ashish Gupta <ashish.gupta@marvell.com>, Akhil Goyal <gakhil@marvell.com>,
- Anoob Joseph <anoobj@marvell.com>
-Subject: [PATCH 31/32] test: replace memcpy with structure assignment
-Date: Sat,  8 Feb 2025 12:22:23 -0800
-Message-ID: <20250208203142.242284-32-stephen@networkplumber.org>
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH 32/32] test/cryptodev: replace memcpy with structure assignment
+Date: Sat,  8 Feb 2025 12:22:24 -0800
+Message-ID: <20250208203142.242284-33-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -85,248 +81,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Prefer structure assignment over memcpy.
-Found by struct-assign.cocci.
+Found by cocci/struct_assign.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_acl.c                   |  5 ++--
- app/test/test_compressdev.c           | 36 +++++++++------------------
- app/test/test_security_inline_proto.c | 23 +++++++----------
- 3 files changed, 23 insertions(+), 41 deletions(-)
+ app/test/test_cryptodev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/app/test/test_acl.c b/app/test/test_acl.c
-index 503ff08894..43d13b5b0f 100644
---- a/app/test/test_acl.c
-+++ b/app/test/test_acl.c
-@@ -1223,8 +1223,7 @@ test_create_find_add(void)
+diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
+index 441ecc6ad5..50518dc5c6 100644
+--- a/app/test/test_cryptodev.c
++++ b/app/test/test_cryptodev.c
+@@ -14837,8 +14837,7 @@ test_multi_session_random_usage(void)
  
- 	/* create dummy acl */
- 	for (i = 0; i < LEN; i++) {
--		memcpy(&rules[i], &acl_rule,
--			sizeof(struct rte_acl_ipv4vlan_rule));
-+		rules[i] = acl_rule;
- 		/* skip zero */
- 		rules[i].data.userdata = i + 1;
- 		/* one rule per category */
-@@ -1286,7 +1285,7 @@ test_invalid_rules(void)
- 	 * such rules.
- 	 */
- 	/* create dummy acl */
--	memcpy(&rule, &acl_rule, sizeof(struct rte_acl_ipv4vlan_rule));
-+	rule = acl_rule;
- 	rule.data.userdata = 1;
- 	rule.dst_port_low = 0xfff0;
- 	rule.dst_port_high = 0x0010;
-diff --git a/app/test/test_compressdev.c b/app/test/test_compressdev.c
-index 81b8e02006..c217ad6cda 100644
---- a/app/test/test_compressdev.c
-+++ b/app/test/test_compressdev.c
-@@ -346,8 +346,7 @@ test_compressdev_invalid_configuration(void)
- 	RTE_LOG(INFO, USER1, "This is a negative test, errors are expected\n");
+ 	for (i = 0; i < MB_SESSION_NUMBER; i++) {
  
- 	/* Invalid configuration with 0 queue pairs */
--	memcpy(&invalid_config, &valid_config,
--			sizeof(struct rte_compressdev_config));
-+	invalid_config = valid_config;
- 	invalid_config.nb_queue_pairs = 0;
+-		rte_memcpy(&ut_paramz[i].ut_params, &unittest_params,
+-				sizeof(struct crypto_unittest_params));
++		ut_paramz[i].ut_params = unittest_params;
  
- 	TEST_ASSERT_FAIL(rte_compressdev_configure(0, &invalid_config),
-@@ -360,8 +359,7 @@ test_compressdev_invalid_configuration(void)
- 	 */
- 	rte_compressdev_info_get(0, &dev_info);
- 	if (dev_info.max_nb_queue_pairs != 0) {
--		memcpy(&invalid_config, &valid_config,
--			sizeof(struct rte_compressdev_config));
-+		invalid_config = valid_config;
- 		invalid_config.nb_queue_pairs = dev_info.max_nb_queue_pairs + 1;
- 
- 		TEST_ASSERT_FAIL(rte_compressdev_configure(0, &invalid_config),
-@@ -2188,8 +2186,7 @@ test_compressdev_deflate_stateless_fixed(void)
- 		goto exit;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--			sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 	compress_xform->compress.deflate.huffman = RTE_COMP_HUFFMAN_FIXED;
- 
- 	struct interim_data_params int_data = {
-@@ -2260,8 +2257,7 @@ test_compressdev_deflate_stateless_dynamic(void)
- 		goto exit;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--			sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 	compress_xform->compress.deflate.huffman = RTE_COMP_HUFFMAN_DYNAMIC;
- 
- 	struct interim_data_params int_data = {
-@@ -2372,8 +2368,7 @@ test_compressdev_deflate_stateless_multi_level(void)
- 		goto exit;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--			sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 
- 	struct interim_data_params int_data = {
- 		NULL,
-@@ -2442,8 +2437,7 @@ test_compressdev_deflate_stateless_multi_xform(void)
- 			goto exit;
- 		}
- 
--		memcpy(compress_xforms[i], ts_params->def_comp_xform,
--				sizeof(struct rte_comp_xform));
-+		*compress_xforms[i] = *ts_params->def_comp_xform;
- 		compress_xforms[i]->compress.level = level;
- 		level++;
- 
-@@ -2456,8 +2450,7 @@ test_compressdev_deflate_stateless_multi_xform(void)
- 			goto exit;
- 		}
- 
--		memcpy(decompress_xforms[i], ts_params->def_decomp_xform,
--				sizeof(struct rte_comp_xform));
-+		*decompress_xforms[i] = *ts_params->def_decomp_xform;
- 	}
- 
- 	for (i = 0; i < NUM_XFORMS; i++) {
-@@ -2614,8 +2607,7 @@ test_compressdev_deflate_stateless_checksum(void)
- 		return TEST_FAILED;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--			sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 
- 	struct rte_comp_xform *decompress_xform =
- 			rte_malloc(NULL, sizeof(struct rte_comp_xform), 0);
-@@ -2625,8 +2617,7 @@ test_compressdev_deflate_stateless_checksum(void)
- 		return TEST_FAILED;
- 	}
- 
--	memcpy(decompress_xform, ts_params->def_decomp_xform,
--			sizeof(struct rte_comp_xform));
-+	*decompress_xform = *ts_params->def_decomp_xform;
- 
- 	struct interim_data_params int_data = {
- 		NULL,
-@@ -2960,8 +2951,7 @@ test_compressdev_deflate_stateful_decomp_checksum(void)
- 		return TEST_FAILED;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--	       sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 
- 	struct rte_comp_xform *decompress_xform =
- 			rte_malloc(NULL, sizeof(struct rte_comp_xform), 0);
-@@ -2971,8 +2961,7 @@ test_compressdev_deflate_stateful_decomp_checksum(void)
- 		return TEST_FAILED;
- 	}
- 
--	memcpy(decompress_xform, ts_params->def_decomp_xform,
--	       sizeof(struct rte_comp_xform));
-+	*decompress_xform = *ts_params->def_decomp_xform;
- 
- 	struct interim_data_params int_data = {
- 		&compress_test_bufs[0],
-@@ -3186,8 +3175,7 @@ test_compressdev_deflate_stateless_fixed_oos_recoverable(void)
- 		goto exit;
- 	}
- 
--	memcpy(compress_xform, ts_params->def_comp_xform,
--			sizeof(struct rte_comp_xform));
-+	*compress_xform = *ts_params->def_comp_xform;
- 	compress_xform->compress.deflate.huffman = RTE_COMP_HUFFMAN_FIXED;
- 
- 	struct interim_data_params int_data = {
-diff --git a/app/test/test_security_inline_proto.c b/app/test/test_security_inline_proto.c
-index 480469f672..04ecfd02c6 100644
---- a/app/test/test_security_inline_proto.c
-+++ b/app/test/test_security_inline_proto.c
-@@ -858,7 +858,7 @@ test_ipsec_with_rx_inject(struct ip_pkt_vector *vector, const struct ipsec_test_
- 	burst_sz = vector->burst ? ENCAP_DECAP_BURST_SZ : 1;
- 	nb_tx = burst_sz;
- 
--	memcpy(&sa_data, vector->sa_data, sizeof(struct ipsec_test_data));
-+	sa_data = *vector->sa_data;
- 	sa_data.ipsec_xform.direction =	RTE_SECURITY_IPSEC_SA_DIR_EGRESS;
- 	outer_ipv4 = is_outer_ipv4(&sa_data);
- 
-@@ -873,7 +873,7 @@ test_ipsec_with_rx_inject(struct ip_pkt_vector *vector, const struct ipsec_test_
- 	}
- 
- 	for (i = 0; i < burst_sz; i++) {
--		memcpy(&sa_data, vector->sa_data, sizeof(struct ipsec_test_data));
-+		sa_data = *vector->sa_data;
- 		/* Update SPI for every new SA */
- 		sa_data.ipsec_xform.spi += i;
- 		sa_data.ipsec_xform.direction = RTE_SECURITY_IPSEC_SA_DIR_EGRESS;
-@@ -901,7 +901,7 @@ test_ipsec_with_rx_inject(struct ip_pkt_vector *vector, const struct ipsec_test_
- 	}
- 
- 	for (i = 0; i < burst_sz; i++) {
--		memcpy(&sa_data, vector->sa_data, sizeof(struct ipsec_test_data));
-+		sa_data = *vector->sa_data;
- 		/* Update SPI for every new SA */
- 		sa_data.ipsec_xform.spi += i;
- 		sa_data.ipsec_xform.direction = RTE_SECURITY_IPSEC_SA_DIR_INGRESS;
-@@ -1078,7 +1078,7 @@ test_ipsec_with_reassembly(struct reassembly_vector *vector,
- 	memset(tx_pkts_burst, 0, sizeof(tx_pkts_burst[0]) * nb_tx);
- 	memset(rx_pkts_burst, 0, sizeof(rx_pkts_burst[0]) * nb_tx);
- 
--	memcpy(&sa_data, vector->sa_data, sizeof(struct ipsec_test_data));
-+	sa_data = *vector->sa_data;
- 	sa_data.ipsec_xform.direction =	RTE_SECURITY_IPSEC_SA_DIR_EGRESS;
- 	outer_ipv4 = is_outer_ipv4(&sa_data);
- 
-@@ -1096,8 +1096,7 @@ test_ipsec_with_reassembly(struct reassembly_vector *vector,
- 	}
- 
- 	for (i = 0; i < burst_sz; i++) {
--		memcpy(&sa_data, vector->sa_data,
--				sizeof(struct ipsec_test_data));
-+		sa_data = *vector->sa_data;
- 		/* Update SPI for every new SA */
- 		sa_data.ipsec_xform.spi += i;
- 		sa_data.ipsec_xform.direction =
-@@ -1132,8 +1131,7 @@ test_ipsec_with_reassembly(struct reassembly_vector *vector,
- 	}
- 
- 	for (i = 0; i < burst_sz; i++) {
--		memcpy(&sa_data, vector->sa_data,
--				sizeof(struct ipsec_test_data));
-+		sa_data = *vector->sa_data;
- 		/* Update SPI for every new SA */
- 		sa_data.ipsec_xform.spi += i;
- 		sa_data.ipsec_xform.direction =
-@@ -2371,13 +2369,11 @@ test_inline_ip_reassembly(const void *testdata)
- 	reassembly_td.nb_frags = td->nb_frags;
- 	reassembly_td.burst = td->burst;
- 
--	memcpy(&full_pkt, td->full_pkt,
--			sizeof(struct ip_reassembly_test_packet));
-+	full_pkt = *td->full_pkt;
- 	reassembly_td.full_pkt = &full_pkt;
- 
- 	for (; i < reassembly_td.nb_frags; i++) {
--		memcpy(&frags[i], td->frags[i],
--			sizeof(struct ip_reassembly_test_packet));
-+		frags[i] = *td->frags[i];
- 		reassembly_td.frags[i] = &frags[i];
- 
- 		/* Add extra data for multi-seg test on all fragments except last one */
-@@ -2466,8 +2462,7 @@ test_ipsec_inline_proto_rx_inj_inb(const void *test_data)
- 	out_td.sa_data = td->sa_data;
- 	out_td.burst = td->burst;
- 
--	memcpy(&full_pkt, td->full_pkt,
--			sizeof(struct ip_reassembly_test_packet));
-+	full_pkt = *td->full_pkt;
- 	out_td.full_pkt = &full_pkt;
- 
- 	/* Add extra data for multi-seg test */
+ 		test_AES_CBC_HMAC_SHA512_decrypt_create_session_params(
+ 				&ut_paramz[i].ut_params,
 -- 
 2.47.2
 
