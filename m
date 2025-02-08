@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B93C02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FE5C02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:34:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB14A40A73;
-	Sat,  8 Feb 2025 21:32:24 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id E74D6409FA
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:20 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2fa4493a695so1021988a91.0
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF6CF40A87;
+	Sat,  8 Feb 2025 21:32:26 +0100 (CET)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
+ [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 026E440A6B
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:22 +0100 (CET)
+Received: by mail-pj1-f51.google.com with SMTP id
+ 98e67ed59e1d1-2fa488351ffso837593a91.3
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046740;
- x=1739651540; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046741;
+ x=1739651541; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OaGGt1IzpilubFPyUaH3i0IX2QOhYcvHwgwphkkbYaU=;
- b=OPMWZUOrTMSJSWbL4rOBGG71YA4pqbsIl5T+Vm3RuNfdWkzXpIT9kq6hdeNB35EuPx
- xhAGHd+SzvEIxzBj/KaX32FCnQfRRJbIYSRiyI8JSTtCcYkU9rXaPgrDVefvxHFikgQA
- DX5i0281X6v2W/wwZJAbC0lSJdJLkHJZaDeWpxscRUjaSlJ7wBE0Kvitfa75zUPs6vOc
- XBbUopJBrnLG0ckthVhW7Kql6/qvluzpvFWMVeWnTasN+mnODObwmLe3tGYQTWSo8CFr
- jPFWAUqgXdPzFNSxvC3xF3X0n2Czv8fR0TW2s5u5EzbcSUg/ctLIaIxUYKG55P4gER7i
- VVWw==
+ bh=7oH5uTmmZlTeQlsWM1XMd+2q8kxfIxTDVtV/uIkhbvA=;
+ b=fsOupnl9bQ7jmwGScY24zWPYGMXp98rhQZkL8Sd8z0rHX5MXGKFa5r6K1ixW2+2I/w
+ PRrsHsiCHVb4fTfDvcSBHzUZ3S0mywz85B8vORSJ413Wwv2cXqEkLJqA5AHZEqtGQFEe
+ EGjsKRvCYydTyecAM3YPe1XbkRNx5phMVbkI6SUkEaWRvTuAtqG/d7Q7hpTdTgNe09b2
+ GqRY6BG++ZvvCaDHOM7f21ZzBWt89O3JES9xvJOhnOjpz2ZUOkBazzOYxrLEI7AQbkPT
+ RJ3VsD+bkQJP+VvFeDleUo4f5VdWBGTR8vKMUV2lRG7mJzSfNyv8ppJpv66huR7i8rm3
+ hz2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046740; x=1739651540;
+ d=1e100.net; s=20230601; t=1739046741; x=1739651541;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=OaGGt1IzpilubFPyUaH3i0IX2QOhYcvHwgwphkkbYaU=;
- b=S7EfCisE8LmrhSIRS9EuI87BOhXni6Us4VR8cz4afJOTit+oq2EbuJBoSJqBxKFCDh
- U4ztqXSeSmdAO8ad8hYcuNN0BHsqa5nQvac3+CS0EkQCbPUpl9+h8Jw4CARO/S0VrLO8
- 5307rBXXTdf13LJrc0MGnnjeKm7MEu3OxgEc4UUBpTITx2xRriZ6EU1JDN875WE/cAzw
- jtFtJSOhEg7R9QQi4rrPywWa0kW/lqYocc4Rl1giX9/JQSl/0S47hHzzMII8Z35AxdZ5
- oPbWJTmoTe8vgEEY5ZL/qWwHge0W77tFjdczA5OVpkwYNVHD9dBn2zKmkaUcYoomg6x3
- 3vrw==
-X-Gm-Message-State: AOJu0YwytPFJpPsNtd6MYiW1y2Jr1zucYH/2/9EHWUC6UhkcnjLK39jh
- Ur1x0zPJBLE3p3Mg/sxEOAOcOMzhnMOQqIV07JHFDrY688ey/mh+LCYgDqT97LML1pUQ1Q02kXw
- 2nvY=
-X-Gm-Gg: ASbGnctYBxHJrpz9eqfp/8xgbsYEaAsxyvCRIXWtjrOO/F/xJW07d3xCACUQUpwoO/Z
- hU7P5H5eVXgVf/9pZck740JNhslM+5lTqt6Y3FnA5G4j6cTfipG6Nh1Ov3NtDO6cHA6j04siOZs
- AqTEi6ND20d0sn1A2AUGob0Sp1oCsWq1OkEf0ETyG2Ngrbt1ZkSH/LhR9F2K4vL39lmLFGJePIk
- R+lUC10uUeXWd/5OB4Jr1c4Rl7459qZDstTJ6G2PApO4UHQXvf9wQXiL42uTHrU/hHdlDk6QeJk
- JoP4OGkRCDPaCO00Jr9VxjJDDvFoq6azKLN0F2Kf49ZwqpQ9D82QktGGfjBxJtduu/sv
-X-Google-Smtp-Source: AGHT+IF/CTIKax2wJ0mxAsMno2NnBFN2g90mcqRiIbzum+h/NcDhLLhuh00hEzUAJH8lhaHhAq6D3Q==
-X-Received: by 2002:a05:6a00:2385:b0:725:b201:2362 with SMTP id
- d2e1a72fcca58-7305d46849fmr11999388b3a.11.1739046740230; 
- Sat, 08 Feb 2025 12:32:20 -0800 (PST)
+ bh=7oH5uTmmZlTeQlsWM1XMd+2q8kxfIxTDVtV/uIkhbvA=;
+ b=cCkinVDHqkWOqv1X9I8B4XFTkXF/Cz6gD6dPLIoXUCwLJ+FpVGaW9nU3UY54FS1508
+ SuUU902MZS/xtaoPeScHTtktxQ8pmKfKBYsPsO6zQCijo+wkUtX7/QRG5DiLHD3YbRhC
+ m/SgyN2QdnZkRP17PPvLUxpYLLnr/j9oduTJsH5qSV+XGqtY0CmPEuMwc9bniI7P6vkv
+ d2Ib4eiANUCnPl2ftDmk3DGkSXIqzInA/qEtviYEkWAYgWoxTjGGzCASKrdq/51DgHXX
+ LB/ShCHz0hJV2RrhiNfX4Ubt70ADMSdNxBzgSsekGStIy9CmrbzioPNU0bI/JlQLZQgv
+ itjg==
+X-Gm-Message-State: AOJu0YyhtpKy0WzfI/7drP+YHCTzcx9peVLSGkrR/606W/ptpwAE43b8
+ VpAlPkM/IBUEqnTakkFqLxS8WsoGnpxFFVM3gfO7R5S8fbLw+48ua/7qPIkboiczWNO0tIZON1Y
+ xX3I=
+X-Gm-Gg: ASbGncv5RagrfowJ4OejcaATdb6ltoCtYdcok64cmQYnVE6PtS53kukOrr587lyz2zi
+ 9iD6f4MwD5vKdxtqDznXj6RkQkws1/FoyWHjivqdrGwj3fqhpYHZho0P6SFh1KUXALe2aOln8We
+ CEk+0Q11dnWHnTcMMVYjgtmCl3NNrgjQ/OVxWg5iCflhr/Nx1rFO8M1K0W38O/kDIqhVAPI+2d4
+ acfXHwTMUHpzXUwwXltnKXO77ue2Ll+JD6yqMKp7OoUueLuwu/dwDUqcYA7GP6c9Iqw0ekOj2Gl
+ /QAYSuIkIWz5yBU5/6nr95HVbb4dFF11wlyzu6bnDNMFwDcxZHfpt8OsOJU71WVxix9e
+X-Google-Smtp-Source: AGHT+IHhoea/QF1gQ9pTncIUa5FMJqvgbmB/JMfou++23reA63bYMhgxaTIbRo/xcyRDEkXahxQhQA==
+X-Received: by 2002:a05:6a00:2d8a:b0:727:3cd0:1167 with SMTP id
+ d2e1a72fcca58-7305d5058cbmr11388620b3a.21.1739046741192; 
+ Sat, 08 Feb 2025 12:32:21 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.19
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:19 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:20 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chaoyong He <chaoyong.he@corigine.com>
-Subject: [PATCH 22/32] net/nfp: replace memcpy with assignment
-Date: Sat,  8 Feb 2025 12:22:14 -0800
-Message-ID: <20250208203142.242284-23-stephen@networkplumber.org>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Jian Wang <jianwang@trustnetic.com>
+Subject: [PATCH 23/32] net/txgbe: replace memcpy with assignment
+Date: Sat,  8 Feb 2025 12:22:15 -0800
+Message-ID: <20250208203142.242284-24-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -85,22 +85,24 @@ Found by cocci/struct_assign.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/nfp/flower/nfp_flower_representor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_flow.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/nfp/flower/nfp_flower_representor.c b/drivers/net/nfp/flower/nfp_flower_representor.c
-index 9601aa5f96..ae0f082eb9 100644
---- a/drivers/net/nfp/flower/nfp_flower_representor.c
-+++ b/drivers/net/nfp/flower/nfp_flower_representor.c
-@@ -318,7 +318,7 @@ nfp_flower_repr_stats_get(struct rte_eth_dev *ethdev,
- 	struct nfp_flower_representor *repr;
+diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
+index 5d2dd45368..9e446c80c3 100644
+--- a/drivers/net/txgbe/txgbe_flow.c
++++ b/drivers/net/txgbe/txgbe_flow.c
+@@ -2827,9 +2827,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 		if (fdir_rule.b_mask) {
+ 			if (!fdir_info->mask_added) {
+ 				/* It's the first time the mask is set. */
+-				rte_memcpy(&fdir_info->mask,
+-					&fdir_rule.mask,
+-					sizeof(struct txgbe_hw_fdir_mask));
++				fdir_info->mask = fdir_rule.mask;
+ 				fdir_info->flex_bytes_offset =
+ 					fdir_rule.flex_bytes_offset;
  
- 	repr = ethdev->data->dev_private;
--	rte_memcpy(stats, &repr->repr_stats, sizeof(struct rte_eth_stats));
-+	*stats = repr->repr_stats;
- 
- 	return 0;
- }
 -- 
 2.47.2
 
