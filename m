@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66163C02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65A1C0219B
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:32:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7164540649;
-	Sat,  8 Feb 2025 21:32:05 +0100 (CET)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3528140615
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:02 +0100 (CET)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-21f61b01630so20259635ad.1
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 66F9240651;
+	Sat,  8 Feb 2025 21:32:06 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id CDDE140609
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:03 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-21f4500a5c3so57624505ad.3
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046721;
- x=1739651521; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046723;
+ x=1739651523; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=laxEXCx80XcdHoH1gOOKbSj67MVc4I5m5RVujYFj2G8=;
- b=FTTStHbGhafRNceI3x24k1ZIINWthAMAab3cPlP+lcXXyT3FyXtMtO/k3rWUHxfO6Q
- F9wQgdLrSy5Lf8Xab0twoOUPknIKWFXi7yZR/zwWRxoNFA9yfN/y3fsh/Gr3JnNnWg4j
- jEjftqOGNqADk6JP0GSGgXwmb0zTCLONmrjKQEwguz7rMUqBgoVXR2s6cZR6iD2ojhhQ
- y5ogxod/KoWfefCLK85M0w+7fpu9EODCZu+YXlTyUg9bRd5cOqWBHHmYOEm3FqrOKE1g
- bKzCkO5yAVbwSPHPxhVwphWOy3bp+Cd/puojPwWf8X88lmSBLMyGN0ZhKQlL4WmDAxnV
- p/GQ==
+ bh=zjrrdQzp86xm6MVD5Kb8geXtF1KgxOSOKLGq9JF6YA4=;
+ b=QQrlHd68jjDz9m+nIs/08CZyjnaWz8af8j1NJUb9jpuPuWOXkTbLE9wFAj4qjGXMDf
+ Z45vAGtX53V1a3PpjIBl+giOlo1ij15Sbzir6i1wqGeVHF+ubPuZm+E7+w7zOy9z6zNM
+ 2myDLY43xw6G0XvZKQJoG/JPX4UMHwSwftGlrdNvy4sVXcaKNLY9xco1XS7ErRdByPxh
+ MCYqdHVZv/3dEbcPG+mHLVNhlr+KkZaFddtIoRJNQzPUVq8D5gG3sUxpqKurJPWMgKNp
+ WW03+hzlirFpxWaWshTRUyj8L6hZEE0xtXwlSHYjUS/pUD+7dTe6nYOWoDuxtml4YIbh
+ Dkjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046721; x=1739651521;
+ d=1e100.net; s=20230601; t=1739046723; x=1739651523;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=laxEXCx80XcdHoH1gOOKbSj67MVc4I5m5RVujYFj2G8=;
- b=vI3EkqlR/PWtNv5YGzzJSh6Iu1/ZkiKZYs7FtTfl/+r85f2ImMn3W7rYwXUWPvNv/J
- H58ks6VoFPI2ogRmDhHzxB/ZfO+G+bYk2qk4j5jEF+Viow6I+35BAeHUKSgfyQA2nKpc
- agLgBVDpvFAYCGk3x/UCY0mIdrC7ht96/TE+Ls9FtYfbsilbu7KSGNfAvMWrXPJYh+QG
- nma7jXNOB3mpSpz1y04INJB6/pvbrwdbeMc0z5yipREBWhADI5b9ewG01U50WeWIzB0k
- T/cdHGQ7BFgceu3Co4sPiFb4B4R3I8XU6QKvf/qdCjd0rupAqC8HYcDt2ka1Ghs77Ri6
- eXRw==
-X-Gm-Message-State: AOJu0Yzd1TMlPVu1cohg8PdDuKPPEIt/pLXLyvsVU2y//6IzOUXWfmPj
- 4weAy51wSQkO90cdhKNX9x9dOyKiJXLGKGLvIx37tQm2CE3JzPxsvaqoxrboz1cAz7QP6gj9TFT
- Mw3E=
-X-Gm-Gg: ASbGnct1c+lNE5VY7M2tGiKpwdSf8E9C0naNQfrhApwf24/K1VpcOc76eY7bPi3v6Mt
- iAyI7QlIyf7mqHzsTd6xHC921tRNk0rxzIand5k9zKjSPccfH9MGYo+2Xq6byM97AE9LzuO3x6r
- l2n880NBrplVEZgZjyJs158QHjMX3njl3RNbENOZo2zw1zff0FkYUtf/QIIOjH12dmZpDrfokvC
- hMIC8Hbi//aYVPsuihhzsx12GNze8S1fHdqHJL32CCATJOzSrMSpzIdvAu/zDYyyOezNMExMu1t
- 06t5tYaMIW/youKMOC5fydJOWIO15Y4Ni24Jkh7Cec9kIBqnDQL0gYo5F0PaBFeb81iY
-X-Google-Smtp-Source: AGHT+IEJec9El1Al32BdNjFH/HUigmyApaO4fLl2JIUPHbPU5xsxwkfkJOFuMCjHKlEwF4+sHJanGw==
-X-Received: by 2002:a05:6a21:6d8e:b0:1e2:2e4:6893 with SMTP id
- adf61e73a8af0-1ee052c529cmr12387299637.9.1739046721381; 
- Sat, 08 Feb 2025 12:32:01 -0800 (PST)
+ bh=zjrrdQzp86xm6MVD5Kb8geXtF1KgxOSOKLGq9JF6YA4=;
+ b=cLlRqsdKQNHcpTalX1KbZf1/RD0quwFxEHF0xTqoPJu5FubBO3G/PfWnjG9NTdD/Y2
+ evqrHKYE+zGj5GsFXpHrfZ5eyShYPuLhJo1Q3Dh1ODeQge0dSFm76zxhVVYnHJjCQnB9
+ f4wjy71bShf1rbIk0MmBXDshnk3AKCNMhPbYwolqtEnx4d+OUzTHQnlwdMr/sBsge/f2
+ yaeCj0TPBHclQvYetpshIGg7viI+e3gMuESUDiiI+qn+oALrAjwpQ9gl804bASAAQaUt
+ PgNQPi1j05tHlXJtCxkNw0j0QgwHYVGGbU66xCulEfzWyRx/syApB7mqawQbgZ3cGKxP
+ 4/DQ==
+X-Gm-Message-State: AOJu0YxAQWsfWg7dqOxYtHxjpWQG0yTZObzOsfwDaoLQLx+JCiMuR19h
+ f0sD7iRL28JzYgRRG46kzGberYu9wqfsuGtSXZxBIG8rm8IFqJB9atX9elVqgJS8r6+ObTJUR1v
+ p6Sg=
+X-Gm-Gg: ASbGncuBCGn5/FpMdldomCiLojExmFIAiTv7ahbovZv9fPrawEMxY3bzXhFaUVHLbOv
+ 5+KRtsFzXCNALf4mEz8DiK7zqe90x48b8p/rLC9F3wamuTIlhLqC+NnebdPueyzgcSQUaBhU49N
+ aquto9IU1Npm0/qKNLRcbWX7hpFmAjaB4heQEKFN8DeqZw3+QruGC6inZi8bk3tfAmJ0G2w6Atu
+ vwCMkgLo3zSKwHFKF9nCrMu7b/eE6ONw8c6LGReMmcPZNrXvuUpTl5iGtmeLea8Pne1FpEofGL9
+ LGFWqui4xFNB2ixip9ivPx6HyZ2SEOE6cNtIryH9jitNU2X7b7MLVSRzNMwa/uXT9q3k
+X-Google-Smtp-Source: AGHT+IHUJccVsCjvlxqHGdqPYqweJS/ijYKyYNhnKXJC5riKALvWTEpSbdxHVllxoljuzHK5mU9byg==
+X-Received: by 2002:a05:6a21:9211:b0:1ed:75f4:d285 with SMTP id
+ adf61e73a8af0-1ee03a8dcbcmr13857574637.19.1739046722997; 
+ Sat, 08 Feb 2025 12:32:02 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.00
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:00 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:02 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Amit Prakash Shukla <amitprakashs@marvell.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Erik Gabriel Carrillo <erik.g.carrillo@intel.com>
-Subject: [PATCH 06/32] eventdev: replace memcpy with assignment
-Date: Sat,  8 Feb 2025 12:21:58 -0800
-Message-ID: <20250208203142.242284-7-stephen@networkplumber.org>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH 07/32] event/dpaa2: replace memcpy with structure assignment
+Date: Sat,  8 Feb 2025 12:21:59 -0800
+Message-ID: <20250208203142.242284-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -84,40 +83,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Prefer structure assignment over memcpy.
-Found by cocci/struct_assign.cocci
+Found by struct-assign.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eventdev/rte_event_dma_adapter.c   | 2 +-
- lib/eventdev/rte_event_timer_adapter.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/event/dpaa2/dpaa2_eventdev.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-index 165374d195..70a208620a 100644
---- a/lib/eventdev/rte_event_dma_adapter.c
-+++ b/lib/eventdev/rte_event_dma_adapter.c
-@@ -449,7 +449,7 @@ rte_event_dma_adapter_create(uint8_t id, uint8_t evdev_id, struct rte_event_port
- 	if (pc == NULL)
- 		return -ENOMEM;
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
+index 6c8ed3ff6b..95d9154b11 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.c
++++ b/drivers/event/dpaa2/dpaa2_eventdev.c
+@@ -224,7 +224,7 @@ static void dpaa2_eventdev_process_parallel(struct qbman_swp *swp,
  
--	rte_memcpy(pc, port_config, sizeof(struct rte_event_port_conf));
-+	*pc = *port_config;
- 	ret = rte_event_dma_adapter_create_ext(id, evdev_id, edma_default_config_cb, mode, pc);
- 	if (ret != 0)
- 		rte_free(pc);
-diff --git a/lib/eventdev/rte_event_timer_adapter.c b/lib/eventdev/rte_event_timer_adapter.c
-index 5886965d14..871cfba576 100644
---- a/lib/eventdev/rte_event_timer_adapter.c
-+++ b/lib/eventdev/rte_event_timer_adapter.c
-@@ -549,7 +549,7 @@ event_buffer_add(struct event_buffer *bufp, struct rte_event *eventp)
- 	/* Instead of modulus, bitwise AND with mask to get head_idx. */
- 	head_idx = bufp->head & EVENT_BUFFER_MASK;
- 	buf_eventp = &bufp->events[head_idx];
--	rte_memcpy(buf_eventp, eventp, sizeof(struct rte_event));
-+	*buf_eventp = *eventp;
+ 	RTE_SET_USED(rxq);
  
- 	/* Wrap automatically when overflow occurs. */
- 	bufp->head++;
+-	rte_memcpy(ev, ev_temp, sizeof(struct rte_event));
++	*ev = *ev_temp;
+ 	rte_free(ev_temp);
+ 
+ 	qbman_swp_dqrr_consume(swp, dq);
+@@ -243,7 +243,7 @@ static void dpaa2_eventdev_process_atomic(struct qbman_swp *swp,
+ 	RTE_SET_USED(swp);
+ 	RTE_SET_USED(rxq);
+ 
+-	rte_memcpy(ev, ev_temp, sizeof(struct rte_event));
++	*ev = *ev_temp;
+ 	rte_free(ev_temp);
+ 	*dpaa2_seqn(ev->mbuf) = dqrr_index + 1;
+ 	DPAA2_PER_LCORE_DQRR_SIZE++;
+@@ -588,8 +588,7 @@ dpaa2_eventdev_port_link(struct rte_eventdev *dev, void *port,
+ 
+ 	for (i = 0; i < nb_links; i++) {
+ 		evq_info = &priv->evq_info[queues[i]];
+-		memcpy(&dpaa2_portal->evq_info[queues[i]], evq_info,
+-			   sizeof(struct dpaa2_eventq));
++		dpaa2_portal->evq_info[queues[i]] = *evq_info;
+ 		dpaa2_portal->evq_info[queues[i]].event_port = port;
+ 		dpaa2_portal->num_linked_evq++;
+ 	}
 -- 
 2.47.2
 
