@@ -2,36 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094DEC02199
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Feb 2025 23:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840FDC02199
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 00:21:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D267B40280;
-	Sat,  8 Feb 2025 00:22:03 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id E27BC40270;
- Sat,  8 Feb 2025 00:22:01 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id CFD6D210730A; Fri,  7 Feb 2025 15:22:00 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CFD6D210730A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1738970520;
- bh=xHqc/FEDVAzK85ZgH0ekdP2faYBKRyeNqw7qWXiiawI=;
- h=From:To:Cc:Subject:Date:From;
- b=tFKPcctUoGwulOcpVW0+Pgtj1bP51yGj0hivhPZcEoHSSuVlVG5/JLHsgzRZ3JFso
- +IKH2kOgOKqy5NlX/pvPPMsJlLRqH4TZcUSSKdtnrAxAr2+7urtG2ApDk4XpYcJXpG
- bPbL4958Z+7vhwEUD7sbzKIGwDHI+EhD2xerfqTo=
-From: longli@linuxonhyperv.com
-To: Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Wei Hu <weh@microsoft.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/mana: use mana_local_data for tracking usage data for
- primary process
-Date: Fri,  7 Feb 2025 15:21:45 -0800
-Message-Id: <1738970505-7864-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id D0D63402BB;
+	Sat,  8 Feb 2025 01:21:29 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 99C2640280
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 01:21:27 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-21f40deb941so48271415ad.2
+ for <dev@dpdk.org>; Fri, 07 Feb 2025 16:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1738974086;
+ x=1739578886; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=9gfcKWJRl6EcJd6OfVeypd/BvyC1gS6+trm1hs7KIyI=;
+ b=ZQT98XOPjeDyHhsFAD6TnquZEN3Ze7fsDPn4yxxCPPfDTtw7iVh8MP8YTJgaa3szSZ
+ mIRvq/sB9AcS5HQN6E7m8/WKTjQBDpHizyXKtvrLVaX8QvD2a5v6QUFkgzTXS4XL4O5v
+ KycU4M1RCAvZoj9LuN3A0DmOuMXcdcjkxgAnq8Tdg2T68osO/BtWGTbUvJj7a3YDo2SD
+ bbCEmrFD7sLwwwTd/06lXXP/En7PLKdT+QvJegpYZNwXV3ZBTnsSEexdZ6XyxFs8xMtb
+ u8TpNm5/kjcMPBEbL1SbEEt5Z2ovovzv31EtLaHGMD1VZaoU0+VpGIhkI2YJgEXH+zcQ
+ 6E5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1738974086; x=1739578886;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=9gfcKWJRl6EcJd6OfVeypd/BvyC1gS6+trm1hs7KIyI=;
+ b=cp2Xt3kEMd1aQhQ5K9NIHBJ5Wkhvq1WLFQlaOVfHzQVZuqDqCNsVcqWxh6mTqtj3F0
+ G1E3+UbH/zF4qNt7IJ7K/Aj9buXrtUzUk7Os84NCYI1iv54wOdKi0DXB2VEvt8e/8W0Z
+ Q3STSH+SBWZP5Xqkp27FlEzvkF4kSA5bYgfIUBCkMIhfbAp0khxEVyY3ZCIFJD2H8e3m
+ o++Ms0Z1WsZadPyG1VeWmdKHchvpE59BGF3Noe08M1x7C4zfiLFozBHZymu57MWz5IAc
+ wbhcWNfyRkOA5Spl+1Wh0rK30T52PzQ9p8gr9HLXX8K87rjZYMgvUHkUZ/JJMJw78fyg
+ 6ljA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWvrWTKA6YpDJnVUb72u2rBb4imrlM2V9lpmbyu2ew6TidKdbBD4ZdBN2vz7Ojj81eeT7s=@dpdk.org
+X-Gm-Message-State: AOJu0YxSJRtavYUe10+yPIln177wYEhRx4i3wKnBXzHBK8U0bd/+yfPL
+ aL9H0q/kZOyS6PMG3Gngpkqla/FbfGbJBf1Zp+dORMLe+SwtcuSvOjjLaVhGSzs=
+X-Gm-Gg: ASbGncs3zR6bqYkV2GsJ/nE6OSKCLXcuQDtxUXO8yQOXTCZjqM/WD9+L3sMRPwCRRn/
+ 9EZgnRQHCkemU0Omy+OjXEafKk65UtAdle1dsoOTuoNj9WxWFJFSN0WvyrrrKj/FhzGkmGesT59
+ 5qF8JXscfAJD/Xr1IsZcnQfEwZogYJGL1Xf0YOp6W/xiDF2RgBA+PU6A1cPJ/iwP+8ctz8hB++R
+ PB1zGzBXsDnD8WecBB8Qp5ug5uF0rHGjNGutKAAI73GROX+zU+o3/e9YvV++0vgiPHDWXr5g3e7
+ YbQCSXiWCGcYF+0EMy5FQ0VPxzKzdeJL9n9H0W/I6xKjIwONJ+9hBLS1Fo0wIYcMKh9K
+X-Google-Smtp-Source: AGHT+IFnRvsuOimGvDtczkkXjTJKj8piouCg9x7nYEXp17G4cB4+wBsEjx8bKIg1YcKFjdnZeNj/mA==
+X-Received: by 2002:a17:902:d50f:b0:21f:78f:c178 with SMTP id
+ d9443c01a7336-21f4e6cea22mr86052955ad.3.1738974086621; 
+ Fri, 07 Feb 2025 16:21:26 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-21f3656125esm36620485ad.95.2025.02.07.16.21.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 07 Feb 2025 16:21:26 -0800 (PST)
+Date: Fri, 7 Feb 2025 16:21:24 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: longli@linuxonhyperv.com
+Cc: Ferruh Yigit <ferruh.yigit@amd.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, Wei Hu <weh@microsoft.com>, dev@dpdk.org,
+ Long Li <longli@microsoft.com>, stable@dpdk.org
+Subject: Re: [PATCH] net/mana: use mana_local_data for tracking usage data
+ for primary process
+Message-ID: <20250207162124.112f0c00@hermes.local>
+In-Reply-To: <1738970505-7864-1-git-send-email-longli@linuxonhyperv.com>
+References: <1738970505-7864-1-git-send-email-longli@linuxonhyperv.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,189 +84,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
+On Fri,  7 Feb 2025 15:21:45 -0800
+longli@linuxonhyperv.com wrote:
 
-The driver uses mana_shared_data for tracking usage count for primary
-process. This is not correct as the mana_shared_data is allocated
-by the primary and is meant to track usage of secondary process by the
-primary process. And it creates a race condition when the device is
-removed because the counter is no longer available if this shared
-memory is being freed.
+> +	/* At least one eth_dev is probed, init shared data */
+> +	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+> +		rte_spinlock_lock(&mana_shared_data_lock);
+> +		mana_local_data.primary_cnt++;
+> +		rte_spinlock_unlock(&mana_shared_data_lock);
+> +	} else {
+> +		rte_spinlock_lock(&mana_shared_data_lock);
+> +		mana_local_data.secondary_cnt++;
+> +		rte_spinlock_unlock(&mana_shared_data_lock);
+> +
+> +		rte_spinlock_lock(&mana_shared_data->lock);
+> +		mana_shared_data->secondary_cnt++;
+> +		rte_spinlock_unlock(&mana_shared_data->lock);
 
-Move the usage count tracking to mana_local_data and fix the race
-condition in mana_pci_remove().
-
-Fixes: 517ed6e2d590 ("net/mana: add basic driver with build environment")
-Cc: stable@dpdk.org
-Signed-off-by: Long Li <longli@microsoft.com>
----
- drivers/net/mana/mana.c | 76 ++++++++++++++++++++++++++---------------
- 1 file changed, 48 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index c37c4e3444..da4a54144f 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -1167,8 +1167,12 @@ mana_init_shared_data(void)
- 	rte_spinlock_lock(&mana_shared_data_lock);
- 
- 	/* Skip if shared data is already initialized */
--	if (mana_shared_data)
-+	if (mana_shared_data) {
-+		DRV_LOG(INFO, "shared data is already initialized");
- 		goto exit;
-+	}
-+
-+	memset(&mana_local_data, 0, sizeof(mana_local_data));
- 
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		mana_shared_mz = rte_memzone_reserve(MZ_MANA_SHARED_DATA,
-@@ -1192,7 +1196,6 @@ mana_init_shared_data(void)
- 		}
- 
- 		mana_shared_data = secondary_mz->addr;
--		memset(&mana_local_data, 0, sizeof(mana_local_data));
- 	}
- 
- exit:
-@@ -1213,11 +1216,11 @@ mana_init_once(void)
- 	if (ret)
- 		return ret;
- 
--	rte_spinlock_lock(&mana_shared_data->lock);
-+	rte_spinlock_lock(&mana_shared_data_lock);
- 
- 	switch (rte_eal_process_type()) {
- 	case RTE_PROC_PRIMARY:
--		if (mana_shared_data->init_done)
-+		if (mana_local_data.init_done)
- 			break;
- 
- 		ret = mana_mp_init_primary();
-@@ -1225,7 +1228,7 @@ mana_init_once(void)
- 			break;
- 		DRV_LOG(ERR, "MP INIT PRIMARY");
- 
--		mana_shared_data->init_done = 1;
-+		mana_local_data.init_done = 1;
- 		break;
- 
- 	case RTE_PROC_SECONDARY:
-@@ -1248,7 +1251,7 @@ mana_init_once(void)
- 		break;
- 	}
- 
--	rte_spinlock_unlock(&mana_shared_data->lock);
-+	rte_spinlock_unlock(&mana_shared_data_lock);
- 
- 	return ret;
- }
-@@ -1319,11 +1322,6 @@ mana_probe_port(struct ibv_device *ibdev, struct ibv_device_attr_ex *dev_attr,
- 		eth_dev->tx_pkt_burst = mana_tx_burst;
- 		eth_dev->rx_pkt_burst = mana_rx_burst;
- 
--		rte_spinlock_lock(&mana_shared_data->lock);
--		mana_shared_data->secondary_cnt++;
--		mana_local_data.secondary_cnt++;
--		rte_spinlock_unlock(&mana_shared_data->lock);
--
- 		rte_eth_copy_pci_info(eth_dev, pci_dev);
- 		rte_eth_dev_probing_finish(eth_dev);
- 
-@@ -1406,10 +1404,6 @@ mana_probe_port(struct ibv_device *ibdev, struct ibv_device_attr_ex *dev_attr,
- 		goto failed;
- 	}
- 
--	rte_spinlock_lock(&mana_shared_data->lock);
--	mana_shared_data->primary_cnt++;
--	rte_spinlock_unlock(&mana_shared_data->lock);
--
- 	eth_dev->device = &pci_dev->device;
- 
- 	DRV_LOG(INFO, "device %s at port %u", name, eth_dev->data->port_id);
-@@ -1552,13 +1546,42 @@ mana_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 		count = mana_pci_probe_mac(pci_dev, NULL);
- 	}
- 
-+	/* If no device is found, clean up resources if this is the last one */
- 	if (!count) {
--		rte_memzone_free(mana_shared_mz);
--		mana_shared_mz = NULL;
--		ret = -ENODEV;
-+		rte_spinlock_lock(&mana_shared_data_lock);
-+		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+			if (!mana_local_data.primary_cnt) {
-+				mana_mp_uninit_primary();
-+				rte_memzone_free(mana_shared_mz);
-+				mana_shared_mz = NULL;
-+				mana_shared_data = NULL;
-+			}
-+		} else {
-+			if (!mana_local_data.secondary_cnt) {
-+				mana_mp_uninit_secondary();
-+				mana_shared_data = NULL;
-+			}
-+		}
-+		rte_spinlock_unlock(&mana_shared_data_lock);
-+		return -ENODEV;
- 	}
- 
--	return ret;
-+	/* At least one eth_dev is probed, init shared data */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		rte_spinlock_lock(&mana_shared_data_lock);
-+		mana_local_data.primary_cnt++;
-+		rte_spinlock_unlock(&mana_shared_data_lock);
-+	} else {
-+		rte_spinlock_lock(&mana_shared_data_lock);
-+		mana_local_data.secondary_cnt++;
-+		rte_spinlock_unlock(&mana_shared_data_lock);
-+
-+		rte_spinlock_lock(&mana_shared_data->lock);
-+		mana_shared_data->secondary_cnt++;
-+		rte_spinlock_unlock(&mana_shared_data->lock);
-+	}
-+
-+	return 0;
- }
- 
- static int
-@@ -1576,22 +1599,18 @@ mana_pci_remove(struct rte_pci_device *pci_dev)
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		rte_spinlock_lock(&mana_shared_data_lock);
- 
--		rte_spinlock_lock(&mana_shared_data->lock);
-+		RTE_VERIFY(mana_local_data.primary_cnt > 0);
-+		mana_local_data.primary_cnt--;
- 
--		RTE_VERIFY(mana_shared_data->primary_cnt > 0);
--		mana_shared_data->primary_cnt--;
--		if (!mana_shared_data->primary_cnt) {
-+		if (!mana_local_data.primary_cnt) {
- 			DRV_LOG(DEBUG, "mp uninit primary");
- 			mana_mp_uninit_primary();
--		}
--
--		rte_spinlock_unlock(&mana_shared_data->lock);
- 
--		/* Also free the shared memory if this is the last */
--		if (!mana_shared_data->primary_cnt) {
-+			/* Also free the shared memory if this is the last */
- 			DRV_LOG(DEBUG, "free shared memezone data");
- 			rte_memzone_free(mana_shared_mz);
- 			mana_shared_mz = NULL;
-+			mana_shared_data = NULL;
- 		}
- 
- 		rte_spinlock_unlock(&mana_shared_data_lock);
-@@ -1608,6 +1627,7 @@ mana_pci_remove(struct rte_pci_device *pci_dev)
- 		if (!mana_local_data.secondary_cnt) {
- 			DRV_LOG(DEBUG, "mp uninit secondary");
- 			mana_mp_uninit_secondary();
-+			mana_shared_data = NULL;
- 		}
- 
- 		rte_spinlock_unlock(&mana_shared_data_lock);
--- 
-2.34.1
-
+If all you are doing is wanting a MP safe counter, use atomic operations
+instead of the overhead of a spin lock.
