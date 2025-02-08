@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBEBC02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF8AC02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:33:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD77E402D7;
-	Sat,  8 Feb 2025 21:32:16 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 997EA40650
- for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:13 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-2f9bd7c480eso5786516a91.1
- for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:13 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DE96240695;
+	Sat,  8 Feb 2025 21:32:17 +0100 (CET)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 922B24066D
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:32:14 +0100 (CET)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-2f42992f608so4822063a91.0
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:32:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046733;
- x=1739651533; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046734;
+ x=1739651534; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dwumik8AL9gXNbaQcQoYUzwtaLs4pzRfeSyg3VNOr0g=;
- b=h4wgPFyVkwFbqnUA3VFNVaDfamreY9PxJhrSOlPQKfW+ppZ1B+yQcA4T+qNE9P2N70
- Ji3yHDdFK7SFF3OWS3NiVPZNfNumH/wmz6AJbQa7ufC1EbgBuYuvJQJ3JAuDdbFDfleE
- sv5B2nhPhPXZmw3ChHfpuUshHYaDSl0A7OnidUmzT0RFKSOGOhM6tnYirvV+Gkf42geQ
- japxbLzr3TETrnwlEmvSB9ltfKGmeIBT9/DRL8gMIDO9oABn8f2CH6z15TbqMJvMgX3M
- a0poLHEiQar82C9UmL4BWMicppGGmwYJfZX/wj0JllWYXs8+shH9QYU3mwvGMSDQmOme
- 0bNg==
+ bh=ZCJPFILj3Md5HFtnzDLz1Y0XfpqaLYgctdooy5SB3ek=;
+ b=R06Oi2Mq0vKsxY0lmw9pelNtHz6rNRni48DBgM07o+YEnLg4r9z18NCGnqG4vDYxLK
+ m/MS+C1uGdEGYyiW++cstJWL3U2RJe/67yk+/2hHOapuL35ZDLnFys8eV6J3dPTLUpUe
+ NTwoM8ZYuB850S81dO8+iDByVO5Xmi8GoEFGeZtGsq3z5qrArBGfLqjJH/wDE8wWi+6+
+ PS9LRAHnCfUtrI+PDxpZQtHD9bdmqFSfVJBvIWMVLUjzs55peZ7LilxtzADATVKs0iow
+ EA7N2J7OUY4V4X/ZKSkpc0H3zfmsM3i8s1deYqXvcz1775X2KXNG9IP1GJfgpxNq0Bk+
+ nHaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739046733; x=1739651533;
+ d=1e100.net; s=20230601; t=1739046734; x=1739651534;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=dwumik8AL9gXNbaQcQoYUzwtaLs4pzRfeSyg3VNOr0g=;
- b=Uomg9BU9cs0TmQqgHXHRTj3rLWIGyBGw7r17lAd06b76nREjtOQV3jZ7B5jA0azCod
- Q6p2iepyEB5SqlrqbHTPtlAtkfQ35Sn03JwiKpxjqSBsxLpeG3PrxOtUGr/jU2dLcjTn
- 4p7eQ9qHBM1AQeoVtDQDWVNPZflrEZmW/SeoB0DvbHEbGJvYu01DGJ/Dv0RzV9KESTvG
- 2udhWRV/GdagO2tgOQvOzm7Ghc7cC/eBDkJS16OSllYJR4RNx0WUlJ6gwl/NUTSFikRx
- /BuSiaOtmAe407LxpZQijroTLGn1tlZzvysOiRfWsQ0P7vqA4CTqev/I9+kofTsil7zV
- pIPQ==
-X-Gm-Message-State: AOJu0Yzf9LTWtMxg11LW7f87ffIIIA4953XcaU8qNkPO7Sz8/m43U1Cq
- n0LQESj7aaTGAkEx1o5DEhEoccs4hosIGerle8fvw0E13clNdlA4D/dVf6zTb+Ob7EWR/nPaATS
- 7Hh4=
-X-Gm-Gg: ASbGncvPMYyb3Fhht8IVQEFzgLHrpux5SLXPtnWVNLf3iVrYEsaMhj/2MCVVq9tlKTJ
- qHcmkRAlToL4CtrvTwu+mTpMWNTNYW4BUTXFT790uX+uW8Diz50TFhtgjRI4lgqSpAIGi6ignby
- q6rBE4yB5FCYkwa7Hqdrt7jHtBxjyv28RJLMS1ZppgDf56vAGDmyKWKci1a1DVaN7ti42qUTkNh
- FyZC+UGjAoOuV7K66f5XQvt2KWxLaI8IHURSfzw/X84OX16Om14wuGEGoqC3Bsiu/hyVL1L6ofo
- Av2bpm8oiOLrYQ4PGTX5Q/jMq4q+jZTOjJWcP4h1KLVcs+QVmtaF/6RBPFQiN7d45Lb8
-X-Google-Smtp-Source: AGHT+IEJWY8kDKGAFRT13tmS0EMay7XCzz5PIJEurrbktLjWvHWlaR2EtNX7iIO88MtWxTogNVALzQ==
-X-Received: by 2002:a05:6a00:6f1a:b0:730:74f8:25b9 with SMTP id
- d2e1a72fcca58-73074f8430cmr4672837b3a.17.1739046732745; 
- Sat, 08 Feb 2025 12:32:12 -0800 (PST)
+ bh=ZCJPFILj3Md5HFtnzDLz1Y0XfpqaLYgctdooy5SB3ek=;
+ b=CkM1H47qm1TvC/NHrSa82vstwWwnMZHKV3IIb5/dtqa+AXuZuJ50GQo2WgixTWPCOl
+ Va41DYWEsaD5xlu5U4UX9OHF5iFqMhfP6yFSkSlPJRhAyjbx3ocezx6at94Gqim6riBK
+ 8fSD+2xKp1HKz79WKYV1+olE04VmZRUFZhKVo3n3SUihRf/D1p55Bn4OiVWsePUyQfBj
+ R1m2/DRMn/dYl02bCDjP11mLsHZBuP0aZvawOY8KFoC0CX92cEAEKmoWJnMov2RdPt8g
+ iolQ6u/8oW/BNG7ltvJTfxBqXcBjKB6c9hNWFxJYUh5Ur6ExX7w35fPwSetO2/37WoO+
+ E3qA==
+X-Gm-Message-State: AOJu0YxciZTxcKGQnpsn3FSw/fa8wqaUjssNppzBYRbty78k6n6VQ1v1
+ ki+OLIhoKyzAVmYj61ZDCf3W+mI3sKkBA8zxu6rFCWtXZFNjgxOSRtpBlCgtK9lWygD32iuYJF1
+ qfoo=
+X-Gm-Gg: ASbGnctmBaIGwSU+1OV9JeSH+WbAz9Bpx08aIyCL69k4gSQfHm3xmp5oN5YhRIIHwab
+ YsFMmfReKEmdCKUP6FceIn7PTJefgLNrRsb4iGC9W4ffC65H2vJOZBvtcCM1lK+uprFBMV4UO2w
+ rOzQQ69vSIzjOiXcwYmopQ/VFZilDP5IY6kt3FyuGu5IwziptGZPrYEpz7k6IwAe6rBN8am9u6S
+ vbHH4f7gVH334EGRYbBEOrCjDVaqVcE6LSMeYlrjnw++YEjedq188w5f5R8SOcMeIE9vu26cR0E
+ tI2mzgHY/sxc/eHLhvm+Xmmq9+nbMzefp19/olwhXauA9wJp1wIcq5fIonLbtYhiw0OT
+X-Google-Smtp-Source: AGHT+IFLu9YMjsSFAOohDmrzdE2ZWzD1hkacGP7WMthzW8/kJB3KN6IKE+cTtk1Dbvyh9KpqvICxmw==
+X-Received: by 2002:a05:6a00:3488:b0:725:b347:c3cc with SMTP id
+ d2e1a72fcca58-7305d529a92mr13443106b3a.23.1739046733784; 
+ Sat, 08 Feb 2025 12:32:13 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.12
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.32.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 12:32:12 -0800 (PST)
+ Sat, 08 Feb 2025 12:32:13 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH 15/32] net/ntnic: replace memcpy with structure assignment
-Date: Sat,  8 Feb 2025 12:22:07 -0800
-Message-ID: <20250208203142.242284-16-stephen@networkplumber.org>
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>
+Subject: [PATCH 16/32] net/bnxt: replace memcpy with structure assignment
+Date: Sat,  8 Feb 2025 12:22:08 -0800
+Message-ID: <20250208203142.242284-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
 References: <20250208203142.242284-1-stephen@networkplumber.org>
@@ -86,45 +86,65 @@ Found by struct-assign.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ntnic/nthw/flow_api/flow_id_table.c               | 4 ++--
- .../nthw/flow_api/profile_inline/flow_api_profile_inline.c    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/bnxt/bnxt_hwrm.c      | 3 +--
+ drivers/net/bnxt/tf_core/tf_rm.c  | 8 ++------
+ drivers/net/bnxt/tf_ulp/ulp_tun.c | 3 +--
+ 3 files changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-index a63f5542d1..61cec41590 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-@@ -99,7 +99,7 @@ uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t
- 	struct ntnic_id_table_element *element = ntnic_id_table_array_find_element(handle, new_id);
- 	element->caller_id = caller_id;
- 	element->type = type;
--	memcpy(&element->handle, &flm_h, sizeof(union flm_handles));
-+	element->handle = flm_h;
+diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
+index d015ba2b9c..b2f73207ae 100644
+--- a/drivers/net/bnxt/bnxt_hwrm.c
++++ b/drivers/net/bnxt/bnxt_hwrm.c
+@@ -3266,8 +3266,7 @@ int bnxt_hwrm_func_qstats(struct bnxt *bp, uint16_t fid,
  
- 	rte_spinlock_unlock(&handle->mtx);
+ 	HWRM_CHECK_RESULT();
+ 	if (func_qstats)
+-		memcpy(func_qstats, resp,
+-		       sizeof(struct hwrm_func_qstats_output));
++		*func_qstats = *resp;
  
-@@ -139,7 +139,7 @@ void ntnic_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h,
+ 	if (!stats)
+ 		goto exit;
+diff --git a/drivers/net/bnxt/tf_core/tf_rm.c b/drivers/net/bnxt/tf_core/tf_rm.c
+index e9a2fbd851..18f46c0a0a 100644
+--- a/drivers/net/bnxt/tf_core/tf_rm.c
++++ b/drivers/net/bnxt/tf_core/tf_rm.c
+@@ -1265,9 +1265,7 @@ tf_rm_get_info(struct tf_rm_get_alloc_info_parms *parms)
+ 	if (cfg_type == TF_RM_ELEM_CFG_NULL)
+ 		return -ENOTSUP;
  
- 	*caller_id = element->caller_id;
- 	*type = element->type;
--	memcpy(flm_h, &element->handle, sizeof(union flm_handles));
-+	*flm_h = element->handle;
+-	memcpy(parms->info,
+-	       &rm_db->db[parms->subtype].alloc,
+-	       sizeof(struct tf_rm_alloc_info));
++	*parms->info = rm_db->db[parms->subtype].alloc;
  
- 	rte_spinlock_unlock(&handle->mtx);
+ 	return 0;
  }
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index ff8eb502f4..5565a7857c 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -3099,7 +3099,7 @@ static int convert_fh_to_fh_flm(struct flow_handle *fh, const uint32_t *packet_d
- 	if (fh->type != FLOW_HANDLE_TYPE_FLOW)
- 		return -1;
+@@ -1299,9 +1297,7 @@ tf_rm_get_all_info(struct tf_rm_get_alloc_info_parms *parms, int size)
+ 			continue;
+ 		}
  
--	memcpy(&fh_copy, fh, sizeof(struct flow_handle));
-+	fh_copy = *fh;
- 	memset(fh, 0x0, sizeof(struct flow_handle));
- 	fd = fh_copy.fd;
+-		memcpy(info,
+-		       &rm_db->db[i].alloc,
+-		       sizeof(struct tf_rm_alloc_info));
++		*info = rm_db->db[i].alloc;
+ 		info++;
+ 	}
  
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_tun.c b/drivers/net/bnxt/tf_ulp/ulp_tun.c
+index 7ebe81c4ea..b90b4bf252 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_tun.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_tun.c
+@@ -40,8 +40,7 @@ ulp_app_tun_search_entry(struct bnxt_ulp_context *ulp_ctx,
+ 	}
+ 	if (free_entry >= 0) {
+ 		*tun_entry =  &tun_ent_list[free_entry];
+-		memcpy(&tun_ent_list[free_entry].app_tunnel, app_tunnel,
+-		       sizeof(struct rte_flow_tunnel));
++		tun_ent_list[free_entry].app_tunnel = *app_tunnel;
+ 		tun_ent_list[free_entry].ref_cnt = 1;
+ 		rc = 1;
+ 	} else {
 -- 
 2.47.2
 
