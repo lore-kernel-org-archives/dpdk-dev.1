@@ -2,74 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7B0C02198
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 16:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5402C02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 20:31:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DED3740279;
-	Sat,  8 Feb 2025 17:33:28 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5E9E54025E
- for <dev@dpdk.org>; Sat,  8 Feb 2025 17:33:27 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-21f53ad05a0so26584545ad.3
- for <dev@dpdk.org>; Sat, 08 Feb 2025 08:33:27 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78416402B7;
+	Sat,  8 Feb 2025 21:31:55 +0100 (CET)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
+ [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 8203D402A0
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 21:31:54 +0100 (CET)
+Received: by mail-pj1-f51.google.com with SMTP id
+ 98e67ed59e1d1-2f9d627b5fbso5842997a91.2
+ for <dev@dpdk.org>; Sat, 08 Feb 2025 12:31:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739032406;
- x=1739637206; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9IAQrpRpJcuhexC0Xprrs8qRTEuxjyMMOMis1wQNNQ0=;
- b=PbkRFUpU5Sq0DPsL7Rc+q/sTTLHWFsUVN1ZbMrE9EB98FIDIlMDbbed+5pGk67rD0p
- a4nRuCWGbUJW3fM7Sdp4qiFbAm2NdJRCeKay+ju49qZZyU98YPVzAbgsTyTR2bBhPWoQ
- wqxxtOqrWJv4xlPKknyiRDvB674wPcIQX2fCQC9kOMWgGiJC0l6j7Qnl6ipNZkUOWeiO
- OHCvkM9czq+R8hgfAYnIe3lAN8FCuQLYFgMCL3D/H23sU4MIPOHGE95HjQq42cMi7CNz
- IcA7A3SYBR1adsYt0l0723mYx4oY1EBHvskEisMgXEcvmAqSMNamLp9gUeMQKSfsGTAV
- OAFA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739046713;
+ x=1739651513; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=qLvkKD+ESV5jjiXRZecf18JwJOK2TedQ2Ym7V7aJL0w=;
+ b=ryHk7RIRU7H/ru6ygOoo/TjzWYOtQ7vlcd8W1a2ajA9+je3wEQ/sHQG2UNDuVBLMXq
+ R3D16pajw8stdcCeyy6D5aovgfVi+NEQJoCJYAvY91Zgprxjx7ews8jROj80xmskm+cS
+ cHJhg57vYObExppCosaXdZkvbhIgg465FelDB3/ByLFhyoNW3Ojs7V71rPvdAXjE1Rjm
+ qDyEEa5OURGxCeZGFBJ7L/JAz0F5ZdvzMmP/3INzUUXigI6HU4TI8wnZqIXnYD0GsCma
+ O4RTKycJ5mE423XtZeOn+MPrxV/F8Y5lawhEIUFOXH486vpa3SKsGDbU69BBIPjsB0P2
+ YaJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739032406; x=1739637206;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=9IAQrpRpJcuhexC0Xprrs8qRTEuxjyMMOMis1wQNNQ0=;
- b=nZy+CtwjbCwt/ETOY4g5K19f5CSDoapqBG26nzSOazXQkJGBhMWQGRFZqJdpe4RdMB
- D5JQgGpOXQhNiy8tWDt83GhWrg6vT+aVGyZiU+NR6Iel9mkqJESO6cPDB88WxR+piYvW
- zoJ6C6uTdSgeIGDKb56FR7RWI+hYSeb2tAYOH8xA2eToE/oc2LjC1fctGhyloin4iyPn
- vPL7m3ZPoIBRZRSgPpp68btFAQ6t3y7tXDuOJQpl/Uz0byTUTH1HdDnLXpXjjkAlwghZ
- fZ0uSaeKUiG9UTkHM9H45SM/kRcZZfqa2bQObvNAhD217oUQgHQ2trhRrSMh+oOtgt/M
- +auQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU1AZQPireYGeRiuq9TUGc6malG1kJVVq5Y8wdXYXLc254GlbLHsJ/xpXe9I9HgA3+94gg=@dpdk.org
-X-Gm-Message-State: AOJu0YwWGDMiV9WaB4qJoHJZFrF8GRIv2pV7eH3USQKjV8t66qb46qDC
- 1KnSXgJMnNu8TRXR7gixeTeED61VUKHkAUS0Ndat+33gg9eHCG8gUbOJqvjx0OY=
-X-Gm-Gg: ASbGncvKwSRmZoil5ZCHdqlitEMnrgvJEjXLTb0h8rdo4LqDp3lkN5cDKlMdMeSprtl
- kGNXWvyRW5Fch1iMnGrO7y4Mja2Wie1cvOeQuxvajbn6ubFNGIget2m/vew1vyf9x0XsT9zP0Xn
- PvkgqzpB9DalQwEzkBRUzwGGtYRAKfXv2NG1G6WRBu4Yvgik3f/rCl/UtrZf9M+nElTwwxQpnGr
- aqs9cC3dl18d6rigdlXjD+cESJcSNhHzYRM9Ufw72GgqQYg6mDmOBml4K7AZ02AhS36poOfC+We
- g6NTWexN3n+832sB5zJMv6wQuilbuqwtbR/I5yNjjL+enu+B0fkdbM1Pt8KYqVpxbgrH
-X-Google-Smtp-Source: AGHT+IEixYCuH5wrU31Jhuoz7PQoYWq6nCCszTTnLA5KMCQIMFSwv7vwzY4yK/sZbDkEIiU4fadegw==
-X-Received: by 2002:a17:902:e946:b0:215:352c:af73 with SMTP id
- d9443c01a7336-21f4e6c4c10mr107279495ad.18.1739032406323; 
- Sat, 08 Feb 2025 08:33:26 -0800 (PST)
+ d=1e100.net; s=20230601; t=1739046713; x=1739651513;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=qLvkKD+ESV5jjiXRZecf18JwJOK2TedQ2Ym7V7aJL0w=;
+ b=YQclRFEW+2CE3gIdCjp/7kr8nZk82Xt/jzkipK400TQEQy0Dn0lVo9HDmSejJLz0th
+ FfLRC5YeKzvzPYiPiZO6qf9x2FNW2Y7SG5fiwGs7Hd9n/gnafW2pJTJQzHUfADrCQkwf
+ 4fiXlWcVqimPr4/ZeF85h2yASI44/QvkGQ+F3eCxfwzx8o7JFki9stnhgeoZ6B0V2cqX
+ AD0hvhYr+6j5PbF/x3dHAvGokxiq4Z3klkcJ+R/lFxQQzlV0UJ2Zz687p4ft/lOUZHDb
+ OWSBaak9OZhJp9aimaq4CQfIRvSIOGXxQjPeiyopjMnWSXNhjoXzowNIkGBfVYtKJwKV
+ QDMg==
+X-Gm-Message-State: AOJu0Yzs5gb29XdqPzY3qTdMbby0ssULMJ7+Acs/ippPMjKRF5oZVIdC
+ cC70HybzlNX1kXyMakwweEepbGF+1aDwQQGrX0iTDqYIvrs9iVhdORIcSiWY4QpwvnAvL6jvhZ4
+ qhMQ=
+X-Gm-Gg: ASbGncsrIm55nDFOzPOkXJSoa/3XsXwDhku3QaBFxoF/mToLcy7ei77en3rMW02++H3
+ JEx2poNTUJBQEji/GYy1ECinW4SXU6xQT+KO4rCIf72B/UiXloUGXqIQpA1yJJfA8GBOjebdzxy
+ PD+LnqG8ruWjyO9dw+uHW1n/42pOtgSTWLN37Sz+RlUhK1Mcnz/GCmUQ0/CeR5+kF+QbqqAgHPD
+ impcCYGxpUYtqXWWZsqlTBhK+hzvVo7SQuPeNgMz8YIeUvIZoHM/5H3GrLth17tZQa0ilOmnP5K
+ NG6Kg0l/qSBnQKlfXkfIBbXu6VYsNNbxVNUc4Mp+xXWGFPR6Wvg0cz5PCV/NJJOKRPjx
+X-Google-Smtp-Source: AGHT+IEOS2EE+DE/iVAF9/AxJeuAqPUOmBBuindFTsEL2NYCj2KEioFnA/EHgZReRPbvdQtuRYfTNQ==
+X-Received: by 2002:aa7:88cb:0:b0:727:3b77:4174 with SMTP id
+ d2e1a72fcca58-7305d53aa2dmr13458559b3a.23.1739046713001; 
+ Sat, 08 Feb 2025 12:31:53 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f368bb4bdsm48158025ad.235.2025.02.08.08.33.25
+ d2e1a72fcca58-7304c780da5sm4882019b3a.69.2025.02.08.12.31.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 08 Feb 2025 08:33:26 -0800 (PST)
-Date: Sat, 8 Feb 2025 08:33:23 -0800
+ Sat, 08 Feb 2025 12:31:52 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenbo Cao <caowenbo@mucse.com>
-Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v7 01/28] net/rnp: add skeleton
-Message-ID: <20250208083323.314e90ff@hermes.local>
-In-Reply-To: <1738982645-34550-2-git-send-email-caowenbo@mucse.com>
-References: <1738982645-34550-1-git-send-email-caowenbo@mucse.com>
- <1738982645-34550-2-git-send-email-caowenbo@mucse.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/32] Use structure assignment instead of memcpy
+Date: Sat,  8 Feb 2025 12:21:52 -0800
+Message-ID: <20250208203142.242284-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,14 +76,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat,  8 Feb 2025 10:43:38 +0800
-Wenbo Cao <caowenbo@mucse.com> wrote:
+This patch series reduces use of memcpy and rte_memcpy
+in DPDK. It changes memcpy to a simple assignment operator
+which easier to read, generates the same code, and
+keeps type safety.
 
-> Add basic PMD library and doc build infrastructure
-> Update maintainers file to claim responsibility.
-> 
-> Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
-> Reviewed-by: Thomas Monjalon <thomas@monjalon.net>
+Historically memcpy was used in textbooks because there
+was no structure assignement in original K&R C.
 
-The MAINTAINERS file has changed, and this patch does not apply cleanly.
-Please rebase and submit v8
+Stephen Hemminger (32):
+  devtools/cocci: prefer structure assignment over memcpy
+  app/testpmd: replace memcpy with assignment
+  app/graph: replace memcpy with structure assignment
+  crypto/dpaa_sec: replace memcpy with assignment
+  dma/dpaa2: replace memcpy with assignment
+  eventdev: replace memcpy with assignment
+  event/dpaa2: replace memcpy with structure assignment
+  event/dsw: replace memcpy with assignment
+  ml/cnxk: replace memcpy with assignment
+  examples: replace memcpy with assignment
+  node: replace memcpy with assignment
+  pipeline: replace memcpy with assignment
+  sched: replace memcpy with structure assignment
+  table: replace memcpy with structure assignment
+  net/ntnic: replace memcpy with structure assignment
+  net/bnxt: replace memcpy with structure assignment
+  crypto/qat: replace memcpy with structure assignment
+  mempool/cnxk: replace memcpy with structure assignment
+  net/dpaa2: replace memcpy with assignment
+  net/enic: replace memcpy with assignment
+  net/intel/i40e: replace memcpy with structure assignment
+  net/nfp: replace memcpy with assignment
+  net/txgbe: replace memcpy with assignment
+  net/bnx2x: replace memcpy with structure assignment
+  net/dpaa2: replace memcpy with structure assignment
+  net/bonding: replace memcpy with structure assignment
+  net/cnxk: replace memcpy with structure assignment
+  net/enic: replace memcpy with structure assignment
+  net/iavf: replace memcpy with structure assignment
+  net/ice: replace memcpy with structure assignment
+  test: replace memcpy with structure assignment
+  test/cryptodev: replace memcpy with structure assignment
+
+ app/graph/ethdev.c                            |  2 +-
+ app/test-pmd/cmdline_flow.c                   |  2 +-
+ app/test/test_acl.c                           |  5 ++-
+ app/test/test_compressdev.c                   | 36 +++++++------------
+ app/test/test_cryptodev.c                     |  3 +-
+ app/test/test_security_inline_proto.c         | 23 +++++-------
+ devtools/cocci/struct-assign.cocci            | 15 ++++++++
+ drivers/crypto/dpaa_sec/dpaa_sec.c            |  2 +-
+ drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c  |  3 +-
+ drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c  |  3 +-
+ drivers/dma/dpaa2/dpaa2_qdma.c                |  4 +--
+ drivers/event/dpaa2/dpaa2_eventdev.c          |  7 ++--
+ drivers/event/dsw/dsw_event.c                 |  3 +-
+ drivers/mempool/cnxk/cnxk_mempool_ops.c       |  2 +-
+ drivers/ml/cnxk/cnxk_ml_ops.c                 |  2 +-
+ drivers/net/bnx2x/bnx2x_stats.c               |  2 +-
+ drivers/net/bnxt/bnxt_hwrm.c                  |  3 +-
+ drivers/net/bnxt/tf_core/tf_rm.c              |  8 ++---
+ drivers/net/bnxt/tf_ulp/ulp_tun.c             |  3 +-
+ drivers/net/bonding/rte_eth_bond_pmd.c        |  2 +-
+ drivers/net/cnxk/cnxk_ethdev_cman.c           |  2 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              |  5 ++-
+ drivers/net/dpaa2/dpaa2_flow.c                |  9 ++---
+ drivers/net/dpaa2/dpaa2_mux.c                 |  2 +-
+ drivers/net/enic/enic_fm_flow.c               |  2 +-
+ drivers/net/enic/enic_main.c                  |  2 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          |  6 ++--
+ drivers/net/intel/i40e/i40e_fdir.c            |  3 +-
+ drivers/net/intel/i40e/i40e_flow.c            |  3 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |  3 +-
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c    |  3 +-
+ drivers/net/intel/ice/ice_hash.c              |  6 ++--
+ drivers/net/intel/ixgbe/ixgbe_flow.c          |  4 +--
+ .../net/nfp/flower/nfp_flower_representor.c   |  2 +-
+ .../net/ntnic/nthw/flow_api/flow_id_table.c   |  4 +--
+ .../profile_inline/flow_api_profile_inline.c  |  2 +-
+ drivers/net/txgbe/txgbe_flow.c                |  4 +--
+ examples/bbdev_app/main.c                     |  2 +-
+ examples/ip_pipeline/parser.c                 |  2 +-
+ examples/l2fwd-cat/cat.c                      |  3 +-
+ examples/ptpclient/ptpclient.c                |  4 +--
+ lib/eventdev/rte_event_dma_adapter.c          |  2 +-
+ lib/eventdev/rte_event_timer_adapter.c        |  2 +-
+ lib/node/ethdev_rx.c                          |  2 +-
+ lib/node/ip4_reassembly.c                     |  2 +-
+ lib/node/kernel_rx.c                          |  2 +-
+ lib/pipeline/rte_pipeline.c                   |  6 ++--
+ lib/pipeline/rte_swx_ctl.c                    |  2 +-
+ lib/pipeline/rte_swx_ipsec.c                  |  2 +-
+ lib/pipeline/rte_swx_pipeline_spec.c          | 36 +++++++------------
+ lib/sched/rte_sched.c                         |  2 +-
+ lib/table/rte_swx_table_selector.c            |  2 +-
+ 52 files changed, 108 insertions(+), 155 deletions(-)
+ create mode 100644 devtools/cocci/struct-assign.cocci
+
+-- 
+2.47.2
+
