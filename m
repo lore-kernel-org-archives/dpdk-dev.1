@@ -2,27 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C646DC02199
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 02:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752FBC02198
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Feb 2025 07:40:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3937F40DD1;
-	Sat,  8 Feb 2025 03:45:17 +0100 (CET)
-Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 8C6E040A7D
- for <dev@dpdk.org>; Sat,  8 Feb 2025 03:45:06 +0100 (CET)
-Received: by localhost.localdomain (Postfix, from userid 0)
- id 6D6E5A325C; Sat,  8 Feb 2025 10:44:23 +0800 (CST)
-From: Wenbo Cao <caowenbo@mucse.com>
-To: thomas@monjalon.net,
-	Wenbo Cao <caowenbo@mucse.com>
-Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v7 26/28] net/rnp: add support VLAN filters operations.
-Date: Sat,  8 Feb 2025 10:44:03 +0800
-Message-Id: <1738982645-34550-27-git-send-email-caowenbo@mucse.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1738982645-34550-1-git-send-email-caowenbo@mucse.com>
-References: <1738982645-34550-1-git-send-email-caowenbo@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6237E40280;
+	Sat,  8 Feb 2025 08:40:14 +0100 (CET)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 7703440279
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 08:40:12 +0100 (CET)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4YqjRT66xLz501bw
+ for <dev@dpdk.org>; Sat,  8 Feb 2025 15:40:05 +0800 (CST)
+Received: from szxlzmapp03.zte.com.cn ([10.5.231.207])
+ by mse-fl2.zte.com.cn with SMTP id 5187dxNU077400
+ for <dev@dpdk.org>; Sat, 8 Feb 2025 15:39:59 +0800 (+08)
+ (envelope-from li.hanxiao@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Sat, 8 Feb 2025 15:40:01 +0800
+X-Zmail-TransId: 3e8167a70a4a004-0384b
+From: Hanxiao Li <li.hanxiao@zte.com.cn>
+To: dev@dpdk.org
+Cc: Hanxiao Li <li.hanxiao@zte.com.cn>
+Subject: [PATCH v26 00/13] drivers/zsda: introduce zsda drivers
+Date: Sat,  8 Feb 2025 15:27:16 +0800
+Message-ID: <20250208072732.4008334-1-li.hanxiao@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250122093325.3099070-2-li.hanxiao@zte.com.cn>
+References: <20250122093325.3099070-2-li.hanxiao@zte.com.cn>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl2.zte.com.cn 5187dxNU077400
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67A70A55.001/4YqjRT66xLz501bw
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -36,458 +51,280 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support to update vid for vlan filter
 
-Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
----
- doc/guides/nics/features/rnp.ini    |  1 +
- doc/guides/nics/rnp.rst             |  2 +-
- drivers/net/rnp/base/meson.build    |  1 +
- drivers/net/rnp/base/rnp_bitrev.h   | 64 ++++++++++++++++++++++++++++
- drivers/net/rnp/base/rnp_crc32.c    | 37 ++++++++++++++++
- drivers/net/rnp/base/rnp_crc32.h    | 10 +++++
- drivers/net/rnp/base/rnp_eth_regs.h |  1 +
- drivers/net/rnp/base/rnp_hw.h       |  1 +
- drivers/net/rnp/base/rnp_mac.c      | 85 +++++++++++++++++++++++++++++++++++++
- drivers/net/rnp/base/rnp_mac.h      |  1 +
- drivers/net/rnp/base/rnp_mac_regs.h |  6 +++
- drivers/net/rnp/base/rnp_osdep.h    | 13 ++++++
- drivers/net/rnp/rnp.h               | 11 +++++
- drivers/net/rnp/rnp_ethdev.c        | 10 +++++
- 14 files changed, 242 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
- create mode 100644 drivers/net/rnp/base/rnp_crc32.c
- create mode 100644 drivers/net/rnp/base/rnp_crc32.h
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 18ec4bc..ce7381e 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -20,6 +20,7 @@ Promiscuous mode     = Y
- Allmulticast mode    = Y
- MTU update           = Y
- Unicast MAC filter   = Y
-+VLAN filter          = Y
- VLAN offload         = Y
- QinQ offload         = Y
- RSS hash             = Y
-diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index febdaf8..f1d4a06 100644
---- a/doc/guides/nics/rnp.rst
-+++ b/doc/guides/nics/rnp.rst
-@@ -17,7 +17,7 @@ Features
- - Promiscuous mode
- - Link state information
- - MTU update
--- MAC filtering
-+- MAC/VLAN filtering
- - Jumbo frames
- - Scatter-Gather IO support
- - Port hardware statistic
-diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
-index c2ef0d0..6b78de8 100644
---- a/drivers/net/rnp/base/meson.build
-+++ b/drivers/net/rnp/base/meson.build
-@@ -8,6 +8,7 @@ sources = [
-         'rnp_common.c',
-         'rnp_mac.c',
- 	'rnp_bdq_if.c',
-+	'rnp_crc32.c',
- ]
- 
- error_cflags = ['-Wno-unused-value',
-diff --git a/drivers/net/rnp/base/rnp_bitrev.h b/drivers/net/rnp/base/rnp_bitrev.h
-new file mode 100644
-index 0000000..05c36ca
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_bitrev.h
-@@ -0,0 +1,64 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#ifndef _RNP_BITREV_H_
-+#define _RNP_BITREV_H_
-+
-+#include "rnp_osdep.h"
-+
-+static const u8 byte_rev_table[256] = {
-+	0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-+	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
-+	0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
-+	0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8,
-+	0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
-+	0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4,
-+	0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec,
-+	0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc,
-+	0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2,
-+	0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
-+	0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea,
-+	0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa,
-+	0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6,
-+	0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6,
-+	0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
-+	0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe,
-+	0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1,
-+	0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1,
-+	0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9,
-+	0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
-+	0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5,
-+	0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5,
-+	0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed,
-+	0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd,
-+	0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
-+	0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3,
-+	0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb,
-+	0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb,
-+	0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7,
-+	0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
-+	0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef,
-+	0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff,
-+};
-+
-+static inline u8 bitrev8(u8 byte)
-+{
-+	return byte_rev_table[byte];
-+}
-+
-+static u16 bitrev16(u16 x)
-+{
-+	return (bitrev8(x & 0xff) << 8) | bitrev8(x >> 8);
-+}
-+
-+/**
-+ * bitrev32 - reverse the order of bits in a u32 value
-+ * @x: value to be bit-reversed
-+ */
-+static u32 bitrev32(uint32_t x)
-+{
-+	return (bitrev16(x & 0xffff) << 16) | bitrev16(x >> 16);
-+}
-+
-+#endif /* _RNP_BITREV_H */
-diff --git a/drivers/net/rnp/base/rnp_crc32.c b/drivers/net/rnp/base/rnp_crc32.c
-new file mode 100644
-index 0000000..c287b35
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_crc32.c
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#include "rnp_osdep.h"
-+#include "rnp_crc32.h"
-+
-+static inline int get_bitmask_order(u32 count)
-+{
-+	int order;
-+
-+	order = fls(count);
-+
-+	return order;   /* We could be slightly more clever with -1 here... */
-+}
-+
-+u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le)
-+{
-+	u8 *data = (u8 *)&vid_le;
-+	u32 crc = crc_init;
-+	u8 data_byte = 0;
-+	u32 temp = 0;
-+	int i, bits;
-+
-+	bits = get_bitmask_order(VLAN_VID_MASK);
-+	for (i = 0; i < bits; i++) {
-+		if ((i % 8) == 0)
-+			data_byte = data[i / 8];
-+		temp = ((crc & 1) ^ data_byte) & 1;
-+		crc >>= 1;
-+		data_byte >>= 1;
-+		if (temp)
-+			crc ^= 0xedb88320;
-+	}
-+
-+	return crc;
-+}
-diff --git a/drivers/net/rnp/base/rnp_crc32.h b/drivers/net/rnp/base/rnp_crc32.h
-new file mode 100644
-index 0000000..e117dcf
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_crc32.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#ifndef _RNP_CRC32_H_
-+#define _RNP_CRC32_H_
-+
-+u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le);
-+
-+#endif /* _RNP_CRC32_H_ */
-diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 802a127..ac9cea4 100644
---- a/drivers/net/rnp/base/rnp_eth_regs.h
-+++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -61,6 +61,7 @@
- /* vlan filter ctrl */
- #define RNP_VLAN_FILTER_CTRL	_ETH_(0x9118)
- #define RNP_VLAN_FILTER_EN	RTE_BIT32(30)
-+#define RNP_VFTA_HASH_TABLE(id) _ETH_(0xB000 + 0x4 * (id))
- /* rss function ctrl */
- #define RNP_RSS_INNER_CTRL	_ETH_(0x805c)
- #define RNP_INNER_RSS_EN	(1)
-diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-index 6d07480..1a3a341 100644
---- a/drivers/net/rnp/base/rnp_hw.h
-+++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -76,6 +76,7 @@ struct rnp_mac_ops {
- 	int (*clear_rafb)(struct rnp_eth_port *port, u32 index);
- 	/* receive vlan filter */
- 	int (*vlan_f_en)(struct rnp_eth_port *port, bool en);
-+	int (*update_vlan)(struct rnp_eth_port *port, u16 vid, bool en);
- };
- 
- struct rnp_eth_adapter;
-diff --git a/drivers/net/rnp/base/rnp_mac.c b/drivers/net/rnp/base/rnp_mac.c
-index ddf2a36..cf93cb0 100644
---- a/drivers/net/rnp/base/rnp_mac.c
-+++ b/drivers/net/rnp/base/rnp_mac.c
-@@ -8,6 +8,8 @@
- #include "rnp_mac.h"
- #include "rnp_eth_regs.h"
- #include "rnp_mac_regs.h"
-+#include "rnp_bitrev.h"
-+#include "rnp_crc32.h"
- #include "../rnp.h"
- 
- static int
-@@ -214,12 +216,86 @@
- 	return 0;
- }
- 
-+static int
-+rnp_update_vlan_filter_pf(struct rnp_eth_port *port,
-+			  u16 vlan, bool add)
-+{
-+	struct rnp_vlan_filter *vfta_tb = &port->vfta;
-+	struct rnp_hw *hw = port->hw;
-+	u32 vid_idx;
-+	u32 vid_bit;
-+	u32 vfta;
-+
-+	vid_idx = (u32)((vlan >> 5) & 0x7F);
-+	vid_bit = (u32)(1 << (vlan & 0x1F));
-+	vfta = RNP_E_REG_RD(hw, RNP_VFTA_HASH_TABLE(vid_idx));
-+	if (add)
-+		vfta |= vid_bit;
-+	else
-+		vfta &= ~vid_bit;
-+	RNP_E_REG_WR(hw, RNP_VFTA_HASH_TABLE(vid_idx), vfta);
-+	/* update local VFTA copy */
-+	vfta_tb->vfta_entries[vid_idx] = vfta;
-+
-+	return 0;
-+}
-+
-+static void
-+rnp_update_vlan_hash_indep(struct rnp_eth_port *port)
-+{
-+	struct rnp_hw *hw = port->hw;
-+	u16 lane = port->attr.nr_lane;
-+	u64 vid_idx, vid_bit;
-+	u16 hash = 0;
-+	u16 vid_le;
-+	u32 crc;
-+	u16 vid;
-+
-+	/* Generate VLAN Hash Table */
-+	for (vid = 0; vid < VLAN_N_VID; vid++) {
-+		vid_idx = RNP_VLAN_BITMAP_IDX(vid);
-+		vid_bit = port->vfta.vlans_bitmap[vid_idx];
-+		vid_bit = (u64)vid_bit >>
-+			(vid - (BITS_TO_LONGS(VLAN_N_VID) * vid_idx));
-+		/* If Vid isn't Set, Calc Next Vid Hash Value */
-+		if (!(vid_bit & 1))
-+			continue;
-+		vid_le = cpu_to_le16(vid);
-+		crc = bitrev32(~rnp_vid_crc32_calc(~0, vid_le));
-+		crc >>= RNP_MAC_VLAN_HASH_SHIFT;
-+		hash |= (1 << crc);
-+	}
-+	/* Update vlan hash table */
-+	printf("hash 0x%.2x\n", hash);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_VLAN_HASH, hash);
-+}
-+
-+static int
-+rnp_update_vlan_filter_indep(struct rnp_eth_port *port,
-+			     u16 vid,
-+			     bool add)
-+{
-+	u64 vid_bit, vid_idx;
-+
-+	vid_bit = RNP_VLAN_BITMAP_BIT(vid);
-+	vid_idx = RNP_VLAN_BITMAP_IDX(vid);
-+	if (add)
-+		port->vfta.vlans_bitmap[vid_idx] |= vid_bit;
-+	else
-+		port->vfta.vlans_bitmap[vid_idx] &= ~vid_bit;
-+
-+	rnp_update_vlan_hash_indep(port);
-+
-+	return 0;
-+}
-+
- const struct rnp_mac_ops rnp_mac_ops_pf = {
- 	.get_macaddr = rnp_mbx_fw_get_macaddr,
- 	.update_mpfm = rnp_update_mpfm_pf,
- 	.set_rafb = rnp_set_mac_addr_pf,
- 	.clear_rafb = rnp_clear_mac_pf,
- 	.vlan_f_en = rnp_en_vlan_filter_pf,
-+	.update_vlan = rnp_update_vlan_filter_pf,
- };
- 
- const struct rnp_mac_ops rnp_mac_ops_indep = {
-@@ -228,6 +304,7 @@
- 	.set_rafb = rnp_set_mac_addr_indep,
- 	.clear_rafb = rnp_clear_mac_indep,
- 	.vlan_f_en = rnp_en_vlan_filter_indep,
-+	.update_vlan = rnp_update_vlan_filter_indep,
- };
- 
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac)
-@@ -271,6 +348,14 @@ int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en)
- 	return rnp_call_hwif_impl(port, mac_ops->vlan_f_en, en);
- }
- 
-+int rnp_update_vlan_filter(struct rnp_eth_port *port, u16 vid, bool en)
-+{
-+	const struct rnp_mac_ops *mac_ops =
-+		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
-+
-+	return rnp_call_hwif_impl(port, mac_ops->update_vlan, vid, en);
-+}
-+
- void rnp_mac_ops_init(struct rnp_hw *hw)
- {
- 	struct rnp_proc_priv *proc_priv = RNP_DEV_TO_PROC_PRIV(hw->back->eth_dev);
-diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
-index 4a5206d..6f22c82 100644
---- a/drivers/net/rnp/base/rnp_mac.h
-+++ b/drivers/net/rnp/base/rnp_mac.h
-@@ -29,5 +29,6 @@
- int rnp_update_mpfm(struct rnp_eth_port *port,
- 		    u32 mode, bool en);
- int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en);
-+int rnp_update_vlan_filter(struct rnp_eth_port *port, u16 vid, bool en);
- 
- #endif /* _RNP_MAC_H_ */
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index 43e0aed..9c1d440 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -85,6 +85,12 @@
- #define RNP_MAC_VLAN_ETV	RTE_BIT32(16)
- /* enable vid valid  */
- #define RNP_MAC_VLAN_HASH_EN	RTE_GENMASK32(15, 0)
-+/* mac vlan hash filter */
-+#define RNP_MAC_VLAN_HASH	(0x58)
-+#define RNP_MAC_VLAN_HASH_MASK	RTE_GENMASK32(15, 0)
-+#define RNP_MAC_VLAN_HASH_SHIFT	(28)
-+#define RNP_VLAN_BITMAP_BIT(vlan_id)	(1UL << ((vlan_id) & 0x3F))
-+#define RNP_VLAN_BITMAP_IDX(vlan_id)	((vlan_id) >> 6)
- /* MAC VLAN CTRL INSERT REG */
- #define RNP_MAC_VLAN_INCL	(0x60)
- #define RNP_MAC_INNER_VLAN_INCL	(0x64)
-diff --git a/drivers/net/rnp/base/rnp_osdep.h b/drivers/net/rnp/base/rnp_osdep.h
-index 137e0e8..6332517 100644
---- a/drivers/net/rnp/base/rnp_osdep.h
-+++ b/drivers/net/rnp/base/rnp_osdep.h
-@@ -49,6 +49,19 @@
- #define cpu_to_le32(v)	rte_cpu_to_le_32((u32)(v))
- #endif
- 
-+#ifndef DIV_ROUND_UP
-+#define DIV_ROUND_UP(n, d)      (((n) + (d) - 1) / (d))
-+#define BITS_PER_BYTE           (8)
-+#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-+#endif
-+
-+#define fls(n)	rte_fls_u32(n)
-+
-+#ifndef VLAN_N_VID
-+#define VLAN_N_VID		(4096)
-+#define VLAN_VID_MASK		(0x0fff)
-+#endif
-+
- #define spinlock_t			rte_spinlock_t
- #define spin_lock_init(spinlock_v)	rte_spinlock_init(spinlock_v)
- #define spin_lock(spinlock_v)		rte_spinlock_lock(spinlock_v)
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index a4790d3..1a0c2d2 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -63,6 +63,7 @@
- #define RNP_MAX_HASH_MC_MAC_SIZE	(4096)	/* max multicast hash mac num */
- #define RNP_MAX_UC_HASH_TABLE		(128)	/* max unicast hash mac filter table */
- #define RNP_MAC_MC_HASH_TABLE		(128)	/* max multicast hash mac filter table*/
-+#define RNP_MAX_VFTA_SIZE		(128)   /* max pf vlan hash table size */
- /* Peer port own independent resource */
- #define RNP_PORT_MAX_MACADDR         (32)
- #define RNP_PORT_MAX_UC_HASH_TB      (8)
-@@ -176,6 +177,15 @@ enum rnp_vlan_type {
- 	RNP_SVLAN_TYPE = 1,
- };
- 
-+struct rnp_vlan_filter {
-+	union {
-+		/* indep vlan hash filter table used */
-+		uint64_t vlans_bitmap[BITS_TO_LONGS(VLAN_N_VID)];
-+		/* PF vlan filter table used */
-+		uint32_t vfta_entries[RNP_MAX_VFTA_SIZE];
-+	};
-+};
-+
- struct rnp_eth_port {
- 	struct rnp_proc_priv *proc_priv;
- 	struct rte_ether_addr mac_addr;
-@@ -200,6 +210,7 @@ struct rnp_eth_port {
- 
- 	enum rnp_vlan_type outvlan_type;
- 	enum rnp_vlan_type invlan_type;
-+	struct rnp_vlan_filter vfta;
- 	rte_spinlock_t rx_mac_lock;
- 	bool port_stopped;
- };
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index bddf0d5..52693f4 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -393,6 +393,15 @@ static int rnp_enable_all_tx_queue(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
-+static int
-+rnp_vlan_filter_set(struct rte_eth_dev *dev,
-+		uint16_t vlan_id, int on)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+
-+	return rnp_update_vlan_filter(port, vlan_id, on);
-+}
-+
- static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- {
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
-@@ -1478,6 +1487,7 @@ static void rnp_get_hw_stats(struct rte_eth_dev *dev)
- 	/* vlan offload */
- 	.vlan_offload_set             = rnp_vlan_offload_set,
- 	.vlan_strip_queue_set         = rnp_vlan_strip_queue_set,
-+	.vlan_filter_set              = rnp_vlan_filter_set,
- };
- 
- static void
--- 
-1.8.3.1
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djI2Og0KLSB0cnkgdG8gZW5zdXJlIGFsbCBwYXRjaGVzIGdldHMgY29tcGlsZWQgaW5jcmVtZW50
+YWxseS4NCg0KdjI1Og0KLSByZXBsYWNlIHRoZSBgYF9fcnRlX3BhY2tlZGBgIG1hY3JvLg0KLSBm
+aXggYW4gZXh0cmEgbGluZSBhdCBlbmQgb2YgZmlsZSBpbiBwYXRjaCAxMS4NCg0KdjI0Og0KLSBU
+cnkgdG8gcmVzb2x2ZSB0aGUgaXNzdWUgaW4gdjIzIGJ5IHNlbmRpbmcgYWxsIHBhdGNoZXMgYXQg
+b25jZQ0KDQp2MjM6DQotIG1vZGlmeSBmdW5jaXRvbnMgbmFtZSB0byBtb3ZlIHRoZSB2ZXJiIHRv
+IHRoZSBlbmQNCi0gbW92ZSB0aGUgcXBfc2V0dXAgYW5kIHFwX3JlbGVhc2UgY2FsbHMgaW4gc2Ft
+ZSBwYXRjaA0KLSBtYWtlIHRoZSBxdWV1ZSBzZXR1cCBBUElzIGNvbW1vbiB3aXRoIG9uZSBmdW5j
+dGlvbi4NCi0gRml4IHNvbWUgY29kZSBpbiBvcmlnaW5hbCBwYXRjaC4NCg0KdjIyOg0KLSBtb2Rp
+ZnkgbWlzc3BlbGxlZCBlcnJvcnMuDQoNCnYyMToNCi0gbW9kaWZ5IHNvbWUgZXJyb3JzLg0KDQp2
+MjANCi0gYWRkIHJlbGVhc2Ugbm90ZSB3aGljaCB3YXMgZm9yZ290IGluIGxhc3QgdmVyc2lvbg0K
+DQp2MTk6DQotIGRlbGV0ZSBjcnlwdG9kZXYgZHJpdmVycyBhbmQgcHJlcGFyZSB0byBzdWJtaXQg
+aXQgbmV4dCB0aW1lLg0KLSBvbmx5IHN1Ym1pdCBjb21wcmVzc2RldiBkcml2ZXIgdGhpcyB0aW1l
+Lg0KLSByZXNwbGl0IHRoZSBwYXRjaGVzLg0KDQp2MTg6DQotIGFkZCBjb2RlIGluIGRyaXZlcnMv
+bWVzb24uYnVpbGQgdG8gY29tcGlsZSB6c2RhIGRyaXZlcnMuDQotIG1ha2UgZXZlcnkgcGF0Y2gg
+Y29tcGlsZSB3aXRob3V0IGFueSB3YXJuaW5ncyBvciBlcnJvcnMuDQoNCnYxNzoNCi0gZml4IHNv
+bWUgc3BlbGxpbmcgZXJyb3JzDQoNCnYxNjoNCi0gcmVzcGxpdCBwYXRjaGVzLg0KLSBjb21wbGV0
+ZSBkb2N1bWVudGF0aW9uIHdoaWNoIGlzIHlldCB0aGVyZSBpbiB0aGF0IHBhdGNoLg0KLSBldmVy
+eSBwYXRjaCBzaG91bGQgY29tcGlsZSB3aXRob3V0IGFueSB3YXJuaW5ncyBvciBlcnJvcnMuDQot
+IGRlbGV0ZSB1bnVzZWQgY29tbWVudHMuDQoNCnYxNToNCi0gc3BsaXQgdG8gbW9yZSBwYXRjaGVz
+Lg0KDQp2MTQ6DQotIFVuaWZvcm0gQnl0ZSBBbGlnbm1lbnQuDQoNCnYxMzoNCi0gcmVzb2x2ZSBz
+b21lIGNvbWlsZXIgd2FybmluZ3MgdGhhdCBhcmUgYmVpbmcgc3VwcHJlc3NlZC4NCg0KdjEyOg0K
+LSB1c2UgUlRFX0xPR19MSU5FX1BSRUZJWCBpbiBsb2dnaW5nIG1hY3JvLg0KLSBkZWxldGUgdGhl
+IGNoZWNrIGZvciBudWxsIHdpdGggcnRlX21lbXBvb2xfZnJlZS4NCi0gZGVsZXRlIHNvbWUgdW51
+c2VkIGluaXRpYWwgdmFsdWVzLg0KDQp2MTE6DQotIHVzZSBSVEVfTE9HX0xJTkUgaW4gbG9nZ2lu
+ZyBtYWNyby4NCi0gZml4IHNvbWUga25vd24gYnVncy4NCg0KdjEwOg0KLSBkZWxldGUgbmV3IGJs
+YW5rIGxpbmUgYXQgRU9GDQotIENsZWFuaW5nIHVwIHNvbWUgY29kZSBpbiB6c2RhX2xvZy5oDQoN
+CnY5Og0KLSBhZGQgYSBuZXcgZmVhdHVyZSAgaW4gZGVmYXVsdC5pbmkuDQotIFJlLXNwbGl0IHRo
+ZSBwYXRjaCBhY2NvcmRpbmcgdG8gdGhlIG5ldyBQTUQgZ3VpZGVsaW5lcw0KaHR0cHM6Ly9wYXRj
+aGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI0MTAwNjE4NA0KMjU0LjUzNDk5LTEt
+bmFuZGluaXBlcnNhZDM2MUBnbWFpbC5jb20vDQotIFNwbGl0IFNNNC1YVFMgdGVzdHMgaW50byBh
+IG5ldyBzZXJpZXMgdG8gcmVsZWFzZXMuDQotIFNlcGFyYXRlIG91dCBkYXRhcGF0aChlbnF1ZXVl
+L2RlcXVldWUpIGFzIGEgc2VwYXJhdGUgcGF0Y2guDQoNCnY4Og0KLSBmaXggc29tZSBlcnJvcnMg
+aW4gY3J5cHRvZGV2cy9mZWF0dXJlcy96c2RhLmluaS4NCg0Kdjc6IA0KLSBhZGQgcmVsZWFzZSBu
+b3RlcyBhbmQgc29tZSBkb2N1bWVudGF0aW9ucy4NCi0gYWRkIE1BSU5UQUlORVJTIGNvbnRleHQg
+aW4gdGhlIHBhdGNoIHdoZXJlIHRoZSBmaWxlL2ZvbGRlciBpcyBhZGRlZC4NCi0gYWRkIGZpbGVz
+IGluIG1lYXNvbi5idWlsZCB3aGljaCBhcmUgaW5jbHVkZWQgaW4gdGhlIHBhdGNoIG9ubHkuDQot
+IGFkZCBhIGNoZWNrIGZvciB1bnN1cHBvcnRlZCBvbiBXaW5kb3dzLg0KLSBub3RpY2UgdGhlIGlt
+cGxpY2l0IGNhc3QgaW4gQy4NCi0gYWRkIGNvdmVyIGxldHRlci4NCi0gY29tcGlsZSBlYWNoIG9m
+IHRoZSBwYXRjaGVzIGluZGl2aWR1YWxseS4NCg0KDQpIYW54aWFvIExpICgxMyk6DQogIGNvbmZp
+ZzogYWRkIHpzZGEgZGV2aWNlIG51bWJlcg0KICBjb21tb24venNkYTogYWRkIHpzZGFkZXYgZHJp
+dmVyDQogIGNvbW1vbi96c2RhOiBhZGQgbG9nZ2luZyBtYWNyb3MNCiAgY29tbW9uL3pzZGE6IGFk
+ZCBmdW5jdGlvbnMgdG8gb3BlcmF0ZSBoYXJkd2FyZSBxdWV1ZQ0KICBjb21tb24venNkYTogYWRk
+IGRlZmluaXRpb24gYW5kIHVzZSBvZiBtc2cgY2hhbi4NCiAgY29tcHJlc3MvenNkYTogYWRkIHpz
+ZGEgY29tcHJlc3NkZXYgZHJpdmVyIHNrZWxldG9uDQogIGNvbXByZXNzL3pzZGE6IGFkZCB6c2Rh
+IGNvbXByZXNzZGV2IGRldiBvcHMNCiAgY29tcHJlc3MvenNkYTogYWRkIHpzZGEgY29tcHJlc3Nk
+ZXYgc3RhdHMgb3BzDQogIGNvbXByZXNzL3pzZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IHhmb3Jt
+IG9wcw0KICBjb21wcmVzcy96c2RhOiBhZGQgenNkYSBjb21wcmVzc2RldiBxcCBvcHMNCiAgY29t
+cHJlc3MvenNkYTogYWRkIHpzZGEgY29tcHJlc3NkZXYgZW5xdWV1ZSBkYXRhcGF0aA0KICBjb21w
+cmVzcy96c2RhOiBhZGQgenNkYSBjb21wcmVzc2RldiBkZXF1ZXVlIGRhdGFwYXRoDQogIGNvbXBy
+ZXNzL3pzZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IGNhcGFiaWxpdGllcw0KDQogTUFJTlRBSU5F
+UlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKw0KIGNvbmZpZy9ydGVfY29u
+ZmlnLmggICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICsNCiBkb2MvZ3VpZGVzL2NvbXByZXNz
+ZGV2cy9mZWF0dXJlcy96c2RhLmluaSB8ICAxNSArDQogZG9jL2d1aWRlcy9jb21wcmVzc2RldnMv
+aW5kZXgucnN0ICAgICAgICAgfCAgIDEgKw0KIGRvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pzZGEu
+cnN0ICAgICAgICAgIHwgMTk0ICsrKysrDQogZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8y
+NV8wMy5yc3QgICAgfCAgIDcgKw0KIGRyaXZlcnMvY29tbW9uL3pzZGEvbWVzb24uYnVpbGQgICAg
+ICAgICAgIHwgIDI2ICsNCiBkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfZGV2aWNlLmMgICAgICAg
+ICB8IDIwOSArKysrKw0KIGRyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9kZXZpY2UuaCAgICAgICAg
+IHwgIDU5ICsrDQogZHJpdmVycy9jb21tb24venNkYS96c2RhX2xvZ3MuYyAgICAgICAgICAgfCAg
+MTkgKw0KIGRyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9sb2dzLmggICAgICAgICAgIHwgIDI3ICsN
+CiBkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfcXAuYyAgICAgICAgICAgICB8IDk0NiArKysrKysr
+KysrKysrKysrKysrKysrDQogZHJpdmVycy9jb21tb24venNkYS96c2RhX3FwLmggICAgICAgICAg
+ICAgfCAxODYgKysrKysNCiBkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfcXBfY29tbW9uLmMgICAg
+ICB8IDE5MiArKysrKw0KIGRyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9xcF9jb21tb24uaCAgICAg
+IHwgMTg5ICsrKysrDQogZHJpdmVycy9jb21wcmVzcy96c2RhL3pzZGFfY29tcC5jICAgICAgICAg
+fCAzODggKysrKysrKysrDQogZHJpdmVycy9jb21wcmVzcy96c2RhL3pzZGFfY29tcC5oICAgICAg
+ICAgfCAgNDUgKw0KIGRyaXZlcnMvY29tcHJlc3MvenNkYS96c2RhX2NvbXBfcG1kLmMgICAgIHwg
+NDE4ICsrKysrKysrKysNCiBkcml2ZXJzL2NvbXByZXNzL3pzZGEvenNkYV9jb21wX3BtZC5oICAg
+ICB8ICA0MSArDQogZHJpdmVycy9tZXNvbi5idWlsZCAgICAgICAgICAgICAgICAgICAgICAgfCAg
+IDEgKw0KIDIwIGZpbGVzIGNoYW5nZWQsIDI5NzMgaW5zZXJ0aW9ucygrKQ0KIGNyZWF0ZSBtb2Rl
+IDEwMDY0NCBkb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy9mZWF0dXJlcy96c2RhLmluaQ0KIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy96c2RhLnJzdA0KIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL2NvbW1vbi96c2RhL21lc29uLmJ1aWxkDQogY3JlYXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9kZXZpY2UuYw0KIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfZGV2aWNlLmgNCiBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9jb21tb24venNkYS96c2RhX2xvZ3MuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfbG9ncy5oDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvY29tbW9uL3pzZGEvenNkYV9xcC5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29t
+bW9uL3pzZGEvenNkYV9xcC5oDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29tbW9uL3pz
+ZGEvenNkYV9xcF9jb21tb24uYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2NvbW1vbi96
+c2RhL3pzZGFfcXBfY29tbW9uLmgNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jb21wcmVz
+cy96c2RhL3pzZGFfY29tcC5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29tcHJlc3Mv
+enNkYS96c2RhX2NvbXAuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2NvbXByZXNzL3pz
+ZGEvenNkYV9jb21wX3BtZC5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29tcHJlc3Mv
+enNkYS96c2RhX2NvbXBfcG1kLmgNCg0KLS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djI2OjxiciAvPi0mbmJzcDt0cnkmbmJzcDt0byZuYnNwO2Vuc3VyZSZuYnNwO2FsbCZuYnNwO3Bh
+dGNoZXMmbmJzcDtnZXRzJm5ic3A7Y29tcGlsZWQmbmJzcDtpbmNyZW1lbnRhbGx5LjxiciAvPg08
+YnIgLz52MjU6PGJyIC8+LSZuYnNwO3JlcGxhY2UmbmJzcDt0aGUmbmJzcDtgYF9fcnRlX3BhY2tl
+ZGBgJm5ic3A7bWFjcm8uPGJyIC8+LSZuYnNwO2ZpeCZuYnNwO2FuJm5ic3A7ZXh0cmEmbmJzcDts
+aW5lJm5ic3A7YXQmbmJzcDtlbmQmbmJzcDtvZiZuYnNwO2ZpbGUmbmJzcDtpbiZuYnNwO3BhdGNo
+Jm5ic3A7MTEuPGJyIC8+DTxiciAvPnYyNDo8YnIgLz4tJm5ic3A7VHJ5Jm5ic3A7dG8mbmJzcDty
+ZXNvbHZlJm5ic3A7dGhlJm5ic3A7aXNzdWUmbmJzcDtpbiZuYnNwO3YyMyZuYnNwO2J5Jm5ic3A7
+c2VuZGluZyZuYnNwO2FsbCZuYnNwO3BhdGNoZXMmbmJzcDthdCZuYnNwO29uY2U8YnIgLz4NPGJy
+IC8+djIzOjxiciAvPi0mbmJzcDttb2RpZnkmbmJzcDtmdW5jaXRvbnMmbmJzcDtuYW1lJm5ic3A7
+dG8mbmJzcDttb3ZlJm5ic3A7dGhlJm5ic3A7dmVyYiZuYnNwO3RvJm5ic3A7dGhlJm5ic3A7ZW5k
+PGJyIC8+LSZuYnNwO21vdmUmbmJzcDt0aGUmbmJzcDtxcF9zZXR1cCZuYnNwO2FuZCZuYnNwO3Fw
+X3JlbGVhc2UmbmJzcDtjYWxscyZuYnNwO2luJm5ic3A7c2FtZSZuYnNwO3BhdGNoPGJyIC8+LSZu
+YnNwO21ha2UmbmJzcDt0aGUmbmJzcDtxdWV1ZSZuYnNwO3NldHVwJm5ic3A7QVBJcyZuYnNwO2Nv
+bW1vbiZuYnNwO3dpdGgmbmJzcDtvbmUmbmJzcDtmdW5jdGlvbi48YnIgLz4tJm5ic3A7Rml4Jm5i
+c3A7c29tZSZuYnNwO2NvZGUmbmJzcDtpbiZuYnNwO29yaWdpbmFsJm5ic3A7cGF0Y2guPGJyIC8+
+DTxiciAvPnYyMjo8YnIgLz4tJm5ic3A7bW9kaWZ5Jm5ic3A7bWlzc3BlbGxlZCZuYnNwO2Vycm9y
+cy48YnIgLz4NPGJyIC8+djIxOjxiciAvPi0mbmJzcDttb2RpZnkmbmJzcDtzb21lJm5ic3A7ZXJy
+b3JzLjxiciAvPg08YnIgLz52MjA8YnIgLz4tJm5ic3A7YWRkJm5ic3A7cmVsZWFzZSZuYnNwO25v
+dGUmbmJzcDt3aGljaCZuYnNwO3dhcyZuYnNwO2ZvcmdvdCZuYnNwO2luJm5ic3A7bGFzdCZuYnNw
+O3ZlcnNpb248YnIgLz4NPGJyIC8+djE5OjxiciAvPi0mbmJzcDtkZWxldGUmbmJzcDtjcnlwdG9k
+ZXYmbmJzcDtkcml2ZXJzJm5ic3A7YW5kJm5ic3A7cHJlcGFyZSZuYnNwO3RvJm5ic3A7c3VibWl0
+Jm5ic3A7aXQmbmJzcDtuZXh0Jm5ic3A7dGltZS48YnIgLz4tJm5ic3A7b25seSZuYnNwO3N1Ym1p
+dCZuYnNwO2NvbXByZXNzZGV2Jm5ic3A7ZHJpdmVyJm5ic3A7dGhpcyZuYnNwO3RpbWUuPGJyIC8+
+LSZuYnNwO3Jlc3BsaXQmbmJzcDt0aGUmbmJzcDtwYXRjaGVzLjxiciAvPg08YnIgLz52MTg6PGJy
+IC8+LSZuYnNwO2FkZCZuYnNwO2NvZGUmbmJzcDtpbiZuYnNwO2RyaXZlcnMvbWVzb24uYnVpbGQm
+bmJzcDt0byZuYnNwO2NvbXBpbGUmbmJzcDt6c2RhJm5ic3A7ZHJpdmVycy48YnIgLz4tJm5ic3A7
+bWFrZSZuYnNwO2V2ZXJ5Jm5ic3A7cGF0Y2gmbmJzcDtjb21waWxlJm5ic3A7d2l0aG91dCZuYnNw
+O2FueSZuYnNwO3dhcm5pbmdzJm5ic3A7b3ImbmJzcDtlcnJvcnMuPGJyIC8+DTxiciAvPnYxNzo8
+YnIgLz4tJm5ic3A7Zml4Jm5ic3A7c29tZSZuYnNwO3NwZWxsaW5nJm5ic3A7ZXJyb3JzPGJyIC8+
+DTxiciAvPnYxNjo8YnIgLz4tJm5ic3A7cmVzcGxpdCZuYnNwO3BhdGNoZXMuPGJyIC8+LSZuYnNw
+O2NvbXBsZXRlJm5ic3A7ZG9jdW1lbnRhdGlvbiZuYnNwO3doaWNoJm5ic3A7aXMmbmJzcDt5ZXQm
+bmJzcDt0aGVyZSZuYnNwO2luJm5ic3A7dGhhdCZuYnNwO3BhdGNoLjxiciAvPi0mbmJzcDtldmVy
+eSZuYnNwO3BhdGNoJm5ic3A7c2hvdWxkJm5ic3A7Y29tcGlsZSZuYnNwO3dpdGhvdXQmbmJzcDth
+bnkmbmJzcDt3YXJuaW5ncyZuYnNwO29yJm5ic3A7ZXJyb3JzLjxiciAvPi0mbmJzcDtkZWxldGUm
+bmJzcDt1bnVzZWQmbmJzcDtjb21tZW50cy48YnIgLz4NPGJyIC8+djE1OjxiciAvPi0mbmJzcDtz
+cGxpdCZuYnNwO3RvJm5ic3A7bW9yZSZuYnNwO3BhdGNoZXMuPGJyIC8+DTxiciAvPnYxNDo8YnIg
+Lz4tJm5ic3A7VW5pZm9ybSZuYnNwO0J5dGUmbmJzcDtBbGlnbm1lbnQuPGJyIC8+DTxiciAvPnYx
+Mzo8YnIgLz4tJm5ic3A7cmVzb2x2ZSZuYnNwO3NvbWUmbmJzcDtjb21pbGVyJm5ic3A7d2Fybmlu
+Z3MmbmJzcDt0aGF0Jm5ic3A7YXJlJm5ic3A7YmVpbmcmbmJzcDtzdXBwcmVzc2VkLjxiciAvPg08
+YnIgLz52MTI6PGJyIC8+LSZuYnNwO3VzZSZuYnNwO1JURV9MT0dfTElORV9QUkVGSVgmbmJzcDtp
+biZuYnNwO2xvZ2dpbmcmbmJzcDttYWNyby48YnIgLz4tJm5ic3A7ZGVsZXRlJm5ic3A7dGhlJm5i
+c3A7Y2hlY2smbmJzcDtmb3ImbmJzcDtudWxsJm5ic3A7d2l0aCZuYnNwO3J0ZV9tZW1wb29sX2Zy
+ZWUuPGJyIC8+LSZuYnNwO2RlbGV0ZSZuYnNwO3NvbWUmbmJzcDt1bnVzZWQmbmJzcDtpbml0aWFs
+Jm5ic3A7dmFsdWVzLjxiciAvPg08YnIgLz52MTE6PGJyIC8+LSZuYnNwO3VzZSZuYnNwO1JURV9M
+T0dfTElORSZuYnNwO2luJm5ic3A7bG9nZ2luZyZuYnNwO21hY3JvLjxiciAvPi0mbmJzcDtmaXgm
+bmJzcDtzb21lJm5ic3A7a25vd24mbmJzcDtidWdzLjxiciAvPg08YnIgLz52MTA6PGJyIC8+LSZu
+YnNwO2RlbGV0ZSZuYnNwO25ldyZuYnNwO2JsYW5rJm5ic3A7bGluZSZuYnNwO2F0Jm5ic3A7RU9G
+PGJyIC8+LSZuYnNwO0NsZWFuaW5nJm5ic3A7dXAmbmJzcDtzb21lJm5ic3A7Y29kZSZuYnNwO2lu
+Jm5ic3A7enNkYV9sb2cuaDxiciAvPg08YnIgLz52OTo8YnIgLz4tJm5ic3A7YWRkJm5ic3A7YSZu
+YnNwO25ldyZuYnNwO2ZlYXR1cmUmbmJzcDsmbmJzcDtpbiZuYnNwO2RlZmF1bHQuaW5pLjxiciAv
+Pi0mbmJzcDtSZS1zcGxpdCZuYnNwO3RoZSZuYnNwO3BhdGNoJm5ic3A7YWNjb3JkaW5nJm5ic3A7
+dG8mbmJzcDt0aGUmbmJzcDtuZXcmbmJzcDtQTUQmbmJzcDtndWlkZWxpbmVzPGJyIC8+aHR0cHM6
+Ly9wYXRjaGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI0MTAwNjE4NDxiciAvPjI1
+NC41MzQ5OS0xLW5hbmRpbmlwZXJzYWQzNjFAZ21haWwuY29tLzxiciAvPi0mbmJzcDtTcGxpdCZu
+YnNwO1NNNC1YVFMmbmJzcDt0ZXN0cyZuYnNwO2ludG8mbmJzcDthJm5ic3A7bmV3Jm5ic3A7c2Vy
+aWVzJm5ic3A7dG8mbmJzcDtyZWxlYXNlcy48YnIgLz4tJm5ic3A7U2VwYXJhdGUmbmJzcDtvdXQm
+bmJzcDtkYXRhcGF0aChlbnF1ZXVlL2RlcXVldWUpJm5ic3A7YXMmbmJzcDthJm5ic3A7c2VwYXJh
+dGUmbmJzcDtwYXRjaC48YnIgLz4NPGJyIC8+djg6PGJyIC8+LSZuYnNwO2ZpeCZuYnNwO3NvbWUm
+bmJzcDtlcnJvcnMmbmJzcDtpbiZuYnNwO2NyeXB0b2RldnMvZmVhdHVyZXMvenNkYS5pbmkuPGJy
+IC8+DTxiciAvPnY3OiZuYnNwOw08YnIgLz4tJm5ic3A7YWRkJm5ic3A7cmVsZWFzZSZuYnNwO25v
+dGVzJm5ic3A7YW5kJm5ic3A7c29tZSZuYnNwO2RvY3VtZW50YXRpb25zLjxiciAvPi0mbmJzcDth
+ZGQmbmJzcDtNQUlOVEFJTkVSUyZuYnNwO2NvbnRleHQmbmJzcDtpbiZuYnNwO3RoZSZuYnNwO3Bh
+dGNoJm5ic3A7d2hlcmUmbmJzcDt0aGUmbmJzcDtmaWxlL2ZvbGRlciZuYnNwO2lzJm5ic3A7YWRk
+ZWQuPGJyIC8+LSZuYnNwO2FkZCZuYnNwO2ZpbGVzJm5ic3A7aW4mbmJzcDttZWFzb24uYnVpbGQm
+bmJzcDt3aGljaCZuYnNwO2FyZSZuYnNwO2luY2x1ZGVkJm5ic3A7aW4mbmJzcDt0aGUmbmJzcDtw
+YXRjaCZuYnNwO29ubHkuPGJyIC8+LSZuYnNwO2FkZCZuYnNwO2EmbmJzcDtjaGVjayZuYnNwO2Zv
+ciZuYnNwO3Vuc3VwcG9ydGVkJm5ic3A7b24mbmJzcDtXaW5kb3dzLjxiciAvPi0mbmJzcDtub3Rp
+Y2UmbmJzcDt0aGUmbmJzcDtpbXBsaWNpdCZuYnNwO2Nhc3QmbmJzcDtpbiZuYnNwO0MuPGJyIC8+
+LSZuYnNwO2FkZCZuYnNwO2NvdmVyJm5ic3A7bGV0dGVyLjxiciAvPi0mbmJzcDtjb21waWxlJm5i
+c3A7ZWFjaCZuYnNwO29mJm5ic3A7dGhlJm5ic3A7cGF0Y2hlcyZuYnNwO2luZGl2aWR1YWxseS48
+YnIgLz4NPGJyIC8+DTxiciAvPkhhbnhpYW8mbmJzcDtMaSZuYnNwOygxMyk6PGJyIC8+Jm5ic3A7
+Jm5ic3A7Y29uZmlnOiZuYnNwO2FkZCZuYnNwO3pzZGEmbmJzcDtkZXZpY2UmbmJzcDtudW1iZXI8
+YnIgLz4mbmJzcDsmbmJzcDtjb21tb24venNkYTombmJzcDthZGQmbmJzcDt6c2RhZGV2Jm5ic3A7
+ZHJpdmVyPGJyIC8+Jm5ic3A7Jm5ic3A7Y29tbW9uL3pzZGE6Jm5ic3A7YWRkJm5ic3A7bG9nZ2lu
+ZyZuYnNwO21hY3JvczxiciAvPiZuYnNwOyZuYnNwO2NvbW1vbi96c2RhOiZuYnNwO2FkZCZuYnNw
+O2Z1bmN0aW9ucyZuYnNwO3RvJm5ic3A7b3BlcmF0ZSZuYnNwO2hhcmR3YXJlJm5ic3A7cXVldWU8
+YnIgLz4mbmJzcDsmbmJzcDtjb21tb24venNkYTombmJzcDthZGQmbmJzcDtkZWZpbml0aW9uJm5i
+c3A7YW5kJm5ic3A7dXNlJm5ic3A7b2YmbmJzcDttc2cmbmJzcDtjaGFuLjxiciAvPiZuYnNwOyZu
+YnNwO2NvbXByZXNzL3pzZGE6Jm5ic3A7YWRkJm5ic3A7enNkYSZuYnNwO2NvbXByZXNzZGV2Jm5i
+c3A7ZHJpdmVyJm5ic3A7c2tlbGV0b248YnIgLz4mbmJzcDsmbmJzcDtjb21wcmVzcy96c2RhOiZu
+YnNwO2FkZCZuYnNwO3pzZGEmbmJzcDtjb21wcmVzc2RldiZuYnNwO2RldiZuYnNwO29wczxiciAv
+PiZuYnNwOyZuYnNwO2NvbXByZXNzL3pzZGE6Jm5ic3A7YWRkJm5ic3A7enNkYSZuYnNwO2NvbXBy
+ZXNzZGV2Jm5ic3A7c3RhdHMmbmJzcDtvcHM8YnIgLz4mbmJzcDsmbmJzcDtjb21wcmVzcy96c2Rh
+OiZuYnNwO2FkZCZuYnNwO3pzZGEmbmJzcDtjb21wcmVzc2RldiZuYnNwO3hmb3JtJm5ic3A7b3Bz
+PGJyIC8+Jm5ic3A7Jm5ic3A7Y29tcHJlc3MvenNkYTombmJzcDthZGQmbmJzcDt6c2RhJm5ic3A7
+Y29tcHJlc3NkZXYmbmJzcDtxcCZuYnNwO29wczxiciAvPiZuYnNwOyZuYnNwO2NvbXByZXNzL3pz
+ZGE6Jm5ic3A7YWRkJm5ic3A7enNkYSZuYnNwO2NvbXByZXNzZGV2Jm5ic3A7ZW5xdWV1ZSZuYnNw
+O2RhdGFwYXRoPGJyIC8+Jm5ic3A7Jm5ic3A7Y29tcHJlc3MvenNkYTombmJzcDthZGQmbmJzcDt6
+c2RhJm5ic3A7Y29tcHJlc3NkZXYmbmJzcDtkZXF1ZXVlJm5ic3A7ZGF0YXBhdGg8YnIgLz4mbmJz
+cDsmbmJzcDtjb21wcmVzcy96c2RhOiZuYnNwO2FkZCZuYnNwO3pzZGEmbmJzcDtjb21wcmVzc2Rl
+diZuYnNwO2NhcGFiaWxpdGllczxiciAvPg08YnIgLz4mbmJzcDtNQUlOVEFJTkVSUyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDs2Jm5ic3A7KzxiciAvPiZuYnNwO2NvbmZpZy9ydGVf
+Y29uZmlnLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7NCZuYnNw
+Oys8YnIgLz4mbmJzcDtkb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy9mZWF0dXJlcy96c2RhLmluaSZu
+YnNwO3wmbmJzcDsmbmJzcDsxNSZuYnNwOys8YnIgLz4mbmJzcDtkb2MvZ3VpZGVzL2NvbXByZXNz
+ZGV2cy9pbmRleC5yc3QmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7MSZuYnNwOys8YnIgLz4mbmJzcDtkb2MvZ3Vp
+ZGVzL2NvbXByZXNzZGV2cy96c2RhLnJzdCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsxOTQmbmJzcDsrKysrKzxiciAvPiZu
+YnNwO2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjVfMDMucnN0Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzcmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9j
+b21tb24venNkYS9tZXNvbi5idWlsZCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyNiZuYnNwOys8YnIg
+Lz4mbmJzcDtkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfZGV2aWNlLmMmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MjA5Jm5ic3A7Kysr
+Kys8YnIgLz4mbmJzcDtkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfZGV2aWNlLmgmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7
+NTkmbmJzcDsrKzxiciAvPiZuYnNwO2RyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9sb2dzLmMmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDt8Jm5ic3A7Jm5ic3A7MTkmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9jb21tb24venNk
+YS96c2RhX2xvZ3MuaCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyNyZuYnNwOys8YnIgLz4mbmJzcDtk
+cml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfcXAuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDs5
+NDYmbmJzcDsrKysrKysrKysrKysrKysrKysrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9jb21tb24v
+enNkYS96c2RhX3FwLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTg2Jm5ic3A7KysrKys8
+YnIgLz4mbmJzcDtkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfcXBfY29tbW9uLmMmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTkyJm5ic3A7KysrKys8YnIgLz4mbmJz
+cDtkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfcXBfY29tbW9uLmgmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTg5Jm5ic3A7KysrKys8YnIgLz4mbmJzcDtkcml2ZXJz
+L2NvbXByZXNzL3pzZGEvenNkYV9jb21wLmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Mzg4Jm5ic3A7KysrKysrKysrPGJyIC8+Jm5i
+c3A7ZHJpdmVycy9jb21wcmVzcy96c2RhL3pzZGFfY29tcC5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzQ1Jm5ic3A7Kzxi
+ciAvPiZuYnNwO2RyaXZlcnMvY29tcHJlc3MvenNkYS96c2RhX2NvbXBfcG1kLmMmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7NDE4Jm5ic3A7KysrKysrKysrKzxiciAvPiZuYnNw
+O2RyaXZlcnMvY29tcHJlc3MvenNkYS96c2RhX2NvbXBfcG1kLmgmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7NDEmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9tZXNv
+bi5idWlsZCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDsxJm5ic3A7
+KzxiciAvPiZuYnNwOzIwJm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzI5NzMmbmJzcDtp
+bnNlcnRpb25zKCspPGJyIC8+Jm5ic3A7Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNw
+O2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL2ZlYXR1cmVzL3pzZGEuaW5pPGJyIC8+Jm5ic3A7Y3Jl
+YXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pz
+ZGEucnN0PGJyIC8+Jm5ic3A7Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RyaXZl
+cnMvY29tbW9uL3pzZGEvbWVzb24uYnVpbGQ8YnIgLz4mbmJzcDtjcmVhdGUmbmJzcDttb2RlJm5i
+c3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9jb21tb24venNkYS96c2RhX2RldmljZS5jPGJyIC8+Jm5i
+c3A7Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RyaXZlcnMvY29tbW9uL3pzZGEv
+enNkYV9kZXZpY2UuaDxiciAvPiZuYnNwO2NyZWF0ZSZuYnNwO21vZGUmbmJzcDsxMDA2NDQmbmJz
+cDtkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFfbG9ncy5jPGJyIC8+Jm5ic3A7Y3JlYXRlJm5ic3A7
+bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9sb2dzLmg8YnIg
+Lz4mbmJzcDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9jb21tb24v
+enNkYS96c2RhX3FwLmM8YnIgLz4mbmJzcDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5i
+c3A7ZHJpdmVycy9jb21tb24venNkYS96c2RhX3FwLmg8YnIgLz4mbmJzcDtjcmVhdGUmbmJzcDtt
+b2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9jb21tb24venNkYS96c2RhX3FwX2NvbW1vbi5j
+PGJyIC8+Jm5ic3A7Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RyaXZlcnMvY29t
+bW9uL3pzZGEvenNkYV9xcF9jb21tb24uaDxiciAvPiZuYnNwO2NyZWF0ZSZuYnNwO21vZGUmbmJz
+cDsxMDA2NDQmbmJzcDtkcml2ZXJzL2NvbXByZXNzL3pzZGEvenNkYV9jb21wLmM8YnIgLz4mbmJz
+cDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9jb21wcmVzcy96c2Rh
+L3pzZGFfY29tcC5oPGJyIC8+Jm5ic3A7Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNw
+O2RyaXZlcnMvY29tcHJlc3MvenNkYS96c2RhX2NvbXBfcG1kLmM8YnIgLz4mbmJzcDtjcmVhdGUm
+bmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9jb21wcmVzcy96c2RhL3pzZGFfY29t
+cF9wbWQuaDxiciAvPg08YnIgLz4tLSZuYnNwOw08YnIgLz4yLjI3LjA8YnIgLz4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
