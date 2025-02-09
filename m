@@ -2,56 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521ADC0219E
-	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Feb 2025 17:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B38C0219E
+	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Feb 2025 17:29:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C0214066A;
-	Sun,  9 Feb 2025 18:29:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7B24740677;
+	Sun,  9 Feb 2025 18:29:17 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D1D0F4065A
- for <dev@dpdk.org>; Sun,  9 Feb 2025 18:29:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 004A540677
+ for <dev@dpdk.org>; Sun,  9 Feb 2025 18:29:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1739122149;
+ s=mimecast20190719; t=1739122155;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pRyfhKpU327LAZSKwaKAzat/YlIjCz55Lm6lAfubx7A=;
- b=OoyZPPPG97iIBvEUS8uoIG7IM6W35E4EAbLDsJ9Nr/Wyvt0avF/QABkUL4Nv7/JHo3pFy+
- mIvEb6RP48Cfc+loNxnT1l0P/e9tcl9WVkL7ioAFXwxOnjY4SxTb+EUIlMqpTmLmrI/vLb
- nrNfoyNRHBLac6PWb37vletAxw/T6Bs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ bh=o03yEeznxmqnVcNpfukGCaghzNONrW1lwmKXBf18xog=;
+ b=TyPFGSHuaXydEMNl1IniUXUqUblEhhQeheX9H9I+FcAodqoemKv4EWuWoEbVUJRw0/9qjH
+ 1N4l4nQ7pwiArF6S6RjCjij3V0Cc9ibRKcEyqmAdh7VqmwnVRWI2iDnaur3eG+n6UrNLAA
+ f0VS9MKTr5XYJEh0eH5d57/yHFP8WPA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-sLNgTc_DOauEEhOXg1Zgvw-1; Sun,
- 09 Feb 2025 12:29:06 -0500
-X-MC-Unique: sLNgTc_DOauEEhOXg1Zgvw-1
-X-Mimecast-MFC-AGG-ID: sLNgTc_DOauEEhOXg1Zgvw
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-207-prmubT0mNoGRXulxK9g5ig-1; Sun,
+ 09 Feb 2025 12:29:12 -0500
+X-MC-Unique: prmubT0mNoGRXulxK9g5ig-1
+X-Mimecast-MFC-AGG-ID: prmubT0mNoGRXulxK9g5ig
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B4A78195608B; Sun,  9 Feb 2025 17:29:04 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6F232195608C; Sun,  9 Feb 2025 17:29:10 +0000 (UTC)
 Received: from dmarchan.com (unknown [10.44.32.76])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id AE0A130001AB; Sun,  9 Feb 2025 17:29:02 +0000 (UTC)
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 7E6FD19560A3; Sun,  9 Feb 2025 17:29:07 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com, Kai Ji <kai.ji@intel.com>
-Subject: [RFC v2 02/10] common/qat: remove weak symbols
-Date: Sun,  9 Feb 2025 18:28:40 +0100
-Message-ID: <20250209172850.2429075-3-david.marchand@redhat.com>
+ andremue@linux.microsoft.com,
+ Nagadheeraj Rottela <rnagadheeraj@marvell.com>,
+ Srikanth Jampala <jsrikanth@marvell.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashish.gupta@marvell.com>
+Subject: [RFC v2 03/10] drivers: remove weak symbols in Nitrox drivers
+Date: Sun,  9 Feb 2025 18:28:41 +0100
+Message-ID: <20250209172850.2429075-4-david.marchand@redhat.com>
 In-Reply-To: <20250209172850.2429075-1-david.marchand@redhat.com>
 References: <20250207083252.3131588-1-david.marchand@redhat.com>
  <20250209172850.2429075-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vFLZMC1tK2Yb_mnhOhzcA7SULsHi76gkVAqmZj0FqHo_1739122145
+X-Mimecast-MFC-PROC-ID: faIjALI3jmSwfyGK9STWzmBw1TJwCfh-TL4EKiLI_BA_1739122150
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,47 +71,254 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove dead code, those symbols are never used as the "strong" symbols
-are always linked in.
+Make compress and crypto drivers register to the common driver.
+Remove (unneeded) include_directories().
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/common/qat/qat_qp.c | 8 --------
- drivers/common/qat/qat_qp.h | 5 -----
- 2 files changed, 13 deletions(-)
+ drivers/common/nitrox/meson.build     |  3 --
+ drivers/common/nitrox/nitrox_device.c | 75 ++++++++++-----------------
+ drivers/common/nitrox/nitrox_device.h | 16 ++++++
+ drivers/common/nitrox/version.map     |  1 +
+ drivers/compress/nitrox/meson.build   |  2 -
+ drivers/compress/nitrox/nitrox_comp.c |  6 +++
+ drivers/crypto/nitrox/meson.build     |  2 -
+ drivers/crypto/nitrox/nitrox_sym.c    |  6 +++
+ 8 files changed, 57 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/common/qat/qat_qp.c b/drivers/common/qat/qat_qp.c
-index 4bf9bac23e..0d2bbdb8a5 100644
---- a/drivers/common/qat/qat_qp.c
-+++ b/drivers/common/qat/qat_qp.c
-@@ -944,11 +944,3 @@ qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp)
- 	return ret;
+diff --git a/drivers/common/nitrox/meson.build b/drivers/common/nitrox/meson.build
+index f3cb42f006..115dd8de4d 100644
+--- a/drivers/common/nitrox/meson.build
++++ b/drivers/common/nitrox/meson.build
+@@ -14,6 +14,3 @@ sources += files(
+         'nitrox_logs.c',
+         'nitrox_qp.c',
+ )
+-
+-includes += include_directories('../../crypto/nitrox')
+-includes += include_directories('../../compress/nitrox')
+diff --git a/drivers/common/nitrox/nitrox_device.c b/drivers/common/nitrox/nitrox_device.c
+index 39edc440a7..6cd57faaa4 100644
+--- a/drivers/common/nitrox/nitrox_device.c
++++ b/drivers/common/nitrox/nitrox_device.c
+@@ -6,8 +6,6 @@
+ 
+ #include "nitrox_device.h"
+ #include "nitrox_hal.h"
+-#include "nitrox_sym.h"
+-#include "nitrox_comp.h"
+ 
+ #define PCI_VENDOR_ID_CAVIUM	0x177d
+ #define NITROX_V_PCI_VF_DEV_ID	0x13
+@@ -63,11 +61,21 @@ ndev_release(struct nitrox_device *ndev)
+ 	rte_free(ndev);
  }
- #endif
+ 
++TAILQ_HEAD(ndrv_list, nitrox_driver);
++static struct ndrv_list ndrv_list = TAILQ_HEAD_INITIALIZER(ndrv_list);
++
++void
++nitrox_register_driver(struct nitrox_driver *ndrv)
++{
++	TAILQ_INSERT_TAIL(&ndrv_list, ndrv, next);
++}
++
+ static int
+ nitrox_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 		struct rte_pci_device *pdev)
+ {
+ 	struct nitrox_device *ndev;
++	struct nitrox_driver *ndrv;
+ 	int err = -1;
+ 
+ 	/* Nitrox CSR space */
+@@ -79,19 +87,21 @@ nitrox_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 		return -ENOMEM;
+ 
+ 	ndev_init(ndev, pdev);
+-	err = nitrox_sym_pmd_create(ndev);
+-	if (err)
+-		goto sym_pmd_err;
+-
+-	err = nitrox_comp_pmd_create(ndev);
+-	if (err)
+-		goto comp_pmd_err;
++	TAILQ_FOREACH(ndrv, &ndrv_list, next) {
++		err = ndrv->create(ndev);
++		if (err)
++			goto drv_err;
++	}
+ 
+ 	return 0;
+ 
+-comp_pmd_err:
+-	nitrox_sym_pmd_destroy(ndev);
+-sym_pmd_err:
++drv_err:
++	ndrv = TAILQ_PREV(ndrv, ndrv_list, next);
++	while (ndrv != NULL) {
++		ndrv->destroy(ndev);
++		ndrv = TAILQ_PREV(ndrv, ndrv_list, next);
++	}
++
+ 	ndev_release(ndev);
+ 	return err;
+ }
+@@ -100,19 +110,18 @@ static int
+ nitrox_pci_remove(struct rte_pci_device *pdev)
+ {
+ 	struct nitrox_device *ndev;
++	struct nitrox_driver *ndrv;
+ 	int err;
+ 
+ 	ndev = find_ndev(pdev);
+ 	if (!ndev)
+ 		return -ENODEV;
+ 
+-	err = nitrox_sym_pmd_destroy(ndev);
+-	if (err)
+-		return err;
+-
+-	err = nitrox_comp_pmd_destroy(ndev);
+-	if (err)
+-		return err;
++	TAILQ_FOREACH(ndrv, &ndrv_list, next) {
++		err = ndrv->destroy(ndev);
++		if (err)
++			return err;
++	}
+ 
+ 	ndev_release(ndev);
+ 	return 0;
+@@ -133,33 +142,5 @@ static struct rte_pci_driver nitrox_pmd = {
+ 	.remove         = nitrox_pci_remove,
+ };
+ 
+-__rte_weak int
+-nitrox_sym_pmd_create(struct nitrox_device *ndev)
+-{
+-	RTE_SET_USED(ndev);
+-	return 0;
+-}
 -
 -__rte_weak int
--qat_comp_process_response(void **op __rte_unused, uint8_t *resp __rte_unused,
--			  void *op_cookie __rte_unused,
--			  uint64_t *dequeue_err_count __rte_unused)
+-nitrox_sym_pmd_destroy(struct nitrox_device *ndev)
 -{
--	return  0;
+-	RTE_SET_USED(ndev);
+-	return 0;
 -}
-diff --git a/drivers/common/qat/qat_qp.h b/drivers/common/qat/qat_qp.h
-index f0ea907503..5ccaedefa7 100644
---- a/drivers/common/qat/qat_qp.h
-+++ b/drivers/common/qat/qat_qp.h
-@@ -156,11 +156,6 @@ int
- qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp);
- #endif
+-
+-__rte_weak int
+-nitrox_comp_pmd_create(struct nitrox_device *ndev)
+-{
+-	RTE_SET_USED(ndev);
+-	return 0;
+-}
+-
+-__rte_weak int
+-nitrox_comp_pmd_destroy(struct nitrox_device *ndev)
+-{
+-	RTE_SET_USED(ndev);
+-	return 0;
+-}
+-
+ RTE_PMD_REGISTER_PCI(nitrox, nitrox_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(nitrox, pci_id_nitrox_map);
+diff --git a/drivers/common/nitrox/nitrox_device.h b/drivers/common/nitrox/nitrox_device.h
+index 877bccb321..b74b71808e 100644
+--- a/drivers/common/nitrox/nitrox_device.h
++++ b/drivers/common/nitrox/nitrox_device.h
+@@ -6,6 +6,7 @@
+ #define _NITROX_DEVICE_H_
  
--/* Needed for weak function*/
--int
--qat_comp_process_response(void **op __rte_unused, uint8_t *resp __rte_unused,
--			  void *op_cookie __rte_unused,
--			  uint64_t *dequeue_err_count __rte_unused);
- int
- qat_read_qp_config(struct qat_pci_device *qat_dev);
+ #include <bus_pci_driver.h>
++#include <rte_compat.h>
  
+ struct nitrox_sym_device;
+ struct nitrox_comp_device;
+@@ -21,4 +22,19 @@ struct nitrox_device {
+ 	uint16_t nr_queues;
+ };
+ 
++struct nitrox_driver {
++	TAILQ_ENTRY(nitrox_driver) next;
++	int (*create)(struct nitrox_device *ndev);
++	int (*destroy)(struct nitrox_device *ndev);
++};
++
++__rte_internal
++void nitrox_register_driver(struct nitrox_driver *ndrv);
++
++#define NITROX_REGISTER_DRIVER(ndrv) \
++RTE_INIT(ndrv ## _register) \
++{ \
++	nitrox_register_driver(&ndrv); \
++}
++
+ #endif /* _NITROX_DEVICE_H_ */
+diff --git a/drivers/common/nitrox/version.map b/drivers/common/nitrox/version.map
+index 43295171e4..f58c044fc5 100644
+--- a/drivers/common/nitrox/version.map
++++ b/drivers/common/nitrox/version.map
+@@ -4,6 +4,7 @@ INTERNAL {
+ 	nitrox_logtype;
+ 	nitrox_qp_release;
+ 	nitrox_qp_setup;
++	nitrox_register_driver;
+ 
+ 	local: *;
+ };
+diff --git a/drivers/compress/nitrox/meson.build b/drivers/compress/nitrox/meson.build
+index 1becc66912..5cecc2ad66 100644
+--- a/drivers/compress/nitrox/meson.build
++++ b/drivers/compress/nitrox/meson.build
+@@ -12,5 +12,3 @@ sources += files(
+         'nitrox_comp.c',
+         'nitrox_comp_reqmgr.c',
+ )
+-
+-includes += include_directories('../../common/nitrox')
+diff --git a/drivers/compress/nitrox/nitrox_comp.c b/drivers/compress/nitrox/nitrox_comp.c
+index 1b2054c61a..41a3ee0de8 100644
+--- a/drivers/compress/nitrox/nitrox_comp.c
++++ b/drivers/compress/nitrox/nitrox_comp.c
+@@ -602,3 +602,9 @@ nitrox_comp_pmd_destroy(struct nitrox_device *ndev)
+ 	ndev->comp_dev = NULL;
+ 	return 0;
+ }
++
++static struct nitrox_driver comp_drv = {
++	.create = nitrox_comp_pmd_create,
++	.destroy = nitrox_comp_pmd_destroy,
++};
++NITROX_REGISTER_DRIVER(comp_drv);
+diff --git a/drivers/crypto/nitrox/meson.build b/drivers/crypto/nitrox/meson.build
+index f8887713d2..cbe2b7d6dc 100644
+--- a/drivers/crypto/nitrox/meson.build
++++ b/drivers/crypto/nitrox/meson.build
+@@ -13,5 +13,3 @@ sources += files(
+         'nitrox_sym_capabilities.c',
+         'nitrox_sym_reqmgr.c',
+ )
+-
+-includes += include_directories('../../common/nitrox')
+diff --git a/drivers/crypto/nitrox/nitrox_sym.c b/drivers/crypto/nitrox/nitrox_sym.c
+index da70121d91..7c2dc98a4b 100644
+--- a/drivers/crypto/nitrox/nitrox_sym.c
++++ b/drivers/crypto/nitrox/nitrox_sym.c
+@@ -798,6 +798,12 @@ nitrox_sym_pmd_destroy(struct nitrox_device *ndev)
+ 	return rte_cryptodev_pmd_destroy(ndev->sym_dev->cdev);
+ }
+ 
++static struct nitrox_driver sym_drv = {
++	.create = nitrox_sym_pmd_create,
++	.destroy = nitrox_sym_pmd_destroy,
++};
++NITROX_REGISTER_DRIVER(sym_drv);
++
+ static struct cryptodev_driver nitrox_crypto_drv;
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(nitrox_crypto_drv,
+ 		nitrox_rte_sym_drv,
 -- 
 2.48.1
 
