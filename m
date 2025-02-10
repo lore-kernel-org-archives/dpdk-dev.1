@@ -2,48 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55218C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 17:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7499C02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 17:21:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CA7F427C5;
-	Mon, 10 Feb 2025 18:20:09 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id BA2E1427C4;
- Mon, 10 Feb 2025 18:20:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739208008; x=1770744008;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=ez9I4ddHCxAwEVg2fpgsB34DjpJ7d2eoToghXw7+eBk=;
- b=HIkoOMukSCq2QhY9zWEXs/qJMasvY0mi2HolqXWxk3pX+0U+XP54soYr
- kbm63fT1zXgKaHgxxNm8VQzsfLKzhBuurQUMRqZMhW3QDVJtNYjVW+PYo
- ws4e7RpIClnbDV0u0EgEM9WGuUv0vOgdrxgBlek9BnkQHeQq6/Nw3iQYm
- Bwt1W4EYLBCbT0gA0PufkAu0aaoMoK44GUOU9zm3yOBkaVX94HtYiYnrU
- DqEL9T6cHXLWL3XmRXohKgXBj/m8xGAbBS+wtVDuL6jfAVSsDeyH/xbgA
- n0/ZYMJBtfR55pXvJr5vo2bPOtO2qjjhXEAtRZWrntnqe6GQwaFNqh2vb g==;
-X-CSE-ConnectionGUID: RNvNVJWwQ3uOBzE0Z+zclw==
-X-CSE-MsgGUID: fY7myNVgRiCtHJZsw/Vhuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11341"; a="65153450"
-X-IronPort-AV: E=Sophos;i="6.13,275,1732608000"; d="scan'208";a="65153450"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2025 09:20:07 -0800
-X-CSE-ConnectionGUID: nvse9oY3QPmrSsl+V0Lsiw==
-X-CSE-MsgGUID: Tg6rD0uSQA28rwspTTyoHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="143142512"
-Received: from silpixa00401197coob.ir.intel.com (HELO
- silpixa00401385.ir.intel.com) ([10.237.214.45])
- by fmviesa001.fm.intel.com with ESMTP; 10 Feb 2025 09:20:05 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 12AC1427C5;
+	Mon, 10 Feb 2025 18:21:03 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id DF3E6427C4
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 18:21:01 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-21c2f1b610dso113918945ad.0
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 09:21:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739208061;
+ x=1739812861; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=TNe+nXDcRCkNSOIlqr/voh/oXWoMHGmJCu4QrYgj5+M=;
+ b=Zo7iqQiinmBKpM9agVYQZV7sufQrxEFFOaRgXWkDpQpwJcMq2cLHIKXmng9q9WxQ/c
+ ApZeFjClfVsx0yfSWQpOEfmFe5GOh6J6NGsqUohRCsnqdYL4hn135dQ9ZsmYAZirioTO
+ 2MsDMoyFZGcbFGox6xoC298kCmt9TYQDH7ISYM8tKFSpVVHDAnnLBNcb/15r+WrVFTz7
+ YIxp6JPV6cCqhPWtn8ZwQ3VzGtTXgy3eGUiuJoUGXbkXk6NVlCiRdEe7ORnJV1hYfxXd
+ UwhDd2DAJ1HSDWyf5lIinStXUZlZcJLyJOZxZFcaXtRTAc/JvkYiTzhdIu63qB2yBA2r
+ GJ3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1739208061; x=1739812861;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=TNe+nXDcRCkNSOIlqr/voh/oXWoMHGmJCu4QrYgj5+M=;
+ b=Py6HglapsXutd7G+RBpzcksZ6aOalOYQY6t+Baw2I3SY5FCTYj6k0u8d6Atwq3Hr6e
+ Ui+WpBiqHcMFEXRFQZTX/g1DBaQXt6xXWTRSQR1SnyYHfrjYCrWXCQ+4+xS8x0myt1Zi
+ RI4rEYnSL9oh3B2I/nlX/uwwGH/PLlarY60IpO3oGDsP+uQKc8lNXwEgCon/hwFju7KC
+ 0Rd6H7E3CLOppdsbsyo2oQna4v7gA2pV89jEQ63zR7ltaLn7aGCVuMyo9A9YCf3RGkcq
+ 6IkXm1bocHGraniL+HZiVg58R/0xIsjzJy+mFB+PzyGN3yqmNHo3WXuyJwoJsBpTHWDi
+ hLrA==
+X-Gm-Message-State: AOJu0Yzdz02fC12UGXoHh1fjRlacXzncwt6NSNw3Q+g/1FcydYJ8Ixfs
+ pk6sXfKZGZi3PN5zbMhzSXHcjoDqw8VHBhP4b+zfIT0hDOY1R4zNnozavgoE9UpuGbEWlv5ns9K
+ s
+X-Gm-Gg: ASbGncvDA9y4szef+lXZX21/TSWXtdxAeiUBxlyxJxcAvoxJPwcBM7fxzQUfyN8u50+
+ u8i1pKdJBnm02OXf088M70s8P0dmnkHgFM+ld03+rh05X7oqgjhlsKsbpK2350rqldFqA3sXoad
+ +cBuvJ84lLbUigjL9J0an2/3LizuGCXALfE4AHaWzeESkt17rUP2Oi7VowOq6II0GX3+yLTTpAd
+ odwfjfhrXWIRhy34CMy754+488+gt2QmTpJ3BY4hluHcZQBKeIqFDZzlpHGMuIEqH3HFon3LMXE
+ FznrF0UicHHLiuEbDRDV5iOFkT6W+yRdQLniFacyTxWLHgH47emneUBLWhveV/iTIz07
+X-Google-Smtp-Source: AGHT+IG0MoZWYS+ITRis03k8sbLwzq/07B30BYYrCfLiSnB6iuJgVFifJ0k48+a7FPrv/9zq//umPw==
+X-Received: by 2002:a17:903:240f:b0:21f:1202:f2f5 with SMTP id
+ d9443c01a7336-21f4e6ce1a4mr229953025ad.8.1739208061096; 
+ Mon, 10 Feb 2025 09:21:01 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-21f365110f7sm81330985ad.42.2025.02.10.09.21.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 10 Feb 2025 09:21:00 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Ian Stokes <ian.stokes@intel.com>
-Subject: [PATCH] drivers: fix build warnings when using icx
-Date: Mon, 10 Feb 2025 17:19:57 +0000
-Message-ID: <20250210171957.1670913-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.43.0
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Paul Szczepanek <paul.szczepanek@arm.com>,
+ Patrick Robb <probb@iol.unh.edu>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [RFC] git: consolidate .gitignore files
+Date: Mon, 10 Feb 2025 09:20:49 -0800
+Message-ID: <20250210172050.8884-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250207182634.168820-1-stephen@networkplumber.org>
+References: <20250207182634.168820-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,85 +83,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Intel oneAPI DPC++/C++ Compiler (icx), issues warnings on build when
-the "-march=native", or other configured global "-march" flag, is
-overridden to "skylake-avx512", when compiling AVX-512 code.
+Lets have only one .gitignore at top level.
 
-Allow building with icx with warnings-as-errors flag (werror) enabled by
-disabling the warning for the cases where we pass that extra "-march"
-flag.
-
-Fixes: e6a6a138919f ("net/i40e: add AVX512 vector path")
-Fixes: 31737f2b66fb ("net/iavf: enable AVX512 for legacy Rx")
-Fixes: 7f85d5ebcfe1 ("net/ice: add AVX512 vector path")
-Fixes: 0fac6a1c44d5 ("common/idpf: add AVX512 for single queue model")
-Cc: stable@dpdk.org
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Ian Stokes <ian.stokes@intel.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/idpf/meson.build    | 3 +++
- drivers/net/intel/i40e/meson.build | 3 +++
- drivers/net/intel/iavf/meson.build | 3 +++
- drivers/net/intel/ice/meson.build  | 3 +++
- 4 files changed, 12 insertions(+)
+ .gitignore                   | 6 ++++++
+ dts/.gitignore               | 4 ----
+ kernel/linux/uapi/.gitignore | 4 ----
+ 3 files changed, 6 insertions(+), 8 deletions(-)
+ delete mode 100644 dts/.gitignore
+ delete mode 100644 kernel/linux/uapi/.gitignore
 
-diff --git a/drivers/common/idpf/meson.build b/drivers/common/idpf/meson.build
-index 46fd45c03b..7dbcdabd90 100644
---- a/drivers/common/idpf/meson.build
-+++ b/drivers/common/idpf/meson.build
-@@ -21,6 +21,9 @@ if arch_subdir == 'x86'
-         avx512_args = cflags + cc_avx512_flags
-         if cc.has_argument('-march=skylake-avx512')
-             avx512_args += '-march=skylake-avx512'
-+            if cc.has_argument('-Wno-overriding-option')
-+                avx512_args += '-Wno-overriding-option'
-+            endif
-         endif
-         idpf_common_avx512_lib = static_library('idpf_common_avx512_lib',
-                 'idpf_common_rxtx_avx512.c',
-diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
-index 5c93493124..ffa40c5d64 100644
---- a/drivers/net/intel/i40e/meson.build
-+++ b/drivers/net/intel/i40e/meson.build
-@@ -57,6 +57,9 @@ if arch_subdir == 'x86'
-         avx512_args = cflags + cc_avx512_flags
-         if cc.has_argument('-march=skylake-avx512')
-             avx512_args += '-march=skylake-avx512'
-+            if cc.has_argument('-Wno-overriding-option')
-+                avx512_args += '-Wno-overriding-option'
-+            endif
-         endif
-         i40e_avx512_lib = static_library('i40e_avx512_lib',
-                 'i40e_rxtx_vec_avx512.c',
-diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
-index d9b605f55a..c2bef0230f 100644
---- a/drivers/net/intel/iavf/meson.build
-+++ b/drivers/net/intel/iavf/meson.build
-@@ -40,6 +40,9 @@ if arch_subdir == 'x86' and is_variable('static_rte_common_iavf')
-         avx512_args = cflags + cc_avx512_flags
-         if cc.has_argument('-march=skylake-avx512')
-             avx512_args += '-march=skylake-avx512'
-+            if cc.has_argument('-Wno-overriding-option')
-+                avx512_args += '-Wno-overriding-option'
-+            endif
-         endif
-         iavf_avx512_lib = static_library('iavf_avx512_lib',
-                 'iavf_rxtx_vec_avx512.c',
-diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
-index beaf21e176..3b13a5913d 100644
---- a/drivers/net/intel/ice/meson.build
-+++ b/drivers/net/intel/ice/meson.build
-@@ -40,6 +40,9 @@ if arch_subdir == 'x86'
-         avx512_args = cflags + cc_avx512_flags
-         if cc.has_argument('-march=skylake-avx512')
-             avx512_args += '-march=skylake-avx512'
-+            if cc.has_argument('-Wno-overriding-option')
-+                avx512_args += '-Wno-overriding-option'
-+            endif
-         endif
-         ice_avx512_lib = static_library('ice_avx512_lib',
-                 'ice_rxtx_vec_avx512.c',
+diff --git a/.gitignore b/.gitignore
+index 903fe9bc64..a1a6843494 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -43,6 +43,8 @@ TAGS
+ 
+ # DTS results
+ dts/output
++dts/nodes.yaml
++dts/test_rund.yaml
+ 
+ # ignore default build directory, and directories from test-meson-builds.sh
+ build
+@@ -50,3 +52,7 @@ build-*
+ # ignore other build directory patterns
+ *-gcc*
+ *-clang*
++
++# ignore Linux UAPI kernel headers
++kernel/linux/uapi/version
++kernel/linux/uapi/**/*.h
+diff --git a/dts/.gitignore b/dts/.gitignore
+deleted file mode 100644
+index d53a2f3b7e..0000000000
+--- a/dts/.gitignore
++++ /dev/null
+@@ -1,4 +0,0 @@
+-# default configuration files for DTS
+-nodes.yaml
+-test_runs.yaml
+-
+diff --git a/kernel/linux/uapi/.gitignore b/kernel/linux/uapi/.gitignore
+deleted file mode 100644
+index 558ba597d6..0000000000
+--- a/kernel/linux/uapi/.gitignore
++++ /dev/null
+@@ -1,4 +0,0 @@
+-**
+-!**/
+-!**/*.h
+-!version
 -- 
-2.43.0
+2.47.2
 
