@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEBDC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE91C02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:24:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F400440666;
-	Mon, 10 Feb 2025 19:24:29 +0100 (CET)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 2EB384060F
- for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:29 +0100 (CET)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-2fa1fb3c445so5637125a91.2
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 20DBF40674;
+	Mon, 10 Feb 2025 19:24:34 +0100 (CET)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 04F0B40673
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:33 +0100 (CET)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-2fa51743d80so2907833a91.2
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211868;
- x=1739816668; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211872;
+ x=1739816672; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xjwmhHHxRfNKD2dJn7cLWhATSTRBuH5IKDm868vZHPs=;
- b=eu5q6Ce7EZPqRAadyN+VFa475cy/5vozCTjts/+LQjAbirab4UvakLFgZ1kkSF7Ffz
- Tc1074o/bHCZikQaJ+IHxpyP7frZHtKmaCAY39lL88R5V7mAaRYs7B/WAPspIjbMCqlw
- 24IC0vbNTJcm7WLGIB4Pnk4QFV9XW822qgZixC1m60PAAC1RIs1FW2NR960NwKffJGJ0
- 6PimlHGB8aj0mpB7vEhsBSZ9d9KoETv9/bPCMAbjrWTcqAQpH/5YSNabH3bNU3eLpbe2
- ar1Vjb1ao4dND1NXmKGTM2pvuLv858SEw2nxmpb8B7E0V+2CjIltdTzEghp0phSOISHw
- zpbw==
+ bh=7c1uXG3vY1vH7uSogzrNVZJxtqGwvfv136gHw7YQx+I=;
+ b=tR5Os0qWUEpbmDMF+tohP949vsMDd3s5jjHhkfhvA8cK/1nX594N433ELY4IX5cVa/
+ gciDV87LJk5KroLcys2z0ob7P0rAv00rhPOBsfzWhhtMq6UpeJJz2UskGN0gkBfju9oK
+ JcWVMz3gPkF9tcNiPXacrSGK8Fh7FocFb9uLigbJPSg5ZQNjCWi1Isw0DwcU2PtbhwRs
+ IbRTX+IzHckODBBpkOSZPSXsVlkPx6tP2LwUj7vBgmPuRLvelUzjn7nzD3TOBWJAyYme
+ C0QSzZBziTF4UtjX2k0er/zqZ+ifXDOfQnZ/b8jqNqqhcNxU/wnxGP9pERiQWQA2PUjy
+ VtdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739211868; x=1739816668;
+ d=1e100.net; s=20230601; t=1739211872; x=1739816672;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=xjwmhHHxRfNKD2dJn7cLWhATSTRBuH5IKDm868vZHPs=;
- b=Zb+E69IoS8V+ooDZ2iZP/5xx5ZNTzGk+sovyDqmcwI/hduaHyDeqDXRhGoUD/tvFnR
- kWNZf34a/jnTAFoou6Jp503kPFPPgVszHru8WSwVeWfQs2LNVvuo51luPN4BGVREwRGr
- oFMp1qWMUGR95lrUGhnmJeaCV4n0Jbc7WVbhxjrPOxnnp9bLfWVehDMwopXvwLT9jk/j
- DZ6fD9HgJUfV1xk4u9Uo7PQ6xHcjT6/CnQAB4ud/YI7Vbdx8QQ/jfYFlswh2jOPf/Ziy
- u4hg9vXr2nhrI8O/g/NPdR1/KUnjZEf/X0ltrlLTFT/D4SEE1KPRv2t6xgEpKU2Skthd
- 8Z1Q==
-X-Gm-Message-State: AOJu0YyfGZ3HihKByrL8K7EHXlJ0/rorMetIsfyidtEJQPJIdUO3/sbv
- cb/O1l4jVFFhMOpbTlVgoO/91HmFDSsuosovagwuxq4UCRmuZrVf02swP84jx2ZigO/mtZ9eJlW
- I
-X-Gm-Gg: ASbGncuYHaZACxUqorx6uOWgB8/8/CtgE4WKYK8xggqnvbj7oVNs3mAZqZJ2NZT7Rg4
- xzDfU1U6dkNTjOp+9L2un5WS6qVj4bOEeQcJqoTyn+S2VVw0SMp/anHSu6iU3CF8hxeDQg7RqsR
- zz528Ghgvs42gHOQgu5UqkEvaOKyWiAuin0P3yTSzh1ILdyy8bGwSzOYdiTtV0I+pSxhBnQM3wS
- EBmsTcmnz3jrZ7Bdg6bVMIwb4ReZnnydmF+0/i0IGtvK6MvVQIOCML4LUuFUan2TR4CxH/6oMRF
- dFbmUxnRJ4auHU34F4cz5WRcMHn42T6hEHPoBqWlq/+VJlmploAK4j8jPJ2TCah+E0eX
-X-Google-Smtp-Source: AGHT+IHN6ffsYVKjSQ4ELLRzedHL+fTtxVfDfyfmXGPgaRW4A0UPZMfeouhgsCGrAZ52VHxkUuu1lw==
-X-Received: by 2002:a17:90b:4d08:b0:2ef:33a4:ae6e with SMTP id
- 98e67ed59e1d1-2fa9ed7db98mr939463a91.12.1739211868251; 
- Mon, 10 Feb 2025 10:24:28 -0800 (PST)
+ bh=7c1uXG3vY1vH7uSogzrNVZJxtqGwvfv136gHw7YQx+I=;
+ b=Ay8rxb7iZeXfXg2UAgKSDvb8EJ92ROqJ3PPo+J94jN52qepI/ibSjS9UoLxhyU6uYQ
+ zCeV7jU8QNhR9YmvAMqNyPdaLt+K4NYx99HzfQVMptetcI59/qPUVDF+jQbGqDRsSCdU
+ HtSxDBrlcEcnW9GqC5LR7G5tRiKg8dqyhMxrhCRFLTxy8qkkGALcNnu98LtWqVzhhMTj
+ GykdOwlycX+RlHhAWYMHBaOj6yJwB/CkiFQ2XtIzZrMzBFQJXRS4/9eh/a5RMBzG1dQW
+ VFKA9VaxlyELVEWYCnt/08zFp0s4QbrCuexEZWuWFpWCWirdxMNMmkxIjKrUOE2OCuST
+ pHhQ==
+X-Gm-Message-State: AOJu0Yx6DS6/EEnKLqX9NQtCobCXoGi5UupXGVpyEmNSfvKFd7GTXf/E
+ ntZBTsinxWCPyIpWGlAbWnASuD/j4d2rlJ8rOMTyadsCIYQWtl6UmhFIxnEzKxk=
+X-Gm-Gg: ASbGncsSfiWhLK68WeB82mtDhQXLEPsNCRWuAGLyxr3H4iC5VRHyqBAPUjbQ+EK70lq
+ iSBLzQpxNYVhc9bMnCkelRex3k2H/xzHQgk1JVGiw3AyBAyxwCs5HImdmwdVGLHUW6h1WFNcxC7
+ YRdmEEI25UVI7joqgh8UisYvepVDv2jF3lbsPhY/v/+SomY1XT7v3lvkJv5wkBfHJxm2HvmYAyf
+ ZnbQMKRjZKv4bkD4Ibp3n4bBYBYeNk9f+IJslUgDJxF34LhLNG2xszgpr0rjALAzQhP5GlqttEy
+ F5bKYj+d9cCLQUO6Fd4WUtPMhGL9gEWwfp1HBoQ3DTA0MYwhyDcQ450oYir9rxstJbS/
+X-Google-Smtp-Source: AGHT+IHJpK3tlBeH5jjTVVLpDuD5dH2hwOSVgciBjY3aGfPkYJ+RlwyScjCq3GNNQfv7BKBx5ukXvg==
+X-Received: by 2002:a17:90b:1d52:b0:2fa:137f:5c5c with SMTP id
+ 98e67ed59e1d1-2fa23f44beemr20506270a91.1.1739211872218; 
+ Mon, 10 Feb 2025 10:24:32 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.27
+ 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 10:24:28 -0800 (PST)
-Date: Mon, 10 Feb 2025 09:35:32 -0800
+ Mon, 10 Feb 2025 10:24:32 -0800 (PST)
+Date: Mon, 10 Feb 2025 09:40:15 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Bingbin Chen <chen.bingbin@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 07/14] net/zxdh: get flow tables resources
-Message-ID: <20250210093532.012adf97@hermes.local>
-In-Reply-To: <20250210015017.4105624-2-chen.bingbin@zte.com.cn>
+Subject: Re: [PATCH v1 09/14] net/zxdh: implement tables initialization
+Message-ID: <20250210094015.67e40e4e@hermes.local>
+In-Reply-To: <20250210015017.4105624-4-chen.bingbin@zte.com.cn>
 References: <20250210014441.4105335-1-chen.bingbin@zte.com.cn>
  <20250210015017.4105624-1-chen.bingbin@zte.com.cn>
- <20250210015017.4105624-2-chen.bingbin@zte.com.cn>
+ <20250210015017.4105624-4-chen.bingbin@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,36 +80,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:50:10 +0800
+On Mon, 10 Feb 2025 09:50:12 +0800
 Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
 
-> +static uint32_t
-> +zxdh_np_agent_channel_se_res_get(uint32_t dev_id,
-> +								uint32_t sub_type,
-> +								uint32_t opr,
-> +								uint32_t *p_rsp_buff,
-> +								uint32_t buff_size)
+> +static inline void
+> +zxdh_np_comm_uint32_write_bits(uint32_t *_dst_, uint32_t _src_,
+> +	uint32_t _start_pos_, uint32_t _len_)
 > +{
-> +	uint32_t rc = ZXDH_OK;
+> +	(*_dst_) =
+> +	((*_dst_) & ~(ZXDH_COMM_GET_BIT_MASK(uint32_t, (_len_)) << (_start_pos_))) |
+> +	(((_src_) & ZXDH_COMM_GET_BIT_MASK(uint32_t, (_len_))) << (_start_pos_));
+> +}
 > +
-> +	uint32_t msg_result = 0;
-> +	ZXDH_AGENT_SE_RES_MSG_T msgcfg = {0};
-> +	ZXDH_AGENT_CHANNEL_MSG_T agent_msg = {0};
-> +
-> +	msgcfg.dev_id = 0;
-> +	msgcfg.type = ZXDH_RES_MSG;
-> +	msgcfg.sub_type = sub_type;
-> +	msgcfg.oper = opr;
-> +	agent_msg.msg = (void *)&msgcfg;
-> +	agent_msg.msg_len = sizeof(ZXDH_AGENT_SE_RES_MSG_T);
 
-All this would be more readable as one initializer
+Would be more readable if mask computed once.
+Don't need _ on function args
 
-	ZXDH_AGENT_SE_RES_MSG_T msgcfg = {
-		.dev_id = 0,
-		.type = ZXDH_RES_MSG,
-		.sub_type = sub_type,
-		.oper = opr,
-	};
+static inline void
+zxdh_np_comm_uint32_write_bits(uint32_t *dst, uint32_t src,
+	uint32_t start_pos, uint32_t len)
+{
+	uint32_t mask = ZXDH_COMM_GET_BIT_MASK(uint32_t, len) << start_pos;
 
-etc.
+	*dst = (*dst & mask) | (src & mask);
+}
