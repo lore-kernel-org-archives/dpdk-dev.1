@@ -2,63 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1186FC021A1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18C3C02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:57:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4CE9402A1;
-	Mon, 10 Feb 2025 20:42:37 +0100 (CET)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com
- [209.85.208.181])
- by mails.dpdk.org (Postfix) with ESMTP id 46EBB4021E
- for <dev@dpdk.org>; Mon, 10 Feb 2025 20:42:36 +0100 (CET)
-Received: by mail-lj1-f181.google.com with SMTP id
- 38308e7fff4ca-307e067f236so3176801fa.0
- for <dev@dpdk.org>; Mon, 10 Feb 2025 11:42:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id ACA26402A1;
+	Mon, 10 Feb 2025 20:57:31 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 9A07D4021E
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 20:57:30 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-21f7f03d7c0so38696695ad.3
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 11:57:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1739216555; x=1739821355; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739217450;
+ x=1739822250; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=k14JrcnX4wzcj5ecER8H4mcAU6o68V3w0zHL2mfZU5w=;
- b=JjnTh75vf00EINn1uU7dEkklaxm99y0hDblI+XAwE0JjyclXByIDf8lTsD1cVfxjhp
- QTxCvKvSpnafhdBZ6XfCxff4blqcH0EvRjGABe0IOAH/6uz934+/FllKsdqkAZkuTL5N
- nBhrEgxXoC6Oro/NZ2Bk6iNGPG4pLCnpUcMOI=
+ bh=uVh1g1hIAvFt8jMzO3q2Ari8+TG0POwBsCyuU+l8gCQ=;
+ b=O8opsE67ecfylueIkDu94/kXh7tzhXTjxVjlVJe8PqXw1AfgNUI+ii6DlZdeHUMLFq
+ H7CPRZou3U7vp/nzCH8+mOVpsdNNTw5PPmtFrGfHhLEphulcbdZLl83WUTYr++xHQFT7
+ O6DDxilynYns4kKRKX3SQTq4MlWpe7NLhpHKGRbUS7FIUAY2v/AxI6wRrfljpAbsy6Uw
+ oMi+wVn2uV+sx12je+jOhy9hB8PHzCCwHDsY5x9BZkuJAb5gbfiMa86uxZEemPz3VCF6
+ Q/wyS8vvqbfKb3AqwrtcqjR8po+jhB///j3vzCinZ1oQHDo7twNRMdn43tk2ON4ZvbKc
+ pjQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739216555; x=1739821355;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1739217450; x=1739822250;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=k14JrcnX4wzcj5ecER8H4mcAU6o68V3w0zHL2mfZU5w=;
- b=cpq1l8hwUv0uCryF6tC1SYIQUG/6TBXpgOGraSfbQQUvkrKFCZNBCPgtl/yQxDwHm9
- HWUAfShPvKhjWtfCAHBEiYK6AhyqJ4BepDfPr5jCI7rc7nC9qjSDohdQVfy2dcx2Ljzg
- zZd+qnviZ08S3yItFQkoxVbggpSM9vUx01qA7kfkPIry7z6gB6Mxd6i/AY4K8cGSHQ+t
- z0DlV1PD3Jz/nzmDVZq01//6cnDzeH1hv/9jW0rrL6o1AEUypQUvyDV/ywhka+z65AaU
- yxtf+6GgweJbIe0B8D0RID81/G+7HuOuJw3fMoTFNYN089MXGHLkhXY93XtFxPXJzDwu
- IgEg==
-X-Gm-Message-State: AOJu0YyMG3wQHRlM1heFBrJK1D9IKc66qZEYPlrEolzyxahJKaGEyHRz
- hx0M4kqDJqzJ185M8DMxaQueIqz5t8HsyMrlSS8TDVVwR76kyCoEUTbypnzuc3oHCtnWBSExuf2
- PHd860A8EkV6oGq7BUXwsrzfLHH9gr70rZhM/hg==
-X-Gm-Gg: ASbGncum0javyCISaDW+8UpFkI81mP2Ukc3tp7ovKYgL/xZpiD5XLZklntVE3OE+R1q
- RO3g5XrO1DS61Mdc9rSa4VKwgD35KdjsOZxN3QQidGOkGx6Qo7y6JZWcjJKYPHUPZJ9/5Ouu93f
- mRHUYJpLgQ0kvH5Wni6EQmoqE16IeMdR8=
-X-Google-Smtp-Source: AGHT+IGSkWiDCCB9OynkDXH/B9rtI3d0+3drO6uvPrM8S4k1vYJYE/pJVLuYRu1uyjpx9jmY9M+khq76uWNyisU/+xs=
-X-Received: by 2002:a2e:a548:0:b0:308:ee65:7f40 with SMTP id
- 38308e7fff4ca-308ee65851dmr7151151fa.2.1739216555358; Mon, 10 Feb 2025
- 11:42:35 -0800 (PST)
+ bh=uVh1g1hIAvFt8jMzO3q2Ari8+TG0POwBsCyuU+l8gCQ=;
+ b=vVeRqVzw3Zn3LdvPlrqAd5H6pwUaQGt6Amw7B6hPH086+X84QA7EzDwm4xlAvyIyMa
+ JyTF/IuPnvb1DwyoeyR+e2LQ3K4eFN/l5GhP3OOFJGlBkM5kVaFbBC+Bs2zDP78n4nxr
+ ozlzaQajjAwxAzuqMdCPeJHVyLWY7UeAKDO898klrS+Mg0K7rZLI3XGqBfpLjGM47O5v
+ QKsHQRuXyQt/kifjcPXeCQsCQU1IwyBBEBXgwe3ELmQkLVQPfV8NYWh3UDB8G3xNgsJQ
+ gA4w8YG+H+srQ5v+yVkqODYDD7mdd2/MA8kzkzBjI3E6Xih80EOHj63yh8sUYxapVmXx
+ u0sg==
+X-Gm-Message-State: AOJu0Yx7aNV+/f9B8qpBqwBjgHHqfDyMXNwdnIAUwOokOQ6ps4S+DMXB
+ 4yhTZSzRl5fRwA7o+iF4cr3ghsaGT7QO2nd/VxB64CH3KENFoRTAQG3nDP3r8gQ=
+X-Gm-Gg: ASbGncuTu6E5F3vyGnashyyRqusyXsy3m2nwx5iP93SYzZTm35w2djTGDf6l86+kdzE
+ dcSMRr2BsWxoE/O0Bvp4Vr5iUdMHayqXiwJ0/lwG1hoj1Ewtj6rmpoBMYu9D+Enr1wKykQ/+2GD
+ MhW47P+0dr4fOhs/uuV1m0EY7Xls6MoHvP2cJkQS4DV8xec/+2upyrxxODX8bF/gDMcanGlR5+z
+ FjEHO29lSe3ofnN7UWZs0Oy+EqjQ/ZCAcfIc6zIyv82qTZXZJyO8hDbrZ2nEbujyTcVqICwrodO
+ jOXZRuNZVFMyRddCSfvrkzZBUnVNnOOK96RgNWnpF3rFh1CQ9RqUEbRIurV5SxlKU/QH
+X-Google-Smtp-Source: AGHT+IGmnkjn/FltENJWfJ2IwhMBoVQB0HalpkR6mCH4Dm9Yj60VHsfkbarg8G+aQVTeVHHromektw==
+X-Received: by 2002:a17:903:19cf:b0:210:f706:dc4b with SMTP id
+ d9443c01a7336-21f4e6a9a19mr213040065ad.13.1739217449683; 
+ Mon, 10 Feb 2025 11:57:29 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-21f3683db25sm82101465ad.134.2025.02.10.11.57.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 10 Feb 2025 11:57:29 -0800 (PST)
+Date: Mon, 10 Feb 2025 11:57:27 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+Cc: dev@dpdk.org, ferruh.yigit@amd.com, kai.ji@intel.com,
+ brian.dooley@intel.com
+Subject: Re: [PATCH v5] net: add thread-safe crc api
+Message-ID: <20250210115727.4e2570dd@hermes.local>
+In-Reply-To: <20250207182443.9775-1-arkadiuszx.kusztal@intel.com>
+References: <20250207063758.3971992-1-arkadiuszx.kusztal@intel.com>
+ <20250207182443.9775-1-arkadiuszx.kusztal@intel.com>
 MIME-Version: 1.0
-References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
- <20250203151613.2436570-4-luca.vizzarro@arm.com>
-In-Reply-To: <20250203151613.2436570-4-luca.vizzarro@arm.com>
-From: Nicholas Pratte <npratte@iol.unh.edu>
-Date: Mon, 10 Feb 2025 14:42:24 -0500
-X-Gm-Features: AWEUYZnaPfNVnG5_0IOrt7IwiO2xxcRZgwE-HAcvI50w3ptb1EhblMdGpx-ZplY
-Message-ID: <CAKXZ7ejE83ODLObphUZ6i-n+CW-TmE+hes75t6wM0Q3fV+wAxw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/7] dts: revamp Topology model
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, Patrick Robb <probb@iol.unh.edu>, 
- Paul Szczepanek <paul.szczepanek@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,165 +81,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
+On Fri,  7 Feb 2025 18:24:43 +0000
+Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com> wrote:
 
-On Mon, Feb 3, 2025 at 10:17=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
-m> wrote:
->
-> Change the Topology model to add further flexility in its usage as a
-> standalone entry point to test suites.
->
-> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
-> ---
->  dts/framework/testbed_model/topology.py | 85 +++++++++++++------------
->  1 file changed, 45 insertions(+), 40 deletions(-)
->
-> diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/test=
-bed_model/topology.py
-> index 814c3f3fe4..cf5c2c28ba 100644
-> --- a/dts/framework/testbed_model/topology.py
-> +++ b/dts/framework/testbed_model/topology.py
-> @@ -9,10 +9,12 @@
->  """
->
->  from collections.abc import Iterator
-> +from dataclasses import dataclass
->  from enum import Enum
->  from typing import NamedTuple
->
-> -from framework.config.node import PortConfig
-> +from typing_extensions import Self
+> +static struct
+> +{
+> +	rte_net_crc_handler f[RTE_NET_CRC_REQS];
+> +} handlers_dpdk26[RTE_NET_CRC_AVX512 + 1];
 > +
->  from framework.exception import ConfigurationError
->
->  from .port import Port
-> @@ -43,35 +45,32 @@ class PortLink(NamedTuple):
->      tg_port: Port
->
->
-> +@dataclass(frozen=3DTrue)
->  class Topology:
->      """Testbed topology.
->
->      The topology contains ports processed into ingress and egress ports.
-> -    If there are no ports on a node, dummy ports (ports with no actual v=
-alues) are stored.
-> -    If there is only one link available, the ports of this link are stor=
-ed
-> +    If there are no ports on a node, accesses to :attr:`~Topology.tg_por=
-t_egress` and alike will
-> +    raise an exception. If there is only one link available, the ports o=
-f this link are stored
->      as both ingress and egress ports.
->
-> -    The dummy ports shouldn't be used. It's up to :class:`~framework.run=
-ner.DTSRunner`
-> -    to ensure no test case or suite requiring actual links is executed
-> -    when the topology prohibits it and up to the developers to make sure=
- that test cases
-> -    not requiring any links don't use any ports. Otherwise, the underlyi=
-ng methods
-> -    using the ports will fail.
-> +    It's up to :class:`~framework.test_run.TestRun` to ensure no test ca=
-se or suite requiring actual
-> +    links is executed when the topology prohibits it and up to the devel=
-opers to make sure that test
-> +    cases not requiring any links don't use any ports. Otherwise, the un=
-derlying methods using the
-> +    ports will fail.
->
->      Attributes:
->          type: The type of the topology.
-> -        tg_port_egress: The egress port of the TG node.
-> -        sut_port_ingress: The ingress port of the SUT node.
-> -        sut_port_egress: The egress port of the SUT node.
-> -        tg_port_ingress: The ingress port of the TG node.
-> +        sut_ports: The SUT ports.
-> +        tg_ports: The TG ports.
->      """
->
->      type: TopologyType
-> -    tg_port_egress: Port
-> -    sut_port_ingress: Port
-> -    sut_port_egress: Port
-> -    tg_port_ingress: Port
-> +    sut_ports: list[Port]
-> +    tg_ports: list[Port]
->
-> -    def __init__(self, port_links: Iterator[PortLink]):
-> +    @classmethod
-> +    def from_port_links(cls, port_links: Iterator[PortLink]) -> Self:
->          """Create the topology from `port_links`.
->
->          Args:
-> @@ -80,34 +79,40 @@ def __init__(self, port_links: Iterator[PortLink]):
->          Raises:
->              ConfigurationError: If an unsupported link topology is suppl=
-ied.
->          """
-> -        dummy_port =3D Port(
-> -            "",
-> -            PortConfig(
-> -                name=3D"dummy",
-> -                pci=3D"0000:00:00.0",
-> -                os_driver_for_dpdk=3D"",
-> -                os_driver=3D"",
-> -            ),
-> -        )
-> -
-> -        self.type =3D TopologyType.no_link
-> -        self.tg_port_egress =3D dummy_port
-> -        self.sut_port_ingress =3D dummy_port
-> -        self.sut_port_egress =3D dummy_port
-> -        self.tg_port_ingress =3D dummy_port
-> +        type =3D TopologyType.no_link
->
->          if port_link :=3D next(port_links, None):
-> -            self.type =3D TopologyType.one_link
-> -            self.tg_port_egress =3D port_link.tg_port
-> -            self.sut_port_ingress =3D port_link.sut_port
-> -            self.sut_port_egress =3D self.sut_port_ingress
-> -            self.tg_port_ingress =3D self.tg_port_egress
-> +            type =3D TopologyType.one_link
-> +            sut_ports =3D [port_link.sut_port]
-> +            tg_ports =3D [port_link.tg_port]
->
->              if port_link :=3D next(port_links, None):
-> -                self.type =3D TopologyType.two_links
-> -                self.sut_port_egress =3D port_link.sut_port
-> -                self.tg_port_ingress =3D port_link.tg_port
-> +                type =3D TopologyType.two_links
-> +                sut_ports.append(port_link.sut_port)
-> +                tg_ports.append(port_link.tg_port)
->
->                  if next(port_links, None) is not None:
->                      msg =3D "More than two links in a topology are not s=
-upported."
->                      raise ConfigurationError(msg)
+
+Should have { after the struct
+
++void rte_net_crc_free(struct rte_net_crc *crc)
++{
++	rte_free(crc);
++}
+
+Add rte_net_crc_free to the coccinelle script that checks for null free.
+Also add function attributes please.
+
+> diff --git a/lib/net/rte_net_crc.h b/lib/net/rte_net_crc.h
+> index 72d3e10ff6..ffac8c2f1f 100644
+> --- a/lib/net/rte_net_crc.h
+> +++ b/lib/net/rte_net_crc.h
+> @@ -1,5 +1,5 @@
+>  /* SPDX-License-Identifier: BSD-3-Clause
+> - * Copyright(c) 2017-2020 Intel Corporation
+> + * Copyright(c) 2017-2025 Intel Corporation
+>   */
+
+Not sure what DPDK policy is around copyright date updates.
+The Linux kernel has said no to this (excess churn).
+
+> +struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
+> +	enum rte_net_crc_type type)
+
+Since this now an allocator should add function attributes __rte_malloc
+and __rte_dealloc(rte_crc_free, 1).
+
+
+> +{
+> +	uint16_t max_simd_bitwidth;
+> +	struct rte_net_crc *crc;
 > +
-> +        return cls(type, sut_ports, tg_ports)
-> +
-> +    @property
-> +    def tg_port_egress(self) -> Port:
-> +        """The egress port of the TG node."""
-> +        return self.tg_ports[0]
-> +
-> +    @property
-> +    def sut_port_ingress(self) -> Port:
-> +        """The ingress port of the SUT node."""
-> +        return self.sut_ports[0]
-> +
-> +    @property
-> +    def sut_port_egress(self) -> Port:
-> +        """The egress port of the SUT node."""
-> +        return self.sut_ports[1 if self.type is TopologyType.two_links e=
-lse 0]
-> +
-> +    @property
-> +    def tg_port_ingress(self) -> Port:
-> +        """The ingress port of the TG node."""
-> +        return self.tg_ports[1 if self.type is TopologyType.two_links el=
-se 0]
-> --
-> 2.43.0
->
+> +	crc = rte_zmalloc(NULL, sizeof(struct rte_net_crc), 0);
+> +	if (crc == NULL)
+> +		return NULL;
+
+Are you using rte_malloc here because it can be shared between primary/secondary?
+Otherwise regular malloc has more checks.
