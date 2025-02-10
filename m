@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2BCC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1186FC021A1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:42:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49226402A1;
-	Mon, 10 Feb 2025 20:09:56 +0100 (CET)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com
- [209.85.208.174])
- by mails.dpdk.org (Postfix) with ESMTP id 3734A4021E
- for <dev@dpdk.org>; Mon, 10 Feb 2025 20:09:55 +0100 (CET)
-Received: by mail-lj1-f174.google.com with SMTP id
- 38308e7fff4ca-308f3dbd305so897901fa.2
- for <dev@dpdk.org>; Mon, 10 Feb 2025 11:09:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C4CE9402A1;
+	Mon, 10 Feb 2025 20:42:37 +0100 (CET)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com
+ [209.85.208.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 46EBB4021E
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 20:42:36 +0100 (CET)
+Received: by mail-lj1-f181.google.com with SMTP id
+ 38308e7fff4ca-307e067f236so3176801fa.0
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 11:42:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1739214594; x=1739819394; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1739216555; x=1739821355; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iWdq3432XJZh96+3dedrXUZQ09QHlnJCsr2EacdQlus=;
- b=XmxxaEFDBFmuL+RydQ5EjLxirLFiKhD11+PbixhTtPEeyVMsOWu7Jyh9Zi1MyAdWYA
- KVJ8kIV5GTK8NLTz7SMgeFxHaMXEo21GPvYnxqQk4mzv28+dwHmK8ptN98kRbfK5DDRm
- jC8+gRPobzcm/cWVnNQNfk90qa3U55TbJqdq8=
+ bh=k14JrcnX4wzcj5ecER8H4mcAU6o68V3w0zHL2mfZU5w=;
+ b=JjnTh75vf00EINn1uU7dEkklaxm99y0hDblI+XAwE0JjyclXByIDf8lTsD1cVfxjhp
+ QTxCvKvSpnafhdBZ6XfCxff4blqcH0EvRjGABe0IOAH/6uz934+/FllKsdqkAZkuTL5N
+ nBhrEgxXoC6Oro/NZ2Bk6iNGPG4pLCnpUcMOI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739214594; x=1739819394;
+ d=1e100.net; s=20230601; t=1739216555; x=1739821355;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=iWdq3432XJZh96+3dedrXUZQ09QHlnJCsr2EacdQlus=;
- b=KPbWTPauM9ksoTaGbegg5KFMLwFxE2BRnX0Gsz7FRy7bCvmZcTT4Y/ziH0+dEX2gGw
- zDDh6/OX2JvO08wU4jK55Vtpvp39iGHOuttWhHjnAu1f1EpvcPHyG8OA0IS3PDuluQQl
- sQ3PhcUOOOjaUJqqK7pXIHDRAqnwmejqV6aOB49Eyx6w2gyksrwIDj15QuzGX6SeF7Pz
- sRbUPSVaRCH8KrLSTPuZrv3z0U9gmZ+50hZ7gb76QKv5BGHvgFnoRm7SZCceF7l0+nvN
- u82WHJzW/TW1DATyrAm+aALOnrth6ld6Q412gobF0U+EgKp6UJ5yIntUBosMo6P8DU37
- zxfA==
-X-Gm-Message-State: AOJu0YzNfKUW9mInBumIsjzLWeJR6RPb43HYfsVnYk8A0J3AzX+Po0kc
- Leg52KNeQZyeCYlIizsDIKkbuSfJsiEsGTc/nD0M+ZP9cKyTp/3q7sdCFh2FMv9TwuKNo0LZtNN
- 1/2sqnrYDPyXI9cLNEcdQCQVNAnQWbbv+4gjtYg==
-X-Gm-Gg: ASbGncvvWZfD+HBIlk0fGkmUfcxT28ZKSwrpH4L+RnyzEz6gRDaDALzhQA/Asy4dtH1
- /gLVc+GKaL6sRrbRUbUjCjOSCswgK557dWFLwjb7OYHaucSSCCN9BZAW4bPoith1svs+J3eJ0Rl
- k/9MeFjcXcBJxflATr3Eln5L5sTBact9g=
-X-Google-Smtp-Source: AGHT+IH8q/XKEQVh3d3J7hmNGs/jaEenSYGCY22iqYiNcNFX/GgtJ2LyYYY9xUxA2DKIrjqwcCtIFcjHEx0/VMTPnxo=
-X-Received: by 2002:a2e:be10:0:b0:308:eb58:658d with SMTP id
- 38308e7fff4ca-308eb5868e7mr8568451fa.11.1739214594388; Mon, 10 Feb 2025
- 11:09:54 -0800 (PST)
+ bh=k14JrcnX4wzcj5ecER8H4mcAU6o68V3w0zHL2mfZU5w=;
+ b=cpq1l8hwUv0uCryF6tC1SYIQUG/6TBXpgOGraSfbQQUvkrKFCZNBCPgtl/yQxDwHm9
+ HWUAfShPvKhjWtfCAHBEiYK6AhyqJ4BepDfPr5jCI7rc7nC9qjSDohdQVfy2dcx2Ljzg
+ zZd+qnviZ08S3yItFQkoxVbggpSM9vUx01qA7kfkPIry7z6gB6Mxd6i/AY4K8cGSHQ+t
+ z0DlV1PD3Jz/nzmDVZq01//6cnDzeH1hv/9jW0rrL6o1AEUypQUvyDV/ywhka+z65AaU
+ yxtf+6GgweJbIe0B8D0RID81/G+7HuOuJw3fMoTFNYN089MXGHLkhXY93XtFxPXJzDwu
+ IgEg==
+X-Gm-Message-State: AOJu0YyMG3wQHRlM1heFBrJK1D9IKc66qZEYPlrEolzyxahJKaGEyHRz
+ hx0M4kqDJqzJ185M8DMxaQueIqz5t8HsyMrlSS8TDVVwR76kyCoEUTbypnzuc3oHCtnWBSExuf2
+ PHd860A8EkV6oGq7BUXwsrzfLHH9gr70rZhM/hg==
+X-Gm-Gg: ASbGncum0javyCISaDW+8UpFkI81mP2Ukc3tp7ovKYgL/xZpiD5XLZklntVE3OE+R1q
+ RO3g5XrO1DS61Mdc9rSa4VKwgD35KdjsOZxN3QQidGOkGx6Qo7y6JZWcjJKYPHUPZJ9/5Ouu93f
+ mRHUYJpLgQ0kvH5Wni6EQmoqE16IeMdR8=
+X-Google-Smtp-Source: AGHT+IGSkWiDCCB9OynkDXH/B9rtI3d0+3drO6uvPrM8S4k1vYJYE/pJVLuYRu1uyjpx9jmY9M+khq76uWNyisU/+xs=
+X-Received: by 2002:a2e:a548:0:b0:308:ee65:7f40 with SMTP id
+ 38308e7fff4ca-308ee65851dmr7151151fa.2.1739216555358; Mon, 10 Feb 2025
+ 11:42:35 -0800 (PST)
 MIME-Version: 1.0
 References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
- <20250203151613.2436570-3-luca.vizzarro@arm.com>
-In-Reply-To: <20250203151613.2436570-3-luca.vizzarro@arm.com>
+ <20250203151613.2436570-4-luca.vizzarro@arm.com>
+In-Reply-To: <20250203151613.2436570-4-luca.vizzarro@arm.com>
 From: Nicholas Pratte <npratte@iol.unh.edu>
-Date: Mon, 10 Feb 2025 14:09:42 -0500
-X-Gm-Features: AWEUYZnlBm0gowvSkdJ2B18ka-rvYAP-_ZKPszspIdBpBEDMQPeL_0KZwYUSZPw
-Message-ID: <CAKXZ7eihDxJmAydrbT36bEV9uAfQfeEvS4-o1US-5p8PHrfoUg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] dts: isolate test specification to config
+Date: Mon, 10 Feb 2025 14:42:24 -0500
+X-Gm-Features: AWEUYZnaPfNVnG5_0IOrt7IwiO2xxcRZgwE-HAcvI50w3ptb1EhblMdGpx-ZplY
+Message-ID: <CAKXZ7ejE83ODLObphUZ6i-n+CW-TmE+hes75t6wM0Q3fV+wAxw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/7] dts: revamp Topology model
 To: Luca Vizzarro <luca.vizzarro@arm.com>
 Cc: dev@dpdk.org, Patrick Robb <probb@iol.unh.edu>, 
  Paul Szczepanek <paul.szczepanek@arm.com>
@@ -72,270 +72,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This makes sense to me!
-
 Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
 
 On Mon, Feb 3, 2025 at 10:17=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
 m> wrote:
 >
-> In an effort to improve separation of concerns, make the TestRunConfig
-> class responsible for processing the configured test suites. Moreover,
-> give TestSuiteConfig a facility to yield references to the selected test
-> cases.
+> Change the Topology model to add further flexility in its usage as a
+> standalone entry point to test suites.
 >
 > Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 > ---
->  dts/framework/config/__init__.py | 84 +++++++++++---------------------
->  dts/framework/config/test_run.py | 59 +++++++++++++++++-----
->  2 files changed, 76 insertions(+), 67 deletions(-)
+>  dts/framework/testbed_model/topology.py | 85 +++++++++++++------------
+>  1 file changed, 45 insertions(+), 40 deletions(-)
 >
-> diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__in=
-it__.py
-> index f8ac2c0d18..7761a8b56f 100644
-> --- a/dts/framework/config/__init__.py
-> +++ b/dts/framework/config/__init__.py
-> @@ -27,9 +27,8 @@
->        and makes it thread safe should we ever want to move in that direc=
-tion.
+> diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/test=
+bed_model/topology.py
+> index 814c3f3fe4..cf5c2c28ba 100644
+> --- a/dts/framework/testbed_model/topology.py
+> +++ b/dts/framework/testbed_model/topology.py
+> @@ -9,10 +9,12 @@
 >  """
 >
-> -from functools import cached_property
->  from pathlib import Path
-> -from typing import Annotated, Any, Literal, NamedTuple, TypeVar, cast
-> +from typing import Annotated, Any, Literal, TypeVar, cast
+>  from collections.abc import Iterator
+> +from dataclasses import dataclass
+>  from enum import Enum
+>  from typing import NamedTuple
 >
->  import yaml
->  from pydantic import Field, TypeAdapter, ValidationError, field_validato=
-r, model_validator
-> @@ -46,18 +45,6 @@
->  )
->  from .test_run import TestRunConfiguration
->
-> -
-> -class TestRunWithNodesConfiguration(NamedTuple):
-> -    """Tuple containing the configuration of the test run and its associ=
-ated nodes."""
-> -
-> -    #:
-> -    test_run_config: TestRunConfiguration
-> -    #:
-> -    sut_node_config: SutNodeConfiguration
-> -    #:
-> -    tg_node_config: TGNodeConfiguration
-> -
-> -
->  TestRunsConfig =3D Annotated[list[TestRunConfiguration], Field(min_lengt=
-h=3D1)]
->
->  NodesConfig =3D Annotated[list[NodeConfigurationTypes], Field(min_length=
-=3D1)]
-> @@ -71,40 +58,6 @@ class Configuration(FrozenModel):
->      #: Node configurations.
->      nodes: NodesConfig
->
-> -    @cached_property
-> -    def test_runs_with_nodes(self) -> list[TestRunWithNodesConfiguration=
-]:
-> -        """List of test runs with the associated nodes."""
-> -        test_runs_with_nodes =3D []
-> -
-> -        for test_run_no, test_run in enumerate(self.test_runs):
-> -            sut_node_name =3D test_run.system_under_test_node
-> -            sut_node =3D next(filter(lambda n: n.name =3D=3D sut_node_na=
-me, self.nodes), None)
-> -
-> -            assert sut_node is not None, (
-> -                f"test_runs.{test_run_no}.sut_node_config.node_name "
-> -                f"({test_run.system_under_test_node}) is not a valid nod=
-e name"
-> -            )
-> -            assert isinstance(sut_node, SutNodeConfiguration), (
-> -                f"test_runs.{test_run_no}.sut_node_config.node_name is a=
- valid node name, "
-> -                "but it is not a valid SUT node"
-> -            )
-> -
-> -            tg_node_name =3D test_run.traffic_generator_node
-> -            tg_node =3D next(filter(lambda n: n.name =3D=3D tg_node_name=
-, self.nodes), None)
-> -
-> -            assert tg_node is not None, (
-> -                f"test_runs.{test_run_no}.tg_node_name "
-> -                f"({test_run.traffic_generator_node}) is not a valid nod=
-e name"
-> -            )
-> -            assert isinstance(tg_node, TGNodeConfiguration), (
-> -                f"test_runs.{test_run_no}.tg_node_name is a valid node n=
-ame, "
-> -                "but it is not a valid TG node"
-> -            )
-> -
-> -            test_runs_with_nodes.append(TestRunWithNodesConfiguration(te=
-st_run, sut_node, tg_node))
-> -
-> -        return test_runs_with_nodes
-> -
->      @field_validator("nodes")
->      @classmethod
->      def validate_node_names(cls, nodes: list[NodeConfiguration]) -> list=
-[NodeConfiguration]:
-> @@ -164,14 +117,33 @@ def validate_port_links(self) -> Self:
->          return self
->
->      @model_validator(mode=3D"after")
-> -    def validate_test_runs_with_nodes(self) -> Self:
-> -        """Validate the test runs to nodes associations.
-> -
-> -        This validator relies on the cached property `test_runs_with_nod=
-es` to run for the first
-> -        time in this call, therefore triggering the assertions if needed=
-.
-> -        """
-> -        if self.test_runs_with_nodes:
-> -            pass
-> +    def validate_test_runs_against_nodes(self) -> Self:
-> +        """Validate the test runs to nodes associations."""
-> +        for test_run_no, test_run in enumerate(self.test_runs):
-> +            sut_node_name =3D test_run.system_under_test_node
-> +            sut_node =3D next((n for n in self.nodes if n.name =3D=3D su=
-t_node_name), None)
+> -from framework.config.node import PortConfig
+> +from typing_extensions import Self
 > +
-> +            assert sut_node is not None, (
-> +                f"Test run {test_run_no}.system_under_test_node "
-> +                f"({sut_node_name}) is not a valid node name."
-> +            )
-> +            assert isinstance(sut_node, SutNodeConfiguration), (
-> +                f"Test run {test_run_no}.system_under_test_node is a val=
-id node name, "
-> +                "but it is not a valid SUT node."
-> +            )
-> +
-> +            tg_node_name =3D test_run.traffic_generator_node
-> +            tg_node =3D next((n for n in self.nodes if n.name =3D=3D tg_=
-node_name), None)
-> +
-> +            assert tg_node is not None, (
-> +                f"Test run {test_run_no}.traffic_generator_name "
-> +                f"({tg_node_name}) is not a valid node name."
-> +            )
-> +            assert isinstance(tg_node, TGNodeConfiguration), (
-> +                f"Test run {test_run_no}.traffic_generator_name is a val=
-id node name, "
-> +                "but it is not a valid TG node."
-> +            )
-> +
->          return self
+>  from framework.exception import ConfigurationError
+>
+>  from .port import Port
+> @@ -43,35 +45,32 @@ class PortLink(NamedTuple):
+>      tg_port: Port
 >
 >
-> diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test=
-_run.py
-> index 2092da725e..9ea898b15c 100644
-> --- a/dts/framework/config/test_run.py
-> +++ b/dts/framework/config/test_run.py
-> @@ -11,6 +11,8 @@
+> +@dataclass(frozen=3DTrue)
+>  class Topology:
+>      """Testbed topology.
 >
->  import re
->  import tarfile
-> +from collections import deque
-> +from collections.abc import Iterable
->  from enum import auto, unique
->  from functools import cached_property
->  from pathlib import Path, PurePath
-> @@ -25,7 +27,7 @@
->  from .common import FrozenModel, load_fields_from_settings
+>      The topology contains ports processed into ingress and egress ports.
+> -    If there are no ports on a node, dummy ports (ports with no actual v=
+alues) are stored.
+> -    If there is only one link available, the ports of this link are stor=
+ed
+> +    If there are no ports on a node, accesses to :attr:`~Topology.tg_por=
+t_egress` and alike will
+> +    raise an exception. If there is only one link available, the ports o=
+f this link are stored
+>      as both ingress and egress ports.
 >
->  if TYPE_CHECKING:
-> -    from framework.test_suite import TestSuiteSpec
-> +    from framework.test_suite import TestCase, TestSuite, TestSuiteSpec
+> -    The dummy ports shouldn't be used. It's up to :class:`~framework.run=
+ner.DTSRunner`
+> -    to ensure no test case or suite requiring actual links is executed
+> -    when the topology prohibits it and up to the developers to make sure=
+ that test cases
+> -    not requiring any links don't use any ports. Otherwise, the underlyi=
+ng methods
+> -    using the ports will fail.
+> +    It's up to :class:`~framework.test_run.TestRun` to ensure no test ca=
+se or suite requiring actual
+> +    links is executed when the topology prohibits it and up to the devel=
+opers to make sure that test
+> +    cases not requiring any links don't use any ports. Otherwise, the un=
+derlying methods using the
+> +    ports will fail.
 >
+>      Attributes:
+>          type: The type of the topology.
+> -        tg_port_egress: The egress port of the TG node.
+> -        sut_port_ingress: The ingress port of the SUT node.
+> -        sut_port_egress: The egress port of the SUT node.
+> -        tg_port_ingress: The ingress port of the TG node.
+> +        sut_ports: The SUT ports.
+> +        tg_ports: The TG ports.
+>      """
 >
->  @unique
-> @@ -233,6 +235,21 @@ def test_suite_spec(self) -> "TestSuiteSpec":
->          ), f"{self.test_suite_name} is not a valid test suite module nam=
-e."
->          return test_suite_spec
+>      type: TopologyType
+> -    tg_port_egress: Port
+> -    sut_port_ingress: Port
+> -    sut_port_egress: Port
+> -    tg_port_ingress: Port
+> +    sut_ports: list[Port]
+> +    tg_ports: list[Port]
 >
-> +    @cached_property
-> +    def test_cases(self) -> list[type["TestCase"]]:
-> +        """The objects of the selected test cases."""
-> +        available_test_cases =3D {t.name: t for t in self.test_suite_spe=
-c.class_obj.get_test_cases()}
-> +        selected_test_cases =3D []
-> +
-> +        for requested_test_case in self.test_cases_names:
-> +            assert requested_test_case in available_test_cases, (
-> +                f"{requested_test_case} is not a valid test case "
-> +                f"of test suite {self.test_suite_name}."
-> +            )
-> +            selected_test_cases.append(available_test_cases[requested_te=
-st_case])
-> +
-> +        return selected_test_cases or list(available_test_cases.values()=
-)
-> +
->      @model_validator(mode=3D"before")
->      @classmethod
->      def convert_from_string(cls, data: Any) -> Any:
-> @@ -246,17 +263,11 @@ def convert_from_string(cls, data: Any) -> Any:
->      def validate_names(self) -> Self:
->          """Validate the supplied test suite and test cases names.
+> -    def __init__(self, port_links: Iterator[PortLink]):
+> +    @classmethod
+> +    def from_port_links(cls, port_links: Iterator[PortLink]) -> Self:
+>          """Create the topology from `port_links`.
 >
-> -        This validator relies on the cached property `test_suite_spec` t=
-o run for the first
-> -        time in this call, therefore triggering the assertions if needed=
-.
-> +        This validator relies on the cached properties `test_suite_spec`=
- and `test_cases` to run for
-> +        the first time in this call, therefore triggering the assertions=
- if needed.
+>          Args:
+> @@ -80,34 +79,40 @@ def __init__(self, port_links: Iterator[PortLink]):
+>          Raises:
+>              ConfigurationError: If an unsupported link topology is suppl=
+ied.
 >          """
-> -        available_test_cases =3D map(
-> -            lambda t: t.name, self.test_suite_spec.class_obj.get_test_ca=
-ses()
+> -        dummy_port =3D Port(
+> -            "",
+> -            PortConfig(
+> -                name=3D"dummy",
+> -                pci=3D"0000:00:00.0",
+> -                os_driver_for_dpdk=3D"",
+> -                os_driver=3D"",
+> -            ),
 > -        )
-> -        for requested_test_case in self.test_cases_names:
-> -            assert requested_test_case in available_test_cases, (
-> -                f"{requested_test_case} is not a valid test case "
-> -                f"of test suite {self.test_suite_name}."
-> -            )
-> +        if self.test_cases:
-> +            pass
+> -
+> -        self.type =3D TopologyType.no_link
+> -        self.tg_port_egress =3D dummy_port
+> -        self.sut_port_ingress =3D dummy_port
+> -        self.sut_port_egress =3D dummy_port
+> -        self.tg_port_ingress =3D dummy_port
+> +        type =3D TopologyType.no_link
 >
->          return self
+>          if port_link :=3D next(port_links, None):
+> -            self.type =3D TopologyType.one_link
+> -            self.tg_port_egress =3D port_link.tg_port
+> -            self.sut_port_ingress =3D port_link.sut_port
+> -            self.sut_port_egress =3D self.sut_port_ingress
+> -            self.tg_port_ingress =3D self.tg_port_egress
+> +            type =3D TopologyType.one_link
+> +            sut_ports =3D [port_link.sut_port]
+> +            tg_ports =3D [port_link.tg_port]
 >
-> @@ -383,3 +394,29 @@ class TestRunConfiguration(FrozenModel):
->      fields_from_settings =3D model_validator(mode=3D"before")(
->          load_fields_from_settings("test_suites", "random_seed")
->      )
+>              if port_link :=3D next(port_links, None):
+> -                self.type =3D TopologyType.two_links
+> -                self.sut_port_egress =3D port_link.sut_port
+> -                self.tg_port_ingress =3D port_link.tg_port
+> +                type =3D TopologyType.two_links
+> +                sut_ports.append(port_link.sut_port)
+> +                tg_ports.append(port_link.tg_port)
+>
+>                  if next(port_links, None) is not None:
+>                      msg =3D "More than two links in a topology are not s=
+upported."
+>                      raise ConfigurationError(msg)
 > +
-> +    def filter_tests(
-> +        self,
-> +    ) -> Iterable[tuple[type["TestSuite"], deque[type["TestCase"]]]]:
-> +        """Filter test suites and cases selected for execution."""
-> +        from framework.test_suite import TestCaseType
+> +        return cls(type, sut_ports, tg_ports)
 > +
-> +        test_suites =3D [TestSuiteConfig(test_suite=3D"smoke_tests")]
+> +    @property
+> +    def tg_port_egress(self) -> Port:
+> +        """The egress port of the TG node."""
+> +        return self.tg_ports[0]
 > +
-> +        if self.skip_smoke_tests:
-> +            test_suites =3D self.test_suites
-> +        else:
-> +            test_suites +=3D self.test_suites
+> +    @property
+> +    def sut_port_ingress(self) -> Port:
+> +        """The ingress port of the SUT node."""
+> +        return self.sut_ports[0]
 > +
-> +        return (
-> +            (
-> +                t.test_suite_spec.class_obj,
-> +                deque(
-> +                    tt
-> +                    for tt in t.test_cases
-> +                    if (tt.test_type is TestCaseType.FUNCTIONAL and self=
-.func)
-> +                    or (tt.test_type is TestCaseType.PERFORMANCE and sel=
-f.perf)
-> +                ),
-> +            )
-> +            for t in test_suites
-> +        )
+> +    @property
+> +    def sut_port_egress(self) -> Port:
+> +        """The egress port of the SUT node."""
+> +        return self.sut_ports[1 if self.type is TopologyType.two_links e=
+lse 0]
+> +
+> +    @property
+> +    def tg_port_ingress(self) -> Port:
+> +        """The ingress port of the TG node."""
+> +        return self.tg_ports[1 if self.type is TopologyType.two_links el=
+se 0]
 > --
 > 2.43.0
 >
