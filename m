@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB7DC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60ECC02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:24:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C4EC402E8;
-	Mon, 10 Feb 2025 19:24:07 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 61748402E5
- for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:06 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-2f9d3d0f55dso7273080a91.1
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D3D6402EF;
+	Mon, 10 Feb 2025 19:24:11 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id BFE0840611
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:09 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-21f4a4fbb35so61313525ad.0
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211845;
- x=1739816645; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211849;
+ x=1739816649; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZNUsqIqt7Uo6WGWMoMt/X/mG8b2IRP0ZwascG6bpI40=;
- b=aR3HgWe1KqD5Rd71Bkv4c2WKzLXZKcmcvQzMNe8pKpf3f6z0Inz0GI8oVs1VfN/oH0
- E79+XDOtZ0QzYq3T2QSKk7f3vBpKVSPjKbgbMI8odHt++MO+lJ/mXpGCESGtaY9pCZOw
- hixOjQBiY/3M1b1KLFCMtYgeKt8NFbXjg6PG/Lx5UrGqHZ6wFAYP2qOUtjhShFiBR6L0
- KPkRQ+02DkYhaaB8DQCOTOSMSEbkFT+9i5M15DNfLMSbE5+LUFpJ0PWtT25PZAmuTbWV
- g2H5Tj8B3R3eDcNa8aBmJ3bTcxnlL/9mOHaelXp/tbDtOv/xDkpnr3LrzGh0fdsudgtn
- dshw==
+ bh=Rtv++eot4nBWpGgF1TUkRM+VAY+AQWCwSnSDhka0APU=;
+ b=eXeXiXHubqkbTmC5sdA19i32o+AEW0hPPbrY/qcNXCWWsobFacHfXbQWdzuZ77KYMI
+ Xy0DJPIJ6ASM5I9EoXYyAukegn06EdnUT4uCKHYXfOm0ugPv0nqO74NywGZjeEuZdOdb
+ 0LH348BlPiQr4LPY4NgHhPZp7VGeomramW90pIdSBXgEkRh1LGAlJrndIZyuxcMUbVCG
+ ihWP9xDggbbGUnf1bfQMxgAYS2HPxfFVTdZTJKTCrf1CJtOIaiTZ94WPxUanV4giFepQ
+ F8w8qjhudG9k9WbGtNDAlG84ZpdR72mCQUpa88mwkdD+f90CsX/ekyxwd2hct2KhjsH8
+ zvwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739211845; x=1739816645;
+ d=1e100.net; s=20230601; t=1739211849; x=1739816649;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZNUsqIqt7Uo6WGWMoMt/X/mG8b2IRP0ZwascG6bpI40=;
- b=K905qmg45kA1IJWZs1eq6Gf0K/+cnONd/TCqHLk3CCagbrGP5CEAhxxHgCLilpDBUv
- elv5NQokfDN3nzHbhuche0dWIaYQfC6XJ2a2ZlsSP5+iGLoFr+fsouFms9kGEC0aoFqm
- H/c1BHVLmT+ZOhzN3LCm346V/V6EsghDV0flWXKyASuRbwuKv9CxVVVaZPBsgoNpkjOm
- yQ5L02W/NZnFjpxLassZ2E0HcG+xoHPcOX/759Jh+TDwR6JnJEHBcOcNOE85Wo2wJH97
- eZoMBYm43Qx66uJtTAt/3M8CrAMqD5Cy0t/zURHVzrITaN2c1vfhOZ/b1r+Y+zSZ+BM/
- 2qVw==
-X-Gm-Message-State: AOJu0YyrHpDEtU8BuxlkbJQfTH2cSf7cR4MlxMbcgmmaXP4Y9fk1StwD
- xEVonCHhivVZm7dOwOJ4cYrFBgpyyYFwl/ymizSsZqhspPaKk93fKCrpZlgk4V8=
-X-Gm-Gg: ASbGnctJMhCWs8BltWFXaOlEYx1CJyeAfUOUKh6BCgVFiwVKojZfKBoLJDgor6hnQKA
- VsylDdPlBwS9RdVGD3UV7ZP3c12vnknvS0U3xWwu+55RSdVOar7Nnb/0JYfmcj+g3OxZOwS4Ar7
- lljMAL3an+A4PYPX4rWNsZ/tveOxDFAO172d5X2gy6nuK+7+/iXhX4VDxsvA5hUjt2puV+S4/qK
- 1kaxPFeR/LquYTPYlFPRSnrLd8NQ81RiVrPJo1gCOtEE28goHCItcBVqRTYH4jXMjiobxSX8M/N
- DWstbZvSZraXALESaa32ey+bqqkh9Uz3y8G2DjBVH1WG+nh1X8Ibs5XfmMcL1gpLRc1K
-X-Google-Smtp-Source: AGHT+IEv9Xg/9Dxnu9LaZzXNOIUy7CZj25IlJaYVE3yC3jh8SvfUmtxVWcO8tneAqYVfjjPJq7Nijw==
-X-Received: by 2002:a17:90b:3143:b0:2ee:c918:cd60 with SMTP id
- 98e67ed59e1d1-2fa241776f8mr22197542a91.20.1739211845599; 
- Mon, 10 Feb 2025 10:24:05 -0800 (PST)
+ bh=Rtv++eot4nBWpGgF1TUkRM+VAY+AQWCwSnSDhka0APU=;
+ b=HTWGXqJLl61jCU0ZbNGZhd6UuZNFzHpZEV78HxPx95np8aS5FIeAqmymj1ug/iVYL7
+ 5GxYf7VlxCOJCbWqhOJ7+78+EPnHkgBvIX/AA2KukBIuUImqoosqdzVWCSxS2ShDSkVn
+ gcTyNKSZH6HebLyWWrxHWa7RD6D5sHf9Bl6x03zlGycsHFCxG0dFpkBW3xezafGUUYX/
+ z7dW3WkR1ZOPzOUFz2A9DWdbuTtGZgFjAJaG52g/YPHWv8WUHV0FR2twJumLmeTkVpwm
+ tjWEbk2N4cDHIBDPdVouR81DMqQhXALhPZui+vLpRr1MsLKSAAf4QymIsLLnY3mObPOd
+ NncQ==
+X-Gm-Message-State: AOJu0Yx4KJVIKZNpKimJr3bX/exkvcuk81wMLW1zu0NP1R5pPkl9GAal
+ 6V7aTRttsUO5BPxnNG9nOoCPcEfFGvx+HLGGNmHzd7fKHGdNnGg1rNcwt6titic=
+X-Gm-Gg: ASbGncumIfzQSM4K+Esd/sp7t9zpuyAzEA92wTUdLUpc2rfGQmo+B4DvrOM2SY4QjVf
+ hg/TFOFGAMDXWqJZT9ThGEq9bLJNtDTUS8xZ7OjrG0LFZTa7joOB088z+jQ8p1T6AAZsVKUSuGI
+ 31+rhwH98b6U8g9aHHxFkBEondX2+gnqXF+x5rnE7gzD5UDzvq3qInnrq0UFv12QXwLS8bt4DJY
+ ZjQi2AyYaijuDQMdn5fma9VvD1mrOl64ce+gCv5jg26JmVFNV/50haTypd/zcmGYwSs8E5R4Nl9
+ YePmYTGT2CZNBR7uOG33hoQu7hWcVEsJv++cXCQGzIU2r54ff1HxKOHcHA08+yKo/HOW
+X-Google-Smtp-Source: AGHT+IGt9BHiFFK7DtR4bdxslIKDOf45dFzNlCMktXl5B67kqBfCAlUyya8i9HS6WO0uX2uCw70dzA==
+X-Received: by 2002:a17:90b:548b:b0:2ee:8cbb:de28 with SMTP id
+ 98e67ed59e1d1-2faa090abccmr561462a91.8.1739211848968; 
+ Mon, 10 Feb 2025 10:24:08 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.05
+ 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 10:24:05 -0800 (PST)
-Date: Mon, 10 Feb 2025 09:36:26 -0800
+ Mon, 10 Feb 2025 10:24:08 -0800 (PST)
+Date: Mon, 10 Feb 2025 09:45:24 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Bingbin Chen <chen.bingbin@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 08/14] net/zxdh: support hash resources configuration
-Message-ID: <20250210093626.57c76e6e@hermes.local>
-In-Reply-To: <20250210015017.4105624-3-chen.bingbin@zte.com.cn>
+Subject: Re: [PATCH v1 10/14] net/zxdh: support hash tables write and delete
+ ops
+Message-ID: <20250210094524.73c26217@hermes.local>
+In-Reply-To: <20250210015017.4105624-5-chen.bingbin@zte.com.cn>
 References: <20250210014441.4105335-1-chen.bingbin@zte.com.cn>
  <20250210015017.4105624-1-chen.bingbin@zte.com.cn>
- <20250210015017.4105624-3-chen.bingbin@zte.com.cn>
+ <20250210015017.4105624-5-chen.bingbin@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,23 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:50:11 +0800
+On Mon, 10 Feb 2025 09:50:13 +0800
 Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
 
-> +static uint16_t g_lpm_crc[ZXDH_SE_ZBLK_NUM] = {
-> +	0x1021, 0x8005, 0x3D65, 0xab47, 0x3453, 0x0357, 0x0589, 0xa02b,
-> +	0x1021, 0x8005, 0x3D65, 0xab47, 0x3453, 0x0357, 0x0589, 0xa02b,
-> +	0x1021, 0x8005, 0x3D65, 0xab47, 0x3453, 0x0357, 0x0589, 0xa02b,
-> +	0x1021, 0x8005, 0x3D65, 0xab47, 0x3453, 0x0357, 0x0589, 0xa02b
-> +};
-> +uint32_t g_hash_zblk_idx[ZXDH_DEV_CHANNEL_MAX]
-> +				[ZXDH_HASH_FUNC_ID_NUM]
-> +				[ZXDH_HASH_TBL_ID_NUM] = {0};
-> +static uint32_t g_ddr_hash_arg[ZXDH_HASH_DDR_CRC_NUM] = {
-> +	0x04C11DB7,
-> +	0xF4ACFB13,
-> +	0x20044009,
-> +	0x00210801
-> +};
+> +static inline uint32_t
+> +ZXDH_ZBLK_ADDR_CONV(uint32_t zblk_idx)
 
-CRC tables should be const?
+Do not name functions with all upper case, that is reserved for macros.
+
+> +{
+> +	return ((zblk_idx) / ZXDH_ZBLK_NUM_PER_ZGRP) * (1 << ZXDH_ZBLK_IDX_BT_WIDTH) + (zblk_idx)
+> +	% ZXDH_ZBLK_NUM_PER_ZGRP;
+
+Indent the previous line since it is contunation of expression
+
+> +}
+
+> +
+> +static inline uint32_t
+> +ZXDH_ZCELL_ADDR_CONV(uint32_t zcell_idx)
+> +{
+> +	uint32_t blk_grp_idx = (zcell_idx >> ZXDH_ZCELL_IDX_BT_WIDTH) &
+> +			((1 << (ZXDH_ZBLK_IDX_BT_WIDTH + ZXDH_ZGRP_IDX_BT_WIDTH)) - 1);
+> +
+> +	uint32_t cell_idx = zcell_idx & ((1 << ZXDH_ZCELL_IDX_BT_WIDTH) - 1);
+> +
+> +	return (ZXDH_ZBLK_ADDR_CONV(blk_grp_idx) << ZXDH_ZCELL_IDX_BT_WIDTH) | cell_idx;
+> +}
