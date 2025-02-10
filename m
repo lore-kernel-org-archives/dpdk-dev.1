@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB75C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75037C02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:04:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D56040612;
-	Mon, 10 Feb 2025 19:24:59 +0100 (CET)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 30D2F40B99
- for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:57 +0100 (CET)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-2fa2c1ab145so5881349a91.3
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4ACE8402A1;
+	Mon, 10 Feb 2025 20:04:05 +0100 (CET)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id D63ED4021E
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 20:04:03 +0100 (CET)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-21f74c4e586so39876665ad.0
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 11:04:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211896;
- x=1739816696; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739214243;
+ x=1739819043; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5Ak7TQxXVBfPJuHoyIQ3zDyIGWLtdjH7hMT1Ki1EQDA=;
- b=H9kBXEeyfYlEmJlYSo9Wc/pMWDIKepeIWvPfYj9nQ0jX+atEIoFXJ5PRWWHtQdltpi
- N6fmbmVrmenBRqZoN5AtjYegJyej/s4TeIpbNEXthRtUzwwug1tvSEXCD3QU6x2jRo4r
- ecHtokwG0ax+0eERvUeOeXLdXOMZE8o7+XDgDqlOq7nM+6+OC8O6x69hK17B1dyAkhdI
- f+2hxXvaeDr5Y8Mf2rLIxeti/gpfpyNJE7vL/SbvFt+gaDr06e8u1vuPqG30Y3XfQ19T
- 9ZIuEYjNh8UJfmi2HOjhdWYQ+t5551BQQIaX8gnPZJdtdnVpPmIMWZiMkw1FoS4mS5/Q
- fvKQ==
+ bh=FJYj/q7qcuqXMjbaXKJePvE+0roxzGmAG7vyH5BWXrU=;
+ b=XsTfzAXrFrUAv9vNSJrnMErNslZiXQ85B/Rk3cvZDTfHwnbGDSLrAoh/rCPn9mPmZ2
+ KSubuRK7z9PcaxIsDyh0q9wHoam0EX0ylXLbKazKsvxWFdhxzUUew6dOmAZCU2HNbH/n
+ V2EdylAjXDZXy/EfHgSKi0twlJ4Xpa9bXhKE0STjIUUvJtVP4zZEH5t5aIn7WqCIDDsD
+ IcoM6ifusxzkHzyiTFd9ZwRTYn+idIPMCn540heKZ+bFH8pWul+HUbJZ+2yT8b0ALthe
+ q9ljTFlpoyLbCGHR9eTmmSL6qwH3m4bNOLoo7naKyod96irA95lmymQU041CfjHtB/fi
+ xHQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739211896; x=1739816696;
+ d=1e100.net; s=20230601; t=1739214243; x=1739819043;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5Ak7TQxXVBfPJuHoyIQ3zDyIGWLtdjH7hMT1Ki1EQDA=;
- b=rK+mNxbFENupYXkjVHaWGJafv4FWps+9Yz2YMBV4GQCdcRHrXFpGc/5g/OoDG8FVSD
- y4L9xsFP3Gs9W9Oj+1A2po8BEiogCed3gESV62sVJjAXZHglA4U+bCJONQ/JBIgza0P0
- FZVEJJ/k7HexlYgxAl/CV3DVLkpjoShnDQzX352OFjZm7WlnvhIsPAPUq+h8yF7hrGfB
- aYpqqquq9MqHVqWrPLyJ8yoOXmgAPcP4tit6Ss2NM83xZ6JqMVDHF12Czkvq9cuCJCTY
- vcLL0CZrPSg2X2eJnhDecy5G3ATXrd3uJkZ1ixHbkiyXVAwainG3jdcvPQ73w3AEYpVE
- TlcA==
-X-Gm-Message-State: AOJu0YxPWe8QkFRukfFU+oAEG+djdb7Fb7xYzMpj2ASybd5Lq25gevRU
- j5cU1kiTdFg2A0LnyqIYQHk0v9wOT7TTitcUMjGkk2Mfs2Onnr/4luLJPDz+Yuc=
-X-Gm-Gg: ASbGnctCzwlmfH7e4GLlASGTW9UPwyy673WWdA1i6AjgUeeTzyS/O17Ek18vlbf00NA
- UKcQAnao4OqA6/fJ7yz4fEPXWG4wsLc/vTefbB9zBgOmrdc4SInr6W5/GyMXA4ATWIVTr7L1SaT
- K48hwmNB9Pjaclh2u6EtJh2PedL5nisM2W8NrnzjpdVZndfVR4v6pDnSbEbc98COhveFdO235Wv
- KhghZxHPOo0mlYDG4I3daQRIrZ75TrrxRsQ8IorNFh0zFpRg1j5R7d/CBJTiPmpEa/6wteNZik1
- 0P9Wu7SKIfoX8QzWYb57inwl5bWuCU8B+1fDfvyGvYiZyLMOWkqC4zgNp7T2CGBJbQhy
-X-Google-Smtp-Source: AGHT+IFQHVrXd5qb5EwkNfxBtfk6TCN07X0DggTOhSVxnPRgH7aPwZQ79LW/ORlrHw7mjRsgXKwOyQ==
-X-Received: by 2002:a17:90b:4f90:b0:2ee:b26c:10a0 with SMTP id
- 98e67ed59e1d1-2fa243f0351mr23249636a91.24.1739211896375; 
- Mon, 10 Feb 2025 10:24:56 -0800 (PST)
+ bh=FJYj/q7qcuqXMjbaXKJePvE+0roxzGmAG7vyH5BWXrU=;
+ b=smqLPOUBEim19DI9uVN2ut/chlPJXaBT4CPDo2SqippzLaHpZsp1AS4sfUeO9qdjRL
+ IiaVBqtV/kKuMt6GGDRX+U8gwDNfNH3D1L7gg2Jz8a3hywtfrddCdw5+xYWmiv1eDIpy
+ IZ3L+fljjD/HD5KYFIgTFxaPma/ng/MzSlEiBzMUYt+5sY0Y/JM1tkXx6VKQV9gqn41j
+ qaarTaSA7gyupHe3ShVDV5HV7sI3dzl+/DuEwDhW34RywNdJ2mPtN+Ala1TuqOnppfCV
+ qwJLWq5utB4vmTDL+MhjiuyY8aNMsaSFU6iHShab+EVZBGDF39X3SSojlfCW2gRNKLiq
+ WyNQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWN6miPBEvHB517dbuwpY4jkfEdKe6WVDWgq/EkZjNcjxKLXc3L9eBJIhKWpepG+BIyl98=@dpdk.org
+X-Gm-Message-State: AOJu0YyFbOnY1ZYDKhsRz0z67Vgw1HIlmWn2yHYBdn93pWjryh5NLVsm
+ /0AgVnDRVxiEOeK1Ktqb4vKdrn8N9g5Xd0b5Cl8tH0ZdBeNBex1pLI6saOAu36A=
+X-Gm-Gg: ASbGnctbjhweH4CLagD5a7IIavwY3rF68qktku8+7K0Rbc+xjTs9QpApicFwuYi1dkx
+ Dw5NP8aLoVACDXjsPcsaVfRBwPxLHBFH8oQEE6owEEj4cOCVs0Mhc2GY1pRGK7dPVyZ03xISY9B
+ FvINeWkhripzHdrxghDKys7NumJ3n7YzX/tq7syeQBTtIRIhjdEo3BrOvDFWzBHTYs6s3osp0gq
+ lFBL+QsJfSnGDGm7JcCAMmV2K9EbmX9WcvJSyqnOwjZJvpgUlPXNNZuoPbotxkC51yyXK8PYz4c
+ Vz6tinqAYM88b0V/XM9SzQ7b7yniAlFnMY2fkhw99Eg2Dn64bl+LlDmNtX9H7/55ngVB
+X-Google-Smtp-Source: AGHT+IGBGCAymwq76ht9W/D+9R3b76Jp0PkfeZ+HW6UAbtRwLjF2EW7NO7RqVMCKKE4GzgAszIJtMw==
+X-Received: by 2002:a05:6a00:c85:b0:730:75b1:720a with SMTP id
+ d2e1a72fcca58-73217f94a60mr991505b3a.23.1739214242749; 
+ Mon, 10 Feb 2025 11:04:02 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.55
+ d2e1a72fcca58-73093ab315csm1877120b3a.143.2025.02.10.11.04.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 10:24:55 -0800 (PST)
-Date: Mon, 10 Feb 2025 09:30:47 -0800
+ Mon, 10 Feb 2025 11:04:02 -0800 (PST)
+Date: Mon, 10 Feb 2025 11:03:59 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bingbin Chen <chen.bingbin@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 03/14] net/zxdh: add agent channel
-Message-ID: <20250210093047.25e89f83@hermes.local>
-In-Reply-To: <20250210014702.4105460-1-chen.bingbin@zte.com.cn>
-References: <20250210014441.4105335-1-chen.bingbin@zte.com.cn>
- <20250210014702.4105460-1-chen.bingbin@zte.com.cn>
+To: Wenbo Cao <caowenbo@mucse.com>
+Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
+ andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
+Subject: Re: [PATCH v8 00/28] [v8]drivers/net Add Support mucse N10 Pmd Driver
+Message-ID: <20250210110359.2b844491@hermes.local>
+In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
+References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,29 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:47:02 +0800
-Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
+Driver review checklist for mucse PMD
 
->  
-> +#define ZXDH_COMM_CHECK_DEV_RC_UNLOCK(dev_id, rc, becall, mutex)\
-> +do {\
-> +	uint32_t temp_rc = rc;\
-> +	if ((temp_rc) != ZXDH_OK) {\
-> +		PMD_DRV_LOG(ERR, "ZXDH %s:%d [ErrorCode:0x%x]!-- %s"\
-> +			"Call %s Fail!", __FILE__, __LINE__, temp_rc, __func__, becall);\
-> +		if (zxdh_np_comm_mutex_unlock(mutex) != 0) {   \
-> +			PMD_DRV_LOG(ERR, "File: [%s], Function:[%s], Line:%u mutex"\
-> +				"unlock failed!-->Return ERROR",\
-> +				__FILE__, __func__, __LINE__);\
-> +		}   \
-> +		RTE_ASSERT(0);\
-> +	} \
-> +} while (0)
+Mark items with:
+    =E2=9C=94 passed
+    =E2=9C=98 Failed
 
-Way to verbose and messy.
+Basic hygiene
+    =E2=9C=98 Look at CI results in patchwork; notify submitter if any fail=
+ures
+    =E2=9C=94 Merge cleanly with git am; look for missing newline at EOF etc
+    =E2=9C=98 Run checkpatches; warnings are ok, but look more carefully.
+    =E2=9C=98 Run check-git-log; often get some minor warnings that are ok
+    =E2=9C=94 Run check-symbol-maps.sh
+    =E2=9C=94 Run check-doc-vs-code
+    =E2=9C=94 Run check-spdk-tag
 
-1. Your wrapper functions already log on error.
-2. The messages are broken across lines and don't give any more information, just more words
-3. The file and line is already logged by the PMD_DRV_LOG
-4. RTE_ASSERT() is ignored unless RTE_ASSERT_DEBUG is enabled, and in that case it panics.
+Builds
+    =E2=9C=98 Normal Gcc build; make sure driver is built!
+    =E2=9C=98 Use latest experimental Gcc 15 to catch new warnings
+    =E2=9C=98 Clang build using current version (clang-19)
+    =E2=9C=98 Doc build
 
+Rest of checklist skipped, not worth running with these kind of failures
