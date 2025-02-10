@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A344FC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 16:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD1CC0219E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 17:04:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A972427B2;
-	Mon, 10 Feb 2025 17:56:11 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id DE210427A0
- for <dev@dpdk.org>; Mon, 10 Feb 2025 17:56:09 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-21f40deb941so95532435ad.2
- for <dev@dpdk.org>; Mon, 10 Feb 2025 08:56:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 57367427B2;
+	Mon, 10 Feb 2025 18:04:11 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 3F774427A0
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 18:04:10 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-21f464b9a27so76078035ad.1
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 09:04:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739206569;
- x=1739811369; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739207049;
+ x=1739811849; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7yhp0oQ6xt1oQ/HYuQJKyI1ZRkP//4a5kSqlNtaqDRE=;
- b=su//J5D4ETTns11PooHD3zTYOdUL5NeiWzXzlWHuMP4MDuqudGYc4Ma+Z4H40Q5QBf
- oT75G+ofKY5m8W3UgczxCJAVX5TMNf6TlQadrIa1Fb4iz4U9myz1nSqha3aQPtalH+iu
- 6yh8jRenB0i8yJ58L3Zb6VMg3OzUVxvM26Is4PU051lMD76AC/i3/HsqWg1r5jTnxmJB
- m/80tiAnXsuVbfNJ7fJ2g8IO34964kytGrNBH0mODPsJxDmw4JNU8HueDxPHmFIFY6+v
- SHr8LncqUxgIlditzR3L1Ll8hQzPkZd7y5utHlfwVTyNCtXcQlOkbWSdjlSUT90u3zKL
- wgvA==
+ bh=WwmN6FFYO/Z21n0e3hu6x+udrqVQrFGOiu9uP02gRjM=;
+ b=UKahmc6/fJDaeGdiyjrU6t8x4WsbDY5rKIiqAzCGMmSdfv1gp9NOqqSWOovn5hi2wS
+ dq+83Pa46deUJ4ZeBDqAgK0YvvEH6lN2byUXSIGphpXHGJtTmnD4uhPwgBIhf7r7JEjv
+ doHu6VZAgmzPqopSBvOOJ03REow8e6lwhPfJfESFLVHmwrczphNVQZCtqG7ze+K+kj4D
+ 1+HUFLWYMjmMWj8XjLDKeVocLXmkazNUgOQzEfd9hXoHxbTppsBnHiO0QLTzLsZzzp9T
+ Jm1yvRxtXyj8PkpddWcoR3RJFD8ybH5Is38Fkbntg1HWHWv/cHqr3Wzu1RjuL1NTNAnp
+ DPoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739206569; x=1739811369;
+ d=1e100.net; s=20230601; t=1739207049; x=1739811849;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=7yhp0oQ6xt1oQ/HYuQJKyI1ZRkP//4a5kSqlNtaqDRE=;
- b=j1qxkdMIuEpG3zGptxbnbFuL2pOyrIQfh641Fek/x8wX26ibsyh5jJ4HV4l3RYMlUg
- FNN7zmh9aP6s68f/ZkxnYAKc9snynne15ReNnOoKULlvExZS3sFqumENODV0q7zoYe7W
- G1fWiuWee6OTAMm5//iUkuXzrNhegSY8oYf9bPNNUrPDYFs/7aZHQ84+aGDZbV9D2mnD
- bVo+ZGY1ySziQ+pZ3VPl122vLUuleIHBufAc+ZB1gCigqrOFYpy3/i2N4XAKanLM4AsI
- 8eXcDbwThGajpsEc5JJ39wwIL7FUdu2Ae8JVrDp26H+AKnRwOHjA+TpuPcJpZYb3yLga
- vnkA==
-X-Gm-Message-State: AOJu0YxquolGwMugzQcmWCIwUJQFHI5y7oeWIXbtvVB2xS3Fqs2le7ql
- D7jM+Ks6HNBZVjIfxdy32rQXetmMxyxTTli3+9wYuBA2qRCr8DIpcR/SfggaeFE=
-X-Gm-Gg: ASbGncuJ+OicYeL+R5vvuye0ZegEwXRlVRB+TtChZ8zT8H76nzDeRcZebDyzcHw9IK2
- QpLr22C3qpUVWSplTv0tH19MjGY9zACphG8adSh85ReIg6ccT0CSD2YUL+WUp6/GqFNekoYYrEl
- rcXD0UJHW87ZwpwdGQXm0mfM44jMh0MWOccUcHTUevNETlRENEAaXxWXxDaXd2uQaodwo7QFuiD
- gd7iXQIuv2M8+k9rM+Hy15TCLsAKhUkfVLjwctit3gUrrywl3q8K3UpQDcKgkrSL/8FT2AhEMhI
- uB2ze3Smtf/td4ThUmR2RaeCBA5G9QKJyxPy0T+3lw+E6iIBdKJXwSPzt9jZq3TDreS5
-X-Google-Smtp-Source: AGHT+IHDXpKh6L0yBdeWly1GXpSpXZW4YwVyMr+PcgrC7TTkDeqIifPN20YGXVRJqOM/omw286PNHw==
-X-Received: by 2002:a17:902:f688:b0:21f:7a8b:d675 with SMTP id
- d9443c01a7336-21f7a8bd917mr163187835ad.4.1739206569001; 
- Mon, 10 Feb 2025 08:56:09 -0800 (PST)
+ bh=WwmN6FFYO/Z21n0e3hu6x+udrqVQrFGOiu9uP02gRjM=;
+ b=s9McdLXltZhhgp92o2NLn5MTU4yObVOuKyjcSxy8UoYus1hd0eRszPcQ1cQv4qRni0
+ O8QP9ZoeLZ0wGuX2J8eRQUnw6FoPw8lG+HMxCPfNZOvxfMGGLhZFFHzJdbtyeqXO+h4/
+ ZH33P/zP2yBO2TMDkeg99x4nN6jxqakJ+9osta4VOoVEtVKR0tTAz3JIlZXKk2B3W0GJ
+ 8To+AEdH01mZtoQuiaQYvkVi/KHEon3TFdXwL9QAkA/SIyGR60yK6CHME3sVij5/UPlT
+ zz0KAD8KWA36YTyRzzBkVbpZMA4AJknj/Nk+xoVCfv+/2WBp9ThMNVLPOxyHEcjn0CGL
+ 0VSw==
+X-Gm-Message-State: AOJu0YzpFg7DCUK2sXfarbdr3TrGIKZGiTqO7OTJPXytpdNMGxLzzp+W
+ rAfMrT156G5sP3Ybxgl0c/aK2C8DO/xuHCG+zI5pWfbzW4ssVekbh9Td+xYeTJk=
+X-Gm-Gg: ASbGnctP591BdycugZOSZnNAtckxIVkBigJOhX06zTfN94h5kgVXDebZPHElHnpw7zD
+ b4lrkpXA0rN2waEuKl70xJJ0VkKO7CuPSvebvCtQgkTJ8qQSrwGWDZW1qaAPZioO/Mpf6NwLWbi
+ 0yjwrWQp0z7mjH/Oqxhdp1tRThCIzhBMbecyurN4a99yTWPbcz7YuPasiPuA2XTSkW854WJSb+y
+ I21UDP37OIlFXYCgbFDMB81+Ys1NFy3qj5QRXb55hde8ppcBB825miOZlSjTN6CqjJR9Gd1+ywK
+ a4SJtxwn5XTcPu9LyJdAT3caFVnpffvlqQEupdpzKkHuG88EBIzvdONtTkeVD+GrLs+U
+X-Google-Smtp-Source: AGHT+IGeLqbIrXfMe/8uUZ2DTLOiiPMOe/HCCkdDgKkS7vBhrEtFh/V7EPhDcBfTi/TR54oB6Cz+pg==
+X-Received: by 2002:a05:6a00:3029:b0:724:592d:aa5f with SMTP id
+ d2e1a72fcca58-7305d4ef721mr25211514b3a.19.1739207049285; 
+ Mon, 10 Feb 2025 09:04:09 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f3653afb6sm81437255ad.53.2025.02.10.08.56.08
+ d2e1a72fcca58-730764c4b51sm4486458b3a.55.2025.02.10.09.04.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 08:56:08 -0800 (PST)
-Date: Mon, 10 Feb 2025 08:56:06 -0800
+ Mon, 10 Feb 2025 09:04:09 -0800 (PST)
+Date: Mon, 10 Feb 2025 09:04:07 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bingbin Chen <chen.bingbin@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 01/14] net/zxdh: add network processor registers ops
-Message-ID: <20250210085606.3789a116@hermes.local>
-In-Reply-To: <20250210011924.4104325-1-chen.bingbin@zte.com.cn>
-References: <20250210011924.4104325-1-chen.bingbin@zte.com.cn>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, =?UTF-8?B?wqA=?= <mkashani@nvidia.com>,
+ <rasland@nvidia.com>, Shani Peretz <shperetz@nvidia.com>
+Subject: Re: [PATCH] crypto/mlx5: log when num of segs exceed max segs
+Message-ID: <20250210090407.478ae523@hermes.local>
+In-Reply-To: <20250209120851.254695-1-getelson@nvidia.com>
+References: <20250209120851.254695-1-getelson@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,33 +80,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:19:24 +0800
-Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
+On Sun, 9 Feb 2025 14:08:51 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-> +ZXDH_REG_T g_dpp_reg_info[] = {
-> +	{
-> +		"cpu_ind_cmd",
-> +		669,
-> +		SMMU0,
-> +		ZXDH_REG_FLAG_DIRECT,
-> +		ZXDH_REG_NUL_ARRAY,
-> +		ZXDH_SYS_SE_SMMU0_BASE_ADDR + ZXDH_MODULE_SE_SMMU0_BASE_ADDR + 0x00000014,
-> +		(32 / 8),
-> +		0,
-> +		0,
-> +		0,
-> +		0,
-> +		4,
-> +		g_smmu0_smmu0_cpu_ind_cmd_reg,
-> +		zxdh_np_se_smmu0_write,
-> +		zxdh_np_se_smmu0_read,
-> +	},
+> -	MLX5_ASSERT(nb_segs <=3D qp->priv->max_segs_num);
+> +	if (nb_segs > qp->priv->max_segs_num) {
+> +		DRV_LOG(WARNING, "Segment count exceeds limit. "
+> +				"Current segments: %d, Maximum allowed: %d. "
+> +				"To resolve, either increase the segment size "
+> +				"or set a higher value for the devargs max_segs_num parameter.",
+> +			nb_segs, qp->priv->max_segs_num);
+> +		RTE_VERIFY(nb_segs <=3D qp->priv->max_segs_num);
+> +		return 0;
+> +	}
 
-For complex initializers like this, it is better to use explicit field names.
+Way to verbose.
+RTE_VERIFY never returns since it calls rte_panic().
 
-	{
-		.name = "cpu_ind_cmd",
-...
+Would it be better to just use RTE_VERIFY()?
+Maybe MLX5 should have MLX5_ASSERT() and MLX5_VERIFY() macro.
 
-The problem is that if you get something in wrong place only some analysis
-tool many years later will notice.
+Je n=E2=80=99ai fait celle-ci plus longue que parce que je n=E2=80=99ai pas=
+ eu le loisir de la faire plus courte.
+I have made this longer than usual because I have not had time to make it s=
+horter.
