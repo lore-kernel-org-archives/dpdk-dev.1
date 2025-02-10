@@ -2,73 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D39C0219B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2BCC02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:09:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93BFF4064C;
-	Mon, 10 Feb 2025 20:04:24 +0100 (CET)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 1FDDE40615
- for <dev@dpdk.org>; Mon, 10 Feb 2025 20:04:23 +0100 (CET)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-21f50895565so50082835ad.2
- for <dev@dpdk.org>; Mon, 10 Feb 2025 11:04:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 49226402A1;
+	Mon, 10 Feb 2025 20:09:56 +0100 (CET)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com
+ [209.85.208.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3734A4021E
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 20:09:55 +0100 (CET)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-308f3dbd305so897901fa.2
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 11:09:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739214262;
- x=1739819062; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1739214594; x=1739819394; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vIuazVlvULVs868BppSNdpL1YPcYBYd5hLbiAQoiRH8=;
- b=yaWdpCQreuNUG98KxJB3tIRFTCl2RfYU8ioqHTyIiB63jgYQ0JGO7IsufFb3l3B+lP
- QIQhLK+vJjRu9rf6ahM3+6KntVWhlp+oVUtv4X6TI35FynEqvGaBWzxoUXa9sF4+HFVt
- jG8M05pD1Qamqiy0/c0+eWbbb94LGyUg2H15U68oABOEb+bdmfDYIuegYhy2Yae6+8yn
- T7Rog1sBNK7YfhPB6H0b+FJZ+naKs3UV7UA/7KwYRxKsuimB+R5jfNa65wTTRplr+tmq
- v9qRjWCbAmmj8odc0HSvjFNrEFgZKFT4CRL3kXQmBIIbJ2HiTTE0QDNJP42/z244cWAY
- M+Ew==
+ bh=iWdq3432XJZh96+3dedrXUZQ09QHlnJCsr2EacdQlus=;
+ b=XmxxaEFDBFmuL+RydQ5EjLxirLFiKhD11+PbixhTtPEeyVMsOWu7Jyh9Zi1MyAdWYA
+ KVJ8kIV5GTK8NLTz7SMgeFxHaMXEo21GPvYnxqQk4mzv28+dwHmK8ptN98kRbfK5DDRm
+ jC8+gRPobzcm/cWVnNQNfk90qa3U55TbJqdq8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739214262; x=1739819062;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1739214594; x=1739819394;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=vIuazVlvULVs868BppSNdpL1YPcYBYd5hLbiAQoiRH8=;
- b=OxGGWciKLL0cXwFHTqeXlrpE2/iK85tpaebcf/UhHLLKstnECx5SLZloIuHFKojwA3
- hnGeeP3C1coDS68pQ2HWgJ4fLMX9IDpQk2pPmiiDZZzD0YZpYechP2UhcjbvYzGbKdWx
- gzyHvUk8GACsZc07WZlekYMCnH7vQakrCxpok3cvOCduxaz9KN9osna3GCTBYOjG2cHw
- NK1jDIwRa69y0OUAC3wzNRiJUyYiX/O3mNm6fkD2n/DzyaenTJtX+6oRM36KSFlIcj+Y
- +2ZozdS5Q5zSZI1oUCFFpJvU1SUefrmvgH7m28K87Z/cc1yHCGUprPJ3DznLb9BguXMY
- b0fQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUaZiCdiM2btifsxE6PxX1ZL6q+6e044hiwN8utD43+UMMzbM3apNgjAmPSnZ4pB2XUy+I=@dpdk.org
-X-Gm-Message-State: AOJu0YwG4t5MPh1XlTOoIsYLo5wb2pI/8JlNh+qMp3sDx8ypHLEtB6aN
- vXg3O4nXQ9ND3VKU4vgQ8+0p0Yg3vewh8JMeb0U79VnjXZreL/uY7EHb+uUMPiA=
-X-Gm-Gg: ASbGncsLQ6dvwdQbxNZoKVhv39BujHmSkQFTGY1+zqjwx/yC/lXFCJ73NaSaSYRsbT4
- 7rGdLqfKPI4v/A//B2hpr3bX+77m8WXWzQ/KNbsAi6cNXpuYvIyOquNSFp/N3rY3zhy/o7b2M2K
- Cv0f+3Yxk/Yu6RRSEliBv7zd5YxU/fxrZrPNdDaSEl2sRItZ3EVHkyIjDDsAc6iERG7SKv5oyPq
- EfCd//e86y+QwB4X60xMC9lY/1W868HoAhowc0Qx70VZ0RBj9Jy5UOfVeei6fkE+jwT+aifRlqL
- M69jTDLUAQ1/3jJVZ7lOYNwpP0kD0rXPSSwf/XDy3saZlpy6xc4Ce9To/ziEsDmhKXmE
-X-Google-Smtp-Source: AGHT+IEopqLA5y+evhZ7uAlCgWpjbojoNCzYQZzXscrlf0ZaI4VhAWxkgLepTAriRMtlPIxNTIg5VQ==
-X-Received: by 2002:a05:6a20:12c9:b0:1e1:cbbf:be0 with SMTP id
- adf61e73a8af0-1ee49e819aemr1524396637.22.1739214262338; 
- Mon, 10 Feb 2025 11:04:22 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73077975f05sm4511914b3a.14.2025.02.10.11.04.20
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 11:04:21 -0800 (PST)
-Date: Mon, 10 Feb 2025 11:02:35 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenbo Cao <caowenbo@mucse.com>
-Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v8 00/28] [v8]drivers/net Add Support mucse N10 Pmd Driver
-Message-ID: <20250210110235.4940b6fb@hermes.local>
-In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
-References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
+ bh=iWdq3432XJZh96+3dedrXUZQ09QHlnJCsr2EacdQlus=;
+ b=KPbWTPauM9ksoTaGbegg5KFMLwFxE2BRnX0Gsz7FRy7bCvmZcTT4Y/ziH0+dEX2gGw
+ zDDh6/OX2JvO08wU4jK55Vtpvp39iGHOuttWhHjnAu1f1EpvcPHyG8OA0IS3PDuluQQl
+ sQ3PhcUOOOjaUJqqK7pXIHDRAqnwmejqV6aOB49Eyx6w2gyksrwIDj15QuzGX6SeF7Pz
+ sRbUPSVaRCH8KrLSTPuZrv3z0U9gmZ+50hZ7gb76QKv5BGHvgFnoRm7SZCceF7l0+nvN
+ u82WHJzW/TW1DATyrAm+aALOnrth6ld6Q412gobF0U+EgKp6UJ5yIntUBosMo6P8DU37
+ zxfA==
+X-Gm-Message-State: AOJu0YzNfKUW9mInBumIsjzLWeJR6RPb43HYfsVnYk8A0J3AzX+Po0kc
+ Leg52KNeQZyeCYlIizsDIKkbuSfJsiEsGTc/nD0M+ZP9cKyTp/3q7sdCFh2FMv9TwuKNo0LZtNN
+ 1/2sqnrYDPyXI9cLNEcdQCQVNAnQWbbv+4gjtYg==
+X-Gm-Gg: ASbGncvvWZfD+HBIlk0fGkmUfcxT28ZKSwrpH4L+RnyzEz6gRDaDALzhQA/Asy4dtH1
+ /gLVc+GKaL6sRrbRUbUjCjOSCswgK557dWFLwjb7OYHaucSSCCN9BZAW4bPoith1svs+J3eJ0Rl
+ k/9MeFjcXcBJxflATr3Eln5L5sTBact9g=
+X-Google-Smtp-Source: AGHT+IH8q/XKEQVh3d3J7hmNGs/jaEenSYGCY22iqYiNcNFX/GgtJ2LyYYY9xUxA2DKIrjqwcCtIFcjHEx0/VMTPnxo=
+X-Received: by 2002:a2e:be10:0:b0:308:eb58:658d with SMTP id
+ 38308e7fff4ca-308eb5868e7mr8568451fa.11.1739214594388; Mon, 10 Feb 2025
+ 11:09:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
+ <20250203151613.2436570-3-luca.vizzarro@arm.com>
+In-Reply-To: <20250203151613.2436570-3-luca.vizzarro@arm.com>
+From: Nicholas Pratte <npratte@iol.unh.edu>
+Date: Mon, 10 Feb 2025 14:09:42 -0500
+X-Gm-Features: AWEUYZnlBm0gowvSkdJ2B18ka-rvYAP-_ZKPszspIdBpBEDMQPeL_0KZwYUSZPw
+Message-ID: <CAKXZ7eihDxJmAydrbT36bEV9uAfQfeEvS4-o1US-5p8PHrfoUg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/7] dts: isolate test specification to config
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: dev@dpdk.org, Patrick Robb <probb@iol.unh.edu>, 
+ Paul Szczepanek <paul.szczepanek@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,155 +72,270 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 15:26:27 +0800
-Wenbo Cao <caowenbo@mucse.com> wrote:
+This makes sense to me!
 
-> For This patchset just to support the basic chip init work
-> and user can just found the eth_dev, but can't control more.
-> For Now just support 2*10g nic,the chip can support
-> 2*10g,4*10g,4*1g,8*1g,8*10g.
-> The Feature rx side can support rx-cksum-offload,rss,vlan-filter
-> flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
-> The Feature tx side can support tx-cksum-offload,tso,vxlan-tso 
-> flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
-> for sriov is also support.
-> 
-> Because of the chip design defect, for multiple-port mode
-> one pci-bdf will have multiple-port (max can have four ports)
-> so this code must be care of one bdf init multiple-port.
-> 
-> v8:
->   * fixed codespell issue.
->   * fixed MAINTAINERS file
-> 
-> v7:
->   * add support nic basic feature such as rss vlan strip/filter,
->   * mtu-change recv/send scater-recv/mutltiple-send.
->   * fixed code rationality, advised by Ferruh Yigit.
-> 
-> v6:
->   * fixed the doc(rst) format problem advise by Thomas Monjalon
-> 
-> v5:
->   * fixed the symbol name require by the style documentation
-> 
-> v4:
->   * one patch has been forgot to upload :(
-> 
-> v3:
->   * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
->   * change iobar type to void suggest by Stephen Hemminger
->   * add KMOD_DEP support for vfio-pci
->   * change run-cmd argument parse check for invalid extra_args
-> 
-> v2:
->   * fixed MAINTAIN maillist fullname format
->   * fixed driver/net/meson the order issue of new driver to driver list
->   * improve virtual point function usage suggest by Stephen Hemminger
-> 
-> Wenbo Cao (28):
->   net/rnp: add skeleton
->   net/rnp: add ethdev probe and remove
->   net/rnp: add log
->   net/rnp: support mailbox basic operate
->   net/rnp: add device init and uninit
->   net/rnp: add get device information operation
->   net/rnp: add support mac promisc mode
->   net/rnp: add queue setup and release operations
->   net/rnp: add queue stop and start operations
->   net/rnp: add support device start stop operations
->   net/rnp: add RSS support operations
->   net/rnp: add support link update operations.
->   net/rnp: add support link setup operations
->   net/rnp: add Rx burst simple support
->   net/rnp: add Tx burst simple support
->   net/rnp: add MTU set operation
->   net/rnp: add Rx scatter segment version
->   net/rnp: add Tx multiple segment version
->   net/rnp: add support basic stats operation
->   net/rnp: add support xstats operation
->   net/rnp: add unicast MAC filter operation
->   net/rnp: add supported packet types
->   net/rnp: add support Rx checksum offload
->   net/rnp: add support Tx TSO offload
->   net/rnp: support VLAN offloads.
->   net/rnp: add support VLAN filters operations.
->   net/rnp: add queue info operation.
->   net/rnp: support Rx/Tx burst mode info
-> 
->  MAINTAINERS                         |    6 +
->  doc/guides/nics/features/rnp.ini    |   33 +
->  doc/guides/nics/index.rst           |    1 +
->  doc/guides/nics/rnp.rst             |  100 ++
->  drivers/net/meson.build             |    1 +
->  drivers/net/rnp/base/meson.build    |   28 +
->  drivers/net/rnp/base/rnp_bdq_if.c   |  398 ++++++
->  drivers/net/rnp/base/rnp_bdq_if.h   |  154 +++
->  drivers/net/rnp/base/rnp_bitrev.h   |   64 +
->  drivers/net/rnp/base/rnp_common.c   |  103 ++
->  drivers/net/rnp/base/rnp_common.h   |   17 +
->  drivers/net/rnp/base/rnp_crc32.c    |   37 +
->  drivers/net/rnp/base/rnp_crc32.h    |   10 +
->  drivers/net/rnp/base/rnp_dma_regs.h |   68 +
->  drivers/net/rnp/base/rnp_eth_regs.h |   90 ++
->  drivers/net/rnp/base/rnp_fw_cmd.c   |  162 +++
->  drivers/net/rnp/base/rnp_fw_cmd.h   |  358 ++++++
->  drivers/net/rnp/base/rnp_hw.h       |  136 ++
->  drivers/net/rnp/base/rnp_mac.c      |  367 ++++++
->  drivers/net/rnp/base/rnp_mac.h      |   34 +
->  drivers/net/rnp/base/rnp_mac_regs.h |  207 +++
->  drivers/net/rnp/base/rnp_mbx.c      |  512 ++++++++
->  drivers/net/rnp/base/rnp_mbx.h      |   58 +
->  drivers/net/rnp/base/rnp_mbx_fw.c   |  499 ++++++++
->  drivers/net/rnp/base/rnp_mbx_fw.h   |   24 +
->  drivers/net/rnp/base/rnp_osdep.h    |  175 +++
->  drivers/net/rnp/meson.build         |   20 +
->  drivers/net/rnp/rnp.h               |  258 ++++
->  drivers/net/rnp/rnp_ethdev.c        | 1829 +++++++++++++++++++++++++++
->  drivers/net/rnp/rnp_link.c          |  439 +++++++
->  drivers/net/rnp/rnp_link.h          |   38 +
->  drivers/net/rnp/rnp_logs.h          |   36 +
->  drivers/net/rnp/rnp_rss.c           |  367 ++++++
->  drivers/net/rnp/rnp_rss.h           |   43 +
->  drivers/net/rnp/rnp_rxtx.c          | 1820 ++++++++++++++++++++++++++
->  drivers/net/rnp/rnp_rxtx.h          |  162 +++
->  36 files changed, 8654 insertions(+)
->  create mode 100644 doc/guides/nics/features/rnp.ini
->  create mode 100644 doc/guides/nics/rnp.rst
->  create mode 100644 drivers/net/rnp/base/meson.build
->  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
->  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
->  create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
->  create mode 100644 drivers/net/rnp/base/rnp_common.c
->  create mode 100644 drivers/net/rnp/base/rnp_common.h
->  create mode 100644 drivers/net/rnp/base/rnp_crc32.c
->  create mode 100644 drivers/net/rnp/base/rnp_crc32.h
->  create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
->  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
->  create mode 100644 drivers/net/rnp/base/rnp_hw.h
->  create mode 100644 drivers/net/rnp/base/rnp_mac.c
->  create mode 100644 drivers/net/rnp/base/rnp_mac.h
->  create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_mbx.c
->  create mode 100644 drivers/net/rnp/base/rnp_mbx.h
->  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
->  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
->  create mode 100644 drivers/net/rnp/base/rnp_osdep.h
->  create mode 100644 drivers/net/rnp/meson.build
->  create mode 100644 drivers/net/rnp/rnp.h
->  create mode 100644 drivers/net/rnp/rnp_ethdev.c
->  create mode 100644 drivers/net/rnp/rnp_link.c
->  create mode 100644 drivers/net/rnp/rnp_link.h
->  create mode 100644 drivers/net/rnp/rnp_logs.h
->  create mode 100644 drivers/net/rnp/rnp_rss.c
->  create mode 100644 drivers/net/rnp/rnp_rss.h
->  create mode 100644 drivers/net/rnp/rnp_rxtx.c
->  create mode 100644 drivers/net/rnp/rnp_rxtx.h
-> 
+Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
 
-
-Did you do a test build of doc's it shows error:
-
-Warning generate_overview_table(): Unknown feature 'Jumbo frame' in 'rnp.ini'
+On Mon, Feb 3, 2025 at 10:17=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
+m> wrote:
+>
+> In an effort to improve separation of concerns, make the TestRunConfig
+> class responsible for processing the configured test suites. Moreover,
+> give TestSuiteConfig a facility to yield references to the selected test
+> cases.
+>
+> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+> ---
+>  dts/framework/config/__init__.py | 84 +++++++++++---------------------
+>  dts/framework/config/test_run.py | 59 +++++++++++++++++-----
+>  2 files changed, 76 insertions(+), 67 deletions(-)
+>
+> diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__in=
+it__.py
+> index f8ac2c0d18..7761a8b56f 100644
+> --- a/dts/framework/config/__init__.py
+> +++ b/dts/framework/config/__init__.py
+> @@ -27,9 +27,8 @@
+>        and makes it thread safe should we ever want to move in that direc=
+tion.
+>  """
+>
+> -from functools import cached_property
+>  from pathlib import Path
+> -from typing import Annotated, Any, Literal, NamedTuple, TypeVar, cast
+> +from typing import Annotated, Any, Literal, TypeVar, cast
+>
+>  import yaml
+>  from pydantic import Field, TypeAdapter, ValidationError, field_validato=
+r, model_validator
+> @@ -46,18 +45,6 @@
+>  )
+>  from .test_run import TestRunConfiguration
+>
+> -
+> -class TestRunWithNodesConfiguration(NamedTuple):
+> -    """Tuple containing the configuration of the test run and its associ=
+ated nodes."""
+> -
+> -    #:
+> -    test_run_config: TestRunConfiguration
+> -    #:
+> -    sut_node_config: SutNodeConfiguration
+> -    #:
+> -    tg_node_config: TGNodeConfiguration
+> -
+> -
+>  TestRunsConfig =3D Annotated[list[TestRunConfiguration], Field(min_lengt=
+h=3D1)]
+>
+>  NodesConfig =3D Annotated[list[NodeConfigurationTypes], Field(min_length=
+=3D1)]
+> @@ -71,40 +58,6 @@ class Configuration(FrozenModel):
+>      #: Node configurations.
+>      nodes: NodesConfig
+>
+> -    @cached_property
+> -    def test_runs_with_nodes(self) -> list[TestRunWithNodesConfiguration=
+]:
+> -        """List of test runs with the associated nodes."""
+> -        test_runs_with_nodes =3D []
+> -
+> -        for test_run_no, test_run in enumerate(self.test_runs):
+> -            sut_node_name =3D test_run.system_under_test_node
+> -            sut_node =3D next(filter(lambda n: n.name =3D=3D sut_node_na=
+me, self.nodes), None)
+> -
+> -            assert sut_node is not None, (
+> -                f"test_runs.{test_run_no}.sut_node_config.node_name "
+> -                f"({test_run.system_under_test_node}) is not a valid nod=
+e name"
+> -            )
+> -            assert isinstance(sut_node, SutNodeConfiguration), (
+> -                f"test_runs.{test_run_no}.sut_node_config.node_name is a=
+ valid node name, "
+> -                "but it is not a valid SUT node"
+> -            )
+> -
+> -            tg_node_name =3D test_run.traffic_generator_node
+> -            tg_node =3D next(filter(lambda n: n.name =3D=3D tg_node_name=
+, self.nodes), None)
+> -
+> -            assert tg_node is not None, (
+> -                f"test_runs.{test_run_no}.tg_node_name "
+> -                f"({test_run.traffic_generator_node}) is not a valid nod=
+e name"
+> -            )
+> -            assert isinstance(tg_node, TGNodeConfiguration), (
+> -                f"test_runs.{test_run_no}.tg_node_name is a valid node n=
+ame, "
+> -                "but it is not a valid TG node"
+> -            )
+> -
+> -            test_runs_with_nodes.append(TestRunWithNodesConfiguration(te=
+st_run, sut_node, tg_node))
+> -
+> -        return test_runs_with_nodes
+> -
+>      @field_validator("nodes")
+>      @classmethod
+>      def validate_node_names(cls, nodes: list[NodeConfiguration]) -> list=
+[NodeConfiguration]:
+> @@ -164,14 +117,33 @@ def validate_port_links(self) -> Self:
+>          return self
+>
+>      @model_validator(mode=3D"after")
+> -    def validate_test_runs_with_nodes(self) -> Self:
+> -        """Validate the test runs to nodes associations.
+> -
+> -        This validator relies on the cached property `test_runs_with_nod=
+es` to run for the first
+> -        time in this call, therefore triggering the assertions if needed=
+.
+> -        """
+> -        if self.test_runs_with_nodes:
+> -            pass
+> +    def validate_test_runs_against_nodes(self) -> Self:
+> +        """Validate the test runs to nodes associations."""
+> +        for test_run_no, test_run in enumerate(self.test_runs):
+> +            sut_node_name =3D test_run.system_under_test_node
+> +            sut_node =3D next((n for n in self.nodes if n.name =3D=3D su=
+t_node_name), None)
+> +
+> +            assert sut_node is not None, (
+> +                f"Test run {test_run_no}.system_under_test_node "
+> +                f"({sut_node_name}) is not a valid node name."
+> +            )
+> +            assert isinstance(sut_node, SutNodeConfiguration), (
+> +                f"Test run {test_run_no}.system_under_test_node is a val=
+id node name, "
+> +                "but it is not a valid SUT node."
+> +            )
+> +
+> +            tg_node_name =3D test_run.traffic_generator_node
+> +            tg_node =3D next((n for n in self.nodes if n.name =3D=3D tg_=
+node_name), None)
+> +
+> +            assert tg_node is not None, (
+> +                f"Test run {test_run_no}.traffic_generator_name "
+> +                f"({tg_node_name}) is not a valid node name."
+> +            )
+> +            assert isinstance(tg_node, TGNodeConfiguration), (
+> +                f"Test run {test_run_no}.traffic_generator_name is a val=
+id node name, "
+> +                "but it is not a valid TG node."
+> +            )
+> +
+>          return self
+>
+>
+> diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test=
+_run.py
+> index 2092da725e..9ea898b15c 100644
+> --- a/dts/framework/config/test_run.py
+> +++ b/dts/framework/config/test_run.py
+> @@ -11,6 +11,8 @@
+>
+>  import re
+>  import tarfile
+> +from collections import deque
+> +from collections.abc import Iterable
+>  from enum import auto, unique
+>  from functools import cached_property
+>  from pathlib import Path, PurePath
+> @@ -25,7 +27,7 @@
+>  from .common import FrozenModel, load_fields_from_settings
+>
+>  if TYPE_CHECKING:
+> -    from framework.test_suite import TestSuiteSpec
+> +    from framework.test_suite import TestCase, TestSuite, TestSuiteSpec
+>
+>
+>  @unique
+> @@ -233,6 +235,21 @@ def test_suite_spec(self) -> "TestSuiteSpec":
+>          ), f"{self.test_suite_name} is not a valid test suite module nam=
+e."
+>          return test_suite_spec
+>
+> +    @cached_property
+> +    def test_cases(self) -> list[type["TestCase"]]:
+> +        """The objects of the selected test cases."""
+> +        available_test_cases =3D {t.name: t for t in self.test_suite_spe=
+c.class_obj.get_test_cases()}
+> +        selected_test_cases =3D []
+> +
+> +        for requested_test_case in self.test_cases_names:
+> +            assert requested_test_case in available_test_cases, (
+> +                f"{requested_test_case} is not a valid test case "
+> +                f"of test suite {self.test_suite_name}."
+> +            )
+> +            selected_test_cases.append(available_test_cases[requested_te=
+st_case])
+> +
+> +        return selected_test_cases or list(available_test_cases.values()=
+)
+> +
+>      @model_validator(mode=3D"before")
+>      @classmethod
+>      def convert_from_string(cls, data: Any) -> Any:
+> @@ -246,17 +263,11 @@ def convert_from_string(cls, data: Any) -> Any:
+>      def validate_names(self) -> Self:
+>          """Validate the supplied test suite and test cases names.
+>
+> -        This validator relies on the cached property `test_suite_spec` t=
+o run for the first
+> -        time in this call, therefore triggering the assertions if needed=
+.
+> +        This validator relies on the cached properties `test_suite_spec`=
+ and `test_cases` to run for
+> +        the first time in this call, therefore triggering the assertions=
+ if needed.
+>          """
+> -        available_test_cases =3D map(
+> -            lambda t: t.name, self.test_suite_spec.class_obj.get_test_ca=
+ses()
+> -        )
+> -        for requested_test_case in self.test_cases_names:
+> -            assert requested_test_case in available_test_cases, (
+> -                f"{requested_test_case} is not a valid test case "
+> -                f"of test suite {self.test_suite_name}."
+> -            )
+> +        if self.test_cases:
+> +            pass
+>
+>          return self
+>
+> @@ -383,3 +394,29 @@ class TestRunConfiguration(FrozenModel):
+>      fields_from_settings =3D model_validator(mode=3D"before")(
+>          load_fields_from_settings("test_suites", "random_seed")
+>      )
+> +
+> +    def filter_tests(
+> +        self,
+> +    ) -> Iterable[tuple[type["TestSuite"], deque[type["TestCase"]]]]:
+> +        """Filter test suites and cases selected for execution."""
+> +        from framework.test_suite import TestCaseType
+> +
+> +        test_suites =3D [TestSuiteConfig(test_suite=3D"smoke_tests")]
+> +
+> +        if self.skip_smoke_tests:
+> +            test_suites =3D self.test_suites
+> +        else:
+> +            test_suites +=3D self.test_suites
+> +
+> +        return (
+> +            (
+> +                t.test_suite_spec.class_obj,
+> +                deque(
+> +                    tt
+> +                    for tt in t.test_cases
+> +                    if (tt.test_type is TestCaseType.FUNCTIONAL and self=
+.func)
+> +                    or (tt.test_type is TestCaseType.PERFORMANCE and sel=
+f.perf)
+> +                ),
+> +            )
+> +            for t in test_suites
+> +        )
+> --
+> 2.43.0
+>
