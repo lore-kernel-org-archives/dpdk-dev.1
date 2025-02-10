@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1A7C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C8DC0219E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:25:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D72E740616;
-	Mon, 10 Feb 2025 19:24:46 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 97840402B9
- for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:45 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-21f4af4f9ddso52970145ad.1
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:45 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CFF040A75;
+	Mon, 10 Feb 2025 19:24:50 +0100 (CET)
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
+ [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id 759B940A73
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:48 +0100 (CET)
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-2fa286ea7e8so4906958a91.2
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211885;
- x=1739816685; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211887;
+ x=1739816687; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bEmIOwQZus5+itBNF0Ph7L7cYX1yHFVXjg0C5B5PoDY=;
- b=DWVvcsXpK0EEUmgcBB49KJEL7+ZWnxoYS8p5oFK6GmSK7Ly+vH+k0wjm/MMOr6Uj0Z
- /WpW2gTqO9gv7PzRH7BI13p/kZTXkfUdm84+RVG15ObIdLwx1YyCroSWUUFhqz6WPk6y
- 7GmbPfN/qAy/ryKrrw54ex4MCa+2I66bPzJ0Z2TZoe5cfMOJQokTwoanVMUwAtxEc3Mn
- fzbbO4yrNAMNOTJOhhHSnIp3XAkMw+goU5F45TUXhzei3j+DzdYT5xcLhOn9NPOcDm+M
- MfWKBWryd1+EvBGF8KmSrfkGbAWr0/RDM/vHeeEsS6v7xVhIu5TrRdc9LykEN0HxZPzA
- fedA==
+ bh=N5zGxZZGUgKFH1ppgDNfX8X7dALNQYCyqpC9+x+u174=;
+ b=0kGUZIsI2g9jdHXwS/jxWvowRkF56yQ0jsmJYD5zR3Up4CgoRBEBNEKwpv6iKd7+G/
+ kVVhPJo3UbN/6eGbKLjRbrqeUYhDnKF+yxjbxWnRMHL800mb/Wg7/AImL/pduerpfHmL
+ hC+bT4inzp5/7kHiRlrVUj6Sn6cRv5nl3SMKnwMoYbw2V9XqSxrmvsKTGIaCmOIqRtZr
+ tzJmGTeqt010AA4p1BI26gwQ4xXE3PGJExDRDlwR5QayuX9wAb1LwPWEgbSkJGh+fpRr
+ wLMcyKm6t9OfQbNzNFOhPfGlh9R5zQmeIEjw5Hoxf3nH9fFG0HXaWMx1TdnORZeNr3/V
+ UVlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739211885; x=1739816685;
+ d=1e100.net; s=20230601; t=1739211887; x=1739816687;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=bEmIOwQZus5+itBNF0Ph7L7cYX1yHFVXjg0C5B5PoDY=;
- b=ppPOyMlfY0/UF5rFnURwnzVMBhGhVzvGPX7X3VaBJNs5RxeijQfNqu0TN2Gg1I3LO3
- My17EkA5VVs6bwfSHObxIfgqJhT0AmiJmcqiLMPkv8uNjOcyccFe0z8GD5xWnk79aLIE
- xj821TJxLJa8WE0ln4Wrb05Ng2E6IxoLreQ189aNSJp8Jh9HwFSIHce2p+TuYbly5mrK
- XiiDMzfPTLSx1jMfdz66cVO4Yy1riv6ZlJ5weuN/edQuBoyMrqdfiEMU+nofFb2l9PwA
- SkOqaaT+fKEZebaHaL8AntBf1bHatnTqOI7bz60y+UJpbpn/nsXDahUoKD8W65fSuN63
- WEyw==
-X-Gm-Message-State: AOJu0YxD9PPf2vxVN4CorHbz/e7jRtvRqPQ4aLF2xO+dfij5XuWVeiKX
- mfKTTpRA3b0cQ8YQ9eJRFYcMXKeqtadlq9j3rkb9YM3k2RzE0JRaFH/ee8iOS2A=
-X-Gm-Gg: ASbGncuRUIJ6C1RdH2ibYS6cIM5ac5BDclXOQhrsgSZub+gbZyg0H1Yw2SefKlahD57
- btoXMjYvrX0XBekb3zJxC3pP0TzBF2vjk/4RXQLf3j2yDgp6g5w1LF4mGHeFG1C3zAav8az5XVE
- Q07hV+EWH1OIAvIn0NxqWkB2uCaePy7FId3iA04bt50Ktx321T+PmVE8Djx9waf3ECQXyVDI7JW
- CbnmC5Bx3Zul/SzEogffMn+R01XyimsP4uC1eeSMstQnH9/lv3dxQZoqfMMTV6spGjYxSAK4sLM
- mG2ALhyf4omk6mR4S3wSFaw1vrag+HMD889HCFEJuL5SoE3ksHF+dWfy34SLqPtvABHo
-X-Google-Smtp-Source: AGHT+IF8piH/1Ia7l403a66FHK4Q/BLUStXs0devfUd1lkgTOpT9lVZWadkkkYpde2zEDfbdZlQKfA==
-X-Received: by 2002:a17:903:32cb:b0:215:b75f:a18d with SMTP id
- d9443c01a7336-21f4e6a069bmr207947235ad.11.1739211884842; 
- Mon, 10 Feb 2025 10:24:44 -0800 (PST)
+ bh=N5zGxZZGUgKFH1ppgDNfX8X7dALNQYCyqpC9+x+u174=;
+ b=e8YS3gk2gkIxIbKHcfgJkMeL0/txMsEwVM7NdFRSV8S8sQBr7dHKa/j0aY+bZeMAnM
+ KKkiCvcZqNdBMsUmzsbxWVv+AvmFxpX3ggFO/xDrOtvTNECEKoWJXY6eiUWxst54CiZ0
+ 5EInolGT3x/uqbbULZw+RRNIfv0iRtA2lMPosvUId0Tnf5tJZ+3/6bJ9BaNioXCoYyYH
+ jylMGJdEK3zC465eRwBRXst0PS24NdalqhfU25xh4xhL/1b22rrCo/j0uy75G1PFReNe
+ W8kIFGrer0hLbNGCkyjYl0UYWgXOixN63sH9pqFEJzp8zOz6V39bv5RVNcdzaQtyJu1C
+ NZkg==
+X-Gm-Message-State: AOJu0YyRu7DgsLlpMh/fqb9Sb8t4iNeDf5Ox7qW3c4ut5QLnWoRSsf9C
+ 5WlXT9rEquWG2kTeOcdw3KURoftsynL8aD6mlaBMV21EdYWnZzCgiv4MsxnjG4w=
+X-Gm-Gg: ASbGncvT2WPj8TdrBaQgBaHaxNc0dP1Ex0g4iaK8lfmxDLsF7KcDNrBBOt42q92+Bb+
+ sKSI/E+4B1LvRxxdDbuLcrQs7zS2I2yW3F0WBPsiwjxvGgK4y+/Wo3ZCoHQlsSgcXTb+zYhmEFz
+ a6pe9DcWBB9aGAoT+i9v8W9vDM4hIwSkrm06YbsTXFMj8tOJ/TSbIdz5/wB4Hby+9/2nS1ehKq8
+ CEMpZqrGlwqzZLjdDknFyzSbAJP0eD7Eu26FfP9n5OaTe5KOEJ3sWl8nhwxQcyBhCJg5WYYnuY9
+ ETM57cxR93IEnCBxyAEemf7c7JDzzHrxYypkvDlMDsrkrJienPb8l1lE1DjADakerb+0
+X-Google-Smtp-Source: AGHT+IHPJUZjopyOseIt/x8kdIraXqRBz6xdbyY/rWhUBhjFp6KaRJsAoZ3tml2tDUXVL14vPsKWrw==
+X-Received: by 2002:a17:90b:3d03:b0:2f6:d266:f45e with SMTP id
+ 98e67ed59e1d1-2fa23f42672mr23164052a91.2.1739211887657; 
+ Mon, 10 Feb 2025 10:24:47 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.43
+ 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 10:24:44 -0800 (PST)
-Date: Mon, 10 Feb 2025 09:31:49 -0800
+ Mon, 10 Feb 2025 10:24:47 -0800 (PST)
+Date: Mon, 10 Feb 2025 09:35:57 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Bingbin Chen <chen.bingbin@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 04/14] net/zxdh: modify dtb queue ops
-Message-ID: <20250210093149.5dbf21ee@hermes.local>
-In-Reply-To: <20250210014730.4105481-1-chen.bingbin@zte.com.cn>
+Subject: Re: [PATCH v1 07/14] net/zxdh: get flow tables resources
+Message-ID: <20250210093557.40080e54@hermes.local>
+In-Reply-To: <20250210015017.4105624-2-chen.bingbin@zte.com.cn>
 References: <20250210014441.4105335-1-chen.bingbin@zte.com.cn>
- <20250210014730.4105481-1-chen.bingbin@zte.com.cn>
+ <20250210015017.4105624-1-chen.bingbin@zte.com.cn>
+ <20250210015017.4105624-2-chen.bingbin@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,17 +80,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:47:30 +0800
+On Mon, 10 Feb 2025 09:50:10 +0800
 Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
 
-> diff --git a/drivers/net/zxdh/zxdh_np.c b/drivers/net/zxdh/zxdh_np.c
-> index bab8b23a68..1f16f75a23 100644
-> --- a/drivers/net/zxdh/zxdh_np.c
-> +++ b/drivers/net/zxdh/zxdh_np.c
-> @@ -27,6 +27,7 @@ ZXDH_PPU_STAT_CFG_T g_ppu_stat_cfg;
->  static uint64_t g_np_fw_compat_addr[ZXDH_DEV_CHANNEL_MAX];
->  static ZXDH_VERSION_COMPATIBLE_REG_T g_np_sdk_version = {
->  	ZXDH_NPSDK_COMPAT_ITEM_ID, 1, 0, 0, 0, {0} };
-> +uint32_t hardware_ep_id[5] = {5, 6, 7, 8, 9};
+> +static uint32_t
+> +zxdh_np_get_se_buff_size(uint32_t opr)
+> +{
+> +	uint32_t buff_size = 0;
+> +
+> +	switch (opr) {
+> +	case ZXDH_HASH_FUNC_BULK_REQ:
+> +	{
+> +		buff_size = sizeof(ZXDH_NP_SE_HASH_FUNC_BULK_T);
+> +		break;
+> +	}
 
-Shouldn't this be static (so not visible everywhere) and const?
+C does not require each case to have { }
