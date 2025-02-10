@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DE3C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E800C0219B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:30:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 253ED40E24;
-	Mon, 10 Feb 2025 08:27:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 54AC741157;
+	Mon, 10 Feb 2025 08:27:57 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 0086B40E25
- for <dev@dpdk.org>; Mon, 10 Feb 2025 08:27:48 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2B17F40E0C
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 08:27:49 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id DD0D8A3A43; Mon, 10 Feb 2025 15:27:23 +0800 (CST)
+ id 11C5AA3A4A; Mon, 10 Feb 2025 15:27:26 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v8 24/28] net/rnp: add support Tx TSO offload
-Date: Mon, 10 Feb 2025 15:26:51 +0800
-Message-Id: <1739172415-48507-25-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v8 26/28] net/rnp: add support VLAN filters operations.
+Date: Mon, 10 Feb 2025 15:26:53 +0800
+Message-Id: <1739172415-48507-27-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
 References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
@@ -36,613 +36,458 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support tx tso and tunnel tso.
-for tunnel just support vxlan/nvgre
+add support to update vid for vlan filter
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/base/rnp_bdq_if.h |   1 +
- drivers/net/rnp/rnp.h             |   2 +-
- drivers/net/rnp/rnp_ethdev.c      |  16 ++
- drivers/net/rnp/rnp_rxtx.c        | 457 +++++++++++++++++++++++++++++-
- drivers/net/rnp/rnp_rxtx.h        |   1 +
- 5 files changed, 471 insertions(+), 6 deletions(-)
+ doc/guides/nics/features/rnp.ini    |  1 +
+ doc/guides/nics/rnp.rst             |  2 +-
+ drivers/net/rnp/base/meson.build    |  1 +
+ drivers/net/rnp/base/rnp_bitrev.h   | 64 ++++++++++++++++++++++
+ drivers/net/rnp/base/rnp_crc32.c    | 37 +++++++++++++
+ drivers/net/rnp/base/rnp_crc32.h    | 10 ++++
+ drivers/net/rnp/base/rnp_eth_regs.h |  1 +
+ drivers/net/rnp/base/rnp_hw.h       |  1 +
+ drivers/net/rnp/base/rnp_mac.c      | 85 +++++++++++++++++++++++++++++
+ drivers/net/rnp/base/rnp_mac.h      |  1 +
+ drivers/net/rnp/base/rnp_mac_regs.h |  6 ++
+ drivers/net/rnp/base/rnp_osdep.h    | 13 +++++
+ drivers/net/rnp/rnp.h               | 11 ++++
+ drivers/net/rnp/rnp_ethdev.c        | 10 ++++
+ 14 files changed, 242 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.c
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.h
 
-diff --git a/drivers/net/rnp/base/rnp_bdq_if.h b/drivers/net/rnp/base/rnp_bdq_if.h
-index a7d27bdebb..7a6d0b21ec 100644
---- a/drivers/net/rnp/base/rnp_bdq_if.h
-+++ b/drivers/net/rnp/base/rnp_bdq_if.h
-@@ -111,6 +111,7 @@ struct rnp_tx_desc {
- #define RNP_TX_VLAN_VALID	RTE_BIT32(15)
- /* tx data mac_ip len */
- #define RNP_TX_MAC_LEN_S	(9)
-+#define RNP_TX_MAC_LEN_MASK	RTE_GENMASK32(15, 9)
- /* tx ctrl cmd */
- #define RNP_TX_LEN_PAD_S	(8)
- #define RNP_TX_OFF_MAC_PAD	(0x01UL << RNP_TX_LEN_PAD_S)
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index 9cfc17b93c..5eb0676f11 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -17,7 +17,7 @@
- #define RNP_ETH_OVERHEAD \
- 	(RTE_ETHER_HDR_LEN + RTE_VLAN_HLEN * 2)
- #define RNP_MAC_MAXFRM_SIZE	(9590)
--
-+#define RNP_MAX_TSO_PKT		(16 * 1024)
- #define RNP_RX_MAX_MTU_SEG	(64)
- #define RNP_TX_MAX_MTU_SEG	(32)
- #define RNP_RX_MAX_SEG		(150)
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index b5d749e7a5..c43ffbe0c3 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -651,6 +651,17 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
- 	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
- 	/* rx support offload cap */
- 	dev_info->rx_offload_capa = RNP_RX_CHECKSUM_SUPPORT;
-+	/* tx support offload cap */
-+	dev_info->tx_offload_capa = 0 |
-+				     RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
-+				     RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
-+				     RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
-+				     RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
-+				     RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
-+				     RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+				     RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |
-+				     RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |
-+				     RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
- 	dev_info->default_rxconf = (struct rte_eth_rxconf) {
- 		.rx_drop_en = 0,
- 		.rx_thresh = {
-@@ -1084,13 +1095,18 @@ rnp_dev_stats_get(struct rte_eth_dev *dev,
- 					(data->tx_queues))[i]->stats.opackets;
- 			stats->q_obytes[i] = ((struct rnp_tx_queue **)
- 					(data->tx_queues))[i]->stats.obytes;
-+			stats->oerrors += ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.errors;
- 			stats->opackets += stats->q_opackets[i];
- 			stats->obytes += stats->q_obytes[i];
-+
- 		} else {
- 			stats->opackets += ((struct rnp_tx_queue **)
- 					(data->tx_queues))[i]->stats.opackets;
- 			stats->obytes += ((struct rnp_tx_queue **)
- 					(data->tx_queues))[i]->stats.obytes;
-+			stats->oerrors += ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.errors;
- 		}
- 	}
- 	stats->imissed = eth_stats->rx_trans_drop + eth_stats->rx_trunc_drop;
-diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index e0b2cc7a26..209bd3690d 100644
---- a/drivers/net/rnp/rnp_rxtx.c
-+++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -1130,6 +1130,198 @@ rnp_multiseg_clean_txq(struct rnp_tx_queue *txq)
+diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
+index 18ec4bc8d4..ce7381effe 100644
+--- a/doc/guides/nics/features/rnp.ini
++++ b/doc/guides/nics/features/rnp.ini
+@@ -20,6 +20,7 @@ Promiscuous mode     = Y
+ Allmulticast mode    = Y
+ MTU update           = Y
+ Unicast MAC filter   = Y
++VLAN filter          = Y
+ VLAN offload         = Y
+ QinQ offload         = Y
+ RSS hash             = Y
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index febdaf84d3..f1d4a06ad7 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -17,7 +17,7 @@ Features
+ - Promiscuous mode
+ - Link state information
+ - MTU update
+-- MAC filtering
++- MAC/VLAN filtering
+ - Jumbo frames
+ - Scatter-Gather IO support
+ - Port hardware statistic
+diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
+index c2ef0d05be..6b78de8841 100644
+--- a/drivers/net/rnp/base/meson.build
++++ b/drivers/net/rnp/base/meson.build
+@@ -8,6 +8,7 @@ sources = [
+         'rnp_common.c',
+         'rnp_mac.c',
+ 	'rnp_bdq_if.c',
++	'rnp_crc32.c',
+ ]
  
- 	return txq->nb_tx_free;
- }
-+static inline uint32_t
-+rnp_cal_tso_seg(struct rte_mbuf *mbuf)
+ error_cflags = ['-Wno-unused-value',
+diff --git a/drivers/net/rnp/base/rnp_bitrev.h b/drivers/net/rnp/base/rnp_bitrev.h
+new file mode 100644
+index 0000000000..05c36ca80d
+--- /dev/null
++++ b/drivers/net/rnp/base/rnp_bitrev.h
+@@ -0,0 +1,64 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#ifndef _RNP_BITREV_H_
++#define _RNP_BITREV_H_
++
++#include "rnp_osdep.h"
++
++static const u8 byte_rev_table[256] = {
++	0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
++	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
++	0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
++	0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8,
++	0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
++	0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4,
++	0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec,
++	0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc,
++	0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2,
++	0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
++	0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea,
++	0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa,
++	0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6,
++	0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6,
++	0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
++	0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe,
++	0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1,
++	0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1,
++	0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9,
++	0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
++	0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5,
++	0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5,
++	0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed,
++	0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd,
++	0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
++	0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3,
++	0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb,
++	0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb,
++	0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7,
++	0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
++	0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef,
++	0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff,
++};
++
++static inline u8 bitrev8(u8 byte)
 +{
-+	uint32_t hdr_len;
-+
-+	hdr_len = mbuf->l2_len + mbuf->l3_len + mbuf->l4_len;
-+
-+	hdr_len += (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) ?
-+		mbuf->outer_l2_len + mbuf->outer_l3_len : 0;
-+
-+	return (mbuf->tso_segsz) ? mbuf->tso_segsz : hdr_len;
++	return byte_rev_table[byte];
 +}
 +
-+static inline bool
-+rnp_need_ctrl_desc(uint64_t flags)
++static u16 bitrev16(u16 x)
 +{
-+	static uint64_t mask = RTE_MBUF_F_TX_OUTER_IP_CKSUM |
-+			       RTE_MBUF_F_TX_TCP_SEG |
-+			       RTE_MBUF_F_TX_TUNNEL_VXLAN |
-+			       RTE_MBUF_F_TX_TUNNEL_GRE;
-+	return (flags & mask) ? 1 : 0;
++	return (bitrev8(x & 0xff) << 8) | bitrev8(x >> 8);
 +}
 +
-+static void
-+rnp_build_tx_control_desc(struct rnp_tx_queue *txq,
-+			  volatile struct rnp_tx_desc *txbd,
-+			  struct rte_mbuf *mbuf)
++/**
++ * bitrev32 - reverse the order of bits in a u32 value
++ * @x: value to be bit-reversed
++ */
++static u32 bitrev32(uint32_t x)
 +{
-+	struct rte_gre_hdr *gre_hdr;
-+	uint16_t tunnel_len = 0;
-+	uint64_t flags;
-+
-+	*txbd = txq->zero_desc;
-+	/* For outer checksum offload l2_len is
-+	 * l2 (MAC) Header Length for non-tunneling pkt.
-+	 * For Inner checksum offload l2_len is
-+	 * Outer_L4_len + ... + Inner_L2_len(Inner L2 Header Len)
-+	 * for tunneling pkt.
-+	 */
-+	if (!mbuf)
-+		return;
-+	flags = mbuf->ol_flags;
-+	if (flags & RTE_MBUF_F_TX_TCP_SEG) {
-+		txbd->c.qword0.mss = rnp_cal_tso_seg(mbuf);
-+		txbd->c.qword0.l4_len = mbuf->l4_len;
-+	}
-+#define GRE_TUNNEL_KEY (4)
-+#define GRE_TUNNEL_SEQ (4)
-+	switch (flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
-+		tunnel_len = mbuf->outer_l2_len + mbuf->outer_l3_len +
-+			sizeof(struct rte_udp_hdr) +
-+			sizeof(struct rte_vxlan_hdr);
-+		break;
-+	case RTE_MBUF_F_TX_TUNNEL_GRE:
-+		gre_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_gre_hdr *,
-+				mbuf->outer_l2_len + mbuf->outer_l3_len);
-+		tunnel_len = mbuf->outer_l2_len + mbuf->outer_l3_len +
-+				  sizeof(struct rte_gre_hdr);
-+		if (gre_hdr->k)
-+			tunnel_len += GRE_TUNNEL_KEY;
-+		if (gre_hdr->s)
-+			tunnel_len += GRE_TUNNEL_SEQ;
-+		break;
-+	}
-+	txbd->c.qword0.tunnel_len = tunnel_len;
-+	txbd->c.qword1.cmd |= RNP_CTRL_DESC;
++	return (bitrev16(x & 0xffff) << 16) | bitrev16(x >> 16);
 +}
 +
-+static void
-+rnp_padding_hdr_len(volatile struct rnp_tx_desc *txbd,
-+		    struct rte_mbuf *m)
-+{
-+	struct rte_ether_hdr *eth_hdr = NULL;
-+	struct rte_vlan_hdr *vlan_hdr = NULL;
-+	int ethertype, l2_len;
-+	uint16_t l3_len = 0;
++#endif /* _RNP_BITREV_H */
+diff --git a/drivers/net/rnp/base/rnp_crc32.c b/drivers/net/rnp/base/rnp_crc32.c
+new file mode 100644
+index 0000000000..c287b35759
+--- /dev/null
++++ b/drivers/net/rnp/base/rnp_crc32.c
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
 +
-+	if (m->l2_len == 0) {
-+		eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
-+		l2_len = RTE_ETHER_HDR_LEN;
-+		ethertype = rte_le_to_cpu_32(eth_hdr->ether_type);
-+		if (ethertype == RTE_ETHER_TYPE_VLAN) {
-+			vlan_hdr = (struct rte_vlan_hdr *)(eth_hdr + 1);
-+			l2_len += RTE_VLAN_HLEN;
-+			ethertype = vlan_hdr->eth_proto;
-+		}
-+		switch (ethertype) {
-+		case RTE_ETHER_TYPE_IPV4:
-+			l3_len = sizeof(struct rte_ipv4_hdr);
-+			break;
-+		case RTE_ETHER_TYPE_IPV6:
-+			l3_len = sizeof(struct rte_ipv6_hdr);
-+			break;
-+		}
-+	} else {
-+		l2_len = m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK ?
-+				  m->outer_l2_len : m->l2_len;
-+		l3_len = m->l3_len;
-+	}
-+	txbd->d.mac_ip_len = l2_len << RNP_TX_MAC_LEN_S;
-+	txbd->d.mac_ip_len |= l3_len;
++#include "rnp_osdep.h"
++#include "rnp_crc32.h"
++
++static inline int get_bitmask_order(u32 count)
++{
++	int order;
++
++	order = fls(count);
++
++	return order;   /* We could be slightly more clever with -1 here... */
 +}
 +
-+static void
-+rnp_check_inner_eth_hdr(struct rte_mbuf *mbuf,
-+			volatile struct rnp_tx_desc *txbd)
++u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le)
 +{
-+	struct rte_ether_hdr *eth_hdr;
-+	uint16_t inner_l2_offset = 0;
-+	struct rte_vlan_hdr *vlan_hdr;
-+	uint16_t ext_l2_len = 0;
-+	uint16_t l2_offset = 0;
-+	uint16_t l2_type;
++	u8 *data = (u8 *)&vid_le;
++	u32 crc = crc_init;
++	u8 data_byte = 0;
++	u32 temp = 0;
++	int i, bits;
 +
-+	inner_l2_offset = mbuf->outer_l2_len + mbuf->outer_l3_len +
-+		sizeof(struct rte_udp_hdr) +
-+		sizeof(struct rte_vxlan_hdr);
-+	eth_hdr = rte_pktmbuf_mtod_offset(mbuf,
-+			struct rte_ether_hdr *, inner_l2_offset);
-+	l2_type = eth_hdr->ether_type;
-+	l2_offset = txbd->d.mac_ip_len >> RNP_TX_MAC_LEN_S;
-+	while (l2_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
-+			l2_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
-+		vlan_hdr = (struct rte_vlan_hdr *)
-+			((char *)eth_hdr + l2_offset);
-+		l2_offset += RTE_VLAN_HLEN;
-+		ext_l2_len += RTE_VLAN_HLEN;
-+		l2_type = vlan_hdr->eth_proto;
++	bits = get_bitmask_order(VLAN_VID_MASK);
++	for (i = 0; i < bits; i++) {
++		if ((i % 8) == 0)
++			data_byte = data[i / 8];
++		temp = ((crc & 1) ^ data_byte) & 1;
++		crc >>= 1;
++		data_byte >>= 1;
++		if (temp)
++			crc ^= 0xedb88320;
 +	}
-+	txbd->d.mac_ip_len += (ext_l2_len << RNP_TX_MAC_LEN_S);
-+}
 +
-+#define RNP_TX_L4_OFFLOAD_ALL   (RTE_MBUF_F_TX_SCTP_CKSUM | \
-+				 RTE_MBUF_F_TX_TCP_CKSUM | \
-+				 RTE_MBUF_F_TX_UDP_CKSUM)
-+static inline void
-+rnp_setup_csum_offload(struct rte_mbuf *mbuf,
-+		       volatile struct rnp_tx_desc *tx_desc)
-+{
-+	tx_desc->d.cmd |= (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM) ?
-+		RNP_TX_IP_CKSUM_EN : 0;
-+	tx_desc->d.cmd |= (mbuf->ol_flags & RTE_MBUF_F_TX_IPV6) ?
-+		RNP_TX_L3TYPE_IPV6 : 0;
-+	tx_desc->d.cmd |= (mbuf->ol_flags & RNP_TX_L4_OFFLOAD_ALL) ?
-+		RNP_TX_L4CKSUM_EN : 0;
-+	switch ((mbuf->ol_flags & RTE_MBUF_F_TX_L4_MASK)) {
-+	case RTE_MBUF_F_TX_TCP_CKSUM:
-+		tx_desc->d.cmd |= RNP_TX_L4TYPE_TCP;
-+		break;
-+	case RTE_MBUF_F_TX_UDP_CKSUM:
-+		tx_desc->d.cmd |= RNP_TX_L4TYPE_UDP;
-+		break;
-+	case RTE_MBUF_F_TX_SCTP_CKSUM:
-+		tx_desc->d.cmd |= RNP_TX_L4TYPE_SCTP;
-+		break;
-+	}
-+	tx_desc->d.mac_ip_len = mbuf->l2_len << RNP_TX_MAC_LEN_S;
-+	tx_desc->d.mac_ip_len |= mbuf->l3_len;
-+	if (mbuf->ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
-+		tx_desc->d.cmd |= RNP_TX_IP_CKSUM_EN;
-+		tx_desc->d.cmd |= RNP_TX_L4CKSUM_EN;
-+		tx_desc->d.cmd |= RNP_TX_L4TYPE_TCP;
-+		tx_desc->d.cmd |= RNP_TX_TSO_EN;
-+	}
-+	if (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		/* need inner l2 l3 lens for inner checksum offload */
-+		tx_desc->d.mac_ip_len &= ~RNP_TX_MAC_LEN_MASK;
-+		tx_desc->d.mac_ip_len |= RTE_ETHER_HDR_LEN << RNP_TX_MAC_LEN_S;
-+		rnp_check_inner_eth_hdr(mbuf, tx_desc);
-+		switch (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
-+			tx_desc->d.cmd |= RNP_TX_VXLAN_TUNNEL;
-+			break;
-+		case RTE_MBUF_F_TX_TUNNEL_GRE:
-+			tx_desc->d.cmd |= RNP_TX_NVGRE_TUNNEL;
-+			break;
-+		}
-+	}
++	return crc;
 +}
+diff --git a/drivers/net/rnp/base/rnp_crc32.h b/drivers/net/rnp/base/rnp_crc32.h
+new file mode 100644
+index 0000000000..e117dcfc2f
+--- /dev/null
++++ b/drivers/net/rnp/base/rnp_crc32.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
 +
-+static void
-+rnp_setup_tx_offload(struct rnp_tx_queue *txq,
-+		     volatile struct rnp_tx_desc *txbd,
-+		     uint64_t flags, struct rte_mbuf *tx_pkt)
-+{
-+	*txbd = txq->zero_desc;
-+	if (flags & RTE_MBUF_F_TX_L4_MASK ||
-+	    flags & RTE_MBUF_F_TX_TCP_SEG ||
-+	    flags & RTE_MBUF_F_TX_IP_CKSUM)
-+		rnp_setup_csum_offload(tx_pkt, txbd);
-+}
++#ifndef _RNP_CRC32_H_
++#define _RNP_CRC32_H_
++
++u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le);
++
++#endif /* _RNP_CRC32_H_ */
+diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
+index 802a127b1a..ac9cea484b 100644
+--- a/drivers/net/rnp/base/rnp_eth_regs.h
++++ b/drivers/net/rnp/base/rnp_eth_regs.h
+@@ -61,6 +61,7 @@
+ /* vlan filter ctrl */
+ #define RNP_VLAN_FILTER_CTRL	_ETH_(0x9118)
+ #define RNP_VLAN_FILTER_EN	RTE_BIT32(30)
++#define RNP_VFTA_HASH_TABLE(id) _ETH_(0xB000 + 0x4 * (id))
+ /* rss function ctrl */
+ #define RNP_RSS_INNER_CTRL	_ETH_(0x805c)
+ #define RNP_INNER_RSS_EN	(1)
+diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
+index b0c599d22e..92778a4276 100644
+--- a/drivers/net/rnp/base/rnp_hw.h
++++ b/drivers/net/rnp/base/rnp_hw.h
+@@ -76,6 +76,7 @@ struct rnp_mac_ops {
+ 	int (*clear_rafb)(struct rnp_eth_port *port, u32 index);
+ 	/* receive vlan filter */
+ 	int (*vlan_f_en)(struct rnp_eth_port *port, bool en);
++	int (*update_vlan)(struct rnp_eth_port *port, u16 vid, bool en);
+ };
  
- static __rte_always_inline uint16_t
- rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-@@ -1140,6 +1332,8 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	struct rte_mbuf *tx_pkt, *m_seg;
- 	uint16_t send_pkts = 0;
- 	uint16_t nb_used_bd;
-+	uint8_t ctx_desc_use;
-+	uint8_t first_seg;
- 	uint16_t tx_last;
- 	uint16_t nb_tx;
- 	uint16_t tx_id;
-@@ -1155,17 +1349,39 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	txe = &txq->sw_ring[tx_id];
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
- 		tx_pkt = tx_pkts[nb_tx];
--		nb_used_bd = tx_pkt->nb_segs;
-+		ctx_desc_use = rnp_need_ctrl_desc(tx_pkt->ol_flags);
-+		nb_used_bd = tx_pkt->nb_segs + ctx_desc_use;
- 		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
- 		if (tx_last >= txq->attr.nb_desc)
- 			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
- 		if (nb_used_bd > txq->nb_tx_free)
- 			if (nb_used_bd > rnp_multiseg_clean_txq(txq))
- 				break;
-+		if (ctx_desc_use) {
-+			txbd = &txq->tx_bdr[tx_id];
-+			txn = &txq->sw_ring[txe->next_id];
-+			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
-+			if (txe->mbuf) {
-+				rte_pktmbuf_free_seg(txe->mbuf);
-+				txe->mbuf = NULL;
-+			}
-+			rnp_build_tx_control_desc(txq, txbd, tx_pkt);
-+			txe->last_id = tx_last;
-+			tx_id = txe->next_id;
-+			txe = txn;
-+		}
- 		m_seg = tx_pkt;
-+		first_seg = 1;
- 		do {
- 			txbd = &txq->tx_bdr[tx_id];
- 			txn = &txq->sw_ring[txe->next_id];
-+			if ((first_seg && m_seg->ol_flags)) {
-+				rnp_setup_tx_offload(txq, txbd,
-+						m_seg->ol_flags, m_seg);
-+				if (!txbd->d.mac_ip_len)
-+					rnp_padding_hdr_len(txbd, m_seg);
-+				first_seg = 0;
-+			}
- 			if (txe->mbuf) {
- 				rte_pktmbuf_free_seg(txe->mbuf);
- 				txe->mbuf = NULL;
-@@ -1201,6 +1417,231 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	return send_pkts;
+ struct rnp_eth_adapter;
+diff --git a/drivers/net/rnp/base/rnp_mac.c b/drivers/net/rnp/base/rnp_mac.c
+index ddf2a360ad..cf93cb03e9 100644
+--- a/drivers/net/rnp/base/rnp_mac.c
++++ b/drivers/net/rnp/base/rnp_mac.c
+@@ -8,6 +8,8 @@
+ #include "rnp_mac.h"
+ #include "rnp_eth_regs.h"
+ #include "rnp_mac_regs.h"
++#include "rnp_bitrev.h"
++#include "rnp_crc32.h"
+ #include "../rnp.h"
+ 
+ static int
+@@ -214,12 +216,86 @@ rnp_en_vlan_filter_indep(struct rnp_eth_port *port, bool en)
+ 	return 0;
  }
  
-+#define RNP_TX_TUNNEL_NOSUP_TSO_MASK (RTE_MBUF_F_TX_TUNNEL_MASK ^ \
-+				     (RTE_MBUF_F_TX_TUNNEL_VXLAN | \
-+				      RTE_MBUF_F_TX_TUNNEL_GRE))
-+static inline bool
-+rnp_check_tx_tso_valid(struct rte_mbuf *m)
++static int
++rnp_update_vlan_filter_pf(struct rnp_eth_port *port,
++			  u16 vlan, bool add)
 +{
-+	uint16_t max_seg = m->nb_segs;
-+	uint32_t remain_len = 0;
-+	struct rte_mbuf *m_seg;
-+	uint32_t total_len = 0;
-+	uint32_t limit_len = 0;
-+	uint32_t tso = 0;
++	struct rnp_vlan_filter *vfta_tb = &port->vfta;
++	struct rnp_hw *hw = port->hw;
++	u32 vid_idx;
++	u32 vid_bit;
++	u32 vfta;
 +
-+	if (likely(!(m->ol_flags & RTE_MBUF_F_TX_TCP_SEG))) {
-+		/* non tso mode */
-+		if (unlikely(m->pkt_len > RNP_MAC_MAXFRM_SIZE)) {
-+			return false;
-+		} else if (max_seg <= RNP_TX_MAX_MTU_SEG) {
-+			m_seg = m;
-+			do {
-+				total_len += m_seg->data_len;
-+				m_seg = m_seg->next;
-+			} while (m_seg != NULL);
-+			if (total_len > RNP_MAC_MAXFRM_SIZE)
-+				return false;
-+			return true;
-+		}
-+	} else {
-+		if (unlikely(m->ol_flags & RNP_TX_TUNNEL_NOSUP_TSO_MASK))
-+			return false;
-+		if (max_seg > RNP_TX_MAX_MTU_SEG)
-+			return false;
-+		tso = rnp_cal_tso_seg(m);
-+		m_seg = m;
-+		do {
-+			remain_len = RTE_MAX(remain_len, m_seg->data_len % tso);
-+			m_seg = m_seg->next;
-+		} while (m_seg != NULL);
-+		/* TSO will remain bytes because of tso
-+		 * in this situation must refer the worst condition
-+		 */
-+		limit_len = remain_len * max_seg + tso;
-+
-+		if (limit_len > RNP_MAX_TSO_PKT)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static inline int
-+rnp_net_cksum_flags_prepare(struct rte_mbuf *m, uint64_t ol_flags)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr = NULL;
-+	uint64_t inner_l3_offset = m->l2_len;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_sctp_hdr *sctp_hdr;
-+	struct rte_tcp_hdr *tcp_hdr;
-+	struct rte_udp_hdr *udp_hdr;
-+
-+	if (!(ol_flags & (RTE_MBUF_F_TX_IP_CKSUM |
-+			  RTE_MBUF_F_TX_L4_MASK |
-+			  RTE_MBUF_F_TX_TCP_SEG)))
-+		return 0;
-+	if (ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IPV6)) {
-+		if ((ol_flags & RTE_MBUF_F_TX_L4_MASK) ==
-+				RTE_MBUF_F_TX_TCP_CKSUM ||
-+				(ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
-+			/* hardware must require out-ip cksum is zero
-+			 * when vxlan-tso enable
-+			 */
-+			ipv4_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv4_hdr *, m->outer_l2_len);
-+			ipv4_hdr->hdr_checksum = 0;
-+		}
-+		inner_l3_offset += m->outer_l2_len + m->outer_l3_len;
-+	}
-+	if (unlikely(rte_pktmbuf_data_len(m) <
-+				inner_l3_offset + m->l3_len + m->l4_len))
-+		return -ENOTSUP;
-+	if (ol_flags & RTE_MBUF_F_TX_IPV4) {
-+		ipv4_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ipv4_hdr *,
-+				inner_l3_offset);
-+		if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM)
-+			ipv4_hdr->hdr_checksum = 0;
-+	}
-+	if ((ol_flags & RTE_MBUF_F_TX_L4_MASK) == RTE_MBUF_F_TX_UDP_CKSUM) {
-+		if (ol_flags & RTE_MBUF_F_TX_IPV4) {
-+			udp_hdr = (struct rte_udp_hdr *)((char *)ipv4_hdr +
-+					m->l3_len);
-+			udp_hdr->dgram_cksum = rte_ipv4_phdr_cksum(ipv4_hdr,
-+					ol_flags);
-+		} else {
-+			ipv6_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv6_hdr *, inner_l3_offset);
-+			/* non-TSO udp */
-+			udp_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_udp_hdr *,
-+					inner_l3_offset + m->l3_len);
-+			udp_hdr->dgram_cksum = rte_ipv6_phdr_cksum(ipv6_hdr,
-+					ol_flags);
-+		}
-+	} else if ((ol_flags & RTE_MBUF_F_TX_L4_MASK) == RTE_MBUF_F_TX_TCP_CKSUM ||
-+			(ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
-+		if (ol_flags & RTE_MBUF_F_TX_IPV4) {
-+			/* non-TSO tcp or TSO */
-+			tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv4_hdr + m->l3_len);
-+			tcp_hdr->cksum = rte_ipv4_phdr_cksum(ipv4_hdr,
-+					ol_flags);
-+		} else {
-+			ipv6_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv6_hdr *, inner_l3_offset);
-+			/* non-TSO tcp or TSO */
-+			tcp_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_tcp_hdr *,
-+					inner_l3_offset + m->l3_len);
-+			tcp_hdr->cksum = rte_ipv6_phdr_cksum(ipv6_hdr,
-+					ol_flags);
-+		}
-+	} else if ((ol_flags & RTE_MBUF_F_TX_L4_MASK) == RTE_MBUF_F_TX_SCTP_CKSUM) {
-+		if (ol_flags & RTE_MBUF_F_TX_IPV4) {
-+			sctp_hdr = (struct rte_sctp_hdr *)((char *)ipv4_hdr +
-+					m->l3_len);
-+			/* SCTP-cksm implement CRC32 */
-+			sctp_hdr->cksum = 0;
-+		} else {
-+			ipv6_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv6_hdr *, inner_l3_offset);
-+			/* NON-TSO SCTP */
-+			sctp_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_sctp_hdr *,
-+					inner_l3_offset + m->l3_len);
-+			sctp_hdr->cksum = 0;
-+		}
-+	}
-+	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM && !(ol_flags &
-+				(RTE_MBUF_F_TX_L4_MASK || RTE_MBUF_F_TX_TCP_SEG))) {
-+		/* the hardware L4 is follow on l3 checksum.
-+		 * when ol_flags set hw L3, sw l4 checksum offload,
-+		 * we must prepare pseudo header to avoid
-+		 * the l4 Checksum error
-+		 */
-+		if (ol_flags & RTE_MBUF_F_TX_IPV4) {
-+			ipv4_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv4_hdr *, inner_l3_offset);
-+			switch (ipv4_hdr->next_proto_id) {
-+			case IPPROTO_UDP:
-+				udp_hdr = (struct rte_udp_hdr *)((char *)ipv4_hdr +
-+						m->l3_len);
-+				udp_hdr->dgram_cksum =
-+					rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
-+				break;
-+			case IPPROTO_TCP:
-+				tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv4_hdr +
-+						m->l3_len);
-+				tcp_hdr->cksum = rte_ipv4_phdr_cksum(ipv4_hdr,
-+						ol_flags);
-+				break;
-+			default:
-+				break;
-+			}
-+		} else {
-+			ipv6_hdr = rte_pktmbuf_mtod_offset(m,
-+					struct rte_ipv6_hdr *, inner_l3_offset);
-+			switch (ipv6_hdr->proto) {
-+			case IPPROTO_UDP:
-+				udp_hdr = (struct rte_udp_hdr *)((char *)ipv6_hdr +
-+						m->l3_len);
-+				udp_hdr->dgram_cksum =
-+					rte_ipv6_phdr_cksum(ipv6_hdr, ol_flags);
-+				break;
-+			case IPPROTO_TCP:
-+				tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv6_hdr +
-+						m->l3_len);
-+				tcp_hdr->cksum = rte_ipv6_phdr_cksum(ipv6_hdr,
-+						ol_flags);
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+	}
++	vid_idx = (u32)((vlan >> 5) & 0x7F);
++	vid_bit = (u32)(1 << (vlan & 0x1F));
++	vfta = RNP_E_REG_RD(hw, RNP_VFTA_HASH_TABLE(vid_idx));
++	if (add)
++		vfta |= vid_bit;
++	else
++		vfta &= ~vid_bit;
++	RNP_E_REG_WR(hw, RNP_VFTA_HASH_TABLE(vid_idx), vfta);
++	/* update local VFTA copy */
++	vfta_tb->vfta_entries[vid_idx] = vfta;
 +
 +	return 0;
 +}
 +
-+static uint16_t
-+rnp_tx_pkt_prepare(void *tx_queue,
-+		   struct rte_mbuf **tx_pkts,
-+		   uint16_t nb_pkts)
++static void
++rnp_update_vlan_hash_indep(struct rnp_eth_port *port)
 +{
-+	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)tx_queue;
-+	struct rte_mbuf *m;
-+	int i, ret;
++	struct rnp_hw *hw = port->hw;
++	u16 lane = port->attr.nr_lane;
++	u64 vid_idx, vid_bit;
++	u16 hash = 0;
++	u16 vid_le;
++	u32 crc;
++	u16 vid;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	for (i = 0; i < nb_pkts; i++) {
-+		m = tx_pkts[i];
-+		if (unlikely(!rnp_check_tx_tso_valid(m))) {
-+			txq->stats.errors++;
-+			rte_errno = EINVAL;
-+			return i;
-+		}
-+		if (m->nb_segs > 10) {
-+			txq->stats.errors++;
-+			rte_errno = EINVAL;
-+			return i;
-+		}
-+#ifdef RTE_ETHDEV_DEBUG_TX
-+		ret = rte_validate_tx_offload(m);
-+		if (ret != 0) {
-+			rte_errno = -ret;
-+			return i;
-+		}
-+#endif
-+		ret = rnp_net_cksum_flags_prepare(m, m->ol_flags);
-+		if (ret != 0) {
-+			rte_errno = -ret;
-+			return i;
-+		}
++	/* Generate VLAN Hash Table */
++	for (vid = 0; vid < VLAN_N_VID; vid++) {
++		vid_idx = RNP_VLAN_BITMAP_IDX(vid);
++		vid_bit = port->vfta.vlans_bitmap[vid_idx];
++		vid_bit = (u64)vid_bit >>
++			(vid - (BITS_TO_LONGS(VLAN_N_VID) * vid_idx));
++		/* If Vid isn't Set, Calc Next Vid Hash Value */
++		if (!(vid_bit & 1))
++			continue;
++		vid_le = cpu_to_le16(vid);
++		crc = bitrev32(~rnp_vid_crc32_calc(~0, vid_le));
++		crc >>= RNP_MAC_VLAN_HASH_SHIFT;
++		hash |= (1 << crc);
 +	}
-+
-+	return i;
++	/* Update vlan hash table */
++	printf("hash 0x%.2x\n", hash);
++	RNP_MAC_REG_WR(hw, lane, RNP_MAC_VLAN_HASH, hash);
 +}
 +
- static int
- rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
- {
-@@ -1227,9 +1668,14 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
- static int
- rnp_check_tx_simple_valid(struct rte_eth_dev *dev, struct rnp_tx_queue *txq)
- {
--	RTE_SET_USED(txq);
-+	uint64_t tx_offloads = dev->data->dev_conf.txmode.offloads;
++static int
++rnp_update_vlan_filter_indep(struct rnp_eth_port *port,
++			     u16 vid,
++			     bool add)
++{
++	u64 vid_bit, vid_idx;
 +
-+	tx_offloads |= txq->tx_offloads;
-+	if (tx_offloads != RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
-+		return -ENOTSUP;
- 	if (dev->data->scattered_rx)
- 		return -ENOTSUP;
++	vid_bit = RNP_VLAN_BITMAP_BIT(vid);
++	vid_idx = RNP_VLAN_BITMAP_IDX(vid);
++	if (add)
++		port->vfta.vlans_bitmap[vid_idx] |= vid_bit;
++	else
++		port->vfta.vlans_bitmap[vid_idx] &= ~vid_bit;
 +
- 	return 0;
- }
- 
-@@ -1243,11 +1689,12 @@ int rnp_tx_func_select(struct rte_eth_dev *dev)
- 		txq = dev->data->tx_queues[idx];
- 		simple_allowed = rnp_check_tx_simple_valid(dev, txq) == 0;
- 	}
--	if (simple_allowed)
-+	if (simple_allowed) {
- 		dev->tx_pkt_burst = rnp_xmit_simple;
--	else
-+	} else {
- 		dev->tx_pkt_burst = rnp_multiseg_xmit_pkts;
--	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
-+		dev->tx_pkt_prepare = rnp_tx_pkt_prepare;
-+	}
- 
- 	return 0;
- }
-diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index d26497a263..51e5d4b600 100644
---- a/drivers/net/rnp/rnp_rxtx.h
-+++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -53,6 +53,7 @@ struct rnp_queue_stats {
- 
- 	uint64_t ibytes;
- 	uint64_t ipackets;
-+	uint64_t errors;
++	rnp_update_vlan_hash_indep(port);
++
++	return 0;
++}
++
+ const struct rnp_mac_ops rnp_mac_ops_pf = {
+ 	.get_macaddr = rnp_mbx_fw_get_macaddr,
+ 	.update_mpfm = rnp_update_mpfm_pf,
+ 	.set_rafb = rnp_set_mac_addr_pf,
+ 	.clear_rafb = rnp_clear_mac_pf,
+ 	.vlan_f_en = rnp_en_vlan_filter_pf,
++	.update_vlan = rnp_update_vlan_filter_pf,
  };
  
- struct rnp_rx_queue {
+ const struct rnp_mac_ops rnp_mac_ops_indep = {
+@@ -228,6 +304,7 @@ const struct rnp_mac_ops rnp_mac_ops_indep = {
+ 	.set_rafb = rnp_set_mac_addr_indep,
+ 	.clear_rafb = rnp_clear_mac_indep,
+ 	.vlan_f_en = rnp_en_vlan_filter_indep,
++	.update_vlan = rnp_update_vlan_filter_indep,
+ };
+ 
+ int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac)
+@@ -271,6 +348,14 @@ int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en)
+ 	return rnp_call_hwif_impl(port, mac_ops->vlan_f_en, en);
+ }
+ 
++int rnp_update_vlan_filter(struct rnp_eth_port *port, u16 vid, bool en)
++{
++	const struct rnp_mac_ops *mac_ops =
++		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
++
++	return rnp_call_hwif_impl(port, mac_ops->update_vlan, vid, en);
++}
++
+ void rnp_mac_ops_init(struct rnp_hw *hw)
+ {
+ 	struct rnp_proc_priv *proc_priv = RNP_DEV_TO_PROC_PRIV(hw->back->eth_dev);
+diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
+index 4a5206ded3..6f22c8279a 100644
+--- a/drivers/net/rnp/base/rnp_mac.h
++++ b/drivers/net/rnp/base/rnp_mac.h
+@@ -29,5 +29,6 @@ int rnp_clear_macaddr(struct rnp_eth_port *port, u32 index);
+ int rnp_update_mpfm(struct rnp_eth_port *port,
+ 		    u32 mode, bool en);
+ int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en);
++int rnp_update_vlan_filter(struct rnp_eth_port *port, u16 vid, bool en);
+ 
+ #endif /* _RNP_MAC_H_ */
+diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
+index 43e0aed3ff..9c1d4406d2 100644
+--- a/drivers/net/rnp/base/rnp_mac_regs.h
++++ b/drivers/net/rnp/base/rnp_mac_regs.h
+@@ -85,6 +85,12 @@
+ #define RNP_MAC_VLAN_ETV	RTE_BIT32(16)
+ /* enable vid valid  */
+ #define RNP_MAC_VLAN_HASH_EN	RTE_GENMASK32(15, 0)
++/* mac vlan hash filter */
++#define RNP_MAC_VLAN_HASH	(0x58)
++#define RNP_MAC_VLAN_HASH_MASK	RTE_GENMASK32(15, 0)
++#define RNP_MAC_VLAN_HASH_SHIFT	(28)
++#define RNP_VLAN_BITMAP_BIT(vlan_id)	(1UL << ((vlan_id) & 0x3F))
++#define RNP_VLAN_BITMAP_IDX(vlan_id)	((vlan_id) >> 6)
+ /* MAC VLAN CTRL INSERT REG */
+ #define RNP_MAC_VLAN_INCL	(0x60)
+ #define RNP_MAC_INNER_VLAN_INCL	(0x64)
+diff --git a/drivers/net/rnp/base/rnp_osdep.h b/drivers/net/rnp/base/rnp_osdep.h
+index c2dde3bb70..c41c5ca233 100644
+--- a/drivers/net/rnp/base/rnp_osdep.h
++++ b/drivers/net/rnp/base/rnp_osdep.h
+@@ -50,6 +50,19 @@ typedef rte_iova_t dma_addr_t;
+ #define cpu_to_le32(v)	rte_cpu_to_le_32((u32)(v))
+ #endif
+ 
++#ifndef DIV_ROUND_UP
++#define DIV_ROUND_UP(n, d)      (((n) + (d) - 1) / (d))
++#define BITS_PER_BYTE           (8)
++#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
++#endif
++
++#define fls(n)	rte_fls_u32(n)
++
++#ifndef VLAN_N_VID
++#define VLAN_N_VID		(4096)
++#define VLAN_VID_MASK		(0x0fff)
++#endif
++
+ #define spinlock_t			rte_spinlock_t
+ #define spin_lock_init(spinlock_v)	rte_spinlock_init(spinlock_v)
+ #define spin_lock(spinlock_v)		rte_spinlock_lock(spinlock_v)
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+index 12b2850ae3..51f1e6b694 100644
+--- a/drivers/net/rnp/rnp.h
++++ b/drivers/net/rnp/rnp.h
+@@ -63,6 +63,7 @@
+ #define RNP_MAX_HASH_MC_MAC_SIZE	(4096)	/* max multicast hash mac num */
+ #define RNP_MAX_UC_HASH_TABLE		(128)	/* max unicast hash mac filter table */
+ #define RNP_MAC_MC_HASH_TABLE		(128)	/* max multicast hash mac filter table*/
++#define RNP_MAX_VFTA_SIZE		(128)   /* max pf vlan hash table size */
+ /* Peer port own independent resource */
+ #define RNP_PORT_MAX_MACADDR         (32)
+ #define RNP_PORT_MAX_UC_HASH_TB      (8)
+@@ -176,6 +177,15 @@ enum rnp_vlan_type {
+ 	RNP_SVLAN_TYPE = 1,
+ };
+ 
++struct rnp_vlan_filter {
++	union {
++		/* indep vlan hash filter table used */
++		uint64_t vlans_bitmap[BITS_TO_LONGS(VLAN_N_VID)];
++		/* PF vlan filter table used */
++		uint32_t vfta_entries[RNP_MAX_VFTA_SIZE];
++	};
++};
++
+ struct rnp_eth_port {
+ 	struct rnp_proc_priv *proc_priv;
+ 	struct rte_ether_addr mac_addr;
+@@ -200,6 +210,7 @@ struct rnp_eth_port {
+ 
+ 	enum rnp_vlan_type outvlan_type;
+ 	enum rnp_vlan_type invlan_type;
++	struct rnp_vlan_filter vfta;
+ 	rte_spinlock_t rx_mac_lock;
+ 	bool port_stopped;
+ };
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index 0492d36ec2..a5ae670c96 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -394,6 +394,15 @@ rnp_vlan_offload_set(struct rte_eth_dev *dev, int mask)
+ 	return 0;
+ }
+ 
++static int
++rnp_vlan_filter_set(struct rte_eth_dev *dev,
++		uint16_t vlan_id, int on)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++
++	return rnp_update_vlan_filter(port, vlan_id, on);
++}
++
+ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
+ {
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
+@@ -1479,6 +1488,7 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	/* vlan offload */
+ 	.vlan_offload_set             = rnp_vlan_offload_set,
+ 	.vlan_strip_queue_set         = rnp_vlan_strip_queue_set,
++	.vlan_filter_set              = rnp_vlan_filter_set,
+ };
+ 
+ static void
 -- 
 2.34.1
 
