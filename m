@@ -2,88 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCBBC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 09:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8049C0219D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 10:15:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A0A840268;
-	Mon, 10 Feb 2025 10:36:40 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0451A40150
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:36:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1739180198;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=jyiFNnAaATN/gQYZoH2CiNTYvfb6/jGaNxr5ta/SX+c=;
- b=f15zo/O4GiYTo/hUsc4H7Lj/+7ZgQCmDfm+9dj4cX78UfmXwSOvrfylgNBUNeZr/TI0N9j
- HKrZ95Usi/GAeSCkOIM2KyD7jnpMoAoc2tGb7yx20rps8/DXX96leAKFHBS5FTUtlpHb0w
- NzoMpgUqBY0EcgaGwFclzkGZKNZCbsc=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-449-bfONyESOOHGXqmZxi6bBsw-1; Mon, 10 Feb 2025 04:36:35 -0500
-X-MC-Unique: bfONyESOOHGXqmZxi6bBsw-1
-X-Mimecast-MFC-AGG-ID: bfONyESOOHGXqmZxi6bBsw
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-54508fa5d1cso590024e87.0
- for <dev@dpdk.org>; Mon, 10 Feb 2025 01:36:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739180193; x=1739784993;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=jyiFNnAaATN/gQYZoH2CiNTYvfb6/jGaNxr5ta/SX+c=;
- b=aeQ3d/UcYKaZQOTMpYCePE5UjwVVfKMAQ0R16B96ZtsELHomeQC+nBUEn7qk3TkYI2
- /H9bLpITWLbgEKFxggWXQ5GZDXup274hj735SbFI6d7IOIG+8D0MaSO3f+gxLqEcSiIZ
- RAblJgNwaWtSQVbBqlUoxuZ+IP+ThWzrpPTm7CDkfflPH7Lllar8NUdOAOIKLHYJyG8i
- oRGZBC9dxR9L61Xa6GDwEjqWwYxsHmrnvoe6zfs6/ehoZ/ZpXEtJvv0NFIhakR/O+a5Y
- 5FKoSw8jgrEDnPn/IB2P7P8GUJpVjuE0F2N3bLYRAs7lbDUf/iKrZknp/bwnMH5LJKTX
- MMHw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWJZZHMQxvqLgCc+Nz3fn2GeAgp3ITXifZGQyLYPPlQXSROMByQi98hoplqZvfiy07JAjs=@dpdk.org
-X-Gm-Message-State: AOJu0YwXkJHjtTIIJWwGU8XiNEA1827sjFepIiTcxJsTVDtmGXr+TAeq
- u3RI098v0vJ5eUqNniLcbYA8Gk9Zu1K3xasjPZXlmWtjorihO2JxTCP2Sp0LBJ6FqEEZa2zUViz
- qQh0TiwrCdPQNCL9ebxOCvRF1WA31zbOK4Fe/oK+MqZC2RmcqzQS9BLzaljjdJVHvc06eM97yC4
- fSBDZH0yV0lVKKGgU=
-X-Gm-Gg: ASbGncshXyInDhCOfFvlPCWzsX0j9SE/YhHOrXp9t16aAo83KeULnzO8/USMbt/dKSa
- O0fL9taUmHb7+a/KEwFsmK9yW8EcNuQmvojtiP0myBQSswODMlqHGH+DX/cpzPBMU
-X-Received: by 2002:a05:6512:4893:b0:545:353:4d46 with SMTP id
- 2adb3069b0e04-54503535125mr1905767e87.25.1739180193564; 
- Mon, 10 Feb 2025 01:36:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFn5eJZ2QDuarweFuN6AeVTKpMBSBCNSG5ZTzsMXxrVnR3lzF7j+XLS8attpyvRbnVGPejb42+1DbugNE+/xVc=
-X-Received: by 2002:a05:6512:4893:b0:545:353:4d46 with SMTP id
- 2adb3069b0e04-54503535125mr1905761e87.25.1739180193180; Mon, 10 Feb 2025
- 01:36:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2454640E96;
+	Mon, 10 Feb 2025 11:15:37 +0100 (CET)
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10on2065.outbound.protection.outlook.com [40.107.92.65])
+ by mails.dpdk.org (Postfix) with ESMTP id 147E740150;
+ Mon, 10 Feb 2025 11:15:36 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v4aeg/Uxjy5Vh5bMC+DY1TkqKqxW5NWxiMWoRoVXv5/qgHzXJDx8eJWuLSONBAvnUzVMKYOYmTKhgEk5SVJjc7B+qcrGggaylZerNBSXS+W5q+Pf5nYdcd5cb1P/dmWP8IWmOUlHC2a8MKLJKb/fhwZ7Y1cmAhlfz52Mj6tvrlpyLseL08l6sMMrxNyyx1VMmM8GriF9HJ/I4CsS3JEYJYJfsO+wT+YvMoBTQRbvace0TKpEs/MOqYaW2lsQnZC7r+e6OwQLh3WfQgj6Xz9ZL4tGiGjQ3yJUkYV6rzrm7ADgdUW9EofSj6elbbueHHQiXoB6CiFe3UWlS9TZvbAjDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u1/vW0ryWIFzDTFB7NLIM5OH+I++dt4tZchxTUuTlYc=;
+ b=lICLR+Zy7CuK1oUkcTyt+HZnQu1M9Zy5nJyd5rYfa1DdxNhG5k0R/Ty+drErasLxSU0I1Jyptn/Jo6yxwt6NnLDfX3UGNZYz/1R89xsQHgWTjRAHsSpAbmStXmTKZBnE9wV8modzNfbLhERMKzniNzxUJnL1RVGz4y/efkghwGh7AP/ManDHcKHMtY22gK1QoXdNKjWt1U603X2rPyFCpaHGR+ialHIpqpw5WzoCFgUNrCVY0E7E5Y9yF0QYBVFPBTWQdbKLLlZaqmC4bRiBlF3ULulNFTayKFfGh4vC0hjjO2LNbdLObg/i8YrDMLzwNT7xp1az3/fN5Q965KEAMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u1/vW0ryWIFzDTFB7NLIM5OH+I++dt4tZchxTUuTlYc=;
+ b=b8kYajU7smlaclmUlON/VfJQSm6L3cucCa+jSQsU+g49WaOgvm1nprcXweaYMQX0Shws4FShU6FFicWY8WEU+vP3Q9yICZ71AYzuY8ZiIcKxraeyWltP2cLpAA2jPCoG9CKsrtDEyZzeIKUNpSQRByhBLylBaGKecaJwJJZ4iAukhb8jooDcpub8V63c+9fZfoA28JjjPpKLiXtdRdvJipmJ4y/5uCTA01LFMfpqgJPuK7LSpntEVrG7vJ6oGIjk5vocifPEuG1UUazJbhqadQtpQ+tfMP9VtksSGHNVCwxgOd72sHIXAw886XowUJ6ohYC9MmK4raSByz/aXFNS3A==
+Received: from PH0PR07CA0098.namprd07.prod.outlook.com (2603:10b6:510:4::13)
+ by IA1PR12MB6282.namprd12.prod.outlook.com (2603:10b6:208:3e6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.11; Mon, 10 Feb
+ 2025 10:15:33 +0000
+Received: from SJ1PEPF000026C9.namprd04.prod.outlook.com
+ (2603:10b6:510:4:cafe::7a) by PH0PR07CA0098.outlook.office365.com
+ (2603:10b6:510:4::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.31 via Frontend Transport; Mon,
+ 10 Feb 2025 10:15:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000026C9.mail.protection.outlook.com (10.167.244.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.10 via Frontend Transport; Mon, 10 Feb 2025 10:15:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 10 Feb
+ 2025 02:15:15 -0800
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 10 Feb
+ 2025 02:15:12 -0800
+From: Gregory Etelson <getelson@nvidia.com>
+To: <dev@dpdk.org>
+CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
+ <rasland@nvidia.com>, Bing Zhao <bingz@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: fix the GRE mask set on root table
+Date: Mon, 10 Feb 2025 12:14:56 +0200
+Message-ID: <20250210101457.306368-1-getelson@nvidia.com>
+X-Mailer: git-send-email 2.45.2
 MIME-Version: 1.0
-References: <20250124161408.310581-1-david.marchand@redhat.com>
- <20250130145849.82003-1-david.marchand@redhat.com>
- <20250130145849.82003-3-david.marchand@redhat.com>
- <CAJFAV8yvVXqnK0mwngjroV-HgtnBpfG50co-3cMgq3AsPLnzgQ@mail.gmail.com>
- <CO6PR18MB386009DC96D52BF64C1FFFE6B4F12@CO6PR18MB3860.namprd18.prod.outlook.com>
- <CO6PR18MB3860F074B0C173655429323BB4F22@CO6PR18MB3860.namprd18.prod.outlook.com>
-In-Reply-To: <CO6PR18MB3860F074B0C173655429323BB4F22@CO6PR18MB3860.namprd18.prod.outlook.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 10 Feb 2025 10:36:21 +0100
-X-Gm-Features: AWEUYZn2pBgMGoSM9eDUEcgPXuIzQnpK9GC-e_18cdEZGrhGy48DUoaN-Jh4CyY
-Message-ID: <CAJFAV8zWUjBktVrdtJ2kDmwJ0J_NpwVkYHovjLkdpXnQNT-PnA@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v2 3/3] trace: fix undefined behavior in
- register
-To: Sunil Kumar Kori <skori@marvell.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>, 
- Chengwen Feng <fengchengwen@huawei.com>, Kevin Laatz <kevin.laatz@intel.com>, 
- Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>, 
- Andre Muezerie <andremue@linux.microsoft.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- Stephen Hemminger <stephen@networkplumber.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: f3RwDCzFsZgAfSWoLX7sEIIqCSZB8pvm-THSQz1--F8_1739180194
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C9:EE_|IA1PR12MB6282:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8d38cac-48f0-464a-8bca-08dd49bbda11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/Cyrp5torR4gD94WhUy0dSFPLdogzQNP5bNYQ8aEwnIhWWi+cwz31T0s44WW?=
+ =?us-ascii?Q?oGdne0qynoooaGEG0f1McP+Pnxbig/R2UFIss+LZGUR8ybyG3nHdEliwvyxQ?=
+ =?us-ascii?Q?Qyu+iUS/Jt237cIf+W/adeiV5ucxBx9cjE/HbMRCXmEpTWAlQgvpaHXEcLXV?=
+ =?us-ascii?Q?++zIoGDPugWx7E1Y1GUlWBPGFV0oiwqEBGYeGTzcLB8fKkQuOFBy6OpmSPzP?=
+ =?us-ascii?Q?B1RXR1OPnOpWn/5pQmsLgYRLp/69+Eloyj5FObAa54E7qxjY2bqFZJiK8MYg?=
+ =?us-ascii?Q?qoGpyWaWgOIPpM8/yi9Z8HsF/NYCGXKxcK6LFR+JStghBSUlG9FWPldmK5FP?=
+ =?us-ascii?Q?eFMup7zDrktoxXvGXIhCruAXBDa3rJGAp6IRbFNFpNV92/erPFfqDm2L6ryb?=
+ =?us-ascii?Q?CUE77IQshS+XUY+Arl8+GSqsNAqyePRtU6ygYUYQdxhu0bUOLxR9XdWNB6XW?=
+ =?us-ascii?Q?waAbz0oJAaJWIj1Z6xoONudJ+yWBUE7OqoQ5qvQtT7GiOolQjuZS/ZDYueVC?=
+ =?us-ascii?Q?zDlVwS0jxsBvecvSh8eiG23Z0vEe+jEJz3pEGHcmp8SdqVP4MaFPKFbzbAZa?=
+ =?us-ascii?Q?Vu6KrBXUYyT8KXRX6AJyN017um8zBPfHw+u0ozdNLZ1/zuUQO/DTDcTgjJkp?=
+ =?us-ascii?Q?0bfAuckip5rJi02rNtQV/CBtarDP/nN99faSLA5/1hhKtqm9UZv7pwnPRbSI?=
+ =?us-ascii?Q?QkFIV2Oi1cvW0GGjTeKaI83BS0Um3kFlv2noyNNYDCSP0LZCc9av8UuGbFDA?=
+ =?us-ascii?Q?9eYwIMHSZxcLvTr8hRppYLVCPeCgfmqRbY4u6AeNIGiPLw2PUAuAPzY5qiiP?=
+ =?us-ascii?Q?CrR6YLXdtpOCkcMmXBP99C5G+atOlG5w2+ryNPzmoxurylbmVsXSmCE+zb+j?=
+ =?us-ascii?Q?g5cXfvRaPwzBc+7yc3dzhaFbcpf3wl0mjKni9REHfXGOW1O0d3QJ94z4YRHw?=
+ =?us-ascii?Q?DYekFrdUjsRGZg8djLDo3Y994Hclyt2p9UvojYco8qObv6EkQymhSlpzLXSy?=
+ =?us-ascii?Q?nUTc0o7vy6Rwt/O32bFCorMRT1xb6uaYamUGdCPnUM9k/dAd21OaagESRspC?=
+ =?us-ascii?Q?aCbOJbcygNbUTX2jT1BBbk05PDuqVaqKjAT4/IFVIkPz0P5axn38cJZfaGqd?=
+ =?us-ascii?Q?tesWKT/lI5GyNZuuoQLfZnQYqWOcKOq9KvvG/koWEI6W+J8SjnyYVAxhXwJ8?=
+ =?us-ascii?Q?Ir/njH1V3aVMfeMLC30O/uGMOWIr4b1l/feVSUM8g+DKQO0+nxEuhJzVs18C?=
+ =?us-ascii?Q?eHdqLX3pJXvsy+mSehvlC9qerfU4JYDCFoke5GHA+xX5G4Tx3N4qaazg9V4s?=
+ =?us-ascii?Q?BG3T97bBe/tdL/K3iZBSRuKfBXVh907vd1lA1I/hpMBtUe2oZvX748ClMRbZ?=
+ =?us-ascii?Q?kcqthVN5U0QLtKVSpbL10c3zmzvcgM3owrIRniTlJEdVtAubbijNsQEYTS7E?=
+ =?us-ascii?Q?oxWyjIPh158THrWaeh8I2bgQErQI8857eM2fpc6yUWHdXsl9MtMx31l9UJP/?=
+ =?us-ascii?Q?WQ98GdzJFB9u2nY=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2025 10:15:32.1522 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8d38cac-48f0-464a-8bca-08dd49bbda11
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000026C9.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6282
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,22 +131,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Feb 10, 2025 at 10:02=E2=80=AFAM Sunil Kumar Kori <skori@marvell.co=
-m> wrote:
->
-> Hi David,
->
-> I tried validating series to see the trace results but babeltrace throws =
-error while reading metadata file and traces can=E2=80=99t be generated.
->
-> Can you please have a look into this ?
+From: Bing Zhao <bingz@nvidia.com>
 
-Ok, I see what is wrong, in the dma trace update.
-Too bad we don't have something in the CI to catch such issue...
+When setting the value, the GRE mask cannot reuse the one from the
+value, or else the value cannot be really ANDed with the proper input
+mask from the user. If the value contains more valid bits than the
+mask, the rule insertion on the root table will get a failure due to
+the extra bits in the value field.
 
-Anyway, do you have comments on this last patch of the series?
+Using the input mask or the default mask will help to clear the extra
+bits and solve the issue.
 
+Fixes: 25ab2cbba31d ("net/mlx5: fix GRE item translation for root table")
 
---=20
-David Marchand
+cc: stable@dpdk.org
+
+Signed-off-by: Bing Zhao <bingz@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_flow_dv.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
+index 41ebe0b61a..c65345e6ac 100644
+--- a/drivers/net/mlx5/mlx5_flow_dv.c
++++ b/drivers/net/mlx5/mlx5_flow_dv.c
+@@ -9853,8 +9853,6 @@ flow_dv_translate_item_gre(void *key, const struct rte_flow_item *item,
+ 		} else if (!gre_m) {
+ 			gre_m = &rte_flow_item_gre_mask;
+ 		}
+-		if (key_type == MLX5_SET_MATCHER_HS_V)
+-			gre_m = gre_v;
+ 	}
+ 	gre_crks_rsvd0_ver_m.value = rte_be_to_cpu_16(gre_m->c_rsvd0_ver);
+ 	gre_crks_rsvd0_ver_v.value = rte_be_to_cpu_16(gre_v->c_rsvd0_ver);
+-- 
+2.45.2
 
