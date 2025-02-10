@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEAAC02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C0FC02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:28:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05A6840EAB;
-	Mon, 10 Feb 2025 08:27:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A79440E43;
+	Mon, 10 Feb 2025 08:27:36 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 8AA9840E37
+ by mails.dpdk.org (Postfix) with ESMTP id 5A26740E43
  for <dev@dpdk.org>; Mon, 10 Feb 2025 08:27:31 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id D0A3AA3355; Mon, 10 Feb 2025 15:27:07 +0800 (CST)
+ id A0634A3356; Mon, 10 Feb 2025 15:27:05 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v8 10/28] net/rnp: add support device start stop operations
-Date: Mon, 10 Feb 2025 15:26:37 +0800
-Message-Id: <1739172415-48507-11-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v8 08/28] net/rnp: add queue setup and release operations
+Date: Mon, 10 Feb 2025 15:26:35 +0800
+Message-Id: <1739172415-48507-9-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
 References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
@@ -36,534 +36,1456 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add basic support for device to start/stop function
+support tx/rx queue setup and release add hw bd
+queue reset,sw queue reset.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/base/rnp_common.c   |  22 +++
- drivers/net/rnp/base/rnp_common.h   |   1 +
- drivers/net/rnp/base/rnp_dma_regs.h |  10 +
- drivers/net/rnp/base/rnp_eth_regs.h |   5 +
- drivers/net/rnp/base/rnp_hw.h       |   1 +
- drivers/net/rnp/base/rnp_mac.h      |  14 ++
- drivers/net/rnp/base/rnp_mac_regs.h |  42 +++++
- drivers/net/rnp/rnp.h               |   3 +
- drivers/net/rnp/rnp_ethdev.c        | 274 +++++++++++++++++++++++++++-
- 9 files changed, 371 insertions(+), 1 deletion(-)
+ doc/guides/nics/rnp.rst             |   1 +
+ drivers/net/rnp/base/meson.build    |   1 +
+ drivers/net/rnp/base/rnp_bdq_if.c   | 398 +++++++++++++++++++++++
+ drivers/net/rnp/base/rnp_bdq_if.h   | 149 +++++++++
+ drivers/net/rnp/base/rnp_common.h   |   4 +
+ drivers/net/rnp/base/rnp_dma_regs.h |  45 +++
+ drivers/net/rnp/base/rnp_eth_regs.h |   4 +
+ drivers/net/rnp/base/rnp_hw.h       |   3 +
+ drivers/net/rnp/base/rnp_osdep.h    |  13 +
+ drivers/net/rnp/meson.build         |   1 +
+ drivers/net/rnp/rnp.h               |   2 +
+ drivers/net/rnp/rnp_ethdev.c        |  29 ++
+ drivers/net/rnp/rnp_rxtx.c          | 476 ++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.h          | 123 +++++++
+ 14 files changed, 1249 insertions(+)
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
+ create mode 100644 drivers/net/rnp/rnp_rxtx.c
+ create mode 100644 drivers/net/rnp/rnp_rxtx.h
 
-diff --git a/drivers/net/rnp/base/rnp_common.c b/drivers/net/rnp/base/rnp_common.c
-index 58de3bde03..2dacb5113e 100644
---- a/drivers/net/rnp/base/rnp_common.c
-+++ b/drivers/net/rnp/base/rnp_common.c
-@@ -79,3 +79,25 @@ rnp_setup_common_ops(struct rnp_hw *hw)
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index 62585acd4b..54175936b9 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -10,6 +10,7 @@ driver support for the inbuilt network device found in the **Mucse RNP**
+ Features
+ --------
  
- 	return 0;
- }
++- Multiple queues for TX and RX
+ - Promiscuous mode
+ 
+ Prerequisites
+diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
+index b9db033ff6..c2ef0d05be 100644
+--- a/drivers/net/rnp/base/meson.build
++++ b/drivers/net/rnp/base/meson.build
+@@ -7,6 +7,7 @@ sources = [
+         'rnp_mbx_fw.c',
+         'rnp_common.c',
+         'rnp_mac.c',
++	'rnp_bdq_if.c',
+ ]
+ 
+ error_cflags = ['-Wno-unused-value',
+diff --git a/drivers/net/rnp/base/rnp_bdq_if.c b/drivers/net/rnp/base/rnp_bdq_if.c
+new file mode 100644
+index 0000000000..471c19efda
+--- /dev/null
++++ b/drivers/net/rnp/base/rnp_bdq_if.c
+@@ -0,0 +1,398 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
 +
-+int rnp_clock_valid_check(struct rnp_hw *hw, u16 nr_lane)
++#include "rnp_osdep.h"
++
++#include "../rnp.h"
++#include "rnp_dma_regs.h"
++#include "rnp_eth_regs.h"
++#include "rnp_bdq_if.h"
++#include "rnp_common.h"
++#include "../rnp_rxtx.h"
++
++static void
++rnp_read_mac_veb(struct rnp_hw *hw,
++		  u16 nr_lane,
++		  u16 vf_id,
++		  struct rnp_veb_cfg *cfg)
 +{
-+	uint16_t timeout = 0;
++	cfg->mac_lo = RNP_E_REG_RD(hw, RNP_VEB_MAC_LO(nr_lane, vf_id));
++	cfg->mac_hi = RNP_E_REG_RD(hw, RNP_VEB_MAC_HI(nr_lane, vf_id));
++	cfg->ring = RNP_E_REG_RD(hw, RNP_VEB_VF_RING(nr_lane, vf_id));
++}
 +
++static void
++rnp_update_mac_veb(struct rnp_hw *hw,
++		   u16 nr_lane,
++		   u16 vf_id,
++		   struct rnp_veb_cfg *cfg)
++{
++	u32 reg = cfg->ring;
++	u16 idx = 0;
++
++	idx = nr_lane;
++	wmb();
++	RNP_E_REG_WR(hw, RNP_VEB_MAC_LO(idx, vf_id), cfg->mac_lo);
++	RNP_E_REG_WR(hw, RNP_VEB_MAC_HI(idx, vf_id), cfg->mac_hi);
++	reg |= ((RNP_VEB_SWITCH_VF_EN | vf_id) << 8);
++	RNP_E_REG_WR(hw, RNP_VEB_VF_RING(idx, vf_id), reg);
++}
++
++void
++rnp_rxq_flow_disable(struct rnp_hw *hw,
++		     u16 hw_idx)
++{
++	u32 fc_ctrl;
++
++	spin_lock(&hw->rxq_reset_lock);
++	fc_ctrl = RNP_E_REG_RD(hw, RNP_RING_FC_EN(hw_idx));
++	wmb();
++	RNP_E_REG_WR(hw, RNP_RING_FC_THRESH(hw_idx), 0);
++	fc_ctrl |= 1 << (hw_idx % 32);
++	wmb();
++	RNP_E_REG_WR(hw, RNP_RING_FC_EN(hw_idx), fc_ctrl);
++}
++
++void
++rnp_rxq_flow_enable(struct rnp_hw *hw,
++		    u16 hw_idx)
++{
++	u32 fc_ctrl;
++
++
++	fc_ctrl = RNP_E_REG_RD(hw, RNP_RING_FC_EN(hw_idx));
++	fc_ctrl &= ~(1 << (hw_idx % 32));
++	wmb();
++	RNP_E_REG_WR(hw, RNP_RING_FC_EN(hw_idx), fc_ctrl);
++
++	spin_unlock(&hw->rxq_reset_lock);
++}
++
++#define RNP_RXQ_RESET_PKT_LEN	(64)
++
++static void
++rnp_reset_xmit(struct rnp_tx_queue *txq, u64 pkt_addr)
++{
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *tx_entry;
++	u16 timeout = 0;
++	u16 tx_id;
++
++	tx_id = txq->tx_tail;
++	txbd = &txq->tx_bdr[tx_id];
++	tx_entry = &txq->sw_ring[tx_id];
++	memset(tx_entry, 0, sizeof(*tx_entry));
++
++	txbd->d.addr = pkt_addr;
++	txbd->d.blen = RNP_RXQ_RESET_PKT_LEN;
++	wmb();
++	txbd->d.cmd = cpu_to_le16(RNP_CMD_EOP | RNP_CMD_RS);
++	tx_id = (tx_id + 1) & txq->attr.nb_desc_mask;
++	wmb();
++	RNP_REG_WR(txq->tx_tailreg, 0, tx_id);
 +	do {
-+		RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(nr_lane, 0), 0x7f);
++		if (txbd->d.cmd & RNP_CMD_DD)
++			break;
++		if (timeout == 1000)
++			RNP_PMD_ERR("rx queue %u reset send pkt is hang",
++					txq->attr.index);
++		timeout++;
++		udelay(10);
++	} while (1);
++}
++
++void
++rnp_reset_hw_rxq_op(struct rnp_hw *hw,
++		    struct rnp_rx_queue *rxq,
++		    struct rnp_tx_queue *txq,
++		    struct rnp_rxq_reset_res *res)
++{
++	u8 reset_pcap[RNP_RXQ_RESET_PKT_LEN] = {
++		0x01, 0x02, 0x27, 0xe2, 0x9f, 0xa6, 0x08, 0x00,
++		0x27, 0xfc, 0x6a, 0xc9, 0x08, 0x00, 0x45, 0x00,
++		0x01, 0xc4, 0xb5, 0xd0, 0x00, 0x7a, 0x40, 0x01,
++		0xbc, 0xea, 0x02, 0x01, 0x01, 0x02, 0x02, 0x01,
++		0x01, 0x01, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd,
++		0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5,
++		0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd,
++		0xde, 0xdf, 0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5};
++	struct rnp_veb_cfg veb_bak_cfg[RNP_MAX_PORT_OF_PF];
++	struct rnp_veb_cfg reset_cfg = {0};
++	volatile struct rnp_rx_desc *rxbd;
++	u16 index = rxq->attr.index;
++	u16 vf_num = hw->mbx.vf_num;
++	u8 *macaddr = res->eth_hdr;
++	u16 timeout = 0;
++	u16 vf_id = 0;
++	u16 head = 0;
++	u16 idx = 0;
++
++	memcpy(macaddr, reset_pcap, RNP_RXQ_RESET_PKT_LEN);
++	macaddr[5] = index;
++	reset_cfg.mac_hi = RNP_GET_MAC_HI(macaddr);
++	reset_cfg.mac_lo = RNP_GET_MAC_LO(macaddr);
++	reset_cfg.ring = index;
++	vf_id = (vf_num != UINT16_MAX) ? vf_num : index / 2;
++	if (hw->mbx.vf_num == UINT16_MAX) {
++		for (idx = 0; idx < RNP_MAX_PORT_OF_PF; idx++) {
++			rnp_read_mac_veb(hw, idx, vf_id, &veb_bak_cfg[idx]);
++			rnp_update_mac_veb(hw, idx, vf_id, &reset_cfg);
++		}
++	} else {
++		idx = rxq->attr.lane_id;
++		rnp_read_mac_veb(hw, idx, vf_id, &veb_bak_cfg[idx]);
++		rnp_update_mac_veb(hw, idx, vf_id, &reset_cfg);
++	}
++	wmb();
++	timeout = 0;
++	do {
++		if (!RNP_E_REG_RD(hw, RNP_RXQ_READY(index)))
++			break;
++		udelay(5);
++		timeout++;
++	} while (timeout < 100);
++	timeout = 0;
++	do {
++		if (RNP_E_REG_RD(hw, RNP_TXQ_READY(index)))
++			break;
 +		udelay(10);
 +		timeout++;
-+		if (timeout >= 1000)
++	} while (timeout < 100);
++	rxq->rx_tail = RNP_E_REG_RD(hw, RNP_RXQ_HEAD(index));
++	rxbd = &rxq->rx_bdr[rxq->rx_tail];
++	rxbd->d.pkt_addr = res->rx_pkt_addr;
++	if (rxq->rx_tail != rxq->attr.nb_desc_mask)
++		RNP_E_REG_WR(hw, RNP_RXQ_LEN(index), rxq->rx_tail + 1);
++	wmb();
++	RNP_REG_WR(rxq->rx_tailreg, 0, 0);
++	RNP_E_REG_WR(hw, RNP_RXQ_START(index), TRUE);
++	rnp_reset_xmit(txq, res->tx_pkt_addr);
++	timeout = 0;
++	do {
++		if (rxbd->wb.qword1.cmd & cpu_to_le32(RNP_CMD_DD))
 +			break;
-+	} while (RNP_E_REG_RD(hw, RNP_RSS_REDIR_TB(nr_lane, 0)) != 0x7f);
-+
-+	if (timeout >= 1000) {
-+		RNP_PMD_ERR("ethernet[%d] eth reg can't be write", nr_lane);
-+		return -EPERM;
++		if (timeout == 1000)
++			RNP_PMD_LOG(ERR, "rx_queue[%d] reset queue hang",
++					index);
++		udelay(10);
++		timeout++;
++	} while (1);
++	timeout = 0;
++	do {
++		head = RNP_E_REG_RD(hw, RNP_RXQ_HEAD(index));
++		if (head == 0)
++			break;
++		timeout++;
++		if (timeout == 1000)
++			RNP_PMD_LOG(ERR, "rx_queue[%d] reset head to 0 failed",
++					index);
++		udelay(10);
++	} while (1);
++	RNP_E_REG_WR(hw, RNP_RXQ_START(index), FALSE);
++	rxbd->d.pkt_addr = 0;
++	rxbd->d.cmd = 0;
++	if (hw->mbx.vf_num == UINT16_MAX) {
++		for (idx = 0; idx < 4; idx++)
++			rnp_update_mac_veb(hw, idx, vf_id, &veb_bak_cfg[idx]);
++	} else {
++		idx = rxq->attr.lane_id;
++		rnp_update_mac_veb(hw, idx, vf_id, &veb_bak_cfg[idx]);
 +	}
-+	/* clear the dirty value */
-+	RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(nr_lane, 0), 0);
-+
-+	return 0;
++	rxq->rx_tail = head;
 +}
++
++void rnp_setup_rxbdr(struct rnp_hw *hw,
++		     struct rnp_rx_queue *rxq)
++{
++	u16 max_desc = rxq->attr.nb_desc;
++	u16 idx = rxq->attr.index;
++	phys_addr_t bd_address;
++	u32 dmah, dmal;
++	u32 desc_ctrl;
++
++	RNP_E_REG_WR(hw, RNP_RXQ_START(idx), FALSE);
++	bd_address = (phys_addr_t)rxq->ring_phys_addr;
++	dmah = upper_32_bits((uint64_t)bd_address);
++	dmal = lower_32_bits((uint64_t)bd_address);
++	desc_ctrl = rxq->pburst << RNQ_DESC_FETCH_BURST_S | rxq->pthresh;
++	if (hw->mbx.sriov_st)
++		dmah |= (hw->mbx.sriov_st << 24);
++	/* we must set sriov_state to hi dma_address high 8bit for vf isolation
++	 * |---8bit-----|----------24bit--------|
++	 * |sriov_state-|-------high dma address|
++	 * |---------------8bit-----------------|
++	 * |7bit | 6bit |5-0bit-----------------|
++	 * |vf_en|pf_num|-------vf_num----------|
++	 */
++	RNP_E_REG_WR(hw, RNP_RXQ_BASE_ADDR_LO(idx), dmal);
++	RNP_E_REG_WR(hw, RNP_RXQ_BASE_ADDR_HI(idx), dmah);
++	RNP_E_REG_WR(hw, RNP_RXQ_LEN(idx), max_desc);
++	rxq->rx_tailreg = (u32 *)((u8 *)hw->e_ctrl + RNP_RXQ_TAIL(idx));
++	rxq->rx_headreg = (u32 *)((u8 *)hw->e_ctrl + RNP_RXQ_HEAD(idx));
++	rxq->rx_tail = RNP_E_REG_RD(hw, RNP_RXQ_HEAD(idx));
++	RNP_E_REG_WR(hw, RNP_RXQ_DESC_FETCH_CTRL(idx), desc_ctrl);
++	RNP_E_REG_WR(hw, RNP_RXQ_DROP_TIMEOUT_TH(idx),
++			rxq->nodesc_tm_thresh);
++}
++
++int rnp_get_dma_ring_index(struct rnp_eth_port *port, u16 queue_idx)
++{
++	struct rnp_hw *hw = port->hw;
++	u16 lane = port->attr.nr_lane;
++	u16 hwrid = 0;
++
++	switch (hw->nic_mode) {
++	case RNP_DUAL_10G:
++		hwrid = 2 * (queue_idx + lane) - queue_idx % 2;
++		break;
++	case RNP_QUAD_10G:
++		hwrid = 4 * (queue_idx) + lane;
++		break;
++	default:
++		hwrid = queue_idx;
++	}
++
++	return hwrid;
++}
++
++void rnp_setup_txbdr(struct rnp_hw *hw, struct rnp_tx_queue *txq)
++{
++	u16 max_desc = txq->attr.nb_desc;
++	u16 idx = txq->attr.index;
++	phys_addr_t bd_address;
++	u32 desc_ctrl = 0;
++	u32 dmah, dmal;
++
++	bd_address = (phys_addr_t)txq->ring_phys_addr;
++	desc_ctrl = txq->pburst << RNQ_DESC_FETCH_BURST_S | txq->pthresh;
++	dmah = upper_32_bits((u64)bd_address);
++	dmal = lower_32_bits((u64)bd_address);
++	if (hw->mbx.sriov_st)
++		dmah |= (hw->mbx.sriov_st << 24);
++	/* We must set sriov_state to hi dma_address high 8bit for vf isolation
++	 * |---8bit-----|----------24bit--------|
++	 * |sriov_state-|-------high dma address|
++	 * |---------------8bit-----------------|
++	 * |7bit | 6bit |5-0bit-----------------|
++	 * |vf_en|pf_num|-------vf_num----------|
++	 */
++	RNP_E_REG_WR(hw, RNP_TXQ_BASE_ADDR_LO(idx), dmal);
++	RNP_E_REG_WR(hw, RNP_TXQ_BASE_ADDR_HI(idx), dmah);
++	RNP_E_REG_WR(hw, RNP_TXQ_LEN(idx), max_desc);
++	RNP_E_REG_WR(hw, RNP_TXQ_DESC_FETCH_CTRL(idx), desc_ctrl);
++	RNP_E_REG_WR(hw, RNP_RXTX_IRQ_MASK(idx), RNP_RXTX_IRQ_MASK_ALL);
++	txq->tx_headreg = (void *)((u8 *)hw->e_ctrl + RNP_TXQ_HEAD(idx));
++	txq->tx_tailreg = (void *)((u8 *)hw->e_ctrl + RNP_TXQ_TAIL(idx));
++
++	txq->tx_tail = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(idx));
++	RNP_E_REG_WR(hw, RNP_TXQ_TAIL(idx), 0);
++}
++
++static void
++rnp_txq_reset_pre(struct rnp_hw *hw)
++{
++	u16 i = 0;
++
++	spin_lock(&hw->txq_reset_lock);
++	for (i = 0; i < RNP_MAX_RX_QUEUE_NUM; i++) {
++		wmb();
++		RNP_E_REG_WR(hw, RNP_RXQ_START(i), 0);
++	}
++}
++
++static void
++rnp_txq_reset_fin(struct rnp_hw *hw)
++{
++	u16 i = 0;
++
++	for (i = 0; i < RNP_MAX_RX_QUEUE_NUM; i++) {
++		wmb();
++		RNP_E_REG_WR(hw, RNP_RXQ_START(i), 1);
++	}
++	spin_unlock(&hw->txq_reset_lock);
++}
++
++static void
++rnp_xmit_nop_frame_ring(struct rnp_hw *hw,
++			struct rnp_tx_queue *txq,
++			u16 head)
++{
++	volatile struct rnp_tx_desc *tx_desc;
++	u16 check_head = 0;
++	u16 timeout = 0;
++	u16 index = 0;
++	u16 tx_id;
++
++	tx_id = head;
++	index = txq->attr.index;
++	tx_desc = &txq->tx_bdr[tx_id];
++
++	/* set length to 0 */
++	tx_desc->d.blen = 0;
++	tx_desc->d.addr = 0;
++	wmb();
++	tx_desc->d.cmd = cpu_to_le16(RNP_CMD_EOP);
++	wmb();
++	/* update tail */
++	RNP_REG_WR(txq->tx_tailreg, 0, 0);
++	do {
++		check_head = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(index));
++		if (check_head == 0)
++			break;
++		if (timeout == 1000)
++			RNP_PMD_ERR("tx_queue[%d] reset may be hang "
++					"check_head %d base head %d",
++					index, check_head, head);
++		timeout++;
++		udelay(10);
++	} while (1);
++	/* restore the origin right state */
++	wmb();
++	RNP_E_REG_WR(hw, RNP_TXQ_LEN(index), txq->attr.nb_desc);
++}
++
++void rnp_reset_hw_txq_op(struct rnp_hw *hw,
++			 struct rnp_tx_queue *txq)
++{
++	u16 timeout = 0;
++	u16 index = 0;
++	u16 head;
++	u16 tail;
++
++	timeout = 0;
++	/* Disable Tx Queue */
++	index = txq->attr.index;
++	rnp_txq_reset_pre(hw);
++	rmb();
++	tail = RNP_E_REG_RD(hw, RNP_TXQ_TAIL(index));
++	txq->tx_tail = tail;
++	do {
++		/* wait for hw head is stopped */
++		head = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(index));
++		if (head == txq->tx_tail)
++			break;
++		if (timeout > 1000) {
++			RNP_PMD_ERR("txq[%u] 1000*10us can't "
++				    "wait for hw head == tail", index);
++			break;
++		}
++		timeout++;
++		udelay(10);
++	} while (1);
++	rmb();
++	head = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(index));
++	/* head is zero no need to reset */
++	if (head == 0)
++		goto tx_reset_fin;
++	wmb();
++	if (head != txq->attr.nb_desc_mask)
++		RNP_E_REG_WR(hw, RNP_TXQ_LEN(index), head + 1);
++	wmb();
++	/* reset hw head */
++	rnp_xmit_nop_frame_ring(hw, txq, head);
++	rmb();
++	txq->tx_tail = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(index));
++tx_reset_fin:
++	rnp_txq_reset_fin(hw);
++}
+diff --git a/drivers/net/rnp/base/rnp_bdq_if.h b/drivers/net/rnp/base/rnp_bdq_if.h
+new file mode 100644
+index 0000000000..61a38323e5
+--- /dev/null
++++ b/drivers/net/rnp/base/rnp_bdq_if.h
+@@ -0,0 +1,149 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#ifndef _RNP_BDQ_IF_H_
++#define _RNP_BDQ_IF_H_
++
++#include "rnp_hw.h"
++
++struct rnp_rx_queue;
++struct rnp_tx_queue;
++#pragma pack(push)
++#pragma pack(1)
++/* receive descriptor */
++struct rnp_rx_desc {
++	/* rx buffer descriptor */
++	union {
++		struct {
++			u64 pkt_addr;
++			u16 rsvd[3];
++			u16 cmd;
++		} d;
++		struct {
++			struct {
++				u32 rss_hash;
++				u32 mark_data;
++			} qword0;
++			struct {
++				u32 lens;
++				u16 vlan_tci;
++				u16 cmd;
++			} qword1;
++		} wb;
++	};
++};
++/* tx buffer descriptors (BD) */
++struct rnp_tx_desc {
++	union {
++		struct {
++			u64 addr;       /* pkt dma address */
++			u16 blen;       /* pkt data Len */
++			u16 mac_ip_len; /* mac ip header len */
++			u16 vlan_tci;   /* vlan_tci */
++			u16 cmd;        /* ctrl command */
++		} d;
++		struct {
++			struct {
++				u16 mss;        /* tso sz */
++				u8 vf_num;      /* vf num */
++				u8 l4_len;      /* l4 header size */
++				u8 tunnel_len;  /* tunnel header size */
++				u16 vlan_tci;   /* vlan_tci */
++				u8 veb_tran;    /* mark pkt is transmit by veb */
++			} qword0;
++			struct {
++				u16 rsvd[3];
++				u16 cmd;        /* ctrl command */
++			} qword1;
++		} c;
++	};
++};
++#pragma pack(pop)
++/* common command */
++#define RNP_CMD_EOP              RTE_BIT32(0) /* End Of Packet */
++#define RNP_CMD_DD               RTE_BIT32(1)
++#define RNP_CMD_RS               RTE_BIT32(2)
++#define RNP_DESC_TYPE_S		(3)
++#define RNP_DATA_DESC		(0x00UL << RNP_DESC_TYPE_S)
++#define RNP_CTRL_DESC		(0x01UL << RNP_DESC_TYPE_S)
++/* rx data cmd */
++#define RNP_RX_PTYPE_PTP	RTE_BIT32(4)
++#define RNP_RX_L3TYPE_S		(5)
++#define RNP_RX_L3TYPE_IPV4	(0x00UL << RNP_RX_L3TYPE_S)
++#define RNP_RX_L3TYPE_IPV6	(0x01UL << RNP_RX_L3TYPE_S)
++#define RNP_RX_L4TYPE_S		(6)
++#define RNP_RX_L4TYPE_TCP	(0x01UL << RNP_RX_L4TYPE_S)
++#define RNP_RX_L4TYPE_SCTP	(0x02UL << RNP_RX_L4TYPE_S)
++#define RNP_RX_L4TYPE_UDP	(0x03UL << RNP_RX_L4TYPE_S)
++#define RNP_RX_ERR_MASK		RTE_GENMASK32(12, 8)
++#define RNP_RX_L3_ERR		RTE_BIT32(8)
++#define RNP_RX_L4_ERR		RTE_BIT32(9)
++#define RNP_RX_SCTP_ERR		RTE_BIT32(10)
++#define RNP_RX_IN_L3_ERR	RTE_BIT32(11)
++#define RNP_RX_IN_L4_ERR	RTE_BIT32(12)
++#define RNP_RX_TUNNEL_TYPE_S	(13)
++#define RNP_RX_PTYPE_VXLAN	(0x01UL << RNP_RX_TUNNEL_TYPE_S)
++#define RNP_RX_PTYPE_NVGRE	(0x02UL << RNP_RX_TUNNEL_TYPE_S)
++#define RNP_RX_PTYPE_VLAN	RTE_BIT32(15)
++/* tx data cmd */
++#define RNP_TX_TSO_EN		RTE_BIT32(4)
++#define RNP_TX_L3TYPE_S		(5)
++#define RNP_TX_L3TYPE_IPV6	(0x01UL << RNP_TX_L3TYPE_S)
++#define RNP_TX_L3TYPE_IPV4	(0x00UL << RNP_TX_L3TYPE_S)
++#define RNP_TX_L4TYPE_S		(6)
++#define RNP_TX_L4TYPE_TCP	(0x01UL << RNP_TX_L4TYPE_S)
++#define RNP_TX_L4TYPE_SCTP	(0x02UL << RNP_TX_L4TYPE_S)
++#define RNP_TX_L4TYPE_UDP	(0x03UL << RNP_TX_L4TYPE_S)
++#define RNP_TX_TUNNEL_TYPE_S	(8)
++#define RNP_TX_VXLAN_TUNNEL	(0x01UL << RNP_TX_TUNNEL_TYPE_S)
++#define RNP_TX_NVGRE_TUNNEL	(0x02UL << RNP_TX_TUNNEL_TYPE_S)
++#define RNP_TX_PTP_EN		RTE_BIT32(10)
++#define RNP_TX_IP_CKSUM_EN	RTE_BIT32(11)
++#define RNP_TX_L4CKSUM_EN	RTE_BIT32(12)
++#define RNP_TX_VLAN_CTRL_S	(13)
++#define RNP_TX_VLAN_STRIP	(0x01UL << RNP_TX_VLAN_CTRL_S)
++#define RNP_TX_VLAN_INSERT	(0x02UL << RNP_TX_VLAN_CTRL_S)
++#define RNP_TX_VLAN_VALID	RTE_BIT32(15)
++/* tx data mac_ip len */
++#define RNP_TX_MAC_LEN_S	(9)
++/* tx ctrl cmd */
++#define RNP_TX_LEN_PAD_S	(8)
++#define RNP_TX_OFF_MAC_PAD	(0x01UL << RNP_TX_LEN_PAD_S)
++#define RNP_TX_QINQ_CTRL_S	(10)
++#define RNP_TX_QINQ_INSERT	(0x02UL << RNP_TX_QINQ_CTRL_S)
++#define RNP_TX_QINQ_STRIP	(0x01UL << RNP_TX_QINQ_CTRL_S)
++#define RNP_TX_TO_NPU_EN	RTE_BIT32(15)
++/* descript op end */
++struct rnp_rxq_reset_res {
++	u64 rx_pkt_addr;
++	u64 tx_pkt_addr;
++	u8 *eth_hdr;
++};
++struct rnp_veb_cfg {
++	uint32_t mac_hi;
++	uint32_t mac_lo;
++	uint32_t vid;
++	uint16_t vf_id;
++	uint16_t ring;
++};
++void
++rnp_rxq_flow_enable(struct rnp_hw *hw,
++		    u16 hw_idx);
++void
++rnp_rxq_flow_disable(struct rnp_hw *hw,
++		     u16 hw_idx);
++void
++rnp_reset_hw_rxq_op(struct rnp_hw *hw,
++		    struct rnp_rx_queue *rxq,
++		    struct rnp_tx_queue *txq,
++		    struct rnp_rxq_reset_res *res);
++void rnp_reset_hw_txq_op(struct rnp_hw *hw,
++			 struct rnp_tx_queue *txq);
++void rnp_setup_rxbdr(struct rnp_hw *hw,
++		     struct rnp_rx_queue *rxq);
++void rnp_setup_txbdr(struct rnp_hw *hw,
++		     struct rnp_tx_queue *txq);
++int rnp_get_dma_ring_index(struct rnp_eth_port *port, u16 queue_idx);
++
++#endif /* _RNP_BDQ_IF_H_ */
 diff --git a/drivers/net/rnp/base/rnp_common.h b/drivers/net/rnp/base/rnp_common.h
-index cf1996a675..91e2996398 100644
+index aaf77a6dad..cf1996a675 100644
 --- a/drivers/net/rnp/base/rnp_common.h
 +++ b/drivers/net/rnp/base/rnp_common.h
-@@ -12,5 +12,6 @@
- 	 ((macaddr[4] << 8)) | (macaddr[5]))
+@@ -6,6 +6,10 @@
+ #define _RNP_COMMON_H_
+ 
+ #define RNP_NIC_RESET		_NIC_(0x0010)
++#define RNP_GET_MAC_HI(macaddr) (((macaddr[0]) << 8) | (macaddr[1]))
++#define RNP_GET_MAC_LO(macaddr) \
++	((macaddr[2] << 24) | (macaddr[3] << 16) | \
++	 ((macaddr[4] << 8)) | (macaddr[5]))
  int rnp_init_hw(struct rnp_hw *hw);
  int rnp_setup_common_ops(struct rnp_hw *hw);
-+int rnp_clock_valid_check(struct rnp_hw *hw, u16 nr_lane);
  
- #endif /* _RNP_COMMON_H_ */
 diff --git a/drivers/net/rnp/base/rnp_dma_regs.h b/drivers/net/rnp/base/rnp_dma_regs.h
-index 7c17741c55..8bc6fe581a 100644
+index 00f8aff944..7c17741c55 100644
 --- a/drivers/net/rnp/base/rnp_dma_regs.h
 +++ b/drivers/net/rnp/base/rnp_dma_regs.h
-@@ -6,9 +6,19 @@
- #define _RNP_DMA_REGS_H_
- 
- #define RNP_DMA_VERSION		(0)
-+#define RNP_DMA_CTRL		(0x4)
-+/* 1bit <-> 16 bytes dma addr size */
-+#define RNP_DMA_SCATTER_MEM_MASK	RTE_GENMASK32(31, 16)
-+#define RNP_DMA_SCATTER_MEN_S		(16)
-+#define RNP_DMA_RX_MEM_PAD_EN		RTE_BIT32(8)
-+#define RTE_DMA_VEB_BYPASS		RTE_BIT32(4)
-+#define RNP_DMA_TXRX_LOOP		RTE_BIT32(1)
-+#define RNP_DMA_TXMRX_LOOP		RTE_BIT32(0)
-+
+@@ -9,5 +9,50 @@
  #define RNP_DMA_HW_EN		(0x10)
  #define RNP_DMA_EN_ALL		(0b1111)
  #define RNP_DMA_HW_STATE	(0x14)
-+
- /* --- queue register --- */
- /* queue enable */
- #define RNP_RXQ_START(qid)	_RING_(0x0010 + 0x100 * (qid))
++/* --- queue register --- */
++/* queue enable */
++#define RNP_RXQ_START(qid)	_RING_(0x0010 + 0x100 * (qid))
++#define RNP_RXQ_READY(qid)	_RING_(0x0014 + 0x100 * (qid))
++#define RNP_TXQ_START(qid)	_RING_(0x0018 + 0x100 * (qid))
++#define RNP_TXQ_READY(qid)	_RING_(0x001c + 0x100 * (qid))
++/* queue irq generate ctrl */
++#define RNP_RXTX_IRQ_STAT(qid)	_RING_(0x0020 + 0x100 * (qid))
++#define RNP_RXTX_IRQ_MASK(qid)	_RING_(0x0024 + 0x100 * (qid))
++#define RNP_TX_IRQ_MASK		RTE_BIT32(1)
++#define RNP_RX_IRQ_MASK		RTE_BIT32(0)
++#define RNP_RXTX_IRQ_MASK_ALL	(RNP_RX_IRQ_MASK | RNP_TX_IRQ_MASK)
++#define RNP_RXTX_IRQ_CLER(qid)	_RING_(0x0028 + 0x100 * (qid))
++/* rx-queue setup */
++#define RNP_RXQ_BASE_ADDR_HI(qid)	_RING_(0x0030 + 0x100 * (qid))
++#define RNP_RXQ_BASE_ADDR_LO(qid)	_RING_(0x0034 + 0x100 * (qid))
++#define RNP_RXQ_LEN(qid)		_RING_(0x0038 + 0x100 * (qid))
++#define RNP_RXQ_HEAD(qid)		_RING_(0x003c + 0x100 * (qid))
++#define RNP_RXQ_TAIL(qid)		_RING_(0x0040 + 0x100 * (qid))
++#define RNP_RXQ_DESC_FETCH_CTRL(qid)	_RING_(0x0044 + 0x100 * (qid))
++/* rx queue interrupt generate param */
++#define RNP_RXQ_INT_DELAY_TIMER(qid)	_RING_(0x0048 + 0x100 * (qid))
++#define RNP_RXQ_INT_DELAY_PKTCNT(qid)	_RING_(0x004c + 0x100 * (qid))
++#define RNP_RXQ_RX_PRI_LVL(qid)		_RING_(0x0050 + 0x100 * (qid))
++#define RNP_RXQ_DROP_TIMEOUT_TH(qid)	_RING_(0x0054 + 0x100 * (qid))
++/* tx queue setup */
++#define RNP_TXQ_BASE_ADDR_HI(qid)        _RING_(0x0060 + 0x100 * (qid))
++#define RNP_TXQ_BASE_ADDR_LO(qid)        _RING_(0x0064 + 0x100 * (qid))
++#define RNP_TXQ_LEN(qid)                 _RING_(0x0068 + 0x100 * (qid))
++#define RNP_TXQ_HEAD(qid)                _RING_(0x006c + 0x100 * (qid))
++#define RNP_TXQ_TAIL(qid)                _RING_(0x0070 + 0x100 * (qid))
++#define RNP_TXQ_DESC_FETCH_CTRL(qid)     _RING_(0x0074 + 0x100 * (qid))
++#define RNQ_DESC_FETCH_BURST_S		(16)
++/* tx queue interrupt generate param */
++#define RNP_TXQ_INT_DELAY_TIMER(qid)     _RING_(0x0078 + 0x100 * (qid))
++#define RNP_TXQ_INT_DELAY_PKTCNT(qid)    _RING_(0x007c + 0x100 * (qid))
++/* veb ctrl register */
++#define RNP_VEB_MAC_LO(p, n)	_RING_(0x00a0 + (4 * (p)) + (0x100 * (n)))
++#define RNP_VEB_MAC_HI(p, n)	_RING_(0x00b0 + (4 * (p)) + (0x100 * (n)))
++#define RNP_VEB_VID_CFG(p, n)	_RING_(0x00c0 + (4 * (p)) + (0x100 * (n)))
++#define RNP_VEB_VF_RING(p, n)	_RING_(0x00d0 + (4 * (p)) + (0x100 * (n)))
++#define RNP_MAX_VEB_TB		(64)
++#define RNP_VEB_RING_CFG_S	(8)
++#define RNP_VEB_SWITCH_VF_EN	RTE_BIT32(7)
++#define MAX_VEB_TABLES_NUM	(4)
+ 
+ #endif /* _RNP_DMA_REGS_H_ */
 diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 10e3d954b8..60766d2035 100644
+index c4519ba1e5..10e3d954b8 100644
 --- a/drivers/net/rnp/base/rnp_eth_regs.h
 +++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -10,6 +10,9 @@
+@@ -10,6 +10,10 @@
  #define RNP_E_FILTER_EN		_ETH_(0x801c)
  #define RNP_E_REDIR_EN		_ETH_(0x8030)
  
-+#define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
-+#define RNP_RX_ETH_F_OFF	(0x7ff)
-+#define RNP_RX_ETH_F_ON		(0x270)
- /* rx queue flow ctrl */
- #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
- #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
-@@ -28,6 +31,8 @@
- #define RNP_MAC_HASH_MASK		RTE_GENMASK32(11, 0)
- #define RNP_MAC_MULTICASE_TBL_EN	RTE_BIT32(2)
- #define RNP_MAC_UNICASE_TBL_EN		RTE_BIT32(3)
-+/* rss function ctrl */
-+#define RNP_RSS_REDIR_TB(n, id) _ETH_(0xe000 + ((n) * 0x200) + ((id) * 0x4))
- 
- #define RNP_TC_PORT_OFFSET(lane)	_ETH_(0xe840 + 0x04 * (lane))
- 
++/* rx queue flow ctrl */
++#define RNP_RX_FC_ENABLE	_ETH_(0x8520)
++#define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
++#define RNP_RING_FC_THRESH(n)	_ETH_(0x8a00 + ((0x4) * (n)))
+ /* Mac Host Filter  */
+ #define RNP_MAC_FCTRL		_ETH_(0x9110)
+ #define RNP_MAC_FCTRL_MPE	RTE_BIT32(8)  /* Multicast Promiscuous En */
 diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-index e2b2717f0a..6cdca99bda 100644
+index dd9649ddbc..e2b2717f0a 100644
 --- a/drivers/net/rnp/base/rnp_hw.h
 +++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -120,6 +120,7 @@ struct rnp_hw {
+@@ -120,6 +120,9 @@ struct rnp_hw {
  	bool lane_is_sgmii[RNP_MAX_PORT_OF_PF];
  	struct rnp_mbx_info mbx;
  	struct rnp_fw_info fw_info;
-+	u16 min_dma_size;
- 
- 	spinlock_t rxq_reset_lock; /* reset op isn't thread safe */
- 	spinlock_t txq_reset_lock; /* reset op isn't thread safe */
-diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
-index 57cbd9e3d5..1dac903396 100644
---- a/drivers/net/rnp/base/rnp_mac.h
-+++ b/drivers/net/rnp/base/rnp_mac.h
-@@ -7,6 +7,20 @@
- 
- #include "rnp_osdep.h"
- #include "rnp_hw.h"
-+#include "rnp_eth_regs.h"
 +
-+#define RNP_RX_ETH_DISABLE(hw, nr_lane) do { \
-+	wmb(); \
-+	RNP_E_REG_WR(hw, RNP_RX_ETH_F_CTRL(nr_lane), \
-+			RNP_RX_ETH_F_OFF); \
-+} while (0)
-+
-+#define RNP_RX_ETH_ENABLE(hw, nr_lane) do { \
-+	wmb(); \
-+	RNP_E_REG_WR(hw, RNP_RX_ETH_F_CTRL(nr_lane), \
-+			RNP_RX_ETH_F_ON); \
-+} while (0)
-+
- 
- void rnp_mac_ops_init(struct rnp_hw *hw);
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac);
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index 1dc0668b48..1ae880143d 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -7,6 +7,41 @@
- 
- #define RNP_MAC_BASE_OFFSET(n)  (_MAC_(0) + ((0x10000) * (n)))
- 
-+#define RNP_MAC_TX_CFG		(0x0)
-+/* Transmitter Enable */
-+#define RNP_MAC_TE		RTE_BIT32(0)
-+/* Jabber Disable */
-+#define RNP_MAC_JD		RTE_BIT32(16)
-+#define RNP_SPEED_SEL_MASK	RTE_GENMASK32(30, 28)
-+#define RNP_SPEED_SEL_S		(28)
-+#define RNP_SPEED_SEL_1G	(b111 << RNP_SPEED_SEL_S)
-+#define RNP_SPEED_SEL_10G	(b010 << RNP_SPEED_SEL_S)
-+#define RNP_SPEED_SEL_40G	(b000 << RNP_SPEED_SEL_S)
-+
-+#define RNP_MAC_RX_CFG		(0x4)
-+/* Receiver Enable */
-+#define RNP_MAC_RE		RTE_BIT32(0)
-+/* Automatic Pad or CRC Stripping */
-+#define RNP_MAC_ACS		RTE_BIT32(1)
-+/* CRC stripping for Type packets */
-+#define RNP_MAC_CST		RTE_BIT32(2)
-+/* Disable CRC Check */
-+#define RNP_MAC_DCRCC		RTE_BIT32(3)
-+/* Enable Max Frame Size Limit */
-+#define RNP_MAC_GPSLCE		RTE_BIT32(6)
-+/* Watchdog Disable */
-+#define RNP_MAC_WD		RTE_BIT32(7)
-+/* Jumbo Packet Support En */
-+#define RNP_MAC_JE		RTE_BIT32(8)
-+/* Enable IPC */
-+#define RNP_MAC_IPC		RTE_BIT32(9)
-+/* Loopback Mode */
-+#define RNP_MAC_LM		RTE_BIT32(10)
-+/* Giant Packet Size Limit */
-+#define RNP_MAC_GPSL_MASK	RTE_GENMASK32(29, 16)
-+#define RNP_MAC_MAX_GPSL	(1518)
-+#define RNP_MAC_CPSL_SHIFT	(16)
-+
- #define RNP_MAC_PKT_FLT_CTRL	(0x8)
- /* Receive All */
- #define RNP_MAC_RA		RTE_BIT32(31)
-@@ -35,5 +70,12 @@
- #define RNP_MAC_HPF		RTE_BIT32(10)
- #define RNP_MAC_VTFE		RTE_BIT32(16)
- 
-+#define RNP_MAC_VFE		RTE_BIT32(16)
-+/* mac link ctrl */
-+#define RNP_MAC_LPI_CTRL	(0xd0)
-+/* PHY Link Status Disable */
-+#define RNP_MAC_PLSDIS		RTE_BIT32(18)
-+/* PHY Link Status */
-+#define RNP_MAC_PLS		RTE_BIT32(17)
- 
- #endif /* _RNP_MAC_REGS_H_ */
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index b579fc1052..27fff0282f 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -107,6 +107,9 @@ struct rnp_eth_port {
- 	struct rnp_port_attr attr;
- 	struct rnp_tx_queue *tx_queues[RNP_MAX_RX_QUEUE_NUM];
- 	struct rnp_hw *hw;
-+
-+	rte_spinlock_t rx_mac_lock;
-+	bool port_stopped;
++	spinlock_t rxq_reset_lock; /* reset op isn't thread safe */
++	spinlock_t txq_reset_lock; /* reset op isn't thread safe */
  };
  
- struct rnp_eth_adapter {
+ #endif /* __RNP_H__*/
+diff --git a/drivers/net/rnp/base/rnp_osdep.h b/drivers/net/rnp/base/rnp_osdep.h
+index 8817a4985c..c2dde3bb70 100644
+--- a/drivers/net/rnp/base/rnp_osdep.h
++++ b/drivers/net/rnp/base/rnp_osdep.h
+@@ -14,6 +14,7 @@
+ #include <rte_bitops.h>
+ #include <rte_cycles.h>
+ #include <rte_byteorder.h>
++#include <rte_spinlock.h>
+ #include <rte_common.h>
+ #include <rte_memcpy.h>
+ #include <rte_memzone.h>
+@@ -33,16 +34,28 @@ typedef rte_iova_t dma_addr_t;
+ 
+ #define mb()	rte_mb()
+ #define wmb()	rte_wmb()
++#define rmb()	rte_rmb()
+ 
+ #define udelay(x) rte_delay_us(x)
+ #define mdelay(x) rte_delay_ms(x)
+ #define memcpy rte_memcpy
+ 
++#ifndef upper_32_bits
++#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
++#define lower_32_bits(n) ((u32)((n) & 0xffffffff))
++#endif
++
++#ifndef cpu_to_le32
++#define cpu_to_le16(v)	rte_cpu_to_le_16((u16)(v))
++#define cpu_to_le32(v)	rte_cpu_to_le_32((u32)(v))
++#endif
++
+ #define spinlock_t			rte_spinlock_t
+ #define spin_lock_init(spinlock_v)	rte_spinlock_init(spinlock_v)
+ #define spin_lock(spinlock_v)		rte_spinlock_lock(spinlock_v)
+ #define spin_unlock(spinlock_v)		rte_spinlock_unlock(spinlock_v)
+ 
++#define _RING_(off)	((off) + (0x08000))
+ #define _ETH_(off)	((off) + (0x10000))
+ #define _NIC_(off)	((off) + (0x30000))
+ #define _MAC_(off)	((off) + (0x60000))
+diff --git a/drivers/net/rnp/meson.build b/drivers/net/rnp/meson.build
+index 660b36e1b0..18cadd46ff 100644
+--- a/drivers/net/rnp/meson.build
++++ b/drivers/net/rnp/meson.build
+@@ -14,4 +14,5 @@ includes += include_directories('base')
+ 
+ sources = files(
+                 'rnp_ethdev.c',
++                'rnp_rxtx.c',
+ )
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+index b777aa2a4a..b579fc1052 100644
+--- a/drivers/net/rnp/rnp.h
++++ b/drivers/net/rnp/rnp.h
+@@ -105,6 +105,7 @@ struct rnp_eth_port {
+ 	struct rte_ether_addr mac_addr;
+ 	struct rte_eth_dev *eth_dev;
+ 	struct rnp_port_attr attr;
++	struct rnp_tx_queue *tx_queues[RNP_MAX_RX_QUEUE_NUM];
+ 	struct rnp_hw *hw;
+ };
+ 
+@@ -113,6 +114,7 @@ struct rnp_eth_adapter {
+ 	struct rte_pci_device *pdev;
+ 	struct rte_eth_dev *eth_dev; /* alloc eth_dev by platform */
+ 
++	struct rte_mempool *reset_pool;
+ 	struct rnp_eth_port *ports[RNP_MAX_PORT_OF_PF];
+ 	uint16_t closed_ports;
+ 	uint16_t inited_ports;
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 52d2ed5641..5d33da7fb2 100644
+index 39736b01d0..52d2ed5641 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -15,6 +15,8 @@
+@@ -15,6 +15,7 @@
  #include "base/rnp_mac.h"
  #include "base/rnp_eth_regs.h"
  #include "base/rnp_common.h"
-+#include "base/rnp_dma_regs.h"
-+#include "base/rnp_mac_regs.h"
- #include "rnp_rxtx.h"
++#include "rnp_rxtx.h"
  
  static struct rte_eth_dev *
-@@ -53,9 +55,275 @@ static void rnp_dev_interrupt_handler(void *param)
- 	RTE_SET_USED(param);
+ rnp_alloc_eth_port(struct rte_pci_device *pci, char *name)
+@@ -238,6 +239,11 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.promiscuous_disable          = rnp_promiscuous_disable,
+ 	.allmulticast_enable          = rnp_allmulticast_enable,
+ 	.allmulticast_disable         = rnp_allmulticast_disable,
++
++	.rx_queue_setup               = rnp_rx_queue_setup,
++	.rx_queue_release             = rnp_dev_rx_queue_release,
++	.tx_queue_setup               = rnp_tx_queue_setup,
++	.tx_queue_release             = rnp_dev_tx_queue_release,
+ };
+ 
+ static void
+@@ -330,6 +336,26 @@ rnp_proc_priv_init(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
-+static void rnp_mac_rx_enable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	rte_spinlock_lock(&port->rx_mac_lock);
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+	mac_cfg |= RNP_MAC_RE;
-+
-+	mac_cfg &= ~RNP_MAC_GPSL_MASK;
-+	mac_cfg |= (RNP_MAC_MAX_GPSL << RNP_MAC_CPSL_SHIFT);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-+	rte_spinlock_unlock(&port->rx_mac_lock);
-+}
-+
-+static void rnp_mac_rx_disable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	/* to protect conflict hw resource */
-+	rte_spinlock_lock(&port->rx_mac_lock);
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+	mac_cfg &= ~RNP_MAC_RE;
-+
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-+	rte_spinlock_unlock(&port->rx_mac_lock);
-+}
-+
-+static void rnp_mac_tx_enable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_TX_CFG);
-+	mac_cfg |= RNP_MAC_TE;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_TX_CFG, mac_cfg);
-+}
-+
-+static void rnp_mac_tx_disable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t ctrl;
-+
-+	/* must wait for tx side has send finish
-+	 * before fisable tx side
-+	 */
-+	ctrl = RNP_MAC_REG_RD(hw, lane, RNP_MAC_TX_CFG);
-+	ctrl &= ~RNP_MAC_TE;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_TX_CFG, ctrl);
-+}
-+
-+static void rnp_mac_init(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	rnp_mac_tx_enable(dev);
-+	rnp_mac_rx_enable(dev);
-+
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_LPI_CTRL);
-+	mac_cfg |= RNP_MAC_PLSDIS | RNP_MAC_PLS;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_LPI_CTRL, mac_cfg);
-+}
-+
 +static int
-+rnp_rx_scattered_setup(struct rte_eth_dev *dev)
++rnp_rx_reset_pool_setup(struct rnp_eth_adapter *adapter)
 +{
-+	uint16_t max_pkt_size =
-+		dev->data->dev_conf.rxmode.mtu + RNP_ETH_OVERHEAD;
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw *hw = port->hw;
-+	struct rnp_rx_queue *rxq;
-+	uint16_t dma_buf_size;
-+	uint16_t queue_id;
-+	uint32_t dma_ctrl;
++	struct rte_eth_dev *eth_dev = adapter->eth_dev;
++	char name[RTE_MEMPOOL_NAMESIZE];
 +
-+	if (dev->data->rx_queues == NULL)
++	snprintf(name, sizeof(name), "rx_reset_pool_%d:%d",
++			eth_dev->data->port_id, eth_dev->device->numa_node);
++
++	adapter->reset_pool = rte_pktmbuf_pool_create(name, 2,
++			0, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
++			eth_dev->device->numa_node);
++	if (adapter->reset_pool == NULL) {
++		RNP_PMD_ERR("mempool %s create failed", name);
 +		return -ENOMEM;
-+	for (queue_id = 0; queue_id < dev->data->nb_rx_queues; queue_id++) {
-+		rxq = dev->data->rx_queues[queue_id];
-+		if (!rxq)
-+			continue;
-+		if (hw->min_dma_size == 0)
-+			hw->min_dma_size = rxq->rx_buf_len;
-+		else
-+			hw->min_dma_size = RTE_MIN(hw->min_dma_size,
-+					rxq->rx_buf_len);
 +	}
-+	if (hw->min_dma_size < RNP_MIN_DMA_BUF_SIZE) {
-+		RNP_PMD_ERR("port[%d] scatter dma len is not support %d",
-+				dev->data->port_id, hw->min_dma_size);
-+		return -ENOTSUP;
-+	}
-+	dma_buf_size = hw->min_dma_size;
-+	/* Setup max dma scatter engine split size */
-+	dma_ctrl = RNP_E_REG_RD(hw,  RNP_DMA_CTRL);
-+	if (max_pkt_size == dma_buf_size)
-+		dma_buf_size += (dma_buf_size % 16);
-+	RNP_PMD_INFO("PF[%d] MaxPktLen %d MbSize %d MbHeadRoom %d",
-+			hw->mbx.pf_num, max_pkt_size,
-+			dma_buf_size, RTE_PKTMBUF_HEADROOM);
-+	dma_ctrl &= ~RNP_DMA_SCATTER_MEM_MASK;
-+	dma_ctrl |= ((dma_buf_size / 16) << RNP_DMA_SCATTER_MEN_S);
-+	RNP_E_REG_WR(hw, RNP_DMA_CTRL, dma_ctrl);
 +
 +	return 0;
 +}
 +
-+static int rnp_enable_all_rx_queue(struct rte_eth_dev *dev)
+ static int
+ rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
+ {
+@@ -425,6 +451,9 @@ rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
+ 			rte_eth_dev_probing_finish(sub_eth_dev);
+ 		}
+ 	}
++	ret = rnp_rx_reset_pool_setup(adapter);
++	if (ret)
++		goto eth_alloc_error;
+ 	/* enable link update event interrupt */
+ 	rte_intr_callback_register(intr_handle,
+ 			rnp_dev_interrupt_handler, adapter);
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+new file mode 100644
+index 0000000000..6aa43945f4
+--- /dev/null
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -0,0 +1,476 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#include <stdint.h>
++
++#include <rte_ethdev.h>
++#include <rte_memzone.h>
++#include <rte_mbuf.h>
++#include <rte_malloc.h>
++
++#include "base/rnp_bdq_if.h"
++#include "base/rnp_dma_regs.h"
++#include "rnp_rxtx.h"
++#include "rnp_logs.h"
++#include "rnp.h"
++
++static void rnp_tx_queue_release_mbuf(struct rnp_tx_queue *txq);
++static void rnp_tx_queue_sw_reset(struct rnp_tx_queue *txq);
++static void rnp_tx_queue_release(void *_txq);
++
++static __rte_always_inline phys_addr_t
++rnp_get_dma_addr(struct rnp_queue_attr *attr, struct rte_mbuf *mbuf)
 +{
-+	struct rnp_rx_queue *rxq;
-+	uint16_t idx;
-+	int ret = 0;
++	phys_addr_t dma_addr;
 +
-+	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
-+		rxq = dev->data->rx_queues[idx];
-+		if (!rxq || rxq->rx_deferred_start)
-+			continue;
-+		if (dev->data->rx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STOPPED) {
-+			ret = rnp_rx_queue_start(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
++	dma_addr = rte_cpu_to_le_64(rte_mbuf_data_iova(mbuf));
++	if (attr->sriov_st)
++		dma_addr |= (attr->sriov_st << 56);
 +
-+	return ret;
++	return dma_addr;
 +}
 +
-+static int rnp_enable_all_tx_queue(struct rte_eth_dev *dev)
++static void rnp_rx_queue_release_mbuf(struct rnp_rx_queue *rxq)
 +{
-+	struct rnp_tx_queue *txq;
-+	uint16_t idx;
-+	int ret = 0;
++	uint16_t i;
 +
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = dev->data->tx_queues[idx];
-+		if (!txq || txq->tx_deferred_start)
-+			continue;
-+		if (dev->data->tx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STOPPED) {
-+			ret = rnp_tx_queue_start(dev, idx);
-+			if (ret < 0)
-+				return ret;
++	if (!rxq)
++		return;
++
++	if (rxq->sw_ring) {
++		for (i = 0; i < rxq->attr.nb_desc; i++) {
++			if (rxq->sw_ring[i].mbuf)
++				rte_pktmbuf_free_seg(rxq->sw_ring[i].mbuf);
 +		}
++		memset(rxq->sw_ring, 0,
++				sizeof(rxq->sw_ring[0]) * rxq->attr.nb_desc);
 +	}
-+
-+	return ret;
 +}
 +
-+static int rnp_dev_start(struct rte_eth_dev *eth_dev)
++static void rnp_rx_queue_release(void *_rxq)
++{
++	struct rnp_rx_queue *rxq = (struct rnp_rx_queue *)_rxq;
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (rxq) {
++		rnp_rx_queue_release_mbuf(rxq);
++		if (rxq->rz)
++			rte_memzone_free(rxq->rz);
++		if (rxq->sw_ring)
++			rte_free(rxq->sw_ring);
++		rte_free(rxq);
++	}
++}
++
++static int
++rnp_tx_queue_reset(struct rnp_eth_port *port,
++		   struct rnp_tx_queue *txq)
++{
++	struct rnp_hw *hw = port->hw;
++
++	rnp_reset_hw_txq_op(hw, txq);
++
++	return 0;
++}
++
++static int
++rnp_rx_queue_reset(struct rnp_eth_port *port,
++		   struct rnp_rx_queue *rxq)
++{
++	struct rte_eth_dev_data *data = port->eth_dev->data;
++	struct rnp_eth_adapter *adapter = port->hw->back;
++	struct rte_eth_dev *dev = port->eth_dev;
++	struct rnp_rxq_reset_res res = {0};
++	uint16_t qidx = rxq->attr.queue_id;
++	struct rnp_tx_queue *txq = NULL;
++	struct rte_eth_txconf def_conf;
++	struct rnp_hw *hw = port->hw;
++	struct rte_mbuf *m_mbuf[2];
++	bool tx_new = false;
++	uint16_t index;
++	int err = 0;
++
++	index = rxq->attr.index;
++	/* disable eth send pkts to this ring */
++	rxq->rx_tail = RNP_E_REG_RD(hw, RNP_RXQ_HEAD(index));
++	if (!rxq->rx_tail)
++		return 0;
++	if (qidx < data->nb_tx_queues && data->tx_queues[qidx]) {
++		txq = (struct rnp_tx_queue *)data->tx_queues[qidx];
++	} else {
++		/* tx queues has been release or txq num less than rxq num */
++		def_conf.tx_deferred_start = true;
++		def_conf.tx_free_thresh = 32;
++		def_conf.tx_rs_thresh = 32;
++		if (dev->dev_ops->tx_queue_setup)
++			err = dev->dev_ops->tx_queue_setup(dev, qidx,
++				rxq->attr.nb_desc,
++				dev->data->numa_node, &def_conf);
++		if (err) {
++			RNP_PMD_ERR("rxq[%d] reset pair txq setup fail", qidx);
++			return err;
++		}
++		txq = port->tx_queues[qidx];
++		tx_new = true;
++	}
++	if (unlikely(rte_mempool_get_bulk(adapter->reset_pool, (void *)m_mbuf,
++					2) < 0)) {
++		RNP_PMD_LOG(WARNING, "port[%d] reset rx queue[%d] failed "
++				"because mbuf alloc failed",
++				data->port_id, qidx);
++		return -ENOMEM;
++	}
++	rnp_rxq_flow_disable(hw, index);
++	rte_mbuf_refcnt_set(m_mbuf[0], 1);
++	rte_mbuf_refcnt_set(m_mbuf[1], 1);
++	m_mbuf[0]->data_off = RTE_PKTMBUF_HEADROOM;
++	m_mbuf[1]->data_off = RTE_PKTMBUF_HEADROOM;
++	res.eth_hdr = rte_pktmbuf_mtod(m_mbuf[0], uint8_t *);
++	res.rx_pkt_addr = rnp_get_dma_addr(&rxq->attr, m_mbuf[1]);
++	res.tx_pkt_addr = rnp_get_dma_addr(&txq->attr, m_mbuf[0]);
++	rnp_reset_hw_rxq_op(hw, rxq, txq, &res);
++	if (tx_new)
++		rnp_tx_queue_release(txq);
++	else
++		txq->tx_tail = RNP_E_REG_RD(hw, RNP_TXQ_HEAD(index));
++	if (!tx_new) {
++		if (txq->tx_tail) {
++			rnp_tx_queue_release_mbuf(txq);
++			rnp_tx_queue_reset(port, txq);
++			rnp_tx_queue_sw_reset(txq);
++		}
++	}
++	rte_mempool_put_bulk(adapter->reset_pool, (void **)m_mbuf, 2);
++	rnp_rxq_flow_enable(hw, index);
++	rte_io_wmb();
++	RNP_E_REG_WR(hw, RNP_RXQ_LEN(index), rxq->attr.nb_desc);
++
++	return 0;
++}
++
++static int
++rnp_alloc_rxbdr(struct rte_eth_dev *dev,
++		struct rnp_rx_queue *rxq,
++		uint16_t nb_rx_desc, int socket_id)
++{
++	const struct rte_memzone *rz = NULL;
++	uint32_t size = 0;
++
++	size = (nb_rx_desc + RNP_RX_MAX_BURST_SIZE) *
++		sizeof(struct rnp_rxsw_entry);
++	rxq->sw_ring = rte_zmalloc_socket("rx_swring", size,
++			RTE_CACHE_LINE_SIZE, socket_id);
++	if (rxq->sw_ring == NULL)
++		return -ENOMEM;
++	rz = rte_eth_dma_zone_reserve(dev, "rx_ring", rxq->attr.queue_id,
++			RNP_RX_MAX_RING_SZ, RNP_BD_RING_ALIGN, socket_id);
++	if (rz == NULL) {
++		rte_free(rxq->sw_ring);
++		rxq->sw_ring = NULL;
++		return -ENOMEM;
++	}
++	memset(rz->addr, 0, RNP_RX_MAX_RING_SZ);
++	rxq->rx_bdr = (struct rnp_rx_desc *)rz->addr;
++	rxq->ring_phys_addr = rz->iova;
++	rxq->rz = rz;
++
++	return 0;
++}
++
++static void
++rnp_rx_queue_sw_reset(struct rnp_rx_queue *rxq)
++{
++	uint32_t size = 0;
++	uint32_t idx = 0;
++
++	rxq->nb_rx_free = rxq->attr.nb_desc - 1;
++	rxq->rx_tail = 0;
++
++	size = rxq->attr.nb_desc + RNP_RX_MAX_BURST_SIZE;
++	for (idx = 0; idx < size * sizeof(struct rnp_rx_desc); idx++)
++		((volatile char *)rxq->rx_bdr)[idx] = 0;
++}
++
++
++int rnp_rx_queue_setup(struct rte_eth_dev *eth_dev,
++		       uint16_t qidx,
++		       uint16_t nb_rx_desc,
++		       unsigned int socket_id,
++		       const struct rte_eth_rxconf *rx_conf,
++		       struct rte_mempool *mb_pool)
 +{
 +	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
 +	struct rte_eth_dev_data *data = eth_dev->data;
 +	struct rnp_hw *hw = port->hw;
-+	uint16_t lane = 0;
-+	uint16_t idx = 0;
-+	int ret = 0;
++	struct rnp_rx_queue *rxq = NULL;
++	uint64_t offloads;
++	int err = 0;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	lane = port->attr.nr_lane;
-+	ret = rnp_clock_valid_check(hw, lane);
-+	if (ret) {
-+		RNP_PMD_ERR("port[%d] function[%d] lane[%d] hw clock error",
-+				data->port_id, hw->mbx.pf_num, lane);
-+		return ret;
++	RNP_PMD_LOG(INFO, "RXQ[%d] setup nb-desc %d", qidx, nb_rx_desc);
++	offloads = rx_conf->offloads | data->dev_conf.rxmode.offloads;
++	if (rte_is_power_of_2(nb_rx_desc) == 0) {
++		RNP_PMD_ERR("Rxq Desc Num Must power of 2");
++		return -EINVAL;
 +	}
-+	/* disable eth rx flow */
-+	RNP_RX_ETH_DISABLE(hw, lane);
-+	ret = rnp_rx_scattered_setup(eth_dev);
-+	if (ret)
-+		return ret;
-+	ret = rnp_enable_all_tx_queue(eth_dev);
-+	if (ret)
-+		goto txq_start_failed;
-+	ret = rnp_enable_all_rx_queue(eth_dev);
-+	if (ret)
-+		goto rxq_start_failed;
-+	rnp_mac_init(eth_dev);
-+	/* enable eth rx flow */
-+	RNP_RX_ETH_ENABLE(hw, lane);
-+	port->port_stopped = 0;
++	if (nb_rx_desc > RNP_MAX_BD_COUNT)
++		return -EINVAL;
++	/* check whether queue has been created if so release it */
++	if (qidx < data->nb_rx_queues &&
++			data->rx_queues[qidx] != NULL) {
++		rnp_rx_queue_release(data->rx_queues[qidx]);
++		data->rx_queues[qidx] = NULL;
++	}
++	rxq = rte_zmalloc_socket("rnp_rxq", sizeof(struct rnp_rx_queue),
++			RTE_CACHE_LINE_SIZE, socket_id);
++	if (rxq == NULL) {
++		RNP_PMD_ERR("Failed to allocate rx ring memory");
++		return -ENOMEM;
++	}
++	rxq->rx_offloads = offloads;
++	/* queue hw info */
++	rxq->attr.index = rnp_get_dma_ring_index(port, qidx);
++	rxq->attr.nb_desc_mask = nb_rx_desc - 1;
++	rxq->attr.nb_desc = nb_rx_desc;
++	rxq->attr.queue_id = qidx;
++	/* queue map to port hw info */
++	rxq->attr.vf_num = hw->mbx.vf_num;
++	rxq->attr.sriov_st = hw->mbx.sriov_st;
++	rxq->attr.lane_id = port->attr.nr_lane;
++	rxq->attr.port_id = data->port_id;
++#define RNP_RXQ_BD_TIMEOUT   (5000000)
++	rxq->nodesc_tm_thresh = RNP_RXQ_BD_TIMEOUT;
++	rxq->rx_buf_len = (uint16_t)(rte_pktmbuf_data_room_size(mb_pool) -
++			RTE_PKTMBUF_HEADROOM);
++	rxq->mb_pool = mb_pool;
++	err = rnp_alloc_rxbdr(eth_dev, rxq, nb_rx_desc, socket_id);
++	if (err)
++		goto fail;
++	RNP_PMD_LOG(INFO, "PF[%d] dev:[%d] hw-lane[%d] rx_qid[%d] "
++			"hw_ridx %d socket %d",
++			hw->mbx.pf_num, rxq->attr.port_id,
++			rxq->attr.lane_id, qidx,
++			rxq->attr.index, socket_id);
++	rxq->rx_free_thresh = (rx_conf->rx_free_thresh) ?
++		rx_conf->rx_free_thresh : RNP_DEFAULT_RX_FREE_THRESH;
++	rxq->pthresh = (rx_conf->rx_thresh.pthresh) ?
++		rx_conf->rx_thresh.pthresh : RNP_RX_DESC_FETCH_TH;
++	rxq->pburst = (rx_conf->rx_thresh.hthresh) ?
++		rx_conf->rx_thresh.hthresh : RNP_RX_DESC_FETCH_BURST;
++	rnp_setup_rxbdr(hw, rxq);
++	if (rxq->rx_tail) {
++		err = rnp_rx_queue_reset(port, rxq);
++		if (err) {
++			RNP_PMD_ERR("PF[%d] dev:[%d] lane[%d] rx_qid[%d] "
++				    "hw_ridx[%d] bdr setup failed",
++				    hw->mbx.pf_num, rxq->attr.port_id,
++				    rxq->attr.lane_id, qidx, rxq->attr.index);
++			goto rxbd_setup_failed;
++		}
++	}
++	rnp_rx_queue_sw_reset(rxq);
++	data->rx_queues[qidx] = rxq;
 +
 +	return 0;
-+rxq_start_failed:
-+	for (idx = 0; idx < data->nb_rx_queues; idx++)
-+		rnp_rx_queue_stop(eth_dev, idx);
-+txq_start_failed:
-+	for (idx = 0; idx < data->nb_tx_queues; idx++)
-+		rnp_tx_queue_stop(eth_dev, idx);
++rxbd_setup_failed:
++	if (rxq->rz)
++		rte_memzone_free(rxq->rz);
++fail:
++	rte_free(rxq);
 +
-+	return ret;
++	return err;
 +}
 +
-+static int rnp_disable_all_rx_queue(struct rte_eth_dev *dev)
++static void rnp_tx_queue_release_mbuf(struct rnp_tx_queue *txq)
 +{
-+	struct rnp_rx_queue *rxq;
-+	uint16_t idx;
-+	int ret = 0;
++	uint16_t i;
 +
-+	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
-+		rxq = dev->data->rx_queues[idx];
-+		if (!rxq || rxq->rx_deferred_start)
-+			continue;
-+		if (dev->data->rx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STARTED) {
-+			ret = rnp_rx_queue_stop(dev, idx);
-+			if (ret < 0)
-+				return ret;
++	if (!txq)
++		return;
++	if (txq->sw_ring) {
++		for (i = 0; i < txq->attr.nb_desc; i++) {
++			if (txq->sw_ring[i].mbuf) {
++				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++				txq->sw_ring[i].mbuf = NULL;
++			}
 +		}
 +	}
-+
-+	return ret;
 +}
 +
-+static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
++static void rnp_tx_queue_release(void *_txq)
 +{
++	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (txq) {
++		rnp_tx_queue_release_mbuf(txq);
++
++		if (txq->rz)
++			rte_memzone_free(txq->rz);
++		if (txq->sw_ring)
++			rte_free(txq->sw_ring);
++		rte_free(txq);
++	}
++}
++
++void
++rnp_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
++{
++	rnp_rx_queue_release(dev->data->rx_queues[qid]);
++}
++
++void
++rnp_dev_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
++{
++	rnp_tx_queue_release(dev->data->tx_queues[qid]);
++}
++
++static int rnp_alloc_txbdr(struct rte_eth_dev *dev,
++			   struct rnp_tx_queue *txq,
++			   uint16_t nb_desc, int socket_id)
++{
++	const struct rte_memzone *rz = NULL;
++	int size;
++
++	size = nb_desc * sizeof(struct rnp_txsw_entry);
++	txq->sw_ring = rte_zmalloc_socket("tx_swq", size,
++			RTE_CACHE_LINE_SIZE, socket_id);
++	if (txq->sw_ring == NULL)
++		return -ENOMEM;
++
++	rz = rte_eth_dma_zone_reserve(dev, "tx_ring", txq->attr.queue_id,
++			RNP_TX_MAX_RING_SZ, RNP_BD_RING_ALIGN, socket_id);
++	if (rz == NULL) {
++		rte_free(txq->sw_ring);
++		txq->sw_ring = NULL;
++		return -ENOMEM;
++	}
++	memset(rz->addr, 0, RNP_TX_MAX_RING_SZ);
++	txq->ring_phys_addr = rz->iova;
++	txq->tx_bdr = rz->addr;
++	txq->rz = rz;
++
++	return 0;
++}
++
++static void
++rnp_tx_queue_sw_reset(struct rnp_tx_queue *txq)
++{
++	struct rnp_txsw_entry *sw_ring = txq->sw_ring;
++	uint32_t idx = 0, prev = 0;
++	uint32_t size = 0;
++
++	prev = (uint16_t)(txq->attr.nb_desc - 1);
++	for (idx = 0; idx < txq->attr.nb_desc; idx++) {
++		sw_ring[idx].mbuf = NULL;
++		sw_ring[idx].last_id = idx;
++		sw_ring[prev].next_id = idx;
++		prev = idx;
++	}
++	txq->nb_tx_free = txq->attr.nb_desc - 1;
++	txq->tx_next_dd = txq->tx_rs_thresh - 1;
++	txq->tx_next_rs = txq->tx_rs_thresh - 1;
++
++	size = (txq->attr.nb_desc + RNP_TX_MAX_BURST_SIZE);
++	for (idx = 0; idx < size * sizeof(struct rnp_tx_desc); idx++)
++		((volatile char *)txq->tx_bdr)[idx] = 0;
++}
++
++int
++rnp_tx_queue_setup(struct rte_eth_dev *dev,
++		   uint16_t qidx, uint16_t nb_desc,
++		   unsigned int socket_id,
++		   const struct rte_eth_txconf *tx_conf)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rte_eth_dev_data *data = dev->data;
++	struct rnp_hw *hw = port->hw;
 +	struct rnp_tx_queue *txq;
-+	uint16_t idx;
-+	int ret = 0;
++	uint64_t offloads = 0;
++	int err = 0;
 +
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = dev->data->tx_queues[idx];
-+		if (!txq || txq->tx_deferred_start)
-+			continue;
-+		if (dev->data->tx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STARTED) {
-+			ret = rnp_tx_queue_stop(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
++	PMD_INIT_FUNC_TRACE();
++	offloads = tx_conf->offloads | dev->data->dev_conf.txmode.offloads;
++	RNP_PMD_INFO("TXQ[%d] setup nb-desc %d", qidx, nb_desc);
++	if (rte_is_power_of_2(nb_desc) == 0) {
++		RNP_PMD_ERR("txq Desc num must power of 2");
++		return -EINVAL;
 +	}
++	if (nb_desc > RNP_MAX_BD_COUNT)
++		return -EINVAL;
++	/* check whether queue Has been create if so release it */
++	if (qidx < data->nb_tx_queues && data->tx_queues[qidx]) {
++		rnp_tx_queue_release(data->tx_queues[qidx]);
++		data->tx_queues[qidx] = NULL;
++	}
++	txq = rte_zmalloc_socket("rnp_txq", sizeof(struct rnp_tx_queue),
++			RTE_CACHE_LINE_SIZE, socket_id);
++	if (!txq) {
++		RNP_PMD_ERR("Failed to allocate TX ring memory");
++		return -ENOMEM;
++	}
++	txq->tx_rs_thresh = tx_conf->tx_rs_thresh ?
++		tx_conf->tx_rs_thresh : RNP_DEFAULT_TX_RS_THRESH;
++	txq->tx_free_thresh = tx_conf->tx_free_thresh ?
++		tx_conf->tx_free_thresh : RNP_DEFAULT_TX_FREE_THRESH;
++	if (txq->tx_rs_thresh > txq->tx_free_thresh) {
++		RNP_PMD_ERR("tx_rs_thresh must be less than or "
++			     "equal to tx_free_thresh. (tx_free_thresh=%u"
++			     " tx_rs_thresh=%u port=%d queue=%d)",
++			     (unsigned int)tx_conf->tx_free_thresh,
++			     (unsigned int)tx_conf->tx_rs_thresh,
++			     (int)data->port_id,
++			     (int)qidx);
++		err = -EINVAL;
++		goto txbd_setup_failed;
++	}
++	if (txq->tx_rs_thresh + txq->tx_free_thresh >= nb_desc) {
++		RNP_PMD_ERR("tx_rs_thresh + tx_free_thresh >= nb_desc"
++				"%d + %d >= %d", txq->tx_rs_thresh,
++				txq->tx_free_thresh, nb_desc);
++		err = -EINVAL;
++		goto txbd_setup_failed;
++	}
++	txq->pthresh = (tx_conf->tx_thresh.pthresh) ?
++		tx_conf->tx_thresh.pthresh : RNP_TX_DESC_FETCH_TH;
++	txq->pburst = (tx_conf->tx_thresh.hthresh) ?
++		tx_conf->tx_thresh.hthresh : RNP_TX_DESC_FETCH_BURST;
++	txq->free_mbufs = rte_zmalloc_socket("txq->free_mbufs",
++			sizeof(struct rte_mbuf *) * txq->tx_rs_thresh,
++			RTE_CACHE_LINE_SIZE, socket_id);
++	txq->attr.index = rnp_get_dma_ring_index(port, qidx);
++	txq->attr.lane_id = port->attr.nr_lane;
++	txq->attr.port_id = dev->data->port_id;
++	txq->attr.nb_desc_mask = nb_desc - 1;
++	txq->attr.vf_num = hw->mbx.vf_num;
++	txq->attr.nb_desc = nb_desc;
++	txq->attr.queue_id = qidx;
 +
-+	return ret;
++	err = rnp_alloc_txbdr(dev, txq, nb_desc, socket_id);
++	if (err)
++		goto txbd_setup_failed;
++	rnp_setup_txbdr(hw, txq);
++	if (txq->tx_tail)
++		rnp_reset_hw_txq_op(hw, txq);
++	rnp_tx_queue_sw_reset(txq);
++	RNP_PMD_LOG(INFO, "PF[%d] dev:[%d] hw-lane[%d] txq queue_id[%d] "
++			"dma_idx %d socket %d",
++			hw->mbx.pf_num, txq->attr.port_id,
++			txq->attr.lane_id, qidx,
++			txq->attr.index, socket_id);
++	if (qidx < dev->data->nb_tx_queues)
++		data->tx_queues[qidx] = txq;
++	port->tx_queues[qidx] = txq;
++
++	txq->tx_deferred_start = tx_conf->tx_deferred_start;
++	txq->tx_offloads = offloads;
++
++	return 0;
++txbd_setup_failed:
++
++	rte_free(txq);
++
++	return err;
 +}
+diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
+new file mode 100644
+index 0000000000..3ea977ccaa
+--- /dev/null
++++ b/drivers/net/rnp/rnp_rxtx.h
+@@ -0,0 +1,123 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
 +
- static int rnp_dev_stop(struct rte_eth_dev *eth_dev)
- {
--	RTE_SET_USED(eth_dev);
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
-+	struct rte_eth_link link;
++#ifndef _RNP_RXTX_H_
++#define _RNP_RXTX_H_
 +
-+	if (port->port_stopped)
-+		return 0;
-+	eth_dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	eth_dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	eth_dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
++#include "rnp.h"
++#include "base/rnp_bdq_if.h"
 +
-+	/* clear the recorded link status */
-+	memset(&link, 0, sizeof(link));
-+	rte_eth_linkstatus_set(eth_dev, &link);
++#define RNP_RX_MAX_BURST_SIZE	(32)
++#define RNP_TX_MAX_BURST_SIZE	(32)
++#define RNP_BD_RING_ALIGN	(128)
++#define RNP_MAX_RING_DESC	(4096)
++#define RNP_RX_MAX_RING_SZ	\
++	((RNP_MAX_RING_DESC + \
++	  RNP_RX_MAX_BURST_SIZE) * \
++	 sizeof(struct rnp_rx_desc))
++#define RNP_TX_MAX_RING_SZ	\
++	((RNP_MAX_RING_DESC + \
++	  RNP_TX_MAX_BURST_SIZE) * \
++	 sizeof(struct rnp_tx_desc))
 +
-+	rnp_disable_all_tx_queue(eth_dev);
-+	rnp_disable_all_rx_queue(eth_dev);
-+	rnp_mac_tx_disable(eth_dev);
-+	rnp_mac_rx_disable(eth_dev);
++#define RNP_RX_DESC_FETCH_TH		(96) /* dma fetch desC threshold */
++#define RNP_RX_DESC_FETCH_BURST		(32) /* */
++#define RNP_TX_DESC_FETCH_TH		(64) /* dma fetch desc threshold */
++#define RNP_TX_DESC_FETCH_BURST		(32) /* max-num_descs_peer_read*/
 +
-+	eth_dev->data->dev_started = 0;
-+	port->port_stopped = 1;
- 
- 	return 0;
- }
-@@ -231,6 +499,7 @@ static int rnp_allmulticast_disable(struct rte_eth_dev *eth_dev)
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_close                    = rnp_dev_close,
-+	.dev_start                    = rnp_dev_start,
- 	.dev_stop                     = rnp_dev_stop,
- 	.dev_infos_get                = rnp_dev_infos_get,
- 
-@@ -314,6 +583,7 @@ rnp_init_port_resource(struct rnp_eth_adapter *adapter,
- 	}
- 	rte_ether_addr_copy(&port->mac_addr, &eth_dev->data->mac_addrs[0]);
- 
-+	rte_spinlock_init(&port->rx_mac_lock);
- 	adapter->ports[p_id] = port;
- 	adapter->inited_ports++;
- 
-@@ -446,6 +716,8 @@ rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
- 		ret = rnp_init_port_resource(adapter, sub_eth_dev, name, p_id);
- 		if (ret)
- 			goto eth_alloc_error;
-+		rnp_mac_rx_disable(sub_eth_dev);
-+		rnp_mac_tx_disable(sub_eth_dev);
- 		if (p_id) {
- 			/* port 0 will be probe by platform */
- 			rte_eth_dev_probing_finish(sub_eth_dev);
++#define RNP_DEFAULT_TX_FREE_THRESH   (32)
++#define RNP_DEFAULT_TX_RS_THRESH     (32)
++#define RNP_DEFAULT_RX_FREE_THRESH   (32)
++
++/* rx queue info */
++struct rnp_queue_attr {
++	uint64_t sriov_st; /* enable sriov info */
++	uint16_t vf_num; /* ring belong to which vf */
++
++	uint16_t queue_id; /* sw queue index*/
++	uint16_t index; /* hw ring index */
++	uint16_t lane_id; /* ring belong to which physical Lane */
++	uint16_t nb_desc; /* max bds */
++	uint16_t nb_desc_mask; /* mask of bds */
++	uint16_t port_id; /* dpdk manage port sequence id */
++};
++
++struct rnp_rxsw_entry {
++	struct rte_mbuf *mbuf;
++};
++
++struct rnp_rx_queue {
++	struct rte_mempool *mb_pool; /* mbuf pool to populate rx ring. */
++	const struct rte_memzone *rz; /* rx hw ring base alloc memzone */
++	uint64_t ring_phys_addr; /* rx hw ring physical addr */
++	volatile struct rnp_rx_desc *rx_bdr; /* rx hw ring rirtual Addr */
++	volatile struct rnp_rx_desc zero_desc;
++	struct rnp_rxsw_entry *sw_ring; /* rx software ring addr */
++	volatile void *rx_tailreg; /* hw desc tail register */
++	volatile void *rx_headreg; /* hw desc head register*/
++	struct rnp_queue_attr attr;
++
++	uint16_t rx_buf_len; /* mempool mbuf buf len */
++	uint16_t nb_rx_free; /* number available use desc */
++	uint16_t rx_free_thresh; /* rx free desc desource thresh */
++	uint16_t rx_tail;
++
++	uint32_t nodesc_tm_thresh; /* rx queue no desc timeout thresh */
++	uint8_t rx_deferred_start; /* do not start queue with dev_start(). */
++	uint8_t pthresh; /* rx desc prefetch threshold */
++	uint8_t pburst; /* rx desc prefetch burst */
++
++	uint64_t rx_offloads; /* user set hw offload features */
++	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
++};
++
++struct rnp_txsw_entry {
++	struct rte_mbuf *mbuf;  /* sync with tx desc dma physical addr */
++	uint16_t next_id;       /* next entry resource used */
++	uint16_t last_id;       /* last entry resource used */
++};
++
++struct rnp_tx_desc;
++struct rnp_tx_queue {
++	const struct rte_memzone *rz;
++	uint64_t ring_phys_addr; /* tx dma ring physical addr */
++	volatile struct rnp_tx_desc *tx_bdr; /* tx dma ring virtual addr */
++	struct rnp_txsw_entry *sw_ring; /* tx software ring addr */
++	volatile void *tx_tailreg; /* hw desc tail register */
++	volatile void *tx_headreg; /* hw desc head register*/
++	struct rnp_queue_attr attr;
++
++	uint16_t nb_tx_free; /* avail desc to set pkts */
++	uint16_t nb_tx_used;
++	uint16_t tx_tail;
++
++	uint16_t tx_next_dd; /* next to scan writeback dd bit */
++	uint16_t tx_rs_thresh; /* number of interval set rs bit */
++	uint16_t tx_next_rs; /* index of next time to set rs bit*/
++	uint16_t tx_free_thresh; /* thresh to free tx desc resource */
++
++	uint8_t tx_deferred_start; /*< Do not start queue with dev_start(). */
++	uint8_t pthresh; /* rx desc prefetch threshold */
++	uint8_t pburst; /* rx desc burst*/
++
++	uint64_t tx_offloads; /* tx offload features */
++	struct rte_mbuf **free_mbufs; /* tx bulk free reserve of free mbufs */
++};
++
++void
++rnp_dev_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
++void
++rnp_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
++int rnp_rx_queue_setup(struct rte_eth_dev *eth_dev,
++		       uint16_t qidx,
++		       uint16_t nb_rx_desc,
++		       unsigned int socket_id,
++		       const struct rte_eth_rxconf *rx_conf,
++		       struct rte_mempool *mb_pool);
++int rnp_tx_queue_setup(struct rte_eth_dev *dev,
++		       uint16_t qidx, uint16_t nb_desc,
++		       unsigned int socket_id,
++		       const struct rte_eth_txconf *tx_conf);
++
++#endif /* _RNP_RXTX_H_ */
 -- 
 2.34.1
 
