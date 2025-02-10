@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75037C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74EB2C02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 19:04:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4ACE8402A1;
-	Mon, 10 Feb 2025 20:04:05 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id D63ED4021E
- for <dev@dpdk.org>; Mon, 10 Feb 2025 20:04:03 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-21f74c4e586so39876665ad.0
- for <dev@dpdk.org>; Mon, 10 Feb 2025 11:04:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78F39402C9;
+	Mon, 10 Feb 2025 20:04:12 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 7BB10402C9
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 20:04:11 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-21f53ad05a0so54335655ad.3
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 11:04:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739214243;
- x=1739819043; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739214250;
+ x=1739819050; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FJYj/q7qcuqXMjbaXKJePvE+0roxzGmAG7vyH5BWXrU=;
- b=XsTfzAXrFrUAv9vNSJrnMErNslZiXQ85B/Rk3cvZDTfHwnbGDSLrAoh/rCPn9mPmZ2
- KSubuRK7z9PcaxIsDyh0q9wHoam0EX0ylXLbKazKsvxWFdhxzUUew6dOmAZCU2HNbH/n
- V2EdylAjXDZXy/EfHgSKi0twlJ4Xpa9bXhKE0STjIUUvJtVP4zZEH5t5aIn7WqCIDDsD
- IcoM6ifusxzkHzyiTFd9ZwRTYn+idIPMCn540heKZ+bFH8pWul+HUbJZ+2yT8b0ALthe
- q9ljTFlpoyLbCGHR9eTmmSL6qwH3m4bNOLoo7naKyod96irA95lmymQU041CfjHtB/fi
- xHQw==
+ bh=xM94kRD4ajRuEcOyEhrxKm2Bx0Mdcy+WzXM71SkpFLI=;
+ b=2bZsg0lNj8wqiVs8bUSyFmsIgRgYJmhIA6o5PNrfrK/eosBmx2KT5oy+yI65DCk38W
+ uUjDtraQb0ZvDfBjqyyS91DClQKbq1bOy4tsuYcVEsKyUq0qXueO0benTFy5RDr6XPO3
+ uO2Fmr61rrgZPoeQP11jpJsG3uBttkjruuul24YXp/e5XdXE6BBHEEY0vjq9gr5GXgyL
+ kszLAPAfX8TNvykhqssER+8uwKEGNVINFD0LyAqXEp8OpMVV/CJXpu734zMTihYiDK0c
+ h9RVRqkSfXd4rMNv53C5AO9eWqd596eECFFF8Lxlfr57LhP6pBkTO3HL9NrfwtfxqifT
+ QKmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739214243; x=1739819043;
+ d=1e100.net; s=20230601; t=1739214250; x=1739819050;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=FJYj/q7qcuqXMjbaXKJePvE+0roxzGmAG7vyH5BWXrU=;
- b=smqLPOUBEim19DI9uVN2ut/chlPJXaBT4CPDo2SqippzLaHpZsp1AS4sfUeO9qdjRL
- IiaVBqtV/kKuMt6GGDRX+U8gwDNfNH3D1L7gg2Jz8a3hywtfrddCdw5+xYWmiv1eDIpy
- IZ3L+fljjD/HD5KYFIgTFxaPma/ng/MzSlEiBzMUYt+5sY0Y/JM1tkXx6VKQV9gqn41j
- qaarTaSA7gyupHe3ShVDV5HV7sI3dzl+/DuEwDhW34RywNdJ2mPtN+Ala1TuqOnppfCV
- qwJLWq5utB4vmTDL+MhjiuyY8aNMsaSFU6iHShab+EVZBGDF39X3SSojlfCW2gRNKLiq
- WyNQ==
+ bh=xM94kRD4ajRuEcOyEhrxKm2Bx0Mdcy+WzXM71SkpFLI=;
+ b=CYUWVEzvPEyyIYw8kwTr6Kz5YlBUZolIhpac1vmBejamMp5SW2uVlAJAyissXJP05r
+ K4RvPKt4SJPgt2OuN/bD7DRVqkhEGLbcpmyYDqgWM+Bur7viT3pJdR5E2bZtmlGrangg
+ R8YFSb1287DDwJexwAFvgpmsS+9VAkrcaq1wlocq2MVwVLNWatnc+JBKMe/vku+/YNfS
+ 0XkARkCyco9fd3ODeH6lMGPIa1jN3q3UCvj1Y5Nwcrcgg6S4ElsGYe3nxgmaPRi+m3Gl
+ MyhLR7dVrXSBMRmVJQKeJhY1w0eV4tHyvoqMq/cA6QMxO9ST2eNlFdPqQqfq8Tsfn36h
+ JvFQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWN6miPBEvHB517dbuwpY4jkfEdKe6WVDWgq/EkZjNcjxKLXc3L9eBJIhKWpepG+BIyl98=@dpdk.org
-X-Gm-Message-State: AOJu0YyFbOnY1ZYDKhsRz0z67Vgw1HIlmWn2yHYBdn93pWjryh5NLVsm
- /0AgVnDRVxiEOeK1Ktqb4vKdrn8N9g5Xd0b5Cl8tH0ZdBeNBex1pLI6saOAu36A=
-X-Gm-Gg: ASbGnctbjhweH4CLagD5a7IIavwY3rF68qktku8+7K0Rbc+xjTs9QpApicFwuYi1dkx
- Dw5NP8aLoVACDXjsPcsaVfRBwPxLHBFH8oQEE6owEEj4cOCVs0Mhc2GY1pRGK7dPVyZ03xISY9B
- FvINeWkhripzHdrxghDKys7NumJ3n7YzX/tq7syeQBTtIRIhjdEo3BrOvDFWzBHTYs6s3osp0gq
- lFBL+QsJfSnGDGm7JcCAMmV2K9EbmX9WcvJSyqnOwjZJvpgUlPXNNZuoPbotxkC51yyXK8PYz4c
- Vz6tinqAYM88b0V/XM9SzQ7b7yniAlFnMY2fkhw99Eg2Dn64bl+LlDmNtX9H7/55ngVB
-X-Google-Smtp-Source: AGHT+IGBGCAymwq76ht9W/D+9R3b76Jp0PkfeZ+HW6UAbtRwLjF2EW7NO7RqVMCKKE4GzgAszIJtMw==
-X-Received: by 2002:a05:6a00:c85:b0:730:75b1:720a with SMTP id
- d2e1a72fcca58-73217f94a60mr991505b3a.23.1739214242749; 
- Mon, 10 Feb 2025 11:04:02 -0800 (PST)
+ AJvYcCVZ+MYVVN9Iv69YCulczJKkrx1I19qySe0uGGH9CEjKwp98SZDMdomtNSw5/HN4qo6M0MA=@dpdk.org
+X-Gm-Message-State: AOJu0YzNdu1L7f9Uo6dO0IubI7TbKXO4h2aDD2yAnxgaqpFar1oyiLQg
+ pfx7PPCgDnZvKjFZKRPORsgxcxFSzJIZZUgcYcGq7C3DeIEG6cIvSbzCrqYenFo=
+X-Gm-Gg: ASbGnctf1LPHCc0wS7X5Itaq3nUJ6Dz6NNWL98NO6R5TtByKljS7rUsxZQBKsaMiwMT
+ tO4N412AYCr5MgLY75GzTXbVVBe/W0d4RZZSV7Cw/3dhGYlN8/M7Y9EcUODNuZHYaQh/ZLKwVuY
+ jfcUELmiA1BWx31mDwx7+IKpcyYfBg0qBkS1IG/uvRPD3pjOcGt7Q7Sd+3AWH+7FI85qMQgQHDN
+ 0/dQG74c7seCCAtl6NzzE3YLYSPlMxEfJxvG1TcYSkZOPTw1V1BbzP7c0Nreuw2+vCTF07b2xlB
+ jGF8nXIpg9vVvm+NPLDPWKcV1Cb6oP8FKCoLx5UyhPPCSYAs0QFp8HLA++sZoVZz5FDH
+X-Google-Smtp-Source: AGHT+IFWcsAd4KR7TwlGfOXTzsKBbezLT+bZlwDCMW40HMXN8wQUdnHci+zTEgcP0CUvi1VAv0hidA==
+X-Received: by 2002:a05:6a00:1884:b0:730:927c:d451 with SMTP id
+ d2e1a72fcca58-73217f8cb8amr1233829b3a.20.1739214250569; 
+ Mon, 10 Feb 2025 11:04:10 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73093ab315csm1877120b3a.143.2025.02.10.11.04.02
+ d2e1a72fcca58-73077975f05sm4511914b3a.14.2025.02.10.11.04.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 11:04:02 -0800 (PST)
-Date: Mon, 10 Feb 2025 11:03:59 -0800
+ Mon, 10 Feb 2025 11:04:10 -0800 (PST)
+Date: Mon, 10 Feb 2025 10:36:58 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wenbo Cao <caowenbo@mucse.com>
 Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v8 00/28] [v8]drivers/net Add Support mucse N10 Pmd Driver
-Message-ID: <20250210110359.2b844491@hermes.local>
-In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
+Subject: Re: [PATCH v8 01/28] net/rnp: add skeleton
+Message-ID: <20250210103658.28a54c22@hermes.local>
+In-Reply-To: <1739172415-48507-2-git-send-email-caowenbo@mucse.com>
 References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
+ <1739172415-48507-2-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,26 +83,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Driver review checklist for mucse PMD
+On Mon, 10 Feb 2025 15:26:28 +0800
+Wenbo Cao <caowenbo@mucse.com> wrote:
 
-Mark items with:
-    =E2=9C=94 passed
-    =E2=9C=98 Failed
+> Add basic PMD library and doc build infrastructure
+> Update maintainers file to claim responsibility.
+> 
+> Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
+> Reviewed-by: Thomas Monjalon <thomas@monjalon.net>
+> ---
+>  MAINTAINERS                      |  6 +++
+>  doc/guides/nics/features/rnp.ini |  8 ++++
+>  doc/guides/nics/index.rst        |  1 +
+>  doc/guides/nics/rnp.rst          | 82 ++++++++++++++++++++++++++++++++
+>  drivers/net/meson.build          |  1 +
+>  drivers/net/rnp/meson.build      | 11 +++++
+>  drivers/net/rnp/rnp_ethdev.c     |  3 ++
+>  7 files changed, 112 insertions(+)
+>  create mode 100644 doc/guides/nics/features/rnp.ini
+>  create mode 100644 doc/guides/nics/rnp.rst
+>  create mode 100644 drivers/net/rnp/meson.build
+>  create mode 100644 drivers/net/rnp/rnp_ethdev.c
 
-Basic hygiene
-    =E2=9C=98 Look at CI results in patchwork; notify submitter if any fail=
-ures
-    =E2=9C=94 Merge cleanly with git am; look for missing newline at EOF etc
-    =E2=9C=98 Run checkpatches; warnings are ok, but look more carefully.
-    =E2=9C=98 Run check-git-log; often get some minor warnings that are ok
-    =E2=9C=94 Run check-symbol-maps.sh
-    =E2=9C=94 Run check-doc-vs-code
-    =E2=9C=94 Run check-spdk-tag
+You need to add your mail address to .mailmap
 
-Builds
-    =E2=9C=98 Normal Gcc build; make sure driver is built!
-    =E2=9C=98 Use latest experimental Gcc 15 to catch new warnings
-    =E2=9C=98 Clang build using current version (clang-19)
-    =E2=9C=98 Doc build
-
-Rest of checklist skipped, not worth running with these kind of failures
+$  ./devtools/check-git-log.sh 
+Wrong headline format:
+	net/rnp: add support link update operations.
+	net/rnp: support VLAN offloads.
+	net/rnp: add support VLAN filters operations.
+	net/rnp: add queue info operation.
+Wrong headline case:
+			"net/rnp: add support mac promisc mode": mac --> MAC
+Missing 'Signed-off-by:' tag: 
+	net/rnp: add get device information operation
+Contributor name/email mismatch with .mailmap: 
+	Wenbo Cao <caowenbo@mucse.com> is unknown in .mailmap
