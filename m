@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41605C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B6CC02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 18:25:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3103940662;
-	Mon, 10 Feb 2025 19:24:52 +0100 (CET)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id CC8B3402E8
- for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:50 +0100 (CET)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-2f9b91dff71so7263335a91.2
- for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 549AC4066D;
+	Mon, 10 Feb 2025 19:24:54 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 0C94340687
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 19:24:53 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-21f573ff39bso64435855ad.1
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 10:24:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211890;
- x=1739816690; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739211892;
+ x=1739816692; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=mmnvdZEk8INNTxG3oDj8q9YRQ7YajDItl1znlC7Nqmo=;
- b=eBmFkxM7hldtrDEgId8B2g7Q11IQuhDzgiC8L/FWnD3MbiUUnVxeoF7oBhXnAIhthc
- U9z7UjEktyEDCa3Ys/Gx0ADLr6AapYRUxVFo9G9WxbyhHT8JobUK8fv6sr6oUYHm3hRo
- Og1VJrKznnj+7IQGpIM1aFZmmNDBHyB/Js50SizGJBEKvxxQqx3DKGEdB4j7ZEgDMmmA
- onaeON6onFnk+CpTAqMnSc/DtqU8PQqm/TZAEPwx/jAJWpP8OeKWNcwLXO/7WQ/sxFNb
- Se9TnB6amdMlmfgIbbnpxvnhARW+CedXmka51AIgeJKz6cJpJ/4WxQIl3Z6DpLChBx+K
- GZ4Q==
+ bh=G1DXUgRKAd+VjvZN3rIry2TZYGKs2GwN8yIEg5Bi0Ow=;
+ b=Y5D2QWWGNXZgI00Mco2Bh9GRvo4JX6KngyhGEHrQJpHnV2OCiknQ/OaN+LtZIgo71r
+ Y7520nuIeJAW5nP77GM861kGQGacs6S6U9gNh2hksnofnOTWd4E3JNxlTtNArs4uWeT2
+ PyVqS9Bx426UkmEbySCzuo1d462uDcY0N7W4l32PObx/JCnCt4Nywp7xhZNOpK0ZgWo5
+ AZoZdEeIfNkHELefBBhqLn04pv8ftEvo03XCoEvmQNmD+W91CdlHE8owIM/670tmHVmO
+ jc7uYeI6vBqeXxIqpfmudW/TRjL3HA9lp04gcgSKeX1ubM17weGJxl/W/G16otCYVLT/
+ QzVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739211890; x=1739816690;
+ d=1e100.net; s=20230601; t=1739211892; x=1739816692;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=mmnvdZEk8INNTxG3oDj8q9YRQ7YajDItl1znlC7Nqmo=;
- b=mymTgFrdmCwNCQLlAi42545LmCPon92MbyB6Da96JtC84ekzdpxKO9vr/0Q+wnonq4
- cyONJlIeYhgyogSL8lP3+AY6EvPaWe4orKOHV3gveIKcqTE1Xfw+6QVex8ApGOrGEA0R
- ZUICofJn6KmHrSf00pphU3gZGWn2zi6Nf+ST3IdFetyEiCGYOIkv4dcHGFHdor+4+Uhh
- 5rZp0iJdrQiiZPnmhTqvL50ZQPSbUwpU0ZZVRzAG7w08muKPGfWH+T7y8RAMPXCGTlFL
- J4Tbh7eBx+e+ihZDFwxUmUG35IKwDvPQGayoBfuJM7zFGcfEZ32eK7n1GUQnoB8Wd1iQ
- 1bCQ==
-X-Gm-Message-State: AOJu0Yw3V3uYyvx9d/tQ3wtatmDs3YUPVkW/fkqLrmL32H1RLrvYS1/e
- cNG6ZsfnkChsdoDkqsH9YHf9r7R2I91otosy+ZgSMJZr/NfBtsnxWyg7plupEYU=
-X-Gm-Gg: ASbGnctS8y3sIAu0wfSxvtxrNLeNWrdbk9uo916P6WFctSCNwlaJwQvgDgSf5l1u9o0
- +RgGBokbeoZk1czLL3geCZta4GXPUxDZvvkZBX+Rglwas6Z468oiUaYARePOZdP5O2XuUsyqDnd
- WCIaJKtIvSgzxcYWxaxm3R4QFZc2FA1As9KyBk+C9nLW7po4paHe+On4GuC6uQ5imwzoocIDA09
- sj6ZLMYGiJTBJ326j7u3Xi0Iw0n9g1y0zy61SSco16svVzm0op0MtLZ/oKFAE5nIhSgLoLvKEn7
- ZC2sx0fa7JkbNouq/8hPiYmVXg6Hx4009Ogh1fWp2gdarzwAB9g0oxBvKNRQZt5RFa5d
-X-Google-Smtp-Source: AGHT+IFLB2BpOyu9q8ycyZuDXxIFMAwIYIfF/5SKQIaX4o8jw35MOWvVuI5nrMIk1hiFInvzA7yIcA==
-X-Received: by 2002:a17:90a:da87:b0:2ee:bbe0:98c6 with SMTP id
- 98e67ed59e1d1-2fa240634ecmr22272102a91.8.1739211889884; 
- Mon, 10 Feb 2025 10:24:49 -0800 (PST)
+ bh=G1DXUgRKAd+VjvZN3rIry2TZYGKs2GwN8yIEg5Bi0Ow=;
+ b=KGMjIp6R9F5uztd4Puw3nJxvKnDNyHNMoHqUB099viXoaYYUxjYgHQ7xFL5VvZvVr0
+ bYv86FOpZXQ3niQC7NqTY6+twbwqIiudtuhnSlLY21usJPiObhBoM7odZUUPBGktj529
+ F0hPzX80TLojvPmTQsI81Fv9L+P8O6Lv82n2/7Pkgs3A8qD/ic/rkw7fbxmoS23SYGrK
+ hmyIFmClsnJFloQUS7dCAlgN34I/TvFPDkLHGu84YylWEpEu6tI9S5sTmGHrUu0ED8gf
+ V9e8wKyPUmVcqANG6hiD3KQ6OEWoCxAnr1IjTFsGy3FnT/mG3I7rFjRAvMEppueYTo3E
+ /Ljg==
+X-Gm-Message-State: AOJu0YzA9VROUJk+2oaJt7PatyYhsg/etTxOUIm+K4HMakQPK8Aq2uaE
+ IdftVzMFLR24FCcDYaS7EgVyNfq6yTt+KnXUfujr+xMrcevAN+hMzFXDZ2aropw+y9bb6wDSEgT
+ s
+X-Gm-Gg: ASbGnctdmmqaPgVpykPrb+uTxrPYredJTYNZyos1D07O+MvYRh/M88SOKRCygzmyWcE
+ spBpVDx1f6gN7F+NTuV9Q0qnQfqYYHRz+yRWtod8vCgKRAQfCC+Ydlws7T0EQFEr9r8Y4JY5VSC
+ oTpONlNrevn6JYtq9duN+9cUcHkDDFC+L+2UrX2JiShwfGjK3EKYxi4hxjnMdCR1Tp8wNOOV1O5
+ YsfPz7Rd9MF+SPGWxCL8aj4DkPVxIFloE0kGNGkvvW6FtXGzXMBf1XpblagZd2+bQeDPH/BhhCW
+ 5qGCzyb/ey4GFMSwVwMGmbF4UlND8hta5/Wf7REYbhwvQadHWElzyrPuBqyN0yEhczSm
+X-Google-Smtp-Source: AGHT+IGX2xP3MzIxyCNTs0THgF5IBPBzc4U7Kd6faihzLLE5u2lJiSX7CoiRSFGkvEvSWduKgr7zKQ==
+X-Received: by 2002:a17:903:240f:b0:216:7cde:523 with SMTP id
+ d9443c01a7336-21f4e739f99mr259923395ad.32.1739211892179; 
+ Mon, 10 Feb 2025 10:24:52 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.49
+ 98e67ed59e1d1-2fa42dde5e5sm5519217a91.3.2025.02.10.10.24.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 10:24:49 -0800 (PST)
-Date: Mon, 10 Feb 2025 09:43:50 -0800
+ Mon, 10 Feb 2025 10:24:51 -0800 (PST)
+Date: Mon, 10 Feb 2025 09:47:26 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Bingbin Chen <chen.bingbin@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 09/14] net/zxdh: implement tables initialization
-Message-ID: <20250210094350.66a8c42f@hermes.local>
-In-Reply-To: <20250210015017.4105624-4-chen.bingbin@zte.com.cn>
+Subject: Re: [PATCH v1 12/14] net/zxdh: delete all hash entries
+Message-ID: <20250210094726.128af4b6@hermes.local>
+In-Reply-To: <20250210015017.4105624-7-chen.bingbin@zte.com.cn>
 References: <20250210014441.4105335-1-chen.bingbin@zte.com.cn>
  <20250210015017.4105624-1-chen.bingbin@zte.com.cn>
- <20250210015017.4105624-4-chen.bingbin@zte.com.cn>
+ <20250210015017.4105624-7-chen.bingbin@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,40 +82,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 09:50:12 +0800
+On Mon, 10 Feb 2025 09:50:15 +0800
 Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
 
-> +static uint32_t
-> +zxdh_np_sdt_mgr_sdt_item_add(uint32_t dev_id, uint32_t sdt_no,
-> +		uint32_t sdt_hig32, uint32_t sdt_low32)
-> +{
-> +	ZXDH_SDT_SOFT_TABLE_T *p_sdt_soft_tbl = NULL;
-> +	ZXDH_SDT_ITEM_T *p_sdt_item = NULL;
-> +
-> +	p_sdt_soft_tbl = ZXDH_SDT_SOFT_TBL_GET(dev_id);
-> +
-> +	if (p_sdt_soft_tbl == NULL) {
-> +		PMD_DRV_LOG(ERR, "Error: %s soft sdt table not Init!", __func__);
-> +		RTE_ASSERT(0);
-> +		return ZXDH_RC_TABLE_SDT_MGR_INVALID;
-> +	}
-> +
-> +	if (dev_id != p_sdt_soft_tbl->device_id) {
-> +		PMD_DRV_LOG(ERR,
-> +		"Error: %s soft sdt table Item Invalid!", __func__);
-> +		RTE_ASSERT(0);
-> +		return ZXDH_RC_TABLE_PARA_INVALID;
-> +	}
-> +
-> +	p_sdt_item = &p_sdt_soft_tbl->sdt_array[sdt_no];
-> +	p_sdt_item->valid = ZXDH_SDT_VALID;
-> +	p_sdt_item->table_cfg[0] = sdt_hig32;
-> +	p_sdt_item->table_cfg[1] = sdt_low32;
-> +
-> +	PMD_DRV_LOG(DEBUG, "%s 0x%08x 0x%08x", __func__,
-> +		p_sdt_item->table_cfg[0], p_sdt_item->table_cfg[1]);
+> +#define ZXDH_COMM_CHECK_POINT_MEMORY_FREE2PTR(point, ptr0, ptr1)\
+> +do {\
+> +	if ((point) == NULL) {\
+> +		PMD_DRV_LOG(ERR, " ZXDH %s:%d[Error:POINT NULL] ! FUNCTION"\
+> +		": %s!", __FILE__, __LINE__, __func__);\
+> +		rte_free(ptr0);\
+> +		rte_free(ptr1);\
+> +		RTE_ASSERT(0);\
 
-Duplication here.
-
-define PMD_DRV_LOG(level, ...) \
-	RTE_LOG_LINE_PREFIX(level, ZXDH_DRIVER, "%s(): ", __func__, __VA_ARGS__)
+Again, PMD_DRV_LOG already puts function name in, and making louder
+by SCREAMING UPPER CASE won't fix the problem
