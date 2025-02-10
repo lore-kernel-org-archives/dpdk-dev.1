@@ -2,71 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E16C02198
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 20:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1575C0219E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 20:27:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95CA4402AB;
-	Mon, 10 Feb 2025 21:06:34 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 4374F402A1
- for <dev@dpdk.org>; Mon, 10 Feb 2025 21:06:33 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2f9b9c0088fso7623418a91.0
- for <dev@dpdk.org>; Mon, 10 Feb 2025 12:06:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C2F73402AB;
+	Mon, 10 Feb 2025 21:27:07 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id A5DCF402A1
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 21:27:05 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-21f818a980cso29827375ad.3
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 12:27:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739217992;
- x=1739822792; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739219225;
+ x=1739824025; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iu9VYTfmYaHY6rRRFCagl7gQjdyUIcUhjpF/XtvriF0=;
- b=vPxp6G2xocAWEmPlSfonuyavXh+21QiCZasJUEhMtEgsk2fwnEKHkSgAWavzgVAYgW
- CxdUstfvhsWm0gl9f+agUvDBS8HLQtQssPO34KWiua53hRv2xGCsoJlIqCODelZGgBrN
- 0hnZY20mICfB+OsYNE0jUbktvh7zWDnLPWa2QgpyCd3MMXfiCrivVKglKrPuWW4+E9ui
- AYOyhum5jYPndDnH7x6JiU/i7P0nrFQHvUGdTUwwlzHGJnk1Blo5gvdqimpiej8gnDcA
- wGKEvgUHIXA6nqf06vVKtAUu3u6h1RtE9SiKPxcvfZW0QrteFHBE+14MxIT12sTii7GV
- EfZQ==
+ bh=15aKtzv878sjxdDO4d8wQkv0lg9McpIL7bbDtWzn4GQ=;
+ b=LO80r04SgIzSAD2oPJJ2ZiUa34UxKiyHvvQsH/HK2qxD4526WfEk3htB3uIvw4+ccs
+ +YXsXRvPgQM4k6GS7Jb2oW+PkHX42NQRUjbW4Z5pGkQCIq6EffwlddTwqa3oX/w1aI9T
+ w+ATFR1oNURZMapQD8/NnH7zI187Lk9tIYXiCx5GXk0/ckPF0Xfy2pvf6QRrH5HFGIeY
+ 6X/6Ej4yWJpJPIkYq1xGnOkOfnX+UUSI2oHNC3vwwhnhVDeEGuy7vxS2EFvWSknPIz6l
+ F2rgaSA6O3h3E0+QWM7WRpVIpkdWLkrh8ajCaCS2O+qpEfGNZ7K5WWIc5lKWRFRL74U+
+ RQSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739217992; x=1739822792;
+ d=1e100.net; s=20230601; t=1739219225; x=1739824025;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=iu9VYTfmYaHY6rRRFCagl7gQjdyUIcUhjpF/XtvriF0=;
- b=pzQNNPat3e2u6prKvFWpe51NpUwpyw43lbo91VE+QLoDFQpgdZ6pHnFxNvExc9x5mp
- tHMpsXdJ7XCTM6xjBnSWXjFaTf85zn0eA3ClY65zxIRrRGfC0oqkJOPzLmG/Diq6vMNZ
- Qua8t0Y86A3Mn/dKjPBlnYpqrvtYcnT6KKZQreZCCavo+6cN5YCFeEEOJOPV2NyiRBY2
- clqrQ0c7X2Y9PHpZimCgUc4KliVAgEdB6qCnw356yVClh3lDMx6Ch8ZEVwRMrVgJpPn7
- CvcUWK0+1s/o2GO/399IHg/mi9cV/rwwqHNjmQ0eaREHKeQCegq+Yy+7KcbHG+g6ZdZU
- 5WRw==
-X-Gm-Message-State: AOJu0YwgUKFYHJZAP5GA35z3Y0qSLhegNknAlQjlCKJ2N0Gnvst6dP20
- zBD0afzMXnOffY/RQT+fvPwOSi8UarrM81h9JLPxDujVBFEVIFYwNjZ0ub7wGFY=
-X-Gm-Gg: ASbGnctQT3njk/NbHXMbanSzCe+nB4F2SOtQMOvPmeITYiq2iRcmvvZeRNU97JwqP+8
- Eu7JsPKE/fR3fGumSIj75UL4VRWDSqkTFu+bfhn62jTmd/rO0n60utuSrlZ4kr77BAi8Joe+YNT
- gBdbTSz4VrHTLr7V3awaqtQf1kQOb8tyLOJjhBtvm5xZcToWBOkukm7jYN3YPiQ7F+NrI14Kku3
- J0YN9Ejs9C/9K85YX9Se3FNtztE0X2QnxWnBl07c1to2ftpb24fvzfs2VGWT7nFj7g60Bbyn0Ow
- zX6dHOWWR5ehISSaWeYKj+DCJrHWCB694Vf88Yvso6KUMiU6hfLoupymoWOhgsd+zfZ7
-X-Google-Smtp-Source: AGHT+IGNHfNIpN/ZyblKtxlWDxcKn2I4XFMmqrISD3NoMofF5y2DbcGfnj+WaMf5iEX56lV+wMv92A==
-X-Received: by 2002:a17:90a:3948:b0:2fa:9c9:20a3 with SMTP id
- 98e67ed59e1d1-2faa041cc2emr1146174a91.0.1739217992161; 
- Mon, 10 Feb 2025 12:06:32 -0800 (PST)
+ bh=15aKtzv878sjxdDO4d8wQkv0lg9McpIL7bbDtWzn4GQ=;
+ b=VwLYfENPIdfJZL9In2Cj3AgjQS4ley0A+vinepzBJdSPbuRVc1VOdQqeO+M3HRaXdD
+ p3t5KCIYgzfS0Gh/wqUl8Uw0HFEoQffB6tztunbL3MKGhvgxoRdICq3DMSbhMrS2GE0d
+ z9y/w8IfKnTvmbL4SI5hUXo7X6m2wxNYSMJ97NGhBuUEc5VwGufSB5fQwREQRs7oi1MR
+ HJB3RRvFwsbWSYv8MMNX4fD52yDktVF34aGeZdi7dIC6mVv9tNTfSzXRuuseYuwtW2ru
+ wnc44mMnOZDHnpGHjTF7FVs2euIu9WfbbbqSXa734q69rQ2H+zHxYpafRiyHZhjrqrS3
+ smGw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX7/Lh5doQRL7EJelUSaMEVlwDqruc458uTumg148SM3QlrkBx3DXFryMSdNHGZLU8lnck=@dpdk.org
+X-Gm-Message-State: AOJu0YyqqhDUUoE4fUEzQQmINR+CBb9oYQYq0GOKAT/jrov3es1/nAhq
+ sKizOJq6SAjXBXllFa6pya8weq8BKHqpOtUOGdnbJ6Ytb7qlXeCJskVxCcHipfc=
+X-Gm-Gg: ASbGnctnM7wHqvgzEuy7t1fxASVNRqBTYMNcFKFOWKxQaGhZugMLuFoobfNcbb2uB+h
+ QbSZipSBj7PMls2o2lBdzTqpKzoj0KdPTocC1Ds4UDMQGBZGpeR4vqsc50RRcCTPVFVko+VirrT
+ oJ38ObNLdEI7aspT2+MEzd0Ikb4GxyU+LfRUHhQkpl35VCU8Rp1BBIsGEbtNyKVhyjMOhzpAfpS
+ fWntbfovcYuaQM3aagsZJEGt3ur/0EBwbwwI4xa7olUFBwK+Dw5OlMcpgLxVa8HNvTX0UNg7KaV
+ awnsSmf6C3VXvSn2viuRripSsyBRhMTJcOBVxwNuKqP7FynGn2dR17vbWPExB/DQMOBE
+X-Google-Smtp-Source: AGHT+IFYPbjOaPjW/l/2zy4DFSLpJY7U60EIShjtpcZltRSbEj1xOdvMpGZ4tnJpln+wmP1WxpvwrA==
+X-Received: by 2002:a17:902:f60a:b0:21f:3e2d:7d48 with SMTP id
+ d9443c01a7336-21f4e129872mr248390265ad.0.1739219224687; 
+ Mon, 10 Feb 2025 12:27:04 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa09b3ee31sm8972126a91.34.2025.02.10.12.06.31
+ d9443c01a7336-21f368ba864sm81661035ad.233.2025.02.10.12.27.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Feb 2025 12:06:31 -0800 (PST)
-Date: Mon, 10 Feb 2025 12:06:29 -0800
+ Mon, 10 Feb 2025 12:27:04 -0800 (PST)
+Date: Mon, 10 Feb 2025 12:27:02 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jie Hai <haijie1@huawei.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <ferruh.yigit@amd.com>,
- <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
- <huangdengdui@huawei.com>
-Subject: Re: [PATCH 0/2] net/hns3: bugfix on hns3
-Message-ID: <20250210120629.7e02aaee@hermes.local>
-In-Reply-To: <20250210030113.1154709-1-haijie1@huawei.com>
-References: <20250210030113.1154709-1-haijie1@huawei.com>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: <thomas@monjalon.net>, <david.marchand@redhat.com>, <dev@dpdk.org>,
+ <mb@smartsharesystems.com>, <anatoly.burakov@intel.com>,
+ <dmitry.kozliuk@gmail.com>, <jerinjacobk@gmail.com>,
+ <hofors@lysator.liu.se>
+Subject: Re: [PATCH v19 1/6] memarea: introduce memarea library
+Message-ID: <20250210122702.39f83617@hermes.local>
+In-Reply-To: <20230720092254.54157-2-fengchengwen@huawei.com>
+References: <20220721044648.6817-1-fengchengwen@huawei.com>
+ <20230720092254.54157-1-fengchengwen@huawei.com>
+ <20230720092254.54157-2-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,18 +86,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Feb 2025 11:01:11 +0800
-Jie Hai <haijie1@huawei.com> wrote:
+On Thu, 20 Jul 2023 09:22:49 +0000
+Chengwen Feng <fengchengwen@huawei.com> wrote:
 
-> Fix some possible failure on hns3 driver.
-> 
-> Dengdui Huang (2):
->   net/hns3: fix possible copper port initialize fail
->   net/hns3: fix possible reset timeout
-> 
->  drivers/net/hns3/hns3_cmd.c    | 18 ++++++++++++------
->  drivers/net/hns3/hns3_cmd.h    |  4 ++--
->  drivers/net/hns3/hns3_ethdev.c | 29 ++++++++++++++++++++++++++++-
->  3 files changed, 42 insertions(+), 9 deletions(-)
+> The memarea library is an allocator of variable-size object which based
+> on a memory region.
+>=20
+> This patch provides rte_memarea_create() and rte_memarea_destroy() API.
+>=20
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> Reviewed-by: Dongdong Liu <liudongdong3@huawei.com>
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>  MAINTAINERS                            |   5 +
+>  doc/api/doxy-api-index.md              |   3 +-
+>  doc/api/doxy-api.conf.in               |   1 +
+>  doc/guides/prog_guide/index.rst        |   1 +
+>  doc/guides/prog_guide/memarea_lib.rst  |  48 ++++++
+>  doc/guides/rel_notes/release_23_07.rst |   6 +
+>  lib/memarea/memarea_private.h          | 116 ++++++++++++++
+>  lib/memarea/meson.build                |  18 +++
+>  lib/memarea/rte_memarea.c              | 204 +++++++++++++++++++++++++
+>  lib/memarea/rte_memarea.h              | 141 +++++++++++++++++
+>  lib/memarea/version.map                |  12 ++
+>  lib/meson.build                        |   1 +
+>  12 files changed, 555 insertions(+), 1 deletion(-)
+>  create mode 100644 doc/guides/prog_guide/memarea_lib.rst
+>  create mode 100644 lib/memarea/memarea_private.h
+>  create mode 100644 lib/memarea/meson.build
+>  create mode 100644 lib/memarea/rte_memarea.c
+>  create mode 100644 lib/memarea/rte_memarea.h
+>  create mode 100644 lib/memarea/version.map
+>=20
 
-Added to next-net
+The library is still interesting but patch needs some changes and rebasing.
+
+> diff --git a/doc/guides/rel_notes/release_23_07.rst b/doc/guides/rel_note=
+s/release_23_07.rst
+> index 6a1c45162b..2751d70740 100644
+> --- a/doc/guides/rel_notes/release_23_07.rst
+> +++ b/doc/guides/rel_notes/release_23_07.rst
+> @@ -222,6 +222,12 @@ New Features
+> =20
+>    See the :doc:`../tools/dmaperf` for more details.
+> =20
+> +* **Added memarea library.**
+> +
+> +  The memarea library is an allocator of variable-size objects, it is or=
+iented
+> +  towards the application layer, providing 'region-based memory manageme=
+nt'
+> +  function.
+> +
+>
+
+This would need to be for 25_03 now
+
+
+> diff --git a/lib/memarea/meson.build b/lib/memarea/meson.build
+> new file mode 100644
+> index 0000000000..7e18c02d3e
+> --- /dev/null
+> +++ b/lib/memarea/meson.build
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright(c) 2023 HiSilicon Limited
+> +
+> +if is_windows
+> +    build =3D false
+> +    reason =3D 'not supported on Windows'
+> +    subdir_done()
+> +endif
+
+Is there a strong reason this can't be used on Windows?
+
+...
+
+> +void
+> +rte_memarea_destroy(struct rte_memarea *ma)
+> +{
+> +	if (ma =3D=3D NULL) {
+> +		rte_errno =3D EINVAL;
+
+No, this is normal, do not set EINVAL here.
+
+> +		return;
+> +	}
+> +	memarea_free_area(&ma->init, ma->area_base);
+> +	rte_free(ma);
+> +}
+
+Also add rte_memarea_destroy to the null_free coccinelle script
+so that any cleanup pass later would fix unnecessary null checks
+around this function.
+
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change without prior notice.
+> + *
+> + * Create memarea.
+> + *
+> + * Create one new memarea.
+> + *
+> + * @param init
+> + *   The init parameter of memarea.
+> + *
+> + * @return
+> + *   Non-NULL on success. Otherwise NULL is returned (the rte_errno is s=
+et).
+> + */
+> +__rte_experimental
+> +struct rte_memarea *rte_memarea_create(const struct rte_memarea_param *i=
+nit);
+
+Now that DPDK has function attributes on allocators,
+this function should be:
+	__rte_malloc
+and
+	__rte_dealloc(rte_memarea_destroy, 1)
+
+
+> +
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change without prior notice.
+> + *
+> + * Destroy memarea.
+> + *
+> + * Destroy the memarea.
+> + *
+> + * @param ma
+> + *   The pointer of memarea.
+> + *
+> + * @note The rte_errno is set if destroy failed.
+> + */
+> +__rte_experimental
+> +void rte_memarea_destroy(struct rte_memarea *ma);
+> +
+
+When using __rte_dealloc, would need this prototype to be
+before the create function
+
+> +#ifdef __cplusplus
+> +}
+> +#endif
