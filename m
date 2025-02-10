@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD47BC0219B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9DDC02198
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Feb 2025 07:31:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 212C1427B9;
-	Mon, 10 Feb 2025 08:28:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A96A427C0;
+	Mon, 10 Feb 2025 08:28:06 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id C37B54275B
- for <dev@dpdk.org>; Mon, 10 Feb 2025 08:27:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 322444278C
+ for <dev@dpdk.org>; Mon, 10 Feb 2025 08:28:00 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 23D2EA335B; Mon, 10 Feb 2025 15:27:15 +0800 (CST)
+ id 079D3A3A4C; Mon, 10 Feb 2025 15:27:27 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v8 17/28] net/rnp: add Rx scatter segment version
-Date: Mon, 10 Feb 2025 15:26:44 +0800
-Message-Id: <1739172415-48507-18-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v8 27/28] net/rnp: add queue info operation.
+Date: Mon, 10 Feb 2025 15:26:54 +0800
+Message-Id: <1739172415-48507-28-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
 References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
@@ -36,205 +36,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support scatter multi segment received.
+add support get queue configure info for user debug
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini |   2 +
- doc/guides/nics/rnp.rst          |   2 +
- drivers/net/rnp/rnp_rxtx.c       | 131 ++++++++++++++++++++++++++++++-
- drivers/net/rnp/rnp_rxtx.h       |   2 +
- 4 files changed, 135 insertions(+), 2 deletions(-)
+ drivers/net/rnp/rnp_ethdev.c |  2 ++
+ drivers/net/rnp/rnp_rxtx.c   | 42 ++++++++++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.h   |  4 ++++
+ 3 files changed, 48 insertions(+)
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 6d13370e8f..c68d6fbe2e 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -15,5 +15,7 @@ RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
- Inner RSS            = Y
-+Jumbo frame          = Y
-+Scattered Rx         = Y
- Linux                = Y
- x86-64               = Y
-diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 9fa7ad9ae9..db64104527 100644
---- a/doc/guides/nics/rnp.rst
-+++ b/doc/guides/nics/rnp.rst
-@@ -17,6 +17,8 @@ Features
- - Promiscuous mode
- - Link state information
- - MTU update
-+- Jumbo frames
-+- Scatter-Gather IO support
- 
- Prerequisites
- -------------
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index a5ae670c96..0d37dd60b0 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -1466,6 +1466,8 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.rx_queue_release             = rnp_dev_rx_queue_release,
+ 	.tx_queue_setup               = rnp_tx_queue_setup,
+ 	.tx_queue_release             = rnp_dev_tx_queue_release,
++	.rxq_info_get                 = rnp_rx_queue_info_get,
++	.txq_info_get                 = rnp_tx_queue_info_get,
+ 	/* rss impl */
+ 	.reta_update                  = rnp_dev_rss_reta_update,
+ 	.reta_query                   = rnp_dev_rss_reta_query,
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index f029e29b8b..018a861b51 100644
+index 6498b012ca..c5661a0f7a 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -830,7 +830,6 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		if (txq->tx_next_rs > txq->attr.nb_desc)
- 			txq->tx_next_rs = txq->tx_rs_thresh - 1;
- 	}
--
- 	txq->tx_tail = i;
- 
- 	rte_wmb();
-@@ -839,9 +838,137 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	return start;
- }
- 
-+static int
-+rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
-+		   volatile struct rnp_rx_desc *rxbd,
-+		   struct rnp_rxsw_entry *rxe,
-+		   bool bulk_alloc)
-+{
-+	struct rte_mbuf *nmb = NULL;
-+	uint16_t update_tail;
-+
-+	if (!bulk_alloc) {
-+		nmb = rte_mbuf_raw_alloc(rxq->mb_pool);
-+		if (unlikely(!nmb)) {
-+			rte_eth_devices[rxq->attr.port_id].data->
-+				rx_mbuf_alloc_failed++;
-+			return -ENOMEM;
-+		}
-+		rxbd->d.pkt_addr = 0;
-+		rxbd->d.cmd = 0;
-+		rxe->mbuf = NULL;
-+		rxe->mbuf = nmb;
-+		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
-+	}
-+	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
-+		rxq->rxrearm_nb -= rxq->rx_free_thresh;
-+		rxq->rxrearm_start += rxq->rx_free_thresh;
-+		if (rxq->rxrearm_start >= rxq->attr.nb_desc)
-+			rxq->rxrearm_start = 0;
-+		update_tail = (uint16_t)((rxq->rxrearm_start == 0) ?
-+				(rxq->attr.nb_desc - 1) : (rxq->rxrearm_start - 1));
-+		rte_io_wmb();
-+		RNP_REG_WR(rxq->rx_tailreg, 0, update_tail);
-+	}
-+
-+	return 0;
-+}
-+
-+static __rte_always_inline uint16_t
-+rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
-+		 uint16_t nb_pkts)
-+{
-+	struct rnp_rx_queue *rxq = (struct rnp_rx_queue *)rx_queue;
-+	volatile struct rnp_rx_desc *bd_ring = rxq->rx_bdr;
-+	struct rte_mbuf *first_seg = rxq->pkt_first_seg;
-+	struct rte_mbuf *last_seg = rxq->pkt_last_seg;
-+	struct rnp_rxsw_entry *sw_ring = rxq->sw_ring;
-+	volatile struct rnp_rx_desc *rxbd;
-+	volatile struct rnp_rx_desc rxd;
-+	struct rnp_rxsw_entry *rxe;
-+	struct rte_mbuf *rxm;
-+	uint16_t rx_pkt_len;
-+	uint16_t nb_rx = 0;
-+	uint16_t rx_status;
-+	uint16_t rx_id;
-+
-+	if (unlikely(!rxq->rxq_started || !rxq->rx_link))
-+		return 0;
-+	rx_id = rxq->rx_tail;
-+	while (nb_rx < nb_pkts) {
-+		rxbd = &bd_ring[rx_id];
-+		rx_status = rxbd->wb.qword1.cmd;
-+		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_DD)))
-+			break;
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+		rxd = *rxbd;
-+		rxe = &sw_ring[rx_id];
-+		rxm = rxe->mbuf;
-+		if (rnp_rxq_bulk_alloc(rxq, rxbd, rxe, false))
-+			break;
-+		rx_id = (rx_id + 1) & rxq->attr.nb_desc_mask;
-+		rte_prefetch0(sw_ring[rx_id].mbuf);
-+		if ((rx_id & 0x3) == 0) {
-+			rte_prefetch0(&bd_ring[rx_id]);
-+			rte_prefetch0(&sw_ring[rx_id]);
-+		}
-+		rx_pkt_len = rxd.wb.qword1.lens;
-+		rxm->data_len = rx_pkt_len;
-+		rxm->data_off = RTE_PKTMBUF_HEADROOM;
-+		if (!first_seg) {
-+			/* first segment pkt */
-+			first_seg = rxm;
-+			first_seg->nb_segs = 1;
-+			first_seg->pkt_len = rx_pkt_len;
-+		} else {
-+			/* follow-up segment pkt */
-+			first_seg->pkt_len =
-+				(uint16_t)(first_seg->pkt_len + rx_pkt_len);
-+			first_seg->nb_segs++;
-+			last_seg->next = rxm;
-+		}
-+		rxq->rxrearm_nb++;
-+		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
-+			last_seg = rxm;
-+			continue;
-+		}
-+		rxm->next = NULL;
-+		first_seg->port = rxq->attr.port_id;
-+		/* this the end of packet the large pkt has been recv finish */
-+		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
-+					first_seg->data_off));
-+		rx_pkts[nb_rx++] = first_seg;
-+		first_seg = NULL;
-+	}
-+	if (!nb_rx)
-+		return 0;
-+	/* update sw record point */
-+	rxq->rx_tail = rx_id;
-+	rxq->pkt_first_seg = first_seg;
-+	rxq->pkt_last_seg = last_seg;
-+
-+	return nb_rx;
-+}
-+
-+static int
-+rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
-+{
-+	uint64_t rx_offloads = dev->data->dev_conf.rxmode.offloads;
-+
-+	if (dev->data->scattered_rx || rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER)
-+		return -ENOTSUP;
-+	return 0;
-+}
-+
- int rnp_rx_func_select(struct rte_eth_dev *dev)
- {
--	dev->rx_pkt_burst = rnp_recv_pkts;
-+	bool simple_allowed = false;
-+
-+	simple_allowed = rnp_check_rx_simple_valid(dev) == 0;
-+	if (simple_allowed)
-+		dev->rx_pkt_burst = rnp_recv_pkts;
-+	else
-+		dev->rx_pkt_burst = rnp_scattered_rx;
+@@ -1718,3 +1718,45 @@ int rnp_tx_func_select(struct rte_eth_dev *dev)
  
  	return 0;
  }
++
++void
++rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++		      struct rte_eth_rxq_info *qinfo)
++{
++	struct rnp_rx_queue *rxq;
++
++	rxq = dev->data->rx_queues[queue_id];
++	if (!rxq)
++		return;
++	qinfo->mp = rxq->mb_pool;
++	qinfo->scattered_rx = dev->data->scattered_rx;
++	qinfo->queue_state = rxq->rxq_started;
++	qinfo->nb_desc = rxq->attr.nb_desc;
++	qinfo->rx_buf_size = rxq->rx_buf_len;
++
++	qinfo->conf.rx_deferred_start = rxq->rx_deferred_start;
++	qinfo->conf.rx_free_thresh = rxq->rx_free_thresh;
++	qinfo->conf.rx_thresh.pthresh = rxq->pthresh;
++	qinfo->conf.rx_thresh.hthresh = rxq->pburst;
++	qinfo->conf.offloads = rxq->rx_offloads;
++}
++
++void
++rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++		      struct rte_eth_txq_info *qinfo)
++{
++	struct rnp_tx_queue *txq;
++
++	txq = dev->data->tx_queues[queue_id];
++	if (!txq)
++		return;
++	qinfo->queue_state = txq->txq_started;
++	qinfo->nb_desc = txq->attr.nb_desc;
++
++	qinfo->conf.tx_deferred_start = txq->tx_deferred_start;
++	qinfo->conf.tx_free_thresh = txq->tx_free_thresh;
++	qinfo->conf.tx_rs_thresh = txq->tx_rs_thresh;
++	qinfo->conf.tx_thresh.pthresh = txq->pthresh;
++	qinfo->conf.tx_thresh.hthresh = txq->pburst;
++	qinfo->conf.offloads = txq->tx_offloads;
++}
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index a8fd8d052f..973b667cb2 100644
+index 51e5d4b600..dc4a8ea9dd 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -76,6 +76,8 @@ struct rnp_rx_queue {
- 	uint64_t rx_offloads; /* user set hw offload features */
- 	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
- 	struct rte_mbuf fake_mbuf; /* dummy mbuf */
-+	struct rte_mbuf	*pkt_first_seg; /**< First segment of current packet. */
-+	struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
- };
+@@ -148,5 +148,9 @@ int rnp_rx_queue_stop(struct rte_eth_dev *eth_dev, uint16_t qidx);
+ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx);
+ int rnp_rx_func_select(struct rte_eth_dev *dev);
+ int rnp_tx_func_select(struct rte_eth_dev *dev);
++void rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			   struct rte_eth_rxq_info *qinfo);
++void rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			   struct rte_eth_txq_info *qinfo);
  
- struct rnp_txsw_entry {
+ #endif /* _RNP_RXTX_H_ */
 -- 
 2.34.1
 
