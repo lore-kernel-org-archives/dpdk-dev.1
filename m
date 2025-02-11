@@ -2,73 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8E9C021A1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94794C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:44:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D07D402DA;
-	Tue, 11 Feb 2025 17:34:29 +0100 (CET)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 3A8BA402C9
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:34:27 +0100 (CET)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-2fa3fe04dd2so5374096a91.0
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291666;
- x=1739896466; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=8qaBlQx/pNSkK772VzKWaacJ5xouh8oZ5qUAnP92Ssc=;
- b=CdDmDQ0HLtqgvP3Dl0TRUjNAlQqH0QSK4kb85ybh7lwWXgihbLM+Wt99Hv3n+BJ664
- dQEa9Yla81bfVePWpyVISyqLI0YcbiOXdZ4VUlWUrtBf03BTxv1XJ6UrBG98kfkUXUCv
- vZ/XcVKul+t4yWPDdbRlQMtYxbyATaSwed5HGByC/eFcbwwhgcA0/WX8Ta+o9JKQVykJ
- czVkfX5OZQbpZDTJFaMWv9+FMbvsY00QX3oCIiREgVNJfumz6yoL7cw9zGLB2o/Er2pw
- zm/CUgpzh8mPnCmH32CkHYUkJ7OvGJTONIxzGXcWO5P/zCSgP9Vbt5Q3B4e3oDXBel9+
- 3X+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739291666; x=1739896466;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=8qaBlQx/pNSkK772VzKWaacJ5xouh8oZ5qUAnP92Ssc=;
- b=D63KejUIHyaLjJEvQAPbypP5VRaGMdBJqT/yYShK0PdVa3nMZ/O9eNCBx9tP/WfV3o
- lAi16UMFxNHEKuHChHSR0sHye42i72aQtBoebxPEPQweGNBw+A28uh2Hp8QEZ0q9qCv0
- ucHwX7c5nlAiydUqggQevwXqHdfW9wFc82+U6NYJXPtZsVVqYMS1/F0TFE15xZKDe6pv
- Q5vb/BnBxcOFoK/PJRmWKDW6BHmLo+aD87EcDoGqbp5OZQJ7DAIdYBECc8x5AO81V0sU
- QC1s7OucUT1bhmHHOFQfKqElyaDZ/1Wr9D6s1YhnqObHkv9aM0M0+7KOaJpvnGL3Ywhd
- HvmQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU9csLQHWzLKxQRdDripA7BZRHOnexMjfibhC74AvPqdjGJ0zmjkP/dLzwOVhCdw7WNXck=@dpdk.org
-X-Gm-Message-State: AOJu0Yzi26km0DSpiPf19VX5sqAbU+Z7nanMXNDNv2D63N2h/Ku7PEZT
- CqiBIyb3vhiJfs201Fcm3RHv4aCbo8d5u/PBKc808ePWbB8xudklHh7j8EBinqU=
-X-Gm-Gg: ASbGncu/v+14pJRCsM+3E4J2kI2KSoWrH7oXnX3VULxW5oZO5my7jW76obj/5PLuHaG
- IwO6A1WAKB36lpTVzV1cQihBu9UfJ8IY0SxWoucSDgjo8PVZsMg8r6LbAPMblX+Dz8eX+uQh+Qc
- 4isa7KLpaBYHSePH1vjaRtrdaWOGPCKM8o/lPLjRAPXQ5RRjctgwKDXDe70c4nbIanvMTz8S5Va
- pjp5eQM7b6p9hPtO7gztK1ITsb+YFUmGR0GhgS+DqPJnH8zcmqhmXAaSfSUlZfnpXQf6LikNCQJ
- 1jfE+SyovKHfiq3wR3sMnlEXcBAXX7OVLXH5ZsLpNi3hOoZayuD9LhMQCMiOioECMAyM
-X-Google-Smtp-Source: AGHT+IGoO/CZQ3JokNYsXOcpIDBgUpR123tMi9gV1RYGi7LqwgvoMUn+TZvWHlptrzL70roNRmgl6g==
-X-Received: by 2002:a17:90b:368c:b0:2ee:741c:e9f4 with SMTP id
- 98e67ed59e1d1-2fa2406434fmr26983459a91.11.1739291666026; 
- Tue, 11 Feb 2025 08:34:26 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa135a3762sm10505448a91.19.2025.02.11.08.34.25
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:34:25 -0800 (PST)
-Date: Tue, 11 Feb 2025 08:34:23 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenbo Cao <caowenbo@mucse.com>
-Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v10 00/28] [v10]drivers/net Add Support mucse N10 Pmd
- Driver
-Message-ID: <20250211083423.48a1d3ab@hermes.local>
-In-Reply-To: <1739286398-61972-1-git-send-email-caowenbo@mucse.com>
-References: <1739286398-61972-1-git-send-email-caowenbo@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C8421402C9;
+	Tue, 11 Feb 2025 17:44:11 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id B9A7D402A1
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:44:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1739292251; x=1770828251;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=X3HATIrOCR4TlS+9smLnBaapfM5wrE66j91jrqmGPSA=;
+ b=dkR5f9CwUuqNcJN7dA/kNX2DxQsPKAFwguu/ZzpGvm1NnVeo3aAYz9N4
+ p50snV+1MFucx9fDODeBD31f/u6b6zebUefWbC/QmehkVvbTfRouA8fA3
+ jBcf1vP3JssHQ6cgHWdaSKiakKpa1cZltSxaKS5Egl8UA6BpKbbJ5a+sM
+ eQ+OzqEITVF6j40nsiFCq5x8Ewu2+Dg7koKjYIpFDugW6Embor19FUQ9K
+ VVAy1a4t7wgSOy6N9OxK6te6J4yXchm9RW/zrsEP0pOOQM0F0FTpNNldf
+ Fl3g4vD5eq2uBTkUmsvq/LUF/K/KiORuQTA2PS6G/LS9E+IJjc7994e+e Q==;
+X-CSE-ConnectionGUID: vvfj9RI6RFutRb/pfzsL2g==
+X-CSE-MsgGUID: 962LBrdFRZeVj/eGyLE1iA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50905074"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; d="scan'208";a="50905074"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2025 08:44:10 -0800
+X-CSE-ConnectionGUID: CjlucMMHQp2LJiC6ufFhoQ==
+X-CSE-MsgGUID: siYyUhceQEmw3aKboxvqiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; d="scan'208";a="112326941"
+Received: from silpixa00401197coob.ir.intel.com (HELO
+ silpixa00401385.ir.intel.com) ([10.237.214.45])
+ by orviesa009.jf.intel.com with ESMTP; 11 Feb 2025 08:44:09 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: pdamouny@nvidia.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH] app/test-pmd: add option to run startup cmds without echo
+Date: Tue, 11 Feb 2025 16:44:02 +0000
+Message-ID: <20250211164402.99941-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,250 +59,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Feb 2025 23:06:10 +0800
-Wenbo Cao <caowenbo@mucse.com> wrote:
+Depending on the scenario, a user may want to run testpmd with
+pre-canned startup commands either with or without echoing of those
+commands as they are executed. To observe progress of each command, or
+to help determine what command an error response is printed for, echoing
+is useful. When running a large number of commands, performance can be
+improved by disabling the echo of each one.
 
-> For This patchset just to support the basic chip init work
-> and user can just found the eth_dev, but can't control more.
-> For Now just support 2*10g nic,the chip can support
-> 2*10g,4*10g,4*1g,8*1g,8*10g.
-> The Feature rx side can support rx-cksum-offload,rss,vlan-filter
-> flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
-> The Feature tx side can support tx-cksum-offload,tso,vxlan-tso=20
-> flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
-> for sriov is also support.
->=20
-> Because of the chip design defect, for multiple-port mode
-> one pci-bdf will have multiple-port (max can have four ports)
-> so this code must be care of one bdf init multiple-port.
->=20
-> v10:
->   * fixed mingw windows meson issue
->   * rnp not support windows for now.
->   * change ffs use osdep rte_fls_u32
->=20
-> v9:
->   * fixed commit log format check by devtools.
->   * fixed code compile issue.
->=20
-> v8:
->   * fixed codespell issue.
->   * fixed MAINTAINERS file
->=20
-> v7:
->   * add support nic basic feature such as rss vlan strip/filter,
->   * mtu-change recv/send scater-recv/mutltiple-send.
->   * fixed code rationality, advised by Ferruh Yigit.
-> v6:
->   * fixed the doc(rst) format problem advise by Thomas Monjalon
->=20
-> v5:
->   * fixed the symbol name require by the style documentation
->=20
-> v4:
->   * one patch has been forgot to upload :(
->=20
-> v3:
->   * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
->   * change iobar type to void suggest by Stephen Hemminger
->   * add KMOD_DEP support for vfio-pci
->   * change run-cmd argument parse check for invalid extra_args
->=20
-> v2:
->   * fixed MAINTAIN maillist fullname format
->   * fixed driver/net/meson the order issue of new driver to driver list
->   * improve virtual point function usage suggest by Stephen Hemminger
->=20
-> Wenbo Cao (28):
->   net/rnp: add skeleton
->   net/rnp: add ethdev probe and remove
->   net/rnp: add log
->   net/rnp: support mailbox basic operate
->   net/rnp: add device init and uninit
->   net/rnp: add get device information operation
->   net/rnp: add support MAC promisc mode
->   net/rnp: add queue setup and release operations
->   net/rnp: add queue stop and start operations
->   net/rnp: add support device start stop operations
->   net/rnp: add RSS support operations
->   net/rnp: add support link update operations
->   net/rnp: add support link setup operations
->   net/rnp: add Rx burst simple support
->   net/rnp: add Tx burst simple support
->   net/rnp: add MTU set operation
->   net/rnp: add Rx scatter segment version
->   net/rnp: add Tx multiple segment version
->   net/rnp: add support basic stats operation
->   net/rnp: add support xstats operation
->   net/rnp: add unicast MAC filter operation
->   net/rnp: add supported packet types
->   net/rnp: add support Rx checksum offload
->   net/rnp: add support Tx TSO offload
->   net/rnp: support VLAN offloads
->   net/rnp: add support VLAN filters operations
->   net/rnp: add queue info operation
->   net/rnp: support Rx/Tx burst mode info
->=20
->  .mailmap                            |    1 +
->  MAINTAINERS                         |    6 +
->  doc/guides/nics/features/rnp.ini    |   33 +
->  doc/guides/nics/index.rst           |    1 +
->  doc/guides/nics/rnp.rst             |  101 ++
->  drivers/net/meson.build             |    1 +
->  drivers/net/rnp/base/meson.build    |   28 +
->  drivers/net/rnp/base/rnp_bdq_if.c   |  398 ++++++
->  drivers/net/rnp/base/rnp_bdq_if.h   |  154 +++
->  drivers/net/rnp/base/rnp_bitrev.h   |   64 +
->  drivers/net/rnp/base/rnp_common.c   |  103 ++
->  drivers/net/rnp/base/rnp_common.h   |   17 +
->  drivers/net/rnp/base/rnp_crc32.c    |   37 +
->  drivers/net/rnp/base/rnp_crc32.h    |   10 +
->  drivers/net/rnp/base/rnp_dma_regs.h |   68 +
->  drivers/net/rnp/base/rnp_eth_regs.h |   90 ++
->  drivers/net/rnp/base/rnp_fw_cmd.c   |  162 +++
->  drivers/net/rnp/base/rnp_fw_cmd.h   |  358 ++++++
->  drivers/net/rnp/base/rnp_hw.h       |  136 ++
->  drivers/net/rnp/base/rnp_mac.c      |  366 ++++++
->  drivers/net/rnp/base/rnp_mac.h      |   34 +
->  drivers/net/rnp/base/rnp_mac_regs.h |  207 +++
->  drivers/net/rnp/base/rnp_mbx.c      |  512 ++++++++
->  drivers/net/rnp/base/rnp_mbx.h      |   58 +
->  drivers/net/rnp/base/rnp_mbx_fw.c   |  499 ++++++++
->  drivers/net/rnp/base/rnp_mbx_fw.h   |   24 +
->  drivers/net/rnp/base/rnp_osdep.h    |  175 +++
->  drivers/net/rnp/meson.build         |   27 +
->  drivers/net/rnp/rnp.h               |  258 ++++
->  drivers/net/rnp/rnp_ethdev.c        | 1845 +++++++++++++++++++++++++++
->  drivers/net/rnp/rnp_link.c          |  439 +++++++
->  drivers/net/rnp/rnp_link.h          |   38 +
->  drivers/net/rnp/rnp_logs.h          |   36 +
->  drivers/net/rnp/rnp_rss.c           |  367 ++++++
->  drivers/net/rnp/rnp_rss.h           |   43 +
->  drivers/net/rnp/rnp_rxtx.c          | 1820 ++++++++++++++++++++++++++
->  drivers/net/rnp/rnp_rxtx.h          |  162 +++
->  37 files changed, 8678 insertions(+)
->  create mode 100644 doc/guides/nics/features/rnp.ini
->  create mode 100644 doc/guides/nics/rnp.rst
->  create mode 100644 drivers/net/rnp/base/meson.build
->  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
->  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
->  create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
->  create mode 100644 drivers/net/rnp/base/rnp_common.c
->  create mode 100644 drivers/net/rnp/base/rnp_common.h
->  create mode 100644 drivers/net/rnp/base/rnp_crc32.c
->  create mode 100644 drivers/net/rnp/base/rnp_crc32.h
->  create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
->  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
->  create mode 100644 drivers/net/rnp/base/rnp_hw.h
->  create mode 100644 drivers/net/rnp/base/rnp_mac.c
->  create mode 100644 drivers/net/rnp/base/rnp_mac.h
->  create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
->  create mode 100644 drivers/net/rnp/base/rnp_mbx.c
->  create mode 100644 drivers/net/rnp/base/rnp_mbx.h
->  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
->  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
->  create mode 100644 drivers/net/rnp/base/rnp_osdep.h
->  create mode 100644 drivers/net/rnp/meson.build
->  create mode 100644 drivers/net/rnp/rnp.h
->  create mode 100644 drivers/net/rnp/rnp_ethdev.c
->  create mode 100644 drivers/net/rnp/rnp_link.c
->  create mode 100644 drivers/net/rnp/rnp_link.h
->  create mode 100644 drivers/net/rnp/rnp_logs.h
->  create mode 100644 drivers/net/rnp/rnp_rss.c
->  create mode 100644 drivers/net/rnp/rnp_rss.h
->  create mode 100644 drivers/net/rnp/rnp_rxtx.c
->  create mode 100644 drivers/net/rnp/rnp_rxtx.h
->=20
+Therefore, we can add a new cmdline-file-noecho command to testpmd to
+allow running without echo. Behaviour is otherwise the same as
+cmdline-file command.
 
+When adding the new command also:
+* fix leak of the fd when using the existing cmdline-file flag
+* add cmdline-file (and cmdline-file-noecho) to the testpmd docs
 
-Also the script devtools/test-meson-builds.sh that runs through
-different build options, eventually fails at:
+Bugzilla ID: 1612
 
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test-pmd/cmdline.c                | 29 ++++++++++++++++++---------
+ app/test-pmd/parameters.c             |  9 ++++++++-
+ app/test-pmd/testpmd.c                |  1 +
+ app/test-pmd/testpmd.h                |  1 +
+ doc/guides/testpmd_app_ug/run_app.rst |  7 +++++++
+ 5 files changed, 36 insertions(+), 11 deletions(-)
 
-  User defined options
-    buildtype             : debugoptimized
-    check_includes        : true
-    cpu_instruction_set   : nehalem
-    default_library       : shared
-    enable_deprecated_libs: *
-    examples              : all
-    libdir                : lib
-    werror                : true
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 2897e44c34..1381ee6874 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -13855,24 +13855,29 @@ void
+ cmdline_read_from_file(const char *filename)
+ {
+ 	struct cmdline *cl;
++	int fd = -1;
+ 
+-	/* cmdline_file_new does not produce any output which is not ideal here.
+-	 * Much better to show output of the commands, so we open filename directly
++	/* cmdline_file_new does not produce any output
++	 * so when echoing is requested we open filename directly
+ 	 * and then pass that to cmdline_new with stdout as the output path.
+ 	 */
+-	int fd = open(filename, O_RDONLY);
+-	if (fd < 0) {
+-		fprintf(stderr, "Failed to open file %s: %s\n",
+-			filename, strerror(errno));
+-		return;
+-	}
++	if (!echo_cmdline_file) {
++		cl = cmdline_file_new(main_ctx, "testpmd> ", filename);
++	} else {
++		fd = open(filename, O_RDONLY);
++		if (fd < 0) {
++			fprintf(stderr, "Failed to open file %s: %s\n",
++				filename, strerror(errno));
++			return;
++		}
+ 
+-	cl = cmdline_new(main_ctx, "testpmd> ", fd, STDOUT_FILENO);
++		cl = cmdline_new(main_ctx, "testpmd> ", fd, STDOUT_FILENO);
++	}
+ 	if (cl == NULL) {
+ 		fprintf(stderr,
+ 			"Failed to create file based cmdline context: %s\n",
+ 			filename);
+-		return;
++		goto end;
+ 	}
+ 
+ 	cmdline_interact(cl);
+@@ -13881,6 +13886,10 @@ cmdline_read_from_file(const char *filename)
+ 	cmdline_free(cl);
+ 
+ 	printf("Read CLI commands from %s\n", filename);
++
++end:
++	if (fd >= 0)
++		close(fd);
+ }
+ 
+ void
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 7b31b94542..1132972913 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -51,6 +51,8 @@ enum {
+ 	TESTPMD_OPT_LONG_MIN_NUM = 256,
+ #define TESTPMD_OPT_CMDLINE_FILE "cmdline-file"
+ 	TESTPMD_OPT_CMDLINE_FILE_NUM,
++#define TESTPMD_OPT_CMDLINE_FILE_NOECHO "cmdline-file-noecho"
++	TESTPMD_OPT_CMDLINE_FILE_NOECHO_NUM,
+ #define TESTPMD_OPT_ETH_PEERS_CONFIGFILE "eth-peers-configfile"
+ 	TESTPMD_OPT_ETH_PEERS_CONFIGFILE_NUM,
+ #define TESTPMD_OPT_ETH_PEER "eth-peer"
+@@ -269,6 +271,7 @@ static const struct option long_options[] = {
+ 	NO_ARG(TESTPMD_OPT_HELP),
+ 	NO_ARG(TESTPMD_OPT_INTERACTIVE),
+ 	REQUIRED_ARG(TESTPMD_OPT_CMDLINE_FILE),
++	REQUIRED_ARG(TESTPMD_OPT_CMDLINE_FILE_NOECHO),
+ 	REQUIRED_ARG(TESTPMD_OPT_ETH_PEERS_CONFIGFILE),
+ 	REQUIRED_ARG(TESTPMD_OPT_ETH_PEER),
+ 	NO_ARG(TESTPMD_OPT_TX_FIRST),
+@@ -387,7 +390,8 @@ usage(char* progname)
+ 	printf("\nUsage: %s [EAL options] -- [testpmd options]\n\n",
+ 	       progname);
+ 	printf("  --interactive: run in interactive mode.\n");
+-	printf("  --cmdline-file: execute cli commands before startup.\n");
++	printf("  --cmdline-file: execute cli commands before startup, echoing each command as it is run.\n");
++	printf("  --cmdline-file-noecho: execute cli commands before startup, without echoing each command.\n");
+ 	printf("  --auto-start: start forwarding on init "
+ 	       "[always when non-interactive].\n");
+ 	printf("  --help: display this message and quit.\n");
+@@ -956,6 +960,9 @@ launch_args_parse(int argc, char** argv)
+ 			exit(EXIT_SUCCESS);
+ 			break;
+ 		case TESTPMD_OPT_CMDLINE_FILE_NUM:
++			echo_cmdline_file = true;
++			/* fall-through */
++		case TESTPMD_OPT_CMDLINE_FILE_NOECHO_NUM:
+ 			printf("CLI commands to be read from %s\n",
+ 				optarg);
+ 			strlcpy(cmdline_filename, optarg,
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index ac654048df..f7dc6a9590 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -106,6 +106,7 @@ uint8_t interactive = 0;
+ uint8_t auto_start = 0;
+ uint8_t tx_first;
+ char cmdline_filename[PATH_MAX] = {0};
++bool echo_cmdline_file;
+ 
+ /*
+  * NUMA support configuration.
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index 260e4761bd..425b608e3e 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -508,6 +508,7 @@ extern uint8_t  interactive;
+ extern uint8_t  auto_start;
+ extern uint8_t  tx_first;
+ extern char cmdline_filename[PATH_MAX]; /**< offline commands file */
++extern bool echo_cmdline_file;  /** unset if cmdline-file-noecho is used */
+ extern uint8_t  numa_support; /**< set by "--numa" parameter */
+ extern uint16_t port_topology; /**< set by "--port-topology" parameter */
+ extern uint8_t no_flush_rx; /**<set by "--no-flush-rx" parameter */
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index 48717707a7..330c37f2d9 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -39,6 +39,13 @@ The command line options are:
+ 
+     Display a help message and quit.
+ 
++*   ``--cmdline-file=filename, --cmdline-file-noecho=filename``
++
++    Read and execute commands from a file.
++    The file should contain the same commands that can be entered interactively.
++    When using ``cmdline-file``, each command is printed as it is executed.
++    When using ``cmdline-file-noecho``, the commands are executed silently.
++
+ *   ``-a, --auto-start``
+ 
+     Start forwarding on initialization.
+-- 
+2.43.0
 
-Found ninja-1.12.1 at /usr/bin/ninja
-ninja: Entering directory `./build-x86-generic'                            =
-                                                                           =
-                                             =20
-[1751/6916] Compiling C object drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_e=
-thdev.c.o
-FAILED: drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o=20
-cc -Idrivers/libtmp_rte_net_rnp.a.p -Idrivers -I../drivers -Idrivers/net/rn=
-p -I../drivers/net/rnp -Idrivers/net/rnp/base -I../drivers/net/rnp/base -Il=
-ib/ethdev -I../lib/ethdev -I. -I.. -Iconfig -I../config -Ilib/eal/include -=
-I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -Ili=
-b/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal/comm=
-on -I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs =
--Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../=
-lib/telemetry -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool=
- -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/meter -I../lib/meter -Idri=
-vers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I..=
-/lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -I/usr/include/x86_64-lin=
-ux-gnu -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvali=
-d-pch -Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-=
-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -Wmissing-=
-declarations -Wmissing-prototypes -Wnested-externs -Wold-style-definition -=
-Wpointer-arith -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -=
-Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC =
--march=3Dnehalem -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-f=
-ormat-truncation -Wno-address-of-packed-member -DRTE_LOG_DEFAULT_LOGTYPE=3D=
-pmd.net.rnp -MD -MQ drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o -=
-MF drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o.d -o drivers/libtm=
-p_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o -c ../drivers/net/rnp/rnp_ethdev.c
-In file included from ../lib/eal/x86/include/rte_atomic.h:11,
-                 from ../lib/eal/include/generic/rte_pause.h:19,
-                 from ../lib/eal/x86/include/rte_pause.h:8,
-                 from ../lib/eal/include/generic/rte_rwlock.h:31,
-                 from ../lib/eal/x86/include/rte_rwlock.h:8,
-                 from ../lib/eal/include/rte_eal_memconfig.h:10,
-                 from ../lib/eal/include/rte_memory.h:21,
-                 from ../lib/eal/include/rte_malloc.h:16,
-                 from ../lib/ethdev/ethdev_pci.h:9,
-                 from ../drivers/net/rnp/rnp_ethdev.c:5:
-In function =E2=80=98_mm_loadu_si128=E2=80=99,
-    inlined from =E2=80=98rte_mov16=E2=80=99 at ../lib/eal/x86/include/rte_=
-memcpy.h:113:9,
-    inlined from =E2=80=98rte_mov32=E2=80=99 at ../lib/eal/x86/include/rte_=
-memcpy.h:131:2,
-    inlined from =E2=80=98rte_mov64=E2=80=99 at ../lib/eal/x86/include/rte_=
-memcpy.h:149:2,
-    inlined from =E2=80=98rte_mov128=E2=80=99 at ../lib/eal/x86/include/rte=
-_memcpy.h:161:2,
-    inlined from =E2=80=98rte_memcpy_generic=E2=80=99 at ../lib/eal/x86/inc=
-lude/rte_memcpy.h:615:4,
-    inlined from =E2=80=98rte_memcpy=E2=80=99 at ../lib/eal/x86/include/rte=
-_memcpy.h:757:10,
-    inlined from =E2=80=98rnp_mbx_fw_reply_handler=E2=80=99 at ../drivers/n=
-et/rnp/rnp_ethdev.c:75:3,
-    inlined from =E2=80=98rnp_process_fw_msg=E2=80=99 at ../drivers/net/rnp=
-/rnp_ethdev.c:113:4,
-    inlined from =E2=80=98rnp_dev_interrupt_handler=E2=80=99 at ../drivers/=
-net/rnp/rnp_ethdev.c:130:2,
-    inlined from =E2=80=98rnp_dev_interrupt_handler=E2=80=99 at ../drivers/=
-net/rnp/rnp_ethdev.c:123:13:
-/usr/lib/gcc/x86_64-linux-gnu/14/include/emmintrin.h:706:10: error: array s=
-ubscript 16 is outside array bounds of =E2=80=98uint32_t[64]=E2=80=99 {aka =
-=E2=80=98unsigned int[64]=E2=80=99} [-Werror=3Darray-bounds=3D]
-  706 |   return *__P;
-      |          ^~~~
-../drivers/net/rnp/rnp_ethdev.c: In function =E2=80=98rnp_dev_interrupt_han=
-dler=E2=80=99:
-../drivers/net/rnp/rnp_ethdev.c:103:18: note: at offset 256 into object =E2=
-=80=98msgbuf=E2=80=99 of size 256
-  103 |         uint32_t msgbuf[64];
-      |                  ^~~~~~
-cc1: all warnings being treated as errors
-[1772/6916] Compiling C object lib/librte_pipeline.a.p/pipeline_rte_table_a=
-ction.c.o
-ninja: build stopped: subcommand failed.
