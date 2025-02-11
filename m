@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E49EDC0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8A0C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:24:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17F6B402DA;
-	Tue, 11 Feb 2025 17:24:38 +0100 (CET)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 4185B402C9
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:37 +0100 (CET)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-21f49837d36so67038865ad.3
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A8144066F;
+	Tue, 11 Feb 2025 17:24:42 +0100 (CET)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id D11404066A
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:40 +0100 (CET)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-2fa1a3c88c5so7554272a91.3
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291076;
- x=1739895876; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291080;
+ x=1739895880; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DSxRubKSgLZWVrsWNeUhL1kPYo18oemXwmvh6NdAlTw=;
- b=r83JHFfWOwQIa+K4FngFkGDYfCH0berUYA3SC+o6koaugMRqO+NyqMHtKeOoluwJQc
- 19pwvClNm/Ads9hMFcxHmez5cbg/9QT33O5mhpW8PpXlxfDXrzOEMigvP0/RAj4B0KnX
- BJlA22txwk+zLVqRKoXaYggEkdDxaKbkSM1TwFq06x8v1uGU44VCneOBY0MjlJMQOm3a
- XB8FK2MNtcHaWsi/7VI9fTZJO3yN3q0vyZ2N0BQ32uAC98SCpzGXsaDsVaemnhJtjY50
- 97ApNELoIBnCOPBkJbG/HU04LA4CQVvaND52ctGNpM9qcPuxOJAmE9BftJ/bjDeQpiGt
- VGMQ==
+ bh=rSW4YnSURPBYzTkV7bC4RFJyfEnneI3shOhxZvcUwkI=;
+ b=RGo9u0BgWLiln5BDcCRx4/uJEHsh/d+My86gvUrlv7EnJA3aBaki+NC1eQ3bslh2i6
+ x+sQYl8qgywPtzIRnWG+AdXGokBtWwF0u2sbiCRomsCt1fpIq/kJALpGcYMCmQPBCtmq
+ actKhilDt8mc9Z0jmpegDK+GbxMZl82eweUhX4CbyVKdbzSIqmk31qIO5QN92F2cfd+4
+ sRuyGjZzViqDw2NHURMFvQSRyM/+ce0Si2qMafgfUSFo+HMeSprw96WqtmyS6/qAC1Dm
+ DUPkZqvQ8Gloc15YQCwezZt0R6Vz26hqcUta5jQwFOpt62a+4SXCghfJz5LHqX1wfYXl
+ n8/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739291076; x=1739895876;
+ d=1e100.net; s=20230601; t=1739291080; x=1739895880;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=DSxRubKSgLZWVrsWNeUhL1kPYo18oemXwmvh6NdAlTw=;
- b=iEUTXO9wGV9UZKZoBvNMT6PLL5SvHFeXqqZvII55Pda3fwTJCT1nDFI/scp7aCLjl2
- UltwcoPTD7aABNDiJKp/LOpN1sEFTa7xVb/gOv8njF3NYW4+98XSIp79QSsy6JXMBy4R
- Nao8owBdJ5W4/Df2nE8V6iCXjkbHAHAMD43v7p82b3SQEfsoJVUqdbuiSLAnpc0sKgyy
- nAbHWyMNiCPzr/hIO81b5cmzid7vcmAX5OQRjr5xOCBunjfeQDyyADRFYO00amqXkbq0
- qS9TA6TMHIAOIz4rgOBydHNZ1gJy5d5mWsbBlyTK5+039e0rHWFd24eKcLH1q+3bquA9
- X7qg==
+ bh=rSW4YnSURPBYzTkV7bC4RFJyfEnneI3shOhxZvcUwkI=;
+ b=wx98057/x8nO3gZjhyhpWaZwuMb0bO9737vQA+3aJCTlJjwCefX82ILtwNahUiTW/V
+ wMsWbGnP1mCr+XSVxggA2HUZghBxfU7sgFKHXBlHaaaMMAJxbMPItaS7UyxMUF9YvfpJ
+ grO+5NryTTpSewhAxFRxihXCL1VVmwrBOfBHZI/jnyZe1PYlmrzp2h2v32L79cJMBXdU
+ KiKJaOd2ZXoMDQmq1Fiprkk4lWGuxvtdBsFZbd22cCEl/xX9QLiSyF6bTWONET+lNGnL
+ nmH9nNpL5i9cvgv0UzHW8yph3FaDMA94gtdlPIO6QG8j3Dz6OT9OGOC/+B0vtQ1SYjwR
+ wBIg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUl95dl7ymufgxVhpkNfsd2CT83F+tToWKGlXsYLJWVfG8S/G92QxG5aXpVzCkVCVmkX2s=@dpdk.org
-X-Gm-Message-State: AOJu0YxehCxtfn3oR2Nvwh1mjzzSHc5kbjoZlCxUb8auQI59RbhrmK4T
- Mv+GDdmfRBsa2IqAA1N0pia3ov3Js7+cKGc4Z0qemCHIW7CqUYirjlBw6FztIMM=
-X-Gm-Gg: ASbGncvZEggfC34TgosnmGnuz+6/+/vx/MaaopdQqCR35vLdndvTHR7aTiZrO5ENxnW
- Lo/c2BKqvy50dX717zQigSYRSXxjmUOTioqGbVc6oMuL1Iihv0Qk90oOS6iRtDb+C5JBh2RalBT
- 2QWANiV9ou3zyrLBLXwECrv6+fiWPrun7IMAvEFuwJtkM2vfUGRZJ6WA85UGhlNXyQxexMzoSpX
- IR0UjVClCaNNkDdfOcPS0eIlm93OuaR+oOweVKqtqAP42V5PvOWD6qkCBwKrFSSxUDDZ4q4obXo
- eCjQRF19KdDMDasIfEzJBrgBzUbQRP8hg3E1fW449Uze8uItiLveGSweCnVOf7DVcU/g
-X-Google-Smtp-Source: AGHT+IGJ+kg+3ua+exey0D/jQckVjyuU3++3Z2xLYTs5q8yV71LusNM6iltQJrL2i1O3rmF7/bUcJg==
-X-Received: by 2002:a17:902:ea01:b0:216:5448:22a4 with SMTP id
- d9443c01a7336-21f4e6a037dmr273303615ad.10.1739291076289; 
- Tue, 11 Feb 2025 08:24:36 -0800 (PST)
+ AJvYcCXxvcqnWI24b3R1Yx8bYiRr2i8X4d+5honSVsKH2viO23ULbrFDtSi45sgPRfgkz/Yu2ww=@dpdk.org
+X-Gm-Message-State: AOJu0Yypjr/KiqlnXw72DuFMuSAIQJFFtss+3HM2ixcqHcl180HnHyfi
+ bQAG09EDalV3PXSGHefermQjrvvZ6GJLI8z30KX6GCH7riwtc5obp02sgoKaN8M=
+X-Gm-Gg: ASbGncvLh/JFofy6920VS+yOhmsHXYE1BONBR3Y6CTty77bwnEPDpunmb07ObR2AGtw
+ R8iXJbYCugpbjr7juziHxXObZue6nNax+SHDwzUu/BAhKjlksXaHLeJN2aeS+0iCis00i3za4IQ
+ 4Ij/hOGHFPx4e65nzJyeQLO1oA91FVTv6l/LvZqTp3hHhGzwp6sTBMUZQlrryVoY9nfgWA23OpQ
+ PcKm0gGRm5Lo6nMXZ3H7wQGw5+5djdtSBiaG2e9mAfCDpIt7wNApV01Bxbu498IbOsv6xvnOG+T
+ lx/Rjc1DMLMBkqWGL5cw5yJavHs/F0GxZ/fxm+34bB20Pnb0RPDuhDF3HsxCVCh7CaS5
+X-Google-Smtp-Source: AGHT+IGorHnPCozbuzYsZAQvqWwJIRaoImgILAeEyF1CGCCQyCfpVgIPVLkBTt07+dsXz2bUesQulQ==
+X-Received: by 2002:a17:90a:d643:b0:2fa:20f4:d27f with SMTP id
+ 98e67ed59e1d1-2fa9ee31752mr5413468a91.32.1739291080000; 
+ Tue, 11 Feb 2025 08:24:40 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.35
+ 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:24:35 -0800 (PST)
-Date: Tue, 11 Feb 2025 07:24:06 -0800
+ Tue, 11 Feb 2025 08:24:39 -0800 (PST)
+Date: Tue, 11 Feb 2025 07:35:03 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wenbo Cao <caowenbo@mucse.com>
 Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v9 04/28] net/rnp: support mailbox basic operate
-Message-ID: <20250211072406.59f15101@hermes.local>
-In-Reply-To: <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
+Subject: Re: [PATCH v9 12/28] net/rnp: add support link update operations
+Message-ID: <20250211073503.78f084ff@hermes.local>
+In-Reply-To: <1739263818-59770-13-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
+ <1739263818-59770-13-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,33 +82,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Feb 2025 16:49:54 +0800
+On Tue, 11 Feb 2025 16:50:02 +0800
 Wenbo Cao <caowenbo@mucse.com> wrote:
 
-> diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
-> new file mode 100644
-> index 0000000000..9ea88c3bff
-> --- /dev/null
-> +++ b/drivers/net/rnp/base/meson.build
-> @@ -0,0 +1,22 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(C) 2023 Mucse IC Design Ltd.
+> static int
+> +rnp_mbx_fw_reply_handler(struct rnp_eth_adapter *adapter,
+> +			 struct rnp_mbx_fw_cmd_reply *reply)
+> +{
+> +	struct rnp_mbx_req_cookie *cookie;
 > +
-> +sources = [
-> +        'rnp_mbx.c',
-> +]
+> +	RTE_SET_USED(adapter);
+> +	/* dbg_here; */
+> +	cookie = reply->cookie;
+> +	if (!cookie || cookie->magic != RNP_COOKIE_MAGIC) {
+> +		RNP_PMD_ERR("[%s] invalid cookie:%p opcode: "
+> +				"0x%x v0:0x%x",
+> +				__func__,
+> +				cookie,
+> +				reply->opcode,
+> +				*((int *)reply));
+
+Don't break messages across lines in source. It makes it harder to search.
+You don't need __func__, it is already being added by the macro.
+
+> +		return -EIO;
+> +	}
+> +	if (cookie->priv_len > 0)
+> +		rte_memcpy(cookie->priv, reply->data, cookie->priv_len);
+
+Use memcpy instead of rte_memcpy in all new code.
+
 > +
-> +error_cflags = ['-Wno-unused-value',
-> +        '-Wno-unused-but-set-variable',
-> +        '-Wno-unused-parameter',
-> +        ]
-
-Put the first item on new line, meson is like python and similar style applies.
-It is disappointing that base code is so messy that you have to disable warnings.
-
-> +c_args = cflags
-> +foreach flag: error_cflags
-> +    if cc.has_argument(flag)
-> +        c_args += flag
-> +    endif
-> +endforeach
+> +	cookie->done = 1;
+> +	if (reply->flags & RNP_FLAGS_ERR)
+> +		cookie->errcode = reply->error_code;
+> +	else
+> +		cookie->errcode = 0;
+> +
+> +	return 0;
+> +}
