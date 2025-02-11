@@ -2,57 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96525C0219D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 08:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D39AC021A5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 09:02:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF56A40156;
-	Tue, 11 Feb 2025 09:56:35 +0100 (CET)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
- by mails.dpdk.org (Postfix) with ESMTP id 6C18340150
- for <dev@dpdk.org>; Tue, 11 Feb 2025 09:56:34 +0100 (CET)
-X-QQ-mid: bizesmtp85t1739264179t9uqq039
-X-QQ-Originating-IP: +VaqcHnkGdp6rRA854pvi4imjdLz4sNUKJvpy0R1epI=
-Received: from LAPTOP96V0OHHN ( [103.233.162.252])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 11 Feb 2025 16:56:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3877265363882633569
-From: "11" <caowenbo@mucse.com>
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-References: <1739172415-48507-1-git-send-email-caowenbo@mucse.com>
- <20250210110359.2b844491@hermes.local>
-In-Reply-To: <20250210110359.2b844491@hermes.local>
-Subject: RE: [PATCH v8 00/28] [v8]drivers/net Add Support mucse N10 Pmd Driver
-Date: Tue, 11 Feb 2025 16:56:18 +0800
-Message-ID: <63577437082A8172+000401db7c62$d1b99000$752cb000$@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 409EB40156;
+	Tue, 11 Feb 2025 10:02:14 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 7DF8740150
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 10:02:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1739264533; x=1770800533;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=RwyNCn39cLox1Ur87qarLDZTe/oy75iutJLlqSV+Qh4=;
+ b=l/D39y41n0aMGQi/XiyWIqbXGwUBNEfOzLU1mtBRPrscRKRwPwACMbbu
+ aPEl4yw2tgXMloJ5wFpL+6ZPrDHJ3qYhGSbeXNSHgNTWrUtRTWSzpBef6
+ qM6AGnVXVzYvioVqznNtp4mj4seUhd8zJZFLwoS0Iv+oA97hCjVpU3z0O
+ ivxAAzr84ejZ9B1pkwmES6lBe8SPyefBTDU6oNo2QpNOHrOs0EmRD5Rd0
+ k7xycFvYl69YkYmqkA531Kld0ATmICAlUUR+JSsrlGCftwH6CiipbE+OR
+ l0rGd7jOXnOYJoNnzRC2gAtHM9xSIqPU/D41w5DRj6gw279kl1T5WplrF w==;
+X-CSE-ConnectionGUID: axqtqgGQQfimccqrmcWeUQ==
+X-CSE-MsgGUID: 6UB+NAW1Tpeqq8AJK2MWAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11341"; a="39569204"
+X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208";a="39569204"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2025 01:02:12 -0800
+X-CSE-ConnectionGUID: A7EgSoEFRpOCMA9LZBxNpA==
+X-CSE-MsgGUID: cTfdLLT2QWGCb5KU/vNdhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; d="scan'208";a="117364970"
+Received: from silpixa00401012.ir.intel.com ([10.243.23.14])
+ by orviesa003.jf.intel.com with ESMTP; 11 Feb 2025 01:02:10 -0800
+From: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+To: dev@dpdk.org
+Cc: ferruh.yigit@amd.com, kai.ji@intel.com, brian.dooley@intel.com,
+ stephen@networkplumber.org,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+Subject: [PATCH v7] net: add thread-safe crc api
+Date: Tue, 11 Feb 2025 09:02:02 +0000
+Message-Id: <20250211090202.1018656-1-arkadiuszx.kusztal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250210212710.708809-1-arkadiuszx.kusztal@intel.com>
+References: <20250210212710.708809-1-arkadiuszx.kusztal@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQItGVzvtb/99CFzdHQF3oghg19c4QBGCgHOspxiIPA=
-Content-Language: zh-cn
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: NDxI9psdf3YVWr/UbGqEAYlBA8NvenC/trrghdry+2V97wF/4KQKJ7Hk
- 7aW16kMGYcjqZ+sYcY06FT85P25qebUR80xfxz35wQgediwIFGP//HBBzj9jNZf3Nf/Vm5U
- NUmCZ0DjhvpFI70Qq1TSA3MwO7FnCq/tama+dHpD2cg1s0J3c+eBp/yBkunTl7r2PiFhtWQ
- Ik/6HQmjmYJva3LEy6K8xZUXwIgJ2ahPtCJl+dbTZG39kMLMYlTOsYFWZGoxgPRJWdzIXBa
- MKEwbVpMkWXVnz7xGrvGic68lyv38qELEKTdtY1SHtJcL4jE8LfW0M99X3l0tYKyYhN+Kq1
- ye0jr7AcS2rBr5ayWrsoO4EHIq7jzIEgfbfHH3HsW/EMA4My0YqKEfH9pxvUPLpYIyHqeYQ
- nTzn22A05RSpWiChU71oaXocCklkdCmkg/boTO5A6KJn4Z6rktbGnIyfoMUOs5R/sXZsF8V
- xSlompDdHgHQDENQjGUfIJuQCHOYi+zyncHpawMgA1qtAGcXV+mLEyJSi3LTZ5x/VxB4u+R
- uzdoPSK0Xac4BgVWH4S0OOjB3FtLAFoRdhwuspfTlmo6kKkPK/DHDpv7u2YaUJKYu4d+XBY
- aDXEEpaRzO/sIpzBQ3l02ZjQJ+UPfprx18qH3wIKlv3OWbMCEdGioEV+aoeUTutXA9QFFEV
- zEBw1aG6WTCpmxMu7k3un9nSJPXiusdMV6rX5ghASvUY2jabL+XKq4MbnyH1vCDuKEHGa9p
- rFL2lVCBaYEMxvg7ishn4OzJJgZmxtsjDgJkKPAoqPUWyAMvl5C1dbgEI9bWJEJuU/csVNS
- wnrGj1A6aKv5WVORQ2egvU4xrUqD3TFBWsDKS+JAWJbGn7dG9em5WDw2Ab1DtDA/9/id59p
- qVAx4ncNOoycoz45nhyRbj1t6Wc08r97JSftB3SW2TxAxRNkoBZi47cuKLztfU+j
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,48 +61,667 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Stephen,
+The current net CRC API is not thread-safe, this patch
+solves this by adding another, thread-safe API functions.
+This API is also safe to use across multiple processes,
+yet with limitations on max-simd-bitwidth, which will be checked only by
+the process that created the CRC context; all other processes
+(that did not create the context) will use the highest possible
+SIMD extension that was built with the binary, but no higher than the one
+requested by the CRC context.
 
-Thanks for your guideine, I will fixed these soon.
+Since the change of the API at this point is an ABI break,
+these API symbols are versioned with the _26 suffix.
 
-Regards Wenbo
+Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+---
+v2:
+- added multi-process safety
+v3:
+- made the crc context opaque
+- versioned old APIs
+v4:
+- exported rte_net_crc_free symbol
+v5:
+- fixed unclear comments in release notes section
+- aligned `fall-through` comments
+v6:
+- fixed typos and code formatting
+- added entry to the nullfree.cocci script
+- added malloc attributes
+- reverted copyright changes
+v7:
+- made net_crc header self-contained
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: 2025=E5=B9=B42=E6=9C=8811=E6=97=A5 3:04
-> To: Wenbo Cao <caowenbo@mucse.com>
-> Cc: thomas@monjalon.net; dev@dpdk.org; ferruh.yigit@amd.com;
-> andrew.rybchenko@oktetlabs.ru; yaojun@mucse.com
-> Subject: Re: [PATCH v8 00/28] [v8]drivers/net Add Support mucse N10 =
-Pmd
-> Driver
->=20
-> Driver review checklist for mucse PMD
->=20
-> Mark items with:
->     =E2=9C=94 passed
->     =E2=9C=98 Failed
->=20
-> Basic hygiene
->     =E2=9C=98 Look at CI results in patchwork; notify submitter if any =
-failures
->     =E2=9C=94 Merge cleanly with git am; look for missing newline at =
-EOF etc
->     =E2=9C=98 Run checkpatches; warnings are ok, but look more =
-carefully.
->     =E2=9C=98 Run check-git-log; often get some minor warnings that =
-are ok
->     =E2=9C=94 Run check-symbol-maps.sh
->     =E2=9C=94 Run check-doc-vs-code
->     =E2=9C=94 Run check-spdk-tag
->=20
-> Builds
->     =E2=9C=98 Normal Gcc build; make sure driver is built!
->     =E2=9C=98 Use latest experimental Gcc 15 to catch new warnings
->     =E2=9C=98 Clang build using current version (clang-19)
->     =E2=9C=98 Doc build
->=20
-> Rest of checklist skipped, not worth running with these kind of =
-failures
+ app/test/test_crc.c                    | 167 ++++++++++---------------
+ devtools/cocci/nullfree.cocci          |   3 +
+ doc/guides/rel_notes/release_25_03.rst |   5 +
+ drivers/crypto/qat/qat_sym.h           |   6 +-
+ drivers/crypto/qat/qat_sym_session.c   |   8 ++
+ drivers/crypto/qat/qat_sym_session.h   |   2 +
+ lib/net/meson.build                    |   2 +
+ lib/net/net_crc.h                      |  16 +++
+ lib/net/rte_net_crc.c                  | 127 ++++++++++++++++++-
+ lib/net/rte_net_crc.h                  |  39 ++++--
+ lib/net/version.map                    |   6 +
+ 11 files changed, 268 insertions(+), 113 deletions(-)
 
+diff --git a/app/test/test_crc.c b/app/test/test_crc.c
+index b85fca35fe..f18eff7217 100644
+--- a/app/test/test_crc.c
++++ b/app/test/test_crc.c
+@@ -44,131 +44,100 @@ static const uint32_t crc32_vec_res = 0xb491aab4;
+ static const uint32_t crc32_vec1_res = 0xac54d294;
+ static const uint32_t crc32_vec2_res = 0xefaae02f;
+ static const uint32_t crc16_vec_res = 0x6bec;
+-static const uint16_t crc16_vec1_res = 0x8cdd;
+-static const uint16_t crc16_vec2_res = 0xec5b;
++static const uint32_t crc16_vec1_res = 0x8cdd;
++static const uint32_t crc16_vec2_res = 0xec5b;
+ 
+ static int
+-crc_calc(const uint8_t *vec,
+-	uint32_t vec_len,
+-	enum rte_net_crc_type type)
++crc_all_algs(const char *desc, enum rte_net_crc_type type,
++	const uint8_t *data, int data_len, uint32_t res)
+ {
+-	/* compute CRC */
+-	uint32_t ret = rte_net_crc_calc(vec, vec_len, type);
++	struct rte_net_crc *ctx;
++	uint32_t crc;
++	int ret = TEST_SUCCESS;
++
++	ctx = rte_net_crc_set_alg(RTE_NET_CRC_SCALAR, type);
++	TEST_ASSERT_NOT_NULL(ctx, "cannot allocate the CRC context");
++	crc = rte_net_crc_calc(ctx, data, data_len);
++	if (crc != res) {
++		RTE_LOG(ERR, USER1, "TEST FAILED: %s SCALAR\n", desc);
++		debug_hexdump(stdout, "SCALAR", &crc, 4);
++		ret = TEST_FAILED;
++	}
++	rte_net_crc_free(ctx);
++
++	ctx = rte_net_crc_set_alg(RTE_NET_CRC_SSE42, type);
++	TEST_ASSERT_NOT_NULL(ctx, "cannot allocate the CRC context");
++	crc = rte_net_crc_calc(ctx, data, data_len);
++	if (crc != res) {
++		RTE_LOG(ERR, USER1, "TEST FAILED: %s SSE42\n", desc);
++		debug_hexdump(stdout, "SSE", &crc, 4);
++		ret = TEST_FAILED;
++	}
+ 
+-	/* dump data on console */
+-	debug_hexdump(stdout, NULL, vec, vec_len);
++	rte_net_crc_free(ctx);
++
++	ctx = rte_net_crc_set_alg(RTE_NET_CRC_AVX512, type);
++	TEST_ASSERT_NOT_NULL(ctx, "cannot allocate the CRC context");
++	crc = rte_net_crc_calc(ctx, data, data_len);
++	if (crc != res) {
++		RTE_LOG(ERR, USER1, "TEST FAILED: %s AVX512\n", desc);
++		debug_hexdump(stdout, "AVX512", &crc, 4);
++		ret = TEST_FAILED;
++	}
++	rte_net_crc_free(ctx);
++
++	ctx = rte_net_crc_set_alg(RTE_NET_CRC_NEON, type);
++	TEST_ASSERT_NOT_NULL(ctx, "cannot allocate the CRC context");
++	crc = rte_net_crc_calc(ctx, data, data_len);
++	if (crc != res) {
++		RTE_LOG(ERR, USER1, "TEST FAILED: %s NEON\n", desc);
++		debug_hexdump(stdout, "NEON", &crc, 4);
++		ret = TEST_FAILED;
++	}
++	rte_net_crc_free(ctx);
+ 
+-	return  ret;
++	return ret;
+ }
+ 
+ static int
+-test_crc_calc(void)
+-{
++crc_autotest(void)
++{	uint8_t *test_data;
+ 	uint32_t i;
+-	enum rte_net_crc_type type;
+-	uint8_t *test_data;
+-	uint32_t result;
+-	int error;
++	int ret = TEST_SUCCESS;
+ 
+ 	/* 32-bit ethernet CRC: Test 1 */
+-	type = RTE_NET_CRC32_ETH;
+-
+-	result = crc_calc(crc_vec, CRC_VEC_LEN, type);
+-	if (result != crc32_vec_res)
+-		return -1;
++	ret = crc_all_algs("32-bit ethernet CRC: Test 1", RTE_NET_CRC32_ETH, crc_vec,
++		sizeof(crc_vec), crc32_vec_res);
+ 
+ 	/* 32-bit ethernet CRC: Test 2 */
+ 	test_data = rte_zmalloc(NULL, CRC32_VEC_LEN1, 0);
+ 	if (test_data == NULL)
+ 		return -7;
+-
+ 	for (i = 0; i < CRC32_VEC_LEN1; i += 12)
+ 		rte_memcpy(&test_data[i], crc32_vec1, 12);
+-
+-	result = crc_calc(test_data, CRC32_VEC_LEN1, type);
+-	if (result != crc32_vec1_res) {
+-		error = -2;
+-		goto fail;
+-	}
++	ret |= crc_all_algs("32-bit ethernet CRC: Test 2", RTE_NET_CRC32_ETH, test_data,
++		CRC32_VEC_LEN1, crc32_vec1_res);
+ 
+ 	/* 32-bit ethernet CRC: Test 3 */
++	memset(test_data, 0, CRC32_VEC_LEN1);
+ 	for (i = 0; i < CRC32_VEC_LEN2; i += 12)
+ 		rte_memcpy(&test_data[i], crc32_vec1, 12);
+-
+-	result = crc_calc(test_data, CRC32_VEC_LEN2, type);
+-	if (result != crc32_vec2_res) {
+-		error = -3;
+-		goto fail;
+-	}
++	ret |= crc_all_algs("32-bit ethernet CRC: Test 3", RTE_NET_CRC32_ETH, test_data,
++		CRC32_VEC_LEN2, crc32_vec2_res);
+ 
+ 	/* 16-bit CCITT CRC:  Test 4 */
+-	type = RTE_NET_CRC16_CCITT;
+-	result = crc_calc(crc_vec, CRC_VEC_LEN, type);
+-	if (result != crc16_vec_res) {
+-		error = -4;
+-		goto fail;
+-	}
+-	/* 16-bit CCITT CRC:  Test 5 */
+-	result = crc_calc(crc16_vec1, CRC16_VEC_LEN1, type);
+-	if (result != crc16_vec1_res) {
+-		error = -5;
+-		goto fail;
+-	}
+-	/* 16-bit CCITT CRC:  Test 6 */
+-	result = crc_calc(crc16_vec2, CRC16_VEC_LEN2, type);
+-	if (result != crc16_vec2_res) {
+-		error = -6;
+-		goto fail;
+-	}
+-
+-	rte_free(test_data);
+-	return 0;
+-
+-fail:
+-	rte_free(test_data);
+-	return error;
+-}
+-
+-static int
+-test_crc(void)
+-{
+-	int ret;
+-	/* set CRC scalar mode */
+-	rte_net_crc_set_alg(RTE_NET_CRC_SCALAR);
+-
+-	ret = test_crc_calc();
+-	if (ret < 0) {
+-		printf("test_crc (scalar): failed (%d)\n", ret);
+-		return ret;
+-	}
+-	/* set CRC sse4.2 mode */
+-	rte_net_crc_set_alg(RTE_NET_CRC_SSE42);
++	crc_all_algs("16-bit CCITT CRC:  Test 4", RTE_NET_CRC16_CCITT, crc_vec,
++		sizeof(crc_vec), crc16_vec_res);
+ 
+-	ret = test_crc_calc();
+-	if (ret < 0) {
+-		printf("test_crc (x86_64_SSE4.2): failed (%d)\n", ret);
+-		return ret;
+-	}
+-
+-	/* set CRC avx512 mode */
+-	rte_net_crc_set_alg(RTE_NET_CRC_AVX512);
+-
+-	ret = test_crc_calc();
+-	if (ret < 0) {
+-		printf("test crc (x86_64 AVX512): failed (%d)\n", ret);
+-		return ret;
+-	}
+-
+-	/* set CRC neon mode */
+-	rte_net_crc_set_alg(RTE_NET_CRC_NEON);
++	/* 16-bit CCITT CRC:  Test 5 */
++	ret |= crc_all_algs("16-bit CCITT CRC:  Test 5", RTE_NET_CRC16_CCITT, crc16_vec1,
++		CRC16_VEC_LEN1, crc16_vec1_res);
+ 
+-	ret = test_crc_calc();
+-	if (ret < 0) {
+-		printf("test crc (arm64 neon pmull): failed (%d)\n", ret);
+-		return ret;
+-	}
++	/* 16-bit CCITT CRC:  Test 6 */
++	ret |= crc_all_algs("16-bit CCITT CRC:  Test 6", RTE_NET_CRC16_CCITT, crc16_vec2,
++		CRC16_VEC_LEN2, crc16_vec2_res);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+-REGISTER_FAST_TEST(crc_autotest, true, true, test_crc);
++REGISTER_FAST_TEST(crc_autotest, true, true, crc_autotest);
+diff --git a/devtools/cocci/nullfree.cocci b/devtools/cocci/nullfree.cocci
+index c0526a2a3f..e7417b69ff 100644
+--- a/devtools/cocci/nullfree.cocci
++++ b/devtools/cocci/nullfree.cocci
+@@ -138,4 +138,7 @@ expression E;
+ |
+ - if (E != NULL) BN_free(E);
+ + BN_free(E);
++|
++- if (E != NULL) rte_net_crc_free(E);
+++ rte_net_crc_free(E);
+ )
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index 3ef6f8f427..2693011b8f 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -165,6 +165,11 @@ API Changes
+   but to enable/disable these drivers via Meson option requires use of the new paths.
+   For example, ``-Denable_drivers=/net/i40e`` becomes ``-Denable_drivers=/net/intel/i40e``.
+ 
++* net: Changed the API for CRC calculation to be thread safe.
++  An opaque context argument was introduced to the net CRC API containing
++  the algorithm type and length. This argument is added to
++  to ``rte_net_crc_calc``, ``rte_net_crc_set_alg`` and freed with ``rte_net_crc_free``.
++  These functions are versioned to retain binary compatiabilty until the next LTS release.
+ 
+ ABI Changes
+ -----------
+diff --git a/drivers/crypto/qat/qat_sym.h b/drivers/crypto/qat/qat_sym.h
+index f42336d7ed..849e047615 100644
+--- a/drivers/crypto/qat/qat_sym.h
++++ b/drivers/crypto/qat/qat_sym.h
+@@ -267,8 +267,7 @@ qat_crc_verify(struct qat_sym_session *ctx, struct rte_crypto_op *op)
+ 		crc_data = rte_pktmbuf_mtod_offset(sym_op->m_src, uint8_t *,
+ 				crc_data_ofs);
+ 
+-		crc = rte_net_crc_calc(crc_data, crc_data_len,
+-				RTE_NET_CRC32_ETH);
++		crc = rte_net_crc_calc(ctx->crc, crc_data, crc_data_len);
+ 
+ 		if (crc != *(uint32_t *)(crc_data + crc_data_len))
+ 			op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
+@@ -291,8 +290,7 @@ qat_crc_generate(struct qat_sym_session *ctx,
+ 		crc_data = rte_pktmbuf_mtod_offset(sym_op->m_src, uint8_t *,
+ 				sym_op->auth.data.offset);
+ 		crc = (uint32_t *)(crc_data + crc_data_len);
+-		*crc = rte_net_crc_calc(crc_data, crc_data_len,
+-				RTE_NET_CRC32_ETH);
++		*crc = rte_net_crc_calc(ctx->crc, crc_data, crc_data_len);
+ 	}
+ }
+ 
+diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
+index 50d687fd37..7200022adf 100644
+--- a/drivers/crypto/qat/qat_sym_session.c
++++ b/drivers/crypto/qat/qat_sym_session.c
+@@ -3174,6 +3174,14 @@ qat_sec_session_set_docsis_parameters(struct rte_cryptodev *dev,
+ 		ret = qat_sym_session_configure_crc(dev, xform, session);
+ 		if (ret < 0)
+ 			return ret;
++	} else {
++		/* Initialize crc algorithm */
++		session->crc = rte_net_crc_set_alg(RTE_NET_CRC_AVX512,
++			RTE_NET_CRC32_ETH);
++		if (session->crc == NULL) {
++			QAT_LOG(ERR, "Cannot initialize CRC context");
++			return -1;
++		}
+ 	}
+ 	qat_sym_session_finalize(session);
+ 
+diff --git a/drivers/crypto/qat/qat_sym_session.h b/drivers/crypto/qat/qat_sym_session.h
+index 2ca6c8ddf5..2ef2066646 100644
+--- a/drivers/crypto/qat/qat_sym_session.h
++++ b/drivers/crypto/qat/qat_sym_session.h
+@@ -7,6 +7,7 @@
+ #include <rte_crypto.h>
+ #include <cryptodev_pmd.h>
+ #include <rte_security.h>
++#include <rte_net_crc.h>
+ 
+ #include "qat_common.h"
+ #include "icp_qat_hw.h"
+@@ -149,6 +150,7 @@ struct qat_sym_session {
+ 	uint8_t is_zuc256;
+ 	uint8_t is_wireless;
+ 	uint32_t slice_types;
++	struct rte_net_crc *crc;
+ 	enum qat_sym_proto_flag qat_proto_flag;
+ 	qat_sym_build_request_t build_request[2];
+ #ifndef RTE_QAT_OPENSSL
+diff --git a/lib/net/meson.build b/lib/net/meson.build
+index 8afcc4ed37..b26b377e8e 100644
+--- a/lib/net/meson.build
++++ b/lib/net/meson.build
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017-2020 Intel Corporation
+ 
++use_function_versioning=true
++
+ headers = files(
+         'rte_cksum.h',
+         'rte_ip.h',
+diff --git a/lib/net/net_crc.h b/lib/net/net_crc.h
+index 7a74d5406c..a9a6c9542c 100644
+--- a/lib/net/net_crc.h
++++ b/lib/net/net_crc.h
+@@ -5,6 +5,22 @@
+ #ifndef _NET_CRC_H_
+ #define _NET_CRC_H_
+ 
++#include "rte_net_crc.h"
++
++void
++rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg);
++
++struct rte_net_crc *
++rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
++	enum rte_net_crc_type type);
++
++uint32_t
++rte_net_crc_calc_v25(const void *data,
++	uint32_t data_len, enum rte_net_crc_type type);
++
++uint32_t
++rte_net_crc_calc_v26(const struct rte_net_crc *ctx,
++	const void *data, const uint32_t data_len);
+ /*
+  * Different implementations of CRC
+  */
+diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
+index 346c285c15..2fb3eec231 100644
+--- a/lib/net/rte_net_crc.c
++++ b/lib/net/rte_net_crc.c
+@@ -10,6 +10,8 @@
+ #include <rte_net_crc.h>
+ #include <rte_log.h>
+ #include <rte_vect.h>
++#include <rte_function_versioning.h>
++#include <rte_malloc.h>
+ 
+ #include "net_crc.h"
+ 
+@@ -38,11 +40,20 @@ rte_crc32_eth_handler(const uint8_t *data, uint32_t data_len);
+ typedef uint32_t
+ (*rte_net_crc_handler)(const uint8_t *data, uint32_t data_len);
+ 
++struct rte_net_crc {
++	enum rte_net_crc_alg alg;
++	enum rte_net_crc_type type;
++};
++
+ static rte_net_crc_handler handlers_default[] = {
+ 	[RTE_NET_CRC16_CCITT] = rte_crc16_ccitt_default_handler,
+ 	[RTE_NET_CRC32_ETH] = rte_crc32_eth_default_handler,
+ };
+ 
++static struct {
++	rte_net_crc_handler f[RTE_NET_CRC_REQS];
++} handlers_dpdk26[RTE_NET_CRC_AVX512 + 1];
++
+ static const rte_net_crc_handler *handlers = handlers_default;
+ 
+ static const rte_net_crc_handler handlers_scalar[] = {
+@@ -286,10 +297,56 @@ rte_crc32_eth_default_handler(const uint8_t *data, uint32_t data_len)
+ 	return handlers[RTE_NET_CRC32_ETH](data, data_len);
+ }
+ 
++static void
++handlers_init(enum rte_net_crc_alg alg)
++{
++	handlers_dpdk26[alg].f[RTE_NET_CRC16_CCITT] = rte_crc16_ccitt_handler;
++	handlers_dpdk26[alg].f[RTE_NET_CRC32_ETH] = rte_crc32_eth_handler;
++
++	switch (alg) {
++	case RTE_NET_CRC_AVX512:
++#ifdef CC_X86_64_AVX512_VPCLMULQDQ_SUPPORT
++		if (AVX512_VPCLMULQDQ_CPU_SUPPORTED) {
++			handlers_dpdk26[alg].f[RTE_NET_CRC16_CCITT] =
++				rte_crc16_ccitt_avx512_handler;
++			handlers_dpdk26[alg].f[RTE_NET_CRC32_ETH] =
++				rte_crc32_eth_avx512_handler;
++			break;
++		}
++#endif
++		/* fall-through */
++	case RTE_NET_CRC_SSE42:
++#ifdef CC_X86_64_SSE42_PCLMULQDQ_SUPPORT
++		if (SSE42_PCLMULQDQ_CPU_SUPPORTED) {
++			handlers_dpdk26[alg].f[RTE_NET_CRC16_CCITT] =
++				rte_crc16_ccitt_sse42_handler;
++			handlers_dpdk26[alg].f[RTE_NET_CRC32_ETH] =
++				rte_crc32_eth_sse42_handler;
++		}
++#endif
++		break;
++	case RTE_NET_CRC_NEON:
++#ifdef CC_ARM64_NEON_PMULL_SUPPORT
++		if (NEON_PMULL_CPU_SUPPORTED) {
++			handlers_dpdk26[alg].f[RTE_NET_CRC16_CCITT] =
++				rte_crc16_ccitt_neon_handler;
++			handlers_dpdk26[alg].f[RTE_NET_CRC32_ETH] =
++				rte_crc32_eth_neon_handler;
++			break;
++		}
++#endif
++		/* fall-through */
++	case RTE_NET_CRC_SCALAR:
++		/* fall-through */
++	default:
++		break;
++	}
++}
++
+ /* Public API */
+ 
+ void
+-rte_net_crc_set_alg(enum rte_net_crc_alg alg)
++rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg)
+ {
+ 	handlers = NULL;
+ 	if (max_simd_bitwidth == 0)
+@@ -316,9 +373,59 @@ rte_net_crc_set_alg(enum rte_net_crc_alg alg)
+ 	if (handlers == NULL)
+ 		handlers = handlers_scalar;
+ }
++VERSION_SYMBOL(rte_net_crc_set_alg, _v25, 25);
++
++struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
++	enum rte_net_crc_type type)
++{
++	uint16_t max_simd_bitwidth;
++	struct rte_net_crc *crc;
++
++	crc = rte_zmalloc(NULL, sizeof(struct rte_net_crc), 0);
++	if (crc == NULL)
++		return NULL;
++	max_simd_bitwidth = rte_vect_get_max_simd_bitwidth();
++	crc->type = type;
++	crc->alg = RTE_NET_CRC_SCALAR;
++
++	switch (alg) {
++	case RTE_NET_CRC_AVX512:
++		if (max_simd_bitwidth >= RTE_VECT_SIMD_512) {
++			crc->alg = RTE_NET_CRC_AVX512;
++			return crc;
++		}
++		/* fall-through */
++	case RTE_NET_CRC_SSE42:
++		if (max_simd_bitwidth >= RTE_VECT_SIMD_128) {
++			crc->alg = RTE_NET_CRC_SSE42;
++			return crc;
++		}
++		break;
++	case RTE_NET_CRC_NEON:
++		if (max_simd_bitwidth >= RTE_VECT_SIMD_128) {
++			crc->alg = RTE_NET_CRC_NEON;
++			return crc;
++		}
++		break;
++	case RTE_NET_CRC_SCALAR:
++		/* fall-through */
++	default:
++		break;
++	}
++	return crc;
++}
++BIND_DEFAULT_SYMBOL(rte_net_crc_set_alg, _v26, 26);
++MAP_STATIC_SYMBOL(struct rte_net_crc *rte_net_crc_set_alg(
++	enum rte_net_crc_alg alg, enum rte_net_crc_type type),
++	rte_net_crc_set_alg_v26);
++
++void rte_net_crc_free(struct rte_net_crc *crc)
++{
++	rte_free(crc);
++}
+ 
+ uint32_t
+-rte_net_crc_calc(const void *data,
++rte_net_crc_calc_v25(const void *data,
+ 	uint32_t data_len,
+ 	enum rte_net_crc_type type)
+ {
+@@ -330,6 +437,18 @@ rte_net_crc_calc(const void *data,
+ 
+ 	return ret;
+ }
++VERSION_SYMBOL(rte_net_crc_calc, _v25, 25);
++
++uint32_t
++rte_net_crc_calc_v26(const struct rte_net_crc *ctx,
++	const void *data, const uint32_t data_len)
++{
++	return handlers_dpdk26[ctx->alg].f[ctx->type](data, data_len);
++}
++BIND_DEFAULT_SYMBOL(rte_net_crc_calc, _v26, 26);
++MAP_STATIC_SYMBOL(uint32_t rte_net_crc_calc(const struct rte_net_crc *ctx,
++	const void *data, const uint32_t data_len),
++	rte_net_crc_calc_v26);
+ 
+ /* Call initialisation helpers for all crc algorithm handlers */
+ RTE_INIT(rte_net_crc_init)
+@@ -338,4 +457,8 @@ RTE_INIT(rte_net_crc_init)
+ 	sse42_pclmulqdq_init();
+ 	avx512_vpclmulqdq_init();
+ 	neon_pmull_init();
++	handlers_init(RTE_NET_CRC_SCALAR);
++	handlers_init(RTE_NET_CRC_NEON);
++	handlers_init(RTE_NET_CRC_SSE42);
++	handlers_init(RTE_NET_CRC_AVX512);
+ }
+diff --git a/lib/net/rte_net_crc.h b/lib/net/rte_net_crc.h
+index 72d3e10ff6..3f350b3001 100644
+--- a/lib/net/rte_net_crc.h
++++ b/lib/net/rte_net_crc.h
+@@ -6,6 +6,7 @@
+ #define _RTE_NET_CRC_H_
+ 
+ #include <stdint.h>
++#include <rte_common.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -26,8 +27,21 @@ enum rte_net_crc_alg {
+ 	RTE_NET_CRC_AVX512,
+ };
+ 
++/** CRC context (algorithm, type) */
++struct rte_net_crc;
++
+ /**
+- * This API set the CRC computation algorithm (i.e. scalar version,
++ * Frees the memory space pointed to by the CRC context pointer.
++ * If the pointer is NULL, the function does nothing.
++ *
++ * @param ctx
++ *   Pointer to the CRC context
++ */
++void
++rte_net_crc_free(struct rte_net_crc *crc);
++
++/**
++ * This API set the CRC context (i.e. scalar version,
+  * x86 64-bit sse4.2 intrinsic version, etc.) and internal data
+  * structure.
+  *
+@@ -37,27 +51,36 @@ enum rte_net_crc_alg {
+  *   - RTE_NET_CRC_SSE42 (Use 64-bit SSE4.2 intrinsic)
+  *   - RTE_NET_CRC_NEON (Use ARM Neon intrinsic)
+  *   - RTE_NET_CRC_AVX512 (Use 512-bit AVX intrinsic)
++ * @param type
++ *   CRC type (enum rte_net_crc_type)
++ *
++ * @return
++ *   Pointer to the CRC context
+  */
+-void
+-rte_net_crc_set_alg(enum rte_net_crc_alg alg);
++struct rte_net_crc *
++rte_net_crc_set_alg(enum rte_net_crc_alg alg, enum rte_net_crc_type type)
++	__rte_malloc __rte_dealloc(rte_net_crc_free, 1);
+ 
+ /**
+  * CRC compute API
+  *
++ * Note:
++ * The command line argument --force-max-simd-bitwidth will be ignored
++ * by processes that have not created this CRC context.
++ *
++ * @param ctx
++ *   Pointer to the CRC context
+  * @param data
+  *   Pointer to the packet data for CRC computation
+  * @param data_len
+  *   Data length for CRC computation
+- * @param type
+- *   CRC type (enum rte_net_crc_type)
+  *
+  * @return
+  *   CRC value
+  */
+ uint32_t
+-rte_net_crc_calc(const void *data,
+-	uint32_t data_len,
+-	enum rte_net_crc_type type);
++rte_net_crc_calc(const struct rte_net_crc *ctx,
++	const void *data, const uint32_t data_len);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/lib/net/version.map b/lib/net/version.map
+index bec4ce23ea..d03f3f6ad0 100644
+--- a/lib/net/version.map
++++ b/lib/net/version.map
+@@ -5,6 +5,7 @@ DPDK_25 {
+ 	rte_ether_format_addr;
+ 	rte_ether_unformat_addr;
+ 	rte_net_crc_calc;
++	rte_net_crc_free;
+ 	rte_net_crc_set_alg;
+ 	rte_net_get_ptype;
+ 	rte_net_make_rarp_packet;
+@@ -12,3 +13,8 @@ DPDK_25 {
+ 
+ 	local: *;
+ };
++
++DPDK_26 {
++	rte_net_crc_calc;
++	rte_net_crc_set_alg;
++} DPDK_25;
+-- 
+2.34.1
 
