@@ -2,163 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF89C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B65DC021A1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:56:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 752B5402C9;
-	Tue, 11 Feb 2025 15:56:42 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 01DE6402C2
- for <dev@dpdk.org>; Tue, 11 Feb 2025 15:56:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739285801; x=1770821801;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=Uv2BVSB7SMrYOPK+ZBQUkchM4ZInb+waSUqzJvoLI3c=;
- b=ViOuthu2//Y8tXuEAjFvDJuYFED0OEY9losEMDAICHVYcZd7ZywURik8
- IMPvqCG5jF6Yn5umFkP5wPtV8eMXNLJboxEyA9OutTF1wRq6qc9E/cvw8
- fgIU5RuNw6PH9HQsNGnoWaPQVmv81tF5idYQ3LE2mmAzyP+0hjLHbFd3N
- 9xfbplv3MHDevKiZHDBg/rdsxJTPoCLAwfxQKTxuWTRJimQogu3/B7EQH
- DAZAjqeGoeIX9S4hS6YlukAk1Uwe5XzUWiRlyoUarhI0xB2zCcxMLybus
- BbG3oQiTBdVdeqrfX0I3oWPWVTJ0NlwXR2d0LQ3Nk+a0aRac43dvns4o7 A==;
-X-CSE-ConnectionGUID: IeYrLjxbSTmffL/8d53SNQ==
-X-CSE-MsgGUID: rO0rd6IRRXuAg1JtJUNI0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="42746233"
-X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208,217";a="42746233"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2025 06:56:40 -0800
-X-CSE-ConnectionGUID: qsn/Y7NzSmyE+ZNxs7RuAg==
-X-CSE-MsgGUID: i9mGNkB4Q4K3/HZZHRTp0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
- d="scan'208,217";a="117150534"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 11 Feb 2025 06:56:40 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 11 Feb 2025 06:56:38 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Tue, 11 Feb 2025 06:56:38 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 11 Feb 2025 06:56:37 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oPBMLXRUd4W/LjK53r3svAgHtcafcDOuZnSyTu3po3Jgb/oV9oBfE3c9rWsFDqiyBKlTyCaarCjWKVQdVD4YVjtDc/27LWk+W58SPGHOj8pRLujPwh5vTIMchU7aCT3MUK4vzzTffsHNpgpBISQCFidtGIubWvtWXo6dic3yhluS0VxSJE/HjL5zu8W84Hxz/8pW2BpytFzpTxf7A+1J/R95wki2MFPzALOB+BYPnH0NkNm5Z9ZEHxs3aRrP5tSqXkLy4eWmVPel6Htlcrk6+PxciXhxC8gn3/31o0kQdoy+AXHBtwpdbnQunhlV2TxvxwNQwT0WRFSbR//O6Z9ojQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FblltLwHocGum2SPxUHHehBpmmO4vqcc7c1LvlY3Xqw=;
- b=MtZil81oAYoZA0MKtJp4d3ZS5Rd8KO3A44/ly8FHV9ukk9kJ6mAjvzxznlSmoUdHOO58BXeeDgYfXSpnlr0gq/Da/4Nph7Laar2MnJGyotrPfzRs7BkVALj2ea2Xb+YTZgJenkSWonK8yFotKMsmYUAl4Oifi5FTh9ciTgdRHKIuIH8BsFix4KzuZOuj9+6uEVovEFNN8Q3jmE/v+wmbZ6eddJUZThBFltvv9d7fmTCJGAZoJ4Nk2j0qZkMx/oK3G5M2uF7NmQEtmid1rZaidy+MFeTbRS7thZ1pQdoVu9eV9lPPrFdy5hRexkP+rKSZjf+nyATHdjq2/jydJ8zglw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH8PR11MB6804.namprd11.prod.outlook.com (2603:10b6:510:1bc::6)
- by CY8PR11MB7947.namprd11.prod.outlook.com (2603:10b6:930:7a::11)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Tue, 11 Feb
- 2025 14:56:10 +0000
-Received: from PH8PR11MB6804.namprd11.prod.outlook.com
- ([fe80::6f39:a4f:9001:ea75]) by PH8PR11MB6804.namprd11.prod.outlook.com
- ([fe80::6f39:a4f:9001:ea75%6]) with mapi id 15.20.8422.015; Tue, 11 Feb 2025
- 14:56:10 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Marchand, David"
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2025-02-11
-Thread-Topic: DPDK Release Status Meeting 2025-02-11
-Thread-Index: Adt8lPuFGewtGE1yQq6BhZqdlFzz1A==
-Date: Tue, 11 Feb 2025 14:56:10 +0000
-Message-ID: <PH8PR11MB68048E7988E9246DCE6D4417FCFD2@PH8PR11MB6804.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR11MB6804:EE_|CY8PR11MB7947:EE_
-x-ms-office365-filtering-correlation-id: 31861394-2d6e-4840-35d9-08dd4aac38d8
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|8096899003|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?uY75+bDt5eFnBhPLNlz+jWcROKssXg6mXhEgiU0V5MNUJcHymeJiidh52uFC?=
- =?us-ascii?Q?8HE8Yg0s2oMEnZa8qUiKmmiGhwQ0im8sIE3V5WmGU9DTULCY4pZ1jN4jyRBu?=
- =?us-ascii?Q?3qcIwRQkwRXAoKz1AaOjUq7jjexoliZDzKMl7zgweegbM94pVWUdkyhZ4ghd?=
- =?us-ascii?Q?7pPLZlrpS3TIoGs3rNMJEGMoOUWpQ9bQPeN09XH9HW31aQPUCqfaWpF8RYc9?=
- =?us-ascii?Q?t/bSvasApWU9a5jl3/Kv2m2uOLvt6fHnTrc8tAMCIpe2TKSvDW2XGNG/kg8M?=
- =?us-ascii?Q?lmvyickop96x4RU2JVh74Hlpq8Gj4GOkefpROnmXV8QW7zZPD+IUuGojCj07?=
- =?us-ascii?Q?tNApavgX4BEd/4q7YZ46SqSxiiPpFwLCAQh6JvlkJ3oV0KdkM/Jgr5Cqjpdz?=
- =?us-ascii?Q?QIKCRuioCY54VwK2iWiitwLNUcnrQepzb3sZFavM7cM61AoPHeb7SaVADQVc?=
- =?us-ascii?Q?rIcty6ipLo3cmSg/mHfuSxMhp9gA0QqwCFY0Q/o2e31Zfoj/wQdm3IpDsRy5?=
- =?us-ascii?Q?ZgyJwi8SKbIXG5GEoSiZAcQ4BE8mjvcs0ES0RBUPniP3H2D3P9y6uFQaEriz?=
- =?us-ascii?Q?5Gu67a4tKWCgZrMzN8EefCGO41ZF9QckH+dQBiEXeTNWwQ2OkHg9LCgAFX3t?=
- =?us-ascii?Q?iIcX7D/VMP50KPVdL8UbhJichL+QefN1x2dczGXbaoAKMVZjkF7ixLSk2fOp?=
- =?us-ascii?Q?i8kBT5FmRmBCf/xoKqGdveC6hZLb22G5QCz9hy+J0+7Y4Q4NzatIJTJUCWPG?=
- =?us-ascii?Q?umtBm0Wb7TV3ZpdvohvhtnBWHCZcPQEfmVybw43OAa/ScBeGa+i9PfwZEPjM?=
- =?us-ascii?Q?7AB8Vwy0J2UwFC9+xUkNd8HUPZGV/87NThdzto/30yB+C+ieFE0zo8GJxq5p?=
- =?us-ascii?Q?jqjhs+7vAijbkiJYt7QHgyi3c4siWdH7/G96R+RpIycD31mq2u3VBR9w8Auf?=
- =?us-ascii?Q?g3GqFoc9IR3P8unlBnVOm2HiXmIjE+n347M8VA3KhUDNsT3zYHzb/gzjvFb7?=
- =?us-ascii?Q?qW/CxBwxC/K6mM4isgvrboD+kos9oB77/kpJUyzhfX8UzYNAECbK+vMm7HKB?=
- =?us-ascii?Q?zwJkeVp3E0m8hjoRw/aajzK1v7H9WUJy3L0wF+HCjNIbRm2JE4Eo0xelmgiI?=
- =?us-ascii?Q?jDyxfmGN+tujaVg8qncvKbCAwnXiuNYeVGVY9GNCgg4g7B9ysJ2he9z9QLZe?=
- =?us-ascii?Q?6Gg0kI3z51bazHNdBHbtf6DNgcBCqLk8b74KXeL1E0fD1ICbnkQIM4HlXgT6?=
- =?us-ascii?Q?bWVCfkqLMCwLdkUy2a/UB7M358pjXyn4eqfOyb6qRh+p7guFDyIvcpco07C+?=
- =?us-ascii?Q?EqwiT5tiVmGmKrAHwAEjqYYIt9l6hZX5sP5hkprbPg7A+qEA+YdvjZTbY9+N?=
- =?us-ascii?Q?SqF+lgD3tfbDqSVB3vhCadzIMKOITulu/uO2/xtgKtxPor5wog=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH8PR11MB6804.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(8096899003)(38070700018); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5iqVXnFE7mKBKwp8MT/ZIweAvlQj++2dYoNkUVXMTgS0LmqRvuCm2JzeRdLC?=
- =?us-ascii?Q?BjjEEv2nqOmcgMC6zaMqT5OOKCAJSZVfmQDbWcAs9Ty6e2Wnn3EZoug1obWC?=
- =?us-ascii?Q?vR5rXaF6cWWF/GQ+aC8fmXOa+S49usRhnVo4n/AiEiOR6+/XHUDzRYvocAX+?=
- =?us-ascii?Q?tQTaURrhSM2Knq225mrE81FS109CzfbLOzQVCVpMaEhbgmPFGTuY0f6e4nBw?=
- =?us-ascii?Q?Kta9Fut5rINITMvJJhJcZdSJTHfUOnh1pqDK+AZ73jtaQIjCW+nghX241uUI?=
- =?us-ascii?Q?sTScVbz8oCW5CIBg8/rUZ5D9HyUTHdgzCKUwFXVJpL/8tExUiXwfPi6kw6QD?=
- =?us-ascii?Q?eJ0QdNlm+14cFdyY2oUTB5/w7BP6lM+HH4oEwt3m+AMvRywjOQUC40m+kRDa?=
- =?us-ascii?Q?muKePdnYuTgRh3ptG7C1t2CQTReX+ZBNRkuyokgPTZU0vW78upHV4lZy6vSl?=
- =?us-ascii?Q?XmWQnB/4wFDfnSYQNiR/I88Q0IT09L8dUPkQZfhC0w5KI2Uu5JrERw2EOZnA?=
- =?us-ascii?Q?aAwNDUK6z8BEaYolu5ISySyt2AtVJj6C6VXDWhsTBAGsz6ZO99D2h8lWl5MG?=
- =?us-ascii?Q?VYiW3t4LVRS7Z3/r5iKLuhLqg3DZUik1MbBuh4guUc0vUwwgXptalzzr/Q1V?=
- =?us-ascii?Q?/qeZaUjx30CcX13xajcvJrgGYi3pr1rB2f8+wFW7NdzWsZly9kxTaO6bVXCa?=
- =?us-ascii?Q?Hs90mwwwN2X2L1RnqfhrPQUePuhHkiy3sKYuMSLVPAAoqQ+oZetcVUxX6SAY?=
- =?us-ascii?Q?IcrWYIzWK1yFOST8Dg28x/cUpztxH2dOT/RMrImsXKS3roN77F7hFnJLyhS8?=
- =?us-ascii?Q?Gmo0RAyZMjYH5+6EpPsFeNtQlP/t2Z1r8Vdgrk+raXQj3fXGM6CDRbmJjAhE?=
- =?us-ascii?Q?S354pSc2N2k19S7aBX6kvjs09s21RPiHeSi8B5oj4cHA7oKd3hqGnrqEVGrG?=
- =?us-ascii?Q?oJbjo1O/AnQA1Ybsn+2vGApucvwhfJn2yJhc1DwA5FltzfeS+XWGj/W+Ctum?=
- =?us-ascii?Q?0VK9C8RCJKWBFXmfDccC6KfpN1STaUkrfTgF3x3gaIy6TBnVUXVTogmw2euR?=
- =?us-ascii?Q?96aUtNd0I0AWt+85amFdUv0ljYrgk/lu0q0H2vHfX4cOV0GT08kqjZkEUR9H?=
- =?us-ascii?Q?6raGIbvohyK1ogDM5lZiYBCqmOl35F0AImYzzeZse9YBosZEr8XNcG/c0XDg?=
- =?us-ascii?Q?+jmTQoFV+7fcLdnflRnmw/HVaHuNFT2yE0aiEZf99y4BOGAWxS7hp6eh7nE5?=
- =?us-ascii?Q?AeUOZzmqJ3lxt7V3mkH28T1+EcDWCji2j04hJLcVmQQcAUE8IgYJBtVqpckr?=
- =?us-ascii?Q?hjVsoW+zuWMHwhVDJYktccslePd66pFuFgeBhl7tg0zmm2avOd/5IdYSFsDg?=
- =?us-ascii?Q?ZYT5oFgHgErtOPASVgv5qV8InPjrpMb1LjuWjPDfe0Gt1NqIOMlt7QZFVOEZ?=
- =?us-ascii?Q?oF6AAKsZjpbIFS/X2QqnOOgI5qQ1ejYVq/ms7ZW2lTIFc7rIH9o7cLeKM2oF?=
- =?us-ascii?Q?wALnI2F7egCueciQbUDgPRwubRJJgNKEqRpaETOGVziKUoldMgESNzKU18ZF?=
- =?us-ascii?Q?3TnIf1jaGfq4rTo7PJKGL0MWcZpfpalrSLPVbJaA?=
-Content-Type: multipart/alternative;
- boundary="_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_"
+	by mails.dpdk.org (Postfix) with ESMTP id 9204D4060C;
+	Tue, 11 Feb 2025 15:56:56 +0100 (CET)
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
+ [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id CAB574042E
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 15:56:55 +0100 (CET)
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-2fa8ada6662so3361319a91.1
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 06:56:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739285815;
+ x=1739890615; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=1qluvXKA/mNwlBNJ+I9ZmUiuN90wYf0DHds0F+lSWik=;
+ b=ETHYU5JkNJSRWpxUZBol8zIryOIV2GX+bw7SlZWojKFqAN51p7ksWEN2PCC0iYEvTv
+ 2kVd0R9nq6bICm6w9lgstO0QmWwN9mrHify6t7WuNt5ahsJ7oOqq+q1W9ZeRZ227aO/+
+ ZD+LQ6ULxS84PZ0Nso6ppVDXAJHjDDwUu/2Ytbt0c6fDSocydz/mEFet3bT3kp9BWVBg
+ +XZB/7IOekH9CfY7zxyJ9eNiu8kusI89TurC8oJaJT5705iMxtoYk1McDP5FWjv2viV+
+ 9MFn2vhejfFkYgxKAwtHTM16NldWEwjV3aH7K8zVFVKZuB+WI/taErIfb1HkgVX4hVLc
+ I/pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1739285815; x=1739890615;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=1qluvXKA/mNwlBNJ+I9ZmUiuN90wYf0DHds0F+lSWik=;
+ b=xKY9aQ3F9vn2uRAQde1QVMovfE22NpZf3nazgOcLUW5xMf1HSSdJy7pMDbVT3BReI9
+ R3RSBx+IgTYRPPC1FUEZ287vjVNgwgRStK8Ik21Xqj9voEccfBYswV+4K8IICCLXg8LU
+ aNeOFWQV44NXqanZ86Q4KknQPECGLUmj8D5dy98gdf+FNWFJUHqFN0qPEeaz47dJes+r
+ prIf7aauDSeTmR4I4yes4SMmEyrVJYEYHo+S7mCwkWdFP22UiFDRBHxO5nmuhAvPo7fz
+ g4C9Qy8SxHRHHGGfiQ7apH7AptFym0ELD8P8q0XI133YDbCZS3JF24HqxkO/zLEva5SC
+ HOEA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV2MMkKsgJ0cWT0pFUMoq+4aHbVnm/OQQZu48ftC8XKjEOh5ZM5S+W0T8wf3C12+dipAYU=@dpdk.org
+X-Gm-Message-State: AOJu0Yy76YIm2ntuGa0zSz4l0k0pLvE+aW1Sl1qZtLQSXUaeSzscJu97
+ YA22KylHOtxclb0irJvPNLqHOL3LFgkQ2+IOkDHhWV4QyRcVJ9J1ItpmQwpziarkhPy+dhG9r64
+ 3
+X-Gm-Gg: ASbGncvQWBX2v38rY+gtTEhAYYPDyfYyQ7Ny+vdpcCQz5MKEl0hrFGpy5XqT9yLY4GI
+ ITa2W0a/hb9LvHTzPbi2JGl5vjSuIPbhF2P+f3obg3z/tXcvRi4KLT2HeGsM+5U62wF1p6aN6Vr
+ aILqEm3FRvQOXyVRpvsSrUBMfbV56o2vywgLkhbrbsS4vE/Q5vgRot2ZmvciFYXw+T9fU+Z41ut
+ IBw4rUVazdzC39X6gOUqsDP1cHn1mKG/fROVAR/f/ye7x0pzKTxGVANrIDYEC5YvvrpY5vWZMQJ
+ apFvqe9Xh/g+xbgzBowgxmm40ybki6J2g8IWFOLnB9XgU9HuyO/57NpJm4FcEDQlT3lW
+X-Google-Smtp-Source: AGHT+IGGtXgzo8VceASzS7Few4R4jKwLb0wtL6vlKwBjcu+HnQx0aQxwz6rkQ9Mjw6uLgXclboHuqg==
+X-Received: by 2002:a17:90b:2dd0:b0:2fa:13ce:bf16 with SMTP id
+ 98e67ed59e1d1-2fb63d15de7mr68816a91.11.1739285814881; 
+ Tue, 11 Feb 2025 06:56:54 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-2fa20eba0dasm9269277a91.45.2025.02.11.06.56.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 11 Feb 2025 06:56:54 -0800 (PST)
+Date: Tue, 11 Feb 2025 06:56:49 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Wenbo Cao <caowenbo@mucse.com>
+Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
+ andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
+Subject: Re: [PATCH v9 00/28] [v9]drivers/net Add Support mucse N10 Pmd Driver
+Message-ID: <20250211065649.1885ab26@hermes.local>
+In-Reply-To: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
+References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6804.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31861394-2d6e-4840-35d9-08dd4aac38d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2025 14:56:10.4566 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uDnST7+HYdrYfuZOy2YoxnXsnFQMU0/K184dTSfdhS9uOTI2J3R7d5ztOXYUn1evCWru9kgxOsDSp6xY78wWcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7947
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -172,478 +82,208 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+On Tue, 11 Feb 2025 16:49:50 +0800
+Wenbo Cao <caowenbo@mucse.com> wrote:
 
-Release status meeting minutes 2025-02-11
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> For This patchset just to support the basic chip init work
+> and user can just found the eth_dev, but can't control more.
+> For Now just support 2*10g nic,the chip can support
+> 2*10g,4*10g,4*1g,8*1g,8*10g.
+> The Feature rx side can support rx-cksum-offload,rss,vlan-filter
+> flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
+> The Feature tx side can support tx-cksum-offload,tso,vxlan-tso=20
+> flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
+> for sriov is also support.
+>=20
+> Because of the chip design defect, for multiple-port mode
+> one pci-bdf will have multiple-port (max can have four ports)
+> so this code must be care of one bdf init multiple-port.
+>=20
+> v9:
+>   * fixed commit log format check by devtools.
+>   * fixed code compile issue.
+>=20
+> v8:
+>   * fixed codespell issue.
+>   * fixed MAINTAINERS file
+>=20
+> v7:
+>   * add support nic basic feature such as rss vlan strip/filter,
+>   * mtu-change recv/send scater-recv/mutltiple-send.
+>   * fixed code rationality, advised by Ferruh Yigit.
+> v6:
+>   * fixed the doc(rst) format problem advise by Thomas Monjalon
+>=20
+> v5:
+>   * fixed the symbol name require by the style documentation
+>=20
+> v4:
+>   * one patch has been forgot to upload :(
+>=20
+> v3:
+>   * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
+>   * change iobar type to void suggest by Stephen Hemminger
+>   * add KMOD_DEP support for vfio-pci
+>   * change run-cmd argument parse check for invalid extra_args
+>=20
+> v2:
+>   * fixed MAINTAIN maillist fullname format
+>   * fixed driver/net/meson the order issue of new driver to driver list
+>   * improve virtual point function usage suggest by Stephen Hemminger
+>=20
+> Wenbo Cao (28):
+>   net/rnp: add skeleton
+>   net/rnp: add ethdev probe and remove
+>   net/rnp: add log
+>   net/rnp: support mailbox basic operate
+>   net/rnp: add device init and uninit
+>   net/rnp: add get device information operation
+>   net/rnp: add support MAC promisc mode
+>   net/rnp: add queue setup and release operations
+>   net/rnp: add queue stop and start operations
+>   net/rnp: add support device start stop operations
+>   net/rnp: add RSS support operations
+>   net/rnp: add support link update operations
+>   net/rnp: add support link setup operations
+>   net/rnp: add Rx burst simple support
+>   net/rnp: add Tx burst simple support
+>   net/rnp: add MTU set operation
+>   net/rnp: add Rx scatter segment version
+>   net/rnp: add Tx multiple segment version
+>   net/rnp: add support basic stats operation
+>   net/rnp: add support xstats operation
+>   net/rnp: add unicast MAC filter operation
+>   net/rnp: add supported packet types
+>   net/rnp: add support Rx checksum offload
+>   net/rnp: add support Tx TSO offload
+>   net/rnp: support VLAN offloads
+>   net/rnp: add support VLAN filters operations
+>   net/rnp: add queue info operation
+>   net/rnp: support Rx/Tx burst mode info
+>=20
+>  .mailmap                            |    1 +
+>  MAINTAINERS                         |    6 +
+>  doc/guides/nics/features/rnp.ini    |   33 +
+>  doc/guides/nics/index.rst           |    1 +
+>  doc/guides/nics/rnp.rst             |  101 ++
+>  drivers/net/meson.build             |    1 +
+>  drivers/net/rnp/base/meson.build    |   28 +
+>  drivers/net/rnp/base/rnp_bdq_if.c   |  398 ++++++
+>  drivers/net/rnp/base/rnp_bdq_if.h   |  154 +++
+>  drivers/net/rnp/base/rnp_bitrev.h   |   64 +
+>  drivers/net/rnp/base/rnp_common.c   |  103 ++
+>  drivers/net/rnp/base/rnp_common.h   |   17 +
+>  drivers/net/rnp/base/rnp_crc32.c    |   37 +
+>  drivers/net/rnp/base/rnp_crc32.h    |   10 +
+>  drivers/net/rnp/base/rnp_dma_regs.h |   68 +
+>  drivers/net/rnp/base/rnp_eth_regs.h |   90 ++
+>  drivers/net/rnp/base/rnp_fw_cmd.c   |  162 +++
+>  drivers/net/rnp/base/rnp_fw_cmd.h   |  358 ++++++
+>  drivers/net/rnp/base/rnp_hw.h       |  136 ++
+>  drivers/net/rnp/base/rnp_mac.c      |  367 ++++++
+>  drivers/net/rnp/base/rnp_mac.h      |   34 +
+>  drivers/net/rnp/base/rnp_mac_regs.h |  207 +++
+>  drivers/net/rnp/base/rnp_mbx.c      |  512 ++++++++
+>  drivers/net/rnp/base/rnp_mbx.h      |   58 +
+>  drivers/net/rnp/base/rnp_mbx_fw.c   |  499 ++++++++
+>  drivers/net/rnp/base/rnp_mbx_fw.h   |   24 +
+>  drivers/net/rnp/base/rnp_osdep.h    |  173 +++
+>  drivers/net/rnp/meson.build         |   20 +
+>  drivers/net/rnp/rnp.h               |  258 ++++
+>  drivers/net/rnp/rnp_ethdev.c        | 1841 +++++++++++++++++++++++++++
+>  drivers/net/rnp/rnp_link.c          |  439 +++++++
+>  drivers/net/rnp/rnp_link.h          |   38 +
+>  drivers/net/rnp/rnp_logs.h          |   36 +
+>  drivers/net/rnp/rnp_rss.c           |  367 ++++++
+>  drivers/net/rnp/rnp_rss.h           |   43 +
+>  drivers/net/rnp/rnp_rxtx.c          | 1820 ++++++++++++++++++++++++++
+>  drivers/net/rnp/rnp_rxtx.h          |  162 +++
+>  37 files changed, 8666 insertions(+)
+>  create mode 100644 doc/guides/nics/features/rnp.ini
+>  create mode 100644 doc/guides/nics/rnp.rst
+>  create mode 100644 drivers/net/rnp/base/meson.build
+>  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
+>  create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
+>  create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
+>  create mode 100644 drivers/net/rnp/base/rnp_common.c
+>  create mode 100644 drivers/net/rnp/base/rnp_common.h
+>  create mode 100644 drivers/net/rnp/base/rnp_crc32.c
+>  create mode 100644 drivers/net/rnp/base/rnp_crc32.h
+>  create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
+>  create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
+>  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
+>  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
+>  create mode 100644 drivers/net/rnp/base/rnp_hw.h
+>  create mode 100644 drivers/net/rnp/base/rnp_mac.c
+>  create mode 100644 drivers/net/rnp/base/rnp_mac.h
+>  create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
+>  create mode 100644 drivers/net/rnp/base/rnp_mbx.c
+>  create mode 100644 drivers/net/rnp/base/rnp_mbx.h
+>  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
+>  create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
+>  create mode 100644 drivers/net/rnp/base/rnp_osdep.h
+>  create mode 100644 drivers/net/rnp/meson.build
+>  create mode 100644 drivers/net/rnp/rnp.h
+>  create mode 100644 drivers/net/rnp/rnp_ethdev.c
+>  create mode 100644 drivers/net/rnp/rnp_link.c
+>  create mode 100644 drivers/net/rnp/rnp_link.h
+>  create mode 100644 drivers/net/rnp/rnp_logs.h
+>  create mode 100644 drivers/net/rnp/rnp_rss.c
+>  create mode 100644 drivers/net/rnp/rnp_rss.h
+>  create mode 100644 drivers/net/rnp/rnp_rxtx.c
+>  create mode 100644 drivers/net/rnp/rnp_rxtx.h
+>=20
 
-Agenda:
-* Release Dates
-* Subtrees
-* Roadmaps
-* LTS
-* Defects
-* Opens
-
-Participants:
-* Broadcom
-* ARM
-* Intel
-* Marvell
-* Microsoft
-* Nvidia
-* Red Hat
-
-
-Release Dates
--------------
-
-The following are the proposed working dates for 25.03:
-
-- Proposal deadline (RFC/v1 patches): 4 January 2025
-- API freeze (-rc1): 7 February 2025 - Trending to 12 February
-- PMD features freeze (-rc2): 28 February 2025
-- Builtin applications features freeze (-rc3): 7 March 2025
-- Release: 26 March 2025
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-* next-net
-  * 3 patches pending
-  * Some drivers under review
-  * 29 patches under reviewing
-
-* next-net-intel
-  * Mainly done for RC1
-  * ~ 5 patches remaining/in progress.
-
-* next-net-broadcom
-  * 9 patches submitted and merged
-
-* next-net-mlx
-  * 12 patches merged and awaiting pull
-
-* next-net-mvl
-  * 32 patches. Will target RC2.
-
-* next-eventdev
-  * 3 patches awaiting review from Intel
-
-* next-baseband
-  * 1 series under review.
-  * Merging in RC2
-
-* next-virtio
-  * PR submitted
-
-* next-crypto
-  * Most patches merged
-  * 1 PMD ready
-  * Series with ZTE driver
-
-* next-dts
-  * Issue with Python 3.13 is fixed
-  * Mainly new tests pending
-
-* main
-  * Merged:
-    * VLA patchset for Windows
-    * Annotations on locks
-    * Memory allocators
-  * Fix for GCC 15 zero padding issue
-  * RC1 to close 12 Feb
+Two copies of v9 received.
+Build is failing in CI
+-------------------------------BEGIN LOGS----------------------------
+###########################################################################=
+#########
+#### [Begin job log] "ubuntu-22.04-gcc-static-mingw" at step Build and test
+###########################################################################=
+#########
+[632/3011] Linking static target drivers/libtmp_rte_net_ring.a
+[633/3011] Linking static target drivers/librte_net_r8169.a
+[634/3011] Generating rte_net_ring.pmd.c with a custom command
+[635/3011] Linking target drivers/librte_net_r8169-25.dll
+[636/3011] Compiling C object drivers/librte_net_ring-25.dll.p/meson-genera=
+ted_.._rte_net_ring.pmd.c.obj
+[637/3011] Compiling C object drivers/librte_net_ring.a.p/meson-generated_.=
+._rte_net_ring.pmd.c.obj
+[638/3011] Linking target drivers/librte_net_ring-25.dll
+[639/3011] Linking static target drivers/librte_net_ring.a
+[640/3011] Compiling C object drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_=
+fw.c.obj
+FAILED: drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.obj=20
+ccache x86_64-w64-mingw32-gcc -Idrivers/net/rnp/base/librnp_base.a.p -Idriv=
+ers/net/rnp/base -I../drivers/net/rnp/base -I. -I.. -Iconfig -I../config -I=
+lib/eal/include -I../lib/eal/include -Ilib/eal/windows/include -I../lib/eal=
+/windows/include -Ilib/eal/x86/include -I../lib/eal/x86/include -Ilib/eal/c=
+ommon -I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/log -I../lib/log -Il=
+ib/kvargs -I../lib/kvargs -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -=
+Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/metrics -I../l=
+ib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/ethdev -I../lib/ethdev =
+-Ilib/meter -I../lib/meter -fdiagnostics-color=3Dalways -pipe -D_FILE_OFFSE=
+T_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O2 -g -include =
+rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -W=
+format-security -Wmissing-declarations -Wmissing-prototypes -Wnested-extern=
+s -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes=
+ -Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initial=
+izers -D_GNU_SOURCE -D_WIN32_WINNT=3D0x0A00 -D__USE_MINGW_ANSI_STDIO -march=
+=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
+runcation -Wno-address-of-packed-member -Wno-unused-value -Wno-unused-but-s=
+et-variable -Wno-unused-parameter -MD -MQ drivers/net/rnp/base/librnp_base.=
+a.p/rnp_mbx_fw.c.obj -MF drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.=
+obj.d -o drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.obj -c ../driver=
+s/net/rnp/base/rnp_mbx_fw.c
+../drivers/net/rnp/base/rnp_mbx_fw.c: In function =E2=80=98rnp_mbx_fw_get_c=
+apability=E2=80=99:
+../drivers/net/rnp/base/rnp_mbx_fw.c:259:15: error: implicit declaration of=
+ function =E2=80=98ffs=E2=80=99; did you mean =E2=80=98fls=E2=80=99? [-Werr=
+or=3Dimplicit-function-declaration]
+  259 |    lane_bit =3D ffs(temp_mask) - 1;
+      |               ^~~
+      |               fls
 
 
-Other
------
-  - DPDK Summit 2025 will be in Prague in May:
-    - https://events.linuxfoundation.org/dpdk-summit/
-    - https://www.dpdk.org/event/dpdk-summit-2025-prague/
-
-
-LTS
----
-
-Backporting in progress.
-
-Current LTS versions:
-
-* 24.11.2
-* 23.11.3
-* 22.11.7
-
-See https://core.dpdk.org/roadmap/#dates
-
-* 20.11.10 - Will only be updated with CVE and critical fixes.
-* 19.11.14 - Will only be updated with CVE and critical fixes.
-
-
-* Distros
-  * Debian 12 contains DPDK v22.11
-  * Ubuntu 24.04 contains DPDK v23.11
-  * Ubuntu 23.04 contains DPDK v22.11
-  * RHEL 8/9 contains DPDK 23.11
-
-Defects
--------
-
-* Bugzilla links, 'Bugs',  added for hosted projects
-  * https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the master tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara john.mcnamara@intel.com" for the invite.
-
---_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:Consolas;
-	panose-1:2 11 6 9 2 2 4 3 2 4;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:Consolas;
-	color:windowtext;
-	font-weight:normal;
-	font-style:normal;
-	text-decoration:none none;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:11.0pt;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release status =
-meeting minutes 2025-02-11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Agenda:<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Release Dates=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Subtrees<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Roadmaps<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* LTS<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Defects<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Opens<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Participants:<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Broadcom<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* ARM<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Intel<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Marvell<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Microsoft<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Nvidia<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Red Hat<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release Dates<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------------<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The following a=
-re the proposed working dates for 25.03:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Proposal dead=
-line (RFC/v1 patches): 4 January 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- API freeze (-=
-rc1): 7 February 2025 &#8211; Trending to 12 February<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- PMD features =
-freeze (-rc2): 28 February 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Builtin appli=
-cations features freeze (-rc3): 7 March 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release: 26 M=
-arch 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
-e.dpdk.org/roadmap/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Subtrees<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">--------<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 3 patc=
-hes pending<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Some d=
-rivers under review<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 29 pat=
-ches under reviewing<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-inte=
-l<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mainly=
- done for RC1<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * ~ 5 pa=
-tches remaining/in progress.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-broa=
-dcom<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 9 patc=
-hes submitted and merged<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mlx<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 12 pat=
-ches merged and awaiting pull<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mvl<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 32 pat=
-ches. Will target RC2.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-eventdev=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 3 patc=
-hes awaiting review from Intel<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-baseband=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 seri=
-es under review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mergin=
-g in RC2<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-virtio<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * PR sub=
-mitted<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-crypto<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Most p=
-atches merged<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 PMD =
-ready<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Series=
- with ZTE driver<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-dts<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Issue =
-with Python 3.13 is fixed<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mainly=
- new tests pending<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* main<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Merged=
-:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; * VLA patchset for Windows<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; * Annotations on locks<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; * Memory allocators<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Fix fo=
-r GCC 15 zero padding issue<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RC1 to=
- close 12 Feb<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Other<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-----<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - DPDK S=
-ummit 2025 will be in Prague in May:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; - https://events.linuxfoundation.org/dpdk-summit/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; - https://www.dpdk.org/event/dpdk-summit-2025-prague/<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Backporting in =
-progress.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Current LTS ver=
-sions:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 24.11.2<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 23.11.3<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 22.11.7<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
-e.dpdk.org/roadmap/#dates<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 20.11.10 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 19.11.14 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Distros<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Debian=
- 12 contains DPDK v22.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
- 24.04 contains DPDK v23.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
- 23.04 contains DPDK v22.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RHEL 8=
-/9 contains DPDK 23.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Defects<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Bugzilla link=
-s, 'Bugs',&nbsp; added for hosted projects<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * https:=
-//www.dpdk.org/hosted-projects/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">DPDK Release St=
-atus Meetings<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---------------=
--------------<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The DPDK Releas=
-e Status Meeting is intended for DPDK Committers to discuss the<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">status of the m=
-aster tree and sub-trees, and for project managers to track<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">progress or mil=
-estone dates.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The meeting occ=
-urs on every Tuesday at 14:30 DST over Jitsi on https://meet.jit.si/DPDK<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">You don't need =
-an invite to join the meeting but if you want a calendar reminder just<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">send an email t=
-o &quot;John McNamara john.mcnamara@intel.com&quot; for the invite.<o:p></o=
-:p></span></p>
-</div>
-</body>
-</html>
-
---_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_--
+You need to use rte_ffs32 (or rte_ffs64) from rte_bitops.h instead.
