@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7157C0219D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 08:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2B2C021A2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 08:52:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C71E140A72;
-	Tue, 11 Feb 2025 09:51:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 57D4B40A6E;
+	Tue, 11 Feb 2025 09:51:13 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 77A68406A2
+ by mails.dpdk.org (Postfix) with ESMTP id 9BA15406BA
  for <dev@dpdk.org>; Tue, 11 Feb 2025 09:51:10 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 30FD0A3A6F; Tue, 11 Feb 2025 16:50:39 +0800 (CST)
+ id 085A3A3A6E; Tue, 11 Feb 2025 16:50:41 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v9 16/28] net/rnp: add MTU set operation
-Date: Tue, 11 Feb 2025 16:50:06 +0800
-Message-Id: <1739263818-59770-17-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v9 18/28] net/rnp: add Tx multiple segment version
+Date: Tue, 11 Feb 2025 16:50:08 +0800
+Message-Id: <1739263818-59770-19-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
@@ -36,279 +36,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add mtu update limit for multiple port mode.
-multiple mode just used the max-mtu of ports
-to limit receive.
+add support multiple segs mbuf send.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini    |   1 +
- doc/guides/nics/rnp.rst             |   1 +
- drivers/net/rnp/base/rnp_eth_regs.h |   3 +
- drivers/net/rnp/rnp.h               |   3 +
- drivers/net/rnp/rnp_ethdev.c        | 148 +++++++++++++++++++++++++++-
- 5 files changed, 155 insertions(+), 1 deletion(-)
+ drivers/net/rnp/rnp_rxtx.c | 126 ++++++++++++++++++++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.h |   3 +-
+ 2 files changed, 126 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 695b9c0dba..6d13370e8f 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -10,6 +10,7 @@ Link status event    = Y
- Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
-+MTU update           = Y
- RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
-diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 72a7c49590..fec92792f2 100644
---- a/doc/guides/nics/rnp.rst
-+++ b/doc/guides/nics/rnp.rst
-@@ -16,6 +16,7 @@ Features
-   Inner RSS is only support for vxlan/nvgre
- - Promiscuous mode
- - Link state information
-+- MTU update
- 
- Prerequisites
- -------------
-diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index c74886e70c..91a18dd42d 100644
---- a/drivers/net/rnp/base/rnp_eth_regs.h
-+++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -16,6 +16,9 @@
- #define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
- #define RNP_RX_ETH_F_OFF	(0x7ff)
- #define RNP_RX_ETH_F_ON		(0x270)
-+/* max/min pkts length receive limit ctrl */
-+#define RNP_MIN_FRAME_CTRL	_ETH_(0x80f0)
-+#define RNP_MAX_FRAME_CTRL	_ETH_(0x80f4)
- /* rx queue flow ctrl */
- #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
- #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index c61ade7925..7ed20521c5 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -120,6 +120,9 @@ struct rnp_eth_port {
- 	bool hw_rss_en;
- 	uint32_t indirtbl[RNP_RSS_INDIR_SIZE];
- 
-+	uint16_t cur_mtu;
-+	bool jumbo_en;
-+
- 	rte_spinlock_t rx_mac_lock;
- 	bool port_stopped;
- };
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index dc186ec8cf..45d36d8020 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -21,6 +21,7 @@
- #include "rnp_rss.h"
- #include "rnp_link.h"
- 
-+static int rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
- static struct rte_eth_dev *
- rnp_alloc_eth_port(struct rte_pci_device *pci, char *name)
- {
-@@ -141,6 +142,13 @@ static void rnp_mac_rx_enable(struct rte_eth_dev *dev)
- 	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
- 	mac_cfg |= RNP_MAC_RE;
- 
-+	if (port->jumbo_en) {
-+		mac_cfg |= RNP_MAC_JE;
-+		mac_cfg |= RNP_MAC_GPSLCE | RNP_MAC_WD;
-+	} else {
-+		mac_cfg &= ~RNP_MAC_JE;
-+		mac_cfg &= ~RNP_MAC_WD;
-+	}
- 	mac_cfg &= ~RNP_MAC_GPSL_MASK;
- 	mac_cfg |= (RNP_MAC_MAX_GPSL << RNP_MAC_CPSL_SHIFT);
- 	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-@@ -210,6 +218,7 @@ rnp_rx_scattered_setup(struct rte_eth_dev *dev)
- {
- 	uint16_t max_pkt_size =
- 		dev->data->dev_conf.rxmode.mtu + RNP_ETH_OVERHEAD;
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
- 	struct rnp_hw *hw = port->hw;
- 	struct rnp_rx_queue *rxq;
-@@ -235,6 +244,12 @@ rnp_rx_scattered_setup(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index 018a861b51..96529884e1 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -374,9 +374,11 @@ rnp_tx_queue_sw_reset(struct rnp_tx_queue *txq)
+ 		sw_ring[prev].next_id = idx;
+ 		prev = idx;
  	}
- 	dma_buf_size = hw->min_dma_size;
-+	if (dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_SCATTER ||
-+			max_pkt_size > dma_buf_size ||
-+			dev->data->mtu + RNP_ETH_OVERHEAD > dma_buf_size)
-+		dev->data->scattered_rx = 1;
-+	else
-+		dev->data->scattered_rx = 0;
- 	/* Setup max dma scatter engine split size */
- 	dma_ctrl = RNP_E_REG_RD(hw,  RNP_DMA_CTRL);
- 	if (max_pkt_size == dma_buf_size)
-@@ -295,6 +310,7 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- {
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
- 	struct rte_eth_dev_data *data = eth_dev->data;
-+	uint16_t max_rx_pkt_len = eth_dev->data->mtu;
- 	bool lsc = data->dev_conf.intr_conf.lsc;
- 	struct rnp_hw *hw = port->hw;
- 	uint16_t lane = 0;
-@@ -315,6 +331,9 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- 	if (ret)
- 		return ret;
- 	ret = rnp_rx_scattered_setup(eth_dev);
-+	if (ret)
-+		return ret;
-+	ret = rnp_mtu_set(eth_dev, max_rx_pkt_len);
- 	if (ret)
- 		return ret;
- 	ret = rnp_enable_all_tx_queue(eth_dev);
-@@ -636,6 +655,133 @@ static int rnp_allmulticast_disable(struct rte_eth_dev *eth_dev)
- 	return rnp_update_mpfm(port, RNP_MPF_MODE_ALLMULTI, 0);
++	txq->last_desc_cleaned = txq->attr.nb_desc - 1;
+ 	txq->nb_tx_free = txq->attr.nb_desc - 1;
+ 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
+ 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
++	txq->nb_tx_used = 0;
+ 	txq->tx_tail = 0;
+ 
+ 	size = (txq->attr.nb_desc + RNP_TX_MAX_BURST_SIZE);
+@@ -860,6 +862,7 @@ rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
+ 		rxe->mbuf = nmb;
+ 		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
+ 	}
++	rxq->rxrearm_nb++;
+ 	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
+ 		rxq->rxrearm_nb -= rxq->rx_free_thresh;
+ 		rxq->rxrearm_start += rxq->rx_free_thresh;
+@@ -927,7 +930,6 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			first_seg->nb_segs++;
+ 			last_seg->next = rxm;
+ 		}
+-		rxq->rxrearm_nb++;
+ 		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
+ 			last_seg = rxm;
+ 			continue;
+@@ -950,6 +952,106 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	return nb_rx;
  }
  
-+static bool
-+rnp_verify_pf_scatter(struct rnp_eth_adapter *adapter)
++static __rte_always_inline uint16_t
++rnp_multiseg_clean_txq(struct rnp_tx_queue *txq)
 +{
-+	struct rnp_hw *hw = &adapter->hw;
-+	struct rte_eth_dev *eth_dev;
-+	uint8_t i = 0;
++	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
++	struct rnp_txsw_entry *sw_ring = txq->sw_ring;
++	volatile struct rnp_tx_desc *txbd;
++	uint16_t desc_to_clean_to;
++	uint16_t nb_tx_to_clean;
 +
-+	for (i = 0; i < hw->max_port_num; i++) {
-+		if (adapter->ports[i] == NULL)
-+			continue;
-+		eth_dev = adapter->ports[i]->eth_dev;
-+		if (eth_dev->data == NULL)
-+			continue;
-+		/* sub port of pf eth_dev state is not
-+		 * started so the scatter_rx attr isn't
-+		 * setup don't check this sub port.
-+		 */
-+		if (!eth_dev->data->dev_started)
-+			continue;
-+		if (!eth_dev->data->scattered_rx)
-+			return false;
-+	}
++	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
++	desc_to_clean_to = desc_to_clean_to & (txq->attr.nb_desc - 1);
 +
-+	return true;
++	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
++	txbd = &txq->tx_bdr[desc_to_clean_to];
++	if (!(txbd->d.cmd & RNP_CMD_DD))
++		return txq->nb_tx_free;
++
++	if (last_desc_cleaned > desc_to_clean_to)
++		nb_tx_to_clean = (uint16_t)((txq->attr.nb_desc -
++					last_desc_cleaned) + desc_to_clean_to);
++	else
++		nb_tx_to_clean = (uint16_t)(desc_to_clean_to -
++				last_desc_cleaned);
++
++	txbd->d.cmd = 0;
++
++	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
++
++	return txq->nb_tx_free;
 +}
 +
-+static int
-+rnp_update_valid_mtu(struct rnp_eth_port *port, uint16_t *set_mtu)
++static __rte_always_inline uint16_t
++rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct rnp_eth_adapter *adapter = port->hw->back;
-+	struct rnp_eth_port *sub_port = NULL;
-+	struct rnp_hw *hw = port->hw;
-+	uint16_t origin_mtu = 0;
-+	uint16_t mtu = 0;
-+	uint8_t i = 0;
++	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *txe, *txn;
++	struct rte_mbuf *tx_pkt, *m_seg;
++	uint16_t send_pkts = 0;
++	uint16_t nb_used_bd;
++	uint16_t tx_last;
++	uint16_t nb_tx;
++	uint16_t tx_id;
 +
-+	if (hw->max_port_num == 1) {
-+		port->cur_mtu = *set_mtu;
-+
++	if (unlikely(!txq->txq_started || !txq->tx_link))
 +		return 0;
-+	}
-+	origin_mtu = port->cur_mtu;
-+	port->cur_mtu = *set_mtu;
-+	mtu = *set_mtu;
-+	for (i = 0; i < hw->max_port_num; i++) {
-+		sub_port = adapter->ports[i];
-+		if (sub_port == NULL)
-+			continue;
-+		mtu = RTE_MAX(mtu, sub_port->cur_mtu);
-+	}
-+	if (hw->max_port_num > 1 &&
-+			mtu + RNP_ETH_OVERHEAD > hw->min_dma_size) {
-+		if (!rnp_verify_pf_scatter(adapter)) {
-+			RNP_PMD_ERR("single pf multiple port max_frame_sz "
-+					"is bigger than min_dma_size please "
-+					"stop all pf port before set mtu.");
-+			port->cur_mtu = origin_mtu;
-+			return -EINVAL;
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		rnp_multiseg_clean_txq(txq);
++	if (unlikely(txq->nb_tx_free == 0))
++		return 0;
++	tx_id = txq->tx_tail;
++	txbd = &txq->tx_bdr[tx_id];
++	txe = &txq->sw_ring[tx_id];
++	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		tx_pkt = tx_pkts[nb_tx];
++		nb_used_bd = tx_pkt->nb_segs;
++		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
++		if (tx_last >= txq->attr.nb_desc)
++			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
++		if (nb_used_bd > txq->nb_tx_free)
++			if (nb_used_bd > rnp_multiseg_clean_txq(txq))
++				break;
++		m_seg = tx_pkt;
++		do {
++			txbd = &txq->tx_bdr[tx_id];
++			txn = &txq->sw_ring[txe->next_id];
++			if (txe->mbuf) {
++				rte_pktmbuf_free_seg(txe->mbuf);
++				txe->mbuf = NULL;
++			}
++			txe->mbuf = m_seg;
++			txe->last_id = tx_last;
++			txbd->d.addr = rnp_get_dma_addr(&txq->attr, m_seg);
++			txbd->d.blen = rte_cpu_to_le_32(m_seg->data_len);
++			txbd->d.cmd &= ~RNP_CMD_EOP;
++			txbd->d.cmd |= RNP_DATA_DESC;
++			m_seg = m_seg->next;
++			tx_id = txe->next_id;
++			txe = txn;
++		} while (m_seg != NULL);
++		txbd->d.cmd |= RNP_CMD_EOP;
++		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
++		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
++		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
++			txq->nb_tx_used = 0;
++			txbd->d.cmd |= RNP_CMD_RS;
 +		}
++		send_pkts++;
 +	}
-+	*set_mtu = mtu;
++	if (!send_pkts)
++		return 0;
++	txq->tx_tail = tx_id;
 +
-+	return 0;
++	rte_wmb();
++	RNP_REG_WR(txq->tx_tailreg, 0, tx_id);
++
++	return send_pkts;
 +}
 +
+ static int
+ rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
+ {
+@@ -973,9 +1075,29 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
 +static int
-+rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
++rnp_check_tx_simple_valid(struct rte_eth_dev *dev, struct rnp_tx_queue *txq)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint32_t frame_size = mtu + RNP_ETH_OVERHEAD;
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	bool jumbo_en = false;
-+	uint32_t reg;
-+	int ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	/* check that mtu is within the allowed range */
-+	if (frame_size < RTE_ETHER_MIN_LEN ||
-+			frame_size > RNP_MAC_MAXFRM_SIZE)
-+		return -EINVAL;
-+	/*
-+	 * Refuse mtu that requires the support of scattered packets
-+	 * when this feature has not been enabled before.
-+	 */
-+	if (dev->data->dev_started && !dev->data->scattered_rx &&
-+			frame_size > dev->data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM) {
-+		RNP_PMD_ERR("port %d mtu update must be stopped "
-+				"before configuration when scatter rx off.",
-+				dev->data->port_id);
-+
-+		return -EBUSY;
-+	}
-+	if (frame_size < RTE_ETHER_MIN_LEN) {
-+		RNP_PMD_ERR("valid packet length must be "
-+				"range from %u to  %u, "
-+				"when Jumbo Frame Feature disabled",
-+				(uint32_t)RTE_ETHER_MIN_LEN,
-+				(uint32_t)RTE_ETHER_MAX_LEN);
-+		return -EINVAL;
-+	}
-+	/* For one pf multiple port the mtu we must set
-+	 * the biggest mtu the ports selong to pf
-+	 * because of the control button is only one
-+	 */
-+	ret = rnp_update_valid_mtu(port, &mtu);
-+	if (ret < 0)
-+		return ret;
-+	frame_size = mtu + RNP_ETH_OVERHEAD;
-+	if (frame_size > RTE_ETHER_MAX_LEN)
-+		jumbo_en = true;
-+	/* setting the MTU */
-+	RNP_E_REG_WR(hw, RNP_MAX_FRAME_CTRL, frame_size);
-+	RNP_E_REG_WR(hw, RNP_MIN_FRAME_CTRL, 60);
-+	if (jumbo_en) {
-+		/* To protect conflict hw resource */
-+		rte_spinlock_lock(&port->rx_mac_lock);
-+		reg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+		reg |= RNP_MAC_JE;
-+		RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, reg);
-+		rte_spinlock_unlock(&port->rx_mac_lock);
-+	}
-+	port->jumbo_en = jumbo_en;
-+
++	RTE_SET_USED(txq);
++	if (dev->data->scattered_rx)
++		return -ENOTSUP;
 +	return 0;
 +}
 +
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -649,7 +795,7 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.promiscuous_disable          = rnp_promiscuous_disable,
- 	.allmulticast_enable          = rnp_allmulticast_enable,
- 	.allmulticast_disable         = rnp_allmulticast_disable,
--
-+	.mtu_set                      = rnp_mtu_set,
- 	.rx_queue_setup               = rnp_rx_queue_setup,
- 	.rx_queue_release             = rnp_dev_rx_queue_release,
- 	.tx_queue_setup               = rnp_tx_queue_setup,
+ int rnp_tx_func_select(struct rte_eth_dev *dev)
+ {
+-	dev->tx_pkt_burst = rnp_xmit_simple;
++	bool simple_allowed = false;
++	struct rnp_tx_queue *txq;
++	int idx = 0;
++
++	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
++		txq = dev->data->tx_queues[idx];
++		simple_allowed = rnp_check_tx_simple_valid(dev, txq) == 0;
++	}
++	if (simple_allowed)
++		dev->tx_pkt_burst = rnp_xmit_simple;
++	else
++		dev->tx_pkt_burst = rnp_multiseg_xmit_pkts;
+ 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
+ 
+ 	return 0;
+diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
+index 973b667cb2..f63128555b 100644
+--- a/drivers/net/rnp/rnp_rxtx.h
++++ b/drivers/net/rnp/rnp_rxtx.h
+@@ -98,7 +98,8 @@ struct rnp_tx_queue {
+ 	struct rnp_queue_attr attr;
+ 
+ 	uint16_t nb_tx_free; /* avail desc to set pkts */
+-	uint16_t nb_tx_used;
++	uint16_t nb_tx_used; /* multiseg mbuf used num */
++	uint16_t last_desc_cleaned;
+ 	uint16_t tx_tail;
+ 
+ 	uint16_t tx_next_dd; /* next to scan writeback dd bit */
 -- 
 2.34.1
 
