@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C2CC0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 18:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B57C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 18:18:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0ADFF409FA;
-	Tue, 11 Feb 2025 19:11:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 739AC409FA;
+	Tue, 11 Feb 2025 19:18:46 +0100 (CET)
 Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com
  [209.85.208.181])
- by mails.dpdk.org (Postfix) with ESMTP id 178FD4067A
- for <dev@dpdk.org>; Tue, 11 Feb 2025 19:11:14 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id F2C9F4067A
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 19:18:44 +0100 (CET)
 Received: by mail-lj1-f181.google.com with SMTP id
- 38308e7fff4ca-308e92c3779so285541fa.0
- for <dev@dpdk.org>; Tue, 11 Feb 2025 10:11:14 -0800 (PST)
+ 38308e7fff4ca-30761be8fa7so53699421fa.2
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 10:18:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1739297473; x=1739902273; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1739297924; x=1739902724; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=U00TzYeh5W6+5zWDBbPJvj06FbcgL0GA+Qjrye4dg2s=;
- b=UYBB0WTTXUItUkCLk+haJmNPkb2eZDxvIY7K2IPggCH1CCbbdTsjg5Gc91b1QNFgmH
- mUQup7ur41pt8U2LkVAOVqD5jQowkoCTxJKI3xrohusZLzTEybpBPNLDSS21bmiqwgCi
- SjlaFZ1UmgdsTGqrUBjGTTsVbBUeGoEgXtfKg=
+ bh=kgnsIjNIBShhSjthNaCVjBpS5vqWJPftEkRgdrL5BZU=;
+ b=ADJ9ZIBA9Iwj6Xr1kj3gdiaIh0r3FigRUej0DoWLLT3aUfHF1sM3DcUFRAhCZ6TC2k
+ FAvs0IdlvfUXQNp/682J9MBgbmFGKzanczAgiZW0Wr+J+Thmqkb8nND8SEUOpziD2WJ4
+ g8hE3r7t/q8y+wvH/7nnIawckcMSgK2VLZ41U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739297473; x=1739902273;
+ d=1e100.net; s=20230601; t=1739297924; x=1739902724;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=U00TzYeh5W6+5zWDBbPJvj06FbcgL0GA+Qjrye4dg2s=;
- b=atBKaPAeR2Il4VNwN3c2MHOi7LTLWcPOwh9MYsAT8PS06ifSYwvHocmem87Xeo+7qw
- Bz9JoNhgNLi6Gczt3YriGBd4yG8k2apo/TflsZe0FHZQyt4bse8jZeneMmO+tzFzlksN
- J9kFU0tPrXfzAILwYqhPAjF4vE0cNc+uenWdZxGhG5QTCiXFH54RnG0RhstcOFTxOQSe
- RnnSTAZQJlogGLepAaiQltaIhHVkefvvRFAHEIl6dYlOCkbhd5jRJk73cCL5DfQh9kJt
- 415krzhE8/d5sFQUrs/EGeiKDi+WBkyw59R5F5xNfMNmLYXYi7HdrgPD2/cnVEDt+XWp
- p1IA==
-X-Gm-Message-State: AOJu0Yyln0EV2D2/IIxE42N8b5fY3tjCV3DoYYeJimK8WelTsLfHdo+x
- iToE92PycuA4yzfAfEAsMe2WqPXEl/unaNfPxXYoAOrEUIuCYWPiwL4Os5gIPKOIcgjRHMydXoh
- 7cR0/nEFI11UXFmqXzs3hogmyn43FHSlwT7i26Q==
-X-Gm-Gg: ASbGnctUG94wTtYNoYmTW1Sl9aTrh3He+d8Jb3Oy9X6Oxj4DZ0RaVcOwPCaDaE9LW0s
- IIaiTrAvzDVchrKWZyRUEFVvDci4jvgTReCjy4rBgan7mtwXbMyjS1Rf2Ah8PKI/3LNqxrSa5EU
- rFejzn+TeGH73Or48MKJAhNxTEiFS8cws=
-X-Google-Smtp-Source: AGHT+IEFOyBhlAu3bJPhwzKhdAfkIYzUGA6WUL2wAd8nhqjHoR73SjwOPZbMkLScs8RTQNM8G5FKGQS1BqR6zdFv6fw=
-X-Received: by 2002:a05:6512:224e:b0:545:93a:11c7 with SMTP id
- 2adb3069b0e04-54511c814d4mr1623863e87.22.1739297473260; Tue, 11 Feb 2025
- 10:11:13 -0800 (PST)
+ bh=kgnsIjNIBShhSjthNaCVjBpS5vqWJPftEkRgdrL5BZU=;
+ b=Ok9PzRzko6FoUTjTySbG0gJZTIvbgUqvwxC83Ih1aefWswqIas/JH82XL1RCmKQjAR
+ MCN5uatW3CyIFcVtIS9Hs/6pKOj0zUyZkrmRPa7qKNUzXkOr5juBHXuLULDWCpQmArEX
+ y9jOB35wCJY9teFqe2mSQSj2Y58PM+AC2ormXYt8nBbQHIymEufWMryrW6wis4E/yEyq
+ 6h9uAWzKxNTuBJdqP0XxP2bVG3+dWh/pvItY+0R2+ButKCcO7piiEhSOThxU/Cw/FTUd
+ nomo1THN2PPTx6JmLZzpAKzrLrMnFdk1xz+M9IsvQb4g1curDAqhQDBjbCzZs9b2Rtc+
+ RQJQ==
+X-Gm-Message-State: AOJu0YxU2ZojDF5A7UNYbpFcz/w7poqur6Z/E+16zg2R3nhknp1pkCzZ
+ esVdoJz630Nltqnu0l2fYLdCzcOGUXJhAYlwVkpIfXz0BPXg4VGB9XrYifGhazrdYsloLEBNwU4
+ SEsWhGfU+qCWFKJA//Za+tByutrExHHStLn3HEw==
+X-Gm-Gg: ASbGncvoAP34z4QcwEuXURXV60i73O1gGkKw2iWkrcK80XolsOctYy2qek1zehL3by0
+ kRDTU1ll870YGXXtAc0GJ6LP7AHCnz2ZKP85jkd81lKvw8f7pzpcITMCbRG1gI+u8S/htbNTeUB
+ TxBCIItZdKoaMVFfHIwNPebc3eXv+qyAk=
+X-Google-Smtp-Source: AGHT+IFr5uD7fQkoCnD4goSHxaPQhBkxSFe5f0AQzx/maw5JOx8+iIo8wmSVrjS5bNovXD/+iimz4ZCndx0kqCrfl/w=
+X-Received: by 2002:a05:651c:1a0b:b0:308:eb58:6563 with SMTP id
+ 38308e7fff4ca-309036dc3ccmr1831551fa.28.1739297924276; Tue, 11 Feb 2025
+ 10:18:44 -0800 (PST)
 MIME-Version: 1.0
 References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
- <20250203151613.2436570-3-luca.vizzarro@arm.com>
-In-Reply-To: <20250203151613.2436570-3-luca.vizzarro@arm.com>
+ <20250203151613.2436570-4-luca.vizzarro@arm.com>
+In-Reply-To: <20250203151613.2436570-4-luca.vizzarro@arm.com>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 11 Feb 2025 13:11:01 -0500
-X-Gm-Features: AWEUYZnKKSHtHsczI1GkXeOCedoV5iuk1aBcXWzIFCeG55qImURcnDUZupiUlHs
-Message-ID: <CABD7UXMA8eM5ZJhkkHrUfYPS8pEt4W6+K_ApXoqVaMneP1kOiw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] dts: isolate test specification to config
+Date: Tue, 11 Feb 2025 13:18:31 -0500
+X-Gm-Features: AWEUYZm9WzNZ7Dgt2ju61I8vQfswHW8B0IA5VrH3cxslbJPWDKxRk_Hw-Tog6B8
+Message-ID: <CABD7UXOR-JOqfqtjyDSqFcTUwY6up0jk+UD_AxLuouq33qF2kQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/7] dts: revamp Topology model
 To: Luca Vizzarro <luca.vizzarro@arm.com>
 Cc: dev@dpdk.org, Patrick Robb <probb@iol.unh.edu>, 
  Paul Szczepanek <paul.szczepanek@arm.com>
@@ -75,10 +75,8 @@ Errors-To: dev-bounces@dpdk.org
 On Mon, Feb 3, 2025 at 10:17=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
 m> wrote:
 >
-> In an effort to improve separation of concerns, make the TestRunConfig
-> class responsible for processing the configured test suites. Moreover,
-> give TestSuiteConfig a facility to yield references to the selected test
-> cases.
+> Change the Topology model to add further flexility in its usage as a
+> standalone entry point to test suites.
 >
 > Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 
