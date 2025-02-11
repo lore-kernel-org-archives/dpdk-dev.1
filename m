@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5A5C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAC1C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:25:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6974D409FA;
-	Tue, 11 Feb 2025 17:24:47 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id A1FC54069D
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:46 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-2fa488351ffso4923295a91.3
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B5F7A406A2;
+	Tue, 11 Feb 2025 17:24:49 +0100 (CET)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 965254068A
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:48 +0100 (CET)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-2fa488351ffso4923358a91.3
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291086;
- x=1739895886; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291088;
+ x=1739895888; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=J8YstkOUlTy4RmfvF0cG1MBWO1Jam3DnL+8atAuq3m8=;
- b=dnHhpJKvkIknUXi1B7nH4ovtAM9GnFMtGubM1KNwjI6oWPoKdl5o8MtBWj0GYFYcqb
- 3q+PZ95bsJr8fESF/8iZ9s8tjEhH6UvmQZLsk5UPkfSGKIpNVZLQjgznnmbjset6e1ba
- hNPjfnFO8t/qMljC0F97YA/4Cgmgnoa4MzIzb0XohH6QI9TLl4RgYKB+yJyDWgXjIdxU
- A/MVFtDkFhYpIqQHlC0MDS5/SMyp+Ue3eHiM/g6MZ5WtZpB7qa2rVn3ApLzlYjtVCAn1
- 4W4Ex+8WV5Xm5ss5ELgQQh8kFUyNxXdMD3/WiqHXo06NjkkGyz4Gd1HKSzBFQUj6qLKN
- 0L4w==
+ bh=NQ294bFbJH4zXBMKTHLaYVTNVUl5RZXSb/LBSGTuTcI=;
+ b=YOyTWrPqopAFdXzbDdSSi/C/VWrtuTVv0Jqoj6cO4H/drgK+XHgZjuYSKjZzyCxAxB
+ NNCSQpI7/5VIG0/4KNKwqK4WJpJMmm+nYQRHH8xuVC69xhS6nIBSn3EFPxxYylTfZAZu
+ JphAjEpW5eX4sHXHoeJwmeHSpDpmk6nmltG1VTVgD6bLs/WdnStn9fxkrPwc2dT4/0DC
+ 5OSgsxzvLZFpWvBBdGZWNIcQyK0mEMi9v5MuSaAMlCaO6Gur2vDo6U6GZ7R7DLsYU/LB
+ P4H6LhyN7PsAZzJlj8TShA53bS+iDRT/sQ6Or6J/RZenQBSPBVv7jN8dRmOC3vkyfPFJ
+ uPkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739291086; x=1739895886;
+ d=1e100.net; s=20230601; t=1739291088; x=1739895888;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=J8YstkOUlTy4RmfvF0cG1MBWO1Jam3DnL+8atAuq3m8=;
- b=YDUtD8O1ZLmevVrappFIHD7bviEA0MNcrOEnJZ+NXixlBdKkl4A4asI+TUGsIw2eqG
- OQfe6nwi9P6PXDeOBCOXVR8OuQscecdfCfPNmbuT91ivfhhoAY+PmmFoA6fLi+5tfM3c
- 5P5j4IfFpZ71qFcrh15pA9G5nocEAlSTNXXLfOoHdmd8lcwG5KgCs9b4gso3Rr9ixt7a
- da3mJWbbGy8Cz1yMD+ZOLn2i82g4e0sNYus9XOl6tJDUKbMoiLQz+oOGNX3LQzRYPxVd
- 5xXfKdpK5zoXRLg8beOrpFH7TveoTvUHSodZ9k2F1yoAOr/if8hRYP04a2cRyt2Y/Ut5
- Y/6A==
+ bh=NQ294bFbJH4zXBMKTHLaYVTNVUl5RZXSb/LBSGTuTcI=;
+ b=HEMYAGUFgLQKnxdJ3l1E3gHwJ+qYkBQCzyieW14BjmDMQLmm/h425uckVfeUyCRZcC
+ Sx4DbWU9pO1Q+LCkU4Q3KbtM1XoyWaerDxCURbm9AoFlfRGREFa7n3oi6zBjBR1IukXF
+ oGa28wDP7Z9FUx6jfJ5HepCZoftXelw2mVPyulSIONYjIqLkcrNjCPiBvnM0tFKeE9Yu
+ JZgxrDIXQxuV3++35o4BwFfT48KN62+gR3J04Ta/Xa09/Dmr1aVe6c9I2S/Fyxk3DzEw
+ 69c2ql+JOi9rUu2JRdzXi2U91Go03S5qqpLrEzkRdtJrPXm3dBieSu2yLdRMoQBOxf0x
+ GfLQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVGu2cx3K2dvAKHLsE42TDddMgEpZwgseZKJsu2IlfQsPgQAHtccM9Bgr9BK79Y/rBdZpg=@dpdk.org
-X-Gm-Message-State: AOJu0Yw/s+Vb1vd3Wx9ybzKmjY/N+YbC5yew4T17jEpZKYMeT7AqnX19
- xD6vvJJU+3RQcJgJ51MJa/cqOGv5CC/0+jw337jzcHOK05GYeeD6T3URBwQEsoDExXp+7xGjUdh
- j
-X-Gm-Gg: ASbGncunCr9dIAJ3OSj4m3aaVA8j9ZAqdpdIMAKZ8MX4oOm3CsWa57svHcY0+3ZNIwd
- JDBq2GJfrGZnncvbA4vCObGAxenCiKtopRDYWDIyAXxVlVs39CIhif23dMWhdkOFRVBU1roRQDN
- YHbLYcY4sWo3uVzH88kYgTU4hUPHrEwT9SffzKwYVIM4mjtRivTvEI3KAmdH/rq+F/2T8pkCbfI
- vFQHDmDW8Nybnu7xjeDKcwoeE3EjeVV8o0/zQzSoVUffWeenUWqEOenFpQ2sfYTNcfiu/c/yr4A
- YYc1r1zBttQj9CWhjBiN+mCu4mTkpo6ZNfPb05XBfoKp9SPEGGCwjMWVPuPvRWaupGXL
-X-Google-Smtp-Source: AGHT+IH8tIr3by4SfJfT6ZMSpkED+qW6ndpYOzgKOv2Xt1MrPtqE2wQx9lQB4kQiX4dneUkCHKlmug==
-X-Received: by 2002:a17:90b:1915:b0:2f9:cf97:56ac with SMTP id
- 98e67ed59e1d1-2fa22b8e509mr32147967a91.0.1739291085826; 
- Tue, 11 Feb 2025 08:24:45 -0800 (PST)
+ AJvYcCWa9H4C8VxWxNrkrNqC5wTYBVf4IYTSCeBKhSen0kvq4jCvRTO5cXunQITJn6gkSau3qE8=@dpdk.org
+X-Gm-Message-State: AOJu0Yyak+N5MI5IRerfJCEBZ+DGfhILfoniGwEjYvTUSRKNanu/04bg
+ 3kKpW4cdw6JOBaEnfHV1iLtn8rlai19/Bd0fWqPC1mmy6M3RL9/HFEvMsGHG21k=
+X-Gm-Gg: ASbGnctJ1sQChwdEa1KccYFGxNhGwjgbXnmpvykvj1ZUwMmGyeJpoID9jpbID11MAMZ
+ DSU28pXFF78XYXe9E4OdQIfuDWkCKmu+SeJqox/wAPkH3tpy74keRXvJLMfR60ua6gNt75ec9Cn
+ JFFmrCYZpETgZwK3c1sQVbnPjmHbEyG+RW8MNs+P9GoEIkBHygM+v6y6Oy6W909Jan0KhPcr6gg
+ E/Umsjo/dTQQz5Ubg2fZmQhboe8a30G5a+UTy+lup92X0SYeUKZmHXiH3EvhiaKa5im6Cg2nago
+ BuhLVrRHK0M4HHdHsX3PilzpD3N9QmhU9EXkgXzrffa0sUERVyM2L2AM4jwHHuxMzOVK
+X-Google-Smtp-Source: AGHT+IFNYGVxjmYSQCfJ8ZryQQD4Ml8e3j26H4O32gqj6MQIAUXAD3wEItiq6JTmDdLE6dYow49DyA==
+X-Received: by 2002:a17:90b:4b0b:b0:2fa:ba3:5455 with SMTP id
+ 98e67ed59e1d1-2fa23f55dcdmr29115383a91.7.1739291087799; 
+ Tue, 11 Feb 2025 08:24:47 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.45
+ 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:24:45 -0800 (PST)
-Date: Tue, 11 Feb 2025 07:22:11 -0800
+ Tue, 11 Feb 2025 08:24:47 -0800 (PST)
+Date: Tue, 11 Feb 2025 07:31:10 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wenbo Cao <caowenbo@mucse.com>
 Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v9 08/28] net/rnp: add queue setup and release operations
-Message-ID: <20250211072211.29549f24@hermes.local>
-In-Reply-To: <1739263818-59770-9-git-send-email-caowenbo@mucse.com>
+Subject: Re: [PATCH v9 04/28] net/rnp: support mailbox basic operate
+Message-ID: <20250211073110.61ab967d@hermes.local>
+In-Reply-To: <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <1739263818-59770-9-git-send-email-caowenbo@mucse.com>
+ <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,20 +82,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Feb 2025 16:49:58 +0800
+On Tue, 11 Feb 2025 16:49:54 +0800
 Wenbo Cao <caowenbo@mucse.com> wrote:
 
-> diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
-> index b9db033ff6..c2ef0d05be 100644
-> --- a/drivers/net/rnp/base/meson.build
-> +++ b/drivers/net/rnp/base/meson.build
-> @@ -7,6 +7,7 @@ sources = [
->          'rnp_mbx_fw.c',
->          'rnp_common.c',
->          'rnp_mac.c',
-> +	'rnp_bdq_if.c',
->  ]
->  
+> +static inline u32
+> +rnp_reg_read32(void *base, size_t offset)
+> +{
+> +	unsigned int v = rte_read32(((u8 *)base + offset));
+> +
+> +	RNP_PMD_REG_LOG(DEBUG, "offset=0x%08lx val=0x%04x",
+> +			(unsigned long)offset, v);
+> +	return v;
+> +}
 
-The meson.build file ends up with conflicting indentation here.
-Some spaces, some tabs. The DPDK standard is to use spaces (no tabs) in meson.build
+Why not use uint32_t here?
+Why not use const?
+Why the extra parens?
+
+static inline u32
+rnp_reg_read32(const void *base, size_t offset)
+{
+	u32 v = rte_read32((const u8 *)base + offset);
+
+	RNP_PMD_REG_LOG(DEBUG, "offset=%p val=%#" PRIx32, offset, v);
+}
