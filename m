@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAC1C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA15C021A5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:25:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5F7A406A2;
-	Tue, 11 Feb 2025 17:24:49 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 965254068A
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:48 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2fa488351ffso4923358a91.3
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E7D2A4069F;
+	Tue, 11 Feb 2025 17:24:51 +0100 (CET)
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
+ [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id 79A6A40A71
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:50 +0100 (CET)
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-2fa5af6d743so4487601a91.3
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291088;
- x=1739895888; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291090;
+ x=1739895890; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=NQ294bFbJH4zXBMKTHLaYVTNVUl5RZXSb/LBSGTuTcI=;
- b=YOyTWrPqopAFdXzbDdSSi/C/VWrtuTVv0Jqoj6cO4H/drgK+XHgZjuYSKjZzyCxAxB
- NNCSQpI7/5VIG0/4KNKwqK4WJpJMmm+nYQRHH8xuVC69xhS6nIBSn3EFPxxYylTfZAZu
- JphAjEpW5eX4sHXHoeJwmeHSpDpmk6nmltG1VTVgD6bLs/WdnStn9fxkrPwc2dT4/0DC
- 5OSgsxzvLZFpWvBBdGZWNIcQyK0mEMi9v5MuSaAMlCaO6Gur2vDo6U6GZ7R7DLsYU/LB
- P4H6LhyN7PsAZzJlj8TShA53bS+iDRT/sQ6Or6J/RZenQBSPBVv7jN8dRmOC3vkyfPFJ
- uPkg==
+ bh=hg9JDpdpsb66ahGhd9298SRkuhD7wL2EEO5c3Ddb5iQ=;
+ b=fm3KxTAQnMHm5VTHGqPN6FI8xEVPZHqZQOhv/xH2k0Uo0iuVFkOepGMa0ULAV31pyi
+ wJsfu+PsTvqnVwFHQRYWGinvSp6XFwaCS6BWOqb1EVM209jlh/8/Cd9l0g0OTPnsgyWP
+ 8zCeNyI/qddGVJlojTL82VjGq2TrU3eeG7u1dnGfFwWLhReVmqEXMhIUSVtfwxI2V0/H
+ bEnKxDb9ROczBzqF+wug3+lAdpBpGlJmyrFowLrUSytIivh5qFdnz78UQwcJu7BrvrTx
+ ceZC4BtaeYHsgs8/TquylAbNYjCMFQuwUy83QJ1JFOal/EiGcSFy4bUD4sRQNU020U+F
+ G98w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739291088; x=1739895888;
+ d=1e100.net; s=20230601; t=1739291090; x=1739895890;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=NQ294bFbJH4zXBMKTHLaYVTNVUl5RZXSb/LBSGTuTcI=;
- b=HEMYAGUFgLQKnxdJ3l1E3gHwJ+qYkBQCzyieW14BjmDMQLmm/h425uckVfeUyCRZcC
- Sx4DbWU9pO1Q+LCkU4Q3KbtM1XoyWaerDxCURbm9AoFlfRGREFa7n3oi6zBjBR1IukXF
- oGa28wDP7Z9FUx6jfJ5HepCZoftXelw2mVPyulSIONYjIqLkcrNjCPiBvnM0tFKeE9Yu
- JZgxrDIXQxuV3++35o4BwFfT48KN62+gR3J04Ta/Xa09/Dmr1aVe6c9I2S/Fyxk3DzEw
- 69c2ql+JOi9rUu2JRdzXi2U91Go03S5qqpLrEzkRdtJrPXm3dBieSu2yLdRMoQBOxf0x
- GfLQ==
+ bh=hg9JDpdpsb66ahGhd9298SRkuhD7wL2EEO5c3Ddb5iQ=;
+ b=B2fPT2vY8+7mGzqTDVM0rjsMl/VuXKZEa5ev+nQyhwT8eAFp7vZvQI818mJQ5JZhnA
+ KLpILnxEllEe4LKHJ417S86/A/v+nDSHjU9ia7jOELvvX96+4ExkWX7QJYvfNeFWHKzx
+ mGDcd3jPR13i6bE0IE+Roz69ufuQwT7dN3KuNO5LnELxRge9aVQsjaEsF8iCT1dvbhNe
+ hMah7Xl2eXOXzrPVke/RPAHgn8O8bDQkQDNv6GzS+hOiVd169wU9ud8b8VhJss9005g4
+ YYUQndkAhacpZkleBAEf+HCrIW4UQSCn3yOn4EpgISkZG+ObNcFKtZYcXFgfZHAt5tHg
+ ZoEA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWa9H4C8VxWxNrkrNqC5wTYBVf4IYTSCeBKhSen0kvq4jCvRTO5cXunQITJn6gkSau3qE8=@dpdk.org
-X-Gm-Message-State: AOJu0Yyak+N5MI5IRerfJCEBZ+DGfhILfoniGwEjYvTUSRKNanu/04bg
- 3kKpW4cdw6JOBaEnfHV1iLtn8rlai19/Bd0fWqPC1mmy6M3RL9/HFEvMsGHG21k=
-X-Gm-Gg: ASbGnctJ1sQChwdEa1KccYFGxNhGwjgbXnmpvykvj1ZUwMmGyeJpoID9jpbID11MAMZ
- DSU28pXFF78XYXe9E4OdQIfuDWkCKmu+SeJqox/wAPkH3tpy74keRXvJLMfR60ua6gNt75ec9Cn
- JFFmrCYZpETgZwK3c1sQVbnPjmHbEyG+RW8MNs+P9GoEIkBHygM+v6y6Oy6W909Jan0KhPcr6gg
- E/Umsjo/dTQQz5Ubg2fZmQhboe8a30G5a+UTy+lup92X0SYeUKZmHXiH3EvhiaKa5im6Cg2nago
- BuhLVrRHK0M4HHdHsX3PilzpD3N9QmhU9EXkgXzrffa0sUERVyM2L2AM4jwHHuxMzOVK
-X-Google-Smtp-Source: AGHT+IFNYGVxjmYSQCfJ8ZryQQD4Ml8e3j26H4O32gqj6MQIAUXAD3wEItiq6JTmDdLE6dYow49DyA==
-X-Received: by 2002:a17:90b:4b0b:b0:2fa:ba3:5455 with SMTP id
- 98e67ed59e1d1-2fa23f55dcdmr29115383a91.7.1739291087799; 
- Tue, 11 Feb 2025 08:24:47 -0800 (PST)
+ AJvYcCWmMim4eFCBv5EPDXiKD7nJ6hp1fBKWsA0j/VB6wnRQ1k3/bqPmrwgRwPIpWmkwODg+ahI=@dpdk.org
+X-Gm-Message-State: AOJu0YwXFSg2C86b02zmejD7sKgM5PhN6j7zkp2f9BRSe3aaioKug5rk
+ MvuTxE/iTO82FBJlLZGxDdxWcFCt6yOCyUcyFAYOAkz0/r0XgBvPrqWV+qChJyE=
+X-Gm-Gg: ASbGncv51X/+Ep6vGoOIVAKZ0pmcpKk72F4DeOOLmsigCwSyti+ApX4Gyar8YMOZPfg
+ xwMid/rWgwKRVg2JiBRjOOn1sBHxTYhBEr8C5W9f1ajRWz0kEI1YO6FgJVERN4QhHd0gg+v1mFI
+ OwE6yiiGKrSbPMaEZqwDA6LyIpDPTjRBiY2QO0VKxGOXKfVtJBFXnZt4qWgTpUsjK8c8WVBZjcN
+ X2AgOmcCxmSWCTd7UStZRAp6ewziz9ORZwHkYd6a/52ADQr9NWQk5+8Ul+8M3wu5frWzbnSTbIC
+ UVdNpWrVyXSq+l1mp+3qjkqVHMTNuS+Ih7zLt8EVTSiQFaMpwCB6XzDJaeY+2ZE89Zrr
+X-Google-Smtp-Source: AGHT+IGVgXobvGSVpqmbql4SRJJxbNSbVa9p5K9W6sL8qjm66hlXbZn9KJmwKaNV6usuDrwYov0vfQ==
+X-Received: by 2002:a17:90b:3552:b0:2f6:be57:49cd with SMTP id
+ 98e67ed59e1d1-2fa242d9f42mr27254035a91.25.1739291089703; 
+ Tue, 11 Feb 2025 08:24:49 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.47
+ 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:24:47 -0800 (PST)
-Date: Tue, 11 Feb 2025 07:31:10 -0800
+ Tue, 11 Feb 2025 08:24:49 -0800 (PST)
+Date: Tue, 11 Feb 2025 08:02:02 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wenbo Cao <caowenbo@mucse.com>
 Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: Re: [PATCH v9 04/28] net/rnp: support mailbox basic operate
-Message-ID: <20250211073110.61ab967d@hermes.local>
-In-Reply-To: <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
+Subject: Re: [PATCH v9 08/28] net/rnp: add queue setup and release operations
+Message-ID: <20250211080202.621a091f@hermes.local>
+In-Reply-To: <1739263818-59770-9-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
+ <1739263818-59770-9-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,27 +82,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Feb 2025 16:49:54 +0800
+On Tue, 11 Feb 2025 16:49:58 +0800
 Wenbo Cao <caowenbo@mucse.com> wrote:
 
-> +static inline u32
-> +rnp_reg_read32(void *base, size_t offset)
-> +{
-> +	unsigned int v = rte_read32(((u8 *)base + offset));
+> diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
+> index da2c1d3b0e..ea4e1b8d83 100644
+> --- a/drivers/net/rnp/base/rnp_hw.h
+> +++ b/drivers/net/rnp/base/rnp_hw.h
+> @@ -120,6 +120,9 @@ struct rnp_hw {
+>  	bool lane_is_sgmii[RNP_MAX_PORT_OF_PF];
+>  	struct rnp_mbx_info mbx;
+>  	struct rnp_fw_info fw_info;
 > +
-> +	RNP_PMD_REG_LOG(DEBUG, "offset=0x%08lx val=0x%04x",
-> +			(unsigned long)offset, v);
-> +	return v;
-> +}
+> +	spinlock_t rxq_reset_lock; /* reset op isn't thread safe */
+> +	spinlock_t txq_reset_lock; /* reset op isn't thread safe */
+>  };
+>  
 
-Why not use uint32_t here?
-Why not use const?
-Why the extra parens?
-
-static inline u32
-rnp_reg_read32(const void *base, size_t offset)
-{
-	u32 v = rte_read32((const u8 *)base + offset);
-
-	RNP_PMD_REG_LOG(DEBUG, "offset=%p val=%#" PRIx32, offset, v);
-}
+In DPDK control operations do not need to be thread safe.
+Many other drivers do not allow start/stop in one thread while tx/rx are happening etc.
+This is because rx/tx should not have overhead of any locks.
+The cost of one spinlock at 10G will drop performance a lot
