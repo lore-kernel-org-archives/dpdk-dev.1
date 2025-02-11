@@ -2,164 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68E9C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF89C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:56:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B93E9402C9;
-	Tue, 11 Feb 2025 15:46:23 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 8FB6A402C2
- for <dev@dpdk.org>; Tue, 11 Feb 2025 15:46:22 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BDihBJ013705
- for <dev@dpdk.org>; Tue, 11 Feb 2025 06:46:21 -0800
-Received: from pps.reinject (localhost [127.0.0.1])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44qf8sk02b-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 11 Feb 2025 06:46:21 -0800 (PST)
-Received: from m0045851.ppops.net (m0045851.ppops.net [127.0.0.1])
- by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51BEkLwA014538;
- Tue, 11 Feb 2025 06:46:21 -0800
-Received: from nam12-dm6-obe.outbound.protection.outlook.com
- (mail-dm6nam12lp2171.outbound.protection.outlook.com [104.47.59.171])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44qf8sk027-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 11 Feb 2025 06:46:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 752B5402C9;
+	Tue, 11 Feb 2025 15:56:42 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 01DE6402C2
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 15:56:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1739285801; x=1770821801;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=Uv2BVSB7SMrYOPK+ZBQUkchM4ZInb+waSUqzJvoLI3c=;
+ b=ViOuthu2//Y8tXuEAjFvDJuYFED0OEY9losEMDAICHVYcZd7ZywURik8
+ IMPvqCG5jF6Yn5umFkP5wPtV8eMXNLJboxEyA9OutTF1wRq6qc9E/cvw8
+ fgIU5RuNw6PH9HQsNGnoWaPQVmv81tF5idYQ3LE2mmAzyP+0hjLHbFd3N
+ 9xfbplv3MHDevKiZHDBg/rdsxJTPoCLAwfxQKTxuWTRJimQogu3/B7EQH
+ DAZAjqeGoeIX9S4hS6YlukAk1Uwe5XzUWiRlyoUarhI0xB2zCcxMLybus
+ BbG3oQiTBdVdeqrfX0I3oWPWVTJ0NlwXR2d0LQ3Nk+a0aRac43dvns4o7 A==;
+X-CSE-ConnectionGUID: IeYrLjxbSTmffL/8d53SNQ==
+X-CSE-MsgGUID: rO0rd6IRRXuAg1JtJUNI0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="42746233"
+X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208,217";a="42746233"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2025 06:56:40 -0800
+X-CSE-ConnectionGUID: qsn/Y7NzSmyE+ZNxs7RuAg==
+X-CSE-MsgGUID: i9mGNkB4Q4K3/HZZHRTp0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+ d="scan'208,217";a="117150534"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 11 Feb 2025 06:56:40 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 11 Feb 2025 06:56:38 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 11 Feb 2025 06:56:38 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 11 Feb 2025 06:56:37 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=opU1VRpylNrZr/ZEk4AGjzbNVix6QQQXTM5PC0KBj0clYJ7sg47Zu6iwQZBEPHECvU9Cbie//enEznh+rmQZg8uh6W9NTjxfREdkHyyVauEUBhifI3ao5MoSuHQ/K4I3uONlQ5IT0OFGWqibV5ew12MNDVbnPY6x8/RwctLon6RlHSrSy2U1oMd1kuldiJknckDH/jPWVUJZzLmwz1P68btN+5VGqZVVsClsSdjMhIGaBQ9UU7LryoL7f5R9ZAfiPaeb/2mJtyF2nZN03L79f87sIrtX/lnQ+fGn+/5xhU53nTmOOwwC3/IVGiJS4hjQkUEMBtjskQyuhuMKx0c5IQ==
+ b=oPBMLXRUd4W/LjK53r3svAgHtcafcDOuZnSyTu3po3Jgb/oV9oBfE3c9rWsFDqiyBKlTyCaarCjWKVQdVD4YVjtDc/27LWk+W58SPGHOj8pRLujPwh5vTIMchU7aCT3MUK4vzzTffsHNpgpBISQCFidtGIubWvtWXo6dic3yhluS0VxSJE/HjL5zu8W84Hxz/8pW2BpytFzpTxf7A+1J/R95wki2MFPzALOB+BYPnH0NkNm5Z9ZEHxs3aRrP5tSqXkLy4eWmVPel6Htlcrk6+PxciXhxC8gn3/31o0kQdoy+AXHBtwpdbnQunhlV2TxvxwNQwT0WRFSbR//O6Z9ojQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lcKR1O3QtIMfz5pcRwYbPLvwe9bmD7Og84oAoi3o1JY=;
- b=YclDH1sFdb55xwe+IeAPjyAZUS+QVdi+0vcLiB83G8NWrDCz38U601J+HCAFAIIig5kobdBowP5UlcA93niPLTqCs0FtIDcjPyVGmXQ34cwf0Nc3j3DVl9KwnfU+JezoPv6szCOuhaFNS/sYlNWeILCs+zDDeQqtHeH04EKP4Je0bUdhGgW1u0RbL2fwoQZrc49kxCRXJkBlT+5xCasxfO8I0oQquMTZh5XIs0xPeWJu4ugPFAIad1beWhhXzekZiX7Yv/p/XL7ZGOKroxd1bOCcSREIUfgNNMzDgJroxenh6v7nKipZrKblRdA9ZCSOewe4kq8q36FhS6pK1e079Q==
+ bh=FblltLwHocGum2SPxUHHehBpmmO4vqcc7c1LvlY3Xqw=;
+ b=MtZil81oAYoZA0MKtJp4d3ZS5Rd8KO3A44/ly8FHV9ukk9kJ6mAjvzxznlSmoUdHOO58BXeeDgYfXSpnlr0gq/Da/4Nph7Laar2MnJGyotrPfzRs7BkVALj2ea2Xb+YTZgJenkSWonK8yFotKMsmYUAl4Oifi5FTh9ciTgdRHKIuIH8BsFix4KzuZOuj9+6uEVovEFNN8Q3jmE/v+wmbZ6eddJUZThBFltvv9d7fmTCJGAZoJ4Nk2j0qZkMx/oK3G5M2uF7NmQEtmid1rZaidy+MFeTbRS7thZ1pQdoVu9eV9lPPrFdy5hRexkP+rKSZjf+nyATHdjq2/jydJ8zglw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lcKR1O3QtIMfz5pcRwYbPLvwe9bmD7Og84oAoi3o1JY=;
- b=r9dkCluOhLJoKNFmVjZwLqkfqwsknwHYgLvXQoq1jpIKvA8Cm0LcLU85PNejqKbd7divDj3KfhhpI8Gsg2NpmCgkQj/qc86j+Dw6Mdv5ow0ylnA5YQuMB1tVrukbortmnd9YRcHf9YEH+Wsxd2ASEvI1Hi7/9oq4UOZ4oa79q0Y=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- DM6PR18MB3570.namprd18.prod.outlook.com (2603:10b6:5:2ab::15) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8422.19; Tue, 11 Feb 2025 14:46:16 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d%7]) with mapi id 15.20.8422.015; Tue, 11 Feb 2025
- 14:46:14 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Hanxiao Li <li.hanxiao@zte.com.cn>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [PATCH v26 00/13] drivers/zsda: introduce zsda drivers
-Thread-Topic: [EXTERNAL] [PATCH v26 00/13] drivers/zsda: introduce zsda drivers
-Thread-Index: AQHbefy3gOKiW1Z200ybBDBwa0Rph7NCMx9w
-Date: Tue, 11 Feb 2025 14:46:14 +0000
-Message-ID: <CO6PR18MB4484D2CFFDC08C6503B1284AD8FD2@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20250122093325.3099070-2-li.hanxiao@zte.com.cn>
- <20250208072732.4008334-1-li.hanxiao@zte.com.cn>
-In-Reply-To: <20250208072732.4008334-1-li.hanxiao@zte.com.cn>
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from PH8PR11MB6804.namprd11.prod.outlook.com (2603:10b6:510:1bc::6)
+ by CY8PR11MB7947.namprd11.prod.outlook.com (2603:10b6:930:7a::11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Tue, 11 Feb
+ 2025 14:56:10 +0000
+Received: from PH8PR11MB6804.namprd11.prod.outlook.com
+ ([fe80::6f39:a4f:9001:ea75]) by PH8PR11MB6804.namprd11.prod.outlook.com
+ ([fe80::6f39:a4f:9001:ea75%6]) with mapi id 15.20.8422.015; Tue, 11 Feb 2025
+ 14:56:10 +0000
+From: "Mcnamara, John" <john.mcnamara@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Marchand, David"
+ <david.marchand@redhat.com>
+Subject: DPDK Release Status Meeting 2025-02-11
+Thread-Topic: DPDK Release Status Meeting 2025-02-11
+Thread-Index: Adt8lPuFGewtGE1yQq6BhZqdlFzz1A==
+Date: Tue, 11 Feb 2025 14:56:10 +0000
+Message-ID: <PH8PR11MB68048E7988E9246DCE6D4417FCFD2@PH8PR11MB6804.namprd11.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|DM6PR18MB3570:EE_
-x-ms-office365-filtering-correlation-id: b2d62514-2169-4d8a-9028-08dd4aaad5d5
+x-ms-traffictypediagnostic: PH8PR11MB6804:EE_|CY8PR11MB7947:EE_
+x-ms-office365-filtering-correlation-id: 31861394-2d6e-4840-35d9-08dd4aac38d8
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?aHNLNEVaWGFPc2wvek84eVo3TjVEZ3B5RlNDbjRZRXZxMStXbnh0Vm9iRzNC?=
- =?utf-8?B?bUc5dUh6OEM2UTZjdFJlV05xRkpzSjEwT3FKRjllWG1JSGFCcXllclB0dFFR?=
- =?utf-8?B?OHhhelphY3NYazYvU2hWVkhhZkl6MkRySUlMdHd4S2I2WVN4TFdBU3ZNTy91?=
- =?utf-8?B?cDNaaE9NQlVZVzVsOHVpZ2UraklIb2w3UHZ4czdNT0dGNVJRQm5lUEZMV1ZU?=
- =?utf-8?B?UzgxMmFYdUx3VzltUWthU216Zk84WkFZT0dQc3I1Qm5wV1ROTWc2SFg3Vkhi?=
- =?utf-8?B?SzQ3Q0xLNXVEdUVuRWVseFZkcXpLZjFkeUg3U1RRWmF4NU4zN2N2UFNjNXl5?=
- =?utf-8?B?ak51bzVJbHpaK2ZhMk8raHhYQmxSeGk5WTMyVlBSYWk4d1RqWi9oNFRZUXAx?=
- =?utf-8?B?Tjc5MDZUYlZ4bnZ1TDBBS0xsUEU1UzBQcVkrV2o3U1B2L25oVC8reEZFRzBy?=
- =?utf-8?B?YTU3QkMrbU93OGJyRlJxb0xUUzhWRHZFNzlUaXhzWjZKU2ZsVmdYWDBPZFZQ?=
- =?utf-8?B?SFdwWHg5bUlFU2piRGljdGxodHA4U25ueldiUGhiWFJKaDZoeHpTeUlJbmxX?=
- =?utf-8?B?WjQ2SGNoZXRsalV6Z3ZqYW5BS2ZSYUZYTENlUHpIVW5NWTBKb3UxQWwvNTZP?=
- =?utf-8?B?N1NheTNYSElST3lnd3Rpd082aVlLZUxZbnBCdnZ2WDB1Rk9XNm9rOXYrMWFL?=
- =?utf-8?B?L1M1N0JYZll4TnNETytpeWk1dm5BZUxnQmJTNnVjTDRTUXRrb1kyOUZvbGpx?=
- =?utf-8?B?SVFtSm5iV05wbE1TNVhlZDJ0V3hWcFRtRkxQUlVQWHlyKzdwb2k0RHN5RUo4?=
- =?utf-8?B?V1RrWmNFRFdwOGJITURmcHQxMHljQUdBbm54L2lNS1VUYTNXdWxOTTJtSVdO?=
- =?utf-8?B?UE9hN2JPNjB5aUYrVm0zQTRzSDcrZHllb1ZjU2duVDNnOGxQZlVqYllTdlNx?=
- =?utf-8?B?QmpTdEZFSVFud2Z1SkdDZnhHazlRQkRUQzFpWmhmaThjVmp6Wm1BSmFWWFF0?=
- =?utf-8?B?ckxvQTZ1VjlLQjZhVHlHYVJJM3l5U0VPdENDOFduOStKeHg4QndlVWpWS1lN?=
- =?utf-8?B?L05VM0ZFR1hPTVd4OHd6MFdOcFN2SlRxT2NaUmFqaG13c1IxQkRqR085RXo2?=
- =?utf-8?B?cGNoeGVzT2YxVVNiV3puYjFTSXhLbDZlSmFYbE5JQmYyRS9vUUtSc1loNmhi?=
- =?utf-8?B?YlpGT1NMaEJSbDg5RGZnWWNHdVZUK25DUXcrYjJ6aURmOFVqRTBaN0NIeUpC?=
- =?utf-8?B?Zk9RQk9lcTFIaGREdERmRVZSTi84RjI5Q2x6Y0RzTjhEaVh6cEU5Qk44NEFG?=
- =?utf-8?B?S3RXdk5IKy9wbk1UYjRSKytyS3dDSlRzczJweGZicU15VGFDUy8xOFhLK2o5?=
- =?utf-8?B?eHQ5WlpLRjh2UVBVSzE1N2RleU1BY1FpZncrMlo0MU41bnJleitIMHlDYzlw?=
- =?utf-8?B?RzhQc1FjdEIwOG4rNjRpKzZFejg0UGtOQkNTb2x6QnR2YUZwc1lIMzc1RVBm?=
- =?utf-8?B?RDBkb0podzBEd2JEV1djRDBhNFVUTTRENEZsQnlTSFd6WnhvZXBUa0wzZ3Rx?=
- =?utf-8?B?cms5T3Rjb3FPRnZ2cFhsSjNQK0c2WU1yd0VlVzFNdmdEc20zbkVrY210MjJr?=
- =?utf-8?B?WUd6RkFZVDVFM29DdGl1MEtaRjR3OW56ZGdFNndjekRuN3pzSTgwdnJaVkI4?=
- =?utf-8?B?OUlXeW9ocHZ6RGMyMVRGSXVCQkZ1SWlYUmFsc1hobzFSQk1SQU5qbkNpMzZ5?=
- =?utf-8?B?RFBEWlpKYnMvaDBCRk4ycVU1QUhGd1Y5c09haU5TaUtEU2Zidi9LRTlxcFh6?=
- =?utf-8?B?ZFhscVB1dU1CQ3d3ME8zOHdJcVFtbGNIUG5XWUVFenJyaFM0enQ2ajlJdDBX?=
- =?utf-8?B?YnJHdUZ0dEdkdENrLzNQRmJuYmpHYXlSYXZucHR2cE9LTXc9PQ==?=
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|8096899003|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?uY75+bDt5eFnBhPLNlz+jWcROKssXg6mXhEgiU0V5MNUJcHymeJiidh52uFC?=
+ =?us-ascii?Q?8HE8Yg0s2oMEnZa8qUiKmmiGhwQ0im8sIE3V5WmGU9DTULCY4pZ1jN4jyRBu?=
+ =?us-ascii?Q?3qcIwRQkwRXAoKz1AaOjUq7jjexoliZDzKMl7zgweegbM94pVWUdkyhZ4ghd?=
+ =?us-ascii?Q?7pPLZlrpS3TIoGs3rNMJEGMoOUWpQ9bQPeN09XH9HW31aQPUCqfaWpF8RYc9?=
+ =?us-ascii?Q?t/bSvasApWU9a5jl3/Kv2m2uOLvt6fHnTrc8tAMCIpe2TKSvDW2XGNG/kg8M?=
+ =?us-ascii?Q?lmvyickop96x4RU2JVh74Hlpq8Gj4GOkefpROnmXV8QW7zZPD+IUuGojCj07?=
+ =?us-ascii?Q?tNApavgX4BEd/4q7YZ46SqSxiiPpFwLCAQh6JvlkJ3oV0KdkM/Jgr5Cqjpdz?=
+ =?us-ascii?Q?QIKCRuioCY54VwK2iWiitwLNUcnrQepzb3sZFavM7cM61AoPHeb7SaVADQVc?=
+ =?us-ascii?Q?rIcty6ipLo3cmSg/mHfuSxMhp9gA0QqwCFY0Q/o2e31Zfoj/wQdm3IpDsRy5?=
+ =?us-ascii?Q?ZgyJwi8SKbIXG5GEoSiZAcQ4BE8mjvcs0ES0RBUPniP3H2D3P9y6uFQaEriz?=
+ =?us-ascii?Q?5Gu67a4tKWCgZrMzN8EefCGO41ZF9QckH+dQBiEXeTNWwQ2OkHg9LCgAFX3t?=
+ =?us-ascii?Q?iIcX7D/VMP50KPVdL8UbhJichL+QefN1x2dczGXbaoAKMVZjkF7ixLSk2fOp?=
+ =?us-ascii?Q?i8kBT5FmRmBCf/xoKqGdveC6hZLb22G5QCz9hy+J0+7Y4Q4NzatIJTJUCWPG?=
+ =?us-ascii?Q?umtBm0Wb7TV3ZpdvohvhtnBWHCZcPQEfmVybw43OAa/ScBeGa+i9PfwZEPjM?=
+ =?us-ascii?Q?7AB8Vwy0J2UwFC9+xUkNd8HUPZGV/87NThdzto/30yB+C+ieFE0zo8GJxq5p?=
+ =?us-ascii?Q?jqjhs+7vAijbkiJYt7QHgyi3c4siWdH7/G96R+RpIycD31mq2u3VBR9w8Auf?=
+ =?us-ascii?Q?g3GqFoc9IR3P8unlBnVOm2HiXmIjE+n347M8VA3KhUDNsT3zYHzb/gzjvFb7?=
+ =?us-ascii?Q?qW/CxBwxC/K6mM4isgvrboD+kos9oB77/kpJUyzhfX8UzYNAECbK+vMm7HKB?=
+ =?us-ascii?Q?zwJkeVp3E0m8hjoRw/aajzK1v7H9WUJy3L0wF+HCjNIbRm2JE4Eo0xelmgiI?=
+ =?us-ascii?Q?jDyxfmGN+tujaVg8qncvKbCAwnXiuNYeVGVY9GNCgg4g7B9ysJ2he9z9QLZe?=
+ =?us-ascii?Q?6Gg0kI3z51bazHNdBHbtf6DNgcBCqLk8b74KXeL1E0fD1ICbnkQIM4HlXgT6?=
+ =?us-ascii?Q?bWVCfkqLMCwLdkUy2a/UB7M358pjXyn4eqfOyb6qRh+p7guFDyIvcpco07C+?=
+ =?us-ascii?Q?EqwiT5tiVmGmKrAHwAEjqYYIt9l6hZX5sP5hkprbPg7A+qEA+YdvjZTbY9+N?=
+ =?us-ascii?Q?SqF+lgD3tfbDqSVB3vhCadzIMKOITulu/uO2/xtgKtxPor5wog=3D=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
+ IPV:NLI; SFV:NSPM; H:PH8PR11MB6804.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(8096899003)(38070700018); DIR:OUT;
+ SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VndDbnlET3JjRzlObWRSSXZoS3FlNEtpand0STlqQWZkUENPaGtucXVuNGZi?=
- =?utf-8?B?NjRzcTVUa0JBWGtFb1Z5b1k1N3VhdWVBUXErQ1pKV3kwRXF2K2NnOUlkRU5I?=
- =?utf-8?B?NjNUVWo3cGZkUEF3MGFhUk8vUlJ1WDMvZlJVTjh0TlZ1QnNyZW5CQkE1Y0Nw?=
- =?utf-8?B?NGxiL0w3M2pjNkwzZy9iR3hXTHNvalltcGk5OHVmTi9tZm90MFdmZFF4eXpQ?=
- =?utf-8?B?a2dJbnVXNTNwdWF3TzdTSTB2Yy9xYU5pZUFTM2xBM0s5cTRiT2poajRPeVkv?=
- =?utf-8?B?eEF1VGUxRTNLWFlmZmhITjVVcGpqb2pqeE5VRDBWWlgwQTV3dHk2QzJDckIr?=
- =?utf-8?B?SVNrcEw5MWtHNE5pbmNLZzRVVEJrS1ZKbjdGV0VUV0dmQWVLdCtQajZrVG5U?=
- =?utf-8?B?aWg3dnpnbUdxNmNWVU5HNDdxSVAyYnFVT2Y1MVMyUGdPcWJyL1cxc1ZUVERi?=
- =?utf-8?B?WGtLTkF6bWlWRFZFVEhtM3owZmFSRU1HM3ZzaVcramU0enBTWjBjRHRxSFo5?=
- =?utf-8?B?MFlINjcvbWEvOWRnbTE2R0V0RmliK2thYlZtelUyV0p1T0RZWGJ1eVRscVJL?=
- =?utf-8?B?czAzZDJKNGtPTXU2QTR6cnhhWU1XSzN0RWZlRzFDMlNWOHIvbDg3S2o0UUR1?=
- =?utf-8?B?Z3ExeStmVmVhY3dxbVZYb1dRUVlCNWhwTW9tTUwwbG53cm0zeXhZRHRuSVlU?=
- =?utf-8?B?Ymo4UlhvbWtGNjBjR29VS0NGaXFtZmdkTDJWNGducFhFa1NheDhsc1hadzhE?=
- =?utf-8?B?ckx1bExyUTRPSzNVNHdscnMwN2FSWWhwdWV4UDU1MTZoU1JYektBeU8xU2Jq?=
- =?utf-8?B?NnhsMno2SkFMWnpWWEVFaUJkdkJQYTk5YTVTUHh5OEVuTzlhcjdES3B0cDU4?=
- =?utf-8?B?bmIybmpzeDBialBWZkR5RDlVdkl5eUxtUU5KTmp5Rm5iQXpSM3JwSTNmdEsr?=
- =?utf-8?B?Y21MQWZUNUN6ZkN2TDNmUkJ3Ykw1Sm1ETmc0UGFXeGJXZHV4ekZ6aFdYeHUx?=
- =?utf-8?B?YTJ0aVpIcmI4dEFyWjh3Uk1wVkgwL2ZLWXl4c1ZZK3B6dFgzZCtPaklncGhQ?=
- =?utf-8?B?SzV3TnErWEN6N2hpd2R1VXJ6Qkc0S202ai9QRklQL0hTQnRYVzVpdTQwUWxZ?=
- =?utf-8?B?b2JmczNFeThwMERZcFljVms4QkEzN3NnNEVEM0t6U1FUWFVsSzRqaThvS1Bx?=
- =?utf-8?B?VFVKdjk2TFZqU0Q3MTB6cklQdVEzRm9WdDI0Q0FkWDJ4cGN0NHliK3hXT0Na?=
- =?utf-8?B?alVoVHJMeDVVQ3cyT2xOUWc0WnMvcldHb3ZxSm5pR3g3ZktpT0JHVG1ncnQw?=
- =?utf-8?B?d3EzMnM4QUdyODJxSWlseUJzeFNQTkFZM2srMVJZY2pQaEJzb2I4eVowT3I2?=
- =?utf-8?B?UWpQQzUya01zQU9EemNFNVNOUjBRejJJWlhSZXBuMTJvMDhnZW4ycmthMXJy?=
- =?utf-8?B?eng1MG92OU50ZWZYaWFHbkl2cVVrUWpVNU5sYWM4MDBpay8yWGNBV1lrRmdp?=
- =?utf-8?B?VE5tMEo1NVEvZWxrZnVFSjhsbCtqYTEvL2F1aksvOFBHRWxUamVCOWpCbEU3?=
- =?utf-8?B?UWdsZ1pUdlFCcjljanBNemVnNUI3R1BhNWtDN2JWaGFxcSt5a3lGR0F6Wmoy?=
- =?utf-8?B?eHJ5dmdmMFV1ekRWL3FLZGNIYms3bHNvVEd4U2tQeVZ1QVFxOEhVRFVGUmVG?=
- =?utf-8?B?R0dNdFJxSjBuMHR0MjFDa3MyclEwcEp6VkFIZDNXblNVcU5GNE9MMytQRDc2?=
- =?utf-8?B?S3NDZjM5RzZJWVdSbnQwR0ljOHdSOTdIcHY2Znh0bmxSUktISThQaW5SUmJY?=
- =?utf-8?B?eGR4TCtrMVloQ3E3TkFFZGR2VCtYQUdXNEdiUTBhcFJhTmFWQ2lIRDlWL0NF?=
- =?utf-8?B?UmllMG9pY2tyM3VTdjNCOE1ybmNyazl6REFZd3hNbWZpR1lHU2FnR3pxKzA2?=
- =?utf-8?B?U3RuTkR6TWhrQW5yaFk2eDJBcytwS0ZpVWZBbml5M2xpa3cwM3RaZWFnbldJ?=
- =?utf-8?B?VGVpdEY1bEtsaXhjZVl1ZDJNS0VMd25vb1lFV2JsRk9UVWdpWFhuaytmYVEx?=
- =?utf-8?B?WUFvdzU4ZDN5eWg3dTEzUXE0UC9INXZQSTFEU0VTUjFYVmF0K3J6U3kvc1No?=
- =?utf-8?Q?ZcBAtfVuWJGOxEu1kfOyZoJHZ?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5iqVXnFE7mKBKwp8MT/ZIweAvlQj++2dYoNkUVXMTgS0LmqRvuCm2JzeRdLC?=
+ =?us-ascii?Q?BjjEEv2nqOmcgMC6zaMqT5OOKCAJSZVfmQDbWcAs9Ty6e2Wnn3EZoug1obWC?=
+ =?us-ascii?Q?vR5rXaF6cWWF/GQ+aC8fmXOa+S49usRhnVo4n/AiEiOR6+/XHUDzRYvocAX+?=
+ =?us-ascii?Q?tQTaURrhSM2Knq225mrE81FS109CzfbLOzQVCVpMaEhbgmPFGTuY0f6e4nBw?=
+ =?us-ascii?Q?Kta9Fut5rINITMvJJhJcZdSJTHfUOnh1pqDK+AZ73jtaQIjCW+nghX241uUI?=
+ =?us-ascii?Q?sTScVbz8oCW5CIBg8/rUZ5D9HyUTHdgzCKUwFXVJpL/8tExUiXwfPi6kw6QD?=
+ =?us-ascii?Q?eJ0QdNlm+14cFdyY2oUTB5/w7BP6lM+HH4oEwt3m+AMvRywjOQUC40m+kRDa?=
+ =?us-ascii?Q?muKePdnYuTgRh3ptG7C1t2CQTReX+ZBNRkuyokgPTZU0vW78upHV4lZy6vSl?=
+ =?us-ascii?Q?XmWQnB/4wFDfnSYQNiR/I88Q0IT09L8dUPkQZfhC0w5KI2Uu5JrERw2EOZnA?=
+ =?us-ascii?Q?aAwNDUK6z8BEaYolu5ISySyt2AtVJj6C6VXDWhsTBAGsz6ZO99D2h8lWl5MG?=
+ =?us-ascii?Q?VYiW3t4LVRS7Z3/r5iKLuhLqg3DZUik1MbBuh4guUc0vUwwgXptalzzr/Q1V?=
+ =?us-ascii?Q?/qeZaUjx30CcX13xajcvJrgGYi3pr1rB2f8+wFW7NdzWsZly9kxTaO6bVXCa?=
+ =?us-ascii?Q?Hs90mwwwN2X2L1RnqfhrPQUePuhHkiy3sKYuMSLVPAAoqQ+oZetcVUxX6SAY?=
+ =?us-ascii?Q?IcrWYIzWK1yFOST8Dg28x/cUpztxH2dOT/RMrImsXKS3roN77F7hFnJLyhS8?=
+ =?us-ascii?Q?Gmo0RAyZMjYH5+6EpPsFeNtQlP/t2Z1r8Vdgrk+raXQj3fXGM6CDRbmJjAhE?=
+ =?us-ascii?Q?S354pSc2N2k19S7aBX6kvjs09s21RPiHeSi8B5oj4cHA7oKd3hqGnrqEVGrG?=
+ =?us-ascii?Q?oJbjo1O/AnQA1Ybsn+2vGApucvwhfJn2yJhc1DwA5FltzfeS+XWGj/W+Ctum?=
+ =?us-ascii?Q?0VK9C8RCJKWBFXmfDccC6KfpN1STaUkrfTgF3x3gaIy6TBnVUXVTogmw2euR?=
+ =?us-ascii?Q?96aUtNd0I0AWt+85amFdUv0ljYrgk/lu0q0H2vHfX4cOV0GT08kqjZkEUR9H?=
+ =?us-ascii?Q?6raGIbvohyK1ogDM5lZiYBCqmOl35F0AImYzzeZse9YBosZEr8XNcG/c0XDg?=
+ =?us-ascii?Q?+jmTQoFV+7fcLdnflRnmw/HVaHuNFT2yE0aiEZf99y4BOGAWxS7hp6eh7nE5?=
+ =?us-ascii?Q?AeUOZzmqJ3lxt7V3mkH28T1+EcDWCji2j04hJLcVmQQcAUE8IgYJBtVqpckr?=
+ =?us-ascii?Q?hjVsoW+zuWMHwhVDJYktccslePd66pFuFgeBhl7tg0zmm2avOd/5IdYSFsDg?=
+ =?us-ascii?Q?ZYT5oFgHgErtOPASVgv5qV8InPjrpMb1LjuWjPDfe0Gt1NqIOMlt7QZFVOEZ?=
+ =?us-ascii?Q?oF6AAKsZjpbIFS/X2QqnOOgI5qQ1ejYVq/ms7ZW2lTIFc7rIH9o7cLeKM2oF?=
+ =?us-ascii?Q?wALnI2F7egCueciQbUDgPRwubRJJgNKEqRpaETOGVziKUoldMgESNzKU18ZF?=
+ =?us-ascii?Q?3TnIf1jaGfq4rTo7PJKGL0MWcZpfpalrSLPVbJaA?=
+Content-Type: multipart/alternative;
+ boundary="_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_"
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2d62514-2169-4d8a-9028-08dd4aaad5d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2025 14:46:14.8832 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6804.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31861394-2d6e-4840-35d9-08dd4aac38d8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2025 14:56:10.4566 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CZgtwnH3/QmQ34GP4HTGai4n/rgiKPGJTThuWTu2FA4JsC+OIRyOPW2hHBDPYkfRA5TIEaaFThYWPsZyFjK/VA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR18MB3570
-X-Proofpoint-ORIG-GUID: 3CW9Isb-qvXcI8kuqDvprwuQjSzGjuZ8
-X-Proofpoint-GUID: jgFvszjH9kwbuW4Qwlrii693OQy2dwpe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-11_06,2025-02-11_01,2024-11-22_01
+X-MS-Exchange-CrossTenant-userprincipalname: uDnST7+HYdrYfuZOy2YoxnXsnFQMU0/K184dTSfdhS9uOTI2J3R7d5ztOXYUn1evCWru9kgxOsDSp6xY78wWcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7947
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -173,101 +172,478 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiB2MjY6DQo+IC0gdHJ5IHRvIGVuc3VyZSBhbGwgcGF0Y2hlcyBnZXRzIGNvbXBpbGVkIGluY3Jl
-bWVudGFsbHkuDQoNClNlcmllcyBBY2tlZC1ieTogQWtoaWwgR295YWwgPGdha2hpbEBtYXJ2ZWxs
-LmNvbT4NCg0KVXBkYXRlZCB0aGUgcGF0Y2ggdGl0bGUgd2hpbGUgbWVyZ2luZyBhbmQgZml4IHJl
-bGVhc2Ugbm90ZXMuDQoNCkFwcGxpZWQgdG8gZHBkay1uZXh0LWNyeXB0bw0KVGhhbmtzLg0KDQo+
-IA0KPiB2MjU6DQo+IC0gcmVwbGFjZSB0aGUgYGBfX3J0ZV9wYWNrZWRgYCBtYWNyby4NCj4gLSBm
-aXggYW4gZXh0cmEgbGluZSBhdCBlbmQgb2YgZmlsZSBpbiBwYXRjaCAxMS4NCj4gDQo+IHYyNDoN
-Cj4gLSBUcnkgdG8gcmVzb2x2ZSB0aGUgaXNzdWUgaW4gdjIzIGJ5IHNlbmRpbmcgYWxsIHBhdGNo
-ZXMgYXQgb25jZQ0KPiANCj4gdjIzOg0KPiAtIG1vZGlmeSBmdW5jaXRvbnMgbmFtZSB0byBtb3Zl
-IHRoZSB2ZXJiIHRvIHRoZSBlbmQNCj4gLSBtb3ZlIHRoZSBxcF9zZXR1cCBhbmQgcXBfcmVsZWFz
-ZSBjYWxscyBpbiBzYW1lIHBhdGNoDQo+IC0gbWFrZSB0aGUgcXVldWUgc2V0dXAgQVBJcyBjb21t
-b24gd2l0aCBvbmUgZnVuY3Rpb24uDQo+IC0gRml4IHNvbWUgY29kZSBpbiBvcmlnaW5hbCBwYXRj
-aC4NCj4gDQo+IHYyMjoNCj4gLSBtb2RpZnkgbWlzc3BlbGxlZCBlcnJvcnMuDQo+IA0KPiB2MjE6
-DQo+IC0gbW9kaWZ5IHNvbWUgZXJyb3JzLg0KPiANCj4gdjIwDQo+IC0gYWRkIHJlbGVhc2Ugbm90
-ZSB3aGljaCB3YXMgZm9yZ290IGluIGxhc3QgdmVyc2lvbg0KPiANCj4gdjE5Og0KPiAtIGRlbGV0
-ZSBjcnlwdG9kZXYgZHJpdmVycyBhbmQgcHJlcGFyZSB0byBzdWJtaXQgaXQgbmV4dCB0aW1lLg0K
-PiAtIG9ubHkgc3VibWl0IGNvbXByZXNzZGV2IGRyaXZlciB0aGlzIHRpbWUuDQo+IC0gcmVzcGxp
-dCB0aGUgcGF0Y2hlcy4NCj4gDQo+IHYxODoNCj4gLSBhZGQgY29kZSBpbiBkcml2ZXJzL21lc29u
-LmJ1aWxkIHRvIGNvbXBpbGUgenNkYSBkcml2ZXJzLg0KPiAtIG1ha2UgZXZlcnkgcGF0Y2ggY29t
-cGlsZSB3aXRob3V0IGFueSB3YXJuaW5ncyBvciBlcnJvcnMuDQo+IA0KPiB2MTc6DQo+IC0gZml4
-IHNvbWUgc3BlbGxpbmcgZXJyb3JzDQo+IA0KPiB2MTY6DQo+IC0gcmVzcGxpdCBwYXRjaGVzLg0K
-PiAtIGNvbXBsZXRlIGRvY3VtZW50YXRpb24gd2hpY2ggaXMgeWV0IHRoZXJlIGluIHRoYXQgcGF0
-Y2guDQo+IC0gZXZlcnkgcGF0Y2ggc2hvdWxkIGNvbXBpbGUgd2l0aG91dCBhbnkgd2FybmluZ3Mg
-b3IgZXJyb3JzLg0KPiAtIGRlbGV0ZSB1bnVzZWQgY29tbWVudHMuDQo+IA0KPiB2MTU6DQo+IC0g
-c3BsaXQgdG8gbW9yZSBwYXRjaGVzLg0KPiANCj4gdjE0Og0KPiAtIFVuaWZvcm0gQnl0ZSBBbGln
-bm1lbnQuDQo+IA0KPiB2MTM6DQo+IC0gcmVzb2x2ZSBzb21lIGNvbWlsZXIgd2FybmluZ3MgdGhh
-dCBhcmUgYmVpbmcgc3VwcHJlc3NlZC4NCj4gDQo+IHYxMjoNCj4gLSB1c2UgUlRFX0xPR19MSU5F
-X1BSRUZJWCBpbiBsb2dnaW5nIG1hY3JvLg0KPiAtIGRlbGV0ZSB0aGUgY2hlY2sgZm9yIG51bGwg
-d2l0aCBydGVfbWVtcG9vbF9mcmVlLg0KPiAtIGRlbGV0ZSBzb21lIHVudXNlZCBpbml0aWFsIHZh
-bHVlcy4NCj4gDQo+IHYxMToNCj4gLSB1c2UgUlRFX0xPR19MSU5FIGluIGxvZ2dpbmcgbWFjcm8u
-DQo+IC0gZml4IHNvbWUga25vd24gYnVncy4NCj4gDQo+IHYxMDoNCj4gLSBkZWxldGUgbmV3IGJs
-YW5rIGxpbmUgYXQgRU9GDQo+IC0gQ2xlYW5pbmcgdXAgc29tZSBjb2RlIGluIHpzZGFfbG9nLmgN
-Cj4gDQo+IHY5Og0KPiAtIGFkZCBhIG5ldyBmZWF0dXJlICBpbiBkZWZhdWx0LmluaS4NCj4gLSBS
-ZS1zcGxpdCB0aGUgcGF0Y2ggYWNjb3JkaW5nIHRvIHRoZSBuZXcgUE1EIGd1aWRlbGluZXMNCj4g
-aHR0cHM6Ly9wYXRjaGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI0MTAwNjE4NA0K
-PiA8aHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3YyL3VybD91PWh0dHBzLQ0KPiAz
-QV9fcGF0Y2hlcy5kcGRrLm9yZ19wcm9qZWN0X2RwZGtfcGF0Y2hfMjAyNDEwMDYxODQmZD1Ed1FH
-YVEmYz1uS2pXDQo+IGVjMmI2UjBtT3lQYXo3eHRmUSZyPURuTDdTaTJ3bF9QUndwWjlUV2V5M2V1
-NjhnQnpuN0RrUHd1cWhkNldOeQ0KPiBvJm09R0p6eXMzb1RSZWpEV2swV1YtYjlDMTMtDQo+IFRJ
-czFsdzE5WGlZUlU0eU1McWpYTXlveGJGRlhNT0lEekxteFlteDEmcz1tdlZyQmVNekZGNFFfOXI0
-ajlNQw0KPiBVdERXQndRdk9nV3cxNHpjeFRydFF5WSZlPT4NCj4gMjU0LjUzNDk5LTEtbmFuZGlu
-aXBlcnNhZDM2MUBnbWFpbC5jb20vDQo+IC0gU3BsaXQgU000LVhUUyB0ZXN0cyBpbnRvIGEgbmV3
-IHNlcmllcyB0byByZWxlYXNlcy4NCj4gLSBTZXBhcmF0ZSBvdXQgZGF0YXBhdGgoZW5xdWV1ZS9k
-ZXF1ZXVlKSBhcyBhIHNlcGFyYXRlIHBhdGNoLg0KPiANCj4gdjg6DQo+IC0gZml4IHNvbWUgZXJy
-b3JzIGluIGNyeXB0b2RldnMvZmVhdHVyZXMvenNkYS5pbmkuDQo+IA0KPiB2NzoNCj4gLSBhZGQg
-cmVsZWFzZSBub3RlcyBhbmQgc29tZSBkb2N1bWVudGF0aW9ucy4NCj4gLSBhZGQgTUFJTlRBSU5F
-UlMgY29udGV4dCBpbiB0aGUgcGF0Y2ggd2hlcmUgdGhlIGZpbGUvZm9sZGVyIGlzIGFkZGVkLg0K
-PiAtIGFkZCBmaWxlcyBpbiBtZWFzb24uYnVpbGQgd2hpY2ggYXJlIGluY2x1ZGVkIGluIHRoZSBw
-YXRjaCBvbmx5Lg0KPiAtIGFkZCBhIGNoZWNrIGZvciB1bnN1cHBvcnRlZCBvbiBXaW5kb3dzLg0K
-PiAtIG5vdGljZSB0aGUgaW1wbGljaXQgY2FzdCBpbiBDLg0KPiAtIGFkZCBjb3ZlciBsZXR0ZXIu
-DQo+IC0gY29tcGlsZSBlYWNoIG9mIHRoZSBwYXRjaGVzIGluZGl2aWR1YWxseS4NCj4gDQo+IA0K
-PiBIYW54aWFvIExpICgxMyk6DQo+ICAgY29uZmlnOiBhZGQgenNkYSBkZXZpY2UgbnVtYmVyDQo+
-ICAgY29tbW9uL3pzZGE6IGFkZCB6c2RhZGV2IGRyaXZlcg0KPiAgIGNvbW1vbi96c2RhOiBhZGQg
-bG9nZ2luZyBtYWNyb3MNCj4gICBjb21tb24venNkYTogYWRkIGZ1bmN0aW9ucyB0byBvcGVyYXRl
-IGhhcmR3YXJlIHF1ZXVlDQo+ICAgY29tbW9uL3pzZGE6IGFkZCBkZWZpbml0aW9uIGFuZCB1c2Ug
-b2YgbXNnIGNoYW4uDQo+ICAgY29tcHJlc3MvenNkYTogYWRkIHpzZGEgY29tcHJlc3NkZXYgZHJp
-dmVyIHNrZWxldG9uDQo+ICAgY29tcHJlc3MvenNkYTogYWRkIHpzZGEgY29tcHJlc3NkZXYgZGV2
-IG9wcw0KPiAgIGNvbXByZXNzL3pzZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IHN0YXRzIG9wcw0K
-PiAgIGNvbXByZXNzL3pzZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IHhmb3JtIG9wcw0KPiAgIGNv
-bXByZXNzL3pzZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IHFwIG9wcw0KPiAgIGNvbXByZXNzL3pz
-ZGE6IGFkZCB6c2RhIGNvbXByZXNzZGV2IGVucXVldWUgZGF0YXBhdGgNCj4gICBjb21wcmVzcy96
-c2RhOiBhZGQgenNkYSBjb21wcmVzc2RldiBkZXF1ZXVlIGRhdGFwYXRoDQo+ICAgY29tcHJlc3Mv
-enNkYTogYWRkIHpzZGEgY29tcHJlc3NkZXYgY2FwYWJpbGl0aWVzDQo+IA0KPiAgTUFJTlRBSU5F
-UlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKw0KPiAgY29uZmlnL3J0ZV9j
-b25maWcuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKw0KPiAgZG9jL2d1aWRlcy9jb21w
-cmVzc2RldnMvZmVhdHVyZXMvenNkYS5pbmkgfCAgMTUgKw0KPiAgZG9jL2d1aWRlcy9jb21wcmVz
-c2RldnMvaW5kZXgucnN0ICAgICAgICAgfCAgIDEgKw0KPiAgZG9jL2d1aWRlcy9jb21wcmVzc2Rl
-dnMvenNkYS5yc3QgICAgICAgICAgfCAxOTQgKysrKysNCj4gIGRvYy9ndWlkZXMvcmVsX25vdGVz
-L3JlbGVhc2VfMjVfMDMucnN0ICAgIHwgICA3ICsNCj4gIGRyaXZlcnMvY29tbW9uL3pzZGEvbWVz
-b24uYnVpbGQgICAgICAgICAgIHwgIDI2ICsNCj4gIGRyaXZlcnMvY29tbW9uL3pzZGEvenNkYV9k
-ZXZpY2UuYyAgICAgICAgIHwgMjA5ICsrKysrDQo+ICBkcml2ZXJzL2NvbW1vbi96c2RhL3pzZGFf
-ZGV2aWNlLmggICAgICAgICB8ICA1OSArKw0KPiAgZHJpdmVycy9jb21tb24venNkYS96c2RhX2xv
-Z3MuYyAgICAgICAgICAgfCAgMTkgKw0KPiAgZHJpdmVycy9jb21tb24venNkYS96c2RhX2xvZ3Mu
-aCAgICAgICAgICAgfCAgMjcgKw0KPiAgZHJpdmVycy9jb21tb24venNkYS96c2RhX3FwLmMgICAg
-ICAgICAgICAgfCA5NDYgKysrKysrKysrKysrKysrKysrKysrKw0KPiAgZHJpdmVycy9jb21tb24v
-enNkYS96c2RhX3FwLmggICAgICAgICAgICAgfCAxODYgKysrKysNCj4gIGRyaXZlcnMvY29tbW9u
-L3pzZGEvenNkYV9xcF9jb21tb24uYyAgICAgIHwgMTkyICsrKysrDQo+ICBkcml2ZXJzL2NvbW1v
-bi96c2RhL3pzZGFfcXBfY29tbW9uLmggICAgICB8IDE4OSArKysrKw0KPiAgZHJpdmVycy9jb21w
-cmVzcy96c2RhL3pzZGFfY29tcC5jICAgICAgICAgfCAzODggKysrKysrKysrDQo+ICBkcml2ZXJz
-L2NvbXByZXNzL3pzZGEvenNkYV9jb21wLmggICAgICAgICB8ICA0NSArDQo+ICBkcml2ZXJzL2Nv
-bXByZXNzL3pzZGEvenNkYV9jb21wX3BtZC5jICAgICB8IDQxOCArKysrKysrKysrDQo+ICBkcml2
-ZXJzL2NvbXByZXNzL3pzZGEvenNkYV9jb21wX3BtZC5oICAgICB8ICA0MSArDQo+ICBkcml2ZXJz
-L21lc29uLmJ1aWxkICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ICAyMCBmaWxlcyBj
-aGFuZ2VkLCAyOTczIGluc2VydGlvbnMoKykNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkb2MvZ3Vp
-ZGVzL2NvbXByZXNzZGV2cy9mZWF0dXJlcy96c2RhLmluaQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
-IGRvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pzZGEucnN0DQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9jb21tb24venNkYS9tZXNvbi5idWlsZA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
-aXZlcnMvY29tbW9uL3pzZGEvenNkYV9kZXZpY2UuYw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
-aXZlcnMvY29tbW9uL3pzZGEvenNkYV9kZXZpY2UuaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
-aXZlcnMvY29tbW9uL3pzZGEvenNkYV9sb2dzLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
-ZXJzL2NvbW1vbi96c2RhL3pzZGFfbG9ncy5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9jb21tb24venNkYS96c2RhX3FwLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nv
-bW1vbi96c2RhL3pzZGFfcXAuaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29tbW9u
-L3pzZGEvenNkYV9xcF9jb21tb24uYw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY29t
-bW9uL3pzZGEvenNkYV9xcF9jb21tb24uaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
-Y29tcHJlc3MvenNkYS96c2RhX2NvbXAuYw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
-Y29tcHJlc3MvenNkYS96c2RhX2NvbXAuaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
-Y29tcHJlc3MvenNkYS96c2RhX2NvbXBfcG1kLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
-ZXJzL2NvbXByZXNzL3pzZGEvenNkYV9jb21wX3BtZC5oDQo+IA0KPiAtLQ0KPiAyLjI3LjANCg0K
+--_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Release status meeting minutes 2025-02-11
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Agenda:
+* Release Dates
+* Subtrees
+* Roadmaps
+* LTS
+* Defects
+* Opens
+
+Participants:
+* Broadcom
+* ARM
+* Intel
+* Marvell
+* Microsoft
+* Nvidia
+* Red Hat
+
+
+Release Dates
+-------------
+
+The following are the proposed working dates for 25.03:
+
+- Proposal deadline (RFC/v1 patches): 4 January 2025
+- API freeze (-rc1): 7 February 2025 - Trending to 12 February
+- PMD features freeze (-rc2): 28 February 2025
+- Builtin applications features freeze (-rc3): 7 March 2025
+- Release: 26 March 2025
+
+See https://core.dpdk.org/roadmap/
+
+
+Subtrees
+--------
+
+* next-net
+  * 3 patches pending
+  * Some drivers under review
+  * 29 patches under reviewing
+
+* next-net-intel
+  * Mainly done for RC1
+  * ~ 5 patches remaining/in progress.
+
+* next-net-broadcom
+  * 9 patches submitted and merged
+
+* next-net-mlx
+  * 12 patches merged and awaiting pull
+
+* next-net-mvl
+  * 32 patches. Will target RC2.
+
+* next-eventdev
+  * 3 patches awaiting review from Intel
+
+* next-baseband
+  * 1 series under review.
+  * Merging in RC2
+
+* next-virtio
+  * PR submitted
+
+* next-crypto
+  * Most patches merged
+  * 1 PMD ready
+  * Series with ZTE driver
+
+* next-dts
+  * Issue with Python 3.13 is fixed
+  * Mainly new tests pending
+
+* main
+  * Merged:
+    * VLA patchset for Windows
+    * Annotations on locks
+    * Memory allocators
+  * Fix for GCC 15 zero padding issue
+  * RC1 to close 12 Feb
+
+
+Other
+-----
+  - DPDK Summit 2025 will be in Prague in May:
+    - https://events.linuxfoundation.org/dpdk-summit/
+    - https://www.dpdk.org/event/dpdk-summit-2025-prague/
+
+
+LTS
+---
+
+Backporting in progress.
+
+Current LTS versions:
+
+* 24.11.2
+* 23.11.3
+* 22.11.7
+
+See https://core.dpdk.org/roadmap/#dates
+
+* 20.11.10 - Will only be updated with CVE and critical fixes.
+* 19.11.14 - Will only be updated with CVE and critical fixes.
+
+
+* Distros
+  * Debian 12 contains DPDK v22.11
+  * Ubuntu 24.04 contains DPDK v23.11
+  * Ubuntu 23.04 contains DPDK v22.11
+  * RHEL 8/9 contains DPDK 23.11
+
+Defects
+-------
+
+* Bugzilla links, 'Bugs',  added for hosted projects
+  * https://www.dpdk.org/hosted-projects/
+
+
+
+DPDK Release Status Meetings
+----------------------------
+
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the
+status of the master tree and sub-trees, and for project managers to track
+progress or milestone dates.
+
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK
+
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just
+send an email to "John McNamara john.mcnamara@intel.com" for the invite.
+
+--_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:Consolas;
+	color:windowtext;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none none;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release status =
+meeting minutes 2025-02-11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Agenda:<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Release Dates=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Subtrees<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Roadmaps<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* LTS<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Defects<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Opens<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Participants:<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Broadcom<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* ARM<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Intel<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Marvell<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Microsoft<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Nvidia<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Red Hat<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release Dates<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------------<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The following a=
+re the proposed working dates for 25.03:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Proposal dead=
+line (RFC/v1 patches): 4 January 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- API freeze (-=
+rc1): 7 February 2025 &#8211; Trending to 12 February<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- PMD features =
+freeze (-rc2): 28 February 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Builtin appli=
+cations features freeze (-rc3): 7 March 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release: 26 M=
+arch 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
+e.dpdk.org/roadmap/<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Subtrees<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">--------<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 3 patc=
+hes pending<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Some d=
+rivers under review<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 29 pat=
+ches under reviewing<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-inte=
+l<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mainly=
+ done for RC1<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * ~ 5 pa=
+tches remaining/in progress.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-broa=
+dcom<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 9 patc=
+hes submitted and merged<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mlx<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 12 pat=
+ches merged and awaiting pull<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mvl<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 32 pat=
+ches. Will target RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-eventdev=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 3 patc=
+hes awaiting review from Intel<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-baseband=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 seri=
+es under review.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mergin=
+g in RC2<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-virtio<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * PR sub=
+mitted<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-crypto<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Most p=
+atches merged<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 PMD =
+ready<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Series=
+ with ZTE driver<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-dts<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Issue =
+with Python 3.13 is fixed<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Mainly=
+ new tests pending<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* main<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Merged=
+:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
+sp; * VLA patchset for Windows<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
+sp; * Annotations on locks<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
+sp; * Memory allocators<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Fix fo=
+r GCC 15 zero padding issue<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RC1 to=
+ close 12 Feb<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Other<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-----<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - DPDK S=
+ummit 2025 will be in Prague in May:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
+sp; - https://events.linuxfoundation.org/dpdk-summit/<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
+sp; - https://www.dpdk.org/event/dpdk-summit-2025-prague/<o:p></o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Backporting in =
+progress.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Current LTS ver=
+sions:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 24.11.2<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 23.11.3<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 22.11.7<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
+e.dpdk.org/roadmap/#dates<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 20.11.10 - Wi=
+ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 19.11.14 - Wi=
+ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Distros<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Debian=
+ 12 contains DPDK v22.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
+ 24.04 contains DPDK v23.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
+ 23.04 contains DPDK v22.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RHEL 8=
+/9 contains DPDK 23.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Defects<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Bugzilla link=
+s, 'Bugs',&nbsp; added for hosted projects<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * https:=
+//www.dpdk.org/hosted-projects/<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">DPDK Release St=
+atus Meetings<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---------------=
+-------------<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The DPDK Releas=
+e Status Meeting is intended for DPDK Committers to discuss the<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">status of the m=
+aster tree and sub-trees, and for project managers to track<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">progress or mil=
+estone dates.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The meeting occ=
+urs on every Tuesday at 14:30 DST over Jitsi on https://meet.jit.si/DPDK<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">You don't need =
+an invite to join the meeting but if you want a calendar reminder just<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">send an email t=
+o &quot;John McNamara john.mcnamara@intel.com&quot; for the invite.<o:p></o=
+:p></span></p>
+</div>
+</body>
+</html>
+
+--_000_PH8PR11MB68048E7988E9246DCE6D4417FCFD2PH8PR11MB6804namp_--
