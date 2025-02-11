@@ -2,74 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F219C0219D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 09:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD63C0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 09:53:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C23A340156;
-	Tue, 11 Feb 2025 10:50:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 278FA40156;
+	Tue, 11 Feb 2025 10:53:57 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id F113F40150
- for <dev@dpdk.org>; Tue, 11 Feb 2025 10:50:38 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D97E740150
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 10:53:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1739267438;
+ s=mimecast20190719; t=1739267635;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=uvDTdZHE7+i6Kn1iU9G9oGcZLOj068x9S9/Y6hXjBTU=;
- b=CBwfksWAi7gQP6k7loXpArRnEhvqdxzcWSWmR/RA6QIl/GvFHkBkd6zMsVJmqYaWcHpxKR
- G+WHfJbt5UmNqqeRi7XKc+FIbN4hCt8vnuGuyL82gg9y+9g3EiA6MhgK8j1/5FNDNHvy6Q
- BiN461Hx4cCJfxdMDxjZirfGH5rzZX8=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=6aS066P6oP3KaEwkR6PiKx8qsMp+GokcqpH6K1fm4pg=;
+ b=XQi6u73gndKS2cNQjvkYmOMaWLQGjMIJoqbP7W8oGwp9oNgEt0KNKfDK0eMhOBA+L9CUD+
+ jDKOLAyjNQj9qq9Yts5aJ8W+5QRUj+rDEvSW+83K1lksU7THkur9UnCxXFEjIpMZTWAZco
+ 2fPEMmVmuta8Kvk+e4i+MHKHG99URNc=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-meEBOAPpPgWKdb0s1026vQ-1; Tue, 11 Feb 2025 04:50:37 -0500
-X-MC-Unique: meEBOAPpPgWKdb0s1026vQ-1
-X-Mimecast-MFC-AGG-ID: meEBOAPpPgWKdb0s1026vQ_1739267436
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-308e84b5b43so11485071fa.1
- for <dev@dpdk.org>; Tue, 11 Feb 2025 01:50:37 -0800 (PST)
+ us-mta-97-65gPTLt3Nj2bBJUeNyJCcg-1; Tue, 11 Feb 2025 04:53:54 -0500
+X-MC-Unique: 65gPTLt3Nj2bBJUeNyJCcg-1
+X-Mimecast-MFC-AGG-ID: 65gPTLt3Nj2bBJUeNyJCcg
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-308fac358f2so2385301fa.3
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 01:53:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739267436; x=1739872236;
+ d=1e100.net; s=20230601; t=1739267632; x=1739872432;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=uvDTdZHE7+i6Kn1iU9G9oGcZLOj068x9S9/Y6hXjBTU=;
- b=GPqjW2Ce+BrXwm/Q1RClN54OjaY7ZQCphg0bjFeVUjVeRb2LILlE0XsKPWL6Lb/N6C
- e7X7DboprSSPMHEGCTmBBllngHnA2GBWITSJr+nTOW85zCTOBxwbJ/d6Fc8oAkVQjq3j
- Sq3WuyCOZG+FYSrXb7san+FOhqJeE/ghwp8Cxgwp1d1ZNiyFmxghjjN1HD3apsGdOz2P
- u5fJMgoVM/lQh7XXWk7hcawuarm2gM2NCirbvDpGKraPxEoLuyn2hUZvCcBtWhcYeBd1
- RDHxduBePTvhLiS7hn5Hr5qtUJFdUn6QX1r3nU8EiZL/pl7cuOlNtnac97jlC+7rxdXi
- L+wA==
-X-Gm-Message-State: AOJu0YxsRhivkPgOjnkNhEE1O5wARCHI2hIAfZbBeASRwEwYcBpCFy9l
- SfIYFN70yfIb0h/8xKI5Zyu9Gyp2T4EZj3ngbiHW8xZEcq7rL11OMltKnV2ZveOrGv9SlqNxHL7
- r1PiuBlNGSrhoHDfh97cGlMRDuu7sRTi5rV+J3m5cYDt2sBPbi5zeu0BKBpg2sZDtcTqb5FE+xS
- pyufkEUkPc5NRzYR4=
-X-Gm-Gg: ASbGncvkkDInVmcVGkcI8/8mFiYzxrMgtSs7z2wZ3+P1Ufi0IymV3rYTgBX0E29Mo1M
- KN95q9YfR1Ob9/tAibSdQougJx4rZDQNO8WM8+J2QEh/ZuTfBVf/kusUlqY3m8j8U
-X-Received: by 2002:a05:651c:884:b0:304:9dd4:fea7 with SMTP id
- 38308e7fff4ca-307e57eeab2mr49868411fa.16.1739267435880; 
- Tue, 11 Feb 2025 01:50:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEclqkRS3tmdL9KifMYUtNR+XgEWISGYLFbllIibl/27Tc3CqUyNfkqOEPLILpD0xPG/++6vaxgjlZQgy0qc+s=
-X-Received: by 2002:a05:651c:884:b0:304:9dd4:fea7 with SMTP id
- 38308e7fff4ca-307e57eeab2mr49868291fa.16.1739267435503; Tue, 11 Feb 2025
- 01:50:35 -0800 (PST)
+ bh=6aS066P6oP3KaEwkR6PiKx8qsMp+GokcqpH6K1fm4pg=;
+ b=HfrhaEL1J8LqfDVemwverzARcWllaZB++IYvz0czeU96PlfZOGVMNVVUCDQq6Y/01b
+ pvBDWa/F5JKoUGgyy0F0fqPlgIYZy8DwalB/qymZuhjT2SFr/qk5EZSrkzY53yYcQkdI
+ OlBJfpYJGgAksDOOiHJdF27T1JV+K3aAXkuGODUJuPkPQIceagus71S9aH2zp+zFJ8Q8
+ oU4NV0668IbdQn9XA1IpOKG5PYvb7D2wzt3gBkoPuOvzkCWYWUve1z7vv7UYfuuutLAt
+ +hwpjZL9ZiujrFa1AJY2BrRk5iIg5+bOhZ0TiOD7xdfYd7xOmdjqiGflstEqS3upSv9A
+ 67eg==
+X-Gm-Message-State: AOJu0YwZvPXefzCLOZI6qQXi73bwAidwpyohSo2Rdy7V1nleKib1EvI2
+ NxyT0fEfGWeIuBzvbegzelN8rvcl9r4MDXrv5ndrSyqmd6ErvwQKaKySAAaARSezHYRFEJqNJZY
+ 4KBIm5n8DahZ6uwShW8uMW8ldDZvMDbXPq2xDJDTVZB8FrVAOXOyKPpnT/vo7iJfcyzIgZhQvqA
+ 46+x6TMNIP9yLHC0I=
+X-Gm-Gg: ASbGncuNma998TnBoWFvqddr/od9ovyRoPy2JddPbX+zcyN8f02kmGBbhxSJ8z/Zhir
+ rgbC33cY1Ttpn3Xgt9Ctr9OcJrCy/s+z/+ZDu4JslziluAHPZzyKoYCXxNNIHlHKy
+X-Received: by 2002:a05:651c:50b:b0:308:f479:569a with SMTP id
+ 38308e7fff4ca-308f4795a53mr15834301fa.29.1739267632404; 
+ Tue, 11 Feb 2025 01:53:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IECIFYB8zl/3caYS3pGPrBQ61dGWjv5Uicm1pcTFjcTfhzXHRs/9ewTokp+h2I0XH7ZmCCcERuyZpg4sFZ++Ak=
+X-Received: by 2002:a05:651c:50b:b0:308:f479:569a with SMTP id
+ 38308e7fff4ca-308f4795a53mr15834141fa.29.1739267632017; Tue, 11 Feb 2025
+ 01:53:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20250205161823.2849595-1-bruce.richardson@intel.com>
- <20250210171845.1669874-1-bruce.richardson@intel.com>
-In-Reply-To: <20250210171845.1669874-1-bruce.richardson@intel.com>
+References: <20250124161408.310581-1-david.marchand@redhat.com>
+ <20250210174424.3364021-1-david.marchand@redhat.com>
+ <20250210174424.3364021-3-david.marchand@redhat.com>
+ <CO6PR18MB3860449F9DE83AF498DF2788B4FD2@CO6PR18MB3860.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB3860449F9DE83AF498DF2788B4FD2@CO6PR18MB3860.namprd18.prod.outlook.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 11 Feb 2025 10:50:23 +0100
-X-Gm-Features: AWEUYZkXQKPJep_7KtsKZXfKFO6TNFtueQK-M1AmrzzkA1x6E-7FUuA0dix6MdQ
-Message-ID: <CAJFAV8xqY=XxNy-fN7VTX-MOdtTCAOVGGW5HGPayfARqMsrFFQ@mail.gmail.com>
-Subject: Re: [PATCH v3] build: replace support for icc with icx
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>, 
- Ian Stokes <ian.stokes@intel.com>, Patrick Robb <probb@iol.unh.edu>, 
- Paul Szczepanek <Paul.Szczepanek@arm.com>
+Date: Tue, 11 Feb 2025 10:53:39 +0100
+X-Gm-Features: AWEUYZlWYdyzo30kdgqiQ09z7zZzNr3d0Z1pt9n_eIFZMp5Cp_uEWMf_kuy_zkM
+Message-ID: <CAJFAV8xLJ_0v8S-OGoJGYPmxUR3yZ7SGEbok9SSOqv5g1t9o1w@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v3 2/6] trace: support dereferencing arguments
+To: Sunil Kumar Kori <skori@marvell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, 
+ "fengchengwen@huawei.com" <fengchengwen@huawei.com>,
+ Kevin Laatz <kevin.laatz@intel.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: DfTH65ii2cNW-a5pFIIArafy1DAS7PYy_SYmZ-J3PEk_1739267436
+X-Mimecast-MFC-PROC-ID: 3jWFtzvxKltv3yVGRABOukmAW8V0Fynj-EHe0s4U_t0_1739267632
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,29 +90,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Feb 10, 2025 at 6:19=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
-> diff --git a/dts/framework/testbed_model/posix_session.py b/dts/framework=
-/testbed_model/posix_session.py
-> index 981600e24c..eab08a90ce 100644
-> --- a/dts/framework/testbed_model/posix_session.py
-> +++ b/dts/framework/testbed_model/posix_session.py
-> @@ -391,8 +391,6 @@ def get_compiler_version(self, compiler_name: str) ->=
- str:
->                  ).stdout.split("\n")[0]
->              case "msvc":
->                  return self.send_command("cl", SETTINGS.timeout).stdout
-> -            case "icc":
-> -                return self.send_command(f"{compiler_name} -V", SETTINGS=
-.timeout).stdout
->              case _:
->                  raise ValueError(f"Unknown compiler {compiler_name}")
+On Tue, Feb 11, 2025 at 9:44=E2=80=AFAM Sunil Kumar Kori <skori@marvell.com=
+> wrote:
 >
+> > diff --git a/lib/eal/common/eal_common_trace_ctf.c
+> > b/lib/eal/common/eal_common_trace_ctf.c
+> > index 04c4f71462..3e4228ee7f 100644
+> > --- a/lib/eal/common/eal_common_trace_ctf.c
+> > +++ b/lib/eal/common/eal_common_trace_ctf.c
+> > @@ -373,6 +373,11 @@ rte_trace_metadata_dump(FILE *f)
+> >
+> >  char *trace_metadata_fixup_field(const char *field)  {
+> > +     static const char * const tokens[] =3D {
+> > +             ".",
+> > +             "->",
+> > +             "*",
+> > +     };
+> As this patch is intended to support dereferencing operation but as a sid=
+e effect it applies to multiplication operator too.
 
-I think we can drop icc =3D auto() in dts/framework/config/test_run.py too.
-Wdyt?
+Support for multiplication helps with the next patch too, when passing
+an array size as a blob length.
 
-I can fix when applying.
+> Hence for A * B, field is generated like A___B (one extra underscore). So=
+ IMO, multiplication string shouldn't be used.
+
+I am not following the consequence.. why should it be prevented?
 
 
 --=20
