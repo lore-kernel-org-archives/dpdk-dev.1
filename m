@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD43C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA81BC0219D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 14:14:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3277F402C6;
-	Tue, 11 Feb 2025 15:12:41 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 559BC402C3
- for <dev@dpdk.org>; Tue, 11 Feb 2025 15:12:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BB904402C3;
+	Tue, 11 Feb 2025 15:14:16 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 3772D40289
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 15:14:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739283160; x=1770819160;
+ t=1739283256; x=1770819256;
  h=from:to:cc:subject:date:message-id:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=VFNEZ6eAI9mMz5gdxOEqOAbxfW8pi2f/AL4YTYvZm6A=;
- b=ZkNnSjqNpoWx+zv8ZDkujEIhTSSq1FvGVXx4PpqxItWc1I0n4XBfo6vG
- i93661DLV6HgmTjbZtH6m7mJi6k4270CdZK5IA22MazTBvYhCoF99slaL
- 0DPEvb44juKRI2u89mKfA+Okh+UBJnG1GbOVfl3eWp4D88ux9evRVGI8I
- pt4ZUkMJjc0absY8FzhsCZd/YPBm2ew17lobnAoMDdNWrsGpFnZI042Tm
- AElR6ktXaCz+WixKUP4h6WMo11N5HYmH7FBM+q6B3HOWEZkBumkaX8NoT
- Z4XvzYHrRMrxcpPsyHqk+HRDuADuwDDMrk1441Q0HVfjpWH8bf/mMk+Qb g==;
-X-CSE-ConnectionGUID: Oc2ODgBdRMi/aqrhaWzlMw==
-X-CSE-MsgGUID: CBvcNQJaTZW/nxAZoaxvXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11341"; a="42740524"
-X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208";a="42740524"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2025 06:12:39 -0800
-X-CSE-ConnectionGUID: 2xKZgVnVSua0zZ/z2T/Xiw==
-X-CSE-MsgGUID: 8uUfeGmERCi29j7MCWTxow==
+ bh=UnIc9JpnEno6/LUb6CjFxSHFnMNUDsQ2gxtIIWXKBsc=;
+ b=mY11qVpheTnwdfDxPjUWa0ylkrSe1Z/7VesVuuqTTESfJgefW/fX1/E5
+ r3XorfS9p2sQfD/pJ2KuT9ysEeI3q91ragOcG/zVlUgX2pA3sYGGlnRiq
+ Etq3nLxvrDkr8R+2DH0a8yqnB3Oe6gw3jPz1CD7BzhFrJu2c0sHnEyMvx
+ pZBbcYS5JETOb33xLyiZ19F5HZUqFC8ByQZ0eNzm0/neGpI7siijMFCLD
+ MZmhQ1teCgvtKaKjyKqhxDRdnwjWlSH3sd2uQl2h/JDEY/jmRlKLFhmBD
+ qat9rNcLnFLriMm3OvNxAfxXzjJSarBJJqpO/YLBDFp2iIygQb2h6RJkG Q==;
+X-CSE-ConnectionGUID: U+08B5JzQjeNqeTK23nNXg==
+X-CSE-MsgGUID: ZjVLdPK7Sg+LqGp16dMlbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11341"; a="57312836"
+X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208";a="57312836"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2025 06:14:15 -0800
+X-CSE-ConnectionGUID: xbyhFgZcSr+pkMmQXFrv8Q==
+X-CSE-MsgGUID: t/e1SMaMQfuMBwoFHXvrcA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="149708555"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 11 Feb 2025 06:12:38 -0800
+X-IronPort-AV: E=Sophos;i="6.13,277,1732608000"; d="scan'208";a="117545519"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+ by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 11 Feb 2025 06:14:15 -0800
 Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 11 Feb 2025 06:12:37 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ 15.1.2507.44; Tue, 11 Feb 2025 06:14:14 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
  orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Tue, 11 Feb 2025 06:12:37 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.172)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ 15.1.2507.44 via Frontend Transport; Tue, 11 Feb 2025 06:14:14 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 11 Feb 2025 06:12:37 -0800
+ 15.1.2507.44; Tue, 11 Feb 2025 06:14:13 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CFu5lpL1oy6fQ1ws38cBVHHlITOfRbOVcYA2r9+WRkYaqBYB36woty53t6X/DNO/T87Bl/amZIwWTlE3PCqYkI1A82V6ucjV1rqiXFtI8NzGgyPAcUchUc7xFIW008vydMilvrwCbOAyaJIpFHkxLsc4LiVrGPRPxBUttTKDdqItry9AbR3rgznpQ8MzrjBOW5/XuDgHtAkdpMsa+uul2mjTTUzbN010GLI9vCZlWWxdxGcSuTP7zPrB14bAQ+D4/KAkJK9QomnNEki4JoGecbGyYVMsqHwxZz4ize9KEbAoLVD1ZQY9FxVKkFiuYEHW9zCmPSejWXxvDNDtvVpLaQ==
+ b=FmnMYXXz9sZ7xQsQoADURzQMNmvVRjO7rPi9bMDjoj384GkIokFwbaNXxqTdM+iaRdptXEQ8E0OHcw+BZVM3R8XDmqB65uHehD28f5zTPTCm+2h3TQfHKEKj5trFYtfPEBgKMQaRMRTWr8UAVtZSU8xC6KDzLJpPniZdXV2gy4HlHRs8jE0JBFfsqS/sBKae1gciD2TykKW/Kfrg6WrembBu9gZzjbPGhtDuNSNERC0SZXQuoorwiEZBOA1PJv5omdBVcwAcGLrRqgmySRK8Z/OQvX6i6X0pwugRQdXcFQJ+LpU/SDWDN/nuATnhN/kxrVMstMzYxa25iCoIHqAnjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OiOqgE+3C6ajjj1xwNvuUZhSGhDRSDqi4IYlZkwYHtM=;
- b=ld844iNRsA86ez7CC3FvsCxXZb6zH3qjX1h+An1ub5/wf/wjQyYR8XZhV2+B1QL32ZPzpwJfSpKf0rwfCH5GakEGt2o5VmaTqTgOJk07nQbPtoPoeGBSIJYHsgRpxJqkKz9BvRUP7gZDABJT9zVFGvrepmjAWyzglicz+kUG3GbQpr1kj1kIFqg65v9G6uz3PGb82RGF7qRBmOYPCvYUO1yR6sfkNJd21u9ddV9dRuuKEB10xuLW47oIYE7iaauPa79XdS94eXAktAEK+JD5aNrEIzgUTVk5TxgeLqY4UcOsPDiCVQsX3MrvrKbl3cX7whX2fLEefzZZbqm/9qOFLw==
+ bh=DYJo7sgvxdupeSeOoDb4LifcqYaxlKBuIUcKZndkt34=;
+ b=j235hp8mqyD6YpILZEw+M+RcOSoQGKrBnihRnH253V+SLxzvDPGipL03DgqI+6tO7Fhr0BBB5hLVrnMEgbjkajL8bonfz6rrcPcO5c0iFfg96Hki7GtpDlP4gcVUY3y6cc9FFhBlBT1+BiXk6q5jdlpmUllWWYv8ei6ePb9GlUx4IUwR93ZBuNvmFCY+90yCUBpeaE7qBy0egJhG4QydWh56zc01TwB4TktvxNfkkfdp319Zzycs5Qzf8XTE9vnTPN/1SPHAb5kQxGa167KFIKvNBDjE1PM8JClCwYe8fE1+uy84VZA0xQLNSk59yAkObOhcTeomV4/gklrAI3DsPA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -62,24 +62,24 @@ Received: from MW6PR11MB8309.namprd11.prod.outlook.com (2603:10b6:303:24c::19)
  by DM6PR11MB4754.namprd11.prod.outlook.com (2603:10b6:5:2ad::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Tue, 11 Feb
- 2025 14:12:32 +0000
+ 2025 14:13:44 +0000
 Received: from MW6PR11MB8309.namprd11.prod.outlook.com
  ([fe80::ba43:b01f:aee0:10a8]) by MW6PR11MB8309.namprd11.prod.outlook.com
  ([fe80::ba43:b01f:aee0:10a8%4]) with mapi id 15.20.8445.008; Tue, 11 Feb 2025
- 14:12:32 +0000
+ 14:13:44 +0000
 From: "Stokes, Ian" <ian.stokes@intel.com>
 To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
  <dev@dpdk.org>
 CC: "Richardson, Bruce" <bruce.richardson@intel.com>
-Subject: RE: [PATCH v5 3/4] drivers: move iavf common folder to iavf net
-Thread-Topic: [PATCH v5 3/4] drivers: move iavf common folder to iavf net
-Thread-Index: AQHbe9s4u53FLICcF0uiRW5f3IC+frNCJeww
-Date: Tue, 11 Feb 2025 14:12:32 +0000
-Message-ID: <MW6PR11MB8309FCC5041119B326B143C292FD2@MW6PR11MB8309.namprd11.prod.outlook.com>
+Subject: RE: [PATCH v5 4/4] net/intel: allow building ice driver without iavf
+Thread-Topic: [PATCH v5 4/4] net/intel: allow building ice driver without iavf
+Thread-Index: AQHbe9s5QSidgofXREaYmkiWOskcobNCJmpQ
+Date: Tue, 11 Feb 2025 14:13:44 +0000
+Message-ID: <MW6PR11MB8309BA14FAE5FDC350DD913692FD2@MW6PR11MB8309.namprd11.prod.outlook.com>
 References: <20250128163649.343336-1-bruce.richardson@intel.com>
  <20250210164427.1118265-1-bruce.richardson@intel.com>
- <20250210164427.1118265-4-bruce.richardson@intel.com>
-In-Reply-To: <20250210164427.1118265-4-bruce.richardson@intel.com>
+ <20250210164427.1118265-5-bruce.richardson@intel.com>
+In-Reply-To: <20250210164427.1118265-5-bruce.richardson@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -88,77 +88,77 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: MW6PR11MB8309:EE_|DM6PR11MB4754:EE_
-x-ms-office365-filtering-correlation-id: b8172ebf-c69c-47a0-8531-08dd4aa6208d
+x-ms-office365-filtering-correlation-id: 46d31273-c7a5-4d0c-8274-08dd4aa64b08
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?/nD5l1KQ7E1IANiIcPeDslejn4foe87X6xwDiy9JQnugGTQ1r4829agg1CM+?=
- =?us-ascii?Q?m8Et4ecRUGVWv49bTZCBqSUhvOztwUc6gXWxzuO3dFfUFmcgmK1MEG/LbWcK?=
- =?us-ascii?Q?1XZ0ZmmUS6RbwyskF8VxUI6qbO4yt3HTTeKJ96yKX/ke5W8P0ASW74JpNBXo?=
- =?us-ascii?Q?kixiqzXaTP61/G3NXZNQMBqkDiDNH0KSBgECirkbeuzaTA5tUjZWIvyZTwP3?=
- =?us-ascii?Q?/1owzbdhnCCERKdbLPBCuoEMP8qSxS40MQ6sDxYA5gAzmG3NCWguj49a1nfi?=
- =?us-ascii?Q?Seogpcp6w4g8rxSouHLKObyt0tPJ63uo9UGLfPRmMlasWHaMhm7JpVooCQ2Y?=
- =?us-ascii?Q?42NVqICJh9Co9kDYBW0T3P9MtAo1VccJR/n800hmnw4dKf9U98ZwXlwv3A3D?=
- =?us-ascii?Q?LadaMk9lFxAMOe4twHaOMcwAkEal/s/7rZfS4VBWVYd/+R/g6dKn1f7m8fGJ?=
- =?us-ascii?Q?JF8AUUrvPURa+lgC9QF8QaQt2iiN+LKbIYOwzDG9ZE/xONEtXVY+lFUPSR6h?=
- =?us-ascii?Q?uTjd4kJpw+/C6UF51oqYGWa0AN2NMCcZqnhwQxUU1jIb8qPfYe974Yqw/1Rc?=
- =?us-ascii?Q?2v3Pqq1nbIZtdmLJVJpnUWPpwa/YTrH0UJ2YhnVzpsBFydsMmUjunXWYuhx6?=
- =?us-ascii?Q?YT29e0BmTUX846R69vvY95bHrTttkNWp3WkfiEEMYSrkIJ39mIo2aKsPTFMD?=
- =?us-ascii?Q?HF6ZzJneX1YdPGZ6VbrO2NenZc9QQtdVYZyjMASb8UEmBJrtRZhSGioTfO4j?=
- =?us-ascii?Q?SGrxybc5yd4FE/65QmuAkh0x4JAYBeQWWp3ohb+prAlR2JQp8WCWBWMYeh5Z?=
- =?us-ascii?Q?1foQw5v5l46MJuO3zgoCX4MLWm7lAB3y1GZGgubbsc2EaFYo0Bt087jjQ/e0?=
- =?us-ascii?Q?70fQeMC6tfHd6u53cvKkgbqpr9tW3sQcyDqUGT0h4dxhOnGFXA0ShPpPZLXk?=
- =?us-ascii?Q?eRg5g4uQ6fFLNdGioadbTHu8oRCBngO+NhRVPtd3ZooXxTkW6YlO1mwXXyRO?=
- =?us-ascii?Q?44ZVh9Fjsqw8J132+LxSYm3tDnhQnv/263d7QrtH2NMS9YMN/8HE9ApM6/4p?=
- =?us-ascii?Q?tNuDtRw7BPUQRRmTO8bDAEBhj8ZEftidJpnJKBuliX6j8Lg4Xi5MposuqWmo?=
- =?us-ascii?Q?vY8hLTXBUncWwtYuzs8e6FRrEvdHN7RChvHbz1iwD+sPEwt/hhk7Cv19BIqT?=
- =?us-ascii?Q?1XPYKbrlZ0itH0kffKhUHMYT9SyRtO/gEjdr2xPlDocajXL0oBL5Xib1hxXE?=
- =?us-ascii?Q?xH0k1IBkSEFA8H6eDSYmBfj1fpBpkcVP2YSynLAwK+fZrs8MdTYmxyASk9KV?=
- =?us-ascii?Q?NJOlE00k0kHpCavdD7xkILGHRAh+Jt2cKmaCN+wAqiBVOzhvscEXPjOIb0to?=
- =?us-ascii?Q?6OTr+mjaC2TEGFgkD/qE1UwM44HcF+Ym2/2MXkUC1jURSC8cxEnyqlhUQieP?=
- =?us-ascii?Q?J6/P8U3QwBuX2kRLc8QOeebuuCjh8VVZ?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?pzSKcQREhUoGHPrXy7ZcVGr0Z0TWOILJBdy+iguZyjLdl14yh169BQK9fTeJ?=
+ =?us-ascii?Q?IU0nZ452rgVrV2zPKPwP44S1b0/aWHf7vviRsXJuavpfJf4ODdXflUCfktcr?=
+ =?us-ascii?Q?rn8DkpCYa7NlCHpLCE69oZiN5HSsP0hFcjpfqRJv/TnPoffH7Z9s59ttu/pM?=
+ =?us-ascii?Q?LKJidTZHT+lxB180frr/bOQCJnUZ9QghqaTaFfbc0q3iaZE68obN2qFVttXT?=
+ =?us-ascii?Q?ZevFrBqEQoIO4vd1hSgR2WUw2XRqTxsc+Ht6tnGZR9EBvvjBwzTuzWeqOowB?=
+ =?us-ascii?Q?nF3ugtpEDThGTVch6vid97oBM4AAFnvTfEWwWd7AQgZCgtZtE2mGEkWoyh1/?=
+ =?us-ascii?Q?bAOcqfvxy5kBDZUJnz9Bz3mqNuWa2amOyoz9NaauNpo9Xi4hg7E6B13CK6Ed?=
+ =?us-ascii?Q?OoAPwufvfRxXVtJ4OQoNR9/1ffziGy4XN1zvG4u8yht0H6qO1AAZCXG4PacX?=
+ =?us-ascii?Q?uIGWS7THEWDea9Q22N71BhgnmQIDgCKxo9ZvKkdIOPO8k3xkypOqknvOuyzw?=
+ =?us-ascii?Q?hT0bgOqxJ4KsZlp04LJYYUy1fywCy0747Smfiy2D3kks0Edmp4odu07xpdAj?=
+ =?us-ascii?Q?e40mFxVoWsfhxKP51SBnlHU+Fl3KpTuHMoKT2oBcgm4tZSZ77Ft10aOUKejl?=
+ =?us-ascii?Q?UZ/3P22IVh4Wry0h8nCqnUZZzeoUoyF0Y1PF1aRE36nO6+tWlOtvNHDYek7Y?=
+ =?us-ascii?Q?u2SN/kgsdeikTcblfYWUSutbntKWjEnY4Vm8l09Q1zkFvtTR9vu0ZBM9X61w?=
+ =?us-ascii?Q?sBIE/Bhtkyk6AugrxzKnzMt+I4JF/mO/fGNOkAekkGV97Hqr4zj5721J/b3z?=
+ =?us-ascii?Q?yzS6qUHwewasix1glhM3lNNvlHF7oe8bds85T27tMMcRXArbVlMzkQh2F2fx?=
+ =?us-ascii?Q?7TFcRNYbZWdQkBn1KAXSSrgtUSYPl0t0W3sKFDaVCwgH0xl2+AzjNegVhOBW?=
+ =?us-ascii?Q?Y5edAOJp7UOBdkQUsLFJewflaE4RCdj3Qy3OLThMJwk9v192bXjo/KVrA9mz?=
+ =?us-ascii?Q?fPSoaOccuY8cnSOJWXmrRk/n2MLOkQhbx37zpI6bcG2ZIDtX1W++qXrvKeUl?=
+ =?us-ascii?Q?x6qqlKdkqjZ5wTEUf0nUwn7scLxa3B3i9qEFuL7Vv98R9GkUU4ejmDIIeBtj?=
+ =?us-ascii?Q?jajOApJb04gr3SJ6FOo1qJJObI2UbcQet8yz4EP9OnUHvJMRT9xcORjE0mlb?=
+ =?us-ascii?Q?7naH9P0PNP2p3fUj3C0zudKJSzKXq5XePJ5HmRUhqZ/wrLmJJUC9arnhFuYg?=
+ =?us-ascii?Q?s9+XpFtYDNzNcl2tWoHB7hrQ0vzZ4ggfkaazB4l/9uuiPiWpA5ria+5mfr4E?=
+ =?us-ascii?Q?3eFVGIImNrvUdbldDUBeHW+Veaq70G26OmiOCFV0LSP4J2u6r+RsiMNvHMlj?=
+ =?us-ascii?Q?efHrr0DWYkjE8pkI4w7Vu1ZyIQJifNdGOFZmx+LpI9rJr2apg4R+Pm9rhM7p?=
+ =?us-ascii?Q?PSh1mMk0rFfvKWVR1lxHP5h5OoUUicmq?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:MW6PR11MB8309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ghttP4WbtXnJOhfW2+6ML/jivCU2HhHEz0lMqyeocMH/bRvPbtEgdr01GzOh?=
- =?us-ascii?Q?hQGUyo3qkemng1WTDoHFRrSe76JP6xCV0mAeqXGtnuzHhb3ogq3me7UvpiRM?=
- =?us-ascii?Q?5LZrNBxT5gnGMFt1pMi5GE7IihWp5gNW0D4Z2FZhytO/OqqOfks4LA/tVgBw?=
- =?us-ascii?Q?C0rCIXfVpU0YporthMVmjWST/A3qU7G7F99/oxIN1dNMeMzdTbHT4CAKQs8m?=
- =?us-ascii?Q?WwR+npQNkibkrCWvCJSQ8iOl/TzP+PiyXZZmBptG6xcF2F6N1WdEfHbQO/xv?=
- =?us-ascii?Q?b3++FgT599zVae224AQNbKCyMPX1Ba0bk1hQAzEfUQUB5q5HVsi5c8Jzpf6s?=
- =?us-ascii?Q?aozLC9bw+uT0KbMea0+0Br/mtKDpyyK4p0OBU6TbeX9/4BQahnGXWInzOm+R?=
- =?us-ascii?Q?yLdeoIpJYjDJKiILUkQaSBor63iI8W3OmbO4Tch/y1aeayR7puv4VyAjyL7a?=
- =?us-ascii?Q?MMtvUpMJnjv7Ko/SPDszlCXK+djj3/7INUdJ58QLThKx8f25r0AlNRE8aRg4?=
- =?us-ascii?Q?dtxC0u7CcMWU3l/VOzDOSJ1T6QNFZe75MR4OB+CLCmtnLVqylC7HvOfiE2JX?=
- =?us-ascii?Q?gkDGZ6ZWB0Qv4B2x2mGB8JgbHHh2pCrqm3ZvEzcbIBYBbecxoCJaH32t5Mg7?=
- =?us-ascii?Q?5uLUjNPQHigWw6/DBE7xDcVpwKC99uJzXTGPJNFUppO2kq2zGAOJUk4AnZIZ?=
- =?us-ascii?Q?uQaBzDpqGnpqu2xx5AN0Uipp9VryPUtrYZX4rZpKrI99NXt5Gz84Yw3nJV30?=
- =?us-ascii?Q?06AKH2lHM6IAJGKe6R9nQPkkIFmt/fx28e4IhbB4P2XnyQNsbVC49G8I9/Oj?=
- =?us-ascii?Q?MclgHCowHnJ/r/IvvjXJwVhaLq63Ap58Z205R259gPXmmrPAD4JddXCzQ21F?=
- =?us-ascii?Q?zVTS/45C+AZUM/Lxh/6u858LbQnvtWF0JSp4mBWOPgzvqCzkvjapqNh8WZn6?=
- =?us-ascii?Q?hL6G9BwWNKc32Nrjqv/8dZwcoc9QnESJ87HUhryihpnSHPBKdnUqPjIgCymH?=
- =?us-ascii?Q?ERaDvK14yuc3wv8RiwdMbs3f/AayUo28bsgXoFeN20YC0zmSZ1z/vhG2Pdsp?=
- =?us-ascii?Q?JUwJluYFx5cw5ILBidlW2fNCox+pUq8aDF9nP5tjGT7+0c5OhgLM/T0NlxLU?=
- =?us-ascii?Q?B8GYkKHvC6DcIDhsFToCtadUU7LSThQ0r+dmRMPAJ1A2eRRoOTS2mUPfiiQS?=
- =?us-ascii?Q?6SwcRD837uHmQFgIZ1omduLYUwvOgc8Ngs64jaE5jRIxBW/F01b3HAPXiU/6?=
- =?us-ascii?Q?QCDGJkhaIJ/RBjdfoxG1woVTnB7Lu99hV0anRuANy7Y3sePnsxY3VfA3Ro30?=
- =?us-ascii?Q?/xqE3cU/ZjFIshTXCqmXMGldWupJu1yPoqeDVw9kQZQuJLbm2Wmyo0L9V+hD?=
- =?us-ascii?Q?1ec4SiGcXg8qGOGLTbl3VDeJa8WGOy/3hejM74y1sRvCYL3JxI3w+6XgBlH3?=
- =?us-ascii?Q?fFh1FetihyWtRh1yJ5/QK08onMzJ1o6WtCgLduWRxBN3WRByKaLCjehZ9DNK?=
- =?us-ascii?Q?m8UgB6OvTuHGlbaMgCRnPweQSKQNx1LSCR7943ws3tx1J+kMoJlTzt3KduHT?=
- =?us-ascii?Q?iuhZn6/c8mlqwo4kTcCHu/Lpc0a77zW2HZe21f2n?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?OvWsB0/UD5ABq3Y2dI3jZbV91DMzPLGP3kgz8F5bxdUOqpsUHwgS6Q4K5+KX?=
+ =?us-ascii?Q?K23cd2Ka+noJ6FI9O56sg4ARmdYnfBV0mq2EFxub3TP6hQr+Wrp5ONA4ebci?=
+ =?us-ascii?Q?4C0d5eXoYbfqpIARo7DPy9VoRL+U4Qt/GWMTVq0g2/xG6ULg8X9gei4Nsvd3?=
+ =?us-ascii?Q?C6uMH5UVEz64mLjhHzb7UCf5FWMDmTKgrEpTqMResD6AI/ARcfMRP3YwiqDd?=
+ =?us-ascii?Q?02s2Qs8hdfA6fQRx0qvHmj2T57ENi0Oa3Q90jm+1VXM95y/FGykqVwdWA0oV?=
+ =?us-ascii?Q?G7ZAzYON42RbV+zPyl7cLCkrwamytF6qrmDT/40KAKRX0SHcPxN0Lk/yEsqL?=
+ =?us-ascii?Q?RtXFW6F7znMFnn8+rFRMz2Ki7KTXhkkhbTQk47+rBiWrqqZFkcZdHsyEDyvP?=
+ =?us-ascii?Q?fzBrsiq9l+urVTqudXHMRZ1e2sipTsr32xIh1nXmQiLiKRxAP7znGncPDhZm?=
+ =?us-ascii?Q?j0x2a1flYly2Sq+OX1XHnk91tL1VJWFxhgFO7Ed1Q/jXfkc87xXAtqKNTyX2?=
+ =?us-ascii?Q?ahFLLwlUFtWF1N8RZHY3PEUHKT0yPR2Gva2qv+cXBKVlJytTcWkcpY/ODc0K?=
+ =?us-ascii?Q?xi+d6MOT/zEXa1nMH+Cld+bZZ/o54m9Q73Vh/5zS7N5oU10ukTmsishv2GDf?=
+ =?us-ascii?Q?f6DtFDYe9Pb8RexQVwyk3wEYZYQDitOM0Xnb7VcHJIqREyAsqYiE702aYmoA?=
+ =?us-ascii?Q?GOMHj1Y3SDKpnTwoHCPz78hLBAvoAQhmtBUio8aT25agJB7XqeMaAYfLkUUD?=
+ =?us-ascii?Q?2nrsnUGWcwh/cPbLQN3igWhjd47rLuUW9uvrCpR/CTfSTu1kx4MlzzXDcu65?=
+ =?us-ascii?Q?QK3KBRAh2AeXHxj2AQ/2GMvOpdOCllt9Luly2/hxvJV23wjm196Ab1XqHZAY?=
+ =?us-ascii?Q?EP1lUA2Bg/nrCKAiCshm/qHjKfQiXNq/MF5fT/F+icm4MVNA90cZSb3gNZ75?=
+ =?us-ascii?Q?9nqiLDUdBQvHniVWSH7DRp+lOBbes7Hi26ZZEV4DVtKoBreRljJtZeIkzgfR?=
+ =?us-ascii?Q?SlmRLkeXn2eAoMGhRm2b+t3Ey2BX2CrVp3BHsZRouz751/TnI3OmsSS25hL6?=
+ =?us-ascii?Q?csh8kWhntColIHPswEpskIuZSlWztMosrk0gDV5D4ihHzOxAsts8clQQJuF8?=
+ =?us-ascii?Q?/nmFrsYLbv/6hEaRRro/ThMSxpwE8jPG4uGNs6RoJ7H/o2lHnUzp3n6vUCpp?=
+ =?us-ascii?Q?10ZJg4y0B3K65FXeiQVpsAMyx2jyUOAcVfD9jia7dCD2qNK/xdz68VxwPAmq?=
+ =?us-ascii?Q?2LeomnPnWqKQeddsrYivLmaONTxhN/CS4H/6Zg2ROv6QxYGyjuH0KQ+eARYD?=
+ =?us-ascii?Q?PskkdZ68k/efXqALqGrwW8fdIXp1OP5r6qh4Mp1WsDO8cX9pCsvYviNQdRGo?=
+ =?us-ascii?Q?oRM9eeJUyEcMXXkt/1YI6q5DtEGzfPeMBrb2XY0UU4C8FAaxqlCm3x0Fc4UK?=
+ =?us-ascii?Q?uu50UOAwZzfB9I++xCPSuUdFty2PpTfpWqyyMBgjxzcB2rRgHA7DWIByYGAG?=
+ =?us-ascii?Q?p8s6/Qmmghbx9+ZrAzAv09v8EsukI+Yj5fdwhyt+JD3Z5M9Xjz79ese6FBrp?=
+ =?us-ascii?Q?VU32qptLno2Dd7Z4hd6nvJ8vucf/kMvWn4vhcZ6C?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: MW6PR11MB8309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8172ebf-c69c-47a0-8531-08dd4aa6208d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2025 14:12:32.7313 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46d31273-c7a5-4d0c-8274-08dd4aa64b08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2025 14:13:44.0192 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5vof7+Jw36vjd7Fkp4npgRteHR5DVUzeDFbRvf3U1Ya/E5fEdJz6CmWWiYE8rzcb7h4ItPuTkzscHqAMgjR90w==
+X-MS-Exchange-CrossTenant-userprincipalname: dA3yI1b+T5QQMoRfaw66Ep8ZwNDxo/3Wh5JqPd5I6YcdUA/kS1+2dUYsc+SvlPPG4YnMhnf/GEavwsFhJI/QKw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4754
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -174,347 +174,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> The common/iavf driver folder contains the base code for the iavf
-> driver, which is also linked against by the ice driver and others.
-> However, there is no need for this to be in common, and we can
-> move it to the net/intel/iavf as a base code driver. This involves
-> updating dependencies that were on common/iavf to net/iavf
+> The ice PMD relies on a number of functions from the iavf base code,
+> which can be got by linking against that iavf driver. However, since
+> only three C files are necessary here, we can allow ice to be built
+> independently of iavf by including the base files directly in cases
+> where iavf is not part of the build. If it is part of the build, the
+> dependency remains as now.
 >=20
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->  devtools/libabigail.abignore                       |  1 +
->  doc/guides/rel_notes/release_25_03.rst             |  5 ++++-
->  drivers/common/iavf/version.map                    | 13 -------------
->  drivers/common/meson.build                         |  1 -
->  .../{common/iavf =3D> net/intel/iavf/base}/README    |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_adminq.c     |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_adminq.h     |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_adminq_cmd.h |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_alloc.h      |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_common.c     |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_devids.h     |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_impl.c       |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_osdep.h      |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_prototype.h  |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_register.h   |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_status.h     |  0
->  .../iavf =3D> net/intel/iavf/base}/iavf_type.h       |  0
->  .../iavf =3D> net/intel/iavf/base}/meson.build       |  0
->  .../iavf =3D> net/intel/iavf/base}/virtchnl.h        |  0
->  .../intel/iavf/base}/virtchnl_inline_ipsec.h       |  0
->  drivers/net/intel/iavf/meson.build                 | 13 +++++++++----
->  drivers/net/intel/iavf/version.map                 | 14 ++++++++++++++
->  drivers/net/intel/ice/meson.build                  |  7 +++----
->  drivers/net/intel/idpf/meson.build                 |  2 +-
->  24 files changed, 32 insertions(+), 24 deletions(-)
->  delete mode 100644 drivers/common/iavf/version.map
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/README (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_adminq.c (100=
-%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_adminq.h (100=
-%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_adminq_cmd.h
-> (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_alloc.h (100%=
-)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_common.c
-> (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_devids.h (100=
-%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_impl.c (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_osdep.h (100%=
-)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_prototype.h
-> (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_register.h (1=
-00%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_status.h (100=
-%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/iavf_type.h (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/meson.build (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/virtchnl.h (100%)
->  rename drivers/{common/iavf =3D> net/intel/iavf/base}/virtchnl_inline_ip=
-sec.h
-> (100%)
+>  drivers/net/intel/iavf/base/iavf_prototype.h |  8 ++++++++
+>  drivers/net/intel/ice/meson.build            | 13 ++++++++++++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/devtools/libabigail.abignore b/devtools/libabigail.abignore
-> index b7daca4841..ce501632b3 100644
-> --- a/devtools/libabigail.abignore
-> +++ b/devtools/libabigail.abignore
-> @@ -23,6 +23,7 @@
->  ; This is not a libabigail rule (see check-abi.sh).
->  ; This is used for driver removal and other special cases like mlx glue =
-libs.
->  ;
-> +; SKIP_LIBRARY=3Dlibrte_common_iavf
->  ; SKIP_LIBRARY=3Dlibrte_common_idpf
->  ; SKIP_LIBRARY=3Dlibrte_common_mlx5_glue
->  ; SKIP_LIBRARY=3Dlibrte_net_mlx4_glue
-> diff --git a/doc/guides/rel_notes/release_25_03.rst
-> b/doc/guides/rel_notes/release_25_03.rst
-> index 2338a97e76..d2e8b03107 100644
-> --- a/doc/guides/rel_notes/release_25_03.rst
-> +++ b/doc/guides/rel_notes/release_25_03.rst
-> @@ -182,9 +182,12 @@ API Changes
->    ``-Denable_drivers=3Dnet/intel/e1000``.
->=20
->  * The driver ``common/idpf`` has been merged into the ``net/intel/idpf``
-> driver.
-> -  This change should have no impact to end applications, but,
-> +  Similarly, the ``common/iavf`` driver has been merged into the
-> ``net/intel/iavf`` driver.
-> +  These changes should have no impact to end applications, but,
->    when specifying the ``idpf`` or ``cpfl`` net drivers to meson via ``-
-> Denable_drivers`` option,
->    there is no longer any need to also specify the ``common/idpf`` driver=
-.
-> +  In the same way, when specifying the ``iavf`` or ``ice`` net drivers,
-> +  there is no need to also specify the ``common/iavf`` driver.
->    Note, however, ``net/intel/cpfl`` driver now depends upon the
-> ``net/intel/idpf`` driver.
->=20
->=20
-> diff --git a/drivers/common/iavf/version.map
-> b/drivers/common/iavf/version.map
-> deleted file mode 100644
-> index 6c1427cca4..0000000000
-> --- a/drivers/common/iavf/version.map
-> +++ /dev/null
-> @@ -1,13 +0,0 @@
-> -INTERNAL {
-> -	global:
-> -
-> -	iavf_aq_send_msg_to_pf;
-> -	iavf_clean_arq_element;
-> -	iavf_init_adminq;
-> -	iavf_set_mac_type;
-> -	iavf_shutdown_adminq;
-> -	iavf_vf_parse_hw_config;
-> -	iavf_vf_reset;
-> -
-> -	local: *;
-> -};
-> diff --git a/drivers/common/meson.build b/drivers/common/meson.build
-> index e1e3149d8f..dc096aab0a 100644
-> --- a/drivers/common/meson.build
-> +++ b/drivers/common/meson.build
-> @@ -5,7 +5,6 @@ std_deps =3D ['eal']
->  drivers =3D [
->          'cpt',
->          'dpaax',
-> -        'iavf',
->          'ionic',
->          'mvep',
->          'octeontx',
-> diff --git a/drivers/common/iavf/README
-> b/drivers/net/intel/iavf/base/README
-> similarity index 100%
-> rename from drivers/common/iavf/README
-> rename to drivers/net/intel/iavf/base/README
-> diff --git a/drivers/common/iavf/iavf_adminq.c
-> b/drivers/net/intel/iavf/base/iavf_adminq.c
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_adminq.c
-> rename to drivers/net/intel/iavf/base/iavf_adminq.c
-> diff --git a/drivers/common/iavf/iavf_adminq.h
-> b/drivers/net/intel/iavf/base/iavf_adminq.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_adminq.h
-> rename to drivers/net/intel/iavf/base/iavf_adminq.h
-> diff --git a/drivers/common/iavf/iavf_adminq_cmd.h
-> b/drivers/net/intel/iavf/base/iavf_adminq_cmd.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_adminq_cmd.h
-> rename to drivers/net/intel/iavf/base/iavf_adminq_cmd.h
-> diff --git a/drivers/common/iavf/iavf_alloc.h
-> b/drivers/net/intel/iavf/base/iavf_alloc.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_alloc.h
-> rename to drivers/net/intel/iavf/base/iavf_alloc.h
-> diff --git a/drivers/common/iavf/iavf_common.c
-> b/drivers/net/intel/iavf/base/iavf_common.c
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_common.c
-> rename to drivers/net/intel/iavf/base/iavf_common.c
-> diff --git a/drivers/common/iavf/iavf_devids.h
-> b/drivers/net/intel/iavf/base/iavf_devids.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_devids.h
-> rename to drivers/net/intel/iavf/base/iavf_devids.h
-> diff --git a/drivers/common/iavf/iavf_impl.c
-> b/drivers/net/intel/iavf/base/iavf_impl.c
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_impl.c
-> rename to drivers/net/intel/iavf/base/iavf_impl.c
-> diff --git a/drivers/common/iavf/iavf_osdep.h
-> b/drivers/net/intel/iavf/base/iavf_osdep.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_osdep.h
-> rename to drivers/net/intel/iavf/base/iavf_osdep.h
-> diff --git a/drivers/common/iavf/iavf_prototype.h
+> diff --git a/drivers/net/intel/iavf/base/iavf_prototype.h
 > b/drivers/net/intel/iavf/base/iavf_prototype.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_prototype.h
-> rename to drivers/net/intel/iavf/base/iavf_prototype.h
-> diff --git a/drivers/common/iavf/iavf_register.h
-> b/drivers/net/intel/iavf/base/iavf_register.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_register.h
-> rename to drivers/net/intel/iavf/base/iavf_register.h
-> diff --git a/drivers/common/iavf/iavf_status.h
-> b/drivers/net/intel/iavf/base/iavf_status.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_status.h
-> rename to drivers/net/intel/iavf/base/iavf_status.h
-> diff --git a/drivers/common/iavf/iavf_type.h
-> b/drivers/net/intel/iavf/base/iavf_type.h
-> similarity index 100%
-> rename from drivers/common/iavf/iavf_type.h
-> rename to drivers/net/intel/iavf/base/iavf_type.h
-> diff --git a/drivers/common/iavf/meson.build
-> b/drivers/net/intel/iavf/base/meson.build
-> similarity index 100%
-> rename from drivers/common/iavf/meson.build
-> rename to drivers/net/intel/iavf/base/meson.build
-> diff --git a/drivers/common/iavf/virtchnl.h
-> b/drivers/net/intel/iavf/base/virtchnl.h
-> similarity index 100%
-> rename from drivers/common/iavf/virtchnl.h
-> rename to drivers/net/intel/iavf/base/virtchnl.h
-> diff --git a/drivers/common/iavf/virtchnl_inline_ipsec.h
-> b/drivers/net/intel/iavf/base/virtchnl_inline_ipsec.h
-> similarity index 100%
-> rename from drivers/common/iavf/virtchnl_inline_ipsec.h
-> rename to drivers/net/intel/iavf/base/virtchnl_inline_ipsec.h
-> diff --git a/drivers/net/intel/iavf/meson.build
-> b/drivers/net/intel/iavf/meson.build
-> index d9b605f55a..c823d618e3 100644
-> --- a/drivers/net/intel/iavf/meson.build
-> +++ b/drivers/net/intel/iavf/meson.build
-> @@ -7,9 +7,13 @@ endif
+> index 7c43a817bb..5d2ee0a785 100644
+> --- a/drivers/net/intel/iavf/base/iavf_prototype.h
+> +++ b/drivers/net/intel/iavf/base/iavf_prototype.h
+> @@ -11,6 +11,14 @@
 >=20
->  testpmd_sources =3D files('iavf_testpmd.c')
+>  #include <rte_compat.h>
 >=20
-> -deps +=3D ['common_iavf', 'security', 'cryptodev']
-> +deps +=3D ['security', 'cryptodev']
->=20
->  sources =3D files(
-> +        'base/iavf_adminq.c',
-> +        'base/iavf_common.c',
-> +        'base/iavf_impl.c',
+> +/* functions only need exporting if this is being built into
+> + * iavf driver itself. If included in ice driver, then no export
+> + */
+> +#ifndef RTE_NET_IAVF
+> +#undef __rte_internal
+> +#define __rte_internal
+> +#endif
 > +
->          'iavf_ethdev.c',
->          'iavf_rxtx.c',
->          'iavf_vchnl.c',
-> @@ -20,8 +24,9 @@ sources =3D files(
->          'iavf_ipsec_crypto.c',
->          'iavf_fsub.c',
->  )
-> +includes +=3D include_directories('base')
->=20
-> -if arch_subdir =3D=3D 'x86' and is_variable('static_rte_common_iavf')
-> +if arch_subdir =3D=3D 'x86'
->      sources +=3D files('iavf_rxtx_vec_sse.c')
->=20
->      if is_windows and cc.get_id() !=3D 'clang'
-> @@ -30,7 +35,7 @@ if arch_subdir =3D=3D 'x86' and
-> is_variable('static_rte_common_iavf')
->=20
->      iavf_avx2_lib =3D static_library('iavf_avx2_lib',
->              'iavf_rxtx_vec_avx2.c',
-> -            dependencies: [static_rte_ethdev, static_rte_common_iavf],
-> +            dependencies: [static_rte_ethdev],
->              include_directories: includes,
->              c_args: [cflags, '-mavx2'])
->      objs +=3D iavf_avx2_lib.extract_objects('iavf_rxtx_vec_avx2.c')
-> @@ -43,7 +48,7 @@ if arch_subdir =3D=3D 'x86' and
-> is_variable('static_rte_common_iavf')
->          endif
->          iavf_avx512_lib =3D static_library('iavf_avx512_lib',
->                  'iavf_rxtx_vec_avx512.c',
-> -                dependencies: [static_rte_ethdev, static_rte_common_iavf=
-],
-> +                dependencies: [static_rte_ethdev],
->                  include_directories: includes,
->                  c_args: avx512_args)
->          objs +=3D iavf_avx512_lib.extract_objects('iavf_rxtx_vec_avx512.=
-c')
-> diff --git a/drivers/net/intel/iavf/version.map
-> b/drivers/net/intel/iavf/version.map
-> index 98de64cca2..d18dea64dd 100644
-> --- a/drivers/net/intel/iavf/version.map
-> +++ b/drivers/net/intel/iavf/version.map
-> @@ -17,3 +17,17 @@ EXPERIMENTAL {
->  	# added in 21.11
->  	rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
->  };
-> +
-> +INTERNAL {
-> +	global:
-> +
-> +	iavf_aq_send_msg_to_pf;
-> +	iavf_clean_arq_element;
-> +	iavf_init_adminq;
-> +	iavf_set_mac_type;
-> +	iavf_shutdown_adminq;
-> +	iavf_vf_parse_hw_config;
-> +	iavf_vf_reset;
-> +
-> +	local: *;
-> +};
+>  /* Prototypes for shared code functions that are not in
+>   * the standard function pointer structures.  These are
+>   * mostly because they are needed even before the init
 > diff --git a/drivers/net/intel/ice/meson.build
 > b/drivers/net/intel/ice/meson.build
-> index beaf21e176..5faf887386 100644
+> index 5faf887386..ff7f84597a 100644
 > --- a/drivers/net/intel/ice/meson.build
 > +++ b/drivers/net/intel/ice/meson.build
-> @@ -18,7 +18,7 @@ sources =3D files(
+> @@ -18,9 +18,20 @@ sources =3D files(
 >=20
 >  testpmd_sources =3D files('ice_testpmd.c')
 >=20
-> -deps +=3D ['hash', 'net', 'common_iavf']
-> +deps +=3D ['hash', 'net', 'net_iavf']
+> -deps +=3D ['hash', 'net', 'net_iavf']
+> +deps +=3D ['hash', 'net']
 >  includes +=3D include_directories('base')
 >=20
+> +if dpdk_conf.has('RTE_NET_IAVF')
+> +    deps +=3D 'net_iavf'
+> +else
+> +    includes +=3D include_directories('../iavf/base')
+> +    sources +=3D files(
+> +            '../iavf/base/iavf_adminq.c',
+> +            '../iavf/base/iavf_common.c',
+> +            '../iavf/base/iavf_impl.c',
+> +    )
+> +endif
+> +
 >  if arch_subdir =3D=3D 'x86'
-> @@ -30,7 +30,7 @@ if arch_subdir =3D=3D 'x86'
+>      sources +=3D files('ice_rxtx_vec_sse.c')
 >=20
->      ice_avx2_lib =3D static_library('ice_avx2_lib',
->              'ice_rxtx_vec_avx2.c',
-> -            dependencies: [static_rte_ethdev, static_rte_kvargs, static_=
-rte_hash],
-> +            dependencies: [static_rte_ethdev, static_rte_hash],
->              include_directories: includes,
->              c_args: [cflags, '-mavx2'])
->      objs +=3D ice_avx2_lib.extract_objects('ice_rxtx_vec_avx2.c')
-> @@ -43,8 +43,7 @@ if arch_subdir =3D=3D 'x86'
->          endif
->          ice_avx512_lib =3D static_library('ice_avx512_lib',
->                  'ice_rxtx_vec_avx512.c',
-> -                dependencies: [static_rte_ethdev,
-> -                    static_rte_kvargs, static_rte_hash],
-> +                dependencies: [static_rte_ethdev, static_rte_hash],
->                  include_directories: includes,
->                  c_args: avx512_args)
->          objs +=3D ice_avx512_lib.extract_objects('ice_rxtx_vec_avx512.c'=
-)
-> diff --git a/drivers/net/intel/idpf/meson.build
-> b/drivers/net/intel/idpf/meson.build
-> index 87bc39f76e..d69254484b 100644
-> --- a/drivers/net/intel/idpf/meson.build
-> +++ b/drivers/net/intel/idpf/meson.build
-> @@ -7,7 +7,7 @@ if is_windows
->      subdir_done()
->  endif
->=20
-> -includes +=3D include_directories('../../../common/iavf')
-> +includes +=3D include_directories('../iavf/base')
->=20
->  sources =3D files(
->          'idpf_common_device.c',
 > --
 > 2.43.0
 
-Patch looks good to me Bruce.
+Checks out ok for me, looks good.
 
 Acked-by: Ian Stokes <ian.stokes@intel.com>
+
 
