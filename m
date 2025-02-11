@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68A0C021A1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 08:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32EAC021A2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 08:53:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52AD640B8C;
-	Tue, 11 Feb 2025 09:51:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A08BE40698;
+	Tue, 11 Feb 2025 09:51:20 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 8CAE740693
- for <dev@dpdk.org>; Tue, 11 Feb 2025 09:51:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 099B740A73
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 09:51:12 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id EC36CA3A72; Tue, 11 Feb 2025 16:50:41 +0800 (CST)
+ id 84AC5A3A76; Tue, 11 Feb 2025 16:50:45 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v9 19/28] net/rnp: add support basic stats operation
-Date: Tue, 11 Feb 2025 16:50:09 +0800
-Message-Id: <1739263818-59770-20-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v9 23/28] net/rnp: add support Rx checksum offload
+Date: Tue, 11 Feb 2025 16:50:13 +0800
+Message-Id: <1739263818-59770-24-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
@@ -36,362 +36,293 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support hw-missed rx/tx packets bytes.
+Add support Rx l3/l4 checum and tunnel
+inner l3/l4, out l3 chksum.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini    |   2 +
- doc/guides/nics/rnp.rst             |   1 +
- drivers/net/rnp/base/rnp_eth_regs.h |   3 +
- drivers/net/rnp/rnp.h               |  10 +-
- drivers/net/rnp/rnp_ethdev.c        | 147 ++++++++++++++++++++++++++++
- drivers/net/rnp/rnp_rxtx.c          |   9 ++
- drivers/net/rnp/rnp_rxtx.h          |  10 ++
- 7 files changed, 181 insertions(+), 1 deletion(-)
+ doc/guides/nics/features/rnp.ini    |  4 ++
+ doc/guides/nics/rnp.rst             |  1 +
+ drivers/net/rnp/base/rnp_eth_regs.h | 13 ++++
+ drivers/net/rnp/rnp.h               |  7 +++
+ drivers/net/rnp/rnp_ethdev.c        | 64 +++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.c          | 97 ++++++++++++++++++++++++++++-
+ 6 files changed, 185 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 6453762745..07caedba7a 100644
+index eb1c27a3d3..ceac0beff8 100644
 --- a/doc/guides/nics/features/rnp.ini
 +++ b/doc/guides/nics/features/rnp.ini
-@@ -7,6 +7,8 @@
- Speed capabilities   = Y
+@@ -8,6 +8,10 @@ Speed capabilities   = Y
  Link status          = Y
  Link status event    = Y
-+Basic stats          = Y
-+Stats per queue      = Y
- Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
+ Packet type parsing  = Y
++L3 checksum offload  = P
++L4 checksum offload  = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
+ Basic stats          = Y
+ Stats per queue      = Y
+ Extended stats       = Y
 diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 532608e11c..b8611821ec 100644
+index cd81a75f53..bea472068e 100644
 --- a/doc/guides/nics/rnp.rst
 +++ b/doc/guides/nics/rnp.rst
-@@ -19,6 +19,7 @@ Features
- - MTU update
- - Jumbo frames
+@@ -22,6 +22,7 @@ Features
  - Scatter-Gather IO support
-+- Port hardware statistic
+ - Port hardware statistic
+ - Packet type parsing
++- Checksum offload
  
  Prerequisites
  -------------
 diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 91a18dd42d..391688bd80 100644
+index 8a448b9eec..b0961a1459 100644
 --- a/drivers/net/rnp/base/rnp_eth_regs.h
 +++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -23,6 +23,9 @@
- #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
- #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
- #define RNP_RING_FC_THRESH(n)	_ETH_(0x8a00 + ((0x4) * (n)))
-+/* ETH Statistic */
-+#define RNP_ETH_RXTRANS_DROP	_ETH_(0x8904)
-+#define RNP_ETH_RXTRUNC_DROP	_ETH_(0x8928)
- /* Mac Host Filter  */
- #define RNP_MAC_FCTRL		_ETH_(0x9110)
- #define RNP_MAC_FCTRL_MPE	RTE_BIT32(8)  /* Multicast Promiscuous En */
+@@ -16,6 +16,19 @@
+ #define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
+ #define RNP_RX_ETH_F_OFF	(0x7ff)
+ #define RNP_RX_ETH_F_ON		(0x270)
++/* rx checksum ctrl */
++#define RNP_HW_SCTP_CKSUM_CTRL		_ETH_(0x8038)
++#define RNP_HW_CHECK_ERR_CTRL		_ETH_(0x8060)
++#define RNP_HW_ERR_HDR_LEN		RTE_BIT32(0)
++#define RNP_HW_ERR_PKTLEN		RTE_BIT32(1)
++#define RNP_HW_L3_CKSUM_ERR		RTE_BIT32(2)
++#define RNP_HW_L4_CKSUM_ERR		RTE_BIT32(3)
++#define RNP_HW_SCTP_CKSUM_ERR		RTE_BIT32(4)
++#define RNP_HW_INNER_L3_CKSUM_ERR	RTE_BIT32(5)
++#define RNP_HW_INNER_L4_CKSUM_ERR	RTE_BIT32(6)
++#define RNP_HW_CKSUM_ERR_MASK		RTE_GENMASK32(6, 2)
++#define RNP_HW_CHECK_ERR_MASK		RTE_GENMASK32(6, 0)
++#define RNP_HW_ERR_RX_ALL_MASK		RTE_GENMASK32(1, 0)
+ /* max/min pkts length receive limit ctrl */
+ #define RNP_MIN_FRAME_CTRL	_ETH_(0x80f0)
+ #define RNP_MAX_FRAME_CTRL	_ETH_(0x80f4)
 diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index 7ed20521c5..bd2eb8caff 100644
+index af930800c6..9cfc17b93c 100644
 --- a/drivers/net/rnp/rnp.h
 +++ b/drivers/net/rnp/rnp.h
-@@ -10,7 +10,7 @@
- #include "base/rnp_hw.h"
- 
- #define PCI_VENDOR_ID_MUCSE	(0x8848)
--#define RNP_DEV_ID_N10G		(0x1000)
-+#define RNP_DEV_ID_N10G		(0x1020)
- #define RNP_MAX_VF_NUM		(64)
- #define RNP_MISC_VEC_ID		RTE_INTR_VEC_ZERO_OFFSET
- /* maximum frame size supported */
-@@ -105,6 +105,11 @@ struct rnp_proc_priv {
- 	const struct rnp_mbx_ops *mbx_ops;
- };
- 
-+struct rnp_hw_eth_stats {
-+	uint64_t rx_trans_drop;         /* rx eth to dma fifo full drop */
-+	uint64_t rx_trunc_drop;         /* rx mac to eth to host copy fifo full drop */
-+};
-+
- struct rnp_eth_port {
- 	struct rnp_proc_priv *proc_priv;
- 	struct rte_ether_addr mac_addr;
-@@ -113,6 +118,9 @@ struct rnp_eth_port {
- 	struct rnp_tx_queue *tx_queues[RNP_MAX_RX_QUEUE_NUM];
- 	struct rnp_hw *hw;
- 
-+	struct rnp_hw_eth_stats eth_stats_old;
-+	struct rnp_hw_eth_stats eth_stats;
-+
- 	struct rte_eth_rss_conf rss_conf;
- 	uint16_t last_rx_num;
- 	bool rxq_num_changed;
+@@ -42,6 +42,13 @@
+ 		RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
+ 		RTE_ETH_RSS_IPV6_UDP_EX | \
+ 		RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++/* rx checksum offload */
++#define RNP_RX_CHECKSUM_SUPPORT ( \
++		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM)
+ /* Ring info special */
+ #define RNP_MAX_BD_COUNT	(4096)
+ #define RNP_MIN_BD_COUNT	(128)
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 45d36d8020..694a40a026 100644
+index d70029dc28..ef9fcc07da 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -782,6 +782,150 @@ rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+@@ -406,6 +406,67 @@ static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
++static void rnp_set_rx_cksum_offload(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw *hw = port->hw;
++	uint32_t cksum_ctrl;
++	uint64_t offloads;
++
++	offloads = dev->data->dev_conf.rxmode.offloads;
++	cksum_ctrl = RNP_HW_CHECK_ERR_MASK;
++	/* enable rx checksum feature */
++	if (!rnp_pf_is_multiple_ports(hw->device_id)) {
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* Tunnel Option Cksum L4_Option */
++			cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_INNER_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l4_option */
++			cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L4_CKSUM_ERR;
++		}
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* tunnel option cksum l3_option */
++			cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_INNER_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l3_option */
++			cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L3_CKSUM_ERR;
++		}
++		/* sctp option */
++		if (offloads & RTE_ETH_RX_OFFLOAD_SCTP_CKSUM) {
++			cksum_ctrl &= ~RNP_HW_SCTP_CKSUM_ERR;
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++		} else {
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, false);
++		}
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, cksum_ctrl);
++	} else {
++		/* Enabled all support checksum features
++		 * use software mode support per port rx checksum
++		 * feature enabled/disabled for multiple port mode
++		 */
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, RNP_HW_ERR_RX_ALL_MASK);
++		RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++	}
++}
++
+ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ {
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
+@@ -415,6 +476,7 @@ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ 	else
+ 		port->rxq_num_changed = false;
+ 	port->last_rx_num = eth_dev->data->nb_rx_queues;
++	rnp_set_rx_cksum_offload(eth_dev);
+ 
+ 	return 0;
+ }
+@@ -587,6 +649,8 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
+ 	dev_info->reta_size = RNP_RSS_INDIR_SIZE;
+ 	/* speed cap info */
+ 	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
++	/* rx support offload cap */
++	dev_info->rx_offload_capa = RNP_RX_CHECKSUM_SUPPORT;
+ 	/* default ring configure */
+ 	dev_info->default_rxportconf.burst_size = 32;
+ 	dev_info->default_txportconf.burst_size = 32;
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index bd9fc7f8c4..e0b2cc7a26 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -644,8 +644,102 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
  	return 0;
  }
  
-+struct rte_rnp_xstats_name_off {
-+	char name[RTE_ETH_XSTATS_NAME_SIZE];
-+	uint32_t offset;
-+	uint32_t reg_base;
-+	bool hi_addr_en;
++struct rnp_rx_cksum_parse {
++	uint64_t offloads;
++	uint64_t packet_type;
++	uint16_t hw_offload;
++	uint64_t good;
++	uint64_t bad;
 +};
 +
-+static const struct rte_rnp_xstats_name_off rte_rnp_rx_eth_stats_str[] = {
-+	{"eth rx full drop", offsetof(struct rnp_hw_eth_stats,
-+			rx_trans_drop), RNP_ETH_RXTRANS_DROP, false},
-+	{"eth_rx_fifo_drop", offsetof(struct rnp_hw_eth_stats,
-+			rx_trunc_drop), RNP_ETH_RXTRUNC_DROP, false},
++#define RNP_RX_OFFLOAD_L4_CKSUM (RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_SCTP_CKSUM)
++static const struct rnp_rx_cksum_parse rnp_rx_cksum_tunnel[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4 | RTE_PTYPE_TUNNEL_MASK, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD
++	},
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_IN_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM, RTE_PTYPE_L4_MASK,
++	  RNP_RX_IN_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
++	}
 +};
-+#define RNP_NB_RX_HW_ETH_STATS (RTE_DIM(rte_rnp_rx_eth_stats_str))
-+#define RNP_GET_E_HW_COUNT(stats, offset)            \
-+	((uint64_t *)(((char *)stats) + (offset)))
-+#define RNP_ADD_INCL_COUNT(stats, offset, val)       \
-+	((*(RNP_GET_E_HW_COUNT(stats, (offset)))) += val)
 +
-+static inline void
-+rnp_update_eth_stats_32bit(struct rnp_hw_eth_stats *new,
-+			   struct rnp_hw_eth_stats *old,
-+			   uint32_t offset, uint32_t val)
-+{
-+	uint64_t *last_count = NULL;
-+
-+	last_count = RNP_GET_E_HW_COUNT(old, offset);
-+	if (val >= *last_count)
-+		RNP_ADD_INCL_COUNT(new, offset, val - (*last_count));
-+	else
-+		RNP_ADD_INCL_COUNT(new, offset, val + UINT32_MAX);
-+	*last_count = val;
-+}
-+
-+static void rnp_get_eth_count(struct rnp_hw *hw,
-+			      uint16_t lane,
-+			      struct rnp_hw_eth_stats *new,
-+			      struct rnp_hw_eth_stats *old,
-+			      const struct rte_rnp_xstats_name_off *ptr)
-+{
-+	uint64_t val = 0;
-+
-+	if (ptr->reg_base) {
-+		val = RNP_E_REG_RD(hw, ptr->reg_base + 0x40 * lane);
-+		rnp_update_eth_stats_32bit(new, old, ptr->offset, val);
++static const struct rnp_rx_cksum_parse rnp_rx_cksum[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM,
++	  RTE_PTYPE_L4_MASK, RNP_RX_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
 +	}
-+}
++};
 +
-+static void rnp_get_hw_stats(struct rte_eth_dev *dev)
++static void
++rnp_rx_parse_tunnel_cksum(struct rnp_rx_queue *rxq,
++			  struct rte_mbuf *m, uint16_t cksum_cmd)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw_eth_stats *old = &port->eth_stats_old;
-+	struct rnp_hw_eth_stats *new = &port->eth_stats;
-+	const struct rte_rnp_xstats_name_off *ptr;
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint16_t i;
++	uint16_t idx = 0;
 +
-+	for (i = 0; i < RNP_NB_RX_HW_ETH_STATS; i++) {
-+		ptr = &rte_rnp_rx_eth_stats_str[i];
-+		rnp_get_eth_count(hw, lane, new, old, ptr);
-+	}
-+}
-+
-+static int
-+rnp_dev_stats_get(struct rte_eth_dev *dev,
-+		  struct rte_eth_stats *stats)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw_eth_stats *eth_stats = &port->eth_stats;
-+	struct rte_eth_dev_data *data = dev->data;
-+	int i = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	rnp_get_hw_stats(dev);
-+	for (i = 0; i < data->nb_rx_queues; i++) {
-+		if (!data->rx_queues[i])
-+			continue;
-+		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
-+			stats->q_ipackets[i] = ((struct rnp_rx_queue **)
-+					(data->rx_queues))[i]->stats.ipackets;
-+			stats->q_ibytes[i] = ((struct rnp_rx_queue **)
-+					(data->rx_queues))[i]->stats.ibytes;
-+			stats->ipackets += stats->q_ipackets[i];
-+			stats->ibytes += stats->q_ibytes[i];
-+		} else {
-+			stats->ipackets += ((struct rnp_rx_queue **)
-+					(data->rx_queues))[i]->stats.ipackets;
-+			stats->ibytes += ((struct rnp_rx_queue **)
-+					(data->rx_queues))[i]->stats.ibytes;
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum_tunnel); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum_tunnel[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum_tunnel[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum_tunnel[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].good;
 +		}
 +	}
++}
 +
-+	for (i = 0; i < data->nb_tx_queues; i++) {
-+		if (!data->tx_queues[i])
-+			continue;
-+		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
-+			stats->q_opackets[i] = ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.opackets;
-+			stats->q_obytes[i] = ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.obytes;
-+			stats->opackets += stats->q_opackets[i];
-+			stats->obytes += stats->q_obytes[i];
-+		} else {
-+			stats->opackets += ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.opackets;
-+			stats->obytes += ((struct rnp_tx_queue **)
-+					(data->tx_queues))[i]->stats.obytes;
++static void
++rnp_rx_parse_cksum(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m, uint16_t cksum_cmd)
++{
++	uint16_t idx = 0;
++
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum[idx].good;
 +		}
 +	}
-+	stats->imissed = eth_stats->rx_trans_drop + eth_stats->rx_trunc_drop;
-+
-+	return 0;
 +}
 +
-+static int
-+rnp_dev_stats_reset(struct rte_eth_dev *dev)
++static __rte_always_inline void
++rnp_dev_rx_offload(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m,
++		   volatile struct rnp_rx_desc rxbd)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw_eth_stats *eth_stats = &port->eth_stats;
-+	struct rnp_rx_queue *rxq;
-+	struct rnp_tx_queue *txq;
-+	uint16_t idx;
++	uint32_t rss = rte_le_to_cpu_32(rxbd.wb.qword0.rss_hash);
++	uint16_t cmd = rxbd.wb.qword1.cmd;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	memset(eth_stats, 0, sizeof(*eth_stats));
-+	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
-+		rxq = ((struct rnp_rx_queue **)
-+				(dev->data->rx_queues))[idx];
-+		if (!rxq)
-+			continue;
-+		memset(&rxq->stats, 0, sizeof(struct rnp_queue_stats));
++	if (rxq->rx_offloads & RNP_RX_CHECKSUM_SUPPORT) {
++		if (m->packet_type & RTE_PTYPE_TUNNEL_MASK) {
++			rnp_rx_parse_tunnel_cksum(rxq, m, cmd);
++		} else {
++			if (m->packet_type & RTE_PTYPE_L3_MASK ||
++			    m->packet_type & RTE_PTYPE_L4_MASK)
++				rnp_rx_parse_cksum(rxq, m, cmd);
++		}
 +	}
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = ((struct rnp_tx_queue **)
-+				(dev->data->tx_queues))[idx];
-+		if (!txq)
-+			continue;
-+		memset(&txq->stats, 0, sizeof(struct rnp_queue_stats));
++	if (rxq->rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH && rss) {
++		m->hash.rss = rss;
++		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
 +	}
-+
-+	return 0;
 +}
 +
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -805,6 +949,9 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.reta_query                   = rnp_dev_rss_reta_query,
- 	.rss_hash_update              = rnp_dev_rss_hash_update,
- 	.rss_hash_conf_get            = rnp_dev_rss_hash_conf_get,
-+	/* stats */
-+	.stats_get                    = rnp_dev_stats_get,
-+	.stats_reset                  = rnp_dev_stats_reset,
- 	/* link impl */
- 	.link_update                  = rnp_dev_link_update,
- 	.dev_set_link_up              = rnp_dev_set_link_up,
-diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index 96529884e1..bce16334ac 100644
---- a/drivers/net/rnp/rnp_rxtx.c
-+++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -741,6 +741,8 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 			nmb->packet_type = 0;
- 			nmb->ol_flags = 0;
- 			nmb->nb_segs = 1;
-+
-+			rxq->stats.ibytes += nmb->data_len;
- 		}
- 		for (j = 0; j < nb_dd; ++j) {
- 			rx_pkts[i + j] = rx_swbd[j].mbuf;
-@@ -752,6 +754,7 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 		if (nb_dd != RNP_CACHE_FETCH_RX)
- 			break;
+ static __rte_always_inline void
+-rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
++rnp_dev_rx_parse(struct rnp_rx_queue *rxq,
+ 		 struct rte_mbuf *m,
+ 		 volatile struct rnp_rx_desc rxbd)
+ {
+@@ -685,6 +779,7 @@ rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
  	}
-+	rxq->stats.ipackets += nb_rx;
- 	rxq->rx_tail = (rxq->rx_tail + nb_rx) & rxq->attr.nb_desc_mask;
- 	rxq->rxrearm_nb = rxq->rxrearm_nb + nb_rx;
+ 	if (!(m->packet_type & RTE_PTYPE_L2_MASK))
+ 		m->packet_type |= RTE_PTYPE_L2_ETHER;
++	rnp_dev_rx_offload(rxq, m, rxbd);
+ }
  
-@@ -821,6 +824,7 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		txbd->d.blen = tx_swbd->mbuf->data_len;
- 		txbd->d.cmd = RNP_CMD_EOP;
- 
-+		txq->stats.obytes += txbd->d.blen;
- 		i = (i + 1) & txq->attr.nb_desc_mask;
- 	}
- 	txq->nb_tx_free -= start;
-@@ -832,6 +836,7 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		if (txq->tx_next_rs > txq->attr.nb_desc)
- 			txq->tx_next_rs = txq->tx_rs_thresh - 1;
- 	}
-+	txq->stats.opackets += start;
- 	txq->tx_tail = i;
- 
- 	rte_wmb();
-@@ -936,6 +941,7 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		}
- 		rxm->next = NULL;
- 		first_seg->port = rxq->attr.port_id;
-+		rxq->stats.ibytes += first_seg->pkt_len;
- 		/* this the end of packet the large pkt has been recv finish */
- 		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
- 					first_seg->data_off));
-@@ -944,6 +950,7 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	}
- 	if (!nb_rx)
- 		return 0;
-+	rxq->stats.ipackets += nb_rx;
- 	/* update sw record point */
- 	rxq->rx_tail = rx_id;
- 	rxq->pkt_first_seg = first_seg;
-@@ -1033,6 +1040,7 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			tx_id = txe->next_id;
- 			txe = txn;
- 		} while (m_seg != NULL);
-+		txq->stats.obytes += tx_pkt->pkt_len;
- 		txbd->d.cmd |= RNP_CMD_EOP;
- 		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
- 		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
-@@ -1044,6 +1052,7 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	}
- 	if (!send_pkts)
- 		return 0;
-+	txq->stats.opackets += send_pkts;
- 	txq->tx_tail = tx_id;
- 
- 	rte_wmb();
-diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index f63128555b..d26497a263 100644
---- a/drivers/net/rnp/rnp_rxtx.h
-+++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -47,6 +47,14 @@ struct rnp_rxsw_entry {
- 	struct rte_mbuf *mbuf;
- };
- 
-+struct rnp_queue_stats {
-+	uint64_t obytes;
-+	uint64_t opackets;
-+
-+	uint64_t ibytes;
-+	uint64_t ipackets;
-+};
-+
- struct rnp_rx_queue {
- 	struct rte_mempool *mb_pool; /* mbuf pool to populate rx ring. */
- 	const struct rte_memzone *rz; /* rx hw ring base alloc memzone */
-@@ -73,6 +81,7 @@ struct rnp_rx_queue {
- 	uint8_t pthresh; /* rx desc prefetch threshold */
- 	uint8_t pburst; /* rx desc prefetch burst */
- 
-+	struct rnp_queue_stats stats;
- 	uint64_t rx_offloads; /* user set hw offload features */
- 	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
- 	struct rte_mbuf fake_mbuf; /* dummy mbuf */
-@@ -113,6 +122,7 @@ struct rnp_tx_queue {
- 	uint8_t pthresh; /* rx desc prefetch threshold */
- 	uint8_t pburst; /* rx desc burst*/
- 
-+	struct rnp_queue_stats stats;
- 	uint64_t tx_offloads; /* tx offload features */
- 	struct rte_mbuf **free_mbufs; /* tx bulk free reserve of free mbufs */
- };
+ #define RNP_CACHE_FETCH_RX (4)
 -- 
 2.34.1
 
