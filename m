@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B76A7C021A1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49EDC0219B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:24:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB9F3402DA;
-	Tue, 11 Feb 2025 17:16:06 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id D5900402C9
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:16:04 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-21f2339dcfdso91370685ad.1
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:16:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 17F6B402DA;
+	Tue, 11 Feb 2025 17:24:38 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 4185B402C9
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:37 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-21f49837d36so67038865ad.3
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739290564;
- x=1739895364; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291076;
+ x=1739895876; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hzrM6dmae9iMIsCxZ7yubTou4wouL/BtT+YuzY+X0l8=;
- b=qXaxbVweS7cRfUdDc8lV86H/I/4gsvpeGULXKOArMNVHy6PUwbwVoyMi9OVKat+PW3
- gywAhALLo3Thj12o3yK7ucHPeTNvhfd8lIwhSSkEr8xR4DaOPo3wvTswSB3V+2cGJtsA
- AcyffiqlF+cBPBHyWePEEi89nCO8nZi2uCvgztdToCyz16NpbZ9b+LxLNuE2d8d0lnmD
- yB862GY8LrGsOYsk8go9W1ZtwKkxd+ydtAls6PwApumiw3JtiRp12QTTLXl+SC0vSsbF
- gANJDw8vfL1LnGIUgSXdQDmqWeXD0OHn1lKBI+a4xjfpxxzkGLKxMsSInz8JiLIF/SC/
- 089A==
+ bh=DSxRubKSgLZWVrsWNeUhL1kPYo18oemXwmvh6NdAlTw=;
+ b=r83JHFfWOwQIa+K4FngFkGDYfCH0berUYA3SC+o6koaugMRqO+NyqMHtKeOoluwJQc
+ 19pwvClNm/Ads9hMFcxHmez5cbg/9QT33O5mhpW8PpXlxfDXrzOEMigvP0/RAj4B0KnX
+ BJlA22txwk+zLVqRKoXaYggEkdDxaKbkSM1TwFq06x8v1uGU44VCneOBY0MjlJMQOm3a
+ XB8FK2MNtcHaWsi/7VI9fTZJO3yN3q0vyZ2N0BQ32uAC98SCpzGXsaDsVaemnhJtjY50
+ 97ApNELoIBnCOPBkJbG/HU04LA4CQVvaND52ctGNpM9qcPuxOJAmE9BftJ/bjDeQpiGt
+ VGMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739290564; x=1739895364;
+ d=1e100.net; s=20230601; t=1739291076; x=1739895876;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=hzrM6dmae9iMIsCxZ7yubTou4wouL/BtT+YuzY+X0l8=;
- b=OqZJKHV0vbaeskV1KdzMSdMzO1OLbjl7KpvmIeBk5K/oMiVqDfjccXefRtVyxs0rJl
- rw15LEWMF6GwGZ5aziWkP98arxxhsfk1KrsvJE92RCIK5bn/fGqi4iFv5eWGmPLQjyvq
- uK+u55ohp5rkUECdnezt5pUzvBHaKn6ME6HVfk1D87j4lWBTyj0AmYTN5eYD6FLWrmWG
- djNmyT59vyWkJq3UHOfCP+Xm8I26+bx4OTLk2BBm515QF2rWKCkykWmUUfIoNYL3itzX
- ZJcXuWBVpwtRd4Rp1VbF/qktrpy32x9surGP0MEbZHWp4HazJnxQbWX3HyQNaCJXCKk6
- oOcw==
+ bh=DSxRubKSgLZWVrsWNeUhL1kPYo18oemXwmvh6NdAlTw=;
+ b=iEUTXO9wGV9UZKZoBvNMT6PLL5SvHFeXqqZvII55Pda3fwTJCT1nDFI/scp7aCLjl2
+ UltwcoPTD7aABNDiJKp/LOpN1sEFTa7xVb/gOv8njF3NYW4+98XSIp79QSsy6JXMBy4R
+ Nao8owBdJ5W4/Df2nE8V6iCXjkbHAHAMD43v7p82b3SQEfsoJVUqdbuiSLAnpc0sKgyy
+ nAbHWyMNiCPzr/hIO81b5cmzid7vcmAX5OQRjr5xOCBunjfeQDyyADRFYO00amqXkbq0
+ qS9TA6TMHIAOIz4rgOBydHNZ1gJy5d5mWsbBlyTK5+039e0rHWFd24eKcLH1q+3bquA9
+ X7qg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUyp3aZll+Z5dOXV8X03lyhAS0nZKHE1leWlutjhhKP7li+17EshknHssueykJl8kAHML4=@dpdk.org
-X-Gm-Message-State: AOJu0YzlPsCzcu78sYYSDRe6sgqZCEqgPxIzPVxDFHFM89+FR3ViX5ce
- KyIQVHSQ0GMgfAzFpV7IbKt7nXbBdExtaMl4w0R0qXIqFiuHyu1IXcbw4laluo0=
-X-Gm-Gg: ASbGncvtQtGj5TyuETTJDTegtQrCssoqZ1bbgWZPsByheC3MHHY/gS8f4vwPGm4qDWb
- bwpUFZz8ake26s9vWk7BMMyXNBrcbvIm/M0gBixgc1xDm3Ka8ytdUuZZz9PRzE/udJPw+DCPVhp
- uSpHL7AMrzWw9YcqlecBSO8sa5MG+u0A98s4fbSkdoYvlNwr99SsZeVFL8xRK8m3tKkkhujNu8v
- aOgvhr8lad2mtTUKnQddL0NDSntPFbpTKqu6NlIc4PPpjXuDRKwQzL63p5N1JQrsEYDZY66Jww6
- YwzSkYZJ8YVFRe494fLhQxdT2gQI5cwInnE+SCs4mcdb6cemOr2v1xAQY3UQXhrmqywb
-X-Google-Smtp-Source: AGHT+IHhfsH3l2vBYpG9S2VRG12xcx5V+pr0qDjsjEk3hX9Hww/QOM8hNhMWTD3YhUhmVrYb5l10hg==
-X-Received: by 2002:a17:902:e54c:b0:216:59f1:c7d9 with SMTP id
- d9443c01a7336-21fb6f2394dmr75858305ad.19.1739290563962; 
- Tue, 11 Feb 2025 08:16:03 -0800 (PST)
+ AJvYcCUl95dl7ymufgxVhpkNfsd2CT83F+tToWKGlXsYLJWVfG8S/G92QxG5aXpVzCkVCVmkX2s=@dpdk.org
+X-Gm-Message-State: AOJu0YxehCxtfn3oR2Nvwh1mjzzSHc5kbjoZlCxUb8auQI59RbhrmK4T
+ Mv+GDdmfRBsa2IqAA1N0pia3ov3Js7+cKGc4Z0qemCHIW7CqUYirjlBw6FztIMM=
+X-Gm-Gg: ASbGncvZEggfC34TgosnmGnuz+6/+/vx/MaaopdQqCR35vLdndvTHR7aTiZrO5ENxnW
+ Lo/c2BKqvy50dX717zQigSYRSXxjmUOTioqGbVc6oMuL1Iihv0Qk90oOS6iRtDb+C5JBh2RalBT
+ 2QWANiV9ou3zyrLBLXwECrv6+fiWPrun7IMAvEFuwJtkM2vfUGRZJ6WA85UGhlNXyQxexMzoSpX
+ IR0UjVClCaNNkDdfOcPS0eIlm93OuaR+oOweVKqtqAP42V5PvOWD6qkCBwKrFSSxUDDZ4q4obXo
+ eCjQRF19KdDMDasIfEzJBrgBzUbQRP8hg3E1fW449Uze8uItiLveGSweCnVOf7DVcU/g
+X-Google-Smtp-Source: AGHT+IGJ+kg+3ua+exey0D/jQckVjyuU3++3Z2xLYTs5q8yV71LusNM6iltQJrL2i1O3rmF7/bUcJg==
+X-Received: by 2002:a17:902:ea01:b0:216:5448:22a4 with SMTP id
+ d9443c01a7336-21f4e6a037dmr273303615ad.10.1739291076289; 
+ Tue, 11 Feb 2025 08:24:36 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-21f60238538sm72321945ad.120.2025.02.11.08.16.03
+ 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:16:03 -0800 (PST)
-Date: Tue, 11 Feb 2025 08:16:00 -0800
+ Tue, 11 Feb 2025 08:24:35 -0800 (PST)
+Date: Tue, 11 Feb 2025 07:24:06 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "11" <caowenbo@mucse.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-Subject: Re: [PATCH v9 00/28] [v9]drivers/net Add Support mucse N10 Pmd Driver
-Message-ID: <20250211081600.34cff0a0@hermes.local>
-In-Reply-To: <D097802739E0FA43+000801db7c98$387d2380$a9776a80$@mucse.com>
+To: Wenbo Cao <caowenbo@mucse.com>
+Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
+ andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
+Subject: Re: [PATCH v9 04/28] net/rnp: support mailbox basic operate
+Message-ID: <20250211072406.59f15101@hermes.local>
+In-Reply-To: <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
 References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <20250211065649.1885ab26@hermes.local>
- <D097802739E0FA43+000801db7c98$387d2380$a9776a80$@mucse.com>
+ <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,18 +83,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Feb 2025 23:18:34 +0800
-"11" <caowenbo@mucse.com> wrote:
+On Tue, 11 Feb 2025 16:49:54 +0800
+Wenbo Cao <caowenbo@mucse.com> wrote:
 
-> Hi Stephen=EF=BC=8C
->=20
-> For rsic-v,windows freebsd plaform, I need to limit compile meson file wh=
-at we not support ?
->=20
-> Regards Wenbo
+> diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
+> new file mode 100644
+> index 0000000000..9ea88c3bff
+> --- /dev/null
+> +++ b/drivers/net/rnp/base/meson.build
+> @@ -0,0 +1,22 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright(C) 2023 Mucse IC Design Ltd.
+> +
+> +sources = [
+> +        'rnp_mbx.c',
+> +]
+> +
+> +error_cflags = ['-Wno-unused-value',
+> +        '-Wno-unused-but-set-variable',
+> +        '-Wno-unused-parameter',
+> +        ]
 
-You can stick to linux for first version.
-I assume issue with risc-v is byte order.
+Put the first item on new line, meson is like python and similar style applies.
+It is disappointing that base code is so messy that you have to disable warnings.
 
-All this can be blocked in meson.build and should be notede in release note=
-s.
+> +c_args = cflags
+> +foreach flag: error_cflags
+> +    if cc.has_argument(flag)
+> +        c_args += flag
+> +    endif
+> +endforeach
