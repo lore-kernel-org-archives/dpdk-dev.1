@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC014C0219B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8E9C021A1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Feb 2025 16:34:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D8E840A84;
-	Tue, 11 Feb 2025 17:24:54 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id B786C40A7F
- for <dev@dpdk.org>; Tue, 11 Feb 2025 17:24:52 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-2fa1a3c88c5so7554652a91.3
- for <dev@dpdk.org>; Tue, 11 Feb 2025 08:24:52 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D07D402DA;
+	Tue, 11 Feb 2025 17:34:29 +0100 (CET)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 3A8BA402C9
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 17:34:27 +0100 (CET)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-2fa3fe04dd2so5374096a91.0
+ for <dev@dpdk.org>; Tue, 11 Feb 2025 08:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291092;
- x=1739895892; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739291666;
+ x=1739896466; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=AAAzoiVwGRMRqOff+yLRvRQEn8GnS33u5+dBkYenTO0=;
- b=vcD+eGWV9cFL9lp11F7dWIg7FKIaV8jUyOFFWIrSF+xX78zaxeIZvIK5GLY5dI0pDg
- cXOfXPejyl3ZTaXPEt6k8LbHtR+jIq4cdp/3BAQar1aUREEEpnhaZ4dxXRbmWZIOqdJK
- rPhJYkZext47Bgq9E9Y+9dKBWhJEOsHyAbd3BxwXV4Eu9i0MPBn09mwLT+pz0QjftR+r
- nJ8tW6piHSwe8rtZaR77acss3Pu6h8XXuTTgyNdqigCnP67rkw/jumRx0SMV2iTQK5lX
- XaEsU3lu/3SBlQ7UKky5WgaSXPsIrWM+7BXR+IQ9K+bkaOkyocvgeqfUZWBpjimiM0PE
- +dTw==
+ bh=8qaBlQx/pNSkK772VzKWaacJ5xouh8oZ5qUAnP92Ssc=;
+ b=CdDmDQ0HLtqgvP3Dl0TRUjNAlQqH0QSK4kb85ybh7lwWXgihbLM+Wt99Hv3n+BJ664
+ dQEa9Yla81bfVePWpyVISyqLI0YcbiOXdZ4VUlWUrtBf03BTxv1XJ6UrBG98kfkUXUCv
+ vZ/XcVKul+t4yWPDdbRlQMtYxbyATaSwed5HGByC/eFcbwwhgcA0/WX8Ta+o9JKQVykJ
+ czVkfX5OZQbpZDTJFaMWv9+FMbvsY00QX3oCIiREgVNJfumz6yoL7cw9zGLB2o/Er2pw
+ zm/CUgpzh8mPnCmH32CkHYUkJ7OvGJTONIxzGXcWO5P/zCSgP9Vbt5Q3B4e3oDXBel9+
+ 3X+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739291092; x=1739895892;
+ d=1e100.net; s=20230601; t=1739291666; x=1739896466;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=AAAzoiVwGRMRqOff+yLRvRQEn8GnS33u5+dBkYenTO0=;
- b=ZIRMI/lu9HHCb+nSeNbpMIqLD4wGjLqDKVKlZA6AKKnbW1KmtaRSKZ9iMdR6q96Fij
- M7ZJdJYtzVVSdl0kaUKpRafsQ3HstNunjUIIr5VyqSD3tZY2YSRxTShhnzmMszGLGKLr
- cmo83e8FUlzbdOBmpONGpA7kzdv+KOOUF/YknhESVJDA/fPObGyqzsYCVQMgu5rDMn0i
- bdlHPQetYQK0YI4daYhcf3NyNvlsg+XdyGfUvkLE8cjNPENF7vsCo8vbahiNMBQKL70o
- D2lXHtONmjmu7vHc5ec4piflKXdGZ2OZSj4zAfEf6xQKMkji/h+1htENb4Rns1wlCCdB
- yFcw==
+ bh=8qaBlQx/pNSkK772VzKWaacJ5xouh8oZ5qUAnP92Ssc=;
+ b=D63KejUIHyaLjJEvQAPbypP5VRaGMdBJqT/yYShK0PdVa3nMZ/O9eNCBx9tP/WfV3o
+ lAi16UMFxNHEKuHChHSR0sHye42i72aQtBoebxPEPQweGNBw+A28uh2Hp8QEZ0q9qCv0
+ ucHwX7c5nlAiydUqggQevwXqHdfW9wFc82+U6NYJXPtZsVVqYMS1/F0TFE15xZKDe6pv
+ Q5vb/BnBxcOFoK/PJRmWKDW6BHmLo+aD87EcDoGqbp5OZQJ7DAIdYBECc8x5AO81V0sU
+ QC1s7OucUT1bhmHHOFQfKqElyaDZ/1Wr9D6s1YhnqObHkv9aM0M0+7KOaJpvnGL3Ywhd
+ HvmQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUpuXjlz7h7oVYVz7RXyYQtzHGfUyRCwRR5WfAl92g8yo3qVA3A3P4BRHJZg9kZEymAFvE=@dpdk.org
-X-Gm-Message-State: AOJu0Yz5rt7tK+iCNhlRqju50LwL027rg7swWKdGhEzbYBJ9fIxJYpLM
- lazx2c6OcPkWaITvoygbFtjDNYbWV3I7BWrQWDrl8sguiDbhGwrjoseyvxvUGUQ=
-X-Gm-Gg: ASbGnctO+8ugQIljvRZ0yWshCDuC5j1UxsijorlB9C+zejkmQqPuQ/mCNiapJTYO8NM
- TwigpNvlhcg+b0GHZnfK+UrN3kO9v45sabLKlONse+3OIflmryJgZKJcl6WovQS7v4Wphk010G0
- ReIT9EwGQqG2lTJ7gxDTPsm6sd3NaukqzHBxoSkzUbiZ0Z1qvvYjVBy3fuAz/t/iQsAlCE7YYD4
- 7+8xxhbvwR+kUvkRO3W/efXTHHait+1pCRMA05iFY1HWmobH+P2PTeSEU79aDs0wB90eOgieoMK
- PAE+oaW8ryRcCtVtE+JY0aBQ/3Vu71urBRZfGJmUV4X8fZe6TyGTvNgKZartt0eCwHp3
-X-Google-Smtp-Source: AGHT+IEALO+f7BZUId9obF0UiHezU+bko+wutjYzADfCwxaD0/1w/bGErmsgovTkpCYx0TCdqT+0IQ==
-X-Received: by 2002:a17:90b:4f45:b0:2ea:7fd8:9dc1 with SMTP id
- 98e67ed59e1d1-2fa9eda445fmr6987363a91.18.1739291091946; 
- Tue, 11 Feb 2025 08:24:51 -0800 (PST)
+ AJvYcCU9csLQHWzLKxQRdDripA7BZRHOnexMjfibhC74AvPqdjGJ0zmjkP/dLzwOVhCdw7WNXck=@dpdk.org
+X-Gm-Message-State: AOJu0Yzi26km0DSpiPf19VX5sqAbU+Z7nanMXNDNv2D63N2h/Ku7PEZT
+ CqiBIyb3vhiJfs201Fcm3RHv4aCbo8d5u/PBKc808ePWbB8xudklHh7j8EBinqU=
+X-Gm-Gg: ASbGncu/v+14pJRCsM+3E4J2kI2KSoWrH7oXnX3VULxW5oZO5my7jW76obj/5PLuHaG
+ IwO6A1WAKB36lpTVzV1cQihBu9UfJ8IY0SxWoucSDgjo8PVZsMg8r6LbAPMblX+Dz8eX+uQh+Qc
+ 4isa7KLpaBYHSePH1vjaRtrdaWOGPCKM8o/lPLjRAPXQ5RRjctgwKDXDe70c4nbIanvMTz8S5Va
+ pjp5eQM7b6p9hPtO7gztK1ITsb+YFUmGR0GhgS+DqPJnH8zcmqhmXAaSfSUlZfnpXQf6LikNCQJ
+ 1jfE+SyovKHfiq3wR3sMnlEXcBAXX7OVLXH5ZsLpNi3hOoZayuD9LhMQCMiOioECMAyM
+X-Google-Smtp-Source: AGHT+IGoO/CZQ3JokNYsXOcpIDBgUpR123tMi9gV1RYGi7LqwgvoMUn+TZvWHlptrzL70roNRmgl6g==
+X-Received: by 2002:a17:90b:368c:b0:2ee:741c:e9f4 with SMTP id
+ 98e67ed59e1d1-2fa2406434fmr26983459a91.11.1739291666026; 
+ Tue, 11 Feb 2025 08:34:26 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fa2d831a1csm8617326a91.44.2025.02.11.08.24.51
+ 98e67ed59e1d1-2fa135a3762sm10505448a91.19.2025.02.11.08.34.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Feb 2025 08:24:51 -0800 (PST)
-Date: Tue, 11 Feb 2025 08:24:22 -0800
+ Tue, 11 Feb 2025 08:34:25 -0800 (PST)
+Date: Tue, 11 Feb 2025 08:34:23 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wenbo Cao <caowenbo@mucse.com>
 Cc: thomas@monjalon.net, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
 Subject: Re: [PATCH v10 00/28] [v10]drivers/net Add Support mucse N10 Pmd
  Driver
-Message-ID: <20250211082422.321cb893@hermes.local>
+Message-ID: <20250211083423.48a1d3ab@hermes.local>
 In-Reply-To: <1739286398-61972-1-git-send-email-caowenbo@mucse.com>
 References: <1739286398-61972-1-git-send-email-caowenbo@mucse.com>
 MIME-Version: 1.0
@@ -237,91 +237,95 @@ Wenbo Cao <caowenbo@mucse.com> wrote:
 >  create mode 100644 drivers/net/rnp/rnp_rss.h
 >  create mode 100644 drivers/net/rnp/rnp_rxtx.c
 >  create mode 100644 drivers/net/rnp/rnp_rxtx.h
-
-Review checklist for rnp v9 patches
-
-Mark items with:
-    =E2=9C=94 passed
-    =E2=9C=98 Failed
-
-Basic hygiene
-    =E2=9C=98 Look at CI results in patchwork; notify submitter if any fail=
-ures
-    =E2=9C=94 Merge cleanly with git am; look for missing newline at EOF etc
-    =E2=9C=98 Run checkpatches; warnings are ok, but look more carefully.
-      Lots of warnings from base code (allowed but not preferred).
-
-      The osdep code should be using rte_common.h
-	WARNING:PREFER_DEFINED_ATTRIBUTE_MACRO: Prefer __packed over __attribute__=
-((packed))
-	#999: FILE: drivers/net/rnp/base/rnp_osdep.h:49:
-	+#define _PACKED_ALIGN4 __attribute__((packed, aligned(4)))
-
-	Warning in drivers/net/rnp/base/rnp_osdep.h:
-	Using compiler attribute directly
-	Warning in drivers/net/rnp/base/rnp_hw.h:
-	Do not use variadic argument pack in macros
-
-	Warning in drivers/net/rnp/rnp_ethdev.c:
-	Using __builtin helpers, prefer EAL macros
-
-	Warning in drivers/net/rnp/rnp_ethdev.c:
-	Using rte_atomicNN_xxx
-
-	WARNING:MULTILINE_DEREFERENCE: Avoid multiple line dereference - prefer 'r=
-te_eth_devices[rxq->attr.port_id].data->rx_mbuf_alloc_failed'
-	#63: FILE: drivers/net/rnp/rnp_rxtx.c:854:
-	+			rte_eth_devices[rxq->attr.port_id].data->
-	+				rx_mbuf_alloc_failed++;
-
-	Warning in drivers/net/rnp/base/rnp_mac.c:
-	Writing to stdout or stderr
-
-    =E2=9C=94 Run check-git-log
-    =E2=9C=94 Run check-symbol-maps.sh
-    =E2=9C=94 Run check-doc-vs-code
-    =E2=9C=94 Run check-spdk-tag
-
-Builds
-    =E2=9C=94 Normal Gcc build
-    =E2=9C=94 Use latest experimental Gcc 15 to catch new warnings
-    =E2=9C=94 Clang build using current version (clang-19)
-    =E2=9C=94 Doc build
-    =E2=9C=94 Build for 32 bit x86
-    =E2=9C=94 Debug build
-    =E2=9C=94 Enable asserts
-    Test meson builds
-
-Experimental builds:
-    =E2=9C=94 Enable address sanitizer
-    =E2=9C=98 Enable extra warnings (edit meson.build) for
-        -Wvla, -Wformat-truncation, -Waddress-of-packed-member
-
-../drivers/net/rnp/base/rnp_mbx_fw.c: In function =E2=80=98rnp_fw_init=E2=
-=80=99:
-../drivers/net/rnp/base/rnp_mbx_fw.c:196:40: warning: =E2=80=98%s=E2=80=99 =
-directive output may be truncated writing up to 63 bytes into a region of s=
-ize 18 [-Wformat-truncation=3D]
-  196 |                         "fw_req_cookie_%s",
-      |                                        ^~
-../drivers/net/rnp/base/rnp_mbx_fw.c:195:9: note: =E2=80=98snprintf=E2=80=
-=99 output between 15 and 78 bytes into a destination of size 32
-  195 |         snprintf(fw_info->cookie_name, RTE_MEMZONE_NAMESIZE,
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  196 |                         "fw_req_cookie_%s",
-      |                         ~~~~~~~~~~~~~~~~~~~
-  197 |                         hw->device_name);
+>=20
 
 
-Look for anti-patterns:
-    =E2=9C=98 Driver must not disable warnings with compiler flags or pragm=
-a's
-    =E2=9C=94 Driver must not use thread and signal
-    =E2=9C=98 Apply coccinelle scripts; look that for example null free che=
-cks
-    =E2=9C=98 Review use of memcpy/rte_memcpy
-    =E2=9C=94 Review use of malloc
-    =E2=9C=94 Review use of memset
-    =E2=9C=94 Review locking
-      Unnecessary locking in base code??
+Also the script devtools/test-meson-builds.sh that runs through
+different build options, eventually fails at:
 
+
+  User defined options
+    buildtype             : debugoptimized
+    check_includes        : true
+    cpu_instruction_set   : nehalem
+    default_library       : shared
+    enable_deprecated_libs: *
+    examples              : all
+    libdir                : lib
+    werror                : true
+
+Found ninja-1.12.1 at /usr/bin/ninja
+ninja: Entering directory `./build-x86-generic'                            =
+                                                                           =
+                                             =20
+[1751/6916] Compiling C object drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_e=
+thdev.c.o
+FAILED: drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o=20
+cc -Idrivers/libtmp_rte_net_rnp.a.p -Idrivers -I../drivers -Idrivers/net/rn=
+p -I../drivers/net/rnp -Idrivers/net/rnp/base -I../drivers/net/rnp/base -Il=
+ib/ethdev -I../lib/ethdev -I. -I.. -Iconfig -I../config -Ilib/eal/include -=
+I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -Ili=
+b/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal/comm=
+on -I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs =
+-Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../=
+lib/telemetry -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool=
+ -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/meter -I../lib/meter -Idri=
+vers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I..=
+/lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -I/usr/include/x86_64-lin=
+ux-gnu -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvali=
+d-pch -Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-=
+qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -Wmissing-=
+declarations -Wmissing-prototypes -Wnested-externs -Wold-style-definition -=
+Wpointer-arith -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -=
+Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC =
+-march=3Dnehalem -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-f=
+ormat-truncation -Wno-address-of-packed-member -DRTE_LOG_DEFAULT_LOGTYPE=3D=
+pmd.net.rnp -MD -MQ drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o -=
+MF drivers/libtmp_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o.d -o drivers/libtm=
+p_rte_net_rnp.a.p/net_rnp_rnp_ethdev.c.o -c ../drivers/net/rnp/rnp_ethdev.c
+In file included from ../lib/eal/x86/include/rte_atomic.h:11,
+                 from ../lib/eal/include/generic/rte_pause.h:19,
+                 from ../lib/eal/x86/include/rte_pause.h:8,
+                 from ../lib/eal/include/generic/rte_rwlock.h:31,
+                 from ../lib/eal/x86/include/rte_rwlock.h:8,
+                 from ../lib/eal/include/rte_eal_memconfig.h:10,
+                 from ../lib/eal/include/rte_memory.h:21,
+                 from ../lib/eal/include/rte_malloc.h:16,
+                 from ../lib/ethdev/ethdev_pci.h:9,
+                 from ../drivers/net/rnp/rnp_ethdev.c:5:
+In function =E2=80=98_mm_loadu_si128=E2=80=99,
+    inlined from =E2=80=98rte_mov16=E2=80=99 at ../lib/eal/x86/include/rte_=
+memcpy.h:113:9,
+    inlined from =E2=80=98rte_mov32=E2=80=99 at ../lib/eal/x86/include/rte_=
+memcpy.h:131:2,
+    inlined from =E2=80=98rte_mov64=E2=80=99 at ../lib/eal/x86/include/rte_=
+memcpy.h:149:2,
+    inlined from =E2=80=98rte_mov128=E2=80=99 at ../lib/eal/x86/include/rte=
+_memcpy.h:161:2,
+    inlined from =E2=80=98rte_memcpy_generic=E2=80=99 at ../lib/eal/x86/inc=
+lude/rte_memcpy.h:615:4,
+    inlined from =E2=80=98rte_memcpy=E2=80=99 at ../lib/eal/x86/include/rte=
+_memcpy.h:757:10,
+    inlined from =E2=80=98rnp_mbx_fw_reply_handler=E2=80=99 at ../drivers/n=
+et/rnp/rnp_ethdev.c:75:3,
+    inlined from =E2=80=98rnp_process_fw_msg=E2=80=99 at ../drivers/net/rnp=
+/rnp_ethdev.c:113:4,
+    inlined from =E2=80=98rnp_dev_interrupt_handler=E2=80=99 at ../drivers/=
+net/rnp/rnp_ethdev.c:130:2,
+    inlined from =E2=80=98rnp_dev_interrupt_handler=E2=80=99 at ../drivers/=
+net/rnp/rnp_ethdev.c:123:13:
+/usr/lib/gcc/x86_64-linux-gnu/14/include/emmintrin.h:706:10: error: array s=
+ubscript 16 is outside array bounds of =E2=80=98uint32_t[64]=E2=80=99 {aka =
+=E2=80=98unsigned int[64]=E2=80=99} [-Werror=3Darray-bounds=3D]
+  706 |   return *__P;
+      |          ^~~~
+../drivers/net/rnp/rnp_ethdev.c: In function =E2=80=98rnp_dev_interrupt_han=
+dler=E2=80=99:
+../drivers/net/rnp/rnp_ethdev.c:103:18: note: at offset 256 into object =E2=
+=80=98msgbuf=E2=80=99 of size 256
+  103 |         uint32_t msgbuf[64];
+      |                  ^~~~~~
+cc1: all warnings being treated as errors
+[1772/6916] Compiling C object lib/librte_pipeline.a.p/pipeline_rte_table_a=
+ction.c.o
+ninja: build stopped: subcommand failed.
