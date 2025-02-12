@@ -2,29 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAFCC02198
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A82C02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:46:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00D6C427E8;
-	Wed, 12 Feb 2025 17:45:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3099C42D9D;
+	Wed, 12 Feb 2025 17:46:08 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id D240942707
- for <dev@dpdk.org>; Wed, 12 Feb 2025 17:45:29 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 375CF42707
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 17:46:06 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04DB312FC;
- Wed, 12 Feb 2025 08:45:50 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7303612FC;
+ Wed, 12 Feb 2025 08:46:26 -0800 (PST)
 Received: from localhost.localdomain (unknown [10.57.11.32])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 342F03F5A1;
- Wed, 12 Feb 2025 08:45:28 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 873313F5A1;
+ Wed, 12 Feb 2025 08:46:04 -0800 (PST)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Nicholas Pratte <npratte@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
  Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
  Paul Szczepanek <paul.szczepanek@arm.com>
 Subject: [PATCH v2 0/7] dts: revamp framework
-Date: Wed, 12 Feb 2025 16:45:17 +0000
-Message-ID: <20250212164524.23615-1-luca.vizzarro@arm.com>
+Date: Wed, 12 Feb 2025 16:45:53 +0000
+Message-ID: <20250212164600.23759-1-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250203151613.2436570-1-luca.vizzarro@arm.com>
+References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
