@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00840C021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0706C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:35:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EA1642E72;
-	Wed, 12 Feb 2025 16:33:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E12C42E75;
+	Wed, 12 Feb 2025 16:33:53 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id B637242E4B
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:43 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 767ED42E4B
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:45 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 337A4A3667; Wed, 12 Feb 2025 23:33:42 +0800 (CST)
+ id CC313A3669; Wed, 12 Feb 2025 23:33:44 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v12 21/28] net/rnp: add unicast MAC filter operation
-Date: Wed, 12 Feb 2025 23:32:41 +0800
-Message-Id: <1739374368-4949-22-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v12 23/28] net/rnp: add support Rx checksum offload
+Date: Wed, 12 Feb 2025 23:32:43 +0800
+Message-Id: <1739374368-4949-24-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
 References: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
@@ -36,327 +36,293 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add mac filter for single/multiple port.
+Add support Rx l3/l4 checum and tunnel
+inner l3/l4, out l3 chksum.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini    |  1 +
+ doc/guides/nics/features/rnp.ini    |  4 ++
  doc/guides/nics/rnp.rst             |  1 +
- drivers/net/rnp/base/rnp_eth_regs.h |  4 ++
- drivers/net/rnp/base/rnp_hw.h       |  3 +
- drivers/net/rnp/base/rnp_mac.c      | 91 +++++++++++++++++++++++++++++
- drivers/net/rnp/base/rnp_mac.h      |  2 +
- drivers/net/rnp/base/rnp_mac_regs.h |  5 +-
- drivers/net/rnp/rnp.h               |  4 ++
- drivers/net/rnp/rnp_ethdev.c        | 61 +++++++++++++++++--
- 9 files changed, 166 insertions(+), 6 deletions(-)
+ drivers/net/rnp/base/rnp_eth_regs.h | 13 ++++
+ drivers/net/rnp/rnp.h               |  7 +++
+ drivers/net/rnp/rnp_ethdev.c        | 64 +++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.c          | 97 ++++++++++++++++++++++++++++-
+ 6 files changed, 185 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 14ff88fec1..00b23b0fa2 100644
+index eb1c27a3d3..ceac0beff8 100644
 --- a/doc/guides/nics/features/rnp.ini
 +++ b/doc/guides/nics/features/rnp.ini
-@@ -14,6 +14,7 @@ Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
- MTU update           = Y
-+Unicast MAC filter   = Y
- RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
+@@ -8,6 +8,10 @@ Speed capabilities   = Y
+ Link status          = Y
+ Link status event    = Y
+ Packet type parsing  = Y
++L3 checksum offload  = P
++L4 checksum offload  = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
+ Basic stats          = Y
+ Stats per queue      = Y
+ Extended stats       = Y
 diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index b8611821ec..98d77620ac 100644
+index cd81a75f53..bea472068e 100644
 --- a/doc/guides/nics/rnp.rst
 +++ b/doc/guides/nics/rnp.rst
-@@ -17,6 +17,7 @@ Features
- - Promiscuous mode
- - Link state information
- - MTU update
-+- MAC filtering
- - Jumbo frames
+@@ -22,6 +22,7 @@ Features
  - Scatter-Gather IO support
  - Port hardware statistic
+ - Packet type parsing
++- Checksum offload
+ 
+ Prerequisites
+ -------------
 diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index ada42be8e9..8a448b9eec 100644
+index 8a448b9eec..b0961a1459 100644
 --- a/drivers/net/rnp/base/rnp_eth_regs.h
 +++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -63,5 +63,9 @@
- #define RNP_RSS_KEY_TABLE(idx)	_ETH_(0x92d0 + ((idx) * 0x4))
+@@ -16,6 +16,19 @@
+ #define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
+ #define RNP_RX_ETH_F_OFF	(0x7ff)
+ #define RNP_RX_ETH_F_ON		(0x270)
++/* rx checksum ctrl */
++#define RNP_HW_SCTP_CKSUM_CTRL		_ETH_(0x8038)
++#define RNP_HW_CHECK_ERR_CTRL		_ETH_(0x8060)
++#define RNP_HW_ERR_HDR_LEN		RTE_BIT32(0)
++#define RNP_HW_ERR_PKTLEN		RTE_BIT32(1)
++#define RNP_HW_L3_CKSUM_ERR		RTE_BIT32(2)
++#define RNP_HW_L4_CKSUM_ERR		RTE_BIT32(3)
++#define RNP_HW_SCTP_CKSUM_ERR		RTE_BIT32(4)
++#define RNP_HW_INNER_L3_CKSUM_ERR	RTE_BIT32(5)
++#define RNP_HW_INNER_L4_CKSUM_ERR	RTE_BIT32(6)
++#define RNP_HW_CKSUM_ERR_MASK		RTE_GENMASK32(6, 2)
++#define RNP_HW_CHECK_ERR_MASK		RTE_GENMASK32(6, 0)
++#define RNP_HW_ERR_RX_ALL_MASK		RTE_GENMASK32(1, 0)
+ /* max/min pkts length receive limit ctrl */
+ #define RNP_MIN_FRAME_CTRL	_ETH_(0x80f0)
+ #define RNP_MAX_FRAME_CTRL	_ETH_(0x80f4)
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+index 4a8d718815..c9af2c1b4d 100644
+--- a/drivers/net/rnp/rnp.h
++++ b/drivers/net/rnp/rnp.h
+@@ -42,6 +42,13 @@
+ 		RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
+ 		RTE_ETH_RSS_IPV6_UDP_EX | \
+ 		RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++/* rx checksum offload */
++#define RNP_RX_CHECKSUM_SUPPORT ( \
++		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM)
+ /* Ring info special */
+ #define RNP_MAX_BD_COUNT	(4096)
+ #define RNP_MIN_BD_COUNT	(128)
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index faefa665ed..9844c0e413 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -405,6 +405,67 @@ static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
+ 	return ret;
+ }
  
- #define RNP_TC_PORT_OFFSET(lane)	_ETH_(0xe840 + 0x04 * (lane))
-+/* host mac address filter */
-+#define RNP_RAL_BASE_ADDR(n)	_ETH_(0xA000 + (0x04 * (n)))
-+#define RNP_RAH_BASE_ADDR(n)	_ETH_(0xA400 + (0x04 * (n)))
-+#define RNP_MAC_FILTER_EN	RTE_BIT32(31)
++static void rnp_set_rx_cksum_offload(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw *hw = port->hw;
++	uint32_t cksum_ctrl;
++	uint64_t offloads;
++
++	offloads = dev->data->dev_conf.rxmode.offloads;
++	cksum_ctrl = RNP_HW_CHECK_ERR_MASK;
++	/* enable rx checksum feature */
++	if (!rnp_pf_is_multiple_ports(hw->device_id)) {
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* Tunnel Option Cksum L4_Option */
++			cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_INNER_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l4_option */
++			cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L4_CKSUM_ERR;
++		}
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* tunnel option cksum l3_option */
++			cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_INNER_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l3_option */
++			cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L3_CKSUM_ERR;
++		}
++		/* sctp option */
++		if (offloads & RTE_ETH_RX_OFFLOAD_SCTP_CKSUM) {
++			cksum_ctrl &= ~RNP_HW_SCTP_CKSUM_ERR;
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++		} else {
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, false);
++		}
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, cksum_ctrl);
++	} else {
++		/* Enabled all support checksum features
++		 * use software mode support per port rx checksum
++		 * feature enabled/disabled for multiple port mode
++		 */
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, RNP_HW_ERR_RX_ALL_MASK);
++		RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++	}
++}
++
+ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ {
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
+@@ -414,6 +475,7 @@ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ 	else
+ 		port->rxq_num_changed = false;
+ 	port->last_rx_num = eth_dev->data->nb_rx_queues;
++	rnp_set_rx_cksum_offload(eth_dev);
  
- #endif /* _RNP_ETH_REGS_H */
-diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-index f47371ad75..2d1d9d9e66 100644
---- a/drivers/net/rnp/base/rnp_hw.h
-+++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -71,6 +71,9 @@ struct rnp_mac_ops {
- 	int (*get_macaddr)(struct rnp_eth_port *port, u8 *mac);
- 	/* update mac packet filter mode */
- 	int (*update_mpfm)(struct rnp_eth_port *port, u32 mode, bool en);
-+	/* Receive Address Filter table */
-+	int (*set_rafb)(struct rnp_eth_port *port, u8 *mac, u32 index);
-+	int (*clear_rafb)(struct rnp_eth_port *port, u32 index);
- };
- 
- struct rnp_eth_adapter;
-diff --git a/drivers/net/rnp/base/rnp_mac.c b/drivers/net/rnp/base/rnp_mac.c
-index 2c9499f1da..01929fd574 100644
---- a/drivers/net/rnp/base/rnp_mac.c
-+++ b/drivers/net/rnp/base/rnp_mac.c
-@@ -102,14 +102,89 @@ rnp_update_mpfm_pf(struct rnp_eth_port *port, u32 mode, bool en)
+ 	return 0;
+ }
+@@ -588,6 +650,8 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
+ 	dev_info->reta_size = RNP_RSS_INDIR_SIZE;
+ 	/* speed cap info */
+ 	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
++	/* rx support offload cap */
++	dev_info->rx_offload_capa = RNP_RX_CHECKSUM_SUPPORT;
+ 	/* default ring configure */
+ 	dev_info->default_rxportconf.burst_size = 32;
+ 	dev_info->default_txportconf.burst_size = 32;
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index 598b0c2ca1..bf670f2bbc 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -639,8 +639,102 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
  	return 0;
  }
  
-+static int
-+rnp_set_mac_addr_pf(struct rnp_eth_port *port,
-+		    u8 *addr, u32 index)
-+{
-+	struct rnp_hw *hw = port->hw;
-+	u32 addr_hi = 0, addr_lo = 0;
-+	u8 *mac = NULL;
++struct rnp_rx_cksum_parse {
++	uint64_t offloads;
++	uint64_t packet_type;
++	uint16_t hw_offload;
++	uint64_t good;
++	uint64_t bad;
++};
 +
-+	mac = (u8 *)&addr_hi;
-+	mac[0] = addr[1];
-+	mac[1] = addr[0];
-+	mac = (u8 *)&addr_lo;
-+	mac[0] = addr[5];
-+	mac[1] = addr[4];
-+	mac[2] = addr[3];
-+	mac[3] = addr[2];
-+	addr_hi |= RNP_MAC_FILTER_EN;
-+	RNP_E_REG_WR(hw, RNP_RAH_BASE_ADDR(index), addr_hi);
-+	RNP_E_REG_WR(hw, RNP_RAL_BASE_ADDR(index), addr_lo);
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_set_mac_addr_indep(struct rnp_eth_port *port,
-+		       u8 *addr, u32 index)
-+{
-+	u16 lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	u32 addr_hi = 0, addr_lo = 0;
-+	u8 *mac = NULL;
-+
-+	mac = (u8 *)&addr_lo;
-+	mac[0] = addr[0];
-+	mac[1] = addr[1];
-+	mac[2] = addr[2];
-+	mac[3] = addr[3];
-+	mac = (u8 *)&addr_hi;
-+	mac[0] = addr[4];
-+	mac[1] = addr[5];
-+
-+	addr_hi |= RNP_MAC_AE;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_HI(index), addr_hi);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_LO(index), addr_lo);
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_clear_mac_pf(struct rnp_eth_port *port, u32 index)
-+{
-+	struct rnp_hw *hw = port->hw;
-+
-+	RNP_E_REG_WR(hw, RNP_RAL_BASE_ADDR(index), 0);
-+	RNP_E_REG_WR(hw, RNP_RAH_BASE_ADDR(index), 0);
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_clear_mac_indep(struct rnp_eth_port *port, u32 index)
-+{
-+	u16 lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_HI(index), 0);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_LO(index), 0);
-+
-+	return 0;
-+}
-+
- const struct rnp_mac_ops rnp_mac_ops_pf = {
- 	.get_macaddr = rnp_mbx_fw_get_macaddr,
- 	.update_mpfm = rnp_update_mpfm_pf,
-+	.set_rafb = rnp_set_mac_addr_pf,
-+	.clear_rafb = rnp_clear_mac_pf
- };
- 
- const struct rnp_mac_ops rnp_mac_ops_indep = {
- 	.get_macaddr = rnp_mbx_fw_get_macaddr,
- 	.update_mpfm = rnp_update_mpfm_indep,
-+	.set_rafb = rnp_set_mac_addr_indep,
-+	.clear_rafb = rnp_clear_mac_indep,
- };
- 
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac)
-@@ -129,6 +204,22 @@ int rnp_update_mpfm(struct rnp_eth_port *port,
- 	return rnp_call_hwif_impl(port, mac_ops->update_mpfm, mode, en);
- }
- 
-+int rnp_set_macaddr(struct rnp_eth_port *port, u8 *mac, u32 index)
-+{
-+	const struct rnp_mac_ops *mac_ops =
-+		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
-+
-+	return rnp_call_hwif_impl(port, mac_ops->set_rafb, mac, index);
-+}
-+
-+int rnp_clear_macaddr(struct rnp_eth_port *port, u32 index)
-+{
-+	const struct rnp_mac_ops *mac_ops =
-+		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
-+
-+	return rnp_call_hwif_impl(port, mac_ops->clear_rafb, index);
-+}
-+
- void rnp_mac_ops_init(struct rnp_hw *hw)
- {
- 	struct rnp_proc_priv *proc_priv = RNP_DEV_TO_PROC_PRIV(hw->back->eth_dev);
-diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
-index 1dac903396..865fc348df 100644
---- a/drivers/net/rnp/base/rnp_mac.h
-+++ b/drivers/net/rnp/base/rnp_mac.h
-@@ -24,6 +24,8 @@
- 
- void rnp_mac_ops_init(struct rnp_hw *hw);
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac);
-+int rnp_set_macaddr(struct rnp_eth_port *port, u8 *mac, u32 index);
-+int rnp_clear_macaddr(struct rnp_eth_port *port, u32 index);
- int rnp_update_mpfm(struct rnp_eth_port *port,
- 		    u32 mode, bool en);
- 
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index 94aeba9d6c..85308a749e 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -77,7 +77,10 @@
- #define RNP_MAC_PLSDIS		RTE_BIT32(18)
- /* PHY Link Status */
- #define RNP_MAC_PLS		RTE_BIT32(17)
--
-+/* Rx macaddr filter ctrl */
-+#define RNP_MAC_ADDR_HI(n)	(0x0300 + ((n) * 0x8))
-+#define RNP_MAC_AE		RTE_BIT32(31)
-+#define RNP_MAC_ADDR_LO(n)	(0x0304 + ((n) * 0x8))
- /* Mac Manage Counts */
- #define RNP_MMC_CTRL		(0x0800)
- #define RNP_MMC_RSTONRD	RTE_BIT32(2)
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index abb63a508e..4a8d718815 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -56,6 +56,10 @@
- #define RNP_MAX_HASH_MC_MAC_SIZE	(4096)	/* max multicast hash mac num */
- #define RNP_MAX_UC_HASH_TABLE		(128)	/* max unicast hash mac filter table */
- #define RNP_MAC_MC_HASH_TABLE		(128)	/* max multicast hash mac filter table*/
-+/* Peer port own independent resource */
-+#define RNP_PORT_MAX_MACADDR         (32)
-+#define RNP_PORT_MAX_UC_HASH_TB      (8)
-+#define RNP_PORT_MAX_UC_MAC_SIZE     (RNP_PORT_MAX_UC_HASH_TB * 32)
- /* hardware media type */
- enum rnp_media_type {
- 	RNP_MEDIA_TYPE_UNKNOWN,
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 50f1e1ed27..faefa665ed 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -1167,6 +1167,44 @@ rnp_dev_xstats_get_names(__rte_unused struct rte_eth_dev *dev,
- 	return xstats_cnt;
- }
- 
-+static int
-+rnp_dev_mac_addr_set(struct rte_eth_dev *dev,
-+		     struct rte_ether_addr *mac_addr)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+
-+	return rnp_set_macaddr(port, (u8 *)mac_addr, 0);
-+}
-+
-+static int
-+rnp_dev_mac_addr_add(struct rte_eth_dev *dev,
-+		     struct rte_ether_addr *mac_addr,
-+		     uint32_t index,
-+		     uint32_t vmdq __rte_unused)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+
-+	if (index >= port->attr.max_mac_addrs) {
-+		RNP_PMD_ERR("mac add index %d is of range", index);
-+		return -EINVAL;
++#define RNP_RX_OFFLOAD_L4_CKSUM (RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_SCTP_CKSUM)
++static const struct rnp_rx_cksum_parse rnp_rx_cksum_tunnel[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4 | RTE_PTYPE_TUNNEL_MASK, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD
++	},
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_IN_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM, RTE_PTYPE_L4_MASK,
++	  RNP_RX_IN_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
 +	}
++};
 +
-+	return rnp_set_macaddr(port, (u8 *)mac_addr, index);
++static const struct rnp_rx_cksum_parse rnp_rx_cksum[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM,
++	  RTE_PTYPE_L4_MASK, RNP_RX_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
++	}
++};
++
++static void
++rnp_rx_parse_tunnel_cksum(struct rnp_rx_queue *rxq,
++			  struct rte_mbuf *m, uint16_t cksum_cmd)
++{
++	uint16_t idx = 0;
++
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum_tunnel); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum_tunnel[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum_tunnel[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum_tunnel[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].good;
++		}
++	}
 +}
 +
 +static void
-+rnp_dev_mac_addr_remove(struct rte_eth_dev *dev,
-+			uint32_t index)
++rnp_rx_parse_cksum(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m, uint16_t cksum_cmd)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint16_t idx = 0;
 +
-+	if (index >= port->attr.max_mac_addrs) {
-+		RNP_PMD_ERR("mac add index %d is of range", index);
-+		return;
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum[idx].good;
++		}
 +	}
-+	rnp_clear_macaddr(port, index);
 +}
 +
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -1200,6 +1238,10 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.link_update                  = rnp_dev_link_update,
- 	.dev_set_link_up              = rnp_dev_set_link_up,
- 	.dev_set_link_down            = rnp_dev_set_link_down,
-+	/* mac address filter */
-+	.mac_addr_set                 = rnp_dev_mac_addr_set,
-+	.mac_addr_add                 = rnp_dev_mac_addr_add,
-+	.mac_addr_remove              = rnp_dev_mac_addr_remove,
- };
- 
- static void
-@@ -1222,11 +1264,19 @@ rnp_setup_port_attr(struct rnp_eth_port *port,
- 	attr->max_rx_queues = RNP_MAX_RX_QUEUE_NUM / hw->max_port_num;
- 	attr->max_tx_queues = RNP_MAX_TX_QUEUE_NUM / hw->max_port_num;
- 
--	attr->max_mac_addrs = RNP_MAX_MAC_ADDRS;
--	attr->max_uc_mac_hash = RNP_MAX_HASH_UC_MAC_SIZE;
--	attr->max_mc_mac_hash = RNP_MAX_HASH_MC_MAC_SIZE;
--	attr->uc_hash_tb_size = RNP_MAX_UC_HASH_TABLE;
--	attr->mc_hash_tb_size = RNP_MAC_MC_HASH_TABLE;
-+	if (hw->nic_mode > RNP_SINGLE_10G) {
-+		attr->max_mac_addrs = RNP_PORT_MAX_MACADDR;
-+		attr->max_uc_mac_hash = RNP_PORT_MAX_UC_MAC_SIZE;
-+		attr->max_mc_mac_hash = 0;
-+		attr->uc_hash_tb_size = RNP_PORT_MAX_UC_HASH_TB;
-+		attr->mc_hash_tb_size = 0;
-+	} else {
-+		attr->max_mac_addrs = RNP_MAX_MAC_ADDRS;
-+		attr->max_uc_mac_hash = RNP_MAX_HASH_UC_MAC_SIZE;
-+		attr->max_mc_mac_hash = RNP_MAX_HASH_MC_MAC_SIZE;
-+		attr->uc_hash_tb_size = RNP_MAX_UC_HASH_TABLE;
-+		attr->mc_hash_tb_size = RNP_MAC_MC_HASH_TABLE;
++static __rte_always_inline void
++rnp_dev_rx_offload(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m,
++		   volatile struct rnp_rx_desc rxbd)
++{
++	uint32_t rss = rte_le_to_cpu_32(rxbd.wb.qword0.rss_hash);
++	uint16_t cmd = rxbd.wb.qword1.cmd;
++
++	if (rxq->rx_offloads & RNP_RX_CHECKSUM_SUPPORT) {
++		if (m->packet_type & RTE_PTYPE_TUNNEL_MASK) {
++			rnp_rx_parse_tunnel_cksum(rxq, m, cmd);
++		} else {
++			if (m->packet_type & RTE_PTYPE_L3_MASK ||
++			    m->packet_type & RTE_PTYPE_L4_MASK)
++				rnp_rx_parse_cksum(rxq, m, cmd);
++		}
 +	}
- 	rnp_mbx_fw_get_lane_stat(port);
- 
- 	RNP_PMD_INFO("PF[%d] SW-ETH-PORT[%d]<->PHY_LANE[%d]",
-@@ -1269,6 +1319,7 @@ rnp_init_port_resource(struct rnp_eth_adapter *adapter,
- 		rte_eth_random_addr(port->mac_addr.addr_bytes);
++	if (rxq->rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH && rss) {
++		m->hash.rss = rss;
++		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
++	}
++}
++
+ static __rte_always_inline void
+-rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
++rnp_dev_rx_parse(struct rnp_rx_queue *rxq,
+ 		 struct rte_mbuf *m,
+ 		 volatile struct rnp_rx_desc rxbd)
+ {
+@@ -680,6 +774,7 @@ rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
  	}
- 	rte_ether_addr_copy(&port->mac_addr, &eth_dev->data->mac_addrs[0]);
-+	rnp_set_macaddr(port, (u8 *)&port->mac_addr, 0);
+ 	if (!(m->packet_type & RTE_PTYPE_L2_MASK))
+ 		m->packet_type |= RTE_PTYPE_L2_ETHER;
++	rnp_dev_rx_offload(rxq, m, rxbd);
+ }
  
- 	rte_spinlock_init(&port->rx_mac_lock);
- 	adapter->ports[p_id] = port;
+ #define RNP_CACHE_FETCH_RX (4)
 -- 
 2.48.1
 
