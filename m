@@ -2,74 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34B9C02198
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432FBC02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:33:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9DF24279D;
-	Wed, 12 Feb 2025 16:03:33 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 88AD44111B
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:03:32 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-220c8f38febso8336075ad.2
- for <dev@dpdk.org>; Wed, 12 Feb 2025 07:03:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739372612;
- x=1739977412; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=bbnngU6XckjzKhSN+7yGevwx1cyyIatdJJZdPrFRIKI=;
- b=p1i3fn20jLwZzO4xGtiJxVHj6ooOoKsSlQWOWk7+RnbN6+o2aT/Tc0hwCtlaXP4eHh
- Pwcb1Z+tGn6UsTWaNMgM3QLaHkNAsf75OKkcxjWSvlyARUL8B4CR1Nw2eFCF0taH1S+r
- B6rcYdJXSUxbDR5DVrpKWkWahhTkTxGuBm6+MsWxxJrZ+hVOZaaOYoZrJaNI5zVn5lRv
- 7uFAPtbga11Kq84osP9U+VPggoCnJ0SrGRoJWE/Rz5ONkH4PXvMjh8XI5JgIi7A+65gx
- nhcPG3B8yhPQ81lKKcjmyaqwFdsn3EFxO0iFbm6644uJmAtyAMm64TKTkJMwAlMt+7rH
- irEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739372612; x=1739977412;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=bbnngU6XckjzKhSN+7yGevwx1cyyIatdJJZdPrFRIKI=;
- b=Hnx/Mltot9PhKb4boK1wan6nJwLMX1yLWr4YhokF8wppOHzYDAUUbIixiq0AtmV2/m
- oPTXUpr1FzJ/AZKFIF1bPTywl65DdLuAqoDdhsTphFoCLYwqxCqh7uZ/+fqL475MEiDU
- LnHu6WYmfrTXyQfluY/85xnm274EH+cebm7mcFYdxkoVeQp/5tgnGPlCx6qklthNSUSq
- 2SoW7ZHf9spcpF+KyiKEkOxewvlCeSdx2JPK0/2k7doKHwTT0Nej9KfJLuaiiJuyh75v
- UTKffa9hjOE0MqEmK+MGTMrC1sTZyZJGkGoOMOwTOnaYMXnglOG+/cX+THLuHwgz1zpi
- 3HLQ==
-X-Gm-Message-State: AOJu0YwiTvRhqbOcEX9Oko0T99CNcK/nMuBFeFZBYMKNmrpYsfeFZcAx
- 1p1tzLqJenZJUOrfEkCQbH3S66v8NtDohYH4P7UIt3RTv8/cOjRM+wTHMLjgUyjyuY63nPonz/w
- 7
-X-Gm-Gg: ASbGncs1+giEYGGYWmPQXFMF0eLJKBLMaRifZMDKEmAENIM173GI14KlXu2lDqkPdF1
- DTAQm0a+Eha0ER+ByMOQrwr2Y/8BYC7HJ78JsTortZXBOisJZKhSVg+rQbnpYTUWiRJtdFq5Wxa
- fBLU15rr+PK9vd71qsvt/oAw+VCEZgoLONoRzTzAnoduoj/AVGDSMb11waIQYuOZoytp/5Gu9Sp
- zMduQ87NUnByZyq58Af4LXCbVAyHGY5QWvK6d+HlwrMFgiDot4mDLeZWqvIOeGUmzLZHIL0kAkg
- s78Wn+rlnBsHueh7Sm0VXDRXI3/0Pj1/6nnp7PAEys3u3h41eFxjr8I/nypYNtyaeBme
-X-Google-Smtp-Source: AGHT+IFKPtiHsSa1OXXe+CbuZbw+rLEJU6Y7NIKEvAe3SG40Pr1290cf2z3efecnW3hE1LfbotVZrA==
-X-Received: by 2002:a05:6a00:2d08:b0:730:95f1:53ca with SMTP id
- d2e1a72fcca58-7322c591c13mr4313746b3a.10.1739372611608; 
- Wed, 12 Feb 2025 07:03:31 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73048ae7c24sm11223500b3a.78.2025.02.12.07.03.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Feb 2025 07:03:31 -0800 (PST)
-Date: Wed, 12 Feb 2025 07:03:29 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, "Tyler Retzlaff" <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v5 01/11] eal: introduce new secure memory fill
-Message-ID: <20250212070329.7d1b816c@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FA26@smartserver.smartshare.dk>
-References: <20241114011129.451243-1-stephen@networkplumber.org>
- <20250211173720.1188517-1-stephen@networkplumber.org>
- <20250211173720.1188517-2-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FA26@smartserver.smartshare.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 613974279D;
+	Wed, 12 Feb 2025 16:33:13 +0100 (CET)
+Received: from localhost.localdomain (unknown [103.233.162.252])
+ by mails.dpdk.org (Postfix) with ESMTP id 22DFE42789
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:12 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+ id 3F9F4A3648; Wed, 12 Feb 2025 23:33:11 +0800 (CST)
+From: Wenbo Cao <caowenbo@mucse.com>
+To: thomas@monjalon.net
+Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
+ andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com,
+ Wenbo Cao <caowenbo@mucse.com>
+Subject: [PATCH v12 00/28] [v12]drivers/net Add Support mucse N10 Pmd Driver
+Date: Wed, 12 Feb 2025 23:32:20 +0800
+Message-Id: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,29 +34,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Feb 2025 10:09:27 +0100
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+For This patchset just to support the basic chip init work
+and user can just found the eth_dev, but can't control more.
+For Now just support 2*10g nic,the chip can support
+2*10g,4*10g,4*1g,8*1g,8*10g.
+The Feature rx side can support rx-cksum-offload,rss,vlan-filter
+flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
+The Feature tx side can support tx-cksum-offload,tso,vxlan-tso 
+flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
+for sriov is also support.
 
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Tuesday, 11 February 2025 18.35
-> >=20
-> > When memset() is used before a release function such as free,
-> > the compiler if allowed to optimize the memset away under
-> > the as-if rules. This is normally ok, but in certain cases such
-> > as passwords or security keys it is problematic.
-> >=20
-> > Introduce a DPDK wrapper which is equivalent to the C++ memset_s
-> > function.  Naming chosen to be similar to kernel. =20
->=20
-> It's not like C11 memset_s, which takes one more parameter, and is an opt=
-ional part of the C11 standard.
-> It's like C23 memset_explicit.
->=20
-> Wouldn't it be better to name it after the C standard function, i.e. rte_=
-memset_explicit?
->=20
-> Or maybe backport memset_explicit from C23, i.e. omit the rte_ prefix, if=
- not using a C23 compiler?
->=20
+Because of the chip design defect, for multiple-port mode
+one pci-bdf will have multiple-port (max can have four ports)
+so this code must be care of one bdf init multiple-port.
+v12:
+  * fixed __rte_packed __deprecated__ compile issue.
 
-I prefer parallel Linux kernal API names, lots of drivers share code.
+v11:
+  * fixed array-bounds issue when used rte_memcpy src addr is
+  * not enough to hold align dst.
+  * improve efficient_code advised by Stephen
+
+v10:
+  * fixed mingw windows meson issue
+  * rnp not support windows for now.
+
+v9:
+  * fixed commit log format check by devtools.
+  * fixed code compile issue.
+
+v8:
+  * fixed codespell issue.
+  * fixed MAINTAINERS file
+
+v7:
+  * add support nic basic feature such as rss vlan strip/filter,
+  * mtu-change recv/send scater-recv/mutltiple-send.
+  * fixed code rationality, advised by Ferruh Yigit.
+v6:
+  * fixed the doc(rst) format problem advise by Thomas Monjalon
+
+v5:
+  * fixed the symbol name require by the style documentation
+
+v4:
+  * one patch has been forgot to upload :(
+
+v3:
+  * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
+  * change iobar type to void suggest by Stephen Hemminger
+  * add KMOD_DEP support for vfio-pci
+  * change run-cmd argument parse check for invalid extra_args
+
+v2:
+  * fixed MAINTAIN maillist fullname format
+  * fixed driver/net/meson the order issue of new driver to driver list
+  * improve virtual point function usage suggest by Stephen Hemminger
+
+Wenbo Cao (28):
+  net/rnp: add skeleton
+  net/rnp: add ethdev probe and remove
+  net/rnp: add log
+  net/rnp: support mailbox basic operate
+  net/rnp: add device init and uninit
+  net/rnp: add get device information operation
+  net/rnp: add support MAC promisc mode
+  net/rnp: add queue setup and release operations
+  net/rnp: add queue stop and start operations
+  net/rnp: add support device start stop operations
+  net/rnp: add RSS support operations
+  net/rnp: add support link update operations
+  net/rnp: add support link setup operations
+  net/rnp: add Rx burst simple support
+  net/rnp: add Tx burst simple support
+  net/rnp: add MTU set operation
+  net/rnp: add Rx scatter segment version
+  net/rnp: add Tx multiple segment version
+  net/rnp: add support basic stats operation
+  net/rnp: add support xstats operation
+  net/rnp: add unicast MAC filter operation
+  net/rnp: add supported packet types
+  net/rnp: add support Rx checksum offload
+  net/rnp: add support Tx TSO offload
+  net/rnp: support VLAN offloads
+  net/rnp: add support VLAN filters operations
+  net/rnp: add queue info operation
+  net/rnp: support Rx/Tx burst mode info
+
+ .mailmap                            |    1 +
+ MAINTAINERS                         |    6 +
+ doc/guides/nics/features/rnp.ini    |   33 +
+ doc/guides/nics/index.rst           |    1 +
+ doc/guides/nics/rnp.rst             |  101 ++
+ drivers/net/meson.build             |    1 +
+ drivers/net/rnp/base/meson.build    |   17 +
+ drivers/net/rnp/base/rnp_bdq_if.c   |  398 ++++++
+ drivers/net/rnp/base/rnp_bdq_if.h   |  154 +++
+ drivers/net/rnp/base/rnp_bitrev.h   |   64 +
+ drivers/net/rnp/base/rnp_common.c   |  103 ++
+ drivers/net/rnp/base/rnp_common.h   |   17 +
+ drivers/net/rnp/base/rnp_crc32.c    |   37 +
+ drivers/net/rnp/base/rnp_crc32.h    |   10 +
+ drivers/net/rnp/base/rnp_dma_regs.h |   68 +
+ drivers/net/rnp/base/rnp_eth_regs.h |   90 ++
+ drivers/net/rnp/base/rnp_fw_cmd.c   |  162 +++
+ drivers/net/rnp/base/rnp_fw_cmd.h   |  357 ++++++
+ drivers/net/rnp/base/rnp_hw.h       |  136 ++
+ drivers/net/rnp/base/rnp_mac.c      |  366 ++++++
+ drivers/net/rnp/base/rnp_mac.h      |   34 +
+ drivers/net/rnp/base/rnp_mac_regs.h |  207 +++
+ drivers/net/rnp/base/rnp_mbx.c      |  512 ++++++++
+ drivers/net/rnp/base/rnp_mbx.h      |   58 +
+ drivers/net/rnp/base/rnp_mbx_fw.c   |  499 ++++++++
+ drivers/net/rnp/base/rnp_mbx_fw.h   |   24 +
+ drivers/net/rnp/base/rnp_osdep.h    |  169 +++
+ drivers/net/rnp/meson.build         |   27 +
+ drivers/net/rnp/rnp.h               |  258 ++++
+ drivers/net/rnp/rnp_ethdev.c        | 1841 +++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_link.c          |  439 +++++++
+ drivers/net/rnp/rnp_link.h          |   38 +
+ drivers/net/rnp/rnp_logs.h          |   36 +
+ drivers/net/rnp/rnp_rss.c           |  367 ++++++
+ drivers/net/rnp/rnp_rss.h           |   43 +
+ drivers/net/rnp/rnp_rxtx.c          | 1815 ++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.h          |  162 +++
+ 37 files changed, 8651 insertions(+)
+ create mode 100644 doc/guides/nics/features/rnp.ini
+ create mode 100644 doc/guides/nics/rnp.rst
+ create mode 100644 drivers/net/rnp/base/meson.build
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
+ create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
+ create mode 100644 drivers/net/rnp/base/rnp_common.c
+ create mode 100644 drivers/net/rnp/base/rnp_common.h
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.c
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.h
+ create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
+ create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
+ create mode 100644 drivers/net/rnp/base/rnp_hw.h
+ create mode 100644 drivers/net/rnp/base/rnp_mac.c
+ create mode 100644 drivers/net/rnp/base/rnp_mac.h
+ create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_mbx.c
+ create mode 100644 drivers/net/rnp/base/rnp_mbx.h
+ create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
+ create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
+ create mode 100644 drivers/net/rnp/base/rnp_osdep.h
+ create mode 100644 drivers/net/rnp/meson.build
+ create mode 100644 drivers/net/rnp/rnp.h
+ create mode 100644 drivers/net/rnp/rnp_ethdev.c
+ create mode 100644 drivers/net/rnp/rnp_link.c
+ create mode 100644 drivers/net/rnp/rnp_link.h
+ create mode 100644 drivers/net/rnp/rnp_logs.h
+ create mode 100644 drivers/net/rnp/rnp_rss.c
+ create mode 100644 drivers/net/rnp/rnp_rss.h
+ create mode 100644 drivers/net/rnp/rnp_rxtx.c
+ create mode 100644 drivers/net/rnp/rnp_rxtx.h
+
+-- 
+2.48.1
+
