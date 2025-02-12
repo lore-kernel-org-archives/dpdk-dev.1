@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF915C021A1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBC0C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:38:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7EAB342D72;
-	Wed, 12 Feb 2025 15:37:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9774642D3F;
+	Wed, 12 Feb 2025 15:37:12 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 736484113C
- for <dev@dpdk.org>; Wed, 12 Feb 2025 15:37:04 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id B201C4111B
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 15:37:05 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id B85CCDFB9AE; Wed, 12 Feb 2025 22:36:57 +0800 (CST)
+ id 62E68DFB995; Wed, 12 Feb 2025 22:36:55 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v11 20/28] net/rnp: add support xstats operation
-Date: Wed, 12 Feb 2025 22:36:17 +0800
-Message-Id: <1739370987-3989-21-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v11 18/28] net/rnp: add Tx multiple segment version
+Date: Wed, 12 Feb 2025 22:36:15 +0800
+Message-Id: <1739370987-3989-19-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
 References: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
@@ -36,494 +36,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support mac eth rx tx hw xstats.
+add support multiple segs mbuf send.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini    |   1 +
- drivers/net/rnp/base/rnp_eth_regs.h |   3 +
- drivers/net/rnp/base/rnp_mac_regs.h |  80 +++++++++
- drivers/net/rnp/rnp.h               |  51 ++++++
- drivers/net/rnp/rnp_ethdev.c        | 243 ++++++++++++++++++++++++++++
- 5 files changed, 378 insertions(+)
+ drivers/net/rnp/rnp_rxtx.c | 126 ++++++++++++++++++++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.h |   3 +-
+ 2 files changed, 126 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 07caedba7a..14ff88fec1 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -9,6 +9,7 @@ Link status          = Y
- Link status event    = Y
- Basic stats          = Y
- Stats per queue      = Y
-+Extended stats       = Y
- Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
-diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 391688bd80..ada42be8e9 100644
---- a/drivers/net/rnp/base/rnp_eth_regs.h
-+++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -25,6 +25,9 @@
- #define RNP_RING_FC_THRESH(n)	_ETH_(0x8a00 + ((0x4) * (n)))
- /* ETH Statistic */
- #define RNP_ETH_RXTRANS_DROP	_ETH_(0x8904)
-+#define RNP_ETH_RXGLAN_DROP	_ETH_(0x8918)
-+#define RNP_ETH_RXIPH_E_DROP	_ETH_(0x891c)
-+#define RNP_ETH_RXCKSUM_E_DROP	_ETH_(0x8920)
- #define RNP_ETH_RXTRUNC_DROP	_ETH_(0x8928)
- /* Mac Host Filter  */
- #define RNP_MAC_FCTRL		_ETH_(0x9110)
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index 1ae880143d..94aeba9d6c 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -78,4 +78,84 @@
- /* PHY Link Status */
- #define RNP_MAC_PLS		RTE_BIT32(17)
- 
-+/* Mac Manage Counts */
-+#define RNP_MMC_CTRL		(0x0800)
-+#define RNP_MMC_RSTONRD	RTE_BIT32(2)
-+/* Tx Good And Bad Bytes Base */
-+#define RNP_MMC_TX_GBOCTGB	(0x0814)
-+/* Tx Good And Bad Frame Num Base */
-+#define RNP_MMC_TX_GBFRMB	(0x081c)
-+/* Tx Good Broadcast Frame Num Base */
-+#define RNP_MMC_TX_BCASTB	(0x0824)
-+/* Tx Good Multicast Frame Num Base */
-+#define RNP_MMC_TX_MCASTB	(0x082c)
-+/* Tx 64Bytes Frame Num */
-+#define RNP_MMC_TX_64_BYTESB	(0x0834)
-+#define RNP_MMC_TX_65TO127_BYTESB	(0x083c)
-+#define RNP_MMC_TX_128TO255_BYTEB	(0x0844)
-+#define RNP_MMC_TX_256TO511_BYTEB	(0x084c)
-+#define RNP_MMC_TX_512TO1023_BYTEB	(0x0854)
-+#define RNP_MMC_TX_1024TOMAX_BYTEB	(0x085c)
-+/* Tx Good And Bad Unicast Frame Num Base */
-+#define RNP_MMC_TX_GBUCASTB		(0x0864)
-+/* Tx Good And Bad Multicast Frame Num Base */
-+#define RNP_MMC_TX_GBMCASTB		(0x086c)
-+/* Tx Good And Bad Broadcast Frame NUM Base */
-+#define RNP_MMC_TX_GBBCASTB		(0x0874)
-+/* Tx Frame Underflow Error */
-+#define RNP_MMC_TX_UNDRFLWB		(0x087c)
-+/* Tx Good Frame Bytes Base */
-+#define RNP_MMC_TX_GBYTESB		(0x0884)
-+/* Tx Good Frame Num Base*/
-+#define RNP_MMC_TX_GBRMB		(0x088c)
-+/* Tx Good Pause Frame Num Base */
-+#define RNP_MMC_TX_PAUSEB		(0x0894)
-+/* Tx Good Vlan Frame Num Base */
-+#define RNP_MMC_TX_VLANB		(0x089c)
-+
-+/* Rx Good And Bad Frames Num Base */
-+#define RNP_MMC_RX_GBFRMB		(0x0900)
-+/* Rx Good And Bad Frames Bytes Base */
-+#define RNP_MMC_RX_GBOCTGB		(0x0908)
-+/* Rx Good Framse Bytes Base */
-+#define RNP_MMC_RX_GOCTGB		(0x0910)
-+/* Rx Good Broadcast Frames Num Base */
-+#define RNP_MMC_RX_BCASTGB		(0x0918)
-+/* Rx Good Multicast Frames Num Base */
-+#define RNP_MMC_RX_MCASTGB		(0x0920)
-+/* Rx Crc Error Frames Num Base */
-+#define RNP_MMC_RX_CRCERB		(0x0928)
-+/* Rx Less Than 64Byes with Crc Err Base*/
-+#define RNP_MMC_RX_RUNTERB		(0x0930)
-+/* Receive Jumbo Frame Error */
-+#define RNP_MMC_RX_JABBER_ERR		(0x0934)
-+/* Shorter Than 64Bytes without Any Errora Base */
-+#define RNP_MMC_RX_USIZEGB		(0x0938)
-+/* Len Oversize Than Support */
-+#define RNP_MMC_RX_OSIZEGB		(0x093c)
-+/* Rx 64Byes Frame Num Base */
-+#define RNP_MMC_RX_64_BYTESB		(0x0940)
-+/* Rx 65Bytes To 127Bytes Frame Num Base */
-+#define RNP_MMC_RX_65TO127_BYTESB	(0x0948)
-+/* Rx 128Bytes To 255Bytes Frame Num Base */
-+#define RNP_MMC_RX_128TO255_BYTESB	(0x0950)
-+/* Rx 256Bytes To 511Bytes Frame Num Base */
-+#define RNP_MMC_RX_256TO511_BYTESB	(0x0958)
-+/* Rx 512Bytes To 1023Bytes Frame Num Base */
-+#define RNP_MMC_RX_512TO1203_BYTESB	(0x0960)
-+/* Rx Len Bigger Than 1024Bytes Base */
-+#define RNP_MMC_RX_1024TOMAX_BYTESB	(0x0968)
-+/* Rx Unicast Frame Good Num Base */
-+#define RNP_MMC_RX_UCASTGB		(0x0970)
-+/* Rx Length Error Of Frame Part */
-+#define RNP_MMC_RX_LENERRB		(0x0978)
-+/* Rx received with a Length field not equal to the valid frame size */
-+#define RNP_MMC_RX_OUTOF_RANGE		(0x0980)
-+/* Rx Pause Frame Good Num Base */
-+#define RNP_MMC_RX_PAUSEB		(0x0988)
-+/* Rx Vlan Frame Good Num Base */
-+#define RNP_MMC_RX_VLANGB		(0x0998)
-+/* Rx With A Watchdog Timeout Err Frame Base */
-+#define RNP_MMC_RX_WDOGERRB		(0x09a0)
-+
- #endif /* _RNP_MAC_REGS_H_ */
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index 4440d495e0..abb63a508e 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -108,6 +108,56 @@ struct rnp_proc_priv {
- struct rnp_hw_eth_stats {
- 	uint64_t rx_trans_drop;         /* rx eth to dma fifo full drop */
- 	uint64_t rx_trunc_drop;         /* rx mac to eth to host copy fifo full drop */
-+	uint64_t rx_glen_drop;          /* pkts length bigger than hw limit */
-+	uint64_t rx_cksum_e_drop;       /* rx cksum error pkts drop */
-+	uint64_t rx_iph_e_drop;         /* rx ip header error drop */
-+};
-+
-+struct rnp_hw_mac_stats {
-+	uint64_t rx_all_pkts;     /* Include Good And Bad Frame Num */
-+	uint64_t rx_all_bytes;    /* Include Good And Bad Pkts octes */
-+	uint64_t rx_good_pkts;
-+	uint64_t rx_good_bytes;
-+	uint64_t rx_broadcast;
-+	uint64_t rx_multicast;
-+	uint64_t rx_crc_err;
-+	uint64_t rx_runt_err;     /* Frame Less-than-64-byte with a CRC error*/
-+	uint64_t rx_jabber_err;   /* Jumbo Frame Crc Error */
-+	uint64_t rx_undersize_err;/* Frame Less Than 64 bytes Error */
-+	uint64_t rx_oversize_err; /* Bigger Than Max Support Length Frame */
-+	uint64_t rx_64octes_pkts;
-+	uint64_t rx_65to127_octes_pkts;
-+	uint64_t rx_128to255_octes_pkts;
-+	uint64_t rx_256to511_octes_pkts;
-+	uint64_t rx_512to1023_octes_pkts;
-+	uint64_t rx_1024tomax_octes_pkts;
-+	uint64_t rx_unicast;
-+	uint64_t rx_len_err;     /* Bigger Or Less Than Len Support */
-+	uint64_t rx_len_invalid; /* Frame Len Isn't equal real Len */
-+	uint64_t rx_pause; /* Rx Pause Frame Num */
-+	uint64_t rx_vlan;  /* Rx Vlan Frame Num */
-+	uint64_t rx_watchdog_err; /* Rx with a watchdog time out error */
-+	uint64_t rx_bad_pkts;
-+
-+	uint64_t tx_all_pkts;     /* Include Good And Bad Frame Num */
-+	uint64_t tx_all_bytes;    /* Include Good And Bad Pkts octes */
-+	uint64_t tx_broadcast;
-+	uint64_t tx_multicast;
-+	uint64_t tx_64octes_pkts;
-+	uint64_t tx_65to127_octes_pkts;
-+	uint64_t tx_128to255_octes_pkts;
-+	uint64_t tx_256to511_octes_pkts;
-+	uint64_t tx_512to1023_octes_pkts;
-+	uint64_t tx_1024tomax_octes_pkts;
-+	uint64_t tx_all_unicast;
-+	uint64_t tx_all_multicase;
-+	uint64_t tx_all_broadcast;
-+	uint64_t tx_underflow_err;
-+	uint64_t tx_good_pkts;
-+	uint64_t tx_good_bytes;
-+	uint64_t tx_pause_pkts;
-+	uint64_t tx_vlan_pkts;
-+	uint64_t tx_bad_pkts;
- };
- 
- struct rnp_eth_port {
-@@ -120,6 +170,7 @@ struct rnp_eth_port {
- 
- 	struct rnp_hw_eth_stats eth_stats_old;
- 	struct rnp_hw_eth_stats eth_stats;
-+	struct rnp_hw_mac_stats mac_stats;
- 
- 	struct rte_eth_rss_conf rss_conf;
- 	uint16_t last_rx_num;
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 69d9945d8b..50f1e1ed27 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -795,12 +795,126 @@ static const struct rte_rnp_xstats_name_off rte_rnp_rx_eth_stats_str[] = {
- 			rx_trans_drop), RNP_ETH_RXTRANS_DROP, false},
- 	{"eth_rx_fifo_drop", offsetof(struct rnp_hw_eth_stats,
- 			rx_trunc_drop), RNP_ETH_RXTRUNC_DROP, false},
-+	{"eth rx pkts bigger than mtu", offsetof(struct rnp_hw_eth_stats,
-+			rx_glen_drop), RNP_ETH_RXGLAN_DROP, false},
-+	{"eth rx cksum error drop", offsetof(struct rnp_hw_eth_stats,
-+			rx_cksum_e_drop), RNP_ETH_RXCKSUM_E_DROP, false},
-+	{"eth rx iph error drop", offsetof(struct rnp_hw_eth_stats,
-+			rx_iph_e_drop), RNP_ETH_RXIPH_E_DROP, false},
- };
-+
-+static const struct rte_rnp_xstats_name_off rte_rnp_rx_mac_stats_str[] = {
-+	{"Rx good bad Pkts", offsetof(struct rnp_hw_mac_stats,
-+			rx_all_pkts), RNP_MMC_RX_GBFRMB, true},
-+	{"Rx good bad bytes", offsetof(struct rnp_hw_mac_stats,
-+			rx_all_bytes), RNP_MMC_RX_GBOCTGB, true},
-+	{"Rx good Pkts", offsetof(struct rnp_hw_mac_stats,
-+			rx_good_pkts), 0, false},
-+	{"RX good Bytes", offsetof(struct rnp_hw_mac_stats,
-+			rx_good_bytes), RNP_MMC_RX_GOCTGB, true},
-+	{"Rx Broadcast Pkts", offsetof(struct rnp_hw_mac_stats,
-+			rx_broadcast), RNP_MMC_RX_BCASTGB, true},
-+	{"Rx Multicast Pkts", offsetof(struct rnp_hw_mac_stats,
-+			rx_multicast), RNP_MMC_RX_MCASTGB, true},
-+	{"Rx Crc Frames Err Pkts", offsetof(struct rnp_hw_mac_stats,
-+			rx_crc_err), RNP_MMC_RX_CRCERB, true},
-+	{"Rx len Err with Crc err", offsetof(struct rnp_hw_mac_stats,
-+			rx_runt_err), RNP_MMC_RX_RUNTERB, false},
-+	{"Rx jabber Error ", offsetof(struct rnp_hw_mac_stats,
-+			rx_jabber_err), RNP_MMC_RX_JABBER_ERR, false},
-+	{"Rx len Err Without Other Error", offsetof(struct rnp_hw_mac_stats,
-+			rx_undersize_err), RNP_MMC_RX_USIZEGB, false},
-+	{"Rx Len Shorter 64Bytes Without Err", offsetof(struct rnp_hw_mac_stats,
-+			rx_undersize_err), RNP_MMC_RX_USIZEGB, false},
-+	{"Rx Len Oversize 9K", offsetof(struct rnp_hw_mac_stats,
-+			rx_oversize_err), RNP_MMC_RX_OSIZEGB, false},
-+	{"Rx 64Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_64octes_pkts), RNP_MMC_RX_64_BYTESB, true},
-+	{"Rx 65Bytes To 127Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_65to127_octes_pkts), RNP_MMC_RX_65TO127_BYTESB, true},
-+	{"Rx 128Bytes To 255Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_128to255_octes_pkts), RNP_MMC_RX_128TO255_BYTESB, true},
-+	{"Rx 256Bytes To 511Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_256to511_octes_pkts), RNP_MMC_RX_256TO511_BYTESB, true},
-+	{"Rx 512Bytes To 1023Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_512to1023_octes_pkts), RNP_MMC_RX_512TO1203_BYTESB, true},
-+	{"Rx Bigger 1024Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_1024tomax_octes_pkts), RNP_MMC_RX_1024TOMAX_BYTESB, true},
-+	{"Rx Unicast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_unicast), RNP_MMC_RX_UCASTGB, true},
-+	{"Rx Len Err Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_len_err), RNP_MMC_RX_LENERRB, true},
-+	{"Rx Len Not Equal Real data_len", offsetof(struct rnp_hw_mac_stats,
-+			rx_len_invalid), RNP_MMC_RX_OUTOF_RANGE, true},
-+	{"Rx Pause Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_pause), RNP_MMC_RX_PAUSEB, true},
-+	{"Rx Vlan Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			rx_vlan), RNP_MMC_RX_VLANGB, true},
-+	{"Rx Hw Watchdog Frame Err", offsetof(struct rnp_hw_mac_stats,
-+			rx_watchdog_err), RNP_MMC_RX_WDOGERRB, true},
-+};
-+
-+static const struct rte_rnp_xstats_name_off rte_rnp_tx_mac_stats_str[] = {
-+	{"Tx Good Bad Pkts Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_all_pkts), RNP_MMC_TX_GBFRMB, true},
-+	{"Tx Good Bad Bytes", offsetof(struct rnp_hw_mac_stats,
-+			tx_all_bytes), RNP_MMC_TX_GBOCTGB, true},
-+	{"Tx Good Broadcast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_broadcast), RNP_MMC_TX_BCASTB, true},
-+	{"Tx Good Multicast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_multicast), RNP_MMC_TX_MCASTB, true},
-+	{"Tx 64Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_64octes_pkts), RNP_MMC_TX_64_BYTESB, true},
-+	{"Tx 65 To 127 Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_65to127_octes_pkts), RNP_MMC_TX_65TO127_BYTESB, true},
-+	{"Tx 128 To 255 Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_128to255_octes_pkts), RNP_MMC_TX_128TO255_BYTEB, true},
-+	{"Tx 256 To 511 Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_256to511_octes_pkts), RNP_MMC_TX_256TO511_BYTEB, true},
-+	{"Tx 512 To 1023 Bytes Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_512to1023_octes_pkts), RNP_MMC_TX_512TO1023_BYTEB, true},
-+	{"Tx Bigger Than 1024 Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_1024tomax_octes_pkts), RNP_MMC_TX_1024TOMAX_BYTEB, true},
-+	{"Tx Good And Bad Unicast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_all_unicast), RNP_MMC_TX_GBUCASTB, true},
-+	{"Tx Good And Bad Multicast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_all_multicase), RNP_MMC_TX_GBMCASTB, true},
-+	{"Tx Good And Bad Broadcast Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_all_broadcast), RNP_MMC_TX_GBBCASTB, true},
-+	{"Tx Underflow Frame Err Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_underflow_err), RNP_MMC_TX_UNDRFLWB, true},
-+	{"Tx Good Frame Bytes", offsetof(struct rnp_hw_mac_stats,
-+			tx_good_bytes), RNP_MMC_TX_GBYTESB, true},
-+	{"Tx Good Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_good_pkts), RNP_MMC_TX_GBFRMB, true},
-+	{"Tx Pause Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_pause_pkts), RNP_MMC_TX_PAUSEB, true},
-+	{"Tx Vlan Frame Num", offsetof(struct rnp_hw_mac_stats,
-+			tx_vlan_pkts), RNP_MMC_TX_VLANB, true},
-+};
-+
-+#define RNP_NB_RX_HW_MAC_STATS (RTE_DIM(rte_rnp_rx_mac_stats_str))
-+#define RNP_NB_TX_HW_MAC_STATS (RTE_DIM(rte_rnp_tx_mac_stats_str))
- #define RNP_NB_RX_HW_ETH_STATS (RTE_DIM(rte_rnp_rx_eth_stats_str))
- #define RNP_GET_E_HW_COUNT(stats, offset)            \
- 	((uint64_t *)(((char *)stats) + (offset)))
- #define RNP_ADD_INCL_COUNT(stats, offset, val)       \
- 	((*(RNP_GET_E_HW_COUNT(stats, (offset)))) += val)
-+static inline void
-+rnp_store_hw_stats(struct rnp_hw_mac_stats *stats,
-+		   uint32_t offset, uint64_t val)
-+{
-+	*(uint64_t *)(((char *)stats) + offset) = val;
-+}
-+
-+static uint32_t rnp_dev_cal_xstats_num(void)
-+{
-+	uint32_t cnt = RNP_NB_RX_HW_MAC_STATS + RNP_NB_TX_HW_MAC_STATS;
-+
-+	cnt += RNP_NB_RX_HW_ETH_STATS;
-+
-+	return cnt;
-+}
- 
- static inline void
- rnp_update_eth_stats_32bit(struct rnp_hw_eth_stats *new,
-@@ -831,11 +945,33 @@ static void rnp_get_eth_count(struct rnp_hw *hw,
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index f094e4339e..2bf03cf263 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -369,9 +369,11 @@ rnp_tx_queue_sw_reset(struct rnp_tx_queue *txq)
+ 		sw_ring[prev].next_id = idx;
+ 		prev = idx;
  	}
++	txq->last_desc_cleaned = txq->attr.nb_desc - 1;
+ 	txq->nb_tx_free = txq->attr.nb_desc - 1;
+ 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
+ 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
++	txq->nb_tx_used = 0;
+ 	txq->tx_tail = 0;
+ 
+ 	size = (txq->attr.nb_desc + RNP_TX_MAX_BURST_SIZE);
+@@ -855,6 +857,7 @@ rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
+ 		rxe->mbuf = nmb;
+ 		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
+ 	}
++	rxq->rxrearm_nb++;
+ 	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
+ 		rxq->rxrearm_nb -= rxq->rx_free_thresh;
+ 		rxq->rxrearm_start += rxq->rx_free_thresh;
+@@ -922,7 +925,6 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			first_seg->nb_segs++;
+ 			last_seg->next = rxm;
+ 		}
+-		rxq->rxrearm_nb++;
+ 		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
+ 			last_seg = rxm;
+ 			continue;
+@@ -945,6 +947,106 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	return nb_rx;
  }
  
-+static void
-+rnp_get_mmc_info(struct rnp_hw *hw,
-+		 uint16_t lane,
-+		 struct rnp_hw_mac_stats *stats,
-+		 const struct rte_rnp_xstats_name_off *ptr)
++static __rte_always_inline uint16_t
++rnp_multiseg_clean_txq(struct rnp_tx_queue *txq)
 +{
-+	uint64_t count = 0;
-+	uint32_t offset;
-+	uint64_t hi_reg;
++	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
++	struct rnp_txsw_entry *sw_ring = txq->sw_ring;
++	volatile struct rnp_tx_desc *txbd;
++	uint16_t desc_to_clean_to;
++	uint16_t nb_tx_to_clean;
 +
-+	if (ptr->reg_base) {
-+		count = RNP_MAC_REG_RD(hw, lane, ptr->reg_base);
-+		if (ptr->hi_addr_en) {
-+			offset = ptr->reg_base + 4;
-+			hi_reg = RNP_MAC_REG_RD(hw, lane, offset);
-+			count += (hi_reg << 32);
++	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
++	desc_to_clean_to = desc_to_clean_to & (txq->attr.nb_desc - 1);
++
++	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
++	txbd = &txq->tx_bdr[desc_to_clean_to];
++	if (!(txbd->d.cmd & RNP_CMD_DD))
++		return txq->nb_tx_free;
++
++	if (last_desc_cleaned > desc_to_clean_to)
++		nb_tx_to_clean = (uint16_t)((txq->attr.nb_desc -
++					last_desc_cleaned) + desc_to_clean_to);
++	else
++		nb_tx_to_clean = (uint16_t)(desc_to_clean_to -
++				last_desc_cleaned);
++
++	txbd->d.cmd = 0;
++
++	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
++
++	return txq->nb_tx_free;
++}
++
++static __rte_always_inline uint16_t
++rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *txe, *txn;
++	struct rte_mbuf *tx_pkt, *m_seg;
++	uint16_t send_pkts = 0;
++	uint16_t nb_used_bd;
++	uint16_t tx_last;
++	uint16_t nb_tx;
++	uint16_t tx_id;
++
++	if (unlikely(!txq->txq_started || !txq->tx_link))
++		return 0;
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		rnp_multiseg_clean_txq(txq);
++	if (unlikely(txq->nb_tx_free == 0))
++		return 0;
++	tx_id = txq->tx_tail;
++	txbd = &txq->tx_bdr[tx_id];
++	txe = &txq->sw_ring[tx_id];
++	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		tx_pkt = tx_pkts[nb_tx];
++		nb_used_bd = tx_pkt->nb_segs;
++		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
++		if (tx_last >= txq->attr.nb_desc)
++			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
++		if (nb_used_bd > txq->nb_tx_free)
++			if (nb_used_bd > rnp_multiseg_clean_txq(txq))
++				break;
++		m_seg = tx_pkt;
++		do {
++			txbd = &txq->tx_bdr[tx_id];
++			txn = &txq->sw_ring[txe->next_id];
++			if (txe->mbuf) {
++				rte_pktmbuf_free_seg(txe->mbuf);
++				txe->mbuf = NULL;
++			}
++			txe->mbuf = m_seg;
++			txe->last_id = tx_last;
++			txbd->d.addr = rnp_get_dma_addr(&txq->attr, m_seg);
++			txbd->d.blen = rte_cpu_to_le_32(m_seg->data_len);
++			txbd->d.cmd &= ~RNP_CMD_EOP;
++			txbd->d.cmd |= RNP_DATA_DESC;
++			m_seg = m_seg->next;
++			tx_id = txe->next_id;
++			txe = txn;
++		} while (m_seg != NULL);
++		txbd->d.cmd |= RNP_CMD_EOP;
++		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
++		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
++		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
++			txq->nb_tx_used = 0;
++			txbd->d.cmd |= RNP_CMD_RS;
 +		}
-+		rnp_store_hw_stats(stats, ptr->offset, count);
++		send_pkts++;
 +	}
++	if (!send_pkts)
++		return 0;
++	txq->tx_tail = tx_id;
++
++	rte_wmb();
++	RNP_REG_WR(txq->tx_tailreg, 0, tx_id);
++
++	return send_pkts;
 +}
 +
- static void rnp_get_hw_stats(struct rte_eth_dev *dev)
- {
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
- 	struct rnp_hw_eth_stats *old = &port->eth_stats_old;
- 	struct rnp_hw_eth_stats *new = &port->eth_stats;
-+	struct rnp_hw_mac_stats *stats = &port->mac_stats;
- 	const struct rte_rnp_xstats_name_off *ptr;
- 	uint16_t lane = port->attr.nr_lane;
- 	struct rnp_hw *hw = port->hw;
-@@ -845,6 +981,19 @@ static void rnp_get_hw_stats(struct rte_eth_dev *dev)
- 		ptr = &rte_rnp_rx_eth_stats_str[i];
- 		rnp_get_eth_count(hw, lane, new, old, ptr);
- 	}
-+	for (i = 0; i < RNP_NB_RX_HW_MAC_STATS; i++) {
-+		ptr = &rte_rnp_rx_mac_stats_str[i];
-+		rnp_get_mmc_info(hw, lane, stats, ptr);
-+	}
-+	for (i = 0; i < RNP_NB_TX_HW_MAC_STATS; i++) {
-+		ptr = &rte_rnp_tx_mac_stats_str[i];
-+		rnp_get_mmc_info(hw, lane, stats, ptr);
-+	}
-+	stats->rx_good_pkts = stats->rx_all_pkts - stats->rx_crc_err -
-+		stats->rx_len_err - stats->rx_watchdog_err;
-+	stats->rx_bad_pkts = stats->rx_crc_err + stats->rx_len_err +
-+		stats->rx_watchdog_err;
-+	stats->tx_bad_pkts = stats->tx_underflow_err;
- }
- 
  static int
-@@ -927,6 +1076,97 @@ rnp_dev_stats_reset(struct rte_eth_dev *dev)
+ rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
+ {
+@@ -968,9 +1070,29 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
  	return 0;
  }
  
 +static int
-+rnp_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
-+		   unsigned int n __rte_unused)
++rnp_check_tx_simple_valid(struct rte_eth_dev *dev, struct rnp_tx_queue *txq)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw_eth_stats *eth_stats = &port->eth_stats;
-+	struct rnp_hw_mac_stats *mac_stats = &port->mac_stats;
-+	uint32_t count = 0;
-+	uint16_t i;
-+
-+	if (xstats != NULL) {
-+		rnp_get_hw_stats(dev);
-+		for (i = 0; i < RNP_NB_RX_HW_MAC_STATS; i++) {
-+			xstats[count].value = *(uint64_t *)(((char *)mac_stats) +
-+					rte_rnp_rx_mac_stats_str[i].offset);
-+			xstats[count].id = count;
-+			count++;
-+		}
-+		for (i = 0; i < RNP_NB_TX_HW_MAC_STATS; i++) {
-+			xstats[count].value = *(uint64_t *)(((char *)mac_stats) +
-+					rte_rnp_tx_mac_stats_str[i].offset);
-+			xstats[count].id = count;
-+			count++;
-+		}
-+		for (i = 0; i < RNP_NB_RX_HW_ETH_STATS; i++) {
-+			xstats[count].value = *(uint64_t *)(((char *)eth_stats) +
-+					rte_rnp_rx_eth_stats_str[i].offset);
-+			xstats[count].id = count;
-+			count++;
-+		}
-+	} else {
-+		return rnp_dev_cal_xstats_num();
-+	}
-+
-+	return count;
-+}
-+
-+static int
-+rnp_dev_xstats_reset(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t reg;
-+
-+	/* set MMC reset hw counter when read event */
-+	reg = RNP_MAC_REG_RD(hw, lane, RNP_MMC_CTRL);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MMC_CTRL, RNP_MMC_RSTONRD);
-+
-+	rnp_dev_stats_reset(dev);
-+	rnp_get_hw_stats(dev);
-+	reg = RNP_MAC_REG_RD(hw, lane, RNP_MMC_CTRL);
-+	reg &= ~RNP_MMC_RSTONRD;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MMC_CTRL, reg);
-+
++	RTE_SET_USED(txq);
++	if (dev->data->scattered_rx)
++		return -ENOTSUP;
 +	return 0;
 +}
 +
-+static int
-+rnp_dev_xstats_get_names(__rte_unused struct rte_eth_dev *dev,
-+			 struct rte_eth_xstat_name *xstats_names,
-+			 __rte_unused unsigned int size)
-+{
-+	uint32_t xstats_cnt = rnp_dev_cal_xstats_num();
-+	uint32_t i, count = 0;
+ int rnp_tx_func_select(struct rte_eth_dev *dev)
+ {
+-	dev->tx_pkt_burst = rnp_xmit_simple;
++	bool simple_allowed = false;
++	struct rnp_tx_queue *txq;
++	int idx = 0;
 +
-+	if (xstats_names != NULL) {
-+		for (i = 0; i < RNP_NB_RX_HW_MAC_STATS; i++) {
-+			strlcpy(xstats_names[count].name,
-+					rte_rnp_rx_mac_stats_str[i].name,
-+					sizeof(xstats_names[count].name));
-+			count++;
-+		}
-+
-+		for (i = 0; i < RNP_NB_TX_HW_MAC_STATS; i++) {
-+			strlcpy(xstats_names[count].name,
-+					rte_rnp_tx_mac_stats_str[i].name,
-+					sizeof(xstats_names[count].name));
-+			count++;
-+		}
-+		for (i = 0; i < RNP_NB_RX_HW_ETH_STATS; i++) {
-+			strlcpy(xstats_names[count].name,
-+					rte_rnp_rx_eth_stats_str[i].name,
-+					sizeof(xstats_names[count].name));
-+			count++;
-+		}
++	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
++		txq = dev->data->tx_queues[idx];
++		simple_allowed = rnp_check_tx_simple_valid(dev, txq) == 0;
 +	}
-+
-+	return xstats_cnt;
-+}
-+
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -953,6 +1193,9 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	/* stats */
- 	.stats_get                    = rnp_dev_stats_get,
- 	.stats_reset                  = rnp_dev_stats_reset,
-+	.xstats_get                   = rnp_dev_xstats_get,
-+	.xstats_reset                 = rnp_dev_xstats_reset,
-+	.xstats_get_names             = rnp_dev_xstats_get_names,
- 	/* link impl */
- 	.link_update                  = rnp_dev_link_update,
- 	.dev_set_link_up              = rnp_dev_set_link_up,
++	if (simple_allowed)
++		dev->tx_pkt_burst = rnp_xmit_simple;
++	else
++		dev->tx_pkt_burst = rnp_multiseg_xmit_pkts;
+ 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
+ 
+ 	return 0;
+diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
+index 973b667cb2..f63128555b 100644
+--- a/drivers/net/rnp/rnp_rxtx.h
++++ b/drivers/net/rnp/rnp_rxtx.h
+@@ -98,7 +98,8 @@ struct rnp_tx_queue {
+ 	struct rnp_queue_attr attr;
+ 
+ 	uint16_t nb_tx_free; /* avail desc to set pkts */
+-	uint16_t nb_tx_used;
++	uint16_t nb_tx_used; /* multiseg mbuf used num */
++	uint16_t last_desc_cleaned;
+ 	uint16_t tx_tail;
+ 
+ 	uint16_t tx_next_dd; /* next to scan writeback dd bit */
 -- 
 2.34.1
 
