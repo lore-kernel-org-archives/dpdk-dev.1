@@ -2,35 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C15C02198
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC71C02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 18:43:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D66942DDE;
-	Wed, 12 Feb 2025 17:52:48 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id A2CF542DBB
- for <dev@dpdk.org>; Wed, 12 Feb 2025 17:52:47 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0D8E12FC;
- Wed, 12 Feb 2025 08:53:07 -0800 (PST)
-Received: from [10.57.11.32] (unknown [10.57.11.32])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 672C43F5A1;
- Wed, 12 Feb 2025 08:52:46 -0800 (PST)
-Message-ID: <41dd3fe7-ca21-4975-82ad-1149142ce06f@arm.com>
-Date: Wed, 12 Feb 2025 16:52:45 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/7] dts: revamp framework
-Content-Language: en-GB
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: dev@dpdk.org, Patrick Robb <probb@iol.unh.edu>,
- Paul Szczepanek <paul.szczepanek@arm.com>
-References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
- <CABD7UXP1rU9ZC8uQK33B4H5QR6noQiu9agwR1yapEOpn81EZ5Q@mail.gmail.com>
-From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <CABD7UXP1rU9ZC8uQK33B4H5QR6noQiu9agwR1yapEOpn81EZ5Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+	by mails.dpdk.org (Postfix) with ESMTP id D807D42D55;
+	Wed, 12 Feb 2025 19:43:46 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 93367400D5
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 19:43:45 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 743F346206; Wed, 12 Feb 2025 19:43:45 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/other Bug 1649] igb_uio legacy mode can not be used in
+ X710/XL710/XXV710
+Date: Wed, 12 Feb 2025 18:43:45 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: other
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: ktraynor@redhat.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: WONTFIX
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status resolution cc
+Message-ID: <bug-1649-3-Dz5oXBdcIz@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1649-3@http.bugs.dpdk.org/>
+References: <bug-1649-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17393858250.A98A.208264
 Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,41 +55,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 04/02/2025 21:08, Dean Marx wrote:
-> Hi Luca,
-> 
-> I saw in the meeting minutes that the main purpose of this series is
-> to implement the separation of concern principle better in DTS. Just
-> wondering, what parts of the current framework did you think needed to
-> be separated and why? I'm taking an OOP class this semester and we
-> just started talking in depth about separation of concerns, so if you
-> wouldn't mind I'd be interested in your thought process. Working on a
-> review for the series currently as well, should be done relatively
-> soon.
-> 
-> Thanks,
-> Dean
 
-Hi Dean,
+--17393858250.A98A.208264
+Date: Wed, 12 Feb 2025 19:43:45 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-For starters all the major logic was held within the `runner.py` file, 
-which is not ideal. When some logic touches the same object too often, 
-maybe its an indicator that it actually belongs to that class instead. 
-For example, the test suite and cases are configured within the 
-configuration. Anything configuration should be kept within the 
-configuration, the runner should assume that the configuration is final 
-and is ready to be fed to the classes. For this reason, I've moved the 
-test suite and cases filtering logic there. Test runs are a whole 
-concept on their own, and they have their own logic. For this reason it 
-is a better idea to have them individually in their own dedicated class 
-where they can control themselves. As opposed to having a runner.py 
-basically dealing with every part of the framework in the same place. If 
-you were to make a graph with all the linked classes to runner.py, I am 
-sure it'd look like spaghetti. We don't want that. We want a hierarical 
-and structured approach. Separation of concerns will aid this by keeping 
-things where they belong, minimising import/export. This will also help 
-with circular import issues.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1649
 
-Hope this provides some insight!
+Kevin Traynor (ktraynor@redhat.com) changed:
 
-Luca
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |WONTFIX
+                 CC|                            |ktraynor@redhat.com
+
+--- Comment #1 from Kevin Traynor (ktraynor@redhat.com) ---
+This report is 7 years old. At this stage, i'm sure anybody who needed this
+information has got it.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17393858250.A98A.208264
+Date: Wed, 12 Feb 2025 19:43:45 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:ktraynor&=
+#64;redhat.com" title=3D"Kevin Traynor (ktraynor&#64;redhat.com)"> <span cl=
+ass=3D"fn">Kevin Traynor</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - igb_uio legacy mode can not be used in X710/=
+XL710/XXV710"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1649">bug 1649</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>WONTFIX
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">CC</td>
+           <td>
+               &nbsp;
+           </td>
+           <td>ktraynor&#64;redhat.com
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - igb_uio legacy mode can not be used in X710/=
+XL710/XXV710"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1649#c1">Comment # 1</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - igb_uio legacy mode can not be used in X710/=
+XL710/XXV710"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1649">bug 1649</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+ktraynor&#64;redhat.com" title=3D"Kevin Traynor (ktraynor&#64;redhat.com)">=
+ <span class=3D"fn">Kevin Traynor</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">This report is 7 years old. At thi=
+s stage, i'm sure anybody who needed this
+information has got it.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1649#c1">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17393858250.A98A.208264--
