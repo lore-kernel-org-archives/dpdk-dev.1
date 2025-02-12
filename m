@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BF9C021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FFEC02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:34:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2377E42DA3;
-	Wed, 12 Feb 2025 16:33:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CC1E942DC7;
+	Wed, 12 Feb 2025 16:33:33 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 94DE042D97
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:29 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6F94C42D3F
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:30 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id E5A35A3657; Wed, 12 Feb 2025 23:33:28 +0800 (CST)
+ id 2266BA3658; Wed, 12 Feb 2025 23:33:30 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v12 10/28] net/rnp: add support device start stop operations
-Date: Wed, 12 Feb 2025 23:32:30 +0800
-Message-Id: <1739374368-4949-11-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v12 11/28] net/rnp: add RSS support operations
+Date: Wed, 12 Feb 2025 23:32:31 +0800
+Message-Id: <1739374368-4949-12-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
 References: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
@@ -36,534 +36,591 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add basic support for device to start/stop function
+add support rss reta updata/query rss hash update/get
+dev_configure add rss conf check.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/base/rnp_common.c   |  22 +++
- drivers/net/rnp/base/rnp_common.h   |   1 +
- drivers/net/rnp/base/rnp_dma_regs.h |  10 +
- drivers/net/rnp/base/rnp_eth_regs.h |   5 +
- drivers/net/rnp/base/rnp_hw.h       |   1 +
- drivers/net/rnp/base/rnp_mac.h      |  14 ++
- drivers/net/rnp/base/rnp_mac_regs.h |  42 +++++
- drivers/net/rnp/rnp.h               |   3 +
- drivers/net/rnp/rnp_ethdev.c        | 274 +++++++++++++++++++++++++++-
- 9 files changed, 371 insertions(+), 1 deletion(-)
+ doc/guides/nics/features/rnp.ini    |   4 +
+ doc/guides/nics/rnp.rst             |   3 +
+ drivers/net/rnp/base/rnp_eth_regs.h |  16 ++
+ drivers/net/rnp/meson.build         |   1 +
+ drivers/net/rnp/rnp.h               |   7 +
+ drivers/net/rnp/rnp_ethdev.c        |  23 ++
+ drivers/net/rnp/rnp_rss.c           | 367 ++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rss.h           |  43 ++++
+ 8 files changed, 464 insertions(+)
+ create mode 100644 drivers/net/rnp/rnp_rss.c
+ create mode 100644 drivers/net/rnp/rnp_rss.h
 
-diff --git a/drivers/net/rnp/base/rnp_common.c b/drivers/net/rnp/base/rnp_common.c
-index 58de3bde03..2dacb5113e 100644
---- a/drivers/net/rnp/base/rnp_common.c
-+++ b/drivers/net/rnp/base/rnp_common.c
-@@ -79,3 +79,25 @@ rnp_setup_common_ops(struct rnp_hw *hw)
+diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
+index fd7d4b9d8d..2fc94825f5 100644
+--- a/doc/guides/nics/features/rnp.ini
++++ b/doc/guides/nics/features/rnp.ini
+@@ -8,5 +8,9 @@ Speed capabilities   = Y
+ Queue start/stop     = Y
+ Promiscuous mode     = Y
+ Allmulticast mode    = Y
++RSS hash             = Y
++RSS key update       = Y
++RSS reta update      = Y
++Inner RSS            = Y
+ Linux                = Y
+ x86-64               = Y
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index 8bce5028b6..ee325b1aa4 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -11,6 +11,9 @@ Features
+ --------
  
- 	return 0;
- }
-+
-+int rnp_clock_valid_check(struct rnp_hw *hw, u16 nr_lane)
-+{
-+	uint16_t timeout = 0;
-+
-+	do {
-+		RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(nr_lane, 0), 0x7f);
-+		udelay(10);
-+		timeout++;
-+		if (timeout >= 1000)
-+			break;
-+	} while (RNP_E_REG_RD(hw, RNP_RSS_REDIR_TB(nr_lane, 0)) != 0x7f);
-+
-+	if (timeout >= 1000) {
-+		RNP_PMD_ERR("ethernet[%d] eth reg can't be write", nr_lane);
-+		return -EPERM;
-+	}
-+	/* clear the dirty value */
-+	RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(nr_lane, 0), 0);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/rnp/base/rnp_common.h b/drivers/net/rnp/base/rnp_common.h
-index cf1996a675..91e2996398 100644
---- a/drivers/net/rnp/base/rnp_common.h
-+++ b/drivers/net/rnp/base/rnp_common.h
-@@ -12,5 +12,6 @@
- 	 ((macaddr[4] << 8)) | (macaddr[5]))
- int rnp_init_hw(struct rnp_hw *hw);
- int rnp_setup_common_ops(struct rnp_hw *hw);
-+int rnp_clock_valid_check(struct rnp_hw *hw, u16 nr_lane);
+ - Multiple queues for TX and RX
++- Receiver Side Steering (RSS)
++  Receiver Side Steering (RSS) on IPv4, IPv6, IPv4-TCP/UDP/SCTP, IPv6-TCP/UDP/SCTP
++  Inner RSS is only support for vxlan/nvgre
+ - Promiscuous mode
  
- #endif /* _RNP_COMMON_H_ */
-diff --git a/drivers/net/rnp/base/rnp_dma_regs.h b/drivers/net/rnp/base/rnp_dma_regs.h
-index 7c17741c55..8bc6fe581a 100644
---- a/drivers/net/rnp/base/rnp_dma_regs.h
-+++ b/drivers/net/rnp/base/rnp_dma_regs.h
-@@ -6,9 +6,19 @@
- #define _RNP_DMA_REGS_H_
- 
- #define RNP_DMA_VERSION		(0)
-+#define RNP_DMA_CTRL		(0x4)
-+/* 1bit <-> 16 bytes dma addr size */
-+#define RNP_DMA_SCATTER_MEM_MASK	RTE_GENMASK32(31, 16)
-+#define RNP_DMA_SCATTER_MEN_S		(16)
-+#define RNP_DMA_RX_MEM_PAD_EN		RTE_BIT32(8)
-+#define RTE_DMA_VEB_BYPASS		RTE_BIT32(4)
-+#define RNP_DMA_TXRX_LOOP		RTE_BIT32(1)
-+#define RNP_DMA_TXMRX_LOOP		RTE_BIT32(0)
-+
- #define RNP_DMA_HW_EN		(0x10)
- #define RNP_DMA_EN_ALL		(0b1111)
- #define RNP_DMA_HW_STATE	(0x14)
-+
- /* --- queue register --- */
- /* queue enable */
- #define RNP_RXQ_START(qid)	_RING_(0x0010 + 0x100 * (qid))
+ Prerequisites
 diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 10e3d954b8..60766d2035 100644
+index 60766d2035..be7ed5b886 100644
 --- a/drivers/net/rnp/base/rnp_eth_regs.h
 +++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -10,6 +10,9 @@
- #define RNP_E_FILTER_EN		_ETH_(0x801c)
- #define RNP_E_REDIR_EN		_ETH_(0x8030)
- 
-+#define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
-+#define RNP_RX_ETH_F_OFF	(0x7ff)
-+#define RNP_RX_ETH_F_ON		(0x270)
- /* rx queue flow ctrl */
- #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
- #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
-@@ -28,6 +31,8 @@
- #define RNP_MAC_HASH_MASK		RTE_GENMASK32(11, 0)
+@@ -32,7 +32,23 @@
  #define RNP_MAC_MULTICASE_TBL_EN	RTE_BIT32(2)
  #define RNP_MAC_UNICASE_TBL_EN		RTE_BIT32(3)
-+/* rss function ctrl */
-+#define RNP_RSS_REDIR_TB(n, id) _ETH_(0xe000 + ((n) * 0x200) + ((id) * 0x4))
+ /* rss function ctrl */
++#define RNP_RSS_INNER_CTRL	_ETH_(0x805c)
++#define RNP_INNER_RSS_EN	(1)
++#define RNP_INNER_RSS_DIS	(0)
+ #define RNP_RSS_REDIR_TB(n, id) _ETH_(0xe000 + ((n) * 0x200) + ((id) * 0x4))
++#define RNP_RSS_MRQC_ADDR	_ETH_(0x92a0)
++/* RSS policy */
++#define RNP_RSS_HASH_CFG_MASK	(0x3F30000)
++#define RNP_RSS_HASH_IPV4_TCP	RTE_BIT32(16)
++#define RNP_RSS_HASH_IPV4	RTE_BIT32(17)
++#define RNP_RSS_HASH_IPV6	RTE_BIT32(20)
++#define RNP_RSS_HASH_IPV6_TCP	RTE_BIT32(21)
++#define RNP_RSS_HASH_IPV4_UDP	RTE_BIT32(22)
++#define RNP_RSS_HASH_IPV6_UDP   RTE_BIT32(23)
++#define RNP_RSS_HASH_IPV4_SCTP  RTE_BIT32(24)
++#define RNP_RSS_HASH_IPV6_SCTP  RTE_BIT32(25)
++/* rss hash key */
++#define RNP_RSS_KEY_TABLE(idx)	_ETH_(0x92d0 + ((idx) * 0x4))
  
  #define RNP_TC_PORT_OFFSET(lane)	_ETH_(0xe840 + 0x04 * (lane))
  
-diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-index ea4e1b8d83..6a08df9d67 100644
---- a/drivers/net/rnp/base/rnp_hw.h
-+++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -120,6 +120,7 @@ struct rnp_hw {
- 	bool lane_is_sgmii[RNP_MAX_PORT_OF_PF];
- 	struct rnp_mbx_info mbx;
- 	struct rnp_fw_info fw_info;
-+	u16 min_dma_size;
- 
- 	spinlock_t rxq_reset_lock; /* reset op isn't thread safe */
- 	spinlock_t txq_reset_lock; /* reset op isn't thread safe */
-diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
-index 57cbd9e3d5..1dac903396 100644
---- a/drivers/net/rnp/base/rnp_mac.h
-+++ b/drivers/net/rnp/base/rnp_mac.h
-@@ -7,6 +7,20 @@
- 
- #include "rnp_osdep.h"
- #include "rnp_hw.h"
-+#include "rnp_eth_regs.h"
-+
-+#define RNP_RX_ETH_DISABLE(hw, nr_lane) do { \
-+	wmb(); \
-+	RNP_E_REG_WR(hw, RNP_RX_ETH_F_CTRL(nr_lane), \
-+			RNP_RX_ETH_F_OFF); \
-+} while (0)
-+
-+#define RNP_RX_ETH_ENABLE(hw, nr_lane) do { \
-+	wmb(); \
-+	RNP_E_REG_WR(hw, RNP_RX_ETH_F_CTRL(nr_lane), \
-+			RNP_RX_ETH_F_ON); \
-+} while (0)
-+
- 
- void rnp_mac_ops_init(struct rnp_hw *hw);
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac);
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index 1dc0668b48..1ae880143d 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -7,6 +7,41 @@
- 
- #define RNP_MAC_BASE_OFFSET(n)  (_MAC_(0) + ((0x10000) * (n)))
- 
-+#define RNP_MAC_TX_CFG		(0x0)
-+/* Transmitter Enable */
-+#define RNP_MAC_TE		RTE_BIT32(0)
-+/* Jabber Disable */
-+#define RNP_MAC_JD		RTE_BIT32(16)
-+#define RNP_SPEED_SEL_MASK	RTE_GENMASK32(30, 28)
-+#define RNP_SPEED_SEL_S		(28)
-+#define RNP_SPEED_SEL_1G	(b111 << RNP_SPEED_SEL_S)
-+#define RNP_SPEED_SEL_10G	(b010 << RNP_SPEED_SEL_S)
-+#define RNP_SPEED_SEL_40G	(b000 << RNP_SPEED_SEL_S)
-+
-+#define RNP_MAC_RX_CFG		(0x4)
-+/* Receiver Enable */
-+#define RNP_MAC_RE		RTE_BIT32(0)
-+/* Automatic Pad or CRC Stripping */
-+#define RNP_MAC_ACS		RTE_BIT32(1)
-+/* CRC stripping for Type packets */
-+#define RNP_MAC_CST		RTE_BIT32(2)
-+/* Disable CRC Check */
-+#define RNP_MAC_DCRCC		RTE_BIT32(3)
-+/* Enable Max Frame Size Limit */
-+#define RNP_MAC_GPSLCE		RTE_BIT32(6)
-+/* Watchdog Disable */
-+#define RNP_MAC_WD		RTE_BIT32(7)
-+/* Jumbo Packet Support En */
-+#define RNP_MAC_JE		RTE_BIT32(8)
-+/* Enable IPC */
-+#define RNP_MAC_IPC		RTE_BIT32(9)
-+/* Loopback Mode */
-+#define RNP_MAC_LM		RTE_BIT32(10)
-+/* Giant Packet Size Limit */
-+#define RNP_MAC_GPSL_MASK	RTE_GENMASK32(29, 16)
-+#define RNP_MAC_MAX_GPSL	(1518)
-+#define RNP_MAC_CPSL_SHIFT	(16)
-+
- #define RNP_MAC_PKT_FLT_CTRL	(0x8)
- /* Receive All */
- #define RNP_MAC_RA		RTE_BIT32(31)
-@@ -35,5 +70,12 @@
- #define RNP_MAC_HPF		RTE_BIT32(10)
- #define RNP_MAC_VTFE		RTE_BIT32(16)
- 
-+#define RNP_MAC_VFE		RTE_BIT32(16)
-+/* mac link ctrl */
-+#define RNP_MAC_LPI_CTRL	(0xd0)
-+/* PHY Link Status Disable */
-+#define RNP_MAC_PLSDIS		RTE_BIT32(18)
-+/* PHY Link Status */
-+#define RNP_MAC_PLS		RTE_BIT32(17)
- 
- #endif /* _RNP_MAC_REGS_H_ */
+diff --git a/drivers/net/rnp/meson.build b/drivers/net/rnp/meson.build
+index 3afe2ac7d7..970b45cc09 100644
+--- a/drivers/net/rnp/meson.build
++++ b/drivers/net/rnp/meson.build
+@@ -22,4 +22,5 @@ includes += include_directories('base')
+ sources = files(
+                 'rnp_ethdev.c',
+                 'rnp_rxtx.c',
++                'rnp_rss.c',
+ )
 diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index b579fc1052..27fff0282f 100644
+index 27fff0282f..c62204f851 100644
 --- a/drivers/net/rnp/rnp.h
 +++ b/drivers/net/rnp/rnp.h
-@@ -107,6 +107,9 @@ struct rnp_eth_port {
- 	struct rnp_port_attr attr;
+@@ -108,6 +108,13 @@ struct rnp_eth_port {
  	struct rnp_tx_queue *tx_queues[RNP_MAX_RX_QUEUE_NUM];
  	struct rnp_hw *hw;
-+
-+	rte_spinlock_t rx_mac_lock;
-+	bool port_stopped;
- };
  
- struct rnp_eth_adapter {
++	struct rte_eth_rss_conf rss_conf;
++	uint16_t last_rx_num;
++	bool rxq_num_changed;
++	bool reta_has_cfg;
++	bool hw_rss_en;
++	uint32_t indirtbl[RNP_RSS_INDIR_SIZE];
++
+ 	rte_spinlock_t rx_mac_lock;
+ 	bool port_stopped;
+ };
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 7969513244..efc7322fbd 100644
+index efc7322fbd..e0146c0cd1 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -15,6 +15,8 @@
- #include "base/rnp_mac.h"
- #include "base/rnp_eth_regs.h"
- #include "base/rnp_common.h"
-+#include "base/rnp_dma_regs.h"
-+#include "base/rnp_mac_regs.h"
+@@ -18,6 +18,7 @@
+ #include "base/rnp_dma_regs.h"
+ #include "base/rnp_mac_regs.h"
  #include "rnp_rxtx.h"
++#include "rnp_rss.h"
  
  static struct rte_eth_dev *
-@@ -53,9 +55,275 @@ static void rnp_dev_interrupt_handler(void *param)
- 	RTE_SET_USED(param);
+ rnp_alloc_eth_port(struct rte_pci_device *pci, char *name)
+@@ -235,6 +236,9 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
+ 	}
+ 	/* disable eth rx flow */
+ 	RNP_RX_ETH_DISABLE(hw, lane);
++	ret = rnp_dev_rss_configure(eth_dev);
++	if (ret)
++		return ret;
+ 	ret = rnp_rx_scattered_setup(eth_dev);
+ 	if (ret)
+ 		return ret;
+@@ -302,6 +306,19 @@ static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
+ 	return ret;
  }
  
-+static void rnp_mac_rx_enable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	rte_spinlock_lock(&port->rx_mac_lock);
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+	mac_cfg |= RNP_MAC_RE;
-+
-+	mac_cfg &= ~RNP_MAC_GPSL_MASK;
-+	mac_cfg |= (RNP_MAC_MAX_GPSL << RNP_MAC_CPSL_SHIFT);
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-+	rte_spinlock_unlock(&port->rx_mac_lock);
-+}
-+
-+static void rnp_mac_rx_disable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	/* to protect conflict hw resource */
-+	rte_spinlock_lock(&port->rx_mac_lock);
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+	mac_cfg &= ~RNP_MAC_RE;
-+
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-+	rte_spinlock_unlock(&port->rx_mac_lock);
-+}
-+
-+static void rnp_mac_tx_enable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_TX_CFG);
-+	mac_cfg |= RNP_MAC_TE;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_TX_CFG, mac_cfg);
-+}
-+
-+static void rnp_mac_tx_disable(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t ctrl;
-+
-+	/* must wait for tx side has send finish
-+	 * before fisable tx side
-+	 */
-+	ctrl = RNP_MAC_REG_RD(hw, lane, RNP_MAC_TX_CFG);
-+	ctrl &= ~RNP_MAC_TE;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_TX_CFG, ctrl);
-+}
-+
-+static void rnp_mac_init(struct rte_eth_dev *dev)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	uint32_t mac_cfg;
-+
-+	rnp_mac_tx_enable(dev);
-+	rnp_mac_rx_enable(dev);
-+
-+	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_LPI_CTRL);
-+	mac_cfg |= RNP_MAC_PLSDIS | RNP_MAC_PLS;
-+	RNP_MAC_REG_WR(hw, lane, RNP_MAC_LPI_CTRL, mac_cfg);
-+}
-+
-+static int
-+rnp_rx_scattered_setup(struct rte_eth_dev *dev)
-+{
-+	uint16_t max_pkt_size =
-+		dev->data->dev_conf.rxmode.mtu + RNP_ETH_OVERHEAD;
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	struct rnp_hw *hw = port->hw;
-+	struct rnp_rx_queue *rxq;
-+	uint16_t dma_buf_size;
-+	uint16_t queue_id;
-+	uint32_t dma_ctrl;
-+
-+	if (dev->data->rx_queues == NULL)
-+		return -ENOMEM;
-+	for (queue_id = 0; queue_id < dev->data->nb_rx_queues; queue_id++) {
-+		rxq = dev->data->rx_queues[queue_id];
-+		if (!rxq)
-+			continue;
-+		if (hw->min_dma_size == 0)
-+			hw->min_dma_size = rxq->rx_buf_len;
-+		else
-+			hw->min_dma_size = RTE_MIN(hw->min_dma_size,
-+					rxq->rx_buf_len);
-+	}
-+	if (hw->min_dma_size < RNP_MIN_DMA_BUF_SIZE) {
-+		RNP_PMD_ERR("port[%d] scatter dma len is not support %d",
-+				dev->data->port_id, hw->min_dma_size);
-+		return -ENOTSUP;
-+	}
-+	dma_buf_size = hw->min_dma_size;
-+	/* Setup max dma scatter engine split size */
-+	dma_ctrl = RNP_E_REG_RD(hw,  RNP_DMA_CTRL);
-+	if (max_pkt_size == dma_buf_size)
-+		dma_buf_size += (dma_buf_size % 16);
-+	RNP_PMD_INFO("PF[%d] MaxPktLen %d MbSize %d MbHeadRoom %d",
-+			hw->mbx.pf_num, max_pkt_size,
-+			dma_buf_size, RTE_PKTMBUF_HEADROOM);
-+	dma_ctrl &= ~RNP_DMA_SCATTER_MEM_MASK;
-+	dma_ctrl |= ((dma_buf_size / 16) << RNP_DMA_SCATTER_MEN_S);
-+	RNP_E_REG_WR(hw, RNP_DMA_CTRL, dma_ctrl);
-+
-+	return 0;
-+}
-+
-+static int rnp_enable_all_rx_queue(struct rte_eth_dev *dev)
-+{
-+	struct rnp_rx_queue *rxq;
-+	uint16_t idx;
-+	int ret = 0;
-+
-+	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
-+		rxq = dev->data->rx_queues[idx];
-+		if (!rxq || rxq->rx_deferred_start)
-+			continue;
-+		if (dev->data->rx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STOPPED) {
-+			ret = rnp_rx_queue_start(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int rnp_enable_all_tx_queue(struct rte_eth_dev *dev)
-+{
-+	struct rnp_tx_queue *txq;
-+	uint16_t idx;
-+	int ret = 0;
-+
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = dev->data->tx_queues[idx];
-+		if (!txq || txq->tx_deferred_start)
-+			continue;
-+		if (dev->data->tx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STOPPED) {
-+			ret = rnp_tx_queue_start(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int rnp_dev_start(struct rte_eth_dev *eth_dev)
++static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
 +{
 +	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
-+	struct rte_eth_dev_data *data = eth_dev->data;
-+	struct rnp_hw *hw = port->hw;
-+	uint16_t lane = 0;
-+	uint16_t idx = 0;
-+	int ret = 0;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	lane = port->attr.nr_lane;
-+	ret = rnp_clock_valid_check(hw, lane);
-+	if (ret) {
-+		RNP_PMD_ERR("port[%d] function[%d] lane[%d] hw clock error",
-+				data->port_id, hw->mbx.pf_num, lane);
-+		return ret;
-+	}
-+	/* disable eth rx flow */
-+	RNP_RX_ETH_DISABLE(hw, lane);
-+	ret = rnp_rx_scattered_setup(eth_dev);
-+	if (ret)
-+		return ret;
-+	ret = rnp_enable_all_tx_queue(eth_dev);
-+	if (ret)
-+		goto txq_start_failed;
-+	ret = rnp_enable_all_rx_queue(eth_dev);
-+	if (ret)
-+		goto rxq_start_failed;
-+	rnp_mac_init(eth_dev);
-+	/* enable eth rx flow */
-+	RNP_RX_ETH_ENABLE(hw, lane);
-+	port->port_stopped = 0;
++	if (port->last_rx_num != eth_dev->data->nb_rx_queues)
++		port->rxq_num_changed = true;
++	else
++		port->rxq_num_changed = false;
++	port->last_rx_num = eth_dev->data->nb_rx_queues;
 +
 +	return 0;
-+rxq_start_failed:
-+	for (idx = 0; idx < data->nb_rx_queues; idx++)
-+		rnp_rx_queue_stop(eth_dev, idx);
-+txq_start_failed:
-+	for (idx = 0; idx < data->nb_tx_queues; idx++)
-+		rnp_tx_queue_stop(eth_dev, idx);
-+
-+	return ret;
-+}
-+
-+static int rnp_disable_all_rx_queue(struct rte_eth_dev *dev)
-+{
-+	struct rnp_rx_queue *rxq;
-+	uint16_t idx;
-+	int ret = 0;
-+
-+	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
-+		rxq = dev->data->rx_queues[idx];
-+		if (!rxq || rxq->rx_deferred_start)
-+			continue;
-+		if (dev->data->rx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STARTED) {
-+			ret = rnp_rx_queue_stop(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
-+{
-+	struct rnp_tx_queue *txq;
-+	uint16_t idx;
-+	int ret = 0;
-+
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = dev->data->tx_queues[idx];
-+		if (!txq || txq->tx_deferred_start)
-+			continue;
-+		if (dev->data->tx_queue_state[idx] ==
-+				RTE_ETH_QUEUE_STATE_STARTED) {
-+			ret = rnp_tx_queue_stop(dev, idx);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
 +}
 +
  static int rnp_dev_stop(struct rte_eth_dev *eth_dev)
  {
--	RTE_SET_USED(eth_dev);
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
-+	struct rte_eth_link link;
-+
-+	if (port->port_stopped)
-+		return 0;
-+	eth_dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	eth_dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	eth_dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
-+
-+	/* clear the recorded link status */
-+	memset(&link, 0, sizeof(link));
-+	rte_eth_linkstatus_set(eth_dev, &link);
-+
-+	rnp_disable_all_tx_queue(eth_dev);
-+	rnp_disable_all_rx_queue(eth_dev);
-+	rnp_mac_tx_disable(eth_dev);
-+	rnp_mac_rx_disable(eth_dev);
-+
-+	eth_dev->data->dev_started = 0;
-+	port->port_stopped = 1;
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
+@@ -504,6 +521,7 @@ static int rnp_allmulticast_disable(struct rte_eth_dev *eth_dev)
  
- 	return 0;
- }
-@@ -237,6 +505,7 @@ static int rnp_allmulticast_disable(struct rte_eth_dev *eth_dev)
  /* Features supported by this driver */
  static const struct eth_dev_ops rnp_eth_dev_ops = {
++	.dev_configure                = rnp_dev_configure,
  	.dev_close                    = rnp_dev_close,
-+	.dev_start                    = rnp_dev_start,
+ 	.dev_start                    = rnp_dev_start,
  	.dev_stop                     = rnp_dev_stop,
- 	.dev_infos_get                = rnp_dev_infos_get,
+@@ -519,6 +537,11 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.rx_queue_release             = rnp_dev_rx_queue_release,
+ 	.tx_queue_setup               = rnp_tx_queue_setup,
+ 	.tx_queue_release             = rnp_dev_tx_queue_release,
++	/* rss impl */
++	.reta_update                  = rnp_dev_rss_reta_update,
++	.reta_query                   = rnp_dev_rss_reta_query,
++	.rss_hash_update              = rnp_dev_rss_hash_update,
++	.rss_hash_conf_get            = rnp_dev_rss_hash_conf_get,
+ };
  
-@@ -320,6 +589,7 @@ rnp_init_port_resource(struct rnp_eth_adapter *adapter,
- 	}
- 	rte_ether_addr_copy(&port->mac_addr, &eth_dev->data->mac_addrs[0]);
- 
-+	rte_spinlock_init(&port->rx_mac_lock);
- 	adapter->ports[p_id] = port;
- 	adapter->inited_ports++;
- 
-@@ -452,6 +722,8 @@ rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
- 		ret = rnp_init_port_resource(adapter, sub_eth_dev, name, p_id);
- 		if (ret)
- 			goto eth_alloc_error;
-+		rnp_mac_rx_disable(sub_eth_dev);
-+		rnp_mac_tx_disable(sub_eth_dev);
- 		if (p_id) {
- 			/* port 0 will be probe by platform */
- 			rte_eth_dev_probing_finish(sub_eth_dev);
+ static void
+diff --git a/drivers/net/rnp/rnp_rss.c b/drivers/net/rnp/rnp_rss.c
+new file mode 100644
+index 0000000000..0d6584d6f1
+--- /dev/null
++++ b/drivers/net/rnp/rnp_rss.c
+@@ -0,0 +1,367 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#include <stdint.h>
++
++#include "base/rnp_bdq_if.h"
++#include "base/rnp_eth_regs.h"
++
++#include "rnp.h"
++#include "rnp_rxtx.h"
++#include "rnp_rss.h"
++
++static const struct rnp_rss_hash_cfg rnp_rss_cfg[] = {
++	{RNP_RSS_IPV4, RNP_RSS_HASH_IPV4, RTE_ETH_RSS_IPV4},
++	{RNP_RSS_IPV4, RNP_RSS_HASH_IPV4, RTE_ETH_RSS_FRAG_IPV4},
++	{RNP_RSS_IPV4, RNP_RSS_HASH_IPV4, RTE_ETH_RSS_NONFRAG_IPV4_OTHER},
++	{RNP_RSS_IPV6, RNP_RSS_HASH_IPV6, RTE_ETH_RSS_IPV6},
++	{RNP_RSS_IPV6, RNP_RSS_HASH_IPV6, RTE_ETH_RSS_FRAG_IPV6},
++	{RNP_RSS_IPV6, RNP_RSS_HASH_IPV6, RTE_ETH_RSS_NONFRAG_IPV6_OTHER},
++	{RNP_RSS_IPV4_TCP, RNP_RSS_HASH_IPV4_TCP, RTE_ETH_RSS_NONFRAG_IPV4_TCP},
++	{RNP_RSS_IPV4_UDP, RNP_RSS_HASH_IPV4_UDP, RTE_ETH_RSS_NONFRAG_IPV4_UDP},
++	{RNP_RSS_IPV4_SCTP, RNP_RSS_HASH_IPV4_SCTP, RTE_ETH_RSS_NONFRAG_IPV4_SCTP},
++	{RNP_RSS_IPV6_TCP, RNP_RSS_HASH_IPV6_TCP, RTE_ETH_RSS_NONFRAG_IPV6_TCP},
++	{RNP_RSS_IPV6_UDP, RNP_RSS_HASH_IPV6_UDP, RTE_ETH_RSS_NONFRAG_IPV6_UDP},
++	{RNP_RSS_IPV6_SCTP, RNP_RSS_HASH_IPV6_SCTP, RTE_ETH_RSS_NONFRAG_IPV6_SCTP}
++};
++
++static uint8_t rnp_rss_default_key[40] = {
++	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
++	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
++	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
++	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
++	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
++};
++
++int
++rnp_dev_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			uint16_t reta_size)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint16_t port_offset = port->attr.port_offset;
++	uint32_t *indirtbl = &port->indirtbl[0];
++	uint16_t lane = port->attr.nr_lane;
++	struct rnp_hw *hw = port->hw;
++	struct rnp_rx_queue *rxq;
++	uint16_t i, idx, shift;
++	uint16_t hwrid;
++	uint16_t qid = 0;
++
++	if (reta_size > RNP_RSS_INDIR_SIZE) {
++		RNP_PMD_ERR("Invalid reta size, reta_size:%d", reta_size);
++		return -EINVAL;
++	}
++	for (i = 0; i < reta_size; i++) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		if (reta_conf[idx].mask & (1ULL << shift))
++			indirtbl[i] = reta_conf[idx].reta[shift];
++	}
++	for (i = 0; i < RNP_RSS_INDIR_SIZE; i++) {
++		qid = indirtbl[i];
++		if (qid < dev->data->nb_rx_queues) {
++			rxq = dev->data->rx_queues[qid];
++			hwrid = rxq->attr.index - port_offset;
++			RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(lane, i), hwrid);
++			rxq->rx_offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
++		} else {
++			RNP_PMD_WARN("port[%d] reta[%d]-queue=%d "
++					"rx queue is out range of cur Settings",
++					dev->data->port_id, i, qid);
++		}
++	}
++	port->reta_has_cfg = true;
++
++	return 0;
++}
++
++static uint16_t
++rnp_hwrid_to_queue_id(struct rte_eth_dev *dev, uint16_t hwrid)
++{
++	struct rnp_rx_queue *rxq;
++	bool find = false;
++	uint16_t idx;
++
++	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
++		rxq = dev->data->rx_queues[idx];
++		if (!rxq)
++			continue;
++		if (rxq->attr.index == hwrid) {
++			find = true;
++			break;
++		}
++	}
++	if (find)
++		return rxq->attr.queue_id;
++
++	return UINT16_MAX;
++}
++
++int
++rnp_dev_rss_reta_query(struct rte_eth_dev *dev,
++		       struct rte_eth_rss_reta_entry64 *reta_conf,
++		       uint16_t reta_size)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint16_t port_offset = port->attr.port_offset;
++	struct rnp_hw *hw = port->hw;
++	uint32_t *indirtbl = &port->indirtbl[0];
++	uint16_t lane = port->attr.nr_lane;
++	uint16_t i, idx, shift;
++	uint16_t hwrid;
++	uint16_t queue_id;
++
++	if (reta_size > RNP_RSS_INDIR_SIZE) {
++		RNP_PMD_ERR("Invalid reta size, reta_size:%d", reta_size);
++		return -EINVAL;
++	}
++	for (i = 0; i < reta_size; i++) {
++		hwrid = RNP_E_REG_RD(hw, RNP_RSS_REDIR_TB(lane, i));
++		hwrid = hwrid + port_offset;
++		queue_id = rnp_hwrid_to_queue_id(dev, hwrid);
++		if (queue_id == UINT16_MAX) {
++			RNP_PMD_ERR("Invalid rss-table value is the"
++					" Sw-queue not Match Hardware?");
++			return -EINVAL;
++		}
++		indirtbl[i] = queue_id;
++	}
++	for (i = 0; i < reta_size; i++) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		if (reta_conf[idx].mask & (1ULL << shift))
++			reta_conf[idx].reta[shift] = (uint16_t)indirtbl[i];
++	}
++
++	return 0;
++}
++
++static void rnp_disable_rss(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_adapter *adapter = RNP_DEV_TO_ADAPTER(dev);
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rte_eth_rss_conf *conf = &port->rss_conf;
++	struct rnp_rx_queue *rxq = NULL;
++	struct rnp_hw *hw = port->hw;
++	uint8_t rss_disable = 0;
++	uint32_t mrqc_reg = 0;
++	uint16_t lane, index;
++	uint16_t idx;
++
++	memset(conf, 0, sizeof(*conf));
++	lane = port->attr.nr_lane;
++	for (idx = 0; idx < hw->max_port_num; idx++) {
++		if (adapter->ports[idx] == NULL) {
++			rss_disable++;
++			continue;
++		}
++		if (!adapter->ports[idx]->rss_conf.rss_hf)
++			rss_disable++;
++	}
++
++	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
++		rxq = dev->data->rx_queues[idx];
++		if (!rxq)
++			continue;
++		rxq->rx_offloads &= ~RTE_ETH_RX_OFFLOAD_RSS_HASH;
++	}
++	/* we use software way to achieve multiple port mode
++	 * rss feature disable by set RSS table to default ring.
++	 * So when re enable RSS,the rss reta table need to set
++	 * last user set State
++	 */
++	rxq = dev->data->rx_queues[0];
++	index = rxq->attr.index - port->attr.port_offset;
++	for (idx = 0; idx < RNP_RSS_INDIR_SIZE; idx++)
++		RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(lane, idx), index);
++	if (rss_disable == hw->max_port_num) {
++		mrqc_reg = RNP_E_REG_RD(hw, RNP_RSS_MRQC_ADDR);
++		mrqc_reg &= ~RNP_RSS_HASH_CFG_MASK;
++		RNP_E_REG_WR(hw, RNP_RSS_MRQC_ADDR, mrqc_reg);
++	}
++}
++
++static void
++rnp_rss_hash_set(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_conf)
++{
++	uint64_t rss_hash_level = RTE_ETH_RSS_LEVEL(rss_conf->rss_hf);
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_rx_queue *rxq = NULL;
++	struct rnp_hw *hw = port->hw;
++	uint8_t *hash_key;
++	uint32_t mrqc_reg = 0;
++	uint32_t rss_key;
++	uint64_t rss_hf;
++	uint16_t i;
++
++	rss_hf = rss_conf->rss_hf;
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < RNP_MAX_HASH_KEY_SIZE; i++) {
++			rss_key  = hash_key[(i * 4)];
++			rss_key |= hash_key[(i * 4) + 1] << 8;
++			rss_key |= hash_key[(i * 4) + 2] << 16;
++			rss_key |= hash_key[(i * 4) + 3] << 24;
++			rss_key = rte_cpu_to_be_32(rss_key);
++			RNP_E_REG_WR(hw, RNP_RSS_KEY_TABLE(9 - i), rss_key);
++		}
++	}
++	if (rss_hf) {
++		for (i = 0; i < RTE_DIM(rnp_rss_cfg); i++)
++			if (rnp_rss_cfg[i].rss_flag & rss_hf)
++				mrqc_reg |= rnp_rss_cfg[i].reg_val;
++		/* Enable inner rss mode
++		 * If enable, outer(vxlan/nvgre) rss won't cals
++		 */
++		if (rss_hash_level == RTE_ETH_RSS_LEVEL_INNERMOST)
++			RNP_E_REG_WR(hw, RNP_RSS_INNER_CTRL, RNP_INNER_RSS_EN);
++		else
++			RNP_E_REG_WR(hw, RNP_RSS_INNER_CTRL, RNP_INNER_RSS_DIS);
++		RNP_E_REG_WR(hw, RNP_RSS_MRQC_ADDR, mrqc_reg);
++		for (i = 0; i < dev->data->nb_rx_queues; i++) {
++			rxq = dev->data->rx_queues[i];
++			if (!rxq)
++				continue;
++			rxq->rx_offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
++		}
++	}
++}
++
++static void
++rnp_reta_table_update(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint16_t port_offset = port->attr.port_offset;
++	uint32_t *indirtbl = &port->indirtbl[0];
++	struct rnp_hw *hw = port->hw;
++	struct rnp_rx_queue *rxq;
++	int i = 0, qid = 0, p_id;
++	uint16_t hwrid;
++
++	p_id = port->attr.nr_lane;
++	for (i = 0; i < RNP_RSS_INDIR_SIZE; i++) {
++		qid = indirtbl[i];
++		if (qid < dev->data->nb_rx_queues) {
++			rxq = dev->data->rx_queues[qid];
++			hwrid = rxq->attr.index - port_offset;
++			RNP_E_REG_WR(hw, RNP_RSS_REDIR_TB(p_id, i), hwrid);
++			rxq->rx_offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
++		} else {
++			RNP_PMD_LOG(WARNING, "port[%d] reta[%d]-queue=%d "
++					"rx queues is out range of cur set",
++					dev->data->port_id, i, qid);
++		}
++	}
++}
++
++int
++rnp_dev_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++
++	if (rss_conf->rss_key &&
++			rss_conf->rss_key_len > RNP_MAX_HASH_KEY_SIZE) {
++		RNP_PMD_ERR("Invalid rss key, rss_key_len:%d",
++				rss_conf->rss_key_len);
++		return -EINVAL;
++	}
++	if (rss_conf->rss_hf &&
++			(!(rss_conf->rss_hf & RNP_SUPPORT_RSS_OFFLOAD_ALL))) {
++		RNP_PMD_ERR("RSS type don't support");
++		return -EINVAL;
++	}
++	if (!rss_conf->rss_hf) {
++		rnp_disable_rss(dev);
++	} else {
++		rnp_rss_hash_set(dev, rss_conf);
++		rnp_reta_table_update(dev);
++	}
++	port->rss_conf = *rss_conf;
++
++	return 0;
++}
++
++int
++rnp_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
++			  struct rte_eth_rss_conf *rss_conf)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw *hw = port->hw;
++	uint8_t *hash_key;
++	uint32_t rss_key;
++	uint64_t rss_hf;
++	uint32_t mrqc;
++	uint16_t i;
++
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < 10; i++) {
++			rss_key = RNP_E_REG_RD(hw, RNP_RSS_KEY_TABLE(9 - i));
++			rss_key = rte_be_to_cpu_32(rss_key);
++			hash_key[(i * 4)] = rss_key & 0x000000FF;
++			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
++			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
++			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
++		}
++	}
++	rss_hf = 0;
++	mrqc = RNP_E_REG_RD(hw, RNP_RSS_MRQC_ADDR) & RNP_RSS_HASH_CFG_MASK;
++	if (mrqc == 0) {
++		rss_conf->rss_hf = 0;
++		return 0;
++	}
++	for (i = 0; i < RTE_DIM(rnp_rss_cfg); i++)
++		if (rnp_rss_cfg[i].reg_val & mrqc)
++			rss_hf |= rnp_rss_cfg[i].rss_flag;
++
++	rss_conf->rss_hf = rss_hf;
++
++	return 0;
++}
++
++int rnp_dev_rss_configure(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint32_t *indirtbl = port->indirtbl;
++	enum rte_eth_rx_mq_mode mq_mode = 0;
++	struct rte_eth_rss_conf rss_conf;
++	struct rnp_rx_queue *rxq;
++	int i, j;
++
++	mq_mode = dev->data->dev_conf.rxmode.mq_mode;
++	if (dev->data->rx_queues == NULL) {
++		RNP_PMD_ERR("rx_queue is not setup skip rss set");
++		return -EINVAL;
++	}
++	rss_conf = dev->data->dev_conf.rx_adv_conf.rss_conf;
++	if (!(rss_conf.rss_hf & RNP_SUPPORT_RSS_OFFLOAD_ALL) ||
++			!(mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)) {
++		rnp_disable_rss(dev);
++
++		return 0;
++	}
++	if (rss_conf.rss_key == NULL)
++		rss_conf.rss_key = rnp_rss_default_key;
++
++	if (port->rxq_num_changed || !port->reta_has_cfg) {
++		/* set default reta policy */
++		for (i = 0; i < RNP_RSS_INDIR_SIZE; i++) {
++			j = i % dev->data->nb_rx_queues;
++			rxq = dev->data->rx_queues[j];
++			if (!rxq) {
++				RNP_PMD_ERR("rss Set reta-cfg rxq %d Is NULL", i);
++				return -EINVAL;
++			}
++			indirtbl[i] = rxq->attr.queue_id;
++		}
++	}
++	rnp_reta_table_update(dev);
++	port->rss_conf = rss_conf;
++	/* setup rss key and hash func */
++	rnp_rss_hash_set(dev, &rss_conf);
++
++	return 0;
++}
+diff --git a/drivers/net/rnp/rnp_rss.h b/drivers/net/rnp/rnp_rss.h
+new file mode 100644
+index 0000000000..73f895d6f1
+--- /dev/null
++++ b/drivers/net/rnp/rnp_rss.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#ifndef _RNP_RSS_H_
++#define _RNP_RSS_H_
++
++#include "rnp.h"
++
++struct rnp_rss_hash_cfg {
++	uint32_t func_id;
++	uint32_t reg_val;
++	uint64_t rss_flag;
++};
++
++enum rnp_rss_hash_type {
++	RNP_RSS_IPV4,
++	RNP_RSS_IPV6,
++	RNP_RSS_IPV4_TCP,
++	RNP_RSS_IPV4_UDP,
++	RNP_RSS_IPV4_SCTP,
++	RNP_RSS_IPV6_TCP,
++	RNP_RSS_IPV6_UDP,
++	RNP_RSS_IPV6_SCTP,
++};
++
++int
++rnp_dev_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			uint16_t reta_size);
++int
++rnp_dev_rss_reta_query(struct rte_eth_dev *dev,
++		       struct rte_eth_rss_reta_entry64 *reta_conf,
++		       uint16_t reta_size);
++int
++rnp_dev_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf);
++int
++rnp_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
++			  struct rte_eth_rss_conf *rss_conf);
++int rnp_dev_rss_configure(struct rte_eth_dev *dev);
++
++#endif /* _RNP_RSS_H_ */
 -- 
 2.48.1
 
