@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FC9C021A1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6EAFC021A4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:36:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2AE342792;
-	Wed, 12 Feb 2025 15:36:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 00D1542798;
+	Wed, 12 Feb 2025 15:36:39 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 986FA4111B
- for <dev@dpdk.org>; Wed, 12 Feb 2025 15:36:34 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 257874278C
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 15:36:36 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id A11E1554A7A; Wed, 12 Feb 2025 22:36:32 +0800 (CST)
+ id 394DA554A7B; Wed, 12 Feb 2025 22:36:34 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v11 02/28] net/rnp: add ethdev probe and remove
-Date: Wed, 12 Feb 2025 22:35:59 +0800
-Message-Id: <1739370987-3989-3-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v11 03/28] net/rnp: add log
+Date: Wed, 12 Feb 2025 22:36:00 +0800
+Message-Id: <1739370987-3989-4-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
 References: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
@@ -36,117 +36,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add basic PCIe ethdev probe and remove.
+add log function for trace or debug
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/rnp/rnp.h        | 13 +++++++
- drivers/net/rnp/rnp_ethdev.c | 74 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
- create mode 100644 drivers/net/rnp/rnp.h
+ drivers/net/rnp/rnp_ethdev.c |  2 ++
+ drivers/net/rnp/rnp_logs.h   | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 drivers/net/rnp/rnp_logs.h
 
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index b71226cb84..12cc30e013 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -72,6 +72,8 @@ static struct rte_pci_driver rte_rnp_pmd = {
+ 	.remove = rnp_pci_remove,
+ };
+ 
++RTE_LOG_REGISTER_SUFFIX(rnp_init_logtype, init, NOTICE);
++
+ RTE_PMD_REGISTER_PCI(net_rnp, rte_rnp_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_rnp, pci_id_rnp_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_rnp, "igb_uio | uio_pci_generic | vfio-pci");
+diff --git a/drivers/net/rnp/rnp_logs.h b/drivers/net/rnp/rnp_logs.h
 new file mode 100644
-index 0000000000..6cd717a36e
+index 0000000000..c68a5c1028
 --- /dev/null
-+++ b/drivers/net/rnp/rnp.h
-@@ -0,0 +1,13 @@
++++ b/drivers/net/rnp/rnp_logs.h
+@@ -0,0 +1,36 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(C) 2023 Mucse IC Design Ltd.
 + */
-+#ifndef __RNP_H__
-+#define __RNP_H__
 +
-+#define PCI_VENDOR_ID_MUCSE	(0x8848)
-+#define RNP_DEV_ID_N10G		(0x1000)
++#ifndef __RNP_LOGS_H__
++#define __RNP_LOGS_H__
 +
-+struct rnp_eth_port {
-+};
++#include <rte_log.h>
 +
-+#endif /* __RNP_H__ */
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 9ce3c0b497..b71226cb84 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -1,3 +1,77 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(C) 2023 Mucse IC Design Ltd.
-  */
++extern int rnp_init_logtype;
++#define RTE_LOGTYPE_RNP_INIT rnp_init_logtype
++#define RNP_PMD_INIT_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, RNP_INIT, "%s(): ", __func__,  __VA_ARGS__)
++#define PMD_INIT_FUNC_TRACE() RNP_PMD_INIT_LOG(DEBUG, " >>")
++#define RNP_PMD_DRV_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, RNP_INIT, \
++			"%s(): ", __func__, __VA_ARGS__)
++#define RNP_PMD_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, RNP_INIT, \
++			"rnp_net: (%d) ", __LINE__, __VA_ARGS__)
++#define RNP_PMD_ERR(fmt, ...) \
++	RNP_PMD_LOG(ERR, fmt, ## __VA_ARGS__)
++#define RNP_PMD_WARN(fmt, ...) \
++	RNP_PMD_LOG(WARNING, fmt, ## __VA_ARGS__)
++#define RNP_PMD_INFO(fmt, ...) \
++	RNP_PMD_LOG(INFO, fmt, ## __VA_ARGS__)
 +
-+#include <ethdev_pci.h>
-+#include <rte_io.h>
-+#include <rte_malloc.h>
++#ifdef RTE_LIBRTE_RNP_REG_DEBUG
++#define RNP_PMD_REG_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, RNP_INIT, \
++			"%s(): ", __func__, __VA_ARGS__)
++#else
++#define RNP_PMD_REG_LOG(...) do { } while (0)
++#endif
 +
-+#include "rnp.h"
-+
-+static int
-+rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
-+{
-+	RTE_SET_USED(eth_dev);
-+
-+	return -ENODEV;
-+}
-+
-+static int
-+rnp_eth_dev_uninit(struct rte_eth_dev *eth_dev)
-+{
-+	RTE_SET_USED(eth_dev);
-+
-+	return -ENODEV;
-+}
-+
-+static int
-+rnp_pci_remove(struct rte_pci_device *pci_dev)
-+{
-+	struct rte_eth_dev *eth_dev;
-+	int rc;
-+
-+	eth_dev = rte_eth_dev_allocated(pci_dev->device.name);
-+
-+	if (eth_dev) {
-+		/* Cleanup eth dev */
-+		rc = rte_eth_dev_pci_generic_remove(pci_dev,
-+				rnp_eth_dev_uninit);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
-+{
-+	int rc;
-+
-+	RTE_SET_USED(pci_drv);
-+
-+	rc = rte_eth_dev_pci_generic_probe(pci_dev, sizeof(struct rnp_eth_port),
-+			rnp_eth_dev_init);
-+
-+	return rc;
-+}
-+
-+static const struct rte_pci_id pci_id_rnp_map[] = {
-+	{
-+		RTE_PCI_DEVICE(PCI_VENDOR_ID_MUCSE, RNP_DEV_ID_N10G)
-+	},
-+	{
-+		.vendor_id = 0,
-+	},
-+};
-+
-+static struct rte_pci_driver rte_rnp_pmd = {
-+	.id_table = pci_id_rnp_map,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
-+	.probe = rnp_pci_probe,
-+	.remove = rnp_pci_remove,
-+};
-+
-+RTE_PMD_REGISTER_PCI(net_rnp, rte_rnp_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_rnp, pci_id_rnp_map);
-+RTE_PMD_REGISTER_KMOD_DEP(net_rnp, "igb_uio | uio_pci_generic | vfio-pci");
++#endif /* __RNP_LOGS_H__ */
 -- 
 2.34.1
 
