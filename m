@@ -2,77 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC9DC021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E48C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:36:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3310742DCA;
-	Wed, 12 Feb 2025 16:34:40 +0100 (CET)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2FF9C42D72
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:34:38 +0100 (CET)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-21f6a47d617so79447915ad.2
- for <dev@dpdk.org>; Wed, 12 Feb 2025 07:34:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739374477;
- x=1739979277; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=EruzyRjiXGbDI8DRTxomWekY8R48+uDxLAU2Q7fA91s=;
- b=BvZgc0z9QEIu0Ixw+8floCwmCM7VM5vCTBqFSyis5Acgg54CO7yADFWXoKjdjFZH2l
- v6N7uQy4qTrZi4bayUNfnbMEWlRGVJz8scrNOPbBYeewGVHE6yyhr0bdgXT4mzj8O1Ml
- fip8AJwo3i7+UrSt4AgQNBDL0guhaQCIFYEnRH+zAi5n17KITgDLkpoRPsYJGvkteP7E
- Y2pZ3crWt9mn0T7hYbVdQ/AfCyprEkOpg0X5wV9hUs9Z4+GLkVTUBZl9Q2XkVRxU/unQ
- kMi57ht+HmsBCB9tykBBMGjt8RvuBoC9+wIhCB4hnYPzggFOMkuMRscx6gOPwiDFGIny
- WKxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739374477; x=1739979277;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=EruzyRjiXGbDI8DRTxomWekY8R48+uDxLAU2Q7fA91s=;
- b=mgWQP3NCs+L7JrnDQZEUDp2+sP3WsBzsYtLX4qA9cxXSI+xtvt+j+awFh3dUjmep4p
- 6aFmsaYT3BVOFKzoMc7f0Y13GnVZefr1fAAjTMhGIbguxHC+fY+1RZLkZJ9X5p4N62ue
- LudoeLwvz2rIjO4C3o+OxnzCMbnA5BbFnYNC5oNk8f6Yqc4irVCfqJdvCuUlarEhJYIB
- 6Fdw/3V5TTXcoZqjPxfALWTRG53XgR8H8jX4r3DvJknrcu2Tv1XVUN+Z/nf8z8r0do2C
- 2+0KpXZBjX+tzm1SK/1nIfva3ncBgqdqgmFZTCNds/TC90DQ/BxPmtSpqM5kRbfDxDDG
- X/dQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXuIDr6RbBJecea9iWrzjSayMP1mED7/+MQ4binYmSxP9O0oBXO3YCiCJJpM+zmFl0oajw=@dpdk.org
-X-Gm-Message-State: AOJu0YzY4YrQisNxVZ5fEjx1V1m+AycgaIVfRwowORRHNNP5MOX4/jQb
- aqX+sQvf+0OcClYAueIImoLVk8ujLW9ZGpOlFLGpPXklQpg3XP5DAfcyhNaVsdqlgosK3h8g9kI
- X
-X-Gm-Gg: ASbGncurD1QJlY4jlmPA7F1xPMUxIDx8UDonGttSbRpjYatoVdTQzpeSOS0uyEyCye7
- GTJtmRIK2dgQUo60f/MV2/MQTVFz3wjr5XxsmRZ39jPLylZfvaowCiRvw4qcjM3iPJbxvFHmg7s
- 5910ynY5Vj0BUYtUM9p4wK5UIVGJP/W6EjG/NnlPXDA0hqaEW95EvWf2/2JNkAHNpzwxfKB/gPp
- VdqtV/MnMmZYOFFU60ovUYpMZf4wkQ+pW3TJ8C9ZaxJShOyKZR2TyqWlGp1B3gL1unG2sVjN8VD
- T9ksp9LmSV9hReLjXdg9Lq4sJ/Yl55MGzMVRcxWbmGqkg+Arh9pK7i/NeJ2ZzHwmGfDp
-X-Google-Smtp-Source: AGHT+IEIo1R+5xxDNhCxLiwvmihwm7ThzwTQEuY2aP6EqSsstw1NqsOokue5ga95XKAKzfSgyzABfw==
-X-Received: by 2002:a05:6a21:700b:b0:1ee:1af5:86a9 with SMTP id
- adf61e73a8af0-1ee5c790e07mr6777598637.22.1739374475773; 
- Wed, 12 Feb 2025 07:34:35 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-ad54a8a56b2sm6366785a12.76.2025.02.12.07.34.35
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Feb 2025 07:34:35 -0800 (PST)
-Date: Wed, 12 Feb 2025 07:34:32 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: "11" <caowenbo@mucse.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-Subject: Re: [PATCH v9 04/28] net/rnp: support mailbox basic operate
-Message-ID: <20250212073432.3c2782ea@hermes.local>
-In-Reply-To: <87250201494D281A+001701db7cf9$6b2242f0$4166c8d0$@mucse.com>
-References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <1739263818-59770-5-git-send-email-caowenbo@mucse.com>
- <20250211072406.59f15101@hermes.local>
- <87250201494D281A+001701db7cf9$6b2242f0$4166c8d0$@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E8B5542DC7;
+	Wed, 12 Feb 2025 16:35:31 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id D218242DBB
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 16:35:29 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 49B461140118;
+ Wed, 12 Feb 2025 10:35:29 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 12 Feb 2025 10:35:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1739374529;
+ x=1739460929; bh=XYLSxAbflu2FskbKU624rd4iF9XcsZMTb9lsOXr4R3I=; b=
+ huEyJywPHbh7036T6VbmCr3DtPJD2YhgjK2wPBc0QO0dJiCyEfaK4zksIHOeK+6k
+ XzZX5gZstEqdiJt82sUHe0gA06PrmIiNX8zrn9q2z348zXpOGoNa48PiCk9yDANh
+ JSTQBjIaVDiF21fF4M0K9N87c9zeLhAupYqsUQ6KWeuaoMSrHpuqoP6MtSe+1rBv
+ nGBm4BflGqhjja9HK4AwAVsPGm6txNe5ti56xqn3z3xJGGj9ov9aAh3NLr3N5fwm
+ Ls91qTb6NsiU+nc4opMWz7BN5/63eRlPzAEuGpgKwrgKH5FoG2mpvYnpSOnI3mos
+ 6R2PLgpVojizDN1iT6efWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739374529; x=
+ 1739460929; bh=XYLSxAbflu2FskbKU624rd4iF9XcsZMTb9lsOXr4R3I=; b=L
+ 9qrmeeJusB/vhFH3j8FGtwHX4fmaPN3TP+Zi+sbhw1QQug2zxUaVxIfmC5nK1mlS
+ 92eY5JzVbILUOS/jDtkdbqWhoM5hfcMDhxSPK+aQoo6KSBmm6Nk7RC/GAOV1ICXd
+ Yfx96zKA+KlwqGglCYPn7ZDRlVHNySSvWlx2ca76Gt5AO7PniBc6pVcH00AhD1UM
+ JtRk9XY/gtcFvDpoNEtOzp8jE04V59OoYq1gnGT3x+4EDQ0yC301SRY1FxAus9Jl
+ fznkpVuulsZ3ES3FG0wD/RduZ36QLoL1e0+klUfCt/FcQ8YeQE1DqbSopWjvDSyk
+ eyEGUoODP4DFKel0U559A==
+X-ME-Sender: <xms:wL-sZ_I1ClFiJGUY7tUFGKQ6TrvsMk645UjWyBroPGE34QC-vjyDKA>
+ <xme:wL-sZzKA3ozjpsdFgYPUoEgw5B6sFHCSA7C7bgKwnEeusS220uu7T3qFFL8W11hu5
+ EiN4P9TS1-fPoNspg>
+X-ME-Received: <xmr:wL-sZ3vZYWMh1chqInClkZxzRq2eaevVxkbLjqA6cEMi8rcTu6rQ0_A2MTguyOsq3lMowfdpwLbLZN3k8Q_8-yJUMg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedviecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruh
+ gtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhgpdhrtghpthhtohepihgrnhdrshhtohhkvghssehinhhtvghlrdgtoh
+ hm
+X-ME-Proxy: <xmx:wL-sZ4aHVaZou3LRinjD1cvVyZLEDSO6kNXpmGKqcmypCD_TlR_NLA>
+ <xmx:wL-sZ2bc-Am6YF9nvw-qWlMx3YJDJsy7b9OW6NcFvCUF8brYABHlBg>
+ <xmx:wL-sZ8AX6Pf8PCeKhtH15gOAOgRgTyH-mJho65VRMGxDHn1s-C0Wfg>
+ <xmx:wL-sZ0YuxuqRnPb2Hk-xCuuVnH9p3kZhQloDKdbAB4k0am1FDm-AzA>
+ <xmx:wb-sZ2G1E7CSmdePLzBEzR6Azx0OiMwlaQTscnYoJ1lm8s48QkvI_7mk>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Feb 2025 10:35:28 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "Stokes, Ian" <ian.stokes@intel.com>
+Subject: Re: [PATCH] build: allow disabling avx512 support via compiler flag
+Date: Wed, 12 Feb 2025 16:35:26 +0100
+Message-ID: <5541003.tWeucmBOSa@thomas>
+In-Reply-To: <MW6PR11MB83091D62D1060A738AA514E192FD2@MW6PR11MB8309.namprd11.prod.outlook.com>
+References: <20250121164114.2311086-1-bruce.richardson@intel.com>
+ <MW6PR11MB83091D62D1060A738AA514E192FD2@MW6PR11MB8309.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,18 +90,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Feb 2025 10:54:20 +0800
-"11" <caowenbo@mucse.com> wrote:
-
-> Hi Stephen,
+11/02/2025 18:02, Stokes, Ian:
+> > DPDK build checks for build support for various instruction sets by
+> > checking both the target machine and the compiler for support. However,
+> > any disabling of instruction sets via compiler flags was not taken into
+> > account in many cases. For AVX512 support, check for a user-specified
+> > "no-avx512f" flag in the c_args parameter before checking if the
+> > compiler can actually build AVX512 code.
+> > 
+> > As well as providing an option for the user, this can be used to test
+> > builds without AVX512 without having to use an older compiler.
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > 
-> This flag add will ignore some warning error ?
-> > +error_cflags = ['-Wno-unused-value',
-> > +        '-Wno-unused-but-set-variable',
-> > +        '-Wno-unused-parameter',
-> > +        ]  
+> Thanks Bruce,
 > 
-> Regards Wenbo
+> tested ok for me, LGTM.
+> 
+> Acked-by: Ian Stokes <ian.stokes@intel.com>
+
+Applied, thanks.
 
 
-Yes, but can't they be fixed instead.
+
