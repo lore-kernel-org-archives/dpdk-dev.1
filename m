@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52940C021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57FBC021A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:46:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90F5242E6F;
-	Wed, 12 Feb 2025 17:46:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EACBC42E8C;
+	Wed, 12 Feb 2025 17:46:18 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 6534C42D92
- for <dev@dpdk.org>; Wed, 12 Feb 2025 17:46:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C789842E50
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 17:46:12 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D83D512FC;
- Wed, 12 Feb 2025 08:46:31 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D7771E4D;
+ Wed, 12 Feb 2025 08:46:33 -0800 (PST)
 Received: from localhost.localdomain (unknown [10.57.11.32])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0F8243F5A1;
- Wed, 12 Feb 2025 08:46:09 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 25C113F5A1;
+ Wed, 12 Feb 2025 08:46:11 -0800 (PST)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Nicholas Pratte <npratte@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 5/7] dts: add global runtime context
-Date: Wed, 12 Feb 2025 16:45:58 +0000
-Message-ID: <20250212164600.23759-6-luca.vizzarro@arm.com>
+Subject: [PATCH v2 6/7] dts: revamp runtime internals
+Date: Wed, 12 Feb 2025 16:45:59 +0000
+Message-ID: <20250212164600.23759-7-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250212164600.23759-1-luca.vizzarro@arm.com>
 References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
@@ -43,1149 +43,1800 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a new context module which holds the runtime context. The new
-context will describe the current scenario and aid underlying classes
-used by the test suites to automatically infer their parameters. This
-further simplifies the test writing process as the test writer won't need
-to be concerned about the nodes, and can directly use the tools
-implementing context awareness, e.g. TestPmdShell, as needed.
+Enforce separation of concerns by letting test runs being isolated
+through a new TestRun class and respective module. This also means that
+any actions taken on the nodes must be handled exclusively by the test
+run. An example being the creation and destruction of the traffic
+generator. TestSuiteWithCases is now redundant as the configuration is
+able to provide all the details about the test run's own test suites.
+Any other runtime state which concerns the test runs, now belongs to
+their class.
 
-Bugzilla ID: 1461
+Finally, as the test run execution is isolated, all the runtime
+internals are held in the new class. Internals which have been
+completely reworked into a finite state machine (FSM), to simplify the
+use and understanding of the different execution states, while
+rendering the process of handling errors less repetitive and easier.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
 ---
- doc/api/dts/framework.context.rst             |   8 ++
- doc/api/dts/index.rst                         |   1 +
- dts/framework/context.py                      | 117 ++++++++++++++++++
- dts/framework/remote_session/dpdk_shell.py    |  53 +++-----
- .../single_active_interactive_shell.py        |  14 +--
- dts/framework/remote_session/testpmd_shell.py |  27 ++--
- dts/framework/test_suite.py                   |  73 +++++------
- dts/tests/TestSuite_blocklist.py              |   6 +-
- dts/tests/TestSuite_checksum_offload.py       |  14 +--
- dts/tests/TestSuite_dual_vlan.py              |   6 +-
- dts/tests/TestSuite_dynamic_config.py         |   8 +-
- dts/tests/TestSuite_dynamic_queue_conf.py     |   1 -
- dts/tests/TestSuite_hello_world.py            |   2 +-
- dts/tests/TestSuite_l2fwd.py                  |   9 +-
- dts/tests/TestSuite_mac_filter.py             |  10 +-
- dts/tests/TestSuite_mtu.py                    |  17 +--
- dts/tests/TestSuite_pmd_buffer_scatter.py     |   9 +-
- ...stSuite_port_restart_config_persistency.py |   8 +-
- dts/tests/TestSuite_promisc_support.py        |   8 +-
- dts/tests/TestSuite_smoke_tests.py            |   3 +-
- dts/tests/TestSuite_softnic.py                |   4 +-
- dts/tests/TestSuite_uni_pkt.py                |  14 +--
- dts/tests/TestSuite_vlan.py                   |   8 +-
- 23 files changed, 247 insertions(+), 173 deletions(-)
- create mode 100644 doc/api/dts/framework.context.rst
- create mode 100644 dts/framework/context.py
+ doc/api/dts/framework.test_run.rst        |   8 +
+ doc/api/dts/index.rst                     |   1 +
+ doc/guides/conf.py                        |   3 +-
+ dts/framework/exception.py                |  33 +-
+ dts/framework/logger.py                   |  26 +-
+ dts/framework/runner.py                   | 556 +------------------
+ dts/framework/test_result.py              | 143 +----
+ dts/framework/test_run.py                 | 640 ++++++++++++++++++++++
+ dts/framework/test_suite.py               |   2 +-
+ dts/framework/testbed_model/capability.py |  24 +-
+ dts/framework/testbed_model/tg_node.py    |   6 +-
+ 11 files changed, 729 insertions(+), 713 deletions(-)
+ create mode 100644 doc/api/dts/framework.test_run.rst
+ create mode 100644 dts/framework/test_run.py
 
-diff --git a/doc/api/dts/framework.context.rst b/doc/api/dts/framework.context.rst
+diff --git a/doc/api/dts/framework.test_run.rst b/doc/api/dts/framework.test_run.rst
 new file mode 100644
-index 0000000000..a8c8b5022e
+index 0000000000..8147320ed9
 --- /dev/null
-+++ b/doc/api/dts/framework.context.rst
++++ b/doc/api/dts/framework.test_run.rst
 @@ -0,0 +1,8 @@
 +.. SPDX-License-Identifier: BSD-3-Clause
 +
-+context - DTS execution context
++test_run - Test Run Execution
 +===========================================================
 +
-+.. automodule:: framework.context
++.. automodule:: framework.test_run
 +   :members:
 +   :show-inheritance:
 diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 534512dc17..90092014d2 100644
+index 90092014d2..33b05953d2 100644
 --- a/doc/api/dts/index.rst
 +++ b/doc/api/dts/index.rst
-@@ -29,6 +29,7 @@ Modules
+@@ -26,6 +26,7 @@ Modules
+    :maxdepth: 1
+ 
+    framework.runner
++   framework.test_run
     framework.test_suite
     framework.test_result
     framework.settings
-+   framework.context
-    framework.logger
-    framework.parser
-    framework.utils
-diff --git a/dts/framework/context.py b/dts/framework/context.py
-new file mode 100644
-index 0000000000..03eaf63b88
---- /dev/null
-+++ b/dts/framework/context.py
-@@ -0,0 +1,117 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Arm Limited
-+
-+"""Runtime contexts."""
-+
-+import functools
-+from dataclasses import MISSING, dataclass, field, fields
-+from typing import TYPE_CHECKING, ParamSpec
-+
-+from framework.exception import InternalError
-+from framework.settings import SETTINGS
-+from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
-+from framework.testbed_model.topology import Topology
-+
-+if TYPE_CHECKING:
-+    from framework.testbed_model.sut_node import SutNode
-+    from framework.testbed_model.tg_node import TGNode
-+
-+P = ParamSpec("P")
-+
-+
-+@dataclass
-+class LocalContext:
-+    """Updatable context local to test suites and cases.
-+
-+    Attributes:
-+        lcore_filter_specifier: A number of lcores/cores/sockets to use or a list of lcore ids to
-+            use. The default will select one lcore for each of two cores on one socket, in ascending
-+            order of core ids.
-+        ascending_cores: Sort cores in ascending order (lowest to highest IDs). If :data:`False`,
-+            sort in descending order.
-+        append_prefix_timestamp: If :data:`True`, will append a timestamp to DPDK file prefix.
-+        timeout: The timeout used for the SSH channel that is dedicated to this interactive
-+            shell. This timeout is for collecting output, so if reading from the buffer
-+            and no output is gathered within the timeout, an exception is thrown.
-+    """
-+
-+    lcore_filter_specifier: LogicalCoreCount | LogicalCoreList = field(
-+        default_factory=LogicalCoreCount
-+    )
-+    ascending_cores: bool = True
-+    append_prefix_timestamp: bool = True
-+    timeout: float = SETTINGS.timeout
-+
-+    def reset(self) -> None:
-+        """Reset the local context to the default values."""
-+        for _field in fields(LocalContext):
-+            default = (
-+                _field.default_factory()
-+                if _field.default_factory is not MISSING
-+                else _field.default
-+            )
-+
-+            assert (
-+                default is not MISSING
-+            ), "{LocalContext.__name__} must have defaults on all fields!"
-+
-+            setattr(self, _field.name, default)
-+
-+
-+@dataclass(frozen=True)
-+class Context:
-+    """Runtime context."""
-+
-+    sut_node: "SutNode"
-+    tg_node: "TGNode"
-+    topology: Topology
-+    local: LocalContext = field(default_factory=LocalContext)
-+
-+
-+__current_ctx: Context | None = None
-+
-+
-+def get_ctx() -> Context:
-+    """Retrieve the current runtime context.
-+
-+    Raises:
-+        InternalError: If there is no context.
-+    """
-+    if __current_ctx:
-+        return __current_ctx
-+
-+    raise InternalError("Attempted to retrieve context that has not been initialized yet.")
-+
-+
-+def init_ctx(ctx: Context) -> None:
-+    """Initialize context."""
-+    global __current_ctx
-+    __current_ctx = ctx
-+
-+
-+def filter_cores(
-+    specifier: LogicalCoreCount | LogicalCoreList, ascending_cores: bool | None = None
-+):
-+    """Decorates functions that require a temporary update to the lcore specifier."""
-+
-+    def decorator(func):
-+        @functools.wraps(func)
-+        def wrapper(*args: P.args, **kwargs: P.kwargs):
-+            local_ctx = get_ctx().local
-+
-+            old_specifier = local_ctx.lcore_filter_specifier
-+            local_ctx.lcore_filter_specifier = specifier
-+            if ascending_cores is not None:
-+                old_ascending_cores = local_ctx.ascending_cores
-+                local_ctx.ascending_cores = ascending_cores
-+
-+            try:
-+                return func(*args, **kwargs)
-+            finally:
-+                local_ctx.lcore_filter_specifier = old_specifier
-+                if ascending_cores is not None:
-+                    local_ctx.ascending_cores = old_ascending_cores
-+
-+        return wrapper
-+
-+    return decorator
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index c11d9ab81c..b55deb7fa0 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -9,54 +9,45 @@
- from abc import ABC
- from pathlib import PurePath
+diff --git a/doc/guides/conf.py b/doc/guides/conf.py
+index 50cbc7f612..b71f0f47e2 100644
+--- a/doc/guides/conf.py
++++ b/doc/guides/conf.py
+@@ -59,7 +59,8 @@
  
-+from framework.context import get_ctx
- from framework.params.eal import EalParams
- from framework.remote_session.single_active_interactive_shell import (
-     SingleActiveInteractiveShell,
- )
--from framework.settings import SETTINGS
--from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
-+from framework.testbed_model.cpu import LogicalCoreList
- from framework.testbed_model.sut_node import SutNode
+ # DTS API docs additional configuration
+ if environ.get('DTS_DOC_BUILD'):
+-    extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autodoc']
++    extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autodoc', 'sphinx.ext.graphviz']
++    graphviz_output_format = "svg"
+ 
+     # Pydantic models require autodoc_pydantic for the right formatting. Add if installed.
+     try:
+diff --git a/dts/framework/exception.py b/dts/framework/exception.py
+index d967ede09b..47e3fac05c 100644
+--- a/dts/framework/exception.py
++++ b/dts/framework/exception.py
+@@ -205,28 +205,27 @@ class TestCaseVerifyError(DTSError):
+     severity: ClassVar[ErrorSeverity] = ErrorSeverity.TESTCASE_VERIFY_ERR
  
  
- def compute_eal_params(
--    sut_node: SutNode,
-     params: EalParams | None = None,
--    lcore_filter_specifier: LogicalCoreCount | LogicalCoreList = LogicalCoreCount(),
--    ascending_cores: bool = True,
--    append_prefix_timestamp: bool = True,
- ) -> EalParams:
-     """Compute EAL parameters based on the node's specifications.
+-class BlockingTestSuiteError(DTSError):
+-    """A failure in a blocking test suite."""
++class InternalError(DTSError):
++    """An internal error or bug has occurred in DTS."""
  
-     Args:
--        sut_node: The SUT node to compute the values for.
-         params: If :data:`None`, a new object is created and returned. Otherwise `params.lcore_list`
-             is modified according to `lcore_filter_specifier`. A DPDK file prefix is also added. If
-             `params.ports` is :data:`None`, then `sut_node.ports` is assigned to it.
--        lcore_filter_specifier: A number of lcores/cores/sockets to use or a list of lcore ids to
--            use. The default will select one lcore for each of two cores on one socket, in ascending
--            order of core ids.
--        ascending_cores: Sort cores in ascending order (lowest to highest IDs). If :data:`False`,
--            sort in descending order.
--        append_prefix_timestamp: If :data:`True`, will append a timestamp to DPDK file prefix.
-     """
-+    ctx = get_ctx()
-+
-     if params is None:
-         params = EalParams()
+     #:
+-    severity: ClassVar[ErrorSeverity] = ErrorSeverity.BLOCKING_TESTSUITE_ERR
+-    _suite_name: str
++    severity: ClassVar[ErrorSeverity] = ErrorSeverity.INTERNAL_ERR
  
-     if params.lcore_list is None:
-         params.lcore_list = LogicalCoreList(
--            sut_node.filter_lcores(lcore_filter_specifier, ascending_cores)
-+            ctx.sut_node.filter_lcores(ctx.local.lcore_filter_specifier, ctx.local.ascending_cores)
-         )
+-    def __init__(self, suite_name: str) -> None:
+-        """Define the meaning of the first argument.
  
-     prefix = params.prefix
--    if append_prefix_timestamp:
--        prefix = f"{prefix}_{sut_node.dpdk_timestamp}"
--    prefix = sut_node.main_session.get_dpdk_file_prefix(prefix)
-+    if ctx.local.append_prefix_timestamp:
-+        prefix = f"{prefix}_{ctx.sut_node.dpdk_timestamp}"
-+    prefix = ctx.sut_node.main_session.get_dpdk_file_prefix(prefix)
-     if prefix:
--        sut_node.dpdk_prefix_list.append(prefix)
-+        ctx.sut_node.dpdk_prefix_list.append(prefix)
-     params.prefix = prefix
- 
-     if params.allowed_ports is None:
--        params.allowed_ports = sut_node.ports
-+        params.allowed_ports = ctx.topology.sut_ports
- 
-     return params
- 
-@@ -74,29 +65,15 @@ class DPDKShell(SingleActiveInteractiveShell, ABC):
- 
-     def __init__(
-         self,
--        node: SutNode,
-+        name: str | None = None,
-         privileged: bool = True,
--        timeout: float = SETTINGS.timeout,
--        lcore_filter_specifier: LogicalCoreCount | LogicalCoreList = LogicalCoreCount(),
--        ascending_cores: bool = True,
--        append_prefix_timestamp: bool = True,
-         app_params: EalParams = EalParams(),
--        name: str | None = None,
-     ) -> None:
--        """Extends :meth:`~.interactive_shell.InteractiveShell.__init__`.
--
--        Adds the `lcore_filter_specifier`, `ascending_cores` and `append_prefix_timestamp` arguments
--        which are then used to compute the EAL parameters based on the node's configuration.
+-        Args:
+-            suite_name: The blocking test suite.
 -        """
--        app_params = compute_eal_params(
--            node,
--            app_params,
--            lcore_filter_specifier,
--            ascending_cores,
--            append_prefix_timestamp,
--        )
-+        """Extends :meth:`~.interactive_shell.InteractiveShell.__init__`."""
-+        app_params = compute_eal_params(app_params)
-+        node = get_ctx().sut_node
+-        self._suite_name = suite_name
++class SkippedTestException(DTSError):
++    """An exception raised when a test suite or case has been skipped."""
  
--        super().__init__(node, privileged, timeout, app_params, name)
-+        super().__init__(node, name, privileged, app_params)
+-    def __str__(self) -> str:
+-        """Add some context to the string representation."""
+-        return f"Blocking suite {self._suite_name} failed."
++    #:
++    severity: ClassVar[ErrorSeverity] = ErrorSeverity.NO_ERR
  
-     def _update_real_path(self, path: PurePath) -> None:
-         """Extends :meth:`~.interactive_shell.InteractiveShell._update_real_path`.
-diff --git a/dts/framework/remote_session/single_active_interactive_shell.py b/dts/framework/remote_session/single_active_interactive_shell.py
-index cfe5baec14..2eec2f698a 100644
---- a/dts/framework/remote_session/single_active_interactive_shell.py
-+++ b/dts/framework/remote_session/single_active_interactive_shell.py
-@@ -27,6 +27,7 @@
- from paramiko import Channel, channel
- from typing_extensions import Self
++    def __init__(self, reason: str) -> None:
++        """Constructor.
  
-+from framework.context import get_ctx
- from framework.exception import (
-     InteractiveCommandExecutionError,
-     InteractiveSSHSessionDeadError,
-@@ -34,7 +35,6 @@
- )
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params import Params
--from framework.settings import SETTINGS
- from framework.testbed_model.node import Node
- from framework.utils import MultiInheritanceBaseClass
+-class InternalError(DTSError):
+-    """An internal error or bug has occurred in DTS."""
++        Args:
++            reason: The reason for the test being skipped.
++        """
++        self._reason = reason
  
-@@ -90,10 +90,9 @@ class SingleActiveInteractiveShell(MultiInheritanceBaseClass, ABC):
-     def __init__(
-         self,
-         node: Node,
-+        name: str | None = None,
-         privileged: bool = False,
--        timeout: float = SETTINGS.timeout,
-         app_params: Params = Params(),
--        name: str | None = None,
-         **kwargs,
-     ) -> None:
-         """Create an SSH channel during initialization.
-@@ -103,13 +102,10 @@ def __init__(
+-    #:
+-    severity: ClassVar[ErrorSeverity] = ErrorSeverity.INTERNAL_ERR
++    def __str__(self) -> str:
++        """Stringify the exception."""
++        return self._reason
+diff --git a/dts/framework/logger.py b/dts/framework/logger.py
+index d2b8e37da4..f43b442bc9 100644
+--- a/dts/framework/logger.py
++++ b/dts/framework/logger.py
+@@ -13,37 +13,15 @@
+ """
  
-         Args:
-             node: The node on which to run start the interactive shell.
--            privileged: Enables the shell to run as superuser.
--            timeout: The timeout used for the SSH channel that is dedicated to this interactive
--                shell. This timeout is for collecting output, so if reading from the buffer
--                and no output is gathered within the timeout, an exception is thrown.
--            app_params: The command line parameters to be passed to the application on startup.
-             name: Name for the interactive shell to use for logging. This name will be appended to
-                 the name of the underlying node which it is running on.
-+            privileged: Enables the shell to run as superuser.
-+            app_params: The command line parameters to be passed to the application on startup.
-             **kwargs: Any additional arguments if any.
-         """
-         self._node = node
-@@ -118,7 +114,7 @@ def __init__(
-         self._logger = get_dts_logger(f"{node.name}.{name}")
-         self._app_params = app_params
-         self._privileged = privileged
--        self._timeout = timeout
-+        self._timeout = get_ctx().local.timeout
-         # Ensure path is properly formatted for the host
-         self._update_real_path(self.path)
-         super().__init__(**kwargs)
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 287886ec44..672ecd970f 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -32,6 +32,9 @@
-     TypeAlias,
- )
+ import logging
+-from enum import auto
+ from logging import FileHandler, StreamHandler
+ from pathlib import Path
+ from typing import ClassVar
  
-+from framework.context import get_ctx
-+from framework.testbed_model.topology import TopologyType
-+
- if TYPE_CHECKING or environ.get("DTS_DOC_BUILD"):
-     from enum import Enum as NoAliasEnum
- else:
-@@ -40,13 +43,11 @@
- from typing_extensions import Self, Unpack
- 
- from framework.exception import InteractiveCommandExecutionError, InternalError
--from framework.params.testpmd import SimpleForwardingModes, TestPmdParams
-+from framework.params.testpmd import PortTopology, SimpleForwardingModes, TestPmdParams
- from framework.params.types import TestPmdParamsDict
- from framework.parser import ParserFn, TextParser
- from framework.remote_session.dpdk_shell import DPDKShell
- from framework.settings import SETTINGS
--from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
--from framework.testbed_model.sut_node import SutNode
- from framework.utils import REGEX_FOR_MAC_ADDRESS, StrEnum
- 
- P = ParamSpec("P")
-@@ -1532,26 +1533,14 @@ class TestPmdShell(DPDKShell):
- 
-     def __init__(
-         self,
--        node: SutNode,
--        privileged: bool = True,
--        timeout: float = SETTINGS.timeout,
--        lcore_filter_specifier: LogicalCoreCount | LogicalCoreList = LogicalCoreCount(),
--        ascending_cores: bool = True,
--        append_prefix_timestamp: bool = True,
-         name: str | None = None,
-+        privileged: bool = True,
-         **app_params: Unpack[TestPmdParamsDict],
-     ) -> None:
-         """Overrides :meth:`~.dpdk_shell.DPDKShell.__init__`. Changes app_params to kwargs."""
--        super().__init__(
--            node,
--            privileged,
--            timeout,
--            lcore_filter_specifier,
--            ascending_cores,
--            append_prefix_timestamp,
--            TestPmdParams(**app_params),
--            name,
--        )
-+        if "port_topology" not in app_params and get_ctx().topology.type is TopologyType.one_link:
-+            app_params["port_topology"] = PortTopology.loop
-+        super().__init__(name, privileged, TestPmdParams(**app_params))
-         self.ports_started = not self._app_params.disable_device_start
-         self._ports = None
- 
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index 3d168d522b..b9b527e40d 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -24,7 +24,7 @@
- from ipaddress import IPv4Interface, IPv6Interface, ip_interface
- from pkgutil import iter_modules
- from types import ModuleType
--from typing import ClassVar, Protocol, TypeVar, Union, cast
-+from typing import TYPE_CHECKING, ClassVar, Protocol, TypeVar, Union, cast
- 
- from scapy.layers.inet import IP
- from scapy.layers.l2 import Ether
-@@ -32,9 +32,6 @@
- from typing_extensions import Self
- 
- from framework.testbed_model.capability import TestProtocol
--from framework.testbed_model.port import Port
--from framework.testbed_model.sut_node import SutNode
--from framework.testbed_model.tg_node import TGNode
- from framework.testbed_model.topology import Topology
- from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
-@@ -44,6 +41,9 @@
- from .logger import DTSLogger, get_dts_logger
- from .utils import get_packet_summaries, to_pascal_case
- 
-+if TYPE_CHECKING:
-+    from framework.context import Context
-+
- 
- class TestSuite(TestProtocol):
-     """The base class with building blocks needed by most test cases.
-@@ -69,33 +69,19 @@ class TestSuite(TestProtocol):
- 
-     The test suite is aware of the testbed (the SUT and TG) it's running on. From this, it can
-     properly choose the IP addresses and other configuration that must be tailored to the testbed.
+-from .utils import StrEnum
 -
--    Attributes:
--        sut_node: The SUT node where the test suite is running.
--        tg_node: The TG node where the test suite is running.
+ date_fmt = "%Y/%m/%d %H:%M:%S"
+ stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
+ dts_root_logger_name = "dts"
+ 
+ 
+-class DtsStage(StrEnum):
+-    """The DTS execution stage."""
+-
+-    #:
+-    pre_run = auto()
+-    #:
+-    test_run_setup = auto()
+-    #:
+-    test_suite_setup = auto()
+-    #:
+-    test_suite = auto()
+-    #:
+-    test_suite_teardown = auto()
+-    #:
+-    test_run_teardown = auto()
+-    #:
+-    post_run = auto()
+-
+-
+ class DTSLogger(logging.Logger):
+     """The DTS logger class.
+ 
+@@ -55,7 +33,7 @@ class DTSLogger(logging.Logger):
+     a new stage switch occurs. This is useful mainly for logging per test suite.
      """
  
--    sut_node: SutNode
--    tg_node: TGNode
-     #: Whether the test suite is blocking. A failure of a blocking test suite
-     #: will block the execution of all subsequent test suites in the current test run.
-     is_blocking: ClassVar[bool] = False
-+    _ctx: "Context"
-     _logger: DTSLogger
--    _sut_port_ingress: Port
--    _sut_port_egress: Port
-     _sut_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
-     _sut_ip_address_egress: Union[IPv4Interface, IPv6Interface]
--    _tg_port_ingress: Port
--    _tg_port_egress: Port
-     _tg_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
-     _tg_ip_address_egress: Union[IPv4Interface, IPv6Interface]
+-    _stage: ClassVar[DtsStage] = DtsStage.pre_run
++    _stage: ClassVar[str] = "pre_run"
+     _extra_file_handlers: list[FileHandler] = []
  
--    def __init__(
+     def __init__(self, *args, **kwargs):
+@@ -110,7 +88,7 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
+ 
+         self._add_file_handlers(Path(output_dir, self.name))
+ 
+-    def set_stage(self, stage: DtsStage, log_file_path: Path | None = None) -> None:
++    def set_stage(self, stage: str, log_file_path: Path | None = None) -> None:
+         """Set the DTS execution stage and optionally log to files.
+ 
+         Set the DTS execution stage of the DTSLog class and optionally add
+diff --git a/dts/framework/runner.py b/dts/framework/runner.py
+index 60a885d8e6..90aeb63cfb 100644
+--- a/dts/framework/runner.py
++++ b/dts/framework/runner.py
+@@ -6,27 +6,15 @@
+ 
+ """Test suite runner module.
+ 
+-The module is responsible for running DTS in a series of stages:
+-
+-    #. Test run stage,
+-    #. DPDK build stage,
+-    #. Test suite stage,
+-    #. Test case stage.
+-
+-The test run stage sets up the environment before running test suites.
+-The test suite stage sets up steps common to all test cases
+-and the test case stage runs test cases individually.
++The module is responsible for preparing DTS and running the test runs.
+ """
+ 
+ import os
+-import random
+ import sys
+-from pathlib import Path
+-from types import MethodType
+-from typing import Iterable
+ 
+ from framework.config.common import ValidationContext
+-from framework.testbed_model.capability import Capability, get_supported_capabilities
++from framework.test_run import TestRun
++from framework.testbed_model.node import Node
+ from framework.testbed_model.sut_node import SutNode
+ from framework.testbed_model.tg_node import TGNode
+ 
+@@ -38,51 +26,20 @@
+     SutNodeConfiguration,
+     TGNodeConfiguration,
+ )
+-from .config.test_run import (
+-    TestRunConfiguration,
+-    TestSuiteConfig,
+-)
+-from .exception import BlockingTestSuiteError, SSHTimeoutError, TestCaseVerifyError
+-from .logger import DTSLogger, DtsStage, get_dts_logger
++from .logger import DTSLogger, get_dts_logger
+ from .settings import SETTINGS
+ from .test_result import (
+     DTSResult,
+     Result,
+-    TestCaseResult,
+-    TestRunResult,
+-    TestSuiteResult,
+-    TestSuiteWithCases,
+ )
+-from .test_suite import TestCase, TestSuite
+-from .testbed_model.topology import PortLink, Topology
+ 
+ 
+ class DTSRunner:
+-    r"""Test suite runner class.
+-
+-    The class is responsible for running tests on testbeds defined in the test run configuration.
+-    Each setup or teardown of each stage is recorded in a :class:`~framework.test_result.DTSResult`
+-    or one of its subclasses. The test case results are also recorded.
+-
+-    If an error occurs, the current stage is aborted, the error is recorded, everything in
+-    the inner stages is marked as blocked and the run continues in the next iteration
+-    of the same stage. The return code is the highest `severity` of all
+-    :class:`~.framework.exception.DTSError`\s.
+-
+-    Example:
+-        An error occurs in a test suite setup. The current test suite is aborted,
+-        all its test cases are marked as blocked and the run continues
+-        with the next test suite. If the errored test suite was the last one in the
+-        given test run, the next test run begins.
+-    """
++    """Test suite runner class."""
+ 
+     _configuration: Configuration
+     _logger: DTSLogger
+     _result: DTSResult
+-    _test_suite_class_prefix: str
+-    _test_suite_module_prefix: str
+-    _func_test_case_regex: str
+-    _perf_test_case_regex: str
+ 
+     def __init__(self):
+         """Initialize the instance with configuration, logger, result and string constants."""
+@@ -92,94 +49,45 @@ def __init__(self):
+             os.makedirs(SETTINGS.output_dir)
+         self._logger.add_dts_root_logger_handlers(SETTINGS.verbose, SETTINGS.output_dir)
+         self._result = DTSResult(SETTINGS.output_dir, self._logger)
+-        self._test_suite_class_prefix = "Test"
+-        self._test_suite_module_prefix = "tests.TestSuite_"
+-        self._func_test_case_regex = r"test_(?!perf_)"
+-        self._perf_test_case_regex = r"test_perf_"
+ 
+     def run(self) -> None:
+-        """Run all test runs from the test run configuration.
+-
+-        Before running test suites, test runs are first set up.
+-        The test runs defined in the test run configuration are iterated over.
+-        The test runs define which tests to run and where to run them.
+-
+-        The test suites are set up for each test run and each discovered
+-        test case within the test suite is set up, executed and torn down. After all test cases
+-        have been executed, the test suite is torn down and the next test suite will be run. Once
+-        all test suites have been run, the next test run will be tested.
+-
+-        In order to properly mark test suites and test cases as blocked in case of a failure,
+-        we need to have discovered which test suites and test cases to run before any failures
+-        happen. The discovery happens at the earliest point at the start of each test run.
+-
+-        All the nested steps look like this:
+-
+-            #. Test run setup
+-
+-                #. Test suite setup
+-
+-                    #. Test case setup
+-                    #. Test case logic
+-                    #. Test case teardown
++        """Run DTS.
+ 
+-                #. Test suite teardown
+-
+-            #. Test run teardown
+-
+-        The test cases are filtered according to the specification in the test run configuration and
+-        the :option:`--test-suite` command line argument or
+-        the :envvar:`DTS_TESTCASES` environment variable.
++        Prepare all the nodes ahead of the test runs execution,
++        which are subsequently run as configured.
+         """
+-        sut_nodes: dict[str, SutNode] = {}
+-        tg_nodes: dict[str, TGNode] = {}
++        nodes: list[Node] = []
+         try:
+             # check the python version of the server that runs dts
+             self._check_dts_python_version()
+             self._result.update_setup(Result.PASS)
+ 
++            for node_config in self._configuration.nodes:
++                node: Node
++
++                match node_config:
++                    case SutNodeConfiguration():
++                        node = SutNode(node_config)
++                    case TGNodeConfiguration():
++                        node = TGNode(node_config)
++
++                nodes.append(node)
++
+             # for all test run sections
+-            for test_run_with_nodes_config in self._configuration.test_runs_with_nodes:
+-                test_run_config, sut_node_config, tg_node_config = test_run_with_nodes_config
+-                self._logger.set_stage(DtsStage.test_run_setup)
+-                self._logger.info(f"Running test run with SUT '{sut_node_config.name}'.")
+-                self._init_random_seed(test_run_config)
++            for test_run_config in self._configuration.test_runs:
+                 test_run_result = self._result.add_test_run(test_run_config)
+-                # we don't want to modify the original config, so create a copy
+-                test_run_test_suites = test_run_config.test_suites
+-                if not test_run_config.skip_smoke_tests:
+-                    test_run_test_suites[:0] = [TestSuiteConfig(test_suite="smoke_tests")]
+-                try:
+-                    test_suites_with_cases = self._get_test_suites_with_cases(
+-                        test_run_test_suites, test_run_config.func, test_run_config.perf
+-                    )
+-                    test_run_result.test_suites_with_cases = test_suites_with_cases
+-                except Exception as e:
+-                    self._logger.exception(
+-                        f"Invalid test suite configuration found: " f"{test_run_test_suites}."
+-                    )
+-                    test_run_result.update_setup(Result.FAIL, e)
+-
+-                else:
+-                    self._connect_nodes_and_run_test_run(
+-                        sut_nodes,
+-                        tg_nodes,
+-                        sut_node_config,
+-                        tg_node_config,
+-                        test_run_config,
+-                        test_run_result,
+-                        test_suites_with_cases,
+-                    )
++                test_run = TestRun(test_run_config, nodes, test_run_result)
++                test_run.spin()
+ 
+         except Exception as e:
+             self._logger.exception("An unexpected error has occurred.")
+             self._result.add_error(e)
+-            raise
++            # raise
+ 
+         finally:
+             try:
+-                self._logger.set_stage(DtsStage.post_run)
+-                for node in (sut_nodes | tg_nodes).values():
++                self._logger.set_stage("post_run")
++                for node in nodes:
+                     node.close()
+                 self._result.update_teardown(Result.PASS)
+             except Exception as e:
+@@ -205,412 +113,6 @@ def _check_dts_python_version(self) -> None:
+             )
+             self._logger.warning("Please use Python >= 3.10 instead.")
+ 
+-    def _get_test_suites_with_cases(
+-        self,
+-        test_suite_configs: list[TestSuiteConfig],
+-        func: bool,
+-        perf: bool,
+-    ) -> list[TestSuiteWithCases]:
+-        """Get test suites with selected cases.
+-
+-        The test suites with test cases defined in the user configuration are selected
+-        and the corresponding functions and classes are gathered.
+-
+-        Args:
+-            test_suite_configs: Test suite configurations.
+-            func: Whether to include functional test cases in the final list.
+-            perf: Whether to include performance test cases in the final list.
+-
+-        Returns:
+-            The test suites, each with test cases.
+-        """
+-        test_suites_with_cases = []
+-
+-        for test_suite_config in test_suite_configs:
+-            test_suite_class = test_suite_config.test_suite_spec.class_obj
+-            test_cases: list[type[TestCase]] = []
+-            func_test_cases, perf_test_cases = test_suite_class.filter_test_cases(
+-                test_suite_config.test_cases_names
+-            )
+-            if func:
+-                test_cases.extend(func_test_cases)
+-            if perf:
+-                test_cases.extend(perf_test_cases)
+-
+-            test_suites_with_cases.append(
+-                TestSuiteWithCases(test_suite_class=test_suite_class, test_cases=test_cases)
+-            )
+-        return test_suites_with_cases
+-
+-    def _connect_nodes_and_run_test_run(
+-        self,
+-        sut_nodes: dict[str, SutNode],
+-        tg_nodes: dict[str, TGNode],
+-        sut_node_config: SutNodeConfiguration,
+-        tg_node_config: TGNodeConfiguration,
+-        test_run_config: TestRunConfiguration,
+-        test_run_result: TestRunResult,
+-        test_suites_with_cases: Iterable[TestSuiteWithCases],
+-    ) -> None:
+-        """Connect nodes, then continue to run the given test run.
+-
+-        Connect the :class:`SutNode` and the :class:`TGNode` of this `test_run_config`.
+-        If either has already been connected, it's going to be in either `sut_nodes` or `tg_nodes`,
+-        respectively.
+-        If not, connect and add the node to the respective `sut_nodes` or `tg_nodes` :class:`dict`.
+-
+-        Args:
+-            sut_nodes: A dictionary storing connected/to be connected SUT nodes.
+-            tg_nodes: A dictionary storing connected/to be connected TG nodes.
+-            sut_node_config: The test run's SUT node configuration.
+-            tg_node_config: The test run's TG node configuration.
+-            test_run_config: A test run configuration.
+-            test_run_result: The test run's result.
+-            test_suites_with_cases: The test suites with test cases to run.
+-        """
+-        sut_node = sut_nodes.get(sut_node_config.name)
+-        tg_node = tg_nodes.get(tg_node_config.name)
+-
+-        try:
+-            if not sut_node:
+-                sut_node = SutNode(sut_node_config)
+-                sut_nodes[sut_node.name] = sut_node
+-            if not tg_node:
+-                tg_node = TGNode(tg_node_config)
+-                tg_nodes[tg_node.name] = tg_node
+-        except Exception as e:
+-            failed_node = test_run_config.system_under_test_node
+-            if sut_node:
+-                failed_node = test_run_config.traffic_generator_node
+-            self._logger.exception(f"The Creation of node {failed_node} failed.")
+-            test_run_result.update_setup(Result.FAIL, e)
+-
+-        else:
+-            self._run_test_run(
+-                sut_node,
+-                tg_node,
+-                test_run_config,
+-                test_run_result,
+-                test_suites_with_cases,
+-            )
+-
+-    def _run_test_run(
+-        self,
+-        sut_node: SutNode,
+-        tg_node: TGNode,
+-        test_run_config: TestRunConfiguration,
+-        test_run_result: TestRunResult,
+-        test_suites_with_cases: Iterable[TestSuiteWithCases],
+-    ) -> None:
+-        """Run the given test run.
+-
+-        This involves running the test run setup as well as running all test suites
+-        in the given test run. After that, the test run teardown is run.
+-
+-        Args:
+-            sut_node: The test run's SUT node.
+-            tg_node: The test run's TG node.
+-            test_run_config: A test run configuration.
+-            test_run_result: The test run's result.
+-            test_suites_with_cases: The test suites with test cases to run.
+-
+-        Raises:
+-            ConfigurationError: If the DPDK sources or build is not set up from config or settings.
+-        """
+-        self._logger.info(f"Running test run with SUT '{test_run_config.system_under_test_node}'.")
+-        test_run_result.ports = sut_node.ports
+-        test_run_result.sut_info = sut_node.node_info
+-        try:
+-            dpdk_build_config = test_run_config.dpdk_config
+-            sut_node.set_up_test_run(test_run_config, dpdk_build_config)
+-            test_run_result.dpdk_build_info = sut_node.get_dpdk_build_info()
+-            tg_node.set_up_test_run(test_run_config, dpdk_build_config)
+-            test_run_result.update_setup(Result.PASS)
+-        except Exception as e:
+-            self._logger.exception("Test run setup failed.")
+-            test_run_result.update_setup(Result.FAIL, e)
+-
+-        else:
+-            topology = Topology(
+-                PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
+-                for link in test_run_config.port_topology
+-            )
+-            self._run_test_suites(
+-                sut_node, tg_node, topology, test_run_result, test_suites_with_cases
+-            )
+-
+-        finally:
+-            try:
+-                self._logger.set_stage(DtsStage.test_run_teardown)
+-                sut_node.tear_down_test_run()
+-                tg_node.tear_down_test_run()
+-                test_run_result.update_teardown(Result.PASS)
+-            except Exception as e:
+-                self._logger.exception("Test run teardown failed.")
+-                test_run_result.update_teardown(Result.FAIL, e)
+-
+-    def _get_supported_capabilities(
+-        self,
+-        sut_node: SutNode,
+-        topology_config: Topology,
+-        test_suites_with_cases: Iterable[TestSuiteWithCases],
+-    ) -> set[Capability]:
+-        capabilities_to_check = set()
+-        for test_suite_with_cases in test_suites_with_cases:
+-            capabilities_to_check.update(test_suite_with_cases.required_capabilities)
+-
+-        self._logger.debug(f"Found capabilities to check: {capabilities_to_check}")
+-
+-        return get_supported_capabilities(sut_node, topology_config, capabilities_to_check)
+-
+-    def _run_test_suites(
 -        self,
 -        sut_node: SutNode,
 -        tg_node: TGNode,
 -        topology: Topology,
--    ):
-+    def __init__(self):
-         """Initialize the test suite testbed information and basic configuration.
+-        test_run_result: TestRunResult,
+-        test_suites_with_cases: Iterable[TestSuiteWithCases],
+-    ) -> None:
+-        """Run `test_suites_with_cases` with the current test run.
+-
+-        The method assumes the DPDK we're testing has already been built on the SUT node.
+-
+-        Before running any suites, the method determines whether they should be skipped
+-        by inspecting any required capabilities the test suite needs and comparing those
+-        to capabilities supported by the tested environment. If all capabilities are supported,
+-        the suite is run. If all test cases in a test suite would be skipped, the whole test suite
+-        is skipped (the setup and teardown is not run).
+-
+-        If a blocking test suite (such as the smoke test suite) fails, the rest of the test suites
+-        in the current test run won't be executed.
+-
+-        Args:
+-            sut_node: The test run's SUT node.
+-            tg_node: The test run's TG node.
+-            topology: The test run's port topology.
+-            test_run_result: The test run's result.
+-            test_suites_with_cases: The test suites with test cases to run.
+-        """
+-        end_dpdk_build = False
+-        supported_capabilities = self._get_supported_capabilities(
+-            sut_node, topology, test_suites_with_cases
+-        )
+-        for test_suite_with_cases in test_suites_with_cases:
+-            test_suite_with_cases.mark_skip_unsupported(supported_capabilities)
+-            test_suite_result = test_run_result.add_test_suite(test_suite_with_cases)
+-            try:
+-                if not test_suite_with_cases.skip:
+-                    self._run_test_suite(
+-                        sut_node,
+-                        tg_node,
+-                        topology,
+-                        test_suite_result,
+-                        test_suite_with_cases,
+-                    )
+-                else:
+-                    self._logger.info(
+-                        f"Test suite execution SKIPPED: "
+-                        f"'{test_suite_with_cases.test_suite_class.__name__}'. Reason: "
+-                        f"{test_suite_with_cases.test_suite_class.skip_reason}"
+-                    )
+-                    test_suite_result.update_setup(Result.SKIP)
+-            except BlockingTestSuiteError as e:
+-                self._logger.exception(
+-                    f"An error occurred within {test_suite_with_cases.test_suite_class.__name__}. "
+-                    "Skipping the rest of the test suites in this test run."
+-                )
+-                self._result.add_error(e)
+-                end_dpdk_build = True
+-            # if a blocking test failed and we need to bail out of suite executions
+-            if end_dpdk_build:
+-                break
+-
+-    def _run_test_suite(
+-        self,
+-        sut_node: SutNode,
+-        tg_node: TGNode,
+-        topology: Topology,
+-        test_suite_result: TestSuiteResult,
+-        test_suite_with_cases: TestSuiteWithCases,
+-    ) -> None:
+-        """Set up, execute and tear down `test_suite_with_cases`.
+-
+-        The method assumes the DPDK we're testing has already been built on the SUT node.
+-
+-        Test suite execution consists of running the discovered test cases.
+-        A test case run consists of setup, execution and teardown of said test case.
+-
+-        Record the setup and the teardown and handle failures.
+-
+-        Args:
+-            sut_node: The test run's SUT node.
+-            tg_node: The test run's TG node.
+-            topology: The port topology of the nodes.
+-            test_suite_result: The test suite level result object associated
+-                with the current test suite.
+-            test_suite_with_cases: The test suite with test cases to run.
+-
+-        Raises:
+-            BlockingTestSuiteError: If a blocking test suite fails.
+-        """
+-        test_suite_name = test_suite_with_cases.test_suite_class.__name__
+-        self._logger.set_stage(
+-            DtsStage.test_suite_setup, Path(SETTINGS.output_dir, test_suite_name)
+-        )
+-        test_suite = test_suite_with_cases.test_suite_class(sut_node, tg_node, topology)
+-        try:
+-            self._logger.info(f"Starting test suite setup: {test_suite_name}")
+-            test_suite.set_up_suite()
+-            test_suite_result.update_setup(Result.PASS)
+-            self._logger.info(f"Test suite setup successful: {test_suite_name}")
+-        except Exception as e:
+-            self._logger.exception(f"Test suite setup ERROR: {test_suite_name}")
+-            test_suite_result.update_setup(Result.ERROR, e)
+-
+-        else:
+-            self._execute_test_suite(
+-                test_suite,
+-                test_suite_with_cases.test_cases,
+-                test_suite_result,
+-            )
+-        finally:
+-            try:
+-                self._logger.set_stage(DtsStage.test_suite_teardown)
+-                test_suite.tear_down_suite()
+-                sut_node.kill_cleanup_dpdk_apps()
+-                test_suite_result.update_teardown(Result.PASS)
+-            except Exception as e:
+-                self._logger.exception(f"Test suite teardown ERROR: {test_suite_name}")
+-                self._logger.warning(
+-                    f"Test suite '{test_suite_name}' teardown failed, "
+-                    "the next test suite may be affected."
+-                )
+-                test_suite_result.update_setup(Result.ERROR, e)
+-            if len(test_suite_result.get_errors()) > 0 and test_suite.is_blocking:
+-                raise BlockingTestSuiteError(test_suite_name)
+-
+-    def _execute_test_suite(
+-        self,
+-        test_suite: TestSuite,
+-        test_cases: Iterable[type[TestCase]],
+-        test_suite_result: TestSuiteResult,
+-    ) -> None:
+-        """Execute all `test_cases` in `test_suite`.
+-
+-        If the :option:`--re-run` command line argument or the :envvar:`DTS_RERUN` environment
+-        variable is set, in case of a test case failure, the test case will be executed again
+-        until it passes or it fails that many times in addition of the first failure.
+-
+-        Args:
+-            test_suite: The test suite object.
+-            test_cases: The list of test case functions.
+-            test_suite_result: The test suite level result object associated
+-                with the current test suite.
+-        """
+-        self._logger.set_stage(DtsStage.test_suite)
+-        for test_case in test_cases:
+-            test_case_name = test_case.__name__
+-            test_case_result = test_suite_result.add_test_case(test_case_name)
+-            all_attempts = SETTINGS.re_run + 1
+-            attempt_nr = 1
+-            if not test_case.skip:
+-                self._run_test_case(test_suite, test_case, test_case_result)
+-                while not test_case_result and attempt_nr < all_attempts:
+-                    attempt_nr += 1
+-                    self._logger.info(
+-                        f"Re-running FAILED test case '{test_case_name}'. "
+-                        f"Attempt number {attempt_nr} out of {all_attempts}."
+-                    )
+-                    self._run_test_case(test_suite, test_case, test_case_result)
+-            else:
+-                self._logger.info(
+-                    f"Test case execution SKIPPED: {test_case_name}. Reason: "
+-                    f"{test_case.skip_reason}"
+-                )
+-                test_case_result.update_setup(Result.SKIP)
+-
+-    def _run_test_case(
+-        self,
+-        test_suite: TestSuite,
+-        test_case: type[TestCase],
+-        test_case_result: TestCaseResult,
+-    ) -> None:
+-        """Setup, execute and teardown `test_case_method` from `test_suite`.
+-
+-        Record the result of the setup and the teardown and handle failures.
+-
+-        Args:
+-            test_suite: The test suite object.
+-            test_case: The test case function.
+-            test_case_result: The test case level result object associated
+-                with the current test case.
+-        """
+-        test_case_name = test_case.__name__
+-
+-        try:
+-            # run set_up function for each case
+-            test_suite.set_up_test_case()
+-            test_case_result.update_setup(Result.PASS)
+-        except SSHTimeoutError as e:
+-            self._logger.exception(f"Test case setup FAILED: {test_case_name}")
+-            test_case_result.update_setup(Result.FAIL, e)
+-        except Exception as e:
+-            self._logger.exception(f"Test case setup ERROR: {test_case_name}")
+-            test_case_result.update_setup(Result.ERROR, e)
+-
+-        else:
+-            # run test case if setup was successful
+-            self._execute_test_case(test_suite, test_case, test_case_result)
+-
+-        finally:
+-            try:
+-                test_suite.tear_down_test_case()
+-                test_case_result.update_teardown(Result.PASS)
+-            except Exception as e:
+-                self._logger.exception(f"Test case teardown ERROR: {test_case_name}")
+-                self._logger.warning(
+-                    f"Test case '{test_case_name}' teardown failed, "
+-                    f"the next test case may be affected."
+-                )
+-                test_case_result.update_teardown(Result.ERROR, e)
+-                test_case_result.update(Result.ERROR)
+-
+-    def _execute_test_case(
+-        self,
+-        test_suite: TestSuite,
+-        test_case: type[TestCase],
+-        test_case_result: TestCaseResult,
+-    ) -> None:
+-        """Execute `test_case_method` from `test_suite`, record the result and handle failures.
+-
+-        Args:
+-            test_suite: The test suite object.
+-            test_case: The test case function.
+-            test_case_result: The test case level result object associated
+-                with the current test case.
+-
+-        Raises:
+-            KeyboardInterrupt: If DTS has been interrupted by the user.
+-        """
+-        test_case_name = test_case.__name__
+-        try:
+-            self._logger.info(f"Starting test case execution: {test_case_name}")
+-            # Explicit method binding is required, otherwise mypy complains
+-            MethodType(test_case, test_suite)()
+-            test_case_result.update(Result.PASS)
+-            self._logger.info(f"Test case execution PASSED: {test_case_name}")
+-
+-        except TestCaseVerifyError as e:
+-            self._logger.exception(f"Test case execution FAILED: {test_case_name}")
+-            test_case_result.update(Result.FAIL, e)
+-        except Exception as e:
+-            self._logger.exception(f"Test case execution ERROR: {test_case_name}")
+-            test_case_result.update(Result.ERROR, e)
+-        except KeyboardInterrupt:
+-            self._logger.error(f"Test case execution INTERRUPTED by user: {test_case_name}")
+-            test_case_result.update(Result.SKIP)
+-            raise KeyboardInterrupt("Stop DTS")
+-
+     def _exit_dts(self) -> None:
+         """Process all errors and exit with the proper exit code."""
+         self._result.process()
+@@ -619,9 +121,3 @@ def _exit_dts(self) -> None:
+             self._logger.info("DTS execution has ended.")
  
-         Find links between ports and set up default IP addresses to be used when
-@@ -106,18 +92,25 @@ def __init__(
-             tg_node: The TG node where the test suite will run.
-             topology: The topology where the test suite will run.
-         """
--        self.sut_node = sut_node
--        self.tg_node = tg_node
-+        from framework.context import get_ctx
-+
-+        self._ctx = get_ctx()
-         self._logger = get_dts_logger(self.__class__.__name__)
--        self._tg_port_egress = topology.tg_port_egress
--        self._sut_port_ingress = topology.sut_port_ingress
--        self._sut_port_egress = topology.sut_port_egress
--        self._tg_port_ingress = topology.tg_port_ingress
-         self._sut_ip_address_ingress = ip_interface("192.168.100.2/24")
-         self._sut_ip_address_egress = ip_interface("192.168.101.2/24")
-         self._tg_ip_address_egress = ip_interface("192.168.100.3/24")
-         self._tg_ip_address_ingress = ip_interface("192.168.101.3/24")
+         sys.exit(self._result.get_return_code())
+-
+-    def _init_random_seed(self, conf: TestRunConfiguration) -> None:
+-        """Initialize the random seed to use for the test run."""
+-        seed = conf.random_seed or random.randrange(0xFFFF_FFFF)
+-        self._logger.info(f"Initializing test run with random seed {seed}.")
+-        random.seed(seed)
+diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
+index 1acb526b64..a59bac71bb 100644
+--- a/dts/framework/test_result.py
++++ b/dts/framework/test_result.py
+@@ -25,98 +25,18 @@
  
-+    @property
-+    def name(self) -> str:
-+        """The name of the test suite class."""
-+        return type(self).__name__
-+
-+    @property
-+    def topology(self) -> Topology:
-+        """The current topology in use."""
-+        return self._ctx.topology
-+
-     @classmethod
-     def get_test_cases(cls) -> list[type["TestCase"]]:
-         """A list of all the available test cases."""
-@@ -254,10 +247,10 @@ def send_packets_and_capture(
-             A list of received packets.
+ import json
+ from collections.abc import MutableSequence
+-from dataclasses import asdict, dataclass, field
+ from enum import Enum, auto
+ from pathlib import Path
+-from typing import Any, Callable, TypedDict, cast
++from typing import Any, Callable, TypedDict
+ 
+-from framework.config.node import PortConfig
+-from framework.testbed_model.capability import Capability
+-
+-from .config.test_run import TestRunConfiguration, TestSuiteConfig
++from .config.test_run import TestRunConfiguration
+ from .exception import DTSError, ErrorSeverity
+ from .logger import DTSLogger
+-from .test_suite import TestCase, TestSuite
+ from .testbed_model.os_session import OSSessionInfo
+ from .testbed_model.port import Port
+ from .testbed_model.sut_node import DPDKBuildInfo
+ 
+ 
+-@dataclass(slots=True, frozen=True)
+-class TestSuiteWithCases:
+-    """A test suite class with test case methods.
+-
+-    An auxiliary class holding a test case class with test case methods. The intended use of this
+-    class is to hold a subset of test cases (which could be all test cases) because we don't have
+-    all the data to instantiate the class at the point of inspection. The knowledge of this subset
+-    is needed in case an error occurs before the class is instantiated and we need to record
+-    which test cases were blocked by the error.
+-
+-    Attributes:
+-        test_suite_class: The test suite class.
+-        test_cases: The test case methods.
+-        required_capabilities: The combined required capabilities of both the test suite
+-            and the subset of test cases.
+-    """
+-
+-    test_suite_class: type[TestSuite]
+-    test_cases: list[type[TestCase]]
+-    required_capabilities: set[Capability] = field(default_factory=set, init=False)
+-
+-    def __post_init__(self):
+-        """Gather the required capabilities of the test suite and all test cases."""
+-        for test_object in [self.test_suite_class] + self.test_cases:
+-            self.required_capabilities.update(test_object.required_capabilities)
+-
+-    def create_config(self) -> TestSuiteConfig:
+-        """Generate a :class:`TestSuiteConfig` from the stored test suite with test cases.
+-
+-        Returns:
+-            The :class:`TestSuiteConfig` representation.
+-        """
+-        return TestSuiteConfig(
+-            test_suite=self.test_suite_class.__name__,
+-            test_cases=[test_case.__name__ for test_case in self.test_cases],
+-        )
+-
+-    def mark_skip_unsupported(self, supported_capabilities: set[Capability]) -> None:
+-        """Mark the test suite and test cases to be skipped.
+-
+-        The mark is applied if object to be skipped requires any capabilities and at least one of
+-        them is not among `supported_capabilities`.
+-
+-        Args:
+-            supported_capabilities: The supported capabilities.
+-        """
+-        for test_object in [self.test_suite_class, *self.test_cases]:
+-            capabilities_not_supported = test_object.required_capabilities - supported_capabilities
+-            if capabilities_not_supported:
+-                test_object.skip = True
+-                capability_str = (
+-                    "capability" if len(capabilities_not_supported) == 1 else "capabilities"
+-                )
+-                test_object.skip_reason = (
+-                    f"Required {capability_str} '{capabilities_not_supported}' not found."
+-                )
+-        if not self.test_suite_class.skip:
+-            if all(test_case.skip for test_case in self.test_cases):
+-                self.test_suite_class.skip = True
+-
+-                self.test_suite_class.skip_reason = (
+-                    "All test cases are marked to be skipped with reasons: "
+-                    f"{' '.join(test_case.skip_reason for test_case in self.test_cases)}"
+-                )
+-
+-    @property
+-    def skip(self) -> bool:
+-        """Skip the test suite if all test cases or the suite itself are to be skipped.
+-
+-        Returns:
+-            :data:`True` if the test suite should be skipped, :data:`False` otherwise.
+-        """
+-        return all(test_case.skip for test_case in self.test_cases) or self.test_suite_class.skip
+-
+-
+ class Result(Enum):
+     """The possible states that a setup, a teardown or a test case may end up in."""
+ 
+@@ -463,7 +383,6 @@ class TestRunResult(BaseResult):
+     """
+ 
+     _config: TestRunConfiguration
+-    _test_suites_with_cases: list[TestSuiteWithCases]
+     _ports: list[Port]
+     _sut_info: OSSessionInfo | None
+     _dpdk_build_info: DPDKBuildInfo | None
+@@ -476,49 +395,23 @@ def __init__(self, test_run_config: TestRunConfiguration):
          """
-         packets = self._adjust_addresses(packets)
--        return self.tg_node.send_packets_and_capture(
-+        return self._ctx.tg_node.send_packets_and_capture(
-             packets,
--            self._tg_port_egress,
--            self._tg_port_ingress,
-+            self._ctx.topology.tg_port_egress,
-+            self._ctx.topology.tg_port_ingress,
-             filter_config,
-             duration,
+         super().__init__()
+         self._config = test_run_config
+-        self._test_suites_with_cases = []
+         self._ports = []
+         self._sut_info = None
+         self._dpdk_build_info = None
+ 
+-    def add_test_suite(
+-        self,
+-        test_suite_with_cases: TestSuiteWithCases,
+-    ) -> "TestSuiteResult":
++    def add_test_suite(self, test_suite_name: str) -> "TestSuiteResult":
+         """Add and return the child result (test suite).
+ 
+         Args:
+-            test_suite_with_cases: The test suite with test cases.
++            test_suite_name: The test suite name.
+ 
+         Returns:
+             The test suite's result.
+         """
+-        result = TestSuiteResult(test_suite_with_cases)
++        result = TestSuiteResult(test_suite_name)
+         self.child_results.append(result)
+         return result
+ 
+-    @property
+-    def test_suites_with_cases(self) -> list[TestSuiteWithCases]:
+-        """The test suites with test cases to be executed in this test run.
+-
+-        The test suites can only be assigned once.
+-
+-        Returns:
+-            The list of test suites with test cases. If an error occurs between
+-            the initialization of :class:`TestRunResult` and assigning test cases to the instance,
+-            return an empty list, representing that we don't know what to execute.
+-        """
+-        return self._test_suites_with_cases
+-
+-    @test_suites_with_cases.setter
+-    def test_suites_with_cases(self, test_suites_with_cases: list[TestSuiteWithCases]) -> None:
+-        if self._test_suites_with_cases:
+-            raise ValueError(
+-                "Attempted to assign test suites to a test run result "
+-                "which already has test suites."
+-            )
+-        self._test_suites_with_cases = test_suites_with_cases
+-
+     @property
+     def ports(self) -> list[Port]:
+         """Get the list of ports associated with this test run."""
+@@ -602,24 +495,14 @@ def to_dict(self) -> TestRunResultDict:
+             compiler_version = self.dpdk_build_info.compiler_version
+             dpdk_version = self.dpdk_build_info.dpdk_version
+ 
+-        ports = [asdict(port) for port in self.ports]
+-        for port in ports:
+-            port["config"] = cast(PortConfig, port["config"]).model_dump()
+-
+         return {
+             "compiler_version": compiler_version,
+             "dpdk_version": dpdk_version,
+-            "ports": ports,
++            "ports": [port.to_dict() for port in self.ports],
+             "test_suites": [child.to_dict() for child in self.child_results],
+             "summary": results | self.generate_pass_rate_dict(results),
+         }
+ 
+-    def _mark_results(self, result) -> None:
+-        """Mark the test suite results as `result`."""
+-        for test_suite_with_cases in self._test_suites_with_cases:
+-            child_result = self.add_test_suite(test_suite_with_cases)
+-            child_result.update_setup(result)
+-
+ 
+ class TestSuiteResult(BaseResult):
+     """The test suite specific result.
+@@ -631,18 +514,16 @@ class TestSuiteResult(BaseResult):
+     """
+ 
+     test_suite_name: str
+-    _test_suite_with_cases: TestSuiteWithCases
+     _child_configs: list[str]
+ 
+-    def __init__(self, test_suite_with_cases: TestSuiteWithCases):
++    def __init__(self, test_suite_name: str):
+         """Extend the constructor with test suite's config.
+ 
+         Args:
+-            test_suite_with_cases: The test suite with test cases.
++            test_suite_name: The test suite name.
+         """
+         super().__init__()
+-        self.test_suite_name = test_suite_with_cases.test_suite_class.__name__
+-        self._test_suite_with_cases = test_suite_with_cases
++        self.test_suite_name = test_suite_name
+ 
+     def add_test_case(self, test_case_name: str) -> "TestCaseResult":
+         """Add and return the child result (test case).
+@@ -667,12 +548,6 @@ def to_dict(self) -> TestSuiteResultDict:
+             "test_cases": [child.to_dict() for child in self.child_results],
+         }
+ 
+-    def _mark_results(self, result) -> None:
+-        """Mark the test case results as `result`."""
+-        for test_case_method in self._test_suite_with_cases.test_cases:
+-            child_result = self.add_test_case(test_case_method.__name__)
+-            child_result.update_setup(result)
+-
+ 
+ class TestCaseResult(BaseResult, FixtureResult):
+     r"""The test case specific result.
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+new file mode 100644
+index 0000000000..811798f57f
+--- /dev/null
++++ b/dts/framework/test_run.py
+@@ -0,0 +1,640 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 Arm Limited
++
++r"""Test run module.
++
++The test run is implemented as a finite state machine which maintains a globally accessible
++:class:`~.context.Context` and each state implements :class:`State`.
++
++To spin up the test run state machine call :meth:`~TestRun.spin`.
++
++The following graph represents all the states and steps of the state machine. Each node represents a
++state labelled with the initials, e.g. ``TRS`` is represented by :class:`TestRunSetup`. States
++represented by a double green circle are looping states. These states are only exited through:
++
++    * **next** which progresses to the next test suite/case.
++    * **end** which indicates that no more test suites/cases are available and
++      the loop is terminated.
++
++Red dashed links represent the path taken when an exception is
++raised in the origin state. If a state does not have one, then the execution progresses as usual.
++When :class:`~.exception.InternalError` is raised in any state, the state machine execution is
++immediately terminated.
++Orange dashed links represent exceptional conditions. Test suites and cases can be ``blocked`` or
++``skipped`` in the following conditions:
++
++    * If a *blocking* test suite fails, the ``blocked`` flag is raised.
++    * If the user sends a ``SIGINT`` signal, the ``blocked`` flag is raised.
++    * If a test suite and/or test case requires a capability unsupported by the test run, then this
++      is ``skipped`` and the state restarts from the beginning.
++
++Finally, test cases **retry** when they fail and DTS is configured to re-run.
++
++.. digraph:: test_run_fsm
++
++    bgcolor=transparent
++    nodesep=0.5
++    ranksep=0.3
++
++    node [fontname="sans-serif" fixedsize="true" width="0.7"]
++    edge [fontname="monospace" color="gray30" fontsize=12]
++    node [shape="circle"] "TRS" "TRT" "TSS" "TST" "TCS" "TCT"
++
++    node [shape="doublecircle" style="bold" color="darkgreen"] "TRE" "TSE" "TCE"
++
++    node [style="solid" shape="plaintext" fontname="monospace" fontsize=12 fixedsize="false"] "exit"
++
++    "TRS" -> "TRE"
++    "TRE":e -> "TRT":w [taillabel="end" labeldistance=1.5 labelangle=45]
++    "TRT" -> "exit" [style="solid" color="gray30"]
++
++    "TRE" -> "TSS" [headlabel="next" labeldistance=3 labelangle=320]
++    "TSS" -> "TSE"
++    "TSE" -> "TST" [label="end"]
++    "TST" -> "TRE"
++
++    "TSE" -> "TCS" [headlabel="next" labeldistance=3 labelangle=320]
++    "TCS" -> "TCE" -> "TCT" -> "TSE":se
++
++
++    edge [fontcolor="orange", color="orange" style="dashed"]
++    "TRE":sw -> "TSE":nw [taillabel="next\n(blocked)" labeldistance=13]
++    "TSE":ne -> "TRE" [taillabel="end\n(blocked)" labeldistance=7.5 labelangle=345]
++    "TRE":w -> "TRE":nw [headlabel="next\n(skipped)" labeldistance=4]
++    "TSE":e -> "TSE":e [taillabel="next\n(blocked)\n(skipped)" labelangle=325 labeldistance=7.5]
++    "TCE":e -> "TCE":e [taillabel="retry" labelangle=5 labeldistance=2.5]
++
++    edge [fontcolor="crimson" color="crimson"]
++    "TRS" -> "TRT"
++    "TSS":w -> "TST":n
++    "TCS" -> "TCT"
++
++    node [fontcolor="crimson" color="crimson"]
++    "InternalError" -> "exit":ew
++"""
++
++import random
++from collections import deque
++from collections.abc import Iterable
++from dataclasses import dataclass
++from functools import cached_property
++from pathlib import Path
++from types import MethodType
++from typing import ClassVar, Protocol, Union, cast
++
++from framework.config.test_run import TestRunConfiguration
++from framework.context import Context, init_ctx
++from framework.exception import (
++    InternalError,
++    SkippedTestException,
++    TestCaseVerifyError,
++)
++from framework.logger import DTSLogger, get_dts_logger
++from framework.settings import SETTINGS
++from framework.test_result import BaseResult, Result, TestCaseResult, TestRunResult, TestSuiteResult
++from framework.test_suite import TestCase, TestSuite
++from framework.testbed_model.capability import (
++    Capability,
++    get_supported_capabilities,
++    test_if_supported,
++)
++from framework.testbed_model.node import Node
++from framework.testbed_model.sut_node import SutNode
++from framework.testbed_model.tg_node import TGNode
++from framework.testbed_model.topology import PortLink, Topology
++
++TestScenario = tuple[type[TestSuite], deque[type[TestCase]]]
++
++
++class TestRun:
++    r"""A class representing a test run.
++
++    The class is responsible for running tests on testbeds defined in the test run configuration.
++    Each setup or teardown of each stage is recorded in a :class:`~framework.test_result.DTSResult`
++    or one of its subclasses. The test case results are also recorded.
++
++    If an error occurs, the current stage is aborted, the error is recorded, everything in
++    the inner stages is marked as blocked and the run continues in the next iteration
++    of the same stage. The return code is the highest `severity` of all
++    :class:`~.framework.exception.DTSError`\s.
++
++    Example:
++        An error occurs in a test suite setup. The current test suite is aborted,
++        all its test cases are marked as blocked and the run continues
++        with the next test suite. If the errored test suite was the last one in the
++        given test run, the next test run begins.
++
++    Attributes:
++        config: The test run configuration.
++        logger: A reference to the current logger.
++        state: The current state of the state machine.
++        ctx: The test run's runtime context.
++        result: The test run's execution result.
++        selected_tests: The test suites and cases selected in this test run.
++        blocked: :data:`True` if the test run execution has been blocked.
++        remaining_tests: The remaining tests in the execution of the test run.
++        remaining_test_cases: The remaining test cases in the execution of a test suite within the
++            test run's state machine.
++        supported_capabilities: All the capabilities supported by this test run.
++    """
++
++    config: TestRunConfiguration
++    logger: DTSLogger
++
++    state: "State"
++    ctx: Context
++    result: TestRunResult
++    selected_tests: list[TestScenario]
++
++    blocked: bool
++    remaining_tests: deque[TestScenario]
++    remaining_test_cases: deque[type[TestCase]]
++    supported_capabilities: set[Capability]
++
++    def __init__(self, config: TestRunConfiguration, nodes: Iterable[Node], result: TestRunResult):
++        """Test run constructor.
++
++        Args:
++            config: The test run's own configuration.
++            nodes: A reference to all the available nodes.
++            result: A reference to the test run result object.
++        """
++        self.config = config
++        self.logger = get_dts_logger()
++
++        sut_node = next(n for n in nodes if n.name == config.system_under_test_node)
++        sut_node = cast(SutNode, sut_node)  # Config validation must render this valid.
++
++        tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
++        tg_node = cast(TGNode, tg_node)  # Config validation must render this valid.
++
++        topology = Topology.from_port_links(
++            PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
++            for link in self.config.port_topology
++        )
++
++        self.ctx = Context(sut_node, tg_node, topology)
++        self.result = result
++        self.selected_tests = list(self.config.filter_tests())
++        self.blocked = False
++        self.remaining_tests = deque()
++        self.remaining_test_cases = deque()
++        self.supported_capabilities = set()
++
++        self.state = TestRunSetup(self, self.result)
++
++    @cached_property
++    def required_capabilities(self) -> set[Capability]:
++        """The capabilities required to run this test run in its totality."""
++        caps = set()
++
++        for test_suite, test_cases in self.selected_tests:
++            caps.update(test_suite.required_capabilities)
++            for test_case in test_cases:
++                caps.update(test_case.required_capabilities)
++
++        return caps
++
++    def spin(self):
++        """Spin the internal state machine that executes the test run."""
++        self.logger.info(f"Running test run with SUT '{self.ctx.sut_node.name}'.")
++
++        while self.state is not None:
++            try:
++                self.state.before()
++                next_state = self.state.next()
++            except (KeyboardInterrupt, Exception) as e:
++                next_state = self.state.handle_exception(e)
++            finally:
++                self.state.after()
++            if next_state is not None:
++                self.logger.debug(
++                    f"FSM - moving from '{self.state.logger_name}' to '{next_state.logger_name}'"
++                )
++            self.state = next_state
++
++    def init_random_seed(self) -> None:
++        """Initialize the random seed to use for the test run."""
++        seed = self.config.random_seed or random.randrange(0xFFFF_FFFF)
++        self.logger.info(f"Initializing with random seed {seed}.")
++        random.seed(seed)
++
++
++class State(Protocol):
++    """Protocol indicating the state of the test run."""
++
++    logger_name: ClassVar[str]
++    test_run: TestRun
++    result: BaseResult
++
++    def before(self):
++        """Hook before the state is processed."""
++        self.logger.set_stage(self.logger_name, self.log_file_path)
++
++    def after(self):
++        """Hook after the state is processed."""
++        return
++
++    @property
++    def description(self) -> str:
++        """State description."""
++
++    @cached_property
++    def logger(self) -> DTSLogger:
++        """A reference to the root logger."""
++        return get_dts_logger()
++
++    def get_log_file_name(self) -> str | None:
++        """Name of the log file for this state."""
++        return None
++
++    @property
++    def log_file_path(self) -> Path | None:
++        """Path to the log file for this state."""
++        if file_name := self.get_log_file_name():
++            return Path(SETTINGS.output_dir, file_name)
++        return None
++
++    def next(self) -> Union["State", None]:
++        """Next state."""
++
++    def on_error(self, ex: Exception) -> Union["State", None]:
++        """Next state on error."""
++
++    def handle_exception(self, ex: Exception) -> Union["State", None]:
++        """Handles an exception raised by `next`."""
++        next_state = self.on_error(ex)
++
++        match ex:
++            case InternalError():
++                self.logger.error(
++                    f"A CRITICAL ERROR has occurred during {self.description}. "
++                    "Unrecoverable state reached, shutting down."
++                )
++                raise
++            case KeyboardInterrupt():
++                self.logger.info(
++                    f"{self.description.capitalize()} INTERRUPTED by user! "
++                    "Shutting down gracefully."
++                )
++                self.test_run.blocked = True
++            case _:
++                self.logger.error(f"An unexpected ERROR has occurred during {self.description}.")
++                self.logger.exception(ex)
++
++        return next_state
++
++
++@dataclass
++class TestRunSetup(State):
++    """Test run setup."""
++
++    logger_name: ClassVar[str] = "test_run_setup"
++    test_run: TestRun
++    result: TestRunResult
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return "test run setup"
++
++    def next(self) -> State | None:
++        """Process state and return the next one."""
++        test_run = self.test_run
++        init_ctx(test_run.ctx)
++
++        self.logger.info(f"Running on SUT node '{test_run.ctx.sut_node.name}'.")
++        test_run.init_random_seed()
++        test_run.remaining_tests = deque(test_run.selected_tests)
++
++        test_run.ctx.sut_node.set_up_test_run(test_run.config, test_run.ctx.topology.sut_ports)
++
++        self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
++        self.result.sut_info = test_run.ctx.sut_node.node_info
++        self.result.dpdk_build_info = test_run.ctx.sut_node.get_dpdk_build_info()
++
++        self.logger.debug(f"Found capabilities to check: {test_run.required_capabilities}")
++        test_run.supported_capabilities = get_supported_capabilities(
++            test_run.ctx.sut_node, test_run.ctx.topology, test_run.required_capabilities
++        )
++
++        self.result.update_setup(Result.PASS)
++        return TestRunExecution(test_run, self.result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_setup(Result.ERROR, ex)
++        return TestRunTeardown(self.test_run, self.result)
++
++
++@dataclass
++class TestRunExecution(State):
++    """Test run execution."""
++
++    logger_name: ClassVar[str] = "test_run"
++    test_run: TestRun
++    result: TestRunResult
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return "test run execution"
++
++    def next(self) -> State | None:
++        """Next state."""
++        test_run = self.test_run
++        try:
++            test_suite_class, test_run.remaining_test_cases = test_run.remaining_tests.popleft()
++            test_suite = test_suite_class()
++            test_suite_result = test_run.result.add_test_suite(test_suite.name)
++
++            if test_run.blocked:
++                test_suite_result.update_setup(Result.BLOCK)
++                self.logger.warning(f"Test suite '{test_suite.name}' was BLOCKED.")
++                # Continue to allow the rest to mark as blocked, no need to setup.
++                return TestSuiteExecution(test_run, test_suite, test_suite_result)
++
++            try:
++                test_if_supported(test_suite_class, test_run.supported_capabilities)
++            except SkippedTestException as e:
++                self.logger.info(
++                    f"Test suite '{test_suite.name}' execution SKIPPED with reason: {e}"
++                )
++                test_suite_result.update_setup(Result.SKIP)
++                return self
++
++            test_run.ctx.local.reset()
++            return TestSuiteSetup(test_run, test_suite, test_suite_result)
++        except IndexError:
++            # No more test suites. We are done here.
++            return TestRunTeardown(test_run, self.result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_setup(Result.ERROR, ex)
++        return TestRunTeardown(self.test_run, self.result)
++
++
++@dataclass
++class TestRunTeardown(State):
++    """Test run teardown."""
++
++    logger_name: ClassVar[str] = "test_run_teardown"
++    test_run: TestRun
++    result: TestRunResult
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return "test run teardown"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.test_run.ctx.sut_node.tear_down_test_run(self.test_run.ctx.topology.sut_ports)
++        self.result.update_teardown(Result.PASS)
++        return None
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_teardown(Result.ERROR, ex)
++        self.logger.warning(
++            "The environment may have not been cleaned up correctly. "
++            "The subsequent tests could be affected!"
++        )
++        return None
++
++
++@dataclass
++class TestSuiteState(State):
++    """A test suite state template."""
++
++    test_run: TestRun
++    test_suite: TestSuite
++    result: TestSuiteResult
++
++    def get_log_file_name(self) -> str | None:
++        """Get the log file name."""
++        return self.test_suite.name
++
++
++@dataclass
++class TestSuiteSetup(TestSuiteState):
++    """Test suite setup."""
++
++    logger_name: ClassVar[str] = "test_suite_setup"
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test suite '{self.test_suite.name}' setup"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.test_suite.set_up_suite()
++        self.result.update_setup(Result.PASS)
++        return TestSuiteExecution(self.test_run, self.test_suite, self.result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_setup(Result.ERROR, ex)
++        return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
++
++
++@dataclass
++class TestSuiteExecution(TestSuiteState):
++    """Test suite execution."""
++
++    logger_name: ClassVar[str] = "test_suite"
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test suite '{self.test_suite.name}' execution"
++
++    def next(self) -> State | None:
++        """Next state."""
++        try:
++            test_case = self.test_run.remaining_test_cases.popleft()
++            test_case_result = self.result.add_test_case(test_case.name)
++
++            if self.test_run.blocked:
++                test_case_result.update_setup(Result.BLOCK)
++                self.logger.warning(f"Test case '{test_case.name}' execution was BLOCKED.")
++                return TestSuiteExecution(self.test_run, self.test_suite, self.result)
++
++            try:
++                test_if_supported(test_case, self.test_run.supported_capabilities)
++            except SkippedTestException as e:
++                self.logger.info(f"Test case '{test_case.name}' execution SKIPPED with reason: {e}")
++                test_case_result.update_setup(Result.SKIP)
++                return self
++
++            return TestCaseSetup(
++                self.test_run, self.test_suite, self.result, test_case, test_case_result
++            )
++        except IndexError:
++            if self.test_run.blocked and self.result.setup_result.result is Result.BLOCK:
++                # Skip teardown if the test case AND suite were blocked.
++                return TestRunExecution(self.test_run, self.test_run.result)
++            else:
++                # No more test cases. We are done here.
++                return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_setup(Result.ERROR, ex)
++        return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
++
++
++@dataclass
++class TestSuiteTeardown(TestSuiteState):
++    """Test suite teardown."""
++
++    logger_name: ClassVar[str] = "test_suite_teardown"
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test suite '{self.test_suite.name}' teardown"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.test_suite.tear_down_suite()
++        self.test_run.ctx.sut_node.kill_cleanup_dpdk_apps()
++        self.result.update_teardown(Result.PASS)
++        return TestRunExecution(self.test_run, self.test_run.result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.logger.warning(
++            "The environment may have not been cleaned up correctly. "
++            "The subsequent tests could be affected!"
++        )
++        self.result.update_teardown(Result.ERROR, ex)
++        return TestRunExecution(self.test_run, self.test_run.result)
++
++    def after(self):
++        """Hook after state is processed."""
++        if self.result.get_errors() and self.test_suite.is_blocking:
++            self.logger.warning(
++                f"An error occurred within blocking {self.test_suite.name}. "
++                "The remaining test suites will be skipped."
++            )
++            self.test_run.blocked = True
++
++
++@dataclass
++class TestCaseState(State):
++    """A test case state template."""
++
++    test_run: TestRun
++    test_suite: TestSuite
++    test_suite_result: TestSuiteResult
++    test_case: type[TestCase]
++    result: TestCaseResult
++
++    def get_log_file_name(self) -> str | None:
++        """Get the log file name."""
++        return self.test_suite.name
++
++
++@dataclass
++class TestCaseSetup(TestCaseState):
++    """Test case setup."""
++
++    logger_name: ClassVar[str] = "test_case_setup"
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test case '{self.test_case.name}' setup"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.test_suite.set_up_test_case()
++        self.result.update_setup(Result.PASS)
++        return TestCaseExecution(
++            self.test_run,
++            self.test_suite,
++            self.test_suite_result,
++            self.test_case,
++            self.result,
++            SETTINGS.re_run,
++        )
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update_setup(Result.ERROR, ex)
++        return TestCaseTeardown(
++            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
++        )
++
++
++@dataclass
++class TestCaseExecution(TestCaseState):
++    """Test case execution."""
++
++    logger_name: ClassVar[str] = "test_case"
++    reattempts_left: int
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test case '{self.test_case.name}' execution"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.logger.info(f"Running test case '{self.test_case.name}'.")
++        run_test_case = MethodType(self.test_case, self.test_suite)
++        try:
++            run_test_case()
++        except TestCaseVerifyError as e:
++            self.logger.error(f"{self.description.capitalize()} FAILED: {e}")
++
++            self.reattempts_left -= 1
++            if self.reattempts_left > 0:
++                self.logger.info(f"Re-attempting. {self.reattempts_left} attempts left.")
++                return self
++
++            self.result.update(Result.FAIL, e)
++        else:
++            self.result.update(Result.PASS)
++            self.logger.info(f"{self.description.capitalize()} PASSED.")
++
++        return TestCaseTeardown(
++            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
++        )
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.result.update(Result.ERROR, ex)
++        return TestCaseTeardown(
++            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
++        )
++
++
++@dataclass
++class TestCaseTeardown(TestCaseState):
++    """Test case teardown."""
++
++    logger_name: ClassVar[str] = "test_case_teardown"
++
++    @property
++    def description(self) -> str:
++        """State description."""
++        return f"test case '{self.test_case.name}' teardown"
++
++    def next(self) -> State | None:
++        """Next state."""
++        self.test_suite.tear_down_test_case()
++        self.result.update_teardown(Result.PASS)
++        return TestSuiteExecution(self.test_run, self.test_suite, self.test_suite_result)
++
++    def on_error(self, ex: Exception) -> State | None:
++        """Next state on error."""
++        self.logger.warning(
++            "The environment may have not been cleaned up correctly. "
++            "The subsequent tests could be affected!"
++        )
++        self.result.update_teardown(Result.ERROR, ex)
++        return TestSuiteExecution(self.test_run, self.test_suite, self.test_suite_result)
+diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
+index b9b527e40d..ae90997061 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/framework/test_suite.py
+@@ -60,7 +60,7 @@ class TestSuite(TestProtocol):
+ 
+     By default, all test cases will be executed. A list of testcase names may be specified
+     in the YAML test run configuration file and in the :option:`--test-suite` command line argument
+-    or in the :envvar:`DTS_TESTCASES` environment variable to filter which test cases to run.
++    or in the :envvar:`DTS_TEST_SUITES` environment variable to filter which test cases to run.
+     The union of both lists will be used. Any unknown test cases from the latter lists
+     will be silently ignored.
+ 
+diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
+index e1215f9703..a1d6d9dd32 100644
+--- a/dts/framework/testbed_model/capability.py
++++ b/dts/framework/testbed_model/capability.py
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2024 PANTHEON.tech s.r.o.
++# Copyright(c) 2025 Arm Limited
+ 
+ """Testbed capabilities.
+ 
+@@ -53,7 +54,7 @@ def test_scatter_mbuf_2048(self):
+ 
+ from typing_extensions import Self
+ 
+-from framework.exception import ConfigurationError
++from framework.exception import ConfigurationError, SkippedTestException
+ from framework.logger import get_dts_logger
+ from framework.remote_session.testpmd_shell import (
+     NicCapability,
+@@ -217,9 +218,7 @@ def get_supported_capabilities(
          )
-@@ -272,7 +265,7 @@ def send_packets(
-             packets: Packets to send.
-         """
-         packets = self._adjust_addresses(packets)
--        self.tg_node.send_packets(packets, self._tg_port_egress)
-+        self._ctx.tg_node.send_packets(packets, self._ctx.topology.tg_port_egress)
+         if cls.capabilities_to_check:
+             capabilities_to_check_map = cls._get_decorated_capabilities_map()
+-            with TestPmdShell(
+-                sut_node, privileged=True, disable_device_start=True
+-            ) as testpmd_shell:
++            with TestPmdShell() as testpmd_shell:
+                 for (
+                     conditional_capability_fn,
+                     capabilities,
+@@ -506,3 +505,20 @@ def get_supported_capabilities(
+         supported_capabilities.update(callback(sut_node, topology_config))
  
-     def get_expected_packets(
+     return supported_capabilities
++
++
++def test_if_supported(test: type[TestProtocol], supported_caps: set[Capability]) -> None:
++    """Test if the given test suite or test case is supported.
++
++    Args:
++        test: The test suite or case.
++        supported_caps: The capabilities that need to be checked against the test.
++
++    Raises:
++        SkippedTestException: If the test hasn't met the requirements.
++    """
++    unsupported_caps = test.required_capabilities - supported_caps
++    if unsupported_caps:
++        capability_str = "capabilities" if len(unsupported_caps) > 1 else "capability"
++        msg = f"Required {capability_str} '{unsupported_caps}' not found."
++        raise SkippedTestException(msg)
+diff --git a/dts/framework/testbed_model/tg_node.py b/dts/framework/testbed_model/tg_node.py
+index 595836a664..290a3fbd74 100644
+--- a/dts/framework/testbed_model/tg_node.py
++++ b/dts/framework/testbed_model/tg_node.py
+@@ -37,9 +37,11 @@ class TGNode(Node):
+     must be a way to send traffic without that.
+ 
+     Attributes:
++        config: The traffic generator node configuration.
+         traffic_generator: The traffic generator running on the node.
+     """
+ 
++    config: TGNodeConfiguration
+     traffic_generator: CapturingTrafficGenerator
+ 
+     def __init__(self, node_config: TGNodeConfiguration):
+@@ -51,7 +53,6 @@ def __init__(self, node_config: TGNodeConfiguration):
+             node_config: The TG node's test run configuration.
+         """
+         super().__init__(node_config)
+-        self.traffic_generator = create_traffic_generator(self, node_config.traffic_generator)
+         self._logger.info(f"Created node: {self.name}")
+ 
+     def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable[Port]) -> None:
+@@ -64,6 +65,7 @@ def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable
+         """
+         super().set_up_test_run(test_run_config, ports)
+         self.main_session.bring_up_link(ports)
++        self.traffic_generator = create_traffic_generator(self, self.config.traffic_generator)
+ 
+     def tear_down_test_run(self, ports: Iterable[Port]) -> None:
+         """Extend the test run teardown with the teardown of the traffic generator.
+@@ -72,6 +74,7 @@ def tear_down_test_run(self, ports: Iterable[Port]) -> None:
+             ports: The ports to tear down for the test run.
+         """
+         super().tear_down_test_run(ports)
++        self.traffic_generator.close()
+ 
+     def send_packets_and_capture(
          self,
-@@ -352,15 +345,15 @@ def _adjust_addresses(self, packets: list[Packet], expected: bool = False) -> li
-             # only be the Ether src/dst.
-             if "src" not in packet.fields:
-                 packet.src = (
--                    self._sut_port_egress.mac_address
-+                    self.topology.sut_port_egress.mac_address
-                     if expected
--                    else self._tg_port_egress.mac_address
-+                    else self.topology.tg_port_egress.mac_address
-                 )
-             if "dst" not in packet.fields:
-                 packet.dst = (
--                    self._tg_port_ingress.mac_address
-+                    self.topology.tg_port_ingress.mac_address
-                     if expected
--                    else self._sut_port_ingress.mac_address
-+                    else self.topology.sut_port_ingress.mac_address
-                 )
+@@ -119,5 +122,4 @@ def close(self) -> None:
  
-             # update l3 addresses
-@@ -400,10 +393,10 @@ def verify(self, condition: bool, failure_description: str) -> None:
- 
-     def _fail_test_case_verify(self, failure_description: str) -> None:
-         self._logger.debug("A test case failed, showing the last 10 commands executed on SUT:")
--        for command_res in self.sut_node.main_session.remote_session.history[-10:]:
-+        for command_res in self._ctx.sut_node.main_session.remote_session.history[-10:]:
-             self._logger.debug(command_res.command)
-         self._logger.debug("A test case failed, showing the last 10 commands executed on TG:")
--        for command_res in self.tg_node.main_session.remote_session.history[-10:]:
-+        for command_res in self._ctx.tg_node.main_session.remote_session.history[-10:]:
-             self._logger.debug(command_res.command)
-         raise TestCaseVerifyError(failure_description)
- 
-@@ -517,14 +510,14 @@ def _verify_l2_frame(self, received_packet: Ether, l3: bool) -> bool:
-         self._logger.debug("Looking at the Ether layer.")
-         self._logger.debug(
-             f"Comparing received dst mac '{received_packet.dst}' "
--            f"with expected '{self._tg_port_ingress.mac_address}'."
-+            f"with expected '{self.topology.tg_port_ingress.mac_address}'."
-         )
--        if received_packet.dst != self._tg_port_ingress.mac_address:
-+        if received_packet.dst != self.topology.tg_port_ingress.mac_address:
-             return False
- 
--        expected_src_mac = self._tg_port_egress.mac_address
-+        expected_src_mac = self.topology.tg_port_egress.mac_address
-         if l3:
--            expected_src_mac = self._sut_port_egress.mac_address
-+            expected_src_mac = self.topology.sut_port_egress.mac_address
-         self._logger.debug(
-             f"Comparing received src mac '{received_packet.src}' "
-             f"with expected '{expected_src_mac}'."
-diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
-index b9e9cd1d1a..ce7da1cc8f 100644
---- a/dts/tests/TestSuite_blocklist.py
-+++ b/dts/tests/TestSuite_blocklist.py
-@@ -18,7 +18,7 @@ class TestBlocklist(TestSuite):
- 
-     def verify_blocklisted_ports(self, ports_to_block: list[Port]):
-         """Runs testpmd with the given ports blocklisted and verifies the ports."""
--        with TestPmdShell(self.sut_node, allowed_ports=[], blocked_ports=ports_to_block) as testpmd:
-+        with TestPmdShell(allowed_ports=[], blocked_ports=ports_to_block) as testpmd:
-             allowlisted_ports = {port.device_name for port in testpmd.show_port_info_all()}
-             blocklisted_ports = {port.pci for port in ports_to_block}
- 
-@@ -49,7 +49,7 @@ def one_port_blocklisted(self):
-         Verify:
-             That the port was successfully blocklisted.
+         This extends the superclass method with TG cleanup.
          """
--        self.verify_blocklisted_ports(self.sut_node.ports[:1])
-+        self.verify_blocklisted_ports(self.topology.sut_ports[:1])
- 
-     @func_test
-     def all_but_one_port_blocklisted(self):
-@@ -60,4 +60,4 @@ def all_but_one_port_blocklisted(self):
-         Verify:
-             That all specified ports were successfully blocklisted.
-         """
--        self.verify_blocklisted_ports(self.sut_node.ports[:-1])
-+        self.verify_blocklisted_ports(self.topology.sut_ports[:-1])
-diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
-index a8bb6a71f7..b38d73421b 100644
---- a/dts/tests/TestSuite_checksum_offload.py
-+++ b/dts/tests/TestSuite_checksum_offload.py
-@@ -128,7 +128,7 @@ def test_insert_checksums(self) -> None:
-             Ether(dst=mac_id) / IPv6(src="::1") / UDP() / Raw(payload),
-             Ether(dst=mac_id) / IPv6(src="::1") / TCP() / Raw(payload),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             self.setup_hw_offload(testpmd=testpmd)
-@@ -160,7 +160,7 @@ def test_no_insert_checksums(self) -> None:
-             Ether(dst=mac_id) / IPv6(src="::1") / UDP() / Raw(payload),
-             Ether(dst=mac_id) / IPv6(src="::1") / TCP() / Raw(payload),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             testpmd.start()
-@@ -190,7 +190,7 @@ def test_l4_rx_checksum(self) -> None:
-             Ether(dst=mac_id) / IP() / UDP(chksum=0xF),
-             Ether(dst=mac_id) / IP() / TCP(chksum=0xF),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             self.setup_hw_offload(testpmd=testpmd)
-@@ -223,7 +223,7 @@ def test_l3_rx_checksum(self) -> None:
-             Ether(dst=mac_id) / IP(chksum=0xF) / UDP(),
-             Ether(dst=mac_id) / IP(chksum=0xF) / TCP(),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             self.setup_hw_offload(testpmd=testpmd)
-@@ -260,7 +260,7 @@ def test_validate_rx_checksum(self) -> None:
-             Ether(dst=mac_id) / IPv6(src="::1") / UDP(chksum=0xF),
-             Ether(dst=mac_id) / IPv6(src="::1") / TCP(chksum=0xF),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             self.setup_hw_offload(testpmd=testpmd)
-@@ -299,7 +299,7 @@ def test_vlan_checksum(self) -> None:
-             Ether(dst=mac_id) / Dot1Q(vlan=1) / IPv6(src="::1") / UDP(chksum=0xF) / Raw(payload),
-             Ether(dst=mac_id) / Dot1Q(vlan=1) / IPv6(src="::1") / TCP(chksum=0xF) / Raw(payload),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             self.setup_hw_offload(testpmd=testpmd)
-@@ -333,7 +333,7 @@ def test_validate_sctp_checksum(self) -> None:
-             Ether(dst=mac_id) / IP() / SCTP(),
-             Ether(dst=mac_id) / IP() / SCTP(chksum=0xF),
-         ]
--        with TestPmdShell(node=self.sut_node, enable_rx_cksum=True) as testpmd:
-+        with TestPmdShell(enable_rx_cksum=True) as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.csum)
-             testpmd.set_verbose(level=1)
-             testpmd.csum_set_hw(layers=ChecksumOffloadOptions.sctp)
-diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vlan.py
-index bdbee7e8d1..6af503528d 100644
---- a/dts/tests/TestSuite_dual_vlan.py
-+++ b/dts/tests/TestSuite_dual_vlan.py
-@@ -193,7 +193,7 @@ def insert_second_vlan(self) -> None:
-             Packets are received.
-             Packet contains two VLAN tags.
-         """
--        with TestPmdShell(self.sut_node, forward_mode=SimpleForwardingModes.mac) as testpmd:
-+        with TestPmdShell(forward_mode=SimpleForwardingModes.mac) as testpmd:
-             testpmd.tx_vlan_set(port=self.tx_port, enable=True, vlan=self.vlan_insert_tag)
-             testpmd.start()
-             recv = self.send_packet_and_capture(
-@@ -229,7 +229,7 @@ def all_vlan_functions(self) -> None:
-             / Dot1Q(vlan=self.inner_vlan_tag)
-             / Raw(b"X" * 20)
-         )
--        with TestPmdShell(self.sut_node, forward_mode=SimpleForwardingModes.mac) as testpmd:
-+        with TestPmdShell(forward_mode=SimpleForwardingModes.mac) as testpmd:
-             testpmd.start()
-             recv = self.send_packet_and_capture(send_pkt)
-             self.verify(len(recv) > 0, "Unmodified packet was not received.")
-@@ -269,7 +269,7 @@ def maintains_priority(self) -> None:
-             / Dot1Q(vlan=self.inner_vlan_tag, prio=2)
-             / Raw(b"X" * 20)
-         )
--        with TestPmdShell(self.sut_node, forward_mode=SimpleForwardingModes.mac) as testpmd:
-+        with TestPmdShell(forward_mode=SimpleForwardingModes.mac) as testpmd:
-             testpmd.start()
-             recv = self.send_packet_and_capture(pkt)
-             self.verify(len(recv) > 0, "Did not receive any packets when testing VLAN priority.")
-diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
-index 5a33f6f3c2..a4bee2e90b 100644
---- a/dts/tests/TestSuite_dynamic_config.py
-+++ b/dts/tests/TestSuite_dynamic_config.py
-@@ -88,7 +88,7 @@ def test_default_mode(self) -> None:
-         and sends two packets; one matching source MAC address and one unknown.
-         Verifies that both are received.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             is_promisc = testpmd.show_port_info(0).is_promiscuous_mode_enabled
-             self.verify(is_promisc, "Promiscuous mode was not enabled by default.")
-             testpmd.start()
-@@ -106,7 +106,7 @@ def test_disable_promisc(self) -> None:
-         and sends two packets; one matching source MAC address and one unknown.
-         Verifies that only the matching address packet is received.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd = self.disable_promisc_setup(testpmd=testpmd, port_id=0)
-             mac = testpmd.show_port_info(0).mac_address
-             self.send_packet_and_verify(should_receive=True, mac_address=str(mac))
-@@ -120,7 +120,7 @@ def test_disable_promisc_broadcast(self) -> None:
-         and sends two packets; one matching source MAC address and one broadcast.
-         Verifies that both packets are received.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd = self.disable_promisc_setup(testpmd=testpmd, port_id=0)
-             mac = testpmd.show_port_info(0).mac_address
-             self.send_packet_and_verify(should_receive=True, mac_address=str(mac))
-@@ -134,7 +134,7 @@ def test_disable_promisc_multicast(self) -> None:
-         and sends two packets; one matching source MAC address and one multicast.
-         Verifies that the multicast packet is only received once allmulticast mode is enabled.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd = self.disable_promisc_setup(testpmd=testpmd, port_id=0)
-             testpmd.set_multicast_all(on=False)
-             # 01:00:5E:00:00:01 is the first of the multicast MAC range of addresses
-diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
-index e55716f545..344dd540eb 100644
---- a/dts/tests/TestSuite_dynamic_queue_conf.py
-+++ b/dts/tests/TestSuite_dynamic_queue_conf.py
-@@ -84,7 +84,6 @@ def wrap(self: "TestDynamicQueueConf", is_rx_testing: bool) -> None:
-             queues_to_config.add(random.randint(1, self.number_of_queues - 1))
-         unchanged_queues = set(range(self.number_of_queues)) - queues_to_config
-         with TestPmdShell(
--            self.sut_node,
-             port_topology=PortTopology.chained,
-             rx_queues=self.number_of_queues,
-             tx_queues=self.number_of_queues,
-diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello_world.py
-index 031b94de4d..141f2bc4c9 100644
---- a/dts/tests/TestSuite_hello_world.py
-+++ b/dts/tests/TestSuite_hello_world.py
-@@ -23,6 +23,6 @@ def test_hello_world(self) -> None:
-         Verify:
-             The testpmd session throws no errors.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.start()
-         self.log("Hello World!")
-diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-index 0f6ff18907..0555d75ed8 100644
---- a/dts/tests/TestSuite_l2fwd.py
-+++ b/dts/tests/TestSuite_l2fwd.py
-@@ -7,6 +7,7 @@
- The forwarding test is performed with several packets being sent at once.
- """
- 
-+from framework.context import filter_cores
- from framework.params.testpmd import EthPeer, SimpleForwardingModes
- from framework.remote_session.testpmd_shell import TestPmdShell
- from framework.test_suite import TestSuite, func_test
-@@ -33,6 +34,7 @@ def set_up_suite(self) -> None:
-         """
-         self.packets = generate_random_packets(self.NUMBER_OF_PACKETS_TO_SEND, self.PAYLOAD_SIZE)
- 
-+    @filter_cores(LogicalCoreCount(cores_per_socket=4))
-     @func_test
-     def l2fwd_integrity(self) -> None:
-         """Test the L2 forwarding integrity.
-@@ -44,11 +46,12 @@ def l2fwd_integrity(self) -> None:
-         """
-         queues = [1, 2, 4, 8]
- 
-+        self.topology.sut_ports[0]
-+        self.topology.tg_ports[0]
-+
-         with TestPmdShell(
--            self.sut_node,
--            lcore_filter_specifier=LogicalCoreCount(cores_per_socket=4),
-             forward_mode=SimpleForwardingModes.mac,
--            eth_peer=[EthPeer(1, self.tg_node.ports[1].mac_address)],
-+            eth_peer=[EthPeer(1, self.topology.tg_port_ingress.mac_address)],
-             disable_device_start=True,
-         ) as shell:
-             for queues_num in queues:
-diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
-index 11e4b595c7..e6c55d3ec6 100644
---- a/dts/tests/TestSuite_mac_filter.py
-+++ b/dts/tests/TestSuite_mac_filter.py
-@@ -101,10 +101,10 @@ def test_add_remove_mac_addresses(self) -> None:
-             Remove the fake mac address from the PMD's address pool.
-             Send a packet with the fake mac address to the PMD. (Should not receive)
-         """
--        with TestPmdShell(self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.set_promisc(0, enable=False)
-             testpmd.start()
--            mac_address = self._sut_port_ingress.mac_address
-+            mac_address = self.topology.sut_port_ingress.mac_address
- 
-             # Send a packet with NIC default mac address
-             self.send_packet_and_verify(mac_address=mac_address, should_receive=True)
-@@ -137,9 +137,9 @@ def test_invalid_address(self) -> None:
-             Determine the device's mac address pool size, and fill the pool with fake addresses.
-             Attempt to add another fake mac address, overloading the address pool. (Should fail)
-         """
--        with TestPmdShell(self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.start()
--            mac_address = self._sut_port_ingress.mac_address
-+            mac_address = self.topology.sut_port_ingress.mac_address
-             try:
-                 testpmd.set_mac_addr(0, "00:00:00:00:00:00", add=True)
-                 self.verify(False, "Invalid mac address added.")
-@@ -191,7 +191,7 @@ def test_multicast_filter(self) -> None:
-             Remove the fake multicast address from the PMDs multicast address filter.
-             Send a packet with the fake multicast address to the PMD. (Should not receive)
-         """
--        with TestPmdShell(self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.start()
-             testpmd.set_promisc(0, enable=False)
-             multicast_address = "01:00:5E:00:00:00"
-diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
-index 4b59515bae..63e570ba03 100644
---- a/dts/tests/TestSuite_mtu.py
-+++ b/dts/tests/TestSuite_mtu.py
-@@ -51,8 +51,8 @@ def set_up_suite(self) -> None:
-             Set traffic generator MTU lengths to a size greater than scope of all
-             test cases.
-         """
--        self.tg_node.main_session.configure_port_mtu(JUMBO_MTU + 200, self._tg_port_egress)
--        self.tg_node.main_session.configure_port_mtu(JUMBO_MTU + 200, self._tg_port_ingress)
-+        self.topology.tg_port_egress.configure_mtu(JUMBO_MTU + 200)
-+        self.topology.tg_port_ingress.configure_mtu(JUMBO_MTU + 200)
- 
-     def send_packet_and_verify(self, pkt_size: int, should_receive: bool) -> None:
-         """Generate, send a packet, and assess its behavior based on a given packet size.
-@@ -156,11 +156,7 @@ def test_runtime_mtu_updating_and_forwarding(self) -> None:
-             Verify that standard MTU packets forward, in addition to packets within the limits of
-             an MTU size set during runtime.
-         """
--        with TestPmdShell(
--            self.sut_node,
--            tx_offloads=0x8000,
--            mbuf_size=[JUMBO_MTU + 200],
--        ) as testpmd:
-+        with TestPmdShell(tx_offloads=0x8000, mbuf_size=[JUMBO_MTU + 200]) as testpmd:
-             testpmd.set_port_mtu_all(1500, verify=True)
-             testpmd.start()
-             self.assess_mtu_boundary(testpmd, 1500)
-@@ -201,7 +197,6 @@ def test_cli_mtu_forwarding_for_std_packets(self) -> None:
-             MTU modification.
-         """
-         with TestPmdShell(
--            self.sut_node,
-             tx_offloads=0x8000,
-             mbuf_size=[JUMBO_MTU + 200],
-             mbcache=200,
-@@ -230,7 +225,6 @@ def test_cli_jumbo_forwarding_for_jumbo_mtu(self) -> None:
-             Verify that all packets are forwarded after pre-runtime MTU modification.
-         """
-         with TestPmdShell(
--            self.sut_node,
-             tx_offloads=0x8000,
-             mbuf_size=[JUMBO_MTU + 200],
-             mbcache=200,
-@@ -259,7 +253,6 @@ def test_cli_mtu_std_packets_for_jumbo_mtu(self) -> None:
-             MTU modification.
-         """
-         with TestPmdShell(
--            self.sut_node,
-             tx_offloads=0x8000,
-             mbuf_size=[JUMBO_MTU + 200],
-             mbcache=200,
-@@ -277,5 +270,5 @@ def tear_down_suite(self) -> None:
-         Teardown:
-             Set the MTU size of the traffic generator back to the standard 1518 byte size.
-         """
--        self.tg_node.main_session.configure_port_mtu(STANDARD_MTU, self._tg_port_egress)
--        self.tg_node.main_session.configure_port_mtu(STANDARD_MTU, self._tg_port_ingress)
-+        self.topology.tg_port_egress.configure_mtu(STANDARD_MTU)
-+        self.topology.tg_port_ingress.configure_mtu(STANDARD_MTU)
-diff --git a/dts/tests/TestSuite_pmd_buffer_scatter.py b/dts/tests/TestSuite_pmd_buffer_scatter.py
-index a8c111eea7..5e23f28bc6 100644
---- a/dts/tests/TestSuite_pmd_buffer_scatter.py
-+++ b/dts/tests/TestSuite_pmd_buffer_scatter.py
-@@ -58,8 +58,8 @@ def set_up_suite(self) -> None:
-             Increase the MTU of both ports on the traffic generator to 9000
-             to support larger packet sizes.
-         """
--        self.tg_node.main_session.configure_port_mtu(9000, self._tg_port_egress)
--        self.tg_node.main_session.configure_port_mtu(9000, self._tg_port_ingress)
-+        self.topology.tg_port_egress.configure_mtu(9000)
-+        self.topology.tg_port_ingress.configure_mtu(9000)
- 
-     def scatter_pktgen_send_packet(self, pkt_size: int) -> list[Packet]:
-         """Generate and send a packet to the SUT then capture what is forwarded back.
-@@ -110,7 +110,6 @@ def pmd_scatter(self, mb_size: int, enable_offload: bool = False) -> None:
-             Start testpmd and run functional test with preset `mb_size`.
-         """
-         with TestPmdShell(
--            self.sut_node,
-             forward_mode=SimpleForwardingModes.mac,
-             mbcache=200,
-             mbuf_size=[mb_size],
-@@ -147,5 +146,5 @@ def tear_down_suite(self) -> None:
-         Teardown:
-             Set the MTU of the tg_node back to a more standard size of 1500.
-         """
--        self.tg_node.main_session.configure_port_mtu(1500, self._tg_port_egress)
--        self.tg_node.main_session.configure_port_mtu(1500, self._tg_port_ingress)
-+        self.topology.tg_port_egress.configure_mtu(1500)
-+        self.topology.tg_port_ingress.configure_mtu(1500)
-diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
-index ad42c6c2e6..42ea221586 100644
---- a/dts/tests/TestSuite_port_restart_config_persistency.py
-+++ b/dts/tests/TestSuite_port_restart_config_persistency.py
-@@ -61,8 +61,8 @@ def port_configuration_persistence(self) -> None:
-         Verify:
-             The configuration persists after the port is restarted.
-         """
--        with TestPmdShell(self.sut_node, disable_device_start=True) as testpmd:
--            for port_id in range(len(self.sut_node.ports)):
-+        with TestPmdShell(disable_device_start=True) as testpmd:
-+            for port_id, _ in enumerate(self.topology.sut_ports):
-                 testpmd.set_port_mtu(port_id=port_id, mtu=STANDARD_MTU, verify=True)
-                 self.restart_port_and_verify(port_id, testpmd, "MTU")
- 
-@@ -90,8 +90,8 @@ def flow_ctrl_port_configuration_persistence(self) -> None:
-         Verify:
-             The configuration persists after the port is restarted.
-         """
--        with TestPmdShell(self.sut_node, disable_device_start=True) as testpmd:
--            for port_id in range(len(self.sut_node.ports)):
-+        with TestPmdShell(disable_device_start=True) as testpmd:
-+            for port_id, _ in enumerate(self.topology.sut_ports):
-                 flow_ctrl = TestPmdPortFlowCtrl(rx=True)
-                 testpmd.set_flow_control(port=port_id, flow_ctrl=flow_ctrl)
-                 self.restart_port_and_verify(port_id, testpmd, "flow_ctrl")
-diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_promisc_support.py
-index a3ea2461f0..445f6e1d69 100644
---- a/dts/tests/TestSuite_promisc_support.py
-+++ b/dts/tests/TestSuite_promisc_support.py
-@@ -38,10 +38,8 @@ def test_promisc_packets(self) -> None:
-         """
-         packet = [Ether(dst=self.ALTERNATIVE_MAC_ADDRESS) / IP() / Raw(load=b"\x00" * 64)]
- 
--        with TestPmdShell(
--            self.sut_node,
--        ) as testpmd:
--            for port_id in range(len(self.sut_node.ports)):
-+        with TestPmdShell() as testpmd:
-+            for port_id, _ in enumerate(self.topology.sut_ports):
-                 testpmd.set_promisc(port=port_id, enable=True, verify=True)
-             testpmd.start()
- 
-@@ -51,7 +49,7 @@ def test_promisc_packets(self) -> None:
- 
-             testpmd.stop()
- 
--            for port_id in range(len(self.sut_node.ports)):
-+            for port_id, _ in enumerate(self.topology.sut_ports):
-                 testpmd.set_promisc(port=port_id, enable=False, verify=True)
-             testpmd.start()
- 
-diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
-index 7ed266dac0..8a5799c684 100644
---- a/dts/tests/TestSuite_smoke_tests.py
-+++ b/dts/tests/TestSuite_smoke_tests.py
-@@ -46,6 +46,7 @@ def set_up_suite(self) -> None:
-         Setup:
-             Set the build directory path and a list of NICs in the SUT node.
-         """
-+        self.sut_node = self._ctx.sut_node  # FIXME: accessing the context should be forbidden
-         self.dpdk_build_dir_path = self.sut_node.remote_dpdk_build_dir
-         self.nics_in_node = self.sut_node.config.ports
- 
-@@ -104,7 +105,7 @@ def test_devices_listed_in_testpmd(self) -> None:
-         Test:
-             List all devices found in testpmd and verify the configured devices are among them.
-         """
--        with TestPmdShell(self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             dev_list = [str(x) for x in testpmd.get_devices()]
-         for nic in self.nics_in_node:
-             self.verify(
-diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
-index 07480db392..370fd6b419 100644
---- a/dts/tests/TestSuite_softnic.py
-+++ b/dts/tests/TestSuite_softnic.py
-@@ -32,6 +32,7 @@ def set_up_suite(self) -> None:
-         Setup:
-             Generate the random packets that will be sent and create the softnic config files.
-         """
-+        self.sut_node = self._ctx.sut_node  # FIXME: accessing the context should be forbidden
-         self.packets = generate_random_packets(self.NUMBER_OF_PACKETS_TO_SEND, self.PAYLOAD_SIZE)
-         self.cli_file = self.prepare_softnic_files()
- 
-@@ -105,9 +106,8 @@ def softnic(self) -> None:
- 
-         """
-         with TestPmdShell(
--            self.sut_node,
-             vdevs=[VirtualDevice(f"net_softnic0,firmware={self.cli_file},cpu_id=1,conn_port=8086")],
--            eth_peer=[EthPeer(1, self.tg_node.ports[1].mac_address)],
-+            eth_peer=[EthPeer(1, self.topology.tg_port_ingress.mac_address)],
-             port_topology=None,
-         ) as shell:
-             shell.start()
-diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_uni_pkt.py
-index 0898187675..656a69b0f1 100644
---- a/dts/tests/TestSuite_uni_pkt.py
-+++ b/dts/tests/TestSuite_uni_pkt.py
-@@ -85,7 +85,7 @@ def test_l2_packet_detect(self) -> None:
-         mac_id = "00:00:00:00:00:01"
-         packet_list = [Ether(dst=mac_id, type=0x88F7) / Raw(), Ether(dst=mac_id) / ARP() / Raw()]
-         flag_list = [RtePTypes.L2_ETHER_TIMESYNC, RtePTypes.L2_ETHER_ARP]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -118,7 +118,7 @@ def test_l3_l4_packet_detect(self) -> None:
-             RtePTypes.L4_ICMP,
-             RtePTypes.L4_FRAG | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.L2_ETHER,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -147,7 +147,7 @@ def test_ipv6_l4_packet_detect(self) -> None:
-             RtePTypes.L4_TCP,
-             RtePTypes.L3_IPV6_EXT_UNKNOWN,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -182,7 +182,7 @@ def test_l3_tunnel_packet_detect(self) -> None:
-             RtePTypes.TUNNEL_IP | RtePTypes.INNER_L4_ICMP,
-             RtePTypes.TUNNEL_IP | RtePTypes.INNER_L3_IPV6_EXT_UNKNOWN | RtePTypes.INNER_L4_FRAG,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -215,7 +215,7 @@ def test_gre_tunnel_packet_detect(self) -> None:
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_SCTP,
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_ICMP,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -250,7 +250,7 @@ def test_nsh_packet_detect(self) -> None:
-             RtePTypes.L2_ETHER_NSH | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.L4_SCTP,
-             RtePTypes.L2_ETHER_NSH | RtePTypes.L3_IPV6_EXT_UNKNOWN | RtePTypes.L4_NONFRAG,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
- 
-     @func_test
-@@ -295,6 +295,6 @@ def test_vxlan_tunnel_packet_detect(self) -> None:
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_ICMP,
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L3_IPV6_EXT_UNKNOWN | RtePTypes.INNER_L4_FRAG,
-         ]
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.rx_vxlan(4789, 0, True)
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
-diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
-index c67520baef..d2a9e614d4 100644
---- a/dts/tests/TestSuite_vlan.py
-+++ b/dts/tests/TestSuite_vlan.py
-@@ -124,7 +124,7 @@ def test_vlan_receipt_no_stripping(self) -> None:
-         Test:
-             Create an interactive testpmd shell and verify a VLAN packet.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.vlan_setup(testpmd=testpmd, port_id=0, filtered_id=1)
-             testpmd.start()
-             self.send_vlan_packet_and_verify(True, strip=False, vlan_id=1)
-@@ -137,7 +137,7 @@ def test_vlan_receipt_stripping(self) -> None:
-         Test:
-             Create an interactive testpmd shell and verify a VLAN packet.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.vlan_setup(testpmd=testpmd, port_id=0, filtered_id=1)
-             testpmd.set_vlan_strip(port=0, enable=True)
-             testpmd.start()
-@@ -150,7 +150,7 @@ def test_vlan_no_receipt(self) -> None:
-         Test:
-             Create an interactive testpmd shell and verify a VLAN packet.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             self.vlan_setup(testpmd=testpmd, port_id=0, filtered_id=1)
-             testpmd.start()
-             self.send_vlan_packet_and_verify(should_receive=False, strip=False, vlan_id=2)
-@@ -162,7 +162,7 @@ def test_vlan_header_insertion(self) -> None:
-         Test:
-             Create an interactive testpmd shell and verify a non-VLAN packet.
-         """
--        with TestPmdShell(node=self.sut_node) as testpmd:
-+        with TestPmdShell() as testpmd:
-             testpmd.set_forward_mode(SimpleForwardingModes.mac)
-             testpmd.set_promisc(port=0, enable=False)
-             testpmd.stop_all_ports()
+-        self.traffic_generator.close()
+         super().close()
 -- 
 2.43.0
 
