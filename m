@@ -2,57 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A5DC021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 01:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16845C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 02:01:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B714F402BB;
-	Wed, 12 Feb 2025 02:50:16 +0100 (CET)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id C635740269
- for <dev@dpdk.org>; Wed, 12 Feb 2025 02:50:14 +0100 (CET)
-X-QQ-mid: bizesmtp86t1739325004tdnpj1qx
-X-QQ-Originating-IP: 002qsvGGXJcohblTzUzG9L+eiNjAJuuMxR6RTVWSP8M=
-Received: from LAPTOP96V0OHHN ( [103.233.162.252])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 12 Feb 2025 09:50:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16923138145981230284
-From: "11" <caowenbo@mucse.com>
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>	<1739263818-59770-9-git-send-email-caowenbo@mucse.com>
- <20250211080202.621a091f@hermes.local>
-In-Reply-To: <20250211080202.621a091f@hermes.local>
-Subject: RE: [PATCH v9 08/28] net/rnp: add queue setup and release operations
-Date: Wed, 12 Feb 2025 09:50:03 +0800
-Message-ID: <E6209857AB9C9268+001301db7cf0$7005b8a0$501129e0$@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2D6EB402BB;
+	Wed, 12 Feb 2025 03:01:19 +0100 (CET)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 86FC440269
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 03:01:16 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Yt1fZ3HBBzkXJv;
+ Wed, 12 Feb 2025 09:57:42 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9E7FA14022E;
+ Wed, 12 Feb 2025 10:01:14 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 12 Feb 2025 10:01:14 +0800
+Message-ID: <49539947-48de-415e-b968-776eab0f3797@huawei.com>
+Date: Wed, 12 Feb 2025 10:01:13 +0800
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLqICmjQftEF0oQ/zI69QXbQqbszQJof9ghAXG/3LCxBsqYoA==
-Content-Language: zh-cn
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: OPbPBgDYDz6myxhbjwiPabNwbBes3tss0V7VG2EP5XYWZNdnYrNq22vH
- a9RJ+oIoOX/ia4qC3XiULaNg0sZSijSdTlG+nf5/DD3TIU8WqvGDf8XDBCvCcjqpZll3n+i
- X7pzW8rhQ2eH2Dkg4iZxqhrx5RAl1nEtiPMN3Mmzf5z3jRBlkqI/TFaycdDkeAHsHR4ePdX
- BtKaWaaGk2rpoB1QUwYcAO2gVjfF0t+btBqQFJMx1V4zkNf6Jul0FdUaV8+E8QDdtV6qV1T
- JXzm+QjUIsYAwEJK8Yu8VBZmgSMmwLou7Q8b3gezlM2muXMMG5lqId8xGqYg5fbf8BRKPuz
- SIaIc0u/Udf4sGoazWOo16qtQYXbnd9mCRr6Zc+mEcTlmijzO/EQmrSEKCIUNauOwzFT3w9
- WuLQ+iUaibM+JWJnry9Ir05hd0wmPjm2E3wz9oFXU17aFG/Sd4nY/IwMfz5GuaMXJOQF8qw
- lvRBtOxgktfQ+C3EWmfs66FdwdYShkTYUmApP+xlRNZG/hqFA8FP7l8AayeEQrgRyVWOwfb
- p96MhQlZMGxX+csOXgco5Msc4ukEYiUTRfTzeMePDu5m8/SWvGlb9amUNKhd6b3kVVfpoU1
- yefX9BGjF5k5tnORG5ziMGPmQ5XQKGuw3o3sZvhqBrImnkQwLY87oZwZ7o2UavAsuOnA2Ac
- QEBTHgJICJpLR3kE7WTy2srZkz+TNMoqi/4Y6doTBtiQE5asj9PuLDMwBwbGf7X1UXRXpzt
- TkSob4hfDi+myKrhDgBrBOJQvq5Lsmt+YuLi63BKPFmNT3en3SXDxVPWyldEAPizauCxddq
- RwjZYRzmVzXWAHKWBaIJMSF3OkwYVKFqS8J9JsSLMpQKwIup/pEYQUytr0m3uVTGWjBzI50
- vMjVctk8Y4C3QRrkbT+vIu6J0tCXqnti2oixjsCjaEd5El//eR2AJA==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/11] eal: add new secure free function
+To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>
+References: <20241114011129.451243-1-stephen@networkplumber.org>
+ <20250211173720.1188517-1-stephen@networkplumber.org>
+ <20250211173720.1188517-3-stephen@networkplumber.org>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250211173720.1188517-3-stephen@networkplumber.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,53 +52,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Stephe,
+On 2025/2/12 1:35, Stephen Hemminger wrote:
+> Although internally rte_free does poison the buffer in most
+> cases, it is useful to have function that explicitly does
+> this to avoid any security issues.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/eal/common/rte_malloc.c  | 30 ++++++++++++++++++++++++------
+>  lib/eal/include/rte_malloc.h | 18 ++++++++++++++++++
+>  lib/eal/version.map          |  3 +++
+>  3 files changed, 45 insertions(+), 6 deletions(-)
+> 
+> diff --git a/lib/eal/common/rte_malloc.c b/lib/eal/common/rte_malloc.c
+> index 3eed4d4be6..c9e0f4724f 100644
+> --- a/lib/eal/common/rte_malloc.c
+> +++ b/lib/eal/common/rte_malloc.c
+> @@ -15,6 +15,7 @@
+>  #include <rte_eal_memconfig.h>
+>  #include <rte_common.h>
+>  #include <rte_spinlock.h>
+> +#include <rte_string_fns.h>
+>  
+>  #include <eal_trace_internal.h>
+>  
+> @@ -27,27 +28,44 @@
+>  
+>  
+>  /* Free the memory space back to heap */
+> -static void
+> -mem_free(void *addr, const bool trace_ena)
+> +static inline void
+> +mem_free(void *addr, const bool trace_ena, bool zero)
+>  {
+> +	struct malloc_elem *elem;
+> +
+>  	if (trace_ena)
+>  		rte_eal_trace_mem_free(addr);
+>  
+> -	if (addr == NULL) return;
+> -	if (malloc_heap_free(malloc_elem_from_data(addr)) < 0)
+> +	if (addr == NULL)
+> +		return;
+> +
+> +	elem = malloc_elem_from_data(addr);
+> +	if (zero) {
+> +		size_t data_len = elem->size - MALLOC_ELEM_OVERHEAD;
 
-The spinlock of rxq_reset_lock, and txq_reset than I need it to make =
-sure
-one time just one user can call
-queue_stop operate a queue reset, hardware only support reset queue head =
-to
-zero only one user operate.
-When queue_stop 0 and queue_stop 1 operate at  the same time, the =
-hardware
-queue reset will be fault.
-Even port0 and port1 of  one pf, operate queue reset will be also fault.
-For rx_burst and tx_burst that I don't used the spinlock
+this will make rte_malloc know the layout of malloc-elem.
+Prefer to add extra paramter, e.g. malloc_heap_free(elem, bool zero)
 
-Regards Wenbo
+> +
+> +		rte_memset_sensitive(addr, 0, data_len);
+> +	}
+> +
+> +	if (malloc_heap_free(elem) < 0)
+>  		EAL_LOG(ERR, "Error: Invalid memory");
+>  }
+>  
+>  void
+>  rte_free(void *addr)
+>  {
+> -	mem_free(addr, true);
+> +	mem_free(addr, true, false);
+> +}
+> +
+> +void
+> +rte_free_sensitive(void *addr)
+> +{
+> +	mem_free(addr, true, true);
+>  }
+>  
+>  void
+>  eal_free_no_trace(void *addr)
+>  {
+> -	mem_free(addr, false);
+> +	mem_free(addr, false, false);
+>  }
+>  
+>  static void *
+> diff --git a/lib/eal/include/rte_malloc.h b/lib/eal/include/rte_malloc.h
+> index c8836de67c..d472ebb7db 100644
+> --- a/lib/eal/include/rte_malloc.h
+> +++ b/lib/eal/include/rte_malloc.h
+> @@ -51,6 +51,24 @@ struct rte_malloc_socket_stats {
+>  void
+>  rte_free(void *ptr);
+>  
+> +
+> +/**
+> + * Frees the memory space pointed to by the provided pointer
+> + * and guarantees it will be zero'd before reuse.
+> + *
+> + * This pointer must have been returned by a previous call to
+> + * rte_malloc(), rte_zmalloc(), rte_calloc() or rte_realloc(). The behaviour of
+> + * rte_free() is undefined if the pointer does not match this requirement.
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: 2025=C4=EA2=D4=C212=C8=D5 0:02
-> To: Wenbo Cao <caowenbo@mucse.com>
-> Cc: thomas@monjalon.net; dev@dpdk.org; ferruh.yigit@amd.com;
-> andrew.rybchenko@oktetlabs.ru; yaojun@mucse.com
-> Subject: Re: [PATCH v9 08/28] net/rnp: add queue setup and release
-operations
->=20
-> On Tue, 11 Feb 2025 16:49:58 +0800
-> Wenbo Cao <caowenbo@mucse.com> wrote:
->=20
-> > diff --git a/drivers/net/rnp/base/rnp_hw.h
-> > b/drivers/net/rnp/base/rnp_hw.h index da2c1d3b0e..ea4e1b8d83 100644
-> > --- a/drivers/net/rnp/base/rnp_hw.h
-> > +++ b/drivers/net/rnp/base/rnp_hw.h
-> > @@ -120,6 +120,9 @@ struct rnp_hw {
-> >  	bool lane_is_sgmii[RNP_MAX_PORT_OF_PF];
-> >  	struct rnp_mbx_info mbx;
-> >  	struct rnp_fw_info fw_info;
-> > +
-> > +	spinlock_t rxq_reset_lock; /* reset op isn't thread safe */
-> > +	spinlock_t txq_reset_lock; /* reset op isn't thread safe */
-> >  };
-> >
->=20
-> In DPDK control operations do not need to be thread safe.
-> Many other drivers do not allow start/stop in one thread while tx/rx =
-are
-> happening etc.
-> This is because rx/tx should not have overhead of any locks.
-> The cost of one spinlock at 10G will drop performance a lot
+Suggest add notice: The value may be cleared twice, which affects the performance.
 
+> + *
+> + * If the pointer is NULL, the function does nothing.
+> + *
+> + * @param ptr
+> + *   The pointer to memory to be freed.
+> + */
+> +__rte_experimental
+> +void
+> +rte_free_sensitive(void *ptr);
+
+one line is OK.
+void rte_free_sensitive(void *ptr);
+
+> +
+>  /**
+>   * This function allocates memory from the huge-page area of memory. The memory
+>   * is not cleared. In NUMA systems, the memory allocated resides on the same
+> diff --git a/lib/eal/version.map b/lib/eal/version.map
+> index a20c713eb1..fa67ff44d5 100644
+> --- a/lib/eal/version.map
+> +++ b/lib/eal/version.map
+> @@ -398,6 +398,9 @@ EXPERIMENTAL {
+>  	# added in 24.11
+>  	rte_bitset_to_str;
+>  	rte_lcore_var_alloc;
+> +
+> +	# added in 25.03
+> +	rte_free_sensitive;
+>  };
+>  
+>  INTERNAL {
 
