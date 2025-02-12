@@ -2,80 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6F9C021A4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DC3C02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:25:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64F8542707;
-	Wed, 12 Feb 2025 17:02:28 +0100 (CET)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id 3544C4114B
- for <dev@dpdk.org>; Wed, 12 Feb 2025 17:02:26 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id C49E411400B9;
- Wed, 12 Feb 2025 11:02:25 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Wed, 12 Feb 2025 11:02:25 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 96488427E8;
+	Wed, 12 Feb 2025 17:25:14 +0100 (CET)
+Received: from fout-a4-smtp.messagingengine.com
+ (fout-a4-smtp.messagingengine.com [103.168.172.147])
+ by mails.dpdk.org (Postfix) with ESMTP id E9BF742707
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 17:25:12 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal
+ [10.202.2.44])
+ by mailfout.phl.internal (Postfix) with ESMTP id 6FC5B138020F;
+ Wed, 12 Feb 2025 11:25:12 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+ by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 11:25:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1739376145;
- x=1739462545; bh=OcW5rKp1B5KbDwkQe2lmx895FG+CSk1zhXOzymRrn0k=; b=
- JoLZRuv138qkSUBCDi3FAj1m60z05pRNRfe73XabguAZ5mkmF+jxDnrgXQxbwoiR
- JaMqlneeMfUeNJTYToQIFkzGy0cDeUDDxL8/h6SK3Ig1vN8Hyf6peR0q5exZRQez
- HExqr1VQTMDAA+oNdBdA7DlLc8QDaVGslmv+aVCTgYOODxcu3NDwsv/4Qlh0V4Fz
- j2x45RnDGUWmhrg9ScFEGTwLnJYNfJejvfKGhlyEufDwLQ/myM2GGgneDMYbK/Nz
- JMVFoQTQ0+v6ZA5Rq3gniX/mmgHh03KUaAX3LEXw4x7k1USMPKC0Ih9fNyzVu6aY
- JGOomKPBxQ2QRblYpWV7qw==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1739377512;
+ x=1739463912; bh=w4pss+2xva4TTER4459CzPXfvs/zhREo2WKChnO02B8=; b=
+ r7pFYUso9EeAt/x79doVssTtyS0aHYmQTghr9A50KpIESqZRDmR7SYGb3K2kPSIJ
+ MlCb7iBZvyO1FISvFrnJVhinnU2w7Q8C48vGNdbf+M6MQQTDMCjYQf2PplcG09Ud
+ Y6eyrn48SSb3p2t/OWbyGvJBRSsP1kHIGNlru482+b9OQvLI3ZbQ/rWugrcOISNe
+ 2ZfYkKQxFMd+uAro52QXzB6P8N+ApJGsbfZj9IySTzxDCYUAmOcvbM31k6E/ZYX5
+ pwbKfCTCdHcZ+jF9CbUT1VJgshekPiFT07g4c9Lpgmx3x3wKuMVFs2V8QBil+iRi
+ 55tBPD7vrbleN8GZuFCw3w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739376145; x=
- 1739462545; bh=OcW5rKp1B5KbDwkQe2lmx895FG+CSk1zhXOzymRrn0k=; b=b
- ZKe6NnuN5hDJjJ4IEM5s7Rryj6VMXOogHOtmvJxdPRsT2yHdNjr3cbdTl7ia3DNP
- LqNYirTvZ+8ogcyj1R+WULbzZRWXqG1gp9Y64k7kUqAXIW0v3KVBzJLRowfFoWze
- jSbkImvhtBtbSBPqXCb2aym9tJT4rK8rr7/ywZosVWi3vL/7XSRUDSjA9mW9gho9
- bIpFFXdxZKJk/Z835Lzfz4pOlttWNM3Y3y0rm0rmlemPq86BDbkEQjIKJy7cXDw4
- OlLK368jeboaeaUsrWWMvYUc6w3/uR4engtHb3naMZWraQtto/moxJDbpic4aBrB
- aYbeFbv1BeSxuclzpJrSg==
-X-ME-Sender: <xms:EcasZ6sgj7Ccfnl3vvhGBEnbnEfZMDsZFftdM-7x0WEkWl053F1oRQ>
- <xme:EcasZ_em5HMd2YwKyZkW45z09AMji4WWoTPzqMOpNWHJWwRx0ElDDOaqAP9T52gYu
- 8a3wDKIlaREoI_sIA>
-X-ME-Received: <xmr:EcasZ1xZcduy1t_YDGfrVnWNlyRCHWzvGQf0kTuRfHNMngfdPzAkyv9kCgoli9gKlLSyd4F7UbeONBNQ8sVd4a8l6g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeefudcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739377512; x=
+ 1739463912; bh=w4pss+2xva4TTER4459CzPXfvs/zhREo2WKChnO02B8=; b=N
+ btdO/2pqJGoNfMclONzhugF8AhJiHAzgALwOZVOjiFWg0k5a+qdMMdHUKxboftLV
+ LjmplrpJNxhT71Mic8RsRKHVcU96Skn8VD6OyobrnpuvY83dlUBAKTJ3K1zzFqfi
+ dY8S9tQOb8N0eePv3+wHb1B3GOycZ9SMunqhbsK5tvRUrQ1DI/DfrfuBak82RaQe
+ g8YQvtScu4xs6FsMrPwnmwC+xoYgNZtZAT+iE4SvePtxpQAK0DZrLAh6/CW1Sism
+ D+nWcrBumjp7KnDwIV+smIDpbED2rxzKjiKUIY7x2jif9Qeo+wYUYvhB3Jc1HiiD
+ hzXuV5Fnun7oEawJK4eXg==
+X-ME-Sender: <xms:Z8usZwXzszymsDv9zXeN2jQCp0_m3nqIaWeDNvipYTyvSNbyJNafPw>
+ <xme:Z8usZ0kThys8Xeo723-Y-F13nm9_kXOQwop1DL8fPoC4InSqI79Sf08fGTOpsAiF-
+ 8b9k0DwXveA7mjJqQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeefhecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
- hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
- necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
- grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
- keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
- frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvg
- hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhg
-X-ME-Proxy: <xmx:EcasZ1MgP7NktY4DBOviqw9k5l-FVmVTJRkQ87IkuomRSrEHOGP-yA>
- <xmx:EcasZ68ZswuCQuxM58l3Mz0be0ybueBEc2YQitmM_paq88De7cMKiQ>
- <xmx:EcasZ9XFj9R_Z5khPb2G-Y8Z0FfcD26Xrwkp1G9A7QbxXy4ISIZoUQ>
- <xmx:EcasZzcr7jWF4ygPIMDfzdOkkT_q6yYd_crwgNia-j58wAO2WYQvDQ>
- <xmx:EcasZ8INIOMa1g4BiDoxchUZtKKOurqLf_iEb-RwGW7XZyISPKuEkOO3>
+ hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+ jeenucfhrhhomhepfdfvhhhomhgrshcuofhonhhjrghlohhnfdcuoehthhhomhgrshesmh
+ honhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeevteffffffgfevfeduffdv
+ vedtveefueduudeufeetiefgtddvgedvjeejieetudenucevlhhushhtvghrufhiiigvpe
+ dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhn
+ vghtpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+ guvghvseguphgukhdrohhrghdprhgtphhtthhopegrnhgurhgvmhhuvgeslhhinhhugidr
+ mhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorh
+ hkphhluhhmsggvrhdrohhrgh
+X-ME-Proxy: <xmx:aMusZ0Ykg_DXRWEm2b8S9NfRdNjvCHKxK5Gx8uGRau0w-_832oMYWQ>
+ <xmx:aMusZ_XB2KP0FyktkbROb6MEkfhww5o0p8gw4v937QSJ1sRo2q5BkA>
+ <xmx:aMusZ6l3rAHPQfNVVBbm8AfCxck9UhWmuuaPPGwmLlDb5wSdKQLivA>
+ <xmx:aMusZ0dlowjVhGKkBQNrELfQagUy79d2gJesGJCEpAotCeYoEL7ZhA>
+ <xmx:aMusZ_xwxVTW0KS29x6hBE1pY2FPgnskwVabcMBwWIwFs9E6ynev9CNa>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Feb 2025 11:02:25 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: add release not for af_packet
-Date: Wed, 12 Feb 2025 17:02:23 +0100
-Message-ID: <6062138.uKWtJMOXK1@thomas>
-In-Reply-To: <20250122155653.82860-1-stephen@networkplumber.org>
-References: <20250122072845.714800-1-stefan.laesser@omicronenergy.com>
- <20250122155653.82860-1-stephen@networkplumber.org>
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id E472B78005E; Wed, 12 Feb 2025 11:25:11 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Date: Wed, 12 Feb 2025 17:24:51 +0100
+From: "Thomas Monjalon" <thomas@monjalon.net>
+To: "Andre Muezerie" <andremue@linux.microsoft.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>, dev@dpdk.org
+Message-Id: <10d7a706-55e5-4d77-8965-15ce82b0c137@app.fastmail.com>
+In-Reply-To: <25209858.kmuVQn2iE0@thomas>
+References: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
+ <20250210143429.5ec26d17@hermes.local>
+ <20250211021916.GA5671@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <25209858.kmuVQn2iE0@thomas>
+Subject: Re: [PATCH] mbuf: enable to be compiled with MSVC
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,13 +92,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-22/01/2025 16:56, Stephen Hemminger:
-> +* **Enhancements to af_packet net driver.**
-> +
-> +  Added ability to option to configure receive packet fanout mode.
-> +  Improved statistics including failed receive buffer allocation
-> +  and missed packets.
-
-Was squashed in relevant commits, thanks.
 
 
+Mer 12 f=C3=A9vr 2025, =C3=A0 15:23, Thomas Monjalon a =C3=A9crit=E2=80=AF:
+> 11/02/2025 03:19, Andre Muezerie:
+>> On Mon, Feb 10, 2025 at 02:34:29PM -0800, Stephen Hemminger wrote:
+>> > On Mon, 10 Feb 2025 13:51:05 -0800
+>> > Andre Muezerie <andremue@linux.microsoft.com> wrote:
+>> >=20
+>> > > Now that the issues preventing this lib from be compiled with MSVC
+>> > > are fixed it can be included in the compilation.
+>> > >=20
+>> > > The "net" library will automatically get compiled as well as it
+>> > > has a dependency on "mbuf" which will now get fulfilled.
+>> > >=20
+>> > > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+>> > > ---
+>> >=20
+>> > Getting close to building test-pmd on Windows?
+>> >=20
+>> > Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+>>=20
+>> We are getting closer, yes :-)
+>
+> Good news
+>
+> Applied, thanks.
+
+The patch has been removed from main because Andre reported a compilatio=
+n issue.
