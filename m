@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EDAC021A0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DD6C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:35:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB37942E1D;
-	Wed, 12 Feb 2025 16:33:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 16D6542E58;
+	Wed, 12 Feb 2025 16:33:48 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 7E42942DE9
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:39 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 47E1442E10
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 16:33:40 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 827EEA3663; Wed, 12 Feb 2025 23:33:38 +0800 (CST)
+ id 9CFE4A3664; Wed, 12 Feb 2025 23:33:39 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v12 18/28] net/rnp: add Tx multiple segment version
-Date: Wed, 12 Feb 2025 23:32:38 +0800
-Message-Id: <1739374368-4949-19-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v12 19/28] net/rnp: add support basic stats operation
+Date: Wed, 12 Feb 2025 23:32:39 +0800
+Message-Id: <1739374368-4949-20-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
 References: <1739374368-4949-1-git-send-email-caowenbo@mucse.com>
@@ -36,198 +36,362 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support multiple segs mbuf send.
+add support hw-missed rx/tx packets bytes.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/rnp_rxtx.c | 126 ++++++++++++++++++++++++++++++++++++-
- drivers/net/rnp/rnp_rxtx.h |   3 +-
- 2 files changed, 126 insertions(+), 3 deletions(-)
+ doc/guides/nics/features/rnp.ini    |   2 +
+ doc/guides/nics/rnp.rst             |   1 +
+ drivers/net/rnp/base/rnp_eth_regs.h |   3 +
+ drivers/net/rnp/rnp.h               |  10 +-
+ drivers/net/rnp/rnp_ethdev.c        | 147 ++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.c          |   9 ++
+ drivers/net/rnp/rnp_rxtx.h          |  10 ++
+ 7 files changed, 181 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index f094e4339e..2bf03cf263 100644
---- a/drivers/net/rnp/rnp_rxtx.c
-+++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -369,9 +369,11 @@ rnp_tx_queue_sw_reset(struct rnp_tx_queue *txq)
- 		sw_ring[prev].next_id = idx;
- 		prev = idx;
- 	}
-+	txq->last_desc_cleaned = txq->attr.nb_desc - 1;
- 	txq->nb_tx_free = txq->attr.nb_desc - 1;
- 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
- 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
-+	txq->nb_tx_used = 0;
- 	txq->tx_tail = 0;
+diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
+index 6453762745..07caedba7a 100644
+--- a/doc/guides/nics/features/rnp.ini
++++ b/doc/guides/nics/features/rnp.ini
+@@ -7,6 +7,8 @@
+ Speed capabilities   = Y
+ Link status          = Y
+ Link status event    = Y
++Basic stats          = Y
++Stats per queue      = Y
+ Queue start/stop     = Y
+ Promiscuous mode     = Y
+ Allmulticast mode    = Y
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index 532608e11c..b8611821ec 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -19,6 +19,7 @@ Features
+ - MTU update
+ - Jumbo frames
+ - Scatter-Gather IO support
++- Port hardware statistic
  
- 	size = (txq->attr.nb_desc + RNP_TX_MAX_BURST_SIZE);
-@@ -855,6 +857,7 @@ rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
- 		rxe->mbuf = nmb;
- 		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
- 	}
-+	rxq->rxrearm_nb++;
- 	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
- 		rxq->rxrearm_nb -= rxq->rx_free_thresh;
- 		rxq->rxrearm_start += rxq->rx_free_thresh;
-@@ -922,7 +925,6 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			first_seg->nb_segs++;
- 			last_seg->next = rxm;
- 		}
--		rxq->rxrearm_nb++;
- 		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
- 			last_seg = rxm;
- 			continue;
-@@ -945,6 +947,106 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	return nb_rx;
- }
+ Prerequisites
+ -------------
+diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
+index 91a18dd42d..391688bd80 100644
+--- a/drivers/net/rnp/base/rnp_eth_regs.h
++++ b/drivers/net/rnp/base/rnp_eth_regs.h
+@@ -23,6 +23,9 @@
+ #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
+ #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
+ #define RNP_RING_FC_THRESH(n)	_ETH_(0x8a00 + ((0x4) * (n)))
++/* ETH Statistic */
++#define RNP_ETH_RXTRANS_DROP	_ETH_(0x8904)
++#define RNP_ETH_RXTRUNC_DROP	_ETH_(0x8928)
+ /* Mac Host Filter  */
+ #define RNP_MAC_FCTRL		_ETH_(0x9110)
+ #define RNP_MAC_FCTRL_MPE	RTE_BIT32(8)  /* Multicast Promiscuous En */
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+index 4ee817d149..4440d495e0 100644
+--- a/drivers/net/rnp/rnp.h
++++ b/drivers/net/rnp/rnp.h
+@@ -10,7 +10,7 @@
+ #include "base/rnp_hw.h"
  
-+static __rte_always_inline uint16_t
-+rnp_multiseg_clean_txq(struct rnp_tx_queue *txq)
-+{
-+	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
-+	struct rnp_txsw_entry *sw_ring = txq->sw_ring;
-+	volatile struct rnp_tx_desc *txbd;
-+	uint16_t desc_to_clean_to;
-+	uint16_t nb_tx_to_clean;
+ #define PCI_VENDOR_ID_MUCSE	(0x8848)
+-#define RNP_DEV_ID_N10G		(0x1000)
++#define RNP_DEV_ID_N10G		(0x1020)
+ #define RNP_MAX_VF_NUM		(64)
+ #define RNP_MISC_VEC_ID		RTE_INTR_VEC_ZERO_OFFSET
+ /* maximum frame size supported */
+@@ -105,6 +105,11 @@ struct rnp_proc_priv {
+ 	const struct rnp_mbx_ops *mbx_ops;
+ };
+ 
++struct rnp_hw_eth_stats {
++	uint64_t rx_trans_drop;         /* rx eth to dma fifo full drop */
++	uint64_t rx_trunc_drop;         /* rx mac to eth to host copy fifo full drop */
++};
 +
-+	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
-+	desc_to_clean_to = desc_to_clean_to & (txq->attr.nb_desc - 1);
+ struct rnp_eth_port {
+ 	struct rnp_proc_priv *proc_priv;
+ 	struct rte_ether_addr mac_addr;
+@@ -113,6 +118,9 @@ struct rnp_eth_port {
+ 	struct rnp_tx_queue *tx_queues[RNP_MAX_RX_QUEUE_NUM];
+ 	struct rnp_hw *hw;
+ 
++	struct rnp_hw_eth_stats eth_stats_old;
++	struct rnp_hw_eth_stats eth_stats;
 +
-+	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
-+	txbd = &txq->tx_bdr[desc_to_clean_to];
-+	if (!(txbd->d.cmd & RNP_CMD_DD))
-+		return txq->nb_tx_free;
-+
-+	if (last_desc_cleaned > desc_to_clean_to)
-+		nb_tx_to_clean = (uint16_t)((txq->attr.nb_desc -
-+					last_desc_cleaned) + desc_to_clean_to);
-+	else
-+		nb_tx_to_clean = (uint16_t)(desc_to_clean_to -
-+				last_desc_cleaned);
-+
-+	txbd->d.cmd = 0;
-+
-+	txq->last_desc_cleaned = desc_to_clean_to;
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
-+
-+	return txq->nb_tx_free;
-+}
-+
-+static __rte_always_inline uint16_t
-+rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
-+	volatile struct rnp_tx_desc *txbd;
-+	struct rnp_txsw_entry *txe, *txn;
-+	struct rte_mbuf *tx_pkt, *m_seg;
-+	uint16_t send_pkts = 0;
-+	uint16_t nb_used_bd;
-+	uint16_t tx_last;
-+	uint16_t nb_tx;
-+	uint16_t tx_id;
-+
-+	if (unlikely(!txq->txq_started || !txq->tx_link))
-+		return 0;
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		rnp_multiseg_clean_txq(txq);
-+	if (unlikely(txq->nb_tx_free == 0))
-+		return 0;
-+	tx_id = txq->tx_tail;
-+	txbd = &txq->tx_bdr[tx_id];
-+	txe = &txq->sw_ring[tx_id];
-+	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
-+		tx_pkt = tx_pkts[nb_tx];
-+		nb_used_bd = tx_pkt->nb_segs;
-+		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
-+		if (tx_last >= txq->attr.nb_desc)
-+			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
-+		if (nb_used_bd > txq->nb_tx_free)
-+			if (nb_used_bd > rnp_multiseg_clean_txq(txq))
-+				break;
-+		m_seg = tx_pkt;
-+		do {
-+			txbd = &txq->tx_bdr[tx_id];
-+			txn = &txq->sw_ring[txe->next_id];
-+			if (txe->mbuf) {
-+				rte_pktmbuf_free_seg(txe->mbuf);
-+				txe->mbuf = NULL;
-+			}
-+			txe->mbuf = m_seg;
-+			txe->last_id = tx_last;
-+			txbd->d.addr = rnp_get_dma_addr(&txq->attr, m_seg);
-+			txbd->d.blen = rte_cpu_to_le_32(m_seg->data_len);
-+			txbd->d.cmd &= ~RNP_CMD_EOP;
-+			txbd->d.cmd |= RNP_DATA_DESC;
-+			m_seg = m_seg->next;
-+			tx_id = txe->next_id;
-+			txe = txn;
-+		} while (m_seg != NULL);
-+		txbd->d.cmd |= RNP_CMD_EOP;
-+		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
-+		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
-+		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
-+			txq->nb_tx_used = 0;
-+			txbd->d.cmd |= RNP_CMD_RS;
-+		}
-+		send_pkts++;
-+	}
-+	if (!send_pkts)
-+		return 0;
-+	txq->tx_tail = tx_id;
-+
-+	rte_wmb();
-+	RNP_REG_WR(txq->tx_tailreg, 0, tx_id);
-+
-+	return send_pkts;
-+}
-+
- static int
- rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
- {
-@@ -968,9 +1070,29 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ 	struct rte_eth_rss_conf rss_conf;
+ 	uint16_t last_rx_num;
+ 	bool rxq_num_changed;
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index 3932a2e0b3..69d9945d8b 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -783,6 +783,150 @@ rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
  	return 0;
  }
  
-+static int
-+rnp_check_tx_simple_valid(struct rte_eth_dev *dev, struct rnp_tx_queue *txq)
++struct rte_rnp_xstats_name_off {
++	char name[RTE_ETH_XSTATS_NAME_SIZE];
++	uint32_t offset;
++	uint32_t reg_base;
++	bool hi_addr_en;
++};
++
++static const struct rte_rnp_xstats_name_off rte_rnp_rx_eth_stats_str[] = {
++	{"eth rx full drop", offsetof(struct rnp_hw_eth_stats,
++			rx_trans_drop), RNP_ETH_RXTRANS_DROP, false},
++	{"eth_rx_fifo_drop", offsetof(struct rnp_hw_eth_stats,
++			rx_trunc_drop), RNP_ETH_RXTRUNC_DROP, false},
++};
++#define RNP_NB_RX_HW_ETH_STATS (RTE_DIM(rte_rnp_rx_eth_stats_str))
++#define RNP_GET_E_HW_COUNT(stats, offset)            \
++	((uint64_t *)(((char *)stats) + (offset)))
++#define RNP_ADD_INCL_COUNT(stats, offset, val)       \
++	((*(RNP_GET_E_HW_COUNT(stats, (offset)))) += val)
++
++static inline void
++rnp_update_eth_stats_32bit(struct rnp_hw_eth_stats *new,
++			   struct rnp_hw_eth_stats *old,
++			   uint32_t offset, uint32_t val)
 +{
-+	RTE_SET_USED(txq);
-+	if (dev->data->scattered_rx)
-+		return -ENOTSUP;
++	uint64_t *last_count = NULL;
++
++	last_count = RNP_GET_E_HW_COUNT(old, offset);
++	if (val >= *last_count)
++		RNP_ADD_INCL_COUNT(new, offset, val - (*last_count));
++	else
++		RNP_ADD_INCL_COUNT(new, offset, val + UINT32_MAX);
++	*last_count = val;
++}
++
++static void rnp_get_eth_count(struct rnp_hw *hw,
++			      uint16_t lane,
++			      struct rnp_hw_eth_stats *new,
++			      struct rnp_hw_eth_stats *old,
++			      const struct rte_rnp_xstats_name_off *ptr)
++{
++	uint64_t val = 0;
++
++	if (ptr->reg_base) {
++		val = RNP_E_REG_RD(hw, ptr->reg_base + 0x40 * lane);
++		rnp_update_eth_stats_32bit(new, old, ptr->offset, val);
++	}
++}
++
++static void rnp_get_hw_stats(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw_eth_stats *old = &port->eth_stats_old;
++	struct rnp_hw_eth_stats *new = &port->eth_stats;
++	const struct rte_rnp_xstats_name_off *ptr;
++	uint16_t lane = port->attr.nr_lane;
++	struct rnp_hw *hw = port->hw;
++	uint16_t i;
++
++	for (i = 0; i < RNP_NB_RX_HW_ETH_STATS; i++) {
++		ptr = &rte_rnp_rx_eth_stats_str[i];
++		rnp_get_eth_count(hw, lane, new, old, ptr);
++	}
++}
++
++static int
++rnp_dev_stats_get(struct rte_eth_dev *dev,
++		  struct rte_eth_stats *stats)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw_eth_stats *eth_stats = &port->eth_stats;
++	struct rte_eth_dev_data *data = dev->data;
++	int i = 0;
++
++	PMD_INIT_FUNC_TRACE();
++	rnp_get_hw_stats(dev);
++	for (i = 0; i < data->nb_rx_queues; i++) {
++		if (!data->rx_queues[i])
++			continue;
++		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
++			stats->q_ipackets[i] = ((struct rnp_rx_queue **)
++					(data->rx_queues))[i]->stats.ipackets;
++			stats->q_ibytes[i] = ((struct rnp_rx_queue **)
++					(data->rx_queues))[i]->stats.ibytes;
++			stats->ipackets += stats->q_ipackets[i];
++			stats->ibytes += stats->q_ibytes[i];
++		} else {
++			stats->ipackets += ((struct rnp_rx_queue **)
++					(data->rx_queues))[i]->stats.ipackets;
++			stats->ibytes += ((struct rnp_rx_queue **)
++					(data->rx_queues))[i]->stats.ibytes;
++		}
++	}
++
++	for (i = 0; i < data->nb_tx_queues; i++) {
++		if (!data->tx_queues[i])
++			continue;
++		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
++			stats->q_opackets[i] = ((struct rnp_tx_queue **)
++					(data->tx_queues))[i]->stats.opackets;
++			stats->q_obytes[i] = ((struct rnp_tx_queue **)
++					(data->tx_queues))[i]->stats.obytes;
++			stats->opackets += stats->q_opackets[i];
++			stats->obytes += stats->q_obytes[i];
++		} else {
++			stats->opackets += ((struct rnp_tx_queue **)
++					(data->tx_queues))[i]->stats.opackets;
++			stats->obytes += ((struct rnp_tx_queue **)
++					(data->tx_queues))[i]->stats.obytes;
++		}
++	}
++	stats->imissed = eth_stats->rx_trans_drop + eth_stats->rx_trunc_drop;
++
 +	return 0;
 +}
 +
- int rnp_tx_func_select(struct rte_eth_dev *dev)
- {
--	dev->tx_pkt_burst = rnp_xmit_simple;
-+	bool simple_allowed = false;
++static int
++rnp_dev_stats_reset(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw_eth_stats *eth_stats = &port->eth_stats;
++	struct rnp_rx_queue *rxq;
 +	struct rnp_tx_queue *txq;
-+	int idx = 0;
++	uint16_t idx;
 +
-+	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
-+		txq = dev->data->tx_queues[idx];
-+		simple_allowed = rnp_check_tx_simple_valid(dev, txq) == 0;
++	PMD_INIT_FUNC_TRACE();
++	memset(eth_stats, 0, sizeof(*eth_stats));
++	for (idx = 0; idx < dev->data->nb_rx_queues; idx++) {
++		rxq = ((struct rnp_rx_queue **)
++				(dev->data->rx_queues))[idx];
++		if (!rxq)
++			continue;
++		memset(&rxq->stats, 0, sizeof(struct rnp_queue_stats));
 +	}
-+	if (simple_allowed)
-+		dev->tx_pkt_burst = rnp_xmit_simple;
-+	else
-+		dev->tx_pkt_burst = rnp_multiseg_xmit_pkts;
- 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
++	for (idx = 0; idx < dev->data->nb_tx_queues; idx++) {
++		txq = ((struct rnp_tx_queue **)
++				(dev->data->tx_queues))[idx];
++		if (!txq)
++			continue;
++		memset(&txq->stats, 0, sizeof(struct rnp_queue_stats));
++	}
++
++	return 0;
++}
++
+ /* Features supported by this driver */
+ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.dev_configure                = rnp_dev_configure,
+@@ -806,6 +950,9 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.reta_query                   = rnp_dev_rss_reta_query,
+ 	.rss_hash_update              = rnp_dev_rss_hash_update,
+ 	.rss_hash_conf_get            = rnp_dev_rss_hash_conf_get,
++	/* stats */
++	.stats_get                    = rnp_dev_stats_get,
++	.stats_reset                  = rnp_dev_stats_reset,
+ 	/* link impl */
+ 	.link_update                  = rnp_dev_link_update,
+ 	.dev_set_link_up              = rnp_dev_set_link_up,
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index 2bf03cf263..77788860ce 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -736,6 +736,8 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 			nmb->packet_type = 0;
+ 			nmb->ol_flags = 0;
+ 			nmb->nb_segs = 1;
++
++			rxq->stats.ibytes += nmb->data_len;
+ 		}
+ 		for (j = 0; j < nb_dd; ++j) {
+ 			rx_pkts[i + j] = rx_swbd[j].mbuf;
+@@ -747,6 +749,7 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		if (nb_dd != RNP_CACHE_FETCH_RX)
+ 			break;
+ 	}
++	rxq->stats.ipackets += nb_rx;
+ 	rxq->rx_tail = (rxq->rx_tail + nb_rx) & rxq->attr.nb_desc_mask;
+ 	rxq->rxrearm_nb = rxq->rxrearm_nb + nb_rx;
  
- 	return 0;
+@@ -816,6 +819,7 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		txbd->d.blen = tx_swbd->mbuf->data_len;
+ 		txbd->d.cmd = RNP_CMD_EOP;
+ 
++		txq->stats.obytes += txbd->d.blen;
+ 		i = (i + 1) & txq->attr.nb_desc_mask;
+ 	}
+ 	txq->nb_tx_free -= start;
+@@ -827,6 +831,7 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		if (txq->tx_next_rs > txq->attr.nb_desc)
+ 			txq->tx_next_rs = txq->tx_rs_thresh - 1;
+ 	}
++	txq->stats.opackets += start;
+ 	txq->tx_tail = i;
+ 
+ 	rte_wmb();
+@@ -931,6 +936,7 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		}
+ 		rxm->next = NULL;
+ 		first_seg->port = rxq->attr.port_id;
++		rxq->stats.ibytes += first_seg->pkt_len;
+ 		/* this the end of packet the large pkt has been recv finish */
+ 		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
+ 					first_seg->data_off));
+@@ -939,6 +945,7 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	}
+ 	if (!nb_rx)
+ 		return 0;
++	rxq->stats.ipackets += nb_rx;
+ 	/* update sw record point */
+ 	rxq->rx_tail = rx_id;
+ 	rxq->pkt_first_seg = first_seg;
+@@ -1028,6 +1035,7 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 			tx_id = txe->next_id;
+ 			txe = txn;
+ 		} while (m_seg != NULL);
++		txq->stats.obytes += tx_pkt->pkt_len;
+ 		txbd->d.cmd |= RNP_CMD_EOP;
+ 		txq->nb_tx_used = (uint16_t)txq->nb_tx_used + nb_used_bd;
+ 		txq->nb_tx_free = (uint16_t)txq->nb_tx_free - nb_used_bd;
+@@ -1039,6 +1047,7 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	}
+ 	if (!send_pkts)
+ 		return 0;
++	txq->stats.opackets += send_pkts;
+ 	txq->tx_tail = tx_id;
+ 
+ 	rte_wmb();
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index 973b667cb2..f63128555b 100644
+index f63128555b..d26497a263 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -98,7 +98,8 @@ struct rnp_tx_queue {
- 	struct rnp_queue_attr attr;
+@@ -47,6 +47,14 @@ struct rnp_rxsw_entry {
+ 	struct rte_mbuf *mbuf;
+ };
  
- 	uint16_t nb_tx_free; /* avail desc to set pkts */
--	uint16_t nb_tx_used;
-+	uint16_t nb_tx_used; /* multiseg mbuf used num */
-+	uint16_t last_desc_cleaned;
- 	uint16_t tx_tail;
++struct rnp_queue_stats {
++	uint64_t obytes;
++	uint64_t opackets;
++
++	uint64_t ibytes;
++	uint64_t ipackets;
++};
++
+ struct rnp_rx_queue {
+ 	struct rte_mempool *mb_pool; /* mbuf pool to populate rx ring. */
+ 	const struct rte_memzone *rz; /* rx hw ring base alloc memzone */
+@@ -73,6 +81,7 @@ struct rnp_rx_queue {
+ 	uint8_t pthresh; /* rx desc prefetch threshold */
+ 	uint8_t pburst; /* rx desc prefetch burst */
  
- 	uint16_t tx_next_dd; /* next to scan writeback dd bit */
++	struct rnp_queue_stats stats;
+ 	uint64_t rx_offloads; /* user set hw offload features */
+ 	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
+ 	struct rte_mbuf fake_mbuf; /* dummy mbuf */
+@@ -113,6 +122,7 @@ struct rnp_tx_queue {
+ 	uint8_t pthresh; /* rx desc prefetch threshold */
+ 	uint8_t pburst; /* rx desc burst*/
+ 
++	struct rnp_queue_stats stats;
+ 	uint64_t tx_offloads; /* tx offload features */
+ 	struct rte_mbuf **free_mbufs; /* tx bulk free reserve of free mbufs */
+ };
 -- 
 2.48.1
 
