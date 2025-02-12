@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57FBC021A5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB0BC02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:46:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EACBC42E8C;
-	Wed, 12 Feb 2025 17:46:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A87B542E99;
+	Wed, 12 Feb 2025 17:46:20 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id C789842E50
- for <dev@dpdk.org>; Wed, 12 Feb 2025 17:46:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AF90B42E5F
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 17:46:13 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D7771E4D;
- Wed, 12 Feb 2025 08:46:33 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 131BB1E7D;
+ Wed, 12 Feb 2025 08:46:34 -0800 (PST)
 Received: from localhost.localdomain (unknown [10.57.11.32])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 25C113F5A1;
- Wed, 12 Feb 2025 08:46:11 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3D5093F792;
+ Wed, 12 Feb 2025 08:46:12 -0800 (PST)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Nicholas Pratte <npratte@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 6/7] dts: revamp runtime internals
-Date: Wed, 12 Feb 2025 16:45:59 +0000
-Message-ID: <20250212164600.23759-7-luca.vizzarro@arm.com>
+Subject: [PATCH v2 7/7] dts: remove node distinction
+Date: Wed, 12 Feb 2025 16:46:00 +0000
+Message-ID: <20250212164600.23759-8-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250212164600.23759-1-luca.vizzarro@arm.com>
 References: <20250203151613.2436570-1-luca.vizzarro@arm.com>
@@ -43,1800 +43,1781 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enforce separation of concerns by letting test runs being isolated
-through a new TestRun class and respective module. This also means that
-any actions taken on the nodes must be handled exclusively by the test
-run. An example being the creation and destruction of the traffic
-generator. TestSuiteWithCases is now redundant as the configuration is
-able to provide all the details about the test run's own test suites.
-Any other runtime state which concerns the test runs, now belongs to
-their class.
+Remove the distinction between SUT and TG nodes for configuration
+purposes. As DPDK and the traffic generator belong to the runtime side
+of testing, and don't belong to the testbed model, these are better
+suited to be configured under the test runs.
 
-Finally, as the test run execution is isolated, all the runtime
-internals are held in the new class. Internals which have been
-completely reworked into a finite state machine (FSM), to simplify the
-use and understanding of the different execution states, while
-rendering the process of handling errors less repetitive and easier.
+Split the DPDK configuration in DPDKBuildConfiguration and
+DPDKRuntimeConfiguration. The former stays the same but gains
+implementation in its own self-contained class. DPDKRuntimeConfiguration
+instead represents the prior dpdk options. Through a new
+DPDKRuntimeEnvironment class all the DPDK-related runtime features are
+now also self-contained. This sets a predisposition for DPDK-based
+traffic generator as well, as it'd make it easier to handle their own
+environment using the pre-existing functionality.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- doc/api/dts/framework.test_run.rst        |   8 +
- doc/api/dts/index.rst                     |   1 +
- doc/guides/conf.py                        |   3 +-
- dts/framework/exception.py                |  33 +-
- dts/framework/logger.py                   |  26 +-
- dts/framework/runner.py                   | 556 +------------------
- dts/framework/test_result.py              | 143 +----
- dts/framework/test_run.py                 | 640 ++++++++++++++++++++++
- dts/framework/test_suite.py               |   2 +-
- dts/framework/testbed_model/capability.py |  24 +-
- dts/framework/testbed_model/tg_node.py    |   6 +-
- 11 files changed, 729 insertions(+), 713 deletions(-)
- create mode 100644 doc/api/dts/framework.test_run.rst
- create mode 100644 dts/framework/test_run.py
+ doc/api/dts/framework.remote_session.dpdk.rst |   8 +
+ doc/api/dts/framework.remote_session.rst      |   1 +
+ dts/framework/config/__init__.py              |  16 +-
+ dts/framework/config/node.py                  |  73 +--
+ dts/framework/config/test_run.py              |  72 ++-
+ dts/framework/context.py                      |  11 +-
+ .../sut_node.py => remote_session/dpdk.py}    | 444 +++++++++---------
+ dts/framework/remote_session/dpdk_shell.py    |  12 +-
+ .../single_active_interactive_shell.py        |   4 +-
+ dts/framework/runner.py                       |  16 +-
+ dts/framework/test_result.py                  |   2 +-
+ dts/framework/test_run.py                     |  23 +-
+ dts/framework/test_suite.py                   |   9 +-
+ dts/framework/testbed_model/capability.py     |  24 +-
+ dts/framework/testbed_model/node.py           |  87 ++--
+ dts/framework/testbed_model/tg_node.py        | 125 -----
+ .../traffic_generator/__init__.py             |   8 +-
+ .../testbed_model/traffic_generator/scapy.py  |  12 +-
+ .../traffic_generator/traffic_generator.py    |   9 +-
+ dts/tests/TestSuite_smoke_tests.py            |   6 +-
+ dts/tests/TestSuite_softnic.py                |   2 +-
+ 21 files changed, 393 insertions(+), 571 deletions(-)
+ create mode 100644 doc/api/dts/framework.remote_session.dpdk.rst
+ rename dts/framework/{testbed_model/sut_node.py => remote_session/dpdk.py} (61%)
+ delete mode 100644 dts/framework/testbed_model/tg_node.py
 
-diff --git a/doc/api/dts/framework.test_run.rst b/doc/api/dts/framework.test_run.rst
+diff --git a/doc/api/dts/framework.remote_session.dpdk.rst b/doc/api/dts/framework.remote_session.dpdk.rst
 new file mode 100644
-index 0000000000..8147320ed9
+index 0000000000..830364b984
 --- /dev/null
-+++ b/doc/api/dts/framework.test_run.rst
++++ b/doc/api/dts/framework.remote_session.dpdk.rst
 @@ -0,0 +1,8 @@
 +.. SPDX-License-Identifier: BSD-3-Clause
 +
-+test_run - Test Run Execution
-+===========================================================
++dpdk - DPDK Environments
++===========================================
 +
-+.. automodule:: framework.test_run
++.. automodule:: framework.remote_session.dpdk
 +   :members:
 +   :show-inheritance:
-diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 90092014d2..33b05953d2 100644
---- a/doc/api/dts/index.rst
-+++ b/doc/api/dts/index.rst
-@@ -26,6 +26,7 @@ Modules
-    :maxdepth: 1
+diff --git a/doc/api/dts/framework.remote_session.rst b/doc/api/dts/framework.remote_session.rst
+index dd6f8530d7..79d65e3444 100644
+--- a/doc/api/dts/framework.remote_session.rst
++++ b/doc/api/dts/framework.remote_session.rst
+@@ -15,6 +15,7 @@ remote\_session - Node Connections Package
+    framework.remote_session.ssh_session
+    framework.remote_session.interactive_remote_session
+    framework.remote_session.interactive_shell
++   framework.remote_session.dpdk
+    framework.remote_session.dpdk_shell
+    framework.remote_session.testpmd_shell
+    framework.remote_session.python_shell
+diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
+index 273a5cc3a7..c42eacb748 100644
+--- a/dts/framework/config/__init__.py
++++ b/dts/framework/config/__init__.py
+@@ -37,16 +37,12 @@
+ from framework.exception import ConfigurationError
  
-    framework.runner
-+   framework.test_run
-    framework.test_suite
-    framework.test_result
-    framework.settings
-diff --git a/doc/guides/conf.py b/doc/guides/conf.py
-index 50cbc7f612..b71f0f47e2 100644
---- a/doc/guides/conf.py
-+++ b/doc/guides/conf.py
-@@ -59,7 +59,8 @@
+ from .common import FrozenModel, ValidationContext
+-from .node import (
+-    NodeConfigurationTypes,
+-    SutNodeConfiguration,
+-    TGNodeConfiguration,
+-)
++from .node import NodeConfiguration
+ from .test_run import TestRunConfiguration
  
- # DTS API docs additional configuration
- if environ.get('DTS_DOC_BUILD'):
--    extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autodoc']
-+    extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autodoc', 'sphinx.ext.graphviz']
-+    graphviz_output_format = "svg"
+ TestRunsConfig = Annotated[list[TestRunConfiguration], Field(min_length=1)]
  
-     # Pydantic models require autodoc_pydantic for the right formatting. Add if installed.
-     try:
-diff --git a/dts/framework/exception.py b/dts/framework/exception.py
-index d967ede09b..47e3fac05c 100644
---- a/dts/framework/exception.py
-+++ b/dts/framework/exception.py
-@@ -205,28 +205,27 @@ class TestCaseVerifyError(DTSError):
-     severity: ClassVar[ErrorSeverity] = ErrorSeverity.TESTCASE_VERIFY_ERR
+-NodesConfig = Annotated[list[NodeConfigurationTypes], Field(min_length=1)]
++NodesConfig = Annotated[list[NodeConfiguration], Field(min_length=1)]
  
  
--class BlockingTestSuiteError(DTSError):
--    """A failure in a blocking test suite."""
-+class InternalError(DTSError):
-+    """An internal error or bug has occurred in DTS."""
+ class Configuration(FrozenModel):
+@@ -125,10 +121,6 @@ def validate_test_runs_against_nodes(self) -> Self:
+                 f"Test run {test_run_no}.system_under_test_node "
+                 f"({sut_node_name}) is not a valid node name."
+             )
+-            assert isinstance(sut_node, SutNodeConfiguration), (
+-                f"Test run {test_run_no}.system_under_test_node is a valid node name, "
+-                "but it is not a valid SUT node."
+-            )
  
-     #:
--    severity: ClassVar[ErrorSeverity] = ErrorSeverity.BLOCKING_TESTSUITE_ERR
--    _suite_name: str
-+    severity: ClassVar[ErrorSeverity] = ErrorSeverity.INTERNAL_ERR
+             tg_node_name = test_run.traffic_generator_node
+             tg_node = next((n for n in self.nodes if n.name == tg_node_name), None)
+@@ -137,10 +129,6 @@ def validate_test_runs_against_nodes(self) -> Self:
+                 f"Test run {test_run_no}.traffic_generator_name "
+                 f"({tg_node_name}) is not a valid node name."
+             )
+-            assert isinstance(tg_node, TGNodeConfiguration), (
+-                f"Test run {test_run_no}.traffic_generator_name is a valid node name, "
+-                "but it is not a valid TG node."
+-            )
  
--    def __init__(self, suite_name: str) -> None:
--        """Define the meaning of the first argument.
+         return self
  
--        Args:
--            suite_name: The blocking test suite.
--        """
--        self._suite_name = suite_name
-+class SkippedTestException(DTSError):
-+    """An exception raised when a test suite or case has been skipped."""
- 
--    def __str__(self) -> str:
--        """Add some context to the string representation."""
--        return f"Blocking suite {self._suite_name} failed."
-+    #:
-+    severity: ClassVar[ErrorSeverity] = ErrorSeverity.NO_ERR
- 
-+    def __init__(self, reason: str) -> None:
-+        """Constructor.
- 
--class InternalError(DTSError):
--    """An internal error or bug has occurred in DTS."""
-+        Args:
-+            reason: The reason for the test being skipped.
-+        """
-+        self._reason = reason
- 
--    #:
--    severity: ClassVar[ErrorSeverity] = ErrorSeverity.INTERNAL_ERR
-+    def __str__(self) -> str:
-+        """Stringify the exception."""
-+        return self._reason
-diff --git a/dts/framework/logger.py b/dts/framework/logger.py
-index d2b8e37da4..f43b442bc9 100644
---- a/dts/framework/logger.py
-+++ b/dts/framework/logger.py
-@@ -13,37 +13,15 @@
+diff --git a/dts/framework/config/node.py b/dts/framework/config/node.py
+index 97e0285912..438a1bdc8f 100644
+--- a/dts/framework/config/node.py
++++ b/dts/framework/config/node.py
+@@ -9,8 +9,7 @@
+ The root model of a node configuration is :class:`NodeConfiguration`.
  """
  
- import logging
--from enum import auto
- from logging import FileHandler, StreamHandler
- from pathlib import Path
- from typing import ClassVar
+-from enum import Enum, auto, unique
+-from typing import Annotated, Literal
++from enum import auto, unique
  
--from .utils import StrEnum
--
- date_fmt = "%Y/%m/%d %H:%M:%S"
- stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
- dts_root_logger_name = "dts"
+ from pydantic import Field, model_validator
+ from typing_extensions import Self
+@@ -32,14 +31,6 @@ class OS(StrEnum):
+     windows = auto()
  
  
--class DtsStage(StrEnum):
--    """The DTS execution stage."""
+-@unique
+-class TrafficGeneratorType(str, Enum):
+-    """The supported traffic generators."""
 -
 -    #:
--    pre_run = auto()
--    #:
--    test_run_setup = auto()
--    #:
--    test_suite_setup = auto()
--    #:
--    test_suite = auto()
--    #:
--    test_suite_teardown = auto()
--    #:
--    test_run_teardown = auto()
--    #:
--    post_run = auto()
+-    SCAPY = "SCAPY"
 -
 -
- class DTSLogger(logging.Logger):
-     """The DTS logger class.
+ class HugepageConfiguration(FrozenModel):
+     r"""The hugepage configuration of :class:`~framework.testbed_model.node.Node`\s."""
  
-@@ -55,7 +33,7 @@ class DTSLogger(logging.Logger):
-     a new stage switch occurs. This is useful mainly for logging per test suite.
+@@ -62,33 +53,6 @@ class PortConfig(FrozenModel):
+     os_driver: str = Field(examples=["i40e", "ice", "mlx5_core"])
+ 
+ 
+-class TrafficGeneratorConfig(FrozenModel):
+-    """A protocol required to define traffic generator types."""
+-
+-    #: The traffic generator type the child class is required to define to be distinguished among
+-    #: others.
+-    type: TrafficGeneratorType
+-
+-
+-class ScapyTrafficGeneratorConfig(TrafficGeneratorConfig):
+-    """Scapy traffic generator specific configuration."""
+-
+-    type: Literal[TrafficGeneratorType.SCAPY]
+-
+-
+-#: A union type discriminating traffic generators by the `type` field.
+-TrafficGeneratorConfigTypes = Annotated[ScapyTrafficGeneratorConfig, Field(discriminator="type")]
+-
+-#: Comma-separated list of logical cores to use. An empty string or ```any``` means use all lcores.
+-LogicalCores = Annotated[
+-    str,
+-    Field(
+-        examples=["1,2,3,4,5,18-22", "10-15", "any"],
+-        pattern=r"^(([0-9]+|([0-9]+-[0-9]+))(,([0-9]+|([0-9]+-[0-9]+)))*)?$|any",
+-    ),
+-]
+-
+-
+ class NodeConfiguration(FrozenModel):
+     r"""The configuration of :class:`~framework.testbed_model.node.Node`\s."""
+ 
+@@ -118,38 +82,3 @@ def verify_unique_port_names(self) -> Self:
+             )
+             used_port_names[port.name] = idx
+         return self
+-
+-
+-class DPDKConfiguration(FrozenModel):
+-    """Configuration of the DPDK EAL parameters."""
+-
+-    #: A comma delimited list of logical cores to use when running DPDK. ```any```, an empty
+-    #: string or omitting this field means use any core except for the first one. The first core
+-    #: will only be used if explicitly set.
+-    lcores: LogicalCores = ""
+-
+-    #: The number of memory channels to use when running DPDK.
+-    memory_channels: int = 1
+-
+-    @property
+-    def use_first_core(self) -> bool:
+-        """Returns :data:`True` if `lcores` explicitly selects the first core."""
+-        return "0" in self.lcores
+-
+-
+-class SutNodeConfiguration(NodeConfiguration):
+-    """:class:`~framework.testbed_model.sut_node.SutNode` specific configuration."""
+-
+-    #: The runtime configuration for DPDK.
+-    dpdk_config: DPDKConfiguration
+-
+-
+-class TGNodeConfiguration(NodeConfiguration):
+-    """:class:`~framework.testbed_model.tg_node.TGNode` specific configuration."""
+-
+-    #: The configuration of the traffic generator present on the TG node.
+-    traffic_generator: TrafficGeneratorConfigTypes
+-
+-
+-#: Union type for all the node configuration types.
+-NodeConfigurationTypes = TGNodeConfiguration | SutNodeConfiguration
+diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
+index eef01d0340..1b3045730d 100644
+--- a/dts/framework/config/test_run.py
++++ b/dts/framework/config/test_run.py
+@@ -13,10 +13,10 @@
+ import tarfile
+ from collections import deque
+ from collections.abc import Iterable
+-from enum import auto, unique
++from enum import Enum, auto, unique
+ from functools import cached_property
+ from pathlib import Path, PurePath
+-from typing import Any, Literal, NamedTuple
++from typing import Annotated, Any, Literal, NamedTuple
+ 
+ from pydantic import Field, field_validator, model_validator
+ from typing_extensions import TYPE_CHECKING, Self
+@@ -361,6 +361,68 @@ def verify_distinct_nodes(self) -> Self:
+         return self
+ 
+ 
++@unique
++class TrafficGeneratorType(str, Enum):
++    """The supported traffic generators."""
++
++    #:
++    SCAPY = "SCAPY"
++
++
++class TrafficGeneratorConfig(FrozenModel):
++    """A protocol required to define traffic generator types."""
++
++    #: The traffic generator type the child class is required to define to be distinguished among
++    #: others.
++    type: TrafficGeneratorType
++
++
++class ScapyTrafficGeneratorConfig(TrafficGeneratorConfig):
++    """Scapy traffic generator specific configuration."""
++
++    type: Literal[TrafficGeneratorType.SCAPY]
++
++
++#: A union type discriminating traffic generators by the `type` field.
++TrafficGeneratorConfigTypes = Annotated[ScapyTrafficGeneratorConfig, Field(discriminator="type")]
++
++#: Comma-separated list of logical cores to use. An empty string or ```any``` means use all lcores.
++LogicalCores = Annotated[
++    str,
++    Field(
++        examples=["1,2,3,4,5,18-22", "10-15", "any"],
++        pattern=r"^(([0-9]+|([0-9]+-[0-9]+))(,([0-9]+|([0-9]+-[0-9]+)))*)?$|any",
++    ),
++]
++
++
++class DPDKRuntimeConfiguration(FrozenModel):
++    """Configuration of the DPDK EAL parameters."""
++
++    #: A comma delimited list of logical cores to use when running DPDK. ```any```, an empty
++    #: string or omitting this field means use any core except for the first one. The first core
++    #: will only be used if explicitly set.
++    lcores: LogicalCores = ""
++
++    #: The number of memory channels to use when running DPDK.
++    memory_channels: int = 1
++
++    #: The names of virtual devices to test.
++    vdevs: list[str] = Field(default_factory=list)
++
++    @property
++    def use_first_core(self) -> bool:
++        """Returns :data:`True` if `lcores` explicitly selects the first core."""
++        return "0" in self.lcores
++
++
++class DPDKConfiguration(DPDKRuntimeConfiguration):
++    """The DPDK configuration needed to test."""
++
++    #: The DPDKD build configuration used to test.
++    build: DPDKBuildConfiguration
++
++
+ class TestRunConfiguration(FrozenModel):
+     """The configuration of a test run.
+ 
+@@ -369,7 +431,9 @@ class TestRunConfiguration(FrozenModel):
      """
  
--    _stage: ClassVar[DtsStage] = DtsStage.pre_run
-+    _stage: ClassVar[str] = "pre_run"
-     _extra_file_handlers: list[FileHandler] = []
+     #: The DPDK configuration used to test.
+-    dpdk_config: DPDKBuildConfiguration = Field(alias="dpdk_build")
++    dpdk: DPDKConfiguration
++    #: The traffic generator configuration used to test.
++    traffic_generator: TrafficGeneratorConfigTypes
+     #: Whether to run performance tests.
+     perf: bool
+     #: Whether to run functional tests.
+@@ -382,8 +446,6 @@ class TestRunConfiguration(FrozenModel):
+     system_under_test_node: str
+     #: The TG node name to use in this test run.
+     traffic_generator_node: str
+-    #: The names of virtual devices to test.
+-    vdevs: list[str] = Field(default_factory=list)
+     #: The seed to use for pseudo-random generation.
+     random_seed: int | None = None
+     #: The port links between the specified nodes to use.
+diff --git a/dts/framework/context.py b/dts/framework/context.py
+index 03eaf63b88..8adffff57f 100644
+--- a/dts/framework/context.py
++++ b/dts/framework/context.py
+@@ -10,11 +10,12 @@
+ from framework.exception import InternalError
+ from framework.settings import SETTINGS
+ from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
++from framework.testbed_model.node import Node
+ from framework.testbed_model.topology import Topology
  
-     def __init__(self, *args, **kwargs):
-@@ -110,7 +88,7 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
+ if TYPE_CHECKING:
+-    from framework.testbed_model.sut_node import SutNode
+-    from framework.testbed_model.tg_node import TGNode
++    from framework.remote_session.dpdk import DPDKRuntimeEnvironment
++    from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
  
-         self._add_file_handlers(Path(output_dir, self.name))
+ P = ParamSpec("P")
  
--    def set_stage(self, stage: DtsStage, log_file_path: Path | None = None) -> None:
-+    def set_stage(self, stage: str, log_file_path: Path | None = None) -> None:
-         """Set the DTS execution stage and optionally log to files.
+@@ -62,9 +63,11 @@ def reset(self) -> None:
+ class Context:
+     """Runtime context."""
  
-         Set the DTS execution stage of the DTSLog class and optionally add
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index 60a885d8e6..90aeb63cfb 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -6,27 +6,15 @@
+-    sut_node: "SutNode"
+-    tg_node: "TGNode"
++    sut_node: Node
++    tg_node: Node
+     topology: Topology
++    dpdk: "DPDKRuntimeEnvironment"
++    tg: "TrafficGenerator"
+     local: LocalContext = field(default_factory=LocalContext)
  
- """Test suite runner module.
  
--The module is responsible for running DTS in a series of stages:
+diff --git a/dts/framework/testbed_model/sut_node.py b/dts/framework/remote_session/dpdk.py
+similarity index 61%
+rename from dts/framework/testbed_model/sut_node.py
+rename to dts/framework/remote_session/dpdk.py
+index 9007d89b1c..476d6915d3 100644
+--- a/dts/framework/testbed_model/sut_node.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -1,47 +1,40 @@
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2010-2014 Intel Corporation
++# SPDX-License-Identifier: BSD-3-C
+ # Copyright(c) 2023 PANTHEON.tech s.r.o.
+ # Copyright(c) 2023 University of New Hampshire
+-# Copyright(c) 2024 Arm Limited
++# Copyright(c) 2025 Arm Limited
+ 
+-"""System under test (DPDK + hardware) node.
 -
--    #. Test run stage,
--    #. DPDK build stage,
--    #. Test suite stage,
--    #. Test case stage.
--
--The test run stage sets up the environment before running test suites.
--The test suite stage sets up steps common to all test cases
--and the test case stage runs test cases individually.
-+The module is responsible for preparing DTS and running the test runs.
- """
+-A system under test (SUT) is the combination of DPDK
+-and the hardware we're testing with DPDK (NICs, crypto and other devices).
+-An SUT node is where this SUT runs.
+-"""
++"""DPDK environment."""
  
  import os
--import random
- import sys
--from pathlib import Path
--from types import MethodType
--from typing import Iterable
+ import time
+ from collections.abc import Iterable
+ from dataclasses import dataclass
++from functools import cached_property
+ from pathlib import Path, PurePath
++from typing import Final
  
- from framework.config.common import ValidationContext
--from framework.testbed_model.capability import Capability, get_supported_capabilities
-+from framework.test_run import TestRun
-+from framework.testbed_model.node import Node
- from framework.testbed_model.sut_node import SutNode
- from framework.testbed_model.tg_node import TGNode
- 
-@@ -38,51 +26,20 @@
-     SutNodeConfiguration,
-     TGNodeConfiguration,
- )
--from .config.test_run import (
--    TestRunConfiguration,
--    TestSuiteConfig,
+-from framework.config.node import (
+-    SutNodeConfiguration,
 -)
--from .exception import BlockingTestSuiteError, SSHTimeoutError, TestCaseVerifyError
--from .logger import DTSLogger, DtsStage, get_dts_logger
-+from .logger import DTSLogger, get_dts_logger
- from .settings import SETTINGS
- from .test_result import (
-     DTSResult,
-     Result,
--    TestCaseResult,
--    TestRunResult,
--    TestSuiteResult,
--    TestSuiteWithCases,
+ from framework.config.test_run import (
+     DPDKBuildConfiguration,
+     DPDKBuildOptionsConfiguration,
+     DPDKPrecompiledBuildConfiguration,
++    DPDKRuntimeConfiguration,
+     DPDKUncompiledBuildConfiguration,
+     LocalDPDKTarballLocation,
+     LocalDPDKTreeLocation,
+     RemoteDPDKTarballLocation,
+     RemoteDPDKTreeLocation,
+-    TestRunConfiguration,
  )
--from .test_suite import TestCase, TestSuite
--from .testbed_model.topology import PortLink, Topology
+ from framework.exception import ConfigurationError, RemoteFileNotFoundError
++from framework.logger import DTSLogger, get_dts_logger
+ from framework.params.eal import EalParams
+ from framework.remote_session.remote_session import CommandResult
++from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
++from framework.testbed_model.node import Node
++from framework.testbed_model.os_session import OSSession
+ from framework.testbed_model.port import Port
++from framework.testbed_model.virtual_device import VirtualDevice
+ from framework.utils import MesonArgs, TarCompressionFormat
+ 
+-from .cpu import LogicalCore, LogicalCoreList
+-from .node import Node
+-from .os_session import OSSession, OSSessionInfo
+-from .virtual_device import VirtualDevice
+-
+ 
+ @dataclass(slots=True, frozen=True)
+ class DPDKBuildInfo:
+@@ -56,177 +49,36 @@ class DPDKBuildInfo:
+     compiler_version: str | None
  
  
- class DTSRunner:
--    r"""Test suite runner class.
+-class SutNode(Node):
+-    """The system under test node.
 -
--    The class is responsible for running tests on testbeds defined in the test run configuration.
--    Each setup or teardown of each stage is recorded in a :class:`~framework.test_result.DTSResult`
--    or one of its subclasses. The test case results are also recorded.
+-    The SUT node extends :class:`Node` with DPDK specific features:
 -
--    If an error occurs, the current stage is aborted, the error is recorded, everything in
--    the inner stages is marked as blocked and the run continues in the next iteration
--    of the same stage. The return code is the highest `severity` of all
--    :class:`~.framework.exception.DTSError`\s.
--
--    Example:
--        An error occurs in a test suite setup. The current test suite is aborted,
--        all its test cases are marked as blocked and the run continues
--        with the next test suite. If the errored test suite was the last one in the
--        given test run, the next test run begins.
--    """
-+    """Test suite runner class."""
+-        * Managing DPDK source tree on the remote SUT,
+-        * Building the DPDK from source or using a pre-built version,
+-        * Gathering of DPDK build info,
+-        * The running of DPDK apps, interactively or one-time execution,
+-        * DPDK apps cleanup.
++class DPDKBuildEnvironment:
++    """Class handling a DPDK build environment."""
  
-     _configuration: Configuration
-     _logger: DTSLogger
-     _result: DTSResult
--    _test_suite_class_prefix: str
--    _test_suite_module_prefix: str
--    _func_test_case_regex: str
--    _perf_test_case_regex: str
- 
-     def __init__(self):
-         """Initialize the instance with configuration, logger, result and string constants."""
-@@ -92,94 +49,45 @@ def __init__(self):
-             os.makedirs(SETTINGS.output_dir)
-         self._logger.add_dts_root_logger_handlers(SETTINGS.verbose, SETTINGS.output_dir)
-         self._result = DTSResult(SETTINGS.output_dir, self._logger)
--        self._test_suite_class_prefix = "Test"
--        self._test_suite_module_prefix = "tests.TestSuite_"
--        self._func_test_case_regex = r"test_(?!perf_)"
--        self._perf_test_case_regex = r"test_perf_"
- 
-     def run(self) -> None:
--        """Run all test runs from the test run configuration.
--
--        Before running test suites, test runs are first set up.
--        The test runs defined in the test run configuration are iterated over.
--        The test runs define which tests to run and where to run them.
--
--        The test suites are set up for each test run and each discovered
--        test case within the test suite is set up, executed and torn down. After all test cases
--        have been executed, the test suite is torn down and the next test suite will be run. Once
--        all test suites have been run, the next test run will be tested.
--
--        In order to properly mark test suites and test cases as blocked in case of a failure,
--        we need to have discovered which test suites and test cases to run before any failures
--        happen. The discovery happens at the earliest point at the start of each test run.
--
--        All the nested steps look like this:
--
--            #. Test run setup
--
--                #. Test suite setup
--
--                    #. Test case setup
--                    #. Test case logic
--                    #. Test case teardown
-+        """Run DTS.
- 
--                #. Test suite teardown
--
--            #. Test run teardown
--
--        The test cases are filtered according to the specification in the test run configuration and
--        the :option:`--test-suite` command line argument or
--        the :envvar:`DTS_TESTCASES` environment variable.
-+        Prepare all the nodes ahead of the test runs execution,
-+        which are subsequently run as configured.
-         """
--        sut_nodes: dict[str, SutNode] = {}
--        tg_nodes: dict[str, TGNode] = {}
-+        nodes: list[Node] = []
-         try:
-             # check the python version of the server that runs dts
-             self._check_dts_python_version()
-             self._result.update_setup(Result.PASS)
- 
-+            for node_config in self._configuration.nodes:
-+                node: Node
-+
-+                match node_config:
-+                    case SutNodeConfiguration():
-+                        node = SutNode(node_config)
-+                    case TGNodeConfiguration():
-+                        node = TGNode(node_config)
-+
-+                nodes.append(node)
-+
-             # for all test run sections
--            for test_run_with_nodes_config in self._configuration.test_runs_with_nodes:
--                test_run_config, sut_node_config, tg_node_config = test_run_with_nodes_config
--                self._logger.set_stage(DtsStage.test_run_setup)
--                self._logger.info(f"Running test run with SUT '{sut_node_config.name}'.")
--                self._init_random_seed(test_run_config)
-+            for test_run_config in self._configuration.test_runs:
-                 test_run_result = self._result.add_test_run(test_run_config)
--                # we don't want to modify the original config, so create a copy
--                test_run_test_suites = test_run_config.test_suites
--                if not test_run_config.skip_smoke_tests:
--                    test_run_test_suites[:0] = [TestSuiteConfig(test_suite="smoke_tests")]
--                try:
--                    test_suites_with_cases = self._get_test_suites_with_cases(
--                        test_run_test_suites, test_run_config.func, test_run_config.perf
--                    )
--                    test_run_result.test_suites_with_cases = test_suites_with_cases
--                except Exception as e:
--                    self._logger.exception(
--                        f"Invalid test suite configuration found: " f"{test_run_test_suites}."
--                    )
--                    test_run_result.update_setup(Result.FAIL, e)
--
--                else:
--                    self._connect_nodes_and_run_test_run(
--                        sut_nodes,
--                        tg_nodes,
--                        sut_node_config,
--                        tg_node_config,
--                        test_run_config,
--                        test_run_result,
--                        test_suites_with_cases,
--                    )
-+                test_run = TestRun(test_run_config, nodes, test_run_result)
-+                test_run.spin()
- 
-         except Exception as e:
-             self._logger.exception("An unexpected error has occurred.")
-             self._result.add_error(e)
--            raise
-+            # raise
- 
-         finally:
-             try:
--                self._logger.set_stage(DtsStage.post_run)
--                for node in (sut_nodes | tg_nodes).values():
-+                self._logger.set_stage("post_run")
-+                for node in nodes:
-                     node.close()
-                 self._result.update_teardown(Result.PASS)
-             except Exception as e:
-@@ -205,412 +113,6 @@ def _check_dts_python_version(self) -> None:
-             )
-             self._logger.warning("Please use Python >= 3.10 instead.")
- 
--    def _get_test_suites_with_cases(
--        self,
--        test_suite_configs: list[TestSuiteConfig],
--        func: bool,
--        perf: bool,
--    ) -> list[TestSuiteWithCases]:
--        """Get test suites with selected cases.
--
--        The test suites with test cases defined in the user configuration are selected
--        and the corresponding functions and classes are gathered.
--
--        Args:
--            test_suite_configs: Test suite configurations.
--            func: Whether to include functional test cases in the final list.
--            perf: Whether to include performance test cases in the final list.
--
--        Returns:
--            The test suites, each with test cases.
--        """
--        test_suites_with_cases = []
--
--        for test_suite_config in test_suite_configs:
--            test_suite_class = test_suite_config.test_suite_spec.class_obj
--            test_cases: list[type[TestCase]] = []
--            func_test_cases, perf_test_cases = test_suite_class.filter_test_cases(
--                test_suite_config.test_cases_names
--            )
--            if func:
--                test_cases.extend(func_test_cases)
--            if perf:
--                test_cases.extend(perf_test_cases)
--
--            test_suites_with_cases.append(
--                TestSuiteWithCases(test_suite_class=test_suite_class, test_cases=test_cases)
--            )
--        return test_suites_with_cases
--
--    def _connect_nodes_and_run_test_run(
--        self,
--        sut_nodes: dict[str, SutNode],
--        tg_nodes: dict[str, TGNode],
--        sut_node_config: SutNodeConfiguration,
--        tg_node_config: TGNodeConfiguration,
--        test_run_config: TestRunConfiguration,
--        test_run_result: TestRunResult,
--        test_suites_with_cases: Iterable[TestSuiteWithCases],
--    ) -> None:
--        """Connect nodes, then continue to run the given test run.
--
--        Connect the :class:`SutNode` and the :class:`TGNode` of this `test_run_config`.
--        If either has already been connected, it's going to be in either `sut_nodes` or `tg_nodes`,
--        respectively.
--        If not, connect and add the node to the respective `sut_nodes` or `tg_nodes` :class:`dict`.
--
--        Args:
--            sut_nodes: A dictionary storing connected/to be connected SUT nodes.
--            tg_nodes: A dictionary storing connected/to be connected TG nodes.
--            sut_node_config: The test run's SUT node configuration.
--            tg_node_config: The test run's TG node configuration.
--            test_run_config: A test run configuration.
--            test_run_result: The test run's result.
--            test_suites_with_cases: The test suites with test cases to run.
--        """
--        sut_node = sut_nodes.get(sut_node_config.name)
--        tg_node = tg_nodes.get(tg_node_config.name)
--
--        try:
--            if not sut_node:
--                sut_node = SutNode(sut_node_config)
--                sut_nodes[sut_node.name] = sut_node
--            if not tg_node:
--                tg_node = TGNode(tg_node_config)
--                tg_nodes[tg_node.name] = tg_node
--        except Exception as e:
--            failed_node = test_run_config.system_under_test_node
--            if sut_node:
--                failed_node = test_run_config.traffic_generator_node
--            self._logger.exception(f"The Creation of node {failed_node} failed.")
--            test_run_result.update_setup(Result.FAIL, e)
--
--        else:
--            self._run_test_run(
--                sut_node,
--                tg_node,
--                test_run_config,
--                test_run_result,
--                test_suites_with_cases,
--            )
--
--    def _run_test_run(
--        self,
--        sut_node: SutNode,
--        tg_node: TGNode,
--        test_run_config: TestRunConfiguration,
--        test_run_result: TestRunResult,
--        test_suites_with_cases: Iterable[TestSuiteWithCases],
--    ) -> None:
--        """Run the given test run.
--
--        This involves running the test run setup as well as running all test suites
--        in the given test run. After that, the test run teardown is run.
--
--        Args:
--            sut_node: The test run's SUT node.
--            tg_node: The test run's TG node.
--            test_run_config: A test run configuration.
--            test_run_result: The test run's result.
--            test_suites_with_cases: The test suites with test cases to run.
--
--        Raises:
--            ConfigurationError: If the DPDK sources or build is not set up from config or settings.
--        """
--        self._logger.info(f"Running test run with SUT '{test_run_config.system_under_test_node}'.")
--        test_run_result.ports = sut_node.ports
--        test_run_result.sut_info = sut_node.node_info
--        try:
--            dpdk_build_config = test_run_config.dpdk_config
--            sut_node.set_up_test_run(test_run_config, dpdk_build_config)
--            test_run_result.dpdk_build_info = sut_node.get_dpdk_build_info()
--            tg_node.set_up_test_run(test_run_config, dpdk_build_config)
--            test_run_result.update_setup(Result.PASS)
--        except Exception as e:
--            self._logger.exception("Test run setup failed.")
--            test_run_result.update_setup(Result.FAIL, e)
--
--        else:
--            topology = Topology(
--                PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
--                for link in test_run_config.port_topology
--            )
--            self._run_test_suites(
--                sut_node, tg_node, topology, test_run_result, test_suites_with_cases
--            )
--
--        finally:
--            try:
--                self._logger.set_stage(DtsStage.test_run_teardown)
--                sut_node.tear_down_test_run()
--                tg_node.tear_down_test_run()
--                test_run_result.update_teardown(Result.PASS)
--            except Exception as e:
--                self._logger.exception("Test run teardown failed.")
--                test_run_result.update_teardown(Result.FAIL, e)
--
--    def _get_supported_capabilities(
--        self,
--        sut_node: SutNode,
--        topology_config: Topology,
--        test_suites_with_cases: Iterable[TestSuiteWithCases],
--    ) -> set[Capability]:
--        capabilities_to_check = set()
--        for test_suite_with_cases in test_suites_with_cases:
--            capabilities_to_check.update(test_suite_with_cases.required_capabilities)
--
--        self._logger.debug(f"Found capabilities to check: {capabilities_to_check}")
--
--        return get_supported_capabilities(sut_node, topology_config, capabilities_to_check)
--
--    def _run_test_suites(
--        self,
--        sut_node: SutNode,
--        tg_node: TGNode,
--        topology: Topology,
--        test_run_result: TestRunResult,
--        test_suites_with_cases: Iterable[TestSuiteWithCases],
--    ) -> None:
--        """Run `test_suites_with_cases` with the current test run.
--
--        The method assumes the DPDK we're testing has already been built on the SUT node.
--
--        Before running any suites, the method determines whether they should be skipped
--        by inspecting any required capabilities the test suite needs and comparing those
--        to capabilities supported by the tested environment. If all capabilities are supported,
--        the suite is run. If all test cases in a test suite would be skipped, the whole test suite
--        is skipped (the setup and teardown is not run).
--
--        If a blocking test suite (such as the smoke test suite) fails, the rest of the test suites
--        in the current test run won't be executed.
--
--        Args:
--            sut_node: The test run's SUT node.
--            tg_node: The test run's TG node.
--            topology: The test run's port topology.
--            test_run_result: The test run's result.
--            test_suites_with_cases: The test suites with test cases to run.
--        """
--        end_dpdk_build = False
--        supported_capabilities = self._get_supported_capabilities(
--            sut_node, topology, test_suites_with_cases
--        )
--        for test_suite_with_cases in test_suites_with_cases:
--            test_suite_with_cases.mark_skip_unsupported(supported_capabilities)
--            test_suite_result = test_run_result.add_test_suite(test_suite_with_cases)
--            try:
--                if not test_suite_with_cases.skip:
--                    self._run_test_suite(
--                        sut_node,
--                        tg_node,
--                        topology,
--                        test_suite_result,
--                        test_suite_with_cases,
--                    )
--                else:
--                    self._logger.info(
--                        f"Test suite execution SKIPPED: "
--                        f"'{test_suite_with_cases.test_suite_class.__name__}'. Reason: "
--                        f"{test_suite_with_cases.test_suite_class.skip_reason}"
--                    )
--                    test_suite_result.update_setup(Result.SKIP)
--            except BlockingTestSuiteError as e:
--                self._logger.exception(
--                    f"An error occurred within {test_suite_with_cases.test_suite_class.__name__}. "
--                    "Skipping the rest of the test suites in this test run."
--                )
--                self._result.add_error(e)
--                end_dpdk_build = True
--            # if a blocking test failed and we need to bail out of suite executions
--            if end_dpdk_build:
--                break
--
--    def _run_test_suite(
--        self,
--        sut_node: SutNode,
--        tg_node: TGNode,
--        topology: Topology,
--        test_suite_result: TestSuiteResult,
--        test_suite_with_cases: TestSuiteWithCases,
--    ) -> None:
--        """Set up, execute and tear down `test_suite_with_cases`.
--
--        The method assumes the DPDK we're testing has already been built on the SUT node.
--
--        Test suite execution consists of running the discovered test cases.
--        A test case run consists of setup, execution and teardown of said test case.
--
--        Record the setup and the teardown and handle failures.
--
--        Args:
--            sut_node: The test run's SUT node.
--            tg_node: The test run's TG node.
--            topology: The port topology of the nodes.
--            test_suite_result: The test suite level result object associated
--                with the current test suite.
--            test_suite_with_cases: The test suite with test cases to run.
--
--        Raises:
--            BlockingTestSuiteError: If a blocking test suite fails.
--        """
--        test_suite_name = test_suite_with_cases.test_suite_class.__name__
--        self._logger.set_stage(
--            DtsStage.test_suite_setup, Path(SETTINGS.output_dir, test_suite_name)
--        )
--        test_suite = test_suite_with_cases.test_suite_class(sut_node, tg_node, topology)
--        try:
--            self._logger.info(f"Starting test suite setup: {test_suite_name}")
--            test_suite.set_up_suite()
--            test_suite_result.update_setup(Result.PASS)
--            self._logger.info(f"Test suite setup successful: {test_suite_name}")
--        except Exception as e:
--            self._logger.exception(f"Test suite setup ERROR: {test_suite_name}")
--            test_suite_result.update_setup(Result.ERROR, e)
--
--        else:
--            self._execute_test_suite(
--                test_suite,
--                test_suite_with_cases.test_cases,
--                test_suite_result,
--            )
--        finally:
--            try:
--                self._logger.set_stage(DtsStage.test_suite_teardown)
--                test_suite.tear_down_suite()
--                sut_node.kill_cleanup_dpdk_apps()
--                test_suite_result.update_teardown(Result.PASS)
--            except Exception as e:
--                self._logger.exception(f"Test suite teardown ERROR: {test_suite_name}")
--                self._logger.warning(
--                    f"Test suite '{test_suite_name}' teardown failed, "
--                    "the next test suite may be affected."
--                )
--                test_suite_result.update_setup(Result.ERROR, e)
--            if len(test_suite_result.get_errors()) > 0 and test_suite.is_blocking:
--                raise BlockingTestSuiteError(test_suite_name)
--
--    def _execute_test_suite(
--        self,
--        test_suite: TestSuite,
--        test_cases: Iterable[type[TestCase]],
--        test_suite_result: TestSuiteResult,
--    ) -> None:
--        """Execute all `test_cases` in `test_suite`.
--
--        If the :option:`--re-run` command line argument or the :envvar:`DTS_RERUN` environment
--        variable is set, in case of a test case failure, the test case will be executed again
--        until it passes or it fails that many times in addition of the first failure.
--
--        Args:
--            test_suite: The test suite object.
--            test_cases: The list of test case functions.
--            test_suite_result: The test suite level result object associated
--                with the current test suite.
--        """
--        self._logger.set_stage(DtsStage.test_suite)
--        for test_case in test_cases:
--            test_case_name = test_case.__name__
--            test_case_result = test_suite_result.add_test_case(test_case_name)
--            all_attempts = SETTINGS.re_run + 1
--            attempt_nr = 1
--            if not test_case.skip:
--                self._run_test_case(test_suite, test_case, test_case_result)
--                while not test_case_result and attempt_nr < all_attempts:
--                    attempt_nr += 1
--                    self._logger.info(
--                        f"Re-running FAILED test case '{test_case_name}'. "
--                        f"Attempt number {attempt_nr} out of {all_attempts}."
--                    )
--                    self._run_test_case(test_suite, test_case, test_case_result)
--            else:
--                self._logger.info(
--                    f"Test case execution SKIPPED: {test_case_name}. Reason: "
--                    f"{test_case.skip_reason}"
--                )
--                test_case_result.update_setup(Result.SKIP)
--
--    def _run_test_case(
--        self,
--        test_suite: TestSuite,
--        test_case: type[TestCase],
--        test_case_result: TestCaseResult,
--    ) -> None:
--        """Setup, execute and teardown `test_case_method` from `test_suite`.
--
--        Record the result of the setup and the teardown and handle failures.
--
--        Args:
--            test_suite: The test suite object.
--            test_case: The test case function.
--            test_case_result: The test case level result object associated
--                with the current test case.
--        """
--        test_case_name = test_case.__name__
--
--        try:
--            # run set_up function for each case
--            test_suite.set_up_test_case()
--            test_case_result.update_setup(Result.PASS)
--        except SSHTimeoutError as e:
--            self._logger.exception(f"Test case setup FAILED: {test_case_name}")
--            test_case_result.update_setup(Result.FAIL, e)
--        except Exception as e:
--            self._logger.exception(f"Test case setup ERROR: {test_case_name}")
--            test_case_result.update_setup(Result.ERROR, e)
--
--        else:
--            # run test case if setup was successful
--            self._execute_test_case(test_suite, test_case, test_case_result)
--
--        finally:
--            try:
--                test_suite.tear_down_test_case()
--                test_case_result.update_teardown(Result.PASS)
--            except Exception as e:
--                self._logger.exception(f"Test case teardown ERROR: {test_case_name}")
--                self._logger.warning(
--                    f"Test case '{test_case_name}' teardown failed, "
--                    f"the next test case may be affected."
--                )
--                test_case_result.update_teardown(Result.ERROR, e)
--                test_case_result.update(Result.ERROR)
--
--    def _execute_test_case(
--        self,
--        test_suite: TestSuite,
--        test_case: type[TestCase],
--        test_case_result: TestCaseResult,
--    ) -> None:
--        """Execute `test_case_method` from `test_suite`, record the result and handle failures.
--
--        Args:
--            test_suite: The test suite object.
--            test_case: The test case function.
--            test_case_result: The test case level result object associated
--                with the current test case.
--
--        Raises:
--            KeyboardInterrupt: If DTS has been interrupted by the user.
--        """
--        test_case_name = test_case.__name__
--        try:
--            self._logger.info(f"Starting test case execution: {test_case_name}")
--            # Explicit method binding is required, otherwise mypy complains
--            MethodType(test_case, test_suite)()
--            test_case_result.update(Result.PASS)
--            self._logger.info(f"Test case execution PASSED: {test_case_name}")
--
--        except TestCaseVerifyError as e:
--            self._logger.exception(f"Test case execution FAILED: {test_case_name}")
--            test_case_result.update(Result.FAIL, e)
--        except Exception as e:
--            self._logger.exception(f"Test case execution ERROR: {test_case_name}")
--            test_case_result.update(Result.ERROR, e)
--        except KeyboardInterrupt:
--            self._logger.error(f"Test case execution INTERRUPTED by user: {test_case_name}")
--            test_case_result.update(Result.SKIP)
--            raise KeyboardInterrupt("Stop DTS")
--
-     def _exit_dts(self) -> None:
-         """Process all errors and exit with the proper exit code."""
-         self._result.process()
-@@ -619,9 +121,3 @@ def _exit_dts(self) -> None:
-             self._logger.info("DTS execution has ended.")
- 
-         sys.exit(self._result.get_return_code())
--
--    def _init_random_seed(self, conf: TestRunConfiguration) -> None:
--        """Initialize the random seed to use for the test run."""
--        seed = conf.random_seed or random.randrange(0xFFFF_FFFF)
--        self._logger.info(f"Initializing test run with random seed {seed}.")
--        random.seed(seed)
-diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
-index 1acb526b64..a59bac71bb 100644
---- a/dts/framework/test_result.py
-+++ b/dts/framework/test_result.py
-@@ -25,98 +25,18 @@
- 
- import json
- from collections.abc import MutableSequence
--from dataclasses import asdict, dataclass, field
- from enum import Enum, auto
- from pathlib import Path
--from typing import Any, Callable, TypedDict, cast
-+from typing import Any, Callable, TypedDict
- 
--from framework.config.node import PortConfig
--from framework.testbed_model.capability import Capability
--
--from .config.test_run import TestRunConfiguration, TestSuiteConfig
-+from .config.test_run import TestRunConfiguration
- from .exception import DTSError, ErrorSeverity
- from .logger import DTSLogger
--from .test_suite import TestCase, TestSuite
- from .testbed_model.os_session import OSSessionInfo
- from .testbed_model.port import Port
- from .testbed_model.sut_node import DPDKBuildInfo
- 
- 
--@dataclass(slots=True, frozen=True)
--class TestSuiteWithCases:
--    """A test suite class with test case methods.
--
--    An auxiliary class holding a test case class with test case methods. The intended use of this
--    class is to hold a subset of test cases (which could be all test cases) because we don't have
--    all the data to instantiate the class at the point of inspection. The knowledge of this subset
--    is needed in case an error occurs before the class is instantiated and we need to record
--    which test cases were blocked by the error.
+-    Building DPDK from source uses `build` configuration inside `dpdk_build` of configuration.
 -
 -    Attributes:
--        test_suite_class: The test suite class.
--        test_cases: The test case methods.
--        required_capabilities: The combined required capabilities of both the test suite
--            and the subset of test cases.
+-        config: The SUT node configuration.
+-        virtual_devices: The virtual devices used on the node.
 -    """
 -
--    test_suite_class: type[TestSuite]
--    test_cases: list[type[TestCase]]
--    required_capabilities: set[Capability] = field(default_factory=set, init=False)
--
--    def __post_init__(self):
--        """Gather the required capabilities of the test suite and all test cases."""
--        for test_object in [self.test_suite_class] + self.test_cases:
--            self.required_capabilities.update(test_object.required_capabilities)
--
--    def create_config(self) -> TestSuiteConfig:
--        """Generate a :class:`TestSuiteConfig` from the stored test suite with test cases.
--
--        Returns:
--            The :class:`TestSuiteConfig` representation.
+-    config: SutNodeConfiguration
+-    virtual_devices: list[VirtualDevice]
+-    dpdk_prefix_list: list[str]
+-    dpdk_timestamp: str
+-    _env_vars: dict
++    config: DPDKBuildConfiguration
++    _node: Node
++    _session: OSSession
++    _logger: DTSLogger
+     _remote_tmp_dir: PurePath
+-    __remote_dpdk_tree_path: str | PurePath | None
++    _remote_dpdk_tree_path: str | PurePath | None
+     _remote_dpdk_build_dir: PurePath | None
+     _app_compile_timeout: float
+-    _dpdk_kill_session: OSSession | None
+-    _dpdk_version: str | None
+-    _node_info: OSSessionInfo | None
+-    _compiler_version: str | None
+-    _path_to_devbind_script: PurePath | None
+ 
+-    def __init__(self, node_config: SutNodeConfiguration):
+-        """Extend the constructor with SUT node specifics.
++    compiler_version: str | None
+ 
+-        Args:
+-            node_config: The SUT node's test run configuration.
 -        """
--        return TestSuiteConfig(
--            test_suite=self.test_suite_class.__name__,
--            test_cases=[test_case.__name__ for test_case in self.test_cases],
+-        super().__init__(node_config)
+-        self.lcores = self.filter_lcores(LogicalCoreList(self.config.dpdk_config.lcores))
+-        if LogicalCore(lcore=0, core=0, socket=0, node=0) in self.lcores:
+-            self._logger.info(
+-                """
+-                WARNING: First core being used;
+-                using the first core is considered risky and should only
+-                be done by advanced users.
+-                """
+-            )
+-        else:
+-            self._logger.info("Not using first core")
+-        self.virtual_devices = []
+-        self.dpdk_prefix_list = []
+-        self._env_vars = {}
+-        self._remote_tmp_dir = self.main_session.get_remote_tmp_dir()
+-        self.__remote_dpdk_tree_path = None
++    def __init__(self, config: DPDKBuildConfiguration, node: Node):
++        """DPDK build environment class constructor."""
++        self.config = config
++        self._node = node
++        self._logger = get_dts_logger()
++        self._session = node.create_session("dpdk_build")
++
++        self._remote_tmp_dir = node.main_session.get_remote_tmp_dir()
++        self._remote_dpdk_tree_path = None
+         self._remote_dpdk_build_dir = None
+         self._app_compile_timeout = 90
+-        self._dpdk_kill_session = None
+-        self.dpdk_timestamp = (
+-            f"{str(os.getpid())}_{time.strftime('%Y%m%d%H%M%S', time.localtime())}"
 -        )
+-        self._dpdk_version = None
+-        self._node_info = None
+-        self._compiler_version = None
+-        self._path_to_devbind_script = None
+-        self._ports_bound_to_dpdk = False
+-        self._logger.info(f"Created node: {self.name}")
 -
--    def mark_skip_unsupported(self, supported_capabilities: set[Capability]) -> None:
--        """Mark the test suite and test cases to be skipped.
+-    @property
+-    def _remote_dpdk_tree_path(self) -> str | PurePath:
+-        """The remote DPDK tree path."""
+-        if self.__remote_dpdk_tree_path:
+-            return self.__remote_dpdk_tree_path
 -
--        The mark is applied if object to be skipped requires any capabilities and at least one of
--        them is not among `supported_capabilities`.
+-        self._logger.warning(
+-            "Failed to get remote dpdk tree path because we don't know the "
+-            "location on the SUT node."
+-        )
+-        return ""
+-
+-    @property
+-    def remote_dpdk_build_dir(self) -> str | PurePath:
+-        """The remote DPDK build dir path."""
+-        if self._remote_dpdk_build_dir:
+-            return self._remote_dpdk_build_dir
+-
+-        self._logger.warning(
+-            "Failed to get remote dpdk build dir because we don't know the "
+-            "location on the SUT node."
+-        )
+-        return ""
+-
+-    @property
+-    def dpdk_version(self) -> str | None:
+-        """Last built DPDK version."""
+-        if self._dpdk_version is None:
+-            self._dpdk_version = self.main_session.get_dpdk_version(self._remote_dpdk_tree_path)
+-        return self._dpdk_version
+-
+-    @property
+-    def node_info(self) -> OSSessionInfo:
+-        """Additional node information."""
+-        if self._node_info is None:
+-            self._node_info = self.main_session.get_node_info()
+-        return self._node_info
+-
+-    @property
+-    def compiler_version(self) -> str | None:
+-        """The node's compiler version."""
+-        if self._compiler_version is None:
+-            self._logger.warning("The `compiler_version` is None because a pre-built DPDK is used.")
+ 
+-        return self._compiler_version
+-
+-    @compiler_version.setter
+-    def compiler_version(self, value: str) -> None:
+-        """Set the `compiler_version` used on the SUT node.
 -
 -        Args:
--            supported_capabilities: The supported capabilities.
+-            value: The node's compiler version.
 -        """
--        for test_object in [self.test_suite_class, *self.test_cases]:
--            capabilities_not_supported = test_object.required_capabilities - supported_capabilities
--            if capabilities_not_supported:
--                test_object.skip = True
--                capability_str = (
--                    "capability" if len(capabilities_not_supported) == 1 else "capabilities"
--                )
--                test_object.skip_reason = (
--                    f"Required {capability_str} '{capabilities_not_supported}' not found."
--                )
--        if not self.test_suite_class.skip:
--            if all(test_case.skip for test_case in self.test_cases):
--                self.test_suite_class.skip = True
--
--                self.test_suite_class.skip_reason = (
--                    "All test cases are marked to be skipped with reasons: "
--                    f"{' '.join(test_case.skip_reason for test_case in self.test_cases)}"
--                )
+-        self._compiler_version = value
 -
 -    @property
--    def skip(self) -> bool:
--        """Skip the test suite if all test cases or the suite itself are to be skipped.
--
--        Returns:
--            :data:`True` if the test suite should be skipped, :data:`False` otherwise.
--        """
--        return all(test_case.skip for test_case in self.test_cases) or self.test_suite_class.skip
--
--
- class Result(Enum):
-     """The possible states that a setup, a teardown or a test case may end up in."""
- 
-@@ -463,7 +383,6 @@ class TestRunResult(BaseResult):
-     """
- 
-     _config: TestRunConfiguration
--    _test_suites_with_cases: list[TestSuiteWithCases]
-     _ports: list[Port]
-     _sut_info: OSSessionInfo | None
-     _dpdk_build_info: DPDKBuildInfo | None
-@@ -476,49 +395,23 @@ def __init__(self, test_run_config: TestRunConfiguration):
-         """
-         super().__init__()
-         self._config = test_run_config
--        self._test_suites_with_cases = []
-         self._ports = []
-         self._sut_info = None
-         self._dpdk_build_info = None
- 
--    def add_test_suite(
--        self,
--        test_suite_with_cases: TestSuiteWithCases,
--    ) -> "TestSuiteResult":
-+    def add_test_suite(self, test_suite_name: str) -> "TestSuiteResult":
-         """Add and return the child result (test suite).
- 
-         Args:
--            test_suite_with_cases: The test suite with test cases.
-+            test_suite_name: The test suite name.
- 
-         Returns:
-             The test suite's result.
-         """
--        result = TestSuiteResult(test_suite_with_cases)
-+        result = TestSuiteResult(test_suite_name)
-         self.child_results.append(result)
-         return result
- 
--    @property
--    def test_suites_with_cases(self) -> list[TestSuiteWithCases]:
--        """The test suites with test cases to be executed in this test run.
--
--        The test suites can only be assigned once.
--
--        Returns:
--            The list of test suites with test cases. If an error occurs between
--            the initialization of :class:`TestRunResult` and assigning test cases to the instance,
--            return an empty list, representing that we don't know what to execute.
--        """
--        return self._test_suites_with_cases
--
--    @test_suites_with_cases.setter
--    def test_suites_with_cases(self, test_suites_with_cases: list[TestSuiteWithCases]) -> None:
--        if self._test_suites_with_cases:
--            raise ValueError(
--                "Attempted to assign test suites to a test run result "
--                "which already has test suites."
+-    def path_to_devbind_script(self) -> PurePath | str:
+-        """The path to the dpdk-devbind.py script on the node."""
+-        if self._path_to_devbind_script is None:
+-            self._path_to_devbind_script = self.main_session.join_remote_path(
+-                self._remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
 -            )
--        self._test_suites_with_cases = test_suites_with_cases
+-        return self._path_to_devbind_script
 -
-     @property
-     def ports(self) -> list[Port]:
-         """Get the list of ports associated with this test run."""
-@@ -602,24 +495,14 @@ def to_dict(self) -> TestRunResultDict:
-             compiler_version = self.dpdk_build_info.compiler_version
-             dpdk_version = self.dpdk_build_info.dpdk_version
- 
--        ports = [asdict(port) for port in self.ports]
--        for port in ports:
--            port["config"] = cast(PortConfig, port["config"]).model_dump()
+-    def get_dpdk_build_info(self) -> DPDKBuildInfo:
+-        """Get additional DPDK build information.
 -
-         return {
-             "compiler_version": compiler_version,
-             "dpdk_version": dpdk_version,
--            "ports": ports,
-+            "ports": [port.to_dict() for port in self.ports],
-             "test_suites": [child.to_dict() for child in self.child_results],
-             "summary": results | self.generate_pass_rate_dict(results),
-         }
- 
--    def _mark_results(self, result) -> None:
--        """Mark the test suite results as `result`."""
--        for test_suite_with_cases in self._test_suites_with_cases:
--            child_result = self.add_test_suite(test_suite_with_cases)
--            child_result.update_setup(result)
+-        Returns:
+-            The DPDK build information,
+-        """
+-        return DPDKBuildInfo(dpdk_version=self.dpdk_version, compiler_version=self.compiler_version)
 -
+-    def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable[Port]) -> None:
+-        """Extend the test run setup with vdev config and DPDK build set up.
+-
+-        This method extends the setup process by configuring virtual devices and preparing the DPDK
+-        environment based on the provided configuration.
+-
+-        Args:
+-            test_run_config: A test run configuration according to which
+-                the setup steps will be taken.
+-            ports: The ports to set up for the test run.
+-        """
+-        super().set_up_test_run(test_run_config, ports)
+-        for vdev in test_run_config.vdevs:
+-            self.virtual_devices.append(VirtualDevice(vdev))
+-        self._set_up_dpdk(test_run_config.dpdk_config, ports)
+-
+-    def tear_down_test_run(self, ports: Iterable[Port]) -> None:
+-        """Extend the test run teardown with virtual device teardown and DPDK teardown.
+-
+-        Args:
+-            ports: The ports to tear down for the test run.
+-        """
+-        super().tear_down_test_run(ports)
+-        self.virtual_devices = []
+-        self._tear_down_dpdk(ports)
++        self.compiler_version = None
  
- class TestSuiteResult(BaseResult):
-     """The test suite specific result.
-@@ -631,18 +514,16 @@ class TestSuiteResult(BaseResult):
-     """
+-    def _set_up_dpdk(
+-        self, dpdk_build_config: DPDKBuildConfiguration, ports: Iterable[Port]
+-    ) -> None:
+-        """Set up DPDK the SUT node and bind ports.
++    def setup(self):
++        """Set up the DPDK build on the target node.
  
-     test_suite_name: str
--    _test_suite_with_cases: TestSuiteWithCases
-     _child_configs: list[str]
- 
--    def __init__(self, test_suite_with_cases: TestSuiteWithCases):
-+    def __init__(self, test_suite_name: str):
-         """Extend the constructor with test suite's config.
- 
-         Args:
--            test_suite_with_cases: The test suite with test cases.
-+            test_suite_name: The test suite name.
+         DPDK setup includes setting all internals needed for the build, the copying of DPDK
+         sources and then building DPDK or using the exist ones from the `dpdk_location`. The drivers
+@@ -236,7 +88,7 @@ def _set_up_dpdk(
+             dpdk_build_config: A DPDK build configuration to test.
+             ports: The ports to use for DPDK.
          """
-         super().__init__()
--        self.test_suite_name = test_suite_with_cases.test_suite_class.__name__
--        self._test_suite_with_cases = test_suite_with_cases
-+        self.test_suite_name = test_suite_name
+-        match dpdk_build_config.dpdk_location:
++        match self.config.dpdk_location:
+             case RemoteDPDKTreeLocation(dpdk_tree=dpdk_tree):
+                 self._set_remote_dpdk_tree_path(dpdk_tree)
+             case LocalDPDKTreeLocation(dpdk_tree=dpdk_tree):
+@@ -248,24 +100,13 @@ def _set_up_dpdk(
+                 remote_tarball = self._copy_dpdk_tarball_to_remote(tarball)
+                 self._prepare_and_extract_dpdk_tarball(remote_tarball)
  
-     def add_test_case(self, test_case_name: str) -> "TestCaseResult":
-         """Add and return the child result (test case).
-@@ -667,12 +548,6 @@ def to_dict(self) -> TestSuiteResultDict:
-             "test_cases": [child.to_dict() for child in self.child_results],
-         }
+-        match dpdk_build_config:
++        match self.config:
+             case DPDKPrecompiledBuildConfiguration(precompiled_build_dir=build_dir):
+                 self._set_remote_dpdk_build_dir(build_dir)
+             case DPDKUncompiledBuildConfiguration(build_options=build_options):
+                 self._configure_dpdk_build(build_options)
+                 self._build_dpdk()
  
--    def _mark_results(self, result) -> None:
--        """Mark the test case results as `result`."""
--        for test_case_method in self._test_suite_with_cases.test_cases:
--            child_result = self.add_test_case(test_case_method.__name__)
--            child_result.update_setup(result)
+-        self.bind_ports_to_driver(ports)
 -
+-    def _tear_down_dpdk(self, ports: Iterable[Port]) -> None:
+-        """Reset DPDK variables and bind port driver to the OS driver."""
+-        self._env_vars = {}
+-        self.__remote_dpdk_tree_path = None
+-        self._remote_dpdk_build_dir = None
+-        self._dpdk_version = None
+-        self.compiler_version = None
+-        self.bind_ports_to_driver(ports, for_dpdk=False)
+-
+     def _set_remote_dpdk_tree_path(self, dpdk_tree: PurePath):
+         """Set the path to the remote DPDK source tree based on the provided DPDK location.
  
- class TestCaseResult(BaseResult, FixtureResult):
-     r"""The test case specific result.
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-new file mode 100644
-index 0000000000..811798f57f
---- /dev/null
-+++ b/dts/framework/test_run.py
-@@ -0,0 +1,640 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Arm Limited
+@@ -280,14 +121,14 @@ def _set_remote_dpdk_tree_path(self, dpdk_tree: PurePath):
+                 is not found.
+             ConfigurationError: If the remote DPDK source tree specified is not a valid directory.
+         """
+-        if not self.main_session.remote_path_exists(dpdk_tree):
++        if not self._session.remote_path_exists(dpdk_tree):
+             raise RemoteFileNotFoundError(
+                 f"Remote DPDK source tree '{dpdk_tree}' not found in SUT node."
+             )
+-        if not self.main_session.is_remote_dir(dpdk_tree):
++        if not self._session.is_remote_dir(dpdk_tree):
+             raise ConfigurationError(f"Remote DPDK source tree '{dpdk_tree}' must be a directory.")
+ 
+-        self.__remote_dpdk_tree_path = dpdk_tree
++        self._remote_dpdk_tree_path = dpdk_tree
+ 
+     def _copy_dpdk_tree(self, dpdk_tree_path: Path) -> None:
+         """Copy the DPDK source tree to the SUT.
+@@ -298,14 +139,14 @@ def _copy_dpdk_tree(self, dpdk_tree_path: Path) -> None:
+         self._logger.info(
+             f"Copying DPDK source tree to SUT: '{dpdk_tree_path}' into '{self._remote_tmp_dir}'."
+         )
+-        self.main_session.copy_dir_to(
++        self._session.copy_dir_to(
+             dpdk_tree_path,
+             self._remote_tmp_dir,
+             exclude=[".git", "*.o"],
+             compress_format=TarCompressionFormat.gzip,
+         )
+ 
+-        self.__remote_dpdk_tree_path = self.main_session.join_remote_path(
++        self._remote_dpdk_tree_path = self._session.join_remote_path(
+             self._remote_tmp_dir, PurePath(dpdk_tree_path).name
+         )
+ 
+@@ -320,9 +161,9 @@ def _validate_remote_dpdk_tarball(self, dpdk_tarball: PurePath) -> None:
+                 not found.
+             ConfigurationError: If the `dpdk_tarball` is a valid path but not a valid tar archive.
+         """
+-        if not self.main_session.remote_path_exists(dpdk_tarball):
++        if not self._session.remote_path_exists(dpdk_tarball):
+             raise RemoteFileNotFoundError(f"Remote DPDK tarball '{dpdk_tarball}' not found in SUT.")
+-        if not self.main_session.is_remote_tarfile(dpdk_tarball):
++        if not self._session.is_remote_tarfile(dpdk_tarball):
+             raise ConfigurationError(f"Remote DPDK tarball '{dpdk_tarball}' must be a tar archive.")
+ 
+     def _copy_dpdk_tarball_to_remote(self, dpdk_tarball: Path) -> PurePath:
+@@ -337,8 +178,8 @@ def _copy_dpdk_tarball_to_remote(self, dpdk_tarball: Path) -> PurePath:
+         self._logger.info(
+             f"Copying DPDK tarball to SUT: '{dpdk_tarball}' into '{self._remote_tmp_dir}'."
+         )
+-        self.main_session.copy_to(dpdk_tarball, self._remote_tmp_dir)
+-        return self.main_session.join_remote_path(self._remote_tmp_dir, dpdk_tarball.name)
++        self._session.copy_to(dpdk_tarball, self._remote_tmp_dir)
++        return self._session.join_remote_path(self._remote_tmp_dir, dpdk_tarball.name)
+ 
+     def _prepare_and_extract_dpdk_tarball(self, remote_tarball_path: PurePath) -> None:
+         """Prepare the remote DPDK tree path and extract the tarball.
+@@ -365,19 +206,19 @@ def remove_tarball_suffix(remote_tarball_path: PurePath) -> PurePath:
+                     return PurePath(str(remote_tarball_path).replace(suffixes_to_remove, ""))
+             return remote_tarball_path.with_suffix("")
+ 
+-        tarball_top_dir = self.main_session.get_tarball_top_dir(remote_tarball_path)
+-        self.__remote_dpdk_tree_path = self.main_session.join_remote_path(
++        tarball_top_dir = self._session.get_tarball_top_dir(remote_tarball_path)
++        self._remote_dpdk_tree_path = self._session.join_remote_path(
+             remote_tarball_path.parent,
+             tarball_top_dir or remove_tarball_suffix(remote_tarball_path),
+         )
+ 
+         self._logger.info(
+             "Extracting DPDK tarball on SUT: "
+-            f"'{remote_tarball_path}' into '{self._remote_dpdk_tree_path}'."
++            f"'{remote_tarball_path}' into '{self.remote_dpdk_tree_path}'."
+         )
+-        self.main_session.extract_remote_tarball(
++        self._session.extract_remote_tarball(
+             remote_tarball_path,
+-            self._remote_dpdk_tree_path,
++            self.remote_dpdk_tree_path,
+         )
+ 
+     def _set_remote_dpdk_build_dir(self, build_dir: str):
+@@ -395,10 +236,10 @@ def _set_remote_dpdk_build_dir(self, build_dir: str):
+             RemoteFileNotFoundError: If the `build_dir` is expected but does not exist on the SUT
+                 node.
+         """
+-        remote_dpdk_build_dir = self.main_session.join_remote_path(
+-            self._remote_dpdk_tree_path, build_dir
++        remote_dpdk_build_dir = self._session.join_remote_path(
++            self.remote_dpdk_tree_path, build_dir
+         )
+-        if not self.main_session.remote_path_exists(remote_dpdk_build_dir):
++        if not self._session.remote_path_exists(remote_dpdk_build_dir):
+             raise RemoteFileNotFoundError(
+                 f"Remote DPDK build dir '{remote_dpdk_build_dir}' not found in SUT node."
+             )
+@@ -415,20 +256,18 @@ def _configure_dpdk_build(self, dpdk_build_config: DPDKBuildOptionsConfiguration
+             dpdk_build_config: A DPDK build configuration to test.
+         """
+         self._env_vars = {}
+-        self._env_vars.update(self.main_session.get_dpdk_build_env_vars(self.arch))
++        self._env_vars.update(self._session.get_dpdk_build_env_vars(self._node.arch))
+         if compiler_wrapper := dpdk_build_config.compiler_wrapper:
+             self._env_vars["CC"] = f"'{compiler_wrapper} {dpdk_build_config.compiler.name}'"
+         else:
+             self._env_vars["CC"] = dpdk_build_config.compiler.name
+ 
+-        self.compiler_version = self.main_session.get_compiler_version(
+-            dpdk_build_config.compiler.name
+-        )
++        self.compiler_version = self._session.get_compiler_version(dpdk_build_config.compiler.name)
+ 
+-        build_dir_name = f"{self.arch}-{self.config.os}-{dpdk_build_config.compiler}"
++        build_dir_name = f"{self._node.arch}-{self._node.config.os}-{dpdk_build_config.compiler}"
+ 
+-        self._remote_dpdk_build_dir = self.main_session.join_remote_path(
+-            self._remote_dpdk_tree_path, build_dir_name
++        self._remote_dpdk_build_dir = self._session.join_remote_path(
++            self.remote_dpdk_tree_path, build_dir_name
+         )
+ 
+     def _build_dpdk(self) -> None:
+@@ -437,10 +276,10 @@ def _build_dpdk(self) -> None:
+         Uses the already configured DPDK build configuration. Assumes that the
+         `_remote_dpdk_tree_path` has already been set on the SUT node.
+         """
+-        self.main_session.build_dpdk(
++        self._session.build_dpdk(
+             self._env_vars,
+             MesonArgs(default_library="static", enable_kmods=True, libdir="lib"),
+-            self._remote_dpdk_tree_path,
++            self.remote_dpdk_tree_path,
+             self.remote_dpdk_build_dir,
+         )
+ 
+@@ -459,31 +298,120 @@ def build_dpdk_app(self, app_name: str, **meson_dpdk_args: str | bool) -> PurePa
+             The directory path of the built app. If building all apps, return
+             the path to the examples directory (where all apps reside).
+         """
+-        self.main_session.build_dpdk(
++        self._session.build_dpdk(
+             self._env_vars,
+             MesonArgs(examples=app_name, **meson_dpdk_args),  # type: ignore [arg-type]
+             # ^^ https://github.com/python/mypy/issues/11583
+-            self._remote_dpdk_tree_path,
++            self.remote_dpdk_tree_path,
+             self.remote_dpdk_build_dir,
+             rebuild=True,
+             timeout=self._app_compile_timeout,
+         )
+ 
+         if app_name == "all":
+-            return self.main_session.join_remote_path(self.remote_dpdk_build_dir, "examples")
+-        return self.main_session.join_remote_path(
++            return self._session.join_remote_path(self.remote_dpdk_build_dir, "examples")
++        return self._session.join_remote_path(
+             self.remote_dpdk_build_dir, "examples", f"dpdk-{app_name}"
+         )
+ 
+-    def kill_cleanup_dpdk_apps(self) -> None:
+-        """Kill all dpdk applications on the SUT, then clean up hugepages."""
+-        if self._dpdk_kill_session and self._dpdk_kill_session.is_alive():
+-            # we can use the session if it exists and responds
+-            self._dpdk_kill_session.kill_cleanup_dpdk_apps(self.dpdk_prefix_list)
++    @property
++    def remote_dpdk_tree_path(self) -> str | PurePath:
++        """The remote DPDK tree path."""
++        if self._remote_dpdk_tree_path:
++            return self._remote_dpdk_tree_path
 +
-+r"""Test run module.
++        self._logger.warning(
++            "Failed to get remote dpdk tree path because we don't know the "
++            "location on the SUT node."
++        )
++        return ""
 +
-+The test run is implemented as a finite state machine which maintains a globally accessible
-+:class:`~.context.Context` and each state implements :class:`State`.
++    @property
++    def remote_dpdk_build_dir(self) -> str | PurePath:
++        """The remote DPDK build dir path."""
++        if self._remote_dpdk_build_dir:
++            return self._remote_dpdk_build_dir
 +
-+To spin up the test run state machine call :meth:`~TestRun.spin`.
++        self._logger.warning(
++            "Failed to get remote dpdk build dir because we don't know the "
++            "location on the SUT node."
++        )
++        return ""
 +
-+The following graph represents all the states and steps of the state machine. Each node represents a
-+state labelled with the initials, e.g. ``TRS`` is represented by :class:`TestRunSetup`. States
-+represented by a double green circle are looping states. These states are only exited through:
++    @cached_property
++    def dpdk_version(self) -> str | None:
++        """Last built DPDK version."""
++        return self._session.get_dpdk_version(self.remote_dpdk_tree_path)
 +
-+    * **next** which progresses to the next test suite/case.
-+    * **end** which indicates that no more test suites/cases are available and
-+      the loop is terminated.
++    def get_dpdk_build_info(self) -> DPDKBuildInfo:
++        """Get additional DPDK build information.
 +
-+Red dashed links represent the path taken when an exception is
-+raised in the origin state. If a state does not have one, then the execution progresses as usual.
-+When :class:`~.exception.InternalError` is raised in any state, the state machine execution is
-+immediately terminated.
-+Orange dashed links represent exceptional conditions. Test suites and cases can be ``blocked`` or
-+``skipped`` in the following conditions:
-+
-+    * If a *blocking* test suite fails, the ``blocked`` flag is raised.
-+    * If the user sends a ``SIGINT`` signal, the ``blocked`` flag is raised.
-+    * If a test suite and/or test case requires a capability unsupported by the test run, then this
-+      is ``skipped`` and the state restarts from the beginning.
-+
-+Finally, test cases **retry** when they fail and DTS is configured to re-run.
-+
-+.. digraph:: test_run_fsm
-+
-+    bgcolor=transparent
-+    nodesep=0.5
-+    ranksep=0.3
-+
-+    node [fontname="sans-serif" fixedsize="true" width="0.7"]
-+    edge [fontname="monospace" color="gray30" fontsize=12]
-+    node [shape="circle"] "TRS" "TRT" "TSS" "TST" "TCS" "TCT"
-+
-+    node [shape="doublecircle" style="bold" color="darkgreen"] "TRE" "TSE" "TCE"
-+
-+    node [style="solid" shape="plaintext" fontname="monospace" fontsize=12 fixedsize="false"] "exit"
-+
-+    "TRS" -> "TRE"
-+    "TRE":e -> "TRT":w [taillabel="end" labeldistance=1.5 labelangle=45]
-+    "TRT" -> "exit" [style="solid" color="gray30"]
-+
-+    "TRE" -> "TSS" [headlabel="next" labeldistance=3 labelangle=320]
-+    "TSS" -> "TSE"
-+    "TSE" -> "TST" [label="end"]
-+    "TST" -> "TRE"
-+
-+    "TSE" -> "TCS" [headlabel="next" labeldistance=3 labelangle=320]
-+    "TCS" -> "TCE" -> "TCT" -> "TSE":se
++        Returns:
++            The DPDK build information,
++        """
++        return DPDKBuildInfo(dpdk_version=self.dpdk_version, compiler_version=self.compiler_version)
 +
 +
-+    edge [fontcolor="orange", color="orange" style="dashed"]
-+    "TRE":sw -> "TSE":nw [taillabel="next\n(blocked)" labeldistance=13]
-+    "TSE":ne -> "TRE" [taillabel="end\n(blocked)" labeldistance=7.5 labelangle=345]
-+    "TRE":w -> "TRE":nw [headlabel="next\n(skipped)" labeldistance=4]
-+    "TSE":e -> "TSE":e [taillabel="next\n(blocked)\n(skipped)" labelangle=325 labeldistance=7.5]
-+    "TCE":e -> "TCE":e [taillabel="retry" labelangle=5 labeldistance=2.5]
++class DPDKRuntimeEnvironment:
++    """Class handling a DPDK runtime environment."""
 +
-+    edge [fontcolor="crimson" color="crimson"]
-+    "TRS" -> "TRT"
-+    "TSS":w -> "TST":n
-+    "TCS" -> "TCT"
++    config: Final[DPDKRuntimeConfiguration]
++    build: Final[DPDKBuildEnvironment]
++    _node: Final[Node]
++    _logger: Final[DTSLogger]
 +
-+    node [fontcolor="crimson" color="crimson"]
-+    "InternalError" -> "exit":ew
-+"""
++    timestamp: Final[str]
++    _virtual_devices: list[VirtualDevice]
++    _lcores: list[LogicalCore]
 +
-+import random
-+from collections import deque
-+from collections.abc import Iterable
-+from dataclasses import dataclass
-+from functools import cached_property
-+from pathlib import Path
-+from types import MethodType
-+from typing import ClassVar, Protocol, Union, cast
++    _env_vars: dict
++    _kill_session: OSSession | None
++    prefix_list: list[str]
 +
-+from framework.config.test_run import TestRunConfiguration
-+from framework.context import Context, init_ctx
-+from framework.exception import (
-+    InternalError,
-+    SkippedTestException,
-+    TestCaseVerifyError,
-+)
-+from framework.logger import DTSLogger, get_dts_logger
-+from framework.settings import SETTINGS
-+from framework.test_result import BaseResult, Result, TestCaseResult, TestRunResult, TestSuiteResult
-+from framework.test_suite import TestCase, TestSuite
-+from framework.testbed_model.capability import (
-+    Capability,
-+    get_supported_capabilities,
-+    test_if_supported,
-+)
-+from framework.testbed_model.node import Node
-+from framework.testbed_model.sut_node import SutNode
-+from framework.testbed_model.tg_node import TGNode
-+from framework.testbed_model.topology import PortLink, Topology
-+
-+TestScenario = tuple[type[TestSuite], deque[type[TestCase]]]
-+
-+
-+class TestRun:
-+    r"""A class representing a test run.
-+
-+    The class is responsible for running tests on testbeds defined in the test run configuration.
-+    Each setup or teardown of each stage is recorded in a :class:`~framework.test_result.DTSResult`
-+    or one of its subclasses. The test case results are also recorded.
-+
-+    If an error occurs, the current stage is aborted, the error is recorded, everything in
-+    the inner stages is marked as blocked and the run continues in the next iteration
-+    of the same stage. The return code is the highest `severity` of all
-+    :class:`~.framework.exception.DTSError`\s.
-+
-+    Example:
-+        An error occurs in a test suite setup. The current test suite is aborted,
-+        all its test cases are marked as blocked and the run continues
-+        with the next test suite. If the errored test suite was the last one in the
-+        given test run, the next test run begins.
-+
-+    Attributes:
-+        config: The test run configuration.
-+        logger: A reference to the current logger.
-+        state: The current state of the state machine.
-+        ctx: The test run's runtime context.
-+        result: The test run's execution result.
-+        selected_tests: The test suites and cases selected in this test run.
-+        blocked: :data:`True` if the test run execution has been blocked.
-+        remaining_tests: The remaining tests in the execution of the test run.
-+        remaining_test_cases: The remaining test cases in the execution of a test suite within the
-+            test run's state machine.
-+        supported_capabilities: All the capabilities supported by this test run.
-+    """
-+
-+    config: TestRunConfiguration
-+    logger: DTSLogger
-+
-+    state: "State"
-+    ctx: Context
-+    result: TestRunResult
-+    selected_tests: list[TestScenario]
-+
-+    blocked: bool
-+    remaining_tests: deque[TestScenario]
-+    remaining_test_cases: deque[type[TestCase]]
-+    supported_capabilities: set[Capability]
-+
-+    def __init__(self, config: TestRunConfiguration, nodes: Iterable[Node], result: TestRunResult):
-+        """Test run constructor.
++    def __init__(
++        self,
++        config: DPDKRuntimeConfiguration,
++        node: Node,
++        build_env: DPDKBuildEnvironment,
++    ):
++        """DPDK environment constructor.
 +
 +        Args:
-+            config: The test run's own configuration.
-+            nodes: A reference to all the available nodes.
-+            result: A reference to the test run result object.
++            config: The configuration of DPDK.
++            node: The target node to manage a DPDK environment.
++            build_env: The DPDK build environment.
 +        """
 +        self.config = config
-+        self.logger = get_dts_logger()
-+
-+        sut_node = next(n for n in nodes if n.name == config.system_under_test_node)
-+        sut_node = cast(SutNode, sut_node)  # Config validation must render this valid.
-+
-+        tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
-+        tg_node = cast(TGNode, tg_node)  # Config validation must render this valid.
-+
-+        topology = Topology.from_port_links(
-+            PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
-+            for link in self.config.port_topology
-+        )
-+
-+        self.ctx = Context(sut_node, tg_node, topology)
-+        self.result = result
-+        self.selected_tests = list(self.config.filter_tests())
-+        self.blocked = False
-+        self.remaining_tests = deque()
-+        self.remaining_test_cases = deque()
-+        self.supported_capabilities = set()
-+
-+        self.state = TestRunSetup(self, self.result)
-+
-+    @cached_property
-+    def required_capabilities(self) -> set[Capability]:
-+        """The capabilities required to run this test run in its totality."""
-+        caps = set()
-+
-+        for test_suite, test_cases in self.selected_tests:
-+            caps.update(test_suite.required_capabilities)
-+            for test_case in test_cases:
-+                caps.update(test_case.required_capabilities)
-+
-+        return caps
-+
-+    def spin(self):
-+        """Spin the internal state machine that executes the test run."""
-+        self.logger.info(f"Running test run with SUT '{self.ctx.sut_node.name}'.")
-+
-+        while self.state is not None:
-+            try:
-+                self.state.before()
-+                next_state = self.state.next()
-+            except (KeyboardInterrupt, Exception) as e:
-+                next_state = self.state.handle_exception(e)
-+            finally:
-+                self.state.after()
-+            if next_state is not None:
-+                self.logger.debug(
-+                    f"FSM - moving from '{self.state.logger_name}' to '{next_state.logger_name}'"
-+                )
-+            self.state = next_state
-+
-+    def init_random_seed(self) -> None:
-+        """Initialize the random seed to use for the test run."""
-+        seed = self.config.random_seed or random.randrange(0xFFFF_FFFF)
-+        self.logger.info(f"Initializing with random seed {seed}.")
-+        random.seed(seed)
-+
-+
-+class State(Protocol):
-+    """Protocol indicating the state of the test run."""
-+
-+    logger_name: ClassVar[str]
-+    test_run: TestRun
-+    result: BaseResult
-+
-+    def before(self):
-+        """Hook before the state is processed."""
-+        self.logger.set_stage(self.logger_name, self.log_file_path)
-+
-+    def after(self):
-+        """Hook after the state is processed."""
-+        return
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+
-+    @cached_property
-+    def logger(self) -> DTSLogger:
-+        """A reference to the root logger."""
-+        return get_dts_logger()
-+
-+    def get_log_file_name(self) -> str | None:
-+        """Name of the log file for this state."""
-+        return None
-+
-+    @property
-+    def log_file_path(self) -> Path | None:
-+        """Path to the log file for this state."""
-+        if file_name := self.get_log_file_name():
-+            return Path(SETTINGS.output_dir, file_name)
-+        return None
-+
-+    def next(self) -> Union["State", None]:
-+        """Next state."""
-+
-+    def on_error(self, ex: Exception) -> Union["State", None]:
-+        """Next state on error."""
-+
-+    def handle_exception(self, ex: Exception) -> Union["State", None]:
-+        """Handles an exception raised by `next`."""
-+        next_state = self.on_error(ex)
-+
-+        match ex:
-+            case InternalError():
-+                self.logger.error(
-+                    f"A CRITICAL ERROR has occurred during {self.description}. "
-+                    "Unrecoverable state reached, shutting down."
-+                )
-+                raise
-+            case KeyboardInterrupt():
-+                self.logger.info(
-+                    f"{self.description.capitalize()} INTERRUPTED by user! "
-+                    "Shutting down gracefully."
-+                )
-+                self.test_run.blocked = True
-+            case _:
-+                self.logger.error(f"An unexpected ERROR has occurred during {self.description}.")
-+                self.logger.exception(ex)
-+
-+        return next_state
-+
-+
-+@dataclass
-+class TestRunSetup(State):
-+    """Test run setup."""
-+
-+    logger_name: ClassVar[str] = "test_run_setup"
-+    test_run: TestRun
-+    result: TestRunResult
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return "test run setup"
-+
-+    def next(self) -> State | None:
-+        """Process state and return the next one."""
-+        test_run = self.test_run
-+        init_ctx(test_run.ctx)
-+
-+        self.logger.info(f"Running on SUT node '{test_run.ctx.sut_node.name}'.")
-+        test_run.init_random_seed()
-+        test_run.remaining_tests = deque(test_run.selected_tests)
-+
-+        test_run.ctx.sut_node.set_up_test_run(test_run.config, test_run.ctx.topology.sut_ports)
-+
-+        self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
-+        self.result.sut_info = test_run.ctx.sut_node.node_info
-+        self.result.dpdk_build_info = test_run.ctx.sut_node.get_dpdk_build_info()
-+
-+        self.logger.debug(f"Found capabilities to check: {test_run.required_capabilities}")
-+        test_run.supported_capabilities = get_supported_capabilities(
-+            test_run.ctx.sut_node, test_run.ctx.topology, test_run.required_capabilities
-+        )
-+
-+        self.result.update_setup(Result.PASS)
-+        return TestRunExecution(test_run, self.result)
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_setup(Result.ERROR, ex)
-+        return TestRunTeardown(self.test_run, self.result)
-+
-+
-+@dataclass
-+class TestRunExecution(State):
-+    """Test run execution."""
-+
-+    logger_name: ClassVar[str] = "test_run"
-+    test_run: TestRun
-+    result: TestRunResult
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return "test run execution"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        test_run = self.test_run
-+        try:
-+            test_suite_class, test_run.remaining_test_cases = test_run.remaining_tests.popleft()
-+            test_suite = test_suite_class()
-+            test_suite_result = test_run.result.add_test_suite(test_suite.name)
-+
-+            if test_run.blocked:
-+                test_suite_result.update_setup(Result.BLOCK)
-+                self.logger.warning(f"Test suite '{test_suite.name}' was BLOCKED.")
-+                # Continue to allow the rest to mark as blocked, no need to setup.
-+                return TestSuiteExecution(test_run, test_suite, test_suite_result)
-+
-+            try:
-+                test_if_supported(test_suite_class, test_run.supported_capabilities)
-+            except SkippedTestException as e:
-+                self.logger.info(
-+                    f"Test suite '{test_suite.name}' execution SKIPPED with reason: {e}"
-+                )
-+                test_suite_result.update_setup(Result.SKIP)
-+                return self
-+
-+            test_run.ctx.local.reset()
-+            return TestSuiteSetup(test_run, test_suite, test_suite_result)
-+        except IndexError:
-+            # No more test suites. We are done here.
-+            return TestRunTeardown(test_run, self.result)
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_setup(Result.ERROR, ex)
-+        return TestRunTeardown(self.test_run, self.result)
-+
-+
-+@dataclass
-+class TestRunTeardown(State):
-+    """Test run teardown."""
-+
-+    logger_name: ClassVar[str] = "test_run_teardown"
-+    test_run: TestRun
-+    result: TestRunResult
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return "test run teardown"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.test_run.ctx.sut_node.tear_down_test_run(self.test_run.ctx.topology.sut_ports)
-+        self.result.update_teardown(Result.PASS)
-+        return None
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_teardown(Result.ERROR, ex)
-+        self.logger.warning(
-+            "The environment may have not been cleaned up correctly. "
-+            "The subsequent tests could be affected!"
-+        )
-+        return None
-+
-+
-+@dataclass
-+class TestSuiteState(State):
-+    """A test suite state template."""
-+
-+    test_run: TestRun
-+    test_suite: TestSuite
-+    result: TestSuiteResult
-+
-+    def get_log_file_name(self) -> str | None:
-+        """Get the log file name."""
-+        return self.test_suite.name
-+
-+
-+@dataclass
-+class TestSuiteSetup(TestSuiteState):
-+    """Test suite setup."""
-+
-+    logger_name: ClassVar[str] = "test_suite_setup"
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test suite '{self.test_suite.name}' setup"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.test_suite.set_up_suite()
-+        self.result.update_setup(Result.PASS)
-+        return TestSuiteExecution(self.test_run, self.test_suite, self.result)
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_setup(Result.ERROR, ex)
-+        return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
-+
-+
-+@dataclass
-+class TestSuiteExecution(TestSuiteState):
-+    """Test suite execution."""
-+
-+    logger_name: ClassVar[str] = "test_suite"
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test suite '{self.test_suite.name}' execution"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        try:
-+            test_case = self.test_run.remaining_test_cases.popleft()
-+            test_case_result = self.result.add_test_case(test_case.name)
-+
-+            if self.test_run.blocked:
-+                test_case_result.update_setup(Result.BLOCK)
-+                self.logger.warning(f"Test case '{test_case.name}' execution was BLOCKED.")
-+                return TestSuiteExecution(self.test_run, self.test_suite, self.result)
-+
-+            try:
-+                test_if_supported(test_case, self.test_run.supported_capabilities)
-+            except SkippedTestException as e:
-+                self.logger.info(f"Test case '{test_case.name}' execution SKIPPED with reason: {e}")
-+                test_case_result.update_setup(Result.SKIP)
-+                return self
-+
-+            return TestCaseSetup(
-+                self.test_run, self.test_suite, self.result, test_case, test_case_result
++        self.build = build_env
++        self._node = node
++        self._logger = get_dts_logger()
++
++        self.timestamp = f"{str(os.getpid())}_{time.strftime('%Y%m%d%H%M%S', time.localtime())}"
++        self._virtual_devices = [VirtualDevice(vdev) for vdev in config.vdevs]
++
++        self._lcores = node.lcores
++        self._lcores = self.filter_lcores(LogicalCoreList(self.config.lcores))
++        if LogicalCore(lcore=0, core=0, socket=0, node=0) in self._lcores:
++            self._logger.warning(
++                "First core being used; "
++                "the first core is considered risky and should only be done by advanced users."
 +            )
-+        except IndexError:
-+            if self.test_run.blocked and self.result.setup_result.result is Result.BLOCK:
-+                # Skip teardown if the test case AND suite were blocked.
-+                return TestRunExecution(self.test_run, self.test_run.result)
-+            else:
-+                # No more test cases. We are done here.
-+                return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
+         else:
+-            # otherwise, we need to (re)create it
+-            self._dpdk_kill_session = self.create_session("dpdk_kill")
+-        self.dpdk_prefix_list = []
++            self._logger.info("Not using first core")
 +
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_setup(Result.ERROR, ex)
-+        return TestSuiteTeardown(self.test_run, self.test_suite, self.result)
++        self.prefix_list = []
++        self._env_vars = {}
++        self._ports_bound_to_dpdk = False
++        self._kill_session = None
 +
++    def setup(self, ports: Iterable[Port]):
++        """Set up the DPDK runtime on the target node."""
++        self.build.setup()
++        self.bind_ports_to_driver(ports)
 +
-+@dataclass
-+class TestSuiteTeardown(TestSuiteState):
-+    """Test suite teardown."""
-+
-+    logger_name: ClassVar[str] = "test_suite_teardown"
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test suite '{self.test_suite.name}' teardown"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.test_suite.tear_down_suite()
-+        self.test_run.ctx.sut_node.kill_cleanup_dpdk_apps()
-+        self.result.update_teardown(Result.PASS)
-+        return TestRunExecution(self.test_run, self.test_run.result)
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.logger.warning(
-+            "The environment may have not been cleaned up correctly. "
-+            "The subsequent tests could be affected!"
-+        )
-+        self.result.update_teardown(Result.ERROR, ex)
-+        return TestRunExecution(self.test_run, self.test_run.result)
-+
-+    def after(self):
-+        """Hook after state is processed."""
-+        if self.result.get_errors() and self.test_suite.is_blocking:
-+            self.logger.warning(
-+                f"An error occurred within blocking {self.test_suite.name}. "
-+                "The remaining test suites will be skipped."
-+            )
-+            self.test_run.blocked = True
-+
-+
-+@dataclass
-+class TestCaseState(State):
-+    """A test case state template."""
-+
-+    test_run: TestRun
-+    test_suite: TestSuite
-+    test_suite_result: TestSuiteResult
-+    test_case: type[TestCase]
-+    result: TestCaseResult
-+
-+    def get_log_file_name(self) -> str | None:
-+        """Get the log file name."""
-+        return self.test_suite.name
-+
-+
-+@dataclass
-+class TestCaseSetup(TestCaseState):
-+    """Test case setup."""
-+
-+    logger_name: ClassVar[str] = "test_case_setup"
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test case '{self.test_case.name}' setup"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.test_suite.set_up_test_case()
-+        self.result.update_setup(Result.PASS)
-+        return TestCaseExecution(
-+            self.test_run,
-+            self.test_suite,
-+            self.test_suite_result,
-+            self.test_case,
-+            self.result,
-+            SETTINGS.re_run,
-+        )
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update_setup(Result.ERROR, ex)
-+        return TestCaseTeardown(
-+            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
-+        )
-+
-+
-+@dataclass
-+class TestCaseExecution(TestCaseState):
-+    """Test case execution."""
-+
-+    logger_name: ClassVar[str] = "test_case"
-+    reattempts_left: int
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test case '{self.test_case.name}' execution"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.logger.info(f"Running test case '{self.test_case.name}'.")
-+        run_test_case = MethodType(self.test_case, self.test_suite)
-+        try:
-+            run_test_case()
-+        except TestCaseVerifyError as e:
-+            self.logger.error(f"{self.description.capitalize()} FAILED: {e}")
-+
-+            self.reattempts_left -= 1
-+            if self.reattempts_left > 0:
-+                self.logger.info(f"Re-attempting. {self.reattempts_left} attempts left.")
-+                return self
-+
-+            self.result.update(Result.FAIL, e)
-+        else:
-+            self.result.update(Result.PASS)
-+            self.logger.info(f"{self.description.capitalize()} PASSED.")
-+
-+        return TestCaseTeardown(
-+            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
-+        )
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.result.update(Result.ERROR, ex)
-+        return TestCaseTeardown(
-+            self.test_run, self.test_suite, self.test_suite_result, self.test_case, self.result
-+        )
-+
-+
-+@dataclass
-+class TestCaseTeardown(TestCaseState):
-+    """Test case teardown."""
-+
-+    logger_name: ClassVar[str] = "test_case_teardown"
-+
-+    @property
-+    def description(self) -> str:
-+        """State description."""
-+        return f"test case '{self.test_case.name}' teardown"
-+
-+    def next(self) -> State | None:
-+        """Next state."""
-+        self.test_suite.tear_down_test_case()
-+        self.result.update_teardown(Result.PASS)
-+        return TestSuiteExecution(self.test_run, self.test_suite, self.test_suite_result)
-+
-+    def on_error(self, ex: Exception) -> State | None:
-+        """Next state on error."""
-+        self.logger.warning(
-+            "The environment may have not been cleaned up correctly. "
-+            "The subsequent tests could be affected!"
-+        )
-+        self.result.update_teardown(Result.ERROR, ex)
-+        return TestSuiteExecution(self.test_run, self.test_suite, self.test_suite_result)
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index b9b527e40d..ae90997061 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -60,7 +60,7 @@ class TestSuite(TestProtocol):
++    def teardown(self, ports: Iterable[Port]) -> None:
++        """Reset DPDK variables and bind port driver to the OS driver."""
++        self.bind_ports_to_driver(ports, for_dpdk=False)
  
-     By default, all test cases will be executed. A list of testcase names may be specified
-     in the YAML test run configuration file and in the :option:`--test-suite` command line argument
--    or in the :envvar:`DTS_TESTCASES` environment variable to filter which test cases to run.
-+    or in the :envvar:`DTS_TEST_SUITES` environment variable to filter which test cases to run.
-     The union of both lists will be used. Any unknown test cases from the latter lists
-     will be silently ignored.
- 
-diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-index e1215f9703..a1d6d9dd32 100644
---- a/dts/framework/testbed_model/capability.py
-+++ b/dts/framework/testbed_model/capability.py
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2024 PANTHEON.tech s.r.o.
-+# Copyright(c) 2025 Arm Limited
- 
- """Testbed capabilities.
- 
-@@ -53,7 +54,7 @@ def test_scatter_mbuf_2048(self):
- 
- from typing_extensions import Self
- 
--from framework.exception import ConfigurationError
-+from framework.exception import ConfigurationError, SkippedTestException
- from framework.logger import get_dts_logger
- from framework.remote_session.testpmd_shell import (
-     NicCapability,
-@@ -217,9 +218,7 @@ def get_supported_capabilities(
+     def run_dpdk_app(
+         self, app_path: PurePath, eal_params: EalParams, timeout: float = 30
+@@ -501,7 +429,7 @@ def run_dpdk_app(
+         Returns:
+             The result of the DPDK app execution.
+         """
+-        return self.main_session.send_command(
++        return self._node.main_session.send_command(
+             f"{app_path} {eal_params}", timeout, privileged=True, verify=True
          )
-         if cls.capabilities_to_check:
-             capabilities_to_check_map = cls._get_decorated_capabilities_map()
--            with TestPmdShell(
--                sut_node, privileged=True, disable_device_start=True
--            ) as testpmd_shell:
-+            with TestPmdShell() as testpmd_shell:
-                 for (
-                     conditional_capability_fn,
-                     capabilities,
-@@ -506,3 +505,20 @@ def get_supported_capabilities(
-         supported_capabilities.update(callback(sut_node, topology_config))
  
-     return supported_capabilities
-+
-+
-+def test_if_supported(test: type[TestProtocol], supported_caps: set[Capability]) -> None:
-+    """Test if the given test suite or test case is supported.
-+
-+    Args:
-+        test: The test suite or case.
-+        supported_caps: The capabilities that need to be checked against the test.
-+
-+    Raises:
-+        SkippedTestException: If the test hasn't met the requirements.
-+    """
-+    unsupported_caps = test.required_capabilities - supported_caps
-+    if unsupported_caps:
-+        capability_str = "capabilities" if len(unsupported_caps) > 1 else "capability"
-+        msg = f"Required {capability_str} '{unsupported_caps}' not found."
-+        raise SkippedTestException(msg)
-diff --git a/dts/framework/testbed_model/tg_node.py b/dts/framework/testbed_model/tg_node.py
-index 595836a664..290a3fbd74 100644
---- a/dts/framework/testbed_model/tg_node.py
-+++ b/dts/framework/testbed_model/tg_node.py
-@@ -37,9 +37,11 @@ class TGNode(Node):
-     must be a way to send traffic without that.
+@@ -518,9 +446,59 @@ def bind_ports_to_driver(self, ports: Iterable[Port], for_dpdk: bool = True) ->
+                 continue
  
-     Attributes:
-+        config: The traffic generator node configuration.
-         traffic_generator: The traffic generator running on the node.
+             driver = port.config.os_driver_for_dpdk if for_dpdk else port.config.os_driver
+-            self.main_session.send_command(
+-                f"{self.path_to_devbind_script} -b {driver} --force {port.pci}",
++            self._node.main_session.send_command(
++                f"{self.devbind_script_path} -b {driver} --force {port.pci}",
+                 privileged=True,
+                 verify=True,
+             )
+             port.bound_for_dpdk = for_dpdk
++
++    @cached_property
++    def devbind_script_path(self) -> PurePath:
++        """The path to the dpdk-devbind.py script on the node."""
++        return self._node.main_session.join_remote_path(
++            self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
++        )
++
++    def filter_lcores(
++        self,
++        filter_specifier: LogicalCoreCount | LogicalCoreList,
++        ascending: bool = True,
++    ) -> list[LogicalCore]:
++        """Filter the node's logical cores that DTS can use.
++
++        Logical cores that DTS can use are the ones that are present on the node, but filtered
++        according to the test run configuration. The `filter_specifier` will filter cores from
++        those logical cores.
++
++        Args:
++            filter_specifier: Two different filters can be used, one that specifies the number
++                of logical cores per core, cores per socket and the number of sockets,
++                and another one that specifies a logical core list.
++            ascending: If :data:`True`, use cores with the lowest numerical id first and continue
++                in ascending order. If :data:`False`, start with the highest id and continue
++                in descending order. This ordering affects which sockets to consider first as well.
++
++        Returns:
++            The filtered logical cores.
++        """
++        self._logger.debug(f"Filtering {filter_specifier} from {self._lcores}.")
++        return lcore_filter(
++            self._lcores,
++            filter_specifier,
++            ascending,
++        ).filter()
++
++    def kill_cleanup_dpdk_apps(self) -> None:
++        """Kill all dpdk applications on the SUT, then clean up hugepages."""
++        if self._kill_session and self._kill_session.is_alive():
++            # we can use the session if it exists and responds
++            self._kill_session.kill_cleanup_dpdk_apps(self.prefix_list)
++        else:
++            # otherwise, we need to (re)create it
++            self._kill_session = self._node.create_session("dpdk_kill")
++        self.prefix_list = []
++
++    def get_virtual_devices(self) -> Iterable[VirtualDevice]:
++        """The available DPDK virtual devices."""
++        return (v for v in self._virtual_devices)
+diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
+index b55deb7fa0..fc43448e06 100644
+--- a/dts/framework/remote_session/dpdk_shell.py
++++ b/dts/framework/remote_session/dpdk_shell.py
+@@ -15,7 +15,6 @@
+     SingleActiveInteractiveShell,
+ )
+ from framework.testbed_model.cpu import LogicalCoreList
+-from framework.testbed_model.sut_node import SutNode
+ 
+ 
+ def compute_eal_params(
+@@ -35,15 +34,15 @@ def compute_eal_params(
+ 
+     if params.lcore_list is None:
+         params.lcore_list = LogicalCoreList(
+-            ctx.sut_node.filter_lcores(ctx.local.lcore_filter_specifier, ctx.local.ascending_cores)
++            ctx.dpdk.filter_lcores(ctx.local.lcore_filter_specifier, ctx.local.ascending_cores)
+         )
+ 
+     prefix = params.prefix
+     if ctx.local.append_prefix_timestamp:
+-        prefix = f"{prefix}_{ctx.sut_node.dpdk_timestamp}"
++        prefix = f"{prefix}_{ctx.dpdk.timestamp}"
+     prefix = ctx.sut_node.main_session.get_dpdk_file_prefix(prefix)
+     if prefix:
+-        ctx.sut_node.dpdk_prefix_list.append(prefix)
++        ctx.dpdk.prefix_list.append(prefix)
+     params.prefix = prefix
+ 
+     if params.allowed_ports is None:
+@@ -60,7 +59,6 @@ class DPDKShell(SingleActiveInteractiveShell, ABC):
+     supplied app parameters.
      """
  
-+    config: TGNodeConfiguration
-     traffic_generator: CapturingTrafficGenerator
+-    _node: SutNode
+     _app_params: EalParams
  
-     def __init__(self, node_config: TGNodeConfiguration):
-@@ -51,7 +53,6 @@ def __init__(self, node_config: TGNodeConfiguration):
-             node_config: The TG node's test run configuration.
+     def __init__(
+@@ -80,4 +78,6 @@ def _update_real_path(self, path: PurePath) -> None:
+ 
+         Adds the remote DPDK build directory to the path.
          """
-         super().__init__(node_config)
--        self.traffic_generator = create_traffic_generator(self, node_config.traffic_generator)
-         self._logger.info(f"Created node: {self.name}")
+-        super()._update_real_path(PurePath(self._node.remote_dpdk_build_dir).joinpath(path))
++        super()._update_real_path(
++            PurePath(get_ctx().dpdk.build.remote_dpdk_build_dir).joinpath(path)
++        )
+diff --git a/dts/framework/remote_session/single_active_interactive_shell.py b/dts/framework/remote_session/single_active_interactive_shell.py
+index 2eec2f698a..c1369ef77e 100644
+--- a/dts/framework/remote_session/single_active_interactive_shell.py
++++ b/dts/framework/remote_session/single_active_interactive_shell.py
+@@ -27,7 +27,6 @@
+ from paramiko import Channel, channel
+ from typing_extensions import Self
  
-     def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable[Port]) -> None:
-@@ -64,6 +65,7 @@ def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable
+-from framework.context import get_ctx
+ from framework.exception import (
+     InteractiveCommandExecutionError,
+     InteractiveSSHSessionDeadError,
+@@ -35,6 +34,7 @@
+ )
+ from framework.logger import DTSLogger, get_dts_logger
+ from framework.params import Params
++from framework.settings import SETTINGS
+ from framework.testbed_model.node import Node
+ from framework.utils import MultiInheritanceBaseClass
+ 
+@@ -114,7 +114,7 @@ def __init__(
+         self._logger = get_dts_logger(f"{node.name}.{name}")
+         self._app_params = app_params
+         self._privileged = privileged
+-        self._timeout = get_ctx().local.timeout
++        self._timeout = SETTINGS.timeout
+         # Ensure path is properly formatted for the host
+         self._update_real_path(self.path)
+         super().__init__(**kwargs)
+diff --git a/dts/framework/runner.py b/dts/framework/runner.py
+index 90aeb63cfb..801709a2aa 100644
+--- a/dts/framework/runner.py
++++ b/dts/framework/runner.py
+@@ -15,17 +15,11 @@
+ from framework.config.common import ValidationContext
+ from framework.test_run import TestRun
+ from framework.testbed_model.node import Node
+-from framework.testbed_model.sut_node import SutNode
+-from framework.testbed_model.tg_node import TGNode
+ 
+ from .config import (
+     Configuration,
+     load_config,
+ )
+-from .config.node import (
+-    SutNodeConfiguration,
+-    TGNodeConfiguration,
+-)
+ from .logger import DTSLogger, get_dts_logger
+ from .settings import SETTINGS
+ from .test_result import (
+@@ -63,15 +57,7 @@ def run(self) -> None:
+             self._result.update_setup(Result.PASS)
+ 
+             for node_config in self._configuration.nodes:
+-                node: Node
+-
+-                match node_config:
+-                    case SutNodeConfiguration():
+-                        node = SutNode(node_config)
+-                    case TGNodeConfiguration():
+-                        node = TGNode(node_config)
+-
+-                nodes.append(node)
++                nodes.append(Node(node_config))
+ 
+             # for all test run sections
+             for test_run_config in self._configuration.test_runs:
+diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
+index a59bac71bb..7f576022c7 100644
+--- a/dts/framework/test_result.py
++++ b/dts/framework/test_result.py
+@@ -32,9 +32,9 @@
+ from .config.test_run import TestRunConfiguration
+ from .exception import DTSError, ErrorSeverity
+ from .logger import DTSLogger
++from .remote_session.dpdk import DPDKBuildInfo
+ from .testbed_model.os_session import OSSessionInfo
+ from .testbed_model.port import Port
+-from .testbed_model.sut_node import DPDKBuildInfo
+ 
+ 
+ class Result(Enum):
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 811798f57f..6801bf87fd 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -80,7 +80,7 @@
+ from functools import cached_property
+ from pathlib import Path
+ from types import MethodType
+-from typing import ClassVar, Protocol, Union, cast
++from typing import ClassVar, Protocol, Union
+ 
+ from framework.config.test_run import TestRunConfiguration
+ from framework.context import Context, init_ctx
+@@ -90,6 +90,7 @@
+     TestCaseVerifyError,
+ )
+ from framework.logger import DTSLogger, get_dts_logger
++from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
+ from framework.settings import SETTINGS
+ from framework.test_result import BaseResult, Result, TestCaseResult, TestRunResult, TestSuiteResult
+ from framework.test_suite import TestCase, TestSuite
+@@ -99,9 +100,8 @@
+     test_if_supported,
+ )
+ from framework.testbed_model.node import Node
+-from framework.testbed_model.sut_node import SutNode
+-from framework.testbed_model.tg_node import TGNode
+ from framework.testbed_model.topology import PortLink, Topology
++from framework.testbed_model.traffic_generator import create_traffic_generator
+ 
+ TestScenario = tuple[type[TestSuite], deque[type[TestCase]]]
+ 
+@@ -163,17 +163,18 @@ def __init__(self, config: TestRunConfiguration, nodes: Iterable[Node], result:
+         self.logger = get_dts_logger()
+ 
+         sut_node = next(n for n in nodes if n.name == config.system_under_test_node)
+-        sut_node = cast(SutNode, sut_node)  # Config validation must render this valid.
+-
+         tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
+-        tg_node = cast(TGNode, tg_node)  # Config validation must render this valid.
+ 
+         topology = Topology.from_port_links(
+             PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
+             for link in self.config.port_topology
+         )
+ 
+-        self.ctx = Context(sut_node, tg_node, topology)
++        dpdk_build_env = DPDKBuildEnvironment(config.dpdk.build, sut_node)
++        dpdk_runtime_env = DPDKRuntimeEnvironment(config.dpdk, sut_node, dpdk_build_env)
++        traffic_generator = create_traffic_generator(config.traffic_generator, tg_node)
++
++        self.ctx = Context(sut_node, tg_node, topology, dpdk_runtime_env, traffic_generator)
+         self.result = result
+         self.selected_tests = list(self.config.filter_tests())
+         self.blocked = False
+@@ -307,11 +308,11 @@ def next(self) -> State | None:
+         test_run.init_random_seed()
+         test_run.remaining_tests = deque(test_run.selected_tests)
+ 
+-        test_run.ctx.sut_node.set_up_test_run(test_run.config, test_run.ctx.topology.sut_ports)
++        test_run.ctx.dpdk.setup(test_run.ctx.topology.sut_ports)
+ 
+         self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
+         self.result.sut_info = test_run.ctx.sut_node.node_info
+-        self.result.dpdk_build_info = test_run.ctx.sut_node.get_dpdk_build_info()
++        self.result.dpdk_build_info = test_run.ctx.dpdk.build.get_dpdk_build_info()
+ 
+         self.logger.debug(f"Found capabilities to check: {test_run.required_capabilities}")
+         test_run.supported_capabilities = get_supported_capabilities(
+@@ -390,7 +391,7 @@ def description(self) -> str:
+ 
+     def next(self) -> State | None:
+         """Next state."""
+-        self.test_run.ctx.sut_node.tear_down_test_run(self.test_run.ctx.topology.sut_ports)
++        self.test_run.ctx.dpdk.teardown(self.test_run.ctx.topology.sut_ports)
+         self.result.update_teardown(Result.PASS)
+         return None
+ 
+@@ -500,7 +501,7 @@ def description(self) -> str:
+     def next(self) -> State | None:
+         """Next state."""
+         self.test_suite.tear_down_suite()
+-        self.test_run.ctx.sut_node.kill_cleanup_dpdk_apps()
++        self.test_run.ctx.dpdk.kill_cleanup_dpdk_apps()
+         self.result.update_teardown(Result.PASS)
+         return TestRunExecution(self.test_run, self.test_run.result)
+ 
+diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
+index ae90997061..58da26adf0 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/framework/test_suite.py
+@@ -34,6 +34,7 @@
+ from framework.testbed_model.capability import TestProtocol
+ from framework.testbed_model.topology import Topology
+ from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
++    CapturingTrafficGenerator,
+     PacketFilteringConfig,
+ )
+ 
+@@ -246,8 +247,12 @@ def send_packets_and_capture(
+         Returns:
+             A list of received packets.
          """
-         super().set_up_test_run(test_run_config, ports)
-         self.main_session.bring_up_link(ports)
-+        self.traffic_generator = create_traffic_generator(self, self.config.traffic_generator)
- 
-     def tear_down_test_run(self, ports: Iterable[Port]) -> None:
-         """Extend the test run teardown with the teardown of the traffic generator.
-@@ -72,6 +74,7 @@ def tear_down_test_run(self, ports: Iterable[Port]) -> None:
-             ports: The ports to tear down for the test run.
++        assert isinstance(
++            self._ctx.tg, CapturingTrafficGenerator
++        ), "Cannot capture with a non-capturing traffic generator"
++        # TODO: implement @requires for types of traffic generator
+         packets = self._adjust_addresses(packets)
+-        return self._ctx.tg_node.send_packets_and_capture(
++        return self._ctx.tg.send_packets_and_capture(
+             packets,
+             self._ctx.topology.tg_port_egress,
+             self._ctx.topology.tg_port_ingress,
+@@ -265,7 +270,7 @@ def send_packets(
+             packets: Packets to send.
          """
-         super().tear_down_test_run(ports)
-+        self.traffic_generator.close()
+         packets = self._adjust_addresses(packets)
+-        self._ctx.tg_node.send_packets(packets, self._ctx.topology.tg_port_egress)
++        self._ctx.tg.send_packets(packets, self._ctx.topology.tg_port_egress)
  
-     def send_packets_and_capture(
+     def get_expected_packets(
          self,
-@@ -119,5 +122,4 @@ def close(self) -> None:
+diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
+index a1d6d9dd32..ea0e647a47 100644
+--- a/dts/framework/testbed_model/capability.py
++++ b/dts/framework/testbed_model/capability.py
+@@ -63,8 +63,8 @@ def test_scatter_mbuf_2048(self):
+     TestPmdShellDecorator,
+     TestPmdShellMethod,
+ )
++from framework.testbed_model.node import Node
  
-         This extends the superclass method with TG cleanup.
+-from .sut_node import SutNode
+ from .topology import Topology, TopologyType
+ 
+ if TYPE_CHECKING:
+@@ -90,7 +90,7 @@ class Capability(ABC):
+     #: A set storing the capabilities whose support should be checked.
+     capabilities_to_check: ClassVar[set[Self]] = set()
+ 
+-    def register_to_check(self) -> Callable[[SutNode, "Topology"], set[Self]]:
++    def register_to_check(self) -> Callable[[Node, "Topology"], set[Self]]:
+         """Register the capability to be checked for support.
+ 
+         Returns:
+@@ -118,27 +118,27 @@ def _preprocess_required(self, test_case_or_suite: type["TestProtocol"]) -> None
+         """An optional method that modifies the required capabilities."""
+ 
+     @classmethod
+-    def _get_and_reset(cls, sut_node: SutNode, topology: "Topology") -> set[Self]:
++    def _get_and_reset(cls, node: Node, topology: "Topology") -> set[Self]:
+         """The callback method to be called after all capabilities have been registered.
+ 
+         Not only does this method check the support of capabilities,
+         but it also reset the internal set of registered capabilities
+         so that the "register, then get support" workflow works in subsequent test runs.
          """
+-        supported_capabilities = cls.get_supported_capabilities(sut_node, topology)
++        supported_capabilities = cls.get_supported_capabilities(node, topology)
+         cls.capabilities_to_check = set()
+         return supported_capabilities
+ 
+     @classmethod
+     @abstractmethod
+-    def get_supported_capabilities(cls, sut_node: SutNode, topology: "Topology") -> set[Self]:
++    def get_supported_capabilities(cls, node: Node, topology: "Topology") -> set[Self]:
+         """Get the support status of each registered capability.
+ 
+         Each subclass must implement this method and return the subset of supported capabilities
+         of :attr:`capabilities_to_check`.
+ 
+         Args:
+-            sut_node: The SUT node of the current test run.
++            node: The node to check capabilities against.
+             topology: The topology of the current test run.
+ 
+         Returns:
+@@ -197,7 +197,7 @@ def get_unique(cls, nic_capability: NicCapability) -> Self:
+ 
+     @classmethod
+     def get_supported_capabilities(
+-        cls, sut_node: SutNode, topology: "Topology"
++        cls, node: Node, topology: "Topology"
+     ) -> set["DecoratedNicCapability"]:
+         """Overrides :meth:`~Capability.get_supported_capabilities`.
+ 
+@@ -207,7 +207,7 @@ def get_supported_capabilities(
+         before executing its `capability_fn` so that each capability is retrieved only once.
+         """
+         supported_conditional_capabilities: set["DecoratedNicCapability"] = set()
+-        logger = get_dts_logger(f"{sut_node.name}.{cls.__name__}")
++        logger = get_dts_logger(f"{node.name}.{cls.__name__}")
+         if topology.type is topology.type.no_link:
+             logger.debug(
+                 "No links available in the current topology, not getting NIC capabilities."
+@@ -332,7 +332,7 @@ def get_unique(cls, topology_type: TopologyType) -> Self:
+ 
+     @classmethod
+     def get_supported_capabilities(
+-        cls, sut_node: SutNode, topology: "Topology"
++        cls, node: Node, topology: "Topology"
+     ) -> set["TopologyCapability"]:
+         """Overrides :meth:`~Capability.get_supported_capabilities`."""
+         supported_capabilities = set()
+@@ -483,14 +483,14 @@ def add_required_capability(
+ 
+ 
+ def get_supported_capabilities(
+-    sut_node: SutNode,
++    node: Node,
+     topology_config: Topology,
+     capabilities_to_check: set[Capability],
+ ) -> set[Capability]:
+     """Probe the environment for `capabilities_to_check` and return the supported ones.
+ 
+     Args:
+-        sut_node: The SUT node to check for capabilities.
++        node: The node to check capabilities against.
+         topology_config: The topology config to check for capabilities.
+         capabilities_to_check: The capabilities to check.
+ 
+@@ -502,7 +502,7 @@ def get_supported_capabilities(
+         callbacks.add(capability_to_check.register_to_check())
+     supported_capabilities = set()
+     for callback in callbacks:
+-        supported_capabilities.update(callback(sut_node, topology_config))
++        supported_capabilities.update(callback(node, topology_config))
+ 
+     return supported_capabilities
+ 
+diff --git a/dts/framework/testbed_model/node.py b/dts/framework/testbed_model/node.py
+index 1a4c825ed2..be1b4ac2ac 100644
+--- a/dts/framework/testbed_model/node.py
++++ b/dts/framework/testbed_model/node.py
+@@ -13,25 +13,22 @@
+ The :func:`~Node.skip_setup` decorator can be used without subclassing.
+ """
+ 
+-from abc import ABC
+-from collections.abc import Iterable
+ from functools import cached_property
+ 
+ from framework.config.node import (
+     OS,
+     NodeConfiguration,
+ )
+-from framework.config.test_run import TestRunConfiguration
+ from framework.exception import ConfigurationError
+ from framework.logger import DTSLogger, get_dts_logger
+ 
+-from .cpu import Architecture, LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
++from .cpu import Architecture, LogicalCore
+ from .linux_session import LinuxSession
+-from .os_session import OSSession
++from .os_session import OSSession, OSSessionInfo
+ from .port import Port
+ 
+ 
+-class Node(ABC):
++class Node:
+     """The base class for node management.
+ 
+     It shouldn't be instantiated, but rather subclassed.
+@@ -57,7 +54,8 @@ class Node(ABC):
+     ports: list[Port]
+     _logger: DTSLogger
+     _other_sessions: list[OSSession]
+-    _test_run_config: TestRunConfiguration
++    _node_info: OSSessionInfo | None
++    _compiler_version: str | None
+ 
+     def __init__(self, node_config: NodeConfiguration):
+         """Connect to the node and gather info during initialization.
+@@ -80,35 +78,13 @@ def __init__(self, node_config: NodeConfiguration):
+         self._get_remote_cpus()
+         self._other_sessions = []
+         self.ports = [Port(self, port_config) for port_config in self.config.ports]
++        self._logger.info(f"Created node: {self.name}")
+ 
+     @cached_property
+     def ports_by_name(self) -> dict[str, Port]:
+         """Ports mapped by the name assigned at configuration."""
+         return {port.name: port for port in self.ports}
+ 
+-    def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable[Port]) -> None:
+-        """Test run setup steps.
+-
+-        Configure hugepages on all DTS node types. Additional steps can be added by
+-        extending the method in subclasses with the use of super().
+-
+-        Args:
+-            test_run_config: A test run configuration according to which
+-                the setup steps will be taken.
+-            ports: The ports to set up for the test run.
+-        """
+-        self._setup_hugepages()
+-
+-    def tear_down_test_run(self, ports: Iterable[Port]) -> None:
+-        """Test run teardown steps.
+-
+-        There are currently no common execution teardown steps common to all DTS node types.
+-        Additional steps can be added by extending the method in subclasses with the use of super().
+-
+-        Args:
+-            ports: The ports to tear down for the test run.
+-        """
+-
+     def create_session(self, name: str) -> OSSession:
+         """Create and return a new OS-aware remote session.
+ 
+@@ -134,40 +110,33 @@ def create_session(self, name: str) -> OSSession:
+         self._other_sessions.append(connection)
+         return connection
+ 
+-    def filter_lcores(
+-        self,
+-        filter_specifier: LogicalCoreCount | LogicalCoreList,
+-        ascending: bool = True,
+-    ) -> list[LogicalCore]:
+-        """Filter the node's logical cores that DTS can use.
+-
+-        Logical cores that DTS can use are the ones that are present on the node, but filtered
+-        according to the test run configuration. The `filter_specifier` will filter cores from
+-        those logical cores.
+-
+-        Args:
+-            filter_specifier: Two different filters can be used, one that specifies the number
+-                of logical cores per core, cores per socket and the number of sockets,
+-                and another one that specifies a logical core list.
+-            ascending: If :data:`True`, use cores with the lowest numerical id first and continue
+-                in ascending order. If :data:`False`, start with the highest id and continue
+-                in descending order. This ordering affects which sockets to consider first as well.
+-
+-        Returns:
+-            The filtered logical cores.
+-        """
+-        self._logger.debug(f"Filtering {filter_specifier} from {self.lcores}.")
+-        return lcore_filter(
+-            self.lcores,
+-            filter_specifier,
+-            ascending,
+-        ).filter()
+-
+     def _get_remote_cpus(self) -> None:
+         """Scan CPUs in the remote OS and store a list of LogicalCores."""
+         self._logger.info("Getting CPU information.")
+         self.lcores = self.main_session.get_remote_cpus()
+ 
++    @cached_property
++    def node_info(self) -> OSSessionInfo:
++        """Additional node information."""
++        return self.main_session.get_node_info()
++
++    @property
++    def compiler_version(self) -> str | None:
++        """The node's compiler version."""
++        if self._compiler_version is None:
++            self._logger.warning("The `compiler_version` is None because a pre-built DPDK is used.")
++
++        return self._compiler_version
++
++    @compiler_version.setter
++    def compiler_version(self, value: str) -> None:
++        """Set the `compiler_version` used on the SUT node.
++
++        Args:
++            value: The node's compiler version.
++        """
++        self._compiler_version = value
++
+     def _setup_hugepages(self) -> None:
+         """Setup hugepages on the node.
+ 
+diff --git a/dts/framework/testbed_model/tg_node.py b/dts/framework/testbed_model/tg_node.py
+deleted file mode 100644
+index 290a3fbd74..0000000000
+--- a/dts/framework/testbed_model/tg_node.py
++++ /dev/null
+@@ -1,125 +0,0 @@
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2010-2014 Intel Corporation
+-# Copyright(c) 2022 University of New Hampshire
+-# Copyright(c) 2023 PANTHEON.tech s.r.o.
+-
+-"""Traffic generator node.
+-
+-A traffic generator (TG) generates traffic that's sent towards the SUT node.
+-A TG node is where the TG runs.
+-"""
+-
+-from collections.abc import Iterable
+-
+-from scapy.packet import Packet
+-
+-from framework.config.node import TGNodeConfiguration
+-from framework.config.test_run import TestRunConfiguration
+-from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
+-    PacketFilteringConfig,
+-)
+-
+-from .node import Node
+-from .port import Port
+-from .traffic_generator import CapturingTrafficGenerator, create_traffic_generator
+-
+-
+-class TGNode(Node):
+-    """The traffic generator node.
+-
+-    The TG node extends :class:`Node` with TG specific features:
+-
+-        * Traffic generator initialization,
+-        * The sending of traffic and receiving packets,
+-        * The sending of traffic without receiving packets.
+-
+-    Not all traffic generators are capable of capturing traffic, which is why there
+-    must be a way to send traffic without that.
+-
+-    Attributes:
+-        config: The traffic generator node configuration.
+-        traffic_generator: The traffic generator running on the node.
+-    """
+-
+-    config: TGNodeConfiguration
+-    traffic_generator: CapturingTrafficGenerator
+-
+-    def __init__(self, node_config: TGNodeConfiguration):
+-        """Extend the constructor with TG node specifics.
+-
+-        Initialize the traffic generator on the TG node.
+-
+-        Args:
+-            node_config: The TG node's test run configuration.
+-        """
+-        super().__init__(node_config)
+-        self._logger.info(f"Created node: {self.name}")
+-
+-    def set_up_test_run(self, test_run_config: TestRunConfiguration, ports: Iterable[Port]) -> None:
+-        """Extend the test run setup with the setup of the traffic generator.
+-
+-        Args:
+-            test_run_config: A test run configuration according to which
+-                the setup steps will be taken.
+-            ports: The ports to set up for the test run.
+-        """
+-        super().set_up_test_run(test_run_config, ports)
+-        self.main_session.bring_up_link(ports)
+-        self.traffic_generator = create_traffic_generator(self, self.config.traffic_generator)
+-
+-    def tear_down_test_run(self, ports: Iterable[Port]) -> None:
+-        """Extend the test run teardown with the teardown of the traffic generator.
+-
+-        Args:
+-            ports: The ports to tear down for the test run.
+-        """
+-        super().tear_down_test_run(ports)
 -        self.traffic_generator.close()
-         super().close()
+-
+-    def send_packets_and_capture(
+-        self,
+-        packets: list[Packet],
+-        send_port: Port,
+-        receive_port: Port,
+-        filter_config: PacketFilteringConfig = PacketFilteringConfig(),
+-        duration: float = 1,
+-    ) -> list[Packet]:
+-        """Send `packets`, return received traffic.
+-
+-        Send `packets` on `send_port` and then return all traffic captured
+-        on `receive_port` for the given duration. Also record the captured traffic
+-        in a pcap file.
+-
+-        Args:
+-            packets: The packets to send.
+-            send_port: The egress port on the TG node.
+-            receive_port: The ingress port in the TG node.
+-            filter_config: The filter to use when capturing packets.
+-            duration: Capture traffic for this amount of time after sending `packet`.
+-
+-        Returns:
+-             A list of received packets. May be empty if no packets are captured.
+-        """
+-        return self.traffic_generator.send_packets_and_capture(
+-            packets,
+-            send_port,
+-            receive_port,
+-            filter_config,
+-            duration,
+-        )
+-
+-    def send_packets(self, packets: list[Packet], port: Port):
+-        """Send packets without capturing resulting received packets.
+-
+-        Args:
+-            packets: Packets to send.
+-            port: Port to send the packets on.
+-        """
+-        self.traffic_generator.send_packets(packets, port)
+-
+-    def close(self) -> None:
+-        """Free all resources used by the node.
+-
+-        This extends the superclass method with TG cleanup.
+-        """
+-        super().close()
+diff --git a/dts/framework/testbed_model/traffic_generator/__init__.py b/dts/framework/testbed_model/traffic_generator/__init__.py
+index 922875f401..2a259a6e6c 100644
+--- a/dts/framework/testbed_model/traffic_generator/__init__.py
++++ b/dts/framework/testbed_model/traffic_generator/__init__.py
+@@ -14,7 +14,7 @@
+ and a capturing traffic generator is required.
+ """
+ 
+-from framework.config.node import ScapyTrafficGeneratorConfig, TrafficGeneratorConfig
++from framework.config.test_run import ScapyTrafficGeneratorConfig, TrafficGeneratorConfig
+ from framework.exception import ConfigurationError
+ from framework.testbed_model.node import Node
+ 
+@@ -23,13 +23,13 @@
+ 
+ 
+ def create_traffic_generator(
+-    tg_node: Node, traffic_generator_config: TrafficGeneratorConfig
++    traffic_generator_config: TrafficGeneratorConfig, node: Node
+ ) -> CapturingTrafficGenerator:
+     """The factory function for creating traffic generator objects from the test run configuration.
+ 
+     Args:
+-        tg_node: The traffic generator node where the created traffic generator will be running.
+         traffic_generator_config: The traffic generator config.
++        node: The node where the created traffic generator will be running.
+ 
+     Returns:
+         A traffic generator capable of capturing received packets.
+@@ -39,6 +39,6 @@ def create_traffic_generator(
+     """
+     match traffic_generator_config:
+         case ScapyTrafficGeneratorConfig():
+-            return ScapyTrafficGenerator(tg_node, traffic_generator_config, privileged=True)
++            return ScapyTrafficGenerator(node, traffic_generator_config, privileged=True)
+         case _:
+             raise ConfigurationError(f"Unknown traffic generator: {traffic_generator_config.type}")
+diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
+index c9c7dac54a..520561b2eb 100644
+--- a/dts/framework/testbed_model/traffic_generator/scapy.py
++++ b/dts/framework/testbed_model/traffic_generator/scapy.py
+@@ -14,13 +14,15 @@
+ 
+ import re
+ import time
++from collections.abc import Iterable
+ from typing import ClassVar
+ 
+ from scapy.compat import base64_bytes
+ from scapy.layers.l2 import Ether
+ from scapy.packet import Packet
+ 
+-from framework.config.node import OS, ScapyTrafficGeneratorConfig
++from framework.config.node import OS
++from framework.config.test_run import ScapyTrafficGeneratorConfig
+ from framework.remote_session.python_shell import PythonShell
+ from framework.testbed_model.node import Node
+ from framework.testbed_model.port import Port
+@@ -83,6 +85,14 @@ def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs)
+         super().__init__(node=tg_node, config=config, tg_node=tg_node, **kwargs)
+         self.start_application()
+ 
++    def setup(self, ports: Iterable[Port]):
++        """Extends :meth:`.traffic_generator.TrafficGenerator.setup`.
++
++        Brings up the port links.
++        """
++        super().setup(ports)
++        self._tg_node.main_session.bring_up_link(ports)
++
+     def start_application(self) -> None:
+         """Extends :meth:`framework.remote_session.interactive_shell.start_application`.
+ 
+diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+index 9b4d5dc80a..4469273e36 100644
+--- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
++++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+@@ -9,10 +9,11 @@
+ """
+ 
+ from abc import ABC, abstractmethod
++from typing import Iterable
+ 
+ from scapy.packet import Packet
+ 
+-from framework.config.node import TrafficGeneratorConfig
++from framework.config.test_run import TrafficGeneratorConfig
+ from framework.logger import DTSLogger, get_dts_logger
+ from framework.testbed_model.node import Node
+ from framework.testbed_model.port import Port
+@@ -49,6 +50,12 @@ def __init__(self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs):
+         self._logger = get_dts_logger(f"{self._tg_node.name} {self._config.type}")
+         super().__init__(**kwargs)
+ 
++    def setup(self, ports: Iterable[Port]):
++        """Setup the traffic generator."""
++
++    def teardown(self):
++        """Teardown the traffic generator."""
++
+     def send_packet(self, packet: Packet, port: Port) -> None:
+         """Send `packet` and block until it is fully sent.
+ 
+diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
+index 8a5799c684..a8ea07595f 100644
+--- a/dts/tests/TestSuite_smoke_tests.py
++++ b/dts/tests/TestSuite_smoke_tests.py
+@@ -47,7 +47,7 @@ def set_up_suite(self) -> None:
+             Set the build directory path and a list of NICs in the SUT node.
+         """
+         self.sut_node = self._ctx.sut_node  # FIXME: accessing the context should be forbidden
+-        self.dpdk_build_dir_path = self.sut_node.remote_dpdk_build_dir
++        self.dpdk_build_dir_path = self._ctx.dpdk.build.remote_dpdk_build_dir
+         self.nics_in_node = self.sut_node.config.ports
+ 
+     @func_test
+@@ -79,7 +79,7 @@ def test_driver_tests(self) -> None:
+             Run the ``driver-tests`` unit test suite through meson.
+         """
+         vdev_args = ""
+-        for dev in self.sut_node.virtual_devices:
++        for dev in self._ctx.dpdk.get_virtual_devices():
+             vdev_args += f"--vdev {dev} "
+         vdev_args = vdev_args[:-1]
+         driver_tests_command = f"meson test -C {self.dpdk_build_dir_path} --suite driver-tests"
+@@ -125,7 +125,7 @@ def test_device_bound_to_driver(self) -> None:
+             List all devices with the ``dpdk-devbind.py`` script and verify that
+             the configured devices are bound to the proper driver.
+         """
+-        path_to_devbind = self.sut_node.path_to_devbind_script
++        path_to_devbind = self._ctx.dpdk.devbind_script_path
+ 
+         all_nics_in_dpdk_devbind = self.sut_node.main_session.send_command(
+             f"{path_to_devbind} --status | awk '/{REGEX_FOR_PCI_ADDRESS}/'",
+diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
+index 370fd6b419..eefd6d3273 100644
+--- a/dts/tests/TestSuite_softnic.py
++++ b/dts/tests/TestSuite_softnic.py
+@@ -46,7 +46,7 @@ def prepare_softnic_files(self) -> PurePath:
+         spec_file = Path("rx_tx.spec")
+         rx_tx_1_file = Path("rx_tx_1.io")
+         rx_tx_2_file = Path("rx_tx_2.io")
+-        path_sut = self.sut_node.remote_dpdk_build_dir
++        path_sut = self._ctx.dpdk.build.remote_dpdk_build_dir
+         cli_file_sut = self.sut_node.main_session.join_remote_path(path_sut, cli_file)
+         spec_file_sut = self.sut_node.main_session.join_remote_path(path_sut, spec_file)
+         rx_tx_1_file_sut = self.sut_node.main_session.join_remote_path(path_sut, rx_tx_1_file)
 -- 
 2.43.0
 
