@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155CCC02198
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7C1C021A0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 14:39:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31C1F42DBD;
-	Wed, 12 Feb 2025 15:37:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BC09942E12;
+	Wed, 12 Feb 2025 15:37:24 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 6E09B427E5
- for <dev@dpdk.org>; Wed, 12 Feb 2025 15:37:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A9B3B427E9
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 15:37:10 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id B4242DFB991; Wed, 12 Feb 2025 22:36:51 +0800 (CST)
+ id E5FF4F00F84; Wed, 12 Feb 2025 22:37:09 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v11 15/28] net/rnp: add Tx burst simple support
-Date: Wed, 12 Feb 2025 22:36:12 +0800
-Message-Id: <1739370987-3989-16-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v11 28/28] net/rnp: support Rx/Tx burst mode info
+Date: Wed, 12 Feb 2025 22:36:25 +0800
+Message-Id: <1739370987-3989-29-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
 References: <1739370987-3989-1-git-send-email-caowenbo@mucse.com>
@@ -36,147 +36,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add only support simple send pkts.
+add platform method for get rx/tx burst function select
+by upload func name.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/rnp_ethdev.c |  6 +++
- drivers/net/rnp/rnp_rxtx.c   | 85 +++++++++++++++++++++++++++++++++++-
- drivers/net/rnp/rnp_rxtx.h   |  1 +
- 3 files changed, 91 insertions(+), 1 deletion(-)
+ drivers/net/rnp/rnp_ethdev.c |  2 ++
+ drivers/net/rnp/rnp_rxtx.c   | 58 ++++++++++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.h   |  6 ++++
+ 3 files changed, 66 insertions(+)
 
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 55098158bb..915704204d 100644
+index 7d51ec4f24..a295982780 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -588,6 +588,12 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
- 	};
- 
- 	dev_info->default_txconf = (struct rte_eth_txconf) {
-+		.tx_thresh = {
-+			.pthresh = RNP_TX_DESC_FETCH_TH,
-+			.hthresh = RNP_TX_DESC_FETCH_BURST,
-+		},
-+		.tx_free_thresh = RNP_DEFAULT_TX_FREE_THRESH,
-+		.tx_rs_thresh = RNP_DEFAULT_TX_RS_THRESH,
- 		.offloads = 0,
- 	};
- 
+@@ -1481,6 +1481,8 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.tx_queue_release             = rnp_dev_tx_queue_release,
+ 	.rxq_info_get                 = rnp_rx_queue_info_get,
+ 	.txq_info_get                 = rnp_tx_queue_info_get,
++	.rx_burst_mode_get            = rnp_rx_burst_mode_get,
++	.tx_burst_mode_get            = rnp_tx_burst_mode_get,
+ 	/* rss impl */
+ 	.reta_update                  = rnp_dev_rss_reta_update,
+ 	.reta_query                   = rnp_dev_rss_reta_query,
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index df9462fbcf..af416b900e 100644
+index ccba0b93b6..990f0c5dfb 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -751,6 +751,89 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 	return nb_rx;
+@@ -1755,3 +1755,61 @@ rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	qinfo->conf.tx_thresh.hthresh = txq->pburst;
+ 	qinfo->conf.offloads = txq->tx_offloads;
  }
- 
-+static  __rte_always_inline int
-+rnp_clean_tx_ring(struct rnp_tx_queue *txq)
++
++static const struct {
++	eth_rx_burst_t pkt_burst;
++	const char *info;
++} rnp_rx_burst_infos[] = {
++	{ rnp_scattered_rx,		"Scalar Scattered" },
++	{ rnp_recv_pkts,		"Scalar" },
++};
++
++static const struct {
++	eth_tx_burst_t pkt_burst;
++	const char *info;
++} rnp_tx_burst_infos[] = {
++	{ rnp_xmit_simple,		"Scalar Simple" },
++	{ rnp_multiseg_xmit_pkts,	"Scalar" },
++};
++
++int
++rnp_rx_burst_mode_get(struct rte_eth_dev *dev,
++		      __rte_unused uint16_t queue_id,
++		      struct rte_eth_burst_mode *mode)
 +{
-+	volatile struct rnp_tx_desc *txbd;
-+	struct rnp_txsw_entry *tx_swbd;
-+	struct rte_mbuf *m;
-+	uint16_t next_dd;
-+	uint16_t i;
++	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
++	int ret = -EINVAL;
++	unsigned int i;
 +
-+	txbd = &txq->tx_bdr[txq->tx_next_dd];
-+	if (!(txbd->d.cmd & RNP_CMD_DD))
-+		return 0;
-+	*txbd = txq->zero_desc;
-+	next_dd = txq->tx_next_dd - (txq->tx_free_thresh - 1);
-+	tx_swbd = &txq->sw_ring[next_dd];
-+
-+	for (i = 0; i < txq->tx_rs_thresh; ++i, ++tx_swbd) {
-+		if (tx_swbd->mbuf) {
-+			m = tx_swbd->mbuf;
-+			rte_pktmbuf_free_seg(m);
-+			tx_swbd->mbuf = NULL;
++	for (i = 0; i < RTE_DIM(rnp_rx_burst_infos); ++i) {
++		if (pkt_burst == rnp_rx_burst_infos[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++					rnp_rx_burst_infos[i].info);
++			ret = 0;
++			break;
 +		}
 +	}
-+	txq->nb_tx_free = (txq->nb_tx_free + txq->tx_rs_thresh);
-+	txq->tx_next_dd = (txq->tx_next_dd + txq->tx_rs_thresh) &
-+		txq->attr.nb_desc_mask;
 +
-+	return 0;
++	return ret;
 +}
 +
-+static __rte_always_inline uint16_t
-+rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++int
++rnp_tx_burst_mode_get(struct rte_eth_dev *dev,
++		      __rte_unused uint16_t queue_id,
++		      struct rte_eth_burst_mode *mode)
 +{
-+	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
-+	volatile struct rnp_tx_desc *txbd;
-+	struct rnp_txsw_entry *tx_swbd;
-+	uint64_t phy;
-+	uint16_t start;
-+	uint16_t i;
++	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
++	int ret = -EINVAL;
++	unsigned int i;
 +
-+	if (unlikely(!txq->txq_started || !txq->tx_link))
-+		return 0;
-+
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		rnp_clean_tx_ring(txq);
-+
-+	nb_pkts = RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	if (!nb_pkts)
-+		return 0;
-+	start = nb_pkts;
-+	i = txq->tx_tail;
-+
-+	while (nb_pkts--) {
-+		txbd = &txq->tx_bdr[i];
-+		tx_swbd = &txq->sw_ring[i];
-+		tx_swbd->mbuf = *tx_pkts++;
-+		phy = rnp_get_dma_addr(&txq->attr, tx_swbd->mbuf);
-+		txbd->d.addr = phy;
-+		if (unlikely(tx_swbd->mbuf->data_len > RNP_MAC_MAXFRM_SIZE))
-+			tx_swbd->mbuf->data_len = 0;
-+		txbd->d.blen = tx_swbd->mbuf->data_len;
-+		txbd->d.cmd = RNP_CMD_EOP;
-+
-+		i = (i + 1) & txq->attr.nb_desc_mask;
-+	}
-+	txq->nb_tx_free -= start;
-+	if (txq->tx_tail + start > txq->tx_next_rs) {
-+		txbd = &txq->tx_bdr[txq->tx_next_rs];
-+		txbd->d.cmd |= RNP_CMD_RS;
-+		txq->tx_next_rs = (txq->tx_next_rs + txq->tx_rs_thresh);
-+
-+		if (txq->tx_next_rs > txq->attr.nb_desc)
-+			txq->tx_next_rs = txq->tx_rs_thresh - 1;
++	for (i = 0; i < RTE_DIM(rnp_tx_burst_infos); ++i) {
++		if (pkt_burst == rnp_tx_burst_infos[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++					rnp_tx_burst_infos[i].info);
++			ret = 0;
++			break;
++		}
 +	}
 +
-+	txq->tx_tail = i;
-+
-+	rte_wmb();
-+	RNP_REG_WR(txq->tx_tailreg, 0, i);
-+
-+	return start;
++	return ret;
 +}
-+
- int rnp_rx_func_select(struct rte_eth_dev *dev)
- {
- 	dev->rx_pkt_burst = rnp_recv_pkts;
-@@ -760,7 +843,7 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
- 
- int rnp_tx_func_select(struct rte_eth_dev *dev)
- {
--	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	dev->tx_pkt_burst = rnp_xmit_simple;
- 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
- 
- 	return 0;
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index 39e5184502..a8fd8d052f 100644
+index dc4a8ea9dd..8639f0892d 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -89,6 +89,7 @@ struct rnp_tx_queue {
- 	const struct rte_memzone *rz;
- 	uint64_t ring_phys_addr; /* tx dma ring physical addr */
- 	volatile struct rnp_tx_desc *tx_bdr; /* tx dma ring virtual addr */
-+	volatile struct rnp_tx_desc zero_desc;
- 	struct rnp_txsw_entry *sw_ring; /* tx software ring addr */
- 	volatile void *tx_tailreg; /* hw desc tail register */
- 	volatile void *tx_headreg; /* hw desc head register*/
+@@ -152,5 +152,11 @@ void rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			   struct rte_eth_rxq_info *qinfo);
+ void rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			   struct rte_eth_txq_info *qinfo);
++int rnp_rx_burst_mode_get(struct rte_eth_dev *dev,
++			  __rte_unused uint16_t queue_id,
++			  struct rte_eth_burst_mode *mode);
++int rnp_tx_burst_mode_get(struct rte_eth_dev *dev,
++			  __rte_unused uint16_t queue_id,
++			  struct rte_eth_burst_mode *mode);
+ 
+ #endif /* _RNP_RXTX_H_ */
 -- 
 2.34.1
 
