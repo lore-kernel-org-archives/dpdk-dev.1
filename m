@@ -2,44 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22C1C0219B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 01:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DDBC0219B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 01:16:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE210402BB;
-	Wed, 12 Feb 2025 02:16:14 +0100 (CET)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id 08E0A40269
- for <dev@dpdk.org>; Wed, 12 Feb 2025 02:16:12 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Yt0hr0g98zfbH0;
- Wed, 12 Feb 2025 09:14:36 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id F0B951802D0;
- Wed, 12 Feb 2025 09:16:10 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Feb 2025 09:16:10 +0800
-Message-ID: <fa141b19-4988-4dff-8731-b8992927c1d9@huawei.com>
-Date: Wed, 12 Feb 2025 09:16:09 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] test-pmd: declare lcore_count atomic when using C11
- memory model
-To: Andre Muezerie <andremue@linux.microsoft.com>, Honnappa Nagarahalli
- <honnappa.nagarahalli@arm.com>, Konstantin Ananyev
- <konstantin.v.ananyev@yandex.ru>
-CC: <dev@dpdk.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 262AF40EF0;
+	Wed, 12 Feb 2025 02:16:54 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id BC7CA40269
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 02:16:52 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id F05132107AB5; Tue, 11 Feb 2025 17:16:51 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F05132107AB5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1739323011;
+ bh=zilLXdHb4bdezlpthvnKv23q7EQ3ie/XVXZrc8uYPY8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=XbPbGGgmmzUXgOSee2AwZPq6IOIKQEHFq5KMwLYMsGLSqnyTcShYoLYDVhBWsbwW8
+ Ri8Gwn8MGacz5bn5ROx3PQUBaBagcJ/NYzRPPzyTtZbgVi2qFqAAkDfXZ4zxj09zNx
+ DRmehEdA3Lt0GSIz52N4ah1Xrt7Klnd7/JoqOQRE=
+Date: Tue, 11 Feb 2025 17:16:51 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, dev@dpdk.org
+Subject: Re: [PATCH 08/10] test-pmd: declare lcore_count atomic when using
+ C11 memory model
+Message-ID: <20250212011651.GA19389@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
  <1739311325-14425-9-git-send-email-andremue@linux.microsoft.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <1739311325-14425-9-git-send-email-andremue@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+ <20250211141212.45e90ab2@hermes.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211141212.45e90ab2@hermes.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,16 +49,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+On Tue, Feb 11, 2025 at 02:12:12PM -0800, Stephen Hemminger wrote:
+> On Tue, 11 Feb 2025 14:02:04 -0800
+> Andre Muezerie <andremue@linux.microsoft.com> wrote:
+> 
+> > Compiling with MSVC results in the error below:
+> > 
+> > app/test/test_ring_perf.c(197): error C7712: address argument to atomic
+> >     operation must be a pointer to an atomic integer,
+> >     'volatile unsigned int *' is not valid
+> > 
+> > The fix is to mark lcore_count as atomic when using C11 memory model.
+> > 
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> 
+> Prefer using RTE_ATOMIC() all teh time now.
 
-On 2025/2/12 6:02, Andre Muezerie wrote:
-> Compiling with MSVC results in the error below:
-> 
-> app/test/test_ring_perf.c(197): error C7712: address argument to atomic
->     operation must be a pointer to an atomic integer,
->     'volatile unsigned int *' is not valid
-> 
-> The fix is to mark lcore_count as atomic when using C11 memory model.
-> 
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-
+You mean even when not explicitly using the C11 model, right?
