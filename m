@@ -2,41 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91848C0219B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 00:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8A8C0219B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 00:59:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A03C1402BB;
-	Wed, 12 Feb 2025 01:59:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D2CE540E72;
+	Wed, 12 Feb 2025 01:59:57 +0100 (CET)
 Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id 5980540269
- for <dev@dpdk.org>; Wed, 12 Feb 2025 01:59:29 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.88.163])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yt0H20Nz6z2Fd3F;
- Wed, 12 Feb 2025 08:55:42 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id C2F1E40E50
+ for <dev@dpdk.org>; Wed, 12 Feb 2025 01:59:55 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yt0HX4zqCz2FdQM;
+ Wed, 12 Feb 2025 08:56:08 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 645F0180069;
- Wed, 12 Feb 2025 08:59:27 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 0D0791A016C;
+ Wed, 12 Feb 2025 08:59:54 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Feb 2025 08:59:26 +0800
-Message-ID: <461ea7be-e1c8-4951-9c98-5b341cc5f243@huawei.com>
-Date: Wed, 12 Feb 2025 08:59:26 +0800
+ 15.2.1544.11; Wed, 12 Feb 2025 08:59:53 +0800
+Message-ID: <d1dd5811-4ab7-402c-8bdc-46435c98af27@huawei.com>
+Date: Wed, 12 Feb 2025 08:59:52 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] eal: add workaround for __builtin_constant_p
+Subject: Re: [PATCH 02/10] test_alarm: avoid warning about different qualifiers
 To: Andre Muezerie <andremue@linux.microsoft.com>, Tyler Retzlaff
  <roretzla@linux.microsoft.com>
 CC: <dev@dpdk.org>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1739311325-14425-2-git-send-email-andremue@linux.microsoft.com>
+ <1739311325-14425-3-git-send-email-andremue@linux.microsoft.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <1739311325-14425-2-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1739311325-14425-3-git-send-email-andremue@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -54,15 +54,12 @@ Errors-To: dev-bounces@dpdk.org
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 
 On 2025/2/12 6:01, Andre Muezerie wrote:
-> There's no MSVC equivalent for compiler extension __builtin_constant_p.
-> EAL already had __rte_constant which was used as a first attempt to
-> workaround __builtin_constant_p when using MSVC. However, there are
-> pieces of code that would benefit from being able to provide a default
-> value to be used instead of it being always 0 like how it was done by
-> __rte_constant.
+> Compiling with MSVC results in the warning below:
 > 
-> A new macro is added here allowing such default to be provided by the
-> caller.
+> app/test/test_alarm.c(54): warning C4090: 'function':
+>     different '_Atomic' qualifiers
+> 
+> The fix is to use a macro to explicitly drop the qualifier.
 > 
 > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
