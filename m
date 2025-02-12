@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D447C021A8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 05:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809C9C021A8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 05:53:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69EA642E9D;
-	Thu, 13 Feb 2025 06:53:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9009942EA3;
+	Thu, 13 Feb 2025 06:53:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id DAADE400D5
- for <dev@dpdk.org>; Thu, 13 Feb 2025 06:53:25 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8633442E98
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 06:53:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739426006; x=1770962006;
+ t=1739426008; x=1770962008;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=skoEzdzNtQrrMQcth5JbL8qRavxNuaADfPayZwgmtCU=;
- b=PPEmUEEGB1CdGpRvavx7dB7Gxd6WJ9Wlq+K/YITTvH0dtyAu4DJMRfs/
- vaB0iGu1hfVFxdm78OVdgl8IxAi/nqtRkuqbesQri3CFSSVYzrkpybYjJ
- AMKRdkLfDMZbntjseNl4figs3NAzmZTxnEZY8NHlVHkCqj6NNNI26Hbb1
- iYCMW20bx0nAqBZ4/DsZigYBApbu1xHXFcHQRG0ZuLsvKu6Jyf8b5u81w
- 14d3QWNeEsWMU7ZgzCk3xghM36XdCKFrat5DV1DmxGE+m8RhcYs99XHFx
- fXhuhAGf7MdMGkWC5HwUzKjldqozMr+TOc2o+bmAuNLlxp4Gn19fHVrfJ g==;
-X-CSE-ConnectionGUID: Cr7U8wRtTtiaoriDrf0dAg==
-X-CSE-MsgGUID: r+P19HMiR/SM2/fU4O6heA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39813332"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="39813332"
+ bh=hUnnl+t9Z33CjPq0joDDeFH7scuhhc9Bi3j0S9vcAEE=;
+ b=TmBf8SI1XfABM8Q1SNlWM70C8/3hm4VrBpJt0EUIkEctB5/mcq+GuxSK
+ q8jIJc0InNdchMMrciIzBsiQ0Jrf9hOq4u82PdnHE+2fKeK6o7Y2TLgt/
+ vVLPjavOCoumY85ObCM25LNqTFe/wFWOmqfy0nRqaOQW9/ZI/46tcdDUP
+ 5uqT+OTpQmgphUWDeLgVV1iIewpW0san7l1hIgb7AdwZNBwjk+n5XulX8
+ hEGMG8+ulyH8DAClvN5eGsmap43b7mTwp0YE9HIjOOHbI1fH0CuuI16vo
+ dElXegxeCHSMRTGuEDO99vcZApt5vOTdyxRNlaaK9VQFe46sKoykjH37/ g==;
+X-CSE-ConnectionGUID: 1Y12qMuTRXOh7jza3z33dQ==
+X-CSE-MsgGUID: 8vDS8rD4QXOdCO/4SUcOTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39813334"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="39813334"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Feb 2025 21:53:25 -0800
-X-CSE-ConnectionGUID: ezzeVpCCQOSh2zJuyujdFg==
-X-CSE-MsgGUID: 0gO/GJnIRS2KW5XTinfRXQ==
+ 12 Feb 2025 21:53:27 -0800
+X-CSE-ConnectionGUID: HGPBnAxCSoqLFrOioMD85g==
+X-CSE-MsgGUID: 2wJZo2nHRpeGYn2qHDBlYg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="113035644"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="113035647"
 Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa007.fm.intel.com with ESMTP; 12 Feb 2025 21:53:23 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 12 Feb 2025 21:53:25 -0800
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com,
-	Paul Greenwalt <paul.greenwalt@intel.com>
-Subject: [PATCH v2 1/2] net/intel: add E830 ETF offload timestamp resolution
-Date: Wed, 12 Feb 2025 21:47:10 +0000
-Message-ID: <20250212214711.1046777-2-soumyadeep.hore@intel.com>
+Cc: aman.deep.singh@intel.com
+Subject: [PATCH v2 2/2] net/intel: add Tx time queue
+Date: Wed, 12 Feb 2025 21:47:11 +0000
+Message-ID: <20250212214711.1046777-3-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250212214711.1046777-1-soumyadeep.hore@intel.com>
 References: <20250207124300.1022523-2-soumyadeep.hore@intel.com>
@@ -62,39 +61,308 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Paul Greenwalt <paul.greenwalt@intel.com>
-
-Update E830 ETF offload time stamp resolution to 128ns along
-with certain HW defines for TXTIME_PROFILE register.
+Enabling Tx timestamp queue for supporting Tx time based
+scheduling of packets.
 
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
-Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
 ---
- drivers/net/intel/ice/base/ice_lan_tx_rx.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/intel/common/tx.h              |   5 +
+ drivers/net/intel/ice/base/ice_lan_tx_rx.h |   1 +
+ drivers/net/intel/ice/ice_ethdev.h         |   1 +
+ drivers/net/intel/ice/ice_rxtx.c           | 174 +++++++++++++++++++++
+ drivers/net/intel/ice/ice_rxtx.h           |   5 +
+ 5 files changed, 186 insertions(+)
 
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index d9cf4474fc..f3777fa9e7 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -35,6 +35,7 @@ struct ci_tx_queue {
+ 		volatile struct i40e_tx_desc *i40e_tx_ring;
+ 		volatile struct iavf_tx_desc *iavf_tx_ring;
+ 		volatile struct ice_tx_desc *ice_tx_ring;
++		volatile struct ice_ts_desc *ice_tstamp_ring;
+ 		volatile union ixgbe_adv_tx_desc *ixgbe_tx_ring;
+ 	};
+ 	volatile uint8_t *qtx_tail;               /* register address of tail */
+@@ -76,6 +77,10 @@ struct ci_tx_queue {
+ 	union {
+ 		struct { /* ICE driver specific values */
+ 			uint32_t q_teid; /* TX schedule node id. */
++			uint16_t nb_tstamp_desc;	/* number of Timestamp descriptors */
++			volatile uint8_t *tstamp_tail;	/* value of timestamp tail register */
++			rte_iova_t tstamp_ring_dma;	/* Timestamp ring DMA address */
++			uint16_t next_tstamp_id;
+ 		};
+ 		struct { /* I40E driver specific values */
+ 			uint8_t dcb_tc;
 diff --git a/drivers/net/intel/ice/base/ice_lan_tx_rx.h b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
-index f92382346f..940c6843d9 100644
+index 940c6843d9..edd1137114 100644
 --- a/drivers/net/intel/ice/base/ice_lan_tx_rx.h
 +++ b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
-@@ -1278,6 +1278,8 @@ struct ice_ts_desc {
- #define ICE_TXTIME_MAX_QUEUE		2047
+@@ -1279,6 +1279,7 @@ struct ice_ts_desc {
  #define ICE_SET_TXTIME_MAX_Q_AMOUNT	127
  #define ICE_OP_TXTIME_MAX_Q_AMOUNT	2047
-+#define ICE_TXTIME_FETCH_TS_DESC_DFLT	8
-+
+ #define ICE_TXTIME_FETCH_TS_DESC_DFLT	8
++#define ICE_TXTIME_FETCH_PROFILE_CNT	16
+ 
  /* Tx Time queue context data
   *
-  * The sizes of the variables may be larger than needed due to crossing byte
-@@ -1303,6 +1305,8 @@ struct ice_txtime_ctx {
- 	u8 drbell_mode_32;
- #define ICE_TXTIME_CTX_DRBELL_MODE_32	1
- 	u8 ts_res;
-+#define ICE_TXTIME_CTX_FETCH_PROF_ID_0 0
-+#define ICE_TXTIME_CTX_RESOLUTION_128NS 7
- 	u8 ts_round_type;
- 	u8 ts_pacing_slot;
- 	u8 merging_ena;
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index afe8dae497..9649456771 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -299,6 +299,7 @@ struct ice_vsi {
+ 	uint8_t enabled_tc; /* The traffic class enabled */
+ 	uint8_t vlan_anti_spoof_on; /* The VLAN anti-spoofing enabled */
+ 	uint8_t vlan_filter_on; /* The VLAN filter enabled */
++	uint8_t enabled_txpp;	/* TXPP support enabled */
+ 	/* information about rss configuration */
+ 	u32 rss_key_size;
+ 	u32 rss_lut_size;
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 8dd8644b16..f043ae3aa6 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -5,6 +5,7 @@
+ #include <ethdev_driver.h>
+ #include <rte_net.h>
+ #include <rte_vect.h>
++#include <rte_os_shim.h>
+ 
+ #include "ice_rxtx.h"
+ #include "ice_rxtx_vec_common.h"
+@@ -741,6 +742,87 @@ ice_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+ 	return 0;
+ }
+ 
++/**
++ * ice_setup_txtime_ctx - setup a struct ice_txtime_ctx instance
++ * @ring: The tstamp ring to configure
++ * @txtime_ctx: Pointer to the Tx time queue context structure to be initialized
++ * @txtime_ena: Tx time enable flag, set to true if Tx time should be enabled
++ */
++static int
++ice_setup_txtime_ctx(struct ci_tx_queue *txq,
++		     struct ice_txtime_ctx *txtime_ctx, bool txtime_ena)
++{
++	struct ice_vsi *vsi = txq->ice_vsi;
++	struct ice_hw *hw;
++
++	hw = ICE_VSI_TO_HW(vsi);
++	txtime_ctx->base = txq->tstamp_ring_dma >> ICE_TX_CMPLTNQ_CTX_BASE_S;
++
++	/* Tx time Queue Length */
++	txtime_ctx->qlen = txq->nb_tstamp_desc;
++
++	if (txtime_ena)
++		txtime_ctx->txtime_ena_q = 1;
++
++	/* PF number */
++	txtime_ctx->pf_num = hw->pf_id;
++
++	switch (vsi->type) {
++	case ICE_VSI_LB:
++	case ICE_VSI_CTRL:
++	case ICE_VSI_ADI:
++	case ICE_VSI_PF:
++		txtime_ctx->vmvf_type = ICE_TLAN_CTX_VMVF_TYPE_PF;
++		break;
++	default:
++		PMD_DRV_LOG(ERR, "Unable to set VMVF type for VSI type %d",
++			vsi->type);
++		return -EINVAL;
++	}
++
++	/* make sure the context is associated with the right VSI */
++	txtime_ctx->src_vsi = ice_get_hw_vsi_num(hw, vsi->idx);
++
++
++	txtime_ctx->ts_res = ICE_TXTIME_CTX_RESOLUTION_128NS;
++	txtime_ctx->drbell_mode_32 = ICE_TXTIME_CTX_DRBELL_MODE_32;
++	txtime_ctx->ts_fetch_prof_id = ICE_TXTIME_CTX_FETCH_PROF_ID_0;
++
++	return 0;
++}
++
++/**
++ * ice_calc_ts_ring_count - Calculate the number of timestamp descriptors
++ * @hw: pointer to the hardware structure
++ * @tx_desc_count: number of Tx descriptors in the ring
++ *
++ * Return: the number of timestamp descriptors
++ */
++uint16_t ice_calc_ts_ring_count(struct ice_hw *hw, u16 tx_desc_count)
++{
++	uint16_t prof = ICE_TXTIME_CTX_FETCH_PROF_ID_0;
++	uint16_t max_fetch_desc = 0;
++	uint16_t fetch;
++	uint32_t reg;
++	uint16_t i;
++
++	for (i = 0; i < ICE_TXTIME_FETCH_PROFILE_CNT; i++) {
++		reg = rd32(hw, E830_GLTXTIME_FETCH_PROFILE(prof, 0));
++		fetch = ((uint32_t)((reg &
++				E830_GLTXTIME_FETCH_PROFILE_FETCH_TS_DESC_M)
++				>> rte_bsf64
++				(E830_GLTXTIME_FETCH_PROFILE_FETCH_TS_DESC_M)));
++		max_fetch_desc = max(fetch, max_fetch_desc);
++	}
++
++	if (!max_fetch_desc)
++		max_fetch_desc = ICE_TXTIME_FETCH_TS_DESC_DFLT;
++
++	max_fetch_desc = RTE_ALIGN(max_fetch_desc, ICE_REQ_DESC_MULTIPLE);
++
++	return tx_desc_count + max_fetch_desc;
++}
++
+ int
+ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ {
+@@ -829,6 +911,29 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 
+ 	dev->data->tx_queue_state[tx_queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
+ 
++	if (txq->ice_tstamp_ring) {
++		struct ice_aqc_set_txtime_qgrp *txtime_qg_buf;
++		u8 txtime_buf_len = ice_struct_size(txtime_qg_buf, txtimeqs, 1);
++		struct ice_txtime_ctx txtime_ctx = { 0 };
++
++		txtime_qg_buf = ice_malloc(hw, txtime_buf_len);
++		ice_setup_txtime_ctx(txq, &txtime_ctx,
++				vsi->enabled_txpp);
++		ice_set_ctx(hw, (u8 *)&txtime_ctx,
++			    txtime_qg_buf->txtimeqs[0].txtime_ctx,
++			    ice_txtime_ctx_info);
++
++		txq->tstamp_tail = hw->hw_addr +
++					E830_GLQTX_TXTIME_DBELL_LSB(tx_queue_id);
++
++		err = ice_aq_set_txtimeq(hw, tx_queue_id, 1, txtime_qg_buf,
++					    txtime_buf_len, NULL);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Failed to set Tx Time queue context, error: %d", err);
++			return err;
++		}
++	}
++
+ 	rte_free(txq_elem);
+ 	return 0;
+ }
+@@ -1039,6 +1144,22 @@ ice_reset_tx_queue(struct ci_tx_queue *txq)
+ 		prev = i;
+ 	}
+ 
++	if (txq->ice_tstamp_ring) {
++		size = sizeof(struct ice_ts_desc) * txq->nb_tstamp_desc;
++		for (i = 0; i < size; i++)
++			((volatile char *)txq->ice_tstamp_ring)[i] = 0;
++
++		prev = (uint16_t)(txq->nb_tstamp_desc - 1);
++		for (i = 0; i < txq->nb_tstamp_desc; i++) {
++			volatile struct ice_ts_desc *tsd = &txq->ice_tstamp_ring[i];
++			tsd->tx_desc_idx_tstamp = 0;
++			prev = i;
++		}
++
++		txq->next_tstamp_id = 0;
++		txq->tstamp_tail = NULL;
++	}
++
+ 	txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
+ 	txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+ 
+@@ -1501,6 +1622,24 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
+ 		return -ENOMEM;
+ 	}
+ 
++	if (vsi->type == ICE_VSI_PF && vsi->enabled_txpp) {
++		const struct rte_memzone *tstamp_z =
++					rte_eth_dma_zone_reserve(dev, "ice_tstamp_ring",
++					queue_idx, ring_size, ICE_RING_BASE_ALIGN,
++				    socket_id);
++		if (!tstamp_z) {
++			ice_tx_queue_release(txq);
++			PMD_INIT_LOG(ERR, "Failed to reserve DMA memory for TX");
++			return -ENOMEM;
++		}
++
++		txq->nb_tstamp_desc =
++				    ice_calc_ts_ring_count(ICE_VSI_TO_HW(vsi),
++							    txq->nb_tx_desc);
++	} else {
++		txq->ice_tstamp_ring = NULL;
++	}
++
+ 	ice_reset_tx_queue(txq);
+ 	txq->q_set = true;
+ 	dev->data->tx_queues[queue_idx] = txq;
+@@ -3161,6 +3300,41 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		txd->cmd_type_offset_bsz |=
+ 			rte_cpu_to_le_64(((uint64_t)td_cmd) <<
+ 					 ICE_TXD_QW1_CMD_S);
++
++		if (txq->ice_tstamp_ring) {
++			volatile struct ice_ts_desc *ts_desc;
++			volatile struct ice_ts_desc *ice_tstamp_ring;
++			struct timespec sys_time;
++			uint16_t next_ts_id = txq->next_tstamp_id;
++			uint64_t ns;
++			uint32_t tstamp;
++
++			clock_gettime(CLOCK_REALTIME, &sys_time);
++			ns = rte_timespec_to_ns(&sys_time);
++			tstamp = ns >> ICE_TXTIME_CTX_RESOLUTION_128NS;
++
++			ice_tstamp_ring = txq->ice_tstamp_ring;
++			ts_desc = &ice_tstamp_ring[next_ts_id];
++			ts_desc->tx_desc_idx_tstamp =
++						rte_cpu_to_le_32(((uint32_t)tx_id &
++						ICE_TXTIME_TX_DESC_IDX_M) |
++						((uint32_t)tstamp << ICE_TXTIME_STAMP_M));
++
++			next_ts_id++;
++			if (next_ts_id == txq->nb_tstamp_desc) {
++				int fetch = txq->nb_tstamp_desc - txq->nb_tx_desc;
++
++				for (next_ts_id = 0; next_ts_id < fetch; next_ts_id++) {
++					ts_desc = &ice_tstamp_ring[next_ts_id];
++					ts_desc->tx_desc_idx_tstamp =
++							rte_cpu_to_le_32(((uint32_t)tx_id &
++							ICE_TXTIME_TX_DESC_IDX_M) |
++							((uint32_t)tstamp << ICE_TXTIME_STAMP_M));
++				}
++			}
++			txq->next_tstamp_id = next_ts_id;
++			ICE_PCI_REG_WRITE(txq->tstamp_tail, next_ts_id);
++		}
+ 	}
+ end_of_tx:
+ 	/* update Tail register */
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index f9293ac6f9..651e146e6d 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -29,6 +29,10 @@
+ #define ice_rx_flex_desc ice_32b_rx_flex_desc
+ #endif
+ 
++#define ICE_TXTIME_TX_DESC_IDX_M	0x00001fff
++#define ICE_TXTIME_STAMP_M		12
++#define ICE_REQ_DESC_MULTIPLE	32
++
+ #define ICE_SUPPORT_CHAIN_NUM 5
+ 
+ #define ICE_TD_CMD                      ICE_TX_DESC_CMD_EOP
+@@ -293,6 +297,7 @@ uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
+ int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
+ int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
+ int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
++u16 ice_calc_ts_ring_count(struct ice_hw *hw, u16 tx_desc_count);
+ 
+ #define FDIR_PARSING_ENABLE_PER_QUEUE(ad, on) do { \
+ 	int i; \
 -- 
 2.43.0
 
