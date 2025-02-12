@@ -2,76 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065FFC02198
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A285C02198
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 15:43:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AC8C42707;
-	Wed, 12 Feb 2025 16:37:48 +0100 (CET)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 806EA40658
- for <dev@dpdk.org>; Wed, 12 Feb 2025 16:37:46 +0100 (CET)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-21f4af4f9ddso84287955ad.1
- for <dev@dpdk.org>; Wed, 12 Feb 2025 07:37:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739374666;
- x=1739979466; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OQ79Y5YbaoKNl02BcGVT1+MzDGuQXNZNmaOqKjbfs9M=;
- b=ZWkeSYpEOjXGFFqfq2r2LZmbyrN7ZYikPM4o2nJ2MZTbkfgMdwx0JT9gH77wpmBF1+
- q8wG9+WadDuVEBH2EL83pUkETWMpPmRsDSJoviI6l1eCFyuPo3t+CC0KXv5bMMPej6az
- c0wXxDHWHVdKD9+8bB978kH0blXoWwd1VLjAMtmLfqd4dOJ72MQJwlP1b4YSLMXyMqHi
- lur4HqxwbtBN6eUeAmyaC4wbIX1POA0eK3TJ/JBKoHDvSvzWDjfMYe3GFxCZBkYCExrr
- R7H3hfQt/RfYc/F+PTCuEoeFCxl95UIeW5J//Zvhj8KRGr4EsK5fBSWH64DJcIRs/kqp
- hQ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739374666; x=1739979466;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=OQ79Y5YbaoKNl02BcGVT1+MzDGuQXNZNmaOqKjbfs9M=;
- b=uixLUKfW/a6e2sIrvf2rCGG9pQSKkmYzcy92ccvevWYwbCOm7ozFq+j9Bil9BiheCc
- QPtXdnDk6zU/UqtLnQ5fAxMZSziWQiNBiGjwfxoBP44zNoXFXG2p1BshGNAm48Gb/+PJ
- ywURkHjS9dj8oi5n7GvcMqGY3SHTBIIM4KHfcOjCCK+Oq/3ewx2tdgil7WR8lnXKrfma
- QQ14DFKP1Di1hOt3kGhhti75pzjeJhj0bNHxN9gsODGH3C6I+BVXx2780pl3Pdp8uy+F
- cBA4tU87r5HaK5GaEO5xdKvK5SXb/gMcvE61Abt3UAY3hElvNLIvv3l5pWT+uBCpzVJF
- FWWg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXnqkzi65hwl3+wJydGdApHRW7piUE/aK6T3g9P+EXpi4Wc3FgAMKjPzN2xWKWEwk4NPv4=@dpdk.org
-X-Gm-Message-State: AOJu0YxM5OlueWnjhYnPwmVX82LZ0xHjBnNu8KqHhMwP5UGqvr8zlgAr
- F0ko2upKQ5xbSeUYZxuFcrBA092DG3sEaZQBmy20PhR4y1rlnGYU2mz0iucg1vE=
-X-Gm-Gg: ASbGncsQJF3+vXygK48R/GJNiK3pNkx4wcUjv58ejpbCNHuzniCCOwkwUcqC633OFfF
- SA/IOS2+ampfK2yboCOEQsH1D7XiS4bdOlNVx/Xmxg5gDp9Nm2sYnpGqW+IzPOPxzPsFs54/NH9
- 5gRJ1gei6xiQ2VUyHpeEt/8eR9rFEeTueQ7jU2014XeoGkq3wW4ccCCFvadPK9Nw0+mOQGgS9cb
- WKnTWdWr+kJ68A+GfkHwIFv+f2CBfh7WSNAv754EKKWvXFW34ueaX8GP83xdB5LJpyopaRAOhf5
- Dwt/kB4hrvdfegLAM3oH5mu/9WvYLtxzvf3r/iO0nrUPMPdCl+VXInJhK794D++BkWw1
-X-Google-Smtp-Source: AGHT+IEpVZVLsoIsM/aejU5vYCHjAg1ln/gSog/OcKPeXWaMFCUafvAzdF61ylclYKSuSztpLLS5YA==
-X-Received: by 2002:a17:902:dac1:b0:216:1543:1962 with SMTP id
- d9443c01a7336-220bbb45e0amr53312645ad.23.1739374665699; 
- Wed, 12 Feb 2025 07:37:45 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-ad53aa4678bsm6747794a12.28.2025.02.12.07.37.45
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Feb 2025 07:37:45 -0800 (PST)
-Date: Wed, 12 Feb 2025 07:37:43 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: "11" <caowenbo@mucse.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-Subject: Re: [PATCH v9 12/28] net/rnp: add support link update operations
-Message-ID: <20250212073743.7fdd6d53@hermes.local>
-In-Reply-To: <89E4C0CDD2F99463+001a01db7cfd$4210f7e0$c632e7a0$@mucse.com>
-References: <1739263818-59770-1-git-send-email-caowenbo@mucse.com>
- <1739263818-59770-13-git-send-email-caowenbo@mucse.com>
- <20250211073503.78f084ff@hermes.local>
- <89E4C0CDD2F99463+001a01db7cfd$4210f7e0$c632e7a0$@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7994642707;
+	Wed, 12 Feb 2025 16:43:57 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id C8CCD4114B;
+ Wed, 12 Feb 2025 16:43:56 +0100 (CET)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal
+ [10.202.2.49])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 309C81140102;
+ Wed, 12 Feb 2025 10:43:56 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Wed, 12 Feb 2025 10:43:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1739375036;
+ x=1739461436; bh=ZcEWFEITfSScTuyv4NzIBzrEBR6m9abLNfLJfPwtx3c=; b=
+ dNoe0ASYw7Q77aDXt9oGkIXBLZlTyAr3dZVNNWNwjyWmcgt5Ne2wd7tpTkwxqJ3q
+ LKLXCa1cf2iAn143iWAluv8lBp5o7CRlA+//r4qz/vCql2VVdkHyE4qC5YQmLFuR
+ ctxxFssbmPpErHYJm0TTrOfWboDJC9hQdWBKNqdMf/jTG+wZ++vlusVMqO+cdI6q
+ yixhiMh/PGjeMDj1fSyfywyyiEZx+gX9hQwnIMFWBk6ZlkVTaxPvyR0/juzh38aM
+ H6go4ve/rvYXb3hfOqq4PRBl2/JJQ3WwlGMQvtmRK+t2P8FZtyc6zh6yZN4fOgv6
+ kqUvp3oGCCo6FqjjmrtlmA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739375036; x=
+ 1739461436; bh=ZcEWFEITfSScTuyv4NzIBzrEBR6m9abLNfLJfPwtx3c=; b=Y
+ 9NVsL67+pOU81bSMQjD/stv7Sm/gwZ33ndumhs3Un9PrEnX/WCnqGAV+FuuidoaV
+ zNTbOiOYLMhd8HdSOjY4SD6ILMAuqF5/jNuyJjCWDHMFFsA6UM4yJn6MBb6FU75/
+ vZj2Q407+wxT/AY6piaThHsFcL+/vGWeQjWIqDLIacfexkdW5TL/hQO2Vy5Z8UfG
+ vGSlDAq+8w8ltK/p4YhiNXT4aV+P7I7c1Ci+OJKEFF+jDQsOd2V7yrgSLgiiDmXF
+ P2IpMQBGM0cIpgpSC8b/OkOgJkqJsk/4FtOmNA9sdw6FKQ2xfW2+f6jWjeKpioDZ
+ XN10B9ic3pnDvO/0lYKTg==
+X-ME-Sender: <xms:u8GsZ8DyuMEqdV1ManwoAjRqZWLhUwcfKuREOtfSNMpITIVm_m8H9w>
+ <xme:u8GsZ-j3zTZaZNKsOUsUjinw_Cabxb-AUcqb8-e1x_1pNXNnqXZjAxoTHB2PZh1w3
+ feZ900QoVWqCc8I-g>
+X-ME-Received: <xmr:u8GsZ_lVrROCPN-TG-Ji1F7JrU9FoYqeR-hnrXF_GDsSc8SrBMR5j3HbBUSpS189m59HTLgAxae-CY-VTesZce8JRQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedvkecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgrsh
+ hlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+ pdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopeifrggvlh
+ grsehnvhhiughirgdrtghomhdprhgtphhtthhopehmkhgrshhhrghnihesnhhvihguihgr
+ rdgtohhm
+X-ME-Proxy: <xmx:u8GsZyy9epBhP9D78Z2cU3CUwr95Z6YHh8l11kNOKEWpbG3MNvH4Vw>
+ <xmx:u8GsZxTYC5PctycCsGHgIj700m1U4W1Rtts08GIXiX0uat0s7ok5mA>
+ <xmx:u8GsZ9aUg0u5dkPJA7fWZP6Uq6IFcXddEinbGnJxMYAU86MHBeuB1w>
+ <xmx:u8GsZ6Q0pJoGhAyPP92BVQp3pxOqQt5hscg9WW25zBZhKVLZRQ7ZPA>
+ <xmx:vMGsZ6JmaVw5jwsTxjDVt4gqcvzko7vOHnCoBf483a6sQKTyteCDs11e>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Feb 2025 10:43:55 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Raslan Darawsheh <rasland@nvidia.com>
+Cc: dev@dpdk.org, stable@dpdk.org, waela@nvidia.com, mkashani@nvidia.com
+Subject: Re: [PATCH] doc: add tested platforms with NVIDIA NICs
+Date: Wed, 12 Feb 2025 16:43:53 +0100
+Message-ID: <2333195.8uLHfb51uz@thomas>
+In-Reply-To: <20241203075914.62923-1-rasland@nvidia.com>
+References: <20241203075914.62923-1-rasland@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,22 +90,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Feb 2025 11:21:49 +0800
-"11" <caowenbo@mucse.com> wrote:
-
-> Hi Stephen,
-> For memcpy what ever base code or other code all used memcpy not rte_memcpy
-> ?
-> Even the memory is malloc from rte_malloc/zmalloc ?
+03/12/2024 08:59, Raslan Darawsheh:
+> Add tested platforms with NVIDIA NICs to the 24.11 release notes.
 > 
-> Regards Wenbo.
+> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
+
+Cc: stable@dpdk.org
+
+Applied after the release, and can be backported, thanks.
 
 
-The documentation doesn't make it clear but rte_memcpy is the same as memcpy.
-It only exists because for some cases (like older versions of Gcc and differences
-in alignment assumptions) when running micro benchmarks rte_memcpy was faster.
-
-All new code should only use memcpy() unless there is a benchmark test
-that shows a noticable difference. The reason is that tools like Coverity, Gcc,
-Clang, and PVS studio all treat memcpy specially and can do checks for
-access outside of range.
