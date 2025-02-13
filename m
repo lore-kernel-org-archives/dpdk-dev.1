@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D2EC021A4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 21:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E3DC021A0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 22:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 101FF4066C;
-	Thu, 13 Feb 2025 22:22:14 +0100 (CET)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id 302974064E
- for <dev@dpdk.org>; Thu, 13 Feb 2025 22:22:10 +0100 (CET)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-219f8263ae0so22811795ad.0
- for <dev@dpdk.org>; Thu, 13 Feb 2025 13:22:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07EC2402B9;
+	Thu, 13 Feb 2025 23:18:32 +0100 (CET)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id E013040279
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 23:18:30 +0100 (CET)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-2fbf5c2f72dso2300916a91.1
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 14:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739481729;
- x=1740086529; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739485110;
+ x=1740089910; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Nfzftuol9TKasfULCQivt7OsevKxD6HzWoJJXbL/TuA=;
- b=EnfX7AQBJd9HrikYFj9AfYI/9MLZZWesA63yf/9hqG8LgxJUHVXHPrzGSTBGKAR+MC
- n1aIgjHx/ARrU1S+Ey8k3EYqzOv4kLz0kyroB6NfreIAT8/vyDc00B9kBtA7K9Ybu6Zp
- vZ5HGwHJLMkoZefTQGoRf5AhbiaRPX4BCmvR7/2LY5Ka0MkEEvMn9e5ll+uUtCOnnWhi
- 4h2KhjDn/vtkOsMRZuKIp8txuoQ2ThY6C4+4OE9oOFaMgOZg17DHHuVjBXp0jZvFc18I
- GS7k/Y8susd5okmfDRpLqt2S8aos+xIKZQJP9eI9dcyrDl6eH+jaaqKc6IbMQFONsz8d
- d02w==
+ bh=PwbPAYaQDaY6eyfb3DfMi7Frq4tEeq7+B7UnYVKaLC4=;
+ b=MAJ8adfRSox4tqR3YANlGndZMSRDuxYacpxyAneqfZ9bt+26pT2NyBen+eXiu6ZMAj
+ bamWXpN/2qoX0NdVMPz/4wjUAzdrQsyK2AGA/zX0nskn6/ngnigtD4rHJFX/vytDp47e
+ xe7dQzQn5zF5bsTLVdRFEPRfRmLTZ9bN5rmVqNNh3If/hxrRhDavgudcH5GSlLGt/inr
+ mnXRIjqpEtR8+Hfrik61DO0LYb/Av9x3bb0S+rbtAevg+TxWpxvCTmmb1CYY4ZhPJcoj
+ DGLJfCRC0oTwHXnFqg5ey7E7zRtrPY2z3q2qIi7xJc2nfTen2gI1BFwLqtom9fsfgt9E
+ CCTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739481729; x=1740086529;
+ d=1e100.net; s=20230601; t=1739485110; x=1740089910;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Nfzftuol9TKasfULCQivt7OsevKxD6HzWoJJXbL/TuA=;
- b=onxnTpdCN0Pu2apN2iWgaV4VT0uf6d1LW1aBhplo/Hdafln+RqZOh9EaytkF+Q1B/k
- I9vv0ZEUQVs5y05L49shZwPC8VTHX12oHUYmUNCZ7rgQQYEyekG3gnH7/os4qekd1JVO
- 3OpZD9YxFkPgVsfPjHz/g4CzwZYE/tnSFLvBsUj98nrrQvfZSRHiYMTtKTs9Xn/n+PTH
- HLChPkYlqi3AKGeUeNdPK91cT/EpF/5KYOISEOWJ7Yd150HM8mTQhJYKaRTShlz4BvO8
- 3DxW8yKHCnP73NpRwNlXLb+IkY1uTgprpdXJghTqjVlb5SLuaDV0kSb6LCSteKzZ1znQ
- 1QeA==
-X-Gm-Message-State: AOJu0YxVsymuHpDK2gnWviLl6crTeiHXv3JAFaQ0sRXAgwkSUadBoF51
- TFfpiSKZ0MCUpKHsCMtrltJr8xllj08QSwH663GGxUuactHCEqlV5SRERo7tW4pewIVkXOEmyS9
- O
-X-Gm-Gg: ASbGncuehvxD0CjRiN+HFeH0epzw/BXgnMr/rFWpmUZW2TNE2z9CP8U67anXzUsTVTM
- wKmpJVmsWB1POulffwFy3r0hRPMzQOkJGtJe4IQ76u7wKcPNGv6IiIe/SDfBjFwfIsU+2q4QyjQ
- oVaWer7aMmWOtXH7f7/eJK8NkhjoUTFw8dVpqZBglW7buXDS3/ZMWANsIn8b55P53Y23Oye5WSa
- G2bEYzc8dJTF97arMQCKWcnHdQjt+X+Z6ColKZCZttXv0/SvONGNWyEe/XSwFfYxQJvVAb19ZDo
- mESKCgNNTFfeEordKWZVwLc4oMRbSIxh5sSVzB0q7xMlztnlbal9Cx9D0rr2+1whD04W
-X-Google-Smtp-Source: AGHT+IEIQRBwIq1zJupZM2ZmjQoYn9aJD2zfrbvCC9m1DvpQqf14GnwNuvINidc+Q2dVfuiLZH7o7A==
-X-Received: by 2002:a17:902:c945:b0:220:d5a4:3ac with SMTP id
- d9443c01a7336-220d5a404a4mr52353285ad.45.1739481729373; 
- Thu, 13 Feb 2025 13:22:09 -0800 (PST)
+ bh=PwbPAYaQDaY6eyfb3DfMi7Frq4tEeq7+B7UnYVKaLC4=;
+ b=nsejKUAqqYb1ojxHvR+L/rulpbOfsHq9t9KIKgx0AEQuFQEL/DaAajOHU3RuibC4FH
+ 7TzDPnCCM7FTOOaBdHmZ/z03eJTO/Jwft4s5D+BiM93JaZGd6DRmaZ4qi1ahvRf4FMMs
+ SWwom6O2g/IQe+LyEmB7K3t3CI8rxHBvrtssCoVFz0IKlf2VnBTIeSWFj5VUA4qEmJNX
+ gBLRyAQVdd9SPaR/grjda/G2wE0m0CyCkh8RjUDa3WYSNd/aHbLSrr/Ie0GjFAb4hgrl
+ B371+Lwasw5j6D23XMBLYgOBEpeioAk+3LAkIb+Ara1oPk1XaAU3oWaZPGTRfVStOv6v
+ V1GA==
+X-Gm-Message-State: AOJu0YxM0PghvYAdvxVOqPcSywnOZ39CDAqrAUNZAIc49lm9Yz8GPIky
+ uypSvkvFR4BtMDR4sIRmLvPJDq/l1tn2iZSOqKqAX7BHCqTPCRdWoA7D4a2aixo2fjHDEyIxKqH
+ s
+X-Gm-Gg: ASbGncvIQu7hFw/78lpfPdYv7w+PMwhKzX877v8v1M7KF1gd/Rl08mt3p2zysHh6E2q
+ VhVYyJ1IaGu1BuNEbA+87GNpeIr78nddQdETnWQadStF2naPzK0Myts9gJFmbLJhsYPrkvaelIm
+ Gde6+FXEejLiKNc5lruazlfJJ70XlIpRQabBLow1Hb4pfVdtLh+7jzS93Bl2QN+IXerI1Htsw2K
+ G7mbzxUfaa0l+RyY5siUG4ZpvBSlKItlXb/iR2b/tI7ITgluX4LlDkMVF2Muf6DJgFVthaEigyI
+ AyXppMsGALp1RuhZDuUcqiockIbUZEKY7NZpqh8k1rVaMyr+n3uNNT/i51LheOR3Y6Qi
+X-Google-Smtp-Source: AGHT+IHpJbwXqVuwRsGYeRupTHlBTcZgv/TQ7lVt4C5/JDGZZAvCFWOlvp5JuSopP9Yvsq/E1V/cLg==
+X-Received: by 2002:a17:90b:2748:b0:2ee:dd9b:e402 with SMTP id
+ 98e67ed59e1d1-2fbf5bf351cmr17034769a91.12.1739485110004; 
+ Thu, 13 Feb 2025 14:18:30 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-adb57c5de85sm1615822a12.10.2025.02.13.13.22.08
+ 98e67ed59e1d1-2fc13ad726bsm1706826a91.28.2025.02.13.14.18.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Feb 2025 13:22:08 -0800 (PST)
+ Thu, 13 Feb 2025 14:18:29 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v7 7/7] test: update to latencystats tests
-Date: Thu, 13 Feb 2025 13:20:36 -0800
-Message-ID: <20250213212151.1693506-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v6 00/11] secure zeroing of memory
+Date: Thu, 13 Feb 2025 14:16:13 -0800
+Message-ID: <20250213221819.1856769-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250213212151.1693506-1-stephen@networkplumber.org>
-References: <20240408195036.182545-1-stephen@networkplumber.org>
- <20250213212151.1693506-1-stephen@networkplumber.org>
+In-Reply-To: <20241114011129.451243-1-stephen@networkplumber.org>
+References: <20241114011129.451243-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,170 +79,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-No need for loop and memset() here. Just use structure
-initialization.  Remove unnecessary initializations.
+This series handles memset related bugs indentified by PVS Studio.
+The root cause is that Gcc and other compilers are free to
+optimize away memset called before free.
 
-Look at the number of samples, min, max and average
-numbers to make sure they look correct.
-Forward for longer to make sure multiple samples are taken.
+v6 - rename rte_memset_sensative to rte_memzero_explicit to more
+     closely match kernel usage.
+     use rte_free_sensistive in crypto/qat driver
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_latencystats.c | 84 ++++++++++++++++++++++++------------
- 1 file changed, 57 insertions(+), 27 deletions(-)
+Stephen Hemminger (11):
+  eal: introduce new secure memory fill
+  eal: add new secure free function
+  crypto/qat: force zero of keys
+  crypto/qat: fix size calculation for memset
+  crypto/qat: use secure memset
+  bus/uacce: remove memset before free
+  compress/octeontx: remove unnecessary memset
+  test: remove unneeded memset
+  net/ntnic: check result of malloc
+  net/ntnic: remove unnecessary memset
+  devtools/cocci: add script to find problematic memset
 
-diff --git a/app/test/test_latencystats.c b/app/test/test_latencystats.c
-index c309ab194f..676a99d385 100644
---- a/app/test/test_latencystats.c
-+++ b/app/test/test_latencystats.c
-@@ -14,18 +14,19 @@
- #include "sample_packet_forward.h"
- #include "test.h"
- 
--#define NUM_STATS 4
-+#define NUM_STATS 5
- #define LATENCY_NUM_PACKETS 10
- #define QUEUE_ID 0
- 
- static uint16_t portid;
- static struct rte_ring *ring;
- 
--static struct rte_metric_name lat_stats_strings[] = {
-+static struct rte_metric_name lat_stats_strings[NUM_STATS] = {
- 	{"min_latency_ns"},
- 	{"avg_latency_ns"},
- 	{"max_latency_ns"},
- 	{"jitter_ns"},
-+	{"samples"},
- };
- 
- /* Test case for latency init with metrics init */
-@@ -70,13 +71,9 @@ static int test_latency_uninit(void)
- /* Test case to get names of latency stats */
- static int test_latencystats_get_names(void)
- {
--	int ret = 0, i = 0;
--	int size = 0;
--	struct rte_metric_name names[NUM_STATS];
--
--	size_t m_size = sizeof(struct rte_metric_name);
--	for (i = 0; i < NUM_STATS; i++)
--		memset(&names[i], 0, m_size);
-+	int ret, i;
-+	uint16_t size;
-+	struct rte_metric_name names[NUM_STATS] = { };
- 
- 	/* Success Test: Valid names and size */
- 	size = NUM_STATS;
-@@ -106,13 +103,9 @@ static int test_latencystats_get_names(void)
- /* Test case to get latency stats values */
- static int test_latencystats_get(void)
- {
--	int ret = 0, i = 0;
--	int size = 0;
--	struct rte_metric_value values[NUM_STATS];
--
--	size_t v_size = sizeof(struct rte_metric_value);
--	for (i = 0; i < NUM_STATS; i++)
--		memset(&values[i], 0, v_size);
-+	int ret;
-+	uint16_t size;
-+	struct rte_metric_value values[NUM_STATS] = { };
- 
- 	/* Success Test: Valid values and valid size */
- 	size = NUM_STATS;
-@@ -149,10 +142,14 @@ static void test_latency_ring_free(void)
- 
- static int test_latency_packet_forward(void)
- {
-+	unsigned int i;
- 	int ret;
- 	struct rte_mbuf *pbuf[LATENCY_NUM_PACKETS] = { };
- 	struct rte_mempool *mp;
- 	char poolname[] = "mbuf_pool";
-+	uint64_t end_cycles;
-+	struct rte_metric_value values[NUM_STATS] = { };
-+	struct rte_metric_name names[NUM_STATS] = { };
- 
- 	ret = test_get_mbuf_from_pool(&mp, pbuf, poolname);
- 	if (ret < 0) {
-@@ -166,9 +163,41 @@ static int test_latency_packet_forward(void)
- 		return TEST_FAILED;
- 	}
- 
--	ret = test_packet_forward(pbuf, portid, QUEUE_ID);
--	if (ret < 0)
--		printf("send pkts Failed\n");
-+	ret = rte_latencystats_get_names(names, NUM_STATS);
-+	TEST_ASSERT((ret == NUM_STATS), "Test Failed to get metrics names");
-+
-+	ret = rte_latencystats_get(values, NUM_STATS);
-+	TEST_ASSERT(ret == NUM_STATS, "Test failed to get results before forwarding");
-+	TEST_ASSERT(values[4].value == 0, "Samples not zero at start of test");
-+
-+	/*
-+	 * Want test to run long enough to collect sufficient samples
-+	 * but not so long that scheduler decides to reschedule it (1000 hz).
-+	 */
-+	end_cycles = rte_rdtsc() + rte_get_tsc_hz() / 2000;
-+	do {
-+		ret = test_packet_forward(pbuf, portid, QUEUE_ID);
-+		if (ret < 0)
-+			printf("send pkts Failed\n");
-+	} while (rte_rdtsc() < end_cycles);
-+
-+	ret = rte_latencystats_get(values, NUM_STATS);
-+	TEST_ASSERT(ret == NUM_STATS, "Test failed to get results after forwarding");
-+
-+	for (i = 0; i < NUM_STATS; i++) {
-+		uint16_t k = values[i].key;
-+
-+		printf("%s = %"PRIu64"\n",
-+		       names[k].name, values[i].value);
-+	}
-+
-+	TEST_ASSERT(values[4].value > 0, "No samples taken");
-+	TEST_ASSERT(values[0].value > 0, "Min latency should not be zero");
-+	TEST_ASSERT(values[1].value > 0, "Avg latency should not be zero");
-+	TEST_ASSERT(values[2].value > 0, "Max latency should not be zero");
-+	TEST_ASSERT(values[0].value < values[1].value, "Min latency > Avg latency");
-+	TEST_ASSERT(values[0].value < values[2].value, "Min latency > Max latency");
-+	TEST_ASSERT(values[1].value < values[2].value, "Avg latency > Max latency");
- 
- 	rte_eth_dev_stop(portid);
- 	test_put_mbuf_to_pool(mp, pbuf);
-@@ -188,22 +217,23 @@ unit_test_suite latencystats_testsuite = {
- 		 */
- 		TEST_CASE_ST(NULL, NULL, test_latency_init),
- 
--		/* Test Case 2: Do packet forwarding for metrics
--		 * calculation and check the latency metrics values
--		 * are updated
--		 */
--		TEST_CASE_ST(test_latency_packet_forward, NULL,
--				test_latency_update),
--		/* Test Case 3: To check whether latency stats names
-+		/* Test Case 2: To check whether latency stats names
- 		 * are retrieved
- 		 */
- 		TEST_CASE_ST(NULL, NULL, test_latencystats_get_names),
- 
--		/* Test Case 4: To check whether latency stats
-+		/* Test Case 3: To check whether latency stats
- 		 * values are retrieved
- 		 */
- 		TEST_CASE_ST(NULL, NULL, test_latencystats_get),
- 
-+		/* Test Case 4: Do packet forwarding for metrics
-+		 * calculation and check the latency metrics values
-+		 * are updated
-+		 */
-+		TEST_CASE_ST(test_latency_packet_forward, NULL,
-+				test_latency_update),
-+
- 		/* Test Case 5: To check uninit of latency test */
- 		TEST_CASE_ST(NULL, NULL, test_latency_uninit),
- 
+ app/test/test_cmdline_cirbuf.c                |  2 -
+ devtools/cocci/memset_free.cocci              |  9 ++++
+ drivers/bus/uacce/uacce.c                     |  1 -
+ drivers/compress/octeontx/otx_zip.c           |  1 -
+ drivers/compress/octeontx/otx_zip_pmd.c       |  2 -
+ drivers/crypto/qat/qat_asym.c                 |  5 +--
+ drivers/crypto/qat/qat_sym_session.c          | 43 ++++++++++---------
+ drivers/net/ntnic/nthw/core/nthw_hif.c        |  5 +--
+ drivers/net/ntnic/nthw/core/nthw_iic.c        |  5 +--
+ drivers/net/ntnic/nthw/core/nthw_pcie3.c      |  5 +--
+ drivers/net/ntnic/nthw/core/nthw_rpf.c        |  5 +--
+ drivers/net/ntnic/nthw/core/nthw_sdc.c        |  5 +--
+ drivers/net/ntnic/nthw/core/nthw_si5340.c     |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_cat.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_csu.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_flm.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_hfu.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_hsh.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_info.c   |  5 +--
+ .../net/ntnic/nthw/flow_filter/flow_nthw_km.c |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_pdb.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_qsl.c    |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.c |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c |  1 -
+ .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.c |  5 +--
+ .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c |  5 +--
+ .../net/ntnic/nthw/model/nthw_fpga_model.c    |  1 -
+ drivers/net/ntnic/nthw/nthw_rac.c             |  4 +-
+ lib/eal/common/rte_malloc.c                   | 30 ++++++++++---
+ lib/eal/include/rte_malloc.h                  | 20 +++++++++
+ lib/eal/include/rte_string_fns.h              | 24 +++++++++++
+ lib/eal/version.map                           |  3 ++
+ 33 files changed, 125 insertions(+), 116 deletions(-)
+ create mode 100644 devtools/cocci/memset_free.cocci
+
 -- 
 2.47.2
 
