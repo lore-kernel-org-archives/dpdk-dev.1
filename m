@@ -2,17 +2,17 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853F0C021A5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 07:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22D7C021A8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 07:32:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C479142EA7;
-	Thu, 13 Feb 2025 08:32:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C5A1C42EB3;
+	Thu, 13 Feb 2025 08:32:10 +0100 (CET)
 Received: from smtp.cecloud.com (unknown [1.203.97.240])
- by mails.dpdk.org (Postfix) with ESMTP id 448B74028C
- for <dev@dpdk.org>; Thu, 13 Feb 2025 08:15:27 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2C18A4028C
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 08:15:41 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
- by smtp.cecloud.com (Postfix) with ESMTP id BC7BB900116;
- Thu, 13 Feb 2025 15:15:24 +0800 (CST)
+ by smtp.cecloud.com (Postfix) with ESMTP id 16218900113;
+ Thu, 13 Feb 2025 15:15:40 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-SKE-CHECKED: 1
@@ -20,7 +20,7 @@ X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [111.48.58.10])
  by smtp.cecloud.com (postfix) whith ESMTP id
  P3907747T281458896793968S1739430923169192_; 
- Thu, 13 Feb 2025 15:15:24 +0800 (CST)
+ Thu, 13 Feb 2025 15:15:39 +0800 (CST)
 X-IP-DOMAINF: 1
 X-RL-SENDER: luzhipeng@cestc.cn
 X-SENDER: luzhipeng@cestc.cn
@@ -31,16 +31,18 @@ X-LOCAL-RCPT-COUNT: 1
 X-MUTI-DOMAIN-COUNT: 0
 X-SENDER-IP: 111.48.58.10
 X-ATTACHMENT-NUM: 0
-X-UNIQUE-TAG: <2d4661ee7229e65bbd785b9491ef7943>
+X-UNIQUE-TAG: <802befeeb1bd23010dedc1bda1c25046>
 X-System-Flag: 0
 From: luzhipeng <luzhipeng@cestc.cn>
 To: dev@dpdk.org
 Cc: Thomas Monjalon <thomas@monjalon.net>,
 	luzhipeng <luzhipeng@cestc.cn>
 Subject: [PATCH] config/arm: add Phytium TengYun S5000c
-Date: Thu, 13 Feb 2025 15:14:58 +0800
-Message-Id: <20250213071459.458-1-luzhipeng@cestc.cn>
+Date: Thu, 13 Feb 2025 15:14:59 +0800
+Message-Id: <20250213071459.458-2-luzhipeng@cestc.cn>
 X-Mailer: git-send-email 2.34.0.windows.1
+In-Reply-To: <20250213071459.458-1-luzhipeng@cestc.cn>
+References: <20250213071459.458-1-luzhipeng@cestc.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Thu, 13 Feb 2025 08:32:07 +0100
