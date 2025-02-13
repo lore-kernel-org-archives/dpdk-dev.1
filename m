@@ -2,50 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22D7C021A8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 07:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62062C0219D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 07:50:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C5A1C42EB3;
-	Thu, 13 Feb 2025 08:32:10 +0100 (CET)
-Received: from smtp.cecloud.com (unknown [1.203.97.240])
- by mails.dpdk.org (Postfix) with ESMTP id 2C18A4028C
- for <dev@dpdk.org>; Thu, 13 Feb 2025 08:15:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
- by smtp.cecloud.com (Postfix) with ESMTP id 16218900113;
- Thu, 13 Feb 2025 15:15:40 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [111.48.58.10])
- by smtp.cecloud.com (postfix) whith ESMTP id
- P3907747T281458896793968S1739430923169192_; 
- Thu, 13 Feb 2025 15:15:39 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: luzhipeng@cestc.cn
-X-SENDER: luzhipeng@cestc.cn
-X-LOGIN-NAME: luzhipeng@cestc.cn
-X-FST-TO: dev@dpdk.org
-X-RCPT-COUNT: 3
-X-LOCAL-RCPT-COUNT: 1
-X-MUTI-DOMAIN-COUNT: 0
-X-SENDER-IP: 111.48.58.10
-X-ATTACHMENT-NUM: 0
-X-UNIQUE-TAG: <802befeeb1bd23010dedc1bda1c25046>
-X-System-Flag: 0
-From: luzhipeng <luzhipeng@cestc.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 9BD47402A3;
+	Thu, 13 Feb 2025 08:50:29 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6C1FA42EA1
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 08:50:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1739433028;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=y+ZXBDEGrHlaPwoP5JmDvdisPgQqaVcD0RDzyDCO1Uc=;
+ b=EjUhpIkmpg/azcg5RL+hb0RmOoHTm1OeNWD725vMaufIwoatsZNjzjK51qevMKEiMZ3SkZ
+ bE1mQ/5DOAgHHx6q9HlEOayh/lL54iNmfe3FNy71Rm2vTHEtSoP4WHVmrDQvFHRaTCrPQE
+ jz99G7/jrn54X1tgtlYFgDQPcCzA/ng=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-418-WuWM6xIKOhW_d_fdEF6_ag-1; Thu,
+ 13 Feb 2025 02:50:24 -0500
+X-MC-Unique: WuWM6xIKOhW_d_fdEF6_ag-1
+X-Mimecast-MFC-AGG-ID: WuWM6xIKOhW_d_fdEF6_ag
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8DB6A1975AFC; Thu, 13 Feb 2025 07:50:22 +0000 (UTC)
+Received: from dmarchan.com (unknown [10.44.33.80])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 6FAEA190C541; Thu, 13 Feb 2025 07:50:19 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
-	luzhipeng <luzhipeng@cestc.cn>
-Subject: [PATCH] config/arm: add Phytium TengYun S5000c
-Date: Thu, 13 Feb 2025 15:14:59 +0800
-Message-Id: <20250213071459.458-2-luzhipeng@cestc.cn>
-X-Mailer: git-send-email 2.34.0.windows.1
-In-Reply-To: <20250213071459.458-1-luzhipeng@cestc.cn>
-References: <20250213071459.458-1-luzhipeng@cestc.cn>
+Cc: thomas@monjalon.net, andremue@linux.microsoft.com,
+ Aaron Conole <aconole@redhat.com>,
+ Michael Santana <maicolgabriel@hotmail.com>
+Subject: [PATCH] ci: build with MSVC in GHA
+Date: Thu, 13 Feb 2025 08:50:10 +0100
+Message-ID: <20250213075010.2670431-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YQM36aOJVvW62qJzrzW1RR-w8gfDd8WDBui3okk5YXY_1739433022
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Thu, 13 Feb 2025 08:32:07 +0100
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,98 +65,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support for Phytium tengyunS5000c
+Add a build target in Windows 2022 for MSVC.
 
-Signed-off-by: luzhipeng <luzhipeng@cestc.cn>
+Loading MSVC environment and having successive commands in a single
+(cmd or pwsh) shell does not seem to correctly report if one of the
+commands failed.
+For now, load MSVC environment and run commands in separate shells.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- config/arm/arm64_fts5000c_linux_gcc | 16 ++++++++++++++++
- config/arm/meson.build              | 20 ++++++++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 config/arm/arm64_fts5000c_linux_gcc
+ .github/workflows/build.yml | 38 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/config/arm/arm64_fts5000c_linux_gcc b/config/arm/arm64_fts5000c_linux_gcc
-new file mode 100644
-index 0000000000..1f3b920b1a
---- /dev/null
-+++ b/config/arm/arm64_fts5000c_linux_gcc
-@@ -0,0 +1,16 @@
-+[binaries]
-+c = 'aarch64-linux-gnu-gcc'
-+cpp = 'aarch64-linux-gnu-g++'
-+ar = 'aarch64-linux-gnu-gcc-ar'
-+strip = 'aarch64-linux-gnu-strip'
-+pkgconfig = 'aarch64-linux-gnu-pkg-config'
-+pcap-config = ''
-+
-+[host_machine]
-+system = 'linux'
-+cpu_family = 'aarch64'
-+cpu = 'armv8-a'
-+endian = 'little'
-+
-+[properties]
-+platform = 'fts5000c'
-diff --git a/config/arm/meson.build b/config/arm/meson.build
-index 5302861e2c..086985d7b6 100644
---- a/config/arm/meson.build
-+++ b/config/arm/meson.build
-@@ -304,6 +304,13 @@ implementer_phytium = {
-                 ['RTE_MAX_LCORE', 256],
-                 ['RTE_MAX_NUMA_NODES', 32]
-             ]
-+        },
-+        '0x862': {
-+            'mcpu': 'mcpu_tys5000c',
-+            'flags': [
-+                ['RTE_MAX_LCORE', 256],
-+                ['RTE_MAX_NUMA_NODES', 32]
-+            ]
-         }
-     }
- }
-@@ -614,6 +621,13 @@ soc_tys2500 = {
-     'numa': true
- }
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index dcafb4a8f5..aef692ca1f 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -174,6 +174,44 @@ jobs:
+           build/meson-logs/meson-log.txt
+           build/meson-logs/testlog.txt
  
-+soc_tys5000c = {
-+    'description': 'Phytium TengYun S5000c',
-+    'implementer': '0x70',
-+    'part_number': '0x862',
-+    'numa': true
-+}
++  windows-vm-builds:
++    name: ${{ join(matrix.config.*, '-') }}
++    runs-on: ${{ matrix.config.os }}
++    strategy:
++      fail-fast: false
++      matrix:
++        config:
++          - os: windows-2022
++            compiler: msvc
 +
- soc_v2 = {
-     'description': 'Arm Neoverse V2',
-     'implementer': '0x41',
-@@ -650,6 +664,10 @@ mcpu_defs = {
-         'march': 'armv8-a',
-         'march_extensions': ['crc']
-     },
-+    'mcpu_tys5000c': {
-+        'march': 'armv8-a',
-+        'march_extensions': ['crc']
-+    },
-     'mcpu_generic': {
-         'march': 'armv8-a',
-         'march_extensions': ['crc'],
-@@ -694,6 +712,7 @@ thunderx2:       Marvell ThunderX2 T99
- thunderxt83:     Marvell ThunderX T83
- thunderxt88:     Marvell ThunderX T88
- tys2500:         Phytium TengYun S2500
-+tys5000c:        Phytium TengYun S5000c
- v2:              Arm Neoverse V2
- End of SoCs list
- '''
-@@ -733,6 +752,7 @@ socs = {
-     'thunderxt83': soc_thunderxt83,
-     'thunderxt88': soc_thunderxt88,
-     'tys2500': soc_tys2500,
-+    'tys5000c': soc_tys5000c,
-     'v2': soc_v2,
- }
- 
++    steps:
++    - name: Checkout sources
++      uses: actions/checkout@v4
++    - name: Set up Python
++      uses: actions/setup-python@v5
++      with:
++        python-version: '3.x'
++    - name: Install dependencies
++      run: python -m pip install meson==1.6.1 ninja
++    - name: Configure
++      shell: cmd
++      run: |
++        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=amd64
++        meson setup -Denable_stdatomic=true build
++    - name: Build
++      shell: cmd
++      run: |
++        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=amd64
++        meson compile -C build
++    - name: Upload logs on failure
++      if: failure()
++      uses: actions/upload-artifact@v4
++      with:
++        name: meson-logs-${{ join(matrix.config.*, '-') }}
++        path: |
++          build/.ninja_log
++          build/meson-logs/meson-log.txt
++
+   prepare-container-images:
+     name: ${{ join(matrix.config.*, '-') }}
+     runs-on: ubuntu-latest
 -- 
-2.34.0.windows.1
-
-
+2.48.1
 
