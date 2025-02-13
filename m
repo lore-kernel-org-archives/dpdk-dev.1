@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224A1C021A0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 21:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70319C021A4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 21:22:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 33C6F402DD;
-	Thu, 13 Feb 2025 22:22:08 +0100 (CET)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id ECB7E402C5
- for <dev@dpdk.org>; Thu, 13 Feb 2025 22:22:05 +0100 (CET)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-21f78b1fb7dso23405675ad.3
- for <dev@dpdk.org>; Thu, 13 Feb 2025 13:22:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 29E8A40613;
+	Thu, 13 Feb 2025 22:22:09 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id E84C7402F0
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 22:22:06 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-21c2f1b610dso31550235ad.0
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 13:22:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739481725;
- x=1740086525; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739481726;
+ x=1740086526; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Iabywrl0u11YGh3Q3Dtu1Jk/vzT4tGJ0vMVH+hzkvQ0=;
- b=GeCtngkORSvoukbHq1WSof+Ei7Zbs99/4x0+4v1pMy80yiJyga5EvcRv0VRfK2QMnA
- JF2DnsjxJscHyENgBqQEXAaeptE0zBdFU8Qy8Giv3CNPN1L/c3PjRpsldKX0GPxleUxx
- 9CRgYOF9CrVljKLnW9e3fv8nO3OjSn/NnOyxd3hNu/kEwXxzJ7aIepVZlmeAFed71ASZ
- z7eLVwYzKyUCoJMx41qM+U+gT5R6USQdbIgIeyhBQkvvwGCfsohoMI5S8lNwJp8nThsa
- TPeNVhhFtUeDR3c7dKcdpl6knHm3gT+nqGbyNamXzRWV+xrm+PLAKwQFrrgyX4h7Fb/L
- G1Dg==
+ bh=NE6zl8XsJ9Mi4v6+xHRRaeLGuAW7qv3igvxwRXR74us=;
+ b=1FzD1BYwGVTnhmavJs2p1Gpvy18/Klv1rWqcN2/mN08C7Jq0zR65pCWdFtt+M/8PFL
+ ilQBuO1WNr5i3ZGq5vH8jbqALxBfCcWxYhPAv3rsKL3tjQH1yCZKoySB0cBrpR0r7kGd
+ wRGg8FOnMOfS+IuIRa7tjk5ZtLfpxUmdbxvtVR3u7bhINtFDLE0iml3iWa75c8sX2PaW
+ e+aV9tVrdiTA2ohhO5/Nozwza1yWazSkhL9x+pBY51y/WUb/TqHIoPiTGphsVomawBve
+ IqO4q4BWgY1I+Isc/CkV9VeefWZ14mk37n2SlJjwMZ+z6xuW1l9MedHtsBRWNFRRKmUJ
+ mdaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739481725; x=1740086525;
+ d=1e100.net; s=20230601; t=1739481726; x=1740086526;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Iabywrl0u11YGh3Q3Dtu1Jk/vzT4tGJ0vMVH+hzkvQ0=;
- b=qWenq+KlTLyGh8gNzTXVhzGtCEla6m8kZw1CNCJIj41pAfFdfkY5eReET8D9+rfF8X
- BKbWCg7LSCCzPY+Zcg1rK2M0sxB1SxtOsqJoPa7MU6wYcJYpLhT0G2N8HWykcULXugtY
- ckFT872diFjE2ObL5sOS2FyaqbvbWXp0ggeRdiARArr/k7HT4Gx3u5yg7ILe5rJVPuRv
- RdAvq3EoWmoySKSxWuWB292xovtwblLrdfSfFV0gMEi/sjc2pPpUmYkesmSkkeLYmWaC
- CLLc5+xQ2d1Sg79HfSDhp0ds6yjyIDif9aNNUwRJCkmWsp9dz0KV62mzOM1DyxkCwKT4
- 4GeA==
-X-Gm-Message-State: AOJu0YyrTetaqXLQ6VxCPIJDR+rfm5t1xu8nhERgA8bd4zJan1uSkDtk
- ZqRCk6Bigw0xHUoTLc/8imKxRFRqi3nto+pQg3Bb7zRHMdhfPxaOheoAhZ7b2cRJl35h5gmaYGx
- W
-X-Gm-Gg: ASbGnculnta9AskdMRQ10mbLdOB5WrfAhjwVc12nq9HVHF1nUWl6wMMnv5hGPO2Qdud
- Tiu6pwOhwDc34HBbdu/3CCl8TPC7T9gDM/lmLQ0cTLkjS4l/EIvsXrTyQQIL7uulELXtjpsA2FS
- mHEFAtZbP5i0GjgE/ZCGyOpJIVJPa6gT2uSBLrRQj/pDfD+q+o7+8kjnXmo9Ic26ah+sAx+XZWm
- /c/pY5QV2DZd/GyYNqmy3q2lsRiJhsaOvpPQSYmW24bam2r8zeby34W5fsjyV6UHhtIGlYDUPvp
- UJdjGBk+ijtb8JwyBrSnsKu8sQ1ULxlEJ4gZE6T81KbHfmpKB7/Z7oE2FbS0LGywNX0Y
-X-Google-Smtp-Source: AGHT+IHwd6NpUdbnrgK1EgtQ54zdTyOU7ebAssScAuV4up9LUf9k/40DL+yW6WjO9xuZUpcgIdrDhw==
-X-Received: by 2002:a17:902:d50c:b0:220:be86:a42d with SMTP id
- d9443c01a7336-220be86a79amr120983235ad.21.1739481725095; 
- Thu, 13 Feb 2025 13:22:05 -0800 (PST)
+ bh=NE6zl8XsJ9Mi4v6+xHRRaeLGuAW7qv3igvxwRXR74us=;
+ b=A6o7S52SYIvcxP8aP6JUPwdyUQbzTEdUI5z8XztosZRdz1tS8gGLIyV4oOiUxVsY/V
+ gIz0JVnT4reEFRI6aWPsnQX1NmMCP+NralPqTJFzRw4bDp/VZlH/+eBWich4xD0yTvGH
+ NjSREv0s45CW3qgotugD4Wo/3OW22zZxO0V1AlKt8ZkqTutfUx8WnYvUwkeMycQOIQWl
+ SYSe0lo5PQEydc68gT9tbIHLCkp1QvKRdMMzuHa6/LqWLbllVaNgHBBkLlV74ZaePXP7
+ tDyvW5pXy6WjmHLxQ8ozuYQ127fQkNgHH88LB1nYh36d+deTbwLD8r28yKeEv458fzGs
+ qbKw==
+X-Gm-Message-State: AOJu0YxfSoftTFkZDl2Z3dpBYupC300K4mkoekkK5WadpEXm40u7BlGu
+ A44rGqnMJ8/k0EY74ovYDRP8hKqV+wchBpUSeypD0F98XJFeJJFQHzGR0O+3mD5ve8WmX9BuUpG
+ 6
+X-Gm-Gg: ASbGncuic1qO65lC9MUE/j7cdSdOSQswLDTfnmADFCn5SJ8thgO5jlKXgoFSVMOQl7u
+ /7kKQlakTg51uCFnYf0Vhh6Tc+xp8zysEJpgetyF3mx1SXRYiz89KDXnyhzUbCYp5U1wEFoTQ1J
+ b4v1c//pw5BrBM9AIFiSXgzosGLqrnpi7j381bldqqbVYrR7mmggHGsv0ndcBraAcxJMP9OSpy9
+ OZAE7H+Se3doMQKRJ3jcaIw5oOF1gpm/K+ZKG5j79oWHWBBb1qKG6AkiRNoCdkTNKzXQOq+L1l0
+ i86vSPdatPw8I20y1Acn4zTq4qLpZ3gbF00GLNrB0AxfCJIUfuHyPVxbcm8LucEJjAG2
+X-Google-Smtp-Source: AGHT+IH77qgWKF3Nq2LjU8LCAdDaCkaIDeLVTRZSAWn8GMTr8X7V+wxzmLk7e1LR6hUIb1XFFfeq4Q==
+X-Received: by 2002:a05:6a21:e8e:b0:1ee:40e2:8f51 with SMTP id
+ adf61e73a8af0-1ee6b4459b1mr8659050637.42.1739481726119; 
+ Thu, 13 Feb 2025 13:22:06 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-adb57c5de85sm1615822a12.10.2025.02.13.13.22.04
+ 41be03b00d2f7-adb57c5de85sm1615822a12.10.2025.02.13.13.22.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Feb 2025 13:22:04 -0800 (PST)
+ Thu, 13 Feb 2025 13:22:05 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
  Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v7 3/7] latencystats: fix log messages
-Date: Thu, 13 Feb 2025 13:20:32 -0800
-Message-ID: <20250213212151.1693506-4-stephen@networkplumber.org>
+Subject: [PATCH v7 4/7] latencystats: update include files
+Date: Thu, 13 Feb 2025 13:20:33 -0800
+Message-ID: <20250213212151.1693506-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250213212151.1693506-1-stephen@networkplumber.org>
 References: <20240408195036.182545-1-stephen@networkplumber.org>
@@ -83,102 +82,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All messages that because of an error should be at log level
-NOTICE or above. Do not break log messages across lines.
-Reword message for the case where getting info about a port
-fails and it is skipped.
+Include what is used here.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Tyler Retzlaff <roretzla@linux.microsoft.com>
 ---
- lib/latencystats/rte_latencystats.c | 35 ++++++++++++++---------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ lib/latencystats/rte_latencystats.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
 diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
-index b7a4e313ad..82c310da92 100644
+index 82c310da92..b990e5760f 100644
 --- a/lib/latencystats/rte_latencystats.c
 +++ b/lib/latencystats/rte_latencystats.c
-@@ -259,7 +259,7 @@ rte_latencystats_init(uint64_t app_samp_intvl,
- 	latency_stats_index = rte_metrics_reg_names(ptr_strings,
- 							NUM_LATENCY_STATS);
- 	if (latency_stats_index < 0) {
--		LATENCY_STATS_LOG(DEBUG,
-+		LATENCY_STATS_LOG(ERR,
- 			"Failed to register latency stats names");
- 		return -1;
- 	}
-@@ -279,8 +279,8 @@ rte_latencystats_init(uint64_t app_samp_intvl,
+@@ -2,17 +2,26 @@
+  * Copyright(c) 2018 Intel Corporation
+  */
  
- 		ret = rte_eth_dev_info_get(pid, &dev_info);
- 		if (ret != 0) {
--			LATENCY_STATS_LOG(INFO,
--				"Error during getting device (port %u) info: %s",
-+			LATENCY_STATS_LOG(NOTICE,
-+				"Can not get info for device (port %u): %s",
- 				pid, strerror(-ret));
++#include <errno.h>
+ #include <math.h>
++#include <stdbool.h>
++#include <stddef.h>
++#include <stdlib.h>
++#include <string.h>
  
- 			continue;
-@@ -291,18 +291,18 @@ rte_latencystats_init(uint64_t app_samp_intvl,
- 			cbs->cb = rte_eth_add_first_rx_callback(pid, qid,
- 					add_time_stamps, user_cb);
- 			if (!cbs->cb)
--				LATENCY_STATS_LOG(INFO, "Failed to "
--					"register Rx callback for pid=%d, "
--					"qid=%d", pid, qid);
-+				LATENCY_STATS_LOG(NOTICE,
-+					"Failed to register Rx callback for pid=%u, qid=%u",
-+					pid, qid);
- 		}
- 		for (qid = 0; qid < dev_info.nb_tx_queues; qid++) {
- 			cbs = &tx_cbs[pid][qid];
- 			cbs->cb =  rte_eth_add_tx_callback(pid, qid,
- 					calc_latency, user_cb);
- 			if (!cbs->cb)
--				LATENCY_STATS_LOG(INFO, "Failed to "
--					"register Tx callback for pid=%d, "
--					"qid=%d", pid, qid);
-+				LATENCY_STATS_LOG(NOTICE,
-+					"Failed to register Tx callback for pid=%u, qid=%u",
-+					pid, qid);
- 		}
- 	}
- 	return 0;
-@@ -323,10 +323,9 @@ rte_latencystats_uninit(void)
+ #include <rte_common.h>
+-#include <rte_string_fns.h>
+-#include <rte_mbuf_dyn.h>
+-#include <rte_log.h>
+ #include <rte_cycles.h>
++#include <rte_eal.h>
++#include <rte_errno.h>
+ #include <rte_ethdev.h>
+-#include <rte_metrics.h>
+-#include <rte_memzone.h>
+ #include <rte_lcore.h>
++#include <rte_log.h>
++#include <rte_mbuf.h>
++#include <rte_mbuf_dyn.h>
++#include <rte_memzone.h>
++#include <rte_metrics.h>
++#include <rte_spinlock.h>
++#include <rte_string_fns.h>
  
- 		ret = rte_eth_dev_info_get(pid, &dev_info);
- 		if (ret != 0) {
--			LATENCY_STATS_LOG(INFO,
--				"Error during getting device (port %u) info: %s",
-+			LATENCY_STATS_LOG(NOTICE,
-+				"Can not get info for device (port %u): %s",
- 				pid, strerror(-ret));
--
- 			continue;
- 		}
- 
-@@ -334,17 +333,17 @@ rte_latencystats_uninit(void)
- 			cbs = &rx_cbs[pid][qid];
- 			ret = rte_eth_remove_rx_callback(pid, qid, cbs->cb);
- 			if (ret)
--				LATENCY_STATS_LOG(INFO, "failed to "
--					"remove Rx callback for pid=%d, "
--					"qid=%d", pid, qid);
-+				LATENCY_STATS_LOG(NOTICE,
-+					"Failed to remove Rx callback for pid=%u, qid=%u",
-+					pid, qid);
- 		}
- 		for (qid = 0; qid < dev_info.nb_tx_queues; qid++) {
- 			cbs = &tx_cbs[pid][qid];
- 			ret = rte_eth_remove_tx_callback(pid, qid, cbs->cb);
- 			if (ret)
--				LATENCY_STATS_LOG(INFO, "failed to "
--					"remove Tx callback for pid=%d, "
--					"qid=%d", pid, qid);
-+				LATENCY_STATS_LOG(NOTICE,
-+					"Failed to remove Tx callback for pid=%u, qid=%u",
-+					pid, qid);
- 		}
- 	}
+ #include "rte_latencystats.h"
  
 -- 
 2.47.2
