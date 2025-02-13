@@ -2,52 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809C9C021A8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 05:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69C8C021A7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 06:54:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9009942EA3;
-	Thu, 13 Feb 2025 06:53:31 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 8633442E98
- for <dev@dpdk.org>; Thu, 13 Feb 2025 06:53:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739426008; x=1770962008;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=hUnnl+t9Z33CjPq0joDDeFH7scuhhc9Bi3j0S9vcAEE=;
- b=TmBf8SI1XfABM8Q1SNlWM70C8/3hm4VrBpJt0EUIkEctB5/mcq+GuxSK
- q8jIJc0InNdchMMrciIzBsiQ0Jrf9hOq4u82PdnHE+2fKeK6o7Y2TLgt/
- vVLPjavOCoumY85ObCM25LNqTFe/wFWOmqfy0nRqaOQW9/ZI/46tcdDUP
- 5uqT+OTpQmgphUWDeLgVV1iIewpW0san7l1hIgb7AdwZNBwjk+n5XulX8
- hEGMG8+ulyH8DAClvN5eGsmap43b7mTwp0YE9HIjOOHbI1fH0CuuI16vo
- dElXegxeCHSMRTGuEDO99vcZApt5vOTdyxRNlaaK9VQFe46sKoykjH37/ g==;
-X-CSE-ConnectionGUID: 1Y12qMuTRXOh7jza3z33dQ==
-X-CSE-MsgGUID: 8vDS8rD4QXOdCO/4SUcOTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39813334"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="39813334"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Feb 2025 21:53:27 -0800
-X-CSE-ConnectionGUID: HGPBnAxCSoqLFrOioMD85g==
-X-CSE-MsgGUID: 2wJZo2nHRpeGYn2qHDBlYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; d="scan'208";a="113035647"
-Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa007.fm.intel.com with ESMTP; 12 Feb 2025 21:53:25 -0800
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com
-Subject: [PATCH v2 2/2] net/intel: add Tx time queue
-Date: Wed, 12 Feb 2025 21:47:11 +0000
-Message-ID: <20250212214711.1046777-3-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 904DC402A3;
+	Thu, 13 Feb 2025 07:54:20 +0100 (CET)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 879EE4028C
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 07:54:18 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4YtmBC4Vl5z4xVcP;
+ Thu, 13 Feb 2025 14:54:11 +0800 (CST)
+Received: from szxl2zmapp05.zte.com.cn ([10.1.32.37])
+ by mse-fl1.zte.com.cn with SMTP id 51D6rvAF028778;
+ Thu, 13 Feb 2025 14:53:57 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Thu, 13 Feb 2025 14:54:00 +0800
+X-Zmail-TransId: 3e8167ad9703004-67e37
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
+Subject: [PATCH v1 00/16] net/zxdh: updated net zxdh driver
+Date: Thu, 13 Feb 2025 14:41:16 +0800
+Message-ID: <20250213064134.88166-1-wang.junlong1@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250212214711.1046777-1-soumyadeep.hore@intel.com>
-References: <20250207124300.1022523-2-soumyadeep.hore@intel.com>
- <20250212214711.1046777-1-soumyadeep.hore@intel.com>
+In-Reply-To: <20250121034433.3033681-2-wang.junlong1@zte.com.cn>
+References: <20250121034433.3033681-2-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 51D6rvAF028778
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67AD9713.000/4YtmBC4Vl5z4xVcP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,308 +51,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enabling Tx timestamp queue for supporting Tx time based
-scheduling of packets.
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
----
- drivers/net/intel/common/tx.h              |   5 +
- drivers/net/intel/ice/base/ice_lan_tx_rx.h |   1 +
- drivers/net/intel/ice/ice_ethdev.h         |   1 +
- drivers/net/intel/ice/ice_rxtx.c           | 174 +++++++++++++++++++++
- drivers/net/intel/ice/ice_rxtx.h           |   5 +
- 5 files changed, 186 insertions(+)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index d9cf4474fc..f3777fa9e7 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -35,6 +35,7 @@ struct ci_tx_queue {
- 		volatile struct i40e_tx_desc *i40e_tx_ring;
- 		volatile struct iavf_tx_desc *iavf_tx_ring;
- 		volatile struct ice_tx_desc *ice_tx_ring;
-+		volatile struct ice_ts_desc *ice_tstamp_ring;
- 		volatile union ixgbe_adv_tx_desc *ixgbe_tx_ring;
- 	};
- 	volatile uint8_t *qtx_tail;               /* register address of tail */
-@@ -76,6 +77,10 @@ struct ci_tx_queue {
- 	union {
- 		struct { /* ICE driver specific values */
- 			uint32_t q_teid; /* TX schedule node id. */
-+			uint16_t nb_tstamp_desc;	/* number of Timestamp descriptors */
-+			volatile uint8_t *tstamp_tail;	/* value of timestamp tail register */
-+			rte_iova_t tstamp_ring_dma;	/* Timestamp ring DMA address */
-+			uint16_t next_tstamp_id;
- 		};
- 		struct { /* I40E driver specific values */
- 			uint8_t dcb_tc;
-diff --git a/drivers/net/intel/ice/base/ice_lan_tx_rx.h b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
-index 940c6843d9..edd1137114 100644
---- a/drivers/net/intel/ice/base/ice_lan_tx_rx.h
-+++ b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
-@@ -1279,6 +1279,7 @@ struct ice_ts_desc {
- #define ICE_SET_TXTIME_MAX_Q_AMOUNT	127
- #define ICE_OP_TXTIME_MAX_Q_AMOUNT	2047
- #define ICE_TXTIME_FETCH_TS_DESC_DFLT	8
-+#define ICE_TXTIME_FETCH_PROFILE_CNT	16
- 
- /* Tx Time queue context data
-  *
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index afe8dae497..9649456771 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -299,6 +299,7 @@ struct ice_vsi {
- 	uint8_t enabled_tc; /* The traffic class enabled */
- 	uint8_t vlan_anti_spoof_on; /* The VLAN anti-spoofing enabled */
- 	uint8_t vlan_filter_on; /* The VLAN filter enabled */
-+	uint8_t enabled_txpp;	/* TXPP support enabled */
- 	/* information about rss configuration */
- 	u32 rss_key_size;
- 	u32 rss_lut_size;
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 8dd8644b16..f043ae3aa6 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -5,6 +5,7 @@
- #include <ethdev_driver.h>
- #include <rte_net.h>
- #include <rte_vect.h>
-+#include <rte_os_shim.h>
- 
- #include "ice_rxtx.h"
- #include "ice_rxtx_vec_common.h"
-@@ -741,6 +742,87 @@ ice_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 	return 0;
- }
- 
-+/**
-+ * ice_setup_txtime_ctx - setup a struct ice_txtime_ctx instance
-+ * @ring: The tstamp ring to configure
-+ * @txtime_ctx: Pointer to the Tx time queue context structure to be initialized
-+ * @txtime_ena: Tx time enable flag, set to true if Tx time should be enabled
-+ */
-+static int
-+ice_setup_txtime_ctx(struct ci_tx_queue *txq,
-+		     struct ice_txtime_ctx *txtime_ctx, bool txtime_ena)
-+{
-+	struct ice_vsi *vsi = txq->ice_vsi;
-+	struct ice_hw *hw;
-+
-+	hw = ICE_VSI_TO_HW(vsi);
-+	txtime_ctx->base = txq->tstamp_ring_dma >> ICE_TX_CMPLTNQ_CTX_BASE_S;
-+
-+	/* Tx time Queue Length */
-+	txtime_ctx->qlen = txq->nb_tstamp_desc;
-+
-+	if (txtime_ena)
-+		txtime_ctx->txtime_ena_q = 1;
-+
-+	/* PF number */
-+	txtime_ctx->pf_num = hw->pf_id;
-+
-+	switch (vsi->type) {
-+	case ICE_VSI_LB:
-+	case ICE_VSI_CTRL:
-+	case ICE_VSI_ADI:
-+	case ICE_VSI_PF:
-+		txtime_ctx->vmvf_type = ICE_TLAN_CTX_VMVF_TYPE_PF;
-+		break;
-+	default:
-+		PMD_DRV_LOG(ERR, "Unable to set VMVF type for VSI type %d",
-+			vsi->type);
-+		return -EINVAL;
-+	}
-+
-+	/* make sure the context is associated with the right VSI */
-+	txtime_ctx->src_vsi = ice_get_hw_vsi_num(hw, vsi->idx);
-+
-+
-+	txtime_ctx->ts_res = ICE_TXTIME_CTX_RESOLUTION_128NS;
-+	txtime_ctx->drbell_mode_32 = ICE_TXTIME_CTX_DRBELL_MODE_32;
-+	txtime_ctx->ts_fetch_prof_id = ICE_TXTIME_CTX_FETCH_PROF_ID_0;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ice_calc_ts_ring_count - Calculate the number of timestamp descriptors
-+ * @hw: pointer to the hardware structure
-+ * @tx_desc_count: number of Tx descriptors in the ring
-+ *
-+ * Return: the number of timestamp descriptors
-+ */
-+uint16_t ice_calc_ts_ring_count(struct ice_hw *hw, u16 tx_desc_count)
-+{
-+	uint16_t prof = ICE_TXTIME_CTX_FETCH_PROF_ID_0;
-+	uint16_t max_fetch_desc = 0;
-+	uint16_t fetch;
-+	uint32_t reg;
-+	uint16_t i;
-+
-+	for (i = 0; i < ICE_TXTIME_FETCH_PROFILE_CNT; i++) {
-+		reg = rd32(hw, E830_GLTXTIME_FETCH_PROFILE(prof, 0));
-+		fetch = ((uint32_t)((reg &
-+				E830_GLTXTIME_FETCH_PROFILE_FETCH_TS_DESC_M)
-+				>> rte_bsf64
-+				(E830_GLTXTIME_FETCH_PROFILE_FETCH_TS_DESC_M)));
-+		max_fetch_desc = max(fetch, max_fetch_desc);
-+	}
-+
-+	if (!max_fetch_desc)
-+		max_fetch_desc = ICE_TXTIME_FETCH_TS_DESC_DFLT;
-+
-+	max_fetch_desc = RTE_ALIGN(max_fetch_desc, ICE_REQ_DESC_MULTIPLE);
-+
-+	return tx_desc_count + max_fetch_desc;
-+}
-+
- int
- ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- {
-@@ -829,6 +911,29 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 
- 	dev->data->tx_queue_state[tx_queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
- 
-+	if (txq->ice_tstamp_ring) {
-+		struct ice_aqc_set_txtime_qgrp *txtime_qg_buf;
-+		u8 txtime_buf_len = ice_struct_size(txtime_qg_buf, txtimeqs, 1);
-+		struct ice_txtime_ctx txtime_ctx = { 0 };
-+
-+		txtime_qg_buf = ice_malloc(hw, txtime_buf_len);
-+		ice_setup_txtime_ctx(txq, &txtime_ctx,
-+				vsi->enabled_txpp);
-+		ice_set_ctx(hw, (u8 *)&txtime_ctx,
-+			    txtime_qg_buf->txtimeqs[0].txtime_ctx,
-+			    ice_txtime_ctx_info);
-+
-+		txq->tstamp_tail = hw->hw_addr +
-+					E830_GLQTX_TXTIME_DBELL_LSB(tx_queue_id);
-+
-+		err = ice_aq_set_txtimeq(hw, tx_queue_id, 1, txtime_qg_buf,
-+					    txtime_buf_len, NULL);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Failed to set Tx Time queue context, error: %d", err);
-+			return err;
-+		}
-+	}
-+
- 	rte_free(txq_elem);
- 	return 0;
- }
-@@ -1039,6 +1144,22 @@ ice_reset_tx_queue(struct ci_tx_queue *txq)
- 		prev = i;
- 	}
- 
-+	if (txq->ice_tstamp_ring) {
-+		size = sizeof(struct ice_ts_desc) * txq->nb_tstamp_desc;
-+		for (i = 0; i < size; i++)
-+			((volatile char *)txq->ice_tstamp_ring)[i] = 0;
-+
-+		prev = (uint16_t)(txq->nb_tstamp_desc - 1);
-+		for (i = 0; i < txq->nb_tstamp_desc; i++) {
-+			volatile struct ice_ts_desc *tsd = &txq->ice_tstamp_ring[i];
-+			tsd->tx_desc_idx_tstamp = 0;
-+			prev = i;
-+		}
-+
-+		txq->next_tstamp_id = 0;
-+		txq->tstamp_tail = NULL;
-+	}
-+
- 	txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
- 	txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
- 
-@@ -1501,6 +1622,24 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
- 		return -ENOMEM;
- 	}
- 
-+	if (vsi->type == ICE_VSI_PF && vsi->enabled_txpp) {
-+		const struct rte_memzone *tstamp_z =
-+					rte_eth_dma_zone_reserve(dev, "ice_tstamp_ring",
-+					queue_idx, ring_size, ICE_RING_BASE_ALIGN,
-+				    socket_id);
-+		if (!tstamp_z) {
-+			ice_tx_queue_release(txq);
-+			PMD_INIT_LOG(ERR, "Failed to reserve DMA memory for TX");
-+			return -ENOMEM;
-+		}
-+
-+		txq->nb_tstamp_desc =
-+				    ice_calc_ts_ring_count(ICE_VSI_TO_HW(vsi),
-+							    txq->nb_tx_desc);
-+	} else {
-+		txq->ice_tstamp_ring = NULL;
-+	}
-+
- 	ice_reset_tx_queue(txq);
- 	txq->q_set = true;
- 	dev->data->tx_queues[queue_idx] = txq;
-@@ -3161,6 +3300,41 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		txd->cmd_type_offset_bsz |=
- 			rte_cpu_to_le_64(((uint64_t)td_cmd) <<
- 					 ICE_TXD_QW1_CMD_S);
-+
-+		if (txq->ice_tstamp_ring) {
-+			volatile struct ice_ts_desc *ts_desc;
-+			volatile struct ice_ts_desc *ice_tstamp_ring;
-+			struct timespec sys_time;
-+			uint16_t next_ts_id = txq->next_tstamp_id;
-+			uint64_t ns;
-+			uint32_t tstamp;
-+
-+			clock_gettime(CLOCK_REALTIME, &sys_time);
-+			ns = rte_timespec_to_ns(&sys_time);
-+			tstamp = ns >> ICE_TXTIME_CTX_RESOLUTION_128NS;
-+
-+			ice_tstamp_ring = txq->ice_tstamp_ring;
-+			ts_desc = &ice_tstamp_ring[next_ts_id];
-+			ts_desc->tx_desc_idx_tstamp =
-+						rte_cpu_to_le_32(((uint32_t)tx_id &
-+						ICE_TXTIME_TX_DESC_IDX_M) |
-+						((uint32_t)tstamp << ICE_TXTIME_STAMP_M));
-+
-+			next_ts_id++;
-+			if (next_ts_id == txq->nb_tstamp_desc) {
-+				int fetch = txq->nb_tstamp_desc - txq->nb_tx_desc;
-+
-+				for (next_ts_id = 0; next_ts_id < fetch; next_ts_id++) {
-+					ts_desc = &ice_tstamp_ring[next_ts_id];
-+					ts_desc->tx_desc_idx_tstamp =
-+							rte_cpu_to_le_32(((uint32_t)tx_id &
-+							ICE_TXTIME_TX_DESC_IDX_M) |
-+							((uint32_t)tstamp << ICE_TXTIME_STAMP_M));
-+				}
-+			}
-+			txq->next_tstamp_id = next_ts_id;
-+			ICE_PCI_REG_WRITE(txq->tstamp_tail, next_ts_id);
-+		}
- 	}
- end_of_tx:
- 	/* update Tail register */
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index f9293ac6f9..651e146e6d 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -29,6 +29,10 @@
- #define ice_rx_flex_desc ice_32b_rx_flex_desc
- #endif
- 
-+#define ICE_TXTIME_TX_DESC_IDX_M	0x00001fff
-+#define ICE_TXTIME_STAMP_M		12
-+#define ICE_REQ_DESC_MULTIPLE	32
-+
- #define ICE_SUPPORT_CHAIN_NUM 5
- 
- #define ICE_TD_CMD                      ICE_TX_DESC_CMD_EOP
-@@ -293,6 +297,7 @@ uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
- int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
- int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
- int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
-+u16 ice_calc_ts_ring_count(struct ice_hw *hw, u16 tx_desc_count);
- 
- #define FDIR_PARSING_ENABLE_PER_QUEUE(ad, on) do { \
- 	int i; \
--- 
-2.43.0
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjE6DQogIC0gdXBkYXRlZCBuZXQgenhkaCBkcml2ZXIuDQogICAgb3B0aW1pemUgaW5pdCBhbmQg
+c29tZSBvcHMuDQogICAgcHJvdmlkZWQgY3N1bS9scm8vdHNvIOOAgWV4dGVuZCBzdGF0c+OAgWZ3
+X3ZlcnNpb27jgIFtb2R1bGVfaW5mbyDjgIFtZXRlciwgZXRjLg0KDQpKdW5sb25nIFdhbmcgKDE2
+KToNCiAgbmV0L3p4ZGg6IG9wdGltaXplIG5wIGR0YiBjaGFubmVsIGluaXRpYWxpemF0aW9uDQog
+IG5ldC96eGRoOiBvcHRpbWl6ZSBxdWV1ZSByZXMgYWxsb2MvZnJlZSBwcm9jZXNzDQogIG5ldC96
+eGRoOiBvcHRpbWl6ZSBsaW5rIHVwZGF0ZSBwcm9jZXNzDQogIG5ldC96eGRoOiB1cGRhdGUgcngv
+dHggdG8gbGF0ZXN0DQogIG5ldC96eGRoOiBwcm92aWRlZCBtc2cocGZ2ZikgaW50ciBjYWxsYmFj
+aw0KICBuZXQvenhkaDogb3B0aW1pemUgbWFjIG9wcw0KICBuZXQvenhkaDogb3B0aW1pemUgcHJv
+bWlzYyBvcHMNCiAgbmV0L3p4ZGg6IG9wdGltaXplIHZsYW4gZmlsdGVyL29mZmxvYWQgb3BzDQog
+IG5ldC96eGRoOiBvcHRpbWl6ZSByc3MgaGFzaCBjb25maWcvdXBkYXRlLHJldGEgdXBkYXRlL2dl
+dA0KICBuZXQvenhkaDogb3B0aW1pemUgbXR1IHNldCBvcHMNCiAgbmV0L3p4ZGg6IG9wdGltaXpl
+IGJhc2ljIHN0YXRzIG9wcw0KICBuZXQvenhkaDogcHJvdmlkZWQgY3N1bS90c28vbHJvIGNvbmZp
+Zw0KICBuZXQvenhkaDogcHJvdmlkZWQgcnhxL3R4cSBpbmZvIGdldCBpbXBsZW1lbnRhdGlvbnMN
+CiAgbmV0L3p4ZGg6IHByb3ZpZGUgZXh0ZW5kZWQgc3RhdHMgb3BzIGltcGxlbWVudGF0aW9ucw0K
+ICBuZXQvenhkaDogcHJvdmlkZSBwdHlwZXMgZndfdmVyc2lvbiBtb2R1bGUgaW5mby9lZXByb20g
+b3BzDQogIG5ldC96eGRoOiBwcm92aWRlIG1ldGVyIG9wcyBpbXBsZW1lbnRhdGlvbnMNCg0KIGRv
+Yy9ndWlkZXMvbmljcy9mZWF0dXJlcy96eGRoLmluaSAgfCAgICA4ICsNCiBkb2MvZ3VpZGVzL25p
+Y3MvenhkaC5yc3QgICAgICAgICAgIHwgICAgNSArDQogZHJpdmVycy9uZXQvenhkaC9tZXNvbi5i
+dWlsZCAgICAgICB8ICAgIDEgKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9jb21tb24uYyAgICAg
+fCAgIDQ4ICstDQogZHJpdmVycy9uZXQvenhkaC96eGRoX2NvbW1vbi5oICAgICB8ICAgIDMgKw0K
+IGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyAgICAgfCAgNjYwICsrKysrKysrKysrKy0t
+LQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuaCAgICAgfCAgIDYzICstDQogZHJpdmVy
+cy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuYyB8ICA5MDYgKysrKysrKysrKysrKysrKysrLS0t
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuaCB8ICAgNTMgKy0NCiBkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfbXNnLmMgICAgICAgIHwgIDk0MCArKysrKysrKysrKysrKysrKysrKy0N
+CiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmggICAgICAgIHwgIDExMiArKy0NCiBkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfbXRyLmMgICAgICAgIHwgMTIyMyArKysrKysrKysrKysrKysrKysrKysr
+KysrKysrDQogZHJpdmVycy9uZXQvenhkaC96eGRoX210ci5oICAgICAgICB8ICAxMTQgKysrDQog
+ZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmMgICAgICAgICB8ICA3MjggKysrKysrKysrKysrKysr
+KysNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaCAgICAgICAgIHwgIDI2MiArKysrKysNCiBk
+cml2ZXJzL25ldC96eGRoL3p4ZGhfcGNpLmMgICAgICAgIHwgICAxMCAtDQogZHJpdmVycy9uZXQv
+enhkaC96eGRoX3F1ZXVlLmMgICAgICB8ICAxMzIgKy0tDQogZHJpdmVycy9uZXQvenhkaC96eGRo
+X3F1ZXVlLmggICAgICB8ICAxMTggKy0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3J4dHguYyAg
+ICAgICB8ICA2OTYgKysrKysrKysrLS0tLS0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9yeHR4
+LmggICAgICAgfCAgIDI3ICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfdGFibGVzLmMgICAgIHwg
+IDM3OCArKysrKysrLS0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfdGFibGVzLmggICAgIHwgIDIw
+NiArKystLQ0KIDIyIGZpbGVzIGNoYW5nZWQsIDU4OTAgaW5zZXJ0aW9ucygrKSwgODAzIGRlbGV0
+aW9ucygtKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXRyLmMN
+CiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvenhkaC96eGRoX210ci5oDQoNCi0tIA0K
+Mi4yNy4w
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjE6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3VwZGF0ZWQmbmJzcDtuZXQmbmJzcDt6eGRoJm5i
+c3A7ZHJpdmVyLjxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO29wdGltaXplJm5ic3A7aW5p
+dCZuYnNwO2FuZCZuYnNwO3NvbWUmbmJzcDtvcHMuPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7cHJvdmlkZWQmbmJzcDtjc3VtL2xyby90c28mbmJzcDvjgIFleHRlbmQmbmJzcDtzdGF0c+OA
+gWZ3X3ZlcnNpb27jgIFtb2R1bGVfaW5mbyZuYnNwO+OAgW1ldGVyLCZuYnNwO2V0Yy48YnIgLz4N
+PGJyIC8+SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsoMTYpOjxiciAvPiZuYnNwOyZuYnNwO25ldC96
+eGRoOiZuYnNwO29wdGltaXplJm5ic3A7bnAmbmJzcDtkdGImbmJzcDtjaGFubmVsJm5ic3A7aW5p
+dGlhbGl6YXRpb248YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNw
+O3F1ZXVlJm5ic3A7cmVzJm5ic3A7YWxsb2MvZnJlZSZuYnNwO3Byb2Nlc3M8YnIgLz4mbmJzcDsm
+bmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO2xpbmsmbmJzcDt1cGRhdGUmbmJzcDtw
+cm9jZXNzPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7dXBkYXRlJm5ic3A7cngvdHgm
+bmJzcDt0byZuYnNwO2xhdGVzdDxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO3Byb3Zp
+ZGVkJm5ic3A7bXNnKHBmdmYpJm5ic3A7aW50ciZuYnNwO2NhbGxiYWNrPGJyIC8+Jm5ic3A7Jm5i
+c3A7bmV0L3p4ZGg6Jm5ic3A7b3B0aW1pemUmbmJzcDttYWMmbmJzcDtvcHM8YnIgLz4mbmJzcDsm
+bmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO3Byb21pc2MmbmJzcDtvcHM8YnIgLz4m
+bmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO3ZsYW4mbmJzcDtmaWx0ZXIv
+b2ZmbG9hZCZuYnNwO29wczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXpl
+Jm5ic3A7cnNzJm5ic3A7aGFzaCZuYnNwO2NvbmZpZy91cGRhdGUscmV0YSZuYnNwO3VwZGF0ZS9n
+ZXQ8YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO210dSZuYnNw
+O3NldCZuYnNwO29wczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXplJm5i
+c3A7YmFzaWMmbmJzcDtzdGF0cyZuYnNwO29wczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZu
+YnNwO3Byb3ZpZGVkJm5ic3A7Y3N1bS90c28vbHJvJm5ic3A7Y29uZmlnPGJyIC8+Jm5ic3A7Jm5i
+c3A7bmV0L3p4ZGg6Jm5ic3A7cHJvdmlkZWQmbmJzcDtyeHEvdHhxJm5ic3A7aW5mbyZuYnNwO2dl
+dCZuYnNwO2ltcGxlbWVudGF0aW9uczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO3By
+b3ZpZGUmbmJzcDtleHRlbmRlZCZuYnNwO3N0YXRzJm5ic3A7b3BzJm5ic3A7aW1wbGVtZW50YXRp
+b25zPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7cHJvdmlkZSZuYnNwO3B0eXBlcyZu
+YnNwO2Z3X3ZlcnNpb24mbmJzcDttb2R1bGUmbmJzcDtpbmZvL2VlcHJvbSZuYnNwO29wczxiciAv
+PiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO3Byb3ZpZGUmbmJzcDttZXRlciZuYnNwO29wcyZu
+YnNwO2ltcGxlbWVudGF0aW9uczxiciAvPg08YnIgLz4mbmJzcDtkb2MvZ3VpZGVzL25pY3MvZmVh
+dHVyZXMvenhkaC5pbmkmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7OCZuYnNw
+Oys8YnIgLz4mbmJzcDtkb2MvZ3VpZGVzL25pY3MvenhkaC5yc3QmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7NSZuYnNwOys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL21lc29u
+LmJ1aWxkJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOzEmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRo
+X2NvbW1vbi5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNw
+OzQ4Jm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfY29tbW9uLmgmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MyZuYnNw
+Oys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2LmMmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7NjYwJm5ic3A7KysrKysrKysrKysrLS0tPGJy
+IC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5oJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzYzJm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2
+ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jJm5ic3A7fCZuYnNwOyZuYnNwOzkwNiZuYnNw
+OysrKysrKysrKysrKysrKysrKy0tLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9l
+dGhkZXZfb3BzLmgmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7NTMmbmJzcDsrLTxiciAvPiZuYnNw
+O2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9tc2cuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDs5NDAmbmJzcDsrKysrKysrKysrKysrKysr
+KysrKy08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmgmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7MTEyJm5ic3A7
+KystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX210ci5jJm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOzEyMjMmbmJzcDsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX210
+ci5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNw
+OyZuYnNwOzExNCZuYnNwOysrKzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5j
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZu
+YnNwOyZuYnNwOzcyOCZuYnNwOysrKysrKysrKysrKysrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9u
+ZXQvenhkaC96eGRoX25wLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7MjYyJm5ic3A7KysrKysrPGJyIC8+Jm5ic3A7ZHJp
+dmVycy9uZXQvenhkaC96eGRoX3BjaS5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzEwJm5ic3A7LTxiciAvPiZuYnNwO2Ry
+aXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7fCZuYnNwOyZuYnNwOzEzMiZuYnNwOystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4
+ZGgvenhkaF9xdWV1ZS5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNw
+OyZuYnNwOzExOCZuYnNwOystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9yeHR4
+LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7
+Njk2Jm5ic3A7KysrKysrKysrLS0tLS0tLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhk
+aF9yeHR4LmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7
+Jm5ic3A7Jm5ic3A7MjcmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3Rh
+Ymxlcy5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzM3OCZuYnNw
+OysrKysrKystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF90YWJsZXMuaCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyMDYmbmJzcDsrKystLTxiciAv
+PiZuYnNwOzIyJm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzU4OTAmbmJzcDtpbnNlcnRp
+b25zKCspLCZuYnNwOzgwMyZuYnNwO2RlbGV0aW9ucygtKTxiciAvPiZuYnNwO2NyZWF0ZSZuYnNw
+O21vZGUmbmJzcDsxMDA2NDQmbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXRyLmM8YnIgLz4m
+bmJzcDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96
+eGRoX210ci5oPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxiciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
