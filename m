@@ -2,75 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38835C021A6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 17:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA9EC021A0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 17:17:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA3ED42EDA;
-	Thu, 13 Feb 2025 18:04:33 +0100 (CET)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 9DEEF42EB1
- for <dev@dpdk.org>; Thu, 13 Feb 2025 18:04:31 +0100 (CET)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-2f9f6a2fa8dso1713059a91.1
- for <dev@dpdk.org>; Thu, 13 Feb 2025 09:04:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 45D9C42ED7;
+	Thu, 13 Feb 2025 18:17:34 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 7AF5542EB1
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 18:17:33 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-21f6d2642faso29500145ad.1
+ for <dev@dpdk.org>; Thu, 13 Feb 2025 09:17:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739466270;
- x=1740071070; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739467052;
+ x=1740071852; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bqdNKWAMpdB2Pjbli+WJgcGdEagyoILKg35V6dGsSww=;
- b=CT9HXxfu4jpQ1wi0WhO9PSl1bVHajBJPJgeCpsL5lF7ZUinDmG9JYd1eN04IS5KVhz
- Foe6g3ucomf13P3rjoSgnbIsz9GFLHGSBvMb3jfXzXoGs6y6yoduFmxg8+ab0NPOYK5k
- 0S/WuBOwOYMBIWK5ZLlh0kqvR7YWQOfVWAH6o+qgdJrc9IPA8cAgSqcGsLTreSMEUkZw
- cFc1zmwp94X5chXafw7jK5h/1Nrma3GZ2iKbXBRX8f0rMr2qOHQAEA15RBPreSVtKYIO
- XdGewSQOPee1sQpntGstGjr0evfPojRAWuOdbaqAsCvGw2He2cMdSxZIZq4GSHmDDRYk
- I7sg==
+ bh=xb6iS8WQXm2UTvDtrj/uiMbQEGlOr83XbspMEIdMqM4=;
+ b=2CiuD38DG/wSaLwVlpPAMfd5RZPUb31sqJblsUG9JaKWEeBMve/nYKjo4I8VRvY6+r
+ SF3JpSQ8a8a76KErbZmTdXfao34Sht88o612Z0FnvpLTOMGxov229Nd0KdiOURcIkQMf
+ h8VRJoYYOzzdiJsF+NuL9LxBE/FSqaPKMnUhiokCZhKY8esNZKQdKjg6qJn1S7AMPoEq
+ G7Fb4gyfH9W3NKamjdAfxd38Z5mry0+VjxOaTtvIW4lJGbOIFU/3pVvz5BojYpW1Kc7E
+ fEdb+RZRM5WZ40czj1P9iSIGAD07RmasNw7b6Cr7hniFyq1X+FUCGjSmFzbDukr/Bn38
+ sykg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739466270; x=1740071070;
+ d=1e100.net; s=20230601; t=1739467052; x=1740071852;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=bqdNKWAMpdB2Pjbli+WJgcGdEagyoILKg35V6dGsSww=;
- b=WD/gG/8+ZskP7AJ+TmNNrhB8KKuH/y1hnLQZh//OSsEJhkGFoCuEVbo6W/X2pbg+aF
- dhopUFzaGHw6+zRXQumleG5QEqESbS+v7SbI1c+BQPTx1UH3/AgrU6/1TIjS0B1R53Uq
- +NZxhaYK0J6cn0oVPalfW7qdSRNSMFRMxvk8jKtZKnyuMwMbSHfgUuFzZaAuhW1JYFAF
- gH3HPzUvYZSiiTxLzhAb6lVJ/dYqcBffpV5P0GGLMml3EwFayabTxeVOcOB4DXuCmurS
- IUKML7mST9u/9Gf9kgo8VTD3MAUkwEVCldsv7HSkjONyPpvvo1Gb2v9SVTnjGc2Fwf7g
- klDQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWN4BRDIFzGHxA6VUDFBf8IL6CXg9HBpfw56k2P53W0uf2BFkooMzP+3jLxqV6RE43bjvk=@dpdk.org
-X-Gm-Message-State: AOJu0Yy69BLLd8LbhJc5rD3wRaWzLfqL8pxpE+SJkTtvsaAcxgfDZ5hW
- bdhsKvVGdR4SdImAmcr7iDpsX+N23/2RCDBwWyayJdzbOEbEcAw2fG0gvoBoRSs=
-X-Gm-Gg: ASbGncvw7HKljY3Tadmu3uIVJKCYsh3YzDwAGy3FGtMHdhzYZfVMT1uzohyt18HfLJ8
- Jb/kmy4mMXRovRuo2/xDvJCrYCOwEejGEYxN1H7HQe/Cqxv3CZf4s974PDF03/HNxs2Vu0RcWW3
- 4wUSy0NYVMrgrAviZ+vK+P9ynSNtMm1aTeZHTtZrCMfs/YnbByiChEPIBL+Xdr+SpW4DO69dKbx
- FlgPNahAfq3akBZjpkfDXMXcOd/1iJi45pWCkfQFVGtzldGGd3of6EFUtAymG1YdCH3iwkoDMYE
- MxjSPHRfkUWjm5QHzkVND16ZID91xe/u8Vzj5QQsCzG79UXTpyUh3nPVzAecYDJ+kr4g
-X-Google-Smtp-Source: AGHT+IF6qFyXzeHILD+A8nzZXFPEw6gPYOmRff7iUjIy9JCekVSQqbNysx3MtvJC3G/UeHwc7/tepg==
-X-Received: by 2002:a17:90b:2742:b0:2ee:693e:ed7c with SMTP id
- 98e67ed59e1d1-2fbf5c6b76amr14096448a91.33.1739466269896; 
- Thu, 13 Feb 2025 09:04:29 -0800 (PST)
+ bh=xb6iS8WQXm2UTvDtrj/uiMbQEGlOr83XbspMEIdMqM4=;
+ b=noIy7giWva5v7NIfI5g2yqDQ6is/g//nroW7NxOa4vY1heCBcmNBugAMpuFRRI8QC6
+ 0Q2UJarRFGKvgwKfYIOvReGChGqmb19JBW5ws/GXaqAXk0XBbmcKdZyisBxsBRL8r1MQ
+ CjfxsmObXL/ROKTcDODwjbDDkCgvPLrwp7mQD5Z1lrMk8DHQ8pk9uX18P/ed1TowAJvy
+ SqfiB1XRCxXOLWKLIs+drPucxrLS8LZIyzLJiTr3iyGEmCaStPsUJ/ac5mIdcPzk5wfE
+ BqDivjtMw/b3jSMxjC4QoNBLzctPCoS0AEVIy4KxR4qSahE24o+FV+bNVpH/8DuOOrYH
+ /5gQ==
+X-Gm-Message-State: AOJu0YzBVQBUpSV+UzImZYJU+CYm41W10Ep0H75wVn984bluV8lzOB8i
+ 3Xl6nNkk+ys+UHNMgIejYFTUTCBsXxxFAFSl+LSSqrM593eA2y8WNvsVXhxl0Qw=
+X-Gm-Gg: ASbGncuFsyHBB4eh0Ge6vlYrE8aOsdTG1zyCGx8Z1xnsNfZ/mMV+16+cwjbjDzwv3SB
+ VmJ0jgsp6IraFpelvw3BkSxYxctaW+/hc/LLXfiPcxZuzKGGIePN0z0pM21sQllN8+pPuy1BCi9
+ Y/O9ZaMy+4UzOIBbrM/hTy2DOsyj3ClRYV9Pix1JVxUUGRjsDlnKpP17k3VmwYWf9EaBlm9rYR9
+ Yfi3tNHFJmR54UFeIWp0OnThAUcPrMW7yjhIZRlk/wwECafQRqj2B5n9mXBPtVUme64HAgyi9vU
+ IY1Wd5Jn5bWqNyKWwOr3Oms7HBRch/Nh6KPLwpLQ2iwvkAZoo4Ov2h3BKuwpToLA+/ko
+X-Google-Smtp-Source: AGHT+IG5Se8/e87zJCHZqWB/EZf24ARi37we95OzKAlP6IeFJk7QIdzDXES8pfyFGZFOmaKE/fdkPA==
+X-Received: by 2002:a17:902:e946:b0:215:e98c:c5bc with SMTP id
+ d9443c01a7336-220bbc77f99mr145648465ad.48.1739467052552; 
+ Thu, 13 Feb 2025 09:17:32 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fc13abfd17sm1490694a91.11.2025.02.13.09.04.29
+ d9443c01a7336-220d556d3b1sm14841535ad.163.2025.02.13.09.17.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Feb 2025 09:04:29 -0800 (PST)
-Date: Thu, 13 Feb 2025 09:04:26 -0800
+ Thu, 13 Feb 2025 09:17:31 -0800 (PST)
+Date: Thu, 13 Feb 2025 09:17:29 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ariel Otilibili <ariel.otilibili@6wind.com>
-Cc: Maryam Tahhan <mtahhan@redhat.com>, dev@dpdk.org, stable@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>, David Marchand
- <david.marchand@redhat.com>, Ciara Loftus <ciara.loftus@intel.com>
-Subject: Re: [PATCH v9 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-Message-ID: <20250213090426.67ab2a8c@hermes.local>
-In-Reply-To: <CAF1zDgatvhGqZBYf0K=RkVJQvDxo+==WWDAAXREqHAuR15W-2Q@mail.gmail.com>
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250207104552.1663519-1-ariel.otilibili@6wind.com>
- <20250207104552.1663519-3-ariel.otilibili@6wind.com>
- <2b6e60c0-4436-44dd-bba2-335c1b22a7e9@redhat.com>
- <CAF1zDgYZJLX7FBCpwMWrfiLm6si-8jpfppQaW1Cd36QoNOCOfw@mail.gmail.com>
- <CAF1zDgatvhGqZBYf0K=RkVJQvDxo+==WWDAAXREqHAuR15W-2Q@mail.gmail.com>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1 00/16] net/zxdh: updated net zxdh driver
+Message-ID: <20250213091729.7a4b807c@hermes.local>
+In-Reply-To: <20250213064134.88166-1-wang.junlong1@zte.com.cn>
+References: <20250121034433.3033681-2-wang.junlong1@zte.com.cn>
+ <20250213064134.88166-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -87,48 +80,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Feb 2025 12:17:51 +0100
-Ariel Otilibili <ariel.otilibili@6wind.com> wrote:
+On Thu, 13 Feb 2025 14:41:16 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> Hello Maryam, hello Stephen;
+> V1:
+>   - updated net zxdh driver.
+>     optimize init and some ops.
+>     provided csum/lro/tso =E3=80=81extend stats=E3=80=81fw_version=E3=80=
+=81module_info =E3=80=81meter, etc.
 >=20
-> On Fri, Feb 7, 2025 at 1:33=E2=80=AFPM Ariel Otilibili <ariel.otilibili@6=
-wind.com>
-> wrote:
+> Junlong Wang (16):
+>   net/zxdh: optimize np dtb channel initialization
+>   net/zxdh: optimize queue res alloc/free process
+>   net/zxdh: optimize link update process
+>   net/zxdh: update rx/tx to latest
+>   net/zxdh: provided msg(pfvf) intr callback
+>   net/zxdh: optimize mac ops
+>   net/zxdh: optimize promisc ops
+>   net/zxdh: optimize vlan filter/offload ops
+>   net/zxdh: optimize rss hash config/update,reta update/get
+>   net/zxdh: optimize mtu set ops
+>   net/zxdh: optimize basic stats ops
+>   net/zxdh: provided csum/tso/lro config
+>   net/zxdh: provided rxq/txq info get implementations
+>   net/zxdh: provide extended stats ops implementations
+>   net/zxdh: provide ptypes fw_version module info/eeprom ops
+>   net/zxdh: provide meter ops implementations
 >=20
-> >
-> >
-> > On Fri, Feb 7, 2025 at 12:13=E2=80=AFPM Maryam Tahhan <mtahhan@redhat.c=
-om> wrote:
-> > =20
-> >>
-> >> On 07/02/2025 10:45, Ariel Otilibili wrote:
-> >>
-> >> Both legs of the loop share the same logic: the common parts are about
-> >> reserving and filling both address and length into the description.
-> >>
-> >> This is moved into reserve_and_fill().
-> >>
-> >> Bugzilla ID: 1440
-> >> Suggested-by: Maryam Tahhan <mtahhan@redhat.com> <mtahhan@redhat.com>
-> >> Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com> <ariel.otil=
-ibili@6wind.com>
-> >>
-> >> Acked-by: Maryam Tahhan <mtahhan@redhat.com> <mtahhan@redhat.com>
-> >>
-> >> =20
-> > Thanks for your insight, Maryam; I've learnt a lot along the way.
-> > =20
->=20
-> Are you expecting anything from me? From what I understood, the series was
-> acked. Still, patchwork labels it as* Change Requested.*
->=20
-> http://patches.dpdk.org/project/dpdk/patch/20250207104552.1663519-3-ariel=
-.otilibili@6wind.com/
->=20
-> Let me know,
-> Ariel
+>  doc/guides/nics/features/zxdh.ini  |    8 +
+>  doc/guides/nics/zxdh.rst           |    5 +
+>  drivers/net/zxdh/meson.build       |    1 +
+>  drivers/net/zxdh/zxdh_common.c     |   48 +-
+>  drivers/net/zxdh/zxdh_common.h     |    3 +
+>  drivers/net/zxdh/zxdh_ethdev.c     |  660 ++++++++++++---
+>  drivers/net/zxdh/zxdh_ethdev.h     |   63 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.c |  906 ++++++++++++++++++---
+>  drivers/net/zxdh/zxdh_ethdev_ops.h |   53 +-
+>  drivers/net/zxdh/zxdh_msg.c        |  940 ++++++++++++++++++++-
+>  drivers/net/zxdh/zxdh_msg.h        |  112 ++-
+>  drivers/net/zxdh/zxdh_mtr.c        | 1223 ++++++++++++++++++++++++++++
+>  drivers/net/zxdh/zxdh_mtr.h        |  114 +++
+>  drivers/net/zxdh/zxdh_np.c         |  728 +++++++++++++++++
+>  drivers/net/zxdh/zxdh_np.h         |  262 ++++++
+>  drivers/net/zxdh/zxdh_pci.c        |   10 -
+>  drivers/net/zxdh/zxdh_queue.c      |  132 +--
+>  drivers/net/zxdh/zxdh_queue.h      |  118 +--
+>  drivers/net/zxdh/zxdh_rxtx.c       |  696 +++++++++-------
+>  drivers/net/zxdh/zxdh_rxtx.h       |   27 +
+>  drivers/net/zxdh/zxdh_tables.c     |  378 +++++++--
+>  drivers/net/zxdh/zxdh_tables.h     |  206 +++--
+>  22 files changed, 5890 insertions(+), 803 deletions(-)
+>  create mode 100644 drivers/net/zxdh/zxdh_mtr.c
+>  create mode 100644 drivers/net/zxdh/zxdh_mtr.h
 
-I was wanting for discussion to end, there seemed to be open issues around =
-testing
-and the new common code.
+Did you look at outstanding Coverity issues?
+
+https://scan4.scan.coverity.com/#/project-view/65610/10075?selectedIssue=3D=
+456598
