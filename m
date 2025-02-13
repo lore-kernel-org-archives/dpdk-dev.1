@@ -2,67 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF8DC0219D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 11:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489EBC0219D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Feb 2025 12:22:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AD4A42ED0;
-	Thu, 13 Feb 2025 12:18:04 +0100 (CET)
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com
- [209.85.166.48]) by mails.dpdk.org (Postfix) with ESMTP id 7AAC342EA9
- for <dev@dpdk.org>; Thu, 13 Feb 2025 12:18:02 +0100 (CET)
-Received: by mail-io1-f48.google.com with SMTP id
- ca18e2360f4ac-85525784a97so61445439f.0
- for <dev@dpdk.org>; Thu, 13 Feb 2025 03:18:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1739445482; x=1740050282; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=8pe8tkkI1QEQ2gE61lkLoP/8mQ5GO8FOaQSGjtjJ480=;
- b=HtOrpDIaswxG1PwG2+KWgAyaT+oYF6FE/tHGmYg5JbWtb5Goq2yO2+XyxN7U4WDS1y
- Ny+wa5tRKanq1QCE4xyZJ8u98deDOixT6rK8tvf/ad8cfEjQJArjzPKH+3QiymLMSnSE
- Edsnd4ZaH51Ggoc0CfM27P3pUSrCuswcIcC2Zwvvvqv9pFYchRHV6lDVWXvtME+C3VT5
- fXT2Y0BWTs9+vs9439u4UmfZPh99ljobbLRbKXHqv1ct3cGZYnba0KKB2kY86f7rpoJE
- gyMj4DP2hUpKKMTmvPfF8gRXaLekUyWmj15OOH1OK/3NeZODw0CEAZlenxT21i7IkVRp
- NVWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739445482; x=1740050282;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=8pe8tkkI1QEQ2gE61lkLoP/8mQ5GO8FOaQSGjtjJ480=;
- b=ISPDfP1zQRZW2mo4Au4gNJd/3Zm0UI5l21f+u6wF04NPAxkEFOnFR2g84Bhb/p0iqV
- 0EqQ6GlaAW/sg2j9mYGsB/zpqzNtd2t7Q0ntOb0ZwicfVtBZKCvWoHgwqh2Og79wJdVO
- wYpc3V2PoEpZCmBnjazUH5lSOxJgkCcaMdhPnL8UVP8EA07eifxDs5c/l0SNApm2GvhT
- E7Axc0shRwlT4UoQTi9Tn/KojtF/4ouI2aosmQEDU4/4tt8CZruUemT0x3DaWWVkNUKj
- mJbX6fYr1zWoVrmlx2nfHc9n4mO8wQkZfdmLRThkO2G3QwLgKvVFLhhqL7IktWMPO60C
- 5TYQ==
-X-Gm-Message-State: AOJu0Yx/6NHeXz/Uc063YR6iKrFov+XbhEqNidQcw/udePbzXo68pn9F
- R5HQeVUTwpDMnVzdyXbR3AKk39K39HxB3Es3YKuKXyqD15/4Uc2OURKdqFq2ZOMrGGEyMbPUIO7
- CyItQO+/Yqmrmpmik5cW8rT0CSsHWkY4xjnN7hQ==
-X-Gm-Gg: ASbGncuqbKWYYRucZEvgLSwKdtL9EWHgBRPel/2C41A3RSMNXDdxo3RBVL63BW3ODYu
- lA/7p0bhDl5VcvdQkObwIJcTHeyHMlSj1/bTNu4Stk8dWr7fEUBeFv2oMLzfQGAy6sLXh6FM=
-X-Google-Smtp-Source: AGHT+IFqwNSBOHeK2f+K5nD0CiIbst8oGvOZyhGn4zYSFASOcviGSILxnfTqAqgYAsZ9N4oh9VXgiT9Ts6r8Joy1uC0=
-X-Received: by 2002:a05:6e02:12c2:b0:3d0:25d0:8507 with SMTP id
- e9e14a558f8ab-3d18c22b0fbmr26588345ab.6.1739445481711; Thu, 13 Feb 2025
- 03:18:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1747A42EA9;
+	Thu, 13 Feb 2025 13:22:33 +0100 (CET)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 8068040287;
+ Thu, 13 Feb 2025 13:22:29 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YtvP23gZYz16KFY;
+ Thu, 13 Feb 2025 20:19:02 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 809CC14037E;
+ Thu, 13 Feb 2025 20:22:23 +0800 (CST)
+Received: from kwepemn100010.china.huawei.com (7.202.194.113) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Feb 2025 20:22:23 +0800
+Received: from kwepemd500024.china.huawei.com (7.221.188.194) by
+ kwepemn100010.china.huawei.com (7.202.194.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Feb 2025 20:22:22 +0800
+Received: from kwepemd500024.china.huawei.com ([7.221.188.194]) by
+ kwepemd500024.china.huawei.com ([7.221.188.194]) with mapi id 15.02.1544.011; 
+ Thu, 13 Feb 2025 20:22:12 +0800
+From: "Wangyunjian(wangyunjian,TongTu)" <wangyunjian@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "maxime.coquelin@redhat.com"
+ <maxime.coquelin@redhat.com>, "chenbox@nvidia.com" <chenbox@nvidia.com>,
+ "Lilijun (Jerry)" <jerry.lilijun@huawei.com>, "xiawei (H)"
+ <xiawei40@huawei.com>, wangzengyuan <wangzengyuan@huawei.com>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v2 1/1] vhost: fix a double fetch when dequeue offloading
+Thread-Topic: [PATCH v2 1/1] vhost: fix a double fetch when dequeue offloading
+Thread-Index: AQHbUpI+FCGDiyHbb0Sqz6JfQyy2bLLu2P4AgFalaDA=
+Date: Thu, 13 Feb 2025 12:22:12 +0000
+Message-ID: <dd21d206b0384a2db02d33d1cee860f1@huawei.com>
+References: <91dc12662805a3867413940f856ba9454b91c579.1734588243.git.wangyunjian@huawei.com>
+ <09058cfb25d7583f67d74f09cd36673f1b10f5ec.1734661755.git.wangyunjian@huawei.com>
+ <20241220091052.68bb13ee@hermes.local>
+In-Reply-To: <20241220091052.68bb13ee@hermes.local>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.174.242.157]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250207104552.1663519-1-ariel.otilibili@6wind.com>
- <20250207104552.1663519-3-ariel.otilibili@6wind.com>
- <2b6e60c0-4436-44dd-bba2-335c1b22a7e9@redhat.com>
- <CAF1zDgYZJLX7FBCpwMWrfiLm6si-8jpfppQaW1Cd36QoNOCOfw@mail.gmail.com>
-In-Reply-To: <CAF1zDgYZJLX7FBCpwMWrfiLm6si-8jpfppQaW1Cd36QoNOCOfw@mail.gmail.com>
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-Date: Thu, 13 Feb 2025 12:17:51 +0100
-X-Gm-Features: AWEUYZkaXK6YeVBD5TCpZRUtDJKxhnoysUJ5uCpWylHnJAXbyGn6cRcn5TbxZVk
-Message-ID: <CAF1zDgatvhGqZBYf0K=RkVJQvDxo+==WWDAAXREqHAuR15W-2Q@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-To: Maryam Tahhan <mtahhan@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>, 
- Ciara Loftus <ciara.loftus@intel.com>
-Content-Type: multipart/alternative; boundary="0000000000000b3e86062e0436bd"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,98 +64,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000000b3e86062e0436bd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello Maryam, hello Stephen;
+> -----Original Message-----
+> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> Sent: Saturday, December 21, 2024 1:11 AM
+> To: Wangyunjian(wangyunjian,TongTu) <wangyunjian@huawei.com>
+> Cc: dev@dpdk.org; maxime.coquelin@redhat.com; chenbox@nvidia.com;
+> Lilijun (Jerry) <jerry.lilijun@huawei.com>; xiawei (H) <xiawei40@huawei.c=
+om>;
+> wangzengyuan <wangzengyuan@huawei.com>; stable@dpdk.org
+> Subject: Re: [PATCH v2 1/1] vhost: fix a double fetch when dequeue offloa=
+ding
+>=20
+> On Fri, 20 Dec 2024 11:49:55 +0800
+> Yunjian Wang <wangyunjian@huawei.com> wrote:
+>=20
+> > The hdr->csum_start does two successive reads from user space to read a
+> > variable length data structure. The result overflow if the data structu=
+re
+> > changes between the two reads.
+> >
+> > To fix this, we can prevent double fetch issue by copying virtio_hdr to
+> > the temporary variable.
+> >
+> > Fixes: 4dc4e33ffa10 ("net/virtio: fix Rx checksum calculation")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+>=20
+>=20
+> How about something like the following *untested*
 
-On Fri, Feb 7, 2025 at 1:33=E2=80=AFPM Ariel Otilibili <ariel.otilibili@6wi=
-nd.com>
-wrote:
+I agree. Can you fix it?
 
->
->
-> On Fri, Feb 7, 2025 at 12:13=E2=80=AFPM Maryam Tahhan <mtahhan@redhat.com=
-> wrote:
->
->>
->> On 07/02/2025 10:45, Ariel Otilibili wrote:
->>
->> Both legs of the loop share the same logic: the common parts are about
->> reserving and filling both address and length into the description.
->>
->> This is moved into reserve_and_fill().
->>
->> Bugzilla ID: 1440
->> Suggested-by: Maryam Tahhan <mtahhan@redhat.com> <mtahhan@redhat.com>
->> Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com> <ariel.otilib=
-ili@6wind.com>
->>
->> Acked-by: Maryam Tahhan <mtahhan@redhat.com> <mtahhan@redhat.com>
->>
->>
-> Thanks for your insight, Maryam; I've learnt a lot along the way.
->
+Thanks,
+Yunjian
 
-Are you expecting anything from me? From what I understood, the series was
-acked. Still, patchwork labels it as* Change Requested.*
+>=20
+> diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
+> index 69901ab3b5..c65cb639b2 100644
+> --- a/lib/vhost/virtio_net.c
+> +++ b/lib/vhost/virtio_net.c
+> @@ -2861,25 +2861,28 @@ vhost_dequeue_offload(struct virtio_net *dev,
+> struct virtio_net_hdr *hdr,
+>  	}
+>  }
+>=20
+> -static __rte_noinline void
+> +static inline int
+>  copy_vnet_hdr_from_desc(struct virtio_net_hdr *hdr,
+> -		struct buf_vector *buf_vec)
+> +			const struct buf_vector *buf_vec,
+> +			uint16_t nr_vec)
+>  {
+> -	uint64_t len;
+> -	uint64_t remain =3D sizeof(struct virtio_net_hdr);
+> -	uint64_t src;
+> -	uint64_t dst =3D (uint64_t)(uintptr_t)hdr;
+> +	size_t remain =3D sizeof(struct virtio_net_hdr);
+> +	uint8_t *dst =3D (uint8_t *)hdr;
+>=20
+> -	while (remain) {
+> -		len =3D RTE_MIN(remain, buf_vec->buf_len);
+> -		src =3D buf_vec->buf_addr;
+> -		rte_memcpy((void *)(uintptr_t)dst,
+> -				(void *)(uintptr_t)src, len);
+> +	while (remain > 0) {
+> +		size_t len =3D RTE_MIN(remain, buf_vec->buf_len);
+> +		const void *src =3D (const void *)(uintptr_t)buf_vec->buf_addr;
+>=20
+> +		if (unlikely(nr_vec =3D=3D 0))
+> +			return -1;
+> +
+> +		memcpy(dst, src, len);
+>  		remain -=3D len;
+>  		dst +=3D len;
+>  		buf_vec++;
+> +		--nr_vec;
+>  	}
+> +	return 0;
+>  }
+>=20
+>  static __rte_always_inline int
+> @@ -2908,16 +2911,12 @@ desc_to_mbuf(struct virtio_net *dev, struct
+> vhost_virtqueue *vq,
+>  	 */
+>=20
+>  	if (virtio_net_with_host_offload(dev)) {
+> -		if (unlikely(buf_vec[0].buf_len < sizeof(struct virtio_net_hdr))) {
+> -			/*
+> -			 * No luck, the virtio-net header doesn't fit
+> -			 * in a contiguous virtual area.
+> -			 */
+> -			copy_vnet_hdr_from_desc(&tmp_hdr, buf_vec);
+> -			hdr =3D &tmp_hdr;
+> -		} else {
+> -			hdr =3D (struct virtio_net_hdr *)((uintptr_t)buf_vec[0].buf_addr);
+> -		}
+> +		if (unlikely(copy_vnet_hdr_from_desc(&tmp_hdr, buf_vec, nr_vec) !=3D
+> 0))
+> +		    return -1;
+> +
+> +		/* ensure that compiler does not delay copy */
+> +		rte_compiler_barrier();
+> +		hdr =3D &tmp_hdr;
+>  	}
+>=20
+>  	for (vec_idx =3D 0; vec_idx < nr_vec; vec_idx++) {
+> @@ -3363,7 +3362,6 @@ virtio_dev_tx_batch_packed(struct virtio_net *dev,
+>  {
+>  	uint16_t avail_idx =3D vq->last_avail_idx;
+>  	uint32_t buf_offset =3D sizeof(struct virtio_net_hdr_mrg_rxbuf);
+> -	struct virtio_net_hdr *hdr;
+>  	uintptr_t desc_addrs[PACKED_BATCH_SIZE];
+>  	uint16_t ids[PACKED_BATCH_SIZE];
+>  	uint16_t i;
+> @@ -3382,8 +3380,12 @@ virtio_dev_tx_batch_packed(struct virtio_net *dev,
+>=20
+>  	if (virtio_net_with_host_offload(dev)) {
+>  		vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE) {
+> -			hdr =3D (struct virtio_net_hdr *)(desc_addrs[i]);
+> -			vhost_dequeue_offload(dev, hdr, pkts[i], legacy_ol_flags);
+> +			struct virtio_net_hdr hdr;
+> +
+> +			memcpy(&hdr, (void *)desc_addrs[i], sizeof(struct
+> virtio_net_hdr));
+> +			rte_compiler_barrier();
+> +
+> +			vhost_dequeue_offload(dev, &hdr, pkts[i], legacy_ol_flags);
+>  		}
+>  	}
+>=20
 
-http://patches.dpdk.org/project/dpdk/patch/20250207104552.1663519-3-ariel.o=
-tilibili@6wind.com/
-
-Let me know,
-Ariel
-
---0000000000000b3e86062e0436bd
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><div>Hello Maryam, hello Stephen;</div></=
-div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" c=
-lass=3D"gmail_attr">On Fri, Feb 7, 2025 at 1:33=E2=80=AFPM Ariel Otilibili =
-&lt;<a href=3D"mailto:ariel.otilibili@6wind.com">ariel.otilibili@6wind.com<=
-/a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0=
-px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><=
-div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote"><=
-div dir=3D"ltr" class=3D"gmail_attr">On Fri, Feb 7, 2025 at 12:13=E2=80=AFP=
-M Maryam Tahhan &lt;<a href=3D"mailto:mtahhan@redhat.com" target=3D"_blank"=
->mtahhan@redhat.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quot=
-e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
-;padding-left:1ex"><u></u>
-
- =20
-   =20
- =20
-  <div>
-    <p><br>
-    </p>
-    <div>On 07/02/2025 10:45, Ariel Otilibili
-      wrote:<br>
-    </div>
-    <blockquote type=3D"cite">
-      <pre>Both legs of the loop share the same logic: the common parts are=
- about
-reserving and filling both address and length into the description.
-
-This is moved into reserve_and_fill().
-
-Bugzilla ID: 1440
-Suggested-by: Maryam Tahhan <a href=3D"mailto:mtahhan@redhat.com" target=3D=
-"_blank">&lt;mtahhan@redhat.com&gt;</a>
-Signed-off-by: Ariel Otilibili <a href=3D"mailto:ariel.otilibili@6wind.com"=
- target=3D"_blank">&lt;ariel.otilibili@6wind.com&gt;</a>
-</pre>
-    </blockquote>
-    <pre>Acked-by: Maryam Tahhan <a href=3D"mailto:mtahhan@redhat.com" targ=
-et=3D"_blank">&lt;mtahhan@redhat.com&gt;</a></pre></div></blockquote><div><=
-br></div><div>Thanks for your insight, Maryam; I&#39;ve learnt a lot along =
-the way. <br></div></div></div></blockquote><div><br></div><div><div>Are yo=
-u expecting anything from me? From what I understood, the series was acked.=
- Still, patchwork labels it as<i> Change Requested.</i></div><div><br></div=
-><div><a href=3D"http://patches.dpdk.org/project/dpdk/patch/20250207104552.=
-1663519-3-ariel.otilibili@6wind.com/">http://patches.dpdk.org/project/dpdk/=
-patch/20250207104552.1663519-3-ariel.otilibili@6wind.com/</a></div><div><br=
-></div><div>Let me know,</div><div>Ariel<br></div></div></div></div>
-
---0000000000000b3e86062e0436bd--
