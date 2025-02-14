@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0A6C02198
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Feb 2025 17:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE7EC02198
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Feb 2025 17:22:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AAF8040670;
-	Fri, 14 Feb 2025 18:21:51 +0100 (CET)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2F1C940693
- for <dev@dpdk.org>; Fri, 14 Feb 2025 18:21:49 +0100 (CET)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-220bff984a0so40905895ad.3
- for <dev@dpdk.org>; Fri, 14 Feb 2025 09:21:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 12550406BC;
+	Fri, 14 Feb 2025 18:21:53 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 7071040698
+ for <dev@dpdk.org>; Fri, 14 Feb 2025 18:21:50 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-22100006bc8so7594875ad.0
+ for <dev@dpdk.org>; Fri, 14 Feb 2025 09:21:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739553708;
- x=1740158508; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739553709;
+ x=1740158509; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZmS6C67gqT/5w6zHyptHE2BI3maLr1NNKbfa06vuclU=;
- b=zAV4FdmxkjF6Zo6RJT+MF6sVSgVvF/GoBgeUuR95FrTMBxTWcC4TTvMHwmlnt7XORQ
- WxcuO7aX3VCLbdJVhuPJJrnxGlWtWJUnaClTNUQEBqzO2IkVq7b6Y81tpm6TbLfrWLSY
- UD+jJfDMh10fbFw+pDlMnEhUyc3o0TnrSLOfdR71xu88Cnoddz0zA4qjmzm4KrvRnVL1
- b9q78AMfEcbR8kx/U0f2Z/MYAeXqypWVHGsQTa3TGmq6PSe5TkUQQTh16RxCshPxdRs8
- M2xi8qbwdou7r3VJ18a8Pp/3kbPqaJ14dtCJ9uRwJepuqw9AlEqCaJ99iOFHMZEvArUh
- PLbg==
+ bh=k4BGX8mrdECUGcDmE3lVhBRuX6KeQ84mN3E1mIvS5WE=;
+ b=At0y04N687L72CKt0S3xgcSxd/lykr3Qd0qqi+isUkczurOgas5V1hODIV+L4bWaVJ
+ esvLPhyJL+IH0G7XsIWXKhmvExMnMCc2pOucjJVRiM3zhDm7papECsGOFpbl0SH1ka/l
+ fHHpRW+m+OHWyV1H/lOps+p7/wU69IQoCIn9yv9meWLR5mGE+79hJV3cJ+fKSa47bhDD
+ AJRBBmlserXEK8/OB21bndO4LN0VdP0AbX96Je1STiBjAzt1LFuYRf1UCUmDLIv+TSFt
+ Scw+RFdzhxwBPfR03pGnQ1q23AXf7bACQjRZprgRkzkh6QfmbVQpizB40I1NZ0OIApcq
+ dbtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739553708; x=1740158508;
+ d=1e100.net; s=20230601; t=1739553709; x=1740158509;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZmS6C67gqT/5w6zHyptHE2BI3maLr1NNKbfa06vuclU=;
- b=W6CxbbednOlIbvpVIxRFv/l0GBWH5Hzp3hQ0skzOCvrYk4tQym2NJR7+FOyDHn+5sw
- GFeOWalj86Us1avSVOnCFrxPYQ9Z/ncT9rvf1JstbNmgGV8UIwbvKOWdGAXModLOt8ah
- QDIuVF4m8ZT0Ia+lTeQxT/LEfvH1JwVUZEUIfj7TWl63M2AVnfIEBAkCP9SbEvpzuAjr
- y1xXRDaVAkxjolxepwC/7EYMLHjXZktZl5FFpPSydkvEHsWF4Aim+GOKSNeny6sdDXkK
- A/Us78AZsVTCoVePDycJEjHpXSL3iEXvq3HyJnRVfELb9t/3uqaha2rRjda7EaJ8MlGa
- sP4Q==
-X-Gm-Message-State: AOJu0YysVf6prZVs0k1sB5X4XciNF04BcSnkOJWjFF0d98/YoMOYsDQ/
- cdwlihVQweH2X1FuBMtIqbM4O+fNWhPPRf+1jCKmZXYBmlm76EGikT0sdTR9lYHAPVnZmc2QfCQ
- EsEA=
-X-Gm-Gg: ASbGncu/IQoAGq3e+tRS9Jz8N/zy4mJqL7dvbm89+IgLbY8fkeZa3DvCQgsTlZ+q1mp
- KtbHTny0ML+bLjwTT3XIoaPAuiev0umC2swU55fmwoMUqVj3X6FXq/x/cOjeo2yT46APtA2RvbV
- CMdVtFNnUB9SnkOPzPxfwbIgGTu61l5V9aetwfC6IfdqXkV0+aIdu59SJC6FZgDiuHvg6MXp7VA
- 1MjOKkR70Uu3gV+ZPe3I5OD0WtBR6e7mq4dWZOfnrfZ/FQIcjynilbs/EhUXW8OHGy51yR0vYom
- 7rHwM7dzlUlwype99UyzOFnZkljoevN5a7m1ilA6Q+fxWIRGgL4J7Sh/VUmxHTwwuhY1
-X-Google-Smtp-Source: AGHT+IEfM5gTls7GNm08OGIfudfglspr375yFFmhDk4zpYSwf72jWqMpo5WXccOHjKOwokavcb1Wlw==
-X-Received: by 2002:a05:6a00:1256:b0:730:91fc:f9c9 with SMTP id
- d2e1a72fcca58-732618b0b1dmr265473b3a.16.1739553708298; 
- Fri, 14 Feb 2025 09:21:48 -0800 (PST)
+ bh=k4BGX8mrdECUGcDmE3lVhBRuX6KeQ84mN3E1mIvS5WE=;
+ b=inmF/qg+4G9agECAWWFGu1Hc+2j/7KZOqAVUtP/I76Becnvqbu8wtlLVc86zcyzvXX
+ UvZh2cbVdIMn+3LCQHKhZ6GNOHKty03v3ayve3fpcs4bHXV0RRctoI0BPBgnxHs8V7OE
+ YuojOXQe0ryiwA9XjtZ8TzdPyeHgJiftY5IYMHOuSd+T6KhGfe52xP4Lm/RE+szstjbe
+ Di9aV+8U5wpTy0iOkqY4B9botEUK1ed2E3VtiiL49ygJaDihHpiumapdDAZ+en125Kzk
+ OvNPtIu1Fx5REMzyd+cbE+cqIn6S/tmX6OP8rD3Fo8rgUoCN6Ew7dGNmVqCZLQGLViHM
+ Ssnw==
+X-Gm-Message-State: AOJu0YwRayiuzJDV+KA0RF+QPomVTa5/NzfcIVAyVjQ4w2cZtxFNHqqG
+ nDPhSlLWnHgi+9RLiCqGdT3p3lKUifDUxiVBnXdWEHBdehxl9HKB016uoSfS0nFkiq4O7FjhkVA
+ 7Fb8=
+X-Gm-Gg: ASbGncuvlNy8TRRvvjIRO99oyRqGhJyKaTN3Pv4fS1PQKEN7mi8fQBxxw6CPdwG8YTb
+ uNOQrAq8DQ0VPLm3KEYa+/MDDqFaL1nO9xy49QNQc2SjtRyY4914RmHsppF7/Ztm6DCzJljIVFm
+ dyBnEXyqOH6BiBxA8669ii7rtSNgVATb2AA1ZsjtKbIFEOSHkBXujLKr+G5R0sMJcOVwtOKTyhB
+ fAYyTlyKbT96g2jkxcO9XGBQDmLW29o6iS9hJl7Sm2xP+fuagjYMOT/pEOi2RpTFm1W5Ugkk2SD
+ YWd/vj+pUJ+8q2mktYqZXfuxhBwNmuQdj+iWVWp4jPKbPVL8aeiV4YKsKKMXXVsRRy+S
+X-Google-Smtp-Source: AGHT+IHz9jnNXtJO4peENvzCgcKmKCblXExbzaTZN5E6vrUPAGqEXbfZQVimrAzmBRMwWF1J40KXmw==
+X-Received: by 2002:a05:6a00:3915:b0:725:b201:2362 with SMTP id
+ d2e1a72fcca58-732617c3c6emr250231b3a.11.1739553709701; 
+ Fri, 14 Feb 2025 09:21:49 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-adb5a52af8bsm3134264a12.50.2025.02.14.09.21.47
+ 41be03b00d2f7-adb5a52af8bsm3134264a12.50.2025.02.14.09.21.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Feb 2025 09:21:47 -0800 (PST)
+ Fri, 14 Feb 2025 09:21:48 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, shreyansh.jain@nxp.com,
- stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v2 3/7] bus/fslmc: fix use after free
-Date: Fri, 14 Feb 2025 09:20:11 -0800
-Message-ID: <20250214172134.73908-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, ajit.khaparde@broadcom.com,
+ stable@dpdk.org, Somnath Kotur <somnath.kotur@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Subject: [PATCH v2 4/7] net/bnxt: fix use after free
+Date: Fri, 14 Feb 2025 09:20:12 -0800
+Message-ID: <20250214172134.73908-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250214172134.73908-1-stephen@networkplumber.org>
 References: <20250127180842.97907-1-stephen@networkplumber.org>
@@ -83,55 +83,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The cleanup loop would deference the dpio_dev after freeing.
-Use TAILQ_FOREACH_SAFE to fix that.
-Found by building with sanitizer undefined flag.
+The filter cleanup loop was using STAILQ_FOREACH and rte_free
+and would dereference the filter after free.
 
-Fixes: e55d0494ab98 ("bus/fslmc: support secondary process")
-Cc: shreyansh.jain@nxp.com
+Found by build with -Dbsanitize=address,undefined
+
+Fixes: e8fe0e067b68 ("net/bnxt: fix allocation of PF info struct")
+Cc: ajit.khaparde@broadcom.com
 Cc: stable@dpdk.org
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index 2dfcf7a498..6ae15c2054 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -15,7 +15,6 @@
- #include <signal.h>
- #include <pthread.h>
- #include <sys/types.h>
--#include <sys/queue.h>
- #include <sys/ioctl.h>
- #include <sys/stat.h>
- #include <sys/mman.h>
-@@ -27,6 +26,7 @@
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
- #include <rte_memcpy.h>
-+#include <rte_queue.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-@@ -403,6 +403,7 @@ dpaa2_create_dpio_device(int vdev_fd,
- 	struct rte_dpaa2_device *obj)
- {
- 	struct dpaa2_dpio_dev *dpio_dev = NULL;
-+	struct dpaa2_dpio_dev *dpio_tmp;
- 	struct vfio_region_info reg_info = { .argsz = sizeof(reg_info)};
- 	struct qbman_swp_desc p_des;
- 	struct dpio_attr attr;
-@@ -588,7 +589,7 @@ dpaa2_create_dpio_device(int vdev_fd,
- 	rte_free(dpio_dev);
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+---
+ drivers/net/bnxt/bnxt_filter.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/bnxt/bnxt_filter.c b/drivers/net/bnxt/bnxt_filter.c
+index 7b90ba651f..f083f3aa94 100644
+--- a/drivers/net/bnxt/bnxt_filter.c
++++ b/drivers/net/bnxt/bnxt_filter.c
+@@ -3,14 +3,12 @@
+  * All rights reserved.
+  */
  
- 	/* For each element in the list, cleanup */
--	TAILQ_FOREACH(dpio_dev, &dpio_dev_list, next) {
-+	TAILQ_FOREACH_SAFE(dpio_dev, &dpio_dev_list, next, dpio_tmp) {
- 		if (dpio_dev->dpio) {
- 			dpio_disable(dpio_dev->dpio, CMD_PRI_LOW,
- 				dpio_dev->token);
+-#include <sys/queue.h>
+-
+ #include <rte_byteorder.h>
+ #include <rte_log.h>
+ #include <rte_malloc.h>
+ #include <rte_flow.h>
+ #include <rte_flow_driver.h>
+-#include <rte_tailq.h>
++#include <rte_queue.h>
+ 
+ #include "bnxt.h"
+ #include "bnxt_filter.h"
+@@ -151,7 +149,9 @@ void bnxt_free_filter_mem(struct bnxt *bp)
+ 	bp->filter_info = NULL;
+ 
+ 	for (i = 0; i < bp->pf->max_vfs; i++) {
+-		STAILQ_FOREACH(filter, &bp->pf->vf_info[i].filter, next) {
++		struct bnxt_filter_info *tmp;
++
++		STAILQ_FOREACH_SAFE(filter, &bp->pf->vf_info[i].filter, next, tmp) {
+ 			rte_free(filter);
+ 			STAILQ_REMOVE(&bp->pf->vf_info[i].filter, filter,
+ 				      bnxt_filter_info, next);
 -- 
 2.47.2
 
