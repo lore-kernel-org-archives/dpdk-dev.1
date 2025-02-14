@@ -2,160 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0A0C02198
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Feb 2025 09:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF782C021A4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Feb 2025 09:47:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B7374064F;
-	Fri, 14 Feb 2025 10:36:28 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id CD4144064A
- for <dev@dpdk.org>; Fri, 14 Feb 2025 10:36:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739525787; x=1771061787;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Cl1yqL1wd1x3fiF7UyjP5B98BeFJldd14lBKP+t7Ee8=;
- b=jbNe3h/7WyzTtB1s/kqNQ8xXqphimkJz7IbQXPC+EeS/uNYR1ZtJOowa
- chJU0HquCupPBPha1VvN+3HsXgnt40ktm4oZ6rdZGsY5s+YZSDlj28PCc
- m+j1tAfdsXl61UzC+l12bIE0NQ48NYd76wn7F1eWfGnIwldw4RAjl3aEc
- Ok/FIjemIjBxB5h++tp1oU/MkcCO6CBaUrR9yQ6nhWuE69jl3FbqxXXml
- YHm7UeuJfbUcWe3YfaRlMVRzL3hCo0A5ZJIeKN6YzFHr9NgPyHN7eECPn
- MW6dFYcXxkS4CyAf8UkRRI3gHHq8dd0eo+sMqhE5dYh9bhHmADyek24LX w==;
-X-CSE-ConnectionGUID: U/gofxWyTIeYa8pcxP763A==
-X-CSE-MsgGUID: tvcWJMfjS8GfPzxRZW/K6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39977775"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; d="scan'208";a="39977775"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Feb 2025 01:36:25 -0800
-X-CSE-ConnectionGUID: Tsfjvr1US6+qEmIr3zdHJg==
-X-CSE-MsgGUID: EDftzix8SoGbxGruzK1Pwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; d="scan'208";a="114054712"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
- by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 14 Feb 2025 01:36:25 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 14 Feb 2025 01:36:24 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 01:36:24 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.176)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 14 Feb 2025 01:36:23 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YpYm+6sKdb2bmddaQE/wQe25t/Ov9niL5pKJP/5Oj30I3HdiouhaZsoOlcpm3sxGhms51ANXVrYcxrL2Qo2Emp6f6m/hIhjTMUzdCiFVhRPaQ5me9NL2g4GeRX9gKrP97x+Ket9il83HivDBTKfgH6dEPVLgIEk4/KkOUv9z9ytnjTeCUromQrjTwgcpmQgo7sN2BFlPL9lnIOx3A9olot0X4K+NvW/0TnOlJAD910fWinYpHVZ2C/AAbemrNbfcNTAJwgxhKccmniLjgOAsJ0H/0/pzO5pBTksVIPicNrw30jTijAIKbTvmm7D6EjwsyYkhzjewN/R9ClXcXCkfLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=va/O4JRn26HMaGq1VjWbXET8JTGCSnCYvrlxAdL5jQM=;
- b=FSUOco2/KsJmqGaRbXo7olVXssINhZrGxpEImfbJhHd2lcvUYaLnR1ECGp0YV9DtS/wxHFm/twoSIYhzoutL6aRv9nXkzTuZf3nlQ6MJe4G69ZDfFViUyfmYbtPb51H5IT6E8zEyH+ueo9PIlo3xEF9pkXzIPjFTzlXMqPJwp5626R5TQaqnPpP/B+UXdmhORb+MH/T8UX2g3SdT4BqYidjn/8jFSG9D7Vmi9p/FVcJlHZAEgXXpfW/5ymGfUFB60YiApA/IJOOXdb+qV0WysaxFlT0uc6i/EU3s3uI9E4RrLkkhF9nJPn+6AWKij78mwxXXGZ/EYsd+6H90Ed+Nvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH7PR11MB6355.namprd11.prod.outlook.com (2603:10b6:510:1fd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Fri, 14 Feb
- 2025 09:36:21 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8445.015; Fri, 14 Feb 2025
- 09:36:21 +0000
-Date: Fri, 14 Feb 2025 09:36:16 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v7 0/7] latencystats: cleanup
-Message-ID: <Z68OkDkG8rEpNYgq@bricha3-mobl1.ger.corp.intel.com>
-References: <20240408195036.182545-1-stephen@networkplumber.org>
- <20250213212151.1693506-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250213212151.1693506-1-stephen@networkplumber.org>
-X-ClientProxiedBy: DB8PR06CA0024.eurprd06.prod.outlook.com
- (2603:10a6:10:100::37) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id B81FB4064F;
+	Fri, 14 Feb 2025 10:47:54 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 953954064A
+ for <dev@dpdk.org>; Fri, 14 Feb 2025 10:47:53 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 74A2146224; Fri, 14 Feb 2025 10:47:53 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1661] mlx5: rte_flow_create can cause a seg fault
+Date: Fri, 14 Feb 2025 09:47:52 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 24.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: ktraynor@redhat.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1661-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17395264730.42ab59.1307357
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6355:EE_
-X-MS-Office365-Filtering-Correlation-Id: 659c550c-7e35-470c-5942-08dd4cdb0a2b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?loNJJGth3Hg0O6H21QSI8WqQpLdLsWzz2VBoFKRHYFjJ/DfKV1+PI36ejajK?=
- =?us-ascii?Q?KlhsDWkUpQ7pju9/arVD6VuPurghnsLc0Dczu7QjBLhAVYP2suNJIV3Jemgd?=
- =?us-ascii?Q?AELlUgULgGysPGCeI9B/aGQxu+wV/cYt8BDBawTNFC3zBnMgDUu4R3TDDqo6?=
- =?us-ascii?Q?rlYl/N0K6V11Wex/psn6P6Y53Pa73UcYdoCcG5AAjoJVXyuEwOoYxg8QgezE?=
- =?us-ascii?Q?wjPJPRrlnJf8cbB5wKfj/hWO8J7iP7ZZg5Nw7Xij38R6/X9JDTCC2qp9is2/?=
- =?us-ascii?Q?EYULVztMlqbmK5HHSyXfJF7BQO9x970+RD19Mny0k7M0RMGBqmsuOocxBugb?=
- =?us-ascii?Q?HVI1JQqEd1Ab4HFUemHbrgpCS6/Sy+46R3rQoV1aiVwlrr+qY4pWXYL86rff?=
- =?us-ascii?Q?Zp9CZAjn80AOv/x9C+Kwl80a5TtO9D5rUzt0t1JXQ7a2tYf5UiJKUnyOGPy+?=
- =?us-ascii?Q?PXIdi9vJ/Lm2O26XvOmyFsshI7mSAdlGwp6rMQqTjYsIEu90scw3OrHn48yH?=
- =?us-ascii?Q?2Vvdt9p5Y6PvbM4A5jd68C2M+hfu3P6qgwJtS/YvRC7ZqOJlOgFmjfzvET9y?=
- =?us-ascii?Q?oLHjANdE/AonZN+y0jW4Lvv/HxRIvj1wPo3Pms1/dzf+/eGcC1M5CUgwoa8F?=
- =?us-ascii?Q?UjBoLrjD5Aw5uEW7AO+V+OyDJdX/PPh70YlSsOfOPNyj9zU6EuvxG/kkopJf?=
- =?us-ascii?Q?ObKijM0YdbnTISWurdCF7FSSAZekbGaUgWvY+09RBCGQMjzpUW6C4j6zwm1O?=
- =?us-ascii?Q?Zssyix/trXkVKm+TdSjIuAVGKGjcSS8E+gQSYMhGH0XG3OT7SNK+4p3b7WVU?=
- =?us-ascii?Q?LuGK8v8e3W1vg+b66ieL+2Rw5FC6Z131lmpW2ZdYW4DaCAqzAD/6+bcnDtO2?=
- =?us-ascii?Q?29/qJJT5qCooJ68BwUDh416Ln6D5e+i9kPddtdY6kmM3TO1PitW5rsjqDbyG?=
- =?us-ascii?Q?vww0Qowx2ZpQtG5CeR+QIImXHYXOEZvL88Byr9yd0zeqrAB4ZbGfDwUtocFo?=
- =?us-ascii?Q?iHC/XQdZxLFHGW3AtYPvYsVRslAX8EWJ+CBtExxEW3e3oc0mvR6B7o/H71WQ?=
- =?us-ascii?Q?CPyCKXDptawO20vyin19WomvI0VYGeHPt4HoQLrDuSdIVUeo23+NNY0modna?=
- =?us-ascii?Q?e8pfWrB/nfn+2PfszJg+JofA8xCz0WnIdejA61rtVKHhujI9qVOPkr7ZQvO/?=
- =?us-ascii?Q?t9PVS7pr5uocKUw9OzoYcYiZA/UxV48hVDaiFGXm/jqA2tPByV0Xi+gQInMA?=
- =?us-ascii?Q?pd+hG07sZzuZJhU7/ev1j+rPMJKGEFBtoX7jFM3NGZQ/5eZAY/RwlEqIBuK3?=
- =?us-ascii?Q?PIqVDBCZBosnNXr3qLE9nHl7c8omsoDyJg5VzhQeRdpS1XEE0oPBOmYY1mR0?=
- =?us-ascii?Q?P+UTLrMkMWC3Plx6LXdNo9FdHajp?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?08YOsvzYUngN8Kr91Y3yz1xxpCcwmWOqxReLYbokefhJd42VUujF8bthF29u?=
- =?us-ascii?Q?r0Sb8Ewt1eqYY8Y3SeZMXy4u5L91aeqf5SEim26wUhO2+psU2B3Yr/vZtmhW?=
- =?us-ascii?Q?nN43Yz2o92fZ9W6Y5UK81OZ8XdeP62l6gPXCwx/HRjBSuAwR1+Jep3oDAYSH?=
- =?us-ascii?Q?jDAwoyx1O4aeB3kRj6XMrERLxzBqQ/gJZn6iEUZW1OhUlQjSo7JVpCR2QDbv?=
- =?us-ascii?Q?hyoTWv6aXYiNJhipIqzh7F1j39/u71cz6WNF/NdK0p/A1Ey8DKYUUp3RxGlA?=
- =?us-ascii?Q?z+NEOPlLUXmFS9K1HNfdc0oGTyA45THpIHxgBGB1qVnOQabJLiigHQD4oia+?=
- =?us-ascii?Q?tzxLAFGDA8pUwYXGwRVNMUqAv5zxcpJtGSfU5LibC5CFypNXY7sTAkM1QRqh?=
- =?us-ascii?Q?LXsiprDS1rUxc/svwgRU75JncBhRZd5ah9yCQD71FXzi3ZtHrMXITgqCPM7e?=
- =?us-ascii?Q?kfP7ni4unMii0J89U49UH+rN++JoNg/6NzGBLTMXtfKkn8ElQBTgcbdhQ61L?=
- =?us-ascii?Q?jzzUv+G2hZ8FYM696zpNGup91r3r8K9shgrNsPjkR83zEocDThLuKkMudSPV?=
- =?us-ascii?Q?y0mg/uDzxM1QhApvppiuoyE4f9px/3hA8IrmFJddCk58DiEy29g4WmnsFxfM?=
- =?us-ascii?Q?+s/RXTgL9Jv+A1xqrpYVd3vGZ5uG6/hGt8GGrV7vflK+KFQMKydfTjZhIV8a?=
- =?us-ascii?Q?XB548KhjKZsFf3jhsSh2Lq3/3YamhZxPK4GsuhrXq6iOn4s+qSlQPi7D3Jzp?=
- =?us-ascii?Q?Nhjo/ZqRRV//eg96Xa4kzvfTd7SSGuaDjgOyUacBWZaunqIr+7PsM8SiI5S4?=
- =?us-ascii?Q?iHOO8k8r3AkUJEwV4HsDe/REDvCXbuUq24mj4xUDhWukq5cW2G7nHfkIjET7?=
- =?us-ascii?Q?2ZFfz2oe4sHfQmO77wqT6s7L6+Al3l8OWcD6JSaP2t2nNRpMFTxN3uVyzXwA?=
- =?us-ascii?Q?8OoZvkeyB5XGOf7/IFkgru1qlj/O/x05bAHnLPqS8Vns6b1MuOnmVeB+oRtK?=
- =?us-ascii?Q?HXt2sY25u67e8kRv1UbJ6H0Kj0uVkcMvfmYWqoOLqw79OsNk6m0rPePiWSnv?=
- =?us-ascii?Q?sh/gRT2oQ8XkKx+Gc4t8iwAOos+XPf11ZhxzVeKnLMiMx+GdQdBZ/20EGyPO?=
- =?us-ascii?Q?GKPHS7V9G4ShyOhfdn0k1cEAdBXDbYewHz/rqA1m9xbjVX6kTN3tauSjocrD?=
- =?us-ascii?Q?Kk4IYVnumSOXUOciQ+QlvNOrotWaRw58Jrbtc8e1MIAtRgZLuz1rqCMV6xee?=
- =?us-ascii?Q?qkTdYp1jkWtM03lrPATxAif0eoMJHmtYszU/xdLAnowkUU8ELG5Y5r2FNDLl?=
- =?us-ascii?Q?LItHEOXp5TtKZFExjYWt5hry/UUuDPnX5FYY07ttLDbj9syXi75n3ru3UikX?=
- =?us-ascii?Q?N/59QjOsY+Jq0kz7hIanjp8S2v6QhTQLlHpRwDAYHiGpItpqN7NePmyOk+BQ?=
- =?us-ascii?Q?o2nIrpIl0bJQEE2z9eCLTqVM/gF5xqGzYXKs6lEPdJIXWS8maBWt5daU1KJB?=
- =?us-ascii?Q?Tjp8Pztgd7Qt/MJR/N1zP3Utxea/KUP2hprKzjcvecINYgiNOaoRsYQ/Ok/5?=
- =?us-ascii?Q?fJ+VZyMb0PbSM0x3BnArWVMeCBBfC/wDr12C2ABJjxHWJ1mPB9hNLcy2wvam?=
- =?us-ascii?Q?CQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 659c550c-7e35-470c-5942-08dd4cdb0a2b
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 09:36:20.9884 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 66aYRXdYGG+hrW7NIeR4QoptOYsNftJK+aH+CCLon7QzhzE023NLx6CQsWSsMazm3l79jmETFUZ8ofv01Pa/6sHuA6dBk1LCh4QGb9mfPo8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6355
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,20 +54,496 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Feb 13, 2025 at 01:20:29PM -0800, Stephen Hemminger wrote:
-> Latencystats uses unnecessary floating point and is inaccurate if the number
-> of cycles per ns is not an integral value. Cleanup the code and add
-> more tests as well.
-> 
-> v7 - rebase and drop already merged VLA patch
-> 
-> Stephen Hemminger (7):
->   latencystats: handle fractional cycles per ns
->   latencystats: do not use floating point
->   latencystats: fix log messages
->   latencystats: update include files
->   latencystats: enforce that unused callback function is NULL
->   latencystats: add metric for number of samples
->   test: update to latencystats tests
-> 
-Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+--17395264730.42ab59.1307357
+Date: Fri, 14 Feb 2025 10:47:53 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1661
+
+            Bug ID: 1661
+           Summary: mlx5: rte_flow_create can cause a seg fault
+           Product: DPDK
+           Version: 24.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: ktraynor@redhat.com
+  Target Milestone: ---
+
+Depending on NIC configuration, a seg fault can occur when calling
+rte_flow_create() because mlx5_flow_null_drv_ops does not have a .list_crea=
+te
+implementation.
+
+Details:
+
+Driver type gets selected from flow_get_drv_type() and can return
+MLX5_FLOW_TYPE_MAX
+
+
+ 4180=E2=94=82 flow_get_drv_type(struct rte_eth_dev *dev, const struct rte_=
+flow_attr
+*attr)
+ 4181=E2=94=82 {
+ 4182=E2=94=82         struct mlx5_priv *priv =3D dev->data->dev_private;
+ 4183=E2=94=82         /* The OS can determine first a specific flow type (=
+DV, VERBS)
+*/
+ 4184=E2=94=82         enum mlx5_flow_drv_type type =3D mlx5_flow_os_get_ty=
+pe();
+ 4185=E2=94=82
+ 4186=E2=94=82         if (type !=3D MLX5_FLOW_TYPE_MAX)
+ 4187=E2=94=82                 return type;
+ 4188=E2=94=82         /*
+ 4189=E2=94=82          * Currently when dv_flow_en =3D=3D 2, only HW steer=
+ing engine is
+ 4190=E2=94=82          * supported. New engines can also be chosen here if=
+ ready.
+ 4191=E2=94=82          */
+ 4192=E2=94=82         if (priv->sh->config.dv_flow_en =3D=3D 2)
+ 4193=E2=94=82                 return MLX5_FLOW_TYPE_HW;
+ 4194=E2=94=82         if (!attr)
+ 4195=E2=94=82                 return MLX5_FLOW_TYPE_MIN;
+ 4196=E2=94=82         /* If no OS specific type - continue with DV/VERBS s=
+election */
+ 4197=E2=94=82         if (attr->transfer && priv->sh->config.dv_esw_en)
+ 4198=E2=94=82                 type =3D MLX5_FLOW_TYPE_DV;
+ 4199=E2=94=82         if (!attr->transfer)
+ 4200=E2=94=82                 type =3D priv->sh->config.dv_flow_en ? MLX5_=
+FLOW_TYPE_DV :
+ 4201=E2=94=82=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20
+MLX5_FLOW_TYPE_VERBS;
+ 4202=E2=94=9C>        return type;
+ 4203=E2=94=82 }
+
+(gdb) p type
+$1 =3D MLX5_FLOW_TYPE_MAX
+(gdb) p attr->transfer
+$2 =3D 1
+(gdb) p priv->sh->config
+$5 =3D {tx_pp =3D 0, tx_skew =3D 0, reclaim_mode =3D 0, dv_esw_en =3D 0, dv=
+_flow_en =3D 1,
+dv_xmeta_en =3D 0, dv_miss_info =3D 0, l3_vxlan_en =3D 0, vf_nl_en =3D 1, l=
+acp_by_user
+=3D
+0, decap_en =3D 1, hw_fcs_strip =3D 1, allow_duplicate_pattern =3D 1, lro_a=
+llowed =3D
+1, cnt_svc =3D {service_core =3D 0, cycle_time =3D 500}, fdb_def_rule =3D 1,
+repr_matching
+ =3D 1}
+
+In this case flow_get_drv_ops() selects mlx5_flow_null_drv_ops, which does =
+not
+have a .list_create implementation.
+
+
+ 8032=E2=94=82 uintptr_t
+ 8033=E2=94=82 mlx5_flow_list_create(struct rte_eth_dev *dev, enum mlx5_flo=
+w_type type,
+ 8034=E2=94=82                       const struct rte_flow_attr *attr,
+ 8035=E2=94=82                       const struct rte_flow_item items[],
+ 8036=E2=94=82                       const struct rte_flow_action actions[],
+ 8037=E2=94=82                       bool external, struct rte_flow_error *=
+error)
+ 8038=E2=94=82 {
+ 8039=E2=94=82         const struct mlx5_flow_driver_ops *fops;
+ 8040=E2=94=82         enum mlx5_flow_drv_type drv_type =3D flow_get_drv_ty=
+pe(dev, attr);
+ 8041=E2=94=82
+ 8042=E2=94=82         fops =3D flow_get_drv_ops(drv_type);
+ 8043=E2=94=9C>        return fops->list_create(dev, type, attr, items, act=
+ions,
+external,
+ 8044=E2=94=82                 error);
+ 8045=E2=94=82 }
+
+(gdb) p drv_type
+$1 =3D MLX5_FLOW_TYPE_MAX
+(gdb) p fops
+$2 =3D (const struct mlx5_flow_driver_ops *) 0x45b34e0 <mlx5_flow_null_drv_=
+ops>
+(gdb) p fops->list_create
+$3 =3D (mlx5_flow_list_create_t) 0x0
+
+As there is no list_create, it causes a seg fault
+
+(gdb) bt
+#0  0x0000000000000000 in ?? ()
+#1  0x000000000158a6b1 in mlx5_flow_list_create (dev=3D0x4e87500
+<rte_eth_devices+33152>, type=3DMLX5_FLOW_TYPE_GEN, attr=3D0x7f0095666c98,
+items=3D0x7f008000e1a0, actions=3D0x7f008000dd10, external=3Dtrue,
+error=3D0x7f0095666c30) at ../drivers/net/mlx
+5/mlx5_flow.c:8043
+#2  0x000000000158a535 in mlx5_flow_create (dev=3D0x4e87500
+<rte_eth_devices+33152>, attr=3D0x7f0095666c98, items=3D0x7f008000e1a0,
+actions=3D0x7f008000dd10, error=3D0x7f0095666c30) at
+../drivers/net/mlx5/mlx5_flow.c:8019
+#3  0x00000000037a51af in rte_flow_create (port_id=3D2, attr=3D0x7f0095666c=
+98,
+pattern=3D0x7f008000e1a0, actions=3D0x7f008000dd10, error=3D0x7f0095666c30)=
+ at
+../lib/ethdev/rte_flow.c:420
+#4  0x0000000003a86d6f in netdev_dpdk_rte_flow_create (netdev=3D0x17d15a5c0,
+attr=3D0x7f0095666c98, items=3D0x7f008000e1a0, actions=3D0x7f008000dd10,
+error=3D0x7f0095666c30) at lib/netdev-dpdk.c:6539
+#5  0x0000000003a8b798 in netdev_offload_dpdk_flow_create (netdev=3D0x17d15=
+a5c0,
+attr=3D0x7f0095666c98, flow_patterns=3D0x7f0095666d00, flow_actions=3D0x7f0=
+095666c50,
+error=3D0x7f0095666c30) at lib/netdev-offload-dpdk.c:927
+#6  0x0000000003a8f3af in netdev_offload_dpdk_actions (netdev=3D0x17d15a5c0,
+patterns=3D0x7f0095666d00, nl_actions=3D0x7f0088005be0, actions_len=3D8) at
+lib/netdev-offload-dpdk.c:2292
+#7  0x0000000003a8f563 in netdev_offload_dpdk_add_flow (netdev=3D0x17d15a5c=
+0,
+match=3D0x7f0088009010, nl_actions=3D0x7f0088005be0, actions_len=3D8,
+ufid=3D0x7f0088008888, info=3D0x7f0095666ed0) at lib/netdev-offload-dpdk.c:=
+2322
+#8  0x0000000003a8fb27 in netdev_offload_dpdk_flow_put (netdev=3D0x17d15a5c=
+0,
+match=3D0x7f0088009010, actions=3D0x7f0088005be0, actions_len=3D8,
+ufid=3D0x7f0088008888, info=3D0x7f0095666ed0, stats=3D0x0) at
+lib/netdev-offload-dpdk.c:2456
+#9  0x000000000394800b in netdev_flow_put (netdev=3D0x17d15a5c0,
+match=3D0x7f0088009010, actions=3D0x7f0088005be0, act_len=3D8, ufid=3D0x7f0=
+088008888,
+info=3D0x7f0095666ed0, stats=3D0x0) at lib/netdev-offload.c:318
+#10 0x00000000038f19a5 in dp_netdev_flow_offload_put (item=3D0x7f0088008fe0=
+) at
+lib/dpif-netdev.c:2853
+#11 0x00000000038f1a83 in dp_offload_flow (item=3D0x7f0088008fe0) at
+lib/dpif-netdev.c:2889
+#12 0x00000000038f1d27 in dp_netdev_flow_offload_main (arg=3D0x7f0090001700=
+) at
+lib/dpif-netdev.c:2960
+#13 0x00000000039d618f in ovsthread_wrapper (aux_=3D0x7f0090002dd0) at
+lib/ovs-thread.c:429
+#14 0x00007f00c60631ca in start_thread () from /lib64/libpthread.so.0
+#15 0x00007f00c3337e73 in clone () from /lib64/libc.so.6
+
+Simple solution to avoid seg fault is to create a null ops implementation f=
+or
+list_create.
+
+I'm not sure right now if there is an additional bug with the device flow
+driver ops selection as it requires more knowledge about NIC config and dev=
+ice
+flow drivers selection.
+
+For now, I will send a patch to fix the seg fault. Would be helpful if some=
+one
+from Nvidia could review the device flow driver selection for correctness a=
+nd
+user docs on flow modes.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17395264730.42ab59.1307357
+Date: Fri, 14 Feb 2025 10:47:53 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - mlx5: rte_flow_create can cause a seg fault"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1661">1661</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>mlx5: rte_flow_create can cause a seg fault
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>24.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>ktraynor&#64;redhat.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Depending on NIC configuration, a =
+seg fault can occur when calling
+rte_flow_create() because mlx5_flow_null_drv_ops does not have a .list_crea=
+te
+implementation.
+
+Details:
+
+Driver type gets selected from flow_get_drv_type() and can return
+MLX5_FLOW_TYPE_MAX
+
+
+ 4180=E2=94=82 flow_get_drv_type(struct rte_eth_dev *dev, const struct rte_=
+flow_attr
+*attr)
+ 4181=E2=94=82 {
+ 4182=E2=94=82         struct mlx5_priv *priv =3D dev-&gt;data-&gt;dev_priv=
+ate;
+ 4183=E2=94=82         /* The OS can determine first a specific flow type (=
+DV, VERBS)
+*/
+ 4184=E2=94=82         enum mlx5_flow_drv_type type =3D mlx5_flow_os_get_ty=
+pe();
+ 4185=E2=94=82
+ 4186=E2=94=82         if (type !=3D MLX5_FLOW_TYPE_MAX)
+ 4187=E2=94=82                 return type;
+ 4188=E2=94=82         /*
+ 4189=E2=94=82          * Currently when dv_flow_en =3D=3D 2, only HW steer=
+ing engine is
+ 4190=E2=94=82          * supported. New engines can also be chosen here if=
+ ready.
+ 4191=E2=94=82          */
+ 4192=E2=94=82         if (priv-&gt;sh-&gt;config.dv_flow_en =3D=3D 2)
+ 4193=E2=94=82                 return MLX5_FLOW_TYPE_HW;
+ 4194=E2=94=82         if (!attr)
+ 4195=E2=94=82                 return MLX5_FLOW_TYPE_MIN;
+ 4196=E2=94=82         /* If no OS specific type - continue with DV/VERBS s=
+election */
+ 4197=E2=94=82         if (attr-&gt;transfer &amp;&amp; priv-&gt;sh-&gt;con=
+fig.dv_esw_en)
+ 4198=E2=94=82                 type =3D MLX5_FLOW_TYPE_DV;
+ 4199=E2=94=82         if (!attr-&gt;transfer)
+ 4200=E2=94=82                 type =3D priv-&gt;sh-&gt;config.dv_flow_en ?=
+ MLX5_FLOW_TYPE_DV :
+ 4201=E2=94=82=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20
+MLX5_FLOW_TYPE_VERBS;
+ 4202=E2=94=9C&gt;        return type;
+ 4203=E2=94=82 }
+
+(gdb) p type
+$1 =3D MLX5_FLOW_TYPE_MAX
+(gdb) p attr-&gt;transfer
+$2 =3D 1
+(gdb) p priv-&gt;sh-&gt;config
+$5 =3D {tx_pp =3D 0, tx_skew =3D 0, reclaim_mode =3D 0, dv_esw_en =3D 0, dv=
+_flow_en =3D 1,
+dv_xmeta_en =3D 0, dv_miss_info =3D 0, l3_vxlan_en =3D 0, vf_nl_en =3D 1, l=
+acp_by_user
+=3D
+0, decap_en =3D 1, hw_fcs_strip =3D 1, allow_duplicate_pattern =3D 1, lro_a=
+llowed =3D
+1, cnt_svc =3D {service_core =3D 0, cycle_time =3D 500}, fdb_def_rule =3D 1,
+repr_matching
+ =3D 1}
+
+In this case flow_get_drv_ops() selects mlx5_flow_null_drv_ops, which does =
+not
+have a .list_create implementation.
+
+
+ 8032=E2=94=82 uintptr_t
+ 8033=E2=94=82 mlx5_flow_list_create(struct rte_eth_dev *dev, enum mlx5_flo=
+w_type type,
+ 8034=E2=94=82                       const struct rte_flow_attr *attr,
+ 8035=E2=94=82                       const struct rte_flow_item items[],
+ 8036=E2=94=82                       const struct rte_flow_action actions[],
+ 8037=E2=94=82                       bool external, struct rte_flow_error *=
+error)
+ 8038=E2=94=82 {
+ 8039=E2=94=82         const struct mlx5_flow_driver_ops *fops;
+ 8040=E2=94=82         enum mlx5_flow_drv_type drv_type =3D flow_get_drv_ty=
+pe(dev, attr);
+ 8041=E2=94=82
+ 8042=E2=94=82         fops =3D flow_get_drv_ops(drv_type);
+ 8043=E2=94=9C&gt;        return fops-&gt;list_create(dev, type, attr, item=
+s, actions,
+external,
+ 8044=E2=94=82                 error);
+ 8045=E2=94=82 }
+
+(gdb) p drv_type
+$1 =3D MLX5_FLOW_TYPE_MAX
+(gdb) p fops
+$2 =3D (const struct mlx5_flow_driver_ops *) 0x45b34e0 &lt;mlx5_flow_null_d=
+rv_ops&gt;
+(gdb) p fops-&gt;list_create
+$3 =3D (mlx5_flow_list_create_t) 0x0
+
+As there is no list_create, it causes a seg fault
+
+(gdb) bt
+#0  0x0000000000000000 in ?? ()
+#1  0x000000000158a6b1 in mlx5_flow_list_create (dev=3D0x4e87500
+&lt;rte_eth_devices+33152&gt;, type=3DMLX5_FLOW_TYPE_GEN, attr=3D0x7f009566=
+6c98,
+items=3D0x7f008000e1a0, actions=3D0x7f008000dd10, external=3Dtrue,
+error=3D0x7f0095666c30) at ../drivers/net/mlx
+5/mlx5_flow.c:8043
+#2  0x000000000158a535 in mlx5_flow_create (dev=3D0x4e87500
+&lt;rte_eth_devices+33152&gt;, attr=3D0x7f0095666c98, items=3D0x7f008000e1a=
+0,
+actions=3D0x7f008000dd10, error=3D0x7f0095666c30) at
+../drivers/net/mlx5/mlx5_flow.c:8019
+#3  0x00000000037a51af in rte_flow_create (port_id=3D2, attr=3D0x7f0095666c=
+98,
+pattern=3D0x7f008000e1a0, actions=3D0x7f008000dd10, error=3D0x7f0095666c30)=
+ at
+../lib/ethdev/rte_flow.c:420
+#4  0x0000000003a86d6f in netdev_dpdk_rte_flow_create (netdev=3D0x17d15a5c0,
+attr=3D0x7f0095666c98, items=3D0x7f008000e1a0, actions=3D0x7f008000dd10,
+error=3D0x7f0095666c30) at lib/netdev-dpdk.c:6539
+#5  0x0000000003a8b798 in netdev_offload_dpdk_flow_create (netdev=3D0x17d15=
+a5c0,
+attr=3D0x7f0095666c98, flow_patterns=3D0x7f0095666d00, flow_actions=3D0x7f0=
+095666c50,
+error=3D0x7f0095666c30) at lib/netdev-offload-dpdk.c:927
+#6  0x0000000003a8f3af in netdev_offload_dpdk_actions (netdev=3D0x17d15a5c0,
+patterns=3D0x7f0095666d00, nl_actions=3D0x7f0088005be0, actions_len=3D8) at
+lib/netdev-offload-dpdk.c:2292
+#7  0x0000000003a8f563 in netdev_offload_dpdk_add_flow (netdev=3D0x17d15a5c=
+0,
+match=3D0x7f0088009010, nl_actions=3D0x7f0088005be0, actions_len=3D8,
+ufid=3D0x7f0088008888, info=3D0x7f0095666ed0) at lib/netdev-offload-dpdk.c:=
+2322
+#8  0x0000000003a8fb27 in netdev_offload_dpdk_flow_put (netdev=3D0x17d15a5c=
+0,
+match=3D0x7f0088009010, actions=3D0x7f0088005be0, actions_len=3D8,
+ufid=3D0x7f0088008888, info=3D0x7f0095666ed0, stats=3D0x0) at
+lib/netdev-offload-dpdk.c:2456
+#9  0x000000000394800b in netdev_flow_put (netdev=3D0x17d15a5c0,
+match=3D0x7f0088009010, actions=3D0x7f0088005be0, act_len=3D8, ufid=3D0x7f0=
+088008888,
+info=3D0x7f0095666ed0, stats=3D0x0) at lib/netdev-offload.c:318
+#10 0x00000000038f19a5 in dp_netdev_flow_offload_put (item=3D0x7f0088008fe0=
+) at
+lib/dpif-netdev.c:2853
+#11 0x00000000038f1a83 in dp_offload_flow (item=3D0x7f0088008fe0) at
+lib/dpif-netdev.c:2889
+#12 0x00000000038f1d27 in dp_netdev_flow_offload_main (arg=3D0x7f0090001700=
+) at
+lib/dpif-netdev.c:2960
+#13 0x00000000039d618f in ovsthread_wrapper (aux_=3D0x7f0090002dd0) at
+lib/ovs-thread.c:429
+#14 0x00007f00c60631ca in start_thread () from /lib64/libpthread.so.0
+#15 0x00007f00c3337e73 in clone () from /lib64/libc.so.6
+
+Simple solution to avoid seg fault is to create a null ops implementation f=
+or
+list_create.
+
+I'm not sure right now if there is an additional bug with the device flow
+driver ops selection as it requires more knowledge about NIC config and dev=
+ice
+flow drivers selection.
+
+For now, I will send a patch to fix the seg fault. Would be helpful if some=
+one
+from Nvidia could review the device flow driver selection for correctness a=
+nd
+user docs on flow modes.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1661">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17395264730.42ab59.1307357--
