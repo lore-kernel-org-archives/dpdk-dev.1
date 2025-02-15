@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777A0C021A4
-	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Feb 2025 19:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD94C021A4
+	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Feb 2025 19:07:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30E7D40DD6;
-	Sat, 15 Feb 2025 20:06:11 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id BCB1340DC9
- for <dev@dpdk.org>; Sat, 15 Feb 2025 20:06:05 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2211cd4463cso2080825ad.2
- for <dev@dpdk.org>; Sat, 15 Feb 2025 11:06:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 863B840E11;
+	Sat, 15 Feb 2025 20:06:13 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id D8AB640DD2
+ for <dev@dpdk.org>; Sat, 15 Feb 2025 20:06:06 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-21f3c119fe6so74785065ad.0
+ for <dev@dpdk.org>; Sat, 15 Feb 2025 11:06:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739646365;
- x=1740251165; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739646366;
+ x=1740251166; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4eCQHxeqtnmJwnbM+apidP+XqcqCydmDyWVcC/qwE90=;
- b=Yfti7L3ZXlRTdadTviqOlfWJqqL0eFJWeQmUw17AA1x59kGwbVUduB9gLofS6/4+Pj
- 6Fk7QNZjETgYo0z4D4teeID5wvOg4GrDnKTyYS1yhtOqfvfbXxHaG0yUofnmesoPkz/D
- 5uJaXcESsCKEzvE++B9EUJs5KrNcA1mOKovwjq0AMQbbqtIrkZpAsxglvZw4EN0XL729
- Y9BtZutRNLudl9cixY3nM7nzZ2daAuxWUSAJtwrZdb+z/fi1hyqEU22V71x0fDXDufA+
- zZHP/3SSIv9V+RPgmFXl/JeB78j4d9uRd4KAeKZzDXJoouloDLNa6igk5gHLycMXQGuS
- Pfww==
+ bh=AZmRfVHuNAu8WwJa8G2gVzrRUKoolZ9gQmZARtWp9Nw=;
+ b=Jw1+/7IzaQozhX/n6NL4jUJ+t8NMRw1jmT2SdRfjmHz1fbfslQowYGpDiGldm4qbH8
+ NaX8gs2QsIIRHfz4Rd4PYUiVQKnK71stPrwtg+4xXk3TppJOchrZFstvDductc7bP5MA
+ 3bgKBa3xnuXS0RQfPSWEyZrA6s704DicZZ6c8cS8A84Il5lpM/9jO7T//2n6Z2mQR4Bz
+ 9lLnlv3fR/QHAD7hLWPMQyIYNFITFiMf0DQiUWU6Oy5uG7TMz1YfUI7U+KSPMmwHgvv3
+ b24f36xDgSDikMVRQSw06SlcJqE5UElHldcskay5hJMfzq3c6ZT8B9/PfLRcai2MHpRs
+ eM6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739646365; x=1740251165;
+ d=1e100.net; s=20230601; t=1739646366; x=1740251166;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=4eCQHxeqtnmJwnbM+apidP+XqcqCydmDyWVcC/qwE90=;
- b=VGb75rf9Sl3IU4GJqRt+UKj8vPIKzlDoq/WMoS0N4DytkHjWFerTLLAgfrprRPtcqV
- PQmjlS0kb78FU285LqF59L4dIkzSzH7bvCLE4z/JRKGcroOgV8BRBa4Quf0N0pmN7KWN
- 8CGCzkiH6gYlMJOl6StBWUkIjyZrXC2mIigLPxtWo2V8HZ1riv8rhlG3xMKHeZiHEFCs
- YsKxTayVjYm0fACZYPX3RLc57iiOvlPleAkhg7r4+L1BXV7aJ5j2FTedL6UcjlBbRAz+
- EszfxAkG0+AfsbbipXGyE1yuO3V5+Qwcrc+QVlPHVHM3fELRUWd2E1RZhxJnnNW7tCgs
- vVow==
-X-Gm-Message-State: AOJu0YxAmfdDT7mDauMYaVw6km69iIp1cLuCbmcEl0Vm4Jt3z2GnVj+u
- L7AgjPu/oItOjPPUDGIw9VNrTZYHVTaKs+6LgAwXEMxqEJfpxIX4Un7eiXY2eamnYQ5vcXP1Jay
- I
-X-Gm-Gg: ASbGnctXmPC1ZcR7aLLKfVFRZ+7Vn1Gkdzmd5TL9zt01ATDzccGJyIA5ECUuBWbC4iH
- BORJ5J9eNjeIrRLqkjzmREv/SxHYJbduzIpCtqcD8MMvpXh8jktImaw5zVI2MH/f3hXonT3YvpF
- /2MRL2LUC5iSWGKkEPQus/HW7RAqnNElK/vSxjDO33AXBuOAJkrwEo1XMkxaM4ZOtACSJ7NlT8o
- B/htSSjbEs0Z1MB5nYNvCw89MeIMysyod9lru2aFUXZ08Z5Rvf+Yzy9Qc/SVSr4HBMWXW2Zku6o
- aTPeotIjxeeY1Hm8x5GkyUmEMTv6lF6p0uOlzSkisfykbTcdYtXUC0Nkhr5aILZQn/LE
-X-Google-Smtp-Source: AGHT+IGZSf4pX2QPKizUBLNbCJFg09aVkd/iILt0NWlmMbzfXQhJK6pjxP7hSYiODrmA7fnbFAHpuw==
-X-Received: by 2002:a05:6a00:124f:b0:732:5935:c219 with SMTP id
- d2e1a72fcca58-7326177d652mr7433581b3a.3.1739646364942; 
- Sat, 15 Feb 2025 11:06:04 -0800 (PST)
+ bh=AZmRfVHuNAu8WwJa8G2gVzrRUKoolZ9gQmZARtWp9Nw=;
+ b=wUnceVzbaktqBY4KT0kzgymQBNaYH64ahaThQClmC4wPrCS+JCQsoUndRQvkjhcupG
+ poO2BchTjlTomgtgywHaXLmxb3gZsjFAxdRTFs/FvmdKsHN0geZLJ5QNb9WUI5T1XBYD
+ qLcLOakTSzrlTW70so5ql+aA0AQJ5oMa6+WvU+Yk05r81MN1QVFAQnJapta+ys1K2Od6
+ ID0DdioowDDUqKCcdEfEOon9U7zsUJOGZckHDj1pYAoX0Vdryf+WPT4bC9Hpc6zTInyr
+ AbJNWujwOVMQEoXMV0CbMyVc3iwHUdZA/PFFJdkkpVepIZnqoERRaTZAOENM7pzdTj4i
+ y4eA==
+X-Gm-Message-State: AOJu0Yy3rQmePWuyzT7n1Jrhkv41b/kGtyPA8XASdioCFHA2TA3gEJEH
+ NEySnP265qhFvsjvDNBj2HFHvpjBOaJy0ZxRB01/iRRoVltZTtWLBMTewYrzpkPj16+BYez8YLY
+ f
+X-Gm-Gg: ASbGncswQf8LWVJxaJkwNk3HbazqPxkSldKboLCJwX/zCXyVbYVRK+e5cTtUVkQoFjr
+ t+vDo2pKH87tfBBU2CuJjCLkuu+5YsLSTJBQ2HkeDPYmloD4v5y372jt5chSlvee1Bfibtfru1t
+ V5D0p0lnenxKxGPL3/+FFfVpHx4gFpDahpqBQ4mZ2n5jhDpHm7bqCdnN3I3FoppD4eL29Jy2YJh
+ fHb7eAHE5kAWz9Y2r8TYZ2Q31GqGin0sL7guYyOiNgZ9W7qDXaNCBMkPOZQN2IhLsSXa/SfAg1g
+ yLdjbq+XN36o3nlfRSOpZYa7vU2nmT4Uf7wqGLTm5BUK7cFpJvLR7TxdbU2HAN2cPVm6
+X-Google-Smtp-Source: AGHT+IE4wt3GwTNvNSYxgQ5MV/PkQnSZJ4y7zH4Rl3MXtboLysjdb7L/SQlzvZUFt6qzG0/dY7FGyQ==
+X-Received: by 2002:a05:6a00:4f88:b0:732:516f:21fa with SMTP id
+ d2e1a72fcca58-732617d014fmr6261407b3a.14.1739646366053; 
+ Sat, 15 Feb 2025 11:06:06 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7324254685csm5080179b3a.4.2025.02.15.11.06.04
+ d2e1a72fcca58-7324254685csm5080179b3a.4.2025.02.15.11.06.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 15 Feb 2025 11:06:04 -0800 (PST)
+ Sat, 15 Feb 2025 11:06:05 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v7 11/16] bus/uacce: remove memset before free
-Date: Sat, 15 Feb 2025 11:04:39 -0800
-Message-ID: <20250215190544.988310-12-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Ashish Gupta <ashish.gupta@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH v7 12/16] compress/octeontx: remove unnecessary memset
+Date: Sat, 15 Feb 2025 11:04:40 -0800
+Message-ID: <20250215190544.988310-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250215190544.988310-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
@@ -82,28 +83,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Doing memset before free maybe removed by compiler, and
-is flagged by security scanning tools as potential problem.
-In this case the memset is unnecessary.
+Calling memset before rte_free not necessary, and could be
+removed by the compiler. In this case, the data is not security
+sensitive so the memset can be removed. Some security scanning
+tools will flag this.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/bus/uacce/uacce.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/compress/octeontx/otx_zip.c     | 1 -
+ drivers/compress/octeontx/otx_zip_pmd.c | 2 --
+ 2 files changed, 3 deletions(-)
 
-diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index 9ca048122d..cc1e42d56a 100644
---- a/drivers/bus/uacce/uacce.c
-+++ b/drivers/bus/uacce/uacce.c
-@@ -454,7 +454,6 @@ uacce_cleanup(void)
- 		dev->device.driver = NULL;
+diff --git a/drivers/compress/octeontx/otx_zip.c b/drivers/compress/octeontx/otx_zip.c
+index 11471dcbb4..331d2d9475 100644
+--- a/drivers/compress/octeontx/otx_zip.c
++++ b/drivers/compress/octeontx/otx_zip.c
+@@ -81,7 +81,6 @@ zipvf_q_term(struct zipvf_qp *qp)
+ 	struct zip_vf *vf = qp->vf;
  
- free:
--		memset(dev, 0, sizeof(*dev));
- 		free(dev);
+ 	if (cmdq->va != NULL) {
+-		memset(cmdq->va, 0, ZIP_MAX_CMDQ_SIZE);
+ 		rte_free(cmdq->va);
  	}
  
+diff --git a/drivers/compress/octeontx/otx_zip_pmd.c b/drivers/compress/octeontx/otx_zip_pmd.c
+index c8f456b319..74e3e942ad 100644
+--- a/drivers/compress/octeontx/otx_zip_pmd.c
++++ b/drivers/compress/octeontx/otx_zip_pmd.c
+@@ -479,8 +479,6 @@ zip_pmd_stream_free(struct rte_compressdev *dev, void *stream)
+ 				(void *)&(z_stream->bufs[0]),
+ 				(MAX_BUFS_PER_STREAM * ZIP_BURST_SIZE));
+ 
+-	/* Zero out the whole structure */
+-	memset(stream, 0, sizeof(struct zip_stream));
+ 	rte_free(stream);
+ 
+ 	return 0;
 -- 
 2.47.2
 
