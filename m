@@ -2,43 +2,132 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EB1C021A0
-	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Feb 2025 07:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6C3C021A0
+	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Feb 2025 11:12:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86EB54028A;
-	Sat, 15 Feb 2025 08:48:21 +0100 (CET)
-Received: from lf-2-37.ptr.blmpb.com (lf-2-37.ptr.blmpb.com [101.36.218.37])
- by mails.dpdk.org (Postfix) with ESMTP id 06BB4400D7
- for <dev@dpdk.org>; Sat, 15 Feb 2025 08:48:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1739605692; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=NKmuusBIUbBYhQUZ4HP0xuAYVl8c6LEquLgg2i0Sx8M=;
- b=I0zWjFYMMfzRZcG9KXyzk3MKKuO+GgScaFjqjNrNm+6yKmbB6N7ggbp8xmjS633+CeMgzN
- +iacZ6cuylgaaxyN+RrLu1OSAgCzWnYhu5kCR28kBKJqSsx7oUiPdz8vQd1rMPBBCN64Ce
- hXKS+WBI34M7tZxX5YGw4gKuTwrzccvd2iny/SYDjZOEcKhTNtWAleQPcOnrcgNJ8+WrkH
- wMFkXhS6ewjYaPYjzYc2IKFGIKMDe0UlEjmKjOl0lPPDZxM1vrkddRclZWmd5x6YboXoAu
- OCh+XqZJt61lWe74LFxvs+ZTLO4t+cqD5tP7O/npYRGCWXw6E1dWWbvpc1FsKQ==
-Date: Sat, 15 Feb 2025 15:48:04 +0800
-Message-Id: <2e3ee112-b3c2-40f1-bd33-1a5e337351f4@yunsilicon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, <ferruh.yigit@amd.com>, <thomas@monjalon.net>, 
- <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
- <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>
-Mime-Version: 1.0
-X-Lms-Return-Path: <lba+267b046ba+f29802+dpdk.org+wanry@yunsilicon.com>
-User-Agent: Mozilla Thunderbird
-In-Reply-To: <20250214152708.4916cf2b@hermes.local>
-From: "Renyong Wan" <wanry@yunsilicon.com>
-Subject: Re: [PATCH v7 00/15] XSC PMD for Yunsilicon NICs
-Received: from [127.0.0.1] ([114.93.246.172]) by smtp.feishu.cn with ESMTPS;
- Sat, 15 Feb 2025 15:48:09 +0800
-References: <20250128144649.1956159-1-wanry@yunsilicon.com>
- <20250214152708.4916cf2b@hermes.local>
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 858124028A;
+	Sat, 15 Feb 2025 12:12:51 +0100 (CET)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05on2052.outbound.protection.outlook.com [40.107.21.52])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BC79400D7;
+ Sat, 15 Feb 2025 12:12:50 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zWuDnKuWk1rL1pArynF3dNZ3c4vbvUE0PxrBJE9br+5EbwTskVMEyt5AS6PAMeUm0ZcPHAIueDZaMTc3i2q78Z8eiT7lD57dvZ3O9wSFbT/E0HNUpgiMKdh7Pg9wivXxB4RKSZ10SqhqLfu48GsxSo2SHdrPngmTHxKmJPSMQoUfuwCzWzEUxOCPapkX49AFp60HSqKWQjFp1/CUO5hUOPPANhrnFr9M2/E+D7esS5YfnYnaWCoVeDV6djO6SoDNEBarBKGzXo+LPlNb6629QhwG1x6jeLgbDozQQHJCxER2nHMw3qwXSdKrqrwHeIIc7s0qRzlpSWzpk+h9PCby4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e2cBlK0qIqibF+HkyzK6SZ0TXPxJnhbzwlNS7poovZE=;
+ b=MROKKhfC+teqy2GkY3vqzpiLKTLk6l2JlamPCUhtJ3mPEUdjbeBne5ffhp58sfunyx36htF8dWGcWjyhqNPaaqxOUccF2sPGPXn9VA2YnTSGTV/nGSMe/nfrbIA+bYptdNffvA2fmqPaLMC3Sr3cUP7Jzmm0XQRWeMwuZNQqBYDoUoZG3h6UXQBaCYnLB/LZVtTx6KCMFEQMLz1Y4uXQYdn2ss3onaVOLUGnL6UXUqmUYvYlZmxnc0jeNnd9H6B4aX9SJEk8bqIHDuL+Y3mypoDdiv+RgWVY7lDfk2REBjJ6D3kowQNRrRvUDpCTtxlLqcYSoJKABhQMlK7c8eTFNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e2cBlK0qIqibF+HkyzK6SZ0TXPxJnhbzwlNS7poovZE=;
+ b=mC7QpCQtezLCeWpO2V37DIFUppus9u9cf+20p0pz91xqQHOKqvDVKS5tbOMpxhMgo00qpUu3GCwxll8VE4zRQOztsn60YCc16GlV9PvDvfEHtQbIM5dTA5hBIfndRRXtOI0xX9032+pdHhVpKc4wTFOa8ENM8cvy4GLJWaZGEkt8ppWWQey4FtJuBbyYavEUGpx9cyo+9BR4DyYLtn2Q/7NRpdpAqd8MA4dkPTJYvBOWbXf4xliB6Ud4TTobZzen/ZuaBmZt2YHWHlz5b4zZKHVoorfAAqY7WrszNOJCCzgzSDM98QlqW/nYlXTdZO2EbJWPxNs6D9Oa8VXIgG0/QQ==
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by AS4PR04MB9573.eurprd04.prod.outlook.com (2603:10a6:20b:4fb::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Sat, 15 Feb
+ 2025 11:12:49 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87%4]) with mapi id 15.20.8422.015; Sat, 15 Feb 2025
+ 11:12:49 +0000
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Sachin Saxena <sachin.saxena@nxp.com>
+Subject: RE: [PATCH v2 3/7] bus/fslmc: fix use after free
+Thread-Topic: [PATCH v2 3/7] bus/fslmc: fix use after free
+Thread-Index: AQHbfwTwmIP+csDeh0Gs4/oGdTPiKrNINvFw
+Date: Sat, 15 Feb 2025 11:12:49 +0000
+Message-ID: <PAXPR04MB9328F3E7482A31B557E607BD89F92@PAXPR04MB9328.eurprd04.prod.outlook.com>
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <20250214172134.73908-1-stephen@networkplumber.org>
+ <20250214172134.73908-4-stephen@networkplumber.org>
+In-Reply-To: <20250214172134.73908-4-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9328:EE_|AS4PR04MB9573:EE_
+x-ms-office365-filtering-correlation-id: 213d4448-dbe4-4e07-400c-08dd4db1aebe
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?v+725pcBVl3pHcJSZTVsdmRKstkUOXXkF/l9GRh4wGpRyta2vWl2neM9A47P?=
+ =?us-ascii?Q?eoYnEgjB13BjQfCfIV3lnxSHiDbcQkk0IgHBNpi/voiFkFYOxAkDRwv8QOLI?=
+ =?us-ascii?Q?fMe5OgczntTK83v6lBN/EglR5PZLemW1ius+MtRvGmMBSUZDQg5hSBpJTgYu?=
+ =?us-ascii?Q?p44LvRsgOKFeuvnKC6d73J2y1mZvnRE8eukhU0m/3fqZNjilx4TEv2r4NIAK?=
+ =?us-ascii?Q?mEs7PPdkkKvbQOMG6mnEqvbzRvodPj7eepN5TF0PwzErGW+E5nPHLy9gK+DX?=
+ =?us-ascii?Q?kYCVJiQ1/YiEMvi4GjuCmMJI/ZAu+7S43NWBt2jo5LCjEecpIuBXRfh3hCdR?=
+ =?us-ascii?Q?63DqNyk618akhJBVQWbrcrMRXsgBuprMB6AD1FsjBR+p2ufujE4RKEYiR3wX?=
+ =?us-ascii?Q?hjYFfIxxZsxrkJG8BRpjVUGso+ZbaZtJ2YZMuQE0kVApGXgf6qgOZVwB+DAt?=
+ =?us-ascii?Q?oSirF6fvge6eYExX5mUlhAPnH/Vc1V5ITL3I68tYX0kP6ru8TX4e9isEsXRZ?=
+ =?us-ascii?Q?nygmL0fpq6uf6q53ENKKDmMkhkkiYITKm7wNos6KJ/vwFLGi7O1sLZ73nbLY?=
+ =?us-ascii?Q?0+VQD7C6lTj3JmawxRmnkiyL+g1xpcodfxxUbJIc960FZ6r3bGKuqv8/DUKH?=
+ =?us-ascii?Q?MX01fBlq8ZJQdDaGKKkoYDNhStJEklqhpf/o/c1pVMQuf+YPwhXz1hNrPaYk?=
+ =?us-ascii?Q?kBRz7svoq7KIXryXU5BTZndZ2Yu4zVnT2xaIEwfvTjV4HtBesAaIB1fKaS28?=
+ =?us-ascii?Q?+nfWMU7lVcB9SFaqqMxu3nVxcQpDgZliSqbhpL7f+xsm45hJooQcDxRNPlzh?=
+ =?us-ascii?Q?fEiYwnQ4l3l2Tlq6PkdENIzcdpXvYDw4zW2iYltPeW6ibUSkPPmdWaHg6S1V?=
+ =?us-ascii?Q?YrZZY2/HTxJdxKKmOGkAATQ305opwmxP5ji5tgGMp66cKfwrl64sZn4q5I0O?=
+ =?us-ascii?Q?QfWTifdO/XaATqZqdCwSi0CMTmWX9WIYAtUNqTjeAzethRYhutn83HuAJSA7?=
+ =?us-ascii?Q?BE6IIuLqvwLYLkMzVu94uY+/kzGS+Hlc6NtEruY1EQ5x+K2QW8TZsLErTO6y?=
+ =?us-ascii?Q?lOpkC4KGai2eUJ4DCh2D6kyakodn67dStUjsp+5KGYqq69VC1She7pS4g5W9?=
+ =?us-ascii?Q?x0mqpr92s48Jyu6aNSmZX6AUxfN4M0hUDaqR/VKWf30d8Rtq88j7oGSk6iSO?=
+ =?us-ascii?Q?XQw6CAFYy1foUwUhnkeMAwQd9x7YlJW00s+FOvU9cHtvTl7ozWlRkp+HEHFE?=
+ =?us-ascii?Q?URFQbSybwSjwDS4PkB3/qtpGMBOs1OaP/bu/CKaZ3HtQhw0iHWHKaeNpM0hz?=
+ =?us-ascii?Q?NUwV5dOluYU6OeLbR51oT7lbGKExYYdRbKqDN+RpYRlgn+3x2rh3tGvAjUUH?=
+ =?us-ascii?Q?hE8eY2ocCb7V6U1SOVboHBN3Gfpm04xpxIabG/vsn+6i6LdFw2hj86/Un1dB?=
+ =?us-ascii?Q?7Qi/Wo16jH99uSaG926RBKTaOGdgKvAp?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?g88AVmr72iv8BitLY7W/DEmDFf799E1PUqpIFMceBcirrCwS8ZsD6HedD+Eo?=
+ =?us-ascii?Q?3r1d9eUR+LMiI1lY57Xtk+0rGuQZEUKKdNgwuJN3artHPD/8CHA9u9pxTehQ?=
+ =?us-ascii?Q?We/oAQ9GSl4eIpZqcOn2TPgu2+yMNAX84WA0WpTANaPPM4dTU+V8uK5umEgi?=
+ =?us-ascii?Q?1KPkKbn4OGFyafHEvmyrkK5sihghn+E5PZItr0o9rrABiFSULdZcyivTBItr?=
+ =?us-ascii?Q?Pw2mcQ8scQOUBNxSWV40eS4XC/hyWmAjqpujxgdSVHpqEOtpA0TsTIibw3Mp?=
+ =?us-ascii?Q?DoDfi/w7XC7dCeMX4mk5jBozUcJFtLGPEh6DVIKWY5Ipl0Pxb1zvp+QoIdGJ?=
+ =?us-ascii?Q?8+hdZP9UI0eaoQx0jRrJF7jYzHuLSm76E7MAagQQhjwfLU/1+IH/T58uPSxq?=
+ =?us-ascii?Q?W2lhNo5q7hoYdRK3ZblVFAsKjQwfGDPl2UWOmdXZURKKd7v6YzNHagV/YcXD?=
+ =?us-ascii?Q?U5n04rU3W2Q+Dha0xVpllXA8nips1tZAPtMs4ZoTWHq6WBk9/LeZBXPhYyM2?=
+ =?us-ascii?Q?ZEe5K1ZJiFXaatSZSmrljY/NxnfkRAc7RFo19s6IE8eq+JO1N+0ikHcfPQVB?=
+ =?us-ascii?Q?44AeyZ9Gbe3f8eokgdNXzNPNRMk42PV2gXsXFYkZ3IHQjUopkwigbmQXAFBX?=
+ =?us-ascii?Q?C+9fiOu20uFQlaR9om0B1IP75e1WFdItw5suKqtZuLWYgvdunWE2Ig+fmj54?=
+ =?us-ascii?Q?GfKwP9+p9UXruF7uz1ByHf+hy0KpVoXAOKNQRAhWdZQuCTHwihnnKhOFdDMh?=
+ =?us-ascii?Q?Sjnpm5OjmnXZWt7x3bweQdWxKya3YGYKPFfHUOcY1Hacwwo4k3ks1QmW62A8?=
+ =?us-ascii?Q?rXg8Oe8mvKz3NIDVFD9n9ef63nHKUXCQwRohrAHGBlQlBBig0d6uZ3k+Hf6w?=
+ =?us-ascii?Q?hCmedFdCY+Q5oFI1MUW9vnGjp33g+Yg6ihShdzVTzOJ28KevpDrG9eIdKYjm?=
+ =?us-ascii?Q?dGr8DNSOcJv5N47UFZUTiR9IPfjzBYwyMYqVZJdhwA2A4mENKLpwo0lTOI9G?=
+ =?us-ascii?Q?rqEeE2cEycXYvhPIlmXWgxs7hK1p8uxaF0XpGh9Z/W9cQE4eYn+L4LYLYqxd?=
+ =?us-ascii?Q?W4FNRMIE9tZ0zAGBtd3r/dcEwmdEh51ktw0HGqk9uwJUUF/MMkDhElw+CSVl?=
+ =?us-ascii?Q?/iFV80TjTqdOrWk7xrWv+1MEXBht5FhzuXnBOzHCfT+pe/TRNpxVYnsbVMdS?=
+ =?us-ascii?Q?dZLQMXabclUq3hGtWj+B6h6I/5tfwSPVCmAHM6Uq4K+BFjh+aFzIG3yxXzB+?=
+ =?us-ascii?Q?2TR7fAAmzcmC8orj+Wio8eIRisfbv5igofb3Rwr+TQBpECLoXM2uqcnrZlby?=
+ =?us-ascii?Q?3gk7j3dDBFYVG7TUCiwWr6PAs5TKK2a9ur1EtGDX/vuG7W+tldpEKrNV1N0/?=
+ =?us-ascii?Q?JK8lFWqt4Vhrnc/SPf++FJDIOC/loRPMho63jdxa1IXjvDE1c3RuWoIQVje3?=
+ =?us-ascii?Q?7qqaNKwUDHcsTdjW8r+C3lp7U8i9AOHB8Jtj0WstjA+/3NplMabWzBcvMbj0?=
+ =?us-ascii?Q?1l/QN8askIZlqeWm+VWxj0QHMZ081JAGfLOPl2CXEjvh8UCkaQj/PPWxBDgB?=
+ =?us-ascii?Q?cOkh3f4YAO7UbyZUaOppc4lpuwcbfhaRF4mwnCwm?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 213d4448-dbe4-4e07-400c-08dd4db1aebe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2025 11:12:49.2469 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 89EsCys8LNG/xBwXzznrPhuxaXjELl4K4eaBeElt9wT6+IEu+bcubp9vSP9e6y0XcDTiskE08a3C0gh8qIxIaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9573
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,234 +141,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025/2/15 7:27, Stephen Hemminger wrote:
-> On Tue, 28 Jan 2025 22:47:22 +0800
-> "Renyong Wan" <wanry@yunsilicon.com> wrote:
->
->> This xsc PMD (**librte_net_xsc**) provides poll mode driver for
->> Yunsilicon metaScale serials NICs.
->>
->> Features:
->> ---------
->> - MTU update
->> - TSO
->> - RSS hash
->> - RSS key update
->> - RSS reta update
->> - L3 checksum offload
->> - L4 checksum offload
->> - Inner L3 checksum
->> - Inner L4 checksum
->> - Basic stats
->> - Stats per queue
->>
->> Support NICs:
->> -------------
->> - metaScale-200S   Single QSFP56 Port 200GE SmartNIC
->> - metaScale-200    Quad QSFP28 Ports 100GE SmartNIC
->> - metaScale-50     Dual QSFP28 Port 25GE SmartNIC
->> - metaScale-100Q   Quad QSFP28 Port 25GE SmartNIC
->>
->> ---
->>
->> v7:
->> * Remove the packed attributes of sub structures and unions.
->> * Remove the cast of xdev->dev_priv.
->> * Remove the cast of malloc return value.
->> * Define the size of xdev->name to PCI_PRI_STR_SIZE.
->> * Change the name of Wanrenyong to Renyong Wan
->>
->> v6:
->> * Remove unnecessary paren.
->> * Add the feature of stats per queue in xsc.ini.
->> * Use memcpy instead of rte_memcpy in non critical path.
->> * Rebase from the main branch and merge release notes.
->> * Replace __rte_packed with __rte_packed_begin and __rte_packed_end.
->>
->> v5:
->> * fix compilation errors.
->> * fix coding style issue with misspelling.
->> * remove some unnecessary parameter checks.
->> * remove unnecessary call of rte_wmb.
->> * Rearrange elements in structure to avoid holes.
->>
->> v4:
->> * Based on the review comments from previous versions, reconstruct the xsc PMD to eliminate
->>    the dependency on rdma core library and proprietary kernel driver, while adding support for
->>    the vfio kernel driver.
->>
->> v3:
->> * fix compilation errors
->>
->> v2:
->> * fix checkpatch warnings and errors
->>
->> ---
->> Renyong Wan (15):
->>    net/xsc: add xsc PMD framework
->>    net/xsc: add xsc device initialization
->>    net/xsc: add xsc mailbox
->>    net/xsc: add xsc dev ops to support VFIO driver
->>    net/xsc: add PCT interfaces
->>    net/xsc: initialize xsc representors
->>    net/xsc: add ethdev configure and RSS ops
->>    net/xsc: add Rx and Tx queue setup
->>    net/xsc: add ethdev start
->>    net/xsc: add ethdev stop and close
->>    net/xsc: add ethdev Rx burst
->>    net/xsc: add ethdev Tx burst
->>    net/xsc: add basic stats ops
->>    net/xsc: add ethdev infos get
->>    net/xsc: add ethdev link and MTU ops
->>
->>   .mailmap                               |   5 +
->>   MAINTAINERS                            |  10 +
->>   doc/guides/nics/features/xsc.ini       |  19 +
->>   doc/guides/nics/index.rst              |   1 +
->>   doc/guides/nics/xsc.rst                |  31 +
->>   doc/guides/rel_notes/release_25_03.rst |   4 +
->>   drivers/net/meson.build                |   1 +
->>   drivers/net/xsc/meson.build            |  17 +
->>   drivers/net/xsc/xsc_cmd.h              | 387 +++++++++++
->>   drivers/net/xsc/xsc_defs.h             | 100 +++
->>   drivers/net/xsc/xsc_dev.c              | 397 +++++++++++
->>   drivers/net/xsc/xsc_dev.h              | 184 +++++
->>   drivers/net/xsc/xsc_ethdev.c           | 917 +++++++++++++++++++++++++
->>   drivers/net/xsc/xsc_ethdev.h           |  63 ++
->>   drivers/net/xsc/xsc_log.h              |  24 +
->>   drivers/net/xsc/xsc_np.c               | 492 +++++++++++++
->>   drivers/net/xsc/xsc_np.h               | 154 +++++
->>   drivers/net/xsc/xsc_rx.c               | 512 ++++++++++++++
->>   drivers/net/xsc/xsc_rx.h               |  65 ++
->>   drivers/net/xsc/xsc_rxtx.h             | 191 +++++
->>   drivers/net/xsc/xsc_tx.c               | 354 ++++++++++
->>   drivers/net/xsc/xsc_tx.h               |  62 ++
->>   drivers/net/xsc/xsc_vfio.c             | 746 ++++++++++++++++++++
->>   drivers/net/xsc/xsc_vfio_mbox.c        | 691 +++++++++++++++++++
->>   drivers/net/xsc/xsc_vfio_mbox.h        | 142 ++++
->>   25 files changed, 5569 insertions(+)
->>   create mode 100644 doc/guides/nics/features/xsc.ini
->>   create mode 100644 doc/guides/nics/xsc.rst
->>   create mode 100644 drivers/net/xsc/meson.build
->>   create mode 100644 drivers/net/xsc/xsc_cmd.h
->>   create mode 100644 drivers/net/xsc/xsc_defs.h
->>   create mode 100644 drivers/net/xsc/xsc_dev.c
->>   create mode 100644 drivers/net/xsc/xsc_dev.h
->>   create mode 100644 drivers/net/xsc/xsc_ethdev.c
->>   create mode 100644 drivers/net/xsc/xsc_ethdev.h
->>   create mode 100644 drivers/net/xsc/xsc_log.h
->>   create mode 100644 drivers/net/xsc/xsc_np.c
->>   create mode 100644 drivers/net/xsc/xsc_np.h
->>   create mode 100644 drivers/net/xsc/xsc_rx.c
->>   create mode 100644 drivers/net/xsc/xsc_rx.h
->>   create mode 100644 drivers/net/xsc/xsc_rxtx.h
->>   create mode 100644 drivers/net/xsc/xsc_tx.c
->>   create mode 100644 drivers/net/xsc/xsc_tx.h
->>   create mode 100644 drivers/net/xsc/xsc_vfio.c
->>   create mode 100644 drivers/net/xsc/xsc_vfio_mbox.c
->>   create mode 100644 drivers/net/xsc/xsc_vfio_mbox.h
->>
-> Now that XSC is merged to main, there are a number of possible problems reported
-> by PVS studio.
->
-> The Vxxx value is the PVS studio error code.
->
-> xsc_dev.c (292)
-> V576	Incorrect format. Consider checking the fifth actual argument of the 'rte_log' function. The UNSIGNED integer type argument is expected.
-> xsc_dev.c (292)
-> V576	Incorrect format. Consider checking the sixth actual argument of the 'rte_log' function. The UNSIGNED integer type argument is expected.
-> xsc_ethdev.c (724)
-> V547	Expression 'config->tso' is always true.
-> xsc_ethdev.c (728)
-> V547	Expression is always false.
-> xsc_ethdev.c (729)
-> V547	Expression 'priv->is_representor' is always true.
-> xsc_ethdev.c (316)
-> V1001	The 'ret' variable is assigned but is not used by the end of the function.
-> xsc_ethdev.c (141)
-> V522	There might be dereferencing of a potential null pointer 'rxq'.
-> xsc_ethdev.c (165)
-> V522	There might be dereferencing of a potential null pointer 'txq'.
-> xsc_ethdev.c (650)
-> V526	The 'memcmp' function returns 0 if corresponding buffers are equal. Consider examining the condition for mistakes.
-> xsc_ethdev.c (825)
-> V1027	Pointer to an object of the 'rte_device' class is cast to unrelated 'rte_pci_device' class.
-> xsc_np.c (175)
-> V595	The 'in' pointer was utilized before it was verified against nullptr. Check lines: 175, 176.
-> xsc_np.c (140)
-> V560	A part of conditional expression is always false: (rss_conf->rss_hf & (0UL << 50)).
-> xsc_np.c (175)
-> V575	The potential null pointer is passed into 'memset' function. Inspect the first argument. Check lines: 175, 174.
-> xsc_np.c (142)
-> V1048	The 'outer' variable was assigned the same value.
-> xsc_np.c (192)
-> V1027	Pointer to an object of the 'xsc_np_mbox_in' class is cast to unrelated 'xsc_np_mbox_out' class.
-> xsc_rx.c (296)
-> V595	The 'in' pointer was utilized before it was verified against nullptr. Check lines: 296, 297.
-> xsc_rx.c (45)
-> V560	A part of conditional expression is always false: ret == - 1.
-> xsc_rx.c (45)
-> V560	A part of conditional expression is always false: ret == 0x2.
-> xsc_rx.c (296)
-> V575	The potential null pointer is passed into 'memset' function. Inspect the first argument. Check lines: 296, 295.
-> xsc_rx.c (284)
-> V522	There might be dereferencing of a potential null pointer 'rxq_data'.
-> xsc_rx.c (391)
-> V522	There might be dereferencing of a potential null pointer 'rxq_data'.
-> xsc_rx.c (430)
-> V522	Dereferencing of the null pointer might take place. The potential null pointer is passed into 'xsc_rxq_elts_alloc' function. Inspect the first argument. Check lines: 'xsc_rx.c:430', 'xsc_ethdev.c:274'.
-> xsc_rx.c (361)
-> V576	Incorrect format. Consider checking the fifth actual argument of the 'rte_log' function. The UNSIGNED integer type argument is expected.
-> xsc_rx.c (361)
-> V576	Incorrect format. Consider checking the ninth actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_rx.c (410)
-> V576	Incorrect format. Consider checking the ninth actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_rx.c (447)
-> V656	Variables '(mbuf)->data_len', '(mbuf)->pkt_len' are initialized through the call to the same function. It's probably an error or un-optimized code. Check lines: 445, 447.
-> xsc_rx.c (335)
-> V1027	Pointer to an object of the 'xsc_cmd_create_multiqp_mbox_in' class is cast to unrelated 'xsc_cmd_create_multiqp_mbox_out' class.
-> xsc_tx.c (18)
-> V522	Dereferencing of the null pointer might take place. The potential null pointer is passed into 'xsc_txq_elts_alloc' function. Inspect the first argument. Check lines: 'xsc_tx.c:18', 'xsc_ethdev.c:232'.
-> xsc_tx.c (55)
-> V576	Incorrect format. Consider checking the eighth actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_tx.c (86)
-> V576	Incorrect format. Consider checking the eighth actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_tx.c (218)
-> V1048	The 'cs->has_pph' variable was assigned the same value.
-> xsc_vfio.c (434)
-> V595	The 'in' pointer was utilized before it was verified against nullptr. Check lines: 434, 435.
-> xsc_vfio.c (434)
-> V575	The potential null pointer is passed into 'memset' function. Inspect the first argument. Check lines: 434, 433.
-> xsc_vfio.c (340)
-> V576	Incorrect format. Consider checking the fifth actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_vfio.c (486)
-> V576	Incorrect format. Consider checking the seventh actual argument of the 'rte_log' function. The SIGNED integer type argument is expected.
-> xsc_vfio.c (88)
-> V1027	Pointer to an object of the 'xsc_cmd_query_hca_cap_mbox_in' class is cast to unrelated 'xsc_cmd_query_hca_cap_mbox_out' class.
-> xsc_vfio.c (207)
-> V1027	Pointer to an object of the 'xsc_cmd_destroy_qp_mbox_in' class is cast to unrelated 'xsc_cmd_destroy_qp_mbox_out' class.
-> xsc_vfio.c (248)
-> V1027	Pointer to an object of the 'xsc_cmd_destroy_cq_mbox_in' class is cast to unrelated 'xsc_cmd_destroy_cq_mbox_out' class.
-> xsc_vfio.c (330)
-> V1027	Pointer to an object of the 'xsc_cmd_modify_qp_mbox_in' class is cast to unrelated 'xsc_cmd_modify_qp_mbox_out' class.
-> xsc_vfio.c (380)
-> V1027	Pointer to an object of the 'xsc_cmd_modify_raw_qp_mbox_in' class is cast to unrelated 'xsc_cmd_modify_raw_qp_mbox_out' class.
-> xsc_vfio.c (463)
-> V1027	Pointer to an object of the 'xsc_cmd_create_cq_mbox_in' class is cast to unrelated 'xsc_cmd_create_cq_mbox_out' class.
-> xsc_vfio.c (560)
-> V1027	Pointer to an object of the 'xsc_cmd_create_cq_mbox_in' class is cast to unrelated 'xsc_cmd_create_cq_mbox_out' class.
-> xsc_vfio.c (666)
-> V1027	Pointer to an object of the 'xsc_cmd_create_qp_mbox_in' class is cast to unrelated 'xsc_cmd_create_qp_mbox_out' class.
-> xsc_vfio_mbox.c (517)
-> V576	Incorrect format. Consider checking the seventh actual argument of the 'rte_log' function. The UNSIGNED integer type argument is expected.
-> xsc_vfio_mbox.c (575)
-> V1048	The 'size' variable was assigned the same value.
-Hello Stephen,
-
-Thank you for providing the detailed PVS Studio report, these issues 
-will be addressed in the upcoming 25.03-rc2, as well as the defects 
-reported in the Coverity Scan email you forwarded earlier.
-
--- 
-Best regards,
-Renyong Wan
+Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
