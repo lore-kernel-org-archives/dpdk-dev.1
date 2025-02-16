@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E9DC021A6
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B224C02198
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:01:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FDFC40E1D;
-	Sun, 16 Feb 2025 18:01:27 +0100 (CET)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 99BDA40DD8
- for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:23 +0100 (CET)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-221206dbd7eso6874405ad.2
- for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AE32C40E30;
+	Sun, 16 Feb 2025 18:01:28 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 713BE40150
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:24 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-22128b7d587so4725225ad.3
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739725283;
  x=1740330083; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rAR4ZctvgYZrv+iP1slYJzFPiuMnmFTGiePO9PNu9qQ=;
- b=MozkFSaF434G+IRzT4m41AJfG2JoWy/XUWhu0kvPjervNZ9qy6+/+NGJUtlhfyTstk
- k+J1tPIkf0SA6dAX6gg5rdGetF1ANsDGRyAr2v0AOcREOx/IFwbCKne9cxXUCbNluakg
- 24L+1+DPfabgsY2F8qqgnts5Pq+muw+AQaGiSxRd0cUzzv52Ze5Eb31d8vxdraPuCcvR
- 2ZDRxACOkMAI2KOs/ozAxXtXzYmYAwhUXBrPpAm03p9gOr3Mzsga+nz2upuqD0mupAfg
- FMadMp7QsbCvFmwqBhswONY+dJpwWXPeODbw+un6t1Y0kpvkcv81OSv2PpiY8f94gIzb
- 9Szg==
+ bh=BKsHwBy4OeQM441PNFrvjPnAsOJIxD9G/WylTgJ1y/c=;
+ b=1B6eauzhcLcwcSG3deUIBAwtAnR51gBriPhphpZ1bV4FOeqJdXwq9zZjc2gASFt0MJ
+ 1GPwYOH1J1oeANzdKc806dnFlefqKScSL9fzUY3cRWIxrq8cICEDTR61ffw3zaYsqj6e
+ 758m7FFiI2OSOrzae22li7H7dB/ootmrFk/7j3WwIJKDQF45RGzUTyeSUDsnmOQITrxu
+ EV/4dEfbmRm8LvIhFSK4WQ/tcGftsj4h/R1jY6cSd0sGf+Fcma123aQqLAWmcs/Zp4Jx
+ nKiHqLcF6+qO+o6oyd2Ekeg1QH3REwnrVGOhx4C4t/1P9kMHiFYwJa8oFXrPr4ele5w2
+ 9VYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1739725283; x=1740330083;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=rAR4ZctvgYZrv+iP1slYJzFPiuMnmFTGiePO9PNu9qQ=;
- b=NMrn+sV7YGIltqYwg/kxuSq/3FBnAuq4iVBVOtVI9BqW2q4fGKEefMnpCsWNPACwcg
- R2oSOC+Lfh8u/9g/9eNGdtY717Zwq7ubzWgZG1FgINdw1rBBL1L8Z5BhRqJfMceEDOp+
- ZkfgWLNek9ACvBhXmFdO+bgNwdsgwVBfnxMa7KNNlhdrb2LBH/aODjl1BxSJRKRImuj1
- OMbDLgzYadqJu4Fk1I0O6Gjoa6JY+8vHaokY0VzH2H8t5EvG+SPWT4XHaHMQevjbiAUU
- CzFbdFyae66OB7Txh3BMClOu1Rh8ZbXutSISCdMSh4SG8eD550tQy+rnae3LMpEm9AHK
- KFGw==
-X-Gm-Message-State: AOJu0Yws7UEEfRhEJ1w/jJqwt4gsCmsQLi7C81EDFYIGS4jF6u+A1O1V
- o5XHdccmzVpn/JtfVpldSOKYtfr1RfT95cyK6BKlHJhsTWj6jtpuSKXhG7Nw8p89Tu7RFw3syYg
- 8
-X-Gm-Gg: ASbGncvFkMns5bprlQFvjse7MNq/li0moTHWF0A0dIEsCmJ970s126WeniIgoDoMb/z
- Wl8yQhEXrSX7yHWWCIGA7NzyueXLrozd4EnXuj3hsPBxPbxGBm/GhhIwjwHqzODLicJHQjOvddt
- pVB8uoSO/D85di0LErUcll4GEi0eKSPn3GSaYHs3+f9MW1TE9sNfZf3sxYzZyKUIxHtMjkAzsV5
- Urx6DjYDh3/Nb+iPuaUpcXFhJInzxZhysFWoAfp1E6IZOGKZRpmFCDgnRbJZM+VPvgIU8H1b6GO
- s4TzoYraltENCZ4jClTIyNVMl3Ym/yfMpKax72wpsyrWE34AaT+0LNwR0DhFsW9VXcEV
-X-Google-Smtp-Source: AGHT+IHIKxsmD5gUDOeHsFXfj8+CTuG2R2HMB3Ip3F4cgdknIWnzFg383yKWKqXUhzcKQ5gYNPpziQ==
-X-Received: by 2002:a17:902:d58b:b0:220:c813:dfcb with SMTP id
- d9443c01a7336-2210408d75emr118805745ad.39.1739725282709; 
- Sun, 16 Feb 2025 09:01:22 -0800 (PST)
+ bh=BKsHwBy4OeQM441PNFrvjPnAsOJIxD9G/WylTgJ1y/c=;
+ b=eCNfzOmd8zmOln61zaK30SpLnozGzhZR2soWzVFbeMqZY0lSah7AzuKKTC3282gGES
+ YBI+IXPsUuTRnV7QQ4MXLP+sZyQhdZQXiWfjiLwcbg0D0X/bHxbEw0fcA6JDS59jXnGd
+ qmQwn58AF3k8c+cTXsaQIy5mVi6Y9ItvDmQxjg80YSqQ5GUZZClE98StnQWxGZW6LHn+
+ 7zrczXWIjzQY/14U9+I0cwmgc+Sqw1rCufBH4Oe70qXPvAjXyBqgXkws64Ihv2wwBuRW
+ g4SfeYYkdtlZRqjx2rqHIns6OSr7XXPDLo22lO7ij48tE33furqm/+uB9MfcIms1jyVq
+ BPFw==
+X-Gm-Message-State: AOJu0YwE0qOnt6U3tH85VmmWU6XuwrswzDjhQnfTsUFiq90oxBD8IOoP
+ sYrWwQumFWm2cdgvqY3Ot1KieOO60KBxPA6L6v0/wVI0nsIVJZf9oef60A4j7IV5LKOOV4y+XQM
+ j
+X-Gm-Gg: ASbGncvgLm6Btxm3mAdSA9q56nf/N6JwcdP1EkjHKYT+lc+dddToGGQHSxu4M6oMOXi
+ +5HVKXbFI8v+Cu62G+Lchk6AgQ8TzVlbBEX1l53O+wiCFWK39GY5mjPwjywIpiZpQCV9ZUO2SyO
+ DLQRqsEk2wpZoYBPpqX5VFHOOnzouQV6UwAIy6Dh4Oe78bzO6kGfod69lYWOaFuXE/4e1mNYDXR
+ qMZlZefvxzXO1neB3EkUniWSNGBWq4rEmq9zjzPYRvVzNFRXeuhWq3S9jqZZSfCiMyIf4pgPbQG
+ Moewe5ErNPj6SD0TE64MiC3km9pXsudemjjGlxFbW+JpjfDEo0UR+l6Qe390abVHWnq/
+X-Google-Smtp-Source: AGHT+IGn1dpLr85/rzPN+mZ7S7mJ/u5SQ3pbWgdxlx9G9uM5pPHh/56Jp0DIFiTuWIU5NSWo6VD2VA==
+X-Received: by 2002:a17:902:e747:b0:215:a434:b6ad with SMTP id
+ d9443c01a7336-221040ac0f9mr111197165ad.33.1739725283494; 
+ Sun, 16 Feb 2025 09:01:23 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
  d9443c01a7336-2211eafd20dsm11196805ad.182.2025.02.16.09.01.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Feb 2025 09:01:22 -0800 (PST)
+ Sun, 16 Feb 2025 09:01:23 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v8 03/17] app/test: add test for rte_memzero_explicit
-Date: Sun, 16 Feb 2025 08:53:02 -0800
-Message-ID: <20250216170110.7230-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v8 04/17] app/test: remove unused variable
+Date: Sun, 16 Feb 2025 08:53:03 -0800
+Message-ID: <20250216170110.7230-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250216170110.7230-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
@@ -82,95 +81,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a new test for rte_memzero_explicit.
-Test strategy is based of glibc bzero_explicit test which
-is based off a test in the OpenBSD regression test suite.
+The buffer tmp is set but never used. This leads to warning
+since the memset could be eliminated by the compiler.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_string_fns.c | 56 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ app/test/test_cmdline_cirbuf.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/app/test/test_string_fns.c b/app/test/test_string_fns.c
-index ce07c17228..b4fe3a7c30 100644
---- a/app/test/test_string_fns.c
-+++ b/app/test/test_string_fns.c
-@@ -8,6 +8,10 @@
- #include <errno.h>
- #include <string.h>
+diff --git a/app/test/test_cmdline_cirbuf.c b/app/test/test_cmdline_cirbuf.c
+index 8ac326cb02..f6361d49e9 100644
+--- a/app/test/test_cmdline_cirbuf.c
++++ b/app/test/test_cmdline_cirbuf.c
+@@ -251,11 +251,9 @@ test_cirbuf_string_add_del_reverse(void)
+ {
+ 	struct cirbuf cb;
+ 	char buf[CMDLINE_TEST_BUFSIZE];
+-	char tmp[CMDLINE_TEST_BUFSIZE];
  
-+#include <rte_debug.h>
-+#include <rte_launch.h>
-+#include <rte_lcore.h>
-+#include <rte_random.h>
- #include <rte_string_fns.h>
+ 	/* initialize buffers */
+ 	memset(buf, 0, sizeof(buf));
+-	memset(tmp, 0, sizeof(tmp));
  
- #include "test.h"
-@@ -205,12 +209,64 @@ test_rte_str_skip_leading_spaces(void)
- 	return 0;
- }
- 
-+/*
-+ * This test does a variation of what OpenBSD regression suite does to test explicit bzero.
-+ * One thread creates a buffer then zeros it but does not touch after that.
-+ * Other thread checks that buffer has been cleared.
-+ * A broken implementation would get optimized away.
-+ */
-+#define TEST_DATA_SIZE	123
-+static int
-+run_memzero_explicit(void *arg)
-+{
-+	uint8_t *data = arg;
-+
-+	for (unsigned int i = 0; i < TEST_DATA_SIZE; i++)
-+		data[i] = rte_rand_max(256);
-+
-+	rte_memzero_explicit(data, TEST_DATA_SIZE);
-+	return 0;
-+}
-+
-+static unsigned int
-+get_worker_lcore(void)
-+{
-+	unsigned int lcore_id = rte_get_next_lcore(-1, 1, 0);
-+
-+	/* avoid checkers (like Coverity) false positives */
-+	RTE_VERIFY(lcore_id < RTE_MAX_LCORE);
-+
-+	return lcore_id;
-+}
-+
-+static int
-+test_rte_memzero_explicit(void)
-+{
-+	if (rte_lcore_count() < 2) {
-+		printf("Need multiple cores to run memzero explicit test.\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	uint8_t test_data[TEST_DATA_SIZE] = { 1 };
-+	unsigned int worker_lcore_id = get_worker_lcore();
-+	int rc = rte_eal_remote_launch(run_memzero_explicit, test_data, worker_lcore_id);
-+	TEST_ASSERT(rc == 0, "Worker thread launch failed");
-+
-+	rte_eal_mp_wait_lcore();
-+
-+	for (unsigned int i = 0; i < TEST_DATA_SIZE; i++)
-+		TEST_ASSERT(test_data[i] == 0, "rte_memset_explicit did not zero");
-+
-+	return TEST_SUCCESS;
-+}
-+
- static struct unit_test_suite test_suite = {
- 	.suite_name = "String functions tests",
- 	.unit_test_cases = {
- 		TEST_CASE(test_rte_strsplit),
- 		TEST_CASE(test_rte_strlcat),
- 		TEST_CASE(test_rte_str_skip_leading_spaces),
-+		TEST_CASE(test_rte_memzero_explicit),
- 		TEST_CASES_END()
- 	}
- };
+ 	/*
+ 	 * initialize circular buffer
 -- 
 2.47.2
 
