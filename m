@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3393C021A4
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AE4C021A4
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:02:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BFE5E40ED9;
-	Sun, 16 Feb 2025 18:01:37 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id BD2B340E3E
- for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:30 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2211cd4463cso8993645ad.2
- for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E398D40ECF;
+	Sun, 16 Feb 2025 18:01:38 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 8CD8C40E32
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:31 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-220ca204d04so47161775ad.0
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739725290;
- x=1740330090; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739725291;
+ x=1740330091; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qhNKU7vZcxq5FB0scX4PLj+Qg9WKGbFWsm6xVFz3F8s=;
- b=f3q+1tBla7/GADgZf1BP2jn4yxSzaXjNJX4UEC8WP8uEDiEjohmhAsDLIz6n0N3+LP
- 4Jx6Vgk0sdP61v4Wvq2Ce0PUzx0kpQbLyTCj6u22sv2xTwQC6SfFTK3FWK7RCFgJ8LAk
- Bt77LmkiLa+i/fQ+xQLJSXYJarhLRRPcocMUmjBeL6B4iC5zDuakhP8ExlMdHJvCLGZb
- 6jF/weBafOep4dgM2eUfJAF7+i81AhsPYhmyTnDQ7d+8R9ytm4PMXEXKyea80Q31FOIe
- Btr0l8IoSOroLZ0Ib2+3eHmNIj3jEQh/kRmcB90O1JFBrPN/U76z1A9Wt982nVzzEsIW
- qqRg==
+ bh=4eCQHxeqtnmJwnbM+apidP+XqcqCydmDyWVcC/qwE90=;
+ b=x5S56DOcnMK3sdKRW9k1eFzHsrkbqsWoLTzlYCQg1y3yfLtCjSAOGcKqbVvd3DfR/t
+ FP3SMGGEm5PcvZcdMzqI9zvsyiXpdpPZGJ2Kw/iebd9QpYdpNzJRsq8KVzrcyBQSzzyl
+ +eGGWH7Yvz8/rK7/ICt7p6Hq6KaLmLL2JvOsnWeM+aYqrHVra4hXUKehBauGEmHLyAS2
+ cAi7dTFpvEND66fsRIV5Z8JIcyF/sMAIcjSr5EFe37rigFKouBQNsfhzxWFAz4mtnV2H
+ B9tpjDIaV1PO68iYyZfM2WXgQEPhd/2D8ML1xAVWA1bs80F+sSZG/PZ7GpM8hBKf60Tn
+ W7Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739725290; x=1740330090;
+ d=1e100.net; s=20230601; t=1739725291; x=1740330091;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=qhNKU7vZcxq5FB0scX4PLj+Qg9WKGbFWsm6xVFz3F8s=;
- b=P4q0LFQ5v6/jdmEbyc8iK8pg7JVaOz85OdaWoSRJpO/pYwJBpZaBqLBfKZsRx/4WR8
- f4ds8x73tqo8H0T/X1yqHTkP0nD4iMZQ/lYBz7JSjNf6uHV2k03o0yTg1aFjo5t4/6Jp
- y4zf16F5h/cUYU9OeyCTW81pWNnt6dUJYviGAEVlioIAMSAjzLAhoJ/pSLyEv49SaPPk
- AyQnSxWfRA4L+SFSRMk+GpW2TQfzsXOBgt3Q3nU639QZy5ym9SO+2nC0+Ig9a+wCvot/
- i05LbHRkg5WYOB3HB4ctzkpsy8dUxCk6GWeesDKldEBrvNIbz6CFsKFjPm6Ec7uj6von
- MvTg==
-X-Gm-Message-State: AOJu0YyNQVerBMXJSnpX06mfmwtIOkqfyKy41CGL3LCnpYu2jO65JZQi
- S6/ybonLX+rfurgWhp48vXdBrq55SexuuoZybWP+3vC34QYXMea/6acpw8r+N3ZLkGkHRtLlFZR
- o
-X-Gm-Gg: ASbGnct2zhjn/DJujLBOEhNhtStuBk4tr826udf4IKfODPXmjB5th5GVAw6wWJdZOw5
- 2QbW6wlT7XWUzd/2oYyPyzQjcnWWAA5VZJCFCotJ6vqWteqvX+5P72f3BlG7g3RJxwT/RHrBYSG
- HA1pbhkiOc+JODbrrWcuT5qfalfuwddvyS+qY46BbZgIhLemo6CrOt68uTeiTNm27ixIfOFtmBa
- eWehxAFX7Ed1JHawrwZ+K2XJ/Uxx4klgytMVuOi7DsgpDBuNo/y+nAY3Fv+n4jYz7No6404ervu
- 7tqldlp3MqEezOUnBFtWNR47fK2hwUhzxQ1leOtszjzYcE19JxbpHXb6EEDXiP4FYv8T
-X-Google-Smtp-Source: AGHT+IGPycg8FBW6tHsyefN++7Yht48E1Y1LAzzROr03c9gNWaGJoieD8vHSKQ5nm433ngfahNi2dQ==
-X-Received: by 2002:a17:902:ce0d:b0:215:9894:5679 with SMTP id
- d9443c01a7336-22103c5f5e4mr116565245ad.0.1739725289962; 
- Sun, 16 Feb 2025 09:01:29 -0800 (PST)
+ bh=4eCQHxeqtnmJwnbM+apidP+XqcqCydmDyWVcC/qwE90=;
+ b=tqCDrxGm0GrxPwi4IN2i2ghVgeM2taziSUafDPL4r6GbV5eePplZCzLk1R5RljbhEc
+ Da6a2CdJyynBCkBRAM9LLYFN+x1yRLUCfjR6rMx8y/rOvoxMbEbqZQQlRFqUnk1PereM
+ Chcu6XSaD9HvF5PBxSDIyLOWmkHVEo5DixYQhrjYaA0Qf9hC0BXfm1fsEi8YiL8JinXo
+ RfzDtLwAXE04vhSC5BLKOaEU53oNmijUIH1KpOCjN8Xf75/qnu9m/NDzULZPubQTtmCj
+ GhZDr43U/PvEPPEcCQ/qYkZ31tL0gp4VmNxefbs1Pr/XrfjYQ3qn6q7s7Auj+akfdnlV
+ 8p7g==
+X-Gm-Message-State: AOJu0Yye5bBW9CHb1u9Yyg7/c2IBjoAZovzBuRYpwBbPVhz/ZXJEOHmg
+ xJ0ytrsCOp1ZXQcMHqkRZXyHAKvbPy2y2LlerDUbn3/3Y6d9eX0ONmGDPUr791Cu9mz52ntCQLM
+ K
+X-Gm-Gg: ASbGncvJTIoAvQITL0wXBTqvNRpO0vcBBOE9MkWDcH91A5FTayhF856qVVzEqhscqI7
+ abh0tABfBZsF0bmfDgHYW5buAZsXz7XCWzQ4ucfH2ii3kmixR62pLctKjcbhNTPcKE+1H23gfz3
+ j3hF91smqwcMRftIZ+dX0VsIlRsAlzcx0TgEoiTP/sulxAkXAzTz0904DLdNpxu01kQRbC6iEJv
+ 3jVglRPHMAsv/8hY6sdDO0FpSLR7gJJH1Jth/V0OU+BHaMYnJBN+fk5vJpSjY0s/6xm8pbSklPl
+ 2Hr0BR+Pck1L2u8ujawnuUvwrxV9AEKBDSRNS5zw8lF0fwPq0ToOSxXZlJ4bxZEjuH1z
+X-Google-Smtp-Source: AGHT+IGpQpweQFwMyKIwt0jGSGYUysc5MitUailh1TgV9z0g3P+R3YfCTqWl+eSnPmUv6MQV3O+VRQ==
+X-Received: by 2002:a17:903:22c3:b0:220:ef79:aca9 with SMTP id
+ d9443c01a7336-221040ac0cbmr97979795ad.53.1739725290798; 
+ Sun, 16 Feb 2025 09:01:30 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2211eafd20dsm11196805ad.182.2025.02.16.09.01.29
+ d9443c01a7336-2211eafd20dsm11196805ad.182.2025.02.16.09.01.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Feb 2025 09:01:29 -0800 (PST)
+ Sun, 16 Feb 2025 09:01:30 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>, Kai Ji <kai.ji@intel.com>
-Subject: [PATCH v8 11/17] crypto/qat: use secure free for keys
-Date: Sun, 16 Feb 2025 08:53:10 -0800
-Message-ID: <20250216170110.7230-12-stephen@networkplumber.org>
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v8 12/17] bus/uacce: remove memset before free
+Date: Sun, 16 Feb 2025 08:53:11 -0800
+Message-ID: <20250216170110.7230-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250216170110.7230-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
@@ -82,58 +82,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Regular memset maybe removed by compiler if done before a free
-function. Use new rte_free_sensitive instead.
+Doing memset before free maybe removed by compiler, and
+is flagged by security scanning tools as potential problem.
+In this case the memset is unnecessary.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/crypto/qat/qat_asym.c        | 5 +----
- drivers/crypto/qat/qat_sym_session.c | 8 ++++----
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/bus/uacce/uacce.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/crypto/qat/qat_asym.c b/drivers/crypto/qat/qat_asym.c
-index f5b56b2f71..d8a1406819 100644
---- a/drivers/crypto/qat/qat_asym.c
-+++ b/drivers/crypto/qat/qat_asym.c
-@@ -102,10 +102,7 @@ static const struct rte_driver cryptodev_qat_asym_driver = {
- 		curve.p.data, curve.bytesize)
+diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
+index 9ca048122d..cc1e42d56a 100644
+--- a/drivers/bus/uacce/uacce.c
++++ b/drivers/bus/uacce/uacce.c
+@@ -454,7 +454,6 @@ uacce_cleanup(void)
+ 		dev->device.driver = NULL;
  
- #define PARAM_CLR(what) \
--	do { \
--		memset(what.data, 0, what.length); \
--		rte_free(what.data);	\
--	} while (0)
-+	rte_free_sensitive(what.data)
- 
- static void
- request_init(struct icp_qat_fw_pke_request *qat_req)
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 7836c95064..fd2cc94418 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -1739,8 +1739,8 @@ static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
- 
- 	/* do partial hash of ipad and copy to state1 */
- 	if (partial_hash_compute(hash_alg, ipad, p_state_buf)) {
--		memset(ipad, 0, block_size);
--		memset(opad, 0, block_size);
-+		rte_memzero_explicit(ipad, block_size);
-+		rte_memzero_explicit(opad, block_size);
- 		QAT_LOG(ERR, "ipad precompute failed");
- 		return -EFAULT;
+ free:
+-		memset(dev, 0, sizeof(*dev));
+ 		free(dev);
  	}
-@@ -1751,8 +1751,8 @@ static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
- 	 */
- 	*p_state_len = qat_hash_get_state1_size(hash_alg);
- 	if (partial_hash_compute(hash_alg, opad, p_state_buf + *p_state_len)) {
--		memset(ipad, 0, block_size);
--		memset(opad, 0, block_size);
-+		rte_memzero_explicit(ipad, block_size);
-+		rte_memzero_explicit(opad, block_size);
- 		QAT_LOG(ERR, "opad precompute failed");
- 		return -EFAULT;
- 	}
+ 
 -- 
 2.47.2
 
