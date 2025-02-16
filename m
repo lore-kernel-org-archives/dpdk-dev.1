@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A3CC02198
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30ADC02198
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Feb 2025 17:01:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63DDF40156;
-	Sun, 16 Feb 2025 18:01:22 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id EF70840150
- for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:20 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-219f8263ae0so62631365ad.0
- for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 008BF40DDD;
+	Sun, 16 Feb 2025 18:01:23 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id E8F6040150
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 18:01:21 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-22101839807so32799675ad.3
+ for <dev@dpdk.org>; Sun, 16 Feb 2025 09:01:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739725280;
- x=1740330080; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739725281;
+ x=1740330081; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vmN3o7iH912keCUKIIVcEyOIxZVpAQ40QSO2LduDMEQ=;
- b=iLv90Ly3/Gax/qHwNHtSSnMiiCMOfNhlhkJDB8TZxHjs+92s+lTVcGYT7FyI6DlIUb
- hVujJ4iUVaovpFJMgCnM0XzhYIGB6IjM5X8k3DKLGVDVUON01SdwJe4Cl6yvESlaIt2v
- /PaVlDecnKN4yBp8PXqdR/4Zlg4ZGq2+L4rg/6mg7RpcW1QwFNDhCjZoQPMhCpbg5A7w
- 04NqGJqszWHpHXwVZdvtP6hn8J8BUkEl3EssBOnKdQFAlPfV8mqPc+BWOtY+LMMHBycR
- ztKnKUlw+KTXHo/ZtEfvj8I15Pdl+F1S8GQdrVVr+/ocECimOev1Uu9Ul3knohCdxD03
- ZBfQ==
+ bh=Ox+czeXgjbDT/mWMJGQMQyMceRRbm8M1t97ch3xDIVQ=;
+ b=W0YCId737fAPqqJLRBZpKqUYCB7o4r3KlbWudzLTFTZUcNo7w6s5cwSywBhVe7MD1s
+ NE9ZUW+MiYhJed0kjQ+g4Guwskujr8u/XEMJ0bNBwp0VdgAm0nm6/zRnwzK7gQOly2EV
+ fouLE8ME/9epDPp/S5tu0kCFvSpxyaTNiLV198LrrM+6LqU9kRzde+5dTCgkCAebzFa8
+ HA0jfk3Z947GClFI1xYhJYbEqnZafkNGqzPEGGTB8mo2JjA84TGil6ZGCwIuKWaR9hg7
+ fh+0wEC9epJ83NKSC000wrnFz2xgWdKnn1qVh32IcIWh6J5sdW3PyRWbr+j+uWBm2MO3
+ NhSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739725280; x=1740330080;
+ d=1e100.net; s=20230601; t=1739725281; x=1740330081;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=vmN3o7iH912keCUKIIVcEyOIxZVpAQ40QSO2LduDMEQ=;
- b=PaXIHFxhnRh9d23oT5kkGkg7r1ATQMRh31hooehIeLnOa1VtBnnasmEs0ud4Irxzlg
- wip572K1MNZ4Tn687sHYVwnKM7zFI9uZbEGU+XdD6FCiu8711SERQsMsEdvIj7MiG3Rc
- EDI3k41itP5nFlbnpU4Vh7nudg9VP6iRfMOs2xEGPaj2WxYuvpyIEsFBIz1ibZZAKr2u
- HS5PEf6H2P9TQ2xojZ8UpsXsZqYMcpHV9ryMpxX1rAlUkjoAwNJhzIht1OcGXHpkl9A2
- DeaOLsOKH5xChEjeHnrD2gNt1XalokePgsxTqHKydWqFL1a3U7v8RU8c5KSLxSJlv+EB
- evdA==
-X-Gm-Message-State: AOJu0Yx+OQvxtJj2vBe21SPJYr5iusBBw0yDk8q1sqicp6xUMLXle57E
- i1bzcllheu+2v8SbWJDpKa5AVW3vfU3ilEO3fXltTO8RkT8LCVNjtqYT56YLmv0ikFEUc6eDXBL
- Z
-X-Gm-Gg: ASbGncvu6ziAp4r5NAXX4seHGbfSyigCLT8219iYx2g6cjAweBgzdSFRE5FBKh5i9jx
- c9byPF3afxZnO/GxrR1VF618WQk21sX8kw7aDrdAMp9iZFuVckgq0RD+jx+Pl45WGU9Yw7jfSY/
- nfiDdWSMxpHQ+F1PgjQntmW6wTjjZnNkm2jqd2PyVe3fWozTR9a5fhxrdz9yhWZvEMyUwyQW1FO
- 4syyMHbZMTUCf3ndXu2wxZBjXqTpY+DwU+UVeumnSuKq85XWo4dezzDR2Em5hKpeeqsQ15HIDV+
- CpivgzkGTqZygB+gLbREJMLHLgh7UJG7Ipu4PDMw/+oCoLKOTzG2odrakLEXana3PbVg
-X-Google-Smtp-Source: AGHT+IHMT653wpMDho8mfD5mvFZBB9vc5MwQMjDihT4HkD/d5ZbG9yBTwBGuyhXKf/rZIlE2vJVV/g==
-X-Received: by 2002:a17:902:f612:b0:21f:9c7:2d2e with SMTP id
- d9443c01a7336-221040bdb68mr117168635ad.40.1739725280147; 
- Sun, 16 Feb 2025 09:01:20 -0800 (PST)
+ bh=Ox+czeXgjbDT/mWMJGQMQyMceRRbm8M1t97ch3xDIVQ=;
+ b=nEN4WSps7/Bbkl6rZusVqqXa4F3E9/FwKJe5JRzlj0C7SVB5ECdZ/6nS4rew5/CjfL
+ YFviQ2DVux60LSaCa6h060/H6JsgNDCsLhQQDoAMgzoVBDwR+ee08/TvrcKp68VVrfi0
+ hLMs4nFDfbnUXf2WJ65Ffb6nWNq/lKimAnG/CStEfjRmK0axr/r5/zywpi29Pc9yVhJF
+ w/mVyvvoEacpjpwVdX9Sro07En3VoWyTiRd9Fe+WR37Pfw+IyjK+6AWJ9TgEAhiqLk8V
+ /RMUl0B0p339mlEBSxBnXcB9w12qTaTkfRM0GCJ3tRtUe5Ez7eaEoZ/cczB8fJdPuOSX
+ wtlw==
+X-Gm-Message-State: AOJu0YzaSiamzd2K0j/qdpN+m/ceHEGbpOIFzpSc3t3y7/kFosszBcpD
+ y9yecL/5tUcTvLBJ/nQ6LValrfBEzAyBazoVZzDg/ZL54DSbVKB1HUyXKbmNFETcQ33SqX8KR0P
+ j
+X-Gm-Gg: ASbGncsShSmTJuZEFH9YK6MFwvM+zQ2WckgFnaMRZ+8UfbP8z9TTJK1t408UVylSEIp
+ lh/S7HzHfzZVKAeXaDYd72ZM7QYPzrsAVrNiRkUNyiHZmVF/bm2VvLUAzXYxiRMO6uiiLYAl5r3
+ 3tSfWsBNnCV7DYp+dz1L9TXrshG5HjONjkzN0naPhCzavqFkgOtihoEMxva7Tyg3Y0kHXoq4pUD
+ abLeMt96/kvaY+uz5o3jyfcPAJ+VKZilEhZvGKpuUOKeZmv7A2MtL7qgYwidERetipDd7bcBQXx
+ eEl9cgKOV3cRAsN/SXDCtybwe/UcV3SDyeFg4OPNL3IkweQ1GKcRHL6VaMsx5N1OiDvC
+X-Google-Smtp-Source: AGHT+IGuyyvK2Gk22Mix4APN1Mk5/I9fQxqJv4lBivD7N/e7GS5oCU205qKnQCzua4WStIVOZUJJNw==
+X-Received: by 2002:a17:903:174c:b0:21f:164d:93fe with SMTP id
+ d9443c01a7336-221040e7162mr107614265ad.53.1739725281025; 
+ Sun, 16 Feb 2025 09:01:21 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2211eafd20dsm11196805ad.182.2025.02.16.09.01.19
+ d9443c01a7336-2211eafd20dsm11196805ad.182.2025.02.16.09.01.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Feb 2025 09:01:19 -0800 (PST)
+ Sun, 16 Feb 2025 09:01:20 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v8 00/17] fix memset warnings reported by PVS studio
-Date: Sun, 16 Feb 2025 08:52:59 -0800
-Message-ID: <20250216170110.7230-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v8 01/17] eal: introduce new secure memory zero
+Date: Sun, 16 Feb 2025 08:53:00 -0800
+Message-ID: <20250216170110.7230-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20241114011129.451243-1-stephen@networkplumber.org>
+In-Reply-To: <20250216170110.7230-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
+ <20250216170110.7230-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -81,82 +84,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series handles memset related bugs identified by PVS Studio.
-This tool will correctly flag places where memset could be deleted.
-See: https://pvs-studio.com/en/docs/warnings/v597/
+When memset() is used before a release function such as free,
+the compiler if allowed to optimize the memset away under
+the as-if rules. This is normally ok, but in certain cases such
+as passwords or security keys it is problematic.
 
-Compilers are free to optimize away memset called before free.
-This is handled in other libraries and OS's by the use of special
-versions of zeroing and free.
+Introduce a DPDK wrapper which uses the bzero_explicit function
+or SecureZeroMemory on Windows.
 
-There are three types of anti-patterns:
-   1. trying to clear a key or sensitive data
-   2. being overly paranoid and always calling memset that can be removed.
-   3. unnecessary arrays (cut and paste?) that can be removed.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/eal/common/eal_common_string_fns.c | 14 ++++++++++++++
+ lib/eal/include/rte_string_fns.h       | 18 ++++++++++++++++++
+ lib/eal/version.map                    |  3 +++
+ 3 files changed, 35 insertions(+)
 
-v8 - annotate the unit test so that it passes with ASAN
-   - fix test for cmdline_cirbuf
-   - additional memset fix in QAT
-
-Stephen Hemminger (17):
-  eal: introduce new secure memory zero
-  app/test: use unit test runner for string tests
-  app/test: add test for rte_memzero_explicit
-  app/test: remove unused variable
-  eal: add new secure free function
-  app/test: use unit test runner for malloc tests
-  app/test: add test for rte_free_sensitive
-  common/cnxk: remove unused variable
-  crypto/qat: force zero of keys
-  crypto/qat: fix size calculation for memset
-  crypto/qat: use secure free for keys
-  bus/uacce: remove memset before free
-  compress/octeontx: remove unnecessary memset
-  test: remove unneeded memset
-  net/ntnic: check result of malloc
-  net/ntnic: remove unnecessary memset
-  devtools/cocci: add script to find problematic memset
-
- app/test/test_cmdline_cirbuf.c                |   4 -
- app/test/test_malloc.c                        | 194 ++++++++++--------
- app/test/test_string_fns.c                    |  74 ++++++-
- devtools/cocci/memset_free.cocci              |   9 +
- drivers/bus/uacce/uacce.c                     |   1 -
- drivers/common/cnxk/roc_npc_utils.c           |   4 -
- drivers/compress/octeontx/otx_zip.c           |   1 -
- drivers/compress/octeontx/otx_zip_pmd.c       |   2 -
- drivers/crypto/qat/qat_asym.c                 |   5 +-
- drivers/crypto/qat/qat_sym_session.c          |  51 ++---
- drivers/net/ntnic/nthw/core/nthw_hif.c        |   5 +-
- drivers/net/ntnic/nthw/core/nthw_iic.c        |   5 +-
- drivers/net/ntnic/nthw/core/nthw_pcie3.c      |   5 +-
- drivers/net/ntnic/nthw/core/nthw_rpf.c        |   5 +-
- drivers/net/ntnic/nthw/core/nthw_sdc.c        |   5 +-
- drivers/net/ntnic/nthw/core/nthw_si5340.c     |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_cat.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_csu.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_flm.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hfu.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hsh.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_info.c   |   5 +-
- .../net/ntnic/nthw/flow_filter/flow_nthw_km.c |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_pdb.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_qsl.c    |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.c |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c |   1 -
- .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.c |   5 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c |   5 +-
- .../net/ntnic/nthw/model/nthw_fpga_model.c    |   1 -
- drivers/net/ntnic/nthw/nthw_rac.c             |   4 +-
- lib/eal/common/eal_common_string_fns.c        |  14 ++
- lib/eal/common/rte_malloc.c                   |  30 ++-
- lib/eal/include/rte_malloc.h                  |  23 +++
- lib/eal/include/rte_string_fns.h              |  18 ++
- lib/eal/version.map                           |   4 +
- 37 files changed, 318 insertions(+), 217 deletions(-)
- create mode 100644 devtools/cocci/memset_free.cocci
-
+diff --git a/lib/eal/common/eal_common_string_fns.c b/lib/eal/common/eal_common_string_fns.c
+index 9ca2045b18..31804101cc 100644
+--- a/lib/eal/common/eal_common_string_fns.c
++++ b/lib/eal/common/eal_common_string_fns.c
+@@ -10,6 +10,10 @@
+ #include <rte_string_fns.h>
+ #include <rte_errno.h>
+ 
++#ifdef RTE_EXEC_ENV_WINDOWS
++#include <rte_windows.h>
++#endif
++
+ /* split string into tokens */
+ int
+ rte_strsplit(char *string, int stringlen,
+@@ -98,3 +102,13 @@ rte_str_to_size(const char *str)
+ 	}
+ 	return size;
+ }
++
++void
++rte_memzero_explicit(void *dst, size_t sz)
++{
++#ifdef RTE_EXEC_ENV_WINDOWS
++	SecureZeroMemory(dst, sz);
++#else
++	explicit_bzero(dst, sz);
++#endif
++}
+diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_fns.h
+index 702bd81251..79ca9abd67 100644
+--- a/lib/eal/include/rte_string_fns.h
++++ b/lib/eal/include/rte_string_fns.h
+@@ -149,6 +149,24 @@ rte_str_skip_leading_spaces(const char *src)
+ 	return p;
+ }
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Fill memory with zero's (e.g. sensitive keys).
++ * Normally using memset() is fine, but in cases where clearing out local data
++ * before going out of scope is required, use rte_memzero_explicit() instead
++ * to prevent the compiler from optimizing away the zeroing operation.
++ *
++ * @param dst
++ *   target buffer
++ * @param sz
++ *   number of bytes to fill
++ */
++__rte_experimental
++void
++rte_memzero_explicit(void *dst, size_t sz);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/lib/eal/version.map b/lib/eal/version.map
+index a20c713eb1..82a3e91c97 100644
+--- a/lib/eal/version.map
++++ b/lib/eal/version.map
+@@ -398,6 +398,9 @@ EXPERIMENTAL {
+ 	# added in 24.11
+ 	rte_bitset_to_str;
+ 	rte_lcore_var_alloc;
++
++	# added in 25.03
++	rte_memzero_explicit;
+ };
+ 
+ INTERNAL {
 -- 
 2.47.2
 
