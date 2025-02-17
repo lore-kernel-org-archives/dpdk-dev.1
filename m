@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCADC021AA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 18:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2483DC021AA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 18:58:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AF7B4060F;
-	Mon, 17 Feb 2025 19:58:00 +0100 (CET)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id E1E16402A7
- for <dev@dpdk.org>; Mon, 17 Feb 2025 19:57:56 +0100 (CET)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-221057b6ac4so34931125ad.2
- for <dev@dpdk.org>; Mon, 17 Feb 2025 10:57:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A35DF40615;
+	Mon, 17 Feb 2025 19:58:01 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id F1FC0402D3
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 19:57:57 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-220d132f16dso66161255ad.0
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 10:57:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739818676;
- x=1740423476; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739818677;
+ x=1740423477; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5pOC/FqRASKAHeZBhAimHJ1l8ohTp5EPkO7j3wpeRcI=;
- b=wpwxZkm7r5u2HTuzVpNc8eTZH2qmJC3WpS72rJvSsB/1gdP6r6qUolXTOt54h2ziSM
- Yl6oC8MKMwIcIWsey5+AwIZKHOsDnMqmWixiMhDQnYz+lFsEE0C2wbygZCmWPZxV2ADw
- TJxf+6zdpYR5aIRfsgTXLuIy6rSHsLv6q7y0cGovc+RN6jVnqCUWJVgSPdaM0RND0rhA
- dRfkiJ6hy/d5TxrEuzrER/Busa4Tds4C+ThEuv5GwQ2kvsaRSPoROafLvZEqjhCxtmbv
- Bw3oH8RwBo360la3+rssD46qwaQxevSPe5SE0TZL1ZYYolfnHMDWwuzEe+Me4MvvBhlG
- gUQw==
+ bh=ofEEZSScqvsIoCR/saAoH1DxNdeCB1dkw8HHAvdWCtw=;
+ b=ppE/nV8Tp5rjqrTSIYgriYe6/DFf4j1UUOwlwk67UO2YmcLzJtH66b1tTFi/eJqeIa
+ 6lvavui9kNUWJlEIPR+z0hZ6sPNCMCFkP+lIz9OwNBIpNxljnSVc6a/yyP1mpUaYVjyC
+ 6rF5F9SteP8uK9A7QjRhkLunO6THTpyw8DCQuTjsWij24TOXbbh8T+qAZ/6VNEoRiZqk
+ OhzlN6ecAp5ch7oE42L72Td8zYJwO9cbsUn5tSjl0lUfq/LT6lUc3hgx99YzgsYf/EsM
+ 6Zx7ETUCyPxHlbSCzK9CJOR5WxiisTpK9krkM2XBcep7jcCC3iLMFwCDpxx0/YyY87n1
+ 1uDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739818676; x=1740423476;
+ d=1e100.net; s=20230601; t=1739818677; x=1740423477;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5pOC/FqRASKAHeZBhAimHJ1l8ohTp5EPkO7j3wpeRcI=;
- b=be3IJIR8S1Xt+uTPVgU7kfMTKz4hrTK8uLsj9HzY2Px15QdbtjIyDl/QzcQJQyTweD
- wY7IUmPmJcGgR7PYqPgNtCbwwwLSfUgDlAGNpKcjTctDgVUl4yENktXuZxFdRvY3I8A9
- PgIUXC1ZxXi/B/kVpSCLDIzqpJggqILfvsJ4YMk/XOv9fN1L1dCTMwuLwxe4ayDvycGZ
- 61ry7TRBzZEZYhuRudLXPH5y51tGtAtyohDYvFDgoJ4zRaUbfpNcHOZboaBeRzzap+rC
- gpVqwEPABflftZtbwlO+I2ZwB0FZZ0tGLG0wf4RnnUYzfW76CXe1XI9ivZNVVZuex7Yr
- NYwg==
-X-Gm-Message-State: AOJu0Ywa6BgVu5meiesBaOrwqhm6O/hqtxjcDtuNgLl9rRu63cfgzDDm
- ZW5PJ/GM9obN3cWe74pCOLjyDpTkPtAkdRjBqeDowX2DWetYcmVYfBfzpKCjRa/q2b/aQczVGNx
- hvkY=
-X-Gm-Gg: ASbGncsAenkmSQZrRE8ZRsuKWKlFrkXrgCnLNy/OH/kww27wvsoGdclEiwOEvEYfHGK
- YCqYgqpruHahhm0DgirNguxPi3KQXK2Yicm5UfZSEP6uEULhU+ADcNNpAjWZFgLm8xBzj8nOr2A
- dKY4nZmMe8SYecCny3VHFV/PHi5kCETTWC0c2aBKH0YUTtmdcbqmwhtdBP2T8k2Kj6gJ9e/GSlw
- X1B34hOo2nYJQAKXHtrGV7zHx59SB6ebQ0NaJkuolPl9psgeywq7/CDKUOTK8IC2NHMCvx1BVCV
- wrPxVRuwor7bzA/fDWiVR+nY7PmVJ+yj78JEig6+pvc34jCYo7J2oPcmTXGa5GyJFNxB
-X-Google-Smtp-Source: AGHT+IEWtBnEfAb2OtyBmioXU8yPyqKosGfPXMFuAikBzvh+Xwwb1Ov/yKJKYlHt1voMbB20TxdcQg==
-X-Received: by 2002:a17:903:2f88:b0:216:2259:a4bd with SMTP id
- d9443c01a7336-221040eb63dmr175367885ad.52.1739818676187; 
- Mon, 17 Feb 2025 10:57:56 -0800 (PST)
+ bh=ofEEZSScqvsIoCR/saAoH1DxNdeCB1dkw8HHAvdWCtw=;
+ b=F9/oCuzlQIJaFnuK1xn+DoaILOeK9125SlpQzbEvikD6zPVp0o1Hbj9+KQWc+KCakz
+ Ve5TCV6QUUFat640bqZZ7C4+9ntl0UufR6OhM3l+bsZvweYDAJaZyFXp17QnPSmfsRxm
+ 33HCe/Jr1196HiVfUIyaHcnaX3AQOi/5k0Cb9CFVPTp0wTTGOJCgOzfyfGnzP6nS/FQx
+ yBYmk9qW/E6c05xD/rvL81ps652I+ajTyJFLpAt7fhdiyM7HPAeKhNup06+Y9ijlBDO8
+ k+O3IlDH8m0imQx2opAzYsz9SjLwms6NGuMYmBITO1ZNsXHoQgYk7vpUmLNgJTQ4aOfF
+ v5ww==
+X-Gm-Message-State: AOJu0Yxsrat+AafUgv//cgqc7mpQdXbTn8nLmmMVKJzvo5lgD/F2IZxf
+ 04moXbnyKII8Nt4vKyY0JgzPasV7uikI5tAd4BWYSdN0+QxYvrCrpda1M238rNe3c4E0Ic5V/7W
+ XAnM=
+X-Gm-Gg: ASbGncuScrM5j8zkH3EouJYXEerEh0BZ0jc3ZDa1CXckSwVeZCeMyYkeRvrDVDo552+
+ maCK63VymxedwEFpick4JuF5YGxymQ9Jv/sDZfDHGo9urGONI2uRfKg5JWX9yNcykKd2zxRI8+I
+ QXCT/2PZu2NCk8CuwkfkI+7H4xUIQbeSjUKeHpv6uRgV/x+l9GGyBFOgvu4erxFXHLCb+2p7DGo
+ OpcGtAtCkFBqnbKqft/aoZEDgp7rdNQtSgNF6cAF/sJd9o9s4F4m2YF/L//GRr056Z6H9RXaOyJ
+ rxoqWldSP+HFW3tdB6aeSnDegulGTgZc4aONoN3jF2W+xIGcvGohjDW9cHlAXDK7k+Ow
+X-Google-Smtp-Source: AGHT+IGZF29Rr9FWLKmnbl0+tRlecZusgF3T2EIWIbQOU1nl/e/P2FJvMRMuoEHsYJY6pVNO9Kalhw==
+X-Received: by 2002:a05:6a00:4b04:b0:732:1d12:ded4 with SMTP id
+ d2e1a72fcca58-732617a0f5cmr15326161b3a.7.1739818677045; 
+ Mon, 17 Feb 2025 10:57:57 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-adb57c5dc68sm7815149a12.9.2025.02.17.10.57.55
+ 41be03b00d2f7-adb57c5dc68sm7815149a12.9.2025.02.17.10.57.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 17 Feb 2025 10:57:55 -0800 (PST)
+ Mon, 17 Feb 2025 10:57:56 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 03/11] net/ixgbe: remove unnecessary dereference
-Date: Mon, 17 Feb 2025 10:54:02 -0800
-Message-ID: <20250217185743.169778-4-stephen@networkplumber.org>
+Subject: [RFC 04/11] net/memif: remove unnecessary deref of function pointers
+Date: Mon, 17 Feb 2025 10:54:03 -0800
+Message-ID: <20250217185743.169778-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250217185743.169778-1-stephen@networkplumber.org>
 References: <20250217185743.169778-1-stephen@networkplumber.org>
@@ -80,37 +80,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The expression *dev->dev_ops->vlan_strip_queue_set and
-dev->dev_ops->vlan_strip_queue are equivalent in C.
+Since queue release functions are local to driver, prefer those
+over dereferencing the dev_ops table.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/ixgbe/rte_pmd_ixgbe.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/memif/rte_eth_memif.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-index 15c28e7a3f..5a7d66d9b9 100644
---- a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-+++ b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-@@ -291,7 +291,7 @@ rte_pmd_ixgbe_set_vf_vlan_stripq(uint16_t port, uint16_t vf, uint8_t on)
- 	if (on > 1)
- 		return -EINVAL;
+diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
+index c0bf1e3bbf..f7b04c4f9e 100644
+--- a/drivers/net/memif/rte_eth_memif.c
++++ b/drivers/net/memif/rte_eth_memif.c
+@@ -70,6 +70,8 @@ static const struct rte_eth_link pmd_link = {
  
--	if (*dev->dev_ops->vlan_strip_queue_set == NULL)
-+	if (dev->dev_ops->vlan_strip_queue_set == NULL)
- 		return -ENOTSUP;
+ static int memif_region_init_zc(const struct rte_memseg_list *msl,
+ 				const struct rte_memseg *ms, void *arg);
++static void memif_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
++static void memif_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
  
- 	/* The PF has 128 queue pairs and in SRIOV configuration
-@@ -310,8 +310,7 @@ rte_pmd_ixgbe_set_vf_vlan_stripq(uint16_t port, uint16_t vf, uint8_t on)
- 				  RTE_ETH_64_POOLS;
+ const char *
+ memif_version(void)
+@@ -1418,9 +1420,9 @@ memif_dev_close(struct rte_eth_dev *dev)
+ 		memif_msg_enq_disconnect(pmd->cc, "Device closed", 0);
  
- 	for (q = 0; q < queues_per_pool; q++)
--		(*dev->dev_ops->vlan_strip_queue_set)(dev,
--				q + vf * queues_per_pool, on);
-+		dev->dev_ops->vlan_strip_queue_set(dev, q + vf * queues_per_pool, on);
- 	return 0;
- }
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++)
+-			(*dev->dev_ops->rx_queue_release)(dev, i);
++			memif_rx_queue_release(dev, i);
+ 		for (i = 0; i < dev->data->nb_tx_queues; i++)
+-			(*dev->dev_ops->tx_queue_release)(dev, i);
++			memif_tx_queue_release(dev, i);
  
+ 		memif_socket_remove_device(dev);
+ 	}
 -- 
 2.47.2
 
