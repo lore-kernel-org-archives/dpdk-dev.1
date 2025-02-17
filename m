@@ -2,160 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD5AC021AA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 17:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FABC021A9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 17:21:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67E0C40289;
-	Mon, 17 Feb 2025 18:13:19 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 80B6D400EF
- for <dev@dpdk.org>; Mon, 17 Feb 2025 18:13:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739812398; x=1771348398;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=wK+D0LaBkUicyI+JSgQDNf0ujZEEFs3dI3tpR3GqkV0=;
- b=K7uqpYRwWZaSjsGjVM9f5osAnuYxhY8dS/vv66TUl33hbMqe2P6BbS7B
- btQlKHJzEO9bofuOv83yyFSztnWuIr+9FxAhs8P7sh1wf2CSGV2reE89g
- q8DkgIWjKnzCPGZy9e8DPihELKKMN5IbF78NfQQz0RYHKiFD7rfarmAN7
- yz3wfw+fWGh5lvSSX1dLFiidIwS1VnF4S54Hf7SUKiKhK4y2ITxzyyRrU
- kWsJ/w9oY5omrVTn9h7DilfBAcsCbYusbKa+hJvWotqOx/Yukn0YXOUIF
- AUex4KXls0v5XexrzCY1JWtZW7GrhYDLDBHtpv1VmhM/QYfzvlExKzcIm w==;
-X-CSE-ConnectionGUID: 0WJv5nTcTr2eXiktFQ1wWA==
-X-CSE-MsgGUID: sD2M9jobQGe2IAeiXpVQCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50717587"
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; d="scan'208";a="50717587"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Feb 2025 09:13:17 -0800
-X-CSE-ConnectionGUID: LUtXBdiKSkCy4d1riosVIQ==
-X-CSE-MsgGUID: 6HbqfDnQR4yS+9UCXXVkRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="114045656"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 17 Feb 2025 09:13:16 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 17 Feb 2025 09:13:16 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 09:13:16 -0800
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 09:13:16 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id CD70A400EF;
+	Mon, 17 Feb 2025 18:21:51 +0100 (CET)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F5ED400D6
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 18:21:50 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bHkbAQ8fanvpcDwxGmczf9tTS1ABG7ScxhG8DSnSsMbEu3zpLTCaFb0eMe+jXmRVEzq+zThK0hLEhidkeG7avFEAju8gL/ujc4GSMPEzyCQRehncMg4V6l2K/+X8a0Fy8+3twD0M2gFuj4ei+QMvgoH6c1bsMTBtSIQJ0irnc6gidv9ZQB+VC50j3cGEwi0xerLIhmtyB43eQ8qlXXya/aNPuTHfL7ySvg3LoaARhI++AR0XI8uBlK6T7I23o7I9946Qe2lCPc9XVLWB095mNShTutjCe9+AZqGlhJe1uy0FHNzqZoVqhnCo21qBXwjME7Zf5NCLCzUozIuBaXyTXw==
+ b=RwxwrYXW8FrpXM2v22curyiNPgRwExTIBjuOBolXZVXRaLpUW76WQvAmxu6+jXUbcBFhb/1qed21hGxe1sykL1rDjhlWVYxboWgpreK5ciXXhFO12sDzmqkEqoBRABfXEAsJAfL6x99s1TK8y6mSIoDY7CX24uE9sRAXKXmeq3dqkftE72caf9qjk4vuHaoYmHUyfU2QpE6mHlLybqUqMoLbuyVWrrlpq1adDxfD9gqU6I4gHpnwR5il58GchkXa7YzWpCSJDcDkm2n7IFHMGphVhxxUyL2e7/CrtFkZ4tQ3M7hhrAWUgKfwC9S6SySqaYPt0dKQrqoiWC6Dc87Gkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eDlUGG9hs8hX2hijYaRmSYUdYlfDMJwPNJkzaWWmAnA=;
- b=ELRVAPfySzqw0psFv+zUmQ32Z33ae3qCmPwuHgu5nsU84BrqYRh18nR8RyxCSRb6E7BI5Z4hAk/bx2PjqD+JA6sKd2gRLP3oF5FVmaTZQel+kg9jyOlmzBGiTn7oVOt3X2vdG5aYLySiJuPJyWcCoj944uIcwNJfbxoht9+XeODQeoex+B5umlqS8LQFFmPZlKq6zXRuFOdJzHBg9VfPzxeG+31HPfwBedn2nHTwm3FuyVzp9y2lcBpAhMw155cGA3XlrfKsZ71aHMCEacey6LCiPfRoKlS+YFX+/ZNAaOTh8Cr44nc5eDne9GjJuM2BY2yPpmFm8BIojnKWWX6HEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CO1PR11MB5091.namprd11.prod.outlook.com (2603:10b6:303:6c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 17:13:14 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 17:13:14 +0000
-Date: Mon, 17 Feb 2025 17:13:09 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v2 0/6] fix the handling of deferred start in ethdev
-Message-ID: <Z7NuJV-4DfhCee8O@bricha3-mobl1.ger.corp.intel.com>
-References: <20241213214929.817688-1-stephen@networkplumber.org>
- <20250214174224.79142-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250214174224.79142-1-stephen@networkplumber.org>
-X-ClientProxiedBy: DUZPR01CA0306.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::16) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ bh=aOOm824RWgD536kqH/JxTSmFortss58zAuYITCM0Dss=;
+ b=vxsNP4KWJkC0n6y93YVYllKsLOLTZeZE0ai1yW3JpkzhUrM6vLAh2fp6/dldKgrnEDlXWnnsMRNAK6aN/rpDLgoXLKIPDjLZkgtWlnlc1gwTdGqnhL6MyM9mUfj+iQTcoIIaOap0TbAv7GFuXgw3AbslhiY2b/8XYW2mhNYrRj9HaL4LWzIYWIJ93MU8G/5UCvJUdA7Nu6HwHX/r2/w+05ft5p47R0X//wURy8SoZ04sDOGunEl5NOTlNrVfWiKgYeukDarSlBErlYp0B4BZKTPBb+QC+6gqHX+lVX9BlLokyDUmQIcLNv4TQtg1lAWBoOgjjLU9P942qbnLPx9mbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aOOm824RWgD536kqH/JxTSmFortss58zAuYITCM0Dss=;
+ b=UcbHA7kCQCF7fHG9yKZjSGbZ3muSEQEYdzIpukAiFDlKbu6Dh7TTWNtUcU7aN/2qSgmJpfN5jU8NbUUuMaJCtc5Ytop6HXE0iYFxTvJw/ImV2d9Qjv6SBsZOS4POe1ioIcbXklrLwbQQjHKqNohZOo+yoKviOMoLaggCoIqx0QY191t4TCVFLj9+6jPspjD0bT44Hy91unsYDkTU5MSed8VGGBQk28IbOs4DNp5NbR5Z2diVWzvfqQAd19g8PGUEMk8+BTIcAqlnx/J7NdJJuyEb/+gCPz3UX9FOIsQoNwpvN2T/o/5pAakGNM8xaQH1IsJYjzb9IsYc4zYrI/B2Fg==
+Received: from CH2PR02CA0007.namprd02.prod.outlook.com (2603:10b6:610:4e::17)
+ by CH3PR12MB7545.namprd12.prod.outlook.com (2603:10b6:610:146::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Mon, 17 Feb
+ 2025 17:21:46 +0000
+Received: from CH2PEPF0000013E.namprd02.prod.outlook.com
+ (2603:10b6:610:4e:cafe::f0) by CH2PR02CA0007.outlook.office365.com
+ (2603:10b6:610:4e::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.18 via Frontend Transport; Mon,
+ 17 Feb 2025 17:21:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF0000013E.mail.protection.outlook.com (10.167.244.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Mon, 17 Feb 2025 17:21:46 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 17 Feb
+ 2025 09:21:30 -0800
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
+ 2025 09:21:28 -0800
+From: Gregory Etelson <getelson@nvidia.com>
+To: <dev@dpdk.org>
+CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
+ <rasland@nvidia.com>
+Subject: [PATCH v2] testpmd: support meter_mark init_color in indirect list
+ configuration
+Date: Mon, 17 Feb 2025 19:21:10 +0200
+Message-ID: <20250217172111.67655-1-getelson@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250216140420.216805-1-getelson@nvidia.com>
+References: <20250216140420.216805-1-getelson@nvidia.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CO1PR11MB5091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 287c0c75-9f69-4462-c556-08dd4f765ceb
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013E:EE_|CH3PR12MB7545:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4553d696-376c-457a-a4eb-08dd4f778e36
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?vDg+ToYIkPRvKg2Gv5Yx9oemG9n2OmpK2dbuTIA7r9Gv2iZoUwq2IoGYHzre?=
- =?us-ascii?Q?DOIjlKK/ZJGkrva0ZrlZbB5v+d6g5VIl45npBFheLl8Bj8rp6Bg2j/Lpe8m1?=
- =?us-ascii?Q?6fiMQQxMbawYMcJBHQ4yZlHjrpc9+iW74+o722lLeHdxbUK7jZJS89/YXA7X?=
- =?us-ascii?Q?fVd6Lx4Yd+AATiwxtnxDAw2MPbMJNO2Zy70VFJ+xFYcagFsJmJo8HvmeEwU9?=
- =?us-ascii?Q?S/wKVTO17A9ytonpyrIWmwwWaaJS7IYWdYYLxnjxpNdt9EQ0HDjhjCpbug2B?=
- =?us-ascii?Q?oJEG4dRHjM7h4ZwMZrDCwDYNGVBXQvLVzQY6JvNHEcwMcO6u8MJ00lrv2USI?=
- =?us-ascii?Q?Egf9WdnOW2iLmiPAo21S7W9Ek+WyTFaoAINI6p+SGRRB2pplpffLuWAGzZEI?=
- =?us-ascii?Q?krZjH2iOfOBLD3DM3YltfTfB8AbpZF7LPmUPVqm2Myj7WREuMSu7kgRlAm7b?=
- =?us-ascii?Q?mzlS0hRXWbK1tPthau9FwzLqW4ZOKO+ZPA5FoMkh1y0MINnyCtQSIOXhmucc?=
- =?us-ascii?Q?LMAkI+3oBiBKUo2Xgh0S3iuG6zQffHWPOGW+2GTBdrqOCfux1iRX3/CNZw7H?=
- =?us-ascii?Q?Xt1DMZNeIxF2VDYNVbtHZPcMbWO6v1brrtsb9OoOQlQhNtJ8Z2V/IHJNn2KC?=
- =?us-ascii?Q?r5zJ0lUJCwMBie7m7zKZOsmYiwrZllJmXAuDgMUdV6Uv2AaQNBV6n/6/HU/N?=
- =?us-ascii?Q?YRfpqw6L52f+ZyM+CKuXDYtiTmB2tvevigaH39H/JyYCWiHXvK9uAu5/m45v?=
- =?us-ascii?Q?e2PDxspkqpZhIDkzL7Z0a/WS6axiXpmauaMKnRaF7q02GNmu7febSEtFEz3p?=
- =?us-ascii?Q?wgMc8DxU18ur8UoxwUMdzHCC5Agbe3ayr+5vOmMKv/xO8pc2cEO/qENvpyoM?=
- =?us-ascii?Q?fba2llAobzK4Vh35y3E//An80I9N0zjC+ffzsCxNouJB6kqFLTHuWOquJ6gh?=
- =?us-ascii?Q?d0SacPptCBs+YkQ7vUZbBZZktsRB6LolJA+SDoXCEB07My72jMIF2JIEbryK?=
- =?us-ascii?Q?xcESmYni46JLA3HCEReauRBzSyh7u8saaA17qRXTEyF++B+XiiLnlBBfUE5P?=
- =?us-ascii?Q?vljB2ZiS5vWTbWLS2WvrV1vJ3+HGXzuDGMUicYKP5qGkVON3RiV3zhI2dZtZ?=
- =?us-ascii?Q?eeQ9qkx+WY4p2Si5+iHywN0PlBQhqeVwwBoDBCgtRp/fVKnhyuB5UoYFdfcz?=
- =?us-ascii?Q?yLdiLmkvZtC9s7BTxIQ6ZgD767JvNEEuUTUUa5CPjl5br1vS41VBJ3JFdgcF?=
- =?us-ascii?Q?ZqzCKZanR5uMXG9f/krp5aUKeHNTFJ1pbS91StCcNkvKhdo5tn0EdF7oPfut?=
- =?us-ascii?Q?8oCZkrZMEpeTM7VLcmx0NEThGcujF8cHGNopxLS5E0Il5uTpdbqT6EHI5/2y?=
- =?us-ascii?Q?8+vqWBlTirmPFj3Xj+HqOjMLFoVQ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QBj1DULxMFiKXbjTyvSnI2Q1UsxwE9v7Xcrs1wAyp3p/bhGx+QtsflFsu5E9?=
- =?us-ascii?Q?u2Sl7tQZCrGGqOeeOPvZSAORw1proikQptHMDVia59nH8mnHvTgXn3YKaodi?=
- =?us-ascii?Q?lLP15nIZIdbqd0Go17z0+0QO09QZ4tOyTQLmS0aUauvBpiHVTK6RZizEQES6?=
- =?us-ascii?Q?Y3aFu6ytElFDndgL7d5uAPWLsRgH4Oj3MMUrD5IlaS36NEl76aRQWHhOaIXe?=
- =?us-ascii?Q?N+2Nw1NpRY4jAq/D6LwoUUmlQLcQAB637fuxqhW1L6cGDZEDKS/w+n3AdeLH?=
- =?us-ascii?Q?SH+xAPnSIhj7KG2YOGI/njjrvp6roSO5b8JEUNtZeqQ1HaEIWL0gBOXH/9ht?=
- =?us-ascii?Q?Yr7v7u1gTr/p3cfx1b/sb8FC2Aaoyz9RWBiZ7DRRQWqPPV1HsKGNuNuWKOe6?=
- =?us-ascii?Q?2DkDiA9Z+SBTvs0ZXl0+81zSyI4O0BGmprYdOWxBr8CkvF0bsdCtjz76q9dO?=
- =?us-ascii?Q?jEClp0zKIqCwjMd2/BHtuuejhm09HkCuFr10S8t5mXuRIXTA+D/sg8uAv08I?=
- =?us-ascii?Q?SwMLW2zfqeoR2bCSsKQzM8s3jtrTa40myL28zRC4wimJF7elUM1ZN67Sp4Wg?=
- =?us-ascii?Q?RPz56RrDViVct8uHGbMRADBKb7bt4KUo4LYaPONcAwkhWLoyqO7X464AFHm9?=
- =?us-ascii?Q?/EEzpvDRijvtQRAah1taEen631y3blSXdVktT9YGA8y7zCW05x4TCDBhJCI3?=
- =?us-ascii?Q?ja3XLIV9lSS3fCK3o9vmHwPQkIpN6HDmNQwFu9chuj6EvP7aOQIArDoVXjhT?=
- =?us-ascii?Q?OxsL3CAXCEy8zEYUG8nRqO2StESY6ubaR4KgWRFdWf4h075Ii70KlUis2cEB?=
- =?us-ascii?Q?1Xi8AkfMxE2Tt4KeG/BMGJpY8Tf0pX6ppnNvCWMGzLf3zBo4ywP1cEYyfjB/?=
- =?us-ascii?Q?RrJNq8yMIZmwDvw8OOcnkFbiiqK2tcspy7EuRSmq9MM4jrUPsDD4zu+SOWXD?=
- =?us-ascii?Q?w3tIgHu0ykY4kfXn7/X3nYDa0L6HOZGFB2N6GNPuQ8BbSd+vc6Pu3Jv+ZcmE?=
- =?us-ascii?Q?oi+XtOQy9nMa0/Qs7J7BOJaW+lqv6XlaaW2cW1BVfXZ/uk9KkaH2htPlKFpT?=
- =?us-ascii?Q?ht+x32lk29vCmOOujtLi3j0IHxHPL2P0Gz36L7BEs3TDTnMTZhTkENGF3gev?=
- =?us-ascii?Q?fzSVUQA3pZcF+wopkADLrqTOZroTZTszlMstUCG+e1DyojfzFmUqQuzL88pM?=
- =?us-ascii?Q?+3TWF/NNplo+UtQBAZcv9br/Ci9V1Gytsqea6GTEFkuw/2SCun9vW+SC7DDP?=
- =?us-ascii?Q?/K5Q4lnmPAynshI3ruchRyDV7kb5Z57m6JvRpNa3axoYlk7wp5oZurxKxh61?=
- =?us-ascii?Q?tfXsan9nXQQ/SpfjTQyrdtpvxWVhnHrMtimjlAm836uh5P9wJFbdsrbTs49a?=
- =?us-ascii?Q?vVjvVNyaCWTi8tcOzuwJHxJdwX4xVoxrsmEGYA+pJTJuL2DmXXbFoN0c2KqU?=
- =?us-ascii?Q?/nJj6P14XpbwoBL8lLsSIj8hRYyTG02houE5bjB2+HwhQjUzlbGJ6P8zkT53?=
- =?us-ascii?Q?M9D8ebJAY8h/hGtfizf8eEcmp1BMnXpBgBvQF+hYTHTMor/rS+O0ZSGRIeBT?=
- =?us-ascii?Q?JsP2IYZ5j0pkhqQTm0xx9JETMDodzGPU/a/0TSNTqDME3+xRSc1zJv8Z/dTj?=
- =?us-ascii?Q?kw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 287c0c75-9f69-4462-c556-08dd4f765ceb
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 17:13:14.1193 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tAogTbIoRe6dK+y1Kp/5Th5qpU2mYWDqaBZ0mg1AA5YxwmtsmxamW21w0KLwTDpeVTcqE7DtFsaOTPr80SeQssZCVJqCWGGy3VI+SLpVqHc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5091
-X-OriginatorOrg: intel.com
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|36860700013|82310400026|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xE86C/6tBxra31x1rK36i9g9x2oysmS1LcJZpL5m3KuhKNNQshyD9E9xAqZJ?=
+ =?us-ascii?Q?gN0TRvRzoEkNPcyBykYeDP6zhAM9rNOFBDQhGIsRbrh7y2ot0JlX6UkE3SJd?=
+ =?us-ascii?Q?kAcbSyuRX4WhI8kcJt2nisHdtCp5+ExTldRrcOSxlWr16K+1h1eHn7NzfH3u?=
+ =?us-ascii?Q?MqcBYTD5DoU4Mtjm9cw+XRkHW1LnOwiDWgDnRVCQ8l7SM/hhnqW1WTc7d6pi?=
+ =?us-ascii?Q?oSx6nTVWOWOALrKUQwg5z6XVbMSNweBBSC1SnmOGsPD+GetBXy5m0igVkDld?=
+ =?us-ascii?Q?aK3o35Jp40ESF+J6N2h5Xa3lDVAHgXN0ft8U6CYi2SA3wAq/N+XJzT16rTMw?=
+ =?us-ascii?Q?TWHZ3cbsccZNTGFtyC3JH7gLsbo53ptRiX6NiqXlSaweMdCJDhz5eZ70pZPR?=
+ =?us-ascii?Q?5Mak2xPcaRCLKdWsE4YQaXLrrL8DicP1ossjtrlMEN/IYwtm9TWrU770/S5V?=
+ =?us-ascii?Q?ps28TE4tYfIQjGHFvMWlupgRgNpmJhCSY/DSkILfWY9hQUEToF7r8mef6lXD?=
+ =?us-ascii?Q?MhX396FedmU0W+JCK7KxXLT1JZgCTGS9v/50CadKxliJylI6xzuBuKAdUdlB?=
+ =?us-ascii?Q?IV4SaLUbI7nRoeV5q6sU+4CNgcfNnWbJ64TzfSUlCsTXbAeI2DpL+SPLTrYX?=
+ =?us-ascii?Q?PMIM3reKqIQSi8O/c5Tmlw42nzeXmCQLH8I7WgzmdJTkMXHG3fRBBVaixejZ?=
+ =?us-ascii?Q?asnRoPsWEvH/669NQtH/IEQqlRt5dAEOmRQbUr//uTQHNsf3FutlE4SbSQs2?=
+ =?us-ascii?Q?M4pMU/SB5vU9DdddeK4sNxgk7R8ZJt0LJOdWqc4rZSWyOBWeba7LIbALee6k?=
+ =?us-ascii?Q?Gw8XZ4tvRLV3c7lDSDQdqgrryZ0oZ7RS4pUVxL/fZvL781S/Om3oqlC7H+5M?=
+ =?us-ascii?Q?a2klz8dhysufSkBVgLKhdbtun4ThZ5xQGkVXoGPs+H8qbe64uifsrw2ZttAa?=
+ =?us-ascii?Q?xvIBC0C5G9K9BrLZDAPCtDsZseU6+ktVpDxD43fFHyQ0SpBzp9BPx+0GitGt?=
+ =?us-ascii?Q?YbHilXa4JhyRHLFYU0hD3v7n5lKw9IC8aMF3OUbl4c6DH37qqPiNor8hb4/1?=
+ =?us-ascii?Q?AaDtQwPr/ogXVL4MrFnABcOvQVJINHJTXPsbIX4fwY/MoaiW7IoevEqzH5Wm?=
+ =?us-ascii?Q?TVEBmExnOyPzXYkS7i106Adfnc/GPYeWM85IAYA3BnpnFAx1ii5RvqL8eEMU?=
+ =?us-ascii?Q?806cauvg+SY4kWv/1O7X7mKBb5AfP7IcPhQoUMvBTx3dLu7DhHcsSIagSg43?=
+ =?us-ascii?Q?N1lZ7qcOPXfHHCi5KuQJ81DaBX88XF2ZYsJiIKP7/J8rOKljDOuLycjHgnEL?=
+ =?us-ascii?Q?2cC+Ie77DJMqs1l6syHv5NtNMM/kuY/NGfWlvWMeeNt6EIBEWKasv0JnQD/x?=
+ =?us-ascii?Q?uNtgj3w4a/i/aL+PkeJaHPkfoJXPzmFarCE+fRkjsarJ2sd6MAB8OIOgbhBP?=
+ =?us-ascii?Q?EyxgCdAOTaWmfzczERsizrv57QToKo1wSbP3Vt8kZ1O2YgzLjbBNz82X5JFI?=
+ =?us-ascii?Q?JxW52gXOQpcqmzM=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 17:21:46.0408 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4553d696-376c-457a-a4eb-08dd4f778e36
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF0000013E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7545
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,42 +134,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 14, 2025 at 09:38:53AM -0800, Stephen Hemminger wrote:
-> There is a inconsistency and lack of documentation around the deferred
-> start configuration flag. The queue deferred start only makes sense if
-> the driver has a way to start the queue later via ethdev ops.
-> Therefore move the check into the ethdev queue configuration handling.
-> Fix the driver documentation where the support of deferred start
-> does not match what the driver implements.
-> 
-> Stephen Hemminger (6):
->   ethdev: check that device supports deferred start
->   doc: fix feature flags for queue start/stop
->   net/dpaa: remove unnecessary deferred start check
->   net/dpaa2: remove unneeded deferred start check
->   net/enetfec: remove unneeded deferred start check
->   net/virtio: remove unneeded deferred start check
-> 
-> v2 - rebase and cleanup wording
-> 
+Flow actions parameters in indirect actions list are created as
+read-only and shared between all flows that reference that indirect
+list.
 
-This seems a good idea to do.
+If a flow rule needs to apply rule specific actions list parameters it
+does it with the indirect actions list conf parameter.
 
-Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
+The patch allows flow rule to set meter_mark init_color value when
+meter_mark action was created in indirect actions list.
 
->  doc/guides/nics/features.rst         |  1 +
->  doc/guides/nics/features/gve.ini     |  1 +
->  doc/guides/nics/features/mana.ini    |  1 -
->  doc/guides/nics/features/netvsc.ini  |  1 -
->  doc/guides/nics/features/virtio.ini  |  1 -
->  doc/guides/nics/features/vmxnet3.ini |  1 -
->  drivers/net/dpaa/dpaa_ethdev.c       | 10 ----------
->  drivers/net/dpaa2/dpaa2_ethdev.c     | 14 --------------
->  drivers/net/enetfec/enet_ethdev.c    | 16 ++--------------
->  drivers/net/virtio/virtio_rxtx.c     | 10 ----------
->  lib/ethdev/rte_ethdev.c              | 14 ++++++++++++++
->  11 files changed, 18 insertions(+), 52 deletions(-)
-> 
-> -- 
-> 2.47.2
-> 
+Example:
+
+// create indirect actions list with meter_mark flow action:
+testpmd> flow indirect_action 0 create action_id 10 ingress \
+  list actions meter_mark mtr_profile 20 \
+  mtr_state 1 mtr_color_mode 1 / end
+
+// create a flow specific meter_mark init_color configuration:
+testpmd> flow indirect_action 0 create action_id 11 flow_conf \
+   actions meter_mark_conf mtr_update_init_color red / end
+
+// queue a flow rule with indirect actions list
+// and flow specific configuration:
+testpmd> flow queue 0 create 0 template_table 1 pattern_template 0 \
+   actions_template 0 postpone no pattern eth / ipv4 / udp / end \
+   actions indirect_list handle 10 conf 11 / \
+   jump group 10 / end
+
+Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+---
+v2: Fix commit log.
+---
+ app/test-pmd/cmdline_flow.c | 52 +++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 11 deletions(-)
+
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index e1720e54d7..6add4e56ec 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -62,6 +62,7 @@ enum index {
+ 	COMMON_ACTIONS_TEMPLATE_ID,
+ 	COMMON_TABLE_ID,
+ 	COMMON_QUEUE_ID,
++	COMMON_METER_COLOR_NAME,
+ 
+ 	/* TOP-level command. */
+ 	ADD,
+@@ -556,7 +557,6 @@ enum index {
+ 	ITEM_PPP_PROTO_ID,
+ 	ITEM_METER,
+ 	ITEM_METER_COLOR,
+-	ITEM_METER_COLOR_NAME,
+ 	ITEM_QUOTA,
+ 	ITEM_QUOTA_STATE,
+ 	ITEM_QUOTA_STATE_NAME,
+@@ -642,6 +642,8 @@ enum index {
+ 	ACTION_METER_COLOR_RED,
+ 	ACTION_METER_ID,
+ 	ACTION_METER_MARK,
++	ACTION_METER_MARK_CONF,
++	ACTION_METER_MARK_CONF_COLOR,
+ 	ACTION_METER_PROFILE,
+ 	ACTION_METER_PROFILE_ID2PTR,
+ 	ACTION_METER_POLICY,
+@@ -2270,6 +2272,7 @@ static const enum index next_action[] = {
+ 	ACTION_METER,
+ 	ACTION_METER_COLOR,
+ 	ACTION_METER_MARK,
++	ACTION_METER_MARK_CONF,
+ 	ACTION_OF_DEC_NW_TTL,
+ 	ACTION_OF_POP_VLAN,
+ 	ACTION_OF_PUSH_VLAN,
+@@ -3235,6 +3238,12 @@ static const struct token token_list[] = {
+ 		.call = parse_int,
+ 		.comp = comp_queue_id,
+ 	},
++	[COMMON_METER_COLOR_NAME] = {
++		.name = "color_name",
++		.help = "meter color name",
++		.call = parse_meter_color,
++		.comp = comp_meter_color,
++	},
+ 	/* Top-level command. */
+ 	[FLOW] = {
+ 		.name = "flow",
+@@ -6280,17 +6289,11 @@ static const struct token token_list[] = {
+ 		.name = "color",
+ 		.help = "meter color",
+ 		.next = NEXT(item_meter,
+-			     NEXT_ENTRY(ITEM_METER_COLOR_NAME),
++			     NEXT_ENTRY(COMMON_METER_COLOR_NAME),
+ 			     item_param),
+ 		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_meter_color,
+ 					color)),
+ 	},
+-	[ITEM_METER_COLOR_NAME] = {
+-		.name = "color_name",
+-		.help = "meter color name",
+-		.call = parse_meter_color,
+-		.comp = comp_meter_color,
+-	},
+ 	[ITEM_QUOTA] = {
+ 		.name = "quota",
+ 		.help = "match quota",
+@@ -6856,6 +6859,23 @@ static const struct token token_list[] = {
+ 		.next = NEXT(action_meter_mark),
+ 		.call = parse_vc,
+ 	},
++	[ACTION_METER_MARK_CONF] = {
++		.name = "meter_mark_conf",
++		.help = "meter mark configuration",
++		.priv = PRIV_ACTION(METER_MARK,
++				    sizeof(struct rte_flow_action_meter_mark)),
++		.next = NEXT(NEXT_ENTRY(ACTION_METER_MARK_CONF_COLOR)),
++		.call = parse_vc,
++	},
++	[ACTION_METER_MARK_CONF_COLOR] = {
++		.name = "mtr_update_init_color",
++		.help = "meter update init color",
++		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
++			     NEXT_ENTRY(COMMON_METER_COLOR_NAME)),
++		.args = ARGS(ARGS_ENTRY
++			     (struct rte_flow_indirect_update_flow_meter_mark,
++			      init_color)),
++	},
+ 	[ACTION_METER_PROFILE] = {
+ 		.name = "mtr_profile",
+ 		.help = "meter profile id to use",
+@@ -12375,8 +12395,8 @@ parse_meter_color(struct context *ctx, const struct token *token,
+ 		  const char *str, unsigned int len, void *buf,
+ 		  unsigned int size)
+ {
+-	struct rte_flow_item_meter_color *meter_color;
+ 	unsigned int i;
++	struct buffer *out = buf;
+ 
+ 	(void)token;
+ 	(void)buf;
+@@ -12388,8 +12408,18 @@ parse_meter_color(struct context *ctx, const struct token *token,
+ 		return -1;
+ 	if (!ctx->object)
+ 		return len;
+-	meter_color = ctx->object;
+-	meter_color->color = (enum rte_color)i;
++	if (ctx->prev == ACTION_METER_MARK_CONF_COLOR) {
++		struct rte_flow_action *action =
++			out->args.vc.actions + out->args.vc.actions_n - 1;
++		const struct arg *arg = pop_args(ctx);
++
++		if (!arg)
++			return -1;
++		*(int *)RTE_PTR_ADD(action->conf, arg->offset) = i;
++	} else {
++		((struct rte_flow_item_meter_color *)
++			ctx->object)->color = (enum rte_color)i;
++	}
+ 	return len;
+ }
+ 
+-- 
+2.45.2
+
