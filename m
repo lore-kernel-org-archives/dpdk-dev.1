@@ -2,125 +2,178 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FABC021A9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 17:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29FFC021AA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 17:28:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD70A400EF;
-	Mon, 17 Feb 2025 18:21:51 +0100 (CET)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
- by mails.dpdk.org (Postfix) with ESMTP id 5F5ED400D6
- for <dev@dpdk.org>; Mon, 17 Feb 2025 18:21:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B33BB400EF;
+	Mon, 17 Feb 2025 18:28:57 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id D7730400D6
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 18:28:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1739813336; x=1771349336;
+ h=message-id:date:subject:to:references:from:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=vPu3Exoz1fxTB5QWF7stHffemUItpUGoflwFAEff+HI=;
+ b=aC9hewq/T5BpWiIv3VAvAua4L3oH3aMOUNdjiGTazTwuNanNsWwxge9d
+ ToXhwqO0XxGy1BIielDdR+RF+mzsusYyiC5GRIbdwv/3zjQkRsfvTbKy4
+ 47DNMd9D2eIu1vcQ3G5XhB3gqDWeHt11p720VBVvWTAamT7N6JSRFUoNB
+ bRrZgs0pIIhBs9jSOzQu+Xf0/EBJjOaJVwIOs6wqX/0D2vFsLv4eP9sWK
+ EzHEBowe79GMNqNISUMk87SEW1w0YvkwI3FgYkvXstuGtpAIoVPtdY0fd
+ 4tLwli3T4wnXqvLQ6AIZauErcCL95wU4A0NbMlnzzWUWJ5DIEmidfrPzQ A==;
+X-CSE-ConnectionGUID: HHv2QOS/R86Shz2pOXmZyg==
+X-CSE-MsgGUID: yPq3aGOsSo6MGCkLUdVuiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40527881"
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; d="scan'208";a="40527881"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Feb 2025 09:28:55 -0800
+X-CSE-ConnectionGUID: THzY/eB3SC2qDFHh8Fd+mQ==
+X-CSE-MsgGUID: aLefX41USoei+ugCt5496g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; d="scan'208";a="114156498"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Feb 2025 09:28:54 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 17 Feb 2025 09:28:53 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 09:28:53 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 17 Feb 2025 09:28:53 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RwxwrYXW8FrpXM2v22curyiNPgRwExTIBjuOBolXZVXRaLpUW76WQvAmxu6+jXUbcBFhb/1qed21hGxe1sykL1rDjhlWVYxboWgpreK5ciXXhFO12sDzmqkEqoBRABfXEAsJAfL6x99s1TK8y6mSIoDY7CX24uE9sRAXKXmeq3dqkftE72caf9qjk4vuHaoYmHUyfU2QpE6mHlLybqUqMoLbuyVWrrlpq1adDxfD9gqU6I4gHpnwR5il58GchkXa7YzWpCSJDcDkm2n7IFHMGphVhxxUyL2e7/CrtFkZ4tQ3M7hhrAWUgKfwC9S6SySqaYPt0dKQrqoiWC6Dc87Gkg==
+ b=u1l7I/60EZbJ4Iw6OzrOvNiC0ullUm+lc8qB92YePcotpoYHCCHmKnlunP/rRqVEq7mjQ68iiqeuVsN2kzlRyu9iSAxmhL5Z5Vk68otOySZKj84pCV0JmxlCHX+cPC/UcrmvpxYvlhbtxFPVy8uaQTF0aoTXFsrZekuMq/fTv2w2ZJfO7BpR06vy+tzHwZgdpjMxDzhGiAeze8vZcK/lap6uGq1x/vK4sw9WpdvPrH1M9wu8/biIfQ5i4r+Fn7laART7/TMJbRz0lZhsAWa6fz1Kux8NJG7KeO5WpCy4kyVosRKQB/NKlfUCjlOejj0lGTzKXQ7x9wgmEkr5LvO5kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aOOm824RWgD536kqH/JxTSmFortss58zAuYITCM0Dss=;
- b=vxsNP4KWJkC0n6y93YVYllKsLOLTZeZE0ai1yW3JpkzhUrM6vLAh2fp6/dldKgrnEDlXWnnsMRNAK6aN/rpDLgoXLKIPDjLZkgtWlnlc1gwTdGqnhL6MyM9mUfj+iQTcoIIaOap0TbAv7GFuXgw3AbslhiY2b/8XYW2mhNYrRj9HaL4LWzIYWIJ93MU8G/5UCvJUdA7Nu6HwHX/r2/w+05ft5p47R0X//wURy8SoZ04sDOGunEl5NOTlNrVfWiKgYeukDarSlBErlYp0B4BZKTPBb+QC+6gqHX+lVX9BlLokyDUmQIcLNv4TQtg1lAWBoOgjjLU9P942qbnLPx9mbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aOOm824RWgD536kqH/JxTSmFortss58zAuYITCM0Dss=;
- b=UcbHA7kCQCF7fHG9yKZjSGbZ3muSEQEYdzIpukAiFDlKbu6Dh7TTWNtUcU7aN/2qSgmJpfN5jU8NbUUuMaJCtc5Ytop6HXE0iYFxTvJw/ImV2d9Qjv6SBsZOS4POe1ioIcbXklrLwbQQjHKqNohZOo+yoKviOMoLaggCoIqx0QY191t4TCVFLj9+6jPspjD0bT44Hy91unsYDkTU5MSed8VGGBQk28IbOs4DNp5NbR5Z2diVWzvfqQAd19g8PGUEMk8+BTIcAqlnx/J7NdJJuyEb/+gCPz3UX9FOIsQoNwpvN2T/o/5pAakGNM8xaQH1IsJYjzb9IsYc4zYrI/B2Fg==
-Received: from CH2PR02CA0007.namprd02.prod.outlook.com (2603:10b6:610:4e::17)
- by CH3PR12MB7545.namprd12.prod.outlook.com (2603:10b6:610:146::13)
+ bh=qfp2I+TeT/uaP4z8z0w56rwV0sznxmLy1cokNlhqVVQ=;
+ b=k1PJqMPBp2d7QDfTrJiBGrqSDFs870FG+W8NQBeqgteSIS41cYKMeyqX2nIUWjEI4/0D8MCTjQjCvMMvssRJ+DTkLL3r5TaTaolGJ1tNNVKIL+8fFQy+VZw0BCbqOczxDgrFBD+lyBppo2Bb55Bx/zCsuu/VtNvMbpw47BMKPbMVbZkXaWrmGXQB9vSiLE0F8MDBIrlQL1Pq2E59yyQRT3wYkd60P+HAOcuYBk8UhYs11MjqvJlAyjbI/qkM7I/tySLrP46qSweFmFVn9SQi/+iRICH/VWNQtnniMgoLQShjjhG8/3zrKZl8fu9ruO9aF4UV653EStyyP62Hc1ilog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ0PR11MB5772.namprd11.prod.outlook.com (2603:10b6:a03:422::8)
+ by PH0PR11MB7470.namprd11.prod.outlook.com (2603:10b6:510:288::7)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Mon, 17 Feb
- 2025 17:21:46 +0000
-Received: from CH2PEPF0000013E.namprd02.prod.outlook.com
- (2603:10b6:610:4e:cafe::f0) by CH2PR02CA0007.outlook.office365.com
- (2603:10b6:610:4e::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.18 via Frontend Transport; Mon,
- 17 Feb 2025 17:21:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF0000013E.mail.protection.outlook.com (10.167.244.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Mon, 17 Feb 2025 17:21:46 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 17 Feb
- 2025 09:21:30 -0800
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 09:21:28 -0800
-From: Gregory Etelson <getelson@nvidia.com>
-To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
- <rasland@nvidia.com>
-Subject: [PATCH v2] testpmd: support meter_mark init_color in indirect list
- configuration
-Date: Mon, 17 Feb 2025 19:21:10 +0200
-Message-ID: <20250217172111.67655-1-getelson@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250216140420.216805-1-getelson@nvidia.com>
-References: <20250216140420.216805-1-getelson@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Mon, 17 Feb
+ 2025 17:28:04 +0000
+Received: from SJ0PR11MB5772.namprd11.prod.outlook.com
+ ([fe80::5851:319:3da6:850b]) by SJ0PR11MB5772.namprd11.prod.outlook.com
+ ([fe80::5851:319:3da6:850b%5]) with mapi id 15.20.8445.013; Mon, 17 Feb 2025
+ 17:28:04 +0000
+Message-ID: <5465b94b-e415-453f-a826-a4ef5b445252@intel.com>
+Date: Mon, 17 Feb 2025 17:28:01 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] net/ixgbe: prevent crashes in secondary processes
+To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>
+References: <3c323577ce36cf4425d2c2def85d0d6644b87dc8.1734020337.git.anatoly.burakov@intel.com>
+ <11dadf1bf66aa2129a08b588b68ec0a8c992cfaa.1739800426.git.anatoly.burakov@intel.com>
+Content-Language: en-US
+From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+In-Reply-To: <11dadf1bf66aa2129a08b588b68ec0a8c992cfaa.1739800426.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU6P191CA0015.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:540::16) To SJ0PR11MB5772.namprd11.prod.outlook.com
+ (2603:10b6:a03:422::8)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013E:EE_|CH3PR12MB7545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4553d696-376c-457a-a4eb-08dd4f778e36
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB5772:EE_|PH0PR11MB7470:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70e9cc82-490e-48b8-4717-08dd4f786f9f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|82310400026|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xE86C/6tBxra31x1rK36i9g9x2oysmS1LcJZpL5m3KuhKNNQshyD9E9xAqZJ?=
- =?us-ascii?Q?gN0TRvRzoEkNPcyBykYeDP6zhAM9rNOFBDQhGIsRbrh7y2ot0JlX6UkE3SJd?=
- =?us-ascii?Q?kAcbSyuRX4WhI8kcJt2nisHdtCp5+ExTldRrcOSxlWr16K+1h1eHn7NzfH3u?=
- =?us-ascii?Q?MqcBYTD5DoU4Mtjm9cw+XRkHW1LnOwiDWgDnRVCQ8l7SM/hhnqW1WTc7d6pi?=
- =?us-ascii?Q?oSx6nTVWOWOALrKUQwg5z6XVbMSNweBBSC1SnmOGsPD+GetBXy5m0igVkDld?=
- =?us-ascii?Q?aK3o35Jp40ESF+J6N2h5Xa3lDVAHgXN0ft8U6CYi2SA3wAq/N+XJzT16rTMw?=
- =?us-ascii?Q?TWHZ3cbsccZNTGFtyC3JH7gLsbo53ptRiX6NiqXlSaweMdCJDhz5eZ70pZPR?=
- =?us-ascii?Q?5Mak2xPcaRCLKdWsE4YQaXLrrL8DicP1ossjtrlMEN/IYwtm9TWrU770/S5V?=
- =?us-ascii?Q?ps28TE4tYfIQjGHFvMWlupgRgNpmJhCSY/DSkILfWY9hQUEToF7r8mef6lXD?=
- =?us-ascii?Q?MhX396FedmU0W+JCK7KxXLT1JZgCTGS9v/50CadKxliJylI6xzuBuKAdUdlB?=
- =?us-ascii?Q?IV4SaLUbI7nRoeV5q6sU+4CNgcfNnWbJ64TzfSUlCsTXbAeI2DpL+SPLTrYX?=
- =?us-ascii?Q?PMIM3reKqIQSi8O/c5Tmlw42nzeXmCQLH8I7WgzmdJTkMXHG3fRBBVaixejZ?=
- =?us-ascii?Q?asnRoPsWEvH/669NQtH/IEQqlRt5dAEOmRQbUr//uTQHNsf3FutlE4SbSQs2?=
- =?us-ascii?Q?M4pMU/SB5vU9DdddeK4sNxgk7R8ZJt0LJOdWqc4rZSWyOBWeba7LIbALee6k?=
- =?us-ascii?Q?Gw8XZ4tvRLV3c7lDSDQdqgrryZ0oZ7RS4pUVxL/fZvL781S/Om3oqlC7H+5M?=
- =?us-ascii?Q?a2klz8dhysufSkBVgLKhdbtun4ThZ5xQGkVXoGPs+H8qbe64uifsrw2ZttAa?=
- =?us-ascii?Q?xvIBC0C5G9K9BrLZDAPCtDsZseU6+ktVpDxD43fFHyQ0SpBzp9BPx+0GitGt?=
- =?us-ascii?Q?YbHilXa4JhyRHLFYU0hD3v7n5lKw9IC8aMF3OUbl4c6DH37qqPiNor8hb4/1?=
- =?us-ascii?Q?AaDtQwPr/ogXVL4MrFnABcOvQVJINHJTXPsbIX4fwY/MoaiW7IoevEqzH5Wm?=
- =?us-ascii?Q?TVEBmExnOyPzXYkS7i106Adfnc/GPYeWM85IAYA3BnpnFAx1ii5RvqL8eEMU?=
- =?us-ascii?Q?806cauvg+SY4kWv/1O7X7mKBb5AfP7IcPhQoUMvBTx3dLu7DhHcsSIagSg43?=
- =?us-ascii?Q?N1lZ7qcOPXfHHCi5KuQJ81DaBX88XF2ZYsJiIKP7/J8rOKljDOuLycjHgnEL?=
- =?us-ascii?Q?2cC+Ie77DJMqs1l6syHv5NtNMM/kuY/NGfWlvWMeeNt6EIBEWKasv0JnQD/x?=
- =?us-ascii?Q?uNtgj3w4a/i/aL+PkeJaHPkfoJXPzmFarCE+fRkjsarJ2sd6MAB8OIOgbhBP?=
- =?us-ascii?Q?EyxgCdAOTaWmfzczERsizrv57QToKo1wSbP3Vt8kZ1O2YgzLjbBNz82X5JFI?=
- =?us-ascii?Q?JxW52gXOQpcqmzM=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 17:21:46.0408 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4553d696-376c-457a-a4eb-08dd4f778e36
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF0000013E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7545
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?U0lJSFFqaHFNSTNFeU9wM3lSK2R0SFptOWFYYUFhb0p5SW5mUGpLOVlMWmQw?=
+ =?utf-8?B?M1R6a0JkSUR0dlpJOVJkd0NyVGtDblJTREF3cUptQVFiOG9WWG1NaHZzcy90?=
+ =?utf-8?B?Uk5remh0bXpxU1I3c3dyNjQwS0FkbDB6V0Q2RnpZOWtTQ01IN0o5L3lQWTJS?=
+ =?utf-8?B?d1VVVklIMUd5TVFUc3BEa0dSRmlwVDF3OGNwVFhuZFhtVTJWa2tKb09LbW81?=
+ =?utf-8?B?MVRzZXdIK1c1NWY1U1EvMk5iUVkvVktGS3hCSjZQVDB4WFJMZkVVWk8zYTVC?=
+ =?utf-8?B?Uzl3Ynd1Q0V3ZmROR3BrZmZMS1NOU0x3ZlVUbzhYK3dZckhRNFlySDMyb3hi?=
+ =?utf-8?B?MW5TMjU0aTltS3ZCOVBRNEk4Y2Ura2tpKy9GQTVndmE5ZmNYL1llSE1MdFhs?=
+ =?utf-8?B?YmFxVmxTcWdHR3RXSFN2UTluc0NVUkpLdjkwUzY5M2JIZ08ycTA5clJ0VDNI?=
+ =?utf-8?B?d0thRVVZTDVUejRxWC9FZVhoa203TUpWUS9RM2t6ME1ueEJTWkFkbXUwdEI4?=
+ =?utf-8?B?NEFnSEdxdUdiM0NGcVRQb0s3cVFDeHZHUFNYdjJVSzVGakw2YnJHZUM5bmdx?=
+ =?utf-8?B?c2ZaK1lEL0lFNjB4TDZiK0xLU3RIK2N3Y1haZTFmdHBKdzBVYklZVEk2L2VF?=
+ =?utf-8?B?bzNwTDl2U0VTSFZWS3ZyMVB1eHRHblVyZHNSQmpEbEhhbDh6eUVRbUFDSGd0?=
+ =?utf-8?B?U0N3TWVvZXNZdlpuVGo4YTVQZk1PNDBKVHdjOG9KYlgzR3U3UEExU1dzY2dY?=
+ =?utf-8?B?blhLWGgxOTZRY0hrSFBJMWFhZDdZdmtKcVdXK0dVVEt2L0g5bnNEcUpmdUFo?=
+ =?utf-8?B?dXNFN1ZHMy9ORGFZWUVpQnNqM3RTU3JKZm8rSlNRSGd5QmhqU0tOdXN5SmlF?=
+ =?utf-8?B?SU40bG1vVDJ4ais2Y1RGS1FUWVpnTUZ1b3VYdmd5NjQ2M0daYzBTbXhaWDI2?=
+ =?utf-8?B?M01ZeGFsYmxSRmtKUXp6VjlmZjE4RTR2enNnTVpVakpsMlhDODFmNXVVcDhX?=
+ =?utf-8?B?UUZNQ3AzdDNZWElsK2UrNXE2M1g0S3B2bk5zeEcxZTV1eWZITEZqMTZCRHJ2?=
+ =?utf-8?B?M0U0b3VDNnVYSDZMaUtrMWNWUmtXdVBWVjJHWG1hZUVZNisweEt6aFhGZnpm?=
+ =?utf-8?B?YnJ4LytqNGd4MHhMRk5VdTM5eFpsN1hhYWdPbXlrem5RK1c2WjlHVmFnNEhh?=
+ =?utf-8?B?TEF2ZVJJZXBodWxTVUdiRnlGOUpTTHJFM3VpOGo0M2hteVlhTzU0UHk4Zmto?=
+ =?utf-8?B?M0JvekhpSWNBTThqYU9zVGtpRlo5Y1BGb1VsT3NJaThINW1TckJraFkweENl?=
+ =?utf-8?B?WDBXQW1CRTFaMlBpYnJ6WVJtb3FjSFJpb1V2ZUxaWVJFSnAzVjVoRHJsVnVp?=
+ =?utf-8?B?UWRpRHYzSkw5TmM4UnB5ckdJRUEyRlg2d3EwV1VPTW9WQmJkbTVkRnBNZDBl?=
+ =?utf-8?B?anhXN3BvRVdQWnpQT2hrc0I4emY0Sm9TOWd4WDRYeUJWdHJ6N2EycG9ZVldr?=
+ =?utf-8?B?MmgzeXhzcEc3Z0dnYSsxSEhXUk1SZVRUbk5TNXVpb0hCNDFHUzdEMjB3Slhn?=
+ =?utf-8?B?Rzg3WUxoa2svR2xyclE0RTEralZ0ZXNWcHVscTRYajhNQ2VQWlJ2SWZlcnE3?=
+ =?utf-8?B?UjJhQ1JvOEUwdnppVWFhU1MvMGxCNEEzSWNGRDREeW5UU1N2bmxKMEE0bVJ2?=
+ =?utf-8?B?WmNCK3N6WmtpMThiOGdpL0xrVTk2cXZGWWg4bkpWZlh6VDBpZGJIckxaTlIw?=
+ =?utf-8?B?T1RWWVN4NDBrcEpmMnEySEVjb0VSdjdCdEE2S2NxK3hIZGVIY3pKZGNuT0o2?=
+ =?utf-8?B?NkJGaUhjVUZzVVV5Rmt2K283em0yblNPRVdxQVU5TEtLblJaN2lwNW9oQS9P?=
+ =?utf-8?Q?odY6zCSiFQptE?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ0PR11MB5772.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TGdjcTFxelh1Und5TjRPUExLYm51QTZPbXFscG5sTG1EYWovZzJobnVka09v?=
+ =?utf-8?B?ckRGcjNqcGFycDdVNUErK2E4VitnellCdlI4NlhmQ1RzbW45bEJYVm0rV2VI?=
+ =?utf-8?B?dERHV2F1b1A0UGUzQ055QTZORjZFNWN2akR1Tyt6RFZYbHhzUmxQTUVQbmJU?=
+ =?utf-8?B?NHhwUVIwQlAyYUt6TFNoWFl2b0ZjUjdvbi9sUWkxd3lVOEs2MHBrL1RISnZh?=
+ =?utf-8?B?S21SQ0U1T1M5RUZJRER2eTZpZGt0bkhISTRQT25HYTBKd2hoa1U2UDExc3Vo?=
+ =?utf-8?B?aHhYWlBYbUlqQS81bDF0aThOak1iTTVleWhyeWxobFZYUEJYSGNHeHdIU2tx?=
+ =?utf-8?B?WGtwZGVYd3NIQzlJNG1sckk5RkNDSm5oSmx3ZTdPeHBPN2NMZktkS3pqSUVy?=
+ =?utf-8?B?ZFVPT3FYRzA4T0hmdEpiZjVtNEppQ0VDL09RbzRlSGdyVUxLK1Y0RlZSOEQ1?=
+ =?utf-8?B?amZhamNKRkVCMjBZNThXSjRXc2R2VFBBcW40VGVqQmkrTUg3OTBOVm9lK0hD?=
+ =?utf-8?B?dlFKQk5hY0JKem40Uk5pai9GQk1KUWlsSW4rVGtqcVZWMElxYXRWTVAvbWhs?=
+ =?utf-8?B?WnU3QnJlQUNEUktRSVRSTUpFQTNWc1JOQk5GRWc1aHlVYndVQkZPNjJYL3Fk?=
+ =?utf-8?B?SDNwc253bUo2bDRKQW9KR2xZOW1mbHhvczhibWs2TVR2UGJhbDJMMHVpZXNt?=
+ =?utf-8?B?ZXQyelJRbmdubVNiS0trZVFDTDM1SXZ0K1BGTi8zcEdRemVPWS84MDd3L1BP?=
+ =?utf-8?B?dGNjc0NTMU5zTDAxSVZ5Z3BYTVVSSW9ydzNDNUtzR2hRZzNJUVRoL1ZILzly?=
+ =?utf-8?B?UCtEQXpNcEltUjRFYzkyZTVqK1JKeHhCRU5zanJ2TDcyRk9KLzc1V05Ha1pp?=
+ =?utf-8?B?cW9QSmRBVXNRQkpoQmYwa0NDNytTV1BkUVlud3p4SVlxQzIyRGRtUW5oTDlV?=
+ =?utf-8?B?THF4eDRKdkhablluUUNqU1FTWE43cnlzL1pwcDNaUFE2aVlsbWU5bGtFbnJp?=
+ =?utf-8?B?ZHZCN1E1RENXbFdQbXVEQ0dGWGRydUVZTkhKc0FqRTdPS2pQbmFaNklHYk9Q?=
+ =?utf-8?B?N1hSdGVNbGNBendRdG5jMG5qRWRDcnFWdzh4YVdwNExJNmhBRmdmZUxBTUlM?=
+ =?utf-8?B?ZXZ0NXg3UFA0bjRwY1hGL0NtbnRNd09pa3pPVm43TTFaUlZLRnZsYW8xK1g0?=
+ =?utf-8?B?bVRaTGMzdm90SmovbmFyYmdCV2oxdkZmVllQMEQxbGNSY0g2cUFjdTJ2bkl5?=
+ =?utf-8?B?VGY5MlVYOE5DdW1MWVhheTY0ekQ5NU90cGU5bFBaOXdxS2szSnU4TkJNN2hG?=
+ =?utf-8?B?Sit5eFhxWDlYc3pIb0d2TEE2bU1Ta2lZSDlWWEFHMWt3QysrUmxvMnJFR2U1?=
+ =?utf-8?B?dmRySVFIM0RZbmQwK2Nsc2NYaWV6aVJ2bEZLK3A0VllOVHNFelJUcVoxMVdr?=
+ =?utf-8?B?a0o1eWJKWG1FdWJTNGFZcEhGY2hhLzlucE1mR2hFRGl5RXhIMVF4UXRHdXdq?=
+ =?utf-8?B?NWJYWXdsMy9XMDE0M05GcGNmYXBOM1hHbFdiM3N0aXVzNWVOaHJTcTE1cWI0?=
+ =?utf-8?B?T3RmREpkSVJUNkRENENNZkhPZkJsQy96TCtKTllvUVg2c2hkRCtjcUh4bDF5?=
+ =?utf-8?B?SERJS2xEZmIza2k4OXhPcGN2UVdESkFtcUFKelF4MHFubW5EMnpYTUVIRm00?=
+ =?utf-8?B?RldoSFNHZndPcUY4NnhHQUl1c2VkdFV4LzVZZ29iZHpkWU5nMjVkM0xVa3ZX?=
+ =?utf-8?B?UGc2VVQyWFN0dDVmS1YwWSt5QUQyT2hSWFpjRk5BNmFTVmpKSzFCa0Nnd2x5?=
+ =?utf-8?B?WFdkclprWjBPQjNjZk1uV0F5ZG01QndWQTRod1ZpRm40ZStadkllVGVIeGkr?=
+ =?utf-8?B?WG1pV2dRUkdqSUVTQ2RFK1JkODBNTGhrV3MvbWoveHhzcStOc21lbHZiemVJ?=
+ =?utf-8?B?Y1NKYWdQUEJTNERsVm9qUHFuanJCQnltTU9yTjZ0WktsSXBNYzV5V3dGVjFE?=
+ =?utf-8?B?MmgzalZiTk5CTEVxeTVNaW9DMDUyU0RzZUZsTHVUQjFaNlRZdkRoQVVxV3Y0?=
+ =?utf-8?B?Q1BvSjF3RW9waTBiYWdJSlhaMHdqR3FVOWJwNGVobUpIRWtlc1ZQOEJtekhv?=
+ =?utf-8?B?L09KbnR3OTRRVS9LWUJ2d3ZWc2tiTnp0NU5MOFpZVW1aOFprTm1PVit0LzU0?=
+ =?utf-8?B?b1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70e9cc82-490e-48b8-4717-08dd4f786f9f
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5772.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 17:28:04.6251 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5Mqamk5eN48J7Q+7jPRrqSR1l724yRjAOtjdstj+lmGSzjtkgWOonoLj303BLLcFGtarNRse2eAjJOdndZU6BlnaY+FjmMuSgdBfIdRpYyM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7470
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,165 +187,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Flow actions parameters in indirect actions list are created as
-read-only and shared between all flows that reference that indirect
-list.
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-If a flow rule needs to apply rule specific actions list parameters it
-does it with the indirect actions list conf parameter.
+On 17/02/2025 13:54, Anatoly Burakov wrote:
+> Currently, the architecture of IXGBE base driver is such that it uses
+> function pointers internally. These are not guaranteed to be valid in
+> secondary processes, which can lead to crashes. This patch prevents IXGBE
+> ethdev driver from calling into these functions.
+>
+> Bugzilla ID: 1575
+>
+> Fixes: af75078fece3 ("first public release")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>   doc/guides/nics/ixgbe.rst              |  14 ++
+>   drivers/net/intel/ixgbe/ixgbe_ethdev.c | 242 +++++++++++++++++++++++++
+>   2 files changed, 256 insertions(+)
+>
+<snip>
 
-The patch allows flow rule to set meter_mark init_color value when
-meter_mark action was created in indirect actions list.
-
-Example:
-
-// create indirect actions list with meter_mark flow action:
-testpmd> flow indirect_action 0 create action_id 10 ingress \
-  list actions meter_mark mtr_profile 20 \
-  mtr_state 1 mtr_color_mode 1 / end
-
-// create a flow specific meter_mark init_color configuration:
-testpmd> flow indirect_action 0 create action_id 11 flow_conf \
-   actions meter_mark_conf mtr_update_init_color red / end
-
-// queue a flow rule with indirect actions list
-// and flow specific configuration:
-testpmd> flow queue 0 create 0 template_table 1 pattern_template 0 \
-   actions_template 0 postpone no pattern eth / ipv4 / udp / end \
-   actions indirect_list handle 10 conf 11 / \
-   jump group 10 / end
-
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>
----
-v2: Fix commit log.
----
- app/test-pmd/cmdline_flow.c | 52 +++++++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 11 deletions(-)
-
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index e1720e54d7..6add4e56ec 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -62,6 +62,7 @@ enum index {
- 	COMMON_ACTIONS_TEMPLATE_ID,
- 	COMMON_TABLE_ID,
- 	COMMON_QUEUE_ID,
-+	COMMON_METER_COLOR_NAME,
- 
- 	/* TOP-level command. */
- 	ADD,
-@@ -556,7 +557,6 @@ enum index {
- 	ITEM_PPP_PROTO_ID,
- 	ITEM_METER,
- 	ITEM_METER_COLOR,
--	ITEM_METER_COLOR_NAME,
- 	ITEM_QUOTA,
- 	ITEM_QUOTA_STATE,
- 	ITEM_QUOTA_STATE_NAME,
-@@ -642,6 +642,8 @@ enum index {
- 	ACTION_METER_COLOR_RED,
- 	ACTION_METER_ID,
- 	ACTION_METER_MARK,
-+	ACTION_METER_MARK_CONF,
-+	ACTION_METER_MARK_CONF_COLOR,
- 	ACTION_METER_PROFILE,
- 	ACTION_METER_PROFILE_ID2PTR,
- 	ACTION_METER_POLICY,
-@@ -2270,6 +2272,7 @@ static const enum index next_action[] = {
- 	ACTION_METER,
- 	ACTION_METER_COLOR,
- 	ACTION_METER_MARK,
-+	ACTION_METER_MARK_CONF,
- 	ACTION_OF_DEC_NW_TTL,
- 	ACTION_OF_POP_VLAN,
- 	ACTION_OF_PUSH_VLAN,
-@@ -3235,6 +3238,12 @@ static const struct token token_list[] = {
- 		.call = parse_int,
- 		.comp = comp_queue_id,
- 	},
-+	[COMMON_METER_COLOR_NAME] = {
-+		.name = "color_name",
-+		.help = "meter color name",
-+		.call = parse_meter_color,
-+		.comp = comp_meter_color,
-+	},
- 	/* Top-level command. */
- 	[FLOW] = {
- 		.name = "flow",
-@@ -6280,17 +6289,11 @@ static const struct token token_list[] = {
- 		.name = "color",
- 		.help = "meter color",
- 		.next = NEXT(item_meter,
--			     NEXT_ENTRY(ITEM_METER_COLOR_NAME),
-+			     NEXT_ENTRY(COMMON_METER_COLOR_NAME),
- 			     item_param),
- 		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_meter_color,
- 					color)),
- 	},
--	[ITEM_METER_COLOR_NAME] = {
--		.name = "color_name",
--		.help = "meter color name",
--		.call = parse_meter_color,
--		.comp = comp_meter_color,
--	},
- 	[ITEM_QUOTA] = {
- 		.name = "quota",
- 		.help = "match quota",
-@@ -6856,6 +6859,23 @@ static const struct token token_list[] = {
- 		.next = NEXT(action_meter_mark),
- 		.call = parse_vc,
- 	},
-+	[ACTION_METER_MARK_CONF] = {
-+		.name = "meter_mark_conf",
-+		.help = "meter mark configuration",
-+		.priv = PRIV_ACTION(METER_MARK,
-+				    sizeof(struct rte_flow_action_meter_mark)),
-+		.next = NEXT(NEXT_ENTRY(ACTION_METER_MARK_CONF_COLOR)),
-+		.call = parse_vc,
-+	},
-+	[ACTION_METER_MARK_CONF_COLOR] = {
-+		.name = "mtr_update_init_color",
-+		.help = "meter update init color",
-+		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
-+			     NEXT_ENTRY(COMMON_METER_COLOR_NAME)),
-+		.args = ARGS(ARGS_ENTRY
-+			     (struct rte_flow_indirect_update_flow_meter_mark,
-+			      init_color)),
-+	},
- 	[ACTION_METER_PROFILE] = {
- 		.name = "mtr_profile",
- 		.help = "meter profile id to use",
-@@ -12375,8 +12395,8 @@ parse_meter_color(struct context *ctx, const struct token *token,
- 		  const char *str, unsigned int len, void *buf,
- 		  unsigned int size)
- {
--	struct rte_flow_item_meter_color *meter_color;
- 	unsigned int i;
-+	struct buffer *out = buf;
- 
- 	(void)token;
- 	(void)buf;
-@@ -12388,8 +12408,18 @@ parse_meter_color(struct context *ctx, const struct token *token,
- 		return -1;
- 	if (!ctx->object)
- 		return len;
--	meter_color = ctx->object;
--	meter_color->color = (enum rte_color)i;
-+	if (ctx->prev == ACTION_METER_MARK_CONF_COLOR) {
-+		struct rte_flow_action *action =
-+			out->args.vc.actions + out->args.vc.actions_n - 1;
-+		const struct arg *arg = pop_args(ctx);
-+
-+		if (!arg)
-+			return -1;
-+		*(int *)RTE_PTR_ADD(action->conf, arg->offset) = i;
-+	} else {
-+		((struct rte_flow_item_meter_color *)
-+			ctx->object)->color = (enum rte_color)i;
-+	}
- 	return len;
- }
- 
 -- 
-2.45.2
+Regards,
+Vladimir
 
