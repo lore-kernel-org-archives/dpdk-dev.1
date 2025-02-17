@@ -2,44 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C85C021A9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 13:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F02C021A9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 13:54:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CDC4402A0;
-	Mon, 17 Feb 2025 14:54:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 79350402C6;
+	Mon, 17 Feb 2025 14:54:18 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id A64E6400D5
- for <dev@dpdk.org>; Mon, 17 Feb 2025 14:54:14 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CA686402B5
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 14:54:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739800455; x=1771336455;
+ t=1739800457; x=1771336457;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=wMe/LLQxjIeEgzJLJ6r0OdvKeBn+CPH5ovW2wNs63AQ=;
- b=hUWPWCf1aUbJ0NW69akkbe8lk5mba5kHzXwLSIElwJIMOleCaFU6dq+f
- bKym54HCb0fJzgr1yGxFbaprX3k/m2E2xHLCoGttVFvCfpxIap1ls/tRl
- LzcngU3wPpjsL/eUvoDEbNUE4bVoorng2ZgzJ3TS77+/9zOypl+uLBGqG
- KgYZLdhjQA/kw2Qvj6O/Bg5izt7WlH6bABh55FoGMvn6RKm2RvJV/LQfk
- 9N5AkwKVpVh5QmEH7Sc/gcwGOj+HhIIOlHXTdOvJJ5Z/u4yz0kZqCEol+
- 7F+UcZGCMZnCkZcuxe2PUH9LIeVdiSOe6tD3qT1RNJN0n0DPPmQN+CzZ1 w==;
-X-CSE-ConnectionGUID: KwhSGtPBTbu78efaU8SoOA==
-X-CSE-MsgGUID: vBL0KNmvQya9n75YmhyVbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="39712995"
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; d="scan'208";a="39712995"
+ bh=Vl2AURd6umAtdlBYvLJtHJ0cXVOO1U5ZWq3UkVDDB1I=;
+ b=noRrTQ8bkU5clqw8EhOlCCqqFh4FBaDVgf99cIB7g94tijT9To1Z/izY
+ H5W/7XnqjYs4uIY3I7gkqZE5Prs8un1NdQchYhSq1SsDC7JE1I/ena5ui
+ 5SdDIKTE5hFzUCUo0ptCVnDQ3TfleL07AIaXna2oePPlsBlH4ac+6jBdC
+ lhSGn7L67GFqeia7zlvuo80f15pT5l4TdViIFrc5clcuCNAokxN07IcbG
+ ox9zKHF3AbBtIqkBEn964LIyG7LfURnPVBN2fYyg2x/x5bReaHlayOak+
+ Uzl6kb33ktrQAKeAzKgyREVsAW30nYPE/pq0OVGTn6+NCCOsjJrrXH1O+ A==;
+X-CSE-ConnectionGUID: E8Xuk5xtQbWFwNEQgIgoEg==
+X-CSE-MsgGUID: fIGciQgxSwug3HX3BT7xlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="39712999"
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; d="scan'208";a="39712999"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Feb 2025 05:54:14 -0800
-X-CSE-ConnectionGUID: QIUwdR6XQlyZyOFeI0f/7g==
-X-CSE-MsgGUID: TE5G2zMoRIOLKZoWgFtUwA==
+ 17 Feb 2025 05:54:16 -0800
+X-CSE-ConnectionGUID: 27lhGbeuQgmRaPlzohwPIw==
+X-CSE-MsgGUID: ex4QVo17S+aR6c1+fNSqgw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="115015602"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="115015615"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa008.jf.intel.com with ESMTP; 17 Feb 2025 05:54:13 -0800
+ by orviesa008.jf.intel.com with ESMTP; 17 Feb 2025 05:54:14 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v2 2/4] net/e1000: prevent crashes in secondary processes
-Date: Mon, 17 Feb 2025 13:54:06 +0000
-Message-ID: <826ae61846fe7a60ef9ce55917d21292b1ce3a6a.1739800426.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Alvin Zhang <alvinx.zhang@intel.com>,
+ Ferruh Yigit <ferruh.yigit@intel.com>
+Subject: [PATCH v2 3/4] net/e1000: prevent crashes in secondary processes
+Date: Mon, 17 Feb 2025 13:54:07 +0000
+Message-ID: <421d8b0458f2ab9912413705247cef7b1c593ff4.1739800426.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cd3ef1f143afdef81cf7086bf0e6a3e49c43fbff.1739800426.git.anatoly.burakov@intel.com>
 References: <3c323577ce36cf4425d2c2def85d0d6644b87dc8.1734020337.git.anatoly.burakov@intel.com>
@@ -60,76 +61,46 @@ Errors-To: dev-bounces@dpdk.org
 
 Currently, the architecture of e1000 base driver is such that it uses
 function pointers internally. These are not guaranteed to be valid in
-secondary processes, which can lead to crashes. This patch prevents IGB
+secondary processes, which can lead to crashes. This patch prevents IGC
 ethdev driver from calling into these functions.
 
-Fixes: af75078fece3 ("first public release")
+Fixes: 4f09bc55ac3d ("net/igc: implement device base operations")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- doc/guides/nics/igb.rst              |  13 ++
- drivers/net/intel/e1000/igb_ethdev.c | 176 +++++++++++++++++++++++++++
- 2 files changed, 189 insertions(+)
+ doc/guides/nics/igc.rst              |  5 ++
+ drivers/net/intel/e1000/igc_ethdev.c | 97 ++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+)
 
-diff --git a/doc/guides/nics/igb.rst b/doc/guides/nics/igb.rst
-index e3a91c316b..3f7a4156ff 100644
---- a/doc/guides/nics/igb.rst
-+++ b/doc/guides/nics/igb.rst
-@@ -31,3 +31,16 @@ Features of the IGB PMD are:
- * Checksum offload
- * TCP segmentation offload
- * Jumbo frames supported
+diff --git a/doc/guides/nics/igc.rst b/doc/guides/nics/igc.rst
+index c267431c5f..9790b58102 100644
+--- a/doc/guides/nics/igc.rst
++++ b/doc/guides/nics/igc.rst
+@@ -104,3 +104,8 @@ Add a rule to enable ipv4-udp RSS:
+ .. code-block:: console
+ 
+    testpmd> flow create 0 ingress pattern end actions rss types ipv4-udp end / end
 +
 +Secondary Process Support
 +-------------------------
 +
-+IGB Physical Function Driver
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
 +Control plane operations are currently not supported in secondary processes.
-+
-+IGB Virtual Function Driver
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Control plane operations are currently not supported in secondary processes.
-diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
-index be3123572f..cbd2f15f5f 100644
---- a/drivers/net/intel/e1000/igb_ethdev.c
-+++ b/drivers/net/intel/e1000/igb_ethdev.c
-@@ -1248,6 +1248,14 @@ eth_igb_start(struct rte_eth_dev *dev)
+diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+index 136f5af2a0..e712cfcf7c 100644
+--- a/drivers/net/intel/e1000/igc_ethdev.c
++++ b/drivers/net/intel/e1000/igc_ethdev.c
+@@ -12,6 +12,7 @@
+ #include <ethdev_pci.h>
+ #include <rte_malloc.h>
+ #include <rte_alarm.h>
++#include <rte_errno.h>
  
- 	PMD_INIT_FUNC_TRACE();
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	/* disable uio/vfio intr/eventfd mapping */
- 	rte_intr_disable(intr_handle);
- 
-@@ -1471,6 +1479,14 @@ eth_igb_stop(struct rte_eth_dev *dev)
- 	struct e1000_adapter *adapter =
- 		E1000_DEV_PRIVATE(dev->data->dev_private);
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	if (adapter->stopped)
- 		return 0;
- 
-@@ -1524,6 +1540,14 @@ eth_igb_dev_set_link_up(struct rte_eth_dev *dev)
+ #include "e1000_logs.h"
+ #include "igc_txrx.h"
+@@ -397,6 +398,14 @@ eth_igc_set_link_up(struct rte_eth_dev *dev)
  {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -142,9 +113,9 @@ index be3123572f..cbd2f15f5f 100644
  	if (hw->phy.media_type == e1000_media_type_copper)
  		e1000_power_up_phy(hw);
  	else
-@@ -1537,6 +1561,14 @@ eth_igb_dev_set_link_down(struct rte_eth_dev *dev)
+@@ -409,6 +418,14 @@ eth_igc_set_link_down(struct rte_eth_dev *dev)
  {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -157,22 +128,7 @@ index be3123572f..cbd2f15f5f 100644
  	if (hw->phy.media_type == e1000_media_type_copper)
  		e1000_power_down_phy(hw);
  	else
-@@ -2158,6 +2190,14 @@ eth_igb_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
- 	struct e1000_fw_version fw;
- 	int ret;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	e1000_get_fw_version(hw, &fw);
- 
- 	switch (hw->mac.type) {
-@@ -2406,6 +2446,14 @@ eth_igb_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+@@ -482,6 +499,14 @@ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
  	struct rte_eth_link link;
  	int link_check, count;
  
@@ -187,9 +143,9 @@ index be3123572f..cbd2f15f5f 100644
  	link_check = 0;
  	hw->mac.get_link_status = 1;
  
-@@ -3028,6 +3076,14 @@ eth_igb_led_on(struct rte_eth_dev *dev)
- {
- 	struct e1000_hw *hw;
+@@ -659,6 +684,14 @@ eth_igc_stop(struct rte_eth_dev *dev)
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct rte_eth_link link;
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -199,102 +155,27 @@ index be3123572f..cbd2f15f5f 100644
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	return e1000_led_on(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
- }
-@@ -3037,6 +3093,14 @@ eth_igb_led_off(struct rte_eth_dev *dev)
- {
- 	struct e1000_hw *hw;
+ 	dev->data->dev_started = 0;
+ 	adapter->stopped = 1;
  
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	return e1000_led_off(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
- }
-@@ -3099,6 +3163,14 @@ eth_igb_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
- 	uint32_t rctl;
- 	uint32_t ctrl;
+@@ -970,6 +1003,14 @@ eth_igc_start(struct rte_eth_dev *dev)
  
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	if (fc_conf->autoneg != hw->mac.autoneg)
- 		return -ENOTSUP;
-@@ -3185,6 +3257,14 @@ eth_igb_rar_set(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr,
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	uint32_t rah;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	e1000_rar_set(hw, mac_addr->addr_bytes, index);
- 	rah = E1000_READ_REG(hw, E1000_RAH(index));
- 	rah |= (0x1 << (E1000_RAH_POOLSEL_SHIFT + pool));
-@@ -3198,6 +3278,14 @@ eth_igb_rar_clear(struct rte_eth_dev *dev, uint32_t index)
- 	uint8_t addr[RTE_ETHER_ADDR_LEN];
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return;
-+
- 	memset(addr, 0, sizeof(addr));
- 
- 	e1000_rar_set(hw, addr, index);
-@@ -3207,6 +3295,14 @@ static int
- eth_igb_default_mac_addr_set(struct rte_eth_dev *dev,
- 				struct rte_ether_addr *addr)
- {
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	eth_igb_rar_clear(dev, 0);
- 	eth_igb_rar_set(dev, (void *)addr, 0, 0);
- 
-@@ -3340,6 +3436,14 @@ igbvf_dev_start(struct rte_eth_dev *dev)
- 	int ret;
- 	uint32_t intr_vector = 0;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
  	PMD_INIT_FUNC_TRACE();
  
- 	hw->mac.ops.reset_hw(hw);
-@@ -3396,6 +3500,14 @@ igbvf_dev_stop(struct rte_eth_dev *dev)
- 	struct e1000_adapter *adapter =
- 		E1000_DEV_PRIVATE(dev->data->dev_private);
++	/*
++	 * This function calls into the base driver, which in turn will use
++	 * function pointers, which are not guaranteed to be valid in secondary
++	 * processes, so avoid using this function in secondary processes.
++	 */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -E_RTE_SECONDARY;
++
+ 	/* disable all MSI-X interrupts */
+ 	E1000_WRITE_REG(hw, E1000_EIMC, 0x1f);
+ 	E1000_WRITE_FLUSH(hw);
+@@ -1553,6 +1594,14 @@ eth_igc_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
+ 	struct e1000_fw_version fw;
+ 	int ret;
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -304,12 +185,12 @@ index be3123572f..cbd2f15f5f 100644
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
- 	if (adapter->stopped)
- 		return 0;
+ 	e1000_get_fw_version(hw, &fw);
  
-@@ -3468,6 +3580,14 @@ igbvf_promiscuous_enable(struct rte_eth_dev *dev)
+ 	/* if option rom is valid, display its version too */
+@@ -1643,6 +1692,14 @@ eth_igc_led_on(struct rte_eth_dev *dev)
  {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -319,12 +200,12 @@ index be3123572f..cbd2f15f5f 100644
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
- 	/* Set both unicast and multicast promisc */
- 	e1000_promisc_set_vf(hw, e1000_promisc_enabled);
+ 	return e1000_led_on(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
+ }
  
-@@ -3479,6 +3599,14 @@ igbvf_promiscuous_disable(struct rte_eth_dev *dev)
+@@ -1651,6 +1708,14 @@ eth_igc_led_off(struct rte_eth_dev *dev)
  {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
  
 +	/*
 +	 * This function calls into the base driver, which in turn will use
@@ -334,106 +215,76 @@ index be3123572f..cbd2f15f5f 100644
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
- 	/* If in allmulticast mode leave multicast promisc */
- 	if (dev->data->all_multicast == 1)
- 		e1000_promisc_set_vf(hw, e1000_promisc_multicast);
-@@ -3493,6 +3621,14 @@ igbvf_allmulticast_enable(struct rte_eth_dev *dev)
- {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	return e1000_led_off(hw) == E1000_SUCCESS ? 0 : -ENOTSUP;
+ }
  
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	/* In promiscuous mode multicast promisc already set */
- 	if (dev->data->promiscuous == 0)
- 		e1000_promisc_set_vf(hw, e1000_promisc_multicast);
-@@ -3505,6 +3641,14 @@ igbvf_allmulticast_disable(struct rte_eth_dev *dev)
- {
- 	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	/* In promiscuous mode leave multicast promisc enabled */
- 	if (dev->data->promiscuous == 0)
- 		e1000_promisc_set_vf(hw, e1000_promisc_disabled);
-@@ -4608,6 +4752,14 @@ eth_igb_set_mc_addr_list(struct rte_eth_dev *dev,
- {
- 	struct e1000_hw *hw;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	e1000_update_mc_addr_list(hw, (u8 *)mc_addr_set, nb_mc_addr);
- 	return 0;
-@@ -5056,6 +5208,14 @@ eth_igb_get_eeprom(struct rte_eth_dev *dev,
- 	uint16_t *data = in_eeprom->data;
- 	int first, length;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	first = in_eeprom->offset >> 1;
- 	length = in_eeprom->length >> 1;
- 	if ((first >= hw->nvm.word_size) ||
-@@ -5080,6 +5240,14 @@ eth_igb_set_eeprom(struct rte_eth_dev *dev,
- 	uint16_t *data = in_eeprom->data;
- 	int first, length;
- 
-+	/*
-+	 * This function calls into the base driver, which in turn will use
-+	 * function pointers, which are not guaranteed to be valid in secondary
-+	 * processes, so avoid using this function in secondary processes.
-+	 */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -E_RTE_SECONDARY;
-+
- 	first = in_eeprom->offset >> 1;
- 	length = in_eeprom->length >> 1;
- 	if ((first >= hw->nvm.word_size) ||
-@@ -5180,6 +5348,10 @@ eth_igb_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+@@ -2194,6 +2259,10 @@ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
  	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	uint32_t vec = E1000_MISC_VEC_ID;
+ 	uint32_t vec = IGC_MISC_VEC_ID;
  
 +	/* device interrupts are only subscribed to in primary processes */
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
  	if (rte_intr_allow_others(intr_handle))
- 		vec = E1000_RX_VEC_START;
+ 		vec = IGC_RX_VEC_START;
  
-@@ -5200,6 +5372,10 @@ eth_igb_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+@@ -2213,6 +2282,10 @@ eth_igc_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
  	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	uint32_t vec = E1000_MISC_VEC_ID;
+ 	uint32_t vec = IGC_MISC_VEC_ID;
  
 +	/* device interrupts are only subscribed to in primary processes */
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
 +		return -E_RTE_SECONDARY;
 +
  	if (rte_intr_allow_others(intr_handle))
- 		vec = E1000_RX_VEC_START;
+ 		vec = IGC_RX_VEC_START;
  
+@@ -2276,6 +2349,14 @@ eth_igc_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ 	uint32_t rctl;
+ 	int err;
+ 
++	/*
++	 * This function calls into the base driver, which in turn will use
++	 * function pointers, which are not guaranteed to be valid in secondary
++	 * processes, so avoid using this function in secondary processes.
++	 */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -E_RTE_SECONDARY;
++
+ 	if (fc_conf->autoneg != hw->mac.autoneg)
+ 		return -ENOTSUP;
+ 
+@@ -2777,6 +2858,14 @@ eth_igc_timesync_read_rx_timestamp(__rte_unused struct rte_eth_dev *dev,
+ 	struct igc_rx_queue *rxq;
+ 	uint64_t rx_timestamp;
+ 
++	/*
++	 * This function calls into the base driver, which in turn will use
++	 * function pointers, which are not guaranteed to be valid in secondary
++	 * processes, so avoid using this function in secondary processes.
++	 */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -E_RTE_SECONDARY;
++
+ 	/* Get current link speed. */
+ 	eth_igc_link_update(dev, 1);
+ 	rte_eth_linkstatus_get(dev, &link);
+@@ -2813,6 +2902,14 @@ eth_igc_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 	uint64_t tx_timestamp;
+ 	int adjust = 0;
+ 
++	/*
++	 * This function calls into the base driver, which in turn will use
++	 * function pointers, which are not guaranteed to be valid in secondary
++	 * processes, so avoid using this function in secondary processes.
++	 */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -E_RTE_SECONDARY;
++
+ 	val = E1000_READ_REG(hw, E1000_TSYNCTXCTL);
+ 	if (!(val & E1000_TSYNCTXCTL_VALID))
+ 		return -EINVAL;
 -- 
 2.43.5
 
