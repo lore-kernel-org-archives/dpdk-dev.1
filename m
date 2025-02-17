@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97978C021A9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 18:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F32C021AA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Feb 2025 18:58:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3072C40653;
-	Mon, 17 Feb 2025 19:58:05 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 78E734042F
- for <dev@dpdk.org>; Mon, 17 Feb 2025 19:58:00 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-220e83d65e5so69444635ad.1
- for <dev@dpdk.org>; Mon, 17 Feb 2025 10:58:00 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 45F234066C;
+	Mon, 17 Feb 2025 19:58:06 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2EB88402E5
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 19:58:01 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-22101839807so52762715ad.3
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 10:58:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739818680;
  x=1740423480; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=NKF/uEbxOyRaV8cHNMiprNcICe8xejq4bqzXCu4xLg4=;
- b=0+Y6JW1qWOJ7kaF5lvqrJ2OgSOuGYctZysQToImFGdL1/jeWyi11THdCumiQqmRuR+
- D+CRG45IBpJ7/SHxOOsZAxzxOEjJ2rGnJHw2FzvhBBaCp2q3dWemj6pcMbQ/6yyxrp7s
- SnLreoffzr+imAdlVUSky2U1VfQlp2oZMTypqApO/WioH5K5ZMWSqarkMJEMWBRAd44R
- p0wTVzUu2PpGsrGIV3U57YuRAdJRvwwe62M1WYKz8GrEq//Bklqr1jA1jZJhpV/EUXtn
- 6Nqc66Hp2jHIu7NdedatPpBgy69k9/c3U6ZsP8MbD+Zjc3mMuErQq3h+O+jTy+Bh4H4B
- xiEw==
+ bh=1lNQycMbkBB3vhI3IytwM6LSWOou66F+K4PaW2XhHdA=;
+ b=tsm9XrjIltoWJMTKGDPsgNGpxi8XIdUzLujlcJXNeGTBQa8Nb1bZ6fuu+Xj9VECEt4
+ h+lIU1AQV5Sgm93bUedpPiNeO/dQ26fhnyyYlf4jW6jG6aHGPT3YpJhoS3pF1ZMNA6N4
+ H6C3FQl/0WSXr7+aINIu5kAn4+o1sRMsEA0FoSMMqfCvcHE+ttUuDMCjnf3yS3dGybnd
+ gJ7ZccYHh4/IqhJc9nUgW0FtlX+yGy1hHhdnWKSe/KaBMqO04hTDLK3jUP1ZosFerID5
+ VapeDOhsuVHNPj//iKv/wO6FLxelRsKLoOfetGKSEvbxuMCm5JnTVU0CjBlEUVUZRGiW
+ 4C4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1739818680; x=1740423480;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=NKF/uEbxOyRaV8cHNMiprNcICe8xejq4bqzXCu4xLg4=;
- b=sZRAxaUnPR+qLqjjzzeomOssMyGeVPoRCAdCWJpqcBIlHBITsCP4MJ+CM7atcrAgDH
- DEJy8Lw7bNr0jzZRzIgOpwBXg/+Khx2QwTUYFEnHqh5OcD1ulgrjXebCE5WQYV1OQDkE
- +M5VdT7uXBDxGCsBW8w6s3cympdl4x71Z8dOdAcPBDCkbuIZF09/BaLPPiUgF3K+828v
- cvfIjqE8z5439tq5+ExKXu2lWxPqvVQPeeggSrp8D3SOLe7r3rCS+p1ITQgIBazbN0tF
- pYxe3ef2Gly1ZwzMQniZg1z5WoZ0DZeSKn/VTtykfAsrDL0IDTbIXkMDt8wkfHkadkIj
- tupA==
-X-Gm-Message-State: AOJu0YxbtSMTIsTBGTswCm/J+ooubHlfh6OttPF7WlilVggHIF/rZIKR
- gUBc5IHFNlz1qXQXltB+7xZWTl2OoKg6uFhHykACRQGR/BkCtcLF/Zt57tUX7qEM6+ZJSRKuEuD
- 8mhE=
-X-Gm-Gg: ASbGncvAzywQTSlMr1vO5X0ZfCxAYZuGLk0eUXQmsL45YUKF51eu9sTn1GzFtFY+XAY
- ecg8vocDIFL4NCFYCoxXdbGz4xtoOjnPfrmmp0bbtxtgir6VXEXt+C4xLbZZj4c6mIUPN70d6+G
- 2Z8pQudxta04McXHThcBauYJNcIiASFcf+A0yGlh33Y5huwn4Fb5uhwPlYgGMKWfR+wKmpSQd7f
- x3GATk3sZm9JQcdy5DHK0DQVENWGoKp0AMwrzAJI3A2mpu0KhxX+Z4TI8XCOwr/tGd//Om0l0sQ
- YYl8zneZ3Auh+gV6bXRa3iUjOx5MA9Waax4EiriqWbXKnzN9wQ4Wgdh1TLk8ZEoIUNDu
-X-Google-Smtp-Source: AGHT+IHedpBB0DON0utdyFpoFgkgqqyebT0g6Pg1Oe/oGWizbTfNNz6xdMEPjxDqZbkJwHeGQ/49vQ==
-X-Received: by 2002:a17:902:e843:b0:220:f869:1e6e with SMTP id
- d9443c01a7336-221040ac24dmr176114235ad.38.1739818679591; 
- Mon, 17 Feb 2025 10:57:59 -0800 (PST)
+ bh=1lNQycMbkBB3vhI3IytwM6LSWOou66F+K4PaW2XhHdA=;
+ b=qdct30yeany5YQxDDMsaLicGlPomNTzZPtxYoB17yiskmwDrwoddJ4NQ6zMEc/mHu/
+ ZQ1rPFHATEapFPooUV22AN4JDtJs17aetXf97rGTXSlggqRnm2jBZhRGn/sdCmpZJ3Ef
+ ohyEN1eNc+18VvYzV+qFV/Umy0wdIY0Nk9DDgJ0smzspPvN9AYeeGDSZMr7A0YR30Sor
+ 9NazjD8KmnjJXxyQgNhsXlSlbthdaYTFpySYtPyhtYKphz8j7o78NgngUtk6OLwVt71Q
+ bLq9n2fG23M62z47CZR07auwnr3vS/boSkxueus6t/VFiE1vPhpKpneomN1sjCuiqRb2
+ Z+Kg==
+X-Gm-Message-State: AOJu0YxUu/AmtP6mb2MpkLul9jegRFpi0ST/AWWl8CtePZqt/uxfS7MW
+ nqKJD+Dq7iJ9kL6NcDBhSre3jRoRnvxxXF4vKTo5P4CAjywTzuZuq33ycvGTiNYQ5jzChk+Y/Kg
+ PYwg=
+X-Gm-Gg: ASbGncuTP96cosMu3nar/xjcCVce0ycKhkyFjidDFJUgd3KmT+M8PouaTjDxYbDGRlo
+ Ugby7mnfF1bYDO2E6YXXLQ4RP1Ij1W4eFQTpmwHurR4yAGJYT5wuhHedcLBWC8vBcTj/Byr3Kr4
+ b6+C0MpvTm1hRzgMIH5g0rBEcBi4DnFjR9XSrKPHMJzg+/VtVk0Xmrq6wZ5WOdGqjaZtGRyPxPB
+ D3VZmz4GP6ZD0A5f4x9nI8TS5X5C5vkZy0ZitMEEpvYOxnLlhn2b0eB6PMtfpZqzQcMnIRSigHY
+ MsPG5D/OoZFTUjPrCkygQoSOOdA6JMRLDlhQ0nshQMXMJpUjXUWlLFxvtG/PTnD4qrBY
+X-Google-Smtp-Source: AGHT+IGEZNTsZ67uzLskDiAxwC3DeWTmXgXL4CwsoLhn7cYWiHUosrj47OmVwAdzuOd98QoucmSkxw==
+X-Received: by 2002:a05:6a21:164a:b0:1ee:7714:61 with SMTP id
+ adf61e73a8af0-1ee8caab64dmr17839887637.4.1739818680377; 
+ Mon, 17 Feb 2025 10:58:00 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-adb57c5dc68sm7815149a12.9.2025.02.17.10.57.58
+ 41be03b00d2f7-adb57c5dc68sm7815149a12.9.2025.02.17.10.57.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 17 Feb 2025 10:57:59 -0800 (PST)
+ Mon, 17 Feb 2025 10:58:00 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 07/11] compressdev: remove unnecessary deref of function pointers
-Date: Mon, 17 Feb 2025 10:54:06 -0800
-Message-ID: <20250217185743.169778-8-stephen@networkplumber.org>
+Subject: [RFC 08/11] dmadev: remove unnecessary deref of function pointers
+Date: Mon, 17 Feb 2025 10:54:07 -0800
+Message-ID: <20250217185743.169778-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250217185743.169778-1-stephen@networkplumber.org>
 References: <20250217185743.169778-1-stephen@networkplumber.org>
@@ -80,215 +80,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The expression *dev->dev_ops->dev_info_gets and dev->dev_ops->info_get
-are equivalent.
+The expression *dev->dev_ops->dev_info_get and
+dev->dev_ops->dev_info_get are equivalent.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/compressdev/rte_compressdev.c | 56 +++++++++++++++----------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+ lib/dmadev/rte_dmadev.c | 38 +++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-diff --git a/lib/compressdev/rte_compressdev.c b/lib/compressdev/rte_compressdev.c
-index cf2c20a704..1fc4661ef0 100644
---- a/lib/compressdev/rte_compressdev.c
-+++ b/lib/compressdev/rte_compressdev.c
-@@ -316,9 +316,9 @@ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
+diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
+index 8bb7824aa1..4a075ee1c6 100644
+--- a/lib/dmadev/rte_dmadev.c
++++ b/lib/dmadev/rte_dmadev.c
+@@ -443,11 +443,10 @@ rte_dma_info_get(int16_t dev_id, struct rte_dma_info *dev_info)
+ 		return -EINVAL;
+ 	dev = &rte_dma_devices[dev_id];
  
- 	memset(&dev_info, 0, sizeof(struct rte_compressdev_info));
- 
--	if (*dev->dev_ops->dev_infos_get == NULL)
-+	if (dev->dev_ops->dev_infos_get == NULL)
+-	if (*dev->dev_ops->dev_info_get == NULL)
++	if (dev->dev_ops->dev_info_get == NULL)
  		return -ENOTSUP;
--	(*dev->dev_ops->dev_infos_get)(dev, &dev_info);
-+	dev->dev_ops->dev_infos_get(dev, &dev_info);
+ 	memset(dev_info, 0, sizeof(struct rte_dma_info));
+-	ret = (*dev->dev_ops->dev_info_get)(dev, dev_info,
+-					    sizeof(struct rte_dma_info));
++	ret = dev->dev_ops->dev_info_get(dev, dev_info, sizeof(struct rte_dma_info));
+ 	if (ret != 0)
+ 		return ret;
  
- 	if ((dev_info.max_nb_queue_pairs != 0) &&
- 			(nb_qpairs > dev_info.max_nb_queue_pairs)) {
-@@ -346,11 +346,11 @@ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
- 
- 		qp = dev->data->queue_pairs;
- 
--		if (*dev->dev_ops->queue_pair_release == NULL)
-+		if (dev->dev_ops->queue_pair_release == NULL)
- 			return -ENOTSUP;
- 
- 		for (i = nb_qpairs; i < old_nb_queues; i++) {
--			ret = (*dev->dev_ops->queue_pair_release)(dev, i);
-+			ret = dev->dev_ops->queue_pair_release(dev, i);
- 			if (ret < 0)
- 				return ret;
- 		}
-@@ -397,11 +397,11 @@ rte_compressdev_queue_pairs_release(struct rte_compressdev *dev)
- 	COMPRESSDEV_LOG(DEBUG, "Free %d queues pairs on device %u",
- 			dev->data->nb_queue_pairs, dev->data->dev_id);
- 
--	if (*dev->dev_ops->queue_pair_release == NULL)
-+	if (dev->dev_ops->queue_pair_release == NULL)
- 		return -ENOTSUP;
- 
- 	for (i = 0; i < num_qps; i++) {
--		ret = (*dev->dev_ops->queue_pair_release)(dev, i);
-+		ret = dev->dev_ops->queue_pair_release(dev, i);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -432,7 +432,7 @@ rte_compressdev_configure(uint8_t dev_id, struct rte_compressdev_config *config)
- 		return -EBUSY;
+@@ -510,10 +509,9 @@ rte_dma_configure(int16_t dev_id, const struct rte_dma_conf *dev_conf)
+ 		return -EINVAL;
  	}
  
 -	if (*dev->dev_ops->dev_configure == NULL)
 +	if (dev->dev_ops->dev_configure == NULL)
  		return -ENOTSUP;
+-	ret = (*dev->dev_ops->dev_configure)(dev, dev_conf,
+-					     sizeof(struct rte_dma_conf));
++	ret = dev->dev_ops->dev_configure(dev, dev_conf, sizeof(struct rte_dma_conf));
+ 	if (ret == 0)
+ 		memcpy(&dev->data->dev_conf, dev_conf,
+ 		       sizeof(struct rte_dma_conf));
+@@ -546,7 +544,7 @@ rte_dma_start(int16_t dev_id)
+ 	if (dev->dev_ops->dev_start == NULL)
+ 		goto mark_started;
  
- 	/* Setup new number of queue pairs and reconfigure device. */
-@@ -445,7 +445,7 @@ rte_compressdev_configure(uint8_t dev_id, struct rte_compressdev_config *config)
- 		return diag;
+-	ret = (*dev->dev_ops->dev_start)(dev);
++	ret = dev->dev_ops->dev_start(dev);
+ 	rte_dma_trace_start(dev_id, ret);
+ 	if (ret != 0)
+ 		return ret;
+@@ -574,7 +572,7 @@ rte_dma_stop(int16_t dev_id)
+ 	if (dev->dev_ops->dev_stop == NULL)
+ 		goto mark_stopped;
+ 
+-	ret = (*dev->dev_ops->dev_stop)(dev);
++	ret = dev->dev_ops->dev_stop(dev);
+ 	rte_dma_trace_stop(dev_id, ret);
+ 	if (ret != 0)
+ 		return ret;
+@@ -601,9 +599,9 @@ rte_dma_close(int16_t dev_id)
+ 		return -EBUSY;
  	}
- 
--	return (*dev->dev_ops->dev_configure)(dev, config);
-+	return dev->dev_ops->dev_configure(dev, config);
- }
- 
- int
-@@ -463,7 +463,7 @@ rte_compressdev_start(uint8_t dev_id)
- 
- 	dev = &rte_comp_devices[dev_id];
- 
--	if (*dev->dev_ops->dev_start == NULL)
-+	if (dev->dev_ops->dev_start == NULL)
- 		return -ENOTSUP;
- 
- 	if (dev->data->dev_started != 0) {
-@@ -472,7 +472,7 @@ rte_compressdev_start(uint8_t dev_id)
- 		return 0;
- 	}
- 
--	diag = (*dev->dev_ops->dev_start)(dev);
-+	diag = dev->dev_ops->dev_start(dev);
- 	if (diag == 0)
- 		dev->data->dev_started = 1;
- 	else
-@@ -493,7 +493,7 @@ rte_compressdev_stop(uint8_t dev_id)
- 
- 	dev = &rte_comp_devices[dev_id];
- 
--	if (*dev->dev_ops->dev_stop == NULL)
-+	if (dev->dev_ops->dev_stop == NULL)
- 		return;
- 
- 	if (dev->data->dev_started == 0) {
-@@ -502,7 +502,7 @@ rte_compressdev_stop(uint8_t dev_id)
- 		return;
- 	}
- 
--	(*dev->dev_ops->dev_stop)(dev);
-+	dev->dev_ops->dev_stop(dev);
- 	dev->data->dev_started = 0;
- }
- 
-@@ -532,9 +532,9 @@ rte_compressdev_close(uint8_t dev_id)
- 	if (retval < 0)
- 		return retval;
  
 -	if (*dev->dev_ops->dev_close == NULL)
 +	if (dev->dev_ops->dev_close == NULL)
  		return -ENOTSUP;
--	retval = (*dev->dev_ops->dev_close)(dev);
-+	retval = dev->dev_ops->dev_close(dev);
+-	ret = (*dev->dev_ops->dev_close)(dev);
++	ret = dev->dev_ops->dev_close(dev);
+ 	if (ret == 0)
+ 		dma_release(dev);
  
- 	if (retval < 0)
- 		return retval;
-@@ -571,10 +571,10 @@ rte_compressdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+@@ -698,10 +696,9 @@ rte_dma_vchan_setup(int16_t dev_id, uint16_t vchan,
  		return -EINVAL;
  	}
  
--	if (*dev->dev_ops->queue_pair_setup == NULL)
-+	if (dev->dev_ops->queue_pair_setup == NULL)
+-	if (*dev->dev_ops->vchan_setup == NULL)
++	if (dev->dev_ops->vchan_setup == NULL)
  		return -ENOTSUP;
+-	ret = (*dev->dev_ops->vchan_setup)(dev, vchan, conf,
+-					sizeof(struct rte_dma_vchan_conf));
++	ret = dev->dev_ops->vchan_setup(dev, vchan, conf, sizeof(struct rte_dma_vchan_conf));
+ 	rte_dma_trace_vchan_setup(dev_id, vchan, conf, ret);
  
--	return (*dev->dev_ops->queue_pair_setup)(dev, queue_pair_id,
-+	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id,
- 			max_inflight_ops, socket_id);
- }
- 
-@@ -618,9 +618,9 @@ rte_compressdev_stats_get(uint8_t dev_id, struct rte_compressdev_stats *stats)
- 	dev = &rte_comp_devices[dev_id];
- 	memset(stats, 0, sizeof(*stats));
+ 	return ret;
+@@ -723,11 +720,10 @@ rte_dma_stats_get(int16_t dev_id, uint16_t vchan, struct rte_dma_stats *stats)
+ 		return -EINVAL;
+ 	}
  
 -	if (*dev->dev_ops->stats_get == NULL)
 +	if (dev->dev_ops->stats_get == NULL)
  		return -ENOTSUP;
--	(*dev->dev_ops->stats_get)(dev, stats);
-+	dev->dev_ops->stats_get(dev, stats);
- 	return 0;
+ 	memset(stats, 0, sizeof(struct rte_dma_stats));
+-	return (*dev->dev_ops->stats_get)(dev, vchan, stats,
+-					  sizeof(struct rte_dma_stats));
++	return dev->dev_ops->stats_get(dev, vchan, stats, sizeof(struct rte_dma_stats));
  }
  
-@@ -636,9 +636,9 @@ rte_compressdev_stats_reset(uint8_t dev_id)
- 
- 	dev = &rte_comp_devices[dev_id];
+ int
+@@ -747,9 +743,9 @@ rte_dma_stats_reset(int16_t dev_id, uint16_t vchan)
+ 		return -EINVAL;
+ 	}
  
 -	if (*dev->dev_ops->stats_reset == NULL)
 +	if (dev->dev_ops->stats_reset == NULL)
- 		return;
--	(*dev->dev_ops->stats_reset)(dev);
-+	dev->dev_ops->stats_reset(dev);
+ 		return -ENOTSUP;
+-	ret = (*dev->dev_ops->stats_reset)(dev, vchan);
++	ret = dev->dev_ops->stats_reset(dev, vchan);
+ 	rte_dma_trace_stats_reset(dev_id, vchan, ret);
+ 
+ 	return ret;
+@@ -769,9 +765,9 @@ rte_dma_vchan_status(int16_t dev_id, uint16_t vchan, enum rte_dma_vchan_status *
+ 		return -EINVAL;
+ 	}
+ 
+-	if (*dev->dev_ops->vchan_status == NULL)
++	if (dev->dev_ops->vchan_status == NULL)
+ 		return -ENOTSUP;
+-	return (*dev->dev_ops->vchan_status)(dev, vchan, status);
++	return dev->dev_ops->vchan_status(dev, vchan, status);
  }
  
+ static const char *
+@@ -850,7 +846,7 @@ rte_dma_dump(int16_t dev_id, FILE *f)
+ 		dev->data->dev_conf.enable_silent ? "on" : "off");
  
-@@ -656,9 +656,9 @@ rte_compressdev_info_get(uint8_t dev_id, struct rte_compressdev_info *dev_info)
+ 	if (dev->dev_ops->dev_dump != NULL)
+-		ret = (*dev->dev_ops->dev_dump)(dev, f);
++		ret = dev->dev_ops->dev_dump(dev, f);
+ 	rte_dma_trace_dump(dev_id, f, ret);
  
- 	memset(dev_info, 0, sizeof(struct rte_compressdev_info));
- 
--	if (*dev->dev_ops->dev_infos_get == NULL)
-+	if (dev->dev_ops->dev_infos_get == NULL)
- 		return;
--	(*dev->dev_ops->dev_infos_get)(dev, dev_info);
-+	dev->dev_ops->dev_infos_get(dev, dev_info);
- 
- 	dev_info->driver_name = dev->device->driver->name;
- }
-@@ -676,9 +676,9 @@ rte_compressdev_private_xform_create(uint8_t dev_id,
- 	if (xform == NULL || priv_xform == NULL || dev == NULL)
- 		return -EINVAL;
- 
--	if (*dev->dev_ops->private_xform_create == NULL)
-+	if (dev->dev_ops->private_xform_create == NULL)
- 		return -ENOTSUP;
--	ret = (*dev->dev_ops->private_xform_create)(dev, xform, priv_xform);
-+	ret = dev->dev_ops->private_xform_create(dev, xform, priv_xform);
- 	if (ret < 0) {
- 		COMPRESSDEV_LOG(ERR,
- 			"dev_id %d failed to create private_xform: err=%d",
-@@ -700,7 +700,7 @@ rte_compressdev_private_xform_free(uint8_t dev_id, void *priv_xform)
- 	if (dev == NULL || priv_xform == NULL)
- 		return -EINVAL;
- 
--	if (*dev->dev_ops->private_xform_free == NULL)
-+	if (dev->dev_ops->private_xform_free == NULL)
- 		return -ENOTSUP;
- 	ret = dev->dev_ops->private_xform_free(dev, priv_xform);
- 	if (ret < 0) {
-@@ -726,9 +726,9 @@ rte_compressdev_stream_create(uint8_t dev_id,
- 	if (xform == NULL || dev == NULL || stream == NULL)
- 		return -EINVAL;
- 
--	if (*dev->dev_ops->stream_create == NULL)
-+	if (dev->dev_ops->stream_create == NULL)
- 		return -ENOTSUP;
--	ret = (*dev->dev_ops->stream_create)(dev, xform, stream);
-+	ret = dev->dev_ops->stream_create(dev, xform, stream);
- 	if (ret < 0) {
- 		COMPRESSDEV_LOG(ERR,
- 			"dev_id %d failed to create stream: err=%d",
-@@ -751,7 +751,7 @@ rte_compressdev_stream_free(uint8_t dev_id, void *stream)
- 	if (dev == NULL || stream == NULL)
- 		return -EINVAL;
- 
--	if (*dev->dev_ops->stream_free == NULL)
-+	if (dev->dev_ops->stream_free == NULL)
- 		return -ENOTSUP;
- 	ret = dev->dev_ops->stream_free(dev, stream);
- 	if (ret < 0) {
+ 	return ret;
 -- 
 2.47.2
 
