@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D6BC021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42369C021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DE3B40687;
-	Tue, 18 Feb 2025 17:32:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B9B7740695;
+	Tue, 18 Feb 2025 17:32:22 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 58DE740652
+ by mails.dpdk.org (Postfix) with ESMTP id 619EB40658
  for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:15 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 4B77420376E7; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4B77420376E7
+ id 57B0920376E8; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57B0920376E8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1739896334;
- bh=unQasv6UXRNIjBi2YSyxPO3HBiDYlPMb/4WVTqcvVWY=;
+ bh=jaf8IHbxA1OeStjJ5GJLM5EXMesSgLeWDrGHlc9auNk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=OsVILPhVarBJTPLGzsRN3xK9GDlvbG+mtzR/OYW61pg0L+xKekyT6I5CFoaQyygZm
- ctF/eCPTJhtTP6ad5vwPfz4csd5KrrUulY8Ahfc0t2DhLyxZEJE85haFSeaHpVdK41
- nW0pzzFXgZmOt5bsyLgOJxI6YJ/mMJygxADqJMJo=
+ b=KQfCWONe1xgx66yxX4jEIvuAmLvxxwmeJfqH0TqvM217LcSNjZqM8dK/94Jyxsrig
+ FSTIlvh42rk6xC8o/6n/fet+chalHcsMtBHk8Pznt3NWyCh4LyHSFehKAEcE8xvWGs
+ x/CxmeeQNX+cckOLRppcMAhNHEEtTLvuwiM97yR0=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v2 01/10] eal: add workaround for __builtin_constant_p
-Date: Tue, 18 Feb 2025 08:32:00 -0800
-Message-Id: <1739896329-1946-2-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v2 02/10] test_alarm: avoid warning about different qualifiers
+Date: Tue, 18 Feb 2025 08:32:01 -0800
+Message-Id: <1739896329-1946-3-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,59 +44,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There's no MSVC equivalent for compiler extension __builtin_constant_p.
-EAL already had __rte_constant which was used as a first attempt to
-workaround __builtin_constant_p when using MSVC. However, there are
-pieces of code that would benefit from being able to provide a default
-value to be used instead of it being always 0 like how it was done by
-__rte_constant.
+Compiling with MSVC results in the warning below:
 
-A new macro is added here allowing such default to be provided by the
-caller.
+app/test/test_alarm.c(54): warning C4090: 'function':
+    different '_Atomic' qualifiers
+
+The fix is to use a macro to explicitly drop the qualifier.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/eal/include/generic/rte_pause.h |  2 +-
- lib/eal/include/rte_common.h        | 12 ++++++++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ app/test/test_alarm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/lib/eal/include/generic/rte_pause.h b/lib/eal/include/generic/rte_pause.h
-index 968c0886d3..57e13807ea 100644
---- a/lib/eal/include/generic/rte_pause.h
-+++ b/lib/eal/include/generic/rte_pause.h
-@@ -130,7 +130,7 @@ rte_wait_until_equal_64(volatile uint64_t *addr, uint64_t expected,
-  *  rte_memory_order_acquire and rte_memory_order_relaxed.
-  */
- #define RTE_WAIT_UNTIL_MASKED(addr, mask, cond, expected, memorder) do { \
--	RTE_BUILD_BUG_ON(!__builtin_constant_p(memorder));               \
-+	RTE_BUILD_BUG_ON(!__rte_constant_with_default(memorder, 1));     \
- 	RTE_BUILD_BUG_ON((memorder) != rte_memory_order_acquire &&       \
- 		(memorder) != rte_memory_order_relaxed);                 \
- 	typeof(*(addr)) expected_value = (expected);                     \
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 3f77b7624e..6bdce70551 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -50,6 +50,18 @@ extern "C" {
- #define __rte_constant(e) __extension__(__builtin_constant_p(e))
- #endif
+diff --git a/app/test/test_alarm.c b/app/test/test_alarm.c
+index 9ed8c6f72c..6445f713fe 100644
+--- a/app/test/test_alarm.c
++++ b/app/test/test_alarm.c
+@@ -51,12 +51,12 @@ test_alarm(void)
+ 			 "Expected rte_eal_alarm_cancel to fail with null callback parameter");
  
-+/**
-+ * Determine if an expression's value is constant at compile time.
-+ * All compilers except MSVC will return 1 if the first argument is a
-+ * compile-time constant, and 0 otherwise. MSVC will just return the second
-+ * argument as a default value.
-+ */
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#define __rte_constant_with_default(e, def) def
-+#else
-+#define __rte_constant_with_default(e, def) __extension__(__builtin_constant_p(e))
-+#endif
-+
- /*
-  * RTE_TOOLCHAIN_GCC is defined if the target is built with GCC,
-  * while a host application (like pmdinfogen) may have another compiler.
+ 	/* check if can set a alarm for one second */
+-	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback, &triggered),
+-			    "Setting one second alarm failed");
++	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback,
++			    RTE_PTR_UNQUAL(&triggered)), "Setting one second alarm failed");
+ 
+ 	/* set a longer alarm that will be canceled. */
+-	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback, &later),
+-			    "Setting ten second alarm failed");
++	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback,
++			    RTE_PTR_UNQUAL(&later)), "Setting ten second alarm failed");
+ 
+ 	/* wait for alarm to happen */
+ 	while (rte_atomic_load_explicit(&triggered, rte_memory_order_acquire) == false)
+@@ -65,11 +65,11 @@ test_alarm(void)
+ 	TEST_ASSERT(!rte_atomic_load_explicit(&later, rte_memory_order_acquire),
+ 		    "Only one alarm should have fired.");
+ 
+-	ret = rte_eal_alarm_cancel(test_alarm_callback, &triggered);
++	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&triggered));
+ 	TEST_ASSERT(ret == 0 && rte_errno == ENOENT,
+ 		    "Canceling alarm after run ret %d: %s", ret, rte_strerror(rte_errno));
+ 
+-	ret = rte_eal_alarm_cancel(test_alarm_callback, &later);
++	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&later));
+ 	TEST_ASSERT(ret == 1, "Canceling ten second alarm failed %d: %s",
+ 		    ret, rte_strerror(rte_errno));
+ 
 -- 
 2.48.1.vfs.0.0
 
