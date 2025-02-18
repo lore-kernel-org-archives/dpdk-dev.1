@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D3FC021AD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8441C021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9FA9406BB;
-	Tue, 18 Feb 2025 17:32:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 39725406A2;
+	Tue, 18 Feb 2025 17:32:25 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 1355040654
+ by mails.dpdk.org (Postfix) with ESMTP id 2736F40658
  for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:16 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 8913D20376EC; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8913D20376EC
+ id A146520376EE; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A146520376EE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1739896334;
- bh=rifw1IyScKCgx/ZxTwA9tsFkppB/mtm2BWmVGJk/4Qk=;
+ bh=i+VwVkbdcjw5oZ6WP4cCGkYkY/ToiACDQEGhH/Sy6lc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=P+K1YjVJTblLoRYflcNaBJcN5KgmarDhcTeg0yv+P+HXN+lL+ZzbF7FZ98v5Y1pwQ
- OwYfVrizC9B9LwVjA1Y3R0+kC2SocE9BhlCBXIlc3Nc98mJEVE4yNUZr5e+fZdAeJa
- N0PQvulZ1rxHdpeVSmyyu5u7nCMYL+I1TOLZnyZQ=
+ b=hywm8NRWC5lB2D7UfX4NoWwQWvEn5PLe0sWIlvkMhmy/O3meKFyDMIYEAgaJF1V1e
+ 952QUCQ7kzXWDZe967atkU+XzjN2oyrKEqS2mgD5jZF3CVaz6w/JB2Qv3t1GYu34Dx
+ Cvf1Spx9XgdUP5WuM/TFqWQLlxtnCBUaLY7TCjiU=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v2 06/10] test-pmd: avoid non-constant initializer
-Date: Tue, 18 Feb 2025 08:32:05 -0800
-Message-Id: <1739896329-1946-7-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v2 08/10] test-pmd: declare lcore_count atomic
+Date: Tue, 18 Feb 2025 08:32:07 -0800
+Message-Id: <1739896329-1946-9-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,73 +44,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in errors like the one below:
+Compiling with MSVC results in the error below:
 
-app/test-pmd/cmdline_flow.c(8819): error C2099: initializer
-    is not a constant
+app/test/test_ring_perf.c(197): error C7712: address argument to atomic
+    operation must be a pointer to an atomic integer,
+    'volatile unsigned int *' is not valid
+
+The fix is to mark lcore_count as atomic.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/cmdline_flow.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ app/test/test_ring_perf.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index e1720e54d7..24323d8891 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -8812,8 +8812,6 @@ parse_vc_spec(struct context *ctx, const struct token *token,
- 		return -1;
- 	/* Parse parameter types. */
- 	switch (ctx->curr) {
--		static const enum index prefix[] = NEXT_ENTRY(COMMON_PREFIX);
--
- 	case ITEM_PARAM_IS:
- 		index = 0;
- 		objmask = 1;
-@@ -8828,7 +8826,7 @@ parse_vc_spec(struct context *ctx, const struct token *token,
- 		/* Modify next token to expect a prefix. */
- 		if (ctx->next_num < 2)
- 			return -1;
--		ctx->next[ctx->next_num - 2] = prefix;
-+		ctx->next[ctx->next_num - 2] = NEXT_ENTRY(COMMON_PREFIX);
- 		/* Fall through. */
- 	case ITEM_PARAM_MASK:
- 		index = 2;
-@@ -9270,7 +9268,6 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
- 			  const char *str, unsigned int len,
- 			  void *buf, unsigned int size)
- {
--	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_TYPE);
- 	struct action_rss_data *action_rss_data;
- 	unsigned int i;
+diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
+index 57cd04a124..366e256323 100644
+--- a/app/test/test_ring_perf.c
++++ b/app/test/test_ring_perf.c
+@@ -34,7 +34,7 @@ struct lcore_pair {
+ 	unsigned c1, c2;
+ };
  
-@@ -9296,7 +9293,7 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
- 	/* Repeat token. */
- 	if (ctx->next_num == RTE_DIM(ctx->next))
- 		return -1;
--	ctx->next[ctx->next_num++] = next;
-+	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_TYPE);
- 	if (!ctx->object)
- 		return len;
- 	action_rss_data = ctx->object;
-@@ -9314,7 +9311,6 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
- 			  const char *str, unsigned int len,
- 			  void *buf, unsigned int size)
- {
--	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_QUEUE);
- 	struct action_rss_data *action_rss_data;
- 	const struct arg *arg;
- 	int ret;
-@@ -9347,7 +9343,7 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
- 	/* Repeat token. */
- 	if (ctx->next_num == RTE_DIM(ctx->next))
- 		return -1;
--	ctx->next[ctx->next_num++] = next;
-+	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_QUEUE);
- end:
- 	if (!ctx->object)
- 		return len;
+-static volatile unsigned lcore_count = 0;
++static RTE_ATOMIC(unsigned int) lcore_count;
+ 
+ static void
+ test_ring_print_test_string(unsigned int api_type, int esize,
+@@ -193,11 +193,7 @@ enqueue_dequeue_bulk_helper(const unsigned int flag, struct thread_params *p)
+ 	unsigned int n_remaining;
+ 	const unsigned int bulk_n = bulk_sizes[p->ring_params->bulk_sizes_i];
+ 
+-#ifdef RTE_USE_C11_MEM_MODEL
+ 	if (rte_atomic_fetch_add_explicit(&lcore_count, 1, rte_memory_order_relaxed) + 1 != 2)
+-#else
+-	if (__sync_add_and_fetch(&lcore_count, 1) != 2)
+-#endif
+ 		while(lcore_count != 2)
+ 			rte_pause();
+ 
 -- 
 2.48.1.vfs.0.0
 
