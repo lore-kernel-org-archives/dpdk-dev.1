@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FF0C021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9C4C021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:33:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDFA940A6E;
-	Tue, 18 Feb 2025 17:32:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E607240A76;
+	Tue, 18 Feb 2025 17:32:28 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3CEFF40664
+ by mails.dpdk.org (Postfix) with ESMTP id 4CF2440666
  for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:16 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id B98F220376F0; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B98F220376F0
+ id 7D30720376EB; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D30720376EB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1739896334;
- bh=vn6GfQCAj2RrgB+geIVCJLKWwQ+rnpDq/5tPKQ2dz0g=;
+ bh=G0dkf1d7cFFXXRI0D6fp/4x/6xdg4Tu7/5qkGRBE9cs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VAmbZiuvvQVXFMCVzZLmZoBayUqllicfYlP3O1y42ZTis4h4cthktc1z7584O1tkt
- XMaZOKMkbmXQ0V7CgPtsZoCWB6F6bJyDK2dayJuIx9sPwBCZhOvB0xT1YdIt1LdH0X
- y+YMCsFsHsC6wMh5ELvIlGQvM5aGVSm0XC8RBAjs=
+ b=tDeKv1TVYn2CwVIUActv17K4QZpPRqDN9PcavJUCeSIazyczXsT2y8uBy2gbBTEF4
+ g5YBq62e6kuCHeXn3AJpkLAUdjEISOXRqUG0/g+GDNdJTAo8GCIoZu/E8YQiG1QoxF
+ fq78aq8SM8tLH9fsQUkojlOkzwDVmtYCsGfUysMQ=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org
-Subject: [PATCH v2 10/10] app: enable app directory to be compiled with MSVC
-Date: Tue, 18 Feb 2025 08:32:09 -0800
-Message-Id: <1739896329-1946-11-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org,
+	Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v2 05/10] test-pmd: avoid undefined behavior
+Date: Tue, 18 Feb 2025 08:32:04 -0800
+Message-Id: <1739896329-1946-6-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -43,45 +44,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enabled "app" directory to be compiled with MSVC along with all its
-contents.
+Compiling with MSVC results in warnings like below:
+
+app/test-pmd/cmdline.c(9023): warning C5101: use of preprocessor
+    directive in function-like macro argument list is undefined behavior
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/meson.build          | 4 ----
- app/test-pmd/meson.build | 4 +++-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ app/test-pmd/cmdline.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/app/meson.build b/app/meson.build
-index e2db888ae1..1798db3ae4 100644
---- a/app/meson.build
-+++ b/app/meson.build
-@@ -1,10 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017-2019 Intel Corporation
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 2afcf916c0..4f0b0340c8 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -9011,6 +9011,18 @@ static void cmd_dump_parsed(void *parsed_result,
+ }
  
--if is_ms_compiler
--    subdir_done()
--endif
--
- disable_apps = ',' + get_option('disable_apps')
- disable_apps = run_command(list_dir_globs, disable_apps, check: true).stdout().split()
+ static cmdline_parse_token_string_t cmd_dump_dump =
++#ifdef RTE_EXEC_ENV_WINDOWS
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_result, dump,
++		"dump_physmem#"
++		"dump_memzone#"
++		"dump_socket_mem#"
++		"dump_struct_sizes#"
++		"dump_ring#"
++		"dump_mempool#"
++		"dump_devargs#"
++		"dump_lcores#"
++		"dump_log_types");
++#else
+ 	TOKEN_STRING_INITIALIZER(struct cmd_dump_result, dump,
+ 		"dump_physmem#"
+ 		"dump_memzone#"
+@@ -9020,10 +9032,9 @@ static cmdline_parse_token_string_t cmd_dump_dump =
+ 		"dump_mempool#"
+ 		"dump_devargs#"
+ 		"dump_lcores#"
+-#ifndef RTE_EXEC_ENV_WINDOWS
+ 		"dump_trace#"
+-#endif
+ 		"dump_log_types");
++#endif
  
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index f1c36529b4..8e8863812a 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -3,7 +3,9 @@
- 
- # override default name to drop the hyphen
- name = 'testpmd'
--cflags += '-Wno-deprecated-declarations'
-+if cc.has_argument('-Wno-deprecated-declarations')
-+    cflags += '-Wno-deprecated-declarations'
-+endif
- sources = files(
-         '5tswap.c',
-         'cmdline.c',
+ static cmdline_parse_inst_t cmd_dump = {
+ 	.f = cmd_dump_parsed,  /* function to call */
 -- 
 2.48.1.vfs.0.0
 
