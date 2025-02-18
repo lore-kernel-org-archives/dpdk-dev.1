@@ -2,75 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12ECC021AD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8556C02198
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E08AF40648;
-	Tue, 18 Feb 2025 12:16:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F8514066A;
+	Tue, 18 Feb 2025 12:16:13 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id B8AB240648
- for <dev@dpdk.org>; Tue, 18 Feb 2025 12:15:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 016BF4065A
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 12:16:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739877360; x=1771413360;
+ t=1739877372; x=1771413372;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=f5n65BQHe8mgUHNrJ4bOoCsYaiR5xuxVk3zv8i7ORZg=;
- b=SHkKu0dL147cZLW3pKfcuwBmp9tvns94myX9VFL3Oya8kBgFPke6B2sY
- pW6JM4o5A7/N8al9hmhBOndQ8IPQsu3mLlVcm2TdMEK0Eyfu8emy5xjbJ
- XVljEK71DN6ZxiQax9gqGunnMFE/M8guQHynkhTbnD5Lxqmx4yGGIIH9N
- UaOfipGOorldJ/4w+OnWYJx7xG0+BQ4CHrDantpq/u2Xf0KmkSFC5WxxO
- 8KGo9nQnnxpQ3pGLaY7CnQMkqYTcyP7ErTYEijjFNPHdItw9ScVHSlDnZ
- fXnNwjTGe6q+elbJwscsCwWd0LeBE3w8LZ3Q0lRKwhXPcRLmbQ41ER8Ev g==;
-X-CSE-ConnectionGUID: yoFbVm4jR7uD+Yeaz6pLew==
-X-CSE-MsgGUID: xmmeYkrRRXuCdEtB3sAQjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780846"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780846"
+ bh=Ybi04Wlm/Oyus7opb8a9WuQIXNM4bwoO0dszGj+KFcw=;
+ b=eKxf99hUwo9wSIYYh9R70GLHHJo+d5pcsDUK1gHXMqHX67oFexWvsV3G
+ Ht3EYYyE+zAD9Jy8NxzymcWza20bVkaPzZ0Nt34EIiMLFYnRAXHSb9Dfj
+ Fauxh5vYI1us8H61r6o3kOe09Cd4yMwmhAx5oPzartcBB27Bs9PMG5Ivy
+ Zevh3nvlfBHjCMEbAwyGav7l83aXAnOgXk2UQoFnbRR6XT2Y9sf6JKVs/
+ fQEVfiUBnkus0quvaNtOg5ddMkbELb/vBjnZbNOxgwWYUwOJbpPPidWjt
+ ukRuLn5NrifS8A5h41kphMyj0j/1CtUc4MbBmwqUzWfy9YOB2fGkVdOMx A==;
+X-CSE-ConnectionGUID: 19KtOE/MQb6qUfnT9wcIeA==
+X-CSE-MsgGUID: TwiKqyYyRLyMyF1xYW+Qww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780856"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780856"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Feb 2025 03:15:58 -0800
-X-CSE-ConnectionGUID: KpD29CGWTU6q9Mq8fgMTCQ==
-X-CSE-MsgGUID: 0vXarYvzRK2WFIrSbOvEfA==
+ 18 Feb 2025 03:16:11 -0800
+X-CSE-ConnectionGUID: PbFO/h9XRt63+ULLZAOZ/g==
+X-CSE-MsgGUID: kOLr9yseSK+WfBZUQCW+2g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466304"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466381"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:15:48 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:15:57 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Fan Zhang <fanzhang.oss@gmail.com>,
- Ashish Gupta <ashish.gupta@marvell.com>, Akhil Goyal <gakhil@marvell.com>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- David Hunt <david.hunt@intel.com>, Kevin Laatz <kevin.laatz@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Byron Marohn <byron.marohn@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Jerin Jacob <jerinj@marvell.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Elena Agostini <eagostini@nvidia.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
+To: dev@dpdk.org, Nicolas Chautru <nicolas.chautru@intel.com>,
+ Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
  Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, Jiayu Hu <hujiayu.hu@foxmail.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Reshma Pattan <reshma.pattan@intel.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Hanxiao Li <li.hanxiao@zte.com.cn>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashish.gupta@marvell.com>,
+ Nagadheeraj Rottela <rnagadheeraj@marvell.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Vikas Gupta <vikas.gupta@broadcom.com>,
+ Ankur Dwivedi <adwivedi@marvell.com>,
+ Tejasree Kondoj <ktejasree@marvell.com>, Kai Ji <kai.ji@intel.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Srikanth Jampala <jsrikanth@marvell.com>,
+ Vamsi Attunuru <vattunuru@marvell.com>,
+ Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>,
+ Vidya Sagar Velumuri <vvelumuri@marvell.com>,
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
  Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Anoob Joseph <anoobj@marvell.com>, Volodymyr Fialko <vfialko@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>,
+ Pravin Pathak <pravin.pathak@intel.com>, Jerin Jacob <jerinj@marvell.com>,
+ Harry van Haaren <harry.van.haaren@intel.com>,
+ Ashwin Sekhar T K <asekhar@marvell.com>,
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Ian Stokes <ian.stokes@intel.com>, Long Li <longli@microsoft.com>,
+ Wei Hu <weh@microsoft.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
- Sachin Saxena <sachin.saxena@nxp.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Ori Kam <orika@nvidia.com>, Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v6 5/8] lib: reduce library dependencies
-Date: Tue, 18 Feb 2025 11:15:31 +0000
-Message-ID: <b6fd122e3b9d355024f5d392922ec849e65cf243.1739877266.git.anatoly.burakov@intel.com>
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Jakub Palider <jpalider@marvell.com>, Yong Zhang <zhang.yong25@zte.com.cn>,
+ Jingjing Wu <jingjing.wu@intel.com>, Liron Himi <lironh@marvell.com>,
+ Vijay Kumar Srivastava <vsrivast@xilinx.com>
+Subject: [PATCH v6 6/8] drivers: reduce driver dependencies
+Date: Tue, 18 Feb 2025 11:15:32 +0000
+Message-ID: <f678bf6f44bb18deecaad5cc6689cefee0d483ae.1739877266.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1739877265.git.anatoly.burakov@intel.com>
 References: <cover.1725462264.git.anatoly.burakov@intel.com>
@@ -92,613 +104,828 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Bruce Richardson <bruce.richardson@intel.com>
 
-Rather than having each library depend up on EAL + any extra libs, we
-can take advantage of recursive dependency support in meson and
-just assign the dependencies of each directory directly, rather than
-appending to the array. For libraries which only depend upon EAL, keep
-that as a default, but for libraries which depend upon even a single
-extra lib, that EAL dependency is unnecessary.
-
-Going further, we can identify using the find_duplicate_deps.py script
-any unnecessary deps in each library's list, and remove them to slim the
-dependency tree down.
-
-Reducing number of dependencies means that meson takes less time
-processing and deduplicating the dependency tree for each component, and
-also shrinks the dependency graph for DPDK itself.
+Remove any unnecessary dependencies from the driver dependency lists.
+This will give each driver a near-minimum set of required dependencies.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Reviewed-by: Rosen Xu <rosen.xu@intel.com>
 ---
- lib/argparse/meson.build     | 2 +-
- lib/bbdev/meson.build        | 2 +-
- lib/bitratestats/meson.build | 2 +-
- lib/bpf/meson.build          | 2 +-
- lib/cmdline/meson.build      | 2 +-
- lib/compressdev/meson.build  | 2 +-
- lib/cryptodev/meson.build    | 2 +-
- lib/dispatcher/meson.build   | 2 +-
- lib/distributor/meson.build  | 2 +-
- lib/dmadev/meson.build       | 2 --
- lib/eal/meson.build          | 5 +----
- lib/efd/meson.build          | 2 +-
- lib/ethdev/meson.build       | 2 +-
- lib/eventdev/meson.build     | 3 +--
- lib/fib/meson.build          | 4 +---
- lib/gpudev/meson.build       | 2 +-
- lib/graph/meson.build        | 2 +-
- lib/gro/meson.build          | 2 +-
- lib/gso/meson.build          | 2 +-
- lib/hash/meson.build         | 4 +---
- lib/ip_frag/meson.build      | 2 +-
- lib/ipsec/meson.build        | 2 +-
- lib/kvargs/meson.build       | 2 +-
- lib/latencystats/meson.build | 2 +-
- lib/lpm/meson.build          | 4 +---
- lib/mbuf/meson.build         | 2 +-
- lib/member/meson.build       | 2 +-
- lib/mempool/meson.build      | 2 +-
- lib/metrics/meson.build      | 2 +-
- lib/mldev/meson.build        | 2 +-
- lib/net/meson.build          | 2 +-
- lib/node/meson.build         | 2 +-
- lib/pcapng/meson.build       | 2 +-
- lib/pdcp/meson.build         | 2 +-
- lib/pdump/meson.build        | 2 +-
- lib/pipeline/meson.build     | 2 +-
- lib/port/meson.build         | 2 +-
- lib/power/meson.build        | 3 +--
- lib/rawdev/meson.build       | 2 --
- lib/rcu/meson.build          | 2 +-
- lib/regexdev/meson.build     | 2 +-
- lib/reorder/meson.build      | 2 +-
- lib/rib/meson.build          | 2 +-
- lib/ring/meson.build         | 1 -
- lib/sched/meson.build        | 2 +-
- lib/security/meson.build     | 2 +-
- lib/table/meson.build        | 2 +-
- lib/telemetry/meson.build    | 2 +-
- lib/vhost/meson.build        | 2 +-
- 49 files changed, 46 insertions(+), 62 deletions(-)
+ drivers/baseband/fpga_5gnr_fec/meson.build | 2 +-
+ drivers/baseband/fpga_lte_fec/meson.build  | 2 +-
+ drivers/baseband/la12xx/meson.build        | 2 +-
+ drivers/baseband/null/meson.build          | 2 +-
+ drivers/baseband/turbo_sw/meson.build      | 2 +-
+ drivers/bus/auxiliary/meson.build          | 2 --
+ drivers/bus/dpaa/meson.build               | 2 +-
+ drivers/bus/fslmc/meson.build              | 2 +-
+ drivers/bus/ifpga/meson.build              | 2 +-
+ drivers/bus/pci/meson.build                | 4 +---
+ drivers/bus/platform/meson.build           | 1 -
+ drivers/bus/uacce/meson.build              | 2 --
+ drivers/bus/vdev/meson.build               | 2 --
+ drivers/common/cnxk/meson.build            | 4 ++--
+ drivers/common/cpt/meson.build             | 2 +-
+ drivers/common/mlx5/meson.build            | 2 +-
+ drivers/common/zsda/meson.build            | 2 +-
+ drivers/compress/mlx5/meson.build          | 2 +-
+ drivers/compress/nitrox/meson.build        | 2 +-
+ drivers/compress/octeontx/meson.build      | 2 +-
+ drivers/crypto/bcmfs/meson.build           | 2 +-
+ drivers/crypto/cnxk/meson.build            | 2 +-
+ drivers/crypto/dpaa_sec/meson.build        | 2 +-
+ drivers/crypto/ipsec_mb/meson.build        | 2 +-
+ drivers/crypto/mlx5/meson.build            | 2 +-
+ drivers/crypto/nitrox/meson.build          | 2 +-
+ drivers/dma/cnxk/meson.build               | 2 +-
+ drivers/dma/dpaa/meson.build               | 2 +-
+ drivers/dma/dpaa2/meson.build              | 2 +-
+ drivers/dma/odm/meson.build                | 2 +-
+ drivers/dma/skeleton/meson.build           | 2 +-
+ drivers/event/cnxk/meson.build             | 2 +-
+ drivers/event/dlb2/meson.build             | 2 +-
+ drivers/event/dpaa2/meson.build            | 2 +-
+ drivers/event/octeontx/meson.build         | 3 +--
+ drivers/event/sw/meson.build               | 2 +-
+ drivers/mempool/cnxk/meson.build           | 2 +-
+ drivers/mempool/dpaa/meson.build           | 2 +-
+ drivers/mempool/dpaa2/meson.build          | 2 +-
+ drivers/mempool/octeontx/meson.build       | 2 +-
+ drivers/ml/cnxk/meson.build                | 2 +-
+ drivers/net/cnxk/meson.build               | 4 +---
+ drivers/net/intel/iavf/meson.build         | 2 +-
+ drivers/net/intel/ice/meson.build          | 2 +-
+ drivers/net/mana/meson.build               | 2 +-
+ drivers/net/mlx5/meson.build               | 2 +-
+ drivers/net/sfc/meson.build                | 2 +-
+ drivers/net/softnic/meson.build            | 2 +-
+ drivers/net/virtio/meson.build             | 2 +-
+ drivers/raw/cnxk_bphy/meson.build          | 2 +-
+ drivers/raw/cnxk_gpio/meson.build          | 2 +-
+ drivers/raw/gdtc/meson.build               | 2 +-
+ drivers/raw/ntb/meson.build                | 2 +-
+ drivers/raw/skeleton/meson.build           | 2 +-
+ drivers/regex/cn9k/meson.build             | 2 +-
+ drivers/regex/mlx5/meson.build             | 2 +-
+ drivers/vdpa/ifc/meson.build               | 2 +-
+ drivers/vdpa/meson.build                   | 3 +--
+ drivers/vdpa/mlx5/meson.build              | 2 +-
+ drivers/vdpa/sfc/meson.build               | 2 +-
+ 60 files changed, 57 insertions(+), 70 deletions(-)
 
-diff --git a/lib/argparse/meson.build b/lib/argparse/meson.build
-index b6a08ca049..96abc8766f 100644
---- a/lib/argparse/meson.build
-+++ b/lib/argparse/meson.build
-@@ -4,4 +4,4 @@
- sources = files('rte_argparse.c')
- headers = files('rte_argparse.h')
+diff --git a/drivers/baseband/fpga_5gnr_fec/meson.build b/drivers/baseband/fpga_5gnr_fec/meson.build
+index c3678d23eb..31b9e92fbb 100644
+--- a/drivers/baseband/fpga_5gnr_fec/meson.build
++++ b/drivers/baseband/fpga_5gnr_fec/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2020 Intel Corporation
  
--deps += ['log']
-+deps = ['log']
-diff --git a/lib/bbdev/meson.build b/lib/bbdev/meson.build
-index 07685e7578..2e68aa7873 100644
---- a/lib/bbdev/meson.build
-+++ b/lib/bbdev/meson.build
-@@ -11,4 +11,4 @@ sources = files('rte_bbdev.c')
- headers = files('rte_bbdev.h',
-         'rte_bbdev_pmd.h',
-         'rte_bbdev_op.h')
--deps += ['mbuf']
-+deps = ['mbuf']
-diff --git a/lib/bitratestats/meson.build b/lib/bitratestats/meson.build
-index ede7e0a579..8defcd53bf 100644
---- a/lib/bitratestats/meson.build
-+++ b/lib/bitratestats/meson.build
-@@ -3,4 +3,4 @@
+-deps += ['bus_vdev', 'ring', 'pci', 'bus_pci']
++deps += ['bus_vdev', 'bus_pci']
  
- sources = files('rte_bitrate.c')
- headers = files('rte_bitrate.h')
--deps += ['ethdev', 'metrics']
-+deps = ['metrics']
-diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
-index 28df7f469a..ba1d0cb1d0 100644
---- a/lib/bpf/meson.build
-+++ b/lib/bpf/meson.build
-@@ -33,7 +33,7 @@ headers = files('bpf_def.h',
-         'rte_bpf.h',
-         'rte_bpf_ethdev.h')
+ sources = files('rte_fpga_5gnr_fec.c')
  
--deps += ['mbuf', 'net', 'ethdev']
-+deps = ['ethdev']
+diff --git a/drivers/baseband/fpga_lte_fec/meson.build b/drivers/baseband/fpga_lte_fec/meson.build
+index 14e07826ef..fbf24755db 100644
+--- a/drivers/baseband/fpga_lte_fec/meson.build
++++ b/drivers/baseband/fpga_lte_fec/meson.build
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2019 Intel Corporation
  
- dep = dependency('libelf', required: false, method: 'pkg-config')
- if dep.found()
-diff --git a/lib/cmdline/meson.build b/lib/cmdline/meson.build
-index e38e05893a..b3b623156d 100644
---- a/lib/cmdline/meson.build
-+++ b/lib/cmdline/meson.build
-@@ -33,4 +33,4 @@ else
-     sources += files('cmdline_os_unix.c')
- endif
- 
--deps += ['net']
-+deps = ['net']
-diff --git a/lib/compressdev/meson.build b/lib/compressdev/meson.build
-index c80295dc0d..4b86955baf 100644
---- a/lib/compressdev/meson.build
-+++ b/lib/compressdev/meson.build
-@@ -16,4 +16,4 @@ driver_sdk_headers = files(
-         'rte_compressdev_pmd.h',
-         'rte_compressdev_internal.h',
-     )
--deps += ['kvargs', 'mbuf']
-+deps = ['mbuf']
-diff --git a/lib/cryptodev/meson.build b/lib/cryptodev/meson.build
-index 4734acf321..74e42ac700 100644
---- a/lib/cryptodev/meson.build
-+++ b/lib/cryptodev/meson.build
-@@ -20,4 +20,4 @@ driver_sdk_headers += files(
-         'cryptodev_pmd.h',
- )
- 
--deps += ['kvargs', 'mbuf', 'rcu', 'telemetry']
-+deps = ['mbuf', 'rcu']
-diff --git a/lib/dispatcher/meson.build b/lib/dispatcher/meson.build
-index 5e269b2d40..9de17765b5 100644
---- a/lib/dispatcher/meson.build
-+++ b/lib/dispatcher/meson.build
-@@ -12,4 +12,4 @@ cflags += no_wvla_cflag
- sources = files('rte_dispatcher.c')
- headers = files('rte_dispatcher.h')
- 
--deps += ['eventdev']
-+deps = ['eventdev']
-diff --git a/lib/distributor/meson.build b/lib/distributor/meson.build
-index 24988c5827..ba43273bc3 100644
---- a/lib/distributor/meson.build
-+++ b/lib/distributor/meson.build
-@@ -14,4 +14,4 @@ else
-     sources += files('rte_distributor_match_generic.c')
- endif
- headers = files('rte_distributor.h')
--deps += ['mbuf']
-+deps = ['mbuf']
-diff --git a/lib/dmadev/meson.build b/lib/dmadev/meson.build
-index e66dcb66b0..70b375f1cb 100644
---- a/lib/dmadev/meson.build
-+++ b/lib/dmadev/meson.build
-@@ -11,5 +11,3 @@ sources = files('rte_dmadev.c', 'rte_dmadev_trace_points.c')
- headers = files('rte_dmadev.h')
- indirect_headers += files('rte_dmadev_core.h', 'rte_dmadev_trace_fp.h')
- driver_sdk_headers += files('rte_dmadev_pmd.h')
--
--deps += ['telemetry']
-diff --git a/lib/eal/meson.build b/lib/eal/meson.build
-index e1d6c4cf17..d25443d097 100644
---- a/lib/eal/meson.build
-+++ b/lib/eal/meson.build
-@@ -14,10 +14,7 @@ subdir(exec_env)
- 
- subdir(arch_subdir)
- 
--deps += ['log', 'kvargs']
--if not is_windows
--    deps += ['telemetry']
--endif
-+deps = ['kvargs', 'telemetry']
- if dpdk_conf.has('RTE_USE_LIBBSD')
-     ext_deps += libbsd
- endif
-diff --git a/lib/efd/meson.build b/lib/efd/meson.build
-index 343f14e1f3..da0ee7f803 100644
---- a/lib/efd/meson.build
-+++ b/lib/efd/meson.build
-@@ -9,4 +9,4 @@ endif
- 
- sources = files('rte_efd.c')
- headers = files('rte_efd.h')
--deps += ['ring', 'hash']
-+deps = ['hash']
-diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
-index f1d2586591..fc53a9c309 100644
---- a/lib/ethdev/meson.build
-+++ b/lib/ethdev/meson.build
-@@ -53,7 +53,7 @@ if is_linux
-     )
- endif
- 
--deps += ['net', 'kvargs', 'meter', 'telemetry']
-+deps = ['net', 'meter']
- 
- if is_freebsd
-     annotate_locks = false
-diff --git a/lib/eventdev/meson.build b/lib/eventdev/meson.build
-index 71dea91727..a90bad6809 100644
---- a/lib/eventdev/meson.build
-+++ b/lib/eventdev/meson.build
-@@ -40,5 +40,4 @@ driver_sdk_headers += files(
-         'event_timer_adapter_pmd.h',
- )
- 
--deps += ['ring', 'ethdev', 'hash', 'mempool', 'mbuf', 'timer', 'cryptodev', 'dmadev']
--deps += ['telemetry']
-+deps = ['ethdev', 'hash', 'timer', 'cryptodev', 'dmadev']
-diff --git a/lib/fib/meson.build b/lib/fib/meson.build
-index 0c19cc8201..ac040d5372 100644
---- a/lib/fib/meson.build
-+++ b/lib/fib/meson.build
-@@ -10,9 +10,7 @@ endif
- 
- sources = files('rte_fib.c', 'rte_fib6.c', 'dir24_8.c', 'trie.c')
- headers = files('rte_fib.h', 'rte_fib6.h')
--deps += ['rib']
--deps += ['rcu']
--deps += ['net']
-+deps = ['rib', 'rcu']
- 
- if dpdk_conf.has('RTE_ARCH_X86_64')
-     if target_has_avx512
-diff --git a/lib/gpudev/meson.build b/lib/gpudev/meson.build
-index d21fadc052..5d883b85a1 100644
---- a/lib/gpudev/meson.build
-+++ b/lib/gpudev/meson.build
-@@ -13,4 +13,4 @@ sources = files(
-         'gpudev.c',
- )
- 
--deps += ['mbuf']
-+deps = ['mbuf']
-diff --git a/lib/graph/meson.build b/lib/graph/meson.build
-index 0cb15442ab..f58f107d52 100644
---- a/lib/graph/meson.build
-+++ b/lib/graph/meson.build
-@@ -25,4 +25,4 @@ indirect_headers += files(
-         'rte_graph_worker_common.h',
- )
- 
--deps += ['eal', 'pcapng', 'mempool', 'ring']
-+deps = ['pcapng']
-diff --git a/lib/gro/meson.build b/lib/gro/meson.build
-index dbce05220d..c6de6ceebc 100644
---- a/lib/gro/meson.build
-+++ b/lib/gro/meson.build
-@@ -10,4 +10,4 @@ sources = files(
-         'gro_vxlan_udp4.c',
- )
- headers = files('rte_gro.h')
--deps += ['ethdev']
-+deps = ['ethdev']
-diff --git a/lib/gso/meson.build b/lib/gso/meson.build
-index 622411df8f..bc99109933 100644
---- a/lib/gso/meson.build
-+++ b/lib/gso/meson.build
-@@ -10,4 +10,4 @@ sources = files(
-         'rte_gso.c',
- )
- headers = files('rte_gso.h')
--deps += ['ethdev']
-+deps = ['ethdev']
-diff --git a/lib/hash/meson.build b/lib/hash/meson.build
-index 7ce504ee8b..e6cb1ebe3b 100644
---- a/lib/hash/meson.build
-+++ b/lib/hash/meson.build
-@@ -26,6 +26,4 @@ sources = files(
-         'rte_thash_gf2_poly_math.c',
- )
- 
--deps += ['net']
--deps += ['ring']
--deps += ['rcu']
-+deps = ['net', 'rcu']
-diff --git a/lib/ip_frag/meson.build b/lib/ip_frag/meson.build
-index ea2de09f75..cacf391460 100644
---- a/lib/ip_frag/meson.build
-+++ b/lib/ip_frag/meson.build
-@@ -10,4 +10,4 @@ sources = files(
-         'ip_frag_internal.c',
- )
- headers = files('rte_ip_frag.h')
--deps += ['ethdev', 'hash']
-+deps = ['ethdev', 'hash']
-diff --git a/lib/ipsec/meson.build b/lib/ipsec/meson.build
-index 02d18f5829..e6673aa9ba 100644
---- a/lib/ipsec/meson.build
-+++ b/lib/ipsec/meson.build
-@@ -16,6 +16,6 @@ sources = files('esp_inb.c', 'esp_outb.c',
- headers = files('rte_ipsec.h', 'rte_ipsec_sa.h', 'rte_ipsec_sad.h')
- indirect_headers += files('rte_ipsec_group.h')
- 
--deps += ['mbuf', 'net', 'cryptodev', 'security', 'hash', 'telemetry']
-+deps = ['security', 'hash']
- 
- annotate_locks = false
-diff --git a/lib/kvargs/meson.build b/lib/kvargs/meson.build
-index 7eae744a8f..7282b0ff8d 100644
---- a/lib/kvargs/meson.build
-+++ b/lib/kvargs/meson.build
+-deps += ['bus_vdev', 'ring', 'pci', 'bus_pci']
++deps += ['bus_vdev', 'bus_pci']
+ sources = files('fpga_lte_fec.c')
+diff --git a/drivers/baseband/la12xx/meson.build b/drivers/baseband/la12xx/meson.build
+index 7b7e41c961..e1dbdd0fa7 100644
+--- a/drivers/baseband/la12xx/meson.build
++++ b/drivers/baseband/la12xx/meson.build
 @@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright 2020-2021 NXP
+ 
+-deps += ['bus_vdev', 'ring']
++deps += ['bus_vdev']
+ 
+ sources = files('bbdev_la12xx.c')
+diff --git a/drivers/baseband/null/meson.build b/drivers/baseband/null/meson.build
+index 22863f0bd8..716d6c6fdb 100644
+--- a/drivers/baseband/null/meson.build
++++ b/drivers/baseband/null/meson.build
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2018 Luca Boccassi <bluca@debian.org>
+ 
+-deps += ['bus_vdev', 'ring']
++deps += ['bus_vdev']
+ sources = files('bbdev_null.c')
+diff --git a/drivers/baseband/turbo_sw/meson.build b/drivers/baseband/turbo_sw/meson.build
+index a9035a753e..ac18e8a9b6 100644
+--- a/drivers/baseband/turbo_sw/meson.build
++++ b/drivers/baseband/turbo_sw/meson.build
+@@ -26,5 +26,5 @@ if dep_dec5g.found()
+     cflags += ['-DRTE_BBDEV_SDK_AVX512']
+ endif
+ 
+-deps += ['bus_vdev', 'ring']
++deps += ['bus_vdev']
+ sources = files('bbdev_turbo_software.c')
+diff --git a/drivers/bus/auxiliary/meson.build b/drivers/bus/auxiliary/meson.build
+index 10468fd130..a113f11743 100644
+--- a/drivers/bus/auxiliary/meson.build
++++ b/drivers/bus/auxiliary/meson.build
+@@ -13,5 +13,3 @@ if is_linux
+ endif
+ 
+ require_iova_in_mbuf = false
+-
+-deps += ['kvargs']
+diff --git a/drivers/bus/dpaa/meson.build b/drivers/bus/dpaa/meson.build
+index 5506f2bffc..a2314fdebe 100644
+--- a/drivers/bus/dpaa/meson.build
++++ b/drivers/bus/dpaa/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['common_dpaax', 'eventdev']
++deps = ['common_dpaax', 'eventdev']
+ sources = files(
+         'base/fman/fman.c',
+         'base/fman/fman_hw.c',
+diff --git a/drivers/bus/fslmc/meson.build b/drivers/bus/fslmc/meson.build
+index 70098ad778..a0e11f7081 100644
+--- a/drivers/bus/fslmc/meson.build
++++ b/drivers/bus/fslmc/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['common_dpaax', 'eventdev', 'kvargs']
++deps = ['common_dpaax', 'eventdev']
+ sources = files(
+         'fslmc_bus.c',
+         'fslmc_vfio.c',
+diff --git a/drivers/bus/ifpga/meson.build b/drivers/bus/ifpga/meson.build
+index dedc94db2d..e87b08eaf4 100644
+--- a/drivers/bus/ifpga/meson.build
++++ b/drivers/bus/ifpga/meson.build
+@@ -7,6 +7,6 @@ if is_windows
+     subdir_done()
+ endif
+ 
+-deps += ['pci', 'kvargs', 'rawdev']
++deps = ['pci', 'rawdev']
+ driver_sdk_headers += files('bus_ifpga_driver.h')
+ sources = files('ifpga_bus.c')
+diff --git a/drivers/bus/pci/meson.build b/drivers/bus/pci/meson.build
+index fede114dc7..776c3d1550 100644
+--- a/drivers/bus/pci/meson.build
++++ b/drivers/bus/pci/meson.build
+@@ -1,7 +1,7 @@
  # SPDX-License-Identifier: BSD-3-Clause
  # Copyright(c) 2017 Intel Corporation
  
--deps += 'log'
-+deps = ['log']
- sources = files('rte_kvargs.c')
- headers = files('rte_kvargs.h')
-diff --git a/lib/latencystats/meson.build b/lib/latencystats/meson.build
-index 286558dd79..f8b9a8aeec 100644
---- a/lib/latencystats/meson.build
-+++ b/lib/latencystats/meson.build
-@@ -3,4 +3,4 @@
- 
- sources = files('rte_latencystats.c')
- headers = files('rte_latencystats.h')
--deps += ['metrics', 'ethdev']
-+deps = ['metrics']
-diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build
-index fae4f79fb9..5031b085c4 100644
---- a/lib/lpm/meson.build
-+++ b/lib/lpm/meson.build
-@@ -18,6 +18,4 @@ indirect_headers += files(
-         'rte_lpm_sse.h',
-         'rte_lpm_sve.h',
- )
--deps += ['hash']
--deps += ['rcu']
--deps += ['net']
-+deps = ['hash']
-diff --git a/lib/mbuf/meson.build b/lib/mbuf/meson.build
-index 2cee9057a5..22f5a3038b 100644
---- a/lib/mbuf/meson.build
-+++ b/lib/mbuf/meson.build
-@@ -20,4 +20,4 @@ headers = files(
-         'rte_mbuf_pool_ops.h',
-         'rte_mbuf_dyn.h',
- )
--deps += ['mempool']
-+deps = ['mempool']
-diff --git a/lib/member/meson.build b/lib/member/meson.build
-index f92cbb7f25..bd6d955fc9 100644
---- a/lib/member/meson.build
-+++ b/lib/member/meson.build
-@@ -18,7 +18,7 @@ sources = files(
-         'rte_member_vbf.c',
- )
- 
--deps += ['hash', 'ring']
-+deps = ['hash']
- 
- # compile AVX512 version if:
- if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
-diff --git a/lib/mempool/meson.build b/lib/mempool/meson.build
-index 8099a56466..0c0b3ea0c5 100644
---- a/lib/mempool/meson.build
-+++ b/lib/mempool/meson.build
-@@ -19,4 +19,4 @@ headers = files(
-         'rte_mempool.h',
-         'rte_mempool_trace_fp.h',
- )
--deps += ['ring', 'telemetry']
-+deps = ['ring']
-diff --git a/lib/metrics/meson.build b/lib/metrics/meson.build
-index 6722f666d2..93a248f255 100644
---- a/lib/metrics/meson.build
-+++ b/lib/metrics/meson.build
-@@ -8,6 +8,6 @@ if dpdk_conf.has('RTE_HAS_JANSSON')
-     ext_deps += jansson_dep
+-deps += ['pci']
++deps = ['pci']
+ headers = files('rte_bus_pci.h')
+ driver_sdk_headers = files('bus_pci_driver.h')
+ sources = files('pci_common.c',
+@@ -31,5 +31,3 @@ if is_windows
  endif
  
--deps += ['ethdev', 'telemetry']
-+deps = ['ethdev']
+ require_iova_in_mbuf = false
+-
+-deps += ['kvargs']
+diff --git a/drivers/bus/platform/meson.build b/drivers/bus/platform/meson.build
+index 8633cc4e75..2039c23ac6 100644
+--- a/drivers/bus/platform/meson.build
++++ b/drivers/bus/platform/meson.build
+@@ -10,7 +10,6 @@ endif
+ 
+ require_iova_in_mbuf = false
+ 
+-deps += ['kvargs']
+ sources = files(
+         'platform_params.c',
+         'platform.c',
+diff --git a/drivers/bus/uacce/meson.build b/drivers/bus/uacce/meson.build
+index a659d65f23..130148a315 100644
+--- a/drivers/bus/uacce/meson.build
++++ b/drivers/bus/uacce/meson.build
+@@ -8,5 +8,3 @@ endif
+ 
+ sources = files('uacce.c')
+ driver_sdk_headers += files('bus_uacce_driver.h')
+-
+-deps += ['kvargs']
+diff --git a/drivers/bus/vdev/meson.build b/drivers/bus/vdev/meson.build
+index 50f0c8918d..24993c88a3 100644
+--- a/drivers/bus/vdev/meson.build
++++ b/drivers/bus/vdev/meson.build
+@@ -9,5 +9,3 @@ headers = files('rte_bus_vdev.h')
+ driver_sdk_headers = files('bus_vdev_driver.h')
+ 
+ require_iova_in_mbuf = false
+-
+-deps += ['kvargs']
+diff --git a/drivers/common/cnxk/meson.build b/drivers/common/cnxk/meson.build
+index 00a352dc55..669e4d78b7 100644
+--- a/drivers/common/cnxk/meson.build
++++ b/drivers/common/cnxk/meson.build
+@@ -8,7 +8,7 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+     subdir_done()
+ endif
+ 
+-deps = ['eal', 'pci', 'bus_pci', 'mbuf', 'security']
++deps = ['bus_pci', 'security']
+ sources = files(
+         'roc_ae.c',
+         'roc_aes.c',
+@@ -107,7 +107,7 @@ elif soc_type == 'cn20k'
+     dpdk_conf.set('ROC_PLATFORM_CN20K', 1)
+ endif
+ 
+-deps += ['bus_pci', 'net', 'telemetry']
++deps += ['bus_pci']
+ 
+ require_iova_in_mbuf = false
+ 
+diff --git a/drivers/common/cpt/meson.build b/drivers/common/cpt/meson.build
+index c09824a651..a4b000dc37 100644
+--- a/drivers/common/cpt/meson.build
++++ b/drivers/common/cpt/meson.build
+@@ -9,5 +9,5 @@ endif
+ 
+ sources = files('cpt_fpm_tables.c', 'cpt_pmd_ops_helper.c')
+ 
+-deps = ['kvargs', 'pci', 'cryptodev']
++deps = ['pci', 'cryptodev']
+ includes += include_directories('../../crypto/octeontx')
+diff --git a/drivers/common/mlx5/meson.build b/drivers/common/mlx5/meson.build
+index f572b12ae3..a78295bb08 100644
+--- a/drivers/common/mlx5/meson.build
++++ b/drivers/common/mlx5/meson.build
+@@ -12,7 +12,7 @@ if is_windows and not is_ms_linker and not meson.is_cross_build()
+     subdir_done()
+ endif
+ 
+-deps += ['hash', 'pci', 'bus_pci', 'bus_auxiliary', 'net', 'eal', 'kvargs']
++deps += ['hash', 'bus_pci', 'bus_auxiliary']
+ sources += files(
+         'mlx5_devx_cmds.c',
+         'mlx5_common.c',
+diff --git a/drivers/common/zsda/meson.build b/drivers/common/zsda/meson.build
+index be4fbaedb3..e847c21378 100644
+--- a/drivers/common/zsda/meson.build
++++ b/drivers/common/zsda/meson.build
+@@ -7,7 +7,7 @@ if is_windows
+     subdir_done()
+ endif
+ 
+-deps += ['bus_pci', 'mbuf', 'compressdev']
++deps += ['bus_pci', 'compressdev']
+ sources += files(
+         'zsda_device.c',
+         'zsda_logs.c',
+diff --git a/drivers/compress/mlx5/meson.build b/drivers/compress/mlx5/meson.build
+index 26a0e0cd09..ddb9e0f82c 100644
+--- a/drivers/compress/mlx5/meson.build
++++ b/drivers/compress/mlx5/meson.build
+@@ -7,7 +7,7 @@ if not is_linux
+     subdir_done()
+ endif
+ 
+-deps += ['common_mlx5', 'eal', 'compressdev']
++deps += ['common_mlx5', 'compressdev']
+ if not dpdk_conf.has('RTE_COMMON_MLX5')
+     # avoid referencing undefined variables from common/mlx5
+     subdir_done()
+diff --git a/drivers/compress/nitrox/meson.build b/drivers/compress/nitrox/meson.build
+index 1becc66912..c3db4ac2bb 100644
+--- a/drivers/compress/nitrox/meson.build
++++ b/drivers/compress/nitrox/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['common_nitrox', 'bus_pci', 'compressdev']
++deps += ['common_nitrox', 'compressdev']
+ 
+ sources += files(
+         'nitrox_comp.c',
+diff --git a/drivers/compress/octeontx/meson.build b/drivers/compress/octeontx/meson.build
+index 16f973f4d7..0ccde449e8 100644
+--- a/drivers/compress/octeontx/meson.build
++++ b/drivers/compress/octeontx/meson.build
+@@ -9,7 +9,7 @@ endif
+ 
+ sources = files('otx_zip.c', 'otx_zip_pmd.c')
+ includes += include_directories('include')
+-deps += ['mempool_octeontx', 'bus_pci']
++deps += ['mempool_octeontx']
+ ext_deps += dep
+ 
+ require_iova_in_mbuf = false
+diff --git a/drivers/crypto/bcmfs/meson.build b/drivers/crypto/bcmfs/meson.build
+index 5842f83a3b..678bab7398 100644
+--- a/drivers/crypto/bcmfs/meson.build
++++ b/drivers/crypto/bcmfs/meson.build
+@@ -9,7 +9,7 @@ if is_windows
+     subdir_done()
+ endif
+ 
+-deps += ['eal', 'bus_vdev']
++deps += ['bus_vdev']
+ sources = files(
+         'bcmfs_logs.c',
+         'bcmfs_device.c',
+diff --git a/drivers/crypto/cnxk/meson.build b/drivers/crypto/cnxk/meson.build
+index e9b67b4a14..77efe98cb3 100644
+--- a/drivers/crypto/cnxk/meson.build
++++ b/drivers/crypto/cnxk/meson.build
+@@ -25,7 +25,7 @@ sources = files(
+ )
+ 
+ headers = files('rte_pmd_cnxk_crypto.h')
+-deps += ['bus_pci', 'common_cnxk', 'security', 'eventdev']
++deps += ['common_cnxk', 'eventdev']
+ includes += include_directories('../../../lib/net', '../../event/cnxk')
  
  cflags += no_wvla_cflag
-diff --git a/lib/mldev/meson.build b/lib/mldev/meson.build
-index 2c933baad6..6069fff1f0 100644
---- a/lib/mldev/meson.build
-+++ b/lib/mldev/meson.build
-@@ -41,7 +41,7 @@ driver_sdk_headers += files(
-         'mldev_utils.h',
+diff --git a/drivers/crypto/dpaa_sec/meson.build b/drivers/crypto/dpaa_sec/meson.build
+index f87ad6c7e7..9efac952c4 100644
+--- a/drivers/crypto/dpaa_sec/meson.build
++++ b/drivers/crypto/dpaa_sec/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['bus_dpaa', 'mempool_dpaa', 'security']
++deps += ['mempool_dpaa', 'security']
+ sources = files('dpaa_sec.c', 'dpaa_sec_raw_dp.c')
+ 
+ includes += include_directories('../../bus/dpaa/include')
+diff --git a/drivers/crypto/ipsec_mb/meson.build b/drivers/crypto/ipsec_mb/meson.build
+index 5fcff5b04b..5a2a53f55f 100644
+--- a/drivers/crypto/ipsec_mb/meson.build
++++ b/drivers/crypto/ipsec_mb/meson.build
+@@ -47,5 +47,5 @@ sources = files(
+         'pmd_snow3g.c',
+         'pmd_zuc.c',
+ )
+-deps += ['bus_vdev', 'net', 'security']
++deps += ['bus_vdev', 'security']
+ require_iova_in_mbuf = false
+diff --git a/drivers/crypto/mlx5/meson.build b/drivers/crypto/mlx5/meson.build
+index d7bc8ec967..595053d8cd 100644
+--- a/drivers/crypto/mlx5/meson.build
++++ b/drivers/crypto/mlx5/meson.build
+@@ -7,7 +7,7 @@ if not (is_linux or is_windows)
+     subdir_done()
+ endif
+ 
+-deps += ['common_mlx5', 'eal', 'cryptodev']
++deps += ['common_mlx5', 'cryptodev']
+ if not dpdk_conf.has('RTE_COMMON_MLX5')
+     # avoid referencing undefined variables from common/mlx5
+     subdir_done()
+diff --git a/drivers/crypto/nitrox/meson.build b/drivers/crypto/nitrox/meson.build
+index f8887713d2..85e3ca2b28 100644
+--- a/drivers/crypto/nitrox/meson.build
++++ b/drivers/crypto/nitrox/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['common_nitrox', 'bus_pci', 'cryptodev']
++deps += ['common_nitrox', 'cryptodev']
+ 
+ sources += files(
+         'nitrox_sym.c',
+diff --git a/drivers/dma/cnxk/meson.build b/drivers/dma/cnxk/meson.build
+index 8ccc1c2cb7..738774d542 100644
+--- a/drivers/dma/cnxk/meson.build
++++ b/drivers/dma/cnxk/meson.build
+@@ -12,7 +12,7 @@ driver_sdk_headers = files(
+         'cnxk_dma_event_dp.h',
  )
  
--deps += ['mempool', 'mbuf']
-+deps = ['mbuf']
+-deps += ['bus_pci', 'common_cnxk', 'dmadev', 'eventdev']
++deps += ['common_cnxk', 'eventdev']
  
- if get_option('buildtype').contains('debug')
-         cflags += [ '-DRTE_LIBRTE_ML_DEV_DEBUG' ]
-diff --git a/lib/net/meson.build b/lib/net/meson.build
-index c9b34afc98..ded5a5a8f4 100644
---- a/lib/net/meson.build
-+++ b/lib/net/meson.build
-@@ -37,7 +37,7 @@ sources = files(
-         'rte_net.c',
-         'rte_net_crc.c',
- )
--deps += ['mbuf']
-+deps = ['mbuf']
+ includes += include_directories('../../event/cnxk')
  
- use_function_versioning = true
+diff --git a/drivers/dma/dpaa/meson.build b/drivers/dma/dpaa/meson.build
+index aac5ffb36d..33c0b8d858 100644
+--- a/drivers/dma/dpaa/meson.build
++++ b/drivers/dma/dpaa/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on linux'
+ endif
  
-diff --git a/lib/node/meson.build b/lib/node/meson.build
-index 0bed97a96c..368ce1dc63 100644
---- a/lib/node/meson.build
-+++ b/lib/node/meson.build
-@@ -34,4 +34,4 @@ headers = files(
+-deps += ['dmadev', 'bus_dpaa']
++deps += ['bus_dpaa']
+ sources = files('dpaa_qdma.c')
  
- # Strict-aliasing rules are violated by uint8_t[] to context size casts.
- cflags += '-fno-strict-aliasing'
--deps += ['graph', 'mbuf', 'lpm', 'ethdev', 'mempool', 'cryptodev', 'ip_frag']
-+deps = ['graph', 'lpm', 'cryptodev', 'ip_frag']
-diff --git a/lib/pcapng/meson.build b/lib/pcapng/meson.build
-index 4549925d41..e8f059a9b0 100644
---- a/lib/pcapng/meson.build
-+++ b/lib/pcapng/meson.build
-@@ -4,4 +4,4 @@
- sources = files('rte_pcapng.c')
- headers = files('rte_pcapng.h')
+ cflags += no_wvla_cflag
+diff --git a/drivers/dma/dpaa2/meson.build b/drivers/dma/dpaa2/meson.build
+index a523f5edb4..cc4a02440e 100644
+--- a/drivers/dma/dpaa2/meson.build
++++ b/drivers/dma/dpaa2/meson.build
+@@ -8,7 +8,7 @@ endif
  
--deps += ['ethdev']
-+deps = ['ethdev']
-diff --git a/lib/pdcp/meson.build b/lib/pdcp/meson.build
-index eef46dd55a..6eef683252 100644
---- a/lib/pdcp/meson.build
-+++ b/lib/pdcp/meson.build
-@@ -20,4 +20,4 @@ sources = files(
- headers = files('rte_pdcp.h')
- indirect_headers += files('rte_pdcp_group.h')
+ build = dpdk_conf.has('RTE_MEMPOOL_DPAA2')
+ reason = 'missing dependency, DPDK DPAA2 mempool driver'
+-deps += ['dmadev', 'bus_fslmc', 'mempool_dpaa2', 'ring', 'kvargs']
++deps += ['mempool_dpaa2']
+ sources = files('dpaa2_qdma.c')
  
--deps += ['mbuf', 'net', 'cryptodev', 'security', 'reorder']
-+deps = ['security', 'reorder']
-diff --git a/lib/pdump/meson.build b/lib/pdump/meson.build
-index 553dfdd5e6..9bb2f203b1 100644
---- a/lib/pdump/meson.build
-+++ b/lib/pdump/meson.build
-@@ -11,4 +11,4 @@ cflags += no_wvla_cflag
+ if cc.has_argument('-Wno-pointer-arith')
+diff --git a/drivers/dma/odm/meson.build b/drivers/dma/odm/meson.build
+index d597762d37..959e7e685d 100644
+--- a/drivers/dma/odm/meson.build
++++ b/drivers/dma/odm/meson.build
+@@ -7,7 +7,7 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+     subdir_done()
+ endif
  
- sources = files('rte_pdump.c')
- headers = files('rte_pdump.h')
--deps += ['ethdev', 'bpf', 'pcapng']
-+deps = ['bpf', 'pcapng']
-diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
-index 823c7929a7..bda5607c18 100644
---- a/lib/pipeline/meson.build
-+++ b/lib/pipeline/meson.build
-@@ -27,4 +27,4 @@ headers = files(
-         'rte_swx_extern.h',
-         'rte_swx_ctl.h',
- )
--deps += ['port', 'table', 'meter', 'sched', 'cryptodev', 'ipsec']
-+deps = ['table', 'ipsec']
-diff --git a/lib/port/meson.build b/lib/port/meson.build
-index b597772872..0524c3c049 100644
---- a/lib/port/meson.build
-+++ b/lib/port/meson.build
-@@ -40,7 +40,7 @@ headers = files(
-         'rte_swx_port_ring.h',
-         'rte_swx_port_source_sink.h',
- )
--deps += ['ethdev', 'sched', 'ip_frag', 'cryptodev', 'eventdev']
-+deps = ['sched', 'ip_frag', 'eventdev']
+-deps += ['bus_pci', 'dmadev', 'eal', 'mempool', 'pci']
++deps += ['bus_pci', 'dmadev', 'mempool']
  
- if dpdk_conf.has('RTE_HAS_LIBPCAP')
-     dpdk_conf.set('RTE_PORT_PCAP', 1)
-diff --git a/lib/power/meson.build b/lib/power/meson.build
-index 56b59071ea..d4f8a97a3e 100644
---- a/lib/power/meson.build
-+++ b/lib/power/meson.build
-@@ -29,5 +29,4 @@ headers = files(
-         'rte_power_qos.h',
-         'rte_power_uncore.h',
- )
--
--deps += ['timer', 'ethdev']
-+deps = ['timer', 'ethdev']
-diff --git a/lib/rawdev/meson.build b/lib/rawdev/meson.build
-index 7dfc3d5cf9..8841f003d7 100644
---- a/lib/rawdev/meson.build
-+++ b/lib/rawdev/meson.build
-@@ -9,5 +9,3 @@ endif
+ sources = files('odm_dmadev.c', 'odm.c')
  
- sources = files('rte_rawdev.c')
- headers = files('rte_rawdev.h', 'rte_rawdev_pmd.h')
--
--deps += ['telemetry']
-diff --git a/lib/rcu/meson.build b/lib/rcu/meson.build
-index fb1f49ba63..aaf876ebd8 100644
---- a/lib/rcu/meson.build
-+++ b/lib/rcu/meson.build
-@@ -10,7 +10,7 @@ endif
- sources = files('rte_rcu_qsbr.c')
- headers = files('rte_rcu_qsbr.h')
- 
--deps += ['ring']
-+deps = ['ring']
- 
- # FIXME: this library was enabled for mingw target (a Windows target).
- # Relying on no_wvla_cflag would trigger a build error until the VLA in rte_rcu_qsbr.c is removed.
-diff --git a/lib/regexdev/meson.build b/lib/regexdev/meson.build
-index 426e764ece..3e20fa387d 100644
---- a/lib/regexdev/meson.build
-+++ b/lib/regexdev/meson.build
-@@ -10,4 +10,4 @@ endif
- sources = files('rte_regexdev.c')
- headers = files('rte_regexdev.h', 'rte_regexdev_driver.h')
- indirect_headers += files('rte_regexdev_core.h')
--deps += ['mbuf']
-+deps = ['mbuf']
-diff --git a/lib/reorder/meson.build b/lib/reorder/meson.build
-index 03aed53d90..1e088a7d97 100644
---- a/lib/reorder/meson.build
-+++ b/lib/reorder/meson.build
-@@ -3,4 +3,4 @@
- 
- sources = files('rte_reorder.c')
- headers = files('rte_reorder.h')
--deps += ['mbuf']
-+deps = ['mbuf']
-diff --git a/lib/rib/meson.build b/lib/rib/meson.build
-index e98f708481..70a9072255 100644
---- a/lib/rib/meson.build
-+++ b/lib/rib/meson.build
-@@ -4,4 +4,4 @@
- 
- sources = files('rte_rib.c', 'rte_rib6.c')
- headers = files('rte_rib.h', 'rte_rib6.h')
--deps += ['net', 'mempool']
-+deps = ['net']
-diff --git a/lib/ring/meson.build b/lib/ring/meson.build
-index 21f2c12989..69dd50a078 100644
---- a/lib/ring/meson.build
-+++ b/lib/ring/meson.build
-@@ -18,4 +18,3 @@ indirect_headers += files (
-         'rte_ring_rts.h',
-         'rte_ring_rts_elem_pvt.h',
- )
--deps += ['telemetry']
-diff --git a/lib/sched/meson.build b/lib/sched/meson.build
-index df75db51ed..7ca8ec09df 100644
---- a/lib/sched/meson.build
-+++ b/lib/sched/meson.build
-@@ -15,4 +15,4 @@ headers = files(
-         'rte_sched_common.h',
-         'rte_pie.h',
- )
--deps += ['mbuf', 'meter']
-+deps = ['mbuf', 'meter']
-diff --git a/lib/security/meson.build b/lib/security/meson.build
-index 1034a7a299..e4545a8c72 100644
---- a/lib/security/meson.build
-+++ b/lib/security/meson.build
-@@ -3,4 +3,4 @@
- 
- sources = files('rte_security.c')
- headers = files('rte_security.h', 'rte_security_driver.h')
--deps += ['mempool', 'cryptodev', 'net']
-+deps = ['cryptodev', 'net']
-diff --git a/lib/table/meson.build b/lib/table/meson.build
-index e27957fe89..38cacbb388 100644
---- a/lib/table/meson.build
-+++ b/lib/table/meson.build
-@@ -41,7 +41,7 @@ headers = files(
-         'rte_table_lpm_ipv6.h',
-         'rte_table_stub.h',
- )
--deps += ['mbuf', 'port', 'lpm', 'hash', 'acl']
-+deps = ['port', 'lpm', 'acl']
- 
- indirect_headers += files(
-         'rte_lru_arm64.h',
-diff --git a/lib/telemetry/meson.build b/lib/telemetry/meson.build
-index 489d000047..3e3a2cfc32 100644
---- a/lib/telemetry/meson.build
-+++ b/lib/telemetry/meson.build
+diff --git a/drivers/dma/skeleton/meson.build b/drivers/dma/skeleton/meson.build
+index 77055683ad..0d703a36eb 100644
+--- a/drivers/dma/skeleton/meson.build
++++ b/drivers/dma/skeleton/meson.build
 @@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2021 HiSilicon Limited
+ 
+-deps += ['dmadev', 'kvargs', 'ring', 'bus_vdev']
++deps += ['dmadev', 'ring', 'bus_vdev']
+ sources = files(
+         'skeleton_dmadev.c',
+ )
+diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
+index 9461ae33e4..c0ddd84fdd 100644
+--- a/drivers/event/cnxk/meson.build
++++ b/drivers/event/cnxk/meson.build
+@@ -313,7 +313,7 @@ foreach flag: extra_flags
+ endforeach
+ 
+ headers = files('rte_pmd_cnxk_eventdev.h')
+-deps += ['bus_pci', 'common_cnxk', 'net_cnxk', 'crypto_cnxk', 'dma_cnxk']
++deps += ['net_cnxk', 'crypto_cnxk', 'dma_cnxk']
+ 
+ require_iova_in_mbuf = false
+ 
+diff --git a/drivers/event/dlb2/meson.build b/drivers/event/dlb2/meson.build
+index c024edb311..2bb1b97686 100644
+--- a/drivers/event/dlb2/meson.build
++++ b/drivers/event/dlb2/meson.build
+@@ -39,4 +39,4 @@ endif
+ 
+ headers = files('rte_pmd_dlb2.h')
+ 
+-deps += ['mbuf', 'mempool', 'ring', 'pci', 'bus_pci']
++deps += ['bus_pci']
+diff --git a/drivers/event/dpaa2/meson.build b/drivers/event/dpaa2/meson.build
+index dd5063af43..7dae1da32b 100644
+--- a/drivers/event/dpaa2/meson.build
++++ b/drivers/event/dpaa2/meson.build
+@@ -5,7 +5,7 @@ if not is_linux
+     build = false
+     reason = 'only supported on Linux'
+ endif
+-deps += ['bus_vdev', 'net_dpaa2', 'crypto_dpaa2_sec']
++deps += ['net_dpaa2', 'crypto_dpaa2_sec']
+ sources = files(
+         'dpaa2_hw_dpcon.c',
+         'dpaa2_eventdev.c',
+diff --git a/drivers/event/octeontx/meson.build b/drivers/event/octeontx/meson.build
+index eb17e059d8..1227b2e18d 100644
+--- a/drivers/event/octeontx/meson.build
++++ b/drivers/event/octeontx/meson.build
+@@ -17,5 +17,4 @@ sources = files(
+         'timvf_probe.c',
+ )
+ 
+-deps += ['common_octeontx', 'mempool_octeontx', 'bus_vdev', 'net_octeontx']
+-deps += ['crypto_octeontx']
++deps = ['net_octeontx', 'crypto_octeontx']
+diff --git a/drivers/event/sw/meson.build b/drivers/event/sw/meson.build
+index c0c559ebc4..312008eb05 100644
+--- a/drivers/event/sw/meson.build
++++ b/drivers/event/sw/meson.build
+@@ -8,6 +8,6 @@ sources = files(
+         'sw_evdev_xstats.c',
+         'sw_evdev.c',
+ )
+-deps += ['hash', 'bus_vdev']
++deps += ['bus_vdev']
+ require_iova_in_mbuf = false
+ cflags += no_wvla_cflag
+diff --git a/drivers/mempool/cnxk/meson.build b/drivers/mempool/cnxk/meson.build
+index e388cce26a..7bbed325df 100644
+--- a/drivers/mempool/cnxk/meson.build
++++ b/drivers/mempool/cnxk/meson.build
+@@ -18,5 +18,5 @@ sources = files(
+ )
+ 
+ headers = files('rte_pmd_cnxk_mempool.h')
+-deps += ['eal', 'mbuf', 'kvargs', 'bus_pci', 'common_cnxk', 'mempool']
++deps = ['common_cnxk']
+ require_iova_in_mbuf = false
+diff --git a/drivers/mempool/dpaa/meson.build b/drivers/mempool/dpaa/meson.build
+index c4e9994b83..39fc312344 100644
+--- a/drivers/mempool/dpaa/meson.build
++++ b/drivers/mempool/dpaa/meson.build
+@@ -6,5 +6,5 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['bus_dpaa']
++deps = ['bus_dpaa']
+ sources = files('dpaa_mempool.c')
+diff --git a/drivers/mempool/dpaa2/meson.build b/drivers/mempool/dpaa2/meson.build
+index 3d16d44158..0099b20b97 100644
+--- a/drivers/mempool/dpaa2/meson.build
++++ b/drivers/mempool/dpaa2/meson.build
+@@ -6,7 +6,7 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
+-deps += ['bus_fslmc']
++deps = ['bus_fslmc']
+ sources = files('dpaa2_hw_mempool.c')
+ 
+ headers = files('rte_dpaa2_mempool.h')
+diff --git a/drivers/mempool/octeontx/meson.build b/drivers/mempool/octeontx/meson.build
+index 3ccecac75d..f97bcf4a5a 100644
+--- a/drivers/mempool/octeontx/meson.build
++++ b/drivers/mempool/octeontx/meson.build
+@@ -12,6 +12,6 @@ sources = files(
+         'rte_mempool_octeontx.c',
+ )
+ 
+-deps += ['mbuf', 'bus_pci', 'common_octeontx']
++deps = ['mbuf', 'bus_pci', 'common_octeontx']
+ 
+ require_iova_in_mbuf = false
+diff --git a/drivers/ml/cnxk/meson.build b/drivers/ml/cnxk/meson.build
+index 0680a0faa5..6c99f5b57b 100644
+--- a/drivers/ml/cnxk/meson.build
++++ b/drivers/ml/cnxk/meson.build
+@@ -55,7 +55,7 @@ sources = files(
+         'cnxk_ml_utils.c',
+ )
+ 
+-deps += ['mldev', 'common_cnxk', 'kvargs', 'hash']
++deps += ['mldev', 'common_cnxk', 'hash']
+ 
+ if enable_mvtvm
+ 
+diff --git a/drivers/net/cnxk/meson.build b/drivers/net/cnxk/meson.build
+index a747a5fcae..e50acfa67e 100644
+--- a/drivers/net/cnxk/meson.build
++++ b/drivers/net/cnxk/meson.build
+@@ -322,9 +322,7 @@ sources += files(
+ endif
+ endif
+ 
+-
+-deps += ['bus_pci', 'cryptodev', 'eventdev', 'security']
+-deps += ['common_cnxk', 'mempool_cnxk']
++deps = ['eventdev', 'mempool_cnxk']
+ 
+ cflags += no_wvla_cflag
+ 
+diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
+index 19cd1cfbc8..bd0c75053b 100644
+--- a/drivers/net/intel/iavf/meson.build
++++ b/drivers/net/intel/iavf/meson.build
+@@ -7,7 +7,7 @@ endif
+ 
+ testpmd_sources = files('iavf_testpmd.c')
+ 
+-deps += ['security', 'cryptodev']
++deps += ['security']
+ 
+ sources = files(
+         'base/iavf_adminq.c',
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index a34b7c966a..1c0685aca4 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -18,7 +18,7 @@ sources = files(
+ 
+ testpmd_sources = files('ice_testpmd.c')
+ 
+-deps += ['hash', 'net']
++deps += ['hash']
+ includes += include_directories('base')
+ 
+ if dpdk_conf.has('RTE_NET_IAVF')
+diff --git a/drivers/net/mana/meson.build b/drivers/net/mana/meson.build
+index e320da7fc4..20408049d3 100644
+--- a/drivers/net/mana/meson.build
++++ b/drivers/net/mana/meson.build
+@@ -7,7 +7,7 @@ if not is_linux or not (dpdk_conf.has('RTE_ARCH_X86') or dpdk_conf.has('RTE_ARCH
+     subdir_done()
+ endif
+ 
+-deps += ['pci', 'bus_pci', 'net', 'eal', 'kvargs']
++deps += ['bus_pci']
+ 
+ sources += files(
+         'gdma.c',
+diff --git a/drivers/net/mlx5/meson.build b/drivers/net/mlx5/meson.build
+index 78a8648b43..7c4a63524f 100644
+--- a/drivers/net/mlx5/meson.build
++++ b/drivers/net/mlx5/meson.build
+@@ -8,7 +8,7 @@ if not (is_linux or is_windows)
+     subdir_done()
+ endif
+ 
+-deps += ['hash', 'common_mlx5']
++deps += ['common_mlx5']
+ if not dpdk_conf.has('RTE_COMMON_MLX5')
+     # avoid referencing undefined variables from common/mlx5
+     subdir_done()
+diff --git a/drivers/net/sfc/meson.build b/drivers/net/sfc/meson.build
+index 90c38231e1..a0f78eb2aa 100644
+--- a/drivers/net/sfc/meson.build
++++ b/drivers/net/sfc/meson.build
+@@ -72,7 +72,7 @@ if not cc.links(atomic_check_code)
+     ext_deps += libatomic_dep
+ endif
+ 
+-deps += ['common_sfc_efx', 'bus_pci', 'hash']
++deps += ['common_sfc_efx', 'hash']
+ sources = files(
+         'sfc_ethdev.c',
+         'sfc_kvargs.c',
+diff --git a/drivers/net/softnic/meson.build b/drivers/net/softnic/meson.build
+index e8d7290062..cdff250bcc 100644
+--- a/drivers/net/softnic/meson.build
++++ b/drivers/net/softnic/meson.build
+@@ -15,5 +15,5 @@ sources = files(
+         'rte_eth_softnic_swq.c',
+         'rte_eth_softnic_thread.c',
+ )
+-deps += ['pipeline', 'port', 'table']
++deps += ['pipeline']
+ cflags += no_wvla_cflag
+diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+index 4302595424..f748fb3123 100644
+--- a/drivers/net/virtio/meson.build
++++ b/drivers/net/virtio/meson.build
+@@ -21,7 +21,7 @@ sources += files(
+         'virtio_rxtx_simple.c',
+         'virtqueue.c',
+ )
+-deps += ['kvargs', 'bus_pci']
++deps += ['bus_pci']
+ 
+ cflags += no_wvla_cflag
+ 
+diff --git a/drivers/raw/cnxk_bphy/meson.build b/drivers/raw/cnxk_bphy/meson.build
+index bb5d2ffb80..b38b071697 100644
+--- a/drivers/raw/cnxk_bphy/meson.build
++++ b/drivers/raw/cnxk_bphy/meson.build
+@@ -2,7 +2,7 @@
+ # Copyright(C) 2021 Marvell.
+ #
+ 
+-deps += ['bus_pci', 'common_cnxk', 'rawdev']
++deps += ['common_cnxk', 'rawdev']
+ sources = files(
+         'cnxk_bphy.c',
+         'cnxk_bphy_cgx.c',
+diff --git a/drivers/raw/cnxk_gpio/meson.build b/drivers/raw/cnxk_gpio/meson.build
+index 9d9a527392..6d17fe573f 100644
+--- a/drivers/raw/cnxk_gpio/meson.build
++++ b/drivers/raw/cnxk_gpio/meson.build
+@@ -2,7 +2,7 @@
+ # Copyright(C) 2021 Marvell.
+ #
+ 
+-deps += ['bus_vdev', 'common_cnxk', 'rawdev', 'kvargs']
++deps += ['bus_vdev', 'common_cnxk', 'rawdev']
+ sources = files(
+         'cnxk_gpio.c',
+         'cnxk_gpio_irq.c',
+diff --git a/drivers/raw/gdtc/meson.build b/drivers/raw/gdtc/meson.build
+index 3e748ca58d..b86f9510ce 100644
+--- a/drivers/raw/gdtc/meson.build
++++ b/drivers/raw/gdtc/meson.build
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright 2024 ZTE Corporation
+ 
+-deps += ['rawdev', 'kvargs', 'mbuf', 'bus_pci']
++deps += ['rawdev', 'mbuf', 'bus_pci']
+ sources = files('gdtc_rawdev.c')
+diff --git a/drivers/raw/ntb/meson.build b/drivers/raw/ntb/meson.build
+index 9096f2b25a..8f79d3b16a 100644
+--- a/drivers/raw/ntb/meson.build
++++ b/drivers/raw/ntb/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2019 Intel Corporation.
+ 
+-deps += ['rawdev', 'mbuf', 'mempool', 'pci', 'bus_pci']
++deps += ['rawdev', 'mbuf', 'bus_pci']
+ sources = files('ntb.c',
+                 'ntb_hw_intel.c')
+ headers = files('rte_pmd_ntb.h')
+diff --git a/drivers/raw/skeleton/meson.build b/drivers/raw/skeleton/meson.build
+index 9d5fcf6514..7d76fe71b3 100644
+--- a/drivers/raw/skeleton/meson.build
++++ b/drivers/raw/skeleton/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright 2018 NXP
+ 
+-deps += ['rawdev', 'kvargs', 'mbuf', 'bus_vdev']
++deps += ['rawdev', 'mbuf', 'bus_vdev']
+ sources = files(
+         'skeleton_rawdev.c',
+         'skeleton_rawdev_test.c',
+diff --git a/drivers/regex/cn9k/meson.build b/drivers/regex/cn9k/meson.build
+index b22275928a..40aced4c62 100644
+--- a/drivers/regex/cn9k/meson.build
++++ b/drivers/regex/cn9k/meson.build
+@@ -13,4 +13,4 @@ sources = files(
+ )
+ 
+ deps += ['bus_pci']
+-deps += ['common_cnxk', 'mempool_cnxk']
++deps += ['mempool_cnxk']
+diff --git a/drivers/regex/mlx5/meson.build b/drivers/regex/mlx5/meson.build
+index 6070b37501..f75bf2e084 100644
+--- a/drivers/regex/mlx5/meson.build
++++ b/drivers/regex/mlx5/meson.build
+@@ -7,7 +7,7 @@ if not is_linux
+     subdir_done()
+ endif
+ 
+-deps += ['common_mlx5', 'eal']
++deps += ['common_mlx5']
+ if not dpdk_conf.has('RTE_COMMON_MLX5')
+     # avoid referencing undefined variables from common/mlx5
+     subdir_done()
+diff --git a/drivers/vdpa/ifc/meson.build b/drivers/vdpa/ifc/meson.build
+index f78d36a715..f4ed4f491f 100644
+--- a/drivers/vdpa/ifc/meson.build
++++ b/drivers/vdpa/ifc/meson.build
+@@ -1,6 +1,6 @@
  # SPDX-License-Identifier: BSD-3-Clause
  # Copyright(c) 2018 Intel Corporation
  
--deps += 'log'
-+deps = ['log']
- sources = files('telemetry.c', 'telemetry_data.c', 'telemetry_legacy.c')
- headers = files('rte_telemetry.h')
- includes += include_directories('../metrics')
-diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
-index 33773b6d21..ca288cfba5 100644
---- a/lib/vhost/meson.build
-+++ b/lib/vhost/meson.build
-@@ -52,4 +52,4 @@ headers = files(
- driver_sdk_headers = files(
-         'vdpa_driver.h',
- )
--deps += ['ethdev', 'cryptodev', 'hash', 'pci', 'dmadev']
-+deps = ['ethdev', 'cryptodev', 'hash', 'pci', 'dmadev']
+-deps += 'vhost'
++deps += 'bus_pci'
+ sources = files('ifcvf_vdpa.c', 'base/ifcvf.c')
+ includes += include_directories('base')
+diff --git a/drivers/vdpa/meson.build b/drivers/vdpa/meson.build
+index e01c277b9e..747cdc7c55 100644
+--- a/drivers/vdpa/meson.build
++++ b/drivers/vdpa/meson.build
+@@ -11,5 +11,4 @@ drivers = [
+         'nfp',
+         'sfc',
+ ]
+-std_deps = ['bus_pci']
+-std_deps += ['vhost']
++std_deps = ['vhost']
+diff --git a/drivers/vdpa/mlx5/meson.build b/drivers/vdpa/mlx5/meson.build
+index 7be11fda6d..46fd09bfb2 100644
+--- a/drivers/vdpa/mlx5/meson.build
++++ b/drivers/vdpa/mlx5/meson.build
+@@ -7,7 +7,7 @@ if not is_linux
+     subdir_done()
+ endif
+ 
+-deps += ['hash', 'common_mlx5', 'vhost', 'pci', 'eal', 'sched']
++deps += ['common_mlx5', 'vhost', 'sched']
+ if not dpdk_conf.has('RTE_COMMON_MLX5')
+     # avoid referencing undefined variables from common/mlx5
+     subdir_done()
+diff --git a/drivers/vdpa/sfc/meson.build b/drivers/vdpa/sfc/meson.build
+index 933f3f18f3..465ca9f220 100644
+--- a/drivers/vdpa/sfc/meson.build
++++ b/drivers/vdpa/sfc/meson.build
+@@ -16,7 +16,7 @@ foreach flag: extra_flags
+     endif
+ endforeach
+ 
+-deps += ['common_sfc_efx', 'bus_pci']
++deps += ['common_sfc_efx']
+ sources = files(
+         'sfc_vdpa.c',
+         'sfc_vdpa_hw.c',
 -- 
 2.43.5
 
