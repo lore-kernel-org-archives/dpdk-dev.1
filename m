@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C200EC021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353E3C02198
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7043A4064A;
-	Tue, 18 Feb 2025 12:15:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C6BE04065E;
+	Tue, 18 Feb 2025 12:15:50 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id F01184060F
- for <dev@dpdk.org>; Tue, 18 Feb 2025 12:15:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 32358402E8
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 12:15:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739877348; x=1771413348;
+ t=1739877349; x=1771413349;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=1pw2gvhQIht+ZTtmaolkZt7gpSCfIFFG8pMCHJLW1gg=;
- b=ISclkOhwFOK2km41PZlqASOIHH86EUi+i9tMITutGu5Hz5QRo43pyz3N
- gGjqBYt18Vti9rQTsLj6N6Okt9UwzHzuBWWLj/AT7j16NKGDGCX34edVf
- WZpQ8ip/dDtPpCGbpdjkdYTPFzN/K8SrM0ryoDnVFEEiEcHyko8h4lTo0
- EwIjUUgWlBfZQlHiyTZqzd26+GWmHs3/hYmevWVG05/JtvTvulR7tqeL3
- 6hpkXUOmsmk8pM7YNid7DAfeCD+5gu5jI3WlPEh2LF4TQXYL0M9//K2ya
- A4xM8thBEYVBTwb/YQU6lvwmLyjJ6302lAOZCC9BAM8tgb2PwlZVZUvR3 A==;
-X-CSE-ConnectionGUID: F0nQXjTFQSqvEGeLT3Bu7A==
-X-CSE-MsgGUID: PyCNLX2WS468FNnb3J35ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780809"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780809"
+ bh=w6tiUo302GZW3EOHmFhC2zyAGfQ7seZh3s9w9tRAi74=;
+ b=GGm1JpyWTXl/gm38HXg+SJ5qGUvMJSss7fvel8gM+GozpIzLT0nC3b8z
+ hSoYARuYZDNItrJwhT+0r4ENGIdJ9XkrqZiZXGQw8AEeeL9gpO+BW2EL8
+ g2L8Q+edTIi7t8K6fi2qoVdY28umOU6cocyG1WA65uEFNAwvrqSkXhbkH
+ OaREwnVDsa75yCjsN3EkHMUjxJLaRDXQZAerbmNps+zdrSPMQCvoU5LyW
+ fxmstJAv3auqLd/Pf89M5P3BM3t8DB/rFOon2fR0VjXZdz/aoXoXfmScC
+ PRexOj4tMtKhBMUClUk3Y5RzeCD5PziVLODMGmyZQ1twk0yFa6vj3WZTy w==;
+X-CSE-ConnectionGUID: Pg+3jlc7ThCPZjQ+H5GWng==
+X-CSE-MsgGUID: eMkVHvUnT66fhwSZ7S6CnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780814"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780814"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Feb 2025 03:15:47 -0800
-X-CSE-ConnectionGUID: giXbeJaCSemDm9B9OFYLWw==
-X-CSE-MsgGUID: DtI8CmriQ3+zPIt1NIq82g==
+ 18 Feb 2025 03:15:48 -0800
+X-CSE-ConnectionGUID: C7pH6L6tRP++7BXE3YAOyQ==
+X-CSE-MsgGUID: E2mwsnzXRi+9/0/cWHGb/A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466258"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466262"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:15:45 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:15:47 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v6 3/8] devtools: add script to flag unneeded dependencies
-Date: Tue, 18 Feb 2025 11:15:29 +0000
-Message-ID: <f51337b644be32fe787ca8b4ba267c7f32ef8acf.1739877266.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 4/8] drivers: remove kvargs from class dependencies
+Date: Tue, 18 Feb 2025 11:15:30 +0000
+Message-ID: <1b7d95daf08481d65868229f68a61a545d5726fd.1739877266.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1739877265.git.anatoly.burakov@intel.com>
 References: <cover.1725462264.git.anatoly.burakov@intel.com>
@@ -61,87 +61,62 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Bruce Richardson <bruce.richardson@intel.com>
 
-While not a serious problem, DPDK components often list more
-dependencies than are actually necessary to build, due to the use of
-recursive dependencies. In extreme cases, such as with core libraries,
-this can lead to longer configuration times due to meson having to
-deduplicate long lists of dependencies. Therefore we can add a script to
-identify when a component has got unnecessary dependencies listed.
+The kvargs library is used by EAL, and therefore is implicitly a
+dependency of every DPDK driver. Remove it from the minimum set of
+dependencies for each driver class as it's unnecessary to call it out
+there.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- devtools/find-duplicate-deps.py | 62 +++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100755 devtools/find-duplicate-deps.py
+ drivers/event/meson.build | 2 +-
+ drivers/net/meson.build   | 2 +-
+ drivers/regex/meson.build | 2 +-
+ drivers/vdpa/meson.build  | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/devtools/find-duplicate-deps.py b/devtools/find-duplicate-deps.py
-new file mode 100755
-index 0000000000..cbd0ca7196
---- /dev/null
-+++ b/devtools/find-duplicate-deps.py
-@@ -0,0 +1,62 @@
-+#! /usr/bin/env python3
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2024 Intel Corporation
-+
-+"""Identify any superfluous dependencies listed in DPDK deps graph."""
-+
-+import sys
-+
-+all_deps = {}
-+
-+
-+class dep:
-+    """Holds a component and its dependencies."""
-+
-+    def __init__(self, name, dep_names):
-+        """Create and process a component and its deps."""
-+        self.name = name.strip('" ')
-+        self.base_deps = [all_deps[dn.strip('" ')] for dn in dep_names]
-+        self.recursive_deps = []
-+        for d in self.base_deps:
-+            self.recursive_deps.extend(d.base_deps)
-+            self.recursive_deps.extend(d.recursive_deps)
-+        self.extra_deps = []
-+        for d in self.base_deps:
-+            if d in self.recursive_deps:
-+                self.extra_deps.append(d.name)
-+        if self.extra_deps:
-+            print(f'{self.name}: extra deps {self.extra_deps}')
-+
-+    def dict_add(self, d):
-+        """Add this object to a dictionary by name."""
-+        d[self.name] = self
-+
-+
-+def remove_attrs(ln):
-+    """Remove attributes from a line."""
-+    while ln.find("[") != -1:
-+        start = ln.find("[")
-+        end = ln.find("]")
-+        ln = ln[:start] + ln[end + 1 :]
-+    return ln.strip()
-+
-+
-+def main(argv):
-+    """Read the dependency tree from a dot file and process it."""
-+    if len(argv) != 2:
-+        print(f'Usage: {argv[0]} <build-directory>/deps.dot', file=sys.stderr)
-+        sys.exit(1)
-+
-+    with open(argv[1]) as f:
-+        for ln in f.readlines():
-+            ln = remove_attrs(ln.strip())
-+            if '->' in ln:
-+                name, deps = ln.split('->')
-+                deps = deps.strip(' {}')
-+                dep(name, deps.split(',')).dict_add(all_deps)
-+            elif ln.startswith('"') and ln.endswith('"'):
-+                dep(ln.strip('"'), []).dict_add(all_deps)
-+
-+
-+if __name__ == '__main__':
-+    main(sys.argv)
+diff --git a/drivers/event/meson.build b/drivers/event/meson.build
+index d6706b57f7..2708833adf 100644
+--- a/drivers/event/meson.build
++++ b/drivers/event/meson.build
+@@ -19,4 +19,4 @@ if not (toolchain == 'gcc' and cc.version().version_compare('<4.8.6') and
+         dpdk_conf.has('RTE_ARCH_ARM64'))
+     drivers += 'octeontx'
+ endif
+-std_deps = ['eventdev', 'kvargs']
++std_deps = ['eventdev']
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 460eb69e5b..246f99ec17 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -65,6 +65,6 @@ drivers = [
+         'xsc',
+         'zxdh',
+ ]
+-std_deps = ['ethdev', 'kvargs'] # 'ethdev' also pulls in mbuf, net, eal etc
++std_deps = ['ethdev']           # 'ethdev' also pulls in mbuf, net, eal etc
+ std_deps += ['bus_pci']         # very many PMDs depend on PCI, so make std
+ std_deps += ['bus_vdev']        # same with vdev bus
+diff --git a/drivers/regex/meson.build b/drivers/regex/meson.build
+index ff2a8fea89..10192e7c77 100644
+--- a/drivers/regex/meson.build
++++ b/drivers/regex/meson.build
+@@ -5,4 +5,4 @@ drivers = [
+         'mlx5',
+         'cn9k',
+ ]
+-std_deps = ['ethdev', 'kvargs', 'regexdev'] # 'ethdev' also pulls in mbuf, net, eal etc
++std_deps = ['ethdev', 'regexdev'] # 'ethdev' also pulls in mbuf, net, eal etc
+diff --git a/drivers/vdpa/meson.build b/drivers/vdpa/meson.build
+index 896e8e0304..e01c277b9e 100644
+--- a/drivers/vdpa/meson.build
++++ b/drivers/vdpa/meson.build
+@@ -11,5 +11,5 @@ drivers = [
+         'nfp',
+         'sfc',
+ ]
+-std_deps = ['bus_pci', 'kvargs']
++std_deps = ['bus_pci']
+ std_deps += ['vhost']
 -- 
 2.43.5
 
