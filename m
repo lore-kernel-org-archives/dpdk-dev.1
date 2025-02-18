@@ -2,70 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFA1C02198
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1475AC021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 13:32:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C35B8402C4;
-	Tue, 18 Feb 2025 12:58:50 +0100 (CET)
-Received: from mail-lf1-f98.google.com (mail-lf1-f98.google.com
- [209.85.167.98]) by mails.dpdk.org (Postfix) with ESMTP id F1DBA402A0
- for <dev@dpdk.org>; Tue, 18 Feb 2025 12:58:48 +0100 (CET)
-Received: by mail-lf1-f98.google.com with SMTP id
- 2adb3069b0e04-546267ed92fso1662676e87.2
- for <dev@dpdk.org>; Tue, 18 Feb 2025 03:58:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1739879928; x=1740484728; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=2ABdOYLshl5xRr0uKiCZsozUcmdJIGxs0RrkDJV31mI=;
- b=eNdhiNNJIZQ5hfuJYJyFkWtX7jGg5hvKYHdMz3cAAWuHCbRBTXmaGmKJIkhxdK3xBS
- tXGF0vWoZXPsOBsAxA/m8EyPtC/MvQBJjJkPBmC5ehVuW5y692rq+WS92RYmD6ZkMV6u
- 32W+CkdKW57jlQf7bxm3wwyDviHGYLPGldtJVpRVnI9yRi30UPM7P/P4ZCQwParIMjIq
- MJbXhiuIK+K5VliKKxXvH7HK6v1Zx8RxSmFJniODMKus9wyxBgr57YcPiVsEwJTb0vN+
- X1gZKHAYKBJHfLxAI8XM2Q5lA3f37n5xldMF5HpJU3Xn8c7buzLMZlCT82u0zhjxpx4/
- UFrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739879928; x=1740484728;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=2ABdOYLshl5xRr0uKiCZsozUcmdJIGxs0RrkDJV31mI=;
- b=p95fNU9KNB88XjNkYeenH/zXe3Dt7RLAvIB2UQJVuS/IrYAH8gwEgDDfx1TtyL1Z56
- jK2XDtDXUzp1Be58JQs+UjZ2zj6HzIZFB2K1pGmgpbieD7bj0s2VkstEvKH10XIT+bbI
- R5zNfJQKtA8YFjlRlsQciezFDUsiylAp2E9q0++COZvS8/Tm+v7mAR3BYxHWFdE/0dQ1
- yUnFgR8aGcPMTMi8nXZTz7HPBithtnLNXpKTTvWCiuG/p7jQGgNYCLsGEWJyzZuOnK0D
- WaL2FJ7rkD/6DXZPGcavo1JGr6XL0VTVQ3WHQvRCP7XpkAg8rogTckNpmUtg/5Vqq6C2
- uQVA==
-X-Gm-Message-State: AOJu0YxF4qu1v3moFoiU1LIiQkHmtgNUj638cU5rrva7n8efyIYshS5W
- JAe7DtUSzDvWhA4byLwJJBo3vqnNl1f2rp8kDw9hMtQEbLV7Y7NCyNwEhy6E1OoyatTo//+QXII
- yTM9ZRPUCoEEeZMwfAhI+a6ghq82E/wY3ttZ8V28=
-X-Gm-Gg: ASbGncsU6Sh1PMyFBPyYRuj/WILPaf8PslutHotyMcL+daFFBQ5+Pz/DoYICpl30g56
- BsK2mol0sDb1Dm4jHGD+78GKmwyN6wi3COngZDXAbnUKPsBDO59byjM49KJ2JzAV/P+V672KMsz
- BXDWEPWMgOmFzOSgIC950NKavM/CJhu09IVKxDviis66C8fL1wE9Vc0oTn/9YfqD0Q0PDEKRLWu
- Swx/p77vDjGXAoCBQddL4OiLaVwfIn5WudfgbiImkbalIWoMi0yYH+cf/aKZPBnNcGmD8ufrvKq
- iWCocKNOLiFnqJW+JsoanCxm8s+4tZGOZ43KW2TKJYv57yuumXLILAwt55mh
-X-Google-Smtp-Source: AGHT+IEdXvvIQJE0EE/xmDrIIgotJtd8rkE+3rpjqBkolhrPlI3K/6qLMhjVDLkMSsW2wHo5uhUvg/y9gi+A
-X-Received: by 2002:a05:6512:b12:b0:545:6fa:bf60 with SMTP id
- 2adb3069b0e04-5452fe2eaebmr4791892e87.19.1739879928061; 
- Tue, 18 Feb 2025 03:58:48 -0800 (PST)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- 2adb3069b0e04-54622d840a0sm152473e87.10.2025.02.18.03.58.47; 
- Tue, 18 Feb 2025 03:58:48 -0800 (PST)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (vader.dev.6wind.com [10.17.1.39])
- by smtpservice.6wind.com (Postfix) with ESMTP id 7A366121C8;
- Tue, 18 Feb 2025 12:58:47 +0100 (CET)
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-To: dev@dpdk.org
-Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
- Thomas Monjalon <thomas@monjalon.net>, stable@dpdk.org
-Subject: [PATCH] ethdev: fix get_reg_info
-Date: Tue, 18 Feb 2025 12:58:28 +0100
-Message-Id: <20250218115828.2107335-1-thierry.herbelot@6wind.com>
-X-Mailer: git-send-email 2.39.2
+	by mails.dpdk.org (Postfix) with ESMTP id 06185402C4;
+	Tue, 18 Feb 2025 14:32:37 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D0FA402A0
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 14:32:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1739885554;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=HmRZhnj3Rk8W/1ChAS731pTjboZfIWWQVB1tUykiavg=;
+ b=A5NpX5eukug2AgWXDu274mHD3jiHZ7rebJ1csk8+5yIr8lwz4XK81ElXxwARyYP+VJLpvV
+ NemfniM1Wldr2QCNpdVXt9JJ1V2xTetAJZqT8eKoDARJ5Ua035FXGlgQ2FQyaWRRqun5rb
+ +6BCd0H5DL4jsgSTPVFHmbwpO5Xw2qY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-27-LemSvVxBNH27ph31Eke4xg-1; Tue,
+ 18 Feb 2025 08:32:31 -0500
+X-MC-Unique: LemSvVxBNH27ph31Eke4xg-1
+X-Mimecast-MFC-AGG-ID: LemSvVxBNH27ph31Eke4xg_1739885550
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 64EC7193578F; Tue, 18 Feb 2025 13:32:30 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.80.189])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6C59419560A3; Tue, 18 Feb 2025 13:32:28 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org,  thomas@monjalon.net,  andremue@linux.microsoft.com,
+ Michael Santana <maicolgabriel@hotmail.com>
+Subject: Re: [PATCH] ci: build with MSVC in GHA
+In-Reply-To: <20250213075010.2670431-1-david.marchand@redhat.com> (David
+ Marchand's message of "Thu, 13 Feb 2025 08:50:10 +0100")
+References: <20250213075010.2670431-1-david.marchand@redhat.com>
+Date: Tue, 18 Feb 2025 08:32:26 -0500
+Message-ID: <f7teczvbcph.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: MPjETTyNGomQtUY1OdscrQ9ga_KI80WlwJmEx0YGzY8_1739885550
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,31 +67,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-'width' and 'offset' are input parameters when dumping the register
-info of an Ethernet device. They should be copied in the new request
-before calling the device callback function.
+David Marchand <david.marchand@redhat.com> writes:
 
-Fixes: 083db2ed9e9 ('ethdev: add report of register names and filter')
-Cc: stable@dpdk.org
+> Add a build target in Windows 2022 for MSVC.
+>
+> Loading MSVC environment and having successive commands in a single
+> (cmd or pwsh) shell does not seem to correctly report if one of the
+> commands failed.
+> For now, load MSVC environment and run commands in separate shells.
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
-Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
----
- lib/ethdev/rte_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+LGTM.
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 6413c54e3b39..073a3bcf5c0b 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -6511,6 +6511,8 @@ rte_eth_dev_get_reg_info(uint16_t port_id, struct rte_dev_reg_info *info)
- 	}
- 
- 	reg_info.length = info->length;
-+	reg_info.width = info->width;
-+	reg_info.offset = info->offset;
- 	reg_info.data = info->data;
- 
- 	ret = rte_eth_dev_get_reg_info_ext(port_id, &reg_info);
--- 
-2.39.2
+Acked-by: Aaron Conole <aconole@redhat.com>
+
+How far back will this work (ie: can we backport this to older branches?)
+
+>  .github/workflows/build.yml | 38 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+> index dcafb4a8f5..aef692ca1f 100644
+> --- a/.github/workflows/build.yml
+> +++ b/.github/workflows/build.yml
+> @@ -174,6 +174,44 @@ jobs:
+>            build/meson-logs/meson-log.txt
+>            build/meson-logs/testlog.txt
+>  
+> +  windows-vm-builds:
+> +    name: ${{ join(matrix.config.*, '-') }}
+> +    runs-on: ${{ matrix.config.os }}
+> +    strategy:
+> +      fail-fast: false
+> +      matrix:
+> +        config:
+> +          - os: windows-2022
+> +            compiler: msvc
+> +
+> +    steps:
+> +    - name: Checkout sources
+> +      uses: actions/checkout@v4
+> +    - name: Set up Python
+> +      uses: actions/setup-python@v5
+> +      with:
+> +        python-version: '3.x'
+> +    - name: Install dependencies
+> +      run: python -m pip install meson==1.6.1 ninja
+> +    - name: Configure
+> +      shell: cmd
+> +      run: |
+> +        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=amd64
+> +        meson setup -Denable_stdatomic=true build
+> +    - name: Build
+> +      shell: cmd
+> +      run: |
+> +        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=amd64
+> +        meson compile -C build
+> +    - name: Upload logs on failure
+> +      if: failure()
+> +      uses: actions/upload-artifact@v4
+> +      with:
+> +        name: meson-logs-${{ join(matrix.config.*, '-') }}
+> +        path: |
+> +          build/.ninja_log
+> +          build/meson-logs/meson-log.txt
+> +
+>    prepare-container-images:
+>      name: ${{ join(matrix.config.*, '-') }}
+>      runs-on: ubuntu-latest
 
