@@ -2,47 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85849C021A9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 01:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16C2C021A9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 03:01:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D3BA4014F;
-	Tue, 18 Feb 2025 02:35:35 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id DA6CF400EF
- for <dev@dpdk.org>; Tue, 18 Feb 2025 02:35:33 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id C4D0246254; Tue, 18 Feb 2025 02:35:33 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1663] [dpdk-25.03]
- flexible_rxd/check_IPv4_IPv6_TCP_fields_in_RXD_on_specific_queues: port
- config rxq/txq failed after attach port
-Date: Tue, 18 Feb 2025 01:35:33 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: songx.jiale@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1663-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17398425330.AbACC4.3933122
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id ABCEF4014F;
+	Tue, 18 Feb 2025 04:01:18 +0100 (CET)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com
+ [209.85.221.173])
+ by mails.dpdk.org (Postfix) with ESMTP id B50A6400EF
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 04:01:17 +0100 (CET)
+Received: by mail-vk1-f173.google.com with SMTP id
+ 71dfb90a1353d-5209437e773so896946e0c.3
+ for <dev@dpdk.org>; Mon, 17 Feb 2025 19:01:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739847677;
+ x=1740452477; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=wQ6efYizHYW7UtFju12cTQPxfU6Tx3sTyJSw9/BwJAA=;
+ b=WALMxrhmCHqRkfYIP7l4bbUoORz9qIIHPbtM5LJ1UG7jhP7c20sR8EDxMZwzez2gew
+ lJhV9ZoMfxEW0eUZPwG98l2JlseWr2HyqzEgPwvoP1vCRTrM0daAvBG7rB/paVtOwJ1U
+ 5yskrYNnXCk3eU5JUuaW0Szq8mlUNwfct1l4TfZgZ5ejQiq1bNWWOw5c3aV/0YXMwqRK
+ mlBTWrZ+VnmXqKD0lk7RUbpKQ2OUwSuR5Ky+HaySUAYFxnxy9ME0JPAypC7ry1l/B4GP
+ i0nlxht42PcaJdbdGaaZIICOnTyuRf9JLqg5mVDZLgtJNgpENYbYgz0EYKFnKLSnRC4W
+ CTVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1739847677; x=1740452477;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=wQ6efYizHYW7UtFju12cTQPxfU6Tx3sTyJSw9/BwJAA=;
+ b=Ec8L0cUE8J8i7JOIXSPzqku/FggD4UpXrs/IcOcZPuDuLaxepk2ZZkmcCrCiVp5xqC
+ ltQlBUh+lHMW4yahh7H/GwFCJsicJGvqX70ajqx2z5ngof9bHU46/+mpnlFxD83vrlhK
+ 8/5EISApKa1TgfF3JIxE6ar3ZW+uSMJwBVcNXW2PUWSpOuy0n3wePQYAZrt0//xLBIts
+ zaP365/D3k45bECmH8EblT1KimNgEdtpbfoaacN1ZvT4SPLXq35vMxs9hfGMxD0/4u0t
+ cZqmtfD2TxMlm3IhaP1RQkNQ2duHeB5UoLWWDAi0zw2rccfzDJLY0GYnRgG8PKT20ost
+ yfnw==
+X-Gm-Message-State: AOJu0YwW4WM38rYL4W2GnWDmkDQKfalfmnrg6UXlHncymgN6TcJ6cqPO
+ JsUiC04J7Todzuey8MCP9HAmwxC9FAAmTUIvWTaVN8RsLJiMi0qOVZvcwQjHZz5yRnEBGWQwKHQ
+ 8w3xf5EJwiaIpZDLxztrDk1/5AE7IysvRWMyUxRkQygDSmTSlpCE=
+X-Gm-Gg: ASbGncuo7t6TqfzXx9FjZhAn9hDZV2cF35beWAagQd8Taz4BnF/CGjwFCdyJSAFsh0p
+ WW49yM9jX1U9hxjsGLdDfo0YqiBs4rtshqZFqnSTZGmeedd79N82qBDHWgNy5/Qt7eONBylS+ht
+ aTum35O8pEhMzXAamdn1WSIcKcbtTs3A==
+X-Google-Smtp-Source: AGHT+IFLErhkisHE9RUMLsuhJaGwggdvVu6mAIYYZV31F5tG1GpIEkTeXW3lQFoF5K3CLNHw+2Kf863ouebQB8gcRVM=
+X-Received: by 2002:a05:6122:65a8:b0:520:3536:feb5 with SMTP id
+ 71dfb90a1353d-5209dd21cbfmr4389915e0c.11.1739847676753; Mon, 17 Feb 2025
+ 19:01:16 -0800 (PST)
 MIME-Version: 1.0
+References: <20250217185743.169778-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FA48@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FA48@smartserver.smartshare.dk>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Mon, 17 Feb 2025 19:01:08 -0800
+X-Gm-Features: AWEUYZk05j5icBuSpIdN0m0bLpOxlqHAWkA-CH10athNDYHov53jgeKSmh9TD5g
+Message-ID: <CAOaVG158gujFK6fWN98JFLdetVgSOvcvzFiVE+FCNeHFGu-q7Q@mail.gmail.com>
+Subject: Re: [RFC 00/11] Fix dev_ops dereferences
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="000000000000bc98a9062e61daed"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,320 +73,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17398425330.AbACC4.3933122
-Date: Tue, 18 Feb 2025 02:35:33 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+--000000000000bc98a9062e61daed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1663
+I found a bunch more cases will send V2
 
-            Bug ID: 1663
-           Summary: [dpdk-25.03]
-                    flexible_rxd/check_IPv4_IPv6_TCP_fields_in_RXD_on_spec
-                    ific_queues: port config rxq/txq failed after attach
-                    port
-           Product: DPDK
-           Version: 25.03
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: testpmd
-          Assignee: dev@dpdk.org
-          Reporter: songx.jiale@intel.com
-  Target Milestone: ---
+On Mon, Feb 17, 2025, 12:24 Morten Br=C3=B8rup <mb@smartsharesystems.com> w=
+rote:
 
-Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: e5176f23ae8b31437c3e5eb875c81f95bf3a9942 version: 25.03-rc1
-OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
-Compiler:  gcc version 13.2.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
-NIC hardware: Intel Corporation Ethernet Controller E810-C for SFP [8086:15=
-93]
-(rev 01)
-NIC firmware:=20
-  driver: ice-1.16.3
-  FW: 4.70 0x8001f7e2 1.3755.0
+> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > Sent: Monday, 17 February 2025 19.54
+> >
+> > A common pattern in DPDK internals is to have an array of function
+> > pointers. When using these pointers an unnecessary derefence is done;
+> > this is allowed in C because of a historical quirk but unnecessary.
+> >
+> > The PVS Studio checker flags these as:
+> >  https://pvs-studio.com/en/docs/warnings/v516/
+> >
+> > This leads to a large number of warnings marked as High severity.
+> > This patchset simplifies the source and gets rid of these warnings.
+> >
+> > It should have no impact on the resulting binary.
+>
+> +1 to this RFC.
+> The code becomes much cleaner to read.
+>
+>
 
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. bind ports to dpdk=20=20
-./usertools/dpdk-devbind.py -b vfio-pci 0000:af:00.0
-2. launch testpmd=20
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-3 -n 4 -a 0000:af:00.0 -- =
--i=20
-3. detach and attach ports
-port stop all
-port detach 0
-port attach 0000:af:00.0
-port stop all
-4. config port rxq/txq=20
-port config all rxq 16
-port config all txq 16=20=20
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-The status of the port is down, but it cannot be configured.
-testpmd> port config all rxq 16
-Please stop all ports first
-testpmd> port config all txq 16
-Please stop all ports first
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Can successfully configure rxq/txq after attaching the port.
-testpmd> port config all rxq 16
-testpmd> port config all txq 16
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 994635edb2c038e64617bcf2790a8cd326c3e8e0
-Author: Huisong Li <lihuisong@huawei.com>
-Date:   Mon Jan 20 14:42:18 2025 +0800
-
-    app/testpmd: add port attach/detach for multiple process
-
-    The port information needs to be updated due to attaching and detaching
-    port. Currently, it is done in the same thread as removing or probing
-    device, which doesn't satisfy the operation of attaching and detaching
-    device in multiple process.
-
-    If this operation is performed in one process, the other process can
-    receive 'new' or 'destroy' event. So we can move updating port informat=
-ion
-    to event callback to support attaching and detaching port in primary and
-    secondary process.
-
-    Note: the reason for adding an alarm callback in 'destroy' event is that
-    the ethdev state is changed from 'ATTACHED' to 'UNUSED' only after the
-    event callback finished. But the remove_invalid_ports() function removes
-    invalid port only if ethdev state is 'UNUSED'. If we don't add alarm
-    callback, this detached port information can not be removed.
-
-    Signed-off-by: Huisong Li <lihuisong@huawei.com>
-    Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-    Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-
- app/test-pmd/testpmd.c | 68 +++++++++++++++++++++++++++++++++++++---------=
-----
- 1 file changed, 51 insertions, 17 deletions
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17398425330.AbACC4.3933122
-Date: Tue, 18 Feb 2025 02:35:33 +0100
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
+--000000000000bc98a9062e61daed
+Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - [dpdk-25.03] flexible_rxd/check_IPv4_IPv6_TCP_fie=
-lds_in_RXD_on_specific_queues: port config rxq/txq failed after attach port"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1663">1663</a>
-          </td>
-        </tr>
+<div dir=3D"auto">I found a bunch more cases will send V2</div><br><div cla=
+ss=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_at=
+tr">On Mon, Feb 17, 2025, 12:24 Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb=
+@smartsharesystems.com">mb@smartsharesystems.com</a>&gt; wrote:<br></div><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex">&gt; From: Stephen Hemminge=
+r [mailto:<a href=3D"mailto:stephen@networkplumber.org" target=3D"_blank" r=
+el=3D"noreferrer">stephen@networkplumber.org</a>]<br>
+&gt; Sent: Monday, 17 February 2025 19.54<br>
+&gt; <br>
+&gt; A common pattern in DPDK internals is to have an array of function<br>
+&gt; pointers. When using these pointers an unnecessary derefence is done;<=
+br>
+&gt; this is allowed in C because of a historical quirk but unnecessary.<br=
+>
+&gt; <br>
+&gt; The PVS Studio checker flags these as:<br>
+&gt;=C2=A0 <a href=3D"https://pvs-studio.com/en/docs/warnings/v516/" rel=3D=
+"noreferrer noreferrer" target=3D"_blank">https://pvs-studio.com/en/docs/wa=
+rnings/v516/</a><br>
+&gt; <br>
+&gt; This leads to a large number of warnings marked as High severity.<br>
+&gt; This patchset simplifies the source and gets rid of these warnings.<br=
+>
+&gt; <br>
+&gt; It should have no impact on the resulting binary.<br>
+<br>
++1 to this RFC.<br>
+The code becomes much cleaner to read.<br>
+<br>
+</blockquote></div>
 
-        <tr>
-          <th>Summary</th>
-          <td>[dpdk-25.03] flexible_rxd/check_IPv4_IPv6_TCP_fields_in_RXD_o=
-n_specific_queues: port config rxq/txq failed after attach port
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>x86
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>testpmd
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>songx.jiale&#64;intel.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: e5176f23ae8b31437c3e5eb875c81f95bf3a9942 version: 25.03-rc1
-OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
-Compiler:  gcc version 13.2.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU &#64; 2.30GHz
-NIC hardware: Intel Corporation Ethernet Controller E810-C for SFP [8086:15=
-93]
-(rev 01)
-NIC firmware:=20
-  driver: ice-1.16.3
-  FW: 4.70 0x8001f7e2 1.3755.0
-
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. bind ports to dpdk=20=20
-./usertools/dpdk-devbind.py -b vfio-pci 0000:af:00.0
-2. launch testpmd=20
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-3 -n 4 -a 0000:af:00.0 -- =
--i=20
-3. detach and attach ports
-port stop all
-port detach 0
-port attach 0000:af:00.0
-port stop all
-4. config port rxq/txq=20
-port config all rxq 16
-port config all txq 16=20=20
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-The status of the port is down, but it cannot be configured.
-testpmd&gt; port config all rxq 16
-Please stop all ports first
-testpmd&gt; port config all txq 16
-Please stop all ports first
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Can successfully configure rxq/txq after attaching the port.
-testpmd&gt; port config all rxq 16
-testpmd&gt; port config all txq 16
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 994635edb2c038e64617bcf2790a8cd326c3e8e0
-Author: Huisong Li &lt;<a href=3D"mailto:lihuisong&#64;huawei.com">lihuison=
-g&#64;huawei.com</a>&gt;
-Date:   Mon Jan 20 14:42:18 2025 +0800
-
-    app/testpmd: add port attach/detach for multiple process
-
-    The port information needs to be updated due to attaching and detaching
-    port. Currently, it is done in the same thread as removing or probing
-    device, which doesn't satisfy the operation of attaching and detaching
-    device in multiple process.
-
-    If this operation is performed in one process, the other process can
-    receive 'new' or 'destroy' event. So we can move updating port informat=
-ion
-    to event callback to support attaching and detaching port in primary and
-    secondary process.
-
-    Note: the reason for adding an alarm callback in 'destroy' event is that
-    the ethdev state is changed from 'ATTACHED' to 'UNUSED' only after the
-    event callback finished. But the remove_invalid_ports() function removes
-    invalid port only if ethdev state is 'UNUSED'. If we don't add alarm
-    callback, this detached port information can not be removed.
-
-    Signed-off-by: Huisong Li &lt;<a href=3D"mailto:lihuisong&#64;huawei.co=
-m">lihuisong&#64;huawei.com</a>&gt;
-    Signed-off-by: Dongdong Liu &lt;<a href=3D"mailto:liudongdong3&#64;huaw=
-ei.com">liudongdong3&#64;huawei.com</a>&gt;
-    Acked-by: Chengwen Feng &lt;<a href=3D"mailto:fengchengwen&#64;huawei.c=
-om">fengchengwen&#64;huawei.com</a>&gt;
-
- app/test-pmd/testpmd.c | 68 +++++++++++++++++++++++++++++++++++++---------=
-----
- 1 file changed, 51 insertions, 17 deletions
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1663">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17398425330.AbACC4.3933122--
+--000000000000bc98a9062e61daed--
