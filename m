@@ -2,40 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B99C021AD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 17:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399F2C021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 19:45:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 11DEC402CF;
-	Tue, 18 Feb 2025 18:12:08 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id EA78740264
- for <dev@dpdk.org>; Tue, 18 Feb 2025 18:12:05 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B18D02076D;
- Tue, 18 Feb 2025 18:12:05 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 15252402A3;
+	Tue, 18 Feb 2025 20:45:54 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 260F340264
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 20:45:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1739907952;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=OIDAxaqXYVKgm+iNxZCqsCNC38jDMkbbdg0/WPhb2dc=;
+ b=c8QJGUABrrX/Y856AhwQRxLy6XkPAaO0ncDwWV6mLBvdQ+BP9Nb6qvKrz9teKXA9GhDWdy
+ X324p/tV638QxCrJKs7whcwvY2/ch5FMQnHu5DDnzufkUp60nJd6d8ONmp4IsUsLh23F+a
+ nm3KKV/+oxpxg3uSiK4ZhuOJwcxY0k4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-466-psqoyVd3P7mHW57u3GOAfQ-1; Tue,
+ 18 Feb 2025 14:45:51 -0500
+X-MC-Unique: psqoyVd3P7mHW57u3GOAfQ-1
+X-Mimecast-MFC-AGG-ID: psqoyVd3P7mHW57u3GOAfQ_1739907950
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D8E641800879; Tue, 18 Feb 2025 19:45:49 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.80.189])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2D7D91800359; Tue, 18 Feb 2025 19:45:47 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org,  thomas@monjalon.net,  andremue@linux.microsoft.com,
+ Michael Santana <maicolgabriel@hotmail.com>
+Subject: Re: [PATCH] ci: build with MSVC in GHA
+In-Reply-To: <CAJFAV8zuMwzA6mPxzPsk3d5OHjYu3vVjHtTzwODjxDmm7aJAKg@mail.gmail.com>
+ (David Marchand's message of "Tue, 18 Feb 2025 15:10:13 +0100")
+References: <20250213075010.2670431-1-david.marchand@redhat.com>
+ <f7teczvbcph.fsf@redhat.com>
+ <CAJFAV8zuMwzA6mPxzPsk3d5OHjYu3vVjHtTzwODjxDmm7aJAKg@mail.gmail.com>
+Date: Tue, 18 Feb 2025 14:45:45 -0500
+Message-ID: <f7t7c5n9guu.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Vm17EtJmEIeYGdt3Ehp4rVUMu33S18WatOFMAm10_oU_1739907950
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v2 01/10] eal: add workaround for __builtin_constant_p
-Date: Tue, 18 Feb 2025 18:12:04 +0100
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FA4C@smartserver.smartshare.dk>
-In-Reply-To: <1739896329-1946-2-git-send-email-andremue@linux.microsoft.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 01/10] eal: add workaround for __builtin_constant_p
-Thread-Index: AduCIrjlQUDmnDI6RSmTTXHNPphwrAABNBUA
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
- <1739896329-1946-2-git-send-email-andremue@linux.microsoft.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Andre Muezerie" <andremue@linux.microsoft.com>
-Cc: <dev@dpdk.org>, "Chengwen Feng" <fengchengwen@huawei.com>,
- <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,24 +71,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Andre Muezerie [mailto:andremue@linux.microsoft.com]
-> Sent: Tuesday, 18 February 2025 17.32
->=20
-> There's no MSVC equivalent for compiler extension =
-__builtin_constant_p.
-> EAL already had __rte_constant which was used as a first attempt to
-> workaround __builtin_constant_p when using MSVC. However, there are
-> pieces of code that would benefit from being able to provide a default
-> value to be used instead of it being always 0 like how it was done by
-> __rte_constant.
->=20
-> A new macro is added here allowing such default to be provided by the
-> caller.
+David Marchand <david.marchand@redhat.com> writes:
 
-NAK to the new macro.
+> On Tue, Feb 18, 2025 at 2:32=E2=80=AFPM Aaron Conole <aconole@redhat.com>=
+ wrote:
+>>
+>> David Marchand <david.marchand@redhat.com> writes:
+>>
+>> > Add a build target in Windows 2022 for MSVC.
+>> >
+>> > Loading MSVC environment and having successive commands in a single
+>> > (cmd or pwsh) shell does not seem to correctly report if one of the
+>> > commands failed.
+>> > For now, load MSVC environment and run commands in separate shells.
+>> >
+>> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+>> > ---
+>>
+>> LGTM.
+>>
+>> Acked-by: Aaron Conole <aconole@redhat.com>
+>>
+>> How far back will this work (ie: can we backport this to older branches?=
+)
+>
+> MSVC was added in 23.11.
+> The patch applies cleanly and runs on 23.11 (where only lib/kvargs,
+> lib/log and lib/telemetry are compiled) and 24.11.
+>
+> I can add Cc: stable if you think it is worth having it in LTS (UNH
+> provides some coverage in LTS releases).
 
-Please use the sizeof() hack suggested by Stephen to provide an =
-implementation of __rte_constant(e) for MSVC.
-Here's a link to an example of the hack:
-https://news.ycombinator.com/item?id=3D16720172
+I usually prefer to back-port CI related changes because it helps us
+catch issues / improve the stable release cycle.
 
