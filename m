@@ -2,74 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896C9C02198
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 15:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACFDC02198
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 15:37:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA1A0402E8;
-	Tue, 18 Feb 2025 16:35:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 45DF740261;
+	Tue, 18 Feb 2025 16:37:40 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 459E54014F
- for <dev@dpdk.org>; Tue, 18 Feb 2025 16:35:49 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7D4784014F
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 16:37:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1739892948;
+ s=mimecast20190719; t=1739893059;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Q+HNz9zu4+jaFr43NO1U6+CzHA/afYHRPSA77rd4eW8=;
- b=ht9D5VD5C1/VsTYW3msRt3rvqhtS8eFA6AxHQw9etiSY0NynLzzPGWjc4vqMNUuhdpZUnh
- HZKsZbE+OXnmdDPvZw1fZTb6rDXFbWTSb0oWF9+SRH10qSRSQ7nrK//pF1XDgaoHsA1XpK
- hRNRMY4cJwTDkVQrh6tBBE+nHWwR4xQ=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-214-tHjpd5VeNdunU1r5usja0Q-1; Tue, 18 Feb 2025 10:35:47 -0500
-X-MC-Unique: tHjpd5VeNdunU1r5usja0Q-1
-X-Mimecast-MFC-AGG-ID: tHjpd5VeNdunU1r5usja0Q_1739892946
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-30a2793bfceso11931011fa.1
- for <dev@dpdk.org>; Tue, 18 Feb 2025 07:35:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739892946; x=1740497746;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Q+HNz9zu4+jaFr43NO1U6+CzHA/afYHRPSA77rd4eW8=;
- b=YFuJKdaatNmkG8Wq4IZjlXUao3JivCQDDXIgVQRRFbAPbNzp15Sy+JJeS1Q3E9WdFy
- 4Fp1jyikoZSbqRRDGvN530M+oCxn66wM6n7G9+QNbY604ZccJkdNxqrCiUKoRxsdXZ6+
- z/A6eH8wUNKiP4yoqbYgrY1FV+REvOOn66QjV/uu84oe+BnLfb80JX5i/2l/B70ONr4e
- nz/c+CZBJNxI2TbTM+uDhIGOPtAJTlrPnn/nzl9TTXJqTU+mVtXPreU0i4SX5TiC2sEh
- cp/0d8/MwQq9VxsnETRgV36waHIvD+HlMS862GVYr4vcFz9b6grANN42wvYbTtlGEZUN
- Me8w==
-X-Gm-Message-State: AOJu0YwUknOoGuh+RT5rCFee7SNuBxcsS1AIVfVbtjNMoTuP+wWr1Fwu
- 2+0kLSAv6Npbb0X/2SfMnkclopttaKUoIC+jfRqXFMi8N5GJah1zNMQtGx07Pk4rC7BrNm6WUcq
- FD5aPX/PeL/GThccTsaCTNL/F77NFu9K3NXs4oP4EWrpCQfhcVIlUaKhbcMOh2a3Za4DRdHiLqL
- k9fBLZSgzDwzF1nxc=
-X-Gm-Gg: ASbGncsEYTj0Tzr4eRi3ppTmINUtBq3HQYRpLdQ9XMr0+TtGL1TiWibAJ1TY6y6artl
- TnrVsB7lZPjb5jMx6QQFam0nRaQRxVXna8VeRuWzbjjzsfBuu8qZe18c9ZazFRUHg
-X-Received: by 2002:a2e:988e:0:b0:30a:375a:fd2e with SMTP id
- 38308e7fff4ca-30a44119cccmr1078671fa.9.1739892946092; 
- Tue, 18 Feb 2025 07:35:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG00ogn6ldgqRxBL7DF2IBf2KSpixZ6iixyHKRWizDW9bvALq670tNyWxGB2V6P9X5eBbfRbwRbVmk4OSif7MQ=
-X-Received: by 2002:a2e:988e:0:b0:30a:375a:fd2e with SMTP id
- 38308e7fff4ca-30a44119cccmr1078581fa.9.1739892945666; Tue, 18 Feb 2025
- 07:35:45 -0800 (PST)
-MIME-Version: 1.0
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
+ bh=M5fsKkQWxd4NUQpsV3oY6+BwUlgkWzMM7bAxfzegaOM=;
+ b=VFAPfTROcuP2NFkYZNnZYDVAIyHHYLA4b1xo1Lls29imrkYvI1bRobI5Su6/uCosXAEb9q
+ ArYeKer7mA+7sfu4SaVeSNnm5F9R7JqqsmNo5b8DfGGJeOowBO/ucroYX6d1VF8irTafY4
+ 2ZydINrxO7UpkFFSXlX0u+I1ouf9u5Q=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-kJdqgU9ANxuu5mBiGpEaqA-1; Tue,
+ 18 Feb 2025 10:37:36 -0500
+X-MC-Unique: kJdqgU9ANxuu5mBiGpEaqA-1
+X-Mimecast-MFC-AGG-ID: kJdqgU9ANxuu5mBiGpEaqA_1739893055
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id EF2261800360; Tue, 18 Feb 2025 15:37:34 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.171])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 1A0861800368; Tue, 18 Feb 2025 15:37:32 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 18 Feb 2025 16:35:33 +0100
-X-Gm-Features: AWEUYZkzU9VBLBB1Avlwb7l1ZMkwh9IYWuej-Ejtd06naNM9g0Dbva__TuGpN4U
-Message-ID: <CAJFAV8xqYeJAffXe+1wc90Tm_A5Gqc-XkeVcPzxtBm3=ffaRpg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] enable "app" to be compiled with MSVC
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, bruce.richardson@intel.com,
+ andremue@linux.microsoft.com
+Subject: [PATCH v3 00/10] Remove weak symbols
+Date: Tue, 18 Feb 2025 16:37:14 +0100
+Message-ID: <20250218153730.773836-1-david.marchand@redhat.com>
+In-Reply-To: <20250207083252.3131588-1-david.marchand@redhat.com>
+References: <20250207083252.3131588-1-david.marchand@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: EMXhpecumlLbCK1MxYaU5my9CdwzORQvp9G3Na2YsFE_1739892946
+X-Mimecast-MFC-PROC-ID: zbkT1T-78yTU8vSI_fox_Wqz10a_2CTNOXL3R57kQ5Y_1739893055
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,45 +67,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Feb 11, 2025 at 11:02=E2=80=AFPM Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
->
-> This series fixes many issues that prevent the "app" directory
-> from being compiled with MSVC.
->
-> Andre Muezerie (10):
->   eal: add workaround for __builtin_constant_p
->   test_alarm: avoid warning about different qualifiers
->   test-pmd: fix printf format string mismatch
->   test-pmd: do explicit 64-bit shift to avoid implicit conversion
->   test-pmd: avoid undefined behavior
->   test-pmd: avoid non-constant initializer
->   test-pmd: don't return value from void function
->   test-pmd: declare lcore_count atomic when using C11 memory model
->   test: add workaround for __builtin_constant_p in test_memcpy_perf
->   app: enable app directory to be compiled with MSVC
->
->  app/meson.build                     |   4 --
->  app/test-pmd/cmdline.c              |  19 +++--
->  app/test-pmd/cmdline_flow.c         |  22 +++---
->  app/test-pmd/csumonly.c             |  12 ++--
->  app/test-pmd/meson.build            |   4 +-
->  app/test-pmd/testpmd.c              |   2 +-
->  app/test-pmd/util.c                 |   2 +-
->  app/test/test_alarm.c               |  12 ++--
->  app/test/test_memcpy_perf.c         | 106 ++++++++++++++--------------
->  app/test/test_ring_perf.c           |   6 +-
->  lib/eal/include/generic/rte_pause.h |   2 +-
->  lib/eal/include/rte_common.h        |  12 ++++
->  12 files changed, 114 insertions(+), 89 deletions(-)
+This is an alternative to André series:
+https://inbox.dpdk.org/dev/1735009552-31906-1-git-send-email-andremue@linux.microsoft.com/
 
-The last patch of the series was not received on the ml.
-This prevents CI from testing it.
-Please resubmit the whole series.
+Weak symbols can be easily replaced with some linking updates, and make
+it clearer which symbols are actually ending up in the final binary.
 
 
-Thanks.
-
---=20
+-- 
 David Marchand
+
+Changes since v2:
+- rebased,
+
+Changes since v1:
+- fix net/hns3 build for Arm64 without SVE,
+
+
+David Marchand (10):
+  bus/auxiliary: remove weak symbols
+  common/qat: remove weak symbols
+  drivers: remove weak symbols in Nitrox drivers
+  net/enic: remove weak symbols
+  net/hns3: remove weak symbols
+  net/fm10k: remove weak symbols
+  net/nfp: remove weak symbols
+  net/virtio: remove weak symbols
+  app/compress-perf: remove weak symbols
+  eal: deprecate weak symbols
+
+ app/test-compress-perf/main.c            | 62 --------------------
+ doc/guides/rel_notes/release_25_03.rst   |  2 +
+ drivers/bus/auxiliary/auxiliary_common.c |  6 +-
+ drivers/bus/auxiliary/meson.build        |  1 +
+ drivers/common/nitrox/meson.build        |  3 -
+ drivers/common/nitrox/nitrox_device.c    | 75 +++++++++---------------
+ drivers/common/nitrox/nitrox_device.h    | 16 +++++
+ drivers/common/nitrox/version.map        |  1 +
+ drivers/common/qat/qat_qp.c              |  8 ---
+ drivers/common/qat/qat_qp.h              |  5 --
+ drivers/compress/nitrox/meson.build      |  2 -
+ drivers/compress/nitrox/nitrox_comp.c    |  6 ++
+ drivers/crypto/nitrox/meson.build        |  2 -
+ drivers/crypto/nitrox/nitrox_sym.c       |  6 ++
+ drivers/net/enic/enic_main.c             |  8 +--
+ drivers/net/enic/meson.build             |  1 +
+ drivers/net/hns3/hns3_rxtx.c             | 22 ++++---
+ drivers/net/intel/fm10k/fm10k_ethdev.c   | 20 ++++---
+ drivers/net/nfp/meson.build              |  7 ++-
+ drivers/net/nfp/nfdk/nfp_nfdk_vec_stub.c |  2 +-
+ drivers/net/nfp/nfp_rxtx_vec_stub.c      |  4 +-
+ drivers/net/virtio/meson.build           |  5 ++
+ drivers/net/virtio/virtio_rxtx.c         |  6 +-
+ drivers/net/virtio/virtio_rxtx_simple.c  |  4 +-
+ lib/eal/include/rte_common.h             |  6 +-
+ 25 files changed, 119 insertions(+), 161 deletions(-)
+
+-- 
+2.48.1
 
