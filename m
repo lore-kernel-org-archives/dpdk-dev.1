@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42369C021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D3FC021AD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:32:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9B7740695;
-	Tue, 18 Feb 2025 17:32:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E9FA9406BB;
+	Tue, 18 Feb 2025 17:32:23 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 619EB40658
- for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1355040654
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:16 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 57B0920376E8; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57B0920376E8
+ id 8913D20376EC; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8913D20376EC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1739896334;
- bh=jaf8IHbxA1OeStjJ5GJLM5EXMesSgLeWDrGHlc9auNk=;
+ bh=rifw1IyScKCgx/ZxTwA9tsFkppB/mtm2BWmVGJk/4Qk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KQfCWONe1xgx66yxX4jEIvuAmLvxxwmeJfqH0TqvM217LcSNjZqM8dK/94Jyxsrig
- FSTIlvh42rk6xC8o/6n/fet+chalHcsMtBHk8Pznt3NWyCh4LyHSFehKAEcE8xvWGs
- x/CxmeeQNX+cckOLRppcMAhNHEEtTLvuwiM97yR0=
+ b=P+K1YjVJTblLoRYflcNaBJcN5KgmarDhcTeg0yv+P+HXN+lL+ZzbF7FZ98v5Y1pwQ
+ OwYfVrizC9B9LwVjA1Y3R0+kC2SocE9BhlCBXIlc3Nc98mJEVE4yNUZr5e+fZdAeJa
+ N0PQvulZ1rxHdpeVSmyyu5u7nCMYL+I1TOLZnyZQ=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v2 02/10] test_alarm: avoid warning about different qualifiers
-Date: Tue, 18 Feb 2025 08:32:01 -0800
-Message-Id: <1739896329-1946-3-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v2 06/10] test-pmd: avoid non-constant initializer
+Date: Tue, 18 Feb 2025 08:32:05 -0800
+Message-Id: <1739896329-1946-7-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,54 +44,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in the warning below:
+Compiling with MSVC results in errors like the one below:
 
-app/test/test_alarm.c(54): warning C4090: 'function':
-    different '_Atomic' qualifiers
-
-The fix is to use a macro to explicitly drop the qualifier.
+app/test-pmd/cmdline_flow.c(8819): error C2099: initializer
+    is not a constant
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test/test_alarm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ app/test-pmd/cmdline_flow.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/app/test/test_alarm.c b/app/test/test_alarm.c
-index 9ed8c6f72c..6445f713fe 100644
---- a/app/test/test_alarm.c
-+++ b/app/test/test_alarm.c
-@@ -51,12 +51,12 @@ test_alarm(void)
- 			 "Expected rte_eal_alarm_cancel to fail with null callback parameter");
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index e1720e54d7..24323d8891 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -8812,8 +8812,6 @@ parse_vc_spec(struct context *ctx, const struct token *token,
+ 		return -1;
+ 	/* Parse parameter types. */
+ 	switch (ctx->curr) {
+-		static const enum index prefix[] = NEXT_ENTRY(COMMON_PREFIX);
+-
+ 	case ITEM_PARAM_IS:
+ 		index = 0;
+ 		objmask = 1;
+@@ -8828,7 +8826,7 @@ parse_vc_spec(struct context *ctx, const struct token *token,
+ 		/* Modify next token to expect a prefix. */
+ 		if (ctx->next_num < 2)
+ 			return -1;
+-		ctx->next[ctx->next_num - 2] = prefix;
++		ctx->next[ctx->next_num - 2] = NEXT_ENTRY(COMMON_PREFIX);
+ 		/* Fall through. */
+ 	case ITEM_PARAM_MASK:
+ 		index = 2;
+@@ -9270,7 +9268,6 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
+ 			  const char *str, unsigned int len,
+ 			  void *buf, unsigned int size)
+ {
+-	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_TYPE);
+ 	struct action_rss_data *action_rss_data;
+ 	unsigned int i;
  
- 	/* check if can set a alarm for one second */
--	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback, &triggered),
--			    "Setting one second alarm failed");
-+	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback,
-+			    RTE_PTR_UNQUAL(&triggered)), "Setting one second alarm failed");
- 
- 	/* set a longer alarm that will be canceled. */
--	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback, &later),
--			    "Setting ten second alarm failed");
-+	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback,
-+			    RTE_PTR_UNQUAL(&later)), "Setting ten second alarm failed");
- 
- 	/* wait for alarm to happen */
- 	while (rte_atomic_load_explicit(&triggered, rte_memory_order_acquire) == false)
-@@ -65,11 +65,11 @@ test_alarm(void)
- 	TEST_ASSERT(!rte_atomic_load_explicit(&later, rte_memory_order_acquire),
- 		    "Only one alarm should have fired.");
- 
--	ret = rte_eal_alarm_cancel(test_alarm_callback, &triggered);
-+	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&triggered));
- 	TEST_ASSERT(ret == 0 && rte_errno == ENOENT,
- 		    "Canceling alarm after run ret %d: %s", ret, rte_strerror(rte_errno));
- 
--	ret = rte_eal_alarm_cancel(test_alarm_callback, &later);
-+	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&later));
- 	TEST_ASSERT(ret == 1, "Canceling ten second alarm failed %d: %s",
- 		    ret, rte_strerror(rte_errno));
- 
+@@ -9296,7 +9293,7 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
+ 	/* Repeat token. */
+ 	if (ctx->next_num == RTE_DIM(ctx->next))
+ 		return -1;
+-	ctx->next[ctx->next_num++] = next;
++	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_TYPE);
+ 	if (!ctx->object)
+ 		return len;
+ 	action_rss_data = ctx->object;
+@@ -9314,7 +9311,6 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
+ 			  const char *str, unsigned int len,
+ 			  void *buf, unsigned int size)
+ {
+-	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_QUEUE);
+ 	struct action_rss_data *action_rss_data;
+ 	const struct arg *arg;
+ 	int ret;
+@@ -9347,7 +9343,7 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
+ 	/* Repeat token. */
+ 	if (ctx->next_num == RTE_DIM(ctx->next))
+ 		return -1;
+-	ctx->next[ctx->next_num++] = next;
++	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_QUEUE);
+ end:
+ 	if (!ctx->object)
+ 		return len;
 -- 
 2.48.1.vfs.0.0
 
