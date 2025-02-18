@@ -2,50 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE00C02198
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BFBC02198
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 11:16:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C53A40677;
-	Tue, 18 Feb 2025 12:16:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EE1F54066F;
+	Tue, 18 Feb 2025 12:16:16 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id E3F404060B
- for <dev@dpdk.org>; Tue, 18 Feb 2025 12:16:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5F4BD40673
+ for <dev@dpdk.org>; Tue, 18 Feb 2025 12:16:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739877374; x=1771413374;
+ t=1739877375; x=1771413375;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=9sCNLEMekUBGWwK55xCnOpSBqLchTCEqShpl9p8dbjQ=;
- b=JCKtLcU+CTa+9s0ac6wYpOdV4ydpdZ1wtkAlNb9KtDXUGobz7fxc2TY9
- FvEX6w1jEnwSSoruYi1FagafM6Jq0vNWXIAqgOdmW5LTzjwZC6RWk6LBS
- e+dJSAneQSpqUq9QtBej4gYm8e69GhJclO0QPzUZmWLDPfS7tZLAu+V8z
- 1GzeGEZyVt5NkMAffqOHnmHPOQVEBSptFXAXglhNye6J8ldFTldtVxeDR
- gMrGmrLfUoOQaIPsvW36i1E19DI0/qENEWSGU4uJ/QvKb/giGjngDhkf4
- TBnaHwoLRtO17kmO4dWB/wvorTC0DphpbSS0pFgpH1EbiEURWKfXdtSiA A==;
-X-CSE-ConnectionGUID: 5FCvWHLoSvCqesWcnYnVAg==
-X-CSE-MsgGUID: 10K/a4krQvGq6er406NFMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780869"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780869"
+ bh=yFVLtlo+veGQz2CSSkuZrVjMsI6rLl5te2ZjGQ+6z5o=;
+ b=HRQCm0ITvN924oN569lRZh6r6GgGUAYaRBMje3f9K41vOr3aQzWgCA59
+ N9o+4/lcdBFBLvN3KQDzsii1MTxf/AGdc6x1zbPd1vFhS13mEFy04Q/yb
+ dvT58kUmZdpNMaRb64QLmnKZMZ7TAVYsIcni0keAwzakm8Jl99xIDzsBy
+ RNhu/FvM0E2TDRoXvTR4fME6RiyJ5sZXYUWt9e7S1lxqaaiXj6YvI4r2O
+ mguADX/3S5QQGYcfQ8mBu9cx5f1ZSDE/CSbnL0rdYFbddIgkW0VgfmdNt
+ 67hbnF/8Mpxsr8/LsEaInz5hQ0vqLNQb0uCLYEv+tEn7+dTHFe+DbJInG g==;
+X-CSE-ConnectionGUID: NVvN4l5vT1apP/SEVJNLWA==
+X-CSE-MsgGUID: ob+r1tnIT8eWtDDEL/oHMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50780873"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="50780873"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Feb 2025 03:16:13 -0800
-X-CSE-ConnectionGUID: 1kq+CSVuRomSZdROEIIAOA==
-X-CSE-MsgGUID: oBtA9gi6T3OybA10VO7yfw==
+ 18 Feb 2025 03:16:15 -0800
+X-CSE-ConnectionGUID: liCXostFSHq+S/3dxB9joQ==
+X-CSE-MsgGUID: cEVJSTRqQrKChMwsP2Iu1g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466400"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; d="scan'208";a="119466403"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:16:10 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 03:16:13 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Kumar Kori <skori@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>,
- Brian Dooley <brian.dooley@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Subject: [PATCH v6 7/8] app: reduce app dependencies
-Date: Tue, 18 Feb 2025 11:15:33 +0000
-Message-ID: <4fef69922f2220f57ea32cb4a31e015622590237.1739877266.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v6 8/8] devtools: add script to generate DPDK dependency graphs
+Date: Tue, 18 Feb 2025 11:15:34 +0000
+Message-ID: <f017d9a0b15ea2f06fccf041bd73d1fbef479443.1739877266.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1739877265.git.anatoly.burakov@intel.com>
 References: <cover.1725462264.git.anatoly.burakov@intel.com>
@@ -67,117 +61,251 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Bruce Richardson <bruce.richardson@intel.com>
 
-Remove any unnecessary dependencies from the app dependency lists.
-This will give each app a near-minimum set of required dependencies.
+Rather than the single monolithic graph that would be output from the
+deps.dot file in a build directory, we can post-process that to generate
+simpler graphs for different tasks. This new "draw_dependency_graphs"
+script takes the "deps.dot" as input and generates an output file that
+has the nodes categorized, filtering them based off the requested node or
+category. For example, use "--match net/ice" to show the dependency tree
+from that driver, or "--match lib" to show just the library dependency
+tree.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/dumpcap/meson.build          | 2 +-
- app/graph/meson.build            | 2 +-
- app/pdump/meson.build            | 2 +-
- app/proc-info/meson.build        | 2 +-
- app/test-crypto-perf/meson.build | 2 +-
- app/test-fib/meson.build         | 2 +-
- app/test-sad/meson.build         | 2 +-
- app/test/meson.build             | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ devtools/draw-dependency-graphs.py | 223 +++++++++++++++++++++++++++++
+ 1 file changed, 223 insertions(+)
+ create mode 100755 devtools/draw-dependency-graphs.py
 
-diff --git a/app/dumpcap/meson.build b/app/dumpcap/meson.build
-index 69c016c780..6204cf051a 100644
---- a/app/dumpcap/meson.build
-+++ b/app/dumpcap/meson.build
-@@ -14,4 +14,4 @@ endif
- 
- ext_deps += pcap_dep
- sources = files('main.c')
--deps += ['ethdev', 'pdump', 'pcapng', 'bpf']
-+deps += ['pdump']
-diff --git a/app/graph/meson.build b/app/graph/meson.build
-index 344e4a418f..9c4cd080d9 100644
---- a/app/graph/meson.build
-+++ b/app/graph/meson.build
-@@ -9,7 +9,7 @@ if not build
-     subdir_done()
- endif
- 
--deps += ['graph', 'eal', 'lpm', 'ethdev', 'node', 'cmdline', 'net']
-+deps += ['node', 'cmdline']
- sources = files(
-         'cli.c',
-         'conn.c',
-diff --git a/app/pdump/meson.build b/app/pdump/meson.build
-index a4c7dd44e7..f84f43be51 100644
---- a/app/pdump/meson.build
-+++ b/app/pdump/meson.build
-@@ -8,6 +8,6 @@ if is_windows
- endif
- 
- sources = files('main.c')
--deps += ['ethdev', 'kvargs', 'pdump']
-+deps += ['pdump']
- 
- cflags += no_wvla_cflag
-diff --git a/app/proc-info/meson.build b/app/proc-info/meson.build
-index 51315f72a1..ee2a3f0317 100644
---- a/app/proc-info/meson.build
-+++ b/app/proc-info/meson.build
-@@ -8,7 +8,7 @@ if is_windows
- endif
- 
- sources = files('main.c')
--deps += ['ethdev', 'security', 'eventdev']
-+deps += ['security', 'eventdev']
- optional_deps += 'metrics'
- 
- cflags += no_wvla_cflag
-diff --git a/app/test-crypto-perf/meson.build b/app/test-crypto-perf/meson.build
-index fb48d9ec29..f056431bf4 100644
---- a/app/test-crypto-perf/meson.build
-+++ b/app/test-crypto-perf/meson.build
-@@ -19,7 +19,7 @@ sources = files(
-         'cperf_test_verify.c',
-         'main.c',
- )
--deps += ['cryptodev', 'net', 'security']
-+deps += ['cryptodev']
- optional_deps += 'crypto_scheduler'
- 
- cflags += no_wvla_cflag
-diff --git a/app/test-fib/meson.build b/app/test-fib/meson.build
-index eb36772cf3..25e2ea1a1d 100644
---- a/app/test-fib/meson.build
-+++ b/app/test-fib/meson.build
-@@ -8,4 +8,4 @@ if is_windows
- endif
- 
- sources = files('main.c')
--deps += ['fib', 'lpm', 'net']
-+deps += ['fib', 'lpm']
-diff --git a/app/test-sad/meson.build b/app/test-sad/meson.build
-index a1cbcc71d6..cd81638819 100644
---- a/app/test-sad/meson.build
-+++ b/app/test-sad/meson.build
-@@ -8,6 +8,6 @@ if is_windows
- endif
- 
- sources = files('main.c')
--deps += ['ipsec', 'net']
-+deps += ['ipsec']
- 
- cflags += no_wvla_cflag
-diff --git a/app/test/meson.build b/app/test/meson.build
-index eb0447e8c6..d480d39311 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -2,7 +2,7 @@
- # Copyright(c) 2017-2023 Intel Corporation
- 
- # the main test files [test.c and commands.c] relies on these libraries
--deps += ['cmdline', 'ring', 'mempool', 'mbuf']
-+deps += ['cmdline']
- sources += files('commands.c', 'test.c')
- 
- # optional dependencies: some files may use these - and so we should link them in -
+diff --git a/devtools/draw-dependency-graphs.py b/devtools/draw-dependency-graphs.py
+new file mode 100755
+index 0000000000..4fb765498d
+--- /dev/null
++++ b/devtools/draw-dependency-graphs.py
+@@ -0,0 +1,223 @@
++#! /usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2024 Intel Corporation
++
++import argparse
++import collections
++import sys
++import typing as T
++
++# typedef for dependency data types
++Deps = T.Set[str]
++DepData = T.Dict[str, T.Dict[str, T.Dict[bool, Deps]]]
++
++
++def parse_dep_line(line: str) -> T.Tuple[str, Deps, str, bool]:
++    """Parse digraph line into (component, {dependencies}, type, optional)."""
++    # extract attributes first
++    first, last = line.index("["), line.rindex("]")
++    edge_str, attr_str = line[:first], line[first + 1 : last]
++    # key=value, key=value, ...
++    attrs = {
++        key.strip('" '): value.strip('" ')
++        for attr_kv in attr_str.split(",")
++        for key, value in [attr_kv.strip().split("=", 1)]
++    }
++    # check if edge is defined as dotted line, meaning it's optional
++    optional = "dotted" in attrs.get("style", "")
++    try:
++        component_type = attrs["dpdk_componentType"]
++    except KeyError as _e:
++        raise ValueError(f"Error: missing component type: {line}") from _e
++
++    # now, extract component name and any of its dependencies
++    deps: T.Set[str] = set()
++    try:
++        component, deps_str = edge_str.strip('" ').split("->", 1)
++        component = component.strip().strip('" ')
++        deps_str = deps_str.strip().strip("{}")
++        deps = {d.strip('" ') for d in deps_str.split(",")}
++    except ValueError as _e:
++        component = edge_str.strip('" ')
++
++    return component, deps, component_type, optional
++
++
++def gen_dep_line(component: str, deps: T.Set[str], optional: bool) -> str:
++    """Generate a dependency line for a component."""
++    # we use dotted line to represent optional components
++    attr_str = ' [style="dotted"]' if optional else ""
++    dep_list_str = '", "'.join(deps)
++    deps_str = "" if not deps else f' -> {{ "{dep_list_str}" }}'
++    return f'    "{component}"{deps_str}{attr_str}\n'
++
++
++def read_deps_list(lines: T.List[str]) -> DepData:
++    """Read a list of dependency lines into a dictionary."""
++    deps_data: T.Dict[str, T.Any] = {}
++    for ln in lines:
++        if ln.startswith("digraph") or ln == "}":
++            continue
++
++        component, deps, component_type, optional = parse_dep_line(ln)
++
++        # each component will have two sets of dependencies - required and optional
++        c_dict = deps_data.setdefault(component_type, {}).setdefault(component, {})
++        c_dict[optional] = deps
++    return deps_data
++
++
++def create_classified_graph(deps_data: DepData) -> T.Iterator[str]:
++    """Create a graph of dependencies with components classified by type."""
++    yield "digraph dpdk_dependencies {\n  overlap=false\n  model=subset\n"
++    for n, deps_t in enumerate(deps_data.items()):
++        component_type, component_dict = deps_t
++        yield f'  subgraph cluster_{n} {{\n    label = "{component_type}"\n'
++        for component, optional_d in component_dict.items():
++            for optional, deps in optional_d.items():
++                yield gen_dep_line(component, deps, optional)
++        yield "  }\n"
++    yield "}\n"
++
++
++def parse_match(line: str, dep_data: DepData) -> T.List[str]:
++    """Extract list of components from a category string."""
++    # if this is not a compound string, we have very few valid choices
++    if "/" not in line:
++        # is this a category?
++        if line in dep_data:
++            return list(dep_data[line].keys())
++        # this isn't a category. maybe an app name?
++        maybe_app_name = f"dpdk-{line}"
++        if maybe_app_name in dep_data["app"]:
++            return [maybe_app_name]
++        if maybe_app_name in dep_data["examples"]:
++            return [maybe_app_name]
++        # this isn't an app name either, so just look for component with that name
++        for _, component_dict in dep_data.items():
++            if line in component_dict:
++                return [line]
++        # nothing found still. one last try: maybe it's a driver? we have to be careful though
++        # because a driver name may not be unique, e.g. common/iavf and net/iavf. so, only pick
++        # a driver if we can find exactly one driver that matches.
++        found_drivers: T.List[str] = []
++        for component in dep_data["drivers"].keys():
++            _, drv_name = component.split("_", 1)
++            if drv_name == line:
++                found_drivers.append(component)
++        if len(found_drivers) == 1:
++            return found_drivers
++        # we failed to find anything, report error
++        raise ValueError(f"Error: unknown component: {line}")
++
++    # this is a compound string, so we have to do some matching. we may have two or three levels
++    # of hierarchy, as driver/net/ice and net/ice should both be valid.
++
++    # if there are three levels of hierarchy, this must be a driver
++    try:
++        ctype, drv_class, drv_name = line.split("/", 2)
++        component_name = f"{drv_class}_{drv_name}"
++        # we want to directly access the dict to trigger KeyError, and not catch them here
++        if component_name in dep_data[ctype]:
++            return [component_name]
++        else:
++            raise KeyError(f"Unknown category: {line}")
++    except ValueError:
++        # not three levels of hierarchy, try two
++        pass
++
++    first, second = line.split("/", 1)
++
++    # this could still be a driver, just without the "drivers" prefix
++    for component in dep_data["drivers"].keys():
++        if component == f"{first}_{second}":
++            return [component]
++    # could be driver wildcard, e.g. drivers/net
++    if first == "drivers":
++        drv_match: T.List[str] = [
++            drv_name
++            for drv_name in dep_data["drivers"]
++            if drv_name.startswith(f"{second}_")
++        ]
++        if drv_match:
++            return drv_match
++    # may be category + component
++    if first in dep_data:
++        # go through all components in the category
++        if second in dep_data[first]:
++            return [second]
++        # if it's an app or an example, it may have "dpdk-" in front
++        if first in ["app", "examples"]:
++            maybe_app_name = f"dpdk-{second}"
++            if maybe_app_name in dep_data[first]:
++                return [maybe_app_name]
++    # and nothing of value was found
++    raise ValueError(f"Error: unknown component: {line}")
++
++
++def filter_deps(dep_data: DepData, criteria: T.List[str]) -> None:
++    """Filter dependency data to include only specified components."""
++    # this is a two step process: when we get a list of components, we need to
++    # go through all of them and note any dependencies they have, and expand the
++    # list of components with those dependencies. then we filter.
++
++    # walk the dependency list and include all possible dependencies
++    deps_seen: Deps = set()
++    deps_stack = collections.deque(criteria)
++    while deps_stack:
++        component = deps_stack.popleft()
++        if component in deps_seen:
++            continue
++        deps_seen.add(component)
++        for component_type, component_dict in dep_data.items():
++            try:
++                deps = component_dict[component]
++            except KeyError:
++                # wrong component type
++                continue
++            for _, dep_list in deps.items():
++                deps_stack.extend(dep_list)
++    criteria += list(deps_seen)
++
++    # now, "components" has all the dependencies we need to include, so we can filter
++    for component_type, component_dict in dep_data.items():
++        dep_data[component_type] = {
++            component: deps
++            for component, deps in component_dict.items()
++            if component in criteria
++        }
++
++
++def main():
++    parser = argparse.ArgumentParser(
++        description="Utility to generate dependency tree graphs for DPDK"
++    )
++    parser.add_argument(
++        "--match",
++        type=str,
++        help="Output hierarchy for component or category, e.g. net/ice, lib, app, drivers/net, etc.",
++    )
++    parser.add_argument(
++        "input_file",
++        type=argparse.FileType("r"),
++        help="Path to the deps.dot file from a DPDK build directory",
++    )
++    parser.add_argument(
++        "output_file",
++        type=argparse.FileType("w"),
++        help="Path to the desired output dot file",
++    )
++    args = parser.parse_args()
++
++    deps = read_deps_list([ln.strip() for ln in args.input_file.readlines()])
++    if args.match:
++        try:
++            filter_deps(deps, parse_match(args.match, deps))
++        except (KeyError, ValueError) as e:
++            print(e, file=sys.stderr)
++            return
++    args.output_file.writelines(create_classified_graph(deps))
++
++
++if __name__ == "__main__":
++    main()
 -- 
 2.43.5
 
