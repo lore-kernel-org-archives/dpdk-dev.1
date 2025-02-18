@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9C4C021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BB4C021AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 16:33:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E607240A76;
-	Tue, 18 Feb 2025 17:32:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F60E40A7D;
+	Tue, 18 Feb 2025 17:32:30 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 4CF2440666
+ by mails.dpdk.org (Postfix) with ESMTP id 2CD954065F
  for <dev@dpdk.org>; Tue, 18 Feb 2025 17:32:16 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 7D30720376EB; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D30720376EB
+ id AD95820376EF; Tue, 18 Feb 2025 08:32:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD95820376EF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1739896334;
- bh=G0dkf1d7cFFXXRI0D6fp/4x/6xdg4Tu7/5qkGRBE9cs=;
+ bh=LqO0BLfFIFT4RHQkN1C5MdIaaW0KlrIanGf/Ak2w/rg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=tDeKv1TVYn2CwVIUActv17K4QZpPRqDN9PcavJUCeSIazyczXsT2y8uBy2gbBTEF4
- g5YBq62e6kuCHeXn3AJpkLAUdjEISOXRqUG0/g+GDNdJTAo8GCIoZu/E8YQiG1QoxF
- fq78aq8SM8tLH9fsQUkojlOkzwDVmtYCsGfUysMQ=
+ b=G17uoRz15SXkDhSMKZefCj96UnrHy+ZyZT0REv+MmajSQ7iXJWo9ic+3kIouuNtmg
+ 0O5MVN3CNm//GMMzGWM5vazDh8eZxd+Bz9CQmOQnZUvb1/FY8pCkpYqDSYFZctg47V
+ EARQx1jl4azUs6jfNO5HEBKCnwRxjzbmyJsrIwGE=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org,
-	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v2 05/10] test-pmd: avoid undefined behavior
-Date: Tue, 18 Feb 2025 08:32:04 -0800
-Message-Id: <1739896329-1946-6-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org
+Subject: [PATCH v2 09/10] test: add workaround for __builtin_constant_p in
+ test_memcpy_perf
+Date: Tue, 18 Feb 2025 08:32:08 -0800
+Message-Id: <1739896329-1946-10-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,52 +44,154 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in warnings like below:
-
-app/test-pmd/cmdline.c(9023): warning C5101: use of preprocessor
-    directive in function-like macro argument list is undefined behavior
+There's no MSVC equivalent for compiler extension __builtin_constant_p,
+so a workaround is needed.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/cmdline.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ app/test/test_memcpy_perf.c | 106 ++++++++++++++++++------------------
+ 1 file changed, 53 insertions(+), 53 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 2afcf916c0..4f0b0340c8 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -9011,6 +9011,18 @@ static void cmd_dump_parsed(void *parsed_result,
+diff --git a/app/test/test_memcpy_perf.c b/app/test/test_memcpy_perf.c
+index 5c05a84619..6091b6f9dd 100644
+--- a/app/test/test_memcpy_perf.c
++++ b/app/test/test_memcpy_perf.c
+@@ -167,66 +167,66 @@ do_uncached_write(uint8_t *dst, int is_dst_cached,
+  * Run a single memcpy performance test. This is a macro to ensure that if
+  * the "size" parameter is a constant it won't be converted to a variable.
+  */
+-#define SINGLE_PERF_TEST(dst, is_dst_cached, dst_uoffset,                   \
+-                         src, is_src_cached, src_uoffset, size)             \
+-do {                                                                        \
+-    unsigned int iter, t;                                                   \
+-    size_t dst_addrs[TEST_BATCH_SIZE], src_addrs[TEST_BATCH_SIZE];          \
+-    uint64_t start_time, total_time = 0;                                    \
+-    uint64_t total_time2 = 0;                                               \
+-    for (iter = 0; iter < (TEST_ITERATIONS / TEST_BATCH_SIZE); iter++) {    \
+-        fill_addr_arrays(dst_addrs, is_dst_cached, dst_uoffset,             \
+-                         src_addrs, is_src_cached, src_uoffset);            \
+-        start_time = rte_rdtsc();                                           \
+-        for (t = 0; t < TEST_BATCH_SIZE; t++)                               \
+-            rte_memcpy(dst+dst_addrs[t], src+src_addrs[t], size);           \
+-        total_time += rte_rdtsc() - start_time;                             \
+-    }                                                                       \
+-    for (iter = 0; iter < (TEST_ITERATIONS / TEST_BATCH_SIZE); iter++) {    \
+-        fill_addr_arrays(dst_addrs, is_dst_cached, dst_uoffset,             \
+-                         src_addrs, is_src_cached, src_uoffset);            \
+-        start_time = rte_rdtsc();                                           \
+-        for (t = 0; t < TEST_BATCH_SIZE; t++)                               \
+-            memcpy(dst+dst_addrs[t], src+src_addrs[t], size);               \
+-        total_time2 += rte_rdtsc() - start_time;                            \
+-    }                                                                       \
+-    printf("%3.0f -", (double)total_time  / TEST_ITERATIONS);                 \
+-    printf("%3.0f",   (double)total_time2 / TEST_ITERATIONS);                 \
+-    printf("(%6.2f%%) ", ((double)total_time - total_time2)*100/total_time2); \
++#define SINGLE_PERF_TEST(dst, is_dst_cached, dst_uoffset,                         \
++			 src, is_src_cached, src_uoffset, size)                   \
++do {                                                                              \
++	unsigned int iter, t;                                                     \
++	size_t dst_addrs[TEST_BATCH_SIZE], src_addrs[TEST_BATCH_SIZE];            \
++	uint64_t start_time, total_time = 0;                                      \
++	uint64_t total_time2 = 0;                                                 \
++	for (iter = 0; iter < (TEST_ITERATIONS / TEST_BATCH_SIZE); iter++) {      \
++		fill_addr_arrays(dst_addrs, is_dst_cached, dst_uoffset,           \
++				 src_addrs, is_src_cached, src_uoffset);          \
++		start_time = rte_rdtsc();                                         \
++		for (t = 0; t < TEST_BATCH_SIZE; t++)                             \
++			rte_memcpy(dst+dst_addrs[t], src+src_addrs[t], size);     \
++		total_time += rte_rdtsc() - start_time;                           \
++	}                                                                         \
++	for (iter = 0; iter < (TEST_ITERATIONS / TEST_BATCH_SIZE); iter++) {      \
++		fill_addr_arrays(dst_addrs, is_dst_cached, dst_uoffset,           \
++				 src_addrs, is_src_cached, src_uoffset);          \
++		start_time = rte_rdtsc();                                         \
++		for (t = 0; t < TEST_BATCH_SIZE; t++)                             \
++			memcpy(dst+dst_addrs[t], src+src_addrs[t], size);         \
++		total_time2 += rte_rdtsc() - start_time;                          \
++	}                                                                         \
++	printf("%3.0f -", (double)total_time  / TEST_ITERATIONS);                 \
++	printf("%3.0f",   (double)total_time2 / TEST_ITERATIONS);                 \
++	printf("(%6.2f%%) ", ((double)total_time - total_time2)*100/total_time2); \
+ } while (0)
+ 
+ /* Run aligned memcpy tests for each cached/uncached permutation */
+-#define ALL_PERF_TESTS_FOR_SIZE(n)                                       \
+-do {                                                                     \
+-    if (__builtin_constant_p(n))                                         \
+-        printf("\nC%6u", (unsigned)n);                                   \
+-    else                                                                 \
+-        printf("\n%7u", (unsigned)n);                                    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
++#define ALL_PERF_TESTS_FOR_SIZE(n, def)                                      \
++do {                                                                         \
++	if (__rte_constant_with_default(n, def))                             \
++		printf("\nC%6u", (unsigned int)n);                           \
++	else                                                                 \
++		printf("\n%7u", (unsigned int)n);                            \
++	SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
++	SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
+ } while (0)
+ 
+ /* Run unaligned memcpy tests for each cached/uncached permutation */
+-#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                             \
+-do {                                                                     \
+-    if (__builtin_constant_p(n))                                         \
+-        printf("\nC%6u", (unsigned)n);                                   \
+-    else                                                                 \
+-        printf("\n%7u", (unsigned)n);                                    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
++#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n, def)                            \
++do {                                                                         \
++	if (__rte_constant_with_default(n, def))                             \
++		printf("\nC%6u", (unsigned int)n);                           \
++	else                                                                 \
++		printf("\n%7u", (unsigned int)n);                            \
++	SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
++	SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
+ } while (0)
+ 
+ /* Run memcpy tests for constant length */
+-#define ALL_PERF_TEST_FOR_CONSTANT                                      \
+-do {                                                                    \
+-    TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
+-    TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
+-    TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
++#define ALL_PERF_TEST_FOR_CONSTANT                                                \
++do {                                                                              \
++	TEST_CONSTANT(6U, 1); TEST_CONSTANT(64U, 1); TEST_CONSTANT(128U, 1);      \
++	TEST_CONSTANT(192U, 1); TEST_CONSTANT(256U, 1); TEST_CONSTANT(512U, 1);   \
++	TEST_CONSTANT(768U, 1); TEST_CONSTANT(1024U, 1); TEST_CONSTANT(1536U, 1); \
+ } while (0)
+ 
+ /* Run all memcpy tests for aligned constant cases */
+@@ -253,7 +253,7 @@ perf_test_variable_aligned(void)
+ {
+ 	unsigned i;
+ 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+-		ALL_PERF_TESTS_FOR_SIZE((size_t)buf_sizes[i]);
++		ALL_PERF_TESTS_FOR_SIZE(buf_sizes[i], 0);
+ 	}
  }
  
- static cmdline_parse_token_string_t cmd_dump_dump =
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_result, dump,
-+		"dump_physmem#"
-+		"dump_memzone#"
-+		"dump_socket_mem#"
-+		"dump_struct_sizes#"
-+		"dump_ring#"
-+		"dump_mempool#"
-+		"dump_devargs#"
-+		"dump_lcores#"
-+		"dump_log_types");
-+#else
- 	TOKEN_STRING_INITIALIZER(struct cmd_dump_result, dump,
- 		"dump_physmem#"
- 		"dump_memzone#"
-@@ -9020,10 +9032,9 @@ static cmdline_parse_token_string_t cmd_dump_dump =
- 		"dump_mempool#"
- 		"dump_devargs#"
- 		"dump_lcores#"
--#ifndef RTE_EXEC_ENV_WINDOWS
- 		"dump_trace#"
--#endif
- 		"dump_log_types");
-+#endif
+@@ -263,7 +263,7 @@ perf_test_variable_unaligned(void)
+ {
+ 	unsigned i;
+ 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+-		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED((size_t)buf_sizes[i]);
++		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(buf_sizes[i], 0);
+ 	}
+ }
  
- static cmdline_parse_inst_t cmd_dump = {
- 	.f = cmd_dump_parsed,  /* function to call */
 -- 
 2.48.1.vfs.0.0
 
