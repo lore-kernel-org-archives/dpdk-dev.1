@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A905C021AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 07:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF13C021AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 07:59:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F1D3840E3B;
-	Wed, 19 Feb 2025 08:57:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2860F40E96;
+	Wed, 19 Feb 2025 08:58:02 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 1842A40DD3
- for <dev@dpdk.org>; Wed, 19 Feb 2025 08:57:50 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 143CD40E1D
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 08:57:51 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 747E891451; Wed, 19 Feb 2025 15:57:49 +0800 (CST)
+ id 6E7CBAE85F; Wed, 19 Feb 2025 15:57:50 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org, dev@dpdk.org, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru, yaojun@mucse.com
-Subject: [PATCH v13 14/28] net/rnp: add Rx burst simple support
-Date: Wed, 19 Feb 2025 15:57:15 +0800
-Message-Id: <1739951849-67601-15-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v13 15/28] net/rnp: add Tx burst simple support
+Date: Wed, 19 Feb 2025 15:57:16 +0800
+Message-Id: <1739951849-67601-16-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1739951849-67601-1-git-send-email-caowenbo@mucse.com>
 References: <1739951849-67601-1-git-send-email-caowenbo@mucse.com>
@@ -36,200 +36,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add only support simple recv pkts.
+add only support simple send pkts.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/rnp_ethdev.c |   7 ++
- drivers/net/rnp/rnp_rxtx.c   | 130 +++++++++++++++++++++++++++++++++++
- drivers/net/rnp/rnp_rxtx.h   |   5 ++
- 3 files changed, 142 insertions(+)
+ drivers/net/rnp/rnp_ethdev.c |  6 +++
+ drivers/net/rnp/rnp_rxtx.c   | 85 +++++++++++++++++++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.h   |  1 +
+ 3 files changed, 91 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index cd704d7a90..03bf91e74e 100644
+index 03bf91e74e..21f6fed241 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -329,6 +329,8 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- 	rnp_dev_set_link_up(eth_dev);
- 	/* enable eth rx flow */
- 	RNP_RX_ETH_ENABLE(hw, lane);
-+	rnp_rx_func_select(eth_dev);
-+	rnp_tx_func_select(eth_dev);
- 	port->port_stopped = 0;
+@@ -600,6 +600,12 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
+ 	};
  
- 	return 0;
-@@ -589,6 +591,11 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
- 	/* default port configure */
- 	dev_info->default_rxconf = (struct rte_eth_rxconf) {
- 		.rx_drop_en = 0,
-+		.rx_thresh = {
-+			.pthresh = RNP_RX_DESC_FETCH_TH,
-+			.hthresh = RNP_RX_DESC_FETCH_BURST,
+ 	dev_info->default_txconf = (struct rte_eth_txconf) {
++		.tx_thresh = {
++			.pthresh = RNP_TX_DESC_FETCH_TH,
++			.hthresh = RNP_TX_DESC_FETCH_BURST,
 +		},
-+		.rx_free_thresh = RNP_DEFAULT_RX_FREE_THRESH,
++		.tx_free_thresh = RNP_DEFAULT_TX_FREE_THRESH,
++		.tx_rs_thresh = RNP_DEFAULT_TX_RS_THRESH,
  		.offloads = 0,
  	};
  
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index e65bc06d36..a742646c7e 100644
+index a742646c7e..260c34113a 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -636,3 +636,133 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
- 
- 	return 0;
+@@ -752,6 +752,89 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	return nb_rx;
  }
-+
-+#define RNP_CACHE_FETCH_RX (4)
-+static __rte_always_inline int
-+rnp_refill_rx_ring(struct rnp_rx_queue *rxq)
+ 
++static  __rte_always_inline int
++rnp_clean_tx_ring(struct rnp_tx_queue *txq)
 +{
-+	volatile struct rnp_rx_desc *rxbd;
-+	struct rnp_rxsw_entry *rx_swbd;
-+	struct rte_eth_dev_data *data;
-+	struct rte_mbuf *mb;
-+	uint16_t j, i;
-+	uint16_t rx_id;
-+	int ret;
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *tx_swbd;
++	struct rte_mbuf *m;
++	uint16_t next_dd;
++	uint16_t i;
 +
-+	rxbd = rxq->rx_bdr + rxq->rxrearm_start;
-+	rx_swbd = &rxq->sw_ring[rxq->rxrearm_start];
-+	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)rx_swbd,
-+			rxq->rx_free_thresh);
-+	data = rte_eth_devices[rxq->attr.port_id].data;
-+	if (unlikely(ret != 0)) {
-+		if (rxq->rxrearm_nb + rxq->rx_free_thresh >= rxq->attr.nb_desc) {
-+			for (i = 0; i < RNP_CACHE_FETCH_RX; i++) {
-+				rx_swbd[i].mbuf = &rxq->fake_mbuf;
-+				rxbd[i].d.pkt_addr = 0;
-+				rxbd[i].d.cmd = 0;
-+			}
-+		}
-+		data->rx_mbuf_alloc_failed += rxq->rx_free_thresh;
++	txbd = &txq->tx_bdr[txq->tx_next_dd];
++	if (!(txbd->d.cmd & RNP_CMD_DD))
 +		return 0;
++	*txbd = txq->zero_desc;
++	next_dd = txq->tx_next_dd - (txq->tx_free_thresh - 1);
++	tx_swbd = &txq->sw_ring[next_dd];
++
++	for (i = 0; i < txq->tx_rs_thresh; ++i, ++tx_swbd) {
++		if (tx_swbd->mbuf) {
++			m = tx_swbd->mbuf;
++			rte_pktmbuf_free_seg(m);
++			tx_swbd->mbuf = NULL;
++		}
 +	}
-+	for (j = 0; j < rxq->rx_free_thresh; ++j) {
-+		mb = rx_swbd[j].mbuf;
-+		rte_mbuf_refcnt_set(mb, 1);
-+		mb->data_off = RTE_PKTMBUF_HEADROOM;
-+		mb->port = rxq->attr.port_id;
++	txq->nb_tx_free = (txq->nb_tx_free + txq->tx_rs_thresh);
++	txq->tx_next_dd = (txq->tx_next_dd + txq->tx_rs_thresh) &
++		txq->attr.nb_desc_mask;
 +
-+		rxbd[j].d.pkt_addr = rnp_get_dma_addr(&rxq->attr, mb);
-+		rxbd[j].d.cmd = 0;
-+	}
-+	rxq->rxrearm_start += rxq->rx_free_thresh;
-+	if (rxq->rxrearm_start >= rxq->attr.nb_desc - 1)
-+		rxq->rxrearm_start = 0;
-+	rxq->rxrearm_nb -= rxq->rx_free_thresh;
-+
-+	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
-+			(rxq->attr.nb_desc - 1) : (rxq->rxrearm_start - 1));
-+	rte_wmb();
-+	RNP_REG_WR(rxq->rx_tailreg, 0, rx_id);
-+
-+	return j;
++	return 0;
 +}
 +
 +static __rte_always_inline uint16_t
-+rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct rnp_rx_queue *rxq = (struct rnp_rx_queue *)_rxq;
-+	struct rnp_rxsw_entry *rx_swbd;
-+	uint32_t state_cmd[RNP_CACHE_FETCH_RX];
-+	uint32_t pkt_len[RNP_CACHE_FETCH_RX] = {0};
-+	volatile struct rnp_rx_desc *rxbd;
-+	struct rte_mbuf *nmb;
-+	int nb_dd, nb_rx = 0;
-+	int i, j;
++	struct rnp_tx_queue *txq = (struct rnp_tx_queue *)_txq;
++	volatile struct rnp_tx_desc *txbd;
++	struct rnp_txsw_entry *tx_swbd;
++	uint64_t phy;
++	uint16_t start;
++	uint16_t i;
 +
-+	if (unlikely(!rxq->rxq_started || !rxq->rx_link))
-+		return 0;
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, RNP_CACHE_FETCH_RX);
-+	rxbd = &rxq->rx_bdr[rxq->rx_tail];
-+	rte_prefetch0(rxbd);
-+	if (rxq->rxrearm_nb > rxq->rx_free_thresh)
-+		rnp_refill_rx_ring(rxq);
-+
-+	if (!(rxbd->wb.qword1.cmd & RNP_CMD_DD))
++	if (unlikely(!txq->txq_started || !txq->tx_link))
 +		return 0;
 +
-+	rx_swbd = &rxq->sw_ring[rxq->rx_tail];
-+	for (i = 0; i < nb_pkts;
-+			i += RNP_CACHE_FETCH_RX, rxbd += RNP_CACHE_FETCH_RX,
-+			rx_swbd += RNP_CACHE_FETCH_RX) {
-+		for (j = 0; j < RNP_CACHE_FETCH_RX; j++)
-+			state_cmd[j] = rxbd[j].wb.qword1.cmd;
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		rnp_clean_tx_ring(txq);
 +
-+		for (nb_dd = 0; nb_dd < RNP_CACHE_FETCH_RX &&
-+				(state_cmd[nb_dd] & rte_cpu_to_le_16(RNP_CMD_DD));
-+				nb_dd++)
-+			;
-+		for (j = 0; j < nb_dd; j++)
-+			pkt_len[j] = rxbd[j].wb.qword1.lens;
++	nb_pkts = RTE_MIN(txq->nb_tx_free, nb_pkts);
++	if (!nb_pkts)
++		return 0;
++	start = nb_pkts;
++	i = txq->tx_tail;
 +
-+		for (j = 0; j < nb_dd; ++j) {
-+			nmb = rx_swbd[j].mbuf;
++	while (nb_pkts--) {
++		txbd = &txq->tx_bdr[i];
++		tx_swbd = &txq->sw_ring[i];
++		tx_swbd->mbuf = *tx_pkts++;
++		phy = rnp_get_dma_addr(&txq->attr, tx_swbd->mbuf);
++		txbd->d.addr = phy;
++		if (unlikely(tx_swbd->mbuf->data_len > RNP_MAC_MAXFRM_SIZE))
++			tx_swbd->mbuf->data_len = 0;
++		txbd->d.blen = tx_swbd->mbuf->data_len;
++		txbd->d.cmd = RNP_CMD_EOP;
 +
-+			nmb->data_off = RTE_PKTMBUF_HEADROOM;
-+			nmb->port = rxq->attr.port_id;
-+			nmb->data_len = pkt_len[j];
-+			nmb->pkt_len = pkt_len[j];
-+			nmb->packet_type = 0;
-+			nmb->ol_flags = 0;
-+			nmb->nb_segs = 1;
-+		}
-+		for (j = 0; j < nb_dd; ++j) {
-+			rx_pkts[i + j] = rx_swbd[j].mbuf;
-+			rx_swbd[j].mbuf = NULL;
-+		}
-+
-+		nb_rx += nb_dd;
-+		rxq->nb_rx_free -= nb_dd;
-+		if (nb_dd != RNP_CACHE_FETCH_RX)
-+			break;
++		i = (i + 1) & txq->attr.nb_desc_mask;
 +	}
-+	rxq->rx_tail = (rxq->rx_tail + nb_rx) & rxq->attr.nb_desc_mask;
-+	rxq->rxrearm_nb = rxq->rxrearm_nb + nb_rx;
++	txq->nb_tx_free -= start;
++	if (txq->tx_tail + start > txq->tx_next_rs) {
++		txbd = &txq->tx_bdr[txq->tx_next_rs];
++		txbd->d.cmd |= RNP_CMD_RS;
++		txq->tx_next_rs = (txq->tx_next_rs + txq->tx_rs_thresh);
 +
-+	return nb_rx;
++		if (txq->tx_next_rs > txq->attr.nb_desc)
++			txq->tx_next_rs = txq->tx_rs_thresh - 1;
++	}
++
++	txq->tx_tail = i;
++
++	rte_wmb();
++	RNP_REG_WR(txq->tx_tailreg, 0, i);
++
++	return start;
 +}
 +
-+int rnp_rx_func_select(struct rte_eth_dev *dev)
-+{
-+	dev->rx_pkt_burst = rnp_recv_pkts;
-+
-+	return 0;
-+}
-+
-+int rnp_tx_func_select(struct rte_eth_dev *dev)
-+{
-+	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
-+	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
-+
-+	return 0;
-+}
+ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ {
+ 	dev->rx_pkt_burst = rnp_recv_pkts;
+@@ -761,7 +844,7 @@ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ 
+ int rnp_tx_func_select(struct rte_eth_dev *dev)
+ {
+-	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
++	dev->tx_pkt_burst = rnp_xmit_simple;
+ 	dev->tx_pkt_prepare = rte_eth_pkt_burst_dummy;
+ 
+ 	return 0;
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index 94e1f06722..39e5184502 100644
+index 39e5184502..a8fd8d052f 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -63,6 +63,9 @@ struct rnp_rx_queue {
- 	uint16_t rx_free_thresh; /* rx free desc desource thresh */
- 	uint16_t rx_tail;
- 
-+	uint16_t rxrearm_start;
-+	uint16_t rxrearm_nb;
-+
- 	uint32_t nodesc_tm_thresh; /* rx queue no desc timeout thresh */
- 	uint8_t rx_deferred_start; /* do not start queue with dev_start(). */
- 	uint8_t rxq_started; /* rx queue is started */
-@@ -128,5 +131,7 @@ int rnp_tx_queue_setup(struct rte_eth_dev *dev,
- 		       const struct rte_eth_txconf *tx_conf);
- int rnp_rx_queue_stop(struct rte_eth_dev *eth_dev, uint16_t qidx);
- int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx);
-+int rnp_rx_func_select(struct rte_eth_dev *dev);
-+int rnp_tx_func_select(struct rte_eth_dev *dev);
- 
- #endif /* _RNP_RXTX_H_ */
+@@ -89,6 +89,7 @@ struct rnp_tx_queue {
+ 	const struct rte_memzone *rz;
+ 	uint64_t ring_phys_addr; /* tx dma ring physical addr */
+ 	volatile struct rnp_tx_desc *tx_bdr; /* tx dma ring virtual addr */
++	volatile struct rnp_tx_desc zero_desc;
+ 	struct rnp_txsw_entry *sw_ring; /* tx software ring addr */
+ 	volatile void *tx_tailreg; /* hw desc tail register */
+ 	volatile void *tx_headreg; /* hw desc head register*/
 -- 
 2.25.1
 
