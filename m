@@ -2,33 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D61C021AA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Feb 2025 21:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811F8C021AD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 01:03:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CEC7402A0;
-	Tue, 18 Feb 2025 22:13:29 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id B2BCF40264;
- Tue, 18 Feb 2025 22:13:27 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id C0DD620376EA; Tue, 18 Feb 2025 13:13:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0DD620376EA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1739913206;
- bh=uVIj4U68o6mmcrNZVH62Oxv3oJX8kiQ4UgHIVMnjxao=;
- h=From:To:Cc:Subject:Date:From;
- b=blqoHwmRMuajJRGoQe5RATb3AKjoay8rDKDbF1hNeb0LVY1JViYd9SElYDMnAIB7T
- CEuf/aJYsde5fpj90hF3XtZHrFNZFOdqvsovact4Y39b5WatP6TSD7sGUREXkNMoCa
- DF5OmCgkfmWmMIw7V4HiprZj3qG7zvxEcyVwI9qE=
-From: longli@linuxonhyperv.com
-To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/netvsc: add stats counters from VF
-Date: Tue, 18 Feb 2025 13:13:19 -0800
-Message-Id: <1739913199-8988-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id 55C6F4025A;
+	Wed, 19 Feb 2025 02:03:44 +0100 (CET)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+ by mails.dpdk.org (Postfix) with ESMTP id 3320140041
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 02:03:42 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YyJ7b2xvhz22k7n;
+ Wed, 19 Feb 2025 09:04:11 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id A1ADD1A0188;
+ Wed, 19 Feb 2025 09:03:40 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 19 Feb 2025 09:03:40 +0800
+Message-ID: <9af05848-1141-40fd-8c70-55acced53049@huawei.com>
+Date: Wed, 19 Feb 2025 09:03:39 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] net/hns3: remove weak symbols
+To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <bruce.richardson@intel.com>,
+ <andremue@linux.microsoft.com>, Jie Hai <haijie1@huawei.com>
+References: <20250207083252.3131588-1-david.marchand@redhat.com>
+ <20250218153730.773836-1-david.marchand@redhat.com>
+ <20250218153730.773836-6-david.marchand@redhat.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250218153730.773836-6-david.marchand@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,48 +52,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-The netvsc driver should add per-queue and rx_nombuf counters from VF.
-
-Fixes: 4e9c73e96e83 ("net/netvsc: add Hyper-V network device")
-Cc: stable@dpdk.org
-Signed-off-by: Long Li <longli@microsoft.com>
----
- drivers/net/netvsc/hn_ethdev.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 988c51928d..069d603d90 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -824,8 +824,8 @@ static int hn_dev_stats_get(struct rte_eth_dev *dev,
- 		stats->oerrors += txq->stats.errors;
- 
- 		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
--			stats->q_opackets[i] = txq->stats.packets;
--			stats->q_obytes[i] = txq->stats.bytes;
-+			stats->q_opackets[i] += txq->stats.packets;
-+			stats->q_obytes[i] += txq->stats.bytes;
- 		}
- 	}
- 
-@@ -841,12 +841,12 @@ static int hn_dev_stats_get(struct rte_eth_dev *dev,
- 		stats->imissed += rxq->stats.ring_full;
- 
- 		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
--			stats->q_ipackets[i] = rxq->stats.packets;
--			stats->q_ibytes[i] = rxq->stats.bytes;
-+			stats->q_ipackets[i] += rxq->stats.packets;
-+			stats->q_ibytes[i] += rxq->stats.bytes;
- 		}
- 	}
- 
--	stats->rx_nombuf = dev->data->rx_mbuf_alloc_failed;
-+	stats->rx_nombuf += dev->data->rx_mbuf_alloc_failed;
- 	return 0;
- }
- 
--- 
-2.34.1
+On 2025/2/18 23:37, David Marchand wrote:
+> Rather than use weak symbols, expose stubs symbols when needed.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
