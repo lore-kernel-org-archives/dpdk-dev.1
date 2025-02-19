@@ -2,76 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82EEC021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 17:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61213C021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 17:32:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3BB44427A8;
-	Wed, 19 Feb 2025 18:10:17 +0100 (CET)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id AEB9F4028B
- for <dev@dpdk.org>; Wed, 19 Feb 2025 18:10:15 +0100 (CET)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-2fc4418c0e1so1982267a91.1
- for <dev@dpdk.org>; Wed, 19 Feb 2025 09:10:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739985015;
- x=1740589815; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=o7xo1K/9WqKHMlO7hX1dlSAINaPZB3pDXVtejOI5fQc=;
- b=HccVmhITFlZ4+nijxF6lnnTLclqOQ2ESbfEBQesdneaFhtf7aRoStwH9fG64v7kR9w
- C7S8zXr5POTJTPK5sfllaPekIJ2hz+oELUzQXOh8/xL4cG/n8Dirfo2F2ALLRQaDepDi
- chkqHXp+yOSTlX6N2buYwksg5vlftRHQZY/XNfsX74DQwWs6gWoi9zxKFO/32eZFfeeW
- CUoLJUAadN8BUdf0IEpltz1rVLmKxEr8UGx1ffcHXt5WicOMfXj08Zf+3JjO2XQfZx2n
- BDJZdopd8Jrqic8Ig+D60H1pMZBNJm6Nn0PdNB1UZnrcetZBavpQRjhYYZ9xcQVl24tl
- WvgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739985015; x=1740589815;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=o7xo1K/9WqKHMlO7hX1dlSAINaPZB3pDXVtejOI5fQc=;
- b=mTMn7Pc6G+BE+iHPTTlTGxWCwldiK176iSo55+bQK6A69ZpaH5uSmbG4pJMTZIglC8
- JO2qvEo4CCp2P45kAh1l5m5NQIHqoygNlyDopowL0YVLC30v7K1H8fMv6oRbgtkAqXMh
- 3biUewTqEuYNYGCQI/hGMZt6cTrAPGQht7auFSKLC3bWp/AUYklcUlH2HjjxGe+VWkLI
- 4BeYdgy0M5Y0fJg3K3gOO888NN61Zas+aXpDObk42G0pYhJ9ZB1mb1CaSM/Nx48TIcdP
- ptLuJF9SawlLt9TvHKJJLu/DrFuGGWMF+XgUGhxfB/h9zmXaouhGsfL1bHS0ib0ituMT
- wWfQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUcxRjTeva3nmwjMK+XLuiLrCqNph9WKjfqtGWUooJ1WfJ/vvnUVGlzjg0Qnkl30u9jnq8=@dpdk.org
-X-Gm-Message-State: AOJu0YykDkDaaFWrn+/e1ZWB8S4fj3IQ/d5Hr6MvuwiRyjrm6HeMcQIF
- 5aJkDqzCN3dAQliq8lgE1RsgRJI0ZEFf2a5t/EF9+tjMNtOxPr3oAGjXlAl/0eA=
-X-Gm-Gg: ASbGncsIDZBh9T8smXmKWdv7P40aaSBckZxytpJBdtPqIrukjwhDO29KtXM8hrmX2av
- xBM33NDvBXnof0ewl4M0P2ngDMxMIf52mY7BzmviLYJAIXM3sv1KpWavaDtCWnVAtTgt9n1JXqV
- YE4nedzphq1t4c5rsRaI9oqWNUfWIuoZT/cLz98xyeZqm3u0qv+6EFaxmhIZhifc85YhABf9P+R
- NKXfURLY6d04KtDuhOSIJD6xno9vt/VQopDRRJ5gGYTsyb7y95nwx5qN9A6WEd0W//vCnL9n0Mi
- kO3Ni+4H2O/8AhARNSl9tVpZlZECunRatC1+FBiGrmV2bfoSs442QDkLO011I02sf2Cj
-X-Google-Smtp-Source: AGHT+IFV8tSFaQ1ANy8M/51srzIKMFRzFc49ts3aGKaGjpbabxe9u/8ONG6CmO55jb+AF0VpYEgI3g==
-X-Received: by 2002:a17:90b:4cd2:b0:2fa:1e56:5d82 with SMTP id
- 98e67ed59e1d1-2fcb4d80a53mr7194500a91.17.1739985014673; 
- Wed, 19 Feb 2025 09:10:14 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d5349389sm108079145ad.42.2025.02.19.09.10.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Feb 2025 09:10:14 -0800 (PST)
-Date: Wed, 19 Feb 2025 09:10:11 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH v2 01/10] eal: add workaround for __builtin_constant_p
-Message-ID: <20250219091011.2c49f342@hermes.local>
-In-Reply-To: <20250219165002.GA6472@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
- <1739896329-1946-2-git-send-email-andremue@linux.microsoft.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FA4C@smartserver.smartshare.dk>
- <20250219165002.GA6472@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 77F15402DA;
+	Wed, 19 Feb 2025 18:32:49 +0100 (CET)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 7EB9A4028B
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 18:32:48 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal
+ [10.202.2.44])
+ by mailfout.phl.internal (Postfix) with ESMTP id ECE5C13809B9;
+ Wed, 19 Feb 2025 12:32:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Wed, 19 Feb 2025 12:32:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1739986367;
+ x=1740072767; bh=YUktkfJyVbN9rDUY5wFlc8SxZhjsLD+F3oUqe0GErvk=; b=
+ ybZLLEuF8BjDIQgSBNDltBseH4UpnHv2/KmtUA5msQll4AodkcpNZ1xLEDzqJAR+
+ 5xgHSDUmNupgbvJvQhecu2+8+oCL5Tzi2IVEuoXpQLsFSyZOM4WY7bA1SDuysTF9
+ fI5Nd6s+jSgjDNk3mxvUMm4BZNNh5b7zAyV312QCPoJbecxO+RYmwf1t/PMaQbrZ
+ EcSkp8/Oq3sIM56jiCxdlLHuLnZhZb39yNpwt0gclChzfE+PK/PLcMrc/xldYV7e
+ KrJmuOe1b0IN3qvIEiDASL+4T+iiE+OpEGLMQ4pWTvSnWgQUc8pKMdiNvMvKAqH6
+ rI9+qttIMChEoEzZEk5E4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739986367; x=
+ 1740072767; bh=YUktkfJyVbN9rDUY5wFlc8SxZhjsLD+F3oUqe0GErvk=; b=U
+ UO7/xhbDotKrqjRYCgBlEa4E/7TB9m5C7Cw/nY73N4qjhD7HAkjzevZcXLRka4BG
+ gr1uq6zQfJJPHY47ndtswwzP27fdzodX1YTWUZZUK79ChLPftXSSOkLCHeBDeZeK
+ abe9WDFgGB875tced1o7CaGGElunAgd2bVBYWU1FtE6T9M6auIo5ekSI7ugj2P+a
+ IO07wxVJHtf3XsF1T2rN5vlso7rzM6tf2jr/FOyFCfBjiFc2bjBNQxsiz+wvxFhz
+ nXF+buqSWpvElnbT37Y3HGc3jhsqaF9BpctIaRjGIOEUjxCdKKPxX6NtafJTF2a/
+ Mg6NpYkqx8H+i3cyyFkqA==
+X-ME-Sender: <xms:vxW2Z8C32ZV_-PaO6Wgz28ivhR-Acvme002Drlw9QmfkjjFE4EiKhg>
+ <xme:vxW2Z-jYv5W7n21lhwEH2R9XIPlfHIoBIXyJRrMWT6uKVoHSwGBBaYm2zYTaBmYRl
+ ea9u_FAv1DUSqI_wA>
+X-ME-Received: <xmr:vxW2Z_ki0DyCOA25ItNYlHg2o5QgYBqrF2arzocdX_qsfjVTZBmGyEyVRIY08rgtQs7jVev7PQDosiT7cgqO3PFfNA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeekjecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvth
+ gvlhhsohhnsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhr
+ ghdprhgtphhtthhopehmkhgrshhhrghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtoh
+ eprhgrshhlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepnhgusegrrhhmrdgt
+ ohhmpdhrtghpthhtohepfigrthhhshgrlhgrrdhvihhthhgrnhgrghgvsegrrhhmrdgtoh
+ hm
+X-ME-Proxy: <xmx:vxW2ZywGelQ4WSuZO3Koz4PAja0_N1Sooodats9xkK7ueO94gWN0tw>
+ <xmx:vxW2ZxTtU645duCmEUaUqF5_zS9JtVulxs2Bx4hZyAU7PND30Dpjjw>
+ <xmx:vxW2Z9aFEghmu0gCvCyNX-rqcCWtzowEF0ey2X21B39N64srJ0MsjQ>
+ <xmx:vxW2Z6TRBnxtUxaF0rxsk5t8T44Brcm6kN08AjUahGComY6gXQi9iA>
+ <xmx:vxW2ZwGNJK6DDB6Iq7yKFwhME5UxpEjv-QBbHPkmzKepelX2bZJv8VYh>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Feb 2025 12:32:46 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "mkashani@nvidia.com" <mkashani@nvidia.com>,
+ "rasland@nvidia.com" <rasland@nvidia.com>, nd <nd@arm.com>,
+ Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
+Subject: Re: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
+Date: Wed, 19 Feb 2025 18:32:44 +0100
+Message-ID: <11075212.CDJkKcVGEf@thomas>
+In-Reply-To: <PAWPR08MB8909905417281D380EEBEF0B9FC52@PAWPR08MB8909.eurprd08.prod.outlook.com>
+References: <20250216140420.216805-1-getelson@nvidia.com>
+ <20250218104942.81984-1-getelson@nvidia.com>
+ <PAWPR08MB8909905417281D380EEBEF0B9FC52@PAWPR08MB8909.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,38 +95,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 19 Feb 2025 08:50:02 -0800
-Andre Muezerie <andremue@linux.microsoft.com> wrote:
+19/02/2025 17:35, Wathsala Wathawana Vithanage:
+> > Subject: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
+> > 
+> > ARM configuration requires explicit `mcpu` specifications in the implementor
+> > description.
+> > 
+> > The patch adds `mcpu` and `flags` description for the NVIDIA
+> > BlueField-3 configuration.
+> > 
+> > Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+> 
+> Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
 
-> On Tue, Feb 18, 2025 at 06:12:04PM +0100, Morten Br=C3=B8rup wrote:
-> > > From: Andre Muezerie [mailto:andremue@linux.microsoft.com]
-> > > Sent: Tuesday, 18 February 2025 17.32
-> > >=20
-> > > There's no MSVC equivalent for compiler extension __builtin_constant_=
-p.
-> > > EAL already had __rte_constant which was used as a first attempt to
-> > > workaround __builtin_constant_p when using MSVC. However, there are
-> > > pieces of code that would benefit from being able to provide a default
-> > > value to be used instead of it being always 0 like how it was done by
-> > > __rte_constant.
-> > >=20
-> > > A new macro is added here allowing such default to be provided by the
-> > > caller. =20
-> >=20
-> > NAK to the new macro.
-> >=20
-> > Please use the sizeof() hack suggested by Stephen to provide an impleme=
-ntation of __rte_constant(e) for MSVC.
-> > Here's a link to an example of the hack:
-> > https://news.ycombinator.com/item?id=3D16720172 =20
->=20
-> Thanks for the link. I tried to use the hack as suggested but turns out i=
-t does
-> not work with msvc. It results in error C2100: "you cannot dereference an
-> operand of type 'void'".
->=20
-> I'm open to further suggestions.
+Adding error message:
+"
+The build was broken for BlueField-3:
+    ERROR: Problem encountered:
+    No suitable Arm mcpu name or custom mcpu definition object found.
+"
 
-Maybe contact the MSVC team? there really ought to be way to do this.
-The compiler knows what is constant and what is not since it needs this for=
- static assertions.
+and
+Fixes: c02c01dbf907 ("config/arm: prefer strict use of -mcpu if supported")
+
+Applied, thanks.
+
+
