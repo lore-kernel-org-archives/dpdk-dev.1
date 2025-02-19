@@ -2,83 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61213C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 17:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8C9C021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 17:42:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77F15402DA;
-	Wed, 19 Feb 2025 18:32:49 +0100 (CET)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id 7EB9A4028B
- for <dev@dpdk.org>; Wed, 19 Feb 2025 18:32:48 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal
- [10.202.2.44])
- by mailfout.phl.internal (Postfix) with ESMTP id ECE5C13809B9;
- Wed, 19 Feb 2025 12:32:47 -0500 (EST)
+	by mails.dpdk.org (Postfix) with ESMTP id 54E61427AC;
+	Wed, 19 Feb 2025 18:42:27 +0100 (CET)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 6BA604028B
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 18:42:26 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id C613211400B9;
+ Wed, 19 Feb 2025 12:42:25 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Wed, 19 Feb 2025 12:32:47 -0500
+ by phl-compute-01.internal (MEProxy); Wed, 19 Feb 2025 12:42:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1739986367;
- x=1740072767; bh=YUktkfJyVbN9rDUY5wFlc8SxZhjsLD+F3oUqe0GErvk=; b=
- ybZLLEuF8BjDIQgSBNDltBseH4UpnHv2/KmtUA5msQll4AodkcpNZ1xLEDzqJAR+
- 5xgHSDUmNupgbvJvQhecu2+8+oCL5Tzi2IVEuoXpQLsFSyZOM4WY7bA1SDuysTF9
- fI5Nd6s+jSgjDNk3mxvUMm4BZNNh5b7zAyV312QCPoJbecxO+RYmwf1t/PMaQbrZ
- EcSkp8/Oq3sIM56jiCxdlLHuLnZhZb39yNpwt0gclChzfE+PK/PLcMrc/xldYV7e
- KrJmuOe1b0IN3qvIEiDASL+4T+iiE+OpEGLMQ4pWTvSnWgQUc8pKMdiNvMvKAqH6
- rI9+qttIMChEoEzZEk5E4A==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1739986945;
+ x=1740073345; bh=s8XNWrVyv3KGYr3VOezhkIW/DLOVIL0IypJ4zpHw47c=; b=
+ GBRP7EzHaWvJ4U+YCQ27wTkPos1p+6wo5v3CfCj77b3TFVvOpslmt+PgnGEgFHnk
+ PemWdQ7LHApXRyBmsJk0C05HiYRKNPUcno2883GirvYEFZgocpXvqXQd1P85vet1
+ 73RDzuyPLkNW5A4zKtRK8Oe/FZx8vVazAie02lNVtm5PMlN3DeDX7ZxUpLpg2L0k
+ OY+tgAHt3iPQ1yxD9hjULUj/CwZD/Mywdxy6xkOo3KVrNrKGB2tAldRRVC2xncGa
+ d3nFgtK6s2MPoKVKbpyrEPCW0wMExfILmB8TVfTHdzwrtCQvAgNSh/mLEhmDlWv/
+ voZFEYRxpR5fK2lRrnp0TA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739986367; x=
- 1740072767; bh=YUktkfJyVbN9rDUY5wFlc8SxZhjsLD+F3oUqe0GErvk=; b=U
- UO7/xhbDotKrqjRYCgBlEa4E/7TB9m5C7Cw/nY73N4qjhD7HAkjzevZcXLRka4BG
- gr1uq6zQfJJPHY47ndtswwzP27fdzodX1YTWUZZUK79ChLPftXSSOkLCHeBDeZeK
- abe9WDFgGB875tced1o7CaGGElunAgd2bVBYWU1FtE6T9M6auIo5ekSI7ugj2P+a
- IO07wxVJHtf3XsF1T2rN5vlso7rzM6tf2jr/FOyFCfBjiFc2bjBNQxsiz+wvxFhz
- nXF+buqSWpvElnbT37Y3HGc3jhsqaF9BpctIaRjGIOEUjxCdKKPxX6NtafJTF2a/
- Mg6NpYkqx8H+i3cyyFkqA==
-X-ME-Sender: <xms:vxW2Z8C32ZV_-PaO6Wgz28ivhR-Acvme002Drlw9QmfkjjFE4EiKhg>
- <xme:vxW2Z-jYv5W7n21lhwEH2R9XIPlfHIoBIXyJRrMWT6uKVoHSwGBBaYm2zYTaBmYRl
- ea9u_FAv1DUSqI_wA>
-X-ME-Received: <xmr:vxW2Z_ki0DyCOA25ItNYlHg2o5QgYBqrF2arzocdX_qsfjVTZBmGyEyVRIY08rgtQs7jVev7PQDosiT7cgqO3PFfNA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeekjecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739986945; x=
+ 1740073345; bh=s8XNWrVyv3KGYr3VOezhkIW/DLOVIL0IypJ4zpHw47c=; b=j
+ F4oEhav/OuPjR+I8B55Tx61UuLWmc5zSHFr5J9Slz6K0SnHJcV8NnfeOIWOLM8wr
+ 3g/lBl2S8H2eMFXMDR4GzaWT77k7eEBDHonbPx0if4qPJNaQxOk4HMBjWTofdL9Q
+ EdfOS2j2GWCfuBCevmpycyNsRuyvFyv0Ir1rhgZmhpwAqH4/h79bQJbMWneReG5n
+ RmvCuOb6S8WXZSLYQsvqdpo2yYw2qROn/fhZ6EWgKR7mZ4YIx4vcOqCV7sJrRJRb
+ Gxm0ErtnmGj5PObZUQJOXxthlHar6huyU9izlPOBFussWGqilAEUpBg02qKcxmqY
+ kynNc15u1qc98pwMQ31ow==
+X-ME-Sender: <xms:ARi2Zzw6rXuqtEmzy_9lguGBorfVYp_k0vX0tW8gItmD4DKVnW_rsA>
+ <xme:ARi2Z7TPWUrfCn9I-XY5b0aTDz085BsNuTsVYiMappL-y77hIQnYnOYGjp2kqCGs-
+ U1usNODwUW0I1BuAQ>
+X-ME-Received: <xmr:ARi2Z9V_KeKrSOjgVN6QEKsaPIn3Z1f86jWlZJydP6plLmdTfYYx6GpkwlzKdR0u3piVX_PzprcS8nuhJzZPLsmDCA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeeklecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
- hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
- necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
- grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
- keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
- frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvth
- gvlhhsohhnsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhr
- ghdprhgtphhtthhopehmkhgrshhhrghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtoh
- eprhgrshhlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepnhgusegrrhhmrdgt
- ohhmpdhrtghpthhtohepfigrthhhshgrlhgrrdhvihhthhgrnhgrghgvsegrrhhmrdgtoh
- hm
-X-ME-Proxy: <xmx:vxW2ZywGelQ4WSuZO3Koz4PAja0_N1Sooodats9xkK7ueO94gWN0tw>
- <xmx:vxW2ZxTtU645duCmEUaUqF5_zS9JtVulxs2Bx4hZyAU7PND30Dpjjw>
- <xmx:vxW2Z9aFEghmu0gCvCyNX-rqcCWtzowEF0ey2X21B39N64srJ0MsjQ>
- <xmx:vxW2Z6TRBnxtUxaF0rxsk5t8T44Brcm6kN08AjUahGComY6gXQi9iA>
- <xmx:vxW2ZwGNJK6DDB6Iq7yKFwhME5UxpEjv-QBbHPkmzKepelX2bZJv8VYh>
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvve
+ fufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgr
+ lhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrh
+ hnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeen
+ ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomh
+ grshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhmohguvgepshhm
+ thhpohhuthdprhgtphhtthhopehkohhntggvphhtudesghhmrghilhdrtghomhdprhgtph
+ htthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgr
+ rhgushhonhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:ARi2Z9g3xGeUDYQFzGwHC6xB9wXmvU82sKcfOjWQHx_zKFjWeekCYw>
+ <xmx:ARi2Z1CbG4Aetq2_BiDtVuzU_20SFQ1sc5BcioVTEmda7IHWUFNyUA>
+ <xmx:ARi2Z2Kd8Wdm9hM1QuYOsd2JppqEvcIZtzCl9l-EzpLcZSnqXsRyeQ>
+ <xmx:ARi2Z0CgO9p4TKmh3baYN5JZEdb0h1fZolGABHDV3dZNl56jY5R0HA>
+ <xmx:ARi2Z0ONt_l-66skC4AORaJkeUaCNz_rGCkpk3g0AnwYA558vGaGGihb>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Feb 2025 12:32:46 -0500 (EST)
+ 19 Feb 2025 12:42:24 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Gregory Etelson <getelson@nvidia.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "mkashani@nvidia.com" <mkashani@nvidia.com>,
- "rasland@nvidia.com" <rasland@nvidia.com>, nd <nd@arm.com>,
- Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-Subject: Re: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
-Date: Wed, 19 Feb 2025 18:32:44 +0100
-Message-ID: <11075212.CDJkKcVGEf@thomas>
-In-Reply-To: <PAWPR08MB8909905417281D380EEBEF0B9FC52@PAWPR08MB8909.eurprd08.prod.outlook.com>
-References: <20250216140420.216805-1-getelson@nvidia.com>
- <20250218104942.81984-1-getelson@nvidia.com>
- <PAWPR08MB8909905417281D380EEBEF0B9FC52@PAWPR08MB8909.eurprd08.prod.outlook.com>
+To: Ben Magistro <koncept1@gmail.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com
+Subject: Re: Link custom libarchive meson support
+Date: Wed, 19 Feb 2025 18:42:23 +0100
+Message-ID: <3484257.VLH7GnMWUR@thomas>
+In-Reply-To: <CAKx8PBic6QVBP2ntcke_mxxjjPmAtGmMY4YtSN0gZ5wmjcfTRg@mail.gmail.com>
+References: <CAKx8PBic6QVBP2ntcke_mxxjjPmAtGmMY4YtSN0gZ5wmjcfTRg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -95,29 +88,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/02/2025 17:35, Wathsala Wathawana Vithanage:
-> > Subject: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
-> > 
-> > ARM configuration requires explicit `mcpu` specifications in the implementor
-> > description.
-> > 
-> > The patch adds `mcpu` and `flags` description for the NVIDIA
-> > BlueField-3 configuration.
-> > 
-> > Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+11/02/2025 19:46, Ben Magistro:
+> Will acknowledge this may be more of a meson question and less of a DPDK
+> issue but things didn't seem to work as expected and had to tweak the
+> config/meson.build to want to start with the DPDK team.
 > 
-> Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> Our project is cmake based and we use fetch content to pull in our external
+> dependencies (eg dpdk, libarchive, etc).  We recently noticed
+> (rediscovered) that DPDK was not linking libarchive which causes the OS
+> provided DDP for the Intel ICE based cards to be unable to be
+> decompressed.  Previously we had some additional items installed that
+> provided an uncompressed DDP file.  As our project already builds
+> libarchive we did not want to install it at the os level for inclusion into
+> DPDK as we may now be mixing versions within our application.
+> 
+> In our cmake we added -Dpkg_config_path to help meson find our libarchive
+> build (it is not installed as it is statically linked into our app).  This
+> worked but did not expose the include and link directories or any libs that
+> may also need to be linked from the pc file.
 
-Adding error message:
-"
-The build was broken for BlueField-3:
-    ERROR: Problem encountered:
-    No suitable Arm mcpu name or custom mcpu definition object found.
-"
+I don't understand this part.
+It should be sufficient.
+Are you saying your .pc file is not correct because not installed?
 
-and
-Fixes: c02c01dbf907 ("config/arm: prefer strict use of -mcpu if supported")
+> We had to make some changes
+> to get those added and allow things to compile cleanly.  I can confirm the
+> changes here work but feel they should not have been necessary.
+> 
+> What is the correct way to link/use a custom libarchive (or any dependency
+> for that matter) with DPDK?  I've attached the diff for the meson changes
+> plus the generated pc file for libarchive that we are telling meson to find
+> with the pkg_config_path parameter.
 
-Applied, thanks.
+The correct way is to give the path to the .pc file.
+Please give more info about what is failing.
 
 
