@@ -2,200 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B603C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 16:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D5CC021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 16:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52DA842759;
-	Wed, 19 Feb 2025 17:36:01 +0100 (CET)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013007.outbound.protection.outlook.com
- [40.107.162.7]) by mails.dpdk.org (Postfix) with ESMTP id A23C34270A
- for <dev@dpdk.org>; Wed, 19 Feb 2025 17:35:59 +0100 (CET)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=UD4arBSS1+p+dBnU0mkKLdTwtqBMgSv1eUC/nQjyuSxbK3KQSryk9/tx6jfZB3uEpCYeThSLyKcOJDFMEt0098rieb6iYyhD82yil2eGryRnRvPYzfxWS49bXpXCTlga1O3WcHPNoN8M0GrTVnKy2EFmcY0aiNWWvcQLXLsKkNC2SkljHmdogw1DegFk+lpiSDmMEdMR8O406uH4JWGepI+Ly/I/jDbtHTKT3nKwvP8vDD8s+ejocvUeG+fmLJOhfGxMh1Mz/BOklegLEFpNITySN0Ab+XELi7VTS3qGbfQth89D6WnUxdcaDdwAWnc6tTSgByRHa08/TUxzuDw4TQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jfQMHvQEe+9x8/oCB1GrCyvPnakQefTIgX3HWeBVBEQ=;
- b=HjMF6T/CL6FYxXS/EUXygmQWltiWAO9Rz3qr0ovSHAMdYHH1XRVu4CCQjT2D+HQh9oxq0zpsJwyJPZ0FIl77+dMtmoqDpJfS8KhtHJy3y/aK7AoI5Uia1XfZArMf4x2kbMnhLF/TuXbIuo1u2kHyI6GsnUHiFQ3jAZp1MG5u8xz9DPkoJExZ1S/fnYuCTNgiYSixPviHmD3FHYsdj3HO21QP5WT+1uHLW800BuR+ZReevsHgBihOJqLyV6UQU8eppfohixFXZFI2C+aP0GlRg9v3OmMbYE0wA0jCmFJtMJbylCFpFKWizFDATfPguzwePEl7+Z3nvp66K0rhRWH45w==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=dpdk.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jfQMHvQEe+9x8/oCB1GrCyvPnakQefTIgX3HWeBVBEQ=;
- b=kC6s3WiU+HiXFYjQvR6QBWSObLWhaYeqbWaInk1f+gfO1c9Qqb4JWSFm0j0uDm+p9CV2eU1h//BTKVWG7AnYXlSz7gTzIe534ziOy5GGh1IXo8EpaPdpPYmBZaMIEfVEVz1zLdpvpouV3HXp+8CvR3AfP2KAFX0wRysil5Q0G8k=
-Received: from AM0PR03CA0067.eurprd03.prod.outlook.com (2603:10a6:208::44) by
- DB9PR08MB6348.eurprd08.prod.outlook.com (2603:10a6:10:263::24) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.19; Wed, 19 Feb 2025 16:35:55 +0000
-Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:208:0:cafe::d2) by AM0PR03CA0067.outlook.office365.com
- (2603:10a6:208::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Wed,
- 19 Feb 2025 16:35:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with
- Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.11
- via Frontend Transport; Wed, 19 Feb 2025 16:35:54 +0000
-Received: ("Tessian outbound a593bc61b951:v567");
- Wed, 19 Feb 2025 16:35:54 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 3fe377e5299237ee
-X-TessianGatewayMetadata: bWe1gBSaOpZPePshymSnEciNrFtS3ax2asHwxo3qeOfSC9Ju8/MB2FO9qbod4e97xn0HArQo4qV/M8+MVm/SzVi0114XBWqvkDUhBKy0DEbIQ+WprQqWZEDjTemTWjOiRk/XkY0W0f2K65ieTi03ZJzFjS2GTdF8xYDVejmQ4pM2Uz1/GR/gCZmUX+fuJnPVSjnSIsxgJhsBXMOUpN3mXg==
-X-CR-MTA-TID: 64aa7808
-Received: from Lbc98b557fa4e.1
- by 64aa7808-outbound-1.mta.getcheckrecipient.com id
- 854A8F1C-D006-4CF0-B385-230435A62D37.1; 
- Wed, 19 Feb 2025 16:35:47 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
- by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id
- Lbc98b557fa4e.1 (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Wed, 19 Feb 2025 16:35:47 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AUNgo/CZGnxoLMB/nIlwANrvVui5wADPyevFtGCQ9cGZWLnBiKoyyBwz4N7yyNt39Qr7JqUm2DkR3E74o7b79m4tTdAUhMqbqDOIdkuE1IkwuCS5sOKFeX8tUWn448XGVyX+5+skGMfVW2FFw9I9gHVMsEQgyW/+1/h+cz9FLTbQNF5JzvGEVHaxkjjbbwrddGCCoS16ZauIqABpkbuH6l0Kw9Si/TnWZbz0X7bboA/gJjkYwTaa5+x+hHFGhzR04UNOaGFm3NTwQdy01TEDencsZKipH9Si89+Fs9u0aHPWtHL7TzihvVVv7793HOKgtLbX5nkqh56NLM7u488QRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jfQMHvQEe+9x8/oCB1GrCyvPnakQefTIgX3HWeBVBEQ=;
- b=BV5kdu1MajN29d6+//q1bHcDQE+4Jhrk3Ea6+AJvD7XoKXf1nkNuJrfYe+DvIS7n5PujlevibBsVhSFFTg6c+tMzcYISwr1Pb3/2SYF7MUxiJsH8RayCQI9SvaskN7QFk7xGM+TcG98OhSNSk7sB8bl709sJnq1DGMGRt7yC6ABlCThlKV3pLFbHxNsoad5DpNfExCnNswZxsiOKXHdiZbTOgkOJHIwA2m82769IvGgSgxa8r/IM72tsGI6kiQv+LeK6Qyy0TFpfXaLTxlTRUk1XLnxjFdPsSJLRSoVSDCokUhH9LceWQd8SYgMGWR8cBVZGElRfkJZiX7pnJ5JCMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jfQMHvQEe+9x8/oCB1GrCyvPnakQefTIgX3HWeBVBEQ=;
- b=kC6s3WiU+HiXFYjQvR6QBWSObLWhaYeqbWaInk1f+gfO1c9Qqb4JWSFm0j0uDm+p9CV2eU1h//BTKVWG7AnYXlSz7gTzIe534ziOy5GGh1IXo8EpaPdpPYmBZaMIEfVEVz1zLdpvpouV3HXp+8CvR3AfP2KAFX0wRysil5Q0G8k=
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by DB9PR08MB7584.eurprd08.prod.outlook.com (2603:10a6:10:308::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 16:35:44 +0000
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 16:35:44 +0000
-From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-To: Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "mkashani@nvidia.com" <mkashani@nvidia.com>, "rasland@nvidia.com"
- <rasland@nvidia.com>, nd <nd@arm.com>
-Subject: RE: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
-Thread-Topic: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
-Thread-Index: AQHbgfLmP/PEaXyZd0iWBsleAUCFArNO0sSw
-Date: Wed, 19 Feb 2025 16:35:44 +0000
-Message-ID: <PAWPR08MB8909905417281D380EEBEF0B9FC52@PAWPR08MB8909.eurprd08.prod.outlook.com>
-References: <20250216140420.216805-1-getelson@nvidia.com>
- <20250218104942.81984-1-getelson@nvidia.com>
-In-Reply-To: <20250218104942.81984-1-getelson@nvidia.com>
-Accept-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 1253D42788;
+	Wed, 19 Feb 2025 17:44:20 +0100 (CET)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id F2D4C4270A
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 17:44:17 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Yyhtz1NzHztQbR;
+ Thu, 20 Feb 2025 00:39:39 +0800 (CST)
+Received: from kwepemk500008.china.huawei.com (unknown [7.202.194.93])
+ by mail.maildlp.com (Postfix) with ESMTPS id D1926140257;
+ Thu, 20 Feb 2025 00:44:15 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ kwepemk500008.china.huawei.com (7.202.194.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 20 Feb 2025 00:44:14 +0800
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 19 Feb 2025 17:44:12 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: huangdengdui <huangdengdui@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "wathsala.vithanage@arm.com" <wathsala.vithanage@arm.com>,
+ "stephen@networkplumber.org" <stephen@networkplumber.org>, "lihuisong (C)"
+ <lihuisong@huawei.com>, Fengchengwen <fengchengwen@huawei.com>, haijie
+ <haijie1@huawei.com>, liuyonglong <liuyonglong@huawei.com>
+Subject: RE: [PATCH] examples/l3fwd: add option to set refetch offset
+Thread-Topic: [PATCH] examples/l3fwd: add option to set refetch offset
+Thread-Index: AQHbY0M+J3rwtDemskeud65RtItxhbNPEU3g
+Date: Wed, 19 Feb 2025 16:44:12 +0000
+Message-ID: <e514a9af829447c2965b3e2d5b2672fb@huawei.com>
+References: <20241225075302.353013-1-huangdengdui@huawei.com>
+ <20250110093715.4044681-1-huangdengdui@huawei.com>
+In-Reply-To: <20250110093715.4044681-1-huangdengdui@huawei.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|DB9PR08MB7584:EE_|AM4PEPF00027A69:EE_|DB9PR08MB6348:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b26d9a3-a76d-4f61-6593-08dd51037b0f
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|1800799024|376014|366016|38070700018; 
-X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?pqHC12omJZfxYX7Br2LM3Gb7OVDJl/efwaSc6pEkVQKjtKHxlitvBpJn/IGg?=
- =?us-ascii?Q?PesnSX4LH824/KQ+gsc5FecKZbY9fpKgir6dMt8tiGZ/CJ/4WXvCbkB3zzFo?=
- =?us-ascii?Q?d9Q0Ib4qxvVGwkif6la/hTUiTz/3NIbfRPQ97MwC+/b4W21GZDMTnBr+HBMH?=
- =?us-ascii?Q?AxfpvGDgO2VpBrdCppXDWGcoDxxyyg9iEnGx6oQ2aaSUtp3XnF4foX1DQ/KB?=
- =?us-ascii?Q?+P6nnxVtFsmtU7XV752fcjGBvqmimdVV/TxPEGZpOHLWbdPhHTMrR3kv6h+G?=
- =?us-ascii?Q?/Gi5MIDJe01ILhT35mOPQZJh/+z1mHkTjhfEm61AAoaUoiKOXB+0fa5LbON+?=
- =?us-ascii?Q?j94JYnTGegKWe9j6aYEHE7uHRa9GbgEL+gfQxdR0/R6Dac4LEjkiKbr7ePJ3?=
- =?us-ascii?Q?ko8IF7uqwCqS1rkFpcwtAQJioTYuW3cpRJHTXFpQXPnxRmVoW/b/IQm2brev?=
- =?us-ascii?Q?zjXmAg2TjXdX4/eV7Vj1yLF/6DFI+Qz9ysoUQ9T8UnF9EpEDYzKUqMKLUAj5?=
- =?us-ascii?Q?YK43citVUsKL3CPgK2o1cVnSmZMIYvm+BXyulekcd19Z9/zYN6plgUEA6y3L?=
- =?us-ascii?Q?F3eaF8UOH5udJmNxudFDRXdyUQLdwcE8NlX+6SRNfZZhIi2Zr0h9zuQ/0uRb?=
- =?us-ascii?Q?+aXwPWH+eqzZc94k0InLlNhI5dKYirBJcLe2U0/4tBkYpGm1N07Nd11o8gav?=
- =?us-ascii?Q?JDIlX0B1HMefVZ+3kUsNJcxwJ0MPeH2P3XZ4rEVFSsY/kTbidQqB1KH4pke9?=
- =?us-ascii?Q?whgr08/NhKwVwnZmtt2zQHGXzJ0wRuWCQUOF+eWfdYptksYSGHvVcOzrZ38x?=
- =?us-ascii?Q?ge2JohF9EBNHRGF77juPM658VsS9Hw5k6TBmX1ekkzovS8PtYdnT7xDR+tqZ?=
- =?us-ascii?Q?0eMEvsJ0YXPET/flV6jVF73ktSyV4SZHDO1+GP6l5E4UVsUmIafVilk61AzA?=
- =?us-ascii?Q?ppMMCRdKiDRt79C2G8+9+rwCVzhIOVb6YQ1pD/jBizBjgPeDKUcD4vyWvukM?=
- =?us-ascii?Q?G2dVl0SJ+STS/h23RWd7x2W6OwCJrTJ+FizdKSElTzk1YgEfLOZDs9SF7ks6?=
- =?us-ascii?Q?OB6Td8U0B+M9nlKbSs7VMyLizd32TfxH5dOIvV8Xm+8JGQgtr0Ly4RUBB64B?=
- =?us-ascii?Q?/i93cbIcnYXZi9ctzcC5G+84oA6nMEk0QmnDKhuoyTtPfuyjh6OrTsGPLEXj?=
- =?us-ascii?Q?3T5krjg6WiJ2AIXjrL1VeIp25Yi3ue3Gh0XdQbBXzD8ePcNHCG1k/K4FMnSA?=
- =?us-ascii?Q?kqvQyaO21L3rOSdIxBDuU3rSfdhGzd2OogOjKgBjtJlIAG8QkGQU3mMsNROQ?=
- =?us-ascii?Q?Fs1+Mp3R0hnYgZRBLlwhoJ0ClKeo8mrLH7gBd7eY8AcZJoB3TgPvh+dVQf/N?=
- =?us-ascii?Q?Xr/MyvBwugMSIvOnCtz0/wrszbVeS6mTRjrgAeJjCLHBFDEMcafqcUhLBeXq?=
- =?us-ascii?Q?zpST2npOZ7VCXERPP7iEeauh4QyMTaKk?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(1800799024)(376014)(366016)(38070700018);
- DIR:OUT; SFP:1101; 
+x-originating-ip: [10.206.138.73]
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7584
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender: ip=[2603:10a6:102:33a::19];
- domain=PAWPR08MB8909.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM4PEPF00027A69.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 238a9693-a39c-4cde-019e-08dd510374b5
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|35042699022|1800799024|36860700013|82310400026|14060799003;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Lf8pP3HWCn/dAKdjkXBTYg+GGxd/M+C6xQaCyDvW+0QgVBstwQhEzDpb0EJ6?=
- =?us-ascii?Q?VXnYTJme8qZrWTAyqRq0YUaO67IiL4gNiT98ceIq1VWSWM7Ye7r5W8XTfWoZ?=
- =?us-ascii?Q?zrvyJ1JjcSREf5IJ8LdXGFHgi0186ReSUmxnbW0SnzS7M/NLWnXxFg+kjTK4?=
- =?us-ascii?Q?ZSRcNBH89K2XcTUUPFDCnlUCvMTRLcSeZ4VnMgaSBbP3DsLKCBNoCf2JbLZw?=
- =?us-ascii?Q?kBdmWDTYYXq5lc2AJ7JAZvQVSVnxPDaxgGNFI8cCNmcTBlS5tm4Lh5hX1kAP?=
- =?us-ascii?Q?tlsBTcZizNDcREMDqsdwJbrHxTsCeiGhGdhJpNIkJW0oMlmoOG+R/bkD1XV7?=
- =?us-ascii?Q?3Ae6cpKy2Cuo2HBUYc+8tJ1AuW7Og0jYzRW7mSAbiSov+8K2LG7hs2vpijyL?=
- =?us-ascii?Q?nxKWb3D8M/MhDDAN0a5Pvyg1IvGcGRqHuOWXYYAltRBs1f2XBQqmMq9QUedo?=
- =?us-ascii?Q?6uZUWUJWc3PZDRt6xzyPmggFjCmenvDjqPeosMR/P2gupI4mzap7RxGfpl7k?=
- =?us-ascii?Q?qG4KXYCX7BCedeghHeHNHhvWAczNWleIKeXK68RSjPewpSH830jthi8/9tj1?=
- =?us-ascii?Q?vQYwCY9BytlN1zCgYNDsa/wPv35ZGkCpd+GmUN7LJ9tg9WgGIKsRrVVowxzi?=
- =?us-ascii?Q?mkGqVn9huJUyU2t9IwBH63VxUaEmKkeOjX8LG7UP2eO+TF8qkWIdBISGnfrE?=
- =?us-ascii?Q?W0I6T+5tlHTEv1ZjYl+udQKA0FH0NxLaUPzYIIyLngnrQjTWEbbxlM9uVX8P?=
- =?us-ascii?Q?46uT30F4ObIyF8BWxzds3ggOPRWCxFpkZvIXv1UHy24AQqAgnksY5fpWQ494?=
- =?us-ascii?Q?h0R8AtdhtC11cIEZ7x/uEX7WmaBi1N7zcwRl9Z5lV7zfXzhj/3gOCr/h7OOw?=
- =?us-ascii?Q?+Lk6UBjrKhZU/rkK5twN91bY93y9JX795Uv+cSRpGbSVMWekvF77GzGhRpKa?=
- =?us-ascii?Q?Gzfd6tQiDaQuNOFlR8wF4yteP1EqA3f0D87wU4qyC1liDJAQGWOgIpc8968W?=
- =?us-ascii?Q?sX+gUlr8/BURnNJhpm8aXY367dC835K76y4pwxKZsfn87HApRwSkRb3tFRuk?=
- =?us-ascii?Q?EXnI7yH/tTedxkcnG0W/sh4pxA06UrITgJdK9dVaTslUx+7CI2DerARwhXL3?=
- =?us-ascii?Q?s5m1SwPRjPllbiKi3YAsP8l6I91v58kSmAo4mNrB0IcYMPOHG0mvQBCpEqBg?=
- =?us-ascii?Q?mmGujMbhyuy2o+H72ESPpzL1KXhFIUqTT3JGh7OojxK+luOhKrCyNgANNTjX?=
- =?us-ascii?Q?vpxpq5PtoL0F2psn6RBiHVL9ehzsI4ks64229TEqIf5QtRUrgY/nODySre57?=
- =?us-ascii?Q?NQHdvuIxauoaAPgPaTIricM59C0t6Tndjs7inm9LAIDglEGVK96xRNqmLL4G?=
- =?us-ascii?Q?9aOb/YGJ43sp9jq2tsRsUslV0KPimXhaCo2cIEU7V9uzeJ8m24c0RFDSD1Xn?=
- =?us-ascii?Q?COArRq7RJG02k/72RfPwaHsr8RlG9kLppC9cd/ZXHADI5SAxbg+G+Q=3D=3D?=
-X-Forefront-Antispam-Report: CIP:63.35.35.123; CTRY:IE; LANG:en; SCL:1; SRV:;
- IPV:CAL; SFV:NSPM; H:64aa7808-outbound-1.mta.getcheckrecipient.com;
- PTR:64aa7808-outbound-1.mta.getcheckrecipient.com; CAT:NONE;
- SFS:(13230040)(376014)(35042699022)(1800799024)(36860700013)(82310400026)(14060799003);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 16:35:54.7211 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b26d9a3-a76d-4f61-6593-08dd51037b0f
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[63.35.35.123];
- Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6348
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -209,38 +58,546 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Subject: [PATCH] config/arm: update NVIDIA BlueField-3 configuration
->=20
-> ARM configuration requires explicit `mcpu` specifications in the implemen=
-tor
-> description.
->=20
-> The patch adds `mcpu` and `flags` description for the NVIDIA
-> BlueField-3 configuration.
->=20
-> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
-> ---
->  config/arm/meson.build | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/config/arm/meson.build b/config/arm/meson.build index
-> 5302861e2c..74f4dd4e1f 100644
-> --- a/config/arm/meson.build
-> +++ b/config/arm/meson.build
-> @@ -85,6 +85,11 @@ part_number_config_arm =3D {
->      },
->      '0xd42': {
->          'march': 'armv8.4-a',
-> +        'mcpu' : 'cortex-a78ae',
-> +        'flags': [
-> +            ['RTE_MAX_LCORE', 16],
-> +            ['RTE_MAX_NUMA_NODES', 1]
-> +        ],
->      },
->      '0xd49': {
->          'mcpu': 'neoverse-n2',
-> --
-> 2.45.2
 
-Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> Subject: [PATCH] examples/l3fwd: add option to set refetch offset
+
+I suppose it should be 'prefetch'.
+=20
+> The prefetch window depending on the HW platform. It is difficult to
+> measure the prefetch window of a HW platform. Therefore, the prefetch
+> offset option is added to change the prefetch window. User can adjust
+> the refetch offset to achieve the best prefetch effect.
+>=20
+> In addition, this option is used only in the main loop.
+
+I run few tests for fib,lpm,acl modes on my Intel ICX box.
+Didn't notice any performance drop with that patch.
+
+>=20
+> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+> ---
+>  examples/l3fwd/l3fwd.h               |  6 ++-
+>  examples/l3fwd/l3fwd_acl_scalar.h    |  6 +--
+>  examples/l3fwd/l3fwd_em.h            | 18 ++++-----
+>  examples/l3fwd/l3fwd_em_hlm.h        |  9 +++--
+>  examples/l3fwd/l3fwd_em_sequential.h | 60 ++++++++++++++++------------
+>  examples/l3fwd/l3fwd_fib.c           | 21 +++++-----
+>  examples/l3fwd/l3fwd_lpm.h           |  6 +--
+>  examples/l3fwd/l3fwd_lpm_neon.h      | 45 ++++-----------------
+>  examples/l3fwd/main.c                | 14 +++++++
+>  9 files changed, 91 insertions(+), 94 deletions(-)
+>=20
+> diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+> index 0cce3406ee..2272fb2870 100644
+> --- a/examples/l3fwd/l3fwd.h
+> +++ b/examples/l3fwd/l3fwd.h
+> @@ -39,8 +39,7 @@
+>=20
+>  #define NB_SOCKETS        8
+>=20
+> -/* Configure how many packets ahead to prefetch, when reading packets */
+> -#define PREFETCH_OFFSET	  3
+> +#define DEFAULT_PREFECH_OFFSET 4
+>=20
+>  /* Used to mark destination port as 'invalid'. */
+>  #define	BAD_PORT ((uint16_t)-1)
+> @@ -119,6 +118,9 @@ extern uint32_t max_pkt_len;
+>  extern uint32_t nb_pkt_per_burst;
+>  extern uint32_t mb_mempool_cache_size;
+>=20
+> +/* Prefetch offset of packets processed by the main loop. */
+> +extern uint16_t prefetch_offset;
+> +
+>  /* Send burst of packets on an output interface */
+>  static inline int
+>  send_burst(struct lcore_conf *qconf, uint16_t n, uint16_t port)
+> diff --git a/examples/l3fwd/l3fwd_acl_scalar.h b/examples/l3fwd/l3fwd_acl=
+_scalar.h
+> index cb22bb49aa..d00730ff25 100644
+> --- a/examples/l3fwd/l3fwd_acl_scalar.h
+> +++ b/examples/l3fwd/l3fwd_acl_scalar.h
+> @@ -72,14 +72,14 @@ l3fwd_acl_prepare_acl_parameter(struct rte_mbuf **pkt=
+s_in, struct acl_search_t *
+>  	acl->num_ipv6 =3D 0;
+>=20
+>  	/* Prefetch first packets */
+> -	for (i =3D 0; i < PREFETCH_OFFSET && i < nb_rx; i++) {
+> +	for (i =3D 0; i < prefetch_offset && i < nb_rx; i++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(
+>  				pkts_in[i], void *));
+>  	}
+>=20
+> -	for (i =3D 0; i < (nb_rx - PREFETCH_OFFSET); i++) {
+> +	for (i =3D 0; i < (nb_rx - prefetch_offset); i++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_in[
+> -				i + PREFETCH_OFFSET], void *));
+> +				i + prefetch_offset], void *));
+>  		l3fwd_acl_prepare_one_packet(pkts_in, acl, i);
+>  	}
+>=20
+> diff --git a/examples/l3fwd/l3fwd_em.h b/examples/l3fwd/l3fwd_em.h
+> index 1fee2e2e6c..3ef32c9053 100644
+> --- a/examples/l3fwd/l3fwd_em.h
+> +++ b/examples/l3fwd/l3fwd_em.h
+> @@ -132,16 +132,16 @@ l3fwd_em_no_opt_send_packets(int nb_rx, struct rte_=
+mbuf **pkts_burst,
+>  	int32_t j;
+>=20
+>  	/* Prefetch first packets */
+> -	for (j =3D 0; j < PREFETCH_OFFSET && j < nb_rx; j++)
+> +	for (j =3D 0; j < prefetch_offset && j < nb_rx; j++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j], void *));
+>=20
+>  	/*
+>  	 * Prefetch and forward already prefetched
+>  	 * packets.
+>  	 */
+> -	for (j =3D 0; j < (nb_rx - PREFETCH_OFFSET); j++) {
+> +	for (j =3D 0; j < (nb_rx - prefetch_offset); j++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[
+> -				j + PREFETCH_OFFSET], void *));
+> +				j + prefetch_offset], void *));
+>  		l3fwd_em_simple_forward(pkts_burst[j], portid, qconf);
+>  	}
+>=20
+> @@ -161,16 +161,16 @@ l3fwd_em_no_opt_process_events(int nb_rx, struct rt=
+e_event **events,
+>  	int32_t j;
+>=20
+>  	/* Prefetch first packets */
+> -	for (j =3D 0; j < PREFETCH_OFFSET && j < nb_rx; j++)
+> +	for (j =3D 0; j < prefetch_offset && j < nb_rx; j++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(events[j]->mbuf, void *));
+>=20
+>  	/*
+>  	 * Prefetch and forward already prefetched
+>  	 * packets.
+>  	 */
+> -	for (j =3D 0; j < (nb_rx - PREFETCH_OFFSET); j++) {
+> +	for (j =3D 0; j < (nb_rx - prefetch_offset); j++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(events[
+> -				j + PREFETCH_OFFSET]->mbuf, void *));
+> +				j + prefetch_offset]->mbuf, void *));
+>  		l3fwd_em_simple_process(events[j]->mbuf, qconf);
+>  	}
+>=20
+> @@ -188,15 +188,15 @@ l3fwd_em_no_opt_process_event_vector(struct rte_eve=
+nt_vector *vec,
+>  	int32_t i;
+>=20
+>  	/* Prefetch first packets */
+> -	for (i =3D 0; i < PREFETCH_OFFSET && i < vec->nb_elem; i++)
+> +	for (i =3D 0; i < prefetch_offset && i < vec->nb_elem; i++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i], void *));
+>=20
+>  	/*
+>  	 * Prefetch and forward already prefetched packets.
+>  	 */
+> -	for (i =3D 0; i < (vec->nb_elem - PREFETCH_OFFSET); i++) {
+> +	for (i =3D 0; i < (vec->nb_elem - prefetch_offset); i++) {
+>  		rte_prefetch0(
+> -			rte_pktmbuf_mtod(mbufs[i + PREFETCH_OFFSET], void *));
+> +			rte_pktmbuf_mtod(mbufs[i + prefetch_offset], void *));
+>  		dst_ports[i] =3D l3fwd_em_simple_process(mbufs[i], qconf);
+>  	}
+>=20
+> diff --git a/examples/l3fwd/l3fwd_em_hlm.h b/examples/l3fwd/l3fwd_em_hlm.=
+h
+> index c1d819997a..764527962b 100644
+> --- a/examples/l3fwd/l3fwd_em_hlm.h
+> +++ b/examples/l3fwd/l3fwd_em_hlm.h
+> @@ -190,7 +190,7 @@ l3fwd_em_process_packets(int nb_rx, struct rte_mbuf *=
+*pkts_burst,
+>  	 */
+>  	int32_t n =3D RTE_ALIGN_FLOOR(nb_rx, EM_HASH_LOOKUP_COUNT);
+>=20
+> -	for (j =3D 0; j < EM_HASH_LOOKUP_COUNT && j < nb_rx; j++) {
+> +	for (j =3D 0; j < prefetch_offset && j < nb_rx; j++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j],
+>  					       struct rte_ether_hdr *) + 1);
+>  	}
+> @@ -207,7 +207,7 @@ l3fwd_em_process_packets(int nb_rx, struct rte_mbuf *=
+*pkts_burst,
+>  		l3_type =3D pkt_type & RTE_PTYPE_L3_MASK;
+>  		tcp_or_udp =3D pkt_type & (RTE_PTYPE_L4_TCP | RTE_PTYPE_L4_UDP);
+>=20
+> -		for (i =3D 0, pos =3D j + EM_HASH_LOOKUP_COUNT;
+> +		for (i =3D 0, pos =3D j + prefetch_offset;
+>  		     i < EM_HASH_LOOKUP_COUNT && pos < nb_rx; i++, pos++) {
+>  			rte_prefetch0(rte_pktmbuf_mtod(
+>  					pkts_burst[pos],
+> @@ -277,6 +277,9 @@ l3fwd_em_process_events(int nb_rx, struct rte_event *=
+*ev,
+>  	for (j =3D 0; j < nb_rx; j++)
+>  		pkts_burst[j] =3D ev[j]->mbuf;
+>=20
+> +	for (i =3D 0; i < prefetch_offset && i < nb_rx; i++)
+> +		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i], struct rte_ether_hdr *) =
++ 1);
+> +
+
+If there are no prefetches right now, probably no need to add new.
+Or if you feel strongly about it - make it as a new patch.
+
+>  	for (j =3D 0; j < n; j +=3D EM_HASH_LOOKUP_COUNT) {
+>=20
+>  		uint32_t pkt_type =3D RTE_PTYPE_L3_MASK |
+> @@ -289,7 +292,7 @@ l3fwd_em_process_events(int nb_rx, struct rte_event *=
+*ev,
+>  		l3_type =3D pkt_type & RTE_PTYPE_L3_MASK;
+>  		tcp_or_udp =3D pkt_type & (RTE_PTYPE_L4_TCP | RTE_PTYPE_L4_UDP);
+>=20
+> -		for (i =3D 0, pos =3D j + EM_HASH_LOOKUP_COUNT;
+> +		for (i =3D 0, pos =3D j + prefetch_offset;
+>  		     i < EM_HASH_LOOKUP_COUNT && pos < nb_rx; i++, pos++) {
+>  			rte_prefetch0(rte_pktmbuf_mtod(
+>  					pkts_burst[pos],
+> diff --git a/examples/l3fwd/l3fwd_em_sequential.h b/examples/l3fwd/l3fwd_=
+em_sequential.h
+> index 3a40b2e434..f2c6ceb7c0 100644
+> --- a/examples/l3fwd/l3fwd_em_sequential.h
+> +++ b/examples/l3fwd/l3fwd_em_sequential.h
+> @@ -81,20 +81,19 @@ l3fwd_em_send_packets(int nb_rx, struct rte_mbuf **pk=
+ts_burst,
+>  	int32_t i, j;
+>  	uint16_t dst_port[SENDM_PORT_OVERHEAD(MAX_PKT_BURST)];
+>=20
+> -	if (nb_rx > 0) {
+> -		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[0],
+> +	for (i =3D 0; i < prefetch_offset && i < nb_rx; i++)
+> +		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i],
+>  					       struct rte_ether_hdr *) + 1);
+> -	}
+>=20
+> -	for (i =3D 1, j =3D 0; j < nb_rx; i++, j++) {
+> -		if (i < nb_rx) {
+> -			rte_prefetch0(rte_pktmbuf_mtod(
+> -					pkts_burst[i],
+> -					struct rte_ether_hdr *) + 1);
+> -		}
+> +	for (j =3D 0; j < nb_rx - prefetch_offset; j++) {
+> +		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j + prefetch_offset],
+> +					       struct rte_ether_hdr *) + 1);
+>  		dst_port[j] =3D em_get_dst_port(qconf, pkts_burst[j], portid);
+>  	}
+>=20
+> +	for (; j < nb_rx; j++)
+> +		dst_port[j] =3D em_get_dst_port(qconf, pkts_burst[j], portid);
+> +
+>  	send_packets_multi(qconf, pkts_burst, dst_port, nb_rx);
+>  }
+>=20
+> @@ -106,20 +105,26 @@ static inline void
+>  l3fwd_em_process_events(int nb_rx, struct rte_event **events,
+>  		     struct lcore_conf *qconf)
+>  {
+> +	struct rte_mbuf *mbuf;
+> +	uint16_t port;
+>  	int32_t i, j;
+>=20
+> -	rte_prefetch0(rte_pktmbuf_mtod(events[0]->mbuf,
+> -		      struct rte_ether_hdr *) + 1);
+> +	for (i =3D 0; i < prefetch_offset && i < nb_rx; i++)
+> +		rte_prefetch0(rte_pktmbuf_mtod(events[i]->mbuf, struct rte_ether_hdr *=
+) + 1);
+>=20
+> -	for (i =3D 1, j =3D 0; j < nb_rx; i++, j++) {
+> -		struct rte_mbuf *mbuf =3D events[j]->mbuf;
+> -		uint16_t port;
+> +	for (j =3D 0; j < nb_rx - prefetch_offset; j++) {
+> +		rte_prefetch0(rte_pktmbuf_mtod(events[j + prefetch_offset]->mbuf,
+> +					       struct rte_ether_hdr *) + 1);
+> +		mbuf =3D events[j]->mbuf;
+> +		port =3D mbuf->port;
+> +		mbuf->port =3D em_get_dst_port(qconf, mbuf, mbuf->port);
+> +		process_packet(mbuf, &mbuf->port);
+> +		if (mbuf->port =3D=3D BAD_PORT)
+> +			mbuf->port =3D port;
+> +	}
+>=20
+> -		if (i < nb_rx) {
+> -			rte_prefetch0(rte_pktmbuf_mtod(
+> -					events[i]->mbuf,
+> -					struct rte_ether_hdr *) + 1);
+> -		}
+> +	for (; j < nb_rx; j++) {
+> +		mbuf =3D events[j]->mbuf;
+>  		port =3D mbuf->port;
+>  		mbuf->port =3D em_get_dst_port(qconf, mbuf, mbuf->port);
+>  		process_packet(mbuf, &mbuf->port);
+> @@ -136,17 +141,22 @@ l3fwd_em_process_event_vector(struct rte_event_vect=
+or *vec,
+>  	struct rte_mbuf **mbufs =3D vec->mbufs;
+>  	int32_t i, j;
+>=20
+> -	rte_prefetch0(rte_pktmbuf_mtod(mbufs[0], struct rte_ether_hdr *) + 1);
+> +	for (i =3D 0; i < prefetch_offset && i < vec->nb_elem; i++)
+> +		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i], struct rte_ether_hdr *) + 1);
+>=20
+> -	for (i =3D 0, j =3D 1; i < vec->nb_elem; i++, j++) {
+> -		if (j < vec->nb_elem)
+> -			rte_prefetch0(rte_pktmbuf_mtod(mbufs[j],
+> -						       struct rte_ether_hdr *) +
+> -				      1);
+> +	for (i =3D 0; i < vec->nb_elem - prefetch_offset; i++) {
+> +		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i + prefetch_offset],
+> +					       struct rte_ether_hdr *) + 1);
+>  		dst_ports[i] =3D em_get_dst_port(qconf, mbufs[i],
+>  					       attr_valid ? vec->port :
+>  							    mbufs[i]->port);
+>  	}
+> +
+> +	for (; i < vec->nb_elem; i++)
+> +		dst_ports[i] =3D em_get_dst_port(qconf, mbufs[i],
+> +					       attr_valid ? vec->port :
+> +							    mbufs[i]->port);
+> +
+>  	j =3D RTE_ALIGN_FLOOR(vec->nb_elem, FWDSTEP);
+>=20
+>  	for (i =3D 0; i !=3D j; i +=3D FWDSTEP)
+> diff --git a/examples/l3fwd/l3fwd_fib.c b/examples/l3fwd/l3fwd_fib.c
+> index 82f1739df7..25192611c5 100644
+> --- a/examples/l3fwd/l3fwd_fib.c
+> +++ b/examples/l3fwd/l3fwd_fib.c
+> @@ -24,9 +24,6 @@
+>  #include "l3fwd_event.h"
+>  #include "l3fwd_route.h"
+>=20
+> -/* Configure how many packets ahead to prefetch for fib. */
+> -#define FIB_PREFETCH_OFFSET 4
+> -
+>  /* A non-existent portid is needed to denote a default hop for fib. */
+>  #define FIB_DEFAULT_HOP 999
+>=20
+> @@ -130,14 +127,14 @@ fib_send_packets(int nb_rx, struct rte_mbuf **pkts_=
+burst,
+>  	int32_t i;
+>=20
+>  	/* Prefetch first packets. */
+> -	for (i =3D 0; i < FIB_PREFETCH_OFFSET && i < nb_rx; i++)
+> +	for (i =3D 0; i < prefetch_offset && i < nb_rx; i++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i], void *));
+>=20
+>  	/* Parse packet info and prefetch. */
+> -	for (i =3D 0; i < (nb_rx - FIB_PREFETCH_OFFSET); i++) {
+> +	for (i =3D 0; i < (nb_rx - prefetch_offset); i++) {
+>  		/* Prefetch packet. */
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[
+> -				i + FIB_PREFETCH_OFFSET], void *));
+> +				i + prefetch_offset], void *));
+>  		fib_parse_packet(pkts_burst[i],
+>  				&ipv4_arr[ipv4_cnt], &ipv4_cnt,
+>  				&ipv6_arr[ipv6_cnt], &ipv6_cnt,
+> @@ -302,11 +299,11 @@ fib_event_loop(struct l3fwd_event_resources *evt_rs=
+rc,
+>  		ipv6_arr_assem =3D 0;
+>=20
+>  		/* Prefetch first packets. */
+> -		for (i =3D 0; i < FIB_PREFETCH_OFFSET && i < nb_deq; i++)
+> +		for (i =3D 0; i < prefetch_offset && i < nb_deq; i++)
+>  			rte_prefetch0(rte_pktmbuf_mtod(events[i].mbuf, void *));
+>=20
+>  		/* Parse packet info and prefetch. */
+> -		for (i =3D 0; i < (nb_deq - FIB_PREFETCH_OFFSET); i++) {
+> +		for (i =3D 0; i < (nb_deq - prefetch_offset); i++) {
+>  			if (flags & L3FWD_EVENT_TX_ENQ) {
+>  				events[i].queue_id =3D tx_q_id;
+>  				events[i].op =3D RTE_EVENT_OP_FORWARD;
+> @@ -318,7 +315,7 @@ fib_event_loop(struct l3fwd_event_resources *evt_rsrc=
+,
+>=20
+>  			/* Prefetch packet. */
+>  			rte_prefetch0(rte_pktmbuf_mtod(events[
+> -					i + FIB_PREFETCH_OFFSET].mbuf,
+> +					i + prefetch_offset].mbuf,
+>  					void *));
+>=20
+>  			fib_parse_packet(events[i].mbuf,
+> @@ -455,12 +452,12 @@ fib_process_event_vector(struct rte_event_vector *v=
+ec, uint8_t *type_arr,
+>  	ipv6_arr_assem =3D 0;
+>=20
+>  	/* Prefetch first packets. */
+> -	for (i =3D 0; i < FIB_PREFETCH_OFFSET && i < vec->nb_elem; i++)
+> +	for (i =3D 0; i < prefetch_offset && i < vec->nb_elem; i++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i], void *));
+>=20
+>  	/* Parse packet info and prefetch. */
+> -	for (i =3D 0; i < (vec->nb_elem - FIB_PREFETCH_OFFSET); i++) {
+> -		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i + FIB_PREFETCH_OFFSET],
+> +	for (i =3D 0; i < (vec->nb_elem - prefetch_offset); i++) {
+> +		rte_prefetch0(rte_pktmbuf_mtod(mbufs[i + prefetch_offset],
+>  					       void *));
+>  		fib_parse_packet(mbufs[i], &ipv4_arr[ipv4_cnt], &ipv4_cnt,
+>  				 &ipv6_arr[ipv6_cnt], &ipv6_cnt, &type_arr[i]);
+> diff --git a/examples/l3fwd/l3fwd_lpm.h b/examples/l3fwd/l3fwd_lpm.h
+> index 4ee61e8d88..d81aa2efaf 100644
+> --- a/examples/l3fwd/l3fwd_lpm.h
+> +++ b/examples/l3fwd/l3fwd_lpm.h
+> @@ -82,13 +82,13 @@ l3fwd_lpm_no_opt_send_packets(int nb_rx, struct rte_m=
+buf **pkts_burst,
+>  	int32_t j;
+>=20
+>  	/* Prefetch first packets */
+> -	for (j =3D 0; j < PREFETCH_OFFSET && j < nb_rx; j++)
+> +	for (j =3D 0; j < prefetch_offset && j < nb_rx; j++)
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j], void *));
+>=20
+>  	/* Prefetch and forward already prefetched packets. */
+> -	for (j =3D 0; j < (nb_rx - PREFETCH_OFFSET); j++) {
+> +	for (j =3D 0; j < (nb_rx - prefetch_offset); j++) {
+>  		rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[
+> -				j + PREFETCH_OFFSET], void *));
+> +				j + prefetch_offset], void *));
+>  		l3fwd_lpm_simple_forward(pkts_burst[j], portid, qconf);
+>  	}
+>=20
+> diff --git a/examples/l3fwd/l3fwd_lpm_neon.h b/examples/l3fwd/l3fwd_lpm_n=
+eon.h
+> index 3c1f827424..5570a11687 100644
+> --- a/examples/l3fwd/l3fwd_lpm_neon.h
+> +++ b/examples/l3fwd/l3fwd_lpm_neon.h
+> @@ -85,23 +85,20 @@ l3fwd_lpm_process_packets(int nb_rx, struct rte_mbuf =
+**pkts_burst,
+>  			  uint16_t portid, uint16_t *dst_port,
+>  			  struct lcore_conf *qconf, const uint8_t do_step3)
+>  {
+> -	int32_t i =3D 0, j =3D 0;
+> +	int32_t i =3D 0, j =3D 0, pos =3D 0;
+>  	int32x4_t dip;
+>  	uint32_t ipv4_flag;
+>  	const int32_t k =3D RTE_ALIGN_FLOOR(nb_rx, FWDSTEP);
+>  	const int32_t m =3D nb_rx % FWDSTEP;
+>=20
+>  	if (k) {
+> -		for (i =3D 0; i < FWDSTEP; i++) {
+> -			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i],
+> -							void *));
+> -		}
+> -		for (j =3D 0; j !=3D k - FWDSTEP; j +=3D FWDSTEP) {
+> -			for (i =3D 0; i < FWDSTEP; i++) {
+> -				rte_prefetch0(rte_pktmbuf_mtod(
+> -						pkts_burst[j + i + FWDSTEP],
+> -						void *));
+> -			}
+> +		for (i =3D 0; i < prefetch_offset && i < k; i++)
+> +			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i], void *));
+> +
+> +		for (j =3D 0; j !=3D k; j +=3D FWDSTEP) {
+> +			for (i =3D 0, pos =3D j + prefetch_offset;
+> +			     i < FWDSTEP && pos < k; i++, pos++)
+> +				rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[pos], void *));
+>=20
+>  			processx4_step1(&pkts_burst[j], &dip, &ipv4_flag);
+>  			processx4_step2(qconf, dip, ipv4_flag, portid,
+> @@ -109,35 +106,9 @@ l3fwd_lpm_process_packets(int nb_rx, struct rte_mbuf=
+ **pkts_burst,
+>  			if (do_step3)
+>  				processx4_step3(&pkts_burst[j], &dst_port[j]);
+>  		}
+> -
+> -		processx4_step1(&pkts_burst[j], &dip, &ipv4_flag);
+> -		processx4_step2(qconf, dip, ipv4_flag, portid, &pkts_burst[j],
+> -				&dst_port[j]);
+> -		if (do_step3)
+> -			processx4_step3(&pkts_burst[j], &dst_port[j]);
+> -
+> -		j +=3D FWDSTEP;
+>  	}
+>=20
+>  	if (m) {
+> -		/* Prefetch last up to 3 packets one by one */
+> -		switch (m) {
+> -		case 3:
+> -			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j],
+> -							void *));
+> -			j++;
+> -			/* fallthrough */
+> -		case 2:
+> -			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j],
+> -							void *));
+> -			j++;
+> -			/* fallthrough */
+> -		case 1:
+> -			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[j],
+> -							void *));
+> -			j++;
+> -		}
+> -		j -=3D m;
+>  		/* Classify last up to 3 packets one by one */
+>  		switch (m) {
+>  		case 3:
+> diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
+> index 994b7dd8e5..0920c0b2f6 100644
+> --- a/examples/l3fwd/main.c
+> +++ b/examples/l3fwd/main.c
+> @@ -59,6 +59,7 @@ uint16_t nb_rxd =3D RX_DESC_DEFAULT;
+>  uint16_t nb_txd =3D TX_DESC_DEFAULT;
+>  uint32_t nb_pkt_per_burst =3D DEFAULT_PKT_BURST;
+>  uint32_t mb_mempool_cache_size =3D MEMPOOL_CACHE_SIZE;
+> +uint16_t prefetch_offset =3D DEFAULT_PREFECH_OFFSET;
+>=20
+>  /**< Ports set in promiscuous mode off by default. */
+>  static int promiscuous_on;
+> @@ -769,6 +770,7 @@ static const char short_options[] =3D
+>  #define CMD_LINE_OPT_ALG "alg"
+>  #define CMD_LINE_OPT_PKT_BURST "burst"
+>  #define CMD_LINE_OPT_MB_CACHE_SIZE "mbcache"
+> +#define CMD_PREFETCH_OFFSET "prefetch-offset"
+>=20
+>  enum {
+>  	/* long options mapped to a short option */
+> @@ -800,6 +802,7 @@ enum {
+>  	CMD_LINE_OPT_VECTOR_TMO_NS_NUM,
+>  	CMD_LINE_OPT_PKT_BURST_NUM,
+>  	CMD_LINE_OPT_MB_CACHE_SIZE_NUM,
+> +	CMD_PREFETCH_OFFSET_NUM,
+>  };
+>=20
+>  static const struct option lgopts[] =3D {
+> @@ -828,6 +831,7 @@ static const struct option lgopts[] =3D {
+>  	{CMD_LINE_OPT_ALG,   1, 0, CMD_LINE_OPT_ALG_NUM},
+>  	{CMD_LINE_OPT_PKT_BURST,   1, 0, CMD_LINE_OPT_PKT_BURST_NUM},
+>  	{CMD_LINE_OPT_MB_CACHE_SIZE,   1, 0, CMD_LINE_OPT_MB_CACHE_SIZE_NUM},
+> +	{CMD_PREFETCH_OFFSET,   1, 0, CMD_PREFETCH_OFFSET_NUM},
+>  	{NULL, 0, 0, 0}
+>  };
+>=20
+> @@ -1017,6 +1021,9 @@ parse_args(int argc, char **argv)
+>  		case CMD_LINE_OPT_ALG_NUM:
+>  			l3fwd_set_alg(optarg);
+>  			break;
+> +		case CMD_PREFETCH_OFFSET_NUM:
+> +			prefetch_offset =3D strtol(optarg, NULL, 10);
+
+Hmm... might be something like parse_max_pkt_len() is doing, to be more rob=
+ust?
+In fact, probably can re-use the same function, might be just name it in a =
+more generic way.
+=20
+
+> +			break;
+>  		default:
+>  			print_usage(prgname);
+>  			return -1;
+> @@ -1054,6 +1061,13 @@ parse_args(int argc, char **argv)
+>  	}
+>  #endif
+>=20
+> +	if (prefetch_offset > nb_pkt_per_burst) {
+> +		fprintf(stderr, "Prefetch offset (%u) cannot be greater than burst siz=
+e (%u). "
+> +			"Using burst size %u.\n",
+> +			prefetch_offset, nb_pkt_per_burst, nb_pkt_per_burst);
+> +		prefetch_offset =3D nb_pkt_per_burst;
+
+Might be just print err message and terminate gracefully?=20
+
+> +	}
+> +
+>  	/*
+>  	 * Nothing is selected, pick longest-prefix match
+>  	 * as default match.
+> --
+> 2.33.0
 
