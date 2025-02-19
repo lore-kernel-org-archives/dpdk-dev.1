@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C507C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 10:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D3BC021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 10:58:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49F3740E28;
-	Wed, 19 Feb 2025 11:58:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C199F40E27;
+	Wed, 19 Feb 2025 11:58:10 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id DF50D40E11
- for <dev@dpdk.org>; Wed, 19 Feb 2025 11:58:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 42C1540E26
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 11:58:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739962686; x=1771498686;
+ t=1739962687; x=1771498687;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=qaUTOngNIRN4uhqTDK0HVpCKNEAlzS/2+L5CJEec6yc=;
- b=OVvwBAvZZpcKoQcqh7Gt7g/c3p9R59y6DJsMa81XbkflMHc5BHLX5VPq
- ySOEkETM/HA8+n3OKQAMutA8pHewvCGLUmPlR0iPhjdM0sInLyFHKn5LR
- U4igkzms2SekcizJa3CHMQGGBE/HLImltIxmLsCpmsoUqXnknLG/r62ow
- Xx2XzqgCKyCOtI+JLHE7xZmoa6bKwdmTG3+jlqWp2Cj7ealpszjWox0RE
- YnGaI9HudTpLcX1mD933MXvwUpreN0DHIAVqVQGw/BfISnDutq27VPpMZ
- xNIBOXUNukMdKWsXmtngoXh1hly8ED8JZQqkakk8xh6yk2fk9tnNr5HWs A==;
-X-CSE-ConnectionGUID: E01d0HBTQoimBGMqkYkxsQ==
-X-CSE-MsgGUID: /TS9A8rfTEqzrgq7hRF0bw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44609951"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="44609951"
+ bh=1pw2gvhQIht+ZTtmaolkZt7gpSCfIFFG8pMCHJLW1gg=;
+ b=hvzo3t/qacmVembeaa+fbaEzLF66FXyaPmIdauTIBQelr/Cipaduvhjy
+ 9gu7Jbsscr8EBleCTXYH8f/oD/W6a3BaxNflFdVZjw648OYywcfmUtfYU
+ OQ72KjILjGRS4BWDOJ+dGkVZby4QujwSx8rEMOLqUYB8AAPVwgwI6GUff
+ puK0wGMMaVMBcdRYhQ8qlvVfU5uDSmEAevtHPMzGBcVoY57zdGxzGA2Wb
+ A/oT8ZsyEEyuXRY6fET3eDfVSDlTvuimXG6eKtqNeD02NRFjgDJ1dByPh
+ Kl78cXGshshDNvO6foTWlUvZsKgxroZxGdxld1br9scV2Yll34g2f+iDy g==;
+X-CSE-ConnectionGUID: UyjPwqfnS3y/sUCMkKZYzA==
+X-CSE-MsgGUID: j+7Cty6WSlOEyRJ5DQRq0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44609955"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="44609955"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2025 02:58:05 -0800
-X-CSE-ConnectionGUID: UNpU+dqSRpu8whXNeHX0RQ==
-X-CSE-MsgGUID: +FfKJZmTR6SlpdR5jIGjHA==
+ 19 Feb 2025 02:58:07 -0800
+X-CSE-ConnectionGUID: e5pPZrZpTKiac/5Ux5LszA==
+X-CSE-MsgGUID: qoovmel1TE2KfjRZXmNKWQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="145533469"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="145533476"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 19 Feb 2025 02:58:05 -0800
+ by orviesa002.jf.intel.com with ESMTP; 19 Feb 2025 02:58:06 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v7 2/8] build: output a dependency log in build directory
-Date: Wed, 19 Feb 2025 10:57:48 +0000
-Message-ID: <9116a125a439e25d75a76a9b29c43b351a0188bc.1739962646.git.anatoly.burakov@intel.com>
+Subject: [PATCH v7 3/8] devtools: add script to flag unneeded dependencies
+Date: Wed, 19 Feb 2025 10:57:49 +0000
+Message-ID: <a41608f5e99d852bf648f83e716cd737bcd16326.1739962646.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1739962645.git.anatoly.burakov@intel.com>
 References: <cover.1725462264.git.anatoly.burakov@intel.com>
@@ -61,285 +61,87 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Bruce Richardson <bruce.richardson@intel.com>
 
-As meson processes our DPDK source tree it manages dependencies
-specified by each individual driver. To enable future analysis of the
-dependency links between components, log the dependencies of each DPDK
-component as it gets processed. This could potentially allow other tools
-to automatically enable or disable components based on the desired end
-components to be built, e.g. if the user requests net/ice, ensure that
-common/iavf is also enabled in the drivers.
-
-The output file produced is in "dot" or "graphviz" format, which allows
-producing a graphical representation of the DPDK dependency tree if so
-desired. For example: "dot -Tpng -O build/deps.dot" to produce the
-image file "build/deps.dot.png".
+While not a serious problem, DPDK components often list more
+dependencies than are actually necessary to build, due to the use of
+recursive dependencies. In extreme cases, such as with core libraries,
+this can lead to longer configuration times due to meson having to
+deduplicate long lists of dependencies. Therefore we can add a script to
+identify when a component has got unnecessary dependencies listed.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
+ devtools/find-duplicate-deps.py | 62 +++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100755 devtools/find-duplicate-deps.py
 
-Notes:
-    v4 -> v5:
-    - Change output format to include display name
-
- app/meson.build        | 17 +++++++-
- buildtools/log-deps.py | 94 ++++++++++++++++++++++++++++++++++++++++++
- buildtools/meson.build |  2 +
- drivers/meson.build    | 14 +++++++
- examples/meson.build   | 18 +++++++-
- lib/meson.build        | 14 +++++++
- 6 files changed, 157 insertions(+), 2 deletions(-)
- create mode 100644 buildtools/log-deps.py
-
-diff --git a/app/meson.build b/app/meson.build
-index 61202495bd..a971738d40 100644
---- a/app/meson.build
-+++ b/app/meson.build
-@@ -77,7 +77,22 @@ foreach app:apps
-     endif
- 
-     if build
-+        # call into subdir may update name so record it here
-+        display_name = name
-+
-         subdir(name)
-+        app_name = 'dpdk-' + name
-+
-+        # log mandatory dependencies
-+        cmds = ['--type', 'app']
-+        cmds += ['--display-name', display_name]
-+        run_command([log_deps_cmd, cmds, app_name, deps], check: false)
-+
-+        # log optional dependencies, if any
-+        if optional_deps.length() > 0
-+            cmds += ['--optional']
-+            run_command([log_deps_cmd, cmds, app_name, optional_deps], check: false)
-+        endif
-         if not build and require_apps
-             error('Cannot build explicitly requested app "@0@".\n'.format(name)
-                   + '\tReason: ' + reason)
-@@ -125,7 +140,7 @@ foreach app:apps
-         link_libs = dpdk_static_libraries + dpdk_drivers
-     endif
- 
--    exec = executable('dpdk-' + name,
-+    exec = executable(app_name,
-             [ sources, resources ],
-             c_args: cflags,
-             link_args: ldflags,
-diff --git a/buildtools/log-deps.py b/buildtools/log-deps.py
-new file mode 100644
-index 0000000000..7a99b129d7
+diff --git a/devtools/find-duplicate-deps.py b/devtools/find-duplicate-deps.py
+new file mode 100755
+index 0000000000..cbd0ca7196
 --- /dev/null
-+++ b/buildtools/log-deps.py
-@@ -0,0 +1,94 @@
++++ b/devtools/find-duplicate-deps.py
+@@ -0,0 +1,62 @@
 +#! /usr/bin/env python3
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2024 Intel Corporation
 +
-+"""Utility script to build up a list of dependencies from meson."""
++"""Identify any superfluous dependencies listed in DPDK deps graph."""
 +
-+import os
 +import sys
-+import argparse
-+import typing as T
++
++all_deps = {}
 +
 +
-+def file_to_list(filename: str) -> T.List[str]:
-+    """Read file into a list of strings."""
-+    with open(filename, encoding="utf-8") as f:
-+        return f.readlines()
++class dep:
++    """Holds a component and its dependencies."""
++
++    def __init__(self, name, dep_names):
++        """Create and process a component and its deps."""
++        self.name = name.strip('" ')
++        self.base_deps = [all_deps[dn.strip('" ')] for dn in dep_names]
++        self.recursive_deps = []
++        for d in self.base_deps:
++            self.recursive_deps.extend(d.base_deps)
++            self.recursive_deps.extend(d.recursive_deps)
++        self.extra_deps = []
++        for d in self.base_deps:
++            if d in self.recursive_deps:
++                self.extra_deps.append(d.name)
++        if self.extra_deps:
++            print(f'{self.name}: extra deps {self.extra_deps}')
++
++    def dict_add(self, d):
++        """Add this object to a dictionary by name."""
++        d[self.name] = self
 +
 +
-+def list_to_file(filename: str, lines: T.List[str]):
-+    """Write a list of strings out to a file."""
-+    with open(filename, "w", encoding="utf-8") as f:
-+        f.writelines(lines)
++def remove_attrs(ln):
++    """Remove attributes from a line."""
++    while ln.find("[") != -1:
++        start = ln.find("[")
++        end = ln.find("]")
++        ln = ln[:start] + ln[end + 1 :]
++    return ln.strip()
 +
 +
-+def gen_deps(
-+    component_type: str,
-+    optional: bool,
-+    component: str,
-+    display_name: T.Optional[str],
-+    deps: T.List[str],
-+) -> str:
-+    """Generate a dependency graph for meson."""
-+    dep_list_str = '", "'.join(deps)
-+    deps_str = "" if not deps else f' -> {{ "{dep_list_str}" }}'
-+    # we define custom attributes for the nodes
-+    attr_str = f'dpdk_componentType="{component_type}"'
-+    if optional:
-+        # we use a dotted line to represent optional dependencies
-+        attr_str += ',style="dotted"'
-+    if display_name is not None:
-+        attr_str += f',dpdk_displayName="{display_name}"'
-+    return f'"{component}"{deps_str} [{attr_str}]\n'
++def main(argv):
++    """Read the dependency tree from a dot file and process it."""
++    if len(argv) != 2:
++        print(f'Usage: {argv[0]} <build-directory>/deps.dot', file=sys.stderr)
++        sys.exit(1)
++
++    with open(argv[1]) as f:
++        for ln in f.readlines():
++            ln = remove_attrs(ln.strip())
++            if '->' in ln:
++                name, deps = ln.split('->')
++                deps = deps.strip(' {}')
++                dep(name, deps.split(',')).dict_add(all_deps)
++            elif ln.startswith('"') and ln.endswith('"'):
++                dep(ln.strip('"'), []).dict_add(all_deps)
 +
 +
-+def _main():
-+    depsfile = f'{os.environ["MESON_BUILD_ROOT"]}/deps.dot'
-+
-+    # to reset the deps file on each build, the script is called without any params
-+    if len(sys.argv) == 1:
-+        os.remove(depsfile)
-+        sys.exit(0)
-+
-+    # we got arguments, parse them
-+    parser = argparse.ArgumentParser(
-+        description="Generate a dependency graph for meson."
-+    )
-+    # type is required
-+    parser.add_argument(
-+        "--type", required=True, help="Type of dependency (lib, examples, etc.)"
-+    )
-+    parser.add_argument(
-+        "--optional", action="store_true", help="Whether the dependency is optional"
-+    )
-+    parser.add_argument(
-+        "--display-name",
-+        help="Component name as it is used in the build system",
-+    )
-+    # component is required
-+    parser.add_argument("component", help="The component to add to the graph")
-+    parser.add_argument("deps", nargs="*", help="The dependencies of the component")
-+
-+    parsed = parser.parse_args()
-+
-+    try:
-+        contents = file_to_list(depsfile)
-+    except FileNotFoundError:
-+        contents = ["digraph {\n", "}\n"]
-+
-+    # occasionally, component binary name may be different from what it appears in Meson.
-+    display_name = parsed.display_name
-+
-+    c_type = parsed.type
-+    optional = parsed.optional
-+    component = parsed.component
-+    deps = parsed.deps
-+    contents[-1] = gen_deps(c_type, optional, component, display_name, deps)
-+
-+    contents.append("}\n")
-+
-+    list_to_file(depsfile, contents)
-+
-+
-+if __name__ == "__main__":
-+    _main()
-diff --git a/buildtools/meson.build b/buildtools/meson.build
-index 4e2c1217a2..13a0477245 100644
---- a/buildtools/meson.build
-+++ b/buildtools/meson.build
-@@ -26,6 +26,8 @@ header_gen_cmd = py3 + files('gen-header.py')
- has_hugepages_cmd = py3 + files('has-hugepages.py')
- cmdline_gen_cmd = py3 + files('dpdk-cmdline-gen.py')
- check_dts_requirements = py3 + files('check-dts-requirements.py')
-+log_deps_cmd = py3 + files('log-deps.py')
-+run_command(log_deps_cmd, check: false)  # call with no parameters to reset the file
- 
- # install any build tools that end-users might want also
- install_data([
-diff --git a/drivers/meson.build b/drivers/meson.build
-index fb48e11eaf..e9698373e2 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -162,6 +162,8 @@ foreach subpath:subdirs
-         endif
- 
-         if build
-+            # call into subdir may update name so record it here
-+            display_name = '@0@/@1@'.format(class, name)
-             # pull in driver directory which should update all the local variables
-             subdir(drv_path)
- 
-@@ -176,6 +178,18 @@ foreach subpath:subdirs
-                         +'\tReason: ' + reason)
-             endif
- 
-+            # log mandatory dependencies
-+            cmds = ['--type', 'drivers']
-+            cmds += ['--display-name', display_name]
-+            drv_name = class + '_' + name
-+            run_command([log_deps_cmd, cmds, drv_name, deps], check: false)
-+
-+            # log optional dependencies, if any
-+            if optional_deps.length() > 0
-+                cmds += ['--optional']
-+                run_command([log_deps_cmd, cmds, drv_name, optional_deps], check: false)
-+            endif
-+
-             # get dependency objs from strings
-             shared_deps = ext_deps
-             static_deps = ext_deps
-diff --git a/examples/meson.build b/examples/meson.build
-index 14b8aadf68..d1856dbafc 100644
---- a/examples/meson.build
-+++ b/examples/meson.build
-@@ -99,11 +99,27 @@ foreach example: examples
-     includes = [include_directories(example, 'common')]
-     deps = ['eal', 'mempool', 'net', 'mbuf', 'ethdev', 'cmdline']
-     optional_deps = []
-+
-+    # call into subdir may update name so record it here
-+    display_name = example
-+
-     subdir(example)
-+    example_name = 'dpdk-' + name
- 
-     if build
-         dep_objs = ext_deps
- 
-+        # log mandatory dependencies
-+        cmds = ['--type', 'examples']
-+        cmds += ['--display-name', display_name]
-+        run_command([log_deps_cmd, cmds, example_name, deps], check: false)
-+
-+        # log optional dependencies, if any
-+        if optional_deps.length() > 0
-+            cmds += ['--optional']
-+            run_command([log_deps_cmd, cmds, example_name, optional_deps], check: false)
-+        endif
-+
-         # resolve any optional internal dependencies
-         def_lib = get_option('default_library')
-         foreach d: optional_deps
-@@ -135,7 +151,7 @@ foreach example: examples
-     if allow_experimental_apis
-         cflags += '-DALLOW_EXPERIMENTAL_API'
-     endif
--    executable('dpdk-' + name, sources,
-+    executable(example_name, sources,
-             include_directories: includes,
-             link_whole: link_whole_libs,
-             link_args: ldflags,
-diff --git a/lib/meson.build b/lib/meson.build
-index 76bf849852..db0d121b3c 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -160,7 +160,21 @@ foreach l:libraries
-     endif
- 
-     if build
-+        # as per warning below, directory name should match library name but it is not considered an error
-+        display_name = name
-+
-         subdir(l)
-+
-+        # log mandatory dependencies
-+        cmds = ['--type', 'lib']
-+        cmds += ['--display-name', display_name]
-+        run_command([log_deps_cmd, cmds, name, deps], check: false)
-+
-+        # log optional dependencies, if any
-+        if optional_deps.length() > 0
-+            cmds += ['--optional']
-+            run_command([log_deps_cmd, cmds, name, optional_deps], check: false)
-+        endif
-         if not build and require_libs
-             error('Cannot build explicitly requested lib "@0@".\n'.format(name)
-                     +'\tReason: ' + reason)
++if __name__ == '__main__':
++    main(sys.argv)
 -- 
 2.43.5
 
