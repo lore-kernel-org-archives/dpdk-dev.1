@@ -2,70 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E620C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 18:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C399C021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 18:46:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9025E40263;
-	Wed, 19 Feb 2025 19:39:55 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 4781E4014F
- for <dev@dpdk.org>; Wed, 19 Feb 2025 19:39:54 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-220c8f38febso572035ad.2
- for <dev@dpdk.org>; Wed, 19 Feb 2025 10:39:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 439EF402A0;
+	Wed, 19 Feb 2025 19:46:00 +0100 (CET)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
+ [209.85.214.180])
+ by mails.dpdk.org (Postfix) with ESMTP id A5CCB40263
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 19:45:58 +0100 (CET)
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-22128b7d587so621135ad.3
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 10:45:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739990393;
- x=1740595193; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739990758;
+ x=1740595558; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+bFqfzhJKrgo6iwMoxNfRzUcNqn/pUeaAZGHc3gisxQ=;
- b=nwJrUTcCSNnWp91ReXYjq7aE5q5Zg4DYU+SMHZKJFNb85Cy4wnstm9cOrh6hVbSPxy
- qRBbpu7hqb1gYfW2hxHhgH6rd9lYNbA1b1zM2Iw0c+W1mUi7MOpuBbQm6lWY4HfcvDas
- obzUYJ67wpVrJb4SBqE1iZpk4aOb+h9yZogO/9+KIQATSSNAiw6qjxA3V1spAYkm7Iks
- P40KikUu1/nLskmPyJlsT0SvGNeum1fMnZzcN2YslfbesjBk1/erYxGQrVgiwb1bNdEL
- 9wGdPN2iwj4USiedZOakVPSLa/1AlTMT3URHH2JhZ8zRIPxufErzKBYO8XqFFT2oxHJB
- ksMA==
+ bh=JqWEJ+iusIh3WGYUAKhkQ3qSD1adLwMYAmrB8kn95AQ=;
+ b=QtejmxGhaLvehrbR6etzljHAT6amDGV8f+h+8EVhsu4Oyl2T6NlO1mbPbHl1BrQBnO
+ mtAItWFAprGwBBxMLmGv6pQ0AL6RGzRV96NdB82qjmApdBZOkCn0CWWw9jPsrOJ2UrwO
+ YHPUolWPi88XTh7lARbSNDzOrcq6DrD5RMsW1Fi69tOv+n6Rr9bx/WoTFcpusX2yEOlD
+ wD3lnDOB+D6UIdUQjjYqhKvwsMvT1oNaDb9fWPF+4E0s7EkpzDIi4Q3mcfYWmtA5FgFO
+ uESgmgay70/mUsGwv6VkvZgBxlaBNN0xe8Zxy39EMZoZj7ur/oUSQTvONLnTtro3UYe0
+ Rojw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739990393; x=1740595193;
+ d=1e100.net; s=20230601; t=1739990758; x=1740595558;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=+bFqfzhJKrgo6iwMoxNfRzUcNqn/pUeaAZGHc3gisxQ=;
- b=f/1B/qYdTAkzFYYZ1p5lGKoPWLPN4L0Q0lSwoSDobL4w5Zm1bpnrYw0ZUKPiFyXaHZ
- KbMFJARVCAoQbem/+RC4BA42q2ew3rh1jTTTThMOncaaNnF7S5EDMDqyefGzdh48C6UN
- A6FRBLhy66UgArSfMMnKH7wbJEUKloHRv0Gzs2crAm3GS3jQM367xw4BVcXstcNfp3zU
- PzgUSNfiAGcYQpf0tV6GpHyhFwqlCLZ/foJOdCJMsyN3bSMA70/Vc1UW6xTW0FT+ucYc
- OYuWWDz1fG2trP/Irmy6xw+WPMCQZPKuglO9hjU1TF35sGx2Uz8k8Ios9VD046hsWmdG
- X5xg==
-X-Gm-Message-State: AOJu0YxikRKBxdr639y/L5FUPQjE1L4npS3yefuPa8oEMj/9vLy7swWV
- DkXnqhrTmmPl6be87O3/YV0ccqnjLV5YChmdB/3zuAxlAqYSl1i801GOo8W2mEc=
-X-Gm-Gg: ASbGncv8qnZ/sYk9qhV/h+4iIqDjfoRj63rNGzsE1CvVGpzf/MF4n8msh1uI7oaxiI0
- 6vvhw3tbOGCzi1rrKNxO5qEDK8cO4hBuBEeQkI9r8i0fSdAjuMw9SilfwrFZs/OYMTKxaiegiUN
- TnGzmuswXmovhTbphK1uQmRfho3noIDNGTGxAKvwF4HrLPyEhNORNhKDsaD4eC4Xsbm3aoTb3yt
- 04M98XGGjAnIdNxFXVDOzZKarX0vRsFsYiW35Rkr+ByUJmi6A65fgl4hVQQqjS+hfQxLP/vjvSH
- f9VtwMtlrHbhPvnE6WC0Eb0K4I7iqKlXpnCrtKEvtomdONr2di10N0/kwBMkh6RwJqeb
-X-Google-Smtp-Source: AGHT+IFnjtKvyRopPv6xLfXN/eh6NDhtxG3gSLl5XAny+YoVJDS8Omgqs/eDAo52NkGkrhz36EHfHg==
-X-Received: by 2002:a05:6a00:1816:b0:730:7970:1f8f with SMTP id
- d2e1a72fcca58-732617bfaa2mr23510507b3a.12.1739990393406; 
- Wed, 19 Feb 2025 10:39:53 -0800 (PST)
+ bh=JqWEJ+iusIh3WGYUAKhkQ3qSD1adLwMYAmrB8kn95AQ=;
+ b=ArI+WueWLy0hDCOn59uEgfNY0TtLYdjaKoEvgqFYUORA2hw3EdMqbHoZMFEUVibEaS
+ ygIXFTGKfPw+xWoPiwW2PpfHdyl+qsQRCrNCdz0XsFGsqW1KeSadEzuHcCSRsfnsFW/d
+ sp4n2gaekwm3Iq/5xbhbpbU9nU4bD0gnUzG4MqQ6e++V0XpqJm2UoONwNcXpagCXPzrO
+ 3ia9fY06E8WYhHsW9rEDitGvxbw9qhsZh0My9D+EbM3ehovdZA7GF3hJ5yGTT+SivYLq
+ TqhwXkM0YWBimYCyPPOPNvEFmUAcmyitoVAzhpQAgfDxhUGLToSWMh2NhPnpBk2tiByO
+ xyaw==
+X-Gm-Message-State: AOJu0Yy0VaDMjWumfbZuPLC4d6c15qtyocYCxLrPxRH6Vs7DV15vp1Z2
+ xW5Pr2KggvRuMQps4/fs5xA6+1glFkvVRfamudF4x4D6GPhu1+TPDKNFVTBR0KU=
+X-Gm-Gg: ASbGnct1eyqu5zO2yvJ2F33XvLmajCofsiEmGZ+Li7i9w3kLv0U/l/Mh0XAaQob+irm
+ yvxBVV9fq77CZNHUmu9FOqbxygu4S2qHPtKo4mcLMb1jrTNgxCNM7rkn5y9raJbw9Gh73zJ4XaV
+ khpq2EcDxj7oiLDCFqls5mTznq2WisVoC0oR2U1sWZiCgRf5oEHHTFkjP31cSOJ22xjfJyNUCEL
+ zG1j0l0XKyrxdiT/8SpE+69YMElZpWS4RCL8ZsHmjiDVjJhg+ZlUEgyIKmu81cTPOmz77hclQM8
+ YMystvXLFROSsh7crWazb7LI9gqcyMR+qCtRyOyB9smdpFFedwSfjjUhH6FbzhFLGoeE
+X-Google-Smtp-Source: AGHT+IH1PlxVqRHYDVd5IgXmEj3ZllkVTnZxIxUZm4nPU+qB35aUXhq0ZIKteRWTe7Dt7irisRLzVQ==
+X-Received: by 2002:a17:902:eb83:b0:220:d078:eb28 with SMTP id
+ d9443c01a7336-221711d1730mr77509825ad.48.1739990757676; 
+ Wed, 19 Feb 2025 10:45:57 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-ade083277b3sm7769031a12.27.2025.02.19.10.39.52
+ 98e67ed59e1d1-2fc13ba6285sm12287279a91.48.2025.02.19.10.45.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Feb 2025 10:39:53 -0800 (PST)
-Date: Wed, 19 Feb 2025 10:39:51 -0800
+ Wed, 19 Feb 2025 10:45:57 -0800 (PST)
+Date: Wed, 19 Feb 2025 10:45:55 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gregory Etelson <getelson@nvidia.com>
-Cc: <dev@dpdk.org>, =?UTF-8?B?wqA=?= <mkashani@nvidia.com>,
- <rasland@nvidia.com>
-Subject: Re: [PATCH v2] testpmd: support meter_mark init_color in indirect
- list configuration
-Message-ID: <20250219103951.5e9870bc@hermes.local>
-In-Reply-To: <20250217172111.67655-1-getelson@nvidia.com>
-References: <20250216140420.216805-1-getelson@nvidia.com>
- <20250217172111.67655-1-getelson@nvidia.com>
+To: Thierry Herbelot <thierry.herbelot@6wind.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, stable@dpdk.org
+Subject: Re: [PATCH] ethdev: fix get_reg_info
+Message-ID: <20250219104555.0bc2e0ff@hermes.local>
+In-Reply-To: <20250218115828.2107335-1-thierry.herbelot@6wind.com>
+References: <20250218115828.2107335-1-thierry.herbelot@6wind.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,44 +79,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 17 Feb 2025 19:21:10 +0200
-Gregory Etelson <getelson@nvidia.com> wrote:
+On Tue, 18 Feb 2025 12:58:28 +0100
+Thierry Herbelot <thierry.herbelot@6wind.com> wrote:
 
-> Flow actions parameters in indirect actions list are created as
-> read-only and shared between all flows that reference that indirect
-> list.
+> 'width' and 'offset' are input parameters when dumping the register
+> info of an Ethernet device. They should be copied in the new request
+> before calling the device callback function.
 > 
-> If a flow rule needs to apply rule specific actions list parameters it
-> does it with the indirect actions list conf parameter.
+> Fixes: 083db2ed9e9 ('ethdev: add report of register names and filter')
+> Cc: stable@dpdk.org
 > 
-> The patch allows flow rule to set meter_mark init_color value when
-> meter_mark action was created in indirect actions list.
-> 
-> Example:
-> 
-> // create indirect actions list with meter_mark flow action:
-> testpmd> flow indirect_action 0 create action_id 10 ingress \  
->   list actions meter_mark mtr_profile 20 \
->   mtr_state 1 mtr_color_mode 1 / end
-> 
-> // create a flow specific meter_mark init_color configuration:
-> testpmd> flow indirect_action 0 create action_id 11 flow_conf \  
->    actions meter_mark_conf mtr_update_init_color red / end
-> 
-> // queue a flow rule with indirect actions list
-> // and flow specific configuration:
-> testpmd> flow queue 0 create 0 template_table 1 pattern_template 0 \  
->    actions_template 0 postpone no pattern eth / ipv4 / udp / end \
->    actions indirect_list handle 10 conf 11 / \
->    jump group 10 / end
-> 
-> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+> Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
 
-Looks good, would like a ack from one of the flow maintainers that
-looked at the original patch. Those were:
+Why does the ethdev code create an on stack temporary variable.
+Looks like it only wants to make sure that names element is NULL.
 
-    Signed-off-by: Alexander Kozyrev <akozyrev@nvidia.com>
-    Acked-by: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-    Acked-by: Ori Kam <orika@nvidia.com>
-    Acked-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-    Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Really should be one function and when extended fields were added
+should have used API versioning.
+Probably too late now, although rte_eth_dev_get_reg_info_ext()
+is an experimental API.
