@@ -2,53 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE34C021B0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 11:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50257C021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 12:47:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2FB240E72;
-	Wed, 19 Feb 2025 12:50:23 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 6A58740E68
- for <dev@dpdk.org>; Wed, 19 Feb 2025 12:50:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739965823; x=1771501823;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=UH9GhpINIZG9pGAdL/g7xP9FHCSwwmvFTBb30Rjf79c=;
- b=EAOD4tasHusf8BxqWH7rp1nqjy4imjL6SWD+cNHS858xH2ELJLHyeF04
- e+65yuPVsPCzqTCDzxqz+uM22eoz2V7i3V7HJ0nxsTmA/nqy84G2T2X9s
- blihwCtnXSJOfjustzfgidbXug582kq3murtXieO8ibUruWEnHTAiZitg
- BIVIMHyr5c2ewqOhtTPvvSm2GRAFBaroHRM4d8U8PVd98f84y0YGHh2lm
- Ib2jvIrc1CXGQzY9hHddI07eAL1eVUYUudsgzVundOLIU2G4RXeZB4XsN
- ug31UFGn4M0XHwwBTsntHQA0cLr4OW9X8O4voYojT5B5qwnuV8lkAA/aX g==;
-X-CSE-ConnectionGUID: SzT4eXhRSM2F1pmGSSguvA==
-X-CSE-MsgGUID: u4e4DlOlT+2EOij+sSCEMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40412108"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="40412108"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2025 03:50:22 -0800
-X-CSE-ConnectionGUID: N41o7xvHRSe6uYZZHuCwbA==
-X-CSE-MsgGUID: sXncODRyTgWkpQDFP89LWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="114556935"
-Received: from unknown (HELO silpixa00400886.ir.intel.com) ([10.243.22.139])
- by orviesa010.jf.intel.com with ESMTP; 19 Feb 2025 03:50:20 -0800
-From: Brian Dooley <brian.dooley@intel.com>
-To: Akhil Goyal <gakhil@marvell.com>,
-	Fan Zhang <fanzhang.oss@gmail.com>
-Cc: dev@dpdk.org, kai.ji@intel.com, pablo.de.lara.guarch@intel.com,
- Brian Dooley <brian.dooley@intel.com>
-Subject: [PATCH v4 3/3] app/test: add SM4 GCM tests
-Date: Wed, 19 Feb 2025 11:50:01 +0000
-Message-Id: <20250219115001.1047145-3-brian.dooley@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250219115001.1047145-1-brian.dooley@intel.com>
-References: <20241213125850.2714328-1-brian.dooley@intel.com>
- <20250219115001.1047145-1-brian.dooley@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B19D440E39;
+	Wed, 19 Feb 2025 13:47:16 +0100 (CET)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com
+ (mail-sg2apc01on2096.outbound.protection.outlook.com [40.107.215.96])
+ by mails.dpdk.org (Postfix) with ESMTP id 486F940E12;
+ Wed, 19 Feb 2025 13:47:15 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UY9FtUrhul3XTMcmL+uw39134AoXMu3ohQ+PLNCRNdvl2NEVNsHNk+iLJbn17lCsz22BKwBkKPhWhcfQMEEtfeD6mxaDAIr5EW91A7qhVA686BB1aNrIb82LrKHopXT8JtXQQyZhynKraYNuHPe8bBSPIXoClRlLljiamxF8kR7yvRMP8BWdwJUVQL7dJzilf1U0zYjodnwhOpuUmR96c/FlA8BGDbSXkvs03QtlVjrYTdPhWY3d7QP5haP7lJUJ6e3v83HA3Z4ph0cXhxPZxXeWEhF/Xt4jR5MPvivOuZvSz23+h8yq7bc+o8BUgM1CQIRL+spk/9I8HjEAt4q6+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KRp/riacURQON6FNF42LH08iQ6UbjtuHRwpD7Q8yDok=;
+ b=rgkDoT/LlsCOA0C3fKsbidUB8l+xmo9psYsbSLUjPc53hlMd8C+N+PxO244nlilq4ZDl1d7sFamed4nUh2uBzawgTXIJh5z+CCpOv6KLA54RcqONTAXqV++iV5//SBFsMfBdQObHrp0SMbV7oggnsnERVXUygDoV07Z/DCGqtvJStctPm/kjOx44vSYeJQij4BHNqCJQepx8/glVkAq1L6lXAlZQ/d2fQvAriFEnyAnZkHmpyMZ67MQ3z/yXFKOgmf5o18ZgLeYCpkf7N6XjLLDnV0gdqkt5i55li1Vjv0en4J+4hox73tTQeOebm3XqYjFMrK8ai3g+83vy+moluA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KRp/riacURQON6FNF42LH08iQ6UbjtuHRwpD7Q8yDok=;
+ b=bifVqnyiTNscjjNmwdXeHu0jXMYRyTixk0bSrn9EzoRLXWD3Jkn3mFlVDBrrzLgelb6yABfs0nX1fisGwZmq0ZlBsLbYuPeKtKJUIcpfNp53dt9Li9pwayj+E3VJ66HdllZnmLUyxsTaJk/rUYj/Lo3zA/qjRhcS6oEl/gRT9ng=
+Received: from OSQP153MB1307.APCP153.PROD.OUTLOOK.COM (2603:1096:604:373::18)
+ by OSQP153MB1229.APCP153.PROD.OUTLOOK.COM (2603:1096:604:372::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 12:47:11 +0000
+Received: from OSQP153MB1307.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b5b4:898a:d979:93e9]) by OSQP153MB1307.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b5b4:898a:d979:93e9%7]) with mapi id 15.20.8466.004; Wed, 19 Feb 2025
+ 12:47:11 +0000
+From: Wei Hu <weh@microsoft.com>
+To: "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>, Long
+ Li <longli@microsoft.com>
+Subject: RE: [EXTERNAL] [Patch v2] net/mana: use mana_local_data for tracking
+ usage data for primary process
+Thread-Topic: [EXTERNAL] [Patch v2] net/mana: use mana_local_data for tracking
+ usage data for primary process
+Thread-Index: AQHbgkgHhb71oHJKPUWSKNTKsoeD9rNOk/Dw
+Date: Wed, 19 Feb 2025 12:47:11 +0000
+Message-ID: <OSQP153MB1307B222A37066A4D6746147BBC52@OSQP153MB1307.APCP153.PROD.OUTLOOK.COM>
+References: <1739912366-6052-1-git-send-email-longli@linuxonhyperv.com>
+In-Reply-To: <1739912366-6052-1-git-send-email-longli@linuxonhyperv.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=b9b9ef4b-41d6-4202-afb8-68f401578298;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-02-19T12:46:09Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSQP153MB1307:EE_|OSQP153MB1229:EE_
+x-ms-office365-filtering-correlation-id: 1f5d447c-75f2-44e0-4134-08dd50e3871a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|10070799003|366016|1800799024|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?KxBGse5iurkpTFmngLWcvlmlJGfJedXpDzR1w9FCA82eES0G9ig+84agFj4B?=
+ =?us-ascii?Q?qM8vANTIASjSGEYw89gBF7D+zGByHwHDFTfFCWr8ks0pp7LgRda0tPFHk8LE?=
+ =?us-ascii?Q?quUmceHshY4f/37+qKIAogVFWxIrCY+79dzxtfRllMZ/QSdJN2wBFsh7nsVD?=
+ =?us-ascii?Q?TM4IfHPalLDLG6AEmD6maHaTCbhRgJobsY02wlNCJruCwxYvvIfprEvvoYSM?=
+ =?us-ascii?Q?ux2Y14YPxZLZDiA/HPseRiLQyCeLba22VFRs1paRCzpYmA+QBTyme2tFk9Xp?=
+ =?us-ascii?Q?6JQisvAqwhRx9/EMCBbwWLXB6aEIQX0fQubyB6LdQAhaHsT+zW2fSfImvPDX?=
+ =?us-ascii?Q?SWM6Xnb8Xn6tgrf6yZyPMkeoUpWpbjbsl7fU5hf4RM/jWMAZHMy2ffIeTkRS?=
+ =?us-ascii?Q?kEeka+nsJ8TA2/0CimCWt4jaQ9LWY2PbLC3d6w8yNpYGZT391tIGJ6VGzwTC?=
+ =?us-ascii?Q?TX6H5aN3juia98Wk0ZptdVr+pFCEdcjL097yfyEj0kUWwmTwkGrO95BZQf/I?=
+ =?us-ascii?Q?bq00uBmhcaJfuDUInUkxy+VNxgH3JmD2My4i8YcEiDwc+Hxhbi/10JxEoLtH?=
+ =?us-ascii?Q?iWjO65DZt5ncNV/V0PnU9Rnlz0gSZxb54aLr1amd1YBk+uFIgH3OtYD0KTSI?=
+ =?us-ascii?Q?E0pVmgCdLG1IqLWnAqw4nzcg4ukw/56X9lMiL1bcjvlurOiR8pka0BTiHJjC?=
+ =?us-ascii?Q?2R9qnzfWmL1SUYUFN8jYmYW1/AUiVq4cC1P9BqD9ohi73Y8fILgt4Of14Pfk?=
+ =?us-ascii?Q?eSPYWMHCthi8yw1elNaKG7Awmr0sgcN8YOHI3WKZBDyLv5w7a5cG66RewPZd?=
+ =?us-ascii?Q?HhU5f1/vlWwDeEgzmUsNfgAyFKR6kyBb1eVHVs/oSvdo+C1j6qMsMKuVNH+d?=
+ =?us-ascii?Q?uyoW13IVq/wEdmMOL3NIGLcmaZr88UPWI9YnbS76CHndsE2WK9pb/9sBVD/e?=
+ =?us-ascii?Q?QWY2rAmVlFAxqHGdrvMSMYIjUw/eho9TY0RtmLwsBJuc1Q3h+yQQryy/VtN7?=
+ =?us-ascii?Q?SjjrKLPVAOr1v599qI/VRM8dC4gJB3gmgyi8/RjAEUrHWxOLl/c0X+Nw+rPf?=
+ =?us-ascii?Q?mGZL+ZqbHWifJmWafiirVBrCAAXNUoV6V0ooB56AktaPEc6f4iweYQ+afLk/?=
+ =?us-ascii?Q?Z98vnzj1QRnEtC0LMHVhuGBx5BXjzwVZkoxBS22pQ1ByRdZOJtZybXdSB6jS?=
+ =?us-ascii?Q?c7kfCWOR89rwJpUI8unmpTiDSTwfHo69toT4igbOv8JEY8jkkT6zumoqKMAs?=
+ =?us-ascii?Q?OO1SzqfU39ZO5wbKq+kQacj54Oiv5b4qDegzcMkDUSGQVz+8yIwg3xoRHRcy?=
+ =?us-ascii?Q?If84ry+2o96pHGx5NkcV1UkHxURekvuWbC6nudjb5tWWZMQbudjgkv99hTSG?=
+ =?us-ascii?Q?PFLzLT70DXvk7VFp7cAWH7Y+RvnGfXA2HpbBW7mexhfTCiR4ocJHGiCLral6?=
+ =?us-ascii?Q?2dvQ7R9wSrtSN9FHDEJ5hgB2beBmiSx9?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:OSQP153MB1307.APCP153.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(7053199007)(38070700018);
+ DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?w24bJKin8ZjWqwoGh+Stkf8teZ02OgysNNzXy9LcieD28m75ibzswtiSWcSM?=
+ =?us-ascii?Q?9GW8fVN/+Z9tsBsRW0bjCGmXMt785wf5EiAHsFjDUFeBgPeNMcCVRVPePrs8?=
+ =?us-ascii?Q?52AwoSqy/bP1xK+9nWtg5ISzwYm7g4x8/6ptMr9L3mQkKRokyAqWCEOb2bGG?=
+ =?us-ascii?Q?cRIs7wYE5RXX5AhEcfR+o6Ztfqy7OW8kIqjpLPiEA7U0mHFuosr2xS59Uj+V?=
+ =?us-ascii?Q?kMEbU3nanWc55OMVzbBekn4Z/TkTInVbhpGs6RuDkCKLhVy581LAP8XntarQ?=
+ =?us-ascii?Q?DjDdNd1GYmu0cbLKRWUulxRaRjg7SMwCfcVT1GRqRzayIS/KRmX5aTwFK3rM?=
+ =?us-ascii?Q?YSV12D41E++XTg8GeIwlou1pbgj4YrQM15G3PsEd60VUaGYBHpfHlVTmbeke?=
+ =?us-ascii?Q?Tk4zDrGXSHXBdM4UDcgQW/wfjq+pcgFOwl+lcqBa5rEXi2wcn5Wxk3qwfH2N?=
+ =?us-ascii?Q?rlTv8g77alzEQJZ7wNrsgdnwNAyvHBOjNHVAahvX9sTHEYkdpHIvRGIFxHxh?=
+ =?us-ascii?Q?jh/IJaBR+0oIqiGeCJspSmks8jha5m6RHt/VYKUmOKtYCwF0xMY5ICYBlwmh?=
+ =?us-ascii?Q?S5TV/b698fHW7FduMbtl5nqpXinlKtLcAnPNdNAStB2VnAZkCVQ/vBBCGou9?=
+ =?us-ascii?Q?8aVbgCz76WoiZzCCjt0EvXHA5+dVpKiw7Q/CrPg7PNtg+BDox29VNOf/jAQ8?=
+ =?us-ascii?Q?4E7LnF8m6fZJRZn8e2klUvjy/YgHEWUfH9R6whtMVgkJ+AFkEwgb6WNmx4L8?=
+ =?us-ascii?Q?FCzwwyjgLJJ9bnP33+3h66LyraJPq/I9Pk2yAReK++OE4Ovuqv3wFLlthM8T?=
+ =?us-ascii?Q?Irw2JVpr12rq8fwt4ZJzKBLR9u+riWyzuVl8SejUUfLKuRQFzOVCNVTypliI?=
+ =?us-ascii?Q?ZAWcXtAtFgKKMhHqcKvKsX3XuaXqQd55fQrxW1Ewg2u0IQygwBmzLSaBttTG?=
+ =?us-ascii?Q?EGR1bCSaYa59Qd47tNtGKy4K7OEjlttFVoITIUAmXTSB41xpDMJxU7aiRmkC?=
+ =?us-ascii?Q?9a/boA0pZUggsdLqZ6jnoEmQHfp41EvLwZHuM1lJkr6vPIvIDJgu1PLb+jhp?=
+ =?us-ascii?Q?c+zqHI5DQDXReX9IWLWBjcIAW6dnYpBb7A9W/NAX5gtenBKJDrtHy/K20uEh?=
+ =?us-ascii?Q?EoI5ylUOLjGkNAeYm37vxlOyFu4bvjwPYA6/EXviKPc33l/P2YNBmdIiMWa+?=
+ =?us-ascii?Q?qSFcbEOV1Omr9Q68ZTaY292veh6r72OC10jJg7UKJZ7mT+H7FwK8tgqvDtDE?=
+ =?us-ascii?Q?wS+vcJLY7RPtIB/g3weYFhl4T+rtKbM0PHBujG79Ejvw3u02NbXBKbgvzrdn?=
+ =?us-ascii?Q?4s6PrG858FDD5BYInZYCJvUJtWJfIzoLlEakLgHdFVuhyFsNobxiAS24hWKw?=
+ =?us-ascii?Q?siSdbyG9FbIQbbQ41W2ZrL2+WjfO3a+Wloj8OYBtv1EnoZ2gAojpIUdEw2JU?=
+ =?us-ascii?Q?8m0BY5Tb7aKx5/NxtpNGy4I+8/jM3vwgvqZjLLr+lVs887Aurn5kEe3wi19q?=
+ =?us-ascii?Q?lpdCt8O+r+GQKuggHbTY5VCtUdTLkMMmizPiGZMlubOcRZ+h/9u7JBgq0gV5?=
+ =?us-ascii?Q?e5Mcj1rgLRnMpo47A9k17U1rBf5SnNgMCFOgPdUR/23x09w/VeeMrvme4o4z?=
+ =?us-ascii?Q?YQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSQP153MB1307.APCP153.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f5d447c-75f2-44e0-4134-08dd50e3871a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2025 12:47:11.0379 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wwPXXgerxe7KJn0z/KZ0+/4JavTZtgNPxsL2/N0aSMMNGYWQe2j/GQMCIOBlX2ynEXXUFPr5aLlqjTXHcUR71w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQP153MB1229
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,931 +154,288 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added SM4-GCM tests for the AESNI MB PMD.
 
-Signed-off-by: Brian Dooley <brian.dooley@intel.com>
----
-v4:
-	Remove MAX_AAD_LENGTH array length from test vectors
----
- app/test/test_cryptodev.c                   | 158 +++++
- app/test/test_cryptodev_aead_test_vectors.h | 708 ++++++++++++++++++++
- 2 files changed, 866 insertions(+)
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 441ecc6ad5..2e58819fca 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -1143,6 +1143,35 @@ chacha20_poly1305_testsuite_setup(void)
- 	return 0;
- }
- 
-+static int
-+sm4_gcm_testsuite_setup(void)
-+{
-+	struct crypto_testsuite_params *ts_params = &testsuite_params;
-+	uint8_t dev_id = ts_params->valid_devs[0];
-+	struct rte_cryptodev_info dev_info;
-+	const enum rte_crypto_aead_algorithm aeads[] = {
-+		RTE_CRYPTO_AEAD_SM4_GCM
-+	};
-+
-+	rte_cryptodev_info_get(dev_id, &dev_info);
-+
-+	if (!(dev_info.feature_flags & RTE_CRYPTODEV_FF_SYMMETRIC_CRYPTO) ||
-+			((global_api_test_type == CRYPTODEV_RAW_API_TEST) &&
-+			!(dev_info.feature_flags & RTE_CRYPTODEV_FF_SYM_RAW_DP))) {
-+		RTE_LOG(INFO, USER1, "Feature flag requirements for "
-+				"SM4 GCM testsuite not met\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	if (check_aead_capabilities_supported(aeads, RTE_DIM(aeads)) != 0) {
-+		RTE_LOG(INFO, USER1, "Capability requirements for "
-+				"SM4 GCM testsuite not met\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- snow3g_testsuite_setup(void)
- {
-@@ -17508,6 +17537,96 @@ test_chacha20_poly1305_encrypt_SGL_out_of_place(void)
- 		chacha20_poly1305_case_2.plaintext.len);
- }
- 
-+static int
-+test_SM4_GCM_case_1(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_1);
-+}
-+
-+static int
-+test_SM4_GCM_case_2(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_2);
-+}
-+
-+static int
-+test_SM4_GCM_case_3(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_3);
-+}
-+
-+static int
-+test_SM4_GCM_case_4(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_4);
-+}
-+
-+static int
-+test_SM4_GCM_case_5(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_5);
-+}
-+
-+static int
-+test_SM4_GCM_case_6(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_6);
-+}
-+
-+static int
-+test_SM4_GCM_case_7(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_7);
-+}
-+
-+static int
-+test_SM4_GCM_case_8(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_8);
-+}
-+
-+static int
-+test_SM4_GCM_case_9(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_9);
-+}
-+
-+static int
-+test_SM4_GCM_case_10(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_10);
-+}
-+
-+static int
-+test_SM4_GCM_case_11(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_11);
-+}
-+
-+static int
-+test_SM4_GCM_case_12(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_12);
-+}
-+
-+static int
-+test_SM4_GCM_case_13(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_13);
-+}
-+
-+static int
-+test_SM4_GCM_case_14(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_14);
-+}
-+
-+static int
-+test_SM4_GCM_case_15(void)
-+{
-+	return test_authenticated_encryption(&sm4_gcm_case_15);
-+}
-+
- #ifdef RTE_CRYPTO_SCHEDULER
- 
- /* global AESNI worker IDs for the scheduler test */
-@@ -19616,6 +19735,44 @@ static struct unit_test_suite cryptodev_mixed_cipher_hash_testsuite  = {
- 	}
- };
- 
-+static struct unit_test_suite cryptodev_sm4_gcm_testsuite  = {
-+	.suite_name = "SM4 GCM Test Suite",
-+	.setup = sm4_gcm_testsuite_setup,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_1),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_2),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_3),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_4),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_5),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_6),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_7),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_8),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_9),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_10),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_11),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_12),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_13),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_14),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_SM4_GCM_case_15),
-+		TEST_CASES_END()
-+	}
-+};
-+
- static int
- run_cryptodev_testsuite(const char *pmd_name)
- {
-@@ -19648,6 +19805,7 @@ run_cryptodev_testsuite(const char *pmd_name)
- 		&cryptodev_mixed_cipher_hash_testsuite,
- 		&cryptodev_negative_hmac_sha1_testsuite,
- 		&cryptodev_gen_testsuite,
-+		&cryptodev_sm4_gcm_testsuite,
- #ifdef RTE_LIB_SECURITY
- 		&ipsec_proto_testsuite,
- 		&pdcp_proto_testsuite,
-diff --git a/app/test/test_cryptodev_aead_test_vectors.h b/app/test/test_cryptodev_aead_test_vectors.h
-index 73bfb8dad4..3c17987202 100644
---- a/app/test/test_cryptodev_aead_test_vectors.h
-+++ b/app/test/test_cryptodev_aead_test_vectors.h
-@@ -50,6 +50,54 @@ static uint8_t ccm_aad_test_2[22] = {
- 		0xA5, 0xB8, 0xFC, 0xBA, 0x00, 0x00
- };
- 
-+static uint8_t sm4_gcm_aad_test_2[] = {
-+		0x3f, 0x89, 0x42, 0x20
-+};
-+
-+static uint8_t sm4_gcm_aad_test_3[] = {
-+		0x36, 0x94, 0xf6, 0x7b, 0x8a, 0x58, 0x4d, 0xed
-+};
-+
-+static uint8_t sm4_gcm_aad_test_4[] = {
-+		0xd5, 0x66, 0x06, 0x8f, 0xbc, 0x11, 0xb8
-+};
-+
-+static uint8_t sm4_gcm_aad_test_6[] = {
-+		0x1b, 0xcd
-+};
-+
-+static uint8_t sm4_gcm_aad_test_7[] = {
-+		0x6c, 0xac, 0xc4
-+};
-+
-+static uint8_t sm4_gcm_aad_test_8[] = {
-+		0x76, 0xb3, 0xad, 0x45, 0x78
-+};
-+
-+static uint8_t sm4_gcm_aad_test_9[] = {
-+		0x29
-+};
-+
-+static uint8_t sm4_gcm_aad_test_11[] = {
-+		0xfe, 0xed, 0xfa, 0xce, 0xde, 0xad, 0xbe, 0xef,
-+		0xfe, 0xed, 0xfa, 0xce, 0xde, 0xad, 0xbe, 0xef,
-+		0xab, 0xad, 0xda, 0xd2
-+};
-+
-+static uint8_t sm4_gcm_aad_test_14[] = {
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00
-+};
-+
-+static uint8_t sm4_gcm_aad_test_15[] = {
-+		0xc9, 0x9a, 0x66, 0x32, 0x0d, 0xb7, 0x31, 0x58,
-+		0xa3, 0x5a, 0x25, 0x5d, 0x05, 0x17, 0x58, 0xe9,
-+		0x5e, 0xd4, 0xab, 0xb2, 0xcd, 0xc6, 0x9b, 0xb4,
-+		0x54, 0x11, 0x0e, 0x82, 0x74, 0x41, 0x21, 0x3d,
-+		0xdc, 0x87, 0x70, 0xe9, 0x3e, 0xa1, 0x41,
-+};
-+
- struct aead_test_data {
- 	enum rte_crypto_aead_algorithm algo;
- 
-@@ -4119,4 +4167,664 @@ static const struct aead_test_data chacha20_poly1305_case_2 = {
- 		.len = 16
- 	}
- };
-+
-+static const struct aead_test_data sm4_gcm_case_1 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x22, 0x04, 0xb5, 0x07, 0x83, 0x5a, 0xf3, 0x3e,
-+			0xb1, 0x07, 0xa2, 0x71, 0x31, 0x4a, 0x65, 0x8c
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x25, 0xc1, 0xe9, 0xce, 0x6e, 0x61, 0xe7, 0xf4,
-+			0x7c, 0xcf, 0x2c, 0xe7
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = 0,
-+		.len = 0
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xf1, 0x7b, 0xe7, 0x3b, 0x74, 0x08, 0x40, 0x66,
-+			0xd1, 0x5f, 0x0f, 0x9e, 0xd6, 0xcf, 0x29, 0xd3
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x27, 0xd5, 0x79, 0x8a, 0x80, 0x45, 0x9e, 0xee,
-+			0x00, 0x56, 0xb4, 0x93, 0xda, 0x8d, 0x4d, 0x3d
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x13, 0xc4, 0xe1, 0xda, 0x30, 0xd0, 0xad, 0x72,
-+			0x55, 0x7c, 0xb7, 0xe4, 0x9f, 0xad, 0xd8, 0xae
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_2 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x1f, 0x52, 0x3c, 0x62, 0x96, 0xcf, 0xee, 0x91,
-+			0x4c, 0x54, 0x28, 0xda, 0xdd, 0x6a, 0xa9, 0xad
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0xe3, 0x94, 0xea, 0x81, 0x82, 0x30, 0x16, 0x4b,
-+			0xea, 0x28, 0xeb, 0x3d
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_2,
-+		.len = 4
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x0f, 0xd2, 0x41, 0x06, 0x07, 0x52, 0x06, 0xf3,
-+			0xff, 0x36, 0x37, 0x68, 0x2e, 0x59, 0x33, 0xfd
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x64, 0xa7, 0x9c, 0x9d, 0xd4, 0xeb, 0xec, 0x07,
-+			0x2b, 0xe3, 0xd2, 0x47, 0xf1, 0xce, 0x54, 0x80
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x06, 0x70, 0x8c, 0x2c, 0x8a, 0x52, 0xd1, 0x7e,
-+			0x35, 0x53, 0x43, 0x31, 0xea, 0x1a, 0xe6, 0xdc
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_3 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x4f, 0xae, 0xca, 0xe5, 0x31, 0xaf, 0xc0, 0xed,
-+			0x41, 0xf4, 0xaf, 0xe4, 0xb4, 0x3a, 0x68, 0xcd
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x6c, 0x2a, 0xf4, 0x2c, 0xb0, 0xca, 0x71, 0x5a,
-+			0x54, 0xc5, 0xb5, 0xfc
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_3,
-+		.len = 8
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x51, 0x71, 0xc0, 0xf1, 0x11, 0xaa, 0xd7, 0xe3,
-+			0xdd, 0x03, 0xfa, 0x65, 0x3e, 0xfa, 0x38, 0xe6
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0xf9, 0xff, 0xb9, 0xbf, 0x8b, 0xcb, 0xba, 0xd9,
-+			0x28, 0x8d, 0x9e, 0x7b, 0x53, 0x77, 0x24, 0x6c
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x51, 0x72, 0xbb, 0x14, 0xdb, 0x45, 0xc8, 0x1e,
-+			0x55, 0x7a, 0x24, 0x0d, 0xa8, 0x39, 0x06, 0x86
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_4 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x17, 0xc4, 0x8b, 0x7a, 0x40, 0x2d, 0xc0, 0x4b,
-+			0x26, 0xe4, 0x45, 0x47, 0x72, 0x08, 0x5f, 0x20
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0xf0, 0x1e, 0x3a, 0xcd, 0x3b, 0xfd, 0x25, 0x71,
-+			0xb4, 0x02, 0xa9, 0x5b
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_4,
-+		.len = 7
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xe9, 0xec, 0x00, 0x14, 0x57, 0x99, 0xb0, 0xc6,
-+			0x05, 0xa0, 0xfa, 0x01, 0x8f, 0xcf, 0x82, 0xd8
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x62, 0xae, 0x61, 0x4d, 0xcc, 0xb6, 0x2f, 0xce,
-+			0xe7, 0x81, 0x61, 0x87, 0xe6, 0x95, 0xbc, 0x39
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0xbf, 0x20, 0x8d, 0xda, 0x95, 0xc5, 0x63, 0xa8,
-+			0x13, 0xf2, 0x4c, 0xaf, 0xef, 0xab, 0xa1, 0x38
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_5 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0xc4, 0xc5, 0xa7, 0x1c, 0xef, 0xba, 0x2f, 0x10,
-+			0x59, 0x2e, 0xd7, 0x19, 0x0e, 0xdf, 0xe5, 0xe0
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x40, 0xa7, 0x92, 0xa1, 0x9b, 0x29, 0x15, 0x3b,
-+			0x1b, 0xfc, 0x29, 0x6e
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = 0,
-+		.len = 0
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x6e, 0x3d, 0xce, 0x73, 0x73, 0xe9, 0x30, 0xf1,
-+			0x83, 0x26, 0x7e, 0xeb, 0x8a, 0x16, 0xa5, 0xb6
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x1c, 0x97, 0x37, 0xc3, 0x2c, 0xb6, 0x6c, 0x3c,
-+			0xb1, 0xbc, 0x49, 0x9c, 0x32, 0x2b, 0x95, 0xca
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x8d, 0xa3, 0x12, 0xa0, 0x68, 0xa0, 0x8c, 0xd7,
-+			0xf1, 0x72, 0x72, 0xc0, 0xe3, 0x90, 0x3b, 0x50
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_6 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x96, 0x89, 0x6f, 0xae, 0x4b, 0x9f, 0x16, 0x8a,
-+			0x61, 0xa2, 0xef, 0x71, 0x7f, 0xee, 0xde, 0x61
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0xad, 0x94, 0x73, 0x37, 0x14, 0x2e, 0x60, 0x24,
-+			0x28, 0xcf, 0xfd, 0x5b
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_6,
-+		.len = 2
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x64, 0xdd, 0x83, 0x7e, 0xb7, 0x4a, 0x98, 0x0a,
-+			0x5e, 0xe0, 0xba, 0x48, 0xd4, 0xc7, 0x91, 0x86
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x53, 0xcf, 0x5f, 0x9b, 0x39, 0x40, 0x63, 0x33,
-+			0x3f, 0x1b, 0xbb, 0xb3, 0x95, 0xd1, 0x3e, 0xa7
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0xd7, 0x52, 0x13, 0x2a, 0xb7, 0xe3, 0x5a, 0xaf,
-+			0xf2, 0x8c, 0x8a, 0x0b, 0xa6, 0xab, 0x0c, 0x8e
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_7 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x79, 0x86, 0x37, 0x4a, 0x61, 0xea, 0x12, 0x4b,
-+			0xa8, 0x0c, 0xc4, 0xf8, 0xd7, 0x20, 0xd6, 0x71
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x3f, 0x2b, 0x3a, 0x8b, 0x4d, 0x61, 0x84, 0xe1,
-+			0x36, 0xfe, 0x9e, 0x35
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_7,
-+		.len = 3
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x87, 0xc8, 0x7b, 0xa1, 0xc2, 0xf9, 0x58, 0x44,
-+			0x19, 0x87, 0xd3, 0x43, 0xd9, 0x1a, 0x2f, 0xba
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x36, 0xe2, 0x4f, 0x1d, 0xa0, 0xfa, 0xb8, 0x6e,
-+			0x07, 0xc1, 0x31, 0xd7, 0x0a, 0x07, 0x0e, 0xcb
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0xd3, 0xf0, 0x78, 0x87, 0x90, 0x80, 0x52, 0xcf,
-+			0x69, 0xb6, 0x6d, 0xd4, 0x59, 0x59, 0x61, 0x05
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_8 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x34, 0xce, 0x5b, 0x8d, 0x57, 0x57, 0xd0, 0x1b,
-+			0x8b, 0x96, 0xd7, 0x38, 0x25, 0x44, 0x51, 0xd6
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x0f, 0xc7, 0x27, 0xb8, 0x5a, 0x32, 0x09, 0x70,
-+			0xe5, 0x46, 0x62, 0xa0
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_8,
-+		.len = 5
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xc2, 0x32, 0xfa, 0x82, 0xe1, 0x49, 0xda, 0x2e,
-+			0x2c, 0x9a, 0xc4, 0x87, 0x4c, 0xdc, 0x45, 0x42
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0xa3, 0xac, 0xf5, 0xb4, 0xbe, 0xf7, 0x20, 0xdc,
-+			0xe9, 0x20, 0xf4, 0x21, 0x63, 0xdf, 0xf4, 0x8c
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x60, 0x32, 0x24, 0x47, 0x0b, 0xae, 0xba, 0xfb,
-+			0x3f, 0xea, 0xc3, 0xf6, 0x92, 0x69, 0x1a, 0xa7
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_9 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0xc3, 0xa6, 0x1f, 0xff, 0xe6, 0x36, 0x44, 0x6a,
-+			0xc5, 0xc0, 0x87, 0xeb, 0x1a, 0xe5, 0x0d, 0xc4
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0xc6, 0x4d, 0x6a, 0xde, 0x76, 0xc6, 0xca, 0xe0,
-+			0x57, 0x5e, 0x2c, 0xd0
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_9,
-+		.len = 1
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x3e, 0x4a, 0xac, 0x5b, 0x89, 0xec, 0x2a, 0x83,
-+			0x2e, 0x7e, 0x93, 0x2b, 0x56, 0xb4, 0x0b, 0xce
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x99, 0xf0, 0x47, 0x8e, 0x8f, 0x92, 0x64, 0x83,
-+			0xc4, 0xb6, 0x01, 0x2a, 0x4c, 0x17, 0xaa, 0xb5
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x73, 0x84, 0xf9, 0xb7, 0xe2, 0xb9, 0x04, 0xc6,
-+			0x4f, 0xe5, 0x5d, 0x69, 0x3c, 0xdd, 0xfb, 0xbd
-+		},
-+		.len = 16
-+	}
-+};
-+
-+static const struct aead_test_data sm4_gcm_case_10 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0xa8, 0xbe, 0xf3, 0x0b, 0x73, 0x1e, 0xfb, 0x64,
-+			0x9a, 0x28, 0x58, 0x55, 0x2c, 0xe2, 0x99, 0x4c
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x3f, 0xa7, 0x24, 0x18, 0x2e, 0xc1, 0xaf, 0xae,
-+			0xe1, 0xb9, 0x70, 0x48
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = 0,
-+		.len = 0
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x2b, 0x85, 0x74, 0x6a, 0xd0, 0x2b, 0x6c, 0x79,
-+			0x4a, 0x93, 0x97, 0x39, 0xfc, 0xa1, 0x65, 0x96
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x5a, 0x3c, 0xb9, 0x84, 0x17, 0x5a, 0x2c, 0xed,
-+			0x75, 0xd8, 0x97, 0x60, 0xfa, 0x9b, 0xc2, 0xe8
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0xb9, 0xe3, 0xd7, 0x80, 0x7d, 0xea, 0x7a, 0x09,
-+			0xdc, 0x21, 0x18, 0x3c, 0x8f, 0xfb, 0xe7, 0x63
-+		},
-+		.len = 16
-+	}
-+};
-+
-+/*
-+ * Vector from RFC-8998
-+ * https://datatracker.ietf.org/doc/html/rfc8998
-+ * Appendix A.
-+ */
-+static const struct aead_test_data sm4_gcm_case_11 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
-+			0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x00, 0x00, 0x12, 0x34, 0x56, 0x78, 0x00, 0x00,
-+			0x00, 0x00, 0xab, 0xcd
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_11,
-+		.len = 20
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
-+			0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb,
-+			0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc,
-+			0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
-+			0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee,
-+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-+			0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee,
-+			0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa
-+		},
-+		.len = 64
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x17, 0xf3, 0x99, 0xf0, 0x8c, 0x67, 0xd5, 0xee,
-+			0x19, 0xd0, 0xdc, 0x99, 0x69, 0xc4, 0xbb, 0x7d,
-+			0x5f, 0xd4, 0x6f, 0xd3, 0x75, 0x64, 0x89, 0x06,
-+			0x91, 0x57, 0xb2, 0x82, 0xbb, 0x20, 0x07, 0x35,
-+			0xd8, 0x27, 0x10, 0xca, 0x5c, 0x22, 0xf0, 0xcc,
-+			0xfa, 0x7c, 0xbf, 0x93, 0xd4, 0x96, 0xac, 0x15,
-+			0xa5, 0x68, 0x34, 0xcb, 0xcf, 0x98, 0xc3, 0x97,
-+			0xb4, 0x02, 0x4a, 0x26, 0x91, 0x23, 0x3b, 0x8d
-+		},
-+		.len = 64
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x83, 0xde, 0x35, 0x41, 0xe4, 0xc2, 0xb5, 0x81,
-+			0x77, 0xe0, 0x65, 0xa9, 0xbf, 0x7b, 0x62, 0xec
-+		},
-+		.len = 16
-+	}
-+};
-+
-+/*
-+ * No plaintext, no AAD vector
-+ */
-+static const struct aead_test_data sm4_gcm_case_12 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = 0,
-+		.len = 0
-+	},
-+	.plaintext = {
-+		.data = { 0 },
-+		.len = 0
-+	},
-+	.ciphertext = {
-+		.data = { 0 },
-+		.len = 0
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x23, 0x2f, 0x0c, 0xfe, 0x30, 0x8b, 0x49, 0xea,
-+			0x6f, 0xc8, 0x82, 0x29, 0xb5, 0xdc, 0x85, 0x8d
-+		},
-+		.len = 16
-+	}
-+};
-+
-+/*
-+ * 16-byte plaintext with all zeros, no AAD
-+ */
-+static const struct aead_test_data sm4_gcm_case_13 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = 0,
-+		.len = 0
-+	},
-+	.plaintext = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 16
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x7d, 0xe2, 0xaa, 0x7f, 0x11, 0x10, 0x18, 0x82,
-+			0x18, 0x06, 0x3b, 0xe1, 0xbf, 0xeb, 0x6d, 0x89
-+		},
-+		.len = 16
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0xb8, 0x51, 0xb5, 0xf3, 0x94, 0x93, 0x75, 0x2b,
-+			0xe5, 0x08, 0xf1, 0xbb, 0x44, 0x82, 0xc5, 0x57
-+		},
-+		.len = 16
-+	}
-+};
-+
-+/*
-+ * No plaintext, 20-byte AAD
-+ */
-+static const struct aead_test_data sm4_gcm_case_14 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_14,
-+		.len = 20
-+	},
-+	.plaintext = {
-+		.data = { 0 },
-+		.len = 0
-+	},
-+	.ciphertext = {
-+		.data = { 0 },
-+		.len = 0
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x97, 0x20, 0x01, 0xb2, 0xd6, 0x04, 0xac, 0xcd,
-+			0x37, 0x6d, 0x82, 0x9d, 0x35, 0x89, 0xf3, 0xd3
-+		},
-+		.len = 16
-+	}
-+};
-+
-+/*
-+ * Variable sized plaintext, AAD
-+ */
-+static const struct aead_test_data sm4_gcm_case_15 = {
-+	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+	.key = {
-+		.data = {
-+			0x69, 0x73, 0x51, 0xff, 0x4a, 0xec, 0x29, 0xcd,
-+			0xba, 0xab, 0xf2, 0xfb, 0xe3, 0x46, 0x7c, 0xc2
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x54, 0xf8, 0x1b, 0xe8, 0xe7, 0x8d, 0x76, 0x5a,
-+			0x2e, 0x63, 0x33, 0x9f
-+		},
-+		.len = 12
-+	},
-+	.aad = {
-+		.data = sm4_gcm_aad_test_15,
-+		.len = 39
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xe1, 0xfc, 0x67, 0x3e, 0x01, 0x7e
-+		},
-+		.len = 6
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x79, 0x0c, 0x5b, 0x40, 0xcb, 0xbe
-+		},
-+		.len = 6
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x81, 0x96, 0xee, 0x15, 0x59, 0xac, 0xc9, 0x3d,
-+			0xac, 0xc0, 0xdc, 0x7c, 0x9a, 0x40, 0x0e, 0x8d
-+		},
-+		.len = 16
-+	}
-+};
- #endif /* TEST_CRYPTODEV_AEAD_TEST_VECTORS_H_ */
--- 
-2.25.1
+> -----Original Message-----
+> From: longli@linuxonhyperv.com <longli@linuxonhyperv.com>
+> Sent: Wednesday, February 19, 2025 4:59 AM
+> To: Stephen Hemminger <stephen@networkplumber.org>; Wei Hu
+> <weh@microsoft.com>
+> Cc: dev@dpdk.org; stable@dpdk.org; Long Li <longli@microsoft.com>
+> Subject: [EXTERNAL] [Patch v2] net/mana: use mana_local_data for tracking
+> usage data for primary process
+>=20
+> From: Long Li <longli@microsoft.com>
+>=20
+> The driver uses mana_shared_data for tracking usage count for primary
+> process. This is not correct as the mana_shared_data is allocated by the
+> primary and is meant to track usage of secondary process by the primary
+> process. And it creates a race condition when the device is removed becau=
+se
+> the counter is no longer available if this shared memory is freed.
+>=20
+> Move the usage count tracking to mana_local_data and fix the race conditi=
+on
+> in mana_pci_remove().
+>=20
+> Fixes: 517ed6e2d590 ("net/mana: add basic driver with build environment")
+> Signed-off-by: Long Li <longli@microsoft.com>
+
+Reviewed-by: Wei Hu <weh@linux.microsoft.com>
+
+> ---
+> Changes:
+> v2: use atomic variable to track the secondary_cnt in shared memory, remo=
+ve
+> the spinlock for shared memory
+>=20
+>  drivers/net/mana/mana.c | 99 +++++++++++++++++++++++------------------
+>  drivers/net/mana/mana.h |  6 +--
+>  drivers/net/mana/mp.c   |  2 +-
+>  3 files changed, 57 insertions(+), 50 deletions(-)
+>=20
+> diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c index
+> c37c4e3444..69cb7ab13f 100644
+> --- a/drivers/net/mana/mana.c
+> +++ b/drivers/net/mana/mana.c
+> @@ -23,9 +23,14 @@
+>  #include "mana.h"
+>=20
+>  /* Shared memory between primary/secondary processes, per driver */
+> -/* Data to track primary/secondary usage */  struct mana_shared_data
+> *mana_shared_data; -static struct mana_shared_data mana_local_data;
+> +
+> +/* Local data to track device instance usage for primary/secondary
+> +processes */ static struct mana_local_data {
+> +	int init_done;
+> +	unsigned int primary_cnt;
+> +	unsigned int secondary_cnt;
+> +} mana_local_data;
+>=20
+>  /* The memory region for the above data */  static const struct rte_memz=
+one
+> *mana_shared_mz; @@ -1167,8 +1172,12 @@
+> mana_init_shared_data(void)
+>  	rte_spinlock_lock(&mana_shared_data_lock);
+>=20
+>  	/* Skip if shared data is already initialized */
+> -	if (mana_shared_data)
+> +	if (mana_shared_data) {
+> +		DRV_LOG(INFO, "shared data is already initialized");
+>  		goto exit;
+> +	}
+> +
+> +	memset(&mana_local_data, 0, sizeof(mana_local_data));
+>=20
+>  	if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
+>  		mana_shared_mz =3D
+> rte_memzone_reserve(MZ_MANA_SHARED_DATA,
+> @@ -1181,8 +1190,7 @@ mana_init_shared_data(void)
+>  		}
+>=20
+>  		mana_shared_data =3D mana_shared_mz->addr;
+> -		memset(mana_shared_data, 0, sizeof(*mana_shared_data));
+> -		rte_spinlock_init(&mana_shared_data->lock);
+> +		rte_atomic32_set(&mana_shared_data->secondary_cnt, 0);
+>  	} else {
+>  		secondary_mz =3D
+> rte_memzone_lookup(MZ_MANA_SHARED_DATA);
+>  		if (!secondary_mz) {
+> @@ -1192,7 +1200,6 @@ mana_init_shared_data(void)
+>  		}
+>=20
+>  		mana_shared_data =3D secondary_mz->addr;
+> -		memset(&mana_local_data, 0, sizeof(mana_local_data));
+>  	}
+>=20
+>  exit:
+> @@ -1213,11 +1220,11 @@ mana_init_once(void)
+>  	if (ret)
+>  		return ret;
+>=20
+> -	rte_spinlock_lock(&mana_shared_data->lock);
+> +	rte_spinlock_lock(&mana_shared_data_lock);
+>=20
+>  	switch (rte_eal_process_type()) {
+>  	case RTE_PROC_PRIMARY:
+> -		if (mana_shared_data->init_done)
+> +		if (mana_local_data.init_done)
+>  			break;
+>=20
+>  		ret =3D mana_mp_init_primary();
+> @@ -1225,7 +1232,7 @@ mana_init_once(void)
+>  			break;
+>  		DRV_LOG(ERR, "MP INIT PRIMARY");
+>=20
+> -		mana_shared_data->init_done =3D 1;
+> +		mana_local_data.init_done =3D 1;
+>  		break;
+>=20
+>  	case RTE_PROC_SECONDARY:
+> @@ -1248,7 +1255,7 @@ mana_init_once(void)
+>  		break;
+>  	}
+>=20
+> -	rte_spinlock_unlock(&mana_shared_data->lock);
+> +	rte_spinlock_unlock(&mana_shared_data_lock);
+>=20
+>  	return ret;
+>  }
+> @@ -1319,11 +1326,6 @@ mana_probe_port(struct ibv_device *ibdev,
+> struct ibv_device_attr_ex *dev_attr,
+>  		eth_dev->tx_pkt_burst =3D mana_tx_burst;
+>  		eth_dev->rx_pkt_burst =3D mana_rx_burst;
+>=20
+> -		rte_spinlock_lock(&mana_shared_data->lock);
+> -		mana_shared_data->secondary_cnt++;
+> -		mana_local_data.secondary_cnt++;
+> -		rte_spinlock_unlock(&mana_shared_data->lock);
+> -
+>  		rte_eth_copy_pci_info(eth_dev, pci_dev);
+>  		rte_eth_dev_probing_finish(eth_dev);
+>=20
+> @@ -1406,10 +1408,6 @@ mana_probe_port(struct ibv_device *ibdev,
+> struct ibv_device_attr_ex *dev_attr,
+>  		goto failed;
+>  	}
+>=20
+> -	rte_spinlock_lock(&mana_shared_data->lock);
+> -	mana_shared_data->primary_cnt++;
+> -	rte_spinlock_unlock(&mana_shared_data->lock);
+> -
+>  	eth_dev->device =3D &pci_dev->device;
+>=20
+>  	DRV_LOG(INFO, "device %s at port %u", name, eth_dev->data-
+> >port_id); @@ -1552,13 +1550,37 @@ mana_pci_probe(struct rte_pci_driver
+> *pci_drv __rte_unused,
+>  		count =3D mana_pci_probe_mac(pci_dev, NULL);
+>  	}
+>=20
+> +	/* If no device is found, clean up resources if this is the last one
+> +*/
+>  	if (!count) {
+> -		rte_memzone_free(mana_shared_mz);
+> -		mana_shared_mz =3D NULL;
+> -		ret =3D -ENODEV;
+> +		rte_spinlock_lock(&mana_shared_data_lock);
+> +		if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
+> +			if (!mana_local_data.primary_cnt) {
+> +				mana_mp_uninit_primary();
+> +				rte_memzone_free(mana_shared_mz);
+> +				mana_shared_mz =3D NULL;
+> +				mana_shared_data =3D NULL;
+> +			}
+> +		} else {
+> +			if (!mana_local_data.secondary_cnt) {
+> +				mana_mp_uninit_secondary();
+> +				mana_shared_data =3D NULL;
+> +			}
+> +		}
+> +		rte_spinlock_unlock(&mana_shared_data_lock);
+> +		return -ENODEV;
+>  	}
+>=20
+> -	return ret;
+> +	/* At least one eth_dev is probed, increase counter for shared data */
+> +	rte_spinlock_lock(&mana_shared_data_lock);
+> +	if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
+> +		mana_local_data.primary_cnt++;
+> +	} else {
+> +		rte_atomic32_inc(&mana_shared_data->secondary_cnt);
+> +		mana_local_data.secondary_cnt++;
+> +	}
+> +	rte_spinlock_unlock(&mana_shared_data_lock);
+> +
+> +	return 0;
+>  }
+>=20
+>  static int
+> @@ -1573,45 +1595,34 @@ mana_dev_uninit(struct rte_eth_dev *dev)
+> static int  mana_pci_remove(struct rte_pci_device *pci_dev)  {
+> +	rte_spinlock_lock(&mana_shared_data_lock);
+>  	if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
+> -		rte_spinlock_lock(&mana_shared_data_lock);
+> -
+> -		rte_spinlock_lock(&mana_shared_data->lock);
+> +		RTE_VERIFY(mana_local_data.primary_cnt > 0);
+> +		mana_local_data.primary_cnt--;
+>=20
+> -		RTE_VERIFY(mana_shared_data->primary_cnt > 0);
+> -		mana_shared_data->primary_cnt--;
+> -		if (!mana_shared_data->primary_cnt) {
+> +		if (!mana_local_data.primary_cnt) {
+>  			DRV_LOG(DEBUG, "mp uninit primary");
+>  			mana_mp_uninit_primary();
+> -		}
+> -
+> -		rte_spinlock_unlock(&mana_shared_data->lock);
+>=20
+> -		/* Also free the shared memory if this is the last */
+> -		if (!mana_shared_data->primary_cnt) {
+> +			/* Also free the shared memory if this is the last */
+>  			DRV_LOG(DEBUG, "free shared memezone data");
+>  			rte_memzone_free(mana_shared_mz);
+>  			mana_shared_mz =3D NULL;
+> +			mana_shared_data =3D NULL;
+>  		}
+> -
+> -		rte_spinlock_unlock(&mana_shared_data_lock);
+>  	} else {
+> -		rte_spinlock_lock(&mana_shared_data_lock);
+> -
+> -		rte_spinlock_lock(&mana_shared_data->lock);
+> -		RTE_VERIFY(mana_shared_data->secondary_cnt > 0);
+> -		mana_shared_data->secondary_cnt--;
+> -		rte_spinlock_unlock(&mana_shared_data->lock);
+> +		rte_atomic32_dec(&mana_shared_data->secondary_cnt);
+> +		RTE_VERIFY(rte_atomic32_read(&mana_shared_data-
+> >secondary_cnt) >=3D 0);
+>=20
+>  		RTE_VERIFY(mana_local_data.secondary_cnt > 0);
+>  		mana_local_data.secondary_cnt--;
+>  		if (!mana_local_data.secondary_cnt) {
+>  			DRV_LOG(DEBUG, "mp uninit secondary");
+>  			mana_mp_uninit_secondary();
+> +			mana_shared_data =3D NULL;
+>  		}
+> -
+> -		rte_spinlock_unlock(&mana_shared_data_lock);
+>  	}
+> +	rte_spinlock_unlock(&mana_shared_data_lock);
+>=20
+>  	return rte_eth_dev_pci_generic_remove(pci_dev,
+> mana_dev_uninit);  } diff --git a/drivers/net/mana/mana.h
+> b/drivers/net/mana/mana.h index 41a0ca6dfe..b60b1f1977 100644
+> --- a/drivers/net/mana/mana.h
+> +++ b/drivers/net/mana/mana.h
+> @@ -8,12 +8,8 @@
+>  #define	PCI_VENDOR_ID_MICROSOFT		0x1414
+>  #define PCI_DEVICE_ID_MICROSOFT_MANA	0x00ba
+>=20
+> -/* Shared data between primary/secondary processes */  struct
+> mana_shared_data {
+> -	rte_spinlock_t lock;
+> -	int init_done;
+> -	unsigned int primary_cnt;
+> -	unsigned int secondary_cnt;
+> +	rte_atomic32_t secondary_cnt;
+>  };
+>=20
+>  #define MANA_MAX_MTU	9000
+> diff --git a/drivers/net/mana/mp.c b/drivers/net/mana/mp.c index
+> 34b45ed832..e7eecfcc30 100644
+> --- a/drivers/net/mana/mp.c
+> +++ b/drivers/net/mana/mp.c
+> @@ -306,7 +306,7 @@ mana_mp_req_on_rxtx(struct rte_eth_dev *dev,
+> enum mana_mp_req_type type)
+>  		return;
+>  	}
+>=20
+> -	if (!mana_shared_data->secondary_cnt)
+> +	if (rte_atomic32_read(&mana_shared_data->secondary_cnt) <=3D 0)
+>  		return;
+>=20
+>  	mp_init_msg(&mp_req, type, dev->data->port_id);
+> --
+> 2.34.1
 
