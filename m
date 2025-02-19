@@ -2,49 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C54C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 10:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C507C021AA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 10:58:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EA8F40E1B;
-	Wed, 19 Feb 2025 11:58:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 49F3740E28;
+	Wed, 19 Feb 2025 11:58:08 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 26F6140DDA
- for <dev@dpdk.org>; Wed, 19 Feb 2025 11:58:03 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DF50D40E11
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 11:58:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1739962684; x=1771498684;
+ t=1739962686; x=1771498686;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=3nPbQGJXYt7ERY+1IwU9gfIkMBEueheLJbGqI1b0ZS4=;
- b=JcByE0/v+MWelM5HdgxIiWgiNlk28CgQ8rUK8X1tbaPtrSFHKqzED5qt
- nC3oLyqqiKdpPG1j4FYTmy0vbTjLiv7DGqnhgskPX2mnp4ntVo7nw3FJh
- jRDxiHo+zg8s8eHzYFrExuSUX3FnRJZVP3d8PBF8Wxe5r5fdBYwvMaEiB
- YoAG90/nvM/CAoiKa5/J8kvZMhPTzn6mqlLOFyTn1HgzxNsUpvCRCbq5i
- fs0CxEck/BSUIf7rYaxJqwC7HhkrMbzLeHqPJVomdiv2+Q6FBCHJfnlQZ
- J7PBEoKOT9s+bRJkGnfufJM6S5g00Dpr5w5DOKIjUGENKJ50rpYysOML4 Q==;
-X-CSE-ConnectionGUID: iukFECGNSv23YoQqiKsYQA==
-X-CSE-MsgGUID: frgu2lKoRPe/BrnvapsYJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44609946"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="44609946"
+ bh=qaUTOngNIRN4uhqTDK0HVpCKNEAlzS/2+L5CJEec6yc=;
+ b=OVvwBAvZZpcKoQcqh7Gt7g/c3p9R59y6DJsMa81XbkflMHc5BHLX5VPq
+ ySOEkETM/HA8+n3OKQAMutA8pHewvCGLUmPlR0iPhjdM0sInLyFHKn5LR
+ U4igkzms2SekcizJa3CHMQGGBE/HLImltIxmLsCpmsoUqXnknLG/r62ow
+ Xx2XzqgCKyCOtI+JLHE7xZmoa6bKwdmTG3+jlqWp2Cj7ealpszjWox0RE
+ YnGaI9HudTpLcX1mD933MXvwUpreN0DHIAVqVQGw/BfISnDutq27VPpMZ
+ xNIBOXUNukMdKWsXmtngoXh1hly8ED8JZQqkakk8xh6yk2fk9tnNr5HWs A==;
+X-CSE-ConnectionGUID: E01d0HBTQoimBGMqkYkxsQ==
+X-CSE-MsgGUID: /TS9A8rfTEqzrgq7hRF0bw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44609951"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="44609951"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2025 02:58:04 -0800
-X-CSE-ConnectionGUID: bBmTrM2ET+OztXCqDN9o4A==
-X-CSE-MsgGUID: e1i22BBUSGGWavOnpYAecg==
+ 19 Feb 2025 02:58:05 -0800
+X-CSE-ConnectionGUID: UNpU+dqSRpu8whXNeHX0RQ==
+X-CSE-MsgGUID: +FfKJZmTR6SlpdR5jIGjHA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="145533468"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; d="scan'208";a="145533469"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 19 Feb 2025 02:58:01 -0800
+ by orviesa002.jf.intel.com with ESMTP; 19 Feb 2025 02:58:05 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Brian Dooley <brian.dooley@intel.com>,
- Aman Singh <aman.deep.singh@intel.com>, Akhil Goyal <gakhil@marvell.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, David Hunt <david.hunt@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Subject: [PATCH v7 1/8] build: introduce optional internal dependencies
-Date: Wed, 19 Feb 2025 10:57:47 +0000
-Message-ID: <98e74fd7f7233d0e603f24d52de6e26308a01fbb.1739962646.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v7 2/8] build: output a dependency log in build directory
+Date: Wed, 19 Feb 2025 10:57:48 +0000
+Message-ID: <9116a125a439e25d75a76a9b29c43b351a0188bc.1739962646.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1739962645.git.anatoly.burakov@intel.com>
 References: <cover.1725462264.git.anatoly.burakov@intel.com>
@@ -64,415 +59,287 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow specifying internal dependencies as either mandatory or optional.
-Specifying a dependency as optional will mean that the component being
-built will be skipped if said dependency is not being built. At build
-time, the build system will resolve any optional dependencies and add
-them to the list of dependencies to be built. Any source files requiring
-said optional depepdencies will still have to be added explicitly to the
-build by the respective component (e.g. adding BPF-related files when BPF
-support is being built).
+From: Bruce Richardson <bruce.richardson@intel.com>
+
+As meson processes our DPDK source tree it manages dependencies
+specified by each individual driver. To enable future analysis of the
+dependency links between components, log the dependencies of each DPDK
+component as it gets processed. This could potentially allow other tools
+to automatically enable or disable components based on the desired end
+components to be built, e.g. if the user requests net/ice, ensure that
+common/iavf is also enabled in the drivers.
+
+The output file produced is in "dot" or "graphviz" format, which allows
+producing a graphical representation of the DPDK dependency tree if so
+desired. For example: "dot -Tpng -O build/deps.dot" to produce the
+image file "build/deps.dot.png".
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
 
 Notes:
     v4 -> v5:
-    - Automatically handle optional dependencies based on Bruce's
-      earlier patch [1]
-    
-    [1] https://patches.dpdk.org/project/dpdk/patch/20231220142152.492556-4-bruce.richardson@intel.com/
+    - Change output format to include display name
 
- app/meson.build                       | 14 ++++++-
- app/proc-info/meson.build             |  4 +-
- app/test-bbdev/meson.build            | 18 +++------
- app/test-crypto-perf/meson.build      |  4 +-
- app/test-pmd/meson.build              | 56 +++++++++------------------
- app/test/meson.build                  | 12 +++---
- drivers/meson.build                   | 13 ++++++-
- examples/ethtool/meson.build          |  4 +-
- examples/l2fwd-crypto/meson.build     |  4 +-
- examples/l3fwd/meson.build            |  4 +-
- examples/meson.build                  | 13 ++++++-
- examples/vm_power_manager/meson.build | 16 +++-----
- lib/meson.build                       | 13 ++++++-
- 13 files changed, 89 insertions(+), 86 deletions(-)
+ app/meson.build        | 17 +++++++-
+ buildtools/log-deps.py | 94 ++++++++++++++++++++++++++++++++++++++++++
+ buildtools/meson.build |  2 +
+ drivers/meson.build    | 14 +++++++
+ examples/meson.build   | 18 +++++++-
+ lib/meson.build        | 14 +++++++
+ 6 files changed, 157 insertions(+), 2 deletions(-)
+ create mode 100644 buildtools/log-deps.py
 
 diff --git a/app/meson.build b/app/meson.build
-index e2db888ae1..61202495bd 100644
+index 61202495bd..a971738d40 100644
 --- a/app/meson.build
 +++ b/app/meson.build
-@@ -66,6 +66,7 @@ foreach app:apps
-     # external package/library requirements
-     ext_deps = []
-     deps = []
-+    optional_deps = []
- 
-     if not enable_apps.contains(app)
-         build = false
-@@ -83,10 +84,19 @@ foreach app:apps
-         endif
+@@ -77,7 +77,22 @@ foreach app:apps
      endif
  
-+    # resolve any optional internal dependencies
-+    def_lib = get_option('default_library')
-+    foreach d: optional_deps
-+        # if optional dependency is defined, add it to the deps list
-+        if is_variable(def_lib + '_rte_' + d)
-+            deps += [d]
-+        endif
-+    endforeach
-+
      if build
-         dep_objs = []
-         foreach d:deps
--            var_name = get_option('default_library') + '_rte_' + d
-+            var_name = def_lib + '_rte_' + d
-             if not is_variable(var_name)
-                 build = false
-                 reason = 'missing internal dependency, "@0@"'.format(d)
-@@ -111,7 +121,7 @@ foreach app:apps
- 
-     dpdk_apps_enabled += app
-     link_libs = []
--    if get_option('default_library') == 'static'
-+    if def_lib == 'static'
++        # call into subdir may update name so record it here
++        display_name = name
++
+         subdir(name)
++        app_name = 'dpdk-' + name
++
++        # log mandatory dependencies
++        cmds = ['--type', 'app']
++        cmds += ['--display-name', display_name]
++        run_command([log_deps_cmd, cmds, app_name, deps], check: false)
++
++        # log optional dependencies, if any
++        if optional_deps.length() > 0
++            cmds += ['--optional']
++            run_command([log_deps_cmd, cmds, app_name, optional_deps], check: false)
++        endif
+         if not build and require_apps
+             error('Cannot build explicitly requested app "@0@".\n'.format(name)
+                   + '\tReason: ' + reason)
+@@ -125,7 +140,7 @@ foreach app:apps
          link_libs = dpdk_static_libraries + dpdk_drivers
      endif
  
-diff --git a/app/proc-info/meson.build b/app/proc-info/meson.build
-index 316253cd5d..51315f72a1 100644
---- a/app/proc-info/meson.build
-+++ b/app/proc-info/meson.build
-@@ -9,8 +9,6 @@ endif
- 
- sources = files('main.c')
- deps += ['ethdev', 'security', 'eventdev']
--if dpdk_conf.has('RTE_LIB_METRICS')
--    deps += 'metrics'
--endif
-+optional_deps += 'metrics'
- 
- cflags += no_wvla_cflag
-diff --git a/app/test-bbdev/meson.build b/app/test-bbdev/meson.build
-index 85b060edec..d41bd60396 100644
---- a/app/test-bbdev/meson.build
-+++ b/app/test-bbdev/meson.build
-@@ -14,17 +14,11 @@ sources = files(
-         'test_bbdev_vector.c',
- )
- deps += ['bbdev', 'bus_vdev']
--if dpdk_conf.has('RTE_BASEBAND_FPGA_LTE_FEC')
--    deps += ['baseband_fpga_lte_fec']
--endif
--if dpdk_conf.has('RTE_BASEBAND_FPGA_5GNR_FEC')
--    deps += ['baseband_fpga_5gnr_fec']
--endif
--if dpdk_conf.has('RTE_BASEBAND_ACC')
--    deps += ['baseband_acc']
--endif
--if dpdk_conf.has('RTE_BASEBAND_LA12XX')
--    deps += ['baseband_la12xx']
--endif
-+optional_deps += [
-+        'baseband_fpga_lte_fec',
-+        'baseband_fpga_5gnr_fec',
-+        'baseband_acc',
-+        'baseband_la12xx',
-+]
- 
- cflags += no_wvla_cflag
-diff --git a/app/test-crypto-perf/meson.build b/app/test-crypto-perf/meson.build
-index 87dd3bc5f1..fb48d9ec29 100644
---- a/app/test-crypto-perf/meson.build
-+++ b/app/test-crypto-perf/meson.build
-@@ -20,8 +20,6 @@ sources = files(
-         'main.c',
- )
- deps += ['cryptodev', 'net', 'security']
--if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
--    deps += 'crypto_scheduler'
--endif
-+optional_deps += 'crypto_scheduler'
- 
- cflags += no_wvla_cflag
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index f1c36529b4..bbc8d429f8 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -34,47 +34,29 @@ sources = files(
- if dpdk_conf.has('RTE_HAS_JANSSON')
-     ext_deps += jansson_dep
- endif
--
--deps += ['ethdev', 'cmdline']
--if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
--    deps += 'crypto_scheduler'
--endif
--if dpdk_conf.has('RTE_LIB_BITRATESTATS')
--    deps += 'bitratestats'
--endif
- if dpdk_conf.has('RTE_LIB_BPF')
-     sources += files('bpf_cmd.c')
--    deps += 'bpf'
--endif
--if dpdk_conf.has('RTE_LIB_GRO')
--    deps += 'gro'
--endif
--if dpdk_conf.has('RTE_LIB_GSO')
--    deps += 'gso'
--endif
--if dpdk_conf.has('RTE_LIB_LATENCYSTATS')
--    deps += 'latencystats'
--endif
--if dpdk_conf.has('RTE_LIB_METRICS')
--    deps += 'metrics'
--endif
--if dpdk_conf.has('RTE_LIB_PDUMP')
--    deps += 'pdump'
--endif
--if dpdk_conf.has('RTE_NET_BNXT')
--    deps += 'net_bnxt'
--endif
--if dpdk_conf.has('RTE_NET_I40E')
--    deps += 'net_i40e'
--endif
--if dpdk_conf.has('RTE_NET_IXGBE')
--    deps += 'net_ixgbe'
--endif
--if dpdk_conf.has('RTE_NET_DPAA')
--    deps += ['bus_dpaa', 'mempool_dpaa', 'net_dpaa']
- endif
- 
-+deps += ['ethdev', 'cmdline']
-+optional_deps += [
-+        'crypto_scheduler',
-+        'bitratestats',
-+        'bpf',
-+        'gro',
-+        'gso',
-+        'latencystats',
-+        'metrics',
-+        'pdump',
-+        'net_bnxt',
-+        'net_i40e',
-+        'net_ixgbe',
-+        'bus_dpaa',
-+        'mempool_dpaa',
-+        'net_dpaa',
-+]
+-    exec = executable('dpdk-' + name,
++    exec = executable(app_name,
+             [ sources, resources ],
+             c_args: cflags,
+             link_args: ldflags,
+diff --git a/buildtools/log-deps.py b/buildtools/log-deps.py
+new file mode 100644
+index 0000000000..7a99b129d7
+--- /dev/null
++++ b/buildtools/log-deps.py
+@@ -0,0 +1,94 @@
++#! /usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2024 Intel Corporation
 +
- # Driver-specific commands are located in driver directories.
- includes = include_directories('.')
- sources += testpmd_drivers_sources
--deps += testpmd_drivers_deps
-+optional_deps += testpmd_drivers_deps
-diff --git a/app/test/meson.build b/app/test/meson.build
-index b6285a6b45..eb0447e8c6 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -7,7 +7,7 @@ sources += files('commands.c', 'test.c')
++"""Utility script to build up a list of dependencies from meson."""
++
++import os
++import sys
++import argparse
++import typing as T
++
++
++def file_to_list(filename: str) -> T.List[str]:
++    """Read file into a list of strings."""
++    with open(filename, encoding="utf-8") as f:
++        return f.readlines()
++
++
++def list_to_file(filename: str, lines: T.List[str]):
++    """Write a list of strings out to a file."""
++    with open(filename, "w", encoding="utf-8") as f:
++        f.writelines(lines)
++
++
++def gen_deps(
++    component_type: str,
++    optional: bool,
++    component: str,
++    display_name: T.Optional[str],
++    deps: T.List[str],
++) -> str:
++    """Generate a dependency graph for meson."""
++    dep_list_str = '", "'.join(deps)
++    deps_str = "" if not deps else f' -> {{ "{dep_list_str}" }}'
++    # we define custom attributes for the nodes
++    attr_str = f'dpdk_componentType="{component_type}"'
++    if optional:
++        # we use a dotted line to represent optional dependencies
++        attr_str += ',style="dotted"'
++    if display_name is not None:
++        attr_str += f',dpdk_displayName="{display_name}"'
++    return f'"{component}"{deps_str} [{attr_str}]\n'
++
++
++def _main():
++    depsfile = f'{os.environ["MESON_BUILD_ROOT"]}/deps.dot'
++
++    # to reset the deps file on each build, the script is called without any params
++    if len(sys.argv) == 1:
++        os.remove(depsfile)
++        sys.exit(0)
++
++    # we got arguments, parse them
++    parser = argparse.ArgumentParser(
++        description="Generate a dependency graph for meson."
++    )
++    # type is required
++    parser.add_argument(
++        "--type", required=True, help="Type of dependency (lib, examples, etc.)"
++    )
++    parser.add_argument(
++        "--optional", action="store_true", help="Whether the dependency is optional"
++    )
++    parser.add_argument(
++        "--display-name",
++        help="Component name as it is used in the build system",
++    )
++    # component is required
++    parser.add_argument("component", help="The component to add to the graph")
++    parser.add_argument("deps", nargs="*", help="The dependencies of the component")
++
++    parsed = parser.parse_args()
++
++    try:
++        contents = file_to_list(depsfile)
++    except FileNotFoundError:
++        contents = ["digraph {\n", "}\n"]
++
++    # occasionally, component binary name may be different from what it appears in Meson.
++    display_name = parsed.display_name
++
++    c_type = parsed.type
++    optional = parsed.optional
++    component = parsed.component
++    deps = parsed.deps
++    contents[-1] = gen_deps(c_type, optional, component, display_name, deps)
++
++    contents.append("}\n")
++
++    list_to_file(depsfile, contents)
++
++
++if __name__ == "__main__":
++    _main()
+diff --git a/buildtools/meson.build b/buildtools/meson.build
+index 4e2c1217a2..13a0477245 100644
+--- a/buildtools/meson.build
++++ b/buildtools/meson.build
+@@ -26,6 +26,8 @@ header_gen_cmd = py3 + files('gen-header.py')
+ has_hugepages_cmd = py3 + files('has-hugepages.py')
+ cmdline_gen_cmd = py3 + files('dpdk-cmdline-gen.py')
+ check_dts_requirements = py3 + files('check-dts-requirements.py')
++log_deps_cmd = py3 + files('log-deps.py')
++run_command(log_deps_cmd, check: false)  # call with no parameters to reset the file
  
- # optional dependencies: some files may use these - and so we should link them in -
- # but do not explicitly require them so they are not listed in the per-file lists below
--optional_deps = ['crypto_scheduler', 'lpm']
-+opt_deps = ['crypto_scheduler', 'lpm']
- 
- # some other utility C files, providing functions used by various tests
- # so we need to include these deps in the dependency list for the files using those fns.
-@@ -222,8 +222,8 @@ foreach f, f_deps : source_file_deps
-             break
-         else
-             # technically we might not need this dep, but adding it is harmless
--            if d not in deps
--                deps += d
-+            if d not in optional_deps and d not in deps
-+                optional_deps += d
-             endif
-         endif
-     endforeach
-@@ -244,9 +244,9 @@ foreach f, f_deps : source_file_deps
-     endif
- endforeach
- # add the optional dependencies
--foreach d:optional_deps
--    if is_variable(def_lib + '_rte_' + d) and d not in deps
--        deps += d
-+foreach d:opt_deps
-+    if d not in optional_deps and d not in deps
-+        optional_deps += d
-     endif
- endforeach
- 
+ # install any build tools that end-users might want also
+ install_data([
 diff --git a/drivers/meson.build b/drivers/meson.build
-index 05391a575d..fb48e11eaf 100644
+index fb48e11eaf..e9698373e2 100644
 --- a/drivers/meson.build
 +++ b/drivers/meson.build
-@@ -133,6 +133,7 @@ foreach subpath:subdirs
-         includes = [include_directories(drv_path)]
-         # set up internal deps. Drivers can append/override as necessary
-         deps = std_deps
-+        optional_deps = []
-         # ext_deps: Stores external library dependency got
-         # using dependency() (preferred) or find_library().
-         # For the find_library() case (but not with dependency()) we also
-@@ -178,11 +179,21 @@ foreach subpath:subdirs
+@@ -162,6 +162,8 @@ foreach subpath:subdirs
+         endif
+ 
+         if build
++            # call into subdir may update name so record it here
++            display_name = '@0@/@1@'.format(class, name)
+             # pull in driver directory which should update all the local variables
+             subdir(drv_path)
+ 
+@@ -176,6 +178,18 @@ foreach subpath:subdirs
+                         +'\tReason: ' + reason)
+             endif
+ 
++            # log mandatory dependencies
++            cmds = ['--type', 'drivers']
++            cmds += ['--display-name', display_name]
++            drv_name = class + '_' + name
++            run_command([log_deps_cmd, cmds, drv_name, deps], check: false)
++
++            # log optional dependencies, if any
++            if optional_deps.length() > 0
++                cmds += ['--optional']
++                run_command([log_deps_cmd, cmds, drv_name, optional_deps], check: false)
++            endif
++
              # get dependency objs from strings
              shared_deps = ext_deps
              static_deps = ext_deps
-+
-+            # resolve any optional internal dependencies
-+            def_lib = get_option('default_library')
-+            foreach d: optional_deps
-+                # if optional dependency is defined, add it to the deps list
-+                if is_variable(def_lib + '_rte_' + d)
-+                    deps += [d]
-+                endif
-+            endforeach
-+
-             foreach d:deps
-                 if not build
-                     break
-                 endif
--                if not is_variable('shared_rte_' + d)
-+                if not is_variable(def_lib + '_rte_' + d)
-                     build = false
-                     reason = 'missing internal dependency, "@0@"'.format(d)
-                     if dpdk_libs_deprecated.contains(d)
-diff --git a/examples/ethtool/meson.build b/examples/ethtool/meson.build
-index d7f63d48af..bb2a7fbb89 100644
---- a/examples/ethtool/meson.build
-+++ b/examples/ethtool/meson.build
-@@ -19,8 +19,6 @@ sources = files(
- includes = include_directories('lib', 'ethtool-app')
- 
- deps += 'bus_pci'
--if dpdk_conf.has('RTE_NET_IXGBE')
--    deps += 'net_ixgbe'
--endif
-+optional_deps += 'net_ixgbe'
- 
- allow_experimental_apis = true
-diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
-index c21722b85c..2a1070707e 100644
---- a/examples/l2fwd-crypto/meson.build
-+++ b/examples/l2fwd-crypto/meson.build
-@@ -7,9 +7,7 @@
- # DPDK instance, use 'make'
- 
- deps += 'cryptodev'
--if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
--    deps += 'crypto_scheduler'
--endif
-+optional_deps += 'crypto_scheduler'
- allow_experimental_apis = true
- sources = files(
-         'main.c',
-diff --git a/examples/l3fwd/meson.build b/examples/l3fwd/meson.build
-index 74144c7979..9a9f2c6d40 100644
---- a/examples/l3fwd/meson.build
-+++ b/examples/l3fwd/meson.build
-@@ -18,7 +18,5 @@ sources = files(
-         'l3fwd_lpm.c',
-         'main.c',
- )
--if dpdk_conf.has('RTE_LIB_EVENTDEV')
--    deps += 'eventdev'
--endif
-+optional_deps += 'eventdev'
- cflags += no_wvla_cflag
 diff --git a/examples/meson.build b/examples/meson.build
-index 8e8968a1fa..14b8aadf68 100644
+index 14b8aadf68..d1856dbafc 100644
 --- a/examples/meson.build
 +++ b/examples/meson.build
-@@ -98,12 +98,23 @@ foreach example: examples
-     ext_deps = []
+@@ -99,11 +99,27 @@ foreach example: examples
      includes = [include_directories(example, 'common')]
      deps = ['eal', 'mempool', 'net', 'mbuf', 'ethdev', 'cmdline']
-+    optional_deps = []
+     optional_deps = []
++
++    # call into subdir may update name so record it here
++    display_name = example
++
      subdir(example)
++    example_name = 'dpdk-' + name
  
      if build
          dep_objs = ext_deps
+ 
++        # log mandatory dependencies
++        cmds = ['--type', 'examples']
++        cmds += ['--display-name', display_name]
++        run_command([log_deps_cmd, cmds, example_name, deps], check: false)
 +
-+        # resolve any optional internal dependencies
-+        def_lib = get_option('default_library')
-+        foreach d: optional_deps
-+            # if optional dependency is defined, add it to the deps list
-+            if is_variable(def_lib + '_rte_' + d)
-+                deps += [d]
-+            endif
-+        endforeach
++        # log optional dependencies, if any
++        if optional_deps.length() > 0
++            cmds += ['--optional']
++            run_command([log_deps_cmd, cmds, example_name, optional_deps], check: false)
++        endif
 +
-         foreach d:deps
--            var_name = get_option('default_library') + '_rte_' + d
-+            var_name = def_lib + '_rte_' + d
-             if not is_variable(var_name)
-                 build = false
-                 message('Missing dependency "@0@" for example "@1@"'.format(d, name))
-diff --git a/examples/vm_power_manager/meson.build b/examples/vm_power_manager/meson.build
-index dcf23198eb..6fc081b06b 100644
---- a/examples/vm_power_manager/meson.build
-+++ b/examples/vm_power_manager/meson.build
-@@ -8,17 +8,11 @@
- 
- deps += ['power', 'power_kvm_vm']
- 
--if dpdk_conf.has('RTE_NET_BNXT')
--    deps += ['net_bnxt']
--endif
--
--if dpdk_conf.has('RTE_NET_I40E')
--    deps += ['net_i40e']
--endif
--
--if dpdk_conf.has('RTE_NET_IXGBE')
--    deps += ['net_ixgbe']
--endif
-+optional_deps += [
-+        'net_bnxt',
-+        'net_i40e',
-+        'net_ixgbe',
-+]
- 
- allow_experimental_apis = true
- sources = files(
+         # resolve any optional internal dependencies
+         def_lib = get_option('default_library')
+         foreach d: optional_deps
+@@ -135,7 +151,7 @@ foreach example: examples
+     if allow_experimental_apis
+         cflags += '-DALLOW_EXPERIMENTAL_API'
+     endif
+-    executable('dpdk-' + name, sources,
++    executable(example_name, sources,
+             include_directories: includes,
+             link_whole: link_whole_libs,
+             link_args: ldflags,
 diff --git a/lib/meson.build b/lib/meson.build
-index ce92cb5537..76bf849852 100644
+index 76bf849852..db0d121b3c 100644
 --- a/lib/meson.build
 +++ b/lib/meson.build
-@@ -134,6 +134,7 @@ foreach l:libraries
-     # external package/library requirements
-     ext_deps = []
-     deps = []
-+    optional_deps = []
-     # eal is standard dependency once built
-     if dpdk_conf.has('RTE_LIB_EAL')
-         deps += ['eal']
-@@ -171,11 +172,21 @@ foreach l:libraries
+@@ -160,7 +160,21 @@ foreach l:libraries
+     endif
  
-     shared_deps = ext_deps
-     static_deps = ext_deps
+     if build
++        # as per warning below, directory name should match library name but it is not considered an error
++        display_name = name
 +
-+    # resolve any optional internal dependencies
-+    def_lib = get_option('default_library')
-+    foreach d: optional_deps
-+        # if optional dependency is defined, add it to the deps list
-+        if is_variable(def_lib + '_rte_' + d)
-+            deps += [d]
+         subdir(l)
++
++        # log mandatory dependencies
++        cmds = ['--type', 'lib']
++        cmds += ['--display-name', display_name]
++        run_command([log_deps_cmd, cmds, name, deps], check: false)
++
++        # log optional dependencies, if any
++        if optional_deps.length() > 0
++            cmds += ['--optional']
++            run_command([log_deps_cmd, cmds, name, optional_deps], check: false)
 +        endif
-+    endforeach
-+
-     foreach d:deps
-         if not build
-             break
-         endif
--        if not is_variable('shared_rte_' + d)
-+        if not is_variable(def_lib + '_rte_' + d)
-             build = false
-             reason = 'missing internal dependency, "@0@"'.format(d)
-             if dpdk_libs_deprecated.contains(d)
+         if not build and require_libs
+             error('Cannot build explicitly requested lib "@0@".\n'.format(name)
+                     +'\tReason: ' + reason)
 -- 
 2.43.5
 
