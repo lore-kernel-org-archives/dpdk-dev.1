@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 732DCC021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA40C021B1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:58:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5DF2E4066F;
-	Thu, 20 Feb 2025 17:57:15 +0100 (CET)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id DB6394065C
- for <dev@dpdk.org>; Thu, 20 Feb 2025 17:57:10 +0100 (CET)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-221057b6ac4so21894985ad.2
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9316F40674;
+	Thu, 20 Feb 2025 17:57:16 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id EADCE4065C
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 17:57:11 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-220c92c857aso21692885ad.0
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740070630;
- x=1740675430; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740070631;
+ x=1740675431; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GpVuw1k4aqMqKYrO7I7yiO8TxMRKxqbJjfzjNg+yLJc=;
- b=S3vBADUKVXkXjegqN6F9qWhXiIuLkM2Qt22/cZFl9more5ftl6cbTgEKxCf+PT06W0
- JPJhnRq6JdjUFSlcaCG+LpuDGMfocAhXagVBs9xStMFP7vAc2M9DwdFPGKZ8aI1muKF2
- 9Scynoktr78KOowReGTteuZBWF2717VxSSZu4AO1kDCpjI/ZstYxvpJfJybFWVG13r7S
- Set5KrFQzwk3XDsFjIE9TfdNIU4cbxbVchFFB+Md4UfSqOzUomZW2LOP20Z6Wjj4aGDW
- bTqymMbozcLCx5QrW0HaPHpIifKOP848p4idfy/YwX6QgU9TH+ZX8tu0BaR826dAdVzE
- P9iA==
+ bh=8mpDKJKwREZw1mB7Bxj5JCDYw4Ai0XXytBpKAwfNb8c=;
+ b=E/rQT4MHgBnbWM60IKIaAVaVQzbhhqMk8xsBERQzrFZ85obJfoHo+NVzMaTugJMiN8
+ IYvcVWgYyAFrM8PR7587+ELbUToJwlblnlwxIRxSFm13Lb3EWhZkY5jTdAWppXCbaYUQ
+ h3RuCP6DDi4+PnImb5bOcf3ZLJlKNNCYYiB+axNqCFyiInEFneZ9pPHNSSi3Xo7rekQl
+ lxAGG+Ku4LfXqT1glUhv802Xof2qnja1mfIb4OA3Le7f1XPOm7oQ31sQXF8HWyfraqud
+ hkJusWvxGsgWNu/bfvpXTpo7seOIgwwnKYbk/saumKV1AHM39OlFnLk+F44pgN98oi3G
+ UAoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740070630; x=1740675430;
+ d=1e100.net; s=20230601; t=1740070631; x=1740675431;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GpVuw1k4aqMqKYrO7I7yiO8TxMRKxqbJjfzjNg+yLJc=;
- b=FdZQwvpijEO5zmiaAkE/HmULsfPAEcnFZ9x6SltKMPBBUuJQ5DEUj3Yx0HK1LkgfD8
- YznCwk+kmNRulH4zwaPY0JBC88GmWGgYvAvCYaZonubAEL18VwtuRVjiUf1bMef6cFSB
- PJQeyKvO3rRwS4SngDAaFA4TRrKib/cJqSAFM/O5PE6szN9hhzlvAz7drzqzf85jGQk5
- /lonwzh9+8Ck5/HBLbsG5UIHKfVG8ghguVFGi/xs2mUtVlIPlNkWyyb8OKsDisT8gDZE
- PuVTJnqdxLcSZe1ps/nwDIviDzqAxtugloh1I1M2bB9VFl4f+2MiGuw9wBXmIUFEEmgx
- l2gw==
-X-Gm-Message-State: AOJu0YyyT+4tqeYO4bWWf5VHgREbIKnEGvyWUXEBtcodGdIyHtemPmo2
- JeCgmpJFDueXMNuakiSJIptIWHmlzBovDYIjFYXx+hv1JWIhDbvN8CVCfsKkVtAGOuKGn62xeKt
- C
-X-Gm-Gg: ASbGncsRDdG3fDs4jWu6gPYPw5htV306dqAJDXA9mGpv83TAGSYCNrHHcgtmlP2fJrx
- FGDx1sSJEQKsNybm3dwbhZsnFzqG9RHJorC2VRLIkdXB49quBK/UgQhiDAetkVzKmje14VrTVvI
- ImwB9QoiLvaCh0hNQCa4C+MliDbAwfj3xg58Aa+jZ7p3zugTslvJdxIg9wauE/DY5Ifze4KEjNy
- zl0KvRLxu+b/Yp2+ygN8Pa6c0vx+T+D8XNVxCvxj9/gZLPFonXBPD54nk8991ffxTNCjqoz+Gvh
- yViSIjOXJtSNyjen7lN/sCbp1xe6GS16LouAT+Vl+pg/RWQ5Qo1Re1n/pviRfu2vHoXy
-X-Google-Smtp-Source: AGHT+IEhvcK2liKA7zYcoIE46ONDJvLMaw6JqZIrJJL3owerQSZc+4sf7dhv169vhfHQbGga8Li8yQ==
-X-Received: by 2002:a17:902:d542:b0:220:c4e8:3b9f with SMTP id
- d9443c01a7336-22103c6237dmr382757815ad.0.1740070630122; 
- Thu, 20 Feb 2025 08:57:10 -0800 (PST)
+ bh=8mpDKJKwREZw1mB7Bxj5JCDYw4Ai0XXytBpKAwfNb8c=;
+ b=azTzGqVbDaEmXmMj9TQXJSokrhfCPNbIqOATzyCbHR30wzH8DHtKN7ctpMMmiO8UuY
+ UM6fOtscOjWSwW2aU+ZPVe8TxmwwjE9UZvO7IMZsLNToZrOGQ5aK0PJTHiCN/yWWikYc
+ c/GgwaNn6YdmHEXE94prTqA9g2EBLVHyCoM5Y9REh+vz0HA17UtnHRoQPXJYqwrDAxza
+ WAprs5zLVqFsLPDjTVmGqPXHMy1OX0bIvC4cdKhGZAVFJwiCQhpRnP5Tk3rC8EAmzMd1
+ SMKzMwXyyZ0fw+02hUJzTURC2BjZxJWqCWgeHbh6VNKANO9b2Y5sbkG+68uHknAGOTJf
+ 8vVg==
+X-Gm-Message-State: AOJu0YzDQgYlmnZkQwUz2Y8pEGBKBoiuyT+Q7LG2j57b901U8pjIozRL
+ 5YDhWs3B6qdZ2E5rM8JDxF6QyHRgdFUgng7RFObHuEqWJPt2l+vVmE55eQVm1P0RQJlqanWjdPn
+ 1
+X-Gm-Gg: ASbGncuc21UStWGvnNzM1ZFwLGF/PYqoQ0amZUpx9MqUIZXebF2GLafftond4KMjtVl
+ t/i0uaEaGMtwYsVdlrLL8xfmTJdlCjq++Dud6ecdyiPUD9vkCMox7TN4HDxbtDhFQlxWUTHQqBS
+ 9ssizavl9vEL+kRWezLBeQwT4L3cEcMcIp96dAK78sLFDy4QeWCNmY8Vwu9BQnMGWjSBamzCZ6I
+ ok2Vojjjpiw/FN2E6Z0r04nUhRWOL2mW4P95KFx4Wp9fZxy/yUXed+Tm6JIyAdyFCm0LulzLZAs
+ 2oYeKpG9g1Wnmd9OXTbhGs86IHUkmH4/i2qSXt/8761baQ2T+BIHSLGBFEd5bCTlDwj4
+X-Google-Smtp-Source: AGHT+IHnxFUnzk6S+FjZ9PcYBqgUryzIaij5aZtur7Q56nRQ5ubB2N/UhDCyJbvDW1D9mW04srBdMg==
+X-Received: by 2002:a17:902:eccb:b0:220:ff82:1c60 with SMTP id
+ d9443c01a7336-2218c3f4367mr69216335ad.14.1740070631041; 
+ Thu, 20 Feb 2025 08:57:11 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d53491b3sm122729435ad.40.2025.02.20.08.57.09
+ d9443c01a7336-220d53491b3sm122729435ad.40.2025.02.20.08.57.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 08:57:09 -0800 (PST)
+ Thu, 20 Feb 2025 08:57:10 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>, Kai Ji <kai.ji@intel.com>
-Subject: [PATCH v3 08/14] crypto/scheduler: remove unnecessary dereference
-Date: Thu, 20 Feb 2025 08:55:22 -0800
-Message-ID: <20250220165644.16421-9-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashish.gupta@marvell.com>
+Subject: [PATCH v3 09/14] compressdev: remove unnecessary deref of function
+ pointers
+Date: Thu, 20 Feb 2025 08:55:23 -0800
+Message-ID: <20250220165644.16421-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250220165644.16421-1-stephen@networkplumber.org>
 References: <20250217185743.169778-1-stephen@networkplumber.org>
@@ -84,121 +86,217 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The expression *dev->dev_ops->sym_session_get_size and
-dev->dev_ops->sym_session_get_size are equivalent.
+The expression *dev->dev_ops->dev_info_gets and dev->dev_ops->info_get
+are equivalent.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Morten Brørup <mb@smartsharesystems.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- .../scheduler/rte_cryptodev_scheduler.c       |  8 +++---
- drivers/crypto/scheduler/scheduler_pmd_ops.c  | 25 +++++++++----------
- 2 files changed, 16 insertions(+), 17 deletions(-)
+ lib/compressdev/rte_compressdev.c | 56 +++++++++++++++----------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-index 9a21edd32a..6013f66aa5 100644
---- a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-+++ b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-@@ -741,10 +741,10 @@ rte_cryptodev_scheduler_option_set(uint8_t scheduler_id,
+diff --git a/lib/compressdev/rte_compressdev.c b/lib/compressdev/rte_compressdev.c
+index cf2c20a704..1fc4661ef0 100644
+--- a/lib/compressdev/rte_compressdev.c
++++ b/lib/compressdev/rte_compressdev.c
+@@ -316,9 +316,9 @@ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
  
- 	sched_ctx = dev->data->dev_private;
+ 	memset(&dev_info, 0, sizeof(struct rte_compressdev_info));
  
--	if (*sched_ctx->ops.option_set == NULL)
-+	if (sched_ctx->ops.option_set == NULL)
+-	if (*dev->dev_ops->dev_infos_get == NULL)
++	if (dev->dev_ops->dev_infos_get == NULL)
+ 		return -ENOTSUP;
+-	(*dev->dev_ops->dev_infos_get)(dev, &dev_info);
++	dev->dev_ops->dev_infos_get(dev, &dev_info);
+ 
+ 	if ((dev_info.max_nb_queue_pairs != 0) &&
+ 			(nb_qpairs > dev_info.max_nb_queue_pairs)) {
+@@ -346,11 +346,11 @@ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
+ 
+ 		qp = dev->data->queue_pairs;
+ 
+-		if (*dev->dev_ops->queue_pair_release == NULL)
++		if (dev->dev_ops->queue_pair_release == NULL)
+ 			return -ENOTSUP;
+ 
+ 		for (i = nb_qpairs; i < old_nb_queues; i++) {
+-			ret = (*dev->dev_ops->queue_pair_release)(dev, i);
++			ret = dev->dev_ops->queue_pair_release(dev, i);
+ 			if (ret < 0)
+ 				return ret;
+ 		}
+@@ -397,11 +397,11 @@ rte_compressdev_queue_pairs_release(struct rte_compressdev *dev)
+ 	COMPRESSDEV_LOG(DEBUG, "Free %d queues pairs on device %u",
+ 			dev->data->nb_queue_pairs, dev->data->dev_id);
+ 
+-	if (*dev->dev_ops->queue_pair_release == NULL)
++	if (dev->dev_ops->queue_pair_release == NULL)
  		return -ENOTSUP;
  
--	return (*sched_ctx->ops.option_set)(dev, option_type, option);
-+	return sched_ctx->ops.option_set(dev, option_type, option);
+ 	for (i = 0; i < num_qps; i++) {
+-		ret = (*dev->dev_ops->queue_pair_release)(dev, i);
++		ret = dev->dev_ops->queue_pair_release(dev, i);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+@@ -432,7 +432,7 @@ rte_compressdev_configure(uint8_t dev_id, struct rte_compressdev_config *config)
+ 		return -EBUSY;
+ 	}
+ 
+-	if (*dev->dev_ops->dev_configure == NULL)
++	if (dev->dev_ops->dev_configure == NULL)
+ 		return -ENOTSUP;
+ 
+ 	/* Setup new number of queue pairs and reconfigure device. */
+@@ -445,7 +445,7 @@ rte_compressdev_configure(uint8_t dev_id, struct rte_compressdev_config *config)
+ 		return diag;
+ 	}
+ 
+-	return (*dev->dev_ops->dev_configure)(dev, config);
++	return dev->dev_ops->dev_configure(dev, config);
  }
  
  int
-@@ -772,10 +772,10 @@ rte_cryptodev_scheduler_option_get(uint8_t scheduler_id,
+@@ -463,7 +463,7 @@ rte_compressdev_start(uint8_t dev_id)
  
- 	sched_ctx = dev->data->dev_private;
+ 	dev = &rte_comp_devices[dev_id];
  
--	if (*sched_ctx->ops.option_get == NULL)
-+	if (sched_ctx->ops.option_get == NULL)
+-	if (*dev->dev_ops->dev_start == NULL)
++	if (dev->dev_ops->dev_start == NULL)
  		return -ENOTSUP;
  
--	return (*sched_ctx->ops.option_get)(dev, option_type, option);
-+	return sched_ctx->ops.option_get(dev, option_type, option);
+ 	if (dev->data->dev_started != 0) {
+@@ -472,7 +472,7 @@ rte_compressdev_start(uint8_t dev_id)
+ 		return 0;
+ 	}
+ 
+-	diag = (*dev->dev_ops->dev_start)(dev);
++	diag = dev->dev_ops->dev_start(dev);
+ 	if (diag == 0)
+ 		dev->data->dev_started = 1;
+ 	else
+@@ -493,7 +493,7 @@ rte_compressdev_stop(uint8_t dev_id)
+ 
+ 	dev = &rte_comp_devices[dev_id];
+ 
+-	if (*dev->dev_ops->dev_stop == NULL)
++	if (dev->dev_ops->dev_stop == NULL)
+ 		return;
+ 
+ 	if (dev->data->dev_started == 0) {
+@@ -502,7 +502,7 @@ rte_compressdev_stop(uint8_t dev_id)
+ 		return;
+ 	}
+ 
+-	(*dev->dev_ops->dev_stop)(dev);
++	dev->dev_ops->dev_stop(dev);
+ 	dev->data->dev_started = 0;
+ }
+ 
+@@ -532,9 +532,9 @@ rte_compressdev_close(uint8_t dev_id)
+ 	if (retval < 0)
+ 		return retval;
+ 
+-	if (*dev->dev_ops->dev_close == NULL)
++	if (dev->dev_ops->dev_close == NULL)
+ 		return -ENOTSUP;
+-	retval = (*dev->dev_ops->dev_close)(dev);
++	retval = dev->dev_ops->dev_close(dev);
+ 
+ 	if (retval < 0)
+ 		return retval;
+@@ -571,10 +571,10 @@ rte_compressdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (*dev->dev_ops->queue_pair_setup == NULL)
++	if (dev->dev_ops->queue_pair_setup == NULL)
+ 		return -ENOTSUP;
+ 
+-	return (*dev->dev_ops->queue_pair_setup)(dev, queue_pair_id,
++	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id,
+ 			max_inflight_ops, socket_id);
+ }
+ 
+@@ -618,9 +618,9 @@ rte_compressdev_stats_get(uint8_t dev_id, struct rte_compressdev_stats *stats)
+ 	dev = &rte_comp_devices[dev_id];
+ 	memset(stats, 0, sizeof(*stats));
+ 
+-	if (*dev->dev_ops->stats_get == NULL)
++	if (dev->dev_ops->stats_get == NULL)
+ 		return -ENOTSUP;
+-	(*dev->dev_ops->stats_get)(dev, stats);
++	dev->dev_ops->stats_get(dev, stats);
+ 	return 0;
+ }
+ 
+@@ -636,9 +636,9 @@ rte_compressdev_stats_reset(uint8_t dev_id)
+ 
+ 	dev = &rte_comp_devices[dev_id];
+ 
+-	if (*dev->dev_ops->stats_reset == NULL)
++	if (dev->dev_ops->stats_reset == NULL)
+ 		return;
+-	(*dev->dev_ops->stats_reset)(dev);
++	dev->dev_ops->stats_reset(dev);
  }
  
  
-diff --git a/drivers/crypto/scheduler/scheduler_pmd_ops.c b/drivers/crypto/scheduler/scheduler_pmd_ops.c
-index 6e43438469..105d9cf02a 100644
---- a/drivers/crypto/scheduler/scheduler_pmd_ops.c
-+++ b/drivers/crypto/scheduler/scheduler_pmd_ops.c
-@@ -195,10 +195,9 @@ scheduler_session_size_get(struct scheduler_ctx *sched_ctx,
- 		uint32_t priv_sess_size = 0;
+@@ -656,9 +656,9 @@ rte_compressdev_info_get(uint8_t dev_id, struct rte_compressdev_info *dev_info)
  
- 		if (session_type == RTE_CRYPTO_OP_WITH_SESSION) {
--			priv_sess_size =
--				(*dev->dev_ops->sym_session_get_size)(dev);
-+			priv_sess_size = dev->dev_ops->sym_session_get_size(dev);
- 		} else {
--			priv_sess_size = (*sec_ctx->ops->session_get_size)(dev);
-+			priv_sess_size = sec_ctx->ops->session_get_size(dev);
- 		}
+ 	memset(dev_info, 0, sizeof(struct rte_compressdev_info));
  
- 		max_priv_sess_size = RTE_MAX(max_priv_sess_size, priv_sess_size);
-@@ -355,22 +354,22 @@ scheduler_pmd_start(struct rte_cryptodev *dev)
- 		return -1;
- 	}
+-	if (*dev->dev_ops->dev_infos_get == NULL)
++	if (dev->dev_ops->dev_infos_get == NULL)
+ 		return;
+-	(*dev->dev_ops->dev_infos_get)(dev, dev_info);
++	dev->dev_ops->dev_infos_get(dev, dev_info);
  
--	if (*sched_ctx->ops.worker_attach == NULL)
-+	if (sched_ctx->ops.worker_attach == NULL)
- 		return -ENOTSUP;
- 
- 	for (i = 0; i < sched_ctx->nb_workers; i++) {
- 		uint8_t worker_dev_id = sched_ctx->workers[i].dev_id;
- 
--		if ((*sched_ctx->ops.worker_attach)(dev, worker_dev_id) < 0) {
-+		if (sched_ctx->ops.worker_attach(dev, worker_dev_id) < 0) {
- 			CR_SCHED_LOG(ERR, "Failed to attach worker");
- 			return -ENOTSUP;
- 		}
- 	}
- 
--	if (*sched_ctx->ops.scheduler_start == NULL)
-+	if (sched_ctx->ops.scheduler_start == NULL)
- 		return -ENOTSUP;
- 
--	if ((*sched_ctx->ops.scheduler_start)(dev) < 0) {
-+	if (sched_ctx->ops.scheduler_start(dev) < 0) {
- 		CR_SCHED_LOG(ERR, "Scheduler start failed");
- 		return -1;
- 	}
-@@ -406,14 +405,14 @@ scheduler_pmd_stop(struct rte_cryptodev *dev)
- 		rte_cryptodev_stop(worker_dev_id);
- 	}
- 
--	if (*sched_ctx->ops.scheduler_stop)
--		(*sched_ctx->ops.scheduler_stop)(dev);
-+	if (sched_ctx->ops.scheduler_stop)
-+		sched_ctx->ops.scheduler_stop(dev);
- 
- 	for (i = 0; i < sched_ctx->nb_workers; i++) {
- 		uint8_t worker_dev_id = sched_ctx->workers[i].dev_id;
- 
--		if (*sched_ctx->ops.worker_detach)
--			(*sched_ctx->ops.worker_detach)(dev, worker_dev_id);
-+		if (sched_ctx->ops.worker_detach)
-+			sched_ctx->ops.worker_detach(dev, worker_dev_id);
- 	}
+ 	dev_info->driver_name = dev->device->driver->name;
  }
+@@ -676,9 +676,9 @@ rte_compressdev_private_xform_create(uint8_t dev_id,
+ 	if (xform == NULL || priv_xform == NULL || dev == NULL)
+ 		return -EINVAL;
  
-@@ -631,8 +630,8 @@ scheduler_pmd_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 		return ret;
- 	}
+-	if (*dev->dev_ops->private_xform_create == NULL)
++	if (dev->dev_ops->private_xform_create == NULL)
+ 		return -ENOTSUP;
+-	ret = (*dev->dev_ops->private_xform_create)(dev, xform, priv_xform);
++	ret = dev->dev_ops->private_xform_create(dev, xform, priv_xform);
+ 	if (ret < 0) {
+ 		COMPRESSDEV_LOG(ERR,
+ 			"dev_id %d failed to create private_xform: err=%d",
+@@ -700,7 +700,7 @@ rte_compressdev_private_xform_free(uint8_t dev_id, void *priv_xform)
+ 	if (dev == NULL || priv_xform == NULL)
+ 		return -EINVAL;
  
--	if (*sched_ctx->ops.config_queue_pair) {
--		if ((*sched_ctx->ops.config_queue_pair)(dev, qp_id) < 0) {
-+	if (sched_ctx->ops.config_queue_pair) {
-+		if (sched_ctx->ops.config_queue_pair(dev, qp_id) < 0) {
- 			CR_SCHED_LOG(ERR, "Unable to configure queue pair");
- 			return -1;
- 		}
+-	if (*dev->dev_ops->private_xform_free == NULL)
++	if (dev->dev_ops->private_xform_free == NULL)
+ 		return -ENOTSUP;
+ 	ret = dev->dev_ops->private_xform_free(dev, priv_xform);
+ 	if (ret < 0) {
+@@ -726,9 +726,9 @@ rte_compressdev_stream_create(uint8_t dev_id,
+ 	if (xform == NULL || dev == NULL || stream == NULL)
+ 		return -EINVAL;
+ 
+-	if (*dev->dev_ops->stream_create == NULL)
++	if (dev->dev_ops->stream_create == NULL)
+ 		return -ENOTSUP;
+-	ret = (*dev->dev_ops->stream_create)(dev, xform, stream);
++	ret = dev->dev_ops->stream_create(dev, xform, stream);
+ 	if (ret < 0) {
+ 		COMPRESSDEV_LOG(ERR,
+ 			"dev_id %d failed to create stream: err=%d",
+@@ -751,7 +751,7 @@ rte_compressdev_stream_free(uint8_t dev_id, void *stream)
+ 	if (dev == NULL || stream == NULL)
+ 		return -EINVAL;
+ 
+-	if (*dev->dev_ops->stream_free == NULL)
++	if (dev->dev_ops->stream_free == NULL)
+ 		return -ENOTSUP;
+ 	ret = dev->dev_ops->stream_free(dev, stream);
+ 	if (ret < 0) {
 -- 
 2.47.2
 
