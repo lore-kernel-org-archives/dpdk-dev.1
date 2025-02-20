@@ -2,35 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC33C021AA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35DFC021AA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:27:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53B2C4064F;
-	Thu, 20 Feb 2025 03:02:02 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 2D7F6402C4
- for <dev@dpdk.org>; Thu, 20 Feb 2025 03:01:49 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 9EDE6204E5B9; Wed, 19 Feb 2025 18:01:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9EDE6204E5B9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1740016907;
- bh=2DGNjrpD188vdjHVy3SHJJFbQqq6ey+wlGBV+5HJMnE=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=O/e1vNapWzUTijPeSa2XxF+gg03/4zQ2T1p8/yooo5jHt1S3NEoJD+6IQFEk1ocKm
- CJcgAsxFuom+qDMKOoquhIGnlEX6yv+ETBlBT3q2tPF3PVoaYQlr5VxQL8ZQygRvVU
- GgSoZJk/ZPZuICgny+Xn0Syp1FNkm/4lNsrsXgbk=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org
-Subject: [PATCH v3 09/10] test: add workaround for __builtin_constant_p in
- test_memcpy_perf
-Date: Wed, 19 Feb 2025 18:01:38 -0800
-Message-Id: <1740016899-2817-10-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DF58E4014F;
+	Thu, 20 Feb 2025 03:27:31 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 6304740041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 03:27:30 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-220e6028214so7821835ad.0
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 18:27:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740018449;
+ x=1740623249; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=8Dc/Qm7IiVVlhG6W9ZfdFETY4Z41pLAyhIsgN6LOQcw=;
+ b=pK/5bSw21wa1w+Lr08cynrh0cJkUH+rQZFn6xqtTGlubZQtRHjXGqyEveHbX1qmmxr
+ TN+kk/Y6/mnYi3S8DR/XJE67hc9CAG/WzWIaXwSS1cOlae6tLM4RQ4bSZtzdC8iSkrc1
+ QlK7502CL6Rjk0nB396cvpncfqGWx9FIaOYh1nfQdzBxPLx0npkl6kJF+1pURc7MAFbo
+ yC4+ibTnZBLgcGCnS6/Ct9ETPsh9VJr1vyZDHNrU9PLtkeV0+FkDFJEabQO+njZDsM7X
+ 17aT1Sj6/W7fO0rGdJ/+qHeLBFuqTOo+GQbRRW0UUp//ceXENzEmAQl9OXA2gHzv3fEW
+ mjOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1740018449; x=1740623249;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=8Dc/Qm7IiVVlhG6W9ZfdFETY4Z41pLAyhIsgN6LOQcw=;
+ b=g4jcksF85QUd/lSU1nK/6bHyeAEVNG62nh1QeFT4qMrUsMeJiBNxEOcFIRmq0BdMNl
+ gSP0P4YmIaNEJrK9emauj+bgoKdlkOZGvgMYBJzhLryieA2yHKpeWOPs3psl9UPCLRmx
+ RGanYSBNB8S2FXGtaLH2145P+OhknD/eGrEIolcL1rNTsU6QKoJl742GNhtVr7g8uSCr
+ CqEQJDg0WXrvquMzP6M11L/4EM/MFztfsZ0Xx7iczdBwQkoHlR6Jk69BqsBlkd/MF3NE
+ vFasBRbZV0pWDYeOq99NOwDHBCm+f8k6qsGTL0VKbuPJfPi6jnCyHWxeZX4bmIgP7lrX
+ gWng==
+X-Gm-Message-State: AOJu0YwSwA8CD2e1jvtkF2L8V32jqopozQnnbeBZZD32/01iQ2+yWWtK
+ i0iICUV3ld62ysaWOil5n1J71shOtWCKfHqfb/SLynUKJxyscHc+kk/naI+bXZM=
+X-Gm-Gg: ASbGncsIn6XGswFRr6whkqBdBOQ49OOtQR5KdoiP775CN8N27pZLOQ1vS0lkD9NHAjQ
+ xQRKfbGjxSm0a/XLuXNkt/O62je40pKy0Lyr6W2mCz9I3yg8mGF/Jsz0jG2gK8uVUHY34T23yZ/
+ 4KjEHjnChVOcjTjNuf/nkiIwlNXPbstvU2yy4AITl8NKEz/s9duV0KDNdZyKK7QrcjJoeCUXuNl
+ Xsd7XtiHnSK1ER/8aJxLW+DnKJ91HxMab8mnKYPp+sw5ciIJlj4F6HKI+rTQfYH20JfKFRXfoLv
+ Q5zfhjXrH49dUZ4zqA3jy2+RJ/WHd4otr7VWWZK9xzj/eMOR3LYjXupxH0dezppdOEG+
+X-Google-Smtp-Source: AGHT+IGUjeeFbLYfLh3AU2y0GwgKCmgExC0qSlV4EOE4EIkvwIuth9Z41RxJ0BudHNLfS242XxL9GQ==
+X-Received: by 2002:a17:902:ea06:b0:220:e63c:5b10 with SMTP id
+ d9443c01a7336-22190690192mr10347725ad.34.1740018449500; 
+ Wed, 19 Feb 2025 18:27:29 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-22120093e41sm64353095ad.93.2025.02.19.18.27.28
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 19 Feb 2025 18:27:29 -0800 (PST)
+Date: Wed, 19 Feb 2025 18:27:27 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
+Subject: Re: [PATCH v3 01/10] eal: add workaround for __builtin_constant_p
+Message-ID: <20250219182727.18c1d798@hermes.local>
+In-Reply-To: <1740016899-2817-2-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
  <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
+ <1740016899-2817-2-git-send-email-andremue@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,99 +81,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There's no MSVC equivalent for compiler extension __builtin_constant_p,
-so a workaround is needed.
+On Wed, 19 Feb 2025 18:01:30 -0800
+Andre Muezerie <andremue@linux.microsoft.com> wrote:
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
----
- app/test/test_memcpy_perf.c | 54 ++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+>  
+>  #ifdef RTE_TOOLCHAIN_MSVC
+> -#define __rte_constant(e) 0
+> +#define __rte_constant(e) _Generic((1 ? (void *) ((e) * 0ll) : (int *) 0), int * : 1, void * : 0)
+>  #else
+>  #define __rte_constant(e) __extension__(__builtin_constant_p(e))
+>  #endif
 
-diff --git a/app/test/test_memcpy_perf.c b/app/test/test_memcpy_perf.c
-index 5c05a84619..32c589c4ba 100644
---- a/app/test/test_memcpy_perf.c
-+++ b/app/test/test_memcpy_perf.c
-@@ -196,37 +196,37 @@ do {                                                                        \
- } while (0)
- 
- /* Run aligned memcpy tests for each cached/uncached permutation */
--#define ALL_PERF_TESTS_FOR_SIZE(n)                                       \
--do {                                                                     \
--    if (__builtin_constant_p(n))                                         \
--        printf("\nC%6u", (unsigned)n);                                   \
--    else                                                                 \
--        printf("\n%7u", (unsigned)n);                                    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
-+#define ALL_PERF_TESTS_FOR_SIZE(n)                                           \
-+do {                                                                         \
-+	if (__rte_constant(n))                                               \
-+		printf("\nC%6u", (unsigned int)n);                           \
-+	else                                                                 \
-+		printf("\n%7u", (unsigned int)n);                            \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
- } while (0)
- 
- /* Run unaligned memcpy tests for each cached/uncached permutation */
--#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                             \
--do {                                                                     \
--    if (__builtin_constant_p(n))                                         \
--        printf("\nC%6u", (unsigned)n);                                   \
--    else                                                                 \
--        printf("\n%7u", (unsigned)n);                                    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
-+#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                                 \
-+do {                                                                         \
-+	if (__rte_constant(n))                                               \
-+		printf("\nC%6u", (unsigned int)n);                           \
-+	else                                                                 \
-+		printf("\n%7u", (unsigned int)n);                            \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
- } while (0)
- 
- /* Run memcpy tests for constant length */
--#define ALL_PERF_TEST_FOR_CONSTANT                                      \
--do {                                                                    \
--    TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
--    TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
--    TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
-+#define ALL_PERF_TEST_FOR_CONSTANT                                          \
-+do {                                                                        \
-+	TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
-+	TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
-+	TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
- } while (0)
- 
- /* Run all memcpy tests for aligned constant cases */
-@@ -253,7 +253,7 @@ perf_test_variable_aligned(void)
- {
- 	unsigned i;
- 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
--		ALL_PERF_TESTS_FOR_SIZE((size_t)buf_sizes[i]);
-+		ALL_PERF_TESTS_FOR_SIZE(buf_sizes[i]);
- 	}
- }
- 
-@@ -263,7 +263,7 @@ perf_test_variable_unaligned(void)
- {
- 	unsigned i;
- 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
--		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED((size_t)buf_sizes[i]);
-+		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(buf_sizes[i]);
- 	}
- }
- 
--- 
-2.48.1.vfs.0.0
-
+Probably worth some explanation as to what is going on.
