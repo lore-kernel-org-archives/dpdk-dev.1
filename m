@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D35BC021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8246C021B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:43:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EA0940664;
-	Thu, 20 Feb 2025 17:42:13 +0100 (CET)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id B2585402D8
- for <dev@dpdk.org>; Thu, 20 Feb 2025 17:42:09 +0100 (CET)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-22100006bc8so21067465ad.0
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:42:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C13FF4065A;
+	Thu, 20 Feb 2025 17:42:14 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id BF5384064C
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 17:42:10 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2210d92292eso33183565ad.1
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 08:42:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740069729;
- x=1740674529; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740069730;
+ x=1740674530; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c8mVx65OZgwlPD3YqCSP4AJR4DoGBjJVIPIjf98KaNw=;
- b=qjf2xsa30+JXAEbaUPpm2ebcGO5J4wj6fEBQb5vNlFEwm6+JRDNzxI0cpPxy2+RRHI
- EfE3WxrGPhHmaI5gz6OQaeAYeMUKhCU9CL9z4nUtJRJtXawnu0d1MfiOD6SOdDasAEqd
- vR5AQC6swr9VhbRm0V6stGDTbC/0+8tNr5m5NVLvxtrowibHDFg/kP6QREupESgNiCGU
- REgXkE7zXcZFY807o+XiUWEiI7HPYZVNJK6HAwdHqQytCiljF6hJCiTQBs+13djEg/DH
- SVF1G1PBLQwQoxHR8vTe6aX3756BqMtdBY8yKXBVpxT1a9ojrHQ7u+yvJPNRCsdB5vkn
- VOwQ==
+ bh=qhNKU7vZcxq5FB0scX4PLj+Qg9WKGbFWsm6xVFz3F8s=;
+ b=ocLtpurSsHLDAZzlkPLWijJKUgW8tje5XVri9Sb901fHXh+13Ka4oMsw7TqFD3SCvB
+ +bcpuM9rzn42hXW4Dq9jNLiVQalUEIVXBomvjY4sZR2sQnn9qftihPKfmNsAhoSpUkfo
+ FFJipmOAmDPj+LBagFszN5lFVyOYQDnYYKqtvoTV6M96dYgwKRePVy68Ute0kX7hhu+R
+ /1nCKpyDTW3x7hmRB2vh2rwKtE0u7myTOv4ijkGF3sUR36upWCOXWGZ7lhMZEg+FmEtM
+ 36Bd49hP40iLoq0TnkYFaVBp6DA0DBvhic+SNWL80VIV/09VT3+xFNtDV9hZjslGPi0G
+ DMOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740069729; x=1740674529;
+ d=1e100.net; s=20230601; t=1740069730; x=1740674530;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=c8mVx65OZgwlPD3YqCSP4AJR4DoGBjJVIPIjf98KaNw=;
- b=tj3TlGk3dXTMsMNJplQptIQsfgehX6cIvRf3HeQVAmoFiF1ENOhSMadztl6wO9O2Du
- tXX7WOHIqwVLXdGiaVxwesa0bSQN1tDzvYTvdN2fpJzyG7nIQEsxXZWyyyYRCv4O8Yn/
- 2m4YWWVOfbLGtdPZtYRDfxquPorFG/vyNtUPRifUhs13Vtase+44xyesLMwrqp6LqaQu
- 5b0pwxTxyPVD6O8z+hDDhyGy9I6bB6Y98aQu/CVNNljbxl1MkFjyPzIjWBF68nXamQIb
- 6ZrX9UPCpYeR1UlOMXxV8s6afci0SN3rzZrFi/kJNMXTtpeSeL5I68VK3/8JFuO+8yUB
- zzlA==
-X-Gm-Message-State: AOJu0Ywsj40BUu2DJDp3XrIfjQmis1D8eeIN02BOTdH1sXFRtOoNN1+Q
- kQdjI18Dbd7a0EKiiK8yXWSNLqBxo5HK7AtrhVkxmJ6b3dc0zLsjLSV1koMMsxG51LivCLTl+Fx
- f
-X-Gm-Gg: ASbGncudBXjcuvpgZxqV/4uy13jQl1RH6/N2lIVnDMJFh0GWHbmVDhA/9u5JqOm3jjc
- TU4NzgklKr+tauv0zrALWBY6jOLy0tVzzYeuV5jONmArPaABoi2qKXd8my3e7aLnjYVxqizzsRi
- uoP/oedm73BOUB0S8R6HhOfcrH3bKQPTU5S4GqRlUrnPDj2F3KMfF99evnpvy+SwWVdhNi7AypZ
- RcuL3SRmlzlAu5an4RS3onBaMjOFIJQW7fREYqn1qcTPpj/DTppkXuER1szshDTupjMBxhyaQbg
- Twu9ddHENG5HG7t/94yDRq9hIuWNCwBZvS864ggkK0Ye+GX9w+atc/R+CxU1muSaAoVa
-X-Google-Smtp-Source: AGHT+IGoWrBs4m+lNx7+BPLHM7lx3WQAj2K/TRxPWta9JbixYHISGlZgjjksFRKYf/MyYiL3KCkhLA==
-X-Received: by 2002:a17:903:8c5:b0:21f:6a36:7bf3 with SMTP id
- d9443c01a7336-22104030814mr385535625ad.12.1740069728959; 
- Thu, 20 Feb 2025 08:42:08 -0800 (PST)
+ bh=qhNKU7vZcxq5FB0scX4PLj+Qg9WKGbFWsm6xVFz3F8s=;
+ b=YRSnvehpfA7uE5M6X2uk/MHsH/ujQYxH9Zsv3qsidn4bee65RjqupUtzkChq4s4BHd
+ tE5rjcphY+i4XvUFxLcJU5P59/0A4E1wrVTMofO3vI1u3Q1Z/CxPliyb9vLMkuBSrCzf
+ hUgO+TM1Q4XspxKic23QaZ+hFxKxFS4LRPYDiR0Llx2xDq7QBmMs7X8nrMQYZdf+cREq
+ aNVRAMd6KFPT0mr1VxHyogET32d6REnGfrlCRnQzzY0/uNhly+Iw+gQFjpFumT5i2YZY
+ Kby+ITh7TbNjFtYbMLnGwCGSo75Zgm2WQUfBnuw6xDjRZpaJn0MQgII94rvy9ZcRC+US
+ j5yA==
+X-Gm-Message-State: AOJu0Yyr58hIZEI7l+15Zo7324wTt5vMql70L+X0B7oLck2HnUWEFEGj
+ LK8ysVmWIANwZoO1zILi3DXoDC995yh/U7TN14TPGDE7H5lwhe0W9gRXKD0oJclQCAsHQ4dNXmk
+ H
+X-Gm-Gg: ASbGncv3q6Vmf/WXWVxuhnHO0SOeyL90egwM6iZSL8Hx7CCbwtsO+9YHS7F0ns3xSMD
+ /QtvnOh1ERq5xke2orzzaHJ7H6p5EYd7KlRCdTfu8y87z/Le2RluFEP3/t2PuORbP/7w8f+a6Vc
+ /+V7hrKowC5MuxC8EMV9JT6gHpdAh1z6HlNbA8Fd9Fs0XoriUyQmIAHE9Xa8+Cwk1nxIyTIlY2f
+ 38dmPsf2BMr8jObXTNhHtEOhCflarrRcSUD0NLVIGehufV+06E3shFKldq63keCtkhBMck5Y4xH
+ 3GZ+vp6ZZbD2xAyCQOB6TIIn0JtT2Rog+kDodgbeRJ+yWyFwb+JuX/XdfUA7IbMT40Sk
+X-Google-Smtp-Source: AGHT+IGIT2ytitcUV0/aTlgLuzz7nAP8VGQ4GVvxHuwgNFY88mRWQnA5kYpwD5p4vfGOdzwiLJHc9g==
+X-Received: by 2002:a17:902:e892:b0:216:3e87:c9fc with SMTP id
+ d9443c01a7336-2217055f573mr133805835ad.5.1740069730033; 
+ Thu, 20 Feb 2025 08:42:10 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d5348e68sm123798305ad.28.2025.02.20.08.42.08
+ d9443c01a7336-220d5348e68sm123798305ad.28.2025.02.20.08.42.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 08:42:08 -0800 (PST)
+ Thu, 20 Feb 2025 08:42:09 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>, Kai Ji <kai.ji@intel.com>,
- Ciara Power <ciara.power@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH v9 08/15] crypto/qat: fix size calculation for memset
-Date: Thu, 20 Feb 2025 08:27:14 -0800
-Message-ID: <20250220164151.9606-9-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>, Kai Ji <kai.ji@intel.com>
+Subject: [PATCH v9 09/15] crypto/qat: use secure free for keys
+Date: Thu, 20 Feb 2025 08:27:15 -0800
+Message-ID: <20250220164151.9606-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250220164151.9606-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
@@ -83,64 +82,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The memset was always doing 0 bytes since size computed later.
-
-Link: https://pvs-studio.com/en/blog/posts/cpp/1179/
-
-Fixes: 3a80d7fb2ecd ("crypto/qat: support SHA3 plain hash")
-Cc: stable@dpdk.org
+Regular memset maybe removed by compiler if done before a free
+function. Use new rte_free_sensitive instead.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/crypto/qat/qat_sym_session.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/crypto/qat/qat_asym.c        | 5 +----
+ drivers/crypto/qat/qat_sym_session.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/crypto/qat/qat_asym.c b/drivers/crypto/qat/qat_asym.c
+index f5b56b2f71..d8a1406819 100644
+--- a/drivers/crypto/qat/qat_asym.c
++++ b/drivers/crypto/qat/qat_asym.c
+@@ -102,10 +102,7 @@ static const struct rte_driver cryptodev_qat_asym_driver = {
+ 		curve.p.data, curve.bytesize)
+ 
+ #define PARAM_CLR(what) \
+-	do { \
+-		memset(what.data, 0, what.length); \
+-		rte_free(what.data);	\
+-	} while (0)
++	rte_free_sensitive(what.data)
+ 
+ static void
+ request_init(struct icp_qat_fw_pke_request *qat_req)
 diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 3564a33484..7836c95064 100644
+index 7836c95064..fd2cc94418 100644
 --- a/drivers/crypto/qat/qat_sym_session.c
 +++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -2347,7 +2347,7 @@ int qat_sym_cd_cipher_set(struct qat_sym_session *cdesc,
- 	return 0;
- }
+@@ -1739,8 +1739,8 @@ static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
  
--int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
-+static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 		const uint8_t *authkey,
- 		uint32_t authkeylen,
- 		uint32_t aad_length,
-@@ -2620,27 +2620,27 @@ int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_SHA3_224:
- 		/* Plain SHA3-224 */
--		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		state1_size = qat_hash_get_state1_size(
- 				cdesc->qat_hash_alg);
-+		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_SHA3_256:
- 		/* Plain SHA3-256 */
--		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		state1_size = qat_hash_get_state1_size(
- 				cdesc->qat_hash_alg);
-+		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_SHA3_384:
- 		/* Plain SHA3-384 */
--		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		state1_size = qat_hash_get_state1_size(
- 				cdesc->qat_hash_alg);
-+		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_SHA3_512:
- 		/* Plain SHA3-512 */
--		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		state1_size = qat_hash_get_state1_size(
- 				cdesc->qat_hash_alg);
-+		memset(cdesc->cd_cur_ptr, 0, state1_size);
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC:
- 		state1_size = ICP_QAT_HW_AES_XCBC_MAC_STATE1_SZ;
+ 	/* do partial hash of ipad and copy to state1 */
+ 	if (partial_hash_compute(hash_alg, ipad, p_state_buf)) {
+-		memset(ipad, 0, block_size);
+-		memset(opad, 0, block_size);
++		rte_memzero_explicit(ipad, block_size);
++		rte_memzero_explicit(opad, block_size);
+ 		QAT_LOG(ERR, "ipad precompute failed");
+ 		return -EFAULT;
+ 	}
+@@ -1751,8 +1751,8 @@ static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
+ 	 */
+ 	*p_state_len = qat_hash_get_state1_size(hash_alg);
+ 	if (partial_hash_compute(hash_alg, opad, p_state_buf + *p_state_len)) {
+-		memset(ipad, 0, block_size);
+-		memset(opad, 0, block_size);
++		rte_memzero_explicit(ipad, block_size);
++		rte_memzero_explicit(opad, block_size);
+ 		QAT_LOG(ERR, "opad precompute failed");
+ 		return -EFAULT;
+ 	}
 -- 
 2.47.2
 
