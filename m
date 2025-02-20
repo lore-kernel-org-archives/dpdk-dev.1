@@ -2,38 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19836C021AD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 07:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B992C021AD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 08:05:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECC3D4014F;
-	Thu, 20 Feb 2025 08:58:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5179B4014F;
+	Thu, 20 Feb 2025 09:05:39 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 653A840041
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:59 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DA92A40041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 09:05:37 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 16D96207C0;
- Thu, 20 Feb 2025 08:57:59 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9D815207C0;
+ Thu, 20 Feb 2025 09:05:37 +0100 (CET)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v3 00/10] enable "app" to be compiled with MSVC
-Date: Thu, 20 Feb 2025 08:57:58 +0100
+Subject: RE: [PATCH v2 00/14] Remove unnecessary function pointer deref
+Date: Thu, 20 Feb 2025 09:05:36 +0100
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FA53@smartserver.smartshare.dk>
-In-Reply-To: <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FA54@smartserver.smartshare.dk>
+In-Reply-To: <20250220023509.630569-1-stephen@networkplumber.org>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 00/10] enable "app" to be compiled with MSVC
-Thread-Index: AduDO28R81BZQLV7SEKrf6XPcrn9iAAMaYxg
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
+Thread-Topic: [PATCH v2 00/14] Remove unnecessary function pointer deref
+Thread-Index: AduDQBeiBWQpj5FiQhOTepeXx8EJVQALhjYQ
+References: <20250217185743.169778-1-stephen@networkplumber.org>
+ <20250220023509.630569-1-stephen@networkplumber.org>
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Andre Muezerie" <andremue@linux.microsoft.com>
-Cc: <dev@dpdk.org>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,4 +48,5 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Series-acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+
 
