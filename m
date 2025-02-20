@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CA5C021AA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E550AC021B0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:02:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88AFE402DB;
-	Thu, 20 Feb 2025 03:01:53 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EE8DD402C6;
+	Thu, 20 Feb 2025 03:01:54 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 39C0E402C3
+ by mails.dpdk.org (Postfix) with ESMTP id 4719A402C4
  for <dev@dpdk.org>; Thu, 20 Feb 2025 03:01:48 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 6268F204E5B4; Wed, 19 Feb 2025 18:01:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6268F204E5B4
+ id 48EA9204E5A3; Wed, 19 Feb 2025 18:01:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 48EA9204E5A3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740016907;
- bh=y5ifBxhMrH+NarBFHQGrShME0aGG5oPAK43G/aqgz7E=;
+ bh=jaf8IHbxA1OeStjJ5GJLM5EXMesSgLeWDrGHlc9auNk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Yb+JG1E3Xew7cdwxSixancnJuIz9mzVI6/Kjtb2mDK2EGKSGs1oiMw6lkthfMNldI
- E8CLzz9a4MWdU4osYfjvX3HBa8exdGbyU1dpuWM+d67WLhEjVGBtARbXP8xbNjeccn
- 39j6+NDCPGMdxE8NsuVrx3xYc82hZgmu2KbH78hI=
+ b=X1kp6udS5lT9jQMS73edXC/xVpANyeCER1jNfXaQbIoygKkrsx3EMHwXM1BFWeBSl
+ EPw2LYAgkMfUkRj6aUn8o8bgeh1NsMGLP4MjrS7r9tjXoic90Ed/wv4chHw3wAcxi7
+ x2O/n2WVwZ2l7QU/gaX1Sa39abHHhB6b/8fgg//4=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v3 04/10] test-pmd: do explicit 64-bit shift to avoid implicit
- conversion
-Date: Wed, 19 Feb 2025 18:01:33 -0800
-Message-Id: <1740016899-2817-5-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v3 02/10] test_alarm: avoid warning about different qualifiers
+Date: Wed, 19 Feb 2025 18:01:31 -0800
+Message-Id: <1740016899-2817-3-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -45,64 +44,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in warnings like the one below:
+Compiling with MSVC results in the warning below:
 
-app/test-pmd/util.c(201): warning C4334: '<<': result of 32-bit shift
-    implicitly converted to 64 bits (was 64-bit shift intended?)
+app/test/test_alarm.c(54): warning C4090: 'function':
+    different '_Atomic' qualifiers
+
+The fix is to use a macro to explicitly drop the qualifier.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test-pmd/cmdline.c | 4 ++--
- app/test-pmd/testpmd.c | 2 +-
- app/test-pmd/util.c    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ app/test/test_alarm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 86d763b66a..2afcf916c0 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -12632,11 +12632,11 @@ cmd_config_dynf_specific_parsed(void *parsed_result,
- 	}
- 	old_port_flags = ports[res->port_id].mbuf_dynf;
- 	if (!strcmp(res->value, "set")) {
--		ports[res->port_id].mbuf_dynf |= 1UL << flag;
-+		ports[res->port_id].mbuf_dynf |= RTE_BIT64(flag);
- 		if (old_port_flags == 0)
- 			add_tx_dynf_callback(res->port_id);
- 	} else {
--		ports[res->port_id].mbuf_dynf &= ~(1UL << flag);
-+		ports[res->port_id].mbuf_dynf &= ~RTE_BIT64(flag);
- 		if (ports[res->port_id].mbuf_dynf == 0)
- 			remove_tx_dynf_callback(res->port_id);
- 	}
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 0520aba0db..0a5b999c3a 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -4152,7 +4152,7 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
- 		for (i = 0; i < vmdq_rx_conf->nb_pool_maps; i++) {
- 			vmdq_rx_conf->pool_map[i].vlan_id = vlan_tags[i];
- 			vmdq_rx_conf->pool_map[i].pools =
--				1 << (i % vmdq_rx_conf->nb_queue_pools);
-+				RTE_BIT64(i % vmdq_rx_conf->nb_queue_pools);
- 		}
- 		for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
- 			vmdq_rx_conf->dcb_tc[i] = i % num_tcs;
-diff --git a/app/test-pmd/util.c b/app/test-pmd/util.c
-index 5fa05fad16..3934831b19 100644
---- a/app/test-pmd/util.c
-+++ b/app/test-pmd/util.c
-@@ -201,7 +201,7 @@ dump_pkt_burst(uint16_t port_id, uint16_t queue, struct rte_mbuf *pkts[],
- 				MKDUMPSTR(print_buf, buf_size, cur_len,
- 					  " - dynf %s: %d",
- 					  dynf_names[dynf_index],
--					  !!(ol_flags & (1UL << dynf_index)));
-+					  !!(ol_flags & RTE_BIT64(dynf_index)));
- 		}
- 		if (mb->packet_type) {
- 			rte_get_ptype_name(mb->packet_type, buf, sizeof(buf));
+diff --git a/app/test/test_alarm.c b/app/test/test_alarm.c
+index 9ed8c6f72c..6445f713fe 100644
+--- a/app/test/test_alarm.c
++++ b/app/test/test_alarm.c
+@@ -51,12 +51,12 @@ test_alarm(void)
+ 			 "Expected rte_eal_alarm_cancel to fail with null callback parameter");
+ 
+ 	/* check if can set a alarm for one second */
+-	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback, &triggered),
+-			    "Setting one second alarm failed");
++	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(US_PER_SEC, test_alarm_callback,
++			    RTE_PTR_UNQUAL(&triggered)), "Setting one second alarm failed");
+ 
+ 	/* set a longer alarm that will be canceled. */
+-	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback, &later),
+-			    "Setting ten second alarm failed");
++	TEST_ASSERT_SUCCESS(rte_eal_alarm_set(10 * US_PER_SEC, test_alarm_callback,
++			    RTE_PTR_UNQUAL(&later)), "Setting ten second alarm failed");
+ 
+ 	/* wait for alarm to happen */
+ 	while (rte_atomic_load_explicit(&triggered, rte_memory_order_acquire) == false)
+@@ -65,11 +65,11 @@ test_alarm(void)
+ 	TEST_ASSERT(!rte_atomic_load_explicit(&later, rte_memory_order_acquire),
+ 		    "Only one alarm should have fired.");
+ 
+-	ret = rte_eal_alarm_cancel(test_alarm_callback, &triggered);
++	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&triggered));
+ 	TEST_ASSERT(ret == 0 && rte_errno == ENOENT,
+ 		    "Canceling alarm after run ret %d: %s", ret, rte_strerror(rte_errno));
+ 
+-	ret = rte_eal_alarm_cancel(test_alarm_callback, &later);
++	ret = rte_eal_alarm_cancel(test_alarm_callback, RTE_PTR_UNQUAL(&later));
+ 	TEST_ASSERT(ret == 1, "Canceling ten second alarm failed %d: %s",
+ 		    ret, rte_strerror(rte_errno));
+ 
 -- 
 2.48.1.vfs.0.0
 
