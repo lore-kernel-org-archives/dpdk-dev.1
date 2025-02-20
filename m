@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3859FC021AA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B717DC021B0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:35:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61DC6402E1;
-	Thu, 20 Feb 2025 03:35:27 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 1EB0C402D3
+	by mails.dpdk.org (Postfix) with ESMTP id F267240430;
+	Thu, 20 Feb 2025 03:35:29 +0100 (CET)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 00195402D3
  for <dev@dpdk.org>; Thu, 20 Feb 2025 03:35:24 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-220d132f16dso6171315ad.0
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-2fa8ada6662so881558a91.1
  for <dev@dpdk.org>; Wed, 19 Feb 2025 18:35:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740018923;
- x=1740623723; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740018924;
+ x=1740623724; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7eLLWAV7Y11vT1ruiyiL0yrL68ZlPVZ0P8SC1SS9qq4=;
- b=In4J6vgX9RO5UiA5rj4V1+U0rqjqx9C6tRUn2aEoqtS9ZbddfMGMoJLs4guMiZW8GI
- NcIBKzrijM3eH50eVyQTxqevOpjWrhGq3U7hv02WwAxu4H7Gb/fEzycEQ4uXzfGWEDHw
- 9Dguz5fmwBAWIbh/1P4NdoUTsC79orhCyR+zzgTYWrC5uadekk2cjiFeLmteXOWcR57K
- kIJ5uoEVYuAFpXAi40FYRoJ5Q9zcCCLavv+P7IZRxrCDeB+YGxiTmeg9Py6JUDzie/n5
- ntm4QeCTOVzyug37cTKiOh+o0FGRzBmY3CduhxZdNDJ16Mrk4S7g/0bi72xoo3nlIuzl
- IIaw==
+ bh=5pOC/FqRASKAHeZBhAimHJ1l8ohTp5EPkO7j3wpeRcI=;
+ b=eTCyu3K9+xC90f3ADJB8VOed+gmniamHvw5rW0zK6m1Foj4vRZcto5b4S7acBN9eFj
+ 6yilCp9zDy/0r8u1JS8usEEeMfZLj8jrQC/1i5trGr5/xawaEpnvJ195uhUGTxOhQPoO
+ CfBaybJ+k5MLXnyyElh4tgUmbn9VAN1R7KPFBWuUh2jcNRSebiYdP2UxvanS/iOnBpol
+ 5pOFQMsJWV9kXMwqUXVCNRlP7VUDwNJNe3LKr0YWr7UvZhjPMKjHFiIv3BS9Eaytbl4J
+ 5gHna64tRZNVnyaDj2QGZGq8UWNsMPE4EBxtgLRBQ1lVTkW8n9BYa2CXMpLOHYCsGP21
+ gzQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740018923; x=1740623723;
+ d=1e100.net; s=20230601; t=1740018924; x=1740623724;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=7eLLWAV7Y11vT1ruiyiL0yrL68ZlPVZ0P8SC1SS9qq4=;
- b=qbRCDJDEvJD2cTQglFNJtulaMa9L1gBTJ3lQ/kM8pb7GMOe3vCno1axN179ApXWIrK
- 83QspvYYsFs6c3peItcRB7l6b/QNark0Ivgtsfg8SmczT5VNaxMOqpVSZhhWXGY5uJQk
- 9oCXRLYAEjQJ2Jg68Lf8wbuIaPxY/Lfkb0TotRoLaD0nHcHjVf95qISeH/DkWhSIbRC9
- TkFNXxvZsw9eFkMu3jhA2iTi9gxHvdE6nAwoMqATjMMG17EkpJuHaspnT8KbtUQjR/Zp
- Bl6WXIzasgpemP5Axqto1eKfe6AdhVsVH3t2NrWKRNB8WxW4VGZakPjQquLBAP91lTP0
- ed1g==
-X-Gm-Message-State: AOJu0Yytg/u6ClnKqJKH03xYVkHWwXeRj8ZIxUMGA/jvIZLjxp22+qdJ
- X5HmcPAXflN2MMx1ISEfpkZz8rZlILQhX9Ueou/YNj+0q2HnLCN5LJiGI9YBbNDmfyJ2q021AS+
- 0f8k=
-X-Gm-Gg: ASbGnct97VD3g4RRqkGjd8yDQY6qsxcclLcksYGcprCf/uPCmfyg3NKWVJ5Zo3XvF9O
- ///QysraGhOP0gj4kR95A9ZDNUpNuScGYT3Eu7oBhmfgRDFNhiMFB5as+ZKaFQZuYCoNS/pcIJW
- Ql20JGUcbtExqp8MuviOZGbFMWJRy/kXPruUhd/BD+Jw0/XVbFvF7U7IhoAaW3v99F4H0nnyITs
- Dg4UDQjOiWQQSlgZz0Ioy4fOzFEYfP3fcbiJPjQYfY5Fd0l+PZs6BXcxb3UwgXkoxTNKykzsnDO
- Bm3JMnlQq+MZeD7FV50CqAN1LrYhuyFHV5uKChW8WgsVvDc7G2KocAg25Js4K9dWR7hk
-X-Google-Smtp-Source: AGHT+IEt+t39VYLZAa4+/wnCND5xRU/ZSLv+O76WzxsZu3Ia3TplzDBavbHYq2DFeL2yh+PGhTvI1A==
-X-Received: by 2002:a17:902:ce05:b0:220:e991:480a with SMTP id
- d9443c01a7336-221707755b4mr106702095ad.15.1740018923260; 
- Wed, 19 Feb 2025 18:35:23 -0800 (PST)
+ bh=5pOC/FqRASKAHeZBhAimHJ1l8ohTp5EPkO7j3wpeRcI=;
+ b=Oifwd94QrpzAf2KrGp+18IP/kQvbZ2FEe8cfZCDgYFrAU0jOdFjbTyGSaX7Dl+0M/v
+ GFjLdSDE8gvLZRysVaLCjOYt1tADxGPk7h+HLTXpcN/TsmHyRfZp0vmKdUWAno450PHC
+ z+Xiet6S2iUTUEhdehNLHEPPjb++olJS0eQ0ZgBO1/vo0Hdb5MjJdEUMSq5epmczVtWF
+ YzPX5sWBlqTO4d87EYXk8ACEZ62BpYSVoiStvDL+OZasLVp863fOf1rqH93/NolDsAtX
+ b+UI9BG3ATfZrioYI26CGVlNqcvsSxW6Q8a+TpiOYIjCXeAhWdLgYnErL872oyPwcRlU
+ FuDQ==
+X-Gm-Message-State: AOJu0YzQE/QApaAdnoGtHyxPnAKswDaUwyPDsf7ssekBFuanlLYDifuB
+ CyHFIAoaKmL/iiuZdw6n1+3st3EG0MZs9ZR5OJDxaS5XMKxcF+iWaEFIPTgdlbNlux7Cz5IYUQY
+ jkAk=
+X-Gm-Gg: ASbGnctIFdWytwKmOuQMSef4uCxR0dvAzFD9q2YWm6Xu26t36LTW88w7p+iPMN/ToVx
+ kBXtsLNOdyftQdoTplkMFG3v6N56JeQQx7O7xcv5x7otUAgduqFnGq96mE2z/GjbhQieI/g3Vhu
+ LtK8k4YMA7RwDxXmgyMMuxkYFEJRdfKO5xKkcQinSbmvsOnpWyDyaQu5fdK9Tl6US39910viHqW
+ I/Qz6q6DCTogY9mxadmBWLsWsEh8Gx3FR6NGeVVkKu14w26dRVGToV/bRDZQWpgxn21Gi5NRRD2
+ fvvSOZP6G6DbWB0jnos3qmXjIaNYbYVLGzE9zAXUzXgdOVWzPvGNwgh6jbvdeR12jF9T
+X-Google-Smtp-Source: AGHT+IE6PsvCtkVYCjU5288pC6XYq6OiXP8eut8+CBA/vynIFFF5N2sBccrjgtn5jYdTw3nXXyZPTQ==
+X-Received: by 2002:a17:90b:224e:b0:2ea:bf1c:1e3a with SMTP id
+ 98e67ed59e1d1-2fc40f0e957mr36975139a91.12.1740018924200; 
+ Wed, 19 Feb 2025 18:35:24 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d53490b6sm111668345ad.16.2025.02.19.18.35.22
+ d9443c01a7336-220d53490b6sm111668345ad.16.2025.02.19.18.35.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Feb 2025 18:35:22 -0800 (PST)
+ Wed, 19 Feb 2025 18:35:23 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chas Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>
-Subject: [PATCH v2 03/14] net/bonding: remove unnecessary deref of function
- pointers
-Date: Wed, 19 Feb 2025 18:32:07 -0800
-Message-ID: <20250220023509.630569-4-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v2 04/14] net/ixgbe: remove unnecessary dereference
+Date: Wed, 19 Feb 2025 18:32:08 -0800
+Message-ID: <20250220023509.630569-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250220023509.630569-1-stephen@networkplumber.org>
 References: <20250217185743.169778-1-stephen@networkplumber.org>
@@ -83,57 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The expression *dev->dev_ops->dev_info_get and
-dev->dev_ops->dev_info_get are equivalent in C.
+The expression *dev->dev_ops->vlan_strip_queue_set and
+dev->dev_ops->vlan_strip_queue are equivalent in C.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bonding/rte_eth_bond_pmd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 467f7fe7ea..b742f538fb 100644
---- a/drivers/net/bonding/rte_eth_bond_pmd.c
-+++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -2493,8 +2493,8 @@ bond_ethdev_member_link_status_change_monitor(void *cb_arg)
- 			polling_member_found = 1;
+diff --git a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
+index 15c28e7a3f..5a7d66d9b9 100644
+--- a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
++++ b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
+@@ -291,7 +291,7 @@ rte_pmd_ixgbe_set_vf_vlan_stripq(uint16_t port, uint16_t vf, uint8_t on)
+ 	if (on > 1)
+ 		return -EINVAL;
  
- 			/* Update member link status */
--			(*member_ethdev->dev_ops->link_update)(member_ethdev,
--					internals->members[i].link_status_wait_to_complete);
-+			member_ethdev->dev_ops->link_update(member_ethdev,
-+					      internals->members[i].link_status_wait_to_complete);
+-	if (*dev->dev_ops->vlan_strip_queue_set == NULL)
++	if (dev->dev_ops->vlan_strip_queue_set == NULL)
+ 		return -ENOTSUP;
  
- 			/* if link status has changed since last checked then call lsc
- 			 * event callback */
-@@ -3275,7 +3275,7 @@ bond_ethdev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+ 	/* The PF has 128 queue pairs and in SRIOV configuration
+@@ -310,8 +310,7 @@ rte_pmd_ixgbe_set_vf_vlan_stripq(uint16_t port, uint16_t vf, uint8_t on)
+ 				  RTE_ETH_64_POOLS;
  
- 	for (i = 0; i < internals->member_count; i++) {
- 		member_eth_dev = &rte_eth_devices[internals->members[i].port_id];
--		if (*member_eth_dev->dev_ops->mtu_set == NULL) {
-+		if (member_eth_dev->dev_ops->mtu_set == NULL) {
- 			rte_spinlock_unlock(&internals->lock);
- 			return -ENOTSUP;
- 		}
-@@ -3325,8 +3325,8 @@ bond_ethdev_mac_addr_add(struct rte_eth_dev *dev,
- 
- 	for (i = 0; i < internals->member_count; i++) {
- 		member_eth_dev = &rte_eth_devices[internals->members[i].port_id];
--		if (*member_eth_dev->dev_ops->mac_addr_add == NULL ||
--			 *member_eth_dev->dev_ops->mac_addr_remove == NULL) {
-+		if (member_eth_dev->dev_ops->mac_addr_add == NULL ||
-+		    member_eth_dev->dev_ops->mac_addr_remove == NULL) {
- 			ret = -ENOTSUP;
- 			goto end;
- 		}
-@@ -3361,7 +3361,7 @@ bond_ethdev_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
- 
- 	for (i = 0; i < internals->member_count; i++) {
- 		member_eth_dev = &rte_eth_devices[internals->members[i].port_id];
--		if (*member_eth_dev->dev_ops->mac_addr_remove == NULL)
-+		if (member_eth_dev->dev_ops->mac_addr_remove == NULL)
- 			goto end;
- 	}
+ 	for (q = 0; q < queues_per_pool; q++)
+-		(*dev->dev_ops->vlan_strip_queue_set)(dev,
+-				q + vf * queues_per_pool, on);
++		dev->dev_ops->vlan_strip_queue_set(dev, q + vf * queues_per_pool, on);
+ 	return 0;
+ }
  
 -- 
 2.47.2
