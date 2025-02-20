@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA00C021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35944C021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:06:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1656B40E13;
-	Thu, 20 Feb 2025 23:04:41 +0100 (CET)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 8304140DD2
- for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:31 +0100 (CET)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur05lp2171.outbound.protection.outlook.com [104.47.17.171]) by
+	by mails.dpdk.org (Postfix) with ESMTP id 2F05140E21;
+	Thu, 20 Feb 2025 23:04:42 +0100 (CET)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 188B640A81
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:32 +0100 (CET)
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur02lp2040.outbound.protection.outlook.com [104.47.11.40]) by
  mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 20 Feb 2025 22:04:30 +0000
+ Thu, 20 Feb 2025 22:04:31 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=agqA0RXv/Vz2ESlSFbbxh4KjZkDtWmHPdlpTCYyms19ZCeXwGfKgTOCUIhKGfZMR/KAvM6JEmiGw/8iHQxjvSTH/DQUnbvJzNRI+OvcFHswL8iUKkQw8eJ7t/ywaNgUgAlElH0FuxpjhGOOJx2giqVqXkXVu38zUX4YXa4IxpIj6phxA/H+Hrw4GY5x46qwlFWEqOsYLKQB58Q0uxrYgC/iKeeLIiWc/5nNasQRDv8lMTgPr2gI13FzfMoHG6SR3FJGvPrBd8oorxYtGmVwRKL1rdCDvJJeGU98BD+nhJ5J6MHadlcBfmGei/xi5jWMk7944wot6psBOXvXsEhMjTQ==
+ b=TZAJnxaRD8wDuyD8m7hLh59tBb+C34LKQD8zbb3iWEUGmHehnpZDo9KHCzoJBSbvDy52crvBQ47geCEVJ4rlSYJ6QySXnpgLX4XCQuehhLUtgd+XT95fb7GWXWl+S3TiomaSTUMrnJZMCjMLpifLrLlXUzREyvrWKMziMwI0Rro7xqUxDBU3AirZXk7oTv6D7pv2GLlWTDYeRtGFuqgadl5Lo4KFKYZZFUph+lFAqOw8Y25t7eypqJHm5fUTH/ik5rgNSBhJjDrOs2WB4LKE4rgYFR1vgqvR+sJlXQHdQN2wd4mE2xr9Z1WVzBrBz4AY6LdGixieHiDxn4UduVDiIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p7ICxblWr0ouLy6kn81vJDI17fzpEm+mOSTCpV9ceEE=;
- b=WBTn/sF1Qv+QzgmJb6Y7SyWqDT8GbZBc2ogOApmeJCJoVsYl+NhK0Jj8izPXe9dny5iE7bjdzPLtULGPPfeELcUNI4CuvfW/cYcbNQVxWatTzRM9/GesYLGpFfRfrYVbG3FBapXbr98bOsL2D5L5PUWKwkG6kbRvcETpkCybwu9+YL7pRu/ZeUpoCHH+8DlV8cZVHhSCdFD1fdvSJOrYTyiGSoGHIUVmLX+80sReu8k2K7EjyjbMvOcRkHPagk6Se8VvQ2PNdVBtY/ueb5xNwbbkCORr1l4XXAXOs5zIRmcJK/bSuBOHHXs3UxrfYJ9EDaQSY/iG51HTrkSxAnq1CQ==
+ bh=RzGnMOSfVoVbGZ1+RHcwoIp/WMjAN28hsHohqB50tFg=;
+ b=VLFBWGVq1gvo3lthVoxq9YNtB1CCY3rR2PKJZzqRN6WXEKHkfQggYab0Odo+sGb3VxN3apOkKJgX7wFCsRIabJhnRAmM7VYI0HC5ROIeW5dBNS+5/tpj+3HdIfqGqsyoiU9eSTxAj3OgrU7SfvDVh7VfDwfY2wq60R54HO6fAInEYg875ztNXWPob/FiKbE9C3o8IQIqa3ToTCeGbnMNUaTKb78tcuz6aTruLRXGtQn4EZJarm4E0q4REYuT+7jU8qoIoYP/SVTkPP6UGk6aJA47mD7aVSEhz4/1+6sRCdMFbjaYkKD3XFVcpmLorrW6KdsfDPzBWF80MuIKYgx3qQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p7ICxblWr0ouLy6kn81vJDI17fzpEm+mOSTCpV9ceEE=;
- b=ZFaa2MRftCTUSrQpYCtKbptS1HJ+WmdepxbYiHbnScOOvGhUlI9pq9Fdqpp4r4XBTkEx1mo7NJ2yumIb/1Xg1vS1KwjauL8RhnXCxtA9g9LZc/zPLHfZ+aFPFbsfge2aSFm419FgxkfChp2kspyEbJukkbRqvi9I4phgdrrRqr0=
-Received: from CWLP265CA0502.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::16)
- by GVXP190MB2180.EURP190.PROD.OUTLOOK.COM (2603:10a6:150:1f6::8) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=RzGnMOSfVoVbGZ1+RHcwoIp/WMjAN28hsHohqB50tFg=;
+ b=GLIY7IujiDOcFWnZyqYUYrQuSyv2xuV1x0V+n0Kc3sdVa5GS95SvbMpxE+9xVILVhp1LUdoBnovwv69SQ+aWo1ioYPxNj0LzIWvDctlyNQQ+0eQqE4U14S36ZTJ5uVpdxCW+XJbDu79i0EOWgxreGD4Ilsm24PfNGgkoceOxm8s=
+Received: from CWLP265CA0510.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::10)
+ by AS4P190MB1879.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:506::20)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 22:04:27 +0000
+ 2025 22:04:29 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::f7) by CWLP265CA0502.outlook.office365.com
- (2603:10a6:400:18b::16) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:400:18b:cafe::6c) by CWLP265CA0510.outlook.office365.com
+ (2603:10a6:400:18b::10) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:26 +0000
+ 20 Feb 2025 22:04:29 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:26 +0000
+ 22:04:29 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
- stephen@networkplumber.org
-Subject: [PATCH v1 19/32] net/ntnic: add PHY ftile reset
-Date: Thu, 20 Feb 2025 23:03:43 +0100
-Message-ID: <20250220220406.3925597-20-sil-plv@napatech.com>
+ stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
+Subject: [PATCH v1 22/32] net/ntnic: add HIF clock test
+Date: Thu, 20 Feb 2025 23:03:46 +0100
+Message-ID: <20250220220406.3925597-23-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,60 +66,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|GVXP190MB2180:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|AS4P190MB1879:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: b0ed69da-ae6b-4002-ed6d-08dd51fa8ac2
+X-MS-Office365-Filtering-Correlation-Id: f63be8a9-baa1-4b5c-a0dd-08dd51fa8c5a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?AJnSk5kcZxnvXriY+EX5oA9vBkTNRSbpGtJOs1DTFxwWLcCvN72rLUddgncR?=
- =?us-ascii?Q?Py1pnHp8a5r5hIws+Yl0GZdgGeg6dNxaHhqCWYKjE4y4MaH9UgMOESchrui1?=
- =?us-ascii?Q?a53WHRdMfp85hnt5HUCw3UZ8S9jPj9IpBWdKZSRIWaHw8/ix9cCT+TwaAB81?=
- =?us-ascii?Q?m9qMb3g4cYWHN2/NzzaaDwLmVU6hMY64Fl0HnkoYrpyaBXsQfNMhfLU+aC/P?=
- =?us-ascii?Q?wN06md5tnFACbfFUxJPV5TlSdi7QVeSytmfXuYVBp6NG+Bj1AgQ9FFPQbYlf?=
- =?us-ascii?Q?xR1SfVik3BYgYc1/8JOp7EE62QuZEShXksKKENrcATlG95F4HCDdO4r/xmG3?=
- =?us-ascii?Q?Zqvr+/zSRbbUn6DiBfxHtgot5FXYI55d8ZTt/bQryKXSCaCjPTKt9lnt7yAN?=
- =?us-ascii?Q?905DvpE0TbAvvtOgzuRkDN26YUnBep2pFBeXcbXpj+xm2tUZArNOT7IZf4O+?=
- =?us-ascii?Q?wVNFVRK/MKnBKO3v5bieXQCWw5g5NeDr2ypZWRGIkxpyhoTAKeM6CdnjWeC8?=
- =?us-ascii?Q?n7ou/sVExFrzCOXlEEasDQwHTVB2A+ozmb0ye3uBUtHbunPFD37HE/McUSvK?=
- =?us-ascii?Q?5kUpOHMpMenG3j8RBAsKqjakIPCbxP8mLl5AgqKQzFOs1+Wpjz27/h4/Tp69?=
- =?us-ascii?Q?x2MPWlt+woWaypBS/3jnLcBDnd6jZ74EmQDi6FP9Ko2fN2IFG2HgbBK+pt5V?=
- =?us-ascii?Q?yqlSluPdP+kJhzRwL0Vp4cq+st2lSh65JUHMyGgCPsZeTlgOPlDds0Tc1175?=
- =?us-ascii?Q?eaUij6yZezsItd/ILxNIIZDRpgfGDYnTTZwrZqd9gkORMKVVPVVD12Sb/Osu?=
- =?us-ascii?Q?DljUydAAtA539URizENb/x9TBt7Wcww8aUNqtKgzmjiieOhTqP+aG9ycLQEO?=
- =?us-ascii?Q?uvESXLvxiI0ExGeC27NC3njN23WRgvfbSy+pf5QdPj8F0b9HVyjkB0w3Kj1c?=
- =?us-ascii?Q?457jz6h2uPQfxH26J+12e6UHtnV9KcSxWmPOmXBSa2f7VgVKVyGAH1l8bfQ1?=
- =?us-ascii?Q?UwPL7HqGfA7Fvg6xPTTh3mSfkoSnICdFkeENgbwdU4rE+eHYEIdWD3bkvaC2?=
- =?us-ascii?Q?B8EbRSP0SQ7GSBosdsg7T6FmnmvVDRrp9REWF3uep8ScTUp4G//R9+mAR0Z/?=
- =?us-ascii?Q?LiZ2eURZLn0+mKXImSdwfxG61ehiG+iJZUZNb4iDPyrIk29YXgE2irRk3iOg?=
- =?us-ascii?Q?cnTlCU7KMuokOowlSEWJuOV/spggLlLgt/8GrYW9IiWUGVJmVIFj1i86CRnv?=
- =?us-ascii?Q?AKIWbyP9D7gVUgmL6Ye58zZ2nNWXXXRTxlpwaWAZJbogg2g57O6q9S3XCqBf?=
- =?us-ascii?Q?19wtDrTDE/X2653vz2YzY3LPntZVNDQd/dgjHx75d61v/VINEhsc/+znPGhI?=
- =?us-ascii?Q?DWwlDrdnMGDC+2aFbEEq/F0t4ums/3RKo+hVbs6YnE8yl6fvjj6gCajJ+O9V?=
- =?us-ascii?Q?IknWQVGaqJMgL0zvKtnfC+qJCEKnzBG4mCfjT8yBZvQCqCaWSC7POhIQfBqh?=
- =?us-ascii?Q?pMFNvpwKDox00HY=3D?=
+ ARA:13230040|36860700013|82310400026|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Qqa1oTrv1rQ77MZFtchaHBkHm2QYs4XSaijuvA+1dck3wW+r8dQH+LvzJj3U?=
+ =?us-ascii?Q?iB0WPdDX/XWuzFXqd63UENlOKpQxgt0bQUycNwtCQYdiKLPC+bJ0QhctlXbS?=
+ =?us-ascii?Q?b9IGgfWnKjTmFGEDmhmgXkp7rYDakfoU30wMTxGB4MUqcoVe74RTzM9GbCEg?=
+ =?us-ascii?Q?TPBUille2xsX2RKBKvvjEe0/+nKyhavdhVw5fezru1yGhnx6C0uwPheAmVb1?=
+ =?us-ascii?Q?Jy7AHujUwD2KAo07x012hAgZRZ7r3JYMF5ddx+OkRbvHM5u4NoxqYz/9Pw5N?=
+ =?us-ascii?Q?z9SYB1/a2nCkyaSeWzIEfCoiuebSfB94jk5uZn4No+G4MyoSIWDdZH5B8uin?=
+ =?us-ascii?Q?jhvej28Cgiw/GhtLIB0xxOEkgCbIaSOGqBAgJls8ZGAK7/DpbhisTCw8rNT4?=
+ =?us-ascii?Q?LW/IY6wtRAo+zifhVlaTMZyjvPvS0GBW9vXHPK7lZNk4RbNxI3tO213S31OW?=
+ =?us-ascii?Q?Wvott41VK64U4H+Wizr2zBkDcN6HMXRJwZEaLA9LnCVSzwHhCf2vBO79QoHK?=
+ =?us-ascii?Q?BHy6sx9KuIZYyu1qYLV7Zp1k5RGPYJUeD9nFj23GTSRNK63Do2idYuwl//Ax?=
+ =?us-ascii?Q?wB8i0hvuACJRVSIXQ2KgjonVX5m2Si/ZFoV2Slks8o+od++z8EZWnkjoL9T0?=
+ =?us-ascii?Q?Pe6Ao1HRat+oPTf0ssRUI5SgIHyZYvgmrfI4/ueNxjoMfCyb0HLBSLaTZ5wF?=
+ =?us-ascii?Q?I7or1diIbP+Klw24oRBjHTzV4njf3sSoBIIGGJTGTqHlFnDbe238PY4AheWb?=
+ =?us-ascii?Q?+hwrguc/v8O9codAHYdW4y78CTRpcgZr/4f6mzzo+6d/ka50a4S9cqR+c372?=
+ =?us-ascii?Q?9h0yNcrvin+p+8sa4+xVmIWvAgh+C+W90ueH7880uVhT2vsPN7eQ3Or+s2hx?=
+ =?us-ascii?Q?8rHeStLKM8QW3bJ+EFM4XA4iUACnVH0p8bcuYjUrPX9I26y/n0FbsqP3TkOI?=
+ =?us-ascii?Q?YEaFN0LEkM+dCOi6DLtC9dmX7i13OQLGKB5GJRj82ix+rXa9utYAbH0mp5zh?=
+ =?us-ascii?Q?i1Ouy7xFOa4Pq4MOWzIskKTbYRch43vtPHuMPGx0zJNW3g6U8hpr8TNalHmt?=
+ =?us-ascii?Q?DrP0P3ZCXcaYj+IHtR+gPjO6h69zaGj7LG4KyObngFYCUkGfJIQ50HTpXTuG?=
+ =?us-ascii?Q?T7hLto4zjJwjfZluA6621UGpsq6s6JMymkpgKbL8rEi/7xGxxv8n5CIUtUqh?=
+ =?us-ascii?Q?38r3yVAi4+bSyzEQ6PdYp8cGWZZwB8/lhQMf4H3xVpWqi+2o1jRvewT+1B/7?=
+ =?us-ascii?Q?LR3L+7wGwe9WGtJtwfAzXXjIeyEDpLqKuTi1dO7n/RDbK8hIBbZpMjmvrpxU?=
+ =?us-ascii?Q?A1OPf+40c96PQl00xzBfFMkvSU3CZ/gWG4atcVwSv99P2vbX/h0aPJPpnafB?=
+ =?us-ascii?Q?tPMhKH1YUHoJEWSGtldtyvkMajnNgg5H/qeGHC8kWKawjfVR1HWqmk9e9FXF?=
+ =?us-ascii?Q?ZUquB+QnsUsipq70B8D+6mj3l6GE5Min1iis6y/zKm6mQpxi5vxNHKF2LEFl?=
+ =?us-ascii?Q?MP3Cmj5TGaevzDM=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);
+ CAT:NONE; SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: f0R9YXIjwJNgjkTCjtBnrkyZRRKyw9puT2F1y2WS1jLy21grEBvdpCnhCLgEwmo4KpapEkPky45UiBnAG07OPe1Hgjrw4U1qtyT8S+AS8klQiidt3lOzon2sGQq7D0kNaVzWySJJUqOWksMQgcRkV3omM+MfjMSHeKvzTpxZiqdUHDvluKq4FegTRfYz+LlVTlzYxYJe/3qOs0uI1Fq6We7uWDH8A8thrfsVHgI5HOO3N7nBNRoZGNjSCwWklCqACIHBw9zC2yoNyalZ0pBe0NBp9QZ7RlAQniB0HxIDVDAWMG8xzXnYQy2fatOYIU8TUnifY3GfxWr5V+8dYDtX0oDK381Ohq4X304SH7v0/PLZ3NCf+md+QMz32NcjrsrD1SeFTp8/8OYpWUKZK2Y11Q50b2uigV0Hj1lvuPQoMG9nYJfwOmuBNV0x0FJd+MXzvW+NtPl4/mvRXVHOp4b/LGb3IYmv4IaDpqnWQsVEVZTd1fNw1gqmJEBmBe8+yAnOfLS1OyI10SBeSx3u2mpWgs6JkP/tD5xyudrv6c8SwQCoVWLHbUPG5Vy+U0APjGZjNFQnLNrhSfjmpKwwXTkmqzcl1ZDPbiBKyDq6vOO7aTtzLfa50cQoUpn22Fh6weueoQrmBCs/zhbBFJ7Am2ZOQKZ3rnZZ6bMen3GkKaxwYd8=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: TEg2BHzpuH8XeTz+bTEEhknX+9hyP0U/fzMlQWSiSXFn+RwVBp5Yqru99D52ZQGXBfd74IAUTRoVvA7qP5OXihpFBvWJ2IKtB8yUbrZ9nBnlQl9pf+dx98fR4NXIuiN/aBzfR3CRz2ZIwIFNrzDr5xfg+W+0WIpK+1905lG/eIyMTgtJjoIkcEmrooH3ErLjXRRhIqpL3TTt+ydM7nouWCeF0StO2J9YT2e5WPZype0f4pCH1qZ6ViLHybgPmmi2qSq3pfQGCjQl1wO6ZqZF9mpnER08L2zAh9k7VTF135zdYXX0IBFtZ4e289U7OPYpV/KlbhxIA7NjMBkG09x0mZ5Uv3f404SAc3yx4Z0YluQZD+3SA3gLuF1i5obd7ALZXIFEQX00GW7KrVVJB4LVdlNvzyf+ca1LXtVy+pcYCBmWYHANTPiGEJDeE/VqkxqsodcZ1dSxjPmQpDirVTqraJDz3VwejyMj09wkyTpbhfXbpkeaEjkqhW5y6AJdG/2wZCEEsvjYZqJIXWUhYm9DWF9EQ8r59VfrjAsLZ6TI4JidhZmix15CbCtz2FQDHLrfIyjzLHB9AlUgmXf3CP78fUSTlv6tGCpW5WnZ+d1KjmGjQPPUImEEcAfRu3H3lA2BabRWEBoeldLWkQlkSkHKcwoOdj+3vR2iELHwof7haN4=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:26.7089 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ed69da-ae6b-4002-ed6d-08dd51fa8ac2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:29.3651 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f63be8a9-baa1-4b5c-a0dd-08dd51fa8c5a
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXP190MB2180
-X-BESS-ID: 1740089070-312005-29066-14097-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4P190MB1879
+X-BESS-ID: 1740089071-312005-29070-14098-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.17.171
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpbm5iZAVgZQ0CgxzTzVwszEKN
- k0LcnMMNXSIC3ZMCnJOMU0MSUlKcVCqTYWAJpCso9BAAAA
+X-BESS-Apparent-Source-IP: 104.47.11.40
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsYWFgZAVgZQMMXYNMnYzMI0yS
+ gtzcIoJSnVwtjcPMUkOdUo1cLU3MRcqTYWAF0QXElBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
@@ -144,307 +144,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add reset functions and reset procedure for module PHY FTILE
+From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
+Add HIF clock test with write/read verification.
+
+Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- .../ntnic/nthw/core/include/nthw_phy_tile.h   |  12 ++
- .../core/nt400dxx/reset/nthw_fpga_rst9574.c   | 161 ++++++++++++++++++
- drivers/net/ntnic/nthw/core/nthw_phy_tile.c   |  38 +++++
- 3 files changed, 211 insertions(+)
+ .../net/ntnic/nthw/core/include/nthw_hif.h    |  3 +
+ .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   | 20 +++++
+ drivers/net/ntnic/nthw/core/nthw_hif.c        | 82 +++++++++++++++++++
+ 3 files changed, 105 insertions(+)
 
-diff --git a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-index f84aef44a9..68d8455b8d 100644
---- a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-+++ b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-@@ -8,6 +8,10 @@
+diff --git a/drivers/net/ntnic/nthw/core/include/nthw_hif.h b/drivers/net/ntnic/nthw/core/include/nthw_hif.h
+index c8f4669f83..deb9ed04e8 100644
+--- a/drivers/net/ntnic/nthw/core/include/nthw_hif.h
++++ b/drivers/net/ntnic/nthw/core/include/nthw_hif.h
+@@ -148,4 +148,7 @@ int nthw_hif_get_stat_rate(nthw_hif_t *p, uint64_t *p_pci_rx_rate, uint64_t *p_p
  
- #include "nthw_fpga_model.h"
+ int nthw_hif_end_point_counters_sample(nthw_hif_t *p, struct nthw_hif_end_point_counters *epc);
  
-+enum mac_pcs_mode_e {
-+	MAC_PCS_MODE_2X100
-+};
++int nthw_hif_read_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t *p_value);
++int nthw_hif_write_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t value);
 +
- struct nt_phy_tile {
- 	nthw_fpga_t *mp_fpga;
+ #endif	/* __NTHW_HIF_H__ */
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+index 1d93474cff..60e7714283 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+@@ -24,6 +24,26 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 	if (res == 0)
+ 		NT_LOG(DBG, NTHW, "%s: Hif module found", p_fpga_info->mp_adapter_id_str);
  
-@@ -16,6 +20,8 @@ struct nt_phy_tile {
- 	int mn_fpga_version;
- 	int mn_fpga_revision;
- 
-+	enum mac_pcs_mode_e mac_pcs_mode;
++	/* (A) Test HIF clock is running by performing simple write/read test of HIF registers */
++	const uint32_t test_pattern[2] = { 0x11223344, 0x55667788 };
 +
- 	nthw_register_t *mp_reg_port_xcvr_base[2][4];
- 	nthw_field_t *mp_fld_port_xcvr_base_ptr[2][4];
- 	nthw_field_t *mp_fld_port_xcvr_base_busy[2][4];
-@@ -39,6 +45,8 @@ struct nt_phy_tile {
- 
- 	nthw_field_t *mp_fld_port_status_rx_hi_ber[2];
- 	nthw_field_t *mp_fld_port_status_rx_am_lock[2];
-+	nthw_field_t *mp_fld_port_status_reset_ackn[2];
-+	nthw_field_t *mp_fld_port_status_tx_lanes_stable[2];
- 	nthw_field_t *mp_fld_port_status_tx_reset_ackn[2];
- 	nthw_field_t *mp_fld_port_status_rx_reset_ackn[2];
- 
-@@ -93,5 +101,9 @@ uint32_t nthw_phy_tile_read_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t la
- 	uint32_t address);
- void nthw_phy_tile_write_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane, uint32_t address,
- 	uint32_t data);
-+uint32_t nthw_phy_tile_get_port_status_reset_ack(nthw_phy_tile_t *p, uint8_t intf_no);
-+uint32_t nthw_phy_tile_get_port_status_tx_lanes_stable(nthw_phy_tile_t *p, uint8_t intf_no);
-+uint8_t nthw_phy_tile_get_no_intfs(nthw_phy_tile_t *p);
-+void nthw_phy_tile_set_port_config_rst(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t value);
- 
- #endif	/* __NTHW_PHY_TILE_H__ */
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-index 27d60d1448..b1bbe28709 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-@@ -79,17 +79,44 @@ static void nthw_fpga_rst9574_set_default_rst_values(struct nthw_fpga_rst_nt400d
- 	nthw_field_set_val_flush32(p->p_fld_rst_phy_ftile, 1);
- }
- 
-+static void nthw_fpga_rst9574_sys_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
-+{
-+	nthw_field_update_register(p->p_fld_rst_sys);
-+	nthw_field_set_val_flush32(p->p_fld_rst_sys, val);
-+}
++	for (uint8_t i = 0; i < 2; ++i) {
++		uint32_t test_data = 0;
++		nthw_hif_write_test_reg(p_nthw_hif, i, test_pattern[i]);
++		nthw_hif_read_test_reg(p_nthw_hif, i, &test_data);
 +
- static void nthw_fpga_rst9574_ddr4_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
- {
- 	nthw_field_update_register(p->p_fld_rst_ddr4);
- 	nthw_field_set_val_flush32(p->p_fld_rst_ddr4, val);
- }
- 
-+static void nthw_fpga_rst9574_phy_ftile_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
-+{
-+	nthw_field_update_register(p->p_fld_rst_phy_ftile);
-+	nthw_field_set_val_flush32(p->p_fld_rst_phy_ftile, val);
-+}
-+
-+static bool nthw_fpga_rst9574_get_phy_ftile_rst(struct nthw_fpga_rst_nt400dxx *const p)
-+{
-+	return nthw_field_get_updated(p->p_fld_rst_phy_ftile) != 0;
-+}
-+
- static bool nthw_fpga_rst9574_get_ddr4_calib_complete_stat(struct nthw_fpga_rst_nt400dxx *const p)
- {
- 	return nthw_field_get_updated(p->p_fld_stat_ddr4_calib_complete) != 0;
- }
- 
-+static bool nthw_fpga_rst9574_get_phy_ftile_rst_done_stat(struct nthw_fpga_rst_nt400dxx *const p)
-+{
-+	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rst_done) != 0;
-+}
-+
-+static bool nthw_fpga_rst9574_get_phy_ftile_rdy_stat(struct nthw_fpga_rst_nt400dxx *const p)
-+{
-+	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rdy) != 0;
-+}
-+
- static bool nthw_fpga_rst9574_get_ddr4_calib_complete_latch(struct nthw_fpga_rst_nt400dxx *const p)
- {
- 	return nthw_field_get_updated(p->p_fld_latch_ddr4_calib_complete) != 0;
-@@ -145,6 +172,69 @@ static int nthw_fpga_rst9574_wait_ddr4_calibration_complete(struct fpga_info_s *
- 	return 0;
- }
- 
-+static int nthw_fpga_rst9574_wait_phy_ftile_rdy(struct fpga_info_s *p_fpga_info,
-+	struct nthw_fpga_rst_nt400dxx *p_rst)
-+{
-+	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
-+	uint32_t complete;
-+	uint32_t timeout;
-+
-+	/* 5: wait until PHY_FTILE reset done */
-+	NT_LOG(DBG, NTHW, "%s: %s: PHY FTILE ready", p_adapter_id_str, __func__);
-+	timeout = 50000;/* initial timeout must be set to 5 sec. */
-+
-+	do {
-+		complete = nthw_fpga_rst9574_get_phy_ftile_rdy_stat(p_rst);
-+
-+		if (!complete) {
-+			nt_os_wait_usec(100);
-+
-+		} else {
-+			NT_LOG(DBG, NTHW, "%s: PHY FTILE ready, margin to timeout %u",
-+				p_adapter_id_str, timeout);
-+		}
-+
-+		timeout--;
-+
-+		if (timeout == 0) {
-+			NT_LOG(ERR, NTHW, "%s: %s: Timeout waiting for PHY FTILE ready",
-+				p_adapter_id_str, __func__);
++		if (test_data != test_pattern[i]) {
++			NT_LOG(ERR,
++				NTHW,
++				"%s: %s: Test sys 250 clock failed",
++				p_fpga_info->mp_adapter_id_str,
++				__func__);
 +			return -1;
 +		}
-+	} while (!complete);
++	}
 +
-+	return 0;
-+}
++	nthw_hif_delete(p_nthw_hif);
 +
-+static int nthw_fpga_rst9574_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_info,
-+	struct nthw_fpga_rst_nt400dxx *p_rst)
-+{
-+	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
-+	uint32_t complete;
-+	uint32_t timeout;
-+
-+	/* 5: wait until PHY_FTILE reset done */
-+	NT_LOG(DBG, NTHW, "%s: %s: PHY FTILE RESET done", p_adapter_id_str, __func__);
-+	timeout = 50000;/* initial timeout must be set to 5 sec. */
-+
-+	do {
-+		complete = nthw_fpga_rst9574_get_phy_ftile_rst_done_stat(p_rst);
-+
-+		if (!complete)
-+			nt_os_wait_usec(100);
-+
-+		timeout--;
-+
-+		if (timeout == 0) {
-+			NT_LOG(ERR, NTHW, "%s: %s: Timeout waiting for PHY FTILE RESET to be done",
-+				p_adapter_id_str, __func__);
-+			return -1;
-+		}
-+	} while (!complete);
-+
-+	return 0;
-+}
-+
- static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt400dxx *p_rst)
- {
-@@ -191,6 +281,77 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 			p_adapter_id_str, __func__);
- 	}
- 
-+	int32_t tries = 0;
-+	bool success = false;
-+
-+	do {
-+		/* Only wait for ftile rst done if ftile is indeed in reset. */
-+		if (nthw_fpga_rst9574_get_phy_ftile_rst(p_rst)) {
-+			/* (5) Wait until PHY_FTILE reset done */
-+			NT_LOG(DBG, NTHW, "%s: %s: Wait until PHY_FTILE reset done",
-+				p_adapter_id_str, __func__);
-+			res = nthw_fpga_rst9574_wait_phy_ftile_rst_done(p_fpga_info, p_rst);
-+
-+			if (res)
-+				return res;
-+		}
-+
-+		/* (6) De-assert PHY_FTILE reset: */
-+		NT_LOG(DBG, NTHW, "%s: %s: De-asserting PHY_FTILE reset", p_adapter_id_str,
-+			__func__);
-+		nthw_fpga_rst9574_phy_ftile_rst(p_rst, 0);
-+
-+		nt_os_wait_usec(10000);
-+		/* (7) Wait until PHY_FTILE ready */
-+		if (nthw_fpga_rst9574_wait_phy_ftile_rdy(p_fpga_info, p_rst) != -1) {
-+			success = true;
-+			continue;
-+		}
-+
-+		if (++tries >= 5) {
-+			/* Give up */
-+			NT_LOG(ERR, NTHW, "%s: %s: PHY_TILE not ready after %u attempts",
-+				p_adapter_id_str, __func__, tries);
-+			return res;
-+		}
-+
-+		/* Try to recover with as little effort as possible */
-+		nthw_phy_tile_t *p_phy_tile = p_fpga_info->mp_nthw_agx.p_phy_tile;
-+
-+		for (uint8_t i = 0; i < nthw_phy_tile_get_no_intfs(p_phy_tile); i++) {
-+			/* Also consider TX_PLL_LOCKED == 0 */
-+			if (!nthw_phy_tile_get_port_status_tx_lanes_stable(p_phy_tile, i)) {
-+				success = false;
-+				NT_LOG(WRN, NTHW,
-+					"%s: %s: PHY_TILE Intf %u TX_LANES_STABLE == FALSE",
-+					p_adapter_id_str, __func__, i);
-+
-+				/* Active low */
-+				nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 0);
-+				int32_t count = 1000;
-+
-+				do {
-+					nt_os_wait_usec(1000);
-+				} while (!nthw_phy_tile_get_port_status_reset_ack(p_phy_tile, i) &&
-+					(--count > 0));
-+
-+				if (count <= 0) {
-+					NT_LOG(ERR, NTHW, "%s: %s: IntfNo %u: "
-+					"Time-out waiting for PortStatusResetAck",
-+					p_adapter_id_str, __func__, i);
-+				}
-+
-+				/* Active low */
-+				nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 1);
-+				nt_os_wait_usec(20000);
-+			}
-+		}
-+
-+	} while (!success);
-+
-+	/* (8) De-assert SYS reset: */
-+	NT_LOG(DBG, NTHW, "%s: %s: De-asserting SYS reset", p_adapter_id_str, __func__);
-+	nthw_fpga_rst9574_sys_rst(p_rst, 0);
+ 	/* Create PCM */
+ 	p_fpga_info->mp_nthw_agx.p_pcm = nthw_pcm_nt400dxx_new();
+ 	res = nthw_pcm_nt400dxx_init(p_fpga_info->mp_nthw_agx.p_pcm, p_fpga, 0);
+diff --git a/drivers/net/ntnic/nthw/core/nthw_hif.c b/drivers/net/ntnic/nthw/core/nthw_hif.c
+index 9f699e4f94..92a2348bbb 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_hif.c
++++ b/drivers/net/ntnic/nthw/core/nthw_hif.c
+@@ -298,3 +298,85 @@ int nthw_hif_end_point_counters_sample(nthw_hif_t *p, struct nthw_hif_end_point_
  
  	return 0;
  }
-diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-index b057e9e88c..a8c2d03be9 100644
---- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-@@ -44,6 +44,17 @@ static const uint32_t eth_soft_csr1 = 0x200;
- static const uint32_t eth_soft_csr2 = 0x204;
- static const uint32_t eth_soft_csr3 = 0x208;
- 
-+uint8_t nthw_phy_tile_get_no_intfs(nthw_phy_tile_t *p)
++
++int nthw_hif_read_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t *p_value)
 +{
-+	switch (p->mac_pcs_mode) {
-+	case MAC_PCS_MODE_2X100:
-+		return 2;
++	uint32_t data;
++
++	switch (test_reg) {
++	case 0:
++		data = nthw_field_get_updated(p->mp_fld_pci_test0);
++		break;
++
++	case 1:
++		data = nthw_field_get_updated(p->mp_fld_pci_test1);
++		break;
++
++	case 2:
++		if (p->mp_fld_pci_test2)
++			data = nthw_field_get_updated(p->mp_fld_pci_test2);
++
++		else
++			return -1;
++
++		break;
++
++	case 3:
++		if (p->mp_fld_pci_test3)
++			data = nthw_field_get_updated(p->mp_fld_pci_test3);
++
++		else
++			return -1;
++
++		break;
 +
 +	default:
-+		return 0;
-+	}
-+}
-+
- static void nthw_phy_tile_set_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
- {
- 	/* Reset is active low */
-@@ -543,3 +554,30 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 
- 	return true;
- }
-+
-+uint32_t nthw_phy_tile_get_port_status_reset_ack(nthw_phy_tile_t *p, uint8_t intf_no)
-+{
-+	if (p->mp_fld_port_status_reset_ackn[intf_no]) {
-+		return nthw_field_get_updated(p->mp_fld_port_status_reset_ackn[intf_no]) == 0
-+			? 1
-+			: 0;    /* Inverted */
++		assert(false);
++		return -1;
 +	}
 +
-+	return 1;
++	if (p_value)
++		*p_value = data;
++
++	else
++		return -1;
++
++	return 0;
 +}
 +
-+uint32_t nthw_phy_tile_get_port_status_tx_lanes_stable(nthw_phy_tile_t *p, uint8_t intf_no)
++int nthw_hif_write_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t value)
 +{
-+	if (p->mp_fld_port_status_tx_lanes_stable[intf_no])
-+		return nthw_field_get_updated(p->mp_fld_port_status_tx_lanes_stable[intf_no]);
++	switch (test_reg) {
++	case 0:
++		nthw_field_set_val_flush32(p->mp_fld_pci_test0, value);
++		break;
 +
-+	return 1;
-+}
++	case 1:
++		nthw_field_set_val_flush32(p->mp_fld_pci_test1, value);
++		break;
 +
-+void nthw_phy_tile_set_port_config_rst(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t value)
-+{
-+	if (p->mp_fld_port_config_reset[intf_no]) {
-+		nthw_field_get_updated(p->mp_fld_port_config_reset[intf_no]);
-+		nthw_field_set_val_flush32(p->mp_fld_port_config_reset[intf_no], value);
++	case 2:
++		if (p->mp_fld_pci_test2)
++			nthw_field_set_val_flush32(p->mp_fld_pci_test2, value);
++
++		else
++			return -1;
++
++		break;
++
++	case 3:
++		if (p->mp_fld_pci_test3)
++			nthw_field_set_val_flush32(p->mp_fld_pci_test3, value);
++
++		else
++			return -1;
++
++		break;
++
++	default:
++		assert(false);
++		return -1;
 +	}
++
++	return 0;
 +}
 -- 
 2.45.0
