@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AAAC021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCA9C021B4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:04:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE8E0406B7;
-	Thu, 20 Feb 2025 23:04:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2693840A76;
+	Thu, 20 Feb 2025 23:04:23 +0100 (CET)
 Received: from egress-ip11b.ess.de.barracuda.com
  (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id EFC0D40691
- for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:17 +0100 (CET)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
- (mail-am6eur05lp2111.outbound.protection.outlook.com [104.47.18.111]) by
- mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ by mails.dpdk.org (Postfix) with ESMTP id 4E27640653
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:19 +0100 (CET)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2171.outbound.protection.outlook.com [104.47.17.171]) by
+ mx-outbound21-132.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 20 Feb 2025 22:04:16 +0000
+ Thu, 20 Feb 2025 22:04:18 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QzSJzJYfIqMkbWuLXaUDJPJvsBQbIHkQlLOVW+MVoRxHnz9YdHcsv4YnPtiZ+Cn68pwV2uvZnOHQhKBVBU9W9wKN6V795n7mTlLCN31nrOFSrIOkZQsS9Zn6q66oaVOq0v0eq3+xmqQCbaAtnT+ljyfp+VZ0c5ppNqlnC4304wVAhFrmIe1Ji90gwzlLai0ezr3Txy8FxDLVc5tQsNcydLjzJAJqJDrm/9KSVOoPtCSIZzGq3/HTif+j1SSvIFJ57NoBDOHVH/16AAWTXU4V4vn4BNS5MKLQHG7PABJFbE5jTmcqAG+PhoHQ8C27XJM2GBFhf4KuPCRNzTrVFICldA==
+ b=FxTES88rzqfwFFjzhJ2dB6641iVRI+7vrQBf01OnqKFyqgrMUVRgqAvrXWo4TNBussuMWqsu8etAISjxj4ySRx+ZT9hCuxejOiA2qAkcMcWo2vIMPK4CfuuTSGiKcM5lj5QW+hRvuFeugIp9XXD91Remr91yhEn6UL9qejX2udk0HTwILF0By72CIZyAIHjbNzQOTv4lDLprOvnk3qE1TgN02l/0oDuamDbQK6XZ7rAH3rrweTrpKFZiprw12vZtMB2g1SjNHdEv4INxwx+rEWwWZZQ3TKe0xjyLoJpAnq35IO/mgCIr2260GBHUX2fAO/2hmLseb0boVkZBPjjdSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z3K+GLwXcX8IUbBlOxGHrWnlrCTFpawvsFk10+Ln+Vo=;
- b=mGb+sJM1vXrwGh5y7iRQyb7NpqofWtpjuvWK03yOEcu73H5Qtmcr77egcHpl6daIJ2rFQivMy6x0J1PXIOVJurigGU6yyaM7y0mAX6su7PI7de16kCjwIunj2GzFpsyx13TLgx/BpBdc7z0yxpfjoT3b/9uXkM9L7N1hkmgZGDxhgxsCOt0rJJPvY+OJBWsp3AhbMMU36c1Y45h4lTQmVRwT578eq5KZQdMVpoZL0LcF4DYnKBxvPJFHrdUn0bfTQbA+lu4QpN3d/YMSAyJzyPcCQgxUYhGgymc+WNOVOr3hqppNN9yBKtqYt2ScswWQMrL39Ye7xF5FbJimbXL2Qw==
+ bh=IhIE+VsUopdglG4jq4JfZm59hwrEMg1oGFOxyXPKuqI=;
+ b=CcXHtr7skJemfRXA1EyG92xz9k1QMkwuxhgoLqBTcEN7lCygcJiJjcv26Wnf15+VoMcqSjaDtKEkfmfauWJ3fdhtm+v7GjaFmIr8jtn4yAYZ3Q1gO5dzDeRt1B2wDX86NEYNJp565xr1EqgkD6HfM/nf1cw7MKUSleRgIvciiL189wqMvhzr3pTcMuDLPnHyQhE8tTqo1xkjUHBbgv5X7hKCqIBzzWfcGEw0hGNq6v+g4cwhTtainqTkdn30c10tC9zeKMMLEgHchkFbmnRpUw0+7GgFHUhau1wynhkMOrFZkHc08POt/NzGzYXlr3mVEHJUcyrn69cRRWgttU8ixw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z3K+GLwXcX8IUbBlOxGHrWnlrCTFpawvsFk10+Ln+Vo=;
- b=bCGLEst7rpGnP3v1OdtUUj3rYXBVtQBsnBCvMZTAx/gyzd7kTtoJigDFJgnMauUcVBHIo4651AIzR/d35sRKTMKaeMro82b4O1CDqwJ21/DG3Rsjl6NDkA9qEdwvfmUvALWnKXkG2xLrjbpkImkSXjfMJ7qQbmnGDZtQRO0UEU4=
-Received: from CWLP265CA0497.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::15)
- by PA2P190MB2103.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:40a::21)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 22:04:14 +0000
+ bh=IhIE+VsUopdglG4jq4JfZm59hwrEMg1oGFOxyXPKuqI=;
+ b=f8QKlfQLBPaUz+PKYx+fVCG2OAf5J1Xc8oCfCSHkpGhn9grnTKJEAOLJx5yMRxIP6wmV5Spu2jIOO6bMkP91GvrtnoQ+/HmGYOWj9lgV/wjkGd97/qwNAH1rb2ShGuwGyHvmhmvq5e6Cp/suxYBST/vL9Cq/POnXuyX+2xnIa08=
+Received: from CWLP265CA0503.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::9)
+ by AS8P190MB1911.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:524::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 20 Feb
+ 2025 22:04:16 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::68) by CWLP265CA0497.outlook.office365.com
- (2603:10a6:400:18b::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:13 +0000
+ (2603:10a6:400:18b:cafe::46) by CWLP265CA0503.outlook.office365.com
+ (2603:10a6:400:18b::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
+ 20 Feb 2025 22:04:16 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:13 +0000
+ 22:04:16 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 03/32] net/ntnic: add rpf and gfg init
-Date: Thu, 20 Feb 2025 23:03:27 +0100
-Message-ID: <20250220220406.3925597-4-sil-plv@napatech.com>
+Subject: [PATCH v1 06/32] net/ntnic: add line loopback init
+Date: Thu, 20 Feb 2025 23:03:30 +0100
+Message-ID: <20250220220406.3925597-7-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,64 +66,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|PA2P190MB2103:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|AS8P190MB1911:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: ca10c3b2-e856-4f0b-cc3e-08dd51fa830c
+X-MS-Office365-Filtering-Correlation-Id: ba320b18-4086-4453-6dfe-08dd51fa8472
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Wr3hEm0KPpsX4BEiyAg+Cjb5BBQ6qkcpq/4A883Cugy7bLzq0cp7SnXzf+px?=
- =?us-ascii?Q?hoK/xzapQloaAj1kqQW05E8guSg4lQYsQfTwogE7oTgHBX8KPK3Okry77dHA?=
- =?us-ascii?Q?M2F3J5znjqkuXPKpLf9PsVaI2vh0m8c9265HzBFqose9H9Rhqd5/INKmDiXY?=
- =?us-ascii?Q?urV4Xjjov0OO94FdaX3rdVKqUe+uHm4+i/rRuVu5I9RMecfBOQufXhtkR24k?=
- =?us-ascii?Q?2bnyor/WiGZjUu7zKv+PlQrj6QbIWOhFbpNm3UKQiktTmLO+1i6B1AdzUTHh?=
- =?us-ascii?Q?xr5spLGpQlfjovtfMlJWhwq0+C01nRE/9rGk9zXd8orHt3WCzib8k+9r+pRK?=
- =?us-ascii?Q?scBVWP8+LjOamsU0s77+v6csGR8fTrXh7D4u98kmqweyfoxXwhow45zhoUVq?=
- =?us-ascii?Q?/hQzFMSepcS4gm8WJnmbNUc4YmhmS+cjVLIlcnQf7REU/soedDBh9UCVJWBB?=
- =?us-ascii?Q?GFlTMhG+wTtdTtILburf8zCApEicfJESHberpQqidNB6OoqACZ7wyJD2ynEp?=
- =?us-ascii?Q?fUESN0HhkDiHHRq24kC2JkIqGxs45p1vT7k4zRbhQCJAwvXF2/XgR09i0jII?=
- =?us-ascii?Q?siXm5aPjNp792H7gIkR/cAJV+jI31KHeXpniXXSEx468nqwd3SkjptFsj+dT?=
- =?us-ascii?Q?Za66G1I2v9VShHrGXNjjEwuvh2oHUYusj/ZFVI506tyrcP8pE8UfrTJw6lD+?=
- =?us-ascii?Q?Tuk2K2NUlTPY2lIkhFhzZU1fJqFShsw0zLek2u1pn04nYGs2x8s9P0PVKt5/?=
- =?us-ascii?Q?ewJqRxeC1Y1XZczHImlf2Kq2kAgzlzYbRZsh42V/4BOLy5uR/jxIwEHoQm6C?=
- =?us-ascii?Q?d09VOPY8A46WSOTbXnVAkwYLxlaByTXH2FrwultazHfXCop6SoIYJv/FHzlE?=
- =?us-ascii?Q?EOhkIcX4/cSMHmtWE6uJ9Qj2Q0NRnJeecJhVVQeH1ulfvor0e5tirPuh+ILv?=
- =?us-ascii?Q?MYK1NEgiAqFiihv5zoCRk4rR+Y1OqAEDTsdjItmW+LjwCHpW3OlfkCk7ntHg?=
- =?us-ascii?Q?YSrGtDZt6gNnVC0bsx5F1bg+iY5mSlAadw6+xuGerbbrCMb7A/gozsYkDGXa?=
- =?us-ascii?Q?mB55E9Z6vsqj7mVTVVy65F9TFopTo87UeE1HJr8HMm7VxIfk6/2+WJ1T8vQc?=
- =?us-ascii?Q?TP7NerirGfw1bAL6qzh8EFNU9NoiN9sQhFmylcb46Q1HcrTiUG8zjcQ5h50r?=
- =?us-ascii?Q?6zihET4rwUFXVuxb0ER+MgIvrNQDVBd+tvIQn6Gq0XICLO/MW0gy0hPGVCSP?=
- =?us-ascii?Q?djbN+A0T41CFs1dPBEgdgueVLtPctJ3EoqwdSbPOw3qVNB2H1UkW0XBBFMMH?=
- =?us-ascii?Q?K43n6xiW7OQUvqI/NNV7b4MqNC3EM220hq4YbDBvpSmCe+0JMGRwc/CE+9Zc?=
- =?us-ascii?Q?DIgJHOusSX34HgVLMX4ZxfXBz4ZDQDiCRrEtZfWZr0KDCj6vJXMXgIeYSDhY?=
- =?us-ascii?Q?yW+cg/+SpPNIW/7fEYM99mnx7s7OYWhChqqtzzwG+c8jLzjzNodp1h93VIew?=
- =?us-ascii?Q?PQnacfuvpccExVw=3D?=
+ ARA:13230040|1800799024|376014|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8I+F1ohVibUw9hnbIDOpGfU7ZpvPEySNrcdK/1RtOEdtbSF+1s1+6pSpSP2T?=
+ =?us-ascii?Q?JmDwjhvJN2sETeqnUDWnn6YpmyAfpriEPfKiFh74vzNkFMYDI3ttn5SIJfqI?=
+ =?us-ascii?Q?c08QUXqvdC1DKCfBcJzfa5g3v7rEbQgRAvxodoUk2kHWoq0WevwNloIiRIn5?=
+ =?us-ascii?Q?J6JUKqZqDXYnX2N4yhE8e1XqFfewBBvCKBGojJkHGbUJpHI/0Rg89IpDu+0U?=
+ =?us-ascii?Q?MHCtqeJ1qTdmjFoAakv1MihIV1B2eEeZkpj0zMemM0Hnll3vHiAUPQ4hsfK5?=
+ =?us-ascii?Q?ndjfBdU6ywfGAE3zhMRWc4zcbLo7K5YDEhwzKZ0PIDSj/EuVURe7EOpIceDE?=
+ =?us-ascii?Q?ndb2bEYfjJtB+Y3OcHFrrh5KvpSeyQj8/r+0AR1pGZWu/beMzaulJuHt8S1K?=
+ =?us-ascii?Q?a/uAlURVpBeN7RClaLJzM9ILqXNfDsXViKwFZhfy5EQVkPxgK/0s/DkHadg2?=
+ =?us-ascii?Q?QhLcg53ppViXZkJR5rOXcGliFwJYBaPbIQ39xlREtPZbc7ZpnEHDyDWDYZwC?=
+ =?us-ascii?Q?i4XoOMbln4szVhRv9+3IfKnCk9NDtt6y6HoZ1ZhuABxlFG3FeVONn+rCzHbE?=
+ =?us-ascii?Q?YhX6DgnZF+UUBaBt1gKuksQAlbhM9gV3Mfc38SiVT9nkgS6eEYJlvi2vLLwp?=
+ =?us-ascii?Q?LwUcys67kmD6AE6A77RP8MYgjZpoOlRLcu2Cu533Jq0Qlc8zvdnluLOsLzpI?=
+ =?us-ascii?Q?q7mUODW+ikoIagiUqIxd+i6Zwx9MAnWxu/B2rd8fOo6nbw5W/dPLFGZmWM+H?=
+ =?us-ascii?Q?2OryKkUJJHKD4sABIXqlrxQTBe1bU+vnLU68DcLqKWEMN/p4CMaUKx3Lg9mC?=
+ =?us-ascii?Q?jGDCcHI+TQruOLskX1UkkNQswjXxoyQpomyKltRzHv4M+dtX19Ex8GlZDayp?=
+ =?us-ascii?Q?eX0do4trQuLFNBvfwx1EGNt/49/5svvTh+7vCV7Y/0QEzuLJY5UAsDvEt17O?=
+ =?us-ascii?Q?tlF1RWZwnf/PToNm/+AtO2HIwJ07wR/PCE0y2ODiIFx6ZwpcQizsPsJqiop2?=
+ =?us-ascii?Q?nbxkGYETpnBW1C6+nbgZkuCbU+EP+RRLkV9zMff2kQrxbe806cHWBw56/etn?=
+ =?us-ascii?Q?bPxbUJ7yY3d7czF/7usOeLA2d/ZKb3rMQQT6/yw1xcUuR7VV6FjB19JeV0zM?=
+ =?us-ascii?Q?/lbHPUba/5zMVqKLKLtnCsmpkrxY4kZKACytq+0tVyVwtzhkRtop09u8wEnk?=
+ =?us-ascii?Q?41yHCC4rkBqcmIKZNvi0O9cezwcfI1pOvQAkVUquD1t8hZG5YrzlpXHc4DMs?=
+ =?us-ascii?Q?wK7zKPEmnQPDX9gKNdiAc1FlJJSL5fK4+nIXJlzOsXVwT7zJ+ZBIKXkI6qSN?=
+ =?us-ascii?Q?LZ1Ng18JACYmJwfECaTzoRs8NS0Rn6lR3xXvpLa9Sjra0KAVpg65KkYvmQDK?=
+ =?us-ascii?Q?R6/uWnVd+w4vc5b37x4/xeYe9MrbVPk5FGMQxgNGcVkE4HcaosC52k/X+l0o?=
+ =?us-ascii?Q?qrFdh17xOptMBLZmUW2l+K+T9LaBZVJ6mDBOUBXVEOkSJraalmNJceiYum30?=
+ =?us-ascii?Q?YrzEjyGZZgR201A=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);
+ CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: o7aKRH1UTdkpQvt8c9qeO3ODuYJlYX8TdamKUhImh4bZXwgDhoizryKmN1ROZ/tm7PM1zvv6KK72c+U4YmJhZoD/pJban4EDalwWjdtac9jcgswzioxR886x5samgGclmgHd4uqdgv3G+ukyHtGE9xfYD8hhaLik0x8bpRo7LBc/Ua/5V0bqT7NEM+nfc14gY4kAdi6loNg6iI6xkroc6Ht71UZGTWEHS1MNmf+rEZkeg/YzCP5orXHhPnR5c61XPNLFdP7Jh/92OJ/VtDJZMeOIS1nCPtrjEJ8JOe6rpAHqIlCwuhuoSywW0YWNbWtrmaw8yz2+CCvlx/aZvoYDCRWa+ZvlqeQtigpQ9Nc8CtAzoTUbD8rAeYAE0zwpia5RRm6tBo/K/0YXc9NqV4p1kBm5mD4W/bgePtMwRXfyMWFshCv9IqIByhbe8cfRaYUTKxnZW5jyKeKjSNK3o4iHs73mSwHjwJueCkxBbKVOsMGJglPdPnh7D59PmD+wN+JRAV39qJIsBCLrIENY/5Yuhdek1cZv58QQj2AMjuaZIaSt7xW39xFNbhJ3LCxvnvf7AHynfX49qZ1hvmxQJGvEb5QrmHWnhhZXKgYuzqIQ8iQTfbNJiXMYLcVwwd9cGRIJpLr+mZCSTmcMUXMc2QY/1K+43HMtTKlE/bhjByuiKRM=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Kg9/gCLwCM3zvFsOZ2GVBylM8ZGa+zr6GoViTqcoGN5Gm8oCS48xzRaSUsNv809gkIfrx16pjHcG/VM4ygR/ZvKePbDPMd6xiz9VYyR1bvSpRZVQZJ+38MtPiZODqRIsW7rVk1LJ9Utwlfq3s8LAKkkLmSjLjcvBS5RfsxYALXaE0vwTlZDPPb1gRTX8HTJzAm8kOjCiQikWD2+hUYjb8pIW2ATBlwkWZvGmiI7fs9EsckVdewxxedJrRa3Nydmpvh7KcxLY6WRunFqql1C+xFLKnIUIsMK/adkmxmtpyWZ4d0DGK/z/ZPhlcMuAh8TuZlQEEoq7DHbffW3qd4sq63eiw7XyKoZi7Hl+xEBd1IClwvCnCiqOczvQjMv5Nivs7msD5awI1Q64Jdg737+FvBPSRilwl/cixojK0ODAmt+DoqAuvrrSEiI5mLyKMuSVJzSIrECTQ+aj7NHbvTDL85KP4UQUtb9spdp4kThqWrdxHhB+LNg1ue0+TXmKOt8fhm8oASeOaXEHcPFJrnPYgumovpkjiilcQa/w2yBeOo4jorUQiGLnvtwcqoxncZvpkQXdL0Gq7SXbCe74QPFtxmQwXQLFue6+N5qNiJCk6D6rhiTtaNdzhQW3xaqzVtt92VbMTrw/wCQRgUKnlxH0mqwuY3mKzslaMIutEZ6KbB0=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:13.7556 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca10c3b2-e856-4f0b-cc3e-08dd51fa830c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:16.0995 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba320b18-4086-4453-6dfe-08dd51fa8472
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2P190MB2103
-X-BESS-ID: 1740089056-312005-29061-14085-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB1911
+X-BESS-ID: 1740089058-305508-25334-16456-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.18.111
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZm5qbGQGYGUDQl1dzSxNDYIM
- 3I1MDQxMwiNc0g0TQxMS3FzNDSJNHYQKk2FgDs6jGaQgAAAA==
+X-BESS-Apparent-Source-IP: 104.47.17.171
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpaW5kZAVgZQMNXMxMDE2DzF0j
+ zR0jTNxMAoKdnC1NI4NckwxcTIODVZqTYWABAFdQ9BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
- cloudscan19-102.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan19-233.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -146,512 +146,342 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-RPF and GFG modules initialization were added.
+Implement PHY host loopback configuration for Agilex FPGA
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/include/nt4ga_link.h        |   2 +
- drivers/net/ntnic/include/nthw_gfg.h          |  33 ++
- .../link_agx_100g/nt4ga_agx_link_100g.c       |  24 ++
+ .../link_agx_100g/nt4ga_agx_link_100g.c       | 116 ++++++++++++++++++
  drivers/net/ntnic/meson.build                 |   1 +
- drivers/net/ntnic/nthw/core/nthw_gfg.c        | 340 ++++++++++++++++++
- drivers/net/ntnic/nthw/nthw_drv.h             |  10 +
- 6 files changed, 410 insertions(+)
- create mode 100644 drivers/net/ntnic/include/nthw_gfg.h
- create mode 100644 drivers/net/ntnic/nthw/core/nthw_gfg.c
+ drivers/net/ntnic/nim/i2c_nim.c               |  70 +++++++++--
+ .../nthw/core/include/nthw_si5332_si5156.h    |   6 +
+ .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |  31 +++++
+ 5 files changed, 216 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
 
-diff --git a/drivers/net/ntnic/include/nt4ga_link.h b/drivers/net/ntnic/include/nt4ga_link.h
-index af7ea4a9f2..e3dc3d4d5d 100644
---- a/drivers/net/ntnic/include/nt4ga_link.h
-+++ b/drivers/net/ntnic/include/nt4ga_link.h
-@@ -8,6 +8,7 @@
- 
- #include "ntos_drv.h"
- #include "ntnic_nim.h"
-+#include "nthw_gfg.h"
- 
- enum nt_link_state_e {
- 	NT_LINK_STATE_UNKNOWN = 0,	/* The link state has not been read yet */
-@@ -84,6 +85,7 @@ typedef struct adapter_100g_s {
- 
- typedef struct adapter_agx_100g_s {
- 	nim_i2c_ctx_t nim_ctx[NUM_ADAPTER_PORTS_MAX];	/* should be the first field */
-+	nthw_gfg_t gfg[NUM_ADAPTER_PORTS_MAX];
- } adapter_agx_100g_t;
- 
- typedef union adapter_var_s {
-diff --git a/drivers/net/ntnic/include/nthw_gfg.h b/drivers/net/ntnic/include/nthw_gfg.h
-new file mode 100644
-index 0000000000..4583fd9ebd
---- /dev/null
-+++ b/drivers/net/ntnic/include/nthw_gfg.h
-@@ -0,0 +1,33 @@
-+/*
-+ * SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2023 Napatech A/S
-+ */
-+
-+#ifndef NTHW_GFG_H_
-+#define NTHW_GFG_H_
-+
-+#include "nthw_fpga_model.h"
-+struct nthw_gfg {
-+	nthw_fpga_t *mp_fpga;
-+	nthw_module_t *mp_mod_gfg;
-+	int mn_instance;
-+
-+	int mn_param_gfg_present;
-+
-+	nthw_field_t *mpa_fld_ctrl_enable[8];
-+	nthw_field_t *mpa_fld_ctrl_mode[8];
-+	nthw_field_t *mpa_fld_ctrl_prbs_en[8];
-+	nthw_field_t *mpa_fld_ctrl_size[8];
-+	nthw_field_t *mpa_fld_stream_id_val[8];
-+	nthw_field_t *mpa_fld_run_run[8];
-+	nthw_field_t *mpa_fld_size_mask[8];
-+	nthw_field_t *mpa_fld_burst_size_val[8];
-+};
-+
-+typedef struct nthw_gfg nthw_gfg_t;
-+
-+int nthw_gfg_init(nthw_gfg_t *p, nthw_fpga_t *p_fpga, int n_instance);
-+
-+int nthw_gfg_stop(nthw_gfg_t *p, const int n_intf_no);
-+
-+#endif	/* NTHW_GFG_H_ */
 diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index 369b9b601f..9db32443fc 100644
+index f3862b7fe3..9551dfdfdc 100644
 --- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
 +++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -11,6 +11,7 @@
- #include <string.h>
- #include "ntnic_mod_reg.h"
- #include "nim_defines.h"
-+#include "nthw_gfg.h"
+@@ -19,6 +19,11 @@ typedef enum {
+ 	LOOPBACK_HOST
+ } loopback_host_t;
  
++typedef enum {
++	LOOPBACK_LINE_NONE,
++	LOOPBACK_LINE
++} loopback_line_t;
++
  static int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info,
  	nthw_fpga_t *fpga);
-@@ -134,11 +135,34 @@ static uint32_t nt4ga_agx_link_100g_mon(void *data)
- int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_fpga_t *fpga)
- {
- 	(void)fpga;
-+	nt4ga_link_t *nt4ga_link = &p_adapter_info->nt4ga_link;
- 	const int adapter_no = p_adapter_info->adapter_no;
- 	int res = 0;
  
- 	NT_LOG(DBG, NTNIC, "%s: Initializing ports", p_adapter_info->mp_adapter_id_str);
+@@ -93,6 +98,105 @@ static int phy_set_host_loopback(adapter_info_t *drv, int port, loopback_host_t
+ 	return 0;
+ }
  
-+	if (!nt4ga_link->variables_initialized) {
-+		nthw_gfg_t *gfg_mod = p_adapter_info->nt4ga_link.u.var_a100g.gfg;
-+		nthw_agx_t *p_nthw_agx = &p_adapter_info->fpga_info.mp_nthw_agx;
++static int phy_set_line_loopback(adapter_info_t *drv, int port, loopback_line_t loopback)
++{
++	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
++	uint32_t addr;
 +
-+		p_nthw_agx->p_rpf = nthw_rpf_new();
-+		res = nthw_rpf_init(p_nthw_agx->p_rpf, fpga, adapter_no);
++	switch (loopback) {
++	case LOOPBACK_LINE_NONE:
++		for (uint8_t lane = 0; lane < 4; lane++) {
++			uint8_t quad_lane;
 +
-+		if (res != 0) {
-+			NT_LOG(ERR, NTNIC, "%s: Failed to initialize RPF module (%u)",
-+				p_adapter_info->mp_adapter_id_str, res);
-+			return res;
++			for (uint8_t fgt = 0; fgt < 4; fgt++) {
++				uint8_t quad_and_lane_no =
++					(uint8_t)nthw_phy_tile_read_xcvr(p, port, lane, 0xFFFFC);
++				quad_lane = quad_and_lane_no & 0x3;	/* bits[1:0] */
++
++				if (quad_lane == lane)
++					break;
++			}
++
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41830u + (0x8000u * quad_lane),
++				0x03);
++
++			addr = nthw_phy_tile_read_xcvr(p, 0, 0, 0x41768u + (0x8000u * quad_lane)) |
++				(1u << 24u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41768u + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, 0, 0, 0x41414u + (0x8000u * quad_lane)) &
++				~(1u << 29u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41414u + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, 0, 0, 0x4141Cu + (0x8000u * quad_lane)) &
++				~(1u << 30u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x4141Cu + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, 0, 0, 0x41418u + (0x8000u * quad_lane)) &
++				~(1u << 31u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41418u + (0x8000u * quad_lane),
++				addr);
 +		}
 +
-+		res = nthw_gfg_init(&gfg_mod[adapter_no], fpga, 0 /* Only one instance */);
++		break;
 +
-+		if (res != 0) {
-+			NT_LOG(ERR, NTNIC, "%s: Failed to initialize GFG module (%u)",
-+				p_adapter_info->mp_adapter_id_str, res);
-+			return res;
++	case LOOPBACK_LINE:
++		for (uint8_t lane = 0; lane < 4; lane++) {
++			uint8_t quad_lane;
++
++			for (uint8_t fgt = 0; fgt < 4; fgt++) {
++				uint8_t quad_and_lane_no =
++					(uint8_t)nthw_phy_tile_read_xcvr(p, port, lane, 0xFFFFC);
++				quad_lane = quad_and_lane_no & 0x3;	/* bits[1:0] */
++
++				if (quad_lane == lane)
++					break;
++			}
++
++			addr = nthw_phy_tile_read_xcvr(p, port, 0,
++					0x41830u + (0x8000u * quad_lane)) &
++				0u;
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41830u + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, port, 0,
++					0x41768u + (0x8000u * quad_lane)) &
++				~(1u << 24u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41768u + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, port, 0,
++					0x41414u + (0x8000u * quad_lane)) |
++				(1u << 29u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41414u + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, port, 0,
++					0x4141Cu + (0x8000u * quad_lane)) |
++				(1u << 30u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x4141Cu + (0x8000u * quad_lane),
++				addr);
++
++			addr = nthw_phy_tile_read_xcvr(p, port, 0,
++					0x41418u + (0x8000u * quad_lane)) |
++				(1u << 31u);
++			nthw_phy_tile_write_xcvr(p, port, 0, 0x41418u + (0x8000u * quad_lane),
++				addr);
 +		}
++
++		break;
++
++	default:
++		NT_LOG(ERR, NTNIC, "Port %d: Unhandled loopback value (%d)", port, loopback);
++		return -1;
 +	}
 +
- 	/*
- 	 * Create state-machine thread
- 	 */
++	return 0;
++}
++
+ /*
+  * Utility functions
+  */
+@@ -156,6 +260,12 @@ set_loopback(struct adapter_info_s *p_adapter_info, int port, uint32_t mode, uin
+ 		swap_tx_rx_polarity(p_adapter_info, port, false);
+ 		break;
+ 
++	case 2:
++		NT_LOG(INF, NTNIC, "%s: Applying line loopback",
++			p_adapter_info->mp_port_id_str[port]);
++		phy_set_line_loopback(p_adapter_info, port, LOOPBACK_LINE);
++		break;
++
+ 	default:
+ 		switch (last_mode) {
+ 		case 1:
+@@ -165,6 +275,12 @@ set_loopback(struct adapter_info_s *p_adapter_info, int port, uint32_t mode, uin
+ 			swap_tx_rx_polarity(p_adapter_info, port, true);
+ 			break;
+ 
++		case 2:
++			NT_LOG(INF, NTNIC, "%s: Removing line loopback",
++				p_adapter_info->mp_port_id_str[port]);
++			phy_set_line_loopback(p_adapter_info, port, LOOPBACK_LINE_NONE);
++			break;
++
+ 		default:
+ 			/* do nothing */
+ 			break;
 diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
-index 7e4f47b1e6..68d7fdafd4 100644
+index 4799ebfb8e..271115cdd3 100644
 --- a/drivers/net/ntnic/meson.build
 +++ b/drivers/net/ntnic/meson.build
-@@ -47,6 +47,7 @@ sources = files(
-         'nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c',
-         'nthw/core/nthw_fpga.c',
-         'nthw/core/nthw_gmf.c',
-+        'nthw/core/nthw_gfg.c',
-         'nthw/core/nthw_tsm.c',
-         'nthw/core/nthw_gpio_phy.c',
-         'nthw/core/nthw_hif.c',
-diff --git a/drivers/net/ntnic/nthw/core/nthw_gfg.c b/drivers/net/ntnic/nthw/core/nthw_gfg.c
+@@ -56,6 +56,7 @@ sources = files(
+         'nthw/core/nthw_mac_pcs.c',
+         'nthw/core/nthw_pcie3.c',
+         'nthw/core/nthw_phy_tile.c',
++        'nthw/core/nthw_si5332_si5156.c',
+         'nthw/core/nthw_rpf.c',
+         'nthw/core/nthw_rmc.c',
+         'nthw/core/nthw_sdc.c',
+diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
+index 7dbbdb8873..f3cca9e555 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.c
++++ b/drivers/net/ntnic/nim/i2c_nim.c
+@@ -13,6 +13,12 @@
+ #include "qsfp_registers.h"
+ #include "nim_defines.h"
+ 
++int nim_agx_read_id(struct nim_i2c_ctx *ctx);
++static void nim_agx_read(struct nim_i2c_ctx *ctx, uint8_t dev_addr, uint8_t reg_addr,
++	uint8_t data_len, void *p_data);
++static void nim_agx_write(struct nim_i2c_ctx *ctx, uint8_t dev_addr, uint8_t reg_addr,
++	uint8_t data_len, void *p_data);
++
+ #define NIM_READ false
+ #define NIM_WRITE true
+ #define NIM_PAGE_SEL_REGISTER 127
+@@ -50,17 +56,17 @@ static int nim_read_write_i2c_data(nim_i2c_ctx_p ctx, bool do_write, uint16_t li
+ 		if (ctx->type == I2C_HWIIC) {
+ 			return nthw_iic_write_data(&ctx->hwiic, i2c_devaddr, a_reg_addr, seq_cnt,
+ 					p_data);
+-
+-		} else {
+-			return 0;
+ 		}
+ 
+-	} else if (ctx->type == I2C_HWIIC) {
+-		return nthw_iic_read_data(&ctx->hwiic, i2c_devaddr, a_reg_addr, seq_cnt, p_data);
+-
+-	} else {
++		nim_agx_write(ctx, i2c_addr, a_reg_addr, seq_cnt, p_data);
+ 		return 0;
+ 	}
++
++	if (ctx->type == I2C_HWIIC)
++		return nthw_iic_read_data(&ctx->hwiic, i2c_devaddr, a_reg_addr, seq_cnt, p_data);
++
++	nim_agx_read(ctx, i2c_addr, a_reg_addr, seq_cnt, p_data);
++	return 0;
+ }
+ 
+ /*
+@@ -216,7 +222,7 @@ static int i2c_nim_common_construct(nim_i2c_ctx_p ctx)
+ 		res = nim_read_id(ctx);
+ 
+ 	else
+-		res = -1;
++		res = nim_agx_read_id(ctx);
+ 
+ 	if (res) {
+ 		NT_LOG(ERR, NTNIC, "Can't read NIM id.");
+@@ -803,3 +809,51 @@ void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2c
+ 	ctx->hwagx.p_ca9849 = p_ca9849;
+ 	ctx->hwagx.p_io_nim = p_io_nim;
+ }
++
++static void nim_agx_read(struct nim_i2c_ctx *ctx,
++	uint8_t dev_addr,
++	uint8_t reg_addr,
++	uint8_t data_len,
++	void *p_data)
++{
++	nthw_i2cm_t *p_nt_i2cm = ctx->hwagx.p_nt_i2cm;
++	nthw_pca9849_t *p_ca9849 = ctx->hwagx.p_ca9849;
++	uint8_t *data = (uint8_t *)p_data;
++
++	rte_spinlock_lock(&p_nt_i2cm->i2cmmutex);
++	nthw_pca9849_set_channel(p_ca9849, ctx->hwagx.mux_channel);
++
++	for (uint8_t i = 0; i < data_len; i++) {
++		nthw_i2cm_read(p_nt_i2cm, (uint8_t)(dev_addr >> 1), (uint8_t)(reg_addr + i), data);
++		data++;
++	}
++
++	rte_spinlock_unlock(&p_nt_i2cm->i2cmmutex);
++}
++
++static void nim_agx_write(struct nim_i2c_ctx *ctx,
++	uint8_t dev_addr,
++	uint8_t reg_addr,
++	uint8_t data_len,
++	void *p_data)
++{
++	nthw_i2cm_t *p_nt_i2cm = ctx->hwagx.p_nt_i2cm;
++	nthw_pca9849_t *p_ca9849 = ctx->hwagx.p_ca9849;
++	uint8_t *data = (uint8_t *)p_data;
++
++	rte_spinlock_lock(&p_nt_i2cm->i2cmmutex);
++	nthw_pca9849_set_channel(p_ca9849, ctx->hwagx.mux_channel);
++
++	for (uint8_t i = 0; i < data_len; i++) {
++		nthw_i2cm_write(p_nt_i2cm, (uint8_t)(dev_addr >> 1), (uint8_t)(reg_addr + i),
++			*data++);
++	}
++
++	rte_spinlock_unlock(&p_nt_i2cm->i2cmmutex);
++}
++
++int nim_agx_read_id(struct nim_i2c_ctx *ctx)
++{
++	nim_agx_read(ctx, 0xA0, 0, sizeof(ctx->nim_id), &ctx->nim_id);
++	return 0;
++}
+diff --git a/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h b/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
+index fb44c62f12..968d7eb74a 100644
+--- a/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
++++ b/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
+@@ -6,13 +6,19 @@
+ #ifndef __NTHW_SI5332_SI5156_H__
+ #define __NTHW_SI5332_SI5156_H__
+ 
++#include "nthw_i2cm.h"
+ /*
+  * PCA9849 I2c mux class
+  */
+ 
+ struct nthw_pca9849 {
++	nthw_i2cm_t *mp_nt_i2cm;
++	uint8_t m_current_channel;
++	uint8_t m_dev_address;
+ };
+ 
+ typedef struct nthw_pca9849 nthw_pca9849_t;
+ 
++int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel);
++
+ #endif	/* __NTHW_SI5332_SI5156_H__ */
+diff --git a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
 new file mode 100644
-index 0000000000..aa71624457
+index 0000000000..b5560e2990
 --- /dev/null
-+++ b/drivers/net/ntnic/nthw/core/nthw_gfg.c
-@@ -0,0 +1,340 @@
++++ b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
+@@ -0,0 +1,31 @@
 +/*
 + * SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2023 Napatech A/S
 + */
 +
++#include <pthread.h>
++#include "nt_util.h"
 +#include "ntlog.h"
 +
 +#include "nthw_drv.h"
 +#include "nthw_register.h"
 +
-+#include "nt_util.h"
-+#include "nthw_gfg.h"
++#include "nthw_si5332_si5156.h"
 +
-+int nthw_gfg_init(nthw_gfg_t *p, nthw_fpga_t *p_fpga, int n_instance)
++int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel)
 +{
-+	nthw_module_t *mod = nthw_fpga_query_module(p_fpga, MOD_GFG, n_instance);
-+	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
-+	nthw_register_t *p_reg;
++	int res;
 +
-+	if (p == NULL)
-+		return mod == NULL ? -1 : 0;
++	if (p->m_current_channel != channel) {
++		uint8_t data = channel + 4;
++		res = nthw_i2cm_write(p->mp_nt_i2cm, p->m_dev_address, 0, data);
 +
-+	if (mod == NULL) {
-+		NT_LOG(ERR, NTHW, "%s: GFG %d: no such instance", p_adapter_id_str, n_instance);
-+		return -1;
-+	}
++		if (res)
++			return res;
 +
-+	p->mp_fpga = p_fpga;
-+	p->mn_instance = n_instance;
-+	p->mp_mod_gfg = mod;
-+
-+	p->mn_param_gfg_present = nthw_fpga_get_product_param(p_fpga, NT_GFG_PRESENT, 0);
-+
-+	if (!p->mn_param_gfg_present) {
-+		NT_LOG(ERR,
-+			NTHW,
-+			"%s: %s: GFG %d module found - but logically not present - failing",
-+			__func__,
-+			p_adapter_id_str,
-+			p->mn_instance);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL0);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[0] = nthw_register_query_field(p_reg, GFG_CTRL0_ENABLE);
-+		p->mpa_fld_ctrl_mode[0] = nthw_register_query_field(p_reg, GFG_CTRL0_MODE);
-+		p->mpa_fld_ctrl_prbs_en[0] = nthw_register_query_field(p_reg, GFG_CTRL0_PRBS_EN);
-+		p->mpa_fld_ctrl_size[0] = nthw_register_query_field(p_reg, GFG_CTRL0_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL1);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[1] = nthw_register_query_field(p_reg, GFG_CTRL1_ENABLE);
-+		p->mpa_fld_ctrl_mode[1] = nthw_register_query_field(p_reg, GFG_CTRL1_MODE);
-+		p->mpa_fld_ctrl_prbs_en[1] = nthw_register_query_field(p_reg, GFG_CTRL1_PRBS_EN);
-+		p->mpa_fld_ctrl_size[1] = nthw_register_query_field(p_reg, GFG_CTRL1_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL2);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[2] = nthw_register_query_field(p_reg, GFG_CTRL2_ENABLE);
-+		p->mpa_fld_ctrl_mode[2] = nthw_register_query_field(p_reg, GFG_CTRL2_MODE);
-+		p->mpa_fld_ctrl_prbs_en[2] = nthw_register_query_field(p_reg, GFG_CTRL2_PRBS_EN);
-+		p->mpa_fld_ctrl_size[2] = nthw_register_query_field(p_reg, GFG_CTRL2_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL3);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[3] = nthw_register_query_field(p_reg, GFG_CTRL3_ENABLE);
-+		p->mpa_fld_ctrl_mode[3] = nthw_register_query_field(p_reg, GFG_CTRL3_MODE);
-+		p->mpa_fld_ctrl_prbs_en[3] = nthw_register_query_field(p_reg, GFG_CTRL3_PRBS_EN);
-+		p->mpa_fld_ctrl_size[3] = nthw_register_query_field(p_reg, GFG_CTRL3_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL4);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[4] = nthw_register_query_field(p_reg, GFG_CTRL4_ENABLE);
-+		p->mpa_fld_ctrl_mode[4] = nthw_register_query_field(p_reg, GFG_CTRL4_MODE);
-+		p->mpa_fld_ctrl_prbs_en[4] = nthw_register_query_field(p_reg, GFG_CTRL4_PRBS_EN);
-+		p->mpa_fld_ctrl_size[4] = nthw_register_query_field(p_reg, GFG_CTRL4_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL5);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[5] = nthw_register_query_field(p_reg, GFG_CTRL5_ENABLE);
-+		p->mpa_fld_ctrl_mode[5] = nthw_register_query_field(p_reg, GFG_CTRL5_MODE);
-+		p->mpa_fld_ctrl_prbs_en[5] = nthw_register_query_field(p_reg, GFG_CTRL5_PRBS_EN);
-+		p->mpa_fld_ctrl_size[5] = nthw_register_query_field(p_reg, GFG_CTRL5_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL6);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[6] = nthw_register_query_field(p_reg, GFG_CTRL6_ENABLE);
-+		p->mpa_fld_ctrl_mode[6] = nthw_register_query_field(p_reg, GFG_CTRL6_MODE);
-+		p->mpa_fld_ctrl_prbs_en[6] = nthw_register_query_field(p_reg, GFG_CTRL6_PRBS_EN);
-+		p->mpa_fld_ctrl_size[6] = nthw_register_query_field(p_reg, GFG_CTRL6_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_CTRL7);
-+
-+	if (p_reg) {
-+		p->mpa_fld_ctrl_enable[7] = nthw_register_query_field(p_reg, GFG_CTRL7_ENABLE);
-+		p->mpa_fld_ctrl_mode[7] = nthw_register_query_field(p_reg, GFG_CTRL7_MODE);
-+		p->mpa_fld_ctrl_prbs_en[7] = nthw_register_query_field(p_reg, GFG_CTRL7_PRBS_EN);
-+		p->mpa_fld_ctrl_size[7] = nthw_register_query_field(p_reg, GFG_CTRL7_SIZE);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN0);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[0] = nthw_register_query_field(p_reg, GFG_RUN0_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN1);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[1] = nthw_register_query_field(p_reg, GFG_RUN1_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN2);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[2] = nthw_register_query_field(p_reg, GFG_RUN2_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN3);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[3] = nthw_register_query_field(p_reg, GFG_RUN3_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN4);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[4] = nthw_register_query_field(p_reg, GFG_RUN4_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN5);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[5] = nthw_register_query_field(p_reg, GFG_RUN5_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN6);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[6] = nthw_register_query_field(p_reg, GFG_RUN6_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_RUN7);
-+
-+	if (p_reg)
-+		p->mpa_fld_run_run[7] = nthw_register_query_field(p_reg, GFG_RUN7_RUN);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID0);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[0] = nthw_register_query_field(p_reg, GFG_STREAMID0_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID1);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[1] = nthw_register_query_field(p_reg, GFG_STREAMID1_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID2);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[2] = nthw_register_query_field(p_reg, GFG_STREAMID2_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID3);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[3] = nthw_register_query_field(p_reg, GFG_STREAMID3_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID4);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[4] = nthw_register_query_field(p_reg, GFG_STREAMID4_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID5);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[5] = nthw_register_query_field(p_reg, GFG_STREAMID5_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID6);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[6] = nthw_register_query_field(p_reg, GFG_STREAMID6_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_STREAMID7);
-+
-+	if (p_reg)
-+		p->mpa_fld_stream_id_val[7] = nthw_register_query_field(p_reg, GFG_STREAMID7_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK0);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[0] = nthw_register_query_field(p_reg, GFG_SIZEMASK0_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK1);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[1] = nthw_register_query_field(p_reg, GFG_SIZEMASK1_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK2);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[2] = nthw_register_query_field(p_reg, GFG_SIZEMASK2_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK3);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[3] = nthw_register_query_field(p_reg, GFG_SIZEMASK3_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK4);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[4] = nthw_register_query_field(p_reg, GFG_SIZEMASK4_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK5);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[5] = nthw_register_query_field(p_reg, GFG_SIZEMASK5_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK6);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[6] = nthw_register_query_field(p_reg, GFG_SIZEMASK6_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_SIZEMASK7);
-+
-+	if (p_reg)
-+		p->mpa_fld_size_mask[7] = nthw_register_query_field(p_reg, GFG_SIZEMASK7_VAL);
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE0);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[0] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE0_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE1);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[1] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE1_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE2);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[2] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE2_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE3);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[3] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE3_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE4);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[4] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE4_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE5);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[5] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE5_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE6);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[6] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE6_VAL);
-+	}
-+
-+	p_reg = nthw_module_query_register(p->mp_mod_gfg, GFG_BURSTSIZE7);
-+
-+	if (p_reg) {
-+		p->mpa_fld_burst_size_val[7] =
-+			nthw_register_query_field(p_reg, GFG_BURSTSIZE7_VAL);
++		p->m_current_channel = channel;
++		nt_os_wait_usec(10000);
 +	}
 +
 +	return 0;
 +}
-+
-+static int nthw_gfg_setup(nthw_gfg_t *p,
-+	const size_t n_intf_no,
-+	const int n_enable,
-+	const int n_frame_count,
-+	const int n_frame_size,
-+	const int n_frame_fill_mode,
-+	const int n_frame_stream_id)
-+{
-+	if ((size_t)n_intf_no >= ARRAY_SIZE(p->mpa_fld_ctrl_enable) ||
-+		n_intf_no >= ARRAY_SIZE(p->mpa_fld_ctrl_mode) ||
-+		(size_t)n_intf_no >= ARRAY_SIZE(p->mpa_fld_ctrl_size) ||
-+		n_intf_no >= ARRAY_SIZE(p->mpa_fld_stream_id_val) ||
-+		(size_t)n_intf_no >= ARRAY_SIZE(p->mpa_fld_burst_size_val)) {
-+		assert(false);
-+		return -1;
-+	}
-+
-+	if (p->mpa_fld_ctrl_enable[n_intf_no] == NULL || p->mpa_fld_ctrl_mode[n_intf_no] == NULL ||
-+		p->mpa_fld_ctrl_size[n_intf_no] == NULL ||
-+		p->mpa_fld_stream_id_val[n_intf_no] == NULL ||
-+		p->mpa_fld_burst_size_val[n_intf_no] == NULL) {
-+		assert(false);
-+		return -1;
-+	}
-+
-+	nthw_field_set_val_flush32(p->mpa_fld_stream_id_val[n_intf_no], n_frame_stream_id);
-+	nthw_field_set_val_flush32(p->mpa_fld_burst_size_val[n_intf_no], n_frame_count);
-+
-+	if (p->mpa_fld_size_mask[n_intf_no])
-+		nthw_field_set_val_flush32(p->mpa_fld_size_mask[n_intf_no], 0);
-+
-+	nthw_field_set_val32(p->mpa_fld_ctrl_mode[n_intf_no], n_frame_fill_mode);
-+	nthw_field_set_val32(p->mpa_fld_ctrl_size[n_intf_no], n_frame_size);
-+
-+	if (p->mpa_fld_ctrl_prbs_en[n_intf_no])
-+		nthw_field_set_val32(p->mpa_fld_ctrl_prbs_en[n_intf_no], 0);
-+
-+	nthw_field_set_val_flush32(p->mpa_fld_ctrl_enable[n_intf_no],
-+		n_enable);	/* write enable and flush */
-+
-+	return 0;
-+}
-+
-+int nthw_gfg_stop(nthw_gfg_t *p, const int n_intf_no)
-+{
-+	return nthw_gfg_setup(p, n_intf_no, 0, 1, 0x666, 0, n_intf_no);
-+}
-diff --git a/drivers/net/ntnic/nthw/nthw_drv.h b/drivers/net/ntnic/nthw/nthw_drv.h
-index 69e0360f5f..9dc839c83c 100644
---- a/drivers/net/ntnic/nthw/nthw_drv.h
-+++ b/drivers/net/ntnic/nthw/nthw_drv.h
-@@ -9,6 +9,15 @@
- #include "nthw_core.h"
- #include "ntnic_dbs.h"
- 
-+#include "nthw_rpf.h"
-+
-+/*
-+ * Structs for controlling Agilex based NT400DXX adapter
-+ */
-+typedef struct nthw_agx_s {
-+	nthw_rpf_t *p_rpf;
-+} nthw_agx_t;
-+
- typedef enum nt_meta_port_type_e {
- 	PORT_TYPE_PHYSICAL,
- 	PORT_TYPE_VIRTUAL,
-@@ -88,6 +97,7 @@ typedef struct fpga_info_s {
- 
- 	nthw_adapter_id_t n_nthw_adapter_id;
- 
-+	nthw_agx_t mp_nthw_agx;	/* For the Agilex based NT400DXX */
- } fpga_info_t;
- 
- 
 -- 
 2.45.0
 
