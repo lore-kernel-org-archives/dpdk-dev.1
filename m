@@ -2,70 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C399C021AA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Feb 2025 18:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC58C021AA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 01:59:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 439EF402A0;
-	Wed, 19 Feb 2025 19:46:00 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id A5CCB40263
- for <dev@dpdk.org>; Wed, 19 Feb 2025 19:45:58 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-22128b7d587so621135ad.3
- for <dev@dpdk.org>; Wed, 19 Feb 2025 10:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739990758;
- x=1740595558; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=JqWEJ+iusIh3WGYUAKhkQ3qSD1adLwMYAmrB8kn95AQ=;
- b=QtejmxGhaLvehrbR6etzljHAT6amDGV8f+h+8EVhsu4Oyl2T6NlO1mbPbHl1BrQBnO
- mtAItWFAprGwBBxMLmGv6pQ0AL6RGzRV96NdB82qjmApdBZOkCn0CWWw9jPsrOJ2UrwO
- YHPUolWPi88XTh7lARbSNDzOrcq6DrD5RMsW1Fi69tOv+n6Rr9bx/WoTFcpusX2yEOlD
- wD3lnDOB+D6UIdUQjjYqhKvwsMvT1oNaDb9fWPF+4E0s7EkpzDIi4Q3mcfYWmtA5FgFO
- uESgmgay70/mUsGwv6VkvZgBxlaBNN0xe8Zxy39EMZoZj7ur/oUSQTvONLnTtro3UYe0
- Rojw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1739990758; x=1740595558;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=JqWEJ+iusIh3WGYUAKhkQ3qSD1adLwMYAmrB8kn95AQ=;
- b=ArI+WueWLy0hDCOn59uEgfNY0TtLYdjaKoEvgqFYUORA2hw3EdMqbHoZMFEUVibEaS
- ygIXFTGKfPw+xWoPiwW2PpfHdyl+qsQRCrNCdz0XsFGsqW1KeSadEzuHcCSRsfnsFW/d
- sp4n2gaekwm3Iq/5xbhbpbU9nU4bD0gnUzG4MqQ6e++V0XpqJm2UoONwNcXpagCXPzrO
- 3ia9fY06E8WYhHsW9rEDitGvxbw9qhsZh0My9D+EbM3ehovdZA7GF3hJ5yGTT+SivYLq
- TqhwXkM0YWBimYCyPPOPNvEFmUAcmyitoVAzhpQAgfDxhUGLToSWMh2NhPnpBk2tiByO
- xyaw==
-X-Gm-Message-State: AOJu0Yy0VaDMjWumfbZuPLC4d6c15qtyocYCxLrPxRH6Vs7DV15vp1Z2
- xW5Pr2KggvRuMQps4/fs5xA6+1glFkvVRfamudF4x4D6GPhu1+TPDKNFVTBR0KU=
-X-Gm-Gg: ASbGnct1eyqu5zO2yvJ2F33XvLmajCofsiEmGZ+Li7i9w3kLv0U/l/Mh0XAaQob+irm
- yvxBVV9fq77CZNHUmu9FOqbxygu4S2qHPtKo4mcLMb1jrTNgxCNM7rkn5y9raJbw9Gh73zJ4XaV
- khpq2EcDxj7oiLDCFqls5mTznq2WisVoC0oR2U1sWZiCgRf5oEHHTFkjP31cSOJ22xjfJyNUCEL
- zG1j0l0XKyrxdiT/8SpE+69YMElZpWS4RCL8ZsHmjiDVjJhg+ZlUEgyIKmu81cTPOmz77hclQM8
- YMystvXLFROSsh7crWazb7LI9gqcyMR+qCtRyOyB9smdpFFedwSfjjUhH6FbzhFLGoeE
-X-Google-Smtp-Source: AGHT+IH1PlxVqRHYDVd5IgXmEj3ZllkVTnZxIxUZm4nPU+qB35aUXhq0ZIKteRWTe7Dt7irisRLzVQ==
-X-Received: by 2002:a17:902:eb83:b0:220:d078:eb28 with SMTP id
- d9443c01a7336-221711d1730mr77509825ad.48.1739990757676; 
- Wed, 19 Feb 2025 10:45:57 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fc13ba6285sm12287279a91.48.2025.02.19.10.45.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Feb 2025 10:45:57 -0800 (PST)
-Date: Wed, 19 Feb 2025 10:45:55 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thierry Herbelot <thierry.herbelot@6wind.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, stable@dpdk.org
-Subject: Re: [PATCH] ethdev: fix get_reg_info
-Message-ID: <20250219104555.0bc2e0ff@hermes.local>
-In-Reply-To: <20250218115828.2107335-1-thierry.herbelot@6wind.com>
-References: <20250218115828.2107335-1-thierry.herbelot@6wind.com>
+	by mails.dpdk.org (Postfix) with ESMTP id ED1024014F;
+	Thu, 20 Feb 2025 02:59:21 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E1D140041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 02:59:20 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 9CCB22043DEE; Wed, 19 Feb 2025 17:59:19 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9CCB22043DEE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1740016759;
+ bh=DlxB8kOcn2G2oMNcvRv9S7JB0upc56sbIlQDFSmtSks=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=luIdReImRIlfEmoAP0HfkXeEEVNrnxA8UszgcbMlcLmH/ZB/EPWyhceciYELav5mH
+ CQYAL8UgWXlcLbTHqqe8O/2ElcuuBJmr6SRUdSIxOcgGO/OMaN6cWNL4BsbborFmi5
+ 1eM8GAXlJV1tC9Tx3R+bkqC0CZ2bO1/oG+5e5QOc=
+Date: Wed, 19 Feb 2025 17:59:19 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>,
+ dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
+Subject: Re: [PATCH v2 01/10] eal: add workaround for __builtin_constant_p
+Message-ID: <20250220015919.GA922@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
+ <1739896329-1946-1-git-send-email-andremue@linux.microsoft.com>
+ <1739896329-1946-2-git-send-email-andremue@linux.microsoft.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FA4C@smartserver.smartshare.dk>
+ <20250219165002.GA6472@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <20250219091011.2c49f342@hermes.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250219091011.2c49f342@hermes.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,22 +52,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 18 Feb 2025 12:58:28 +0100
-Thierry Herbelot <thierry.herbelot@6wind.com> wrote:
-
-> 'width' and 'offset' are input parameters when dumping the register
-> info of an Ethernet device. They should be copied in the new request
-> before calling the device callback function.
+On Wed, Feb 19, 2025 at 09:10:11AM -0800, Stephen Hemminger wrote:
+> On Wed, 19 Feb 2025 08:50:02 -0800
+> Andre Muezerie <andremue@linux.microsoft.com> wrote:
 > 
-> Fixes: 083db2ed9e9 ('ethdev: add report of register names and filter')
-> Cc: stable@dpdk.org
+> > On Tue, Feb 18, 2025 at 06:12:04PM +0100, Morten Brørup wrote:
+> > > > From: Andre Muezerie [mailto:andremue@linux.microsoft.com]
+> > > > Sent: Tuesday, 18 February 2025 17.32
+> > > > 
+> > > > There's no MSVC equivalent for compiler extension __builtin_constant_p.
+> > > > EAL already had __rte_constant which was used as a first attempt to
+> > > > workaround __builtin_constant_p when using MSVC. However, there are
+> > > > pieces of code that would benefit from being able to provide a default
+> > > > value to be used instead of it being always 0 like how it was done by
+> > > > __rte_constant.
+> > > > 
+> > > > A new macro is added here allowing such default to be provided by the
+> > > > caller.  
+> > > 
+> > > NAK to the new macro.
+> > > 
+> > > Please use the sizeof() hack suggested by Stephen to provide an implementation of __rte_constant(e) for MSVC.
+> > > Here's a link to an example of the hack:
+> > > https://news.ycombinator.com/item?id=16720172  
+> > 
+> > Thanks for the link. I tried to use the hack as suggested but turns out it does
+> > not work with msvc. It results in error C2100: "you cannot dereference an
+> > operand of type 'void'".
+> > 
+> > I'm open to further suggestions.
 > 
-> Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+> Maybe contact the MSVC team? there really ought to be way to do this.
+> The compiler knows what is constant and what is not since it needs this for static assertions.
 
-Why does the ethdev code create an on stack temporary variable.
-Looks like it only wants to make sure that names element is NULL.
-
-Really should be one function and when extended fields were added
-should have used API versioning.
-Probably too late now, although rte_eth_dev_get_reg_info_ext()
-is an experimental API.
+I reached out to the MSVC team and they suggested a similar hack using _Generic, which works with
+msvc. I'll send out an updated series.
