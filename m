@@ -2,39 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7989EC021B0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 07:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096DBC021AD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 07:09:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1F6C402CE;
-	Thu, 20 Feb 2025 08:07:09 +0100 (CET)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
- by mails.dpdk.org (Postfix) with ESMTP id 7985940041
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:07:06 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Yz44K3p6lzHr9q;
- Thu, 20 Feb 2025 15:04:01 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 0FC6F140257;
- Thu, 20 Feb 2025 15:07:03 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 20 Feb 2025 15:07:02 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>,
- <aman.deep.singh@intel.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH 2/2] app/testpmd: fix segment fault when config DCB
-Date: Thu, 20 Feb 2025 15:06:51 +0800
-Message-ID: <20250220070651.42123-3-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250220070651.42123-1-fengchengwen@huawei.com>
-References: <20250220070651.42123-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4EB4A4014F;
+	Thu, 20 Feb 2025 08:09:25 +0100 (CET)
+Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
+ by mails.dpdk.org (Postfix) with ESMTP id 746A740041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 08:09:24 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 9C05344
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
+ s=default; t=1740035363;
+ bh=9gMMCr/tgPS3utNGSGFhnJsvb/4991eyT9dxXSkX1U4=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=GRT1tRwGLb2lE9+iA064RkkIZUVWkIOodAOh4iTUItqZ3cLMvLXmC9wZMPY4f7k2S
+ iV0iNK2sgXIC6oMDMslLNkhNty1w7kAP9pTscfS8DzVJoTdnRQXIJuo1Z+CfRmAAN5
+ rbphB9O1S3MSL9MPUsb/rzgeB7FFz/j5/LWg5Ie0=
+Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
+ (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 9C05344;
+ Thu, 20 Feb 2025 10:09:23 +0300 (MSK)
+Message-ID: <2786d5f9-2f14-4af6-a4fe-ed3827c24f0d@oktetlabs.ru>
+Date: Thu, 20 Feb 2025 10:09:23 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/14] ethdev: remove unnecessary deref on function
+ pointers
+To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>
+References: <20250217185743.169778-1-stephen@networkplumber.org>
+ <20250220023509.630569-1-stephen@networkplumber.org>
+ <20250220023509.630569-2-stephen@networkplumber.org>
+Content-Language: en-US
+From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Organization: OKTET Labs
+In-Reply-To: <20250220023509.630569-2-stephen@networkplumber.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,41 +54,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "port config dcb ..." command will segment fault when input with
-invalid port id, this patch fixes it.
+On 2/20/25 05:32, Stephen Hemminger wrote:
+> The expression *dev->dev_ops->rx_queue_start and
+> dev->dev_ops->rx_queue_start are equivalent.
+> Remove the unnecessary asterisk and parenthesis.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Fixes: 9b53e542e9e1 ("app/testpmd: add priority flow control")
-Cc: stable@dpdk.org
+Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+one nit below
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 86d763b66a..56031fbd4e 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -3462,6 +3462,9 @@ cmd_config_dcb_parsed(void *parsed_result,
- 	uint8_t pfc_en;
- 	int ret;
- 
-+	if (port_id_is_invalid(port_id, ENABLED_WARN))
-+		return;
-+
- 	port = &ports[port_id];
- 	/** Check if the port is not started **/
- 	if (port->port_status != RTE_PORT_STOPPED) {
-@@ -6664,6 +6667,9 @@ cmd_priority_flow_ctrl_set_parsed(void *parsed_result,
- 	int rx_fc_enable, tx_fc_enable;
- 	int ret;
- 
-+	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
-+		return;
-+
- 	/*
- 	 * Rx on/off, flow control is enabled/disabled on RX side. This can indicate
- 	 * the RTE_ETH_FC_TX_PAUSE, Transmit pause frame at the Rx side.
--- 
-2.17.1
+> @@ -6995,11 +6966,11 @@ rte_eth_ip_reassembly_capability_get(uint16_t port_id,
+>   		return -EINVAL;
+>   	}
+>   
+> -	if (*dev->dev_ops->ip_reassembly_capability_get == NULL)
+> +	if (dev->dev_ops->ip_reassembly_capability_get == NULL)
+>   		return -ENOTSUP;
+>   	memset(reassembly_capa, 0, sizeof(struct rte_eth_ip_reassembly_params));
+>   
+> -	ret = eth_err(port_id, (*dev->dev_ops->ip_reassembly_capability_get)
+> +	ret = eth_err(port_id, (dev->dev_ops->ip_reassembly_capability_get)
+
+Why are parenthesis kept above instead of moving to the next line and
+remove parenthesis as it is done in the rest of cases?
+
+>   					(dev, reassembly_capa));
+>   
+>   	rte_eth_trace_ip_reassembly_capability_get(port_id, reassembly_capa,
 
