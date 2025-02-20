@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 310D4C021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0941C021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:32:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 561914069F;
-	Thu, 20 Feb 2025 22:31:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D70D406B7;
+	Thu, 20 Feb 2025 22:31:28 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 04C0F4026D
+ by mails.dpdk.org (Postfix) with ESMTP id 520E940615
  for <dev@dpdk.org>; Thu, 20 Feb 2025 22:31:15 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id CEE2D2069406; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CEE2D2069406
+ id AB0782066C20; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB0782066C20
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740087073;
- bh=2DGNjrpD188vdjHVy3SHJJFbQqq6ey+wlGBV+5HJMnE=;
+ bh=rifw1IyScKCgx/ZxTwA9tsFkppB/mtm2BWmVGJk/4Qk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=pCIFJJCEaDlWWlMBqCnpwNW9K6lnNpksN2LKkh+bA2FsjppDd8ljFQBiLoXlDg1gl
- y8IptxWyd1fmNp3Rn+/JoD3J/LD6ctjsOVLBuV82hjClCHFbieuvLvk/tJXi380JCI
- TsDSIDHTtYBiAv5mi/YpOLPdLX8A5SUmH1OgYc78=
+ b=jUrfwsoLch36AK9+mkrPTs0EwJqDT7QRYUzIH9KRAXDhn3bQ3acZtEcgQNTOK0Qer
+ 6kpgBCVHAwoqdk80JQ+jcWMXZoZRkSOlCDlAgCnVWKt2FrpT/BfHPBX48AslunJQ37
+ RAPADo6BTT+jbATJsEeCB71UdwJYJPcJflfpxndA=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org
-Subject: [PATCH v4 09/10] test: add workaround for __builtin_constant_p in
- test_memcpy_perf
-Date: Thu, 20 Feb 2025 13:31:03 -0800
-Message-Id: <1740087064-18680-10-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org,
+	Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v4 06/10] test-pmd: avoid non-constant initializer
+Date: Thu, 20 Feb 2025 13:31:00 -0800
+Message-Id: <1740087064-18680-7-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740087064-18680-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,99 +44,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There's no MSVC equivalent for compiler extension __builtin_constant_p,
-so a workaround is needed.
+Compiling with MSVC results in errors like the one below:
+
+app/test-pmd/cmdline_flow.c(8819): error C2099: initializer
+    is not a constant
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test/test_memcpy_perf.c | 54 ++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+ app/test-pmd/cmdline_flow.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/app/test/test_memcpy_perf.c b/app/test/test_memcpy_perf.c
-index 5c05a84619..32c589c4ba 100644
---- a/app/test/test_memcpy_perf.c
-+++ b/app/test/test_memcpy_perf.c
-@@ -196,37 +196,37 @@ do {                                                                        \
- } while (0)
- 
- /* Run aligned memcpy tests for each cached/uncached permutation */
--#define ALL_PERF_TESTS_FOR_SIZE(n)                                       \
--do {                                                                     \
--    if (__builtin_constant_p(n))                                         \
--        printf("\nC%6u", (unsigned)n);                                   \
--    else                                                                 \
--        printf("\n%7u", (unsigned)n);                                    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
-+#define ALL_PERF_TESTS_FOR_SIZE(n)                                           \
-+do {                                                                         \
-+	if (__rte_constant(n))                                               \
-+		printf("\nC%6u", (unsigned int)n);                           \
-+	else                                                                 \
-+		printf("\n%7u", (unsigned int)n);                            \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
- } while (0)
- 
- /* Run unaligned memcpy tests for each cached/uncached permutation */
--#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                             \
--do {                                                                     \
--    if (__builtin_constant_p(n))                                         \
--        printf("\nC%6u", (unsigned)n);                                   \
--    else                                                                 \
--        printf("\n%7u", (unsigned)n);                                    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
--    SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
--    SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
-+#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                                 \
-+do {                                                                         \
-+	if (__rte_constant(n))                                               \
-+		printf("\nC%6u", (unsigned int)n);                           \
-+	else                                                                 \
-+		printf("\n%7u", (unsigned int)n);                            \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
-+	SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
-+	SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
- } while (0)
- 
- /* Run memcpy tests for constant length */
--#define ALL_PERF_TEST_FOR_CONSTANT                                      \
--do {                                                                    \
--    TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
--    TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
--    TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
-+#define ALL_PERF_TEST_FOR_CONSTANT                                          \
-+do {                                                                        \
-+	TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
-+	TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
-+	TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
- } while (0)
- 
- /* Run all memcpy tests for aligned constant cases */
-@@ -253,7 +253,7 @@ perf_test_variable_aligned(void)
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index e1720e54d7..24323d8891 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -8812,8 +8812,6 @@ parse_vc_spec(struct context *ctx, const struct token *token,
+ 		return -1;
+ 	/* Parse parameter types. */
+ 	switch (ctx->curr) {
+-		static const enum index prefix[] = NEXT_ENTRY(COMMON_PREFIX);
+-
+ 	case ITEM_PARAM_IS:
+ 		index = 0;
+ 		objmask = 1;
+@@ -8828,7 +8826,7 @@ parse_vc_spec(struct context *ctx, const struct token *token,
+ 		/* Modify next token to expect a prefix. */
+ 		if (ctx->next_num < 2)
+ 			return -1;
+-		ctx->next[ctx->next_num - 2] = prefix;
++		ctx->next[ctx->next_num - 2] = NEXT_ENTRY(COMMON_PREFIX);
+ 		/* Fall through. */
+ 	case ITEM_PARAM_MASK:
+ 		index = 2;
+@@ -9270,7 +9268,6 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
+ 			  const char *str, unsigned int len,
+ 			  void *buf, unsigned int size)
  {
- 	unsigned i;
- 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
--		ALL_PERF_TESTS_FOR_SIZE((size_t)buf_sizes[i]);
-+		ALL_PERF_TESTS_FOR_SIZE(buf_sizes[i]);
- 	}
- }
+-	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_TYPE);
+ 	struct action_rss_data *action_rss_data;
+ 	unsigned int i;
  
-@@ -263,7 +263,7 @@ perf_test_variable_unaligned(void)
+@@ -9296,7 +9293,7 @@ parse_vc_action_rss_type(struct context *ctx, const struct token *token,
+ 	/* Repeat token. */
+ 	if (ctx->next_num == RTE_DIM(ctx->next))
+ 		return -1;
+-	ctx->next[ctx->next_num++] = next;
++	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_TYPE);
+ 	if (!ctx->object)
+ 		return len;
+ 	action_rss_data = ctx->object;
+@@ -9314,7 +9311,6 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
+ 			  const char *str, unsigned int len,
+ 			  void *buf, unsigned int size)
  {
- 	unsigned i;
- 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
--		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED((size_t)buf_sizes[i]);
-+		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(buf_sizes[i]);
- 	}
- }
- 
+-	static const enum index next[] = NEXT_ENTRY(ACTION_RSS_QUEUE);
+ 	struct action_rss_data *action_rss_data;
+ 	const struct arg *arg;
+ 	int ret;
+@@ -9347,7 +9343,7 @@ parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
+ 	/* Repeat token. */
+ 	if (ctx->next_num == RTE_DIM(ctx->next))
+ 		return -1;
+-	ctx->next[ctx->next_num++] = next;
++	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_QUEUE);
+ end:
+ 	if (!ctx->object)
+ 		return len;
 -- 
 2.48.1.vfs.0.0
 
