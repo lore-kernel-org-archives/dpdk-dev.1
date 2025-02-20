@@ -2,75 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DBBC021B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA203C021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:58:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A938A40A67;
-	Thu, 20 Feb 2025 17:57:22 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id D1F274067B
- for <dev@dpdk.org>; Thu, 20 Feb 2025 17:57:16 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-2fc0bd358ccso2443470a91.2
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740070636;
- x=1740675436; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OSpVszLkGKZLFlBSiV4S1b0oZK9eCr0ep8q2Ibv3gXo=;
- b=UvG5IVP5s6ZQ3rO643FAqPHYB1ksu3rJSyDOdbjXTyd04urTMPxN2SAEoUPV+b9UAv
- N6hiA3jqrMvlUniHdvNmAdKkl2GH9FiX5VmsSO04V47gOyfuXRbIhrXrSSg3HTG4g4p4
- JnQ1UfvRnfU9UDlQSBpn/yw3F3vdqRPv/D4Z64HnC8fyhFwJm28gA/pBdPdULU9wwpzk
- jR6VBdg2kbB9Zp8N/Z/mCFEzHae4UgFbA0/xN4fPLbDavanMZZGXAQQqLNlkgkAwO+cp
- eILO0Jsre+i/4+8cYesh8pBDPRt5JrMh0YriHUTeqsXCNhY2igP7rXVbS8LkSeGvslLK
- kYSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740070636; x=1740675436;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=OSpVszLkGKZLFlBSiV4S1b0oZK9eCr0ep8q2Ibv3gXo=;
- b=ghEPf8quLdtVWkgy9agxWOKlysakJlPHZHQ8bv7s8y0ZcbB0GzeJQDGAdq+LiYSckZ
- bdHpbFBaJjp5HnoroNreGyo8J2CLMihU9ce2sVVCVyjhJsossN8fUKFxxa4hMhCGYNh/
- iluXU6oiQ/H7zvnxVOfECPRE312XhcYpwtrp9dYgKxNiyH1BWCYyDTLY8iZ827x1yKte
- nCp09Xg51FhaKjEMBoUbIg5z7Vpf+XECLxJNicevgImaVOkTBbjEiXO2TW4q2e/I0+Pr
- JlMJGVwyiqP+r0wGvLdHPQvyO0sm31Tdn3RJtxquDjC0n+dc7CfPPhzVP2SjchAArwkm
- nJpA==
-X-Gm-Message-State: AOJu0YwIc0yMFHBfPplqVA3PYnDVDZsWr8tXO5QVS1wpa6z3Peny4PAq
- ii6bpqTwDNCzQpMPjtdmuElrBFPdKw6MXUgwQVDlK8zPed2m1RoybzHFdqbg8ah57P1fBNNJjes
- 0
-X-Gm-Gg: ASbGncuwKkMRyQa044WWsSqmAx7dNRjqDROu7DguHVGi+JX2s1HUWf3lh4sA9C04iAc
- ltRA5x/IZlyYzF4JcTBR7Rk3VVEbrxujRsM+MdeC/iMwQeUCltp3FA8lCg72mc2jqQYLxunJdZr
- Ylc3TAj5C3XdEyBjcVQEDmA7qiUNnvSJ1Sr2zGNtYU5i+uhgYdWNmn8OeYKwi0mD9WfB95F61VD
- J6mUKmXZFm6eam4yGUJbP94IJUp6F2ZhDIU1yYLZ3CE24e10/2xxpCJyyl+sO0PGshpR9v2p24W
- 77xHQrRogOvbY4KelSev0dOYTdKQxsPBInM2NUJ2vRscU8/za4GeQWt3fO17pj5SvkDd
-X-Google-Smtp-Source: AGHT+IFierEfO0HBP6ukWrQkK9ip970pslN4rxTqEcII5hpdNJ+7OB9iOna8g/qEkH4iFHD2h5WOmg==
-X-Received: by 2002:a17:90b:4d8b:b0:2ee:8ea0:6b9c with SMTP id
- 98e67ed59e1d1-2fc40f0ecb4mr41846468a91.12.1740070636042; 
- Thu, 20 Feb 2025 08:57:16 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d53491b3sm122729435ad.40.2025.02.20.08.57.15
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 08:57:15 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Akhil Goyal <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>
-Subject: [PATCH v3 14/14] security: remove unnecessary dereference
-Date: Thu, 20 Feb 2025 08:55:28 -0800
-Message-ID: <20250220165644.16421-15-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250220165644.16421-1-stephen@networkplumber.org>
-References: <20250217185743.169778-1-stephen@networkplumber.org>
- <20250220165644.16421-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 4029F4064F;
+	Thu, 20 Feb 2025 17:58:25 +0100 (CET)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 8E7964065C
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 17:58:23 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YzKB96ZgzzLr3Y;
+ Fri, 21 Feb 2025 00:54:57 +0800 (CST)
+Received: from kwepemf200007.china.huawei.com (unknown [7.202.181.233])
+ by mail.maildlp.com (Postfix) with ESMTPS id 123D214034D;
+ Fri, 21 Feb 2025 00:58:22 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ kwepemf200007.china.huawei.com (7.202.181.233) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 21 Feb 2025 00:58:20 +0800
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 20 Feb 2025 17:58:18 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "lihuisong (C)" <lihuisong@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ "thomas@monjalon.net" <thomas@monjalon.net>, "david.hunt@intel.com"
+ <david.hunt@intel.com>, "anatoly.burakov@intel.com"
+ <anatoly.burakov@intel.com>, "sivaprasad.tummala@amd.com"
+ <sivaprasad.tummala@amd.com>, liuyonglong <liuyonglong@huawei.com>
+Subject: RE: [PATCH] power: use hugepage memory for queue list entry structure
+Thread-Topic: [PATCH] power: use hugepage memory for queue list entry structure
+Thread-Index: AQHbUezKxRn4I6S/S0+UBKv0KpGojbNQN46AgAB4KgCAABe7sP//8ZoAgAAT57A=
+Date: Thu, 20 Feb 2025 16:58:18 +0000
+Message-ID: <534dac28376f4a88a846fbabf2e45b99@huawei.com>
+References: <20241219075319.8874-1-lihuisong@huawei.com>
+ <01d163c6-6d18-03e8-ac67-e7907d27bd08@huawei.com>
+ <20250220081158.345f09b0@hermes.local>
+ <295b2b64b39c4a61b76158e4ff474e40@huawei.com>
+ <20250220084522.16c5930a@hermes.local>
+In-Reply-To: <20250220084522.16c5930a@hermes.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.35.39]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,33 +62,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The expressions *instance->ops->set_pkt_metadata and
-instance->ops->set_pkt_metadata are equivalent in C.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/security/rte_security.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/lib/security/rte_security.c b/lib/security/rte_security.c
-index e5c862f5f5..1e980343fe 100644
---- a/lib/security/rte_security.c
-+++ b/lib/security/rte_security.c
-@@ -258,10 +258,9 @@ __rte_security_set_pkt_metadata(void *ctx, void *sess, struct rte_mbuf *m, void
- 	RTE_PTR_OR_ERR_RET(instance, -EINVAL);
- 	RTE_PTR_OR_ERR_RET(instance->ops, -EINVAL);
- #endif
--	if (*instance->ops->set_pkt_metadata == NULL)
-+	if (instance->ops->set_pkt_metadata == NULL)
- 		return -ENOTSUP;
--	return instance->ops->set_pkt_metadata(instance->device,
--					       sess, m, params);
-+	return instance->ops->set_pkt_metadata(instance->device, sess, m, params);
- }
- 
- const struct rte_security_capability *
--- 
-2.47.2
+> > > -----Original Message-----
+> > > From: Stephen Hemminger <stephen@networkplumber.org>
+> > > Sent: Thursday, February 20, 2025 4:12 PM
+> > > To: lihuisong (C) <lihuisong@huawei.com>
+> > > Cc: dev@dpdk.org; thomas@monjalon.net; david.hunt@intel.com; anatoly.=
+burakov@intel.com; sivaprasad.tummala@amd.com;
+> > > liuyonglong <liuyonglong@huawei.com>
+> > > Subject: Re: [PATCH] power: use hugepage memory for queue list entry =
+structure
+> > >
+> > > On Thu, 20 Feb 2025 17:01:53 +0800
+> > > "lihuisong (C)" <lihuisong@huawei.com> wrote:
+> > >
+> > > > > The queue_list_entry structure data is used in rx_callback of io =
+path
+> > > > > when enable PMD Power Management. However its memory is currently=
+ from
+> > > > > normal heap memory. For better performance, use hugepage memory t=
+o
+> > > > > replace it.
+> > > > >
+> > > > > Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> > >
+> > > How is that in a hot path where this could matter?
+> >
+> > AFAIU - it is used in RX/TX callbacks that power library installs,
+> > so I presume will get hit on every eth_rx_burst/tx_burst calls.
+> >
+> > > The safety rails in rte_malloc() are much less than regular malloc().
+> > > I prefer some degree of safety from checkers and malloc library inter=
+nals.
+> >
+> > Didn't get your point - what's suddenly wrong with rte_malloc()?
+>=20
+> Coverity and Gcc analyzer treat malloc as special case.
+> With attributes rte_malloc gets similar treatment but not quite as much.
+> Also internally, malloc and free have more heap pool sanity checks.
+> In name of performance, those don't exist in rte_malloc().
+> Lastly hugepages are limited resource, so they should only be used when n=
+eeded.
 
+Ok, I understand all that, but what you suggest then - not use rte_malloc()=
+ anywhere
+In DPDK code, even when it is a hot-path?
