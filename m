@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EA6C021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322A1C021B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:07:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E3C3040E0F;
-	Thu, 20 Feb 2025 23:04:52 +0100 (CET)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 2530840E01
+	by mails.dpdk.org (Postfix) with ESMTP id 15BBC40E4A;
+	Thu, 20 Feb 2025 23:04:54 +0100 (CET)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E39D40E03
  for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:38 +0100 (CET)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com
- (mail-am0eur02lp2236.outbound.protection.outlook.com [104.47.11.236]) by
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+ (mail-am6eur05lp2112.outbound.protection.outlook.com [104.47.18.112]) by
  mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Thu, 20 Feb 2025 22:04:37 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NW/waaAuFWNeMALBS89Jv/+2imRmvB+Z79gv/75mHpRly4MI2jRKV2kQO6v8FHVfaLq8BsbaBKSV/5SzQePEXxo+vwV96+lT3Pv6BSZrPG7a2LAAw9TeMMPhdmCxHxF/6cJQmBlez4yP8APeW13JpB143zTTdI6aVy7JRYPcmTRn5x9Yq55nFN1C7UaW6eKzb4e+Jjq3RvfBAi1yA45THwCm1CH1V92BS8WoHAg+8qRVYtnab58CGEb9VYdq4sYTV9xFqCy+88NuLglKR2TbfMNXmuy/ULra4TKm09Ef/r9FbV7NVW5LO/hMql+Th7WHlC+1e8zv9GrRvY8sO1CTdw==
+ b=VZ5s/cU6ETcdQq/Bn/RIkpQRSt2KLDRc+0wODOzoXs1lHmDwWDjFhlOc3lqHFmmfHTjePeTeiZX8mgn0RRskOPIkgQO4cfbGrb18/RNC67+0GZIYrFa5y39/iMau7QyoliKP533e/kuiHVUmMDXaOoG/VoQcjI0IVEnvRKBRNtTPvh1jeendMJ2eqT1sI9EVGOT9O8bmaOKLS1jxpkgpWSr9Iz0jaI7PtSkpsgVEU4rySstqVK07BFvxKyIU5igWCVXFehTgDeWvEqxRR5Sb7PHrZVKgeoXnsTZldBOMkGo6EL4p0DsA2s8yrztQKEOemHLVTAYUv7bofIY6/FI41g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pzOtsUS+VaZ82/52CXQUKC0hEgIIC4bQMQz/1yrqeV4=;
- b=bJvho0IMn/KDjEKL90eUsd2AZgGOfeRl+BMP+sp1Br2pcYEZkZyBSTlAE0b1eyWCv37M/7kHGlbrFM3yF2Nr2Yxs3cLCq4dPFS4v8DEPuf/vtJCuXQWQOGMgyauVlNxdJLgsBJpXq2sqeH5c35FjSsGY0A7I4dzpbg6P+VGdThPhzQ4JZlCHJS73Hjnjhb3AiOeNHP5O1SiYE4jhq43AsHAl0u/B6VRsdxrzypSo32nOIZr9YM81KR4lW/FdrTMroPDk28hx992ahZ4fWGDwuTz76MBlf6IcjcTodKB5uObKQi64GqBBbuiB0dKX2Ns9mbGRVgnJgZKBf8yEfHi+Zg==
+ bh=UfDbBIgERvnXEvWiAbuaOcs14nB4r1BjvLqNzYXAbPM=;
+ b=DJgjLsQ75RfxcTcdlRf3UFJuOIAx8uDP9av8aInBrgsXExwNnI5cHpAYFU34OcRZAI95mT8UFHOG5Q+1rPQ8rB9A5Sc5VOK6Pz4D5zSWYGv8J0pfPdKDQrOjnsl3VSFN6eVC2orjdbbAExAa5+icVAckAna8gwJneWCY2eV5eiPAMPGL6NC22LOYBN6wsjWpEN/GkOlMmhnB1ewmwqaP3VVbrvTasinlW/FQda3rEVM9PRwL+FQ2p18vXBeZ31nDnN3Yu9Y632tNpr+0yu2y2YlyYk85Kug/qn1Zo0JXFMgaLOiTcd5kWxiFLNqP0MEjIg+F/IQIdexWSSpvS+2+IA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pzOtsUS+VaZ82/52CXQUKC0hEgIIC4bQMQz/1yrqeV4=;
- b=dD0uYHjRCNu/p1HDNdZTA+hKkf/GrhFGeAz7NcUV7u8P/F7HNBPWSBzlwZxRB1oTSOcluT3DICXSQHh6LStkVsDBhTZuJQ9ItE2dU/RgVgMDmiG3h7y/5k0YOwNmFcMzR4aEc5jfbtTd3YD0zhWP91EJjf4/qeHqVFlyngoyNfM=
-Received: from CWLP265CA0506.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::19)
- by GVXP190MB2204.EURP190.PROD.OUTLOOK.COM (2603:10a6:150:1fa::19)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=UfDbBIgERvnXEvWiAbuaOcs14nB4r1BjvLqNzYXAbPM=;
+ b=LgQVl3iQ4LUONrFU03rhYrvABcOyifGjlS2Ka5W0ET8gQQqv6E3hlX/1ER8WJkDxVSuIG4gn1qqyPcWgUF/JW0XQ8HOkuPqzX3Pedswrq1Gu6BHLcXXHu44yfTpqkTbRp5odEF7Pm+FlqTLxhFgSOvT1Zq2aC79DuRgObU51tFQ=
+Received: from CWLP265CA0508.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::6)
+ by AM7P190MB0647.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:115::24) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 22:04:34 +0000
+ 2025 22:04:36 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::b2) by CWLP265CA0506.outlook.office365.com
- (2603:10a6:400:18b::19) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:400:18b:cafe::1c) by CWLP265CA0508.outlook.office365.com
+ (2603:10a6:400:18b::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:33 +0000
+ 20 Feb 2025 22:04:36 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:33 +0000
+ 22:04:36 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 27/32] net/ntnic: add pca init
-Date: Thu, 20 Feb 2025 23:03:51 +0100
-Message-ID: <20250220220406.3925597-28-sil-plv@napatech.com>
+Subject: [PATCH v1 30/32] net/ntnic: add igam module init
+Date: Thu, 20 Feb 2025 23:03:54 +0100
+Message-ID: <20250220220406.3925597-31-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,63 +66,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|GVXP190MB2204:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|AM7P190MB0647:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 786ee6e0-25a6-41fb-ac11-08dd51fa8eec
+X-MS-Office365-Filtering-Correlation-Id: 5d496f81-18b9-4c91-8822-08dd51fa906c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|376014|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PbKzh1A1VriF+V0T8Dtjw19vgXGQ0uP5tQsqnVCNrrQkRqaMXWt9DQGZ4atM?=
- =?us-ascii?Q?/gIRn/6Ehg+Ga7+1NLpHwcxXxeOj8EP8Zkvo3ub+HSxXJLMDcAmG60TTLQJy?=
- =?us-ascii?Q?XFFIioxliO3BWo6tvAqzBJmET/31XES5nl1mP9LAg8mFQnAMv92aEGcyS9uA?=
- =?us-ascii?Q?5skCg36F10lpd+4ntLkl9aIQh3jv4VpptE/I7KE9s9JEEcGvuPGPPCOvQuCk?=
- =?us-ascii?Q?rC7LYnlG349RdAznlOubWGm2idJZx57ioSABUYvIqczSheB7K3bCBjqnyByX?=
- =?us-ascii?Q?ddo4GVAlWyu3+QiUEfv5YckaUqJHO3c/gwBACxa3TzRofGMWaWLo9Pgh/mvR?=
- =?us-ascii?Q?M131elGFrob+9YDqHvuxQnuIqPFcy+wjkNfecjTQ+tJAXVVAmCS8wVfOWOIA?=
- =?us-ascii?Q?VapfElEBv4Ncjw7zM2Eih0WMGS5DzNcwpyAT/UzgN6Fx1ScCdF/NWPl1NMwj?=
- =?us-ascii?Q?d6Qr40z5Oola4bULdRacsUC7cf5dxLWNr/TPrivlRuSiY5dx1DkigCFRuq0y?=
- =?us-ascii?Q?p6TnArErnEYxQES9ydECcHK5jvwjzCoZKt+tiSLQtUiIVySZq+S76Om9KmJm?=
- =?us-ascii?Q?zgzRYtdaqe0BsZgjyJDpPSGA4Hum8mxPUVENsRttOKU0u/xYUMuoz+UywFPm?=
- =?us-ascii?Q?+lCRpUijfvLnZlAYnk60KqaARYtBvli+RjD+g/lwT3NRH6CUJQL/jSDq/prR?=
- =?us-ascii?Q?A6laLekGRI9kSDGH/lux96raCuZLqd5f5paJJldzqy4OJ6EpNd7OIvXmicGn?=
- =?us-ascii?Q?jAdEdelsAjGakGRO7iX3IrxD5NLIRxzV2dlPaxWp/tKrYWKAAc2N7xDdJuTc?=
- =?us-ascii?Q?LUj9QE/NxcGdXUyKmOPRYeU+8TqVDwzN8rt37hFcfO8yHp4W0bENnx3714PY?=
- =?us-ascii?Q?1qOOrUM+e07CJ4plUg/dipkh3Uq1I8Xd8HN4+jIIt9NsEGUK5WgDEaIw3Iei?=
- =?us-ascii?Q?OOVppVl7Ks303DlO7l/VHfzcSUTvDZTq1ESUxdkiiYrwyNDWI1WeSmUIguLD?=
- =?us-ascii?Q?JHc7oEWiOmzUCfLZ7IgI7hMtAvRXHldxFTBQM6H4aqpAbA5mWDlmxM174Akg?=
- =?us-ascii?Q?A+HQUuzXhmAw+F/4Cu3EFsiHZ7hhHNx1zbmJ9ImgfoC4OuoxR3YTly12PDZ+?=
- =?us-ascii?Q?gPA5Qwe7BClctsybtLbPKQ2Kv6q2UqSeqYxyx3PisvxrLPACRxWMhrSZjmzQ?=
- =?us-ascii?Q?aJa9SyH46nK1NkMvZ/5iI30oAlGUF1Mfo+BvZOV7p1kPd+xhV/BNXE8M3pB7?=
- =?us-ascii?Q?XJhcvRFlLz8FuiWp1LjRizN3cjioYRSYsF9E/KCiSSTGghOg/OmJYc/gFhoL?=
- =?us-ascii?Q?dvkDSx42GJ6nTRACondNRDxrU5rcwjhR/78qfxuR5Sh2rL8BsTVD035Nai2o?=
- =?us-ascii?Q?TKI4jU3kXk+65mfvaEhulSL+Luuswqlu0Mx65WN8m+sb4g5Sint0DoSqaNNj?=
- =?us-ascii?Q?BkRVyJYjDr7PvO8zfQspRbmkfsrxe+FpaOgAx0OvQTeUPIDoNFjPjw=3D=3D?=
+ ARA:13230040|82310400026|376014|1800799024|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?r43o2MEBvbW2UiqfO/fMAkiJgUkpD+6junXojWTKaHDYBXPi5y4kNNM7g+Pd?=
+ =?us-ascii?Q?afzrlIcNfqYgFi+Amk5n55m2Ksg0VkwqcnOxOoWu22p2ESNWrydU81/HqaJz?=
+ =?us-ascii?Q?2Vb2L4DHqdQo9CSqcfMLJNxAR61upLrnmYCtoIz0GoWwjYmNZHUZqChBFwIU?=
+ =?us-ascii?Q?FanlcgeUGLYHZleUDlp9PKoLpZ3Tdl22Kc1GMMfl4Frrm8Lr1LcGQTR1TtpX?=
+ =?us-ascii?Q?qB+yoJ/ADAnr8caKj7adeQSwbkDOGa8Gz5pL9mTwpNQ8S9RYMC4leMYB1mYv?=
+ =?us-ascii?Q?d4tZ7AnzJqFs/T61zgprmHtMvWtoMr0XzhCawTw73dyM4I0fij+hvC9URLUy?=
+ =?us-ascii?Q?G5dgdCg1RRQLMBjHPrKPSVzCyd12m/rIqW6mFjunXG2jkHP8V71q6hVHdPFM?=
+ =?us-ascii?Q?40zPtlvAyeZQWdPTNP5db9ICMcpk4RTyYKdTBOzNO/IVCOxT0OnSHxGzSEnF?=
+ =?us-ascii?Q?yzHVH5WibRt9xGni/oRpiH5Ci8lCpN5WXQT/AwGKIcwOTvGYyzsh7lZMNO5R?=
+ =?us-ascii?Q?9Op2+HAP59oQAgB4Ik1WPmD6g6GlUbOBWPD5H/OZUt2++puMxJOvgzkA3ZU3?=
+ =?us-ascii?Q?+/cLAwLavBZyc1oAWZR/CW4Jgp0ekh1u9tDaBxYY7lvL/He+/j2B+Aj0HAy1?=
+ =?us-ascii?Q?QTr1MS6OCVtM4EqCwr8OOV4Y5EyHE0s3QY6GbeIaQg1bIt/QZF5naJSfyqlp?=
+ =?us-ascii?Q?m24z1HAIVwOzsg3CrJB95Xi9hoBAE1xY1o/Ys4hvi/kizqM7+zo8Cjyt8CWW?=
+ =?us-ascii?Q?MSfhraY/b03J6QdhSVKrekfuVIZdlJxNMLylBIwNavuUVWa4fmqf3WbOeNkt?=
+ =?us-ascii?Q?eFrB7Dsz078pZ+stwD+L+XhaH/A9LGipckS5RyobAOYDMoZOjlXB8IwZLxqT?=
+ =?us-ascii?Q?IxJAGuZGjETWE5JmxiVYJ+HIaWqnNTWN14NUDwspwzwvIDDNL3dEVqwjRyZs?=
+ =?us-ascii?Q?yR21O4KjkaXA6k4fpXrS2tRI3OpgYVRQOGWti7Jf4hNfqlPQxC8NR/sil1cv?=
+ =?us-ascii?Q?qnluyXctTCe7noZXTb0eSBOQVC3feVKI3Ioy5PTwh+4srTq9W5Da2XT0TU9g?=
+ =?us-ascii?Q?mCLp2WHP0qkKrBrwcmSuzkzCwnw5VlbOJcMzsJmrz7F7xHqSH8r5iJ9Wendn?=
+ =?us-ascii?Q?yIjIxKVwRfF1qsh+dl5eYJq0GcipBFRpMO3tmvEDTcU0XDY3kt/KjCGhZZcI?=
+ =?us-ascii?Q?9gF3exqXDyMBU5nzgftElAC4JSbGudbTAILJoEZ9lCS1vBTgTHfXggzK4a+R?=
+ =?us-ascii?Q?4irdpww3xSOIBgkACUJKLmpKEEl7joe0B1r4tg1Z2q2x+judhyjxnPFwXRW5?=
+ =?us-ascii?Q?iehrYSh/mmbz9HH62jLn3YaUlKVqLeAqjL69r4yT4hTwU2rZPWmmD5MC2GLb?=
+ =?us-ascii?Q?MSI/nsPvymrkWBlr6MM5jJUpVf3yoqZcSzN66ygLxHfoNQH8QZcqQcLYQI10?=
+ =?us-ascii?Q?pwwVB88Kql0ipBPUm4AYeVdblcMmDTFovt/jW6JhR7bZG4xR0L1LLYcw0E8N?=
+ =?us-ascii?Q?imcAyPssVcF4xyg=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);
+ CAT:NONE; SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: XRAoYcas/S1fTmdGd4XJ0KdeZoElo1ycC88/wjk/+AF7T5RhMX3O7O46zF8sLbYPsPR/91TrXShTOc6Ga3I6i82ypZvonrXh1FWYjmRurjcfHTFL15OstjKMlVoZb7DYPixcXXs8pDtb7VDDoGazdeXJPxHVj78PgbMBk252Sut30dsgOoaLzhw7u0Y/SMzZoatghWla51PtElc4rEGa+5ncp1LlxCQ/RxomPoKnDQEu8Amwt76hyb3s3EsW1PwLQoQ/x3/4R8IiX04xx+kPdBc9sH8FomW5YMpNHbbhk56+uk/xKiWm05J5Ry6M7L8/hMHY//hxKGAWLQObUFs9Tv/33WSuDtkLFh50G8pN458Es6i+iGVQ3KnK1ecM/cHbf2n3RdmgDJZHMoHzjdQcqK/HoBlMMOSZ7JV9wGxgrUWz6buzBB+6Voj0pQyNFn4VM+xBykwGf0y2hKkfEDoWyFqDqK6VRFv/DHMdiQ5dVZp+T/C/N90Zcmu4njzUfS4fDAUVhxf1oU8YRflObktjjh4HDA3tYMhqf6Hj76/KIQUyhZZ1/HnwgMcH5Cui8EMNfkTwHcx3srUZwSZcwcp20UShDeOSpuk2MICNgrSc0aPyeyhJLw5XDPIoFzb45BzrP8Ex4kBWdIchvaXVgpXGOMCK9y+EwRp+W5m7pztnplg=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Jv6T0MpLqIHHS9GnJTkeGmEf7gX4gA8Ueey93/njnQRWW3G2LQhD113/O/SBJFlu9X2RvYdGfsdU49qjFMEuR+CF5TZII0pq27aDKQIGlgRcOsD/R+K6hkZzzqnnwjADa8OPSu1IZunRAsK1m6PlQ7gVx7eYbspctZ0pLlJ7Ptb1yUm7AV3fSfzpaz6fMnYToZuG8D+Pq6oQz02Nj9QbHkgMX+w3VDZlgnZwo+ytICYkE/benyuA33lxuib3pO90m6JXASaTMSFUP0Gy9Xk8Lzx41WsVlK4md9/TutsiPAMMmoIIuujJem7D6TcMJ4j7bsle/zYKz1FAinIXI9SooW+M5JwAtFyT6ddwFstc7BoyRoHzlSpRn7f/ZDfkPYzWOWAkaR67y+05p12dV7bvFpB77+ub5EayhqIaxLhqyOQ0nIXu/vyYxQ57xaYBO0CcFP4npCCDFFrrWzkZmdrIgek0T1+69HzFKaMFqmfatBxpK/r7mV1dtTEHI1emzuIBoqn7sFeQGYvVy/gWdIO8hFV6l0B0MPUsu7+OkYM1UIxx2LW6+aMYdDq9zRhdREkcOb/nGavb01RvZXuDF+VXydzblXW8GpYZsW7ndZ8QkIg9/Wx/RmqaI7+a1/pqRpOs0n5dbFQua7dNwX1LVIRhz99q0qp03p+XQr5ksQJAOOU=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:33.6933 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 786ee6e0-25a6-41fb-ac11-08dd51fa8eec
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:36.2090 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d496f81-18b9-4c91-8822-08dd51fa906c
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXP190MB2204
-X-BESS-ID: 1740089077-312005-29065-14101-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7P190MB0647
+X-BESS-ID: 1740089077-312005-29070-14102-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.11.236
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViZmxiZAVgZQMNHSNNnEwizJMj
- HZ1CDZwDgxzSAt1cAiNTXVMC3R2MxQqTYWADDQcFVBAAAA
+X-BESS-Apparent-Source-IP: 104.47.18.112
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViZm5oZAVgZQ0DjN0Cg5ydQgMT
+ XZ3DTZwDTZPMUkKdXCxNTSJNEixcxAqTYWAMTGZeJBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
- cloudscan10-185.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan19-102.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -145,139 +146,163 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Add initialization for I2C mux and LED driver.
+Create and initialize IGAM module.
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- .../ntnic/nthw/core/include/nthw_pca9532.h    |  3 +++
- .../nthw/core/include/nthw_si5332_si5156.h    |  3 +++
- .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   | 23 +++++++++++++++++++
- drivers/net/ntnic/nthw/core/nthw_pca9532.c    | 20 ++++++++++++++++
- .../net/ntnic/nthw/core/nthw_si5332_si5156.c  | 18 +++++++++++++++
- 5 files changed, 67 insertions(+)
+ drivers/net/ntnic/meson.build                 |  1 +
+ .../net/ntnic/nthw/core/include/nthw_igam.h   | 37 +++++++++++
+ .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |  4 ++
+ drivers/net/ntnic/nthw/core/nthw_igam.c       | 62 +++++++++++++++++++
+ 4 files changed, 104 insertions(+)
+ create mode 100644 drivers/net/ntnic/nthw/core/include/nthw_igam.h
+ create mode 100644 drivers/net/ntnic/nthw/core/nthw_igam.c
 
-diff --git a/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h b/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
-index 24da937a18..7cc0008dcb 100644
---- a/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
-+++ b/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
-@@ -17,6 +17,9 @@ struct nthw_pca9532 {
- 
- typedef struct nthw_pca9532 nthw_pca9532_t;
- 
-+nthw_pca9532_t *nthw_pca9532_new(void);
-+int nthw_pca9532_init(nthw_pca9532_t *p, nthw_i2cm_t *p_nt_i2cm, uint8_t dev_address,
-+	nthw_pca9849_t *pca9849, uint8_t mux_channel);
- void nthw_pca9532_set_led_on(nthw_pca9532_t *p, uint8_t led_pos, bool state_on);
- 
- #endif	/* __NTHW_PCA9532_H__ */
-diff --git a/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h b/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
-index 753717ba8a..9eaf8872e3 100644
---- a/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
-+++ b/drivers/net/ntnic/nthw/core/include/nthw_si5332_si5156.h
-@@ -19,6 +19,9 @@ struct nthw_pca9849 {
- 
- typedef struct nthw_pca9849 nthw_pca9849_t;
- 
-+nthw_pca9849_t *nthw_pca9849_new(void);
-+int nthw_pca9849_init(nthw_pca9849_t *p, nthw_i2cm_t *p_nt_i2cm, uint8_t dev_address);
+diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
+index 7e326a3e1d..30a92130b5 100644
+--- a/drivers/net/ntnic/meson.build
++++ b/drivers/net/ntnic/meson.build
+@@ -56,6 +56,7 @@ sources = files(
+         'nthw/core/nthw_gpio_phy.c',
+         'nthw/core/nthw_hif.c',
+         'nthw/core/nthw_i2cm.c',
++        'nthw/core/nthw_igam.c',
+         'nthw/core/nthw_iic.c',
+         'nthw/core/nthw_mac_pcs.c',
+         'nthw/core/nthw_pcie3.c',
+diff --git a/drivers/net/ntnic/nthw/core/include/nthw_igam.h b/drivers/net/ntnic/nthw/core/include/nthw_igam.h
+new file mode 100644
+index 0000000000..e78637a331
+--- /dev/null
++++ b/drivers/net/ntnic/nthw/core/include/nthw_igam.h
+@@ -0,0 +1,37 @@
++/*
++ * SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2023 Napatech A/S
++ */
 +
- int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel);
- 
- /*
++#ifndef __NTHW_IGAM_H__
++#define __NTHW_IGAM_H__
++
++#include "nthw_fpga_model.h"
++
++struct nt_igam {
++	nthw_fpga_t *mp_fpga;
++
++	nthw_module_t *mp_mod_igam;
++
++	int mn_igam_instance;
++
++	nthw_register_t *mp_reg_base;
++	nthw_field_t *mp_fld_base_ptr;
++	nthw_field_t *mp_fld_base_busy;
++	nthw_field_t *mp_fld_base_cmd;
++
++	nthw_register_t *mp_reg_data;
++	nthw_field_t *mp_fld_data_data;
++
++	/* CTRL From version 0.1 */
++	nthw_register_t *mp_reg_ctrl;
++	nthw_field_t *mp_fld_ctrl_forward_rst;
++};
++
++typedef struct nt_igam nthw_igam_t;
++typedef struct nt_igam nthw_igam;
++
++nthw_igam_t *nthw_igam_new(void);
++int nthw_igam_init(nthw_igam_t *p, nthw_fpga_t *p_fpga, int mn_igam_instance);
++
++#endif	/*  __NTHW_IGAM_H__ */
 diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-index bfc66a97d1..6c5c1cd51e 100644
+index 35cbaea81e..95394b9c8f 100644
 --- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
 +++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-@@ -77,6 +77,29 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 	if (res != 0)
- 		return res;
+@@ -9,6 +9,7 @@
+ #include "nthw_fpga.h"
+ #include "nthw_hif.h"
+ #include "ntnic_mod_reg.h"
++#include "nthw_igam.h"
  
-+	/* Create pca9849 i2c mux */
-+	p_fpga_info->mp_nthw_agx.p_pca9849 = nthw_pca9849_new();
-+	res = nthw_pca9849_init(p_fpga_info->mp_nthw_agx.p_pca9849,
-+			p_fpga_info->mp_nthw_agx.p_i2cm,
-+			0x71);
-+
-+	if (res != 0)
-+		return res;
-+
-+	/* Create LED driver */
-+	p_fpga_info->mp_nthw_agx.p_pca9532_led = nthw_pca9532_new();
-+	res = nthw_pca9532_init(p_fpga_info->mp_nthw_agx.p_pca9532_led,
-+			p_fpga_info->mp_nthw_agx.p_i2cm,
-+			0x60,
-+			p_fpga_info->mp_nthw_agx.p_pca9849,
-+			3);
-+
-+	if (res != 0)
-+		return res;
-+
-+	for (uint8_t i = 0; i < 16; i++)
-+		nthw_pca9532_set_led_on(p_fpga_info->mp_nthw_agx.p_pca9532_led, i, false);
-+
- 	/* Create PCM */
- 	p_fpga_info->mp_nthw_agx.p_pcm = nthw_pcm_nt400dxx_new();
- 	res = nthw_pcm_nt400dxx_init(p_fpga_info->mp_nthw_agx.p_pcm, p_fpga, 0);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pca9532.c b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-index fcf5463fcb..af14cd6d06 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-@@ -15,6 +15,26 @@
+ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ {
+@@ -198,6 +199,9 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 		return -1;
+ 	}
  
- static const uint8_t led_sel_reg[4] = { 6, 7, 8, 9 };
++	nthw_igam_t *p_igam = nthw_igam_new();
++	nthw_igam_init(p_igam, p_fpga, 0);
++
+ 	return 0;
+ }
  
-+nthw_pca9532_t *nthw_pca9532_new(void)
+diff --git a/drivers/net/ntnic/nthw/core/nthw_igam.c b/drivers/net/ntnic/nthw/core/nthw_igam.c
+new file mode 100644
+index 0000000000..5dc7e36c7b
+--- /dev/null
++++ b/drivers/net/ntnic/nthw/core/nthw_igam.c
+@@ -0,0 +1,62 @@
++/*
++ * SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2023 Napatech A/S
++ */
++
++#include "nt_util.h"
++#include "ntlog.h"
++
++#include "nthw_drv.h"
++#include "nthw_register.h"
++
++#include "nthw_igam.h"
++
++nthw_igam_t *nthw_igam_new(void)
 +{
-+	nthw_pca9532_t *p = malloc(sizeof(nthw_pca9532_t));
++	nthw_igam_t *p = malloc(sizeof(nthw_igam_t));
 +
 +	if (p)
-+		memset(p, 0, sizeof(nthw_pca9532_t));
++		memset(p, 0, sizeof(nthw_igam_t));
 +
 +	return p;
 +}
 +
-+int nthw_pca9532_init(nthw_pca9532_t *p, nthw_i2cm_t *p_nt_i2cm, uint8_t dev_address,
-+	nthw_pca9849_t *pca9849, uint8_t mux_channel)
++int nthw_igam_init(nthw_igam_t *p, nthw_fpga_t *p_fpga, int mn_igam_instance)
 +{
-+	p->mp_nt_i2cm = p_nt_i2cm;
-+	p->m_dev_address = dev_address;
-+	p->mp_ca9849 = pca9849;
-+	p->m_mux_channel = mux_channel;
++	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
++	nthw_module_t *mod = nthw_fpga_query_module(p_fpga, MOD_IGAM, mn_igam_instance);
++
++	if (p == NULL)
++		return mod == NULL ? -1 : 0;
++
++	if (mod == NULL) {
++		NT_LOG(ERR, NTHW, "%s: IGAM %d: no such instance", p_adapter_id_str,
++			mn_igam_instance);
++		return -1;
++	}
++
++	p->mp_fpga = p_fpga;
++	p->mn_igam_instance = mn_igam_instance;
++
++	p->mp_mod_igam = mod;
++
++	p->mp_reg_base = nthw_module_get_register(p->mp_mod_igam, IGAM_BASE);
++	p->mp_fld_base_ptr = nthw_register_get_field(p->mp_reg_base, IGAM_BASE_PTR);
++	p->mp_fld_base_busy = nthw_register_get_field(p->mp_reg_base, IGAM_BASE_BUSY);
++	p->mp_fld_base_cmd = nthw_register_get_field(p->mp_reg_base, IGAM_BASE_CMD);
++
++	p->mp_reg_data = nthw_module_get_register(p->mp_mod_igam, IGAM_DATA);
++	p->mp_fld_data_data = nthw_register_get_field(p->mp_reg_data, IGAM_DATA_DATA);
++
++	p->mp_reg_ctrl = nthw_module_query_register(p->mp_mod_igam, IGAM_CTRL);
++
++	if (p->mp_reg_ctrl) {
++		p->mp_fld_ctrl_forward_rst =
++			nthw_register_get_field(p->mp_reg_ctrl, IGAM_CTRL_FORWARD_RST);
++
++	} else {
++		p->mp_fld_ctrl_forward_rst = NULL;
++	}
++
 +	return 0;
 +}
-+
- void nthw_pca9532_set_led_on(nthw_pca9532_t *p, uint8_t led_pos, bool state_on)
- {
- 	if (led_pos >= 16) {
-diff --git a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-index b4a7b57bcb..eb11ebc67a 100644
---- a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-@@ -13,6 +13,24 @@
- 
- #include "nthw_si5332_si5156.h"
- 
-+nthw_pca9849_t *nthw_pca9849_new(void)
-+{
-+	nthw_pca9849_t *p = malloc(sizeof(nthw_pca9849_t));
-+
-+	if (p)
-+		memset(p, 0, sizeof(nthw_pca9849_t));
-+
-+	return p;
-+}
-+
-+int nthw_pca9849_init(nthw_pca9849_t *p, nthw_i2cm_t *p_nt_i2cm, uint8_t dev_address)
-+{
-+	p->mp_nt_i2cm = p_nt_i2cm;
-+	p->m_dev_address = dev_address;
-+	p->m_current_channel = 0;
-+	return 0;
-+}
-+
- int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel)
- {
- 	int res;
 -- 
 2.45.0
 
