@@ -2,145 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 601D3C021B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 09:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2D4C021B1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 09:18:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC42E4014F;
-	Thu, 20 Feb 2025 10:14:57 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 699FC4014F
- for <dev@dpdk.org>; Thu, 20 Feb 2025 10:14:56 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JICh41020243;
- Thu, 20 Feb 2025 01:14:51 -0800
-Received: from nam02-dm3-obe.outbound.protection.outlook.com
- (mail-dm3nam02lp2046.outbound.protection.outlook.com [104.47.56.46])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44vyyumg72-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 20 Feb 2025 01:14:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B5A4402C6;
+	Thu, 20 Feb 2025 10:18:07 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 2408240041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 10:18:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1740043085; x=1771579085;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=UA05Cf6+1QOO8O2AjvvfFfympHUGgfxMff5tapZ97mQ=;
+ b=KsE/MbUPMZQBT5eW+ct7+RLGmYxggOmu+sC5dQGmdtxjni6jH+3P27Fk
+ oFSpYR+zVWMapnmkVrAEqwnNpBYFDLelHNSpn9q1msrC8v/Pw50tgQpAB
+ SrVnHGuCbNQz/hEnLizf32h7b1FHTsJst95pBDFMyj81hXlltsb2P0jT9
+ EoeVmMShmq4IMDDOCkZvUZ4/Wem1OGMEZ/3AyuzmOB0lOi/fvoNIxDOtC
+ WCXm+wCHq3oiUinkG+k6XyI6zhfCgMZAWfpuWmcFudNqSHrUvaQsDVV/e
+ d4vL72jOJFFr/38qF8W/zlmQpBOfxI+c1Wz5FokfbVfPtrKU0SGDO+aC+ A==;
+X-CSE-ConnectionGUID: fwGdAjD8SDGE7A852TqnXA==
+X-CSE-MsgGUID: mrVjkEp0S86jzfKiaeeBZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="28407860"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; d="scan'208";a="28407860"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Feb 2025 01:18:04 -0800
+X-CSE-ConnectionGUID: tdD+SLM+TDCmfgaevXUy6A==
+X-CSE-MsgGUID: JyV6Ba6mSe+jzv18wJ6reA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; d="scan'208";a="119604582"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Feb 2025 01:18:04 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 20 Feb 2025 01:18:03 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 20 Feb 2025 01:18:03 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 20 Feb 2025 01:18:01 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LYsBmpUSpcTN6tUOqSJbJiGZcyBDRrjIHHPOJxVLlK4hIW4NkT7qtdXii4N0SFWhP+PgReWKxkV4wDgEHcsArThPxM9HfhCCDIbsP8Vj6CD+YxIVP054+gWt8qedrLQx9nVGnxJEhjCWeCF9r1+oXE1+THyPPQLEe7BVXD5zSI4v5ERMjvKElsxjwIUDCua0PRUkeSvCrvYV/no1tj+dZAt3VZejs83uX/4gz1i1SDPzC5K99hZAuLz/Mp2CLGMEwGFHoAnjAMHYdZNzjvlyrUD8XvE1WYnELOmHNzuVj3s05Z93s4EnEN93umqAIRRaRha4ralpFjkaoj8k3ggKSQ==
+ b=f6UFV5YwHeVW+5ZFyvy9QGHjxzN3hvnb1NK17K6fHEEEM4JcGZGML5LBf6dYmCr1HxsT2B/ZZ8ual6lb6QRNub8anmvwWGLPRZIsLRx5pdqkrpJdQo7mp2lPziIB+IYDEcRbUfk3QZ+gJ7oe2JXRrV/DsInHo+IxV96zRXsagmDIdYrIeKd3UXZZPtrhWN77H2+Kdl0WfHOWVEZSvir4SCO/LsIGzlABo5uXC06uh+6o3QXPdYjNLTv+lp/lR+WwgHSjnu8NuZ//NSL9vJtA0GZZ3SkRr5iDzrWSfL8JX4g3iVPftMb1icMcwR3f1geaKMNcGyOYop8Kj9zepZAWgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zCWaHkbyrYu1FAN+ixlRE/JGEoXmcIqCTSqRb2aH31I=;
- b=hTpbfsUL3hWHYBxsl4tWMoUUuwX1WpmUpCQq/vBgbrCjbCRY5hUECA54jO0LulGVfCMsljetHWuPMjp6ZyzSrDY3n9ELudUOcyym0tGw0JE/dHoZ3FkzrIatT5aQV8KWm46IvxLJuxLeQ/WZlejlxiE4mtS04FgiE4jmsAFl8OKNbwNGdVfPJXweRslaO6HbuCwwNKGEW/jvIqC75dxDh7zKWSylVSC3L5nIXEcKUIfM6YwPW2FfSgwmJrKK87Yp7NAJsAJ6NjLHoq3BrbnUZRX6hzlwBBg8DpP1yH7dcqh3HdU3bUGdIj4jUdoZ0sKPAA1mCEErbjmQaOfxWOrrlg==
+ bh=y/U8Cxsk+u+O3c+F5mbGWACbHrjrGY2yMRJyjU9xOSk=;
+ b=wXv/bAZTZLkmLEDAJDksswNkDts4teaEZIB/XeZ4SSPZyJ4DfF/QgIxgA9y7fntZl9oswBxidINBn/Zj/RqmielHUa3nMUuku+CjeP4KrJlb3tSTseXxvfI58LjlA1A70Bt43rEoKW6ML6+4KXzS/fJqSdEdXmyQlz2GIPm03jPZNVYFwiEwUT9G0v/RLfFJrGRtiDFjjkUX+VZuO0Vb4L4SO7v8k6LJC0gS89HZR1Mj7GXC3ALEBTZ7Os0TZt2cdxWyCAqe3t8wXmlFFU3yrQdy4bIDZxkLXCHTAou0PJ4B5ilbEFyXlBwAYF6raJaWHeFudNq4glrD20Y9p1Zhcg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zCWaHkbyrYu1FAN+ixlRE/JGEoXmcIqCTSqRb2aH31I=;
- b=TRPBw/y/jlsjLJwdvRZxiYZzgT82T4+brohMn8HyKOaCkcE6dUGuGAV0eYYwcLN8C00W4Z7eqnniOx6tQxpzZNu5/CJ32ERIS4P+lrs9NHRG7LzwBPK3m8L8t+vaGWYNxI2OHZoliEm4Xwhgfu8bgr7bKg+ya3cPzW0olaPdnow=
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
- IA3PR18MB6334.namprd18.prod.outlook.com (2603:10b6:208:529::9) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.14; Thu, 20 Feb 2025 09:14:02 +0000
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717%3]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
- 09:13:59 +0000
-From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-To: Luka Jankovic <luka.jankovic@ericsson.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>,
- "mattias.ronnblom@ericsson.com" <mattias.ronnblom@ericsson.com>
-Subject: RE: [EXTERNAL] [RFC v7 0/4] eventdev: atomic tests to test-eventdev
- app
-Thread-Topic: [EXTERNAL] [RFC v7 0/4] eventdev: atomic tests to test-eventdev
- app
-Thread-Index: AQHbgtRGur5TIW5HjkWXiWpskC/0b7NP6XTg
-Date: Thu, 20 Feb 2025 09:13:58 +0000
-Message-ID: <PH0PR18MB4086B7A9603C94434ACA967DDEC42@PH0PR18MB4086.namprd18.prod.outlook.com>
-References: <20250124095937.1436673-1-luka.jankovic@ericsson.com>
- <20250219134325.1195531-1-luka.jankovic@ericsson.com>
-In-Reply-To: <20250219134325.1195531-1-luka.jankovic@ericsson.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|IA3PR18MB6334:EE_
-x-ms-office365-filtering-correlation-id: c5e7b8da-bafd-4d68-ac15-08dd518ee8ce
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?75BcBz0HCR1kdpMA2k92xWuCzOVm2n0ArTdku665pqh/nOWy2I9vEBlA59k/?=
- =?us-ascii?Q?n9z0o8+71zJgSMkS7w321uXiynKVbF1TJgVMkv1Tp8LuX3kZIlkvsdEKTpwT?=
- =?us-ascii?Q?VTttV18F/0vMlL46GJBdpdOLwE4OlCM547isbKWsdYBiwr+/lPHbNvVkdHA4?=
- =?us-ascii?Q?IjFWWEsXOz61L1Z7J0L8UAlDX5NdO9fzyFDzbGRPMx37EKESkRdNN7lyO6W/?=
- =?us-ascii?Q?/P80tYCE67crFYprV+xhwyHwG+NWe9kZ46H4KAKi7m+wr6mt4aYZplCzzzu4?=
- =?us-ascii?Q?BIsWd2Q+E8StGWV/65It4KIueHS0UUbyj0SivK7nQXj4R1rbfbV+er2KReFc?=
- =?us-ascii?Q?NV8SxoLRIsCSCleOZvLvkQYPSbChWTJC1jq1v8f8lj/mRwbD9bhjT2qM5cUl?=
- =?us-ascii?Q?K8fl+irPeRI/h2vlN3ueTDJYqxLlnILriwAUD5Fl8rwicSf4QfNXsL5rKKsa?=
- =?us-ascii?Q?j1URpWXZ7yzOhGTDhybv5VTJCTMIlil4vSGJFgvKEs2pthBPLgLNQtIlttmS?=
- =?us-ascii?Q?zwco+nlTXt1JCxSsSsrDUmFrc+NNl4T/76Ru5bBIjK+9ekJgY+fzUMqm6mcG?=
- =?us-ascii?Q?XhdE+583tIpEJY13cvo+8QF5mDrDnpW/M+jN9+5NhExvd+Zh2vCJAX/nC+PA?=
- =?us-ascii?Q?uUDxdslnJrP5es3DSsmhUrV9Pv4pLraXyMfIq8ix5abNZ9fCJ5ceGFAikj7h?=
- =?us-ascii?Q?Q8NwrvwyxKWgx7uKUoeUUyazJby00gePn970f6UwBadNJboTsv3uMjSY1e2f?=
- =?us-ascii?Q?inMj2o6dK/cm2818ISGNwMbVLetFCZcGvQvYOnzdpUD6a1hY/yyK2yOVpHvM?=
- =?us-ascii?Q?R4xnxkUd2nIKd4K4zYOfCkNxxisDJd9xxJ/L6XoN0DVQqifzxfSBDusHLYsv?=
- =?us-ascii?Q?C/tmbc2OszGBCCto17IGPQHpKL/RW3w2S/VZs1igr0V1b10xH/dscDThAhop?=
- =?us-ascii?Q?JXTbqli+1GGlFygPIuWW7CCeyqlJlWMHeWSf6soEYUc+D2T5RzCr9A8Y0q1R?=
- =?us-ascii?Q?R1zxESytlKyCWB7+zZWwaT6HciqYh9qRNuk8fm4tKcJzgUffeF1q5ZwestzT?=
- =?us-ascii?Q?EZ6R46448ikqfojjNqFnF9TN3QshkyFvD5ltNVc4vvxaAXtVSXkGLXeyAO57?=
- =?us-ascii?Q?GCtMtRFgQwKqrcwCniItkAqGW9XhmBKdXjHWQvd71Z/KbGEY75xx4DjuRUOr?=
- =?us-ascii?Q?TZCWzP08h74KWEEc90IfsYbwB9u20GgI1n6BzaUAG7tmxFEa+ZnluI0Nu5Hz?=
- =?us-ascii?Q?xxMqG/ICYJN8WeUXM94n1FSHnGfceXNl89RZL3xwhmdsmp70WpnsWzeW/Ncs?=
- =?us-ascii?Q?D3XCr6v3hKCjf7gGgV1jYL9URYmKsWyhqMJYwKk7ppqaShr8cYy9sWKb6S7b?=
- =?us-ascii?Q?mbeSUL8lYdpqjYftCQdJpY/s5Ui6tV23DDAfnGaAz+xjskko+3ynfVF/WR/2?=
- =?us-ascii?Q?Q+hgR+vu26vM5jxP0+b+3yswoqEbN4c5?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZnY9g5u5Yr7cm1I77Guw6NmipCdFIfULtrBDjCBzCsQULnPrWLN6HopVIddl?=
- =?us-ascii?Q?hRR/nDjV3RgT3cVpgGNOlRGJD7nYG8uOVP7OHEyGVvn+FgCvWbPiFNfUZs6+?=
- =?us-ascii?Q?fqY4E38P/jNbo+WseID/IxGwliB2T598K23HYDHiKJlyoRZx2ZypRQsbrNjo?=
- =?us-ascii?Q?CxmLp36e9tMgA9Ti1HPD+W4Ztl/nNQ66dQa2aACDkdP2l5dHYGAU7dAmzhD8?=
- =?us-ascii?Q?cgnaGXHgVQv8ZmAUBuLq6Qu5VrKQAWXqNNai98KJc9UGzg7EfqJ8mlLgHK9R?=
- =?us-ascii?Q?dNdulL4rMKB+1XglQdfTX3O9QACi0W6177qursbX4GATEoOos6f9cjRdOtFw?=
- =?us-ascii?Q?Hg5sWqaetkMJBcVVXQnEvz72h3hGdF5D4yiEDXv5xm9TTWCTRuyfGYvZVmBt?=
- =?us-ascii?Q?TxmOi01m+AiS09IyvfsN9IZYmAyKEFOfMgkVez3nSWbq7D3yLiZlBhEPylKa?=
- =?us-ascii?Q?STcooe1HZfabN28GgW/MefD1xMhaQ4fiO1TA3mtJPveaW/OGXGlgatoMG2fY?=
- =?us-ascii?Q?zjyc40A1ErZW/DDPbAe8TBeOTQHNfawXIw5R+euDOCurMAZziVTyNYvF7efa?=
- =?us-ascii?Q?zKtaOTK7UtNOyl5+y8AQlbpcXPFNQSooi86Tvpkih6yqeASuBrV60tSvWxvc?=
- =?us-ascii?Q?CJfVTQZzcGfG7GrU61E+FbV26emoVghIrotKzOZyPu6Kcz3juTU+Mkv2uIIP?=
- =?us-ascii?Q?Ap1TLqPOwEIxNvw9EqudqpdCopO3QRzGdlP3nj1RELBw9Vf8akBPE+PJbhLR?=
- =?us-ascii?Q?WyZhEbB1T+Yo6d7WDPydtSl/h1Lbk8wlZHVv/GOow5WxBCNO4gtwDHX7GAw7?=
- =?us-ascii?Q?6f6G0Sqrwl0EL94JG0bBWgMd2476KdZm2McBBrCC/+43hLcMxTdLfSoFjBZY?=
- =?us-ascii?Q?toZQz8yaUxKNn8ipv7T0o8B/NobOq4maHdzsk3BemBzRjVjmpCDYSWTv/Z9f?=
- =?us-ascii?Q?G3k2bXKBzTFJGg4vwTN9DoM/vO3Asv/tQ9Ss5a5iziRpsAUhXbZ8A+4MWjW+?=
- =?us-ascii?Q?GQ5jFWBig6lsLM2qTroduzFryKqMfu1jtDkVKG3UBRYHUXQ1BBPGzwMJEY1Q?=
- =?us-ascii?Q?82rvHnjbnOBUI0ryRxKTAmRkJBDTh/pRo9A3TV/Y7xe7axPeU7/KT0JCvjlx?=
- =?us-ascii?Q?PTanaDE5JwgqBA87XKpa70x8H9400HitRXE+iAjIO7S50lsrvXvklwMIZzSZ?=
- =?us-ascii?Q?StUtYcuOqzoz8nyan8h+34ceRlNvOl4tmKW3P7QUPGOuhwQEusXkYJmeHZjS?=
- =?us-ascii?Q?S3mb98UPu7XNQAvUUbd8g0wzplOi/k8euz7/ALxlbV33UyAGXtFWFnLW1S37?=
- =?us-ascii?Q?Ys0BiMDGc2HDe3F8BCXIi8/6fnhfWxB/57B2IPlQFbUtCBScCOQUCW/MsShv?=
- =?us-ascii?Q?iOVEhpUCyp+1pLR6+MX6D4lr6xk1wzV4WDXwmJah/DbDv871Xhv3FsyPSZIL?=
- =?us-ascii?Q?pXRrwY2HGzz/SVuhyVrm4MLAnB2UbLl0YBhSp6rXYGyGF9nvCH1CJ3tFigOU?=
- =?us-ascii?Q?VQJEUHnIoA42YnCsO3CUbVplVBAs9CD82SmfwBgWl0UnyUr0ZVJ8J15g5Xcb?=
- =?us-ascii?Q?CM7JuH2IYYdZMeha1XSFcr9+jU2SG65fbBY90kdy?=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CH3PR11MB7894.namprd11.prod.outlook.com (2603:10b6:610:12c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 09:17:18 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
+ 09:17:17 +0000
+Date: Thu, 20 Feb 2025 09:17:12 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v2 00/14] Remove unnecessary function pointer deref
+Message-ID: <Z7bzGJqiVq0U1sEN@bricha3-mobl1.ger.corp.intel.com>
+References: <20250217185743.169778-1-stephen@networkplumber.org>
+ <20250220023509.630569-1-stephen@networkplumber.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250220023509.630569-1-stephen@networkplumber.org>
+X-ClientProxiedBy: DUZPR01CA0089.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::12) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB7894:EE_
+X-MS-Office365-Filtering-Correlation-Id: cacdf1e9-5bd4-4b29-4ad0-08dd518f5f52
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/W1ootKUnOpfCup9OcHrrhzwm7+lJj30Qx2BvddYcwuU4o7AK/Y8FbLexgzW?=
+ =?us-ascii?Q?NAU561yoJfYPulQhNH8/F8jfYh+QNC5MaFcaAfKJkvWRiuXM2vZ6isV/ztNb?=
+ =?us-ascii?Q?NaYgP1ij7+qnWImS7uUBjFGg9XU73wX9/jtAyGG9+hopE+6R9MiJgsxcH2Vg?=
+ =?us-ascii?Q?lXrPZs8xDS1D10eDdi6i8mrdXRcLuze8usQCzNOoiwuwTnV68JD5FWr0VVwm?=
+ =?us-ascii?Q?AaLqtPgvTDS16IttR9bWdOPERZfBqXAPnhyBPOzLbirMB//TEreOD6SBAgNv?=
+ =?us-ascii?Q?VtDWLshHnVN0oPwmusVOCy1YhnditHKoOFAk3R18O65ij9FYHCOnv3/FH1Pl?=
+ =?us-ascii?Q?Lu0vixQX0MvHUHMXziv/5pBVtiljx+eYV28vvRVM0fjhwrK2jODHp0QPn8Ie?=
+ =?us-ascii?Q?XwPpuMnbGSrdQSdO297Ufb+UgOdveA5kquQw/egMM8UCKEkgB1onsN0g/L1E?=
+ =?us-ascii?Q?2qSwVJhzpTNWrB2Z+3CQnDIrXRpUkZNzyuCxqIYO333WGDrXC7gFWL2QLPsA?=
+ =?us-ascii?Q?78lF0Gevp9gX5wrX47DdsiMRDbH8yejQyASUAzSxUQrd6sCLvx6XuQXpdDUz?=
+ =?us-ascii?Q?pF0ScFdF5Ro4osKCFJwKx6oFF5lGKkPd2BV1WMckBED4ArNshIUi295J/rEA?=
+ =?us-ascii?Q?bDszYaKIjtbyYVnsD4C8CG+k5an0qwwfe6wSr1QKhLPph9cB/YiggxpYJIrr?=
+ =?us-ascii?Q?HlDkUwh9Y6tJ/IVPTl89MRy0AhwR/npCgbc3CIo0BfpbM3K3obG3w4Fgyh7H?=
+ =?us-ascii?Q?ljPwqxk17dG25F9eLspmMmAN1B1T3cUjKtxrkTQFFFeeiNOY7Ry4DrTuhw3+?=
+ =?us-ascii?Q?V/ceIg5n6IIh0ajOJQ0RTHvQgm6yFxz4RTg8Djb6SH3IMRT3iT5dy6rElIG9?=
+ =?us-ascii?Q?1evBh7sA5WDzhIuNPoMLbN8ZvIy7EalJeBxM4AGPIFO802OH3HM8lGAiG8n9?=
+ =?us-ascii?Q?fJjjHAVXI1BAJ1LoWlJ5idFOj1QCsmaNoefjX2IHnfPpOeQrxJlsieoopa5j?=
+ =?us-ascii?Q?tTEMOofYk1eAj5cIxiwP+tWh3WC45BmBHf+bg/FzKeaHEJBu5pOM8cubEhLz?=
+ =?us-ascii?Q?JTksGHVFdamSbWQ4c23Pvi/mfhS9Iz36xRIE8cQx64qyCDuMrC/9QG7WV3a9?=
+ =?us-ascii?Q?8V7Nmy8HrXabhbUcEOOfasq3osQ050vfuY0b0QVuXgTEF8X6jlM4d6nfnBoU?=
+ =?us-ascii?Q?uUwqCDDfOrxULMh0cgjbdJY8xbj9qW6EEgasqxhH/sO971A7taIZCAWj69nj?=
+ =?us-ascii?Q?wPWAglypll0KeM8cRH5rKsbeEekhWZC6BqWMdbpcWMoLVXwuh4cwL9imtStm?=
+ =?us-ascii?Q?w31OjaFRgiRhgTa37OgWTKex?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YAW9JijWsA3TgqFgyADQVkZSwN/Ey5Ds8ayIs7SMeinooZx/k/naQdf0oEK9?=
+ =?us-ascii?Q?jXqie2v1bIqSUPZv/+fxd13whWodSDTlNF+C6//wnVu+STr5Swy8wbJqmhRa?=
+ =?us-ascii?Q?zw5lmpTdrjzovN9TWeme92uS98zmWEEbEkEd2UmHngGtgbpruPKSRd7HtZYq?=
+ =?us-ascii?Q?R9gowLNKoCxxpY5oO6kuWHk1Z0y43zmI5R3p92P3Tbd8NZgspDaxhQ73zlgT?=
+ =?us-ascii?Q?wXqWpPJ9GtGPPiNAXw25jowXl/fd9ZKjs2N7Q1RhE2PiMVzZ2T1lG81H8tQX?=
+ =?us-ascii?Q?FvXo/9vmI26Mgf0vseHfXVYluCZy9v6FmQSOWg70QE9Qmem1lkNPBdLLO7bB?=
+ =?us-ascii?Q?SdiwhV8ETaLstFaWx4JP7wFfN+xOrIQn6rkCrivDzX0vduCLqWUKLu2XsUj3?=
+ =?us-ascii?Q?DoktuG7gogLX8LObelUiRYslwNE+aLt0ukLimFhuyeo52u95DrDRR6yAwUXf?=
+ =?us-ascii?Q?p1sgutOokeMXIYPKNUSN3W4H2c8vgKeuNgw4giZZruadG7L4lWLlTsImlBZ8?=
+ =?us-ascii?Q?snM9kt4VX2exvbNfTqXCg+oyzoGtV+KvIdBjxqfP3NRX2kYGs9CQxlKeRgbJ?=
+ =?us-ascii?Q?kCSkdAtQtISMTwE9a6sU5efRyF6Rc17fA9V+yfiUZ3VAGWrm13Ffe5twhwcK?=
+ =?us-ascii?Q?6kZ49zsaMgOa1NRAvokIxlD3MQi+VDJ8wQiaZynCh2/D9eOdcY16KTkwHHji?=
+ =?us-ascii?Q?pGbOB6nGuju7iOz+H+1QD6I38PC43rIq6lcnq4z+8kArZx6utuvp7YjVXe5M?=
+ =?us-ascii?Q?iAgJUBL9DLb1J4Phg7D9SoundYokBLNYBxKhoarvv44LlTBU4sLfAb+sMTH6?=
+ =?us-ascii?Q?wuJ61cQMY/oZPRlMgCTC4OkQLEhli6qnmYmBDkeDBA1PkIIMIF0W2pSQjtR3?=
+ =?us-ascii?Q?3cVkGoCuj7xC/1w4tyCjSY8/v5kf2qCXZ7BLQoIfmBUEVGZJeYTZ/veB0sol?=
+ =?us-ascii?Q?59xcdPJCdKj9OZULjJkadYOqNTwBeZzKRXTjb9LW+Rbl/8iN0UOzseXKB9IU?=
+ =?us-ascii?Q?T2UGqu//8uxPD8jahwJz96rHahBUiev5h/TadTWRgZAL2XM9MPT31lbqIq8N?=
+ =?us-ascii?Q?nkDrn+0/n8yMwRpvyhLjzIPcRjA0lU6TGJT7BF2k0eHJSuOLBckHpUb4/wov?=
+ =?us-ascii?Q?epNmTu4Z8gR1EsTGSJESpcIAuQYyi7DZPIELXpe3eEYkIH7LTLAUbdbhHmpG?=
+ =?us-ascii?Q?W/g8CgzE5bSoZXDYEGuU0ShKfxR6eMi0PbzAx5cLOn+QspCITvDYUVtIpm1z?=
+ =?us-ascii?Q?npE/Kbv/H69l6mE9QJ8vTg1mlhbjJpyYS+Jo1AIODlk+hPcyp/2D6FZFVHn5?=
+ =?us-ascii?Q?b2nki/aNC94WdZrNUGOoRRbj7+lEc9eedhsfvqwTwVPBxZvIuQHOnZm+FInk?=
+ =?us-ascii?Q?0Il3F4IzcZ+a5qsSrWQKgJgBCezvWrh5BXQoxCuqs1T8mwDPOqYPc5k1bX3C?=
+ =?us-ascii?Q?CuDb34nRJjzhD/n3BcKYrvTmvt39r361Xb1YpdCT94Wpmm2phj7HE+OOgmpA?=
+ =?us-ascii?Q?6+iYpav3iw8bx9nchCYwjXnXmdB+bFzV0eEArGDCWVjjIy6yKKt5C4h+YJdO?=
+ =?us-ascii?Q?+ejxzFVm1VQDlNRftstNvSKoxkLxZ9kGF3D8mB5OMxk8pLxoYtN26ROvIETc?=
+ =?us-ascii?Q?hw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cacdf1e9-5bd4-4b29-4ad0-08dd518f5f52
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5e7b8da-bafd-4d68-ac15-08dd518ee8ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 09:13:58.9194 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CeRMFejLmPvLOD3y5VwyZ1mK2SgvuyPM04cUdPywuuLyYKBXhMXG4IPVxGGjKnjjNBm012G/p1bH2FQTdF0j7vq3rarr0+p9mOUNk5WSSzI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR18MB6334
-X-Proofpoint-GUID: Isly3v_HEXz2YN-aHlNeKjahH1bXHQeU
-X-Proofpoint-ORIG-GUID: Isly3v_HEXz2YN-aHlNeKjahH1bXHQeU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_03,2025-02-20_02,2024-11-22_01
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 09:17:17.9089 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ErcdiRJB+EqwJdmtDE6u197CQjjMJlJ5ZblaxhnaHmhh2xX+rCmsA5kc/K8PETPR5DMdGPUqd+T5E/zbkrSi08ZmeZrkH/j+jKg4MOLAg6A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7894
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -154,80 +168,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Add atomic tests to the test-eventdev app which correspond to the order
-> tests but use exclusively atomic queues.
->=20
-> The test detects if port maintenance is required, and so they are compati=
-ble
-> with event devices such as the distributed software eventdev.
->=20
-> To verify atomicity, a spinlock is used for each combination of stage and=
- flow.
-> It is acquired whenever an event is dequeued for processing and released
-> when
-> processing is finished.
->=20
-> The tests will fail if a port attempts to acquire a lock which is already=
- held.
->=20
-> Luka Jankovic (4):
->   eventdev: atomic common for test-eventdev app
->   eventdev: add atomic queue test to test-evnetdev app
->   eventdev: add atomic atq to test-eventdev app
->   eventdev: documentation for atomic queue and atomic atq tests
->=20
-
-Series-tested-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
->  app/test-eventdev/evt_common.h                |    9 +
->  app/test-eventdev/meson.build                 |    3 +
->  app/test-eventdev/test_atomic_atq.c           |  216 +++
->  app/test-eventdev/test_atomic_common.c        |  134 ++
->  app/test-eventdev/test_atomic_common.h        |   85 +
->  app/test-eventdev/test_atomic_queue.c         |  230 +++
->  .../tools/img/eventdev_atomic_atq_test.svg    | 1588 +++++++++++++++
->  .../tools/img/eventdev_atomic_queue_test.svg  | 1701
-> +++++++++++++++++
->  doc/guides/tools/testeventdev.rst             |  155 ++
->  9 files changed, 4121 insertions(+)
->  create mode 100644 app/test-eventdev/test_atomic_atq.c
->  create mode 100644 app/test-eventdev/test_atomic_common.c
->  create mode 100644 app/test-eventdev/test_atomic_common.h
->  create mode 100644 app/test-eventdev/test_atomic_queue.c
->  create mode 100644 doc/guides/tools/img/eventdev_atomic_atq_test.svg
->  create mode 100644
-> doc/guides/tools/img/eventdev_atomic_queue_test.svg
->=20
-> ---
-> v7:
->  * Refactor common atomic test functionality into separate common file.
->  * Implement atomic atq
->=20
-> v6:
->  * Revert the use of event.u64 to mbufs as the Marvell CNXK platform
-> assumes
->    event.u64 to be 8-byte aligned, which causes the test to fail.
->  * Clarified deadlock error message.
->=20
-> v5:
->  * Updated documentation for dpdk-test-eventdev
->=20
-> v4:
->  * Fix code style issues.
->  * Remove unused imports.
->=20
-> v3:
->  * Use struct to avoid bit operations when accessing event u64.
->  * Changed __rte_always_inline to inline for processing stages.
->  * Introduce idle timeout constant.
->  * Formatting and cleanup.
->=20
-> v2:
->  * Changed to only check queue, flow combination, not port, queue, flow.
->  * Lock is only held when a packet is processed.
->  * Utilize event u64 instead of mbuf.
->  * General cleanup.
->=20
-> ---
-> 2.34.1
-
+On Wed, Feb 19, 2025 at 06:32:04PM -0800, Stephen Hemminger wrote:
+> A common pattern in DPDK internals is to have an array of function
+> pointers. When using these pointers an unnecessary derefence is done;
+> this is allowed in C because of a historical quirk but unnecessary.
+> 
+> This fixes all instances of PVS Studio checker warning:
+>  https://pvs-studio.com/en/docs/warnings/v516/
+> 
+> This leads to a large number of warnings marked as High severity.
+> This patchset simplifies the source and gets rid of these warnings.
+> 
+> Stephen Hemminger (14):
+>   ethdev: remove unnecessary deref on function pointers
+>   eventdev: remover unnecessary deref on function pointers
+>   net/bonding: remove unnecessary deref of function pointers
+>   net/ixgbe: remove unnecessary dereference
+>   net/ipn3ke: remove unnecessary dereference
+>   net/memif: remove unnecessary deref of function pointers
+>   cryptodev: remove unnecessary deref of function pointers
+>   crypto/scheduler: remove unnecessary dereference
+>   compressdev: remove unnecessary deref of function pointers
+>   dmadev: remove unnecessary deref of function pointers
+>   rawdev: remove unnecessary deref of function pointers
+>   mldev: remove unnecessary deref of function pointers
+>   regexdev: remove unnecessary deref of function pointers
+>   security: remove unnecessary dereference
+> 
+Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
