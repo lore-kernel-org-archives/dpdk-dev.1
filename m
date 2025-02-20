@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE20C021B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17C3C021B1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:43:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 523484067C;
-	Thu, 20 Feb 2025 17:42:19 +0100 (CET)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id F105D40615
- for <dev@dpdk.org>; Thu, 20 Feb 2025 17:42:13 +0100 (CET)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-220c92c857aso21365185ad.0
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:42:13 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0ADCE40687;
+	Thu, 20 Feb 2025 17:42:21 +0100 (CET)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 01A1E40668
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 17:42:14 +0100 (CET)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-220d601886fso18197725ad.1
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 08:42:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740069733;
- x=1740674533; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740069734;
+ x=1740674534; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LjAuUKXvjXSz7R4l617xCu44Y8nhJHSq6U+SYUOW77Q=;
- b=HNTFMIKFRRDAoQCMKEnFmq/DoEpbNCYalP4XbZGAsDbV07r0oOckHm2IVGQsPHEWNO
- A4ke+d76KvAG0dlsO261ALLxICly+Pvh5cZRV72N+n1/mf/JrsF2ydLoettCoPbLZNux
- nPMJhlgUkYvPzDAZJKy71/Sy8l/Pll8SeUGma4eu68USUz54wL8g3ez08hQRTtua6Uu1
- Erde0nQgNXTV6XwlZP5Qufi/rqdTIZcEmuSrmV7m1a4nFE1R5Oido99NCZM+XTs3t8O7
- aWslw7CdZSaSTT85YvlK2JiVhaadLKRtQh20jJYP9hNEVld8I8YY6CpWJ5t1FaNUQA+5
- +CkQ==
+ bh=BWlABOBDjT+D93lC4xk3UAjMk4KNQQKjBPILflrvYnM=;
+ b=fHSJKmSSgI7wS9sAmqK77ik7sdrQ8OqJIICp2RH+TAMJi3dzn+v8EZEhN7z6b5TqZH
+ DB7oHH3/ebY1hoBaIcqsD6y67bhWku8n9hFMy+HyYeEuh9wg7TfryK0kKR/HVehSYWuH
+ r1PPVPHHnH2k4schNIemPcjvZ/5nEpmYkxW3muRiRkPIa7R6kLkfb8MzUFCO7NotXo0w
+ PR+SWwXcEPkewOEppnVngnkkz6wAZpm8yMYhOIY5mSt4po2d+jcbK24XoM0MTnrI3RyK
+ 8X5FVEMBu2zOojFQJGmdIjpBe8GdYVDPsHx6bsNjSRSk6pE4/Mlo2ZWQ1ZrzYVW4L2LQ
+ xvOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740069733; x=1740674533;
+ d=1e100.net; s=20230601; t=1740069734; x=1740674534;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=LjAuUKXvjXSz7R4l617xCu44Y8nhJHSq6U+SYUOW77Q=;
- b=IO4GDo/e8R2g4zFTNn0xMDodbW64UpspaIC18bH4szRAswffKM1O3U7oVXSSj8yUed
- 0Jvnr22V/YNayOJhN3PXqXsn62QSKoxUij5TfTu2BjssGlOqzv0i/VNXxiQ2mHpFoSwm
- mJOQ6ttnauSvxPzgsTlBQYbOTNXnrK8RHS68felEf4vbSRN2JWW9YhqYPEFGm800jAWI
- N8blRogZNrIkL5UVLKcmeJ+6ji05rBqCBoD+nVq2UFlCXJvk5KiLcKdD2IpF8GP5nTAp
- UvQcHGXTjQxciQvQj4QJqhySi4yh1ui4K7yI3m6YMkWDU9SdlgSOV8KDHRFERgF+mYRI
- YF0w==
-X-Gm-Message-State: AOJu0YxA58LXKLGInfTZ9kgAQyoWnv82Pc0ieOFHOxkZr7BERGxov73F
- vTui4q64DSxk4jE6lTLUlnp16BDDkWXaTfgemOydx6jWIu/+6ikN+kSFZyqhcNLSDY7GLosb7E/
- f
-X-Gm-Gg: ASbGncu5B6ybjDGpvsRTdpHu1Gy2fiLIrYKivaURuaw/PLvcDaI+/t2cC6qqDtJJdTm
- zY+ScE8YruoGWL3O1X8ud1ZOitr81gv3SMvIUVJvN5uQm/X0PMi9/8ZqjjBLQoWOHwNGlzf67pq
- EN7Lj0VN5PULSmf2DUciA5JTD3WuyYljYrL7sN11kRQOFskv4nSyJc1co1XGmsvQ8dfTpLBoYkh
- dpVZMEXjZYYyKeOhLVrptpELlYrk5cIVdbJknLf8Wk8D2oryaTCoz/x7kkfgn2ntEATVvviwWbl
- Halruv4VpMr/1x4+BjkLezyxd5y9hJ6Tb3O5Y0buOx7rWWunUgq9l9Q0tB954RiaJoRA
-X-Google-Smtp-Source: AGHT+IFYwjmH1krtaT5uz3HMEkR+bgS0kd+4LClwt8+ZTICBenYq95lj3prjz75+qYPoOaA/geLSWA==
-X-Received: by 2002:a17:903:8cb:b0:220:e98e:4f1b with SMTP id
- d9443c01a7336-2218c356405mr79990515ad.0.1740069733102; 
- Thu, 20 Feb 2025 08:42:13 -0800 (PST)
+ bh=BWlABOBDjT+D93lC4xk3UAjMk4KNQQKjBPILflrvYnM=;
+ b=NfPcCzzFgrbwRunUEQTOy1W7JbKk4KQGx28wvq/np22yN7lr0Mwohr0OtWCkpsqPL9
+ vO0lsQygYu7w6hGfb9SUa8TSbcEP8HCsioK7JmOsLPiYyiJaA0AvSr4Sn9PunvTbTGlH
+ XAoH7TUo6neeuDt3kjiylkVzkaHtaJ6hWYZEbt4tTkq/Nn01u9YD/Lqy2JD3YoWvrEe5
+ k3FtQFJLai2VDuSovNPTaBp793FD6+DKF1IJ5a6kRvxsbDE1cskYTj0i3oJwiGpXcCUa
+ qHycr8S4U0UGwJ87bzuQrcPEQLbe+jEyqAlKeRC5zSFffEbtQLelDFVXMX3dPsyx/Ryx
+ wVPw==
+X-Gm-Message-State: AOJu0Yw4g8XGaIEW0FpQzu8k37uFZGVzyquec0yQpos1DPIZEP5CUKUs
+ rnobR94CXm1JU2JikwVU4AfxB8+98yasKQsb/0Il64+D+hnwE3hfMNzxTqntQYyorcCg1r1USRr
+ S
+X-Gm-Gg: ASbGncsRk94P2OOpwZfdlf8LbwP0YyY/CoJ5V6j30YONeoMX9QZIGcBgLsZZw4IWi/B
+ reg/Y9xrZqbIoWHAoMZqFz91e6BSKWCwocV7+8KYNY1kUfMKOZdcAuOLXevMgE67EWOjSgZzoMW
+ fsI0+BGyvs1EmoTIyybkXuLDckgUITeYM8ZDpW/ZPy5aMjMWzUWocVO+Ihy4+VDxFLx36zFsNU+
+ fgaASglBPw1KcyxKYknMYGp/NUrx7bIM775jNOq71lcXWy7GCIm8WpnMyoa7/2is8wsvUb9yTLO
+ sOrcExdluFlBiIoP2lPYBjbM6PNJ4AIUhRfiQUY+qg2273R0kvGFaYCgvfGCDUeY0Nqf
+X-Google-Smtp-Source: AGHT+IFsCf2L7qcCl91BzC3SivpJ2VSseQbtcUjbsxwhE3CKBMIrhUbAm1wlc9BNAiAT+zwqnbvbew==
+X-Received: by 2002:a17:902:da8e:b0:21f:2ded:76ea with SMTP id
+ d9443c01a7336-221040bd2a8mr384783905ad.36.1740069734228; 
+ Thu, 20 Feb 2025 08:42:14 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d5348e68sm123798305ad.28.2025.02.20.08.42.12
+ d9443c01a7336-220d5348e68sm123798305ad.28.2025.02.20.08.42.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 08:42:12 -0800 (PST)
+ Thu, 20 Feb 2025 08:42:13 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v9 12/15] test: remove unneeded memset
-Date: Thu, 20 Feb 2025 08:27:18 -0800
-Message-ID: <20250220164151.9606-13-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v9 13/15] net/ntnic: check result of malloc
+Date: Thu, 20 Feb 2025 08:27:19 -0800
+Message-ID: <20250220164151.9606-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250220164151.9606-1-stephen@networkplumber.org>
 References: <20241114011129.451243-1-stephen@networkplumber.org>
@@ -82,30 +83,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since tmp is not used later in the function, this memset
-is unnecessary. Even though this is harmless,
-it causes tools that look for security issues
-around memset to flag this a bug.
+Need to check the result of malloc() before calling memset.
+This is only place in this driver that forgot, other code
+does check.
 
+Fixes: 0d9bca480e26 ("net/ntnic: add FPGA modules for initialization")
+cc: stable@dpdk.org
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_cmdline_cirbuf.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ntnic/nthw/nthw_rac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/app/test/test_cmdline_cirbuf.c b/app/test/test_cmdline_cirbuf.c
-index f6361d49e9..37882b3779 100644
---- a/app/test/test_cmdline_cirbuf.c
-+++ b/app/test/test_cmdline_cirbuf.c
-@@ -279,8 +279,6 @@ test_cirbuf_string_add_del_reverse(void)
- 		printf("Error: buffer should have been empty!\n");
- 		return -1;
- 	}
--	/* clear tmp buffer */
--	memset(tmp, 0, sizeof(tmp));
+diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
+index ca6aba6db2..f275e64da3 100644
+--- a/drivers/net/ntnic/nthw/nthw_rac.c
++++ b/drivers/net/ntnic/nthw/nthw_rac.c
+@@ -31,7 +31,9 @@
+ nthw_rac_t *nthw_rac_new(void)
+ {
+ 	nthw_rac_t *p = malloc(sizeof(nthw_rac_t));
+-	memset(p, 0, sizeof(nthw_rac_t));
++
++	if (p)
++		memset(p, 0, sizeof(nthw_rac_t));
+ 	return p;
+ }
  
- 	/*
- 	 * reinitialize circular buffer
 -- 
 2.47.2
 
