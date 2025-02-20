@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF0FC021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8755C021B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:07:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 053AD40EE3;
-	Thu, 20 Feb 2025 23:04:55 +0100 (CET)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 3C34F40E12
- for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:39 +0100 (CET)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com
- (mail-am7eur03lp2240.outbound.protection.outlook.com [104.47.51.240]) by
- mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id 1862C40E40;
+	Thu, 20 Feb 2025 23:04:56 +0100 (CET)
+Received: from egress-ip11a.ess.de.barracuda.com
+ (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
+ by mails.dpdk.org (Postfix) with ESMTP id 7732A40E1D
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:40 +0100 (CET)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2174.outbound.protection.outlook.com [104.47.17.174]) by
+ mx-outbound8-89.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 20 Feb 2025 22:04:37 +0000
+ Thu, 20 Feb 2025 22:04:39 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rcgyXXxhLF/xNO4AcnIzjoeWXwv0+fjAjDAa9DfTy2jjvCcYZrG90Wg5YCUDs1rBjLewTa3Jr0XHp9qqq6ywLQcON83m/W+RG2/XyQKibARhMLta0t7M4l8ywSJnRL5q0RL6vlXv/roYLkGsditUA4Bz56Lv1O1M0GE75JacIbFU30rRIMZCy4j9cMp9CjOGt6bBTUjZT9UGK/EqjQcnsXZZPSJxpA7p7i7soA5jmTdNaDVYNXdiVIWr/13G4bhMyezhmmg+/6fIsWtcBieLndNo2Mh8RIGDQWHJdk8udv+IYI1o9CbfwzTV1vPcWu0KZJ4fpDasnrsrA481H2D6vw==
+ b=ahT4y6l7DBuPgpGCy+jQPUAxteVFPTXBD1vh6YRBbMcrXylZQLlNiFYNpKaAmI0YbCZWDnvNN6ivXuZPH/BQyvtEth+GVMGno6rAi616j1QZhJy5OkQHysp6Y/i9u4UBUb/6WerVT+nbnbMiQi9r0w9rVCVlY0eaGeNFWMVEc/dY1I2+BRYFmym48E/qEaYDFNZDaZWiM5KX5IIvlZJg5Dx1Whn1TurSrCFe+qIhdiBovs6Of0z/E2gtn1O1PrifKIxIGr4GGMud1dvkEENq1PBWPNpCTObQZVPeggIYiRqfLfskl2d7Q0XGrPB77FyrioUXWFAGBvY2ii6TCgxxhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0G961r3HzKZJOctbXMBei5as20iBa1ainuY9/frrK4U=;
- b=L/pAaEgFXwdtBaNbu3jCmBKP6zMbYXgvk6viqN16MSqiqF8Gv3K1FzWy0aTVxXcEZ8HKQcBd0BxDw7Cvv5wg4IEHCNlS5LseTmXG5uJ4duDwf+smMu0AOIOkVlG6a96rGDANTtk3lyJsFv/2DFP0Te2vCVzfLz0Se5vpyWzrl9AZI/L+pJUPYBuYCHZfwMuYU+S6CrnS5aeyDxXHeX3cR98er4lAtaHVrNNKrrKG/HDbgt8elQ4l27vOmcmwms6tptDlzzuVejthvWxMamRxDjg/aZJAnYHOUm9tQcTkl1pUrLy/mFDsGdzaCyA5fdW7iSIIZ73u/sur4WGbDJJWCA==
+ bh=0hFsLgiyKSDOd1sEpOrAmZ7n1tI3o4d5FNjTZ6SXuKg=;
+ b=EfR31maGEKoUwEIMASjveuTxNM6Edf1STNC+GOB6T0zsT6OaKXuuqVh8yfvjXGan583SrUyr2UcgDM5h7Hrfn+oKDulMgUjSdYM7XoDf//NCerdFnEulSwkVqEsS2lU3wtkca346IBvkQ+hogSwuqZCyR24Cy2epMJmk17FOFg6fa2AGkNI3b4Jf30NxexklGLZ9QhxCT5kJRF6ejCGK7ONDh4JujPIn/DuxSB+vALm3DpxOfhPOCWGGYJ4bna0qxseX4ZeAsZWpB6M1u5z4WJJCX8OK8SqR/nDX1Bdp4p5njFnGV6OPYKlopS1PD9Sy8uiG7BMBr7wr83xL4hU8YA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0G961r3HzKZJOctbXMBei5as20iBa1ainuY9/frrK4U=;
- b=Zm+sPmSKgmZpFyHF3Sii0Dv32zsda/CbnalgcWnXcCJZkloDoJWcXapvdV7W+j518qqRu/RTocTOsHiHpH9f8oIOVI/c/YrRlsESl5+LFcB8eu7yLKLR4wCGL8Ue6YkeAY40dsETqm2HBoCrogEZrKtZ3jo1kPTQD/QHzfuU3HY=
-Received: from CWLP265CA0503.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::9)
- by PA4P190MB1325.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:108::7) with
+ bh=0hFsLgiyKSDOd1sEpOrAmZ7n1tI3o4d5FNjTZ6SXuKg=;
+ b=DMqWTMXZXKYRGBdQ6H6d8++lTn7r5sTTsK27gS02J1fj8Y3GCuMrV/h428I9Gh/Miz+oviTO00JsmvQ5Mi/QC4AKs0tuG77hA43yR1h6YD68Sg1sRM2o+5NDJVkAAKGMYkLF4XbjOpzPzpmj83LQTmdgC29tz8eOKSN7ErgW8R4=
+Received: from CWLP265CA0493.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::20)
+ by PAWP190MB2189.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:468::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
- 2025 22:04:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
+ 2025 22:04:38 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::aa) by CWLP265CA0503.outlook.office365.com
- (2603:10a6:400:18b::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:35 +0000
+ (2603:10a6:400:18b:cafe::6d) by CWLP265CA0493.outlook.office365.com
+ (2603:10a6:400:18b::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
+ 20 Feb 2025 22:04:38 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:35 +0000
+ 22:04:37 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
- stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 29/32] net/ntnic: add reset PHY init
-Date: Thu, 20 Feb 2025 23:03:53 +0100
-Message-ID: <20250220220406.3925597-30-sil-plv@napatech.com>
+ stephen@networkplumber.org
+Subject: [PATCH v1 32/32] net/ntnic: revert untrusted loop bound
+Date: Thu, 20 Feb 2025 23:03:56 +0100
+Message-ID: <20250220220406.3925597-33-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,71 +66,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|PA4P190MB1325:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|PAWP190MB2189:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 7630ea8a-d0ab-49df-b473-08dd51fa8ff7
+X-MS-Office365-Filtering-Correlation-Id: 48b0bed8-3f02-4440-420c-08dd51fa9169
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|1800799024|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7gZFmFHQkpz3ZakvoS9hSFOZnGg4gjIB/kg9hKoDfP78YBG9Cs/Dd+aSZi9B?=
- =?us-ascii?Q?UYYcFMeDBfCbd9XdJsdRmGnIE+QM7OYEY7VJrhjrTxlSQ/Uf17H0jO1erd+d?=
- =?us-ascii?Q?AquyoCw8TfZrau0/zg56uneN0mK2amZAqBYJBG2EQlK3rKCac5tUAkzMNKOf?=
- =?us-ascii?Q?LK8d6wJSD1adOWeKZfCJ6CgVvzhVyiPDEGXHO0GW6WtA4FKS7Ol6HGEph7lS?=
- =?us-ascii?Q?8wKgPbDazmpaO6AfYrlmFhOPqYvlvOL1jO4XKiPLvmB9geOv/83ydtUVXskD?=
- =?us-ascii?Q?ZVZpnz571lLMZKsC5CCccigMOLgz/BOuaax+GDAN6UOyJlGXL0ARNNlstEQo?=
- =?us-ascii?Q?Sw5aOq2B8pXarp1j1aWPqLyPDDXYaaZvz1P/bd/mrz6ODgfrXvHB8QVtzHw9?=
- =?us-ascii?Q?TXiiOnyBTCelHmy43BMhhMquXKVGh/oEemt0bxDTpFkcaa90T7AzFgaCDBvp?=
- =?us-ascii?Q?Tj9rUqSU1FpItiG7oAVeBxV+dQG2zgQH/AoorRD2Gtpa24Wq8uFnSw848+OY?=
- =?us-ascii?Q?Ff25keMW5XyR9rkHJD0lH8EwuYTOuh0qC7yZGTn+Jg5g6VBw88PrJkUu3NOY?=
- =?us-ascii?Q?KVlqElxZU+4e6Q7KLNRSy6BiECXMxfB9Ce3DsJtR2XoSIOv3sitRWOPW5oGj?=
- =?us-ascii?Q?KF87j3lgceeq0R+cHXnPjoj1Ki+12q4Bh8PhNPj2tCXtOaI2LB0xvo9mYyZZ?=
- =?us-ascii?Q?KWq3SHr4yIJjq/VTPekJkqgKR1aZu4S383nZ/g5KuAohzjwZ2jrPwTs7qUhm?=
- =?us-ascii?Q?Nk3Gps/meHkULYGuaNaltteldkOiEsdG03g+AcHwHlSp6wlsuMQXI5kBiJKU?=
- =?us-ascii?Q?5/LnfvhJ4tkAwVEpyRrwxqLD/mpu0NlyT0v/bP83riApOZH+ev/npN0O4dyQ?=
- =?us-ascii?Q?Qo71O5CQBdIrUnQ2T4mXP2nC8dz1uaacp4Pj3UX5YFbNzIPOqsONwgeL7Hwl?=
- =?us-ascii?Q?nfECV/OGCtinOTW0juTSRDLB9NrW/AY3baVIgH+JrzHqdOmpQimfPJ9ww05U?=
- =?us-ascii?Q?xwl3sya6VJrQVpX9w9OnJleYA8I8JM9ZPVwZ93rUKgAEQG2FdntZdeJRY3Ce?=
- =?us-ascii?Q?QWNwn5Ck9xElwqMgZnm+Wiy3PpSJVbCjbiIkiIm6DCdNOtgh9kJppiaYTRc+?=
- =?us-ascii?Q?lQoSmyYSDEAsGJ2SCqIy+hUvaW+llSODomsfw6ldUygx5FxLM89z9bFRTxfG?=
- =?us-ascii?Q?jaZNQYqTlvTOoDMNC9B7u31J2VjLx1AAeUetUTghveMrfvA4Jb1mieCkkvci?=
- =?us-ascii?Q?667sEwq1JFCCELj1VWicRjj81tBpeVtXmcNk1DtcpFuviyd1UZ9z9f/ULUnN?=
- =?us-ascii?Q?pkT2ZxR9buUifUUdBNwf3HOSgFkq+aSyv8fA4ErNlPpRsJsYZjgHxmrO1BRI?=
- =?us-ascii?Q?ESEAUo4OMUQoXFPDzBykGAtYYiLa5whKTxQq++g6R5BRWs3tikFLMLcoCiD7?=
- =?us-ascii?Q?fpcHABtDW0M74655umaAgzIflJ2uZm3yMLJyqOYVeo0fIdZr2BX1opydgpGR?=
- =?us-ascii?Q?cX6Qn5jhhD/aVy4=3D?=
+ ARA:13230040|1800799024|36860700013|376014|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/5bwNL20DYP/M0LnxBSu3O8l204A9BmUHFXrM64QMEBuqOlmjWRy5qvXGvsA?=
+ =?us-ascii?Q?ceufoMN/Z1ng6fYuaDvov5RUoQicJ3dWaxPvKIxUe1XZJT9cPrmqXb90NSyA?=
+ =?us-ascii?Q?rJru4KEYPk7d9HbTispQS1UPlrXIYZwQuvfotL6srQ8kdG/OtCQ8aL/ioIky?=
+ =?us-ascii?Q?kl9iWbP4pVqA7LRSkNTnuXQcPWmrMuAvX37Ur5kgk6ceQC1okrvbcPsGqB+C?=
+ =?us-ascii?Q?xlcPYuPJD/VMdzvvd7JpBl2wmRhnFPKrnwjvoFmyCXOSlF9FDGJmH8WZK+8Q?=
+ =?us-ascii?Q?O1oVSwGrZF1lN3hPTX3Rbf1QJL+caLOoUZQ11teQ2aM847213vxc8I2p2Mza?=
+ =?us-ascii?Q?CAbYXOSYaIoT1vuJm+K8TAE+B51ZTEw3NKs4epCEJUbrsrAteQU7OJGCYgIU?=
+ =?us-ascii?Q?Ilz1/i3is8m9bxiAoyophOgBXDHf+rMhJFEyKanJk9gI6bRvN9AU6GjCue7U?=
+ =?us-ascii?Q?e77/hrIZHSN9MN9euEA00snAXGSGIxCK/2Pf0Gn1/+u/ikCWYBnLTng/HJjt?=
+ =?us-ascii?Q?R+1/hHlCQCadx0Gp+x4hqz7KBXOtNN14lO2fmq70e1J+97LSpCG6sDYFlA4S?=
+ =?us-ascii?Q?Q0vV0eRIvPnkGZtvx8Y0XyA0wl/cEAcvGKj45xJrjUD836hzmfplkAYmDVA8?=
+ =?us-ascii?Q?7pOJr14ZEPTToE9m+CPBMieg79UzwpZoYd6ikh8lu1EVvtFrzUwadN6Kf+dD?=
+ =?us-ascii?Q?agYgsQtXMEW/MqGZV16dRYr60ZGZ6OGEDiibzvAWnp8VwBHkxOn+T3lKo6IK?=
+ =?us-ascii?Q?zxkHdN7vDHMrLwwwMqZ8eYl0VCbw/f7m9jpaZe1ZbPRGG+aFlrO7WJ7Eb1RJ?=
+ =?us-ascii?Q?oIoAmjWtMpvoPBK3jrQc2pXdtKIc4P8xqyVsA4yqENSW3SIcMnPzNg/VAvDS?=
+ =?us-ascii?Q?zVxXOlKGDu3Bxo3E46kq14J77v/GbOoVFh9D/0MHHgAGFq/ekllR8vBCUmIf?=
+ =?us-ascii?Q?VGbLF3b8/RwllUmK+flP/qT5YGnNOKyGpoeud8qbCA94QiBLy8p4Ml21NHVf?=
+ =?us-ascii?Q?J0djS+heKfAehKtZnO2X+3UCTA0QG1HIZyFeCwsJxTq5MCEicgOnxs1O2Tkw?=
+ =?us-ascii?Q?FGYo/mMHXfSxk7DW+A4Pw3OcEIsyVbmwbImhyvBrmElJ7UpKP3ZM0hNZIGSG?=
+ =?us-ascii?Q?vOwFYfREGxYaklzbfefkaib4PsEFr2CfuuGWR5EBRcHEUJsx59KGEg+un65a?=
+ =?us-ascii?Q?wBEgWiPQgHgu/FpVw9DdV/hwPg2KASiR2BF3rJMTaw8tw1dcQS9DMjf2yrUk?=
+ =?us-ascii?Q?i/wqRr+t0gCI91pJKbnN8c5r9OmawhdjO5H02raahZIWgXxWZ6BOwvMWJrnZ?=
+ =?us-ascii?Q?X5tn0DY4/1VLbDToQsZXEHHlEoIphuhVAkLoAc4+yjSpMOiU7MNk3dH6hrgr?=
+ =?us-ascii?Q?YpynV/a8/ZOhRgBgxCDO1pvnhslUThAYRO9+8DUoHFg841+PBuZAV+XD2zXC?=
+ =?us-ascii?Q?wZZgy26H/Yp0MpgFqL90s6E4xLFs7fzdn8Lfc0vaXDVLmyM09Un3fG0Bbzpu?=
+ =?us-ascii?Q?msQJnaJWG4qvB4U=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);
+ CAT:NONE; SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: LTnm4HwwgaMnB2QmLCPwax9Q31M1WDKHZlntJIfWf8cJyPHamuOmQNWYrF4PRYEguhAocTCLRNR9otjWD/pG9loDtqaE9x3aG70nDdpqoMLWutFWXALdfxAByqDViM4ISEGZ803twvo9TlpSBgRvH5f803quCNFkDuRcC2kuy8JBIhBQcLrRaCcEIS7rzDlFM8lZkH/if2ABChl0hJlmsHVgQs3bkLdYqiglh9Q79cInDOQ3eWr8hP53QqBFbBGNNrtBJ+UJ3QddXmoGIu2YK6uZzKU6kKpBi+W2c2U5I9ne7b4+phb9WYMgjMfa9wpWJkFypojrgfZAo4SYTQOShzoORpBJLSz5VrHxiy+wJfSJ6OXibtkYw9v79yGfe0IpsnMJTkqekUlMdu+mwfbnGjYMqifEXb9wh4pQW6970iBciLDjbALuCvuQaWtN6nPG2i9/JaN+qgf2ODYim7dNl4BJnvE7J49JqXfyZ6YIAhUeY7efROEPCwyfVRNHilDJ51ok+sun95tp/1NX0PqfV39F850Hcz7qzlycQ8rN6szbdDIHYk4qbXoAXn42ksR/mzON/B3Mt6YJKE3BeWIaOvekYLhfSpQ1eU1OumagzcHFEVBJkAxli3srhz1/C2PDacXl4b4opMxYl4IZPHsVyO1FG4LkmOgIwoGd1YomzRU=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 9syIyb+QC06j9M3npICR4MG6JcVTZkw5Sm53hB8U1P5ZWJXC+N3eAJ0vHlCn+UyQuyP7sT/Jx2r0q/nkBRDrT3A6d01xaNprGdjf/SOVniYsr0N0502lYAGjaTPfurQvH9t8b0Z4KZ3IPDHWpt+5OshkyGbVN2hZX7LdakvpwKBYKU/Et4wDzXWvBL0JpJ4R8hx5WHjgtd8FrrqSstGuWvXoNgtR4w6Z2ggylxC2inFsiXoSgf860wLOBFkiQk2CErQjmT0Nj84jyihdV0kjRMhhSywuj5CtbR8iCqvffvay+TEnXhXAV/m/3KuiA7+hJn5Ki6+bR7pIwov/nhEWPS003EFTJEU/AKIcKt9ICarpyrhprzi5zhY0kb/UiTkPdQ9OcB9z8gzB4iGhxm8gRMR+/N5hv71ym0TXweKjXA8+lgniL1L3whSOhOCcmoVZ/w65zRJGXO+IC2wm78rAbNomzHZvgYfZiRCUAxT5aqdk0Q+rxYDDET76QpMQ3grq/MsfWEcm5pFh9Nl1KBuRiuV4DwaczW7+Ul4MW67nAgTDsmp0758TLj6s95Xg9rpfbSfoSRW6WIdNrlxj1wzVNgSCMDn/z0vgD3Drf7AURcswfhSBeH2wbtZ7dMPTZUaJnk4tqU6sI8Sol4ytd2d6hpp3VsAbn+zNXf2qhFPFdFw=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:35.4434 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7630ea8a-d0ab-49df-b473-08dd51fa8ff7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:37.8809 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48b0bed8-3f02-4440-420c-08dd51fa9169
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1325
-X-BESS-ID: 1740089077-312005-29062-14101-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWP190MB2189
+X-BESS-ID: 1740089079-302137-23555-14703-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.51.240
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsaGhmbmQGYGUDTZLM3M2MQ4JT
- HN2Dg1KdXAxCDFJM3UxDg1zdwg2cDCUKk2FgBetdKdQgAAAA==
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 104.47.17.174
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpYm5kBGBlAsMTktzcQy1STZIN
+ Ui0TQt1dzcwMLcyMIoMTnFzMgiMVWpNhYAsMkNJ0AAAAA=
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
- cloudscan19-233.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan21-197.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
- 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -145,763 +144,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Danylo Vodopianov <dvo-plv@napatech.com>
+The changes for untrusted loop bound breaks VLAN processing
 
-Add initialization and logging for Phy Tile module.
+This reverts commit 36cd2cb0eea49813dd59ee1df2eb592e8ae5b6b4.
 
-Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
+Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- .../ntnic/nthw/core/include/nthw_phy_tile.h   |  39 ++
- .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |  16 +
- drivers/net/ntnic/nthw/core/nthw_phy_tile.c   | 598 ++++++++++++++++++
- 3 files changed, 653 insertions(+)
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-index 68d8455b8d..ba044a5091 100644
---- a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-+++ b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-@@ -9,12 +9,16 @@
- #include "nthw_fpga_model.h"
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index 70bff776be..43f45ebe34 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -53,7 +53,7 @@ int interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_fl
+ 		goto interpret_end;
  
- enum mac_pcs_mode_e {
-+	MAC_PCS_MODE_8x10_25,
-+	MAC_PCS_MODE_2X40,
- 	MAC_PCS_MODE_2X100
- };
- 
- struct nt_phy_tile {
- 	nthw_fpga_t *mp_fpga;
- 
-+	nthw_module_t *m_mod_phy_tile;
-+
- 	int mn_phy_tile_instance;
- 
- 	int mn_fpga_version;
-@@ -27,6 +31,7 @@ struct nt_phy_tile {
- 	nthw_field_t *mp_fld_port_xcvr_base_busy[2][4];
- 	nthw_field_t *mp_fld_port_xcvr_base_cmd[2][4];
- 
-+	nthw_register_t *mp_reg_port_xcvr_data[2][4];
- 	nthw_field_t *mp_fld_port_xcvr_data_data[2][4];
- 
- 	nthw_register_t *mp_reg_port_eth_base[2];
-@@ -34,27 +39,44 @@ struct nt_phy_tile {
- 	nthw_field_t *mp_fld_port_eth_base_busy[2];
- 	nthw_field_t *mp_fld_port_eth_base_cmd[2];
- 
-+	nthw_register_t *mp_reg_port_eth_data[2];
- 	nthw_field_t *mp_fld_port_eth_data_data[2];
- 
- 	nthw_register_t *mp_reg_link_summary[2];
- 	nthw_field_t *mp_fld_link_summary_nt_phy_link_state[2];
- 	nthw_field_t *mp_fld_link_summary_ll_nt_phy_link_state[2];
- 	nthw_field_t *mp_fld_link_summary_link_down_cnt[2];
-+	nthw_field_t *mp_fld_link_summary_ll_rx_block_lock[2];
-+	nthw_field_t *mp_fld_link_summary_ll_rx_am_lock[2];
-+	nthw_field_t *mp_fld_link_summary_lh_rx_high_bit_error_rate[2];
- 	nthw_field_t *mp_fld_link_summary_lh_received_local_fault[2];
- 	nthw_field_t *mp_fld_link_summary_lh_remote_fault[2];
- 
-+	nthw_register_t *mp_reg_port_status[2];
-+	nthw_field_t *mp_fld_port_status_rx_pcs_fully_aligned[2];
- 	nthw_field_t *mp_fld_port_status_rx_hi_ber[2];
-+	nthw_field_t *mp_fld_port_status_rx_remote_fault[2];
-+	nthw_field_t *mp_fld_port_status_rx_local_fault[2];
- 	nthw_field_t *mp_fld_port_status_rx_am_lock[2];
- 	nthw_field_t *mp_fld_port_status_reset_ackn[2];
- 	nthw_field_t *mp_fld_port_status_tx_lanes_stable[2];
-+	nthw_field_t *mp_fld_port_status_tx_pll_locked[2];
-+	nthw_field_t *mp_fld_port_status_sys_pll_locked[2];
- 	nthw_field_t *mp_fld_port_status_tx_reset_ackn[2];
- 	nthw_field_t *mp_fld_port_status_rx_reset_ackn[2];
- 
-+	nthw_register_t *mp_reg_port_config[2];
-+	nthw_field_t *mp_fld_port_config_dyn_reset;
- 	nthw_field_t *mp_fld_port_config_reset[2];
- 	nthw_field_t *mp_fld_port_config_rx_reset[2];
- 	nthw_field_t *mp_fld_port_config_tx_reset[2];
-+	nthw_field_t *mp_fld_port_config_nt_linkup_latency[2];
-+	nthw_field_t *mp_fld_port_config_nt_force_linkdown[2];
-+	nthw_field_t *mp_fld_port_config_nt_auto_force_linkdown[2];
- 
-+	nthw_register_t *mp_reg_port_comp[2];
- 	nthw_field_t *mp_fld_port_comp_rx_compensation[2];
-+	nthw_field_t *mp_fld_port_comp_tx_compensation[2];
- 
- 	nthw_register_t *mp_reg_dyn_reconfig_base;
- 	nthw_field_t *mp_fld_dyn_reconfig_base_ptr;
-@@ -64,17 +86,34 @@ struct nt_phy_tile {
- 	nthw_register_t *mp_reg_dyn_reconfig_data;
- 	nthw_field_t *mp_fld_dyn_reconfig_data_data;
- 
-+	nthw_register_t *mp_reg_scratch;
- 	nthw_field_t *mp_fld_scratch_data;
- 
-+	nthw_register_t *mp_reg_dr_cfg;
-+	nthw_field_t *mp_fld_reg_dr_cfg_features;
-+	nthw_field_t *mp_fld_reg_dr_cfg_tx_flush_level;
-+
- 	nthw_register_t *mp_reg_dr_cfg_status;
- 	nthw_field_t *mp_fld_dr_cfg_status_curr_profile_id;
- 	nthw_field_t *mp_fld_dr_cfg_status_in_progress;
- 	nthw_field_t *mp_fld_dr_cfg_status_error;
-+
-+	nthw_register_t *mp_reg_sys_pll;
-+	nthw_field_t *mp_fld_sys_pll_set_rdy;
-+	nthw_field_t *mp_fld_sys_pll_get_rdy;
-+	nthw_field_t *mp_fld_sys_pll_system_pll_lock;
-+	nthw_field_t *mp_fld_sys_pll_en_ref_clk_fgt;
-+	nthw_field_t *mp_fld_sys_pll_disable_ref_clk_monitor;
-+	nthw_field_t *mp_fld_sys_pll_ref_clk_fgt_enabled;
-+	nthw_field_t *mp_fld_sys_pll_forward_rst;
-+	nthw_field_t *mp_fld_sys_pll_force_rst;
- };
- 
- typedef struct nt_phy_tile nthw_phy_tile_t;
- typedef struct nt_phy_tile nt_phy_tile;
- 
-+nthw_phy_tile_t *nthw_phy_tile_new(void);
-+int nthw_phy_tile_init(nthw_phy_tile_t *p, nthw_fpga_t *p_fpga, int mn_phy_tile_instance);
- void nthw_phy_tile_set_tx_pol_inv(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane, bool invert);
- void nthw_phy_tile_set_rx_pol_inv(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane, bool invert);
- void nthw_phy_tile_set_host_loopback(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-index c8fd37d0ff..35cbaea81e 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-@@ -181,7 +181,23 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 
- static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- {
-+	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
-+	nthw_fpga_t *p_fpga = NULL;
-+
-+	p_fpga = p_fpga_info->mp_fpga;
-+
- 	assert(p_fpga_info);
-+
-+	NT_LOG(DBG, NTHW, "%s: %s: BEGIN", p_adapter_id_str, __PRETTY_FUNCTION__);
-+
-+	/* Create Phy Tile module */
-+	p_fpga_info->mp_nthw_agx.p_phy_tile = nthw_phy_tile_new();
-+
-+	if (nthw_phy_tile_init(p_fpga_info->mp_nthw_agx.p_phy_tile, p_fpga, 0)) {
-+		NT_LOG(ERR, NTHW, "%s: Failed to create Phy Tile Module", p_adapter_id_str);
-+		return -1;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-index a8c2d03be9..f78d8263f5 100644
---- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-@@ -44,6 +44,604 @@ static const uint32_t eth_soft_csr1 = 0x200;
- static const uint32_t eth_soft_csr2 = 0x204;
- static const uint32_t eth_soft_csr3 = 0x208;
- 
-+nthw_phy_tile_t *nthw_phy_tile_new(void)
-+{
-+	nthw_phy_tile_t *p = malloc(sizeof(nthw_phy_tile_t));
-+
-+	if (p)
-+		memset(p, 0, sizeof(nthw_phy_tile_t));
-+
-+	return p;
-+}
-+
-+int nthw_phy_tile_init(nthw_phy_tile_t *p, nthw_fpga_t *p_fpga, int mn_phy_tile_instance)
-+{
-+	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
-+	nthw_module_t *mod = nthw_fpga_query_module(p_fpga, MOD_PHY_TILE, mn_phy_tile_instance);
-+
-+	if (p == NULL)
-+		return mod == NULL ? -1 : 0;
-+
-+	if (mod == NULL) {
-+		NT_LOG(ERR, NTHW, "%s: PHY_TILE %d: no such instance", p_adapter_id_str,
-+			mn_phy_tile_instance);
-+		return -1;
-+	}
-+
-+	p->mp_fpga = p_fpga;
-+	p->mn_phy_tile_instance = mn_phy_tile_instance;
-+
-+	p->m_mod_phy_tile = mod;
-+
-+	p->mn_fpga_revision = p_fpga->mn_fpga_revision;
-+	p->mn_fpga_version = p_fpga->mn_fpga_version;
-+
-+	switch (p_fpga->mn_product_id) {
-+	case 9569:
-+	case 9574:
-+		p->mac_pcs_mode = MAC_PCS_MODE_2X100;
-+		break;
-+
-+	default:
-+		NT_LOG_DBG(DBG, NTHW, "unknown product ID: %u", p_fpga->mn_product_id);
-+		break;
-+	}
-+
-+	/* Port 0 Base 0..3 */
-+	p->mp_reg_port_xcvr_base[0][0] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_0_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[0][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][0],
-+			PHY_TILE_PORT_0_XCVR_0_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[0][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][0],
-+			PHY_TILE_PORT_0_XCVR_0_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[0][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][0],
-+			PHY_TILE_PORT_0_XCVR_0_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[0][1] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_1_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[0][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][1],
-+			PHY_TILE_PORT_0_XCVR_1_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[0][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][1],
-+			PHY_TILE_PORT_0_XCVR_1_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[0][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][1],
-+			PHY_TILE_PORT_0_XCVR_1_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[0][2] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_2_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[0][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][2],
-+			PHY_TILE_PORT_0_XCVR_2_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[0][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][2],
-+			PHY_TILE_PORT_0_XCVR_2_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[0][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][2],
-+			PHY_TILE_PORT_0_XCVR_2_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[0][3] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_3_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[0][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][3],
-+			PHY_TILE_PORT_0_XCVR_3_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[0][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][3],
-+			PHY_TILE_PORT_0_XCVR_3_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[0][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[0][3],
-+			PHY_TILE_PORT_0_XCVR_3_BASE_CMD);
-+
-+	/* Port 0 Data 0..3 */
-+	p->mp_reg_port_xcvr_data[0][0] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_0_DATA);
-+	p->mp_fld_port_xcvr_data_data[0][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[0][0],
-+			PHY_TILE_PORT_0_XCVR_0_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[0][1] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_1_DATA);
-+	p->mp_fld_port_xcvr_data_data[0][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[0][1],
-+			PHY_TILE_PORT_0_XCVR_1_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[0][2] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_2_DATA);
-+	p->mp_fld_port_xcvr_data_data[0][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[0][2],
-+			PHY_TILE_PORT_0_XCVR_2_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[0][3] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_XCVR_3_DATA);
-+	p->mp_fld_port_xcvr_data_data[0][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[0][3],
-+			PHY_TILE_PORT_0_XCVR_3_DATA_DATA);
-+
-+	/* Port 1 Base 0..3 */
-+	p->mp_reg_port_xcvr_base[1][0] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_0_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[1][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][0],
-+			PHY_TILE_PORT_1_XCVR_0_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[1][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][0],
-+			PHY_TILE_PORT_1_XCVR_0_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[1][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][0],
-+			PHY_TILE_PORT_1_XCVR_0_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[1][1] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_1_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[1][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][1],
-+			PHY_TILE_PORT_1_XCVR_1_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[1][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][1],
-+			PHY_TILE_PORT_1_XCVR_1_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[1][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][1],
-+			PHY_TILE_PORT_1_XCVR_1_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[1][2] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_2_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[1][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][2],
-+			PHY_TILE_PORT_1_XCVR_2_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[1][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][2],
-+			PHY_TILE_PORT_1_XCVR_2_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[1][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][2],
-+			PHY_TILE_PORT_1_XCVR_2_BASE_CMD);
-+
-+	p->mp_reg_port_xcvr_base[1][3] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_3_BASE);
-+	p->mp_fld_port_xcvr_base_ptr[1][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][3],
-+			PHY_TILE_PORT_1_XCVR_3_BASE_PTR);
-+	p->mp_fld_port_xcvr_base_busy[1][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][3],
-+			PHY_TILE_PORT_1_XCVR_3_BASE_BUSY);
-+	p->mp_fld_port_xcvr_base_cmd[1][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_base[1][3],
-+			PHY_TILE_PORT_1_XCVR_3_BASE_CMD);
-+
-+	/* Port 1 Data 0..3 */
-+	p->mp_reg_port_xcvr_data[1][0] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_0_DATA);
-+	p->mp_fld_port_xcvr_data_data[1][0] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[1][0],
-+			PHY_TILE_PORT_1_XCVR_0_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[1][1] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_1_DATA);
-+	p->mp_fld_port_xcvr_data_data[1][1] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[1][1],
-+			PHY_TILE_PORT_1_XCVR_1_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[1][2] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_2_DATA);
-+	p->mp_fld_port_xcvr_data_data[1][2] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[1][2],
-+			PHY_TILE_PORT_1_XCVR_2_DATA_DATA);
-+
-+	p->mp_reg_port_xcvr_data[1][3] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_XCVR_3_DATA);
-+	p->mp_fld_port_xcvr_data_data[1][3] =
-+		nthw_register_get_field(p->mp_reg_port_xcvr_data[1][3],
-+			PHY_TILE_PORT_1_XCVR_3_DATA_DATA);
-+
-+	if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 3)) {
-+		if (p->mac_pcs_mode == MAC_PCS_MODE_2X100 ||
-+			p->mac_pcs_mode == MAC_PCS_MODE_8x10_25) {
-+			/* DYN_RECONFIG */
-+			p->mp_reg_dyn_reconfig_base =
-+				nthw_module_get_register(p->m_mod_phy_tile,
-+					PHY_TILE_DYN_RECONFIG_BASE);
-+			p->mp_fld_dyn_reconfig_base_ptr =
-+				nthw_register_get_field(p->mp_reg_dyn_reconfig_base,
-+					PHY_TILE_DYN_RECONFIG_BASE_PTR);
-+			p->mp_fld_dyn_reconfig_base_busy =
-+				nthw_register_get_field(p->mp_reg_dyn_reconfig_base,
-+					PHY_TILE_DYN_RECONFIG_BASE_BUSY);
-+			p->mp_fld_dyn_reconfig_base_cmd =
-+				nthw_register_get_field(p->mp_reg_dyn_reconfig_base,
-+					PHY_TILE_DYN_RECONFIG_BASE_CMD);
-+
-+			p->mp_reg_dyn_reconfig_data =
-+				nthw_module_get_register(p->m_mod_phy_tile,
-+					PHY_TILE_DYN_RECONFIG_DATA);
-+			p->mp_fld_dyn_reconfig_data_data =
-+				nthw_register_get_field(p->mp_reg_dyn_reconfig_data,
-+					PHY_TILE_DYN_RECONFIG_DATA_DATA);
-+		}
-+
-+		/* Port 0 Eth Base */
-+		p->mp_reg_port_eth_base[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_ETH_0_BASE);
-+		p->mp_fld_port_eth_base_ptr[0] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[0],
-+				PHY_TILE_PORT_0_ETH_0_BASE_PTR);
-+		p->mp_fld_port_eth_base_busy[0] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[0],
-+				PHY_TILE_PORT_0_ETH_0_BASE_BUSY);
-+		p->mp_fld_port_eth_base_cmd[0] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[0],
-+				PHY_TILE_PORT_0_ETH_0_BASE_CMD);
-+
-+		/* Port 1 Eth Base */
-+		p->mp_reg_port_eth_base[1] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_ETH_0_BASE);
-+		p->mp_fld_port_eth_base_ptr[1] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[1],
-+				PHY_TILE_PORT_1_ETH_0_BASE_PTR);
-+		p->mp_fld_port_eth_base_busy[1] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[1],
-+				PHY_TILE_PORT_1_ETH_0_BASE_BUSY);
-+		p->mp_fld_port_eth_base_cmd[1] =
-+			nthw_register_get_field(p->mp_reg_port_eth_base[1],
-+				PHY_TILE_PORT_1_ETH_0_BASE_CMD);
-+
-+		/* Port 0 Eth Data */
-+		p->mp_reg_port_eth_data[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_0_ETH_0_DATA);
-+		p->mp_fld_port_eth_data_data[0] =
-+			nthw_register_get_field(p->mp_reg_port_eth_data[0],
-+				PHY_TILE_PORT_0_ETH_0_DATA_DATA);
-+
-+		/* Port 1 Eth Data 0..3 */
-+		p->mp_reg_port_eth_data[1] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_1_ETH_0_DATA);
-+		p->mp_fld_port_eth_data_data[1] =
-+			nthw_register_get_field(p->mp_reg_port_eth_data[1],
-+				PHY_TILE_PORT_1_ETH_0_DATA_DATA);
-+	}
-+
-+	p->mp_reg_link_summary[0] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_LINK_SUMMARY_0);
-+	p->mp_fld_link_summary_nt_phy_link_state[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_NT_PHY_LINK_STATE);
-+	p->mp_fld_link_summary_ll_nt_phy_link_state[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LL_PHY_LINK_STATE);
-+	p->mp_fld_link_summary_link_down_cnt[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LINK_DOWN_CNT);
-+	p->mp_fld_link_summary_ll_rx_block_lock[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LL_RX_BLOCK_LOCK);
-+	p->mp_fld_link_summary_ll_rx_am_lock[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LL_RX_AM_LOCK);
-+	p->mp_fld_link_summary_lh_rx_high_bit_error_rate[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LH_RX_HIGH_BIT_ERROR_RATE);
-+	p->mp_fld_link_summary_lh_received_local_fault[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LH_RECEIVED_LOCAL_FAULT);
-+	p->mp_fld_link_summary_lh_remote_fault[0] =
-+		nthw_register_get_field(p->mp_reg_link_summary[0],
-+			PHY_TILE_LINK_SUMMARY_0_LH_REMOTE_FAULT);
-+
-+	p->mp_reg_link_summary[1] =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_LINK_SUMMARY_1);
-+	p->mp_fld_link_summary_nt_phy_link_state[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_NT_PHY_LINK_STATE);
-+	p->mp_fld_link_summary_ll_nt_phy_link_state[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LL_PHY_LINK_STATE);
-+	p->mp_fld_link_summary_link_down_cnt[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LINK_DOWN_CNT);
-+	p->mp_fld_link_summary_ll_rx_block_lock[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LL_RX_BLOCK_LOCK);
-+	p->mp_fld_link_summary_ll_rx_am_lock[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LL_RX_AM_LOCK);
-+	p->mp_fld_link_summary_lh_rx_high_bit_error_rate[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LH_RX_HIGH_BIT_ERROR_RATE);
-+	p->mp_fld_link_summary_lh_received_local_fault[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LH_RECEIVED_LOCAL_FAULT);
-+	p->mp_fld_link_summary_lh_remote_fault[1] =
-+		nthw_register_get_field(p->mp_reg_link_summary[1],
-+			PHY_TILE_LINK_SUMMARY_1_LH_REMOTE_FAULT);
-+
-+	if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 4)) {
-+		p->mp_reg_port_status[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_STATUS_0);
-+		p->mp_fld_port_status_rx_pcs_fully_aligned[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_PCS_FULLY_ALIGNED);
-+		p->mp_fld_port_status_rx_hi_ber[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_HI_BER);
-+		p->mp_fld_port_status_rx_remote_fault[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_REMOTE_FAULT);
-+		p->mp_fld_port_status_rx_local_fault[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_LOCAL_FAULT);
-+		p->mp_fld_port_status_rx_am_lock[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_AM_LOCK);
-+		p->mp_fld_port_status_reset_ackn[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RESET_ACK_N);
-+		p->mp_fld_port_status_tx_lanes_stable[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_TX_LANES_STABLE);
-+		p->mp_fld_port_status_tx_pll_locked[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_TX_PLL_LOCKED);
-+		p->mp_fld_port_status_sys_pll_locked[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_SYS_PLL_LOCKED);
-+		p->mp_fld_port_status_tx_reset_ackn[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_TX_RESET_ACK_N);
-+		p->mp_fld_port_status_rx_reset_ackn[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_0_RX_RESET_ACK_N);
-+
-+		p->mp_reg_port_status[1] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_STATUS_1);
-+		p->mp_fld_port_status_rx_pcs_fully_aligned[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_PCS_FULLY_ALIGNED);
-+		p->mp_fld_port_status_rx_hi_ber[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_HI_BER);
-+		p->mp_fld_port_status_rx_remote_fault[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_REMOTE_FAULT);
-+		p->mp_fld_port_status_rx_local_fault[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_LOCAL_FAULT);
-+		p->mp_fld_port_status_rx_am_lock[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_AM_LOCK);
-+		p->mp_fld_port_status_reset_ackn[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RESET_ACK_N);
-+		p->mp_fld_port_status_tx_lanes_stable[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_TX_LANES_STABLE);
-+		p->mp_fld_port_status_tx_pll_locked[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_TX_PLL_LOCKED);
-+		p->mp_fld_port_status_sys_pll_locked[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_SYS_PLL_LOCKED);
-+		p->mp_fld_port_status_tx_reset_ackn[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_TX_RESET_ACK_N);
-+		p->mp_fld_port_status_rx_reset_ackn[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[1],
-+				PHY_TILE_PORT_STATUS_1_RX_RESET_ACK_N);
-+
-+	} else {
-+		p->mp_reg_port_status[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_STATUS);
-+		p->mp_fld_port_status_rx_pcs_fully_aligned[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_PCS_FULLY_ALIGNED_0);
-+		p->mp_fld_port_status_rx_hi_ber[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_HI_BER_0);
-+		p->mp_fld_port_status_rx_remote_fault[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_REMOTE_FAULT_0);
-+		p->mp_fld_port_status_rx_local_fault[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_LOCAL_FAULT_0);
-+		p->mp_fld_port_status_rx_am_lock[0] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_AM_LOCK_0);
-+
-+		p->mp_fld_port_status_rx_pcs_fully_aligned[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_PCS_FULLY_ALIGNED_1);
-+		p->mp_fld_port_status_rx_hi_ber[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_HI_BER_1);
-+		p->mp_fld_port_status_rx_remote_fault[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_REMOTE_FAULT_1);
-+		p->mp_fld_port_status_rx_local_fault[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_LOCAL_FAULT_1);
-+		p->mp_fld_port_status_rx_am_lock[1] =
-+			nthw_register_get_field(p->mp_reg_port_status[0],
-+				PHY_TILE_PORT_STATUS_RX_AM_LOCK_1);
-+
-+		p->mp_fld_port_status_reset_ackn[0] = NULL;
-+		p->mp_fld_port_status_tx_lanes_stable[0] = NULL;
-+		p->mp_fld_port_status_tx_pll_locked[0] = NULL;
-+		p->mp_fld_port_status_sys_pll_locked[0] = NULL;
-+		p->mp_fld_port_status_tx_reset_ackn[0] = NULL;
-+		p->mp_fld_port_status_rx_reset_ackn[0] = NULL;
-+
-+		p->mp_fld_port_status_reset_ackn[1] = NULL;
-+		p->mp_fld_port_status_tx_lanes_stable[1] = NULL;
-+		p->mp_fld_port_status_tx_pll_locked[1] = NULL;
-+		p->mp_fld_port_status_sys_pll_locked[1] = NULL;
-+		p->mp_fld_port_status_tx_reset_ackn[1] = NULL;
-+		p->mp_fld_port_status_rx_reset_ackn[1] = NULL;
-+	}
-+
-+	if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 4)) {
-+		p->mp_reg_port_config[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_CONFIG_0);
-+		p->mp_fld_port_config_reset[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_0_RST);
-+		p->mp_fld_port_config_rx_reset[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_0_RX_RST);
-+		p->mp_fld_port_config_tx_reset[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_0_TX_RST);
-+		p->mp_fld_port_config_nt_linkup_latency[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_0_NT_LINKUP_LATENCY);
-+		p->mp_fld_port_config_nt_force_linkdown[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_0_NT_FORCE_LINK_DOWN);
-+
-+		if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 10)) {
-+			p->mp_fld_port_config_nt_auto_force_linkdown[0] =
-+				nthw_register_query_field(p->mp_reg_port_config[0],
-+					PHY_TILE_PORT_CONFIG_0_NT_AUTO_FORCE_LINK_DOWN);
-+		}
-+
-+		p->mp_reg_port_config[1] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_CONFIG_1);
-+		p->mp_fld_port_config_reset[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[1],
-+				PHY_TILE_PORT_CONFIG_1_RST);
-+		p->mp_fld_port_config_rx_reset[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[1],
-+				PHY_TILE_PORT_CONFIG_1_RX_RST);
-+		p->mp_fld_port_config_tx_reset[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[1],
-+				PHY_TILE_PORT_CONFIG_1_TX_RST);
-+		p->mp_fld_port_config_nt_linkup_latency[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[1],
-+				PHY_TILE_PORT_CONFIG_1_NT_LINKUP_LATENCY);
-+		p->mp_fld_port_config_nt_force_linkdown[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[1],
-+				PHY_TILE_PORT_CONFIG_1_NT_FORCE_LINK_DOWN);
-+
-+		if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 10)) {
-+			p->mp_fld_port_config_nt_auto_force_linkdown[1] =
-+				nthw_register_query_field(p->mp_reg_port_config[1],
-+					PHY_TILE_PORT_CONFIG_1_NT_AUTO_FORCE_LINK_DOWN);
-+		}
-+
-+	} else {
-+		p->mp_reg_port_config[0] =
-+			nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_CONFIG);
-+		p->mp_fld_port_config_dyn_reset =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_DYN_RESET);
-+		p->mp_fld_port_config_reset[0] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_RESET_0);
-+		p->mp_fld_port_config_rx_reset[0] =
-+			nthw_register_get_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_RX_RESET_0);
-+		p->mp_fld_port_config_tx_reset[0] =
-+			nthw_register_get_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_TX_RESET_0);
-+		p->mp_fld_port_config_reset[1] =
-+			nthw_register_query_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_RESET_1);
-+		p->mp_fld_port_config_rx_reset[1] =
-+			nthw_register_get_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_RX_RESET_1);
-+		p->mp_fld_port_config_tx_reset[1] =
-+			nthw_register_get_field(p->mp_reg_port_config[0],
-+				PHY_TILE_PORT_CONFIG_TX_RESET_1);
-+	}
-+
-+	p->mp_reg_port_comp[0] = nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_COMP_0);
-+	p->mp_fld_port_comp_rx_compensation[0] =
-+		nthw_register_get_field(p->mp_reg_port_comp[0],
-+			PHY_TILE_PORT_COMP_0_RX_COMPENSATION);
-+	p->mp_fld_port_comp_tx_compensation[0] =
-+		nthw_register_get_field(p->mp_reg_port_comp[0],
-+			PHY_TILE_PORT_COMP_0_TX_COMPENSATION);
-+	p->mp_reg_port_comp[1] = nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_PORT_COMP_1);
-+	p->mp_fld_port_comp_rx_compensation[1] =
-+		nthw_register_get_field(p->mp_reg_port_comp[1],
-+			PHY_TILE_PORT_COMP_1_RX_COMPENSATION);
-+	p->mp_fld_port_comp_tx_compensation[1] =
-+		nthw_register_get_field(p->mp_reg_port_comp[1],
-+			PHY_TILE_PORT_COMP_1_TX_COMPENSATION);
-+
-+	p->mp_reg_scratch = nthw_module_query_register(p->m_mod_phy_tile, PHY_TILE_SCRATCH);
-+
-+	if (p->mp_reg_scratch) {
-+		p->mp_fld_scratch_data =
-+			nthw_register_query_field(p->mp_reg_scratch, PHY_TILE_SCRATCH_DATA);
-+	}
-+
-+	if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 4)) {
-+		p->mp_reg_dr_cfg = nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_DR_CFG);
-+		p->mp_fld_port_config_dyn_reset =
-+			nthw_register_get_field(p->mp_reg_dr_cfg, PHY_TILE_DR_CFG_DYN_RST);
-+
-+		if (!p->mp_reg_scratch) {
-+			p->mp_fld_scratch_data =
-+				nthw_register_get_field(p->mp_reg_dr_cfg, PHY_TILE_DR_CFG_SCRATCH);
-+		}
-+
-+		p->mp_fld_reg_dr_cfg_features =
-+			nthw_register_get_field(p->mp_reg_dr_cfg, PHY_TILE_DR_CFG_FEATURES);
-+
-+		if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 10)) {
-+			p->mp_fld_reg_dr_cfg_tx_flush_level =
-+				nthw_register_get_field(p->mp_reg_dr_cfg,
-+					PHY_TILE_DR_CFG_TX_FLUSH_LEVEL);
-+		}
-+	}
-+
-+	p->mp_reg_dr_cfg_status =
-+		nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_DR_CFG_STATUS);
-+	p->mp_fld_dr_cfg_status_curr_profile_id =
-+		nthw_register_get_field(p->mp_reg_dr_cfg_status,
-+			PHY_TILE_DR_CFG_STATUS_CURR_PROFILE_ID);
-+	p->mp_fld_dr_cfg_status_in_progress =
-+		nthw_register_get_field(p->mp_reg_dr_cfg_status,
-+			PHY_TILE_DR_CFG_STATUS_IN_PROGRESS);
-+	p->mp_fld_dr_cfg_status_error =
-+		nthw_register_get_field(p->mp_reg_dr_cfg_status, PHY_TILE_DR_CFG_STATUS_ERROR);
-+
-+	if (nthw_module_is_version_newer(p->m_mod_phy_tile, 0, 7)) {
-+		p->mp_reg_sys_pll = nthw_module_get_register(p->m_mod_phy_tile, PHY_TILE_SYS_PLL);
-+		p->mp_fld_sys_pll_set_rdy =
-+			nthw_register_get_field(p->mp_reg_sys_pll, PHY_TILE_SYS_PLL_SET_RDY);
-+		p->mp_fld_sys_pll_get_rdy =
-+			nthw_register_get_field(p->mp_reg_sys_pll, PHY_TILE_SYS_PLL_GET_RDY);
-+		p->mp_fld_sys_pll_system_pll_lock =
-+			nthw_register_get_field(p->mp_reg_sys_pll,
-+				PHY_TILE_SYS_PLL_SYSTEMPLL_LOCK);
-+		p->mp_fld_sys_pll_en_ref_clk_fgt =
-+			nthw_register_get_field(p->mp_reg_sys_pll, PHY_TILE_SYS_PLL_EN_REFCLK_FGT);
-+		p->mp_fld_sys_pll_disable_ref_clk_monitor =
-+			nthw_register_get_field(p->mp_reg_sys_pll,
-+				PHY_TILE_SYS_PLL_DISABLE_REFCLK_MONITOR);
-+		p->mp_fld_sys_pll_ref_clk_fgt_enabled =
-+			nthw_register_get_field(p->mp_reg_sys_pll,
-+				PHY_TILE_SYS_PLL_REFCLK_FGT_ENABLED);
-+		p->mp_fld_sys_pll_forward_rst =
-+			nthw_register_get_field(p->mp_reg_sys_pll, PHY_TILE_SYS_PLL_FORWARD_RST);
-+		p->mp_fld_sys_pll_force_rst =
-+			nthw_register_get_field(p->mp_reg_sys_pll, PHY_TILE_SYS_PLL_FORCE_RST);
-+
-+	} else {
-+		p->mp_fld_sys_pll_set_rdy = NULL;
-+		p->mp_fld_sys_pll_get_rdy = NULL;
-+		p->mp_fld_sys_pll_system_pll_lock = NULL;
-+		p->mp_fld_sys_pll_en_ref_clk_fgt = NULL;
-+		p->mp_fld_sys_pll_disable_ref_clk_monitor = NULL;
-+		p->mp_fld_sys_pll_ref_clk_fgt_enabled = NULL;
-+		p->mp_fld_sys_pll_forward_rst = NULL;
-+		p->mp_fld_sys_pll_force_rst = NULL;
-+	}
-+
-+	return 0;
-+}
-+
- uint8_t nthw_phy_tile_get_no_intfs(nthw_phy_tile_t *p)
- {
- 	switch (p->mac_pcs_mode) {
+ 	/* VLAN */
+-	if (ether_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
++	while (ether_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
+ 		ether_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ) ||
+ 		ether_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ1)) {
+ 		if (size - pkti == 0)
 -- 
 2.45.0
 
