@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AD0C021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2414C021B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:44:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 16C1C4065B;
-	Thu, 20 Feb 2025 23:32:01 +0100 (CET)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 07FDB40609
- for <dev@dpdk.org>; Thu, 20 Feb 2025 23:31:59 +0100 (CET)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-2fc1c80cdc8so2448452a91.2
- for <dev@dpdk.org>; Thu, 20 Feb 2025 14:31:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 12EA940609;
+	Thu, 20 Feb 2025 23:44:24 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 4FEE940430
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 23:44:22 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-220ecbdb4c2so39261505ad.3
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 14:44:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740090718;
- x=1740695518; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=8vJPK21UFpfBE3X5UOiITQXDj6Kodegry8sZPpRiJSg=;
- b=u1XOfy4vcL9GMXbC3Tv5cndCbMxrRX4tgqgKhjeXblQg/ZQxcw1uqDR+LxrGMxCiUC
- 4lo/vN6P1NX9qE3d3aHTgH9iaBHKcyco05RoXfoA9FJR1ggU9iqa8HoGJCsiH3IQSw70
- 385M+WRjFsK0tBgi//mayu1wH/sQqsokKw9ev/t5I6/gqIm2yTves+9j5Wsq5uN1h8HB
- QNhqDwtmWPmKNQPmzW/K4KGV2DQMbY9ZkKhW+RYfUo2ktpakexobqtSW2y0+dpdjYg8k
- ARPyHi943anJJ6AxaRuoAwC4sWJrYc2BmWGspvN06/UnL4oWRo7AFxR7FuCWITTH1SXE
- Ku4w==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740091461;
+ x=1740696261; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=YtNtG6SzS2yBqAy9BwTEFzVLbgU5CxTnGypoTxa2KS4=;
+ b=OyleNTZPiiZuhLJQ1o0GWMZWoekU8IvJ1eJwjApk9U4DiW4ZMTDbJ335QS1sj2M0S/
+ 3d7wNsk5qFzfk7fmJauZKY/qkXMNm7JchwufjsNBdx59FX1As5gESz6q5LES7Xk5BqpZ
+ VfSs6aUpNCzRQtexJmvyo1i8vH1vTqc1WH2SoYJf5T+vGK8nmW4JO3RalesWnfdYdEoI
+ ORXt+yLvjgN2ZFPoiLDkdX7a2CUdNKWikIhPXmAtFlk1owCscH8qpBmvooB2LSQ5BDDd
+ 3mEnBpqX6C8BV6FCMk70sYcjqyZmzYKIMahj59PTdCk9/V6jdLgWChqMwXWgAayiiMjg
+ sBVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740090718; x=1740695518;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=8vJPK21UFpfBE3X5UOiITQXDj6Kodegry8sZPpRiJSg=;
- b=RS/6zBspdnsWrN7HNZLW5HBNPP4Fyecyffke+CDX2iAz8hix6tphMlFnaESEunWdzl
- h6VqonSPrTRabxg5ELXctDSo2hubYPFVLrxmHFeimeSaZzQn3yc6Cvujmrjf5V38BCkM
- hgb4s8oBdEayff45RdUp4HRlHq9UBefngyUZxqtpb6nc1NP3SpN/g6BfMdg+zV5gZrhk
- qYBi8lILa+qo3hQYCnpCCIBZYEQl1WbIHc58B7Bw4SXGJmTMZKYdqV5hR73sMomLVSus
- Ha7opIezUB60UAQNqgCFLeb4uJqCM0mWyqCSQv1FXkTIvISCOhx32+cvY4rq7ZGLpiFn
- E2SA==
-X-Gm-Message-State: AOJu0YwVim4saC0/vF/NAnT/ene4NgE33OPc+/sAz6AKULi5gT2lTyMW
- l0d5mCfRK5/xCXY1I7QK+jySVpEGdsN68LueHw/kVV7E+pJiV+KfeoSHE0VMDCA=
-X-Gm-Gg: ASbGncuGz3uGZdeV/ct+/wQIUMq9lg9WdCooD43axkCwDqKfFTlGkZ6NytIthnem5V2
- cgG8XGTNUKEcfEt3fkCPTY8oGY7516cUtVtW8yKJU9bLEnuWpPZ5ydxIDKFaCHSJUxjwLOyRYy6
- WnXDGw4dMr2Xxy5mkUcZAf0OXLaWG/iymND04K53VrKlFSB0TKqON5Lw10IjtKprFpAARjueaWW
- dnvO/tbOgmCpRGmm3isS64r7D8Fq54oJhz8kRYL18xsZvZSa+DyHwAQvI7dgJSbFx0IQ8AYFgQo
- o8+f9a65uZ2fzug8RhLjpxYROt9SvukO36JuIYBs53ygEp6LNxk/PpzT4Q6AflDfc9HR
-X-Google-Smtp-Source: AGHT+IEtoAKjlPXIG82F83iKwIO/k3NKVZ1zOgCSLlQfm15VUD3W9QAjx5uUQhVL7LTPVqz7HTTy8A==
-X-Received: by 2002:a17:90b:5688:b0:2fa:f8d:65e7 with SMTP id
- 98e67ed59e1d1-2fce769a8demr1513626a91.2.1740090718005; 
- Thu, 20 Feb 2025 14:31:58 -0800 (PST)
+ d=1e100.net; s=20230601; t=1740091461; x=1740696261;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=YtNtG6SzS2yBqAy9BwTEFzVLbgU5CxTnGypoTxa2KS4=;
+ b=nps8KnQZdHTFN8EMjMxY4cfGYrXOcwRXGdte4huKvN1YUPE4gI+UFjbpktgga6wA2k
+ R9wCnNAQyG3cyfaRVHIDlvJ25hJD9yBekf6+UU7Sjrs1JW4XC5bKYKqZ/rWquXA6W/To
+ Q0H3f0p7CMIGCqp/hmc84994Xi8CvRhk3yoKm0rGDxTSAitEo2jVZWRypqmsAdpz58o1
+ k+Ya3oZj7vY+GCUjK3ViQt6RLWGS8vFtvQ2je4hRM6X583HawB0EHc1Rzb63upeAHmsd
+ 4u6gRrAUT9HoUciBTTyCB+/SY517+bswoDFBK11H0ATCg3xopNySDLvfxgFVKkFmkNoN
+ CH+w==
+X-Gm-Message-State: AOJu0YwRPrSHis6JmlwBh0gkUy/tllLUhyGkIblyIMNrv6I6I9Ad2ZUK
+ QiP0/wqJbT5zYgvw3PkQmENV1x0Bjg3OzleGCJOk/4gMXdnwWfiiRcVwUEfhaZHGyn78QPT95y6
+ p
+X-Gm-Gg: ASbGncuMIt3nAWiR8wrKp+wZR5etLL+QU7VXf2krFpytr23GqS7PcD9gRUsr/VpIZ0k
+ RWI11vYe/sYkiTQxV32nsHPKwrJ8PU/6NGXLTBx6slTI8wE7rUTKHG79txYTLwdhuWVtHN5bgti
+ yHdvDBz8uRoWwTTDjN5s1wPov0046JKp7qZi0RruEAi3ZSnbyEKbVe2NsxKujggaNCWBfy+YqF/
+ 3WCsQoUUCRO6ChLb4NQdLIXyyhlfafbfeTJwsjUCyoozO4a5VSHx7qaFpWS/PIXKx+d3eM3+wRI
+ CU8sNYzGHwPbfekfY5g/x+rup/u0AIKTUq9wPpoURrfM0JSHjV0aMuTwz8DXIl9pmbph
+X-Google-Smtp-Source: AGHT+IG6/zG9eI7mNVjadkOPGmRZQbNcAHhn49754u3Hrgo8YsP/R+TOjV4VQ79IzCzdGFU0vSZIwA==
+X-Received: by 2002:a17:903:41ca:b0:21a:8d8c:450d with SMTP id
+ d9443c01a7336-221a11abd40mr7856845ad.53.1740091461412; 
+ Thu, 20 Feb 2025 14:44:21 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fbf9ab049fsm16531983a91.47.2025.02.20.14.31.57
+ d9443c01a7336-220d556e15esm127628075ad.190.2025.02.20.14.44.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 14:31:57 -0800 (PST)
-Date: Thu, 20 Feb 2025 14:31:55 -0800
+ Thu, 20 Feb 2025 14:44:21 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
-Subject: Re: [PATCH v1 32/32] net/ntnic: revert untrusted loop bound
-Message-ID: <20250220143155.1f74163c@hermes.local>
-In-Reply-To: <20250220220406.3925597-33-sil-plv@napatech.com>
-References: <20250220220406.3925597-1-sil-plv@napatech.com>
- <20250220220406.3925597-33-sil-plv@napatech.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
+Subject: [PATCH] net/zxdh: remove unnecessary null free checks
+Date: Thu, 20 Feb 2025 14:44:10 -0800
+Message-ID: <20250220224411.302807-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,14 +78,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Feb 2025 23:03:56 +0100
-Serhii Iliushyk <sil-plv@napatech.com> wrote:
+Remove unnecessary checks for null pointer.
+Found by devtools/cocci/nullfree.cocci script.
 
-> The changes for untrusted loop bound breaks VLAN processing
-> 
-> This reverts commit 36cd2cb0eea49813dd59ee1df2eb592e8ae5b6b4.
-> 
-> Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/zxdh/zxdh_ethdev.c | 3 +--
+ drivers/net/zxdh/zxdh_np.c     | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-This will bring back the Coverity bug and potential for VLAN "packet of doom" bugs.
-Any loop iterating over VLAN's needs to limit depth
+diff --git a/drivers/net/zxdh/zxdh_ethdev.c b/drivers/net/zxdh/zxdh_ethdev.c
+index 858e3c3d47..4617ae3c2c 100644
+--- a/drivers/net/zxdh/zxdh_ethdev.c
++++ b/drivers/net/zxdh/zxdh_ethdev.c
+@@ -945,8 +945,7 @@ zxdh_np_dtb_data_res_free(struct zxdh_hw *hw)
+ 		if (ret)
+ 			PMD_DRV_LOG(ERR, "%s dpp_np_online_uninstall failed", dev->data->name);
+ 
+-		if (g_dtb_data.dtb_table_conf_mz)
+-			rte_memzone_free(g_dtb_data.dtb_table_conf_mz);
++		rte_memzone_free(g_dtb_data.dtb_table_conf_mz);
+ 
+ 		if (g_dtb_data.dtb_table_dump_mz) {
+ 			rte_memzone_free(g_dtb_data.dtb_table_dump_mz);
+diff --git a/drivers/net/zxdh/zxdh_np.c b/drivers/net/zxdh/zxdh_np.c
+index 1e6e8f0e75..06a28e0b04 100644
+--- a/drivers/net/zxdh/zxdh_np.c
++++ b/drivers/net/zxdh/zxdh_np.c
+@@ -873,8 +873,7 @@ zxdh_np_sdt_mgr_destroy(uint32_t dev_id)
+ 	p_sdt_tbl_temp = ZXDH_SDT_SOFT_TBL_GET(dev_id);
+ 	p_sdt_mgr = ZXDH_SDT_MGR_PTR_GET();
+ 
+-	if (p_sdt_tbl_temp != NULL)
+-		free(p_sdt_tbl_temp);
++	free(p_sdt_tbl_temp);
+ 
+ 	ZXDH_SDT_SOFT_TBL_GET(dev_id) = NULL;
+ 
+-- 
+2.47.2
+
