@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE438C021B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310D4C021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:32:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F05ED40698;
-	Thu, 20 Feb 2025 22:31:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 561914069F;
+	Thu, 20 Feb 2025 22:31:27 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 1AF9B40608
+ by mails.dpdk.org (Postfix) with ESMTP id 04C0F4026D
  for <dev@dpdk.org>; Thu, 20 Feb 2025 22:31:15 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id B713F2069400; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B713F2069400
+ id CEE2D2069406; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CEE2D2069406
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740087073;
- bh=liCZLcoycSsNfp5uPsZ3tjg195UlGWkDRisIpPYcHZk=;
+ bh=2DGNjrpD188vdjHVy3SHJJFbQqq6ey+wlGBV+5HJMnE=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KWxX6Pvr9QIyIifWBAlNLGi4XTWgYyNsAPSZt+vm5rnXpILNDKXxy/DnDxYktgY5B
- IeVEJVGYgdDaHe82GCHDrwJmgPlMO6+RlOffxF/XQua1+vas6WfyItT80bhzZz51o6
- PMlqQGYKkRGke69PlCq/svsrioxZVPw1h7OXXxCg=
+ b=pCIFJJCEaDlWWlMBqCnpwNW9K6lnNpksN2LKkh+bA2FsjppDd8ljFQBiLoXlDg1gl
+ y8IptxWyd1fmNp3Rn+/JoD3J/LD6ctjsOVLBuV82hjClCHFbieuvLvk/tJXi380JCI
+ TsDSIDHTtYBiAv5mi/YpOLPdLX8A5SUmH1OgYc78=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org,
-	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v4 07/10] test-pmd: don't return value from void function
-Date: Thu, 20 Feb 2025 13:31:01 -0800
-Message-Id: <1740087064-18680-8-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org
+Subject: [PATCH v4 09/10] test: add workaround for __builtin_constant_p in
+ test_memcpy_perf
+Date: Thu, 20 Feb 2025 13:31:03 -0800
+Message-Id: <1740087064-18680-10-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740087064-18680-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,42 +44,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in the warning below:
-
-app/test-pmd/cmdline_flow.c(13964): warning C4098: 'cmd_set_raw_parsed':
-    'void' function returning a value
+There's no MSVC equivalent for compiler extension __builtin_constant_p,
+so a workaround is needed.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test-pmd/cmdline_flow.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ app/test/test_memcpy_perf.c | 54 ++++++++++++++++++-------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 24323d8891..15a18db2c7 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -13952,11 +13952,15 @@ cmd_set_raw_parsed(const struct buffer *in)
- 	int gtp_psc = -1; /* GTP PSC option index. */
- 	const void *src_spec;
+diff --git a/app/test/test_memcpy_perf.c b/app/test/test_memcpy_perf.c
+index 5c05a84619..32c589c4ba 100644
+--- a/app/test/test_memcpy_perf.c
++++ b/app/test/test_memcpy_perf.c
+@@ -196,37 +196,37 @@ do {                                                                        \
+ } while (0)
  
--	if (in->command == SET_SAMPLE_ACTIONS)
--		return cmd_set_raw_parsed_sample(in);
-+	if (in->command == SET_SAMPLE_ACTIONS) {
-+		cmd_set_raw_parsed_sample(in);
-+		return;
-+	}
- 	else if (in->command == SET_IPV6_EXT_PUSH ||
--		 in->command == SET_IPV6_EXT_REMOVE)
--		return cmd_set_ipv6_ext_parsed(in);
-+			 in->command == SET_IPV6_EXT_REMOVE) {
-+		cmd_set_ipv6_ext_parsed(in);
-+		return;
-+	}
- 	RTE_ASSERT(in->command == SET_RAW_ENCAP ||
- 		   in->command == SET_RAW_DECAP);
- 	if (in->command == SET_RAW_ENCAP) {
+ /* Run aligned memcpy tests for each cached/uncached permutation */
+-#define ALL_PERF_TESTS_FOR_SIZE(n)                                       \
+-do {                                                                     \
+-    if (__builtin_constant_p(n))                                         \
+-        printf("\nC%6u", (unsigned)n);                                   \
+-    else                                                                 \
+-        printf("\n%7u", (unsigned)n);                                    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
++#define ALL_PERF_TESTS_FOR_SIZE(n)                                           \
++do {                                                                         \
++	if (__rte_constant(n))                                               \
++		printf("\nC%6u", (unsigned int)n);                           \
++	else                                                                 \
++		printf("\n%7u", (unsigned int)n);                            \
++	SINGLE_PERF_TEST(small_buf_write, 1, 0, small_buf_read, 1, 0, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 0, small_buf_read, 1, 0, n);    \
++	SINGLE_PERF_TEST(small_buf_write, 1, 0, large_buf_read, 0, 0, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 0, large_buf_read, 0, 0, n);    \
+ } while (0)
+ 
+ /* Run unaligned memcpy tests for each cached/uncached permutation */
+-#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                             \
+-do {                                                                     \
+-    if (__builtin_constant_p(n))                                         \
+-        printf("\nC%6u", (unsigned)n);                                   \
+-    else                                                                 \
+-        printf("\n%7u", (unsigned)n);                                    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
+-    SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
+-    SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
++#define ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(n)                                 \
++do {                                                                         \
++	if (__rte_constant(n))                                               \
++		printf("\nC%6u", (unsigned int)n);                           \
++	else                                                                 \
++		printf("\n%7u", (unsigned int)n);                            \
++	SINGLE_PERF_TEST(small_buf_write, 1, 1, small_buf_read, 1, 5, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 1, small_buf_read, 1, 5, n);    \
++	SINGLE_PERF_TEST(small_buf_write, 1, 1, large_buf_read, 0, 5, n);    \
++	SINGLE_PERF_TEST(large_buf_write, 0, 1, large_buf_read, 0, 5, n);    \
+ } while (0)
+ 
+ /* Run memcpy tests for constant length */
+-#define ALL_PERF_TEST_FOR_CONSTANT                                      \
+-do {                                                                    \
+-    TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
+-    TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
+-    TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
++#define ALL_PERF_TEST_FOR_CONSTANT                                          \
++do {                                                                        \
++	TEST_CONSTANT(6U); TEST_CONSTANT(64U); TEST_CONSTANT(128U);         \
++	TEST_CONSTANT(192U); TEST_CONSTANT(256U); TEST_CONSTANT(512U);      \
++	TEST_CONSTANT(768U); TEST_CONSTANT(1024U); TEST_CONSTANT(1536U);    \
+ } while (0)
+ 
+ /* Run all memcpy tests for aligned constant cases */
+@@ -253,7 +253,7 @@ perf_test_variable_aligned(void)
+ {
+ 	unsigned i;
+ 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+-		ALL_PERF_TESTS_FOR_SIZE((size_t)buf_sizes[i]);
++		ALL_PERF_TESTS_FOR_SIZE(buf_sizes[i]);
+ 	}
+ }
+ 
+@@ -263,7 +263,7 @@ perf_test_variable_unaligned(void)
+ {
+ 	unsigned i;
+ 	for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+-		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED((size_t)buf_sizes[i]);
++		ALL_PERF_TESTS_FOR_SIZE_UNALIGNED(buf_sizes[i]);
+ 	}
+ }
+ 
 -- 
 2.48.1.vfs.0.0
 
