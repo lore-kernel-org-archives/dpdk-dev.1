@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7A0C021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EA4C021B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:05:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF9E440A8A;
-	Thu, 20 Feb 2025 23:04:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7FE0B40DCE;
+	Thu, 20 Feb 2025 23:04:30 +0100 (CET)
 Received: from egress-ip42b.ess.de.barracuda.com
  (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 3000E40A75
+ by mails.dpdk.org (Postfix) with ESMTP id DECED4066F
  for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:22 +0100 (CET)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05lp2105.outbound.protection.outlook.com [104.47.17.105]) by
- mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com
+ (mail-am7eur03lp2236.outbound.protection.outlook.com [104.47.51.236]) by
+ mx-outbound21-132.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 20 Feb 2025 22:04:20 +0000
+ Thu, 20 Feb 2025 22:04:21 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wk1wG1Nr1qkpt5uDGFCZybC7Ba00wyurKjHnRgb2WtRo1iXYEQGIlvPojkA5ESqjKs0r7R61VoyDcNL2tYoRS/KBryWJC0yQp+XAS+/asEeMpp0fwsBrsFevcvdo7VyYxoYoauZ49/tnOKyRusq96/cIKCLDh5/DcehyFQV3JaYLveYxZSVc5UJ/oDOl7wFcIfbe47QrV7qLBq7+iQHw+zIWVl5kcSZ2CCmLZoNmRAhot8d6RAgksnztvOEleqNd62WWR2gCoEs7VG0QWuuBSQfZ08f9lPPnkxcLufjxZ95mBTbrckta/NgTMVSo3Q78UXgLo4v2KBZL/uyBG+7jdQ==
+ b=DheV141uF5owv/a9gPIyGcog0BHa2l5q0EaZwgZAFw8OCqkcWGN9c8psbo7j4+EYBZAGCXJIwQ/ton8dvqt7gqKZz6zzS7wnl45Xi+xLhrtxN4dhNYSSVfT797zhUGrg7mTMSlbQ9nOFxUPP5j6xpBY9fUfZENL4ONK93s99kPHSvfBU03BfYMCLUqGEJanTZ4TW9EhuC9DZMIYey/rs3IRIMKbMsfR+Zr2JY4v4MMmkRfMzqi2L2KfXZXxrZV87CKnjd3xjleDphKGf0/g9wFG4YoJVNaHZ0EXwJ9BL2YQNVWywP7EANcv0ua+kr44XZK22r9bEyBKYqV4dnWEG/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IlB1mcxLqW4KT8I8M90MjTMS2TBlZGQ0jLePqQrUQ/A=;
- b=OEwVXzyFPGM7wCArVIaBG/JfKGoLf9jh6e6tdRrqwo78rl4WrRLmGuNEaJEJRxT54F5LlAls8+HJ0EjagHu7B0KgHHpdfsOJAk5i32pXDS7fdWbCAhr+vVWYnm4qB37ZCCXz2aPzz1GORtmY+Dty8H43i6w+ASHIUKVtRzmcZ4coubzmjKeEGte9Ifsd8HXbSvCYQzWSkYowYKNWWQd9dAa4aPNbAWbDi9G3/bG+Peka/Kg8AFINgPa9oWWVWjPxamI6vC7SgZR71cnkRFB/ri9tmkk5Vo1bFNjswRkN5FuZraEFOo7wXZuSHJRGlFWcwpIQQOMfbWIKVYeLaxCQ2g==
+ bh=OPnVTkEVwW2HnZHefINjW3x8PWnACe0nSiONVwF4V90=;
+ b=hxa+9/4r2Zl9kIlb2yppC2oGPjySxpkVCt3F9p9RCv9eGnAET2OwRAUwH+h5fBuAPjQp5GXZzDSyPyI4g0zp22Lfk+65r41XS3DErpniwato0seyr1QWJC2LSqGTAXiyEx4yQgRMW6IGOr7Pt/hkcf73+HuAnYLrlmyAm/4B4lklW3+Cs0/LSop4ZH8wCWv/36ZJ3eWB65yT4eB21621JSfn8MlrrGG3nmg/Rz4Rqhkz5Tjy7QQS2poSzXAMjJIB3nPzNQAYttxtd1ktTj5HcsuFUgGNc9DhQTr1znDvIQq+zifDMQR1iSAawJN+jKFoV2YTe4tok9GXDTBAtRBtpw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IlB1mcxLqW4KT8I8M90MjTMS2TBlZGQ0jLePqQrUQ/A=;
- b=USpCrhcBdsnoSERYodrsjl2F5fmdP07QpG67qQiSpyTaKinGJO+TQ8MYEpMBItzNjXWU0jYm/Tjdx0zi2tii4eiW5DeEGh3fZCf8aNSw1oXzNXYnuS3yBD4zg5QqLT2PLfmSbRKpO5U/wKy/YWTwbs5puj/XzMB83FcE39AhHgQ=
-Received: from CWLP265CA0496.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::17)
- by PR3P190MB0843.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:92::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Thu, 20 Feb
- 2025 22:04:19 +0000
+ bh=OPnVTkEVwW2HnZHefINjW3x8PWnACe0nSiONVwF4V90=;
+ b=jf0GP5jbyqPLyL3l7Xd2aYzUEWMBXMw3f/yWTO+PDZyTzAlNZL6iRdIC7ZuemVvfrxpmmDwyO9BtByqm9CyAApJ1jYeemG2k4fGD4RNGmwrIGdMofGf+NW03S3/TgcLFhyxugadaC8ajerMkN8Ptdk2J/OWKWCSDxqxADjOTiSU=
+Received: from CWLP265CA0497.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::15)
+ by GV1P190MB2110.EURP190.PROD.OUTLOOK.COM (2603:10a6:150:17d::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 22:04:17 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::6d) by CWLP265CA0496.outlook.office365.com
- (2603:10a6:400:18b::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:19 +0000
+ (2603:10a6:400:18b:cafe::86) by CWLP265CA0497.outlook.office365.com
+ (2603:10a6:400:18b::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
+ 20 Feb 2025 22:04:17 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:19 +0000
+ 22:04:17 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 10/32] net/ntnic: add link handling API
-Date: Thu, 20 Feb 2025 23:03:34 +0100
-Message-ID: <20250220220406.3925597-11-sil-plv@napatech.com>
+Subject: [PATCH v1 08/32] net/ntnic: add port post init
+Date: Thu, 20 Feb 2025 23:03:32 +0100
+Message-ID: <20250220220406.3925597-9-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,60 +66,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|PR3P190MB0843:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|GV1P190MB2110:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 4df45a02-4339-4b93-0bbb-08dd51fa8635
+X-MS-Office365-Filtering-Correlation-Id: b9000cf4-434f-403e-daf9-08dd51fa8541
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RICzvpStgImOArgg3u8/SopUICk9byQ2udY1An+0HYvwFcoPwHYS1GOlFglf?=
- =?us-ascii?Q?9viCKfU/hK3zVOq4HKrjvsumVyqvernnuTSHDnHosksd2MzEpere4pBftNgi?=
- =?us-ascii?Q?mwsXfwAdJpfhZ+mroypuNOlcO5qk+iTENK9tgKPn8slhpLqgAdgMNkQ0Wecq?=
- =?us-ascii?Q?dAzSzyx+W2t0+IWjHYlejig19qLG35NpiIYDFTpxnrSOHaJIeoLntxeLA4C3?=
- =?us-ascii?Q?pSPIchuLnLdJf/NqB8lJ3DPbbAAmH9rbsFNwCAtSt8XUT/9OG7vprYrfQPFl?=
- =?us-ascii?Q?2vkPETRK1pWCMMfyWXG7b5Y2Nc4SrHM/IldPhcw3eiKv8C1wHYITps7OFHun?=
- =?us-ascii?Q?u7k1CSmAHUDEd2sfjgmnyIUvm9ZPW7RNkyxfdndu4xGJmWsgK+LBK3ez/Dkk?=
- =?us-ascii?Q?dxL60X/YWrbJzXTdr6i+HGiDtRZ8h5eHlNI1ClGrPeLlXTo1V55D2JI2eudw?=
- =?us-ascii?Q?sqzEwyX7P46GyqrTlQ1UNnBAUQA5mKEQnS1lQDHrOOLNBNiKYnB05+e0C2zj?=
- =?us-ascii?Q?Z9zGXzATvGZL0wgtxMrzeVefqMGHhTQRIE2eBT/2xc2kTMV+b4I8vb38oFAG?=
- =?us-ascii?Q?07Rfc10fInmkHT9mJcIdDIRYdb7HqhLnBk7lX7djqc3oEn06kUtUiHxFfv3C?=
- =?us-ascii?Q?Kx4qNTCL7L/gPeah6hosWCc0jC6K+0C05abHKX3DYUBj73ghmrOeETC0iX1b?=
- =?us-ascii?Q?WGDC1Q6H/JDAUXRRY51O4JgeQ4S1ClRFc1+dR2JLaabJ3nSt3kIsW75BLY09?=
- =?us-ascii?Q?BAeGL90kJN8TrzUHA+sx2Jhd8ZIFudSVAOqZtrJT2Yyxvc/XjBqpNOoKx9Mt?=
- =?us-ascii?Q?Q7tRF1FqPxPyZSbLoJ/vu4q8MGq9JbJFCnN8F8oPK1QnjAxAA/fzt6oRMg1O?=
- =?us-ascii?Q?+Z2C+OQDdMKmDqXBiLHPhVG/UXgzVVhTGOWtOvjwSBgpWKPdVgRVIX5ZXjdc?=
- =?us-ascii?Q?C1F0f1rYH10Et24qLo88aKXqEMEyO1FcLKT+QRVyzYqL859CoWnzy2fiyAGi?=
- =?us-ascii?Q?/vY9DVB8R/T0W8IhwDB+Tcobs/mdMfGZsrayxbwqXUJDH9lNhF0JRk7RBT0z?=
- =?us-ascii?Q?JpsRKX+Mc0LhjbsUs9qdJZB/aKpmJMeFD0+ywxUSdKcZ96PnEgoCO+rxBCiV?=
- =?us-ascii?Q?juNu8o/1XZyfDr5F1BScq4l24sunWcyU83bHdART6iEIrNqnc96hO32WeFv4?=
- =?us-ascii?Q?9SzDeMx352xkxKVCxycuMEWkncOBHaEZ8MgTSOAfphr+QN/o5t+DXFJdQzZb?=
- =?us-ascii?Q?Z8Ugd7EBaLDgvg4/fBJcDYt2CDo0IXqVqIw/wSQPksWJaf+Qa8sTHgDls1fW?=
- =?us-ascii?Q?c6eqvAB7COb5Rn0Nu1QO/qjie6GVQmP5scLC/HboPMYJlCDfkJZtWFjIHnMG?=
- =?us-ascii?Q?98n6wXSkY3tObb9//71xp8AXz2t7DyaTllxvC9XUkb5+72vPunhyTmstK6r7?=
- =?us-ascii?Q?HuUh8xYiYyfykMMUI41IzzrVson+WczBWqbtLM3f0N6ahUSVNMXqRsBASMWU?=
- =?us-ascii?Q?3asD8/f1taRCDTE=3D?=
+ ARA:13230040|36860700013|376014|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bXfp10KbM18DpsPhIy6BsIE0tRNWsYoSnH0TbHc7HL0b02kuZFpRgEZmmPmh?=
+ =?us-ascii?Q?9k1TS49oQRTePpfGKAmveKn29TpUPJOxLnkgDFPbeKA807kuH4EX3TSp1CfD?=
+ =?us-ascii?Q?BOEB1EXUy0mgnjMRDoRrcN2kk9NNVqYt6ovgVc6YJ8HW/v8ryiDgoqKYYyhG?=
+ =?us-ascii?Q?LJCjLhcD/t9zSXU5lexJWHSbLUTWNddG73xSH/QJGHH/Rlny8W0obQfVbKzo?=
+ =?us-ascii?Q?pLmWOA2Wtj7VxjljIS8lUS2j99GjKXBmYt/XNdpjlsVhDX9nHfwhu5BmDBT9?=
+ =?us-ascii?Q?HdE6aNC3jnAMv+hCvbATp90FTBhPrXclR9+nm2P419aMl2dbacoSsVO0Vl1a?=
+ =?us-ascii?Q?J4pCASbewJZ8kOV0uyRE+szbtDreK8P8RG71Jk/GWZy0fRCocsZ6X+AAMdXC?=
+ =?us-ascii?Q?CxCyZ2OsZqw2x+z41jP4LII0Ud0IhNNGeSnSklMXWmRQqQhONNUS59DRbOAF?=
+ =?us-ascii?Q?HxZGaJYOgsOwNrigvyB/qMVWbGrleiCqSdpuTECRfxG+hKc74AvuupXmfbiW?=
+ =?us-ascii?Q?dE6gW2NAAC0WTK84W0WR0SnQZ970oinFaRFtkg4YF2FIqFC2pMyJuV1UrO1o?=
+ =?us-ascii?Q?COzeHYPLypJ7To6go+0EKrIOXMMJHAnyCyL2x6OM+bZcZo2yCfwMmSBdAxF+?=
+ =?us-ascii?Q?PGU++fROppd3IhYYw6XmgawL1lRuxURXkywln5EXCzLYHjpQKYn1nibv26Tg?=
+ =?us-ascii?Q?uFDtM/fPwrV4jdt5veutQErOaYDOX+v0LXmVSKVn07qZLOF+VS6SK4n02ZiR?=
+ =?us-ascii?Q?UC8fUh8KIfyyw7phvikHm3jzEH61Q1meD8Dr6w44xq72z4tNqAhEwBKHayHf?=
+ =?us-ascii?Q?2i2rut9Egdf2s7eu6M5wID80MtYp2d9wG3hr+wPzIuqRNEk7M9AwMra0HG3e?=
+ =?us-ascii?Q?2qXRpUNfZooQRYYgwh6bIrvMe1BMuD25VFQkOWe3O+9lNbLd1Ra1QgwFb8Zj?=
+ =?us-ascii?Q?cttghfFuQvgO3bl6gw/DK32IgxQA01VBZHcQw8MvS54BhCOAcJs/pP13a8ap?=
+ =?us-ascii?Q?3Vv14jpNWi5j42+0X6TQ5T0HSKEl4e/H79268/Nw3NBcnkuW9baZGtVp023C?=
+ =?us-ascii?Q?NWbwFXAvf+XCqdgaAge15vIaSs0/aFuBPJtECXnF1SmT0VTGevNqj6kCUPUy?=
+ =?us-ascii?Q?hEoxWmBzWUVqllgjY26x6TDr/qGyAS8tS+yNxaJQTlJvXxtVwebGjGtgbDwI?=
+ =?us-ascii?Q?bfk9wbsi5g0m+i9LyXMfcTUA7bjjdQQMnAEX3i3jeLcTCNM0YroidbllFydE?=
+ =?us-ascii?Q?QK2Mv/eVMvS8JG1hQdwpHU8HAurCNFMbIA3HtSZawVpPH8nhloxSDrabpPPi?=
+ =?us-ascii?Q?6XU5K+RXIf9QOvkB9zz8EEbb4lzpVYC6eY7C9CgYr0QSyFIIQ2Xed2+9rbPF?=
+ =?us-ascii?Q?6lnxlnC9OCFCp2N7wubvixSTeCHFdoX66uBJG6hZZYf+PZ3nYkdsuZ5GGjqj?=
+ =?us-ascii?Q?9xkivT41l6ZpRLU2tlEmazxbwiK2k7BqFi7A7nTIK2A0VFhDNU1qvpWInJK7?=
+ =?us-ascii?Q?B4qT061uVr0vdTI=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);
+ CAT:NONE; SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 3wCg2vSNk9Z25uid5mZAHBIyQxMc9PsCyx5u8VHpQcHBuxBIWs3miK41avD0R4mBqSNErFoa7uSebmOjJeSvzyIXUU2oY8H+/jGnaw0wfKU0Vs1Avd4jlgs3NEs5rlIIU2nOfYtxd+25Fmh2JVsG5W/EY2t0IJLrL3bJTTdcZRkoMpmRgcDr2FSs+IVYHK8ST1x4yab+7ViKEjb4pY+Amo1LBBvPVWUZE7kpDNc1q7TUM6zSPsE8f8IsTSA2imjiTSGR4uG8jzQ4/WJ75WuuOQTjpbu68hpyy0YZ9/KGaTyiQ9Db3H3rA3G5fBF0pFSuianh7lIFn16wfxLuZYQGmTANvykxpoYxeeKQsrJyquoeFxzQUpOoQHjfZ5hNBjD8Me1KRwdGReSdFVtQCVO+aKiHe5qox0gBljYOndMRnnWxkp2lwol0XskvNRTJr/fZYQMOG8HZq2QTdk4jF3qmcpCHEsvnojElG5QGwq2zBv7MllCUyVk0XayXp+dqhCl+P3JmfE1tZSmv7diRRSldUXcccoP1uQrxXi4hLY7DzLmy9XYHkmaYANBz4dJx28zmwIRisn5vvBXZPhN664ihDn73FWtNA72kSeBXNbGgiEPsDFpxHIoCEHHZDU52JIEB3JlvIDTFvNMZT+EAsVJqcnhOaZwKbDmKoMKC9Fx7lkI=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: pZsbSuak7Y9dSV/O3AyK7Q11Dq2+8JCtCSZJibHxSngdymdrylrz1VWXhSOQRrU1eZw5IzAStJAcYokBgDvoznGFl509VPC1r8TH7fdLFGoAMRv0Hn+T0tcQz9HS1YCuSjX3JMJ5ef8pAGWkgexMHD59QlsfTPaFOCz9WgVUHIz2QADfNYZjbqANpTJh/Z8p1OtCt8kIfuFRPWpm0rgiwa3gIyyuEuyPVPJ/r0OfKVL8+azBc7c/ejroUsLYio5k2rw9Nqf07ffXNT7Juc3bW3XmtrSf1f0RwObLgh0AGcJI5kijkUROTGXgG55D0TRtZzxglrnL1akyWK/xRAOHc+bsOhrwM8gWt+uFd+q6+YdMna8Qs0lZBvndP98PUoWBnOu/8FgjhEztAvhAmF0VnnNuKUSP8c/3PQa/Jh2PBcOOZ0cu7l4zl0gfqvr3I2xISNaLFyws2ap/pmYr6CbAF5WcoTqs7iMBhmuZphE0wddUoN5w+OKKYQR8T6NDcc3VXmMMsmFmIkZEmQzqVq89RXlf5LAhrpR9Lt96Xs9TIaYEtUWnRcU5hlUdqKtiWBENq/MROX2E5hieMdUNS+z9unf4T55aShZ9PefIPZ9Ctu+6hE/aM5VtXe1QXexmmlz8OXvDXcCBTrLvlfdXKjx0HuFQZtecIZ1LOFu48hydO7Y=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:19.0525 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4df45a02-4339-4b93-0bbb-08dd51fa8635
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:17.4587 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9000cf4-434f-403e-daf9-08dd51fa8541
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P190MB0843
-X-BESS-ID: 1740089060-312005-29061-14088-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P190MB2110
+X-BESS-ID: 1740089061-305508-25332-16458-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.17.105
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYm5hbGQGYGUNTQIC3Z1MzIwD
- I10dLc0CItyTTJ0NDANM00JcU82cDUUKk2FgCM+ALdQgAAAA==
+X-BESS-Apparent-Source-IP: 104.47.51.236
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkamxgZGQGYGUNQ00TDRyNjU2N
+ DUwiIlydAs0dw80TLN1NLMNDUpLSXJVKk2FgChcgIGQgAAAA==
 X-BESS-Outbound-Spam-Score: 1.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
@@ -148,438 +148,652 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Add link state management and NIM reset functionality
-
-- Implement phy_get_link_state to retrieve PHY link state.
-- Implement adjust_maturing_delay to adjust link maturing delay.
-- Implement get/set to operate current link state.
+Configure FEC and TX equalization for 100G NIM on Agilex FPGA
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 171 ++++++++++++++++++
- drivers/net/ntnic/meson.build                 |   1 +
- .../ntnic/nthw/core/include/nthw_pca9532.h    |  22 +++
- .../ntnic/nthw/core/include/nthw_phy_tile.h   |   9 +
- drivers/net/ntnic/nthw/core/nthw_pca9532.c    |  40 ++++
- drivers/net/ntnic/nthw/core/nthw_phy_tile.c   |  51 +++++-
- drivers/net/ntnic/nthw/nthw_drv.h             |   2 +
- 7 files changed, 295 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
- create mode 100644 drivers/net/ntnic/nthw/core/nthw_pca9532.c
+ .../link_agx_100g/nt4ga_agx_link_100g.c       | 122 ++++++++
+ drivers/net/ntnic/nim/i2c_nim.c               |  80 +++++
+ drivers/net/ntnic/nim/i2c_nim.h               |   3 +
+ .../ntnic/nthw/core/include/nthw_phy_tile.h   |  25 ++
+ drivers/net/ntnic/nthw/core/nthw_phy_tile.c   | 295 ++++++++++++++++++
+ 5 files changed, 525 insertions(+)
 
 diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index 9193f21f6f..00a30f24a5 100644
+index 6593c90ca5..fe2acef612 100644
 --- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
 +++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -43,6 +43,38 @@ void link_agx_100g_init(void)
-  * Phy handling
-  */
- 
-+static void phy_get_link_state(adapter_info_t *drv,
-+	int port,
-+	nt_link_state_p p_curr_link_state,
-+	nt_link_state_p p_latched_links_state,
-+	uint32_t *p_local_fault,
-+	uint32_t *p_remote_fault)
-+{
-+	uint32_t status = 0;
-+	uint32_t status_latch = 0;
-+
-+	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
-+
-+	nthw_phy_tile_get_link_summary(p,
-+		&status,
-+		&status_latch,
-+		p_local_fault,
-+		p_remote_fault,
-+		port);
-+
-+	if (status == 0x0)
-+		*p_curr_link_state = NT_LINK_STATE_DOWN;
-+
-+	else
-+		*p_curr_link_state = NT_LINK_STATE_UP;
-+
-+	if (status_latch == 0x0)
-+		*p_latched_links_state = NT_LINK_STATE_DOWN;
-+
-+	else
-+		*p_latched_links_state = NT_LINK_STATE_UP;
-+}
-+
- static void phy_rx_path_rst(adapter_info_t *drv, int port, bool reset)
- {
- 	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
-@@ -242,6 +274,135 @@ static void set_nim_low_power(nim_i2c_ctx_p ctx, uint8_t nim_idx, bool low_power
- 	}
+@@ -372,6 +372,121 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
+ 	return res;
  }
  
-+/*
-+ * Link handling
-+ */
-+
-+static void adjust_maturing_delay(adapter_info_t *drv, int port)
++static int nim_ready_100_gb(adapter_info_t *p_info, int port)
 +{
-+	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
-+	nthw_rpf_t *p_rpf = drv->fpga_info.mp_nthw_agx.p_rpf;
++	nt4ga_link_t *link_info = &p_info->nt4ga_link;
++	nim_i2c_ctx_t *nim_ctx = &link_info->u.nim_ctx[port];
++	nthw_phy_tile_t *p_phy_tile = p_info->fpga_info.mp_nthw_agx.p_phy_tile;
++
++	bool disable_fec_by_port_type = (nim_ctx->port_type == NT_PORT_TYPE_QSFP28_LR4);
++	bool enable_fec = nim_ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena &&
++		!disable_fec_by_port_type;
++
++	NT_LOG(DBG, NTNIC, "Port %s: DisableFec = %d", p_info->mp_port_id_str[port], !enable_fec);
 +	/*
-+	 * Find the maximum of the absolute values of the RX componensation for all
-+	 * ports (the RX componensation may not be set for some of the other ports).
++	 * FecAutonegotiation at 100G is not supported for Napatech adapters and therefore
++	 * not relevant at this speed
 +	 */
-+	const int16_t unset_rx_compensation = -1;	/* 0xffff */
-+	int16_t max_comp = 0;
 +
-+	for (int i = 0; i < drv->fpga_info.n_phy_ports; i++) {
-+		int16_t comp = (int16_t)nthw_phy_tile_get_timestamp_comp_rx(p, i);
-+
-+		if (comp != unset_rx_compensation && abs(comp) > abs(max_comp))
-+			max_comp = comp;
++	/* Adjust NIM power level */
++	if (nim_ctx->pwr_level_req > 4) {
++		qsfp28_set_high_power(nim_ctx);
++		nim_ctx->pwr_level_cur = nim_ctx->pwr_level_req;
 +	}
 +
-+	int delay = nthw_rpf_get_maturing_delay(p_rpf) - max_comp;
++	/* enable_fec is what the end result should be, now find out if it's possible */
++	if (enable_fec) {
++		if (qsfp28_set_fec_enable(nim_ctx, true, false)) {
++			/* Prefer NIM media FEC since the NIM is assumed to know the right FEC */
++			NT_LOG(DBG, NTNIC, "Port %s: NIM media FEC enabled",
++				p_info->mp_port_id_str[port]);
 +
-+	/*
-+	 * For SOF time-stamping account for jumbo frame.
-+	 * Frame size = 80000 b. divided by Gb link speed = processing time in ns.
-+	 */
-+	if (!nthw_rpf_get_ts_at_eof(p_rpf)) {
-+		uint32_t jumbo_frame_processing_time_ns = 80000U / 100U;
-+		delay -= (int)jumbo_frame_processing_time_ns;
-+	}
++			/* The NIM has been set to FEC on the media side so turn FPGA FEC off */
++			if (nthw_phy_tile_configure_fec(p_phy_tile, port, true)) {
++				NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC disabled",
++					p_info->mp_port_id_str[port]);
 +
-+	const unsigned int delay_bit_width = 19;/* 19 bits maturing delay */
-+	const int min_delay = -(1 << (delay_bit_width - 1));
-+	const int max_delay = 0;
++			} else {
++				NT_LOG(DBG, NTNIC,
++					"Port %s: FPGA does not support disabling of FEC",
++					p_info->mp_port_id_str[port]);
++				return 1;
++			}
 +
-+	if (delay >= min_delay && delay <= max_delay) {
-+		nthw_rpf_set_maturing_delay(p_rpf, delay);
++		} else if (qsfp28_set_fec_enable(nim_ctx, false, false)) {
++			/* The NIM does not support FEC at all so turn FPGA FEC on instead */
++			/* This is relevant to SR4 modules */
++			NT_LOG(DBG, NTNIC, "Port %s: No NIM FEC", p_info->mp_port_id_str[port]);
++			nthw_phy_tile_configure_fec(p_phy_tile, port, false);
++			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled",
++				p_info->mp_port_id_str[port]);
++
++		} else if (qsfp28_set_fec_enable(nim_ctx, true, true)) {
++			/* This probably not a likely scenario */
++			nthw_phy_tile_configure_fec(p_phy_tile, port, false);
++			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled",
++				p_info->mp_port_id_str[port]);
++			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC terminated, NIM media FEC enabled",
++				p_info->mp_port_id_str[port]);
++
++		} else {
++			NT_LOG(ERR, NTNIC, "Port %s: Could not enable FEC",
++				p_info->mp_port_id_str[port]);
++			return 1;
++		}
++
++	} else if (qsfp28_set_fec_enable(nim_ctx, false, false)) {
++		/* The NIM does not support FEC at all - this is relevant to LR4 modules */
++		NT_LOG(DBG, NTNIC, "Port %s: No NIM FEC", p_info->mp_port_id_str[port]);
++
++		if (nthw_phy_tile_configure_fec(p_phy_tile, port, true)) {
++			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC disabled",
++				p_info->mp_port_id_str[port]);
++
++		} else {
++			NT_LOG(ERR, NTNIC, "Port %s: FPGA does not support disabling of FEC",
++				p_info->mp_port_id_str[port]);
++			return 1;
++		}
++
++	} else if (qsfp28_set_fec_enable(nim_ctx, false, true)) {
++		nthw_phy_tile_configure_fec(p_phy_tile, port, false);
++		/* This probably not a likely scenario */
++		NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled", p_info->mp_port_id_str[port]);
++		NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC terminated, NIM media FEC disabled",
++			p_info->mp_port_id_str[port]);
 +
 +	} else {
-+		NT_LOG(WRN, NTNIC,
-+			"Port %u: Cannot set the RPF adjusted maturing delay to %i because "
-+			"that value is outside the legal range [%i:%i]",
-+			port, delay, min_delay, max_delay);
-+	}
-+}
-+
-+static void set_link_state(adapter_info_t *drv, nim_i2c_ctx_p ctx, link_state_t *state, int port)
-+{
-+	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
-+	/*
-+	 * 100G: 4 LEDs per port
-+	 */
-+
-+	bool led_on = state->nim_present && state->link_state == NT_LINK_STATE_UP;
-+	uint8_t led_pos = (uint8_t)(port * ctx->lane_count);
-+
-+	for (uint8_t i = 0; i < ctx->lane_count; i++) {
-+		nthw_pca9532_set_led_on(drv->fpga_info.mp_nthw_agx.p_pca9532_led, led_pos + 1,
-+			led_on);
++		NT_LOG(ERR, NTNIC, "Port %s: Could not disable FEC",
++			p_info->mp_port_id_str[port]);
++		return 1;
 +	}
 +
-+	nthw_phy_tile_set_timestamp_comp_rx(p, port, 0);
-+
-+	if (ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena) {
-+		/* Updated after mail from JKH 2023-02-07 */
-+		nthw_phy_tile_set_timestamp_comp_rx(p, port, 0x9E);
-+		/* TODO Hermosa Awaiting comp values to use */
++	if (port == 0) {
++		/* setTxEqualization(uint8_t intf_no, uint8_t lane, uint32_t pre_tap2,
++		 * uint32_t main_tap, uint32_t pre_tap1, uint32_t post_tap1)
++		 */
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 0, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 1, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 2, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 3, 0, 44, 2, 9);
 +
 +	} else {
-+		/* TODO Hermosa Awaiting comp values to use */
-+		nthw_phy_tile_set_timestamp_comp_rx(p, port, 0);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 0, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 1, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 2, 0, 44, 2, 9);
++		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 3, 0, 44, 2, 9);
 +	}
 +
-+	adjust_maturing_delay(drv, port);	/* MUST be called after timestampCompRx */
-+}
-+
-+static void get_link_state(adapter_info_t *drv, nim_i2c_ctx_p ctx, link_state_t *state, int port)
-+{
-+	uint32_t local_fault;
-+	uint32_t remote_fault;
-+	nt_link_state_t curr_link_state;
-+
-+	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
-+
-+	/* Save the current state before reading the new */
-+	curr_link_state = state->link_state;
-+
-+	phy_get_link_state(drv, port, &state->link_state, &state->link_state_latched, &local_fault,
-+		&remote_fault);
-+
-+	if (curr_link_state != state->link_state)
-+		NT_LOG(DBG, NTNIC, "Port %d: Faults(Local = %d, Remote = %d)", port, local_fault,
-+			remote_fault);
-+
-+	state->nim_present = nim_is_present(ctx, port);
-+
-+	if (!state->nim_present)
-+		return;	/* No nim so no need to do anything */
-+
-+	state->link_up = state->link_state == NT_LINK_STATE_UP ? true : false;
-+
-+	if (state->link_state == NT_LINK_STATE_UP)
-+		return;	/* The link is up so no need to do anything else */
-+
-+	if (remote_fault == 0) {
-+		phy_reset_rx(drv, port);
-+		NT_LOG(DBG, NTNIC, "Port %u: resetRx due to local fault.", port);
-+		return;
-+	}
-+
-+	/* In case of too many errors perform a reset */
-+	if (nthw_phy_tile_get_rx_hi_ber(p, port)) {
-+		NT_LOG(INF, NTNIC, "Port %u: HiBer", port);
-+		phy_reset_rx(drv, port);
-+		return;
-+	}
-+
-+	/* If FEC is not enabled then no reason to look at FEC state */
-+	if (!ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena ||
-+		nthw_phy_tile_read_fec_enabled_by_scratch(p, port)) {
-+		return;
-+	}
-+
-+	if (!nthw_phy_tile_get_rx_am_lock(p, port))
-+		phy_reset_rx(drv, port);
++	/*
++	 * Perform a full reset. If the RX is in reset from the start this sequence will
++	 * take it out of reset and this is necessary in order to read block/lane lock
++	 * in getLinkState()
++	 */
++	phy_reset_rx(p_info, port);
++	return 0;
 +}
 +
  /*
-  * Utility functions
+  * Initialize one 100 Gbps port.
   */
-@@ -645,6 +806,7 @@ static void *_common_ptp_nim_state_machine(void *data)
+@@ -424,6 +539,13 @@ static int _port_init(adapter_info_t *p_info, nthw_fpga_t *fpga, int port)
  
- 	while (monitor_task_is_running[adapter_no]) {
- 		int i;
-+		static bool reported_link[NUM_ADAPTER_PORTS_MAX] = { false };
+ 	NT_LOG(DBG, NTNIC, "%s: NIM initialized", p_info->mp_port_id_str[port]);
  
- 		for (i = 0; i < nb_ports; i++) {
- 			const bool is_port_disabled = link_info->port_action[i].port_disable;
-@@ -691,12 +853,14 @@ static void *_common_ptp_nim_state_machine(void *data)
- 				continue;
- 			}
- 
-+			get_link_state(drv, nim_ctx, &link_state[i], i);
- 			link_state[i].link_disabled = is_port_disabled;
- 
- 			if (!link_state[i].nim_present) {
- 				if (!link_state[i].lh_nim_absent) {
- 					NT_LOG(INF, NTNIC, "%s: NIM module removed",
- 						drv->mp_port_id_str[i]);
-+					reported_link[i] = false;
- 					link_state[i].link_up = false;
- 					link_state[i].lh_nim_absent = true;
- 
-@@ -707,6 +871,13 @@ static void *_common_ptp_nim_state_machine(void *data)
- 
- 				continue;
- 			}
++	res = nim_ready_100_gb(p_info, port);
 +
-+			if (reported_link[i] != link_state[i].link_up) {
-+				NT_LOG(INF, NTNIC, "%s: link is %s", drv->mp_port_id_str[i],
-+					(link_state[i].link_up ? "up" : "down"));
-+				reported_link[i] = link_state[i].link_up;
-+				set_link_state(drv, nim_ctx, &link_state[i], i);
-+			}
- 		}
++	if (res) {
++		NT_LOG(WRN, NTNIC, "%s: NIM failed to get ready", p_info->mp_port_id_str[port]);
++		return res;
++	}
++
+ 	phy_reset_rx(p_info, port);
+ 	return res;
+ }
+diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
+index f3cca9e555..892e1b58b7 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.c
++++ b/drivers/net/ntnic/nim/i2c_nim.c
+@@ -192,6 +192,13 @@ static int read_data_lin(nim_i2c_ctx_p ctx, uint16_t lin_addr, uint16_t length,
+ 			NIM_READ);
+ }
  
- 		if (monitor_task_is_running[adapter_no])
-diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
-index b1505c5549..92aad6f94d 100644
---- a/drivers/net/ntnic/meson.build
-+++ b/drivers/net/ntnic/meson.build
-@@ -55,6 +55,7 @@ sources = files(
-         'nthw/core/nthw_iic.c',
-         'nthw/core/nthw_mac_pcs.c',
-         'nthw/core/nthw_pcie3.c',
-+        'nthw/core/nthw_pca9532.c',
-         'nthw/core/nthw_pcal6416a.c',
-         'nthw/core/nthw_phy_tile.c',
-         'nthw/core/nthw_si5332_si5156.c',
-diff --git a/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h b/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
-new file mode 100644
-index 0000000000..24da937a18
---- /dev/null
-+++ b/drivers/net/ntnic/nthw/core/include/nthw_pca9532.h
-@@ -0,0 +1,22 @@
++static int write_data_lin(nim_i2c_ctx_p ctx, uint16_t lin_addr, uint16_t length, void *data)
++{
++	/* Wrapper for using Mutex for QSFP TODO */
++	return nim_read_write_data_lin(ctx, page_addressing(ctx->nim_id), lin_addr, length, data,
++		NIM_WRITE);
++}
++
+ /* Read and return a single byte */
+ static uint8_t read_byte(nim_i2c_ctx_p ctx, uint16_t addr)
+ {
+@@ -802,6 +809,79 @@ int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra)
+ 	return res;
+ }
+ 
 +/*
-+ * SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2023 Napatech A/S
++ * Enables high power according to SFF-8636 Rev 2.7, Table 6-9, Page 35:
++ * When set (= 1b) enables Power Classes 5 to 7 in Byte 129 to exceed 3.5W.
++ * When cleared (= 0b), modules with power classes 5 to 7 must dissipate less
++ * than 3.5W (but are not required to be fully functional). Default 0.
++ */
++void qsfp28_set_high_power(nim_i2c_ctx_p ctx)
++{
++	const uint16_t addr = 93;
++	uint8_t data;
++
++	/* Enable high power class; Set Page 00h, Byte 93 bit 2 to 1 */
++	read_data_lin(ctx, addr, sizeof(data), &data);
++	data |= (1 << 2);
++	write_data_lin(ctx, addr, sizeof(data), &data);
++}
++
++/*
++ * Enable FEC on media and/or host side. If the operation could be carried out
++ * return true. For some modules media side FEC is enabled but cannot be changed
++ *  while others allow changing the FEC state.
++ * For LR4 modules write operations (which are also not necessary) to the control
++ *  register must be avoided as this introduces I2C errors on NT200A01.
 + */
 +
-+#ifndef __NTHW_PCA9532_H__
-+#define __NTHW_PCA9532_H__
++bool qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec)
++{
++	/*
++	 * If the current FEC state does not match the wanted and the FEC cannot be
++	 * controlled then the operation cannot be carried out
++	 */
++	if (ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena != media_side_fec &&
++		!ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ctrl)
++		return false;
 +
-+#include "nthw_si5332_si5156.h"
++	if (ctx->specific_u.qsfp.specific_u.qsfp28.host_side_fec_ena != host_side_fec &&
++		!ctx->specific_u.qsfp.specific_u.qsfp28.host_side_fec_ctrl)
++		return false;
 +
-+struct nthw_pca9532 {
-+	nthw_i2cm_t *mp_nt_i2cm;
-+	uint8_t m_dev_address;
-+	nthw_pca9849_t *mp_ca9849;
-+	uint8_t m_mux_channel;
-+};
++	/*
++	 * If the current media and host side FEC state matches the wanted states then
++	 * no need to do more
++	 */
++	if (ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena == media_side_fec &&
++		ctx->specific_u.qsfp.specific_u.qsfp28.host_side_fec_ena == host_side_fec)
++		return true;
 +
-+typedef struct nthw_pca9532 nthw_pca9532_t;
++	/*
++	 * SFF-8636, Rev 2.10a TABLE 6-29 Optional Channel Control)
++	 * (Page 03h, Bytes 230-241)
++	 */
++	const uint16_t addr = 230 + 3 * 128;
++	uint8_t data = 0;
++	read_data_lin(ctx, addr, sizeof(data), &data);
 +
-+void nthw_pca9532_set_led_on(nthw_pca9532_t *p, uint8_t led_pos, bool state_on);
++	if (media_side_fec)
++		data &= (uint8_t)(~(1 << 6));
 +
-+#endif	/* __NTHW_PCA9532_H__ */
++	else
++		data |= (uint8_t)(1 << 6);
++
++	if (host_side_fec)
++		data |= (uint8_t)(1 << 7);
++
++	else
++		data &= (uint8_t)(~(1 << 7));
++
++	write_data_lin(ctx, addr, sizeof(data), &data);
++	ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena = media_side_fec;
++	ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena = host_side_fec;
++	return true;
++}
++
+ void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
+ 	nthw_pca9849_t *p_ca9849)
+ {
+diff --git a/drivers/net/ntnic/nim/i2c_nim.h b/drivers/net/ntnic/nim/i2c_nim.h
+index 09837448c6..888b709135 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.h
++++ b/drivers/net/ntnic/nim/i2c_nim.h
+@@ -33,6 +33,9 @@ int nim_qsfp_plus_nim_set_tx_laser_disable(nim_i2c_ctx_t *ctx, bool disable, int
+  */
+ int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra);
+ 
++void qsfp28_set_high_power(nim_i2c_ctx_p ctx);
++bool qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec);
++
+ void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
+ 	nthw_pca9849_t *p_ca9849);
+ 
 diff --git a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-index c810f55c0d..f84aef44a9 100644
+index 5577f95944..c810f55c0d 100644
 --- a/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
 +++ b/drivers/net/ntnic/nthw/core/include/nthw_phy_tile.h
-@@ -74,8 +74,17 @@ void nthw_phy_tile_set_host_loopback(nthw_phy_tile_t *p, uint8_t intf_no, uint8_
- void nthw_phy_tile_set_tx_equalization(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
- 	uint32_t pre_tap2, uint32_t main_tap, uint32_t pre_tap1,
- 	uint32_t post_tap1);
-+void nthw_phy_tile_get_link_summary(nthw_phy_tile_t *p, uint32_t *p_nt_phy_link_state,
-+	uint32_t *p_ll_nt_phy_link_state, uint32_t *p_lh_local_fault,
-+	uint32_t *p_lh_remote_fault, uint8_t index);
+@@ -34,15 +34,34 @@ struct nt_phy_tile {
+ 	nthw_field_t *mp_fld_link_summary_nt_phy_link_state[2];
+ 	nthw_field_t *mp_fld_link_summary_ll_nt_phy_link_state[2];
+ 	nthw_field_t *mp_fld_link_summary_link_down_cnt[2];
++	nthw_field_t *mp_fld_link_summary_lh_received_local_fault[2];
+ 	nthw_field_t *mp_fld_link_summary_lh_remote_fault[2];
+ 
++	nthw_field_t *mp_fld_port_status_rx_hi_ber[2];
++	nthw_field_t *mp_fld_port_status_rx_am_lock[2];
+ 	nthw_field_t *mp_fld_port_status_tx_reset_ackn[2];
+ 	nthw_field_t *mp_fld_port_status_rx_reset_ackn[2];
+ 
++	nthw_field_t *mp_fld_port_config_reset[2];
+ 	nthw_field_t *mp_fld_port_config_rx_reset[2];
+ 	nthw_field_t *mp_fld_port_config_tx_reset[2];
+ 
++	nthw_field_t *mp_fld_port_comp_rx_compensation[2];
++
++	nthw_register_t *mp_reg_dyn_reconfig_base;
++	nthw_field_t *mp_fld_dyn_reconfig_base_ptr;
++	nthw_field_t *mp_fld_dyn_reconfig_base_busy;
++	nthw_field_t *mp_fld_dyn_reconfig_base_cmd;
++
++	nthw_register_t *mp_reg_dyn_reconfig_data;
++	nthw_field_t *mp_fld_dyn_reconfig_data_data;
++
+ 	nthw_field_t *mp_fld_scratch_data;
++
++	nthw_register_t *mp_reg_dr_cfg_status;
++	nthw_field_t *mp_fld_dr_cfg_status_curr_profile_id;
++	nthw_field_t *mp_fld_dr_cfg_status_in_progress;
++	nthw_field_t *mp_fld_dr_cfg_status_error;
+ };
+ 
+ typedef struct nt_phy_tile nthw_phy_tile_t;
+@@ -52,9 +71,15 @@ void nthw_phy_tile_set_tx_pol_inv(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t l
+ void nthw_phy_tile_set_rx_pol_inv(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane, bool invert);
+ void nthw_phy_tile_set_host_loopback(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+ 	bool enable);
++void nthw_phy_tile_set_tx_equalization(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
++	uint32_t pre_tap2, uint32_t main_tap, uint32_t pre_tap1,
++	uint32_t post_tap1);
  void nthw_phy_tile_set_tx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset);
  void nthw_phy_tile_set_rx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset);
-+bool nthw_phy_tile_read_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8_t intf_no);
-+
-+bool nthw_phy_tile_get_rx_hi_ber(nthw_phy_tile_t *p, uint8_t intf_no);
-+bool nthw_phy_tile_get_rx_am_lock(nthw_phy_tile_t *p, uint8_t intf_no);
-+void nthw_phy_tile_set_timestamp_comp_rx(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t value);
-+uint32_t nthw_phy_tile_get_timestamp_comp_rx(nthw_phy_tile_t *p, uint8_t intf_no);
  
- uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address);
- void nthw_phy_tile_write_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address, uint32_t data);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pca9532.c b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-new file mode 100644
-index 0000000000..fcf5463fcb
---- /dev/null
-+++ b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-@@ -0,0 +1,40 @@
-+/*
-+ * SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2023 Napatech A/S
-+ */
-+
-+#include <pthread.h>
-+
-+#include "nt_util.h"
-+#include "ntlog.h"
-+
-+#include "nthw_drv.h"
-+#include "nthw_register.h"
-+
-+#include "nthw_pca9532.h"
-+
-+static const uint8_t led_sel_reg[4] = { 6, 7, 8, 9 };
-+
-+void nthw_pca9532_set_led_on(nthw_pca9532_t *p, uint8_t led_pos, bool state_on)
-+{
-+	if (led_pos >= 16) {
-+		NT_LOG(ERR, NTHW, "Led pos (%u) out of range", led_pos);
-+		return;
-+	}
-+
-+	rte_spinlock_lock(&p->mp_nt_i2cm->i2cmmutex);
-+	nthw_pca9849_set_channel(p->mp_ca9849, p->m_mux_channel);
-+
-+	uint8_t reg_addr = led_sel_reg[led_pos / 4];
-+	uint8_t bit_pos = (uint8_t)((led_pos % 4) * 2);
-+	uint8_t data = 0U;
-+
-+	nthw_i2cm_read(p->mp_nt_i2cm, p->m_dev_address, reg_addr, &data);
-+	data = data & (uint8_t)(~(0b11 << bit_pos));	/* Set bits to "00" aka off */
-+
-+	if (state_on)
-+		data = (uint8_t)(data | (0b01 << bit_pos));
-+
-+	nthw_i2cm_write(p->mp_nt_i2cm, p->m_dev_address, reg_addr, data);
-+	rte_spinlock_unlock(&p->mp_nt_i2cm->i2cmmutex);
-+}
++uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address);
++void nthw_phy_tile_write_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address, uint32_t data);
++bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enable);
+ uint32_t nthw_phy_tile_read_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+ 	uint32_t address);
+ void nthw_phy_tile_write_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane, uint32_t address,
 diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-index 42e2782f99..b057e9e88c 100644
+index 6402e5caf3..42e2782f99 100644
 --- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
 +++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-@@ -263,7 +263,34 @@ void nthw_phy_tile_set_tx_equalization(nthw_phy_tile_t *p, uint8_t intf_no, uint
- 	nthw_phy_tile_write_xcvr(p, intf_no, lane, tx_eq_addr + 0x8000U * lane, data);
+@@ -14,10 +14,15 @@
+ 
+ static const uint32_t link_addr = 0x9003C;
+ static const uint32_t phy_addr = 0x90040;
++static const uint32_t tx_eq_addr = 0x47830;
+ /* CPI option flags */
+ static const uint32_t cpi_set = 0x2000;	/* 1 << 13 */
+ static const uint32_t cpi_in_reset = 0x4000;	/* 1 << 14 */
+ static const uint32_t bit_cpi_assert = 0x8000;	/* 1 << 15 */
++static const uint32_t dyn_rcfg_dr_trigger_reg;
++static const uint32_t dyn_rcfg_dr_next_profile_0_reg = 0x4;
++static const uint32_t dyn_rcfg_dr_next_profile_1_reg = 0x8;
++static const uint32_t dyn_rcfg_dr_next_profile_2_reg = 0xc;
+ /*
+  * Base Addresses for Avalon MM Secondary Components
+  * static const uint32_t ADDR_AVMM_DR_CTRL_INT                  =  0x10035000 << 0;
+@@ -35,6 +40,21 @@ static const uint32_t bit_cpi_assert = 0x8000;	/* 1 << 15 */
+  *
+  * ETH AVMM USER SPACE Registers Address Map
+  */
++static const uint32_t eth_soft_csr1 = 0x200;
++static const uint32_t eth_soft_csr2 = 0x204;
++static const uint32_t eth_soft_csr3 = 0x208;
++
++static void nthw_phy_tile_set_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
++{
++	/* Reset is active low */
++	nthw_field_get_updated(p->mp_fld_port_config_reset[intf_no]);
++
++	if (reset)
++		nthw_field_clr_flush(p->mp_fld_port_config_reset[intf_no]);
++
++	else
++		nthw_field_set_flush(p->mp_fld_port_config_reset[intf_no]);
++}
+ 
+ void nthw_phy_tile_set_rx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
+ {
+@@ -118,6 +138,38 @@ void nthw_phy_tile_write_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+ 		nt_os_wait_usec(100);
  }
  
--static bool nthw_phy_tile_read_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8_t intf_no)
-+void nthw_phy_tile_get_link_summary(nthw_phy_tile_t *p, uint32_t *p_nt_phy_link_state,
-+	uint32_t *p_ll_nt_phy_link_state, uint32_t *p_lh_local_fault,
-+	uint32_t *p_lh_remote_fault, uint8_t index)
++static uint32_t nthw_phy_tile_read_dyn_reconfig(nthw_phy_tile_t *p, uint32_t address)
 +{
-+	nthw_register_update(p->mp_reg_link_summary[index]);
++	nthw_register_update(p->mp_reg_dyn_reconfig_base);
++	nthw_field_set_val32(p->mp_fld_dyn_reconfig_base_cmd, 0);
++	nthw_field_set_val_flush32(p->mp_fld_dyn_reconfig_base_ptr, address);
 +
-+	if (p_nt_phy_link_state) {
-+		*p_nt_phy_link_state =
-+			nthw_field_get_val32(p->mp_fld_link_summary_nt_phy_link_state[index]);
-+	}
++	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
++		nt_os_wait_usec(100);
 +
-+	if (p_ll_nt_phy_link_state) {
-+		*p_ll_nt_phy_link_state =
-+			nthw_field_get_val32(p->mp_fld_link_summary_ll_nt_phy_link_state[index]);
-+	}
-+
-+	if (p_lh_local_fault) {
-+		*p_lh_local_fault =
-+			nthw_field_get_val32(p->mp_fld_link_summary_lh_received_local_fault[index]);
-+	}
-+
-+	if (p_lh_remote_fault) {
-+		*p_lh_remote_fault =
-+			nthw_field_get_val32(p->mp_fld_link_summary_lh_remote_fault[index]);
-+	}
++	uint32_t value = nthw_field_get_updated(p->mp_fld_dyn_reconfig_data_data);
++	/*
++	 * NT_LOG(INF, NTHW, "nthw_phy_tile_read_dyn_reconfig address %0x value,
++	 * %0x", address, value);
++	 */
++	return value;
++	/* return nthw_field_get_updated(p->mp_fld_dyn_reconfig_data_data); */
 +}
 +
-+bool nthw_phy_tile_read_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8_t intf_no)
- {
- 	bool fec_enabled = false;
- 
-@@ -292,6 +319,28 @@ static void nthw_phy_tile_write_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8
- 	nthw_field_set_val_flush32(p->mp_fld_scratch_data, val);
++static void nthw_phy_tile_write_dyn_reconfig(nthw_phy_tile_t *p, uint32_t address, uint32_t data)
++{
++	nthw_register_update(p->mp_reg_dyn_reconfig_data);
++	nthw_field_set_val_flush32(p->mp_fld_dyn_reconfig_data_data, data);
++
++	nthw_register_update(p->mp_reg_dyn_reconfig_base);
++	nthw_field_set_val32(p->mp_fld_dyn_reconfig_base_ptr, address);
++	nthw_field_set_val_flush32(p->mp_fld_dyn_reconfig_base_cmd, 1);
++
++	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
++		/* NT_LOG(INF, NTHW, "busy"); */
++		nt_os_wait_usec(100);
++}
++
+ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+ 	uint32_t data, uint8_t op_code, uint32_t cpi_assert,
+ 	uint32_t cpi_set_get)
+@@ -199,3 +251,246 @@ void nthw_phy_tile_set_host_loopback(nthw_phy_tile_t *p, uint8_t intf_no, uint8_
+ 	 * intf_no, lane, enable);
+ 	 */
  }
- 
-+bool nthw_phy_tile_get_rx_hi_ber(nthw_phy_tile_t *p, uint8_t intf_no)
++
++void nthw_phy_tile_set_tx_equalization(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
++	uint32_t pre_tap2, uint32_t main_tap, uint32_t pre_tap1,
++	uint32_t post_tap1)
 +{
-+	return nthw_field_get_updated(p->mp_fld_port_status_rx_hi_ber[intf_no]);
++	uint32_t data = (pre_tap2 << 16) + (main_tap << 10) + (pre_tap1 << 5) + (post_tap1);
++	NT_LOG(DBG, NTHW,
++		"intf_no %u: setTxEq lane %u, pre_tap2 %u, main_tap %u, pre_tap1 %u, post_tap1 %u data %x",
++		intf_no, lane, pre_tap2, main_tap, pre_tap1, post_tap1, data);
++	nthw_phy_tile_write_xcvr(p, intf_no, lane, tx_eq_addr + 0x8000U * lane, data);
 +}
 +
-+bool nthw_phy_tile_get_rx_am_lock(nthw_phy_tile_t *p, uint8_t intf_no)
++static bool nthw_phy_tile_read_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8_t intf_no)
 +{
-+	return nthw_field_get_updated(p->mp_fld_port_status_rx_am_lock[intf_no]);
++	bool fec_enabled = false;
++
++	if (p->mp_fld_scratch_data) {
++		fec_enabled =
++			!((nthw_field_get_updated(p->mp_fld_scratch_data) >> (intf_no)) & 0x1);
++	}
++
++	/*
++	 * log(INF,"intf_no: %d FEC state read from inverted port specificscratch register
++	 * value %u ", intf_no,fec_enabled);
++	 */
++	return fec_enabled;
 +}
 +
-+void nthw_phy_tile_set_timestamp_comp_rx(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t value)
++static void nthw_phy_tile_write_fec_enabled_by_scratch(nthw_phy_tile_t *p, uint8_t intf_no,
++	bool fec_enabled)
 +{
-+	nthw_field_get_updated(p->mp_fld_port_comp_rx_compensation[intf_no]);
-+	nthw_field_set_val_flush32(p->mp_fld_port_comp_rx_compensation[intf_no], value);
++	const uint8_t mask = intf_no == 0U ? 0xf0U : 0xfU;
++	const uint8_t status_other_port =
++		(uint8_t)(nthw_field_get_updated(p->mp_fld_scratch_data) & mask);
++	const uint8_t disablebit = (uint8_t)(1U << (4 * intf_no));
++	const uint8_t val =
++		fec_enabled ? status_other_port : (uint8_t)(status_other_port | disablebit);
++	/*  NT_LOG(INF, NTHW, "intf_no: %u write ScratchFEC value %u", intf_no, val); */
++	nthw_field_set_val_flush32(p->mp_fld_scratch_data, val);
 +}
 +
-+uint32_t nthw_phy_tile_get_timestamp_comp_rx(nthw_phy_tile_t *p, uint8_t intf_no)
++uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address)
 +{
-+	nthw_field_get_updated(p->mp_fld_port_comp_rx_compensation[intf_no]);
-+	return nthw_field_get_val32(p->mp_fld_port_comp_rx_compensation[intf_no]);
++	nthw_register_update(p->mp_reg_port_eth_base[intf_no]);
++	nthw_field_set_val32(p->mp_fld_port_eth_base_cmd[intf_no], 0);
++	nthw_field_set_val_flush32(p->mp_fld_port_eth_base_ptr[intf_no], address);
++
++	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
++		nt_os_wait_usec(100);
++
++	return nthw_field_get_updated(p->mp_fld_port_eth_data_data[intf_no]);
 +}
 +
- uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address)
- {
- 	nthw_register_update(p->mp_reg_port_eth_base[intf_no]);
-diff --git a/drivers/net/ntnic/nthw/nthw_drv.h b/drivers/net/ntnic/nthw/nthw_drv.h
-index 1fc8df52ce..a3c54846f5 100644
---- a/drivers/net/ntnic/nthw/nthw_drv.h
-+++ b/drivers/net/ntnic/nthw/nthw_drv.h
-@@ -11,6 +11,7 @@
- 
- #include "nthw_si5332_si5156.h"
- #include "nthw_pcal6416a.h"
-+#include "nthw_pca9532.h"
- #include "nthw_phy_tile.h"
- #include "nthw_rpf.h"
- #include "nthw_phy_tile.h"
-@@ -22,6 +23,7 @@ typedef struct nthw_agx_s {
- 	nthw_i2cm_t *p_i2cm;
- 	nthw_pca9849_t *p_pca9849;
- 	nthw_pcal6416a_t *p_io_nim;	/* PCAL6416A I/O expander for controlling TS */
-+	nthw_pca9532_t *p_pca9532_led;
- 	nthw_phy_tile_t *p_phy_tile;
- 	nthw_rpf_t *p_rpf;
- } nthw_agx_t;
++void nthw_phy_tile_write_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint32_t address, uint32_t data)
++{
++	nthw_field_set_val_flush32(p->mp_fld_port_eth_data_data[intf_no], data);
++	nthw_register_update(p->mp_reg_port_eth_base[intf_no]);
++	nthw_field_set_val32(p->mp_fld_port_eth_base_ptr[intf_no], address);
++	nthw_field_set_val_flush32(p->mp_fld_port_eth_base_cmd[intf_no], 1);
++
++	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
++		/* NT_LOG(INF, NTHW, "busy"); */
++		nt_os_wait_usec(100);
++}
++
++bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enable)
++{
++	/*
++	 * FPGA must have the Dynamic Reconfig register for FEC configuration to work.
++	 * Previous versions of the FPGA enable FEC statically.
++	 */
++	if (!p->mp_reg_dyn_reconfig_base)
++		return false;
++
++	/*
++	 * NT_LOG(INF, NTHW, "void nthw_phy_tile_configure_fec(intf_no %u, enable %u)",
++	 * intf_no, enable);
++	 */
++
++	/* Available DR profiles related to FEC */
++	/* Used as end symbol in profile sequence fed to NIOS processor - not really a profile. */
++	const uint32_t neutral_dr_profile = 0;
++
++	/* DR Fec profiles port 0*/
++	const uint32_t intf_no0_with_fec_dr_profile = 1;
++	const uint32_t intf_no0_no_fec_dr_profile = 2;
++
++	/* DR Fec profiles port 1 */
++	const uint32_t intf_no1_with_fec_dr_profile = 3;
++	const uint32_t intf_no1_no_fec_dr_profile = 4;
++
++	const uint32_t fec_profile_none = 0x00;
++	const uint32_t fec_profile_cl91 = 0x02;
++
++	uint32_t original_dr_profile_id = 0x00;
++	uint32_t destination_dr_profile_id = 0x00;
++	uint32_t final_fec_profile = 0x00;
++
++	if (intf_no == 0) {
++		original_dr_profile_id =
++			enable ? intf_no0_no_fec_dr_profile : intf_no0_with_fec_dr_profile;
++		destination_dr_profile_id =
++			enable ? intf_no0_with_fec_dr_profile : intf_no0_no_fec_dr_profile;
++
++	} else if (intf_no == 1) {
++		original_dr_profile_id =
++			enable ? intf_no1_no_fec_dr_profile : intf_no1_with_fec_dr_profile;
++		destination_dr_profile_id =
++			enable ? intf_no1_with_fec_dr_profile : intf_no1_no_fec_dr_profile;
++	}
++
++	final_fec_profile = enable ? fec_profile_cl91 : fec_profile_none;
++
++	/*
++	 * These steps are copied from a code example provided by Intel: ftile_eth_dr_test.tcl
++	 * Step 6: Program DUT soft CSR
++	 * The CSR registers are reset by the FPGA reset sequence so
++	 * they need to be set every time the driver is restarted.
++	 * This is why we perform step 6 first before step 1.
++	 */
++	uint32_t current_fec_profile = nthw_phy_tile_read_eth(p, intf_no, eth_soft_csr2);
++
++	if (current_fec_profile != final_fec_profile) {
++		nthw_phy_tile_set_reset(p, intf_no, true);
++		nthw_phy_tile_set_tx_reset(p, intf_no, true);
++		NT_LOG(DBG, NTHW, "intf_no %u: Program DUT soft CSR", intf_no);
++		/* Select profile */
++		nthw_phy_tile_write_eth(p, intf_no, eth_soft_csr1, 0x00);
++
++		/* Select FEC-Mode */
++		nthw_phy_tile_write_eth(p, intf_no, eth_soft_csr2,
++			(0 << 9) + (0 << 6) + (0 << 3) + (final_fec_profile << 0));
++
++		nt_os_wait_usec(10000);
++		nthw_phy_tile_set_reset(p, intf_no, false);
++		nthw_phy_tile_set_tx_reset(p, intf_no, false);
++
++		NT_LOG(DBG, NTHW, "intf_no %u: Register eth_soft_csr1 profile_sel: 0x%2.2x",
++			intf_no, nthw_phy_tile_read_eth(p, intf_no, eth_soft_csr1));
++		NT_LOG(DBG, NTHW, "intf_no %u: Register eth_soft_csr2 fec_mode:    0x%2.2x",
++			intf_no, nthw_phy_tile_read_eth(p, intf_no, eth_soft_csr2));
++		NT_LOG(DBG, NTHW, "intf_no %u: Register eth_soft_csr3 sel:         0x%2.2x",
++			intf_no, nthw_phy_tile_read_eth(p, intf_no, eth_soft_csr3));
++	}
++
++	/*
++	 * The FEC profile applied with Dynamic Reconfiguration is persistent through
++	 * a driver restart. Additionally, the operation is not idempotent, meaning that
++	 * the operations must only be performed when actual reconfiguration is necessary.
++	 * We use a persistent scratch register provided by the FPGA to store the FEC
++	 * state since we have not been able to get any of the methods suggested
++	 * by Intel to function properly.
++	 */
++	if (nthw_phy_tile_read_fec_enabled_by_scratch(p, intf_no) == enable)
++		return true;
++
++	/* Step 1: Wait for DR NIOS to be ready */
++	NT_LOG(DBG, NTHW, "intf_no %u: Step 1 Wait for DR NIOS", intf_no);
++
++	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
++		nt_os_wait_usec(10000);
++
++	/* Step 2: Triggering Reconfiguration */
++	NT_LOG(DBG, NTHW, "intf_no %u: Step 2: Triggering Reconfiguration", intf_no);
++
++	nthw_phy_tile_set_reset(p, intf_no, true);
++	nthw_phy_tile_set_rx_reset(p, intf_no, true);
++	nthw_phy_tile_set_tx_reset(p, intf_no, true);
++	nt_os_wait_usec(10000);
++
++	/* Disable original profile */
++	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg,
++		(1U << 18) + (0U << 15) + original_dr_profile_id);
++	nt_os_wait_usec(10000);
++	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_0_reg: %#010x", intf_no,
++		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg));
++
++	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_1_reg,
++		(1U << 15) + destination_dr_profile_id + (0U << 31) +
++		(neutral_dr_profile << 16));
++	/*
++	 * Enable profile 2 and terminate dyn reconfig by
++	 * setting next profile to 0 and deactivate it
++	 */
++	nt_os_wait_usec(10000);
++	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_1_reg: %#010x", intf_no,
++		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_1_reg));
++
++	/*
++	 * We do not know if this neutral profile is necessary.
++	 * It is done in the example design and INTEL has not
++	 * answered our question if it is necessary or not.
++	 */
++	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg,
++		(0U << 15) + neutral_dr_profile + (0U << 31) +
++		(neutral_dr_profile << 16));
++	nt_os_wait_usec(10000);
++	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_2_reg: %#010x", intf_no,
++		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg));
++
++	nt_os_wait_usec(10000);
++
++	/* Step 3: Trigger DR interrupt */
++	NT_LOG(DBG, NTHW, "intf_no %u: Step 3: Trigger DR interrupt", intf_no);
++	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg, 0x00000001);
++
++	nt_os_wait_usec(1000000);
++
++	/* Step 4: Wait for interrupt Acknowledge */
++	NT_LOG(DBG, NTHW, "intf_no %u: Step 4: Wait for interrupt Acknowledge", intf_no);
++
++	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x01) != 0x00)
++		nt_os_wait_usec(10000);
++
++	nt_os_wait_usec(10000);
++
++	/* Step 5: Wait Until DR config is done */
++	NT_LOG(DBG, NTHW, "intf_no %u: Step 5: Wait Until DR config is done", intf_no);
++
++	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
++		nt_os_wait_usec(10000);
++
++	nt_os_wait_usec(1000000);
++
++	/* Write Fec status to scratch register */
++	nthw_phy_tile_write_fec_enabled_by_scratch(p, intf_no, enable);
++
++	nt_os_wait_usec(1000000);
++
++	nthw_phy_tile_set_reset(p, intf_no, false);
++	nthw_phy_tile_set_tx_reset(p, intf_no, false);
++	nthw_phy_tile_set_rx_reset(p, intf_no, false);
++
++	nthw_register_update(p->mp_reg_dr_cfg_status);
++	NT_LOG(DBG, NTHW, "intf_no %u: DrCfgStatusCurrPofileId: %u", intf_no,
++		nthw_field_get_val32(p->mp_fld_dr_cfg_status_curr_profile_id));
++	NT_LOG(DBG, NTHW, "intf_no %u: DrCfgStatusInProgress:  %u", intf_no,
++		nthw_field_get_val32(p->mp_fld_dr_cfg_status_in_progress));
++	NT_LOG(DBG, NTHW, "intf_no %u: DrCfgStatusError: %u", intf_no,
++		nthw_field_get_val32(p->mp_fld_dr_cfg_status_error));
++
++	return true;
++}
 -- 
 2.45.0
 
