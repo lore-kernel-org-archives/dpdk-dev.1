@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A660CC021B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0994C021B0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:01:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 677F4402BB;
-	Thu, 20 Feb 2025 03:01:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 93779402CB;
+	Thu, 20 Feb 2025 03:01:50 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 0E61240041
+ by mails.dpdk.org (Postfix) with ESMTP id 2AB534014F
  for <dev@dpdk.org>; Thu, 20 Feb 2025 03:01:48 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 5571F204E5A7; Wed, 19 Feb 2025 18:01:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5571F204E5A7
+ id 3C7B0204E59D; Wed, 19 Feb 2025 18:01:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C7B0204E59D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740016907;
- bh=uhNsLjsm6REH06PIzbAStibCADxCqc6rMvdGz9R1y5o=;
+ bh=g7NCe5SVRn2L0LVFDpbEbxvyirQX9eZcZejc8Cc7E7E=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=oCBI9xogGgay/8ypNGk26+WkdWLLAMbn+HL0/8cWOCA08d5+NCE0wDEW5kVJ/+jh3
- 2PwIu8L+Rz7TnO5CZ71UZtRobWm0UWyXE4vmDOdZq0jOWl1pgR1XDxB7NPoCl44mX6
- ckMFhI37XnMKS3jnI4MgC1aDD9hI4XTfmR/D+4KM=
+ b=It/OSBswDz5ztZAIcRRMqi6Hb11+aK+lTmJGRUAPkHJLwFLE+OLo/BKof9rJdAAJ+
+ p/ldpkj53XllYpvmDbDpcUE4UGp8FHzee7O1bHgLq3+Owrg3tEHYh/6xctjwEMTnEJ
+ 1r4DYwUcjgmqJtjq05vkAYx5w46cXxHCtNSDD/10=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v3 03/10] test-pmd: fix printf format string mismatch
-Date: Wed, 19 Feb 2025 18:01:32 -0800
-Message-Id: <1740016899-2817-4-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v3 01/10] eal: add workaround for __builtin_constant_p
+Date: Wed, 19 Feb 2025 18:01:30 -0800
+Message-Id: <1740016899-2817-2-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,71 +44,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in warnings like the one below:
+There's no MSVC equivalent for compiler extension __builtin_constant_p,
+but the same result can be obtained though a clever expression using
+_Generic.
 
-app/test-pmd/csumonly.c(1085): warning C4477: 'printf' : format string
-    '%d' requires an argument of type 'int',
-    but variadic argument 1 has type 'uint64_t'
+This patch redefines the macro __rte_constant when msvc is used and uses
+it as a replacement for __builtin_constant_p.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/csumonly.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ lib/eal/include/generic/rte_pause.h | 2 +-
+ lib/eal/include/rte_common.h        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index d77a140641..5f273e60d7 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -1070,7 +1070,7 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 				info.l2_len, rte_be_to_cpu_16(info.ethertype),
- 				info.l3_len, info.l4_proto, info.l4_len, buf);
- 			if (rx_ol_flags & RTE_MBUF_F_RX_LRO)
--				printf("rx: m->lro_segsz=%u\n", m->tso_segsz);
-+				printf("rx: m->lro_segsz=%u\n", (unsigned int)m->tso_segsz);
- 			if (info.is_tunnel == 1)
- 				printf("rx: outer_l2_len=%d outer_ethertype=%x "
- 					"outer_l3_len=%d\n", info.outer_l2_len,
-@@ -1082,28 +1082,29 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 					    RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
- 					    RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)) ||
- 				info.tso_segsz != 0)
--				printf("tx: m->l2_len=%d m->l3_len=%d "
--					"m->l4_len=%d\n",
--					m->l2_len, m->l3_len, m->l4_len);
-+				printf("tx: m->l2_len=%u m->l3_len=%u "
-+					"m->l4_len=%u\n",
-+					(unsigned int)m->l2_len, (unsigned int)m->l3_len,
-+					(unsigned int)m->l4_len);
- 			if (info.is_tunnel == 1) {
- 				if ((tx_offloads &
- 				    RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM) ||
- 				    (tx_offloads &
- 				    RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM) ||
- 				    (tx_ol_flags & RTE_MBUF_F_TX_OUTER_IPV6))
--					printf("tx: m->outer_l2_len=%d "
--						"m->outer_l3_len=%d\n",
--						m->outer_l2_len,
--						m->outer_l3_len);
-+					printf("tx: m->outer_l2_len=%u "
-+						"m->outer_l3_len=%u\n",
-+						(unsigned int)m->outer_l2_len,
-+						(unsigned int)m->outer_l3_len);
- 				if (info.tunnel_tso_segsz != 0 &&
- 						(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
- 							RTE_MBUF_F_TX_UDP_SEG)))
--					printf("tx: m->tso_segsz=%d\n",
--						m->tso_segsz);
-+					printf("tx: m->tso_segsz=%u\n",
-+						(unsigned int)m->tso_segsz);
- 			} else if (info.tso_segsz != 0 &&
- 					(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
- 						RTE_MBUF_F_TX_UDP_SEG)))
--				printf("tx: m->tso_segsz=%d\n", m->tso_segsz);
-+				printf("tx: m->tso_segsz=%u\n", (unsigned int)m->tso_segsz);
- 			rte_get_tx_ol_flag_list(m->ol_flags, buf, sizeof(buf));
- 			printf("tx: flags=%s", buf);
- 			printf("\n");
+diff --git a/lib/eal/include/generic/rte_pause.h b/lib/eal/include/generic/rte_pause.h
+index 968c0886d3..9515caadbb 100644
+--- a/lib/eal/include/generic/rte_pause.h
++++ b/lib/eal/include/generic/rte_pause.h
+@@ -130,7 +130,7 @@ rte_wait_until_equal_64(volatile uint64_t *addr, uint64_t expected,
+  *  rte_memory_order_acquire and rte_memory_order_relaxed.
+  */
+ #define RTE_WAIT_UNTIL_MASKED(addr, mask, cond, expected, memorder) do { \
+-	RTE_BUILD_BUG_ON(!__builtin_constant_p(memorder));               \
++	RTE_BUILD_BUG_ON(!__rte_constant(memorder));                     \
+ 	RTE_BUILD_BUG_ON((memorder) != rte_memory_order_acquire &&       \
+ 		(memorder) != rte_memory_order_relaxed);                 \
+ 	typeof(*(addr)) expected_value = (expected);                     \
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 3f77b7624e..0a20b6a3e3 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -45,7 +45,7 @@ extern "C" {
+ #endif
+ 
+ #ifdef RTE_TOOLCHAIN_MSVC
+-#define __rte_constant(e) 0
++#define __rte_constant(e) _Generic((1 ? (void *) ((e) * 0ll) : (int *) 0), int * : 1, void * : 0)
+ #else
+ #define __rte_constant(e) __extension__(__builtin_constant_p(e))
+ #endif
 -- 
 2.48.1.vfs.0.0
 
