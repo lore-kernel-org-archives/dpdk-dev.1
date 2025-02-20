@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35DFC021AA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F76C021B0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 02:35:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF58E4014F;
-	Thu, 20 Feb 2025 03:27:31 +0100 (CET)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 6304740041
- for <dev@dpdk.org>; Thu, 20 Feb 2025 03:27:30 +0100 (CET)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-220e6028214so7821835ad.0
- for <dev@dpdk.org>; Wed, 19 Feb 2025 18:27:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 42B7B4014F;
+	Thu, 20 Feb 2025 03:35:21 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B2DF740041
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 03:35:20 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2211acda7f6so7565165ad.3
+ for <dev@dpdk.org>; Wed, 19 Feb 2025 18:35:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740018449;
- x=1740623249; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740018920;
+ x=1740623720; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8Dc/Qm7IiVVlhG6W9ZfdFETY4Z41pLAyhIsgN6LOQcw=;
- b=pK/5bSw21wa1w+Lr08cynrh0cJkUH+rQZFn6xqtTGlubZQtRHjXGqyEveHbX1qmmxr
- TN+kk/Y6/mnYi3S8DR/XJE67hc9CAG/WzWIaXwSS1cOlae6tLM4RQ4bSZtzdC8iSkrc1
- QlK7502CL6Rjk0nB396cvpncfqGWx9FIaOYh1nfQdzBxPLx0npkl6kJF+1pURc7MAFbo
- yC4+ibTnZBLgcGCnS6/Ct9ETPsh9VJr1vyZDHNrU9PLtkeV0+FkDFJEabQO+njZDsM7X
- 17aT1Sj6/W7fO0rGdJ/+qHeLBFuqTOo+GQbRRW0UUp//ceXENzEmAQl9OXA2gHzv3fEW
- mjOg==
+ bh=J2kxMVvLybSA1jYMRytHzWM2czK6BKwxQa3bboFKWdo=;
+ b=lCdr6KhnPflQipbbLRX5iPpZkcs5/R8jWk99tiOCaSMMXPGWglUUuEq/d51jXHBzqo
+ N0TdpGKhw/28/HU/Dg+JZ4aGDgkzVWGfNOozKyu5HItXgSvpOj/MNHM4DsQKZeiuEHPJ
+ d1mDGvO+8/wtsxtjECicdCQWkLAY+RYkVMRu/8ot6N/x7PcHOSVZc0H0jw1S/c8hJGlA
+ 8SLHZ9OEq3AIHAQNugzSfvaShCxfR29hv2QFOQPUJ51Ccrx3ajcL7vdBL+tPm44sOXCw
+ 3YtFBbOsnvchYGesXAZaTZgz5gxkgPaatUt1jCoZZvkLeo4vbk3RO1funwDzZp1lFfh/
+ RN2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740018449; x=1740623249;
+ d=1e100.net; s=20230601; t=1740018920; x=1740623720;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=8Dc/Qm7IiVVlhG6W9ZfdFETY4Z41pLAyhIsgN6LOQcw=;
- b=g4jcksF85QUd/lSU1nK/6bHyeAEVNG62nh1QeFT4qMrUsMeJiBNxEOcFIRmq0BdMNl
- gSP0P4YmIaNEJrK9emauj+bgoKdlkOZGvgMYBJzhLryieA2yHKpeWOPs3psl9UPCLRmx
- RGanYSBNB8S2FXGtaLH2145P+OhknD/eGrEIolcL1rNTsU6QKoJl742GNhtVr7g8uSCr
- CqEQJDg0WXrvquMzP6M11L/4EM/MFztfsZ0Xx7iczdBwQkoHlR6Jk69BqsBlkd/MF3NE
- vFasBRbZV0pWDYeOq99NOwDHBCm+f8k6qsGTL0VKbuPJfPi6jnCyHWxeZX4bmIgP7lrX
- gWng==
-X-Gm-Message-State: AOJu0YwSwA8CD2e1jvtkF2L8V32jqopozQnnbeBZZD32/01iQ2+yWWtK
- i0iICUV3ld62ysaWOil5n1J71shOtWCKfHqfb/SLynUKJxyscHc+kk/naI+bXZM=
-X-Gm-Gg: ASbGncsIn6XGswFRr6whkqBdBOQ49OOtQR5KdoiP775CN8N27pZLOQ1vS0lkD9NHAjQ
- xQRKfbGjxSm0a/XLuXNkt/O62je40pKy0Lyr6W2mCz9I3yg8mGF/Jsz0jG2gK8uVUHY34T23yZ/
- 4KjEHjnChVOcjTjNuf/nkiIwlNXPbstvU2yy4AITl8NKEz/s9duV0KDNdZyKK7QrcjJoeCUXuNl
- Xsd7XtiHnSK1ER/8aJxLW+DnKJ91HxMab8mnKYPp+sw5ciIJlj4F6HKI+rTQfYH20JfKFRXfoLv
- Q5zfhjXrH49dUZ4zqA3jy2+RJ/WHd4otr7VWWZK9xzj/eMOR3LYjXupxH0dezppdOEG+
-X-Google-Smtp-Source: AGHT+IGUjeeFbLYfLh3AU2y0GwgKCmgExC0qSlV4EOE4EIkvwIuth9Z41RxJ0BudHNLfS242XxL9GQ==
-X-Received: by 2002:a17:902:ea06:b0:220:e63c:5b10 with SMTP id
- d9443c01a7336-22190690192mr10347725ad.34.1740018449500; 
- Wed, 19 Feb 2025 18:27:29 -0800 (PST)
+ bh=J2kxMVvLybSA1jYMRytHzWM2czK6BKwxQa3bboFKWdo=;
+ b=avaBRHUAAQ4V88PzRUmlptkReytQr9Wel2vGW148AkBO5NH3ndaw9ly4Y0+K9JeYiV
+ gLn6B5SXtfaSRZv1leuK6SRE6pjrZ0FGr9RtVnS44RmZkkPpxsM6akx7W+rFqw8HWzBZ
+ SWwhGK0L3cl6ufwmA2/AIU7PWmXYHjvgMq1RgQLZxJadQqEAEXBqZ3bPMPBWLuYYG/If
+ YBHWNmFtYa68YNcEyIieBBt/sb0OXMhZI3nd+Ns612ZN+GFcqYUX8YfRIftMD8mr65kw
+ 53IcoXUe/SM6Sikd55ONfEu0MnpC1gy8Th8OWFGcYvmqLS5YVfCP+3lMMQ1w8wxj0otr
+ 1AfA==
+X-Gm-Message-State: AOJu0YzGaDkUQc4HzqGbdcGyz7+EE5AA8YJcuNmwOFOUffyppvwHOll6
+ k4zqm4iPtjqlA2yf0dBBxVdNmhM7s/lMEnNctz2ZlQe1441Ni797v6//6DW2+fmfhegfHxnsulg
+ dAgk=
+X-Gm-Gg: ASbGncu9bT7HDKOUQ0MIfE1p3AFERRvtjuS22c9ME0u3ScbQhFU+S+kYMDmO2KRjD8e
+ iBmhVFCxUmXv9LyKhuulF2ypsZ0DLEzMS/U37yp/C8gCUSe6SK7/UXEdRKDMGIIUKvOK+mTcbFp
+ b0Orw69O7AgyLFwdyYf0SGUeqNFB+zVij4IpivADzE/1SB0/y9WUfhZidadm1u0+Dfo8hZvrl3Z
+ x1oxNaaDXdHv+jd7p4Uh/stUmEIR7PPfpLjU5NNdov9dY33pqubrolbcY39tRnQflAkNNiJOKA7
+ hHjkpHbOfazC3FXzO/tDfI4b4Zactl1RB2cMmoGLoryaSWMDCgv1kn9ZXNHdT7iK0peC
+X-Google-Smtp-Source: AGHT+IGokoyDXhho3QbiqNhTDYJA66m2K7id7UhLnqtKkgiHr6jaYEpxWSTIDAd0PEjTtGVSww7Gjw==
+X-Received: by 2002:a17:902:f547:b0:216:282d:c69b with SMTP id
+ d9443c01a7336-221711c80eemr100369095ad.50.1740018919750; 
+ Wed, 19 Feb 2025 18:35:19 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22120093e41sm64353095ad.93.2025.02.19.18.27.28
+ d9443c01a7336-220d53490b6sm111668345ad.16.2025.02.19.18.35.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Feb 2025 18:27:29 -0800 (PST)
-Date: Wed, 19 Feb 2025 18:27:27 -0800
+ Wed, 19 Feb 2025 18:35:19 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH v3 01/10] eal: add workaround for __builtin_constant_p
-Message-ID: <20250219182727.18c1d798@hermes.local>
-In-Reply-To: <1740016899-2817-2-git-send-email-andremue@linux.microsoft.com>
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740016899-2817-1-git-send-email-andremue@linux.microsoft.com>
- <1740016899-2817-2-git-send-email-andremue@linux.microsoft.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 00/14] Remove unnecessary function pointer deref
+Date: Wed, 19 Feb 2025 18:32:04 -0800
+Message-ID: <20250220023509.630569-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250217185743.169778-1-stephen@networkplumber.org>
+References: <20250217185743.169778-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,15 +80,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 19 Feb 2025 18:01:30 -0800
-Andre Muezerie <andremue@linux.microsoft.com> wrote:
+A common pattern in DPDK internals is to have an array of function
+pointers. When using these pointers an unnecessary derefence is done;
+this is allowed in C because of a historical quirk but unnecessary.
 
->  
->  #ifdef RTE_TOOLCHAIN_MSVC
-> -#define __rte_constant(e) 0
-> +#define __rte_constant(e) _Generic((1 ? (void *) ((e) * 0ll) : (int *) 0), int * : 1, void * : 0)
->  #else
->  #define __rte_constant(e) __extension__(__builtin_constant_p(e))
->  #endif
+This fixes all instances of PVS Studio checker warning:
+ https://pvs-studio.com/en/docs/warnings/v516/
 
-Probably worth some explanation as to what is going on.
+This leads to a large number of warnings marked as High severity.
+This patchset simplifies the source and gets rid of these warnings.
+
+Stephen Hemminger (14):
+  ethdev: remove unnecessary deref on function pointers
+  eventdev: remover unnecessary deref on function pointers
+  net/bonding: remove unnecessary deref of function pointers
+  net/ixgbe: remove unnecessary dereference
+  net/ipn3ke: remove unnecessary dereference
+  net/memif: remove unnecessary deref of function pointers
+  cryptodev: remove unnecessary deref of function pointers
+  crypto/scheduler: remove unnecessary dereference
+  compressdev: remove unnecessary deref of function pointers
+  dmadev: remove unnecessary deref of function pointers
+  rawdev: remove unnecessary deref of function pointers
+  mldev: remove unnecessary deref of function pointers
+  regexdev: remove unnecessary deref of function pointers
+  security: remove unnecessary dereference
+
+ .../scheduler/rte_cryptodev_scheduler.c       |   8 +-
+ drivers/crypto/scheduler/scheduler_pmd_ops.c  |  25 +-
+ drivers/net/bonding/rte_eth_bond_pmd.c        |  12 +-
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.c      |  27 +-
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |   5 +-
+ drivers/net/memif/rte_eth_memif.c             |   6 +-
+ lib/compressdev/rte_compressdev.c             |  56 +-
+ lib/cryptodev/rte_cryptodev.c                 |  72 ++-
+ lib/dmadev/rte_dmadev.c                       |  38 +-
+ lib/ethdev/ethdev_driver.c                    |  16 +-
+ lib/ethdev/ethdev_private.c                   |   4 +-
+ lib/ethdev/rte_ethdev.c                       | 492 ++++++++----------
+ lib/ethdev/rte_ethdev.h                       |  12 +-
+ lib/ethdev/rte_ethdev_cman.c                  |   8 +-
+ lib/eventdev/rte_event_crypto_adapter.c       |  37 +-
+ lib/eventdev/rte_event_dma_adapter.c          |  16 +-
+ lib/eventdev/rte_event_eth_rx_adapter.c       |  50 +-
+ lib/eventdev/rte_eventdev.c                   | 164 +++---
+ lib/mldev/rte_mldev.c                         |  88 ++--
+ lib/rawdev/rte_rawdev.c                       |  99 ++--
+ lib/regexdev/rte_regexdev.c                   |  72 +--
+ lib/security/rte_security.c                   |   5 +-
+ 22 files changed, 612 insertions(+), 700 deletions(-)
+
+-- 
+2.47.2
+
