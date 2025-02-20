@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFFDC021B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84932C021B1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 16:58:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61179406B7;
-	Thu, 20 Feb 2025 17:57:20 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id E24374060F
- for <dev@dpdk.org>; Thu, 20 Feb 2025 17:57:14 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-2fc291f7ddbso1920707a91.1
- for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7783A406FF;
+	Thu, 20 Feb 2025 17:57:21 +0100 (CET)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 0004240672
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 17:57:15 +0100 (CET)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-2fcce9bb0ecso2178514a91.3
+ for <dev@dpdk.org>; Thu, 20 Feb 2025 08:57:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740070634;
- x=1740675434; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740070635;
+ x=1740675435; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iEA5QdZdFhQUZWHXjgt+TckdseLW7bqjnvDipKcWqFw=;
- b=y/sXlmjc6Vf8WrKqg51NgjfxuGCHiFn6fuTti4GWQmegtx+/ntXnNdut1Ui5RwLybl
- WlZ93c2uP6RmBwHpXHUvXCGtnuFFyyVCaxaktovn2yYu5vBxwVzGO8Vok5QoqwzWvCKi
- 0krgKE8TVan2TmeyhaGqdxyPpRlUwbaPLeg2X/LgkxNnCmfo5OZYacptgNz8mZmhJniM
- cLi10uUVsQmnnYtLZqq4MDelc7BYQpOCYN1q27ouAxiNzzs2XjYBxn2/3AKeTE7Z4ScQ
- 0tVsQUG4fmH2MedSujwDa1iFxPaW+4GxafQlX3nF3EGUXRJWY5EKSZAeXGZ610Tf47p2
- VgzA==
+ bh=UlWnRnm4h4oH6JPJdd8SzoHMjlJdIh+gi5+mMYs/1Ao=;
+ b=ZdpAqZiYs0KR2shOOchQsUlI8so+Up69wFvy4FQ97q+iEF91JLo6xsqKmMf8EagXrO
+ PKA+OQOOAdW/zib5jw8rBTcVATxh4SVbx4S8ixyLgPVsw3YljZtXJx4mz6ZygKI3hdyC
+ iHRha3A6nGTSvDKKf35gsv6NnacQpEZg7aLRXSXUK4878AIY/RmLnGApOAvvh2+ySphH
+ o8oYQIII1Tf8Mg0XIPKqeb+zOHU8xxP7EWpkImTI3uFnI2fRpw3BOC+jIZWsq5uKe5Hs
+ gbzuBhlet6T7IfKrJfv/+eKBBRTk9gAt8Y6HxWzKVBX3huyakRXfzJ6LkdwvdgO9r7x1
+ 6g0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740070634; x=1740675434;
+ d=1e100.net; s=20230601; t=1740070635; x=1740675435;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=iEA5QdZdFhQUZWHXjgt+TckdseLW7bqjnvDipKcWqFw=;
- b=wQXGvenIQFIqXI8zwlISVJSlr3ya8Ap1x5qIy1zITvZSErAsr9fTMnPGJjyUrhtm4K
- KrSz8GfY8tIkYQHkPkE7n3s4bXpX99V47i4hDy8m1/4YrTEEdm1Vf4kyI2mMs7eoN17v
- Q2HBgZgI9O052c7yW/n7Uec5lRsNTfixQDw01bCWn4n9c1cjPaYJntyTOe/EC+w7fnJ8
- RY3P2cvWgBSz98cE+329cll0yDRby+zHrNXA38xK0oemmxCXO95FHgjTPRT1dGs+EMfn
- 41g0Uaqn/6fyvz4jRRbRVVObIQYdQpEVfb05tv9dPpP8Zc2Iog3NLut+SEmmdf2Oj4LW
- yijA==
-X-Gm-Message-State: AOJu0YwPGJGHypiCVo4u/2ne+qgXL0ZCpmK6SgtcPW7/MLjhUZfupKoG
- +vMf/vfBB3stb009lbptDJCajSp9staKgt/dPBd+AjuL9VaFkWYsCsOghJ3FrBL7KpsVHBpcxyE
- j
-X-Gm-Gg: ASbGncux1w48iWyPvNP9Nksc1I2SUjNn2z+mXIR1Kus01Anzqm1FPWC+JXWNzjgZdE5
- DvapNc4OB6oJncQ43aNZNEcj/gECKIrzQn8XsQSOqWPOD5MN15PAkTALNtwkyEqr+lF5ClPZzbW
- vN6JiEKv3Sdab/BGv9UU6FNKsoKhdz79qnP1Qb509/3AwJAPlT+yRkkI1399C6vTVbQhxgithTs
- vGBjCJFURz98M4aTmvrzvOwuJPcPjJVcK02GGwp++72sfD5/8Dl8JXFZwLFYSpplUMCqiSJIyiK
- YBQxmfT90TytUW7bAaJmdKuBPNLkCDLSjsdMuwz5pPAkRjFsjTPmuEZmC4PwGb/5k6mL
-X-Google-Smtp-Source: AGHT+IF8XRM+wU4Xglr6BNhdzphugDdSXSe4vtw72SdhOgQU4fbNU/MNAw7IvFzUMzWlcguLdev3Qg==
-X-Received: by 2002:a17:90b:3802:b0:2ef:19d0:2261 with SMTP id
- 98e67ed59e1d1-2fc40f22dd4mr40226952a91.16.1740070634108; 
- Thu, 20 Feb 2025 08:57:14 -0800 (PST)
+ bh=UlWnRnm4h4oH6JPJdd8SzoHMjlJdIh+gi5+mMYs/1Ao=;
+ b=CfFee77cF1OKbr9XXH1vlUlRq9ngv9+orM2UwI2k4gZ33c1YYuabxw5pnO+Tun+vJd
+ fFe4hTAOA6WVFbQoTESEq/mh7CeHt3si2ku0i88Y7B5bEHbERKgBaTKmEZ684JpuY80F
+ q1JBa5vqT7v4GEW3RzmBjjfHpewR08WInMyuAkVmjLo0+2LMyXcoVDsxl+0PKfN7LS7A
+ 3pknJ6ikWhvhDaNBV4vqEpjEu4C4ffa9567FHbVcnmmG1QMrwtExRgmUwZeVkLyRkStv
+ FAU3ahmB7g3LKaVcqWv8C9QVMxeCOykPVDBP7usMGdS0aSQfTWcgECUw1Gt2ezOEP4Zx
+ cQtQ==
+X-Gm-Message-State: AOJu0YwQYYFpmh0lpQRF2Vyzwt+kfEQN8hF4mHyIdvqysz/2CyAbfY9L
+ TPqOF8b0j6LwFwc+HI4MDp5vKHGXSF3iLVtlJVM2JtpE4Q96dJwhFOAE/kezXTqAwf35gWw4xYD
+ a
+X-Gm-Gg: ASbGnctoXB6kx7SOBysAlOIpgreEutgyXswYypEElsCvPXQRJT6BZ3Qu/1BdXPLdCKr
+ 6E7bL+xqLqerUVTuKYWuBxqqzZFylJisHj4j5lDLRg2wtNl8d71icriwGHpJaJSwJVlI9TV5HK+
+ uDeO5S94Y8BuYsqg3B0emmgagS5xE1dZ9z8qTdXFfg6wwox9cGvL1+Kl/GTiq1fkizl87LqiO61
+ ZLDZqQXgT9LEs5B4LfHXWJsbE1xHfFafR6GYI0GtLyPUMFG/j1pFUWBOuF0BlqtSyVJTnIYXoNl
+ jNvLdoUMINXzc9KtItLHL1UWUrOCir2uUUXds5SIxoWIzrZ+onVGuvcbnzU9PeqH93Na
+X-Google-Smtp-Source: AGHT+IHB/PWWkQ0cyAolpbOMFwSTBpmGyfrPHhSP6sXQwYNula1xel1KeeoCRn7u0/htVFFchgTooQ==
+X-Received: by 2002:a17:90b:384a:b0:2ee:ab11:fab2 with SMTP id
+ 98e67ed59e1d1-2fc4104218fmr29634112a91.22.1740070635059; 
+ Thu, 20 Feb 2025 08:57:15 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-220d53491b3sm122729435ad.40.2025.02.20.08.57.13
+ d9443c01a7336-220d53491b3sm122729435ad.40.2025.02.20.08.57.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Feb 2025 08:57:13 -0800 (PST)
+ Thu, 20 Feb 2025 08:57:14 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>
-Subject: [PATCH v3 12/14] mldev: remove unnecessary deref of function pointers
-Date: Thu, 20 Feb 2025 08:55:26 -0800
-Message-ID: <20250220165644.16421-13-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>, Ori Kam <orika@nvidia.com>
+Subject: [PATCH v3 13/14] regexdev: remove unnecessary deref of function
+ pointers
+Date: Thu, 20 Feb 2025 08:55:27 -0800
+Message-ID: <20250220165644.16421-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250220165644.16421-1-stephen@networkplumber.org>
 References: <20250217185743.169778-1-stephen@networkplumber.org>
@@ -91,374 +91,284 @@ Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Morten Brørup <mb@smartsharesystems.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/mldev/rte_mldev.c | 88 +++++++++++++++++++++----------------------
- 1 file changed, 44 insertions(+), 44 deletions(-)
+ lib/regexdev/rte_regexdev.c | 72 ++++++++++++++++++-------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/lib/mldev/rte_mldev.c b/lib/mldev/rte_mldev.c
-index 37d71aebc9..e0e5b8d9e8 100644
---- a/lib/mldev/rte_mldev.c
-+++ b/lib/mldev/rte_mldev.c
-@@ -237,7 +237,7 @@ rte_ml_dev_info_get(int16_t dev_id, struct rte_ml_dev_info *dev_info)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+diff --git a/lib/regexdev/rte_regexdev.c b/lib/regexdev/rte_regexdev.c
+index b2c4b49d97..431ed911a1 100644
+--- a/lib/regexdev/rte_regexdev.c
++++ b/lib/regexdev/rte_regexdev.c
+@@ -189,9 +189,9 @@ regexdev_info_get(uint8_t dev_id, struct rte_regexdev_info *dev_info)
+ 	if (dev_info == NULL)
+ 		return -EINVAL;
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_info_get == NULL)
 +	if (dev->dev_ops->dev_info_get == NULL)
  		return -ENOTSUP;
- 
- 	if (dev_info == NULL) {
-@@ -246,7 +246,7 @@ rte_ml_dev_info_get(int16_t dev_id, struct rte_ml_dev_info *dev_info)
- 	}
- 	memset(dev_info, 0, sizeof(struct rte_ml_dev_info));
- 
 -	return (*dev->dev_ops->dev_info_get)(dev, dev_info);
 +	return dev->dev_ops->dev_info_get(dev, dev_info);
+ 
  }
  
- int
-@@ -262,7 +262,7 @@ rte_ml_dev_configure(int16_t dev_id, const struct rte_ml_dev_config *config)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+@@ -212,7 +212,7 @@ rte_regexdev_configure(uint8_t dev_id, const struct rte_regexdev_config *cfg)
+ 	if (cfg == NULL)
+ 		return -EINVAL;
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_configure == NULL)
 +	if (dev->dev_ops->dev_configure == NULL)
  		return -ENOTSUP;
- 
  	if (dev->data->dev_started) {
-@@ -285,7 +285,7 @@ rte_ml_dev_configure(int16_t dev_id, const struct rte_ml_dev_config *config)
+ 		RTE_REGEXDEV_LOG_LINE
+@@ -289,7 +289,7 @@ rte_regexdev_configure(uint8_t dev_id, const struct rte_regexdev_config *cfg)
+ 				 dev_info.max_rules_per_group);
  		return -EINVAL;
  	}
+-	ret = (*dev->dev_ops->dev_configure)(dev, cfg);
++	ret = dev->dev_ops->dev_configure(dev, cfg);
+ 	if (ret == 0)
+ 		dev->data->dev_conf = *cfg;
+ 	return ret;
+@@ -303,7 +303,7 @@ rte_regexdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
  
--	return (*dev->dev_ops->dev_configure)(dev, config);
-+	return dev->dev_ops->dev_configure(dev, config);
- }
- 
- int
-@@ -299,7 +299,7 @@ rte_ml_dev_close(int16_t dev_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_close == NULL)
-+	if (dev->dev_ops->dev_close == NULL)
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_qp_setup == NULL)
++	if (dev->dev_ops->dev_qp_setup == NULL)
  		return -ENOTSUP;
- 
- 	/* Device must be stopped before it can be closed */
-@@ -308,7 +308,7 @@ rte_ml_dev_close(int16_t dev_id)
+ 	if (dev->data->dev_started) {
+ 		RTE_REGEXDEV_LOG_LINE
+@@ -324,7 +324,7 @@ rte_regexdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+ 			 dev_id);
  		return -EBUSY;
  	}
- 
--	return (*dev->dev_ops->dev_close)(dev);
-+	return dev->dev_ops->dev_close(dev);
+-	return (*dev->dev_ops->dev_qp_setup)(dev, queue_pair_id, qp_conf);
++	return dev->dev_ops->dev_qp_setup(dev, queue_pair_id, qp_conf);
  }
  
  int
-@@ -323,7 +323,7 @@ rte_ml_dev_start(int16_t dev_id)
- 	}
+@@ -335,9 +335,9 @@ rte_regexdev_start(uint8_t dev_id)
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_start == NULL)
 +	if (dev->dev_ops->dev_start == NULL)
  		return -ENOTSUP;
- 
- 	if (dev->data->dev_started != 0) {
-@@ -331,7 +331,7 @@ rte_ml_dev_start(int16_t dev_id)
- 		return -EBUSY;
- 	}
- 
 -	ret = (*dev->dev_ops->dev_start)(dev);
 +	ret = dev->dev_ops->dev_start(dev);
  	if (ret == 0)
  		dev->data->dev_started = 1;
+ 	return ret;
+@@ -350,9 +350,9 @@ rte_regexdev_stop(uint8_t dev_id)
  
-@@ -350,7 +350,7 @@ rte_ml_dev_stop(int16_t dev_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_stop == NULL)
 +	if (dev->dev_ops->dev_stop == NULL)
  		return -ENOTSUP;
+-	(*dev->dev_ops->dev_stop)(dev);
++	dev->dev_ops->dev_stop(dev);
+ 	dev->data->dev_started = 0;
+ 	return 0;
+ }
+@@ -364,9 +364,9 @@ rte_regexdev_close(uint8_t dev_id)
  
- 	if (dev->data->dev_started == 0) {
-@@ -358,7 +358,7 @@ rte_ml_dev_stop(int16_t dev_id)
- 		return -EBUSY;
- 	}
- 
--	ret = (*dev->dev_ops->dev_stop)(dev);
-+	ret = dev->dev_ops->dev_stop(dev);
- 	if (ret == 0)
- 		dev->data->dev_started = 0;
- 
-@@ -392,7 +392,7 @@ rte_ml_dev_queue_pair_setup(int16_t dev_id, uint16_t queue_pair_id,
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_queue_pair_setup == NULL)
-+	if (dev->dev_ops->dev_queue_pair_setup == NULL)
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_close == NULL)
++	if (dev->dev_ops->dev_close == NULL)
  		return -ENOTSUP;
+-	(*dev->dev_ops->dev_close)(dev);
++	dev->dev_ops->dev_close(dev);
+ 	dev->data->dev_started = 0;
+ 	dev->state = RTE_REGEXDEV_UNUSED;
+ 	return 0;
+@@ -380,14 +380,14 @@ rte_regexdev_attr_get(uint8_t dev_id, enum rte_regexdev_attr_id attr_id,
  
- 	if (queue_pair_id >= dev->data->nb_queue_pairs) {
-@@ -410,7 +410,7 @@ rte_ml_dev_queue_pair_setup(int16_t dev_id, uint16_t queue_pair_id,
- 		return -EBUSY;
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_attr_get == NULL)
++	if (dev->dev_ops->dev_attr_get == NULL)
+ 		return -ENOTSUP;
+ 	if (attr_value == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d attribute value can't be NULL",
+ 				 dev_id);
+ 		return -EINVAL;
  	}
- 
--	return (*dev->dev_ops->dev_queue_pair_setup)(dev, queue_pair_id, qp_conf, socket_id);
-+	return dev->dev_ops->dev_queue_pair_setup(dev, queue_pair_id, qp_conf, socket_id);
+-	return (*dev->dev_ops->dev_attr_get)(dev, attr_id, attr_value);
++	return dev->dev_ops->dev_attr_get(dev, attr_id, attr_value);
  }
  
  int
-@@ -424,7 +424,7 @@ rte_ml_dev_stats_get(int16_t dev_id, struct rte_ml_dev_stats *stats)
- 	}
+@@ -398,14 +398,14 @@ rte_regexdev_attr_set(uint8_t dev_id, enum rte_regexdev_attr_id attr_id,
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_stats_get == NULL)
-+	if (dev->dev_ops->dev_stats_get == NULL)
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_attr_set == NULL)
++	if (dev->dev_ops->dev_attr_set == NULL)
  		return -ENOTSUP;
- 
- 	if (stats == NULL) {
-@@ -433,7 +433,7 @@ rte_ml_dev_stats_get(int16_t dev_id, struct rte_ml_dev_stats *stats)
+ 	if (attr_value == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d attribute value can't be NULL",
+ 				 dev_id);
+ 		return -EINVAL;
  	}
- 	memset(stats, 0, sizeof(struct rte_ml_dev_stats));
- 
--	return (*dev->dev_ops->dev_stats_get)(dev, stats);
-+	return dev->dev_ops->dev_stats_get(dev, stats);
- }
- 
- void
-@@ -447,10 +447,10 @@ rte_ml_dev_stats_reset(int16_t dev_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_stats_reset == NULL)
-+	if (dev->dev_ops->dev_stats_reset == NULL)
- 		return;
- 
--	(*dev->dev_ops->dev_stats_reset)(dev);
-+	dev->dev_ops->dev_stats_reset(dev);
+-	return (*dev->dev_ops->dev_attr_set)(dev, attr_id, attr_value);
++	return dev->dev_ops->dev_attr_set(dev, attr_id, attr_value);
  }
  
  int
-@@ -465,10 +465,10 @@ rte_ml_dev_xstats_names_get(int16_t dev_id, enum rte_ml_dev_xstats_mode mode, in
- 	}
+@@ -417,14 +417,14 @@ rte_regexdev_rule_db_update(uint8_t dev_id,
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_rule_db_update == NULL)
++	if (dev->dev_ops->dev_rule_db_update == NULL)
+ 		return -ENOTSUP;
+ 	if (rules == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d rules can't be NULL",
+ 				 dev_id);
+ 		return -EINVAL;
+ 	}
+-	return (*dev->dev_ops->dev_rule_db_update)(dev, rules, nb_rules);
++	return dev->dev_ops->dev_rule_db_update(dev, rules, nb_rules);
+ }
+ 
+ int
+@@ -434,9 +434,9 @@ rte_regexdev_rule_db_compile_activate(uint8_t dev_id)
+ 
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_rule_db_compile_activate == NULL)
++	if (dev->dev_ops->dev_rule_db_compile_activate == NULL)
+ 		return -ENOTSUP;
+-	return (*dev->dev_ops->dev_rule_db_compile_activate)(dev);
++	return dev->dev_ops->dev_rule_db_compile_activate(dev);
+ }
+ 
+ int
+@@ -447,14 +447,14 @@ rte_regexdev_rule_db_import(uint8_t dev_id, const char *rule_db,
+ 
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_db_import == NULL)
++	if (dev->dev_ops->dev_db_import == NULL)
+ 		return -ENOTSUP;
+ 	if (rule_db == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d rules can't be NULL",
+ 				 dev_id);
+ 		return -EINVAL;
+ 	}
+-	return (*dev->dev_ops->dev_db_import)(dev, rule_db, rule_db_len);
++	return dev->dev_ops->dev_db_import(dev, rule_db, rule_db_len);
+ }
+ 
+ int
+@@ -464,9 +464,9 @@ rte_regexdev_rule_db_export(uint8_t dev_id, char *rule_db)
+ 
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_db_export == NULL)
++	if (dev->dev_ops->dev_db_export == NULL)
+ 		return -ENOTSUP;
+-	return (*dev->dev_ops->dev_db_export)(dev, rule_db);
++	return dev->dev_ops->dev_db_export(dev, rule_db);
+ }
+ 
+ int
+@@ -477,14 +477,14 @@ rte_regexdev_xstats_names_get(uint8_t dev_id,
+ 
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_xstats_names_get == NULL)
 +	if (dev->dev_ops->dev_xstats_names_get == NULL)
  		return -ENOTSUP;
- 
--	return (*dev->dev_ops->dev_xstats_names_get)(dev, mode, model_id, xstats_map, size);
-+	return dev->dev_ops->dev_xstats_names_get(dev, mode, model_id, xstats_map, size);
- }
- 
- int
-@@ -482,7 +482,7 @@ rte_ml_dev_xstats_by_name_get(int16_t dev_id, const char *name, uint16_t *stat_i
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_xstats_by_name_get == NULL)
-+	if (dev->dev_ops->dev_xstats_by_name_get == NULL)
- 		return -ENOTSUP;
- 
- 	if (name == NULL) {
-@@ -495,7 +495,7 @@ rte_ml_dev_xstats_by_name_get(int16_t dev_id, const char *name, uint16_t *stat_i
+ 	if (xstats_map == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d xstats map can't be NULL",
+ 				 dev_id);
  		return -EINVAL;
  	}
- 
--	return (*dev->dev_ops->dev_xstats_by_name_get)(dev, name, stat_id, value);
-+	return dev->dev_ops->dev_xstats_by_name_get(dev, name, stat_id, value);
+-	return (*dev->dev_ops->dev_xstats_names_get)(dev, xstats_map);
++	return dev->dev_ops->dev_xstats_names_get(dev, xstats_map);
  }
  
  int
-@@ -510,7 +510,7 @@ rte_ml_dev_xstats_get(int16_t dev_id, enum rte_ml_dev_xstats_mode mode, int32_t
- 	}
+@@ -495,7 +495,7 @@ rte_regexdev_xstats_get(uint8_t dev_id, const uint16_t *ids,
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_xstats_get == NULL)
 +	if (dev->dev_ops->dev_xstats_get == NULL)
  		return -ENOTSUP;
- 
- 	if (stat_ids == NULL) {
-@@ -523,7 +523,7 @@ rte_ml_dev_xstats_get(int16_t dev_id, enum rte_ml_dev_xstats_mode mode, int32_t
+ 	if (ids == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d ids can't be NULL", dev_id);
+@@ -505,7 +505,7 @@ rte_regexdev_xstats_get(uint8_t dev_id, const uint16_t *ids,
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d values can't be NULL", dev_id);
  		return -EINVAL;
  	}
- 
--	return (*dev->dev_ops->dev_xstats_get)(dev, mode, model_id, stat_ids, values, nb_ids);
-+	return dev->dev_ops->dev_xstats_get(dev, mode, model_id, stat_ids, values, nb_ids);
+-	return (*dev->dev_ops->dev_xstats_get)(dev, ids, values, n);
++	return dev->dev_ops->dev_xstats_get(dev, ids, values, n);
  }
  
  int
-@@ -538,10 +538,10 @@ rte_ml_dev_xstats_reset(int16_t dev_id, enum rte_ml_dev_xstats_mode mode, int32_
- 	}
+@@ -516,7 +516,7 @@ rte_regexdev_xstats_by_name_get(uint8_t dev_id, const char *name,
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_xstats_by_name_get == NULL)
++	if (dev->dev_ops->dev_xstats_by_name_get == NULL)
+ 		return -ENOTSUP;
+ 	if (name == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d name can't be NULL", dev_id);
+@@ -530,7 +530,7 @@ rte_regexdev_xstats_by_name_get(uint8_t dev_id, const char *name,
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d value can't be NULL", dev_id);
+ 		return -EINVAL;
+ 	}
+-	return (*dev->dev_ops->dev_xstats_by_name_get)(dev, name, id, value);
++	return dev->dev_ops->dev_xstats_by_name_get(dev, name, id, value);
+ }
+ 
+ int
+@@ -541,13 +541,13 @@ rte_regexdev_xstats_reset(uint8_t dev_id, const uint16_t *ids,
+ 
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_xstats_reset == NULL)
 +	if (dev->dev_ops->dev_xstats_reset == NULL)
  		return -ENOTSUP;
- 
--	return (*dev->dev_ops->dev_xstats_reset)(dev, mode, model_id, stat_ids, nb_ids);
-+	return dev->dev_ops->dev_xstats_reset(dev, mode, model_id, stat_ids, nb_ids);
- }
- 
- int
-@@ -555,7 +555,7 @@ rte_ml_dev_dump(int16_t dev_id, FILE *fd)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->dev_dump == NULL)
-+	if (dev->dev_ops->dev_dump == NULL)
- 		return -ENOTSUP;
- 
- 	if (fd == NULL) {
-@@ -563,7 +563,7 @@ rte_ml_dev_dump(int16_t dev_id, FILE *fd)
+ 	if (ids == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d ids can't be NULL", dev_id);
  		return -EINVAL;
  	}
- 
--	return (*dev->dev_ops->dev_dump)(dev, fd);
-+	return dev->dev_ops->dev_dump(dev, fd);
+-	return (*dev->dev_ops->dev_xstats_reset)(dev, ids, nb_ids);
++	return dev->dev_ops->dev_xstats_reset(dev, ids, nb_ids);
  }
  
  int
-@@ -577,10 +577,10 @@ rte_ml_dev_selftest(int16_t dev_id)
- 	}
+@@ -557,9 +557,9 @@ rte_regexdev_selftest(uint8_t dev_id)
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
 -	if (*dev->dev_ops->dev_selftest == NULL)
 +	if (dev->dev_ops->dev_selftest == NULL)
  		return -ENOTSUP;
- 
 -	return (*dev->dev_ops->dev_selftest)(dev);
 +	return dev->dev_ops->dev_selftest(dev);
  }
  
  int
-@@ -594,7 +594,7 @@ rte_ml_model_load(int16_t dev_id, struct rte_ml_model_params *params, uint16_t *
- 	}
+@@ -569,11 +569,11 @@ rte_regexdev_dump(uint8_t dev_id, FILE *f)
  
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_load == NULL)
-+	if (dev->dev_ops->model_load == NULL)
+ 	RTE_REGEXDEV_VALID_DEV_ID_OR_ERR_RET(dev_id, -EINVAL);
+ 	dev = &rte_regex_devices[dev_id];
+-	if (*dev->dev_ops->dev_dump == NULL)
++	if (dev->dev_ops->dev_dump == NULL)
  		return -ENOTSUP;
- 
- 	if (params == NULL) {
-@@ -607,7 +607,7 @@ rte_ml_model_load(int16_t dev_id, struct rte_ml_model_params *params, uint16_t *
+ 	if (f == NULL) {
+ 		RTE_REGEXDEV_LOG_LINE(ERR, "Dev %d file can't be NULL", dev_id);
  		return -EINVAL;
  	}
- 
--	return (*dev->dev_ops->model_load)(dev, params, model_id);
-+	return dev->dev_ops->model_load(dev, params, model_id);
+-	return (*dev->dev_ops->dev_dump)(dev, f);
++	return dev->dev_ops->dev_dump(dev, f);
  }
- 
- int
-@@ -621,10 +621,10 @@ rte_ml_model_unload(int16_t dev_id, uint16_t model_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_unload == NULL)
-+	if (dev->dev_ops->model_unload == NULL)
- 		return -ENOTSUP;
- 
--	return (*dev->dev_ops->model_unload)(dev, model_id);
-+	return dev->dev_ops->model_unload(dev, model_id);
- }
- 
- int
-@@ -638,10 +638,10 @@ rte_ml_model_start(int16_t dev_id, uint16_t model_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_start == NULL)
-+	if (dev->dev_ops->model_start == NULL)
- 		return -ENOTSUP;
- 
--	return (*dev->dev_ops->model_start)(dev, model_id);
-+	return dev->dev_ops->model_start(dev, model_id);
- }
- 
- int
-@@ -655,10 +655,10 @@ rte_ml_model_stop(int16_t dev_id, uint16_t model_id)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_stop == NULL)
-+	if (dev->dev_ops->model_stop == NULL)
- 		return -ENOTSUP;
- 
--	return (*dev->dev_ops->model_stop)(dev, model_id);
-+	return dev->dev_ops->model_stop(dev, model_id);
- }
- 
- int
-@@ -672,7 +672,7 @@ rte_ml_model_info_get(int16_t dev_id, uint16_t model_id, struct rte_ml_model_inf
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_info_get == NULL)
-+	if (dev->dev_ops->model_info_get == NULL)
- 		return -ENOTSUP;
- 
- 	if (model_info == NULL) {
-@@ -681,7 +681,7 @@ rte_ml_model_info_get(int16_t dev_id, uint16_t model_id, struct rte_ml_model_inf
- 		return -EINVAL;
- 	}
- 
--	return (*dev->dev_ops->model_info_get)(dev, model_id, model_info);
-+	return dev->dev_ops->model_info_get(dev, model_id, model_info);
- }
- 
- int
-@@ -695,7 +695,7 @@ rte_ml_model_params_update(int16_t dev_id, uint16_t model_id, void *buffer)
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->model_params_update == NULL)
-+	if (dev->dev_ops->model_params_update == NULL)
- 		return -ENOTSUP;
- 
- 	if (buffer == NULL) {
-@@ -703,7 +703,7 @@ rte_ml_model_params_update(int16_t dev_id, uint16_t model_id, void *buffer)
- 		return -EINVAL;
- 	}
- 
--	return (*dev->dev_ops->model_params_update)(dev, model_id, buffer);
-+	return dev->dev_ops->model_params_update(dev, model_id, buffer);
- }
- 
- int
-@@ -718,7 +718,7 @@ rte_ml_io_quantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg **d
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->io_quantize == NULL)
-+	if (dev->dev_ops->io_quantize == NULL)
- 		return -ENOTSUP;
- 
- 	if (dbuffer == NULL) {
-@@ -731,7 +731,7 @@ rte_ml_io_quantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg **d
- 		return -EINVAL;
- 	}
- 
--	return (*dev->dev_ops->io_quantize)(dev, model_id, dbuffer, qbuffer);
-+	return dev->dev_ops->io_quantize(dev, model_id, dbuffer, qbuffer);
- }
- 
- int
-@@ -746,7 +746,7 @@ rte_ml_io_dequantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg *
- 	}
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
--	if (*dev->dev_ops->io_dequantize == NULL)
-+	if (dev->dev_ops->io_dequantize == NULL)
- 		return -ENOTSUP;
- 
- 	if (qbuffer == NULL) {
-@@ -759,7 +759,7 @@ rte_ml_io_dequantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg *
- 		return -EINVAL;
- 	}
- 
--	return (*dev->dev_ops->io_dequantize)(dev, model_id, qbuffer, dbuffer);
-+	return dev->dev_ops->io_dequantize(dev, model_id, qbuffer, dbuffer);
- }
- 
- /** Initialise rte_ml_op mempool element */
 -- 
 2.47.2
 
