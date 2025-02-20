@@ -2,33 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C4AC021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B454EC021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 21:31:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A835A40653;
-	Thu, 20 Feb 2025 22:31:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DCD5540669;
+	Thu, 20 Feb 2025 22:31:19 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 346014026D
+ by mails.dpdk.org (Postfix) with ESMTP id 43FB940608
  for <dev@dpdk.org>; Thu, 20 Feb 2025 22:31:14 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 623642059197; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 623642059197
+ id 93008205A9FD; Thu, 20 Feb 2025 13:31:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93008205A9FD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740087073;
- bh=150kAY+uAX8S3/v3kzWuYAuKi1VoTtQiDkh9Rf04Y5c=;
+ bh=y5ifBxhMrH+NarBFHQGrShME0aGG5oPAK43G/aqgz7E=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=CKK9KeaZRx0tM/3xWlEgP2J1nkhVFMMbI8vUVgv/w1wNJ5NEkcCGTCT73EpeviXRY
- 3DHkGqNnfiMqZ6Vgybnqsapliv9L5r//PxXTQaKBNwzB+d9SNq8SVLghbY3d20yw01
- Zgoo/kYSTASx3sD5YfRNHVxeUYYyrPIqx+KWdX10=
+ b=UckZrkPwPs0/WrNG7Ab5scR5W7XpcGsz12Awmi20iF3QgVxKNJ9LR2aesN7toy8xz
+ swMDjxmobShmuMMvmh6Btt54p2ezYO2n3ylyiTcYp3saQUzZst4vAJVu2Nd5Nls3pY
+ Zj/cmfHUUig7Q5jLls9+0DBZ42VHg6G3qCzFY39Y=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org
-Subject: [PATCH v4 00/10] enable "app" to be compiled with MSVC
-Date: Thu, 20 Feb 2025 13:30:54 -0800
-Message-Id: <1740087064-18680-1-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org,
+	Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v4 04/10] test-pmd: do explicit 64-bit shift to avoid implicit
+ conversion
+Date: Thu, 20 Feb 2025 13:30:58 -0800
+Message-Id: <1740087064-18680-5-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1740087064-18680-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
+ <1740087064-18680-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,49 +45,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-v4:
-- add explanation about the expression used in __rte_constant during v3.
+Compiling with MSVC results in warnings like the one below:
 
-v3:
-- use clever expression with _Generic for __rte_constant and use it
-  where __builtin_constant_p was being used.
-- use %u in csumonly.c and just cast variables to unsigned int.
+app/test-pmd/util.c(201): warning C4334: '<<': result of 32-bit shift
+    implicitly converted to 64 bits (was 64-bit shift intended?)
 
-v2:
-- use lcore_count as atomic always, not only when RTE_USE_C11_MEM_MODEL
-  is set.
-- use PRIu64 in csumonly.c instead of casting variables to int.
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test-pmd/cmdline.c | 4 ++--
+ app/test-pmd/testpmd.c | 2 +-
+ app/test-pmd/util.c    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-This series fixes many issues that prevent the "app" directory
-from being compiled with MSVC.
-
-Andre Muezerie (10):
-  eal: add workaround for __builtin_constant_p
-  test_alarm: avoid warning about different qualifiers
-  test-pmd: fix printf format string mismatch
-  test-pmd: do explicit 64-bit shift to avoid implicit conversion
-  test-pmd: avoid undefined behavior
-  test-pmd: avoid non-constant initializer
-  test-pmd: don't return value from void function
-  test-pmd: declare lcore_count atomic
-  test: add workaround for __builtin_constant_p in test_memcpy_perf
-  app: enable app directory to be compiled with MSVC
-
- app/meson.build                     |  4 ---
- app/test-pmd/cmdline.c              | 16 +++++----
- app/test-pmd/cmdline_flow.c         | 22 ++++++------
- app/test-pmd/csumonly.c             | 23 ++++++------
- app/test-pmd/meson.build            |  1 -
- app/test-pmd/testpmd.c              |  2 +-
- app/test-pmd/testpmd.h              |  2 ++
- app/test-pmd/util.c                 |  2 +-
- app/test/test_alarm.c               | 12 +++----
- app/test/test_memcpy_perf.c         | 54 ++++++++++++++---------------
- app/test/test_ring_perf.c           |  6 +---
- lib/eal/include/generic/rte_pause.h |  2 +-
- lib/eal/include/rte_common.h        | 34 +++++++++++++++++-
- 13 files changed, 105 insertions(+), 75 deletions(-)
-
---
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 86d763b66a..2afcf916c0 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -12632,11 +12632,11 @@ cmd_config_dynf_specific_parsed(void *parsed_result,
+ 	}
+ 	old_port_flags = ports[res->port_id].mbuf_dynf;
+ 	if (!strcmp(res->value, "set")) {
+-		ports[res->port_id].mbuf_dynf |= 1UL << flag;
++		ports[res->port_id].mbuf_dynf |= RTE_BIT64(flag);
+ 		if (old_port_flags == 0)
+ 			add_tx_dynf_callback(res->port_id);
+ 	} else {
+-		ports[res->port_id].mbuf_dynf &= ~(1UL << flag);
++		ports[res->port_id].mbuf_dynf &= ~RTE_BIT64(flag);
+ 		if (ports[res->port_id].mbuf_dynf == 0)
+ 			remove_tx_dynf_callback(res->port_id);
+ 	}
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 0520aba0db..0a5b999c3a 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -4152,7 +4152,7 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
+ 		for (i = 0; i < vmdq_rx_conf->nb_pool_maps; i++) {
+ 			vmdq_rx_conf->pool_map[i].vlan_id = vlan_tags[i];
+ 			vmdq_rx_conf->pool_map[i].pools =
+-				1 << (i % vmdq_rx_conf->nb_queue_pools);
++				RTE_BIT64(i % vmdq_rx_conf->nb_queue_pools);
+ 		}
+ 		for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
+ 			vmdq_rx_conf->dcb_tc[i] = i % num_tcs;
+diff --git a/app/test-pmd/util.c b/app/test-pmd/util.c
+index 5fa05fad16..3934831b19 100644
+--- a/app/test-pmd/util.c
++++ b/app/test-pmd/util.c
+@@ -201,7 +201,7 @@ dump_pkt_burst(uint16_t port_id, uint16_t queue, struct rte_mbuf *pkts[],
+ 				MKDUMPSTR(print_buf, buf_size, cur_len,
+ 					  " - dynf %s: %d",
+ 					  dynf_names[dynf_index],
+-					  !!(ol_flags & (1UL << dynf_index)));
++					  !!(ol_flags & RTE_BIT64(dynf_index)));
+ 		}
+ 		if (mb->packet_type) {
+ 			rte_get_ptype_name(mb->packet_type, buf, sizeof(buf));
+-- 
 2.48.1.vfs.0.0
 
