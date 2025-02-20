@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470EEC021B3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59701C021B3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Feb 2025 22:04:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B2A84067C;
-	Thu, 20 Feb 2025 23:04:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 73D3E40693;
+	Thu, 20 Feb 2025 23:04:18 +0100 (CET)
 Received: from egress-ip11b.ess.de.barracuda.com
  (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2276F40653
+ by mails.dpdk.org (Postfix) with ESMTP id EED3A40676
  for <dev@dpdk.org>; Thu, 20 Feb 2025 23:04:15 +0100 (CET)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com
- (mail-am0eur02lp2235.outbound.protection.outlook.com [104.47.11.235]) by
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur02lp2044.outbound.protection.outlook.com [104.47.11.44]) by
  mx-outbound46-229.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 20 Feb 2025 22:04:14 +0000
+ Thu, 20 Feb 2025 22:04:15 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tBy2dnisL3zvYsBP5IB93/z/gLZtz/8BS7Sv1HHTVnDko4QLCj+E4Z8u6F9+3ZjnSKR4DOhtfP401hDCYWjIWZAsDvNpkHbauKMWHglfz3Z9RNJ0X9/7GmeY4hEnqJ7x8c3K/rYCG4r2dYSzbaSx8SIXv0TE1ZCaJaDcP4NgUe2eDCD/yRjIb3cOdINEP7HTrQfPhX2uRvl6XaBq6PjIbykO8EEyEKRGZHWDAUwctmUsyLn7jw5TxTbWe1iZTC9lOAqbuawU9QV/H8UTo5eMuFXYE4mhB8OYD2d9pwRc4MB0QoTpVPeNxwcGgDMCGh2YUqLah+OrZN2XtFqMvdyOZg==
+ b=owpQIn2LlHZXW+bNaqu8KiT65XHARXlWNoBeXjMSVmoEgeDF3ParrIghlDwSmAzQIu6dSG2AWCbEcNdMuyCLvbyUtmghtp26xzTe0lW10DjT1ltnY6nPVkTgWToBPvrX4O6BIPOAIoMAr0yYwzpiTx0pU/l1fvYhnsmFYzwjOCz/GsFCOSJPRIwr70h3KFe44QaxP8lSfSF2gI8dNNWpI+dAz94bIhcKMUCtGhg6keOQZNQAyDVm+oJqhnpCTylI7au2p7lJkCoNwDdn9lUpQ9Sem3bymw1oeapUihTcO7tDmtR27Ag9LqGT7RcvGtJKXnOKp8WNTkHBoIUj9o8hcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VitO+ckScTA9eLn5aXQp9np+uaSsunI25KKycKW5Avs=;
- b=KG++8Y8T+NNl6pjYk0U0HlUnxNGR9k3eeArwg2I0iw/LxbYbEyFEdnUnNILRdq3R7JcWUxOQrjhs3p/yP8kf+HKds67yeRfRA7/vhNfhWy7Fuv1l0TJzjWOMHeRjhJzY1s9o9onn/no38RbltVFA3z8b1FHF0VZ+PdFnJUUkGAzvq5BWAww3duV5wbRnm914VBu9w71ZlhC+SZAQtuWj+Z4tVGxBS6/yhpFAV7HqtkvVdS4dd4W6sCtkosS+XViblRvJQWRJCQrYyMFXIDLAwoauzlSGMZTOCkHkI18yQEOlW0bkWXDf8Lwyxh26a9OftDkWz0aC1lmdQgIjrz2mBw==
+ bh=q6URoEYGXD4rDKdTqqwJa6JApC6DKw+HBgy1vpToMIs=;
+ b=prxNmhCkVup8q52R0DuR5qtvWMfJx3IyDDFApPK6S6XtoMb65sZFskT6zJO4MaXtHcetJ+8eJ3l9wR7cY/lcAuO2pCF9jz9imQL0Mzpi2iHTh4orflLocnk0QYneyieot+N+VR+PcvgthodEx1YutYMnq4TEKIPS5owmPr4JOCyrkrKpSWc9tHAURsq3Jr5QSM+bAcuxMn5VP+pbF//eCbo1qu1FWSrhlx1OwU01M7NiNhfpjHkPPbsr5U0fy0v3H4wN57LrI3IBdrI/4DGc7qfq6Yhmz0uGP9dAXL32lAcSeXjZmPa/WoJ6sLu/jSq8UdRn3nS8MncE9+RURTGt8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VitO+ckScTA9eLn5aXQp9np+uaSsunI25KKycKW5Avs=;
- b=NdbLVbJmT5TmAbQrP8Rf/8lJuN152072YnzLwegUdpo6NyHin4XyB2YFA2PTuzwvVRT90FuXzLOkDjUHDyBeOfGQMDRpKC3P6trVigrAgBSOqauLVq2n76cDoKmbia5C+KD6xFHsbY2MIEwSOWtPsWcHoAqRpTwysgJNboe538k=
-Received: from CWLP265CA0498.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::12)
- by PA2P190MB2131.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:424::10)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=q6URoEYGXD4rDKdTqqwJa6JApC6DKw+HBgy1vpToMIs=;
+ b=fuEIudzfZ9IKOpTQZqJ28cHLi8npALEx4DMZslOfCso+31raRaiUmVaxgPWVdsfOvR8u0KFtM6bIUmbDHLeYZpt+WbM4uzzrxS+YANrQHv6fAwvGNMkDqPt7/bi6BxRjmlE5PxzmevFeSt4EKBz20KSueo3JQRc/CflLrzZKJTc=
+Received: from CWLP265CA0497.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18b::15)
+ by DB9P190MB1865.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:37c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 22:04:12 +0000
+ 2025 22:04:13 +0000
 Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:400:18b:cafe::c0) by CWLP265CA0498.outlook.office365.com
- (2603:10a6:400:18b::12) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:400:18b:cafe::ef) by CWLP265CA0497.outlook.office365.com
+ (2603:10a6:400:18b::15) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 22:04:12 +0000
+ 20 Feb 2025 22:04:13 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
  SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 22:04:12 +0000
+ 22:04:13 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 01/32] net/ntnic: add link agx 100g
-Date: Thu, 20 Feb 2025 23:03:25 +0100
-Message-ID: <20250220220406.3925597-2-sil-plv@napatech.com>
+Subject: [PATCH v1 02/32] net/ntnic: add link state machine
+Date: Thu, 20 Feb 2025 23:03:26 +0100
+Message-ID: <20250220220406.3925597-3-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250220220406.3925597-1-sil-plv@napatech.com>
 References: <20250220220406.3925597-1-sil-plv@napatech.com>
@@ -66,64 +66,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|PA2P190MB2131:EE_
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|DB9P190MB1865:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: ed553f50-a886-425f-239a-08dd51fa8242
+X-MS-Office365-Filtering-Correlation-Id: d187c245-de5f-457a-0b73-08dd51fa82ab
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SZ4Tp+PZYgJa6hNN2EvTnRcDwifbHW+Ec9aeKtoRctAqFvT40aK3tVTgituA?=
- =?us-ascii?Q?+nBwFl4tii0nEb9x/ALwVsahIogm7v62g0TPgKfaEuEJz7X2muMsR0yNTUWM?=
- =?us-ascii?Q?Da+HBKv/c/iIBcRpdx1UxEI6nfjGbsc36MMNPIhjHnN3Ac+LL+udJYhT2j18?=
- =?us-ascii?Q?1a+bGiS57NbQxOfotuYUV3ce5JR7WngxyV4EnDTgnpvcKxgvqifWZ295s1YU?=
- =?us-ascii?Q?bjYIjwbT4ww13Xgcrbd1G5TkrYrblILhPHocPCU7Ym9pdtrRVS7SbuWBBKqy?=
- =?us-ascii?Q?8kcQzgKzLpsYrdCLgYhlG8F/PR9rsaZ+FxrOuDhUTnHP2YZVVJT83MeOVRWq?=
- =?us-ascii?Q?93CuD7mYtTTsdmmzwXN10QPgvvHIOD/6fmoG/J2Uy/2EFzDkadCyypaYB9PF?=
- =?us-ascii?Q?Ygbq+YW6+sWAEf75hRum89/42xVsP098BqhZ4H1OBwR94paERXRA7biyctrD?=
- =?us-ascii?Q?3V2Os8RBFTBBB4+wmB01FgGB5b0uPHTmd+1oQ22gh5LqUdgNfh7zPnqn0Oas?=
- =?us-ascii?Q?Qj0J350Ox6oLG6nGbl9HAjkofyvKCt8ivtnzTrtcn8yidsOjfunXxoRrQulZ?=
- =?us-ascii?Q?J+InR4Aqk+2eju37zP/RNVK7fA4WY0QmB77s99Myckap6LCnBKPDPkhgEQSC?=
- =?us-ascii?Q?LWkSM9Kmi6zQ1FRFMASfJ1eJyFpi0IXpU+B9jegd1nhtzHwZHuxaKPRT/KCi?=
- =?us-ascii?Q?dRLjrmjs/OFQ7bfzG8vBpIqLKf5oOv4vHXzcgyUSet2/cLZ49Nn5hNyyt1Pk?=
- =?us-ascii?Q?VnaMVh+Hijn/gEYxzJqkYEl8/p+2lAb0c9RdSEFxM9K0tSsSnN8Xqs6Skt0q?=
- =?us-ascii?Q?7tDYnpOZKscyBmMAJWEUqWleNf5T0SEy6sNLg/6XoAhsaMNzAz5plpEWpq5S?=
- =?us-ascii?Q?IdXQMLsra9l4uIo8dOi812tkStzeZ92wtQdNK2nRIVCH2lU+nG/7Mon7N1li?=
- =?us-ascii?Q?PWlUTDH5WWOX1A/F9CZhb5NSMY06nCYbPZipfYi7fIF/NW4dwIt/z1Tm1XSy?=
- =?us-ascii?Q?r715SG3F41eAF4sEaKHHHZPGR0m0HuAuGP1BsNC2+UsCCqdu0WsDiQD2uHAK?=
- =?us-ascii?Q?v7ixFZogt3wxieRWbiMeT913LB9VAo4apr+eKOk8iQCvfpvl+87rSrTFiEJg?=
- =?us-ascii?Q?4RJTnfkCMi6qjtg3bOGoSoYEceDxxOqLBuMNKJOjb9HzyDUCQCowV4STgSU8?=
- =?us-ascii?Q?YrcOdJiBoSxk1ewD7fUOtz5OaZa1wKsrl8ze932YSi0uHXwXRqQfS34z65b2?=
- =?us-ascii?Q?6zyocrMpw6B4STfHVymPNiybhPT0lHw7b3/8RlZnw60yTJf5rf1GEK2rOYnw?=
- =?us-ascii?Q?Wzxh0h1CVoC2HDWQZtkq6r+n12L1PzAqPsksgnGWma9nss7SWhXJMgoGy7ON?=
- =?us-ascii?Q?ErOEiWorL/sjb1IpxMoPeDR5yvygkLEK2+TBGOupjBLpZOR6HW/V5Avz4q5L?=
- =?us-ascii?Q?leKZF3Q8ldUc4tvdec9JUoHex3VftJler8xw5gjBvzJ8cEDKKV6qLmIW5YTu?=
- =?us-ascii?Q?lhYq1XmFg8+WIik=3D?=
+ ARA:13230040|376014|82310400026|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/H/peOdKBYfjYdoHo7ez+BJ3H+7sUkj2R5D+4UmcXlNwgARvP8Uh8Ta6GLdd?=
+ =?us-ascii?Q?3a/op4Fy+DjY3iBARC+X2HKUePN0qr0/4tcMgM1JNRwRVkmF0ydG3ZTS8f2F?=
+ =?us-ascii?Q?y9SMjHZ5bVY6WC5ifweKAgGHO9cBJNjmHYNeyST78sPSAZMItenwpx0vUVpN?=
+ =?us-ascii?Q?52I35JSKtFSMqSRmWxI6n88pV/qV8QKvqwBCDIIAekDiZO6oRClqs1llypkX?=
+ =?us-ascii?Q?Zdx/fcXCpB/aILbBXOK3r4RBjG5AqJIdG+KgvHreSo6BHLkhjilQmP0u9Q0y?=
+ =?us-ascii?Q?SY5r9GQ+zLWyRQFPRIQFd+gL+eZyOL82KtTq2lJf4e1tr5l0hUJRQBIIfGln?=
+ =?us-ascii?Q?/LEXIFcfmLpWcyt/xJOZpzgRrU8xcqVdKNx7ZiwvmT8mTvje5yZ7s2JVil9S?=
+ =?us-ascii?Q?ceYTQBGLQc1lvOvW63CX2U67CtEglr6al1R3QVF2aTnFjq4BzdRpjAhXEPQJ?=
+ =?us-ascii?Q?z0vAZtfJ2idIVvTAfJLYMiGsl4dHrgGqK3px9ys90Mi0VrsR9Pk89b7syav4?=
+ =?us-ascii?Q?Z/Pq00QvAQK7n0WsBLiS9LXOhADLXvlEbam6XCIun0VxU3Mp6qt1YzaMpsLd?=
+ =?us-ascii?Q?5g5g/7ZCZli2+EQ2xBy6Uc3L9n+89qkuNKR7BhLYjjjXLwwz1Qut4ikcuRWs?=
+ =?us-ascii?Q?Ht6qimAE4uc62QIOQtkfgkfNgdSKZX2yeTBRukufBvF8O9i7RZu8C8YiIMyn?=
+ =?us-ascii?Q?FnuU5tAG9ThRiYQUZsA3lj/tiAtf5rwX3xpUtW2NfMNkcABc4DHhImzLFAuM?=
+ =?us-ascii?Q?ssRTuBII0n0VNrt6Hn1JFrXkvwfA0R2XReOws9CPZG6JOwz8ToJ/Qu5PvhHg?=
+ =?us-ascii?Q?lz+M9/qEX4G5ky/ZHOUjInTEWwO9tr5zgWkFHir1glQLq95Bn7CMSqkDqFJg?=
+ =?us-ascii?Q?TbW1FjqpkRvu+q2R4i6etVi+1ooOHW08Q12x5AxdAhsd0KlGaFKTycijNkeJ?=
+ =?us-ascii?Q?bj4p/g0TmY8l/Bdcu46MT4UmObx4OAHMKOnF5XMmpX/p1IrQCqkCoLl+/Upd?=
+ =?us-ascii?Q?8pZOKA8DGPSQ+Uulio7Ed1ibv3CwqpT8anQBMeQGXZJDxVOOWlE16XJX2wbE?=
+ =?us-ascii?Q?OTkW1QT5qwfXH8SMJLkZ5EMlCNnp6uEjzNm0KcDUlDS+Nmj+tYTWeKFXxveB?=
+ =?us-ascii?Q?md9BhFofbmxLNd30JY/c+9RAgIaa5pqKya3Nzw8zSk7lH8xqE4gwIZ5TuTjc?=
+ =?us-ascii?Q?5EA09P983mgExFzuXr0l+lMPDTilDh6+8LPljMTpL0OWlzcyBhxUL+W03gmt?=
+ =?us-ascii?Q?G1z/Odln/Kjx/AeZXrnRY/3Et7STvqI9uRBlibl8FwboRSkW6L8ViHNayMSa?=
+ =?us-ascii?Q?oycgmVLe7AKWpIxvXS47D4VXUgmZbnp7qwJsk48/3miDoRf3OQVV7gsoSZn8?=
+ =?us-ascii?Q?fHEdUrF3BYtD9EcGwBfv9Bi1AWvz5O3RPAKdIKLHwpR0UE9L4wijxq/gqQw9?=
+ =?us-ascii?Q?pkSrUBauZO8r+/wp2xwjmiGzvXR3/7dPpJ9EcaICwIYvKWix9vkHbQL108Xv?=
+ =?us-ascii?Q?bj/F9slYBqdciGc=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);
+ CAT:NONE; SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: fL++f6lu7xuc/gWszjeVYX3LoQQ9rH11LOri133IyOI8iQbP+kSq609qYCdV3/yFlIsu7ushwjt6pbnNTrKADoSrD9UqcmbRcdb1ocnlG2UnlqxDP+a4Up6OHIpv1eQ31eufx7GH8+DKllT58bXGosgdFkrnPWSeta5JRDfsTItoVYLzxf2pDmdVbRGvOldTdOZD2D7YVMSOcaXC3uJ3lK1zxj7elPaSVMkNLDx8QpKj51XAVvWFagUank2SJGiHR4ZmDpLIu++bnObfCNo3zk905in/Xsx+7jRBqLwafD89vqqaFpYZORCUdvyZlWk/N29ofIk0TzDBd7RoLqDpQqPybzqHV6IVPlxZpFL7YFzOlTAGyeHr8Y3EThH2wyWNb1INKCcksAGJXHvRms/DfhKNIrWwH+xphrmg3jVFi689aVZ+DkiVqnA9C6GEVyyv0dN0+SmR1suW6NBmOvH3kdoQbkAQWUG6jMkreRZro1N/2oDBuAOV65VSFb02EbwkhD2p8a+2zl9Hp0WHYQcimsBDKxmRdDSn8FBH8v8MlJUxdU1V3Rsm0ue53BnhV+mCBYra2+u0vfvIEGo89NbzHrwblxBp7sotiBQJFZnC0vBPRkbicNVC0w2WJmuIVs/2dYVZiQvmBQw5u3ONcbNReNxQflL51MegMNG5V976in8=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: /oWu1A21/eZCSWB9hDxUQmkFdJ4A+tU/w5qA8C9IefvGuefrO1JdfaA7YqeAg+VAza+pudj9ntGKYz+wZymHUK/Z3UHwOm3PRGrYIDvxo4uAEeF7xkN4kOjdZqvyGEqewellwrGpsZbG4iJTtF7G5ycqrQNCO24cMDskGxwY8IRfdTlf+coPEXiR6WatQjYcT3qLVYtQu7fPp/AIFJeJA06FDV6EmS8zphwuDTtEIc3mBgKE7OR3kOZ1LR3o9FB+QEpl9nUdkJcws80hQia/SxsiuZ7XrNK6FiwAaRqIE81ypqfW8wHyQhhUtP9ImWU9ImyNvzFugdnIhzWL9H+aA4RF7JIUrRTVZrHKE6NtaeWRuQhG3dNj1fvJyE/W/kn5jrXSN9s/n0TBazgWykS8TndN8T/ifIzQPr0YlpMY4+QoaobQtCmOQKBRHKA19yhDI9FaBKGVt0RqppX21GfnTtVPN/Tz+WqmxIpL4INTB5kD5vf4b+Q3QrJ9fon0HGBYGDVjS4xnVigsBo7tTvE+w19/NI6qOstuIJo29sijejzXc/hw06apYjQGIcKDjYz2ANs0TUrArMqKUE1tIA8WC5/BdEiY6s52jRTkJvW9+7rKVLKRzDT9dnP7cLiObzMy3JkOzaxNklnJsWNIP98GI1gmAgVMVe6cBMeGAQVZbcM=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:12.3181 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed553f50-a886-425f-239a-08dd51fa8242
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:04:13.1150 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d187c245-de5f-457a-0b73-08dd51fa82ab
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009B9C.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2P190MB2131
-X-BESS-ID: 1740089054-312005-29067-14084-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P190MB1865
+X-BESS-ID: 1740089054-312005-29070-14085-1
 X-BESS-VER: 2019.1_20250219.2339
-X-BESS-Apparent-Source-IP: 104.47.11.235
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViYmhpZAVgZQMMXAIjE1OcnC3N
- woKc3cKNHEwCTNwjLV3CAlMdXE0thMqTYWAJfa7jFBAAAA
+X-BESS-Apparent-Source-IP: 104.47.11.44
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViaWppZAVgZQ0CDFwMLCwsQ8zT
+ TZMtnAIi0VyDc0NUk1MTYxT0w0N1WqjQUAsXNspUEAAAA=
 X-BESS-Outbound-Spam-Score: 1.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262653 [from 
- cloudscan19-102.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan19-233.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -147,142 +147,165 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Minimal implementation for link agx 100g was added.
-Add support for NT400D13 (Intel Agilex FPGA) link operations.
+Minimal 100g agx link state machine implementation was added.
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/adapter/nt4ga_adapter.c     |  9 ++++
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 42 +++++++++++++++++++
- drivers/net/ntnic/meson.build                 |  1 +
- drivers/net/ntnic/ntnic_mod_reg.c             | 17 ++++++++
- drivers/net/ntnic/ntnic_mod_reg.h             |  4 ++
- 5 files changed, 73 insertions(+)
- create mode 100644 drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+ drivers/net/ntnic/include/nt4ga_link.h        |   5 +
+ .../link_agx_100g/nt4ga_agx_link_100g.c       | 111 ++++++++++++++++++
+ 2 files changed, 116 insertions(+)
 
-diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-index fa72dfda8d..fe9d397293 100644
---- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
-+++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-@@ -196,6 +196,15 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
+diff --git a/drivers/net/ntnic/include/nt4ga_link.h b/drivers/net/ntnic/include/nt4ga_link.h
+index 8366484830..af7ea4a9f2 100644
+--- a/drivers/net/ntnic/include/nt4ga_link.h
++++ b/drivers/net/ntnic/include/nt4ga_link.h
+@@ -82,9 +82,14 @@ typedef struct adapter_100g_s {
+ 	nthw_gpio_phy_t gpio_phy[NUM_ADAPTER_PORTS_MAX];
+ } adapter_100g_t;
  
- 			res = link_ops->link_init(p_adapter_info, p_fpga);
- 			break;
-+		case 9574: /* NT400D13 (Intel Agilex FPGA) */
-+			link_ops = get_agx_100g_link_ops();
-+			if (link_ops == NULL) {
-+				NT_LOG(ERR, NTNIC, "NT400D11 100G link module uninitialized");
-+				res = -1;
-+				break;
-+			}
-+			res = link_ops->link_init(p_adapter_info, p_fpga);
-+			break;
++typedef struct adapter_agx_100g_s {
++	nim_i2c_ctx_t nim_ctx[NUM_ADAPTER_PORTS_MAX];	/* should be the first field */
++} adapter_agx_100g_t;
++
+ typedef union adapter_var_s {
+ 	nim_i2c_ctx_t nim_ctx[NUM_ADAPTER_PORTS_MAX];	/* First field in all the adapters type */
+ 	adapter_100g_t var100g;
++	adapter_agx_100g_t var_a100g;
+ } adapter_var_u;
  
- 		default:
- 			NT_LOG(ERR, NTNIC, "Unsupported FPGA product: %04d",
+ typedef struct nt4ga_link_s {
 diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-new file mode 100644
-index 0000000000..ad3398500f
---- /dev/null
+index ad3398500f..369b9b601f 100644
+--- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
 +++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -0,0 +1,42 @@
-+/*
-+ * SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2023 Napatech A/S
-+ */
-+
-+#include "nt_util.h"
-+#include "ntlog.h"
-+#include "i2c_nim.h"
-+#include "nt4ga_adapter.h"
-+
-+#include <string.h>
-+#include "ntnic_mod_reg.h"
-+#include "nim_defines.h"
-+
-+static int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info,
-+	nthw_fpga_t *fpga);
-+
-+/*
-+ * Init AGX 100G link ops variables
-+ */
-+static struct link_ops_s link_agx_100g_ops = {
-+	.link_init = nt4ga_agx_link_100g_ports_init,
-+};
-+
-+void link_agx_100g_init(void)
-+{
-+	register_agx_100g_link_ops(&link_agx_100g_ops);
-+}
-+
-+/*
-+ * Initialize all ports
-+ * The driver calls this function during initialization (of the driver).
-+ */
-+int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_fpga_t *fpga)
-+{
-+	(void)fpga;
-+	int res = 0;
-+
-+	NT_LOG(DBG, NTNIC, "%s: Initializing ports", p_adapter_info->mp_adapter_id_str);
-+
-+	return res;
-+}
-diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
-index 8ae6817dea..7e4f47b1e6 100644
---- a/drivers/net/ntnic/meson.build
-+++ b/drivers/net/ntnic/meson.build
-@@ -32,6 +32,7 @@ sources = files(
-         'adapter/nt4ga_stat/nt4ga_stat.c',
-         'dbsconfig/ntnic_dbsconfig.c',
-         'link_mgmt/link_100g/nt4ga_link_100g.c',
-+        'link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c',
-         'link_mgmt/nt4ga_link.c',
-         'nim/i2c_nim.c',
-         'ntnic_filter/ntnic_filter.c',
-diff --git a/drivers/net/ntnic/ntnic_mod_reg.c b/drivers/net/ntnic/ntnic_mod_reg.c
-index 658fac72c0..598df08fb7 100644
---- a/drivers/net/ntnic/ntnic_mod_reg.c
-+++ b/drivers/net/ntnic/ntnic_mod_reg.c
-@@ -69,6 +69,23 @@ const struct link_ops_s *get_100g_link_ops(void)
- 	return link_100g_ops;
+@@ -27,6 +27,106 @@ void link_agx_100g_init(void)
+ 	register_agx_100g_link_ops(&link_agx_100g_ops);
  }
  
 +/*
-+ *
++ * Link state machine
 + */
-+static struct link_ops_s *link_agx_100g_ops;
-+
-+void register_agx_100g_link_ops(struct link_ops_s *ops)
++static void *_common_ptp_nim_state_machine(void *data)
 +{
-+	link_agx_100g_ops = ops;
++	adapter_info_t *drv = (adapter_info_t *)data;
++	fpga_info_t *fpga_info = &drv->fpga_info;
++	nt4ga_link_t *link_info = &drv->nt4ga_link;
++	nthw_fpga_t *fpga = fpga_info->mp_fpga;
++	const int adapter_no = drv->adapter_no;
++	const int nb_ports = fpga_info->n_phy_ports;
++	uint32_t last_lpbk_mode[NUM_ADAPTER_PORTS_MAX];
++	/* link_state_t new_link_state; */
++
++	link_state_t *link_state = link_info->link_state;
++
++	if (!fpga) {
++		NT_LOG(ERR, NTNIC, "%s: fpga is NULL", drv->mp_adapter_id_str);
++		goto NT4GA_LINK_100G_MON_EXIT;
++	}
++
++	assert(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
++
++	monitor_task_is_running[adapter_no] = 1;
++	memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
++
++	/* Initialize link state */
++	for (int i = 0; i < nb_ports; i++) {
++		link_state[i].link_disabled = true;
++		link_state[i].nim_present = false;
++		link_state[i].lh_nim_absent = true;
++		link_state[i].link_up = false;
++		link_state[i].link_state = NT_LINK_STATE_UNKNOWN;
++		link_state[i].link_state_latched = NT_LINK_STATE_UNKNOWN;
++	}
++
++	if (monitor_task_is_running[adapter_no])
++		NT_LOG(DBG, NTNIC, "%s: link state machine running...", drv->mp_adapter_id_str);
++
++	while (monitor_task_is_running[adapter_no]) {
++		int i;
++
++		for (i = 0; i < nb_ports; i++) {
++			const bool is_port_disabled = link_info->port_action[i].port_disable;
++			const bool was_port_disabled = link_state[i].link_disabled;
++			const bool disable_port = is_port_disabled && !was_port_disabled;
++			const bool enable_port = !is_port_disabled && was_port_disabled;
++
++			if (!monitor_task_is_running[adapter_no])
++				break;
++
++			/*
++			 * Has the administrative port state changed?
++			 */
++			assert(!(disable_port && enable_port));
++
++			if (enable_port) {
++				link_state[i].link_disabled = false;
++				NT_LOG(DBG, NTNIC, "%s: Port %i is enabled",
++					drv->mp_port_id_str[i], i);
++			}
++
++			if (is_port_disabled)
++				continue;
++
++			link_state[i].link_disabled = is_port_disabled;
++
++			if (!link_state[i].nim_present) {
++				if (!link_state[i].lh_nim_absent) {
++					NT_LOG(INF, NTNIC, "%s: NIM module removed",
++						drv->mp_port_id_str[i]);
++					link_state[i].link_up = false;
++					link_state[i].lh_nim_absent = true;
++
++				} else {
++					NT_LOG(DBG, NTNIC, "%s: No NIM module, skip",
++						drv->mp_port_id_str[i]);
++				}
++
++				continue;
++			}
++		}
++
++		if (monitor_task_is_running[adapter_no])
++			nt_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
++	}
++
++NT4GA_LINK_100G_MON_EXIT:
++	NT_LOG(DBG, NTNIC, "%s: Stopped NT4GA 100 Gbps link monitoring thread.",
++		drv->mp_adapter_id_str);
++	return NULL;
 +}
 +
-+const struct link_ops_s *get_agx_100g_link_ops(void)
++static uint32_t nt4ga_agx_link_100g_mon(void *data)
 +{
-+	if (link_agx_100g_ops == NULL)
-+		link_agx_100g_init();
-+	return link_agx_100g_ops;
++	(void)_common_ptp_nim_state_machine(data);
++
++	return 0;
 +}
 +
- static const struct port_ops *port_ops;
+ /*
+  * Initialize all ports
+  * The driver calls this function during initialization (of the driver).
+@@ -34,9 +134,20 @@ void link_agx_100g_init(void)
+ int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_fpga_t *fpga)
+ {
+ 	(void)fpga;
++	const int adapter_no = p_adapter_info->adapter_no;
+ 	int res = 0;
  
- void register_port_ops(const struct port_ops *ops)
-diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
-index bddae823c8..3e84beaa62 100644
---- a/drivers/net/ntnic/ntnic_mod_reg.h
-+++ b/drivers/net/ntnic/ntnic_mod_reg.h
-@@ -144,6 +144,10 @@ void register_100g_link_ops(struct link_ops_s *ops);
- const struct link_ops_s *get_100g_link_ops(void);
- void link_100g_init(void);
+ 	NT_LOG(DBG, NTNIC, "%s: Initializing ports", p_adapter_info->mp_adapter_id_str);
  
-+void register_agx_100g_link_ops(struct link_ops_s *ops);
-+const struct link_ops_s *get_agx_100g_link_ops(void);
-+void link_agx_100g_init(void);
++	/*
++	 * Create state-machine thread
++	 */
++	if (res == 0) {
++		if (!monitor_task_is_running[adapter_no]) {
++			res = rte_thread_create(&monitor_tasks[adapter_no], NULL,
++					nt4ga_agx_link_100g_mon, p_adapter_info);
++		}
++	}
 +
- struct port_ops {
- 	bool (*get_nim_present)(struct adapter_info_s *p, int port);
- 
+ 	return res;
+ }
 -- 
 2.45.0
 
