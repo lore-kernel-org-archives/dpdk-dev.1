@@ -2,70 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542E1C021B3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 18:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27454C021B6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 19:05:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4362A410E8;
-	Fri, 21 Feb 2025 19:50:10 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id C9770410E6
- for <dev@dpdk.org>; Fri, 21 Feb 2025 19:50:08 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-2fbfa8c73a6so4956838a91.2
- for <dev@dpdk.org>; Fri, 21 Feb 2025 10:50:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740163808;
- x=1740768608; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=FydIl6WAJ0IeNkPItkK/iTQacMAb1mycyh1ypQlvK58=;
- b=CYfaZIsEG9n1TjSjdspoKg1lqO0WJqaDv+t8ly8Z1GIp9elCw67dzPILfwP4Mk2IGn
- ac2Kax2TwusVYN8vbA2gio5m1GwrKISg8kCxFcBLaC6MSxEqrrRkrD6jOScXsDzLZIKH
- GKBSiz+wjQ6A9ARXOgXW4Gam1ENz3hdtUS+PrRXjTpJLbdFsITmHns3Hx6wTV2btxiMR
- QTW5HQHau6EHhjnFsI/V7HjJOlnVH9gi7H4lJ2rtAqXk1c/5pEcfgfCwPxpIrEGfmWKZ
- H+a8qWCoy8MPf7ysVkH8MdaoeZkyhDmUDFCGZzvrgn+V/wQNwLThu0nq/vcsZ/knvz8q
- Msnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740163808; x=1740768608;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=FydIl6WAJ0IeNkPItkK/iTQacMAb1mycyh1ypQlvK58=;
- b=h95KukxUKgbqMwZVqojPPiNJAlL/YJMJ3wi5wVNxAMOzv4ZuKK8kDzx2PQ3G46dPqk
- 53dt/+IY99EEcPUQ/m0AU10Car2orDduVwnJfEus+dAXBlVgvmgOpZ5HDPw7tBNWL24g
- 4U43qgHOMwgkd0r1K5vlxN6Ojk3Wk302gqGvFVzrt3FYIC4NGLp9A7IYPvuFtJE9V9Du
- 29FMYs2dO+6kxAIaySFYZZkb57n7UHSG0gJIcvbWrr1dcBjctyPG1Z/QMBhPOH50nco1
- TbOnJktxaeHTWLs/OnnZysTMm/+Y0WxxdVhmM29yFkrzEMmUkVJaIRLiJ1tGpihnsXu1
- Jadw==
-X-Gm-Message-State: AOJu0YxJWnOJaOsaYPMk8jiszJDoqCf5thphajwfX/DjQYYyU4IKxy0U
- XZL3wq9Sr6YBib4wdzANhsD3BKeSAno7kClOPzN4TIVobrp9D6uRLMCwbcX6lU8=
-X-Gm-Gg: ASbGncufc0HL+/15z4sOVpILXFYrzJNV/v2k1mMy8MA8/89IlJnqOxIAR6mAGCnQ9BH
- Xa6owG8SnlaLX7eB/RyqpZD+1CD5fhkLoP1iwOz40wkPz6dETZtgnCxT0sH3AU8Q8bO/8tf6D56
- 7VGfE3TMYe8Zg2zUPm/wmTZZYakfcKSc+7TzVoAL39AKyL4iinVzUM480/yEXtVer/h7oLrtg5M
- CFCxBIYXVyO0UeUe4lIPtw7m+Z9odEw6v+ni2SILA3ZKYMxr9DEfyjVYx7AsieWQMmXpvqXE5xZ
- Gzsd0POI8fc9rnYOKGWgkhQ+KNXW1ARjSrUwxJUBppP99XOO0YtAQ73lkQj5OCNwgypIpnPlERw
- 6yu4=
-X-Google-Smtp-Source: AGHT+IFhwvdhuZBMnBraqndUAKPJ1OSPuwX9HFKXIXOt0t30EAYZCglMs0Htit/N4PV6qEKFbvZoWw==
-X-Received: by 2002:a17:90b:2b8b:b0:2f9:9ddd:689c with SMTP id
- 98e67ed59e1d1-2fce87247d0mr6449629a91.25.1740163807884; 
- Fri, 21 Feb 2025 10:50:07 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fceb10fab1sm1734066a91.32.2025.02.21.10.50.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Feb 2025 10:50:07 -0800 (PST)
-Date: Fri, 21 Feb 2025 10:50:05 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chris MacNamara <chris.macnamara@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1] doc/guides: update monitor PMD mode description
-Message-ID: <20250221105005.40567940@hermes.local>
-In-Reply-To: <20250221165440.832528-1-chris.macnamara@intel.com>
-References: <20250221165440.832528-1-chris.macnamara@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5A6F7410F6;
+	Fri, 21 Feb 2025 20:05:53 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C3CC8410E8
+ for <dev@dpdk.org>; Fri, 21 Feb 2025 20:05:51 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A289D206C7
+ for <dev@dpdk.org>; Fri, 21 Feb 2025 20:05:51 +0100 (CET)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Fri, 21 Feb 2025 20:05:51 +0100
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [RFC PATCH v19] mempool: fix mempool cache size
+Date: Fri, 21 Feb 2025 19:05:49 +0000
+Message-ID: <20250221190549.192090-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240920163203.840770-1-mb@smartsharesystems.com>
+References: <20240920163203.840770-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 21 Feb 2025 19:05:51.0364 (UTC)
+ FILETIME=[9FCD1C40:01DB8493]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,47 +45,401 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 21 Feb 2025 16:54:40 +0000
-Chris MacNamara <chris.macnamara@intel.com> wrote:
+NOTE: THIS VERSION DOES NOT BREAK THE API/ABI.
 
-> A recent CPU change requires an extra enabling step for
-> the umonitor instruction on Intel CPUs.
-> This is now detailed in the l3 fwd power manager doc.
-> 
-> Signed-off-by: Chris MacNamara <chris.macnamara@intel.com>
-> ---
->  .mailmap                                          | 1 +
->  doc/guides/sample_app_ug/l3_forward_power_man.rst | 5 +++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index a03d3cfb59..c4bc38752f 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -263,6 +263,7 @@ Christopher Reder <christopher.reder@broadcom.com>
->  Christoph Gysin <christoph.gysin@gmail.com>
->  Christos Ricudis <ricudis@niometrics.com>
->  Chris Wright <chrisw@redhat.com>
-> +Chris MacNamara <chris.macnamara@intel.com>
->  Chuanshe Zhang <zhangchuanshe@icloudshield.com>
->  Chuanyu Xue <chuanyu.xue@uconn.edu>
->  Chuhong Yao <ych@panath.cn>
-> diff --git a/doc/guides/sample_app_ug/l3_forward_power_man.rst b/doc/guides/sample_app_ug/l3_forward_power_man.rst
-> index 3271bc2154..d0af28e0ec 100644
-> --- a/doc/guides/sample_app_ug/l3_forward_power_man.rst
-> +++ b/doc/guides/sample_app_ug/l3_forward_power_man.rst
-> @@ -293,6 +293,11 @@ and has three available power management schemes:
->  ``monitor``
->    This will use ``rte_power_monitor()`` function to enter
->    a power-optimized state (subject to platform support).
-> +  On recent Gen 4 Xeon Scalable Processors the umonitor instruction
-> +  is disabled by default.
-> +  An additional step is required to enable the umonitor instruction.
-> +  Writing 0 to bit 6 of register 0x123 will enable umonitor.
-> +  `More details are available via Monitor and Umonitor Performance Guidance <https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/monitor-umonitor-performance-guidance.html>`_
->  
+First, a per-lcore mempool cache could hold 50 % more than the cache's
+size.
+Since application developers do not expect this behavior, it could lead to
+application failure.
+This patch fixes this bug without breaking the API/ABI, by using the
+mempool cache's "size" instead of the "flushthresh" as the threshold for
+how many objects can be held in a mempool cache.
+Note: The "flushthresh" field can be removed from the cache structure in a
+future API/ABI breaking release, which must be announced in advance.
 
-This should be done by the power library, what is the point of having a power API
-if we require applications to test for CPU type and go tweak some CPU register bits.
-And it may be restricted by OS permissions etc.
+Second, requests to fetch a number of objects from the backend driver
+exceeding the cache's size (but less than RTE_MEMPOOL_CACHE_MAX_SIZE) were
+copied twice; first to the cache, and from there to the destination.
+Such superfluous copying through the mempool cache degrades the
+performance in these cases.
+This patch also fixes this misbehavior, so when fetching more objects from
+the driver than the mempool cache's size, they are fetched directly to the
+destination.
+
+The internal macro to calculate the cache flush threshold was updated to
+reflect the new flush threshold of 1 * size instead of 1.5 * size.
+
+The function rte_mempool_do_generic_put() for adding objects to a mempool
+was modified as follows:
+- When determining if the cache has sufficient room for the request
+  without flushing, compare to the cache's size (cache->size) instead of
+  the obsolete flush threshold (cache->flushthresh).
+- The comparison for the request being too big, which is considered
+  unlikely, was moved down and out of the code path where the cache has
+  sufficient room for the added objects, which is considered the most
+  likely code path.
+- Added __rte_assume() about the cache size, for compiler optimization
+  when "n" is compile time constant.
+- Added __rte_assume() about "ret", for compiler optimization of
+  rte_mempool_generic_get() considering the return value of
+  rte_mempool_do_generic_get().
+
+The function rte_mempool_do_generic_get() for getting objects from a
+mempool was refactored as follows:
+- Handling a request for a constant number of objects was merged with
+  handling a request for a nonconstant number of objects, and a note about
+  compiler loop unrolling in the constant case was added.
+- When determining if the remaining part of a request to be dequeued from
+  the backend is too big to be copied via the cache, compare to the
+  cache's size (cache->size) instead of the max possible cache size
+  (RTE_MEMPOOL_CACHE_MAX_SIZE).
+- When refilling the cache, the target fill level was reduced from the
+  full cache size to half the cache size. This allows some room for a
+  put() request following a get() request where the cache was refilled,
+  without "flapping" between draining and refilling the entire cache.
+  Note: Before this patch, the distance between the flush threshold and
+  the refill level was also half a cache size.
+- A copy of cache->len in the local variable "len" is no longer needed,
+  so it was removed.
+- Added a group of __rte_assume()'s, for compiler optimization when "n" is
+  compile time constant.
+
+Some comments were also updated.
+
+Furthermore, some likely()/unlikely()'s were added to a few inline
+functions; most prominently rte_mempool_default_cache(), which is used by
+both rte_mempool_put_bulk() and rte_mempool_get_bulk().
+
+And finally, RTE_ASSERT()'s were added to check the return values of the
+mempool driver dequeue() and enqueue() operations.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v19:
+* Added __rte_assume()'s and RTE_ASSERT()'s.
+v18:
+* Start over from scratch, to avoid API/ABI breakage.
+v17:
+* Update rearm in idpf driver.
+v16:
+* Fix bug in rte_mempool_do_generic_put() regarding criteria for flush.
+v15:
+* Changed back cache bypass limit from n >= RTE_MEMPOOL_CACHE_MAX_SIZE to
+  n > RTE_MEMPOOL_CACHE_MAX_SIZE.
+* Removed cache size limit from serving via cache.
+v14:
+* Change rte_mempool_do_generic_put() back from add-then-flush to
+  flush-then-add.
+  Keep the target cache fill level of ca. 1/2 size of the cache.
+v13:
+* Target a cache fill level of ca. 1/2 size of the cache when flushing and
+  refilling; based on an assumption of equal probability of get and put,
+  instead of assuming a higher probability of put being followed by
+  another put, and get being followed by another get.
+* Reduce the amount of changes to the drivers.
+v12:
+* Do not init mempool caches with size zero; they don't exist.
+  Bug introduced in v10.
+v11:
+* Removed rte_mempool_do_generic_get_split().
+v10:
+* Initialize mempool caches, regardless of size zero.
+  This to fix compiler warning about out of bounds access.
+v9:
+* Removed factor 1.5 from description of cache_size parameter to
+  rte_mempool_create().
+* Refactored rte_mempool_do_generic_put() to eliminate some gotos.
+  No functional change.
+* Removed check for n >= RTE_MEMPOOL_CACHE_MAX_SIZE in
+  rte_mempool_do_generic_get(); it caused the function to fail when the
+  request could not be served from the backend alone, but it could be
+  served from the cache and the backend.
+* Refactored rte_mempool_do_generic_get_split() to make it shorter.
+* When getting objects directly from the backend, use burst size aligned
+  with either CPU cache line size or mempool cache size.
+v8:
+* Rewrote rte_mempool_do_generic_put() to get rid of transaction
+  splitting. Use a method similar to the existing put method with fill
+  followed by flush if overfilled.
+  This also made rte_mempool_do_generic_put_split() obsolete.
+* When flushing the cache as much as we can, use burst size aligned with
+  either CPU cache line size or mempool cache size.
+v7:
+* Increased max mempool cache size from 512 to 1024 objects.
+  Mainly for CI performance test purposes.
+  Originally, the max mempool cache size was 768 objects, and used a fixed
+  size array of 1024 objects in the mempool cache structure.
+v6:
+* Fix v5 incomplete implementation of passing large requests directly to
+  the backend.
+* Use memcpy instead of rte_memcpy where compiler complains about it.
+* Added const to some function parameters.
+v5:
+* Moved helper functions back into the header file, for improved
+  performance.
+* Pass large requests directly to the backend. This also simplifies the
+  code.
+v4:
+* Updated subject to reflect that misleading names are considered bugs.
+* Rewrote patch description to provide more details about the bugs fixed.
+  (Mattias Rönnblom)
+* Moved helper functions, not to be inlined, to mempool C file.
+  (Mattias Rönnblom)
+* Pass requests for n >= RTE_MEMPOOL_CACHE_MAX_SIZE objects known at build
+  time directly to backend driver, to avoid calling the helper functions.
+  This also fixes the compiler warnings about out of bounds array access.
+v3:
+* Removed __attribute__(assume).
+v2:
+* Removed mempool perf test; not part of patch set.
+---
+ lib/mempool/rte_mempool.c |   5 +-
+ lib/mempool/rte_mempool.h | 105 ++++++++++++++++----------------------
+ 2 files changed, 47 insertions(+), 63 deletions(-)
+
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 1e4f24783c..cddc896442 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -50,10 +50,9 @@ static void
+ mempool_event_callback_invoke(enum rte_mempool_event event,
+ 			      struct rte_mempool *mp);
+ 
+-/* Note: avoid using floating point since that compiler
+- * may not think that is constant.
++/* Note: This is no longer 1.5 * size, but simply 1 * size.
+  */
+-#define CALC_CACHE_FLUSHTHRESH(c) (((c) * 3) / 2)
++#define CALC_CACHE_FLUSHTHRESH(c) (c)
+ 
+ #if defined(RTE_ARCH_X86)
+ /*
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index c495cc012f..7742677c01 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -791,7 +791,8 @@ rte_mempool_ops_dequeue_bulk(struct rte_mempool *mp,
+ 	rte_mempool_trace_ops_dequeue_bulk(mp, obj_table, n);
+ 	ops = rte_mempool_get_ops(mp->ops_index);
+ 	ret = ops->dequeue(mp, obj_table, n);
+-	if (ret == 0) {
++	RTE_ASSERT(ret <= 0);
++	if (likely(ret == 0)) {
+ 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_bulk, 1);
+ 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_objs, n);
+ 	}
+@@ -848,6 +849,7 @@ rte_mempool_ops_enqueue_bulk(struct rte_mempool *mp, void * const *obj_table,
+ 	rte_mempool_trace_ops_enqueue_bulk(mp, obj_table, n);
+ 	ops = rte_mempool_get_ops(mp->ops_index);
+ 	ret = ops->enqueue(mp, obj_table, n);
++	RTE_ASSERT(ret <= 0);
+ #ifdef RTE_LIBRTE_MEMPOOL_DEBUG
+ 	if (unlikely(ret < 0))
+ 		RTE_MEMPOOL_LOG(CRIT, "cannot enqueue %u objects to mempool %s",
+@@ -1044,7 +1046,7 @@ rte_mempool_free(struct rte_mempool *mp);
+  *   If cache_size is non-zero, the rte_mempool library will try to
+  *   limit the accesses to the common lockless pool, by maintaining a
+  *   per-lcore object cache. This argument must be lower or equal to
+- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5. It is advised to choose
++ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n. It is advised to choose
+  *   cache_size to have "n modulo cache_size == 0": if this is
+  *   not the case, some elements will always stay in the pool and will
+  *   never be used. The access to the per-lcore table is of course
+@@ -1333,10 +1335,10 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
+ static __rte_always_inline struct rte_mempool_cache *
+ rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
+ {
+-	if (mp->cache_size == 0)
++	if (unlikely(mp->cache_size == 0))
+ 		return NULL;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE)
++	if (unlikely(lcore_id >= RTE_MAX_LCORE))
+ 		return NULL;
+ 
+ 	rte_mempool_trace_default_cache(mp, lcore_id,
+@@ -1383,32 +1385,33 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+ {
+ 	void **cache_objs;
+ 
+-	/* No cache provided */
++	/* No cache provided? */
+ 	if (unlikely(cache == NULL))
+ 		goto driver_enqueue;
+ 
+-	/* increment stat now, adding in mempool always success */
++	/* Increment stats now, adding in mempool always succeeds. */
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
+ 
+-	/* The request itself is too big for the cache */
+-	if (unlikely(n > cache->flushthresh))
+-		goto driver_enqueue_stats_incremented;
+-
+-	/*
+-	 * The cache follows the following algorithm:
+-	 *   1. If the objects cannot be added to the cache without crossing
+-	 *      the flush threshold, flush the cache to the backend.
+-	 *   2. Add the objects to the cache.
+-	 */
+-
+-	if (cache->len + n <= cache->flushthresh) {
++	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= cache->size);
++	if (likely(cache->len + n <= cache->size)) {
++		/* Sufficient room in the cache for the objects. */
+ 		cache_objs = &cache->objs[cache->len];
+ 		cache->len += n;
+-	} else {
++	} else if (n <= cache->size) {
++		/*
++		 * The cache is big enough for the objects, but - as detected by
++		 * the comparison above - has insufficient room for them.
++		 * Flush the cache to make room for the objects.
++		 */
+ 		cache_objs = &cache->objs[0];
+ 		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
+ 		cache->len = n;
++	} else {
++		/* The request itself is too big for the cache. */
++		goto driver_enqueue_stats_incremented;
+ 	}
+ 
+ 	/* Add the objects to the cache. */
+@@ -1512,10 +1515,10 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ {
+ 	int ret;
+ 	unsigned int remaining;
+-	uint32_t index, len;
++	uint32_t index;
+ 	void **cache_objs;
+ 
+-	/* No cache provided */
++	/* No cache provided? */
+ 	if (unlikely(cache == NULL)) {
+ 		remaining = n;
+ 		goto driver_dequeue;
+@@ -1524,11 +1527,12 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	/* The cache is a stack, so copy will be in reverse order. */
+ 	cache_objs = &cache->objs[cache->len];
+ 
+-	if (__rte_constant(n) && n <= cache->len) {
++	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	if (likely(n <= cache->len)) {
+ 		/*
+-		 * The request size is known at build time, and
+-		 * the entire request can be satisfied from the cache,
+-		 * so let the compiler unroll the fixed length copy loop.
++		 * The entire request can be satisfied from the cache.
++		 * Note: If the request size is known at build time,
++		 * the compiler will unroll the fixed length copy loop.
+ 		 */
+ 		cache->len -= n;
+ 		for (index = 0; index < n; index++)
+@@ -1540,55 +1544,35 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Use the cache as much as we have to return hot objects first.
+-	 * If the request size 'n' is known at build time, the above comparison
+-	 * ensures that n > cache->len here, so omit RTE_MIN().
+-	 */
+-	len = __rte_constant(n) ? cache->len : RTE_MIN(n, cache->len);
+-	cache->len -= len;
+-	remaining = n - len;
+-	for (index = 0; index < len; index++)
++	/* Use the cache as much as we have to return hot objects first. */
++	for (index = 0; index < cache->len; index++)
+ 		*obj_table++ = *--cache_objs;
++	remaining = n - cache->len;
++	cache->len = 0;
+ 
+-	/*
+-	 * If the request size 'n' is known at build time, the case
+-	 * where the entire request can be satisfied from the cache
+-	 * has already been handled above, so omit handling it here.
+-	 */
+-	if (!__rte_constant(n) && remaining == 0) {
+-		/* The entire request is satisfied from the cache. */
+-
+-		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+-		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
+-
+-		return 0;
+-	}
+-
+-	/* if dequeue below would overflow mem allocated for cache */
+-	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
++	/* The remaining request is too big for the cache? */
++	if (unlikely(remaining > cache->size))
+ 		goto driver_dequeue;
+ 
+-	/* Fill the cache from the backend; fetch size + remaining objects. */
++	/* Fill the cache from the backend; fetch size / 2 + remaining objects. */
+ 	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs,
+-			cache->size + remaining);
++			cache->size / 2 + remaining);
+ 	if (unlikely(ret < 0)) {
+ 		/*
+-		 * We are buffer constrained, and not able to allocate
+-		 * cache + remaining.
++		 * We are buffer constrained, and not able to fetch all that.
+ 		 * Do not fill the cache, just satisfy the remaining part of
+ 		 * the request directly from the backend.
+ 		 */
+ 		goto driver_dequeue;
+ 	}
+ 
++	cache->len = cache->size / 2;
++
+ 	/* Satisfy the remaining part of the request from the filled cache. */
+-	cache_objs = &cache->objs[cache->size + remaining];
++	cache_objs = &cache->objs[cache->len + remaining];
+ 	for (index = 0; index < remaining; index++)
+ 		*obj_table++ = *--cache_objs;
+ 
+-	cache->len = cache->size;
+-
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
+ 
+@@ -1599,7 +1583,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	/* Get remaining objects directly from the backend. */
+ 	ret = rte_mempool_ops_dequeue_bulk(mp, obj_table, remaining);
+ 
+-	if (ret < 0) {
++	if (unlikely(ret < 0)) {
+ 		if (likely(cache != NULL)) {
+ 			cache->len = n - remaining;
+ 			/*
+@@ -1619,6 +1603,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 			RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
+ 			RTE_MEMPOOL_STAT_ADD(mp, get_success_objs, n);
+ 		}
++		__rte_assume(ret == 0);
+ 	}
+ 
+ 	return ret;
+@@ -1650,7 +1635,7 @@ rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
+ {
+ 	int ret;
+ 	ret = rte_mempool_do_generic_get(mp, obj_table, n, cache);
+-	if (ret == 0)
++	if (likely(ret == 0))
+ 		RTE_MEMPOOL_CHECK_COOKIES(mp, obj_table, n, 1);
+ 	rte_mempool_trace_generic_get(mp, obj_table, n, cache);
+ 	return ret;
+@@ -1741,7 +1726,7 @@ rte_mempool_get_contig_blocks(struct rte_mempool *mp,
+ 	int ret;
+ 
+ 	ret = rte_mempool_ops_dequeue_contig_blocks(mp, first_obj_table, n);
+-	if (ret == 0) {
++	if (likely(ret == 0)) {
+ 		RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
+ 		RTE_MEMPOOL_STAT_ADD(mp, get_success_blks, n);
+ 		RTE_MEMPOOL_CONTIG_BLOCKS_CHECK_COOKIES(mp, first_obj_table, n,
+-- 
+2.43.0
 
