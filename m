@@ -2,45 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAD1C021B2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 01:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E529C021B3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 02:17:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4778D402A8;
-	Fri, 21 Feb 2025 02:27:29 +0100 (CET)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 61ECA4026D;
- Fri, 21 Feb 2025 02:27:27 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YzXS70RqHztSHH;
- Fri, 21 Feb 2025 09:22:47 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
- by mail.maildlp.com (Postfix) with ESMTPS id 7AB0118009E;
- Fri, 21 Feb 2025 09:27:25 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 21 Feb 2025 09:27:25 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 21 Feb
- 2025 09:27:24 +0800
-Message-ID: <afab1498-91b8-641b-5551-b3a2b5a48e5d@huawei.com>
-Date: Fri, 21 Feb 2025 09:27:23 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 120C740A87;
+	Fri, 21 Feb 2025 03:17:06 +0100 (CET)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CA6D40A6B
+ for <dev@dpdk.org>; Fri, 21 Feb 2025 03:17:01 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4YzYfb1h3tz501g9;
+ Fri, 21 Feb 2025 10:16:55 +0800 (CST)
+Received: from szxl2zmapp06.zte.com.cn ([10.1.32.108])
+ by mse-fl1.zte.com.cn with SMTP id 51L2Gk7A044695;
+ Fri, 21 Feb 2025 10:16:46 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Fri, 21 Feb 2025 10:16:48 +0800
+X-Zmail-TransId: 3e8167b7e20b004-f0a1a
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
+Subject: [PATCH v2 00/16] net/zxdh: updated net zxdh driver
+Date: Fri, 21 Feb 2025 10:03:28 +0800
+Message-ID: <20250221020346.494392-1-wang.junlong1@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250213064134.88166-2-wang.junlong1@zte.com.cn>
+References: <20250213064134.88166-2-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH] app/testpmd: fix out-of-bound reference in offload config
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, Aman Singh <aman.deep.singh@intel.com>, Jingjing Wu
- <jingjing.wu@intel.com>, Wei Dai <wei.dai@intel.com>
-References: <20250220204427.213965-1-stephen@networkplumber.org>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20250220204427.213965-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.59]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 51L2Gk7A044695
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67B7E217.002/4YzYfb1h3tz501g9
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,187 +51,163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-LGTM,
-Acked-by: Huisong Li <lihuisong@huawei.com>
-在 2025/2/21 4:44, Stephen Hemminger 写道:
-> When configuring offloads, need to check the port id before
-> indexing into the ports[] array. This can easily be done
-> by moving the call to oh_dev_conf_get_print_err() to before
-> the checks for port stopped.
->
-> Fixes: c73a9071877a ("app/testpmd: add commands to test new offload API")
-> Cc: stable@dpdk.org
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->   app/test-pmd/cmdline.c | 57 +++++++++++++++++++++++-------------------
->   1 file changed, 31 insertions(+), 26 deletions(-)
->
-> diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-> index 86d763b66a..d059b65003 100644
-> --- a/app/test-pmd/cmdline.c
-> +++ b/app/test-pmd/cmdline.c
-> @@ -11627,7 +11627,7 @@ cmd_rx_offload_get_configuration_parsed(
->   	struct cmd_rx_offload_get_configuration_result *res = parsed_result;
->   	struct rte_eth_dev_info dev_info;
->   	portid_t port_id = res->port_id;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	struct rte_eth_conf dev_conf;
->   	uint64_t port_offloads;
->   	uint64_t queue_offloads;
-> @@ -11635,12 +11635,13 @@ cmd_rx_offload_get_configuration_parsed(
->   	int q;
->   	int ret;
->   
-> -	printf("Rx Offloading Configuration of port %d :\n", port_id);
-> -
->   	ret = eth_dev_conf_get_print_err(port_id, &dev_conf);
->   	if (ret != 0)
->   		return;
->   
-> +	port = &ports[port_id];
-> +	printf("Rx Offloading Configuration of port %d :\n", port_id);
-> +
->   	port_offloads = dev_conf.rxmode.offloads;
->   	printf("  Port :");
->   	print_rx_offloads(port_offloads);
-> @@ -11741,12 +11742,17 @@ static void
->   config_port_rx_offload(portid_t port_id, char *name, bool on)
->   {
->   	struct rte_eth_dev_info dev_info;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	uint16_t nb_rx_queues;
->   	uint64_t offload;
->   	int q;
->   	int ret;
->   
-> +	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> +	if (ret != 0)
-> +		return;
-> +
-> +	port = &ports[port_id];
->   	if (port->port_status != RTE_PORT_STOPPED) {
->   		fprintf(stderr,
->   			"Error: Can't config offload when Port %d is not stopped\n",
-> @@ -11754,10 +11760,6 @@ config_port_rx_offload(portid_t port_id, char *name, bool on)
->   		return;
->   	}
->   
-> -	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> -	if (ret != 0)
-> -		return;
-> -
->   	if (!strcmp(name, "all")) {
->   		offload = dev_info.rx_offload_capa;
->   	} else {
-> @@ -11943,10 +11945,15 @@ cmd_config_per_queue_rx_offload_parsed(void *parsed_result,
->   	struct rte_eth_dev_info dev_info;
->   	portid_t port_id = res->port_id;
->   	uint16_t queue_id = res->queue_id;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	uint64_t offload;
->   	int ret;
->   
-> +	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> +	if (ret != 0)
-> +		return;
-> +
-> +	port = &ports[port_id];
->   	if (port->port_status != RTE_PORT_STOPPED) {
->   		fprintf(stderr,
->   			"Error: Can't config offload when Port %d is not stopped\n",
-> @@ -11954,10 +11961,6 @@ cmd_config_per_queue_rx_offload_parsed(void *parsed_result,
->   		return;
->   	}
->   
-> -	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> -	if (ret != 0)
-> -		return;
-> -
->   	if (queue_id >= dev_info.nb_rx_queues) {
->   		fprintf(stderr,
->   			"Error: input queue_id should be 0 ... %d\n",
-> @@ -12145,7 +12148,7 @@ cmd_tx_offload_get_configuration_parsed(
->   	struct cmd_tx_offload_get_configuration_result *res = parsed_result;
->   	struct rte_eth_dev_info dev_info;
->   	portid_t port_id = res->port_id;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	struct rte_eth_conf dev_conf;
->   	uint64_t port_offloads;
->   	uint64_t queue_offloads;
-> @@ -12153,12 +12156,12 @@ cmd_tx_offload_get_configuration_parsed(
->   	int q;
->   	int ret;
->   
-> -	printf("Tx Offloading Configuration of port %d :\n", port_id);
-> -
->   	ret = eth_dev_conf_get_print_err(port_id, &dev_conf);
->   	if (ret != 0)
->   		return;
->   
-> +	printf("Tx Offloading Configuration of port %d :\n", port_id);
-> +	port = &ports[port_id];
->   	port_offloads = dev_conf.txmode.offloads;
->   	printf("  Port :");
->   	print_tx_offloads(port_offloads);
-> @@ -12263,12 +12266,17 @@ static void
->   config_port_tx_offload(portid_t port_id, char *name, bool on)
->   {
->   	struct rte_eth_dev_info dev_info;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	uint16_t nb_tx_queues;
->   	uint64_t offload;
->   	int q;
->   	int ret;
->   
-> +	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> +	if (ret != 0)
-> +		return;
-> +
-> +	port = &ports[port_id];
->   	if (port->port_status != RTE_PORT_STOPPED) {
->   		fprintf(stderr,
->   			"Error: Can't config offload when Port %d is not stopped\n",
-> @@ -12276,10 +12284,6 @@ config_port_tx_offload(portid_t port_id, char *name, bool on)
->   		return;
->   	}
->   
-> -	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> -	if (ret != 0)
-> -		return;
-> -
->   	if (!strcmp(name, "all")) {
->   		offload = dev_info.tx_offload_capa;
->   	} else {
-> @@ -12469,10 +12473,15 @@ cmd_config_per_queue_tx_offload_parsed(void *parsed_result,
->   	struct rte_eth_dev_info dev_info;
->   	portid_t port_id = res->port_id;
->   	uint16_t queue_id = res->queue_id;
-> -	struct rte_port *port = &ports[port_id];
-> +	struct rte_port *port;
->   	uint64_t offload;
->   	int ret;
->   
-> +	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> +	if (ret != 0)
-> +		return;
-> +
-> +	port = &ports[port_id];
->   	if (port->port_status != RTE_PORT_STOPPED) {
->   		fprintf(stderr,
->   			"Error: Can't config offload when Port %d is not stopped\n",
-> @@ -12480,10 +12489,6 @@ cmd_config_per_queue_tx_offload_parsed(void *parsed_result,
->   		return;
->   	}
->   
-> -	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-> -	if (ret != 0)
-> -		return;
-> -
->   	if (queue_id >= dev_info.nb_tx_queues) {
->   		fprintf(stderr,
->   			"Error: input queue_id should be 0 ... %d\n",
+
+
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjI6DQogIC0gbW9kaWZ5IENJIHNvbWUgZXJyb3IgcmVzdWx0cyhjaGVja3BhdGNoZXMgd2Fybmlu
+Z3PjgIFXcm9uZyBoZWFkbGluZSBmb3JtYXQpDQogIC0gZml4IHdhcm5pbmdzIHdoZW4gZW5hYmxl
+IGV4dHJhIHdhcm5pbmdzLg0KICAtIG1vZGlmeSBhcHBseSBtZW1jcHkgc2NyaXB0IGZvciBjb2Nj
+aW5lbGxlIGFuZCB1bm5lY2Vzc2FyeSBpbml0IGFuZA0KICAgIHVubmVjY2Vzc2FyeSBjYXN0IG9m
+IHZvaWQgd2hlbiB1c2UgbWFsbG9jLg0KDQpWMToNCiAgLSB1cGRhdGVkIG5ldCB6eGRoIGRyaXZl
+ci4NCiAgICBvcHRpbWl6ZSBpbml0IGFuZCBzb21lIG9wcy4NCiAgICBwcm92aWRlZCBjc3VtL2xy
+by90c28g44CBZXh0ZW5kIHN0YXRz44CBZndfdmVyc2lvbuOAgW1vZHVsZV9pbmZvIOOAgW1ldGVy
+LCBldGMuDQoNCkp1bmxvbmcgV2FuZyAoMTYpOg0KICBuZXQvenhkaDogb3B0aW1pemUgbnAgZHRi
+IGNoYW5uZWwgaW5pdGlhbGl6YXRpb24NCiAgbmV0L3p4ZGg6IG9wdGltaXplIHF1ZXVlIHJlcyBh
+bGxvYy9mcmVlIHByb2Nlc3MNCiAgbmV0L3p4ZGg6IG9wdGltaXplIGxpbmsgdXBkYXRlIHByb2Nl
+c3MNCiAgbmV0L3p4ZGg6IHVwZGF0ZSBSeC9UeCB0byBsYXRlc3QNCiAgbmV0L3p4ZGg6IHByb3Zp
+ZGVkIFBGL1ZGIG1zZyBpbnRyIGNhbGxiYWNrDQogIG5ldC96eGRoOiBvcHRpbWl6ZSBNQUMgb3Bz
+DQogIG5ldC96eGRoOiBvcHRpbWl6ZSBwcm9taXNjIG9wcw0KICBuZXQvenhkaDogb3B0aW1pemUg
+VkxBTiBmaWx0ZXIvb2ZmbG9hZCBvcHMNCiAgbmV0L3p4ZGg6IG9wdGltaXplIFJTUy9SRVRBIGhh
+c2ggY29uZmlnL3VwZGF0ZS9nZXQNCiAgbmV0L3p4ZGg6IG9wdGltaXplIE1UVSBzZXQgb3BzDQog
+IG5ldC96eGRoOiBvcHRpbWl6ZSBiYXNpYyBzdGF0cyBvcHMNCiAgbmV0L3p4ZGg6IHByb3ZpZGVk
+IENTVU0vVFNPL0xSTyBjb25maWcNCiAgbmV0L3p4ZGg6IHByb3ZpZGVkIHJ4cS90eHEgaW5mbyBn
+ZXQgaW1wbGVtZW50YXRpb25zDQogIG5ldC96eGRoOiBwcm92aWRlIGV4dGVuZGVkIHN0YXRzIG9w
+cyBpbXBsZW1lbnRhdGlvbnMNCiAgbmV0L3p4ZGg6IHByb3ZpZGUgcHR5cGVzIEZXIHZlcnNpb24g
+RUVQUk9NIG9wcw0KICBuZXQvenhkaDogcHJvdmlkZSBtZXRlciBvcHMgaW1wbGVtZW50YXRpb25z
+DQoNCiBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvenhkaC5pbmkgIHwgICAxMSArDQogZG9jL2d1
+aWRlcy9uaWNzL3p4ZGgucnN0ICAgICAgICAgICB8ICAgIDUgKw0KIGRyaXZlcnMvbmV0L3p4ZGgv
+bWVzb24uYnVpbGQgICAgICAgfCAgICAxICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfY29tbW9u
+LmMgICAgIHwgICA0NiArLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9jb21tb24uaCAgICAgfCAg
+ICAzICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2LmMgICAgIHwgIDcyNCArKysrKysr
+KysrKysrLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5oICAgICB8ICAgNjkgKy0N
+CiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jIHwgIDkxNiArKysrKysrKysrKysr
+KysrKystLS0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5oIHwgICA1MyArLQ0K
+IGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9tc2cuYyAgICAgICAgfCAgOTg1ICsrKysrKysrKysrKysr
+KysrKysrKy0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmggICAgICAgIHwgIDE3NSArKyst
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX210ci5jICAgICAgICB8IDEyMjMgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9tdHIuaCAgICAgICAgfCAg
+MTE0ICsrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jICAgICAgICAgfCAgODExICsrKysr
+KysrKysrKysrKystLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5oICAgICAgICAgfCAgMjYy
+ICsrKysrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9wY2kuYyAgICAgICAgfCAgIDEwIC0NCiBk
+cml2ZXJzL25ldC96eGRoL3p4ZGhfcXVldWUuYyAgICAgIHwgIDEzMiArLS0NCiBkcml2ZXJzL25l
+dC96eGRoL3p4ZGhfcXVldWUuaCAgICAgIHwgIDExOCArLS0NCiBkcml2ZXJzL25ldC96eGRoL3p4
+ZGhfcnh0eC5jICAgICAgIHwgIDY5NSArKysrKysrKystLS0tLS0tDQogZHJpdmVycy9uZXQvenhk
+aC96eGRoX3J4dHguaCAgICAgICB8ICAgMjcgKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF90YWJs
+ZXMuYyAgICAgfCAgMzc4ICsrKysrKystLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF90YWJsZXMu
+aCAgICAgfCAgMjIwICsrKy0tDQogMjIgZmlsZXMgY2hhbmdlZCwgNjA0MCBpbnNlcnRpb25zKCsp
+LCA5MzggZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L3p4ZGgv
+enhkaF9tdHIuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXRy
+LmgNCg0KLS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjI6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO21vZGlmeSZuYnNwO0NJJm5ic3A7c29tZSZuYnNw
+O2Vycm9yJm5ic3A7cmVzdWx0cyhjaGVja3BhdGNoZXMmbmJzcDt3YXJuaW5nc+OAgVdyb25nJm5i
+c3A7aGVhZGxpbmUmbmJzcDtmb3JtYXQpPGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO2ZpeCZuYnNw
+O3dhcm5pbmdzJm5ic3A7d2hlbiZuYnNwO2VuYWJsZSZuYnNwO2V4dHJhJm5ic3A7d2FybmluZ3Mu
+PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO21vZGlmeSZuYnNwO2FwcGx5Jm5ic3A7bWVtY3B5Jm5i
+c3A7c2NyaXB0Jm5ic3A7Zm9yJm5ic3A7Y29jY2luZWxsZSZuYnNwO2FuZCZuYnNwO3VubmVjZXNz
+YXJ5Jm5ic3A7aW5pdCZuYnNwO2FuZDxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VubmVj
+Y2Vzc2FyeSZuYnNwO2Nhc3QmbmJzcDtvZiZuYnNwO3ZvaWQmbmJzcDt3aGVuJm5ic3A7dXNlJm5i
+c3A7bWFsbG9jLjxiciAvPg08YnIgLz5WMTo8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7dXBkYXRl
+ZCZuYnNwO25ldCZuYnNwO3p4ZGgmbmJzcDtkcml2ZXIuPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7b3B0aW1pemUmbmJzcDtpbml0Jm5ic3A7YW5kJm5ic3A7c29tZSZuYnNwO29wcy48YnIg
+Lz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtwcm92aWRlZCZuYnNwO2NzdW0vbHJvL3RzbyZuYnNw
+O+OAgWV4dGVuZCZuYnNwO3N0YXRz44CBZndfdmVyc2lvbuOAgW1vZHVsZV9pbmZvJm5ic3A744CB
+bWV0ZXIsJm5ic3A7ZXRjLjxiciAvPg08YnIgLz5KdW5sb25nJm5ic3A7V2FuZyZuYnNwOygxNik6
+PGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7b3B0aW1pemUmbmJzcDtucCZuYnNwO2R0
+YiZuYnNwO2NoYW5uZWwmbmJzcDtpbml0aWFsaXphdGlvbjxiciAvPiZuYnNwOyZuYnNwO25ldC96
+eGRoOiZuYnNwO29wdGltaXplJm5ic3A7cXVldWUmbmJzcDtyZXMmbmJzcDthbGxvYy9mcmVlJm5i
+c3A7cHJvY2VzczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXplJm5ic3A7
+bGluayZuYnNwO3VwZGF0ZSZuYnNwO3Byb2Nlc3M8YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDom
+bmJzcDt1cGRhdGUmbmJzcDtSeC9UeCZuYnNwO3RvJm5ic3A7bGF0ZXN0PGJyIC8+Jm5ic3A7Jm5i
+c3A7bmV0L3p4ZGg6Jm5ic3A7cHJvdmlkZWQmbmJzcDtQRi9WRiZuYnNwO21zZyZuYnNwO2ludHIm
+bmJzcDtjYWxsYmFjazxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXplJm5i
+c3A7TUFDJm5ic3A7b3BzPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7b3B0aW1pemUm
+bmJzcDtwcm9taXNjJm5ic3A7b3BzPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7b3B0
+aW1pemUmbmJzcDtWTEFOJm5ic3A7ZmlsdGVyL29mZmxvYWQmbmJzcDtvcHM8YnIgLz4mbmJzcDsm
+bmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO1JTUy9SRVRBJm5ic3A7aGFzaCZuYnNw
+O2NvbmZpZy91cGRhdGUvZ2V0PGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7b3B0aW1p
+emUmbmJzcDtNVFUmbmJzcDtzZXQmbmJzcDtvcHM8YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDom
+bmJzcDtvcHRpbWl6ZSZuYnNwO2Jhc2ljJm5ic3A7c3RhdHMmbmJzcDtvcHM8YnIgLz4mbmJzcDsm
+bmJzcDtuZXQvenhkaDombmJzcDtwcm92aWRlZCZuYnNwO0NTVU0vVFNPL0xSTyZuYnNwO2NvbmZp
+ZzxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO3Byb3ZpZGVkJm5ic3A7cnhxL3R4cSZu
+YnNwO2luZm8mbmJzcDtnZXQmbmJzcDtpbXBsZW1lbnRhdGlvbnM8YnIgLz4mbmJzcDsmbmJzcDtu
+ZXQvenhkaDombmJzcDtwcm92aWRlJm5ic3A7ZXh0ZW5kZWQmbmJzcDtzdGF0cyZuYnNwO29wcyZu
+YnNwO2ltcGxlbWVudGF0aW9uczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO3Byb3Zp
+ZGUmbmJzcDtwdHlwZXMmbmJzcDtGVyZuYnNwO3ZlcnNpb24mbmJzcDtFRVBST00mbmJzcDtvcHM8
+YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDtwcm92aWRlJm5ic3A7bWV0ZXImbmJzcDtv
+cHMmbmJzcDtpbXBsZW1lbnRhdGlvbnM8YnIgLz4NPGJyIC8+Jm5ic3A7ZG9jL2d1aWRlcy9uaWNz
+L2ZlYXR1cmVzL3p4ZGguaW5pJm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzExJm5ic3A7
+KzxiciAvPiZuYnNwO2RvYy9ndWlkZXMvbmljcy96eGRoLnJzdCZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDs1Jm5ic3A7KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvbWVzb24u
+YnVpbGQmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7MSZuYnNwOys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhf
+Y29tbW9uLmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7
+NDYmbmJzcDsrLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9jb21tb24uaCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDszJm5ic3A7
+KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDs3MjQmbmJzcDsrKysrKysrKysrKysrLS0tPGJy
+IC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5oJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzY5Jm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2
+ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jJm5ic3A7fCZuYnNwOyZuYnNwOzkxNiZuYnNw
+OysrKysrKysrKysrKysrKysrKy0tLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9l
+dGhkZXZfb3BzLmgmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7NTMmbmJzcDsrLTxiciAvPiZuYnNw
+O2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9tc2cuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDs5ODUmbmJzcDsrKysrKysrKysrKysrKysr
+KysrKystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5oJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzE3NSZuYnNw
+OysrKy08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXRyLmMmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTIyMyZuYnNwOysrKysr
+KysrKysrKysrKysrKysrKysrKysrKys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhf
+bXRyLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5i
+c3A7Jm5ic3A7MTE0Jm5ic3A7KysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX25w
+LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8
+Jm5ic3A7Jm5ic3A7ODExJm5ic3A7KysrKysrKysrKysrKysrKy0tPGJyIC8+Jm5ic3A7ZHJpdmVy
+cy9uZXQvenhkaC96eGRoX25wLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7MjYyJm5ic3A7KysrKysrPGJyIC8+Jm5ic3A7
+ZHJpdmVycy9uZXQvenhkaC96eGRoX3BjaS5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzEwJm5ic3A7LTxiciAvPiZuYnNw
+O2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzEzMiZuYnNwOystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0
+L3p4ZGgvenhkaF9xdWV1ZS5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZu
+YnNwOyZuYnNwOzExOCZuYnNwOystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9y
+eHR4LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5i
+c3A7Njk1Jm5ic3A7KysrKysrKysrLS0tLS0tLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgv
+enhkaF9yeHR4LmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5i
+c3A7Jm5ic3A7Jm5ic3A7MjcmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRo
+X3RhYmxlcy5jJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzM3OCZu
+YnNwOysrKysrKystLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF90YWJsZXMuaCZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyMjAmbmJzcDsrKystLTxi
+ciAvPiZuYnNwOzIyJm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzYwNDAmbmJzcDtpbnNl
+cnRpb25zKCspLCZuYnNwOzkzOCZuYnNwO2RlbGV0aW9ucygtKTxiciAvPiZuYnNwO2NyZWF0ZSZu
+YnNwO21vZGUmbmJzcDsxMDA2NDQmbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXRyLmM8YnIg
+Lz4mbmJzcDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9uZXQvenhk
+aC96eGRoX210ci5oPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxiciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
+
