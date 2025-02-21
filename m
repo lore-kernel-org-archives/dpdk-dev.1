@@ -2,36 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E18C021B3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 20:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC6CC021B3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 20:31:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A29A410E8;
-	Fri, 21 Feb 2025 21:27:31 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 19E65410E6
- for <dev@dpdk.org>; Fri, 21 Feb 2025 21:27:30 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B9DE620989
- for <dev@dpdk.org>; Fri, 21 Feb 2025 21:27:29 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 21 Feb 2025 21:27:29 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [RFC PATCH v20] mempool: fix mempool cache size
-Date: Fri, 21 Feb 2025 20:27:22 +0000
-Message-ID: <20250221202722.236360-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240920163203.840770-1-mb@smartsharesystems.com>
-References: <20240920163203.840770-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AD515410E8;
+	Fri, 21 Feb 2025 21:31:52 +0100 (CET)
+Received: from CY4PR05CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11020130.outbound.protection.outlook.com
+ [40.93.198.130]) by mails.dpdk.org (Postfix) with ESMTP id 3314B410E6
+ for <dev@dpdk.org>; Fri, 21 Feb 2025 21:31:51 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xJ/YAaMVfT10tajXT04lg64ThOBaI2cUauzI9OoPBPPpvux144jPOYLq+ssw2tqsusnSz1wxw9IpnFCO1WVM3KnenVcsrTFq8Hq5JGsly8w2Cj0yp2cztoOwBsfvreoe1PGV9yeQHky+bLdqT9AWXsoCYLl1VdekE+FNCA5ea8yY/1mh8BYebZH3PLj+5RjCz3/f2elqrCuMv4RGxUGyFXpLzCp63qQZic8cuKFcz9S6TbRBP934EQc35HxMATDMb62fmoYLk8gmtJkqN+gHUb/g5+T2orTwKXOUERz2I/9q7H54YIe0Flrmq2os2h1x5qTHlY6a1+m7+x8dQfxotw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VuvfBaWa4jn0aC9VaDqVBZVWVGtkR8kSVfN7/MshKT0=;
+ b=KYfk1Vuctslgxca2uTvRKuuSpX9fPjY8Q/gtgYl0RHWAe6QuaI/4CrkffV/4qQPnURxv2+wSk7gda5VzoET89mYGkHOXiOADuGn2cNUKzlhSZbWGqmSUDJ6MfOimoVFoqmH7Nsph/8xx7aLYMMUkpvj/A0DZTTiDpIvKLWfFeuXPN/rl+KqWm28fCWrFQ7rhLNv3j+tykQ17sJfV9+8dIR3U/NEgPGToENeV3jY27eVtsLWYG2rG6dntwH39pFw7SZELth1YMPKRJBz+FW4356d4fJTspARqTyZ4ky1nbI5GoWc9j9UZiz5ApMib3rnSW295rade75p4obFNdcpFWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VuvfBaWa4jn0aC9VaDqVBZVWVGtkR8kSVfN7/MshKT0=;
+ b=aif/jnt+20uPy1ENFxbOydvS/EVfkEi2RpicL+9IJF4eA9X2IhOkjHJu63sg1kf6AoYKEuXpjtO9xVZ14em3rCb77NVKgkKaKM1tgeDMX2KKjQwGvvNDER7TJNO2szYF/U4s4DNAjnXQqrRBaWDX3nl8RlGkrC0jRczDdY3X6iY=
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
+ by SA1PR21MB2067.namprd21.prod.outlook.com (2603:10b6:806:1c2::10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.9; Fri, 21 Feb
+ 2025 20:31:48 +0000
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff%4]) with mapi id 15.20.8489.010; Fri, 21 Feb 2025
+ 20:31:48 +0000
+From: Long Li <longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "longli@linuxonhyperv.com"
+ <longli@linuxonhyperv.com>
+CC: Wei Hu <weh@microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [Patch v3] net/mana: use mana_local_data for
+ tracking usage data for primary process
+Thread-Topic: [EXTERNAL] Re: [Patch v3] net/mana: use mana_local_data for
+ tracking usage data for primary process
+Thread-Index: AQHbhJzH55STPovgMkOCG5ZWEZXKhrNSMLYw
+Date: Fri, 21 Feb 2025 20:31:48 +0000
+Message-ID: <SA6PR21MB42311170DC4057B9D20C6427CEC72@SA6PR21MB4231.namprd21.prod.outlook.com>
+References: <1740094322-10919-1-git-send-email-longli@linuxonhyperv.com>
+ <20250221121114.41e3e8d8@hermes.local>
+In-Reply-To: <20250221121114.41e3e8d8@hermes.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=478e0fc8-6962-4da7-9a36-d4be66b7dc8d;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-02-21T20:12:45Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|SA1PR21MB2067:EE_
+x-ms-office365-filtering-correlation-id: 8a7c753f-4837-463f-7e63-08dd52b6c434
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|10070799003|1800799024|366016|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?w8JYuSsOXONWORgiqOMz7RnzT+JR3Wph/M/Lb8pOfxeFkgNlw0LuVs6B12XK?=
+ =?us-ascii?Q?Yc8DI0pLv0KxccyTYF3lOeOLR4XpbeUbPS48OX5FVTzKDvruj55rHUbDjqGi?=
+ =?us-ascii?Q?KscwPeuYCbufz+CkpGrmBOzrv4RASZAaEj9Gq2Ps0XW2bLKvnoUucFShWHBn?=
+ =?us-ascii?Q?bBB4da0NuWQ4Qn/QyrJgMzjN2ZZ104RaduB5fTwzyjqh4T7BXXTeBeC0pmzR?=
+ =?us-ascii?Q?bTnhaBnxPWSo+4ewndY5EJMjDR+F4yatuOIOWcxf3731QxTzlhqm1+Yr6cKD?=
+ =?us-ascii?Q?XP65vqxFRm4i5slgzCK521CJYcvHHW4pGrrpV+97fV2+ODvDKmIyZNly+wRP?=
+ =?us-ascii?Q?omHHFA0U/wo6U2FpdtGaXNONS0NQW7Gk7s66yiRCy1Q0xOesdYrzFz9lBRvp?=
+ =?us-ascii?Q?ySOmcRsqMwuTnwH52aw6MiAJakHQqj8Qv025q0jf4k88H/svOFUoWOQekN+T?=
+ =?us-ascii?Q?T6VSRFeoqfN0/LXLw/uwEYG5l/wlEoUGfSQkG36pVnz3+w9kTSpfZzBIfuL6?=
+ =?us-ascii?Q?BYjYiKj6n3BGWnrZxA9UBDLvaMHSNKLvI39OdPg3QsaNSq7T2B5RN2H94dAj?=
+ =?us-ascii?Q?Wubbqm2RVtETbjb3JDYjvCRn/2E0rdSGyECPSnId5Rp3olRPJapyHJiA4653?=
+ =?us-ascii?Q?x5qzXJ6GtxZXmzObDQonrXTSyTYKMw2kSe7CeoTRyc0Ji6dKECqlOdnkgxN4?=
+ =?us-ascii?Q?ezK7aLrA9HrMw8GOjZHpsKvj1oBeR06/VXQnhF6kIoQdS0nHyHzR+2ZcpxwU?=
+ =?us-ascii?Q?1dwjIIQAnCTFJZoDQveF1/hNCOE6JzO0DaznaZ0pqyiuMb13YGGzpB+4eEtU?=
+ =?us-ascii?Q?0QLbgAN8XTj7Fbt9F6FCgWAUFkuCBcVTxuRWO3OjaVSkNNH5KdZ/hSFPdl6r?=
+ =?us-ascii?Q?SSUAqUxVHeeJfSSY2npOMz7Hq8nrKCHG1uyUtz2sF8OjaDIt5STsnFivv4o4?=
+ =?us-ascii?Q?0FnK4xDWWyaFnAaBPDlNeSymFY0ykCc1Jv2F6gJk6JgGivNoeoFEPTk0fjJe?=
+ =?us-ascii?Q?AkyRWgrCYfA6gPKmp25j91mox+KyzjDDk6R2Ijt+ZVBVWYp/sF4+oLFtg7XK?=
+ =?us-ascii?Q?gKKGXb2bt+A7c9a/K+PLUpDVno/Rvj5h1vxu5T/7pu/EfJiMon/iE6QmfloF?=
+ =?us-ascii?Q?U6rFTP4sH8gVgqIaFzB7IRKh7e8Ces7VL7K2NxeQo2MEr9ot5Ps/p8QNfPnQ?=
+ =?us-ascii?Q?1TJR7BcbxHhzz88JSkppbAw26dcsQmuV0YxTk7g/FdUVIzqP/Rxumdw6+s7U?=
+ =?us-ascii?Q?FfR+MgAYZsiVXGhHBRE+yD3JVxS58/+rjpuSRWzTZN++u53t2et0ftiKNsc/?=
+ =?us-ascii?Q?2JqSgxehHRPQSTAyF37QBtAN3gOzUdIhV5TnwNgwii0Rdz4HAU2KzNA/PdFI?=
+ =?us-ascii?Q?pl+0NYawaPkcS42ZYhe8UbuxZXgLLINmfpxRuSDgSHpIXhgCbB0FHDi1GcEg?=
+ =?us-ascii?Q?f3tnP3tUQz131lZQTSzAClVrb0xOEira?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA6PR21MB4231.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(38070700018); DIR:OUT;
+ SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?PaKVK0ca93UEElp0Lc73Pr8mN4tAAb4whV9OHal3F14amoMAYrQiiXrvLs7b?=
+ =?us-ascii?Q?y9VRtI8yKTQ6O2cyVg7/3rhx77IoUlTDjRHngG9QwUJxvEYmazURoWOumnUz?=
+ =?us-ascii?Q?+gPD/7I7gv/jlhHjzsi0s/2F88QHwS+4SpiMzI7FYzZz5z3yTNcZN1ZKGXWn?=
+ =?us-ascii?Q?lTxMwrfIq5Fry9O3cBmrsdXL016ouZjH5xZXQmgBzE4Uaw/xtYcQfUCv+RgU?=
+ =?us-ascii?Q?1HTrVndnp+o8vNQr0NiVde7XoVYMA5c87rtuVSdheT3DbWp5fJy4RiWxLqul?=
+ =?us-ascii?Q?/DOJekLqkbdG6drj4nh+WDVWyfwUch+R0gyotsfkFVdrCNcJ+4LpWtarjeM0?=
+ =?us-ascii?Q?MrAw7gEF3cPA0oTpkv4UdQrhtB9OsRfORZoSh8h4IfPReexIk1fqPLqvbTZm?=
+ =?us-ascii?Q?HidphCsA/cZ3HDFwOoCti9Y0FStPQULf+UOBIhRXgj08AeVgD7IHB9ayisJe?=
+ =?us-ascii?Q?YaVhTcTZKPbHXn/zSgFJPEuf/jyGKiyRCfa01AkFAWUeBGVxPrTWxz6Nd/4X?=
+ =?us-ascii?Q?S4ikCMHBPAjrvSOxg88/tUM/gH1kZFZwDdvxew1scOx4jR+9HRS0F9k1As3X?=
+ =?us-ascii?Q?UUOVXjohiQllKAkAFyBRLu3UkI+rRllnY2MqGU7qQWVE8TUfwr+uOwcG++ea?=
+ =?us-ascii?Q?BYNyCRElYc2tjOydc77ZL9ZwgyFtAjzem/qJTFeRfqQJ/CT58awJmv2VsMnM?=
+ =?us-ascii?Q?BrZh2goyEOvSDW7QkyKXpeJhG5VO5iiu49nYFlj+/5uodb4NoAjPqzyLWGFD?=
+ =?us-ascii?Q?DSf1jwquXvCmK9RZJzVX7Uk1FDpAU5oLPz1cGZpag2XtjTSjlQ9JeDiF0ARU?=
+ =?us-ascii?Q?ZPsNAqVnuOsRGE4K+K4Ks4PZdBuQTi0A//t/W3MZsj/U9CQy6IN7jN2Urmfe?=
+ =?us-ascii?Q?71XeWsEmrJ83QQNeJtP2X7hqQpPEMaqnYZLL1GSE8U/h1wKMFkWPVLhpSkZJ?=
+ =?us-ascii?Q?PNGJJuDHXZ5OTrUl7K1qlg4VzQJbWRAOtYcWzOprHyutO/HRfLnHNdWjQETc?=
+ =?us-ascii?Q?7lb5v35jE9h7dekUHSo1QLOMOY3eeLs8Mm0XQn/HrOCiqLDlPgLS3S7vzPiW?=
+ =?us-ascii?Q?45+4+v8bpV+PPSaBizd4ZXEjM37hgkp3hlgcNp1YbKCjJz8up7TX6AYUVPSL?=
+ =?us-ascii?Q?Hgqg+czOlBbb/L32T6Fa7OiAYn585S1Ce+E1L/+Zw+iK3n+AxC0CFUyKJLkn?=
+ =?us-ascii?Q?55w8b3c2t3DRHObINuMGdfWVX/2jmaoIVu6vAyxQ7uySSjvdlTB5xawqIOjv?=
+ =?us-ascii?Q?3YEUCr/Phy16ybRj62swCxppLD20c9CoF2mMWhlvsvdStf0nowocY8Qr01aM?=
+ =?us-ascii?Q?B6GbZ2nc5//TMoaajeL8UA86692pMSzlczsdL3ZZq93J+48WLOHD2y5952F9?=
+ =?us-ascii?Q?zeJP8Holg2rmDc69hPVh2Edx/g4K0sr0RjkvNHiD+DJjwrSkZZal3gVwmy8R?=
+ =?us-ascii?Q?M+DaFh2sF3dD91tPG8sNYRniwMh/eKsvT70OdEOjqPfclfkIf1rwuu8Mhc/U?=
+ =?us-ascii?Q?cjdmlWkcmNjGv3P1eSh7QfR4d6xN5iFEbBr0uZpCJfu6ntGDOlsD33KfU+Oi?=
+ =?us-ascii?Q?8YkSCKMg4YkOQLpsC+Sx3rr86J7AzW9CGYrZRSw/PF9z0sJY2DVOEokv4cEv?=
+ =?us-ascii?Q?Khtbalifg0il7JqnacjvJCgIVvhKykFDptW18v469mIY?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 21 Feb 2025 20:27:29.0449 (UTC)
- FILETIME=[07499190:01DB849F]
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a7c753f-4837-463f-7e63-08dd52b6c434
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 20:31:48.5161 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LUqb9AfQXzIQkNOy61VtWgIQ+okqHTQJ1F7Zz77B+lmHZi+OP41uGV1ApUsPyIKwLts7gDVsSEUGSp4/fjVkbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB2067
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,408 +154,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-NOTE: THIS VERSION DOES NOT BREAK THE API/ABI.
+> Subject: [EXTERNAL] Re: [Patch v3] net/mana: use mana_local_data for trac=
+king
+> usage data for primary process
+>=20
+> On Thu, 20 Feb 2025 15:32:02 -0800
+> longli@linuxonhyperv.com wrote:
+>=20
+> > From: Long Li <longli@microsoft.com>
+> >
+> > The driver uses mana_shared_data for tracking usage count for primary
+> > process. This is not correct as the mana_shared_data is allocated by
+> > the primary and is meant to track usage of secondary process by the
+> > primary process. And it creates a race condition when the device is
+> > removed because the counter is no longer available if this shared
+> > memory is freed.
+> >
+> > Move the usage count tracking to mana_local_data and fix the race
+> > condition in mana_pci_remove().
+> >
+> > Fixes: 517ed6e2d590 ("net/mana: add basic driver with build
+> > environment")
+> > Signed-off-by: Long Li <longli@microsoft.com>
+>=20
+> Ok, mind if I break the long lines when merging?
 
-First, a per-lcore mempool cache could hold 50 % more than the cache's
-size.
-Since application developers do not expect this behavior, it could lead to
-application failure.
-This patch fixes this bug without breaking the API/ABI, by using the
-mempool cache's "size" instead of the "flushthresh" as the threshold for
-how many objects can be held in a mempool cache.
-Note: The "flushthresh" field can be removed from the cache structure in a
-future API/ABI breaking release, which must be announced in advance.
+Yes, please do.
 
-Second, requests to fetch a number of objects from the backend driver
-exceeding the cache's size (but less than RTE_MEMPOOL_CACHE_MAX_SIZE) were
-copied twice; first to the cache, and from there to the destination.
-Such superfluous copying through the mempool cache degrades the
-performance in these cases.
-This patch also fixes this misbehavior, so when fetching more objects from
-the driver than the mempool cache's size, they are fetched directly to the
-destination.
+Sorry I didn't catch this earlier. Will do next time.
 
-The internal macro to calculate the cache flush threshold was updated to
-reflect the new flush threshold of 1 * size instead of 1.5 * size.
-
-The function rte_mempool_do_generic_put() for adding objects to a mempool
-was modified as follows:
-- When determining if the cache has sufficient room for the request
-  without flushing, compare to the cache's size (cache->size) instead of
-  the obsolete flush threshold (cache->flushthresh).
-- The comparison for the request being too big, which is considered
-  unlikely, was moved down and out of the code path where the cache has
-  sufficient room for the added objects, which is considered the most
-  likely code path.
-- Added __rte_assume() about the cache size, for compiler optimization
-  when "n" is compile time constant.
-- Added __rte_assume() about "ret", for compiler optimization of
-  rte_mempool_generic_get() considering the return value of
-  rte_mempool_do_generic_get().
-
-The function rte_mempool_do_generic_get() for getting objects from a
-mempool was refactored as follows:
-- Handling a request for a constant number of objects was merged with
-  handling a request for a nonconstant number of objects, and a note about
-  compiler loop unrolling in the constant case was added.
-- When determining if the remaining part of a request to be dequeued from
-  the backend is too big to be copied via the cache, compare to the
-  cache's size (cache->size) instead of the max possible cache size
-  (RTE_MEMPOOL_CACHE_MAX_SIZE).
-- When refilling the cache, the target fill level was reduced from the
-  full cache size to half the cache size. This allows some room for a
-  put() request following a get() request where the cache was refilled,
-  without "flapping" between draining and refilling the entire cache.
-  Note: Before this patch, the distance between the flush threshold and
-  the refill level was also half a cache size.
-- A copy of cache->len in the local variable "len" is no longer needed,
-  so it was removed.
-- Added a group of __rte_assume()'s, for compiler optimization when "n" is
-  compile time constant.
-
-Some comments were also updated.
-
-Furthermore, some likely()/unlikely()'s were added to a few inline
-functions; most prominently rte_mempool_default_cache(), which is used by
-both rte_mempool_put_bulk() and rte_mempool_get_bulk().
-
-And finally, RTE_ASSERT()'s were added to check the return values of the
-mempool driver dequeue() and enqueue() operations.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v20:
-* Added more __rte_assume()'s to fix build error with GCC 11.4.1 and
-  GCC 11.5.0 in call to mempool_get_bulk() with compile time constant "n"
-  larger than RTE_MEMPOOL_CACHE_MAX_SIZE.
-v19:
-* Added __rte_assume()'s and RTE_ASSERT()'s.
-v18:
-* Start over from scratch, to avoid API/ABI breakage.
-v17:
-* Update rearm in idpf driver.
-v16:
-* Fix bug in rte_mempool_do_generic_put() regarding criteria for flush.
-v15:
-* Changed back cache bypass limit from n >= RTE_MEMPOOL_CACHE_MAX_SIZE to
-  n > RTE_MEMPOOL_CACHE_MAX_SIZE.
-* Removed cache size limit from serving via cache.
-v14:
-* Change rte_mempool_do_generic_put() back from add-then-flush to
-  flush-then-add.
-  Keep the target cache fill level of ca. 1/2 size of the cache.
-v13:
-* Target a cache fill level of ca. 1/2 size of the cache when flushing and
-  refilling; based on an assumption of equal probability of get and put,
-  instead of assuming a higher probability of put being followed by
-  another put, and get being followed by another get.
-* Reduce the amount of changes to the drivers.
-v12:
-* Do not init mempool caches with size zero; they don't exist.
-  Bug introduced in v10.
-v11:
-* Removed rte_mempool_do_generic_get_split().
-v10:
-* Initialize mempool caches, regardless of size zero.
-  This to fix compiler warning about out of bounds access.
-v9:
-* Removed factor 1.5 from description of cache_size parameter to
-  rte_mempool_create().
-* Refactored rte_mempool_do_generic_put() to eliminate some gotos.
-  No functional change.
-* Removed check for n >= RTE_MEMPOOL_CACHE_MAX_SIZE in
-  rte_mempool_do_generic_get(); it caused the function to fail when the
-  request could not be served from the backend alone, but it could be
-  served from the cache and the backend.
-* Refactored rte_mempool_do_generic_get_split() to make it shorter.
-* When getting objects directly from the backend, use burst size aligned
-  with either CPU cache line size or mempool cache size.
-v8:
-* Rewrote rte_mempool_do_generic_put() to get rid of transaction
-  splitting. Use a method similar to the existing put method with fill
-  followed by flush if overfilled.
-  This also made rte_mempool_do_generic_put_split() obsolete.
-* When flushing the cache as much as we can, use burst size aligned with
-  either CPU cache line size or mempool cache size.
-v7:
-* Increased max mempool cache size from 512 to 1024 objects.
-  Mainly for CI performance test purposes.
-  Originally, the max mempool cache size was 768 objects, and used a fixed
-  size array of 1024 objects in the mempool cache structure.
-v6:
-* Fix v5 incomplete implementation of passing large requests directly to
-  the backend.
-* Use memcpy instead of rte_memcpy where compiler complains about it.
-* Added const to some function parameters.
-v5:
-* Moved helper functions back into the header file, for improved
-  performance.
-* Pass large requests directly to the backend. This also simplifies the
-  code.
-v4:
-* Updated subject to reflect that misleading names are considered bugs.
-* Rewrote patch description to provide more details about the bugs fixed.
-  (Mattias Rönnblom)
-* Moved helper functions, not to be inlined, to mempool C file.
-  (Mattias Rönnblom)
-* Pass requests for n >= RTE_MEMPOOL_CACHE_MAX_SIZE objects known at build
-  time directly to backend driver, to avoid calling the helper functions.
-  This also fixes the compiler warnings about out of bounds array access.
-v3:
-* Removed __attribute__(assume).
-v2:
-* Removed mempool perf test; not part of patch set.
----
- lib/mempool/rte_mempool.c |   5 +-
- lib/mempool/rte_mempool.h | 108 +++++++++++++++++---------------------
- 2 files changed, 50 insertions(+), 63 deletions(-)
-
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 1e4f24783c..cddc896442 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -50,10 +50,9 @@ static void
- mempool_event_callback_invoke(enum rte_mempool_event event,
- 			      struct rte_mempool *mp);
- 
--/* Note: avoid using floating point since that compiler
-- * may not think that is constant.
-+/* Note: This is no longer 1.5 * size, but simply 1 * size.
-  */
--#define CALC_CACHE_FLUSHTHRESH(c) (((c) * 3) / 2)
-+#define CALC_CACHE_FLUSHTHRESH(c) (c)
- 
- #if defined(RTE_ARCH_X86)
- /*
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index c495cc012f..de1b41d899 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -791,7 +791,8 @@ rte_mempool_ops_dequeue_bulk(struct rte_mempool *mp,
- 	rte_mempool_trace_ops_dequeue_bulk(mp, obj_table, n);
- 	ops = rte_mempool_get_ops(mp->ops_index);
- 	ret = ops->dequeue(mp, obj_table, n);
--	if (ret == 0) {
-+	RTE_ASSERT(ret <= 0);
-+	if (likely(ret == 0)) {
- 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_bulk, 1);
- 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_objs, n);
- 	}
-@@ -848,6 +849,7 @@ rte_mempool_ops_enqueue_bulk(struct rte_mempool *mp, void * const *obj_table,
- 	rte_mempool_trace_ops_enqueue_bulk(mp, obj_table, n);
- 	ops = rte_mempool_get_ops(mp->ops_index);
- 	ret = ops->enqueue(mp, obj_table, n);
-+	RTE_ASSERT(ret <= 0);
- #ifdef RTE_LIBRTE_MEMPOOL_DEBUG
- 	if (unlikely(ret < 0))
- 		RTE_MEMPOOL_LOG(CRIT, "cannot enqueue %u objects to mempool %s",
-@@ -1044,7 +1046,7 @@ rte_mempool_free(struct rte_mempool *mp);
-  *   If cache_size is non-zero, the rte_mempool library will try to
-  *   limit the accesses to the common lockless pool, by maintaining a
-  *   per-lcore object cache. This argument must be lower or equal to
-- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5. It is advised to choose
-+ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n. It is advised to choose
-  *   cache_size to have "n modulo cache_size == 0": if this is
-  *   not the case, some elements will always stay in the pool and will
-  *   never be used. The access to the per-lcore table is of course
-@@ -1333,10 +1335,10 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
- static __rte_always_inline struct rte_mempool_cache *
- rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
- {
--	if (mp->cache_size == 0)
-+	if (unlikely(mp->cache_size == 0))
- 		return NULL;
- 
--	if (lcore_id >= RTE_MAX_LCORE)
-+	if (unlikely(lcore_id >= RTE_MAX_LCORE))
- 		return NULL;
- 
- 	rte_mempool_trace_default_cache(mp, lcore_id,
-@@ -1383,32 +1385,33 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- {
- 	void **cache_objs;
- 
--	/* No cache provided */
-+	/* No cache provided? */
- 	if (unlikely(cache == NULL))
- 		goto driver_enqueue;
- 
--	/* increment stat now, adding in mempool always success */
-+	/* Increment stats now, adding in mempool always succeeds. */
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
- 
--	/* The request itself is too big for the cache */
--	if (unlikely(n > cache->flushthresh))
--		goto driver_enqueue_stats_incremented;
--
--	/*
--	 * The cache follows the following algorithm:
--	 *   1. If the objects cannot be added to the cache without crossing
--	 *      the flush threshold, flush the cache to the backend.
--	 *   2. Add the objects to the cache.
--	 */
--
--	if (cache->len + n <= cache->flushthresh) {
-+	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	__rte_assume(cache->len <= cache->size);
-+	if (likely(cache->len + n <= cache->size)) {
-+		/* Sufficient room in the cache for the objects. */
- 		cache_objs = &cache->objs[cache->len];
- 		cache->len += n;
--	} else {
-+	} else if (n <= cache->size) {
-+		/*
-+		 * The cache is big enough for the objects, but - as detected by
-+		 * the comparison above - has insufficient room for them.
-+		 * Flush the cache to make room for the objects.
-+		 */
- 		cache_objs = &cache->objs[0];
- 		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
- 		cache->len = n;
-+	} else {
-+		/* The request itself is too big for the cache. */
-+		goto driver_enqueue_stats_incremented;
- 	}
- 
- 	/* Add the objects to the cache. */
-@@ -1512,10 +1515,10 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- {
- 	int ret;
- 	unsigned int remaining;
--	uint32_t index, len;
-+	uint32_t index;
- 	void **cache_objs;
- 
--	/* No cache provided */
-+	/* No cache provided? */
- 	if (unlikely(cache == NULL)) {
- 		remaining = n;
- 		goto driver_dequeue;
-@@ -1524,11 +1527,12 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	/* The cache is a stack, so copy will be in reverse order. */
- 	cache_objs = &cache->objs[cache->len];
- 
--	if (__rte_constant(n) && n <= cache->len) {
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	if (likely(n <= cache->len)) {
- 		/*
--		 * The request size is known at build time, and
--		 * the entire request can be satisfied from the cache,
--		 * so let the compiler unroll the fixed length copy loop.
-+		 * The entire request can be satisfied from the cache.
-+		 * Note: If the request size is known at build time,
-+		 * the compiler will unroll the fixed length copy loop.
- 		 */
- 		cache->len -= n;
- 		for (index = 0; index < n; index++)
-@@ -1540,55 +1544,38 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 		return 0;
- 	}
- 
--	/*
--	 * Use the cache as much as we have to return hot objects first.
--	 * If the request size 'n' is known at build time, the above comparison
--	 * ensures that n > cache->len here, so omit RTE_MIN().
--	 */
--	len = __rte_constant(n) ? cache->len : RTE_MIN(n, cache->len);
--	cache->len -= len;
--	remaining = n - len;
--	for (index = 0; index < len; index++)
-+	/* Use the cache as much as we have to return hot objects first. */
-+	for (index = 0; index < cache->len; index++)
- 		*obj_table++ = *--cache_objs;
-+	remaining = n - cache->len;
-+	cache->len = 0;
- 
--	/*
--	 * If the request size 'n' is known at build time, the case
--	 * where the entire request can be satisfied from the cache
--	 * has already been handled above, so omit handling it here.
--	 */
--	if (!__rte_constant(n) && remaining == 0) {
--		/* The entire request is satisfied from the cache. */
--
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
--
--		return 0;
--	}
--
--	/* if dequeue below would overflow mem allocated for cache */
--	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
-+	/* The remaining request is too big for the cache? */
-+	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	if (unlikely(remaining > cache->size))
- 		goto driver_dequeue;
- 
--	/* Fill the cache from the backend; fetch size + remaining objects. */
-+	/* Fill the cache from the backend; fetch size / 2 + remaining objects. */
- 	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs,
--			cache->size + remaining);
-+			cache->size / 2 + remaining);
- 	if (unlikely(ret < 0)) {
- 		/*
--		 * We are buffer constrained, and not able to allocate
--		 * cache + remaining.
-+		 * We are buffer constrained, and not able to fetch all that.
- 		 * Do not fill the cache, just satisfy the remaining part of
- 		 * the request directly from the backend.
- 		 */
- 		goto driver_dequeue;
- 	}
- 
-+	cache->len = cache->size / 2;
-+
- 	/* Satisfy the remaining part of the request from the filled cache. */
--	cache_objs = &cache->objs[cache->size + remaining];
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	cache_objs = &cache->objs[cache->len + remaining];
- 	for (index = 0; index < remaining; index++)
- 		*obj_table++ = *--cache_objs;
- 
--	cache->len = cache->size;
--
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
- 
-@@ -1599,7 +1586,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	/* Get remaining objects directly from the backend. */
- 	ret = rte_mempool_ops_dequeue_bulk(mp, obj_table, remaining);
- 
--	if (ret < 0) {
-+	if (unlikely(ret < 0)) {
- 		if (likely(cache != NULL)) {
- 			cache->len = n - remaining;
- 			/*
-@@ -1619,6 +1606,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 			RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
- 			RTE_MEMPOOL_STAT_ADD(mp, get_success_objs, n);
- 		}
-+		__rte_assume(ret == 0);
- 	}
- 
- 	return ret;
-@@ -1650,7 +1638,7 @@ rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
- {
- 	int ret;
- 	ret = rte_mempool_do_generic_get(mp, obj_table, n, cache);
--	if (ret == 0)
-+	if (likely(ret == 0))
- 		RTE_MEMPOOL_CHECK_COOKIES(mp, obj_table, n, 1);
- 	rte_mempool_trace_generic_get(mp, obj_table, n, cache);
- 	return ret;
-@@ -1741,7 +1729,7 @@ rte_mempool_get_contig_blocks(struct rte_mempool *mp,
- 	int ret;
- 
- 	ret = rte_mempool_ops_dequeue_contig_blocks(mp, first_obj_table, n);
--	if (ret == 0) {
-+	if (likely(ret == 0)) {
- 		RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
- 		RTE_MEMPOOL_STAT_ADD(mp, get_success_blks, n);
- 		RTE_MEMPOOL_CONTIG_BLOCKS_CHECK_COOKIES(mp, first_obj_table, n,
--- 
-2.43.0
-
+Long
