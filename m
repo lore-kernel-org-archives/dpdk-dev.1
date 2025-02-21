@@ -2,41 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F02C021B3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 17:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8735CC021B5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 17:30:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1211D402CC;
-	Fri, 21 Feb 2025 18:16:20 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CF246402BB
- for <dev@dpdk.org>; Fri, 21 Feb 2025 18:16:18 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id AC7EF206C7;
- Fri, 21 Feb 2025 18:16:18 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id D699440EE3;
+	Fri, 21 Feb 2025 18:30:32 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id C9C7C402CC
+ for <dev@dpdk.org>; Fri, 21 Feb 2025 18:30:30 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LCq8Ak005095;
+ Fri, 21 Feb 2025 09:30:30 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=4
+ Qe8SZ3rliUkPpiOrzl9o+OOdM+/v7KQ2Aq8xpnk5k8=; b=ba+SDKdmWxoKE9BVj
+ qBK8jpXkRuK2fnuyfLYWvEsMzsqvF/E4JFf9L1VzI1j39NaNDjvAH0XAsd8t8mlh
+ 4Osz+u8mtu58Pkl4BhRIikBxToLXOSOTuMDj/RarLemAVbQsXBC4Dq/7icw2yNq7
+ AW94M5qtwV66bdFQWvHihpIoU1hTWiIwC0KsrX5OhxdthOy0t/cdPWJrRs4De1dY
+ 1HA9hdsBBVlfDW8an3x50bFYY+/GjDs3WtBu27ajs4i2DbyrYMUdRNTU2u2AoQR7
+ CkIdF3FPk+bJB+ShAJIsE88gMsyWRVAlkHZX7Q9oUP6dmekVk5MCm5MJo0Kj39uJ
+ Gx+pg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44xnbgh4wn-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 21 Feb 2025 09:30:30 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 21 Feb 2025 09:30:29 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 21 Feb 2025 09:30:29 -0800
+Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.193.66.72])
+ by maili.marvell.com (Postfix) with ESMTP id D0DFC3F707A;
+ Fri, 21 Feb 2025 09:30:26 -0800 (PST)
+From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, Chenbo Xia
+ <chenbox@nvidia.com>
+CC: <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, "Gowrishankar
+ Muthukrishnan" <gmuthukrishn@marvell.com>
+Subject: [v3 0/5] vhost: add RSA support
+Date: Fri, 21 Feb 2025 23:00:08 +0530
+Message-ID: <cover.1740156665.git.gmuthukrishn@marvell.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <cover.1736270125.git.gmuthukrishn@marvell.com>
+References: <cover.1736270125.git.gmuthukrishn@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: Intel FAST_FREE offload question
-Date: Fri, 21 Feb 2025 18:16:17 +0100
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FA64@smartserver.smartshare.dk>
-In-Reply-To: <Z7izW7ckMhzb1jL6@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: Intel FAST_FREE offload question
-Thread-Index: AduEg4eycaxpH524RmuMcdlBdDMrcgAAFjfg
-References: <98CBD80474FA8B44BF855DF32C47DC35E9FA63@smartserver.smartshare.dk>
- <Z7izW7ckMhzb1jL6@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- "Ian Stokes" <ian.stokes@intel.com>, "Jingjing Wu" <jingjing.wu@intel.com>,
- "Praveen Shetty" <praveen.shetty@intel.com>, <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: QhUi5zd6JB25fnHuEJ5PPAe1UpZMhvgc
+X-Proofpoint-ORIG-GUID: QhUi5zd6JB25fnHuEJ5PPAe1UpZMhvgc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,28 +70,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Friday, 21 February 2025 18.10
->=20
-> On Fri, Feb 21, 2025 at 05:58:21PM +0100, Morten Br=F8rup wrote:
-> > Intel NIC folks,
-> >
-> > Why do the Intel network drivers, when using
-> > RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE, fall back to normal freeing when
-> the
-> > mempool cache is empty (cache->len =3D=3D 0)? It doesn't make sense =
-to
-> me.
-> >
-> > Example:
-> > https://git.dpdk.org/dpdk/tree/drivers/net/intel/common/tx.h#n146
-> >
-> Good question. I suspect that it may be a bug and that we meant to
-> check
-> for size =3D=3D 0 rather than len =3D=3D 0.
+This patch series supports asymmetric RSA in vhost crypto library.
+It also includes changes to improve vhost crypto library:
+ * support newer QEMU versions.
+ * fix broken vhost_crypto example application.
+ * stabilize crypto fastpath operations.
 
-Then checking for cache =3D=3D NULL suffices, because =
-rte_mempool_default_cache() returns NULL if the cache size is 0:
-https://elixir.bootlin.com/dpdk/v24.11.1/source/lib/mempool/rte_mempool.h=
-#L1333
+v3:
+ - spin off new patches from one single patch in v2.
+ - stabilized vhost crypto lib and example app.
+
+Gowrishankar Muthukrishnan (5):
+  vhost: skip crypto op fetch before vring init
+  vhost: update vhost_user crypto session parameters
+  examples/vhost_crypto: fix user callbacks
+  vhost: support asymmetric RSA crypto ops
+  examples/vhost_crypto: support asymmetric crypto
+
+ examples/vhost_crypto/main.c |  54 +++-
+ lib/vhost/vhost_crypto.c     | 514 ++++++++++++++++++++++++++++++++---
+ lib/vhost/vhost_user.h       |  33 ++-
+ lib/vhost/virtio_crypto.h    |  67 +++++
+ 4 files changed, 609 insertions(+), 59 deletions(-)
+
+-- 
+2.25.1
 
