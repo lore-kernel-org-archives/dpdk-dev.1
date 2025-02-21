@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF55C021B3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 19:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E09C021B3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 19:53:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AA80427B6;
-	Fri, 21 Feb 2025 20:53:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3EE15427D8;
+	Fri, 21 Feb 2025 20:53:06 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5DFEA4279F
+ by mails.dpdk.org (Postfix) with ESMTP id 7FCFA427A1
  for <dev@dpdk.org>; Fri, 21 Feb 2025 20:52:50 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 05FC320545AC; Fri, 21 Feb 2025 11:52:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 05FC320545AC
+ id 1E976205490D; Fri, 21 Feb 2025 11:52:48 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1E976205490D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740167569;
- bh=PsSMNxEbBL72UOOEw++hrubZMXFY61LfRPUKe733GQ0=;
+ bh=mpKdIy61gyRYiRcav3/U6fSEIAxqPTTlItLbLWXI+6M=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rqYpalziIiIiac4JGHcYNrAAmU/Qs24uyfDIxB6mVx5jVKkjb+Pf9KsYdVZ6a/dlu
- Cv2X1CI51IGTVVm8qS9Rz4qAa61UZ4ytHuX3LXYMX6J8a1iH7SHgLTRbv+xtteR6RV
- HIBzm/EWfZsWZsxbCwHQ4QURTQnQ1enlF07/UZdI=
+ b=Bq99Itx/pUBfhs8XmRQN5Pwu+H6lbb4qflcct/+abZ8wixO4/CbN9OKkV4N2xFyzz
+ nZ2CjrwGQyOtBSWMfIvirtOz31WJjK3q25uF2OShBAWcOtZQDejMbIgvGBYVNRUnwY
+ KAMWiUYnteveu8rGp1YoKU7jir4lvbJq5xFbwTx4=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org,
-	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v5 08/10] test-pmd: declare lcore_count atomic
-Date: Fri, 21 Feb 2025 11:52:41 -0800
-Message-Id: <1740167563-12332-9-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org
+Subject: [PATCH v5 10/10] app: enable app directory to be compiled with MSVC
+Date: Fri, 21 Feb 2025 11:52:43 -0800
+Message-Id: <1740167563-12332-11-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740167563-12332-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,45 +43,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in the error below:
+Enabled "app" directory to be compiled with MSVC along with all its
+contents.
 
-app/test/test_ring_perf.c(197): error C7712: address argument to atomic
-    operation must be a pointer to an atomic integer,
-    'volatile unsigned int *' is not valid
-
-The fix is to mark lcore_count as atomic.
+Removed flag Wno-deprecated-declarations which is not needed anymore.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_ring_perf.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ app/meson.build          | 4 ----
+ app/test-pmd/meson.build | 1 -
+ 2 files changed, 5 deletions(-)
 
-diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
-index 57cd04a124..921aa902c5 100644
---- a/app/test/test_ring_perf.c
-+++ b/app/test/test_ring_perf.c
-@@ -34,7 +34,7 @@ struct lcore_pair {
- 	unsigned c1, c2;
- };
+diff --git a/app/meson.build b/app/meson.build
+index e2db888ae1..1798db3ae4 100644
+--- a/app/meson.build
++++ b/app/meson.build
+@@ -1,10 +1,6 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017-2019 Intel Corporation
  
--static volatile unsigned lcore_count = 0;
-+static volatile RTE_ATOMIC(unsigned int) lcore_count;
+-if is_ms_compiler
+-    subdir_done()
+-endif
+-
+ disable_apps = ',' + get_option('disable_apps')
+ disable_apps = run_command(list_dir_globs, disable_apps, check: true).stdout().split()
  
- static void
- test_ring_print_test_string(unsigned int api_type, int esize,
-@@ -193,11 +193,7 @@ enqueue_dequeue_bulk_helper(const unsigned int flag, struct thread_params *p)
- 	unsigned int n_remaining;
- 	const unsigned int bulk_n = bulk_sizes[p->ring_params->bulk_sizes_i];
+diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
+index f1c36529b4..000548c261 100644
+--- a/app/test-pmd/meson.build
++++ b/app/test-pmd/meson.build
+@@ -3,7 +3,6 @@
  
--#ifdef RTE_USE_C11_MEM_MODEL
- 	if (rte_atomic_fetch_add_explicit(&lcore_count, 1, rte_memory_order_relaxed) + 1 != 2)
--#else
--	if (__sync_add_and_fetch(&lcore_count, 1) != 2)
--#endif
- 		while(lcore_count != 2)
- 			rte_pause();
- 
+ # override default name to drop the hyphen
+ name = 'testpmd'
+-cflags += '-Wno-deprecated-declarations'
+ sources = files(
+         '5tswap.c',
+         'cmdline.c',
 -- 
 2.48.1.vfs.0.0
 
