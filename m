@@ -2,61 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E0BC021B5
-	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Feb 2025 09:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60B4C021B8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Feb 2025 17:30:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2B0742DA1;
-	Sat, 22 Feb 2025 10:17:39 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 60CCD42DD4
- for <dev@dpdk.org>; Sat, 22 Feb 2025 10:17:38 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51M9DLK9024941;
- Sat, 22 Feb 2025 01:17:37 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
- yoJSaoreeLXsUEnuvXJ4uvfMLfRbauJHCnDYjsZc9A=; b=U7h7SWaOiVnFAcD5R
- Uo3xhCjzxc6j88lhRzNeEXWgtiZr+JBy08wV8axivwS0oTcIKIZ0DbH4orRreQgO
- uQ/Q9UNn07iOLXJQymldbqAFBb4p1JEeITDn9PhrMxUcrVA8l50iC2mWt0xgiMxF
- ex8xlVoDWSjb19daub5DCKjvM7ygr4kSLXTz38pvf3r/iCm2xihP8/2BJFIE1LGz
- r2DTr/r88J95idnl8qalcMOMjB2QuaDC4QUr0laT9qMvaZc6OIpryaUyKCrsp8k+
- ZBjWDgyqGmm4wkxeKPU7jOdS1cStwC/1xk93kjgIsiKfz6g+t2Wos91wQ7bnOcsZ
- UeT1w==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44xxew96p3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 22 Feb 2025 01:17:37 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sat, 22 Feb 2025 01:17:36 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sat, 22 Feb 2025 01:17:36 -0800
-Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
- [10.28.163.68])
- by maili.marvell.com (Postfix) with ESMTP id 5BF9A3F705E;
- Sat, 22 Feb 2025 01:17:33 -0800 (PST)
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
- <fanzhang.oss@gmail.com>
-CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Subject: [v4 6/6] test/crypto: add tests for virtio user PMD
-Date: Sat, 22 Feb 2025 14:46:55 +0530
-Message-ID: <0c90ff3a9f64f14fe9ed7abcbaff0de9be3113dc.1740212415.git.gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1740212415.git.gmuthukrishn@marvell.com>
-References: <cover.1740212415.git.gmuthukrishn@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B33DD41143;
+	Sat, 22 Feb 2025 18:30:20 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 58536402B7
+ for <dev@dpdk.org>; Sat, 22 Feb 2025 18:30:19 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-22104c4de96so54224005ad.3
+ for <dev@dpdk.org>; Sat, 22 Feb 2025 09:30:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740245418;
+ x=1740850218; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=lyRMygBFW2/xkhDhb1JNiQ8UAxbqXrWzjoPtVaqRMfI=;
+ b=FNWFSHQqHJdIaATbCYCiJABUdgB9mRckwZ/JLoBNDqR20aCccsXKZRJHmmYmSjO0/M
+ VwZRAuPyNccpU01FNWGBa5mqVLZbRX5C8ZEDkcMUpFlMSFPhgcH3f03xEmMIPDZewa9u
+ cITFlmKcPc24CHkHXyVbt5nghjXqqRMVC54drSy+4UDWuhrFqX2cw7kXEEMYznNBK0KA
+ DoJUL9JBl9v/pCp4ML19K/dCJ4PgS7uvzO0vwLH0/0z+i6Ky8HtzUmcjfMLmZk3UWS4Z
+ 4QnRXsXR+CxHOZb3kqmCC6ieRs+OPk7c7eLWEUOlqsJL0LujOKMvLITzR+EU1uFL52a8
+ UiIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1740245418; x=1740850218;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=lyRMygBFW2/xkhDhb1JNiQ8UAxbqXrWzjoPtVaqRMfI=;
+ b=pYYMB13jMfYguD7xKpKPVGjtS+qeLUqRFvldkT4Ogg8CzqASDQVXLXOxP9Z4soCDio
+ vU5eSnGQPFw1JdmL/DPkQBf3QVRkOT8Twyvbl8M625Kn///AWyHQVWH07jX6nyXp4BRK
+ sCbUAOmZ1oorvsAsJBwhCrYImQvjqvac0hGVoNQMbCvETAhdZUnoRjcqXUxfibJtvvLq
+ LpU0j5p82P+YQ0S5e5An3fbj7fXjCRBf8VoimLwwvwEesmit8uM2xV2e1MheD9J5kqLG
+ +uNp6qGXvj0eUXQoJs3z7enqOoGdHaNk9bs9fU3Fw+wC1w9jZY0JR2/Lc75PWcdXNrFX
+ vdPA==
+X-Gm-Message-State: AOJu0YxC9DmIxmEQ2LfYAKWjSKXDcHpBmijPuH8vii5Hm13Csv1Uokqm
+ vTnOwTeJJeDeau9iSCxn63S7thnaU2CeFi3FV81R4C2a4lKG1iWE1sdGHPE5s2riCHvXDOwXUpf
+ O
+X-Gm-Gg: ASbGncu2xL/byy70Y+ceXnYBbc+1Y6CQIhQdBlZ2ipJCusqB05d1sjg6Tdsf0DMEOAC
+ ZQl9wKiGesOiZpJyY3y8pdI9e9w3AQ0Ac9nr0AY4jyvF+mrLeGwiToenzIxsPrY8lmXdUveiz+T
+ Rzazd4LmWhmZb0w7tO2dHZl3/5EOuT0b2YkrqWxUPnd/yqn+fpF11UAiIa6WwlLh39PHxaAx2l/
+ uORLZpsJkT5RBlGLsAmCJo1UHYHRLu+Wc7NlxeY0lHqqy2d+JlPEGjQ8c+J2sEkXFth65no9kL0
+ dADEsVnhLVD3uGJ5fTrVDL35CK1hlxkS/+IBouvloIGbVQz0Y8rSZ9qV1lTiRvFq5h30V2RgCZa
+ mgLk=
+X-Google-Smtp-Source: AGHT+IEzLxWxPTGlNnCbztlJCEbsRW4MsQqFUyxuUDfJl8lN0oXaYHDV0Lph2vF3ULoCPNFPz7/s3Q==
+X-Received: by 2002:a05:6a21:78a9:b0:1ee:a914:1d5a with SMTP id
+ adf61e73a8af0-1eef3c569ccmr15250008637.2.1740245418256; 
+ Sat, 22 Feb 2025 09:30:18 -0800 (PST)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-73260f9e6e2sm14417228b3a.79.2025.02.22.09.30.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 22 Feb 2025 09:30:17 -0800 (PST)
+Date: Sat, 22 Feb 2025 09:30:16 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Renyong Wan" <wanry@yunsilicon.com>
+Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <qianr@yunsilicon.com>,
+ <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>,
+ <jacky@yunsilicon.com>, <weihg@yunsilicon.com>, <zhenghy@yunsilicon.com>
+Subject: Re: [PATCH 00/12] net/xsc: Resolve issues from PVS and Coverity Scan
+Message-ID: <20250222093016.4b4d615b@hermes.local>
+In-Reply-To: <20250222035732.2290067-1-wanry@yunsilicon.com>
+References: <20250222035732.2290067-1-wanry@yunsilicon.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: wg3vi1xLuCpYm7JDhTkWqFtLVEtjAK9Z
-X-Proofpoint-GUID: wg3vi1xLuCpYm7JDhTkWqFtLVEtjAK9Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-22_03,2025-02-20_02,2024-11-22_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,81 +83,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reuse virtio_crypto tests for testing virtio_crypto_user PMD.
+On Sat, 22 Feb 2025 11:57:59 +0800
+"Renyong Wan" <wanry@yunsilicon.com> wrote:
 
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
----
- app/test/test_cryptodev.c      |  7 +++++++
- app/test/test_cryptodev.h      |  1 +
- app/test/test_cryptodev_asym.c | 15 +++++++++++++++
- 3 files changed, 23 insertions(+)
+> This patch series resolves several issues reported by PVS and Coverity Scan,
+> which were earlier forwarded to us by Stephen Hemminger.
+> 
+> ---
+> Renyong Wan (12):
+>   net/xsc: avoid integer overflow
+>   net/xsc: remove useless call
+>   net/xsc: address incorrect format warnings
+>   net/xsc: remove always-true if expressions
+>   net/xsc: avoid variable is assigned but not used
+>   net/xsc: check possible null pointer dereference
+>   net/xsc: avoid potential null pointer before used
+>   net/xsc: remove always-true part of if expression
+>   net/xsc: avoid assign the same value to a variable
+>   net/xsc: avoid initialize by same function
+>   net/xsc: optimize memcmp returns not 0 check
+>   net/xsc: avoid pointer cast to unrelated class
+> 
+>  drivers/net/xsc/xsc_dev.c       |  2 +-
+>  drivers/net/xsc/xsc_ethdev.c    | 35 ++++++++----
+>  drivers/net/xsc/xsc_np.c        | 17 +++---
+>  drivers/net/xsc/xsc_rx.c        | 31 ++++++-----
+>  drivers/net/xsc/xsc_tx.c        |  7 +--
+>  drivers/net/xsc/xsc_vfio.c      | 97 ++++++++++++++++++++-------------
+>  drivers/net/xsc/xsc_vfio_mbox.c |  2 +-
+>  7 files changed, 111 insertions(+), 80 deletions(-)
+> 
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 441ecc6ad5..60aacdc155 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -19737,6 +19737,12 @@ test_cryptodev_virtio(void)
- 	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_PMD));
- }
- 
-+static int
-+test_cryptodev_virtio_user(void)
-+{
-+	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+}
-+
- static int
- test_cryptodev_aesni_mb(void)
- {
-@@ -20074,6 +20080,7 @@ REGISTER_DRIVER_TEST(cryptodev_dpaa_sec_autotest, test_cryptodev_dpaa_sec);
- REGISTER_DRIVER_TEST(cryptodev_ccp_autotest, test_cryptodev_ccp);
- REGISTER_DRIVER_TEST(cryptodev_uadk_autotest, test_cryptodev_uadk);
- REGISTER_DRIVER_TEST(cryptodev_virtio_autotest, test_cryptodev_virtio);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_autotest, test_cryptodev_virtio_user);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_autotest, test_cryptodev_octeontx);
- REGISTER_DRIVER_TEST(cryptodev_caam_jr_autotest, test_cryptodev_caam_jr);
- REGISTER_DRIVER_TEST(cryptodev_nitrox_autotest, test_cryptodev_nitrox);
-diff --git a/app/test/test_cryptodev.h b/app/test/test_cryptodev.h
-index bb54a33d62..f6c7478f19 100644
---- a/app/test/test_cryptodev.h
-+++ b/app/test/test_cryptodev.h
-@@ -64,6 +64,7 @@
- #define CRYPTODEV_NAME_MVSAM_PMD		crypto_mvsam
- #define CRYPTODEV_NAME_CCP_PMD		crypto_ccp
- #define CRYPTODEV_NAME_VIRTIO_PMD	crypto_virtio
-+#define CRYPTODEV_NAME_VIRTIO_USER_PMD	crypto_virtio_user
- #define CRYPTODEV_NAME_OCTEONTX_SYM_PMD	crypto_octeontx
- #define CRYPTODEV_NAME_CAAM_JR_PMD	crypto_caam_jr
- #define CRYPTODEV_NAME_NITROX_PMD	crypto_nitrox_sym
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index ac47be724f..a98e3dc824 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -4118,9 +4118,24 @@ test_cryptodev_virtio_asym(void)
- 	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
- }
- 
-+static int
-+test_cryptodev_virtio_user_asym(void)
-+{
-+	gbl_driver_id = rte_cryptodev_driver_id_get(
-+			RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+	if (gbl_driver_id == -1) {
-+		RTE_LOG(ERR, USER1, "virtio user PMD must be loaded.\n");
-+		return TEST_FAILED;
-+	}
-+
-+	/* Use test suite registered for crypto_virtio_user PMD */
-+	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
-+}
-+
- REGISTER_DRIVER_TEST(cryptodev_openssl_asym_autotest, test_cryptodev_openssl_asym);
- REGISTER_DRIVER_TEST(cryptodev_qat_asym_autotest, test_cryptodev_qat_asym);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_asym_autotest, test_cryptodev_octeontx_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn9k_asym_autotest, test_cryptodev_cn9k_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn10k_asym_autotest, test_cryptodev_cn10k_asym);
- REGISTER_DRIVER_TEST(cryptodev_virtio_asym_autotest, test_cryptodev_virtio_asym);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_asym_autotest, test_cryptodev_virtio_user_asym);
--- 
-2.25.1
+Applied to next-net Great to see the Coverity issues fixed.
+Ran PVS Studio on it, and there are three potential things that could be fixed later.
 
+1. xsc_ethdev.c (838)
+V1027	Pointer to an object of the 'rte_device' class is cast to unrelated 'rte_pci_device' class.
+
+This is a generic issue in bus_pci_driver.h that can be suppressed there.
+
+2. xsc_rx.c (351)
+V522	There might be dereferencing of a potential null pointer 'rxq_data'.
+
+Looking at the code, there are two loops over the rxq's the first one just
+dereferences, and the second pass uses a helper function that could return NULL.
+Why not just use do direct index in second one:
+
+-- a/drivers/net/xsc/xsc_rx.c
++++ b/drivers/net/xsc/xsc_rx.c
+@@ -347,7 +347,7 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+        rqn_base = rte_be_to_cpu_32(out->qpn_base) & 0xffffff;
+
+        for (i = 0; i < priv->num_rq; i++) {
+-               rxq_data = xsc_rxq_get(priv, i);
++               rxq_data = (*priv->rxqs)[i];
+                rxq_data->wqes = rxq_data->rq_pas->addr;
+                if (!xsc_dev_is_vf(xdev))
+                        rxq_data->rq_db = (uint32_t *)((uint8_t *)xdev->bar_addr +
+
+
+3. xsc_vfio_mbox.c (575)
+V1048	The 'size' variable was assigned the same value.
+
+This one is harmless, since both commands have same size, the tool
+is just being annoying. Can suppress via comment
+
+--- a/drivers/net/xsc/xsc_vfio_mbox.c
++++ b/drivers/net/xsc/xsc_vfio_mbox.c
+@@ -572,7 +572,7 @@ xsc_vfio_mbox_init(struct xsc_dev *xdev)
+        cmdq->req_lay = cmdq->req_mz->addr;
+
+        snprintf(name, RTE_MEMZONE_NAMESIZE, "%s_cmd_cq", xdev->pci_dev->device.name);
+-       size = (1 << XSC_CMDQ_DEPTH_LOG) * sizeof(struct xsc_cmdq_rsp_layout);
++       size = (1 << XSC_CMDQ_DEPTH_LOG) * sizeof(struct xsc_cmdq_rsp_layout); // -V1048
+        cmdq->rsp_mz = rte_memzone_reserve_aligned(name,
+                                                   size, SOCKET_ID_ANY,
+                                                   RTE_MEMZONE_IOVA_CONTIG,
