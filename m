@@ -2,39 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9529BC021B3
-	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Feb 2025 02:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF9AC021B3
+	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Feb 2025 02:13:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FD754027D;
-	Sat, 22 Feb 2025 03:08:48 +0100 (CET)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 45D1F40267
- for <dev@dpdk.org>; Sat, 22 Feb 2025 03:08:47 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.88.194])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z09KJ5jZszdb8P;
- Sat, 22 Feb 2025 10:04:04 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 284D44027D;
+	Sat, 22 Feb 2025 03:13:13 +0100 (CET)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 91B0240267
+ for <dev@dpdk.org>; Sat, 22 Feb 2025 03:13:11 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z09Rr6gXqzGybv;
+ Sat, 22 Feb 2025 10:09:44 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 88FA31400FD;
- Sat, 22 Feb 2025 10:08:44 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id AA4851800E5;
+ Sat, 22 Feb 2025 10:13:09 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 22 Feb 2025 10:08:44 +0800
-Message-ID: <cc6faa6a-6c22-48d4-a9fc-c29b070eb57f@huawei.com>
-Date: Sat, 22 Feb 2025 10:08:43 +0800
+ 15.2.1544.11; Sat, 22 Feb 2025 10:13:09 +0800
+Message-ID: <2319b71d-b9a5-4d1a-b4ed-c3602bef51a4@huawei.com>
+Date: Sat, 22 Feb 2025 10:13:08 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] test/ring: fix return uninitialized variable
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, <dev@dpdk.org>
-CC: <honnappa.nagarahalli@arm.com>
-References: <20250219142314.82235-1-konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH v5 09/10] test: add workaround for __builtin_constant_p in
+ test_memcpy_perf
+To: Andre Muezerie <andremue@linux.microsoft.com>
+CC: <dev@dpdk.org>
+References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
+ <1740167563-12332-1-git-send-email-andremue@linux.microsoft.com>
+ <1740167563-12332-10-git-send-email-andremue@linux.microsoft.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250219142314.82235-1-konstantin.ananyev@huawei.com>
+In-Reply-To: <1740167563-12332-10-git-send-email-andremue@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -51,14 +54,9 @@ Errors-To: dev-bounces@dpdk.org
 
 Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-On 2025/2/19 22:23, Konstantin Ananyev wrote:
-> This change addresses the CID 455328: Uninitialized variables  (UNINIT).
-> Strictly speaking right now it should never happen, as role_mask is not
-> zero. But that might change in future, as more test-cases will be
-> introduced. Anyway the fix is trivial.
+On 2025/2/22 3:52, Andre Muezerie wrote:
+> There's no MSVC equivalent for compiler extension __builtin_constant_p,
+> so a workaround is needed.
 > 
-> Coverity issue: 455328
-> Fixes: 70581c355d69 ("test/ring: add unit tests for soring API")
-> 
-> Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
