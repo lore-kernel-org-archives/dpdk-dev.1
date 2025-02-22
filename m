@@ -2,74 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A22C021B3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Feb 2025 23:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0ACC021B3
+	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Feb 2025 01:53:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B2F402A9;
-	Sat, 22 Feb 2025 00:05:52 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 956A140267
- for <dev@dpdk.org>; Sat, 22 Feb 2025 00:05:51 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-220f4dd756eso54730795ad.3
- for <dev@dpdk.org>; Fri, 21 Feb 2025 15:05:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740179150;
- x=1740783950; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/yGb90w9v4/0xiN50Xtk8o+p76HIoPYmQaRsREAlClI=;
- b=y5eXEp4d9ZtTNX2anAHMuc/bxiknvK770/XrrT2+KTT3Sk6qgXnzz1+20vnV/eAHWj
- ujDKlcCixlsrm1W6llJ/3+2DQh0D793079dAxzg/9Zj15bZCZIGlbuB0n5FSqTJII/qK
- kQkWMJiTXoM+diPDcCaZBVdbzkj5qBHpjxVelFFGGVjNkv1a3c8AEsW9UzQ3X2g8n86A
- yb1ctSyIDa1SUBk+F+REAAeWDZ/YuCKloC5pjrARx9g/wOdbnXXW515Fa40sB/b9mqo7
- uywmIPkB16VQmlfw88Cukyh+FznlJUNC59/MrXi5HCXqnJM60XUiX4a5WonNO/yrNsi1
- LY+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740179150; x=1740783950;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=/yGb90w9v4/0xiN50Xtk8o+p76HIoPYmQaRsREAlClI=;
- b=D1VXeLjLegWcwy4zvGlnIr3RSwWjZ0/dqd213Z9zxJsoe8mzJGujiWzG9WBiIfL1tj
- QNq/8cjfj93SQAG/DOzK02sz4Zfm4GH2qu3Oi0vJDMl608HXHAh+XaTUVda3wUUCnh0M
- YLnvmENB03aovhvFHRvJNks2ZCTSOW6wzASOhV9WOMo8FVYQSREWJnVqRnvDtsPJLuT0
- GwaIKmSGLxgi+1+5JTgwfeTCAodIih7mXcFHU0rvs81/38SG/551MKrh8d1GL4DB5l4C
- ITiF+8tPDpp5xB9AaoL/xuf0mOENd5O8KCBF1t2512w3ps3CX+jGaTdjSchxMg0V6AnF
- Lr+w==
-X-Gm-Message-State: AOJu0Yyo/sVKEU465cFK8U9t4MONQ2wedhDx46fM1OUyLg8kw8rjg13V
- jer8kUfUIp1Lco/gVlzt75wmWgHGAUWhmA+WkpTZVyncqotIFssv1my9Xdt7Pwo=
-X-Gm-Gg: ASbGncueigatOT9EhdXgMH58IDinjfzQXwVsS3hsob/NoJLlttTiPMJeXixZhYTw3Cb
- qawxu2VIAx4R9pU8L02SEKKJX15sQRFryoL7HU30tBPcgwPxHt/N+SDW7JEC2ZraBu7uMYvlL9i
- 4oGGUn0/iWnuaS4ZSF4yX/gEOLAfVFbUIJ9YNl/l//9+riPiJj9uP5Is3M+cv8nwbNfS/cl/TZG
- pa0XnPDRXP2LbCOD6OBZVJVG6CBRJz8Yb9Bmp7stFClL/Isc+kxyTWoEqa47EVqzODwoG93fS0Y
- 6SWfNEswXS/xDJsME0A1vPOWN9+zCsal+bEKQrZjZcoPUyjIUTUmJswYCeM/pV0lJ+58rNrCmGf
- eNb0=
-X-Google-Smtp-Source: AGHT+IFuu/tYelWWafUY0wete/HeHfROms+sAP2WFx8yZzIE4KaDJo80YX4RPdNm6IlalG3mtAzkBw==
-X-Received: by 2002:a05:6a20:72a3:b0:1ee:d6a7:e341 with SMTP id
- adf61e73a8af0-1eef3d6cdc7mr10288396637.30.1740179149311; 
- Fri, 21 Feb 2025 15:05:49 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-ae5eddbcbe1sm5057242a12.50.2025.02.21.15.05.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Feb 2025 15:05:49 -0800 (PST)
-Date: Fri, 21 Feb 2025 15:05:45 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Message-ID: <20250221150545.2ae330ba@hermes.local>
-In-Reply-To: <12279496.nUPlyArG6x@thomas>
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <20250214172134.73908-1-stephen@networkplumber.org>
- <20250214172134.73908-2-stephen@networkplumber.org>
- <12279496.nUPlyArG6x@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 5ACBA4027D;
+	Sat, 22 Feb 2025 02:53:37 +0100 (CET)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+ by mails.dpdk.org (Postfix) with ESMTP id 974E640267
+ for <dev@dpdk.org>; Sat, 22 Feb 2025 02:53:35 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Z095m3mkwzpkDR;
+ Sat, 22 Feb 2025 09:54:04 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+ by mail.maildlp.com (Postfix) with ESMTPS id 28C02140155;
+ Sat, 22 Feb 2025 09:53:33 +0800 (CST)
+Received: from [10.67.121.175] (10.67.121.175) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 22 Feb 2025 09:53:32 +0800
+Message-ID: <4d6ed2e8-957d-0c2d-cc19-7246c9266a5c@huawei.com>
+Date: Sat, 22 Feb 2025 09:53:31 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 1/2] net: add ptype parse for tunnel packets
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <ferruh.yigit@amd.com>,
+ <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <fengchengwen@huawei.com>, <huangdengdui@huawei.com>, Maxime Coquelin
+ <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, Nithin
+ Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
+ <pbhagavatula@marvell.com>, Long Li <longli@microsoft.com>, Gagandeep Singh
+ <g.singh@nxp.com>
+References: <20250108024632.12152-1-haijie1@huawei.com>
+ <20250214015638.29983-1-haijie1@huawei.com>
+ <20250214015638.29983-2-haijie1@huawei.com>
+ <20250214083553.492ddbd7@hermes.local>
+From: Jie Hai <haijie1@huawei.com>
+In-Reply-To: <20250214083553.492ddbd7@hermes.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.175]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,20 +58,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 19 Feb 2025 15:55:17 +0100
-Thomas Monjalon <thomas@monjalon.net> wrote:
-
-> 14/02/2025 18:20, Stephen Hemminger:
-> > The Linux version of sys/queue.h is frozen at an older version
-> > and is missing the _SAFE macro variants. Several drivers started
-> > introducing the own workarounds for this. Should be handled in EAL.
-> > 
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>  
+On 2025/2/15 0:35, Stephen Hemminger wrote:
+> On Fri, 14 Feb 2025 09:56:37 +0800
+> Jie Hai <haijie1@huawei.com> wrote:
 > 
-> We may want to unify with lib/eal/windows/include/sys/queue.h
+>> Add packet types parse for vxlan/vxlan-gpe/gtp/geneve packets.
+>>
+>> Signed-off-by: Jie Hai <haijie1@huawei.com>
+>> ---
+> 
+> Not sure about this.
+> The original purpose of ptype was to support hardware offload information.
+> 
+> Does any driver do this ptype detection in tunnels?
+> 
+> Would the software detection produce the same result as HW offload?
+> .
+As far as I know, there are two types of packet type: sw packet type and 
+hw packet type.
 
-Do we want to just not use the local Linux version of queue.h entirely?
-Maybe just put in current FreeBSD one? It has lots more useful variations.
+The formmer comes from the call of function rte_net_get_ptype(), which 
+parses the
+network headers in mbuf data and return its packet type.
+All caller(of different drivers) share the same standard.
+And it's commonly used in Tx checksum process.
 
-The point is to avoid broken versions (like one Intel driver) or
-having same macro in multiple places.
+The latter comes from the 'packet_type' field in mbuf.
+It is about data really present in the Rx mbuf, and it is defined by drivers
+themselves and generally arived from Rx descriptor (or hardware).
+
+Only a few drivers use rte_net_get_ptype() to set packet_type, e.g.
+
+1.With mask RTE_PTYPE_L2_MASK | RTE_PTYPE_L3_MASK | RTE_PTYPE_L4_MASK
+	drivers\net\netvsc\hn_rxtx.c
+	drivers\net\pfe\pfe_hif_lib.c  under contidion RTE_LIBRTE_PFE_SW_PARSE
+
+2. With mask RTE_PTYPE_ALL_MASK
+	drivers\net\tap\rte_eth_tap.c
+	drivers\net\virtio\virtio_rxtx_packed.h
+	drivers\net\virtio\virtio_rxtx.c
+	lib\vhost\virtio_net.c
+	lib\node\kernel_rx.c
+
+
+What this patch changes is the sw packet type, only these examples are 
+affected.
+
+And they may not have hardware information of packets to report.
+Please check whether there is any impact, @all maintainers.
+
