@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C70DC021B2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 06:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631BEC021B2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 06:04:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F2AE4025E;
-	Sun, 23 Feb 2025 07:04:24 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7ECEA400D6;
- Sun, 23 Feb 2025 07:04:22 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51N5oSsJ020397;
- Sat, 22 Feb 2025 22:04:21 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 9D0A3402CF;
+	Sun, 23 Feb 2025 07:04:29 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 7FA24402CF
+ for <dev@dpdk.org>; Sun, 23 Feb 2025 07:04:28 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51N608Gr010590;
+ Sat, 22 Feb 2025 22:04:27 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
- 8vEF3bkzfM+Jghq09RHaHPWyjdkrpGABxC1/snwHhs=; b=P0NCsnyV0vYtLly8p
- pnDn4jdpWkJyIMzw/jl0tnv23nDYva8jYR0NvPl7RYz/nn5NBmnu23ODGViXyXuu
- Lip9HETBSxq0SIZhjNqHh9VZAgHY9rjqe9TfLU3ZGtMzPmpfG+YQTXxGSWtlkBl6
- 14//+pg+zk/4BG7gfVU31PCXn41+Rbn+6dPX3ujEh76x6YDnG3w+VfKGqLl9eC2L
- sWP9rimVb7bHr8H5v3QVWRPDKUEv5Gz/pOJPVDVIzs+S0OFQBluBVMdR1atAnxhL
- j6PnEBZlD/TGL1XQFR7d/shT19EerxFHDdrcrX7+y/eWaFSw5foLUqzzcSMuy3Yf
- HHsSQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44xnxubn8x-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=t
+ adl4idP6HQ+8zOwtOAJQ77+crssbPas5ySIE8qgTVM=; b=Rqo9nVcZLyHsgPhBv
+ i6f9EjUpQgr+Rww3nck2l1F8Jv2oJtoZ+yztgswkRxz1VJlkZ0F233kHCxK4Wy0e
+ Y7eczuCsg59WDdGAeBSYk4tP8a3eqM8maRZbZtTlgLuT4vf+VQ9b3xDajMvdEXbm
+ lvio7X3uDACPJYTsS/wF0BmtH9J7Eq528HooyJTwn0YYlrRNomB/Q+NedKnEaRyn
+ L2AZIwQlkgoso1gVyueNHrUQwCWyQA/yo2I0us0VZCP9GCLQwFKKp2qayg8elvhW
+ vnK048ufqJYCqsooWCXkZ5GVaPXfNwriA7ead8sKjhMub50c9vqMpj8/Hpkr0R19
+ c0eDQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44yeyks24m-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 22 Feb 2025 22:04:21 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ Sat, 22 Feb 2025 22:04:27 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sat, 22 Feb 2025 22:04:19 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sat, 22 Feb 2025 22:04:19 -0800
+ 15.2.1544.4; Sat, 22 Feb 2025 22:04:25 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sat, 22 Feb 2025 22:04:25 -0800
 Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
  [10.28.163.68])
- by maili.marvell.com (Postfix) with ESMTP id C2F005B6940;
- Sat, 22 Feb 2025 22:04:16 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id CCE1A5B693E;
+ Sat, 22 Feb 2025 22:04:22 -0800 (PST)
 From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Kai Ji <kai.ji@intel.com>, Fan Zhang
- <fanzhang.oss@gmail.com>, Akhil Goyal <gakhil@marvell.com>
-CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>, <stable@dpdk.org>
-Subject: [v2 1/2] crypto/openssl: validate incorrect signature in verify op
-Date: Sun, 23 Feb 2025 11:34:04 +0530
-Message-ID: <1c35f6536b049d2dde122f29e444d462b3d3f948.1740290302.git.gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>
+CC: <anoobj@marvell.com>, Kai Ji <kai.ji@intel.com>, "Gowrishankar
+ Muthukrishnan" <gmuthukrishn@marvell.com>
+Subject: [v2 2/2] test/crypto: add negative test for RSA verify op
+Date: Sun, 23 Feb 2025 11:34:05 +0530
+Message-ID: <4a0cca961025d297d97f6ad14ab10bd99ea65ac6.1740290302.git.gmuthukrishn@marvell.com>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250221170908.1613-1-gmuthukrishn@marvell.com>
-References: <20250221170908.1613-1-gmuthukrishn@marvell.com>
+In-Reply-To: <1c35f6536b049d2dde122f29e444d462b3d3f948.1740290302.git.gmuthukrishn@marvell.com>
+References: <1c35f6536b049d2dde122f29e444d462b3d3f948.1740290302.git.gmuthukrishn@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 9R2bxOQZ2GcHm6BmfrjSTnGVGX6GnFVG
-X-Proofpoint-ORIG-GUID: 9R2bxOQZ2GcHm6BmfrjSTnGVGX6GnFVG
+X-Proofpoint-ORIG-GUID: 2n3YSY5jIUIMma1B8EamqKvVLxywMDlr
+X-Proofpoint-GUID: 2n3YSY5jIUIMma1B8EamqKvVLxywMDlr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-23_02,2025-02-20_02,2024-11-22_01
@@ -71,42 +71,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Return correct error status when incorrect signature is
-used in RSA verify op.
-
-Fixes: d7bd42f6db19 ("crypto/openssl: update RSA routine with 3.0 EVP API")
-Cc: stable@dpdk.org
+Add negative test for RSA verify operation to check if incorrect
+signature is validated.
 
 Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 ---
 v2:
- - clubbed with test patch
+ - no changes, but added openssl pmd patch for CI.
 ---
- drivers/crypto/openssl/rte_openssl_pmd.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ app/test/test_cryptodev_asym.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
-index b090611bd0..5bfad92b7c 100644
---- a/drivers/crypto/openssl/rte_openssl_pmd.c
-+++ b/drivers/crypto/openssl/rte_openssl_pmd.c
-@@ -2803,9 +2803,15 @@ process_openssl_rsa_op_evp(struct rte_crypto_op *cop,
- 			goto err_rsa;
- 		}
+diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
+index 8977d9d3a5..9b5f3c545e 100644
+--- a/app/test/test_cryptodev_asym.c
++++ b/app/test/test_cryptodev_asym.c
+@@ -62,7 +62,7 @@ queue_ops_rsa_sign_verify(void *sess)
+ 	struct rte_crypto_op *op, *result_op;
+ 	struct rte_crypto_asym_op *asym_op;
+ 	uint8_t output_buf[TEST_DATA_SIZE];
+-	int status = TEST_SUCCESS;
++	int status;
  
--		if (EVP_PKEY_verify_recover(rsa_ctx, tmp, &outlen,
-+		ret = EVP_PKEY_verify_recover(rsa_ctx, tmp, &outlen,
- 				op->rsa.sign.data,
--				op->rsa.sign.length) <= 0) {
-+				op->rsa.sign.length);
-+		if (ret <= 0) {
-+			/* OpenSSL RSA verification returns one on
-+			 * successful verification, otherwise 0. Hence,
-+			 * this enqueue operation should succeed even if
-+			 * invalid signature has been requested in verify.
-+			 */
- 			OPENSSL_free(tmp);
- 			goto err_rsa;
- 		}
+ 	/* Set up crypto op data structure */
+ 	op = rte_crypto_op_alloc(op_mpool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
+@@ -129,12 +129,35 @@ queue_ops_rsa_sign_verify(void *sess)
+ 		goto error_exit;
+ 	}
+ 
+-	status = TEST_SUCCESS;
+ 	if (result_op->status != RTE_CRYPTO_OP_STATUS_SUCCESS) {
+ 		RTE_LOG(ERR, USER1, "Failed to process sign-verify op\n");
+ 		status = TEST_FAILED;
++		goto error_exit;
++	}
++
++	/* Negative test */
++	result_op->asym->rsa.sign.data[0] ^= 0xff;
++	if (rte_cryptodev_enqueue_burst(dev_id, 0, &result_op, 1) != 1) {
++		RTE_LOG(ERR, USER1, "Error sending packet for verify\n");
++		status = TEST_FAILED;
++		goto error_exit;
+ 	}
+ 
++	while (rte_cryptodev_dequeue_burst(dev_id, 0, &result_op, 1) == 0)
++		rte_pause();
++
++	if (result_op == NULL) {
++		RTE_LOG(ERR, USER1, "Failed to process verify op\n");
++		status = TEST_FAILED;
++		goto error_exit;
++	}
++
++	if (result_op->status != RTE_CRYPTO_OP_STATUS_ERROR) {
++		RTE_LOG(ERR, USER1, "Failed to process sign-verify op\n");
++		status = TEST_FAILED;
++	}
++
++	status = TEST_SUCCESS;
+ error_exit:
+ 
+ 	rte_crypto_op_free(op);
 -- 
 2.25.1
 
