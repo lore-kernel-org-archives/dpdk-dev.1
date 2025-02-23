@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731E1C021B3
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 21:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D38C021B2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 22:04:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1DD43402F2;
-	Sun, 23 Feb 2025 22:53:08 +0100 (CET)
-Received: from mail-wm1-f100.google.com (mail-wm1-f100.google.com
- [209.85.128.100])
- by mails.dpdk.org (Postfix) with ESMTP id 8D33D402DE
- for <dev@dpdk.org>; Sun, 23 Feb 2025 22:53:05 +0100 (CET)
-Received: by mail-wm1-f100.google.com with SMTP id
- 5b1f17b1804b1-43994ef3872so22249225e9.2
- for <dev@dpdk.org>; Sun, 23 Feb 2025 13:53:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F227402D1;
+	Sun, 23 Feb 2025 23:04:10 +0100 (CET)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com
+ [209.85.167.45])
+ by mails.dpdk.org (Postfix) with ESMTP id 61A1C402CF;
+ Sun, 23 Feb 2025 23:04:09 +0100 (CET)
+Received: by mail-lf1-f45.google.com with SMTP id
+ 2adb3069b0e04-5461dab4bfdso4681041e87.3; 
+ Sun, 23 Feb 2025 14:04:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1740347585; x=1740952385; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1740348249; x=1740953049; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2oDOJc93e6C6OhSIE3mk2tu0aiFmVYFWdqY06gEsSk8=;
- b=ZRN2JP5yuuSJXk463teyB4TyHhOblyLwjbkJ2DisxREpDfSbezmFBlkWGbo9PPjmug
- dcvujJ0UHqV73kAzzswtY/jqrHZIZI+SlHyEKdeshILgOFA1391EoNU9S/lWV/lTTUDi
- j746DrFSwr16a5WveD7WCQORHojWXKcoEFsARBFz65PgHuv9QpPgIlC90xx63iU71jeZ
- ccGl799tVJBzo5PFVd4TuEy9EqDzYJCWNFFtMGEsbpb/vbnY9i/L/DKENZLdDuOFHbfn
- pyCXxIOIcQsXZRlwuzha5vNw0YIssvrbD9DAlP6FhtYDXL1QzGZwXlMc+ERJ6v57IEzL
- WhtQ==
+ bh=sA3p7vFOY4LjdJqRbMiL7BUSj1uiTbYsejsC/vyPjLg=;
+ b=NoLpsN06PvEktmaLm/k8lyEdJbfU+vA7H26SJhm9t7V6kXzunY2AS87Gj61tBalkrK
+ xoN9bdpF7fojRNdMgP0ONXox9DVFUuZhZWo2uE4JQoATZwsn+yltgUdHoXMLWxy0QiPU
+ RkGvwrYSjyKBKEovS2MZ5mI8MYvKQGLkoHlKzFc0BunzR1CleFVHQxcn+qWpMOOHSkPV
+ KSBSeGZRze7bD4xr0qLiRScRfNmwzRB5lHqHwa/WU5Xe/E24b6DMu48u1R7RJC/it+wP
+ FtADE8p+9CL+5glG7JTokiPYv/13kTPEDdqu9ECw1wY0SpBMCK4cnA5BJMYG7o4SUn8J
+ rHkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740347585; x=1740952385;
+ d=1e100.net; s=20230601; t=1740348249; x=1740953049;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=2oDOJc93e6C6OhSIE3mk2tu0aiFmVYFWdqY06gEsSk8=;
- b=d29/fBl9eJIu2CAakX3Xe1yO0XPQ8EqYCi5f+uH7fg2PpSUABgS99d5h2ebtUiC4hc
- Bby2E1RFobqG+jG4PUYao3x3TsVYmJmDIG5m3fdFF4eAe8e59ihYpFT3r+SmdEYamSzT
- m7x4NvIPIoS/fqf19bSIZY8uzlwARja3e6kolRAXWBn5lJ8AjsD/Nq2mQaoJoCIsZEgR
- gZ9i2TDC8loMbCLZo++8/4wLObPMDrp4/T9tbE2DqELMHxHPZnwhPa09uvitzTIneVKB
- TbGBHknOnXVOjqhfQWCIN2o/TPderkt6TfeliHMyx4DpNyUcoLxnt+6PaWC2j8HxpV21
- 5zkg==
-X-Gm-Message-State: AOJu0YyED5mBfcUmYpVjIvHL3GyPNqKZnhl9D1Op+se/Ktth/n6VYZlI
- iHYHwUr5IDrx/hAKjdKfslEEEkr5mt79LnIKcIAQ6WgS426noH7s3WJ1qC9ZQ38hgPhDS/LCBJ6
- EWFEysoxCONRJxOgdyZgX2AKhg226SkC4mRXYEyBU
-X-Gm-Gg: ASbGnct6vMrcsCExRWXqte7ng2ZexVZqzlcJ5BfhyzTt1u1dwRuep1J0160t7V1+JKY
- tRzQYrtM/LxaU3qmu1OLFN8lSwXpY+/tkRsGg0PQdmsBGuIov7PMDwrgmczbG+wPdw9kemi1cb0
- PE7gJsCO7f951nCpdLp5BVtH7ENn9l3GMembmCtpxr4+LqVyppeV4WfmloGzZoUk4R1xqfRN+/T
- 6ac90Ye/9Y2UhmmZKA7zj9iwj0Jc+7cPo4A8YWXo9zz+UyESt6v3cyTAXUb2NdlBzLpOErSanG2
- qSILbR8Rre8GJ/al+puSf8fMsYix7/dxtxOPDXlPX8cWpMWse1bigTuh9kOA
-X-Google-Smtp-Source: AGHT+IG/BiYso2ph+6HjoGOiBdVg3X1gAOsbQxgzUQdSOtHUfppBJCjmkb9/WZkAU6aRsX09A8wVYeTDeylC
-X-Received: by 2002:a05:6000:178e:b0:38d:b448:65c4 with SMTP id
- ffacd0b85a97d-38f6f0da5b1mr8615258f8f.55.1740347585160; 
- Sun, 23 Feb 2025 13:53:05 -0800 (PST)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- 5b1f17b1804b1-439b02d4c3fsm4625395e9.16.2025.02.23.13.53.05; 
- Sun, 23 Feb 2025 13:53:05 -0800 (PST)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
- by smtpservice.6wind.com (Postfix) with ESMTP id 109DE14F05;
- Sun, 23 Feb 2025 22:53:05 +0100 (CET)
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>, stable@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>,
- Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
- Ariel Otilibili <ariel.otilibili@6wind.com>
-Subject: [PATCH v10 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-Date: Sun, 23 Feb 2025 22:52:59 +0100
-Message-Id: <20250223215259.448723-3-ariel.otilibili@6wind.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250223215259.448723-1-ariel.otilibili@6wind.com>
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250223215259.448723-1-ariel.otilibili@6wind.com>
+ bh=sA3p7vFOY4LjdJqRbMiL7BUSj1uiTbYsejsC/vyPjLg=;
+ b=BaMHUkVUJ5ceOG8r1WWc1qoZgpibukgBOaxUhFYvjtvUl6QImds9Jqxq20Qb0Gs4Ms
+ ja6Bv0fhl7DdXqIOvNq5G0vTcifRdPq23yN3vH5OtZTiMFYxX67ujpUbiCuYoy2enx81
+ EBTnMlF/J+1rEOg0hQUcq6tSYrXzLKUg1m7ITVQ7qPkrRUHvfjMVSYBYldPqtG0uVrJF
+ TSPiilTey/XHGE7q2i69Y7+D+8fwA5gt/3ajsJ5QDpj1BciKkIGJretoceQabAKaKANy
+ PbrwjadNT3mKj2muGLR10f/D9O25/W0Dr/x7O2b0L3iDMBjkAYMrhFt5xraF7cULsbAg
+ uj9Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUk0V+vGd1uZLlsk4tat6gO1VFDRh49/Qt8rc0D5J7MLEibmhSRmVZ+XyjBd4tTQp/ypLbeEpQ=@dpdk.org
+X-Gm-Message-State: AOJu0YxhvxUHVru3lRJBVv6CfT37MLtv/lRTAK0qzRjdRh7skaEZzWc/
+ suy86WvokBNwZajZian4Kx+eTzS5DJwvZvsjOZufcxueRxnJkB83
+X-Gm-Gg: ASbGnctS8bWFcEvk5uqrDups7cePI02XotbFsgWYUVup69Z4DdtruG+802wOCygOLbr
+ w+2R5NVqbG8t46IVdOR2Py39qdFTfr8AxxxZ5HVjGQdRYhcY+xNeHaXLxjh7Fo9atEhimeQxp7y
+ NMoPvaBvZnsKqH7hAOTu8irAgnGb27besponb9vYVmK/Fh4vqIf/ZkA26hZ8nAB5o16+25uplUQ
+ s/NBolcRWsGpxdSYvsQhtnGq65HoG8GA2sfRWuqooWwHB45EU02ai+IwxeopBlOB/uqO2NIvA/S
+ bznC1yYr2/s7C3nCHP23aPh70c4fs2lmPxkoOWQKm7GVfufJL9EuzuEIXG9zIJHVyQlew+TDGg=
+ =
+X-Google-Smtp-Source: AGHT+IHArFyCXCtv6gO2mRep5Kue+M0GaGM+MhIkrI0m/mNgYGHFhh9qTSkgXN6W6TkWkqz7Bhxlsw==
+X-Received: by 2002:a05:6512:10d4:b0:545:ae6:d740 with SMTP id
+ 2adb3069b0e04-54838f4c919mr3617370e87.41.1740348248460; 
+ Sun, 23 Feb 2025 14:04:08 -0800 (PST)
+Received: from sovereign (broadband-109-173-43-194.ip.moscow.rt.ru.
+ [109.173.43.194]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-5483fddbec8sm584232e87.191.2025.02.23.14.04.04
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 23 Feb 2025 14:04:06 -0800 (PST)
+Date: Mon, 24 Feb 2025 01:04:04 +0300
+From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+To: Ariel Otilibili <ariel.otilibili@6wind.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, David Marchand
+ <david.marchand@redhat.com>, Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
+Subject: Re: [PATCH v2 1/1] pcapng: warn if NULL is passed to rte_pcapng_close
+Message-ID: <20250224010404.32b9a34a@sovereign>
+In-Reply-To: <20250223214123.447579-2-ariel.otilibili@6wind.com>
+References: <20250216160833.3216001-1-ariel.otilibili@6wind.com>
+ <20250223214123.447579-1-ariel.otilibili@6wind.com>
+ <20250223214123.447579-2-ariel.otilibili@6wind.com>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,137 +86,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Both legs of the loop share the same logic: the common parts are about
-reserving and filling both address and length into the description.
+2025-02-23 22:41 (UTC+0100), Ariel Otilibili:
+> diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+> index 16485b27cb46..d2cbcea42885 100644
+> --- a/lib/pcapng/rte_pcapng.c
+> +++ b/lib/pcapng/rte_pcapng.c
+> @@ -716,6 +716,9 @@ rte_pcapng_fdopen(int fd,
+>  void
+>  rte_pcapng_close(rte_pcapng_t *self)
+>  {
+> +	if (!self)
+> +		rte_errno = EINVAL;
+> +
+>  	close(self->outfd);
+>  	free(self);
+>  }
 
-This is moved into reserve_and_fill().
-
-Bugzilla ID: 1440
-Suggested-by: Maryam Tahhan <mtahhan@redhat.com>
-Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com>
-Acked-by: Maryam Tahhan <mtahhan@redhat.com>
----
- drivers/net/af_xdp/rte_eth_af_xdp.c | 73 ++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 092bcb73aa0a..8d30d307fa0c 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -536,21 +536,49 @@ kick_tx(struct pkt_tx_queue *txq, struct xsk_ring_cons *cq)
- 		}
- }
- 
-+static inline struct xdp_desc *
-+reserve_and_fill(struct pkt_tx_queue *txq, struct rte_mbuf *mbuf,
-+		 struct xsk_umem_info *umem, void **pkt_ptr)
-+{
-+	struct xdp_desc *desc = NULL;
-+	uint64_t addr, offset;
-+	uint32_t idx_tx;
-+
-+	if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx))
-+		goto out;
-+
-+	desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
-+	desc->len = mbuf->pkt_len;
-+
-+	addr = (uint64_t)mbuf - (uint64_t)umem->buffer
-+		- umem->mb_pool->header_size;
-+	offset = rte_pktmbuf_mtod(mbuf, uint64_t) - (uint64_t)mbuf
-+		+ umem->mb_pool->header_size;
-+
-+	if (pkt_ptr)
-+		*pkt_ptr = xsk_umem__get_data(umem->buffer, addr + offset);
-+
-+	offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
-+	desc->addr = addr | offset;
-+
-+out:
-+	return desc;
-+}
-+
- #if defined(XDP_UMEM_UNALIGNED_CHUNK_FLAG)
- static uint16_t
- af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	struct pkt_tx_queue *txq = queue;
- 	struct xsk_umem_info *umem = txq->umem;
--	struct rte_mbuf *mbuf;
-+	struct rte_mbuf *mbuf, *local_mbuf = NULL;
- 	unsigned long tx_bytes = 0;
- 	int i;
--	uint32_t idx_tx;
- 	uint16_t count = 0;
- 	struct xdp_desc *desc;
--	uint64_t addr, offset;
- 	struct xsk_ring_cons *cq = &txq->pair->cq;
- 	uint32_t free_thresh = cq->size >> 1;
-+	void *pkt;
- 
- 	if (xsk_cons_nb_avail(cq, free_thresh) >= free_thresh)
- 		pull_umem_cq(umem, XSK_RING_CONS__DEFAULT_NUM_DESCS, cq);
-@@ -559,51 +587,30 @@ af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		mbuf = bufs[i];
- 
- 		if (mbuf->pool == umem->mb_pool) {
--			if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx)) {
-+		  if (!(desc = reserve_and_fill(txq, mbuf, umem, NULL))) {
- 				kick_tx(txq, cq);
--				if (!xsk_ring_prod__reserve(&txq->tx, 1,
--							    &idx_tx))
-+				desc = reserve_and_fill(txq, mbuf, umem, NULL);
-+				if (!desc)
- 					goto out;
- 			}
--			desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
--			desc->len = mbuf->pkt_len;
--			addr = (uint64_t)mbuf - (uint64_t)umem->buffer -
--					umem->mb_pool->header_size;
--			offset = rte_pktmbuf_mtod(mbuf, uint64_t) -
--					(uint64_t)mbuf +
--					umem->mb_pool->header_size;
--			offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
--			desc->addr = addr | offset;
-+
- 			tx_bytes += desc->len;
- 			count++;
- 		} else {
--			struct rte_mbuf *local_mbuf =
--					rte_pktmbuf_alloc(umem->mb_pool);
--			void *pkt;
--
--			if (local_mbuf == NULL)
-+			if (!(local_mbuf = rte_pktmbuf_alloc(umem->mb_pool)))
- 				goto out;
- 
--			if (!xsk_ring_prod__reserve(&txq->tx, 1, &idx_tx)) {
-+			desc = reserve_and_fill(txq, local_mbuf, umem, &pkt);
-+			if (!desc) {
- 				rte_pktmbuf_free(local_mbuf);
- 				goto out;
- 			}
- 
--			desc = xsk_ring_prod__tx_desc(&txq->tx, idx_tx);
- 			desc->len = mbuf->pkt_len;
--
--			addr = (uint64_t)local_mbuf - (uint64_t)umem->buffer -
--					umem->mb_pool->header_size;
--			offset = rte_pktmbuf_mtod(local_mbuf, uint64_t) -
--					(uint64_t)local_mbuf +
--					umem->mb_pool->header_size;
--			pkt = xsk_umem__get_data(umem->buffer, addr + offset);
--			offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
--			desc->addr = addr | offset;
- 			rte_memcpy(pkt, rte_pktmbuf_mtod(mbuf, void *),
--					desc->len);
--			tx_bytes += desc->len;
-+				   desc->len);
- 			rte_pktmbuf_free(mbuf);
-+			tx_bytes += desc->len;
- 			count++;
- 		}
- 	}
--- 
-2.30.2
-
+Still dereferencing self == NULL.
