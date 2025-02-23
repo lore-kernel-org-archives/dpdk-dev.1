@@ -2,128 +2,137 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF90C021B2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 13:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CD6C021B2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Feb 2025 13:04:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06746402D6;
-	Sun, 23 Feb 2025 14:04:24 +0100 (CET)
-Received: from AS8PR03CU001.outbound.protection.outlook.com
- (mail-westeuropeazon11012007.outbound.protection.outlook.com [52.101.71.7])
- by mails.dpdk.org (Postfix) with ESMTP id 5B89C402C2
- for <dev@dpdk.org>; Sun, 23 Feb 2025 14:04:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E6CBD402E0;
+	Sun, 23 Feb 2025 14:04:27 +0100 (CET)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2057.outbound.protection.outlook.com [40.107.243.57])
+ by mails.dpdk.org (Postfix) with ESMTP id AB2B3402C1;
+ Sun, 23 Feb 2025 14:04:22 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BN4lQNwhsmqaBs0MJ0BPtZwtWAg9CKhavmcIpo8xiQJuaw9Eg9vH+eNpa+7aYDcxeqx0laZzOUD/6xjnmNVeZoff+jULAOkE53mFEapKuRBH6cEErhTcxyCH0QbbeKgE8yH41Pp83HbJ/Uttu6s0swoUvdDbaA5EtkzMM3XbZbLIAvPBdR0EyYjlxIZd2bO3oYBfTUGKfXw4Rc2xax62jq2yZmU9X0wJpTVdxO3MDzDz6KHF4AMR6jVJAqwE7kf1s9ul/ytZE3ulubhb5V7NgLN0NbcT0BLsedFqfR3tQKUDCYD7ZwXhpb5kbcAKb55RDHzP0+9gntp8ZpsOnuao1w==
+ b=QJ9xarNXPjBE8nPLrUIrWa/pSyGyz7tZQqrO9GZTJ7medARyXGjOyAfA/daHCsUYTQLJJIWjF1wR6YvzkPMoFX6axwz8LJpwXWEm4LQiq5YUWY1T262z8hUNvlxSEOmlZfAPxOzXK2r5G3sz36v7y35ALU8fJuuteEv59DUiMdMPypkmzy+sIcFn0jLJR4E0mKdY2Wd57Drc3CHsAYPCiQoe0hhV7V8WJ5b2RwHzOquSv+4FwEbcObySvsLLLxJDlrLrVNhPtBg8S6+2nRGJrrYN5P43cOnkP5zIJ6A9WvTC8/AJaHs1rjZh+KF0UvVf+vpmXmnjDSYqzbEFTXKDvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kx8dTt8fd/aYIfwN8z5RNsu0TO2SXB1jeWqiCorAjrU=;
- b=sQ5Y5DfR+ItfXiEuwhSLbzMHZCrdPA+QEFe5teAUEPu5Vpd7dcah27HJHL31uaRmmFBGgJhCxRhmQP89QqmrdB02yi45xJOvsz8cehWIH2CzJ79wo20u4A6opqna+EiheE5/PVUKB8wNkVmqsX6nqDGtyiu43IigoypVUy5pB/DsAoX9GxQRr/XxrhOHIozBHgYEMI0UP96RUzDHfRqst7DLk/Iv+2Q6JWiNrHj2sCR3I8M5P0GPWTwwlzoZOd7fae9vZV3RPLAP1RstjoWHaUV1UYGYdnBptbUwk55Uv1olesyqs5pd/2FZ07C9/QOWpdofsHqTyElN6uqPkFCw7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
+ bh=5vRPyD5xbfj85sjD9QumcD8xhhZ+TXXORbW/uGIMu9Q=;
+ b=Z0pCTWNvpvJbPske/g7suO/rcenROp0o1v/8BbS4QV+vLQOfTKpaQ/1T8MSbSfSh4spr+7ZdnZlAJtbye4scBxw0uqhC5TVLqjP1PI9e9NQyH2d0hVJj5OYk0PZxgQU0v+GeMqbLtDuXq4iEQ/7eaF6apueNlmvHOs5szQUhdkjl4aMdmI0eOuoAPZfxLGp4BtnWzNWwe5O9pj+dvfqGfcLZ5FTMW1mQaLqr2py/Kc04FPR+FuyBkOwa5ispCw9ZB7lEwaytMF3WQJ0A8tL22ErEnR3edcIS8HQl/TMV3DzBrDJkGjjP5unFlpCkF581Z/vbhRvYY+/VMQWUAW8o2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kx8dTt8fd/aYIfwN8z5RNsu0TO2SXB1jeWqiCorAjrU=;
- b=tyF5FmzsZ6iVEmKj+3Bakg4PXu2DXKcUqpLs92VhsbpkRRt6JAxfJdO8PL6BHf48CN0my3Ismy75Z9fr4li8M+gVLP8q9bybEo3zeGlYbwKc6wo9j/Z3lbgbvp4MS7s7P/RYWXexh04IY0ZmvBlarD5h/o6ue6sNRH+P489/LJaCBXaws0Uk0yU+bO468DDvV0OZKheD6yZOeUP+G5jhH1OBv0YmjKuWUokp0Lc1ymfYE7bpIOQuVhvcEjYutAUqeX2R3uMszUIGGf7P+McvJOeMzhFeZPUB+hJ7yBUmlUnXFVtBki/mpt1zvPjkYq9Ol9Wp6twQtgmc2O7UyzDYWA==
-Received: from DU7P194CA0017.EURP194.PROD.OUTLOOK.COM (2603:10a6:10:553::6) by
- PAXPR07MB8748.eurprd07.prod.outlook.com (2603:10a6:102:247::16) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=5vRPyD5xbfj85sjD9QumcD8xhhZ+TXXORbW/uGIMu9Q=;
+ b=L4q1zmEclkKpQldhzMqHKJYggLCt8Kx+8UWeCoQew8zWlsR9IYB4qKRHI2t4+XeQH5yFQl6r/PJWkFj7gxKhQrbq1aMdUKlXWu4AQYiI+u2VBX1UjaHk3I4WKpMIIp1HGZ2gSqx/pOWUD3GIaLZ2KEVOvaxf0myXQCAarphfJOgupdH4uDk687edJ5zcPi+l8KPN1RAIitp5C0Ongb6KoYUObnw+/m5QamM0GSFcf2cYs3ZrwREi/8FRSnjcumvwofgIS7GjcW5I19rxr4YlJpWUQJnd9efqfVdTrMiTE/Nt/KhpC2PUxZ1++jCFDrUQZLCxrPEONvNhuuV7F146Ig==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by PH8PR12MB8432.namprd12.prod.outlook.com (2603:10b6:510:25b::11)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Sun, 23 Feb
- 2025 13:04:17 +0000
-Received: from DB5PEPF00014B95.eurprd02.prod.outlook.com
- (2603:10a6:10:553:cafe::38) by DU7P194CA0017.outlook.office365.com
- (2603:10a6:10:553::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Sun,
- 23 Feb 2025 13:04:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- DB5PEPF00014B95.mail.protection.outlook.com (10.167.8.233) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Sun, 23 Feb 2025 13:04:16 +0000
-Received: from seliicinfr00049.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.66) with Microsoft SMTP Server
- id 15.2.1544.14; Sun, 23 Feb 2025 14:04:16 +0100
-Received: from breslau.. (seliicwb00002.seli.gic.ericsson.se [10.156.25.100])
- by seliicinfr00049.seli.gic.ericsson.se (Postfix) with ESMTP id
- E410838007A; Sun, 23 Feb 2025 14:04:15 +0100 (CET)
-From: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-To: <dev@dpdk.org>
-CC: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <hofors@lysator.liu.se>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-Subject: [RFC 1/1] eal/x86: replace inline assembly prefetch with cc builtins
-Date: Sun, 23 Feb 2025 13:52:15 +0100
-Message-ID: <20250223125215.358925-2-mattias.ronnblom@ericsson.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250223125215.358925-1-mattias.ronnblom@ericsson.com>
-References: <20250223125215.358925-1-mattias.ronnblom@ericsson.com>
+ 2025 13:04:16 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8466.016; Sun, 23 Feb 2025
+ 13:04:16 +0000
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Jack Min
+ <jackmin@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: fix leak in HWS flow counter action
+Thread-Topic: [PATCH] net/mlx5: fix leak in HWS flow counter action
+Thread-Index: AQHbcKnKPKjL9lilzkesfpmAwy2cPrNVBWMI
+Date: Sun, 23 Feb 2025 13:04:16 +0000
+Message-ID: <CH3PR12MB846071D4CB83E666AAC6D06ACFC12@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20250127105347.1077802-1-david.marchand@redhat.com>
+In-Reply-To: <20250127105347.1077802-1-david.marchand@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|PH8PR12MB8432:EE_
+x-ms-office365-filtering-correlation-id: b8323225-0e37-491e-3f38-08dd540a9426
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?Vk2tg2lBddGBKjElUDVvsXnp9yRtBhdvT7hea4Pgq5hm133F227GCne9mX?=
+ =?iso-8859-1?Q?voay20huDJ4cGYY8YIwDodDyUyiO21eCJlPzg84I3YvH5ftid44/JDbvxM?=
+ =?iso-8859-1?Q?vYWmS0pYP/RzyRUiwUUoY+Y92p4zJ9VtAlkAz7GWasMhOqKEh37IqE1abI?=
+ =?iso-8859-1?Q?ZhsWQzSdhHGTt85SWAmRdGuZ9WmV8TOVC/B48ebxbNtQauD8lWY1kyOgge?=
+ =?iso-8859-1?Q?eBK6ijV1EJ96oQkZF/+mvQdbEWDiMKwDMeDDK/rgT6H5jB7oDSpTDGHlqX?=
+ =?iso-8859-1?Q?rIMcrtQySHFS30IliieKGLK54APfRX5szBDRijnguTm+fUca+Q7plD1TOi?=
+ =?iso-8859-1?Q?MWF4QxE3thd2saOaT8kE9fqx87H9E3ga6NVlrkXluEPh1zHup4dCQ/P2JL?=
+ =?iso-8859-1?Q?P7t+MlTfqKH3Hnkxq0XD/CAfA8gZlsJmSMLD3dsWA/20bXLN8vrR+cAnXi?=
+ =?iso-8859-1?Q?KuBqT63C/m8Fit16UoYVSqKvnSWhjcueSmMQO6iPzREVGqaIUnVtHRLs1+?=
+ =?iso-8859-1?Q?M3FZ3YNPsPiNnc1f/WB6nVUuVA/JCZLgKzJu/f5+SJ/4D9pq772XFXhkbv?=
+ =?iso-8859-1?Q?TN0TojG2z7B1QGzXs+UgGDaYUEbmhNNXTeNiwk83di0opGhgFLAQrDHZm8?=
+ =?iso-8859-1?Q?yUp5+IJzLRHxQzHyqBWvcW0JivFFl0k6fTviefy3TOq8Xr0ihAKdrt/lNB?=
+ =?iso-8859-1?Q?sfzddwH4ALgFMak6/L+ddP/oZrpUHvGgWKN6/Sm2Gl4uHrjupaA2n8VXjS?=
+ =?iso-8859-1?Q?f3ROfjqyDkTNoisainiZcxWxt61EwNsudqPagrGKfHRatpXn4UEasvNcte?=
+ =?iso-8859-1?Q?jX6WKVQhNUhK1IFMpa32weNSYYksuYNNik+jdCj18B2d/6SNZU1iPt9C6Z?=
+ =?iso-8859-1?Q?umacV1zsqdvoGSxYk37dMEcp754PoFbbCH2pYgWo7w7UgN8wdATY/Ln6Js?=
+ =?iso-8859-1?Q?UgPtmtzz2760xyml4zIdCZTyYld+immPdE57PAaLr5i1j7TFjgnn4h4bG6?=
+ =?iso-8859-1?Q?K/ThdxfeWncVLlXq5QobmP0YsUTee3R/hohh/znhb1YZcxL0Aikix/0to7?=
+ =?iso-8859-1?Q?infqzBDu7l9lGJwNaIIZZwuV8AjKVUHjQf5cnAa9caN3uS5m0PRuMfjDST?=
+ =?iso-8859-1?Q?Rr1TE6znaqXFuULAOqzjVGHhLxa5FSDUT22luuDMPvE+RehiErRmuy7CGN?=
+ =?iso-8859-1?Q?k6cGWFstCrKSfc3PrKeHeBR3Y9lLmIc2sw2cJ63jLDCGifu1maFCsiv4jR?=
+ =?iso-8859-1?Q?HioTxOuaEiklCnqxG3JNHVH6rqLjpEZsfN2Cb9HCNrcrZTe1oeX2rCQNxF?=
+ =?iso-8859-1?Q?QBJARHFurOGipBpLjJpzFzFnbtVr120pAvcjs6Riazhjx6r5vRjEHjM0UV?=
+ =?iso-8859-1?Q?HfidtQW9cN4tFwrZAGKAD4aiUE6vJ/7Fo5cCu7GODf8Ftba5+cXHK9fgH2?=
+ =?iso-8859-1?Q?/Hrl3my2UaKbS4OnR+9fYsOfZR6gpVTrN6pcPhGl43bDqu3ss55Iydu3Sg?=
+ =?iso-8859-1?Q?Uz/YKcSS2ixV/vYmxb0GrT?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?uKosnZwjw23Nkv2eNV9u9wpfoz1oBeoIT58TZCKm2QiOx3SqrN5WPQUe5E?=
+ =?iso-8859-1?Q?8VMLD/XTDAM5NSHJa4SiaRwUBb4QYvj0lWDSUVv7ditb14+dmAQ3g8+0Q8?=
+ =?iso-8859-1?Q?lT1Gjm+b7gum4PeZOcLFD5ZE+r0R0+PM4d17vFVVJAdg96czhc0q5kRU3b?=
+ =?iso-8859-1?Q?nIaJzXCU9yeOQ7EAN3xVPQQPTNqfqSeqlWq0c8c+U7GOVvpXPaD/sWPwmM?=
+ =?iso-8859-1?Q?/JreEg4SEXviI6GBuIuz8SfKiR97Yy0uHWpmActwHmNet+BdwoVW0EcmFT?=
+ =?iso-8859-1?Q?3pDQOZhi5PHrgFndSiiGd8J61H1EVNu9EjENwq0b9v3Gk4AVuskn22/kw6?=
+ =?iso-8859-1?Q?8m0rf2GxYPCC5PXe2GeDkkIIdxOm9vKWfpzRv6c70fPcqlk/u8Blr2UjvQ?=
+ =?iso-8859-1?Q?G8dfBuGfACWdlWJdNCa/VpsOeJuy6DUFW38qB9LPFCtw9MEWFjmHuh2OkZ?=
+ =?iso-8859-1?Q?DkDXFmwZBPI53Y6TEYGWa19vBny+cfUc6pioIntzTVev2seDqOe+L7gTFw?=
+ =?iso-8859-1?Q?wBW1aLZUOwZL+9GTNvtN5qHJ6Nk3QC+zk0Gzh6VuKX7rzyigrElZo7MBC+?=
+ =?iso-8859-1?Q?J/+nBwy+2m9Hk7K/JZH9gTfrDlsb4xQUBQBJs/LL8UOMrFVFtCYbB/1hGX?=
+ =?iso-8859-1?Q?vJakg3ewVEc85i9e4U8pZIyZkbxWRpHFSOoNfjDaUilvwKTSH+sCG+Cd0r?=
+ =?iso-8859-1?Q?sioHm48MwbHhw8KHQzc1StN27Kx+91EJ6QJedxhLMYwZlJnLX/hc68foRA?=
+ =?iso-8859-1?Q?Uu6/ARA0g7+yY70mYGIQyWfUnjo87x1hQswaFBLEpIOKwqP0F3z7aUMmfm?=
+ =?iso-8859-1?Q?Y8iRaW8b0EQz0UoUt3CryrtcJJEoV9ZBNuONG/FQyBDjvp5b2bZ3JVESJw?=
+ =?iso-8859-1?Q?YSDnOYvThvch9YlHBSLmSVY9OoksjKfAyzy96wjOFmRjz6nTD2z+Yfz9Xv?=
+ =?iso-8859-1?Q?7JsN18x/4SbbZlZW1PqJsWyI81NiilFbtBZkXXeG6i8oFT2n0OTCRShlnu?=
+ =?iso-8859-1?Q?UBYX6x69exnwWUWUJNDhW9oqhntp4kFIddrOsrjp23dVN07J0Baee3ljFz?=
+ =?iso-8859-1?Q?i2Se0QQHuPqTjJLgQgbaIQZ7u0T2DzIuAJrOkMRgvI2vZ/M5jcFcE+SgI3?=
+ =?iso-8859-1?Q?6hesL2exwjuv7675mEgXSpbvjk9pus/KPG6Ja0+rEqRxUo/8PYVH7qTkxi?=
+ =?iso-8859-1?Q?kGpqwg8jvNe/bJO97Fq0uAVna7WMJoZEBIoyDhH11Aoi5t2h2ndRI0IQmd?=
+ =?iso-8859-1?Q?kS3axTtK02afJiS9sERsTJTtyxg84z9P0T4zV/a+yi8SM55xUXt9kxvYUI?=
+ =?iso-8859-1?Q?pGo8WaZ6TmduS5CpWtTh0AAICj4yvLvKtLzw4B7cjGzzwqCB1dDmxFsK+W?=
+ =?iso-8859-1?Q?/+TzcTS6I08y8TjF1Gsu2f6WmELjx4mrLJPgjECINyBKK4bXdEAo9Flp4L?=
+ =?iso-8859-1?Q?hzve77+0GoMu9C3XvSYzKfivwmSn89XaqvXtlSlJHoXTHUVAtsO+GmAFOX?=
+ =?iso-8859-1?Q?QJMp5Er6pN5W1wQxHfSmumz7JqYhyrJZxtD0NHESMMajCOKwpKfvqN7UIF?=
+ =?iso-8859-1?Q?3I7/rxUG5MyUvrXtC9B1cA7cUelKoGXw7u30L778QWGAyLQuPxK9EenTL5?=
+ =?iso-8859-1?Q?boLQ1MThItf18=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B95:EE_|PAXPR07MB8748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66e81656-13e4-4744-a958-08dd540a9406
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|82310400026|1800799024|376014|13003099007; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?anQ5d3FCOW96TTFteEdMY2ZWQVNJMW9acXBjSzkwT1NQZnV5TGN1NEZxTmVO?=
- =?utf-8?B?Qzl6L1hrODRwNFJEY1JpMHE5dG53bVFkK09xaXBPNUtTMThuNk9WdUFqS2NM?=
- =?utf-8?B?RFdJQzZZQ0hCemVWYytRS0FPdEJlMTZEWkNPRGhUeVlSTXJKU0dOQjAyT2th?=
- =?utf-8?B?ZGVpOUd2WngyV3ZNQW15WVd3ZW92eUhwcVZtMGlQVloyejBaUndpUXVJckVj?=
- =?utf-8?B?endqemowR1V1VVYwTzB0cCtmdWRmSnNyNzJNYlZ5UWJRZ1M4VW92NFA3WHpn?=
- =?utf-8?B?Mkp4R0RQSnQ1OUl1NG9OeEJKZnZWT2ZPNWZHQ1VSeFdOSkhrdVRITWY3Y2ta?=
- =?utf-8?B?WkZsOGowelVyY0tYTE41TTRkdEtNSnhrMjAvQ3hXNXNiSlFUWHJTVStvVCt4?=
- =?utf-8?B?SlpQMnUza2c5djNKUTcxV0VyVDRYU2RpbkNqYnJmZHNON3FRbndvbVI5a0FP?=
- =?utf-8?B?TEFqVG1RdjRmb25HbmNHTjZjdktqdGdwUTN4dUVZb1RuQWNtQzRXcHVEa3RL?=
- =?utf-8?B?WFVWamtJYTJ4YXJNa0xTZXBDRzZIMTlySEs0WWtlUmtpalpJRmVZR0FoZ0hQ?=
- =?utf-8?B?YWZCbG1xUWlJcFg2OXlOYVJBYU8rSHJPTkkrOGJ3UnNLbG5vVnB4Y2szaGI1?=
- =?utf-8?B?YkJBVjkyU2RKWXFzb09LKy90QjhsNG1CWjRsYlp3Y0x2UjBIME50aXJ3TlVy?=
- =?utf-8?B?ZkVsMXB3V2tuT2dkRGJNdDZ4eEFRUkFWZS9zS1ovcjZpWG1jWGF2SDNrMXpp?=
- =?utf-8?B?RXdMd1l1d1hrbDRJSlF3RGZzNXloUHpoSHVyQmJQSnRiL1A2N1BiZWZhMDhv?=
- =?utf-8?B?Sm5KS2ZHMUJ6MTZ2UDhtRXJ5bjVZNWp6V1FGQWFxYzFuN0dZMVdHNGtNczdk?=
- =?utf-8?B?WHNiL3p2NXdZR1lQZE9WWXd4VEMyU3FxZU9PTUlUY2lveVNqeXM3ajZvTWEr?=
- =?utf-8?B?WWtDS212NlhVZlcvVzVjY1pqYitIUlZscU1QNEFoTDhkempzSDNCR2tnY2tH?=
- =?utf-8?B?YTBta001UTF4SGdVTS9iU2txWXhCL1NiZ3pRNEp4cVZaWDF4NERibDdlcC9J?=
- =?utf-8?B?aE1BLzJkSXVld09tRktldjBkKzk4d0NMQTJyTFNDUzlRcTVacDJETFpMcjdT?=
- =?utf-8?B?YnBWdDdtUTNpNWtUaVdwY0xXNW5ZakZMZitMbDhBUFBCUUk3MG4yRUZLWWl0?=
- =?utf-8?B?eW53Snh1TERFOG5UNlZSa0psLzVST0FXRUxqdzBzdEVGem5VeTV1QUw5U1Iz?=
- =?utf-8?B?RWRaWTVWMjFQNzNSN3F2OVp1TmxOQk5BKytDQk5mdUZRdFNYSmdSQXc1di9u?=
- =?utf-8?B?T1N0VEV3N0t4aFlpUEJOSXUrL2x0ZUFyUmYyeWEzc2xWVGdKQkdHRzVaUWpD?=
- =?utf-8?B?U2laUjRkbXFhUEZ5SHFrUEhubXFkeEh1QmUxdmtXVFJXMUdoUFhJN2FEeVYx?=
- =?utf-8?B?MlYwM0JyWTZWYmVIR3JHYytNd1JFWjhJeTc2TFhiL2Yya3YxczFmWkxNY3pH?=
- =?utf-8?B?MkpVTDBHODZHTThtcHpURlphNk5lVU9HZ3hzNWRsbVpXZjVVZU50aU1VK1Mx?=
- =?utf-8?B?ckR6Y3hjdWNrbitDVmM5YmZ4L2dubHBpTjNpZGlVRmZxRmxFMzM2NDJHSTZh?=
- =?utf-8?B?MFB4YjQ2a0VYWFRxazk3K2J3a01xNnRyQXhhZnlOb25aK2ZZYlhpSlZZMWEy?=
- =?utf-8?B?ajI5d1VrUFVjenUrcTQ2V1lqN3FKMjZCSlZBQnpUNnJodWZCc3ZhcTlWQnpW?=
- =?utf-8?B?aW1mUndzUDBLZ2tldVluaTVEMDZwTmxhRXZTbityYjQ0Ykl0TnptQ1RuTy9X?=
- =?utf-8?B?cVVtODRIOFlCRVAyTGdqRlFhZnRlRWNLSW41MjlrVWNVMVdaMnpFR0k3elF3?=
- =?utf-8?B?eGRheVExaHhaVWxVZ1FqU2tBd3ByVFRqOE5uWjlOYVVpM2plNHMwZFByTllN?=
- =?utf-8?B?SmFNQUlSR3BGZHVhbGVNTWRaTTFFWlhUU25Pam0yODhpakdkbWxpclk5QWcz?=
- =?utf-8?Q?XYJa5N2gLIncdp1FI1ls1A+e+OipGY=3D?=
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE;
- SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(13003099007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2025 13:04:16.5567 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66e81656-13e4-4744-a958-08dd540a9406
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5PEPF00014B95.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR07MB8748
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8323225-0e37-491e-3f38-08dd540a9426
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2025 13:04:16.7804 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jM+IVYQnW/xkwmDA4wgcwUoAX17jjZ7Q2H9R/A/N5qIq94EXEYgtvRWVKZWmjgX9FnKBJcRt0BFxDYNs8O6vbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8432
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,74 +146,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the 32- and 64-bit x86 rte_prefetch<n>() functions and
-rte_prefetch_non_temporal() using compiler builtins, rather than
-inline assembly.
-
-This change frees the compiler to do certain optimizations that
-otherwise wouldn't be possible.
-
-Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
----
- lib/eal/x86/include/rte_prefetch.h | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/lib/eal/x86/include/rte_prefetch.h b/lib/eal/x86/include/rte_prefetch.h
-index 34a609cc65..329b1a81f7 100644
---- a/lib/eal/x86/include/rte_prefetch.h
-+++ b/lib/eal/x86/include/rte_prefetch.h
-@@ -22,7 +22,11 @@ static inline void rte_prefetch0(const volatile void *p)
- #ifdef RTE_TOOLCHAIN_MSVC
- 	_mm_prefetch((const char *)(uintptr_t)p, _MM_HINT_T0);
- #else
--	asm volatile ("prefetcht0 %[p]" : : [p] "m" (*(const volatile char *)p));
-+	/* 0 indicates intention to read, 3 sets target cache level to L1. See
-+	 * GCC docs where these integer constants are described in more detail:
-+	 *  https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
-+	 */
-+	__builtin_prefetch((const void *)(uintptr_t)p, 0, 3);
- #endif
- }
- 
-@@ -31,7 +35,11 @@ static inline void rte_prefetch1(const volatile void *p)
- #ifdef RTE_TOOLCHAIN_MSVC
- 	_mm_prefetch((const char *)(uintptr_t)p, _MM_HINT_T1);
- #else
--	asm volatile ("prefetcht1 %[p]" : : [p] "m" (*(const volatile char *)p));
-+	/* 0 indicates intention to read, 2 sets target cache level to L2. See
-+	 * GCC docs where these integer constants are described in more detail:
-+	 *  https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
-+	 */
-+	__builtin_prefetch((const void *)(uintptr_t)p, 0, 2);
- #endif
- }
- 
-@@ -40,7 +48,11 @@ static inline void rte_prefetch2(const volatile void *p)
- #ifdef RTE_TOOLCHAIN_MSVC
- 	_mm_prefetch((const char *)(uintptr_t)p, _MM_HINT_T2);
- #else
--	asm volatile ("prefetcht2 %[p]" : : [p] "m" (*(const volatile char *)p));
-+	/* 0 indicates intention to read, 1 sets target cache level to L3. See
-+	 * GCC docs where these integer constants are described in more detail:
-+	 *  https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
-+	 */
-+	__builtin_prefetch((const void *)(uintptr_t)p, 0, 1);
- #endif
- }
- 
-@@ -49,7 +61,11 @@ static inline void rte_prefetch_non_temporal(const volatile void *p)
- #ifdef RTE_TOOLCHAIN_MSVC
- 	_mm_prefetch((const char *)(uintptr_t)p, _MM_HINT_NTA);
- #else
--	asm volatile ("prefetchnta %[p]" : : [p] "m" (*(const volatile char *)p));
-+	/* 0 indicates intention to read, 1 sets target cache level to L3. See
-+	 * GCC docs where these integer constants are described in more detail:
-+	 *  https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
-+	 */
-+	__builtin_prefetch((const void *)(uintptr_t)p, 0, 0);
- #endif
- }
- 
--- 
-2.43.0
-
+Hi,=0A=
+=0A=
+From: David Marchand <david.marchand@redhat.com>=0A=
+Sent: Monday, January 27, 2025 12:53 PM=0A=
+To: dev@dpdk.org=0A=
+Cc: stable@dpdk.org; Dariusz Sosnowski; Slava Ovsiienko; Bing Zhao; Ori Kam=
+; Suanming Mou; Matan Azrad; Jack Min=0A=
+Subject: [PATCH] net/mlx5: fix leak in HWS flow counter action=0A=
+=0A=
+This was caught by our internal covscan.=0A=
+mp_name can be leaked in case of errors.=0A=
+=0A=
+Fixes: 4d368e1da3a4 ("net/mlx5: support flow counter action for HWS")=0A=
+Cc: stable@dpdk.org=0A=
+=0A=
+Signed-off-by: David Marchand <david.marchand@redhat.com>=0A=
+=0A=
+Patch applied to next-net-mlx,=0A=
+=0A=
+Kindest regards,=0A=
+Raslan Darawsheh=0A=
+=0A=
