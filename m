@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64180C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F186C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:54:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B05E740A6F;
-	Mon, 24 Feb 2025 10:54:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C39A40BA2;
+	Mon, 24 Feb 2025 10:54:30 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 8749F402F0
+ by mails.dpdk.org (Postfix) with ESMTP id F251D4042E
  for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:25 +0100 (CET)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKH001315
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:24 -0800
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKI001315
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:25 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=J
- eTcLq4TNZv42D8NNRBitdCcjbWZH8U7xVUIKnSAhbs=; b=H2T/3CknpoCg1BdLU
- Ty1mbItpLgRZQ6YZWAbgnbxEwB2kElzuqMxNqJnxMIWgqXzHvtt0rRKbeXe8u4la
- Ld1uwEpBvAGyC1Zd7pt0qgK0a7DuzZaVErsnpyE8lAyC/DTxr/L2RJTP8IM8wsJd
- 4/ONVW6SWio7SnX4h6o82Jlu9OlFFvg+30frGLjYbo+7NdmsQDQUJtP07fPMTmuZ
- LOm/REFqBefedc71FFahHGg62M9pZQ7aUL8ozyWXzb0HQj1+5uSjNAiskM0lVH33
- Bost912y+Yy6W3qGrKOPWFM8Vj3ZkMCQiBoYoMeFoGXs0WrLdJHrDiW0I1zqq43n
- vMyiw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=n
+ rtGN3CXa82xWqchOn6cip7OOuOcLnxusmIFPYF9pXU=; b=AgAoR6N4CD9/rTMvR
+ oa2tRfsmMAl60vLwQi83+fDH5It1T06i6hClTbcQcB8q026LV29tbDWsR6KEkBag
+ D5IdUaGutZQduQ1taKk04z8KzJpIsarMTJNVfNBNBaNZvT/9yOzHgsiaUIY+yCPt
+ zs+NpjAT/nZ1srpVAizzy3aomgeg/n1VTBHWxH0f2BYXjQJDMV8kIvtMnW8aa15Q
+ p58s8Z7sz250rT9reHuFcUP2YSTPbjeg3OifgZkLIbKDS1mSID/OCaO7vo5+WcYD
+ 9OVLPanQBVADsjdYB8Rwcda6cbh7nLFqlFDlG34cSAocZJvE1j5ZiGnCh5sef205
+ VP+8w==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh2x-2
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh2x-3
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:24 -0800 (PST)
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:25 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:53:51 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:53:54 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:53:51 -0800
+ Transport; Mon, 24 Feb 2025 01:53:54 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 7F27A3F705D;
- Mon, 24 Feb 2025 01:53:48 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id B1EEA3F705D;
+ Mon, 24 Feb 2025 01:53:51 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v3 15/33] common/cnxk: support inline SA context invalidate
-Date: Mon, 24 Feb 2025 15:22:23 +0530
-Message-ID: <20250224095241.1263700-15-ndabilpuram@marvell.com>
+Subject: [PATCH v3 16/33] common/cnxk: update feature flags for cn20k
+Date: Mon, 24 Feb 2025 15:22:24 +0530
+Message-ID: <20250224095241.1263700-16-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224095241.1263700-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -53,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: l5Fp41k4z-HtAudg9qVqV2ktkFczyHhJ
-X-Proofpoint-ORIG-GUID: l5Fp41k4z-HtAudg9qVqV2ktkFczyHhJ
+X-Proofpoint-GUID: _CgxwmpnUBCD9otzzlJpjy6rGqWRnyN9
+X-Proofpoint-ORIG-GUID: _CgxwmpnUBCD9otzzlJpjy6rGqWRnyN9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -73,139 +73,100 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Rahul Bhansali <rbhansali@marvell.com>
 
-Add SA context invalidate support for cn20k.
+Features updated for cn20k platform.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/hw/cpt.h      | 11 ++++++++-
- drivers/common/cnxk/roc_nix.h     |  1 +
- drivers/common/cnxk/roc_nix_inl.c | 37 ++++++++++++++++++++++++++++++-
- 3 files changed, 47 insertions(+), 2 deletions(-)
+ drivers/common/cnxk/roc_features.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
-index f2c222a920..40987abbb9 100644
---- a/drivers/common/cnxk/hw/cpt.h
-+++ b/drivers/common/cnxk/hw/cpt.h
-@@ -44,7 +44,8 @@
- #define CPT_LF_CTX_ENC_PKT_CNT	(0x540ull)
- #define CPT_LF_CTX_DEC_BYTE_CNT (0x550ull)
- #define CPT_LF_CTX_DEC_PKT_CNT	(0x560ull)
--#define CPT_LF_CTX_RELOAD	(0x570ull)
-+#define CPT_LF_CTX_RELOAD	(0x570ull) /* [CN10k] */
-+#define CPT_LF_CTX_INVAL	(0x570ull) /* [CN20k] */
- 
- #define CPT_AF_LFX_CTL(a)  (0x27000ull | (uint64_t)(a) << 3)
- #define CPT_AF_LFX_CTL2(a) (0x29000ull | (uint64_t)(a) << 3)
-@@ -126,6 +127,14 @@ union cpt_lf_ctx_reload {
- 	} s;
- };
- 
-+union cpt_lf_ctx_inval {
-+	uint64_t u;
-+	struct {
-+		uint64_t cptr : 46;
-+		uint64_t reserved_46_63 : 18;
-+	} s;
-+};
-+
- union cpt_lf_inprog {
- 	uint64_t u;
- 	struct cpt_lf_inprog_s {
-diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
-index 15823ab16c..2597b8d56b 100644
---- a/drivers/common/cnxk/roc_nix.h
-+++ b/drivers/common/cnxk/roc_nix.h
-@@ -474,6 +474,7 @@ struct roc_nix {
- 	bool custom_meta_aura_ena;
- 	bool rx_inj_ena;
- 	bool custom_inb_sa;
-+	bool use_write_sa;
- 	uint32_t root_sched_weight;
- 	uint16_t inb_cfg_param1;
- 	uint16_t inb_cfg_param2;
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index db1969038a..991a81b50d 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -1744,6 +1744,7 @@ roc_nix_inl_sa_sync(struct roc_nix *roc_nix, void *sa, bool inb,
- 	union cpt_lf_ctx_reload reload;
- 	union cpt_lf_ctx_flush flush;
- 	union cpt_lf_ctx_err err;
-+	union cpt_lf_ctx_inval inval;
- 	bool get_inl_lf = true;
- 	uintptr_t rbase;
- 	struct nix *nix;
-@@ -1778,8 +1779,15 @@ roc_nix_inl_sa_sync(struct roc_nix *roc_nix, void *sa, bool inb,
- 
- 		flush.u = 0;
- 		reload.u = 0;
-+		inval.u = 0;
- 		switch (op) {
- 		case ROC_NIX_INL_SA_OP_FLUSH_INVAL:
-+			if (!roc_model_is_cn10k()) {
-+				inval.s.cptr = ((uintptr_t)sa) >> 7;
-+				plt_write64(inval.u, rbase + CPT_LF_CTX_INVAL);
-+				break;
-+			}
-+
- 			flush.s.inval = 1;
- 			/* fall through */
- 		case ROC_NIX_INL_SA_OP_FLUSH:
-@@ -1815,10 +1823,12 @@ roc_nix_inl_ctx_write(struct roc_nix *roc_nix, void *sa_dptr, void *sa_cptr,
- 	struct nix_inl_dev *inl_dev = NULL;
- 	struct roc_cpt_lf *outb_lf = NULL;
- 	union cpt_lf_ctx_flush flush;
-+	union cpt_lf_ctx_inval inval;
- 	union cpt_lf_ctx_err err;
- 	bool get_inl_lf = true;
- 	uintptr_t rbase;
- 	struct nix *nix;
-+	uint64_t *sa;
- 	int rc;
- 
- 	/* Nothing much to do on cn9k */
-@@ -1850,7 +1860,10 @@ roc_nix_inl_ctx_write(struct roc_nix *roc_nix, void *sa_dptr, void *sa_cptr,
- 			outb_lf = &inl_dev->cpt_lf[0];
- 	}
- 
--	if (outb_lf) {
-+	if (outb_lf == NULL)
-+		goto exit;
-+
-+	if (roc_model_is_cn10k() || roc_nix->use_write_sa) {
- 		rbase = outb_lf->rbase;
- 		flush.u = 0;
- 
-@@ -1869,7 +1882,29 @@ roc_nix_inl_ctx_write(struct roc_nix *roc_nix, void *sa_dptr, void *sa_cptr,
- 		if (err.s.flush_st_flt)
- 			plt_warn("CTX flush could not complete");
- 		return 0;
-+	} else {
-+		sa = sa_dptr;
-+
-+		/* Clear bit 58 aop_valid */
-+		sa[0] &= ~(1ULL << 58);
-+		memcpy(sa_cptr, sa_dptr, sa_len);
-+		plt_io_wmb();
-+
-+		/* Trigger CTX invalidate */
-+		rbase = outb_lf->rbase;
-+		inval.u = 0;
-+		inval.s.cptr = ((uintptr_t)sa_cptr) >> 7;
-+		plt_write64(inval.u, rbase + CPT_LF_CTX_INVAL);
-+
-+		/* Set bit 58 aop_valid */
-+		sa = sa_cptr;
-+		sa[0] |= (1ULL << 58);
-+		plt_io_wmb();
-+
-+		return 0;
- 	}
-+
-+exit:
- 	plt_nix_dbg("Could not get CPT LF for CTX write");
- 	return -ENOTSUP;
+diff --git a/drivers/common/cnxk/roc_features.h b/drivers/common/cnxk/roc_features.h
+index 0002a7b5c3..59c09fbc85 100644
+--- a/drivers/common/cnxk/roc_features.h
++++ b/drivers/common/cnxk/roc_features.h
+@@ -13,49 +13,49 @@ roc_feature_sso_has_stash(void)
+ static inline bool
+ roc_feature_nix_has_inl_ipsec_mseg(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
  }
+ 
+ static inline bool
+ roc_feature_nix_has_drop_re_mask(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_inl_rq_mask(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_own_meta_aura(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_late_bp(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_reass(void)
+ {
+-	return roc_model_is_cn10ka();
++	return (roc_model_is_cn20k() || roc_model_is_cn10ka());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_cqe_stash(void)
+ {
+-	return roc_model_is_cn10ka_b0();
++	return (roc_model_is_cn20k() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_rxchan_multi_bpid(void)
+ {
+-	if (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0())
++	if (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0())
+ 		return true;
+ 	return false;
+ }
+@@ -63,7 +63,7 @@ roc_feature_nix_has_rxchan_multi_bpid(void)
+ static inline bool
+ roc_feature_nix_has_age_drop_stats(void)
+ {
+-	return (roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
++	return (roc_model_is_cn20k() || roc_model_is_cn10kb() || roc_model_is_cn10ka_b0());
+ }
+ 
+ static inline bool
+@@ -87,13 +87,13 @@ roc_feature_nix_has_inl_ipsec(void)
+ static inline bool
+ roc_feature_nix_has_rx_inject(void)
+ {
+-	return (roc_model_is_cn10ka_b0() || roc_model_is_cn10kb());
++	return (roc_model_is_cn20k() || roc_model_is_cn10ka_b0() || roc_model_is_cn10kb());
+ }
+ 
+ static inline bool
+ roc_feature_nix_has_second_pass_drop(void)
+ {
+-	return 0;
++	return roc_model_is_cn20k();
+ }
+ 
+ static inline bool
 -- 
 2.34.1
 
