@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E55C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 06:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4461C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 06:25:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C21840299;
-	Mon, 24 Feb 2025 07:24:13 +0100 (CET)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
- by mails.dpdk.org (Postfix) with ESMTP id F085A4025E
- for <dev@dpdk.org>; Mon, 24 Feb 2025 07:24:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 04AEB40299;
+	Mon, 24 Feb 2025 07:25:10 +0100 (CET)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+ by mails.dpdk.org (Postfix) with ESMTP id 651624025E
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 07:25:07 +0100 (CET)
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Z1W0N6bsHz8QrkZ
- for <dev@dpdk.org>; Mon, 24 Feb 2025 14:24:04 +0800 (CST)
-Received: from szxlzmapp02.zte.com.cn ([10.5.231.79])
- by mse-fl2.zte.com.cn with SMTP id 51O6NRwr040268;
- Mon, 24 Feb 2025 14:23:53 +0800 (+08)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Z1W1Z2d9wz4xPBx;
+ Mon, 24 Feb 2025 14:25:06 +0800 (CST)
+Received: from szxl2zmapp06.zte.com.cn ([10.1.32.108])
+ by mse-fl2.zte.com.cn with SMTP id 51O6OiP9041776;
+ Mon, 24 Feb 2025 14:24:44 +0800 (+08)
  (envelope-from wang.junlong1@zte.com.cn)
 Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Mon, 24 Feb 2025 14:23:55 +0800
-X-Zmail-TransId: 3e8167bc1077005-167aa
+ by smtp (Zmail) with SMTP; Mon, 24 Feb 2025 14:24:46 +0800
+X-Zmail-TransId: 3e8167bc10aa005-16800
 From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: stephen@networkplumber.or
+To: stephen@networkplumber.org
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v2 00/16] net/zxdh: updated net zxdh driver
-Date: Mon, 24 Feb 2025 14:10:39 +0800
-Message-ID: <20250224061040.667005-1-wang.junlong1@zte.com.cn>
+Date: Mon, 24 Feb 2025 14:11:30 +0800
+Message-ID: <20250224061131.667051-1-wang.junlong1@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250221020346.494392-1-wang.junlong1@zte.com.cn>
 References: <20250221020346.494392-1-wang.junlong1@zte.com.cn>
@@ -35,9 +35,9 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: multipart/mixed;
 	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 51O6NRwr040268
+X-MAIL: mse-fl2.zte.com.cn 51O6OiP9041776
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67BC1084.006/4Z1W0N6bsHz8QrkZ
+X-Fangmail-MID-QID: 67BC10C2.003/4Z1W1Z2d9wz4xPBx
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
