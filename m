@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE66C021BB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB95C021BB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 17:00:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1ECA2427A8;
-	Mon, 24 Feb 2025 17:59:53 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A91A8427C2;
+	Mon, 24 Feb 2025 17:59:55 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 8BFA641104
- for <dev@dpdk.org>; Mon, 24 Feb 2025 17:59:48 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CC1D6427A3
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 17:59:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1740416388; x=1771952388;
+ t=1740416392; x=1771952392;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=q9Ptjf/NXB+UQCrIoxA0zrHAhyu2gvKrRn93dovJa5A=;
- b=SeSi9/shofNbtCdQ29IfG6sXlUifEQCW1UqKU4k5V7g60WNhH3rpitDH
- 2tQyURPy4QS8w4XTihWOMy9cHMWSsqmmZUHHHAAdCn36um9HIsVGMQTAB
- +R5bH8S9yqdDWlwn1A23Ov0mkCvCg5BNWDP8y9CCPOyxOOaUirh+nzngu
- oelb0pTO6gccH7bPcZootdHoHjc7K8Ggyc0zdszRbFzD2Me/Wxx6m2M66
- McPKga3YsulvNqWXFlL5yS1IvNzcCjkG6R9E8FkMvj51hvkug7wUTX5d+
- Hje1w4SQPFDSIkkJBb+eOQ8Hnf0TzM5WUS5msgkLuuJ/3CIQWdCi07q+e Q==;
-X-CSE-ConnectionGUID: YtkFcZztSSi4ZeuAKJdAyw==
-X-CSE-MsgGUID: igkV5epVSJOwutvNQNWmQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58728748"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="58728748"
+ bh=UH9GhpINIZG9pGAdL/g7xP9FHCSwwmvFTBb30Rjf79c=;
+ b=FqbqkUCYdeNR2tdDsnZgLDtAjAiA8sKjZIElzAhKRLXQntmAJKLVknni
+ q2eHpwWodysP4a6wrvJdo1h5nIS5zpgl0zdhcGbo/le5Et66RGnqRGheR
+ pMy9mu4EdJLW2ncIq+BVtvIOjb/XHYBTUrgOBCGq389ovktDBfYQTH1TG
+ 76kvvEgeU7+Aty/PX8SFdFnSRIOTv/FomUo/tQsvt5ErZnogueTlatDIE
+ XRr2q5P1RuxixINty18FSjr5GXBMByPWEL5WLV+kM0L207EAk4JcYt/qU
+ eL4rnSpLhdEbTWeYof4krxmiWlBzDep5yS9FmRE9cWPKFxRojtqwhXlBH g==;
+X-CSE-ConnectionGUID: daw88gLOQYKR2D7imXeDQA==
+X-CSE-MsgGUID: ki3QPYPJQTKsgtf9YjBZcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58728752"
+X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="58728752"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2025 08:59:48 -0800
-X-CSE-ConnectionGUID: GY5LeffDTBKBzodVgOwu+A==
-X-CSE-MsgGUID: /Jecs5elRUmRqDeHtcH7Ag==
+ 24 Feb 2025 08:59:51 -0800
+X-CSE-ConnectionGUID: 4si+mDHCR4amub3dWoR3OA==
+X-CSE-MsgGUID: k3i5i7YSRoWE8woRjB5AuQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="116618811"
+X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="116618826"
 Received: from unknown (HELO silpixa00400886.ger.corp.intel.com)
  ([10.237.222.180])
- by fmviesa010.fm.intel.com with ESMTP; 24 Feb 2025 08:59:47 -0800
+ by fmviesa010.fm.intel.com with ESMTP; 24 Feb 2025 08:59:49 -0800
 From: Brian Dooley <brian.dooley@intel.com>
-To: Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Cc: dev@dpdk.org,
-	gakhil@marvell.com,
-	Brian Dooley <brian.dooley@intel.com>
-Subject: [PATCH v5 2/3] crypto/ipsec_mb: add SM4 GCM support
-Date: Mon, 24 Feb 2025 16:59:38 +0000
-Message-Id: <20250224165939.717714-2-brian.dooley@intel.com>
+To: Akhil Goyal <gakhil@marvell.com>,
+	Fan Zhang <fanzhang.oss@gmail.com>
+Cc: dev@dpdk.org, kai.ji@intel.com, pablo.de.lara.guarch@intel.com,
+ Brian Dooley <brian.dooley@intel.com>
+Subject: [PATCH v5 3/3] app/test: add SM4 GCM tests
+Date: Mon, 24 Feb 2025 16:59:39 +0000
+Message-Id: <20250224165939.717714-3-brian.dooley@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250224165939.717714-1-brian.dooley@intel.com>
 References: <20241213125850.2714328-1-brian.dooley@intel.com>
@@ -63,216 +63,931 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch introduces SM4 GCM algorithm support to the AESNI_MB PMD.
-SM4 GCM is available in the v2.0 release of Intel IPsec MB.
+Added SM4-GCM tests for the AESNI MB PMD.
 
 Signed-off-by: Brian Dooley <brian.dooley@intel.com>
 ---
-v2:
-	Added aad to cpu job params
-	Added ipsec mb version checks
-v3:
-	Fix naming for patchwork
 v4:
-	Remove cryptodev changes to separate patch
-v5:
-	Change digest_size min value and increment value
+	Remove MAX_AAD_LENGTH array length from test vectors
 ---
- doc/guides/cryptodevs/aesni_mb.rst          |  1 +
- doc/guides/cryptodevs/features/aesni_mb.ini |  1 +
- doc/guides/rel_notes/release_25_03.rst      |  4 ++
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 55 ++++++++++++++++++++-
- drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 30 +++++++++++
- 5 files changed, 89 insertions(+), 2 deletions(-)
+ app/test/test_cryptodev.c                   | 158 +++++
+ app/test/test_cryptodev_aead_test_vectors.h | 708 ++++++++++++++++++++
+ 2 files changed, 866 insertions(+)
 
-diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
-index 16d82147b2..8d7e221e79 100644
---- a/doc/guides/cryptodevs/aesni_mb.rst
-+++ b/doc/guides/cryptodevs/aesni_mb.rst
-@@ -67,6 +67,7 @@ AEAD algorithms:
- * RTE_CRYPTO_AEAD_AES_CCM
- * RTE_CRYPTO_AEAD_AES_GCM
- * RTE_CRYPTO_AEAD_CHACHA20_POLY1305
-+* RTE_CRYPTO_AEAD_SM4_GCM
- 
- Protocol offloads:
- 
-diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/cryptodevs/features/aesni_mb.ini
-index ebe00d075d..c648be62fb 100644
---- a/doc/guides/cryptodevs/features/aesni_mb.ini
-+++ b/doc/guides/cryptodevs/features/aesni_mb.ini
-@@ -80,6 +80,7 @@ AES GCM (128)     = Y
- AES GCM (192)     = Y
- AES GCM (256)     = Y
- CHACHA20-POLY1305 = Y
-+SM4 GCM           = Y
- ;
- ; Supported Asymmetric algorithms of the 'aesni_mb' crypto driver.
- ;
-diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
-index 145b018058..3f8c61e8d5 100644
---- a/doc/guides/rel_notes/release_25_03.rst
-+++ b/doc/guides/rel_notes/release_25_03.rst
-@@ -133,6 +133,10 @@ New Features
- 
-   See the :doc:`../compressdevs/zsda` guide for more details on the new driver.
- 
-+* **Updated IPsec_MB crypto driver.**
-+
-+   * Added support for the SM4 GCM algorithm.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-index 05dc1a039f..a6c3f09b6f 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-@@ -20,7 +20,11 @@ is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)
- {
- 	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305 ||
- 		hash_alg == IMB_AUTH_AES_CCM ||
--		cipher_mode == IMB_CIPHER_GCM);
-+		cipher_mode == IMB_CIPHER_GCM
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+		|| cipher_mode == IMB_CIPHER_SM4_GCM
-+#endif
-+		);
+diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
+index 441ecc6ad5..2e58819fca 100644
+--- a/app/test/test_cryptodev.c
++++ b/app/test/test_cryptodev.c
+@@ -1143,6 +1143,35 @@ chacha20_poly1305_testsuite_setup(void)
+ 	return 0;
  }
  
- /** Set session authentication parameters */
-@@ -602,7 +606,7 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- }
- 
++static int
++sm4_gcm_testsuite_setup(void)
++{
++	struct crypto_testsuite_params *ts_params = &testsuite_params;
++	uint8_t dev_id = ts_params->valid_devs[0];
++	struct rte_cryptodev_info dev_info;
++	const enum rte_crypto_aead_algorithm aeads[] = {
++		RTE_CRYPTO_AEAD_SM4_GCM
++	};
++
++	rte_cryptodev_info_get(dev_id, &dev_info);
++
++	if (!(dev_info.feature_flags & RTE_CRYPTODEV_FF_SYMMETRIC_CRYPTO) ||
++			((global_api_test_type == CRYPTODEV_RAW_API_TEST) &&
++			!(dev_info.feature_flags & RTE_CRYPTODEV_FF_SYM_RAW_DP))) {
++		RTE_LOG(INFO, USER1, "Feature flag requirements for "
++				"SM4 GCM testsuite not met\n");
++		return TEST_SKIPPED;
++	}
++
++	if (check_aead_capabilities_supported(aeads, RTE_DIM(aeads)) != 0) {
++		RTE_LOG(INFO, USER1, "Capability requirements for "
++				"SM4 GCM testsuite not met\n");
++		return TEST_SKIPPED;
++	}
++
++	return 0;
++}
++
  static int
--aesni_mb_set_session_aead_parameters(const IMB_MGR *mb_mgr,
-+aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
- 		struct aesni_mb_session *sess,
- 		const struct rte_crypto_sym_xform *xform)
+ snow3g_testsuite_setup(void)
  {
-@@ -720,6 +724,22 @@ aesni_mb_set_session_aead_parameters(const IMB_MGR *mb_mgr,
- 			return -EINVAL;
- 		}
- 		break;
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+	case RTE_CRYPTO_AEAD_SM4_GCM:
-+		sess->template_job.cipher_mode = IMB_CIPHER_SM4_GCM;
-+		sess->template_job.hash_alg = IMB_AUTH_SM4_GCM;
-+		sess->template_job.u.GCM.aad_len_in_bytes = xform->aead.aad_length;
-+
-+		if (xform->aead.key.length != 16) {
-+			IPSEC_MB_LOG(ERR, "Invalid key length");
-+			return -EINVAL;
-+		}
-+		sess->template_job.key_len_in_bytes = 16;
-+		imb_sm4_gcm_pre(mb_mgr, xform->aead.key.data, &sess->cipher.gcm_key);
-+		sess->template_job.enc_keys = &sess->cipher.gcm_key;
-+		sess->template_job.dec_keys = &sess->cipher.gcm_key;
-+		break;
-+#endif
- 	default:
- 		IPSEC_MB_LOG(ERR, "Unsupported aead mode parameter");
- 		return -ENOTSUP;
-@@ -1037,6 +1057,13 @@ set_cpu_mb_job_params(IMB_JOB *job, struct aesni_mb_session *session,
- 	case IMB_AUTH_CHACHA20_POLY1305:
- 		job->u.CHACHA20_POLY1305.aad = aad->va;
- 		break;
-+
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+	case IMB_AUTH_SM4_GCM:
-+		job->u.GCM.aad = aad->va;
-+		break;
-+#endif
-+
- 	default:
- 		job->u.HMAC._hashed_auth_key_xor_ipad =
- 				session->auth.pads.inner;
-@@ -1559,6 +1586,11 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 			imb_set_session(mb_mgr, job);
- 		}
- 		break;
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+	case IMB_AUTH_SM4_GCM:
-+		job->u.GCM.aad = op->sym->aead.aad.data;
-+		break;
-+#endif
- 	default:
- 		break;
- 	}
-@@ -1687,6 +1719,20 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
- 			session->iv.offset);
- 		break;
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+	case IMB_AUTH_SM4_GCM:
-+		job->hash_start_src_offset_in_bytes = 0;
-+		/*
-+		 * Adding offset as a bug exists in the IPsec MB library which is
-+		 * fixed after v2.0 release.
-+		 */
-+		job->src += op->sym->aead.data.offset;
-+		job->msg_len_to_hash_in_bytes =
-+					op->sym->aead.data.length;
-+		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
-+				session->iv.offset);
-+		break;
-+#endif
+@@ -17508,6 +17537,96 @@ test_chacha20_poly1305_encrypt_SGL_out_of_place(void)
+ 		chacha20_poly1305_case_2.plaintext.len);
+ }
  
- 	default:
- 		job->hash_start_src_offset_in_bytes = auth_start_offset(op,
-@@ -1732,6 +1778,11 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->msg_len_to_cipher_in_bytes = 0;
- 		job->cipher_start_src_offset_in_bytes = 0;
- 		break;
-+#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+	case IMB_CIPHER_SM4_GCM:
-+		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
-+		break;
-+#endif
- 	default:
- 		job->cipher_start_src_offset_in_bytes =
- 					op->sym->cipher.data.offset;
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-index 468a1f35eb..66e8e732ff 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-@@ -826,6 +826,36 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
- 			}, }
- 		}, }
- 	},
-+	{	/* SM4 GCM */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AEAD,
-+			{.aead = {
-+				.algo = RTE_CRYPTO_AEAD_SM4_GCM,
-+				.block_size = 16,
-+				.key_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0,
-+				},
-+				.digest_size = {
-+					.min = 1,
-+					.max = 16,
-+					.increment = 1,
-+				},
-+				.aad_size = {
-+					.min = 0,
-+					.max = 65535,
-+					.increment = 1,
-+				},
-+				.iv_size = {
-+					.min = 12,
-+					.max = 12,
-+					.increment = 0,
-+				}
-+			}, }
-+		}, }
-+	},
- #endif
- 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
++static int
++test_SM4_GCM_case_1(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_1);
++}
++
++static int
++test_SM4_GCM_case_2(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_2);
++}
++
++static int
++test_SM4_GCM_case_3(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_3);
++}
++
++static int
++test_SM4_GCM_case_4(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_4);
++}
++
++static int
++test_SM4_GCM_case_5(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_5);
++}
++
++static int
++test_SM4_GCM_case_6(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_6);
++}
++
++static int
++test_SM4_GCM_case_7(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_7);
++}
++
++static int
++test_SM4_GCM_case_8(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_8);
++}
++
++static int
++test_SM4_GCM_case_9(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_9);
++}
++
++static int
++test_SM4_GCM_case_10(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_10);
++}
++
++static int
++test_SM4_GCM_case_11(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_11);
++}
++
++static int
++test_SM4_GCM_case_12(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_12);
++}
++
++static int
++test_SM4_GCM_case_13(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_13);
++}
++
++static int
++test_SM4_GCM_case_14(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_14);
++}
++
++static int
++test_SM4_GCM_case_15(void)
++{
++	return test_authenticated_encryption(&sm4_gcm_case_15);
++}
++
+ #ifdef RTE_CRYPTO_SCHEDULER
+ 
+ /* global AESNI worker IDs for the scheduler test */
+@@ -19616,6 +19735,44 @@ static struct unit_test_suite cryptodev_mixed_cipher_hash_testsuite  = {
+ 	}
  };
+ 
++static struct unit_test_suite cryptodev_sm4_gcm_testsuite  = {
++	.suite_name = "SM4 GCM Test Suite",
++	.setup = sm4_gcm_testsuite_setup,
++	.unit_test_cases = {
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_1),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_2),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_3),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_4),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_5),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_6),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_7),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_8),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_9),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_10),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_11),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_12),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_13),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_14),
++		TEST_CASE_ST(ut_setup, ut_teardown,
++			test_SM4_GCM_case_15),
++		TEST_CASES_END()
++	}
++};
++
+ static int
+ run_cryptodev_testsuite(const char *pmd_name)
+ {
+@@ -19648,6 +19805,7 @@ run_cryptodev_testsuite(const char *pmd_name)
+ 		&cryptodev_mixed_cipher_hash_testsuite,
+ 		&cryptodev_negative_hmac_sha1_testsuite,
+ 		&cryptodev_gen_testsuite,
++		&cryptodev_sm4_gcm_testsuite,
+ #ifdef RTE_LIB_SECURITY
+ 		&ipsec_proto_testsuite,
+ 		&pdcp_proto_testsuite,
+diff --git a/app/test/test_cryptodev_aead_test_vectors.h b/app/test/test_cryptodev_aead_test_vectors.h
+index 73bfb8dad4..3c17987202 100644
+--- a/app/test/test_cryptodev_aead_test_vectors.h
++++ b/app/test/test_cryptodev_aead_test_vectors.h
+@@ -50,6 +50,54 @@ static uint8_t ccm_aad_test_2[22] = {
+ 		0xA5, 0xB8, 0xFC, 0xBA, 0x00, 0x00
+ };
+ 
++static uint8_t sm4_gcm_aad_test_2[] = {
++		0x3f, 0x89, 0x42, 0x20
++};
++
++static uint8_t sm4_gcm_aad_test_3[] = {
++		0x36, 0x94, 0xf6, 0x7b, 0x8a, 0x58, 0x4d, 0xed
++};
++
++static uint8_t sm4_gcm_aad_test_4[] = {
++		0xd5, 0x66, 0x06, 0x8f, 0xbc, 0x11, 0xb8
++};
++
++static uint8_t sm4_gcm_aad_test_6[] = {
++		0x1b, 0xcd
++};
++
++static uint8_t sm4_gcm_aad_test_7[] = {
++		0x6c, 0xac, 0xc4
++};
++
++static uint8_t sm4_gcm_aad_test_8[] = {
++		0x76, 0xb3, 0xad, 0x45, 0x78
++};
++
++static uint8_t sm4_gcm_aad_test_9[] = {
++		0x29
++};
++
++static uint8_t sm4_gcm_aad_test_11[] = {
++		0xfe, 0xed, 0xfa, 0xce, 0xde, 0xad, 0xbe, 0xef,
++		0xfe, 0xed, 0xfa, 0xce, 0xde, 0xad, 0xbe, 0xef,
++		0xab, 0xad, 0xda, 0xd2
++};
++
++static uint8_t sm4_gcm_aad_test_14[] = {
++		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		0x00, 0x00, 0x00, 0x00
++};
++
++static uint8_t sm4_gcm_aad_test_15[] = {
++		0xc9, 0x9a, 0x66, 0x32, 0x0d, 0xb7, 0x31, 0x58,
++		0xa3, 0x5a, 0x25, 0x5d, 0x05, 0x17, 0x58, 0xe9,
++		0x5e, 0xd4, 0xab, 0xb2, 0xcd, 0xc6, 0x9b, 0xb4,
++		0x54, 0x11, 0x0e, 0x82, 0x74, 0x41, 0x21, 0x3d,
++		0xdc, 0x87, 0x70, 0xe9, 0x3e, 0xa1, 0x41,
++};
++
+ struct aead_test_data {
+ 	enum rte_crypto_aead_algorithm algo;
+ 
+@@ -4119,4 +4167,664 @@ static const struct aead_test_data chacha20_poly1305_case_2 = {
+ 		.len = 16
+ 	}
+ };
++
++static const struct aead_test_data sm4_gcm_case_1 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x22, 0x04, 0xb5, 0x07, 0x83, 0x5a, 0xf3, 0x3e,
++			0xb1, 0x07, 0xa2, 0x71, 0x31, 0x4a, 0x65, 0x8c
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x25, 0xc1, 0xe9, 0xce, 0x6e, 0x61, 0xe7, 0xf4,
++			0x7c, 0xcf, 0x2c, 0xe7
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = 0,
++		.len = 0
++	},
++	.plaintext = {
++		.data = {
++			0xf1, 0x7b, 0xe7, 0x3b, 0x74, 0x08, 0x40, 0x66,
++			0xd1, 0x5f, 0x0f, 0x9e, 0xd6, 0xcf, 0x29, 0xd3
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x27, 0xd5, 0x79, 0x8a, 0x80, 0x45, 0x9e, 0xee,
++			0x00, 0x56, 0xb4, 0x93, 0xda, 0x8d, 0x4d, 0x3d
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x13, 0xc4, 0xe1, 0xda, 0x30, 0xd0, 0xad, 0x72,
++			0x55, 0x7c, 0xb7, 0xe4, 0x9f, 0xad, 0xd8, 0xae
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_2 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x1f, 0x52, 0x3c, 0x62, 0x96, 0xcf, 0xee, 0x91,
++			0x4c, 0x54, 0x28, 0xda, 0xdd, 0x6a, 0xa9, 0xad
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0xe3, 0x94, 0xea, 0x81, 0x82, 0x30, 0x16, 0x4b,
++			0xea, 0x28, 0xeb, 0x3d
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_2,
++		.len = 4
++	},
++	.plaintext = {
++		.data = {
++			0x0f, 0xd2, 0x41, 0x06, 0x07, 0x52, 0x06, 0xf3,
++			0xff, 0x36, 0x37, 0x68, 0x2e, 0x59, 0x33, 0xfd
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x64, 0xa7, 0x9c, 0x9d, 0xd4, 0xeb, 0xec, 0x07,
++			0x2b, 0xe3, 0xd2, 0x47, 0xf1, 0xce, 0x54, 0x80
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x06, 0x70, 0x8c, 0x2c, 0x8a, 0x52, 0xd1, 0x7e,
++			0x35, 0x53, 0x43, 0x31, 0xea, 0x1a, 0xe6, 0xdc
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_3 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x4f, 0xae, 0xca, 0xe5, 0x31, 0xaf, 0xc0, 0xed,
++			0x41, 0xf4, 0xaf, 0xe4, 0xb4, 0x3a, 0x68, 0xcd
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x6c, 0x2a, 0xf4, 0x2c, 0xb0, 0xca, 0x71, 0x5a,
++			0x54, 0xc5, 0xb5, 0xfc
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_3,
++		.len = 8
++	},
++	.plaintext = {
++		.data = {
++			0x51, 0x71, 0xc0, 0xf1, 0x11, 0xaa, 0xd7, 0xe3,
++			0xdd, 0x03, 0xfa, 0x65, 0x3e, 0xfa, 0x38, 0xe6
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0xf9, 0xff, 0xb9, 0xbf, 0x8b, 0xcb, 0xba, 0xd9,
++			0x28, 0x8d, 0x9e, 0x7b, 0x53, 0x77, 0x24, 0x6c
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x51, 0x72, 0xbb, 0x14, 0xdb, 0x45, 0xc8, 0x1e,
++			0x55, 0x7a, 0x24, 0x0d, 0xa8, 0x39, 0x06, 0x86
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_4 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x17, 0xc4, 0x8b, 0x7a, 0x40, 0x2d, 0xc0, 0x4b,
++			0x26, 0xe4, 0x45, 0x47, 0x72, 0x08, 0x5f, 0x20
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0xf0, 0x1e, 0x3a, 0xcd, 0x3b, 0xfd, 0x25, 0x71,
++			0xb4, 0x02, 0xa9, 0x5b
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_4,
++		.len = 7
++	},
++	.plaintext = {
++		.data = {
++			0xe9, 0xec, 0x00, 0x14, 0x57, 0x99, 0xb0, 0xc6,
++			0x05, 0xa0, 0xfa, 0x01, 0x8f, 0xcf, 0x82, 0xd8
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x62, 0xae, 0x61, 0x4d, 0xcc, 0xb6, 0x2f, 0xce,
++			0xe7, 0x81, 0x61, 0x87, 0xe6, 0x95, 0xbc, 0x39
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0xbf, 0x20, 0x8d, 0xda, 0x95, 0xc5, 0x63, 0xa8,
++			0x13, 0xf2, 0x4c, 0xaf, 0xef, 0xab, 0xa1, 0x38
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_5 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0xc4, 0xc5, 0xa7, 0x1c, 0xef, 0xba, 0x2f, 0x10,
++			0x59, 0x2e, 0xd7, 0x19, 0x0e, 0xdf, 0xe5, 0xe0
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x40, 0xa7, 0x92, 0xa1, 0x9b, 0x29, 0x15, 0x3b,
++			0x1b, 0xfc, 0x29, 0x6e
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = 0,
++		.len = 0
++	},
++	.plaintext = {
++		.data = {
++			0x6e, 0x3d, 0xce, 0x73, 0x73, 0xe9, 0x30, 0xf1,
++			0x83, 0x26, 0x7e, 0xeb, 0x8a, 0x16, 0xa5, 0xb6
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x1c, 0x97, 0x37, 0xc3, 0x2c, 0xb6, 0x6c, 0x3c,
++			0xb1, 0xbc, 0x49, 0x9c, 0x32, 0x2b, 0x95, 0xca
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x8d, 0xa3, 0x12, 0xa0, 0x68, 0xa0, 0x8c, 0xd7,
++			0xf1, 0x72, 0x72, 0xc0, 0xe3, 0x90, 0x3b, 0x50
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_6 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x96, 0x89, 0x6f, 0xae, 0x4b, 0x9f, 0x16, 0x8a,
++			0x61, 0xa2, 0xef, 0x71, 0x7f, 0xee, 0xde, 0x61
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0xad, 0x94, 0x73, 0x37, 0x14, 0x2e, 0x60, 0x24,
++			0x28, 0xcf, 0xfd, 0x5b
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_6,
++		.len = 2
++	},
++	.plaintext = {
++		.data = {
++			0x64, 0xdd, 0x83, 0x7e, 0xb7, 0x4a, 0x98, 0x0a,
++			0x5e, 0xe0, 0xba, 0x48, 0xd4, 0xc7, 0x91, 0x86
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x53, 0xcf, 0x5f, 0x9b, 0x39, 0x40, 0x63, 0x33,
++			0x3f, 0x1b, 0xbb, 0xb3, 0x95, 0xd1, 0x3e, 0xa7
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0xd7, 0x52, 0x13, 0x2a, 0xb7, 0xe3, 0x5a, 0xaf,
++			0xf2, 0x8c, 0x8a, 0x0b, 0xa6, 0xab, 0x0c, 0x8e
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_7 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x79, 0x86, 0x37, 0x4a, 0x61, 0xea, 0x12, 0x4b,
++			0xa8, 0x0c, 0xc4, 0xf8, 0xd7, 0x20, 0xd6, 0x71
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x3f, 0x2b, 0x3a, 0x8b, 0x4d, 0x61, 0x84, 0xe1,
++			0x36, 0xfe, 0x9e, 0x35
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_7,
++		.len = 3
++	},
++	.plaintext = {
++		.data = {
++			0x87, 0xc8, 0x7b, 0xa1, 0xc2, 0xf9, 0x58, 0x44,
++			0x19, 0x87, 0xd3, 0x43, 0xd9, 0x1a, 0x2f, 0xba
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x36, 0xe2, 0x4f, 0x1d, 0xa0, 0xfa, 0xb8, 0x6e,
++			0x07, 0xc1, 0x31, 0xd7, 0x0a, 0x07, 0x0e, 0xcb
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0xd3, 0xf0, 0x78, 0x87, 0x90, 0x80, 0x52, 0xcf,
++			0x69, 0xb6, 0x6d, 0xd4, 0x59, 0x59, 0x61, 0x05
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_8 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x34, 0xce, 0x5b, 0x8d, 0x57, 0x57, 0xd0, 0x1b,
++			0x8b, 0x96, 0xd7, 0x38, 0x25, 0x44, 0x51, 0xd6
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x0f, 0xc7, 0x27, 0xb8, 0x5a, 0x32, 0x09, 0x70,
++			0xe5, 0x46, 0x62, 0xa0
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_8,
++		.len = 5
++	},
++	.plaintext = {
++		.data = {
++			0xc2, 0x32, 0xfa, 0x82, 0xe1, 0x49, 0xda, 0x2e,
++			0x2c, 0x9a, 0xc4, 0x87, 0x4c, 0xdc, 0x45, 0x42
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0xa3, 0xac, 0xf5, 0xb4, 0xbe, 0xf7, 0x20, 0xdc,
++			0xe9, 0x20, 0xf4, 0x21, 0x63, 0xdf, 0xf4, 0x8c
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x60, 0x32, 0x24, 0x47, 0x0b, 0xae, 0xba, 0xfb,
++			0x3f, 0xea, 0xc3, 0xf6, 0x92, 0x69, 0x1a, 0xa7
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_9 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0xc3, 0xa6, 0x1f, 0xff, 0xe6, 0x36, 0x44, 0x6a,
++			0xc5, 0xc0, 0x87, 0xeb, 0x1a, 0xe5, 0x0d, 0xc4
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0xc6, 0x4d, 0x6a, 0xde, 0x76, 0xc6, 0xca, 0xe0,
++			0x57, 0x5e, 0x2c, 0xd0
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_9,
++		.len = 1
++	},
++	.plaintext = {
++		.data = {
++			0x3e, 0x4a, 0xac, 0x5b, 0x89, 0xec, 0x2a, 0x83,
++			0x2e, 0x7e, 0x93, 0x2b, 0x56, 0xb4, 0x0b, 0xce
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x99, 0xf0, 0x47, 0x8e, 0x8f, 0x92, 0x64, 0x83,
++			0xc4, 0xb6, 0x01, 0x2a, 0x4c, 0x17, 0xaa, 0xb5
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0x73, 0x84, 0xf9, 0xb7, 0xe2, 0xb9, 0x04, 0xc6,
++			0x4f, 0xe5, 0x5d, 0x69, 0x3c, 0xdd, 0xfb, 0xbd
++		},
++		.len = 16
++	}
++};
++
++static const struct aead_test_data sm4_gcm_case_10 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0xa8, 0xbe, 0xf3, 0x0b, 0x73, 0x1e, 0xfb, 0x64,
++			0x9a, 0x28, 0x58, 0x55, 0x2c, 0xe2, 0x99, 0x4c
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x3f, 0xa7, 0x24, 0x18, 0x2e, 0xc1, 0xaf, 0xae,
++			0xe1, 0xb9, 0x70, 0x48
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = 0,
++		.len = 0
++	},
++	.plaintext = {
++		.data = {
++			0x2b, 0x85, 0x74, 0x6a, 0xd0, 0x2b, 0x6c, 0x79,
++			0x4a, 0x93, 0x97, 0x39, 0xfc, 0xa1, 0x65, 0x96
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x5a, 0x3c, 0xb9, 0x84, 0x17, 0x5a, 0x2c, 0xed,
++			0x75, 0xd8, 0x97, 0x60, 0xfa, 0x9b, 0xc2, 0xe8
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0xb9, 0xe3, 0xd7, 0x80, 0x7d, 0xea, 0x7a, 0x09,
++			0xdc, 0x21, 0x18, 0x3c, 0x8f, 0xfb, 0xe7, 0x63
++		},
++		.len = 16
++	}
++};
++
++/*
++ * Vector from RFC-8998
++ * https://datatracker.ietf.org/doc/html/rfc8998
++ * Appendix A.
++ */
++static const struct aead_test_data sm4_gcm_case_11 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
++			0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x00, 0x00, 0x12, 0x34, 0x56, 0x78, 0x00, 0x00,
++			0x00, 0x00, 0xab, 0xcd
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_11,
++		.len = 20
++	},
++	.plaintext = {
++		.data = {
++			0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
++			0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb, 0xbb,
++			0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc,
++			0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
++			0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee,
++			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++			0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee,
++			0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa
++		},
++		.len = 64
++	},
++	.ciphertext = {
++		.data = {
++			0x17, 0xf3, 0x99, 0xf0, 0x8c, 0x67, 0xd5, 0xee,
++			0x19, 0xd0, 0xdc, 0x99, 0x69, 0xc4, 0xbb, 0x7d,
++			0x5f, 0xd4, 0x6f, 0xd3, 0x75, 0x64, 0x89, 0x06,
++			0x91, 0x57, 0xb2, 0x82, 0xbb, 0x20, 0x07, 0x35,
++			0xd8, 0x27, 0x10, 0xca, 0x5c, 0x22, 0xf0, 0xcc,
++			0xfa, 0x7c, 0xbf, 0x93, 0xd4, 0x96, 0xac, 0x15,
++			0xa5, 0x68, 0x34, 0xcb, 0xcf, 0x98, 0xc3, 0x97,
++			0xb4, 0x02, 0x4a, 0x26, 0x91, 0x23, 0x3b, 0x8d
++		},
++		.len = 64
++	},
++	.auth_tag = {
++		.data = {
++			0x83, 0xde, 0x35, 0x41, 0xe4, 0xc2, 0xb5, 0x81,
++			0x77, 0xe0, 0x65, 0xa9, 0xbf, 0x7b, 0x62, 0xec
++		},
++		.len = 16
++	}
++};
++
++/*
++ * No plaintext, no AAD vector
++ */
++static const struct aead_test_data sm4_gcm_case_12 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = 0,
++		.len = 0
++	},
++	.plaintext = {
++		.data = { 0 },
++		.len = 0
++	},
++	.ciphertext = {
++		.data = { 0 },
++		.len = 0
++	},
++	.auth_tag = {
++		.data = {
++			0x23, 0x2f, 0x0c, 0xfe, 0x30, 0x8b, 0x49, 0xea,
++			0x6f, 0xc8, 0x82, 0x29, 0xb5, 0xdc, 0x85, 0x8d
++		},
++		.len = 16
++	}
++};
++
++/*
++ * 16-byte plaintext with all zeros, no AAD
++ */
++static const struct aead_test_data sm4_gcm_case_13 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = 0,
++		.len = 0
++	},
++	.plaintext = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++		},
++		.len = 16
++	},
++	.ciphertext = {
++		.data = {
++			0x7d, 0xe2, 0xaa, 0x7f, 0x11, 0x10, 0x18, 0x82,
++			0x18, 0x06, 0x3b, 0xe1, 0xbf, 0xeb, 0x6d, 0x89
++		},
++		.len = 16
++	},
++	.auth_tag = {
++		.data = {
++			0xb8, 0x51, 0xb5, 0xf3, 0x94, 0x93, 0x75, 0x2b,
++			0xe5, 0x08, 0xf1, 0xbb, 0x44, 0x82, 0xc5, 0x57
++		},
++		.len = 16
++	}
++};
++
++/*
++ * No plaintext, 20-byte AAD
++ */
++static const struct aead_test_data sm4_gcm_case_14 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_14,
++		.len = 20
++	},
++	.plaintext = {
++		.data = { 0 },
++		.len = 0
++	},
++	.ciphertext = {
++		.data = { 0 },
++		.len = 0
++	},
++	.auth_tag = {
++		.data = {
++			0x97, 0x20, 0x01, 0xb2, 0xd6, 0x04, 0xac, 0xcd,
++			0x37, 0x6d, 0x82, 0x9d, 0x35, 0x89, 0xf3, 0xd3
++		},
++		.len = 16
++	}
++};
++
++/*
++ * Variable sized plaintext, AAD
++ */
++static const struct aead_test_data sm4_gcm_case_15 = {
++	.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++	.key = {
++		.data = {
++			0x69, 0x73, 0x51, 0xff, 0x4a, 0xec, 0x29, 0xcd,
++			0xba, 0xab, 0xf2, 0xfb, 0xe3, 0x46, 0x7c, 0xc2
++		},
++		.len = 16
++	},
++	.iv = {
++		.data = {
++			0x54, 0xf8, 0x1b, 0xe8, 0xe7, 0x8d, 0x76, 0x5a,
++			0x2e, 0x63, 0x33, 0x9f
++		},
++		.len = 12
++	},
++	.aad = {
++		.data = sm4_gcm_aad_test_15,
++		.len = 39
++	},
++	.plaintext = {
++		.data = {
++			0xe1, 0xfc, 0x67, 0x3e, 0x01, 0x7e
++		},
++		.len = 6
++	},
++	.ciphertext = {
++		.data = {
++			0x79, 0x0c, 0x5b, 0x40, 0xcb, 0xbe
++		},
++		.len = 6
++	},
++	.auth_tag = {
++		.data = {
++			0x81, 0x96, 0xee, 0x15, 0x59, 0xac, 0xc9, 0x3d,
++			0xac, 0xc0, 0xdc, 0x7c, 0x9a, 0x40, 0x0e, 0x8d
++		},
++		.len = 16
++	}
++};
+ #endif /* TEST_CRYPTODEV_AEAD_TEST_VECTORS_H_ */
 -- 
 2.25.1
 
