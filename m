@@ -2,78 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E193FC021A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8102FC021BB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:42:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6703427B0;
-	Mon, 24 Feb 2025 17:40:40 +0100 (CET)
-Received: from mail-ej1-f98.google.com (mail-ej1-f98.google.com
- [209.85.218.98]) by mails.dpdk.org (Postfix) with ESMTP id D5BE042792
- for <dev@dpdk.org>; Mon, 24 Feb 2025 17:40:37 +0100 (CET)
-Received: by mail-ej1-f98.google.com with SMTP id
- a640c23a62f3a-abec925a135so57189766b.0
- for <dev@dpdk.org>; Mon, 24 Feb 2025 08:40:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7920942792;
+	Mon, 24 Feb 2025 17:42:52 +0100 (CET)
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com
+ [209.85.166.51]) by mails.dpdk.org (Postfix) with ESMTP id 9A36A42792
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 17:42:51 +0100 (CET)
+Received: by mail-io1-f51.google.com with SMTP id
+ ca18e2360f4ac-8559461c2c2so120903739f.0
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 08:42:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1740415237; x=1741020037; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/AtbEytKxo55iAjaV8ekKqqFZln+jcXYUmALl5RLNuI=;
- b=SsFJoz7iItEevQcX5B8/evHU1D9fGURy8w+3cz3wIWid/ghiYNJT6eVWpFt7pQgO0z
- wF7xF79lYnk/U8gAMvwRI/W/40EQ2BZBQGydQw7P8aMeXpXBUmia1e+YZKwPYyEqgMnG
- VSISdFBtZaJpJQ3I9hZhf52/0HM0PIQYgGM2jJ4x7ekUcauKPIeGG7H2fUGaiXYkNWuY
- cVYLYQ0sdaLF95F2dKXdGUOQg+v4yXc1oSzJoXzapq1uBRe7UEuBWUxKbFgBTDURN8sb
- O9+rtoXyUaWQsQzOfVy9kWcANnZ5VxT059rnBQTQnS/8DBuYn6VPLCdzPgd8HSxwtzbq
- l3Lw==
+ d=6wind.com; s=google; t=1740415371; x=1741020171; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=KgJThX6ykbESJqOcjBm0iiwKV4TaRWslK1qafq6Wdys=;
+ b=PKF/PTPIWoLmHUx5Ckhm2bppnyhp9ld7N/WRmlROkIS4Iv8c/PAvsA0Bx+uwPVwOAg
+ R/xJTI3DNgMM6v1NcLqIb5UNKJPAdvDIObPDihrdBc3Yz8QsERvX5wVj9qy3keGCHi29
+ zEJ5KLT2wi317oZqW4ED1056KvGhlJ4g1iBbPNP8l2QB9e+GdgJ3JFXjRUm2KOGPd3B0
+ 9I2tEvTcjKSoTpLAR6+H7z4ofzsPfV5NvvOclv6N97cfdT6hwRMx8/b8ysaAW8aIErYn
+ K1VkF77rXJZo+La6a8+6OcxqYv9zizQZ8ALzItIm9HYTFk3KGLgBa4jJ7wKVaWYeQO4L
+ n6sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740415237; x=1741020037;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=/AtbEytKxo55iAjaV8ekKqqFZln+jcXYUmALl5RLNuI=;
- b=oAdjluzxD4GO6LcKNC+jRhxs8bpiBMx7WbG7gypMkAXCre4FCVDLlq+QnSHxGqE2ZO
- CX44d04YSGIUUnsVhFG8JzAJMXwQG5Uy46imTPQLZfJFgLkBWq2/uUjMtgVR9bt0yzLY
- WTgKxH9lutk11D0q6PmgjDJM+B4ejA3xz7t9zMftt0aTgHuu8dpyEE8OPSuuEuPACHxS
- /Wv1S3N1QHn1wR8+eAvDNx2JZzQJBHG3tCvklTtqbrak3K9cPNFRfUrnkK4el0G6qgca
- nEGTdkXm3BA/5yUnFhcWNK0j6nW6g97w1zF3H4CbarBiH7SP0Shxv6SU0w3inCkvcuS0
- uI/A==
-X-Gm-Message-State: AOJu0YyUDCnAYdPBXWx3n4V5pjOBNwC/KR8wgZihT8jJn/dA4/VynXv3
- 3+ex8BGkhRnswdsVu/4yboquGBMlnl1GoVfn/4Y1sAhRss844ij18c3KqdF8gp/jIUGYvp9T9ml
- uXHXi/Cel+vZQpsuNSJyxHdjvQz2k4hgNjUr0liYF
-X-Gm-Gg: ASbGncvtJ96SBOF66yLUvw04YI42Bvolr1ehLGlZNikBI23Va/o2mEQVsEaW2UWwlf8
- tcOy8vWWst2tGqfK9guxycxkJH1kuqO4XXgLSyCfGO6W983lUgEasQvswNBR1fqxqaKY5UBvxUu
- 48r/3/cDphbxPEzUo+AwZGcy57naIXCruQ4l97mjd2dm7Knp7cGf9sEAazazNrYXPg53ajmebed
- wmutkCClk6lhy5Tn8dApaxCvlOTotGQ/CWk0TaE1PNgznDcbrSUv6PHwlxy1Nn7JRDOE5VC1aZ6
- foaX+Y+9jA73l5WyF9H2gyxj04Zeh+xO982sGpT5/s9gYI4ld1v2RWHK1MI1
-X-Google-Smtp-Source: AGHT+IGvS7Zq583Ox/kY2Ho4bq0Y/iUW3Zj5rSiN1mseedJnWP7GFzVy65Tn5G1Fa/8KVTQgiTqU5LtTEf1d
-X-Received: by 2002:a17:907:7fac:b0:ab7:eeae:b23e with SMTP id
- a640c23a62f3a-abc09e53506mr1266483866b.47.1740415237421; 
- Mon, 24 Feb 2025 08:40:37 -0800 (PST)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- a640c23a62f3a-abeca18aefasm2811866b.222.2025.02.24.08.40.37; 
- Mon, 24 Feb 2025 08:40:37 -0800 (PST)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
- by smtpservice.6wind.com (Postfix) with ESMTP id 47F3D15754;
- Mon, 24 Feb 2025 17:40:37 +0100 (CET)
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>, stable@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Ariel Otilibili <ariel.otilibili@6wind.com>
-Subject: [PATCH v3 1/1] pcapng: fix null dereference in rte_pcapng_close
-Date: Mon, 24 Feb 2025 17:40:31 +0100
-Message-Id: <20250224164031.587829-2-ariel.otilibili@6wind.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250224164031.587829-1-ariel.otilibili@6wind.com>
-References: <20250216160833.3216001-1-ariel.otilibili@6wind.com>
- <20250224164031.587829-1-ariel.otilibili@6wind.com>
+ d=1e100.net; s=20230601; t=1740415371; x=1741020171;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=KgJThX6ykbESJqOcjBm0iiwKV4TaRWslK1qafq6Wdys=;
+ b=FlqwhiaFqF35mx7/sWxHlW0VHaKx5zZlmbyOHyNHdxDC332fOZBw+ka86Wwszv2wbV
+ h8GA5ztahKqpmadnOS5px62cTCXV7G2ZeEOv9QtFkAo5KP80pCCTiRFMCPjoMYdNF2Gb
+ lLohZifWfSo3T4wQ/05q2sdW3XYBsb1I+MxPKCfM7CwVBu9WmvmL48qqCqgD91OHo37y
+ kPM05fFjMJltmQw7yNfyFcRHEzp9Bq32ej+rqiw+EfzOiCZj8lI08i0pYiRZLPJsdvnI
+ j+Bmpat+WG5mvrKHYjUXVERCqAdOmznRV5Ugihxh+WYCYml+mhyQibAm9NfM4cW59zxy
+ z0EA==
+X-Gm-Message-State: AOJu0YwExQRXdMj94HiPw9Lc37mPPcUQy2zty1tc7+1eQWIfc5pCvfQb
+ hh9d2dyW/MpxLRV+JmNOZH2qczsbHZKw76BeGDqpM4FTSB0Idl1u+vtaNz4SnqgQzLUTeGB7xt+
+ ZvQWBGKpOIcy5CW7uDv3flkpiFwWixfi6EwoT9Q==
+X-Gm-Gg: ASbGncvJD5gfOf3PrsmMqK1eVlWoxA7ihn85Ls4QUC1bn3aBmdqPJgM9o0N+UuNuY6F
+ DArQk6h1GCDadAoyyRio2/SZUzO2Cjj3w4oPptnnwlHUK53/76akaVFAFLVn8/hdLuhzcq0zWUf
+ INeycp8Xpc+r0swOsZhE5W+PyVksBVSeBI30OgNps=
+X-Google-Smtp-Source: AGHT+IFFRKetHkPAOyeyK1wcC2EGR2q5c7UHmE9ua37dUqIO6JE4XiZDKrhTspLiqrnrqfkmIXBbtsDoSOIle2KpGG8=
+X-Received: by 2002:a05:6e02:b2e:b0:3d1:78f1:8a86 with SMTP id
+ e9e14a558f8ab-3d2caeeadb8mr122776995ab.15.1740415370889; Mon, 24 Feb 2025
+ 08:42:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250216160833.3216001-1-ariel.otilibili@6wind.com>
+ <20250223214123.447579-1-ariel.otilibili@6wind.com>
+ <20250223214123.447579-2-ariel.otilibili@6wind.com>
+ <20250224074253.3df64dff@hermes.local>
+In-Reply-To: <20250224074253.3df64dff@hermes.local>
+From: Ariel Otilibili <ariel.otilibili@6wind.com>
+Date: Mon, 24 Feb 2025 17:42:40 +0100
+X-Gm-Features: AWEUYZn1gLoqGXfmVVL_N_mcGVn-aJlhES1cipo0ZpC_lWUkcG8SMO6Vo__m_-8
+Message-ID: <CAF1zDgaa+Fg7kV_QFb6KkXZSBDk8F4jkT2O-yRo77Em9Dhbfqw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] pcapng: warn if NULL is passed to rte_pcapng_close
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ David Marchand <david.marchand@redhat.com>,
+ Reshma Pattan <reshma.pattan@intel.com>, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000f1ae65062ee60786"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,48 +75,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_pcapng_close() might dereference a null pointer; as example,
-PVS-Studio gives its usage in test_pcapng.c: indeed, that call to
-rte_pcapng_close() might receive a null pointer.
+--000000000000f1ae65062ee60786
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Link: https://pvs-studio.com/en/docs/warnings/v522/
-Link: https://github.com/DPDK/dpdk/blob/e5176f23ae8b31437c3e5eb875c81f95bf3a9942/app/test/test_pcapng.c#L438
-Fixes: 8d23ce8f5ee9 ("pcapng: add new library for writing pcapng files")
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com>
----
- .mailmap                | 2 +-
- lib/pcapng/rte_pcapng.c | 6 ++++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Hello Dmitry, hello Stephen;
 
-diff --git a/.mailmap b/.mailmap
-index a03d3cfb591b..ea68d6180ccc 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -135,7 +135,7 @@ Anupam Kapoor <anupam.kapoor@gmail.com>
- Apeksha Gupta <apeksha.gupta@nxp.com>
- Archana Muniganti <marchana@marvell.com> <muniganti.archana@caviumnetworks.com>
- Archit Pandey <architpandeynitk@gmail.com>
--Ariel Otilibili <otilibil@eurecom.fr> <ariel.otilibili@6wind.com>
-+Ariel Otilibili <ariel.otilibili@6wind.com> <otilibil@eurecom.fr>
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
- Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
- Arnaud Fiorini <arnaud.fiorini@polymtl.ca>
-diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 16485b27cb46..66c16ba2277d 100644
---- a/lib/pcapng/rte_pcapng.c
-+++ b/lib/pcapng/rte_pcapng.c
-@@ -716,6 +716,8 @@ rte_pcapng_fdopen(int fd,
- void
- rte_pcapng_close(rte_pcapng_t *self)
- {
--	close(self->outfd);
--	free(self);
-+	if (self) {
-+		close(self->outfd);
-+		free(self);
-+	}
- }
--- 
-2.30.2
+On Mon, Feb 24, 2025 at 4:42=E2=80=AFPM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
 
+> The convention (back from Unix) is that errno is only set on failure.
+> Simpler fix would just to silently ignore NULL case.
+>
+
+Thanks for your feedback. Here they are addressed,
+https://inbox.dpdk.org/dev/20250224164031.587829-1-ariel.otilibili@6wind.co=
+m/
+
+--000000000000f1ae65062ee60786
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr">Hello Dmitry, hello Stephen;<br></div><br=
+><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D=
+"gmail_attr">On Mon, Feb 24, 2025 at 4:42=E2=80=AFPM Stephen Hemminger &lt;=
+<a href=3D"mailto:stephen@networkplumber.org">stephen@networkplumber.org</a=
+>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+The convention (back from Unix) is that errno is only set on failure.<br>
+Simpler fix would just to silently ignore NULL case.<br></blockquote><div><=
+br></div><div>Thanks for your feedback. Here they are addressed,=C2=A0<a hr=
+ef=3D"https://inbox.dpdk.org/dev/20250224164031.587829-1-ariel.otilibili@6w=
+ind.com/">https://inbox.dpdk.org/dev/20250224164031.587829-1-ariel.otilibil=
+i@6wind.com/</a> </div></div></div>
+
+--000000000000f1ae65062ee60786--
