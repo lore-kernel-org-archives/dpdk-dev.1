@@ -2,51 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72FEC021BB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE66C021BB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:59:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA34A4279D;
-	Mon, 24 Feb 2025 17:59:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1ECA2427A8;
+	Mon, 24 Feb 2025 17:59:53 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id EE4B641104
- for <dev@dpdk.org>; Mon, 24 Feb 2025 17:59:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8BFA641104
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 17:59:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1740416387; x=1771952387;
+ t=1740416388; x=1771952388;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=I/r3lXIglFApKip72Y0drL+zUAuc2UaJ2maJGbZWuIc=;
- b=d7sjfLebHWAwC0fCopHQ3WAHqEpmN5Ip4GUu9P1gnxbi+Hd2KR5o+60J
- vCyZ3bmFBN5dX7qu9cH+FTFKRMm2gDPnpcRLtXhPe0V/bYUSmVuc57dip
- 6iWZaaiM4Fu2YF7SeoM0BXW5lOVBR1WdDyepri0FORE9bNlsXnzBAuF2m
- ukDBH1UxEQ6vyuaHbVvJBIQxVKT5uuBwCCA/9yOdR7t30J/5jFaXmJDqr
- 2VCyxbbvBc4Xmcv59C4gmTkIXxm3oriMEor7RLAbApHn8AvRuPHD8HEJP
- d0zuRgaZxcViK3nS2lhXKRa7uvY1YaOMhAgPTJtQDMIHABX04ExabA/zN A==;
-X-CSE-ConnectionGUID: K/fxz7ysSGa/vnbaeeCHhQ==
-X-CSE-MsgGUID: UEDY1gXMRomyCYqFeXOz3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58728730"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="58728730"
+ bh=q9Ptjf/NXB+UQCrIoxA0zrHAhyu2gvKrRn93dovJa5A=;
+ b=SeSi9/shofNbtCdQ29IfG6sXlUifEQCW1UqKU4k5V7g60WNhH3rpitDH
+ 2tQyURPy4QS8w4XTihWOMy9cHMWSsqmmZUHHHAAdCn36um9HIsVGMQTAB
+ +R5bH8S9yqdDWlwn1A23Ov0mkCvCg5BNWDP8y9CCPOyxOOaUirh+nzngu
+ oelb0pTO6gccH7bPcZootdHoHjc7K8Ggyc0zdszRbFzD2Me/Wxx6m2M66
+ McPKga3YsulvNqWXFlL5yS1IvNzcCjkG6R9E8FkMvj51hvkug7wUTX5d+
+ Hje1w4SQPFDSIkkJBb+eOQ8Hnf0TzM5WUS5msgkLuuJ/3CIQWdCi07q+e Q==;
+X-CSE-ConnectionGUID: YtkFcZztSSi4ZeuAKJdAyw==
+X-CSE-MsgGUID: igkV5epVSJOwutvNQNWmQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58728748"
+X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="58728748"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2025 08:59:45 -0800
-X-CSE-ConnectionGUID: BX6jc6MQTK2xzx3vLucCSg==
-X-CSE-MsgGUID: JRJlNyI8RteKneI9h+alnQ==
+ 24 Feb 2025 08:59:48 -0800
+X-CSE-ConnectionGUID: GY5LeffDTBKBzodVgOwu+A==
+X-CSE-MsgGUID: /Jecs5elRUmRqDeHtcH7Ag==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="116618777"
+X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; d="scan'208";a="116618811"
 Received: from unknown (HELO silpixa00400886.ger.corp.intel.com)
  ([10.237.222.180])
- by fmviesa010.fm.intel.com with ESMTP; 24 Feb 2025 08:59:43 -0800
+ by fmviesa010.fm.intel.com with ESMTP; 24 Feb 2025 08:59:47 -0800
 From: Brian Dooley <brian.dooley@intel.com>
-To: Akhil Goyal <gakhil@marvell.com>,
-	Fan Zhang <fanzhang.oss@gmail.com>
-Cc: dev@dpdk.org, kai.ji@intel.com, pablo.de.lara.guarch@intel.com,
- Brian Dooley <brian.dooley@intel.com>
-Subject: [PATCH v5 1/3] cryptodev: add SM4 GCM
-Date: Mon, 24 Feb 2025 16:59:37 +0000
-Message-Id: <20250224165939.717714-1-brian.dooley@intel.com>
+To: Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Cc: dev@dpdk.org,
+	gakhil@marvell.com,
+	Brian Dooley <brian.dooley@intel.com>
+Subject: [PATCH v5 2/3] crypto/ipsec_mb: add SM4 GCM support
+Date: Mon, 24 Feb 2025 16:59:38 +0000
+Message-Id: <20250224165939.717714-2-brian.dooley@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241213125850.2714328-1-brian.dooley@intel.com>
+In-Reply-To: <20250224165939.717714-1-brian.dooley@intel.com>
 References: <20241213125850.2714328-1-brian.dooley@intel.com>
+ <20250224165939.717714-1-brian.dooley@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,61 +63,216 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added support for symmetric algorithm SM4 GCM in cryptodev.
+This patch introduces SM4 GCM algorithm support to the AESNI_MB PMD.
+SM4 GCM is available in the v2.0 release of Intel IPsec MB.
 
 Signed-off-by: Brian Dooley <brian.dooley@intel.com>
 ---
+v2:
+	Added aad to cpu job params
+	Added ipsec mb version checks
+v3:
+	Fix naming for patchwork
+v4:
+	Remove cryptodev changes to separate patch
 v5:
-	Change with GCM mode to in GCM mode
+	Change digest_size min value and increment value
 ---
- doc/guides/cryptodevs/features/default.ini | 2 ++
- lib/cryptodev/rte_crypto_sym.h             | 4 +++-
- lib/cryptodev/rte_cryptodev.c              | 3 ++-
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ doc/guides/cryptodevs/aesni_mb.rst          |  1 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |  1 +
+ doc/guides/rel_notes/release_25_03.rst      |  4 ++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 55 ++++++++++++++++++++-
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 30 +++++++++++
+ 5 files changed, 89 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/cryptodevs/features/default.ini b/doc/guides/cryptodevs/features/default.ini
-index 592af48026..116ffce249 100644
---- a/doc/guides/cryptodevs/features/default.ini
-+++ b/doc/guides/cryptodevs/features/default.ini
-@@ -118,6 +118,8 @@ AES CCM (128)     =
- AES CCM (192)     =
- AES CCM (256)     =
- CHACHA20-POLY1305 =
-+SM4 GCM           =
+diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
+index 16d82147b2..8d7e221e79 100644
+--- a/doc/guides/cryptodevs/aesni_mb.rst
++++ b/doc/guides/cryptodevs/aesni_mb.rst
+@@ -67,6 +67,7 @@ AEAD algorithms:
+ * RTE_CRYPTO_AEAD_AES_CCM
+ * RTE_CRYPTO_AEAD_AES_GCM
+ * RTE_CRYPTO_AEAD_CHACHA20_POLY1305
++* RTE_CRYPTO_AEAD_SM4_GCM
+ 
+ Protocol offloads:
+ 
+diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/cryptodevs/features/aesni_mb.ini
+index ebe00d075d..c648be62fb 100644
+--- a/doc/guides/cryptodevs/features/aesni_mb.ini
++++ b/doc/guides/cryptodevs/features/aesni_mb.ini
+@@ -80,6 +80,7 @@ AES GCM (128)     = Y
+ AES GCM (192)     = Y
+ AES GCM (256)     = Y
+ CHACHA20-POLY1305 = Y
++SM4 GCM           = Y
+ ;
+ ; Supported Asymmetric algorithms of the 'aesni_mb' crypto driver.
+ ;
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index 145b018058..3f8c61e8d5 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -133,6 +133,10 @@ New Features
+ 
+   See the :doc:`../compressdevs/zsda` guide for more details on the new driver.
+ 
++* **Updated IPsec_MB crypto driver.**
 +
- ;
- ; Supported Asymmetric algorithms of a default crypto driver.
- ;
-diff --git a/lib/cryptodev/rte_crypto_sym.h b/lib/cryptodev/rte_crypto_sym.h
-index 505356ff44..2557831fb9 100644
---- a/lib/cryptodev/rte_crypto_sym.h
-+++ b/lib/cryptodev/rte_crypto_sym.h
-@@ -482,8 +482,10 @@ enum rte_crypto_aead_algorithm {
- 	/**< AES algorithm in CCM mode. */
- 	RTE_CRYPTO_AEAD_AES_GCM,
- 	/**< AES algorithm in GCM mode. */
--	RTE_CRYPTO_AEAD_CHACHA20_POLY1305
-+	RTE_CRYPTO_AEAD_CHACHA20_POLY1305,
- 	/**< Chacha20 cipher with poly1305 authenticator */
-+	RTE_CRYPTO_AEAD_SM4_GCM
-+	/**< SM4 cipher in GCM mode */
++   * Added support for the SM4 GCM algorithm.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+index 05dc1a039f..a6c3f09b6f 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -20,7 +20,11 @@ is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)
+ {
+ 	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305 ||
+ 		hash_alg == IMB_AUTH_AES_CCM ||
+-		cipher_mode == IMB_CIPHER_GCM);
++		cipher_mode == IMB_CIPHER_GCM
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++		|| cipher_mode == IMB_CIPHER_SM4_GCM
++#endif
++		);
+ }
+ 
+ /** Set session authentication parameters */
+@@ -602,7 +606,7 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ }
+ 
+ static int
+-aesni_mb_set_session_aead_parameters(const IMB_MGR *mb_mgr,
++aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
+ 		struct aesni_mb_session *sess,
+ 		const struct rte_crypto_sym_xform *xform)
+ {
+@@ -720,6 +724,22 @@ aesni_mb_set_session_aead_parameters(const IMB_MGR *mb_mgr,
+ 			return -EINVAL;
+ 		}
+ 		break;
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++	case RTE_CRYPTO_AEAD_SM4_GCM:
++		sess->template_job.cipher_mode = IMB_CIPHER_SM4_GCM;
++		sess->template_job.hash_alg = IMB_AUTH_SM4_GCM;
++		sess->template_job.u.GCM.aad_len_in_bytes = xform->aead.aad_length;
++
++		if (xform->aead.key.length != 16) {
++			IPSEC_MB_LOG(ERR, "Invalid key length");
++			return -EINVAL;
++		}
++		sess->template_job.key_len_in_bytes = 16;
++		imb_sm4_gcm_pre(mb_mgr, xform->aead.key.data, &sess->cipher.gcm_key);
++		sess->template_job.enc_keys = &sess->cipher.gcm_key;
++		sess->template_job.dec_keys = &sess->cipher.gcm_key;
++		break;
++#endif
+ 	default:
+ 		IPSEC_MB_LOG(ERR, "Unsupported aead mode parameter");
+ 		return -ENOTSUP;
+@@ -1037,6 +1057,13 @@ set_cpu_mb_job_params(IMB_JOB *job, struct aesni_mb_session *session,
+ 	case IMB_AUTH_CHACHA20_POLY1305:
+ 		job->u.CHACHA20_POLY1305.aad = aad->va;
+ 		break;
++
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++	case IMB_AUTH_SM4_GCM:
++		job->u.GCM.aad = aad->va;
++		break;
++#endif
++
+ 	default:
+ 		job->u.HMAC._hashed_auth_key_xor_ipad =
+ 				session->auth.pads.inner;
+@@ -1559,6 +1586,11 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 			imb_set_session(mb_mgr, job);
+ 		}
+ 		break;
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++	case IMB_AUTH_SM4_GCM:
++		job->u.GCM.aad = op->sym->aead.aad.data;
++		break;
++#endif
+ 	default:
+ 		break;
+ 	}
+@@ -1687,6 +1719,20 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
+ 			session->iv.offset);
+ 		break;
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++	case IMB_AUTH_SM4_GCM:
++		job->hash_start_src_offset_in_bytes = 0;
++		/*
++		 * Adding offset as a bug exists in the IPsec MB library which is
++		 * fixed after v2.0 release.
++		 */
++		job->src += op->sym->aead.data.offset;
++		job->msg_len_to_hash_in_bytes =
++					op->sym->aead.data.length;
++		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
++				session->iv.offset);
++		break;
++#endif
+ 
+ 	default:
+ 		job->hash_start_src_offset_in_bytes = auth_start_offset(op,
+@@ -1732,6 +1778,11 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 		job->msg_len_to_cipher_in_bytes = 0;
+ 		job->cipher_start_src_offset_in_bytes = 0;
+ 		break;
++#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++	case IMB_CIPHER_SM4_GCM:
++		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
++		break;
++#endif
+ 	default:
+ 		job->cipher_start_src_offset_in_bytes =
+ 					op->sym->cipher.data.offset;
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+index 468a1f35eb..66e8e732ff 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+@@ -826,6 +826,36 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
++	{	/* SM4 GCM */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AEAD,
++			{.aead = {
++				.algo = RTE_CRYPTO_AEAD_SM4_GCM,
++				.block_size = 16,
++				.key_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0,
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 16,
++					.increment = 1,
++				},
++				.aad_size = {
++					.min = 0,
++					.max = 65535,
++					.increment = 1,
++				},
++				.iv_size = {
++					.min = 12,
++					.max = 12,
++					.increment = 0,
++				}
++			}, }
++		}, }
++	},
+ #endif
+ 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
  };
- 
- /** Symmetric AEAD Operations */
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index a49b0662f3..7b5236ad41 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -168,7 +168,8 @@ static const char *
- crypto_aead_algorithm_strings[] = {
- 	[RTE_CRYPTO_AEAD_AES_CCM]	= "aes-ccm",
- 	[RTE_CRYPTO_AEAD_AES_GCM]	= "aes-gcm",
--	[RTE_CRYPTO_AEAD_CHACHA20_POLY1305] = "chacha20-poly1305"
-+	[RTE_CRYPTO_AEAD_CHACHA20_POLY1305] = "chacha20-poly1305",
-+	[RTE_CRYPTO_AEAD_SM4_GCM]   = "sm4-gcm"
- };
- 
- 
 -- 
 2.25.1
 
