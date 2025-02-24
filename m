@@ -2,62 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64837C021A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD3DC021A6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:38:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46EEC40E2C;
-	Mon, 24 Feb 2025 11:35:50 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 454D84042E
- for <dev@dpdk.org>; Mon, 24 Feb 2025 11:35:48 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DMw001315;
- Mon, 24 Feb 2025 02:35:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
- mtdWpNYQouE4Mt4nwEUg2SfYC1aW5oUpm8T/4s/Ag8=; b=DAP6zWUdCSwVDiNS7
- Kh7OirEJLKfL+woqEdN4Ml4y7+w30K+FhwyAJS96YAHkIRxcu3DK0jEAmavhidZK
- 8GM7j+LzKr6N/zwrMA/U3mFQux1QmxsmDHgsprlb+OyDC2vSHOKGu7kojS47Yev3
- 2hmf/P8Ma2iuOm6URzOWfT9l9dLayZLXtf/tRjZ+q+7PWbnroGovdkIZPFEm097f
- ho0dUsZNzAcIn/oSwK6MiaYv/fxf4tgl+Ogjc3wok/MqLIQyjYv/xm8UmHg+mO7F
- jN9KTUV4fitGAqeqWbXCmhLtX3dqPjdbSRbv7Y3hHzclJKntTaEtYKGy/WkTbmTf
- rcbHA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jkmd-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 24 Feb 2025 02:35:47 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 02:35:45 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 02:35:45 -0800
-Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
- [10.28.21.204])
- by maili.marvell.com (Postfix) with ESMTP id A533F3F705D;
- Mon, 24 Feb 2025 02:35:43 -0800 (PST)
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>
-CC: <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, "Gowrishankar
- Muthukrishnan" <gmuthukrishn@marvell.com>
-Subject: [v5 5/5] examples/vhost_crypto: support asymmetric crypto
-Date: Mon, 24 Feb 2025 16:05:07 +0530
-Message-ID: <a6c57c91475baaa28e1ec492d9d5878c75ab4b76.1740390893.git.gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1740390893.git.gmuthukrishn@marvell.com>
-References: <cover.1740390893.git.gmuthukrishn@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 269BC4042E;
+	Mon, 24 Feb 2025 11:38:57 +0100 (CET)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10on2078.outbound.protection.outlook.com [40.107.94.78])
+ by mails.dpdk.org (Postfix) with ESMTP id 50C48402A4;
+ Mon, 24 Feb 2025 11:38:55 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IUJwD8JA0xaPbzbHTXz0W3e7Kqqrlot2auRx9VLCIAhDOYujbyw3mk5r1q6kySnVlEed9AIkkLTER2FfuAr84MG12d12medlnbWDw4IgFEoaKFHhf+Pd+sgna9NFeGFYYWHgEnbrzBKRSYYr974+DT3JbycYpNs5dmRIJDK3iyCCLLHfVHNu9jPU56Nb/DtWFlMS4W7sy7ymKSBrR7hHyaLNHnSNhCnCO+DMMAvfqEMTDWhx1lc33pjERoWCxRbZQeyksKvr27IG1/Xo0UwUucxTmi2dhwdKKi/4dvje08zlhT7L4N4XNQkSk8/5Y6VW3dYKWKj0jSSemM32rsABQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fGZXZYJY+aW0hmCKD7uVxdMiAZNP5ERji+dByUorLSc=;
+ b=AV+JzfbbxIVzvn0il0IKBu8M1Yci/OSO3h2p7jxJmLVJHniIN1a7kpBtTLkVAkOWafWuU8J6lYe9XQbrUDyGbjsTiuGT7jjVZDqNS+3Ux7THFhrIDC96n/gv4EmEgFjZ35FDT7X2z23ETTzJvxeJQTUQrBpKXfSp3uK+582u1a5FXB9RzKm2bgsncwrNgeqsfgw8ixmMuq4o+QL4IIclaWerY3jfIWmGBvZPDDL+MogCkw28y4rEQPBpYCPQGbikU0yUm20f2m8dIKDf5QAdbhB3nfkfUnpGmYIwu0CfxmeiPq+ADHFHiuXMMJArRaVyhzTrYuc3tB80sYRpSDRIaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGZXZYJY+aW0hmCKD7uVxdMiAZNP5ERji+dByUorLSc=;
+ b=iwn/A6wT8zoiNbJzgMvASGmY872gO6fwKVfZeaRHBzuFjAyPCmhX8LwT2YeTkuJzn742onSqfPUtRyqDjDFAT32UzQpa8zDt5DLxQTiXuOEU/VfchADYDBvKD4Upm8KLFGY8ZgwiLMEFZGGnJ1D7z3GqO/iKKROZIyJIASLO0hSCsyxPBODsQrkQVQ4yKQcDAs0N6SvQrmygQMEO7/7YD0Aesi1eaOauRb87AQ49xWFT4YIvTwVn1RCkjW+hpHGlp7i6hIc3BmY4TdKdSkM8AjJgHPZWHjbiI+5k1xdcJSDaErJc6TVQfycpnwRAZTg66y/7hb19sZWbQ3XSY8DWAg==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by LV8PR12MB9155.namprd12.prod.outlook.com (2603:10b6:408:183::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 10:38:48 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 10:38:48 +0000
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: Junfeng Guo <junfengg@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Dariusz Sosnowski <dsosnowski@nvidia.com>, Slava Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, "Minggang(Gavin) Li" <gavinl@nvidia.com>, "Jiawei(Jonny)
+ Wang" <jiaweiw@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH] net/mlx5: fix err message overwrite for actions
+ translation
+Thread-Topic: [PATCH] net/mlx5: fix err message overwrite for actions
+ translation
+Thread-Index: AQHbg2Zs5ebHJsWiOU22122g7Ew2z7NWSYjp
+Date: Mon, 24 Feb 2025 10:38:47 +0000
+Message-ID: <CH3PR12MB8460B7F6DE2D6FBBD7B1BDE3CFC02@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20250220070850.6661-1-junfengg@nvidia.com>
+In-Reply-To: <20250220070850.6661-1-junfengg@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|LV8PR12MB9155:EE_
+x-ms-office365-filtering-correlation-id: 7f1f5b86-6e13-490c-a820-08dd54bf6bc3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?SA/AV1yA+/aimMZhrpWqk6evFvti8LvVzpQbi9hKU0fxCPeRJW+UR5I8iS?=
+ =?iso-8859-1?Q?LyqhmjICLWIA/MR6oAa68+ts6NpkQSEO/YefXZkc/YmbFh0uduc/bOqT8f?=
+ =?iso-8859-1?Q?9b4ScbW/iWBIqasmIF3+E1MnDZkXxwxflDnRDvjt8BJXjmLnzLCjUvWgu2?=
+ =?iso-8859-1?Q?PopoE6GdaP6G+J/RZ5fqQUrz/sJaa5OK/ns8JwEmHV7EgHGPp6+ONjBRfX?=
+ =?iso-8859-1?Q?iP1CouyR9q5apf0Gt/F1gAycVk8T1FXyeQd8LachzwAWfkQCo8GZhhTVgh?=
+ =?iso-8859-1?Q?fIGHRDFAI/Nrwz+P1yoUpdt+faDHwm99l9cX+9D5/+7iuOd0Gk6koLU4W3?=
+ =?iso-8859-1?Q?aKnduRqYQtDTmNNePPt2fP/ERGJRBLt05I8e7PAJijTIDRjHUvM4ENwv3H?=
+ =?iso-8859-1?Q?wO4nI3YFyOI5cxg/AuKwXO3BjOWogciT5n0PZvS8F5zPnAe+C/EK2SGxpc?=
+ =?iso-8859-1?Q?fhvtRmwgo+GjxUWwR/6QWct2NqS1VpMQyEpzoXYgM+89J6EnkKmu2NARXq?=
+ =?iso-8859-1?Q?zJzzizot6T4vOcS0fx9rahs8qIwP2DTsKpudCJIqvLVVv4onL76rdbGB6m?=
+ =?iso-8859-1?Q?+oXLHigMtLc3JU9XWqPej4wOHfG1SP0AIyc9ADyq8TpL56f04fho6xe+FL?=
+ =?iso-8859-1?Q?bCOqnbvqmBmJLRXFeb0lIe84PJYdgqSc9HHwbtKepcTFUWpWyYn9im9HMd?=
+ =?iso-8859-1?Q?w318whrBwvDZQT96nRCH8UusBb3EfUi+s9AGlA905GGWSPU4ly1H6HAqsp?=
+ =?iso-8859-1?Q?9qU3ITyeDu3Ujpf8/aGNrjGv3jzOPlN7LRQRcqS0jVo39HnO8hvMgOrk+V?=
+ =?iso-8859-1?Q?8kMlxJC7lVExvaTLt/rTh34TNBz3G8jhjJ9nMMxWmHQrwsCcKWQKri7rcA?=
+ =?iso-8859-1?Q?dX333gxfRqIP+ftrAOpDV5T1iZjojePnFfSjEe2gRv+9rj8NlYpreYgSWx?=
+ =?iso-8859-1?Q?nQSh4Tnttsa8Tvwpb7ScM6XIn3PniRBAxmbXAcWsNim2BJHKAYo3a57vfg?=
+ =?iso-8859-1?Q?Ov1IQs7LXvMp13woG1YZ1Mormb7+xX12vIFJRPyDT987+0MlCsJATSiIfZ?=
+ =?iso-8859-1?Q?dxV+rJgL58UlKz6iVSTMIL2lKjqHEHhk7DO4+p6TpDF6wFwynzd5pJyK+r?=
+ =?iso-8859-1?Q?5Diy+X9ovXsd1urgPSqZwd6ZNzo23zs6VnW6ssebB+P1He99LHh95siyyP?=
+ =?iso-8859-1?Q?31FIxZNaFS+3GuC0tPh4LuU/+wwyFYVo8Cp6qgzkokcaSFnV4xtcUcSaQV?=
+ =?iso-8859-1?Q?gXr/O6udOsc3RalJzB5IXrGHBflqFc4w2uf26NzStupvIKOWT4CtDzQGRX?=
+ =?iso-8859-1?Q?LDPKQOiBul1eVJ6yKSc6cbGZ0XJJ4ck+NwyQw3xLK28X2Na5I4yM5z/SgA?=
+ =?iso-8859-1?Q?BHdwjUKifjNTyr/56yYgZiV15zPpIQRHUj8BViX99B1d8+ZdvOJiq0bP43?=
+ =?iso-8859-1?Q?pH5qBEFA3i9FwPqU4kGwsobk/SEQxD/wAlC/ZTkGg6wxQIs/lHCtJZcWEV?=
+ =?iso-8859-1?Q?raJILldv5BPtY3zq8RGYJb?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700018); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?e+uwAw7uHRM2mGd9ohCTZgz037fCE10veabooKLR533W723Mu2R1a+vPpD?=
+ =?iso-8859-1?Q?TvriOWMs6Sch1tRbqhPnrZZKdvQnQy520NovzEiCV9v8Dx+inrlfrDPmAZ?=
+ =?iso-8859-1?Q?pC9ak8YkxzYtDevDaFONfcWFABB6+pv74FggEwuPz+c+9nR8hj0q3MjwKT?=
+ =?iso-8859-1?Q?Vh7PzLJpWfHgOESRnLOyiWUdLMKbm8LSCgPEITl8HdqgHybSthF8B2ChR0?=
+ =?iso-8859-1?Q?abeJQREJ9CsRGp/y8YPg5qtwYSs4B/8YyrZW3gIUXPRa+xn/gGOpnAe8b1?=
+ =?iso-8859-1?Q?WQ2H+8h8CxaYEtSC8H3lrQt55gKHlCbkhLTD/RyaYXerUnghKNxeGCMpHc?=
+ =?iso-8859-1?Q?wMs5bPX6s3yXAT7D5CrECQ64RS26zJEOFG8L68j8aczRD6omwz+yha0sQ4?=
+ =?iso-8859-1?Q?xjcvImFWnjH7GAZ10UgFTRutdI6qH9GN2GIy5iJw0NxdMv840l28Zlndno?=
+ =?iso-8859-1?Q?2plBg8t5O+YCoR2B2mWsrkWY4yRu7NotMxyh5XGpHwkG3fcXzJS/xwlzdD?=
+ =?iso-8859-1?Q?50VHUNe0cfrFjd3f0BkLR4gr3Wr7xH0h6k/1HSvsQh3Tw95dhd2aN8Q+1t?=
+ =?iso-8859-1?Q?39fp1cnxRdiFnYAywYh6yiUrEzrVjOfE68aTBPNrqmYDxDAr6rqpiBewQz?=
+ =?iso-8859-1?Q?H5qjc1N5wCu0rw3sMKnF+hbxde7MqPzGC8o5NGss/zwyrZfURrzYMSr7BP?=
+ =?iso-8859-1?Q?8aIpN67HH71uBYgJWXhmrDhCDpzKge4gEVY4ExDZR8WHld+JkJFjgjP9wn?=
+ =?iso-8859-1?Q?1n3aLC77QEpp7sZEEuaKP4RBbW6PV/58MD1pV2beB51v6Ti8YMgPNj6yfQ?=
+ =?iso-8859-1?Q?D+ElTGwNYZ7qWDRyxG2fvIeYDuDijJwwtkQKr5HZxG3KeTkKKnas5fEn1Z?=
+ =?iso-8859-1?Q?4B0m2WLSUeS4t23VB8l9LdvM0lM/GUibgEqAhumY9HQGVgmPqbQTEAzJwp?=
+ =?iso-8859-1?Q?sZhusqK7VS+JIQmt+FEmT/UbsAAuZ1wt974xob2x+QmYn+EYbSlyM80RFZ?=
+ =?iso-8859-1?Q?0BJxn/pWUrfERKYWBRRIVoL+pa7HYMhlfyUfRa+6tgCtMfudg7RxxMZcPh?=
+ =?iso-8859-1?Q?H5AeWrb78/Uhj106c3ef29s5W5XfV88LDltYT8nhr2IeYJ+Ozogun06VKB?=
+ =?iso-8859-1?Q?ZCUdfKnUlTJDZ50s6koWPEetHXftNN4++MNtTBwJyDH3Ss5qsjAo9sStDj?=
+ =?iso-8859-1?Q?d0yQCUSdE1ReQSGlKvBs0Ack8GGIiWM4m3ZusFp1LcCNsRXWnctDK++Ylo?=
+ =?iso-8859-1?Q?qjdAHyUv8rApuI0Bhnxk6EGUiEQfr0CekfQKnj09kj15Aa2BoAnMfKPWby?=
+ =?iso-8859-1?Q?uXuZcazBHLZ3gNzrh2nUvJgwer9l071gz7xKngsa9tb9Gy6WLpWiB9quGI?=
+ =?iso-8859-1?Q?rwLwA22pSjlQ/j7zya4xmPpTgO/Wr3kkj6ReeIbAbyKD+o0wK7Lp9WJM1o?=
+ =?iso-8859-1?Q?AH/qhk705fyyBDovNW1PXjwBv05RaFPD/hE83iAb0YHU1YVpnFiGTjW+2z?=
+ =?iso-8859-1?Q?ctvofgBKtZjH8HF6ghyGsTqVgLOIW+HKTMmKhm2aR6QdDbZl1lX8eyt6K3?=
+ =?iso-8859-1?Q?NDxpUMkhmgd2G/Xs3+gIEvNETXQm1ZukQAIN5kn9JwOunys0lGfK7G/SV3?=
+ =?iso-8859-1?Q?IQDfex5Wyifhk=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: kCC2bHapEYMUr7mmiwoM5ufHnFAMA2C9
-X-Proofpoint-ORIG-GUID: kCC2bHapEYMUr7mmiwoM5ufHnFAMA2C9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f1f5b86-6e13-490c-a820-08dd54bf6bc3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 10:38:47.9733 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5DkbAJ+YXBxetiItB7/5TGORWRWPOFFC1eAt3ev3P7PwS37hVNy02DFJht8PEYADXr3F6oC0uNwqxp9VzAaZrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9155
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,186 +150,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Support asymmetric crypto operations.
-
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Acked-by: Akhil Goyal <gakhil@marvell.com>
----
-v5:
- - doc update
----
- doc/guides/sample_app_ug/vhost_crypto.rst |  5 +++
- examples/vhost_crypto/main.c              | 50 +++++++++++++++++------
- 2 files changed, 43 insertions(+), 12 deletions(-)
-
-diff --git a/doc/guides/sample_app_ug/vhost_crypto.rst b/doc/guides/sample_app_ug/vhost_crypto.rst
-index 7ae7addac4..b00f2bf3ae 100644
---- a/doc/guides/sample_app_ug/vhost_crypto.rst
-+++ b/doc/guides/sample_app_ug/vhost_crypto.rst
-@@ -33,6 +33,7 @@ Start the vhost_crypto example
-     		--socket-file lcore,PATH
-     		[--zero-copy]
-     		[--guest-polling]
-+		[--asymmetric-crypto]
- 
- where,
- 
-@@ -54,6 +55,10 @@ where,
-   guest works in polling mode, thus will NOT notify the guest completion of
-   processing.
- 
-+* asymmetric-crypto: the presence of this item means the application
-+  can handle the asymmetric crypto requests. When this option is used,
-+  symmetric crypto requests can not be handled by the application.
-+
- The application requires that crypto devices capable of performing
- the specified crypto operation are available on application initialization.
- This means that HW crypto device/s must be bound to a DPDK driver or
-diff --git a/examples/vhost_crypto/main.c b/examples/vhost_crypto/main.c
-index b1fe4120b9..8bdfc40c4b 100644
---- a/examples/vhost_crypto/main.c
-+++ b/examples/vhost_crypto/main.c
-@@ -59,6 +59,7 @@ struct vhost_crypto_options {
- 	uint32_t nb_los;
- 	uint32_t zero_copy;
- 	uint32_t guest_polling;
-+	bool asymmetric_crypto;
- } options;
- 
- enum {
-@@ -70,6 +71,8 @@ enum {
- 	OPT_ZERO_COPY_NUM,
- #define OPT_POLLING         "guest-polling"
- 	OPT_POLLING_NUM,
-+#define OPT_ASYM            "asymmetric-crypto"
-+	OPT_ASYM_NUM,
- };
- 
- #define NB_SOCKET_FIELDS	(2)
-@@ -202,9 +205,10 @@ vhost_crypto_usage(const char *prgname)
- 		"  --%s <lcore>,SOCKET-FILE-PATH\n"
- 		"  --%s (lcore,cdev_id,queue_id)[,(lcore,cdev_id,queue_id)]\n"
- 		"  --%s: zero copy\n"
--		"  --%s: guest polling\n",
-+		"  --%s: guest polling\n"
-+		"  --%s: asymmetric crypto\n",
- 		prgname, OPT_SOCKET_FILE, OPT_CONFIG,
--		OPT_ZERO_COPY, OPT_POLLING);
-+		OPT_ZERO_COPY, OPT_POLLING, OPT_ASYM);
- }
- 
- static int
-@@ -223,6 +227,8 @@ vhost_crypto_parse_args(int argc, char **argv)
- 				NULL, OPT_ZERO_COPY_NUM},
- 		{OPT_POLLING, no_argument,
- 				NULL, OPT_POLLING_NUM},
-+		{OPT_ASYM, no_argument,
-+				NULL, OPT_ASYM_NUM},
- 		{NULL, 0, 0, 0}
- 	};
- 
-@@ -262,6 +268,10 @@ vhost_crypto_parse_args(int argc, char **argv)
- 			options.guest_polling = 1;
- 			break;
- 
-+		case OPT_ASYM_NUM:
-+			options.asymmetric_crypto = true;
-+			break;
-+
- 		default:
- 			vhost_crypto_usage(prgname);
- 			return -EINVAL;
-@@ -376,6 +386,7 @@ vhost_crypto_worker(void *arg)
- 	int callfds[VIRTIO_CRYPTO_MAX_NUM_BURST_VQS];
- 	uint32_t lcore_id = rte_lcore_id();
- 	uint32_t burst_size = MAX_PKT_BURST;
-+	enum rte_crypto_op_type cop_type;
- 	uint32_t i, j, k;
- 	uint32_t to_fetch, fetched;
- 
-@@ -383,9 +394,13 @@ vhost_crypto_worker(void *arg)
- 
- 	RTE_LOG(INFO, USER1, "Processing on Core %u started\n", lcore_id);
- 
-+	cop_type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
-+	if (options.asymmetric_crypto)
-+		cop_type = RTE_CRYPTO_OP_TYPE_ASYMMETRIC;
-+
- 	for (i = 0; i < NB_VIRTIO_QUEUES; i++) {
- 		if (rte_crypto_op_bulk_alloc(info->cop_pool,
--				RTE_CRYPTO_OP_TYPE_SYMMETRIC, ops[i],
-+				cop_type, ops[i],
- 				burst_size) < burst_size) {
- 			RTE_LOG(ERR, USER1, "Failed to alloc cops\n");
- 			ret = -1;
-@@ -411,12 +426,11 @@ vhost_crypto_worker(void *arg)
- 						fetched);
- 				if (unlikely(rte_crypto_op_bulk_alloc(
- 						info->cop_pool,
--						RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+						cop_type,
- 						ops[j], fetched) < fetched)) {
- 					RTE_LOG(ERR, USER1, "Failed realloc\n");
- 					return -1;
- 				}
--
- 				fetched = rte_cryptodev_dequeue_burst(
- 						info->cid, info->qid,
- 						ops_deq[j], RTE_MIN(burst_size,
-@@ -477,6 +491,7 @@ main(int argc, char *argv[])
- 	struct rte_cryptodev_qp_conf qp_conf;
- 	struct rte_cryptodev_config config;
- 	struct rte_cryptodev_info dev_info;
-+	enum rte_crypto_op_type cop_type;
- 	char name[128];
- 	uint32_t i, j, lcore;
- 	int ret;
-@@ -539,12 +554,21 @@ main(int argc, char *argv[])
- 			goto error_exit;
- 		}
- 
--		snprintf(name, 127, "SESS_POOL_%u", lo->lcore_id);
--		info->sess_pool = rte_cryptodev_sym_session_pool_create(name,
--				SESSION_MAP_ENTRIES,
--				rte_cryptodev_sym_get_private_session_size(
--				info->cid), 0, 0,
--				rte_lcore_to_socket_id(lo->lcore_id));
-+		if (!options.asymmetric_crypto) {
-+			snprintf(name, 127, "SYM_SESS_POOL_%u", lo->lcore_id);
-+			info->sess_pool = rte_cryptodev_sym_session_pool_create(name,
-+					SESSION_MAP_ENTRIES,
-+					rte_cryptodev_sym_get_private_session_size(
-+					info->cid), 0, 0,
-+					rte_lcore_to_socket_id(lo->lcore_id));
-+			cop_type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
-+		} else {
-+			snprintf(name, 127, "ASYM_SESS_POOL_%u", lo->lcore_id);
-+			info->sess_pool = rte_cryptodev_asym_session_pool_create(name,
-+					SESSION_MAP_ENTRIES, 0, 64,
-+					rte_lcore_to_socket_id(lo->lcore_id));
-+			cop_type = RTE_CRYPTO_OP_TYPE_ASYMMETRIC;
-+		}
- 
- 		if (!info->sess_pool) {
- 			RTE_LOG(ERR, USER1, "Failed to create mempool");
-@@ -553,7 +577,7 @@ main(int argc, char *argv[])
- 
- 		snprintf(name, 127, "COPPOOL_%u", lo->lcore_id);
- 		info->cop_pool = rte_crypto_op_pool_create(name,
--				RTE_CRYPTO_OP_TYPE_SYMMETRIC, NB_MEMPOOL_OBJS,
-+				cop_type, NB_MEMPOOL_OBJS,
- 				NB_CACHE_OBJS, VHOST_CRYPTO_MAX_IV_LEN,
- 				rte_lcore_to_socket_id(lo->lcore_id));
- 
-@@ -567,6 +591,8 @@ main(int argc, char *argv[])
- 
- 		qp_conf.nb_descriptors = NB_CRYPTO_DESCRIPTORS;
- 		qp_conf.mp_session = info->sess_pool;
-+		if (options.asymmetric_crypto)
-+			qp_conf.mp_session = NULL;
- 
- 		for (j = 0; j < dev_info.max_nb_queue_pairs; j++) {
- 			ret = rte_cryptodev_queue_pair_setup(info->cid, j,
--- 
-2.25.1
-
+Hi,=0A=
+=0A=
+From: Junfeng Guo <junfengg@nvidia.com>=0A=
+Sent: Thursday, February 20, 2025 9:08 AM=0A=
+To: dev@dpdk.org=0A=
+Cc: Dariusz Sosnowski; Slava Ovsiienko; Bing Zhao; Ori Kam; Suanming Mou; M=
+atan Azrad; Minggang(Gavin) Li; Jiawei(Jonny) Wang; stable@dpdk.org=0A=
+Subject: [PATCH] net/mlx5: fix err message overwrite for actions translatio=
+n=0A=
+=0A=
+Function __flow_hw_translate_actions_template contains several=0A=
+encapsulated functions that already have internal error handling=0A=
+process via rte_flow_error_set for each case.=0A=
+=0A=
+Thus the one (rte_flow_error_set) within the goto statement `err`=0A=
+at the end of __flow_hw_translate_actions_template function may be=0A=
+redundant for those failed cases. As a result, the error messages=0A=
+would all be overwritten as "fail to create rte table", making it=0A=
+displayed at quite large granularity.=0A=
+=0A=
+To prevent above error messages overwrite, this patch add a local=0A=
+variable `struct rte_flow_error sub_error` to the function and pass=0A=
+this `sub_error` instead of `error` to each sub-function. Under error=0A=
+handling process (`err` label), if `sub_error` was updated, copy its=0A=
+contents to `error` and return. If it was not updated, return default=0A=
+error message (`fail to create rte table`).=0A=
+=0A=
+Also refactor the logic for SEND_TO_KERNEL, COUNT and AGE actions in=0A=
+above function to align the error handling process.=0A=
+=0A=
+Fixes: f13fab23922b ("net/mlx5: add flow jump action")=0A=
+Cc: suanmingm@nvidia.com=0A=
+Cc: stable@dpdk.org=0A=
+=0A=
+Signed-off-by: Junfeng Guo <junfengg@nvidia.com>=0A=
+=0A=
+Patch applied to next-net-mlx,=0A=
+=0A=
+Kindest regards,=0A=
+Raslan Darawsheh=0A=
