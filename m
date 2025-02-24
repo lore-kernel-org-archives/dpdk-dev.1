@@ -2,52 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD72C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E5C021B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:40:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4511340A72;
-	Mon, 24 Feb 2025 10:40:00 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id E312E40A7F
- for <dev@dpdk.org>; Mon, 24 Feb 2025 10:39:55 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9adFn017495
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:55 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 5304A40A8A;
+	Mon, 24 Feb 2025 10:40:03 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 29B8E40A82
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 10:40:01 +0100 (CET)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O5D0HN020119
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:40:00 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
- +EcxBUxtJKVtaBSN/gYM4SKqo5fwXpB7yS+qZv+Tdw=; b=O3h7lb4CNRkvaSGUa
- LIWpNniqSUkwCNyKFbDocl7DlGkWH6wh3pR6ZDemPCBQqgZHZzKDR4tsOZSUN5g5
- ZOB0zNaQhoxcMux9H6EzuG/0KovJoGd6ZVAGKoXtoxoTCripF6F2Tl7+ZpfgA8sC
- 0hionqbkF/f8wxxOFx6LWxfy5L9KyADtTw+8eH1mYY7yiMXhCofzclp3y8CL7gdx
- wSAQIaSOYZSTebmm/QuBtpJBaDq3qG8osrPEwK2+om5Z6rxuYjPtdopt0vgebmjX
- OB5JHjk9LIYqRLvJA2KzrOdWyifmljlVJO1GBX0KkVaB+Y5L2BGvfCUvvpmmKz/R
- XT0Vw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 450p9300bb-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=C
+ 4xFWnheDsn1B1Wtd58mzeGsq0X0A8ZAK/xNP8HNssE=; b=esNfUSDurnYIsZQGz
+ YjmOOSbyxUY8awNJQRHFDGOMlfEz20KILhtSyikkUBmHNmNHJk0O//YoIq8uH5TH
+ dHmVRo3Ydrs2WaMC0MI7t9eJynL++DHLCwaKQzUKXT4LkXynjOkIclCeulnB03l1
+ OWJuqHrpVsdjp8buCRNjKBbqfkfEkf76sTdZ2FUoi8PVfsVDgyNSUFK5nGddbiE3
+ jqmj1MghIfFiMP4eLvWZzOkjJxNk5U1tAiZGDEEr2a0xY6dg31vaMyhoYVsLcfbf
+ UstkXO0xswaUl2TqDsn742/1JToBnFl0TWg+glJwyQnuEwYOSQlhZWMfeQPvAdqS
+ jYeXQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jg10-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:55 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:58 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:39:53 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:39:53 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:39:57 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 24 Feb 2025 01:39:57 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 031193F705D;
- Mon, 24 Feb 2025 01:39:50 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 7A2483F705D;
+ Mon, 24 Feb 2025 01:39:54 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
- Shijith Thotton <sthotton@marvell.com>
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v2 11/33] common/cnxk: update default eng group for cn20k
-Date: Mon, 24 Feb 2025 15:08:53 +0530
-Message-ID: <20250224093915.1253215-11-ndabilpuram@marvell.com>
+Subject: [PATCH v2 12/33] common/cnxk: support for cn20k IPsec session
+Date: Mon, 24 Feb 2025 15:08:54 +0530
+Message-ID: <20250224093915.1253215-12-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224093915.1253215-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -55,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Bo-coQ-ltFKSUbiXbIgrQ5oN1PQnEk-x
-X-Proofpoint-GUID: Bo-coQ-ltFKSUbiXbIgrQ5oN1PQnEk-x
+X-Proofpoint-GUID: ozpl1scSV_ZwdShRNKYlgRVu6DgndlKk
+X-Proofpoint-ORIG-GUID: ozpl1scSV_ZwdShRNKYlgRVu6DgndlKk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -73,200 +71,626 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-CN20K does not have IE engines, hence change the default eng group
-for cn20k and use legacy for cn10k or older version.
+Add support for cn20k IPsec session create/destroy.
 
 Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 ---
- drivers/common/cnxk/roc_cpt.c         |  6 +++---
- drivers/common/cnxk/roc_cpt.h         | 10 +++++++---
- drivers/common/cnxk/roc_nix_inl.c     | 15 +++++++++++----
- drivers/common/cnxk/roc_nix_inl_dev.c | 12 ++++++++----
- drivers/event/cnxk/cn9k_worker.h      |  2 +-
- drivers/net/cnxk/cn10k_rx.h           |  2 +-
- drivers/net/cnxk/cn10k_tx.h           |  4 ++--
- drivers/net/cnxk/cn20k_tx.h           |  4 ++--
- 8 files changed, 35 insertions(+), 20 deletions(-)
+ drivers/common/cnxk/cnxk_security.c | 546 +++++++++++++++++++++++++++-
+ drivers/common/cnxk/cnxk_security.h |  12 +-
+ drivers/common/cnxk/version.map     |   2 +
+ 3 files changed, 557 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.c
-index a6d2d83f76..b4bf0ccd64 100644
---- a/drivers/common/cnxk/roc_cpt.c
-+++ b/drivers/common/cnxk/roc_cpt.c
-@@ -931,9 +931,9 @@ roc_cpt_iq_reset(struct roc_cpt_lf *lf)
- 		plt_write64(lf_ctl.u, lf->rbase + CPT_LF_CTL);
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index 8953e901a1..3a747ed441 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -4,10 +4,10 @@
  
- 		if (roc_model_is_cn9k())
--			cpt_9k_lf_rst_lmtst(lf, ROC_CPT_DFLT_ENG_GRP_SE);
-+			cpt_9k_lf_rst_lmtst(lf, ROC_LEGACY_CPT_DFLT_ENG_GRP_SE);
- 		else
--			cpt_10k_lf_rst_lmtst(lf, ROC_CPT_DFLT_ENG_GRP_SE);
-+			cpt_10k_lf_rst_lmtst(lf, ROC_LEGACY_CPT_DFLT_ENG_GRP_SE);
+ #include <rte_udp.h>
  
- 		plt_read64(lf->rbase + CPT_LF_INPROG);
- 		plt_delay_us(2);
-@@ -1205,7 +1205,7 @@ roc_cpt_ctx_write(struct roc_cpt_lf *lf, void *sa_dptr, void *sa_cptr,
+-#include "cnxk_security.h"
+-
+ #include "roc_api.h"
  
- 	if (lf->roc_cpt == NULL) {
- 		if (roc_cpt_has_ie_engines())
--			egrp = ROC_CPT_DFLT_ENG_GRP_SE_IE;
-+			egrp = ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE;
- 		else
- 			egrp = ROC_CPT_DFLT_ENG_GRP_SE;
- 	} else {
-diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
-index ac27479371..30bd2a094d 100644
---- a/drivers/common/cnxk/roc_cpt.h
-+++ b/drivers/common/cnxk/roc_cpt.h
-@@ -15,10 +15,14 @@
- #define ROC_LOADFVC_MAJOR_OP 0x01UL
- #define ROC_LOADFVC_MINOR_OP 0x08UL
- 
-+/* Default engine groups for CN9K, CN10K */
-+#define ROC_LEGACY_CPT_DFLT_ENG_GRP_SE	  0UL
-+#define ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE 1UL
-+#define ROC_LEGACY_CPT_DFLT_ENG_GRP_AE	  2UL
++#include "cnxk_security.h"
 +
- /* Default engine groups */
--#define ROC_CPT_DFLT_ENG_GRP_SE	   0UL
--#define ROC_CPT_DFLT_ENG_GRP_SE_IE 1UL
--#define ROC_CPT_DFLT_ENG_GRP_AE	   2UL
-+#define ROC_CPT_DFLT_ENG_GRP_SE 0UL
-+#define ROC_CPT_DFLT_ENG_GRP_AE 1UL
+ static int
+ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_key,
+ 			      uint8_t *salt_key, uint8_t *hmac_opad_ipad,
+@@ -1183,3 +1183,545 @@ cnxk_on_ipsec_inb_sa_create(struct rte_security_ipsec_xform *ipsec,
  
- #define ROC_CPT_MAX_LFS 64
- #define ROC_CPT_MAX_BLKS 2
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 88d5a678b1..6b7532b1f0 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -811,7 +811,10 @@ nix_inl_eng_caps_get(struct nix *nix)
- 	inst.rptr = (uint64_t)rptr;
- 	inst.w4.s.opcode_major = ROC_LOADFVC_MAJOR_OP;
- 	inst.w4.s.opcode_minor = ROC_LOADFVC_MINOR_OP;
--	inst.w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
-+	if (roc_model_is_cn9k() || roc_model_is_cn10k())
-+		inst.w7.s.egrp = ROC_LEGACY_CPT_DFLT_ENG_GRP_SE;
-+	else
-+		inst.w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
- 
- 	/* Use 1 min timeout for the poll */
- 	const uint64_t timeout = plt_tsc_cycles() + 60 * plt_tsc_hz();
-@@ -1053,10 +1056,14 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
- 		ctx_ilen_valid = true;
- 	}
- 
-+	if (roc_model_is_cn9k() || roc_model_is_cn10k())
-+		eng_grpmask = (1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_SE |
-+			       1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE |
-+			       1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_AE);
-+	else
-+		eng_grpmask = (1ULL << ROC_CPT_DFLT_ENG_GRP_SE | 1ULL << ROC_CPT_DFLT_ENG_GRP_AE);
+ 	return ctx_len;
+ }
 +
- 	/* Alloc CPT LF */
--	eng_grpmask = (1ULL << ROC_CPT_DFLT_ENG_GRP_SE |
--		       1ULL << ROC_CPT_DFLT_ENG_GRP_SE_IE |
--		       1ULL << ROC_CPT_DFLT_ENG_GRP_AE);
- 	rc = cpt_lfs_alloc(dev, eng_grpmask, blkaddr,
- 			   !roc_nix->ipsec_out_sso_pffunc, ctx_ilen_valid, ctx_ilen,
- 			   rx_inj, nb_lf - 1);
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index d26cbee0cc..da28b22bcc 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -179,15 +179,19 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
- 	if (!inl_dev->attach_cptlf)
- 		return 0;
- 
--	/* Alloc CPT LF */
--	eng_grpmask = (1ULL << ROC_CPT_DFLT_ENG_GRP_SE |
--		       1ULL << ROC_CPT_DFLT_ENG_GRP_SE_IE |
--		       1ULL << ROC_CPT_DFLT_ENG_GRP_AE);
-+	if (roc_model_is_cn9k() || roc_model_is_cn10k())
-+		eng_grpmask = (1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_SE |
-+			       1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE |
-+			       1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_AE);
-+	else
-+		eng_grpmask = (1ULL << ROC_CPT_DFLT_ENG_GRP_SE | 1ULL << ROC_CPT_DFLT_ENG_GRP_AE);
++static int
++ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_key,
++			      uint8_t *salt_key, uint8_t *hmac_opad_ipad,
++			      struct rte_security_ipsec_xform *ipsec_xfrm,
++			      struct rte_crypto_sym_xform *crypto_xfrm)
++{
++	struct rte_crypto_sym_xform *auth_xfrm, *cipher_xfrm;
++	const uint8_t *key = NULL;
++	uint8_t ccm_flag = 0;
++	uint32_t *tmp_salt;
++	uint64_t *tmp_key;
++	int i, length = 0;
 +
- 	if (roc_errata_cpt_has_ctx_fetch_issue()) {
- 		ctx_ilen = (ROC_NIX_INL_OT_IPSEC_INB_HW_SZ / 128) - 1;
- 		ctx_ilen_valid = true;
- 	}
++	/* Set direction */
++	if (ipsec_xfrm->direction == RTE_SECURITY_IPSEC_SA_DIR_EGRESS)
++		w2->s.dir = ROC_IE_SA_DIR_OUTBOUND;
++	else
++		w2->s.dir = ROC_IE_SA_DIR_INBOUND;
++
++	if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
++		auth_xfrm = crypto_xfrm;
++		cipher_xfrm = crypto_xfrm->next;
++	} else {
++		cipher_xfrm = crypto_xfrm;
++		auth_xfrm = crypto_xfrm->next;
++	}
++
++	/* Set protocol - ESP vs AH */
++	switch (ipsec_xfrm->proto) {
++	case RTE_SECURITY_IPSEC_SA_PROTO_ESP:
++		w2->s.protocol = ROC_IE_SA_PROTOCOL_ESP;
++		break;
++	case RTE_SECURITY_IPSEC_SA_PROTO_AH:
++		w2->s.protocol = ROC_IE_SA_PROTOCOL_AH;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* Set mode - transport vs tunnel */
++	switch (ipsec_xfrm->mode) {
++	case RTE_SECURITY_IPSEC_SA_MODE_TRANSPORT:
++		w2->s.mode = ROC_IE_SA_MODE_TRANSPORT;
++		break;
++	case RTE_SECURITY_IPSEC_SA_MODE_TUNNEL:
++		w2->s.mode = ROC_IE_SA_MODE_TUNNEL;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* Set encryption algorithm */
++	if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
++		key = crypto_xfrm->aead.key.data;
++		length = crypto_xfrm->aead.key.length;
++
++		switch (crypto_xfrm->aead.algo) {
++		case RTE_CRYPTO_AEAD_AES_GCM:
++			w2->s.enc_type = ROC_IE_SA_ENC_AES_GCM;
++			w2->s.auth_type = ROC_IE_SA_AUTH_NULL;
++			memcpy(salt_key, &ipsec_xfrm->salt, 4);
++			tmp_salt = (uint32_t *)salt_key;
++			*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
++			break;
++		case RTE_CRYPTO_AEAD_AES_CCM:
++			w2->s.enc_type = ROC_IE_SA_ENC_AES_CCM;
++			w2->s.auth_type = ROC_IE_SA_AUTH_NULL;
++			ccm_flag = 0x07 & ~ROC_CPT_AES_CCM_CTR_LEN;
++			*salt_key = ccm_flag;
++			memcpy(PLT_PTR_ADD(salt_key, 1), &ipsec_xfrm->salt, 3);
++			tmp_salt = (uint32_t *)salt_key;
++			*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
++			break;
++		default:
++			return -ENOTSUP;
++		}
++	} else {
++		if (cipher_xfrm != NULL) {
++			switch (cipher_xfrm->cipher.algo) {
++			case RTE_CRYPTO_CIPHER_NULL:
++				w2->s.enc_type = ROC_IE_SA_ENC_NULL;
++				break;
++			case RTE_CRYPTO_CIPHER_AES_CBC:
++				w2->s.enc_type = ROC_IE_SA_ENC_AES_CBC;
++				break;
++			case RTE_CRYPTO_CIPHER_AES_CTR:
++				w2->s.enc_type = ROC_IE_SA_ENC_AES_CTR;
++				break;
++			case RTE_CRYPTO_CIPHER_3DES_CBC:
++				w2->s.enc_type = ROC_IE_SA_ENC_3DES_CBC;
++				break;
++			default:
++				return -ENOTSUP;
++			}
++
++			key = cipher_xfrm->cipher.key.data;
++			length = cipher_xfrm->cipher.key.length;
++		}
++
++		switch (auth_xfrm->auth.algo) {
++		case RTE_CRYPTO_AUTH_NULL:
++			if (w2->s.dir == ROC_IE_SA_DIR_INBOUND && ipsec_xfrm->replay_win_sz) {
++				plt_err("anti-replay can't be supported with integrity service disabled");
++				return -EINVAL;
++			}
++			w2->s.auth_type = ROC_IE_SA_AUTH_NULL;
++			break;
++		case RTE_CRYPTO_AUTH_SHA1_HMAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_SHA1;
++			break;
++		case RTE_CRYPTO_AUTH_SHA256_HMAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_SHA2_256;
++			break;
++		case RTE_CRYPTO_AUTH_SHA384_HMAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_SHA2_384;
++			break;
++		case RTE_CRYPTO_AUTH_SHA512_HMAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_SHA2_512;
++			break;
++		case RTE_CRYPTO_AUTH_AES_XCBC_MAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_AES_XCBC_128;
++			break;
++		case RTE_CRYPTO_AUTH_AES_GMAC:
++			w2->s.auth_type = ROC_IE_SA_AUTH_AES_GMAC;
++			key = auth_xfrm->auth.key.data;
++			length = auth_xfrm->auth.key.length;
++			memcpy(salt_key, &ipsec_xfrm->salt, 4);
++			tmp_salt = (uint32_t *)salt_key;
++			*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
++			break;
++		default:
++			return -ENOTSUP;
++		}
++
++		if (auth_xfrm->auth.algo == RTE_CRYPTO_AUTH_AES_XCBC_MAC) {
++			const uint8_t *auth_key = auth_xfrm->auth.key.data;
++			roc_aes_xcbc_key_derive(auth_key, hmac_opad_ipad);
++		} else {
++			roc_se_hmac_opad_ipad_gen(w2->s.auth_type, auth_xfrm->auth.key.data,
++						  auth_xfrm->auth.key.length, &hmac_opad_ipad[0],
++						  ROC_SE_IPSEC);
++		}
++
++		tmp_key = (uint64_t *)hmac_opad_ipad;
++		for (i = 0; i < (int)(ROC_CTX_MAX_OPAD_IPAD_LEN / sizeof(uint64_t)); i++)
++			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
++	}
++
++	/* Set encapsulation type */
++	if (ipsec_xfrm->options.udp_encap)
++		w2->s.encap_type = ROC_IE_OT_SA_ENCAP_UDP;
++
++	w2->s.spi = ipsec_xfrm->spi;
++
++	if (key != NULL && length != 0) {
++		/* Copy encryption key */
++		memcpy(cipher_key, key, length);
++		tmp_key = (uint64_t *)cipher_key;
++		for (i = 0; i < (int)(ROC_CTX_MAX_CKEY_LEN / sizeof(uint64_t)); i++)
++			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
++	}
++
++	/* Set AES key length */
++	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC || w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR || w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM || w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++		switch (length) {
++		case ROC_CPT_AES128_KEY_LEN:
++			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++			break;
++		case ROC_CPT_AES192_KEY_LEN:
++			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++			break;
++		case ROC_CPT_AES256_KEY_LEN:
++			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++			break;
++		default:
++			plt_err("Invalid AES key length");
++			return -EINVAL;
++		}
++	}
++
++	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
++		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
++		    ipsec_xfrm->life.bytes_hard_limit != 0) {
++			plt_err("Expiry tracking with both packets & bytes is not supported");
++			return -EINVAL;
++		}
++		w2->s.life_unit = ROC_IE_OT_SA_LIFE_UNIT_PKTS;
++	}
++
++	if (ipsec_xfrm->life.bytes_soft_limit != 0 || ipsec_xfrm->life.bytes_hard_limit != 0) {
++		if (ipsec_xfrm->life.packets_soft_limit != 0 ||
++		    ipsec_xfrm->life.packets_hard_limit != 0) {
++			plt_err("Expiry tracking with both packets & bytes is not supported");
++			return -EINVAL;
++		}
++		w2->s.life_unit = ROC_IE_OT_SA_LIFE_UNIT_OCTETS;
++	}
++
++	return 0;
++}
++
++static size_t
++ow_ipsec_inb_ctx_size(struct roc_ow_ipsec_inb_sa *sa)
++{
++	size_t size;
++
++	/* Variable based on Anti-replay Window */
++	size = offsetof(struct roc_ow_ipsec_inb_sa, ctx) +
++	       offsetof(struct roc_ow_ipsec_inb_ctx_update_reg, ar_winbits);
++
++	if (sa->w0.s.ar_win)
++		size += (1 << (sa->w0.s.ar_win - 1)) * sizeof(uint64_t);
++
++	return size;
++}
++
++static void
++ow_ipsec_update_ipv6_addr_endianness(uint64_t *addr)
++{
++	*addr = rte_be_to_cpu_64(*addr);
++	addr++;
++	*addr = rte_be_to_cpu_64(*addr);
++}
++
++static int
++ow_ipsec_inb_tunnel_hdr_fill(struct roc_ow_ipsec_inb_sa *sa,
++			     struct rte_security_ipsec_xform *ipsec_xfrm)
++{
++	struct rte_security_ipsec_tunnel_param *tunnel;
++
++	if (ipsec_xfrm->mode != RTE_SECURITY_IPSEC_SA_MODE_TUNNEL)
++		return 0;
++
++	if (ipsec_xfrm->options.tunnel_hdr_verify == 0)
++		return 0;
++
++	tunnel = &ipsec_xfrm->tunnel;
++
++	switch (tunnel->type) {
++	case RTE_SECURITY_IPSEC_TUNNEL_IPV4:
++		sa->w2.s.outer_ip_ver = ROC_IE_SA_IP_VERSION_4;
++		memcpy(&sa->outer_hdr.ipv4.src_addr, &tunnel->ipv4.src_ip, sizeof(struct in_addr));
++		memcpy(&sa->outer_hdr.ipv4.dst_addr, &tunnel->ipv4.dst_ip, sizeof(struct in_addr));
++
++		/* IP Source and Dest are in LE/CPU endian */
++		sa->outer_hdr.ipv4.src_addr = rte_be_to_cpu_32(sa->outer_hdr.ipv4.src_addr);
++		sa->outer_hdr.ipv4.dst_addr = rte_be_to_cpu_32(sa->outer_hdr.ipv4.dst_addr);
++
++		break;
++	case RTE_SECURITY_IPSEC_TUNNEL_IPV6:
++		sa->w2.s.outer_ip_ver = ROC_IE_SA_IP_VERSION_6;
++		memcpy(&sa->outer_hdr.ipv6.src_addr, &tunnel->ipv6.src_addr,
++		       sizeof(struct in6_addr));
++		memcpy(&sa->outer_hdr.ipv6.dst_addr, &tunnel->ipv6.dst_addr,
++		       sizeof(struct in6_addr));
++
++		/* IP Source and Dest are in LE/CPU endian */
++		ow_ipsec_update_ipv6_addr_endianness((uint64_t *)&sa->outer_hdr.ipv6.src_addr);
++		ow_ipsec_update_ipv6_addr_endianness((uint64_t *)&sa->outer_hdr.ipv6.dst_addr);
++
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	switch (ipsec_xfrm->options.tunnel_hdr_verify) {
++	case RTE_SECURITY_IPSEC_TUNNEL_VERIFY_DST_ADDR:
++		sa->w2.s.ip_hdr_verify = ROC_IE_OT_SA_IP_HDR_VERIFY_DST_ADDR;
++		break;
++	case RTE_SECURITY_IPSEC_TUNNEL_VERIFY_SRC_DST_ADDR:
++		sa->w2.s.ip_hdr_verify = ROC_IE_OT_SA_IP_HDR_VERIFY_SRC_DST_ADDR;
++		break;
++	default:
++		return -ENOTSUP;
++	}
++
++	return 0;
++}
++
++int
++cnxk_ow_ipsec_inb_sa_fill(struct roc_ow_ipsec_inb_sa *sa,
++			  struct rte_security_ipsec_xform *ipsec_xfrm,
++			  struct rte_crypto_sym_xform *crypto_xfrm)
++{
++	uint16_t sport = 4500, dport = 4500;
++	union roc_ow_ipsec_sa_word2 w2;
++	uint32_t replay_win_sz;
++	size_t offset;
++	int rc;
++
++	/* Initialize the SA */
++	roc_ow_ipsec_inb_sa_init(sa);
++
++	w2.u64 = 0;
++	rc = ow_ipsec_sa_common_param_fill(&w2, sa->cipher_key, sa->w8.s.salt, sa->hmac_opad_ipad,
++					   ipsec_xfrm, crypto_xfrm);
++	if (rc)
++		return rc;
++
++	/* Updata common word2 data */
++	sa->w2.u64 = w2.u64;
++
++	/* Only support power-of-two window sizes supported */
++	replay_win_sz = ipsec_xfrm->replay_win_sz;
++	if (replay_win_sz) {
++		if (!rte_is_power_of_2(replay_win_sz) || replay_win_sz > ROC_AR_WIN_SIZE_MAX)
++			return -ENOTSUP;
++
++		sa->w0.s.ar_win = rte_log2_u32(replay_win_sz) - 5;
++	}
++
++	rc = ow_ipsec_inb_tunnel_hdr_fill(sa, ipsec_xfrm);
++	if (rc)
++		return rc;
++
++	/* Default options for pkt_out and pkt_fmt are with
++	 * second pass meta and no defrag.
++	 */
++	sa->w0.s.pkt_format = ROC_IE_OT_SA_PKT_FMT_META;
++	sa->w0.s.pkt_output = ROC_IE_OT_SA_PKT_OUTPUT_NO_FRAG;
++	sa->w0.s.pkind = ROC_IE_OT_CPT_PKIND;
++
++	if (ipsec_xfrm->options.ip_reassembly_en)
++		sa->w0.s.pkt_output = ROC_IE_OT_SA_PKT_OUTPUT_HW_BASED_DEFRAG;
++
++	/* ESN */
++	sa->w2.s.esn_en = !!ipsec_xfrm->options.esn;
++	if (ipsec_xfrm->options.udp_encap) {
++		if (ipsec_xfrm->udp.sport)
++			sport = ipsec_xfrm->udp.sport;
++
++		if (ipsec_xfrm->udp.dport)
++			dport = ipsec_xfrm->udp.dport;
++
++		sa->w10.s.udp_src_port = sport;
++		sa->w10.s.udp_dst_port = dport;
++	}
++
++	if (ipsec_xfrm->options.udp_ports_verify)
++		sa->w2.s.udp_ports_verify = 1;
++
++	offset = offsetof(struct roc_ow_ipsec_inb_sa, ctx);
++	/* Word offset for HW managed SA field */
++	sa->w0.s.hw_ctx_off = offset / 8;
++	/* Context push size for inbound spans up to hw_ctx including
++	 * ar_base field, in 8b units
++	 */
++	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off + 1;
++	/* Entire context size in 128B units */
++	sa->w0.s.ctx_size =
++		(PLT_ALIGN_CEIL(ow_ipsec_inb_ctx_size(sa), ROC_CTX_UNIT_128B) / ROC_CTX_UNIT_128B) -
++		1;
++
++	/**
++	 * CPT MC triggers expiry when counter value changes from 2 to 1. To
++	 * mitigate this behaviour add 1 to the life counter values provided.
++	 */
++
++	if (ipsec_xfrm->life.bytes_soft_limit) {
++		sa->ctx.soft_life = ipsec_xfrm->life.bytes_soft_limit + 1;
++		sa->w0.s.soft_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.packets_soft_limit) {
++		sa->ctx.soft_life = ipsec_xfrm->life.packets_soft_limit + 1;
++		sa->w0.s.soft_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.bytes_hard_limit) {
++		sa->ctx.hard_life = ipsec_xfrm->life.bytes_hard_limit + 1;
++		sa->w0.s.hard_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.packets_hard_limit) {
++		sa->ctx.hard_life = ipsec_xfrm->life.packets_hard_limit + 1;
++		sa->w0.s.hard_life_dec = 1;
++	}
++
++	rte_wmb();
++
++	/* Enable SA */
++	sa->w2.s.valid = 1;
++	return 0;
++}
++
++int
++cnxk_ow_ipsec_outb_sa_fill(struct roc_ow_ipsec_outb_sa *sa,
++			   struct rte_security_ipsec_xform *ipsec_xfrm,
++			   struct rte_crypto_sym_xform *crypto_xfrm)
++{
++	struct rte_security_ipsec_tunnel_param *tunnel = &ipsec_xfrm->tunnel;
++	uint16_t sport = 4500, dport = 4500;
++	union roc_ow_ipsec_sa_word2 w2;
++	size_t offset;
++	int rc;
++
++	/* Initialize the SA */
++	roc_ow_ipsec_outb_sa_init(sa);
++
++	w2.u64 = 0;
++	rc = ow_ipsec_sa_common_param_fill(&w2, sa->cipher_key, sa->iv.s.salt, sa->hmac_opad_ipad,
++					   ipsec_xfrm, crypto_xfrm);
++	if (rc)
++		return rc;
++
++	/* Update common word2 data */
++	sa->w2.u64 = w2.u64;
++
++	if (ipsec_xfrm->mode != RTE_SECURITY_IPSEC_SA_MODE_TUNNEL)
++		goto skip_tunnel_info;
++
++	/* Tunnel header info */
++	switch (tunnel->type) {
++	case RTE_SECURITY_IPSEC_TUNNEL_IPV4:
++		sa->w2.s.outer_ip_ver = ROC_IE_SA_IP_VERSION_4;
++		memcpy(&sa->outer_hdr.ipv4.src_addr, &tunnel->ipv4.src_ip, sizeof(struct in_addr));
++		memcpy(&sa->outer_hdr.ipv4.dst_addr, &tunnel->ipv4.dst_ip, sizeof(struct in_addr));
++
++		/* IP Source and Dest seems to be in LE/CPU endian */
++		sa->outer_hdr.ipv4.src_addr = rte_be_to_cpu_32(sa->outer_hdr.ipv4.src_addr);
++		sa->outer_hdr.ipv4.dst_addr = rte_be_to_cpu_32(sa->outer_hdr.ipv4.dst_addr);
++
++		/* Outer header DF bit source */
++		if (!ipsec_xfrm->options.copy_df) {
++			sa->w2.s.ipv4_df_src_or_ipv6_flw_lbl_src = ROC_IE_OT_SA_COPY_FROM_SA;
++			sa->w10.s.ipv4_df_or_ipv6_flw_lbl = tunnel->ipv4.df;
++		} else {
++			sa->w2.s.ipv4_df_src_or_ipv6_flw_lbl_src =
++				ROC_IE_OT_SA_COPY_FROM_INNER_IP_HDR;
++		}
++
++		/* Outer header DSCP source */
++		if (!ipsec_xfrm->options.copy_dscp) {
++			sa->w2.s.dscp_src = ROC_IE_OT_SA_COPY_FROM_SA;
++			sa->w10.s.dscp = tunnel->ipv4.dscp;
++		} else {
++			sa->w2.s.dscp_src = ROC_IE_OT_SA_COPY_FROM_INNER_IP_HDR;
++		}
++		break;
++	case RTE_SECURITY_IPSEC_TUNNEL_IPV6:
++		sa->w2.s.outer_ip_ver = ROC_IE_SA_IP_VERSION_6;
++		memcpy(&sa->outer_hdr.ipv6.src_addr, &tunnel->ipv6.src_addr,
++		       sizeof(struct in6_addr));
++		memcpy(&sa->outer_hdr.ipv6.dst_addr, &tunnel->ipv6.dst_addr,
++		       sizeof(struct in6_addr));
++
++		/* IP Source and Dest are in LE/CPU endian */
++		ow_ipsec_update_ipv6_addr_endianness((uint64_t *)&sa->outer_hdr.ipv6.src_addr);
++		ow_ipsec_update_ipv6_addr_endianness((uint64_t *)&sa->outer_hdr.ipv6.dst_addr);
++
++		/* Outer header flow label source */
++		if (!ipsec_xfrm->options.copy_flabel) {
++			sa->w2.s.ipv4_df_src_or_ipv6_flw_lbl_src = ROC_IE_OT_SA_COPY_FROM_SA;
++
++			sa->w10.s.ipv4_df_or_ipv6_flw_lbl = tunnel->ipv6.flabel;
++		} else {
++			sa->w2.s.ipv4_df_src_or_ipv6_flw_lbl_src =
++				ROC_IE_OT_SA_COPY_FROM_INNER_IP_HDR;
++		}
++
++		/* Outer header DSCP source */
++		if (!ipsec_xfrm->options.copy_dscp) {
++			sa->w2.s.dscp_src = ROC_IE_OT_SA_COPY_FROM_SA;
++			sa->w10.s.dscp = tunnel->ipv6.dscp;
++		} else {
++			sa->w2.s.dscp_src = ROC_IE_OT_SA_COPY_FROM_INNER_IP_HDR;
++		}
++		break;
++	default:
++		return -EINVAL;
++	}
++
++skip_tunnel_info:
++	/* ESN */
++	sa->w0.s.esn_en = !!ipsec_xfrm->options.esn;
++
++	if (ipsec_xfrm->esn.value)
++		sa->ctx.esn_val = ipsec_xfrm->esn.value - 1;
++
++	if (ipsec_xfrm->options.udp_encap) {
++		if (ipsec_xfrm->udp.sport)
++			sport = ipsec_xfrm->udp.sport;
++
++		if (ipsec_xfrm->udp.dport)
++			dport = ipsec_xfrm->udp.dport;
++
++		sa->w10.s.udp_src_port = sport;
++		sa->w10.s.udp_dst_port = dport;
++	}
++
++	offset = offsetof(struct roc_ow_ipsec_outb_sa, ctx);
++	/* Word offset for HW managed SA field */
++	sa->w0.s.hw_ctx_off = offset / 8;
++
++	/* Context push size is up to err ctl in HW ctx */
++	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off + 1;
++
++	/* Entire context size in 128B units */
++	offset = sizeof(struct roc_ow_ipsec_outb_sa);
++	sa->w0.s.ctx_size = (PLT_ALIGN_CEIL(offset, ROC_CTX_UNIT_128B) / ROC_CTX_UNIT_128B) - 1;
++
++	/* IPID gen */
++	sa->w2.s.ipid_gen = 1;
++
++	/**
++	 * CPT MC triggers expiry when counter value changes from 2 to 1. To
++	 * mitigate this behaviour add 1 to the life counter values provided.
++	 */
++
++	if (ipsec_xfrm->life.bytes_soft_limit) {
++		sa->ctx.soft_life = ipsec_xfrm->life.bytes_soft_limit + 1;
++		sa->w0.s.soft_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.packets_soft_limit) {
++		sa->ctx.soft_life = ipsec_xfrm->life.packets_soft_limit + 1;
++		sa->w0.s.soft_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.bytes_hard_limit) {
++		sa->ctx.hard_life = ipsec_xfrm->life.bytes_hard_limit + 1;
++		sa->w0.s.hard_life_dec = 1;
++	}
++
++	if (ipsec_xfrm->life.packets_hard_limit) {
++		sa->ctx.hard_life = ipsec_xfrm->life.packets_hard_limit + 1;
++		sa->w0.s.hard_life_dec = 1;
++	}
++
++	/* There are two words of CPT_CTX_HW_S for ucode to skip */
++	sa->w0.s.ctx_hdr_size = 1;
++	sa->w0.s.aop_valid = 1;
++
++	rte_wmb();
++
++	/* Enable SA */
++	sa->w2.s.valid = 1;
++	return 0;
++}
+diff --git a/drivers/common/cnxk/cnxk_security.h b/drivers/common/cnxk/cnxk_security.h
+index 8ede6c88a3..e324fa2cb9 100644
+--- a/drivers/common/cnxk/cnxk_security.h
++++ b/drivers/common/cnxk/cnxk_security.h
+@@ -10,6 +10,7 @@
+ #include "roc_cpt.h"
+ #include "roc_ie_on.h"
+ #include "roc_ie_ot.h"
++#include "roc_ie_ow.h"
  
-+	/* Alloc CPT LF */
- 	rc = cpt_lfs_alloc(dev, eng_grpmask, RVU_BLOCK_ADDR_CPT0, inl_dev_sso, ctx_ilen_valid,
- 			   ctx_ilen, inl_dev->rx_inj_ena, inl_dev->nb_cptlf - 1);
- 	if (rc) {
-diff --git a/drivers/event/cnxk/cn9k_worker.h b/drivers/event/cnxk/cn9k_worker.h
-index 10abbdfbb5..513d397991 100644
---- a/drivers/event/cnxk/cn9k_worker.h
-+++ b/drivers/event/cnxk/cn9k_worker.h
-@@ -652,7 +652,7 @@ cn9k_sso_hws_xmit_sec_one(const struct cn9k_eth_txq *txq, uint64_t base,
- 	sa_base &= ~(ROC_NIX_INL_SA_BASE_ALIGN - 1);
+ /* Response length calculation data */
+ struct cnxk_ipsec_outb_rlens {
+@@ -36,7 +37,7 @@ uint8_t __roc_api
+ cnxk_ipsec_outb_roundup_byte(enum rte_crypto_cipher_algorithm c_algo,
+ 			     enum rte_crypto_aead_algorithm aead_algo);
  
- 	sa = (uintptr_t)roc_nix_inl_on_ipsec_outb_sa(sa_base, mdata.sa_idx);
--	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | sa);
-+	ucode_cmd[3] = (ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE << 61 | sa);
- 	ucode_cmd[0] = (((ROC_IE_ON_OUTB_MAX_CTX_LEN << 8) |
- 			 ROC_IE_ON_MAJOR_OP_PROCESS_OUTBOUND_IPSEC)
- 				<< 48 |
-diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
-index 990dfbee3e..3430318193 100644
---- a/drivers/net/cnxk/cn10k_rx.h
-+++ b/drivers/net/cnxk/cn10k_rx.h
-@@ -1363,7 +1363,7 @@ cn10k_nix_inj_pkts(struct rte_security_session **sess, struct cnxk_ethdev_inj_cf
- 				((uint64_t)sess_priv.dec_ttl) << 34 | m->pkt_len);
- 
- 		ucode_cmd[2] = 0;
--		ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
-+		ucode_cmd[3] = (ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
- 
- 		/* Move to our line */
- 		laddr = LMT_OFF(c_lbase, lnum, loff ? 64 : 0);
-diff --git a/drivers/net/cnxk/cn10k_tx.h b/drivers/net/cnxk/cn10k_tx.h
-index 77f4e54cd8..809fafb2f7 100644
---- a/drivers/net/cnxk/cn10k_tx.h
-+++ b/drivers/net/cnxk/cn10k_tx.h
-@@ -547,7 +547,7 @@ cn10k_nix_prep_sec_vec(struct rte_mbuf *m, uint64x2_t *cmd0, uint64x2_t *cmd1,
- 	tag = sa_base & 0xFFFFUL;
- 	sa_base &= ~0xFFFFUL;
- 	sa = (uintptr_t)roc_nix_inl_ot_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
--	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
-+	ucode_cmd[3] = (ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
- 	ucode_cmd[0] = (ROC_IE_OT_MAJOR_OP_PROCESS_OUTBOUND_IPSEC << 48 | 1UL << 54 |
- 			((uint64_t)sess_priv.chksum) << 32 | ((uint64_t)sess_priv.dec_ttl) << 34 |
- 			pkt_len);
-@@ -687,7 +687,7 @@ cn10k_nix_prep_sec(struct rte_mbuf *m, uint64_t *cmd, uintptr_t *nixtx_addr,
- 	tag = sa_base & 0xFFFFUL;
- 	sa_base &= ~0xFFFFUL;
- 	sa = (uintptr_t)roc_nix_inl_ot_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
--	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
-+	ucode_cmd[3] = (ROC_LEGACY_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
- 	ucode_cmd[0] = (ROC_IE_OT_MAJOR_OP_PROCESS_OUTBOUND_IPSEC << 48 | 1UL << 54 |
- 			((uint64_t)sess_priv.chksum) << 32 | ((uint64_t)sess_priv.dec_ttl) << 34 |
- 			pkt_len);
-diff --git a/drivers/net/cnxk/cn20k_tx.h b/drivers/net/cnxk/cn20k_tx.h
-index 8c3ba8326d..c419778970 100644
---- a/drivers/net/cnxk/cn20k_tx.h
-+++ b/drivers/net/cnxk/cn20k_tx.h
-@@ -533,7 +533,7 @@ cn20k_nix_prep_sec_vec(struct rte_mbuf *m, uint64x2_t *cmd0, uint64x2_t *cmd1,
- 	tag = sa_base & 0xFFFFUL;
- 	sa_base &= ~0xFFFFUL;
- 	sa = (uintptr_t)roc_nix_inl_ot_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
--	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
-+	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE << 61 | 1UL << 60 | sa);
- 	ucode_cmd[0] = (ROC_IE_OT_MAJOR_OP_PROCESS_OUTBOUND_IPSEC << 48 | 1UL << 54 |
- 			((uint64_t)sess_priv.chksum) << 32 | ((uint64_t)sess_priv.dec_ttl) << 34 |
- 			pkt_len);
-@@ -671,7 +671,7 @@ cn20k_nix_prep_sec(struct rte_mbuf *m, uint64_t *cmd, uintptr_t *nixtx_addr, uin
- 	tag = sa_base & 0xFFFFUL;
- 	sa_base &= ~0xFFFFUL;
- 	sa = (uintptr_t)roc_nix_inl_ot_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
--	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE_IE << 61 | 1UL << 60 | sa);
-+	ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE << 61 | 1UL << 60 | sa);
- 	ucode_cmd[0] = (ROC_IE_OT_MAJOR_OP_PROCESS_OUTBOUND_IPSEC << 48 | 1UL << 54 |
- 			((uint64_t)sess_priv.chksum) << 32 | ((uint64_t)sess_priv.dec_ttl) << 34 |
- 			pkt_len);
+-/* [CN10K, .) */
++/* [CN10K] */
+ int __roc_api
+ cnxk_ot_ipsec_inb_sa_fill(struct roc_ot_ipsec_inb_sa *sa,
+ 			  struct rte_security_ipsec_xform *ipsec_xfrm,
+@@ -56,4 +57,13 @@ int __roc_api cnxk_on_ipsec_inb_sa_create(struct rte_security_ipsec_xform *ipsec
+ int __roc_api cnxk_on_ipsec_outb_sa_create(struct rte_security_ipsec_xform *ipsec,
+ 					   struct rte_crypto_sym_xform *crypto_xform,
+ 					   struct roc_ie_on_outb_sa *out_sa);
++/* [CN20K, .) */
++int __roc_api cnxk_ow_ipsec_inb_sa_fill(struct roc_ow_ipsec_inb_sa *sa,
++					struct rte_security_ipsec_xform *ipsec_xfrm,
++					struct rte_crypto_sym_xform *crypto_xfrm);
++int __roc_api cnxk_ow_ipsec_outb_sa_fill(struct roc_ow_ipsec_outb_sa *sa,
++					 struct rte_security_ipsec_xform *ipsec_xfrm,
++					 struct rte_crypto_sym_xform *crypto_xfrm);
++bool __roc_api cnxk_ow_ipsec_inb_sa_valid(struct roc_ow_ipsec_inb_sa *sa);
++bool __roc_api cnxk_ow_ipsec_outb_sa_valid(struct roc_ow_ipsec_outb_sa *sa);
+ #endif /* _CNXK_SECURITY_H__ */
+diff --git a/drivers/common/cnxk/version.map b/drivers/common/cnxk/version.map
+index 03b37d7841..6a3c28e8a9 100644
+--- a/drivers/common/cnxk/version.map
++++ b/drivers/common/cnxk/version.map
+@@ -23,6 +23,8 @@ INTERNAL {
+ 	cnxk_ot_ipsec_outb_sa_fill;
+ 	cnxk_ot_ipsec_inb_sa_valid;
+ 	cnxk_ot_ipsec_outb_sa_valid;
++	cnxk_ow_ipsec_inb_sa_fill;
++	cnxk_ow_ipsec_outb_sa_fill;
+ 	cnxk_on_ipsec_inb_sa_create;
+ 	cnxk_on_ipsec_outb_sa_create;
+ 	roc_ae_ec_grp_get;
 -- 
 2.34.1
 
