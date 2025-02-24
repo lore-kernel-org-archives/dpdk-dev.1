@@ -2,29 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59582C021A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 13:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD988C021A4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 13:30:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7549240E7C;
-	Mon, 24 Feb 2025 14:30:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6219740EF1;
+	Mon, 24 Feb 2025 14:30:10 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 9316340E44
- for <dev@dpdk.org>; Mon, 24 Feb 2025 14:30:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 42C4740E44
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 14:30:08 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5101477;
- Mon, 24 Feb 2025 05:30:23 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49F701CE0;
+ Mon, 24 Feb 2025 05:30:24 -0800 (PST)
 Received: from localhost.localdomain (JR4XG4HTQC.cambridge.arm.com
  [10.1.32.39])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0CA1C3F5A1;
- Mon, 24 Feb 2025 05:30:05 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F0AC53F5A1;
+ Mon, 24 Feb 2025 05:30:06 -0800 (PST)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
-Cc: Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
- Paul Szczepanek <paul.szczepanek@arm.com>
-Subject: [PATCH 0/6] dts: add build-less driver binding
-Date: Mon, 24 Feb 2025 13:28:17 +0000
-Message-ID: <20250224132823.196509-1-luca.vizzarro@arm.com>
+Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
+ Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH 1/6] dts: ensure runtime working directory
+Date: Mon, 24 Feb 2025 13:28:18 +0000
+Message-ID: <20250224132823.196509-2-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250224132823.196509-1-luca.vizzarro@arm.com>
+References: <20250224132823.196509-1-luca.vizzarro@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -40,36 +42,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi there,
+After loading the user's settings and supplied configuration files, make
+the dts folder the working directory for the runner.
 
-sending in a solution that could enable DTS to bind drivers for
-DPDK-based apps, like traffic generators, that lack the DPDK build to
-gather dpdk-devbind.py from.
+This allows DTS to easily access the local DPDK tree.
 
-Best,
-Luca
+Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+---
+ dts/main.py | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Luca Vizzarro (6):
-  dts: ensure runtime working directory
-  dts: use topology in smoke tests
-  dts: add tmp directory facility
-  dts: decouple DPDK runtime from build
-  dts: enable build-less DPDK driver binding
-  dts: restore TG setup and teardown
-
- dts/framework/context.py                      |  3 +-
- dts/framework/remote_session/dpdk.py          | 49 +++++++++++++++----
- dts/framework/remote_session/dpdk_shell.py    |  2 +-
- dts/framework/test_run.py                     | 12 ++++-
- dts/framework/testbed_model/node.py           | 31 +++++++++++-
- dts/framework/testbed_model/os_session.py     | 12 +++++
- dts/framework/testbed_model/posix_session.py  |  5 ++
- .../traffic_generator/traffic_generator.py    |  2 +-
- dts/main.py                                   |  6 +++
- dts/tests/TestSuite_smoke_tests.py            |  4 +-
- dts/tests/TestSuite_softnic.py                |  2 +-
- 11 files changed, 109 insertions(+), 19 deletions(-)
-
+diff --git a/dts/main.py b/dts/main.py
+index fa878cc16e..5de65c8a50 100755
+--- a/dts/main.py
++++ b/dts/main.py
+@@ -3,9 +3,12 @@
+ # Copyright(c) 2010-2014 Intel Corporation
+ # Copyright(c) 2022 PANTHEON.tech s.r.o.
+ # Copyright(c) 2022 University of New Hampshire
++# Copyright(c) 2025 Arm Limited
+ 
+ """The DTS executable."""
+ 
++import os
++
+ from framework import settings
+ 
+ 
+@@ -23,6 +26,9 @@ def main() -> None:
+     from framework.runner import DTSRunner
+ 
+     dts = DTSRunner()
++
++    # After loading up, make the dts folder the current working directory.
++    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+     dts.run()
+ 
+ 
 -- 
 2.43.0
 
