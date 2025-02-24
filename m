@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B27C021B5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CE1C021B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:56:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2946440EE7;
-	Mon, 24 Feb 2025 10:55:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 62F06410E7;
+	Mon, 24 Feb 2025 10:55:12 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id B033640E38
+ by mails.dpdk.org (Postfix) with ESMTP id 1D09140E35
  for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:54 +0100 (CET)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKe001315
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKf001315
  for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:54 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
- EqRTHRtTPwJiaZTbX1Unx/58oRyXf1Bh5c24mHBJwc=; b=EWcj0Z+rn3/a3/NEJ
- 7Lec/BD1xdqETgSeXdLgKhJkTxLabtMllhVc3oU8zdg9fRxYN+sgZUsU5ZXN1hjC
- NgkhJL2wGXFP4I75Pefa4AuQf+YewWQTzb/fx9LTaPVdNX66SQpG32PFcrhFwMjL
- +VbHSHM9RJZmUC2FzhuUlIn/Q1hEzW7ktKGwfKoFstmZ/wgv4p1rVGRJnoKb+lyG
- 34P5EKiNec443TNjJxSDcXdmQemkVGLB4Y0Vzsq9Y+1WNGR9O7Q6sFm9SW/7daFB
- lrbklMCkkmXS/KbdU0wXT5q3ROdKRpIfuYkNhrL9KX6ia4AHBXGSUAJs2y0j6m8F
- fHG/g==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
+ ZJ8ixiCYlokEjY9obB4Tb/t9aB16s8BF1CqmFwqZsg=; b=Hyg0r1DantEWwoH8w
+ wfB56iyQNZTelySONPYd8pvBZq0BM9oW0KeKT1k0NqeLl5hkDhpSyymNmyhHa16S
+ q5hGaQaG3teWMDc8rub3VQzU7pNKia/0uSfDWiyEH5hHoZYVt8VnD4HH/D03Ahzh
+ WtE6UluP1GOhdjjYq7wA58lUqGLtjLD1eaRHzOK3ipwOVBPV2l7y4CI3BuIg/ywP
+ a/et8rZ04yjNHijY0rO5GTnA7bU0/10dN1+x10zW/+S5h5KpD1akTibYLW/i0gA5
+ gXCL0n3NIbuAwu+Ge8Ede9c30GEzBYo2qvFeFN9IAGctq+qPZsUG8U+1hZDunDFj
+ IDrvA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh3c-13
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh3c-14
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:53 -0800 (PST)
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:54 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:54:13 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:54:22 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:54:13 -0800
+ Transport; Mon, 24 Feb 2025 01:54:22 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id B5DB33F7062;
- Mon, 24 Feb 2025 01:54:10 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id E8EC43F705D;
+ Mon, 24 Feb 2025 01:54:19 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v3 22/33] common/cnxk: support for NPC inline rule for cn20k
-Date: Mon, 24 Feb 2025 15:22:30 +0530
-Message-ID: <20250224095241.1263700-22-ndabilpuram@marvell.com>
+CC: <dev@dpdk.org>, Rahul Bhansali <rbhansali@marvell.com>
+Subject: [PATCH v3 25/33] net/cnxk: store pool buffer size in lookup memory
+Date: Mon, 24 Feb 2025 15:22:33 +0530
+Message-ID: <20250224095241.1263700-25-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224095241.1263700-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -53,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: EaBwQxSAuJ2qSznMSdWvh5v7XXCThkR3
-X-Proofpoint-ORIG-GUID: EaBwQxSAuJ2qSznMSdWvh5v7XXCThkR3
+X-Proofpoint-GUID: w27_SgiVWuJeWVywAZ04XmrFWlFY_uPP
+X-Proofpoint-ORIG-GUID: w27_SgiVWuJeWVywAZ04XmrFWlFY_uPP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -71,151 +71,271 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use UCAST_CPT in cn20k as opposed to UCAST_IPSEC in cn10k
-for inline IPsec rule.
+From: Rahul Bhansali <rbhansali@marvell.com>
 
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Store the pool buffer size in lookup memory to calculate
+mbuf start address for reassembly case in fastpath.
+Also, restructured lookup memory data per port.
+
+Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/hw/nix.h            |  1 +
- drivers/common/cnxk/roc_npc.c           | 15 +++++++++++----
- drivers/common/cnxk/roc_npc_mcam.c      |  7 ++++---
- drivers/common/cnxk/roc_npc_mcam_dump.c |  5 +++++
- drivers/common/cnxk/roc_npc_priv.h      |  8 ++++++++
- 5 files changed, 29 insertions(+), 7 deletions(-)
+ drivers/net/cnxk/cn20k_ethdev.c   | 17 +++++++++
+ drivers/net/cnxk/cn20k_rxtx.h     |  1 +
+ drivers/net/cnxk/cnxk_ethdev.h    |  2 +
+ drivers/net/cnxk/cnxk_ethdev_dp.h | 29 ++++++++++++---
+ drivers/net/cnxk/cnxk_lookup.c    | 61 +++++++++++++++++++++++++++----
+ 5 files changed, 98 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
-index e4d8d285d5..d16fa3b3ec 100644
---- a/drivers/common/cnxk/hw/nix.h
-+++ b/drivers/common/cnxk/hw/nix.h
-@@ -645,6 +645,7 @@
- #define NIX_RX_ACTIONOP_RSS	     (0x4ull)
- #define NIX_RX_ACTIONOP_PF_FUNC_DROP (0x5ull)
- #define NIX_RX_ACTIONOP_MIRROR	     (0x6ull)
-+#define NIX_RX_ACTIONOP_UCAST_CPT    (0x7ull)
- #define NIX_RX_ACTIONOP_DEFAULT	     (0xfull)
+diff --git a/drivers/net/cnxk/cn20k_ethdev.c b/drivers/net/cnxk/cn20k_ethdev.c
+index db8d08cb2a..740fdb7f76 100644
+--- a/drivers/net/cnxk/cn20k_ethdev.c
++++ b/drivers/net/cnxk/cn20k_ethdev.c
+@@ -319,6 +319,8 @@ cn20k_nix_rx_queue_setup(struct rte_eth_dev *eth_dev, uint16_t qid, uint16_t nb_
+ 	/* Data offset from data to start of mbuf is first_skip */
+ 	rxq->data_off = rq->first_skip;
+ 	rxq->mbuf_initializer = cnxk_nix_rxq_mbuf_setup(dev);
++	rxq->mp_buf_sz = (mp->elt_size + mp->header_size + mp->trailer_size) & 0xFFFFFFFF;
++	rxq->mp_buf_sz |= (uint64_t)mp->header_size << 32;
  
- #define NIX_RX_VTAGACTION_VTAG0_RELPTR (0x0ull)
-diff --git a/drivers/common/cnxk/roc_npc.c b/drivers/common/cnxk/roc_npc.c
-index 138f12f6d8..94d5cc84f8 100644
---- a/drivers/common/cnxk/roc_npc.c
-+++ b/drivers/common/cnxk/roc_npc.c
-@@ -568,6 +568,7 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 	struct npc *npc = roc_npc_to_npc_priv(roc_npc);
- 	const struct roc_npc_action *sec_action = NULL;
- 	const struct roc_npc_action_sample *act_sample;
-+	struct roc_nix *roc_nix = roc_npc->roc_nix;
- 	const struct roc_npc_action_mark *act_mark;
- 	const struct roc_npc_action_meter *act_mtr;
- 	const struct roc_npc_action_queue *act_q;
-@@ -576,7 +577,6 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 	uint8_t has_spi_to_sa_act = 0;
- 	int sel_act, req_act = 0;
- 	uint16_t pf_func, vf_id;
--	struct roc_nix *roc_nix;
- 	int errcode = 0;
- 	int mark = 0;
- 	int rq = 0;
-@@ -885,8 +885,15 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 	} else if (req_act & ROC_NPC_ACTION_TYPE_RSS) {
- 		flow->npc_action = NIX_RX_ACTIONOP_UCAST;
- 	} else if (req_act & ROC_NPC_ACTION_TYPE_SEC) {
--		flow->npc_action = NIX_RX_ACTIONOP_UCAST_IPSEC;
--		flow->npc_action |= (uint64_t)rq << 20;
-+		if (roc_model_is_cn20k()) {
-+			flow->npc_action = NIX_RX_ACTIONOP_UCAST_CPT;
-+			flow->npc_action |= (uint64_t)rq << 20;
-+			flow->npc_action2 =
-+				roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true) << 8;
-+		} else {
-+			flow->npc_action = NIX_RX_ACTIONOP_UCAST_IPSEC;
-+			flow->npc_action |= (uint64_t)rq << 20;
-+		}
- 	} else if (req_act & (ROC_NPC_ACTION_TYPE_FLAG | ROC_NPC_ACTION_TYPE_MARK)) {
- 		flow->npc_action = NIX_RX_ACTIONOP_UCAST;
- 	} else if (req_act & ROC_NPC_ACTION_TYPE_COUNT) {
-@@ -1550,7 +1557,7 @@ npc_inline_dev_ipsec_action_free(struct npc *npc, struct roc_npc_flow *flow)
- 	inl_dev = idev->nix_inl_dev;
- 
- 	if (flow->nix_intf == NIX_INTF_RX && inl_dev && inl_dev->ipsec_index &&
--	    ((flow->npc_action & 0xF) == NIX_RX_ACTIONOP_UCAST_IPSEC)) {
-+	    roc_npc_action_is_rx_inline(flow->npc_action)) {
- 		inl_dev->curr_ipsec_idx--;
- 		inl_dev->ipsec_index[inl_dev->curr_ipsec_idx] = flow->mcam_id;
- 		flow->enable = 0;
-diff --git a/drivers/common/cnxk/roc_npc_mcam.c b/drivers/common/cnxk/roc_npc_mcam.c
-index 5db72c22ae..3aa7ff56a9 100644
---- a/drivers/common/cnxk/roc_npc_mcam.c
-+++ b/drivers/common/cnxk/roc_npc_mcam.c
-@@ -747,7 +747,7 @@ npc_mcam_set_channel(struct roc_npc_flow *flow, struct npc_cn20k_mcam_write_entr
- 			chan = (channel | NIX_CHAN_CPT_CH_START);
- 			mask = (chan_mask | NIX_CHAN_CPT_CH_START);
- 		} else {
--			if (!(flow->npc_action & NIX_RX_ACTIONOP_UCAST_IPSEC)) {
-+			if (!roc_npc_action_is_rx_inline(flow->npc_action)) {
- 				/*
- 				 * Clear bits 10 & 11 corresponding to CPT
- 				 * channel. By default, rules should match
-@@ -951,6 +951,7 @@ npc_mcam_alloc_and_write(struct npc *npc, struct roc_npc_flow *flow, struct npc_
- 	if (flow->nix_intf == NIX_INTF_RX)
- 		flow->npc_action |= (uint64_t)flow->recv_queue << 20;
- 	req.entry_data.action = flow->npc_action;
-+	req.entry_data.action2 = flow->npc_action2;
- 
- 	/*
- 	 * Driver sets vtag action on per interface basis, not
-@@ -973,7 +974,7 @@ npc_mcam_alloc_and_write(struct npc *npc, struct roc_npc_flow *flow, struct npc_
- 
- 	if (flow->nix_intf == NIX_INTF_RX) {
- 		if (inl_dev && inl_dev->is_multi_channel &&
--		    (flow->npc_action & NIX_RX_ACTIONOP_UCAST_IPSEC)) {
-+		    roc_npc_action_is_rx_inline(flow->npc_action)) {
- 			pf_func = nix_inl_dev_pffunc_get();
- 			req.entry_data.action &= ~(GENMASK(19, 4));
- 			req.entry_data.action |= (uint64_t)pf_func << 4;
-@@ -1284,7 +1285,7 @@ npc_program_mcam(struct npc *npc, struct npc_parse_state *pst, bool mcam_alloc)
- 	if (idev)
- 		inl_dev = idev->nix_inl_dev;
- 	if (inl_dev && inl_dev->is_multi_channel &&
--	    (pst->flow->npc_action & NIX_RX_ACTIONOP_UCAST_IPSEC))
-+	    roc_npc_action_is_rx_inline(pst->flow->npc_action))
- 		skip_base_rule = true;
- 
- 	if ((pst->is_vf || pst->flow->is_rep_vf) && pst->flow->nix_intf == NIX_INTF_RX &&
-diff --git a/drivers/common/cnxk/roc_npc_mcam_dump.c b/drivers/common/cnxk/roc_npc_mcam_dump.c
-index fa2fd0d344..29221a2169 100644
---- a/drivers/common/cnxk/roc_npc_mcam_dump.c
-+++ b/drivers/common/cnxk/roc_npc_mcam_dump.c
-@@ -639,6 +639,11 @@ npc_flow_dump_rx_action(FILE *file, uint64_t npc_action)
- 			(uint64_t)NIX_RX_ACTIONOP_UCAST_IPSEC);
- 		plt_strlcpy(index_name, "RQ Index:", NPC_MAX_FIELD_NAME_SIZE);
- 		break;
-+	case NIX_RX_ACTIONOP_UCAST_CPT:
-+		fprintf(file, "NIX_RX_ACTIONOP_UCAST_CPT (%" PRIu64 ")\n",
-+			(uint64_t)NIX_RX_ACTIONOP_UCAST_CPT);
-+		plt_strlcpy(index_name, "RQ Index:", NPC_MAX_FIELD_NAME_SIZE);
-+		break;
- 	case NIX_RX_ACTIONOP_MCAST:
- 		fprintf(file, "NIX_RX_ACTIONOP_MCAST (%" PRIu64 ")\n",
- 			(uint64_t)NIX_RX_ACTIONOP_MCAST);
-diff --git a/drivers/common/cnxk/roc_npc_priv.h b/drivers/common/cnxk/roc_npc_priv.h
-index b7d726caa1..56471a6ca9 100644
---- a/drivers/common/cnxk/roc_npc_priv.h
-+++ b/drivers/common/cnxk/roc_npc_priv.h
-@@ -466,6 +466,14 @@ roc_npc_to_npc_priv(struct roc_npc *npc)
- 	return (struct npc *)npc->reserved;
+ 	/* Setup security related info */
+ 	if (dev->rx_offload_flags & NIX_RX_OFFLOAD_SECURITY_F) {
+@@ -358,6 +360,18 @@ cn20k_nix_rx_queue_meta_aura_update(struct rte_eth_dev *eth_dev)
+ 	cnxk_nix_lookup_mem_metapool_set(dev);
  }
  
-+static inline bool
-+roc_npc_action_is_rx_inline(uint64_t npc_action)
++static void
++cn20k_nix_rx_queue_bufsize_update(struct rte_eth_dev *eth_dev)
 +{
-+	uint64_t op = npc_action & 0xFULL;
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct cn20k_eth_rxq *rxq;
 +
-+	return (op == NIX_RX_ACTIONOP_UCAST_IPSEC || op == NIX_RX_ACTIONOP_UCAST_CPT);
++	rxq = eth_dev->data->rx_queues[0];
++
++	/* Store bufsize in lookup mem */
++	cnxk_nix_lookup_mem_bufsize_set(dev, rxq->mp_buf_sz);
 +}
 +
- int npc_mcam_get_stats(struct mbox *mbox, struct roc_npc_flow *flow, uint64_t *count);
- int npc_mcam_alloc_counter(struct mbox *mbox, uint16_t *ctr);
- int npc_mcam_free_counter(struct mbox *mbox, uint16_t ctr_id);
+ static int
+ cn20k_nix_tx_queue_stop(struct rte_eth_dev *eth_dev, uint16_t qidx)
+ {
+@@ -590,6 +604,9 @@ cn20k_nix_dev_start(struct rte_eth_dev *eth_dev)
+ 	if (roc_idev_nix_rx_inject_get(nix->port_id))
+ 		dev->rx_offload_flags |= NIX_RX_SEC_REASSEMBLY_F;
+ 
++	if (dev->rx_offload_flags & NIX_RX_REAS_F)
++		cn20k_nix_rx_queue_bufsize_update(eth_dev);
++
+ 	cn20k_eth_set_tx_function(eth_dev);
+ 	cn20k_eth_set_rx_function(eth_dev);
+ 	return 0;
+diff --git a/drivers/net/cnxk/cn20k_rxtx.h b/drivers/net/cnxk/cn20k_rxtx.h
+index e40edba69d..f23c16ec07 100644
+--- a/drivers/net/cnxk/cn20k_rxtx.h
++++ b/drivers/net/cnxk/cn20k_rxtx.h
+@@ -82,6 +82,7 @@ struct cn20k_eth_rxq {
+ 	uint64_t meta_aura;
+ 	uintptr_t meta_pool;
+ 	uint16_t rq;
++	uint64_t mp_buf_sz;
+ 	struct cnxk_timesync_info *tstamp;
+ } __plt_cache_aligned;
+ 
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index 9b85927f48..daf80be51b 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -727,6 +727,8 @@ int cnxk_nix_lookup_mem_sa_base_set(struct cnxk_eth_dev *dev);
+ int cnxk_nix_lookup_mem_sa_base_clear(struct cnxk_eth_dev *dev);
+ int cnxk_nix_lookup_mem_metapool_set(struct cnxk_eth_dev *dev);
+ int cnxk_nix_lookup_mem_metapool_clear(struct cnxk_eth_dev *dev);
++int cnxk_nix_lookup_mem_bufsize_set(struct cnxk_eth_dev *dev, uint64_t size);
++int cnxk_nix_lookup_mem_bufsize_clear(struct cnxk_eth_dev *dev);
+ __rte_internal
+ int cnxk_nix_inb_mode_set(struct cnxk_eth_dev *dev, bool use_inl_dev);
+ __rte_internal
+diff --git a/drivers/net/cnxk/cnxk_ethdev_dp.h b/drivers/net/cnxk/cnxk_ethdev_dp.h
+index 100d22e759..b5836b491e 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_dp.h
++++ b/drivers/net/cnxk/cnxk_ethdev_dp.h
+@@ -35,8 +35,11 @@
+ #define ERRCODE_ERRLEN_WIDTH 12
+ #define ERR_ARRAY_SZ	     ((BIT(ERRCODE_ERRLEN_WIDTH)) * sizeof(uint32_t))
+ 
+-#define SA_BASE_TBL_SZ	(RTE_MAX_ETHPORTS * sizeof(uintptr_t))
+-#define MEMPOOL_TBL_SZ	(RTE_MAX_ETHPORTS * sizeof(uintptr_t))
++#define SA_BASE_OFFSET 8 /* offset in bytes */
++#define MEMPOOL_OFFSET 8 /* offset in bytes */
++#define BUFLEN_OFFSET  8 /* offset in bytes */
++#define LOOKUP_MEM_PORTDATA_SZ (SA_BASE_OFFSET + MEMPOOL_OFFSET + BUFLEN_OFFSET)
++#define LOOKUP_MEM_PORTDATA_TOTAL_SZ (RTE_MAX_ETHPORTS * LOOKUP_MEM_PORTDATA_SZ)
+ 
+ #define CNXK_NIX_UDP_TUN_BITMASK                                               \
+ 	((1ull << (RTE_MBUF_F_TX_TUNNEL_VXLAN >> 45)) |                               \
+@@ -174,20 +177,36 @@ static __rte_always_inline uintptr_t
+ cnxk_nix_sa_base_get(uint16_t port, const void *lookup_mem)
+ {
+ 	uintptr_t sa_base_tbl;
++	uint32_t offset;
+ 
+ 	sa_base_tbl = (uintptr_t)lookup_mem;
+ 	sa_base_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
+-	return *((const uintptr_t *)sa_base_tbl + port);
++	offset = port * LOOKUP_MEM_PORTDATA_SZ;
++	return *((const uintptr_t *)sa_base_tbl + offset / 8);
+ }
+ 
+ static __rte_always_inline uintptr_t
+ cnxk_nix_inl_metapool_get(uint16_t port, const void *lookup_mem)
+ {
+ 	uintptr_t metapool_tbl;
++	uint32_t offset;
+ 
+ 	metapool_tbl = (uintptr_t)lookup_mem;
+-	metapool_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ + SA_BASE_TBL_SZ;
+-	return *((const uintptr_t *)metapool_tbl + port);
++	metapool_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET;
++	return *((const uintptr_t *)metapool_tbl + offset / 8);
++}
++
++static __rte_always_inline uintptr_t
++cnxk_nix_inl_bufsize_get(uint16_t port, const void *lookup_mem)
++{
++	uintptr_t bufsz_tbl;
++	uint32_t offset;
++
++	bufsz_tbl = (uintptr_t)lookup_mem;
++	bufsz_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET + MEMPOOL_OFFSET;
++	return *((const uintptr_t *)bufsz_tbl + offset / 8);
+ }
+ 
+ #endif /* __CNXK_ETHDEV_DP_H__ */
+diff --git a/drivers/net/cnxk/cnxk_lookup.c b/drivers/net/cnxk/cnxk_lookup.c
+index 1e8cc396b4..7af9cb111e 100644
+--- a/drivers/net/cnxk/cnxk_lookup.c
++++ b/drivers/net/cnxk/cnxk_lookup.c
+@@ -7,7 +7,8 @@
+ 
+ #include "cnxk_ethdev.h"
+ 
+-#define LOOKUP_ARRAY_SZ (PTYPE_ARRAY_SZ + ERR_ARRAY_SZ + SA_BASE_TBL_SZ + MEMPOOL_TBL_SZ)
++#define LOOKUP_ARRAY_SZ (PTYPE_ARRAY_SZ + ERR_ARRAY_SZ + LOOKUP_MEM_PORTDATA_TOTAL_SZ)
++
+ const uint32_t *
+ cnxk_nix_supported_ptypes_get(struct rte_eth_dev *eth_dev,
+ 			      size_t *no_of_elements)
+@@ -336,6 +337,7 @@ cnxk_nix_lookup_mem_sa_base_set(struct cnxk_eth_dev *dev)
+ 	uint16_t port = dev->eth_dev->data->port_id;
+ 	uintptr_t sa_base_tbl;
+ 	uintptr_t sa_base;
++	uint32_t offset;
+ 	uint8_t sa_w;
+ 
+ 	if (!lookup_mem)
+@@ -351,7 +353,8 @@ cnxk_nix_lookup_mem_sa_base_set(struct cnxk_eth_dev *dev)
+ 	/* Set SA Base in lookup mem */
+ 	sa_base_tbl = (uintptr_t)lookup_mem;
+ 	sa_base_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
+-	*((uintptr_t *)sa_base_tbl + port) = sa_base | sa_w;
++	offset = port * LOOKUP_MEM_PORTDATA_SZ;
++	*((uintptr_t *)sa_base_tbl + offset / 8) = sa_base | sa_w;
+ 	return 0;
+ }
+ 
+@@ -361,6 +364,7 @@ cnxk_nix_lookup_mem_sa_base_clear(struct cnxk_eth_dev *dev)
+ 	void *lookup_mem = cnxk_nix_fastpath_lookup_mem_get();
+ 	uint16_t port = dev->eth_dev->data->port_id;
+ 	uintptr_t sa_base_tbl;
++	uint32_t offset;
+ 
+ 	if (!lookup_mem)
+ 		return -EIO;
+@@ -368,7 +372,8 @@ cnxk_nix_lookup_mem_sa_base_clear(struct cnxk_eth_dev *dev)
+ 	/* Set SA Base in lookup mem */
+ 	sa_base_tbl = (uintptr_t)lookup_mem;
+ 	sa_base_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
+-	*((uintptr_t *)sa_base_tbl + port) = 0;
++	offset = port * LOOKUP_MEM_PORTDATA_SZ;
++	*((uintptr_t *)sa_base_tbl + offset / 8) = 0;
+ 	return 0;
+ }
+ 
+@@ -378,14 +383,16 @@ cnxk_nix_lookup_mem_metapool_set(struct cnxk_eth_dev *dev)
+ 	void *lookup_mem = cnxk_nix_fastpath_lookup_mem_get();
+ 	uint16_t port = dev->eth_dev->data->port_id;
+ 	uintptr_t mp_tbl;
++	uint32_t offset;
+ 
+ 	if (!lookup_mem)
+ 		return -EIO;
+ 
+ 	/* Set Mempool in lookup mem */
+ 	mp_tbl = (uintptr_t)lookup_mem;
+-	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ + SA_BASE_TBL_SZ;
+-	*((uintptr_t *)mp_tbl + port) = dev->nix.meta_mempool;
++	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET;
++	*((uintptr_t *)mp_tbl + offset / 8) = dev->nix.meta_mempool;
+ 	return 0;
+ }
+ 
+@@ -395,13 +402,53 @@ cnxk_nix_lookup_mem_metapool_clear(struct cnxk_eth_dev *dev)
+ 	void *lookup_mem = cnxk_nix_fastpath_lookup_mem_get();
+ 	uint16_t port = dev->eth_dev->data->port_id;
+ 	uintptr_t mp_tbl;
++	uint32_t offset;
+ 
+ 	if (!lookup_mem)
+ 		return -EIO;
+ 
+ 	/* Clear Mempool in lookup mem */
+ 	mp_tbl = (uintptr_t)lookup_mem;
+-	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ + SA_BASE_TBL_SZ;
+-	*((uintptr_t *)mp_tbl + port) = dev->nix.meta_mempool;
++	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET;
++	*((uintptr_t *)mp_tbl + offset / 8) = dev->nix.meta_mempool;
++	return 0;
++}
++
++int
++cnxk_nix_lookup_mem_bufsize_set(struct cnxk_eth_dev *dev, uint64_t size)
++{
++	void *lookup_mem = cnxk_nix_fastpath_lookup_mem_get();
++	uint16_t port = dev->eth_dev->data->port_id;
++	uintptr_t mp_tbl;
++	uint32_t offset;
++
++	if (!lookup_mem)
++		return -EIO;
++
++	/* Set bufsize in lookup mem */
++	mp_tbl = (uintptr_t)lookup_mem;
++	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET + MEMPOOL_OFFSET;
++	*((uintptr_t *)mp_tbl + offset / 8) = size;
++	return 0;
++}
++
++int
++cnxk_nix_lookup_mem_bufsize_clear(struct cnxk_eth_dev *dev)
++{
++	void *lookup_mem = cnxk_nix_fastpath_lookup_mem_get();
++	uint16_t port = dev->eth_dev->data->port_id;
++	uintptr_t mp_tbl;
++	uint32_t offset;
++
++	if (!lookup_mem)
++		return -EIO;
++
++	/* Clear bufsize in lookup mem */
++	mp_tbl = (uintptr_t)lookup_mem;
++	mp_tbl += PTYPE_ARRAY_SZ + ERR_ARRAY_SZ;
++	offset = (port * LOOKUP_MEM_PORTDATA_SZ) + SA_BASE_OFFSET + MEMPOOL_OFFSET;
++	*((uintptr_t *)mp_tbl + offset / 8) = 0;
+ 	return 0;
+ }
 -- 
 2.34.1
 
