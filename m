@@ -2,74 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2134C021BB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 20:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EE6C021BB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 20:38:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD44F40EE2;
-	Mon, 24 Feb 2025 21:19:03 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id CBA3340DD0
- for <dev@dpdk.org>; Mon, 24 Feb 2025 21:19:02 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-220c8cf98bbso15606985ad.1
- for <dev@dpdk.org>; Mon, 24 Feb 2025 12:19:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E663240EE2;
+	Mon, 24 Feb 2025 21:38:33 +0100 (CET)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 338B740EE2
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 21:38:32 +0100 (CET)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-2fbfc9ff0b9so7579744a91.2
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 12:38:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740428342;
- x=1741033142; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740429511;
+ x=1741034311; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=siYwfsJzB1G85oMGKr5WLWc6HZuLzoFABD0py+0uZW0=;
- b=sXdHkHKpipxMt5rcWDP/xm9o5DRA6Ac4CmqSM9vLf5gN+hSRYa0EKqcPNqRRFx0vR6
- RQQARlltrsLMajPCwBuJkFJvCGODL7uvqRCdzTrCcAIAVgrxhbmcbfIZxnpZurg7rY43
- kIzEpbYSew+DRfnXMMcQAlGKENofYqllB7jWD1zgji66xDJux/+Cj3GyOVSy2WVD+0FK
- KRfob3yXtsrn6jZUUlJ2vDMWcaqdWj4S/ac3Ks2Zgm/c7LZ14DVjsB/p6UCwGzOFhtSL
- t4vxH203bW9ZcvQyXmW+jCe6QtzS+K1UpI9VnITqfWkSvCiF5MQE7h0o+72eqwVjzEIe
- MefQ==
+ bh=caX+1oC37UzadIhwIGH6xLVfirCRuauWoaWz2hGKc+Y=;
+ b=I5tp5Gs7FwftCLMqy9V4+UWTn7I7MwB874BgQMMumM3qb5eYbLYegalj6TwQI4o/ak
+ Wa9bqupkQHGoIb1fyLsAfdOQYyZL4Tatr1OklEnHQ9Ids5ro2SYUnL55/wdNh5lEkLG3
+ BK7DYY6rCofW4qusDSe2qvRnlhZ6cclDEV8mecReCjDlx7CTAUsx0JaAE4LbUaumO21a
+ xJZoTfQ/egbHvIJSFXqIEiSETfpZDLGKyDBoUZmujMRFWxdQCVswy8Dbc1s65Zeb58R2
+ 94pz1/2CZZAx3/AwV1jFFXc96/PF6AkzLkOqE0E5PzVNvZ8WOyJZ+fMF/z37fdmN6dHG
+ PF3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740428342; x=1741033142;
+ d=1e100.net; s=20230601; t=1740429511; x=1741034311;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=siYwfsJzB1G85oMGKr5WLWc6HZuLzoFABD0py+0uZW0=;
- b=tXyzBYdsDhu+spF2lQgxALdw6wfbJqoGYJbuiDAEsacdmrrWSXHhhd4fg9ngoFxM0r
- 4tn0jKrW2WnIiaGZiR3O7/wpGCQpjzYY8Y7pt9vRwVMbj9ugEDbdoNxJTezAAmTsj0mp
- /8EgdmtdpNvkTjSpS+BXDkNdhswX95A23klizAf3+Ofi6wF7oUdDmmQGAl0xZTBJBjlW
- 83tqpe+tT5t7RKhtV6tdYyzILKy3v6UuQIeqQHzxtTSwWySMdhLDa7o0445GNmmihOu4
- DAf7uqFW0WlYpN0DnGZUCFl1gcEw8i76jtqFiuiCF6doLznUZPQ34lATiKm8j7p4UVHb
- GP7w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVIw+U/GVMMutsalrmixc1ZMRsoZq4nAIJyKTmleKlB5B3jX0mu5+LOA0sHd4m2f5isQ34=@dpdk.org
-X-Gm-Message-State: AOJu0Yxi07KIRLUjwd0SX7PmuduF1HfSoRJdW++dcWUL4GuqU5teT5KL
- zDoIoqA8w1nM6lVELyFLtYogNVPoXkNJpzlkaS27n+fpXQoJV4jJUuLHIpt5qOc=
-X-Gm-Gg: ASbGnctHYdnwdB0iZLb8SKEUebBkaJCOweo9rLh9zyWY7gZKkBNLGt9mY9uIYyEZdS+
- /X586HkRJM3zf7g2OxrvNfeaC4fzc8IVzj9S2wpTDQFKM4Jle1wqoYHORZkzRKKQ+d+YxuR0ESC
- g0YGsd7oANUe67swyoh0/sCPR3uoUCTM9NzrECxZbm+d1Y/bzTvMZL3XrQ8DRc6nETStB/MfEQz
- mufT5/IZxCXbrMwPqYHdvvZHOuw22yQekVN3dbiLCC/hWGXjZ8ejNV1UcVin/HwBjDA48Lvhi6K
- UAETQrXmMV2Kqt8HfVIlFL1JHfAtekk+FTnL+XMGkqR3kqvLfIwMGQmTFxp3cQJwA1HcPux0if6
- sX2Q=
-X-Google-Smtp-Source: AGHT+IF6hjhh/TBsFVTub8665RdCgCrBr5MVX3BZ0yS8IRwQV01JAypNfcGsO367NmPrCrUPJQ3SjQ==
-X-Received: by 2002:a17:902:d503:b0:21f:f02:413c with SMTP id
- d9443c01a7336-221a11737a6mr250183695ad.42.1740428341716; 
- Mon, 24 Feb 2025 12:19:01 -0800 (PST)
+ bh=caX+1oC37UzadIhwIGH6xLVfirCRuauWoaWz2hGKc+Y=;
+ b=roGnd0Qrf2ZA51EEXsgWLWFogqQFvS2qUMtIck1ttcyzoqkHJpFp+57xKE+iYVOr/z
+ 6UvOnR6Qjtg73f6E4olskoGaFVdqkM6au2Ma5dMZJsVlT7NnA8BgKhXl7sIUxw0Xfyvb
+ CUDtQrGTH0ZCnEA3tI+IC2RbIfwNn/br9sYnRTcBBM8Bn0kq4Vdeb5ef2y6J7k4idvpY
+ T+Q0K/P8FKg0+9TD9s1ig1iHK4GQIMzZ6ZkTB6NhTU48ncWY6B8+cFtSK+Ed8wQPzvbH
+ /ejM17JVI7WZf/F6Zv1axACNpb/4KIvMLtM8gACPzkEvTDnNvVMMPqBEaqCNJ4bThpdf
+ jqaQ==
+X-Gm-Message-State: AOJu0YwXmT6JhpHrzvwZwAKQft1KArHUkRe2ChoLK+lefyhza49DJC2h
+ 0AVXr1fzV6XJfF0TC01VytvLosSncCLTb35vOyciAk1KwpLSvHPGnCEynkzaGUo=
+X-Gm-Gg: ASbGncveuKgfIijUVnX5D6txgIQvw+NXpHtrjeUbfhmC5rBsBwUn+nA863f1CW/rW8t
+ mQHZB7IqKCUtpuBr1Z4FPCUMwsvudVH4tSW0TI+TFbZOpm+3xpZul+J3E74yOavFEF90hib5rNG
+ Z3AAMdbFuyPS8NdVAGY72gOS4weIboQvP28VB2MTFmNTiiMVc9BwmN5yU1cpknW9DlacVzpTaqn
+ 5lRZBhigk8p2ms44gRFrLO4rBWpZxYtjYS+fVtGFjVwqbpSeHn4UrOYKawSND01LhhVhVBy4mKT
+ g+9U44UFEJDXoU58MQUjiWqRHcosAcJsVHPFw87U9b6RBi33bxB/4guDAyvSaRdnXXdDtrTIm3m
+ N21I=
+X-Google-Smtp-Source: AGHT+IFp1GBurCBGNH8C+oVnxvOA99xQDKHsl77kyr+zRmLEsAW0PswKPx2rNZvzlHAWsKSUSYSdgA==
+X-Received: by 2002:a17:90b:254d:b0:2f6:be57:49cd with SMTP id
+ 98e67ed59e1d1-2fe68cf4016mr847281a91.25.1740429511265; 
+ Mon, 24 Feb 2025 12:38:31 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2230a0007b9sm195745ad.15.2025.02.24.12.19.01
+ d9443c01a7336-2230a0b2387sm238325ad.258.2025.02.24.12.38.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Feb 2025 12:19:01 -0800 (PST)
-Date: Mon, 24 Feb 2025 12:18:57 -0800
+ Mon, 24 Feb 2025 12:38:30 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:38:28 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "11" <caowenbo@mucse.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <ferruh.yigit@amd.com>,
- <andrew.rybchenko@oktetlabs.ru>, <yaojun@mucse.com>
-Subject: Re: [PATCH v13 00/28] [v13]drivers/net Add Support mucse N10 Pmd
- Driver
-Message-ID: <20250224121857.22e51b36@hermes.local>
-In-Reply-To: <7965B24DF5ABB77F+000101db8355$35272be0$9f7583a0$@mucse.com>
-References: <1739951849-67601-1-git-send-email-caowenbo@mucse.com>
- <20250219081435.3c780063@hermes.local>
- <7965B24DF5ABB77F+000101db8355$35272be0$9f7583a0$@mucse.com>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, Gaetan Rivet <grive@u256.net>
+Subject: Re: [PATCH v7 1/4] bus/pci: fix registration of PCI device
+Message-ID: <20250224123828.2feb3e56@hermes.local>
+In-Reply-To: <20250212163836.178976-1-shperetz@nvidia.com>
+References: <20250206105428.237346-1-shperetz@nvidia.com>
+ <20250212163836.178976-1-shperetz@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,142 +81,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Feb 2025 13:06:30 +0800
-"11" <caowenbo@mucse.com> wrote:
+On Wed, 12 Feb 2025 18:38:32 +0200
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> Hi Stephen,
+> When registering a new PCI device, the device->name field stored
+> the user-provided string from devargs (e.g., "08:00.0" or "0000:08:00.0").
+> This approach led to inconsistencies when registering new devices.
 > 
-> For the release thing, that be ok.
+> This patch fix this issue by saving the parsed PCI in device->name,
+> so when a new PCI device is registering the name displayed in the device
+> list will be the parsed version.
 > 
-> But for Debian 12 with MUSDK it be failed, do I need to fixed it ,
-> The ability when I used it that I had been memset it. But the compile-tool
-> is warning it,
->  hw->phy_port_ids[idx] = ability.port_ids[idx];
+> Fixes: 23eaa9059ec2 ("bus/pci: use given name as generic name")
 > 
-> Branch: master
-> CommitID:968f7b6d7b6a7e60e6e551db430c4eecaccbbfd2
-> 
-> 151613-151639 --> testing issues
-> 
-> Upstream job id: Generic-DPDK-Compile-Meson#362983
-> 
-> Test environment and result as below:
-> 
-> +----------------------------------------+--------------------+
-> |              Environment               | dpdk_meson_compile |
-> +========================================+====================+
-> | RHEL9 (ARM)                            | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 20.04 ARM GCC Cross Compile     | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 20.04 ARM SVE                   | PASS               |
-> +----------------------------------------+--------------------+
-> | Debian 12 with MUSDK                   | FAIL               |
-> +----------------------------------------+--------------------+
-> | Fedora 40 (ARM Clang)                  | PASS               |
-> +----------------------------------------+--------------------+
-> | Fedora 41 (ARM Clang)                  | PASS               |
-> +----------------------------------------+--------------------+
-> | Fedora 41 (ARM)                        | PASS               |
-> +----------------------------------------+--------------------+
-> | Fedora 40 (ARM)                        | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 20.04 (ARM)                     | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 22.04 (ARM)                     | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 24.04 (ARM)                     | PASS               |
-> +----------------------------------------+--------------------+
-> | CentOS Stream 9 (ARM)                  | PASS               |
-> +----------------------------------------+--------------------+
-> | CentOS Stream 10 (ARM)                 | PASS               |
-> +----------------------------------------+--------------------+
-> | Debian 11 (Buster) (ARM)               | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 20.04 ARM Clang Cross Compile   | PASS               |
-> +----------------------------------------+--------------------+
-> | Ubuntu 20.04 aarch32 GCC Cross Compile | PASS               |
-> +----------------------------------------+--------------------+
-> | Debian 12 (arm)                        | PASS               |
-> +----------------------------------------+--------------------+
-> 
-> ==== 20 line log output for Debian 12 with MUSDK (dpdk_meson_compile): ====
-> [888/1284] Linking static target drivers/libtmp_rte_net_r8169.a [889/1284]
-> Generating rte_net_r8169.pmd.c with a custom command [890/1284] Compiling C
-> object drivers/librte_net_r8169.a.p/meson-generated_.._rte_net_r8169.pmd.c.o
-> [891/1284] Linking static target drivers/librte_net_r8169.a [892/1284]
-> Compiling C object
-> drivers/librte_net_r8169.so.25.1.p/meson-generated_.._rte_net_r8169.pmd.c.o
-> [893/1284] Linking target drivers/librte_net_r8169.so.25.1 [894/1284]
-> Compiling C object drivers/net/rnp/base/librnp_base.a.p/rnp_mbx.c.o
-> [895/1284] Compiling C object
-> drivers/net/rnp/base/librnp_base.a.p/rnp_fw_cmd.c.o
-> [896/1284] Compiling C object
-> drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.o
-> FAILED: drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.o
-> ccache aarch64-linux-gnu-gcc -Idrivers/net/rnp/base/librnp_base.a.p
-> -Idrivers/net/rnp/base -I../drivers/net/rnp/base -I. -I.. -Iconfig
-> -I../config -Ilib/eal/include -I../lib/eal/include -Ilib/eal/linux/include
-> -I../lib/eal/linux/include -Ilib/eal/arm/include -I../lib/eal/arm/include
-> -I../kernel/linux -Ilib/eal/common -I../lib/eal/common -Ilib/eal
-> -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log
-> -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/net
-> -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool
-> -Ilib/ring -I../lib/ring -Ilib/ethdev -I../lib/ethdev -Ilib/meter
-> -I../lib/meter -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall
-> -Winvalid-pch -Wextra -Werror -std=c11 -O3 -include rte_config.h -Wvla
-> -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security
-> -Wmissing-declarations -Wmissing-prototypes -Wnested-externs
-> -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes
-> -Wundef -Wwrite-st  rings -Wno-packed-not-aligned
-> -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -mcpu=cortex-a72
-> -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation
-> -Wno-address-of-packed-member -DRTE_LIBRTE_IXGBE_BYPASS -Wno-unused-value
-> -Wno-unused-but-set-variable -Wno-unused-parameter -MD -MQ
-> drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.o -MF
-> drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.o.d -o
-> drivers/net/rnp/base/librnp_base.a.p/rnp_mbx_fw.c.o -c
-> ../drivers/net/rnp/base/rnp_mbx_fw.c
-> ../drivers/net/rnp/base/rnp_mbx_fw.c: In function
-> 'rnp_mbx_fw_get_capability':
-> ../drivers/net/rnp/base/rnp_mbx_fw.c:257:65: error: 'ability' may be used
-> uninitialized [-Werror=maybe-uninitialized]
-> 257 |                         hw->phy_port_ids[idx] = ability.port_ids[idx];
-> |                                                 ~~~~~~~~~~~~~~~~^~~~~
-> ../drivers/net/rnp/base/rnp_mbx_fw.c:235:38: note: 'ability' declared here
-> 235 |         struct rnp_phy_abilities_rep ability;
-> |                                      ^~~~~~~
-> cc1: all warnings being treated as errors
-> ninja: build stopped: subcommand failed.
-> ==== End log output ====
+> Cc: stable@dpdk.org
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 
-Yes, it looks like a compiler bug.  Unfortunately, DPDK has to workaround
-issues with buggy compilers 
+Is there a bugzilla entry for this?
+Would like to be able to see what exactly was broken.
 
-some times.
-Maybe just do this instead
+The PCI name thing goes back to 17.01 release where this was added.
+Did something regress? If so why is there no test for this?
 
-diff --git a/drivers/net/rnp/base/rnp_mbx_fw.c b/drivers/net/rnp/base/rnp_mbx_fw.c
-index 4f351ce960..185bf4dee8 100644
---- a/drivers/net/rnp/base/rnp_mbx_fw.c
-+++ b/drivers/net/rnp/base/rnp_mbx_fw.c
-@@ -232,7 +232,7 @@ rnp_fw_get_phy_capability(struct rnp_eth_port *port,
- 
- int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
- {
--       struct rnp_phy_abilities_rep ability;
-+       struct rnp_phy_abilities_rep ability = { };
-        struct rnp_hw *hw = port->hw;
-        u32 is_sgmii_bits = 0;
-        bool is_sgmii = false;
-@@ -243,7 +243,6 @@ int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
-        u8 lane_idx;
-        u32 idx;
- 
--       memset(&ability, 0, sizeof(ability));
-        err = rnp_fw_get_phy_capability(port, &ability);
-        if (!err) {
-                hw->lane_mask = ability.lane_mask;
+commit 23eaa9059ec24e95e32361f333ed0686f82bea74
+Author: Gaetan Rivet <grive@u256.net>
+Date:   Sat Jul 15 19:56:39 2017 +0200
 
-
-
+    bus/pci: use given name as generic name
+    
+    When an application requests the use of a PCI device, it can currently
+    interchangeably use either the longform DomBDF format (0000:00:00.0) or
+    the shorter BDF format (00:00.0).
+    
+    When a device is inserted via the hotplug API, it must first be scanned
+    and then will be identified by its name using `find_device`. The name of
+    the device must match the name given by the user to be found and then
+    probed.
+    
+    A new function sets the expected name for a scanned PCI device. It was
+    previously generated from parsing the PCI address. This canonical name
+    is superseded when an rte_devargs exists describing the device. In such
+    case, the device takes the given name found within the rte_devargs.
+    
+    As the rte_devargs is linked to the rte_pci_device during scanning, it
+    can be avoided during the probe. Additionally, this fixes the issue of
+    the rte_devargs lookup not being done within rte_pci_probe_one.
+    
+    Fixes: beec692c5157 ("eal: add name field to generic device")
+    Cc: stable@dpdk.org
+    
+    Signed-off-by: Gaetan Rivet <gaetan.rivet@6wind.com>
