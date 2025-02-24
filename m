@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F57C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8317BC021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:40:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC3A1406BB;
-	Mon, 24 Feb 2025 10:39:40 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 291F3406B4
- for <dev@dpdk.org>; Mon, 24 Feb 2025 10:39:39 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O514lO009505
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:38 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id C90C3406BA;
+	Mon, 24 Feb 2025 10:39:43 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 822B8406BA
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 10:39:42 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O8Uhm4015431
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:41 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
- ZxiC/i1DAWftQknRLLO/Ogno0TcmWxx9EKZQJUT1no=; b=fLPFhexv4d4uttHap
- owQonL4PnQazk4O7ZmAPEZib0i1yLEFDZ0lhGvNXuX947uDb/E9VKTz6FDYK8opU
- oIShc/BsCI+F7KQMFFGo2qchHdoE2P7XYqJKry2jVScbEhkWqDamVmQRarUchzjc
- nVvNxXjBawFPRycWtutdUdlENBfMvLiWD6Kd4i+H4Kt7dy6O9Xxf3Yz/h7h66eIX
- /qRfu7a8iIRvjP/FnIqwu5g+spyvlHRAdlGvr2p2TXLtZ44Wp/lXFHwnr7BVjOTe
- +GQpy6TzOJc1pAmuMyBjHaSkvW2JnJj1+Q5TEDijnCZn0txlcZ2waBlhOyxi8z3P
- naoQg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=I
+ lo2Kl6RQFCtQfBjhJUfCJbSvmHD4qD1dBDjdVFhxPU=; b=R8RtwtyEn1rXPfjlp
+ ONldoPYKqV32H0LhCWtTOkb2Fkqif09ojejPW/iZsCC6UrnblRBVl3b7/FX+L2Uf
+ YOx0lqgyNTp3gZvpMfApAExNCmjO03hwG6CM6a0EpTdqZ/ZAgzuTUwGYT6cHrmeR
+ 1PnDokmKORLi8P04EvYHwDYKZqF2sxZmqgCt1kr/gtnwJgovNisLYrcar0Fl6EUz
+ dt5iXAy0FYY5/ceWYwMqetdWePEUGIirVZ95W2u+eguVm5t27Ny0L8yNNK0NPH5d
+ sR2w/JdIYirEDHteq4DPN3ttpcDlkyMAmPypdbTpTby1Tt0/ihnB+oI57zl3fUAC
+ 0W7Ig==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4503qbspr0-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 450nasg4fy-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:38 -0800 (PST)
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:39:41 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:39:37 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:39:40 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:39:37 -0800
+ Transport; Mon, 24 Feb 2025 01:39:40 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id A80D23F705D;
- Mon, 24 Feb 2025 01:39:34 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id DE0393F705D;
+ Mon, 24 Feb 2025 01:39:37 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>, Anoob Joseph <anoobj@marvell.com>
-Subject: [PATCH v2 06/33] common/cnxk: enable IE with cn9k and cn10k only
-Date: Mon, 24 Feb 2025 15:08:48 +0530
-Message-ID: <20250224093915.1253215-6-ndabilpuram@marvell.com>
+Subject: [PATCH v2 07/33] common/cnxk: make special handling only for 9k
+Date: Mon, 24 Feb 2025 15:08:49 +0530
+Message-ID: <20250224093915.1253215-7-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224093915.1253215-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -53,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: BOZEUqycvbARvp78n3rayc9pihPL5bvA
-X-Proofpoint-ORIG-GUID: BOZEUqycvbARvp78n3rayc9pihPL5bvA
+X-Proofpoint-ORIG-GUID: kLa-7rczbevsSaR1NUH7eDlUAt6kxzyT
+X-Proofpoint-GUID: kLa-7rczbevsSaR1NUH7eDlUAt6kxzyT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -73,110 +73,32 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Anoob Joseph <anoobj@marvell.com>
 
-IE engines are present only with cn9k and cn10k.
+9k would need special handling compared to 10k & 20k. Update the check
+to reflect the same.
 
 Signed-off-by: Anoob Joseph <anoobj@marvell.com>
 ---
- drivers/common/cnxk/roc_cpt.c | 43 +++++++++++++++++++++++++++++++----
- drivers/common/cnxk/roc_cpt.h |  3 +++
- 2 files changed, 41 insertions(+), 5 deletions(-)
+ drivers/common/cnxk/roc_cpt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.c
-index 90433e2390..88f6044e60 100644
+index 88f6044e60..a6d2d83f76 100644
 --- a/drivers/common/cnxk/roc_cpt.c
 +++ b/drivers/common/cnxk/roc_cpt.c
-@@ -624,9 +624,13 @@ roc_cpt_dev_configure(struct roc_cpt *roc_cpt, int nb_lf, bool rxc_ena, uint16_t
- 	for (i = 0; i < nb_lf; i++)
- 		cpt->lf_blkaddr[i] = blkaddr[blknum];
+@@ -930,10 +930,10 @@ roc_cpt_iq_reset(struct roc_cpt_lf *lf)
+ 		lf_ctl.s.ena = 1;
+ 		plt_write64(lf_ctl.u, lf->rbase + CPT_LF_CTL);
  
--	eng_grpmsk = (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_AE]) |
--		     (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_SE]) |
--		     (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_IE]);
-+	if (roc_cpt_has_ie_engines())
-+		eng_grpmsk = (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_AE]) |
-+			     (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_SE]) |
-+			     (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_IE]);
-+	else
-+		eng_grpmsk = (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_AE]) |
-+			     (1 << roc_cpt->eng_grp[CPT_ENG_TYPE_SE]);
- 
- 	if (roc_errata_cpt_has_ctx_fetch_issue()) {
- 		ctx_ilen_valid = true;
-@@ -1180,12 +1184,13 @@ int
- roc_cpt_ctx_write(struct roc_cpt_lf *lf, void *sa_dptr, void *sa_cptr,
- 		  uint16_t sa_len)
- {
--	uintptr_t lmt_base = lf->lmt_base;
- 	union cpt_res_s res, *hw_res;
- 	uint64_t lmt_arg, io_addr;
- 	struct cpt_inst_s *inst;
-+	uintptr_t lmt_base;
- 	uint16_t lmt_id;
- 	uint64_t *dptr;
-+	uint8_t egrp;
- 	int i;
- 
- 	if (!plt_is_aligned(sa_cptr, 128)) {
-@@ -1193,6 +1198,25 @@ roc_cpt_ctx_write(struct roc_cpt_lf *lf, void *sa_dptr, void *sa_cptr,
- 		return -EINVAL;
- 	}
- 
-+	if (lf == NULL) {
-+		plt_err("Invalid CPT LF");
-+		return -EINVAL;
-+	}
-+
-+	if (lf->roc_cpt == NULL) {
-+		if (roc_cpt_has_ie_engines())
-+			egrp = ROC_CPT_DFLT_ENG_GRP_SE_IE;
+-		if (roc_model_is_cn10k())
+-			cpt_10k_lf_rst_lmtst(lf, ROC_CPT_DFLT_ENG_GRP_SE);
+-		else
++		if (roc_model_is_cn9k())
+ 			cpt_9k_lf_rst_lmtst(lf, ROC_CPT_DFLT_ENG_GRP_SE);
 +		else
-+			egrp = ROC_CPT_DFLT_ENG_GRP_SE;
-+	} else {
-+		if (roc_cpt_has_ie_engines())
-+			egrp = lf->roc_cpt->eng_grp[CPT_ENG_TYPE_IE];
-+		else
-+			egrp = lf->roc_cpt->eng_grp[CPT_ENG_TYPE_SE];
-+	}
-+
-+	lmt_base = lf->lmt_base;
-+
- 	/* Use this lcore's LMT line as no one else is using it */
- 	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
- 	inst = (struct cpt_inst_s *)lmt_base;
-@@ -1225,7 +1249,7 @@ roc_cpt_ctx_write(struct roc_cpt_lf *lf, void *sa_dptr, void *sa_cptr,
- 	inst->w4.s.opcode_minor = ROC_IE_OT_MINOR_OP_WRITE_SA;
- 	inst->w7.s.cptr = (uint64_t)sa_cptr;
- 	inst->w7.s.ctx_val = 1;
--	inst->w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE_IE;
-+	inst->w7.s.egrp = egrp;
++			cpt_10k_lf_rst_lmtst(lf, ROC_CPT_DFLT_ENG_GRP_SE);
  
- 	lmt_arg = ROC_CN10K_CPT_LMT_ARG | (uint64_t)lmt_id;
- 	io_addr = lf->io_addr | ROC_CN10K_CPT_INST_DW_M1 << 4;
-@@ -1276,3 +1300,12 @@ roc_cpt_int_misc_cb_unregister(roc_cpt_int_misc_cb_t cb, void *args)
- 	int_cb.cb_args = NULL;
- 	return 0;
- }
-+
-+bool
-+roc_cpt_has_ie_engines(void)
-+{
-+	if (roc_model_is_cn9k() || roc_model_is_cn10k())
-+		return true;
-+
-+	return false;
-+}
-diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
-index 70129531eb..c8cf9354da 100644
---- a/drivers/common/cnxk/roc_cpt.h
-+++ b/drivers/common/cnxk/roc_cpt.h
-@@ -226,4 +226,7 @@ int __roc_api roc_cpt_ctx_write(struct roc_cpt_lf *lf, void *sa_dptr, void *sa_c
- 
- void __roc_api roc_cpt_int_misc_cb_register(roc_cpt_int_misc_cb_t cb, void *args);
- int __roc_api roc_cpt_int_misc_cb_unregister(roc_cpt_int_misc_cb_t cb, void *args);
-+
-+bool roc_cpt_has_ie_engines(void);
-+
- #endif /* _ROC_CPT_H_ */
+ 		plt_read64(lf->rbase + CPT_LF_INPROG);
+ 		plt_delay_us(2);
 -- 
 2.34.1
 
