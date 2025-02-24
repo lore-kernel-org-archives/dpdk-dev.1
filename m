@@ -2,29 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D6EC021A6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3190C021A6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:04:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FA6640E0C;
-	Mon, 24 Feb 2025 11:04:23 +0100 (CET)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id 3019740BA2;
- Mon, 24 Feb 2025 11:04:14 +0100 (CET)
-X-QQ-mid: bizesmtpsz5t1740391452tzzf013
-X-QQ-Originating-IP: fm/ssO1zbptC0foHYtdjy4fOwJytVJWVlHG19IkOQUo=
+	by mails.dpdk.org (Postfix) with ESMTP id 1579640DF6;
+	Mon, 24 Feb 2025 11:04:33 +0100 (CET)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 885B640E18;
+ Mon, 24 Feb 2025 11:04:30 +0100 (CET)
+X-QQ-mid: bizesmtpsz5t1740391465tym6wdj
+X-QQ-Originating-IP: /5OO/rByDSRnAZ56AM4LDTjioDktrlQrNQGaq6L+NO8=
 Received: from DSK-zaiyuwang.trustnetic.com ( [218.72.40.164])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 24 Feb 2025 18:03:47 +0800 (CST)
+ id ; Mon, 24 Feb 2025 18:04:13 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14958975911387470976
+X-BIZMAIL-ID: 3609944945698611519
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org, Zaiyu Wang <zaiyuwang@trustnetic.com>,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 1/2] net/ngbe: fix WOL and NCSI capability error
-Date: Mon, 24 Feb 2025 17:59:07 +0800
-Message-Id: <20250224095910.27384-2-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Jian Wang <jianwang@trustnetic.com>,
+ Ferruh Yigit <ferruh.yigit@intel.com>
+Subject: [PATCH 2/2] net/txgbe: remove meaningless choice for SW-FW sync
+Date: Mon, 24 Feb 2025 17:59:08 +0800
+Message-Id: <20250224095910.27384-3-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250224095910.27384-1-zaiyuwang@trustnetic.com>
 References: <20250224095910.27384-1-zaiyuwang@trustnetic.com>
@@ -32,22 +33,22 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: N9V8uIqLa9+gI81i8WYf1IgbAiF3Co79lJRCcMRJ66nOTCr+MjKyyzse
- G20s4v03Z0OOJzPV3GdsCV36tpXBwbaSbDTip85bzdCj8AcrV9X95iS4kNDBr1cI0P5D5qc
- JfcoewJQpKbRln8vKfrnpEPKQomjjQw6YNHupdy4zXJ1xFISiTAyTKVFc+eR9EsDSIfRIsE
- imz3W5H66MQbXeWGfZX+NhF68mJmTtWnzUJ6x7t+j+wIHiYoL7Ni9A45+KsMwSYNG53xx+3
- DN60UVCba56uoG8pZNZCfzrFaUHUYTNpfj2vU68yDJettSihlpDdcafK+IGJS2RCdrk8jty
- HMxAX8VD9mgPaKgvQNALLFOKXAN/6BQzvFQrpeRo1M9MOB3NMOxAUQstfnwrDk+wRtQ3/Y5
- 832Z81CJ98LpPABCIOiyYRgyI8mtq4OKWwThwpV4HCfTw4KUqMEmCyuHw0RUeplEVbBHfQc
- 7+JMLddWBtpdeH6bga+swcXSq7v/VM5aC0nlYcgoNh898tkfiRMxMgI/YtDw3jm9W7V2q9L
- GV1GDQQ1z7OPTDY+E3aBaAF2pi9HZuOgdJdNG1vkAjyTa2giZDgnSI3aGNfN917v+1kkOwf
- iPEEtsjwZidVNsIBCE1n5fKvdo+Pxrse1AfLc3YF9RTLFefBTy7Lsc8AvK9EtYk3t3yhHUN
- gvfR6lEe7OlhLGuLgk6zWo9n5bGn9hUYPqM8+iCq0IAhIIZ9QvWpsY73acl+NvENugoC61b
- EOgXhuJxc9gglMuajs3EO+6p6dOro6fK8TV7MDabDkZokZKn2+Yx28KxmP7NEw1Om+j2kXu
- PcVTuNB0z5Z0v4in7coIOAjeF84m7C8tutqqFYCZXW1wRHhK/SOsdqhfmb0AXtkbpvih7Dh
- KFbF1y6irsQBvrDNJsaxi7DXruOL1X5ypDb5mezAUwrXhh7nwpAZjy+sjEyLwkqLI2YFPdT
- sOaWNVpC8MSGBGvHY4qY6z1oIgiH2599skAk=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: NUDY11p76rEhAY0UCmdFbjNROStdXAjmWexKRZPKVxoLOHysRYljx9ms
+ +T232+dqx1zFqKBeVvK4tTR4xC9cRre6Ew88oCIi3xA9wQOufXIF9mEyhBPP1HyVd5PrgHd
+ oght0MbqmeW2FrUnkHzjx3RpVRtOewL/WRdZSs4Z2DUr8ubZJNkoJOEOv5TSm4QzaAsCwzl
+ 5JAOKNKPT7g2x+0KUoo6UQc5CgBRI96j8RfXArMxB0+tcrjrD4+bzJFnOs240rqS2wy+lH1
+ bNGSDieTVfix4mCOTETSlpxfzrzHwnYoqFa6mHbM2/zbUeYiMCfpPkFWj7aFcdkAEbdWL68
+ 16lhW36Pu5VV6xhp1AZ5sHPgO+zt2Uwlq/zjKY/K+/KHjkyxPmQxIH7IrOo1IZ2kDtnwz8D
+ GHLERpYvTUuLkjaEFO5TG3aRghxbNLadbBTOjrTqP1FJiX6p2oYylS/OC6OklniAmx02oYV
+ +jfSgQldmG3DUDjn2hmUUJr3hzd2RNqRpvX9BgHV+iXHi0U4oTotccs6Pax7PZJH6tBGnPf
+ JtlSgxBsv3C74JZXRAlEiO5x+hUipD91K4fGM5j7HpllMgJMygh2yI/R5KZKt73e8HuJ962
+ D8ds1TDQs94SJTKp7nyT5igNruVmeJl1Kr3qlw63CJzpeMyAO8JqSQ7u20T+lf+dTA1YxYL
+ 4/t9UYza2c4ema5Mzw+C6C6ynskFd0icoGW6J06MfPu9pR7PnP3mvxOVuRj1PK4QEWO25Sx
+ e+HWG7/hGdt+sxOHjWpQjpmkZCVz3Mu1DHu9wpNYGo3kqmXIvR76s61xDzAUgZrH2ovgXCx
+ hRp/n/hUS5o9zr+uWbrJkwbWLhk6+0yp4MOghTRdSdKb0FWaxGxuwxcgF39LCfJRsc8OJjA
+ 4Xn0EU+SpejS2gW7vMCjaZsdgwf2nMG9PmAw6QTIutva7hw+zDrFPnCpllZLOn7bCCSbriU
+ gA0tnGSZxiefdyHXr137Fh8Mi8XiP/VZje2YYYFV/NtWa7AfNOUorcu1GHEzIG79Yt+M=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -62,44 +63,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When determining NIC's WOL and NCSI capability via sub-system ID,
-flag matching must be exact, not inclusive. Misidentifying WOL/NCSI
-capability will skip PHY configuration, causing link-up failure.
+Remove superfluous 'if' and 'else' for SW-FW sync.
 
-Fixes: 5f1ab0d529fc ("net/ngbe: add WOL and NCSI capability")
+Bugzilla ID: 1581
+Fixes: 5364a1ce30df ("net/txgbe: add PHY init")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/base/ngbe_hw.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/txgbe/base/txgbe_phy.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ngbe/base/ngbe_hw.c b/drivers/net/ngbe/base/ngbe_hw.c
-index e29a1946e5..6688ae6a31 100644
---- a/drivers/net/ngbe/base/ngbe_hw.c
-+++ b/drivers/net/ngbe/base/ngbe_hw.c
-@@ -1922,6 +1922,8 @@ void ngbe_read_efuse(struct ngbe_hw *hw)
- void ngbe_map_device_id(struct ngbe_hw *hw)
- {
- 	u16 oem = hw->sub_system_id & NGBE_OEM_MASK;
-+	u16 ncsi = hw->sub_system_id & NGBE_NCSI_SUP_MASK;
-+	u16 wol = hw->sub_system_id & NGBE_WOL_SUP_MASK;
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index d87af656d5..ce6882e262 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -80,12 +80,8 @@ static s32 txgbe_read_phy_if(struct txgbe_hw *hw)
+ 	if (hw->phy.nw_mng_if_sel & TXGBE_ETHPHYIF_MDIO_ACT)
+ 		hw->phy.addr = TXGBE_ETHPHYIF_MDIO_BASE(hw->phy.nw_mng_if_sel);
  
- 	hw->is_pf = true;
+-	if (!hw->phy.phy_semaphore_mask) {
+-		if (hw->bus.lan_id)
+-			hw->phy.phy_semaphore_mask = TXGBE_MNGSEM_SWPHY;
+-		else
+-			hw->phy.phy_semaphore_mask = TXGBE_MNGSEM_SWPHY;
+-	}
++	if (!hw->phy.phy_semaphore_mask)
++		hw->phy.phy_semaphore_mask = TXGBE_MNGSEM_SWPHY;
  
-@@ -1982,9 +1984,9 @@ void ngbe_map_device_id(struct ngbe_hw *hw)
- 			oem == NGBE_LY_YT8521S_SFP)
- 		hw->gpio_ctl = true;
- 
--	hw->wol_enabled = (hw->sub_system_id & NGBE_WOL_SUP_MASK) ? true : false;
--	hw->ncsi_enabled = (hw->sub_system_id & NGBE_NCSI_SUP_MASK ||
--			    hw->sub_system_id & NGBE_OCP_CARD) ? true : false;
-+	hw->wol_enabled = (wol == NGBE_WOL_SUP_MASK) ? true : false;
-+	hw->ncsi_enabled = (ncsi == NGBE_NCSI_SUP_MASK ||
-+			   oem == NGBE_OCP_CARD) ? true : false;
+ 	return 0;
  }
- 
- /**
 -- 
 2.21.0.windows.1
 
