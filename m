@@ -2,143 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A2C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 07:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4DEC021B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 08:42:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A206640652;
-	Mon, 24 Feb 2025 08:28:11 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 0B4B640299
- for <dev@dpdk.org>; Mon, 24 Feb 2025 08:28:09 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O5135S002612;
- Sun, 23 Feb 2025 23:28:09 -0800
-Received: from nam11-dm6-obe.outbound.protection.outlook.com
- (mail-dm6nam11lp2172.outbound.protection.outlook.com [104.47.57.172])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45007b1ryb-1
+	by mails.dpdk.org (Postfix) with ESMTP id 98FE540652;
+	Mon, 24 Feb 2025 09:42:46 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B3A6E40299
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 09:42:44 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O515AI009513;
+ Mon, 24 Feb 2025 00:42:43 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=8
+ jkJ/hvRBoyYXGxq8MxvY474VZzEP/hBx18L3xOCBl0=; b=B1NY/fGo5Sk0QZ6dl
+ dJNdRlfXrViVuBBYi0DSGjfmXLEmBVcICIsT01w0kJIUxUrFUjiHdMV+Na670pUm
+ xSzoN3lxdnld4e3W4J2PcYfMJnP+02s0zBrjwclCg/52kZu6Bgvsvf8B8glUzFcS
+ xx4SD+ua9G+oLaUrUf9ixrqIQ9S06XaZHH3X5noBVjpR91E9rFVrndW5ypzFy780
+ F1fZc+P5CM5veriO9+TWb20obI4EqYIfO7viTzqhvD2yKC7WNi0L9DLpOH6MBf7W
+ 6WvRwLaV3jhAKbl/rRtVrFfyKSoQFub5/Xdz6N0BvHgg2ahZQc+/q42Oa6rD4bYC
+ /iWFw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4503qbsk5g-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 23 Feb 2025 23:28:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OLHK+/wBfDIF3PxCqbntljww4ZjKrM7AdBn8I+Zb+pQoBDN/pJVA89v1NLuEKn7CiqkFIRDsA+JbWPpiX87fWmAxzKKmpCRJiOLXLP0gnc2JKyz+Zeh7fAOpiFvHdFLC3EZmam4XfEpGZvmN1lw+r5YwzWpHyQtuxDUGklbWsDNBL4HGQkddpKFvifDkbmYKCg7S2ORCwYI5/R67cSiR8r5x2SezksaGXvvTIJhE6W1ewKmetPyb49n3pV3OwlLoHVJ/ONwwa4e18k68WdG+MjRd7FB5TQkASZFopCBIjOc+ty+WzVi8uMjN2hGEmIL/uYQSkzbwmNbmCERr45vhdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6p3cGZ4WucAW6iaK5vHrmP4paJurcFSkfqSaWk9Rpic=;
- b=LzxWT5bG5qu3HasxQqb+nTPStsHQ+22xic1m6YlWKkN578UIhpb2axXrk0qu9yeVYtOTeZd7x+2QtZPbLOVWW76w16p8XqxFxv3eQml+4SDsA1UHq/FVx34u9JxH50u0ENC6aoUU8Ix6eojbcaDNA2I2nFLu6HlswcCCPUSrpnfDmiWGJohSYjcFRgP7m+V0h/5VpSurSU+X4Jti8xcrVLKMFeRrlKbKW2epEi0QJA86YjDgfh6nGpmZUu3x9PCC3SsfuwtdODZ1RdH3DH0Q4rYaGmvB+2fI5QlbQ5kmqTo6mOBqb86Hdd6WEK4GhkdrvF67cNY76eKcICM1Em7q9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6p3cGZ4WucAW6iaK5vHrmP4paJurcFSkfqSaWk9Rpic=;
- b=H5VgcRpOxEIvZkPxVw/D+nD59B9zinQBl08xz/Qw4OiLs3GlqZ7k0ring7lhFuDhSrsgPmHtxP5a05HTv0PHz/snOpBmM4yAZVrR1AuCydV0DJassLe2vZX9eRpG8qwV3OjxK81Q5rF8EMtcWqBH1cfDT32Uq8a09tvbEWxSP2E=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- CO6PR18MB3793.namprd18.prod.outlook.com (2603:10b6:5:345::22) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.21; Mon, 24 Feb 2025 07:28:05 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d%3]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 07:28:05 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>,
- "thomas@monjalon.net" <thomas@monjalon.net>
-CC: Anoob Joseph <anoobj@marvell.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>
-Subject: RE: [v4 0/5] vhost: add RSA support
-Thread-Topic: [v4 0/5] vhost: add RSA support
-Thread-Index: AQHbhQUjf9dGrf6M9kq4nMHh9EQWwrNWEKEw
-Date: Mon, 24 Feb 2025 07:28:05 +0000
-Message-ID: <CO6PR18MB44846AAD97390FD5813E657BD8C02@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <cover.1740156665.git.gmuthukrishn@marvell.com>
- <cover.1740212213.git.gmuthukrishn@marvell.com>
-In-Reply-To: <cover.1740212213.git.gmuthukrishn@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|CO6PR18MB3793:EE_
-x-ms-office365-filtering-correlation-id: 4ebf652d-bd06-4a7f-26f4-08dd54a4c766
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?MGzR0RhwkJJ+de04MGbNTTTQHe6VReCuOPoj/UhqLiy5HYgEVOARDMhC3KJc?=
- =?us-ascii?Q?vOfFx5LghO/eaRDi3TRCCIoUqhwQjRN4nkSMhlEar6hGzuE4wMUkfkcwd7VS?=
- =?us-ascii?Q?459DZe1/O7dw+darKuJQ5swSv6AtIPwRxDyoMij02761P6UvhINVpnIyNIVp?=
- =?us-ascii?Q?6r7rJY0MnKKzm5yLKbPDk1IfydC3trcuMh7CgNF6JqxIvqCu3Dg/vqDo5/BY?=
- =?us-ascii?Q?h6Y826d85S28iSAvmAvECpciAXhik6Owjz1+XR172KV+T7QwiumZ6Vaukj9u?=
- =?us-ascii?Q?wD4IRloyqLsC9vOTfaHsaOpU8uFJ607qNujmJRODbyPxTr9dGheEuuoSQqsF?=
- =?us-ascii?Q?1lN0TAOT8XXdTpuKUJOMFXrbeciorIisF6gtAyoQ1nKafK9jP0wfTxkt/9Ci?=
- =?us-ascii?Q?vs+W9ll1kFXT4cdj818i+YuW7DZSs5l0a0dd61E9hYhdgxwAkQ8n/aswtCFo?=
- =?us-ascii?Q?KVDbGQOHtq4V08d4NuwzMe5Ka1pzoxdLhiMzMUES2yqg0UXaNRkJ5tcN+43d?=
- =?us-ascii?Q?J6rZv1w2Q7f7xzYa0ogrRlwTtQj/Q722UI55rS39TAHazxZYofphfORgWAKO?=
- =?us-ascii?Q?Ias2Ot28ln5z2Z6B9gMPKwE6MCktR7Lhda7znLXfVWtTiAUsx+Ca5dQFb0uy?=
- =?us-ascii?Q?u3XjbSCr8zBAEP1FCnj4/BtImhy9iQdAkGLTmfc5mWCofw/EcCzyGIDvH4aT?=
- =?us-ascii?Q?iWdG4nKckOO3y3OmMCmRdfl59An412V5lDBtIIRWRJyIxDAeRK4yT716rSDv?=
- =?us-ascii?Q?h4GftcKrNyKE8Xxy0ilIfV9OEkNTHq8SEC7fIm1+CPSjd5uNf1QD8XsyMvBV?=
- =?us-ascii?Q?zpXERgh/UIqlPZOjLAnXL9nhHK3LeR9JGWxYpNbJL9UR0rQAuSRNoOWbpMiw?=
- =?us-ascii?Q?vrQ2xj95SRUpwjzji0my9gloTWbS9LUfLVfR+jWZw9qDF5UresyjD1Dyketb?=
- =?us-ascii?Q?ZEvBX+v+3Y+EFDzCGcG0mIBBAphV4GwvV5zlxs3yrrV9uDITEIFBkhPd7Vb8?=
- =?us-ascii?Q?t55pyLFx29/9+IwJVKzWkFGAXQbU52x5tuaMCOkcuJNkFt3cA/9CA2Owt3W2?=
- =?us-ascii?Q?ORID0wtpnCOG/Kc3Fcd6ahu0Q3dsVzr1QrOkoCtWN5xUrEymazPBbdw8uhK6?=
- =?us-ascii?Q?DjGiHQR4JL+SKWPAOMDC2rWDrgshlpkO8bpdaA9RRCuoZbnZ1uvFh8+D9ZTR?=
- =?us-ascii?Q?4IFRxZ8dWY9O3eMETmLdrdDEaLFV2oKdDuHClJ7qWtUQGd1OhZU3HAFjTLEh?=
- =?us-ascii?Q?U/rjeWeQkuE6rlRL3gYbomVmromYjI96ickAWLkKBZhk82zPpfixRlc4jXqe?=
- =?us-ascii?Q?CNhscOuqgX+FlBydjSEd3VTX3ApeT0DVPnvj5N/EH4sNd/eRlp5tmVPPZ3E4?=
- =?us-ascii?Q?5UQKdZh0J7Prn8+/xix/t2ovK8B/++z/Vwz1vNI195x18YpvVzy7PIqIkQe+?=
- =?us-ascii?Q?AUU65Xo0PXMlE9vW+u/B+lLhY1MBH+nd?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tbEi6+EzgjAyo5rUja6KYnNfbCqPu0A4/mpQZGx3VPmsww/MvqiZWYMJ+8+A?=
- =?us-ascii?Q?/Y5rQUoFJyxRncxqFCMso5b9AHNz9d2BX6fcqDIBRMKrwPhF7Xa9CyAlktYp?=
- =?us-ascii?Q?lx7RYqZzvUtWgfJOeacJxI08u3y0LZi3HyWtj0Vtaqa5Lbxl/qCF3AB/HPah?=
- =?us-ascii?Q?gewe8HaPMjWI1WtnXaiRfFSFGnB+XiJdVwq76CCWSU12wJnbUVmH80m02rpE?=
- =?us-ascii?Q?oyF7Z417QQvn/12hhGn3FnVwiEBCjD8GxjdnbwSJ7iOr50OSetLDN+ki3yLm?=
- =?us-ascii?Q?dKFK2oS4OH+gB8USeZJvirms5+y5XD4iAGt/AOgAFJ5o1DZVAOuq+NV04Fwo?=
- =?us-ascii?Q?vBCUSpVnBIzGxFql7wIXJnpX79PDQQvykE4gH33fP8FBficKXE2KZdv9M38e?=
- =?us-ascii?Q?z5gmN474zyIhpjd2NJtv+X1YkbNXD+XV7q9JJLB1qyjoXhI92lb5wGai1s4Z?=
- =?us-ascii?Q?krwX48U8JJvnKZ0QYUfBRdu0EV3rHRxg5euBbXlDRa5F0scx6hYbn5MAN+Jw?=
- =?us-ascii?Q?77vhybPZwUo91XhWGp1xdZSEWSpPIxtSkMoWzj78NDfpSNMl1p/5XWSOjlVm?=
- =?us-ascii?Q?n+RCtK4Eptb1M3C1ACBLHHXzJTpD8vrTnfH69GYBtqqsuU4eAA4GB5rkfxQx?=
- =?us-ascii?Q?bRoewAGqZUvn8KyZv3+4dnwKPSytrkponc2WImOMBvkY46CcfmvK/Qsr0kox?=
- =?us-ascii?Q?Hvef+5CmMyTTWW7Bc5rbnfWTUlTIqpy10yeB+hclY7d/OUcwDl/ICCtOX55W?=
- =?us-ascii?Q?l0qJ+aStftpCTp0XbtTjKlNqU3lPl0cARbdUZ2WGh9wmG1rzLdd60KtSq8eu?=
- =?us-ascii?Q?y6q1IB3gMqWiHoiMAN5OJS70ZaEu3oAzFFeSNGjNiRFV2j2gcy75BF51wY3U?=
- =?us-ascii?Q?ZaHL2ledTpmiiLl1OyIc8F4vDR+fpKz8ulpBfqWdCd0M4WXiGKsTOPbJyKb/?=
- =?us-ascii?Q?NPJkT+C8jhpiA4rwgL98OhrxLEO3FfipTse+ejvkwlOt7BBmdpLxKKHl04i2?=
- =?us-ascii?Q?MFKMgcY4/ML5tMZSdMYjeENFoPSJy8CwxFjesuvTXqK2WVUxDk9Qqu92d9fd?=
- =?us-ascii?Q?4tvL34i6JcATM6iI7gLKrhgnwwSHGzuxMKsEOGJAekx7FpTBakcuk0/dPyF0?=
- =?us-ascii?Q?OuMlefvi/Y0RCjbvga7W+2h34oWYBa6w0xY+Qx+jMSd3D1hG8Elde84GlLdB?=
- =?us-ascii?Q?24aOr1EDoijSUG3Ap0+hApFT28k2pI48aeG4fU2tRzMCJWW0vNQDZVRlC6xZ?=
- =?us-ascii?Q?eJh+fLvmXJV+UWY4IgOp2CLkgIdGGWOtxcR5Zm2xz/6/pX9kWxT+Jd0mEqrG?=
- =?us-ascii?Q?AtgmQir8vs8dV9k+m2iM+GnqFD48I4yX/+lwbpmpd8NrPoM0GUq3WexAfeWA?=
- =?us-ascii?Q?FrB7zHpdlXjwCGuvQvoigSATQ/J7y9Ur0sl5p3VeLdCK9W0G/mquzFfXTXgb?=
- =?us-ascii?Q?7lek8/mY2lP1CIg9T1ZOkL5uOe7eRxehwFfzjU0BZnBuEcVpcenn2xB78dpc?=
- =?us-ascii?Q?WdNHfzAZJvE79QiU13e/AA6HVbHXIvN/138KbJRMshpsPAHSsLZlA4Ep9ybX?=
- =?us-ascii?Q?ylqKAfswNJ8ZuaXCvq5GTkUvGkLfjRiakF9lCyPO?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ Mon, 24 Feb 2025 00:42:43 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 24 Feb 2025 00:42:42 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 24 Feb 2025 00:42:42 -0800
+Received: from localhost.localdomain (unknown [10.28.34.29])
+ by maili.marvell.com (Postfix) with ESMTP id C08FA3F705D;
+ Mon, 24 Feb 2025 00:42:40 -0800 (PST)
+From: Shijith Thotton <sthotton@marvell.com>
+To: <s.v.naga.harish.k@intel.com>, <jerinj@marvell.com>
+CC: Shijith Thotton <sthotton@marvell.com>, <dev@dpdk.org>,
+ <pbhagavatula@marvell.com>
+Subject: [PATCH v3 0/3] Rx adapter API to add Rx queues in burst
+Date: Mon, 24 Feb 2025 14:12:22 +0530
+Message-ID: <cover.1740383918.git.sthotton@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250218091543.282270-1-sthotton@marvell.com>
+References: <20250218091543.282270-1-sthotton@marvell.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ebf652d-bd06-4a7f-26f4-08dd54a4c766
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 07:28:05.2931 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YXMCuXgg4/t4ZO9KiH18r7/j9sh/6oFrVv97gfskEcjz3Eg7g2cNm+Rrfm6rP0ITcQq7/2FB7f59r7KfHIgt7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR18MB3793
-X-Proofpoint-ORIG-GUID: fgtEVdHf9WtHolzc2Nm-QsV_iqZLTYZW
-X-Proofpoint-GUID: fgtEVdHf9WtHolzc2Nm-QsV_iqZLTYZW
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: -yNp5yXTu9SAQAZ7lZiEfTP2ULMjyqxO
+X-Proofpoint-ORIG-GUID: -yNp5yXTu9SAQAZ7lZiEfTP2ULMjyqxO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
@@ -155,37 +69,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Maxime,
+This patch series introduces the rte_event_eth_rx_adapter_queues_add()
+API, allowing multiple Rx queues to be added to an Rx adapter in a
+single burst. This enhancement benefits applications that require bulk
+addition of Rx queues.  
 
-Can you pick these patches in vhost tree first so that virtio/crypto patche=
-s can be merged in crypto tree?
+To support this API, a new internal eventdev PMD operation for adding Rx
+queues has been implemented. The second patch in the series enables this
+operation for the CNXK PMD. 
 
-Regards,
-Akhil
-> Subject: [v4 0/5] vhost: add RSA support
->=20
-> This patch series supports asymmetric RSA in vhost crypto library.
-> It also includes changes to improve vhost crypto library:
->  * support newer QEMU versions.
->  * fix broken vhost_crypto example application.
->  * stabilize crypto fastpath operations.
->=20
-> v4:
->  - fixed CI issues.
->=20
-> Gowrishankar Muthukrishnan (5):
->   vhost: skip crypto op fetch before vring init
->   vhost: update vhost_user crypto session parameters
->   examples/vhost_crypto: fix user callbacks
->   vhost: support asymmetric RSA crypto ops
->   examples/vhost_crypto: support asymmetric crypto
->=20
->  examples/vhost_crypto/main.c |  54 +++-
->  lib/vhost/vhost_crypto.c     | 508 ++++++++++++++++++++++++++++++++---
->  lib/vhost/vhost_user.h       |  33 ++-
->  lib/vhost/virtio_crypto.h    |  67 +++++
->  4 files changed, 603 insertions(+), 59 deletions(-)
->=20
-> --
-> 2.25.1
+Additionally, a unit test has been added to validate the API's
+functionality.
+
+RFC:
+ - https://patches.dpdk.org/project/dpdk/patch/20241219073405.1724200-1-sthotton@marvell.com/
+
+v2:
+ - Updated documentation to explain the new API.
+
+v3:
+ - Improved MULTI_EVENTQ check.
+
+Shijith Thotton (3):
+  eventdev/eth_rx: add API to burst add queues to Rx adapter
+  event/cnxk: enable PMD op to burst add queues to Rx adapter
+  test/event: unit test to burst add Rx queues to adapter
+
+ app/test/test_event_eth_rx_adapter.c          |  86 ++++++++
+ .../eventdev/event_ethernet_rx_adapter.rst    |  60 +++++-
+ drivers/event/cnxk/cn10k_eventdev.c           |  82 ++++++--
+ drivers/event/cnxk/cn20k_eventdev.c           | 195 +++++++++++++-----
+ drivers/event/cnxk/cn9k_eventdev.c            |  38 +++-
+ drivers/event/cnxk/cnxk_eventdev.h            |   8 +-
+ drivers/event/cnxk/cnxk_eventdev_adptr.c      | 102 +++++----
+ lib/eventdev/eventdev_pmd.h                   |  34 +++
+ lib/eventdev/eventdev_trace.h                 |  14 ++
+ lib/eventdev/eventdev_trace_points.c          |   3 +
+ lib/eventdev/rte_event_eth_rx_adapter.c       | 160 ++++++++++++++
+ lib/eventdev/rte_event_eth_rx_adapter.h       |  33 +++
+ lib/eventdev/version.map                      |   3 +
+ 13 files changed, 691 insertions(+), 127 deletions(-)
+
+-- 
+2.25.1
 
