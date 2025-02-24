@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38273C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB7C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:55:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32EA140DDD;
-	Mon, 24 Feb 2025 10:54:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 93C7640E2C;
+	Mon, 24 Feb 2025 10:54:51 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 49E6A40B90
- for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:47 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9E81040B90
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:48 +0100 (CET)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKM001315
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:46 -0800
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKN001315
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:47 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
- XQl4YrTONS9QXkq+fuAbxmRIFTOYmS/PTJXgl7Ha3E=; b=WKe/qJrbbWxFr2PBn
- 3HZ83fJHJD43myzv9GsMYfr/J8E7uR77T4pix9Ee2zd9SKaojDduGZyw5SAECOOY
- ac1JZ8KvWhyXEoShZ8whxlHzk7ZgUtFHKCXoVKP2kWhCvnMEuOWegJ9t4/cYDKGl
- KraRqP75ltl/TBhW7n58eP8PlooI65LkSKfUiY/QgxzjBjejyjTakaSVqntAXEJ/
- W43FcekdQo23kFymdS4HuKSRfCC3D/FYa0fxjfzbTPKeguEUegk5xcCHEA7SAUO7
- 87Hmp41345IVT14rFbEpr2Mdy3eKNmkPHGDJ3iAqAXtCdnopvhdijW4JE4Jwbf4L
- seKuA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh2x-7
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
+ e3w3ZPWMfQZCoMesnS9iejTpsuDjWXh8nG0+M/uyzg=; b=X5IDBPhAxsVyNw2Iq
+ W8OiVpL83Mqp3MJoX+SsgB0c8oEXMupC+dOs/n/OsZPu/3yZ23Cce2siDXIYhC6p
+ pUK7qKSxBOSbmNXhC2agyKrw5VVFS0dxIkZB+bdnEVqn/bS34O/HXHPUmCKHeLh9
+ gQnWX1AHaYN+lw2vWl6l9BU7F77jmLnK8O4qn7CDCs4vQCO+KnNtF7qf3Lei1/BQ
+ PTMiUsq1bWyDrDE4BVAtd2STv2M7fWCKjUM8B31uw2hpfAeTMu2Tn41FsWZtZsl7
+ W2mdgNGM+SUyTO5B1L9CSp6CNHxTe5+7vv2czHdlsKW04KbL6DEgRk17qZR8zWdR
+ Jv+vg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh3c-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:27 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:46 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:54:10 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:54:10 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:53:15 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 24 Feb 2025 01:53:15 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 7A42F3F7062;
- Mon, 24 Feb 2025 01:54:07 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 817AF3F7067;
+ Mon, 24 Feb 2025 01:53:12 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v3 21/33] common/cnxk: add NPC action2 support
-Date: Mon, 24 Feb 2025 15:22:29 +0530
-Message-ID: <20250224095241.1263700-21-ndabilpuram@marvell.com>
+CC: <dev@dpdk.org>, Anoob Joseph <anoobj@marvell.com>
+Subject: [PATCH v3 04/33] common/cnxk: move CTX defines to common
+Date: Mon, 24 Feb 2025 15:22:12 +0530
+Message-ID: <20250224095241.1263700-4-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224095241.1263700-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -53,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: T5M1Gi7Tt3EPjus58n0-W1jUaF3V8PM8
-X-Proofpoint-ORIG-GUID: T5M1Gi7Tt3EPjus58n0-W1jUaF3V8PM8
+X-Proofpoint-GUID: uog9HUJ0MjraQJ3PE0YD8ohLEcMqeRUw
+X-Proofpoint-ORIG-GUID: uog9HUJ0MjraQJ3PE0YD8ohLEcMqeRUw
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -71,86 +71,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Rahul Bhansali <rbhansali@marvell.com>
+From: Anoob Joseph <anoobj@marvell.com>
 
-Add action2 config for IPsec rule.
+CTX defines are common for all cases using CPT CTX.
 
-Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+Signed-off-by: Anoob Joseph <anoobj@marvell.com>
 ---
- drivers/common/cnxk/hw/nix.h       | 13 +++++++++++--
- drivers/common/cnxk/roc_mbox.h     |  1 +
- drivers/common/cnxk/roc_npc.h      |  1 +
- drivers/common/cnxk/roc_npc_mcam.c |  1 +
- 4 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/common/cnxk/cnxk_security.h |  1 +
+ drivers/common/cnxk/roc_cpt.h       | 16 ++++++++++++++++
+ drivers/common/cnxk/roc_ie_ot.h     | 16 ----------------
+ drivers/net/cnxk/cn10k_rxtx.h       |  4 ++--
+ drivers/net/cnxk/cn20k_rxtx.h       |  4 ++--
+ 5 files changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
-index dd629a2080..e4d8d285d5 100644
---- a/drivers/common/cnxk/hw/nix.h
-+++ b/drivers/common/cnxk/hw/nix.h
-@@ -1678,6 +1678,15 @@ struct nix_rx_action_s {
- 	uint64_t rsvd_63_61 : 3;
- };
+diff --git a/drivers/common/cnxk/cnxk_security.h b/drivers/common/cnxk/cnxk_security.h
+index cd78b283f0..8ede6c88a3 100644
+--- a/drivers/common/cnxk/cnxk_security.h
++++ b/drivers/common/cnxk/cnxk_security.h
+@@ -7,6 +7,7 @@
+ #include <rte_crypto.h>
+ #include <rte_security.h>
  
-+/* NIX receive action structure */
-+struct nix_rx_action2_s {
-+	uint64_t ipsec_qsel                  :  3;
-+	uint64_t ipsec_qidx                  :  4;
-+	uint64_t reserved_7_7                :  1;
-+	uint64_t inline_profile_id           :  4;
-+	uint64_t reserved_12_63              : 52;
++#include "roc_cpt.h"
+ #include "roc_ie_on.h"
+ #include "roc_ie_ot.h"
+ 
+diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
+index 0b9c933925..70129531eb 100644
+--- a/drivers/common/cnxk/roc_cpt.h
++++ b/drivers/common/cnxk/roc_cpt.h
+@@ -104,6 +104,22 @@
+ 
+ #define ROC_CPT_RES_ALIGN 16
+ 
++/* Context units in bytes */
++#define ROC_CTX_UNIT_8B		  8
++#define ROC_CTX_UNIT_128B	  128
++#define ROC_CTX_MAX_CKEY_LEN	  32
++#define ROC_CTX_MAX_OPAD_IPAD_LEN 128
 +
-+};
- /* NIX receive immediate sub descriptor structure */
- struct nix_rx_imm_s {
- 	uint64_t size : 16;
-@@ -2666,9 +2675,9 @@ struct nix_lso_format {
- #define NIX_SENDSTAT_IOFFSET_MASK 0xFFF
- #define NIX_SENDSTAT_OOFFSET_MASK 0xFFF
++/* Anti reply window size supported */
++#define ROC_AR_WIN_SIZE_MIN	   64
++#define ROC_AR_WIN_SIZE_MAX	   4096
++#define ROC_LOG_MIN_AR_WIN_SIZE_M1 5
++
++/* u64 array size to fit anti replay window bits */
++#define ROC_AR_WINBITS_SZ                                                      \
++	(PLT_ALIGN_CEIL(ROC_AR_WIN_SIZE_MAX, BITS_PER_LONG_LONG) /             \
++	 BITS_PER_LONG_LONG)
++
+ enum {
+ 	ROC_CPT_REVISION_ID_83XX = 0,
+ 	ROC_CPT_REVISION_ID_96XX_B0 = 1,
+diff --git a/drivers/common/cnxk/roc_ie_ot.h b/drivers/common/cnxk/roc_ie_ot.h
+index 26616be901..932d3b6131 100644
+--- a/drivers/common/cnxk/roc_ie_ot.h
++++ b/drivers/common/cnxk/roc_ie_ot.h
+@@ -155,22 +155,6 @@ roc_ie_ot_ucc_is_success(uint8_t ucc)
+ 	return (ucc >= uc_base);
+ }
  
--/* The mask is to extract lower 10-bits of channel number
-+/* The mask is to extract lower 11-bits of channel number
-  * which CPT will pass to X2P.
-  */
--#define NIX_CHAN_CPT_X2P_MASK (0x3ffull)
-+#define NIX_CHAN_CPT_X2P_MASK (0x7ffull)
+-/* Context units in bytes */
+-#define ROC_CTX_UNIT_8B		  8
+-#define ROC_CTX_UNIT_128B	  128
+-#define ROC_CTX_MAX_CKEY_LEN	  32
+-#define ROC_CTX_MAX_OPAD_IPAD_LEN 128
+-
+-/* Anti reply window size supported */
+-#define ROC_AR_WIN_SIZE_MIN	   64
+-#define ROC_AR_WIN_SIZE_MAX	   4096
+-#define ROC_LOG_MIN_AR_WIN_SIZE_M1 5
+-
+-/* u64 array size to fit anti replay window bits */
+-#define ROC_AR_WINBITS_SZ                                                      \
+-	(PLT_ALIGN_CEIL(ROC_AR_WIN_SIZE_MAX, BITS_PER_LONG_LONG) /             \
+-	 BITS_PER_LONG_LONG)
+-
+ #define ROC_IPSEC_ERR_RING_MAX_ENTRY 65536
  
- #endif /* __NIX_HW_H__ */
-diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
-index fbea15690b..22a7258074 100644
---- a/drivers/common/cnxk/roc_mbox.h
-+++ b/drivers/common/cnxk/roc_mbox.h
-@@ -2694,6 +2694,7 @@ struct cn20k_mcam_entry {
- 	uint64_t __io kw_mask[NPC_CN20K_MAX_KWS_IN_KEY];
- 	uint64_t __io action;
- 	uint64_t __io vtag_action;
-+	uint64_t __io action2;
- };
+ union roc_ot_ipsec_err_ring_head {
+diff --git a/drivers/net/cnxk/cn10k_rxtx.h b/drivers/net/cnxk/cn10k_rxtx.h
+index 9861aa6571..98f9e2efa3 100644
+--- a/drivers/net/cnxk/cn10k_rxtx.h
++++ b/drivers/net/cnxk/cn10k_rxtx.h
+@@ -27,8 +27,6 @@
+ #include "hw/npc.h"
+ #include "hw/ssow.h"
  
- struct npc_cn20k_mcam_write_entry_req {
-diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
-index 4da21a8eb3..2a409cce99 100644
---- a/drivers/common/cnxk/roc_npc.h
-+++ b/drivers/common/cnxk/roc_npc.h
-@@ -328,6 +328,7 @@ struct roc_npc_flow {
- 	uint64_t mcam_data[ROC_NPC_MAX_MCAM_WIDTH_DWORDS];
- 	uint64_t mcam_mask[ROC_NPC_MAX_MCAM_WIDTH_DWORDS];
- 	uint64_t npc_action;
-+	uint64_t npc_action2;
- 	uint64_t vtag_action;
- 	bool vtag_insert_enabled;
- 	int8_t vtag_insert_count;
-diff --git a/drivers/common/cnxk/roc_npc_mcam.c b/drivers/common/cnxk/roc_npc_mcam.c
-index 412b2611b7..5db72c22ae 100644
---- a/drivers/common/cnxk/roc_npc_mcam.c
-+++ b/drivers/common/cnxk/roc_npc_mcam.c
-@@ -511,6 +511,7 @@ npc_mcam_write_entry(struct mbox *mbox, struct roc_npc_flow *mcam)
- 		cn20k_req->intf = mcam->nix_intf;
- 		cn20k_req->enable_entry = mcam->enable;
- 		cn20k_req->entry_data.action = mcam->npc_action;
-+		cn20k_req->entry_data.action2 = mcam->npc_action2;
- 		cn20k_req->entry_data.vtag_action = mcam->vtag_action;
- 		cn20k_req->hw_prio = mcam->priority;
- 		if (mcam->use_ctr)
+-#include "roc_ie_ot.h"
+-
+ /* NPA */
+ #include "roc_npa_dp.h"
+ 
+@@ -38,6 +36,8 @@
+ /* CPT */
+ #include "roc_cpt.h"
+ 
++#include "roc_ie_ot.h"
++
+ /* NIX Inline dev */
+ #include "roc_nix_inl_dp.h"
+ 
+diff --git a/drivers/net/cnxk/cn20k_rxtx.h b/drivers/net/cnxk/cn20k_rxtx.h
+index 4a8f194eb8..7aa06444e2 100644
+--- a/drivers/net/cnxk/cn20k_rxtx.h
++++ b/drivers/net/cnxk/cn20k_rxtx.h
+@@ -27,8 +27,6 @@
+ #include "hw/npc.h"
+ #include "hw/ssow.h"
+ 
+-#include "roc_ie_ot.h"
+-
+ /* NPA */
+ #include "roc_npa_dp.h"
+ 
+@@ -38,6 +36,8 @@
+ /* CPT */
+ #include "roc_cpt.h"
+ 
++#include "roc_ie_ot.h"
++
+ /* NIX Inline dev */
+ #include "roc_nix_inl_dp.h"
+ 
 -- 
 2.34.1
 
