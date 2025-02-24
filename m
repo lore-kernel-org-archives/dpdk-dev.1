@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAC2C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38273C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 09:55:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D0DC40DF6;
-	Mon, 24 Feb 2025 10:54:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 32EA140DDD;
+	Mon, 24 Feb 2025 10:54:49 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7F3A64069D
- for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:27 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 49E6A40B90
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 10:54:47 +0100 (CET)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKL001315
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:26 -0800
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51DKM001315
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:46 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=P
- MFzmTSEoAbe4mrYZeuzIRZuyqkG/5nB/XmONApdRJM=; b=ShqO9iYIsYgYvaSnO
- JJSCWvqhrBQAseE7wXh+M/l/Zgw49p5EKLNd9fvo+f6E72LFP/VMVvnyfExsvXzG
- zwQRTYEfMBYMdPMHMrSB+x5GYcV6GIoIVD2Tmt3LszYa/N/Idw4ymEZP1umT8hWx
- ZHI2eacsIbmU/iLl2wJuw9ib7WSxB1vUqAax1fIrIwhyhlYD+YRp45d/B8WUEdxw
- Z6bE3G5loItQbWZrGzh97ZoFE5zfY+av7gaoQqjdNhxD+mWuS/lygOa60QeHLe5B
- MwvS5fEE/F7oY2mPGVweyUExMqnr6EKAdmQRoThxng3OJNgEQ0s18vQ1lH/aEHM+
- mDqRQ==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
+ XQl4YrTONS9QXkq+fuAbxmRIFTOYmS/PTJXgl7Ha3E=; b=WKe/qJrbbWxFr2PBn
+ 3HZ83fJHJD43myzv9GsMYfr/J8E7uR77T4pix9Ee2zd9SKaojDduGZyw5SAECOOY
+ ac1JZ8KvWhyXEoShZ8whxlHzk7ZgUtFHKCXoVKP2kWhCvnMEuOWegJ9t4/cYDKGl
+ KraRqP75ltl/TBhW7n58eP8PlooI65LkSKfUiY/QgxzjBjejyjTakaSVqntAXEJ/
+ W43FcekdQo23kFymdS4HuKSRfCC3D/FYa0fxjfzbTPKeguEUegk5xcCHEA7SAUO7
+ 87Hmp41345IVT14rFbEpr2Mdy3eKNmkPHGDJ3iAqAXtCdnopvhdijW4JE4Jwbf4L
+ seKuA==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh2x-6
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44ys85jh2x-7
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:26 -0800 (PST)
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 01:54:27 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Feb 2025 01:54:07 -0800
+ 15.2.1544.4; Mon, 24 Feb 2025 01:54:10 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Feb 2025 01:54:07 -0800
+ Transport; Mon, 24 Feb 2025 01:54:10 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 3CD753F7062;
- Mon, 24 Feb 2025 01:54:03 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 7A42F3F7062;
+ Mon, 24 Feb 2025 01:54:07 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
  Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
  Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v3 20/33] common/cnxk: add API to fetch inline profile ID
-Date: Mon, 24 Feb 2025 15:22:28 +0530
-Message-ID: <20250224095241.1263700-20-ndabilpuram@marvell.com>
+Subject: [PATCH v3 21/33] common/cnxk: add NPC action2 support
+Date: Mon, 24 Feb 2025 15:22:29 +0530
+Message-ID: <20250224095241.1263700-21-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224095241.1263700-1-ndabilpuram@marvell.com>
 References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
@@ -53,8 +53,8 @@ References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: OHhh5twLqHUGvWDnc-LmnF4czqYft837
-X-Proofpoint-ORIG-GUID: OHhh5twLqHUGvWDnc-LmnF4czqYft837
+X-Proofpoint-GUID: T5M1Gi7Tt3EPjus58n0-W1jUaF3V8PM8
+X-Proofpoint-ORIG-GUID: T5M1Gi7Tt3EPjus58n0-W1jUaF3V8PM8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
@@ -73,99 +73,84 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Rahul Bhansali <rbhansali@marvell.com>
 
-For Inline device, add new roc API to get IPsec and
-reassembly profile id.
+Add action2 config for IPsec rule.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_inl.c | 60 +++++++++++++++++++++++++++++++
- drivers/common/cnxk/roc_nix_inl.h |  2 ++
- 2 files changed, 62 insertions(+)
+ drivers/common/cnxk/hw/nix.h       | 13 +++++++++++--
+ drivers/common/cnxk/roc_mbox.h     |  1 +
+ drivers/common/cnxk/roc_npc.h      |  1 +
+ drivers/common/cnxk/roc_npc_mcam.c |  1 +
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 652698d13b..6927de6505 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -743,6 +743,66 @@ roc_nix_inl_inb_sa_base_get(struct roc_nix *roc_nix, bool inb_inl_dev)
- 	return (uintptr_t)nix->inb_sa_base[nix->ipsec_prof_id];
- }
+diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
+index dd629a2080..e4d8d285d5 100644
+--- a/drivers/common/cnxk/hw/nix.h
++++ b/drivers/common/cnxk/hw/nix.h
+@@ -1678,6 +1678,15 @@ struct nix_rx_action_s {
+ 	uint64_t rsvd_63_61 : 3;
+ };
  
-+uint16_t
-+roc_nix_inl_inb_ipsec_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev)
-+{
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev;
-+	struct nix *nix = NULL;
++/* NIX receive action structure */
++struct nix_rx_action2_s {
++	uint64_t ipsec_qsel                  :  3;
++	uint64_t ipsec_qidx                  :  4;
++	uint64_t reserved_7_7                :  1;
++	uint64_t inline_profile_id           :  4;
++	uint64_t reserved_12_63              : 52;
 +
-+	if (idev == NULL)
-+		return 0;
-+
-+	if (!inb_inl_dev && roc_nix == NULL)
-+		return -EINVAL;
-+
-+	if (roc_nix) {
-+		nix = roc_nix_to_nix_priv(roc_nix);
-+		if (!nix->inl_inb_ena)
-+			return 0;
-+	}
-+
-+	if (inb_inl_dev) {
-+		inl_dev = idev->nix_inl_dev;
-+		/* Return inline Ipsec profile ID */
-+		if (inl_dev)
-+			return inl_dev->ipsec_prof_id;
-+		return 0;
-+	}
-+
-+	return nix->ipsec_prof_id;
-+}
-+
-+uint16_t
-+roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev)
-+{
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev;
-+	struct nix *nix = NULL;
-+
-+	if (idev == NULL)
-+		return 0;
-+
-+	if (!inb_inl_dev && roc_nix == NULL)
-+		return -EINVAL;
-+
-+	if (roc_nix) {
-+		nix = roc_nix_to_nix_priv(roc_nix);
-+		if (!nix->inl_inb_ena)
-+			return 0;
-+	}
-+
-+	if (inb_inl_dev) {
-+		inl_dev = idev->nix_inl_dev;
-+		/* Return inline reassembly profile ID */
-+		if (inl_dev)
-+			return inl_dev->reass_prof_id;
-+		return 0;
-+	}
-+
-+	return nix->reass_prof_id;
-+}
-+
- bool
- roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inb_inl_dev)
- {
-diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
-index 12f36187cf..10bf7d5c25 100644
---- a/drivers/common/cnxk/roc_nix_inl.h
-+++ b/drivers/common/cnxk/roc_nix_inl.h
-@@ -140,6 +140,8 @@ int __roc_api roc_nix_inl_inb_fini(struct roc_nix *roc_nix);
- bool __roc_api roc_nix_inl_inb_is_enabled(struct roc_nix *roc_nix);
- uintptr_t __roc_api roc_nix_inl_inb_sa_base_get(struct roc_nix *roc_nix,
- 						bool inl_dev_sa);
-+uint16_t roc_nix_inl_inb_ipsec_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
-+uint16_t roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
- bool __roc_api roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inl_dev_sa);
- uint32_t __roc_api roc_nix_inl_inb_spi_range(struct roc_nix *roc_nix,
- 					     bool inl_dev_sa, uint32_t *min,
++};
+ /* NIX receive immediate sub descriptor structure */
+ struct nix_rx_imm_s {
+ 	uint64_t size : 16;
+@@ -2666,9 +2675,9 @@ struct nix_lso_format {
+ #define NIX_SENDSTAT_IOFFSET_MASK 0xFFF
+ #define NIX_SENDSTAT_OOFFSET_MASK 0xFFF
+ 
+-/* The mask is to extract lower 10-bits of channel number
++/* The mask is to extract lower 11-bits of channel number
+  * which CPT will pass to X2P.
+  */
+-#define NIX_CHAN_CPT_X2P_MASK (0x3ffull)
++#define NIX_CHAN_CPT_X2P_MASK (0x7ffull)
+ 
+ #endif /* __NIX_HW_H__ */
+diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
+index fbea15690b..22a7258074 100644
+--- a/drivers/common/cnxk/roc_mbox.h
++++ b/drivers/common/cnxk/roc_mbox.h
+@@ -2694,6 +2694,7 @@ struct cn20k_mcam_entry {
+ 	uint64_t __io kw_mask[NPC_CN20K_MAX_KWS_IN_KEY];
+ 	uint64_t __io action;
+ 	uint64_t __io vtag_action;
++	uint64_t __io action2;
+ };
+ 
+ struct npc_cn20k_mcam_write_entry_req {
+diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
+index 4da21a8eb3..2a409cce99 100644
+--- a/drivers/common/cnxk/roc_npc.h
++++ b/drivers/common/cnxk/roc_npc.h
+@@ -328,6 +328,7 @@ struct roc_npc_flow {
+ 	uint64_t mcam_data[ROC_NPC_MAX_MCAM_WIDTH_DWORDS];
+ 	uint64_t mcam_mask[ROC_NPC_MAX_MCAM_WIDTH_DWORDS];
+ 	uint64_t npc_action;
++	uint64_t npc_action2;
+ 	uint64_t vtag_action;
+ 	bool vtag_insert_enabled;
+ 	int8_t vtag_insert_count;
+diff --git a/drivers/common/cnxk/roc_npc_mcam.c b/drivers/common/cnxk/roc_npc_mcam.c
+index 412b2611b7..5db72c22ae 100644
+--- a/drivers/common/cnxk/roc_npc_mcam.c
++++ b/drivers/common/cnxk/roc_npc_mcam.c
+@@ -511,6 +511,7 @@ npc_mcam_write_entry(struct mbox *mbox, struct roc_npc_flow *mcam)
+ 		cn20k_req->intf = mcam->nix_intf;
+ 		cn20k_req->enable_entry = mcam->enable;
+ 		cn20k_req->entry_data.action = mcam->npc_action;
++		cn20k_req->entry_data.action2 = mcam->npc_action2;
+ 		cn20k_req->entry_data.vtag_action = mcam->vtag_action;
+ 		cn20k_req->hw_prio = mcam->priority;
+ 		if (mcam->use_ctr)
 -- 
 2.34.1
 
