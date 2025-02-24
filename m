@@ -2,41 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7E1C021A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5028AC021A4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:24:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20FDD42686;
-	Mon, 24 Feb 2025 17:22:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8883A41104;
+	Mon, 24 Feb 2025 17:24:51 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id C35EB410D5
- for <dev@dpdk.org>; Mon, 24 Feb 2025 17:22:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 34F7941104
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 17:24:50 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 17D5520376FE; Mon, 24 Feb 2025 08:22:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 17D5520376FE
+ id 86315203CDDF; Mon, 24 Feb 2025 08:24:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 86315203CDDF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1740414156;
- bh=MRHoHTd5YZ6/H8GKOsQhTuKxM7qzK3sSs8HLm9NIh5E=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=i6xu9lg9MGkwJUi/ZmviDrzpCkBhpL5suT+mIIJp29ZHO46pnY4rUwuZmdi1YIt6T
- 9GetXR73OtWKvwMqJImrUkHXDtXWJw0N3UVO78EyfvfuQuteO16s+VtGB32Mes0KDS
- DolU6P/grjJ+K6BL4q6P88Gi/uIkfeh041RdeiOk=
-Date: Mon, 24 Feb 2025 08:22:36 -0800
+ s=default; t=1740414289;
+ bh=uhNsLjsm6REH06PIzbAStibCADxCqc6rMvdGz9R1y5o=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=HYJBzV5C5CGxOtlmvmYNKK06RXzMcXx+6VDa40gvCmPEIVvhVYUEEpEP1bPOXwBew
+ BuUgPqWPVfp2huRmfNpiPSSaMdID4ZEccqxY1Xf68Phz8f9JBM0/HyfPkedSDCVDyG
+ +DrbDWBcGZYRfF7sJWgiWZ5EnwlVcwqC20GpnGyE=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-Cc: konstantin.ananyev@huawei.com, dev@dpdk.org,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH v5 08/10] test-pmd: declare lcore_count atomic
-Message-ID: <20250224162236.GA11523@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+To: andremue@linux.microsoft.com
+Cc: dev@dpdk.org,
+	Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v6 03/10] test-pmd: fix printf format string mismatch
+Date: Mon, 24 Feb 2025 08:24:18 -0800
+Message-Id: <1740414265-12217-4-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1740414265-12217-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740167563-12332-1-git-send-email-andremue@linux.microsoft.com>
- <1740167563-12332-9-git-send-email-andremue@linux.microsoft.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FA65@smartserver.smartshare.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FA65@smartserver.smartshare.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+ <1740414265-12217-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,38 +44,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 21, 2025 at 09:58:28PM +0100, Morten Brørup wrote:
-> > From: Andre Muezerie [mailto:andremue@linux.microsoft.com]
-> > Sent: Friday, 21 February 2025 20.53
-> > 
-> > Compiling with MSVC results in the error below:
-> > 
-> > app/test/test_ring_perf.c(197): error C7712: address argument to atomic
-> >     operation must be a pointer to an atomic integer,
-> >     'volatile unsigned int *' is not valid
-> > 
-> > The fix is to mark lcore_count as atomic.
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> > ---
-> >  app/test/test_ring_perf.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> > 
-> > diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
-> > index 57cd04a124..921aa902c5 100644
-> > --- a/app/test/test_ring_perf.c
-> > +++ b/app/test/test_ring_perf.c
-> > @@ -34,7 +34,7 @@ struct lcore_pair {
-> >  	unsigned c1, c2;
-> >  };
-> > 
-> > -static volatile unsigned lcore_count = 0;
-> > +static volatile RTE_ATOMIC(unsigned int) lcore_count;
-> 
-> Using rte_atomic_xxx to access the RTE_ATOMIC qualified lcore_count seems more clean than making it volatile and sometimes access it non-atomically.
-> It is only accessed two more times, so not a big change.
-> 
-> Anyway, this could just be my personal preference. No change required if you disagree.
+Compiling with MSVC results in warnings like the one below:
 
-Makes sense. I'll send an updated series.
+app/test-pmd/csumonly.c(1085): warning C4477: 'printf' : format string
+    '%d' requires an argument of type 'int',
+    but variadic argument 1 has type 'uint64_t'
+
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+ app/test-pmd/csumonly.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+index d77a140641..5f273e60d7 100644
+--- a/app/test-pmd/csumonly.c
++++ b/app/test-pmd/csumonly.c
+@@ -1070,7 +1070,7 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+ 				info.l2_len, rte_be_to_cpu_16(info.ethertype),
+ 				info.l3_len, info.l4_proto, info.l4_len, buf);
+ 			if (rx_ol_flags & RTE_MBUF_F_RX_LRO)
+-				printf("rx: m->lro_segsz=%u\n", m->tso_segsz);
++				printf("rx: m->lro_segsz=%u\n", (unsigned int)m->tso_segsz);
+ 			if (info.is_tunnel == 1)
+ 				printf("rx: outer_l2_len=%d outer_ethertype=%x "
+ 					"outer_l3_len=%d\n", info.outer_l2_len,
+@@ -1082,28 +1082,29 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+ 					    RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
+ 					    RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)) ||
+ 				info.tso_segsz != 0)
+-				printf("tx: m->l2_len=%d m->l3_len=%d "
+-					"m->l4_len=%d\n",
+-					m->l2_len, m->l3_len, m->l4_len);
++				printf("tx: m->l2_len=%u m->l3_len=%u "
++					"m->l4_len=%u\n",
++					(unsigned int)m->l2_len, (unsigned int)m->l3_len,
++					(unsigned int)m->l4_len);
+ 			if (info.is_tunnel == 1) {
+ 				if ((tx_offloads &
+ 				    RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM) ||
+ 				    (tx_offloads &
+ 				    RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM) ||
+ 				    (tx_ol_flags & RTE_MBUF_F_TX_OUTER_IPV6))
+-					printf("tx: m->outer_l2_len=%d "
+-						"m->outer_l3_len=%d\n",
+-						m->outer_l2_len,
+-						m->outer_l3_len);
++					printf("tx: m->outer_l2_len=%u "
++						"m->outer_l3_len=%u\n",
++						(unsigned int)m->outer_l2_len,
++						(unsigned int)m->outer_l3_len);
+ 				if (info.tunnel_tso_segsz != 0 &&
+ 						(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
+ 							RTE_MBUF_F_TX_UDP_SEG)))
+-					printf("tx: m->tso_segsz=%d\n",
+-						m->tso_segsz);
++					printf("tx: m->tso_segsz=%u\n",
++						(unsigned int)m->tso_segsz);
+ 			} else if (info.tso_segsz != 0 &&
+ 					(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
+ 						RTE_MBUF_F_TX_UDP_SEG)))
+-				printf("tx: m->tso_segsz=%d\n", m->tso_segsz);
++				printf("tx: m->tso_segsz=%u\n", (unsigned int)m->tso_segsz);
+ 			rte_get_tx_ol_flag_list(m->ol_flags, buf, sizeof(buf));
+ 			printf("tx: flags=%s", buf);
+ 			printf("\n");
+-- 
+2.48.1.vfs.0.0
+
