@@ -2,47 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA0BC021A6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D6EC021A6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 10:04:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94E3F40B9C;
-	Mon, 24 Feb 2025 11:04:16 +0100 (CET)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id 190DE40B9C
- for <dev@dpdk.org>; Mon, 24 Feb 2025 11:04:15 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.88.214])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z1bps5RG5z21p29;
- Mon, 24 Feb 2025 18:01:09 +0800 (CST)
-Received: from kwepemk100009.china.huawei.com (unknown [7.202.194.57])
- by mail.maildlp.com (Postfix) with ESMTPS id 797FC1A0171;
- Mon, 24 Feb 2025 18:04:13 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- kwepemk100009.china.huawei.com (7.202.194.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 24 Feb 2025 18:04:12 +0800
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 24 Feb 2025 11:04:10 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Fengchengwen <fengchengwen@huawei.com>
-Subject: RE: [PATCH v5 08/10] test-pmd: declare lcore_count atomic
-Thread-Topic: [PATCH v5 08/10] test-pmd: declare lcore_count atomic
-Thread-Index: AQHbhJpSsl+fLX8sx0eHM2Rr4xVtDrNWPVtw
-Date: Mon, 24 Feb 2025 10:04:10 +0000
-Message-ID: <a9ee27507dfa4a60b1a9d24a19f8cb33@huawei.com>
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740167563-12332-1-git-send-email-andremue@linux.microsoft.com>
- <1740167563-12332-9-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1740167563-12332-9-git-send-email-andremue@linux.microsoft.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.73]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 4FA6640E0C;
+	Mon, 24 Feb 2025 11:04:23 +0100 (CET)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 3019740BA2;
+ Mon, 24 Feb 2025 11:04:14 +0100 (CET)
+X-QQ-mid: bizesmtpsz5t1740391452tzzf013
+X-QQ-Originating-IP: fm/ssO1zbptC0foHYtdjy4fOwJytVJWVlHG19IkOQUo=
+Received: from DSK-zaiyuwang.trustnetic.com ( [218.72.40.164])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Mon, 24 Feb 2025 18:03:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14958975911387470976
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Zaiyu Wang <zaiyuwang@trustnetic.com>,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH 1/2] net/ngbe: fix WOL and NCSI capability error
+Date: Mon, 24 Feb 2025 17:59:07 +0800
+Message-Id: <20250224095910.27384-2-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20250224095910.27384-1-zaiyuwang@trustnetic.com>
+References: <20250224095910.27384-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: N9V8uIqLa9+gI81i8WYf1IgbAiF3Co79lJRCcMRJ66nOTCr+MjKyyzse
+ G20s4v03Z0OOJzPV3GdsCV36tpXBwbaSbDTip85bzdCj8AcrV9X95iS4kNDBr1cI0P5D5qc
+ JfcoewJQpKbRln8vKfrnpEPKQomjjQw6YNHupdy4zXJ1xFISiTAyTKVFc+eR9EsDSIfRIsE
+ imz3W5H66MQbXeWGfZX+NhF68mJmTtWnzUJ6x7t+j+wIHiYoL7Ni9A45+KsMwSYNG53xx+3
+ DN60UVCba56uoG8pZNZCfzrFaUHUYTNpfj2vU68yDJettSihlpDdcafK+IGJS2RCdrk8jty
+ HMxAX8VD9mgPaKgvQNALLFOKXAN/6BQzvFQrpeRo1M9MOB3NMOxAUQstfnwrDk+wRtQ3/Y5
+ 832Z81CJ98LpPABCIOiyYRgyI8mtq4OKWwThwpV4HCfTw4KUqMEmCyuHw0RUeplEVbBHfQc
+ 7+JMLddWBtpdeH6bga+swcXSq7v/VM5aC0nlYcgoNh898tkfiRMxMgI/YtDw3jm9W7V2q9L
+ GV1GDQQ1z7OPTDY+E3aBaAF2pi9HZuOgdJdNG1vkAjyTa2giZDgnSI3aGNfN917v+1kkOwf
+ iPEEtsjwZidVNsIBCE1n5fKvdo+Pxrse1AfLc3YF9RTLFefBTy7Lsc8AvK9EtYk3t3yhHUN
+ gvfR6lEe7OlhLGuLgk6zWo9n5bGn9hUYPqM8+iCq0IAhIIZ9QvWpsY73acl+NvENugoC61b
+ EOgXhuJxc9gglMuajs3EO+6p6dOro6fK8TV7MDabDkZokZKn2+Yx28KxmP7NEw1Om+j2kXu
+ PcVTuNB0z5Z0v4in7coIOAjeF84m7C8tutqqFYCZXW1wRHhK/SOsdqhfmb0AXtkbpvih7Dh
+ KFbF1y6irsQBvrDNJsaxi7DXruOL1X5ypDb5mezAUwrXhh7nwpAZjy+sjEyLwkqLI2YFPdT
+ sOaWNVpC8MSGBGvHY4qY6z1oIgiH2599skAk=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,55 +62,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+When determining NIC's WOL and NCSI capability via sub-system ID,
+flag matching must be exact, not inclusive. Misidentifying WOL/NCSI
+capability will skip PHY configuration, causing link-up failure.
 
+Fixes: 5f1ab0d529fc ("net/ngbe: add WOL and NCSI capability")
+Cc: stable@dpdk.org
 
-> Subject: [PATCH v5 08/10] test-pmd: declare lcore_count atomic
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+---
+ drivers/net/ngbe/base/ngbe_hw.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-As a nit, the changes are not in testpmd, bit in the UT.=20
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-=20
-> Compiling with MSVC results in the error below:
->=20
-> app/test/test_ring_perf.c(197): error C7712: address argument to atomic
->     operation must be a pointer to an atomic integer,
->     'volatile unsigned int *' is not valid
->=20
-> The fix is to mark lcore_count as atomic.
->=20
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> ---
->  app/test/test_ring_perf.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
-> index 57cd04a124..921aa902c5 100644
-> --- a/app/test/test_ring_perf.c
-> +++ b/app/test/test_ring_perf.c
-> @@ -34,7 +34,7 @@ struct lcore_pair {
->  	unsigned c1, c2;
->  };
->=20
-> -static volatile unsigned lcore_count =3D 0;
-> +static volatile RTE_ATOMIC(unsigned int) lcore_count;
->=20
->  static void
->  test_ring_print_test_string(unsigned int api_type, int esize,
-> @@ -193,11 +193,7 @@ enqueue_dequeue_bulk_helper(const unsigned int flag,=
- struct thread_params *p)
->  	unsigned int n_remaining;
->  	const unsigned int bulk_n =3D bulk_sizes[p->ring_params->bulk_sizes_i];
->=20
-> -#ifdef RTE_USE_C11_MEM_MODEL
->  	if (rte_atomic_fetch_add_explicit(&lcore_count, 1, rte_memory_order_rel=
-axed) + 1 !=3D 2)
-> -#else
-> -	if (__sync_add_and_fetch(&lcore_count, 1) !=3D 2)
-> -#endif
->  		while(lcore_count !=3D 2)
->  			rte_pause();
->=20
-> --
-> 2.48.1.vfs.0.0
->=20
+diff --git a/drivers/net/ngbe/base/ngbe_hw.c b/drivers/net/ngbe/base/ngbe_hw.c
+index e29a1946e5..6688ae6a31 100644
+--- a/drivers/net/ngbe/base/ngbe_hw.c
++++ b/drivers/net/ngbe/base/ngbe_hw.c
+@@ -1922,6 +1922,8 @@ void ngbe_read_efuse(struct ngbe_hw *hw)
+ void ngbe_map_device_id(struct ngbe_hw *hw)
+ {
+ 	u16 oem = hw->sub_system_id & NGBE_OEM_MASK;
++	u16 ncsi = hw->sub_system_id & NGBE_NCSI_SUP_MASK;
++	u16 wol = hw->sub_system_id & NGBE_WOL_SUP_MASK;
+ 
+ 	hw->is_pf = true;
+ 
+@@ -1982,9 +1984,9 @@ void ngbe_map_device_id(struct ngbe_hw *hw)
+ 			oem == NGBE_LY_YT8521S_SFP)
+ 		hw->gpio_ctl = true;
+ 
+-	hw->wol_enabled = (hw->sub_system_id & NGBE_WOL_SUP_MASK) ? true : false;
+-	hw->ncsi_enabled = (hw->sub_system_id & NGBE_NCSI_SUP_MASK ||
+-			    hw->sub_system_id & NGBE_OCP_CARD) ? true : false;
++	hw->wol_enabled = (wol == NGBE_WOL_SUP_MASK) ? true : false;
++	hw->ncsi_enabled = (ncsi == NGBE_NCSI_SUP_MASK ||
++			   oem == NGBE_OCP_CARD) ? true : false;
+ }
+ 
+ /**
+-- 
+2.21.0.windows.1
 
