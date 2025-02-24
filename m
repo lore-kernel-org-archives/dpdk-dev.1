@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5028AC021A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A4FC021A4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 16:24:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8883A41104;
-	Mon, 24 Feb 2025 17:24:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C53E04278F;
+	Mon, 24 Feb 2025 17:24:52 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 34F7941104
+ by mails.dpdk.org (Postfix) with ESMTP id 1E082410D5
  for <dev@dpdk.org>; Mon, 24 Feb 2025 17:24:50 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 86315203CDDF; Mon, 24 Feb 2025 08:24:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 86315203CDDF
+ id 6DCEA203CDDA; Mon, 24 Feb 2025 08:24:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6DCEA203CDDA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740414289;
- bh=uhNsLjsm6REH06PIzbAStibCADxCqc6rMvdGz9R1y5o=;
+ bh=JJGuSYYv5FRd9NzQqXBDNW0Iges3FwLABVEoJ8ghgxg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=HYJBzV5C5CGxOtlmvmYNKK06RXzMcXx+6VDa40gvCmPEIVvhVYUEEpEP1bPOXwBew
- BuUgPqWPVfp2huRmfNpiPSSaMdID4ZEccqxY1Xf68Phz8f9JBM0/HyfPkedSDCVDyG
- +DrbDWBcGZYRfF7sJWgiWZ5EnwlVcwqC20GpnGyE=
+ b=BZmNyxKQEzxFqz589Yz5+p4JcGpVGSds5AX5h/xWL87YclP0nk23jGDqy7r7u0syu
+ 3uYxx1pGWrmRPxyy8y9xqaF+a3bzKBPLvkqFePd97aMfUffQRCoeeLMnB/LH8NuWM3
+ pNXzJlc1he0y1F4sc6V8EMml+CcD0P+IVq+ZKGCs=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v6 03/10] test-pmd: fix printf format string mismatch
-Date: Mon, 24 Feb 2025 08:24:18 -0800
-Message-Id: <1740414265-12217-4-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v6 01/10] eal: add workaround for __builtin_constant_p
+Date: Mon, 24 Feb 2025 08:24:16 -0800
+Message-Id: <1740414265-12217-2-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740414265-12217-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,71 +44,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Compiling with MSVC results in warnings like the one below:
+There's no MSVC equivalent for compiler extension __builtin_constant_p,
+but the same result can be obtained through a clever expression using
+_Generic.
 
-app/test-pmd/csumonly.c(1085): warning C4477: 'printf' : format string
-    '%d' requires an argument of type 'int',
-    but variadic argument 1 has type 'uint64_t'
+This patch redefines the macro __rte_constant when msvc is used and uses
+it as a replacement for __builtin_constant_p.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/csumonly.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ lib/eal/include/generic/rte_pause.h |  2 +-
+ lib/eal/include/rte_common.h        | 34 ++++++++++++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 2 deletions(-)
 
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index d77a140641..5f273e60d7 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -1070,7 +1070,7 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 				info.l2_len, rte_be_to_cpu_16(info.ethertype),
- 				info.l3_len, info.l4_proto, info.l4_len, buf);
- 			if (rx_ol_flags & RTE_MBUF_F_RX_LRO)
--				printf("rx: m->lro_segsz=%u\n", m->tso_segsz);
-+				printf("rx: m->lro_segsz=%u\n", (unsigned int)m->tso_segsz);
- 			if (info.is_tunnel == 1)
- 				printf("rx: outer_l2_len=%d outer_ethertype=%x "
- 					"outer_l3_len=%d\n", info.outer_l2_len,
-@@ -1082,28 +1082,29 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 					    RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
- 					    RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)) ||
- 				info.tso_segsz != 0)
--				printf("tx: m->l2_len=%d m->l3_len=%d "
--					"m->l4_len=%d\n",
--					m->l2_len, m->l3_len, m->l4_len);
-+				printf("tx: m->l2_len=%u m->l3_len=%u "
-+					"m->l4_len=%u\n",
-+					(unsigned int)m->l2_len, (unsigned int)m->l3_len,
-+					(unsigned int)m->l4_len);
- 			if (info.is_tunnel == 1) {
- 				if ((tx_offloads &
- 				    RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM) ||
- 				    (tx_offloads &
- 				    RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM) ||
- 				    (tx_ol_flags & RTE_MBUF_F_TX_OUTER_IPV6))
--					printf("tx: m->outer_l2_len=%d "
--						"m->outer_l3_len=%d\n",
--						m->outer_l2_len,
--						m->outer_l3_len);
-+					printf("tx: m->outer_l2_len=%u "
-+						"m->outer_l3_len=%u\n",
-+						(unsigned int)m->outer_l2_len,
-+						(unsigned int)m->outer_l3_len);
- 				if (info.tunnel_tso_segsz != 0 &&
- 						(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
- 							RTE_MBUF_F_TX_UDP_SEG)))
--					printf("tx: m->tso_segsz=%d\n",
--						m->tso_segsz);
-+					printf("tx: m->tso_segsz=%u\n",
-+						(unsigned int)m->tso_segsz);
- 			} else if (info.tso_segsz != 0 &&
- 					(m->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
- 						RTE_MBUF_F_TX_UDP_SEG)))
--				printf("tx: m->tso_segsz=%d\n", m->tso_segsz);
-+				printf("tx: m->tso_segsz=%u\n", (unsigned int)m->tso_segsz);
- 			rte_get_tx_ol_flag_list(m->ol_flags, buf, sizeof(buf));
- 			printf("tx: flags=%s", buf);
- 			printf("\n");
+diff --git a/lib/eal/include/generic/rte_pause.h b/lib/eal/include/generic/rte_pause.h
+index 968c0886d3..9515caadbb 100644
+--- a/lib/eal/include/generic/rte_pause.h
++++ b/lib/eal/include/generic/rte_pause.h
+@@ -130,7 +130,7 @@ rte_wait_until_equal_64(volatile uint64_t *addr, uint64_t expected,
+  *  rte_memory_order_acquire and rte_memory_order_relaxed.
+  */
+ #define RTE_WAIT_UNTIL_MASKED(addr, mask, cond, expected, memorder) do { \
+-	RTE_BUILD_BUG_ON(!__builtin_constant_p(memorder));               \
++	RTE_BUILD_BUG_ON(!__rte_constant(memorder));                     \
+ 	RTE_BUILD_BUG_ON((memorder) != rte_memory_order_acquire &&       \
+ 		(memorder) != rte_memory_order_relaxed);                 \
+ 	typeof(*(addr)) expected_value = (expected);                     \
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 4be65376a5..386f11ae40 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -44,8 +44,40 @@ extern "C" {
+ #endif
+ #endif
+ 
++/*
++ * Macro __rte_constant checks if an expression's value can be determined at
++ * compile time. It takes a single argument, the expression to test, and
++ * returns 1 if the expression is a compile-time constant, and 0 otherwise.
++ * For most compilers it uses built-in function __builtin_constant_p, but for
++ * MSVC it uses a different method because MSVC does not have an equivalent
++ * to __builtin_constant_p.
++ *
++ * The trick used with MSVC relies on the way null pointer constants interact
++ * with the type of a ?: expression:
++ * An integer constant expression with the value 0, or such an expression cast
++ * to type void *, is called a null pointer constant.
++ * If both the second and third operands (of the ?: expression) are pointers or
++ * one is a null pointer constant and the other is a pointer, the result type
++ * is a pointer to a type qualified with all the type qualifiers of the types
++ * referenced by both operands. Furthermore, if both operands are pointers to
++ * compatible types or to differently qualified versions of compatible types,
++ * the result type is a pointer to an appropriately qualified version of the
++ * composite type; if one operand is a null pointer constant, the result has
++ * the type of the other operand; otherwise, one operand is a pointer to void
++ * or a qualified version of void, in which case the result type is a pointer
++ * to an appropriately qualified version of void.
++ *
++ * The _Generic keyword then checks the type of the expression
++ * (void *) ((e) * 0ll). It matches this type against the types listed in the
++ * _Generic construct:
++ *     - If the type is int *, the result is 1.
++ *     - If the type is void *, the result is 0.
++ *
++ * This explanation with some more details can be found at:
++ * https://stackoverflow.com/questions/49480442/detecting-integer-constant-expressions-in-macros
++ */
+ #ifdef RTE_TOOLCHAIN_MSVC
+-#define __rte_constant(e) 0
++#define __rte_constant(e) _Generic((1 ? (void *) ((e) * 0ll) : (int *) 0), int * : 1, void * : 0)
+ #else
+ #define __rte_constant(e) __extension__(__builtin_constant_p(e))
+ #endif
 -- 
 2.48.1.vfs.0.0
 
