@@ -2,147 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B63C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 07:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE19C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 07:19:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CFC2440299;
-	Mon, 24 Feb 2025 08:17:31 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id B577B4025E
- for <dev@dpdk.org>; Mon, 24 Feb 2025 08:17:29 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O514Aw009504
- for <dev@dpdk.org>; Sun, 23 Feb 2025 23:17:28 -0800
-Received: from nam10-mw2-obe.outbound.protection.outlook.com
- (mail-mw2nam10lp2042.outbound.protection.outlook.com [104.47.55.42])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4503qbse9t-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Sun, 23 Feb 2025 23:17:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A2E240299;
+	Mon, 24 Feb 2025 08:19:28 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CA2F54025E
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 08:19:26 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O51rUF004594;
+ Sun, 23 Feb 2025 23:19:26 -0800
+Received: from nam10-bn7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44yeyku0c0-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 23 Feb 2025 23:19:26 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uXt7HFAS/x+mQJYkRV4lujFWx0KA6egj7b8OFUQmYdon0wFfB+kf4J8sTFui9mNcZMyFqs5fWO7Yvxy17cJDCYgTzsKxFzRVniernXJq/lRWv6+sKcOUlCFqZUf583oFE3SH/mNy2aWQcx4AnKtNPHQOhb1z5ddUwfSPb7dzu/aOQja/Oh8kWMDi5kR9JLT4fvdfBYKG1LITTT+UU5Ak7L3190RGamKRdhskj3eCJBO+HC0xADbYRz9p+mOk5nVhACL/mjQUlwjVbzYa6tiXsh1hmf7m81IRGrHIquyguNoLQ2xmiBCBjC7Gzbu4r4nc6W4L0WzOUbWpLK7tEW9ykQ==
+ b=hFqg7H+H128vbZp8OxTk7eCGsIWanRb6hG5CgqL0ryB7KYiyZEUeTlcQipFOdKsrRIeZZmW1PiNVNwSCSFNEjZWRLJJclI7hGjf2+yapDqIyhGVxE8DGda5SGyAtBhDgDH40t/asLH52ktBqLqchncwwExXuLY5RqtYliKgPNx2HxRTwCBCAa98sUiuxQC3Xt5ULOQc0Qwkh8pE78/+mnUyqbblS0y9NDvj6nlhGjhrw+ECQqCpkd35raKbhf45bJ7kkheasKUl4mW5J/wGN4P1fxRJkM8AQCthojLbsyJJIDu3KakRwo+U59asLYtPyUBqPcDWYbx/m8zxKeRVj7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a248R5+uFbYyKjTqpGLPBmNXQt8/XqGCNIyomc9K/Go=;
- b=qCeSEGGhUVVK4+skR+KQAxCgfM0oEhaihMqZp5BXGIgiNlo2dd0pmXVmW8DYp1zl5R9aEUVQCf1Ohxa0noUArePYOsHtN143vE7cSJwHAb7Y7ig7V1cLBrb2JaoBTrKagHvboAQR6FALZfVu7aeH6FuAXFlm4/t2j59bWkR6Bh3ijm6h4/SQNr1sp+1ySWwxVtPXUCwahlAkYKopVye4/C0cz1X0AzrM+wcknTLRpupEDqcKYI6P+w4logv5h1Ex3DNY3U7ilVGa9Oy9288H46nVjoy1gUpSHoinHOKaBCwf7XBwrxO8P3mjIenwzqQlg9TDnlgY/Z94Z2EY8MvNVw==
+ bh=qb/8wNv3LqoLca4ksOKAzGf3f3ATJX1fnREYd3IrXMI=;
+ b=E+iVf9IVmiWwmyQr6VsVykmptRHNIR6JwRc7Md2WQKjBhFTZs7JUp81riBPzvyANxrelvzgGEKHzBAFU41fL5GWujgLInHO1A5MHx/00OcGO+hnCwjKME208QM2zT5kAiwcGPWyXGIQi4bMnhElqgE9OllCGBL4k3ARQtGAffy6vN8cEh1akjlhJSr09UJGINDnVHLl9VSUmGorFPAs4dhqWGzshIKzaaaVTUJe5Q60MyjJEkAiyGRGoX//KrPDn6Pj30tJMdNE/Vh0bn+1QdGGkoBo8v3mP2aZzjZn4aq19gNCSnc+Khqfp6S8reNEeT6+hTmkNQ7+98/KKCAI2Sw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a248R5+uFbYyKjTqpGLPBmNXQt8/XqGCNIyomc9K/Go=;
- b=YBqU5H+Ep8f4rlzy8QS8GqEYTJg+2DMP5HZN6TE97n2RlBpDsGaA/jLfU7bqxF/Dx3TDBqccugy9NLkrUd6ULcH/4TQI3aY2fO+VlPhDKDWRJtuxPlN98Mb/E+45yWyWOS5H5B4qVCPMtFPk055m17/BwZxvFQkEeMe3B50YoZs=
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com (2603:10b6:a03:3cc::18)
- by BY1PR18MB5989.namprd18.prod.outlook.com (2603:10b6:a03:4a4::10)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=qb/8wNv3LqoLca4ksOKAzGf3f3ATJX1fnREYd3IrXMI=;
+ b=mzUH2/LSHKqW/fqxxh6hnYqMonZylzc1HhpMstqCwwSsXfgPMIOWHjWNAEHljIZqdwW9kRz/2YvT/XGQMVKe+a0zfvDZMzX0ewkQ47wPH9yKEQJDZwiJNhqq8DxLnRr/VHGgB3skM6WVpeFzvyn8ugPNrec2xgo1aqVA/4aXcu8=
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
+ CH3PR18MB6379.namprd18.prod.outlook.com (2603:10b6:610:205::13) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 07:17:20 +0000
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576]) by BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576%3]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 07:17:19 +0000
-From: Jerin Jacob <jerinj@marvell.com>
-To: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, Nithin Kumar Dabilpuram
- <ndabilpuram@marvell.com>, Kiran Kumar Kokkilagadda
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
- Koteswara Rao Kottidi <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 34/34] common/cnxk: move interrupt handling to
- platform-specific
-Thread-Topic: [PATCH 34/34] common/cnxk: move interrupt handling to
- platform-specific
-Thread-Index: AQHbc7c05Jyhb5+twEqILGHe4r5rkbNWMJBw
-Date: Mon, 24 Feb 2025 07:17:19 +0000
-Message-ID: <BY3PR18MB4785F5DA0E98A9A3673CB166C8C02@BY3PR18MB4785.namprd18.prod.outlook.com>
-References: <20250131080530.3224977-1-ndabilpuram@marvell.com>
- <20250131080530.3224977-34-ndabilpuram@marvell.com>
-In-Reply-To: <20250131080530.3224977-34-ndabilpuram@marvell.com>
+ 2025 07:19:23 +0000
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::3c98:dd36:4897:a51d%3]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 07:19:23 +0000
+From: Akhil Goyal <gakhil@marvell.com>
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>
+Subject: RE: [v4 5/5] examples/vhost_crypto: support asymmetric crypto
+Thread-Topic: [v4 5/5] examples/vhost_crypto: support asymmetric crypto
+Thread-Index: AQHbhQVEEhiivWWu+kKdG0bmQFPM2bNWDpYg
+Date: Mon, 24 Feb 2025 07:19:23 +0000
+Message-ID: <CO6PR18MB448475AAC800BF9A4857291ED8C02@CO6PR18MB4484.namprd18.prod.outlook.com>
+References: <cover.1740212213.git.gmuthukrishn@marvell.com>
+ <80ac8ed50df809d22504dd8dd424eef4dc5cb8e1.1740212213.git.gmuthukrishn@marvell.com>
+In-Reply-To: <80ac8ed50df809d22504dd8dd424eef4dc5cb8e1.1740212213.git.gmuthukrishn@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR18MB4785:EE_|BY1PR18MB5989:EE_
-x-ms-office365-filtering-correlation-id: 46c2685f-3a4a-4295-ac05-08dd54a34688
+x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|CH3PR18MB6379:EE_
+x-ms-office365-filtering-correlation-id: 03e62a57-d6c0-4a10-75dc-08dd54a3901a
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|7053199007|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?g9dYf6rkCVWgCgLkR7zpqWKTrSABlaP/ES1+r5QJjFMPfVkj2dL3wpPaHww0?=
- =?us-ascii?Q?/gNJOWWnxPgPoGTJA62vNoxLQWPIv6KMCLlB5q+QLdqJey/93jfYuhtR2kfv?=
- =?us-ascii?Q?nVM1lTcd3og6cZ+5Px7OhwBHxv+pmxUuGxDttWieg8qd6MJTmgrlPZZ5LBdc?=
- =?us-ascii?Q?qm9yr5QYRga5+haB/Ly+JQ0/BVHQ7XNy5hIbXQoTeLD7BzElx5BQgFAWKziO?=
- =?us-ascii?Q?1N+VXwAFXVXPQwO2NNkAZE2cEY2MRz4vdJIGmKf45P82dEBZf6NTOJC5VlrA?=
- =?us-ascii?Q?cq8LnlApkBrLeGkrsAC1mVNa3pOyNCzHiU7m3Z4n0S230JjAbuvTMiXVJ3wF?=
- =?us-ascii?Q?8ymE6exujgANkRGD4hTAxZXAK48h7wg+RJKXYUXk5TK29J9UvpW9DqahZJh/?=
- =?us-ascii?Q?nGTHGIrp7Npn4l6vXIOhlgPfr6373hMKHLVAUY8DnpJqmPs6Vqnl/3Jgp5Gn?=
- =?us-ascii?Q?mci8SUwsYLMqj+R7llC43U26NF/RyepjBhjlT9WJa29Zzm0ar24IJpjFWmVJ?=
- =?us-ascii?Q?f2WSryGFFL2//RzXxdnFKo2f0RQAO1EluEN1fotc+beIYO4zh814djQ2S9/g?=
- =?us-ascii?Q?UpU4jYP8fHMV6+9FLJGfb83KQ2WabLbK1JtzphiO1L3hy7pyNUqfm5fZFCu8?=
- =?us-ascii?Q?0UDKNNh7eXf7icI/PV/GBKE8r7maXpT0w+evJhAmgLsbUCeb5y0y69mB/NCa?=
- =?us-ascii?Q?gqy8WtGrpOaP8Mn/Wr35KmLdLaUHgl1nOXjCV+n8OSN7A1LWqLvH49Kl5Sqg?=
- =?us-ascii?Q?E9xPFVBffGnQb/dDT8ymmD+QSLfKKoK2GWQb65huy2tH6+W9WOvPlj2d9ut7?=
- =?us-ascii?Q?58ffqXIGHrDuhGYtpnTzdYnWsYd5LnvzmHy3zRZ8wcVOIXJzt1WBErNY0dxo?=
- =?us-ascii?Q?8SThAsMAzP5RtXVrACmYpFe7qYuD6NMLuD9eTKXTcF2XrFRYm3wBsBRgSqth?=
- =?us-ascii?Q?DEzNMusYfiYfgULM0G6oZf8o9+eYdAL/7OdprXyquL8BgavOfBpyQXxGf9N4?=
- =?us-ascii?Q?agRL0NWrIlaSbLS7dbbgrolEq5b5yfGr7GesjaKbnpC1l6tEVNQO5G4HfrIw?=
- =?us-ascii?Q?njig+sPAfmp5GqzBsjGlzPTHUld67iS4iG+z2bdBT/CzaTE93fFdYRu1C16x?=
- =?us-ascii?Q?xRxSCVitRzkZIJL71PoN951VpC8yTicIXTKQf7uGCKiOMJy0jlEUSfOevUOQ?=
- =?us-ascii?Q?F6kaCLqfsJ+ODuSRvjrscXpjhGgWtuC6Tw1E7eL8d+Sbzlj4usY2BjNcbVbM?=
- =?us-ascii?Q?qrT2d1AJZ2k55VHNxU8KGgO+d3Yxp3DDhGiZWFjkevFCqzGoEczZJk3hnEno?=
- =?us-ascii?Q?Ra9uK5m5bnJBtMpsvYgNr2aTqYvjgQDXQ40isVeWaz8XHPyGMsU9pliCLVuO?=
- =?us-ascii?Q?u8FawUGxO021uyVpbOxtPYETRNLTVATMXs/gAr4mcsiXIVzChfpWW6vuTBfV?=
- =?us-ascii?Q?HU3Le8+Ht+r5Djp1qWa8vIW2zoTIlMLm?=
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Ci+NithM5xDmV2x9bsVaemFCqNTphnMe7qbveANeoFag20+1m5ptd3plNWvV?=
+ =?us-ascii?Q?aiEGqrqoSv5LR3q/sBoKLDQP+l6+B9Bf3yO+zgqw8V0d1m+m4vlKFvPPSkWo?=
+ =?us-ascii?Q?PTJfLuiJpAgNMmMeHsnR6icma/GEgH+1c7S6mo9j/2/KjbVFVkl8KjIi+q2i?=
+ =?us-ascii?Q?IX9eO0vZ4ARHdO5FFzx5Vju9Q5VEOZodUKwoN8GP1kjEItpA44KqI0FNHJeo?=
+ =?us-ascii?Q?hjWBMESSBenhm/lpddN/nNHv7uzw1XEx7C5OYZl6KNNWt22M2esbY3ShsEj4?=
+ =?us-ascii?Q?74INhIqoxAFHmTMJMoD3i5lpvHFnE1LWMI5f+we0EYgIR39GBFtMLLSP6q+N?=
+ =?us-ascii?Q?B3ona4tL98/GTlEFtr0UdQkGe3uzOxHQULiASqLsN3ramfP+tG/HhI/ZTADc?=
+ =?us-ascii?Q?l4Lo0eHIf5BG+Pg/Pycq9GNj7y96SfIHaMwsHRkDxHmDFJBVhTaPpkxlWnaR?=
+ =?us-ascii?Q?2f9S+gzNpBPibNCI8fpjZicrilyLv6Jfz5mI1Xnk8+ezl82b+mJ3RgXrFkIY?=
+ =?us-ascii?Q?WtYrVBy9b4YEJZWvuaLAs4hRKSJb4KBi9KKLuaAXPE+89if4iZ0XklgH6E8m?=
+ =?us-ascii?Q?sMto/Tt4XAg7CggWuHJVbuRyZH14UXvu6l3ak6GjfmUNrKH3/uLTYLd1G48s?=
+ =?us-ascii?Q?ZDHoeVtipdCqYM8B/ZX39WFEyu8uQVvWjhAQZJTAl7apabjCucbBW7en/EYK?=
+ =?us-ascii?Q?KzyEz1Ef5MKE6NtA5UiL0xN50zO1dfUUK14OKEo6A4b/DN2Tsdj/k4A8AEmn?=
+ =?us-ascii?Q?RuRdX5K3pQSuXKgsm18Ss5X8X1YLv5nzd6V3HDbZwBOIGDDQ+NhipB17/UKp?=
+ =?us-ascii?Q?GObI1AhJCeQawqH1LUAmLqtTOJJMUa4medxY3eVU0wWpB65zrK3yyhLf2fwQ?=
+ =?us-ascii?Q?AfX6ziVKQwMI3Gq7M1ZrJMTc7/h36oBqzCxpMdGBSRsgLKzY8nbMVhXFdalT?=
+ =?us-ascii?Q?pT7o3aXk3S8vKP+cmZgTEwlvWtWYRqyF7PymR9++TBk4viVBRdIAoDUR5TmZ?=
+ =?us-ascii?Q?a22afg/ARwzFAstjXP4Nx6XzwcULl9QgExz6jvVoAyQ9RQJC1VP5suFjqQDI?=
+ =?us-ascii?Q?fItX6QnpEUP0k4hqTKLm1fxHU3rAZdVK+Jyz/KwoVmmse4QgB1CffTxjD2GH?=
+ =?us-ascii?Q?xoJRuam6wZBSCrscOOs23EmprE5s6wnIGypv+HRthoUXS/Plk0Do4p9lauJR?=
+ =?us-ascii?Q?8iwDHpNc/GXfouaHXHbWxLeUI8usXhJ2fOApgjAnKfA4y9msOMsAlpsCCiS0?=
+ =?us-ascii?Q?DAvhvyCNPIPpZimJxyZi0lNenHrl1UEjs1kn1hXGTQXswvAwK3N6rjiK00I5?=
+ =?us-ascii?Q?pi2IWrvqCT7DEEdStP9W+QEfF8dBnpucKEXmoSzTIryaVlNReS5LJTWSyQoP?=
+ =?us-ascii?Q?st2sdQZfW+MF1jLHFh1KudZyMNlNBgGXMIPLwmtPlvVt5OcT1hrLDAru+h+H?=
+ =?us-ascii?Q?BHZ+pBeXfpvtDOr34eM6V/2O2TMlaXwi?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BY3PR18MB4785.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700018); DIR:OUT;
- SFP:1102; 
+ IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fXv3seMmRVnhrrMTvtn3RItjaRqCVZJO4pViJVIzKoYoPc1qX+pswH68i2jI?=
- =?us-ascii?Q?4r9ZrSMCcUvI3NCKJDSzA/HRDegYgxX2MMT5l/swDhGMJWA+tgWeHaSWqlbH?=
- =?us-ascii?Q?6A/Qtfu9p1untVhGHvQG0z1e0vFsAwt2Hf9L83eyCjwTsZHRETXbiu+AZ0sR?=
- =?us-ascii?Q?JnT754djoDNWioPOzXRO/evvZW6BZSSFM5SVcsMccb1fnipfvgfd8mzRoNba?=
- =?us-ascii?Q?u07gOyqSNm2IU3zQuLgBmukR/f17fU9WCoapZBYxDohsQa8JDkyRh32iB0m4?=
- =?us-ascii?Q?kEfhJmB65qTIjw88lFz72344voIHG2PAVXw5u+Z4U4NYPjnbUnqQ3IxUDhU4?=
- =?us-ascii?Q?oZv1j9F72g/SuLKF76yFWIBP3O+n0EL0mzbUt0W+g0HGnxqZnlLcvWhv3Xcm?=
- =?us-ascii?Q?RyGmAwQLsklvLHtTIwBUUznUMiFrrC03Kyan0i2S9Ylt1INjnGQdWZFwXfAd?=
- =?us-ascii?Q?2ISo67EvXRVHSqdjpewDnqsrTcpUt20d/5MibwMq31gQV8kk0ZqNE6W5M/Jq?=
- =?us-ascii?Q?1Kaf/g1mYl3hy9r73J8xmY0f1An2oYSadUQRZom6acLWhMGqXoxjwZLaVkG0?=
- =?us-ascii?Q?+/yJOoz7G1Gc6nko4/9pX8qyuVe9S7/gMQcwEoeZbjN4/BDK0pxKwS+rwkcs?=
- =?us-ascii?Q?whEfUOSe51yrxxRE0bUaBVVJIaaOS5FIdvypekLfHSG6F2Dr885FR9GonxYQ?=
- =?us-ascii?Q?7yZGoWlOusfs2lgz7hBBoFtJPA/3A92TnQ/OLzgmqeFiptRZUGTI8uRxAKSg?=
- =?us-ascii?Q?hTRRZFbcnXL0tqybp7ogf914oJR1iumyguvc9g+SOlhrKZJnQpbFZOEpqBRo?=
- =?us-ascii?Q?tf64YnsE1COzWNBGL3R8XD7n97qSrZtoIEyL1vI+jjowr2mlOy+a0IHOLk6p?=
- =?us-ascii?Q?VLxLqv5RKprkC912fzzPY03iKp7VMzzu6n4Je+VFB2eHS9YSRYuUUgoqgkMq?=
- =?us-ascii?Q?ff/0E+NB57IqeJe7Yqrq0Qzeb38b36wZkSs4nxqhNxMA68/JWRJc3UBK4u+z?=
- =?us-ascii?Q?SwBH9sAAVWdZp4esutICp25J5DmnsoFjsG0fUOdkWwfIXE9O9rI7rwS69bzh?=
- =?us-ascii?Q?Y0a7oANZvQ1BXVqjZqb0H85BxohWCK+5zB7/Q+QopP9W000cTexrq/6aH1un?=
- =?us-ascii?Q?yl0u3UVUXtnuNLAWrf017EUrBmKTpagUfiaDuZwv4eaqHn8tmSCuT2fxSxkI?=
- =?us-ascii?Q?PIQ919h0PSTACgst5pM2wSvpkD2PhzMBLhDkt/nQ2qob7goNTKF11YNL6vxd?=
- =?us-ascii?Q?hMKBPZ2UzT7/P7lB8G4aJLtesCTWhQWUBk/3jbubQfeSl6dBMmVXefw4B2Gr?=
- =?us-ascii?Q?mMDabb8fT5znBMOdbNQ+A91w6rb96O3WyhGdVacBKWh8UaW0yop0e/aor0IF?=
- =?us-ascii?Q?BGA+m1F2TRYgtxfqNRxSfnxup+X3mFW9n1FwedVtEW6/iUcifEDzKm35hLYO?=
- =?us-ascii?Q?ApIMX3DXnA5/QxGt32lnNc8tg0MmqJiH33+mSBvJ56TFoHCXJhc3hCUEPWrL?=
- =?us-ascii?Q?8T2k05rPTUltOxp4K8IgsYTxXzf2zrfWHcear7PDSDPhJC3sELhMHV+3IdLw?=
- =?us-ascii?Q?5945guoEFFqf4gEDRuSdeTYs/FplehuSvGu/6fWr?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0iK2SKtW/yUJ8KAD6VOcMrGHWRlq86pPY+sGOpBYq9BMjpEKls9s/o+uHnBj?=
+ =?us-ascii?Q?Oa3X49iW+joJY7JM2GK0DJLgXuHNJhoZLAqBYvqAL5kCHos45AnRBw0sCZjo?=
+ =?us-ascii?Q?/ypXdxhFWAV+r6wa8nUR5qrW9JqAMh2GqjCl4g7IVzBPEr95BhMIrTVf4v5c?=
+ =?us-ascii?Q?mcqpe2V3pA3lNTkUgdo1V1Gar4I3DGD6PKYsllubHubCK80EXO7J7hUDRWeH?=
+ =?us-ascii?Q?COjWntI/+xhyz+mkZv/4olAiIXuNHIFc8FYMYEY0tTZgzrE31LOk5Cb9+HyR?=
+ =?us-ascii?Q?ShaMfma+ZXD/lCQlrg2JDmVv5HL6NyJTbRW69DW/wQiIUMJBOafhq2FyjMLz?=
+ =?us-ascii?Q?DjUAgLT2JsWAWciNGqszKmJC3B/4NzZH6E5X78RWWOXDsXCGR+bRvmswyMVL?=
+ =?us-ascii?Q?0NKxE3ojo3Zxm7F37UEyZCAyJqArKMImfhTrFlcSlXw/nE2J37PcmlTVVjVt?=
+ =?us-ascii?Q?Amz1nyskSdEemvJJo8fHDSMqMWihH8YPINtWKgV7MTIbjEDlqMHB8d+kBnDd?=
+ =?us-ascii?Q?J/P4WwYmWlz0YsTV6khJqhoHkpY3a2tTofgySDVeZ1TD+QNG1EgxhJXcBHuq?=
+ =?us-ascii?Q?P/dPOuk8/po1t9b9r0CwDwLmCanuIJSmZi0CMKM+ndSj/tL/Yb5LAGKd5JKo?=
+ =?us-ascii?Q?X9gTUum+GyA4YaZvcKOT2U7SVMR/EDMo+ab2HTAetx8F0d8T9y5j3Upjd34z?=
+ =?us-ascii?Q?6C/bBxOAazUQZh8w9LMBypKkJ4/98eMFNP+91/EJLSx48zE/I1voRuEx7mUg?=
+ =?us-ascii?Q?5EddQ9DN3cFbt90rYPdhwRf643mFAzorQh6IWqeiqIOiqoMK7Gc/D4N2ieft?=
+ =?us-ascii?Q?7N6jJ6YTjs8oLicX7EfWc/63V0a4PF9pXL8HHTJl8yxjrO2X2FozyUmS3Bn6?=
+ =?us-ascii?Q?f7Fp3HLRu7RO7q5PrkZAsrZ5efya4OrvN7URHbDXhxGf0dqY2/trazKAKq5H?=
+ =?us-ascii?Q?KN7pyvgFIQBC4vL/rVfOE9cB2rOZ+UZdmGo/emvJLCddrffvSQrwHvs2CGh8?=
+ =?us-ascii?Q?PS4D2PpjsON4iIUnEWrHISagl9/wykSjnW6hWz5mOIG7drFchBqqB2Nq48rh?=
+ =?us-ascii?Q?RZxpsB/1fecJ9LNjHmPlAGk0pclDuqKvxkCXxhpoX2k1pdTPeKHcXV+XcRXO?=
+ =?us-ascii?Q?MOAHDWnHtWv888xK/gT+nKbmLhDx39jxw014D+Rv/rMniRmrmNn9Fg+d3UhM?=
+ =?us-ascii?Q?ojTCzzFBwMq6P+n0ov9tzi1aWjlJQ3f2fMJdBn2Tnht/RzSSDjXh4yd9p2RE?=
+ =?us-ascii?Q?cK74/CsOdhZ0XReRfCl3EAWMazWJFvEtKf6V1hN+tdL4Ce6hk+B7HcA89X1H?=
+ =?us-ascii?Q?ARxp/25JOmdO2peYMRrF6iBSqvdK0O2PxdjtVppw7FqMvUEh9JvVO7ISYMkd?=
+ =?us-ascii?Q?GYm1d9Nrf0xxx1vZ+/HYcOAdKOvgnFDQS1DnZLjD5k6sCXLGVpXaVYk1RJ3F?=
+ =?us-ascii?Q?8gpAXEFfNJJRc+HlL39hyuEwlmeITs3jMofruA6EeBZ5maS2SD1nM//fmP1x?=
+ =?us-ascii?Q?Lux0KB/X5IG4Vskewj0iF0pYRDVB34KzoLMBZFC+soEWiRVO7BD0h0Xew725?=
+ =?us-ascii?Q?A0TdV7q0zYfIjneSCPrDlHAFSeSmmzHB2TrvKXXU?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4785.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46c2685f-3a4a-4295-ac05-08dd54a34688
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 07:17:19.5688 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03e62a57-d6c0-4a10-75dc-08dd54a3901a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 07:19:23.0231 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: crxG3S8uy5XYwQVxM3TegdKU/yffIIMH/o8mHzNspSsaVjZPOCF+3Qpg6pw2+adcEo6HgSqZkrh8Ue2mh4nIHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB5989
-X-Proofpoint-GUID: th2midpfq6jU2ZrWqJnwPJv-VWYU097I
-X-Proofpoint-ORIG-GUID: th2midpfq6jU2ZrWqJnwPJv-VWYU097I
+X-MS-Exchange-CrossTenant-userprincipalname: 4D2Ios4Zblw85QOshhvfKXVfWVAFYByJWZ13EDZBRaViYregCtfA3wXKxDBVWzXRvnUXZgt1hZTFeyN+yHgJtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR18MB6379
+X-Proofpoint-ORIG-GUID: 5rdTrEzQW7Wc_DOBnBJjE_9rRjfO91kQ
+X-Proofpoint-GUID: 5rdTrEzQW7Wc_DOBnBJjE_9rRjfO91kQ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
@@ -159,129 +154,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Nithin Dabilpuram <ndabilpuram@marvell.com>
-> Sent: Friday, January 31, 2025 1:35 PM
-> To: Jerin Jacob <jerinj@marvell.com>; Nithin Kumar Dabilpuram
-> <ndabilpuram@marvell.com>; Kiran Kumar Kokkilagadda
-> <kirankumark@marvell.com>; Sunil Kumar Kori <skori@marvell.com>; Satha
-> Koteswara Rao Kottidi <skoteshwar@marvell.com>; Harman Kalra
-> <hkalra@marvell.com>
-> Cc: dev@dpdk.org
-> Subject: [PATCH 34/34] common/cnxk: move interrupt handling to platform-
-> specific
+> Subject: [v4 5/5] examples/vhost_crypto: support asymmetric crypto
 >=20
-> From: Satha Rao <skoteshwar@marvell.com>
+> Support asymmetric crypto operations.
 >=20
-> This change refactors the interrupt handling to be platform-specific.
-> Some platforms directly call ioctls, while others provide a library API f=
-or the
-> same functionality. Moving the interrupt handling to platform-specific
-> implementations enhances clarity and maintainability.
->=20
-> Signed-off-by: Satha Rao <skoteshwar@marvell.com>
-
-
-1) Build issue
-build-arm64-generic-gcc
-
-Project name: DPDK
-Project version: 25.03.0-rc1
-C compiler for the host machine: ccache aarch64-linux-gnu-gcc (gcc 14.2.0 "=
-aarch64-linux-gnu-gcc (GCC) 14.2.0")
-C linker for the host machine: aarch64-linux-gnu-gcc ld.bfd 2.43
-C compiler for the build machine: ccache cc (gcc 14.2.1 "cc (GCC) 14.2.1 20=
-250207")
-
-
-
-FAILED: drivers/libtmp_rte_net_cnxk.a.p/net_cnxk_rx_cn20k_rx_64_79.c.o
-ccache aarch64-linux-gnu-gcc -Idrivers/libtmp_rte_net_cnxk.a.p -Idrivers -I=
-../drivers -Idrivers/net/cnxk -I../drivers/net/cnxk -Ilib/ethdev -I../lib/e=
-thdev -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/include =
--Ilib/eal/li
-nux/include -I../lib/eal/linux/include -Ilib/eal/arm/include -I../lib/eal/a=
-rm/include -I../kernel/linux -Ilib/eal/common -I../lib/eal/common -Ilib/eal=
- -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/met=
-rics -I../li
-b/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/net -I../lib/net -Ilib/m=
-buf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -=
-Ilib/meter -I../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drive=
-rs/bus/pci/l
-inux -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib/=
-cryptodev -I../lib/cryptodev -Ilib/rcu -I../lib/rcu -Ilib/eventdev -I../lib=
-/eventdev -Ilib/hash -I../lib/hash -Ilib/timer -I../lib/timer -Ilib/dmadev =
--I../lib/dma
-dev -Ilib/security -I../lib/security -Idrivers/common/cnxk -I../drivers/com=
-mon/cnxk -Idrivers/mempool/cnxk -I../drivers/mempool/cnxk -I/export/cross_p=
-refix/prefix/include -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 =
--Wall -Winvalid-
-pch -Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-qu=
-al -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -Wmissing-de=
-clarations -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wp=
-ointer-arith -
-Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-a=
-ligned -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -march=3Darmv8-a=
-+crc -moutline-atomics -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-f=
-ormat-truncati
-on -Wno-address-of-packed-member -Wno-vla -flax-vector-conversions -Wno-str=
-ict-aliasing -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.cnxk -MD -MQ drivers/libtm=
-p_rte_net_cnxk.a.p/net_cnxk_rx_cn20k_rx_64_79.c.o -MF drivers/libtmp_rte_ne=
-t_cnxk.a.p/net
-_cnxk_rx_cn20k_rx_64_79.c.o.d -o drivers/libtmp_rte_net_cnxk.a.p/net_cnxk_r=
-x_cn20k_rx_64_79.c.o -c ../drivers/net/cnxk/rx/cn20k/rx_64_79.c
-In file included from ../drivers/net/cnxk/cn20k_rxtx.h:18,
-                 from ../drivers/net/cnxk/cn20k_rx.h:7,
-                 from ../drivers/net/cnxk/rx/cn20k/rx_64_79.c:5:
-../drivers/net/cnxk/cn20k_rx.h: In function 'cn20k_nix_flush_recv_pkts':
-../drivers/net/cnxk/cn20k_rx.h:619:37: error: 'lbase' undeclared (first use=
- in this function)
-  619 |                 ROC_LMT_BASE_ID_GET(lbase, lmt_id);
-      |                                     ^~~~~
-../drivers/common/cnxk/roc_io.h:16:18: note: in definition of macro 'ROC_LM=
-T_BASE_ID_GET'
-   16 |                 (lmt_addr) +=3D ((uint64_t)lmt_id << ROC_LMT_LINE_S=
-IZE_LOG2);    \
-      |                  ^~~~~~~~
-../drivers/net/cnxk/cn20k_rx.h:619:37: note: each undeclared identifier is =
-reported only once for each function it appears in
-  619 |                 ROC_LMT_BASE_ID_GET(lbase, lmt_id);
-      |                                     ^~~~~
-../drivers/common/cnxk/roc_io.h:16:18: note: in definition of macro 'ROC_LM=
-T_BASE_ID_GET'
-   16 |                 (lmt_addr) +=3D ((uint64_t)lmt_id << ROC_LMT_LINE_S=
-IZE_LOG2);    \
-      |                  ^~~~~~~~
-[977/3457] Compiling C object drivers/libtmp_rte_net_cnxk.a.p/net_cnxk_rx_c=
-n20k_rx_32_47.c.o
-FAILED: drivers/libtmp_rte_net_cnxk.a.p/net_cnxk_rx_cn20k_rx_32_47.c.o
-
-
-2)
-Is it candidate for Cc: stable@dpdk.org backport?
-        common/cnxk: fix inbound IPsec sa setup
-
-3)
-### [PATCH] common/cnxk: support for inline IPsec for cn20k
-
-Warning in drivers/common/cnxk/roc_nix_inl.c:
-Using __atomic_xxx/__ATOMIC_XXX built-ins, prefer rte_atomic_xxx/rte_memory=
-_order_xxx
-
-### [PATCH] common/cnxk: support for inline inbound queue
-
-CHECK:SPACING: spaces preferred around that '*' (ctx:WxV)
-#1231: FILE: drivers/net/cnxk/cnxk_ethdev.h:506:
-+cnxk_nix_inl_fc_check(uint64_t __rte_atomic *fc, int32_t *fc_sw, uint32_t =
-nb_desc, uint16_t nb_inst)
-                                             ^
-
-total: 0 errors, 0 warnings, 1 checks, 1174 lines checked
-Warning in drivers/common/cnxk/roc_platform.h:
-Use plt_ symbols instead of rte_ API in cnxk base driver
-
-
-4)Please update the release note for new feature such   cn20k inline IPsec =
-support
+> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+> ---
+Update documentation for newly added parameter.
+Apart from that.
+Acked-by: Akhil Goyal <gakhil@marvell.com>
