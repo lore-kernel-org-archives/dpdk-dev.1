@@ -2,143 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101C1C021B3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 07:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A2C021B3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 07:28:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57FCB40652;
-	Mon, 24 Feb 2025 08:25:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A206640652;
+	Mon, 24 Feb 2025 08:28:11 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id BCBCF40299
- for <dev@dpdk.org>; Mon, 24 Feb 2025 08:25:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0B4B640299
+ for <dev@dpdk.org>; Mon, 24 Feb 2025 08:28:09 +0100 (CET)
 Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O513sM002576
- for <dev@dpdk.org>; Sun, 23 Feb 2025 23:25:11 -0800
-Received: from nam11-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45007b1rr9-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Sun, 23 Feb 2025 23:25:10 -0800 (PST)
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O5135S002612;
+ Sun, 23 Feb 2025 23:28:09 -0800
+Received: from nam11-dm6-obe.outbound.protection.outlook.com
+ (mail-dm6nam11lp2172.outbound.protection.outlook.com [104.47.57.172])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45007b1ryb-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 23 Feb 2025 23:28:09 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=geayyFMiz4c9jNmV2s2UzhkyuYlFZ8HdscfYxL3pvgbRWwo1i/61ZxWPWU7Osp4e4KfSz1FZBeppV+Q2zLVXzR5Ni4/YGBmkBtaKerwI29SGUuC/cpuP3rJ1ZF7oGe2PvUlYFaMGIxQqFfS5GUnDhim8+AsZaXxcaDl/fY+tLFWDRaBvR+Y5s1/+GEn0c4jOcTKBy6fKQidtiEuaR9BSkV+4BHplWPe/XXurbSd4Ry3YxSAlGL+eQYCoyzRM4EK0CFlXX06cWIqIYepkmvFxEXsz8gUmOVM5nZusOfwguYFHDbIxbQEyz2qx2W8RFHwDkbvdpQzTAjTwmoIcYj+BNQ==
+ b=OLHK+/wBfDIF3PxCqbntljww4ZjKrM7AdBn8I+Zb+pQoBDN/pJVA89v1NLuEKn7CiqkFIRDsA+JbWPpiX87fWmAxzKKmpCRJiOLXLP0gnc2JKyz+Zeh7fAOpiFvHdFLC3EZmam4XfEpGZvmN1lw+r5YwzWpHyQtuxDUGklbWsDNBL4HGQkddpKFvifDkbmYKCg7S2ORCwYI5/R67cSiR8r5x2SezksaGXvvTIJhE6W1ewKmetPyb49n3pV3OwlLoHVJ/ONwwa4e18k68WdG+MjRd7FB5TQkASZFopCBIjOc+ty+WzVi8uMjN2hGEmIL/uYQSkzbwmNbmCERr45vhdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NXZrsg7M83p0f4vhqwRdUqxAo9WOzdHOGxG44+d/EyA=;
- b=LQQqbvwKzwKg2qBLO1jp0zyKYYUTchxuzw7CS7GvmX2nE7hHVcmZvAS0gwqm8OLcSweyyIBBQIaPeGxs7rPKY97aImWV7Oet0MBDYvnIz1tYOJ7vipUQzDKd5oWQ0tLxWdaCvdePuoqlssjD0/BvHfzlAJUHJg5+f3yOlAvP8dnLKLVt1U6IGw/6G5PEZWO6ZSa8LWYzc9YlCvNKxyKBXSai9YczFtPALGPAetHoLdSbVpTsPnyA6WPW6K7UclPZ7tfuTpui+u7Js/buZzcWO/DAcl4+XH0FN6v5EckHUgsiLLO9OIUdV4eK4D2/ntGnR4UhI/25qTEJSc9QuIpabg==
+ bh=6p3cGZ4WucAW6iaK5vHrmP4paJurcFSkfqSaWk9Rpic=;
+ b=LzxWT5bG5qu3HasxQqb+nTPStsHQ+22xic1m6YlWKkN578UIhpb2axXrk0qu9yeVYtOTeZd7x+2QtZPbLOVWW76w16p8XqxFxv3eQml+4SDsA1UHq/FVx34u9JxH50u0ENC6aoUU8Ix6eojbcaDNA2I2nFLu6HlswcCCPUSrpnfDmiWGJohSYjcFRgP7m+V0h/5VpSurSU+X4Jti8xcrVLKMFeRrlKbKW2epEi0QJA86YjDgfh6nGpmZUu3x9PCC3SsfuwtdODZ1RdH3DH0Q4rYaGmvB+2fI5QlbQ5kmqTo6mOBqb86Hdd6WEK4GhkdrvF67cNY76eKcICM1Em7q9g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NXZrsg7M83p0f4vhqwRdUqxAo9WOzdHOGxG44+d/EyA=;
- b=MjU5elstEtbJrBqOw5tVwFafK8sMuCTJBLHFvsBfvFKHJ22QrT35L5oXC7bQ/ygSg7JPO2sOipZcvOl59KB1ZsF03vUVXV9DCMIaqQPz4KnWcuEEIAOZmQA0RFn5EMbjMKo02eHCgrauPhQGQx01uzWMdWotTSn6o1aX1vhuazg=
+ bh=6p3cGZ4WucAW6iaK5vHrmP4paJurcFSkfqSaWk9Rpic=;
+ b=H5VgcRpOxEIvZkPxVw/D+nD59B9zinQBl08xz/Qw4OiLs3GlqZ7k0ring7lhFuDhSrsgPmHtxP5a05HTv0PHz/snOpBmM4yAZVrR1AuCydV0DJassLe2vZX9eRpG8qwV3OjxK81Q5rF8EMtcWqBH1cfDT32Uq8a09tvbEWxSP2E=
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
  CO6PR18MB3793.namprd18.prod.outlook.com (2603:10b6:5:345::22) with
  Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.21; Mon, 24 Feb 2025 07:25:04 +0000
+ 15.20.8466.21; Mon, 24 Feb 2025 07:28:05 +0000
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::3c98:dd36:4897:a51d%3]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 07:25:04 +0000
+ 07:28:05 +0000
 From: Akhil Goyal <gakhil@marvell.com>
 To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>
+ <dev@dpdk.org>, "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>,
+ "thomas@monjalon.net" <thomas@monjalon.net>
 CC: Anoob Joseph <anoobj@marvell.com>, Gowrishankar Muthukrishnan
  <gmuthukrishn@marvell.com>
-Subject: RE: [v4 0/6] crypto/virtio: enhancements for RSA and vDPA
-Thread-Topic: [v4 0/6] crypto/virtio: enhancements for RSA and vDPA
-Thread-Index: AQHbhQqNWtqg4epR4k+44iGA276fB7NWECwQ
-Date: Mon, 24 Feb 2025 07:25:04 +0000
-Message-ID: <CO6PR18MB4484F1B716E1E306295F1FC9D8C02@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <cover.1740156584.git.gmuthukrishn@marvell.com>
- <cover.1740212415.git.gmuthukrishn@marvell.com>
-In-Reply-To: <cover.1740212415.git.gmuthukrishn@marvell.com>
+Subject: RE: [v4 0/5] vhost: add RSA support
+Thread-Topic: [v4 0/5] vhost: add RSA support
+Thread-Index: AQHbhQUjf9dGrf6M9kq4nMHh9EQWwrNWEKEw
+Date: Mon, 24 Feb 2025 07:28:05 +0000
+Message-ID: <CO6PR18MB44846AAD97390FD5813E657BD8C02@CO6PR18MB4484.namprd18.prod.outlook.com>
+References: <cover.1740156665.git.gmuthukrishn@marvell.com>
+ <cover.1740212213.git.gmuthukrishn@marvell.com>
+In-Reply-To: <cover.1740212213.git.gmuthukrishn@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|CO6PR18MB3793:EE_
-x-ms-office365-filtering-correlation-id: 07253f4b-8821-4a18-db38-08dd54a45bac
+x-ms-office365-filtering-correlation-id: 4ebf652d-bd06-4a7f-26f4-08dd54a4c766
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|7053199007|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?I8a4LL/BVS2gheMWhdjK6tKKCrirdkVq1cSKdroMZDrPZpgC+wpkbgghEqzp?=
- =?us-ascii?Q?3DoyFqHRcrBqWn1I5zGOLYeNt07eLJSWWIoMFSa1BsYtEwrV0Cv+f7FqrGfh?=
- =?us-ascii?Q?0XFLyj6pcP41uGl2T7qHvYoJ8/VRkGWqa4CHE2C99Mnfj2z5E66XmO6HUtDX?=
- =?us-ascii?Q?Y5QhHCTlFbwUNXa0PLxok+Pe8tKCBuF/f1uiBIsnSaA3ZIqSuj8Dkx4ofjhN?=
- =?us-ascii?Q?0bm04AJjLAjBDQ+myglv+r6lXWhLGek6nPwuo5iFhZtQeCrWE2HdYPw+EEq7?=
- =?us-ascii?Q?X/Hw0tP/lfTvf0U48JvuKX++/7CK6DDgwk6I5v19BotxF+pMs5gzrqZ7ZuSm?=
- =?us-ascii?Q?FPsGpsaJKIY0IpPPVEduqrP6vB2xWNb2gN6ABeuSki2gyKKYNA5J7Iq4pd2B?=
- =?us-ascii?Q?EM9ePNuOvHFCWaBeEhEzaP6caW61V5UfFY5cHUsAl8MIUWKg1Jyuad3YqKNI?=
- =?us-ascii?Q?gPiM52J4HIPi2CLCWMf7rbu+oNhchW/gVZKYCcR457nMicHjtzPoJ+PhSPqD?=
- =?us-ascii?Q?1AuTonNo0QsJTMHY1z0Un5WXrgKOUFH1M0+guQ6QwAwwME4GtK5BoR0rOqz5?=
- =?us-ascii?Q?emHRvknCCLhp3uDd92MG1Bpsd/wPfVmBJRoPaE1I/uo1aKEll/x5sSomd7IX?=
- =?us-ascii?Q?Mvd1QIb8WEAymW57k+ml7qcXwfBHV8Czz2G+9Jpu+1iioEeRIgZrBGStjAfC?=
- =?us-ascii?Q?ye+10KEd5CeaAf7k5quWZucdGWSoSkkfZBKDDPbnWzWLr/icyu/OOB1HmPYu?=
- =?us-ascii?Q?iiPLAXjloKP54ccgIkw1tWe67t+cuJRUZ9cPT+CV0jBBpZch2ds0adl9Uzde?=
- =?us-ascii?Q?8hSw5XcQcDdVi7soKG2EA9wbKoWPvs+F0jCnKsxugHf7xApKJcIck4VLWMdw?=
- =?us-ascii?Q?YkRotgh+B16AremGL0PNaxVuboNUHqB3KCLUbLqgtPrvjCpVRAwI9SYEaS+U?=
- =?us-ascii?Q?OCf/3AvKOHRL57LYD8fGQSwJ09hcW6iZPKAgn7qzITnsaKe8k+dLv8b2BDHB?=
- =?us-ascii?Q?Qwjp7+SLwlZnx+1G8FRq2tPqPv3s6M+CYQOU2EtZJM3C57aaefq/FKBmEibv?=
- =?us-ascii?Q?BFsbYOez2KCxlq3+lAQ+3sE50csRQ1DNP/WNURcNZdu6VIFbsCr+yLoqMEEl?=
- =?us-ascii?Q?Lam4J5cwDsbllqA2uXG0okoUatSkbRljSeJYVEcMYY9O4xmBVebNJAybwv/1?=
- =?us-ascii?Q?/3Pik2rSwojQhjpoRgnP+yrVPmzgmIx+49fXyrcR4WHBN2xCBQpebyXcJuXh?=
- =?us-ascii?Q?XD6VV70qIdjTZcW7GBLagsyo6hmNSRb3cjR7Xy7Cy5V6dGdcPxGrCCGagoLn?=
- =?us-ascii?Q?uDABRQRmqmr7GVRib0njnoe6wEst3rsuhQktYpKJaWIRsPar3x5+QNcxGfC0?=
- =?us-ascii?Q?ax1/bPR1k09lIVBsNRTcVYDV+AvLe0LxiWmgrSORtQIdDBFb0POb/eA38gbb?=
- =?us-ascii?Q?0TJrcxud7kORQFz0CdbAyyzz/Ui8jgi9?=
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?MGzR0RhwkJJ+de04MGbNTTTQHe6VReCuOPoj/UhqLiy5HYgEVOARDMhC3KJc?=
+ =?us-ascii?Q?vOfFx5LghO/eaRDi3TRCCIoUqhwQjRN4nkSMhlEar6hGzuE4wMUkfkcwd7VS?=
+ =?us-ascii?Q?459DZe1/O7dw+darKuJQ5swSv6AtIPwRxDyoMij02761P6UvhINVpnIyNIVp?=
+ =?us-ascii?Q?6r7rJY0MnKKzm5yLKbPDk1IfydC3trcuMh7CgNF6JqxIvqCu3Dg/vqDo5/BY?=
+ =?us-ascii?Q?h6Y826d85S28iSAvmAvECpciAXhik6Owjz1+XR172KV+T7QwiumZ6Vaukj9u?=
+ =?us-ascii?Q?wD4IRloyqLsC9vOTfaHsaOpU8uFJ607qNujmJRODbyPxTr9dGheEuuoSQqsF?=
+ =?us-ascii?Q?1lN0TAOT8XXdTpuKUJOMFXrbeciorIisF6gtAyoQ1nKafK9jP0wfTxkt/9Ci?=
+ =?us-ascii?Q?vs+W9ll1kFXT4cdj818i+YuW7DZSs5l0a0dd61E9hYhdgxwAkQ8n/aswtCFo?=
+ =?us-ascii?Q?KVDbGQOHtq4V08d4NuwzMe5Ka1pzoxdLhiMzMUES2yqg0UXaNRkJ5tcN+43d?=
+ =?us-ascii?Q?J6rZv1w2Q7f7xzYa0ogrRlwTtQj/Q722UI55rS39TAHazxZYofphfORgWAKO?=
+ =?us-ascii?Q?Ias2Ot28ln5z2Z6B9gMPKwE6MCktR7Lhda7znLXfVWtTiAUsx+Ca5dQFb0uy?=
+ =?us-ascii?Q?u3XjbSCr8zBAEP1FCnj4/BtImhy9iQdAkGLTmfc5mWCofw/EcCzyGIDvH4aT?=
+ =?us-ascii?Q?iWdG4nKckOO3y3OmMCmRdfl59An412V5lDBtIIRWRJyIxDAeRK4yT716rSDv?=
+ =?us-ascii?Q?h4GftcKrNyKE8Xxy0ilIfV9OEkNTHq8SEC7fIm1+CPSjd5uNf1QD8XsyMvBV?=
+ =?us-ascii?Q?zpXERgh/UIqlPZOjLAnXL9nhHK3LeR9JGWxYpNbJL9UR0rQAuSRNoOWbpMiw?=
+ =?us-ascii?Q?vrQ2xj95SRUpwjzji0my9gloTWbS9LUfLVfR+jWZw9qDF5UresyjD1Dyketb?=
+ =?us-ascii?Q?ZEvBX+v+3Y+EFDzCGcG0mIBBAphV4GwvV5zlxs3yrrV9uDITEIFBkhPd7Vb8?=
+ =?us-ascii?Q?t55pyLFx29/9+IwJVKzWkFGAXQbU52x5tuaMCOkcuJNkFt3cA/9CA2Owt3W2?=
+ =?us-ascii?Q?ORID0wtpnCOG/Kc3Fcd6ahu0Q3dsVzr1QrOkoCtWN5xUrEymazPBbdw8uhK6?=
+ =?us-ascii?Q?DjGiHQR4JL+SKWPAOMDC2rWDrgshlpkO8bpdaA9RRCuoZbnZ1uvFh8+D9ZTR?=
+ =?us-ascii?Q?4IFRxZ8dWY9O3eMETmLdrdDEaLFV2oKdDuHClJ7qWtUQGd1OhZU3HAFjTLEh?=
+ =?us-ascii?Q?U/rjeWeQkuE6rlRL3gYbomVmromYjI96ickAWLkKBZhk82zPpfixRlc4jXqe?=
+ =?us-ascii?Q?CNhscOuqgX+FlBydjSEd3VTX3ApeT0DVPnvj5N/EH4sNd/eRlp5tmVPPZ3E4?=
+ =?us-ascii?Q?5UQKdZh0J7Prn8+/xix/t2ovK8B/++z/Vwz1vNI195x18YpvVzy7PIqIkQe+?=
+ =?us-ascii?Q?AUU65Xo0PXMlE9vW+u/B+lLhY1MBH+nd?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700018); DIR:OUT;
- SFP:1102; 
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XF7tw3xe7OcqLDu2nLYbuykwntL9eotf2rxbuyQybLbcAoRLxy2BiLG66rmK?=
- =?us-ascii?Q?y0UBdIO5cK3PwRt3Nnn8ezKtUSpDOvRIJ8VXoHBTTszfupEA3GrL7z7k8Pz9?=
- =?us-ascii?Q?7Mw4MSqxL5vkFXktq1cqm+rwGUYREUJleTWI13prSvtyF5xhB9+NPxJv6tnP?=
- =?us-ascii?Q?t1PqlrGC0+Ufsng6+4t/Wds9F72FY4heEqL7bR19ioKpfkQQxxoIB9mfIIkv?=
- =?us-ascii?Q?RtYG0RJp33eqy7+xt+6o9rlVSxtYyYjWW4/QjHqb0CfC02QoLYJ0254iS19t?=
- =?us-ascii?Q?Z8J8Tcx61Cei5VpVAyPOeNLceNWkBjQH0Il98Sgj2CBwq2JJP4Uv1WSZPjLx?=
- =?us-ascii?Q?IMq+czG3rYKm34m8Op1Z510ThOPURmzrkpd+NTr2PyfUtw0VJZ6BztfTgQY/?=
- =?us-ascii?Q?J6/AuC9rrYA5qHDRQncVg2j4VsHPU3kCyzZ+yuU/u3toPufi+J9vZRgDJ5jx?=
- =?us-ascii?Q?qD7my7buRtnx/+lSw2pZF69vIJYqT1aECD1adjOtgsLnTdcUtR7WjCbaTVyb?=
- =?us-ascii?Q?JI9QOLS/ztw0c4OpKPuoHpSwyZYTlHiOFh4JRpjrHdNJygfQT5CY1QNFQeov?=
- =?us-ascii?Q?b1FE7GeX1NaDumR/JVZOZ1H6dRCXlRi2pPv+Vlty7NhT60mDovP/UfkZbtpo?=
- =?us-ascii?Q?pWntdc2+eFoWYG0R80p5SYSQU+ZfoMV6IiHUrE8ar8ZWBnJlZTdlhc/vU53v?=
- =?us-ascii?Q?EPwW+jryvRWLOCF436bvO07O4Bb6EMaCfWghwkllAFImO7IHgdA6DB/PyFF/?=
- =?us-ascii?Q?ZSjx8vavjAFJnaGfU/wuCgvQIzRKlUTgcbcf5nSueRRv+a96KR8sEWK3p4lW?=
- =?us-ascii?Q?GxX7vmvZ2jGuthmN3icXgzcpxGF6lLCrIQ+1fv52Q3Cf5m8CLSVRl/5vk+9F?=
- =?us-ascii?Q?jh1PLl0+DXLk9i7YZQ/uZpGOHbsy68E5c8KpH0XL6ewBeDBQHFcJUe7bNUg3?=
- =?us-ascii?Q?DL8sxgjREzLYiwCWULVYACMirShRe0Vw5rysUzcRydbuccXrDdP86RdT9/Dl?=
- =?us-ascii?Q?QYuHVSUVPsIVlAIOOV8TsHjFQ14hgQkOsKm1Jm1InyEt34drm2J2DML4heDj?=
- =?us-ascii?Q?9IxghcjmK9QO418EpNVYKHdzIO9ZSON3qB8lTrLclXbWO6W/EcB9iGo8AykH?=
- =?us-ascii?Q?JaMNGH3Oi1yGqMlkw4Z52TercBHMGbz/sUJSE/o//iBk9G1lzGoqp7tJKmw6?=
- =?us-ascii?Q?Hm4SrgXhCDEyO57qYYyzrP4ZOmobMAa90Jo/ErSN+EnYoBXf9KFpjexm7Y/3?=
- =?us-ascii?Q?VCnZcp2LZT1L0ohkgoGE06alnKSIfGlfnH7PPBsNQmRBL1iZFixgpfI9gjbf?=
- =?us-ascii?Q?FKLDIix88rc0Kiv+ugf0ab3gigBBaIvNp0vRK4xl/XladNO24Vtqtzz9yshM?=
- =?us-ascii?Q?XXJvVjQBU9IA411Sqbz72o0wYmLOcz7XSHw8zKor+AaA4w/hf55GZX1++IVH?=
- =?us-ascii?Q?O/xQChAd6G20ZZ79mPd7rHpKu0RAa3tr5kWyKtgOD2GxgREwEVuANE1EXWXU?=
- =?us-ascii?Q?GRgpTjwJSUpA3389eIqe8iOMMxoxccG7ZXBWCulv8Yh/ERFfMZxBwyby7RcO?=
- =?us-ascii?Q?b7+yu0eDg3T0v/zb9D5seQt6F61iuOrNpvsx6YGX?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tbEi6+EzgjAyo5rUja6KYnNfbCqPu0A4/mpQZGx3VPmsww/MvqiZWYMJ+8+A?=
+ =?us-ascii?Q?/Y5rQUoFJyxRncxqFCMso5b9AHNz9d2BX6fcqDIBRMKrwPhF7Xa9CyAlktYp?=
+ =?us-ascii?Q?lx7RYqZzvUtWgfJOeacJxI08u3y0LZi3HyWtj0Vtaqa5Lbxl/qCF3AB/HPah?=
+ =?us-ascii?Q?gewe8HaPMjWI1WtnXaiRfFSFGnB+XiJdVwq76CCWSU12wJnbUVmH80m02rpE?=
+ =?us-ascii?Q?oyF7Z417QQvn/12hhGn3FnVwiEBCjD8GxjdnbwSJ7iOr50OSetLDN+ki3yLm?=
+ =?us-ascii?Q?dKFK2oS4OH+gB8USeZJvirms5+y5XD4iAGt/AOgAFJ5o1DZVAOuq+NV04Fwo?=
+ =?us-ascii?Q?vBCUSpVnBIzGxFql7wIXJnpX79PDQQvykE4gH33fP8FBficKXE2KZdv9M38e?=
+ =?us-ascii?Q?z5gmN474zyIhpjd2NJtv+X1YkbNXD+XV7q9JJLB1qyjoXhI92lb5wGai1s4Z?=
+ =?us-ascii?Q?krwX48U8JJvnKZ0QYUfBRdu0EV3rHRxg5euBbXlDRa5F0scx6hYbn5MAN+Jw?=
+ =?us-ascii?Q?77vhybPZwUo91XhWGp1xdZSEWSpPIxtSkMoWzj78NDfpSNMl1p/5XWSOjlVm?=
+ =?us-ascii?Q?n+RCtK4Eptb1M3C1ACBLHHXzJTpD8vrTnfH69GYBtqqsuU4eAA4GB5rkfxQx?=
+ =?us-ascii?Q?bRoewAGqZUvn8KyZv3+4dnwKPSytrkponc2WImOMBvkY46CcfmvK/Qsr0kox?=
+ =?us-ascii?Q?Hvef+5CmMyTTWW7Bc5rbnfWTUlTIqpy10yeB+hclY7d/OUcwDl/ICCtOX55W?=
+ =?us-ascii?Q?l0qJ+aStftpCTp0XbtTjKlNqU3lPl0cARbdUZ2WGh9wmG1rzLdd60KtSq8eu?=
+ =?us-ascii?Q?y6q1IB3gMqWiHoiMAN5OJS70ZaEu3oAzFFeSNGjNiRFV2j2gcy75BF51wY3U?=
+ =?us-ascii?Q?ZaHL2ledTpmiiLl1OyIc8F4vDR+fpKz8ulpBfqWdCd0M4WXiGKsTOPbJyKb/?=
+ =?us-ascii?Q?NPJkT+C8jhpiA4rwgL98OhrxLEO3FfipTse+ejvkwlOt7BBmdpLxKKHl04i2?=
+ =?us-ascii?Q?MFKMgcY4/ML5tMZSdMYjeENFoPSJy8CwxFjesuvTXqK2WVUxDk9Qqu92d9fd?=
+ =?us-ascii?Q?4tvL34i6JcATM6iI7gLKrhgnwwSHGzuxMKsEOGJAekx7FpTBakcuk0/dPyF0?=
+ =?us-ascii?Q?OuMlefvi/Y0RCjbvga7W+2h34oWYBa6w0xY+Qx+jMSd3D1hG8Elde84GlLdB?=
+ =?us-ascii?Q?24aOr1EDoijSUG3Ap0+hApFT28k2pI48aeG4fU2tRzMCJWW0vNQDZVRlC6xZ?=
+ =?us-ascii?Q?eJh+fLvmXJV+UWY4IgOp2CLkgIdGGWOtxcR5Zm2xz/6/pX9kWxT+Jd0mEqrG?=
+ =?us-ascii?Q?AtgmQir8vs8dV9k+m2iM+GnqFD48I4yX/+lwbpmpd8NrPoM0GUq3WexAfeWA?=
+ =?us-ascii?Q?FrB7zHpdlXjwCGuvQvoigSATQ/J7y9Ur0sl5p3VeLdCK9W0G/mquzFfXTXgb?=
+ =?us-ascii?Q?7lek8/mY2lP1CIg9T1ZOkL5uOe7eRxehwFfzjU0BZnBuEcVpcenn2xB78dpc?=
+ =?us-ascii?Q?WdNHfzAZJvE79QiU13e/AA6HVbHXIvN/138KbJRMshpsPAHSsLZlA4Ep9ybX?=
+ =?us-ascii?Q?ylqKAfswNJ8ZuaXCvq5GTkUvGkLfjRiakF9lCyPO?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07253f4b-8821-4a18-db38-08dd54a45bac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 07:25:04.5591 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ebf652d-bd06-4a7f-26f4-08dd54a4c766
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 07:28:05.2931 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UYV0RGUAPeaSQcvkgxYPUIhXOy3s0x5OdrN0pLfr8gOtvG7qmtur40YwiHJ87mQmuIsptmPSoyMCBsDKEi/B/g==
+X-MS-Exchange-CrossTenant-userprincipalname: YXMCuXgg4/t4ZO9KiH18r7/j9sh/6oFrVv97gfskEcjz3Eg7g2cNm+Rrfm6rP0ITcQq7/2FB7f59r7KfHIgt7Q==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR18MB3793
-X-Proofpoint-ORIG-GUID: hlgBOXMNuvjzGdtZ1OoFsIlVJTyNrP2e
-X-Proofpoint-GUID: hlgBOXMNuvjzGdtZ1OoFsIlVJTyNrP2e
+X-Proofpoint-ORIG-GUID: fgtEVdHf9WtHolzc2Nm-QsV_iqZLTYZW
+X-Proofpoint-GUID: fgtEVdHf9WtHolzc2Nm-QsV_iqZLTYZW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
@@ -155,64 +155,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> Sent: Saturday, February 22, 2025 2:47 PM
-> To: dev@dpdk.org
-> Cc: Anoob Joseph <anoobj@marvell.com>; Akhil Goyal <gakhil@marvell.com>;
-> Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> Subject: [v4 0/6] crypto/virtio: enhancements for RSA and vDPA
+Hi Maxime,
+
+Can you pick these patches in vhost tree first so that virtio/crypto patche=
+s can be merged in crypto tree?
+
+Regards,
+Akhil
+> Subject: [v4 0/5] vhost: add RSA support
 >=20
-> This patch series enhances virtio crypto PMD to:
->  * support RSA
->  * support packed virtio ring
->  * support vDPA backend
+> This patch series supports asymmetric RSA in vhost crypto library.
+> It also includes changes to improve vhost crypto library:
+>  * support newer QEMU versions.
+>  * fix broken vhost_crypto example application.
+>  * stabilize crypto fastpath operations.
 >=20
 > v4:
->  - CI issue fixed.
+>  - fixed CI issues.
 >=20
-> Depends-on: series-34682 ("vhost: add RSA support")
+> Gowrishankar Muthukrishnan (5):
+>   vhost: skip crypto op fetch before vring init
+>   vhost: update vhost_user crypto session parameters
+>   examples/vhost_crypto: fix user callbacks
+>   vhost: support asymmetric RSA crypto ops
+>   examples/vhost_crypto: support asymmetric crypto
 >=20
-> Gowrishankar Muthukrishnan (6):
->   crypto/virtio: add asymmetric RSA support
->   crypto/virtio: refactor queue operations
->   crypto/virtio: add packed ring support
->   crypto/virtio: add vDPA backend
->   test/crypto: add asymmetric tests for virtio PMD
->   test/crypto: add tests for virtio user PMD
+>  examples/vhost_crypto/main.c |  54 +++-
+>  lib/vhost/vhost_crypto.c     | 508 ++++++++++++++++++++++++++++++++---
+>  lib/vhost/vhost_user.h       |  33 ++-
+>  lib/vhost/virtio_crypto.h    |  67 +++++
+>  4 files changed, 603 insertions(+), 59 deletions(-)
 >=20
->  app/test/test_cryptodev.c                     |    7 +
->  app/test/test_cryptodev.h                     |    1 +
->  app/test/test_cryptodev_asym.c                |   43 +
->  drivers/crypto/virtio/meson.build             |    8 +
->  drivers/crypto/virtio/virtio_crypto_algs.h    |    2 +-
->  .../virtio/virtio_crypto_capabilities.h       |   19 +
->  drivers/crypto/virtio/virtio_cryptodev.c      | 1060 +++++++++++------
->  drivers/crypto/virtio/virtio_cryptodev.h      |   18 +-
->  drivers/crypto/virtio/virtio_cvq.c            |  228 ++++
->  drivers/crypto/virtio/virtio_cvq.h            |   33 +
->  drivers/crypto/virtio/virtio_logs.h           |    6 +-
->  drivers/crypto/virtio/virtio_pci.h            |   38 +-
->  drivers/crypto/virtio/virtio_ring.h           |   65 +-
->  drivers/crypto/virtio/virtio_rxtx.c           |  721 ++++++++++-
->  drivers/crypto/virtio/virtio_rxtx.h           |   13 +
->  drivers/crypto/virtio/virtio_user/vhost.h     |   90 ++
->  .../crypto/virtio/virtio_user/vhost_vdpa.c    |  710 +++++++++++
->  .../virtio/virtio_user/virtio_user_dev.c      |  749 ++++++++++++
->  .../virtio/virtio_user/virtio_user_dev.h      |   85 ++
->  drivers/crypto/virtio/virtio_user_cryptodev.c |  575 +++++++++
->  drivers/crypto/virtio/virtqueue.c             |  229 +++-
->  drivers/crypto/virtio/virtqueue.h             |  221 +++-
->  lib/cryptodev/cryptodev_pmd.h                 |    6 +
->  23 files changed, 4435 insertions(+), 492 deletions(-)
->  create mode 100644 drivers/crypto/virtio/virtio_cvq.c
->  create mode 100644 drivers/crypto/virtio/virtio_cvq.h
->  create mode 100644 drivers/crypto/virtio/virtio_rxtx.h
->  create mode 100644 drivers/crypto/virtio/virtio_user/vhost.h
->  create mode 100644 drivers/crypto/virtio/virtio_user/vhost_vdpa.c
->  create mode 100644 drivers/crypto/virtio/virtio_user/virtio_user_dev.c
->  create mode 100644 drivers/crypto/virtio/virtio_user/virtio_user_dev.h
->  create mode 100644 drivers/crypto/virtio/virtio_user_cryptodev.c
->=20
-Add documentation and release notes updates.
+> --
+> 2.25.1
 
