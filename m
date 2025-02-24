@@ -2,32 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C501DC021BB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 21:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959E6C021BB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Feb 2025 21:02:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D7CB427D1;
-	Mon, 24 Feb 2025 22:01:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BD569427D7;
+	Mon, 24 Feb 2025 22:01:49 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 2D26040DD0
+ by mails.dpdk.org (Postfix) with ESMTP id 586C2427C6
  for <dev@dpdk.org>; Mon, 24 Feb 2025 22:01:43 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 78D6C203CDE5; Mon, 24 Feb 2025 13:01:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 78D6C203CDE5
+ id A7485203CDE6; Mon, 24 Feb 2025 13:01:42 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A7485203CDE6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740430902;
- bh=x5235Fg4fV9Q0mUEUbzRYUSIcsdNAT+/S+ErAl3F7Bg=;
+ bh=5dGFLE7ykqeooZAYGdv7nEhUWs/AyUqC9xbBPX/SJ0I=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=qn0cAzLWlKJMFVHmmABlENfj+ssN9EP9Gwdp+UC6JLqzTTYUaDVbDEljBA7CfABX3
- vHuG4S5DFVec52q0rj1GqjHV10nX58XjYaYewrbmxq1y96BfyVfjJzvCXSmIkHOb0V
- 4vVdRXevEBKs5BQTmJQXme2gsaa3Fby5uPOy/o8U=
+ b=iwyXJU2TX7DS98gmUd7pQOREXE4vKqrbRsYNJcrW71SnL9BHp/rwSB8AGQMDck1Fb
+ V6lIeLqt+nS4sEKST+CQomCATaPl/Xky5MsnJYXt0LT1itGKBiSOlrKYZEi8Xa2yGm
+ r/ckCHy79Sp/7XmpQtm+Ai681QnCb2A4vs5MwcNM=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+To: Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>,
+ Ian Stokes <ian.stokes@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Chaoyong He <chaoyong.he@corigine.com>,
+ Vamsi Attunuru <vattunuru@marvell.com>
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH 3/6] config: allow faster instruction sets to be used with MSVC
-Date: Mon, 24 Feb 2025 13:01:16 -0800
-Message-Id: <1740430879-17874-4-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH 4/6] drivers/net: make compatible with instruction set updates
+ for MSVC
+Date: Mon, 24 Feb 2025 13:01:17 -0800
+Message-Id: <1740430879-17874-5-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
 References: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
@@ -44,421 +54,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Up to now MSVC has being used with the default mode, which uses SSE2
-instructions for scalar floating-point and vector calculations.
-https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-
-This patch allows users to specify the CPU for which the generated
-code should be optimized for in the same way it's done for GCC: by
-passing the CPU name.
-When no explicit CPU name is passed, 'native' is assumed (like it
-happens with GCC) and the code will be optimized for the same CPU
-type used to compile the code.
-
-MSVC does not provide this functionality natively, so logic was
-added to meson.build to handle these differences, detecting which
-instruction sets are supported by the CPU(s), passing the best
-options to MSVC and setting the correct macros (like __AVX512F__)
-so that the DPDK code can rely on them like it is done with GCC.
+Top level 'cc_avx2_flags' was created and holds the correct flags
+depending on the compiler used.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- config/x86/meson.build | 364 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 325 insertions(+), 39 deletions(-)
+ drivers/net/bnxt/meson.build       | 2 +-
+ drivers/net/enic/meson.build       | 2 +-
+ drivers/net/intel/i40e/meson.build | 2 +-
+ drivers/net/intel/iavf/meson.build | 2 +-
+ drivers/net/intel/ice/meson.build  | 2 +-
+ drivers/net/intel/idpf/meson.build | 2 +-
+ drivers/net/nfp/meson.build        | 2 +-
+ drivers/net/octeon_ep/meson.build  | 4 ++--
+ 8 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/config/x86/meson.build b/config/x86/meson.build
-index 47a5b0c04a..9260969c54 100644
---- a/config/x86/meson.build
-+++ b/config/x86/meson.build
-@@ -14,7 +14,194 @@ if is_linux or cc.get_id() == 'gcc'
-     endif
+diff --git a/drivers/net/bnxt/meson.build b/drivers/net/bnxt/meson.build
+index e26cf13a65..fd82d0c409 100644
+--- a/drivers/net/bnxt/meson.build
++++ b/drivers/net/bnxt/meson.build
+@@ -65,7 +65,7 @@ if arch_subdir == 'x86'
+                 static_rte_bus_pci,
+                 static_rte_kvargs, static_rte_hash],
+             include_directories: includes,
+-            c_args: [cflags, '-mavx2'])
++            c_args: [cflags, cc_avx2_flags])
+      objs += bnxt_avx2_lib.extract_objects('bnxt_rxtx_vec_avx2.c')
+ elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
+     sources += files('bnxt_rxtx_vec_neon.c')
+diff --git a/drivers/net/enic/meson.build b/drivers/net/enic/meson.build
+index 1e26338350..cfe5ec170a 100644
+--- a/drivers/net/enic/meson.build
++++ b/drivers/net/enic/meson.build
+@@ -38,7 +38,7 @@ if dpdk_conf.has('RTE_ARCH_X86_64')
+             'enic_rxtx_vec_avx2.c',
+             dependencies: [static_rte_ethdev, static_rte_bus_pci],
+             include_directories: includes,
+-            c_args: [cflags, '-mavx2'])
++            c_args: [cflags, cc_avx2_flags])
+     objs += enic_avx2_lib.extract_objects('enic_rxtx_vec_avx2.c')
  endif
  
--cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
-+cpuid_code = '''
-+    #include <stdio.h>
-+    #include <stdint.h>
-+    #include <intrin.h>
-+
-+    uint32_t f1_ECX = 0;
-+    uint32_t f1_EDX = 0;
-+    uint32_t f7_EBX = 0;
-+    uint32_t f7_ECX = 0;
-+
-+    void get_support_flags()
-+    {
-+        int ids_max;
-+        int data[4];
-+
-+        /*
-+         * Calling __cpuid with 0x0 as the function_id argument
-+         * gets the number of the highest valid function ID.
-+         */
-+        __cpuid(data, 0);
-+        ids_max = data[0];
-+
-+        if (1 <= ids_max) {
-+            __cpuidex(data, 1, 0);
-+            f1_ECX = data[2];
-+            f1_EDX = data[3];
-+
-+            if (7 <= ids_max) {
-+                __cpuidex(data, 7, 0);
-+                f7_EBX = data[1];
-+                f7_ECX = data[2];
-+            }
-+        }
-+    }
-+
-+    int get_instruction_support()
-+    {
-+        get_support_flags();
-+
-+    #ifdef SSE3
-+        return (f1_ECX & (1UL << 0)) ? 1 : 0;
-+    #endif
-+    #ifdef PCLMUL
-+        return (f1_ECX & (1UL << 1)) ? 1 : 0;
-+    #endif
-+    #ifdef SSSE3
-+        return (f1_ECX & (1UL << 9)) ? 1 : 0;
-+    #endif
-+    #ifdef SSE4_1
-+        return (f1_ECX & (1UL << 19)) ? 1 : 0;
-+    #endif
-+    #ifdef SSE4_2
-+        return (f1_ECX & (1UL << 20)) ? 1 : 0;
-+    #endif
-+    #ifdef AES
-+        return (f1_ECX & (1UL << 25)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX
-+        return (f1_ECX & (1UL << 28)) ? 1 : 0;
-+    #endif
-+    #ifdef RDRND
-+        return (f1_ECX & (1UL << 30)) ? 1 : 0;
-+    #endif
-+    #ifdef SSE
-+        return (f1_EDX & (1UL << 25)) ? 1 : 0;
-+    #endif
-+    #ifdef SSE2
-+        return (f1_EDX & (1UL << 26)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX2
-+        return (f7_EBX & (1UL << 5)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512F
-+        return (f7_EBX & (1UL << 16)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512DQ
-+        return (f7_EBX & (1UL << 17)) ? 1 : 0;
-+    #endif
-+    #ifdef RDSEED
-+        return (f7_EBX & (1UL << 18)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512IFMA
-+        return (f7_EBX & (1UL << 21)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512CD
-+        return (f7_EBX & (1UL << 28)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512BW
-+        return (f7_EBX & (1UL << 30)) ? 1 : 0;
-+    #endif
-+    #ifdef AVX512VL
-+        return (f7_EBX & (1UL << 31)) ? 1 : 0;
-+    #endif
-+    #ifdef GFNI
-+        return (f7_ECX & (1UL << 8)) ? 1 : 0;
-+    #endif
-+    #ifdef VPCLMULQDQ
-+        return (f7_ECX & (1UL << 10)) ? 1 : 0;
-+    #endif
-+
-+        return -1;
-+    }
-+
-+    int main(int argc, char *argv[])
-+    {
-+        int res = get_instruction_support();
-+        if (res == -1) {
-+            printf("Unknown instruction set");
-+            return -1;
-+        }
-+        printf("%d", res);
-+
-+        return 0;
-+    }
-+'''
-+
-+# The data in table below can be found here:
-+# https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
-+# This table only contains CPUs that have SSE4.2, as this instruction set is required by DPDK.
-+# That means that in addition to the instruction sets mentioned in the table, all these CPUs
-+# also have ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
-+cpu_type_to_flags = {
-+       'x86-64-v2': [],
-+       'x86-64-v3': ['AVX', 'AVX2'],
-+       'x86-64-v4': ['AVX', 'AVX2', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-+         'nehalem': [],
-+          'corei7': [],
-+        'westmere': ['PCLMUL'],
-+     'sandybridge': ['AVX', 'PCLMUL'],
-+      'corei7-avx': ['AVX', 'PCLMUL'],
-+       'ivybridge': ['AVX', 'PCLMUL', 'RDRND'],
-+      'core-avx-i': ['AVX', 'PCLMUL', 'RDRND'],
-+         'haswell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
-+       'core-avx2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
-+       'broadwell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED'],
-+         'skylake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-+  'skylake-avx512': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-+     'cascadelake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-+      'cannonlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA'],
-+      'cooperlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-+  'icelake-client': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+  'icelake-server': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+       'tigerlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+      'rocketlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+       'alderlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+      'raptorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+      'meteorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+       'gracemont': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+       'arrowlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+     'arrowlake-s': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+       'lunarlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+     'pantherlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+  'sapphirerapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+   'emeraldrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+   'graniterapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+ 'graniterapids-d': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+   'diamondrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+      'silvermont': ['PCLMUL', 'RDRND'],
-+             'slm': ['PCLMUL', 'RDRND'],
-+        'goldmont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-+   'goldmont-plus': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-+         'tremont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES', 'GFNI'],
-+    'sierraforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+      'grandridge': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+'clearwaterforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-+          'bdver1': ['AVX', 'PCLMUL', 'AES'],
-+          'bdver2': ['AVX', 'PCLMUL', 'AES'],
-+          'bdver3': ['AVX', 'PCLMUL', 'AES'],
-+          'bdver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'AES'],
-+          'znver1': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-+          'znver2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-+          'znver3': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ'],
-+          'znver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+          'znver5': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-+          'btver2': ['AVX', 'PCLMUL', 'AES'],
-+        'lujiazui': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-+        'yongfeng': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-+      'shijidadao': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-+}
-+
-+if is_ms_compiler
-+    cc_avx2_flags = ['/arch:AVX2']
-+    cc_avx512_flags = ['/arch:AVX512']
-+else
-+    cc_avx2_flags = ['-mavx2']
-+    cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
-+endif
-+
- cc_has_avx512 = false
- target_has_avx512 = false
- if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
-@@ -30,12 +217,14 @@ if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
-         warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
-     else
-         cc_has_avx512 = true
--        target_has_avx512 = (
--                cc.get_define('__AVX512F__', args: machine_args) != '' and
--                cc.get_define('__AVX512BW__', args: machine_args) != '' and
--                cc.get_define('__AVX512DQ__', args: machine_args) != '' and
--                cc.get_define('__AVX512VL__', args: machine_args) != ''
--            )
-+        if not is_ms_compiler
-+            target_has_avx512 = (
-+                    cc.get_define('__AVX512F__', args: machine_args) != '' and
-+                    cc.get_define('__AVX512BW__', args: machine_args) != '' and
-+                    cc.get_define('__AVX512DQ__', args: machine_args) != '' and
-+                    cc.get_define('__AVX512VL__', args: machine_args) != ''
-+                )
-+        endif
+diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
+index ffa40c5d64..2973ed1a01 100644
+--- a/drivers/net/intel/i40e/meson.build
++++ b/drivers/net/intel/i40e/meson.build
+@@ -49,7 +49,7 @@ if arch_subdir == 'x86'
+             'i40e_rxtx_vec_avx2.c',
+             dependencies: [static_rte_ethdev, static_rte_kvargs, static_rte_hash],
+             include_directories: includes,
+-            c_args: [cflags, '-mavx2'])
++            c_args: [cflags, cc_avx2_flags])
+     objs += i40e_avx2_lib.extract_objects('i40e_rxtx_vec_avx2.c')
+ 
+     if cc_has_avx512
+diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
+index 19cd1cfbc8..f7eac7c57a 100644
+--- a/drivers/net/intel/iavf/meson.build
++++ b/drivers/net/intel/iavf/meson.build
+@@ -37,7 +37,7 @@ if arch_subdir == 'x86'
+             'iavf_rxtx_vec_avx2.c',
+             dependencies: [static_rte_ethdev],
+             include_directories: includes,
+-            c_args: [cflags, '-mavx2'])
++            c_args: [cflags, cc_avx2_flags])
+     objs += iavf_avx2_lib.extract_objects('iavf_rxtx_vec_avx2.c')
+ 
+     if cc_has_avx512
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index a34b7c966a..cbdf38c1c4 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -43,7 +43,7 @@ if arch_subdir == 'x86'
+             'ice_rxtx_vec_avx2.c',
+             dependencies: [static_rte_ethdev, static_rte_hash],
+             include_directories: includes,
+-            c_args: [cflags, '-mavx2'])
++            c_args: [cflags, cc_avx2_flags])
+     objs += ice_avx2_lib.extract_objects('ice_rxtx_vec_avx2.c')
+ 
+     if cc_has_avx512
+diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
+index 802b13035b..4b272d02b1 100644
+--- a/drivers/net/intel/idpf/meson.build
++++ b/drivers/net/intel/idpf/meson.build
+@@ -23,7 +23,7 @@ if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
+         'idpf_common_rxtx_avx2.c',
+         dependencies: [static_rte_ethdev, static_rte_hash],
+         include_directories: includes,
+-        c_args: [cflags, '-mavx2'])
++        c_args: [cflags, cc_avx2_flags])
+     objs += idpf_avx2_lib.extract_objects('idpf_common_rxtx_avx2.c')
+ 
+     if cc_has_avx512
+diff --git a/drivers/net/nfp/meson.build b/drivers/net/nfp/meson.build
+index 39762bd45a..0a12b7dce7 100644
+--- a/drivers/net/nfp/meson.build
++++ b/drivers/net/nfp/meson.build
+@@ -61,7 +61,7 @@ if arch_subdir == 'x86'
+                 avx2_sources,
+                 dependencies: [static_rte_ethdev, static_rte_bus_pci],
+                 include_directories: includes,
+-                c_args: [cflags, '-mavx2']
++                c_args: [cflags, cc_avx2_flags]
+         )
+ 
+         objs += nfp_avx2_lib.extract_all_objects(recursive: true)
+diff --git a/drivers/net/octeon_ep/meson.build b/drivers/net/octeon_ep/meson.build
+index d5d40b23a1..1b34db3edc 100644
+--- a/drivers/net/octeon_ep/meson.build
++++ b/drivers/net/octeon_ep/meson.build
+@@ -18,13 +18,13 @@ if arch_subdir == 'x86'
+     if cc.get_define('__AVX2__', args: machine_args) != ''
+         cflags += ['-DCC_AVX2_SUPPORT']
+         sources += files('cnxk_ep_rx_avx.c')
+-    elif cc.has_argument('-mavx2')
++    elif cc.has_multi_arguments(cc_avx2_flags)
+         cflags += ['-DCC_AVX2_SUPPORT']
+         otx_ep_avx2_lib = static_library('otx_ep_avx2_lib',
+                         'cnxk_ep_rx_avx.c',
+                         dependencies: [static_rte_ethdev, static_rte_pci, static_rte_bus_pci],
+                         include_directories: includes,
+-                        c_args: [cflags, '-mavx2'])
++                        c_args: [cflags, cc_avx2_flags])
+         objs += otx_ep_avx2_lib.extract_objects('cnxk_ep_rx_avx.c')
      endif
  endif
- 
-@@ -47,42 +236,139 @@ if not is_ms_compiler
-     endif
- endif
- 
--# enable restricted transactional memory intrinsics
--# https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
--if cc.get_id() != 'msvc'
--    machine_args += '-mrtm'
--endif
-+if is_ms_compiler
-+    # Determine cpu_flags for a given configuration.
-+    # SSE instructions up to 4.2 are required for DPDK.
-+    cpu_flags = ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
-+
-+    message('cpu_instruction_set: @0@'.format(cpu_instruction_set))
- 
--base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
--foreach f:base_flags
--    compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
--endforeach
--
--optional_flags = [
--        'AES',
--        'AVX',
--        'AVX2',
--        'AVX512BW',
--        'AVX512CD',
--        'AVX512DQ',
--        'AVX512F',
--        'AVX512VL',
--        'PCLMUL',
--        'RDRND',
--        'RDSEED',
--        'VPCLMULQDQ',
--]
--foreach f:optional_flags
--    if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
--        if f == 'PCLMUL' # special case flags with different defines
--            f = 'PCLMULQDQ'
--        elif f == 'RDRND'
--            f = 'RDRAND'
-+    if cpu_instruction_set == ''
-+        # Nothing to do as cpu_flags already holds all the required flags.
-+    elif cpu_instruction_set == 'native'
-+        # MSVC behaves differently than GCC regarding supported instruction sets.
-+        # While GCC will create macros like __AVX512F__ when such instruction set is
-+        # supported by the current CPU, MSVC does not do that. MSVC will create that
-+        # macro when parameter /arch:AVX512 is passed to the compiler, even when the
-+        # CPU does not have that instruction set (by design). So there's a need to
-+        # look at CPUID flags to figure out what is really supported by the CPU, so
-+        # that the correct /arch value can be passed to the compiler.
-+        # The macros also need to be explicitly defined, as /arch will not create all
-+        # macros GCC creates under the same conditions.
-+        # As an example, /arch:AVX512 creates __AVX512BW__, but does not create __SSE2__.
-+        # More details available here:
-+        # https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
-+
-+        optional_flags = [
-+                'PCLMUL',
-+                'AES',
-+                'AVX',
-+                'RDRND',
-+                'AVX2',
-+                'AVX512F',
-+                'AVX512BW',
-+                'AVX512DQ',
-+                'AVX512VL',
-+                'AVX512CD',
-+                'AVX512IFMA',
-+                'GFNI',
-+                'RDSEED',
-+                'VPCLMULQDQ',
-+        ]
-+        foreach f:optional_flags
-+            result = cc.run(cpuid_code, args: '-D@0@'.format(f),
-+                            name: 'instruction set @0@'.format(f))
-+            has_instr_set = result.returncode() == 0 and result.stdout() == '1'
-+            if has_instr_set
-+                cpu_flags += f
-+            endif
-+            message('Target has @0@: @1@'.format(f, has_instr_set))
-+        endforeach
-+    else
-+        # An explicit cpu_instruction_set was provided. Get cpu_flags
-+        # from cpu_type_to_flags table.
-+        if cpu_instruction_set not in cpu_type_to_flags
-+            error('CPU not known or not supported. Please update the table with known CPUs if needed.')
-         endif
--        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-+        cpu_flags += cpu_type_to_flags[cpu_instruction_set]
-+    endif
-+
-+    # Now that all cpu_flags are known, set compile_time_cpuflags and also
-+    # machine_args to ensure that the instruction set #defines (like __SSE2__)
-+    # are always present in the preprocessor.
-+    message('cpu_flags: @0@'.format(cpu_flags))
-+
-+    foreach flag:cpu_flags
-+        machine_args += '/D__@0@__'.format(flag)
-+        if flag == 'PCLMUL'
-+            flag = 'PCLMULQDQ'
-+        elif flag == 'RDRND'
-+            flag = 'RDRAND'
-+        endif
-+        compile_time_cpuflags += ['RTE_CPUFLAG_' + flag]
-+    endforeach
-+
-+    target_has_avx512 = ('AVX512F'  in cpu_flags and
-+                         'AVX512BW' in cpu_flags and
-+                         'AVX512DQ' in cpu_flags and
-+                         'AVX512VL' in cpu_flags)
-+
-+    # Decide which instruction sets should be used by the compiler.
-+    # With MSVC, intrinsic functions are always enabled. However, for the
-+    # compiler to use an extended instruction set for automatically
-+    # generated code "/arch" needs to be passed. So we instruct the compiler
-+    # to use the largest set that is supported by the CPU. It is implied that
-+    # smaller sets than the largest selected are included, as described here:
-+    # https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-+    if 'RTE_CPUFLAG_AVX512F' in compile_time_cpuflags
-+        machine_args += ['/arch:AVX512']
-+    elif 'RTE_CPUFLAG_AVX2' in compile_time_cpuflags
-+        machine_args += ['/arch:AVX2']
-+    elif 'RTE_CPUFLAG_AVX' in compile_time_cpuflags
-+        machine_args += ['/arch:AVX']
-+    else
-+        # SSE4.2 is expected to always be available
-+        machine_args += ['/arch:SSE4.2']
-     endif
--endforeach
- 
-+    message('machine_args: @0@'.format(machine_args))
-+else
-+    # enable restricted transactional memory intrinsics
-+    # https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
-+    machine_args += '-mrtm'
-+
-+    base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
-+    foreach f:base_flags
-+        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-+    endforeach
-+
-+    optional_flags = [
-+            'AES',
-+            'AVX',
-+            'AVX2',
-+            'AVX512BW',
-+            'AVX512CD',
-+            'AVX512DQ',
-+            'AVX512F',
-+            'AVX512VL',
-+            'PCLMUL',
-+            'RDRND',
-+            'RDSEED',
-+            'VPCLMULQDQ',
-+    ]
-+    foreach f:optional_flags
-+        if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
-+            if f == 'PCLMUL' # special case flags with different defines
-+                f = 'PCLMULQDQ'
-+            elif f == 'RDRND'
-+                f = 'RDRAND'
-+            endif
-+            compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-+        endif
-+    endforeach
-+endif
-+
-+message('compile_time_cpuflags: @0@'.format(compile_time_cpuflags))
- 
- dpdk_conf.set('RTE_ARCH_X86', 1)
- if dpdk_conf.get('RTE_ARCH_64')
 -- 
 2.48.1.vfs.0.0
 
