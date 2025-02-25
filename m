@@ -2,35 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E572FC021B2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 09:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6C8C021B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 09:19:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF1FF427C5;
-	Tue, 25 Feb 2025 10:19:33 +0100 (CET)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
- by mails.dpdk.org (Postfix) with ESMTP id A9F87427C5
+	by mails.dpdk.org (Postfix) with ESMTP id 1D8B042D9F;
+	Tue, 25 Feb 2025 10:19:35 +0100 (CET)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+ by mails.dpdk.org (Postfix) with ESMTP id B56FC4281D
  for <dev@dpdk.org>; Tue, 25 Feb 2025 10:19:32 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.88.234])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z2Blg3rBFzJ1Fq;
- Tue, 25 Feb 2025 17:15:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z2BpW4qdQz1HM87;
+ Tue, 25 Feb 2025 17:17:55 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 75D091402DB;
+ by mail.maildlp.com (Postfix) with ESMTPS id 2DEB5180044;
  Tue, 25 Feb 2025 17:19:30 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 17:19:30 +0800
+ 15.2.1544.11; Tue, 25 Feb 2025 17:19:29 +0800
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <stephen@networkplumber.org>,
  <aman.deep.singh@intel.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH 1/4] app/testpmd: remove restrict of number of TCs in DCB
- command
-Date: Tue, 25 Feb 2025 17:19:26 +0800
-Message-ID: <20250225091929.25072-2-fengchengwen@huawei.com>
+Subject: [PATCH 0/4] enhance testpmd DCB command
+Date: Tue, 25 Feb 2025 17:19:25 +0800
+Message-ID: <20250225091929.25072-1-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250225091929.25072-1-fengchengwen@huawei.com>
-References: <20250225091929.25072-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.50.165.33]
@@ -49,48 +46,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the "port config 0 dcb ..." command only supports 4 or 8
-TCs. Other number of TCs may be used in actual applications.
+This patchset enhance the testpmd DCB command features:
+1) remove restrict of number of TCs (currently its 4 or 8)
+2) support config prio-tc map
+3) support don't adjust queue num
+4) support disable DCB
 
-This commit removes this restriction.
+Chengwen Feng (4):
+  app/testpmd: remove restrict of number of TCs in DCB command
+  app/testpmd: support config prio-tc map in DCB command
+  app/testpmd: support don't adjust queue num in DCB command
+  app/testpmd: support disable DCB command
 
-Cc: stable@dpdk.org
+ app/test-pmd/cmdline.c                      | 184 ++++++++++++++++++--
+ app/test-pmd/testpmd.c                      |  96 ++++++----
+ app/test-pmd/testpmd.h                      |   5 +-
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |   6 +-
+ 4 files changed, 236 insertions(+), 55 deletions(-)
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c                      | 4 ++--
- doc/guides/testpmd_app_ug/testpmd_funcs.rst | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 86d763b66a..c23b811764 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -3469,9 +3469,9 @@ cmd_config_dcb_parsed(void *parsed_result,
- 		return;
- 	}
- 
--	if ((res->num_tcs != RTE_ETH_4_TCS) && (res->num_tcs != RTE_ETH_8_TCS)) {
-+	if ((res->num_tcs <= 1 || res->num_tcs > RTE_ETH_8_TCS)) {
- 		fprintf(stderr,
--			"The invalid number of traffic class, only 4 or 8 allowed.\n");
-+			"The invalid number of traffic class, only 2~8 allowed.\n");
- 		return;
- 	}
- 
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index eeef49500f..38bc00705f 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -2167,7 +2167,7 @@ Set the DCB mode for an individual port::
- 
-    testpmd> port config (port_id) dcb vt (on|off) (traffic_class) pfc (on|off)
- 
--The traffic class should be 4 or 8.
-+The traffic class could be 2~8.
- 
- port config - Burst
- ~~~~~~~~~~~~~~~~~~~
 -- 
 2.17.1
 
