@@ -2,39 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D089C021B2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 09:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6BEC021B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 09:43:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 317BD42DDF;
-	Tue, 25 Feb 2025 10:19:39 +0100 (CET)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
- by mails.dpdk.org (Postfix) with ESMTP id D3BDA42D90
- for <dev@dpdk.org>; Tue, 25 Feb 2025 10:19:32 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z2Blh2QpzzJ1Fx;
- Tue, 25 Feb 2025 17:15:28 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 49602140203;
- Tue, 25 Feb 2025 17:19:31 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 17:19:30 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>,
- <aman.deep.singh@intel.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH 4/4] app/testpmd: support disable DCB command
-Date: Tue, 25 Feb 2025 17:19:29 +0800
-Message-ID: <20250225091929.25072-5-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250225091929.25072-1-fengchengwen@huawei.com>
-References: <20250225091929.25072-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E377E42DBE;
+	Tue, 25 Feb 2025 10:43:40 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B4A3427C5;
+ Tue, 25 Feb 2025 10:43:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1740476618; x=1772012618;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=vzy4cBPs4Oe4jU7KDAFKEjxjyW3QZu1T9uDf9Ory3U4=;
+ b=YPe+//sxgTAOAlvIG9Lq8MmIdk2ojV0v6WTDdsUaOB1mG3Ij1k9vcBOY
+ jbDZLBFGwdN16B+kN0hw1/c3mXKs0CMbR2zvvh2aB6hhAD8xbP4MTmC09
+ ttWcfbcMx76uPY9SpIxA5MJs215dfPkpAmWdEhhcla1Afr6cXsAaVF6Ux
+ wKn5cADFmmxmSxE70tpc1W71hx3gXjfJ5ZXOy9AIn1aYw5F9Xzbws8MzR
+ BJOPy4Yy8pxc9Z52RGp+lHvt1GlyCTYFPZY8ZyAiyceD+D38utnYnZmZJ
+ fa4HjU8RIIOkQzFODff4YzaBq40gTHnq81EsI/etwIZILA4FCeBVTbszW w==;
+X-CSE-ConnectionGUID: pu+ZfnpHQYyZv65pGovrQA==
+X-CSE-MsgGUID: fxaUhmxlTZm7r5a0ISdjNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40459285"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; d="scan'208";a="40459285"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2025 01:43:29 -0800
+X-CSE-ConnectionGUID: ZuHJpqegRgKig4YJOZC7IQ==
+X-CSE-MsgGUID: AtQe7lugRLCi/aQFoFtgdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; d="scan'208";a="139571675"
+Received: from unknown (HELO localhost.localdomain) ([10.239.252.253])
+ by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2025 01:43:27 -0800
+From: Mingjin Ye <mingjinx.ye@intel.com>
+To: dev@dpdk.org
+Cc: Mingjin Ye <mingjinx.ye@intel.com>, stable@dpdk.org,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v2] net/ixgbe: fix min Rx/Tx descriptors
+Date: Tue, 25 Feb 2025 09:12:36 +0000
+Message-Id: <20250225091236.357008-1-mingjinx.ye@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250221082318.331815-1-mingjinx.ye@intel.com>
+References: <20250221082318.331815-1-mingjinx.ye@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,130 +62,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After the "port config 0 dcb ..." command is invoked, no command is
-available to disable DCB.
+The minimum free packet threshold (tx_free_thresh) and the minimum RS bit
+threshold (tx_rs_thresh) both have a default value of 32. Therefore, the
+default minimum number of ring descriptors value is 64.
 
-This commit introduces disable DCB when num_tcs is 1, so user could
-disable the DCB by command:
-  port config 0 dcb vt off 1 pfc off
+For reference, see "Configuration of Transmit Queues" in
+doc/guides/prog_guide/ethdev/ethdev.rst
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+Fixes: dee5f1fd5fc7 ("ixgbe: get queue info and descriptor limits")
+Cc: stable@dpdk.org
+
+Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
 ---
- app/test-pmd/cmdline.c                      |  4 +--
- app/test-pmd/testpmd.c                      | 40 +++++++++++++--------
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  2 +-
- 3 files changed, 29 insertions(+), 17 deletions(-)
+v2: Change doc.
+---
+ doc/guides/nics/ixgbe.rst            | 5 +++--
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index ef65a75dc7..517e8d47b6 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -3622,9 +3622,9 @@ cmd_config_dcb_parsed(void *parsed_result,
- 		return;
- 	}
+diff --git a/doc/guides/nics/ixgbe.rst b/doc/guides/nics/ixgbe.rst
+index c5c6a6c34b..aaed324e15 100644
+--- a/doc/guides/nics/ixgbe.rst
++++ b/doc/guides/nics/ixgbe.rst
+@@ -68,11 +68,12 @@ Ensure that the following pre-conditions are satisfied:
  
--	if ((res->num_tcs <= 1 || res->num_tcs > RTE_ETH_8_TCS)) {
-+	if ((res->num_tcs < 1 || res->num_tcs > RTE_ETH_8_TCS)) {
- 		fprintf(stderr,
--			"The invalid number of traffic class, only 2~8 allowed.\n");
-+			"The invalid number of traffic class, only 1~8 allowed.\n");
- 		return;
- 	}
+ *   (rxq->nb_rx_desc % rxq->rx_free_thresh) == 0
  
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index b11762f698..5e0892d99b 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -4194,6 +4194,14 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
- 		eth_conf->dcb_capability_en = RTE_ETH_DCB_PG_SUPPORT;
- }
- 
-+static void
-+clear_eth_dcb_conf(struct rte_eth_conf *eth_conf)
-+{
-+	eth_conf->rxmode.mq_mode &= ~(RTE_ETH_MQ_RX_DCB | RTE_ETH_MQ_RX_VMDQ_DCB);
-+	eth_conf->txmode.mq_mode = RTE_ETH_MQ_TX_NONE;
-+	eth_conf->dcb_capability_en = 0;
-+}
+-*   rxq->nb_rx_desc  < (IXGBE_MAX_RING_DESC - RTE_PMD_IXGBE_RX_MAX_BURST)
++*   rxq->nb_rx_desc >= IXGBE_MIN_RING_DESC
 +
- int
- init_port_dcb_config(portid_t pid,
- 		     enum dcb_mode_enable dcb_mode,
-@@ -4217,16 +4225,19 @@ init_port_dcb_config(portid_t pid,
- 	/* retain the original device configuration. */
- 	memcpy(&port_conf, &rte_port->dev_conf, sizeof(struct rte_eth_conf));
++*   rxq->nb_rx_desc <= IXGBE_MAX_RING_DESC
  
--	/* set configuration of DCB in vt mode and DCB in non-vt mode */
--	get_eth_dcb_conf(&port_conf, dcb_mode, num_tcs, pfc_en, prio_tc, prio_tc_en);
--
--	port_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
--	/* remove RSS HASH offload for DCB in vt mode */
--	if (port_conf.rxmode.mq_mode == RTE_ETH_MQ_RX_VMDQ_DCB) {
--		port_conf.rxmode.offloads &= ~RTE_ETH_RX_OFFLOAD_RSS_HASH;
--		for (i = 0; i < nb_rxq; i++)
--			rte_port->rxq[i].conf.offloads &=
--				~RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+	if (num_tcs > 1) {
-+		/* set configuration of DCB in vt mode and DCB in non-vt mode */
-+		get_eth_dcb_conf(&port_conf, dcb_mode, num_tcs, pfc_en, prio_tc, prio_tc_en);
-+		port_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
-+		/* remove RSS HASH offload for DCB in vt mode */
-+		if (port_conf.rxmode.mq_mode == RTE_ETH_MQ_RX_VMDQ_DCB) {
-+			port_conf.rxmode.offloads &= ~RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+			for (i = 0; i < nb_rxq; i++)
-+				rte_port->rxq[i].conf.offloads &=
-+					~RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+		}
-+	} else {
-+		clear_eth_dcb_conf(&port_conf);
- 	}
+ These conditions are checked in the code.
  
- 	/* re-configure the device . */
-@@ -4241,7 +4252,8 @@ init_port_dcb_config(portid_t pid,
- 	/* If dev_info.vmdq_pool_base is greater than 0,
- 	 * the queue id of vmdq pools is started after pf queues.
- 	 */
--	if (dcb_mode == DCB_VT_ENABLED &&
-+	if (num_tcs > 1 &&
-+	    dcb_mode == DCB_VT_ENABLED &&
- 	    rte_port->dev_info.vmdq_pool_base > 0) {
- 		fprintf(stderr,
- 			"VMDQ_DCB multi-queue mode is nonsensical for port %d.\n",
-@@ -4249,7 +4261,7 @@ init_port_dcb_config(portid_t pid,
- 		return -1;
- 	}
+-Scattered packets are not supported in this mode.
+ If an incoming packet is greater than the maximum acceptable length of one "mbuf" data size (by default, the size is 2 KB),
+ vPMD for RX would be disabled.
  
--	if (keep_qnum == 0) {
-+	if (num_tcs > 1 && keep_qnum == 0) {
- 		/* Assume the ports in testpmd have the same dcb capability
- 		 * and has the same number of rxq and txq in dcb mode
- 		 */
-@@ -4287,10 +4299,10 @@ init_port_dcb_config(portid_t pid,
- 	if (retval != 0)
- 		return retval;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+index 278f665108..54569c7ade 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+@@ -26,7 +26,7 @@
+  * descriptors should meet the following condition:
+  *      (num_ring_desc * sizeof(rx/tx descriptor)) % 128 == 0
+  */
+-#define	IXGBE_MIN_RING_DESC	32
++#define	IXGBE_MIN_RING_DESC	64
+ #define	IXGBE_MAX_RING_DESC	8192
  
--	rte_port->dcb_flag = 1;
-+	rte_port->dcb_flag = num_tcs > 1 ? 1 : 0;
- 
- 	/* Enter DCB configuration status */
--	dcb_config = 1;
-+	dcb_config = num_tcs > 1 ? 1 : 0;
- 
- 	return 0;
- }
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 44eed3f49d..6ad83ae50d 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -2167,7 +2167,7 @@ Set the DCB mode for an individual port::
- 
-    testpmd> port config (port_id) dcb vt (on|off) (traffic_class) pfc (on|off) prio-tc (prio-tc) keep-qnum
- 
--The traffic class could be 2~8.
-+The traffic class could be 1~8, if the value is 1, DCB is disabled.
- The prio-tc field here is optional, if not specified then the prio-tc use default configuration.
- The keep-qnum field here is also optional, if specified then don't adjust Rx/Tx queue number.
- 
+ #define RTE_PMD_IXGBE_TX_MAX_BURST 32
 -- 
-2.17.1
+2.25.1
 
