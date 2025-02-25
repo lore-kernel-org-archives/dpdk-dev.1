@@ -2,154 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC66C021B2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 14:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7A7C021B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 14:28:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFEEE42E97;
-	Tue, 25 Feb 2025 15:14:00 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id DCC56427C5
- for <dev@dpdk.org>; Tue, 25 Feb 2025 15:13:58 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51ONUjMq008228;
- Tue, 25 Feb 2025 06:13:58 -0800
-Received: from nam10-bn7-obe.outbound.protection.outlook.com
- (mail-bn7nam10lp2048.outbound.protection.outlook.com [104.47.70.48])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4512gd1r9p-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 25 Feb 2025 06:13:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0BC742E86;
+	Tue, 25 Feb 2025 15:28:14 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 7B92C40E45
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 15:28:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1740493693; x=1772029693;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=HbSIPAjJkp1jWpBoqzhjFEMyOUplyykP1rcxxzY0deE=;
+ b=JjfzEvDEY2rPmMutHvEWx1cEPCCj4sxg1t5RzBdBkdIMySixcUye89Rr
+ tApaeDRHHWBD/eyspT/ZRltvDjfXG1ulthWIjPtPWP4mRkvKLGIQcXLhZ
+ fbQk5jCqetN+bSNKK5gqelB4a+CsisCF4sfgCpOdc41DxMhmYYX/2H3Sm
+ C2PunwasRbrQYLmJ4f8+8k7JgYrov2X0sqF2EUOBa7aiFNx1AU+ekrUEm
+ zef5snOp4nMu7hHn4utthd7/+mfIaYz0rO2UXtWYEF7v6uizMXurceOBr
+ wa5I1OuqiHjUOAtvFNQTIhNVVuVbOeFKeCDuz6ac7+RBs8BpDtICApxHs Q==;
+X-CSE-ConnectionGUID: 2DPOT1VWRsa2YqtG1uvpLQ==
+X-CSE-MsgGUID: egNKvrAlSHimff1jhQc1VA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41504121"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; d="scan'208";a="41504121"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2025 06:28:11 -0800
+X-CSE-ConnectionGUID: x1ScUGClTPiBTavaH8l3mQ==
+X-CSE-MsgGUID: my6gVYpnROi7RcTYpueCPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="121655074"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2025 06:28:12 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Tue, 25 Feb 2025 06:28:10 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 25 Feb 2025 06:28:10 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 25 Feb 2025 06:28:10 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kUETCnimtyMP1i3i+MmNUnAsVRjuTxOHvkLjLTcqBEBEkz6P9VXQm0FuCYqBA9cWEMYsC60hFmyTDtiG/y8gExUr+DwtUxwKntEP8t4MJaMOooMkRzf2MTUc90tCrigQBvguSBXaJTyVc942YaqcUvXP6TvKb/3urPJGZ0eoWHA+JslCVxB5E/5ptnA+z8AISIy/imDHIkoQXAlOGNB4wQGZZuxtaxIE9cXehj30nwzwO0FYT57yYf4dreBl/GL2l5Yq7SDh9lpgskq9eeN5hQ9NbT6Y2gRBhvQk/+8cMY9wl1G7OT0jEzEwJM4c4ffctWjsua0qb1/DgvosYL6FQg==
+ b=OqH4oTUrTWl7AC+r3XteC7fKuqId31erGU4q0BbHFlcl9jlFESaaNjrWFLxsX/vj4BYMISIIr3YMmofA+Y70vEMp9DaA9wxazugAOIuYcYCW8akm92Sl9is14eO/fhbWOaas1iPpTu9U2h5tRZo27MyPIGbULMF3+V8z7C2gdGUo368HbTzz82J47TEg9tSBQjJzYmqRpqmGUCewpScHK1Lxrv67GRbctTTrABNx/9tnnGPwrmDtUB0eBzMUhTE5VeqDmPRnzHCQ6XNUhAG0dV5OviW/JGB5xUrCt7pou+20yv+DjfdtKtVkPc/TBv5WYPn/igpiz1HMAWcbGoDypQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s4S+rOpqaWDiVluA243UZ79fFrMsIlc5APQFhkQvWSE=;
- b=vh/7bcAIHuiCbnMkeuE6llFXM5yytCVKlCijDACmTVsXKaZn7FafSuuGDA3SPtinlfDvGUtx4L1gQihhGUT2nRxNHW7GZfVrNfj+9oZ7H8buuqAvL6HMEpmMFNykXKbVt0CL7Jy6L9dntsBH4nfRpr8mbUsqANh/Q8BrEGF7OnpQ5Yoqhnbzaj3CO5lx8nx9VNu+IKisEXOpSe2VA+aWAoDM9Pn4hdPK3dHmUz9K2sba90WSWepHUg77NuFsSmhf4x4wCK4Tqotc0H01EIBmvcfe+csJJ/BSEiUOx+zNP36vHpp3CrufPZooR5LE5rCJKIKKT8Vxzrnfp3VcFVoO4Q==
+ bh=7laoN/JT6HTp85KkKU/diJsZgbnKzhmKmJ8oGnj1dX4=;
+ b=gMIXtpZmdUq8GRqGaJCNMkXzFzBohKPZfyUPSBf3AjtURj3e+QMVhBgHNd1wnXmWokxGuAvbVqQ7zm14Cqcv33QTg8/WCwyub1p84DeqH1aI0gosNWA+hUVrXpXk/DaVqPBzuRrZgm4xw4HWPPDjzfSyeOsH3zk88+w7arsdbcnqHHXCJ1qxDfCrMgzLNyMmdjcPI96WaJ2M/c2v6KWu16SmboYgbKXq1OkwYf3VIKXAFBcm9ARVh55cENjpdIgRWgeht0i844WpaDTy7d7s3qGr8gkyxXH5xcoV76VbP6fA/eLBXUL4CYz/z/7DWkLf+n+no6jpzowOX5IUm3NQ2Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s4S+rOpqaWDiVluA243UZ79fFrMsIlc5APQFhkQvWSE=;
- b=KnmvJT4mU9Lsu9Gu9oA1NsF1Gjw01Hik2IGctHlhvJyNaykBvd5/l40vS9bJJeKHkUeAUvxef+L52qZacZqk4oeSzsN2neRA5GeYLjQHQj8BDL/aHSiXv3/hUlEBSPjetfRVKa1CofBTX6liE8gSgexxzx2JVisI8BSLpYv5Bcc=
-Received: from PH0PR18MB5167.namprd18.prod.outlook.com (2603:10b6:510:168::7)
- by BN9PR18MB4297.namprd18.prod.outlook.com (2603:10b6:408:11b::24)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
- 2025 14:13:53 +0000
-Received: from PH0PR18MB5167.namprd18.prod.outlook.com
- ([fe80::fd38:dcb3:d404:a4b6]) by PH0PR18MB5167.namprd18.prod.outlook.com
- ([fe80::fd38:dcb3:d404:a4b6%3]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 14:13:53 +0000
-From: Amit Prakash Shukla <amitprakashs@marvell.com>
-To: Shiva Shankar Kommula <kshankar@marvell.com>, Jerin Jacob
- <jerinj@marvell.com>, Vamsi Krishna Attunuru <vattunuru@marvell.com>,
- "fengchengwen@huawei.com" <fengchengwen@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
- Bhagavatula <pbhagavatula@marvell.com>
-Subject: RE: [PATCH RFC 3/4] doc: update prog guide to use rte_dma_op
-Thread-Topic: [PATCH RFC 3/4] doc: update prog guide to use rte_dma_op
-Thread-Index: AQHbcltDVZikB09c60uZXCDNwjAl0rNYOa0Q
-Date: Tue, 25 Feb 2025 14:13:53 +0000
-Message-ID: <PH0PR18MB5167AFAA73349A4E69B98552C8C32@PH0PR18MB5167.namprd18.prod.outlook.com>
-References: <20250129143649.3887989-1-kshankar@marvell.com>
- <20250129143649.3887989-3-kshankar@marvell.com>
-In-Reply-To: <20250129143649.3887989-3-kshankar@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB5167:EE_|BN9PR18MB4297:EE_
-x-ms-office365-filtering-correlation-id: 1d9de571-1c97-4435-c2da-08dd55a6a277
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|7053199007|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?Hxxmx0RX1KB8aycP1++0+NzAUQlSwvDiRfVY2XXCxa/t/9dlgy9rEzUSDII/?=
- =?us-ascii?Q?d1sVrCDHn80XgPZvC+wzInvNWUN866eFUCr55IVWWZ6Xvht+4umImguO/LEO?=
- =?us-ascii?Q?dG7rZDFN1kiqMtX/a9G3clLoHCs4HOOtSd0EgFeIoW9yMNHLSAHYYUVKqxyT?=
- =?us-ascii?Q?+XGsyR2c6/7tNRukCshx4Z/GHz7BRV2hzhWIqfjp7p6dMim2H2UVrWz30edK?=
- =?us-ascii?Q?xXo7ohoezi3tS7BQl4pPx/MpOPng2e2v6RZXoT9E/f6Enk+XamL5YyrjkpMK?=
- =?us-ascii?Q?jZojiGBZqdTTQ1cIaOASyDVmrV5hb8h2wPwOvaAPsoNZ+TuH1qFA3nKhn2QH?=
- =?us-ascii?Q?kYvcGSRROMoW/2lHHA1up+ju2oz7SUZ8va5uuwCN3NSsJbiT+INADTS+91qY?=
- =?us-ascii?Q?kbiP8AcqSSQH1sY8oOmQg0M6EMY60sA9QCS68hERU+O9KpzKKNwbDuh4AkkH?=
- =?us-ascii?Q?soWBM2KrbTXdjk4q0/Gxok10xtIl5wDfphLXaY1LjhdO1iLbA0pLm7E9giTB?=
- =?us-ascii?Q?6g2YSJi7UIubzP2ERYrBz/yvJ5uc+V2JP387qBmK1FCZkCorrJIgFMf2RKlf?=
- =?us-ascii?Q?zR4HinIfJhsHUtSv+R00laH1pUrYdz5jnbB4beOT7VI5PNv3Vu67tsdFMED8?=
- =?us-ascii?Q?lr7O4UqKMWj2nA/TpkCntMDAuoaxKAdj96xeztoSbXCerUIHJJ55hsE/cfRN?=
- =?us-ascii?Q?JAAe/prH8UYd34q1h35eMpQN4JpsbFx8OT/9cnyxQBpPOvpVr7yHLI//tmGC?=
- =?us-ascii?Q?XMvgTcSllCCu+RO6XzwxaxCMF/LJWZR/JpNQydmvN6C/KlLQYJNUo+G1C5SU?=
- =?us-ascii?Q?9wobJ5TmddxGYTJQEyXrPkWq/lV3luiJ8rVLGoX2lNkNHLrw1vDaF4TlMRP+?=
- =?us-ascii?Q?3rUwdCuLRtJ4DrPSbL19vCd5OLCiE6L0DWdUdARPdJF/AcYEOQRyMQzYWySq?=
- =?us-ascii?Q?M+xhP7kz/icJb4fwlWsmRrV8p8kPRn+254EWGqTwOqbJhnXKvZzJgGw+KM8K?=
- =?us-ascii?Q?1tKh5cbaYWOnq0dOzfW/t89aknovZnDpeXCTBEInT5tmR7djKUyb4S3t/PjR?=
- =?us-ascii?Q?2Tf+A63Pz9BBFsK8OfTbQJ2ZpGQBYAqAUBQq248lew5aKclB3K6JJYV/PE4J?=
- =?us-ascii?Q?F55oPpR/8l6JUeoqzm1GxKCoGfMvNBcS6r3ZkKxf9DimI1IEBvblqmF+u9lc?=
- =?us-ascii?Q?CrEhYRTSVpJ7+Ja7jfm2GKc5UJ4tHg+JIKw5kNiNoKVPaSrWbD9JDKTZuIXG?=
- =?us-ascii?Q?s7PqiPr5Tp+10GftzpxWHhgsQdzI3wgeRAqA48hB+B86mzzh6+xxLZuHwY0/?=
- =?us-ascii?Q?26cKmz3Rv3q7WOethTFQujFEd8h7rZnJS7yU3+IRVor7Z9wetYPDqeYRn0is?=
- =?us-ascii?Q?pANHc7PXSCemYEfxLr4SgjqpBT04jmSe0nP2UrkdWpv9seQBmTLHqpv0Larr?=
- =?us-ascii?Q?nEvOwdKpu2hWtMzI/UrT4phjoCaPgj1x?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR18MB5167.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700018); DIR:OUT;
- SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+kM+uAwFYpTtD3MjMXG5o5k8wmJfGKsHqdaHnetjySvF+sxpx43xHc2Rj0+U?=
- =?us-ascii?Q?PeJGxQjtcVL5OyzewKcwmhBw913McPxfjis1Zz+jybGXkkyHktwZJZmXHuCX?=
- =?us-ascii?Q?hAMOJVNGYp5ZGNO/B3hAczypj5PHOc9p7w83CuzYOed3pE84n74qZbXns94C?=
- =?us-ascii?Q?qvbpQ8jnaDxgFZWWoq+6oZrNqs635LKVAgpT3l8VSGt2e3FpdlxUrEy1xLYT?=
- =?us-ascii?Q?L4htCsSkgoIFl57H07eFptGE2MNg8BhN6K8R+aAP1ddMeHnY4QlUOrm9mYie?=
- =?us-ascii?Q?d4PPFyE0GeFtQ8lTR7pW0VUbiwfFIzDnjcs/KphKZhcSJjrfpufh8DZzjovX?=
- =?us-ascii?Q?j2gLtFMnGkUURVUxG7P4CiAYGmGmiuoEzd1UuAxA+IxlWDbOqQrmlnwE4mE1?=
- =?us-ascii?Q?IF8Rypj+DGa+y4k0SzjAT6Mf81HA3pZITNbEERNVLflgR6HG8j/HUQM0tQJL?=
- =?us-ascii?Q?fvFJMiyvKX2/wXqtl9emBT2cdVrCruluddJJWi1VmwtY81yGID/EseEaUnrU?=
- =?us-ascii?Q?RUi+yYmr2QfFPF6IIrnAMe6MbnidiUKkcfQrX8GSUSC4NU8798bweGx7pVPa?=
- =?us-ascii?Q?qr+2UM4xRJqdz+Y8bpAU2YVP0O3ytMymkhs+BTfeFe/B9FqR5kojlwiQ5mJE?=
- =?us-ascii?Q?mI5/OeYvPi+QtcvSw1J12CIyZfn0VOInsWhdoKSi/q96KTiTEzUbmQbLyabY?=
- =?us-ascii?Q?FFgxXfUmWs8QKZDFPhrfxn+PmFwZ5O3F52EwcAEjjGlx+q8ZKMg7a3DS9u5H?=
- =?us-ascii?Q?R9nByXBQNbFaOKFa6zwzWn9/dnxiNK+AymgRC+fQxqwuoOegiV5xgZnzFoQa?=
- =?us-ascii?Q?8igrtypoivMTGCuPOeDFC0C8vTJMNtbJWYYGJK5krNf4w7JGRa/E8QQZM2NT?=
- =?us-ascii?Q?jBnKWzgUzfiAatI1EFqOklWDG/yk0813DK+JAU/0mJDgvjEXszeoi6sm1XRc?=
- =?us-ascii?Q?9o0y0sTcZU5rCz5LCw1h5bTH1wwL+DzVdClL6snDvE0iD7UzsWePBQFgs11T?=
- =?us-ascii?Q?xpKEn5qWtQHvc8aAg4CzlyDr360qq/68nZR0cS3m0kliUlySw3Nz/OMh2B/K?=
- =?us-ascii?Q?fMgRQx7l4WRQ+hFABgifbNktCmzrdGx5xoraf7YDZ60Tr2Kwfx6/jjadxBp+?=
- =?us-ascii?Q?AqCVcCvlugqMjRQNjF6BlBCUQidCXRCScnRNSFlw3/Bez4SC6KbCJK1xM7cZ?=
- =?us-ascii?Q?laV5FS5KntvdZwfawU4NRj6rENE6n3uLTMn2K9GmwiMMah8lKM6Oiq59Y8CV?=
- =?us-ascii?Q?s2TCKT1k86HGH61ukWN6EFVE5e1dc/lmKHHVE9YIAiM+tHXYVa8Ih58THyI4?=
- =?us-ascii?Q?uIrVqQc3SKgGEHyLXGPtuyT+TIzJhMGmerbykPr4LXvhaqVooR3/5OzDb7SV?=
- =?us-ascii?Q?mt5hEI1tGv8uV0uKSrieqIg/CQs7i5p7sotLX3ri8V1A08P9uV3pEsRWVnVy?=
- =?us-ascii?Q?c+zq0qRVbT29Q19E4WpVKX9ejnvOyhuSAkBjur5ydsiaaCWN8mGplw4cTVvR?=
- =?us-ascii?Q?giIjTuRcG3zIFqzvsLZAWUjT0GvJyYPNxM3uuvKKICsvcPC3+hBrcWyirIVF?=
- =?us-ascii?Q?Chl0ESeYPairIlNGDDA5oagl+Kwxu9+HhzmWJJYl?=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by MW3PR11MB4761.namprd11.prod.outlook.com (2603:10b6:303:53::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 25 Feb
+ 2025 14:28:07 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 14:28:07 +0000
+Date: Tue, 25 Feb 2025 14:28:02 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+CC: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, <dev@dpdk.org>
+Subject: Re: [PATCH 3/6] config: allow faster instruction sets to be used
+ with MSVC
+Message-ID: <Z73Tcj4VmlNYNoLM@bricha3-mobl1.ger.corp.intel.com>
+References: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
+ <1740430879-17874-4-git-send-email-andremue@linux.microsoft.com>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <1740430879-17874-4-git-send-email-andremue@linux.microsoft.com>
+X-ClientProxiedBy: DUZPR01CA0328.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4ba::13) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW3PR11MB4761:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a24f3df-56d0-426e-89b5-08dd55a89f37
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|7053199007|13003099007; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qMdahtqjUaa/k5UNvlYHsPMu+jzyuu5/DFf145u3p2DmPV3T1WYxPe25CX55?=
+ =?us-ascii?Q?smQ/o7RQZ/lhqb4nr1f32mmOx7A9bP/75M4mF507JTpwt7wHD4UAKHe2Fd4H?=
+ =?us-ascii?Q?cAG0AebD7qWJDkokpNbogiTef6McaoXmlwcKNXZVieGZG2G+nxdVwxTnb6U1?=
+ =?us-ascii?Q?MSLfSakUItUnpv06YTInuKZXQjU8xIIGTWHPnmCk5PRFdsmamq4BwzY5HqQe?=
+ =?us-ascii?Q?7Fo8HbPO5/TKxJ0b3kN7Frc+gFahL9Ti+h9HV2THmUDBTFRPsPaGhT6gwDfM?=
+ =?us-ascii?Q?+a2wKgRjNxRBNnk00SveGbZZcDVFLhPyo+R+ufHPLVcmeGbfcdPcANZs0jJd?=
+ =?us-ascii?Q?sTk/sXkn0TIp6yLSAdu1lAE5cP6cuf4CkCclYVGBtLfhwVTIxSNJJ+jpqK7P?=
+ =?us-ascii?Q?GrUX6X+C4uowiDyCEF3iU9PKfLHZvkSW+6NN5pRxuQOLxOPvq6zp5hbBzZbm?=
+ =?us-ascii?Q?dq6qILjIqhJ4yRvUrWxmNGfHFiZz6ItTM5m9JcGB41Zr4USa3s5uk398cm4G?=
+ =?us-ascii?Q?yQyh+x16V2d83IdBVZUyqo3t1U27C5JiN9uH+KLHpWBkiuf4a/bL5DVG7dcL?=
+ =?us-ascii?Q?1ZNYbhDghYyBIGynrP6Yv94k/cAZuCtHOk4ONn/KmxMuislWgCAwhOOaGFCm?=
+ =?us-ascii?Q?jen+gAOn+Co32kYklOYxk+S7S8J9rHE9VHoRa9Q0ChORhdFmHYfZV1E2zBDK?=
+ =?us-ascii?Q?0Q1G3pjRxSjwgS8fObDu1Z+I6oPlhtqmh5N0/fehqUTIoFwng8VdNb9N7IT1?=
+ =?us-ascii?Q?4LwPtbcHmun3vs2+tLmTEwVtRemQEdgbx1UU5JCV+iyuAKN0G0YodWd6R1SE?=
+ =?us-ascii?Q?X0XEK3EuX8YLimeg4rYDlIdLV5bYHTprxBwTNVsL2AMwk9ZpXFq70tvk4P+Y?=
+ =?us-ascii?Q?SIJFmM0eYr9vrzaoeNegu2Fcwgc4ZpeVVNCIRH1PjXHWAivL5TM5dJvGacs6?=
+ =?us-ascii?Q?DyJc75kQAjEjORl0ViwEDu5PNQ+7LcaMfBJT4CH8lCcwEATrRIo3b0e/+NnV?=
+ =?us-ascii?Q?gZV1MLyD7HvcpY2z082f5PjU7xzTj6RkhIMBy43bBPgMPnXe/vIV41ZPYCk9?=
+ =?us-ascii?Q?rgNXWw9kF0gSM/KGrFggiJqgwojMJ7fGoL8HovPwhBboJ2CcS+ziGsmcxqOK?=
+ =?us-ascii?Q?ZGshBLs1renUKJrbNqjUUZxZaAf8QTh7eKGpQDRpJO6fJqUfebq1VTWUKYOX?=
+ =?us-ascii?Q?b0AEURwHpnYkynGKawAUcqPisPYhmIx2RTr6aBcMln+tFXEpyRuswMc624Yz?=
+ =?us-ascii?Q?Q7qhdmzHs4yR+c4olC9E57iEoOokYeXlEhGDzcmMloRIiHHqOO49Ojp8wNWL?=
+ =?us-ascii?Q?B1Zrur6Ixkvr/tPj2csMz9h8CRpY0KESfiHhYyip8ABf0vfVAPZXUJgwSdAn?=
+ =?us-ascii?Q?7fmNpyfhW63+c4hSMvHuLrsmrVMI61xNVWzrBvqGudkKYJ2vEg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(13003099007); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DezRFKH1WLMdmV8bwoLLYXRqiySP65Ri7OAu8MYGrWvwcUYVNTXh0JjvgE9A?=
+ =?us-ascii?Q?/V99/wAH7PVUj46sA0sbL+3Ue/FNxwDdG+eWK3lUzMPnxrs3m6fwwqJ0pi1Y?=
+ =?us-ascii?Q?bZinmN05koMHA75rKU5Wh+Sn6QFOqMiQKLCpG2IhwlSx23AIGTqTT+ANvX4f?=
+ =?us-ascii?Q?E/MryzsVw5FpzXoVXcKyG/btOd0NG6Mwb95ULsdsWazjfNILEu7axTUGGYT2?=
+ =?us-ascii?Q?f/FLsikn5w+PIssqwEVc8TW6kkgOUrpgj7OJcHhOPpr7rR6eoLOdsKKf8D8r?=
+ =?us-ascii?Q?ihLpbbHI2HkB9JF8bSKUnWKMf7dEh4R1e5ibIfi+SWRfAZ3DakRuZ8q50LSL?=
+ =?us-ascii?Q?x+rJOLNOu0qLLOVK61D8goyvVDhEYw/1fnQq+MjbHCKWU1R/qe1vNrV5dvFq?=
+ =?us-ascii?Q?ETZNqusgHQuFe41vM2+rfbgNaoHp8okHYUSlnqBekgv27vneprE+HysFNzX4?=
+ =?us-ascii?Q?DP3iI9IJE7hy4QP5MKZVxkdkxHzpuKB+dHIUcQ/FPrpeT55PYrB7THBvmNjm?=
+ =?us-ascii?Q?9a1fKeUdY6zRpRvqO4yywEXwbS6y0Q7uMw6jguuZYWO+II+DGMk68zucT9R6?=
+ =?us-ascii?Q?EnFkLZNk0PIvQdkZHlGs3U8kA3YHHD83vTEMSseOVGmGa39+bkdlYuB6UAhg?=
+ =?us-ascii?Q?uEKodS9eykzaLngkQZByDJrjko26WRos/mRJ+8yKG+tyyVhlYoYYftwJ8Qhy?=
+ =?us-ascii?Q?X/1amx5AIxE5SDieM7yqd1utl47NAmKhbLoZ+ytII/9EL2qM0TYeYSYpfNaI?=
+ =?us-ascii?Q?Pd1JKXjeqL5Cwt1i9oLspb5gmUbxde40g/s/NJGxwbMz5S/mWakRNotvbc3O?=
+ =?us-ascii?Q?ruHLr+Z7ITU7AEELgea7YN0UczQrGy4FWR+27UKY/ZCPPZZy71tgTWbLwLVT?=
+ =?us-ascii?Q?/fFEZixAWINHApq3kVJywmr6gQZk03mxHVbnXugxuI9EaJoYqTf9TQgO/0D7?=
+ =?us-ascii?Q?YSsSiWZ5C/73+Y1juvEFd+83qbxFLEAN3ApFz7J5lHNLvHXafoL9fyWNU5nY?=
+ =?us-ascii?Q?lm79rPYD5/+GtD0Q7d+Iayej6cYdVyMqBc8D/6Ro1crB03oqgYHIwIi8xAgK?=
+ =?us-ascii?Q?ANpvPuW5yzToYN3qLla+77iU8B01QItfzJ8MkOaKsLwFgpJztwUgTOllYoSq?=
+ =?us-ascii?Q?mnubeg1fix2/I/fqUZuUni7zBxhK4m9uE0Ks5sV6lNklXg6MGd7lX/wlZJeM?=
+ =?us-ascii?Q?Y42cUnt3Xo1MNLWtasG8GSm0XnPHWxSmpIUrPZQJEWpnZ8xNhzJJho/7gGRn?=
+ =?us-ascii?Q?MNdgDaES4OvQ7KDwu5dirS+3pKfEbxPqNvQ5sQhw67/C00apVQqBBcPcByn9?=
+ =?us-ascii?Q?NjYe2BaC6zGPn96IMDuDEUXt7Vd2IcxWF+yo6tAGZ8wmZQi/LJjqEkta+CEp?=
+ =?us-ascii?Q?M40mV7Hua08tGIvRFz5ra4HEcktraN9WuAHLClK0uZpvwJkemHYcGZ959INq?=
+ =?us-ascii?Q?YH+92h2EP6ybGdJI9lvnXc0/yVdj9gAdEEVWxF5vwAZIpuJF/5D5rIvmdz3P?=
+ =?us-ascii?Q?kkDOYbbVZk0d9d+ECavS+W9c1Pbm7BIvoOq8LNxLuemaNl9zd93EcHbTimOC?=
+ =?us-ascii?Q?zu2F9PNWRpTi7pf3QgDcw8aB6N9lL3ZD7hWEGPCRdm3eechjjsYyWiJNbw94?=
+ =?us-ascii?Q?nw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a24f3df-56d0-426e-89b5-08dd55a89f37
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB5167.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d9de571-1c97-4435-c2da-08dd55a6a277
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 14:13:53.4724 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WbsCjKTLJRWjFOZZXHDTPJjxjG8iC9ztcRtv4lcKe6MZP2M0rylax4kCSAa5Wk03E60U44I+A8DstwtHkybjQwU4dy83gsCyvT226eWdjR4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR18MB4297
-X-Authority-Analysis: v=2.4 cv=BPRJrEQG c=1 sm=1 tr=0 ts=67bdd024 cx=c_pps
- a=PK5aExQQjalka8oDlC/sVA==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=T2h4t0Lz3GQA:10 a=-AAbraWEqlQA:10
- a=M5GUcnROAAAA:8 a=i0EeH86SAAAA:8 a=8rWy6zfcAAAA:8 a=BosQwps4EP04c1zR45kA:9
- a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: wH9m0CeJJbVVwa0eO7xE13PVRZCCSMWV
-X-Proofpoint-ORIG-GUID: wH9m0CeJJbVVwa0eO7xE13PVRZCCSMWV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 14:28:07.2918 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qgvvLOHZrwNc5maiaPbRu9q0hQZfx1Cn4jhzIUzb7SHkJcA9/sy0sh0k/GNZsIhHzhpoVlM8nmxIl+M0uFwkO+qeuOcE0k5ZowMIPIJkAcE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4761
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -163,67 +172,470 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Kommula Shiva Shankar <kshankar@marvell.com>
-> Sent: Wednesday, January 29, 2025 8:07 PM
-> To: Jerin Jacob <jerinj@marvell.com>; Amit Prakash Shukla
-> <amitprakashs@marvell.com>; Vamsi Krishna Attunuru
-> <vattunuru@marvell.com>; fengchengwen@huawei.com; dev@dpdk.org
-> Cc: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>; Pavan Nikhilesh
-> Bhagavatula <pbhagavatula@marvell.com>
-> Subject: [PATCH RFC 3/4] doc: update prog guide to use rte_dma_op
->=20
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
->=20
-> Update the documentation to replace all instances of
-> rte_event_dma_adapter_op with rte_dma_op
->=20
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> Change-Id: I0fe65d18f4601709826c11c6738cacec8991515d
+On Mon, Feb 24, 2025 at 01:01:16PM -0800, Andre Muezerie wrote:
+> Up to now MSVC has being used with the default mode, which uses SSE2
+> instructions for scalar floating-point and vector calculations.
+> https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
+> 
+> This patch allows users to specify the CPU for which the generated
+> code should be optimized for in the same way it's done for GCC: by
+> passing the CPU name.
+> When no explicit CPU name is passed, 'native' is assumed (like it
+> happens with GCC) and the code will be optimized for the same CPU
+> type used to compile the code.
+> 
+> MSVC does not provide this functionality natively, so logic was
+> added to meson.build to handle these differences, detecting which
+> instruction sets are supported by the CPU(s), passing the best
+> options to MSVC and setting the correct macros (like __AVX512F__)
+> so that the DPDK code can rely on them like it is done with GCC.
+> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 > ---
->  doc/guides/prog_guide/eventdev/event_dma_adapter.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
 
-Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
+Hi Andre,
 
+couple of initial thoughts inline below.
 
-> diff --git a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-> b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-> index e040d89e8b..e8437a3297 100644
-> --- a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-> +++ b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-> @@ -144,7 +144,7 @@ on which it enqueues events towards the DMA
-> adapter using ``rte_event_enqueue_bu
->     uint32_t cap;
->     int ret;
->=20
-> -   /* Fill in event info and update event_ptr with rte_event_dma_adapter=
-_op
-> */
-> +   /* Fill in event info and update event_ptr with rte_dma_op */
->     memset(&ev, 0, sizeof(ev));
->     .
->     .
-> @@ -244,11 +244,11 @@ Set event response information
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
->  In the ``RTE_EVENT_DMA_ADAPTER_OP_FORWARD`` /
-> ``RTE_EVENT_DMA_ADAPTER_OP_NEW`` mode, -the application specifies the
-> dmadev ID and vchan ID in ``struct rte_event_dma_adapter_op``
-> +the application specifies the dmadev ID and vchan ID in ``struct
-> +rte_dma_op``
->  and the event information (response information)  needed to enqueue an
-> event after the DMA operation has completed.
->  The response information is specified in ``struct rte_event`` -and appen=
-ded
-> to the ``struct rte_event_dma_adapter_op``.
-> +and appended to the ``struct rte_dma_op``.
->=20
->=20
->  Start the adapter instance
-> --
-> 2.43.0
+/Bruce
 
+>  config/x86/meson.build | 364 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 325 insertions(+), 39 deletions(-)
+> 
+
+There is quite a lot of new code to be added here. Might it be worthwhile
+creating a "config/x86/msvc/" subdirectory with its own meson.build file to
+handle all the complexities of using it. We can have the common material at
+the top of the x86/meson.build file, and then do 
+
+if is_ms_compiler
+    subdir(msvc)
+    subdir_done()
+endif
+
+leaving the rest of the file for the gcc/clang/icx code.
+
+> diff --git a/config/x86/meson.build b/config/x86/meson.build
+> index 47a5b0c04a..9260969c54 100644
+> --- a/config/x86/meson.build
+> +++ b/config/x86/meson.build
+> @@ -14,7 +14,194 @@ if is_linux or cc.get_id() == 'gcc'
+>      endif
+>  endif
+>  
+> -cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
+> +cpuid_code = '''
+> +    #include <stdio.h>
+> +    #include <stdint.h>
+> +    #include <intrin.h>
+> +
+> +    uint32_t f1_ECX = 0;
+> +    uint32_t f1_EDX = 0;
+> +    uint32_t f7_EBX = 0;
+> +    uint32_t f7_ECX = 0;
+> +
+> +    void get_support_flags()
+> +    {
+> +        int ids_max;
+> +        int data[4];
+> +
+> +        /*
+> +         * Calling __cpuid with 0x0 as the function_id argument
+> +         * gets the number of the highest valid function ID.
+> +         */
+> +        __cpuid(data, 0);
+> +        ids_max = data[0];
+> +
+> +        if (1 <= ids_max) {
+> +            __cpuidex(data, 1, 0);
+> +            f1_ECX = data[2];
+> +            f1_EDX = data[3];
+> +
+> +            if (7 <= ids_max) {
+> +                __cpuidex(data, 7, 0);
+> +                f7_EBX = data[1];
+> +                f7_ECX = data[2];
+> +            }
+> +        }
+> +    }
+> +
+> +    int get_instruction_support()
+> +    {
+> +        get_support_flags();
+> +
+> +    #ifdef SSE3
+> +        return (f1_ECX & (1UL << 0)) ? 1 : 0;
+> +    #endif
+> +    #ifdef PCLMUL
+> +        return (f1_ECX & (1UL << 1)) ? 1 : 0;
+> +    #endif
+> +    #ifdef SSSE3
+> +        return (f1_ECX & (1UL << 9)) ? 1 : 0;
+> +    #endif
+> +    #ifdef SSE4_1
+> +        return (f1_ECX & (1UL << 19)) ? 1 : 0;
+> +    #endif
+> +    #ifdef SSE4_2
+> +        return (f1_ECX & (1UL << 20)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AES
+> +        return (f1_ECX & (1UL << 25)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX
+> +        return (f1_ECX & (1UL << 28)) ? 1 : 0;
+> +    #endif
+> +    #ifdef RDRND
+> +        return (f1_ECX & (1UL << 30)) ? 1 : 0;
+> +    #endif
+> +    #ifdef SSE
+> +        return (f1_EDX & (1UL << 25)) ? 1 : 0;
+> +    #endif
+> +    #ifdef SSE2
+> +        return (f1_EDX & (1UL << 26)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX2
+> +        return (f7_EBX & (1UL << 5)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512F
+> +        return (f7_EBX & (1UL << 16)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512DQ
+> +        return (f7_EBX & (1UL << 17)) ? 1 : 0;
+> +    #endif
+> +    #ifdef RDSEED
+> +        return (f7_EBX & (1UL << 18)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512IFMA
+> +        return (f7_EBX & (1UL << 21)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512CD
+> +        return (f7_EBX & (1UL << 28)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512BW
+> +        return (f7_EBX & (1UL << 30)) ? 1 : 0;
+> +    #endif
+> +    #ifdef AVX512VL
+> +        return (f7_EBX & (1UL << 31)) ? 1 : 0;
+> +    #endif
+> +    #ifdef GFNI
+> +        return (f7_ECX & (1UL << 8)) ? 1 : 0;
+> +    #endif
+> +    #ifdef VPCLMULQDQ
+> +        return (f7_ECX & (1UL << 10)) ? 1 : 0;
+> +    #endif
+> +
+> +        return -1;
+> +    }
+> +
+> +    int main(int argc, char *argv[])
+> +    {
+> +        int res = get_instruction_support();
+> +        if (res == -1) {
+> +            printf("Unknown instruction set");
+> +            return -1;
+> +        }
+> +        printf("%d", res);
+> +
+> +        return 0;
+> +    }
+> +'''
+> +
+> +# The data in table below can be found here:
+> +# https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
+> +# This table only contains CPUs that have SSE4.2, as this instruction set is required by DPDK.
+> +# That means that in addition to the instruction sets mentioned in the table, all these CPUs
+> +# also have ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
+> +cpu_type_to_flags = {
+> +       'x86-64-v2': [],
+> +       'x86-64-v3': ['AVX', 'AVX2'],
+> +       'x86-64-v4': ['AVX', 'AVX2', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
+> +         'nehalem': [],
+> +          'corei7': [],
+> +        'westmere': ['PCLMUL'],
+> +     'sandybridge': ['AVX', 'PCLMUL'],
+> +      'corei7-avx': ['AVX', 'PCLMUL'],
+> +       'ivybridge': ['AVX', 'PCLMUL', 'RDRND'],
+> +      'core-avx-i': ['AVX', 'PCLMUL', 'RDRND'],
+> +         'haswell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
+> +       'core-avx2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
+> +       'broadwell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED'],
+> +         'skylake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
+> +  'skylake-avx512': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
+> +     'cascadelake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
+> +      'cannonlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA'],
+> +      'cooperlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
+> +  'icelake-client': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +  'icelake-server': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +       'tigerlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +      'rocketlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +       'alderlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +      'raptorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +      'meteorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +       'gracemont': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +       'arrowlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +     'arrowlake-s': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +       'lunarlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +     'pantherlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +  'sapphirerapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +   'emeraldrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +   'graniterapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> + 'graniterapids-d': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +   'diamondrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +      'silvermont': ['PCLMUL', 'RDRND'],
+> +             'slm': ['PCLMUL', 'RDRND'],
+> +        'goldmont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
+> +   'goldmont-plus': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
+> +         'tremont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES', 'GFNI'],
+> +    'sierraforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +      'grandridge': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +'clearwaterforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> +          'bdver1': ['AVX', 'PCLMUL', 'AES'],
+> +          'bdver2': ['AVX', 'PCLMUL', 'AES'],
+> +          'bdver3': ['AVX', 'PCLMUL', 'AES'],
+> +          'bdver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'AES'],
+> +          'znver1': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
+> +          'znver2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
+> +          'znver3': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ'],
+> +          'znver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +          'znver5': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
+> +          'btver2': ['AVX', 'PCLMUL', 'AES'],
+> +        'lujiazui': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
+> +        'yongfeng': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
+> +      'shijidadao': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
+> +}
+> +
+
+I really don't want to have tables like this to maintain in our code if at
+all possible. We used to have something a bit similar in DPDK IIRC, but we
+found it a maintenance nightmare and just switched to using the compiler to
+do all the work. In our existing builds, we just pass the
+cpu_instruction_set parameter straight to the -march flag of the compiler.
+For MSVC support, I believe we should just do the exact same.
+
+Maintaining lists like this will be a problem as new platforms need to be
+constantly added. Do we also look to backport them, because if equivalence
+with the linux build is necessary then that will have to be done - as on
+Linux when a new version of GCC comes out, we can then use the new
+instruction set targets on the old releases of DPDK.
+
+> +if is_ms_compiler
+> +    cc_avx2_flags = ['/arch:AVX2']
+> +    cc_avx512_flags = ['/arch:AVX512']
+> +else
+> +    cc_avx2_flags = ['-mavx2']
+> +    cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
+> +endif
+> +
+>  cc_has_avx512 = false
+>  target_has_avx512 = false
+>  if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
+> @@ -30,12 +217,14 @@ if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
+>          warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
+>      else
+>          cc_has_avx512 = true
+> -        target_has_avx512 = (
+> -                cc.get_define('__AVX512F__', args: machine_args) != '' and
+> -                cc.get_define('__AVX512BW__', args: machine_args) != '' and
+> -                cc.get_define('__AVX512DQ__', args: machine_args) != '' and
+> -                cc.get_define('__AVX512VL__', args: machine_args) != ''
+> -            )
+> +        if not is_ms_compiler
+> +            target_has_avx512 = (
+> +                    cc.get_define('__AVX512F__', args: machine_args) != '' and
+> +                    cc.get_define('__AVX512BW__', args: machine_args) != '' and
+> +                    cc.get_define('__AVX512DQ__', args: machine_args) != '' and
+> +                    cc.get_define('__AVX512VL__', args: machine_args) != ''
+> +                )
+> +        endif
+>      endif
+>  endif
+>  
+> @@ -47,42 +236,139 @@ if not is_ms_compiler
+>      endif
+>  endif
+>  
+> -# enable restricted transactional memory intrinsics
+> -# https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
+> -if cc.get_id() != 'msvc'
+> -    machine_args += '-mrtm'
+> -endif
+> +if is_ms_compiler
+> +    # Determine cpu_flags for a given configuration.
+> +    # SSE instructions up to 4.2 are required for DPDK.
+> +    cpu_flags = ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
+> +
+> +    message('cpu_instruction_set: @0@'.format(cpu_instruction_set))
+>  
+> -base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
+> -foreach f:base_flags
+> -    compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
+> -endforeach
+> -
+> -optional_flags = [
+> -        'AES',
+> -        'AVX',
+> -        'AVX2',
+> -        'AVX512BW',
+> -        'AVX512CD',
+> -        'AVX512DQ',
+> -        'AVX512F',
+> -        'AVX512VL',
+> -        'PCLMUL',
+> -        'RDRND',
+> -        'RDSEED',
+> -        'VPCLMULQDQ',
+> -]
+> -foreach f:optional_flags
+> -    if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
+> -        if f == 'PCLMUL' # special case flags with different defines
+> -            f = 'PCLMULQDQ'
+> -        elif f == 'RDRND'
+> -            f = 'RDRAND'
+> +    if cpu_instruction_set == ''
+> +        # Nothing to do as cpu_flags already holds all the required flags.
+> +    elif cpu_instruction_set == 'native'
+> +        # MSVC behaves differently than GCC regarding supported instruction sets.
+> +        # While GCC will create macros like __AVX512F__ when such instruction set is
+> +        # supported by the current CPU, MSVC does not do that. MSVC will create that
+> +        # macro when parameter /arch:AVX512 is passed to the compiler, even when the
+> +        # CPU does not have that instruction set (by design). So there's a need to
+> +        # look at CPUID flags to figure out what is really supported by the CPU, so
+> +        # that the correct /arch value can be passed to the compiler.
+> +        # The macros also need to be explicitly defined, as /arch will not create all
+> +        # macros GCC creates under the same conditions.
+> +        # As an example, /arch:AVX512 creates __AVX512BW__, but does not create __SSE2__.
+> +        # More details available here:
+> +        # https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+> +
+> +        optional_flags = [
+> +                'PCLMUL',
+> +                'AES',
+> +                'AVX',
+> +                'RDRND',
+> +                'AVX2',
+> +                'AVX512F',
+> +                'AVX512BW',
+> +                'AVX512DQ',
+> +                'AVX512VL',
+> +                'AVX512CD',
+> +                'AVX512IFMA',
+> +                'GFNI',
+> +                'RDSEED',
+> +                'VPCLMULQDQ',
+> +        ]
+> +        foreach f:optional_flags
+> +            result = cc.run(cpuid_code, args: '-D@0@'.format(f),
+> +                            name: 'instruction set @0@'.format(f))
+> +            has_instr_set = result.returncode() == 0 and result.stdout() == '1'
+> +            if has_instr_set
+> +                cpu_flags += f
+> +            endif
+> +            message('Target has @0@: @1@'.format(f, has_instr_set))
+> +        endforeach
+> +    else
+> +        # An explicit cpu_instruction_set was provided. Get cpu_flags
+> +        # from cpu_type_to_flags table.
+> +        if cpu_instruction_set not in cpu_type_to_flags
+> +            error('CPU not known or not supported. Please update the table with known CPUs if needed.')
+>          endif
+> -        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
+> +        cpu_flags += cpu_type_to_flags[cpu_instruction_set]
+> +    endif
+> +
+> +    # Now that all cpu_flags are known, set compile_time_cpuflags and also
+> +    # machine_args to ensure that the instruction set #defines (like __SSE2__)
+> +    # are always present in the preprocessor.
+> +    message('cpu_flags: @0@'.format(cpu_flags))
+> +
+> +    foreach flag:cpu_flags
+> +        machine_args += '/D__@0@__'.format(flag)
+> +        if flag == 'PCLMUL'
+> +            flag = 'PCLMULQDQ'
+> +        elif flag == 'RDRND'
+> +            flag = 'RDRAND'
+> +        endif
+> +        compile_time_cpuflags += ['RTE_CPUFLAG_' + flag]
+> +    endforeach
+> +
+> +    target_has_avx512 = ('AVX512F'  in cpu_flags and
+> +                         'AVX512BW' in cpu_flags and
+> +                         'AVX512DQ' in cpu_flags and
+> +                         'AVX512VL' in cpu_flags)
+> +
+> +    # Decide which instruction sets should be used by the compiler.
+> +    # With MSVC, intrinsic functions are always enabled. However, for the
+> +    # compiler to use an extended instruction set for automatically
+> +    # generated code "/arch" needs to be passed. So we instruct the compiler
+> +    # to use the largest set that is supported by the CPU. It is implied that
+> +    # smaller sets than the largest selected are included, as described here:
+> +    # https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
+> +    if 'RTE_CPUFLAG_AVX512F' in compile_time_cpuflags
+> +        machine_args += ['/arch:AVX512']
+> +    elif 'RTE_CPUFLAG_AVX2' in compile_time_cpuflags
+> +        machine_args += ['/arch:AVX2']
+> +    elif 'RTE_CPUFLAG_AVX' in compile_time_cpuflags
+> +        machine_args += ['/arch:AVX']
+> +    else
+> +        # SSE4.2 is expected to always be available
+> +        machine_args += ['/arch:SSE4.2']
+>      endif
+> -endforeach
+>  
+
+Since these appear to be the only /arch flags supported by the compiler for
+code generation, I would suggest that these would be the only instruction
+set flags that we support on MSVC builds, and that we then build up the
+actual CPU flags based on the minimum flags to be expected when each of
+these instruction sets is present.
+
+Similarly with 'native', rather than supporting all the different CPU types,
+it would be a lot easier to just determine if it's an SSE4 machine, an AVX2
+machine or AVX512, and run with that.
+
+My thinking is that getting this as a first step should get us a lot of the
+benefits without such a massive maintenance headache.
+
+> +    message('machine_args: @0@'.format(machine_args))
+> +else
+> +    # enable restricted transactional memory intrinsics
+> +    # https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
+> +    machine_args += '-mrtm'
+> +
+> +    base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
+> +    foreach f:base_flags
+> +        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
+> +    endforeach
+> +
+> +    optional_flags = [
+> +            'AES',
+> +            'AVX',
+> +            'AVX2',
+> +            'AVX512BW',
+> +            'AVX512CD',
+> +            'AVX512DQ',
+> +            'AVX512F',
+> +            'AVX512VL',
+> +            'PCLMUL',
+> +            'RDRND',
+> +            'RDSEED',
+> +            'VPCLMULQDQ',
+> +    ]
+> +    foreach f:optional_flags
+> +        if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
+> +            if f == 'PCLMUL' # special case flags with different defines
+> +                f = 'PCLMULQDQ'
+> +            elif f == 'RDRND'
+> +                f = 'RDRAND'
+> +            endif
+> +            compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
+> +        endif
+> +    endforeach
+> +endif
+> +
+> +message('compile_time_cpuflags: @0@'.format(compile_time_cpuflags))
+>  
+>  dpdk_conf.set('RTE_ARCH_X86', 1)
+>  if dpdk_conf.get('RTE_ARCH_64')
+> -- 
+> 2.48.1.vfs.0.0
+> 
