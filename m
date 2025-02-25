@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861A2C021BB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 15:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C76C021BB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 15:34:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB297402DA;
-	Tue, 25 Feb 2025 16:34:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id ECDFA402E0;
+	Tue, 25 Feb 2025 16:34:16 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id F2AA040299
- for <dev@dpdk.org>; Tue, 25 Feb 2025 16:34:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AF94D402DB
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 16:34:13 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC9AD28C7;
- Tue, 25 Feb 2025 07:34:27 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29E6B28C7;
+ Tue, 25 Feb 2025 07:34:29 -0800 (PST)
 Received: from e132991.cambridge.arm.com (unknown [10.1.195.24])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4249B3F5A1;
- Tue, 25 Feb 2025 07:34:10 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B46293F5A1;
+ Tue, 25 Feb 2025 07:34:11 -0800 (PST)
 From: Thomas Wilks <thomas.wilks@arm.com>
 To: dev@dpdk.org
 Cc: Paul Szczepanek <paul.szczepanek@arm.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
  Alex Chapman <alex.chapman@arm.com>, Thomas Wilks <thomas.wilks@arm.com>
-Subject: [PATCH v2 1/6] dts: add RSS functions to testpmd
-Date: Tue, 25 Feb 2025 15:33:40 +0000
-Message-ID: <20250225153345.331216-2-thomas.wilks@arm.com>
+Subject: [PATCH v2 2/6] dts: add utils for PMD RSS testsuites
+Date: Tue, 25 Feb 2025 15:33:41 +0000
+Message-ID: <20250225153345.331216-3-thomas.wilks@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250225153345.331216-1-thomas.wilks@arm.com>
 References: <20240829125020.34341-1-alex.chapman@arm.com>
@@ -45,261 +45,229 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Alex Chapman <alex.chapman@arm.com>
 
-This patch adds the required functionality for the RSS key_update,
-RETA, and hash test suites. This includes:
-The setting of custom RETA values for routing packets to specific
-queues.
-The setting of the RSS mode on all ports, to specify how to hash
-the packets.
-The updating of the RSS hash key used during the hashing process.
+To reduce the amount of maintenance and code duplication,
+common functionality between the rss_key_update, pmd_rss_reta
+and pmd_rss_hash test suites has been collated into a single
+file called rss_utils.
 
-Alongside this, there is the addition of a __str__ method to the
-RSSOffloadTypesFlags class, so that when flag names are cast to
-a string they will use '-' as separators, instead of '_'.
-This allows them to be directly used within testpmd RSS commands
-without any further changes.
+It contains 3 main functions:
+1. verify that a packets RSS hash correctly associates with
+    the packets RSS queue.
+2. Send test packets specific to RSS, such as symmetric
+    packets that have the L4 port src and dst swapped.
+3. The setting up of the RSS environment which is common
+    between all 3 tets suites.
 
 Signed-off-by: Alex Chapman <alex.chapman@arm.com>
 Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
 
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- dts/framework/remote_session/testpmd_shell.py | 137 ++++++++++++++++--
- 1 file changed, 123 insertions(+), 14 deletions(-)
+ dts/tests/pmd_rss_utils.py | 195 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 195 insertions(+)
+ create mode 100644 dts/tests/pmd_rss_utils.py
 
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 1f291fcb68..0e1f29f2f3 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -350,6 +350,12 @@ def make_parser(cls) -> ParserFn:
-             RSSOffloadTypesFlag.from_list_string,
-         )
- 
-+    def __str__(self):
-+        """Replaces underscores with hyphens to produce valid testpmd value."""
-+        if self.name is None:
-+            return ""
-+        return self.name.replace("_", "-")
+diff --git a/dts/tests/pmd_rss_utils.py b/dts/tests/pmd_rss_utils.py
+new file mode 100644
+index 0000000000..2d9b333859
+--- /dev/null
++++ b/dts/tests/pmd_rss_utils.py
+@@ -0,0 +1,195 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 Arm Limited
 +
- 
- class DeviceCapabilitiesFlag(Flag):
-     """Flag representing the device capabilities."""
-@@ -655,7 +661,8 @@ class TestPmdPort(TextParser):
-     )
-     #: Maximum number of VMDq pools
-     max_vmdq_pools_num: int | None = field(
--        default=None, metadata=TextParser.find_int(r"Maximum number of VMDq pools: (\d+)")
-+        default=None,
-+        metadata=TextParser.find_int(r"Maximum number of VMDq pools: (\d+)"),
-     )
- 
-     #:
-@@ -1482,7 +1489,9 @@ def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
-     return _wrapper
- 
- 
--def add_remove_mtu(mtu: int = 1500) -> Callable[[TestPmdShellMethod], TestPmdShellMethod]:
-+def add_remove_mtu(
-+    mtu: int = 1500,
-+) -> Callable[[TestPmdShellMethod], TestPmdShellMethod]:
-     """Configure MTU to `mtu` on all ports, run the decorated function, then revert.
- 
-     Args:
-@@ -1723,6 +1732,82 @@ def set_ports_queues(self, number_of: int) -> None:
-         self.send_command(f"port config all rxq {number_of}")
-         self.send_command(f"port config all txq {number_of}")
- 
-+    def port_config_rss_reta(
-+        self, port_id: int, hash_index: int, queue_id: int, verify: bool = True
-+    ) -> None:
-+        """Configure a port's RSS redirection table.
++"""PMD RSS Test Suite Utils.
 +
-+        Args:
-+            port_id: The port where the redirection table will be configured.
-+            hash_index: The index into the redirection table associated with the destination queue.
-+            queue_id: The destination queue of the packet.
-+            verify: If :data:`True`, verifies if a port's redirection table
-+                was correctly configured.
++Utility functions for the pmd_rss_... test suite series
++"""
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If `verify` is :data:`True`
-+                Testpmd failed to config RSS reta.
-+        """
-+        out = self.send_command(f"port config {port_id} rss reta ({hash_index},{queue_id})")
-+        if verify:
-+            if f"The reta size of port {port_id} is" not in out:
-+                self._logger.debug(f"Failed to config RSS reta: \n{out}")
-+                raise InteractiveCommandExecutionError("Testpmd failed to config RSS reta.")
++import random
 +
-+    def port_config_all_rss_offload_type(
-+        self, flag: RSSOffloadTypesFlag, verify: bool = True
-+    ) -> None:
-+        """Set the RSS mode on all ports.
++from scapy.layers.inet import IP, UDP
++from scapy.layers.l2 import Ether
 +
-+        Args:
-+            flag: The RSS iptype all ports will be configured to.
-+            verify: If :data:`True`, it verifies if all ports RSS offload type
-+                was correctly configured.
++from framework.exception import InteractiveCommandExecutionError
++from framework.params.testpmd import SimpleForwardingModes
++from framework.remote_session.testpmd_shell import (
++    FlowRule,
++    RSSOffloadTypesFlag,
++    TestPmdShell,
++    TestPmdVerbosePacket,
++)
++from framework.test_suite import TestSuite
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If `verify` is :data:`True`
-+                Testpmd failed to config the RSS mode on all ports.
-+        """
-+        out = self.send_command(f"port config all rss {flag.name}")
-+        if verify:
-+            if "error" in out:
-+                self._logger.debug(f"Failed to config the RSS mode on all ports: \n{out}")
-+                raise InteractiveCommandExecutionError(
-+                    f"Testpmd failed to change RSS mode to {flag.name}"
-+                )
 +
-+    def port_config_rss_hash_key(
-+        self,
-+        port_id: int,
-+        offload_type: RSSOffloadTypesFlag,
-+        hex_str: str,
-+        verify: bool = True,
-+    ) -> str:
-+        """Sets the RSS hash key for the specified port.
++def VerifyHashQueue(
++    test_suite: TestSuite,
++    reta: list[int],
++    received_packets: list[TestPmdVerbosePacket],
++    verify_packet_pairs: bool,
++) -> None:
++    """Verifies the packet hash corresponds to the packet queue.
 +
-+        Args:
-+            port_id: The port that will have the hash key applied to.
-+            offload_type: The offload type the hash key will be applied to.
-+            hex_str: The hash key to set.
-+            verify: If :data:`True`, verify that RSS has the key.
++    Given the received packets in the verbose output, iterate through each packet.
++    Lookup the packet hash in the RETA and get its intended queue.
++    Verify the intended queue is the same as the actual queue the packet was received in.
++    If the hash algorithm is symmetric, verify that pairs of packets have the same hash,
++    as the pairs of packets sent have "mirrored" L4 ports.
++    e.g. received_packets[0, 1, 2, 3, ...] hash(0) = hash(1), hash(2) = hash(3), ...
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If `verify` is :data:`True`
-+                Testpmd failed to set the RSS hash key.
-+        """
-+        output = self.send_command(
-+            f"port config {port_id} rss-hash-key {offload_type} {hex_str}",
-+            skip_first_line=True,
++    Args:
++        test_suite: The reference to the currently running test suite.
++        reta: Used to get predicted queue based on hash.
++        received_packets: Packets received in the verbose output of testpmd.
++        verify_packet_pairs: Verify pairs of packets have the same hash.
++
++    Raises:
++        InteractiveCommandExecutionError: If packet_hash is None.
++    """
++    # List of packet hashes, used for symmetric algorithms
++    hash_list = []
++    for packet in received_packets:
++        if packet.port_id != 0 or packet.src_mac != "02:00:00:00:00:00":
++            continue
++
++        # Get packet hash
++        packet_hash = packet.rss_hash
++        if packet_hash is None:
++            raise InteractiveCommandExecutionError(
++                "Packet sent by the Traffic Generator has no RSS hash attribute."
++            )
++
++        packet_queue = packet.rss_queue
++
++        # Calculate the predicted packet queue
++        predicted_reta_index = packet_hash % len(reta)
++        predicted_queue = reta[predicted_reta_index]
++
++        # Verify packets are in the correct queue
++        test_suite.verify(
++            predicted_queue == packet_queue,
++            "Packet sent by the Traffic Generator has no RSS queue attribute.",
 +        )
 +
-+        if verify:
-+            if output.strip():
-+                self._logger.debug(f"Failed to set rss hash key: \n{output}")
-+                raise InteractiveCommandExecutionError(
-+                    f"Testpmd failed to set {hex_str} on {port_id} with a flag of {offload_type}."
-+                )
-+        return output
++        if verify_packet_pairs:
++            hash_list.append(packet_hash)
 +
-     def show_port_info_all(self) -> list[TestPmdPort]:
-         """Returns the information of all the ports.
- 
-@@ -1939,22 +2024,28 @@ def csum_set_hw(
-                                                            {port_id}:\n{csum_output}"""
-                     )
- 
--    def flow_create(self, flow_rule: FlowRule, port_id: int) -> int:
-+    def flow_create(self, flow_rule: FlowRule, port_id: int, verify: bool = True) -> int:
-         """Creates a flow rule in the testpmd session.
- 
--        This command is implicitly verified as needed to return the created flow rule id.
--
-         Args:
-             flow_rule: :class:`FlowRule` object used for creating testpmd flow rule.
-             port_id: Integer representing the port to use.
-+            verify: If :data:`True`, the output of the command is scanned
-+            to ensure the flow rule was created successfully.
- 
-         Raises:
-             InteractiveCommandExecutionError: If flow rule is invalid.
- 
-         Returns:
--            Id of created flow rule.
-+            Id of created flow rule as an integer.
-         """
-         flow_output = self.send_command(f"flow create {port_id} {flow_rule}")
-+        if verify:
-+            if "created" not in flow_output:
-+                self._logger.debug(f"Failed to create flow rule:\n{flow_output}")
-+                raise InteractiveCommandExecutionError(
-+                    f"Failed to create flow rule:\n{flow_output}"
-+                )
-         match = re.search(r"#(\d+)", flow_output)
-         if match is not None:
-             match_str = match.group(1)
-@@ -1968,10 +2059,10 @@ def flow_delete(self, flow_id: int, port_id: int, verify: bool = True) -> None:
-         """Deletes the specified flow rule from the testpmd session.
- 
-         Args:
--            flow_id: ID of the flow to remove.
-+            flow_id: :class:`FlowRule` id used for deleting testpmd flow rule.
-             port_id: Integer representing the port to use.
-             verify: If :data:`True`, the output of the command is scanned
--                to ensure the flow rule was deleted successfully.
-+            to ensure the flow rule was deleted successfully.
- 
-         Raises:
-             InteractiveCommandExecutionError: If flow rule is invalid.
-@@ -2639,7 +2730,10 @@ class NicCapability(NoAliasEnum):
-         None,
-     )
-     #: Device supports Large Receive Offload.
--    RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-+    )
-     #: Device supports QinQ (queue in queue) offload.
-     RX_OFFLOAD_QINQ_STRIP: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_rx_offload,
-@@ -2666,7 +2760,10 @@ class NicCapability(NoAliasEnum):
-         None,
-     )
-     #: Device supports receiving segmented mbufs.
--    RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-+    )
-     #: Device supports Timestamp.
-     RX_OFFLOAD_TIMESTAMP: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_rx_offload,
-@@ -2708,7 +2805,10 @@ class NicCapability(NoAliasEnum):
-         None,
-     )
-     #: Device supports all VLAN capabilities.
--    RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_rx_offload,
-+        None,
-+    )
-     #: Device supports Rx queue setup after device started.
-     RUNTIME_RX_QUEUE_SETUP: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_show_port_info,
-@@ -2720,9 +2820,15 @@ class NicCapability(NoAliasEnum):
-         None,
-     )
-     #: Device supports shared Rx queue among ports within Rx domain and switch domain.
--    RXQ_SHARE: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_show_port_info, None)
-+    RXQ_SHARE: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_show_port_info,
-+        None,
-+    )
-     #: Device supports keeping flow rules across restart.
--    FLOW_RULE_KEEP: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_show_port_info, None)
-+    FLOW_RULE_KEEP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_show_port_info,
-+        None,
-+    )
-     #: Device supports keeping shared flow objects across restart.
-     FLOW_SHARED_OBJECT_KEEP: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_show_port_info,
-@@ -2734,7 +2840,10 @@ class NicCapability(NoAliasEnum):
-         None,
-     )
-     #: Device supports flow ctrl.
--    FLOW_CTRL: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_flow_ctrl, None)
-+    FLOW_CTRL: TestPmdShellNicCapability = (
-+        TestPmdShell.get_capabilities_flow_ctrl,
-+        None,
-+    )
- 
-     def __call__(
-         self,
++    if verify_packet_pairs:
++        # Go through pairs of hashes in list and verify they are the same
++        for odd_hash, even_hash in zip(hash_list[0::2], hash_list[1::2]):
++            test_suite.verify(
++                odd_hash == even_hash,
++                "Packet pair do not have same hash. Hash algorithm is not symmetric.",
++            )
++
++
++def SendTestPackets(
++    TestSuite: TestSuite,
++    testpmd: TestPmdShell,
++    send_additional_mirrored_packet: bool,
++) -> list[TestPmdVerbosePacket]:
++    """Sends test packets.
++
++    Send 10 packets from the TG to SUT, parsing the verbose output and returning it.
++    If the algorithm chosen is symmetric, send an additional packet for each initial
++    packet sent, which has the L4 src and dst swapped.
++
++    Args:
++        TestSuite: The reference to the currently running test suite.
++        testpmd: Used to send packets and send commands to testpmd.
++        send_additional_mirrored_packet: Send an additional mirrored packet for each packet sent.
++
++    Returns:
++        TestPmdVerbosePacket: List of packets.
++    """
++    # Create test packets
++    packets = []
++    for i in range(10):
++        packets.append(
++            Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
++            / IP()
++            / UDP(sport=i, dport=i + 1),
++        )
++        if send_additional_mirrored_packet:  # If symmetric, send the inverse packets
++            packets.append(
++                Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
++                / IP()
++                / UDP(sport=i + 1, dport=i),
++            )
++
++    # Set verbose packet information and start packet capture
++    testpmd.set_verbose(3)
++    testpmd.start()
++    testpmd.start_all_ports()
++    TestSuite.send_packets_and_capture(packets)
++
++    # Stop packet capture and revert verbose packet information
++    testpmd_shell_out = testpmd.stop()
++    testpmd.set_verbose(0)
++    # Parse the packets and return them
++    return testpmd.extract_verbose_output(testpmd_shell_out)
++
++
++def SetupRssEnvironment(
++    TestSuite: TestSuite,
++    testpmd: TestPmdShell,
++    num_queues: int,
++    flow_rule: FlowRule | None,
++) -> tuple[list[int], int]:
++    """Sets up the testpmd environment for RSS test suites.
++
++    This involves:
++    1. Setting the testpmd forward mode to rx_only.
++    2. Setting RSS on the NIC to UDP.
++    3. Creating a flow if provided.
++    4. Configuring RETA.
++
++    The reta and key_size of the NIC are then returned
++
++    Args:
++        TestSuite: TestSuite environment.
++        testpmd: Where the environment will be set.
++        num_queues: Number of queues in the RETA table.
++        flow_rule: The flow rule for altering packet fate.
++
++    Raises:
++        InteractiveCommandExecutionError: If size of hash key for driver is None.
++        InteractiveCommandExecutionError: If size of RETA table for driver is None.
++
++    Returns:
++        reta: Configured Redirection Table.
++        key_size: key size supported by NIC.
++    """
++    ports = []
++    for port_id, _ in enumerate(TestSuite.topology.sut_ports):
++        ports.append(port_id)
++
++    port_info = testpmd.show_port_info(ports[0])
++
++    # Get hash key size
++    key_size = port_info.hash_key_size
++    if key_size is None:
++        raise InteractiveCommandExecutionError("Size of hash key for driver is None.")
++
++    # Get RETA table size
++    reta_size = port_info.redirection_table_size
++    if reta_size is None:
++        raise InteractiveCommandExecutionError("Size of RETA table for driver is None.")
++
++    # Set forward mode to receive only, to remove forwarded packets from verbose output
++    testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
++
++    # Reset RSS settings and only RSS udp packets
++    testpmd.port_config_all_rss_offload_type(RSSOffloadTypesFlag.udp)
++
++    # Create flow rule
++    if flow_rule is not None:
++        testpmd.flow_create(flow_rule, ports[0])
++
++    # Configure the RETA with random queues
++    reta: list[int] = []
++    for i in range(reta_size):
++        reta.insert(i, random.randint(0, num_queues - 1))
++        testpmd.port_config_rss_reta(ports[0], i, reta[i])
++
++    return reta, key_size
 -- 
 2.43.0
 
