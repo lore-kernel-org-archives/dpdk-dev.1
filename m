@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9A5C021B2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 14:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB006C021B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 14:42:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4F74402D2;
-	Tue, 25 Feb 2025 15:41:39 +0100 (CET)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 785ED402AE
- for <dev@dpdk.org>; Tue, 25 Feb 2025 15:41:38 +0100 (CET)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-22114b800f7so113761985ad.2
- for <dev@dpdk.org>; Tue, 25 Feb 2025 06:41:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DED0A402D2;
+	Tue, 25 Feb 2025 15:42:47 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 6CDFB402AE
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 15:42:46 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-220ec47991aso79010975ad.1
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 06:42:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740494497;
- x=1741099297; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740494565;
+ x=1741099365; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=VWPvygBFs6O5QDZIZ/MVdDVxz0Ebf/ECzSp5eEbPLto=;
- b=R1tn3eUsDnB19Zf+w6itvq/jNbdCc8Oze/D84hYFy5vE1AIFmnCV8RJNBuBpSG+IK3
- CkDFRJURYJ1/EqKaMHWdJaqNoDZQkMwyQG4dGfT41uZ5dJW4khmsTs98AQLBjBzvL8ZW
- IerL0vBQCt31Api74yRiUVADTFeAzfH5t57HxaDZbq+W9YgI8I/toPBK1+3NsAkV3oU3
- RfVA8hYI6VgWMTgy5ipIaoOcGqDPcjtv3pojCDm37YdFhPke53qqMCh9vrsr6avh9M2O
- yFswhBGM1p6S1/1ZBhLgY3NZSOHXB9cafydGCk4etxAveY13qMetTFkg6g2InP531tJT
- yS4A==
+ bh=NV5iaKuh+yGFl6d6Cr2/74o7XdkJ1X/ZKdlpMo3SumY=;
+ b=k9wvz0DxOYDOcOCOy2zq03m0gJitrR+yTQr3Eye9cjW712Ds6iAtoKLJBdYgqbzA4p
+ zHTJGI+VYUWSgGWESgBp+0FQQGp0fCXiDRPaMEFZtuy058VCVi/lt9NY/WsfGEothtUL
+ DzyFo0SbSORTKawsfL1m1QNlm7co/sqNSEg2kKCZBOdVG7LFNhmOnqn/rwhjEDH6yass
+ OYNoxCTUDst0S0vwQnrzBMPTl3qm6smoj46FWybAx8Z6eeENDqYW1CWJoZqGT62PriYa
+ 5a5uW7fir3301tVAHT3AbB7ck/MpOyQiGQ3AIjGvwFLUN3lVsfCnCipKAlLWwYxw46gj
+ QN3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740494497; x=1741099297;
+ d=1e100.net; s=20230601; t=1740494565; x=1741099365;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=VWPvygBFs6O5QDZIZ/MVdDVxz0Ebf/ECzSp5eEbPLto=;
- b=SH9EpntpFpT7vK4r1/XxG7QnUVgtDNLuwKbVZvA8nhIVwCl3wlBJwS4oVLrBZ02cjP
- ypnXakA/TJgHRADIh1//ZXMv4Wv3j9udtQa/7KpVaxWeJ3/TF6Z3QwC26W41tZXDWRzE
- zRRHv3OpvEKBgBI736+K42m3iFvGJf+r1JeZJv3hxExohd9a1YWNPfaukw79QsT/7k/O
- OhPNLnIht5+DoxZO+WN6pi6YJurDlksd8yyPICkP4jd2tkLPsKwCX2xusUjmJy05FabF
- rNU7T0ORCiXF5kroVNYLI6SFvSUH/4jixyv6GyY+8GPxnDKHPAMOaaL+C1RLdVK0rcJQ
- phxQ==
-X-Gm-Message-State: AOJu0YzrTVcREeWe7fl3o672YXAnzA0+tJu9spt6hvJEHXq9iYeWjlnr
- E+3N78Zdb7pCME9yy349LU1DYfFJ5k0tfy6LIqxgL9vei2tSF9Y2+qKTXicJ50k=
-X-Gm-Gg: ASbGncvbe2Rfi1/SPuMKsQFN9JDclWcuGZWORrCAbIqehWPV820zd46AMVbsfFsk7mW
- H2DfewfDr269i87ushHtxmu1h+379p2IPp3ii0zoSoScD8adJBC/EyNmD1WDI0I0FaFFq05cFy7
- wad1BOAqMbBjv4UdKEIfncfRzzo0Sen1gumpkHBidBV73EihS0xwEFoZPY9AbDhIf+KrN8wlssg
- N87PjerPEkZtN2TKj+sJ2QeMfDrmTSfL/qQMDAPqcvA3LGa7C7GtLQsb8PuOGdf/jZl6IVSpGtt
- gwufvErHhVyfQFhlG9nt8YCccJcXcvwr6/ntyh2Hx8DILIe+xV9L1K772q2Fs+SqhdniwL8rYRf
- UILY=
-X-Google-Smtp-Source: AGHT+IFNyGNnwXyuuLqSIr5Xs3YQoHwM8BkFea4Jb3cE8GV2lXNd1Na87ytEfR1yee5mYavqOuOb0Q==
-X-Received: by 2002:a17:902:f550:b0:220:e63c:5b13 with SMTP id
- d9443c01a7336-2219fff4ef2mr273791435ad.46.1740494497597; 
- Tue, 25 Feb 2025 06:41:37 -0800 (PST)
+ bh=NV5iaKuh+yGFl6d6Cr2/74o7XdkJ1X/ZKdlpMo3SumY=;
+ b=filT5XERt1aueNS8bGS0g3IDj3lZCqk7a4YV0t31qP7Iwjz7Uv6XsM9afdLmf8GN9k
+ OKLk8zTYHWQlQarwbM5TQbw/lMudm8AgttkhCwHF+LfanOi+eJHaw2Hhrsia84/bh4O6
+ z8y90ENFrRvoNSnXZuU9DtJImMNhnKeIn40rsUU1VimkmwpRHPJ6mCGwuZlG4BYPzg+/
+ jpljZATgbYsFzlK4t0CuQx5q9oFZ+SEZFCvNgnDkrRl00Y9FgLj3q67q/zj/4ZcZOP/C
+ KVU7YNukscGUu+plJ5ioBdDkmNuR40EeCIzLEVXXC9gSWYFWXUR4CvmbF6FeSkKbjCjW
+ HGnQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVG+oEpn331tGeux6FDfE9Pnh8rFgaE47FHrbdBLF+DAwBPN8haDiWEFJI+7tOL6ehb05k=@dpdk.org
+X-Gm-Message-State: AOJu0YzEt/jgRkqNI0r+kcztHm5opWXVH9UM75oixuY0/ji7LcnaN7KC
+ uqDCvFLiXmcNgWqPiedH9NKr7C0g3ryoSgixPjzCDNduPTyuna8rLKGl073RDPj25c2/OgXrx9p
+ 0L2c=
+X-Gm-Gg: ASbGncvsti/J1DNRfoeWs1wewRK7IhkaollRSQB7cIroAcA+yHPg2vsHjvLSMkZOQtx
+ ob8HTpj//lzPG/zyAKTAmmERUpU7YdJHSixrpS0bIzUTRBcQSzWHlMycs9mqzh8H4HfUjED/guP
+ Y8DdYFT0350QeHa7iCnZNjeArGI/df18/uZCN1pEgwHfSxVoI4vUtFxwcfydYy79F++oQReXtpo
+ D0Ru6iU0Cq36OJvIfZhG/HR8xfhlaIjtnghH4aksOIiLrRK1oURJ3cW6BNDy3E1OUyNJ5gi+aQo
+ VjN7y/ILxvEB+dKGqoBgB7bLsTMnjqbYHpSrclSULLjrTxl0WZihCi3eRuJt/juu0S2t/S3Xwz1
+ 2OWE=
+X-Google-Smtp-Source: AGHT+IG6jwEpAizf1rz0h6qA0Fki1UeYhJ15OThHhfsThIh0iLL0T6PbgvnXGtCu0ngU0JmHNP9eqQ==
+X-Received: by 2002:a05:6a00:190e:b0:732:13fd:3f1f with SMTP id
+ d2e1a72fcca58-73426d96ceamr35091928b3a.24.1740494565468; 
+ Tue, 25 Feb 2025 06:42:45 -0800 (PST)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2230a0b2975sm14838645ad.259.2025.02.25.06.41.37
+ d2e1a72fcca58-7347a6ababfsm1613430b3a.19.2025.02.25.06.42.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Feb 2025 06:41:37 -0800 (PST)
-Date: Tue, 25 Feb 2025 06:41:35 -0800
+ Tue, 25 Feb 2025 06:42:45 -0800 (PST)
+Date: Tue, 25 Feb 2025 06:42:43 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Pawel Nicinski <pawel.nicinski@ericsson.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Kamila Swarbula
- <kamila.swarbula@ericsson.com>, EUIR CSI ISP RT TEAM CODE DIGGERS
- Sub-contractors <PDLOLTEAMC@pdl.internal.ericsson.com>
-Subject: Re: Bug report for dpdk-stable-22.11.2
-Message-ID: <20250225064135.1cd88ff2@hermes.local>
-In-Reply-To: <VI1PR07MB558269DB5FBD221349168695FAC42@VI1PR07MB5582.eurprd07.prod.outlook.com>
-References: <VI1PR07MB558269DB5FBD221349168695FAC42@VI1PR07MB5582.eurprd07.prod.outlook.com>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: <thomas@monjalon.net>, <aman.deep.singh@intel.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 0/4] enhance testpmd DCB command
+Message-ID: <20250225064243.1bb9f2c3@hermes.local>
+In-Reply-To: <20250225091929.25072-1-fengchengwen@huawei.com>
+References: <20250225091929.25072-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +83,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Feb 2025 12:11:08 +0000
-Pawel Nicinski <pawel.nicinski@ericsson.com> wrote:
+On Tue, 25 Feb 2025 17:19:25 +0800
+Chengwen Feng <fengchengwen@huawei.com> wrote:
 
-> Hello there,
->=20
->=20
->=20
-> I hope you=E2=80=99re having a great day.
->=20
->=20
->=20
-> Using the github.com/Ericsson/codechecker<https://github.com/Ericsson/cod=
-echecker> tool, we conducted a static analysis of your software. We detecte=
-d some potentially critical vulnerabilities related to different areas.
->=20
->=20
->=20
-> Please check the attached csv file and make corrections.
->=20
->=20
->=20
-> Best regards,
->=20
-> Ericsson Team
->=20
->=20
+> This patchset enhance the testpmd DCB command features:
+> 1) remove restrict of number of TCs (currently its 4 or 8)
+> 2) support config prio-tc map
+> 3) support don't adjust queue num
+> 4) support disable DCB
+> 
+> Chengwen Feng (4):
+>   app/testpmd: remove restrict of number of TCs in DCB command
+>   app/testpmd: support config prio-tc map in DCB command
+>   app/testpmd: support don't adjust queue num in DCB command
+>   app/testpmd: support disable DCB command
+> 
+>  app/test-pmd/cmdline.c                      | 184 ++++++++++++++++++--
+>  app/test-pmd/testpmd.c                      |  96 ++++++----
+>  app/test-pmd/testpmd.h                      |   5 +-
+>  doc/guides/testpmd_app_ug/testpmd_funcs.rst |   6 +-
+>  4 files changed, 236 insertions(+), 55 deletions(-)
+> 
 
-More static analysis is great, but please run on current upstream main bran=
-ch not a two year old
-release. Looking a few of these were fixed long ago. Also don't include out=
- of tree drivers.
+Will look at this in more detail after 25.03
