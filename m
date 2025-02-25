@@ -2,74 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0220DC021B2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 16:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCADC021B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 16:09:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E016440299;
-	Tue, 25 Feb 2025 17:08:51 +0100 (CET)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 9E2544025E
- for <dev@dpdk.org>; Tue, 25 Feb 2025 17:08:50 +0100 (CET)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-220d132f16dso90390105ad.0
- for <dev@dpdk.org>; Tue, 25 Feb 2025 08:08:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740499729;
- x=1741104529; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=GHDw50+j2zZAoAKvpIq0GUTDTx3n1AXT/PwdksRdlFc=;
- b=Pj+Mq/Q+AVYVbe3ovZ0N276lKGmgPRFeWQYt95ccTXUkmKnLcrVgRYIgHeM45aRADL
- NFAGLW6cAK9hTFIgUHnvcEa045736GtLhBGuMl1S2G7p6IhiI7nnEVPYtWGTIvBjQgyd
- /dK/+y1uVOpXh/uN09Q8enZ53j/Osm+jsZzhnwJzoaeyU9WLnyEu2xh01oP9VQDvb6Or
- 62DQRizVG6LhXdlHUlGFG7Vq4ReVO3oJR/fYax+FZO4UDbjCgGqX4mSH4mln3q+Lemhl
- VIDh+AnSh39WZsdY1IxLiGHK0npMb8IBt0t4b+cGEn6GMcqYILDJ7AW3JQskBxI5pL5r
- ft7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740499729; x=1741104529;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=GHDw50+j2zZAoAKvpIq0GUTDTx3n1AXT/PwdksRdlFc=;
- b=DycvVrQyAuMOIcAM9uC1MhXmLtuBIsSPdvDfkiG/C03Bo+WoHJqGCtxfBE1QjyD4i2
- b895PvolQae5IkQDvnc5f2JB3wdvMp+ym3B75hX2xyZOEeb1rMzX7/KyUj+rJomrrgMs
- OHjoZGXGafTxfFV0lK2twGKoL6e6n1KJM7TsIdNjoZQB38wnKZ/XCsWp9vdcCOYU2F9q
- ck4ehKEJhGZqxQqxnmMRwzgO+JMVPbgrE24P3moKsNvbskhKdZiMqTphmUuZ+7LKmJCM
- AF8g5EhVlXDTlqpzAD+OajjOP4nuU3QlSd3H7fDhPgpLwCUTsX51u8ZR8WUnXgiWBbf3
- Xx6A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX5OYkH2lwZRX7zO3mmcKN9cfsXUnBJdceaEmJkVfbNFQX38OHS6klcVOwO7ejELMrx/6A=@dpdk.org
-X-Gm-Message-State: AOJu0YxtjNOjLKI84Z6R55JJHPieyFgyW4+V2yba+E/+8Bk7peh2fHVA
- GbQKAkyYZM5jLDoyDVwyWebLeiEa5P+dpp9tfR77Ld19fC+KnAf6mGCx6b7ntVu7RpkdL1kgrMw
- vl4g=
-X-Gm-Gg: ASbGncsRssFYgAGTr0M0e/MuUCWnnC5QNFRqqAXqDP+6DYqh+/FMJPQb/N0AG8R1fjL
- cf0Cf8kVvHU5Xh3JGf5+EJwi2Zz60N3PXdmpuzNwmWzDrsbGU0woGRzwYu7QwQlqoqWd8UxT4dR
- mRDxUquH3n8eIN8LwkjyXvmDEbiCAmkMSktpaJ+9eYal2tOw3eYa5oaAM8QrMUmmH9SgIxB+F2k
- /wcLWTZZ3ewPuU49rs9Nbv0eCA79GwiUdod1tJ7vbhenbOI2dN91U/GlYxZeS7PKTh/3ZTPG8RX
- ZCl/qDCq7PSDW9O+JRvcYasB2sfVHXWYRGOGZZolBA434QwLoJLjKgo3Gj6L9wMy0uoaiY01pbN
- HUCo=
-X-Google-Smtp-Source: AGHT+IExR6bcQG6oV9jhimYOGPAIysg9NnXJYZG9SDYoZoVRuGgQZTDUbz2Iln+ij17fj8iOWp1/nw==
-X-Received: by 2002:a05:6a21:9006:b0:1f0:ee68:ec37 with SMTP id
- adf61e73a8af0-1f0ee68ec7amr12181136637.27.1740499729473; 
- Tue, 25 Feb 2025 08:08:49 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7347a7f9a8asm1744077b3a.95.2025.02.25.08.08.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Feb 2025 08:08:49 -0800 (PST)
-Date: Tue, 25 Feb 2025 08:08:46 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenbo Cao <caowenbo@mucse.com>
-Cc: thomas@monjalon.net, dev@dpdk.org, yaojun@mucse.com
-Subject: Re: [PATCH v15 09/29] net/rnp: add queue stop and start operations
-Message-ID: <20250225080846.50657db8@hermes.local>
-In-Reply-To: <1740472886-30411-10-git-send-email-caowenbo@mucse.com>
-References: <1740472886-30411-1-git-send-email-caowenbo@mucse.com>
- <1740472886-30411-10-git-send-email-caowenbo@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1B3C9402E0;
+	Tue, 25 Feb 2025 17:09:17 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 83E88402E0
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 17:09:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1740499755;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=iJmVTMsfkPqlkEzv81psu6Yo2t232XOrDC+e3jKpkKQ=;
+ b=D78ueWQNw8IlNbuUYD8fnZh1hXD0JEsXLi2nP9pbOMt+9zkJiRsTQunWIwrCoOxdZGBDw8
+ k+ZkJyg/4xvJUvtCXMjCFXq6BoyWa1h/qkaSPXHMv6TqdlHdfBcGteJd9w3JyTzszW5kws
+ R2UyxcG4VAldG9Pf6iuGAziKRcWYdxg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-hbKhPpkGPAayHFT3rn-Ciw-1; Tue,
+ 25 Feb 2025 11:09:11 -0500
+X-MC-Unique: hbKhPpkGPAayHFT3rn-Ciw-1
+X-Mimecast-MFC-AGG-ID: hbKhPpkGPAayHFT3rn-Ciw_1740499748
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id AC1E21800983; Tue, 25 Feb 2025 16:09:08 +0000 (UTC)
+Received: from [10.44.22.16] (unknown [10.44.22.16])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E036F180035F; Tue, 25 Feb 2025 16:09:05 +0000 (UTC)
+Message-ID: <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
+Date: Tue, 25 Feb 2025 17:09:02 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/virtio: add virtio hash report feature
+To: Kommula Shiva Shankar <kshankar@marvell.com>, dev@dpdk.org,
+ chenbox@nvidia.com
+Cc: david.marchand@redhat.com, jerinj@marvell.com, ndabilpuram@marvell.com,
+ schalla@marvell.com
+References: <20250126193404.3431544-1-kshankar@marvell.com>
+ <20250127074150.3499851-1-kshankar@marvell.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20250127074150.3499851-1-kshankar@marvell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: FyJ82Vdy0Hm4Tv63PWS7wH85tcwBql29Dr4BZbpSZxo_1740499748
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,84 +114,221 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 25 Feb 2025 16:41:06 +0800
-Wenbo Cao <caowenbo@mucse.com> wrote:
+Hi,
 
-> diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-> index 99b96e9b8e..c3547c38b6 100644
-> --- a/doc/guides/nics/rnp.rst
-> +++ b/doc/guides/nics/rnp.rst
-> @@ -71,6 +71,10 @@ Listed below are the rte_eth functions supported:
->  * ``rte_eth_dev_close``
->  * ``rte_eth_dev_stop``
->  * ``rte_eth_dev_infos_get``
-> +* ``rte_eth_dev_rx_queue_start``
-> +* ``rte_eth_dev_rx_queue_stop``
-> +* ``rte_eth_dev_tx_queue_start``
-> +* ``rte_eth_dev_tx_queue_stop``
->  * ``rte_eth_promiscuous_disable``
->  * ``rte_eth_promiscuous_enable``
->  * ``rte_eth_allmulticast_enable``
+On 1/27/25 8:41 AM, Kommula Shiva Shankar wrote:
+> This patch adds virtio hash report feature, which is
+> supported in packet queue mode with scalar version
 
-There is no callback in this driver for rx/tx queue start/stop.
-Did you test this with test-pmd?
+Why only restrict to packed ring? isn't it also compatible with split
+ring?
 
-If application calls rte_eth_dev_rx_queue_start()
+> 
+> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
+> ---
+>   drivers/net/virtio/virtio.h                   |  2 ++
+>   drivers/net/virtio/virtio_ethdev.c            | 20 ++++++++++++-
+>   drivers/net/virtio/virtio_ethdev.h            |  1 +
+>   drivers/net/virtio/virtio_rxtx.c              | 30 +++++++++++++++++++
+>   .../net/virtio/virtio_user/virtio_user_dev.c  |  1 +
+>   drivers/net/virtio/virtqueue.h                | 21 +++++++++++++
+>   6 files changed, 74 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/virtio/virtio.h b/drivers/net/virtio/virtio.h
+> index ef5827c5f5..c2a0fd477c 100644
+> --- a/drivers/net/virtio/virtio.h
+> +++ b/drivers/net/virtio/virtio.h
+> @@ -30,6 +30,7 @@
+>   #define VIRTIO_NET_F_GUEST_ANNOUNCE 21	/* Guest can announce device on the network */
+>   #define VIRTIO_NET_F_MQ		22	/* Device supports Receive Flow Steering */
+>   #define VIRTIO_NET_F_CTRL_MAC_ADDR 23	/* Set MAC address */
+> +#define VIRTIO_NET_F_HASH_REPORT  57    /* Supports hash report */
+>   #define VIRTIO_NET_F_RSS	60	/* RSS supported */
+>   
+>   /*
+> @@ -187,6 +188,7 @@ struct virtio_hw {
+>   	uint8_t started;
+>   	uint8_t weak_barriers;
+>   	uint8_t vlan_strip;
+> +	uint8_t has_hash_report;
+>   	bool rx_ol_scatter;
+>   	uint8_t has_tx_offload;
+>   	uint8_t has_rx_offload;
+> diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
+> index 70d4839def..caacbce57a 100644
+> --- a/drivers/net/virtio/virtio_ethdev.c
+> +++ b/drivers/net/virtio/virtio_ethdev.c
+> @@ -1796,7 +1796,9 @@ virtio_init_device(struct rte_eth_dev *eth_dev, uint64_t req_features)
+>   		eth_dev->data->dev_flags &= ~RTE_ETH_DEV_INTR_LSC;
+>   
+>   	/* Setting up rx_header size for the device */
+> -	if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
+> +	if (virtio_with_feature(hw, VIRTIO_NET_F_HASH_REPORT))
+> +		hw->vtnet_hdr_size = sizeof(struct virtio_net_hdr_hash_report);
+> +	else if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
+>   	    virtio_with_feature(hw, VIRTIO_F_VERSION_1) ||
+>   	    virtio_with_packed_queue(hw))
+>   		hw->vtnet_hdr_size = sizeof(struct virtio_net_hdr_mrg_rxbuf);
+> @@ -2181,6 +2183,10 @@ virtio_dev_configure(struct rte_eth_dev *dev)
+>   			(1ULL << VIRTIO_NET_F_GUEST_TSO4) |
+>   			(1ULL << VIRTIO_NET_F_GUEST_TSO6);
+>   
+> +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
+> +		req_features |=
+> +			(1ULL << VIRTIO_NET_F_HASH_REPORT);
+> +
+>   	if (tx_offloads & (RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
+>   			   RTE_ETH_TX_OFFLOAD_TCP_CKSUM))
+>   		req_features |= (1ULL << VIRTIO_NET_F_CSUM);
+> @@ -2233,6 +2239,9 @@ virtio_dev_configure(struct rte_eth_dev *dev)
+>   	if (rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
+>   		hw->vlan_strip = 1;
+>   
+> +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
+> +		hw->has_hash_report = 1;
+> +
+>   	hw->rx_ol_scatter = (rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
+>   
+>   	if ((rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER) &&
+> @@ -2285,6 +2294,12 @@ virtio_dev_configure(struct rte_eth_dev *dev)
+>   					"disabled packed ring vectorized rx for TCP_LRO enabled");
+>   				hw->use_vec_rx = 0;
+>   			}
+> +
+> +			if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
+> +				PMD_DRV_LOG(INFO,
+> +					"disabled packed ring vectorized rx for RSS_HASH enabled");
+> +				hw->use_vec_rx = 0;
+> +			}
+>   		}
+>   	} else {
+>   		if (virtio_with_feature(hw, VIRTIO_F_IN_ORDER)) {
+> @@ -2669,6 +2684,9 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+>   		dev_info->flow_type_rss_offloads = 0;
+>   	}
+>   
+> +	if (host_features & (1ULL << VIRTIO_NET_F_HASH_REPORT))
+> +		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+> +
+>   	if (host_features & (1ULL << VIRTIO_F_RING_PACKED)) {
+>   		/*
+>   		 * According to 2.7 Packed Virtqueues,
+> diff --git a/drivers/net/virtio/virtio_ethdev.h b/drivers/net/virtio/virtio_ethdev.h
+> index 7be1c9acd0..7aa771fd2b 100644
+> --- a/drivers/net/virtio/virtio_ethdev.h
+> +++ b/drivers/net/virtio/virtio_ethdev.h
+> @@ -46,6 +46,7 @@
+>   	 1u << VIRTIO_NET_F_CSUM           |	\
+>   	 1u << VIRTIO_NET_F_HOST_TSO4      |	\
+>   	 1u << VIRTIO_NET_F_HOST_TSO6      |	\
+> +	 1ULL << VIRTIO_NET_F_HASH_REPORT  |    \
+>   	 1ULL << VIRTIO_NET_F_RSS)
+>   
+>   extern const struct eth_dev_ops virtio_user_secondary_eth_dev_ops;
+> diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
+> index b67f063b31..35bd61350c 100644
+> --- a/drivers/net/virtio/virtio_rxtx.c
+> +++ b/drivers/net/virtio/virtio_rxtx.c
+> @@ -40,6 +40,19 @@
+>   #define  VIRTIO_DUMP_PACKET(m, len) do { } while (0)
+>   #endif
+>   
+> +static const uint32_t vhdr_hash_report_to_mbuf_pkt_type[] = {
+> +	RTE_PTYPE_UNKNOWN,
+> +	RTE_PTYPE_L3_IPV4,
+> +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP,
+> +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
+> +	RTE_PTYPE_L3_IPV6,
+> +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
+> +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP,
+> +	RTE_PTYPE_L3_IPV6_EXT,
+> +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_TCP,
+> +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_UDP,
+> +};
+> +
+>   void
+>   vq_ring_free_inorder(struct virtqueue *vq, uint16_t desc_idx, uint16_t num)
+>   {
+> @@ -901,6 +914,16 @@ virtio_discard_rxbuf_inorder(struct virtqueue *vq, struct rte_mbuf *m)
+>   	}
+>   }
+>   
+> +static inline void
+> +virtio_rx_update_hash_report(struct rte_mbuf *m, struct virtio_net_hdr_hash_report *hdr)
+> +{
+> +	if (likely(hdr->hash_report)) {
+> +		m->packet_type = vhdr_hash_report_to_mbuf_pkt_type[hdr->hash_report];
+> +		m->hash.rss = hdr->hash_value;
+> +		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
+> +	}
+> +}
+> +
+>   /* Optionally fill offload information in structure */
+>   static inline int
+>   virtio_rx_offload(struct rte_mbuf *m, struct virtio_net_hdr *hdr)
+> @@ -1134,6 +1157,9 @@ virtio_recv_pkts_packed(void *rx_queue, struct rte_mbuf **rx_pkts,
+>   		hdr = (struct virtio_net_hdr *)((char *)rxm->buf_addr +
+>   			RTE_PKTMBUF_HEADROOM - hdr_size);
+>   
+> +		if (hw->has_hash_report)
+> +			virtio_rx_update_hash_report(rxm,
+> +						    (struct virtio_net_hdr_hash_report *)hdr);
+>   		if (hw->vlan_strip)
+>   			rte_vlan_strip(rxm);
+>   
+> @@ -1617,6 +1643,10 @@ virtio_recv_mergeable_pkts_packed(void *rx_queue,
+>   		if (hw->vlan_strip)
+>   			rte_vlan_strip(rx_pkts[nb_rx]);
+>   
+> +		if (hw->has_hash_report)
+> +			virtio_rx_update_hash_report(rxm,
+> +						    (struct virtio_net_hdr_hash_report *)header);
+> +
+>   		seg_res = seg_num - 1;
+>   
+>   		/* Merge remaining segments */
+> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+> index 2997d2bd26..187f81b066 100644
+> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
+> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+> @@ -726,6 +726,7 @@ virtio_user_free_vrings(struct virtio_user_dev *dev)
+>   	 1ULL << VIRTIO_F_RING_PACKED		|	\
+>   	 1ULL << VIRTIO_F_NOTIFICATION_DATA	|	\
+>   	 1ULL << VIRTIO_F_ORDER_PLATFORM        |       \
+> +	 1ULL << VIRTIO_NET_F_HASH_REPORT       |       \
+>   	 1ULL << VIRTIO_NET_F_RSS)
+>   
+>   int
+> diff --git a/drivers/net/virtio/virtqueue.h b/drivers/net/virtio/virtqueue.h
+> index 60211a40c9..3b468bd4f4 100644
+> --- a/drivers/net/virtio/virtqueue.h
+> +++ b/drivers/net/virtio/virtqueue.h
+> @@ -257,6 +257,27 @@ struct virtio_net_hdr_mrg_rxbuf {
+>   	uint16_t num_buffers; /**< Number of merged rx buffers */
+>   };
+>   
+> +/**
+> + * This is the version of the header to use when the HASH_REPORT
+> + * feature has been negotiated.
+> + */
+> +struct virtio_net_hdr_hash_report {
+> +	struct virtio_net_hdr_mrg_rxbuf hdr;
+> +	uint32_t hash_value;
+> +#define VIRTIO_NET_HASH_REPORT_NONE	0
+> +#define VIRTIO_NET_HASH_REPORT_IPV4	1
+> +#define VIRTIO_NET_HASH_REPORT_TCPV4	2
+> +#define VIRTIO_NET_HASH_REPORT_UDPV4	3
+> +#define VIRTIO_NET_HASH_REPORT_IPV6	4
+> +#define VIRTIO_NET_HASH_REPORT_TCPV6	5
+> +#define VIRTIO_NET_HASH_REPORT_UDPV6	6
+> +#define VIRTIO_NET_HASH_REPORT_IPV6_EX	7
+> +#define VIRTIO_NET_HASH_REPORT_TCPV6_EX	8
+> +#define VIRTIO_NET_HASH_REPORT_UDPV6_EX	9
+> +	uint16_t hash_report;
+> +	uint16_t pad_reserved;
+> +};
+> +
+>   /* Region reserved to allow for transmit header and indirect ring */
+>   #define VIRTIO_MAX_TX_INDIRECT 8
+>   struct virtio_tx_region {
 
-int
-rte_eth_dev_rx_queue_start(uint16_t port_id, uint16_t rx_queue_id)
-{
-...
-	if (*dev->dev_ops->rx_queue_start == NULL)
-		return -ENOTSUP;
-
-The eth_dev_ops in rnp_ethdev.c does not contain rx_queue_start!
-
-/* Features supported by this driver */
-static const struct eth_dev_ops rnp_eth_dev_ops = {
-	.dev_configure                = rnp_dev_configure,
-	.dev_close                    = rnp_dev_close,
-	.dev_start                    = rnp_dev_start,
-	.dev_stop                     = rnp_dev_stop,
-	.dev_infos_get                = rnp_dev_infos_get,
-
-	/* PROMISC */
-	.promiscuous_enable           = rnp_promiscuous_enable,
-	.promiscuous_disable          = rnp_promiscuous_disable,
-	.allmulticast_enable          = rnp_allmulticast_enable,
-	.allmulticast_disable         = rnp_allmulticast_disable,
-	.mtu_set                      = rnp_mtu_set,
-	.rx_queue_setup               = rnp_rx_queue_setup,
-	.rx_queue_release             = rnp_dev_rx_queue_release,
-	.tx_queue_setup               = rnp_tx_queue_setup,
-	.tx_queue_release             = rnp_dev_tx_queue_release,
-	.rxq_info_get                 = rnp_rx_queue_info_get,
-	.txq_info_get                 = rnp_tx_queue_info_get,
-	.rx_burst_mode_get            = rnp_rx_burst_mode_get,
-	.tx_burst_mode_get            = rnp_tx_burst_mode_get,
-	/* rss impl */
-	.reta_update                  = rnp_dev_rss_reta_update,
-	.reta_query                   = rnp_dev_rss_reta_query,
-	.rss_hash_update              = rnp_dev_rss_hash_update,
-	.rss_hash_conf_get            = rnp_dev_rss_hash_conf_get,
-	/* stats */
-	.stats_get                    = rnp_dev_stats_get,
-	.stats_reset                  = rnp_dev_stats_reset,
-	.xstats_get                   = rnp_dev_xstats_get,
-	.xstats_reset                 = rnp_dev_xstats_reset,
-	.xstats_get_names             = rnp_dev_xstats_get_names,
-	/* link impl */
-	.link_update                  = rnp_dev_link_update,
-	.dev_set_link_up              = rnp_dev_set_link_up,
-	.dev_set_link_down            = rnp_dev_set_link_down,
-	/* mac address filter */
-	.mac_addr_set                 = rnp_dev_mac_addr_set,
-	.mac_addr_add                 = rnp_dev_mac_addr_add,
-	.mac_addr_remove              = rnp_dev_mac_addr_remove,
-	.set_mc_addr_list             = rnp_dev_set_mc_addr_list,
-	/* vlan offload */
-	.vlan_offload_set             = rnp_vlan_offload_set,
-	.vlan_strip_queue_set         = rnp_vlan_strip_queue_set,
-	.vlan_filter_set              = rnp_vlan_filter_set,
-	.dev_supported_ptypes_get     = rnp_dev_supported_ptypes_get,
-};
