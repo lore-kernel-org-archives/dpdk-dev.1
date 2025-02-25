@@ -2,25 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDB9C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 08:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C26EC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Feb 2025 08:43:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 58CED42E4B;
-	Tue, 25 Feb 2025 09:41:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 88993427D0;
+	Tue, 25 Feb 2025 09:42:00 +0100 (CET)
 Received: from localhost.localdomain (unknown [103.233.162.252])
- by mails.dpdk.org (Postfix) with ESMTP id 67ED042DE9
- for <dev@dpdk.org>; Tue, 25 Feb 2025 09:41:50 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4E75E42D83
+ for <dev@dpdk.org>; Tue, 25 Feb 2025 09:41:52 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
- id 23407A3246; Tue, 25 Feb 2025 16:41:50 +0800 (CST)
+ id 80E8CA3251; Tue, 25 Feb 2025 16:41:51 +0800 (CST)
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net,
 	Wenbo Cao <caowenbo@mucse.com>
 Cc: stephen@networkplumber.org,
 	dev@dpdk.org,
 	yaojun@mucse.com
-Subject: [PATCH v15 16/29] net/rnp: add MTU set operation
-Date: Tue, 25 Feb 2025 16:41:13 +0800
-Message-Id: <1740472886-30411-17-git-send-email-caowenbo@mucse.com>
+Subject: [PATCH v15 17/29] net/rnp: add Rx scatter segment version
+Date: Tue, 25 Feb 2025 16:41:14 +0800
+Message-Id: <1740472886-30411-18-git-send-email-caowenbo@mucse.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1740472886-30411-1-git-send-email-caowenbo@mucse.com>
 References: <1740472886-30411-1-git-send-email-caowenbo@mucse.com>
@@ -37,277 +37,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add mtu update limit for multiple port mode.
-multiple mode just used the max-mtu of ports
-to limit receive.
+add support scatter multi segment received.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini    |   1 +
- doc/guides/nics/rnp.rst             |   1 +
- drivers/net/rnp/base/rnp_eth_regs.h |   3 +
- drivers/net/rnp/rnp.h               |   3 +
- drivers/net/rnp/rnp_ethdev.c        | 146 +++++++++++++++++++++++++++-
- 5 files changed, 153 insertions(+), 1 deletion(-)
+ doc/guides/nics/features/rnp.ini |   1 +
+ doc/guides/nics/rnp.rst          |   2 +
+ drivers/net/rnp/rnp_ethdev.c     |   2 +
+ drivers/net/rnp/rnp_rxtx.c       | 132 ++++++++++++++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.h       |   2 +
+ 5 files changed, 137 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 695b9c0dba..6d13370e8f 100644
+index 6d13370e8f..6453762745 100644
 --- a/doc/guides/nics/features/rnp.ini
 +++ b/doc/guides/nics/features/rnp.ini
-@@ -10,6 +10,7 @@ Link status event    = Y
- Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
-+MTU update           = Y
- RSS hash             = Y
+@@ -15,5 +15,6 @@ RSS hash             = Y
  RSS key update       = Y
  RSS reta update      = Y
+ Inner RSS            = Y
++Scattered Rx         = Y
+ Linux                = Y
+ x86-64               = Y
 diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index f5a79492bb..5b58a6941c 100644
+index 5b58a6941c..b3d6d4d425 100644
 --- a/doc/guides/nics/rnp.rst
 +++ b/doc/guides/nics/rnp.rst
-@@ -50,6 +50,7 @@ Features
-   Inner RSS is only support for vxlan/nvgre
+@@ -51,6 +51,8 @@ Features
  - Promiscuous mode
  - Link state information
-+- MTU update
+ - MTU update
++- Jumbo frames
++- Scatter-Gather IO support
  
  Prerequisites and Pre-conditions
  --------------------------------
-diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index c74886e70c..91a18dd42d 100644
---- a/drivers/net/rnp/base/rnp_eth_regs.h
-+++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -16,6 +16,9 @@
- #define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
- #define RNP_RX_ETH_F_OFF	(0x7ff)
- #define RNP_RX_ETH_F_ON		(0x270)
-+/* max/min pkts length receive limit ctrl */
-+#define RNP_MIN_FRAME_CTRL	_ETH_(0x80f0)
-+#define RNP_MAX_FRAME_CTRL	_ETH_(0x80f4)
- /* rx queue flow ctrl */
- #define RNP_RX_FC_ENABLE	_ETH_(0x8520)
- #define RNP_RING_FC_EN(n)	_ETH_(0x8524 + ((0x4) * ((n) / 32)))
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index e5f3ac32bf..8323858043 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -123,6 +123,9 @@ struct rnp_eth_port {
- 	bool hw_rss_en;
- 	uint32_t indirtbl[RNP_RSS_INDIR_SIZE];
- 
-+	uint16_t cur_mtu;
-+	bool jumbo_en;
-+
- 	rte_spinlock_t rx_mac_lock;
- 	bool port_stopped;
- };
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 8375cecac2..aa5e221bce 100644
+index aa5e221bce..b8e24f6d27 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -21,6 +21,7 @@
- #include "rnp_rss.h"
- #include "rnp_link.h"
- 
-+static int rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
- static struct rte_eth_dev *
- rnp_alloc_eth_port(struct rte_pci_device *pci, char *name)
- {
-@@ -142,6 +143,13 @@ static void rnp_mac_rx_enable(struct rte_eth_dev *dev)
- 	mac_cfg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
- 	mac_cfg |= RNP_MAC_RE;
- 
-+	if (port->jumbo_en) {
-+		mac_cfg |= RNP_MAC_JE;
-+		mac_cfg |= RNP_MAC_GPSLCE | RNP_MAC_WD;
-+	} else {
-+		mac_cfg &= ~RNP_MAC_JE;
-+		mac_cfg &= ~RNP_MAC_WD;
-+	}
- 	mac_cfg &= ~RNP_MAC_GPSL_MASK;
- 	mac_cfg |= (RNP_MAC_MAX_GPSL << RNP_MAC_CPSL_SHIFT);
- 	RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, mac_cfg);
-@@ -211,6 +219,7 @@ rnp_rx_scattered_setup(struct rte_eth_dev *dev)
- {
- 	uint16_t max_pkt_size =
- 		dev->data->dev_conf.rxmode.mtu + RNP_ETH_OVERHEAD;
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
- 	struct rnp_hw *hw = port->hw;
- 	struct rnp_rx_queue *rxq;
-@@ -236,6 +245,12 @@ rnp_rx_scattered_setup(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
+@@ -606,6 +606,8 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
+ 	dev_info->reta_size = RNP_RSS_INDIR_SIZE;
+ 	/* speed cap info */
+ 	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
++	/* rx support offload cap */
++	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
+ 	/* default ring configure */
+ 	dev_info->default_rxportconf.burst_size = 32;
+ 	dev_info->default_txportconf.burst_size = 32;
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index 260c34113a..c012782e1d 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -826,7 +826,6 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		if (txq->tx_next_rs > txq->attr.nb_desc)
+ 			txq->tx_next_rs = txq->tx_rs_thresh - 1;
  	}
- 	dma_buf_size = hw->min_dma_size;
-+	if (dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_SCATTER ||
-+			max_pkt_size > dma_buf_size ||
-+			dev->data->mtu + RNP_ETH_OVERHEAD > dma_buf_size)
-+		dev->data->scattered_rx = 1;
-+	else
-+		dev->data->scattered_rx = 0;
- 	/* Setup max dma scatter engine split size */
- 	if (max_pkt_size == dma_buf_size)
- 		dma_buf_size += (dma_buf_size % 16);
-@@ -296,6 +311,7 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- {
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
- 	struct rte_eth_dev_data *data = eth_dev->data;
-+	uint16_t max_rx_pkt_len = eth_dev->data->mtu;
- 	bool lsc = data->dev_conf.intr_conf.lsc;
- 	struct rnp_hw *hw = port->hw;
- 	uint16_t lane = 0;
-@@ -316,6 +332,9 @@ static int rnp_dev_start(struct rte_eth_dev *eth_dev)
- 	if (ret)
- 		return ret;
- 	ret = rnp_rx_scattered_setup(eth_dev);
-+	if (ret)
-+		return ret;
-+	ret = rnp_mtu_set(eth_dev, max_rx_pkt_len);
- 	if (ret)
- 		return ret;
- 	ret = rnp_enable_all_tx_queue(eth_dev);
-@@ -655,6 +674,131 @@ static int rnp_allmulticast_disable(struct rte_eth_dev *eth_dev)
- 	return rnp_update_mpfm(port, RNP_MPF_MODE_ALLMULTI, 0);
+-
+ 	txq->tx_tail = i;
+ 
+ 	rte_wmb();
+@@ -835,9 +834,138 @@ rnp_xmit_simple(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	return start;
  }
  
-+static bool
-+rnp_verify_pf_scatter(struct rnp_eth_adapter *adapter)
-+{
-+	struct rnp_hw *hw = &adapter->hw;
-+	struct rte_eth_dev *eth_dev;
-+	uint8_t i = 0;
-+
-+	for (i = 0; i < hw->max_port_num; i++) {
-+		if (adapter->ports[i] == NULL)
-+			continue;
-+		eth_dev = adapter->ports[i]->eth_dev;
-+		if (eth_dev->data == NULL)
-+			continue;
-+		/* sub port of pf eth_dev state is not
-+		 * started so the scatter_rx attr isn't
-+		 * setup don't check this sub port.
-+		 */
-+		if (!eth_dev->data->dev_started)
-+			continue;
-+		if (!eth_dev->data->scattered_rx)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
 +static int
-+rnp_update_valid_mtu(struct rnp_eth_port *port, uint16_t *set_mtu)
++rnp_rxq_bulk_alloc(struct rnp_rx_queue *rxq,
++		   volatile struct rnp_rx_desc *rxbd,
++		   struct rnp_rxsw_entry *rxe,
++		   bool bulk_alloc)
 +{
-+	struct rnp_eth_adapter *adapter = port->hw->back;
-+	struct rnp_eth_port *sub_port = NULL;
-+	struct rnp_hw *hw = port->hw;
-+	uint16_t origin_mtu = 0;
-+	uint16_t mtu = 0;
-+	uint8_t i = 0;
++	struct rte_eth_dev_data *data;
++	struct rte_mbuf *nmb = NULL;
++	uint16_t update_tail;
 +
-+	if (hw->max_port_num == 1) {
-+		port->cur_mtu = *set_mtu;
-+
-+		return 0;
-+	}
-+	origin_mtu = port->cur_mtu;
-+	port->cur_mtu = *set_mtu;
-+	mtu = *set_mtu;
-+	for (i = 0; i < hw->max_port_num; i++) {
-+		sub_port = adapter->ports[i];
-+		if (sub_port == NULL)
-+			continue;
-+		mtu = RTE_MAX(mtu, sub_port->cur_mtu);
-+	}
-+	if (hw->max_port_num > 1 &&
-+			mtu + RNP_ETH_OVERHEAD > hw->min_dma_size) {
-+		if (!rnp_verify_pf_scatter(adapter)) {
-+			RNP_PMD_ERR("single pf multiple port max_frame_sz "
-+					"is bigger than min_dma_size please "
-+					"stop all pf port before set mtu.");
-+			port->cur_mtu = origin_mtu;
-+			return -EINVAL;
++	if (!bulk_alloc) {
++		data = rte_eth_devices[rxq->attr.port_id].data;
++		nmb = rte_mbuf_raw_alloc(rxq->mb_pool);
++		if (unlikely(!nmb)) {
++			data->rx_mbuf_alloc_failed++;
++			return -ENOMEM;
 +		}
++		rxbd->d.pkt_addr = 0;
++		rxbd->d.cmd = 0;
++		rxe->mbuf = NULL;
++		rxe->mbuf = nmb;
++		rxbd->d.pkt_addr = rnp_get_dma_addr(&rxq->attr, nmb);
 +	}
-+	*set_mtu = mtu;
++	if (rxq->rxrearm_nb > rxq->rx_free_thresh) {
++		rxq->rxrearm_nb -= rxq->rx_free_thresh;
++		rxq->rxrearm_start += rxq->rx_free_thresh;
++		if (rxq->rxrearm_start >= rxq->attr.nb_desc)
++			rxq->rxrearm_start = 0;
++		update_tail = (uint16_t)((rxq->rxrearm_start == 0) ?
++				(rxq->attr.nb_desc - 1) : (rxq->rxrearm_start - 1));
++		rte_io_wmb();
++		RNP_REG_WR(rxq->rx_tailreg, 0, update_tail);
++	}
 +
 +	return 0;
++}
++
++static __rte_always_inline uint16_t
++rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
++		 uint16_t nb_pkts)
++{
++	struct rnp_rx_queue *rxq = (struct rnp_rx_queue *)rx_queue;
++	volatile struct rnp_rx_desc *bd_ring = rxq->rx_bdr;
++	struct rte_mbuf *first_seg = rxq->pkt_first_seg;
++	struct rte_mbuf *last_seg = rxq->pkt_last_seg;
++	struct rnp_rxsw_entry *sw_ring = rxq->sw_ring;
++	volatile struct rnp_rx_desc *rxbd;
++	volatile struct rnp_rx_desc rxd;
++	struct rnp_rxsw_entry *rxe;
++	struct rte_mbuf *rxm;
++	uint16_t rx_pkt_len;
++	uint16_t nb_rx = 0;
++	uint16_t rx_status;
++	uint16_t rx_id;
++
++	if (unlikely(!rxq->rxq_started || !rxq->rx_link))
++		return 0;
++	rx_id = rxq->rx_tail;
++	while (nb_rx < nb_pkts) {
++		rxbd = &bd_ring[rx_id];
++		rx_status = rxbd->wb.qword1.cmd;
++		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_DD)))
++			break;
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		rxd = *rxbd;
++		rxe = &sw_ring[rx_id];
++		rxm = rxe->mbuf;
++		if (rnp_rxq_bulk_alloc(rxq, rxbd, rxe, false))
++			break;
++		rx_id = (rx_id + 1) & rxq->attr.nb_desc_mask;
++		rte_prefetch0(sw_ring[rx_id].mbuf);
++		if ((rx_id & 0x3) == 0) {
++			rte_prefetch0(&bd_ring[rx_id]);
++			rte_prefetch0(&sw_ring[rx_id]);
++		}
++		rx_pkt_len = rxd.wb.qword1.lens;
++		rxm->data_len = rx_pkt_len;
++		rxm->data_off = RTE_PKTMBUF_HEADROOM;
++		if (!first_seg) {
++			/* first segment pkt */
++			first_seg = rxm;
++			first_seg->nb_segs = 1;
++			first_seg->pkt_len = rx_pkt_len;
++		} else {
++			/* follow-up segment pkt */
++			first_seg->pkt_len =
++				(uint16_t)(first_seg->pkt_len + rx_pkt_len);
++			first_seg->nb_segs++;
++			last_seg->next = rxm;
++		}
++		rxq->rxrearm_nb++;
++		if (!(rx_status & rte_cpu_to_le_16(RNP_CMD_EOP))) {
++			last_seg = rxm;
++			continue;
++		}
++		rxm->next = NULL;
++		first_seg->port = rxq->attr.port_id;
++		/* this the end of packet the large pkt has been recv finish */
++		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
++					first_seg->data_off));
++		rx_pkts[nb_rx++] = first_seg;
++		first_seg = NULL;
++	}
++	if (!nb_rx)
++		return 0;
++	/* update sw record point */
++	rxq->rx_tail = rx_id;
++	rxq->pkt_first_seg = first_seg;
++	rxq->pkt_last_seg = last_seg;
++
++	return nb_rx;
 +}
 +
 +static int
-+rnp_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
++rnp_check_rx_simple_valid(struct rte_eth_dev *dev)
 +{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint32_t frame_size = mtu + RNP_ETH_OVERHEAD;
-+	uint16_t lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	bool jumbo_en = false;
-+	uint32_t reg;
-+	int ret = 0;
++	uint64_t rx_offloads = dev->data->dev_conf.rxmode.offloads;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	/* check that mtu is within the allowed range */
-+	if (frame_size < RTE_ETHER_MIN_LEN ||
-+			frame_size > RNP_MAC_MAXFRM_SIZE) {
-+		RNP_PMD_ERR("valid packet length must be "
-+				"range from %u to  %u, "
-+				"when Jumbo Frame Feature disabled",
-+				(uint32_t)RTE_ETHER_MIN_LEN,
-+				(uint32_t)RTE_ETHER_MAX_LEN);
-+		return -EINVAL;
-+	}
-+	/*
-+	 * Refuse mtu that requires the support of scattered packets
-+	 * when this feature has not been enabled before.
-+	 */
-+	if (dev->data->dev_started && !dev->data->scattered_rx &&
-+			frame_size > dev->data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM) {
-+		RNP_PMD_ERR("port %d mtu update must be stopped "
-+				"before configuration when scatter rx off.",
-+				dev->data->port_id);
-+
-+		return -EBUSY;
-+	}
-+	/* For one pf multiple port the mtu we must set
-+	 * the biggest mtu the ports selong to pf
-+	 * because of the control button is only one
-+	 */
-+	ret = rnp_update_valid_mtu(port, &mtu);
-+	if (ret < 0)
-+		return ret;
-+	frame_size = mtu + RNP_ETH_OVERHEAD;
-+	if (frame_size > RTE_ETHER_MAX_LEN)
-+		jumbo_en = true;
-+	/* setting the MTU */
-+	RNP_E_REG_WR(hw, RNP_MAX_FRAME_CTRL, frame_size);
-+	RNP_E_REG_WR(hw, RNP_MIN_FRAME_CTRL, 60);
-+	if (jumbo_en) {
-+		/* To protect conflict hw resource */
-+		rte_spinlock_lock(&port->rx_mac_lock);
-+		reg = RNP_MAC_REG_RD(hw, lane, RNP_MAC_RX_CFG);
-+		reg |= RNP_MAC_JE;
-+		RNP_MAC_REG_WR(hw, lane, RNP_MAC_RX_CFG, reg);
-+		rte_spinlock_unlock(&port->rx_mac_lock);
-+	}
-+	port->jumbo_en = jumbo_en;
-+
++	if (dev->data->scattered_rx || rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER)
++		return -ENOTSUP;
 +	return 0;
 +}
 +
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -668,7 +812,7 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.promiscuous_disable          = rnp_promiscuous_disable,
- 	.allmulticast_enable          = rnp_allmulticast_enable,
- 	.allmulticast_disable         = rnp_allmulticast_disable,
--
-+	.mtu_set                      = rnp_mtu_set,
- 	.rx_queue_setup               = rnp_rx_queue_setup,
- 	.rx_queue_release             = rnp_dev_rx_queue_release,
- 	.tx_queue_setup               = rnp_tx_queue_setup,
+ int rnp_rx_func_select(struct rte_eth_dev *dev)
+ {
+-	dev->rx_pkt_burst = rnp_recv_pkts;
++	bool simple_allowed = false;
++
++	simple_allowed = rnp_check_rx_simple_valid(dev) == 0;
++	if (simple_allowed)
++		dev->rx_pkt_burst = rnp_recv_pkts;
++	else
++		dev->rx_pkt_burst = rnp_scattered_rx;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
+index a8fd8d052f..973b667cb2 100644
+--- a/drivers/net/rnp/rnp_rxtx.h
++++ b/drivers/net/rnp/rnp_rxtx.h
+@@ -76,6 +76,8 @@ struct rnp_rx_queue {
+ 	uint64_t rx_offloads; /* user set hw offload features */
+ 	struct rte_mbuf **free_mbufs; /* rx bulk alloc reserve of free mbufs */
+ 	struct rte_mbuf fake_mbuf; /* dummy mbuf */
++	struct rte_mbuf	*pkt_first_seg; /**< First segment of current packet. */
++	struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
+ };
+ 
+ struct rnp_txsw_entry {
 -- 
 2.25.1
 
