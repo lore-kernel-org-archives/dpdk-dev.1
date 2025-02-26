@@ -2,110 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12769C282C5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 10:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C15C282C5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 10:37:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB17F40280;
-	Mon,  3 Mar 2025 11:25:22 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 236D2400D7
- for <dev@dpdk.org>; Mon,  3 Mar 2025 11:25:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1740997521;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=5+KW8ytbBhsu32oZarcQxn4jqzUZ3XvWdvhOuDqGw/w=;
- b=ONB2mi7BlbDXRqrh+DPQuGBUOnR9KZsFQ08UkNHhkFZG/QmbSY5s/bcAUIL+xPXM2c1XqQ
- GJWYLuXjuHbI+ESBAUJwz7FRv4dNLAZYKil4iByyTrrWITUGhS8zfLiBMdo/g2N7zhacG3
- SkREYqqva21eDo8zLTLbKkWWnZMfWIc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-153-STtjK2HuNryqBqfPHnOfUw-1; Mon,
- 03 Mar 2025 05:25:20 -0500
-X-MC-Unique: STtjK2HuNryqBqfPHnOfUw-1
-X-Mimecast-MFC-AGG-ID: STtjK2HuNryqBqfPHnOfUw_1740997519
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4C2C71800987; Mon,  3 Mar 2025 10:25:19 +0000 (UTC)
-Received: from [10.45.242.27] (unknown [10.45.242.27])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 664B61800352; Mon,  3 Mar 2025 10:25:16 +0000 (UTC)
-Message-ID: <b9844729-a2a0-45f9-b0c5-387d0d1e03f2@redhat.com>
-Date: Mon, 3 Mar 2025 11:25:13 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 1E0A240280;
+	Mon,  3 Mar 2025 11:37:18 +0100 (CET)
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+ by mails.dpdk.org (Postfix) with ESMTP id 062844029F
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 10:52:52 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XNJlsTXSeQ0mReW8CMz+OoW815EuKX1oB1Plv2FWB/M9trSJzzIEDCWX7xmRO/8qimO9MiqwKNAQ+b9F4qP4hzGDleeaQTbbpGXJ435kyOdDLT+zGT3pY6G2xaVNGavBotglrUcIAQIwEtX7uc947tim325XEf95GCSF2MTSDBHPiwdJ3zuDhBgGrKFDplXXRZC4JxKgnFz8SuhxfVWy8gA8ZTs7+H3qXXNrTpmX8V2jNNx2UNloDtSY5NfaxfpRuJ5M2HuzuhF+FwGTeYuEwFAXHsorE9u22OATFQquFLfqASKvTnz41sdq6zuCYKoxjsuec6Je7t8UWuI0l3mFWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=adjVdyBHiyJ3xTw1RMTS6wnMlIzbPMoZrhjjK3cuN1k=;
+ b=du+ilMt/X7eLLOwZQr/GKlAjL9ywNxumr6tJp2VmcIVFWK7Ysxes0s3YJvNVactT/BCusXnmQIYt61K/UmfLUKpnL6dWzdRdUGp4QMOXXcQ0+NyV4byHhDj/taQqImcmXWkxZg3c0fR+uO4Sfer1Ig/5ZlDirOw6OEz61o8TbOKCI9CMLCxSC8jIiovQtcNUnu7bM1qMSwSXISxylgP1tzSO8xgXC/bvHBL6h6iZqxlJRuYqhNlhwwJPV7NOIZOBCJQ5LG+qe42IOLKR4LB1Eiso6A3JYtt/+j/Wwuc1HLDSxyObS8Zhb31m7rNzZA54BzQ4B1HDckQj/9Qhs5+pDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=adjVdyBHiyJ3xTw1RMTS6wnMlIzbPMoZrhjjK3cuN1k=;
+ b=kf1SRWeoNfW3LTl5/SNhTZ7N2wYzwOyzNTsCOHa940IWAD9U+iV/briJYzXU2FITfaaPdzqgMpcEnsf3+ynWX6IWPaiJG8of7SpKEgGnAH6TExv2IIdygtaiJF6chVclv5o8Fd+xqrSPE10gqeVmuk0GARVCnDs/FRQCvlcYSznl+NZswdCXQRbXJMxh0fz7vaFUZEV1IJYPgLng2eik+rnfuIXxcat43ivO4au9jw4yf4jsMzT08dwZlDeqoEn9TP2CfFGfxmlDnIgF3WOi+9bR4VugyEPSSUoXsz0STOcJTfIJ2ImJ4X9fmIfNJWbv8K2KBAoeOB8s7TgjUUH7JA==
+Received: from BN9PR03CA0432.namprd03.prod.outlook.com (2603:10b6:408:113::17)
+ by CY8PR12MB8339.namprd12.prod.outlook.com (2603:10b6:930:7e::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 09:52:47 +0000
+Received: from MN1PEPF0000F0E3.namprd04.prod.outlook.com
+ (2603:10b6:408:113:cafe::5b) by BN9PR03CA0432.outlook.office365.com
+ (2603:10b6:408:113::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Wed,
+ 26 Feb 2025 09:52:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E3.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 09:52:47 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Feb
+ 2025 01:52:34 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Feb
+ 2025 01:52:33 -0800
+From: Yaniv Rosner <yrosner@nvidia.com>
+To: <dev@dpdk.org>
+CC: Bing Zhao <bingz@nvidia.com>
+Subject: [PATCH] net/mlx5: add GRE as L4 layer for entropy calculation
+Date: Wed, 26 Feb 2025 09:51:55 +0000
+Message-ID: <20250226095155.55582-1-yrosner@nvidia.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report
- feature
-To: Shiva Shankar Kommula <kshankar@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "chenbox@nvidia.com" <chenbox@nvidia.com>
-Cc: "david.marchand@redhat.com" <david.marchand@redhat.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Srujana Challa <schalla@marvell.com>
-References: <20250126193404.3431544-1-kshankar@marvell.com>
- <20250127074150.3499851-1-kshankar@marvell.com>
- <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
- <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ML5oD2EfATASi2R7S-_qH1qocN7Mfvoo1B-Ipk07gmg_1740997519
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E3:EE_|CY8PR12MB8339:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c83e829-7db3-4740-a999-08dd564b5312
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700013|376014|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rpGExYLSevh92HgiTvtdJeFhLcVtZCus2kKesWfjv4JBD4bGQ7xgRr6l3hhd?=
+ =?us-ascii?Q?a3j7m4O1Iseo/vfaZw36tsFVyHU2A7RVwCmE9Z0WfFAh1f3r8SB5MVj/C8bO?=
+ =?us-ascii?Q?t7TfPZmjHgwhWkYLyoj8pxq4bjOl3uQywhYcL4EJ8AqQFDYvr4F/WgQyny9f?=
+ =?us-ascii?Q?q9lP9a6YZ7b3OPZGOpcci4lyRy5Ugcq8mkvl2GUxs2gzt2Lhy0B88exyRubJ?=
+ =?us-ascii?Q?vhGXKzS+ICa2i9Q9TH4X8vGSv1ce3sUgDJYqnzZEeTBXrIBftLfgDBGgwotp?=
+ =?us-ascii?Q?1HKlHzmnJWkH0A/qW5AkV8BSJ2xYuop1RPaYePT0rhh1B4buqfSSM/4gStbh?=
+ =?us-ascii?Q?cpvZY+a1gflRXxM36x6D7Qkof9Jy6h6YkMXwXyhKgc6EJYzbCQnO+ph0GbyH?=
+ =?us-ascii?Q?3SJ1PkgxGNyiWNnWVkhHlFJ/jBLNX4U1G1+Z936XBz0vf8XFokXfoW42WZvC?=
+ =?us-ascii?Q?Te7MM9fpjMGtqruMzUnQfhlI5oe8i1w/14PND4prI/nVnzWhRcd4qDmTMup0?=
+ =?us-ascii?Q?fpzWV0eDzRV54nFlBmZ+j43xKxaL93b2ibWD1boCymWEtBy9P6k4gMNrSuA/?=
+ =?us-ascii?Q?B/k/EUznhg7An1E41ySAHQb+/GIbQCsTxazPpOmo0zB+1VzpsmEi6kGDLO4L?=
+ =?us-ascii?Q?hqrkC4wMLSn5OOfwx/sOYbv3yoqo42MOWLUVCjyEMehn1CufZsanDvxdFUhZ?=
+ =?us-ascii?Q?455m7O2ZtjClphKcgWpmZWqvAWCg1VF1UUolsyc9ew2pxUfz59R7tq9CEw+A?=
+ =?us-ascii?Q?8KADxdh6rF87245eED8x5GPMbDiKQJoL5ZR/A/LDNd8nYMtbc82b86tDaefe?=
+ =?us-ascii?Q?DQq8ps4wp1vyRXVv9GlcMitu8mfqy9OMUwOtNP4OIXpQgYGVQwr0HJcOO5nM?=
+ =?us-ascii?Q?9aZPKl4Dcl+srzwCEvG88AisSLkJcGZ4KANPlwHwKpim47s1H1uykgZdaWt+?=
+ =?us-ascii?Q?UyWNYhBHDD14s8ZmwNUV7PWbpD7GsvwcCWEiwwhpEqHXcqvAD+npJpmBluc2?=
+ =?us-ascii?Q?CrTbDJjpA1sCuqXdoGyguvU0/CnjPuyWuZW+KrvdDNmO0WuZJw1d+lxZRBuK?=
+ =?us-ascii?Q?nuPCIji9nYZY9IZNihgCVlnnT7iB8tnpWFpSUUY1R7ykRXrZ80sDipHdm1o9?=
+ =?us-ascii?Q?iyt2++HZ8rK2Ab13mCogKVl3WhcsBaKXV0WUXjCSLd5exBsW4D4nzlp3n8fE?=
+ =?us-ascii?Q?15NqDqMZ/QrEjFbwzlZyum2D69ubkL4+xkOVgxKeh9S2EJSt9gBYhWI7iA9t?=
+ =?us-ascii?Q?H/q7cq7JU9o4UfoK1KVVWDTgyxFc6tQo/0wssFQOjbqh85ebYjILjD0b+jeJ?=
+ =?us-ascii?Q?rCEms8xILUDMdzNvmGcxrwkPLArE3YG/8fUBXD/enYFsnW2ewZ1O4SjhBeyd?=
+ =?us-ascii?Q?AYlpgNkTsGTzMwqFoAkcWla/IWH6cWMeIIWSIfVG3QQcUvGBDEAA+/48/2Ml?=
+ =?us-ascii?Q?3PaVKxToXVSma/2TFYYEl9gVLWJvKT+331znNrUVthQodhqiLuOTUZxVmRDn?=
+ =?us-ascii?Q?i9bs/ziGpRnh/rg=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 09:52:47.0871 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c83e829-7db3-4740-a999-08dd564b5312
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000F0E3.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8339
+X-Mailman-Approved-At: Mon, 03 Mar 2025 11:37:17 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -119,292 +131,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Signed-off-by: Yaniv Rosner <yrosner@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_flow_hw.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
-On 2/27/25 10:44 AM, Shiva Shankar Kommula wrote:
->> -----Original Message-----
->> From: Maxime Coquelin <maxime.coquelin@redhat.com>
->> Sent: Tuesday, February 25, 2025 9:39 PM
->> To: Shiva Shankar Kommula <kshankar@marvell.com>; dev@dpdk.org;
->> chenbox@nvidia.com
->> Cc: david.marchand@redhat.com; Jerin Jacob <jerinj@marvell.com>; Nithin
->> Kumar Dabilpuram <ndabilpuram@marvell.com>; Srujana Challa
->> <schalla@marvell.com>
->> Subject: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report feature
->>
->> Hi, On 1/27/25 8: 41 AM, Kommula Shiva Shankar wrote: > This patch adds
->> virtio hash report feature, which is > supported in packet queue mode with
->> scalar version Why only restrict to packed ring? isn't it also compatible with
->> split ring?
->>
->> Hi,
->>
->> On 1/27/25 8:41 AM, Kommula Shiva Shankar wrote:
->>> This patch adds virtio hash report feature, which is supported in
->>> packet queue mode with scalar version
->>
->> Why only restrict to packed ring? isn't it also compatible with split ring?
-> Hi Maxim,
-> Yes, it is. I can add split ring support later if it's alright.
-
-Ok, I checked the split path and it should not break. But please add its 
-support in next release.
-
-I see one thing missing in virtio_ethdev.c:
-
-int
-eth_virtio_dev_init(struct rte_eth_dev *eth_dev)
-{
-	struct virtio_hw *hw = eth_dev->data->dev_private;
-	uint32_t speed = RTE_ETH_SPEED_NUM_UNKNOWN;
-	int vectorized = 0;
-	int ret;
-
-	if (sizeof(struct virtio_net_hdr_mrg_rxbuf) > RTE_PKTMBUF_HEADROOM) {
-		PMD_INIT_LOG(ERR,
-			"Not sufficient headroom required = %d, avail = %d",
-			(int)sizeof(struct virtio_net_hdr_mrg_rxbuf),
-			RTE_PKTMBUF_HEADROOM);
-
-		return -1;
-	}
-
-
-It should now be checked against virtio_net_hdr_hash_report struct size.
-
-Regards,
-Maxime
-
->>
->>>
->>> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
->>> ---
->>>    drivers/net/virtio/virtio.h                   |  2 ++
->>>    drivers/net/virtio/virtio_ethdev.c            | 20 ++++++++++++-
->>>    drivers/net/virtio/virtio_ethdev.h            |  1 +
->>>    drivers/net/virtio/virtio_rxtx.c              | 30 +++++++++++++++++++
->>>    .../net/virtio/virtio_user/virtio_user_dev.c  |  1 +
->>>    drivers/net/virtio/virtqueue.h                | 21 +++++++++++++
->>>    6 files changed, 74 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/virtio/virtio.h b/drivers/net/virtio/virtio.h
->>> index ef5827c5f5..c2a0fd477c 100644
->>> --- a/drivers/net/virtio/virtio.h
->>> +++ b/drivers/net/virtio/virtio.h
->>> @@ -30,6 +30,7 @@
->>>    #define VIRTIO_NET_F_GUEST_ANNOUNCE 21	/* Guest can
->> announce device on the network */
->>>    #define VIRTIO_NET_F_MQ		22	/* Device supports Receive
->> Flow Steering */
->>>    #define VIRTIO_NET_F_CTRL_MAC_ADDR 23	/* Set MAC address */
->>> +#define VIRTIO_NET_F_HASH_REPORT  57    /* Supports hash report */
->>>    #define VIRTIO_NET_F_RSS	60	/* RSS supported */
->>>
->>>    /*
->>> @@ -187,6 +188,7 @@ struct virtio_hw {
->>>    	uint8_t started;
->>>    	uint8_t weak_barriers;
->>>    	uint8_t vlan_strip;
->>> +	uint8_t has_hash_report;
->>>    	bool rx_ol_scatter;
->>>    	uint8_t has_tx_offload;
->>>    	uint8_t has_rx_offload;
->>> diff --git a/drivers/net/virtio/virtio_ethdev.c
->>> b/drivers/net/virtio/virtio_ethdev.c
->>> index 70d4839def..caacbce57a 100644
->>> --- a/drivers/net/virtio/virtio_ethdev.c
->>> +++ b/drivers/net/virtio/virtio_ethdev.c
->>> @@ -1796,7 +1796,9 @@ virtio_init_device(struct rte_eth_dev *eth_dev,
->> uint64_t req_features)
->>>    		eth_dev->data->dev_flags &= ~RTE_ETH_DEV_INTR_LSC;
->>>
->>>    	/* Setting up rx_header size for the device */
->>> -	if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
->>> +	if (virtio_with_feature(hw, VIRTIO_NET_F_HASH_REPORT))
->>> +		hw->vtnet_hdr_size = sizeof(struct
->> virtio_net_hdr_hash_report);
->>> +	else if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
->>>    	    virtio_with_feature(hw, VIRTIO_F_VERSION_1) ||
->>>    	    virtio_with_packed_queue(hw))
->>>    		hw->vtnet_hdr_size = sizeof(struct
->> virtio_net_hdr_mrg_rxbuf); @@
->>> -2181,6 +2183,10 @@ virtio_dev_configure(struct rte_eth_dev *dev)
->>>    			(1ULL << VIRTIO_NET_F_GUEST_TSO4) |
->>>    			(1ULL << VIRTIO_NET_F_GUEST_TSO6);
->>>
->>> +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
->>> +		req_features |=
->>> +			(1ULL << VIRTIO_NET_F_HASH_REPORT);
->>> +
->>>    	if (tx_offloads & (RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
->>>    			   RTE_ETH_TX_OFFLOAD_TCP_CKSUM))
->>>    		req_features |= (1ULL << VIRTIO_NET_F_CSUM); @@ -2233,6
->> +2239,9 @@
->>> virtio_dev_configure(struct rte_eth_dev *dev)
->>>    	if (rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
->>>    		hw->vlan_strip = 1;
->>>
->>> +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
->>> +		hw->has_hash_report = 1;
->>> +
->>>    	hw->rx_ol_scatter = (rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
->>>
->>>    	if ((rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER) && @@ -
->> 2285,6
->>> +2294,12 @@ virtio_dev_configure(struct rte_eth_dev *dev)
->>>    					"disabled packed ring vectorized rx for
->> TCP_LRO enabled");
->>>    				hw->use_vec_rx = 0;
->>>    			}
->>> +
->>> +			if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
->>> +				PMD_DRV_LOG(INFO,
->>> +					"disabled packed ring vectorized rx for
->> RSS_HASH enabled");
->>> +				hw->use_vec_rx = 0;
->>> +			}
->>>    		}
->>>    	} else {
->>>    		if (virtio_with_feature(hw, VIRTIO_F_IN_ORDER)) { @@ -
->> 2669,6
->>> +2684,9 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct
->> rte_eth_dev_info *dev_info)
->>>    		dev_info->flow_type_rss_offloads = 0;
->>>    	}
->>>
->>> +	if (host_features & (1ULL << VIRTIO_NET_F_HASH_REPORT))
->>> +		dev_info->rx_offload_capa |=
->> RTE_ETH_RX_OFFLOAD_RSS_HASH;
->>> +
->>>    	if (host_features & (1ULL << VIRTIO_F_RING_PACKED)) {
->>>    		/*
->>>    		 * According to 2.7 Packed Virtqueues, diff --git
->>> a/drivers/net/virtio/virtio_ethdev.h
->>> b/drivers/net/virtio/virtio_ethdev.h
->>> index 7be1c9acd0..7aa771fd2b 100644
->>> --- a/drivers/net/virtio/virtio_ethdev.h
->>> +++ b/drivers/net/virtio/virtio_ethdev.h
->>> @@ -46,6 +46,7 @@
->>>    	 1u << VIRTIO_NET_F_CSUM           |	\
->>>    	 1u << VIRTIO_NET_F_HOST_TSO4      |	\
->>>    	 1u << VIRTIO_NET_F_HOST_TSO6      |	\
->>> +	 1ULL << VIRTIO_NET_F_HASH_REPORT  |    \
->>>    	 1ULL << VIRTIO_NET_F_RSS)
->>>
->>>    extern const struct eth_dev_ops virtio_user_secondary_eth_dev_ops;
->>> diff --git a/drivers/net/virtio/virtio_rxtx.c
->>> b/drivers/net/virtio/virtio_rxtx.c
->>> index b67f063b31..35bd61350c 100644
->>> --- a/drivers/net/virtio/virtio_rxtx.c
->>> +++ b/drivers/net/virtio/virtio_rxtx.c
->>> @@ -40,6 +40,19 @@
->>>    #define  VIRTIO_DUMP_PACKET(m, len) do { } while (0)
->>>    #endif
->>>
->>> +static const uint32_t vhdr_hash_report_to_mbuf_pkt_type[] = {
->>> +	RTE_PTYPE_UNKNOWN,
->>> +	RTE_PTYPE_L3_IPV4,
->>> +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP,
->>> +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
->>> +	RTE_PTYPE_L3_IPV6,
->>> +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
->>> +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP,
->>> +	RTE_PTYPE_L3_IPV6_EXT,
->>> +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_TCP,
->>> +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_UDP, };
->>> +
->>>    void
->>>    vq_ring_free_inorder(struct virtqueue *vq, uint16_t desc_idx, uint16_t
->> num)
->>>    {
->>> @@ -901,6 +914,16 @@ virtio_discard_rxbuf_inorder(struct virtqueue *vq,
->> struct rte_mbuf *m)
->>>    	}
->>>    }
->>>
->>> +static inline void
->>> +virtio_rx_update_hash_report(struct rte_mbuf *m, struct
->>> +virtio_net_hdr_hash_report *hdr) {
->>> +	if (likely(hdr->hash_report)) {
->>> +		m->packet_type = vhdr_hash_report_to_mbuf_pkt_type[hdr-
->>> hash_report];
->>> +		m->hash.rss = hdr->hash_value;
->>> +		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
->>> +	}
->>> +}
->>> +
->>>    /* Optionally fill offload information in structure */
->>>    static inline int
->>>    virtio_rx_offload(struct rte_mbuf *m, struct virtio_net_hdr *hdr) @@
->>> -1134,6 +1157,9 @@ virtio_recv_pkts_packed(void *rx_queue, struct
->> rte_mbuf **rx_pkts,
->>>    		hdr = (struct virtio_net_hdr *)((char *)rxm->buf_addr +
->>>    			RTE_PKTMBUF_HEADROOM - hdr_size);
->>>
->>> +		if (hw->has_hash_report)
->>> +			virtio_rx_update_hash_report(rxm,
->>> +						    (struct
->> virtio_net_hdr_hash_report *)hdr);
->>>    		if (hw->vlan_strip)
->>>    			rte_vlan_strip(rxm);
->>>
->>> @@ -1617,6 +1643,10 @@ virtio_recv_mergeable_pkts_packed(void
->> *rx_queue,
->>>    		if (hw->vlan_strip)
->>>    			rte_vlan_strip(rx_pkts[nb_rx]);
->>>
->>> +		if (hw->has_hash_report)
->>> +			virtio_rx_update_hash_report(rxm,
->>> +						    (struct
->> virtio_net_hdr_hash_report *)header);
->>> +
->>>    		seg_res = seg_num - 1;
->>>
->>>    		/* Merge remaining segments */
->>> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c
->>> b/drivers/net/virtio/virtio_user/virtio_user_dev.c
->>> index 2997d2bd26..187f81b066 100644
->>> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
->>> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
->>> @@ -726,6 +726,7 @@ virtio_user_free_vrings(struct virtio_user_dev *dev)
->>>    	 1ULL << VIRTIO_F_RING_PACKED		|	\
->>>    	 1ULL << VIRTIO_F_NOTIFICATION_DATA	|	\
->>>    	 1ULL << VIRTIO_F_ORDER_PLATFORM        |       \
->>> +	 1ULL << VIRTIO_NET_F_HASH_REPORT       |       \
->>>    	 1ULL << VIRTIO_NET_F_RSS)
->>>
->>>    int
->>> diff --git a/drivers/net/virtio/virtqueue.h
->>> b/drivers/net/virtio/virtqueue.h index 60211a40c9..3b468bd4f4 100644
->>> --- a/drivers/net/virtio/virtqueue.h
->>> +++ b/drivers/net/virtio/virtqueue.h
->>> @@ -257,6 +257,27 @@ struct virtio_net_hdr_mrg_rxbuf {
->>>    	uint16_t num_buffers; /**< Number of merged rx buffers */
->>>    };
->>>
->>> +/**
->>> + * This is the version of the header to use when the HASH_REPORT
->>> + * feature has been negotiated.
->>> + */
->>> +struct virtio_net_hdr_hash_report {
->>> +	struct virtio_net_hdr_mrg_rxbuf hdr;
->>> +	uint32_t hash_value;
->>> +#define VIRTIO_NET_HASH_REPORT_NONE	0
->>> +#define VIRTIO_NET_HASH_REPORT_IPV4	1
->>> +#define VIRTIO_NET_HASH_REPORT_TCPV4	2
->>> +#define VIRTIO_NET_HASH_REPORT_UDPV4	3
->>> +#define VIRTIO_NET_HASH_REPORT_IPV6	4
->>> +#define VIRTIO_NET_HASH_REPORT_TCPV6	5
->>> +#define VIRTIO_NET_HASH_REPORT_UDPV6	6
->>> +#define VIRTIO_NET_HASH_REPORT_IPV6_EX	7
->>> +#define VIRTIO_NET_HASH_REPORT_TCPV6_EX	8
->>> +#define VIRTIO_NET_HASH_REPORT_UDPV6_EX	9
->>> +	uint16_t hash_report;
->>> +	uint16_t pad_reserved;
->>> +};
->>> +
->>>    /* Region reserved to allow for transmit header and indirect ring */
->>>    #define VIRTIO_MAX_TX_INDIRECT 8
->>>    struct virtio_tx_region {
-> 
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index e72b87d70f..27ee9d6cd3 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -14875,6 +14875,9 @@ flow_hw_calc_encap_hash(struct rte_eth_dev *dev,
+ 		case RTE_FLOW_ITEM_TYPE_ICMP6:
+ 			data.next_protocol = IPPROTO_ICMPV6;
+ 			break;
++		case RTE_FLOW_ITEM_TYPE_GRE:
++			data.next_protocol = IPPROTO_GRE;
++			break;
+ 		default:
+ 			break;
+ 		}
+-- 
+2.48.1
 
