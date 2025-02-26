@@ -2,66 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9798DC19776
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 20:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EEBC021B8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 21:21:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2EE94029F;
-	Wed, 26 Feb 2025 21:13:05 +0100 (CET)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com
- [209.85.166.179])
- by mails.dpdk.org (Postfix) with ESMTP id 03BEA4029F
- for <dev@dpdk.org>; Wed, 26 Feb 2025 21:13:05 +0100 (CET)
-Received: by mail-il1-f179.google.com with SMTP id
- e9e14a558f8ab-3cf8e017abcso966335ab.1
- for <dev@dpdk.org>; Wed, 26 Feb 2025 12:13:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1740600784; x=1741205584; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Ws+8PV/NOMOIjDbQwBA6QjuisGMCANFWr87lo8Mpkk4=;
- b=CraJRl5Tfxwek5kMygQH8uM8rNW6wgqgWxTOwYMFz3FBwoUIi0F2YY+nzWcwNhfxyf
- qK2qqq383aNFZzyJolieEqQsrl+R/Xh0+jQ2vKrU5RBI5OnmrqyK9L+p5iVKg5dGJ4T3
- I/LMXF+Ni+BpNjrJtT4zFYQg+VxCRLjc30fDNNWqy5EbY9hY347mXUUofVc6a+a8wV/G
- bUmnK6hHPHwjxv1teYaZI4uFS+3qI4xsH1sD0+QIm5Flf39r7jWWwaQwS6Qa/jjIxrJL
- rlIUGB8UQoKHH36pQGSK83ru9r7PFxPrWfGXKjqX14d8PCYzpyVMLB/mIoGHA8UiVxot
- XYFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740600784; x=1741205584;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=Ws+8PV/NOMOIjDbQwBA6QjuisGMCANFWr87lo8Mpkk4=;
- b=BlZVFLMFxGS2pjvwA2n2Qw2IrFgcWRRytO4m4J93TMK/254+ckUvw5jNxFimPn3SHG
- S7QHW/U8rEPtNwxvH+PXf7428krsOtpDpdo7hhtnIqmrxvL5ad9v9eOB9mey808M5rsl
- 4yBY+y7sG4BcqufSPg+oYUk3TLz/lCTtWaBqS0tEDtxqjVFr2uyvbwnklBtQUVjEY+2k
- 9A/BYbnvUbf9+jR1ihdTLgHYs48MHB09l3VVDzzBpZbIhV7FK+KqIlhNrw8SzlvrWhtm
- E7r1NgAnmoEgq4c2va3sO5kAj/PKAnA5Lm4iascvSOVBvB7D4rMhltE3ZPqNhFxYEEUb
- /E9w==
-X-Gm-Message-State: AOJu0YzSPTSe//DbZ5j6FPTuB1jpZVpRgd7s1Fii3dLE7SAwGCChJ/GT
- RwDDudkc2IsRH7qHjVSXrG0n2dOIU0w+wVY6mCXXrmSTPgMvh8jTquTVewaHh0H92Yd4o5e1VT1
- fTVEZG1GfEgtOKtquhclcvXsQBVHPUBdMq4RoXw==
-X-Gm-Gg: ASbGnct8/Ru0CZO0F7luBgXNG+Qy8ak14km3ndTSuJf/aEpKFbsrjnL9Z1k2Cyik6Eo
- zD2IKwD71MQLuzTrfmjTCmrIW1yM+dRCP+ievtnBjgFWstLz+AdEz5m/j6wFJeu+1COXKP/wDM6
- vJNpSPBdA0P5r7TKVs/apaQ4XWYWc0k/UjP8uv6Yk=
-X-Google-Smtp-Source: AGHT+IGo3QrjiuLr/CcQ2zHvKzt0cl4IZfDEPDDN44HOEeG9OYWqI9NKj2rTygKglQP5qgHRtcR36msbtf+bQRkLHTI=
-X-Received: by 2002:a05:6e02:1608:b0:3d0:47cf:869c with SMTP id
- e9e14a558f8ab-3d30488b517mr87403805ab.19.1740600784221; Wed, 26 Feb 2025
- 12:13:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
- <20250131231018.2163893-3-ariel.otilibili@6wind.com>
- <20250224112534.684c19c6@hermes.local>
-In-Reply-To: <20250224112534.684c19c6@hermes.local>
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-Date: Wed, 26 Feb 2025 21:12:51 +0100
-X-Gm-Features: AQ5f1JoF9B3JyrQnJ0O9SoqsW0UEGJWyTEYoxUrH_h-yhwj5iYv-0hCbtAl5I6M
-Message-ID: <CAF1zDgbFLbAmzP6Rm-MO925aQ0Jc4Ri7gY-rK=tVEWXw9gfaWw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] net/af_xdp: Refactor af_xdp_tx_zc
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- David Marchand <david.marchand@redhat.com>, Maryam Tahhan <mtahhan@redhat.com>,
- Ciara Loftus <ciara.loftus@intel.com>
-Content-Type: multipart/alternative; boundary="0000000000007097f9062f113380"
+	by mails.dpdk.org (Postfix) with ESMTP id 2880840608;
+	Wed, 26 Feb 2025 22:21:14 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id AB5334029F
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 22:21:12 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id DE660204E5A5; Wed, 26 Feb 2025 13:21:11 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DE660204E5A5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1740604871;
+ bh=jfCyTSfLw71I3U1RJojj/DUf3JGkUJi2Dxt9kNj9uSQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=m+6204rE3IqcrLC25vDtOOFAOFLV47ltgJDPdjkx4YgQNkTGxv75C3ye9o8tpYcQe
+ zbQpsXCUuT7SmQkv6qAPIlk34b5sH6O5dw2dzG2s9Eidp3W2f2XKNcTM/4D0oIczBv
+ TUH19+Z5ynkNjo++ZLPVXspcUE9vTAyvP/UY+7eE=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: andremue@linux.microsoft.com
+Cc: dev@dpdk.org
+Subject: [PATCH v3 0/3] allow faster instruction sets to be used with MSVC
+Date: Wed, 26 Feb 2025 13:21:03 -0800
+Message-Id: <1740604866-6184-1-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
+References: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,77 +42,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000007097f9062f113380
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Meson.build files were refactored to add MSVC support for the AVX2
+instruction set with MSVC: Top level variable cc_avx2_flags was created
+and set according to the compiler used. It is used in lower level
+directories.
 
-Hello Stephen,
+Andre Muezerie (3):
+  eal: make compatible with instruction set updates for MSVC
+  eal: only use numbers as align parameters for MSVC
+  config: create top level variable cc_avx2_flags
 
-On Mon, Feb 24, 2025 at 8:25=E2=80=AFPM Stephen Hemminger <
-stephen@networkplumber.org> wrote:
+ config/x86/meson.build             |  6 ++++++
+ drivers/net/bnxt/meson.build       |  2 +-
+ drivers/net/enic/meson.build       |  2 +-
+ drivers/net/intel/i40e/meson.build |  2 +-
+ drivers/net/intel/iavf/meson.build |  2 +-
+ drivers/net/intel/ice/meson.build  |  2 +-
+ drivers/net/intel/idpf/meson.build |  2 +-
+ drivers/net/nfp/meson.build        |  2 +-
+ drivers/net/octeon_ep/meson.build  |  4 ++--
+ lib/acl/meson.build                |  2 +-
+ lib/eal/common/rte_random.c        |  2 ++
+ lib/eal/x86/include/rte_vect.h     | 11 ++++++++++-
+ 12 files changed, 28 insertions(+), 11 deletions(-)
 
->
-> Please avoid doing assignment in a conditional statement, can be error
-> prone.
-> Surprised checkpatch doesn't complain about it.
->
+--
+2.48.1.vfs.0.0
 
-Thanks for the feedback. checkpatch did catch them.
-
-Here is the new series,
-https://inbox.dpdk.org/dev/20250226200841.2342632-3-ariel.otilibili@6wind.c=
-om/
-
-Regards,
-Ariel
-
->
-> Better as:
->                         desc =3D reserve_and_fill(txq, mbuf, umem);
->                         if (!desc) {
->                                 kick_tx(txq, cq);
->                                 desc =3D reserve_and_fill(txq, mbuf, umem=
-);
->                                 if (!desc)
->                                         goto out;
->
-
---0000000000007097f9062f113380
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Hello Stephen,<br></div><br><div class=3D=
-"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">O=
-n Mon, Feb 24, 2025 at 8:25=E2=80=AFPM Stephen Hemminger &lt;<a href=3D"mai=
-lto:stephen@networkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<b=
-r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
-;border-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
-Please avoid doing assignment in a conditional statement, can be error pron=
-e.<br>
-Surprised checkpatch doesn&#39;t complain about it.<br></blockquote><div><b=
-r></div><div>Thanks for the feedback. checkpatch did catch them.</div><div>=
-<br></div><div>Here is the new series,=C2=A0<a href=3D"https://inbox.dpdk.o=
-rg/dev/20250226200841.2342632-3-ariel.otilibili@6wind.com/">https://inbox.d=
-pdk.org/dev/20250226200841.2342632-3-ariel.otilibili@6wind.com/</a></div><d=
-iv><br></div><div>Regards,</div><div>Ariel<br> </div><blockquote class=3D"g=
-mail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204=
-,204,204);padding-left:1ex">
-<br>
-Better as:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 desc =3D reserve_and_fill(txq, mbuf, umem);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 if (!desc) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 kick_tx(txq, cq);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc =3D reserve_and_fill(txq, mbuf,=
- umem);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!desc)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto out=
-;<br>
-</blockquote></div></div>
-
---0000000000007097f9062f113380--
