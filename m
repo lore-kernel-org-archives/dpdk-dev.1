@@ -2,75 +2,135 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EABC021B8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 13:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E0EC021BF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 13:52:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C0974029F;
-	Wed, 26 Feb 2025 14:45:46 +0100 (CET)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 1C2484026C
- for <dev@dpdk.org>; Wed, 26 Feb 2025 14:45:45 +0100 (CET)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-2212a930001so73157375ad.0
- for <dev@dpdk.org>; Wed, 26 Feb 2025 05:45:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740577544;
- x=1741182344; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=PygRi8XUGCrOF/8DcLt7OUonDhx32ooiqdEdpkU6a34=;
- b=gGBtGN++7g8Y1Xu1ntTcKDgC4POvzdLo+R+TSHxDfBXWyWUGBaGIPnKtQXcTHo/xVX
- 0s5ma9eeZYeqdGov5eN2hiM2jjcItEXszYRUerePBgqqHDYkWZhI+LarlIm6YTUykffk
- hVJvo/lKK47aBFZyFH3Swtp9xWmILWNVwAlTemfU61oxrVf5rercKicBkilqdNaCMkbI
- Q+jGvcIhC7/lgbaOEti2GvQ3JK/HdcWcu8zQsVxcv3y7dJJbx4gH7eTJhnltzuAP/Ws4
- 2BpIyhJZS/8zVR8MQ0ziXqaUt0jncUpcVtvLFMhSjvyCpIMU2WMFE/lJZTYVgLHyw+CF
- 3Y8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740577544; x=1741182344;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=PygRi8XUGCrOF/8DcLt7OUonDhx32ooiqdEdpkU6a34=;
- b=BeAuow6760vBHkOiSJOELc62EpMnnwpe6sI5b356AqCTk0wm49GZSRNu9appUHJRG2
- Ub2FbhJZq127FxVwRmb0KilGPei60Hjaxt2WN5k8gKlKCuC3g7od4GQVEfV2Vc0AP81J
- t1xh4SKYG0N7diIV0cNiYa9zfcEK5JLllplpToQ0Ew3uVBqYNdvEHWlJ7ptdRshzpGGi
- UuhQBltD+KKDcnKepCT5CESHN2tpdcHrd/vesla3OWKC2XL2Hx3jTYy33c6uyQS66/Qn
- dRq1GglqVHc3nYDqtgw2c8F+VlCVvZ6r8nrpoSQ4/SRYpCGcxV5oYx7YpTN2mDEPjXJz
- FPAw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWBPMvgikiCLUY4e/uF9fpabub6wJK1lHgTdoCM/4/QKtbQvKok54t57S5NCjxots+8KEU=@dpdk.org
-X-Gm-Message-State: AOJu0YxJlM8TCMcnjdVLbMeL7cdq49+gXpzxrDqyGlW+dwHSqUN9xAjy
- QFNcFdCEHoQhMqnvBhvHIBDRgTAtUmj2P7b/CMiV1Lf0tNym/mohlTeGVaMFrPQ=
-X-Gm-Gg: ASbGncs8fxMAn7jw86DJ6Du0D7sMLGiBcgR9IkMoodu/rbeiAN9F7uvYX8K6YdRCsOK
- gpqH0WfCXOKUgp6r8o8/mvbotqkmsYNXDy0BSKSPIiJ90tMbRN5LXW80r4ZuEP3C/VjuLbHn0+Y
- 6jN/yPKghrob2/X3fvL/Np5DxTpN/c4nA4c/2prYJbafeb09n16vbmUSWkVE9rbssI5dAExrspv
- W5XKmn4dWDcs4sgCyVgTA/3pjK6XGJftGZrc34arLHDAquro6oaO18iBdJpVxyvwGlnSng0mb/K
- BVai2l2Ioj7BrmMA5/CIWeJdNW2sRk+0gzb398wvhkecW8NpPz0Qesx/Xqkr7ruE96igquwVadd
- 6ITo=
-X-Google-Smtp-Source: AGHT+IHOcpBOP2CCO+2QHXl505yy+lt8lhrxqcWwHysGSb09zLBBjo9fXVVoyFHzA5x/hERURhcE4A==
-X-Received: by 2002:a17:902:e88d:b0:21d:dfae:300b with SMTP id
- d9443c01a7336-221a0ec46ffmr355596125ad.10.1740577544247; 
- Wed, 26 Feb 2025 05:45:44 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2230a01fe8bsm31936915ad.54.2025.02.26.05.45.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Feb 2025 05:45:43 -0800 (PST)
-Date: Wed, 26 Feb 2025 05:45:40 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Yang Ming <ming.1.yang@nokia-sbell.com>
-Cc: Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] Skip vfio in the scenario of non-privileged mode
-Message-ID: <20250226054540.166dfd43@hermes.local>
-In-Reply-To: <ba8c70c7-a738-4b01-8df6-2df5bb0e2d7d@nokia-sbell.com>
-References: <20250117072847.2741-1-ming.1.yang@nokia-sbell.com>
- <20250117084750.3259cfa3@hermes.local>
- <ba8c70c7-a738-4b01-8df6-2df5bb0e2d7d@nokia-sbell.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 870DC4029F;
+	Wed, 26 Feb 2025 14:52:21 +0100 (CET)
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com
+ (mail-bn1nam02on2070.outbound.protection.outlook.com [40.107.212.70])
+ by mails.dpdk.org (Postfix) with ESMTP id F0F654026C
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 14:52:19 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IPRTa3rz/xHH2kfV5DlTnnqK4hdLiJsV2nb6Qt6J3OT7nlbKg3hgU3mh7DYznXnt28PxsrU0mrEcOqbByeZZ8MOmd3g1xRSvK3VHewc4LOgJzlKCSwX+2FeNEYUcV858lUWpF5HBfCVvTyibJeSmyFgz3krf+rkKPTUnabuOQV+OFtVg35+QVD4ybtbZLt1w/hlU8uOtOQEnNJpp4/ndmSyMIdRDT/vvBtQO9XalKWh8S5XvjxT1uvsQgKIQHYHfLMyIV2xOBbHN6wtmox7Ca+x7ou59cfqbUQ0QpmZ29KzwHTs3aS81gW401hfFbsMfj+hj5YTwBklo2egHCcOBsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7dVdMy4cRykxn3XOmV2mgSQ16/c23AIPLWr3Fv+hNhc=;
+ b=vNYnRJp20qg6LAOY31Zp8Om2DiDA4ZnZfHlcWMh9zIFz/hBV1fVtp+QKKL8ysYhtjBOvO4qatAxYWX58Z6tMbH1JQ37RivS0EU9yC/933c+K6Fq0lPOgDDrzi+JAwqS4HN0IUk/8/vmDf8Cu4KVPW6U+xsdDZEG38Kp9bF0hTNkgAvSK6o/uQ8edd5IJ8F/uBS644xOCZojsVBnf9X0FGa57MYKKfFVBwlEkUd2At3Z/KueMfIg94pVm6LWe2Nx8aNWolCtVm4d13ewncQdwtuvWvZwtudRgbQ2MQTn826p6W0WANokOLAwS6u5Oj6nsca19o87pQNjBSj2aWKxXJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7dVdMy4cRykxn3XOmV2mgSQ16/c23AIPLWr3Fv+hNhc=;
+ b=aDmpYq3F2CyJn5Hxdp7afiN96ApfNDbprp1eS/7WH4ADIpgYN+oSA/M0TcYf9cklXmFIEEHWoPhUgIe99vngEUMF5wLGmx4/4EZk7172eb/02tbWFs3YJBNhCmeK2EZC935i5FVVF5foww/Zs5uRGKZRE+0q2ooEwRSR0qdYR7ierkvIJIWh/MowvUe8cEV8wrE/NIQlxAJOqjtiARpNunDMxi0AGdJotPl/Mgs7ygUYIq9vLkYei5feozFh4kD9wrBaQ5JRaDnMannC6ZqJOrBzamLEe4mtIKaYYO2hZr2hNXizJCEniaYrc8pZoFNHso/WIcRiPV3Q36hK1nxDQg==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by CYXPR12MB9425.namprd12.prod.outlook.com (2603:10b6:930:dc::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Wed, 26 Feb
+ 2025 13:52:17 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
+ 13:52:17 +0000
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Maayan Kashani <mkashani@nvidia.com>, Itamar Gozlan <igozlan@nvidia.com>
+Subject: Re: [PATCH] net/mlx5/hws: change error flow on matcher disconnect
+Thread-Topic: [PATCH] net/mlx5/hws: change error flow on matcher disconnect
+Thread-Index: AQHbevlSldzdXh+fL0uz59aGgYN/LLNZtTdn
+Date: Wed, 26 Feb 2025 13:52:17 +0000
+Message-ID: <CH3PR12MB8460A59C69273D44961C6A28CFC22@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20250209134806.263338-1-getelson@nvidia.com>
+In-Reply-To: <20250209134806.263338-1-getelson@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|CYXPR12MB9425:EE_
+x-ms-office365-filtering-correlation-id: f8d6502f-d9f1-4cf6-689e-08dd566cc871
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?ZOBOnyrStCWsHQ7dHaTJzaOWHIZiNx5dd13+BPSPqBe+KTuQeewi0G/BUU?=
+ =?iso-8859-1?Q?fsL/XCNmqD6vfTSRwAuDXv8ReuVft13qFE+yfx/Q1+uY7vvwihFYrGK7cA?=
+ =?iso-8859-1?Q?EXME+yaEhuCoWz6fwaMpnQu49v0ENk2739KkHFbSrPs7Yt4VqXT/xm5Rvo?=
+ =?iso-8859-1?Q?nBgGCrwlQrpQ9az9pHiklNPRRrqXqz+cVp/88/bDeoGtYLPUo+T0Dpduqk?=
+ =?iso-8859-1?Q?wLhJ3KjQuzNFDiRhNwxLsnPfx/KrUgAfe+9YfaJCSx53mo/I0J7Hb4HlcD?=
+ =?iso-8859-1?Q?Sg04E3tvrOLiVPr5K7u0/+59QLlalJQjMUTjAapCthh3ZnXx6Fvbv4pdbu?=
+ =?iso-8859-1?Q?LqvMAVPJxJKWDiMRjGVWUyRzJtvyJSDTZtky6X1RHIWaHTt1/20s4RveJP?=
+ =?iso-8859-1?Q?4lP72Lxv8wBp7CgGSeUGN+k4j3aZXe9CRDMM10aZmEEwWx8eUC3Mei5KCA?=
+ =?iso-8859-1?Q?b6vB3ikioATh8HUNTcFI6rHQ8scsN56jFh9VcQ9KHBaXSnIihpZQWE60aa?=
+ =?iso-8859-1?Q?7kDJontFSftWGftelHHxcJc+DjzgBpNHdxRop5Dt2VDvmWxiMrGWAns5ud?=
+ =?iso-8859-1?Q?SoyhyYbx19TQdwTTaz5Ef0Qg6j2ISHRJRd8Luvrftn7Kt/Qx8jBM/5pfwQ?=
+ =?iso-8859-1?Q?ez8HHOC87LH2nV5kTY4y+n3VkPWSi206+zuBgaL/vXMw6wlAovnXlx8FRe?=
+ =?iso-8859-1?Q?ooYIknp58dndQWpthnRTR1qNhUIBvVbb6DB4/xYW5DNYEI4rHiRXuxXdJh?=
+ =?iso-8859-1?Q?ywDvuvQEe6nho2m76MC2IHztDOyX5Mh4ZboyUfUEEyYgWrpip6Wl8mjdu/?=
+ =?iso-8859-1?Q?MRDMmxUp0+jLqNdydXdMv1SnitEjcL9fVRB8vt01qknXszGtCam1PK3Yoq?=
+ =?iso-8859-1?Q?mF6ywkvEJWkkhPEGMtXttjEAwW6RbJNeItNyODR665C/GptDdMqecCUZjI?=
+ =?iso-8859-1?Q?xgDoWl2ccVgOmfAnyuBqX4K7IPojXtdBoeSi2Vf+OBrdkmuaikqNuyCu6r?=
+ =?iso-8859-1?Q?DAbpDBLthEgHDlRaqCuk6uBr4i75XLrchiR1RnRdlekocUroYuU5UAAcyN?=
+ =?iso-8859-1?Q?5/Dww3dQGAb34Fd4dU3XK0poSr/L4J+Pevzl/O5fE1whD2RrPexo8qmmqo?=
+ =?iso-8859-1?Q?RVOo9a54X7pA66J7dheXGd3VSemsmcxOl383l6hHBWt66vUHUml4suHz5e?=
+ =?iso-8859-1?Q?QZ4VBbcEb3ODPd1cybqTJHqvwK/58uku8S3H3Q0lnjlmgkm5vlqFPyKAZp?=
+ =?iso-8859-1?Q?I2jZZotqDLWTqw+O4mdqUCPgo9lzY2rugjX6DpZDC6Wg0saq1wRcBuumy6?=
+ =?iso-8859-1?Q?1HBZXQP7evulLC0q3JN58J0vE0wqWM+xOCzW9VtFA3bIpahf1gPPK7OIMj?=
+ =?iso-8859-1?Q?7un1ujh9bldaGhGcGhamJ9AO1Fv1btgGe8QiFfIM6qj9N11RS1C0RpZHuV?=
+ =?iso-8859-1?Q?8lWYG64Ze51ciJjnt/HjevKkOZBFBVXIPZI8ZsGYM15BablXjbROwQgP0b?=
+ =?iso-8859-1?Q?vOrVgiPIz/rcoQ455Br0tQ?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700018); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?XgBeAvTqWdiXIVRq1b4xa3M/2SJvjtStQN1qFC3hpgxC+5cPIF46nqa6Ie?=
+ =?iso-8859-1?Q?c46jQIc0/+gX6MrWOh3aG1EU9+unXb4VF0Ws7zg93+3XS7oiLhx5sr8yhe?=
+ =?iso-8859-1?Q?iv2qRo/UjD4Z88N0GgdZ8jwMW5AG9EXxbxxsGKhY2iOoAF0cgnWf/8ydUk?=
+ =?iso-8859-1?Q?2qunDCNWapzxznkQ0YWoadeJETSonZ2x4OmVsFhRXY/jvSJeoGVmLK1UD4?=
+ =?iso-8859-1?Q?ni+aC4pA/3ym3dT2SiRt8cLFuKJO4LSrpFa9qqyRE4gQTGjbmEWortwE1d?=
+ =?iso-8859-1?Q?qYtOfInDa+cDtDKGUbF2WaoTHaljQs/9gnuV43Zf87NIb5VhOn6FATOGf+?=
+ =?iso-8859-1?Q?zH18wOjZ2NuG9GZKzjfIbqY0MNSqGq1DXhWfDrNz0SYRQuL68ad94USXhg?=
+ =?iso-8859-1?Q?LC2MOZiGg+R+T+LbUQwA+YjhDZOf4T+I0kOz+v4mOw19Gm+9FGseJFtL/Z?=
+ =?iso-8859-1?Q?eQ42uaBXfgy1F55AMMVkG6dHWnQvwn9d4STiE+ByEdly8QZ6BOm/QA3iMe?=
+ =?iso-8859-1?Q?4OoULvv4Xmbu9y9xtj2WZMDZUu7gtF+/MHKElN+Kix+YZ82MAlnIehwF1X?=
+ =?iso-8859-1?Q?ZN+Q8rZ3yAs5pccU49/cYCS/1nc3hY/QIEPvpvWUKlnKkRsdUZXVBsfUtn?=
+ =?iso-8859-1?Q?VO0u/wz4Ne4YvyvTWe80QtaUa74ntZMnDnf4NjdOTBT9vLZopoNpVjmI2l?=
+ =?iso-8859-1?Q?EJ2d4UsgaKxqaBDtONiVElEAfHtee1bNhOHlKFFV/M/oKpGwiJZbAdNEjZ?=
+ =?iso-8859-1?Q?I5HY+4IiP+eefwLLXSxbCytU0Zj8ZiBs0KXX1CiGSEIMwwEWBEXrCajjCM?=
+ =?iso-8859-1?Q?vhWP0sipN0IAWSofS56OsanUAUl7YlLbE8jP1HKtPhQdSa+UnuxOlfBQGX?=
+ =?iso-8859-1?Q?Hy26tQ99A6zHHUtNKPbDujCAykMem9G0ccCdur75h4Rltuscp7UO+st5MQ?=
+ =?iso-8859-1?Q?lgzwsWO117uv1JSzZU5B4gOQTl4Dp6c5uqOE7+r/GgAY46HygJbIfPXzBq?=
+ =?iso-8859-1?Q?Lk9kPrGUVVwRNRC1QahzjbXw2WeKmSZstu1m0va8ndSdh3eg4ArQX9BVWs?=
+ =?iso-8859-1?Q?97rROCH7WPtsOsse0DZzniHIPcIYGpkfEqy4ged/wflas6tolgG+l9lpH/?=
+ =?iso-8859-1?Q?KnifTkk2TQtUTyhBF3dNz3ypbFojHbFldJxZbD0LKUyLquYhsIAkyJSais?=
+ =?iso-8859-1?Q?pBec0BbVCqp9LE095lIkrQXHDsRo3aVqPDwTZJGwE1PX3XTtvS0cpA643B?=
+ =?iso-8859-1?Q?n4rdKKY8CXu3SVwOmxzSQoGscGJ06LYYV9iq8TylXkDmPeK91pPY+QGxM2?=
+ =?iso-8859-1?Q?6EtXQUVGveZv2S0n44jAWkOpljzsCEBfBbc6U/go++DVW1y0YWUojXXWrr?=
+ =?iso-8859-1?Q?uHVl+XU9vQrxZPWBBxLTlz2dlvL5VU4VBx3cZVGJ68f3Ov/Hb0dA/Q4Eck?=
+ =?iso-8859-1?Q?50JOwDtWEnMKIg2MdYomMmLeYrQin0K1IScMiwlTAXNRd2hRf4qczQrk/f?=
+ =?iso-8859-1?Q?EhhBbsnrWJdx3WPRWBKcFNTEg/lWmIW7tZ5X7PMFQbNJi+KFMPyktRa3t/?=
+ =?iso-8859-1?Q?yza/y1AxD1uHT/3ew7dD1xEfqAM4JY1ZF19yW9Bylt8ndPxz3q8AfWknfs?=
+ =?iso-8859-1?Q?oASa/g53Pt720=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8d6502f-d9f1-4cf6-689e-08dd566cc871
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 13:52:17.5589 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bdXEuiLXtYhnf+nVAtGtSJBMWR1nsb2AbWFwY+XV1wXmdiqD5iAlOygPKB5zYvgWHcV6pCUiURnWTYjER8rASw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9425
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,120 +144,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 22 Jan 2025 16:15:03 +0800
-Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
-
-> On 2025/1/18 00:47, Stephen Hemminger wrote:
-> > Caution: This is an external email. Please be very careful when clickin=
-g links or opening attachments. See http://nok.it/nsb for additional inform=
-ation.
-> >
-> > On Fri, 17 Jan 2025 15:28:47 +0800
-> > Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
-> > =20
-> >> DPDK detect vfio container according the existence of vfio
-> >> module. But for container with non-privileged mode, there is
-> >> possibility that no VFIO_DIR(/dev/vfio) mapping from host to
-> >> container when host have both Intel NIC and Mellanox NIC but
-> >> this conntainer only allocate VFs from Mellanox NIC.
-> >> In this case, vfio kernel module has already been loaded from
-> >> the host.
-> >> This scenario will cause the error log occurs in DPDK primary
-> >> process as below:
-> >> 'EAL:   cannot open VFIO container, error 2 (No such file or
-> >> directory)'
-> >> 'EAL: VFIO support could not be initialized'
-> >> Because `rte_vfio_enable()` call `rte_vfio_get_container_fd()`
-> >> to execute `vfio_container_fd =3D open(VFIO_CONTAINER_PATH,
-> >> O_RDWR);` but VFIO_CONTAINER_PATH(/dev/vfio/vfio) doesn't exist
-> >> in this container.
-> >> This scenario will also lead to the delay of DPDK secondary
-> >> process because `default_vfio_cfg->vfio_enabled =3D 0` and
-> >> `default_vfio_cfg->vfio_container_fd =3D -1`, socket error will
-> >> be set in DPDK primary process when it sync this info to
-> >> the secondary process.
-> >> This patch use to skip this kind of useless detection for this
-> >> scenario.
-> >>
-> >> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
-> >> ---
-> >>   lib/eal/linux/eal_vfio.c | 11 +++++++++++
-> >>   1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-> >> index 7132e24cba..1679d29263 100644
-> >> --- a/lib/eal/linux/eal_vfio.c
-> >> +++ b/lib/eal/linux/eal_vfio.c
-> >> @@ -7,6 +7,7 @@
-> >>   #include <fcntl.h>
-> >>   #include <unistd.h>
-> >>   #include <sys/ioctl.h>
-> >> +#include <dirent.h>
-> >>  =20
-> >>   #include <rte_errno.h>
-> >>   #include <rte_log.h>
-> >> @@ -1083,6 +1084,7 @@ rte_vfio_enable(const char *modname)
-> >>   	/* initialize group list */
-> >>   	int i, j;
-> >>   	int vfio_available;
-> >> +	DIR *dir;
-> >>   	const struct internal_config *internal_conf =3D
-> >>   		eal_get_internal_configuration();
-> >>  =20
-> >> @@ -1119,6 +1121,15 @@ rte_vfio_enable(const char *modname)
-> >>   		return 0;
-> >>   	}
-> >>  =20
-> >> +	/* return 0 if VFIO directory not exist for container with non-privi=
-leged mode */
-> >> +	dir =3D opendir(VFIO_DIR);
-> >> +	if (dir =3D=3D NULL) {
-> >> +		EAL_LOG(DEBUG,
-> >> +			"VFIO directory not exist, skipping VFIO support...");
-> >> +		return 0;
-> >> +	}
-> >> +	closedir(dir); =20
-> > You need to test the non-container cases.
-> > If vfio is loaded /dev/vfio is a character device (not a directory)
-> >
-> > Also looks suspicious that VFIO_DIR is defined but never used currently.
-> > =20
-> Hi Stephen,
-> For non-container test, /dev/vfio/vfio will be character device, not=20
-> /dev/vfio.
-> Here is the command result on my testing environment with Intel NIC.
->=20
-> [root@computer-1 testuser]# ls -l /dev/vfio
-> total 0
-> crw-rw-rw-. 1 root root 10, 196 Jan 22 01:50 vfio
-> [root@computer-1 testuser]# dpdk-devbind.py -b vfio-pci 0000:04:10.2
-> [root@computer-1 testuser]# ls -l /dev/vfio
-> total 0
-> crw-------. 1 root root 239,=C2=A0=C2=A0 0 Jan 22 01:52 59
-> crw-rw-rw-. 1 root root=C2=A0 10, 196 Jan 22 01:50 vfio
-> [root@computer-1 testuser]# dpdk-devbind.py -b ixgbevf 0000:04:10.2
-> [root@computer-1 testuser]# ls -l /dev/vfio
-> total 0
-> crw-rw-rw-. 1 root root 10, 196 Jan 22 01:50 vfio
->=20
-> Can you confirm your test scenario?
->=20
->=20
-
-When vfio-pci is loaded but no device bound:
-$ ls -l /dev/vfio
-total 0
-crw-rw-rw- 1 root root 10, 196 Feb 26 05:39 vfio
-
-After binding device
-$ ls -l /dev/vfio
-total 0
-crw------- 1 root root 511,   0 Feb 26 05:42 15
-crw-rw-rw- 1 root root  10, 196 Feb 26 05:39 vfio
-
-So testing for /dev/vfio is good indication that module is loaded.
-Not sure what I was thinking earlier.
-
-
-
-
+Hi,=0A=
+=0A=
+From: Gregory Etelson <getelson@nvidia.com>=0A=
+Sent: Sunday, February 9, 2025 3:48 PM=0A=
+To: dev@dpdk.org=0A=
+Cc: Gregory Etelson; Maayan Kashani; Raslan Darawsheh; Itamar Gozlan=0A=
+Subject: [PATCH] net/mlx5/hws: change error flow on matcher disconnect=0A=
+=0A=
+From: Itamar Gozlan <igozlan@nvidia.com>=0A=
+=0A=
+Currently, when a firmware (FW) failure occurs during matcher error flow,=
+=0A=
+the system attempts to reconnect the matcher, leading to a segmentation=0A=
+fault. This happens because the matcher is freed but remains in the list.=
+=0A=
+=0A=
+Example scenario:=0A=
+Given matchers M1->M2->M3, if a FW failure occurs:=0A=
+1. System tries to destroy M1 and fails=0A=
+2. M1 remains in the list but is freed=0A=
+3. When destroying M2, it attempts to remove itself and create M1->M3=0A=
+4. This results in a segmentation fault as M1 is already freed=0A=
+=0A=
+Signed-off-by: Itamar Gozlan <igozlan@nvidia.com>=0A=
+=0A=
+Patch applied to next-net-mlx,=0A=
+=0A=
+=0A=
+Kindest regards,=0A=
+Raslan Darawsheh=0A=
+=0A=
