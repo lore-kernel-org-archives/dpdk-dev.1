@@ -2,39 +2,130 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E1AC021BF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 02:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FD7C021BE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 03:06:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FF46402DC;
-	Wed, 26 Feb 2025 03:01:41 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 373C9402B9
- for <dev@dpdk.org>; Wed, 26 Feb 2025 03:01:39 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 7A6F120460A7; Tue, 25 Feb 2025 18:01:38 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A6F120460A7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1740535298;
- bh=bErNcAEdU7Ap/Ka49cTjFrbImndaaMVTgc2j2pQqtVo=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=bnNiLElX5oKrX1eoa/bdNsd5kTDVt9Yw1e/AHiFkus9LEhHPm1RbLxjxYiljL530t
- hi6t7GstZriC+ZasJrPaSOUenb+U0ciRpHXENMUOU92SfhgluxDrh9erQ0dvKCxtwf
- WuggI5JhKJPBu4TdRZKHGs1gzJ2OOAl62v7zt8XE=
-Date: Tue, 25 Feb 2025 18:01:38 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, dev@dpdk.org
-Subject: Re: [PATCH 3/6] config: allow faster instruction sets to be used
- with MSVC
-Message-ID: <20250226020138.GA16574@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
- <1740430879-17874-4-git-send-email-andremue@linux.microsoft.com>
- <Z73Tcj4VmlNYNoLM@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D94A4402E0;
+	Wed, 26 Feb 2025 04:06:31 +0100 (CET)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2138.outbound.protection.outlook.com [40.107.244.138])
+ by mails.dpdk.org (Postfix) with ESMTP id A09A4402DC;
+ Wed, 26 Feb 2025 04:06:29 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r9+RPmL8fbHMGsga+dfd1xovVWqzFy6/AQ0+T0UpWl9Ub1uxmvsr488qSiLvOaGFDDHvAkKhX3hQht5AhvACedfPZ0NhMhIdyqVDZpx58q9WZJLpuVPhVEwMtNl/YPWRGlmQSa/d5/IJ5aMyTFDL5qTFir1Rdd+q5KxumaTRV6YAIvovp1Jx3JX6RJVgrEyOIvDV3zUFaRA6oLKULRKdr0kdwvxP2c+EJJ7SdVh8k/mO8i5GcouIQKTuGLz3KrTVP3Tm2NwgL/PttRasqW3GybgZDw5S9ZlNlmIIr2kM5PO/XkS3q9J5HSPTGOvS5HBRgruU/Py2dlcqY4aqUSMLEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fEo5b0HmkTinnF/0f2uDXfJHMNbpvd91ImP6l7jOlrA=;
+ b=FQIWZaA9XEBYFg5Mazdv73GIGzgeTWz2lF3o0J1fm7aZQl3gernP9QOcO9T3TqVNXiIFERaR5ALvAIF5jEEGXYoSmGa4pM6VSYOcbR908Q7QKwDbqyy67+AvR0oN10+VQxGjWtYLuu/mtY5Umkbqkngw9ObBr0oISvqP2uuJgjwAtdqNkKJ1KJYujUUIlL0iy9kbEVV5hn/b+f1ShVaZkRPOaRC/qk2X/x5AtKig+IiKPNfTFbnkcNoAn1OVWUJDP40cpyPIcRcof8LjFofzbR8wjAGL1I6a7qiILoDk4hEFoYU9uOGKyQNQ5NrDO8HMXCn8udPjS60oEEijn0WZJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fEo5b0HmkTinnF/0f2uDXfJHMNbpvd91ImP6l7jOlrA=;
+ b=NHYWIFeupR8EpuFUy0YYkWUXWaL2vBsXfWEIwF3V4QFPABG9xA824tu37vGFni79jIkwsgqes/LUQwUOyLiXyfcndF3Eu6T5aecgRSoN6PkEqtbIxjZIRdVKypX/x8E7UxWK7cE8DZarOy+buncLglcaVTB8CJg91LKCAo3Jy+A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB5568.namprd13.prod.outlook.com (2603:10b6:510:12b::16)
+ by BY3PR13MB4916.namprd13.prod.outlook.com (2603:10b6:a03:36f::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
+ 2025 03:06:27 +0000
+Received: from PH0PR13MB5568.namprd13.prod.outlook.com
+ ([fe80::277d:5013:95a1:d8b9]) by PH0PR13MB5568.namprd13.prod.outlook.com
+ ([fe80::277d:5013:95a1:d8b9%3]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 03:06:27 +0000
+From: Chaoyong He <chaoyong.he@corigine.com>
+To: dev@dpdk.org
+Cc: oss-drivers@corigine.com, Chaoyong He <chaoyong.he@corigine.com>,
+ peng.zhang@corigine.com, stable@dpdk.org
+Subject: [PATCH] net/nfp: fix two bugs of error process logic
+Date: Wed, 26 Feb 2025 11:06:05 +0800
+Message-ID: <20250226030605.567179-1-chaoyong.he@corigine.com>
+X-Mailer: git-send-email 2.43.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0141.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::21) To PH0PR13MB5568.namprd13.prod.outlook.com
+ (2603:10b6:510:12b::16)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z73Tcj4VmlNYNoLM@bricha3-mobl1.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB5568:EE_|BY3PR13MB4916:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2807d63-4e55-4961-a409-08dd56128f3b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|52116014|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dBE8yc7D9U8kSgpZHuIFH9ufU0a0gq8WLVatWnDxX8hI8sO6d9oJNStrYYHE?=
+ =?us-ascii?Q?kltHdnAE1OF73JF/QPLDTPZlI9LC7BKb7r5SDQgQ2dRWZCwcgitbxjhhnj1i?=
+ =?us-ascii?Q?LqZh+3v029mg6SzgewONmAkVHksp3+GKHM1CBgiPxWjHJPPZRMCkCjmBfwsC?=
+ =?us-ascii?Q?9RYENmVYHB5tPz1Qu1+DVGmhavQk3WxcvzZTbVrncW8NZXkxO1CcbxHFyf2o?=
+ =?us-ascii?Q?V+NGuxJrommtmVO5cNCe/gF3YY4IP0ACgbuPM6RM+r3A5ab7TYe+X38qOrav?=
+ =?us-ascii?Q?9kVdKSeYgaeU5Wr4QXlgOxh9HxCSw2wyaWBqJKuB18Apvuhrb1E0Jh8bhH8n?=
+ =?us-ascii?Q?/R8agv14+ej8ftV2zcsV48SrpDWtH+hwCZAaUWvPtD794zyPD+ezxJbMbHYH?=
+ =?us-ascii?Q?NxwoO26QzK9M/1zaIRyMzpmLWuOJJUN+aNl1SHCVlfLDt3X5f+2guDeOY7uY?=
+ =?us-ascii?Q?SYN4/P0+KgtxzDGJKUvXF7ReYFgjrdnpWaH/SF+NpfkKI/tsuRyzHLknvAOe?=
+ =?us-ascii?Q?VmEhw/FBs4shXfkHOXL78WDyNTrCEn+O5OmFZN/8LTzHBEEoeU8Jt9XWpL9A?=
+ =?us-ascii?Q?3ZHl1Z4u4VuOuA5B/cek/nuPdCFy0a+ZHlN1nrQZdhU5nRe8PLno1U9SRw38?=
+ =?us-ascii?Q?W1Emgm676rNlZXw4zSyb7ZCshNLe+5/3wjdeZMsUVj2uv2HSY7mYYhRQylVa?=
+ =?us-ascii?Q?QJMQn0ZAvCWjSxZFDjyvPyWYLaF9wZXGvzq9+urL1CyUP+dN3/BpORCmEnMa?=
+ =?us-ascii?Q?8T1kIVCW8r1jsLqVV8Ozo83JLS/zZvQMbR1XQ3jz26cwJmiZUEvBnshb2bjU?=
+ =?us-ascii?Q?HjIuUfekrMKVujiCkZyiZg3kC7HGgDQxErl8ZkDbjLNb9mDo1ZBI2xwFB6b8?=
+ =?us-ascii?Q?NECxm28KeYQAj6ZRJ8jvx4eudb+z47plKwH8GBaePdmYYP6CS64LCDAw9efD?=
+ =?us-ascii?Q?uCv+IrtRZ8pKjxlv8uT6aenv6Pmyszd/YBZhCl7xXcD19jsQ7Co6odeg/wzY?=
+ =?us-ascii?Q?pgUgYwZr3lc/coV0vs/+9pySoDsp6ReR57245D6WfnmTTIxWHmv0fOfqp9i9?=
+ =?us-ascii?Q?qslT+gkqh0vF2zDApxVkKvZaWsS6B8VYBadPijZddlKgbK1ipvEyOnfmg/6n?=
+ =?us-ascii?Q?jxx1ttta/fQLblG4p8RR0jG2fQaihRnDVAiFJCl5jIup5D0cQ9qSUnrjUbGv?=
+ =?us-ascii?Q?LpVHoqDNmoU6/kdssNsnjXBEc6+WUvjQk2qRRHf9RLmv5xlkesig6OXg/pr0?=
+ =?us-ascii?Q?7cz29l8pIG4J+EaRsizhGTRIrhw26VEgA5VKuItJnZBF56R4LzS4Z0py/n2X?=
+ =?us-ascii?Q?eE4JTFH8j+UknRFd4qbA0C4jevBMALVx0NaUwGIaefFxGn95ibB9RwPTDEGe?=
+ =?us-ascii?Q?Rk0QDMZkkheO01JMHlOjkblxnptf9X/RCENSTMZ7s0gIWRqsRyhzZCsT/eKh?=
+ =?us-ascii?Q?T7VEJO3rSBbfu83OgZwDBOhnemBOFb4E?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH0PR13MB5568.namprd13.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014); DIR:OUT;
+ SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8paKUHP+8TjOzl8TarMOF4Yk1lJKn+s8ql3VqjApwC8dvfqpKsKzTP5iAAi8?=
+ =?us-ascii?Q?zsEDysEIfce7X6YBOIUh+KkmbckbG6jp/L6czN/qrg3cIGPzV2rIbAR+8SuE?=
+ =?us-ascii?Q?uy1dvNn/YajQYcuOnnVkDzgURwoxCHPsHyohONF7/SQNFZwTpLBxmf07seIt?=
+ =?us-ascii?Q?WeNKxn30fylAQ3MFUHqeK50/0h5XkkYadi2NDxPGHawOvpMqcoXPT3P/9GzN?=
+ =?us-ascii?Q?HcDcmQTOu6609EENz1sq1d7qvg4B4RHUKb8s2W2Syj2Enon7wT5xnOpnu4K3?=
+ =?us-ascii?Q?1dal2on0TcRd6GXA+2CPHtjTbCj62R0uCOx9E9LbB8IKd02zQA7sLju/a+M5?=
+ =?us-ascii?Q?rHd9j2uAU/DLYmpD76YZPBjb9jNjsGF2Mnd7anZroHGzl1B6hJvSCvpU9HCA?=
+ =?us-ascii?Q?Qiyp0vDfKzMSkfzLReNe5FjqVDB11dC/oW6zfva/I2rvHiqTEgfD+zFTsnTh?=
+ =?us-ascii?Q?LGMMXo1Tmp5BscoDqDbeqPJeyoJ6lfqLHk3uqt1ZitES5v7IIvLWk7n41623?=
+ =?us-ascii?Q?xflqX88D39Qghtd4A8io2HPpVghEpxONpMMRbBDY6NM7eEMUJ5S4iaTxYZjX?=
+ =?us-ascii?Q?rzcluctwVTOmKWhGMpfBz96bNSa0LUk2AYJZgMGxKz1dz4AZcWcsYIdnM5ez?=
+ =?us-ascii?Q?YJ1axa6x4H97TU+SuMRsobXD/Gf1gk2hnpYyNNoh2BEdlkk0T5kqiSvwduTS?=
+ =?us-ascii?Q?WCvnpcqPuo2S+/8S2aR2B6uGYpK4HUyHVquZu4iL6peILO7NO2ODmc5F8gi3?=
+ =?us-ascii?Q?0G3pGnN7pZHab51L4fSZJSnQtn2BOIHHLo89k2eGWT7b8C2GEezRWAhvZqVZ?=
+ =?us-ascii?Q?8z4Df6q70TOgy+9EqELUFzBpolbxAd1hoVc57xeRVowt/nV1IyPDbR/wpxfD?=
+ =?us-ascii?Q?iJNUMmHqaHqcpwADpn/7Tp0OMPFIQgF6dIeNx3wV25QpB/0EU4AkmqGhB1lo?=
+ =?us-ascii?Q?BDizBlW3/1cm+fmHt61F229N2ojhQYEKLSsJhfzwDZqP9jT1C3K8zqlCkxHo?=
+ =?us-ascii?Q?Sj2tmQ4ZSPg3JoZlN3uHgNZdx6tKsm9iAPSIH5k7rp5x2sxEbgw6aDYIlsHB?=
+ =?us-ascii?Q?ZbrZrxDb3LVe2Efg1bvMA3/mw2AHH+zIzhXX3H461BJlgnDP19XaugNyPqJJ?=
+ =?us-ascii?Q?dXh4yzLFCINicpMckrWQU304kBhhIM9yVYbceTXLGBUqmdD9Zw1GLhz1MR8I?=
+ =?us-ascii?Q?bokxeVsfXkKJMj7n+cJrXqSXEqNTKzHfERGTHa0HiCowaT+AZt3jbI78sPEJ?=
+ =?us-ascii?Q?ium+H6ncQrKlL1vTQuyrxXd14vRjyujxyrLJl86sBMc96cRr2/J8dTyP0nGX?=
+ =?us-ascii?Q?JBhRrlfftV1RZygAK4vMxZ4+Nc/78tvtqPwP8ADvL2dIuf9hQeWtuuUldLeE?=
+ =?us-ascii?Q?c2Ny1uG3c1PDIl59g22NyGFLa4nx1YAxre9s5A+DmEPdBS6ua/L6o8xsAWix?=
+ =?us-ascii?Q?QO8fLRYKUX6UZnRG20BGXGZ1WkIiZUEjizBzC+DFltqKTKJm0iqm5cpN7Slr?=
+ =?us-ascii?Q?sNQRODwHMaj2nswBBlv/9UiT6oS02ufl2ItXSrPEAcVJGyNpzNvlI3vpmraN?=
+ =?us-ascii?Q?Y8BA0TcEtb4iylceu+Cg3L416h2rufI0xzXs6H6s5buculht3gv8KKUyT9Dn?=
+ =?us-ascii?Q?Mg=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2807d63-4e55-4961-a409-08dd56128f3b
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB5568.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 03:06:27.2134 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mMeVtfmtFR6J3OephHQ5fecdgeeU2KcbNXcFda1KTF7nyJ43kprtY7C1FeXfy/1bgwI+AedlWGMfgIULQ960hSViI+oTBaUoSccIDq1bJsc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR13MB4916
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,520 +139,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Feb 25, 2025 at 02:28:02PM +0000, Bruce Richardson wrote:
-> On Mon, Feb 24, 2025 at 01:01:16PM -0800, Andre Muezerie wrote:
-> > Up to now MSVC has being used with the default mode, which uses SSE2
-> > instructions for scalar floating-point and vector calculations.
-> > https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-> > 
-> > This patch allows users to specify the CPU for which the generated
-> > code should be optimized for in the same way it's done for GCC: by
-> > passing the CPU name.
-> > When no explicit CPU name is passed, 'native' is assumed (like it
-> > happens with GCC) and the code will be optimized for the same CPU
-> > type used to compile the code.
-> > 
-> > MSVC does not provide this functionality natively, so logic was
-> > added to meson.build to handle these differences, detecting which
-> > instruction sets are supported by the CPU(s), passing the best
-> > options to MSVC and setting the correct macros (like __AVX512F__)
-> > so that the DPDK code can rely on them like it is done with GCC.
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > ---
-> 
-> Hi Andre,
-> 
-> couple of initial thoughts inline below.
-> 
-> /Bruce
-> 
-> >  config/x86/meson.build | 364 ++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 325 insertions(+), 39 deletions(-)
-> > 
-> 
-> There is quite a lot of new code to be added here. Might it be worthwhile
-> creating a "config/x86/msvc/" subdirectory with its own meson.build file to
-> handle all the complexities of using it. We can have the common material at
-> the top of the x86/meson.build file, and then do 
-> 
-> if is_ms_compiler
->     subdir(msvc)
->     subdir_done()
-> endif
-> 
-> leaving the rest of the file for the gcc/clang/icx code.
+Fix two bugs of error process logic.
 
-I think that makes sense, as there's not much common code there that is common to gcc and msvc.
+Fixes: 19bd7cce5705 ("net/nfp: support different configuration BAR size")
+Fixes: 636e133ec891 ("net/nfp: update Tx and Rx for multiple PF")
+Cc: peng.zhang@corigine.com
+Cc: stable@dpdk.org
 
-> 
-> > diff --git a/config/x86/meson.build b/config/x86/meson.build
-> > index 47a5b0c04a..9260969c54 100644
-> > --- a/config/x86/meson.build
-> > +++ b/config/x86/meson.build
-> > @@ -14,7 +14,194 @@ if is_linux or cc.get_id() == 'gcc'
-> >      endif
-> >  endif
-> >  
-> > -cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
-> > +cpuid_code = '''
-> > +    #include <stdio.h>
-> > +    #include <stdint.h>
-> > +    #include <intrin.h>
-> > +
-> > +    uint32_t f1_ECX = 0;
-> > +    uint32_t f1_EDX = 0;
-> > +    uint32_t f7_EBX = 0;
-> > +    uint32_t f7_ECX = 0;
-> > +
-> > +    void get_support_flags()
-> > +    {
-> > +        int ids_max;
-> > +        int data[4];
-> > +
-> > +        /*
-> > +         * Calling __cpuid with 0x0 as the function_id argument
-> > +         * gets the number of the highest valid function ID.
-> > +         */
-> > +        __cpuid(data, 0);
-> > +        ids_max = data[0];
-> > +
-> > +        if (1 <= ids_max) {
-> > +            __cpuidex(data, 1, 0);
-> > +            f1_ECX = data[2];
-> > +            f1_EDX = data[3];
-> > +
-> > +            if (7 <= ids_max) {
-> > +                __cpuidex(data, 7, 0);
-> > +                f7_EBX = data[1];
-> > +                f7_ECX = data[2];
-> > +            }
-> > +        }
-> > +    }
-> > +
-> > +    int get_instruction_support()
-> > +    {
-> > +        get_support_flags();
-> > +
-> > +    #ifdef SSE3
-> > +        return (f1_ECX & (1UL << 0)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef PCLMUL
-> > +        return (f1_ECX & (1UL << 1)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef SSSE3
-> > +        return (f1_ECX & (1UL << 9)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef SSE4_1
-> > +        return (f1_ECX & (1UL << 19)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef SSE4_2
-> > +        return (f1_ECX & (1UL << 20)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AES
-> > +        return (f1_ECX & (1UL << 25)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX
-> > +        return (f1_ECX & (1UL << 28)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef RDRND
-> > +        return (f1_ECX & (1UL << 30)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef SSE
-> > +        return (f1_EDX & (1UL << 25)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef SSE2
-> > +        return (f1_EDX & (1UL << 26)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX2
-> > +        return (f7_EBX & (1UL << 5)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512F
-> > +        return (f7_EBX & (1UL << 16)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512DQ
-> > +        return (f7_EBX & (1UL << 17)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef RDSEED
-> > +        return (f7_EBX & (1UL << 18)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512IFMA
-> > +        return (f7_EBX & (1UL << 21)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512CD
-> > +        return (f7_EBX & (1UL << 28)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512BW
-> > +        return (f7_EBX & (1UL << 30)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef AVX512VL
-> > +        return (f7_EBX & (1UL << 31)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef GFNI
-> > +        return (f7_ECX & (1UL << 8)) ? 1 : 0;
-> > +    #endif
-> > +    #ifdef VPCLMULQDQ
-> > +        return (f7_ECX & (1UL << 10)) ? 1 : 0;
-> > +    #endif
-> > +
-> > +        return -1;
-> > +    }
-> > +
-> > +    int main(int argc, char *argv[])
-> > +    {
-> > +        int res = get_instruction_support();
-> > +        if (res == -1) {
-> > +            printf("Unknown instruction set");
-> > +            return -1;
-> > +        }
-> > +        printf("%d", res);
-> > +
-> > +        return 0;
-> > +    }
-> > +'''
-> > +
-> > +# The data in table below can be found here:
-> > +# https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
-> > +# This table only contains CPUs that have SSE4.2, as this instruction set is required by DPDK.
-> > +# That means that in addition to the instruction sets mentioned in the table, all these CPUs
-> > +# also have ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
-> > +cpu_type_to_flags = {
-> > +       'x86-64-v2': [],
-> > +       'x86-64-v3': ['AVX', 'AVX2'],
-> > +       'x86-64-v4': ['AVX', 'AVX2', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-> > +         'nehalem': [],
-> > +          'corei7': [],
-> > +        'westmere': ['PCLMUL'],
-> > +     'sandybridge': ['AVX', 'PCLMUL'],
-> > +      'corei7-avx': ['AVX', 'PCLMUL'],
-> > +       'ivybridge': ['AVX', 'PCLMUL', 'RDRND'],
-> > +      'core-avx-i': ['AVX', 'PCLMUL', 'RDRND'],
-> > +         'haswell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
-> > +       'core-avx2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2'],
-> > +       'broadwell': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED'],
-> > +         'skylake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-> > +  'skylake-avx512': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-> > +     'cascadelake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-> > +      'cannonlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA'],
-> > +      'cooperlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
-> > +  'icelake-client': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +  'icelake-server': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +       'tigerlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +      'rocketlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +       'alderlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +      'raptorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +      'meteorlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +       'gracemont': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +       'arrowlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +     'arrowlake-s': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +       'lunarlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +     'pantherlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +  'sapphirerapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +   'emeraldrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +   'graniterapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > + 'graniterapids-d': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +   'diamondrapids': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +      'silvermont': ['PCLMUL', 'RDRND'],
-> > +             'slm': ['PCLMUL', 'RDRND'],
-> > +        'goldmont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-> > +   'goldmont-plus': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-> > +         'tremont': ['PCLMUL', 'RDRND', 'RDSEED', 'AES', 'GFNI'],
-> > +    'sierraforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +      'grandridge': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +'clearwaterforest': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
-> > +          'bdver1': ['AVX', 'PCLMUL', 'AES'],
-> > +          'bdver2': ['AVX', 'PCLMUL', 'AES'],
-> > +          'bdver3': ['AVX', 'PCLMUL', 'AES'],
-> > +          'bdver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'AES'],
-> > +          'znver1': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-> > +          'znver2': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-> > +          'znver3': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ'],
-> > +          'znver4': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +          'znver5': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD', 'AVX512IFMA', 'GFNI'],
-> > +          'btver2': ['AVX', 'PCLMUL', 'AES'],
-> > +        'lujiazui': ['PCLMUL', 'RDRND', 'RDSEED', 'AES'],
-> > +        'yongfeng': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-> > +      'shijidadao': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES'],
-> > +}
-> > +
-> 
-> I really don't want to have tables like this to maintain in our code if at
-> all possible. We used to have something a bit similar in DPDK IIRC, but we
-> found it a maintenance nightmare and just switched to using the compiler to
-> do all the work. In our existing builds, we just pass the
-> cpu_instruction_set parameter straight to the -march flag of the compiler.
-> For MSVC support, I believe we should just do the exact same.
-> 
-> Maintaining lists like this will be a problem as new platforms need to be
-> constantly added.
+Signed-off-by: Chaoyong He <chaoyong.he@corigine.com>
+Reviewed-by: Peng Zhang <peng.zhang@corigine.com>
+---
+ drivers/net/nfp/nfp_ethdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It's great that when using gcc users can just pass the CPU type to it and
-that it will set all the macros corresponding to that CPU for them. I
-would love to be able to rely on MSVC for that as well, unfortunately MSVC
-does not provide that level of granularity, that's why I came up with the
-idea of having this table.
+diff --git a/drivers/net/nfp/nfp_ethdev.c b/drivers/net/nfp/nfp_ethdev.c
+index b9cb9fc652..cbd1deffb4 100644
+--- a/drivers/net/nfp/nfp_ethdev.c
++++ b/drivers/net/nfp/nfp_ethdev.c
+@@ -2549,7 +2549,7 @@ nfp_pf_init(struct rte_pci_device *pci_dev)
+ 	ret = nfp_net_vf_config_init(pf_dev);
+ 	if (ret != 0) {
+ 		PMD_INIT_LOG(ERR, "Failed to init VF config.");
+-		goto vf_cfg_tbl_cleanup;
++		goto mac_stats_cleanup;
+ 	}
+ 
+ 	hw_priv->is_pf = true;
+@@ -2557,7 +2557,7 @@ nfp_pf_init(struct rte_pci_device *pci_dev)
+ 	if (!nfp_net_recv_pkt_meta_check_register(hw_priv)) {
+ 		PMD_INIT_LOG(ERR, "PF register meta check function failed.");
+ 		ret = -EIO;
+-		goto hw_priv_free;
++		goto vf_cfg_tbl_cleanup;
+ 	}
+ 
+ 	/*
+-- 
+2.43.5
 
-Initially I was also very concerned about the amount of data to be stored
-there, and the work required to maintain it. Then I decided to throw away
-all the CPU types that do not have SSE4_2. That reduced the table in half.
-Adding the entries manually was still a lot of work and error prone. So,
-I decided to write some code that uses gcc to build that table for me.
-I'll polish that code and add it to the patch. With that it will be almost
-zero effort to maintain that table. All that will be required is running
-that code on a setup with the latest gcc, providing a file with the CPU
-names. Assuming gcc knows about the latest CPUs a new table will be
-generated and can be pasted in the meson.build file.
-
-I assume this does not need to be done too often. In the worst case, if it
-happens that DPDK was not updated with the latest CPUs, people can still
-pick an earlier CPU with similar characteristics and have similar (if not
-same) performance.
-
-
-> Do we also look to backport them, because if equivalence
-> with the linux build is necessary then that will have to be done - as on
-> Linux when a new version of GCC comes out, we can then use the new
-> instruction set targets on the old releases of DPDK.
-
-That would be nice, and I'm willing to help with that. It makes it a
-better user experience if we can minimize the perceived differences
-between the toolsets. I'm not sure if it's a requirement though. If
-you're concerned that this would add too much overhead, it could be
-decided that no such backport should happen.
-
-> 
-> > +if is_ms_compiler
-> > +    cc_avx2_flags = ['/arch:AVX2']
-> > +    cc_avx512_flags = ['/arch:AVX512']
-> > +else
-> > +    cc_avx2_flags = ['-mavx2']
-> > +    cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
-> > +endif
-> > +
-> >  cc_has_avx512 = false
-> >  target_has_avx512 = false
-> >  if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
-> > @@ -30,12 +217,14 @@ if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
-> >          warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
-> >      else
-> >          cc_has_avx512 = true
-> > -        target_has_avx512 = (
-> > -                cc.get_define('__AVX512F__', args: machine_args) != '' and
-> > -                cc.get_define('__AVX512BW__', args: machine_args) != '' and
-> > -                cc.get_define('__AVX512DQ__', args: machine_args) != '' and
-> > -                cc.get_define('__AVX512VL__', args: machine_args) != ''
-> > -            )
-> > +        if not is_ms_compiler
-> > +            target_has_avx512 = (
-> > +                    cc.get_define('__AVX512F__', args: machine_args) != '' and
-> > +                    cc.get_define('__AVX512BW__', args: machine_args) != '' and
-> > +                    cc.get_define('__AVX512DQ__', args: machine_args) != '' and
-> > +                    cc.get_define('__AVX512VL__', args: machine_args) != ''
-> > +                )
-> > +        endif
-> >      endif
-> >  endif
-> >  
-> > @@ -47,42 +236,139 @@ if not is_ms_compiler
-> >      endif
-> >  endif
-> >  
-> > -# enable restricted transactional memory intrinsics
-> > -# https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
-> > -if cc.get_id() != 'msvc'
-> > -    machine_args += '-mrtm'
-> > -endif
-> > +if is_ms_compiler
-> > +    # Determine cpu_flags for a given configuration.
-> > +    # SSE instructions up to 4.2 are required for DPDK.
-> > +    cpu_flags = ['SSE', 'SSE2', 'SSE3', 'SSEE3', 'SSE4_1', 'SSE4_2']
-> > +
-> > +    message('cpu_instruction_set: @0@'.format(cpu_instruction_set))
-> >  
-> > -base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
-> > -foreach f:base_flags
-> > -    compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-> > -endforeach
-> > -
-> > -optional_flags = [
-> > -        'AES',
-> > -        'AVX',
-> > -        'AVX2',
-> > -        'AVX512BW',
-> > -        'AVX512CD',
-> > -        'AVX512DQ',
-> > -        'AVX512F',
-> > -        'AVX512VL',
-> > -        'PCLMUL',
-> > -        'RDRND',
-> > -        'RDSEED',
-> > -        'VPCLMULQDQ',
-> > -]
-> > -foreach f:optional_flags
-> > -    if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
-> > -        if f == 'PCLMUL' # special case flags with different defines
-> > -            f = 'PCLMULQDQ'
-> > -        elif f == 'RDRND'
-> > -            f = 'RDRAND'
-> > +    if cpu_instruction_set == ''
-> > +        # Nothing to do as cpu_flags already holds all the required flags.
-> > +    elif cpu_instruction_set == 'native'
-> > +        # MSVC behaves differently than GCC regarding supported instruction sets.
-> > +        # While GCC will create macros like __AVX512F__ when such instruction set is
-> > +        # supported by the current CPU, MSVC does not do that. MSVC will create that
-> > +        # macro when parameter /arch:AVX512 is passed to the compiler, even when the
-> > +        # CPU does not have that instruction set (by design). So there's a need to
-> > +        # look at CPUID flags to figure out what is really supported by the CPU, so
-> > +        # that the correct /arch value can be passed to the compiler.
-> > +        # The macros also need to be explicitly defined, as /arch will not create all
-> > +        # macros GCC creates under the same conditions.
-> > +        # As an example, /arch:AVX512 creates __AVX512BW__, but does not create __SSE2__.
-> > +        # More details available here:
-> > +        # https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
-> > +
-> > +        optional_flags = [
-> > +                'PCLMUL',
-> > +                'AES',
-> > +                'AVX',
-> > +                'RDRND',
-> > +                'AVX2',
-> > +                'AVX512F',
-> > +                'AVX512BW',
-> > +                'AVX512DQ',
-> > +                'AVX512VL',
-> > +                'AVX512CD',
-> > +                'AVX512IFMA',
-> > +                'GFNI',
-> > +                'RDSEED',
-> > +                'VPCLMULQDQ',
-> > +        ]
-> > +        foreach f:optional_flags
-> > +            result = cc.run(cpuid_code, args: '-D@0@'.format(f),
-> > +                            name: 'instruction set @0@'.format(f))
-> > +            has_instr_set = result.returncode() == 0 and result.stdout() == '1'
-> > +            if has_instr_set
-> > +                cpu_flags += f
-> > +            endif
-> > +            message('Target has @0@: @1@'.format(f, has_instr_set))
-> > +        endforeach
-> > +    else
-> > +        # An explicit cpu_instruction_set was provided. Get cpu_flags
-> > +        # from cpu_type_to_flags table.
-> > +        if cpu_instruction_set not in cpu_type_to_flags
-> > +            error('CPU not known or not supported. Please update the table with known CPUs if needed.')
-> >          endif
-> > -        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-> > +        cpu_flags += cpu_type_to_flags[cpu_instruction_set]
-> > +    endif
-> > +
-> > +    # Now that all cpu_flags are known, set compile_time_cpuflags and also
-> > +    # machine_args to ensure that the instruction set #defines (like __SSE2__)
-> > +    # are always present in the preprocessor.
-> > +    message('cpu_flags: @0@'.format(cpu_flags))
-> > +
-> > +    foreach flag:cpu_flags
-> > +        machine_args += '/D__@0@__'.format(flag)
-> > +        if flag == 'PCLMUL'
-> > +            flag = 'PCLMULQDQ'
-> > +        elif flag == 'RDRND'
-> > +            flag = 'RDRAND'
-> > +        endif
-> > +        compile_time_cpuflags += ['RTE_CPUFLAG_' + flag]
-> > +    endforeach
-> > +
-> > +    target_has_avx512 = ('AVX512F'  in cpu_flags and
-> > +                         'AVX512BW' in cpu_flags and
-> > +                         'AVX512DQ' in cpu_flags and
-> > +                         'AVX512VL' in cpu_flags)
-> > +
-> > +    # Decide which instruction sets should be used by the compiler.
-> > +    # With MSVC, intrinsic functions are always enabled. However, for the
-> > +    # compiler to use an extended instruction set for automatically
-> > +    # generated code "/arch" needs to be passed. So we instruct the compiler
-> > +    # to use the largest set that is supported by the CPU. It is implied that
-> > +    # smaller sets than the largest selected are included, as described here:
-> > +    # https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-> > +    if 'RTE_CPUFLAG_AVX512F' in compile_time_cpuflags
-> > +        machine_args += ['/arch:AVX512']
-> > +    elif 'RTE_CPUFLAG_AVX2' in compile_time_cpuflags
-> > +        machine_args += ['/arch:AVX2']
-> > +    elif 'RTE_CPUFLAG_AVX' in compile_time_cpuflags
-> > +        machine_args += ['/arch:AVX']
-> > +    else
-> > +        # SSE4.2 is expected to always be available
-> > +        machine_args += ['/arch:SSE4.2']
-> >      endif
-> > -endforeach
-> >  
-> 
-> Since these appear to be the only /arch flags supported by the compiler for
-> code generation, I would suggest that these would be the only instruction
-> set flags that we support on MSVC builds, and that we then build up the
-> actual CPU flags based on the minimum flags to be expected when each of
-> these instruction sets is present.
-> 
-> Similarly with 'native', rather than supporting all the different CPU types,
-> it would be a lot easier to just determine if it's an SSE4 machine, an AVX2
-> machine or AVX512, and run with that.
-> 
-> My thinking is that getting this as a first step should get us a lot of the
-> benefits without such a massive maintenance headache.
-
-Providing only /arch option at first sight might look simpler, but I still
-like the table approach much better. As I said earlier, maintaining that
-table is not much work with that extra devtool.
-
-Some drawbacks from the simpler approach:
-
-1) User experience is not as good as it will differ from other toolsets.
-   Users will have to learn about more parameter/values (how/when to use them).
-2) DPDK code will not benefit from other instruction sets which might be
-   present (__RDSEED__, __RDRND__, etc.) because these are not set by /arch.
-
-Let me know your thoughts.
-
-> 
-> > +    message('machine_args: @0@'.format(machine_args))
-> > +else
-> > +    # enable restricted transactional memory intrinsics
-> > +    # https://gcc.gnu.org/onlinedocs/gcc/x86-transactional-memory-intrinsics.html
-> > +    machine_args += '-mrtm'
-> > +
-> > +    base_flags = ['SSE', 'SSE2', 'SSE3','SSSE3', 'SSE4_1', 'SSE4_2']
-> > +    foreach f:base_flags
-> > +        compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-> > +    endforeach
-> > +
-> > +    optional_flags = [
-> > +            'AES',
-> > +            'AVX',
-> > +            'AVX2',
-> > +            'AVX512BW',
-> > +            'AVX512CD',
-> > +            'AVX512DQ',
-> > +            'AVX512F',
-> > +            'AVX512VL',
-> > +            'PCLMUL',
-> > +            'RDRND',
-> > +            'RDSEED',
-> > +            'VPCLMULQDQ',
-> > +    ]
-> > +    foreach f:optional_flags
-> > +        if cc.get_define('__@0@__'.format(f), args: machine_args) == '1'
-> > +            if f == 'PCLMUL' # special case flags with different defines
-> > +                f = 'PCLMULQDQ'
-> > +            elif f == 'RDRND'
-> > +                f = 'RDRAND'
-> > +            endif
-> > +            compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-> > +        endif
-> > +    endforeach
-> > +endif
-> > +
-> > +message('compile_time_cpuflags: @0@'.format(compile_time_cpuflags))
-> >  
-> >  dpdk_conf.set('RTE_ARCH_X86', 1)
-> >  if dpdk_conf.get('RTE_ARCH_64')
-> > -- 
-> > 2.48.1.vfs.0.0
-> > 
