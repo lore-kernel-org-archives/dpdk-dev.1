@@ -2,65 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E09CC021B8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 15:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1989C021B8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 15:19:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D98504029F;
-	Wed, 26 Feb 2025 16:09:39 +0100 (CET)
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com
- [209.85.166.181])
- by mails.dpdk.org (Postfix) with ESMTP id A6B2C4026C
- for <dev@dpdk.org>; Wed, 26 Feb 2025 16:09:38 +0100 (CET)
-Received: by mail-il1-f181.google.com with SMTP id
- e9e14a558f8ab-3d3cb06d947so3257595ab.0
- for <dev@dpdk.org>; Wed, 26 Feb 2025 07:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1740582578; x=1741187378; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=w5C0TP6U0S4LrI5RHDZUuMXrIFYY/tnMExWH9IJ7mkc=;
- b=ZFW0vA8b1T4OjT+Vs0jfF6AmmBJSUuAct1igyMjTc5wL90Z/GksBVmFnAm9TjW5sH7
- fWomUAh1CrSa5SrFKD2W/JFhgoFNJXL0gZBLRGuxcN0sZoIgGAbyvNHulvqh7uqxBPGY
- VfEoxiSvOazvIUuKysMqBlCi6Mhqp/k9AQZ6RLuVIcDsdLdt0kO46JYNZr9rkBoy2iRv
- mZSNR3SuH72RZpOquwfVUndwYOOIM4rkT2U0XKqXTvOo0mwS5DZPSiwQ48j3XDyhillx
- atmT+C1hVKVQYRXWaFQTa+CeUNmiittnDG7bY3qzJSuwwerSaqCh93MxfaQN2X40JChB
- nVNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740582578; x=1741187378;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=w5C0TP6U0S4LrI5RHDZUuMXrIFYY/tnMExWH9IJ7mkc=;
- b=A0KYNgi+bNLtx6AJ9ps6gmYhuX3c0n2usB6mdOXPc5aFCitOrT5pvrnTHzj69J04jE
- 47dqkH9Kv3CUaoLqdi/ADQfEVySExPq9bDI1lgysi3a7Q+WMXuyJffMGxQEuzN8bd/++
- aYBJBggawJjK3+bfH6Yb8dI9Rsz2gsQkr+evS3gi/xlVZBBeVmfrKyTejSR9dJawB/v8
- LS/IkIbLG0Hva+EidSVRy+OFbYJoSvQBMiyASlc7Y365NfAzq7ri+H52gSoSsg3x4MKd
- ibD+SljSPbQQM6UJXH7YWiPOlmNzS3aBL9X86FHZSezgJArPUv1fxOseDGbeWPBd2XYA
- gPTQ==
-X-Gm-Message-State: AOJu0Yy3FWlT/GQtEfCvRNnxX24RtnHjDtht9TIDT6V4/E0Bgi0Y5rhV
- JcF/Kaz86zOO9tWn6AVM7DcIKXyO4KLAyRnfqc9SzRTeS3g/LnvIJoeGNWovGbEPXAFl0bjjzNv
- +j48GU71EHC+bc365jqmrsxjdB6Syust+9qtVQA==
-X-Gm-Gg: ASbGncsFTjip5l/i/O2svmMii8XBjdoRTUlp/WW8ZCuoO4+E1HkINaiuXDzNElrG30c
- 7slEKM3Zosoh4p0NE6SxvSSD5fI8khiYfTdGpGZodw48vtygQE70Gewl89WLsfz2MecVKT6grqP
- BR+/FaEknXXz9qzkt0vcyG61YjfcNjDxlSHtI6Nxk=
-X-Google-Smtp-Source: AGHT+IFG3KyRdKVdBminp2eOKmwmoQVzmyGI37hjwZtyq0+gRXi3u0mJgAiLiikbBk+cW1AZp+2kW7tLv/hebRSBSO0=
-X-Received: by 2002:a92:c807:0:b0:3d3:dbc3:8f9 with SMTP id
- e9e14a558f8ab-3d3dbc30970mr1812495ab.0.1740582577863; Wed, 26 Feb 2025
- 07:09:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DA9AE4029F;
+	Wed, 26 Feb 2025 16:19:35 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id E2F264026C
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 16:19:34 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id B7095462CB; Wed, 26 Feb 2025 16:19:34 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/other Bug 1665] __rte_trace_mem_get causing out of bounds write
+Date: Wed, 26 Feb 2025 15:19:34 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: other
+X-Bugzilla-Version: 24.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: oleksandrn@interfacemasters.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1665-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17405831740.c4D0F.392278
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20250216160833.3216001-1-ariel.otilibili@6wind.com>
- <20250223214123.447579-1-ariel.otilibili@6wind.com>
- <20250223214123.447579-2-ariel.otilibili@6wind.com>
- <CAJvnSUCTKvqKFXGKtsgb8Fu1sk5s4UYzKMGw3YF-u1fq3fGOQw@mail.gmail.com>
-In-Reply-To: <CAJvnSUCTKvqKFXGKtsgb8Fu1sk5s4UYzKMGw3YF-u1fq3fGOQw@mail.gmail.com>
-From: Ariel Otilibili <ariel.otilibili@6wind.com>
-Date: Wed, 26 Feb 2025 16:09:27 +0100
-X-Gm-Features: AQ5f1Jpw--lDZfA0Vk3koOsYi0nxWZzsBanw7gO5svpLqv7RvmRHvBmokz2Cz4g
-Message-ID: <CAF1zDgbyybza6r=O5Dh3JiosLDHHsO2m8qfKwd52mT7vVMXXeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] pcapng: warn if NULL is passed to rte_pcapng_close
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000419b2b062f0cf675"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,47 +54,212 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000419b2b062f0cf675
-Content-Type: text/plain; charset="UTF-8"
+
+--17405831740.c4D0F.392278
+Date: Wed, 26 Feb 2025 16:19:34 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Hello Patrick,
+https://bugs.dpdk.org/show_bug.cgi?id=3D1665
 
-On Tue, Feb 25, 2025 at 9:42=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wr=
-ote:
+            Bug ID: 1665
+           Summary: __rte_trace_mem_get causing out of bounds write
+           Product: DPDK
+           Version: 24.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: other
+          Assignee: dev@dpdk.org
+          Reporter: oleksandrn@interfacemasters.com
+  Target Milestone: ---
 
-> Recheck-request: iol-marvell-Functional
->
-> Putting in a recheck as I believe the fail CI reported is false.
->
->>
->>
-Thanks for the heads up. This patch did supersede version 2,
-https://patches.dpdk.org/project/dpdk/patch/20250224164031.587829-2-ariel.o=
-tilibili@6wind.com/
+When almost out of trace memory, __rte_trace_mem_get can write out of bound=
+s.
 
-Regards,
-Ariel
+It happens in my case if I have trace events of sizes that are not aligned =
+to
+__RTE_TRACE_EVENT_HEADER_SZ. like 27,33 etc.
 
---000000000000419b2b062f0cf675
-Content-Type: text/html; charset="UTF-8"
+I suspect that the issue is with the incorrect bounds check in
+__rte_trace_mem_get.
+
+>    uint32_t offset =3D trace->offset;
+>    if (unlikely((offset + sz) >=3D trace->len)) { // assume condition is =
+false,
+>    and offset is not aligned
+>    ...}
+>    offset =3D RTE_ALIGN_CEIL(offset, __RTE_TRACE_EVENT_HEADER_SZ); // aft=
+er
+>    offset alignment offset + size might be bigger than trace->len
+>    void *mem =3D RTE_PTR_ADD(&trace->mem[0], offset); // returning memory=
+ chunk
+>    that is smaller than requested size
+
+
+For example:
+offset =3D 21, len =3D 32, size =3D 9 -> offset + size is smaller than len
+align offset to __RTE_TRACE_EVENT_HEADER_SZ -> offset =3D 24
+offset + size is bigger than len.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17405831740.c4D0F.392278
+Date: Wed, 26 Feb 2025 16:19:34 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-<div dir=3D"ltr"><div dir=3D"ltr">Hello Patrick,<br></div><br><div class=3D=
-"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">O=
-n Tue, Feb 25, 2025 at 9:42=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:p=
-robb@iol.unh.edu">probb@iol.unh.edu</a>&gt; wrote:<br></div><blockquote cla=
-ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
-rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Recheck-request: iol-ma=
-rvell-Functional<div><br></div><div>Putting in a recheck as I believe the f=
-ail CI reported is false.</div></div><div class=3D"gmail_quote"><blockquote=
- class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
-lid rgb(204,204,204);padding-left:1ex">
-<br></blockquote></div></blockquote><div><br></div><div>Thanks for the head=
-s up. This patch did supersede version 2, <a href=3D"https://patches.dpdk.o=
-rg/project/dpdk/patch/20250224164031.587829-2-ariel.otilibili@6wind.com/">h=
-ttps://patches.dpdk.org/project/dpdk/patch/20250224164031.587829-2-ariel.ot=
-ilibili@6wind.com/</a></div><div><br></div><div>Regards,</div><div>Ariel<br=
-></div></div></div>
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - __rte_trace_mem_get causing out of bounds write"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1665">1665</a>
+          </td>
+        </tr>
 
---000000000000419b2b062f0cf675--
+        <tr>
+          <th>Summary</th>
+          <td>__rte_trace_mem_get causing out of bounds write
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>24.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>other
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>oleksandrn&#64;interfacemasters.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">When almost out of trace memory, _=
+_rte_trace_mem_get can write out of bounds.
+
+It happens in my case if I have trace events of sizes that are not aligned =
+to
+__RTE_TRACE_EVENT_HEADER_SZ. like 27,33 etc.
+
+I suspect that the issue is with the incorrect bounds check in
+__rte_trace_mem_get.
+
+<span class=3D"quote">&gt;    uint32_t offset =3D trace-&gt;offset;
+&gt;    if (unlikely((offset + sz) &gt;=3D trace-&gt;len)) { // assume cond=
+ition is false,
+&gt;    and offset is not aligned
+&gt;    ...}
+&gt;    offset =3D RTE_ALIGN_CEIL(offset, __RTE_TRACE_EVENT_HEADER_SZ); // =
+after
+&gt;    offset alignment offset + size might be bigger than trace-&gt;len
+&gt;    void *mem =3D RTE_PTR_ADD(&amp;trace-&gt;mem[0], offset); // return=
+ing memory chunk
+&gt;    that is smaller than requested size</span >
+
+
+For example:
+offset =3D 21, len =3D 32, size =3D 9 -&gt; offset + size is smaller than l=
+en
+align offset to __RTE_TRACE_EVENT_HEADER_SZ -&gt; offset =3D 24
+offset + size is bigger than len.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1665">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17405831740.c4D0F.392278--
