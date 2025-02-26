@@ -2,35 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB56C021B8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 15:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD5CC19F2E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 16:05:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E024B4029F;
-	Wed, 26 Feb 2025 16:59:32 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B486D4026C
- for <dev@dpdk.org>; Wed, 26 Feb 2025 16:59:30 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7501C21726;
- Wed, 26 Feb 2025 16:59:30 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 26 Feb 2025 16:59:30 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
-	dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mempool: micro optimizations
-Date: Wed, 26 Feb 2025 15:59:22 +0000
-Message-ID: <20250226155923.128859-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 17C574029F;
+	Wed, 26 Feb 2025 17:05:17 +0100 (CET)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
+ by mails.dpdk.org (Postfix) with ESMTP id 99DB04026C
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 17:05:15 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KoJEa6SiC3CPe+l82SCLaM8Pi6UeNI+jRFJZHn5lJZeOq5LSMYmB4XMTO7WlonrvuH9EKsSGJ31YwCaUSIxvgZeRImyzf8loDQRSNP9/586jwnjqEjLdlp0YjWMi4kRCPDv2CgsDNtFClUVG9XxzZX/zKZdi7gfUH7HsIIEehEMPK2E8BwQuYSTdxogzBhpsUh6T/6bzJwBeRGSpZdrRuNOPsDv6xjNFhZaxUwwPFv5L7/kHC6rDU46JxsguznezWj09Egv0jCMmHqk7spDnBkDtMRsMyyfRnp0N0Vw99Sp5e5mMJGvygEJENoZGreK09XfDDeVmE0WM9Y40Rq69QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oP3BBhktdkqfTj5owbb+26K2t6BknX1PxtbcPTualCU=;
+ b=OhrEhN+n+WDum4wfoY0IMrfn60+ghkHi06dTCquUMQTRHTPuMv3fjbMHmNd+ZAPe/yl5isp6rxBwAcauGlxqI6CSsMievr9aVFm1gXSmmkmULrrdopvp53npuQBAmApw2rzRgMFkmhu5Shgd6htjjqFl2qIJA5vtQrxGgF7A+czqMF8dg8KG6PmOSrzeUbcPkFMK1yPDg1YvcrWe6WiboSlqgBpmhSZ+875SU5VAWFycZdNtnFaPwyazN/z6m3sU/E/gvdLge43myyPt8SzOhait1n9kjGJZf1ciSUfSw3YF2jP0EGsvgD1m4tTP7eobDdL7WFKMNloArlnNlGog5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oP3BBhktdkqfTj5owbb+26K2t6BknX1PxtbcPTualCU=;
+ b=SN8MWM/gocMl777YIdPLP88DPiaYxPNvAh5l90PF5InIJwkSNITflHaXAiPUh7+LKT/YE7QU7zwE29HgWtQTnRGjJYxRHHN1bew7AV7XZS/3GMmT2hnwbgC3NZ+N0z/fsX5TVDqIwcK0xp852eo3suPD/sm5mFjzeFjPbj3WXrhM/uqcRRS5e6GJh4G9VZ8IyyXUxANFEmsu0nDgcy31SMaaq8qT4K4sVUdTsbLas2ondw4qN+fiHyPNL+M+rFA8sd36i3e4U0I3R25/MeGu8h93B2MIvClpm0hzU+GDkkf3e4XJRcRHfgOAXacZNB2WZ8SAWj50NNFnKbMVIIruPw==
+Received: from BL1PR13CA0006.namprd13.prod.outlook.com (2603:10b6:208:256::11)
+ by CH2PR12MB9518.namprd12.prod.outlook.com (2603:10b6:610:27e::11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.20; Wed, 26 Feb
+ 2025 16:05:08 +0000
+Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
+ (2603:10b6:208:256:cafe::55) by BL1PR13CA0006.outlook.office365.com
+ (2603:10b6:208:256::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Wed,
+ 26 Feb 2025 16:05:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 16:05:07 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Feb
+ 2025 08:04:49 -0800
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Feb
+ 2025 08:04:47 -0800
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
+Subject: [PATCH v3 0/3] net/mlx5: support jump FDB Rx
+Date: Wed, 26 Feb 2025 17:04:22 +0100
+Message-ID: <20250226160425.78147-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250226140119.2142352-1-suanmingm@nvidia.com>
+References: <20250226140119.2142352-1-suanmingm@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 26 Feb 2025 15:59:30.0064 (UTC)
- FILETIME=[6B4AE100:01DB8867]
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|CH2PR12MB9518:EE_
+X-MS-Office365-Filtering-Correlation-Id: 722abab4-0bb2-4df2-fdfc-08dd567f56fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QSDsd/9AbXrfY6IdiSGn0tkAXE5zKIqgQnY1yegOCSwzBQcMT+pPSHzKSSVh?=
+ =?us-ascii?Q?/8fDzNA6DF99Oe7tP+nU8CAFhAH2aX+FPcsvq7I35PIGchmtdSZxzPA/fDZe?=
+ =?us-ascii?Q?qB6loK2ECUlzV+rO+nCUgjNXesjWIjJW9Jha8fJJWyPXfSQRaydicY+e5EhS?=
+ =?us-ascii?Q?gtwMa3R5zgJgSsOQBo0wDZjmtKcuykdKxk4xmXt/vFnPZyXJn5lk11zKEG7C?=
+ =?us-ascii?Q?wbizBgrUN9q3bEVrYX6w3oDzx8XTNhLO6nE/DP1C5w7yujUCCfe68VDv0j7C?=
+ =?us-ascii?Q?t5EbaRFg4NbZtghPNYg8J8tZ4NUOpMyU8zodHGIcCvV5VbObr08sb77OTAdm?=
+ =?us-ascii?Q?Py/3cXv8+eh6PtIUAws8tvV8HsCJ3GXFQVMSBuzKx8S1v76d5jymCoQKxXr5?=
+ =?us-ascii?Q?OUZ54FKYNiR4+Kp5J6kQ/etXu+aP6ol8/JK5Xk/SbKu7Nm8Mm/w0Kx5pYs1e?=
+ =?us-ascii?Q?aqunnNmAetScAizox2L/YO7C42oxd7NvC/jyDG9fMEPU42TxcMTMUYgrEtBw?=
+ =?us-ascii?Q?3X5QbZjM8N1khB9C4gY+Jx+gxDTAHpobHB4cWfoOPMub5jfPcI+OwvmrBpml?=
+ =?us-ascii?Q?9Kz/iBirj3F+zxBERxJT7bLSWfrC5BLOtyz4RX7zK6ECw0hvEdm3lDgCjGh5?=
+ =?us-ascii?Q?kFXQ6Hk6VCErUEhIhPdAFQN15T8C9Ls5s0u5YZ/Erj5Xt8ejwmF5nggDG2TA?=
+ =?us-ascii?Q?1GGsaiwbomcRXh6ec9oGQqeD25ZdVyyeq+2Nk6SifOi54TQBgeGrz/1aGtm/?=
+ =?us-ascii?Q?5Gy70ybPN99T8U5zUV27L44jrd5p7gV/CmGMyiQrTEyqLQ6DMHlikp+kIPTL?=
+ =?us-ascii?Q?jphOO84OOn4mPXunhe/1scZ/m3e5lWfyBhRZxVw7oBVmEmB9nd7dlcXCgYJq?=
+ =?us-ascii?Q?hoMoTIOV3O4h9HiqSYv3jEyF6iCxqLsOEAEb/8q5iu46xh+Z3OO4KaLa3brL?=
+ =?us-ascii?Q?NWa6SycXT5rJVs1cyJOcUg3OfHJ8JVH0z+CAJMNwgweh7twhv5BJUWPIM1Vt?=
+ =?us-ascii?Q?D4ATMDHjpoQhcqiDTrcC41Qwjxo4DKzdnWI/t8oSlkA/l+bMlDz+8Jr12NqJ?=
+ =?us-ascii?Q?G4438eyc8AR9EGOjqleNEP1Bw1D61Sj0tmNycZPBTDogqO3xzZVPLw8orD6t?=
+ =?us-ascii?Q?YnlLx86gziwEQ3SCbVPK1CWe7LIk1lcvBAFQ7cA6jnZSYYJWrOKQ9y18P9Hx?=
+ =?us-ascii?Q?awnyGwkF9yxzs9N7uo1yG3BGuSSm2E2/pcOxFNDbvZdjWzIkmYdh8sJyJTpY?=
+ =?us-ascii?Q?8AG6IGPqbsLjK+yHXLdJ1WWWcY/cAgzrOmJJL4dI/BJs/Qz7j21AKs4v172t?=
+ =?us-ascii?Q?lftDt85lgKiNi4njdtGtTAOC1voXpBWtGUultANBrX3ipeqJMHifEDNG4zM2?=
+ =?us-ascii?Q?LhXsK/W5F1yGhCGeDiPCIH/z/Z/ARkV2e9j92K6pLaLoQaJcWFcr3la7hvnk?=
+ =?us-ascii?Q?NlR+10S9194DGpuqzeIjr8Ko/oPwpZHT1t6Pu1QB/PGjA31bC/QO5ddB7/1H?=
+ =?us-ascii?Q?nOKuVGiqPay1gXc=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 16:05:07.5418 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 722abab4-0bb2-4df2-fdfc-08dd567f56fb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000F0E5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9518
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,254 +135,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The comparisons lcore_id < RTE_MAX_LCORE and lcore_id != LCORE_ID_ANY are
-equivalent, but the latter compiles to fewer bytes of code space.
-Similarly for lcore_id >= RTE_MAX_LCORE and lcore_id == LCORE_ID_ANY.
+Before FW introduced the JUMP_FDB_RX action feature, jump from
+FDB Tx to Rx is not allowed. JUMP_FDB_RX feature introduces
+the internal loopback for Tx case and allow the REG C0 C1 B be
+preserved as well.
 
-The rte_mempool_get_ops() function is also used in the fast path, so
-RTE_VERIFY() was replaced by RTE_ASSERT().
+This series adds the jump from FDB Tx to FDB Rx support and allows
+RSS action in FDB domain rule when jump FDB Rx is supported.
 
-Compilers implicitly consider comparisons of variable == 0 likely, so
-unlikely() was added to the check for no mempool cache (mp->cache_size ==
-0) in the rte_mempool_default_cache() function.
+v3:
+- Rebased on v2 of mlx5 Unified FDB patches (series 34723)
 
-The rte_mempool_do_generic_put() function for adding objects to a mempool
-was refactored as follows:
-- The comparison for the request itself being too big, which is considered
-  unlikely, was moved down and out of the code path where the cache has
-  sufficient room for the added objects, which is considered the most
-  likely code path.
-- Added __rte_assume() about the cache length, size and threshold, for
-  compiler optimization when "n" is compile time constant.
-- Added __rte_assume() about "ret" being zero, so other functions using
-  the value returned by this function can be potentially optimized by the
-  compiler; especially when it merges multiple sequential code paths of
-  inlined code depending on the return value being either zero or
-  negative.
-- The refactored source code (with comments) made the separate comment
-  describing the cache flush/add algorithm superfluous, so it was removed.
+Suanming Mou (3):
+  net/mlx5/hws: support jump FDB Rx
+  net/mlx5: add jump FDB Rx flag
+  net/mlx5: allow FDB RSS
 
-A few more likely()/unlikely() were added.
+ doc/guides/nics/mlx5.rst              |  4 ++++
+ drivers/common/mlx5/mlx5_devx_cmds.c  |  8 +++++++
+ drivers/common/mlx5/mlx5_devx_cmds.h  |  1 +
+ drivers/common/mlx5/mlx5_prm.h        |  9 +++++++-
+ drivers/net/mlx5/hws/mlx5dr_action.c  | 26 +++++++++++++++++-----
+ drivers/net/mlx5/hws/mlx5dr_action.h  |  4 ++++
+ drivers/net/mlx5/hws/mlx5dr_cmd.c     |  9 ++++++++
+ drivers/net/mlx5/hws/mlx5dr_cmd.h     |  2 ++
+ drivers/net/mlx5/hws/mlx5dr_context.c | 17 ++++++++++++++
+ drivers/net/mlx5/hws/mlx5dr_context.h |  2 ++
+ drivers/net/mlx5/linux/mlx5_os.c      |  9 ++++++--
+ drivers/net/mlx5/mlx5.h               |  1 +
+ drivers/net/mlx5/mlx5_flow.c          |  4 ++--
+ drivers/net/mlx5/mlx5_flow_dv.c       | 32 ++++++++++++++-------------
+ drivers/net/mlx5/mlx5_flow_hw.c       | 28 ++++++++++++++++++-----
+ 15 files changed, 125 insertions(+), 31 deletions(-)
 
-A few comments were improved for readability.
-
-Some assertions, RTE_ASSERT(), were added. Most importantly to assert that
-the return values of the mempool drivers' enqueue and dequeue operations
-are API compliant, i.e. 0 (for success) or negative (for failure), and
-never positive.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mempool/rte_mempool.h | 67 ++++++++++++++++++++++-----------------
- 1 file changed, 38 insertions(+), 29 deletions(-)
-
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index c495cc012f..aedc100964 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -334,7 +334,7 @@ struct __rte_cache_aligned rte_mempool {
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- #define RTE_MEMPOOL_STAT_ADD(mp, name, n) do {                                  \
- 		unsigned int __lcore_id = rte_lcore_id();                       \
--		if (likely(__lcore_id < RTE_MAX_LCORE))                         \
-+		if (likely(__lcore_id != LCORE_ID_ANY))                         \
- 			(mp)->stats[__lcore_id].name += (n);                    \
- 		else                                                            \
- 			rte_atomic_fetch_add_explicit(&((mp)->stats[RTE_MAX_LCORE].name),  \
-@@ -751,7 +751,7 @@ extern struct rte_mempool_ops_table rte_mempool_ops_table;
- static inline struct rte_mempool_ops *
- rte_mempool_get_ops(int ops_index)
- {
--	RTE_VERIFY((ops_index >= 0) && (ops_index < RTE_MEMPOOL_MAX_OPS_IDX));
-+	RTE_ASSERT((ops_index >= 0) && (ops_index < RTE_MEMPOOL_MAX_OPS_IDX));
- 
- 	return &rte_mempool_ops_table.ops[ops_index];
- }
-@@ -791,7 +791,8 @@ rte_mempool_ops_dequeue_bulk(struct rte_mempool *mp,
- 	rte_mempool_trace_ops_dequeue_bulk(mp, obj_table, n);
- 	ops = rte_mempool_get_ops(mp->ops_index);
- 	ret = ops->dequeue(mp, obj_table, n);
--	if (ret == 0) {
-+	RTE_ASSERT(ret <= 0);
-+	if (likely(ret == 0)) {
- 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_bulk, 1);
- 		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_objs, n);
- 	}
-@@ -816,11 +817,14 @@ rte_mempool_ops_dequeue_contig_blocks(struct rte_mempool *mp,
- 		void **first_obj_table, unsigned int n)
- {
- 	struct rte_mempool_ops *ops;
-+	int ret;
- 
- 	ops = rte_mempool_get_ops(mp->ops_index);
- 	RTE_ASSERT(ops->dequeue_contig_blocks != NULL);
- 	rte_mempool_trace_ops_dequeue_contig_blocks(mp, first_obj_table, n);
--	return ops->dequeue_contig_blocks(mp, first_obj_table, n);
-+	ret = ops->dequeue_contig_blocks(mp, first_obj_table, n);
-+	RTE_ASSERT(ret <= 0);
-+	return ret;
- }
- 
- /**
-@@ -848,6 +852,7 @@ rte_mempool_ops_enqueue_bulk(struct rte_mempool *mp, void * const *obj_table,
- 	rte_mempool_trace_ops_enqueue_bulk(mp, obj_table, n);
- 	ops = rte_mempool_get_ops(mp->ops_index);
- 	ret = ops->enqueue(mp, obj_table, n);
-+	RTE_ASSERT(ret <= 0);
- #ifdef RTE_LIBRTE_MEMPOOL_DEBUG
- 	if (unlikely(ret < 0))
- 		RTE_MEMPOOL_LOG(CRIT, "cannot enqueue %u objects to mempool %s",
-@@ -1333,10 +1338,10 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
- static __rte_always_inline struct rte_mempool_cache *
- rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
- {
--	if (mp->cache_size == 0)
-+	if (unlikely(mp->cache_size == 0))
- 		return NULL;
- 
--	if (lcore_id >= RTE_MAX_LCORE)
-+	if (unlikely(lcore_id == LCORE_ID_ANY))
- 		return NULL;
- 
- 	rte_mempool_trace_default_cache(mp, lcore_id,
-@@ -1383,32 +1388,33 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- {
- 	void **cache_objs;
- 
--	/* No cache provided */
-+	/* No cache provided? */
- 	if (unlikely(cache == NULL))
- 		goto driver_enqueue;
- 
--	/* increment stat now, adding in mempool always success */
-+	/* Increment stats now, adding in mempool always succeeds. */
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
- 
--	/* The request itself is too big for the cache */
--	if (unlikely(n > cache->flushthresh))
--		goto driver_enqueue_stats_incremented;
--
--	/*
--	 * The cache follows the following algorithm:
--	 *   1. If the objects cannot be added to the cache without crossing
--	 *      the flush threshold, flush the cache to the backend.
--	 *   2. Add the objects to the cache.
--	 */
--
--	if (cache->len + n <= cache->flushthresh) {
-+	__rte_assume(cache->flushthresh <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
-+	__rte_assume(cache->len <= cache->flushthresh);
-+	if (likely(cache->len + n <= cache->flushthresh)) {
-+		/* Sufficient room in the cache for the objects. */
- 		cache_objs = &cache->objs[cache->len];
- 		cache->len += n;
--	} else {
-+	} else if (n <= cache->flushthresh) {
-+		/*
-+		 * The cache is big enough for the objects, but - as detected by
-+		 * the comparison above - has insufficient room for them.
-+		 * Flush the cache to make room for the objects.
-+		 */
- 		cache_objs = &cache->objs[0];
- 		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
- 		cache->len = n;
-+	} else {
-+		/* The request itself is too big for the cache. */
-+		goto driver_enqueue_stats_incremented;
- 	}
- 
- 	/* Add the objects to the cache. */
-@@ -1515,7 +1521,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	uint32_t index, len;
- 	void **cache_objs;
- 
--	/* No cache provided */
-+	/* No cache provided? */
- 	if (unlikely(cache == NULL)) {
- 		remaining = n;
- 		goto driver_dequeue;
-@@ -1524,6 +1530,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	/* The cache is a stack, so copy will be in reverse order. */
- 	cache_objs = &cache->objs[cache->len];
- 
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
- 	if (__rte_constant(n) && n <= cache->len) {
- 		/*
- 		 * The request size is known at build time, and
-@@ -1556,7 +1563,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	 * where the entire request can be satisfied from the cache
- 	 * has already been handled above, so omit handling it here.
- 	 */
--	if (!__rte_constant(n) && remaining == 0) {
-+	if (!__rte_constant(n) && likely(remaining == 0)) {
- 		/* The entire request is satisfied from the cache. */
- 
- 		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-@@ -1565,7 +1572,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 		return 0;
- 	}
- 
--	/* if dequeue below would overflow mem allocated for cache */
-+	/* Dequeue below would overflow mem allocated for cache? */
- 	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
- 		goto driver_dequeue;
- 
-@@ -1574,8 +1581,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 			cache->size + remaining);
- 	if (unlikely(ret < 0)) {
- 		/*
--		 * We are buffer constrained, and not able to allocate
--		 * cache + remaining.
-+		 * We are buffer constrained, and not able to fetch all that.
- 		 * Do not fill the cache, just satisfy the remaining part of
- 		 * the request directly from the backend.
- 		 */
-@@ -1583,6 +1589,8 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	}
- 
- 	/* Satisfy the remaining part of the request from the filled cache. */
-+	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE);
- 	cache_objs = &cache->objs[cache->size + remaining];
- 	for (index = 0; index < remaining; index++)
- 		*obj_table++ = *--cache_objs;
-@@ -1599,7 +1607,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	/* Get remaining objects directly from the backend. */
- 	ret = rte_mempool_ops_dequeue_bulk(mp, obj_table, remaining);
- 
--	if (ret < 0) {
-+	if (unlikely(ret < 0)) {
- 		if (likely(cache != NULL)) {
- 			cache->len = n - remaining;
- 			/*
-@@ -1619,6 +1627,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 			RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
- 			RTE_MEMPOOL_STAT_ADD(mp, get_success_objs, n);
- 		}
-+		__rte_assume(ret == 0);
- 	}
- 
- 	return ret;
-@@ -1650,7 +1659,7 @@ rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
- {
- 	int ret;
- 	ret = rte_mempool_do_generic_get(mp, obj_table, n, cache);
--	if (ret == 0)
-+	if (likely(ret == 0))
- 		RTE_MEMPOOL_CHECK_COOKIES(mp, obj_table, n, 1);
- 	rte_mempool_trace_generic_get(mp, obj_table, n, cache);
- 	return ret;
-@@ -1741,7 +1750,7 @@ rte_mempool_get_contig_blocks(struct rte_mempool *mp,
- 	int ret;
- 
- 	ret = rte_mempool_ops_dequeue_contig_blocks(mp, first_obj_table, n);
--	if (ret == 0) {
-+	if (likely(ret == 0)) {
- 		RTE_MEMPOOL_STAT_ADD(mp, get_success_bulk, 1);
- 		RTE_MEMPOOL_STAT_ADD(mp, get_success_blks, n);
- 		RTE_MEMPOOL_CONTIG_BLOCKS_CHECK_COOKIES(mp, first_obj_table, n,
--- 
-2.43.0
+--
+2.39.5
 
