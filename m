@@ -2,135 +2,137 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFA9C021BF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 13:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62B3C021BF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 14:00:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3005640616;
-	Wed, 26 Feb 2025 14:55:48 +0100 (CET)
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
- by mails.dpdk.org (Postfix) with ESMTP id 4AD854060B
- for <dev@dpdk.org>; Wed, 26 Feb 2025 14:55:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AA554402D8;
+	Wed, 26 Feb 2025 15:00:07 +0100 (CET)
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam04on2089.outbound.protection.outlook.com [40.107.100.89])
+ by mails.dpdk.org (Postfix) with ESMTP id 97AE44026C
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 15:00:05 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zzbh+UlSY/TITw8Q5jOdfJUSB4bDfJUB53FykvwMHQ08Mz8I+uHHQjKy95SK9ZDmr9nQk0EX6+jtxBuqmB1D7w0BgOAkKqE5A6Jpg8ZOMwdCti3c2qDF7wD/1ddJoR90AsbaRyx6RMPOwIo7bz2xo2ehTVbQbwbgZrkWrXHnxOn775b3lnUlxw5HqGULJjCy5joiYjNdu3DMOkZphxDkyqqyhmjMWCBfWp0FQGBVaUpycR7zMouOrSAcAd7nDMoDcPQ3zrBGnEEBcof2xefP/HxyNS/us7LjXJyNTk5wG+WmIaUNnvXHyNewwZGsFLN8E+LOB/kkv8R7ZB9XPNF7Lg==
+ b=W7+8/mhAYAEzhmIshV/TI7gKxSCC+VhMb05imtZL5qNNqImDvGiIb0FthsE393F4oSX+tsc3wQ1L/wBF3m8v1si1m50YXYA5HP+1amDCF+pby53WEvQiKqcc+5fOYmeVgY9A/WZxJlUN+Su3DPSM4l4SH7XxU+/LiuCq2pvRkiACVwh+jmXp0i6BZu5CRiXWXsAQ28J1lp5c+6lhfqKBslWyIuPjjFSLFXFZABZoK+2Gbmm+/ZpPDSdKY+abeFFkwm9F9OzWaVOmoug0YTTwIUuAF1vyqvscEDWWDtV/xJFbs21Ftq67AZjJLhlMfJw8QAtNqqrf1oAz/FL+kuS3IQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FV6TulyMutJKcoMuJO1Wencgc1F4U777wGk2z9MXJyI=;
- b=tVv+ipl609utbdgP0Vky2hrCyaAygpAnN/4TSXrDdU2VdFrJS93kbLKsiNG2Uhj71Y67XvILYOVnVu3VR9wkftZT+K2pWT2kIxIYeYoOS4W/PmLm1wZ31dzlmuwne8DmiEbC6pqxn65/2OYwIlA39CW8h8yrkR4BejtNshdbMqOuMrKFpzzjT+MohrQdlvdJScsD0pgk4KhlWX79pTzxZY6Ac6qPU7KvUwjrwUDLSUfDk0fy1VEjQ13Tkds5QWnGYtHMwGoXTVpi7mIL9YWdH6lD3lPj7DiNWfs301d189igNo4OWj9Q3+EQeF4mqxCrCL7xarHuPJTgtXkl822jQg==
+ bh=BJdRJrIRZd9xfq1mFH5y3dzXqMPiMj9lsamJkszo2+0=;
+ b=x9tYozuO/ud7qAC02FnpA2siG2qzsbT/oHyelH+lXCiVeSv1AK/8HVNu2qSj278HdkEhdOJ8axYXw07ItPhVSlQmgpEC1O3c8l6ur1WjrNZgmvE3ujQAYWuyN3G/CyqVCCRq4fZUzh2yyuZG8jAm0HxbcexDVJSW648QQVYtGlxSstSuZNRDBvJaFOX8rl7gXJBieYWM4wNrIWmPACC3qW9T6ivu7cye5IB0YyOFx2Nno5n+qh4cJjDvXlR70ydBiMu5/4ijS/BgNcK3EG0QK75hZ5M5tIulep/coofx5ITF920wEfXcDGjekTnT7/6FJPC1o0zjSWfYXZB4fRMEeA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FV6TulyMutJKcoMuJO1Wencgc1F4U777wGk2z9MXJyI=;
- b=DWhm9GhPTJ609AUgQOBDrqpNcBHXoZB3ngf1vrdtG1lVyjujtfTJ/22w86Z2bW877bz6KfoWWGhtCeW+9N/86b58pwmiIhwfbapQPAfdBl4xvl9eGQEVerye5jzbUmMM7MVpBzDRQQHFzROn3vngN/h23WGE9/taCJR1cbcl5mVGrw1exXdYgdMW59P7wTh6beBEzDIbhngiUF/kVVEQ+/hP49VwG1XqOjReSnmpAdZOnJXhBj/jDhRX+zrfsEqTqIl3P+H+4LRcTO5C0EvY3HE5Hm4XQlI3JDiIHi/TrDMNzcmo7LTF8OGRGoqbuKAvWyoTI6Dwugb88GTUlegIWw==
-Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
- by MN0PR12MB6126.namprd12.prod.outlook.com (2603:10b6:208:3c6::5)
+ bh=BJdRJrIRZd9xfq1mFH5y3dzXqMPiMj9lsamJkszo2+0=;
+ b=au+7CQCBJwedq+WoM+vtNDcGPBIqTty5ntrjnK6MtCjzsDAEX9RxQ2f3uXsT0YG2P+uT1CyeWcOcs2Yf1lOnk4IUtUagZGJ/a0phbZ3W9B18rh3LkSy0eF/yyou4Ew5qH0FIzwH8W1Q+CpuqU2Awpj3GSKzI48lwg7Y++Sn3vgv4ErxR3WGsO4n6qVaZKn+gjwbt9l4LUox+M45voEIekn9moB93OVPo1weWXzVN4hxQ9LItsbd8cEs2ljQyiKwVzHAXh5zkbUrJSmEu3q+rzrXWt1W19fluXfImIWHhTf7ZozQV1fz56Sok/7bD8nEsWd7q4F0L5Uvz/Ty/jo+yPg==
+Received: from PH7PR12MB6905.namprd12.prod.outlook.com (2603:10b6:510:1b7::18)
+ by BL3PR12MB6569.namprd12.prod.outlook.com (2603:10b6:208:38c::9)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
- 2025 13:55:44 +0000
-Received: from CH3PR12MB8460.namprd12.prod.outlook.com
- ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
- ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
- 13:55:43 +0000
-From: Raslan Darawsheh <rasland@nvidia.com>
-To: Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Maayan Kashani <mkashani@nvidia.com>
-Subject: Re: [PATCH] net/mlx5: support ESP in non-template RSS expansion
-Thread-Topic: [PATCH] net/mlx5: support ESP in non-template RSS expansion
-Thread-Index: AQHbgQt+piw+aNNlXkutf10bxZQtGLNZqhkY
-Date: Wed, 26 Feb 2025 13:55:43 +0000
-Message-ID: <CH3PR12MB84601B1C1A2E85C7E7A53036CFC22@CH3PR12MB8460.namprd12.prod.outlook.com>
-References: <20250217071316.37195-1-getelson@nvidia.com>
-In-Reply-To: <20250217071316.37195-1-getelson@nvidia.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 14:00:00 +0000
+Received: from PH7PR12MB6905.namprd12.prod.outlook.com
+ ([fe80::33b4:19c2:2281:b662]) by PH7PR12MB6905.namprd12.prod.outlook.com
+ ([fe80::33b4:19c2:2281:b662%7]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 14:00:00 +0000
+From: Bing Zhao <bingz@nvidia.com>
+To: Suanming Mou <suanmingm@nvidia.com>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
+Subject: RE: [PATCH 3/3] net/mlx5: allow FDB RSS
+Thread-Topic: [PATCH 3/3] net/mlx5: allow FDB RSS
+Thread-Index: AQHbhx6tMti1MtHRDkOdzXm2e/KO5bNZaTSggAAxYoCAAAQyQA==
+Date: Wed, 26 Feb 2025 14:00:00 +0000
+Message-ID: <PH7PR12MB690585351CFF3CCD1791A02CD0C22@PH7PR12MB6905.namprd12.prod.outlook.com>
+References: <20250225004527.2066812-1-suanmingm@nvidia.com>
+ <20250225004527.2066812-4-suanmingm@nvidia.com>
+ <PH7PR12MB690552DE1E8E766B1A208A19D0C22@PH7PR12MB6905.namprd12.prod.outlook.com>
+ <PH8PR12MB73268FD5C626A333580DD980C1C22@PH8PR12MB7326.namprd12.prod.outlook.com>
+In-Reply-To: <PH8PR12MB73268FD5C626A333580DD980C1C22@PH8PR12MB7326.namprd12.prod.outlook.com>
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|MN0PR12MB6126:EE_
-x-ms-office365-filtering-correlation-id: 79a35621-1ecf-454c-105c-08dd566d436b
+x-ms-traffictypediagnostic: PH7PR12MB6905:EE_|BL3PR12MB6569:EE_
+x-ms-office365-filtering-correlation-id: 87735e22-85ec-46e4-d513-08dd566ddc74
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|38070700018|7053199007; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?JZetCxuy6TwDIs6jer0SoEy4wCN0l0w0oWS+v+Tazyy0NTmstRY1PBvNOa?=
- =?iso-8859-1?Q?C8Dt1wJBo1cbrPAiqWkNXneleJthxRbdprtQIqp0dQaGZTPPdjunCWdD7F?=
- =?iso-8859-1?Q?dcal8kDlcKmlIC6qv6lrfD2MVnraYNGPWFp6VqbLDnnirrGdQH6aOf2vex?=
- =?iso-8859-1?Q?nQXnhdpuFGJg58GX/h3DQ/Yio6DFnYKFfcSYln3jWOas16sbmAOMhueyzU?=
- =?iso-8859-1?Q?nMxrpXSlTvvEmH/eZGU5u+q25xzA1+kZ1g4VDU4T5W3VWggqo+eBpfC5JJ?=
- =?iso-8859-1?Q?e77txLuwRIwotfVeFn2ITNGB+31Am/ZxXsBkw6XdpoS/nH8nLpnrVWGIOc?=
- =?iso-8859-1?Q?h60COM9TMBf5jQ5xbHMDOyTF+Vm7b+TBW/z2MQPEhmZcv+AZXm2xsi0gbq?=
- =?iso-8859-1?Q?f5AvMFm/aCZJWQL3nETfTtrUylhp8FQCmIhCpba+rOYetkZtSXkWFDo4jT?=
- =?iso-8859-1?Q?2eStqQMQle04qqivD+3qQKiprZfIPk6ldJi0eN90HeOD354mpFM8x+xZa3?=
- =?iso-8859-1?Q?EDPA81bZh6umPaW5Y3+ww20IoGn6SQ9+cI/6LAzUMW3rgZyGd2kyEaQaaE?=
- =?iso-8859-1?Q?6vEjjXs3WDbEr9WVQc/BHZNWp2PpJmBsIDL4wgYb7weGrQ17iEgp+B7A98?=
- =?iso-8859-1?Q?blaiS6jCy58zxXSFmYvbyQuWRsbXrHzHQrc/G+6VM6EVzZEkHioAdrs/5e?=
- =?iso-8859-1?Q?jj4X9ehw7DHW9Yn4n31PS+kr6cYIYMAl4Ee1rLs0PzmBYtdHwbPtedLIok?=
- =?iso-8859-1?Q?7yUCwz7zBkjbkQraXe1hG8QhsnAcS1VoYw6Md3x3VvFeo8UhTcui8EV1nV?=
- =?iso-8859-1?Q?qEocNkNi7PNG5SNn0Zb5cOScFotuo+fRrj0QwV1USXzsjSY0KRw8f8H6BE?=
- =?iso-8859-1?Q?BU5vF4psDs3I83A2t5kXsoL/3EoQg6YbCLvut8lxn0O/2wUze7jGAF1Im6?=
- =?iso-8859-1?Q?WbJdUxs+so3GFs0jZ266v1DBw2CT5iTn0xsvSJXNoi3i4pNwoG2DiQl2Jl?=
- =?iso-8859-1?Q?Lh1Wr2Fj1SWH4MAE5DdQqno+93to0kFXYNutBYRnk+SjniTpivesS/XPha?=
- =?iso-8859-1?Q?YR+V1Sxd4uqT3B5QqfiTcrldGd/6NS8vIn5pc7Yk1KtNC71erj1g7Gg+bE?=
- =?iso-8859-1?Q?yBA+NuPYRkmAXRe7KiOuxOfIoREqDTQIMP/wkz/1nofj2lL1QhYIFsRY6S?=
- =?iso-8859-1?Q?Ae0o936Eh4cHwD74roc2hP/9CnlI0S8kxxrijpVx1o4bB45A5ZihFS4hYY?=
- =?iso-8859-1?Q?WU1apa4U6EXBqhlYO2Lo8IPhiOQnd3K/YAdBswuaxedegnOhveSEI4VxVU?=
- =?iso-8859-1?Q?zKfCh3Fczj2+1OZ5BKdJ0wl6EM1TcXdLE/51y38s9UlyAS6EQVe3p5CXMn?=
- =?iso-8859-1?Q?CLXG0TGmwIIfX09eeCOdrvPAA/Fj5NBFAKeC4S5hvwq6B7Vto29N4kNdE8?=
- =?iso-8859-1?Q?R+jbfU82GObRL1cbR8OGGZTsqlGH7K4BOMPjLOljT6eTPcsnO6UIZpCfdh?=
- =?iso-8859-1?Q?tdXpM6koUoZvLSxOG5VVNS?=
+ ARA:13230040|366016|1800799024|376014|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?OVTHiPAUusIjp6QwqDMayDxfMVPEXy50PU5GgfztS+iTCAxow8SZufgi3tsb?=
+ =?us-ascii?Q?xBq9Z/m57xOsPCsZtzyn0VqFJhG7jcj/XsfEvm8O/tyVYnph1v0UUcEOoA7z?=
+ =?us-ascii?Q?b9FbykfOM6+YWPATCeKEltSiNqv7GnoSYkYB3yqXS06Hdd547TJbvKHwO5En?=
+ =?us-ascii?Q?w/JRMs1vLGxXKtNdyRIyqFzIgQbGH3PeoW1XOp7f+KRYwIObfnuhdBg1qFn+?=
+ =?us-ascii?Q?MA4Ez4aLaPG2wVyilDL9/ABBj3vC//TKP72yKZ+BDS1xSrndu59tNGFQg4nw?=
+ =?us-ascii?Q?QoG2GPKoNc+yMbCGmfHRL6x3OczCOYzIY61KFTD1XJly3Fr3kCqwNpLpCMpF?=
+ =?us-ascii?Q?UJDPx6Dr4HqiyZsq1gZnDWkMHFZ7UE5rix0aX4z+8VbKGeZM8UDB9kM4TFeh?=
+ =?us-ascii?Q?r39RHdp+dbZG0bB0xEP1C4BQXdRe6dpBnd4qBE1N8b4lmD7CTIaNXpxpDFGl?=
+ =?us-ascii?Q?df1bpUy7PRKkrsCLeaytlMdB+9fZ/Av0Xc4Y0eZDURzOIClQzIqTCpK8E1lD?=
+ =?us-ascii?Q?UFJHvQ1NZqta8oK+IZZ6uJ9Z35r8a79jFiH8f3XZT6D9WVaFre9zoABh0j3C?=
+ =?us-ascii?Q?5EsIsit2tJAP8tZS+qzGBQnpF8TGqHJtwP7SN/QhlX59ieGYgvgmzImfXobi?=
+ =?us-ascii?Q?f4evk+An+kKu9U3Sc6Z7xYXkhI7pu0Ky7GOuokPJ/opzPtwn0N2quNn07mV0?=
+ =?us-ascii?Q?1CArgjnvJCc4MP8clIQuKj5qWk9JrKusBYOHYmrc/u6WTdhM2rUdcGPBt85Y?=
+ =?us-ascii?Q?dWaavjgJER5u5GqBDZ2/bnV8wjxIoV+sfZwpptrEVSFtRmq1xaIx1gBR5k8T?=
+ =?us-ascii?Q?Uyq0HbNIpHWMKER2IMBQ/5FcngI41s0ruVOhg6qP9Qr/qpuBqGDTa8mJc+4c?=
+ =?us-ascii?Q?xxDVDEREJt96COLDpN0C9dxHYI19y8pfFo4cVWmg6QAI8OdytwEftxYZ3ts5?=
+ =?us-ascii?Q?96uVKABCyBjoMF3f5ml95ers9OXm7O61uuJigVOge/eqU43rCZjYl3lijupu?=
+ =?us-ascii?Q?XOIgte9FSsV+7UCeKEMuTm+vsgq87tuLkksT30dQ9cam5cPADt6pC1++CMaT?=
+ =?us-ascii?Q?+J6h9Rv9XbMwKG+I1deDMYhIBKYmk7ihAK/YMTs48pMuf3sTkpiqTfa4lmOE?=
+ =?us-ascii?Q?Y37Zizh6ZipHz89UEAlX5rNCvKKaVhGJVsiJb5U0rUcn3ANPqPfYebXJBfFA?=
+ =?us-ascii?Q?pYxElHnSAZV+wdJfruHwj30WZpF84ZhUxa+4ekCbKFmco8AdrN3xNU93e0Q1?=
+ =?us-ascii?Q?MdP5PBKrYpAj0g3KdTxj5nly7FdRpYOlpSKrQ8RfSK15ejtEC7lymuBVTPD7?=
+ =?us-ascii?Q?xZTsx+qocJtz1N7Y8GFtA9ExMoGhEHfa3BKaq3wvMwEZETiQ/K1iOz5/8Yxf?=
+ =?us-ascii?Q?MLv3B6Nsv/6X8o8luyR8A8J+Zq7FDX2ovMn//1kCqNkcx5nMFiu+1OnBSu/8?=
+ =?us-ascii?Q?71pivbMYNuSRQvCT2KS6+VKHQVwZqELW?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(38070700018)(7053199007); DIR:OUT;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB6905.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700018); DIR:OUT;
  SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?HWMSDV4o/iq8kxfOPtZBXiOQ10TPHGvD4D2b+EBQzytAvbKqJq0PmJV2ng?=
- =?iso-8859-1?Q?X6R1Iqi1neSBszQoMZlNjj/Oe+R26TNiyyYqKxwoE66vOMPgmf+41Rfu3t?=
- =?iso-8859-1?Q?1miJQ9IW4g6/d91tDq5QcgGRmFgy00t2PqolRytaxM8KHH03SJ6U6eMKsd?=
- =?iso-8859-1?Q?SzjOPU96PSQx80SZofTZqeJqEoojNw/dG/yRExqFFPMzZOZOni9ZveGlfX?=
- =?iso-8859-1?Q?cCtREc0LbEgMATKsVBtqq1DVIgp12JNOnFuEgcLCJjtgDezD/wxYhL4k9X?=
- =?iso-8859-1?Q?Xp3T11LahwnbDsp56KkuThSm1SapcQgSOxwQq2C3Bf0um/731ZCH1vqh3w?=
- =?iso-8859-1?Q?JHl1NK7h3KgWShfzbE8+ovPzNuo2nOFliuMuYPvTKOaqrgoDuYUxjezEX9?=
- =?iso-8859-1?Q?1WYg15wy8dXdLbbfeLwMJJP8/VGPx5TnlviV9XNe0tsLbYNGkQwIM4NRSO?=
- =?iso-8859-1?Q?vsMX51BUL+jwlSi9BuoFwxHJb3zfn0FFccdVtFpofsN6huwjGQCe4+S/H2?=
- =?iso-8859-1?Q?KsD7Pb9GJ0cHok6kZRE19KQ92d/Dy0ZOHbu5MraTKw72sLa66rSCVgFwDQ?=
- =?iso-8859-1?Q?7WOtoxLZdGHiP3DzhU+WVQLRvgk4bQeBe77XiKyDIsXUPQeZsOnTKPYXa8?=
- =?iso-8859-1?Q?grKEmmT/CUfKJAavF16LDupiaUEZC0OFQr+ytkPb/eaavz1n0XXJ5mkAW5?=
- =?iso-8859-1?Q?MPwTZg3otFslUjsH81vESVtt+idtAfADhWjinmERksICPDuHzG/vcGuZpG?=
- =?iso-8859-1?Q?woETpCLGcglyOtfBhwhNXIKpZB3OYH3GQ18j/Odvbid4ubkXoQupDWyMb/?=
- =?iso-8859-1?Q?KefRnX2yg0VE6ht0XbcrhRslbSFf2XwilT2pC61o+KCSjrGL8OnO8Xle+5?=
- =?iso-8859-1?Q?ocelwz6VJP2NXFxdc9KStMxr0d9QIGXWM1Yab+8HZC5q5MNEdKN0NW4W01?=
- =?iso-8859-1?Q?+ndHf1CBJLFlMHcq8oQ7ydHyllq9pg4KSF3HtRCZXng/rK6zCJX4rqbel7?=
- =?iso-8859-1?Q?cRtRKyQ/vwedu3abghwdeDrexHlODyMkMWE11gzdRzXSflOu/LswG4oCWR?=
- =?iso-8859-1?Q?ym0zKTkeqkSepx3DVGDsYTIsRA/bNHusypQoRj+b5+5cS4KNsFrxKcqDLv?=
- =?iso-8859-1?Q?GMIzkfoGLiCWxtZTwjQaTr55eO95MRE86IpR4OUZxTM3sOtYEV1G6wh/gp?=
- =?iso-8859-1?Q?VxyLmCl97a/4xq+u6wWEni3mrqFljrTlSmEb63lAl/4FXPIYw8ySO1grca?=
- =?iso-8859-1?Q?HXWJnofJmLnYx+MbyioLF3yIk1ign5MBo+C5COUKT5YL4CkX/FxBTLs5uJ?=
- =?iso-8859-1?Q?PGi+h92YJ3+ijrOI47yCFWBewaDM+WTJxv61Q3RKFPw/I9R/uO8Ix8aoMO?=
- =?iso-8859-1?Q?WlitmIOY/tMXFguT8JZQQysEAcy9RdXwWbRRBKeMzgUwLKUvY5jvOMJTmz?=
- =?iso-8859-1?Q?dNfFnUJ926wOiCKUOZSaYu1jB+8ITeKbQy1tkIVitezM1A80UZ5VRhlszI?=
- =?iso-8859-1?Q?5joZ1+vjKPyGMKEWGZXIQue7T1+FylFutUnOatBzwnQs8x+hqCaCLEyEhq?=
- =?iso-8859-1?Q?/c9fFzvdWtWsC+2kqykYNJ/669k9LYa/m8dT5H51K9OArAWjCje1ws5t/b?=
- =?iso-8859-1?Q?SzE8oYnmVIS32NLY/ifEq5PG9foiBr65Eh?=
-Content-Type: text/plain; charset="iso-8859-1"
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GobYq9dvt7eJt5RgV+UhNW3r9uKpYIkzg1zXjfhanpc1Mx8lf5dqdO4CHacW?=
+ =?us-ascii?Q?3tJRt8ULc5k08WrKXCOLDZSqHF91FmRclZMJnKqOjM4J7UHdnq2cziWEvkxf?=
+ =?us-ascii?Q?y8iCUupgh1LiPWthskvrBXWzt9KcvUO7kUaFuiqdrT6VL0VXh/SzP+XCL4Ty?=
+ =?us-ascii?Q?gQaLli4cmZMK2ad6sgVI1A5DY2d4AIWJYy/IzgZepS4QlRjffStE6N5Xg/EC?=
+ =?us-ascii?Q?GDVzKhU8I7lgiXN4hDuJeHs3xSlVp5qNn5bRi+3wejUnfjDWIwtzqG+Njk+j?=
+ =?us-ascii?Q?sQ1NkdCQ82kOjOvfjo7N6jYgsk0YXX93ZK+vOmnH9GfdufV8Bzf/yAH9Hokz?=
+ =?us-ascii?Q?LBib5SoEOXnQ7dBmYpJcLdi1jZQoFrs7I0AsxYpmo9dzOcwhRU8jwD957h/f?=
+ =?us-ascii?Q?0UMBYGEeWsuVvRlNxGnWkpKfG6jjwRCpjflj4wQKQTq+JSArIh1reMN7qzTU?=
+ =?us-ascii?Q?cRpQr3NP4rzPKAmJx9ZNIIbuXklgTW3P5YE2GmAY/1LpNufI9618x05T2o97?=
+ =?us-ascii?Q?Bhb7TCnmkzm7D3kgXKx1wnM3Dbh8pasiqfbfsXHqZu9aPmoNoIFQN99aEhJ+?=
+ =?us-ascii?Q?35JU+YNbHhEfw5tx3ImJareOSozoGPvCXG/O0p9KQVBJbypCTMt+PQw8ggTk?=
+ =?us-ascii?Q?Nr5oC27Fv/bSHp23OrvrGUEBS8uaqAberufYWYLu/6v1mCb2C3143FRjNSHQ?=
+ =?us-ascii?Q?HOrQkQp9XuVKHWqBbuw91U9RYWhwOO9jeuA0L7WyhL4aZTlqHS815iWl0ATv?=
+ =?us-ascii?Q?coE5lzUaMaTwTWhC4n14tbRSSOKgFlNWTmu1+0cplPztYRasUlNaTpsW3g1M?=
+ =?us-ascii?Q?sXsMI/LwIHcQY1+jkz311tn15Q/zlPvn7PKwZYhqyfjgaXfQ0bDQ/TS5b83b?=
+ =?us-ascii?Q?E7nVhMD6Asay09nbulW0L+my134S8zwnEkV1XWUB6AAeIBVbnLWu5B63VF81?=
+ =?us-ascii?Q?yAwSIzNFLFqzqwhDRgZgLuj3vMH2ny/CqjGyPPr3fqOudZJYrR4QMTZYP0J0?=
+ =?us-ascii?Q?ZSJdT2+F9nF1kHvUw8u4Nw4BOg45U4eABWAobaNwJcueWPN+EQgNuyrjHFa4?=
+ =?us-ascii?Q?pIoasFZd6529FQTtEcqwMyWj4JvlUZD2SwDADo/Qv0ofVTHr8n5q82jo61oV?=
+ =?us-ascii?Q?p10ac82naMxL9C3Txd9M4SHVhVW0vnr1jmujaxyTu5xJSdaVZCdjxzXXqX1o?=
+ =?us-ascii?Q?skIRSVWGp4TdH7xyD3/9bEhbdSwVvTgeSnXM44rMn0TDsg56zH29zPw1sZ8I?=
+ =?us-ascii?Q?uc1O/NHQn82iZflto01S4LNRM09kIhHvbT7xghw2ps/D+7vR8iTKn3KjtpNo?=
+ =?us-ascii?Q?efZ5aenSAYycmUDqEBEfTNXA8wpVCq5jNrpOUtsSx+850/mIp5TFfNY2/l44?=
+ =?us-ascii?Q?P4N3gPPPqa7TJsaR3Z0GaZUeZham+HuHK/dt0DyN36W7OOMf7mPY5j3FQIwC?=
+ =?us-ascii?Q?9TxCBGdUYE++37j+NfaDco9u9ikW2hqf2Qt3D8Yc+FgJ7xqRDWU2iUq6hZ29?=
+ =?us-ascii?Q?yGcngThXwM1kPy5XjKYhLJNcQ350jUH71RJS9OqYe7tgdfRuAj3QQJKnV0V0?=
+ =?us-ascii?Q?MRSePZ6tlOAzFjWpnnE=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79a35621-1ecf-454c-105c-08dd566d436b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 13:55:43.8614 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6905.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87735e22-85ec-46e4-d513-08dd566ddc74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 14:00:00.6157 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e3waP43IH2x8F1zusF9O9EpYbMnRA1v1DpYTX4mdbuROiKRmMX4cqNykgwgiomwUkGIcdNm8PJqkVZBWcTuj6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6126
+X-MS-Exchange-CrossTenant-userprincipalname: uIs3AusYTyM5IIn+t5UdpliDjlxX4Q/4DIQusZo0gyeuPfrrk/pC+Ad7UMAn7YPNZiI70DIBKowhim6S3Eu06A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6569
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -144,20 +146,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,=0A=
-=0A=
-From: Gregory Etelson <getelson@nvidia.com>=0A=
-Sent: Monday, February 17, 2025 9:13 AM=0A=
-To: dev@dpdk.org=0A=
-Cc: Gregory Etelson; Maayan Kashani; Raslan Darawsheh=0A=
-Subject: [PATCH] net/mlx5: support ESP in non-template RSS expansion=0A=
-=0A=
-Add support for the ESP protocol in non-template RSS expansion.=0A=
-=0A=
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>=0A=
-=0A=
-=0A=
-Patch applied to next-net-mlx,=0A=
-=0A=
-Kindest regards,=0A=
-Raslan Darawsheh=0A=
+Hi
+
+
+
+> -----Original Message-----
+> From: Suanming Mou <suanmingm@nvidia.com>
+> Sent: Wednesday, February 26, 2025 9:43 PM
+> To: Bing Zhao <bingz@nvidia.com>; Dariusz Sosnowski
+> <dsosnowski@nvidia.com>; Slava Ovsiienko <viacheslavo@nvidia.com>; Ori Ka=
+m
+> <orika@nvidia.com>; Matan Azrad <matan@nvidia.com>
+> Cc: dev@dpdk.org; Raslan Darawsheh <rasland@nvidia.com>
+> Subject: RE: [PATCH 3/3] net/mlx5: allow FDB RSS
+>=20
+>=20
+>=20
+> > -----Original Message-----
+> > From: Bing Zhao <bingz@nvidia.com>
+> > Sent: Wednesday, February 26, 2025 6:50 PM
+> > To: Suanming Mou <suanmingm@nvidia.com>; Dariusz Sosnowski
+> > <dsosnowski@nvidia.com>; Slava Ovsiienko <viacheslavo@nvidia.com>; Ori
+> > Kam <orika@nvidia.com>; Matan Azrad <matan@nvidia.com>
+> > Cc: dev@dpdk.org; Raslan Darawsheh <rasland@nvidia.com>
+> > Subject: RE: [PATCH 3/3] net/mlx5: allow FDB RSS
+> >
+> >
+> >
+> > > -----Original Message-----
+> > > From: Suanming Mou <suanmingm@nvidia.com>
+> > > Sent: Tuesday, February 25, 2025 8:45 AM
+> > > To: Dariusz Sosnowski <dsosnowski@nvidia.com>; Slava Ovsiienko
+> > > <viacheslavo@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam
+> > > <orika@nvidia.com>; Matan Azrad <matan@nvidia.com>
+> > > Cc: dev@dpdk.org; Raslan Darawsheh <rasland@nvidia.com>
+> > > Subject: [PATCH 3/3] net/mlx5: allow FDB RSS
+> > >
+> > > RSS can be used in FDB Rx rules when JUMP_FDB_RX action to allow
+> > > jump from FDB Tx to FDB Rx table.
+> > >
+> > > Different with NIC RSS, FDB RSS will not do the internal implicit
+> > > metadata copy.
+> > >
+> > > This commit enables the FDB RSS if JUMP_FDB_RX is supported.
+> > >
+> > > Signed-off-by: Suanming Mou <suanmingm@nvidia.com>
+> > > ---
+> > >  drivers/net/mlx5/mlx5_flow.c    |  4 ++--
+> > >  drivers/net/mlx5/mlx5_flow_dv.c | 32
+> > > +++++++++++++++++--------------- drivers/net/mlx5/mlx5_flow_hw.c |
+> > > 19 ++++++++++++++-----
+> > >  3 files changed, 33 insertions(+), 22 deletions(-)
+> > >
+> > > diff --git a/drivers/net/mlx5/mlx5_flow.c
+> > > b/drivers/net/mlx5/mlx5_flow.c index 3fbe89a9d4..9c6a4f39fb 100644
+> > > --- a/drivers/net/mlx5/mlx5_flow.c
+> > > +++ b/drivers/net/mlx5/mlx5_flow.c
+> > > @@ -1977,9 +1977,9 @@ mlx5_flow_validate_action_mark(struct
+> > > rte_eth_dev *dev,
+> > >  					  RTE_FLOW_ERROR_TYPE_ATTR_EGRESS, NULL,
+> > >  					  "mark action not supported for "
+> > >  					  "egress");
+> > > -	if (attr->transfer && mlx5_hws_active(dev))
+> > > +	if (attr->transfer && !mlx5_hws_active(dev))
+> > >  		return rte_flow_error_set(error, ENOTSUP,
+> > > -					  RTE_FLOW_ERROR_TYPE_ATTR_EGRESS, NULL,
+> > > +					  RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER, NULL,
+> > >  					  "non-template mark action not supported
+> for
+> > transfer");
+> > >  	return 0;
+> > >  }
+> > > diff --git a/drivers/net/mlx5/mlx5_flow_dv.c
+> > > b/drivers/net/mlx5/mlx5_flow_dv.c index 633c41e358..61d3101ce8
+> > 100644
+> > > --- a/drivers/net/mlx5/mlx5_flow_dv.c
+> > > +++ b/drivers/net/mlx5/mlx5_flow_dv.c
+> > > @@ -8939,21 +8939,23 @@ flow_dv_validate(struct rte_eth_dev *dev,
+> > > const struct rte_flow_attr *attr,
+> > >  						  RTE_FLOW_ERROR_TYPE_ACTION,
+> > >  						  NULL,
+> > >  						  "unsupported action MARK");
+> > > -		if (action_flags & MLX5_FLOW_ACTION_QUEUE)
+> > > -			return rte_flow_error_set(error, ENOTSUP,
+> > > -						  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > -						  NULL,
+> > > -						  "unsupported action QUEUE");
+> > > -		if (action_flags & MLX5_FLOW_ACTION_RSS)
+> > > -			return rte_flow_error_set(error, ENOTSUP,
+> > > -						  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > -						  NULL,
+> > > -						  "unsupported action RSS");
+> > > -		if (!(action_flags & MLX5_FLOW_FATE_ESWITCH_ACTIONS))
+> > > -			return rte_flow_error_set(error, EINVAL,
+> > > -						  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > -						  actions,
+> > > -						  "no fate action is found");
+> > > +		if (!priv->jump_fdb_rx_en) {
+> > > +			if (action_flags & MLX5_FLOW_ACTION_QUEUE)
+> > > +				return rte_flow_error_set(error, ENOTSUP,
+> > > +							  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > +							  NULL,
+> > > +							  "unsupported action QUEUE");
+> > > +			if (action_flags & MLX5_FLOW_ACTION_RSS)
+> > > +				return rte_flow_error_set(error, ENOTSUP,
+> > > +							  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > +							  NULL,
+> > > +							  "unsupported action RSS");
+> > > +			if (!(action_flags & MLX5_FLOW_FATE_ESWITCH_ACTIONS))
+> > > +				return rte_flow_error_set(error, EINVAL,
+> > > +							  RTE_FLOW_ERROR_TYPE_ACTION,
+> > > +							  actions,
+> > > +							  "no fate action is found");
+> > > +		}
+> > >  	} else {
+> > >  		if (!(action_flags & MLX5_FLOW_FATE_ACTIONS) && attr->ingress)
+> > >  			return rte_flow_error_set(error, EINVAL, diff --git
+> > > a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+> > > index 83f55ed3e8..a063e5ac9c 100644
+> > > --- a/drivers/net/mlx5/mlx5_flow_hw.c
+> > > +++ b/drivers/net/mlx5/mlx5_flow_hw.c
+> > > @@ -7026,6 +7026,7 @@ mlx5_hw_validate_action_queue(struct
+> > rte_eth_dev
+> > > *dev,
+> > >  			      uint64_t action_flags,
+> > >  			      struct rte_flow_error *error)  {
+> > > +	struct mlx5_priv *priv =3D dev->data->dev_private;
+> > >  	const struct rte_flow_action_queue *queue_mask =3D template_mask-
+> > > >conf;
+> > >  	const struct rte_flow_attr attr =3D {
+> > >  		.ingress =3D template_attr->ingress, @@ -7034,7 +7035,7 @@
+> > > mlx5_hw_validate_action_queue(struct
+> > rte_eth_dev
+> > > *dev,
+> > >  	};
+> > >  	bool masked =3D queue_mask !=3D NULL && queue_mask->index;
+> > >
+> > > -	if (template_attr->egress || template_attr->transfer)
+> > > +	if (template_attr->egress || (template_attr->transfer &&
+> > > +!priv->jump_fdb_rx_en))
+> > >  		return rte_flow_error_set(error, EINVAL,
+> > >  					  RTE_FLOW_ERROR_TYPE_ATTR, NULL,
+> > >  					  "QUEUE action supported for ingress
+> only"); @@
+> > -7053,9
+> > > +7054,10 @@ mlx5_hw_validate_action_rss(struct
+> > > rte_eth_dev *dev,
+> > >  			      __rte_unused uint64_t action_flags,
+> > >  			      struct rte_flow_error *error)  {
+> > > +	struct mlx5_priv *priv =3D dev->data->dev_private;
+> > >  	const struct rte_flow_action_rss *mask =3D template_mask->conf;
+> > >
+> > > -	if (template_attr->egress || template_attr->transfer)
+> > > +	if (template_attr->egress || (template_attr->transfer &&
+> > > +!priv->jump_fdb_rx_en))
+> > >  		return rte_flow_error_set(error, EINVAL,
+> > >  					  RTE_FLOW_ERROR_TYPE_ATTR, NULL,
+> > >  					  "RSS action supported for ingress only");
+> @@
+> > -8104,6 +8106,7
+> > > @@ __flow_hw_actions_template_create(struct rte_eth_dev *dev,
+> > >  	}
+> > >  	if (priv->sh->config.dv_xmeta_en =3D=3D
+> > MLX5_XMETA_MODE_META32_HWS &&
+> > >  	    priv->sh->config.dv_esw_en &&
+> > > +	    !attr->transfer &&
+> > >  	    (action_flags & (MLX5_FLOW_ACTION_QUEUE |
+> > > MLX5_FLOW_ACTION_RSS))) {
+> > >  		/* Insert META copy */
+> > >  		mf_actions[expand_mf_num] =3D rx_meta_copy_action; @@
+> > -12112,23
+> > > +12115,29 @@ __flow_hw_configure(struct rte_eth_dev *dev,
+> > >  	/* Add global actions. */
+> > >  	for (i =3D 0; i < MLX5_HW_ACTION_FLAG_MAX; i++) {
+> > >  		uint32_t act_flags =3D 0;
+> > > +		uint32_t tag_flags =3D mlx5_hw_act_flag[i][0];
+> > >
+> > >  		act_flags =3D mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_NIC_RX] |
+> > >  			    mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_NIC_TX];
+> > >  		if (is_proxy) {
+> > > -			if (unified_fdb)
+> > > +			if (unified_fdb) {
+> > >  				act_flags |=3D
+> > >
+> > > 	(mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB_RX] |
+> > >
+> > > mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB_TX] |
+> > >
+> > > mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB_UNIFIED]);
+> > > -			else
+> > > +				if (i =3D=3D MLX5_HW_ACTION_FLAG_NONE_ROOT)
+> > > +					tag_flags |=3D
+> > > mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB_RX];
+> > > +			} else {
+> > >  				act_flags |=3D
+> > > mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB];
+> > > +				if (i =3D=3D MLX5_HW_ACTION_FLAG_NONE_ROOT)
+> > > +					tag_flags |=3D
+> > > mlx5_hw_act_flag[i][MLX5DR_TABLE_TYPE_FDB];
+> > > +			}
+> > >  		}
+> >
+> > One small question about the TAG action flags in this case. If unified
+> > FDB is supported, should only FDB_RX sub-domain of all FDB sub-domains
+> > support the TAG? Or FDB_UNI also supports it. And if no unified FDB,
+> > will the TAG also be supported in the legacy FDB domain? Can we add
+> > some code comments here and update the limitation?
+> Yes, it is allowed only in unified FDB Rx domain. Let's do this.
+>=20
+> >
+> > >  		priv->hw_drop[i] =3D mlx5dr_action_create_dest_drop(priv-
+> > > >dr_ctx, act_flags);
+> > >  		if (!priv->hw_drop[i])
+> > >  			goto err;
+> > >  		priv->hw_tag[i] =3D mlx5dr_action_create_tag
+> > > -			(priv->dr_ctx, mlx5_hw_act_flag[i][0]);
+> > > +			(priv->dr_ctx, tag_flags);
+> > >  		if (!priv->hw_tag[i])
+> > >  			goto err;
+> > >  	}
+> > > --
+> > > 2.34.1
+
+This should be with V2 version prefix.
+Series Acked-by: Bing Zhao <bingz@nvidia.com>
+
