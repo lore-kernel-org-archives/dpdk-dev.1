@@ -2,62 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE01C021B8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 19:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D44C19776
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 19:55:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE496402DE;
-	Wed, 26 Feb 2025 20:55:36 +0100 (CET)
-Received: from mail-lj1-f225.google.com (mail-lj1-f225.google.com
- [209.85.208.225])
- by mails.dpdk.org (Postfix) with ESMTP id E3A6A4029F
- for <dev@dpdk.org>; Wed, 26 Feb 2025 20:55:35 +0100 (CET)
-Received: by mail-lj1-f225.google.com with SMTP id
- 38308e7fff4ca-3061513d353so2214891fa.2
- for <dev@dpdk.org>; Wed, 26 Feb 2025 11:55:35 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EC23B40649;
+	Wed, 26 Feb 2025 20:55:49 +0100 (CET)
+Received: from mail-lf1-f100.google.com (mail-lf1-f100.google.com
+ [209.85.167.100])
+ by mails.dpdk.org (Postfix) with ESMTP id F1A0C402AE
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 20:55:48 +0100 (CET)
+Received: by mail-lf1-f100.google.com with SMTP id
+ 2adb3069b0e04-5461cb12e39so131112e87.2
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 11:55:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1740599735; x=1741204535; darn=dpdk.org;
+ d=6wind.com; s=google; t=1740599748; x=1741204548; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zLDLEvOsh5CHtI5b99nNx3Rm/SDzrSSuGd/nbHR9J/w=;
- b=DAtM5ChDTSjocuH/YfoioFRLoCGgBjzps0V1yW2/V0QssFgVmc/J9cYTYFOkjjJq9U
- 18BY+LOrFpH2aalMSKGpI7O5XpydKw9FC93Aj7TnuZNR/KyB20anxGCvO2KviqonQ80y
- pmnNG6e289/ehyVUt4b2/CX3e5gf1T69KSRfyfElNa0s5FCMZG3iMnFi5s+LUdvoErQA
- PXeNcZMqNpkJmk1I5hOsQeOGZmGWzyD3v+8WRnY6TAd8PvwonfdH/I2GdMmo3+YuvQ1y
- m1KzT6SVlSG3umjX65YblLvngxbUiuxLO6TpcjwiYgwQl/GpimmXPcka4v/vg5OQ+ikq
- K7UA==
+ bh=3gjWwstkPyJjBBCYsBY0uVtHQOjQfzbSuqE7Eb2knZ4=;
+ b=aJTENAIP8At9KgUHoe5fDXXjPHtsJA+US3WhiVaYlOTDbhhdMktXBLqNUTQPbPV34a
+ CUYmc31rjzVrXZGNzlh17q0AlHIHdXy5S7R4ivKXBBM6YuTcHdPbz7wYV72OMEWBnMzE
+ WsYp3RktmlPENLd5OGx28wohrsyOR+qccBpTS35VArzThAnU73Z/Ne4bKa0bRdTKEmVb
+ iZbSLNohlHjXb+5sGsnJ0y9RLDtJ0Ypoe5jqYcql/Pqmnvgj466d0lFqwL4ciaVQG9ie
+ W08yO0xS7t8CuypVeqoPpYvfRBck/cwcAW26D2pdQEO197AtSnuaZ4yZe80al/U4kfAd
+ 23VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740599735; x=1741204535;
+ d=1e100.net; s=20230601; t=1740599748; x=1741204548;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=zLDLEvOsh5CHtI5b99nNx3Rm/SDzrSSuGd/nbHR9J/w=;
- b=qUi4ImR2U/Rfg/fCb5lMOIu5vZ2F9ffrcnzIpAI1RFKdDErfByzj9UzA1BXOfCcdKK
- +Risl7xX6wBSkL4YOXtDrt5Y+7Hm8QavvIwxePeC2oylUQtCgslyTzEirYnLoE/rXatM
- fuqbUpmX+1ZJ9p9zjBcas5sl35W5pGaDmWcR+G6/l5t2BVykMg8+aX5NhExRagUDol0A
- vvyJYW3VDwAJ3K2pAe7zWxUNjrejAqOfTneOzX6BfmbU+QjzNkAcSLaJAwHjHwr1X8iJ
- dOEU44qpKBwJSMhgYXje+xGlkEeO/aVZPlBUClBXQyWZ38WqIGa0szXtB9H9u06LhC5J
- ao9w==
-X-Gm-Message-State: AOJu0YzCW0dCEnYfSv0+ov+O+19jQGbcpLRuoRpDDvY+n5lG0uPLp9hT
- +dNw/cLlH18TcXtDl8x3gvdUoukMJN6MXHlxObMZ2LrQcUvm/Lc97sRA3g7sMRNyH4v4IJX7NGV
- eXhCq+FVhx7H9k85cejbv4Y+0TPTfDGMEfn/kylK9
-X-Gm-Gg: ASbGncv3WQf9iE+vmvb6YDI3tSRlSxEgSS38naKpSDYUStw5675ZbDs94XTSPIPKcV0
- JsiboI/bXdL3Y9JHy2aQpmvSGBJlYPzOZbgGJgsAecgQXpdGGPhOmyv1rG4ElEfRvepb6zrC3Vz
- goBo2j/kzBoL7iWV4qngMwd5R2sqgOhy4K40e7UlqMsP+ZEURFILu+z9JfLVVoScH9qw1ElaARu
- MdPAE+y0WcwLdytyo8pKFhdlcEyD9ZUXyt6IgX4KTExE4Iuzj8I/DWzCHuPPecnPEvyNbykZQQS
- vubp8wJGG8R1agg0Tzk4wiSLJUXkDS57sImf47jc4yFEt6hTcsJtFk9DzG8B
-X-Google-Smtp-Source: AGHT+IGLyqtcYcDa2rskaqzvKOTNy1F7V1fmIp+N85X5VZPBLxIL4GGIWu3Y77LxylMY1yOEwXkOfXDpPzzi
-X-Received: by 2002:a2e:9c4a:0:b0:308:e956:670 with SMTP id
- 38308e7fff4ca-30a5b20dcb5mr90398441fa.23.1740599734991; 
- Wed, 26 Feb 2025 11:55:34 -0800 (PST)
+ bh=3gjWwstkPyJjBBCYsBY0uVtHQOjQfzbSuqE7Eb2knZ4=;
+ b=C3XnfckzRAio2ik28vzvqGAUzgjRvnO7h1S35bq2/x9l3wTFY94TkS01gI4RTb7+7t
+ xZygsxitmM7BwhgfERkOJv+nd59H0aJ4diELbr50/vhQCUt3F6817NxXmds2DR/K+G/W
+ kazeMgOb0KK89CYKP61iPFD54P41iEEfASadkM1Vo5U1xWNQLMlrylykm9H47IoQstSW
+ UtMR31k/gtWB8pALoS5mofTw09XI4NimtaR52+Hy7FITUZgxbr8cALVUQPqH3FzWSFHx
+ bf9GHxAzEf5Bk6TuOUc0TCgn28hEgrvKUSS2GvdvpEF77X88ppWRO6ywnZ2b3nYWB9bx
+ UzCg==
+X-Gm-Message-State: AOJu0YwaU5jIkaepD0X13zG+d5x3PXb953Buq7mAspTGsZOeQjFaBCOA
+ o97zGBU9PKyhth7AHDpFYRS+K4lQmvdnj7RAF9GAyp+RbrqnroW7MWu3vQ9kE57aViP6OviLdUf
+ eOKLELTbGKUPxMeH6zhVmAdcEdgTXAFddJWI4UHXe
+X-Gm-Gg: ASbGncs3J0adezT5Ff00aTq+ue0rOzMcDKkmMdgf9uMoJFUKLp+Dpa9pq5987FMYLfW
+ Sor4ges1Zi17Kz5B16hlrSloXEQo0E7T3KuAoPutbsDY4CiLuWVdTBSp8DGuJOY+GFQuveeV1HM
+ SEYbCkIhUM/Xi9YEGAartkH7zMvL+J7IsnVljVtSGgZI3TeinVTYu3j3Rqp1d01oKkJ7UCcD2rR
+ xnzTYUl8DLfdcfRQCOx8x5ixKO3IfHXMXrOVEiHfjrx6qLxhbs8wGtxpJvDcpcYuGxc4u+7xlWJ
+ pR32e4kum6snHapNCKdK/RnTS2r59ATBmvXVkR51NXDHSFzJrHaPFcBrTcPb
+X-Google-Smtp-Source: AGHT+IE96vTwebHSrCVfVItNb6vtXxCP5bKyLb8kEXs6drPWJNnZuCylkOdslcavkBX+b7iwIpQPvhh8mWQ4
+X-Received: by 2002:a05:6512:3183:b0:542:29b6:9c26 with SMTP id
+ 2adb3069b0e04-54838f5b6f6mr11059449e87.47.1740599748361; 
+ Wed, 26 Feb 2025 11:55:48 -0800 (PST)
 Received: from smtpservice.6wind.com ([185.13.181.2])
  by smtp-relay.gmail.com with ESMTP id
- 38308e7fff4ca-30a819f5024sm1427461fa.44.2025.02.26.11.55.34; 
- Wed, 26 Feb 2025 11:55:34 -0800 (PST)
+ 2adb3069b0e04-548514f161csm168553e87.84.2025.02.26.11.55.48; 
+ Wed, 26 Feb 2025 11:55:48 -0800 (PST)
 X-Relaying-Domain: 6wind.com
 Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
- by smtpservice.6wind.com (Postfix) with ESMTP id 9A4CB175EF;
- Wed, 26 Feb 2025 20:55:34 +0100 (CET)
+ by smtpservice.6wind.com (Postfix) with ESMTP id F3455175F0;
+ Wed, 26 Feb 2025 20:55:47 +0100 (CET)
 From: Ariel Otilibili <ariel.otilibili@6wind.com>
 To: dev@dpdk.org
 Cc: Thomas Monjalon <thomas@monjalon.net>,
@@ -65,12 +65,13 @@ Cc: Thomas Monjalon <thomas@monjalon.net>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
  Ariel Otilibili <ariel.otilibili@6wind.com>
-Subject: [PATCH v11 0/2] Fix use after free, and refactor af_xdp_tx_zc
-Date: Wed, 26 Feb 2025 20:55:02 +0100
-Message-Id: <20250226195504.2340737-1-ariel.otilibili@6wind.com>
+Subject: [PATCH v11 1/2] net/af_xdp: Fix use after free in af_xdp_tx_zc
+Date: Wed, 26 Feb 2025 20:55:03 +0100
+Message-Id: <20250226195504.2340737-2-ariel.otilibili@6wind.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+In-Reply-To: <20250226195504.2340737-1-ariel.otilibili@6wind.com>
 References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+ <20250226195504.2340737-1-ariel.otilibili@6wind.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,61 +87,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+tx_bytes is computed after both legs are tested. This might
+produce a use after memory free.
 
-The series addresses Bugzilla ID 1440 in two steps;
+The computation is now moved into each leg.
 
-1. Fix use after free.
-2. Refactor af_xdp_tx_zc().
-
-Thank you,
+Bugzilla ID: 1440
+Fixes: d8a210774e1d ("net/af_xdp: support unaligned umem chunks")
+Signed-off-by: Ariel Otilibili <ariel.otilibili@6wind.com>
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-v11
-* removed assignments in if statements (Stephen Hemminger)
+ .mailmap                            | 2 +-
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-v10 (https://inbox.dpdk.org/dev/20250223215259.448723-1-ariel.otilibili@6wind.com/)
-* no change
-
-v9 (https://inbox.dpdk.org/dev/20250207104552.1663519-1-ariel.otilibili@6wind.com/)
-* desc->len takes its value from mbuf (Maryam Tahhan)
-
-v8 (https://inbox.dpdk.org/dev/20250206204645.1564535-1-ariel.otilibili@6wind.com/)
-* fixed seg fault (https://inbox.dpdk.org/dev/CAFdtZitaNGhC5Q10ATNa7xXX1JbuWob=YzrcWmq8LTz+qjiu4A@mail.gmail.com/)
-* addressed feedback from Maryam Tahhan
-
-v7 (https://inbox.dpdk.org/dev/20250201100300.2194018-1-ariel.otilibili@6wind.com/)
-* no change
-* resent because CI didn't take patch-2 into the series
-
-v6 (https://inbox.dpdk.org/dev/20250131231018.2163893-1-ariel.otilibili@6wind.com/)
-* added missing credits to Maryam Tahhan in v5 
-
-v5 (https://inbox.dpdk.org/dev/20250131183439.909831-1-ariel.otilibili@6wind.com/)
-* fix style issues in the signature of reserve_and_fill() (Stephen Hemminger)
-
-v4 (https://inbox.dpdk.org/dev/20250130221853.789366-1-ariel.otilibili@6wind.com/)
-* redid the refactor (Maryam Tahhan)
-* marked the fix as acked (Stephen Hemminger)
-* updated .mailmap, my main e-mail is @6wind.com (https://inbox.dpdk.org/dev/20250115121152.487360-4-otilibil@eurecom.fr/)
-
-v3 (https://inbox.dpdk.org/dev/20250128231152.249497-1-ariel.otilibili@6wind.com/)
-* reworded commit message of patch-1
-* addressed feedback of Maryam Tahhan
-
-v2 (https://inbox.dpdk.org/dev/20250116225151.188214-1-ariel.otilibili@6wind.com/)
-* reworded commit messages
-* addressed feedback from Stephen Hemminger
-
-v1 (http://inbox.dpdk.org/dev/20250116195640.68885-1-ariel.otilibili@6wind.com/)
-
-Ariel Otilibili (2):
-  net/af_xdp: Fix use after free in af_xdp_tx_zc
-  net/af_xdp: Refactor af_xdp_tx_zc
-
- .mailmap                            |  2 +-
- drivers/net/af_xdp/rte_eth_af_xdp.c | 77 ++++++++++++++++-------------
- 2 files changed, 44 insertions(+), 35 deletions(-)
-
+diff --git a/.mailmap b/.mailmap
+index a03d3cfb591b..ea68d6180ccc 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -135,7 +135,7 @@ Anupam Kapoor <anupam.kapoor@gmail.com>
+ Apeksha Gupta <apeksha.gupta@nxp.com>
+ Archana Muniganti <marchana@marvell.com> <muniganti.archana@caviumnetworks.com>
+ Archit Pandey <architpandeynitk@gmail.com>
+-Ariel Otilibili <otilibil@eurecom.fr> <ariel.otilibili@6wind.com>
++Ariel Otilibili <ariel.otilibili@6wind.com> <otilibil@eurecom.fr>
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+ Arnaud Fiorini <arnaud.fiorini@polymtl.ca>
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 814398ba4b44..092bcb73aa0a 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -574,6 +574,7 @@ af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 					umem->mb_pool->header_size;
+ 			offset = offset << XSK_UNALIGNED_BUF_OFFSET_SHIFT;
+ 			desc->addr = addr | offset;
++			tx_bytes += desc->len;
+ 			count++;
+ 		} else {
+ 			struct rte_mbuf *local_mbuf =
+@@ -601,11 +602,10 @@ af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			desc->addr = addr | offset;
+ 			rte_memcpy(pkt, rte_pktmbuf_mtod(mbuf, void *),
+ 					desc->len);
++			tx_bytes += desc->len;
+ 			rte_pktmbuf_free(mbuf);
+ 			count++;
+ 		}
+-
+-		tx_bytes += mbuf->pkt_len;
+ 	}
+ 
+ out:
 -- 
 2.30.2
 
