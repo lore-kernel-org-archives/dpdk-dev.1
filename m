@@ -2,64 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B80C021BC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 18:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE01C021B8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 19:55:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30C9140696;
-	Wed, 26 Feb 2025 19:59:08 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id E98F040693
- for <dev@dpdk.org>; Wed, 26 Feb 2025 19:59:06 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDQ7l7005433;
- Wed, 26 Feb 2025 10:59:06 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
- yoJSaoreeLXsUEnuvXJ4uvfMLfRbauJHCnDYjsZc9A=; b=ASp6T+0mCNWuw/VDh
- mt/7ffLRDsCyKnbkbCyuWCF0QtavnzGfQTRO8JoAjyKgsbelHME3tJQZ8SInObgL
- fagDMtcikplVE5BPr7uhYTSCIYkR/BbGT0kBCrWL0wajJcd3NzBK+CDasvNoS3uU
- k+Q8VX7PmA9owJGYDXmOQbrR5s2nEM8kTTMqh78CGmhWk2KiLsSABaEc9lopeS4L
- IIh3f829FgRmIoCI4h9yd6V7FyjWhUiPmTGd264lhkEogpwb3YTUv6UX6DYxv59O
- Z6Ct/hkKMD9Rko9L+cl9nF4V6gwRRgmdlIr5OaZOwEDJmlOdYj+QvielgsBMyUNt
- mfUVA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4523u7gtsw-3
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 26 Feb 2025 10:59:05 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 26 Feb 2025 10:59:04 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 26 Feb 2025 10:59:04 -0800
-Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.193.66.81])
- by maili.marvell.com (Postfix) with ESMTP id 03F653F7071;
- Wed, 26 Feb 2025 10:59:02 -0800 (PST)
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
- <fanzhang.oss@gmail.com>
-CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Subject: [v5 6/6] test/crypto: add tests for virtio user PMD
-Date: Thu, 27 Feb 2025 00:28:18 +0530
-Message-ID: <ed9c5de18b1be2fb9830c3b4432360079c43d9bb.1740595670.git.gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1740595670.git.gmuthukrishn@marvell.com>
-References: <cover.1740595670.git.gmuthukrishn@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CE496402DE;
+	Wed, 26 Feb 2025 20:55:36 +0100 (CET)
+Received: from mail-lj1-f225.google.com (mail-lj1-f225.google.com
+ [209.85.208.225])
+ by mails.dpdk.org (Postfix) with ESMTP id E3A6A4029F
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 20:55:35 +0100 (CET)
+Received: by mail-lj1-f225.google.com with SMTP id
+ 38308e7fff4ca-3061513d353so2214891fa.2
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 11:55:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1740599735; x=1741204535; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zLDLEvOsh5CHtI5b99nNx3Rm/SDzrSSuGd/nbHR9J/w=;
+ b=DAtM5ChDTSjocuH/YfoioFRLoCGgBjzps0V1yW2/V0QssFgVmc/J9cYTYFOkjjJq9U
+ 18BY+LOrFpH2aalMSKGpI7O5XpydKw9FC93Aj7TnuZNR/KyB20anxGCvO2KviqonQ80y
+ pmnNG6e289/ehyVUt4b2/CX3e5gf1T69KSRfyfElNa0s5FCMZG3iMnFi5s+LUdvoErQA
+ PXeNcZMqNpkJmk1I5hOsQeOGZmGWzyD3v+8WRnY6TAd8PvwonfdH/I2GdMmo3+YuvQ1y
+ m1KzT6SVlSG3umjX65YblLvngxbUiuxLO6TpcjwiYgwQl/GpimmXPcka4v/vg5OQ+ikq
+ K7UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1740599735; x=1741204535;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zLDLEvOsh5CHtI5b99nNx3Rm/SDzrSSuGd/nbHR9J/w=;
+ b=qUi4ImR2U/Rfg/fCb5lMOIu5vZ2F9ffrcnzIpAI1RFKdDErfByzj9UzA1BXOfCcdKK
+ +Risl7xX6wBSkL4YOXtDrt5Y+7Hm8QavvIwxePeC2oylUQtCgslyTzEirYnLoE/rXatM
+ fuqbUpmX+1ZJ9p9zjBcas5sl35W5pGaDmWcR+G6/l5t2BVykMg8+aX5NhExRagUDol0A
+ vvyJYW3VDwAJ3K2pAe7zWxUNjrejAqOfTneOzX6BfmbU+QjzNkAcSLaJAwHjHwr1X8iJ
+ dOEU44qpKBwJSMhgYXje+xGlkEeO/aVZPlBUClBXQyWZ38WqIGa0szXtB9H9u06LhC5J
+ ao9w==
+X-Gm-Message-State: AOJu0YzCW0dCEnYfSv0+ov+O+19jQGbcpLRuoRpDDvY+n5lG0uPLp9hT
+ +dNw/cLlH18TcXtDl8x3gvdUoukMJN6MXHlxObMZ2LrQcUvm/Lc97sRA3g7sMRNyH4v4IJX7NGV
+ eXhCq+FVhx7H9k85cejbv4Y+0TPTfDGMEfn/kylK9
+X-Gm-Gg: ASbGncv3WQf9iE+vmvb6YDI3tSRlSxEgSS38naKpSDYUStw5675ZbDs94XTSPIPKcV0
+ JsiboI/bXdL3Y9JHy2aQpmvSGBJlYPzOZbgGJgsAecgQXpdGGPhOmyv1rG4ElEfRvepb6zrC3Vz
+ goBo2j/kzBoL7iWV4qngMwd5R2sqgOhy4K40e7UlqMsP+ZEURFILu+z9JfLVVoScH9qw1ElaARu
+ MdPAE+y0WcwLdytyo8pKFhdlcEyD9ZUXyt6IgX4KTExE4Iuzj8I/DWzCHuPPecnPEvyNbykZQQS
+ vubp8wJGG8R1agg0Tzk4wiSLJUXkDS57sImf47jc4yFEt6hTcsJtFk9DzG8B
+X-Google-Smtp-Source: AGHT+IGLyqtcYcDa2rskaqzvKOTNy1F7V1fmIp+N85X5VZPBLxIL4GGIWu3Y77LxylMY1yOEwXkOfXDpPzzi
+X-Received: by 2002:a2e:9c4a:0:b0:308:e956:670 with SMTP id
+ 38308e7fff4ca-30a5b20dcb5mr90398441fa.23.1740599734991; 
+ Wed, 26 Feb 2025 11:55:34 -0800 (PST)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ 38308e7fff4ca-30a819f5024sm1427461fa.44.2025.02.26.11.55.34; 
+ Wed, 26 Feb 2025 11:55:34 -0800 (PST)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (rainbow.dev.6wind.com [10.17.1.165])
+ by smtpservice.6wind.com (Postfix) with ESMTP id 9A4CB175EF;
+ Wed, 26 Feb 2025 20:55:34 +0100 (CET)
+From: Ariel Otilibili <ariel.otilibili@6wind.com>
+To: dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+ David Marchand <david.marchand@redhat.com>, stable@dpdk.org,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
+ Ariel Otilibili <ariel.otilibili@6wind.com>
+Subject: [PATCH v11 0/2] Fix use after free, and refactor af_xdp_tx_zc
+Date: Wed, 26 Feb 2025 20:55:02 +0100
+Message-Id: <20250226195504.2340737-1-ariel.otilibili@6wind.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20250116195640.68885-1-ariel.otilibili@6wind.com>
+References: <20250116195640.68885-1-ariel.otilibili@6wind.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: -XXh6uUhBBWcDoHkdi6H66hAgdoGeVMV
-X-Proofpoint-ORIG-GUID: -XXh6uUhBBWcDoHkdi6H66hAgdoGeVMV
-X-Authority-Analysis: v=2.4 cv=XftzzJ55 c=1 sm=1 tr=0 ts=67bf647a cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=T2h4t0Lz3GQA:10 a=M5GUcnROAAAA:8 a=8v8LZVCtSEv4Ub3s21IA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,81 +86,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reuse virtio_crypto tests for testing virtio_crypto_user PMD.
+Hello,
 
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+The series addresses Bugzilla ID 1440 in two steps;
+
+1. Fix use after free.
+2. Refactor af_xdp_tx_zc().
+
+Thank you,
 ---
- app/test/test_cryptodev.c      |  7 +++++++
- app/test/test_cryptodev.h      |  1 +
- app/test/test_cryptodev_asym.c | 15 +++++++++++++++
- 3 files changed, 23 insertions(+)
+v11
+* removed assignments in if statements (Stephen Hemminger)
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 441ecc6ad5..60aacdc155 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -19737,6 +19737,12 @@ test_cryptodev_virtio(void)
- 	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_PMD));
- }
- 
-+static int
-+test_cryptodev_virtio_user(void)
-+{
-+	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+}
-+
- static int
- test_cryptodev_aesni_mb(void)
- {
-@@ -20074,6 +20080,7 @@ REGISTER_DRIVER_TEST(cryptodev_dpaa_sec_autotest, test_cryptodev_dpaa_sec);
- REGISTER_DRIVER_TEST(cryptodev_ccp_autotest, test_cryptodev_ccp);
- REGISTER_DRIVER_TEST(cryptodev_uadk_autotest, test_cryptodev_uadk);
- REGISTER_DRIVER_TEST(cryptodev_virtio_autotest, test_cryptodev_virtio);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_autotest, test_cryptodev_virtio_user);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_autotest, test_cryptodev_octeontx);
- REGISTER_DRIVER_TEST(cryptodev_caam_jr_autotest, test_cryptodev_caam_jr);
- REGISTER_DRIVER_TEST(cryptodev_nitrox_autotest, test_cryptodev_nitrox);
-diff --git a/app/test/test_cryptodev.h b/app/test/test_cryptodev.h
-index bb54a33d62..f6c7478f19 100644
---- a/app/test/test_cryptodev.h
-+++ b/app/test/test_cryptodev.h
-@@ -64,6 +64,7 @@
- #define CRYPTODEV_NAME_MVSAM_PMD		crypto_mvsam
- #define CRYPTODEV_NAME_CCP_PMD		crypto_ccp
- #define CRYPTODEV_NAME_VIRTIO_PMD	crypto_virtio
-+#define CRYPTODEV_NAME_VIRTIO_USER_PMD	crypto_virtio_user
- #define CRYPTODEV_NAME_OCTEONTX_SYM_PMD	crypto_octeontx
- #define CRYPTODEV_NAME_CAAM_JR_PMD	crypto_caam_jr
- #define CRYPTODEV_NAME_NITROX_PMD	crypto_nitrox_sym
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index ac47be724f..a98e3dc824 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -4118,9 +4118,24 @@ test_cryptodev_virtio_asym(void)
- 	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
- }
- 
-+static int
-+test_cryptodev_virtio_user_asym(void)
-+{
-+	gbl_driver_id = rte_cryptodev_driver_id_get(
-+			RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+	if (gbl_driver_id == -1) {
-+		RTE_LOG(ERR, USER1, "virtio user PMD must be loaded.\n");
-+		return TEST_FAILED;
-+	}
-+
-+	/* Use test suite registered for crypto_virtio_user PMD */
-+	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
-+}
-+
- REGISTER_DRIVER_TEST(cryptodev_openssl_asym_autotest, test_cryptodev_openssl_asym);
- REGISTER_DRIVER_TEST(cryptodev_qat_asym_autotest, test_cryptodev_qat_asym);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_asym_autotest, test_cryptodev_octeontx_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn9k_asym_autotest, test_cryptodev_cn9k_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn10k_asym_autotest, test_cryptodev_cn10k_asym);
- REGISTER_DRIVER_TEST(cryptodev_virtio_asym_autotest, test_cryptodev_virtio_asym);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_asym_autotest, test_cryptodev_virtio_user_asym);
+v10 (https://inbox.dpdk.org/dev/20250223215259.448723-1-ariel.otilibili@6wind.com/)
+* no change
+
+v9 (https://inbox.dpdk.org/dev/20250207104552.1663519-1-ariel.otilibili@6wind.com/)
+* desc->len takes its value from mbuf (Maryam Tahhan)
+
+v8 (https://inbox.dpdk.org/dev/20250206204645.1564535-1-ariel.otilibili@6wind.com/)
+* fixed seg fault (https://inbox.dpdk.org/dev/CAFdtZitaNGhC5Q10ATNa7xXX1JbuWob=YzrcWmq8LTz+qjiu4A@mail.gmail.com/)
+* addressed feedback from Maryam Tahhan
+
+v7 (https://inbox.dpdk.org/dev/20250201100300.2194018-1-ariel.otilibili@6wind.com/)
+* no change
+* resent because CI didn't take patch-2 into the series
+
+v6 (https://inbox.dpdk.org/dev/20250131231018.2163893-1-ariel.otilibili@6wind.com/)
+* added missing credits to Maryam Tahhan in v5 
+
+v5 (https://inbox.dpdk.org/dev/20250131183439.909831-1-ariel.otilibili@6wind.com/)
+* fix style issues in the signature of reserve_and_fill() (Stephen Hemminger)
+
+v4 (https://inbox.dpdk.org/dev/20250130221853.789366-1-ariel.otilibili@6wind.com/)
+* redid the refactor (Maryam Tahhan)
+* marked the fix as acked (Stephen Hemminger)
+* updated .mailmap, my main e-mail is @6wind.com (https://inbox.dpdk.org/dev/20250115121152.487360-4-otilibil@eurecom.fr/)
+
+v3 (https://inbox.dpdk.org/dev/20250128231152.249497-1-ariel.otilibili@6wind.com/)
+* reworded commit message of patch-1
+* addressed feedback of Maryam Tahhan
+
+v2 (https://inbox.dpdk.org/dev/20250116225151.188214-1-ariel.otilibili@6wind.com/)
+* reworded commit messages
+* addressed feedback from Stephen Hemminger
+
+v1 (http://inbox.dpdk.org/dev/20250116195640.68885-1-ariel.otilibili@6wind.com/)
+
+Ariel Otilibili (2):
+  net/af_xdp: Fix use after free in af_xdp_tx_zc
+  net/af_xdp: Refactor af_xdp_tx_zc
+
+ .mailmap                            |  2 +-
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 77 ++++++++++++++++-------------
+ 2 files changed, 44 insertions(+), 35 deletions(-)
+
 -- 
-2.25.1
+2.30.2
 
