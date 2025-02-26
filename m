@@ -2,127 +2,134 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D028EC021BC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 08:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB393C021B8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Feb 2025 08:44:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F72A4065E;
-	Wed, 26 Feb 2025 09:40:07 +0100 (CET)
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com
- (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
- by mails.dpdk.org (Postfix) with ESMTP id 8AE4F40666
- for <dev@dpdk.org>; Wed, 26 Feb 2025 09:40:04 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 03ABF4029F;
+	Wed, 26 Feb 2025 09:44:22 +0100 (CET)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
+ by mails.dpdk.org (Postfix) with ESMTP id 37EDD4027C
+ for <dev@dpdk.org>; Wed, 26 Feb 2025 09:44:20 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uzksSFhT0RFARZIntGwsnDdhy7U5TazpT75qlS2L0ZFzbNS9DtaA9S1W+XW+Yg1IYquuSNPauwqlgq0NWX2xHz+Bf60Gkm6QztMc84QkJbSPD+s/hd78KLzRNXH7uQM/EDOyINMnzGQX1i/xlmsThzDfxi2/Q20eG4Vgmg38xbv+n7RA96HYr0fSErbHOvdWhpqUsSW/kyDtHw/elcDicqTnq9j/63jEZ+Gm59zvZVb8zoW1fcoQyLqcnaBOGh9oWYWiBpvM1+14kgqsGvZg/wKw6IWt7wfVwWXgzHg/jiIqWvpFUW70MffCJY/HC+qz3VwGJY9/1dHWATc4Yh3uxQ==
+ b=p/SiT68SdMlNKqheTKB7KNM7K4XsFlYocyQcH8jsaOyW4d+fonqd21BBRLdmfqvbhYXMCND2MMU5ZoDFIVwPmIHmorZq/nD7EHtM6lu6jTtpLOfssCTJhL1tKvURYvv1Nj7Yv/pBolkNqH7mOwBLqUIwow71F/d4El224jrhc9PSXifSnKXrTb9EJKCSN8g0fAoSFDqW/rc/0wIVNLJHFrsCR9A50CXTSCthq5ep/gOl/UHycIXEWt7g+E6O8HJmY+kgOHJVeW3sJvsnEI5gnAheM5T8JFpsNlQA8fiBvucsUSMx1jn1RuWvDxhOqkh4TEM0rIDW0DpnmDP2JhUH8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CvYbeiJA2Ul2d2WFH1sPy5oGUnQooAFONfhIZCEFQ8U=;
- b=T+XS14oVtPTtnQPwwVRWkwk8Z2MA9UEuwW+3uC6CYC/E3XmGju/tL/WiOhJ62mSt0886qbue87poEsn5u44QLVnD2V3kFoYZWHO1qGPtcD5LOXkkxn4P+t4m6tp56p38vVOLVimbvS1okb423q2MBJixrqN3BNcXTYb7co4iBDtrhGPklh9wlLh9Z8vad/QYqVxpeK0NFsk5cWAkWl0lJ91WxC5yhlDO3G6oanP4a8por4p4SX5a6Qr8kDHHz/8xwgcpRBOWyUuq9Vf0LnXoUz8HZJAvJfl+gT63eWZ5sINTLp91qaVanBkgAsiCScHI2s0deIl7qAaQyRAOIKn8qA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=iXCROx6Rl+IX5FZ6pQH0URxEMCavIgP3NR7D3w+Rwuw=;
+ b=J3J+iZKqM79jcUJVaBiXFydTqIkJ9r6fWwyqJb5YfroyO5NDyJHobhDphMiUQi7neOVoiEfnh68fRKCm4P9TPXf/tZujVXHkVtZ4SwuNo4G98i6L1gXKm6wT/ox9/19DBXwTxBKOGRd0WhzvxjBy2aeejHKwwvW4+nqzEGEFN87Ds/RVwARblaJQfBfUYlJa3zTbf6yRI8q+UcQpY3Q3iGNmhYX0g3CnXMglKcIGiRQirLN6SqR/SuiCs+oUUY3FbQu9AkGDhMA3AmR82EtJo6/wbg//ZX52/kj8ZOw0cW+tU+8HCG1ZGdcuMD6KBBqJHhVpNlyTJnOUGmrO3hlNoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CvYbeiJA2Ul2d2WFH1sPy5oGUnQooAFONfhIZCEFQ8U=;
- b=hRWYjHuZ2bJv7PlvtPE/gO/QwBMPRvWACvI0yIHJX/AxpHj1lWxlZVx38v/+vSeYU/9v/ltRo/P2U5gnBGi+/uLjhlqPWLta/ySHs8dqAKGlEYR+FlI9AB5QM5o8AM0QfIVguKiXS9nPztAl1BQMwQy1MSCS4kZ7xh4dhCDqIObmgHnzWhTlXnjomJ0IGAcYR8+k92N2bHK3uPPVzkFefNPgezRpR1dPSAkf6BDackHdVSQUrbjHXVg9+ahEKGRPQdwj19aK2gdofJO9z5jVQggnAOE0Fnv9+sRj3OpOT11032W8bzr1jTr+TpodqOMeGkBUzKmTfcE1HceLZ5fqbQ==
-Received: from BN8PR16CA0020.namprd16.prod.outlook.com (2603:10b6:408:4c::33)
- by DS0PR12MB7656.namprd12.prod.outlook.com (2603:10b6:8:11f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
- 2025 08:39:59 +0000
-Received: from BN2PEPF000044A6.namprd04.prod.outlook.com
- (2603:10b6:408:4c:cafe::8d) by BN8PR16CA0020.outlook.office365.com
- (2603:10b6:408:4c::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.19 via Frontend Transport; Wed,
- 26 Feb 2025 08:39:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000044A6.mail.protection.outlook.com (10.167.243.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 08:39:59 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Feb
- 2025 00:39:40 -0800
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Feb
- 2025 00:39:37 -0800
-From: Ophir Munk <ophirmu@nvidia.com>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
-Subject: [PATCH V2 4/4] net/mlx5/hws: allow different types in miss validation
-Date: Wed, 26 Feb 2025 10:38:46 +0200
-Message-ID: <20250226083846.4023622-5-ophirmu@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250226083846.4023622-1-ophirmu@nvidia.com>
-References: <20250225120213.2968616-0-ophirmu@nvidia.com>
- <20250226083846.4023622-1-ophirmu@nvidia.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A6:EE_|DS0PR12MB7656:EE_
-X-MS-Office365-Filtering-Correlation-Id: 714927ad-157e-4b8c-6e5e-08dd564127b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?En/1IrwVdC0UNszFcHFEeVkLGqI7e06nEqQSgoOzWCqSvg8b8m2vUxNzbBxH?=
- =?us-ascii?Q?cTTdhQvQvzgftaN1CN7oMeK7gfCmcYQIqxkOIgrjm4WqCMpmWuCPtDdCKn9X?=
- =?us-ascii?Q?yYVJHm7M5fHqocHwVp5aQUYZBXxMjGkFS/6vTebKJaZZ/G1N7dmKb7j7Dgpr?=
- =?us-ascii?Q?DrRfhRA7iFy55NIHYekm+9AjvLvX0jm6gVGcyDJXQBPE3/gu2nZs4xMhzpdA?=
- =?us-ascii?Q?zfMEB7DKGaMHiwTVnTss0gOguWrh2QupAxF1JPeiIHb9DPuZA0f3wl29yYLA?=
- =?us-ascii?Q?7XQBIV0Mzyztr+lNSyXbC0cZl9xrFpRSJHK9HxX145MOdDnM8tU17hwt9nq8?=
- =?us-ascii?Q?TymSkgE9LgzSrqtp90Xt0ODT20aoz0dBoN1n2JkZsRpKZ/SejwNWpuhQQQlj?=
- =?us-ascii?Q?2LnFTzEL3rWeBrsHg1AeCeMx+bfR3Z2yfYgMkqlgF3HqwwbYu38cFqdZJ+DE?=
- =?us-ascii?Q?BtneesP/GcXWgb2HIr3cMe9PrbGz5RTQUwU7BqbdXUxtqKu3e29qlnWv3oID?=
- =?us-ascii?Q?Ntpk4QXbDKR7ThJSGvb3H0JmenjowHKm38f021lr6i1WT8zLKT6lnMKQ7Q+/?=
- =?us-ascii?Q?Bf1vO6zGIT6/D7kR5C/dbPSqDgrroMwY1EGhY3M58I4R2EBW0/d/mfCnQH4o?=
- =?us-ascii?Q?fBxB6bWLMzjPg8lapV43PrsMlh9fErAktzKTNDy3EUlFB+zu2FzNQPV8Pv6v?=
- =?us-ascii?Q?sEO3HMQ3uxlKCvfnhZ2i+VO+l0+pcYwi+R/5N/ZdBs7CWhLUEv8RMER/V2AJ?=
- =?us-ascii?Q?4lZKyz/fkpu/Bqtd5TDlke29lJ1/GTxZlDglbUUMcV0OmBjAG0DH/2xtJble?=
- =?us-ascii?Q?3aJODyW56b945e32SuV6VVz6QHatwFDIFff/cJ5KvGsWtJiRxG1x4oyXluoc?=
- =?us-ascii?Q?sKIxsIwUDXVxcD3qgOqbyBfWVIe0rct8gdxpq9My/9pfYbgl1m6AQYuidwRb?=
- =?us-ascii?Q?1oNOKVQebAhBvydUmdLK8/Ej17XCIHgHcNuoKvsl3P4aXsN4pmNGyIggqfa1?=
- =?us-ascii?Q?qKVW3j5eli/TexObYt0Zw2BdKJF58CQOwj9Vm/zy4MLCEuCnQyJz+omMYfK2?=
- =?us-ascii?Q?EjS6BcJkfBPRtsjaTl4dpCMmFAYijKQR/SByyEcQxkMivgaYe5u2srzD+YOB?=
- =?us-ascii?Q?uESzN0nU7rEgTiYW2SE6QQoNOyylkRuAvh7DhqmZ9fT+EyMt6toRrhN/SSFh?=
- =?us-ascii?Q?cfKRm7NZOxiFFVnO33dnCopy6X8KMeTMwCEHM0C7niPszBA2m3YX6S/HHwIT?=
- =?us-ascii?Q?jdNvRqKwLD2Zrg5VgGuaMXB1Vypj6NY4rAi6hMWv6ng2al57310MXlXXnP87?=
- =?us-ascii?Q?sjO5Fm9MVzAqO1uQHc8XN9DF9/L5nDJpJx/ym7hwf5Bq7gKaq/d91Q/N/3D2?=
- =?us-ascii?Q?S/SvzfuGQ9bS6h6b/xwCZRbijxrR4Q77TGm/SS8SwxmtP3+8SuZgqOZkrbFW?=
- =?us-ascii?Q?c+/JBx8gDIDzzQAs5eeJ3Sxup0KNlODiKAXmiNOwJ+A6sadBk4vbF9jxOVnn?=
- =?us-ascii?Q?xEf0FqncXgsi9TQ=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026); DIR:OUT;
+ bh=iXCROx6Rl+IX5FZ6pQH0URxEMCavIgP3NR7D3w+Rwuw=;
+ b=C9gdmt4a7dxvo8nQb+s/pPC2yHAEYN9ZkClVfCDtG+r4N3FLs4TNhCQatWJWVEyEN/ZuGSaThNm2wuep07JinUH4DIMc2Y4DtJiHqYqLbRY2/h+YfqPL3GKq4mmsL4qWnCpkgR6UjT6pL3c4cdLtkIJ3slPckS/+J2uzQLqV6BnLT+ZWZxzh2X2BrfEbqQH610zeB6V+D4NAlGGELQDOYmjShoTT+0rOeGGS6sk7MZfmc0RfVB3heZNiu1uzyPv/+1YDgptMfXyWMxALNA3MDJYN3DWZnn6rzXz7J7kBJEROASP1bPZlGl1tI06DdCuKfr/S8dgpyEz9Op71WSopUA==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by IA1PR12MB7565.namprd12.prod.outlook.com (2603:10b6:208:42f::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Wed, 26 Feb
+ 2025 08:44:17 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
+ 08:44:17 +0000
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Gregory Etelson <getelson@nvidia.com>, Maayan Kashani
+ <mkashani@nvidia.com>, Raslan Darawsheh <rasland@nvidia.com>, Itamar Gozlan
+ <igozlan@nvidia.com>
+Subject: RE: [PATCH] net/mlx5/hws: change error flow on matcher disconnect
+Thread-Topic: [PATCH] net/mlx5/hws: change error flow on matcher disconnect
+Thread-Index: AQHbevlbQfUcifcACEmOyZMyjvo9DrNZXxdw
+Date: Wed, 26 Feb 2025 08:44:17 +0000
+Message-ID: <CH3PR12MB8460C2DFB17D107690537BCAA4C22@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20250209134806.263338-1-getelson@nvidia.com>
+In-Reply-To: <20250209134806.263338-1-getelson@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|IA1PR12MB7565:EE_
+x-ms-office365-filtering-correlation-id: 249a4a87-eb4a-40e1-89e3-08dd5641c197
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|38070700018|7053199007; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?unytxZ/oWOGm6zawCSm+12k2WHls4Fmf+82RKS6sYgE+bLcrpnNelkr1eoFm?=
+ =?us-ascii?Q?XksPyshetObOfew907fkPj5n3UPlpoJsIOEoZ1cqnhj/y+9pHEsATu5qwsRG?=
+ =?us-ascii?Q?/LIPxYEgviblRk4qwKSSBD+DNyBQnPt4E6BDxMfbqJSidYZBWBYljqABi0kY?=
+ =?us-ascii?Q?eFhLd5JEk1nuKml56ji8ykw5NvFtSTL0mNmyG1k5cN+IH4Kksnr9Fr4aGUYc?=
+ =?us-ascii?Q?a532bc/oP8nodxmcVABynM63HmSlrF9mABmr7cho3SRelRLXOy9BkUO040+J?=
+ =?us-ascii?Q?eDss/6pE8jKW2IdfSvDK4ScTtudMqe5bqNyJPTQq5rBv8AS6xlVYIL2/fihm?=
+ =?us-ascii?Q?GBXkReGOeWAjvlgbLl4+dIg/h06sspvxzn61vRbb4rKCabMILkIDYKIrwJX0?=
+ =?us-ascii?Q?jMyjtCh1of1hsgYbNgERG3E4DCxttnb8gD3DTw47ev4V69iSU7Aq9RZ6ld5p?=
+ =?us-ascii?Q?c3TBSeazQ2VWhKekgEsLDkf/Ox68Y0NmC2KkAuj/J/VoSLyh0Bd6XCyv60Nh?=
+ =?us-ascii?Q?i5qA75O/pv6cMmaMu3gJjui9gxi0hPY2OGu8yazVtGAFNkeV/26nw3yQREZ1?=
+ =?us-ascii?Q?B+V2WQPtM5emBn92bCoZ0ONSVP6rShDGPMG7gRnSZ9zn/8zIKjP15aDxIY5M?=
+ =?us-ascii?Q?r8SxKGDapSCJPgITcUDW/eBVAuuuQW4pIQ/lXORgBB/sQmylOl6uexAVhAFQ?=
+ =?us-ascii?Q?Lmgm27Z0AZa/+xPohoyZ95gZFjSpbcEa4AJ24rlF9ZZEBmwNdU7pZz0GybN7?=
+ =?us-ascii?Q?hygHq2JgjeDVyHOzrjkkXdzp98DWz3cu5p0O1ZyCCqI4IV83z7YNC7Gb5Rnq?=
+ =?us-ascii?Q?UhHJUNITHO1yxeKQfZ7xIBnV+z7W3Lj6RL8fQGfyrlhycsha5azfUrTA+RMM?=
+ =?us-ascii?Q?fu1445qpvxsEC0CMHby3k/hF/GAXWvICztix6GyY0Zqrd8gIhX+ZvbjMZCkH?=
+ =?us-ascii?Q?w3b2ffbkiaJWeFr/fxgeV0t4TjOZx8Cdi7vobK9r4D8L0pc7LS6hbbXjNZcB?=
+ =?us-ascii?Q?lhJXOZfIHzD6tWNeOpuoMEbH4jPairgkkhfE09XxlIvb1u27e7GyeOs+hqcm?=
+ =?us-ascii?Q?1KjP8eQ2Eahd5VJPQCew5yiehVLV/Ki0PejY/9OxfvCA4n2O0uPacLu6JChM?=
+ =?us-ascii?Q?mpxZC4PdAkzHeMvL2kph0t+ueWM3NL+hORq2CZ8N20ksFVk6DkoA0nypaw7R?=
+ =?us-ascii?Q?+HYqehlHGCxMhhV2pE937lVWe4kSOzLg/mhvwq91gTnVSkQobOqMU+dTPeJ0?=
+ =?us-ascii?Q?V/I8Q6ULQlhlJzqmygdHj7TxPxYwah+Lg2B1AXgnsr4fXXauMfAGp4r5y9PF?=
+ =?us-ascii?Q?t7qRmOVQ5yYZyXNck98+aILutz6+C05dhHOB5e4qFxzYHE6ar9zSgKNpQWAN?=
+ =?us-ascii?Q?nAU+BS4l4hxRybYUlj02MGr4rxZaPgbegz5YMfjPERx/bl6tHGcSmSWurFzO?=
+ =?us-ascii?Q?00yqXbtdM8ovNGnXLUN6zV9KIL8jLRw0?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(7053199007); DIR:OUT;
  SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hxos2fGWY5wSzIXEAn5Pm5OC2Il/QZbXoIvYLS3GOs9FkfRsGy6ZroyAACZb?=
+ =?us-ascii?Q?jroNrCY6hTyEGBkHcMnxjjGz7y5esIeQP8GNNt+TXWC+OyMbjkSkEX+LJwC7?=
+ =?us-ascii?Q?OVb3L3bifv56TbNHCCMDzVjJqVUz8Q4LlgBfPrmLLz1nINUAWs17Sj3trZ7J?=
+ =?us-ascii?Q?a6uMbSROPdbGIijOum4+/ksKL/8rRmcrqyOLeFySiFvDCMB7auAaY9gTJeiA?=
+ =?us-ascii?Q?RqQedjrdu9jQSk9GgkK0JplUSNqCJY9Tts7ToZimJ9+dcEAEwo+X0Vz6+LRB?=
+ =?us-ascii?Q?z8rKF9RrxDAs1tl6H0qZzCfm8GTPnh3l+HsJCVSZB3A388hXA2GQgrjWXZQX?=
+ =?us-ascii?Q?8/BGGMaGefYxWhr/sd9O9CS5wqPkXWQdw2GYmhJHcAmugnBRv6uSap0cEtxJ?=
+ =?us-ascii?Q?FY/S0VSf5lDBK4VdYSZ2+OiAV1NgdLsMjhqn5UBYPE2Xg7KbrHrdhs9ttZR2?=
+ =?us-ascii?Q?BRLCngDErX2RlAOU/V3j3/odEBJUEvpP3nxsEbmph08WO9hqSjq5SNTV/Ee4?=
+ =?us-ascii?Q?EMrRXvz2GY0StC5lamVKNNSsF8QMINNB7oXk4fOYR6OVcXOt7BjhwZGGlTpX?=
+ =?us-ascii?Q?Vk5REZGYBho8BondoLr8d81I5elbkZPjOjqB96IREfACPk7VnjQSJ1zmgakI?=
+ =?us-ascii?Q?EHqyEJyplLcDk4P4IOv2u60doI9McWSKQVn/ijMfH637mcJL2Bv+03XoLQC/?=
+ =?us-ascii?Q?mMccrO457f5E8W/VfgVKxkkLQgPajjmSHQ01iZG2bJ6f0ILYmq6DFvhFFSBR?=
+ =?us-ascii?Q?jmv6QL5GGNmTD0BgRmsjGj7TpMag98eZxhEJYnjYJln/hWaotOiMJrseyi2+?=
+ =?us-ascii?Q?dDR58qLGqkhMImShKwI8zIyKoaiFzRRdghymCHO3SQnvr5ZWt7Paomwe9Jl2?=
+ =?us-ascii?Q?RDlaXwT6YtgG9yEwfNqomon69l9cyGtpb7u8DvMyri4EOsstl3sV/0lgtICj?=
+ =?us-ascii?Q?0bMTDtqKpqMthnHaGyBPctDCPT8SsX4jeBybOvqFzAk6X8TyZbYXFT6vAxTY?=
+ =?us-ascii?Q?BR8a0FHq3QiwHIJJgEskvWBkXOAM3KMkRarbsquXrDOd68eOCEV64r6NqQ0X?=
+ =?us-ascii?Q?qW4AGGXmF04zgVlwt9PLBWY9syyoquttsR/B6yJgI1yk1+rJzLhmcnQCpwGL?=
+ =?us-ascii?Q?PUF+XP1gZX8zJGxO86R1QMSSuzvDwUF3B8eEeSe7BlbyrVZhvjYhbquDIRID?=
+ =?us-ascii?Q?NLHvZe6IXGMqK6QK33YqR0/ttgr5SxLwfQi96NwoWRAF8kutX95glzGcGMY9?=
+ =?us-ascii?Q?BQkbrihWIy+IYywjCK7j3YnPqKJBRAjdkm9/RIOY127J+k+xJc4baur3aOHs?=
+ =?us-ascii?Q?x4wwecLbYCt9kEfg7V5opUy66ya4XKqXh4jXNhsw8mtw8SnwMFYoRh2oO1cX?=
+ =?us-ascii?Q?pcwdUd2F2Z0JL6ota04IRQovlKaaFF0ynr6Vqh4fvg+UcuZqHnn0TUx/OrdS?=
+ =?us-ascii?Q?/dLjeMP2MoDycAeJPlGvUSiGWWazKVEzzi9hAw8aipiQH+4SAVm8CE0cmcWv?=
+ =?us-ascii?Q?hecEZFs9AEHD1eG57fFZTdYPLr7Rn4/yPh6kzd/2M0M6XVjlyfCiMe+4ZqC8?=
+ =?us-ascii?Q?+YlNYR4GYJoEEAR1pl0RNyrtVUuCF+Us7Tvngcjc?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 08:39:59.3446 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 714927ad-157e-4b8c-6e5e-08dd564127b4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000044A6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7656
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 249a4a87-eb4a-40e1-89e3-08dd5641c197
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 08:44:17.7229 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lKFoPXAYIf9hZBQs7M157/cuOkmLLI9fXseLkwl4VHsb1MOY4wj1peOy+MTo4W7ThZqgGepJwZScnkYTAq+86A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7565
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,54 +143,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In validating Jump from group A to default miss group B DPDK requests
-that both groups types will be identical. In practice jumping from
-FDB_UNIFIED to FDB_RX or FDB_TX group types (or vice versa) is allowed.
-This commit enables this jumping between the different types.
+> -----Original Message-----
+> From: Gregory Etelson <getelson@nvidia.com>
+> Sent: Sunday, February 9, 2025 2:48 PM
+> To: dev@dpdk.org
+> Cc: Gregory Etelson <getelson@nvidia.com>; Maayan Kashani
+> <mkashani@nvidia.com>; Raslan Darawsheh <rasland@nvidia.com>; Itamar
+> Gozlan <igozlan@nvidia.com>
+> Subject: [PATCH] net/mlx5/hws: change error flow on matcher disconnect
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> From: Itamar Gozlan <igozlan@nvidia.com>
+>=20
+> Currently, when a firmware (FW) failure occurs during matcher error flow,=
+ the
+> system attempts to reconnect the matcher, leading to a segmentation fault=
+. This
+> happens because the matcher is freed but remains in the list.
+>=20
+> Example scenario:
+> Given matchers M1->M2->M3, if a FW failure occurs:
+> 1. System tries to destroy M1 and fails
+> 2. M1 remains in the list but is freed
+> 3. When destroying M2, it attempts to remove itself and create M1->M3 4. =
+This
+> results in a segmentation fault as M1 is already freed
+>=20
+> Signed-off-by: Itamar Gozlan <igozlan@nvidia.com>
 
-Fixes: b81f95ca770d ("net/mlx5/hws: support default miss table")
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-Signed-off-by: Ophir Munk <ophirmu@nvidia.com>
----
- drivers/net/mlx5/hws/mlx5dr_table.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/mlx5/hws/mlx5dr_table.c b/drivers/net/mlx5/hws/mlx5dr_table.c
-index b371f42..c1c60b4 100644
---- a/drivers/net/mlx5/hws/mlx5dr_table.c
-+++ b/drivers/net/mlx5/hws/mlx5dr_table.c
-@@ -626,6 +626,19 @@ int mlx5dr_table_connect_to_miss_table(struct mlx5dr_table *src_tbl,
- 	return 0;
- }
- 
-+static bool mlx5dr_table_set_default_miss_valid_types(enum mlx5dr_table_type from,
-+						      enum mlx5dr_table_type to)
-+{
-+	if (from == to ||
-+	    ((from == MLX5DR_TABLE_TYPE_FDB_UNIFIED &&
-+	     (to == MLX5DR_TABLE_TYPE_FDB_RX || to == MLX5DR_TABLE_TYPE_FDB_TX)) ||
-+	     (to == MLX5DR_TABLE_TYPE_FDB_UNIFIED &&
-+	     (from == MLX5DR_TABLE_TYPE_FDB_RX || from == MLX5DR_TABLE_TYPE_FDB_TX))))
-+		return true;
-+
-+	return false;
-+}
-+
- static int mlx5dr_table_set_default_miss_not_valid(struct mlx5dr_table *tbl,
- 						   struct mlx5dr_table *miss_tbl)
- {
-@@ -637,8 +650,9 @@ static int mlx5dr_table_set_default_miss_not_valid(struct mlx5dr_table *tbl,
- 	}
- 
- 	if (mlx5dr_table_is_root(tbl) ||
--	    (miss_tbl && mlx5dr_table_is_root(miss_tbl)) ||
--	    (miss_tbl && miss_tbl->type != tbl->type)) {
-+	    (miss_tbl &&
-+	     ((mlx5dr_table_is_root(miss_tbl)) ||
-+	     !mlx5dr_table_set_default_miss_valid_types(tbl->type, miss_tbl->type)))) {
- 		DR_LOG(ERR, "Invalid arguments");
- 		rte_errno = EINVAL;
- 		return -rte_errno;
--- 
-2.8.4
-
+Best regards,
+Dariusz Sosnowski
