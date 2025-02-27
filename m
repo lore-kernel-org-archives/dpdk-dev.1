@@ -2,171 +2,127 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B2EC021BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 09:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2475C021BE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 10:14:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E20074064F;
-	Thu, 27 Feb 2025 10:44:47 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 10DB740290
- for <dev@dpdk.org>; Thu, 27 Feb 2025 10:44:45 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R8WVkb005610;
- Thu, 27 Feb 2025 01:44:43 -0800
-Received: from nam04-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam04lp2045.outbound.protection.outlook.com [104.47.74.45])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 452mmn85fd-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 27 Feb 2025 01:44:42 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 337CA40A6D;
+	Thu, 27 Feb 2025 11:14:40 +0100 (CET)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D11940290;
+ Thu, 27 Feb 2025 11:14:38 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VckxumqkQV1GiUY3WsaiyGa+rPcamP5tnoTbUOKvTrNd5p+peroGYz0rZJNEXE0DnmgzKW1NDeCK6LBB+L+sBvQ8306YGKk45xhrkgFiqQZ9dmsWmFZA0ovWtmdCDoODojG+AFod35s5CVLbJu2QM7nGqXu+4KwHzxRp0g1+/IuiK7WwNWixk85o62vdYnKrMvlmd89jCFxqhEPbBbV+iNspB3gOu7miFz+2oWRe/nd9aQfJgHT3heQA4cZdvdyYjgQaHm3LpNBGXDzNTuvzuLYIC3cxnJW9i76EP5OOuEOmhCDsyRp+S3wXJN4hxSsxXGytWnKJKTRQxT/jbatHsA==
+ b=VytWG1ofw1hc7izwZ+a0U1a0C6jNY2bU45BZJXFAffpQR/8Dwld7ShcbgkoaY6mGoAGPxCXVyq+5iup0RClfKEjDL0v9ySdD5F2Xcklu+TQr/9iu3xjWpT+aCz0VxpoMRPC5Dl8t9nq1d0qQCrEA5ATfUqdoK9knBw2J6QYdwipKILE9bf6VfTLphZWHvs3WBtkoaKXo2BEeNLE17cv247hhK4YR4TDG6SO1OXoAWtH2v8w5BsZdIqcCflpLZfXznTXBp7kBE9PYotsJ97Kt2EWB9Un1dCyarcy7U5oqnVxSQYo/h+RYfOWYBBM7xE91P6zBaPO0FSolccYxJyz3FA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oggh0PQc4jIcwVtUiuUy8jqIVnzwm6BKv9Vvtjwnmjg=;
- b=cVCuttrEkdJJQbKnBe0Qzu10L63hlqbrKFFpFBcg0voaljFjuxu1fhyiXKtD4NagMa/DiFMysltsZ8HWqN1kR1yV5KjuDR1Er8lubkWNaMgJscFwwfDvWEl2oh8OiCmPkDVCIpldzMJagJr2dCt7DXczxT4Pz8t8YmhziYXpTpVaEuGMnGd/6TjYzzVCuSwMj3Sv2+aHh4v9SBVd58nHpmU8ZgnK0JqS4TRPos0Qh8wIjCm9pSjC2o0/RxoLAQ+yiWjwa1PtSWpWL3i733bfNg9ZmcF+oZgvyQ3cfI7+97n9iZfMriVsqJB8aez1lfb5Wv3jajpsQV39U0wGtZGJAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
+ bh=iY8d7CeCGLqrIcr8dosLsnp57aXrUL4cpvmDtbeG6q0=;
+ b=wx1qnJ0apwZvH/ZxplqdRXyx0q3QVa9nIa/fRN/1ESfMc8yEHE1/UMBvPFMAT4EjWfW8KhJ2WyyWs38+T06rAYi40ycxEU2ypQgEJxUYOopfc4lsiCC/HJtX5N3dauxiWyPUfix0V4miWWl3XnNRLUZwckB7kEhqRleA1Wszad6wpezGIaIgKE/4ZNyTeLE6JX1hQ419SinDCUsgHQF16wmYwUTCmOf1DvgqukXfHXUqIWSdiMDR+Y8vrwegQLzu/3nRXxGoeiHNgs9uIbxiaSwHg7Q/TAaq2JotSl5WP/ZS2ySS5tfs8v4V7eJxgQFuW+9JdYHzj11TczY3zaSg3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oggh0PQc4jIcwVtUiuUy8jqIVnzwm6BKv9Vvtjwnmjg=;
- b=D7OQGVSu1PJDhcyFSP7yT4yiQQnj/bP0fazcLIlrQyVSfLb+1lN1wcSfKSlV4i7XqBu9bflMO/EQogo7qsEazfwntEUa9EjwW4wRpTN4NUy6/rXtDmS5+y1ZUeOhR0F6r4qLKCepMGLXpbymb54Ckyuf7WkjAJDIUT80g8jN69Q=
-Received: from DM4PR18MB4269.namprd18.prod.outlook.com (2603:10b6:5:394::18)
- by PH0PR18MB3910.namprd18.prod.outlook.com (2603:10b6:510:26::5) with
+ bh=iY8d7CeCGLqrIcr8dosLsnp57aXrUL4cpvmDtbeG6q0=;
+ b=ewoAjhp/be8WKqS7xBJ6UbT2agMM6hYbBRtwHjzHj2nTCCMm8WQ5JT9opgw0RhO5unU6e8r0OdUzvGL5sTRclZgKcYGik7A9qYso9++PJEqOHInEX2mOq97QUIceNtSlf1sf6mSBNEPqD3qRzj8OtbgSQVx/4Abd25rCwAG6tiIj9MiHpNZQdvjVB8Z+FcU9pedSOQhrs1mr+Vab91xI8I9SrYFtrgOmZc0MkMbh0z6elAcVqMX3tfOfD4k2/y6NQp9uQ551xZV5w16ARfxeqjFGGeWyMYwRaHpqkbrX95DcVR4tydq8slByzXw74IGWxRnRVdlvx+atWi/TIAqY6A==
+Received: from BN8PR12CA0017.namprd12.prod.outlook.com (2603:10b6:408:60::30)
+ by SA1PR12MB8858.namprd12.prod.outlook.com (2603:10b6:806:385::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Thu, 27 Feb
+ 2025 10:14:34 +0000
+Received: from BL6PEPF00020E64.namprd04.prod.outlook.com
+ (2603:10b6:408:60:cafe::bc) by BN8PR12CA0017.outlook.office365.com
+ (2603:10b6:408:60::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Thu,
+ 27 Feb 2025 10:14:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00020E64.mail.protection.outlook.com (10.167.249.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 10:14:34 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 27 Feb
+ 2025 02:14:24 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 27 Feb
+ 2025 02:14:23 -0800
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Thu, 27 Feb
- 2025 09:44:40 +0000
-Received: from DM4PR18MB4269.namprd18.prod.outlook.com
- ([fe80::9796:166:30d:454a]) by DM4PR18MB4269.namprd18.prod.outlook.com
- ([fe80::9796:166:30d:454a%5]) with mapi id 15.20.8489.021; Thu, 27 Feb 2025
- 09:44:39 +0000
-From: Shiva Shankar Kommula <kshankar@marvell.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "chenbox@nvidia.com" <chenbox@nvidia.com>
-CC: "david.marchand@redhat.com" <david.marchand@redhat.com>, Jerin Jacob
- <jerinj@marvell.com>, Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Srujana Challa <schalla@marvell.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report
- feature
-Thread-Topic: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report
- feature
-Thread-Index: AQHbcI72u8xxHtElb0Kuk2Bh46tNsrNYXg0AgAK3GFA=
-Date: Thu, 27 Feb 2025 09:44:39 +0000
-Message-ID: <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
-References: <20250126193404.3431544-1-kshankar@marvell.com>
- <20250127074150.3499851-1-kshankar@marvell.com>
- <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
-In-Reply-To: <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR18MB4269:EE_|PH0PR18MB3910:EE_
-x-ms-office365-filtering-correlation-id: 14bfb7f7-117b-4702-5455-08dd57135b01
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?MEhGb3dtR2kwWnlWTHZGU0puY1BvUUJwM005NUt1OVRBRm8xaDVpMmFJREQ0?=
- =?utf-8?B?bjQ3Ti9RRjJYMDBIendxZVpHNVlsL3BySW1rQmNIUXBEa2pSVDliT1IxaW5z?=
- =?utf-8?B?NC9uVERFU3BYNVhSdVlmYTBVcnIyY1VWTk56eUdsMHZtRkJkS21tejlZVHJP?=
- =?utf-8?B?V2lYMlNCYVNrYlRUY292SnFRUG90a3l3TU5WdjUyc0Mwd2xqWGV1enpMNkJJ?=
- =?utf-8?B?VGV4RHcxRldDaXloTUVuMlRYNGVBcGUwamxvQXhHT2R2VHNtWVZNeEhNVmhi?=
- =?utf-8?B?VGV3NFJLVzlIWXZYekowMWJhRnVHQW4rcXlZcG1UdDYraEpHOWhRZExla2tv?=
- =?utf-8?B?VnRHRjlmTnpNWUFpNzRPSWliOVBEcndXVjJxaU9Ydmc2T2dMbGVZWmJ5dzJj?=
- =?utf-8?B?SHJYbjNtQzJqNnU0UlkyUkNFamIvaTZBRkNsMUN1cExUa2RiOTlVengvRldW?=
- =?utf-8?B?ckdTODNqaHZTaDZqbk1QNDNMbUFrQjREczE1a1F2ZnprQ0s3YWlEVllqa2VY?=
- =?utf-8?B?M2ExSW4xZnhkUW9DZ1NQZnhjL1NKTG9SMVFoS2E2cmRLM2pnVUNqYmlNREpa?=
- =?utf-8?B?OEFyZERlZWFxemF4WTVHNmo0U3VBYXdXSmxxdksxVmc2Mm1udGpnVWtOM0t3?=
- =?utf-8?B?R2xUY082NGFYbm5tU29Kd0F1NmI4eDVOVFpPVlFFdlFjRjBiS0tVMzVmdkxy?=
- =?utf-8?B?Z3VFZjVCQnBYQ0h3K2FzKzlPL3VvUmpsd1l1YUZyM0dxMDlRUzA5QVM5ZG5s?=
- =?utf-8?B?bExCN2FEbC9hTVlUeUJYZ0s0RUlYUjlxeDNIT3hGR2NKcmdmVnNLVWw5aWky?=
- =?utf-8?B?Z2RCZnZ5WnZVT2pxVlcwWEErT08vc3FxU2l3aFFuVzlIYzlwaVdXcURUN01R?=
- =?utf-8?B?ZldVdEhxQjBpWklQSHVFT0hleFpnTlJKbUpUU1N0ZXdMTGF0Q29mclQydUti?=
- =?utf-8?B?bkp2MTlLWFhjcTA0RUlTNUtTRUN3RlhsekgyTG8yMEJEWWRjKzZoYUNwY0hZ?=
- =?utf-8?B?ODU1OGtjdXd0SGpGTE5XaDJaRjNmK211VE5KUzBoSnpURi9TSURiUU1iRWJq?=
- =?utf-8?B?U2ZMNUd1d0FUL1puZW5hZThvMjd3TEdSajk4OUlha3BsUGFYRFR1UE9JZmta?=
- =?utf-8?B?cjRRZ0RPY1FKSStJdnRwSW40OFVMWXU4dlhPbmZpMUVlQTBaQ3o4UWpYZjUr?=
- =?utf-8?B?Y3lUa0tJbVZUTklxSmpIWDNIckNpSjgzaGZuelU3bnFkNzV6bWFaYWRDanlq?=
- =?utf-8?B?QmVDc1U4WnhKbHNGTmw1azVsdGRSbm1NL1FYZlgybzhCenI3QTJxVVNSUCtq?=
- =?utf-8?B?SHhiVWxBTzVLUmpVbkw1Z012eUVkZmxSRlpQMWQ1WWg3SHVHQmlKOWtHdU01?=
- =?utf-8?B?c0tiZDRRVkRHZG1jdXBJa3lWSUdOTDRtbVpyVWxFTEhqTUhaSnJ6WUNnUFlH?=
- =?utf-8?B?YUV1WWx5ZWtRMmIvRmpHRFF3TlNsWEoraTlPakJ1b2UwTVhDOWZzZU1YVVRI?=
- =?utf-8?B?dDZkR0JPMUd4R1pWTVZIaG1ZYzhSeVhYNFU5dEwzM0ZsWGlUSk1NUld2QU5x?=
- =?utf-8?B?YzM5QjlUUHpBcEo2YkJXQk5sYnhKY1ZiMXpGUjVvVXdhOTFQL1F3cTBsd0cw?=
- =?utf-8?B?S1VNd0tqTmVEMzJpM3A5Q1IzR3lLVFJrY1YxaGpIcDh6Q3grcnZJb2dQeUs0?=
- =?utf-8?B?MTNoYkFRYVBMdWVZajlTSTQ3Vk81S0Q0ZnloaTgzRUFUelFKQ0xZSFUzblB0?=
- =?utf-8?B?dXk2ZXpOSjZ0cEhNOHI0NldDYWd2bkdwTmNXZk5BSWRnQjJTNGgwakJ0QUUy?=
- =?utf-8?B?M1pwNXA5N1phdHNmUG9QYWhuNGdUczBLVkVIOHVLZ0ZVV2ZrUEFTVEg0OVJy?=
- =?utf-8?Q?1JX9jut29H+c9?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR18MB4269.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MU5pMkdnM0NhaWtKa1luN0ZFVjVBNExzSldsTmZJTkRuZjc0WEJiK09Xc08w?=
- =?utf-8?B?RHFheHB6UlZQRytqaGpFNlFUNVhNNDVvTFdFL1cvTG9oOXVFdFovMFdXVE4w?=
- =?utf-8?B?bXJJQ2IxK2hadTQyOEF6cDZTOHpQenE3ZE5FRzFYc0F4Wjh2NDJCYnd1VHJY?=
- =?utf-8?B?ZllHM0tuakxocGVvazQ4Z3JPdzdxaWpHalh2SzVZVThyS3pvQWJEZXNCSEk0?=
- =?utf-8?B?RXoyZWtPL1JlUnQ2cHdtYURodUJXY3FJN2xXQjJSVmt1T0VlOXp4U3pEVyta?=
- =?utf-8?B?SWd6QUYwRHBoOVgvOXdadHg5RFhmbEpwWnN3T09hMWpIM2JuTnBZK2tBVmxj?=
- =?utf-8?B?VVNrazN1Vy8xNVkwRkZiNWNuam5NMDMwb0ZvSmF4b1FiTHhEM3VMZjdCYVl2?=
- =?utf-8?B?NUE3a2hwUlhoY1pRaXlZOXppRGFDWnY3YTBPOFpkckpGNmZoNWkrNGdPY1Ry?=
- =?utf-8?B?a3ZWbk8zMEJRWE5xaVhLMjkxVG5YL05aRFB6cUxGMGRjY3YvdHpPdVJBWFZO?=
- =?utf-8?B?TGlZckNYWVFoY0xySXdGZUtFcjdpMmU5KzRNeDZEU1NKK0hQRnlTQ0ZBa1pW?=
- =?utf-8?B?YkVMeW83RmJadlg5YlIrYmY5eEF6UnYxUjlSS2hZS2NjeVZ1TnVGbVlmQXE1?=
- =?utf-8?B?c2RxMWl6THVjaHhXYXlwQS9xNEE0RnJSRlF6Y0U2N3hxVjdjWWQ1SFNIM2R4?=
- =?utf-8?B?eWdqUU04MTNnK0I2Vmc5cU9lWXZpbGNPaTNWZFFlUkNEYkNpOXcxOXUrL2d6?=
- =?utf-8?B?REVMTnM4QUVmMzN0Ulc4S241MUNTRkRPUUFCNVprMmxkd0E1SVRwZmZweWhy?=
- =?utf-8?B?VUp2UlNKL2VNNGZQOEVVekt0V1Znc1FyczhTLzFEeDYrUFVyWlFmZXBoa09o?=
- =?utf-8?B?Mjl6OVdEQnhNVmdPanMrWlIvcVg1Y2F2R2hUdXlweXhtbmhqdFI2WHRmUkNL?=
- =?utf-8?B?Z29DSEZDcm9XcWU0TTZySkZocGJyMGZmZ05sbzRjUXJCRW9oVVNhOWZ0UWJj?=
- =?utf-8?B?dmRYa044NkorOVFBNFYxUnM3RU1YQTJnYVJxYm9PZkN1ckhXUmt3STNiV0p2?=
- =?utf-8?B?MUlmMlBabnFPMXFIZy9ocWtMOW94c01yUXNteGF2bHlheFVUWitJSDB6RThQ?=
- =?utf-8?B?VWxIMERNYU1JR1lGWmVWcjA3MWhZWmxtcDJFL2hVVktNUytnRUdRTDV1clE4?=
- =?utf-8?B?dkVKTVNKMUlFbURNWTVvaDFJQTdSREcxa1kzRXY3WnlmSFZDRWJKRkZPV1Ny?=
- =?utf-8?B?emE1Q0lxR2p6OExYN1I5U1dVdE8vR0JEdDNFUDRSelc3TmlxcXZaeUxZV3ZX?=
- =?utf-8?B?NDB5V1BBZi85QUwvMVBPT1hNMTlwd1R6OXlFMERSemsrTHV2S0kwWHczMTVj?=
- =?utf-8?B?bisxWkN6TGlFcjBXMXZadTRnUEo5YS8xVUVLRUZRMWYrL0hyZk5aZlFCU2ZU?=
- =?utf-8?B?K3dET0kzb0JVd2lvQTFoeHEzYUI5WHExcmZPUnRpblo1VlhrYVdxelVQVS9U?=
- =?utf-8?B?TTVSRE9oYVR3T2piYUZTRjdZaWVNL2tidGJEMEhja1ZDbGZxeGtOLzRQK3l4?=
- =?utf-8?B?ajFMdVo5d0ZzL3FhRmt1SUY3UGJzV2pwODJDekdieDAxMXRDOFJTNmhCdEdr?=
- =?utf-8?B?TlBtbWhsNTdtclJaWXE3dWxsYk9CS29OdHgxb0tiV1Y0Rmpmbit1VFFoMzc4?=
- =?utf-8?B?NndON0FuWjN2c1M4ZkJpUU16Tkw1MUU1bVZCQjlOUUdBTzlpRlRHRXJaNXpS?=
- =?utf-8?B?Y3N3Q0xOdDhsb3h2cGY1c3E4RkZYdEt5S3dMa1NjQlJ5WUF0ek9oc2JjQ0tG?=
- =?utf-8?B?Q0dsam8yOUxHdmhXMUlUWU9ENTB3TVo1ZnMxdUlMSWNGZ2hzN01LaCtabHlK?=
- =?utf-8?B?MHZ6NXZXOVFCaTBEamhKcktXRTdUMW94UllOTGpZME9YaU1IaExGSU8wU2xW?=
- =?utf-8?B?VzZSUm04dk1SVm9vaHM3bFJzYkJmNWJUaGwrZXlsVzQ2RXdrT3RpKzVpbUNX?=
- =?utf-8?B?ZmZ3V3BWWkhLUThGRDFRT3o2a1dLdUNncWkzclZlVHRPamorc3NMYTVjQjZs?=
- =?utf-8?B?ZDBxNXlLRWdEa1UyWkFRdWpaa3N2NjNHNVlGUXZsRURMSFBIQk5EZjdWVUp4?=
- =?utf-8?Q?pT0R6oybrJUE6q8a0M0ewwwE5?=
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 27 Feb 2025 02:14:21 -0800
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <dsosnowski@nvidia.com>, <rasland@nvidia.com>,
+ <stable@dpdk.org>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Xueming Li
+ <xuemingl@nvidia.com>
+Subject: [PATCH] net/mlx5: fix assert failure on hairpin queue release
+Date: Thu, 27 Feb 2025 12:14:14 +0200
+Message-ID: <20250227101415.89079-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR18MB4269.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14bfb7f7-117b-4702-5455-08dd57135b01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 09:44:39.8876 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: x2Hm8oyfvrZkE5WiHcjiwVZ2pdsW5HoVk3o9esLRg+2mfFwS5CANEy67/6/5aOohiJUMn4K0o/OTNazfJH1LUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB3910
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=JZxGrVKV c=1 sm=1 tr=0 ts=67c0340a cx=c_pps
- a=GbYsmhbcUJoGoLxTsnc7yA==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=T2h4t0Lz3GQA:10 a=-AAbraWEqlQA:10
- a=20KFwNOVAAAA:8 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=Ikd4Dj_1AAAA:8
- a=RpNjiQI2AAAA:8 a=K3_rMOR3WuyZ97aozrUA:9 a=QEXdDO2ut3YA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: Jc2jcdyHCEvSsL5SoYbJF-COQpKqmukC
-X-Proofpoint-ORIG-GUID: Jc2jcdyHCEvSsL5SoYbJF-COQpKqmukC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_04,2025-02-27_01,2024-11-22_01
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E64:EE_|SA1PR12MB8858:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70ad3ab3-3c5f-484b-e9d0-08dd5717888e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|376014|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8N4SR9Zd4hYb5Q8lQ9nOG9kjp7fxMCisfPsA673rcgbst3mLpUi5Ey0QCgnf?=
+ =?us-ascii?Q?4/680DSSwB2nyqv5BESqhYvkx+u+mzYoe2cv09mHH2ALCFsXaRsnxyoI6W4j?=
+ =?us-ascii?Q?KUz+msmFeVRQBXd710k2FxI6J2rQ+MblVX3tgg6NnT5naIAUHqdxKFSl8XTU?=
+ =?us-ascii?Q?bky92A449gHW9O9/LoFbuWM22u9C6CJiNAVyqe1NvphSIrIKXa5NNlNWdXDC?=
+ =?us-ascii?Q?/6pRLKw1fBmO42pPYitK087U3UhIcMWqhIr/utrpl+TfPOZ/PDlf+pWC/ha9?=
+ =?us-ascii?Q?zdwO2B3mSZ/cYtcfQePf4FcBfOlE7inrCjooWrGSC9XvjMd3Bt2SAm2Va/sM?=
+ =?us-ascii?Q?DEZ5zjkkhu43/bMUNrIrgKQHg706WFKJwK/BpeOhEfhvXjMBIi12Z2joRkMz?=
+ =?us-ascii?Q?tixqnPFMTea/ndEA7J2w/O3O61A3z3L6GRe6jcQOSmjmTa2J0d7MHjkePp13?=
+ =?us-ascii?Q?wAL1JfxavoElYl0+VTHKMDh9DMdDfwwpXzaCDToiyrh5Naw0lrKXpZoALfkn?=
+ =?us-ascii?Q?MJoeP5iteQHJDroH6Rhk6cQBJsaNnjoaEt59dL1SaIwa+AgTUyg6WFda/VHK?=
+ =?us-ascii?Q?n0HzRPaEH2cIAmoFsmRGV8ejVClupfpI6WtSEs1xlCZtZSSG7Jd+TWtUQI1z?=
+ =?us-ascii?Q?4807qCSTAjv2IjrdOQBJq3S+qxTOZU6/GgWzhoYKuNQy5tjeGkf3iHPIBtx/?=
+ =?us-ascii?Q?QNr9m2ac1djsXl1DcXgqNcG+xfTi+bumHT7H6cOTxC8n6fdIfMKsas57LOvJ?=
+ =?us-ascii?Q?kNtp9qOfvVdyQxQSvfNgZdfiNwOPXjZLEdsLNIFgP0W2Tciw3RE/V9YSWfDD?=
+ =?us-ascii?Q?6Uo5EqKApl6QrnlrQGtoW5BZe8FsNpqXAyMhFSYWIAWgeZ/phw0yFBfg4Kcz?=
+ =?us-ascii?Q?vZzcVYIuqMKuZhXZjyOC8rkSznCEN0xoIi0QkqwHuTHrV8vz6bgQGQP85IQb?=
+ =?us-ascii?Q?SKGgsMg0eXTuWigFLBKI56fQ0pjdYvCWQsc/E6360ROtwmCY03b0B7bHSSVM?=
+ =?us-ascii?Q?s9CIrMJbBnP6rKU/RmBaqWWn6i6JkOaKYKvKweyOOqzCeakLoIniQOz7YaJ3?=
+ =?us-ascii?Q?NikL/5zJeJNhaF8g9o6F3mQjOW7kbMWM0uqxneoHUQMyTMYuDsTzOQC7LuCV?=
+ =?us-ascii?Q?x9WHr9OwDPEHjwh9ta3Yg4fvnFrEZTZJNJXJEbLZSZZ/c1dGhfDu//FjbGfz?=
+ =?us-ascii?Q?zEMrdctaVaUjxqe+IC9FRXb3KrOBS1gsrymzihb7hTGQNbDgvas85LzFxo7I?=
+ =?us-ascii?Q?ivthRcDaBMJ0enDFbDrYyJgXDFQ3wyzQrC149B95nEpur4hYVdJfv/e2YEDg?=
+ =?us-ascii?Q?7v2pLOJnw5ZjEHd4n5iNbcwQGknf5t/rMgNOcxO0IA91dntxAp2Jh+ib0nbR?=
+ =?us-ascii?Q?YkHad3gonlqdvRWFeWxURyo09dHOXKefbbBC9X8n3kzG1OvhN9NO7argOrzu?=
+ =?us-ascii?Q?eis34sBjLp6btxKLje8LkYjrNJM0nB4AiJ172w2+efuaB5FXz+L20YqBTZxu?=
+ =?us-ascii?Q?OiwQGys8ds0rsK4=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 10:14:34.1535 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70ad3ab3-3c5f-484b-e9d0-08dd5717888e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF00020E64.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8858
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -180,263 +136,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Maxime Coquelin <maxime.coquelin@redhat.com>
-> Sent: Tuesday, February 25, 2025 9:39 PM
-> To: Shiva Shankar Kommula <kshankar@marvell.com>; dev@dpdk.org;
-> chenbox@nvidia.com
-> Cc: david.marchand@redhat.com; Jerin Jacob <jerinj@marvell.com>; Nithin
-> Kumar Dabilpuram <ndabilpuram@marvell.com>; Srujana Challa
-> <schalla@marvell.com>
-> Subject: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report fea=
-ture
->=20
-> Hi, On 1/27/25 8:=E2=80=8A41 AM, Kommula Shiva Shankar wrote: > This patc=
-h adds
-> virtio hash report feature, which is > supported in packet queue mode with
-> scalar version Why only restrict to packed ring? isn't it also compatible=
- with
-> split ring?
->=20
-> Hi,
->=20
-> On 1/27/25 8:41 AM, Kommula Shiva Shankar wrote:
-> > This patch adds virtio hash report feature, which is supported in
-> > packet queue mode with scalar version
->=20
-> Why only restrict to packed ring? isn't it also compatible with split rin=
-g?
-Hi Maxim,=20
-Yes, it is. I can add split ring support later if it's alright
->=20
-> >
-> > Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
-> > ---
-> >   drivers/net/virtio/virtio.h                   |  2 ++
-> >   drivers/net/virtio/virtio_ethdev.c            | 20 ++++++++++++-
-> >   drivers/net/virtio/virtio_ethdev.h            |  1 +
-> >   drivers/net/virtio/virtio_rxtx.c              | 30 +++++++++++++++++++
-> >   .../net/virtio/virtio_user/virtio_user_dev.c  |  1 +
-> >   drivers/net/virtio/virtqueue.h                | 21 +++++++++++++
-> >   6 files changed, 74 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/virtio/virtio.h b/drivers/net/virtio/virtio.h
-> > index ef5827c5f5..c2a0fd477c 100644
-> > --- a/drivers/net/virtio/virtio.h
-> > +++ b/drivers/net/virtio/virtio.h
-> > @@ -30,6 +30,7 @@
-> >   #define VIRTIO_NET_F_GUEST_ANNOUNCE 21	/* Guest can
-> announce device on the network */
-> >   #define VIRTIO_NET_F_MQ		22	/* Device supports Receive
-> Flow Steering */
-> >   #define VIRTIO_NET_F_CTRL_MAC_ADDR 23	/* Set MAC address */
-> > +#define VIRTIO_NET_F_HASH_REPORT  57    /* Supports hash report */
-> >   #define VIRTIO_NET_F_RSS	60	/* RSS supported */
-> >
-> >   /*
-> > @@ -187,6 +188,7 @@ struct virtio_hw {
-> >   	uint8_t started;
-> >   	uint8_t weak_barriers;
-> >   	uint8_t vlan_strip;
-> > +	uint8_t has_hash_report;
-> >   	bool rx_ol_scatter;
-> >   	uint8_t has_tx_offload;
-> >   	uint8_t has_rx_offload;
-> > diff --git a/drivers/net/virtio/virtio_ethdev.c
-> > b/drivers/net/virtio/virtio_ethdev.c
-> > index 70d4839def..caacbce57a 100644
-> > --- a/drivers/net/virtio/virtio_ethdev.c
-> > +++ b/drivers/net/virtio/virtio_ethdev.c
-> > @@ -1796,7 +1796,9 @@ virtio_init_device(struct rte_eth_dev *eth_dev,
-> uint64_t req_features)
-> >   		eth_dev->data->dev_flags &=3D ~RTE_ETH_DEV_INTR_LSC;
-> >
-> >   	/* Setting up rx_header size for the device */
-> > -	if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
-> > +	if (virtio_with_feature(hw, VIRTIO_NET_F_HASH_REPORT))
-> > +		hw->vtnet_hdr_size =3D sizeof(struct
-> virtio_net_hdr_hash_report);
-> > +	else if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
-> >   	    virtio_with_feature(hw, VIRTIO_F_VERSION_1) ||
-> >   	    virtio_with_packed_queue(hw))
-> >   		hw->vtnet_hdr_size =3D sizeof(struct
-> virtio_net_hdr_mrg_rxbuf); @@
-> > -2181,6 +2183,10 @@ virtio_dev_configure(struct rte_eth_dev *dev)
-> >   			(1ULL << VIRTIO_NET_F_GUEST_TSO4) |
-> >   			(1ULL << VIRTIO_NET_F_GUEST_TSO6);
-> >
-> > +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
-> > +		req_features |=3D
-> > +			(1ULL << VIRTIO_NET_F_HASH_REPORT);
-> > +
-> >   	if (tx_offloads & (RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
-> >   			   RTE_ETH_TX_OFFLOAD_TCP_CKSUM))
-> >   		req_features |=3D (1ULL << VIRTIO_NET_F_CSUM); @@ -2233,6
-> +2239,9 @@
-> > virtio_dev_configure(struct rte_eth_dev *dev)
-> >   	if (rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
-> >   		hw->vlan_strip =3D 1;
-> >
-> > +	if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
-> > +		hw->has_hash_report =3D 1;
-> > +
-> >   	hw->rx_ol_scatter =3D (rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
-> >
-> >   	if ((rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER) && @@ -
-> 2285,6
-> > +2294,12 @@ virtio_dev_configure(struct rte_eth_dev *dev)
-> >   					"disabled packed ring vectorized rx for
-> TCP_LRO enabled");
-> >   				hw->use_vec_rx =3D 0;
-> >   			}
-> > +
-> > +			if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
-> > +				PMD_DRV_LOG(INFO,
-> > +					"disabled packed ring vectorized rx for
-> RSS_HASH enabled");
-> > +				hw->use_vec_rx =3D 0;
-> > +			}
-> >   		}
-> >   	} else {
-> >   		if (virtio_with_feature(hw, VIRTIO_F_IN_ORDER)) { @@ -
-> 2669,6
-> > +2684,9 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct
-> rte_eth_dev_info *dev_info)
-> >   		dev_info->flow_type_rss_offloads =3D 0;
-> >   	}
-> >
-> > +	if (host_features & (1ULL << VIRTIO_NET_F_HASH_REPORT))
-> > +		dev_info->rx_offload_capa |=3D
-> RTE_ETH_RX_OFFLOAD_RSS_HASH;
-> > +
-> >   	if (host_features & (1ULL << VIRTIO_F_RING_PACKED)) {
-> >   		/*
-> >   		 * According to 2.7 Packed Virtqueues, diff --git
-> > a/drivers/net/virtio/virtio_ethdev.h
-> > b/drivers/net/virtio/virtio_ethdev.h
-> > index 7be1c9acd0..7aa771fd2b 100644
-> > --- a/drivers/net/virtio/virtio_ethdev.h
-> > +++ b/drivers/net/virtio/virtio_ethdev.h
-> > @@ -46,6 +46,7 @@
-> >   	 1u << VIRTIO_NET_F_CSUM           |	\
-> >   	 1u << VIRTIO_NET_F_HOST_TSO4      |	\
-> >   	 1u << VIRTIO_NET_F_HOST_TSO6      |	\
-> > +	 1ULL << VIRTIO_NET_F_HASH_REPORT  |    \
-> >   	 1ULL << VIRTIO_NET_F_RSS)
-> >
-> >   extern const struct eth_dev_ops virtio_user_secondary_eth_dev_ops;
-> > diff --git a/drivers/net/virtio/virtio_rxtx.c
-> > b/drivers/net/virtio/virtio_rxtx.c
-> > index b67f063b31..35bd61350c 100644
-> > --- a/drivers/net/virtio/virtio_rxtx.c
-> > +++ b/drivers/net/virtio/virtio_rxtx.c
-> > @@ -40,6 +40,19 @@
-> >   #define  VIRTIO_DUMP_PACKET(m, len) do { } while (0)
-> >   #endif
-> >
-> > +static const uint32_t vhdr_hash_report_to_mbuf_pkt_type[] =3D {
-> > +	RTE_PTYPE_UNKNOWN,
-> > +	RTE_PTYPE_L3_IPV4,
-> > +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP,
-> > +	RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
-> > +	RTE_PTYPE_L3_IPV6,
-> > +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
-> > +	RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP,
-> > +	RTE_PTYPE_L3_IPV6_EXT,
-> > +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_TCP,
-> > +	RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_UDP, };
-> > +
-> >   void
-> >   vq_ring_free_inorder(struct virtqueue *vq, uint16_t desc_idx, uint16_t
-> num)
-> >   {
-> > @@ -901,6 +914,16 @@ virtio_discard_rxbuf_inorder(struct virtqueue *vq,
-> struct rte_mbuf *m)
-> >   	}
-> >   }
-> >
-> > +static inline void
-> > +virtio_rx_update_hash_report(struct rte_mbuf *m, struct
-> > +virtio_net_hdr_hash_report *hdr) {
-> > +	if (likely(hdr->hash_report)) {
-> > +		m->packet_type =3D vhdr_hash_report_to_mbuf_pkt_type[hdr-
-> >hash_report];
-> > +		m->hash.rss =3D hdr->hash_value;
-> > +		m->ol_flags |=3D RTE_MBUF_F_RX_RSS_HASH;
-> > +	}
-> > +}
-> > +
-> >   /* Optionally fill offload information in structure */
-> >   static inline int
-> >   virtio_rx_offload(struct rte_mbuf *m, struct virtio_net_hdr *hdr) @@
-> > -1134,6 +1157,9 @@ virtio_recv_pkts_packed(void *rx_queue, struct
-> rte_mbuf **rx_pkts,
-> >   		hdr =3D (struct virtio_net_hdr *)((char *)rxm->buf_addr +
-> >   			RTE_PKTMBUF_HEADROOM - hdr_size);
-> >
-> > +		if (hw->has_hash_report)
-> > +			virtio_rx_update_hash_report(rxm,
-> > +						    (struct
-> virtio_net_hdr_hash_report *)hdr);
-> >   		if (hw->vlan_strip)
-> >   			rte_vlan_strip(rxm);
-> >
-> > @@ -1617,6 +1643,10 @@ virtio_recv_mergeable_pkts_packed(void
-> *rx_queue,
-> >   		if (hw->vlan_strip)
-> >   			rte_vlan_strip(rx_pkts[nb_rx]);
-> >
-> > +		if (hw->has_hash_report)
-> > +			virtio_rx_update_hash_report(rxm,
-> > +						    (struct
-> virtio_net_hdr_hash_report *)header);
-> > +
-> >   		seg_res =3D seg_num - 1;
-> >
-> >   		/* Merge remaining segments */
-> > diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > index 2997d2bd26..187f81b066 100644
-> > --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> > @@ -726,6 +726,7 @@ virtio_user_free_vrings(struct virtio_user_dev *dev)
-> >   	 1ULL << VIRTIO_F_RING_PACKED		|	\
-> >   	 1ULL << VIRTIO_F_NOTIFICATION_DATA	|	\
-> >   	 1ULL << VIRTIO_F_ORDER_PLATFORM        |       \
-> > +	 1ULL << VIRTIO_NET_F_HASH_REPORT       |       \
-> >   	 1ULL << VIRTIO_NET_F_RSS)
-> >
-> >   int
-> > diff --git a/drivers/net/virtio/virtqueue.h
-> > b/drivers/net/virtio/virtqueue.h index 60211a40c9..3b468bd4f4 100644
-> > --- a/drivers/net/virtio/virtqueue.h
-> > +++ b/drivers/net/virtio/virtqueue.h
-> > @@ -257,6 +257,27 @@ struct virtio_net_hdr_mrg_rxbuf {
-> >   	uint16_t num_buffers; /**< Number of merged rx buffers */
-> >   };
-> >
-> > +/**
-> > + * This is the version of the header to use when the HASH_REPORT
-> > + * feature has been negotiated.
-> > + */
-> > +struct virtio_net_hdr_hash_report {
-> > +	struct virtio_net_hdr_mrg_rxbuf hdr;
-> > +	uint32_t hash_value;
-> > +#define VIRTIO_NET_HASH_REPORT_NONE	0
-> > +#define VIRTIO_NET_HASH_REPORT_IPV4	1
-> > +#define VIRTIO_NET_HASH_REPORT_TCPV4	2
-> > +#define VIRTIO_NET_HASH_REPORT_UDPV4	3
-> > +#define VIRTIO_NET_HASH_REPORT_IPV6	4
-> > +#define VIRTIO_NET_HASH_REPORT_TCPV6	5
-> > +#define VIRTIO_NET_HASH_REPORT_UDPV6	6
-> > +#define VIRTIO_NET_HASH_REPORT_IPV6_EX	7
-> > +#define VIRTIO_NET_HASH_REPORT_TCPV6_EX	8
-> > +#define VIRTIO_NET_HASH_REPORT_UDPV6_EX	9
-> > +	uint16_t hash_report;
-> > +	uint16_t pad_reserved;
-> > +};
-> > +
-> >   /* Region reserved to allow for transmit header and indirect ring */
-> >   #define VIRTIO_MAX_TX_INDIRECT 8
-> >   struct virtio_tx_region {
+Assert was triggered because of ctrl_ref mismatch on hairpin queue.
+Fixed the mismatch.
+
+Fixes: 09c2555 ("net/mlx5: support shared Rx queue")
+Cc: stable@dpdk.org
+
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/net/mlx5/mlx5.h      |  1 +
+ drivers/net/mlx5/mlx5_flow.c |  4 ++--
+ drivers/net/mlx5/mlx5_rx.h   |  1 +
+ drivers/net/mlx5/mlx5_rxq.c  | 12 ++++++++----
+ 4 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index 545ba48b3cd..6df99c25e2f 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -2023,6 +2023,7 @@ struct mlx5_priv {
+ 	uint32_t ctrl_flows; /* Control flow rules. */
+ 	rte_spinlock_t flow_list_lock;
+ 	struct mlx5_obj_ops obj_ops; /* HW objects operations. */
++	LIST_HEAD(rxq, mlx5_rxq_ctrl) rxqsctrl; /* DPDK Rx queues. */
+ 	LIST_HEAD(rxqobj, mlx5_rxq_obj) rxqsobj; /* Verbs/DevX Rx queues. */
+ 	struct mlx5_list *hrxqs; /* Hash Rx queues. */
+ 	LIST_HEAD(txq, mlx5_txq_ctrl) txqsctrl; /* DPDK Tx queues. */
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index f8b3e504b35..6169ebc13f6 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -1648,13 +1648,13 @@ flow_rxq_mark_flag_set(struct rte_eth_dev *dev)
+ 			    opriv->domain_id != priv->domain_id ||
+ 			    opriv->mark_enabled)
+ 				continue;
+-			LIST_FOREACH(rxq_ctrl, &opriv->sh->shared_rxqs, share_entry) {
++			LIST_FOREACH(rxq_ctrl, &opriv->rxqsctrl, next) {
+ 				rxq_ctrl->rxq.mark = 1;
+ 			}
+ 			opriv->mark_enabled = 1;
+ 		}
+ 	} else {
+-		LIST_FOREACH(rxq_ctrl, &priv->sh->shared_rxqs, share_entry) {
++		LIST_FOREACH(rxq_ctrl, &priv->rxqsctrl, next) {
+ 			rxq_ctrl->rxq.mark = 1;
+ 		}
+ 		priv->mark_enabled = 1;
+diff --git a/drivers/net/mlx5/mlx5_rx.h b/drivers/net/mlx5/mlx5_rx.h
+index f80a2e32279..6380895502e 100644
+--- a/drivers/net/mlx5/mlx5_rx.h
++++ b/drivers/net/mlx5/mlx5_rx.h
+@@ -169,6 +169,7 @@ struct __rte_cache_aligned mlx5_rxq_data {
+ /* RX queue control descriptor. */
+ struct mlx5_rxq_ctrl {
+ 	struct mlx5_rxq_data rxq; /* Data path structure. */
++	LIST_ENTRY(mlx5_rxq_ctrl) next; /* Pointer to the next element. */
+ 	LIST_HEAD(priv, mlx5_rxq_priv) owners; /* Owner rxq list. */
+ 	struct mlx5_rxq_obj *obj; /* Verbs/DevX elements. */
+ 	struct mlx5_dev_ctx_shared *sh; /* Shared context. */
+diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
+index a5971b5cdda..5cf7d4971b3 100644
+--- a/drivers/net/mlx5/mlx5_rxq.c
++++ b/drivers/net/mlx5/mlx5_rxq.c
+@@ -1037,6 +1037,7 @@ mlx5_rx_hairpin_queue_setup(struct rte_eth_dev *dev, uint16_t idx,
+ 		rte_errno = ENOMEM;
+ 		return -rte_errno;
+ 	}
++	rte_atomic_fetch_add_explicit(&rxq_ctrl->ctrl_ref, 1, rte_memory_order_relaxed);
+ 	DRV_LOG(DEBUG, "port %u adding hairpin Rx queue %u to list",
+ 		dev->data->port_id, idx);
+ 	dev->data->rx_queues[idx] = &rxq_ctrl->rxq;
+@@ -2006,8 +2007,9 @@ mlx5_rxq_new(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+ 		tmpl->rxq.shared = 1;
+ 		tmpl->share_group = conf->share_group;
+ 		tmpl->share_qid = conf->share_qid;
++		LIST_INSERT_HEAD(&priv->sh->shared_rxqs, tmpl, share_entry);
+ 	}
+-	LIST_INSERT_HEAD(&priv->sh->shared_rxqs, tmpl, share_entry);
++	LIST_INSERT_HEAD(&priv->rxqsctrl, tmpl, next);
+ 	rte_atomic_store_explicit(&tmpl->ctrl_ref, 1, rte_memory_order_relaxed);
+ 	return tmpl;
+ error:
+@@ -2061,7 +2063,7 @@ mlx5_rxq_hairpin_new(struct rte_eth_dev *dev, struct mlx5_rxq_priv *rxq,
+ 	tmpl->rxq.idx = idx;
+ 	rxq->hairpin_conf = *hairpin_conf;
+ 	mlx5_rxq_ref(dev, idx);
+-	LIST_INSERT_HEAD(&priv->sh->shared_rxqs, tmpl, share_entry);
++	LIST_INSERT_HEAD(&priv->rxqsctrl, tmpl, next);
+ 	rte_atomic_store_explicit(&tmpl->ctrl_ref, 1, rte_memory_order_relaxed);
+ 	return tmpl;
+ }
+@@ -2336,7 +2338,9 @@ mlx5_rxq_release(struct rte_eth_dev *dev, uint16_t idx)
+ 			if (!rxq_ctrl->is_hairpin)
+ 				mlx5_mr_btree_free
+ 					(&rxq_ctrl->rxq.mr_ctrl.cache_bh);
+-			LIST_REMOVE(rxq_ctrl, share_entry);
++			if (rxq_ctrl->rxq.shared)
++				LIST_REMOVE(rxq_ctrl, share_entry);
++			LIST_REMOVE(rxq_ctrl, next);
+ 			mlx5_free(rxq_ctrl);
+ 		}
+ 		dev->data->rx_queues[idx] = NULL;
+@@ -2362,7 +2366,7 @@ mlx5_rxq_verify(struct rte_eth_dev *dev)
+ 	struct mlx5_rxq_ctrl *rxq_ctrl;
+ 	int ret = 0;
+ 
+-	LIST_FOREACH(rxq_ctrl, &priv->sh->shared_rxqs, share_entry) {
++	LIST_FOREACH(rxq_ctrl, &priv->rxqsctrl, next) {
+ 		DRV_LOG(DEBUG, "port %u Rx Queue %u still referenced",
+ 			dev->data->port_id, rxq_ctrl->rxq.idx);
+ 		++ret;
+-- 
+2.21.0
 
