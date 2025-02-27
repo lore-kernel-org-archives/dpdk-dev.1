@@ -2,47 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FB5C021BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 08:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE95C19F2E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 09:14:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89D2640290;
-	Thu, 27 Feb 2025 09:39:25 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id AE03F4028C
- for <dev@dpdk.org>; Thu, 27 Feb 2025 09:39:23 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z3Pnt4n4Wz6M53D;
- Thu, 27 Feb 2025 16:36:34 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
- by mail.maildlp.com (Postfix) with ESMTPS id 89A84140442;
- Thu, 27 Feb 2025 16:39:22 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Feb 2025 09:39:22 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Thu, 27 Feb 2025 09:39:22 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v3 2/3] eal: only use numbers as align parameters for MSVC
-Thread-Topic: [PATCH v3 2/3] eal: only use numbers as align parameters for MSVC
-Thread-Index: AQHbiJR0HET0jkbdn0Csz/bmZ1y8WbNa1H2w
-Date: Thu, 27 Feb 2025 08:39:22 +0000
-Message-ID: <e6ddbd0565b346208b18306b3899466e@huawei.com>
-References: <1740430879-17874-1-git-send-email-andremue@linux.microsoft.com>
- <1740604866-6184-1-git-send-email-andremue@linux.microsoft.com>
- <1740604866-6184-3-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1740604866-6184-3-git-send-email-andremue@linux.microsoft.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 5E55740671;
+	Thu, 27 Feb 2025 10:14:30 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 1233C40290
+ for <dev@dpdk.org>; Thu, 27 Feb 2025 10:14:29 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id D5E4320EB4;
+ Thu, 27 Feb 2025 10:14:28 +0100 (CET)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH] mempool: micro optimizations
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 27 Feb 2025 10:14:27 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FA86@smartserver.smartshare.dk>
+In-Reply-To: <Z79G8hI3Yc6kcT2O@bricha3-mobl1.ger.corp.intel.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.174.127]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+Thread-Topic: [PATCH] mempool: micro optimizations
+Thread-Index: AduIbvIjALCtlDjfTt6IZVP2XQC+FgAFa0hQ
+References: <20250226155923.128859-1-mb@smartsharesystems.com>
+ <Z79G8hI3Yc6kcT2O@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,56 +48,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 26 February 2025 17.53
 >=20
-> After the instruction set updates for MSVC the error below popped up:
->=20
-> ..\lib\eal\x86\include\rte_vect.h(82): error C2059: syntax error: '('
->=20
-> The issue is that MSVC does not allow __rte_aligned(RTE_X86_ZMM_SIZE).
-> It only accepts numbers that are power of 2. So, even though
-> RTE_X86_ZMM_SIZE represents a number that is a power of two it cannot
-> be used directly.
-> https://learn.microsoft.com/en-us/cpp/cpp/align-cpp?view=3Dmsvc-170
->=20
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->  lib/eal/x86/include/rte_vect.h | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/lib/eal/x86/include/rte_vect.h b/lib/eal/x86/include/rte_vec=
-t.h
-> index 70c78e9b77..9ea158b27e 100644
-> --- a/lib/eal/x86/include/rte_vect.h
-> +++ b/lib/eal/x86/include/rte_vect.h
-> @@ -76,9 +76,18 @@ __extension__ ({                \
->=20
->  #ifdef __AVX512F__
->=20
-> -#define RTE_X86_ZMM_SIZE	(sizeof(__m512i))
-> +#define RTE_X86_ZMM_SIZE        64
->  #define RTE_X86_ZMM_MASK	(RTE_X86_ZMM_SIZE - 1)
->=20
-> +/*
-> + * MSVC does not allow __rte_aligned(sizeof(__m512i)). It only accepts
-> + * numbers that are power of 2. So, even though sizeof(__m512i) represen=
-ts a
-> + * number that is a power of two it cannot be used directly.
-> + * Ref: https://learn.microsoft.com/en-us/cpp/cpp/align-cpp?view=3Dmsvc-=
-170
-> + * The static assert below ensures that the hardcoded value defined as
-> + * RTE_X86_ZMM_SIZE is equal to sizeof(__m512i).
-> + */
-> +static_assert(RTE_X86_ZMM_SIZE =3D=3D (sizeof(__m512i)), "Unexpected siz=
-e of __m512i");
->  typedef union __rte_aligned(RTE_X86_ZMM_SIZE) __rte_x86_zmm {
->  	__m512i	 z;
->  	ymm_t    y[RTE_X86_ZMM_SIZE / sizeof(ymm_t)];
+> On Wed, Feb 26, 2025 at 03:59:22PM +0000, Morten Br=F8rup wrote:
+> > The comparisons lcore_id < RTE_MAX_LCORE and lcore_id !=3D =
+LCORE_ID_ANY
+> are
+> > equivalent, but the latter compiles to fewer bytes of code space.
+> > Similarly for lcore_id >=3D RTE_MAX_LCORE and lcore_id =3D=3D =
+LCORE_ID_ANY.
+> >
+> > The rte_mempool_get_ops() function is also used in the fast path, so
+> > RTE_VERIFY() was replaced by RTE_ASSERT().
+> >
+> > Compilers implicitly consider comparisons of variable =3D=3D 0 =
+likely, so
+> > unlikely() was added to the check for no mempool cache (mp-
+> >cache_size =3D=3D
+> > 0) in the rte_mempool_default_cache() function.
+> >
+> > The rte_mempool_do_generic_put() function for adding objects to a
+> mempool
+> > was refactored as follows:
+> > - The comparison for the request itself being too big, which is
+> considered
+> >   unlikely, was moved down and out of the code path where the cache
+> has
+> >   sufficient room for the added objects, which is considered the =
+most
+> >   likely code path.
+> > - Added __rte_assume() about the cache length, size and threshold,
+> for
+> >   compiler optimization when "n" is compile time constant.
+> > - Added __rte_assume() about "ret" being zero, so other functions
+> using
+> >   the value returned by this function can be potentially optimized =
+by
+> the
+> >   compiler; especially when it merges multiple sequential code paths
+> of
+> >   inlined code depending on the return value being either zero or
+> >   negative.
+> > - The refactored source code (with comments) made the separate
+> comment
+> >   describing the cache flush/add algorithm superfluous, so it was
+> removed.
+> >
+> > A few more likely()/unlikely() were added.
+> >
+> > A few comments were improved for readability.
+> >
+> > Some assertions, RTE_ASSERT(), were added. Most importantly to =
+assert
+> that
+> > the return values of the mempool drivers' enqueue and dequeue
+> operations
+> > are API compliant, i.e. 0 (for success) or negative (for failure),
+> and
+> > never positive.
+> >
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > ---
+> >  lib/mempool/rte_mempool.h | 67 =
+++++++++++++++++++++++---------------
 > --
+> >  1 file changed, 38 insertions(+), 29 deletions(-)
+> >
+> Is there any measurable performance change with these modifications?
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+It varies.
+Here are some of the good ones, tested on a VM under VMware:
 
-> 2.48.1.vfs.0.0
+mempool_autotest cache=3D512 cores=3D1
+n_get_bulk=3D64 n_put_bulk=3D64 n_keep=3D128 constant_n=3D0
+rate_persec=3D1309408130 -> 1417067889 : +8.2 %
+
+mempool_autotest cache=3D512 cores=3D1
+n_get_bulk=3D64 n_put_bulk=3D64 n_keep=3D128 constant_n=3D1
+rate_persec=3D1479812844 -> 1573307159 : +6.3 %
+
+mempool_autotest cache=3D512 cores=3D1
+n_max_bulk=3D32 n_keep=3D128 constant_n=3D0
+rate_persec=3D825183959 -> 868013386 : +5.2 %
+
+The last result is from a new type of test where the size of every =
+get/put varies between 1 and n_max_bulk, so the CPU's dynamic branch =
+predictor cannot predict the request size.
+I'll probably provide a separate patch for test_mempool_perf.c with this =
+new test type, when I have finished it.
 
