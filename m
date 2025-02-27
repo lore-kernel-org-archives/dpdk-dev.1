@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9664FC19F32
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 18:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBF3C19F32
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Feb 2025 18:15:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF32640B9C;
-	Thu, 27 Feb 2025 19:15:45 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 92CD940A4B;
- Thu, 27 Feb 2025 19:15:44 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RFeArX016570;
- Thu, 27 Feb 2025 10:15:43 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id C1E0940DCA;
+	Thu, 27 Feb 2025 19:15:51 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 3362140BA6
+ for <dev@dpdk.org>; Thu, 27 Feb 2025 19:15:50 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RHl8d0019532;
+ Thu, 27 Feb 2025 10:15:49 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=s
- EEfUHsppMADzm69nkNlu9X57Bhk1t2YEj0b1SzoodQ=; b=cSxmvVBLTTW1iy6fr
- 05QiDldBmcs5UOVzumHpnT1tftz7+sNRYwjYllhR68D3Loc3RmzQRTnZHAM4IseZ
- XtzeCF5qw0HAruFgUSQCt/KrH8kG617lGrQVdG9jnE7qu5geCETaoe6X+7zJFhi5
- 1EYwZD+cqILWpTw8B1kV2xcKkXuigITIwfjFGINt+kV8Kcx9kn0NggtJztz38/n7
- 1EBPO0o6bRRE2DLmANrmVuR29uHTRqsfCY1hwEkcXiWC6YfKdtC6j7dkGANhZRAC
- FtFD0XiAFPhhzlig8U967ViojFWtqyy02Yr23UM7H2UBzYd/gIbEtIhU+qBaFJ29
- eEf3Q==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
+ kgIoaCsJzYdUXcyoCrRkNrBGKWy/gnA/tejt5Ddfr8=; b=K+buOJxy0mavSpyXG
+ CPQe1QuuKW/9S7JBd4C/VbWhWy5FCFCMvdylpnFgH2tcl/bBDN4BJQG31qVX+341
+ pEaNubvj+eBMoo+OjKjAZ/e2FXS9B1JeqzBkNg96OTSqWN+IiFMmv5mSXixo4bJL
+ iJFDito7hXvBatJEsjMXOujvcsXbnVSP/DWOmdUwzNU3qOe6sooyaHjqovi+tldY
+ yqYQMUGk7jZuhIB1skb7XIJco0pXyJQTWoiREW0HMRtFAmFeMncbTMkllWD8IQ0o
+ p8yGRLF47N1e1nIEiNA6XXuxX6p6rrJ13eYmx7iO4GE34UTjvfmQbX/H53aOztG1
+ FQHRw==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 452tvrrchs-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 452vpv02jv-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 27 Feb 2025 10:15:43 -0800 (PST)
+ Thu, 27 Feb 2025 10:15:49 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 27 Feb 2025 10:15:41 -0800
+ 15.2.1544.4; Thu, 27 Feb 2025 10:15:47 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 27 Feb 2025 10:15:41 -0800
+ Transport; Thu, 27 Feb 2025 10:15:47 -0800
 Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
  [10.28.163.68])
- by maili.marvell.com (Postfix) with ESMTP id EECE83F7071;
- Thu, 27 Feb 2025 10:15:38 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 198393F7071;
+ Thu, 27 Feb 2025 10:15:44 -0800 (PST)
 From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 To: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>, Jay Zhou <jianjay.zhou@huawei.com>, Fan Zhang
- <fanzhang.oss@gmail.com>
+ <chenbox@nvidia.com>
 CC: <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, "Gowrishankar
- Muthukrishnan" <gmuthukrishn@marvell.com>, <stable@dpdk.org>
-Subject: [v8 1/5] vhost: skip crypto op fetch before vring init
-Date: Thu, 27 Feb 2025 23:45:22 +0530
-Message-ID: <c80681bc1f357c47c832ecfe5f97eb78e7779a99.1740679955.git.gmuthukrishn@marvell.com>
+ Muthukrishnan" <gmuthukrishn@marvell.com>
+Subject: [v8 2/5] vhost: update vhost_user crypto session parameters
+Date: Thu, 27 Feb 2025 23:45:23 +0530
+Message-ID: <5cb98339d53f48b2f6ec62bb22e532aff6e21a01.1740679955.git.gmuthukrishn@marvell.com>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <cover.1740679955.git.gmuthukrishn@marvell.com>
 References: <cover.1740679955.git.gmuthukrishn@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: wiJ8TgHhtY3DS58UqGbrQ9aHtJbMk9KD
-X-Authority-Analysis: v=2.4 cv=COHQXQrD c=1 sm=1 tr=0 ts=67c0abcf cx=c_pps
+X-Proofpoint-GUID: T1lwc9yJGghb_de9ejn7_VHgAfYQbNGQ
+X-Proofpoint-ORIG-GUID: T1lwc9yJGghb_de9ejn7_VHgAfYQbNGQ
+X-Authority-Analysis: v=2.4 cv=JOjBs9Kb c=1 sm=1 tr=0 ts=67c0abd5 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=T2h4t0Lz3GQA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=fOnq-zMywcwtGl3uzMkA:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: wiJ8TgHhtY3DS58UqGbrQ9aHtJbMk9KD
+ a=T2h4t0Lz3GQA:10 a=M5GUcnROAAAA:8 a=laCGInfEmNnMqFV-ZLIA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
+ definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,93 +75,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Until virtio avail ring is initialized (by VHOST_USER_SET_VRING_ADDR),
-worker thread should not try to fetch crypto op, which would lead to
-memory fault.
+As per requirements on vhost_user spec, session id should be
+located at the end of session parameter.
 
-Fixes: 939066d96563 ("vhost/crypto: add public function implementation")
-Cc: stable@dpdk.org
+Update VhostUserCryptoSessionParam structure to support newer QEMU
+versions (v9). Due to additional parameters added in QEMU,
+received payload from QEMU would be larger than existing payload.
+Hence, it would break parsing vhost_user messages.
+
+This patch addresses both of the above problems.
 
 Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 Acked-by: Akhil Goyal <gakhil@marvell.com>
 ---
-v8:
- - fix CI issue.
----
- lib/vhost/vhost_crypto.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ lib/vhost/vhost_crypto.c | 12 ++++++------
+ lib/vhost/vhost_user.h   | 33 +++++++++++++++++++++++++++++----
+ 2 files changed, 35 insertions(+), 10 deletions(-)
 
 diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-index 3dc41a3bd5..a805d29a0e 100644
+index a805d29a0e..f9d5128af0 100644
 --- a/lib/vhost/vhost_crypto.c
 +++ b/lib/vhost/vhost_crypto.c
-@@ -8,6 +8,7 @@
- #include <rte_mbuf.h>
- #include <rte_cryptodev.h>
+@@ -238,7 +238,7 @@ struct vhost_crypto_data_req {
  
-+#include "iotlb.h"
- #include "rte_vhost_crypto.h"
- #include "vhost.h"
- #include "vhost_user.h"
-@@ -1580,6 +1581,20 @@ rte_vhost_crypto_fetch_requests(int vid, uint32_t qid,
+ static int
+ transform_cipher_param(struct rte_crypto_sym_xform *xform,
+-		VhostUserCryptoSessionParam *param)
++		VhostUserCryptoSymSessionParam *param)
+ {
+ 	int ret;
  
- 	vq = dev->virtqueue[qid];
+@@ -274,7 +274,7 @@ transform_cipher_param(struct rte_crypto_sym_xform *xform,
  
-+	if (unlikely(vq == NULL)) {
-+		VC_LOG_ERR("Invalid virtqueue %u", qid);
-+		return 0;
-+	}
-+
-+	if (unlikely(rte_rwlock_read_trylock(&vq->access_lock) != 0))
-+		return 0;
-+
-+	vhost_user_iotlb_rd_lock(vq);
-+	if (unlikely(!vq->access_ok)) {
-+		VC_LOG_DBG("Virtqueue %u vrings not yet initialized", qid);
-+		goto out_unlock;
-+	}
-+
- 	avail_idx = *((volatile uint16_t *)&vq->avail->idx);
- 	start_idx = vq->last_used_idx;
- 	count = avail_idx - start_idx;
-@@ -1587,7 +1602,7 @@ rte_vhost_crypto_fetch_requests(int vid, uint32_t qid,
- 	count = RTE_MIN(count, nb_ops);
+ static int
+ transform_chain_param(struct rte_crypto_sym_xform *xforms,
+-		VhostUserCryptoSessionParam *param)
++		VhostUserCryptoSymSessionParam *param)
+ {
+ 	struct rte_crypto_sym_xform *xform_cipher, *xform_auth;
+ 	int ret;
+@@ -342,10 +342,10 @@ vhost_crypto_create_sess(struct vhost_crypto *vcrypto,
+ 	struct rte_cryptodev_sym_session *session;
+ 	int ret;
  
- 	if (unlikely(count == 0))
--		return 0;
-+		goto out_unlock;
- 
- 	/* for zero copy, we need 2 empty mbufs for src and dst, otherwise
- 	 * we need only 1 mbuf as src and dst
-@@ -1597,7 +1612,7 @@ rte_vhost_crypto_fetch_requests(int vid, uint32_t qid,
- 		if (unlikely(rte_mempool_get_bulk(vcrypto->mbuf_pool,
- 				(void **)mbufs, count * 2) < 0)) {
- 			VC_LOG_ERR("Insufficient memory");
--			return 0;
-+			goto out_unlock;
+-	switch (sess_param->op_type) {
++	switch (sess_param->u.sym_sess.op_type) {
+ 	case VIRTIO_CRYPTO_SYM_OP_NONE:
+ 	case VIRTIO_CRYPTO_SYM_OP_CIPHER:
+-		ret = transform_cipher_param(&xform1, sess_param);
++		ret = transform_cipher_param(&xform1, &sess_param->u.sym_sess);
+ 		if (unlikely(ret)) {
+ 			VC_LOG_ERR("Error transform session msg (%i)", ret);
+ 			sess_param->session_id = ret;
+@@ -353,7 +353,7 @@ vhost_crypto_create_sess(struct vhost_crypto *vcrypto,
  		}
+ 		break;
+ 	case VIRTIO_CRYPTO_SYM_OP_ALGORITHM_CHAINING:
+-		if (unlikely(sess_param->hash_mode !=
++		if (unlikely(sess_param->u.sym_sess.hash_mode !=
+ 				VIRTIO_CRYPTO_SYM_HASH_MODE_AUTH)) {
+ 			sess_param->session_id = -VIRTIO_CRYPTO_NOTSUPP;
+ 			VC_LOG_ERR("Error transform session message (%i)",
+@@ -363,7 +363,7 @@ vhost_crypto_create_sess(struct vhost_crypto *vcrypto,
  
- 		for (i = 0; i < count; i++) {
-@@ -1627,7 +1642,7 @@ rte_vhost_crypto_fetch_requests(int vid, uint32_t qid,
- 		if (unlikely(rte_mempool_get_bulk(vcrypto->mbuf_pool,
- 				(void **)mbufs, count) < 0)) {
- 			VC_LOG_ERR("Insufficient memory");
--			return 0;
-+			goto out_unlock;
- 		}
+ 		xform1.next = &xform2;
  
- 		for (i = 0; i < count; i++) {
-@@ -1656,6 +1671,10 @@ rte_vhost_crypto_fetch_requests(int vid, uint32_t qid,
+-		ret = transform_chain_param(&xform1, sess_param);
++		ret = transform_chain_param(&xform1, &sess_param->u.sym_sess);
+ 		if (unlikely(ret)) {
+ 			VC_LOG_ERR("Error transform session message (%i)", ret);
+ 			sess_param->session_id = ret;
+diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
+index 9a905ee5f4..ef486545ba 100644
+--- a/lib/vhost/vhost_user.h
++++ b/lib/vhost/vhost_user.h
+@@ -99,11 +99,10 @@ typedef struct VhostUserLog {
+ /* Comply with Cryptodev-Linux */
+ #define VHOST_USER_CRYPTO_MAX_HMAC_KEY_LENGTH	512
+ #define VHOST_USER_CRYPTO_MAX_CIPHER_KEY_LENGTH	64
++#define VHOST_USER_CRYPTO_MAX_KEY_LENGTH	1024
  
- 	vq->last_used_idx += i;
- 
-+out_unlock:
-+	vhost_user_iotlb_rd_unlock(vq);
-+	rte_rwlock_read_unlock(&vq->access_lock);
+ /* Same structure as vhost-user backend session info */
+-typedef struct VhostUserCryptoSessionParam {
+-	int64_t session_id;
+-	uint32_t op_code;
++typedef struct VhostUserCryptoSymSessionParam {
+ 	uint32_t cipher_algo;
+ 	uint32_t cipher_key_len;
+ 	uint32_t hash_algo;
+@@ -114,10 +113,36 @@ typedef struct VhostUserCryptoSessionParam {
+ 	uint8_t dir;
+ 	uint8_t hash_mode;
+ 	uint8_t chaining_dir;
+-	uint8_t *ciphe_key;
++	uint8_t *cipher_key;
+ 	uint8_t *auth_key;
+ 	uint8_t cipher_key_buf[VHOST_USER_CRYPTO_MAX_CIPHER_KEY_LENGTH];
+ 	uint8_t auth_key_buf[VHOST_USER_CRYPTO_MAX_HMAC_KEY_LENGTH];
++} VhostUserCryptoSymSessionParam;
 +
- 	return i;
- }
++
++typedef struct VhostUserCryptoAsymRsaParam {
++	uint32_t padding_algo;
++	uint32_t hash_algo;
++} VhostUserCryptoAsymRsaParam;
++
++typedef struct VhostUserCryptoAsymSessionParam {
++	uint32_t algo;
++	uint32_t key_type;
++	uint32_t key_len;
++	uint8_t *key;
++	union {
++		VhostUserCryptoAsymRsaParam rsa;
++	} u;
++	uint8_t key_buf[VHOST_USER_CRYPTO_MAX_KEY_LENGTH];
++} VhostUserCryptoAsymSessionParam;
++
++typedef struct VhostUserCryptoSessionParam {
++	uint32_t op_code;
++	union {
++		VhostUserCryptoSymSessionParam sym_sess;
++		VhostUserCryptoAsymSessionParam asym_sess;
++	} u;
++	int64_t session_id;
+ } VhostUserCryptoSessionParam;
  
+ typedef struct VhostUserVringArea {
 -- 
 2.25.1
 
