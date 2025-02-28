@@ -2,46 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBE0C19776
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 12:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE2BC19776
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 13:47:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B901B40E3F;
-	Fri, 28 Feb 2025 13:03:49 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 2162440609
- for <dev@dpdk.org>; Fri, 28 Feb 2025 13:03:49 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id EAB62462E7; Fri, 28 Feb 2025 13:03:48 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1666] It is not possible to increase the MTU for
- AF_PACKET PMD beyond 1500B
-Date: Fri, 28 Feb 2025 12:03:48 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 21.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: angelo.mirabella96@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1666-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17407442280.8dcc148.1469702
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 8EE7640E32;
+	Fri, 28 Feb 2025 14:47:28 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id EAFBE40609
+ for <dev@dpdk.org>; Fri, 28 Feb 2025 14:47:26 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SB10qI021859;
+ Fri, 28 Feb 2025 05:47:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=t
+ 3UquHsSuTXl7BM9pf9JZPwmQcIMySMPDf8JGlKfS/w=; b=UJpbP+Yt/SjjygVH7
+ BTlQTwHNflXGwBQuw2NuOlPXnnaDC7HcTMfXUEpoVGGnDQpTkcFi6SQpjJAj6cWJ
+ EWpgxna95zQR3kdSD3Ve1aU9r7EIxRadodRjVEL04NwLt0WZi69YxFZm2dIjsNIU
+ EsH/MRzWqQNZdlvdIygbxtjgPuXuyu8AJMJyAw+Dex/nJdAiKdmavX5G5lHwNGpZ
+ CYso5IQUS6UFH3h4Xds/B2jG2V04aB5aIy6I7d+S1C7QjGBY7KyCSGlEMfAnijAY
+ 9yKQ8RV0vXnZWdnyiDgdIMQ+L+owvro3PUxoIeW8fJJNFW5sN9jxmpf3MPY4arNJ
+ /yHYg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 453bgw884s-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 28 Feb 2025 05:47:25 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 28 Feb 2025 05:47:24 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 28 Feb 2025 05:47:24 -0800
+Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.28.163.68])
+ by maili.marvell.com (Postfix) with ESMTP id 285C45B692E;
+ Fri, 28 Feb 2025 05:47:21 -0800 (PST)
+From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, Chenbo Xia
+ <chenbox@nvidia.com>
+CC: <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, David Marchand
+ <david.marchand@redhat.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>
+Subject: [v9 0/6] vhost: add RSA support
+Date: Fri, 28 Feb 2025 19:17:07 +0530
+Message-ID: <cover.1740749809.git.gmuthukrishn@marvell.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <cover.1740679955.git.gmuthukrishn@marvell.com>
+References: <cover.1740679955.git.gmuthukrishn@marvell.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=ZMQtmW7b c=1 sm=1 tr=0 ts=67c1be6d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=T2h4t0Lz3GQA:10 a=SSEcSf4z2q0PDGKyEI4A:9 a=0lgtpPvCYYIA:10
+X-Proofpoint-ORIG-GUID: 3FMxPbXGXRa2Gh2p0aFBYtwS3BIffsbI
+X-Proofpoint-GUID: 3FMxPbXGXRa2Gh2p0aFBYtwS3BIffsbI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_03,2025-02-27_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,218 +74,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This patch series supports asymmetric RSA in vhost crypto library.
+It also includes changes to improve vhost crypto library:
+ * support newer QEMU versions.
+ * fix broken vhost_crypto example application.
+ * stabilize crypto fastpath operations.
 
---17407442280.8dcc148.1469702
-Date: Fri, 28 Feb 2025 13:03:48 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+v9:
+ - new patch 1/6
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1666
+Gowrishankar Muthukrishnan (6):
+  vhost: fix thread safety checks for vhost crypto data req
+  vhost: skip crypto op fetch before vring init
+  vhost: update vhost_user crypto session parameters
+  examples/vhost_crypto: fix user callbacks
+  vhost: support asymmetric RSA crypto ops
+  examples/vhost_crypto: support asymmetric crypto
 
-            Bug ID: 1666
-           Summary: It is not possible to increase the MTU for AF_PACKET
-                    PMD beyond 1500B
-           Product: DPDK
-           Version: 21.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: angelo.mirabella96@gmail.com
-  Target Milestone: ---
+ doc/guides/rel_notes/release_25_03.rst    |   3 +
+ doc/guides/sample_app_ug/vhost_crypto.rst |   5 +
+ examples/vhost_crypto/main.c              |  54 +-
+ lib/vhost/vhost_crypto.c                  | 597 +++++++++++++++++++---
+ lib/vhost/vhost_user.h                    |  33 +-
+ lib/vhost/virtio_crypto.h                 |  67 +++
+ 6 files changed, 664 insertions(+), 95 deletions(-)
 
-Created attachment 302
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D302&action=3Dedit
-testpmd logs
+-- 
+2.25.1
 
-Hi everyone,
-
-I'm currently working with DPDK v21.11 from the official Ubuntu Jammy packa=
-ge,
-having recently upgraded from v19.11. I noticed that a new check,
-"eth_dev_validate_mtu", has been introduced in "eth_dev_configure".
-
-The final check in this function is:
-
-
-```
-        if (frame_size > dev_info->max_rx_pktlen) {
----
-```
-
-For the AF_PACKET PMD, "max_rx_pktlen" is hardcoded to RTE_ETHER_MAX_LEN
-(1518). As a result, any attempt to increase the MTU beyond 1500 fails, even
-when the vdev is configured with a larger framesz.
-
-I've attached logs from testpmd for reference. Any insights or possible
-workarounds would be appreciated!
-
-Thanks!
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17407442280.8dcc148.1469702
-Date: Fri, 28 Feb 2025 13:03:48 +0100
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - It is not possible to increase the MTU for AF_PAC=
-KET PMD beyond 1500B"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1666">1666</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>It is not possible to increase the MTU for AF_PACKET PMD beyo=
-nd 1500B
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>21.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>angelo.mirabella96&#64;gmail.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D302" name=3D"attach_302" title=3D"testpmd logs">att=
-achment 302</a> <a href=3D"attachment.cgi?id=3D302&amp;action=3Dedit" title=
-=3D"testpmd logs">[details]</a></span>
-testpmd logs
-
-Hi everyone,
-
-I'm currently working with DPDK v21.11 from the official Ubuntu Jammy packa=
-ge,
-having recently upgraded from v19.11. I noticed that a new check,
-&quot;eth_dev_validate_mtu&quot;, has been introduced in &quot;eth_dev_conf=
-igure&quot;.
-
-The final check in this function is:
-
-
-```
-        if (frame_size &gt; dev_info-&gt;max_rx_pktlen) {
----
-```
-
-For the AF_PACKET PMD, &quot;max_rx_pktlen&quot; is hardcoded to RTE_ETHER_=
-MAX_LEN
-(1518). As a result, any attempt to increase the MTU beyond 1500 fails, even
-when the vdev is configured with a larger framesz.
-
-I've attached logs from testpmd for reference. Any insights or possible
-workarounds would be appreciated!
-
-Thanks!
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1666">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17407442280.8dcc148.1469702--
