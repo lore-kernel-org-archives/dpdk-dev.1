@@ -2,33 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416C5C282C5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 21:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D133C282C5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 21:44:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9891E410E7;
-	Fri, 28 Feb 2025 22:43:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E01DD410F2;
+	Fri, 28 Feb 2025 22:43:50 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5D4CA410D4
+ by mails.dpdk.org (Postfix) with ESMTP id 4C81F402CC
  for <dev@dpdk.org>; Fri, 28 Feb 2025 22:43:46 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 5E86F210D0DA; Fri, 28 Feb 2025 13:43:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E86F210D0DA
+ id 7780C210D0EE; Fri, 28 Feb 2025 13:43:45 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7780C210D0EE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1740779025;
- bh=zMw2HVez2KGyQsNTB6IurLD/WytjzkUowqTilXixyy8=;
+ bh=ZiWTeS26a+HZHgs+4ksaMudS3mPKwePPnU9rNdpZBwM=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rWU1xiPNMCav9Wmqr+vYDWP66pJ8VuAeVu5dE5z20nX4iRQBkW33mE3qNZp668zfi
- CzB8TwYU40cz7oFIwzFjZ7rQjy7yrtixf86m986s2hCs6CzqsH58rSYBEHuQJ/QS9p
- LplQSSSjkwsXe0Mh2Mf6ZXrHRu8gFadJuBeq+cVY=
+ b=br1kup6iCnnZnsZSJSpc4w6+jhtnBGcqXnxFOr0qGYoLLJX71jOAb7qxFI2vkJ3Dj
+ fXB6S46mMt7tOqL7rIQbyRyJtrer5Oss/ZqxbYGDGsh1gq5AeKEG4eRpOeC5yDUzSw
+ 40p1qmojN3DhsnSWpvlFfd8MaYOgibw//0xy0T5o=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org
-Subject: [PATCH v2 0/2] allow AVX512 instructions to be used with MSVC
-Date: Fri, 28 Feb 2025 13:43:41 -0800
-Message-Id: <1740779023-1274-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v2 2/2] devtools/dump-cpu-flags: add tool to update CPU flags
+ table
+Date: Fri, 28 Feb 2025 13:43:43 -0800
+Message-Id: <1740779023-1274-3-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1740707537-10517-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1740779023-1274-1-git-send-email-andremue@linux.microsoft.com>
 References: <1740707537-10517-1-git-send-email-andremue@linux.microsoft.com>
+ <1740779023-1274-1-git-send-email-andremue@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,41 +47,361 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Up to now MSVC has being used with the default mode, which uses SSE2
-instructions for scalar floating-point and vector calculations.
-https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-
 This patchset allows users to specify the CPU for which the generated
-code should be optimized for in the same way it's done for GCC: by
-passing the CPU name. When no name is provided 'native' is assumed
-meaning that the code should be optimized for the machine compiling
-the code.
+code should be optimized for by passing the CPU name.
 
 MSVC does not provide this functionality natively, so logic was
 added. This additional logic relies on a table which stores instruction
 set availability (like AXV512F) for different CPUs.
+To make it easier to update this table a new devtool is introduced
+with this patch. The new tool generates the table entries for all CPUs
+listed in an input file using a recent version of the compiler, which
+has all the information needed. This reduces enormously the amount
+of work needed to update the table in msvc/meson.build and makes the
+process much less error prone.
 
-To make it easier to update this table a new devtool was also added.
-
-TODO: Add subdir('msvc'). We can't do this until the common part in
-config/meson.build is merged.
-
-Andre Muezerie (2):
-  config: allow AVX512 instructions to be used with MSVC
-  devtools/dump-cpu-flags: add tool to update CPU flags table
-
- config/x86/msvc/meson.build                | 287 +++++++++++++++++++++
- devtools/dump-cpu-flags/README.md          |  25 ++
- devtools/dump-cpu-flags/cpu-names.txt      | 120 +++++++++
- devtools/dump-cpu-flags/dump-cpu-flags.cpp | 119 +++++++++
- devtools/dump-cpu-flags/dump-cpu-flags.py  |  41 +++
- 5 files changed, 592 insertions(+)
- create mode 100644 config/x86/msvc/meson.build
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ devtools/dump-cpu-flags/README.md          |  25 +++++
+ devtools/dump-cpu-flags/cpu-names.txt      | 120 +++++++++++++++++++++
+ devtools/dump-cpu-flags/dump-cpu-flags.cpp | 119 ++++++++++++++++++++
+ devtools/dump-cpu-flags/dump-cpu-flags.py  |  41 +++++++
+ 4 files changed, 305 insertions(+)
  create mode 100644 devtools/dump-cpu-flags/README.md
  create mode 100644 devtools/dump-cpu-flags/cpu-names.txt
  create mode 100644 devtools/dump-cpu-flags/dump-cpu-flags.cpp
  create mode 100644 devtools/dump-cpu-flags/dump-cpu-flags.py
 
---
+diff --git a/devtools/dump-cpu-flags/README.md b/devtools/dump-cpu-flags/README.md
+new file mode 100644
+index 0000000000..3db69f9f8f
+--- /dev/null
++++ b/devtools/dump-cpu-flags/README.md
+@@ -0,0 +1,25 @@
++# Generating updated CPU flags
++
++File `config\x86\msvc\meson.build` has a table with flags indicating instruction set support for a variety of CPU types.
++
++Script `dump-cpu-flags.py` can be used to generate updated entries for this table.
++
++The CPU names are stored in file `cpu-names.txt`, which is consumed by `dump-cpu-flags.py`. The formatting used in that file is described at the top of the file itself.
++
++The script relies on the information embedded in the g++ compiler. This means that an updated table can automatically be generated by switching to a newer version of the compiler. This avoids the need to manually edit the entries, which is error prone. With the script the table entries can just copied and pasted into `meson.build`. The only thing that might need to be done is adding new CPU names to cpu-names.txt, when new CPUs are released.
++
++**NOTE**: CPUs not known to the compiler will result in errors, which can be ignored (`dump-cpu-flags.py` will ignore these errors and continue). For best results use the latest g++ compiler available.
++
++Below is a sample output, where an error was logged because the compiler did not know about a CPU named ‘raptorlake’.
++
++```sh
++$ ./dump-cpu-flags.py
++       'x86-64-v2': [],
++       'x86-64-v3': ['AVX', 'AVX2'],
++       'x86-64-v4': ['AVX', 'AVX2', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
++       'alderlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
++cc1plus: error: bad value (‘raptorlake’) for ‘-march=’ switch
++cc1plus: note: valid arguments to ‘-march=’ switch are: nocona core2 nehalem corei7 westmere sandybridge...
++      'silvermont': ['PCLMUL', 'RDRND'],
++             'slm': ['PCLMUL', 'RDRND'],
++```
+\ No newline at end of file
+diff --git a/devtools/dump-cpu-flags/cpu-names.txt b/devtools/dump-cpu-flags/cpu-names.txt
+new file mode 100644
+index 0000000000..5ceaf05c0d
+--- /dev/null
++++ b/devtools/dump-cpu-flags/cpu-names.txt
+@@ -0,0 +1,120 @@
++# This file is consumed by dump-cpu-flags.py. It should contain CPU names,
++# one per line. When the given CPU has a 32 bit architecture, it must be
++# indicated so by appending ", 32" to the line.
++# Always use the latest compiler available, otherwise it might not know
++# about some CPUs listed here.
++# The latest CPU names can be obtained from:
++# https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
++#
++
++x86-64
++x86-64-v2
++x86-64-v3
++x86-64-v4
++i386, 32
++i486, 32
++i586, 32
++pentium, 32
++lakemont, 32
++pentium-mmx, 32
++pentiumpro, 32
++i686, 32
++pentium2, 32
++pentium3, 32
++pentium3m, 32
++pentium-m, 32
++pentium4, 32
++pentium4m, 32
++prescott, 32
++nocona
++core2
++nehalem
++corei7
++westmere
++sandybridge
++corei7-avx
++ivybridge
++core-avx-i
++haswell
++core-avx2
++broadwell
++skylake
++skylake-avx512
++cascadelake
++cannonlake
++cooperlake
++icelake-client
++icelake-server
++tigerlake
++rocketlake
++alderlake
++raptorlake,
++meteorlake,
++gracemont
++arrowlake
++arrowlake-s
++lunarlake
++pantherlake
++sapphirerapids
++emeraldrapids
++graniterapids
++graniterapids-d
++diamondrapids
++bonnell
++atom
++silvermont
++slm
++goldmont
++goldmont-plus
++tremont
++sierraforest
++grandridge
++clearwaterforest
++k6, 32
++k6-2, 32
++k6-3, 32
++athlon, 32
++athlon-tbird, 32
++athlon-4, 32
++athlon-xp, 32
++athlon-mp, 32
++k8
++opteron
++athlon64
++athlon-fx
++k8-sse3
++opteron-sse3
++athlon64-sse3
++amdfam10
++barcelona
++bdver1
++bdver2
++bdver3
++bdver4
++znver1
++znver2
++znver3
++znver4
++znver5
++btver1
++btver2
++winchip-c6, 32
++winchip2, 32
++c3, 32
++c3-2, 32
++c7, 32
++samuel-2, 32
++nehemiah, 32
++esther, 32
++eden-x2
++eden-x4
++nano
++nano-1000
++nano-2000
++nano-3000
++nano-x2
++nano-x4
++lujiazui
++yongfeng
++shijidadao
++geode, 32
+diff --git a/devtools/dump-cpu-flags/dump-cpu-flags.cpp b/devtools/dump-cpu-flags/dump-cpu-flags.cpp
+new file mode 100644
+index 0000000000..3bd89c29e0
+--- /dev/null
++++ b/devtools/dump-cpu-flags/dump-cpu-flags.cpp
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Microsoft Corporation
++ */
++
++#include <iostream>
++#include <iomanip>
++#include <string>
++#include <vector>
++
++enum option {
++    FILTER_OMIT_SSE_SETS = 1,
++};
++
++std::vector<std::string> get_cpu_flags(option options)
++{
++    std::vector<std::string> cpu_flags;
++
++    if (!(options & FILTER_OMIT_SSE_SETS)) {
++#ifdef __SSE__
++        cpu_flags.push_back("SSE");
++#endif
++#ifdef __SSE2__
++        cpu_flags.push_back("SSE2");
++#endif
++#ifdef __SSE3__
++        cpu_flags.push_back("SSE3");
++#endif
++#ifdef __SSSE3__
++        cpu_flags.push_back("SSEE3");
++#endif
++#ifdef __SSE4_1__
++        cpu_flags.push_back("SSE4_1");
++#endif
++#ifdef __SSE4_2__
++        cpu_flags.push_back("SSE4_2");
++#endif
++    }
++
++#ifdef __AVX__
++    cpu_flags.push_back("AVX");
++#endif
++#ifdef __PCLMUL__
++    cpu_flags.push_back("PCLMUL");
++#endif
++#ifdef __RDRND__
++    cpu_flags.push_back("RDRND");
++#endif
++#ifdef __AVX2__
++    cpu_flags.push_back("AVX2");
++#endif
++#ifdef __RDSEED__
++    cpu_flags.push_back("RDSEED");
++#endif
++#ifdef __AES__
++    cpu_flags.push_back("AES");
++#endif
++#ifdef __VPCLMULQDQ__
++    cpu_flags.push_back("VPCLMULQDQ");
++#endif
++#ifdef __AVX512F__
++    cpu_flags.push_back("AVX512F");
++#endif
++#ifdef __AVX512VL__
++    cpu_flags.push_back("AVX512VL");
++#endif
++#ifdef __AVX512BW__
++    cpu_flags.push_back("AVX512BW");
++#endif
++#ifdef __AVX512DQ__
++    cpu_flags.push_back("AVX512DQ");
++#endif
++#ifdef __AVX512CD__
++    cpu_flags.push_back("AVX512CD");
++#endif
++#ifdef __AVX512IFMA__
++    cpu_flags.push_back("AVX512IFMA");
++#endif
++#ifdef __GFNI__
++    cpu_flags.push_back("GFNI");
++#endif
++    return cpu_flags;
++}
++
++void dump_cpu_flags(const std::string &cpu_name, const std::vector<std::string> &cpu_flags)
++{
++    std::string cpu_name_quoted = std::string("'") + cpu_name + "'";
++    std::cout << std::setw(18) << cpu_name_quoted << ": [";
++    for (size_t i = 0; i < cpu_flags.size(); ++i) {
++        if (i > 0)
++            std::cout << ", ";
++
++        std::cout << "'" << cpu_flags[i] << "'";
++    }
++    std::cout << "],\n";
++}
++
++bool does_cpu_meet_dpdk_requirements()
++{
++#ifdef __SSE4_2__
++    return true;
++#endif
++
++    return false;
++}
++
++int main(int argc, char *argv[])
++{
++    if (argc < 2) {
++        std::cout << "Usage: " << argv[0] << " <cpu_name>\n";
++        return -1;
++    }
++
++    if (does_cpu_meet_dpdk_requirements()) {
++        std::vector<std::string> cpu_flags = get_cpu_flags(FILTER_OMIT_SSE_SETS);
++        dump_cpu_flags(argv[1], cpu_flags);
++    }
++
++    return 0;
++}
+diff --git a/devtools/dump-cpu-flags/dump-cpu-flags.py b/devtools/dump-cpu-flags/dump-cpu-flags.py
+new file mode 100644
+index 0000000000..660a4a6699
+--- /dev/null
++++ b/devtools/dump-cpu-flags/dump-cpu-flags.py
+@@ -0,0 +1,41 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 Microsoft Corporation
++
++"""
++This script generates a table which lists the flags indicating which instruction sets are
++supported for each CPU type.
++The CPU names are stored in file cpu-names.txt, which is consumed by this script.
++The script relies on the information embedded in the g++ compiler. This means that an updated
++table can automatically be generated by switching to a newer version of the compiler.
++The only thing that might need be done is adding new CPU names to cpu-names.txt, when new
++CPUs are released in the market.
++
++NOTE: CPUs not known to the compiler will result in errors, which can be ignored (this script
++will ignore these errors and continue). For best results use the latest g++ compiler available.
++"""
++
++import subprocess
++
++with open("cpu-names.txt", "r") as file:
++    for line in file:
++        line = line.strip()
++        if line.startswith("#") or line == "":
++            continue
++
++        words = line.split(",")
++        cpu_name = words[0].strip()
++        if len(words) > 1:
++            nbits = words[1].strip()
++        else:
++            nbits = ""
++
++        if nbits == "32":
++            result = subprocess.run(["g++", "dump-cpu-flags.cpp", "-o",
++                                     "dump-cpu-flags", f"-march={cpu_name}", "-m32"])
++        else:
++            result = subprocess.run(["g++", "dump-cpu-flags.cpp", "-o",
++                                     "dump-cpu-flags", f"-march={cpu_name}"])
++
++        if result.returncode == 0:
++            subprocess.run(["./dump-cpu-flags", cpu_name])
+-- 
 2.48.1.vfs.0.0
 
