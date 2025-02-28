@@ -2,41 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC7BC197BF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 00:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64090C282C1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 01:08:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 570F14029B;
-	Fri, 28 Feb 2025 01:22:08 +0100 (CET)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 3F8474027F;
- Fri, 28 Feb 2025 01:22:06 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.88.194])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z3pgB5gNvzwXBr;
- Fri, 28 Feb 2025 08:17:10 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id C5BDC141063;
- Fri, 28 Feb 2025 08:15:40 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 08:15:40 +0800
-Message-ID: <97f3681c-261e-4ca9-b64e-21c2088a5c88@huawei.com>
-Date: Fri, 28 Feb 2025 08:15:39 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] app/test: fix DMA API tests in IOVA as PA mode
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, Kevin Laatz <kevin.laatz@intel.com>, Conor Walsh
- <conor.walsh@intel.com>
-References: <20250227132749.753581-1-bruce.richardson@intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250227132749.753581-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+	by mails.dpdk.org (Postfix) with ESMTP id 9C6A04029B;
+	Fri, 28 Feb 2025 02:08:29 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id DF3964027F
+ for <dev@dpdk.org>; Fri, 28 Feb 2025 02:08:27 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id 176BC210EAC3; Thu, 27 Feb 2025 17:08:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 176BC210EAC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+ s=default; t=1740704907;
+ bh=nsc4bjh/xZGHZBaANmWzlWXL+ZNsvcCZdwqXs7Zd2Eg=;
+ h=From:To:Cc:Subject:Date:From;
+ b=clp9D3pjtYvP/LQru0apxmj+vrmsZZjx4yE2wq/3BdJhfExkAevNYOI8eGtL/A0Xg
+ UsQHiwm7/6/PMB+Wr/JwLEbi5XDHn7unQ289ztVS4lSYAWbHpIlgmpH7jJIgDKT5TH
+ UwkpiwFEi9aFQ5L3CdBw67aNRUoZur76DCKdEQE0=
+From: longli@linuxonhyperv.com
+To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
+Cc: dev@dpdk.org,
+	Long Li <longli@microsoft.com>
+Subject: [PATCH 0/6] Support VMBUS channels without monitoring enabled
+Date: Thu, 27 Feb 2025 17:08:17 -0800
+Message-Id: <1740704904-1493-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,16 +41,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reviewed-by: Chengwen Feng <fengchengwen@huawei.com>
+From: Long Li <longli@microsoft.com>
 
-On 2025/2/27 21:27, Bruce Richardson wrote:
-> When running without IOMMU for address translation, i.e. IOVAs are
-> physical rather than virtual addresses, we need to translate the
-> pointers to IOVAs for the completion API tests.
-> 
-> Fixes: 9942ebb9c698 ("test/dma: add dmadev API test")
-> Cc: fengchengwen@huawei.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Hyperv may expose VMBUS channels without monitoring enabled. In this case,
+it programs almost all the data traffic to VF.
+
+This patchset enabled vmbus/netvsc to use channels without monitoring
+enabled.
+
+Long Li (6):
+  net/netvsc: introduce private data for storing vmbus device for
+    secondary process
+  net/netvsc: introduce get_vmbus_device to get the vmbus device
+  bus/vmbus: store UIO fd for secondary process
+  bus/vmbus: support channels without monitoring enabled
+  bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
+  bus/vmbus: set event for channel without monitoring support
+
+ drivers/bus/vmbus/linux/vmbus_bus.c  |  9 +++--
+ drivers/bus/vmbus/linux/vmbus_uio.c  |  6 ++--
+ drivers/bus/vmbus/private.h          |  2 +-
+ drivers/bus/vmbus/rte_bus_vmbus.h    | 16 ++++++---
+ drivers/bus/vmbus/vmbus_channel.c    | 52 ++++++++++++++++++++--------
+ drivers/bus/vmbus/vmbus_common_uio.c |  9 +++--
+ drivers/net/netvsc/hn_ethdev.c       | 44 ++++++++++++++++++-----
+ drivers/net/netvsc/hn_nvs.c          | 33 +++++++++++++-----
+ drivers/net/netvsc/hn_nvs.h          | 21 +++++++----
+ drivers/net/netvsc/hn_rndis.c        | 11 +++---
+ drivers/net/netvsc/hn_rxtx.c         | 16 ++++-----
+ 11 files changed, 152 insertions(+), 67 deletions(-)
+
+-- 
+2.34.1
 
