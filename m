@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E63C282D0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 17:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E4BC282D1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 17:00:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7991840EE5;
-	Fri, 28 Feb 2025 18:00:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7973940F1A;
+	Fri, 28 Feb 2025 18:00:26 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id D3F6740280
- for <dev@dpdk.org>; Fri, 28 Feb 2025 18:00:23 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7593940280
+ for <dev@dpdk.org>; Fri, 28 Feb 2025 18:00:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1740762024; x=1772298024;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=zcmtBrVzKYVdUG006WldfLwAaHo3oRPlgQgmB62HvTU=;
- b=LS6Cd+PwK+viOKVo3rfi0tJ1Z6bJ3Oh03xvyT0CQD3QsFveD16klbade
- V9N5DfXpr+8c/wbpImz1+HFjQKli7jNNtbIBmZUaeMnY6prxD++ZhvW2F
- M7qT4uBatCkPVWF+tqgEO8B0YPaWTxNhb4DETEVszA233UkTfaOQU8Ww+
- r2nkdUMEYKz6XThIWkxzIgB2ZPij5bS1VLywri+Gu4SR1Wm9vUXgER4FS
- omkoCe6w+NPUtK+UllAyCNiCHLsP1cPvwg6ef792aabeydC1UV7439kLb
- mBwZXDD//VX9M7NZ4TQCQkA/iVM8v5Hosio4IIzJvpBtVNh3aisKZ17FD w==;
-X-CSE-ConnectionGUID: MGKqEqEPT1SiY4lwsOaCaw==
-X-CSE-MsgGUID: 2UtXAjMoS8OxuQ9WFZSVBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="53084405"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="53084405"
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=dGyHeX6KsbcCMSVGxqmpuYwR4241YF4q9qNn9tRhos0=;
+ b=g2KFzIvCkkgIVnlsjm6+rCbkNg3D0lvaYRoOFflDcZ5v1/8/oQZ9lkIH
+ sUMX+4zpCDDNRd5dpH1DWqMOYXzG2ahcbgaHaw3QJvEJsCSThvGPqt/Hw
+ IlmI6FK+Irlg7M/4Mlaw2/H7xPaA8uiAhqxUqZ1Mj6uugyXMSNqdM7jWu
+ DBR6kIY3QdrNcGV0kBhsRErHa2PX/UhLnV3bG8jeavHpO2jR506El/tNh
+ nPeiQK/8yHMuIhxI6rCyytoIrxbYNqxJ1mmh+HM9tXBrBdfLRqCr+hPsX
+ QN7lO6GquCPLyKJu2o8cIwsKWUD7U+qALrMKRLI4TbJJZSiAvBE24UCMa w==;
+X-CSE-ConnectionGUID: z5J2rmMjTjiq3yR4M40H/g==
+X-CSE-MsgGUID: WvdU5WPtRFyGSFmXKcTCbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="53084408"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="53084408"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Feb 2025 09:00:22 -0800
-X-CSE-ConnectionGUID: DUI9ILnOSTqBZ1nAvdu6Pg==
-X-CSE-MsgGUID: Jcd+WzgSQpigg/sguwXXDw==
+ 28 Feb 2025 09:00:23 -0800
+X-CSE-ConnectionGUID: QRrsYwHyQamaybcPyVReBg==
+X-CSE-MsgGUID: vdvnH1s3Qnmyf9rOREeU/g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="122526310"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="122526317"
 Received: from spr-npg-bds1-eec2.sn.intel.com (HELO spr-npg-bds1-eec2..)
  ([10.233.181.123])
  by fmviesa004.fm.intel.com with ESMTP; 28 Feb 2025 09:00:22 -0800
@@ -41,10 +41,12 @@ To: dev@dpdk.org,
 	maxime.coquelin@redhat.com
 Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com,
  Nicolas Chautru <nicolas.chautru@intel.com>
-Subject: [PATCH v1 0/2] bbdev: doc and vector clean up
-Date: Fri, 28 Feb 2025 08:50:20 -0800
-Message-Id: <20250228165022.480453-1-nicolas.chautru@intel.com>
+Subject: [PATCH v1 1/2] doc: update bbdev documentation
+Date: Fri, 28 Feb 2025 08:50:21 -0800
+Message-Id: <20250228165022.480453-2-nicolas.chautru@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250228165022.480453-1-nicolas.chautru@intel.com>
+References: <20250228165022.480453-1-nicolas.chautru@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,20 +62,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Minor changes to clean up the documentation for bbdev programming guide
-and updating vectors to avoid false alarms when using different
-windowing configuration assumption by users.
+Correcting the scope of supported bbdev operations.
 
-Nicolas Chautru (2):
-  doc: update bbdev documentation
-  test/bbdev: update to fft test vectors
+Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
+---
+ doc/guides/prog_guide/bbdev.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- app/test-bbdev/test_vectors/fft_9.data      | 870 --------------------
- app/test-bbdev/test_vectors/fft_byp_28.data |  48 +-
- doc/guides/prog_guide/bbdev.rst             |   2 +-
- 3 files changed, 25 insertions(+), 895 deletions(-)
- delete mode 100644 app/test-bbdev/test_vectors/fft_9.data
-
+diff --git a/doc/guides/prog_guide/bbdev.rst b/doc/guides/prog_guide/bbdev.rst
+index e3f356450b..f0fbb0c1c0 100644
+--- a/doc/guides/prog_guide/bbdev.rst
++++ b/doc/guides/prog_guide/bbdev.rst
+@@ -13,7 +13,7 @@ optimized libraries to appear as virtual bbdev devices.
+ The functional scope of the BBDEV library are those functions in relation to
+ the 3GPP Layer 1 signal processing (channel coding, modulation, ...).
+ 
+-The framework currently only supports FEC function.
++The framework currently supports FEC functions (5G/4G Encoder/Decoder), as well as FFT and MLD-TS.
+ 
+ 
+ Design Principles
 -- 
 2.34.1
 
