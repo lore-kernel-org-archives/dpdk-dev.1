@@ -2,41 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A51CC282D0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 16:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E63C282D0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 17:00:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D86840E2E;
-	Fri, 28 Feb 2025 17:59:33 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5C49840280
- for <dev@dpdk.org>; Fri, 28 Feb 2025 17:59:31 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2CB12207C0;
- Fri, 28 Feb 2025 17:59:30 +0100 (CET)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] mempool: micro optimizations
+	by mails.dpdk.org (Postfix) with ESMTP id 7991840EE5;
+	Fri, 28 Feb 2025 18:00:25 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id D3F6740280
+ for <dev@dpdk.org>; Fri, 28 Feb 2025 18:00:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1740762024; x=1772298024;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=zcmtBrVzKYVdUG006WldfLwAaHo3oRPlgQgmB62HvTU=;
+ b=LS6Cd+PwK+viOKVo3rfi0tJ1Z6bJ3Oh03xvyT0CQD3QsFveD16klbade
+ V9N5DfXpr+8c/wbpImz1+HFjQKli7jNNtbIBmZUaeMnY6prxD++ZhvW2F
+ M7qT4uBatCkPVWF+tqgEO8B0YPaWTxNhb4DETEVszA233UkTfaOQU8Ww+
+ r2nkdUMEYKz6XThIWkxzIgB2ZPij5bS1VLywri+Gu4SR1Wm9vUXgER4FS
+ omkoCe6w+NPUtK+UllAyCNiCHLsP1cPvwg6ef792aabeydC1UV7439kLb
+ mBwZXDD//VX9M7NZ4TQCQkA/iVM8v5Hosio4IIzJvpBtVNh3aisKZ17FD w==;
+X-CSE-ConnectionGUID: MGKqEqEPT1SiY4lwsOaCaw==
+X-CSE-MsgGUID: 2UtXAjMoS8OxuQ9WFZSVBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="53084405"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="53084405"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Feb 2025 09:00:22 -0800
+X-CSE-ConnectionGUID: DUI9ILnOSTqBZ1nAvdu6Pg==
+X-CSE-MsgGUID: Jcd+WzgSQpigg/sguwXXDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; d="scan'208";a="122526310"
+Received: from spr-npg-bds1-eec2.sn.intel.com (HELO spr-npg-bds1-eec2..)
+ ([10.233.181.123])
+ by fmviesa004.fm.intel.com with ESMTP; 28 Feb 2025 09:00:22 -0800
+From: Nicolas Chautru <nicolas.chautru@intel.com>
+To: dev@dpdk.org,
+	maxime.coquelin@redhat.com
+Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com,
+ Nicolas Chautru <nicolas.chautru@intel.com>
+Subject: [PATCH v1 0/2] bbdev: doc and vector clean up
+Date: Fri, 28 Feb 2025 08:50:20 -0800
+Message-Id: <20250228165022.480453-1-nicolas.chautru@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Feb 2025 17:59:29 +0100
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FAA8@smartserver.smartshare.dk>
-In-Reply-To: <Z8Atll7rmVM1p4Ee@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mempool: micro optimizations
-Thread-Index: AduI+GhwDeJrL14XR8qM3ksA8bTC7ABCWf6w
-References: <20250226155923.128859-1-mb@smartsharesystems.com>
- <Z79G8hI3Yc6kcT2O@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FA86@smartserver.smartshare.dk>
- <Z8Atll7rmVM1p4Ee@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,31 +60,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > > Is there any measurable performance change with these
-> modifications?
-> >
-> > It varies.
-> > Here are some of the good ones, tested on a VM under VMware:
-> >
-> > mempool_autotest cache=3D512 cores=3D1
-> > n_get_bulk=3D64 n_put_bulk=3D64 n_keep=3D128 constant_n=3D0
-> > rate_persec=3D1309408130 -> 1417067889 : +8.2 %
-> >
-> > mempool_autotest cache=3D512 cores=3D1
-> > n_get_bulk=3D64 n_put_bulk=3D64 n_keep=3D128 constant_n=3D1
-> > rate_persec=3D1479812844 -> 1573307159 : +6.3 %
-> >
-> > mempool_autotest cache=3D512 cores=3D1
-> > n_max_bulk=3D32 n_keep=3D128 constant_n=3D0
-> > rate_persec=3D825183959 -> 868013386 : +5.2 %
-> >
-> > The last result is from a new type of test where the size of every
-> get/put varies between 1 and n_max_bulk, so the CPU's dynamic branch
-> predictor cannot predict the request size.
-> > I'll probably provide a separate patch for test_mempool_perf.c with
-> this new test type, when I have finished it.
+Minor changes to clean up the documentation for bbdev programming guide
+and updating vectors to avoid false alarms when using different
+windowing configuration assumption by users.
 
-Here's the above mentioned patch for the mempool perf test:
-https://patchwork.dpdk.org/project/dpdk/patch/20250228164858.274204-1-mb@=
-smartsharesystems.com/
+Nicolas Chautru (2):
+  doc: update bbdev documentation
+  test/bbdev: update to fft test vectors
+
+ app/test-bbdev/test_vectors/fft_9.data      | 870 --------------------
+ app/test-bbdev/test_vectors/fft_byp_28.data |  48 +-
+ doc/guides/prog_guide/bbdev.rst             |   2 +-
+ 3 files changed, 25 insertions(+), 895 deletions(-)
+ delete mode 100644 app/test-bbdev/test_vectors/fft_9.data
+
+-- 
+2.34.1
 
