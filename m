@@ -2,63 +2,173 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F5C19776
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 13:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B5FC282C5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 13:54:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D586C40E6E;
-	Fri, 28 Feb 2025 14:48:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D7F6F40E32;
+	Fri, 28 Feb 2025 14:54:05 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id C113540E6E
- for <dev@dpdk.org>; Fri, 28 Feb 2025 14:48:23 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2C06A40609;
+ Fri, 28 Feb 2025 14:54:04 +0100 (CET)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SB183s025232;
- Fri, 28 Feb 2025 05:48:23 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=V
- 6mCTfTDyjGjyj+o2HHmW27lGRso4fFq1/g2nqBKT+Q=; b=ORY/aASu3t8pkpVL+
- 9fneekKJV+sJJEkpMUGCCS3+Ji0TQviFboDK+GSyAh9M2GzsuZtQeuKbvT5qGnle
- aDDVrTAJmdKcN4/cwn06LYHlwACjJKAakKglsSNMh4nQgvmjhGglVFK3vkLGN2bg
- ndoB8yr9iWQMtXcsBt6o8qt2KB8jyGmnBtGCBqWSSWR7IXyxOgDV0HAsfXAiBp6X
- UEpyyqpDWrhsR7j+JDiyCUmxD/BBXcdcecNKXNyWGRKC8IUrnfUiaXYsR1/vwEa2
- wSuIlyAgyxwUQdKneSYXZO4LizQEvKNTR3/rWbjqjZlLV4IQMAiGMMGiXmwDDp5m
- V23/A==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4537rcgmp4-1
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SBUIxZ006484;
+ Fri, 28 Feb 2025 05:54:03 -0800
+Received: from nam10-mw2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4537rcgmxr-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 28 Feb 2025 05:48:22 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 28 Feb 2025 05:48:22 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 28 Feb 2025 05:48:22 -0800
-Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.28.163.68])
- by maili.marvell.com (Postfix) with ESMTP id 943FF5B692E;
- Fri, 28 Feb 2025 05:48:19 -0800 (PST)
+ Fri, 28 Feb 2025 05:54:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VtUIbytu9fa30ksKYJ9+w7Ca9Nk/TPVq40czDhIaTXhKIdnR9KRaysS83/1nUV64B/UaAkknKyP4QzPO9V5cf9kHEaBEgG5REiJdwhr/fu+agrFlNyMoCJmed0JfWocYGR3zM3pi2TWDj48osup6kawwMvDtIcgRhXskKy3NeK3iL/OKgcB0HhsBbh/wo6ROljTKDk1TPBX9/uX6sQcMqKK+p6vaxVZJTUt8psbaiNbp+Cheg/Mbve/TSFzAyNYnpnoSiN4rEYMfw2iUjAj+fDxvygDixHgrSdmbjGfWf+Jt6lwSsyCRPLh+r5Dks9Rh4Yj3Q8iyBYqGmnUIp3Qcvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=teFtQgC8JgsUCE6iq9pePgkpP2jVzAx6htCaxBtKiC0=;
+ b=lkbAjgeLCKQomVesawALkaV5rz+hCIBRpvkNjGUPKZcUSh5JBGtfTvAoDj/U27ik/ubHAhpY6Bl47UO+8KYturm6VirzjWJTCE8gew4kgdYaIFB61Ppc4qnP9JkvHF/6b33FNgU56kyWQVAFqrKL4ovcPYhSMC7YQJcwSe6N2tgGtXx03CH3fMbzYiqTtZP8N28NfJ2Wu4JIgDE45uCJTRsbCR1QBBwam+VDiw2mwkXIk09BfjTSQjQ1Gra9qHFwmghS/iju1SwFRt0pLqHAZlUK3bJKJn+vcoQr+qNlnxSQFBjn8fV42R58UqDPaSKr2JtgyPla+0TdQKF13RtFHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=teFtQgC8JgsUCE6iq9pePgkpP2jVzAx6htCaxBtKiC0=;
+ b=mfiajOH0XliSktFgDoBqzoJorReT4JEJEFpTEhfkx9HmJS22hKdh9uOsJqPTaHyCOX+SqokcvW9sbNqXXbaE5X6XKtJOpXpVW69NYwZnactnW8DC3Hz4WZsWPvv8xbBkvwFkvbFvC3tkWjiyn1YO3a/9889/lI6fXN1PRqzXLbo=
+Received: from CO1PR18MB4714.namprd18.prod.outlook.com (2603:10b6:303:e9::18)
+ by SN7PR18MB4047.namprd18.prod.outlook.com (2603:10b6:806:100::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Fri, 28 Feb
+ 2025 13:53:59 +0000
+Received: from CO1PR18MB4714.namprd18.prod.outlook.com
+ ([fe80::26fb:729e:a947:3e06]) by CO1PR18MB4714.namprd18.prod.outlook.com
+ ([fe80::26fb:729e:a947:3e06%7]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 13:53:59 +0000
 From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>
-CC: <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, David Marchand
- <david.marchand@redhat.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>
-Subject: [v9 6/6] examples/vhost_crypto: support asymmetric crypto
-Date: Fri, 28 Feb 2025 19:17:13 +0530
-Message-ID: <e491d41c2ddde35e6568f6a460310c3e33b9d183.1740749809.git.gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1740749809.git.gmuthukrishn@marvell.com>
-References: <cover.1740749809.git.gmuthukrishn@marvell.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: Maxime Coquelin <maxime.coquelin@redhat.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>, Anoob Joseph
+ <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>, "stable@dpdk.org"
+ <stable@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [v6 1/5] vhost: skip crypto op fetch before vring
+ init
+Thread-Topic: [EXTERNAL] Re: [v6 1/5] vhost: skip crypto op fetch before vring
+ init
+Thread-Index: AQHbiH6FA1dexCVgyUmrLiQ9SxTU/LNa32UAgAAA7wCAAD+IoIAASj/ggAD/9oCAAFQr8A==
+Date: Fri, 28 Feb 2025 13:53:59 +0000
+Message-ID: <CO1PR18MB47149ED167A626A1159F9515CBCC2@CO1PR18MB4714.namprd18.prod.outlook.com>
+References: <cover.1740594750.git.gmuthukrishn@marvell.com>
+ <0784f44b63f6161ac8716644acfea979704eca39.1740594750.git.gmuthukrishn@marvell.com>
+ <81fac570-cdd7-45f7-b209-ce999d5c3d0e@redhat.com>
+ <de649087-3686-4372-a1ac-d9a05961b6c0@redhat.com>
+ <BY3PR18MB47054AE703CEB9AA6812A7C9CBCD2@BY3PR18MB4705.namprd18.prod.outlook.com>
+ <BY3PR18MB470536F2A1329EE6732E332CCBCD2@BY3PR18MB4705.namprd18.prod.outlook.com>
+ <CAJFAV8zDrLGrjk2F5EXqzGJUytQdnFnv5b1y5xr01TfYj0dRLA@mail.gmail.com>
+In-Reply-To: <CAJFAV8zDrLGrjk2F5EXqzGJUytQdnFnv5b1y5xr01TfYj0dRLA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR18MB4714:EE_|SN7PR18MB4047:EE_
+x-ms-office365-filtering-correlation-id: b88f0f36-2063-418f-8788-08dd57ff59d5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?LzRObHovN2Q0bGI5T252bGRyRmVMT3lKS0x5c3VqSmkvS1dtY3NNTkxrZlY0?=
+ =?utf-8?B?dzVHVlJHaVdlNThyMi9SbG96NEZSaFdqME9XaFpXb2Z4b3hyenVvZkxxSSt1?=
+ =?utf-8?B?Vm80Zi9zbzZyV2dlZFdmSWNsWjJWQlRtM09wL0NMeFpUMkVjOERhaWhxYUtW?=
+ =?utf-8?B?S013UmVhMGpnUEJld29BbVlSbzMwUkV0WEFHb2xjUDVtckovNGgzd3NmUjJn?=
+ =?utf-8?B?RHlzcGxYMnpNSE1iREFQMnViTW91clo5dEdKT1hHVmUyaEtuWjJwcVJOUE5S?=
+ =?utf-8?B?bXJ0VVhGV3dpUWRBbmlKNEM1dWVINVNwRnpUTVkveHcyTlRuRlBwOXBDZURx?=
+ =?utf-8?B?YWpLNm1UYzJpZHltWHpsOWpIaXF3WTN5UnJoQjV5eWtiY0JsLzA5dkZyeXhp?=
+ =?utf-8?B?VTJJcitSWVIwLzdFVkZiL1lUcnRjaCt1VVJZYXpiOHlaWmVMN0VOM3FvZFFo?=
+ =?utf-8?B?TFloUkNUUE91Qis1ZHZ5QkkvNy9kcEozbDZDTDE1ZjdGbG9FMmtQYTBOVkNu?=
+ =?utf-8?B?STdIWGFTdjJjd0g1TUswb3NiMjFsemxjTmdBazdwUU9MN3V0UXpraW1Cdzd5?=
+ =?utf-8?B?ZWRRUiswTVFxdk1vcWZpT2Q5c3F0WGh3SWF3cFhMWEZ0UlVnZUI3ZEpEVkRE?=
+ =?utf-8?B?L2paMGdwZWNUcnN1bVc0UTliTkdOZ1RqRWE4VVprUXNaQXBCK0dubHAzTjRq?=
+ =?utf-8?B?MTVLbkV1WEJyOGE1cHFHRC9iQlV6bkNNbEpYVVhhbEQ0d0NuQ09nQUpPTnNE?=
+ =?utf-8?B?dnAxQ0NObHZtOW4rcmlJbU9hS3VseStGajhyUlVqcWozMEVNTXVBSktyWnNC?=
+ =?utf-8?B?VWQ0ZkxTcWZPOGttMzNFV09lbjIyWjhLRVVobkRnL284NDRha3lnaEJxd1lZ?=
+ =?utf-8?B?UnhINTFTZTN2S3dIYjVudmRMRlVIeGZUd0pzbURmc0FvVmlvRlRJanpwQmxo?=
+ =?utf-8?B?aHVTVFNod3J5S0ZoemxmeFNQQ1NaR25ML21mWDcxdzdOWVZaUlkvSEZ1bDRh?=
+ =?utf-8?B?c0xFZ3JKN1hTZ0R6b0lXR1VHM2NLMGJQQkNLTllrdDlwRzN2Z3ZveVRkeGdi?=
+ =?utf-8?B?V2RpUkNKbUZLMzVkZEVYM2s5R2tTclRUc3M2aGV6RWJiR0RTQWowWFZHNmlM?=
+ =?utf-8?B?aUZFWk52R0ZMUVVObmthd3hqZURtcXFtRC92bVZTTGZRcjNrQ2p6Rmx4ajZn?=
+ =?utf-8?B?TTEwcDVtRXFNc2gxTW9GVHVXTDZDdW1HUUM3VE9MTDdrRWhXK1diRXhxQWU1?=
+ =?utf-8?B?MEZjeFJYSmw1Q010enBNRFUzM05LcjV6cFkwYVdxYTA5bTdwSndjUUVaMTlT?=
+ =?utf-8?B?UExpWS9RcnZZaTNUQUFIL2N4djczOUNSTElnaGp2b1dPVjJNNkVBbE9nR0V2?=
+ =?utf-8?B?R210ZVlLM2RaZ282TWxtdzRPUlhhWXBWTHF1Qlh4OU5LSHJmVXJRZE5tNmY2?=
+ =?utf-8?B?SU9lNHpOL2YydWtFbTlKbDhpcEIrc04xZ0dwejc2R2lpeFUrQitOTjVQek1k?=
+ =?utf-8?B?bS9ueHBaWElITHplWjE0ZFlLNVJYb0NvNzNjbWFjdEhaZTl0NWNSRXMwdlJN?=
+ =?utf-8?B?SVJxZGJzSysrRnJsRHFKTE5BSUozM0pHVEJoUkovVFhYQk8yaGRQdEZKYXFh?=
+ =?utf-8?B?NlZCNDlZNzhQZ2NHMjZPN01Cemh3byt0a1JxUDFBVUEwV2RrLytZKzl4TUVO?=
+ =?utf-8?B?ZTNBMUVjQnFmYlNuNkJ2ZE4vTzBaMWc1bWJiNU9hVlFwQWxiZGV6QUh1UmxS?=
+ =?utf-8?B?WnVPN3dvTWJSWVRLdnlhZFVwVWx6dUpGS1RpcDBxRFNlczRVSVBJaG44eE55?=
+ =?utf-8?B?dFhXcWROUGhVNTVzOFRqajFaazl1TjBjWlBFRC8wcytwYlVaQjVXS0M3Qndj?=
+ =?utf-8?B?dVYrQTR3ZElaYU5qWldEU2ljZUhlZHZGVStPS0NseUlubitEazBqSXZzRzJR?=
+ =?utf-8?Q?VJvb6FyDnPBBs/Gpg4kMRhBeWuzg+pPS?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO1PR18MB4714.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cWI1WG1NQ216Q05OenNkL1VUUnJjUmtuQXFLdEtVYWlhSzJEaEpsancveXFB?=
+ =?utf-8?B?TEpIem5hck5lR3pLSmNTcW9DNlRodWZra1NGMk9Tc014ckQzV3ZzU256bTZY?=
+ =?utf-8?B?aUovRit0akgwZWpPSXF5NmcwNW9mWkdHdUpldEdia0E5cHVNMG1QTlI3N3Jt?=
+ =?utf-8?B?TmF2ZEk0ZXc0VjBzeitDUFBNNTVvaVV5dTBPSE5WcFNSSWRYQTl5UElkZERT?=
+ =?utf-8?B?L2E0ZkIxM2luZTVKcklKbjFTU0pkNkRIOW1KQXZxQTBES0xEemFJYlRuUENo?=
+ =?utf-8?B?aDg0YVhXNllDdmZ0K0ZZL1Z4a3h3UTdZVCtoVFdaN2ZQUlRJYnhqQ1BVQVpI?=
+ =?utf-8?B?K04yeWkzZ2RjUHJ6MHNjMlRFQlBIT0xmT0M3b1B1Sjl1UEhJZysrUittZEIy?=
+ =?utf-8?B?dUVwdGFNbEhQcWxvN2d3bThRV1ZCYk1ZQ2hvLzNjM1lHR1pTOGpUUTRhRTlw?=
+ =?utf-8?B?TS8wcHVHYmhtRXVVbS9yL2xjNWdGaEVhd3R0bDNGZHJIVHE1NzBoaDdyeEE5?=
+ =?utf-8?B?emp5OFUxY1JBN3haZDFzbHVmbXVRVnVhanNEeC9KSElpVDl6bm5GM0U5b2pE?=
+ =?utf-8?B?aENiTEw1b0pSQXg3ZE82ejdRbzl3ZVNPYlpoK3lkMlRRSUZqT2ZmdTVFclYz?=
+ =?utf-8?B?K1BDWFVQSWRjWjlqSEZML0RGUTMyZ2ZjTUZ0TUFObFViOXlvR09rVzVDR3oy?=
+ =?utf-8?B?WHZ6ait1R3QyOWt6UElVMjNNK3FrMUVkT2JqODZVRUxGZ0tad2hiOHgxWlRh?=
+ =?utf-8?B?R2tobi9PQ1c4UDZsSjd1VThmNmNPMzFQN2R4bmxlRjhBVzNGTlpjaldxNlUv?=
+ =?utf-8?B?SW0zem94L1pUM0o4c2JFOXBqQVIyR1lURHc0eHNXOWlWblVFbTl2Y1ZPOW5L?=
+ =?utf-8?B?K0daSDVvRE81VTJyWm0zY1lOWjJ5VU44OExkVEFaVW1ucncwblVOQzVZUVRU?=
+ =?utf-8?B?bFR4SHVmaTFCQjYxdTJjaHdWUjBxRG5pR1R1b2laUkFWL3pJRDQ4M2FTa2Mx?=
+ =?utf-8?B?OHBnSFBGM29zVDFjNDd6Rzd4eW5Za0k1VUhDZ0FXTlhiV1RjclVEL0VYakth?=
+ =?utf-8?B?SUc4WFdKM0JLTnRnc0tTT0hJUm5EZ0FSZWJ5aGFoZm1ZQTFENFp5YkpqZ3cz?=
+ =?utf-8?B?dnloeWtxV0RpeUV3ZDlKdWFidHZOWlpGcWgydVJVYUpVSkp1dGJWM2c5ZHA1?=
+ =?utf-8?B?TU5lT0dMS296WjF5ZzB5TnptN3FlYVQ4WGF5U0FPVmkxRUZlNlZheWt4QWRZ?=
+ =?utf-8?B?emdScUluczJJdis5WURTazd3Nkc0NFFTczA3dVl1NktYWW5XNjVQcFJYYkpp?=
+ =?utf-8?B?VHhadHRZbjQxdjJSOTYzSisrb20vU214L0tHdlNYaGdGZVB1OWw2WXFUclRU?=
+ =?utf-8?B?enJPVE9SU2JHcG9lRlI1dW1EUG9xUXYxNjVxUEZ6REhHUUFDVGswRVNCRjV2?=
+ =?utf-8?B?SWtKLzZ4QVgrbW1xNTd1MVhYSy9MUk40andxaklmQllZK3hIQ1F1MkZXQ1cz?=
+ =?utf-8?B?cTYrQkJjdGd5YmlRRWV0cGJoVXM1SGZaU0pRbDVsQkFzaXVkQ080aHFOTXBS?=
+ =?utf-8?B?ZlhUZEE2WFpCa1FxQXRjMXNuOHJvSmJKVmVIcEREMjhUVUhYMnpXSGFDcStn?=
+ =?utf-8?B?czlsVHI1QVF0Z3d4ZThtbC9obDhBeDkydVJwR2ErQkgwaGVjQWNFbElSV1JM?=
+ =?utf-8?B?WWVZcjVwT0VaZjhKblFTb3JOTllVZDVTcGhTR24wMGd5T2Jlb3lWNk9xUUtL?=
+ =?utf-8?B?bm9wTDhKMzZyT2sxdm5tZnhOQnc2RldUMWk3RFJrNjFrSC9TTWxTaUhTUm9q?=
+ =?utf-8?B?SGZqS1F6dmRGR1BzQStBVXlCVHZSMXFjZmZlanRhZDI0Vi85bzNSckJMU05Z?=
+ =?utf-8?B?bWg1WW9qMjFtTUlRTUlyMERsNkhiWG5YUzhWbFF3d3FmQ094eUxVdmJ0SGZK?=
+ =?utf-8?B?dDV5VnlEME5YRnBkbU42cmRCMHdObkx6UzhLTjZHNlBoRlVjU3c1cDEzUEVh?=
+ =?utf-8?B?QVc0WDdLazk5ek5DTGRoaVRvZkEvN00xWE01K2JCU09tc0tZbWUxVG5ZaUdP?=
+ =?utf-8?B?QXBaemIyMExUQ1lZTzUzdU1KMjh6dFVOUUN1a1hpU2JqYnJ6NlFXVk1BVWRO?=
+ =?utf-8?Q?tQoppcN+/slWFhSgcwMgFoOax?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: YRQWWvuTK8DwwNQ-ASUyXMNnHUNBi6vu
-X-Proofpoint-ORIG-GUID: YRQWWvuTK8DwwNQ-ASUyXMNnHUNBi6vu
-X-Authority-Analysis: v=2.4 cv=GcvtnRXL c=1 sm=1 tr=0 ts=67c1bea6 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=T2h4t0Lz3GQA:10 a=M5GUcnROAAAA:8 a=pRZQUwRn-iEXYF3PYm0A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4714.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b88f0f36-2063-418f-8788-08dd57ff59d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 13:53:59.1855 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rdEBka4rS3FyN4H9iwniABFKYSThOTFDtUnqFUKfpxocwswE4FfgltNqxZfRS7ZW9YeY6lFz7RPARz6lNiWcgF7AIhJffY6KdbMQJyEAgl8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR18MB4047
+X-Proofpoint-GUID: nYay3eUIaASGVroZxMPz4gl-_q1P4ikJ
+X-Proofpoint-ORIG-GUID: nYay3eUIaASGVroZxMPz4gl-_q1P4ikJ
+X-Authority-Analysis: v=2.4 cv=GcvtnRXL c=1 sm=1 tr=0 ts=67c1bffb cx=c_pps
+ a=+hq7TYb7Jqj0EztKBnUMzg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=T2h4t0Lz3GQA:10 a=-AAbraWEqlQA:10 a=NNTqsqtgUHVgKveqYuMA:9 a=QEXdDO2ut3YA:10
+ a=ZXulRonScM0A:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-28_03,2025-02-27_01,2024-11-22_01
@@ -75,183 +185,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Support asymmetric crypto operations.
-
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Acked-by: Akhil Goyal <gakhil@marvell.com>
----
- doc/guides/sample_app_ug/vhost_crypto.rst |  5 +++
- examples/vhost_crypto/main.c              | 50 +++++++++++++++++------
- 2 files changed, 43 insertions(+), 12 deletions(-)
-
-diff --git a/doc/guides/sample_app_ug/vhost_crypto.rst b/doc/guides/sample_app_ug/vhost_crypto.rst
-index 7ae7addac4..b00f2bf3ae 100644
---- a/doc/guides/sample_app_ug/vhost_crypto.rst
-+++ b/doc/guides/sample_app_ug/vhost_crypto.rst
-@@ -33,6 +33,7 @@ Start the vhost_crypto example
-     		--socket-file lcore,PATH
-     		[--zero-copy]
-     		[--guest-polling]
-+		[--asymmetric-crypto]
- 
- where,
- 
-@@ -54,6 +55,10 @@ where,
-   guest works in polling mode, thus will NOT notify the guest completion of
-   processing.
- 
-+* asymmetric-crypto: the presence of this item means the application
-+  can handle the asymmetric crypto requests. When this option is used,
-+  symmetric crypto requests can not be handled by the application.
-+
- The application requires that crypto devices capable of performing
- the specified crypto operation are available on application initialization.
- This means that HW crypto device/s must be bound to a DPDK driver or
-diff --git a/examples/vhost_crypto/main.c b/examples/vhost_crypto/main.c
-index b1fe4120b9..8bdfc40c4b 100644
---- a/examples/vhost_crypto/main.c
-+++ b/examples/vhost_crypto/main.c
-@@ -59,6 +59,7 @@ struct vhost_crypto_options {
- 	uint32_t nb_los;
- 	uint32_t zero_copy;
- 	uint32_t guest_polling;
-+	bool asymmetric_crypto;
- } options;
- 
- enum {
-@@ -70,6 +71,8 @@ enum {
- 	OPT_ZERO_COPY_NUM,
- #define OPT_POLLING         "guest-polling"
- 	OPT_POLLING_NUM,
-+#define OPT_ASYM            "asymmetric-crypto"
-+	OPT_ASYM_NUM,
- };
- 
- #define NB_SOCKET_FIELDS	(2)
-@@ -202,9 +205,10 @@ vhost_crypto_usage(const char *prgname)
- 		"  --%s <lcore>,SOCKET-FILE-PATH\n"
- 		"  --%s (lcore,cdev_id,queue_id)[,(lcore,cdev_id,queue_id)]\n"
- 		"  --%s: zero copy\n"
--		"  --%s: guest polling\n",
-+		"  --%s: guest polling\n"
-+		"  --%s: asymmetric crypto\n",
- 		prgname, OPT_SOCKET_FILE, OPT_CONFIG,
--		OPT_ZERO_COPY, OPT_POLLING);
-+		OPT_ZERO_COPY, OPT_POLLING, OPT_ASYM);
- }
- 
- static int
-@@ -223,6 +227,8 @@ vhost_crypto_parse_args(int argc, char **argv)
- 				NULL, OPT_ZERO_COPY_NUM},
- 		{OPT_POLLING, no_argument,
- 				NULL, OPT_POLLING_NUM},
-+		{OPT_ASYM, no_argument,
-+				NULL, OPT_ASYM_NUM},
- 		{NULL, 0, 0, 0}
- 	};
- 
-@@ -262,6 +268,10 @@ vhost_crypto_parse_args(int argc, char **argv)
- 			options.guest_polling = 1;
- 			break;
- 
-+		case OPT_ASYM_NUM:
-+			options.asymmetric_crypto = true;
-+			break;
-+
- 		default:
- 			vhost_crypto_usage(prgname);
- 			return -EINVAL;
-@@ -376,6 +386,7 @@ vhost_crypto_worker(void *arg)
- 	int callfds[VIRTIO_CRYPTO_MAX_NUM_BURST_VQS];
- 	uint32_t lcore_id = rte_lcore_id();
- 	uint32_t burst_size = MAX_PKT_BURST;
-+	enum rte_crypto_op_type cop_type;
- 	uint32_t i, j, k;
- 	uint32_t to_fetch, fetched;
- 
-@@ -383,9 +394,13 @@ vhost_crypto_worker(void *arg)
- 
- 	RTE_LOG(INFO, USER1, "Processing on Core %u started\n", lcore_id);
- 
-+	cop_type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
-+	if (options.asymmetric_crypto)
-+		cop_type = RTE_CRYPTO_OP_TYPE_ASYMMETRIC;
-+
- 	for (i = 0; i < NB_VIRTIO_QUEUES; i++) {
- 		if (rte_crypto_op_bulk_alloc(info->cop_pool,
--				RTE_CRYPTO_OP_TYPE_SYMMETRIC, ops[i],
-+				cop_type, ops[i],
- 				burst_size) < burst_size) {
- 			RTE_LOG(ERR, USER1, "Failed to alloc cops\n");
- 			ret = -1;
-@@ -411,12 +426,11 @@ vhost_crypto_worker(void *arg)
- 						fetched);
- 				if (unlikely(rte_crypto_op_bulk_alloc(
- 						info->cop_pool,
--						RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+						cop_type,
- 						ops[j], fetched) < fetched)) {
- 					RTE_LOG(ERR, USER1, "Failed realloc\n");
- 					return -1;
- 				}
--
- 				fetched = rte_cryptodev_dequeue_burst(
- 						info->cid, info->qid,
- 						ops_deq[j], RTE_MIN(burst_size,
-@@ -477,6 +491,7 @@ main(int argc, char *argv[])
- 	struct rte_cryptodev_qp_conf qp_conf;
- 	struct rte_cryptodev_config config;
- 	struct rte_cryptodev_info dev_info;
-+	enum rte_crypto_op_type cop_type;
- 	char name[128];
- 	uint32_t i, j, lcore;
- 	int ret;
-@@ -539,12 +554,21 @@ main(int argc, char *argv[])
- 			goto error_exit;
- 		}
- 
--		snprintf(name, 127, "SESS_POOL_%u", lo->lcore_id);
--		info->sess_pool = rte_cryptodev_sym_session_pool_create(name,
--				SESSION_MAP_ENTRIES,
--				rte_cryptodev_sym_get_private_session_size(
--				info->cid), 0, 0,
--				rte_lcore_to_socket_id(lo->lcore_id));
-+		if (!options.asymmetric_crypto) {
-+			snprintf(name, 127, "SYM_SESS_POOL_%u", lo->lcore_id);
-+			info->sess_pool = rte_cryptodev_sym_session_pool_create(name,
-+					SESSION_MAP_ENTRIES,
-+					rte_cryptodev_sym_get_private_session_size(
-+					info->cid), 0, 0,
-+					rte_lcore_to_socket_id(lo->lcore_id));
-+			cop_type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
-+		} else {
-+			snprintf(name, 127, "ASYM_SESS_POOL_%u", lo->lcore_id);
-+			info->sess_pool = rte_cryptodev_asym_session_pool_create(name,
-+					SESSION_MAP_ENTRIES, 0, 64,
-+					rte_lcore_to_socket_id(lo->lcore_id));
-+			cop_type = RTE_CRYPTO_OP_TYPE_ASYMMETRIC;
-+		}
- 
- 		if (!info->sess_pool) {
- 			RTE_LOG(ERR, USER1, "Failed to create mempool");
-@@ -553,7 +577,7 @@ main(int argc, char *argv[])
- 
- 		snprintf(name, 127, "COPPOOL_%u", lo->lcore_id);
- 		info->cop_pool = rte_crypto_op_pool_create(name,
--				RTE_CRYPTO_OP_TYPE_SYMMETRIC, NB_MEMPOOL_OBJS,
-+				cop_type, NB_MEMPOOL_OBJS,
- 				NB_CACHE_OBJS, VHOST_CRYPTO_MAX_IV_LEN,
- 				rte_lcore_to_socket_id(lo->lcore_id));
- 
-@@ -567,6 +591,8 @@ main(int argc, char *argv[])
- 
- 		qp_conf.nb_descriptors = NB_CRYPTO_DESCRIPTORS;
- 		qp_conf.mp_session = info->sess_pool;
-+		if (options.asymmetric_crypto)
-+			qp_conf.mp_session = NULL;
- 
- 		for (j = 0; j < dev_info.max_nb_queue_pairs; j++) {
- 			ret = rte_cryptodev_queue_pair_setup(info->cid, j,
--- 
-2.25.1
-
+SGkgRGF2aWQsDQo+ID4NCj4gPiBJdCBpcyBkdWUgdG8gbG9jYWwgdmNfcmVxIHRoYXQgaXMgcGFz
+c2VkIHRvIGZ1bmMgdGhhdCByZXF1aXJlcyBpb3RsYg0KPiA+IGxvY2sgSW4gdmNfcmVxLT52cS4g
+RXZlbiB0aG91Z2ggdmNfcmVxLT52cSBpcyBsb2NrZWQgdnEsIEdDQyBkb2VzIG5vdCBhbGxvdyBp
+dCwNCj4gYXMgSSB1bmRlcnN0YW5kLg0KPiANCj4gKmNvdWdoKiBjbGFuZy4NCj4gDQo+ID4NCj4g
+PiAgICAgICAgIHZjX3JlcSA9ICZkYXRhX3JlcTsNCj4gPiAgICAgICAgIHZjX3JlcS0+ZGVzY19p
+ZHggPSBkZXNjX2lkeDsNCj4gPiAgICAgICAgIHZjX3JlcS0+ZGV2ID0gdmNyeXB0by0+ZGV2Ow0K
+PiA+ICAgICAgICAgdmNfcmVxLT52cSA9IHZxOw0KPiANCj4gVGhlIGFubm90YXRpb25zIHdvbid0
+IGhhbmRsZSB0aGlzIHdyYXBwaW5nIGluIHRoZSB2Y19yZXEgb2JqZWN0Lg0KPiBKdXN0IHBhc3Mg
+YSB2cSBvYmplY3QgcmF0aGVyIHRoYW4gdGhlIHZjX3JlcSAod2hpY2ggSSBkb24ndCBzZWUgbGl0
+dGxlIHBvaW50IGluIGhhdmluZw0KPiBpbiB0aGUgZmlyc3QgcGxhY2UuLikgYW5kIGFkanVzdCBh
+bm5vdGF0aW9ucy4NCj4gDQoNClllcyBJIHRob3VnaHQgYWJvdXQgaXQgaW5pdGlhbGx5LCBidXQg
+dGhlbiBJIGhhZCB0aG91Z2h0IHZob3N0X2NyeXB0b19wcm9jZXNzX29uZV9yZXEoKSBpcyBvbmx5
+IHN0YXRpYyBhbmQgY2FsbGVkIHdpdGggbG9ja3MgaGVsZC4NCkFueXdheSwgSSBoYXZlIGNvbWUg
+dXAgd2l0aCBvbmUgYWRkaXRpb25hbCBwYXRjaCBpbiBzZXJpZXMgdG8gZml4IGl0IHNwZWNpZmlj
+YWxseS4NCg0KVGhhbmtzIGZvciB5b3VyIHN1Z2dlc3Rpb24uDQpSZWdhcmRzLA0KR293cmlzaGFu
+a2FyDQo+IA0KPiAtLQ0KPiBEYXZpZCBNYXJjaGFuZA0KDQo=
