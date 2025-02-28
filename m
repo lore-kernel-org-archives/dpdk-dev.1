@@ -2,113 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3072CC19776
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 09:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C84C19776
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 09:44:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5624D40609;
-	Fri, 28 Feb 2025 10:40:37 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 470844028C
- for <dev@dpdk.org>; Fri, 28 Feb 2025 10:40:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1740735635;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=njjeVk/Gn+PjxeIc9KiT1R/31xohzI0gGrsG9IG590s=;
- b=Eb2pfzz2LDL56nWNlBrtYPvwGScc0K331Ch7QClpKB5jDUVC84PdXihZuDSjOw9EiaSCJz
- pSFkN8hzhOlhgz++NC1mP9/3yeLG06qyQf5v6WjltANwsScDVD0O9JjLLtx4Iy/4CWuSzu
- q+dR4LIbvBpXrfGsodGNntm9zBVyqqA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-639-7N7cUUIQPqSvhE6q2mrMuA-1; Fri,
- 28 Feb 2025 04:40:32 -0500
-X-MC-Unique: 7N7cUUIQPqSvhE6q2mrMuA-1
-X-Mimecast-MFC-AGG-ID: 7N7cUUIQPqSvhE6q2mrMuA_1740735631
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E20141800875; Fri, 28 Feb 2025 09:40:30 +0000 (UTC)
-Received: from [10.45.242.8] (unknown [10.45.242.8])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AB4E419560AB; Fri, 28 Feb 2025 09:40:27 +0000 (UTC)
-Message-ID: <4407830e-f739-439e-8962-c1fcd80ade69@redhat.com>
-Date: Fri, 28 Feb 2025 10:40:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [v6 1/5] vhost: skip crypto op fetch before vring
- init
-To: David Marchand <david.marchand@redhat.com>,
- Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, Jay Zhou <jianjay.zhou@huawei.com>,
- Anoob Joseph <anoobj@marvell.com>, Akhil Goyal <gakhil@marvell.com>,
- "stable@dpdk.org" <stable@dpdk.org>
-References: <cover.1740594750.git.gmuthukrishn@marvell.com>
- <0784f44b63f6161ac8716644acfea979704eca39.1740594750.git.gmuthukrishn@marvell.com>
- <81fac570-cdd7-45f7-b209-ce999d5c3d0e@redhat.com>
- <de649087-3686-4372-a1ac-d9a05961b6c0@redhat.com>
- <BY3PR18MB47054AE703CEB9AA6812A7C9CBCD2@BY3PR18MB4705.namprd18.prod.outlook.com>
- <BY3PR18MB470536F2A1329EE6732E332CCBCD2@BY3PR18MB4705.namprd18.prod.outlook.com>
- <CAJFAV8zDrLGrjk2F5EXqzGJUytQdnFnv5b1y5xr01TfYj0dRLA@mail.gmail.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <CAJFAV8zDrLGrjk2F5EXqzGJUytQdnFnv5b1y5xr01TfYj0dRLA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: _6cH9-eziHCyyflBAIlq4POzN2-bOZPrS83pPE17WAY_1740735631
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+	by mails.dpdk.org (Postfix) with ESMTP id 1FCB840609;
+	Fri, 28 Feb 2025 10:44:14 +0100 (CET)
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com
+ (mail-db5eur02on2074.outbound.protection.outlook.com [40.107.249.74])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B7DE4028C;
+ Fri, 28 Feb 2025 10:44:12 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vR0g9uF22+BQDRqmqJMaPD5xtoZznvg/T31Wu0olyftRykdCEo4wcPewev0LHqDGpYUEdxET6+ciLbql8gFINLe+oaWDa/omr/cqK/gzj0Tlcq8Q168QUgTNB/K52CHUCTYgtBFwoUKqxvNONx9PQY4UoJon6esbJtUNELnLrvj8Tpwo/27siLmwkG7u3xueLWBxdOogzylheTw9XAn3EhDG3H49vgKsiQ+GRcBUplNOA6Qs80Ywn1TAxeY3le7KV92VAEPlu3+GjTB5XI1seDvSAkl8kPr3kZBS1i53iwOJRKEV+lr4LnTwFEPolAlC32UgX1wXyXNWIWP97JQk8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d4+kONNmsiGXP2oa0oVpY0jrsRvk6xFIBCphO/tVIC8=;
+ b=dk1mu7Qbqz1Ja2MdUkn/vVUtX/UfZHTflHD5dTbwHmpfC0Ibxiaiu3WQzYGqM/9hqCZhNPjNZYXpuFkBQhuV+S6iFOoXeoZVZASMv7vD7PBjlBITBlWjcb3R1zuuPuJnhRHnFhstdDG8/RhoY1ryqyecFbI7tOGvnxo3S9tdwAPfxRBu6pY3TtTYnAJa2fKxtfUOGWZKTVnTa2I3wCfFjEF4G1DiFtP+1o14ItYo1BNcd7pjQ18/LJRaNav444IjYLBZ+0AhJzjwXJAHGn5NpLunp3mgpaXzaCkbCyCNHYDrbw13fCxr+pOrczRPwluZnvW70oVTI2tFhbM2ciuiew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia-sbell.com; dmarc=pass action=none
+ header.from=nokia-sbell.com; dkim=pass header.d=nokia-sbell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia-sbell.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d4+kONNmsiGXP2oa0oVpY0jrsRvk6xFIBCphO/tVIC8=;
+ b=Bll3mGO3/Xnpn/SxIsI/Iu0JWq3rbfAEGPusZJQLDYnw3URqeyoVbp/VUDsD6N2x8pWRV+egIxWlbk7LRI4PBcbbKOmRLOz6p0idiWy+7uCjl7Be4hXqcuGlbvGtmMB1vPfVEtRNm45NoZ+YBvQUGbgZKHSKVLEL2PYbA4Ofrsm7rP4idAPvmgVWEBD28A0QVmCGdcp385hGvJnBti4ef9Cs7vu7xyA4qjzwEkbeKNojZUx2aCBXhpUvPclNv+Jzu4KzD4mI0vvU59Y24BGJeoxDqQZrQfF/sUwceoMalqlhJfBHrbf9G+JG8TK4Qv4dZxkGAmjBTiB8ldaXkqWFgQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia-sbell.com;
+Received: from VI1PR07MB9898.eurprd07.prod.outlook.com (2603:10a6:800:119::6)
+ by AM9PR07MB7923.eurprd07.prod.outlook.com (2603:10a6:20b:2fc::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Fri, 28 Feb
+ 2025 09:44:10 +0000
+Received: from VI1PR07MB9898.eurprd07.prod.outlook.com
+ ([fe80::1928:4afb:4eee:1f21]) by VI1PR07MB9898.eurprd07.prod.outlook.com
+ ([fe80::1928:4afb:4eee:1f21%6]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 09:44:10 +0000
+From: Yang Ming <ming.1.yang@nokia-sbell.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org,
+	Yang Ming <ming.1.yang@nokia-sbell.com>,
+	stable@dpdk.org
+Subject: [PATCH] eal/linux: enhance ASLR verification
+Date: Fri, 28 Feb 2025 17:44:04 +0800
+Message-Id: <20250228094405.1437-1-ming.1.yang@nokia-sbell.com>
+X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0008.apcprd06.prod.outlook.com
+ (2603:1096:4:186::23) To VI1PR07MB9898.eurprd07.prod.outlook.com
+ (2603:10a6:800:119::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR07MB9898:EE_|AM9PR07MB7923:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f5b5311-b89b-4669-ba22-08dd57dc73ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3/V4GT/Sm0BM7/KgYG1hsizYY/qUg+P7X/TMZfChwk6Xuy19FkCG82rBLzSg?=
+ =?us-ascii?Q?jrLeUub73dG0q9ET4TnlgDV1WuDOg2Q9x3Qw9tQEmT8TZFS7Wpo1MBw8386D?=
+ =?us-ascii?Q?r42tvRN4oLXm+xOka1y4mHvHaE1q3INY+UI5RchCBf+i7KBvMV4tFU4CF+jF?=
+ =?us-ascii?Q?JXeoLFPVI0BVxbfTWLgb1/8nRvuTAi+AHbgFES77UvbUUbni13+6sV2Xdunv?=
+ =?us-ascii?Q?ikt4y2uKoyKHRNRAFDuebFqD4Xqg+96Yu5zEyNzbT2cfKxtMbe+LscsPGKUt?=
+ =?us-ascii?Q?2qeiwGT8S/gUAIfAvh0r6oAfiBvgTUXUnAZeNnFxzL/ZswnwRQHLbxJyZubd?=
+ =?us-ascii?Q?ztkQ80zrom+f5/IcZB+iXknCwoeEJGD6u3ALP8WO/t3OsYSs360nDgHMt6++?=
+ =?us-ascii?Q?mDsOpv5DGIUk8+sSBY8mYke6vA4pYlgTaakt/sfMOcWbHiW8WayTQVTM7zND?=
+ =?us-ascii?Q?aZ24WMJpW7WK2QY3YC3B843rRZ8PNY6w740feYml0VaYSNORucYSDfSp6mbg?=
+ =?us-ascii?Q?F5WOgsq1BTMuhtfj0R+Ue5kVkulLbUCyhEUu2c01hRwama8TgRv/j9HXhlDv?=
+ =?us-ascii?Q?6p/FqMyjoICWhrK8++98Hk1KhYqakizBNbZ8KOdcw9Jx2fKQp1YYzyUh/8nc?=
+ =?us-ascii?Q?h/Cp9rft4t1mt0kXLOfAkQn7Xobqhn3kxJxcowdLUqDNme+aTwuBNcdDtzGV?=
+ =?us-ascii?Q?QtqY3VU1eHPmwmo7dCiAohRZ54wTzoTOWUrm15zzkz1mfRS3R0tZ10sP3h0B?=
+ =?us-ascii?Q?GLiYgwUJb3sRvla95RqM73Jqtn0MLHY6kUafn++YATWSe2+yCq/9I3D12R6m?=
+ =?us-ascii?Q?x8ylmhZ6OzSAGxAL41YLZjK0uaV/Y14DQO0pCjf3DkrdCXVqHmkWORgLVO73?=
+ =?us-ascii?Q?g1knt6M9PxgxFPJPhLvkqiYlngzfW9OVR/VKlIbim5NMUFTBnFHgtNosun0T?=
+ =?us-ascii?Q?il/GEolFCygGJaBYMaxqftuRlLKqM4DVNaZ/R8eqcu4pELP8+o0eQ3L2ghcW?=
+ =?us-ascii?Q?P5IFN/1FZwwpzt4hQsC5pp/B1jCHbu2I0O2DMVzJ2I2xosMRkLBN0ZyvwGjq?=
+ =?us-ascii?Q?nwMlGuVuK+SpvcSYkGlP4BL17xVMZ8+RZss7b/RRa/4vpepbOEAUjLFYxJB8?=
+ =?us-ascii?Q?EP2H9SUQkBhtCaVlN/BNYWXmyeWrzK1M8ZIAl1NU7ZkHBXz28G6CSU4uOMYt?=
+ =?us-ascii?Q?l1SeKSnkOHVy7QYbgFoW3k3K1ucjsM62LKgSOOzFhFaHT8s8f79JFol9IkrF?=
+ =?us-ascii?Q?0leeJEO68MnrC+9B1sqNYjn4QqSfOK0xn0ZxjcCUrL9puLGQvR5dvwmD/9N/?=
+ =?us-ascii?Q?F9XzgmgdmoF+uLXjXAIDClmg5VpzvW48XbZhfV69dRy9FBKw+hRPxyXw9Rj1?=
+ =?us-ascii?Q?11dSetdBZZtgSrUjhRwiQfFMhOwo?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:VI1PR07MB9898.eurprd07.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3wgQq5kxbcTfrP/DRHSqHOJLioNN12rG9Ev7BIZd7sS5OeOWxA/gjloSoKo4?=
+ =?us-ascii?Q?WZkDnyGggh04AwGycqMQVyqHVnkBoS5ABPJEmF5pB8c+IQuNTLS67PIIngyh?=
+ =?us-ascii?Q?ADfcgYGZxNs9NuO3tXoWB7FiCfLRspdnpyW8lryTA2K15n9zJI60WXPpnlCh?=
+ =?us-ascii?Q?AiDaVJ7JruuiifL9AcB7yp70dbQgqx+5iXsC8ZKGki99dSq8uD3/1Jf7/taT?=
+ =?us-ascii?Q?OmDKQQxPaAq2ZOY2XoVf15vRHSnT/YfuKM71CjN9qHgYoAi1JLywRdnOiCM3?=
+ =?us-ascii?Q?wp7J2FYVlVOq/jUxb9ppxwODfedfVUQd/RmLGRAriCcRjwOG4XOLBtwKNrGm?=
+ =?us-ascii?Q?VsHzRrl5JHuSYzr4DCYUVykYUrhTF2uI8qyJ3DF5BxfmgpDPg0TBWzu1d64Z?=
+ =?us-ascii?Q?zFi5iecorJdDz2gcHreFHayPZ5t+yzBlaDUBBeoW/p5dbwPnQcuHnhTz3L7L?=
+ =?us-ascii?Q?mNszyTYxsKog5EnsrXb9fe5e67xU8KadNOV316dcWDPDiS9G7K13AlRw4a9l?=
+ =?us-ascii?Q?23ueXBonsyKNiWankb9JWw1n3iwxl09R9ln74sKAvcmlpddZEwlx54XMv+wd?=
+ =?us-ascii?Q?xJR7kN5LSD8L0QH7i23Nc/jbVtxySXO8aaBwtCCzgGXEeadk+UVK4Xu7KMJp?=
+ =?us-ascii?Q?lFegnRSi2rUyFT3MPq83BEWIUm0gdx0rxibPJuAI+b0YZ4Z9eCMnZhm8iyE0?=
+ =?us-ascii?Q?WHIFU/M78ImR6G1PMW1WyqwWuMvW7A+mrPZSI+ank7CPJQF2MW+dMVy5VBah?=
+ =?us-ascii?Q?2krbBr36XcX2fMsQsQ9TdjOKxlfWk4bf+qc0yAi39fxbgyriSGj4RB8zDE9S?=
+ =?us-ascii?Q?fEIhkPnPvLSGIlu4oozluPEhskIUw5LC4zGmD60LwYSqg9LFAU9NuSomFb6F?=
+ =?us-ascii?Q?jQOcO506W3lmJgh2OdsiISEuk3whPWj5j0efnAChgjNWrGIDW8zT7PDSnCo+?=
+ =?us-ascii?Q?NONd18LWpWMqi+qcjqc3qXTD0uJs4uZblgnE3Jczpw9oqYsHuu3QCDNUlUZJ?=
+ =?us-ascii?Q?iPjNXdFCPsvGsTe4kdHXhUa8fKB/Y0Y+instGKBJSGkJtbFy634o9znYv9br?=
+ =?us-ascii?Q?aLjwyuLw25VGERTil5vcU7OCG5MpwcFWFRJ+GjirPznYK3e/ocn8aKdrjQbh?=
+ =?us-ascii?Q?CqOzDwd5DnjRm3bs0t8ZbcM+g9k9dq7FEiLjNeoxze7gIDxo6G+C9KvRllFQ?=
+ =?us-ascii?Q?ZaHqrfJ1FCVnCk+7SXn54K+cpOsS1c/KxT2+j2m8rVADZvUKzVtQOgmqylG1?=
+ =?us-ascii?Q?Ltbbsw0V7jKLMqrtA9AB0MdDVQ2+nmYr8+NefyzbC6UxYdzfU3mN4wcoI5oT?=
+ =?us-ascii?Q?hFTjrpF8I/lIUHTNO7Q1i2Dq8GXqwp/br17fR9gMP2TN08j1aIa951+jv/tN?=
+ =?us-ascii?Q?PJZRvmNGfi9gX/emI2xxBvip76F9KK2T9wmq5f/Iy4TJfp1m2e/o+9wH0zTW?=
+ =?us-ascii?Q?RhFy8V1m2BDdtT3DF9IqjXOPBllabVPE2JI6ainaZYHQKMBmd64U0Hd5sltX?=
+ =?us-ascii?Q?LXzcvAsOvd+1w+FEk4KhlrXe4jhuEM8Lk0vEJBaY4/UkQ80JZer/0CurBdFc?=
+ =?us-ascii?Q?rvsW0AEoJ+4lbXswmpfoyB65pNDJJyu541vbBzF+nX8d+JgskzZ8ytZNgoLv?=
+ =?us-ascii?Q?7g=3D=3D?=
+X-OriginatorOrg: nokia-sbell.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f5b5311-b89b-4669-ba22-08dd57dc73ee
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR07MB9898.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 09:44:10.7497 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KL0zO9W7F/07DxYPXL1oQFvGivTv9c3Y4P9qIF2DwYudwYmCRBy+KXo/W61zi2PIebZLK8v1ssFXToyJcY3WlmCWroDSXWGowsNq/0QEGdg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR07MB7923
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -122,44 +137,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Gowri,
+This change ensures that the current process is checked for
+being run with 'setarch' before verifying the value of
+'/proc/sys/kernel/randomize_va_space'. The '-R' or
+'--addr-no-randomize' parameter of the 'setarch' command is used
+to disable the randomization of the virtual address space.
 
-On 2/28/25 9:48 AM, David Marchand wrote:
-> On Thu, Feb 27, 2025 at 7:07 PM Gowrishankar Muthukrishnan
-> <gmuthukrishn@marvell.com> wrote:
->>>> Ha, and also you should be able to remove:
->>>> __rte_no_thread_safety_analysis /* FIXME: requires iotlb_lock? */ in
->>>> vhost_crypto_process_one_req() once implemented.
->>>>
->>>
->> Removing it would break compilation for thread safety flag.
->> http://mails.dpdk.org/archives/test-report/2025-February/857515.html
->>
->> It is due to local vc_req that is passed to func that requires iotlb lock
->> In vc_req->vq. Even though vc_req->vq is locked vq, GCC does not allow it, as I understand.
-> 
-> *cough* clang.
-> 
->>
->>          vc_req = &data_req;
->>          vc_req->desc_idx = desc_idx;
->>          vc_req->dev = vcrypto->dev;
->>          vc_req->vq = vq;
-> 
-> The annotations won't handle this wrapping in the vc_req object.
-> Just pass a vq object rather than the vc_req (which I don't see little
-> point in having in the first place..) and adjust annotations.
-> 
-> 
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
 
-Before your series arrived, we were wondering if we should not deprecate
-Vhost crypto as it was not really maintained and we had no identified
-user.
+Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
+---
+ lib/eal/linux/eal_memory.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Since it seems you are going to use it, which is great, would you commit
-to make the necessary changes to make it reliable? If yes, I would agree
-to take your v8 as is for v25.03 if proper rework is done for v25.07,
-would that work for you?
-
-Maxime
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index 9dda60c0e1..ab1fd83cf2 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -15,6 +15,7 @@
+ #include <sys/stat.h>
+ #include <sys/file.h>
+ #include <sys/resource.h>
++#include <sys/personality.h>
+ #include <unistd.h>
+ #include <limits.h>
+ #include <signal.h>
+@@ -26,7 +27,6 @@
+ #include <numa.h>
+ #include <numaif.h>
+ #endif
+-
+ #include <rte_errno.h>
+ #include <rte_log.h>
+ #include <rte_memory.h>
+@@ -200,6 +200,14 @@ static int
+ aslr_enabled(void)
+ {
+ 	char c;
++
++	/*
++	 * check whether the current process is executed with command line
++	 * "setarch ... --addr-no-randomize ...".
++	 */
++	if ((personality(0xffffffff) & ADDR_NO_RANDOMIZE) == ADDR_NO_RANDOMIZE)
++		return 0;
++
+ 	int retval, fd = open(RANDOMIZE_VA_SPACE_FILE, O_RDONLY);
+ 	if (fd < 0)
+ 		return -errno;
+-- 
+2.34.1
 
