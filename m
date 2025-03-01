@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3FDC021B8
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 09:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3D3C021B8
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 09:29:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 262FB402CA;
-	Sat,  1 Mar 2025 10:29:24 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 403B840281
+	by mails.dpdk.org (Postfix) with ESMTP id 4AB3E402DB;
+	Sat,  1 Mar 2025 10:29:25 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EB80402C2
  for <dev@dpdk.org>; Sat,  1 Mar 2025 10:29:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1740821361; x=1772357361;
+ t=1740821362; x=1772357362;
  h=from:to:cc:subject:date:message-id:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=ssIjxLPPaGlU7Wx3nOzVtrTChdGQeiYPbLFGQYWEBpQ=;
- b=HSi7cRyD31jb33qDEPuh4w3GbPZrc5XfH6B9SWz6R3hGYreuW+VoY4tX
- +NIj+7KcqmCGgyPVheJS7QDUsKY88wmHT49xiTrR12CBQOdoGmgltJYuJ
- 15pDdQw9SkknUZW9o+uld+5ypmFhPR2AiyKMgXzMBltjHTh0MzELBkFZo
- 0JtQabRVkq4CbV3DwOPN4BEkDm1VX5F5gSM/pT6myVaDRVRS+NQWLvKy7
- sPfPXRSMfOWK0LHEM3qRdCP8EbIJQjMQl7orQH1KFdhjkNeW9ONR9AD/D
- PF4fEqzxxLv60VivR9oZP4WHZMnHzMpnUcuOlb0/pTiw2kAcZU7bbZVAl A==;
-X-CSE-ConnectionGUID: L+9FvpV5R6a/gFG0FyI4Fg==
-X-CSE-MsgGUID: QSyJ7i0uSD+mCI7wirICFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="51949778"
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; d="scan'208";a="51949778"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Mar 2025 01:29:20 -0800
-X-CSE-ConnectionGUID: WVvuAQlqSFOlg3SPtQMvXQ==
-X-CSE-MsgGUID: hhJLPfr1SaiSENFM4nfXKQ==
+ bh=h2IwSl30QVdHpKxu3/a9BUrjT2UqVhDQFMtQY4mlN8Q=;
+ b=NOR2oC0F68g4c5xugFw6K9RVVrPNH+MXzsLx/yGD/M1xh1chvIRpsGWz
+ 1d/Z382PNbiaQNwL5t3jtYNJlrLWXN/FnLIxjdIbqHQNhm20JS95EsvlX
+ XjRNQFpXOLYs+mTGegn/Pk3u4ChbgsOfEJL6X8moOxwTsK8LjKILhr8eM
+ 0vBB6d58MKe8tdzA74+jW/5qjEarwyCiWaXV5daS1/LVUsMBz2g05HJHP
+ ukXR+U/n41wc130b6InesrtvktEdV9WBDwMigKltZXmbS4J8XXUnah0P4
+ sdYUvF9QGwUKuwgv7g/7UVo4V8u3Mibx/rI+GQIkubzB6ZMSS575JxVEw g==;
+X-CSE-ConnectionGUID: v7j1u/3mTPOrRpqFv9pU5g==
+X-CSE-MsgGUID: qBaVGnUJRDWZkJAi4KgV/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="52384514"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; d="scan'208";a="52384514"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Mar 2025 01:29:21 -0800
+X-CSE-ConnectionGUID: O1E+fpDfTwau3S1/KGcrvg==
+X-CSE-MsgGUID: rb9V1ABqQ8KYVCDBctSa4g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; d="scan'208";a="118046751"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 01 Mar 2025 01:29:20 -0800
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; d="scan'208";a="122692480"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Mar 2025 01:29:21 -0800
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sat, 1 Mar 2025 01:29:18 -0800
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Sat, 1 Mar 2025 01:29:20 -0800
 Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Sat, 1 Mar 2025 01:29:18 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
+ 15.2.1544.14 via Frontend Transport; Sat, 1 Mar 2025 01:29:20 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.172)
  by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Sat, 1 Mar 2025 01:29:18 -0800
+ 15.1.2507.44; Sat, 1 Mar 2025 01:29:20 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l6NtrOudOFjiAUq72cnToTVPjlGnbYZYdjHS/CZNimdsjD5C5jDE2sXbtxljdJuXvmBXOKpr8w1UK8v39OTbD8gf5g7xdr129RNoaEtTjNfaXfKYwZQMGCfsNjqkQo0IeAmkQziBOg2jdZXQtcOTRsDSlv0QIMcZBp7FQ9p/GCQ6bW5cx2JtBeEimhklidDLpFwifVgno8kKHenkOt7/xWslPve7R7WALIGs7fZnqsAkj/zfQa21z6fb+R9KDaakYoBrIY31oBblJkCUKqvB/1Xn6kVhYRwB9HJklLT0Gb3wCmIjCdU22v4rRPkewlTcsAWw41MQFJyhpcUJijV51Q==
+ b=LWb6aHKjKpAGUoXYFGYtGNCq5ryRpe3F3YpdTTtria8eCFx0HZHOYiX5fJw8E3lIiD9r22s9g9veocaOOfA+Wn4uI+ykgCzF9eBD5iGQB1UTSCaD6/D7gHMPghTLJSWOu4urpvNr6nqdsnvmtPB84OTY/K828BfwcDCDlH+z621LtmRgcoz0xSPikKcVi0TyjOvygoBK4w75GsFZOtIS0ShK0ID949eDIuB5Q8bq9omCiWl8bW5N6ThFM2X2C2JWbSg7hyMlXe75LYvV4lEcpEpGlZcANeU/17qGalslZPrD6A5k3fu40gQZWvKnPHzvs3wWtufOmppLsg9xQiKhyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ohxjkg+NDjMio+kXUxKXlDIOZUMYnd10RhpYZ2a8OrU=;
- b=er+pY3nEdFOeJxCf3iaFZcdNwMadZ8OVvNEzOW0+FyIskm13XoBd/qHRSbOFk5tIPRKegy9oxe8peTgoOHecwe9EfEDTBXsQhDdyhfclZpV4WIJB8osIvLfim0uCcX9YYVoYlLAVDRjKmG770/ydaksQ54NkLvSVz1j8A9hc+RAMluAkO1CzPdy8BSZ61abv85x1L5bcwjgw7BOYGbiINXEbiwFc1gPHUnLt4omqB1lE4wixfWn4ekh88xKOR1XAzitg8Q7gVz3NQ7Fdf20GrVPZzmOAMQabBhBuSZ4mmOvQlijUO0Bx67f5BKZ81n6XHqSpbhy5lA+XunOFP274mQ==
+ bh=yitO8njfK+oDi8UJKmIKhst8SR+FAyC2zzQSXFJO39c=;
+ b=S5mpUzHMKpJBY4k/OHsFpbpN8ADogiyaQ0dCDq7RMfFM3hb0T60jIcaW+4ayCBo4atFoMdud8F8lIcOphGMQmLyZ2Zp8ErPb0H8knJ3ZbdIJOodJXb3QY/szxiPti2OeVK77IoXQsjycb/ex4ot1TfwOqRqR0lshEryqV4r6GhKmtnfWiauDCUfxk6BCEmC73xYTFfVdQUCPv+75zTVEQXhN9v//W8unS5FmG4yJT4+NDdiXqAT2w6Dztd2KXqQCjJt6lTKUyntJE/ccWzPObINHsK0oTR5sYP7z8tLGO5+YHyVsOUHlyQOv90NDKEmnupztAEPuxidIqTeiVMkRmQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -62,34 +62,27 @@ Received: from SN7PR11MB7044.namprd11.prod.outlook.com (2603:10b6:806:29b::5)
  by BL1PR11MB6028.namprd11.prod.outlook.com (2603:10b6:208:393::22)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Sat, 1 Mar
- 2025 09:28:30 +0000
+ 2025 09:29:18 +0000
 Received: from SN7PR11MB7044.namprd11.prod.outlook.com
  ([fe80::79ff:96e:c439:d42e]) by SN7PR11MB7044.namprd11.prod.outlook.com
  ([fe80::79ff:96e:c439:d42e%3]) with mapi id 15.20.8489.021; Sat, 1 Mar 2025
- 09:28:30 +0000
+ 09:29:18 +0000
 From: "Naga Harish K, S V" <s.v.naga.harish.k@intel.com>
 To: Shijith Thotton <sthotton@marvell.com>, "jerinj@marvell.com"
  <jerinj@marvell.com>
 CC: "dev@dpdk.org" <dev@dpdk.org>, "pbhagavatula@marvell.com"
- <pbhagavatula@marvell.com>, "Pathak, Pravin" <pravin.pathak@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Mattias R_nnblom <mattias.ronnblom@ericsson.com>,
- Liang Ma <liangma@liangbit.com>, "Mccarthy, Peter"
- <peter.mccarthy@intel.com>, "Van Haaren, Harry" <harry.van.haaren@intel.com>, 
- "Carrillo, Erik G" <erik.g.carrillo@intel.com>, "Gujjar, Abhinandan S"
- <abhinandan.gujjar@intel.com>, Amit Prakash Shukla
- <amitprakashs@marvell.com>, "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Subject: RE: [PATCH v3 1/3] eventdev/eth_rx: add API to burst add queues to Rx
+ <pbhagavatula@marvell.com>
+Subject: RE: [PATCH v3 3/3] test/event: unit test to burst add Rx queues to
  adapter
-Thread-Topic: [PATCH v3 1/3] eventdev/eth_rx: add API to burst add queues to
- Rx adapter
-Thread-Index: AQHbhpgiVcrQJEldnki9+hhu5Q/BsbNeC0Rw
-Date: Sat, 1 Mar 2025 09:28:30 +0000
-Message-ID: <SN7PR11MB704428213D9E051B0E2FD70BA1CF2@SN7PR11MB7044.namprd11.prod.outlook.com>
+Thread-Topic: [PATCH v3 3/3] test/event: unit test to burst add Rx queues to
+ adapter
+Thread-Index: AQHbhpgjXhKiKpztrk2RVt4pReMNuLNeC4sw
+Date: Sat, 1 Mar 2025 09:29:18 +0000
+Message-ID: <SN7PR11MB7044552A0E652B0E6A5133F2A1CF2@SN7PR11MB7044.namprd11.prod.outlook.com>
 References: <20250218091543.282270-1-sthotton@marvell.com>
  <cover.1740383918.git.sthotton@marvell.com>
- <445d0930473314311091700bb4b9913c6266ffb2.1740383918.git.sthotton@marvell.com>
-In-Reply-To: <445d0930473314311091700bb4b9913c6266ffb2.1740383918.git.sthotton@marvell.com>
+ <c4e02d3a45f8583ad4f91a5b5d98609612d34b60.1740383918.git.sthotton@marvell.com>
+In-Reply-To: <c4e02d3a45f8583ad4f91a5b5d98609612d34b60.1740383918.git.sthotton@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -98,77 +91,77 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SN7PR11MB7044:EE_|BL1PR11MB6028:EE_
-x-ms-office365-filtering-correlation-id: 98d0becb-9967-4832-1d14-08dd58a36dfa
+x-ms-office365-filtering-correlation-id: 3f56bd05-448a-4d39-2430-08dd58a38a9b
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?QU9zKciFTq8Y71i33Xi2ktC/HuUTCgWfl6Rcbuj/8CiLOtP09bSIfMHsNO5k?=
- =?us-ascii?Q?ED9+HCmAgUl/k6Z6669GbmSbYBSjnnyE/tQTYXEkYkYIoyCaCtH81J7T339x?=
- =?us-ascii?Q?UO8YL1weD+Z9TGSl62vxP8pAE9kEUlOBwMC3kL5k9HYpx+R/ksw1dscrYHV6?=
- =?us-ascii?Q?sf6U8S4GJfdALZDpkj9UBlABekuQDEAyiTN0/BqCQqDNng1MpvhzHgfWB/Q3?=
- =?us-ascii?Q?7AGowGCI7RsiruxtKHjBU2dr0gurasl8/SUEsMhIdB1eYW2/aT4LYJE4z5Bt?=
- =?us-ascii?Q?FgHaM6Qbl8cIt0MBmGMo/TlGgNe4d1MWlbEuFbDTuZqLsVJX4hejagyMcS9p?=
- =?us-ascii?Q?lC7glhCdxoImud34NOdXANWe7G3vL5MTJV4nDeH2inZGponGgURgPPCeJpH0?=
- =?us-ascii?Q?GtH3IBjKpMN9b7FriUqvcIcQAIQgtoB5Eb5a817ci62um7cc0cevlTnUm9ef?=
- =?us-ascii?Q?vv06K3lczrXdzVI/vbrTPbs0kDyX4r54/TYxb88nFfhVCjF13oPW0TjSXd2b?=
- =?us-ascii?Q?GRaGywpiKL9WfyR5dkGk3tZP0KJ73umRSvviXcim4X+w+RcXZW4fzFDoSXzm?=
- =?us-ascii?Q?WsiRXtZXqqjsjkh4UG9QbPbtoL5CsWXe1571HkrhBOLD672Fh4SClor7AoF1?=
- =?us-ascii?Q?ssms7JGXUV5yB2SGwDzy2uvnoOklX2Q2xF2A6uEaxNEXPHW8Qk1NMei8MqYM?=
- =?us-ascii?Q?0eUSezSlPdePre99DroDe4HZ4pk10ltWG7CV1Yjqo35HTRdGe7k2WIHYgg38?=
- =?us-ascii?Q?CF7ELaHw2w8Ba3Re8YpBr6hGeZVTPkykxESUQxL5B6Sr+xD47Y9d3XhvkRvf?=
- =?us-ascii?Q?Wx1bnGRmobSBauaG6D6UvSEB6txcExxFcmxIIf2lVD5FNwIhkmBaQdoPT8JQ?=
- =?us-ascii?Q?7U6q8p8Dw8KFOm0EhtZza0HPPu8qrfGtRuspSPigIRqEL6zZmG7FxeIUGwm7?=
- =?us-ascii?Q?y0SaL9RZjMqv7vayMR6gvOxGztjm0q7gGK5pkIK8HwIn2TW1+CQfIdzVozNS?=
- =?us-ascii?Q?LdUVdVWO94iq6ti3lvn4D68bOm2AeE+k+DMaVbenWxG3YYhP0lKfiBsaW+rt?=
- =?us-ascii?Q?BXx7wytXHKH/IopYcFm8heK4tM0RfaniUtWPp4Mqh0D3bPAOKfOwCniMS6Ye?=
- =?us-ascii?Q?tpHSpKCcR3T2xZwTg/xnazFXQM8gdZcMboxcpngt5Un0i3VonvqWcI9Pv4Qt?=
- =?us-ascii?Q?+xYyjChVm1XhdW7cxseHuS458efe2GptT8SIiPy3twMCKvE1IErGgBdhpQWg?=
- =?us-ascii?Q?i4MkWntL3+2sQPz4YJBsWXFJuUjvAXsdlt+Fz5yqEz5IHyxtU6ePuCGXjOZA?=
- =?us-ascii?Q?bATJTDoughRBETie0jyuggII5bS0QJLYEfIwt7jS1eX4oBeOoB2YXl2v1TCq?=
- =?us-ascii?Q?rIrZTkb3LOsEUYaeRf7xQl8NSRHnbI/rGtiSy/SpNx9uNGnUu/yuF6gmzzmH?=
- =?us-ascii?Q?gIelkqDNdXOnqR+03/eTwodHCf8/aKIX?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?crJ2ztHCQDEEtCu6YlbdcMkXjrj14/A42wndc+PNloR2xVmY0w9BB+WF7Ory?=
+ =?us-ascii?Q?xedUoPs0Yqtx2sm+NoKm5VvhWKrqR+wv216C5p7UIMGfUXuR5Xk8Vs3u9Bu1?=
+ =?us-ascii?Q?6Y4wfQLs/fxRCSqVU2sW4VfODAV+RfYmXthGwb5xti9cw6NygMKQTm7Asfes?=
+ =?us-ascii?Q?av7tLf6hPpdoQEiWLpg4a3i4GIjqMoy+p+/NwRaEogbQHjCky8VkInNw3qVp?=
+ =?us-ascii?Q?aTnKObgDCgSqBvB6UQn+GQdzI/bhVWXE3y/PGBX0haok7A05ZkvUPxOPO/jd?=
+ =?us-ascii?Q?SBR2UpV+0q5oXyTgDGJODZBmhmwB7BXgPuPDhFVRkcjtDohsFNwil81SdbF4?=
+ =?us-ascii?Q?k/rEgdXfj2lV796fIxvELfpiLgGb/G6RaXcAlPVBMk5EV8EVfuc8XvuwA/60?=
+ =?us-ascii?Q?ObQEeDLA796bXQL8RM2k7JqRk5frZMhaFPi7tzPjP7crnyPdskOieLQ2xt4Z?=
+ =?us-ascii?Q?xeFBdhZ1iOC9iTYSqv7mBdxqtmOou9NIJCm+S5pFhQShoqqlMbgjG1Th1rUi?=
+ =?us-ascii?Q?TqZseJWxeu2eIMTRbdWVTQ6rataT0ga3bU8WBQXtrMJqliuL0dqNG+sQVTwi?=
+ =?us-ascii?Q?sluLF1Lc1L4ATPtFNI8ENZKR9Zo2/n1Jan4HcB+DMERCk72Q8LB+Mi2rdzRn?=
+ =?us-ascii?Q?c0iXwSG6phTJnxf6luf6GYNC3Tm1lfiAA7SEJXWL6yTkALUxOLKhiNmba3KI?=
+ =?us-ascii?Q?CLDDlne9JFbwu/XLLqnKVxMR5guWanXRNnq9SGxchqiLD8cImm01qUA/jYAy?=
+ =?us-ascii?Q?/gwqx4JqBP6AtmK6nC8NSZU8QulA/TuBuQSRNOTdKij8r+JMNrV9mRKC5oU9?=
+ =?us-ascii?Q?Wots/DNpgRGQE/7nHTaOU08/qKGhCuldkFzbiTPw6/YLlN9cCC7SKk1UQXUi?=
+ =?us-ascii?Q?yGZUTsOwWdk8nnsCEnFAo2hvwVNwSHIp1RuNej6E1A3ZDDKVDnBsrGrOnNgu?=
+ =?us-ascii?Q?/qXR4UV8aplDFVQTQooknWHDRXR36fKt/BomEkSrDyXff6fLg/zj+u6+n3zb?=
+ =?us-ascii?Q?2cGlMRIQfkEs285Y1D1rd7me+SoAGisPkRf/F+GXoBZshlYR1HprJFOPnggG?=
+ =?us-ascii?Q?l8jTFg7HtcXl+Y/mox1pyfz23uvBAvXsG40Xc/MLvETLv2ZzOXrsLqfZ84To?=
+ =?us-ascii?Q?V+7otFK3ORVbQvTyYnNo/FMHSLhX6bULDMNWhqiwXlwMxdOWWKyaOc8lAxNV?=
+ =?us-ascii?Q?e6L9UeGmnqrAMeANHHbgCcy5Ys/jEqjV2rIJ2baOVdFMxTtVCRJH7M0wFKeN?=
+ =?us-ascii?Q?5xn8dzAupkSyQY3q/UoQgNkBoANnwzvEWrMq/yVwKN+Dc/yUxCZYb7UJO2OZ?=
+ =?us-ascii?Q?VG83gfzz+2IMtDmc6RKh9Dqq2Djt4nkLjutx9N6X458fzKdKAhYXnNMDTPCh?=
+ =?us-ascii?Q?oCNZBAREAT+MMkbHt26x6ev0/+WzEwNg6o28BxbCgvYUeUl0aowHU0DPdNhB?=
+ =?us-ascii?Q?Me9Bf8N+H7abQy3msqvW1h71Kq8A7KPn?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SN7PR11MB7044.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ndPMEXpIw7j4kcxYn7bwLkdiK/vBclAav/++clYD4OKwvgyrGT2OazakF4cz?=
- =?us-ascii?Q?9p69eeU2QnkKUDR6QASF+159gqGoRX4nIwtZMsddf9kRINuyQ3BWIyiXfCBR?=
- =?us-ascii?Q?8Q7qJzHHsm8T10m0ybkQblMS2ix3bAdq8X1iQkXD/2FnwISzjUpQ7NKyNpD1?=
- =?us-ascii?Q?aC1aJwUVsbJt7Qzhd2FFyXVQ6XSNOniW6LLogg2O01vcvTOo6C9SYw2anP8R?=
- =?us-ascii?Q?x4PtCV+Q3I2zvvfd/+aPfPHCh51SOOBrMVGmyTk1vUkAiY5YaHUOLaoRHRE3?=
- =?us-ascii?Q?gW+Lh39QQgyf5c/MSwN0L9mAt2ya4Zn3wdHAugmP81W6kCqGn4DeUnd/jmTb?=
- =?us-ascii?Q?HOaMpfRydSgBdosqVGGH1mJAuG8tXbizOVL7clXrXrwvC6wbENtFK5n5e6PT?=
- =?us-ascii?Q?cy0TecxD2QVNPfAHxzcbI5kzC4oIExa/xN+XBpCT+lDlI+FSxoov1u+7TDN2?=
- =?us-ascii?Q?FjHMSzS/DsNmxBchVaZBI2v4OAnPXYH18M0yVJ2mUqodww8gNExBpljdmBAx?=
- =?us-ascii?Q?UdPfkFPqdANwl/caKoaPeDfSedH45fe45y5CwlKevDon+zwLx8AEvZvHx2Hb?=
- =?us-ascii?Q?nQNgsXJNw1LQdeO4yed/NhZPGcaRyooZ8OAoi0DUCU56x0gZEPxI9bdo4gRQ?=
- =?us-ascii?Q?V5pFZrc6P64syG0V5z5VqZxU+2ihi1+e6358XTd1LcjSuWb7AVdd6PHdFRaK?=
- =?us-ascii?Q?CqqSio43cA/a+2C1sECLT8TWkOUNIfKuydo/45CnTgJCI+izaGoLjfcEMqQs?=
- =?us-ascii?Q?93UFoBTN7UTPvUlolfsC4T37RxEXEp/Q2FhEnl4lWPUL4PLbBFR/Doemthi0?=
- =?us-ascii?Q?0Ksr7vlUa3oTzw1qPBsQhHfemXPzoNTHlNhejbVqTaCr277XXZMPUiEIUp39?=
- =?us-ascii?Q?w+Nw/TgSZJSb+aFATWihCaFVpzDnSZl5ekCFkOAZu1DFHbdxn7sWO/AdrYki?=
- =?us-ascii?Q?ku765M18yRROLlQUGwXEn1mtHE/7cOAujGC6/f8v2uwSzUWZFBRSAycdin7l?=
- =?us-ascii?Q?WDmdaFyfodrO4ReIl9yw0/9UEswZYagGS7+Atcs/pRJo/6b2EXJ1iqErgGIb?=
- =?us-ascii?Q?uTBFA9G9NdJFVyVzFedeLUsQhkLTdCWbSthCI36BQMwcEbJ4POxEA7byodgF?=
- =?us-ascii?Q?/k1VIJdCE4OKPv/QNRxTc2sdPUI2ZS07wLJg1juOut0h69foPBA3p6as0Qjd?=
- =?us-ascii?Q?ZgQ8EjtkP/X8ah0/9xXXDAcZbovGuwvjH4229Tdna/kCc10tOK4QrM76QkwZ?=
- =?us-ascii?Q?pfnIk3lggDQ36/mMOiNWc0pDb8OQ0Z1+jXOFcnuSESs0CgAwpt/2HUdh+seK?=
- =?us-ascii?Q?Hs3WHdFU6nTx3gUZDnhw4J/MmaetTV27GfBscRL2BMDwl4PkFxhsnYkZOacP?=
- =?us-ascii?Q?S8x6nMjjnltqlQEc8lp/53ppDqrv8I04NLJrrf4LdMN/CIBTJHCN4RtpYhH/?=
- =?us-ascii?Q?FHZNlGDNljS3dtHyHiDBI1wCXf/MLQqD1FuNvBLoWOTLtqPZ0ZI8/lp+n9GY?=
- =?us-ascii?Q?ShktcJZWfMrDISdi/itHBoC/odWqZB+eXEM8Y8rO65FydXJe820WPKWWFmgj?=
- =?us-ascii?Q?ECAQi7HMocjs0tjOJRpxvZxSwqHmmYvfV8LaHThv?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?9f6PI2VMqciYEDH8JsNkIl9eqWNPWVNzWdC+QNoxkecklyHnKMX6JNh942of?=
+ =?us-ascii?Q?gU6pLPqtxNyBJQpz78ZgxaSvIJIoGLZVd05eCnDsyj4xgOpw4ka9baf55mfu?=
+ =?us-ascii?Q?yP6GfInf2lYi21d7fcVPVABMmLXhrL85Ll/LpREzoMS+zWOys5tWAYxq6nT3?=
+ =?us-ascii?Q?CwYOV/uQGoY0ISvfjAgpLULLZpJno/QOlAHuFwqeeiu4rBn2DNqUXJzmALWJ?=
+ =?us-ascii?Q?mv1P36zcz8yb8lrsjFTCy2zrFjU2n25WtYF2R/CeYITlbCQIIzER1u8DgIh5?=
+ =?us-ascii?Q?f/C5cXGGUadpUIZJVQ9cutNOgagVAbwKJt2KZVkYmsTcmji2m2AKcF5MPpOQ?=
+ =?us-ascii?Q?QwHvRwjIOCAftSskguyj8OcBIvNuWeHz07AeyVMtDVHXX5yp9ib+ew8/RUx5?=
+ =?us-ascii?Q?fl6SSa2CAQMTEx5qm1qULlqTEGlVGT+ZnnyGiAm7ehql0KRSEJmtWSYiwwNn?=
+ =?us-ascii?Q?rX0FeiYUi9ICE2Ok5J4rIjMQCMyDeBGabG3NC75Ln4fjP/nkkXFbPnkmvn3J?=
+ =?us-ascii?Q?aajSWM/jNG+VYDxrLeHhT88KXj5kAXTc5R4jBXYNusGs2D2G5lG/+4zc5mEN?=
+ =?us-ascii?Q?Fzx6IUgi8qx80yON/RmtVyxXHsylc8Mdx0IECPcWd5Al3sUj3niGucWWAvQ2?=
+ =?us-ascii?Q?u41nc/9F79kJqclUJ31+7VLkxAY7mBUYwxNtgnY2qAKMTabD8k0YdByWD1l2?=
+ =?us-ascii?Q?ZQQIOwbGx5trPmzSmA5fnUouqZL9LumSsBmnNXXeCOxfOStSIoUHdCdHp1pM?=
+ =?us-ascii?Q?KfkdqWGLSCFL8olWlJbdCbgy9JMuAHj7WpxgBNRPMbvRka6CbhgO/q2RwYc/?=
+ =?us-ascii?Q?e/LPtrYwYWmhKnPlwVXVJc84VsJGuu3QFAnphuYohywY8f55YzOxi4BPt4kj?=
+ =?us-ascii?Q?bBqjLV7uUcpWIpicLoJA6r08UBXJzlkrL/FAw9WmKrcs1yUvicD5/WgzVruM?=
+ =?us-ascii?Q?MR641cY9w7bO1e10eHFphtWQKGaX1b1JXmLvzVVVv3GArXv6R148wO1Avt62?=
+ =?us-ascii?Q?QHrmEF8eOf5KK0eHCBd8QhGTb15eCKCvEUTX6q1By4z0+iDq16YQlqyI3JMt?=
+ =?us-ascii?Q?Lp0fG2B8cG5LMNStbN8Gmm4SzCwOO4JmULVndDyMWgjXTwWGc7zTUBgn+d5o?=
+ =?us-ascii?Q?35wPFaAV4mmNkV3GeyXb4aLhvCSelvCI6bBt+PuiYzBDXACVtnh+WuUVYEVT?=
+ =?us-ascii?Q?DhcUtvUI83uJHzXOWCQP2I5Plgqm5dsEmVmE89pssIq76Z3Tm6Xi239aRlqg?=
+ =?us-ascii?Q?rgl9golnHp/XIf9A0nHGJ3om6w4g05/SxrxQOslv5/G4r+ctkQcwmQtuoTD8?=
+ =?us-ascii?Q?rxtc4oNKv8JUkkr3aPFpC2OWKxe3t+zUc+TJx93uUspaILWJun690KAs3YPD?=
+ =?us-ascii?Q?VM/QooJJyXxHLOSOrcLCNLXwV+btW1LH9H/HkQkLKPeOedO0s/o5oTtMs5Az?=
+ =?us-ascii?Q?x+yHRv9uYnHqiZ6o/Ujl7CRpmqc0iTqJHBdoG2HAV+wyB+omvQpTYc49DxJB?=
+ =?us-ascii?Q?DTGe3oaRoljEeaBQ+tdnQcFNI8m9g58cM9eNEV72jn7OF7k02cdfN1PEEwPJ?=
+ =?us-ascii?Q?GkpGF0QO41ocA2kFn2umjAciXCehNeAz7+FYvuYi?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7044.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98d0becb-9967-4832-1d14-08dd58a36dfa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2025 09:28:30.4343 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f56bd05-448a-4d39-2430-08dd58a38a9b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2025 09:29:18.4407 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kQ9x+80g5+UXxvRyNPc4PldRRDTpupGorJqj4wjiXgRv85QcLpWXdfR7joHrFqGssVksWg3i68TfDQQk5nBBsAJZEWbzyf9gIWu1/bo4ccs=
+X-MS-Exchange-CrossTenant-userprincipalname: gPZ9iYLIkcYq8/0Eub/Rsr5FmQOhQg1sm0y98LHpsIXwmXZA2vehBP1K9z8TsAx8FCVN77BHlss3AOrBU0BYwAcwqlu4JxkTWtNUj+5W7AY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6028
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -191,528 +184,150 @@ Errors-To: dev-bounces@dpdk.org
 > Sent: Monday, February 24, 2025 2:12 PM
 > To: Naga Harish K, S V <s.v.naga.harish.k@intel.com>; jerinj@marvell.com
 > Cc: Shijith Thotton <sthotton@marvell.com>; dev@dpdk.org;
-> pbhagavatula@marvell.com; Pathak, Pravin <pravin.pathak@intel.com>;
-> Hemant Agrawal <hemant.agrawal@nxp.com>; Sachin Saxena
-> <sachin.saxena@nxp.com>; Mattias R_nnblom
-> <mattias.ronnblom@ericsson.com>; Liang Ma <liangma@liangbit.com>;
-> Mccarthy, Peter <peter.mccarthy@intel.com>; Van Haaren, Harry
-> <harry.van.haaren@intel.com>; Carrillo, Erik G <erik.g.carrillo@intel.com=
->;
-> Gujjar, Abhinandan S <abhinandan.gujjar@intel.com>; Amit Prakash Shukla
-> <amitprakashs@marvell.com>; Burakov, Anatoly
-> <anatoly.burakov@intel.com>
-> Subject: [PATCH v3 1/3] eventdev/eth_rx: add API to burst add queues to R=
-x
+> pbhagavatula@marvell.com
+> Subject: [PATCH v3 3/3] test/event: unit test to burst add Rx queues to
 > adapter
 >=20
->=20
-> This patch introduces a new API, rte_event_eth_rx_adapter_queues_add(),
-> to allow bulk addition of multiple Rx queues in the eventdev Rx adapter.
->=20
-> The existing rte_event_eth_rx_adapter_queue_add() API supports adding
-> multiple queues by specifying rx_queue_id =3D -1, but it lacks the abilit=
-y to apply
-> specific configurations to each of the added queues.
->=20
-> A new internal PMD operation, eventdev_eth_rx_adapter_queues_add_t, has
-> been introduced to enable this functionality. It takes an array of receiv=
-e queue
-> IDs along with their corresponding queue configurations.
+> Added unit test for adding queues to Rx adapter in bursts using
+> rte_event_eth_rx_adapter_queues_add().
 >=20
 > Signed-off-by: Shijith Thotton <sthotton@marvell.com>
 Acked-by: Naga Harish K S V <s.v.naga.harish.k@intel.com>
 > ---
->  .../eventdev/event_ethernet_rx_adapter.rst    |  60 +++++--
->  lib/eventdev/eventdev_pmd.h                   |  34 ++++
->  lib/eventdev/eventdev_trace.h                 |  14 ++
->  lib/eventdev/eventdev_trace_points.c          |   3 +
->  lib/eventdev/rte_event_eth_rx_adapter.c       | 160 ++++++++++++++++++
->  lib/eventdev/rte_event_eth_rx_adapter.h       |  33 ++++
->  lib/eventdev/version.map                      |   3 +
->  7 files changed, 297 insertions(+), 10 deletions(-)
+>  app/test/test_event_eth_rx_adapter.c | 86
+> ++++++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
 >=20
-> diff --git a/doc/guides/prog_guide/eventdev/event_ethernet_rx_adapter.rst
-> b/doc/guides/prog_guide/eventdev/event_ethernet_rx_adapter.rst
-> index 2e68cca798..bae46cc7d7 100644
-> --- a/doc/guides/prog_guide/eventdev/event_ethernet_rx_adapter.rst
-> +++ b/doc/guides/prog_guide/eventdev/event_ethernet_rx_adapter.rst
-> @@ -96,16 +96,23 @@ when the adapter is created using the above-
-> mentioned APIs.
->  Adding Rx Queues to the Adapter Instance
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> diff --git a/app/test/test_event_eth_rx_adapter.c
+> b/app/test/test_event_eth_rx_adapter.c
+> index 0233c87779..92b7ff6d99 100644
+> --- a/app/test/test_event_eth_rx_adapter.c
+> +++ b/app/test/test_event_eth_rx_adapter.c
+> @@ -9,6 +9,7 @@
+>  #include <rte_mempool.h>
+>  #include <rte_mbuf.h>
+>  #include <rte_ethdev.h>
+> +#include <rte_malloc.h>
 >=20
-> -Ethdev Rx queues are added to the instance using the -
-> ``rte_event_eth_rx_adapter_queue_add()`` function. Configuration for the =
-Rx -
-> queue is passed in using a ``struct rte_event_eth_rx_adapter_queue_conf``
-> -parameter. Event information for packets from this Rx queue is encoded i=
-n the
-> -``ev`` field of ``struct rte_event_eth_rx_adapter_queue_conf``. The -
-> servicing_weight member of the struct
-> rte_event_eth_rx_adapter_queue_conf
-> -is the relative polling frequency of the Rx queue and is applicable when=
- the -
-> adapter uses a service core function. The applications can configure queu=
-e -
-> event buffer size in ``struct
-> rte_event_eth_rx_adapter_queue_conf::event_buf_size``
-> -parameter.
-> +Ethdev Rx queues can be added to the instance using either the
-> +``rte_event_eth_rx_adapter_queue_add()`` function or
-> +``rte_event_eth_rx_adapter_queues_add()``. The former is used to add a
-> +single Rx queue at a time, while the latter allows adding multiple Rx
-> +queues in a single call.
-> +
-> +Single Queue Addition
-> +^^^^^^^^^^^^^^^^^^^^^
-> +
-> +The ``rte_event_eth_rx_adapter_queue_add()`` API allows adding a single
-> +Rx queue to the adapter instance. Configuration for the Rx queue is
-> +passed using a ``struct rte_event_eth_rx_adapter_queue_conf``
-> +parameter. Event information for packets from this Rx queue is encoded
-> +in the ``ev`` field of this struct. The ``servicing_weight`` member of
-> +the struct determines the relative polling frequency of the Rx queue
-> +and is applicable when the adapter uses a service core function.
-> +Applications can also configure the queue event buffer size using the
-> ``event_buf_size`` parameter in ``struct
-> rte_event_eth_rx_adapter_queue_conf``.
->=20
->  .. code-block:: c
->=20
-> @@ -122,6 +129,39 @@ parameter.
->                                                  eth_dev_id,
->                                                  0, &queue_config);
->=20
-> +Bulk Queue Addition
-> +^^^^^^^^^^^^^^^^^^^
-> +
-> +The ``rte_event_eth_rx_adapter_queues_add()`` API allows the addition
-> +of multiple Rx queues in a single call. While
-> +``rte_event_eth_rx_adapter_queue_add()`` supports adding multiple
-> +queues by specifying ``rx_queue_id =3D -1``, it does not allow applying
-> +specific configurations to each queue individually.  The
-> +``rte_event_eth_rx_adapter_queues_add()`` API accepts an array of
-> +receive queue IDs along with their corresponding configurations,
-> +enabling control over each Rx queue's settings.
-> +
-> +.. code-block:: c
-> +
-> +        struct rte_event_eth_rx_adapter_queue_conf
-> queue_config[nb_rx_queues];
-> +        int rx_queue_id[nb_rx_queues];
-> +
-> +        for (int i =3D 0; i < nb_rx_queues; i++) {
-> +            rx_queue_id[i] =3D i;
-> +            queue_config[i].rx_queue_flags =3D 0;
-> +            queue_config[i].ev.queue_id =3D i;
-> +            queue_config[i].ev.sched_type =3D RTE_SCHED_TYPE_ATOMIC;
-> +            queue_config[i].ev.priority =3D 0;
-> +            queue_config[i].servicing_weight =3D 1;
-> +            queue_config[i].event_buf_size =3D 1024;
-> +        }
-> +
-> +        err =3D rte_event_eth_rx_adapter_queues_add(id,
-> +                                                 eth_dev_id,
-> +                                                 rx_queue_id,
-> +                                                 queue_config,
-> +                                                 nb_rx_queues);
-> +
->  Querying Adapter Capabilities
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> diff --git a/lib/eventdev/eventdev_pmd.h b/lib/eventdev/eventdev_pmd.h
-> index 36148f8d86..ad13ba5b03 100644
-> --- a/lib/eventdev/eventdev_pmd.h
-> +++ b/lib/eventdev/eventdev_pmd.h
-> @@ -25,6 +25,7 @@
->  #include <rte_mbuf_dyn.h>
->=20
->  #include "event_timer_adapter_pmd.h"
-> +#include "rte_event_eth_rx_adapter.h"
->  #include "rte_eventdev.h"
->=20
->  #ifdef __cplusplus
-> @@ -708,6 +709,37 @@ typedef int
-> (*eventdev_eth_rx_adapter_queue_add_t)(
->  		int32_t rx_queue_id,
->  		const struct rte_event_eth_rx_adapter_queue_conf
-> *queue_conf);
->=20
-> +/**
-> + * Add ethernet Rx queues to event device in burst. This callback is
-> +invoked if
-> + * the caps returned from rte_eventdev_eth_rx_adapter_caps_get(,
-> +eth_port_id)
-> + * has RTE_EVENT_ETH_RX_ADAPTER_CAP_INTERNAL_PORT set.
-> + *
-> + * @param dev
-> + *   Event device pointer
-> + *
-> + * @param eth_dev
-> + *   Ethernet device pointer
-> + *
-> + * @param rx_queue_id
-> + *   Ethernet device receive queue index array
-> + *
-> + * @param queue_conf
-> + *   Additional configuration structure array
-> + *
-> + * @param nb_rx_queues
-> + *   Number of ethernet device receive queues
-> + *
-> + * @return
-> + *   - 0: Success, ethernet receive queues added successfully.
-> + *   - <0: Error code returned by the driver function.
-> + */
-> +typedef int (*eventdev_eth_rx_adapter_queues_add_t)(
-> +		const struct rte_eventdev *dev,
-> +		const struct rte_eth_dev *eth_dev,
-> +		int32_t rx_queue_id[],
-> +		const struct rte_event_eth_rx_adapter_queue_conf
-> queue_conf[],
-> +		uint16_t nb_rx_queues);
-> +
->  /**
->   * Delete ethernet Rx queues from event device. This callback is invoked=
- if
->   * the caps returned from eventdev_eth_rx_adapter_caps_get(, eth_port_id=
-)
-> @@ -1578,6 +1610,8 @@ struct eventdev_ops {
->  	/**< Get ethernet Rx adapter capabilities */
->  	eventdev_eth_rx_adapter_queue_add_t eth_rx_adapter_queue_add;
->  	/**< Add Rx queues to ethernet Rx adapter */
-> +	eventdev_eth_rx_adapter_queues_add_t
-> eth_rx_adapter_queues_add;
-> +	/**< Add Rx queues to ethernet Rx adapter in burst */
->  	eventdev_eth_rx_adapter_queue_del_t eth_rx_adapter_queue_del;
->  	/**< Delete Rx queues from ethernet Rx adapter */
->  	eventdev_eth_rx_adapter_queue_conf_get_t
-> eth_rx_adapter_queue_conf_get; diff --git a/lib/eventdev/eventdev_trace.h
-> b/lib/eventdev/eventdev_trace.h index 8ff8841729..6b334d8bd1 100644
-> --- a/lib/eventdev/eventdev_trace.h
-> +++ b/lib/eventdev/eventdev_trace.h
-> @@ -159,6 +159,20 @@ RTE_TRACE_POINT(
->  	rte_trace_point_emit_int(rc);
->  )
->=20
-> +RTE_TRACE_POINT(
-> +	rte_eventdev_trace_eth_rx_adapter_queues_add,
-> +	RTE_TRACE_POINT_ARGS(uint8_t adptr_id, uint16_t eth_dev_id,
-> +		uint16_t nb_rx_queues, void *rx_queue_id,
-> +		const void *queue_conf,
-> +		int rc),
-> +	rte_trace_point_emit_u8(adptr_id);
-> +	rte_trace_point_emit_u16(eth_dev_id);
-> +	rte_trace_point_emit_u16(nb_rx_queues);
-> +	rte_trace_point_emit_ptr(rx_queue_id);
-> +	rte_trace_point_emit_ptr(queue_conf);
-> +	rte_trace_point_emit_int(rc);
-> +)
-> +
->  RTE_TRACE_POINT(
->  	rte_eventdev_trace_eth_rx_adapter_queue_del,
->  	RTE_TRACE_POINT_ARGS(uint8_t adptr_id, uint16_t eth_dev_id, diff -
-> -git a/lib/eventdev/eventdev_trace_points.c
-> b/lib/eventdev/eventdev_trace_points.c
-> index e7af1591f7..8caf6353a1 100644
-> --- a/lib/eventdev/eventdev_trace_points.c
-> +++ b/lib/eventdev/eventdev_trace_points.c
-> @@ -65,6 +65,9 @@
-> RTE_TRACE_POINT_REGISTER(rte_eventdev_trace_eth_rx_adapter_free,
->=20
-> RTE_TRACE_POINT_REGISTER(rte_eventdev_trace_eth_rx_adapter_queue_ad
-> d,
->  	lib.eventdev.rx.adapter.queue.add)
->=20
-> +RTE_TRACE_POINT_REGISTER(rte_eventdev_trace_eth_rx_adapter_queues_
-> add,
-> +	lib.eventdev.rx.adapter.queues.add)
-> +
->=20
-> RTE_TRACE_POINT_REGISTER(rte_eventdev_trace_eth_rx_adapter_queue_del
-> ,
->  	lib.eventdev.rx.adapter.queue.del)
->=20
-> diff --git a/lib/eventdev/rte_event_eth_rx_adapter.c
-> b/lib/eventdev/rte_event_eth_rx_adapter.c
-> index 39674c4604..2063ceaede 100644
-> --- a/lib/eventdev/rte_event_eth_rx_adapter.c
-> +++ b/lib/eventdev/rte_event_eth_rx_adapter.c
-> @@ -2793,6 +2793,166 @@ rte_event_eth_rx_adapter_queue_add(uint8_t
-> id,
->  	return 0;
+>  #ifdef RTE_EXEC_ENV_WINDOWS
+>  static int
+> @@ -819,6 +820,89 @@ adapter_queue_add_del(void)
+>  	return TEST_SUCCESS;
 >  }
 >=20
-> +int
-> +rte_event_eth_rx_adapter_queues_add(uint8_t id, uint16_t eth_dev_id,
-> int32_t rx_queue_id[],
-> +				    const struct
-> rte_event_eth_rx_adapter_queue_conf queue_conf[],
-> +				    uint16_t nb_rx_queues)
+> +static int
+> +adapter_queues_add_del(void)
 > +{
-> +	struct rte_event_eth_rx_adapter_vector_limits limits;
-> +	struct event_eth_rx_adapter *rx_adapter;
-> +	struct eth_device_info *dev_info;
-> +	struct rte_eventdev *dev;
-> +	uint32_t cap, i;
-> +	int ret;
+> +	struct rte_event_eth_rx_adapter_queue_conf *queue_conf;
+> +	struct rte_event_dev_info event_dev_info;
+> +	struct rte_eth_dev_info dev_info;
+> +	uint16_t i, max_rx_queues;
+> +	int32_t *rx_queue_ids;
+> +	struct rte_event ev;
+> +	uint32_t cap;
+> +	int err;
 > +
-> +	if (rxa_memzone_lookup())
-> +		return -ENOMEM;
+> +	err =3D rte_event_eth_rx_adapter_caps_get(TEST_DEV_ID,
+> TEST_ETHDEV_ID, &cap);
+> +	TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +
-> +	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_ERR_RET(id, -EINVAL);
-> +	RTE_ETH_VALID_PORTID_OR_ERR_RET(eth_dev_id, -EINVAL);
+> +	err =3D rte_eth_dev_info_get(TEST_ETHDEV_ID, &dev_info);
+> +	TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +
-> +	rx_adapter =3D rxa_id_to_adapter(id);
-> +	if ((rx_adapter =3D=3D NULL) || (queue_conf =3D=3D NULL))
-> +		return -EINVAL;
+> +	max_rx_queues =3D RTE_MIN(dev_info.max_rx_queues,
+> MAX_NUM_RX_QUEUE);
 > +
-> +	if (nb_rx_queues && rx_queue_id =3D=3D NULL)
-> +		return -EINVAL;
+> +	err =3D rte_event_dev_info_get(TEST_DEV_ID, &event_dev_info);
+> +	TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +
-> +	if (nb_rx_queues > rte_eth_devices[eth_dev_id].data->nb_rx_queues)
-> {
-> +		RTE_EDEV_LOG_ERR("Invalid number of rx queues %" PRIu16,
-> nb_rx_queues);
-> +		return -EINVAL;
+> +	queue_conf =3D rte_zmalloc(NULL, sizeof(*queue_conf) *
+> max_rx_queues, 0);
+> +	TEST_ASSERT(queue_conf !=3D NULL, "Failed to allocate memory");
+> +
+> +	rx_queue_ids =3D rte_zmalloc(NULL, sizeof(*rx_queue_ids) *
+> max_rx_queues, 0);
+> +	TEST_ASSERT(rx_queue_ids !=3D NULL, "Failed to allocate memory");
+> +
+> +	ev.sched_type =3D RTE_SCHED_TYPE_ATOMIC;
+> +	for (i =3D 0; i < max_rx_queues; i++) {
+> +		rx_queue_ids[i] =3D i;
+> +		ev.queue_id =3D i % event_dev_info.max_event_queues;
+> +		if (cap &
+> RTE_EVENT_ETH_RX_ADAPTER_CAP_OVERRIDE_FLOW_ID) {
+> +			ev.flow_id =3D 1;
+> +			queue_conf[i].rx_queue_flags =3D
+> +
+> 	RTE_EVENT_ETH_RX_ADAPTER_QUEUE_FLOW_ID_VALID;
+> +		}
+> +		queue_conf[i].ev =3D ev;
+> +		queue_conf[i].servicing_weight =3D 1;
 > +	}
 > +
-> +	ret =3D rte_event_eth_rx_adapter_caps_get(rx_adapter->eventdev_id,
-> eth_dev_id, &cap);
-> +	if (ret) {
-> +		RTE_EDEV_LOG_ERR("Failed to get adapter caps edev %"
-> PRIu8 "eth port %" PRIu16, id,
-> +				 eth_dev_id);
-> +		return ret;
-> +	}
+> +	err =3D rte_event_eth_rx_adapter_queues_add(TEST_INST_ID,
+> +						  rte_eth_dev_count_total(),
+> +						  rx_queue_ids, queue_conf,
+> 0);
+> +	TEST_ASSERT(err =3D=3D -EINVAL, "Expected -EINVAL got %d", err);
 > +
-> +	if ((cap & RTE_EVENT_ETH_RX_ADAPTER_CAP_MULTI_EVENTQ) =3D=3D 0)
-> {
-> +		for (i =3D 1; i < nb_rx_queues; i++) {
-> +			if (queue_conf[i].ev.queue_id !=3D
-> queue_conf[0].ev.queue_id) {
-> +				RTE_EDEV_LOG_ERR("Rx queues can only be
-> connected to single "
-> +						 "event queue, eth port: %"
-> PRIu16
-> +						 " adapter id: %" PRIu8,
-> +						 eth_dev_id, id);
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
+> +	err =3D rte_event_eth_rx_adapter_queues_add(TEST_INST_ID + 1,
+> TEST_ETHDEV_ID,
+> +						  NULL, queue_conf, 0);
+> +	TEST_ASSERT(err =3D=3D -EINVAL, "Expected -EINVAL got %d", err);
 > +
-> +	for (i =3D 0; i < (nb_rx_queues ? nb_rx_queues : 1); i++) {
-> +		const struct rte_event_eth_rx_adapter_queue_conf *conf;
-> +
-> +		conf =3D &queue_conf[i];
-> +		if ((cap &
-> RTE_EVENT_ETH_RX_ADAPTER_CAP_OVERRIDE_FLOW_ID) =3D=3D 0 &&
-> +		    (conf->rx_queue_flags &
-> RTE_EVENT_ETH_RX_ADAPTER_QUEUE_FLOW_ID_VALID)) {
-> +			RTE_EDEV_LOG_ERR("Flow ID override is not
-> supported in queue_conf[%" PRIu32
-> +					 "], eth port: %" PRIu16 " adapter id:
-> %" PRIu8,
-> +					 i, eth_dev_id, id);
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (conf->rx_queue_flags &
-> RTE_EVENT_ETH_RX_ADAPTER_QUEUE_EVENT_VECTOR) {
-> +			if ((cap &
-> RTE_EVENT_ETH_RX_ADAPTER_CAP_EVENT_VECTOR) =3D=3D 0) {
-> +				RTE_EDEV_LOG_ERR(
-> +					"Event vectorization is unsupported in
-> queue_conf[%" PRIu32
-> +					"], eth port: %" PRIu16 " adapter id:
-> %" PRIu8,
-> +					i, eth_dev_id, id);
-> +				return -EINVAL;
-> +			}
-> +
-> +			ret =3D
-> rte_event_eth_rx_adapter_vector_limits_get(rx_adapter->eventdev_id,
-> +
-> eth_dev_id, &limits);
-> +			if (ret < 0) {
-> +				RTE_EDEV_LOG_ERR("Failed to get event
-> device vector limits,"
-> +						 " eth port: %" PRIu16 "
-> adapter id: %" PRIu8,
-> +						 eth_dev_id, id);
-> +				return -EINVAL;
-> +			}
-> +
-> +			if (conf->vector_sz < limits.min_sz || conf->vector_sz
-> > limits.max_sz ||
-> +			    conf->vector_timeout_ns < limits.min_timeout_ns
-> ||
-> +			    conf->vector_timeout_ns > limits.max_timeout_ns
-> ||
-> +			    conf->vector_mp =3D=3D NULL) {
-> +				RTE_EDEV_LOG_ERR(
-> +					"Invalid event vector configuration in
-> queue_conf[%" PRIu32
-> +					"], eth port: %" PRIu16 " adapter id:
-> %" PRIu8,
-> +					i, eth_dev_id, id);
-> +				return -EINVAL;
-> +			}
-> +
-> +			if (conf->vector_mp->elt_size < (sizeof(struct
-> rte_event_vector) +
-> +							 (sizeof(uintptr_t) *
-> conf->vector_sz))) {
-> +				RTE_EDEV_LOG_ERR(
-> +					"Invalid event vector configuration in
-> queue_conf[%" PRIu32
-> +					"], eth port: %" PRIu16 " adapter id:
-> %" PRIu8,
-> +					i, eth_dev_id, id);
-> +				return -EINVAL;
-> +			}
-> +		}
-> +
-> +		if ((rx_adapter->use_queue_event_buf && conf-
-> >event_buf_size =3D=3D 0) ||
-> +		    (!rx_adapter->use_queue_event_buf && conf-
-> >event_buf_size !=3D 0)) {
-> +			RTE_EDEV_LOG_ERR("Invalid Event buffer size in
-> queue_conf[%" PRIu32 "]", i);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	dev =3D &rte_eventdevs[rx_adapter->eventdev_id];
-> +	dev_info =3D &rx_adapter->eth_devices[eth_dev_id];
-> +
-> +	if (cap & RTE_EVENT_ETH_RX_ADAPTER_CAP_INTERNAL_PORT) {
-> +		if (*dev->dev_ops->eth_rx_adapter_queues_add =3D=3D NULL)
-> +			return -ENOTSUP;
-> +
-> +		if (dev_info->rx_queue =3D=3D NULL) {
-> +			dev_info->rx_queue =3D
-> +				rte_zmalloc_socket(rx_adapter->mem_name,
-> +						   dev_info->dev->data-
-> >nb_rx_queues *
-> +							   sizeof(struct
-> eth_rx_queue_info),
-> +						   0, rx_adapter->socket_id);
-> +			if (dev_info->rx_queue =3D=3D NULL)
-> +				return -ENOMEM;
-> +		}
-> +
-> +		ret =3D (*dev->dev_ops->eth_rx_adapter_queues_add)(
-> +			dev, &rte_eth_devices[eth_dev_id], rx_queue_id,
-> queue_conf, nb_rx_queues);
-> +		if (ret =3D=3D 0) {
-> +			dev_info->internal_event_port =3D 1;
-> +
-> +			if (nb_rx_queues =3D=3D 0)
-> +				rxa_update_queue(rx_adapter, dev_info, -1,
+> +	err =3D rte_event_eth_rx_adapter_queues_add(TEST_INST_ID,
+> TEST_ETHDEV_ID,
+> +						  rx_queue_ids, queue_conf,
 > 1);
+> +	TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +
-> +			for (i =3D 0; i < nb_rx_queues; i++)
-> +				rxa_update_queue(rx_adapter, dev_info,
-> rx_queue_id[i], 1);
-> +		}
+> +	err =3D rte_event_eth_rx_adapter_queue_del(TEST_INST_ID,
+> TEST_ETHDEV_ID, 0);
+> +	TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
+> +
+> +	if (cap & RTE_EVENT_ETH_RX_ADAPTER_CAP_MULTI_EVENTQ) {
+> +		err =3D rte_event_eth_rx_adapter_queues_add(
+> +			TEST_INST_ID, TEST_ETHDEV_ID, rx_queue_ids,
+> queue_conf,
+> +			max_rx_queues);
+> +		TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
+> +
+> +		err =3D rte_event_eth_rx_adapter_queue_del(TEST_INST_ID,
+> +							 TEST_ETHDEV_ID, -
+> 1);
+> +		TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +	} else {
-> +		rte_spinlock_lock(&rx_adapter->rx_lock);
-> +		dev_info->internal_event_port =3D 0;
-> +		ret =3D rxa_init_service(rx_adapter, id);
-> +		if (ret =3D=3D 0) {
-> +			uint32_t service_id =3D rx_adapter->service_id;
+> +		err =3D rte_event_eth_rx_adapter_queues_add(
+> +			TEST_INST_ID, TEST_ETHDEV_ID, NULL, queue_conf,
+> 0);
+> +		TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +
-> +			if (nb_rx_queues =3D=3D 0)
-> +				ret =3D rxa_sw_add(rx_adapter, eth_dev_id, -1,
-> &queue_conf[0]);
-> +
-> +			for (i =3D 0; i < nb_rx_queues; i++)
-> +				ret =3D rxa_sw_add(rx_adapter, eth_dev_id,
-> rx_queue_id[i],
-> +						 &queue_conf[i]);
-> +
-> +			rte_service_component_runstate_set(service_id,
-> +
-> rxa_sw_adapter_queue_count(rx_adapter));
-> +		}
-> +		rte_spinlock_unlock(&rx_adapter->rx_lock);
+> +		err =3D rte_event_eth_rx_adapter_queue_del(TEST_INST_ID,
+> +							 TEST_ETHDEV_ID, -
+> 1);
+> +		TEST_ASSERT(err =3D=3D 0, "Expected 0 got %d", err);
 > +	}
 > +
-> +	rte_eventdev_trace_eth_rx_adapter_queues_add(id, eth_dev_id,
-> nb_rx_queues, rx_queue_id,
-> +						     queue_conf, ret);
-> +	return ret;
+> +	rte_free(rx_queue_ids);
+> +	rte_free(queue_conf);
+> +
+> +	return TEST_SUCCESS;
 > +}
 > +
 >  static int
->  rxa_sw_vector_limits(struct rte_event_eth_rx_adapter_vector_limits *limi=
-ts)
-> { diff --git a/lib/eventdev/rte_event_eth_rx_adapter.h
-> b/lib/eventdev/rte_event_eth_rx_adapter.h
-> index 9237e198a7..758e1c5f56 100644
-> --- a/lib/eventdev/rte_event_eth_rx_adapter.h
-> +++ b/lib/eventdev/rte_event_eth_rx_adapter.h
-> @@ -553,6 +553,39 @@ int rte_event_eth_rx_adapter_queue_add(uint8_t
-> id,
->  			int32_t rx_queue_id,
->  			const struct rte_event_eth_rx_adapter_queue_conf
-> *conf);
->=20
-> +/**
-> + * Add multiple receive queues to an event adapter.
-> + *
-> + * @param id
-> + *  Adapter identifier.
-> + *
-> + * @param eth_dev_id
-> + *  Port identifier of Ethernet device.
-> + *
-> + * @param rx_queue_id
-> + *  Array of Ethernet device receive queue indices.
-> + *  If nb_rx_queues is 0, then rx_queue_id is ignored.
-> + *
-> + * @param conf
-> + *  Array of additional configuration structures of type
-> + *  *rte_event_eth_rx_adapter_queue_conf*. conf[i] is used for
-> rx_queue_id[i].
-> + *  If nb_rx_queues is 0, then conf[0] is used for all Rx queues.
-> + *
-> + * @param nb_rx_queues
-> + *  Number of receive queues to add.
-> + *  If nb_rx_queues is 0, then all Rx queues configured for
-> + *  the device are added with the same configuration in conf[0].
-> + * @see RTE_EVENT_ETH_RX_ADAPTER_CAP_MULTI_EVENTQ
-> + *
-> + * @return
-> + *  - 0: Success, Receive queues added correctly.
-> + *  - <0: Error code on failure.
-> + */
-> +__rte_experimental
-> +int rte_event_eth_rx_adapter_queues_add(uint8_t id, uint16_t eth_dev_id,
-> int32_t rx_queue_id[],
-> +					const struct
-> rte_event_eth_rx_adapter_queue_conf conf[],
-> +					uint16_t nb_rx_queues);
-> +
->  /**
->   * Delete receive queue from an event adapter.
->   *
-> diff --git a/lib/eventdev/version.map b/lib/eventdev/version.map index
-> 42a5867aba..44687255cb 100644
-> --- a/lib/eventdev/version.map
-> +++ b/lib/eventdev/version.map
-> @@ -153,6 +153,9 @@ EXPERIMENTAL {
->  	__rte_eventdev_trace_port_preschedule_modify;
->  	rte_event_port_preschedule;
->  	__rte_eventdev_trace_port_preschedule;
-> +
-> +	# added in 25.03
-> +	rte_event_eth_rx_adapter_queues_add;
->  };
->=20
->  INTERNAL {
+>  adapter_multi_eth_add_del(void)
+>  {
+> @@ -1423,6 +1507,8 @@ static struct unit_test_suite event_eth_rx_tests =
+=3D {
+>  		TEST_CASE_ST(NULL, NULL,
+> adapter_create_free_with_params),
+>  		TEST_CASE_ST(adapter_create, adapter_free,
+>  					adapter_queue_add_del),
+> +		TEST_CASE_ST(adapter_create, adapter_free,
+> +					adapter_queues_add_del),
+>  		TEST_CASE_ST(adapter_create, adapter_free,
+>  					adapter_multi_eth_add_del),
+>  		TEST_CASE_ST(adapter_create, adapter_free,
+> adapter_start_stop),
 > --
 > 2.25.1
 
