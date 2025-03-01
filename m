@@ -2,40 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6E2C282C5
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 00:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD9AC282C6
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 09:28:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02B514026C;
-	Sat,  1 Mar 2025 01:47:59 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id A58654025D
- for <dev@dpdk.org>; Sat,  1 Mar 2025 01:47:56 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id F3DE22038A22; Fri, 28 Feb 2025 16:47:55 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F3DE22038A22
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1740790076;
- bh=qhVuNzGorU5B6aScUzBoCR50/8Dlk8yidF4vYZ0yp9c=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Ogn6fSdE4v1pCAXsLVw9wRj8HSurcvZ+ObeibAfI5jRT9ul1+Dy05mCaIL7npWEWl
- MM9TiHDfa2ZaZV7OQRwwmqp4GDanZNGn8uCRUnpOas25yHkL56wuR8HMEx78U/Cvjn
- 0EaHYuy5EFPfFfFouclpgAD62Pux4oGCSEncKKso=
-Date: Fri, 28 Feb 2025 16:47:55 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH 1/2] config: allow AVX512 instructions to be used with MSVC
-Message-ID: <20250301004755.GB2378@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1740707537-10517-1-git-send-email-andremue@linux.microsoft.com>
- <1740707537-10517-2-git-send-email-andremue@linux.microsoft.com>
- <Z8HIngY9yOjI3tTQ@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 16967402A9;
+	Sat,  1 Mar 2025 10:28:32 +0100 (CET)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com
+ [209.85.221.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 9AED540281
+ for <dev@dpdk.org>; Sat,  1 Mar 2025 10:28:31 +0100 (CET)
+Received: by mail-vk1-f172.google.com with SMTP id
+ 71dfb90a1353d-52361a772e7so1159157e0c.1
+ for <dev@dpdk.org>; Sat, 01 Mar 2025 01:28:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1740821311;
+ x=1741426111; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=4kZYa9sijgZbLZIilOWBS529JyFp/3iiuvYBsS6ixx4=;
+ b=Mn9ExeECgMCzcB/X858qj1ss86J0Td+/LViw2a2ljNXD7rXijA1z+akPqdVDoZXWV2
+ SqkNI++SXfWombZbaIQ3+qwS4Uf80Euqflx2Eodoglb/SrFDivyj8nuyJLfuAzYsEbdK
+ +i5z1MZzs9UKjIC5r9oucfjcz3Nyy0WyfEkBFwV489BQCH2zWPmNyc1iO9nXjEnoZJ4g
+ UvH56THv20+MKQJoi3a0HBbxD3NGG8vSU/etY3lwMk2u7CRgnoQC6JTG/3qHekSiA4uo
+ 7mEolHn6eC5oCS56JrbKId2DFdpqbzuTLtVAY5W+N/6vEgDCFL6M/6v8rPtaoCVIC6Tl
+ 8QPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1740821311; x=1741426111;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=4kZYa9sijgZbLZIilOWBS529JyFp/3iiuvYBsS6ixx4=;
+ b=b1niXKDQHbnuJABmgR5cOgaIrI6w+GkEJtkZcSccieS9MoeMjGm2VFH52+FwLEQkVp
+ BZDFMP0KHUGxvdm9M9A6SHg51Gcd6XMzGCtrLs2iK2Gs9EzZVmTpS64q5CsYAugpSi8C
+ gfHTd5Y7p8eNfcWtp5oWi89BU0bbOln9IjHP+O6oUFm7P0XzQzyg443R3Z1UraZMQeVr
+ 8Ha33juvPmnma+FD7Ia94iEr0fUq1FEFboW4ye4paW3mHflWF/t3MgM40q6VHazUu0bo
+ srkfaOlCPKwrmdWeXfgSCW/SU4q8X2ctPsiQjXAjQf9WYDOMEm19Ro1zjuDb5S6/DD+F
+ oxIQ==
+X-Gm-Message-State: AOJu0YzuiW1wQeaIqV87C5CXI6vmbsLMlx1mivGg4p/KfCdOFP5wTsWK
+ 3CYpK/oMay5Da3zSjzsXnqrYEM8M/+mqsxgD6xI4GjzO90wKprgYFNRcQdaEzRrkUMaMIaIHiLd
+ OT0W8iZ6AKdr347WkSVjcCQtZyJ2wAA8plZQ7XEjpi19EbEDlSwk=
+X-Gm-Gg: ASbGncsKBboPyw+NgmTi9HzgoxdlF6uiATBzko35NG8UAYnKCbyQeSRYexPE67dgfNw
+ gPKXOIJGMjpUvMkujpIzAuwCnwBsXmApjBFwl9DjWSDQgKT/QsNmhVlui6tn+JvXS5qii0wKmZT
+ ULTzdRIN2QmElrkjv2aaRDFVww/A==
+X-Google-Smtp-Source: AGHT+IHF+T0OKFUX9XZ8uYyzy2cJwkGoGl7uftyaKg5XF2ti3rTm94f5pUkXwOS71Jeiu9sHIhEypUiqeBRZRMPjsfo=
+X-Received: by 2002:a05:6122:f07:b0:51e:ffd1:67f3 with SMTP id
+ 71dfb90a1353d-523592a0767mr4402768e0c.7.1740821310808; Sat, 01 Mar 2025
+ 01:28:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8HIngY9yOjI3tTQ@bricha3-mobl1.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20250228142005.1052bd2d@atlas-11>
+In-Reply-To: <20250228142005.1052bd2d@atlas-11>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Sat, 1 Mar 2025 10:28:21 +0100
+X-Gm-Features: AQ5f1Jq0YDSm-PNfqeHLfoSZIsMncavzujkkyIJtt1bu5Brs4bVONDUvn3212V4
+Message-ID: <CAOaVG14ZUZwNNkBGgD8phDnib7O6_cS476P2Z53dUnjTsxTLWQ@mail.gmail.com>
+Subject: Re: DPDK support in libpcap
+To: Denis Ovsienko <denis@ovsienko.info>
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="000000000000d947c7062f448ba2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,174 +72,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 28, 2025 at 02:30:54PM +0000, Bruce Richardson wrote:
-> On Thu, Feb 27, 2025 at 05:52:16PM -0800, Andre Muezerie wrote:
-> > Up to now MSVC has being used with the default mode, which uses SSE2
-> > instructions for scalar floating-point and vector calculations.
-> > https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
-> > 
-> > This patch allows users to specify the CPU for which the generated
-> > code should be optimized for in the same way it's done for GCC: by
-> > passing the CPU name.
-> > When no explicit CPU name is passed, 'native' is assumed (like it
-> > happens with GCC) and the code will be optimized for the same CPU
-> > type used to compile the code.
-> > 
-> > MSVC does not provide this functionality natively, so logic was
-> > added to a new meson.build file under config/x86/msvc to handle
-> > these differences, detecting which
-> > instruction sets are supported by the CPU(s), passing the best
-> > options to MSVC and setting the correct macros (like __AVX512F__)
-> > so that the DPDK code can rely on them like it is done with GCC.
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> 
-> Thanks for splitting out this change from the earlier one, it allows more
-> focused review.
-> However, I think within this, we can split things a bit further two, and I
-> think this patch could do with being split into separate changes.
-> Specifically:
-> * one patch for reordering the x86/meson.build file, i.e. just move the
->   code about and put a subdir_done() for MSVC once common part is
->   completed. That patch is a quick review since all you are doing is moving
->   things about.
-> * separate patch for adding the new msvc file +  one-line change to add it
->   to the x86/meson.build file.
-> * library changes in separate patch - or perhaps two patches so individual
->   maintainers can ack.
-> 
+--000000000000d947c7062f448ba2
+Content-Type: text/plain; charset="UTF-8"
 
-I split them as suggested. In that process I found an old bug for which I sent
-a patch as well.
+Last time I looked at that code it was really ugly, and messy. But more of
+importantly it was the wrong use case. Very few users will want to have a
+NIC dedicated to capture only.
 
-> Some other comments inline below too.
-> Thanks,
-> /Bruce
-> 
-> > ---
-> >  config/x86/meson.build      |  87 +++++------
+The whole thing should be rewritten so that tcpdump/ Wireshark can run as
+secondary process using existing pdump API.
 
-<snip>
+On Fri, Feb 28, 2025, 15:20 Denis Ovsienko <denis@ovsienko.info> wrote:
 
-> > -
-> > -cpu_instruction_set = get_option('cpu_instruction_set')
-> > -if cpu_instruction_set == 'native'
-> > -    foreach m:epyc_zen_cores.keys()
-> > -        if cc.get_define(m, args: machine_args) != ''
-> > -            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
-> > -            break
-> > -        endif
-> > -    endforeach
-> > -else
-> > -    foreach m:epyc_zen_cores.keys()
-> > -        if m.contains(cpu_instruction_set)
-> > -            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
-> > -            break
-> > -        endif
-> > -    endforeach
-> > -endif
-> > -
-> > -dpdk_conf.set('RTE_MAX_NUMA_NODES', 32)
-> 
-> For changes to config/x86/meson.build you can add my Ack if it's a separate
-> patch.
+> Hello all.
+>
+> libpcap has been implementing DPDK packet capture support for some
+> time, in that a contributor added this support using DPDK 18.11.  This
+> code stopped working with later versions of DPDK and still remains
+> broken.
+>
+> Would anybody be interested to upgrade pcap-dpdk.c in libpcap to the
+> latest stable release of DPDK, to confirm whether it works as intended
+> and maybe even to keep this module better maintained in future?
+>
+> --
+>     Denis Ovsienko
+>
 
-Done, and added the ACK.
+--000000000000d947c7062f448ba2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > diff --git a/config/x86/msvc/meson.build b/config/x86/msvc/meson.build
-> > new file mode 100644
-> > index 0000000000..646c9a8515
-> > --- /dev/null
-> > +++ b/config/x86/msvc/meson.build
-> > @@ -0,0 +1,287 @@
+<div dir=3D"auto">Last time I looked at that code it was really ugly, and m=
+essy. But more of importantly it was the wrong use case. Very few users wil=
+l want to have a NIC dedicated to capture only.<div dir=3D"auto"><br></div>=
+<div dir=3D"auto">The whole thing should be rewritten so that tcpdump/ Wire=
+shark can run as secondary process using existing pdump API.=C2=A0</div></d=
+iv><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" cl=
+ass=3D"gmail_attr">On Fri, Feb 28, 2025, 15:20 Denis Ovsienko &lt;<a href=
+=3D"mailto:denis@ovsienko.info">denis@ovsienko.info</a>&gt; wrote:<br></div=
+><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
+-left:1px solid rgb(204,204,204);padding-left:1ex">Hello all.<br>
+<br>
+libpcap has been implementing DPDK packet capture support for some<br>
+time, in that a contributor added this support using DPDK 18.11.=C2=A0 This=
+<br>
+code stopped working with later versions of DPDK and still remains<br>
+broken.<br>
+<br>
+Would anybody be interested to upgrade pcap-dpdk.c in libpcap to the<br>
+latest stable release of DPDK, to confirm whether it works as intended<br>
+and maybe even to keep this module better maintained in future?<br>
+<br>
+-- <br>
+=C2=A0 =C2=A0 Denis Ovsienko<br>
+</blockquote></div>
 
-<snip>
-
-> > +            'VPCLMULQDQ',
-> > +    ]
-> > +    foreach f:optional_flags
-> > +        result = cc.run(cpuid_code, args: '-D@0@'.format(f),
-> > +                        name: 'instruction set @0@'.format(f))
-> 
-> Is building a new binary for each instruction set the best way to do this?
-> Would it not be better to have a single binary that outputs all the
-> instruction sets in one go?
-
-Building a new binary every time is probably the simplest approach. It also
-makes teh code easy to read and understand. It is fast, and since it will
-probably not be run more than once per DPDK release there's not much incentive
-to come up with something better.
-
-> 
-> > +        has_instr_set = result.returncode() == 0 and result.stdout() == '1'
-> > +        if has_instr_set
-> > +            cpu_flags += f
-> > +        endif
-> > +        message('Target has @0@: @1@'.format(f, has_instr_set))
-> > -                c_args: cflags +
-> > -                    ['-mavx512f', '-mavx512vl',
-> > -                     '-mavx512cd', '-mavx512bw'])
-> > +                c_args: cflags + cc_avx512_flags)
-> >              objs += avx512_tmplib.extract_objects(
-> >                      'acl_run_avx512.c')
-> >              cflags += '-DCC_AVX512_SUPPORT'
-> 
-> Ack from me for this change too.
-
-I forgot to add the ACK.
-
-> 
-> > diff --git a/lib/member/meson.build b/lib/member/meson.build
-> > index f92cbb7f25..8416dc6f8a 100644
-> > --- a/lib/member/meson.build
-> > +++ b/lib/member/meson.build
-> > @@ -33,6 +33,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
-> >      # compiler flags, and then have the .o file from static lib
-> >      # linked into main lib.
-> >  
-> > +    if is_ms_compiler
-> > +        member_avx512_args = cc_avx512_flags
-> > +    else
-> > +        member_avx512_args = ['-mavx512f', '-mavx512dq', '-mavx512ifma']
-> > +    endif
-> > +
-> 
-> is ifma included as msvc as part of the AVX512 flags? How does this work
-> for the windows build?
-
-Option /arch:AVX512 does not set __AVX512IFMA__ so, my educated guess is
-that msvc does not automatically generate instructions from that set.
-
-There's also no msvc option specific for AVX512IFMA.
-
-That being said, compiler intrinsics would still work as these do not require
-any options to be passed to msvc. This is other difference when compared
-to GCC.
-
-Relying on cc_avx512_flags for msvc would still bring the benefit of using
-other AVX512 (non-IFMA) instructions.
-
-> 
-> >      # check if all required flags already enabled
-> >      sketch_avx512_flags = ['__AVX512F__', '__AVX512DQ__', '__AVX512IFMA__']
-> >  
-> > @@ -46,13 +52,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
-> >      if sketch_avx512_on == true
-> >          cflags += ['-DCC_AVX512_SUPPORT']
-> >          sources += files('rte_member_sketch_avx512.c')
-> > -    elif cc.has_multi_arguments('-mavx512f', '-mavx512dq', '-mavx512ifma')
-> > +    elif cc.has_multi_arguments(member_avx512_args)
-> >          sketch_avx512_tmp = static_library('sketch_avx512_tmp',
-> >              'rte_member_sketch_avx512.c',
-> >              include_directories: includes,
-> >              dependencies: [static_rte_eal, static_rte_hash],
-> > -            c_args: cflags +
-> > -                ['-mavx512f', '-mavx512dq', '-mavx512ifma'])
-> > +            c_args: cflags + member_avx512_args)
-> >          objs += sketch_avx512_tmp.extract_objects('rte_member_sketch_avx512.c')
-> >          cflags += ['-DCC_AVX512_SUPPORT']
-> >      endif
-> > -- 
-> > 2.48.1.vfs.0.0
-> > 
+--000000000000d947c7062f448ba2--
