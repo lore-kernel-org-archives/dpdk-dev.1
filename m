@@ -2,34 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D7DC282C6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Feb 2025 22:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464A0C282C5
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 00:38:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656B5410F2;
-	Fri, 28 Feb 2025 23:03:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 07C784026C;
+	Sat,  1 Mar 2025 01:38:03 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 723EA402CC
- for <dev@dpdk.org>; Fri, 28 Feb 2025 23:03:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AD0844025D
+ for <dev@dpdk.org>; Sat,  1 Mar 2025 01:38:01 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id BBA94210D0EE; Fri, 28 Feb 2025 14:03:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BBA94210D0EE
+ id CEAA82038A22; Fri, 28 Feb 2025 16:38:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CEAA82038A22
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1740780194;
- bh=p6Xxmv+gUwX4YhysUIawoydf4FJBbDSzpBp8l4GMCj0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=JiLIUgVSI4ZxoNsv8L863ntQUZm7clSQmMhozzYIBfse83PZVhmzcMOR3/Tpp/E0o
- iJCe4x7DxmJwJqMncH/ybjYDnLGaS7zjBdFwoEpOcqsBpx9qj/VonoHt12RFGnKkkw
- ViL+f2owKZbvHndnYZxYDdWStLPJ7aeCizyot6qw=
+ s=default; t=1740789480;
+ bh=j8NHzOLb9j8ebNchsDWblVTj8rDmVGNBUbFahE0KehQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=FA3Br9ng7ydEgu3gtWQdSoafw0vpzOLtxVPFrrnaljhrS5B+xeEwWOKUfjvI95VmD
+ wFpj1SusWDP48Hcpnx6V/D9RCHSBeLEEaO1NZ2JMtDwhfAkh71/XJSJ61M4/msFitB
+ l3JkivxaVJp1EQLTD9mev988GOxYJYh70bjKf3iU=
+Date: Fri, 28 Feb 2025 16:38:00 -0800
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: bruce.richardson@intel.com, dev@dpdk.org, konstantin.v.ananyev@yandex.ru
-Subject: [PATCH v2 1/1] config: move existing code that is common to the top
-Date: Fri, 28 Feb 2025 14:03:07 -0800
-Message-Id: <1740780187-5272-2-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1740780187-5272-1-git-send-email-andremue@linux.microsoft.com>
-References: <1740757940-10253-1-git-send-email-andremue@linux.microsoft.com>
- <1740780187-5272-1-git-send-email-andremue@linux.microsoft.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 2/2] devtools/dump-cpu-flags: add tool to update CPU
+ flags table
+Message-ID: <20250301003800.GA2378@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1740707537-10517-1-git-send-email-andremue@linux.microsoft.com>
+ <1740707537-10517-3-git-send-email-andremue@linux.microsoft.com>
+ <Z8HJIBSXK8Um_YYa@bricha3-mobl1.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8HJIBSXK8Um_YYa@bricha3-mobl1.ger.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,134 +49,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In preparation to add better MSVC support, existing common code was
-moved up.
+On Fri, Feb 28, 2025 at 02:33:04PM +0000, Bruce Richardson wrote:
+> On Thu, Feb 27, 2025 at 05:52:17PM -0800, Andre Muezerie wrote:
+> > This patchset allows users to specify the CPU for which the generated
+> > code should be optimized for by passing the CPU name.
+> > 
+> > MSVC does not provide this functionality natively, so logic was
+> > added. This additional logic relies on a table which stores instruction
+> > set availability (like AXV512F) for different CPUs.
+> > To make it easier to update this table a new devtool is introduced
+> > with this patch. The new tool generates the table entries for all CPUs
+> > listed in an input file using a recent version of the compiler, which
+> > has all the information needed. This reduces enormously the amount
+> > of work needed to update the table in msvc/meson.build and makes the
+> > process much less error prone.
+> > 
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> > ---
+> >  devtools/dump-cpu-flags/README.md          |  25 +++++
+> >  devtools/dump-cpu-flags/cpu-names.txt      | 120 +++++++++++++++++++++
+> >  devtools/dump-cpu-flags/dump-cpu-flags.cpp | 119 ++++++++++++++++++++
+> >  devtools/dump-cpu-flags/dump-cpu-flags.py  |  41 +++++++
+> >  4 files changed, 305 insertions(+)
+> >  create mode 100644 devtools/dump-cpu-flags/README.md
+> >  create mode 100644 devtools/dump-cpu-flags/cpu-names.txt
+> >  create mode 100644 devtools/dump-cpu-flags/dump-cpu-flags.cpp
+> >  create mode 100644 devtools/dump-cpu-flags/dump-cpu-flags.py
+> > 
+> > diff --git a/devtools/dump-cpu-flags/README.md b/devtools/dump-cpu-flags/README.md
+> > new file mode 100644
+> > index 0000000000..3db69f9f8f
+> > --- /dev/null
+> > +++ b/devtools/dump-cpu-flags/README.md
+> > @@ -0,0 +1,25 @@
+> > +# Generating updated CPU flags
+> > +
+> > +File `config\x86\msvc\meson.build` has a table with flags indicating instruction set support for a variety of CPU types.
+> > +
+> > +Script `dump-cpu-flags.py` can be used to generate updated entries for this table.
+> > +
+> > +The CPU names are stored in file `cpu-names.txt`, which is consumed by `dump-cpu-flags.py`. The formatting used in that file is described at the top of the file itself.
+> > +
+> > +The script relies on the information embedded in the g++ compiler. This means that an updated table can automatically be generated by switching to a newer version of the compiler. This avoids the need to manually edit the entries, which is error prone. With the script the table entries can just copied and pasted into `meson.build`. The only thing that might need to be done is adding new CPU names to cpu-names.txt, when new CPUs are released.
+> > +
+> > +**NOTE**: CPUs not known to the compiler will result in errors, which can be ignored (`dump-cpu-flags.py` will ignore these errors and continue). For best results use the latest g++ compiler available.
+> > +
+> > +Below is a sample output, where an error was logged because the compiler did not know about a CPU named ‘raptorlake’.
+> > +
+> > +```sh
+> > +$ ./dump-cpu-flags.py
+> > +       'x86-64-v2': [],
+> > +       'x86-64-v3': ['AVX', 'AVX2'],
+> > +       'x86-64-v4': ['AVX', 'AVX2', 'AVX512F', 'AVX512VL', 'AVX512BW', 'AVX512DQ', 'AVX512CD'],
+> > +       'alderlake': ['AVX', 'PCLMUL', 'RDRND', 'AVX2', 'RDSEED', 'AES', 'VPCLMULQDQ', 'GFNI'],
+> > +cc1plus: error: bad value (‘raptorlake’) for ‘-march=’ switch
+> > +cc1plus: note: valid arguments to ‘-march=’ switch are: nocona core2 nehalem corei7 westmere sandybridge...
+> > +      'silvermont': ['PCLMUL', 'RDRND'],
+> > +             'slm': ['PCLMUL', 'RDRND'],
+> > +```
+> > \ No newline at end of file
+> 
+> How about having the tool output a valid meson.build file, that can then be
+> used directly without copy-paste. While I know such a thing would end up
+> with us having deep subdir structures, it could be just loaded from e.g.
+> config/x86/msvc/cpu-flags/meson.build, for example.
+> 
+> /Bruce
 
-A split was added which in future will call an MSVC specific meson.build
-file:
+That's an interesting idea. It could be done, but when I think that this
+table will probably get updated no more than once per release I don't see
+much reason to to come up with something more sofisticated.
 
-if is_ms_compiler
-    subdir_done()
-endif
-
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
----
- config/x86/meson.build | 90 ++++++++++++++++++++++--------------------
- 1 file changed, 47 insertions(+), 43 deletions(-)
-
-diff --git a/config/x86/meson.build b/config/x86/meson.build
-index 47a5b0c04a..ea9bd8231d 100644
---- a/config/x86/meson.build
-+++ b/config/x86/meson.build
-@@ -1,6 +1,51 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017-2020 Intel Corporation
- 
-+cc_has_avx512 = false
-+target_has_avx512 = false
-+
-+dpdk_conf.set('RTE_ARCH_X86', 1)
-+if dpdk_conf.get('RTE_ARCH_64')
-+    dpdk_conf.set('RTE_ARCH_X86_64', 1)
-+    dpdk_conf.set('RTE_ARCH', 'x86_64')
-+else
-+    dpdk_conf.set('RTE_ARCH_I686', 1)
-+    dpdk_conf.set('RTE_ARCH', 'i686')
-+endif
-+
-+dpdk_conf.set('RTE_CACHE_LINE_SIZE', 64)
-+dpdk_conf.set('RTE_MAX_LCORE', 128)
-+
-+epyc_zen_cores = {
-+    '__znver5__':768,
-+    '__znver4__':512,
-+    '__znver3__':256,
-+    '__znver2__':256,
-+    '__znver1__':128
-+    }
-+
-+if cpu_instruction_set == 'native'
-+    foreach m:epyc_zen_cores.keys()
-+        if cc.get_define(m, args: machine_args) != ''
-+            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
-+            break
-+        endif
-+    endforeach
-+else
-+    foreach m:epyc_zen_cores.keys()
-+        if m.contains(cpu_instruction_set)
-+            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
-+            break
-+        endif
-+    endforeach
-+endif
-+
-+dpdk_conf.set('RTE_MAX_NUMA_NODES', 32)
-+
-+if is_ms_compiler
-+    subdir_done()
-+endif
-+
- # get binutils version for the workaround of Bug 97
- binutils_ok = true
- if is_linux or cc.get_id() == 'gcc'
-@@ -14,9 +59,8 @@ if is_linux or cc.get_id() == 'gcc'
-     endif
- endif
- 
--cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw']
--cc_has_avx512 = false
--target_has_avx512 = false
-+cc_avx2_flags = ['-mavx2']
-+cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw', '-mavx512cd']
- if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
-         and '-mno-avx512f' not in get_option('c_args'))
-     # check if compiler is working with _mm512_extracti64x4_epi64
-@@ -82,43 +126,3 @@ foreach f:optional_flags
-         compile_time_cpuflags += ['RTE_CPUFLAG_' + f]
-     endif
- endforeach
--
--
--dpdk_conf.set('RTE_ARCH_X86', 1)
--if dpdk_conf.get('RTE_ARCH_64')
--    dpdk_conf.set('RTE_ARCH_X86_64', 1)
--    dpdk_conf.set('RTE_ARCH', 'x86_64')
--else
--    dpdk_conf.set('RTE_ARCH_I686', 1)
--    dpdk_conf.set('RTE_ARCH', 'i686')
--endif
--
--dpdk_conf.set('RTE_CACHE_LINE_SIZE', 64)
--dpdk_conf.set('RTE_MAX_LCORE', 128)
--
--epyc_zen_cores = {
--    '__znver5__':768,
--    '__znver4__':512,
--    '__znver3__':256,
--    '__znver2__':256,
--    '__znver1__':128
--    }
--
--cpu_instruction_set = get_option('cpu_instruction_set')
--if cpu_instruction_set == 'native'
--    foreach m:epyc_zen_cores.keys()
--        if cc.get_define(m, args: machine_args) != ''
--            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
--            break
--        endif
--    endforeach
--else
--    foreach m:epyc_zen_cores.keys()
--        if m.contains(cpu_instruction_set)
--            dpdk_conf.set('RTE_MAX_LCORE', epyc_zen_cores[m])
--            break
--        endif
--    endforeach
--endif
--
--dpdk_conf.set('RTE_MAX_NUMA_NODES', 32)
--- 
-2.48.1.vfs.0.0
-
+Sometimes it's better to keep things simple.
