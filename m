@@ -2,80 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021ACC021A4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Feb 2025 16:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C6C282C6
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Mar 2025 02:26:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42A4642E61;
-	Wed, 12 Feb 2025 17:50:04 +0100 (CET)
-Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id AEE4442DBB;
- Wed, 12 Feb 2025 17:50:03 +0100 (CET)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id C344142D9D
- for <announce@dpdk.org>; Wed, 12 Feb 2025 17:50:01 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 3D57E1380896;
- Wed, 12 Feb 2025 11:50:01 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Wed, 12 Feb 2025 11:50:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:content-type:date:date
- :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm3; t=1739379001; x=1739465401; bh=cr0pXxOLby
- pKyj6Aa7xM2gC0fOc8bVZ2PPl/h61JqmA=; b=0M6Oyf5S5RjQKSixcvSZK2M8ib
- HxVdiEf1JLhOlbL5oCWxnFRnZs331o0KOw72KRr+a3XIlMRz/QzuYv+QDVPErZ+2
- xs+B2aLm9YXRG1H5FQFNPFtk4cVzVWco4+mw6S6aibGQwU6mKMWA9pR6Uq8ThXzN
- XqXJR2g7SG8U2B2z3EdVRqh/zYZiiJi1gO0tJhYRX6wqw1AYftZU0RAe0dKZrvLY
- 64thkAMoyT9BXtx7PwtB/C2FmcSkG4+l28KELCl272qUAdXvooqHqwIkbtMFkhIG
- fVRUmj5CiwD0v3imfIIKBfweQKI4sd5tvWVY+bTzIP0EmXvDZH5Wa02gsneA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1739379001; x=1739465401; bh=cr0pXxOLbypKyj6Aa7xM2gC0fOc8bVZ2PPl
- /h61JqmA=; b=MmKEZv5lppeFxDuOI2OjldIysEbGhhe0UCODHdWs5A6eF6Kkv37
- weOS39TCGRx9MRhmFtAUBwM9PYSME3VdneIulGlU8GwfrcFdcSqn6HwFJ4fgPDoT
- 6w/cx81lN3CgoJ60Dl16WK2NQko0NZHO9dVoAXU7Reaqwua0yyHB1Dt5fNdSOgqO
- NBF7zeKVMEC9IQ4UzTyaOHpFTf7de3IoZP8ViY3PweBI8ojg/ZPOOgLHE4ijax/r
- djUnYaBdOs8wt67ZuRg21XPpaEviT0Y4z3po6OfsbyLnKlb5Z7c/1n79q7mCYaZW
- C9uJ5dSSYZ4Yyv6rROCW8YzG1IVhrwVxeew==
-X-ME-Sender: <xms:ONGsZ_Qq150P73SdutnL1mPpKC83bIedvMNEE-92Z04nVvS3g2FwfA>
- <xme:ONGsZwyeGv4j6QqowFt_Wk3mp4naMqEY0q5HDHGtIrlwqi_5otd3Okwfq7Q8E5lKV
- DJtwHe4mR9lEgy9eQ>
-X-ME-Received: <xmr:ONGsZ01rxC1IxpaKEA2G9d7-2xQ_o3_kriIDCFGQNZrqbaNB_R02ReaAczemSklemDoNE6uMy--FgGJqk6MVdJ-8mA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeegtdcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvuf
- ffkfgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhn
- uceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepue
- eguefhteduvddtjeevjeehgfegjeegieeileevveegieffvdehheejveevkeefnecuffho
- mhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
- epmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgt
- phhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhnohhunhgtvg
- esughpughkrdhorhhg
-X-ME-Proxy: <xmx:ONGsZ_BJ6OpUlZeyZL4N0W72sQuI6TtDjf7TX_7jfuSy2yAmCmD-FQ>
- <xmx:ONGsZ4jf2DxsN5G_6XaruBKNWhUMNGrL5supKym8lr_1O4ksyCJyqg>
- <xmx:ONGsZzr5cUMO1LMg6VR_Mh6Hv_m0ceF2J6oosHgS9yG0M1KToKmRaQ>
- <xmx:ONGsZzjLhp30zktLKV8T940bV4axsClRkXgk03WoAoXv-OwK96mIzw>
- <xmx:OdGsZ0aj5Gixn3Ys8J3bJ3XxJ-5vbGRasL8Qd3SeaKDFWcMrw9wbVPdJ>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <announce@dpdk.org>; Wed, 12 Feb 2025 11:50:00 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: announce@dpdk.org
-Subject: release candidate 25.03-rc1
-Date: Wed, 12 Feb 2025 17:49:59 +0100
-Message-ID: <17054329.0ZKypZ73Fx@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 6440940281;
+	Sat,  1 Mar 2025 03:26:26 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A62D4025D
+ for <dev@dpdk.org>; Sat,  1 Mar 2025 03:26:24 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 0360E2038A24; Fri, 28 Feb 2025 18:26:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0360E2038A24
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1740795983;
+ bh=xwQz3dX1VBEzT+3pkUe1HRRsrDf0NcZN5iuycicYg5k=;
+ h=Date:From:To:Subject:From;
+ b=dkH57UrcphaVP7T0813tGnekLnyyFDXI/qwgbj4fbmRUMLQR2VbyyryRJELz6Ttok
+ 7IhyeQR5J+guUtHxr2i1wJYoXkNiigXKXDoLUvrjrkmd8nRCfepz1ihqkITryeM/kg
+ sHXQWR5AhNixGDDZe+iSR0XcG7dybnIkdVQ0QpqQ=
+Date: Fri, 28 Feb 2025 18:26:22 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: honnappa.nagarahalli@arm.com;, dev@dpdk.org
+Subject: Segfault in rcu
+Message-ID: <20250301022622.GA6940@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-BeenThere: announce@dpdk.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
-X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Unsubscribe: <https://mails.dpdk.org/options/dev>,
  <mailto:dev-request@dpdk.org?subject=unsubscribe>
@@ -86,28 +43,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A new DPDK release candidate is ready for testing:
-	https://git.dpdk.org/dpdk/tag/?id=v25.03-rc1
+Hi,
 
-There are 478 new patches in this snapshot.
+Are there known issues with rcu lib?
+I tried to remove the VLA from it by calling alloca() and gcc 14.2 on Linux immediately complains about "array subscript outside array bounds".
 
-Release notes:
-	https://doc.dpdk.org/guides/rel_notes/release_25_03.html
-
-Highlights of 25.03-rc1:
-	- Staged-Ordered ring (SORING)
-	- mbuf raw bulk functions
-	- some Intel drivers merged together
-	- Yunsilicon xsc networking driver
-	- ZTE Storage Data Accelerator (ZSDA) driver
-	- Intel compiler icc support replaced by icx
-	- more function annotations for analyzers
-	- more MSVC compatibility
-
-Please test and report issues on bugs.dpdk.org.
-
-DPDK 25.03-rc2 is expected in more than two weeks (end of February).
-
-Thank you everyone
+$ ninja -C build
+ninja: Entering directory `build'
+[1/144] Compiling C object lib/librte_rcu.a.p/rcu_rte_rcu_qsbr.c.o
+In file included from ../lib/ring/rte_ring_elem.h:20,
+                 from ../lib/rcu/rte_rcu_qsbr.c:17:
+In function ‘__rte_ring_dequeue_elems_32’,
+    inlined from ‘__rte_ring_do_dequeue_elems’ at ../lib/ring/rte_ring_elem_pvt.h:289:3,
+    inlined from ‘__rte_ring_dequeue_elems’ at ../lib/ring/rte_ring_elem_pvt.h:298:2,
+    inlined from ‘__rte_ring_do_dequeue_start’ at ../lib/ring/rte_ring_peek_elem_pvt.h:172:3,
+    inlined from ‘rte_ring_dequeue_bulk_elem_start’ at ../lib/ring/rte_ring_peek.h:237:9,
+    inlined from ‘rte_rcu_qsbr_dq_reclaim’ at ../lib/rcu/rte_rcu_qsbr.c:392:4:
+../lib/ring/rte_ring_elem_pvt.h:176:36: warning: array subscript 2 is outside array bounds of ‘char[8]’ [-Warray-bounds=]
+  176 |                         obj[i + 2] = ring[idx + 2];
+      |                         ~~~~~~~~~~~^~~~~~~~~~~~~~~
 
 
+If I stubbornly ignore the warning and run the test, rcu_qsbr_autotest segfaults (no surprise given the previous warning).
+Wondering if somebody more familiar with that code would like to take a look.
+
+These were the only changes I had made, on latest main (commit fab31a03ba98e7457284df95dd9eef2223a4ccaa)
+
+$ cat 0001-rcu.patch 
+From dc7776a7b918cd96ffce62dd3bfaca85fc449d1b Mon Sep 17 00:00:00 2001
+From: Andre Muezerie <andremue@linux.microsoft.com>
+Date: Fri, 28 Feb 2025 21:05:25 -0500
+Subject: [PATCH] rcu
+
+---
+ lib/rcu/rte_rcu_qsbr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
+index dbf31501a6..65037d0217 100644
+--- a/lib/rcu/rte_rcu_qsbr.c
++++ b/lib/rcu/rte_rcu_qsbr.c
+@@ -323,7 +323,7 @@ int rte_rcu_qsbr_dq_enqueue(struct rte_rcu_qsbr_dq *dq, void *e)
+ 		return 1;
+ 	}
+ 
+-	char data[dq->esize];
++	char *data = alloca(dq->esize);
+ 	dq_elem = (__rte_rcu_qsbr_dq_elem_t *)data;
+ 	/* Start the grace period */
+ 	dq_elem->token = rte_rcu_qsbr_start(dq->v);
+@@ -386,7 +386,7 @@ rte_rcu_qsbr_dq_reclaim(struct rte_rcu_qsbr_dq *dq, unsigned int n,
+ 
+ 	cnt = 0;
+ 
+-	char data[dq->esize];
++	char *data = alloca(dq->esize);
+ 	/* Check reader threads quiescent state and reclaim resources */
+ 	while (cnt < n &&
+ 		rte_ring_dequeue_bulk_elem_start(dq->r, &data,
+-- 
+2.34.1
+
+Thanks,
+
+Andre Muezerie
