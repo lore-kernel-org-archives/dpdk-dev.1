@@ -2,38 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B546DC282C6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 20:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C98C282C6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 21:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7A2E40156;
-	Mon,  3 Mar 2025 21:49:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BF3E440156;
+	Mon,  3 Mar 2025 22:37:25 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5696040041
- for <dev@dpdk.org>; Mon,  3 Mar 2025 21:49:48 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 733BB40041
+ for <dev@dpdk.org>; Mon,  3 Mar 2025 22:37:23 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id ABE842110483; Mon,  3 Mar 2025 12:49:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ABE842110483
+ id 527B82110486; Mon,  3 Mar 2025 13:37:22 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 527B82110486
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741034987;
- bh=CuralyvcNwSGrGPn1yL9PV4v64Z1R3qdxiqvyS1v/4I=;
+ s=default; t=1741037842;
+ bh=wsb95SBmCip1yf0/F8cr6n6d6xxoUNZ/Pq+nCbBm3RM=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=gZtVvBWW2C3zncVvMTGNmHUYVEQIqvcID9c5gsVeBdPyIis7g5X8yKdCtL8W2Cea3
- GoitDQu8Ah2kJ0rgJGAKlj6PkUZ74KfhCqh90aozPlXFVNZt70TCHF76IbBCoXU+PW
- NHtJ6zlWe/kWMjrwyx6L/L8+utcX+uxJwyz/8gXY=
-Date: Mon, 3 Mar 2025 12:49:47 -0800
+ b=nmL0mBk08pCVrCtLI+ZWK6fmgtdk6ZHmQ/YP7ufyJXcG1zvLIrPyvUOjsE7RII6y8
+ WQOCEZuaZNQPEyQeIGcC8xYJaS/C4cBf4eUCElcIPJyfZP9AmCAqCXU4JbIwi5Kv1K
+ e1RexGO9sGHttk2/t0kpJONKOIP0a8qbq7hWNPJo=
+Date: Mon, 3 Mar 2025 13:37:22 -0800
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] member: use common top-level variable for easier
- maintenance
-Message-ID: <20250303204947.GA13721@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1740769261-736-1-git-send-email-andremue@linux.microsoft.com>
- <Z8XJBGuHKRxbUfzE@bricha3-mobl1.ger.corp.intel.com>
+To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Cc: honnappa.nagarahalli@arm.com, dev@dpdk.org
+Subject: Re: Segfault in rcu
+Message-ID: <20250303213722.GA23080@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20250301022622.GA6940@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAEYuUWCgT8DUyHvUdnDo1r1YisU2JYfctRCNaq=kFusXPe_nQg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8XJBGuHKRxbUfzE@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <CAEYuUWCgT8DUyHvUdnDo1r1YisU2JYfctRCNaq=kFusXPe_nQg@mail.gmail.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -48,62 +46,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Mar 03, 2025 at 03:21:40PM +0000, Bruce Richardson wrote:
-> On Fri, Feb 28, 2025 at 11:01:01AM -0800, Andre Muezerie wrote:
-> > Updated meson.build to use common variable cc_avx512_flags for
-> > msvc and avoiding code duplication for other compilers.
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > ---
-> >  lib/member/meson.build | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/lib/member/meson.build b/lib/member/meson.build
-> > index f92cbb7f25..8416dc6f8a 100644
-> > --- a/lib/member/meson.build
-> > +++ b/lib/member/meson.build
-> > @@ -33,6 +33,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
-> >      # compiler flags, and then have the .o file from static lib
-> >      # linked into main lib.
-> >  
-> > +    if is_ms_compiler
-> > +        member_avx512_args = cc_avx512_flags
-> > +    else
-> > +        member_avx512_args = ['-mavx512f', '-mavx512dq', '-mavx512ifma']
-> > +    endif
-> > +
+On Sat, Mar 01, 2025 at 10:35:48PM +0300, Dmitry Kozlyuk wrote:
+> Hi Andre,
 > 
-> Would this be better as:
+> > @@ -386,7 +386,7 @@ rte_rcu_qsbr_dq_reclaim(struct rte_rcu_qsbr_dq *dq, unsigned int n,
+> >
+> >      cnt = 0;
+> >
+> > -    char data[dq->esize];
+> > +    char *data = alloca(dq->esize);
+> >      /* Check reader threads quiescent state and reclaim resources */
+> >      while (cnt < n &&
+> >          rte_ring_dequeue_bulk_elem_start(dq->r, &data,
 > 
-> member_avx512_args = cc_avx512_flags
-> if not is_ms_compiler
-> 	member_avx512_args += '-mavx512ifma'
-> endif
-> 
-> WDYT?
+> In the last line, "&data" was equivalent to "data" when "data" was an array.
+> This is no longer true when "data" is a pointer.
+> Removing "&" fixes the issue.
+> Maybe coccinelle can check for similar mistakes caused by mechanical
+> replacement of VLA to alloca()?
 
-That is slightly simpler. I updated the patch accordingly.
-
-> 
-> >      # check if all required flags already enabled
-> >      sketch_avx512_flags = ['__AVX512F__', '__AVX512DQ__', '__AVX512IFMA__']
-> >  
-> > @@ -46,13 +52,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
-> >      if sketch_avx512_on == true
-> >          cflags += ['-DCC_AVX512_SUPPORT']
-> >          sources += files('rte_member_sketch_avx512.c')
-> > -    elif cc.has_multi_arguments('-mavx512f', '-mavx512dq', '-mavx512ifma')
-> > +    elif cc.has_multi_arguments(member_avx512_args)
-> >          sketch_avx512_tmp = static_library('sketch_avx512_tmp',
-> >              'rte_member_sketch_avx512.c',
-> >              include_directories: includes,
-> >              dependencies: [static_rte_eal, static_rte_hash],
-> > -            c_args: cflags +
-> > -                ['-mavx512f', '-mavx512dq', '-mavx512ifma'])
-> > +            c_args: cflags + member_avx512_args)
-> >          objs += sketch_avx512_tmp.extract_objects('rte_member_sketch_avx512.c')
-> >          cflags += ['-DCC_AVX512_SUPPORT']
-> >      endif
-> > -- 
-> > 2.48.1.vfs.0.0
-> > 
+That makes sense. Thanks Dmitry.
