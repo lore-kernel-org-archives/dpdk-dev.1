@@ -2,54 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A24C282C6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 09:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFEFC282C5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 10:11:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00BDE402AC;
-	Mon,  3 Mar 2025 10:46:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E76140280;
+	Mon,  3 Mar 2025 11:11:19 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id F2E70400D7
- for <dev@dpdk.org>; Mon,  3 Mar 2025 10:46:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E5062400D7
+ for <dev@dpdk.org>; Mon,  3 Mar 2025 11:11:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1740995176;
+ s=mimecast20190719; t=1740996677;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=DotcPwNC7aNfp3fuv6tRkhz39lPelYUy66xR6dLGQSs=;
- b=XzMBGrRqENtB7LpsC2HbhbSgu94DLmZ18BBDlw+RjGTUi8QYM+zYRwNCcK3Bm1uvwuwjZ+
- YIGQy4sLZ4LgxtWTk+cD7O0ySwCFEcgJrv8TSz1pQG2cpeK/EcAbmY+GNPttxjO6ReI7t5
- dbOWIAIpMX8FhtHi6QaFw8FmwIasq3Q=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=n4rwcMPBqjiTtmLwuYfOVBQfOFmT+e4xxhTq1/V4pyM=;
+ b=X90S/DRxCUQxg4VMFmnPg+TbykWr8OF6v+J2EcMrdsp/CkTz9gWV+ijQggSf9HuHzSTscI
+ r2yHapYNPIp4Gg1zR/vFS6wTfDoLBS5grxIHio3EjpmyPySdVJcjI02coDrdPEm9y3VocK
+ 2w9YF3ixlPWCyZoRqhr5Gbif7WnNziI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-arkp_bHVMkaG1T6LEwWJ0A-1; Mon,
- 03 Mar 2025 04:46:15 -0500
-X-MC-Unique: arkp_bHVMkaG1T6LEwWJ0A-1
-X-Mimecast-MFC-AGG-ID: arkp_bHVMkaG1T6LEwWJ0A_1740995174
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-166-o1_DZXHyMmuqaqgBD0wmgQ-1; Mon,
+ 03 Mar 2025 05:11:14 -0500
+X-MC-Unique: o1_DZXHyMmuqaqgBD0wmgQ-1
+X-Mimecast-MFC-AGG-ID: o1_DZXHyMmuqaqgBD0wmgQ_1740996673
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B286B193585F; Mon,  3 Mar 2025 09:46:13 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4611E1800993; Mon,  3 Mar 2025 10:11:13 +0000 (UTC)
 Received: from [10.45.242.27] (unknown [10.45.242.27])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CA3F11800362; Mon,  3 Mar 2025 09:46:10 +0000 (UTC)
-Message-ID: <6ce49a30-a1fe-498f-ba7e-5579811914e1@redhat.com>
-Date: Mon, 3 Mar 2025 10:46:08 +0100
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id F20F6180094C; Mon,  3 Mar 2025 10:11:10 +0000 (UTC)
+Message-ID: <94b05361-b8d2-437e-9b30-22d6d5d6ecf3@redhat.com>
+Date: Mon, 3 Mar 2025 11:11:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v9 4/6] examples/vhost_crypto: fix user callbacks
+Subject: Re: [v9 5/6] vhost: support asymmetric RSA crypto ops
 To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
- Chenbo Xia <chenbox@nvidia.com>, Jay Zhou <jianjay.zhou@huawei.com>,
- Fan Zhang <fanzhang.oss@gmail.com>
+ Chenbo Xia <chenbox@nvidia.com>
 Cc: anoobj@marvell.com, Akhil Goyal <gakhil@marvell.com>,
- David Marchand <david.marchand@redhat.com>, stable@dpdk.org
+ David Marchand <david.marchand@redhat.com>
 References: <cover.1740749809.git.gmuthukrishn@marvell.com>
- <5c03086ed2c8a3310dfaa22973472b027f96c4d5.1740749809.git.gmuthukrishn@marvell.com>
+ <bbef5d454e68ed0098cc1ae43c96c81cddc68bf0.1740749809.git.gmuthukrishn@marvell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -94,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <5c03086ed2c8a3310dfaa22973472b027f96c4d5.1740749809.git.gmuthukrishn@marvell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <bbef5d454e68ed0098cc1ae43c96c81cddc68bf0.1740749809.git.gmuthukrishn@marvell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lWMIH1A8pn7g8AcnG1ajkpNHLuzUJswsqewpOvrz3Z0_1740995174
+X-Mimecast-MFC-PROC-ID: tb1hNEoQl5bJLqe4GXwug26ZplXNH7HBdF1CpPTmjkg_1740996673
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -118,17 +117,15 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 2/28/25 2:47 PM, Gowrishankar Muthukrishnan wrote:
-> In order to handle new vhost user connection, use new_connection
-> and destroy_connection callbacks.
-> 
-> Fixes: f5188211c721 ("examples/vhost_crypto: add sample application")
-> Cc: stable@dpdk.org
+> Support asymmetric RSA crypto operations in vhost-user.
 > 
 > Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 > Acked-by: Akhil Goyal <gakhil@marvell.com>
 > ---
->   examples/vhost_crypto/main.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   doc/guides/rel_notes/release_25_03.rst |   3 +
+>   lib/vhost/vhost_crypto.c               | 484 +++++++++++++++++++++++--
+>   lib/vhost/virtio_crypto.h              |  67 ++++
+>   3 files changed, 521 insertions(+), 33 deletions(-)
 > 
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
