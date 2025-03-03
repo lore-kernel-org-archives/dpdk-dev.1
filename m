@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70943C282CD
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 14:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0061BC282CD
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 14:57:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48AFD402D2;
-	Mon,  3 Mar 2025 15:57:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BD14402E3;
+	Mon,  3 Mar 2025 15:57:22 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id CAD66400D7
- for <dev@dpdk.org>; Mon,  3 Mar 2025 15:57:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E06A8402AE
+ for <dev@dpdk.org>; Mon,  3 Mar 2025 15:57:20 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42101106F;
- Mon,  3 Mar 2025 06:57:33 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B122113E;
+ Mon,  3 Mar 2025 06:57:34 -0800 (PST)
 Received: from localhost.localdomain (unknown [10.57.64.81])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 700D93F66E;
- Mon,  3 Mar 2025 06:57:18 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 89A1D3F66E;
+ Mon,  3 Mar 2025 06:57:19 -0800 (PST)
 From: Luca Vizzarro <Luca.Vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v4 1/7] dts: add tests package to API docs
-Date: Mon,  3 Mar 2025 16:57:03 +0200
-Message-ID: <20250303145709.126126-2-Luca.Vizzarro@arm.com>
+Subject: [PATCH v4 2/7] dts: amend test suites docstring
+Date: Mon,  3 Mar 2025 16:57:04 +0200
+Message-ID: <20250303145709.126126-3-Luca.Vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250303145709.126126-1-Luca.Vizzarro@arm.com>
 References: <20241108134532.130681-1-luca.vizzarro@arm.com>
@@ -44,318 +44,274 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 
-The test suites are not documented in the API as their respective
-documentation files are missing.
+Amend the test suites docstring to conform to valid rst.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- doc/api/dts/index.rst                                 |  1 +
- doc/api/dts/tests.TestSuite_blocklist.rst             |  8 ++++++++
- doc/api/dts/tests.TestSuite_checksum_offload.rst      |  8 ++++++++
- doc/api/dts/tests.TestSuite_dual_vlan.rst             |  8 ++++++++
- doc/api/dts/tests.TestSuite_dynamic_config.rst        |  8 ++++++++
- doc/api/dts/tests.TestSuite_dynamic_queue_conf.rst    |  8 ++++++++
- doc/api/dts/tests.TestSuite_hello_world.rst           |  8 ++++++++
- doc/api/dts/tests.TestSuite_l2fwd.rst                 |  8 ++++++++
- doc/api/dts/tests.TestSuite_mac_filter.rst            |  8 ++++++++
- doc/api/dts/tests.TestSuite_mtu.rst                   |  8 ++++++++
- doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst    |  8 ++++++++
- ...ests.TestSuite_port_restart_config_persistency.rst |  8 ++++++++
- doc/api/dts/tests.TestSuite_promisc_support.rst       |  8 ++++++++
- doc/api/dts/tests.TestSuite_queue_start_stop.rst      |  8 ++++++++
- doc/api/dts/tests.TestSuite_smoke_tests.rst           |  8 ++++++++
- doc/api/dts/tests.TestSuite_softnic.rst               |  8 ++++++++
- doc/api/dts/tests.TestSuite_uni_pkt.rst               |  8 ++++++++
- doc/api/dts/tests.TestSuite_vlan.rst                  |  8 ++++++++
- doc/api/dts/tests.rst                                 | 11 +++++++++++
- 19 files changed, 148 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_blocklist.rst
- create mode 100644 doc/api/dts/tests.TestSuite_checksum_offload.rst
- create mode 100644 doc/api/dts/tests.TestSuite_dual_vlan.rst
- create mode 100644 doc/api/dts/tests.TestSuite_dynamic_config.rst
- create mode 100644 doc/api/dts/tests.TestSuite_dynamic_queue_conf.rst
- create mode 100644 doc/api/dts/tests.TestSuite_hello_world.rst
- create mode 100644 doc/api/dts/tests.TestSuite_l2fwd.rst
- create mode 100644 doc/api/dts/tests.TestSuite_mac_filter.rst
- create mode 100644 doc/api/dts/tests.TestSuite_mtu.rst
- create mode 100644 doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
- create mode 100644 doc/api/dts/tests.TestSuite_port_restart_config_persistency.rst
- create mode 100644 doc/api/dts/tests.TestSuite_promisc_support.rst
- create mode 100644 doc/api/dts/tests.TestSuite_queue_start_stop.rst
- create mode 100644 doc/api/dts/tests.TestSuite_smoke_tests.rst
- create mode 100644 doc/api/dts/tests.TestSuite_softnic.rst
- create mode 100644 doc/api/dts/tests.TestSuite_uni_pkt.rst
- create mode 100644 doc/api/dts/tests.TestSuite_vlan.rst
- create mode 100644 doc/api/dts/tests.rst
+ dts/tests/TestSuite_dynamic_config.py |  10 +--
+ dts/tests/TestSuite_mac_filter.py     |  42 +++++-----
+ dts/tests/TestSuite_mtu.py            | 114 +++++++++++++-------------
+ 3 files changed, 83 insertions(+), 83 deletions(-)
 
-diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 33b05953d2..a11f395e11 100644
---- a/doc/api/dts/index.rst
-+++ b/doc/api/dts/index.rst
-@@ -14,6 +14,7 @@ Packages
-    :includehidden:
-    :maxdepth: 1
+diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
+index a4bee2e90b..1fce31a0b5 100644
+--- a/dts/tests/TestSuite_dynamic_config.py
++++ b/dts/tests/TestSuite_dynamic_config.py
+@@ -36,13 +36,13 @@ class TestDynamicConfig(TestSuite):
  
-+   tests
-    framework.testbed_model
-    framework.remote_session
-    framework.params
-diff --git a/doc/api/dts/tests.TestSuite_blocklist.rst b/doc/api/dts/tests.TestSuite_blocklist.rst
-new file mode 100644
-index 0000000000..8d032786a0
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_blocklist.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
+     1. Default mode: verify packets are received and forwarded.
+     2. Disable promiscuous mode: verify that packets are received
+-    only for the packet with destination address matching the port address.
++       only for the packet with destination address matching the port address.
+     3. Disable promiscuous mode broadcast: verify that packets with destination
+-    MAC address not matching the port are received and not forwarded, and verify
+-    that broadcast packets are received and forwarded.
++       MAC address not matching the port are received and not forwarded, and verify
++       that broadcast packets are received and forwarded.
+     4. Disable promiscuous mode multicast: verify that packets with destination
+-    MAC address not matching the port are received and not forwarded, and verify
+-    that multicast packets are received and forwarded.
++       MAC address not matching the port are received and not forwarded, and verify
++       that multicast packets are received and forwarded.
+     """
+ 
+     def send_packet_and_verify(self, should_receive: bool, mac_address: str) -> None:
+diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
+index e6c55d3ec6..9dbfec5da2 100644
+--- a/dts/tests/TestSuite_mac_filter.py
++++ b/dts/tests/TestSuite_mac_filter.py
+@@ -93,13 +93,13 @@ def test_add_remove_mac_addresses(self) -> None:
+         the properties applied to the PMD at any given time.
+ 
+         Test:
+-            Start TestPMD without promiscuous mode.
+-            Send a packet with the port's default mac address. (Should receive)
+-            Send a packet with fake mac address. (Should not receive)
+-            Add fake mac address to the PMD's address pool.
+-            Send a packet with the fake mac address to the PMD. (Should receive)
+-            Remove the fake mac address from the PMD's address pool.
+-            Send a packet with the fake mac address to the PMD. (Should not receive)
++            * Start TestPMD without promiscuous mode.
++            * Send a packet with the port's default mac address. (Should receive)
++            * Send a packet with fake mac address. (Should not receive)
++            * Add fake mac address to the PMD's address pool.
++            * Send a packet with the fake mac address to the PMD. (Should receive)
++            * Remove the fake mac address from the PMD's address pool.
++            * Send a packet with the fake mac address to the PMD. (Should not receive)
+         """
+         with TestPmdShell() as testpmd:
+             testpmd.set_promisc(0, enable=False)
+@@ -127,15 +127,15 @@ def test_invalid_address(self) -> None:
+         built-in hardware address, or exceed their address pools.
+ 
+         Test:
+-            Start TestPMD.
+-            Attempt to add an invalid mac address. (Should fail)
+-            Attempt to remove the device's hardware address with no additional addresses in the
+-                address pool. (Should fail)
+-            Add a fake mac address to the pool twice in succession. (Should not create any errors)
+-            Attempt to remove the device's hardware address with other addresses in the address
+-                pool. (Should fail)
+-            Determine the device's mac address pool size, and fill the pool with fake addresses.
+-            Attempt to add another fake mac address, overloading the address pool. (Should fail)
++            * Start TestPMD.
++            * Attempt to add an invalid mac address. (Should fail)
++            * Attempt to remove the device's hardware address with no additional addresses in the
++              address pool. (Should fail)
++            * Add a fake mac address to the pool twice in succession. (Should not create any errors)
++            * Attempt to remove the device's hardware address with other addresses in the address
++              pool. (Should fail)
++            * Determine the device's mac address pool size, and fill the pool with fake addresses.
++            * Attempt to add another fake mac address, overloading the address pool. (Should fail)
+         """
+         with TestPmdShell() as testpmd:
+             testpmd.start()
+@@ -185,11 +185,11 @@ def test_multicast_filter(self) -> None:
+         to the PMD.
+ 
+         Test:
+-            Start TestPMD without promiscuous mode.
+-            Add a fake multicast address to the PMD's multicast address pool.
+-            Send a packet with the fake multicast address to the PMD. (Should receive)
+-            Remove the fake multicast address from the PMDs multicast address filter.
+-            Send a packet with the fake multicast address to the PMD. (Should not receive)
++            * Start TestPMD without promiscuous mode.
++            * Add a fake multicast address to the PMD's multicast address pool.
++            * Send a packet with the fake multicast address to the PMD. (Should receive)
++            * Remove the fake multicast address from the PMDs multicast address filter.
++            * Send a packet with the fake multicast address to the PMD. (Should not receive)
+         """
+         with TestPmdShell() as testpmd:
+             testpmd.start()
+diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
+index 63e570ba03..af6ab88501 100644
+--- a/dts/tests/TestSuite_mtu.py
++++ b/dts/tests/TestSuite_mtu.py
+@@ -48,8 +48,7 @@ def set_up_suite(self) -> None:
+         """Set up the test suite.
+ 
+         Setup:
+-            Set traffic generator MTU lengths to a size greater than scope of all
+-            test cases.
++            Set traffic generator MTU lengths to a size greater than scope of all test cases.
+         """
+         self.topology.tg_port_egress.configure_mtu(JUMBO_MTU + 200)
+         self.topology.tg_port_ingress.configure_mtu(JUMBO_MTU + 200)
+@@ -89,12 +88,13 @@ def assess_mtu_boundary(self, testpmd_shell: TestPmdShell, mtu: int) -> None:
+         will not.
+ 
+         First, start testpmd and update the MTU. Then ensure the new value appears
+-        on port info for all ports.
+-        Next, start packet capturing and send 3 different lengths of packet and verify
+-        they are handled correctly.
+-            # 1. VENDOR_AGNOSTIC_PADDING units smaller than the MTU specified.
+-            # 2. Equal to the MTU specified.
+-            # 3. VENDOR_AGNOSTIC_PADDING units larger than the MTU specified (should be fragmented).
++        on port info for all ports. Next, start packet capturing and send 3 different lengths of
++        packet and verify they are handled correctly:
 +
-+blocklist Test Suite
-+====================
++        1. VENDOR_AGNOSTIC_PADDING units smaller than the MTU specified.
++        2. Equal to the MTU specified.
++        3. VENDOR_AGNOSTIC_PADDING units larger than the MTU specified (should be fragmented).
 +
-+.. automodule:: tests.TestSuite_blocklist
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_checksum_offload.rst b/doc/api/dts/tests.TestSuite_checksum_offload.rst
-new file mode 100644
-index 0000000000..8eea87f2e9
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_checksum_offload.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
+         Finally, stop packet capturing.
+ 
+         Args:
+@@ -126,35 +126,35 @@ def test_runtime_mtu_updating_and_forwarding(self) -> None:
+         """Verify runtime MTU adjustments and assess packet forwarding behavior.
+ 
+         Test:
+-            Start TestPMD in a paired topology.
+-            Set port MTU to 1500.
+-            Send packets of 1491, 1500 and 1509 bytes.
+-                Verify the first two packets are forwarded and the last is dropped.
+-
+-            Set port MTU to 2400.
+-            Send packets of 1491, 1500 and 1509 bytes.
+-                Verify all three packets are forwarded.
+-            Send packets of 2391, 2400 and 2409 bytes.
+-                Verify the first two packets are forwarded and the last is dropped.
+-
+-            Set port MTU to 4800.
+-            Send packets of 1491, 1500 and 1509 bytes.
+-                Verify all three packets are forwarded.
+-            Send packets of 4791, 4800 and 4809 bytes.
+-                Verify the first two packets are forwarded and the last is dropped.
+-
+-            Set port MTU to 9000.
+-            Send packets of 1491, 1500 and 1509 bytes.
+-                Verify all three packets are forwarded.
+-            Send packets of 8991, 9000 and 9009 bytes.
+-                Verify the first two packets are forwarded and the last is dropped.
++            * Start TestPMD in a paired topology.
++            * Set port MTU to 1500.
++            * Send packets of 1491, 1500 and 1509 bytes.
++                * Verify the first two packets are forwarded and the last is dropped.
 +
-+checksum_offload Test Suite
-+===========================
++            * Set port MTU to 2400.
++            * Send packets of 1491, 1500 and 1509 bytes.
++                * Verify all three packets are forwarded.
++            * Send packets of 2391, 2400 and 2409 bytes.
++                * Verify the first two packets are forwarded and the last is dropped.
 +
-+.. automodule:: tests.TestSuite_checksum_offload
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_dual_vlan.rst b/doc/api/dts/tests.TestSuite_dual_vlan.rst
-new file mode 100644
-index 0000000000..22d8c7195f
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_dual_vlan.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
++            * Set port MTU to 4800.
++            * Send packets of 1491, 1500 and 1509 bytes.
++                * Verify all three packets are forwarded.
++            * Send packets of 4791, 4800 and 4809 bytes.
++                * Verify the first two packets are forwarded and the last is dropped.
 +
-+dual_vlan Test Suite
-+====================
-+
-+.. automodule:: tests.TestSuite_dual_vlan
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_dynamic_config.rst b/doc/api/dts/tests.TestSuite_dynamic_config.rst
-new file mode 100644
-index 0000000000..268ef499b6
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_dynamic_config.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+dynamic_config Test Suite
-+=========================
-+
-+.. automodule:: tests.TestSuite_dynamic_config
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_dynamic_queue_conf.rst b/doc/api/dts/tests.TestSuite_dynamic_queue_conf.rst
-new file mode 100644
-index 0000000000..c142b9dc40
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_dynamic_queue_conf.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+dynamic_queue_conf Test Suite
-+=============================
-+
-+.. automodule:: tests.TestSuite_dynamic_queue_conf
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_hello_world.rst b/doc/api/dts/tests.TestSuite_hello_world.rst
-new file mode 100644
-index 0000000000..10db998987
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_hello_world.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+hello_world Test Suite
-+======================
-+
-+.. automodule:: tests.TestSuite_hello_world
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_l2fwd.rst b/doc/api/dts/tests.TestSuite_l2fwd.rst
-new file mode 100644
-index 0000000000..5a0ca312e9
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_l2fwd.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+l2fwd Test Suite
-+================
-+
-+.. automodule:: tests.TestSuite_l2fwd
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_mac_filter.rst b/doc/api/dts/tests.TestSuite_mac_filter.rst
-new file mode 100644
-index 0000000000..a65aaeac0b
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_mac_filter.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+mac_filter Test Suite
-+=====================
-+
-+.. automodule:: tests.TestSuite_mac_filter
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_mtu.rst b/doc/api/dts/tests.TestSuite_mtu.rst
-new file mode 100644
-index 0000000000..6e8cb808da
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_mtu.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+mtu Test Suite
-+==============
-+
-+.. automodule:: tests.TestSuite_mtu
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
-new file mode 100644
-index 0000000000..cdf30fd879
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+pmd_buffer_scatter Test Suite
-+=============================
-+
-+.. automodule:: tests.TestSuite_pmd_buffer_scatter
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_port_restart_config_persistency.rst b/doc/api/dts/tests.TestSuite_port_restart_config_persistency.rst
-new file mode 100644
-index 0000000000..2db4754a01
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_port_restart_config_persistency.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+port_restart_config_persistency Test Suite
-+==========================================
-+
-+.. automodule:: tests.TestSuite_port_restart_config_persistency
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_promisc_support.rst b/doc/api/dts/tests.TestSuite_promisc_support.rst
-new file mode 100644
-index 0000000000..496ee01f2f
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_promisc_support.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+promisc_support Test Suite
-+==========================
-+
-+.. automodule:: tests.TestSuite_promisc_support
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_queue_start_stop.rst b/doc/api/dts/tests.TestSuite_queue_start_stop.rst
-new file mode 100644
-index 0000000000..87121676fb
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_queue_start_stop.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+queue_start_stop Test Suite
-+===========================
-+
-+.. automodule:: tests.TestSuite_queue_start_stop
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_smoke_tests.rst b/doc/api/dts/tests.TestSuite_smoke_tests.rst
-new file mode 100644
-index 0000000000..8c78c3025a
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_smoke_tests.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+smoke_tests Test Suite
-+======================
-+
-+.. automodule:: tests.TestSuite_smoke_tests
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_softnic.rst b/doc/api/dts/tests.TestSuite_softnic.rst
-new file mode 100644
-index 0000000000..a091f265ea
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_softnic.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+softnic Test Suite
-+==================
-+
-+.. automodule:: tests.TestSuite_softnic
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_uni_pkt.rst b/doc/api/dts/tests.TestSuite_uni_pkt.rst
-new file mode 100644
-index 0000000000..95c5a5a28b
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_uni_pkt.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+uni_pkt Test Suite
-+==================
-+
-+.. automodule:: tests.TestSuite_uni_pkt
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_vlan.rst b/doc/api/dts/tests.TestSuite_vlan.rst
-new file mode 100644
-index 0000000000..dfbe6196fd
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_vlan.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+vlan Test Suite
-+===============
-+
-+.. automodule:: tests.TestSuite_vlan
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.rst b/doc/api/dts/tests.rst
-new file mode 100644
-index 0000000000..fdfa6c1f8d
---- /dev/null
-+++ b/doc/api/dts/tests.rst
-@@ -0,0 +1,11 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+Test Suites
-+===========
-+
-+.. toctree::
-+   :glob:
-+   :hidden:
-+   :maxdepth: 1
-+
-+   tests.*
++            * Set port MTU to 9000.
++            * Send packets of 1491, 1500 and 1509 bytes.
++                * Verify all three packets are forwarded.
++            * Send packets of 8991, 9000 and 9009 bytes.
++                * Verify the first two packets are forwarded and the last is dropped.
+         Verify:
+-            Verifies the successful forwarding of packets via a search for an inserted payload.
+-            If the payload is found, the packet was transmitted successfully. Otherwise, the packet
+-            is considered dropped.
++            * Verifies the successful forwarding of packets via a search for an inserted payload.
++              If the payload is found, the packet was transmitted successfully. Otherwise, the
++              packet is considered dropped.
+ 
+-            Verify that standard MTU packets forward, in addition to packets within the limits of
+-            an MTU size set during runtime.
++            * Verify that standard MTU packets forward, in addition to packets within the limits of
++              an MTU size set during runtime.
+         """
+         with TestPmdShell(tx_offloads=0x8000, mbuf_size=[JUMBO_MTU + 200]) as testpmd:
+             testpmd.set_port_mtu_all(1500, verify=True)
+@@ -185,16 +185,16 @@ def test_cli_mtu_forwarding_for_std_packets(self) -> None:
+         """Assesses packet forwarding of standard MTU packets after pre-runtime MTU adjustments.
+ 
+         Test:
+-            Start TestPMD with MTU size of 1518 bytes, set pre-runtime.
+-            Send packets of size 1491, 1500 and 1509 bytes.
+-            Verify the first two packets are forwarded and the last is dropped.
++            * Start TestPMD with MTU size of 1518 bytes, set pre-runtime.
++            * Send packets of size 1491, 1500 and 1509 bytes.
++            * Verify the first two packets are forwarded and the last is dropped.
+         Verify:
+-            Verifies the successful forwarding of packets via a search for an inserted payload.
+-            If the payload is found, the packet was transmitted successfully. Otherwise, the packet
+-            is considered dropped.
++            * Verifies the successful forwarding of packets via a search for an inserted payload.
++              If the payload is found, the packet was transmitted successfully. Otherwise, the
++              packet is considered dropped.
+ 
+-            Verify the first two packets are forwarded and the last is dropped after pre-runtime
+-            MTU modification.
++            * Verify the first two packets are forwarded and the last is dropped after pre-runtime
++              MTU modification.
+         """
+         with TestPmdShell(
+             tx_offloads=0x8000,
+@@ -215,14 +215,14 @@ def test_cli_jumbo_forwarding_for_jumbo_mtu(self) -> None:
+         """Assess packet forwarding of packets within the bounds of a pre-runtime MTU adjustment.
+ 
+         Test:
+-            Start TestPMD with MTU size of 9018 bytes, set pre-runtime.
+-            Send packets of size 8991, 9000 and 1509 bytes.
++            * Start TestPMD with MTU size of 9018 bytes, set pre-runtime.
++            * Send packets of size 8991, 9000 and 1509 bytes.
+         Verify:
+-            Verifies the successful forwarding of packets via a search for an inserted payload.
+-            If the payload is found, the packet was transmitted successfully. Otherwise, the packet
+-            is considered dropped.
++            * Verifies the successful forwarding of packets via a search for an inserted payload.
++              If the payload is found, the packet was transmitted successfully. Otherwise, the
++              packet is considered dropped.
+ 
+-            Verify that all packets are forwarded after pre-runtime MTU modification.
++            * Verify that all packets are forwarded after pre-runtime MTU modification.
+         """
+         with TestPmdShell(
+             tx_offloads=0x8000,
+@@ -241,16 +241,16 @@ def test_cli_mtu_std_packets_for_jumbo_mtu(self) -> None:
+         """Assess boundary of jumbo MTU value set pre-runtime.
+ 
+         Test:
+-            Start TestPMD with MTU size of 9018 bytes, set pre-runtime.
+-            Send a packets of size 8991, 9000 and 9009 bytes.
+-            Verify the first two packets are forwarded and the last is dropped.
++            * Start TestPMD with MTU size of 9018 bytes, set pre-runtime.
++            * Send a packets of size 8991, 9000 and 9009 bytes.
++            * Verify the first two packets are forwarded and the last is dropped.
+         Verify:
+-            Verifies the successful forwarding of packets via a search for an inserted payload.
+-            If the payload is found, the packet was transmitted successfully. Otherwise, the packet
+-            is considered dropped.
++            * Verifies the successful forwarding of packets via a search for an inserted payload.
++              If the payload is found, the packet was transmitted successfully. Otherwise, the
++              packet is considered dropped.
+ 
+-            Verify the first two packets are forwarded and the last is dropped after pre-runtime
+-            MTU modification.
++            * Verify the first two packets are forwarded and the last is dropped after pre-runtime
++              MTU modification.
+         """
+         with TestPmdShell(
+             tx_offloads=0x8000,
 -- 
 2.43.0
 
