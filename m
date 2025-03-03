@@ -2,161 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE77C282CD
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 15:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AB7C282D1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Mar 2025 16:02:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7587940280;
-	Mon,  3 Mar 2025 16:22:21 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id D8B004027F
- for <dev@dpdk.org>; Mon,  3 Mar 2025 16:22:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741015339; x=1772551339;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=A52KjNkDuEYe2+Rsp68WTtebgxyW5kRjxMSutpiyDqg=;
- b=nNhpHSLLH8ZsRQCmBA7fiuFpvOb2T25iZpWfARarrSvcXMkl2d5WxTsA
- OBahw/i8Whrqa3BfMAiY9RzEoiXYutYO59KfWhvTQmGoZ0PcBr/msRNBN
- Bmf5WDKZAp9sCxpI1Il09GQBIyU6Q0VjPliFAbtzNLEyPyNc0eJRBxRk7
- 7caWacVt/G+2uY56r4PNqVxbLATpc1BkwHdelgFgXuBGt3kcuG6Kz1adp
- bfLVhQg3+tYknS842ZJAfSMYr6eUb1pK0ToePFDkEm+L7nIIlQb2Fy+V9
- Ly28DCEQWr/1hZjnNkxpPVOFJ6wBrSHmAAU3vtmkUy/VDMwYbr2Qor+d4 A==;
-X-CSE-ConnectionGUID: RVDpy6ABSpyyRDDBCHZFhg==
-X-CSE-MsgGUID: wt87zzQfQI+dchj9qZl7ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41783514"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; d="scan'208";a="41783514"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Mar 2025 07:22:18 -0800
-X-CSE-ConnectionGUID: ndxMRRhyQ76TOD2SGqYDeA==
-X-CSE-MsgGUID: P+nD9vmFSliW8a3DxLuEZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="118969405"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 03 Mar 2025 07:22:17 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 3 Mar 2025 07:22:16 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 3 Mar 2025 07:22:16 -0800
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 3 Mar 2025 07:22:15 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zK3FI5u9CxhKXNIpzXkpoEWhlRuHDwNaFRgmiYrwy9MyEpl9P/lLZXqlYw4x6XRYcrI3NHzxZt5SgQ1899+yu+nJnYfhSmuz3n9sKBs5nG8SFYyyru9wU4WAVsiYz1ioasKX/L+2wdpLbTXMTQvc8nVmmqOSvg4QDXjPPNJLJWVu1pjhWVfJbSgOgtsaQ+AMzsPyVMCE6KYS4i0LUKISi3kPkvv6RYHeILdLVbXBQZ17xe3ZQDcrm7jzaa9/u7eOKabeLkZ9JO5dQX2TqrwKWPeeEfGq5AQAyCEGkhlSqjsES2C2gwEsw6yhBd6x12SOUQR4F2agtauKO7dRFnHvwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YgZS7GhyT9Y/ZnVEp/r+ZKmANR2DnayRtkSPFWLWEwk=;
- b=Mqq1cxj7W24tG/b7LoAdIHQM3tMYKffLWn/lLqyfyKIRuxMR7DSGsAhzSYE9KximC/XOXArdbkGoPmCreAfyX1N8u3wfpF/I4fegVLRv/Oyl0qAUb2OQ1hVFvx1yj/lOrPgp/2kc8qaU42gfXQcL0jcEdreUl754ihCVW7bEHTgAxvQFRjD6DVYu8r6u1bF4Q9ZUrkNMtOiCoip7SQ4N3nvLjGJwi9N0+6AhwcoLbrYF01Ekf7X7SUcvVpH54CZ7Z6EgsoFs54jb741IyVEoF+dLCDnb2XgEpC+7vkYne73iDj+tU9vb3Uxhwvq13/XyNeesDT7Q8H+iQgy0xtBkVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH7PR11MB6008.namprd11.prod.outlook.com (2603:10b6:510:1d0::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Mon, 3 Mar
- 2025 15:21:46 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 15:21:45 +0000
-Date: Mon, 3 Mar 2025 15:21:40 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-CC: Yipeng Wang <yipeng1.wang@intel.com>, Sameh Gobriel
- <sameh.gobriel@intel.com>, <dev@dpdk.org>
-Subject: Re: [PATCH] member: use common top-level variable for easier
- maintenance
-Message-ID: <Z8XJBGuHKRxbUfzE@bricha3-mobl1.ger.corp.intel.com>
-References: <1740769261-736-1-git-send-email-andremue@linux.microsoft.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1740769261-736-1-git-send-email-andremue@linux.microsoft.com>
-X-ClientProxiedBy: DB9PR01CA0024.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::29) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id E20F94027F;
+	Mon,  3 Mar 2025 17:02:14 +0100 (CET)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
+ [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id 56B7A400D7
+ for <dev@dpdk.org>; Mon,  3 Mar 2025 17:02:13 +0100 (CET)
+Received: by mail-ej1-f51.google.com with SMTP id
+ a640c23a62f3a-ac0b6e8d96cso156725466b.0
+ for <dev@dpdk.org>; Mon, 03 Mar 2025 08:02:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1741017733; x=1741622533; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
+ :references:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=YYaMZA6/p5LuLFMyeTJ594tiStzVQE5/WYrOu3lRy/s=;
+ b=QD9Zs5g6HkXXrDyRI3ipUk5vksqoJGmxOOGvTH3gZelW+s4izk7MJ8HsBV/Fu76asY
+ vkEBjsh0tROaQLxaj9F5aMIzYKtkd0KjgecxNPm+ydFuQgiTeez9acerfzs7Iv6FcaSU
+ hiudtkgNnT1mXqxd4OEmxGYj2tyP8vmd38n+k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741017733; x=1741622533;
+ h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
+ :references:from:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YYaMZA6/p5LuLFMyeTJ594tiStzVQE5/WYrOu3lRy/s=;
+ b=MMwEVLnhehIhSfb+WyKRM1uRuxAWBQqQbgKz3T946JFPLn3UZpzoqVSOqUc2ZbE1mI
+ 1rXo/EaNJc/RztaI+7iz9sRVs6iH/RK3hiIZf1X7BQpkMm54+bz+Sq/552q6hvkITvsH
+ WJw/a5/uRT82lV2Ru/blTwb3YD7KXkkuK4Epgiv3aooIUdPmF922PkI13epJU7AotSrd
+ kXbV2Vc9vvrKqw2uDYVwM8AslWs3+2amMEaql6gBEwKb1HSxS5ogf8+S3GBC979NUAEN
+ 5Ctki/X2VkPxRD4xF8xyiKpvVg7obp0mgr/yXnfVZQzMTN0MBvWIji8UqItBYm3nrmeX
+ ILbg==
+X-Gm-Message-State: AOJu0YwmCMwYQzpYdIvtaPbYPgocIqNC3uWkTmt96twnulwDXEGSiOix
+ 6dQVH/OE1kJXEphffRNEPnZH6UgEAihQpIzyxOsM/a7hwJ8/jwsyEa7uxRFlntCflErTGg0xrLI
+ /pcxl0R+EGJoI6+K1GxHazKwbPulMrFVpWpfQqbfwBwENNRhFS3iYV38FaBiU44aqvdKjXvlre0
+ FqOFti
+X-Gm-Gg: ASbGncvgCPI1vLe6SGNSNrsCgZz4hJpJqSkNdF1NIQcs5CrG9oAUz0ug3dULXvPtd6z
+ q4S7iS+YGCigPtOfOXfJFE4+mzRXAweX41kH7dvp5aCUA+PbJh0cQqjIRbDGo6mAK/ARF+gHFIg
+ 4ZGzWGZj4Oe6sG73nTJ5i3//GF2U4=
+X-Google-Smtp-Source: AGHT+IG+LGtQWH4Ik6hpool/KjdvKawwyRNUPG1gr8cQxfC8uDlUT6OSisDX57u4nv/UmFJG4T+ozL2zHvWvpGMY8E4=
+X-Received: by 2002:a17:907:d1a:b0:ac0:6e7d:cd10 with SMTP id
+ a640c23a62f3a-ac06e7dddf1mr345332166b.2.1741017732661; Mon, 03 Mar 2025
+ 08:02:12 -0800 (PST)
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+References: 0e434799cd43394c0604f08462001c02@mail.gmail.com
+In-Reply-To: 0e434799cd43394c0604f08462001c02@mail.gmail.com
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6008:EE_
-X-MS-Office365-Filtering-Correlation-Id: 593b6275-f1b1-4cd7-7907-08dd5a671bcd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iTWZWqtqvLpb2+BWItD8B1JCqD61GL9W0t9f9iS8qZRi/formZx8tOjx2WzR?=
- =?us-ascii?Q?wPTwQ8h4eIoM4HdLDPENP+PC4CDY9hwLMdwJX9DL1kp3kmWrQHQR5WKwoaXT?=
- =?us-ascii?Q?zE79fIok2uSMoJ+iJZ2EUPjqsPNHP6uuGcbplhJbmkbnlYxcptDzaIlYYgJV?=
- =?us-ascii?Q?nd/NA86vDxWKJqxi1y2R5aUlidhb5yBaCAfMMej6JUQmx86A8yZO7jxc7jXv?=
- =?us-ascii?Q?xq3rlNzfZHiY9pYhkB8m8U92VRnzKo2vr+nXnvYuVxyFoSEe9vbIGuN9y9C7?=
- =?us-ascii?Q?3j+2e+VVdZBxtiumepqh2YrYBLo5zCiFupfG4KGwj3Y6noVMF9Bqb/nChUXF?=
- =?us-ascii?Q?KKquxvs4kGRAnMy+4ziwB2sTFCT0vt2I7EQhKkfX0GxTiUd4EaaWYVEQBsLo?=
- =?us-ascii?Q?DkSniIRqCDk8kfllRwSixRZBtfsJKzU6jkPCYLugxdu+BewJHEIrv4dvMDiz?=
- =?us-ascii?Q?NrVRUDLc7uGYODnXcGMUOgGtQj7Gd3yNSNlxl/7OU5lI3RE72zahCJ8+mUeo?=
- =?us-ascii?Q?lGqedoLiAtGANsHdSCw7W9u/R5a4qi3fbOReIY5AHjGhOssiDQDBiHLwniDg?=
- =?us-ascii?Q?Jfs/ASyh1YKMG0rk3zfzOSMzjjhYdDJijJGYIqnpB/VKFM5N5hIjDb7rYAOd?=
- =?us-ascii?Q?m5Sq4GYg2hMwS+sjoK25XWOrZYqiyGYCFoQdOxOdsNxOkjGrQ1Yg5A/he7kj?=
- =?us-ascii?Q?q5SPQ6kylNgq/wC760yIWS4kWS7Ot2npXCelLdPWp216fk9pbYuFFwDt2rb4?=
- =?us-ascii?Q?tyJI2VIERb3cmS5H8pcEHSmy5QWuxadddX24lHszg0TgwHwJfmSCAJDhE9K1?=
- =?us-ascii?Q?MOIIok5fxt1EAbyDb4bvisiiP1ODRApAE1pJNqsGb2OsTC9BvTN6DWmhn0n/?=
- =?us-ascii?Q?FM8YoMKj+xlRENJ7K+UBmh+IINTFmZ4A6oA+TPcSxXaEMBL2p6FxeV1qhUSQ?=
- =?us-ascii?Q?LpKlZ6ktmzrnEC8fK6cf9CKjRUPk5dBy1bqRPcid1mSvPSDaVWSO8UjuACpd?=
- =?us-ascii?Q?eqlLQGXjR6n3hx1FksDvkQMIejlXrM58ApnnNXJe3tAUMh9/uR3vS2FLitUD?=
- =?us-ascii?Q?3giBu4Xub8yIarNOT0rLeYT9cGP9mx5yRCQz/y0xwS8DnCK96nuF9kVOdWlX?=
- =?us-ascii?Q?zJiPpYVwBHcyyKIdgn5ICQpb+BYyWnepUrc297DUHpX/YHwXgDjTaipOQhHy?=
- =?us-ascii?Q?tbWv8IpsSKj7VgszQb88Ve1X9UzV/Bxv0i4Bc3FcuMsJc2zNGxnYaHLBxrPz?=
- =?us-ascii?Q?L7hBu2MheLgQeLHh8FJ0PQ85xyN+9Bjy1OP7Vlzvb7od5DmA94s5e0munq6s?=
- =?us-ascii?Q?9N0an7Gn4h+6/6z6A2r2aqpE3QcQNPKq76n6rU2bhDGiDofKKNcWx3sgcBUt?=
- =?us-ascii?Q?6edFlrcJ1aeMYHdS2ylbXP9Twmq4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IvzqBy89vErfjVihrF6iUkp2rOrcMYrDhUGOLYUG0hPRXxL5iXpSr/6lz8p0?=
- =?us-ascii?Q?KnsbHpBASRLozLiEHxCOlIKGN8hWsdrCt9cuu6Iys7YK0IfHQ+kuJulllvq7?=
- =?us-ascii?Q?zdYsvBiQu9e+IfOv8mJUaUJvcnr/29myd2SvRWtmLPl28qh43QLBLGgKhX2O?=
- =?us-ascii?Q?GDQn+coXgkdYKAj5Q7ZTn/CBbnFrxtn1oz0kCKcBecWzX3cR9GZo44YInygP?=
- =?us-ascii?Q?7OhQzFujJJkcV5Odr2n54Ps+h2loweQNUC8XA02UXYVFJOKemY502eqSOv9V?=
- =?us-ascii?Q?2johyy2Ca+RMLPHauGzZL4lwPgsG5AL8Pf9LJq5vb9+Mu27Cyhva7SMDWnHD?=
- =?us-ascii?Q?czKCqy8ArY8ZYK6BpkrB1mCkQzJkN20Z8rTpcTJygCsq5zy/ElkArndWUgwx?=
- =?us-ascii?Q?HW/CnPVaJti3f1elB0X/H6Pm2U/PnCE9cAAr9hafOxDCIHquJtlue4GMFHCd?=
- =?us-ascii?Q?a220Dhh9SUm5N2pkZIDb5yYaJQgrruYk+xBBf1kV3CtHM9Wsh7D1OAGTXul9?=
- =?us-ascii?Q?lySGzcme6mZIf8bXu35uFwYVAfpR8WT1VgbX2T68LBnjJV4Gl56Ri9qKPw90?=
- =?us-ascii?Q?L9gRcW1DevM1P+ezqNK3TDuCBQRJx33G9Uy6l5TrE1vXFNHB+Kh/fWBDsK4O?=
- =?us-ascii?Q?i2JM+CT8N+1S9MTweUYq/ZlyifjC0UwTqyNYV41ET+osDqZxx3CYdSKWWDwy?=
- =?us-ascii?Q?a0kuMXw6WQN5ZtCYQEHxCgxXbjq1SFaVqM1ISAAviN9dmy/aRsfF7WGuJgWS?=
- =?us-ascii?Q?fqHiCt7Q9vjO1huuROz0eRCOIjQKDamlXAH445TsOTx0wV8Xo+eR48nswKZe?=
- =?us-ascii?Q?nV2g+kZPzxuoXJYWDVbiiB3F5zlyWaq0E+bhOIvRZOkLcV2SrBn70fvIanHG?=
- =?us-ascii?Q?wAGgDj51PskTda1leyQrNNfxxBuUU+H+sfbc0BSCnvAKtE7yanoHqoq8nAbk?=
- =?us-ascii?Q?m9Utb1PEiqTSwfYjhL6NcZdH++MM6uH1BRIJHFNt+zYkrVxefa+W53HKFnY9?=
- =?us-ascii?Q?eX0KO+eXES7BePGCOBclP2EhCgMQOWGBhqO2efUROuztWlKaP/yCiZzU6jFE?=
- =?us-ascii?Q?NokfSXQ+usknD6FbDUED3HuFDoa2PJsIn4ETunT5ismgvvEIwqeTUOXmATB4?=
- =?us-ascii?Q?YoLKLBb3itivuxp4xN6Hr6z3zmFjVQjsZ6IbdrhTMY8Oq929T2V9TmOkyody?=
- =?us-ascii?Q?6NPyCFDRmysoHyU/1d+jogMVCamcuITJTksKlx9O7x5DpCXxIZcwiivA8uyl?=
- =?us-ascii?Q?lIq+3R4+qHkxjDyxdI0mexXfjhbTF6NY4pfKnbfO9f2SGUaBwzQdhMITHEUz?=
- =?us-ascii?Q?iasuJox+rmNJ7hKWOeF/RUO3noPabNif4BJrSKj//y2xM+LIy9ykRhe2gOLd?=
- =?us-ascii?Q?B5xt8eLlG5eM0LI4gYgqvmR9J6hNpc8cBYAE2ULsrEw7wuoUSbuvLMbXSV1L?=
- =?us-ascii?Q?fuKA3pp0lXPWy4f/z7KVkjSUBiQbP3MH2aexlhLnWn3feHdRwdkOSF1ubDTJ?=
- =?us-ascii?Q?SHQiVxTX5MXdMBMWOC7uzXD7/Cbwtw7zBA0yGIfCIlGfJdu2y6ma1LYda8da?=
- =?us-ascii?Q?eHZy3ON0938xeYJM+dP3kH8mQXN6Nx5RyAWQorLA7Btj0k7gIaY/ZN9sVK7N?=
- =?us-ascii?Q?Sw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 593b6275-f1b1-4cd7-7907-08dd5a671bcd
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 15:21:45.3530 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EN9I77gLWYWhYlUkaKH/RpygPphvzueviS1VFu0iomIAWLvFEBtocCVzinBVoFLuRNcs5DZeblHmAMDODhFTnWZzBUXJ4K3egTowZ/MWf4Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6008
-X-OriginatorOrg: intel.com
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AduJbgXzAHbI9mKUTKiMjEMs7P3TUgC5gXGw
+Date: Mon, 3 Mar 2025 11:02:09 -0500
+X-Gm-Features: AQ5f1Jr3ttnygxv_Y6FGpSQsX-yCQrEXm-v2CiNgKqlNFNmTEsA4qBmmHauQusM
+Message-ID: <b62e330e086126415f7b4987a9747ce2@mail.gmail.com>
+Subject: RE: MPLS Push action
+To: Ajit Khaparde <ajit.khaparde@broadcom.com>, Ferruh.yigit@xilinx.com, 
+ qi.z.zhang@intel.com
+Cc: dev@dpdk.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="000000000000880f67062f7247fa"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,58 +72,225 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 28, 2025 at 11:01:01AM -0800, Andre Muezerie wrote:
-> Updated meson.build to use common variable cc_avx512_flags for
-> msvc and avoiding code duplication for other compilers.
-> 
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> ---
->  lib/member/meson.build | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/member/meson.build b/lib/member/meson.build
-> index f92cbb7f25..8416dc6f8a 100644
-> --- a/lib/member/meson.build
-> +++ b/lib/member/meson.build
-> @@ -33,6 +33,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
->      # compiler flags, and then have the .o file from static lib
->      # linked into main lib.
->  
-> +    if is_ms_compiler
-> +        member_avx512_args = cc_avx512_flags
-> +    else
-> +        member_avx512_args = ['-mavx512f', '-mavx512dq', '-mavx512ifma']
-> +    endif
-> +
+--000000000000880f67062f7247fa
+Content-Type: multipart/alternative; boundary="00000000000080f950062f7247b5"
 
-Would this be better as:
+--00000000000080f950062f7247b5
+Content-Type: text/plain; charset="UTF-8"
 
-member_avx512_args = cc_avx512_flags
-if not is_ms_compiler
-	member_avx512_args += '-mavx512ifma'
-endif
+Hi,
 
-WDYT?
 
->      # check if all required flags already enabled
->      sketch_avx512_flags = ['__AVX512F__', '__AVX512DQ__', '__AVX512IFMA__']
->  
-> @@ -46,13 +52,12 @@ if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
->      if sketch_avx512_on == true
->          cflags += ['-DCC_AVX512_SUPPORT']
->          sources += files('rte_member_sketch_avx512.c')
-> -    elif cc.has_multi_arguments('-mavx512f', '-mavx512dq', '-mavx512ifma')
-> +    elif cc.has_multi_arguments(member_avx512_args)
->          sketch_avx512_tmp = static_library('sketch_avx512_tmp',
->              'rte_member_sketch_avx512.c',
->              include_directories: includes,
->              dependencies: [static_rte_eal, static_rte_hash],
-> -            c_args: cflags +
-> -                ['-mavx512f', '-mavx512dq', '-mavx512ifma'])
-> +            c_args: cflags + member_avx512_args)
->          objs += sketch_avx512_tmp.extract_objects('rte_member_sketch_avx512.c')
->          cflags += ['-DCC_AVX512_SUPPORT']
->      endif
-> -- 
-> 2.48.1.vfs.0.0
-> 
+
+Anyone has any inputs on this. Or should I add new CLI commands in testpmd
+to support action for push MPLS tag.
+
+
+
+Thanks,
+
+Kishore
+
+
+
+
+
+*From:* Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+*Sent:* Thursday, February 27, 2025 6:35 PM
+*To:* 'dev@dpdk.org' <dev@dpdk.org>
+*Subject:* MPLS Push action
+
+
+
+Hi,
+
+
+
+When MPLS push action is used, using testpmd action  of_push_mpls, it
+accepts the ethertype only. How do I specify the MPLS label and other
+fields for the MPLS header to be added ? In the doc
+<https://opennetworking.org/wp-content/uploads/2014/10/openflow-switch-v1.5.1.pdf>,
+in section 7.2.3.7 there is mention of OFXPMT_OFB_MPLS_LABEL and other MPLS
+fields, but I could not find that in dpdk implementation.
+
+
+
+Thanks,
+
+Kishore
+
+-- 
+This electronic communication and the information and any files transmitted 
+with it, or attached to it, are confidential and are intended solely for 
+the use of the individual or entity to whom it is addressed and may contain 
+information that is confidential, legally privileged, protected by privacy 
+laws, or otherwise restricted from disclosure to anyone else. If you are 
+not the intended recipient or the person responsible for delivering the 
+e-mail to the intended recipient, you are hereby notified that any use, 
+copying, distributing, dissemination, forwarding, printing, or copying of 
+this e-mail is strictly prohibited. If you received this e-mail in error, 
+please return the e-mail to the sender, delete it from your computer, and 
+destroy any printed copy of it.
+
+--00000000000080f950062f7247b5
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
+=3Dus-ascii"><meta name=3D"Generator" content=3D"Microsoft Word 15 (filtere=
+d medium)"><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+span.EmailStyle19
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style></head><body lang=3D"EN-US" link=3D"#0563C1" vlink=3D"#954F72" s=
+tyle=3D"word-wrap:break-word"><div class=3D"WordSection1"><p class=3D"MsoNo=
+rmal">Hi,</p><p class=3D"MsoNormal">=C2=A0</p><p class=3D"MsoNormal">Anyone=
+ has any inputs on this. Or should I add new CLI commands in testpmd to sup=
+port action for push MPLS tag.</p><p class=3D"MsoNormal">=C2=A0</p><p class=
+=3D"MsoNormal">Thanks,</p><p class=3D"MsoNormal">Kishore</p><p class=3D"Mso=
+Normal">=C2=A0</p><p class=3D"MsoNormal">=C2=A0</p><div><div style=3D"borde=
+r:none;border-top:solid #e1e1e1 1.0pt;padding:3.0pt 0in 0in 0in"><p class=
+=3D"MsoNormal"><b><span style=3D"font-family:&quot;Calibri&quot;,sans-serif=
+">From:</span></b><span style=3D"font-family:&quot;Calibri&quot;,sans-serif=
+"> Kishore Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com=
+">kishore.padmanabha@broadcom.com</a>&gt; <br><b>Sent:</b> Thursday, Februa=
+ry 27, 2025 6:35 PM<br><b>To:</b> &#39;<a href=3D"mailto:dev@dpdk.org">dev@=
+dpdk.org</a>&#39; &lt;<a href=3D"mailto:dev@dpdk.org">dev@dpdk.org</a>&gt;<=
+br><b>Subject:</b> MPLS Push action</span></p></div></div><p class=3D"MsoNo=
+rmal">=C2=A0</p><p class=3D"MsoNormal">Hi,</p><p class=3D"MsoNormal">=C2=A0=
+</p><p class=3D"MsoNormal">When MPLS push action is used, using testpmd act=
+ion =C2=A0of_push_mpls, it accepts the ethertype only. How do I specify the=
+ MPLS label and other fields for the MPLS header to be added ? In the <a hr=
+ef=3D"https://opennetworking.org/wp-content/uploads/2014/10/openflow-switch=
+-v1.5.1.pdf">doc</a>, in section 7.2.3.7 there is mention of OFXPMT_OFB_MPL=
+S_LABEL and other MPLS fields, but I could not find that in dpdk implementa=
+tion. </p><p class=3D"MsoNormal">=C2=A0</p><p class=3D"MsoNormal">Thanks,</=
+p><p class=3D"MsoNormal">Kishore</p><p class=3D"MsoNormal">=C2=A0</p></div>=
+</body></html>
+
+<br>
+<span style=3D"background-color:rgb(255,255,255)"><font size=3D"2">This ele=
+ctronic communication and the information and any files transmitted with it=
+, or attached to it, are confidential and are intended solely for the use o=
+f the individual or entity to whom it is addressed and may contain informat=
+ion that is confidential, legally privileged, protected by privacy laws, or=
+ otherwise restricted from disclosure to anyone else. If you are not the in=
+tended recipient or the person responsible for delivering the e-mail to the=
+ intended recipient, you are hereby notified that any use, copying, distrib=
+uting, dissemination, forwarding, printing, or copying of this e-mail is st=
+rictly prohibited. If you received this e-mail in error, please return the =
+e-mail to the sender, delete it from your computer, and destroy any printed=
+ copy of it.</font></span>
+--00000000000080f950062f7247b5--
+
+--000000000000880f67062f7247fa
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBV4wggRGoAMCAQICDGgm/w/0NSlGWEAE2zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODE5MTJaFw0yNTA5MTAwODE5MTJaMIGa
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGzAZBgNVBAMTEktpc2hvcmUgUGFkbWFuYWJoYTEuMCwGCSqG
+SIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBAO2KIuHym2NK8LJKtVibxyL/jOwnjzOIbXwiGiJPTo8T3NfkkTIJ4jDc
+o06M9E2KoIo4ve+92WrMmLwu6T+HphBMDOfwXxaFLJqYOTdp/DuZNUCmlXtWkO6YZ60qdFOP+pZI
+0kEta7Kj9i8JM6kC6NChp3t27AlN/Cmo7PEvyRBXKKzBuKV8xxlaTxbs5z63gvCk4AACEUoMhT3G
+OFoe9ghMyQPTG+PhUrwVfqQhB5Cq/UEBY+ML9HK5T2vnfQ6/7Ujo6SRjlDcMKCMt1fsldmDnws3R
+dW+s1pbDZSF3o7LAMPaZD1K6+7+kfhg5PhpHobmqdkKh77/wagvxKPOjt2ECAwEAAaOCAeAwggHc
+MA4GA1UdDwEB/wQEAwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9z
+ZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+dDBBBggrBgEFBQcwAYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFs
+c2lnbjJjYTIwMjAwTQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBz
+Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+
+oDygOoY4aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
+MC5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTATBgNVHSUE
+DDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU
+sUAuVxt1XArsF6SqOey0deblHSAwDQYJKoZIhvcNAQELBQADggEBABnnHNuTT9JPO0hVqI1+MhBA
+mqeMl+tCr/6T161Uv4ra668I1pNZsS/xjmtHYG6uH7m0k09RdNZFerHwtvsaDs1ueuDic62X1xzE
+d5pE71+eY7IXZyt7JOzujKMjBT1ll9ksv900PSfepOhlts+qt39mfsK3GFpWucs5yPQW4QdANh1g
+QQvpKuVIATCT7bbi97PnmyBbqR4lilWpd720IqWfp2so0ihV+YqcZebbT5leoAa/bHgoDUx+ejzc
+Uk12jX97cL/DKIHD0pff67TlZq5ZjltzVjTA0XaUzEak9bSqclhSSbSbYHhRDR4syFcEWXQRxou7
+RctJp8+CIW2Aci4xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxT
+aWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAy
+MDIwAgxoJv8P9DUpRlhABNswDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIAwmsSM3
+xUa2xj2KKIVJ1Cjq6vbg5PsnVMI0+/nqKAsQMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJ
+KoZIhvcNAQkFMQ8XDTI1MDMwMzE2MDIxM1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASow
+CwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZI
+hvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDHrgabC75SNicUzB/qYI7N3YAl
+eBzVpVpnAwIfNEEensBE46Ea1vc+csLvU5W0B3NG0RXC+hYffwQuXMYVPx15lXg6Aw7U+qhxF08z
+ksdFobcekVYUlf2PYac+pQBNHJlUkV82atKhajpDE/bNAjGgTRnnn7w+GFNp4SzFCc7Vs2hdKS1r
+bqsdK2Do5pSBLiVaU1g59/1INIgmA1ARC14Zev1I9NmaSb8t+//xFK5hOMi9ZK7Ri7azbl6mHBkd
++n1lO/Xs9y0OsANAKWGKrULcMGTfoMYKxWLwAV7B+WfI1RkVh/kCafj5xxBtkj38X9TY+1wnZz7g
+I0oISI5iMVTA
+--000000000000880f67062f7247fa--
