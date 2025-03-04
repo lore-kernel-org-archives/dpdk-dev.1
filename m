@@ -2,58 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67567C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 13:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECED7C282C6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 13:42:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2530A40156;
-	Tue,  4 Mar 2025 14:42:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4EC40402DF;
+	Tue,  4 Mar 2025 14:42:38 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id CF3AE40041
- for <dev@dpdk.org>; Tue,  4 Mar 2025 14:42:23 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CD5CC40041
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 14:42:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741095743;
+ s=mimecast20190719; t=1741095756;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=ryTPebsmtO1jy9wBDIdZG1rjL/K02m1VyjAFe9WKyTw=;
- b=HoGyEQYAnOB4n6G6GV2NhBExdnTB9u8GVyEsSIY414il4o4s+Y5EhbS/H9ef6t3G4MJT6y
- aD84t885F0peVUi/f+xRQkvCqF+9//Y6ac7U8j8bG7Bpyu135AU1/+4o6EtZY2LNSLJAoS
- aBiENHo9Le6UUV/PMoBFo8Bn0kS93nY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ bh=H9JfyetLA5h8B+vjIc0Gy8q8C1JtXpEAw1mWEEKxBPY=;
+ b=M1yc8Tl7i0g3/xqKhND854RiKqR1iB/OHRJx9Z3NUtSXnxNAi01VCketjueaBSQjvCVAuh
+ apQ/9AWhlflDfzekMC/2HjgL/AvYKKfALPvYU0yP7W0YPMubOoTL6ZQ1qtJAMXf4Fs0ifz
+ yVmnEyvCkLvA6hb27Qc8bJiG5TmAuuk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-_Eo3jM4KO3aWw30Dv-HE_Q-1; Tue,
- 04 Mar 2025 08:41:55 -0500
-X-MC-Unique: _Eo3jM4KO3aWw30Dv-HE_Q-1
-X-Mimecast-MFC-AGG-ID: _Eo3jM4KO3aWw30Dv-HE_Q_1741095714
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-0tWF2EiKPYmSQSLf9BDSMA-1; Tue,
+ 04 Mar 2025 08:42:32 -0500
+X-MC-Unique: 0tWF2EiKPYmSQSLf9BDSMA-1
+X-Mimecast-MFC-AGG-ID: 0tWF2EiKPYmSQSLf9BDSMA_1741095751
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id EF9F5180099E; Tue,  4 Mar 2025 13:41:53 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4509E1801A36; Tue,  4 Mar 2025 13:42:28 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 417AF19560A3; Tue,  4 Mar 2025 13:41:50 +0000 (UTC)
-Message-ID: <2659e97f-487c-4df8-9290-0f0539abfab1@redhat.com>
-Date: Tue, 4 Mar 2025 14:41:48 +0100
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C81C71954B00; Tue,  4 Mar 2025 13:42:25 +0000 (UTC)
+Message-ID: <de9f6072-bba6-4dbc-b3fd-cfdf0e5524a6@redhat.com>
+Date: Tue, 4 Mar 2025 14:42:22 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report
- feature
-To: Shiva Shankar Kommula <kshankar@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "chenbox@nvidia.com" <chenbox@nvidia.com>
-Cc: "david.marchand@redhat.com" <david.marchand@redhat.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Srujana Challa <schalla@marvell.com>
-References: <20250126193404.3431544-1-kshankar@marvell.com>
- <20250127074150.3499851-1-kshankar@marvell.com>
- <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
- <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
+Subject: Re: [PATCH 1/1] vhost: fix missing descriptor chains length checks
+To: Yunjian Wang <wangyunjian@huawei.com>, dev@dpdk.org
+Cc: chenbox@nvidia.com, cheng1.jiang@intel.com, jerry.lilijun@huawei.com,
+ stable@dpdk.org
+References: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -98,14 +91,14 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ZQ4PxjGMeOUBfZ73OOgWRWWM723phnVayQ2KJ0hjP2o_1741095714
+X-Mimecast-MFC-PROC-ID: ov1ABuxgFlLURi67iIOGBNky2mGd_c9gFK7REJYbeag_1741095751
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -121,44 +114,19 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 2/27/25 10:44 AM, Shiva Shankar Kommula wrote:
->> -----Original Message-----
->> From: Maxime Coquelin <maxime.coquelin@redhat.com>
->> Sent: Tuesday, February 25, 2025 9:39 PM
->> To: Shiva Shankar Kommula <kshankar@marvell.com>; dev@dpdk.org;
->> chenbox@nvidia.com
->> Cc: david.marchand@redhat.com; Jerin Jacob <jerinj@marvell.com>; Nithin
->> Kumar Dabilpuram <ndabilpuram@marvell.com>; Srujana Challa
->> <schalla@marvell.com>
->> Subject: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report feature
->>
->> Hi, On 1/27/25 8: 41 AM, Kommula Shiva Shankar wrote: > This patch adds
->> virtio hash report feature, which is > supported in packet queue mode with
->> scalar version Why only restrict to packed ring? isn't it also compatible with
->> split ring?
->>
->> Hi,
->>
->> On 1/27/25 8:41 AM, Kommula Shiva Shankar wrote:
->>> This patch adds virtio hash report feature, which is supported in
->>> packet queue mode with scalar version
->>
->> Why only restrict to packed ring? isn't it also compatible with split ring?
-> Hi Maxim,
-> Yes, it is. I can add split ring support later if it's alright
->>
->>>
->>> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
->>> ---
->>>    drivers/net/virtio/virtio.h                   |  2 ++
->>>    drivers/net/virtio/virtio_ethdev.c            | 20 ++++++++++++-
->>>    drivers/net/virtio/virtio_ethdev.h            |  1 +
->>>    drivers/net/virtio/virtio_rxtx.c              | 30 +++++++++++++++++++
->>>    .../net/virtio/virtio_user/virtio_user_dev.c  |  1 +
->>>    drivers/net/virtio/virtqueue.h                | 21 +++++++++++++
->>>    6 files changed, 74 insertions(+), 1 deletion(-)
->>>
-
+On 12/23/24 4:29 AM, Yunjian Wang wrote:
+> The descriptor chains length must be greater than the Virtio-net
+> header size. Otherwise, such descriptor chains sizes implies no
+> packet data.
+> 
+> Fixes: fe8477ebbd94 ("vhost: support async packed ring dequeue")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+> ---
+>   lib/vhost/virtio_net.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
 
 Applied to next-virtio.
 
