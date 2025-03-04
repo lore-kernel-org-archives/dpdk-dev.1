@@ -2,52 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1EDC021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 12:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1627AC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 12:36:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AFF840156;
-	Tue,  4 Mar 2025 13:29:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A37540156;
+	Tue,  4 Mar 2025 13:36:22 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E224340041
- for <dev@dpdk.org>; Tue,  4 Mar 2025 13:29:50 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8164C40041
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 13:36:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741091390;
+ s=mimecast20190719; t=1741091779;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=M7UdBmqL+uhf6TVSAy6R15c+CC/gnkLYVmV6Q0c2UZs=;
- b=IVmsOtHQJTDLghsXimP87qfX5X4RR5YyTGj/qv/uRUvLWYFRMCvebJeTriTJspKEVnrGt2
- M8q8/RCZc9ySwnmErPuJ3FLdS9JX1UADCSAyZVkWHs3lZMKHMoCab4Js4WPYVPXcImpgDk
- pcBp7jvcW7YWRQONU4PUu+YYK5XFRxg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=9E5jtZiWfuUJozfNe+Et20GTUWOcCKMEmVZiIV8pbNI=;
+ b=bNqDOsUDr2ol/5T3PVPdWLUR6LyQQLyLafcIHzwXNGKDQydeND4WWzEhLqsQWj/sQLvd8t
+ x0uwA3xyOpIXSIxTPuQtCPG7o0Ev5IExyLBzaWRs8Upi4tZiKrZ7k6D3/DBRB15DzaBp3U
+ jmBh3ut4s+t0INh/eWq6sjDS6tIWCBI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-492--fIIrVA1NZ-In7zrlo20bQ-1; Tue,
- 04 Mar 2025 07:29:46 -0500
-X-MC-Unique: -fIIrVA1NZ-In7zrlo20bQ-1
-X-Mimecast-MFC-AGG-ID: -fIIrVA1NZ-In7zrlo20bQ_1741091385
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-ir1e7j3INYuBBAu0yjmgxw-1; Tue,
+ 04 Mar 2025 07:36:15 -0500
+X-MC-Unique: ir1e7j3INYuBBAu0yjmgxw-1
+X-Mimecast-MFC-AGG-ID: ir1e7j3INYuBBAu0yjmgxw_1741091774
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CDDF81801A29; Tue,  4 Mar 2025 12:29:44 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3AD651800264; Tue,  4 Mar 2025 12:36:14 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8A6DC19560B9; Tue,  4 Mar 2025 12:29:42 +0000 (UTC)
-Message-ID: <ccf69088-44cf-4f8e-bfc8-283d3a4a3ddf@redhat.com>
-Date: Tue, 4 Mar 2025 13:29:39 +0100
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 5F5131954B00; Tue,  4 Mar 2025 12:36:11 +0000 (UTC)
+Message-ID: <71cd5e59-9576-4bad-a748-493953c7ae07@redhat.com>
+Date: Tue, 4 Mar 2025 13:36:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] vhost: fix missing descriptor chains length checks
-To: Yunjian Wang <wangyunjian@huawei.com>, dev@dpdk.org
-Cc: chenbox@nvidia.com, cheng1.jiang@intel.com, jerry.lilijun@huawei.com,
- stable@dpdk.org
-References: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report
+ feature
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: Shiva Shankar Kommula <kshankar@marvell.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "chenbox@nvidia.com" <chenbox@nvidia.com>
+Cc: "david.marchand@redhat.com" <david.marchand@redhat.com>,
+ Jerin Jacob <jerinj@marvell.com>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
+ Srujana Challa <schalla@marvell.com>
+References: <20250126193404.3431544-1-kshankar@marvell.com>
+ <20250127074150.3499851-1-kshankar@marvell.com>
+ <c4c881c5-c975-4fb7-b018-f5c529864171@redhat.com>
+ <DM4PR18MB42690E8143C44B3893DC09D9DFCD2@DM4PR18MB4269.namprd18.prod.outlook.com>
+ <b9844729-a2a0-45f9-b0c5-387d0d1e03f2@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
  kLgBQUki3voWhUbMb69ybqdMUHOl21DGCj0BTU3lXwapYXOAnsh8q6RRM+deUpasyT+Jvf3a
@@ -91,14 +99,14 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <b9844729-a2a0-45f9-b0c5-387d0d1e03f2@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: J0dTT7CXQlhBqYMZcniwinekE8oKaIOKIVoJnsW0qOM_1741091385
+X-Mimecast-MFC-PROC-ID: bXWNwbJLCZyRnJPggGfhn4_YnQjN4bvl4TEqv__32bA_1741091774
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,43 +122,310 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 12/23/24 4:29 AM, Yunjian Wang wrote:
-> The descriptor chains length must be greater than the Virtio-net
-> header size. Otherwise, such descriptor chains sizes implies no
-> packet data.
+On 3/3/25 11:25 AM, Maxime Coquelin wrote:
 > 
-> Fixes: fe8477ebbd94 ("vhost: support async packed ring dequeue")
-> Cc: stable@dpdk.org
 > 
-> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
-> ---
->   lib/vhost/virtio_net.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> On 2/27/25 10:44 AM, Shiva Shankar Kommula wrote:
+>>> -----Original Message-----
+>>> From: Maxime Coquelin <maxime.coquelin@redhat.com>
+>>> Sent: Tuesday, February 25, 2025 9:39 PM
+>>> To: Shiva Shankar Kommula <kshankar@marvell.com>; dev@dpdk.org;
+>>> chenbox@nvidia.com
+>>> Cc: david.marchand@redhat.com; Jerin Jacob <jerinj@marvell.com>; Nithin
+>>> Kumar Dabilpuram <ndabilpuram@marvell.com>; Srujana Challa
+>>> <schalla@marvell.com>
+>>> Subject: [EXTERNAL] Re: [PATCH v2] net/virtio: add virtio hash report 
+>>> feature
+>>>
+>>> Hi, On 1/27/25 8: 41 AM, Kommula Shiva Shankar wrote: > This patch adds
+>>> virtio hash report feature, which is > supported in packet queue mode 
+>>> with
+>>> scalar version Why only restrict to packed ring? isn't it also 
+>>> compatible with
+>>> split ring?
+>>>
+>>> Hi,
+>>>
+>>> On 1/27/25 8:41 AM, Kommula Shiva Shankar wrote:
+>>>> This patch adds virtio hash report feature, which is supported in
+>>>> packet queue mode with scalar version
+>>>
+>>> Why only restrict to packed ring? isn't it also compatible with split 
+>>> ring?
+>> Hi Maxim,
+>> Yes, it is. I can add split ring support later if it's alright.
 > 
-> diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
-> index 69901ab3b5..8fc9bfa056 100644
-> --- a/lib/vhost/virtio_net.c
-> +++ b/lib/vhost/virtio_net.c
-> @@ -3962,6 +3962,16 @@ virtio_dev_tx_async_single_packed(struct virtio_net *dev,
->   					 VHOST_ACCESS_RO) < 0))
->   		return -1;
->   
-> +	if (unlikely(buf_len <= dev->vhost_hlen)) {
-> +		if (!allocerr_warned) {
-> +			VHOST_DATA_LOG(dev->ifname, ERR, "Invalid buffer length.");
-> +			allocerr_warned = true;
-> +		}
-> +		return -1;
-> +	}
-> +
-> +	buf_len -= dev->vhost_hlen;
-> +
->   	if (unlikely(virtio_dev_pktmbuf_prep(dev, pkts, buf_len))) {
->   		if (!allocerr_warned) {
->   			VHOST_DATA_LOG(dev->ifname, ERR, "Failed mbuf alloc of size %d from %s.",
+> Ok, I checked the split path and it should not break. But please add its 
+> support in next release.
+> 
+> I see one thing missing in virtio_ethdev.c:
+> 
+> int
+> eth_virtio_dev_init(struct rte_eth_dev *eth_dev)
+> {
+>      struct virtio_hw *hw = eth_dev->data->dev_private;
+>      uint32_t speed = RTE_ETH_SPEED_NUM_UNKNOWN;
+>      int vectorized = 0;
+>      int ret;
+> 
+>      if (sizeof(struct virtio_net_hdr_mrg_rxbuf) > RTE_PKTMBUF_HEADROOM) {
+>          PMD_INIT_LOG(ERR,
+>              "Not sufficient headroom required = %d, avail = %d",
+>              (int)sizeof(struct virtio_net_hdr_mrg_rxbuf),
+>              RTE_PKTMBUF_HEADROOM);
+> 
+>          return -1;
+>      }
+> 
+> 
+> It should now be checked against virtio_net_hdr_hash_report struct size.
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@¶edhat.com>
+
+I'll fix above issue while applying.
+Please don't forget to add split ring support in next release.
 
 Thanks,
 Maxime
+
+> Regards,
+> Maxime
+> 
+>>>
+>>>>
+>>>> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
+>>>> ---
+>>>>    drivers/net/virtio/virtio.h                   |  2 ++
+>>>>    drivers/net/virtio/virtio_ethdev.c            | 20 ++++++++++++-
+>>>>    drivers/net/virtio/virtio_ethdev.h            |  1 +
+>>>>    drivers/net/virtio/virtio_rxtx.c              | 30 ++++++++++++++ 
+>>>> +++++
+>>>>    .../net/virtio/virtio_user/virtio_user_dev.c  |  1 +
+>>>>    drivers/net/virtio/virtqueue.h                | 21 +++++++++++++
+>>>>    6 files changed, 74 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/net/virtio/virtio.h b/drivers/net/virtio/virtio.h
+>>>> index ef5827c5f5..c2a0fd477c 100644
+>>>> --- a/drivers/net/virtio/virtio.h
+>>>> +++ b/drivers/net/virtio/virtio.h
+>>>> @@ -30,6 +30,7 @@
+>>>>    #define VIRTIO_NET_F_GUEST_ANNOUNCE 21    /* Guest can
+>>> announce device on the network */
+>>>>    #define VIRTIO_NET_F_MQ        22    /* Device supports Receive
+>>> Flow Steering */
+>>>>    #define VIRTIO_NET_F_CTRL_MAC_ADDR 23    /* Set MAC address */
+>>>> +#define VIRTIO_NET_F_HASH_REPORT  57    /* Supports hash report */
+>>>>    #define VIRTIO_NET_F_RSS    60    /* RSS supported */
+>>>>
+>>>>    /*
+>>>> @@ -187,6 +188,7 @@ struct virtio_hw {
+>>>>        uint8_t started;
+>>>>        uint8_t weak_barriers;
+>>>>        uint8_t vlan_strip;
+>>>> +    uint8_t has_hash_report;
+>>>>        bool rx_ol_scatter;
+>>>>        uint8_t has_tx_offload;
+>>>>        uint8_t has_rx_offload;
+>>>> diff --git a/drivers/net/virtio/virtio_ethdev.c
+>>>> b/drivers/net/virtio/virtio_ethdev.c
+>>>> index 70d4839def..caacbce57a 100644
+>>>> --- a/drivers/net/virtio/virtio_ethdev.c
+>>>> +++ b/drivers/net/virtio/virtio_ethdev.c
+>>>> @@ -1796,7 +1796,9 @@ virtio_init_device(struct rte_eth_dev *eth_dev,
+>>> uint64_t req_features)
+>>>>            eth_dev->data->dev_flags &= ~RTE_ETH_DEV_INTR_LSC;
+>>>>
+>>>>        /* Setting up rx_header size for the device */
+>>>> -    if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
+>>>> +    if (virtio_with_feature(hw, VIRTIO_NET_F_HASH_REPORT))
+>>>> +        hw->vtnet_hdr_size = sizeof(struct
+>>> virtio_net_hdr_hash_report);
+>>>> +    else if (virtio_with_feature(hw, VIRTIO_NET_F_MRG_RXBUF) ||
+>>>>            virtio_with_feature(hw, VIRTIO_F_VERSION_1) ||
+>>>>            virtio_with_packed_queue(hw))
+>>>>            hw->vtnet_hdr_size = sizeof(struct
+>>> virtio_net_hdr_mrg_rxbuf); @@
+>>>> -2181,6 +2183,10 @@ virtio_dev_configure(struct rte_eth_dev *dev)
+>>>>                (1ULL << VIRTIO_NET_F_GUEST_TSO4) |
+>>>>                (1ULL << VIRTIO_NET_F_GUEST_TSO6);
+>>>>
+>>>> +    if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
+>>>> +        req_features |=
+>>>> +            (1ULL << VIRTIO_NET_F_HASH_REPORT);
+>>>> +
+>>>>        if (tx_offloads & (RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
+>>>>                   RTE_ETH_TX_OFFLOAD_TCP_CKSUM))
+>>>>            req_features |= (1ULL << VIRTIO_NET_F_CSUM); @@ -2233,6
+>>> +2239,9 @@
+>>>> virtio_dev_configure(struct rte_eth_dev *dev)
+>>>>        if (rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
+>>>>            hw->vlan_strip = 1;
+>>>>
+>>>> +    if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH)
+>>>> +        hw->has_hash_report = 1;
+>>>> +
+>>>>        hw->rx_ol_scatter = (rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
+>>>>
+>>>>        if ((rx_offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER) && @@ -
+>>> 2285,6
+>>>> +2294,12 @@ virtio_dev_configure(struct rte_eth_dev *dev)
+>>>>                        "disabled packed ring vectorized rx for
+>>> TCP_LRO enabled");
+>>>>                    hw->use_vec_rx = 0;
+>>>>                }
+>>>> +
+>>>> +            if (rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
+>>>> +                PMD_DRV_LOG(INFO,
+>>>> +                    "disabled packed ring vectorized rx for
+>>> RSS_HASH enabled");
+>>>> +                hw->use_vec_rx = 0;
+>>>> +            }
+>>>>            }
+>>>>        } else {
+>>>>            if (virtio_with_feature(hw, VIRTIO_F_IN_ORDER)) { @@ -
+>>> 2669,6
+>>>> +2684,9 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct
+>>> rte_eth_dev_info *dev_info)
+>>>>            dev_info->flow_type_rss_offloads = 0;
+>>>>        }
+>>>>
+>>>> +    if (host_features & (1ULL << VIRTIO_NET_F_HASH_REPORT))
+>>>> +        dev_info->rx_offload_capa |=
+>>> RTE_ETH_RX_OFFLOAD_RSS_HASH;
+>>>> +
+>>>>        if (host_features & (1ULL << VIRTIO_F_RING_PACKED)) {
+>>>>            /*
+>>>>             * According to 2.7 Packed Virtqueues, diff --git
+>>>> a/drivers/net/virtio/virtio_ethdev.h
+>>>> b/drivers/net/virtio/virtio_ethdev.h
+>>>> index 7be1c9acd0..7aa771fd2b 100644
+>>>> --- a/drivers/net/virtio/virtio_ethdev.h
+>>>> +++ b/drivers/net/virtio/virtio_ethdev.h
+>>>> @@ -46,6 +46,7 @@
+>>>>         1u << VIRTIO_NET_F_CSUM           |    \
+>>>>         1u << VIRTIO_NET_F_HOST_TSO4      |    \
+>>>>         1u << VIRTIO_NET_F_HOST_TSO6      |    \
+>>>> +     1ULL << VIRTIO_NET_F_HASH_REPORT  |    \
+>>>>         1ULL << VIRTIO_NET_F_RSS)
+>>>>
+>>>>    extern const struct eth_dev_ops virtio_user_secondary_eth_dev_ops;
+>>>> diff --git a/drivers/net/virtio/virtio_rxtx.c
+>>>> b/drivers/net/virtio/virtio_rxtx.c
+>>>> index b67f063b31..35bd61350c 100644
+>>>> --- a/drivers/net/virtio/virtio_rxtx.c
+>>>> +++ b/drivers/net/virtio/virtio_rxtx.c
+>>>> @@ -40,6 +40,19 @@
+>>>>    #define  VIRTIO_DUMP_PACKET(m, len) do { } while (0)
+>>>>    #endif
+>>>>
+>>>> +static const uint32_t vhdr_hash_report_to_mbuf_pkt_type[] = {
+>>>> +    RTE_PTYPE_UNKNOWN,
+>>>> +    RTE_PTYPE_L3_IPV4,
+>>>> +    RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP,
+>>>> +    RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
+>>>> +    RTE_PTYPE_L3_IPV6,
+>>>> +    RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
+>>>> +    RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP,
+>>>> +    RTE_PTYPE_L3_IPV6_EXT,
+>>>> +    RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_TCP,
+>>>> +    RTE_PTYPE_L3_IPV6_EXT | RTE_PTYPE_L4_UDP, };
+>>>> +
+>>>>    void
+>>>>    vq_ring_free_inorder(struct virtqueue *vq, uint16_t desc_idx, 
+>>>> uint16_t
+>>> num)
+>>>>    {
+>>>> @@ -901,6 +914,16 @@ virtio_discard_rxbuf_inorder(struct virtqueue *vq,
+>>> struct rte_mbuf *m)
+>>>>        }
+>>>>    }
+>>>>
+>>>> +static inline void
+>>>> +virtio_rx_update_hash_report(struct rte_mbuf *m, struct
+>>>> +virtio_net_hdr_hash_report *hdr) {
+>>>> +    if (likely(hdr->hash_report)) {
+>>>> +        m->packet_type = vhdr_hash_report_to_mbuf_pkt_type[hdr-
+>>>> hash_report];
+>>>> +        m->hash.rss = hdr->hash_value;
+>>>> +        m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
+>>>> +    }
+>>>> +}
+>>>> +
+>>>>    /* Optionally fill offload information in structure */
+>>>>    static inline int
+>>>>    virtio_rx_offload(struct rte_mbuf *m, struct virtio_net_hdr *hdr) @@
+>>>> -1134,6 +1157,9 @@ virtio_recv_pkts_packed(void *rx_queue, struct
+>>> rte_mbuf **rx_pkts,
+>>>>            hdr = (struct virtio_net_hdr *)((char *)rxm->buf_addr +
+>>>>                RTE_PKTMBUF_HEADROOM - hdr_size);
+>>>>
+>>>> +        if (hw->has_hash_report)
+>>>> +            virtio_rx_update_hash_report(rxm,
+>>>> +                            (struct
+>>> virtio_net_hdr_hash_report *)hdr);
+>>>>            if (hw->vlan_strip)
+>>>>                rte_vlan_strip(rxm);
+>>>>
+>>>> @@ -1617,6 +1643,10 @@ virtio_recv_mergeable_pkts_packed(void
+>>> *rx_queue,
+>>>>            if (hw->vlan_strip)
+>>>>                rte_vlan_strip(rx_pkts[nb_rx]);
+>>>>
+>>>> +        if (hw->has_hash_report)
+>>>> +            virtio_rx_update_hash_report(rxm,
+>>>> +                            (struct
+>>> virtio_net_hdr_hash_report *)header);
+>>>> +
+>>>>            seg_res = seg_num - 1;
+>>>>
+>>>>            /* Merge remaining segments */
+>>>> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c
+>>>> b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+>>>> index 2997d2bd26..187f81b066 100644
+>>>> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
+>>>> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+>>>> @@ -726,6 +726,7 @@ virtio_user_free_vrings(struct virtio_user_dev 
+>>>> *dev)
+>>>>         1ULL << VIRTIO_F_RING_PACKED        |    \
+>>>>         1ULL << VIRTIO_F_NOTIFICATION_DATA    |    \
+>>>>         1ULL << VIRTIO_F_ORDER_PLATFORM        |       \
+>>>> +     1ULL << VIRTIO_NET_F_HASH_REPORT       |       \
+>>>>         1ULL << VIRTIO_NET_F_RSS)
+>>>>
+>>>>    int
+>>>> diff --git a/drivers/net/virtio/virtqueue.h
+>>>> b/drivers/net/virtio/virtqueue.h index 60211a40c9..3b468bd4f4 100644
+>>>> --- a/drivers/net/virtio/virtqueue.h
+>>>> +++ b/drivers/net/virtio/virtqueue.h
+>>>> @@ -257,6 +257,27 @@ struct virtio_net_hdr_mrg_rxbuf {
+>>>>        uint16_t num_buffers; /**< Number of merged rx buffers */
+>>>>    };
+>>>>
+>>>> +/**
+>>>> + * This is the version of the header to use when the HASH_REPORT
+>>>> + * feature has been negotiated.
+>>>> + */
+>>>> +struct virtio_net_hdr_hash_report {
+>>>> +    struct virtio_net_hdr_mrg_rxbuf hdr;
+>>>> +    uint32_t hash_value;
+>>>> +#define VIRTIO_NET_HASH_REPORT_NONE    0
+>>>> +#define VIRTIO_NET_HASH_REPORT_IPV4    1
+>>>> +#define VIRTIO_NET_HASH_REPORT_TCPV4    2
+>>>> +#define VIRTIO_NET_HASH_REPORT_UDPV4    3
+>>>> +#define VIRTIO_NET_HASH_REPORT_IPV6    4
+>>>> +#define VIRTIO_NET_HASH_REPORT_TCPV6    5
+>>>> +#define VIRTIO_NET_HASH_REPORT_UDPV6    6
+>>>> +#define VIRTIO_NET_HASH_REPORT_IPV6_EX    7
+>>>> +#define VIRTIO_NET_HASH_REPORT_TCPV6_EX    8
+>>>> +#define VIRTIO_NET_HASH_REPORT_UDPV6_EX    9
+>>>> +    uint16_t hash_report;
+>>>> +    uint16_t pad_reserved;
+>>>> +};
+>>>> +
+>>>>    /* Region reserved to allow for transmit header and indirect ring */
+>>>>    #define VIRTIO_MAX_TX_INDIRECT 8
+>>>>    struct virtio_tx_region {
+>>
+> 
 
