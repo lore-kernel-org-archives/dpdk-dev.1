@@ -2,102 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C51CC021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 21:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5914BC282D0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 21:53:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2503402F2;
-	Tue,  4 Mar 2025 22:03:39 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0E59D402DF
- for <dev@dpdk.org>; Tue,  4 Mar 2025 22:03:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741122217;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=LD0azqF41U0yQPJMyQsbhMPf/NDmyQ0bkBuMvXjLPc4=;
- b=CpmRUgeWr0O0mw6hDpwZIOxG9k5KzcqwBLJNWDmtzJLH+mwwa6151Rzm90Fe0+I3xDJkAX
- heyblCzI5ckPfPMM55/2UQFEluDpZW/HPW9Pw6PFeWqMbNF547VGhZU4aZmjdeCD61/xCP
- hq+HEFvZ5uJrBe7PofP6Pks2+MynBBs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-0x70dTmEPbCrscITk8FHyw-1; Tue,
- 04 Mar 2025 16:03:34 -0500
-X-MC-Unique: 0x70dTmEPbCrscITk8FHyw-1
-X-Mimecast-MFC-AGG-ID: 0x70dTmEPbCrscITk8FHyw_1741122213
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 36ABC1944CFC; Tue,  4 Mar 2025 21:03:33 +0000 (UTC)
-Received: from [10.44.22.33] (unknown [10.44.22.33])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B30ED180035F; Tue,  4 Mar 2025 21:03:31 +0000 (UTC)
-Message-ID: <e048ea02-9481-4365-b070-61b8af93103a@redhat.com>
-Date: Tue, 4 Mar 2025 22:03:28 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] bbdev: trace point and logging
-To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
-References: <20250123225519.2469167-1-nicolas.chautru@intel.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250123225519.2469167-1-nicolas.chautru@intel.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: p5PNE4QPo7JEtQ-PGzQ0S4JzsMeyDzo862RRIV4bsRM_1741122213
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id 27E33402E5;
+	Tue,  4 Mar 2025 22:53:45 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id BB82E402E5
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 22:53:43 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id CB36D210EAF5; Tue,  4 Mar 2025 13:53:42 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CB36D210EAF5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1741125222;
+ bh=uyUWWvdFSDhkGIeR6XjMHrVtnQQd4K31p8HSw1yhz9A=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Si+qOraHHId0T09aQq3sNWF2qInGvQc0TLXZpWpDHNQeIm9jVVaWCtXt2+Z/D300U
+ HyRQbGrt4XQ4KmFy6XmiHPClsLTs0lkshlnT3lZJ+6OD06I1AWkZIfGZhAWDfa6cqM
+ hzoyjkMbtOl3U5yiefhv1dGmxIcrhitDQznV+Oas=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: andremue@linux.microsoft.com
+Cc: bruce.richardson@intel.com, dev@dpdk.org, sameh.gobriel@intel.com,
+ vladimir.medvedkin@intel.com, yipeng1.wang@intel.com
+Subject: [PATCH v2 1/2] lib/hash: initialize __m128i data type in a portable
+ way
+Date: Tue,  4 Mar 2025 13:53:18 -0800
+Message-Id: <1741125199-1217-1-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1732748278-14796-1-git-send-email-andremue@linux.microsoft.com>
+References: <1732748278-14796-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,48 +44,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+The mechanism used to initialize an __m128i data type in rte_thash.h is
+non-portable and MSVC does not like it. It clearly is not doing what
+is desired:
 
+..\lib\hash\rte_thash.h(38): warning C4305: 'initializing':
+    truncation from 'unsigned __int64' to 'char'
+..\lib\hash\rte_thash.h(38): warning C4305: 'initializing':
+    truncation from 'unsigned __int64' to 'char'
 
-On 1/23/25 11:55 PM, Nicolas Chautru wrote:
-> v2: fix build error.
-> 
-> Hi,
-> 
-> Based on previous discussion improving logging for bbdev and PMD using
-> notably trace points and internal logging extension.
-> The trace point impacting real time are not built by default.
-> This is added at bbdev level and also in the PMD specific
-> implementation.
-> 
-> Thanks
-> Nic
-> 
-> 
-> Nicolas Chautru (3):
->    bbdev: add trace point
->    baseband/acc: add trace point
->    baseband/acc: add internal logging
-> 
->   drivers/baseband/acc/acc_common.c  |  8 +++
->   drivers/baseband/acc/acc_common.h  | 71 ++++++++++++++++++++++++++
->   drivers/baseband/acc/rte_vrb_pmd.c | 81 +++++++++++++++++++-----------
->   drivers/baseband/acc/vrb_trace.h   | 35 +++++++++++++
->   lib/bbdev/bbdev_trace.h            | 69 +++++++++++++++++++++++++
->   lib/bbdev/bbdev_trace_points.c     | 27 ++++++++++
->   lib/bbdev/meson.build              |  6 ++-
->   lib/bbdev/rte_bbdev.c              | 17 +++++++
->   lib/bbdev/rte_bbdev.h              | 50 +++++++++++++++---
->   lib/bbdev/rte_bbdev_trace_fp.h     | 41 +++++++++++++++
->   lib/bbdev/version.map              |  4 ++
->   11 files changed, 372 insertions(+), 37 deletions(-)
->   create mode 100644 drivers/baseband/acc/vrb_trace.h
->   create mode 100644 lib/bbdev/bbdev_trace.h
->   create mode 100644 lib/bbdev/bbdev_trace_points.c
->   create mode 100644 lib/bbdev/rte_bbdev_trace_fp.h
-> 
-Patches 1 & 2 of the series applied to next-baseband/for-main.
-Patch 3 is dropped as agreed on the list.
+A more portable approach is to use compiler intrinsics to perform the
+initialization. This patch uses a single compiler intrinsic to
+initialize the data.
 
-Thanks,
-Maxime
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ lib/hash/rte_thash.h | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/lib/hash/rte_thash.h b/lib/hash/rte_thash.h
+index 04f9f1875c..8bca430663 100644
+--- a/lib/hash/rte_thash.h
++++ b/lib/hash/rte_thash.h
+@@ -30,14 +30,6 @@
+ extern "C" {
+ #endif
+ 
+-#ifdef RTE_ARCH_X86
+-/* Byte swap mask used for converting IPv6 address
+- * 4-byte chunks to CPU byte order
+- */
+-static const __m128i rte_thash_ipv6_bswap_mask = {
+-		0x0405060700010203ULL, 0x0C0D0E0F08090A0BULL};
+-#endif
+-
+ /**
+  * length in dwords of input tuple to
+  * calculate hash of ipv4 header only
+@@ -159,6 +151,11 @@ rte_thash_load_v6_addrs(const struct rte_ipv6_hdr *orig,
+ 			union rte_thash_tuple *targ)
+ {
+ #ifdef RTE_ARCH_X86
++	/* Byte swap mask used for converting IPv6 address
++	 * 4-byte chunks to CPU byte order
++	 */
++	const __m128i rte_thash_ipv6_bswap_mask = _mm_set_epi64x(
++		0x0C0D0E0F08090A0BULL, 0x0405060700010203ULL);
+ 	__m128i ipv6 = _mm_loadu_si128((const __m128i *)&orig->src_addr);
+ 	*(__m128i *)&targ->v6.src_addr =
+ 			_mm_shuffle_epi8(ipv6, rte_thash_ipv6_bswap_mask);
+-- 
+2.48.1.vfs.0.0
 
