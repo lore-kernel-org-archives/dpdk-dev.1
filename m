@@ -2,134 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A79C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 06:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F98AC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 06:50:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FEC240156;
-	Tue,  4 Mar 2025 07:23:09 +0100 (CET)
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com
- (mail-dm3nam02on2077.outbound.protection.outlook.com [40.107.95.77])
- by mails.dpdk.org (Postfix) with ESMTP id D377940041
- for <dev@dpdk.org>; Tue,  4 Mar 2025 07:23:08 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e6DeRuddxskPSN5txzAJNxLvJBGa6FaFNCLFT6nslOqb5qAzP6TEB9q4j/Rn9AXOG5M6/aPcdoR4lI/ePr7LtCLMo/mTwB5fY9I5uKowQ0hrd80LgWQtd4ytwaoKAa/AxxxNHhbe+UdbUcKCjN89dF9/DVEcRhaf1c173mNponjs4l4ofEodXerxhLExQqb1zwfKoP53VP6DHwgcW9NxbKU80dhALL3NJjopD5wNQFzI+dVBArwW3vHCLqV0r1gGPgeDMx26OqFqASdOfsZjLSuMj5TojdRqgIn9U2ivbIHbU7GtggDjVefBqmW3WdFFfWJgOrYBRDsRGn+KXLMJEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pes3hRPduZkQ3v7aKxQrOcZyzpcq+5aBXIDehBKaTPM=;
- b=ehu7IQFLgEdz5tAs4YxO2TPxyONKhBFwd88ZFjBM/BAtMjJnUFl3Ne6Y3jQgeLMMlr7MBszivaYwQhs7FnfP/K3K7ILhNAGGLu5G5Ve7kRC2jK7jAm8AXOA6A7POEqxW4NaTbWzxot6+DiME8lGHJYnu1meFZrU9LQA028d+uP0Qq/oUEFHawoKefA5wSM95DA4baN4lm64vbGpChM+TkUs7arRJJtB7It1rMpXwDiaDqHGaGH1sqWORIe1SbEjzNOzPPpwRcMjT1znH0S7lwsCwv096e7E+h2XSkpLF4gy9hn6cbkdhhAowCQZGjhAs5JUp/mZLIWuHZXitCrqOGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pes3hRPduZkQ3v7aKxQrOcZyzpcq+5aBXIDehBKaTPM=;
- b=UlUmqUT/mc9m9aoJxPxNv5BlNldZv27v4zwmrVss9024w6GvDMkHCIDy80gBmRwWx2N+F3bdXqgfBaMCHQjls9BtV5e7I5yUHGhUYhPG4UkleNOHfuvNams01MP3Bq2K7LeVT8YKv3jBvh0wP8FKnLiy+aPddAKIbcm6loR0Vrry147Z2JQl5RdJTEalrgt+q1C/fJa2xGaslUxF+MXlIV0KaqkVgAhBaJ/Y0USQqAO3XUdAqNYp9GHA4+EGRqxqZ0RUXEFuR1YpbCV/qHDkD+NIMt4No8wrFVNEpXNsPqOjpDXHxhWQha+otWkieijxWeBoc0nzHKrJj3UmC/D44g==
-Received: from SN7PR12MB6909.namprd12.prod.outlook.com (2603:10b6:806:263::18)
- by MN0PR12MB6222.namprd12.prod.outlook.com (2603:10b6:208:3c2::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
- 2025 06:23:06 +0000
-Received: from SN7PR12MB6909.namprd12.prod.outlook.com
- ([fe80::716f:b388:7768:7525]) by SN7PR12MB6909.namprd12.prod.outlook.com
- ([fe80::716f:b388:7768:7525%3]) with mapi id 15.20.8489.028; Tue, 4 Mar 2025
- 06:23:06 +0000
-From: Bing Zhao <bingz@nvidia.com>
-To: Yang Ming <ming.1.yang@nokia-sbell.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 2/2] net/mlx5: improve log file path
-Thread-Topic: [PATCH 2/2] net/mlx5: improve log file path
-Thread-Index: AQHbTUDtWlY/UYCZrEKFHLEb+FG5y7NjAP8g
-Date: Tue, 4 Mar 2025 06:23:06 +0000
-Message-ID: <SN7PR12MB69096FB0FD4930E9CE8A8F80D0C82@SN7PR12MB6909.namprd12.prod.outlook.com>
-References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
- <20241213092444.2987-2-ming.1.yang@nokia-sbell.com>
-In-Reply-To: <20241213092444.2987-2-ming.1.yang@nokia-sbell.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR12MB6909:EE_|MN0PR12MB6222:EE_
-x-ms-office365-filtering-correlation-id: c99f27cf-3449-47e7-d135-08dd5ae506be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?HcTUyBBLczYurmwd5RmtGXXhXqgg+YhOS374EhnzcvtsysRMyankjFrK5Ger?=
- =?us-ascii?Q?XOmZNqoqz2IcoPdS0Z989lp91vmKW8E41RSG9/XJKz5T+qi6qzDEZZp1v9D6?=
- =?us-ascii?Q?qWbq56VnZLlmHy35rLdf/kJoZve/3RBKOXQtaKnlbGXtM14E0ZMcxH3SSA7p?=
- =?us-ascii?Q?MY1C+XjRDiaj85pg2O0XAbi/wP8XOk+cV2cJ55UQ3Oz07kS+bJ+poK7uRqHM?=
- =?us-ascii?Q?pqTgW/sTkPFPxp0TJENncZmUKf5ET2sNmFOLLL25bXrPN6qQGwVjqIlkYz4w?=
- =?us-ascii?Q?LU1p1rhsXlwCz83J0hdr53sMqQaqz32sbFELshxDmnhzZicqPoWqbQ8WpdFQ?=
- =?us-ascii?Q?HfA/imnMEy3YrycEW0djvpf7fA2PA4IrzlAxEGSFu/n4zB8ePh+y4KeIeKN/?=
- =?us-ascii?Q?+GZDJRKy8BHrf0pPKSPnGDAoaSAmCbvmi9g2bWMlFbJfCzryqwce9vFtX6Nu?=
- =?us-ascii?Q?LTkza7b4aGdL02qbfshhfoYIYHud9vbrWsH0s0PIo1Zq1Ww0jBCHuMxAAPLv?=
- =?us-ascii?Q?vg6dh7IdQzq48y5r+JWV8MkM2+4yYzcb3v5zcdO8ThZC8R0N76ukxYugNlwM?=
- =?us-ascii?Q?ztO4GUQg9TGEucrCwOTwnK7WCKkOtk3kmdRZRczxdYnHDiUSPI9pWijKcxD6?=
- =?us-ascii?Q?bWEMRM/Vz1d6JHUvi0lQ04CtAAPlFetVlH0lqlwEr2Kjd5T1rCNp0cisfofq?=
- =?us-ascii?Q?uPvDmdcian62nTpXcN92WmDb4B1Tv6IKSoXXFlHwGuTXQajH+ZPx4rHsowp0?=
- =?us-ascii?Q?HSGAicNX/pJ5dTgpHAINf4DEB+1d/fVgTxtKZbsEOxdZPTnCD6pM90dsd2hg?=
- =?us-ascii?Q?xb3ypril6VuWObwKqfaDrNJW1Q+4qdaiyjgcbbSzrMd1Zrw4tPoGRimZJS5S?=
- =?us-ascii?Q?fAdw3PFW56ZYQKB/7d0gU/WXBIs8q6A29zmlEb+UwrxE/hE8SZtugBKMh202?=
- =?us-ascii?Q?Uu4lb0PsJtEUS2lHQJJric2Z9Yubeq1jsOraXOkQOIo+OEE1z9Ay+vyE7Lg7?=
- =?us-ascii?Q?v3Y2Gce90z2kCb30y6tt8GtnCq/43+4NGShiRoT8Rh+SNZMeIOqD1pPz5L2V?=
- =?us-ascii?Q?9D4MdUlHjRUxHcgpnVgBEu0DaQFSqJhfKwytK8/B9p5B7gxdvCDyblxaQmHb?=
- =?us-ascii?Q?VriVrGXY25UMgGj/UMMKb7fMc4ub2l1wrsKZksjOTmwa+LMMlShPp5HdoVb1?=
- =?us-ascii?Q?2FSSWXYcCSy4n1pao4TJjR6IaBudcDo/iC0XiyHyfxCGaTNovbKzs7dHAYFg?=
- =?us-ascii?Q?wr6oUFP89TC/7IeMZqIP+1iX0IBN35tw3H3UVXfTfX1O92rJcBgRCFKtd6bJ?=
- =?us-ascii?Q?w0+9FO0mf6iUszPa3o9jGtsbwqkuYOSumF1+bSnLZsbRnkMFT8G2sLmWVSJi?=
- =?us-ascii?Q?/bW6AMiuK/EzN0CoOEzmByUPOr1lS+O8GWjXMi2GPhsnsWhfeISb9T1GXX1C?=
- =?us-ascii?Q?D1MbDTi0gm4PiZ0hOqS6L1+rzUwrsbbl?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR12MB6909.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?At+YOxohd3UkaEvKFdHCTZb5KKv+/cTOqayxf5R/w812+B/wZq/XCxgLdRlj?=
- =?us-ascii?Q?F0fcrxm74sgslePLaAE32/u9jGEetFTQHlU5tPfFHqIsm4Aujl7tMBYhKKH3?=
- =?us-ascii?Q?3mDzQ2u8HpzIaSfNWvfrFetYssNsuyXRSN4Ckg/30lt454EhBuzjtzmCiYVQ?=
- =?us-ascii?Q?4olumlnx17i2D+dKAqSVRl9Utm3kmP7yCUhnr1n/j75b9EJvT2KfgAWJrvQP?=
- =?us-ascii?Q?gdFGfrcVok5ZebaFCodi9hPwe6QPVv9cXbc+TRTKWPYUcm5ZdYV7dXCBd2kM?=
- =?us-ascii?Q?6x1N+2psF0X98Svy8TpjVGlmdnH3LWP/jxvc26p9NdHQ7wwbvJ8uqqv5Rzij?=
- =?us-ascii?Q?hrxHz3/icFU5TRxLBIhq2G8ae0dcTyZsB7hUtHc647JSL8DWWWju4ZCevgbZ?=
- =?us-ascii?Q?SvW4aVElVaBklZdV7H5Y3K1FhWxExvH/EcqpsSMkYeNdD8IBJzL/8u7SZL59?=
- =?us-ascii?Q?HLAlTantCScb4+1EclijVOM5d8lNiDGpecydsawmvfAzm6JtCxDJZjAtTRaj?=
- =?us-ascii?Q?D6bDDM0n9MG5i0PhUhIfBG3lYjA153lJ5W183f7WucaJiJeAQTtgGbYrDvPH?=
- =?us-ascii?Q?MFzoSRMImthrfr+LgnN768L7iingEivViEB+Q2tJ1HIJnlJXChS6ZKSGVQ3t?=
- =?us-ascii?Q?6w71x0lylUAHwHmVlzrZ/TT2QWGbGd9PaxENGeJW7aMsH9SecrpLZEQ0syyt?=
- =?us-ascii?Q?IlGwLvRDiq5tlakzr7hy4izZW/Vgc8lskuqQ920poxmPx9REDuU5DTIxR7hm?=
- =?us-ascii?Q?wAAsrMZVMh3xmP1unNhBISG0Xw7isGVNuT675axwjYPLwh33tVgLm8b1YAQ5?=
- =?us-ascii?Q?BaDvE2ZKymKCR4O2zerggXGJMWFU1vy7dlmcSijNwKZLRNooI4la0/dLka2J?=
- =?us-ascii?Q?OTmH7/DoFsRAYW6c4e70gOgS89BD4RKsjJvtEOqVFu7QGHjQAVKvZENv/mox?=
- =?us-ascii?Q?/9p4qv3EuIqd2HZqDHif8kJAnhbwKLeNEC5cibMHquI7LUI+rIozyFq16tKY?=
- =?us-ascii?Q?2WF50qWy2BjMCj+ZP+lEn6N8nNVuOy04X617pDZOTmGO5h42pTO+57O4bHkt?=
- =?us-ascii?Q?4o434wRuivxxMqwpt6eRq7ZXShKNMRpxkwWUprAgFcKIla4mYwd+qN8mN5xp?=
- =?us-ascii?Q?rd8GTW3U8NYaHFgbw8HsdBtx5/LkDkqZllGmokr2zj1rWYbR5Bd7BJGvcx7Q?=
- =?us-ascii?Q?IP78qPTIo+z7z19C/ON0dvPpmb6PP/+azUp/M1q3/w9c0/8eN9DRXkgTfAao?=
- =?us-ascii?Q?dfmnQfVnrZkhg96EmsWmxCL14VY/IXoXACeiU9PD52gBNXGxWoIX2xXOyISR?=
- =?us-ascii?Q?H5oJbHuQSJwTXeeinP/NhfBsYE7erwZO59u5lD1C+91CPcG96pc+biUT2Fz7?=
- =?us-ascii?Q?0Z00MUWkFhfnCWo1ZbdKSO7EAP4wzXb3sVgv9+iONegSMQFndykAj4EwcCm8?=
- =?us-ascii?Q?1uvanI2qhrW+OhssJmQRJIDtFcjzXvGe0/VXV3+dRCTGqK/d9JGmPyvY/g9v?=
- =?us-ascii?Q?CorquVJSq+NOHwOHHJg8ihHjjEPZtmhhSdrOw9VZtEDdYUHKGW5/fAmWTB0o?=
- =?us-ascii?Q?fZxqgLXLFCPbIeDx6t8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 9741A40156;
+	Tue,  4 Mar 2025 07:50:05 +0100 (CET)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com
+ [209.85.221.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 4B45640041
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 07:50:04 +0100 (CET)
+Received: by mail-vk1-f181.google.com with SMTP id
+ 71dfb90a1353d-52399515bd2so1288025e0c.1
+ for <dev@dpdk.org>; Mon, 03 Mar 2025 22:50:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741071003;
+ x=1741675803; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=2btf2Qn7ixilcgl3qopi3eWxBCS9OVY2e3I4ZlQBczo=;
+ b=IvsfkgRkYNiC2UDYG1fB/7xhxzEW15iz3qslzPoZg9ahTDBPwkYEn0IQ3s5Aa5porr
+ NKg7j8D5wCrlV3FVCiLrESbco9eD4dA8OWSZhk6Bj98kaTp7+6c0QI3kUuUwWs/Iqz97
+ AhalqRjFCYv5GOr4QF9kWl/5H1ljC7VuTajrkX24CuK5rHzPsefDaQOLeWQB0t2Ahri6
+ blLn1wDgQMJiVhbM9VI929mMGOoStJnieMgeM1P3PiO4LDJO+K4Tb7CETAG5HKE9ChJc
+ SELiVnx1qqFQMCW4kN/4BXH1+L0zOKrRVa2Ni3tRU9Nn8r75eGkPgDBdhPggx9K61QAX
+ KmAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741071003; x=1741675803;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=2btf2Qn7ixilcgl3qopi3eWxBCS9OVY2e3I4ZlQBczo=;
+ b=HeZYAwsEp+jKy9hb7W01GymLzTfWoHg3yGGlzywTWMSnZLZ/Gf0z60NnbsWT693jlt
+ 67LhIXdl9SBWWrDUKVJQ9b/esfJvQhKTnYOuM0NxdfsNs5rDd38rOZmeiGBfSpR2KWj0
+ csS24TlE3ZucFhE/iMM1s6VBwYxUilaQPCyKDLNAfrkWJt9blSn1DiYM1QSvdxcrhtWg
+ E3TqIctsLEbC6nmOt3nTMMib6nVubdFeY8N0rol43ZBKGfdxdB6uq598fzp7470EAM3g
+ TuBsJ70rvID1OT7Iq2KhzzhbRpYlRZBphT9vdsJZYItUeP3qSBuUaE+O9pm2q1bCDew8
+ qLpQ==
+X-Gm-Message-State: AOJu0Yw1yfLWrTsO0uklXV7M+h/xT870bvWhg59hMGUPg0oRi4Tcap8T
+ nNI7/SFWEIowWEl6aVPmxi4F9gkFtFYSa8cd2wa6CwGH6Gfgyjhp/cHj8DC/CjyrIUzW3gIkvhY
+ 8O/1igpKlmfUEvQFAZynSlT9eKo9E0TFlULNGJRKO0oePydEfILw=
+X-Gm-Gg: ASbGncvEkahx0MEPAltgqGSFgxVhv5i2Yu5QRDEWza/s4JaZQ6tfTyIqD7qFQqzDx+y
+ 30aWnbN4UsH6mdtNcKE+ejMVPKjmGqOCit0fXsLz/pFZuTFq9ygrkO7nfbzMuldAsuEMD9TgFF0
+ /gUy/XcOycOOKDaJKHmPrtzZiHNxW9CiX0WxNf0udXeqiGfRgBUX3s9ECw+RY=
+X-Google-Smtp-Source: AGHT+IFbyr49CyuGFBrSoBPIDQ/J3dTOkn4osQKeDJRTucLm1Gj6m/vlp0mEbihTSlRdM2gz593rZc6CNDjzzAHxYeY=
+X-Received: by 2002:ac5:c84e:0:b0:523:9cd5:bfde with SMTP id
+ 71dfb90a1353d-523abce524emr1080760e0c.5.1741071003616; Mon, 03 Mar 2025
+ 22:50:03 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB6909.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c99f27cf-3449-47e7-d135-08dd5ae506be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2025 06:23:06.3178 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ebgno5bw/Pz9/fiBzQeZwSyyr9iBMo95QRfe8ntwSkUba+PIJEDr0DRMebNF1CGvLWskaCgRIh+CqKvXL4C/Bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6222
+References: <1733281010-23780-1-git-send-email-andremue@linux.microsoft.com>
+ <1741042492-6700-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741042492-6700-1-git-send-email-andremue@linux.microsoft.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Mon, 3 Mar 2025 22:49:52 -0800
+X-Gm-Features: AQ5f1JrZkmEtkY6r_9fzmuDis1I1AWd73RBgPU35NPbQ6wwBtTb2ufYN2EDhcuI
+Message-ID: <CAOaVG16pRvfJKhE-55BKWLs_fFNDD9nfY2ff+K4SYgc-8yTUOQ@mail.gmail.com>
+Subject: Re: [PATCH v3] lib/fib: remove warning about implicit 64-bit
+ conversion
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: dev <dev@dpdk.org>, "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000b326f3062f7eae4a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -143,55 +74,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Ming,
+--000000000000b326f3062f7eae4a
+Content-Type: text/plain; charset="UTF-8"
 
-> -----Original Message-----
-> From: Yang Ming <ming.1.yang@nokia-sbell.com>
-> Sent: Friday, December 13, 2024 5:25 PM
-> To: Dariusz Sosnowski <dsosnowski@nvidia.com>; Slava Ovsiienko
-> <viacheslavo@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam
-> <orika@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>; Matan Azrad
-> <matan@nvidia.com>
-> Cc: dev@dpdk.org; Yang Ming <ming.1.yang@nokia-sbell.com>
-> Subject: [PATCH 2/2] net/mlx5: improve log file path
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> 1. /var/log is hard code which is not a good coding style.
-> 2. /var/log may be not allowed to be written via container's read-only
-> mode.
->=20
-> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
+Better to cast the constant (1) to avoid warning,
+.
+That is what other code does like RTE_BIT macros
+
+On Mon, Mar 3, 2025, 23:55 Andre Muezerie <andremue@linux.microsoft.com>
+wrote:
+
+> MSVC issues the warning below:
+>
+> ../lib/fib/trie.c(341): warning C4334: '<<':
+> result of 32-bit shift implicitly converted to 64 bits
+> (was 64-bit shift intended?)
+>
+> The fix is to cast the result explicitly to uintptr_t since it is used
+> in pointer arithmetic.
+>
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 > ---
->  drivers/net/mlx5/mlx5_rxtx.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
-> index eadadcdffb..a0da73c9c3 100644
-> --- a/drivers/net/mlx5/mlx5_rxtx.c
-> +++ b/drivers/net/mlx5/mlx5_rxtx.c
-> @@ -12,6 +12,7 @@
->  #include <rte_prefetch.h>
->  #include <rte_common.h>
->  #include <rte_branch_prediction.h>
-> +#include <rte_eal.h>
->  #include <rte_ether.h>
->  #include <rte_cycles.h>
->  #include <rte_flow.h>
-> @@ -311,7 +312,7 @@ mlx5_set_swp_types_table(void)
->         }
->  }
->=20
-> -#define MLX5_SYSTEM_LOG_DIR "/var/log"
-> +#define MLX5_SYSTEM_LOG_DIR rte_eal_get_runtime_dir()
-
-I agree that using the fixed PATH is not a good practice. Can you ensure th=
-at the runtime DIR is with RW+ permissions?
-
->  /**
->   * Dump debug information to log file.
->   *
+>  lib/fib/trie.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+> index 4893f6c636..bf9f63eaa2 100644
+> --- a/lib/fib/trie.c
+> +++ b/lib/fib/trie.c
+> @@ -338,7 +338,7 @@ write_edge(struct rte_trie_tbl *dp, const uint8_t
+> *ip_part, uint64_t next_hop,
+>                 if (ret < 0)
+>                         return ret;
+>                 if (edge == LEDGE) {
+> -                       write_to_dp((uint8_t *)p + (1 << dp->nh_sz),
+> +                       write_to_dp((uint8_t *)p + (uintptr_t)(1 <<
+> dp->nh_sz),
+>                                 next_hop << 1, dp->nh_sz, UINT8_MAX -
+> *ip_part);
+>                 } else {
+>                         write_to_dp(get_tbl_p_by_idx(dp->tbl8, tbl8_idx *
 > --
-> 2.34.1
+> 2.48.1.vfs.0.0
+>
+>
 
+--000000000000b326f3062f7eae4a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Better to cast the constant (1) to avoid warning,<div dir=
+=3D"auto">.</div><div dir=3D"auto">That is what other code does like RTE_BI=
+T macros</div></div><br><div class=3D"gmail_quote gmail_quote_container"><d=
+iv dir=3D"ltr" class=3D"gmail_attr">On Mon, Mar 3, 2025, 23:55 Andre Muezer=
+ie &lt;<a href=3D"mailto:andremue@linux.microsoft.com">andremue@linux.micro=
+soft.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D=
+"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-le=
+ft:1ex">MSVC issues the warning below:<br>
+<br>
+../lib/fib/trie.c(341): warning C4334: &#39;&lt;&lt;&#39;:<br>
+result of 32-bit shift implicitly converted to 64 bits<br>
+(was 64-bit shift intended?)<br>
+<br>
+The fix is to cast the result explicitly to uintptr_t since it is used<br>
+in pointer arithmetic.<br>
+<br>
+Signed-off-by: Andre Muezerie &lt;<a href=3D"mailto:andremue@linux.microsof=
+t.com" target=3D"_blank" rel=3D"noreferrer">andremue@linux.microsoft.com</a=
+>&gt;<br>
+---<br>
+=C2=A0lib/fib/trie.c | 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+<br>
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c<br>
+index 4893f6c636..bf9f63eaa2 100644<br>
+--- a/lib/fib/trie.c<br>
++++ b/lib/fib/trie.c<br>
+@@ -338,7 +338,7 @@ write_edge(struct rte_trie_tbl *dp, const uint8_t *ip_p=
+art, uint64_t next_hop,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (ret &lt; 0)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 return ret;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (edge =3D=3D LED=
+GE) {<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0write_to_dp((uint8_t *)p + (1 &lt;&lt; dp-&gt;nh_sz),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0write_to_dp((uint8_t *)p + (uintptr_t)(1 &lt;&lt; dp-&gt;nh_sz),<=
+br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 next_hop &lt;&lt; 1, dp-&gt;nh_sz, U=
+INT8_MAX - *ip_part);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 write_to_dp(get_tbl_p_by_idx(dp-&gt;tbl8, tbl8_idx *<br>
+-- <br>
+2.48.1.vfs.0.0<br>
+<br>
+</blockquote></div>
+
+--000000000000b326f3062f7eae4a--
