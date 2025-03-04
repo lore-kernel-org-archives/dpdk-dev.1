@@ -2,46 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F211AC021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 19:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2978DC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 19:44:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6388402EB;
-	Tue,  4 Mar 2025 20:37:53 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 3AFAD402DF
- for <dev@dpdk.org>; Tue,  4 Mar 2025 20:37:53 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 379CD46343; Tue,  4 Mar 2025 20:37:53 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1667] Can't configure DPDK poller in busy loop to fix
- drops
-Date: Tue, 04 Mar 2025 19:37:53 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: fgiordano@riverbed.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: INVALID
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-1667-3-kF6KOTINuv@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1667-3@http.bugs.dpdk.org/>
-References: <bug-1667-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17411170730.Ff4BC.4117393
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id EFB68402EB;
+	Tue,  4 Mar 2025 20:44:51 +0100 (CET)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com
+ [209.85.128.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 54611402DF
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 20:44:50 +0100 (CET)
+Received: by mail-yw1-f180.google.com with SMTP id
+ 00721157ae682-6fd3b31c860so29810477b3.0
+ for <dev@dpdk.org>; Tue, 04 Mar 2025 11:44:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1741117489; x=1741722289; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
+ b=AQHy9DEjOuFU1Qmp3XOwdncUnGLfyKbElqVAqg8hqR+hpPxwctm6XyC0Po51JuYSBv
+ K7lQ8OYadiEZ9VOtvoBT7Ok+Ao7Jac0/zrthk8H9OmpZqmvqql9iPObGTHwg81nsdI4/
+ Dp++4VWwu+3L4cuBMRN5R+tGsS0jOjMnYROpI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741117489; x=1741722289;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
+ b=Ts0KWNbQZ0QejH63IlfB6FdTxwQJOHb65G4pSpC1qHzVcmbG6IfOrwu9RTsw3l36vH
+ oq+bUIN4+avIlypLR7e4IHhqudgMSacqIVYNFmK3OZJbqE+KibL/k9j+hR+c2jPj6h6Z
+ 3cz5xtx8x+plV54uLEzNrAxErS0RpsjXTJ47mMeseMyozt8MEQXLt5sEhRSbnKpIKOpI
+ cloyUZ3Lib5M9V/ZcMSbnZINNTOKjSupbK13qZ05gdQTKLIOe/ECQUdlnP4lvvNTposD
+ tfQ+CjeOXOMWacwRoEC4z6+KschitZXk6L5niu37WzbxG1h2Nb9e6Ww64D4nfmGKIsat
+ Cq6g==
+X-Gm-Message-State: AOJu0YzaIHEBvzFEpJqCw0QEbQ6S2t+isM5yFPuai21UJMwDyg0zXEH2
+ YV9bLY9hwBTUoRmKeRkuegfTQm0CGN+mQipccqPjvPR7kuvwUV5yGVbK2agO/DSLYh01iIqcP6M
+ 6OMQq3Y8FOV/gPWzT9j7XEOMr7R98sj7y9vz7MQ==
+X-Gm-Gg: ASbGncv9saEX3P2PL0Pff7vUjcbdpheX05isJZw5leU/DyHaf/UaSXV0zVbzQSgtQBR
+ pFhHDLqnD+zu5dCWhPHStittzZDgpjmakU2re7KS+Lpt6EcSVkEQOS8Y9ji3cwQBnAR70PgXrOB
+ EFC2z9o85VVYpaVk8tcF11IYW93dVfpO5P/G9s7z7UEZm6kU/YYFkYZJ/Dg/h3
+X-Google-Smtp-Source: AGHT+IH3SXdNhAIRo5IYJdR22zEAiX6ZW261M+uLapxyDwK/ndyFMyevMsM51IWMYqdYV9n7eJIrAPZzHYI7PJSukcQ=
+X-Received: by 2002:a05:690c:6aca:b0:6fb:b37f:2072 with SMTP id
+ 00721157ae682-6fda2fa1241mr9082457b3.22.1741117489660; Tue, 04 Mar 2025
+ 11:44:49 -0800 (PST)
 MIME-Version: 1.0
+References: <20241108134532.130681-1-luca.vizzarro@arm.com>
+ <20250303145709.126126-1-Luca.Vizzarro@arm.com>
+ <20250303145709.126126-2-Luca.Vizzarro@arm.com>
+In-Reply-To: <20250303145709.126126-2-Luca.Vizzarro@arm.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Tue, 4 Mar 2025 14:44:38 -0500
+X-Gm-Features: AQ5f1JqLG1HNrUkyFrcfa7eev5XP5Ig76jjTyddGkAJBqSZAwpiSqJzDtLnWm8I
+Message-ID: <CABD7UXP=_SR+CsJ-PNzEG4F8xPOzs7+WRWsLiv7Fmme1wSEGBA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dts: add tests package to API docs
+To: Luca Vizzarro <Luca.Vizzarro@arm.com>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
+ Patrick Robb <probb@iol.unh.edu>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,130 +71,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17411170730.Ff4BC.4117393
-Date: Tue, 4 Mar 2025 20:37:53 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1667
-
-fgiordano@riverbed.com changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|UNCONFIRMED                 |RESOLVED
-         Resolution|---                         |INVALID
-
---- Comment #4 from fgiordano@riverbed.com ---
-Never mind, the problem seems to be with the scheduling policy (and its
-priority) that I use for the poller. With non-realtime scheduling policies,=
- I
-can run the poller in busy loop at 100% and not drop a single packet. The b=
-ug
-is invalid.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17411170730.Ff4BC.4117393
-Date: Tue, 4 Mar 2025 20:37:53 +0100
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:fgiordano=
-&#64;riverbed.com" title=3D"fgiordano&#64;riverbed.com">fgiordano&#64;river=
-bed.com</a>
-</span> changed
-          <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Can't configure DPDK poller in busy loop to =
-fix drops"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1667">bug 1667</a>
-          <br>
-             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
-=3D"bz_diff_table">
-          <tr>
-            <th>What</th>
-            <th>Removed</th>
-            <th>Added</th>
-          </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Status</td>
-           <td>UNCONFIRMED
-           </td>
-           <td>RESOLVED
-           </td>
-         </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Resolution</td>
-           <td>---
-           </td>
-           <td>INVALID
-           </td>
-         </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Can't configure DPDK poller in busy loop to =
-fix drops"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1667#c4">Comment # 4</a>
-              on <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - Can't configure DPDK poller in busy loop to =
-fix drops"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1667">bug 1667</a>
-              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
-fgiordano&#64;riverbed.com" title=3D"fgiordano&#64;riverbed.com">fgiordano&=
-#64;riverbed.com</a>
-</span>
-            </b>
-          <pre class=3D"bz_comment_text">Never mind, the problem seems to b=
-e with the scheduling policy (and its
-priority) that I use for the poller. With non-realtime scheduling policies,=
- I
-can run the poller in busy loop at 100% and not drop a single packet. The b=
-ug
-is invalid.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1667#c4">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17411170730.Ff4BC.4117393--
+Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
