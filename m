@@ -2,51 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECED7C282C6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 13:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381ACC282C6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 13:44:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4EC40402DF;
-	Tue,  4 Mar 2025 14:42:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A2F140156;
+	Tue,  4 Mar 2025 14:44:12 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id CD5CC40041
- for <dev@dpdk.org>; Tue,  4 Mar 2025 14:42:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4C7A040041
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 14:44:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741095756;
+ s=mimecast20190719; t=1741095850;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=H9JfyetLA5h8B+vjIc0Gy8q8C1JtXpEAw1mWEEKxBPY=;
- b=M1yc8Tl7i0g3/xqKhND854RiKqR1iB/OHRJx9Z3NUtSXnxNAi01VCketjueaBSQjvCVAuh
- apQ/9AWhlflDfzekMC/2HjgL/AvYKKfALPvYU0yP7W0YPMubOoTL6ZQ1qtJAMXf4Fs0ifz
- yVmnEyvCkLvA6hb27Qc8bJiG5TmAuuk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=GG1O3jVGvB53eZgA8pfy9GxtwV89GRuA0bxCy0eFVS0=;
+ b=G/1r7hfy5XjZpWdfmkPoAexoQOTkhv+BK7L5KC3qGAfmqjHa99NssdBR4UaBvmt4mLG6t+
+ ykzoG8F4b29dIJSPq031YtubWTPTtbYxVinzowZPfj1BpGXcN3FX5CJXsxODXfl4K8G2mO
+ ZLF9+IKS/zhIUFys2P1wkTv5o/qtAK8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-0tWF2EiKPYmSQSLf9BDSMA-1; Tue,
- 04 Mar 2025 08:42:32 -0500
-X-MC-Unique: 0tWF2EiKPYmSQSLf9BDSMA-1
-X-Mimecast-MFC-AGG-ID: 0tWF2EiKPYmSQSLf9BDSMA_1741095751
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-ehqQoAFnNJ-7_-R-1QFyNA-1; Tue,
+ 04 Mar 2025 08:44:00 -0500
+X-MC-Unique: ehqQoAFnNJ-7_-R-1QFyNA-1
+X-Mimecast-MFC-AGG-ID: ehqQoAFnNJ-7_-R-1QFyNA_1741095839
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4509E1801A36; Tue,  4 Mar 2025 13:42:28 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4A8131800873; Tue,  4 Mar 2025 13:43:59 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C81C71954B00; Tue,  4 Mar 2025 13:42:25 +0000 (UTC)
-Message-ID: <de9f6072-bba6-4dbc-b3fd-cfdf0e5524a6@redhat.com>
-Date: Tue, 4 Mar 2025 14:42:22 +0100
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id DA19A3000197; Tue,  4 Mar 2025 13:43:56 +0000 (UTC)
+Message-ID: <ad011523-c85c-4d3d-acde-44095925e4e0@redhat.com>
+Date: Tue, 4 Mar 2025 14:43:53 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] vhost: fix missing descriptor chains length checks
-To: Yunjian Wang <wangyunjian@huawei.com>, dev@dpdk.org
-Cc: chenbox@nvidia.com, cheng1.jiang@intel.com, jerry.lilijun@huawei.com,
- stable@dpdk.org
-References: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
+Subject: Re: [v9 0/6] vhost: add RSA support
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, dev@dpdk.org,
+ Chenbo Xia <chenbox@nvidia.com>
+Cc: anoobj@marvell.com, Akhil Goyal <gakhil@marvell.com>,
+ David Marchand <david.marchand@redhat.com>
+References: <cover.1740679955.git.gmuthukrishn@marvell.com>
+ <cover.1740749809.git.gmuthukrishn@marvell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <0bf28cc647eac66343c39d6acd4df868836e6ae6.1734923187.git.wangyunjian@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <cover.1740749809.git.gmuthukrishn@marvell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ov1ABuxgFlLURi67iIOGBNky2mGd_c9gFK7REJYbeag_1741095751
+X-Mimecast-MFC-PROC-ID: 17p6pERyo2A3I_LkkWX1QhkMfNZph4VKOpy_gtE2S9Q_1741095839
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -114,18 +116,31 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 12/23/24 4:29 AM, Yunjian Wang wrote:
-> The descriptor chains length must be greater than the Virtio-net
-> header size. Otherwise, such descriptor chains sizes implies no
-> packet data.
+On 2/28/25 2:47 PM, Gowrishankar Muthukrishnan wrote:
+> This patch series supports asymmetric RSA in vhost crypto library.
+> It also includes changes to improve vhost crypto library:
+>   * support newer QEMU versions.
+>   * fix broken vhost_crypto example application.
+>   * stabilize crypto fastpath operations.
 > 
-> Fixes: fe8477ebbd94 ("vhost: support async packed ring dequeue")
-> Cc: stable@dpdk.org
+> v9:
+>   - new patch 1/6
 > 
-> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
-> ---
->   lib/vhost/virtio_net.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> Gowrishankar Muthukrishnan (6):
+>    vhost: fix thread safety checks for vhost crypto data req
+>    vhost: skip crypto op fetch before vring init
+>    vhost: update vhost_user crypto session parameters
+>    examples/vhost_crypto: fix user callbacks
+>    vhost: support asymmetric RSA crypto ops
+>    examples/vhost_crypto: support asymmetric crypto
+> 
+>   doc/guides/rel_notes/release_25_03.rst    |   3 +
+>   doc/guides/sample_app_ug/vhost_crypto.rst |   5 +
+>   examples/vhost_crypto/main.c              |  54 +-
+>   lib/vhost/vhost_crypto.c                  | 597 +++++++++++++++++++---
+>   lib/vhost/vhost_user.h                    |  33 +-
+>   lib/vhost/virtio_crypto.h                 |  67 +++
+>   6 files changed, 664 insertions(+), 95 deletions(-)
 > 
 
 Applied to next-virtio.
