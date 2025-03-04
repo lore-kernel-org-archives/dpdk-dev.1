@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AB5C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 20:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C094C021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 20:07:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21766402EB;
-	Tue,  4 Mar 2025 21:01:01 +0100 (CET)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com
- [209.85.128.177])
- by mails.dpdk.org (Postfix) with ESMTP id DDE65402DF
- for <dev@dpdk.org>; Tue,  4 Mar 2025 21:00:59 +0100 (CET)
-Received: by mail-yw1-f177.google.com with SMTP id
- 00721157ae682-6f6ca9a3425so54953397b3.2
- for <dev@dpdk.org>; Tue, 04 Mar 2025 12:00:59 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DAFA402EB;
+	Tue,  4 Mar 2025 21:07:44 +0100 (CET)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com
+ [209.85.208.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 90FFE402DF
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 21:07:43 +0100 (CET)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-30761be8fcfso65845721fa.0
+ for <dev@dpdk.org>; Tue, 04 Mar 2025 12:07:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1741118459; x=1741723259; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1741118863; x=1741723663; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
  bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=J8gpyleVMh/GwkMc8BFP0NzQ0HcuawyKP+YULkw2Ib/Kxx2sRIVik7RN+gWjGt1fJJ
- MgX4plKg1s7rA/6pob12oOLkdWVPsJJAeDDWkoYd+kqdzkrEZgx7iFiy18SWtGy5jrgc
- xSv2prhma23pfAedamgRF6ZVS5kW6oukbvgvE=
+ b=apYPwtZQbgHrG4JSh9M5brH3FGbbvA5LhJtijNU2zjPepcHXF660omteuJZeVjT9EE
+ gH5JQP2MmpTuhY/bc5JcMY6K19vBXGJLr5GRLLBcWV+V//sI99g2S4rFie+EWafATwDo
+ vU7sJfUOBofSV2zVPRI827vWF+kNr95SRSeXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741118459; x=1741723259;
+ d=1e100.net; s=20230601; t=1741118863; x=1741723663;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
  bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=JEPXeG870dmEzsD9YYHHnyJoGOzWCqpJW1MH62JeaCMSpBCWLO+qfx4DZUXCxbr8xv
- hNmTQMkj4N5IS4q24B1nZnVu17c5a8XMrx1F37boKKDHaR0MLZFTyyBpdtDemzjuZ1bt
- nusdis0J59A/1RnkJDHKoXbgTmPzz4d936XNomF79hTovQOYvLL1elxWVSnGjTcMSLCm
- +2hqCgbBOUxuUjJDO+l3wBfFu3Lem0AOzJ3+QPP3FbLquh3/a8FZc8aMpLsWqyafMaKv
- fG6jPS4+p8ntei7cQRwM7Y+Cq70pUsUbNqtyruErArTDleBVvMd5DaHwq9l6LGrZuc38
- KEfQ==
-X-Gm-Message-State: AOJu0Yy3NNwgicwaHoH45ONrjqTRQtg1eSGGaLvpHimkhag+FAP1YLMF
- kOzj66flXVg8uwfBD7GJSbYsCJ0izsdmStNmDe60Mpfh8kvs4Ru7hoHAqzpwYdZfemjlaKPgyZY
- Pi7jtxFFTKQGsc0ajeH+AZ4pYuGo4K+rIrLDt5Q==
-X-Gm-Gg: ASbGnct1lsIempeerMOQVrzsr+0V5GOHTyt+g2q3/FMrHrzM9xBih9kCKqtyccCO6NL
- Yq1AFzuIR0dKsl5cAeXlYpyPDlremxh4bOmlmc7RpnWZEZoCZyisYXTPaSoOAMefgUKdHcxDJPm
- enB5QZqXjWC6ipzv7XmVu/h5Vxruisb8e3mg4rQwLTwlYhB8EFJFWH90y0WK0v
-X-Google-Smtp-Source: AGHT+IFfjjkDIN/TRmSStb3B/s2VCZ0oNEfH1wqH4SVV1GJ4KcwkbwoFob/o6mEeYNi+HQ21gr0OToJN1gBznm9QEFU=
-X-Received: by 2002:a05:690c:4b09:b0:6fb:8461:e828 with SMTP id
- 00721157ae682-6fda3027b0bmr8434157b3.30.1741118459206; Tue, 04 Mar 2025
- 12:00:59 -0800 (PST)
+ b=wj6wuR8j7YpF8PNMaM+c+pejxRpijxYbs/xeaghJj+4nRIrTGOkyijomvWS+cODWET
+ aAXXM46gfvF3i+rj31GRwkrPlph67ZP4RfCL5vxtqEYEh26RZ7oqjMNZ/lnTp8SNK0x0
+ 3AP6uT9w/Ti0GKmmMVm5zjbK3J1Z14nIYu6K8fa6Db3cyp0yvjMnMxmALB7h4DciMuJ1
+ irtw6q8W6Y2/setbUNCb5PXA7W/cXqO5ZioyBrHBF4LgqKl3ui6FSWzDEwbv2T6JecgR
+ B35aphltXCy4Y2rXX+tIMZ2VIyMoWAHwD5FMNXWKrsT4mX3s83smWBkImVMrttgGEsxR
+ jJLg==
+X-Gm-Message-State: AOJu0Yy/NLr5djH7jOw6FqwsRERvDmLEaXPUoCD2PbSRYQqjP3KzQvmJ
+ glKBDj+ZJSeOoPnLU8amdy8pxBrPPCWci1eegeGvICLGw9wKVd73RB5cypHbE8atJ83iWQLRzI1
+ mN7pO1tXZkdruoa3AIr1O9ljtw/8/Fx5rPAdFEg==
+X-Gm-Gg: ASbGnct1P8+fPeGDUUlMXMSpd6Itt9YYRgDIaxBsg+mmSEdh69CxTfy/42OLsmkXJNf
+ UfRbVkM02/QcrtKeofs7USYM2GTgjbdfrJezfCHca1CY2hf9wi42xib8f8KmktC3NV7iPTIrCQR
+ uIs8tSFTN5A16ip/aHdEaPr5YwFJNmuXQXvN42YvAAEXWDxUo0nGirk8a7/BTq
+X-Google-Smtp-Source: AGHT+IEo8bWstcBO0WoMwlYBHebvgPXeNlBRyhVDaQtfDvXGoqbcOgWBBsShDY13zlwW/Y3T7Smfpm7C/fIzmVcvpeA=
+X-Received: by 2002:a2e:bc19:0:b0:30b:d697:8fac with SMTP id
+ 38308e7fff4ca-30bd7a0b9a0mr1542991fa.2.1741118862695; Tue, 04 Mar 2025
+ 12:07:42 -0800 (PST)
 MIME-Version: 1.0
 References: <20241108134532.130681-1-luca.vizzarro@arm.com>
  <20250303145709.126126-1-Luca.Vizzarro@arm.com>
- <20250303145709.126126-3-Luca.Vizzarro@arm.com>
-In-Reply-To: <20250303145709.126126-3-Luca.Vizzarro@arm.com>
+ <20250303145709.126126-4-Luca.Vizzarro@arm.com>
+In-Reply-To: <20250303145709.126126-4-Luca.Vizzarro@arm.com>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 4 Mar 2025 15:00:48 -0500
-X-Gm-Features: AQ5f1Jocn63q9l-XoLrzUXJMY4qguHNlb9o9iKV77MFNUgpl1KFV2-sMMaEBs4o
-Message-ID: <CABD7UXNP_2+_oKtxt7vgOBKykBHFhY+i0nnCu4O6yvwNiczTLg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] dts: amend test suites docstring
+Date: Tue, 4 Mar 2025 15:07:30 -0500
+X-Gm-Features: AQ5f1JpPFmRUJxjsoorITh3NT8YGr8F6yHntES_GjNfASshtsSjSkwFP3yYeYu8
+Message-ID: <CABD7UXMRLNg4Xxp-scfTDQ0=o-jwjPMfGXO9d64HarQR_aco2A@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] dts: fix smoke tests docstring
 To: Luca Vizzarro <Luca.Vizzarro@arm.com>
 Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
  Patrick Robb <probb@iol.unh.edu>
