@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84608C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 16:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BF8C021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 16:19:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7C704029A;
-	Tue,  4 Mar 2025 17:17:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 17FF74029A;
+	Tue,  4 Mar 2025 17:19:13 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 29C4140287
- for <dev@dpdk.org>; Tue,  4 Mar 2025 17:17:33 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 225ED40287
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 17:19:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741105052;
+ s=mimecast20190719; t=1741105150;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=C0lr/o1s1ELSIcU1WfaQydV7a2DsaJvok3N8GU9fa5g=;
- b=eMHSa1NZ8YfKimClV+VCeEo5X94jU0jEnR5pPt8qc+8lIZfwD8of8K7J0qi8f42oIEW/Bd
- 2oFl5YL6GLLe4qVeYJR32PoFreDXuKNcEorw2Mzk+YlOyCDDVEXfdl/0yc2DFvPW6nawrn
- aESrgrM9qgo13+OXVRJSWT4jMDd2j4k=
+ bh=y4dw+Cv/3X4ZNywcCsEATEqj4r4FLqOgGwJUtUMk/4g=;
+ b=S9ElipYOuF876v/VO6Ii39Fdfzh7LQ5fq6JuMoQG+tWB0aswKDL1PHyVq1+2pkX4m7oZFj
+ 5cJ7GSunw0kFXzHjZP8a8W3G/jC2TziQ9S6RO8tRllw3GVWbAnzh8uRv0rEzNm1dMpTNTL
+ HUUh/1p5wQ1LCaCCn/Q/g5oO3/b8RxM=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-357-e34RBWlyM1C-Lgdip0q9VQ-1; Tue,
- 04 Mar 2025 11:17:22 -0500
-X-MC-Unique: e34RBWlyM1C-Lgdip0q9VQ-1
-X-Mimecast-MFC-AGG-ID: e34RBWlyM1C-Lgdip0q9VQ_1741105039
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-52-YNaygUy1P7-mFmmRFV7CSg-1; Tue,
+ 04 Mar 2025 11:19:01 -0500
+X-MC-Unique: YNaygUy1P7-mFmmRFV7CSg-1
+X-Mimecast-MFC-AGG-ID: YNaygUy1P7-mFmmRFV7CSg_1741105140
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 911471944D01; Tue,  4 Mar 2025 16:17:19 +0000 (UTC)
+ id F327D1944D01; Tue,  4 Mar 2025 16:18:59 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 039B61800368; Tue,  4 Mar 2025 16:17:17 +0000 (UTC)
-Message-ID: <5f0e77e8-d228-4c69-9a05-c0c88b33ec85@redhat.com>
-Date: Tue, 4 Mar 2025 17:17:14 +0100
+ id 64A461800367; Tue,  4 Mar 2025 16:18:58 +0000 (UTC)
+Message-ID: <5a8728de-d3b2-4848-9dbb-fac15a9e10bc@redhat.com>
+Date: Tue, 4 Mar 2025 17:18:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] doc: update bbdev documentation
+Subject: Re: [PATCH v1 2/2] test/bbdev: update to fft test vectors
 To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
 References: <20250228165022.480453-1-nicolas.chautru@intel.com>
- <20250228165022.480453-2-nicolas.chautru@intel.com>
+ <20250228165022.480453-3-nicolas.chautru@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250228165022.480453-2-nicolas.chautru@intel.com>
+In-Reply-To: <20250228165022.480453-3-nicolas.chautru@intel.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: NpAPN1i2DLWt9GASkgoR4XDcTzxWFwj7NFoyoD0m6VM_1741105039
+X-Mimecast-MFC-PROC-ID: G3icRg6l-Bqqx0Mhki4LSB5xQTr3zcGmnuWYK5oD9rE_1741105140
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,29 +115,24 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 2/28/25 5:50 PM, Nicolas Chautru wrote:
-> Correcting the scope of supported bbdev operations.
+> Some FFT operations vectors could create false alarms depending
+> on implementation and dependency SW versions.
+> Updated one vector and removing one previous vector.
 > 
 > Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
 > ---
->   doc/guides/prog_guide/bbdev.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   app/test-bbdev/test_vectors/fft_9.data      | 870 --------------------
+>   app/test-bbdev/test_vectors/fft_byp_28.data |  48 +-
+>   2 files changed, 24 insertions(+), 894 deletions(-)
+>   delete mode 100644 app/test-bbdev/test_vectors/fft_9.data
 > 
-> diff --git a/doc/guides/prog_guide/bbdev.rst b/doc/guides/prog_guide/bbdev.rst
-> index e3f356450b..f0fbb0c1c0 100644
-> --- a/doc/guides/prog_guide/bbdev.rst
-> +++ b/doc/guides/prog_guide/bbdev.rst
-> @@ -13,7 +13,7 @@ optimized libraries to appear as virtual bbdev devices.
->   The functional scope of the BBDEV library are those functions in relation to
->   the 3GPP Layer 1 signal processing (channel coding, modulation, ...).
->   
-> -The framework currently only supports FEC function.
-> +The framework currently supports FEC functions (5G/4G Encoder/Decoder), as well as FFT and MLD-TS.
->   
->   
->   Design Principles
+
+
+I did not spot any error :D
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
 Maxime
+
 
