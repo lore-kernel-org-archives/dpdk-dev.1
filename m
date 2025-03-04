@@ -2,60 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91F6C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 15:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E59EC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 15:12:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC9924029A;
-	Tue,  4 Mar 2025 16:11:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CA5104029A;
+	Tue,  4 Mar 2025 16:12:13 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0FC2D40287
- for <dev@dpdk.org>; Tue,  4 Mar 2025 16:11:24 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 41E0E40287
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 16:12:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741101084;
+ s=mimecast20190719; t=1741101131;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=tO7fLJg2IxFjqALlcZ0Q4xfB6ovt7M58fKL/6a1xsOY=;
- b=W5nCrVOB26W64j/ntZP5Jy+N1/mqgr94nPGGCbR6iicX/sS/OHWGWGkp/RMMFYKJI5zd/8
- w+5lb5nxJW8ihibxVoiWy3ETWeAzP8z1xpDxi8ZKFUEwCRZ2kmvGya1yMLWXJS37bjij3B
- vky2b/jXqVTsdMxUFxvpk6wdK6aYy9k=
+ bh=28qaahSeY17S43gCiwOhskLbUXzo0+LqbziG8E/eopY=;
+ b=Pxlw9D9qg+euoox4BpBZ6sn0eTDbwVpyex3fwYDXYRxyM0aqXFX1nFCerZicqCnY2phhzO
+ UN+3Db0rRiZHoL7UP1cffChuhR6CiV8axvW53TsacqNQ5VfOZvW06R9YDeCWSJp/qWjJvh
+ bJX5EQA7XlGg0ndxOcnGZMyPW/zSKxY=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-sTKWLEBjOSmnWP6HPr084Q-1; Tue,
- 04 Mar 2025 10:11:19 -0500
-X-MC-Unique: sTKWLEBjOSmnWP6HPr084Q-1
-X-Mimecast-MFC-AGG-ID: sTKWLEBjOSmnWP6HPr084Q_1741101078
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-352-x-1-XnibNECuIqCTZF6b5A-1; Tue,
+ 04 Mar 2025 10:12:03 -0500
+X-MC-Unique: x-1-XnibNECuIqCTZF6b5A-1
+X-Mimecast-MFC-AGG-ID: x-1-XnibNECuIqCTZF6b5A_1741101122
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 68A821800981; Tue,  4 Mar 2025 15:11:18 +0000 (UTC)
+ id 75DD6180087E; Tue,  4 Mar 2025 15:12:02 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9FC6A1956048; Tue,  4 Mar 2025 15:11:16 +0000 (UTC)
-Message-ID: <9ba75e2f-1660-4543-8cba-6d2ce2cd6f99@redhat.com>
-Date: Tue, 4 Mar 2025 16:11:13 +0100
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id EF17B1944DF0; Tue,  4 Mar 2025 15:12:00 +0000 (UTC)
+Message-ID: <a818ab9e-ceb0-45a9-a410-6f394e8a9f29@redhat.com>
+Date: Tue, 4 Mar 2025 16:11:58 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] baseband/acc: add internal logging
-To: "Chautru, Nicolas" <nicolas.chautru@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
- "Vargas, Hernan" <hernan.vargas@intel.com>
+Subject: Re: [PATCH v2 2/3] baseband/acc: add trace point
+To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
+Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
 References: <20250123225519.2469167-1-nicolas.chautru@intel.com>
- <20250123225519.2469167-4-nicolas.chautru@intel.com>
- <20250123152425.0663a626@hermes.local>
- <SJ0PR11MB6694A42B032D97C9D9CF0D77F8E32@SJ0PR11MB6694.namprd11.prod.outlook.com>
- <20250124100058.5b4de64f@hermes.local>
- <0df7deea-a6f9-4078-9dee-de42a1e647f8@redhat.com>
- <3eb26ee2-1130-446b-a0ce-4789ba21f14c@redhat.com>
- <SJ0PR11MB6694E715CEB27DD13F152ED3F8CC2@SJ0PR11MB6694.namprd11.prod.outlook.com>
+ <20250123225519.2469167-3-nicolas.chautru@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -100,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <SJ0PR11MB6694E715CEB27DD13F152ED3F8CC2@SJ0PR11MB6694.namprd11.prod.outlook.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250123225519.2469167-3-nicolas.chautru@intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: xLahlF-s2aas844dzkoJKbKnBUqLxyh7-JAna3u4fs8_1741101078
+X-Mimecast-MFC-PROC-ID: ZErfijGztzCnNg2ENEiMvTRAagNIdwGpcDqq9W9i6Ls_1741101122
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -121,113 +112,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Nicolas,
 
-On 2/28/25 6:28 PM, Chautru, Nicolas wrote:
-> Hi Maxime,
+
+On 1/23/25 11:55 PM, Nicolas Chautru wrote:
+> Improvement of logging to notably use trace point
+> for driver specific error logging and tracepoint.
 > 
-> I believe that for 25.03 we can just apply the first 2 commits of the serie.
+> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
+> ---
+>   drivers/baseband/acc/acc_common.c  |  8 ++++
+>   drivers/baseband/acc/acc_common.h  | 55 ++++++++++++++++++++++++++
+>   drivers/baseband/acc/rte_vrb_pmd.c | 63 +++++++++++++++++-------------
+>   drivers/baseband/acc/vrb_trace.h   | 35 +++++++++++++++++
+>   4 files changed, 133 insertions(+), 28 deletions(-)
+>   create mode 100644 drivers/baseband/acc/vrb_trace.h
 > 
-> For the last commit, it will take more time to try your suggestion out, we can do this in subsequent release.
-> 
-> Does that sound okay with you?
-Yes, that sounds good to me.
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
 Maxime
 
-> Thanks
-> Nic
-> 
->> -----Original Message-----
->> From: Maxime Coquelin <maxime.coquelin@redhat.com>
->> Sent: Friday, February 28, 2025 12:52 AM
->> To: Stephen Hemminger <stephen@networkplumber.org>; Chautru, Nicolas
->> <nicolas.chautru@intel.com>
->> Cc: dev@dpdk.org; hemant.agrawal@nxp.com; Vargas, Hernan
->> <hernan.vargas@intel.com>
->> Subject: Re: [PATCH v2 3/3] baseband/acc: add internal logging
->>
->> Hi Nicolas,
->>
->> On 2/7/25 10:52 AM, Maxime Coquelin wrote:
->>> Hi Nicolas,
->>>
->>> On 1/24/25 7:00 PM, Stephen Hemminger wrote:
->>>> On Fri, 24 Jan 2025 17:52:43 +0000
->>>> "Chautru, Nicolas" <nicolas.chautru@intel.com> wrote:
->>>>
->>>>> Hi Stephen,
->>>>>
->>>>> The commit message may be misleading, the logging interface doesn't
->>>>> change here. Note also that I reuse existing trace point framework
->>>>> for some of the error logging when relevant (see previous commit).
->>>>> Here the scope for that buffer is more limited, not a new logging
->>>>> method really (the commit message is misleading).
->>>>> The queue_ops_dump() already provides api to dump device specific
->>>>> information related to queue into file (logging in real time is not
->>>>> an option) based on information already in PMD memory.
->>>>> This new buffer is purely there to add storage for the string out of
->>>>> rte_bbdev_ops_param_string() for failed operation on that queue, so
->>>>> that extend that capture as this info is not stored by PMD.
->>>>> The name of the buffer could be renamed probably, or I could store
->>>>> copy of the actual operation instead of the string in case that
->>>>> makes a difference for you.
->>>>>
->>>>> I guess it would possible to move this to trace point but I thought
->>>>> it would be quite convoluted. That information would fits nicely in
->>>>> the queue dump capture, and this would require adding trace point
->>>>> for each operation type (I don't believe it can manage arbitrary
->>>>> string) and would be a bit of an unconventional use of trace point.
->>>>>
->>>>> Any thought?
->>>
->>> I think the introduction of trace points in patch 2 is a good
->>> addition, and could be extended further to not just emit a simple
->>> string but also the necessary values to enable debugging (basically
->>> what you write in the buffers).
->>>
->>> It would have the advantage of having the different traces to be
->>> synchronized (bbdev and acc ones), and also would have less
->>> performance impact.
->>
->> What do you think of this proposal?
->> how do we proceed for v25.03?
->>
->> Thanks,
->> Maxime
->>
->>>>> Thanks
->>>>> Nic
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Stephen Hemminger <stephen@networkplumber.org>
->>>>>> Sent: Thursday, January 23, 2025 3:24 PM
->>>>>> To: Chautru, Nicolas <nicolas.chautru@intel.com>
->>>>>> Cc: dev@dpdk.org; maxime.coquelin@redhat.com;
->>>>>> hemant.agrawal@nxp.com; Vargas, Hernan
->> <hernan.vargas@intel.com>
->>>>>> Subject: Re: [PATCH v2 3/3] baseband/acc: add internal logging
->>>>>>
->>>>>> On Thu, 23 Jan 2025 14:55:19 -0800
->>>>>> Nicolas Chautru <nicolas.chautru@intel.com> wrote:
->>>>>>> Adds internal buffer for more flexible logging.
->>>>>>>
->>>>>>> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
->>>>>>
->>>>>> Inventing another device specific error log seems like a short
->>>>>> sighted concept.
->>>>>> Why doesn't existing DPDK logging work well enough?
->>>>>
->>>>
->>>> My feedback is that why can't you just use DEBUG logging for this.
->>>
->>> Or indeed could use the existing logging mechanism.
->>>
->>>>
->>>
->>> Thanks,
->>> Maxime
-> 
 
