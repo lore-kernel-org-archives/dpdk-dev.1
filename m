@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCD6C021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 21:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C51CC021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 21:03:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 597D5402EB;
-	Tue,  4 Mar 2025 22:03:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A2503402F2;
+	Tue,  4 Mar 2025 22:03:39 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 83118402DF
- for <dev@dpdk.org>; Tue,  4 Mar 2025 22:03:03 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0E59D402DF
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 22:03:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741122182;
+ s=mimecast20190719; t=1741122217;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=UBoHrWVTSpIu67Y7XJMpWiTgFsvXYAxw/WSykfZCCB4=;
- b=NBAuRxyqCS/jgFeYHxbKNacBGr44GcDu//eayAa2S+kVGSYqotSXbNn9J0jHfHrJbztZ+0
- 59qx8WiiHgYIcGLsh2o4a7p83AH+XeF4hRXtpAd+7mpy2bEWypxuvY61xYciZEYSkr2pj8
- LzduAXtiywOFEv4htb7UhL5cvxkmzag=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=LD0azqF41U0yQPJMyQsbhMPf/NDmyQ0bkBuMvXjLPc4=;
+ b=CpmRUgeWr0O0mw6hDpwZIOxG9k5KzcqwBLJNWDmtzJLH+mwwa6151Rzm90Fe0+I3xDJkAX
+ heyblCzI5ckPfPMM55/2UQFEluDpZW/HPW9Pw6PFeWqMbNF547VGhZU4aZmjdeCD61/xCP
+ hq+HEFvZ5uJrBe7PofP6Pks2+MynBBs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-597-x6z_Xs17Pl2SNFntKODNyA-1; Tue,
- 04 Mar 2025 16:02:54 -0500
-X-MC-Unique: x6z_Xs17Pl2SNFntKODNyA-1
-X-Mimecast-MFC-AGG-ID: x6z_Xs17Pl2SNFntKODNyA_1741122173
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-0x70dTmEPbCrscITk8FHyw-1; Tue,
+ 04 Mar 2025 16:03:34 -0500
+X-MC-Unique: 0x70dTmEPbCrscITk8FHyw-1
+X-Mimecast-MFC-AGG-ID: 0x70dTmEPbCrscITk8FHyw_1741122213
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9DA86180056F; Tue,  4 Mar 2025 21:02:53 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 36ABC1944CFC; Tue,  4 Mar 2025 21:03:33 +0000 (UTC)
 Received: from [10.44.22.33] (unknown [10.44.22.33])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 0AD43180035F; Tue,  4 Mar 2025 21:02:51 +0000 (UTC)
-Message-ID: <28ff64d6-8a6a-4992-83c5-25c43264e662@redhat.com>
-Date: Tue, 4 Mar 2025 22:02:49 +0100
+ id B30ED180035F; Tue,  4 Mar 2025 21:03:31 +0000 (UTC)
+Message-ID: <e048ea02-9481-4365-b070-61b8af93103a@redhat.com>
+Date: Tue, 4 Mar 2025 22:03:28 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] bbdev: doc and vector clean up
+Subject: Re: [PATCH v2 0/3] bbdev: trace point and logging
 To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
-References: <20250228165022.480453-1-nicolas.chautru@intel.com>
+References: <20250123225519.2469167-1-nicolas.chautru@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250228165022.480453-1-nicolas.chautru@intel.com>
+In-Reply-To: <20250123225519.2469167-1-nicolas.chautru@intel.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BqHeQ_yar76wJcHyg_NI2cI2QLn2t8yecFq7C3eJx0E_1741122173
+X-Mimecast-MFC-PROC-ID: p5PNE4QPo7JEtQ-PGzQ0S4JzsMeyDzo862RRIV4bsRM_1741122213
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -113,24 +113,45 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 2/28/25 5:50 PM, Nicolas Chautru wrote:
-> Minor changes to clean up the documentation for bbdev programming guide
-> and updating vectors to avoid false alarms when using different
-> windowing configuration assumption by users.
+On 1/23/25 11:55 PM, Nicolas Chautru wrote:
+> v2: fix build error.
 > 
-> Nicolas Chautru (2):
->    doc: update bbdev documentation
->    test/bbdev: update to fft test vectors
+> Hi,
 > 
->   app/test-bbdev/test_vectors/fft_9.data      | 870 --------------------
->   app/test-bbdev/test_vectors/fft_byp_28.data |  48 +-
->   doc/guides/prog_guide/bbdev.rst             |   2 +-
->   3 files changed, 25 insertions(+), 895 deletions(-)
->   delete mode 100644 app/test-bbdev/test_vectors/fft_9.data
+> Based on previous discussion improving logging for bbdev and PMD using
+> notably trace points and internal logging extension.
+> The trace point impacting real time are not built by default.
+> This is added at bbdev level and also in the PMD specific
+> implementation.
 > 
-
-Series applied to next-baseband/for-main.
-I added the fixes tag on patch 2 as discussed off-list.
+> Thanks
+> Nic
+> 
+> 
+> Nicolas Chautru (3):
+>    bbdev: add trace point
+>    baseband/acc: add trace point
+>    baseband/acc: add internal logging
+> 
+>   drivers/baseband/acc/acc_common.c  |  8 +++
+>   drivers/baseband/acc/acc_common.h  | 71 ++++++++++++++++++++++++++
+>   drivers/baseband/acc/rte_vrb_pmd.c | 81 +++++++++++++++++++-----------
+>   drivers/baseband/acc/vrb_trace.h   | 35 +++++++++++++
+>   lib/bbdev/bbdev_trace.h            | 69 +++++++++++++++++++++++++
+>   lib/bbdev/bbdev_trace_points.c     | 27 ++++++++++
+>   lib/bbdev/meson.build              |  6 ++-
+>   lib/bbdev/rte_bbdev.c              | 17 +++++++
+>   lib/bbdev/rte_bbdev.h              | 50 +++++++++++++++---
+>   lib/bbdev/rte_bbdev_trace_fp.h     | 41 +++++++++++++++
+>   lib/bbdev/version.map              |  4 ++
+>   11 files changed, 372 insertions(+), 37 deletions(-)
+>   create mode 100644 drivers/baseband/acc/vrb_trace.h
+>   create mode 100644 lib/bbdev/bbdev_trace.h
+>   create mode 100644 lib/bbdev/bbdev_trace_points.c
+>   create mode 100644 lib/bbdev/rte_bbdev_trace_fp.h
+> 
+Patches 1 & 2 of the series applied to next-baseband/for-main.
+Patch 3 is dropped as agreed on the list.
 
 Thanks,
 Maxime
