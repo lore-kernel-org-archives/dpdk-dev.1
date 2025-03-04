@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02BC021B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 20:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043A4C021B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Mar 2025 20:37:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF957402EB;
-	Tue,  4 Mar 2025 21:33:55 +0100 (CET)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com
- [209.85.208.182])
- by mails.dpdk.org (Postfix) with ESMTP id 9E718402DF
- for <dev@dpdk.org>; Tue,  4 Mar 2025 21:33:54 +0100 (CET)
-Received: by mail-lj1-f182.google.com with SMTP id
- 38308e7fff4ca-307325f2436so60535581fa.0
- for <dev@dpdk.org>; Tue, 04 Mar 2025 12:33:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 39612402EB;
+	Tue,  4 Mar 2025 21:37:43 +0100 (CET)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com
+ [209.85.208.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 22C77402DF
+ for <dev@dpdk.org>; Tue,  4 Mar 2025 21:37:42 +0100 (CET)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-30b9b1979b9so50023621fa.1
+ for <dev@dpdk.org>; Tue, 04 Mar 2025 12:37:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1741120434; x=1741725234; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1741120661; x=1741725461; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=CIqCKxuBsFYbpDdfCiULYPbvtOR8H6o8WnyFxTWPGgc8Da0jLrdO4yqWMKdDlSdS0L
- sNfQZa3DBEK9DYjwkQxbtYDN5SDigAZMCEorsZbcY+CNPVsxTkYf5RU2aPZg9JytyB14
- HuNZcjyRhHXmjQIH1/P6Lj0Ndsw9IhTjuLc9Q=
+ bh=8U4wQuBBfGADsMgTBtzinHRf6bYB/PeT18IahVrsqbg=;
+ b=YD1nRX2p/7CwnEIwYftmjA7B6EtPIKOq2NvDOiGh/L9I5Wif5DFZXhZKat7d+VJr9e
+ kv7rsNV6QfwSvbOqMfisNJ/DvvGzvHdJpOWCm7OGJb/AktuHll34TfSlgMvr2A+6rO3f
+ yxSwgimydu/XdV6Kwrgy3EuTiFSSgzjEZFhLs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741120434; x=1741725234;
+ d=1e100.net; s=20230601; t=1741120661; x=1741725461;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=KRkeKyR06iYhi9mhSt9BJJWIYu5QJAvEnquEURklfKFkuWFGGTIXz9+W5BQO5FZ/AW
- 7QV2biuWs8iRLMb3QhJ6SXoNGfrHrATrceg+em9M8Zh0vEjqj+/FLSe0npRb4CSyrJhP
- lkZszM3xBvodga5WX8m5aPOOz6X4z551ms9NH/hEFfJDzAIl3prWNkzNl6wpdEbQwut6
- AZCB5Ld9rzQCUxbUS0EZuU7ybr4TLosgsJixUiUgU/+5U9svwL8gx/xAROjY6jHzHo+x
- UBxNNbDMjiYNd8NdooyUA98v9iD/LEWojM7djsYmyuwmY648iLuyxxjYpLkcP2z5+mUG
- 6OdQ==
-X-Gm-Message-State: AOJu0YzEyhOoxj3uQcgfL8haLJT9r3jfgtuyXF+Teha6bc77ei5UufIT
- Q5Ku/6lnMtK5N+dMGeuKMneA2IlOEDrWZay6TWuAS0BJVDEQ6P1k0oM4gf5RqTDLYXDCzfOsqaP
- PPIkHyqcQMTTeLJtX2VA5R+k4zf16Lqe2Cc00bA==
-X-Gm-Gg: ASbGncsu0Nrz8Sh8P1eoPSnOZ0pIvE6WATZKO394xZzQNKPeYuzSdO3OCWMIjvpHNEB
- 6ottlk80kHPvokAIOngOAMVTv5IcYSRr/lJttQBp6usXQWyDz4pk9RAIP++Uir0jO1CKutrFhyt
- lBxoezcRXFYMlDqbtcTK6QGWgrWjFJg2J7LiH9wOvmRE2Hv563ykesMjbHFjoR
-X-Google-Smtp-Source: AGHT+IETsYOiWoWEgIO/DVIX0Tn+o0DoR93lldLEtQH8VkFv/B3BJz0N8Tx7tJa2aJ8aWWJOfTkhOQab6Gbgjm/DQtw=
-X-Received: by 2002:a05:651c:154b:b0:309:25f6:8dcb with SMTP id
- 38308e7fff4ca-30bd7a1f949mr1885041fa.5.1741120433945; Tue, 04 Mar 2025
- 12:33:53 -0800 (PST)
+ bh=8U4wQuBBfGADsMgTBtzinHRf6bYB/PeT18IahVrsqbg=;
+ b=mrurmfb3piDVfohc4NR1qMg3Clz1V37gZa0p+T84fMSC15yzGvU1G+U7RqFeIM3gH9
+ Ez0JFTTT+RrIG9p976qz3uAUUm71uybobq0lGgqnTConkVbIiopxUOuIbj5zFJPPo1Nl
+ NoC8lYYSg/UkAGNALm1OyntYN7/fMrhJ+sjXBpQChocm/o87OGamltEWOOB7gMUT8cqu
+ BxhHelpMCdtGXQhSm7mfFi1JOotdGafYFU3Ybs1J/+t6lQLPqo+ioSM0LMQoThUPQvLC
+ HU9OcKwlIXQv2naNb3WZJCVqcSUsAvo5VPStqyp7Nk0epjIx+uFPll6QKmxJOBg1d5+h
+ OE/A==
+X-Gm-Message-State: AOJu0Yx+Rbahm/Irf0i5Ex+FvguBqAjCApfZD88tnrAlh6JmYVWPyLVL
+ 3v1svWokSIrrhT4HnLxrJQPlD6Sj3kDt1Dc41I311UPaqhR05PFS8CgpHb7683Ak0blIAZOefSr
+ U0/8CVzlkYntsZwXMICTaagxNChEBgeomYEGuYw==
+X-Gm-Gg: ASbGncsaZpf+Vorasx04R6JpnwKx3AgH3fTf95T24/xRc8mWV2mqp7RFjmZL+i8lAY6
+ OqwKQ579uz0AM4iCwPCqpOOP1QP+zqQctuJ0bkfD+lnbYjJTpGJB/an0T0S/zHDQoLD0T2OeVXf
+ 1L+oWn9hnZjev4CuPbJdoMrFqM4Wd7o99IwMA7GV5+KFqx0oh/7cBq/FXYdVQ4
+X-Google-Smtp-Source: AGHT+IEOoA7FoIQPxLm8FCtQLYUOtgyOaWzMWETrzD+XImZLmT/4RBBS7fr+J19WsRPGsxvU5AkeDlcgHEo7dhiJyjw=
+X-Received: by 2002:a05:651c:b08:b0:30b:8e06:86a3 with SMTP id
+ 38308e7fff4ca-30bd7a702e7mr1588611fa.16.1741120661430; Tue, 04 Mar 2025
+ 12:37:41 -0800 (PST)
 MIME-Version: 1.0
 References: <20241108134532.130681-1-luca.vizzarro@arm.com>
  <20250303145709.126126-1-Luca.Vizzarro@arm.com>
- <20250303145709.126126-6-Luca.Vizzarro@arm.com>
-In-Reply-To: <20250303145709.126126-6-Luca.Vizzarro@arm.com>
+ <20250303145709.126126-7-Luca.Vizzarro@arm.com>
+In-Reply-To: <20250303145709.126126-7-Luca.Vizzarro@arm.com>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 4 Mar 2025 15:33:40 -0500
-X-Gm-Features: AQ5f1JovbRdK3Ncc5zin9Elmp2KhwCTqRqFOWRg9javO9LYttYKjEjssppWZ9ck
-Message-ID: <CABD7UXPX=SLctkrEjS_1w3+COuv5UjF5mUiTjYcRFtubUX11mg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] dts: run only one test run per execution
+Date: Tue, 4 Mar 2025 15:37:24 -0500
+X-Gm-Features: AQ5f1JoCJta3CEYuFbFJM229OUu6U4W1ehxWfkZwA1VblfUlocwJBwe1d-AdmRs
+Message-ID: <CABD7UXOLUd+zwM6zG4DMeo0RxCE5Ry3R+GxZ+zB32vCOuoJjBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/7] dts: add per-test-suite configuration
 To: Luca Vizzarro <Luca.Vizzarro@arm.com>
 Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
  Patrick Robb <probb@iol.unh.edu>
@@ -70,5 +70,7 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
+
+I like this implementation a lot, it's concise and easy to use.
 
 Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
