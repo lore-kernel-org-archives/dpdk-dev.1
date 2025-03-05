@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178DFC19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 17:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1797BC19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 17:49:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4878540275;
-	Wed,  5 Mar 2025 18:03:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D7BA940275;
+	Wed,  5 Mar 2025 18:49:55 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 246D84025F
- for <dev@dpdk.org>; Wed,  5 Mar 2025 18:03:43 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id AD4884025F
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 18:49:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741194222;
+ s=mimecast20190719; t=1741196994;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=1rwtzMv6OEFX7h8wVcVZ25R5NyJYa0XL9DkxBDqKux0=;
- b=Dpf9kcwiBrYmG1hA+xaXbwDfX7j3MJX7Pip1kpyU89L4aMjQJ3L3lzmAPO08hq5P//1Cp+
- 23ILC9ul/WzjTIefL1W6vjH0AIPvjJScXa278sqwXMtkakQSp8rjmZKoi8EnJVsXluSSqw
- P+8nctJyYPDb5R+Slr041DgTCiTx/1s=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=eaEdk6/6MNErq7016asBbr+9CuECtTexnoJIfvvyQ1I=;
+ b=iIkJXwM3gXpY5ru8/XdSNk52ME0a985/ztI8NavD8e20d+1JWmPJOWt3N0ruViPH/hJ7v3
+ 7wG9PKUPjl9ddMwJ+ZkMGQzSurkAJ6NU13/37oHrOQhztbetwpJ1n4G5jLnFMYcRyioJaN
+ rBXwhwIKo9qIW+gDMXcGnTXwd0/Pazw=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-597-s0mC1EhWPG-K3ztTA2wJrw-1; Wed, 05 Mar 2025 12:03:41 -0500
-X-MC-Unique: s0mC1EhWPG-K3ztTA2wJrw-1
-X-Mimecast-MFC-AGG-ID: s0mC1EhWPG-K3ztTA2wJrw_1741194220
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-549500fc33fso3559105e87.3
- for <dev@dpdk.org>; Wed, 05 Mar 2025 09:03:41 -0800 (PST)
+ us-mta-434-mTHnBcNEMb6VOvi-YnQnHw-1; Wed, 05 Mar 2025 12:49:52 -0500
+X-MC-Unique: mTHnBcNEMb6VOvi-YnQnHw-1
+X-Mimecast-MFC-AGG-ID: mTHnBcNEMb6VOvi-YnQnHw_1741196991
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5495cf1a321so2099129e87.2
+ for <dev@dpdk.org>; Wed, 05 Mar 2025 09:49:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741194220; x=1741799020;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ d=1e100.net; s=20230601; t=1741196991; x=1741801791;
+ h=content-transfer-encoding:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=1rwtzMv6OEFX7h8wVcVZ25R5NyJYa0XL9DkxBDqKux0=;
- b=UAkhRviKB/g/O9ZezfXqFD/ZZz6fbQkf/ElHuo25hySLl79bKF59Ovk/UBG2DKZfqe
- 0lsRAxskqgQKykszanp8QI1pubBtMq5eN5vh8EgwVjE9QXlPY24cpCd12zHcshx39wCb
- e+aitEyTc/I09043PxKmYZFvyHi9yItnOc/LGbg87LWzGblQTNCSbujGUOyygO1UYcrf
- 7sd4gjquI5ElhrO3H6ziwgLwbTIPkeueYZFsxRtjwoN+Pn1sYYcahCOvKYPVtxfK7v2v
- QLmuTB+1ovLtCK63YwN3cSAcFTcZt1f0/ByJiFYtO3wOGn9Jl2Su3ywTbrI2tjaZf0O9
- hLGA==
-X-Gm-Message-State: AOJu0Ywh+QDPrKWc2ezgnVX6EEaxzafU8jn+Pz2k1P3IqoeclGyStQA+
- 2tha2vdt3dwAcO7BZKzCiksNY8/YvrdUEQb08r0714hc8KO3E4YlAuLA8VIs++S0SuXelBgwSlO
- oHySJQLIN2i8sHKg/uweH2WJ2rXQgShK7BsN9ROqbn4cYHym1GFAAHrGbLpl9h2iNE+jMs5F3U+
- 6/XZ9fVfdiVWLCza/lwP5tQ10=
-X-Gm-Gg: ASbGncv17h/Ch0lfmVjVtEvayyAd1ooElHL75EK0jtVHJEViyffjoGp8O4604T3YbLB
- hGKhD9dbz09jyR+lmZJu+ZdqnR8JBvwxln9o/V+4zeVTWaQIXMHAKoU7rFpaQDskWLM6IeYpR8x
- s=
-X-Received: by 2002:a05:6512:3089:b0:549:7394:2cd0 with SMTP id
- 2adb3069b0e04-5497d337e68mr1419284e87.19.1741194219651; 
- Wed, 05 Mar 2025 09:03:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHQVxaLyIi78pJ5kBXwkA7xzitbclIY1cejgydaexzVmV/MbVxrLWsZuToWwV1eTc78NjUmNzWAMIndNo2JgLc=
-X-Received: by 2002:a05:6512:3089:b0:549:7394:2cd0 with SMTP id
- 2adb3069b0e04-5497d337e68mr1419228e87.19.1741194219165; Wed, 05 Mar 2025
- 09:03:39 -0800 (PST)
+ bh=eaEdk6/6MNErq7016asBbr+9CuECtTexnoJIfvvyQ1I=;
+ b=vF/GiK/liGDqL1QB3ThRxF6c0QPTEd5f3mBV45GjijNLKRGNA6l9Hh3RQ7dt8tDDEg
+ Hi6lq/LepsVhpM9N1FhaBOVCvxT5mpRXmp7JLCUTPDYPGgaLmPEBSoDMstrhDLSPQrGZ
+ F3xb6EGqw1dF0qpASpqdX7DJlCXHG11f/zghICKMTUAYfyDN+F+6MeNbnmqejPY7vbl1
+ lfqeF4wcNy/l5yGQS4kgScbDtnA/3M2vw9Rt8uJRrCZ6vpGZ7Ukwe7pJHa9o3ls7vtmH
+ AL6vb1mexziIFfP2PkvHTTP+f4vDn4ai/ePnp5hTC4ESHph+eKk8GBJ4bZfQaIF15AYr
+ RTcQ==
+X-Gm-Message-State: AOJu0YyIkb8NWWPqJY4J7EbJ6JYyxjwzCs7aJWrVxFwt79CYqqJ9RYCi
+ 0GUXEHb5KcoTqYYs00AU5LMGOinAxvD59IrO5GakA7H3u2HyV2a8/j/L+bQz8HdqEt9njcxGCBP
+ nZHwmOLfTWDzmPmTghAajlJSK7yzZOBgots4oz3s7eXR4xl+2DlJEwC2Xe3bC9QbzB1oGa3P9l8
+ W2f1q4JLNAWojCZgepFuvBj9M=
+X-Gm-Gg: ASbGncvsGdT6abwdfUFJ6bwWbLfPhRrWt8lZTgFUqa5S4A/wibxL63zcP9pyF7PaFQm
+ 8UC1ntpCAL3TQWUmjnKys7VcIWnHkP9bowNlCPWZpoYmKkVUCr4w2neLs8zxq2Szws3q7k6E6Jz
+ o=
+X-Received: by 2002:a05:6512:3b9e:b0:545:280e:4b7f with SMTP id
+ 2adb3069b0e04-5497d34bfe3mr1747771e87.27.1741196991027; 
+ Wed, 05 Mar 2025 09:49:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHmIvJEAz3QaHpjHKx/FSlYDxyze6pN/7WV191gKkAfw3heWiZCIF2rYiKOb9rzBEdDU/YHaecvG1OAaIVVQ5M=
+X-Received: by 2002:a05:6512:3b9e:b0:545:280e:4b7f with SMTP id
+ 2adb3069b0e04-5497d34bfe3mr1747762e87.27.1741196990580; Wed, 05 Mar 2025
+ 09:49:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20250220220406.3925597-1-sil-plv@napatech.com>
- <20250220220406.3925597-21-sil-plv@napatech.com>
-In-Reply-To: <20250220220406.3925597-21-sil-plv@napatech.com>
+References: <20250124161408.310581-1-david.marchand@redhat.com>
+ <20250304160633.385185-1-david.marchand@redhat.com>
+In-Reply-To: <20250304160633.385185-1-david.marchand@redhat.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 5 Mar 2025 18:03:27 +0100
-X-Gm-Features: AQ5f1JpjUxb7XdGsIiYiTQUe7WIAVY6dLD8rGSBlmBJzEHpZC3Cu4X_8B22wksc
-Message-ID: <CAJFAV8xtMHZfXo3c8vw0LG9-Cg4v8LCKjP8+psm=sJ3XoFzyNw@mail.gmail.com>
-Subject: Re: [PATCH v1 20/32] net/ntnic: add clock init
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com, 
- stephen@networkplumber.org, Thomas Monjalon <thomas@monjalon.net>
+Date: Wed, 5 Mar 2025 18:49:39 +0100
+X-Gm-Features: AQ5f1JpxD1pjMdXTb87KgUqaH8Az-WHZulyIfb9EtfIbR8dYSQcSJCk4ZEDGgbc
+Message-ID: <CAJFAV8wkUBkMGWRYCT49f93D=pk3vyCxXym_7C1CiGZ3iShYyQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Trace point framework enhancement for dmadev
+To: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Mo53d0dp5jPxfc5G6BFEY03U-uO3ynGCUtkE33SqXUQ_1741194220
+X-Mimecast-MFC-PROC-ID: TuvAxbPAPpPmHHgY_mzj33igZdnJe4b_eZ57wIem-5A_1741196991
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,32 +84,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Feb 20, 2025 at 11:06=E2=80=AFPM Serhii Iliushyk <sil-plv@napatech.=
-com> wrote:
-> diff --git a/drivers/net/ntnic/nthw/core/include/NT400D13_U62_Si5332-GM2-=
-RevD-1_V5-Registers.h b/drivers/net/ntnic/nthw/core/include/NT400D13_U62_Si=
-5332-GM2-RevD-1_V5-Registers.h
-> new file mode 100644
-> index 0000000000..f87828fcfe
-> --- /dev/null
-> +++ b/drivers/net/ntnic/nthw/core/include/NT400D13_U62_Si5332-GM2-RevD-1_=
-V5-Registers.h
-> @@ -0,0 +1,425 @@
-> +/*
-> + * Si5332-GM2 Rev D Configuration Register Export Header File
-> + *
-> + * This file represents a series of Skyworks Si5332-GM2 Rev D
-> + * register writes that can be performed to load a single configuration
-> + * on a device. It was created by a Skyworks ClockBuilder Pro
-> + * export tool.
-> + *
+On Tue, Mar 4, 2025 at 5:07=E2=80=AFPM David Marchand <david.marchand@redha=
+t.com> wrote:
+>
+> dmadev trace points have been working around trace point framework
+> limitations.
+> One of this workaround blocks enabling dmadev on MSVC.
+>
+> Traces files were not checked in CI, so this series also adds a new
+> check.
+>
+> --
+> David Marchand
+>
+> Changes since v3:
+> - dropped changes to CTF metadata,
+> - added new helpers for dumping content of pointed at memory,
+> - changed dmadev to avoid more changes in trace framework,
+>
+> Changes since v2:
+> - added check of traces validity in GHA,
+> - split patch 2 and fixed CTF metadata,
+>
+>
+> David Marchand (5):
+>   ci: check traces validity
+>   dmadev: avoid copies in tracepoints
+>   trace: support dereferencing pointers
+>   trace: support expression for blob length
+>   trace: fix undefined behavior in register
+>
+>  .ci/linux-build.sh                         | 10 ++++
+>  .github/workflows/build.yml                |  2 +-
+>  devtools/libabigail.abignore               |  5 ++
+>  lib/dmadev/rte_dmadev.h                    | 29 +++++-----
+>  lib/dmadev/rte_dmadev_trace.h              | 32 ++---------
+>  lib/dmadev/rte_dmadev_trace_fp.h           | 26 ++-------
+>  lib/eal/include/rte_trace_point.h          | 66 ++++++++++++++--------
+>  lib/eal/include/rte_trace_point_register.h | 51 ++++++++++++++---
+>  lib/ethdev/ethdev_trace.h                  | 27 +++------
+>  9 files changed, 135 insertions(+), 113 deletions(-)
 
-This file is missing a SPDX tag.
-Please send a fix or we will have to revert this change.
-
-The filename also looks strange, as it does not follow some kind of
-implicit convention (when I compare to other files in this driver).
-Could it be renamed?
+Series applied, thanks.
 
 
 --=20
