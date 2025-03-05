@@ -2,56 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8C1C19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 09:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652A2C19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 09:13:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CB4240279;
-	Wed,  5 Mar 2025 10:12:38 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1450C400EF
- for <dev@dpdk.org>; Wed,  5 Mar 2025 10:12:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741165956;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=6ScyjLdb8sj2ynHyzoOGxU/ZD6aY/kVxFrva01Esmos=;
- b=gEiIewF0rr7YBrxz/h35W6+S5sjHZFiaPXreHwEXRVOO1loG/6FOnLB7q9JGHy96puMI/h
- vaG15pFve6lA0y5aC8ErM8ApEs7oVdoo77DVZGsf0BtJe5PY00/OijDGo7yHE/wOUfEo8H
- Lu4ukLmZHyKTtPdrl6b/iT7jCnC0SII=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-38-VRNPlAiyP6yfj56pdnCQsw-1; Wed,
- 05 Mar 2025 04:12:30 -0500
-X-MC-Unique: VRNPlAiyP6yfj56pdnCQsw-1
-X-Mimecast-MFC-AGG-ID: VRNPlAiyP6yfj56pdnCQsw_1741165949
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5D98D1800262; Wed,  5 Mar 2025 09:12:29 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.74])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 74758180035E; Wed,  5 Mar 2025 09:12:27 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>,
- Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Subject: [PATCH] vhost/crypto: fix locking
-Date: Wed,  5 Mar 2025 10:12:16 +0100
-Message-ID: <20250305091217.590887-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9FA2A402E8;
+	Wed,  5 Mar 2025 10:13:22 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id E9F8540279
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 10:13:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1741166001; x=1772702001;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=b6CsPlafhIibC/aQxVKPzpze5b9u5im9cu0IH7oOTlU=;
+ b=nlenTuFQ/J6hsyAfOrx5KhHJuFHEDYAoArPjLeXL79GvSf8TUfEfh9R4
+ DugAl6VoYTmeD7oD/3mEefh3BWGoU705KsN2SN7vx40JymLgDx9JNzbZY
+ aNTk3qkRhWsASRaXm7WHe+1X5ejznok3WBu5NgQA982Bvs+xGAnycUDAn
+ +2qeovpuahSuh0/pOoSwpjb5xrjAdRHVaOf1YfriuQM9IUMjG1IJi4vLn
+ CPT4FfChky5aCPdeGLt7oC7oV3qESQbPk21CUs1DJvhB9HSBXI2TSeWmA
+ fppsoXtGTnLjjO8iVv7WNBkE1LVgf35f5PYFRaXQUOQFTAATLYbyUhHUe g==;
+X-CSE-ConnectionGUID: Lm98ReI0SXyiXXgJA0OsIQ==
+X-CSE-MsgGUID: Tr6UxzbPSeC0U8pL8W+nhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52757068"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; d="scan'208";a="52757068"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Mar 2025 01:13:20 -0800
+X-CSE-ConnectionGUID: KIjvJ+dyRTyVTfiTwQmvJw==
+X-CSE-MsgGUID: wwbwWDG8QQiVxTKeDUMLQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="123825170"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+ by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
+ 05 Mar 2025 01:13:20 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 5 Mar 2025 01:13:19 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 5 Mar 2025 01:13:19 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 5 Mar 2025 01:13:19 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JC4aBtHihN/1AMffxokcsi2iTP3V2oDmcLkvoMLSJC8lUhUIpgC2NbF3C1/CuN0389UkRdQeGfsmFY8egFfXF2XCr735Paa2oZ1tB2NipukYR1BueBK6SfRJAcIZWWRhZiOwr4gME0wu4TBhvkqD1ADy6jbnueDjBtEzirppeH71YyANSrHsjIHnQ2w//EWmyxa/w3jCSVPnTLog3+iSsQ8B2fSoUaBXz+KqnhHLibVu/uEDjIH4W4gC8gkKEnuWrYJn69BZdS2b1zvA739bHN8aODksgH24Tsklfyp3zlq7AOa2HmyfQYMJZdHNvyL+VfVIpNG1rch3Vr7r7y5MeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=buJImkBd1FJk1ukjSpr45YgEVogtDJpd7bmZ2hNaIrw=;
+ b=W2Tme1ZEgzRrT2r0cehXDNbERiXqVw3B+7XmEMtmOM0/c3a2wngIhRB0+eP81w7FfEEnUJjvrq+WeDHv6AFlsfsfgRTVJ1bJQPVV55pe+rbxrRkomYTFMKrFTp9xW4RerS6ldopmqiqqkWHmxPj/kLoLVmYyTnLrpQrWUKUgcKRpR/mrdDbUR7gBIL7UqALF5r2birrQ1Y1YNmPC2nUf9WhgvBvSp+cdhJBEAu8eWQPf675SjeEY/0LxiO9J5zSpE0Zjp2eKOpA7KU7YYutmCEw1l2kV8LLG645aK6zmwOK8LbMoyzOO/1oZ69yNQGYBoroksHfvrgop7QDLLbKSWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS7PR11MB8855.namprd11.prod.outlook.com (2603:10b6:8:257::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
+ 2025 09:13:12 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 09:13:12 +0000
+Date: Wed, 5 Mar 2025 09:13:07 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+CC: <dev@dpdk.org>, <sameh.gobriel@intel.com>, <vladimir.medvedkin@intel.com>, 
+ <yipeng1.wang@intel.com>
+Subject: Re: [PATCH v2 1/2] lib/hash: initialize __m128i data type in a
+ portable way
+Message-ID: <Z8gVo97PpW2ijyZa@bricha3-mobl1.ger.corp.intel.com>
+References: <1732748278-14796-1-git-send-email-andremue@linux.microsoft.com>
+ <1741125199-1217-1-git-send-email-andremue@linux.microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1741125199-1217-1-git-send-email-andremue@linux.microsoft.com>
+X-ClientProxiedBy: DUZPR01CA0118.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bc::29) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lg2abC6DlIH2fVsogiGOXeO9N8Pq_ZIH7KEDhgG5mKw_1741165949
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS7PR11MB8855:EE_
+X-MS-Office365-Filtering-Correlation-Id: 537774d4-1132-4e1e-c66a-08dd5bc5f435
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Qr9io1uuWvx4JuBweWAptFPTV67p2Gz26corzUtnmw26IveFrMMh4crfdujH?=
+ =?us-ascii?Q?KnVmSOAJ3Il4gZTCIT/3papK8/slJMs20+SB+F7+w9tUCoi3levoFvvKfta4?=
+ =?us-ascii?Q?Dm5imypChxfkdr47GxMUoHZLsKcQFFIpvzjmxoPIMbHSSYRfeF79+nUJr+IR?=
+ =?us-ascii?Q?VwfSY0yyYJt+KWMF2Y2wqri8edtWGwNV0fXsodWx1/AEgU3HuIvjn3QAWqBj?=
+ =?us-ascii?Q?+oKQrU96a6PWILce6BQf2U8PwliD3nd529jNVpk8M22Ukf59GnxBm+sNfmPj?=
+ =?us-ascii?Q?eqH5foUqbnPTtP/bd+mcGEXJS7klEqW+d6ykkDY98MuHDPYta4MYakVpmHYU?=
+ =?us-ascii?Q?4Xyuemsoj3auhi9z682z495t3hWt7UdIUPmEGb/IRe5EeIxQOoCw4/F/Rwm2?=
+ =?us-ascii?Q?T4+cviYgS9IHK26jQLPH4iob2B1CMIE/WgmbccM++sAzXTiTKp93XszQzAo1?=
+ =?us-ascii?Q?Z2VSuTnlAwdnxHzE/gZRke2oKtKrleNUzNLZqbAvWDY2JQ8UFoFdvaTAvtEe?=
+ =?us-ascii?Q?S+8L2kcwWgH9a7FGQsqdR0gkGkRjx5/GuFB7Wukgjw1t7b94uMqDB79e5kVj?=
+ =?us-ascii?Q?39/Srmnw7jV1RTTHg7egUUwVZavmUVIAzzPbhEDt7U7t62DMgrTaUKZSjaYo?=
+ =?us-ascii?Q?7mVWvVw6wk5bTeNlehdlUZqEN+HqpZXl9HourQYEz/iHaGMLy6wvDzY6zNzE?=
+ =?us-ascii?Q?v4gTgjbLDu4UNgmDHSeK5kzAom60+ByGJZr/Oe/ZEdPVm5nre+8+kpLe0+u8?=
+ =?us-ascii?Q?OfeQ8BNscuvDcye9d5V7YI82q+LBwMzq2JjvK9GTkzYq7aldFUPGOg7Cw21t?=
+ =?us-ascii?Q?BtcvDgTm87j/fn1Qqjs+0zJK5nYZF498C5/oZZJ4QZEjs4mKfbrBwuhff8LH?=
+ =?us-ascii?Q?5NAoCLzTVmNh7gSQUXi1Yf6BjTF7qpSAIP/1innaP3dqSm6mgeXMC0uyVFdJ?=
+ =?us-ascii?Q?K1j+yncgRaoij0S2UpxyMJJrI/2glaDTI5WrwsK9ohthP7EPWLh8l2R6QHFD?=
+ =?us-ascii?Q?eC8oAy98rwUevor+SXOLepJKWsswpYd2Pn1vZx7hquL4SLgamtEvDmRvnGrD?=
+ =?us-ascii?Q?dH1ULeN7ku+iA/I5GZ4vIuXyZQRhvNwEj2jdBeyUgC9x/w8oPOQR7GxT98en?=
+ =?us-ascii?Q?MUiRFixoZE6PTUAAsBy4NsD3k0RkHfHHglDBqwGELSRA8f4tWU8//DgJdB8k?=
+ =?us-ascii?Q?Q2cWXW/NiRcOCYhU33jBHirU9Nsx//mtLTOUD0pdFi19vcJsKYtVrKBuE+EB?=
+ =?us-ascii?Q?BVoQdSHvOPldAgd9Ps0FZSeQHCQ56Bj0qC52+bY7yBYvAoKJ0kRZmZaw9f5l?=
+ =?us-ascii?Q?4Ay5qJkvomhcl8dvnTxUFo5zPrpSRKC5bMKDNPATqOPI03DROXWFJYdHYZhx?=
+ =?us-ascii?Q?YV7Yad3QMKRBPorTPJC2g4UfQjuz?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ilm+yTQQlCCVJDIfGfCIocPb/VyNqPmtti7ex9fA/IQZjCaN4st+EdSqE9C8?=
+ =?us-ascii?Q?jebmAyXDBgKaJ1GRch0ehHwcCO9C+7X+K9jEXC9MAwgLoibhafoD+cvahXUX?=
+ =?us-ascii?Q?K0P2THqOTmVSZlxCqDvexacOM2qY+wZHMRFGqoDD/Bh8vUdXeoHhAd7X3Od1?=
+ =?us-ascii?Q?J0ZrqPGD22GQjJCAneWi6JY6RVTspTeeTZ0VWYNjpXhXVlNkglXGXBiJ6FHT?=
+ =?us-ascii?Q?211g7DTLSL5XaYKK5Q3rrwrzbWHBB5FY3Y/6vjvawZAcCn4Gd5/2W9wzJoDu?=
+ =?us-ascii?Q?x1J/FTtZNAVpagndfu3ErJbBIcTS5V+Bamc1LTWhpezmCmPMbDdej5xJxSy3?=
+ =?us-ascii?Q?MAeiGHm+pPBZSNa62VlZe40KMgGtKuoZVPDQ2uwUwxa56lPtcxzjgzjbpIS0?=
+ =?us-ascii?Q?5W+ayVvG9DzCQy2txmrxlmvsIGD/jkyU2krIU23JnQWqOmlrdKi4s8VAJX6m?=
+ =?us-ascii?Q?gVzcMqbmFrImQwiCWI+ZRrxC3ukhk12XAQGwlxILBNWZ8FOp4Nt/xI7+UP6b?=
+ =?us-ascii?Q?jXdTnhNAuy2xsE4Usq8uvbSrLMKvctvHlhjjDikmCh2dqFUoLqXjdEya10VX?=
+ =?us-ascii?Q?vSn3DplKmxXsZrpFU6czxCXBCfe23OulEZZN+/pPZiYX+ubD3kq+Twy8S9O4?=
+ =?us-ascii?Q?vzYhsHQy1Fu9JHx0STjl8Jtdi+KcCRejPPHfb+tahbAzM0dbnntcEZlRFf4F?=
+ =?us-ascii?Q?nHfcNKhJ7899RYL5oD5JTj9ISLeg5n+SnGvC0qMhziQKXu+igPSkT4+NxYw/?=
+ =?us-ascii?Q?NZO+jOPY5Wk1XbbidpZoTz8uUxytnks5UoYsHoRbUFMepCgPV6+fqSZxVEel?=
+ =?us-ascii?Q?PQPM+32vXCNI6yWh4Z+0TenG5vSMHoKTIJ24Vjrvhj9evcWGcAGUGPNgmj3Y?=
+ =?us-ascii?Q?yfulHJxlPTYYoZfZXbTA+mVMoSmUgORDcxdmsBm9YxIEDxc00KlfuYd3Wodr?=
+ =?us-ascii?Q?LR0jJL7R4GZOubT7Sunmi5UX1d+G7qNMPCbZoUEN1zOk+NaDF36qVKaSLiP4?=
+ =?us-ascii?Q?g372JLsTqCbniTYwULIfGqF/vdsjosjck2jr/o0ZvPEIlBhv2ysbtDnqCPK4?=
+ =?us-ascii?Q?ssfYPRLtEpEhCkSgsve4BiNaOovQriKaoGxsGlhtzpxT4LtvDiBvDl3mIOYg?=
+ =?us-ascii?Q?0MuGh860nvJcL8E4151N9qQD+Fypvmvx5QpvgcI6QGZDEhWl6Zg9pqCvRRTy?=
+ =?us-ascii?Q?OmrO2k4mzydyDgfUCNIrxz3QKJ80WokO4St4SeSVMjbttF3rNtQyG40O3C3X?=
+ =?us-ascii?Q?DCyGwcdKpetqdvYwQh9tbLUdWdf9byiUBtxP1YH/OEUcqrblrb7nJqbWhokd?=
+ =?us-ascii?Q?ZFyBq/eYPh9RI3Se4Yxh4F1HDHRdF781OjJLfK3EQICRpsixH59phWzhnc3T?=
+ =?us-ascii?Q?y6dXbSs16Qe3ngzfA4kJFG06yBVofCXy6B3y/nV28LgtPFm1hUxEIclFm7eX?=
+ =?us-ascii?Q?Ab21ccg+euXTHQRSA8T9PBCxZVWaGqwXtXAaimBL3CvGSPYg0bAxt04p7mUI?=
+ =?us-ascii?Q?nHRU8bQ4wA6u1f7dtjFPRl2pLdn6RB7Mli//q0yPG5Usoe8SpdbboY+bdk36?=
+ =?us-ascii?Q?5jAjFjqBtlTVqynapsBznj0qjccJLXK9G8Nvn2jm7w0GHNh0F4NhRpRD5j8e?=
+ =?us-ascii?Q?sQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 537774d4-1132-4e1e-c66a-08dd5bc5f435
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 09:13:12.1563 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lz6lDRdteXi3F9IH38Yb5XwAARhcQmhiiDxhxt3tkIVFPYmLW5MitPyfP9uZzITDN6adfkL8Xs9sjp6fHUFMtacw6OvO+yRysEH1zsntGPg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB8855
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,407 +171,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-vc_req_out->vq->iotlb_lock is taken twice on the same thread:
-vc_req_out->vq refers to vc_req->vq (after a memcpy), which itself
-is a reference to the vq.
+On Tue, Mar 04, 2025 at 01:53:18PM -0800, Andre Muezerie wrote:
+> The mechanism used to initialize an __m128i data type in rte_thash.h is
+> non-portable and MSVC does not like it. It clearly is not doing what
+> is desired:
+> 
+> ..\lib\hash\rte_thash.h(38): warning C4305: 'initializing':
+>     truncation from 'unsigned __int64' to 'char'
+> ..\lib\hash\rte_thash.h(38): warning C4305: 'initializing':
+>     truncation from 'unsigned __int64' to 'char'
+> 
+> A more portable approach is to use compiler intrinsics to perform the
+> initialization. This patch uses a single compiler intrinsic to
+> initialize the data.
+> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> ---
+>  lib/hash/rte_thash.h | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+> 
+Much simpler fix, thanks.
 
-clang probably does not detect that the same object is already locked as
-it does not track object referencies.
-
-Finish the incomplete and incorrect cleanup and only refer to the
-&vq->iotlb_lock capability (required by vhost_iova_to_vva).
-
-Fixes: 88c73b5434e6 ("vhost/crypto: fix thread safety check")
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- lib/vhost/vhost_crypto.c | 95 +++++++++++++++++++---------------------
- 1 file changed, 46 insertions(+), 49 deletions(-)
-
-diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-index 55f137aae3..8dd1806a39 100644
---- a/lib/vhost/vhost_crypto.c
-+++ b/lib/vhost/vhost_crypto.c
-@@ -739,7 +739,7 @@ static __rte_always_inline struct virtio_crypto_inhdr *
- reach_inhdr(struct virtio_net *dev, struct vhost_virtqueue *vq,
- 		struct vhost_crypto_desc *head,
- 		uint32_t max_n_descs)
--	__rte_requires_shared_capability(vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct virtio_crypto_inhdr *inhdr;
- 	struct vhost_crypto_desc *last = head + (max_n_descs - 1);
-@@ -783,15 +783,15 @@ move_desc(struct vhost_crypto_desc *head,
- }
- 
- static __rte_always_inline void *
--get_data_ptr(struct vhost_crypto_data_req *vc_req,
-+get_data_ptr(struct vhost_virtqueue *vq, struct vhost_crypto_data_req *vc_req,
- 		struct vhost_crypto_desc *cur_desc,
- 		uint8_t perm)
--	__rte_requires_shared_capability(&vc_req->vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	void *data;
- 	uint64_t dlen = cur_desc->len;
- 
--	data = IOVA_TO_VVA(void *, vc_req->dev, vc_req->vq,
-+	data = IOVA_TO_VVA(void *, vc_req->dev, vq,
- 			cur_desc->addr, &dlen, perm);
- 	if (unlikely(!data || dlen != cur_desc->len)) {
- 		VC_LOG_ERR("Failed to map object");
-@@ -804,7 +804,7 @@ get_data_ptr(struct vhost_crypto_data_req *vc_req,
- static __rte_always_inline uint32_t
- copy_data_from_desc(void *dst, struct virtio_net *dev,
- 	struct vhost_virtqueue *vq, struct vhost_crypto_desc *desc, uint32_t size)
--	__rte_requires_shared_capability(vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	uint64_t remain;
- 	uint64_t addr;
-@@ -836,7 +836,7 @@ static __rte_always_inline int
- copy_data(void *data, struct virtio_net *dev, struct vhost_virtqueue *vq,
- 	struct vhost_crypto_desc *head, struct vhost_crypto_desc **cur_desc,
- 	uint32_t size, uint32_t max_n_descs)
--	__rte_requires_shared_capability(vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct vhost_crypto_desc *desc = *cur_desc;
- 	uint32_t left = size;
-@@ -912,7 +912,8 @@ free_wb_data(struct vhost_crypto_writeback_data *wb_data,
-  *   The pointer to the start of the write back data linked list.
-  */
- static __rte_always_inline struct vhost_crypto_writeback_data *
--prepare_write_back_data(struct vhost_crypto_data_req *vc_req,
-+prepare_write_back_data(struct vhost_virtqueue *vq,
-+		struct vhost_crypto_data_req *vc_req,
- 		struct vhost_crypto_desc *head_desc,
- 		struct vhost_crypto_desc **cur_desc,
- 		struct vhost_crypto_writeback_data **end_wb_data,
-@@ -920,7 +921,7 @@ prepare_write_back_data(struct vhost_crypto_data_req *vc_req,
- 		uint32_t offset,
- 		uint64_t write_back_len,
- 		uint32_t max_n_descs)
--	__rte_requires_shared_capability(&vc_req->vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct vhost_crypto_writeback_data *wb_data, *head;
- 	struct vhost_crypto_desc *desc = *cur_desc;
-@@ -939,7 +940,7 @@ prepare_write_back_data(struct vhost_crypto_data_req *vc_req,
- 	if (likely(desc->len > offset)) {
- 		wb_data->src = src + offset;
- 		dlen = desc->len;
--		dst = IOVA_TO_VVA(uint8_t *, vc_req->dev, vc_req->vq,
-+		dst = IOVA_TO_VVA(uint8_t *, vc_req->dev, vq,
- 			desc->addr, &dlen, VHOST_ACCESS_RW);
- 		if (unlikely(!dst || dlen != desc->len)) {
- 			VC_LOG_ERR("Failed to map descriptor");
-@@ -981,7 +982,7 @@ prepare_write_back_data(struct vhost_crypto_data_req *vc_req,
- 		}
- 
- 		dlen = desc->len;
--		dst = IOVA_TO_VVA(uint8_t *, vc_req->dev, vc_req->vq,
-+		dst = IOVA_TO_VVA(uint8_t *, vc_req->dev, vq,
- 				desc->addr, &dlen, VHOST_ACCESS_RW) + offset;
- 		if (unlikely(dst == NULL || dlen != desc->len)) {
- 			VC_LOG_ERR("Failed to map descriptor");
-@@ -1037,11 +1038,12 @@ vhost_crypto_check_cipher_request(struct virtio_crypto_cipher_data_req *req)
- 
- static __rte_always_inline uint8_t
- prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
-+		struct vhost_virtqueue *vq,
- 		struct vhost_crypto_data_req *vc_req,
- 		struct virtio_crypto_cipher_data_req *cipher,
- 		struct vhost_crypto_desc *head,
- 		uint32_t max_n_descs)
--	__rte_requires_shared_capability(&vc_req->vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct vhost_crypto_desc *desc = head;
- 	struct vhost_crypto_writeback_data *ewb = NULL;
-@@ -1054,7 +1056,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- 	/* prepare */
- 	/* iv */
--	if (unlikely(copy_data(iv_data, vcrypto->dev, vc_req->vq, head, &desc,
-+	if (unlikely(copy_data(iv_data, vcrypto->dev, vq, head, &desc,
- 			cipher->para.iv_len, max_n_descs))) {
- 		VC_LOG_ERR("Incorrect virtio descriptor");
- 		ret = VIRTIO_CRYPTO_BADMSG;
-@@ -1066,7 +1068,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 		m_src->data_len = cipher->para.src_data_len;
- 		rte_mbuf_iova_set(m_src,
- 				  gpa_to_hpa(vcrypto->dev, desc->addr, cipher->para.src_data_len));
--		m_src->buf_addr = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+		m_src->buf_addr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 		if (unlikely(rte_mbuf_iova_get(m_src) == 0 || m_src->buf_addr == NULL)) {
- 			VC_LOG_ERR("zero_copy may fail due to cross page data");
- 			ret = VIRTIO_CRYPTO_ERR;
-@@ -1085,7 +1087,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 		vc_req->wb_pool = vcrypto->wb_pool;
- 		m_src->data_len = cipher->para.src_data_len;
- 		if (unlikely(copy_data(rte_pktmbuf_mtod(m_src, uint8_t *),
--				vcrypto->dev, vc_req->vq, head, &desc,
-+				vcrypto->dev, vq, head, &desc,
- 				cipher->para.src_data_len, max_n_descs) < 0)) {
- 			VC_LOG_ERR("Incorrect virtio descriptor");
- 			ret = VIRTIO_CRYPTO_BADMSG;
-@@ -1109,7 +1111,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 	case RTE_VHOST_CRYPTO_ZERO_COPY_ENABLE:
- 		rte_mbuf_iova_set(m_dst,
- 				  gpa_to_hpa(vcrypto->dev, desc->addr, cipher->para.dst_data_len));
--		m_dst->buf_addr = get_data_ptr(vc_req, desc, VHOST_ACCESS_RW);
-+		m_dst->buf_addr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RW);
- 		if (unlikely(rte_mbuf_iova_get(m_dst) == 0 || m_dst->buf_addr == NULL)) {
- 			VC_LOG_ERR("zero_copy may fail due to cross page data");
- 			ret = VIRTIO_CRYPTO_ERR;
-@@ -1126,7 +1128,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 		m_dst->data_len = cipher->para.dst_data_len;
- 		break;
- 	case RTE_VHOST_CRYPTO_ZERO_COPY_DISABLE:
--		vc_req->wb = prepare_write_back_data(vc_req, head, &desc, &ewb,
-+		vc_req->wb = prepare_write_back_data(vq, vc_req, head, &desc, &ewb,
- 				rte_pktmbuf_mtod(m_src, uint8_t *), 0,
- 				cipher->para.dst_data_len, max_n_descs);
- 		if (unlikely(vc_req->wb == NULL)) {
-@@ -1147,7 +1149,7 @@ prepare_sym_cipher_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 	op->sym->cipher.data.offset = 0;
- 	op->sym->cipher.data.length = cipher->para.src_data_len;
- 
--	vc_req->inhdr = get_data_ptr(vc_req, desc, VHOST_ACCESS_WO);
-+	vc_req->inhdr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_WO);
- 	if (unlikely(vc_req->inhdr == NULL)) {
- 		ret = VIRTIO_CRYPTO_BADMSG;
- 		goto error_exit;
-@@ -1191,11 +1193,12 @@ vhost_crypto_check_chain_request(struct virtio_crypto_alg_chain_data_req *req)
- 
- static __rte_always_inline uint8_t
- prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
-+		struct vhost_virtqueue *vq,
- 		struct vhost_crypto_data_req *vc_req,
- 		struct virtio_crypto_alg_chain_data_req *chain,
- 		struct vhost_crypto_desc *head,
- 		uint32_t max_n_descs)
--	__rte_requires_shared_capability(&vc_req->vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct vhost_crypto_desc *desc = head, *digest_desc;
- 	struct vhost_crypto_writeback_data *ewb = NULL, *ewb2 = NULL;
-@@ -1210,7 +1213,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- 	/* prepare */
- 	/* iv */
--	if (unlikely(copy_data(iv_data, vcrypto->dev, vc_req->vq, head, &desc,
-+	if (unlikely(copy_data(iv_data, vcrypto->dev, vq, head, &desc,
- 			chain->para.iv_len, max_n_descs) < 0)) {
- 		VC_LOG_ERR("Incorrect virtio descriptor");
- 		ret = VIRTIO_CRYPTO_BADMSG;
-@@ -1224,7 +1227,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- 		rte_mbuf_iova_set(m_src,
- 				  gpa_to_hpa(vcrypto->dev, desc->addr, chain->para.src_data_len));
--		m_src->buf_addr = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+		m_src->buf_addr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 		if (unlikely(rte_mbuf_iova_get(m_src) == 0 || m_src->buf_addr == NULL)) {
- 			VC_LOG_ERR("zero_copy may fail due to cross page data");
- 			ret = VIRTIO_CRYPTO_ERR;
-@@ -1242,7 +1245,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 		vc_req->wb_pool = vcrypto->wb_pool;
- 		m_src->data_len = chain->para.src_data_len;
- 		if (unlikely(copy_data(rte_pktmbuf_mtod(m_src, uint8_t *),
--				vcrypto->dev, vc_req->vq, head, &desc,
-+				vcrypto->dev, vq, head, &desc,
- 				chain->para.src_data_len, max_n_descs) < 0)) {
- 			VC_LOG_ERR("Incorrect virtio descriptor");
- 			ret = VIRTIO_CRYPTO_BADMSG;
-@@ -1267,7 +1270,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 	case RTE_VHOST_CRYPTO_ZERO_COPY_ENABLE:
- 		rte_mbuf_iova_set(m_dst,
- 				  gpa_to_hpa(vcrypto->dev, desc->addr, chain->para.dst_data_len));
--		m_dst->buf_addr = get_data_ptr(vc_req, desc, VHOST_ACCESS_RW);
-+		m_dst->buf_addr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RW);
- 		if (unlikely(rte_mbuf_iova_get(m_dst) == 0 || m_dst->buf_addr == NULL)) {
- 			VC_LOG_ERR("zero_copy may fail due to cross page data");
- 			ret = VIRTIO_CRYPTO_ERR;
-@@ -1283,8 +1286,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- 		op->sym->auth.digest.phys_addr = gpa_to_hpa(vcrypto->dev,
- 				desc->addr, chain->para.hash_result_len);
--		op->sym->auth.digest.data = get_data_ptr(vc_req, desc,
--				VHOST_ACCESS_RW);
-+		op->sym->auth.digest.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RW);
- 		if (unlikely(op->sym->auth.digest.phys_addr == 0)) {
- 			VC_LOG_ERR("zero_copy may fail due to cross page data");
- 			ret = VIRTIO_CRYPTO_ERR;
-@@ -1301,7 +1303,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- 		break;
- 	case RTE_VHOST_CRYPTO_ZERO_COPY_DISABLE:
--		vc_req->wb = prepare_write_back_data(vc_req, head, &desc, &ewb,
-+		vc_req->wb = prepare_write_back_data(vq, vc_req, head, &desc, &ewb,
- 				rte_pktmbuf_mtod(m_src, uint8_t *),
- 				chain->para.cipher_start_src_offset,
- 				chain->para.dst_data_len -
-@@ -1318,7 +1320,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 				digest_offset);
- 
- 		/** create a wb_data for digest */
--		ewb->next = prepare_write_back_data(vc_req, head, &desc,
-+		ewb->next = prepare_write_back_data(vq, vc_req, head, &desc,
- 				&ewb2, digest_addr, 0,
- 				chain->para.hash_result_len, max_n_descs);
- 		if (unlikely(ewb->next == NULL)) {
-@@ -1326,7 +1328,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 			goto error_exit;
- 		}
- 
--		if (unlikely(copy_data(digest_addr, vcrypto->dev, vc_req->vq, head,
-+		if (unlikely(copy_data(digest_addr, vcrypto->dev, vq, head,
- 				&digest_desc, chain->para.hash_result_len,
- 				max_n_descs) < 0)) {
- 			VC_LOG_ERR("Incorrect virtio descriptor");
-@@ -1344,7 +1346,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 	}
- 
- 	/* record inhdr */
--	vc_req->inhdr = get_data_ptr(vc_req, desc, VHOST_ACCESS_WO);
-+	vc_req->inhdr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_WO);
- 	if (unlikely(vc_req->inhdr == NULL)) {
- 		ret = VIRTIO_CRYPTO_BADMSG;
- 		goto error_exit;
-@@ -1375,11 +1377,12 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 
- static __rte_always_inline uint8_t
- prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
-+		struct vhost_virtqueue *vq,
- 		struct vhost_crypto_data_req *vc_req,
- 		struct virtio_crypto_op_data_req *req,
- 		struct vhost_crypto_desc *head,
- 		uint32_t max_n_descs)
--	__rte_requires_shared_capability(&vc_req->vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct rte_crypto_rsa_op_param *rsa = &op->asym->rsa;
- 	struct vhost_crypto_desc *desc = head;
-@@ -1392,7 +1395,7 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 		vc_req->wb_pool = vcrypto->wb_pool;
- 		if (req->header.opcode == VIRTIO_CRYPTO_AKCIPHER_SIGN) {
- 			rsa->op_type = RTE_CRYPTO_ASYM_OP_SIGN;
--			rsa->message.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->message.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->message.length = req->u.akcipher_req.para.src_data_len;
- 			rsa->sign.length = req->u.akcipher_req.para.dst_data_len;
- 			wlen = rsa->sign.length;
-@@ -1403,7 +1406,7 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 				goto error_exit;
- 			}
- 
--			rsa->sign.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RW);
-+			rsa->sign.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RW);
- 			if (unlikely(rsa->sign.data == NULL)) {
- 				ret = VIRTIO_CRYPTO_ERR;
- 				goto error_exit;
-@@ -1412,15 +1415,15 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 			desc += 1;
- 		} else if (req->header.opcode == VIRTIO_CRYPTO_AKCIPHER_VERIFY) {
- 			rsa->op_type = RTE_CRYPTO_ASYM_OP_VERIFY;
--			rsa->sign.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->sign.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->sign.length = req->u.akcipher_req.para.src_data_len;
- 			desc += 1;
--			rsa->message.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->message.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->message.length = req->u.akcipher_req.para.dst_data_len;
- 			desc += 1;
- 		} else if (req->header.opcode == VIRTIO_CRYPTO_AKCIPHER_ENCRYPT) {
- 			rsa->op_type = RTE_CRYPTO_ASYM_OP_ENCRYPT;
--			rsa->message.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->message.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->message.length = req->u.akcipher_req.para.src_data_len;
- 			rsa->cipher.length = req->u.akcipher_req.para.dst_data_len;
- 			wlen = rsa->cipher.length;
-@@ -1431,7 +1434,7 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 				goto error_exit;
- 			}
- 
--			rsa->cipher.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RW);
-+			rsa->cipher.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RW);
- 			if (unlikely(rsa->cipher.data == NULL)) {
- 				ret = VIRTIO_CRYPTO_ERR;
- 				goto error_exit;
-@@ -1440,10 +1443,10 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 			desc += 1;
- 		} else if (req->header.opcode == VIRTIO_CRYPTO_AKCIPHER_DECRYPT) {
- 			rsa->op_type = RTE_CRYPTO_ASYM_OP_DECRYPT;
--			rsa->cipher.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->cipher.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->cipher.length = req->u.akcipher_req.para.src_data_len;
- 			desc += 1;
--			rsa->message.data = get_data_ptr(vc_req, desc, VHOST_ACCESS_RO);
-+			rsa->message.data = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_RO);
- 			rsa->message.length = req->u.akcipher_req.para.dst_data_len;
- 			desc += 1;
- 		} else {
-@@ -1459,7 +1462,7 @@ prepare_asym_rsa_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
- 	op->type = RTE_CRYPTO_OP_TYPE_ASYMMETRIC;
- 	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
- 
--	vc_req->inhdr = get_data_ptr(vc_req, desc, VHOST_ACCESS_WO);
-+	vc_req->inhdr = get_data_ptr(vq, vc_req, desc, VHOST_ACCESS_WO);
- 	if (unlikely(vc_req->inhdr == NULL)) {
- 		ret = VIRTIO_CRYPTO_BADMSG;
- 		goto error_exit;
-@@ -1484,7 +1487,7 @@ vhost_crypto_process_one_req(struct vhost_crypto *vcrypto,
- 		struct vhost_virtqueue *vq, struct rte_crypto_op *op,
- 		struct vring_desc *head, struct vhost_crypto_desc *descs,
- 		uint16_t desc_idx)
--	__rte_requires_shared_capability(vq->iotlb_lock)
-+	__rte_requires_shared_capability(&vq->iotlb_lock)
- {
- 	struct vhost_crypto_data_req *vc_req, *vc_req_out;
- 	struct rte_cryptodev_asym_session *asym_session;
-@@ -1617,18 +1620,14 @@ vhost_crypto_process_one_req(struct vhost_crypto *vcrypto,
- 			err = VIRTIO_CRYPTO_NOTSUPP;
- 			break;
- 		case VIRTIO_CRYPTO_SYM_OP_CIPHER:
--			vhost_user_iotlb_rd_lock(vc_req_out->vq);
--			err = prepare_sym_cipher_op(vcrypto, op, vc_req_out,
-+			err = prepare_sym_cipher_op(vcrypto, op, vq, vc_req_out,
- 					&req.u.sym_req.u.cipher, desc,
- 					max_n_descs);
--			vhost_user_iotlb_rd_unlock(vc_req_out->vq);
- 			break;
- 		case VIRTIO_CRYPTO_SYM_OP_ALGORITHM_CHAINING:
--			vhost_user_iotlb_rd_lock(vc_req_out->vq);
--			err = prepare_sym_chain_op(vcrypto, op, vc_req_out,
-+			err = prepare_sym_chain_op(vcrypto, op, vq, vc_req_out,
- 					&req.u.sym_req.u.chain, desc,
- 					max_n_descs);
--			vhost_user_iotlb_rd_unlock(vc_req_out->vq);
- 			break;
- 		}
- 		if (unlikely(err != 0)) {
-@@ -1673,10 +1672,8 @@ vhost_crypto_process_one_req(struct vhost_crypto *vcrypto,
- 
- 		switch (req.header.algo) {
- 		case VIRTIO_CRYPTO_AKCIPHER_RSA:
--			vhost_user_iotlb_rd_lock(vc_req_out->vq);
--			err = prepare_asym_rsa_op(vcrypto, op, vc_req_out,
-+			err = prepare_asym_rsa_op(vcrypto, op, vq, vc_req_out,
- 					&req, desc, max_n_descs);
--			vhost_user_iotlb_rd_unlock(vc_req_out->vq);
- 			break;
- 		}
- 		if (unlikely(err != 0)) {
-@@ -1750,7 +1747,7 @@ vhost_crypto_finalize_one_request(struct rte_crypto_op *op,
- 			rte_mempool_put(m_dst->pool, (void *)m_dst);
- 	}
- 
--	return vc_req->vq;
-+	return vq;
- }
- 
- static __rte_always_inline uint16_t
--- 
-2.48.1
-
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
