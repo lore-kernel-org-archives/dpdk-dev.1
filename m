@@ -2,57 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD3DC19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 21:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83564C19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 21:34:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15077402DD;
-	Wed,  5 Mar 2025 22:33:18 +0100 (CET)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com
- [209.85.128.177])
- by mails.dpdk.org (Postfix) with ESMTP id 462FC40279
- for <dev@dpdk.org>; Wed,  5 Mar 2025 22:33:17 +0100 (CET)
-Received: by mail-yw1-f177.google.com with SMTP id
- 00721157ae682-6feab7c5f96so6634047b3.3
- for <dev@dpdk.org>; Wed, 05 Mar 2025 13:33:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B7B76402DD;
+	Wed,  5 Mar 2025 22:34:42 +0100 (CET)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com
+ [209.85.219.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 69FFE40279
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 22:34:41 +0100 (CET)
+Received: by mail-yb1-f177.google.com with SMTP id
+ 3f1490d57ef6-e60f212fee7so3049152276.1
+ for <dev@dpdk.org>; Wed, 05 Mar 2025 13:34:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1741210396; x=1741815196; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1741210481; x=1741815281; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=5SvP5Wn3IfP8ZzvQSFsLB5uQvRPIw3Cbya69d6kD3aE=;
- b=AdXaKXi7netTJTAzqD82K3X8AZd2OVKH7O5ZbastatEY3Q9rfnkkJN6M9OBEGu3hYP
- Z3+heiAUCyG46iFi4a+Px2A7otKFquFOylJqA5wjjZIB8yBCp23nXmZsC5N8Sqt8GMmm
- KWTY2sW10ZTUiX7V9SOXc2IQY/Q38VRNvwG5U=
+ bh=jvU4HHcW3QwQ2EPiMdGhIWY7HSZG4AQ4RnR+l1Rhq8A=;
+ b=HyrNgoMyvorMd9La5U4RNdM2hABqcpOIzWUenG7G78efq83ienlmWi2VAp51vHc7VQ
+ 10A7P+dlfmzV+SsrDal16ZpN54VHyz6Dk3yQuGqCydXJRqg4FafNjeKiTRfQaVgePbQw
+ yc9k4ghOC1Ce2Xr4peOf9AO3JkAA2OumiYoHw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741210396; x=1741815196;
+ d=1e100.net; s=20230601; t=1741210481; x=1741815281;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=5SvP5Wn3IfP8ZzvQSFsLB5uQvRPIw3Cbya69d6kD3aE=;
- b=YM+Ykgw1RAIQjnYpk123o497QN/k4S0L+KKvW3RXPjidccTS1xMG0UBTndrTv5sUVH
- WSXdv7XFgmtYosySuTraoIH95HRAvbH1jnCvcWz+y33CH4JtcXfpdrVsj61eKzHD3TVe
- /ur8HtcTiJLdDeWR6tb1RvjKPMpWIXX+s+0xngS602uovNqa035jUIYzTVsyu24PtSAM
- N3GsFKnzFUydzXIq1AIXoCxdYW/2wWtovr9gptf2yvF+UeonmvV/oVharo4PnGvW6Eng
- fTpkgsmNDvQot0z8BX+G60B5Lo381wauo94Ilt/MYjcLXg2sjZ2GlbO72OOLT442dYH1
- XDAg==
-X-Gm-Message-State: AOJu0YyodmVmKS1lhLFucH1dE9wXzjwh+ZCWp6VStdMHJ7kAJtl5jjfu
- 7nPO+s22ywP0WcBoyq2xzRcM0Gb8QyOaoIWVVdwDd4qNOZCJiqSKIhCBSeJe4MlJAhT5gu+ClJk
- A97Bit1DaXex/Hdd27RT1StvjUG/f5ejhDnoXSw==
-X-Gm-Gg: ASbGnctsYDuyyA6oL5jZTaBWn8W3boU9vCIwiEFL5DfkvIWn1zIoT6aZnMbex4iEfsB
- wt8Wfw9+EsYjk+VMuua9HOrJmE7gc8bMmMc5uI4Oez/uQqQPwDZ34dsTw7NXXGyCEpBtP3NYSp6
- rEW6iaMysN67xl/M0BPJEr9U3410F3nfvlX0EeI36xFiSXGuxFGMRArgaZaJj5
-X-Google-Smtp-Source: AGHT+IECCBazLaMLN3dAnfp08aeF8qcynTW4F4p1Go/bcj/w04JpTCMabp+jlMs9AxjSPdMDbJFa2bXH+lim20udomg=
-X-Received: by 2002:a05:690c:d87:b0:6fe:ad42:19be with SMTP id
- 00721157ae682-6fead421b2amr24588377b3.12.1741210396428; Wed, 05 Mar 2025
- 13:33:16 -0800 (PST)
+ bh=jvU4HHcW3QwQ2EPiMdGhIWY7HSZG4AQ4RnR+l1Rhq8A=;
+ b=TKs1jQKcfOwKlMvAJb/Wa/VzIBQB8OmEQKJyMtThZXjQSUQ6iGsY/gdLnal8ADrjnN
+ Sfx4OWT/WX+EI/KLi/DE+Vc2QTXW8BrE2FzlGZEp7dWfAhKdjnYuSMtCe2WugYYnznj4
+ xRTsYOHpVLVPnOVr5hVONM5Zr7/EHCjro/Uf2iBGC78u5s+2+6TrXUrdb03yiTHsApEM
+ i/8RhIjvhd2nzN05AZNUQsSS8s8E4XmiiXB2VjQ5fUcDVSGblbcSU4UEaX7S3nnP3xq4
+ 42drZcl4QRMgK7OFV9A0DUbDVQNhteyR2+t83gnyss8PtZCUtwhj13S87hhCwhwtbFUd
+ wOVg==
+X-Gm-Message-State: AOJu0YyjwzaRQ1JOlUrsC8EGIn3tDtQ5s0GrF0nkq2Q0o80R6Qh1vylj
+ SWXnvA+nwKbpi4g7H/8BZI9T5cO65+iZSt/1kMV7TCgHejiL3jdNMS4puPJQ3vp7acEGSZT9iSo
+ d55CLrlNAAV64cH5NfxvyIwDv/OfaVlxbCdQ+ijvs5/yHimF2
+X-Gm-Gg: ASbGncvdbmHXndZCateGvr+v+TfyKk4Tg63NaBpi8BFKmWF0Ez0I5VRN25NTQUs70fV
+ ffiPTufRlbkPZRNZCbQOtJJBKt5DTH1wfCZZKFCOX/BBQa1ySNNiH1XQe+hI1xHyQzVm9f7JuYu
+ 1P8CVteW5BIkxpijMejy6Arfki29gkjgGmDQhCXgoMt8RHiNW4V4By7VgvO5eb
+X-Google-Smtp-Source: AGHT+IFjaZo6cKcQKvEUyE5Nvn4Ee3nLiKZODPROnW4wA59VuAgzFJ+VaU1S4F2AkE7igAgmdiEZyBZuQ2fO5XZ1yqo=
+X-Received: by 2002:a05:690c:338a:b0:6fd:a226:fb50 with SMTP id
+ 00721157ae682-6fda307bd1cmr77364457b3.13.1741210480714; Wed, 05 Mar 2025
+ 13:34:40 -0800 (PST)
 MIME-Version: 1.0
 References: <20250224132823.196509-1-luca.vizzarro@arm.com>
- <20250224132823.196509-6-luca.vizzarro@arm.com>
-In-Reply-To: <20250224132823.196509-6-luca.vizzarro@arm.com>
+ <20250224132823.196509-4-luca.vizzarro@arm.com>
+ <CABD7UXNmGggR7MMysLVcyF=80WzOaee-eDcenVgFNoThrdPa4A@mail.gmail.com>
+In-Reply-To: <CABD7UXNmGggR7MMysLVcyF=80WzOaee-eDcenVgFNoThrdPa4A@mail.gmail.com>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Wed, 5 Mar 2025 16:33:05 -0500
-X-Gm-Features: AQ5f1JpBJqiu5qT5a34Vi2h5eUSVHLWU17cCUsx6uySJe-M2Z7FvU7a8_65n5ck
-Message-ID: <CABD7UXOK9ZH17zMw_7HQ=4JD4a0gxj11TMRJQRRnxg0tuF5QrQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] dts: enable build-less DPDK driver binding
+Date: Wed, 5 Mar 2025 16:34:30 -0500
+X-Gm-Features: AQ5f1JpuyNonRSDEZW5gRtFOZaEyDMMSgRibtkVBiFmKAc2FLwT0USk_HSFzc8c
+Message-ID: <CABD7UXM5B970cR1NzEUZdDAnp_Vy1yhsMfzpAiwTLbF3zPeKDQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] dts: add tmp directory facility
 To: Luca Vizzarro <luca.vizzarro@arm.com>
 Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
  Patrick Robb <probb@iol.unh.edu>
@@ -70,10 +71,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This looks great, one small thing I noticed though is that you don't
-necessarily need to build dpdk to use devbind, since it's already in
-the usertools directory, so this commit/series title could be
-misleading.
-
-Otherwise:
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+Also, use is misspelled in the commit message
