@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E91B0C19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 09:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31CDC19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 09:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AEDC40156;
-	Wed,  5 Mar 2025 10:48:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DCB3E40156;
+	Wed,  5 Mar 2025 10:52:46 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0B6EC400EF
- for <dev@dpdk.org>; Wed,  5 Mar 2025 10:48:53 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id B5507400EF
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 10:52:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741168133;
+ s=mimecast20190719; t=1741168364;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=nAI8BCRfBhcS6uddl+/ZygfNKkuewtzSXceq20KHqMg=;
- b=dNCzor48oyWJ8zb3+Kq6PHjiojcJT2gK/c2tWK7DWEql0leB2sOhT0G3DQYoLDoWoaMDeJ
- 6t1kx9WcOItH4lb3qpb8IcB0ZYTmhQXe/stMsrEF/33ngQ6hUQqWDGWOWkGLosizgwwlDU
- a0rcHFrUkgxyzPvsghX0ZIT7GoEQfC8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=f0FzAM2cGg82ej2IdyQirqItJO+lTNKhNB4niLycB3M=;
+ b=igzqR1IoQ9rgmNvlUJueVPPwGAAlHrRclYrHka7lsqFUT91QvzaetKNRz9fblhBUoopz4g
+ QCsyvVZmFh7n8qQBA0qKEV7imyAlDJSDTn2mtOrF7zkEKZ6v/XNYyapRJy1HhDRyr4aehN
+ +jLVA3y/hvujnYsqgeg+wfwBS6qdiAQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-450-OqhXVSmUO5eDK-E5omg4Wg-1; Wed,
- 05 Mar 2025 04:48:25 -0500
-X-MC-Unique: OqhXVSmUO5eDK-E5omg4Wg-1
-X-Mimecast-MFC-AGG-ID: OqhXVSmUO5eDK-E5omg4Wg_1741168104
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-LQt9SgPtMXKCOKVbuancmA-1; Wed,
+ 05 Mar 2025 04:52:43 -0500
+X-MC-Unique: LQt9SgPtMXKCOKVbuancmA-1
+X-Mimecast-MFC-AGG-ID: LQt9SgPtMXKCOKVbuancmA_1741168362
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3DD31180AB1F; Wed,  5 Mar 2025 09:48:24 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 47EA11956053; Wed,  5 Mar 2025 09:52:42 +0000 (UTC)
 Received: from [10.44.22.29] (unknown [10.44.22.29])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 2E5B51800255; Wed,  5 Mar 2025 09:48:21 +0000 (UTC)
-Message-ID: <1353fc1e-588d-4faf-b5b7-548cf83b98f5@redhat.com>
-Date: Wed, 5 Mar 2025 10:48:18 +0100
+ id B51C31800266; Wed,  5 Mar 2025 09:52:40 +0000 (UTC)
+Message-ID: <617065b3-c58f-4278-82c8-b43009a4cde0@redhat.com>
+Date: Wed, 5 Mar 2025 10:52:37 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost/crypto: fix build with asserts
+Subject: Re: [PATCH] vhost/crypto: fix locking
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: Chenbo Xia <chenbox@nvidia.com>, Akhil Goyal <gakhil@marvell.com>,
+Cc: Chenbo Xia <chenbox@nvidia.com>,
  Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-References: <20250305094323.598983-1-david.marchand@redhat.com>
+References: <20250305091217.590887-1-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,14 +91,14 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250305094323.598983-1-david.marchand@redhat.com>
+In-Reply-To: <20250305091217.590887-1-david.marchand@redhat.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9hsnc8TBXDUw4Csvz9Zxwu3mblFWbfyL26dek127pSY_1741168104
+X-Mimecast-MFC-PROC-ID: 3Cmr0RwCaZrVbwUQqaLkM3yvz7Hk7qgYJq42LVTx7vY_1741168362
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,47 +114,33 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 3/5/25 10:43 AM, David Marchand wrote:
-> ../lib/vhost/vhost_crypto.c: In function ‘virtio_crypto_asym_rsa_der_to_xform’:
-> ../lib/vhost/vhost_crypto.c:538:42: warning: comparison of integer expressions
-> 	of different signedness: ‘long int’ and ‘size_t’ {aka ‘long unsigned int’}
-> 	[-Wsign-compare]
->    538 |         RTE_ASSERT((tlv + len - &der[0]) == der_len);
->        |                                          ^~
-> ../lib/eal/include/rte_branch_prediction.h:43:45: note: in definition of macro
-> 	‘unlikely’
->     43 | #define unlikely(x)     __builtin_expect(!!(x), 0)
->        |                                             ^
-> ../lib/eal/include/rte_debug.h:47:25: note: in expansion of macro ‘RTE_VERIFY’
->     47 | #define RTE_ASSERT(exp) RTE_VERIFY(exp)
->        |                         ^~~~~~~~~~
-> ../lib/vhost/vhost_crypto.c:538:9: note: in expansion of macro ‘RTE_ASSERT’
->    538 |         RTE_ASSERT((tlv + len - &der[0]) == der_len);
->        |         ^~~~~~~~~~
+On 3/5/25 10:12 AM, David Marchand wrote:
+> vc_req_out->vq->iotlb_lock is taken twice on the same thread:
+> vc_req_out->vq refers to vc_req->vq (after a memcpy), which itself
+> is a reference to the vq.
 > 
-> Fixes: d1b484bf1876 ("vhost/crypto: support asymmetric RSA")
+> clang probably does not detect that the same object is already locked as
+> it does not track object referencies.
+
+s/referencies/references/
+
+> 
+> Finish the incomplete and incorrect cleanup and only refer to the
+> &vq->iotlb_lock capability (required by vhost_iova_to_vva).
+> 
+> Fixes: 88c73b5434e6 ("vhost/crypto: fix thread safety check")
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
->   lib/vhost/vhost_crypto.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   lib/vhost/vhost_crypto.c | 95 +++++++++++++++++++---------------------
+>   1 file changed, 46 insertions(+), 49 deletions(-)
 > 
-> diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-> index 8dd1806a39..3c6c5dc114 100644
-> --- a/lib/vhost/vhost_crypto.c
-> +++ b/lib/vhost/vhost_crypto.c
-> @@ -535,7 +535,7 @@ virtio_crypto_asym_rsa_der_to_xform(uint8_t *der, size_t der_len,
->   	xform->rsa.qt.qInv.data = qinv;
->   	xform->rsa.qt.qInv.length = qinvlen;
->   
-> -	RTE_ASSERT((tlv + len - &der[0]) == der_len);
-> +	RTE_ASSERT(tlv + len == der + der_len);
->   	return 0;
->   }
->   
+
+
+Thanks for fixing this!
+With the typo fixed:
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Thanks,
 Maxime
 
