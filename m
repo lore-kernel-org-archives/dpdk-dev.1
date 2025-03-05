@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63B9C282E3
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 12:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1891DC282E3
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 12:52:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B3524042E;
-	Wed,  5 Mar 2025 13:52:29 +0100 (CET)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur05on2072.outbound.protection.outlook.com [40.107.21.72])
- by mails.dpdk.org (Postfix) with ESMTP id F07464025F
- for <dev@dpdk.org>; Wed,  5 Mar 2025 13:52:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 878284064A;
+	Wed,  5 Mar 2025 13:52:30 +0100 (CET)
+Received: from DU2PR03CU002.outbound.protection.outlook.com
+ (mail-northeuropeazon11012067.outbound.protection.outlook.com [52.101.66.67])
+ by mails.dpdk.org (Postfix) with ESMTP id 4A1964060A
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 13:52:29 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NdRMaGvX2yy3Rsf3EdaEEFKkFdvPsVOLgo1CWdO3+a92CLC+2YJTPgWZ833XyctNq7jQK13dmZUYEtb4AAUB9/Q6iG3werFqpgTFQIvZWlnkr2nKeEM3jLV6NCxFR4fWSLj2SnI4NwSap+qEyQorw06Ie9mYf2dQ4+tlfdJnbyKHFY/Jc6N6uQKSmZ6uRnLBCuF723wsEp579cA7/W/LUpu2yWrotJcYe7KTstW3dd7VtDh6OyHDEX5KG+A/gRZ+Y6kPg9CItGKRc6K393d/WrBB8OVSigEjXlDT0HUCwlJ7nVNehdz9by7/OGQIXAdWKc8NDVk+FBoz5ZSmSg3t6g==
+ b=R+CDB79BAZ97aDabIca2QOjef236ZtDcwD32Bliout0z7Jw773BsErtEt4lrTAsKFNEfOTwx8yZpqVJ0Y6/ch8N9CQHwezJalYITZZnuXqPCN4Wgv0CGb8ZiUdKB0KbUkeR8Abfue60rRXxY1MdNMoQowWWubycFJncfpHEUtlwp5gZF3U/Kxgz83Kb9qYnN/7jLEAnxE8wWzBlUXth0GmUqF6l/3i5K7soSdRGHx5VoOsbuLSGOrXgd1zt+UKtJ7zFxL7tySPxRCWEqbMZmdayGsasG5bH/k9v0RblHgMJ2WDvQ98YxGu77AktZ+Y+Q+rfohRntUt0qikdm3H9Sdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BPg1bGkfVBVDc6YOWIPVLSbFelklzB5WlhPSy7HbxX0=;
- b=rlpcnjkJkaiLipdnzC53bsVF9Zxh7dFq4FTtAkfeqT+qxfDmXcbLKOL64k7+V+NYvSidadPzLon5PTLQGy/GimoZTsYv0ffyNmZuFBBVw3F3gBKgQDem7ZXtLIqQSUGb6Sfd+1q7BVytpXlmy9BYCU3RXBAyruW7SccLlKc1D034ucmIgnDMyABpA8RZSTVLU4sgtlWNRwXgPKzDZq7h/LrK+P34evXALkxsHa+acs9MTirjHZdYfWz56xmJ5TSGgdVmSDKLB/Wjuujy0ajfCT0J49RuG3EeZxloikoukVJjpoRge0AqQwQ7p14Zremb/Sa+aF70v1N6DhkUNqtdYg==
+ bh=ky/dN9dWk61AD89Hqb3+Y2yg92nBzg5iVedfo1oc26E=;
+ b=IYu1quFTV+i3hPiLHJBUfYfBrPlNHzzOWFLRjcbEAFgM7AeWJnu2FdXlf5Zzk2uRokSsWk44wz8Y6Pm9VME3sS7SnEoWZTVOwa2U/u5RVDeDHWEMDppdnuNFDjUTqOZQjs5KKI8FSi8KFM1WmMi0+5cDuGkHGfKJrLtqT5cx8sYXondZIORiqg5s7ehw2+n41Sk1h5GWpoLbDPJ2ZycTPOIkUVOAQHVq5NxoWveacWjZ+8cy0plpozXkZjfA+IA7fpuAxiBa03XyeLzTkEO8xW9wOZxw5bJaPT8jTsHeVSWr/tPzUDq6RDSCdvT+wx2nkYSaZcEeD1OQXRzGhivgyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -25,16 +25,16 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BPg1bGkfVBVDc6YOWIPVLSbFelklzB5WlhPSy7HbxX0=;
- b=AILuLQmn45VYv+9Rn7W8GJOwOJNFX4ndONDV33Qvsn9uScnYwqo/8hRmAygCm8UEVmsxuvEUSQATZEHXuSJS9rwiiI/mQyWIIKK5qWaN5fJjTN3HSl9rDtQsBUM0KSoDTOGSvstPrXyx1Jzz0uNc1cExA5/yxDgzMHbqXrVmChr4IeF9I7UHfzZe6fEl9NU7yM1nO9oBV2xUhM342vawXKn9yx8nPE+VMNoOhhBZfaZVbZ2x2eZ0NVKuOArrQe8LdimeMx33jTDiJIgpi+UoSfPRTdrEqN1h5Tqnmq+HA6cNTKcijtjji2dTsiVkKkywvM/+gTMxvepaPQsZjD5hfA==
-Received: from CWLP265CA0520.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18c::23)
- by PAXPR07MB7823.eurprd07.prod.outlook.com (2603:10a6:102:15c::14)
+ bh=ky/dN9dWk61AD89Hqb3+Y2yg92nBzg5iVedfo1oc26E=;
+ b=Bx9Z3JolzmEgqKy3gYKBlIhCCWw7KROTkIIn+jSUth7h+VydiR24oYdGIU8zNEWAnTdF6vlve5na315r7FMhLi+d/ewDuhX4Ms1GatG+9Q4M6CtFz3IH/8Rp2uO8CGR8hMHPhNu8/XfyV889Dbc0sUxUCYYNR7YeqLgr9JOOX3g88fcD1wU0cKMPFiCkYP4/5ArnXGM5pcvIuAWFvLtIPlbxMa4pOsGTOdjkNeNGTpAM4P8ODRwaF3kJgLR0rRi/fempsHZB64c8XszUuh+1kOrrfFRPMjU9y5VUHg4QNORVm21e2lZhcf+ziDtK8yMN8yS8WdWo26Lo5egdcWbfDA==
+Received: from CWLP265CA0523.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18c::19)
+ by GVXPR07MB9917.eurprd07.prod.outlook.com (2603:10a6:150:121::22)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
  2025 12:52:24 +0000
 Received: from AMS0EPF0000019C.eurprd05.prod.outlook.com
- (2603:10a6:400:18c:cafe::1e) by CWLP265CA0520.outlook.office365.com
- (2603:10a6:400:18c::23) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:400:18c:cafe::8b) by CWLP265CA0523.outlook.office365.com
+ (2603:10a6:400:18c::19) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.17 via Frontend Transport; Wed,
  5 Mar 2025 12:52:24 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
@@ -55,64 +55,72 @@ From: Luka Jankovic <luka.jankovic@ericsson.com>
 To: <luka.jankovic@ericsson.com>
 CC: <dev@dpdk.org>, <jerinj@marvell.com>, <mattias.ronnblom@ericsson.com>,
  <pbhagavatula@marvell.com>
-Subject: [PATCH] eventdev: atomic common for test-eventdev app
-Date: Wed, 5 Mar 2025 13:52:13 +0100
-Message-ID: <20250305125215.2870237-2-luka.jankovic@ericsson.com>
+Subject: [PATCH v8 2/3] eventdev: add atomic queue test to test-evnetdev app
+Date: Wed, 5 Mar 2025 13:52:14 +0100
+Message-ID: <20250305125215.2870237-3-luka.jankovic@ericsson.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20250305125215.2870237-1-luka.jankovic@ericsson.com>
 References: <20250219134325.1195531-1-luka.jankovic@ericsson.com>
  <20250305125215.2870237-1-luka.jankovic@ericsson.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019C:EE_|PAXPR07MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: a83d8a34-3cdb-45bb-f730-08dd5be49376
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019C:EE_|GVXPR07MB9917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4886bceb-5a2d-470d-a4d5-08dd5be493c5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|1800799024|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EPI9iV+32HkMVXKNs7wDhCfIp9WL27OUrYQd0ycn/XR5J6TWDW3yLGvBtQb4?=
- =?us-ascii?Q?jaS88czXpxelvjDRal85w4l4FDicQ4jNeLj40ElMO/CYbU5yhfIh0I/9PmvY?=
- =?us-ascii?Q?vVB2M1nHxEKvz5KB1nCjPzpuT1WsT+97Zg5/9xbAovJI/QFK2GU99i6RfnRA?=
- =?us-ascii?Q?BZqXiaYo9Vca8lTZfSdlR99kIQLaOVzwmMro1yChIEAkjj9UOqWXjmOg3qcI?=
- =?us-ascii?Q?yGpVEKJMSHECRx+W45GLPeuJvMU8mblDt7xtHGTZBaTS6eQ4QSOCKsleuJCM?=
- =?us-ascii?Q?0Wg5Z6swmT+33ibXRmrQnABrHSFELMtx5oHkveKfKliTBU3HyMBbP8bSrD8W?=
- =?us-ascii?Q?56GsHP0WtWXdsfgttAIYa5qzg25z1G3NZQt3ip3902IndF5y8l4KnZI3rGJ7?=
- =?us-ascii?Q?q/QgPOhM1loUvuqHuSKxwcsfZmOhZ6Rt41F/0fKDwTjmyAngZt71EcnWu3p/?=
- =?us-ascii?Q?4J51LKl7cv3lw6m0oYwrr+0/+2iK3KDi1i6/ysLgDqL0fE7B+ttc6rjI8TgD?=
- =?us-ascii?Q?oiy6BgzMjvdh0jAUMPro1ZAvSdMvULL/JZB6ri6zsaw9leMqtYOIrHrLR2rC?=
- =?us-ascii?Q?TpnsJQOSAygWLUI0zI1pOlmWq3y3PL//VHAhUJO9jYrr/WkvM6umrxHMBbUR?=
- =?us-ascii?Q?xtkTv8LxrmU6nNcYvb7QqIfQr7BXa5rVbQ1M7VrwoY0lZc3pA/MEWIS2F2po?=
- =?us-ascii?Q?DqTV1xBLDcFCy7Aa5/+fLjVcEZQ7kXEN1gdMkGGim3U8siRkZovQHvUXXEkg?=
- =?us-ascii?Q?m4Rdgm16jKDNvF/IcD8iVsGZUMosiXencMYNJ0Ezc5Zv4Ujruaeiv0O7pNrU?=
- =?us-ascii?Q?nXyo3fkY7UBw0zkIdChvlKVxmNKA6TX8pNkE1s1yIcfDmt2fTLm6vNYRvlby?=
- =?us-ascii?Q?McXoPR43JCX7J+7YFUFGzEL6unKxsLDOpOEKRU5jvuD05kq7kDgyUdp2hgRl?=
- =?us-ascii?Q?gntCHPOQA06Ct0C+X4FbDpJlyQi1ehrk4C66cizj6ey8A8+aWollt/lebgfT?=
- =?us-ascii?Q?+XTnZQnbB9Phb2JiwQjPiyCVHlBQa+eY/Nn4cm9O6qvSzWj6QMwfiJx4Jl4v?=
- =?us-ascii?Q?vRY7QBsCVhDXChC1u8GjR6tIy/XxrQZShDHyt3LyTcpQZz+Ld/Adby3G6Jpn?=
- =?us-ascii?Q?LnrftEGI0yMdGr22BtMpaEmodleCAZ3xZBQLLflk6ggChDoYL8uoHPJk/+Yr?=
- =?us-ascii?Q?PMtaU4mO35P3e9rba6hO8pmGU9j+DQ/QzBbWEVVw7m15NyUw1re7m8D1l8AS?=
- =?us-ascii?Q?eSKZyzeglkxtt+nzzJVFoZsSkZ7TWBH/9YJxwnLXl+ZZBjxwLjOvmGOfzNCb?=
- =?us-ascii?Q?/hTLUWuxIaTUBhvCqX1llYceAuw8GweB5Cq4Ah/h2SKfdBhZaQaRXNamgzm1?=
- =?us-ascii?Q?vWAFikhYp5QvK2fmfi/SSiMbz0CbiJR0MSnQNpHGskJGqhpmg4QR2L8sCWtS?=
- =?us-ascii?Q?hT/jkdKZ95ue9aAf8e8ZbOkSY8T0mP3vyvU1CnGlXSrUUZ45a/Tdq94Pxaut?=
- =?us-ascii?Q?msG5+jVBkbL/7PQ=3D?=
+ ARA:13230040|1800799024|82310400026|376014|36860700013|13003099007; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aEhKQldia21GN3o5YXJhSzR1RitZUWIwSUY5OEtwc1FGV1lMK3dPTjU4WFZM?=
+ =?utf-8?B?S3VrcXRsRjB6dWJwVmcyR0FQR20rMmhnZXpMSlgwTm9UbkRtK1VmN2FDR3Zr?=
+ =?utf-8?B?S3pmWW5ZQU9iNnNsem5xQk11QVFQNmlCbVlES2JuS2RCSC8rY3poT09vcTdv?=
+ =?utf-8?B?UmZoNXhzZ0RVbElVeUZUc1FPREFPa2QrN3M2Y1BpUmtyVEhDRWR1M3lSYlF1?=
+ =?utf-8?B?REQ5NCs2QXd3R00zYXpGZHFibWpOVkQ4VGRNVG1oOThMdmhhWUZiQ3FwSDM0?=
+ =?utf-8?B?djFtQTg2VWVBSUFTV3crVERBSkk3d1FsRm5nb2pJb29KMDY3dVQ4MmZ3Znpl?=
+ =?utf-8?B?ZjlMS3YyV1U3bGdjVUZMYUhqNzZ3aWRwYXk4RVZkRDV1TGI0VTdUYlVVOXFr?=
+ =?utf-8?B?MldCNkxwaDdackRydFdmYlVBYXNKMDlBdjM1NDlaeW55aGMzOG9WRmxSZ0Q3?=
+ =?utf-8?B?YnZCVXF3L3UyTW8zeGYySHpQTXJad0NrNWNSa3hsNHRFNHVqdlZaNTZHdEhz?=
+ =?utf-8?B?bEhpbzFDZjV4b2RITnhTL1pKY1lqOFJXaHc5WTRlMHU2TjY5clI1SWtLamVU?=
+ =?utf-8?B?WkZVRlV5cGpNdHZFenNuUnJIczBpOVl1UVpWOE41UXdLaWU4RnA5ZzZFY2pr?=
+ =?utf-8?B?MGVuZHNyQ0s2Zi9hQnpxaUZXVFA3U3duTUNjT0RDZEtUdmdNanY0OE81SUxV?=
+ =?utf-8?B?U2hCeGhXcmRkSzVVRjUwYmU4ZUtPUHc3N0ptQ0dKVWVCcE14YVI3SzJuOGho?=
+ =?utf-8?B?T1A1aUNHeUFwc1dZYUxkeXNGbklxN3pIRWdOd0VuZDNKcmtTWHpCSXJveS9V?=
+ =?utf-8?B?ajljNVJNbEJMN09LV2l0OVRTSFlOcVJvUGxLbnorcmRpTXAwc25JT0JSeGNW?=
+ =?utf-8?B?NlhLZzFuUXNhSHVrUDRVYXdFL2M2RjlTOHFUbUdXZDgxaERpbGp0NU4rYnQy?=
+ =?utf-8?B?YUdBUElMVmJxcGFGSUFiTXp3SGZUaFQ0UWJvRHVMWXUwTi9NYXprQ1V0NW5x?=
+ =?utf-8?B?VFViU1Zza1BpOGhlRHB6MFc0Z3NlVEo2dHgreTBVM0tXS0krL3FmTi9Oa1JQ?=
+ =?utf-8?B?WG82QmN4QmNNZDcxcER0L2JnRUp0VmZNK2JrRjNFSFdhY1dxdlpZZzZoTGo0?=
+ =?utf-8?B?VjdCcFYwWUNYeUduU3dabzNUQ2JUL3g2b1E3UHUvdjIwbTN6NmtoMHpwMGkr?=
+ =?utf-8?B?RFQ1UXd2Slo3a0N2NXJHMXFMemNoS1lwbzNnWW1xUDVGNHlCc0tMQVVLOWkz?=
+ =?utf-8?B?bUU5N3RBWWZXbnZUaXowWUdkcU1oWTJSakg1K2xzMkVCaEJSMy9NeFQ4UXBw?=
+ =?utf-8?B?Wm9TOEd0aEM1ZWFITkNueHZFcjIzYVVsRjJMa0dESFlrNU1nVGJZMzZCaXlx?=
+ =?utf-8?B?c2VycCtncFdnbkNkYTIzMHJzcDJqdWUwSjAzM2ZvT3RzWHc4WkVyWWg4cEh5?=
+ =?utf-8?B?bEZqVm82bG1SWTIwSytXaHZQYXFrNHJNZnhGV1ByaU9pS1VJbkhtSEI1cjBw?=
+ =?utf-8?B?YXNrb3ZnQkowMnJ4eTNuVU04RE40dmhhZkpiYS83MHQ3cXZkOFU3VVZweWtt?=
+ =?utf-8?B?Rk1sbkd2SUYrdE9qWGlTYlNwZGFYR0xVekdwQUFBajVOYWJsQUd6cGMra05S?=
+ =?utf-8?B?RHoydUxMcDZKT1NjUjFkYllqRlc0REptMFRLbm1HSnlsRzEzWW1pdFVDQzdY?=
+ =?utf-8?B?UDUyNkVsZXhFdVdBRGZ3Q0pyQXc5SDNqVWNZT014RlNsNlAzUkxBcVgwV1lO?=
+ =?utf-8?B?MGZhVk5Wb2FwTEVQWFVWYzdjbW9IVm5HZzZnSlgycXN4dHBERkFMWnlPcjJ3?=
+ =?utf-8?B?ajYzUXYvbGtZT3k4QTF4UlZrNFpaVlJhWmhGMGh0bzUrSEpsWTFISkZyTW9O?=
+ =?utf-8?B?djZVU3RETHg0cnF6bXI2U1hOZStWczhNT0RvUjFXcHRmcmozUk9hUTgyTTlN?=
+ =?utf-8?Q?HMU/TsTNvjOFL6E687AdNviMJGc8+8Jc?=
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE; SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);
+ CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013)(13003099007);
  DIR:OUT; SFP:1101; 
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 12:52:24.0571 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a83d8a34-3cdb-45bb-f730-08dd5be49376
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 12:52:24.5884 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4886bceb-5a2d-470d-a4d5-08dd5be493c5
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF0000019C.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR07MB7823
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR07MB9917
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -126,306 +134,1976 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce changes required for atomic tests to run atomic tests.
-
-- Producer port maintenance
-- Common spinlock implementation
+Add an atomic queue test to the test-eventdev app, which is based on the
+order queue test that exclusively uses atomic queues.
 
 Signed-off-by: Luka Jankovic <luka.jankovic@ericsson.com>
 Tested-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- app/test-eventdev/evt_common.h         |   9 ++
- app/test-eventdev/meson.build          |   1 +
- app/test-eventdev/test_atomic_common.c | 136 +++++++++++++++++++++++++
- app/test-eventdev/test_atomic_common.h |  87 ++++++++++++++++
- doc/guides/rel_notes/release_25_03.rst |   5 +
- 5 files changed, 238 insertions(+)
- create mode 100644 app/test-eventdev/test_atomic_common.c
- create mode 100644 app/test-eventdev/test_atomic_common.h
+ app/test-eventdev/meson.build                 |    1 +
+ app/test-eventdev/test_atomic_queue.c         |  234 +++
+ .../tools/img/eventdev_atomic_atq_test.svg    | 1588 +++++++++++++++++
+ doc/guides/tools/testeventdev.rst             |   92 +
+ 4 files changed, 1915 insertions(+)
+ create mode 100644 app/test-eventdev/test_atomic_queue.c
+ create mode 100644 doc/guides/tools/img/eventdev_atomic_atq_test.svg
 
-diff --git a/app/test-eventdev/evt_common.h b/app/test-eventdev/evt_common.h
-index 63b782f11a..74f9d187f3 100644
---- a/app/test-eventdev/evt_common.h
-+++ b/app/test-eventdev/evt_common.h
-@@ -138,6 +138,15 @@ evt_has_flow_id(uint8_t dev_id)
- 			true : false;
- }
-
-+static inline bool
-+evt_is_maintenance_free(uint8_t dev_id)
-+{
-+	struct rte_event_dev_info dev_info;
-+
-+	rte_event_dev_info_get(dev_id, &dev_info);
-+	return dev_info.event_dev_cap & RTE_EVENT_DEV_CAP_MAINTENANCE_FREE;
-+}
-+
- static inline int
- evt_service_setup(uint32_t service_id)
- {
 diff --git a/app/test-eventdev/meson.build b/app/test-eventdev/meson.build
-index f0da9fadf2..926593b1a6 100644
+index 926593b1a6..1f13e1700c 100644
 --- a/app/test-eventdev/meson.build
 +++ b/app/test-eventdev/meson.build
-@@ -15,6 +15,7 @@ sources = files(
-         'test_order_atq.c',
+@@ -16,6 +16,7 @@ sources = files(
          'test_order_common.c',
          'test_order_queue.c',
-+        'test_atomic_common.c',
+         'test_atomic_common.c',
++        'test_atomic_queue.c',
          'test_perf_atq.c',
          'test_perf_common.c',
          'test_perf_queue.c',
-diff --git a/app/test-eventdev/test_atomic_common.c b/app/test-eventdev/test_atomic_common.c
+diff --git a/app/test-eventdev/test_atomic_queue.c b/app/test-eventdev/test_atomic_queue.c
 new file mode 100644
-index 0000000000..618b92750c
+index 0000000000..c1a447bbac
 --- /dev/null
-+++ b/app/test-eventdev/test_atomic_common.c
-@@ -0,0 +1,136 @@
++++ b/app/test-eventdev/test_atomic_queue.c
+@@ -0,0 +1,234 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Ericsson AB
 + */
++
++#include <stdio.h>
++#include <unistd.h>
 +
 +#include "test_atomic_common.h"
 +
-+static inline bool
-+test_done(struct test_order *const t)
++#define NB_QUEUES 2
++#define NB_STAGES 2
++
++static rte_spinlock_t *atomic_locks;
++
++static inline void
++atomic_queue_process_stage_0(struct test_order *const t,
++		struct rte_event *const ev,
++		uint32_t nb_flows,
++		uint32_t port)
 +{
-+	return t->err || t->result == EVT_TEST_SUCCESS;
++	const uint32_t flow = *order_mbuf_flow_id(t, ev->mbuf);
++
++	atomic_lock_verify(atomic_locks, 0, flow, nb_flows, t, port);
++
++	ev->queue_id = 1;
++	ev->op = RTE_EVENT_OP_FORWARD;
++	ev->sched_type = RTE_SCHED_TYPE_ATOMIC;
++	ev->event_type = RTE_EVENT_TYPE_CPU;
++
++	atomic_spinlock_unlock(atomic_locks, 0, flow, nb_flows);
 +}
 +
-+static inline int
-+atomic_producer(void *arg)
++static inline void
++atomic_queue_process_stage_1(struct test_order *const t,
++		struct rte_event *const ev,
++		uint32_t nb_flows,
++		rte_spinlock_t *atomic_locks,
++		uint32_t *const expected_flow_seq,
++		RTE_ATOMIC(uint64_t) * const outstand_pkts,
++		uint32_t port)
 +{
-+	struct prod_data *p = arg;
-+	struct test_order *t = p->t;
-+	struct evt_options *opt = t->opt;
-+	const uint8_t dev_id = p->dev_id;
-+	const uint8_t port = p->port_id;
-+	struct rte_mempool *pool = t->pool;
-+	const uint64_t nb_pkts = t->nb_pkts;
-+	uint32_t *producer_flow_seq = t->producer_flow_seq;
-+	const uint32_t nb_flows = t->nb_flows;
-+	uint64_t count = 0;
-+	struct rte_mbuf *m;
-+	struct rte_event ev;
++	const uint32_t flow = *order_mbuf_flow_id(t, ev->mbuf);
++	const uint32_t seq = *order_mbuf_seqn(t, ev->mbuf);
 +
-+	if (opt->verbose_level > 1)
-+		printf("%s(): lcore %d dev_id %d port=%d queue=%d\n",
-+			__func__, rte_lcore_id(), dev_id, port, p->queue_id);
++	atomic_lock_verify(atomic_locks, 1, flow, nb_flows, t, port);
 +
-+	ev = (struct rte_event) {
-+		.op = RTE_EVENT_OP_NEW,
-+		.queue_id = p->queue_id,
-+		.sched_type = RTE_SCHED_TYPE_ATOMIC,
-+		.priority = RTE_EVENT_DEV_PRIORITY_NORMAL,
-+		.event_type = RTE_EVENT_TYPE_CPU,
-+		.sub_event_type = 0
-+	};
-+
-+	while (count < nb_pkts && t->err == false) {
-+		m = rte_pktmbuf_alloc(pool);
-+		if (m == NULL)
-+			continue;
-+
-+		/* Maintain seq number per flow */
-+
-+		const flow_id_t flow = rte_rand_max(nb_flows);
-+
-+		*order_mbuf_flow_id(t, m) = flow;
-+		*order_mbuf_seqn(t, m) = producer_flow_seq[flow]++;
-+
-+		ev.flow_id = flow;
-+		ev.mbuf = m;
-+
-+		while (rte_event_enqueue_burst(dev_id, port, &ev, 1) != 1) {
-+			if (t->err)
-+				break;
-+			rte_pause();
-+		}
-+
-+		count++;
++	/* compare the seqn against expected value */
++	if (seq != expected_flow_seq[flow]) {
++		evt_err("flow=%x seqn mismatch got=%x expected=%x", flow, seq,
++				expected_flow_seq[flow]);
++		t->err = true;
 +	}
 +
-+	if (!evt_is_maintenance_free(dev_id)) {
-+		while (!test_done(t)) {
-+			rte_event_maintain(dev_id, port, RTE_EVENT_DEV_MAINT_OP_FLUSH);
++	expected_flow_seq[flow]++;
++	rte_pktmbuf_free(ev->mbuf);
++
++	rte_atomic_fetch_sub_explicit(outstand_pkts, 1, rte_memory_order_relaxed);
++
++	ev->op = RTE_EVENT_OP_RELEASE;
++
++	atomic_spinlock_unlock(atomic_locks, 1, flow, nb_flows);
++}
++
++static int
++atomic_queue_worker_burst(void *arg, bool flow_id_cap, uint32_t max_burst)
++{
++	ORDER_WORKER_INIT;
++	struct rte_event ev[BURST_SIZE];
++	uint16_t i;
++
++	while (t->err == false) {
++
++		uint16_t const nb_rx = rte_event_dequeue_burst(dev_id, port, ev, max_burst, 0);
++
++		if (nb_rx == 0) {
++			if (rte_atomic_load_explicit(outstand_pkts, rte_memory_order_relaxed) <= 0)
++				break;
 +			rte_pause();
++			continue;
 +		}
++
++		for (i = 0; i < nb_rx; i++) {
++			if (!flow_id_cap)
++				order_flow_id_copy_from_mbuf(t, &ev[i]);
++
++			switch (ev[i].queue_id) {
++			case 0:
++				atomic_queue_process_stage_0(t, &ev[i], nb_flows, port);
++				break;
++			case 1:
++				atomic_queue_process_stage_1(t, &ev[i], nb_flows, atomic_locks,
++						expected_flow_seq, outstand_pkts, port);
++				break;
++			default:
++				order_process_stage_invalid(t, &ev[i]);
++				break;
++			}
++		}
++
++		uint16_t total_enq = 0;
++
++		do {
++			total_enq += rte_event_enqueue_burst(
++					dev_id, port, ev + total_enq, nb_rx - total_enq);
++		} while (total_enq < nb_rx);
 +	}
 +
 +	return 0;
 +}
 +
-+int
-+atomic_launch_lcores(struct evt_test *test, struct evt_options *opt,
-+		int (*worker)(void *))
++static int
++worker_wrapper(void *arg)
 +{
-+	int ret, lcore_id;
-+	struct test_order *t = evt_test_priv(test);
++	struct worker_data *w = arg;
++	int max_burst = evt_has_burst_mode(w->dev_id) ? BURST_SIZE : 1;
++	const bool flow_id_cap = evt_has_flow_id(w->dev_id);
 +
-+	/* launch workers */
++	return atomic_queue_worker_burst(arg, flow_id_cap, max_burst);
++}
 +
-+	int wkr_idx = 0;
-+	RTE_LCORE_FOREACH_WORKER(lcore_id) {
-+		if (!(opt->wlcores[lcore_id]))
-+			continue;
++static int
++atomic_queue_launch_lcores(struct evt_test *test, struct evt_options *opt)
++{
++	int ret = atomic_launch_lcores(test, opt, worker_wrapper);
++	rte_free(atomic_locks);
++	return ret;
++}
 +
-+		ret = rte_eal_remote_launch(worker, &t->worker[wkr_idx], lcore_id);
-+		if (ret) {
-+			evt_err("failed to launch worker %d", lcore_id);
-+			return ret;
-+		}
-+		wkr_idx++;
-+	}
++static int
++atomic_queue_eventdev_setup(struct evt_test *test, struct evt_options *opt)
++{
++	int ret;
 +
-+	/* launch producer */
-+	int plcore = evt_get_first_active_lcore(opt->plcores);
++	const uint8_t nb_workers = evt_nr_active_lcores(opt->wlcores);
++	/* number of active worker cores + 1 producer */
++	const uint8_t nb_ports = nb_workers + 1;
 +
-+	ret = rte_eal_remote_launch(atomic_producer, &t->prod, plcore);
++	ret = evt_configure_eventdev(opt, NB_QUEUES, nb_ports);
 +	if (ret) {
-+		evt_err("failed to launch order_producer %d", plcore);
++		evt_err("failed to configure eventdev %d", opt->dev_id);
 +		return ret;
 +	}
 +
-+	uint64_t prev_time = rte_get_timer_cycles();
-+	int64_t prev_outstanding_pkts = -1;
++	/* q0 configuration */
++	struct rte_event_queue_conf q0_atomic_conf = {
++			.priority = RTE_EVENT_DEV_PRIORITY_NORMAL,
++			.schedule_type = RTE_SCHED_TYPE_ATOMIC,
++			.nb_atomic_flows = opt->nb_flows,
++			.nb_atomic_order_sequences = opt->nb_flows,
++	};
++	ret = rte_event_queue_setup(opt->dev_id, 0, &q0_atomic_conf);
++	if (ret) {
++		evt_err("failed to setup queue0 eventdev %d err %d", opt->dev_id, ret);
++		return ret;
++	}
 +
-+	while (t->err == false) {
-+		uint64_t current_time = rte_get_timer_cycles();
-+		int64_t outstanding_pkts = rte_atomic_load_explicit(
-+				&t->outstand_pkts, rte_memory_order_relaxed);
++	/* q1 configuration */
++	struct rte_event_queue_conf q1_atomic_conf = {
++			.priority = RTE_EVENT_DEV_PRIORITY_NORMAL,
++			.schedule_type = RTE_SCHED_TYPE_ATOMIC,
++			.nb_atomic_flows = opt->nb_flows,
++			.nb_atomic_order_sequences = opt->nb_flows,
++	};
++	ret = rte_event_queue_setup(opt->dev_id, 1, &q1_atomic_conf);
++	if (ret) {
++		evt_err("failed to setup queue0 eventdev %d err %d", opt->dev_id, ret);
++		return ret;
++	}
 +
-+		if (outstanding_pkts <= 0) {
-+			t->result = EVT_TEST_SUCCESS;
-+			break;
-+		}
++	/* setup one port per worker, linking to all queues */
++	ret = order_event_dev_port_setup(test, opt, nb_workers, NB_QUEUES);
++	if (ret)
++		return ret;
 +
-+		if (current_time - prev_time > rte_get_timer_hz() * IDLE_TIMEOUT) {
-+			printf(CLGRN "\r%" PRId64 "" CLNRM, outstanding_pkts);
-+			fflush(stdout);
-+			if (prev_outstanding_pkts == outstanding_pkts) {
-+				rte_event_dev_dump(opt->dev_id, stdout);
-+				evt_err("No events processed during one period, deadlock");
-+				t->err = true;
-+				break;
-+			}
-+			prev_outstanding_pkts = outstanding_pkts;
-+			prev_time = current_time;
++	if (!evt_has_distributed_sched(opt->dev_id)) {
++		uint32_t service_id;
++		rte_event_dev_service_id_get(opt->dev_id, &service_id);
++		ret = evt_service_setup(service_id);
++		if (ret) {
++			evt_err("No service lcore found to run event dev.");
++			return ret;
 +		}
 +	}
-+	printf("\r");
++
++	ret = rte_event_dev_start(opt->dev_id);
++	if (ret) {
++		evt_err("failed to start eventdev %d", opt->dev_id);
++		return ret;
++	}
++
++	atomic_locks = atomic_init_locks(NB_STAGES, opt->nb_flows);
 +
 +	return 0;
 +}
-diff --git a/app/test-eventdev/test_atomic_common.h b/app/test-eventdev/test_atomic_common.h
-new file mode 100644
-index 0000000000..a3cec4791d
---- /dev/null
-+++ b/app/test-eventdev/test_atomic_common.h
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Ericsson AB
-+ */
 +
-+#ifndef _TEST_ATOMIC_COMMON_H
-+#define _TEST_ATOMIC_COMMON_H
-+
-+#include <stdio.h>
-+#include <stdbool.h>
-+
-+#include <rte_eventdev.h>
-+
-+#include "evt_common.h"
-+#include "evt_options.h"
-+#include "evt_test.h"
-+
-+#include "test_order_common.h"
-+
-+#define IDLE_TIMEOUT 1
-+
-+static inline uint32_t
-+get_lock_idx(int stage, flow_id_t flow, uint32_t nb_flows)
++static void
++atomic_queue_opt_dump(struct evt_options *opt)
 +{
-+	return (stage * nb_flows) + flow;
++	order_opt_dump(opt);
++	evt_dump("nb_evdev_queues", "%d", NB_QUEUES);
 +}
 +
-+static inline bool
-+atomic_spinlock_trylock(rte_spinlock_t atomic_locks[],
-+		uint32_t stage,
-+		uint32_t flow,
-+		uint32_t nb_flows)
++static bool
++atomic_queue_capability_check(struct evt_options *opt)
 +{
-+	return rte_spinlock_trylock(&atomic_locks[get_lock_idx(stage, flow, nb_flows)]);
-+}
++	struct rte_event_dev_info dev_info;
 +
-+static inline void
-+atomic_spinlock_unlock(rte_spinlock_t atomic_locks[],
-+		uint32_t stage,
-+		uint32_t flow,
-+		uint32_t nb_flows)
-+{
-+	rte_spinlock_unlock(&atomic_locks[get_lock_idx(stage, flow, nb_flows)]);
-+}
-+
-+static inline void
-+atomic_lock_verify(rte_spinlock_t atomic_locks[],
-+		uint32_t stage,
-+		uint32_t flow,
-+		uint32_t nb_flows,
-+		struct test_order *const t,
-+		uint32_t port)
-+{
-+	if (!atomic_spinlock_trylock(atomic_locks, stage, flow, nb_flows)) {
-+
-+		evt_err("q=%u, flow=%x atomicity error: port %u tried to take held spinlock %p",
-+				stage, flow, port,
-+				&atomic_locks[get_lock_idx(stage, flow, nb_flows)]);
-+		t->err = true;
++	rte_event_dev_info_get(opt->dev_id, &dev_info);
++	if (dev_info.max_event_queues < NB_QUEUES ||
++			dev_info.max_event_ports < order_nb_event_ports(opt)) {
++		evt_err("not enough eventdev queues=%d/%d or ports=%d/%d", NB_QUEUES,
++				dev_info.max_event_queues, order_nb_event_ports(opt),
++				dev_info.max_event_ports);
++		return false;
 +	}
++
++	return true;
 +}
 +
-+static inline rte_spinlock_t *
-+atomic_init_locks(uint32_t nb_stages, uint32_t nb_flows)
-+{
-+	const uint32_t num_locks = nb_stages * nb_flows;
++static const struct evt_test_ops atomic_queue = {
++	.cap_check        = atomic_queue_capability_check,
++	.opt_check        = order_opt_check,
++	.opt_dump         = atomic_queue_opt_dump,
++	.test_setup       = order_test_setup,
++	.mempool_setup    = order_mempool_setup,
++	.eventdev_setup   = atomic_queue_eventdev_setup,
++	.launch_lcores    = atomic_queue_launch_lcores,
++	.eventdev_destroy = order_eventdev_destroy,
++	.mempool_destroy  = order_mempool_destroy,
++	.test_result      = order_test_result,
++	.test_destroy     = order_test_destroy,
++};
 +
-+	rte_spinlock_t *atomic_locks = rte_calloc(NULL, num_locks, sizeof(rte_spinlock_t), 0);
++EVT_TEST_REGISTER(atomic_queue);
+diff --git a/doc/guides/tools/img/eventdev_atomic_atq_test.svg b/doc/guides/tools/img/eventdev_atomic_atq_test.svg
+new file mode 100644
+index 0000000000..f7956ecd6a
+--- /dev/null
++++ b/doc/guides/tools/img/eventdev_atomic_atq_test.svg
+@@ -0,0 +1,1588 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!-- Created with Inkscape (http://www.inkscape.org/) -->
 +
-+	if (atomic_locks == NULL)
-+		evt_err("Unable to allocate memory for spinlocks.");
++<!--
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 Ericsson, Inc
++#
++-->
 +
-+	for (uint32_t i = 0; i < num_locks; i++)
-+		rte_spinlock_init(&atomic_locks[i]);
++<svg
++   width="631.91431"
++   height="288.34286"
++   id="svg3868"
++   version="1.1"
++   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
++   sodipodi:docname="eventdev_atomic_atq_test.svg"
++   sodipodi:version="0.32"
++   inkscape:output_extension="org.inkscape.output.svg.inkscape"
++   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
++   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
++   xmlns:xlink="http://www.w3.org/1999/xlink"
++   xmlns="http://www.w3.org/2000/svg"
++   xmlns:svg="http://www.w3.org/2000/svg"
++   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
++   xmlns:cc="http://creativecommons.org/ns#"
++   xmlns:dc="http://purl.org/dc/elements/1.1/">
++  <defs
++     id="defs3870">
++    <linearGradient
++       id="linearGradient6545"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#ffa600;stop-opacity:1;"
++         offset="0"
++         id="stop6543" />
++    </linearGradient>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3302"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3294"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3290"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3286"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3228"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3188"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3184"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3180"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3176"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3172"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3168"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3164"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3160"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3120"
++       is_visible="true" />
++    <linearGradient
++       id="linearGradient3114"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#00f900;stop-opacity:1;"
++         offset="0"
++         id="stop3112" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3088"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#00f900;stop-opacity:1;"
++         offset="0"
++         id="stop3086" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3058"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#00f900;stop-opacity:1;"
++         offset="0"
++         id="stop3056" />
++    </linearGradient>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3054"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3050"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3046"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3042"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3038"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3034"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3030"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3008"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3004"
++       is_visible="true" />
++    <linearGradient
++       id="linearGradient2975"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#ff2200;stop-opacity:1;"
++         offset="0"
++         id="stop2973" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient2969"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#69ff72;stop-opacity:1;"
++         offset="0"
++         id="stop2967" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient2963"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#000000;stop-opacity:1;"
++         offset="0"
++         id="stop2961" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient2929"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#ff2d00;stop-opacity:1;"
++         offset="0"
++         id="stop2927" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient4610"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#00ffff;stop-opacity:1;"
++         offset="0"
++         id="stop4608" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3993"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#6ba6fd;stop-opacity:1;"
++         offset="0"
++         id="stop3991" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3808"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#6ba6fd;stop-opacity:1;"
++         offset="0"
++         id="stop3806" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3776"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#fc0000;stop-opacity:1;"
++         offset="0"
++         id="stop3774" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient3438"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#b8e132;stop-opacity:1;"
++         offset="0"
++         id="stop3436" />
++    </linearGradient>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3408"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3404"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3400"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3392"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3376"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3044"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3040"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3036"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3032"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3028"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3024"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3020"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect2858"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect2854"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect2844"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <linearGradient
++       id="linearGradient2828"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#ff0000;stop-opacity:1;"
++         offset="0"
++         id="stop2826" />
++    </linearGradient>
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect329"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <marker
++       inkscape:stockid="Arrow1Mstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mstart"
++       style="overflow:visible">
++      <path
++         id="path4530"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(0.4,0,0,0.4,4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend"
++       style="overflow:visible">
++      <path
++         id="path4533"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <linearGradient
++       id="linearGradient4513">
++      <stop
++         style="stop-color:#fdffdb;stop-opacity:1;"
++         offset="0"
++         id="stop4515" />
++      <stop
++         style="stop-color:#dfe2d8;stop-opacity:0;"
++         offset="1"
++         id="stop4517" />
++    </linearGradient>
++    <inkscape:perspective
++       sodipodi:type="inkscape:persp3d"
++       inkscape:vp_x="0 : 526.18109 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_z="744.09448 : 526.18109 : 1"
++       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
++       id="perspective3876" />
++    <inkscape:perspective
++       id="perspective3886"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <marker
++       inkscape:stockid="Arrow1Lend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Lend"
++       style="overflow:visible">
++      <path
++         id="path3211"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.8,0,0,-0.8,-10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3892"
++       style="overflow:visible">
++      <path
++         id="path3894"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.8,0,0,-0.8,-10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3896"
++       style="overflow:visible">
++      <path
++         id="path3898"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.8,0,0,-0.8,-10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Lstart"
++       style="overflow:visible">
++      <path
++         id="path3208"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(0.8,0,0,0.8,10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3902"
++       style="overflow:visible">
++      <path
++         id="path3904"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.8,0,0,-0.8,-10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3906"
++       style="overflow:visible">
++      <path
++         id="path3908"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(0.8,0,0,0.8,10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Lend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3910"
++       style="overflow:visible">
++      <path
++         id="path3912"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.8,0,0,-0.8,-10,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:perspective
++       id="perspective4086"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <inkscape:perspective
++       id="perspective4113"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient4513"
++       id="linearGradient4519"
++       x1="47.142857"
++       y1="244.50504"
++       x2="677.85718"
++       y2="244.50504"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="matrix(0.99477436,0,0,0.98597786,2.8382132,3.7730937)" />
++    <inkscape:perspective
++       id="perspective5195"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-4"
++       style="overflow:visible">
++      <path
++         id="path4533-7"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:perspective
++       id="perspective5272"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <marker
++       inkscape:stockid="Arrow1Mstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mstart-4"
++       style="overflow:visible">
++      <path
++         id="path4530-5"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(0.4,0,0,0.4,4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-0"
++       style="overflow:visible">
++      <path
++         id="path4533-3"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:perspective
++       id="perspective5317"
++       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
++       inkscape:vp_z="1 : 0.5 : 1"
++       inkscape:vp_y="0 : 1000 : 0"
++       inkscape:vp_x="0 : 0.5 : 1"
++       sodipodi:type="inkscape:persp3d" />
++    <marker
++       inkscape:stockid="Arrow1Mstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mstart-3"
++       style="overflow:visible">
++      <path
++         id="path4530-2"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(0.4,0,0,0.4,4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-06"
++       style="overflow:visible">
++      <path
++         id="path4533-1"
++         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Mstart"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mstart-8"
++       style="overflow:visible">
++      <path
++         id="path4530-7"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(0.4,0,0,0.4,4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-9"
++       style="overflow:visible">
++      <path
++         id="path4533-2"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect2858-0"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-3"
++       style="overflow:visible">
++      <path
++         id="path4533-75"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3044-9"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-3-2"
++       style="overflow:visible">
++      <path
++         id="path4533-75-8"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect3044-9-9"
++       is_visible="true"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3808"
++       id="linearGradient3810"
++       x1="61.233804"
++       y1="153.47966"
++       x2="308.87187"
++       y2="153.47966"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="matrix(0.97704237,0,0,1.0002563,1.4114958,-0.03933915)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient3995"
++       x1="155.21328"
++       y1="231.61366"
++       x2="207.95523"
++       y2="231.61366"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3438"
++       id="linearGradient4612"
++       x1="594.77722"
++       y1="232.19244"
++       x2="647.51917"
++       y2="232.19244"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3438"
++       id="linearGradient4614"
++       x1="530.03839"
++       y1="232.3177"
++       x2="582.78033"
++       y2="232.3177"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3438"
++       id="linearGradient4616"
++       x1="468.32343"
++       y1="232.3177"
++       x2="521.06543"
++       y2="232.3177"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3438"
++       id="linearGradient4618"
++       x1="405.4682"
++       y1="232.36095"
++       x2="458.21014"
++       y2="232.36095"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient2963"
++       id="linearGradient2965"
++       x1="49.239535"
++       y1="244.84964"
++       x2="677.6483"
++       y2="244.84964"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3438"
++       id="linearGradient2971"
++       x1="372.12488"
++       y1="333.32864"
++       x2="476.58179"
++       y2="333.32864"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="translate(95.459415,-18.384776)" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3008-3"
++       is_visible="true" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3114"
++       id="linearGradient3104"
++       x1="570.76388"
++       y1="265.59842"
++       x2="613.45706"
++       y2="265.59842"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="translate(-4)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3114"
++       id="linearGradient3106"
++       x1="540.94574"
++       y1="265.3059"
++       x2="548.29097"
++       y2="265.3059"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="translate(-2)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3114"
++       id="linearGradient3108"
++       x1="429.95148"
++       y1="274.65289"
++       x2="467.35629"
++       y2="274.65289"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3114"
++       id="linearGradient3116"
++       gradientUnits="userSpaceOnUse"
++       x1="481.13927"
++       y1="264.7722"
++       x2="491.08518"
++       y2="264.7722"
++       gradientTransform="translate(0,2)" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3120-7"
++       is_visible="true" />
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3120-7-3"
++       is_visible="true" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6547"
++       x1="568.54004"
++       y1="280.793"
++       x2="630.64801"
++       y2="280.793"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6549"
++       x1="499.98608"
++       y1="268.21176"
++       x2="522.65869"
++       y2="268.21176"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6551"
++       x1="449.72733"
++       y1="267.29733"
++       x2="480.36688"
++       y2="267.29733"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6553"
++       x1="554.2403"
++       y1="266.57718"
++       x2="565.97662"
++       y2="266.57718"
++       gradientUnits="userSpaceOnUse" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-4-3"
++       style="overflow:visible">
++      <path
++         id="path4533-7-6"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect12084"
++       is_visible="true"
++       lpeversion="1"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++  </defs>
++  <sodipodi:namedview
++     id="base"
++     pagecolor="#ffffff"
++     bordercolor="#666666"
++     borderopacity="1.0"
++     inkscape:pageopacity="0.0"
++     inkscape:pageshadow="2"
++     inkscape:zoom="1.4142136"
++     inkscape:cx="217.08178"
++     inkscape:cy="136.11805"
++     inkscape:document-units="px"
++     inkscape:current-layer="layer1"
++     showgrid="false"
++     inkscape:window-width="1883"
++     inkscape:window-height="1000"
++     inkscape:window-x="2614"
++     inkscape:window-y="195"
++     inkscape:window-maximized="0"
++     fit-margin-top="0.1"
++     fit-margin-left="0.1"
++     fit-margin-right="0.1"
++     fit-margin-bottom="0.1"
++     inkscape:measure-start="-29.078,219.858"
++     inkscape:measure-end="346.809,219.858"
++     showguides="false"
++     inkscape:pagecheckerboard="0" />
++  <metadata
++     id="metadata3873">
++    <rdf:RDF>
++      <cc:Work
++         rdf:about="">
++        <dc:format>image/svg+xml</dc:format>
++        <dc:type
++           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
++        <dc:title />
++      </cc:Work>
++    </rdf:RDF>
++  </metadata>
++  <g
++     inkscape:label="Layer 1"
++     inkscape:groupmode="layer"
++     id="layer1"
++     transform="translate(-46.542857,-100.33361)">
++    <rect
++       style="fill:url(#linearGradient4519);fill-opacity:1;stroke:url(#linearGradient2965);stroke-width:0.99036628;stroke-opacity:1"
++       id="rect3697"
++       width="627.4184"
++       height="283.11649"
++       x="49.734718"
++       y="103.2914"
++       rx="0"
++       ry="0" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="424.47687"
++       y="382.4664"
++       id="text2912"
++       inkscape:export-filename="/home/matz/barracuda/rapports/mbuf-api-v2-images/octeon_multi.png"
++       inkscape:export-xdpi="112"
++       inkscape:export-ydpi="112"><tspan
++         sodipodi:role="line"
++         x="424.47687"
++         y="382.4664"
++         id="tspan2916"
++         style="font-weight:bold;font-size:13.3333px;line-height:1.25">test: atomic_atq(all types queue)</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="99.327995"
++       y="317.25745"
++       id="text2978"
++       inkscape:export-filename="/home/matz/barracuda/rapports/mbuf-api-v2-images/octeon_multi.png"
++       inkscape:export-xdpi="112"
++       inkscape:export-ydpi="112"><tspan
++         sodipodi:role="line"
++         x="99.327995"
++         y="317.25745"
++         id="tspan3006"
++         style="font-size:15.2252px;line-height:1.25"> </tspan></text>
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient4614);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect87"
++       width="51.714954"
++       height="32.587509"
++       x="530.55188"
++       y="216.02396"
++       rx="11.6051"
++       ry="16.293755" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient4612);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect87-3"
++       width="51.714954"
++       height="32.587509"
++       x="595.29071"
++       y="215.89868"
++       rx="11.6051"
++       ry="16.293755" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient4616);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect87-6"
++       width="51.714954"
++       height="32.587509"
++       x="468.83694"
++       y="216.02396"
++       rx="11.6051"
++       ry="16.293755" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient2971);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect128-7"
++       width="103.42992"
++       height="57.382355"
++       x="468.09781"
++       y="286.25269"
++       rx="8.5874901"
++       ry="10.712767" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient4618);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect87-6-5"
++       width="51.714954"
++       height="32.587509"
++       x="405.98169"
++       y="216.06718"
++       rx="11.6051"
++       ry="16.293755" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient3995);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect87-6-5-3"
++       width="51.714954"
++       height="32.587509"
++       x="155.72678"
++       y="215.3199"
++       rx="11.6051"
++       ry="16.293755" />
++    <path
++       style="fill:none;stroke:#009587;stroke-width:0.93883556;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 183.25449,249.08205 c 3.74662,22.85489 17.60919,43.86172 37.14916,56.29446 18.31316,11.65216 40.37703,15.62026 61.91526,18.31267 12.34123,1.54273 24.72858,2.74691 37.14916,3.39123 13.45494,0.69797 26.93497,0.73841 40.40786,0.67825 36.04931,-0.16098 72.09541,-1.04105 108.10962,-2.63952"
++       id="path2852"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect2854"
++       inkscape:original-d="m 183.25449,249.08205 c 12.38397,18.76387 24.76701,37.52867 37.14916,56.29446 12.38211,18.76578 41.27777,12.20748 61.91526,18.31267 20.6375,6.10516 24.76702,2.25985 37.14916,3.39123 12.38215,1.13134 26.9395,0.4512 40.40786,0.67825 13.46837,0.22702 106.15533,-2.64046 108.10962,-2.63952"
++       sodipodi:nodetypes="csscsc" />
++    <g
++       id="g4374">
++      <text
++         id="text5219-3"
++         y="187.92023"
++         x="132.8121"
++         style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++         xml:space="preserve"><tspan
++           style="font-size:10px;line-height:1.25"
++           id="tspan5223-6"
++           y="187.92023"
++           x="132.8121"
++           sodipodi:role="line">producer_flow_seq</tspan></text>
++      <g
++         id="g4286">
++        <text
++           xml:space="preserve"
++           style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++           x="67.609619"
++           y="125.91534"
++           id="text5219"><tspan
++             sodipodi:role="line"
++             x="67.609619"
++             y="125.91534"
++             id="tspan5223"
++             style="font-size:10px;line-height:1.25">producer maintains per flow sequence number</tspan></text>
++        <rect
++           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient3810);stroke-width:0.97884095;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++           id="rect2896"
++           width="240.98547"
++           height="44.122215"
++           x="61.723225"
++           y="131.41856"
++           ry="8.8282356"
++           rx="9.0800323"
++           inkscape:export-filename="/home/matz/barracuda/rapports/mbuf-api-v2-images/octeon_multi.png"
++           inkscape:export-xdpi="112"
++           inkscape:export-ydpi="112" />
++        <rect
++           style="fill:none;fill-opacity:1;stroke:#6ba6fd;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++           id="rect3736"
++           width="39.065548"
++           height="24.347494"
++           x="70.045547"
++           y="143.98941" />
++        <text
++           xml:space="preserve"
++           style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++           x="76.606445"
++           y="141.62436"
++           id="text5219-1-9"><tspan
++             sodipodi:role="line"
++             x="76.606445"
++             y="141.62436"
++             id="tspan5223-2-3"
++             style="font-size:10px;line-height:1.25">flow 0</tspan></text>
++        <rect
++           style="fill:none;fill-opacity:1;stroke:#6ba6fd;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++           id="rect3736-8"
++           width="39.065548"
++           height="24.347494"
++           x="129.42143"
++           y="144.7206" />
++        <text
++           xml:space="preserve"
++           style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++           x="131.98233"
++           y="142.35555"
++           id="text5219-1-9-4"><tspan
++             sodipodi:role="line"
++             x="131.98233"
++             y="142.35555"
++             id="tspan5223-2-3-5"
++             style="font-size:10px;line-height:1.25">flow 1</tspan></text>
++        <text
++           xml:space="preserve"
++           style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++           x="195.98233"
++           y="142.35555"
++           id="text5219-1-9-4-3"><tspan
++             sodipodi:role="line"
++             x="195.98233"
++             y="142.35555"
++             id="tspan5223-2-3-5-6"
++             style="font-size:10px;line-height:1.25">flow 2</tspan></text>
++        <rect
++           style="fill:none;fill-opacity:1;stroke:#6ba6fd;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++           id="rect3736-8-0-1"
++           width="39.065548"
++           height="24.347494"
++           x="251.42145"
++           y="144.7206" />
++        <text
++           xml:space="preserve"
++           style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++           x="257.98233"
++           y="142.35555"
++           id="text5219-1-9-4-3-0"><tspan
++             sodipodi:role="line"
++             x="257.98233"
++             y="142.35555"
++             id="tspan5223-2-3-5-6-6"
++             style="font-size:10px;line-height:1.25">flow n</tspan></text>
++        <rect
++           style="fill:none;fill-opacity:1;stroke:#6ba6fd;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++           id="rect3736-8-3"
++           width="39.065548"
++           height="24.347494"
++           x="192.15901"
++           y="144.7155" />
++      </g>
++    </g>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="157.0374"
++       y="258.07278"
++       id="text5219-2"><tspan
++         sodipodi:role="line"
++         x="157.0374"
++         y="258.07278"
++         id="tspan5223-0"
++         style="font-size:10px;line-height:1.25">producer0</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="477.25565"
++       y="316.59613"
++       id="text5219-6"><tspan
++         sodipodi:role="line"
++         x="477.25565"
++         y="316.59613"
++         id="tspan5223-1"
++         style="font-size:10px;line-height:1.25">all_types_queue0</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="410.87885"
++       y="213.34842"
++       id="text5219-2-4"><tspan
++         sodipodi:role="line"
++         x="410.87885"
++         y="213.34842"
++         id="tspan5223-0-7"
++         style="font-size:10px;line-height:1.25">worker 0</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="157.44383"
++       y="236.49918"
++       id="text5219-2-6"><tspan
++         sodipodi:role="line"
++         x="157.44383"
++         y="236.49918"
++         id="tspan5223-0-9"
++         style="font-size:10px;line-height:1.25">port n+1</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="472.61508"
++       y="213.66943"
++       id="text5219-2-4-3"><tspan
++         sodipodi:role="line"
++         x="472.61508"
++         y="213.66943"
++         id="tspan5223-0-7-7"
++         style="font-size:10px;line-height:1.25">worker 1</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="534.61511"
++       y="213.66943"
++       id="text5219-2-4-3-4"><tspan
++         sodipodi:role="line"
++         x="534.61511"
++         y="213.66943"
++         id="tspan5223-0-7-7-5"
++         style="font-size:10px;line-height:1.25">worker 2</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="600.61511"
++       y="213.66943"
++       id="text5219-2-4-3-4-2"><tspan
++         sodipodi:role="line"
++         x="600.61511"
++         y="213.66943"
++         id="tspan5223-0-7-7-5-5"
++         style="font-size:10px;line-height:1.25">worker n</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="420.13348"
++       y="234.8974"
++       id="text5219-2-6-4"><tspan
++         sodipodi:role="line"
++         x="420.13348"
++         y="234.8974"
++         id="tspan5223-0-9-7"
++         style="font-size:10px;line-height:1.25">port 0</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="477.25241"
++       y="234.85495"
++       id="text5219-2-6-4-4"><tspan
++         sodipodi:role="line"
++         x="477.25241"
++         y="234.85495"
++         id="tspan5223-0-9-7-4"
++         style="font-size:10px;line-height:1.25">port 1</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="539.25244"
++       y="234.85495"
++       id="text5219-2-6-4-4-3"><tspan
++         sodipodi:role="line"
++         x="539.25244"
++         y="234.85495"
++         id="tspan5223-0-9-7-4-0"
++         style="font-size:10px;line-height:1.25">port 2</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="607.25244"
++       y="234.85495"
++       id="text5219-2-6-4-4-3-7"><tspan
++         sodipodi:role="line"
++         x="607.25244"
++         y="234.85495"
++         id="tspan5223-0-9-7-4-0-8"
++         style="font-size:10px;line-height:1.25">port n</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="478.92789"
++       y="188.00357"
++       id="text5219-3-2"><tspan
++         sodipodi:role="line"
++         x="478.92789"
++         y="188.00357"
++         id="tspan5223-6-7"
++         style="font-size:10px;line-height:1.25">expected_flow_seq</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="433.7254"
++       y="125.99867"
++       id="text5219-26"><tspan
++         sodipodi:role="line"
++         x="433.7254"
++         y="125.99867"
++         id="tspan5223-10"
++         style="font-size:10px;line-height:1.25">per flow expected sequence number</tspan></text>
++    <rect
++       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff2d00;stroke-width:0.97884095;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect2896-6"
++       width="240.98547"
++       height="44.122215"
++       x="407.83902"
++       y="131.50191"
++       ry="8.8282356"
++       rx="9.0800323"
++       inkscape:export-filename="/home/matz/barracuda/rapports/mbuf-api-v2-images/octeon_multi.png"
++       inkscape:export-xdpi="112"
++       inkscape:export-ydpi="112" />
++    <rect
++       style="fill:none;fill-opacity:1;stroke:#ff2d00;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect3736-1"
++       width="39.065548"
++       height="24.347494"
++       x="416.16132"
++       y="144.07275" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="422.72223"
++       y="141.7077"
++       id="text5219-1-9-5"><tspan
++         sodipodi:role="line"
++         x="422.72223"
++         y="141.7077"
++         id="tspan5223-2-3-9"
++         style="font-size:10px;line-height:1.25">flow 0</tspan></text>
++    <rect
++       style="fill:none;fill-opacity:1;stroke:#ff2d00;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect3736-8-4"
++       width="39.065548"
++       height="24.347494"
++       x="475.5372"
++       y="144.80394" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="478.09811"
++       y="142.43889"
++       id="text5219-1-9-4-9"><tspan
++         sodipodi:role="line"
++         x="478.09811"
++         y="142.43889"
++         id="tspan5223-2-3-5-0"
++         style="font-size:10px;line-height:1.25">flow 1</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="542.09808"
++       y="142.43889"
++       id="text5219-1-9-4-3-9"><tspan
++         sodipodi:role="line"
++         x="542.09808"
++         y="142.43889"
++         id="tspan5223-2-3-5-6-1"
++         style="font-size:10px;line-height:1.25">flow 2</tspan></text>
++    <rect
++       style="fill:none;fill-opacity:1;stroke:#ff2d00;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect3736-8-0-1-7"
++       width="39.065548"
++       height="24.347494"
++       x="597.53723"
++       y="144.80394" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="604.09808"
++       y="142.43889"
++       id="text5219-1-9-4-3-0-7"><tspan
++         sodipodi:role="line"
++         x="604.09808"
++         y="142.43889"
++         id="tspan5223-2-3-5-6-6-1"
++         style="font-size:10px;line-height:1.25">flow n</tspan></text>
++    <rect
++       style="fill:none;fill-opacity:1;stroke:#ff2d00;stroke-width:1.06814909;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect3736-8-3-1"
++       width="39.065548"
++       height="24.347494"
++       x="538.27478"
++       y="144.79884" />
++    <path
++       style="fill:none;stroke:#5cdcff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 86.923031,168.93973 c 2.833543,14.16771 5.667239,28.33619 16.884859,38.84515 11.21761,10.50897 30.81628,17.35669 50.41543,24.20459"
++       id="path3022"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3024"
++       inkscape:original-d="m 86.923031,168.93973 c 2.834697,14.16748 5.668393,28.33596 8.50109,42.50544 19.601799,6.84748 39.200469,13.6952 58.799199,20.5443" />
++    <path
++       style="fill:none;stroke:#5cdcff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend);marker-start:url(#Arrow1Mstart)"
++       d="m 146.43066,168.35658 c 2.36123,9.20881 4.72265,18.41832 9.20969,26.09352 4.48705,7.67519 11.09851,13.8144 17.71043,19.95404"
++       id="path3026"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3028"
++       inkscape:original-d="m 146.43066,168.35658 c 2.36241,9.20851 4.72383,18.41802 7.08424,27.62854 6.61346,6.13914 13.22492,12.27835 19.83588,18.41902" />
++    <path
++       style="fill:none;stroke:#5cdcff;stroke-width:0.81213671px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 217.48983,176.52088 c -8.64146,12.7325 -17.28354,25.46592 -25.92626,38.20028"
++       id="path3034"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3036"
++       inkscape:original-d="m 217.48983,176.52088 c -8.64125,12.73264 -17.28334,25.46606 -25.92626,38.20028" />
++    <path
++       style="fill:none;stroke:#5cdcff;stroke-width:0.86425042px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 272.10856,176.69086 c -0.83331,11.39414 -1.66669,22.78917 -12.50095,31.58588 -10.83426,8.79671 -31.66708,14.99352 -52.5026,21.19113"
++       id="path3038"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3040"
++       inkscape:original-d="m 272.10856,176.69086 c -0.83249,11.3942 -1.66587,22.78923 -2.50014,34.18511 -20.83523,6.19695 -41.66805,12.39376 -62.50341,18.5919" />
++    <path
++       style="fill:none;stroke:url(#linearGradient3108);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 467.27138,304.53077 c -4.47171,0.79203 -9.17911,0.19735 -13.31337,-1.68186 -4.13426,-1.8792 -7.67758,-5.03486 -10.02115,-8.92474 -2.70468,-4.48926 -3.7629,-9.74432 -4.94975,-14.84924 -2.2305,-9.59386 -5.06642,-19.04692 -8.48528,-28.28427"
++       id="path3040"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3042"
++       inkscape:original-d="m 467.27138,304.53077 c -7.54147,-3.30083 -15.55535,-7.07207 -23.33452,-10.6066 -7.77917,-3.53453 -3.29883,-9.9005 -4.94975,-14.84924 -1.65091,-4.94875 -5.65585,-17.20727 -8.48528,-28.28427"
++       sodipodi:nodetypes="cscc" />
++    <path
++       style="fill:none;stroke:url(#linearGradient3116);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 490.60591,286.02467 c -1.19028,-4.00346 -2.3688,-8.01042 -3.53554,-12.02081 -1.28128,-4.40407 -2.55618,-8.85645 -2.82842,-13.43503 -0.22685,-3.81532 0.25518,-7.67163 1.41421,-11.31371"
++       id="path3044"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3046"
++       inkscape:original-d="m 490.60591,286.02467 c -1.17751,-3.53653 -2.35603,-8.01487 -3.53554,-12.02081 -1.17951,-4.00594 -1.88462,-8.95769 -2.82842,-13.43503 -0.94381,-4.47734 0.9438,-7.54347 1.41421,-11.31371" />
++    <path
++       style="fill:none;stroke:url(#linearGradient3106);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 543.76023,283.31757 c -3.17461,-5.53504 -4.67076,-12.01835 -4.24264,-18.38478 0.38974,-5.79571 2.3658,-11.4769 5.65686,-16.26345"
++       id="path3048"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3050"
++       inkscape:original-d="m 543.76023,283.31757 c -1.17751,-5.89356 -2.82742,-12.25752 -4.24264,-18.38478 -1.41521,-6.12726 3.77224,-10.8433 5.65686,-16.26345" />
++    <path
++       style="fill:none;stroke:url(#linearGradient3104);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 567.52771,286.25269 c -0.89405,-7.05499 0.50327,-14.382 3.93101,-20.61279 3.42237,-6.22103 8.85117,-11.31764 15.27563,-14.34091 6.42445,-3.02328 13.81187,-3.95783 20.78681,-2.62965"
++       id="path3052"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3054"
++       inkscape:original-d="m 567.52771,286.25269 c 1.31134,-6.87193 2.62167,-13.74286 3.93101,-20.61279 1.30933,-6.86993 24.04263,-11.31471 36.06244,-16.97056" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6551);stroke-width:1.23147655px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 449.95502,247.97701 c 7.55606,3.00738 14.27612,8.08523 19.23272,14.53274 4.94601,6.43374 8.12285,14.21372 9.09385,22.27059"
++       id="path3118"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3120"
++       inkscape:original-d="m 449.95502,247.97701 c 6.41168,4.84269 12.82258,9.68693 19.23272,14.53274 6.41012,4.84582 6.06333,14.84549 9.09385,22.27059" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6549);stroke-width:1.02635109px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 500.27242,249.30514 c 5.49861,3.69701 10.16955,8.61776 13.57532,14.30137 3.95545,6.60092 6.18818,14.22417 6.41885,21.91602"
++       id="path3118-5"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3120-7"
++       inkscape:original-d="m 500.27242,249.30514 c 4.52565,4.76559 9.05076,9.5327 13.57532,14.30137 4.52456,4.76867 4.27978,14.60913 6.41885,21.91602" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6553);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 563.4379,247.96223 c -0.93075,1.47255 -1.40195,3.23109 -1.33217,4.97173 0.0873,2.17847 0.98613,4.22982 1.82529,6.24207 0.83917,2.01226 1.64627,4.12194 1.53517,6.29933 -0.10557,2.06901 -1.03996,4.01595 -2.21955,5.71904 -1.17958,1.70309 -2.61086,3.2153 -3.88281,4.85056 -1.79899,2.31284 -3.27787,4.87432 -4.38135,7.58871"
++       id="path3158"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3160"
++       inkscape:original-d="m 563.4379,247.96223 c -0.44305,1.65624 -0.88711,3.31349 -1.33217,4.97173 -0.44505,1.65824 2.24131,8.35993 3.36046,12.5414 1.11915,4.18146 -4.06724,7.0454 -6.10236,10.5696 -2.03512,3.5242 -2.9199,5.05814 -4.38135,7.58871" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6547);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-9)"
++       d="m 627.07751,247.25512 c 2.57858,5.21574 3.57603,11.20045 2.82843,16.97056 -0.64544,4.9816 -2.54874,9.72988 -4.94975,14.14214 -5.34434,9.82114 -13.26591,18.22509 -22.75437,24.13997 -9.48846,5.91488 -20.52182,9.327 -31.69285,9.80115"
++       id="path3170"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3172"
++       inkscape:original-d="m 627.07751,247.25512 c 0.94381,5.65586 1.88662,11.31271 2.82843,16.97056 0.94181,5.65786 -3.29883,9.42709 -4.94975,14.14214 -1.65091,4.71505 -36.29715,22.62642 -54.44722,33.94112" />
++    <path
++       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 472.28159,286.78034 c -4.73891,1.38236 -9.8908,1.31285 -14.59068,-0.19687 -4.69989,-1.50972 -8.9285,-4.45346 -11.97588,-8.33697 -4.6972,-5.98601 -6.39497,-13.73104 -7.77817,-21.2132 -4.74217,-25.65195 -7.34684,-51.69871 -7.77817,-77.78175"
++       id="path3174"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3176"
++       inkscape:original-d="m 472.28159,286.78034 c -8.85452,-2.84561 -17.71004,-5.69023 -26.56656,-8.53384 -8.85651,-2.84361 -5.18444,-18.15007 -7.77817,-21.2132 -2.59372,-3.06313 -5.18445,-47.84856 -7.77817,-77.78175"
++       sodipodi:nodetypes="cscc" />
++    <path
++       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 520.26659,285.52253 c -5.12949,-4.21044 -10.95341,-7.57288 -17.1645,-9.90993 -1.06939,-0.40238 -2.15342,-0.77603 -3.17262,-1.29248 -1.0192,-0.51645 -1.98094,-1.18681 -2.68299,-2.08826 -0.72153,-0.92647 -1.14059,-2.06537 -1.31508,-3.22662 -0.1745,-1.16126 -0.1134,-2.34757 0.0547,-3.50977 0.33614,-2.32441 1.09651,-4.58378 1.26041,-6.92664 0.17202,-2.45897 -0.32204,-4.92427 -1.08174,-7.26926 -0.75971,-2.34499 -1.78291,-4.59423 -2.70916,-6.87857 -3.13866,-7.7406 -5.16733,-15.90124 -6.47139,-24.15154 -2.35876,-14.92295 -2.35876,-30.21628 0,-45.13923"
++       id="path3178"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3180"
++       inkscape:original-d="m 520.26659,285.52253 c -6.30121,-1.68967 -11.442,-6.60762 -17.1645,-9.90993 -5.7225,-3.30231 -3.90274,-2.25483 -5.85561,-3.38074 -1.95287,-1.12591 10e-4,-9.10969 0,-13.66303 -0.001,-4.55334 -2.52627,-9.43288 -3.7909,-14.14783 -1.26463,-4.71494 -4.31326,-16.10203 -6.47139,-24.15154 -2.15813,-8.04952 10e-4,-30.09382 0,-45.13923" />
++    <path
++       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 550.98248,285.63367 c -2.92905,-0.67285 -5.54573,-2.60689 -7.0484,-5.20959 -1.50267,-2.60269 -1.86925,-5.83582 -0.98743,-8.70888 0.60067,-1.95707 1.7332,-3.7028 2.90087,-5.38431 1.16766,-1.68151 2.39383,-3.34436 3.22004,-5.21741 1.05624,-2.39454 1.4169,-5.05627 1.32027,-7.67164 -0.0966,-2.61537 -0.63688,-5.1959 -1.32027,-7.72225 -2.02251,-7.47675 -5.29434,-14.54655 -7.92814,-21.83047 -2.63379,-7.28391 -4.65127,-14.98425 -4.00448,-22.70266 0.8282,-9.88322 6.25638,-19.28511 14.4014,-24.94396"
++       id="path3182"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3184"
++       inkscape:original-d="m 550.98248,285.63367 c -2.67761,-4.64049 -5.35622,-9.27998 -8.03583,-13.91847 -2.67961,-4.63849 4.0816,-7.06881 6.12091,-10.60172 2.0393,-3.53291 0.001,-10.26359 0,-15.39389 -10e-4,-5.1303 -7.95408,-29.68975 -11.93262,-44.53313 -3.97854,-14.84337 9.60194,-16.63031 14.4014,-24.94396" />
++    <path
++       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
++       d="m 570.50897,312.30894 15.9099,-15.9099 c 1.60179,-1.60179 3.18026,-3.22794 4.83149,-4.77871 1.65122,-1.55077 3.4059,-3.02641 5.42156,-4.06012 3.98852,-2.04548 8.73787,-2.20014 12.72792,-4.24264 2.36474,-1.21051 4.3875,-3.06569 5.84524,-5.28657 1.45774,-2.22089 2.35254,-4.80039 2.64004,-7.44135 0.22981,-2.11099 0.0784,-4.24195 0,-6.36397 -0.10438,-2.827 -0.0784,-5.65744 0,-8.48528 0.10462,-3.77187 0.30241,-7.55251 0,-11.3137 -0.66504,-8.27138 -3.7123,-16.13228 -6.42402,-23.97477 -4.92134,-14.23288 -8.82892,-28.81618 -11.68335,-43.60288"
++       id="path3186"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3188"
++       inkscape:original-d="m 570.50897,312.30894 c 5.3043,-5.3043 10.6076,-10.6076 15.9099,-15.9099 5.3023,-5.3023 6.83637,-5.89355 10.25305,-8.83883 3.41668,-2.94528 8.48628,-2.82943 12.72792,-4.24264 4.24164,-1.41322 5.65786,-8.48628 8.48528,-12.72792 2.82743,-4.24164 10e-4,-4.24364 0,-6.36397 -10e-4,-2.12032 10e-4,-5.65785 0,-8.48528 -10e-4,-2.82742 10e-4,-7.54347 0,-11.3137 -10e-4,-3.77024 -4.28168,-15.98418 -6.42402,-23.97477 -2.14234,-7.99059 -7.7879,-29.06959 -11.68335,-43.60288" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="274.48175"
++       y="311.57025"
++       id="text5219-2-62"><tspan
++         sodipodi:role="line"
++         x="274.48175"
++         y="311.57025"
++         id="tspan5223-0-91"
++         style="font-size:10px;line-height:1.25">dequeue_atomic_flow, lock(step 2)</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="230.38838"
++       y="349.16824"
++       id="text5219-2-62-2"><tspan
++         sodipodi:role="line"
++         x="230.38838"
++         y="349.16824"
++         id="tspan5223-0-91-7"
++         style="font-size:10px;line-height:1.25">enqueue atomic flow(step 1)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
++       d="m 284.13073,339.88611 c 0.17405,-3.87643 1.69528,-7.6795 4.24264,-10.6066 1.21368,-1.3946 2.65204,-2.59324 4.24264,-3.53554"
++       id="path3226"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3228"
++       inkscape:original-d="m 284.13073,339.88611 c 1.65092,-3.53654 2.82943,-7.07207 4.24264,-10.6066 1.41322,-3.53454 2.82943,-2.35803 4.24264,-3.53554" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="54.031021"
++       y="305.13019"
++       id="text5219-2-62-2-0"><tspan
++         sodipodi:role="line"
++         x="54.031021"
++         y="305.13019"
++         id="tspan5223-0-91-7-9"
++         style="font-size:10px;line-height:1.25">produce atomic flows(step 0)</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="221.4942"
++       y="271.6572"
++       id="text5219-2-62-3"><tspan
++         sodipodi:role="line"
++         x="221.4942"
++         y="271.6572"
++         id="tspan5223-0-91-6"
++         style="font-size:10px;line-height:1.25"> unlock and enqueue(step 3)</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="228.94464"
++       y="232.44748"
++       id="text5219-2-62-3-0"><tspan
++         sodipodi:role="line"
++         x="228.94464"
++         y="232.44748"
++         id="tspan5223-0-91-6-6"
++         style="font-size:10px;line-height:1.25">dequeue_atomic_flow, lock (step 4)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 125.03171,296.7526 c 3.74786,-3.82704 6.25815,-8.84762 7.07106,-14.14214 0.89616,-5.83674 -0.22472,-11.84652 0.70712,-17.67767 0.88602,-5.54438 3.67535,-10.76654 7.79086,-14.58594 4.11551,-3.81939 9.53103,-6.21176 15.12603,-6.68208"
++       id="path3284"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3286"
++       inkscape:original-d="m 125.03171,296.7526 c 2.35802,-4.71505 4.71504,-9.42909 7.07106,-14.14214 2.35603,-4.71304 -4.47734,-16.97156 0.70712,-17.67767 5.18445,-0.70611 8.30435,-19.6191 22.91689,-21.26802"
++       sodipodi:nodetypes="ccsc" />
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
++       d="m 400.09624,301.70234 c 2.99719,-1.5536 6.06561,-2.9698 9.19239,-4.24264 10.36506,-4.21939 21.37433,-6.85204 32.52691,-7.77817"
++       id="path3288"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3290"
++       inkscape:original-d="m 400.09624,301.70234 c 3.06513,-1.41521 6.12926,-2.82942 9.19239,-4.24264 3.06313,-1.41321 21.68561,-5.18645 32.52691,-7.77817" />
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
++       d="m 366.15512,272.71097 c 3.81527,2.26146 7.84644,4.15848 12.02081,5.65685 11.69951,4.19948 24.37655,5.20587 36.76955,4.24264 17.71147,-1.3766 35.17977,-6.78471 50.20458,-16.26345 1.43767,-0.90698 2.85248,-1.85019 4.24264,-2.82843"
++       id="path3292"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3294"
++       inkscape:original-d="m 366.15512,272.71097 c 4.00793,1.88461 8.01487,3.77023 12.02081,5.65685 4.00594,1.88662 24.51404,2.82743 36.76955,4.24264 12.25552,1.41521 33.47072,-10.8433 50.20458,-16.26345 16.73386,-5.42016 2.82943,-1.88662 4.24264,-2.82843" />
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
++       d="m 336.45663,221.09217 c 2.28482,-4.91581 5.69736,-9.30336 9.8995,-12.72792 8.26499,-6.7356 19.09721,-9.47021 29.69848,-10.6066 11.02462,-1.18177 22.14702,-0.83857 33.23402,-0.70711 6.83505,0.081 13.67105,0.081 20.5061,0"
++       id="path3300"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3302"
++       inkscape:original-d="m 336.45663,221.09217 c 3.30083,-4.24364 6.60067,-8.48628 9.8995,-12.72792 3.29883,-4.24164 19.79999,-7.07207 29.69848,-10.6066 9.8985,-3.53454 22.15701,-0.47241 33.23402,-0.70711 11.07701,-0.2347 13.67173,-0.001 20.5061,0" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="316.1026"
++       y="170.71103"
++       id="text5219-2-62-3-0-3"><tspan
++         sodipodi:role="line"
++         x="316.1026"
++         y="170.71103"
++         id="tspan5223-0-91-6-6-6"
++         style="font-size:10px;line-height:1.25">unlock(step 5)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:0.65;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.65, 1.3;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-4-3)"
++       d="m 351.54328,162.29923 c 4.37234,-3.84771 8.74462,-7.69536 17.46372,-9.28631 8.71911,-1.59095 21.78354,-0.92534 34.84719,-0.25978"
++       id="path12082"
++       inkscape:path-effect="#path-effect12084"
++       inkscape:original-d="m 351.54328,162.29923 c 4.37327,-3.84665 8.74555,-7.6943 13.11682,-11.54294 13.06596,0.66663 26.13039,1.33224 39.19409,1.99685" />
++  </g>
++</svg>
+diff --git a/doc/guides/tools/testeventdev.rst b/doc/guides/tools/testeventdev.rst
+index aaa0e5f24c..4f91e81240 100644
+--- a/doc/guides/tools/testeventdev.rst
++++ b/doc/guides/tools/testeventdev.rst
+@@ -55,6 +55,7 @@ The following are the application command-line options:
+ 
+          order_queue
+          order_atq
++         atomic_queue
+          perf_queue
+          perf_atq
+          pipeline_atq
+@@ -326,6 +327,97 @@ Example command to run order queue test:
+    sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -s 0x10 --vdev=event_sw0 -- \
+                 --test=order_queue --plcores 1 --wlcores 2,3
+ 
++ORDER_ATOMIC Test
++~~~~~~~~~~~~~~~~~
 +
-+	return atomic_locks;
-+}
++This is a functional test is similar to the ORDER_QUEUE test, but differs in two
++critical ways:
 +
-+static inline flow_id_t *
-+order_mbuf_flow_id(struct test_order *t, struct rte_mbuf *mbuf)
-+{
-+	return RTE_MBUF_DYNFIELD(mbuf, t->flow_id_dynfield_offset, flow_id_t *);
-+}
++#. Both queues (q0 and q1) are atomic. This makes it compatible with the
++   distributed software event device (dsw).
++#. Atomicity is verified using spinlocks for each combination of flow id and
++   queue id.
 +
-+int atomic_launch_lcores(struct evt_test *test, struct evt_options *opt,
-+		int (*worker)(void *));
++.. _table_eventdev_atomic_queue_test:
 +
-+#endif
-diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
-index a8c76f11ff..881fe5671a 100644
---- a/doc/guides/rel_notes/release_25_03.rst
-+++ b/doc/guides/rel_notes/release_25_03.rst
-@@ -166,6 +166,11 @@ New Features
-
-   See the :doc:`../compressdevs/zsda` guide for more details on the new driver.
-
-+* **Added atomic tests to the dpdk-test-eventdev test application.**
++.. table:: Atomic queue test eventdev configuration.
 +
-+  Added two atomic tests: ``atomic_queue`` and ``atomic_atq``. They work in the same way as
-+  the corresponding ordered tests but exclusively use atomic queues.
-+  Atomicity is verified using spinlocks.
-
- Removed Items
- -------------
---
-2.36.0
++   +---+--------------+----------------+---------------------------+
++   | # | Items        | Value          | Comments                  |
++   |   |              |                |                           |
++   +===+==============+================+===========================+
++   | 1 | nb_queues    | 2              | q0(atomic), q1(atomic)    |
++   |   |              |                |                           |
++   +---+--------------+----------------+---------------------------+
++   | 2 | nb_producers | 1              |                           |
++   |   |              |                |                           |
++   +---+--------------+----------------+---------------------------+
++   | 3 | nb_workers   | >= 1           |                           |
++   |   |              |                |                           |
++   +---+--------------+----------------+---------------------------+
++   | 4 | nb_ports     | nb_workers +   | Workers use port 0 to     |
++   |   |              | 1              | port n-1.Producer uses    |
++   |   |              |                | port n.                   |
++   +---+--------------+----------------+---------------------------+
++
++.. _figure_eventdev_atomic_queue_test:
++
++.. figure:: img/eventdev_atomic_queue_test.*
++
++   atomic queue test operation.
++
++When an event is dequeued for processing, a spinlock is acquired for the
++the flow from which the event was dequeued. Once processing is complete,
++the lock is released. The test will fail if an attempt is made to take a lock
++that is already held. This indicates that multiple workers attempted to
++process the same flow at the same time, thereby violating atomicity.
++
++.. table:: Atomic queue test queue processing tasks.
++
++   +-----------+---------------------------------------------------+
++   | Queue ID  | Processing Task                                   |
++   |           |                                                   |
++   +===========+===================================================+
++   | 0         | Update queue ID for event and re-enqueue.         |
++   |           |                                                   |
++   +-----------+---------------------------------------------------+
++   | 1         | Verify sequence number.                           |
++   |           |                                                   |
++   +-----------+---------------------------------------------------+
++
++Application options
++^^^^^^^^^^^^^^^^^^^
++
++Supported application command line options are following::
++
++   --verbose
++   --dev
++   --test
++   --socket_id
++   --pool_sz
++   --plcores
++   --wlcores
++   --nb_flows
++   --nb_pkts
++   --worker_deq_depth
++   --deq_tmo_nsec
++
++Example
++^^^^^^^
++
++Example command to run with the software event device:
++
++.. code-block:: console
++
++   sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -s 0x10 --vdev=event_sw0 -- \
++                --test=atomic_queue --plcores 1 --wlcores 2,3
++
++Example command to run with the distributed software event device:
++
++.. code-block:: console
++
++   sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f --vdev=event_dsw0 -- \
++                --test=atomic_queue --plcores 1 --wlcores 2,3,4
+ 
+ ORDER_ATQ Test
+ ~~~~~~~~~~~~~~
+-- 
+2.34.1
 
