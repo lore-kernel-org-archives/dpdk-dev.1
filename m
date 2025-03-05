@@ -2,64 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9CCC19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 06:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2B9C19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 07:43:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A031940648;
-	Wed,  5 Mar 2025 07:16:58 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 5C3B0402DE
- for <dev@dpdk.org>; Wed,  5 Mar 2025 07:16:56 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524B7fkY001359;
- Tue, 4 Mar 2025 22:16:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
- yoJSaoreeLXsUEnuvXJ4uvfMLfRbauJHCnDYjsZc9A=; b=RpHtLw6LBdmF24PGk
- 8LxN2pNHxUTYNo5x9aJrF7vexEdD4HavK17RVjuJIwKpIg19GW3d+22FExGT5iIw
- lTjNPwzBeGj89KQLumFniAe7igB5coPtXVIXnEm/vK5QgI5NxwJGZ0mbj5kdN4Mq
- ZScoGA2AfnX95cIamIUFW0Tcd4mtzziFyh2TpZ3y9iGozY7w7zuAmWDwFLjoIbIN
- IjU+jSLa0CqAETtwkxGriuIm3nzJnbRS9ikuartwEimANW+T1C/YHMfsBPMLvrhe
- kEyJD64E2f1tZYA33jNsHDXtv6C8clBKG3HAf0uOJIXPfOxqOdb41A5UnX7ZT6mm
- r5GLQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4542mugaqj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 04 Mar 2025 22:16:55 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 4 Mar 2025 22:16:54 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 4 Mar 2025 22:16:54 -0800
-Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.28.23.41])
- by maili.marvell.com (Postfix) with ESMTP id A9CF73F705F;
- Tue,  4 Mar 2025 22:16:52 -0800 (PST)
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
- <fanzhang.oss@gmail.com>
-CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Subject: [v6 6/6] test/crypto: add tests for virtio user PMD
-Date: Wed, 5 Mar 2025 11:46:14 +0530
-Message-ID: <10212b9b54bac27b4b53dd682230f2bb861e4ce6.1741154953.git.gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1741154953.git.gmuthukrishn@marvell.com>
-References: <cover.1741154953.git.gmuthukrishn@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 395D140156;
+	Wed,  5 Mar 2025 08:43:58 +0100 (CET)
+Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
+ by mails.dpdk.org (Postfix) with ESMTP id E72B3400EF
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 08:43:56 +0100 (CET)
+Received: from mail.lysator.liu.se (localhost [127.0.0.1])
+ by mail.lysator.liu.se (Postfix) with ESMTP id 76FEE16E67
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 08:43:56 +0100 (CET)
+Received: by mail.lysator.liu.se (Postfix, from userid 1004)
+ id 66AD316DCD; Wed,  5 Mar 2025 08:43:56 +0100 (CET)
+Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
+ [62.63.215.114])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+ (No client certificate requested)
+ by mail.lysator.liu.se (Postfix) with ESMTPSA id 5CEF016CDD;
+ Wed,  5 Mar 2025 08:43:51 +0100 (CET)
+Message-ID: <3ed22143-1abe-410f-813c-6777c2d9b012@lysator.liu.se>
+Date: Wed, 5 Mar 2025 08:43:50 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Introduce Topology NUMA grouping for lcores
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ "Varghese, Vipin" <Vipin.Varghese@amd.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, roretzla@linux.microsoft.com, bruce.richardson@intel.com,
+ john.mcnamara@intel.com, dmitry.kozliuk@gmail.com,
+ ajit.khaparde@broadcom.com, "Song, Keesang" <Keesang.Song@amd.com>,
+ pbhagavatula@marvell.com, jerinj@marvell.com, ruifeng.wang@arm.com,
+ mattias.ronnblom@ericsson.com, anatoly.burakov@intel.com,
+ stephen@networkplumber.org, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
+ honnappa.nagarahalli@arm.com, wathsala.vithanage@arm.com,
+ konstantin.ananyev@huawei.com
+References: <20241105102849.1947-1-vipin.varghese@amd.com>
+ <PH7PR12MB85960CB35BB467CEBBC2CA2F82FF2@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <2097299.UkFFEUeh36@thomas>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FA33@smartserver.smartshare.dk>
+ <PH7PR12MB8596C47BD103ADF3C275C10E82C92@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FABA@smartserver.smartshare.dk>
+Content-Language: en-US
+From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FABA@smartserver.smartshare.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Qm_X_ONWtZTfIhn5_sA5_2rzjks-zpIY
-X-Authority-Analysis: v=2.4 cv=H6Ihw/Yi c=1 sm=1 tr=0 ts=67c7ec57 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=8v8LZVCtSEv4Ub3s21IA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: Qm_X_ONWtZTfIhn5_sA5_2rzjks-zpIY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-04_02,2024-11-22_01
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,81 +63,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reuse virtio_crypto tests for testing virtio_crypto_user PMD.
+On 2025-03-04 11:08, Morten Brørup wrote:
+>> From: Varghese, Vipin [mailto:Vipin.Varghese@amd.com]
+>> Sent: Monday, 3 March 2025 10.06
+>>
+>> [Public]
+>>
+>> Hi Morten,
+>>
+>> snipped
+>>
+>>>
+>>>> From: Thomas Monjalon [mailto:thomas@monjalon.net]
+>>>> Sent: Thursday, 13 February 2025 09.34
+>>>>
+>>>> 13/02/2025 04:09, Varghese, Vipin:
+>>>>> [AMD Official Use Only - AMD Internal Distribution Only]
+>>>>>
+>>>>> Adding Thomas and Ajit to the loop.
+>>>>>
+>>>>> Hi Ajit, we have been using the patch series for identifying the
+>>>> topology and getting l3 cache id for populating the steering tag
+>> for
+>>>> Device Specific Model & MSI-x driven af-xdp for the experimental
+>> STAG
+>>>> firmware on Thor.
+>>>
+>>> Excellent. A real life example use case helps the review process a
+>> lot!
+>>
+>> Steering tag is one of the examples or uses, as shared in the current
+>> patch series  we make use of these for other examples too.
+>> Eventdev, pkt-distributor and graph nodes are also in works to exploit
+>> L2|L3 cache local coherency too.
+>>
+>>>
+>>>>>
+>>>>> Hence current use of topology library helps in 1. workload
+>> placement
+>>>>> in same Cache or IO domain 2. populating id for MSIx or Device
+>>>>> specific model for steering tags.
+>>>>>
+>>>>> Thomas and Ajith can we get some help to get this mainline too?
+>>>>
+>>>> Yes, sorry the review discussions did not start.
+>>>> It has been forgotten.
+>>>
+>>> I think the topology/domain API in the EAL should be co-designed with
+>> the steering
+>>> tag API in the ethdev library, so the design can be
+>> reviewed/discussed in its entirety.
+>>
+>> As shared in the discussion, we have been exploring simplified approach
+>> for steering tags, namely
+>>
+>> 1. pci-dev args (crude way)
+>> 2. flow api for RX (experimental way)
+>>
+>> Based on the platform (in case of AMD EPYC, these are translated to `L3
+>> id + 1`)
+>>
+>> We do agree rte_ethdev library can use topology API. Current topology
+>> API are designed to be made independent from steering tags, as other
+>> examples do make use of the same.
+>>
+>>>
+>>> To help the review discussion, please consider describing the
+>> following:
+>>> Which APIs are for slow path, and which are for fast path?
+>>> Which APIs are "must have", i.e. core to making it work at all, and
+>> which APIs are
+>>> "nice to have", i.e. support APIs to ease use of the new features?
+>>
+>> Yes, will try to do the same in updated version. For Slow and Fast path
+>> API I might need some help, as I was under the impression current
+>> behavior is same rte_lcore (invoked at setup and before remote launch).
+>> But will check again.
+> 
+> Probably they are all used for configuration only, and thus all slow path; but if there are any fast path APIs, they should be highlighted as such.
+> 
 
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
----
- app/test/test_cryptodev.c      |  7 +++++++
- app/test/test_cryptodev.h      |  1 +
- app/test/test_cryptodev_asym.c | 15 +++++++++++++++
- 3 files changed, 23 insertions(+)
+Preferably, software work schedulers like DSW should be able to read 
+topology information during run-time/steady-state operation. If topology 
+APIs are slow or non-MT-safe, they will need to build up their own data 
+structures for such information (which is not crazy idea, but leads to 
+duplication).
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 441ecc6ad5..60aacdc155 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -19737,6 +19737,12 @@ test_cryptodev_virtio(void)
- 	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_PMD));
- }
- 
-+static int
-+test_cryptodev_virtio_user(void)
-+{
-+	return run_cryptodev_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+}
-+
- static int
- test_cryptodev_aesni_mb(void)
- {
-@@ -20074,6 +20080,7 @@ REGISTER_DRIVER_TEST(cryptodev_dpaa_sec_autotest, test_cryptodev_dpaa_sec);
- REGISTER_DRIVER_TEST(cryptodev_ccp_autotest, test_cryptodev_ccp);
- REGISTER_DRIVER_TEST(cryptodev_uadk_autotest, test_cryptodev_uadk);
- REGISTER_DRIVER_TEST(cryptodev_virtio_autotest, test_cryptodev_virtio);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_autotest, test_cryptodev_virtio_user);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_autotest, test_cryptodev_octeontx);
- REGISTER_DRIVER_TEST(cryptodev_caam_jr_autotest, test_cryptodev_caam_jr);
- REGISTER_DRIVER_TEST(cryptodev_nitrox_autotest, test_cryptodev_nitrox);
-diff --git a/app/test/test_cryptodev.h b/app/test/test_cryptodev.h
-index bb54a33d62..f6c7478f19 100644
---- a/app/test/test_cryptodev.h
-+++ b/app/test/test_cryptodev.h
-@@ -64,6 +64,7 @@
- #define CRYPTODEV_NAME_MVSAM_PMD		crypto_mvsam
- #define CRYPTODEV_NAME_CCP_PMD		crypto_ccp
- #define CRYPTODEV_NAME_VIRTIO_PMD	crypto_virtio
-+#define CRYPTODEV_NAME_VIRTIO_USER_PMD	crypto_virtio_user
- #define CRYPTODEV_NAME_OCTEONTX_SYM_PMD	crypto_octeontx
- #define CRYPTODEV_NAME_CAAM_JR_PMD	crypto_caam_jr
- #define CRYPTODEV_NAME_NITROX_PMD	crypto_nitrox_sym
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index ac47be724f..a98e3dc824 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -4118,9 +4118,24 @@ test_cryptodev_virtio_asym(void)
- 	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
- }
- 
-+static int
-+test_cryptodev_virtio_user_asym(void)
-+{
-+	gbl_driver_id = rte_cryptodev_driver_id_get(
-+			RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
-+	if (gbl_driver_id == -1) {
-+		RTE_LOG(ERR, USER1, "virtio user PMD must be loaded.\n");
-+		return TEST_FAILED;
-+	}
-+
-+	/* Use test suite registered for crypto_virtio_user PMD */
-+	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
-+}
-+
- REGISTER_DRIVER_TEST(cryptodev_openssl_asym_autotest, test_cryptodev_openssl_asym);
- REGISTER_DRIVER_TEST(cryptodev_qat_asym_autotest, test_cryptodev_qat_asym);
- REGISTER_DRIVER_TEST(cryptodev_octeontx_asym_autotest, test_cryptodev_octeontx_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn9k_asym_autotest, test_cryptodev_cn9k_asym);
- REGISTER_DRIVER_TEST(cryptodev_cn10k_asym_autotest, test_cryptodev_cn10k_asym);
- REGISTER_DRIVER_TEST(cryptodev_virtio_asym_autotest, test_cryptodev_virtio_asym);
-+REGISTER_DRIVER_TEST(cryptodev_virtio_user_asym_autotest, test_cryptodev_virtio_user_asym);
--- 
-2.25.1
+I didn't follow the hwloc discussions, so I may lack some context for 
+this discussion.
+
+>>
+>>>
+>>> I haven't looked at the hwloc library's API; but I guess these new
+>> EAL functions are
+>>> closely related. Is it a thin wrapper around the hwloc library, or is
+>> it very different?
+>> This is very thin wrapper on top of hwloc library only. But with DPDK
+>> RTE_MAX_LCORE & RTE_NUMA boundary check and population.
+> 
+> OK. The hwloc library is portable across Linux, BSD and Windows, which is great!
+> 
+> Please also describe the benefits of using this DPDK library, compared to directly using the hwloc library.
+> 
 
