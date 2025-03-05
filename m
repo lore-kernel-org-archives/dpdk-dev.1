@@ -2,53 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CF9C19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 18:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8B1C19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 19:46:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4ED3A4060C;
-	Wed,  5 Mar 2025 19:37:06 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id EFB0140275;
- Wed,  5 Mar 2025 19:37:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741199825; x=1772735825;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=kgjkAgQ52cpH18lEHq9J7v1rN1GiimqmIIfLKR8Ftak=;
- b=lyrPAQdVT7IieMhSb3v7oe4pkzsA/OpKN2Z661xTKFM3LBRLnaE6DROh
- b/9WdNNQb/OiQREEnmDDUeGAViFhtkyWySTVjuLVHkq2lObH4caGMdaC1
- b5WBLhXUVcbOZC0xYzDZ6Wshb/B9W8V3nK+pyDnTbxI4g7IXLUsiDcm0P
- WdBVhB9rHpBQkJBvWfEgf7rLNquTSJvPu5ppyNOr9lj9+Y05Cc9P6Ez0C
- JKMDlerxom6QubfqH9w+IN8+fExqPWsPr8cuLQ5XjbVzUAv6Y8N409Zyy
- VaiIi4unqPkDm/liCZvykEeZE25o5G8VpWIBZXMAHhx6zlNxx0BsPYUYJ A==;
-X-CSE-ConnectionGUID: xsRgGpfwRn2qmahWYV6nqA==
-X-CSE-MsgGUID: TpyQwLliT8edLHnI0h4lGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="29763254"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; d="scan'208";a="29763254"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Mar 2025 10:37:02 -0800
-X-CSE-ConnectionGUID: X8IUFGktQQKWURjz7LblcQ==
-X-CSE-MsgGUID: oEqQYdAKTpeRkBdehe8qkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; d="scan'208";a="119699889"
-Received: from spr-npg-bds1-eec2.sn.intel.com (HELO spr-npg-bds1-eec2..)
- ([10.233.181.123])
- by orviesa008.jf.intel.com with ESMTP; 05 Mar 2025 10:37:02 -0800
-From: Nicolas Chautru <nicolas.chautru@intel.com>
-To: dev@dpdk.org,
-	maxime.coquelin@redhat.com
-Cc: hernan.vargas@intel.com, Nicolas Chautru <nicolas.chautru@intel.com>,
- stable@dpdk.org
-Subject: [PATCH v1 1/1] baseband/acc: fix queue setup failure clean up
-Date: Wed,  5 Mar 2025 10:27:16 -0800
-Message-Id: <20250305182716.773937-2-nicolas.chautru@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305182716.773937-1-nicolas.chautru@intel.com>
-References: <20250305182716.773937-1-nicolas.chautru@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+	by mails.dpdk.org (Postfix) with ESMTP id 4590D4025F;
+	Wed,  5 Mar 2025 20:46:09 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C18640156
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 20:46:08 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 6D8E6210EAE7; Wed,  5 Mar 2025 11:46:07 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6D8E6210EAE7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1741203967;
+ bh=Ga/NPf9CvUgGzi9i/AeX0HIemXuDUZykYZpZ+pCYmtI=;
+ h=From:To:Cc:Subject:Date:From;
+ b=WaPX4GUp4Num/mkhep32oQRfGZUmUtvCGEkf9BkLe8jRYfNSR+Brc21spK/QKH8Xd
+ d+RMdDm1FOyKIxwqFt+N2HHqjECMu7TJsR1GQh1OYRVBgbqzDV/gtOIJxiTkcjxgQF
+ Wx9erk5hmi2I+CwLcsLiAU09r+W9ysPPFyqgdZTI=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org,
+	Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH] hash_multiwriter_autotest: fix printf parameters
+Date: Wed,  5 Mar 2025 11:45:55 -0800
+Message-Id: <1741203955-15203-1-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,30 +44,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Incomplete clean up for vrb2 variant when queue setup fails
-to complete successfully.
+Compiling with MSVC logs the warnings below, which result in
+build error:
 
-Fixes: fc65d3dcabe01 ("baseband/acc: refactor queue allocation")
-Cc: stable@dpdk.org
+../app/test/test_hash_multiwriter.c(71): warning C4476: 'printf' :
+    unknown type field character ''' in format specifier
+../app/test/test_hash_multiwriter.c(73): warning C4474: 'printf' :
+    too many arguments passed for format string
+../app/test/test_hash_multiwriter.c(73): note: placeholders and their
+    parameters expect 2 variadic arguments, but 4 were provided
 
-Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- drivers/baseband/acc/rte_vrb_pmd.c | 2 ++
- 1 file changed, 2 insertions(+)
+ app/test/test_hash_multiwriter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/acc/rte_vrb_pmd.c
-index 27620ccc10..2c10ef2c94 100644
---- a/drivers/baseband/acc/rte_vrb_pmd.c
-+++ b/drivers/baseband/acc/rte_vrb_pmd.c
-@@ -1156,6 +1156,8 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
- free_q:
- 	rte_free(q);
- 	q = NULL;
-+	if (d->device_variant == VRB2_VARIANT)
-+		d->queue_index[conf->op_type]--;
+diff --git a/app/test/test_hash_multiwriter.c b/app/test/test_hash_multiwriter.c
+index 33d3147bd8..c24b09013f 100644
+--- a/app/test/test_hash_multiwriter.c
++++ b/app/test/test_hash_multiwriter.c
+@@ -68,7 +68,7 @@ test_hash_multiwriter_worker(void *arg)
+ 	 */
+ 	offset = pos_core * tbl_multiwriter_test_params.nb_tsx_insertion;
  
- 	return ret;
- }
+-	printf("Core #%d inserting %d: %'"PRId64" - %'"PRId64"\n",
++	printf("Core #%d inserting %d: %" PRId64 " - %" PRId64 "\n",
+ 	       lcore_id, tbl_multiwriter_test_params.nb_tsx_insertion,
+ 	       offset,
+ 	       offset + tbl_multiwriter_test_params.nb_tsx_insertion - 1);
 -- 
-2.34.1
+2.48.1.vfs.0.0
 
