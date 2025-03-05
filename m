@@ -2,61 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED77C19F32
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 21:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB512C282EC
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 21:26:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CF5D402DF;
-	Wed,  5 Mar 2025 22:24:58 +0100 (CET)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
- [209.85.128.171])
- by mails.dpdk.org (Postfix) with ESMTP id 6AF334025F
- for <dev@dpdk.org>; Wed,  5 Mar 2025 22:24:57 +0100 (CET)
-Received: by mail-yw1-f171.google.com with SMTP id
- 00721157ae682-6feafc707d3so1778107b3.1
- for <dev@dpdk.org>; Wed, 05 Mar 2025 13:24:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id F3399402DD;
+	Wed,  5 Mar 2025 22:26:17 +0100 (CET)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
+ [209.85.128.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 039E540279
+ for <dev@dpdk.org>; Wed,  5 Mar 2025 22:26:17 +0100 (CET)
+Received: by mail-yw1-f181.google.com with SMTP id
+ 00721157ae682-6f47ed1f40dso55963287b3.1
+ for <dev@dpdk.org>; Wed, 05 Mar 2025 13:26:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1741209897; x=1741814697; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=TIGKnJQWQ/GLP9Y5/IJG6D+T5FS3oJDrfRqCWUQRE9SsFX+09tTu1KjDsJ/Qp6x7sy
- jFrYKLj+xhuPcpSVkpQKU1A4dNPbcWoMUpCbgCOaWWJ8R/7Q5i8UFjHPJW8l5gL73ktZ
- hE/g4N85pDoK1iRVq/+mSZ89oKa+EjYtwJxsU=
+ d=iol.unh.edu; s=unh-iol; t=1741209976; x=1741814776; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=p2ylWT43UKxLzgF7Y1oPjjKPaHVO5JPSq37Wjr4+0ig=;
+ b=fZ4nFR78/7n5pzR2E7/hpVBitGEKmCLzYMKaiDSRxN5hGJzQrYqM5ddWI6foXujjxk
+ B5oeLc7BsXgLlBrt4xRAyxFMLAxqVKOoOArdV0TOi5GVwbqTAemu3+vRnMTRXgghqbkE
+ GEoGJjJkqYmk1RdySv7A2LTSiZrS9t9H+dr/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741209897; x=1741814697;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=AgJrHBef5zcwd3I3J3Xb1mLyx7oYkhB7tM4DtxaDFMo=;
- b=dxRZLrszww2SxYpCVf8VH1W9/f4i1Ucha0z7lVcoIOud3OZ0d2hbuiTOsyfhC5Uq4f
- DhMm7wDdIftGXa51iqBp+eIq6xFiLrElcN/gW4gzIsf+mu8z4vcx4SHyhGNeRPgfSDeZ
- zk1yltoryvL5lyBTdnQzA45UUpCUuovyxY/l49+Gz5rweLMMndgq1HPh6PTz3QVX4ocJ
- mzn9fgGkK+XsiCzQWXHuJGGouYhTqiCyI5oZlHP+PymMb/vjxyeHJTiKhBZHCn1EQMXW
- RE43KxwA7AvDY1Uh0mM4jiLfPSK1Cg6kXnfUywTuCkZD5sViWWhO6TYRjmCNpFC3+EQe
- pu8g==
-X-Gm-Message-State: AOJu0Ywa557p2SMb+RzxhWHqAfO/2KJnorV+hBOCTUJRmz7tQrnDdSji
- eecPeyhwHhftswXLPR6Skp5RjKQbH/O3rzs1O6nYb3amWLbwdxkNhTVBalB2b53g05edkTmOJPw
- sbTS2APgilTAdAI9Mcay8HXb7jJvlabEZI+0FDg==
-X-Gm-Gg: ASbGncsQpbwUBgOvMUwVwT9RvCutWMOnFzFcQzUbTQPsp/mr7r10X/GsX0Pu1Xp4I4u
- 7BMTo/DYusXg+zWhgGjIHNn0BdbNgxvKVJrjZfAZnLYZjtNBl9h8n7U4r5YjMLs0qP/a3N8IJc9
- zxJyKpvYNwP164PxwI8RRcyxMDQgH8BPGlfkfmvKUiefVJ+M0Jd82O23aY8EZd
-X-Google-Smtp-Source: AGHT+IGZYJ9EMNIQLu0bSGyzaX6TRDxSyzxYuiM2lHdekMGP332EG9xQdzCPoiw5pRKGpNa/5lEgyh/pRJHg2SdFEIU=
-X-Received: by 2002:a05:690c:6b11:b0:6ef:48ac:9d0c with SMTP id
- 00721157ae682-6fda31225cbmr72841357b3.25.1741209896854; Wed, 05 Mar 2025
- 13:24:56 -0800 (PST)
+ d=1e100.net; s=20230601; t=1741209976; x=1741814776;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=p2ylWT43UKxLzgF7Y1oPjjKPaHVO5JPSq37Wjr4+0ig=;
+ b=JagNBw/WRZogJ1LQ2lxqI84QhjRFkKapHLNb4msfjVD0k4EBNq4E/M06gTKRCMQxzF
+ 57Wo9/XLWBPtoS4+/4V9ZIhIGeOb6ISeYVQXrPOUbaKZu3owZibRJXUc2ntVDN0XSFb8
+ EOWEl0FlmoVNKobU0JJSuuzYldYH+ZYirZ1jEu3W0mYclm3FgfRkBhrxb+5QYOpo92Gp
+ 6cR34/5V5CKNV+9aAuryRL9Zo3zg/RUE9ZgJXmkJ+8wXt0ijR2Ey1bsJi+DXlJvzPy6G
+ ATcSgt5tvY2bz9shQNhNXACtRGgXUN3UVkLHA204WXdb+Ue9bAs1oss1rr/Cu6pGYlO4
+ dvDA==
+X-Gm-Message-State: AOJu0Yz3mJmPr+MlKjvj+1mSJrWAVIH9Gjx15BIjhenV//jGakd7IrNx
+ PmsKbPYcUyt1LVUG+Ceb5B+KL2tUUYjbt6nsFMqPS+J3nQvfW1cT86am/TCL+S+7cHqcFZZEQx4
+ r/M1SCB8ee6a6j667rO0I8XGFnp49A11ZRMrObGP+CKgjc2vl
+X-Gm-Gg: ASbGncsA2/H8aE/oSIz9ySNJ1E8u8YYf4Q34R7L69gXQ6fbFVQUluqPjZxvBcCxzlJT
+ G99OXAbMRGQpQmiKjyG0e9zfqbgB0MYgx60dz0JjKQTgZdrtiDKcY7KccMKsmY31BqYnSw36K0y
+ lnVbcmilgd6wx3n5cENBrBf2A08OW+QmtREacnp8ICwnXyJjNLtWFKVMyNPBYJ
+X-Google-Smtp-Source: AGHT+IFIa1YrdwxIvSAmh6EA3Nl3ijKhgAUw6SBLcTl2TRmv3DEZI46qVqdXUSzfkLE+PjpP+REvlyNPvSIWnkAWZv4=
+X-Received: by 2002:a05:690c:3583:b0:6f9:8916:3b66 with SMTP id
+ 00721157ae682-6fda2f30972mr64008727b3.12.1741209976390; Wed, 05 Mar 2025
+ 13:26:16 -0800 (PST)
 MIME-Version: 1.0
 References: <20250224132823.196509-1-luca.vizzarro@arm.com>
- <20250224132823.196509-2-luca.vizzarro@arm.com>
-In-Reply-To: <20250224132823.196509-2-luca.vizzarro@arm.com>
+ <20250224132823.196509-3-luca.vizzarro@arm.com>
+In-Reply-To: <20250224132823.196509-3-luca.vizzarro@arm.com>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Wed, 5 Mar 2025 16:24:45 -0500
-X-Gm-Features: AQ5f1Joy2U0t8UbLwvYQva4Ecz7GWl2fSqHCcgNqm0uWq3ZqoTvcuUNymNCVXIE
-Message-ID: <CABD7UXMiewaR4UMPE8Ky5AJxXt0ty2z92So418Z=qzbX_foMzQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dts: ensure runtime working directory
+Date: Wed, 5 Mar 2025 16:26:05 -0500
+X-Gm-Features: AQ5f1JqPRw0UYpwVtAjqQifra8w3RH1GeB5-CrJaafWcxZDiaZ6eFhRaoxbJBMA
+Message-ID: <CABD7UXNL5n0EKxh_XiM+N6jWjCmw_mdY5KH8_hupGsENt5P-dQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dts: use topology in smoke tests
 To: Luca Vizzarro <luca.vizzarro@arm.com>
 Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
  Patrick Robb <probb@iol.unh.edu>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,5 +71,17 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
+
+On Mon, Feb 24, 2025 at 8:30=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
+m> wrote:
+>
+> The smoke tests where wrongly using all the node's ports for the smoke
+> tests. Ensure only the ports specified in the current topology are used.
+<snip>
+
+Should be were, not where
+
+> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+> Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 
 Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
