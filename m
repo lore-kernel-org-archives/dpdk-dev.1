@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C2DC282EC
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 14:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07545C19F32
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Mar 2025 14:13:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CB5740655;
-	Wed,  5 Mar 2025 15:13:08 +0100 (CET)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11012053.outbound.protection.outlook.com [52.101.66.53])
- by mails.dpdk.org (Postfix) with ESMTP id 5BEE840658
+	by mails.dpdk.org (Postfix) with ESMTP id 4D2FB40659;
+	Wed,  5 Mar 2025 15:13:09 +0100 (CET)
+Received: from DUZPR83CU001.outbound.protection.outlook.com
+ (mail-northeuropeazon11013067.outbound.protection.outlook.com [52.101.67.67])
+ by mails.dpdk.org (Postfix) with ESMTP id E57FA40655
  for <dev@dpdk.org>; Wed,  5 Mar 2025 15:13:06 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UZrIg/lI2h5ECiPSNJAeKqBAmbYZ24GLUThpaL6bFp+eGFu4Vii+kAvi9F4hL9Eu3S/Le797Of3qaasQUVhNMal5kHBw3FTLWcfSwblEKVriwSVJnhnAf16KK9Ec1LwnpdELEyoc9Tbkb6kng7NVz2LozzRmIOWGa6V2w0PGVAG7XR9cZnCjmaS2QRHodB5Rw+Pqy84lZkXnAMX18zJJ0nQ8UV+3vqe2Ic02XwyqN0+P8syZSqIdQ9pi0jmeybMp/JHkOjOf8ULMtW1odSGqUbXhHWeMF+0c2qvJxMhj10s/0g4TVggR+FqRuON39cDWL5R+3l/O0x2CqcXKMtR0kQ==
+ b=LaSy1woMCVa7JN9oroPaKaJVL/FvDK1ofVs0ASbgklnDBjcMc7l0ndXNGmm7oJ+P5wT+mIMxTLKO3eJhc0r8YJsD6SkZqLrBf7NCJe3mS7Mk3xNmLIg01XNzrMgrh5n1Pfk3ZbOJ4NRFkqKBdbkhNfdnHeKsuewVBG7/Sy5vYNPNQPJm9XSW0pkt+Ib9tnMaGdkIExZoUGWajP1LxjP/LT19wAiAS/3TUjiB1ak462k4NtrDg2zqNBGG5e6wKjZ8mDFjBVJqAdsJVxap7l2er3pwnDOSmIfGeiaWeDrqoki9OpAofA61gG066t4K6f7QfRdaMqB/cZefPh3aNbFdjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=It0L11hDPXmzf60F75Kf/p0hcGTaZu1pB17cUt8VvD8=;
- b=heretuYyktv9UaHObR1hE9caiH0wPsiQKRwruCSThP29uRYpXDGvfrzQUuyey+FQYs2fP+8cjjuMNte4VWZfzT4e1FNmkz6Opsms33ReO724a53cgk8b68u28v7dUOX0e9Rp5PFv1k6eRP3Pgur8PKdDpx+2QrV+us1vvKRZvdwKo3SwVVypndT66rP2pRk2H9cBW/k4Dir6pKRCG4+HbLzs/ER+3rMVhD5EG7UR3m52tUWdZdZOTrsaJEugNkOjwXQK60G6+4lG7THIKtn8ETlssHcmO4LY00vK4O2qXBu7LJULWZTc6hJeDnvvl2P2St6Nk/zhlx3L/5QHYWfjRQ==
+ bh=zY+Azuhl34uP0t408x5TioOu2k5M3lHTbVAdD1HwQVc=;
+ b=IZxqX9J9ZkRCuTnSU4BY/YbCHXtTPOL0h+sF6erCM/BcdpK0nyeSeXh2Jr0oKQfyfUj3iMTMArW7bA7xxPWBA+lA1NpWtpFEcfnfVbV3O9XSrpnVmELwwVWvOWfq2F+D0WMYkg8hOjuZPRvH6YnjCOm0EBZEj8jRzGW+3u/+kSCt5kS+AX/zilheiwhiaHMx1TkB2gHvxSftzAWuJLY19+pbhZnDm3sAxfRpNF3rV7DoBFAVq3X50lRh1qDsim6n7RtU/RXWJsRPSSoQcWFlVif/gWrETtnnscEGD8rZ88jLuiyjK9L00jFJdvSNpqK6S7T7g6M8AiJ9wTYVl2jjkg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -25,17 +25,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=It0L11hDPXmzf60F75Kf/p0hcGTaZu1pB17cUt8VvD8=;
- b=axMSIV8xlp0Vz7ib48Izi4xRRcaBUOhpKT8TGGFrUCIxvxHPlOqAHs90j5g8Fk9eyIdW95DJicCQDNjUxNJ3PqhauNASY9Xnuml2t6Tl2HAjnzmVBuX6DknY5S8W9QfMpvObv9tCuJWHDV61EsOsIRIKXDBrrobPoCdBpBXNOMc/sFSMOl4wZlJFgf1/hv/Q0erdO6n636rnNaKZYMa9PQboVCJx2bGUiVIFn9POsYtV761sWfPdoyVYyAUbJLqo5kBr7ad3V6ZJxlpXPqZzClAPCX2IUQJS6Nd68QA9hT5ZZ/vAufmAf7AnwChyC7lijAlt/Ef1l/YqtMdc6MvGQw==
-Received: from DB8PR09CA0017.eurprd09.prod.outlook.com (2603:10a6:10:a0::30)
- by DB9PR07MB8893.eurprd07.prod.outlook.com (2603:10a6:10:301::16) with
+ bh=zY+Azuhl34uP0t408x5TioOu2k5M3lHTbVAdD1HwQVc=;
+ b=lwHxdD6xeTtHduweiWtnALaoEJ3xoGBgbcgniuzBRE9KG9DpZO9S0fZATnCK75SJujMP1i04dCgLxNPDA+Gcm7UHkjCwlxgL5VnV3OaUIVTY2RcJIbm7RyKlMUKBHFfufE/ZTVeNG6zH+KdA8ZbCer0y9kXDkpl100mmQv9Dg7H/PtN9ju3lnqwEChxTlTv85ow/gDgjTMfK470M0YusxiYThwS2gDUNBwcT1f/87kVKUUuL4K3TLX0T27MaN35/mj45X+SQMOZf4wGOQRx6SlMrnbgXDZn8VjoC0PHBXLAlc3gsXtlX3RsD84A8Zwqs/H/LWKP1Wa32RahA8/6thg==
+Received: from DB8PR09CA0025.eurprd09.prod.outlook.com (2603:10a6:10:a0::38)
+ by PAWPR07MB10048.eurprd07.prod.outlook.com (2603:10a6:102:38a::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 14:13:01 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Wed, 5 Mar
+ 2025 14:13:02 +0000
 Received: from DU2PEPF0001E9C1.eurprd03.prod.outlook.com
- (2603:10a6:10:a0:cafe::f4) by DB8PR09CA0017.outlook.office365.com
- (2603:10a6:10:a0::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
+ (2603:10a6:10:a0:cafe::e8) by DB8PR09CA0025.outlook.office365.com
+ (2603:10a6:10:a0::38) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Wed,
  5 Mar 2025 14:13:01 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
  smtp.mailfrom=ericsson.com; dkim=none (message not signed)
@@ -50,14 +50,14 @@ Received: from oa.msg.ericsson.com (192.176.1.74) by
  15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 14:13:01 +0000
 Received: from seliiuvd00917.seli.gic.ericsson.se (153.88.142.248) by
  smtp-central.internal.ericsson.com (100.87.178.63) with Microsoft SMTP Server
- id 15.2.1544.14; Wed, 5 Mar 2025 15:12:58 +0100
+ id 15.2.1544.14; Wed, 5 Mar 2025 15:12:59 +0100
 From: ejnulak <luka.jankovic@ericsson.com>
 To: <luka.jankovic@ericsson.com>
 CC: <dev@dpdk.org>, <jerinj@marvell.com>, <mattias.ronnblom@ericsson.com>,
  <pbhagavatula@marvell.com>
-Subject: [PATCH v9 2/3] eventdev: add atomic queue test to test-evnetdev app
-Date: Wed, 5 Mar 2025 15:12:54 +0100
-Message-ID: <20250305141255.3031686-3-luka.jankovic@ericsson.com>
+Subject: [PATCH v9 3/3] eventdev: add atomic atq to test-eventdev app
+Date: Wed, 5 Mar 2025 15:12:55 +0100
+Message-ID: <20250305141255.3031686-4-luka.jankovic@ericsson.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20250305141255.3031686-1-luka.jankovic@ericsson.com>
 References: <20250305125215.2870237-1-luka.jankovic@ericsson.com>
@@ -67,61 +67,61 @@ Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C1:EE_|DB9PR07MB8893:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca0cf0a6-8801-4367-5dc0-08dd5befd6d8
+X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C1:EE_|PAWPR07MB10048:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10d017b8-ab51-422f-6f0f-08dd5befd70a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024|13003099007|43062017; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VDRORnJLdWFxc3VVSUlXLy8wMXAxdy9pVmVjVWFVV1NFSUJwZjFIWTkwNmFJ?=
- =?utf-8?B?cVA3dUVxU0dOVEo0MG1FVlhXd0tuZGE3ZDA0MUdrMUpLRGU5bytFREtMZ2JH?=
- =?utf-8?B?NzJGcXZqLzhad2tDN0hNSU16cFpTSnVUSzlPR0pFYnIvRVRnTjNpU1JuMkdW?=
- =?utf-8?B?ME51NUxoUmlMMWZPT3Z3ekd4MHBQRkczTGF6Q1lhcWk1aE9XVDk2SXVLalpQ?=
- =?utf-8?B?SkxLQU04OWV0SGNzUzZRTUxFdzU4MmVyV1F1L25SdVdsNEFDK2xKOEc3OVIw?=
- =?utf-8?B?V0c1L2RiT0tqOEljTUlMMDNWOXJUWnRld0VzQ3ZFTDYxVWpsNUlBNis3OFBl?=
- =?utf-8?B?dnVFckl2K3Q2UDVmejY1Mlg5MjViRzZNQWFBc0g1VDBHM09WSVlqWVVGZzF4?=
- =?utf-8?B?a1RMR0RUWXdqZWpmNHVtaklOeEIyY3pZSG5pL1lhWm43RkdBUzdENklKQUtI?=
- =?utf-8?B?YkMxbUt1UVpQVU4xQk9xU0FINmVnb0M4NkxhajVvZEJ2a08ycVJzNUljUDB0?=
- =?utf-8?B?OUVDZlBLdUpaSkVTWEFxN0JCTWlkOVI4RDg3TWU2S0l3YTY4RFVIdUl5MEhK?=
- =?utf-8?B?QTROVkJoQVFGdzNyRWVBVGY5OURHeHUrUXJEVWZWRUZYbGViTVFhaEgrcGpi?=
- =?utf-8?B?OVp1MTdveFc5SUdrTUJHdlAyWjdkSm8xSHhJNFRTQjBYaVFkMjgvQ3E1eVJx?=
- =?utf-8?B?WHFEOVRqZTh3S2czamFmTlQ4TlNlbDRRVnFYWXN4YWtwaWhsS0VxUE93M0pn?=
- =?utf-8?B?QW9kdWs3RmxFWEV2WFJ5MDhxWS9IK05GYnFSRThBZXFpZk11bm85WWRPQTh3?=
- =?utf-8?B?ZG44Q2ZJbHFVZjlWVFlEZjlOM3l2UC9RVlJnSUZ2dnVVWllmSXRheUd3aG8x?=
- =?utf-8?B?cGlIVTNKTmw1UDhGRmRBT3lGazl2US9MUzArdGIxNkpiQ3pqc3FkVFdLRUFo?=
- =?utf-8?B?cmJRek5LSnk2amNTdXpLVTRYL0FyZENnU0d4eUptNDBUYXZCNlhoblNxUmh1?=
- =?utf-8?B?dldWT0pXTDJmMnlyRnZRcXE1TXl0WmRiNGI5eTd5RXM3eGlGalZHTUFzZHky?=
- =?utf-8?B?V3lSYlNHY3R6SGpBdDJxc0FjT1JHaFRBdzcrN3JzcE4yZHRzSWFYUnBlbSsx?=
- =?utf-8?B?cEd5NXdydS9WZVhCMW5CUkpzQVlINDk0YU5UMmwrOFVrR3AyVGFLTm5TM1d6?=
- =?utf-8?B?ZkpoaDRlQk1FbUNJY0tIM3NZZ2RkRnRBN1BpcUhTQVF0YmVvMW9lSWgwcVcy?=
- =?utf-8?B?cGdRQVNWYkdXU1dwM2t4NWdCRWZQc1kzdVJoWFJNQ3lGMEJrSW9PTzNDV3NE?=
- =?utf-8?B?NHdTdVpka0NMb0d2RHF2VFlVV1d4M3IzZ29CUVVkWUtTcUV2VFlrdkFJRXc4?=
- =?utf-8?B?TWdNbGtyQTZaN0dRVHNPUWxGZG03dENEc1phN21lMEQ1K3Jqay92S2dxc2hU?=
- =?utf-8?B?T0Z0cEZLTkVnWEY2dFg1OXRhYXFVSU5MSlBtYUNTS2F4VkZtc0FWTVh5R1hJ?=
- =?utf-8?B?a3U5TEZzdUdjN0QxSjBvYXNCeUtPTms5RFJGZEtPTVdXN0pxVDAxYVRna3dC?=
- =?utf-8?B?RjdBVzByVHJhYjQxd3FCazl3NHo0SUFqNUVPeVBxRWtuUnFFYm0xR2tiYlUy?=
- =?utf-8?B?MTJkZEZTNnYyUjJpRkNma2J2ZjRyM1NCYjRQMHZRQmVjaHZCdVczajYvSHdo?=
- =?utf-8?B?NmNMcXNvT3hYUTVSYTV5UlozMVNQZFkyUm5ia3EyWG1NM3UyY291aTg3MGVz?=
- =?utf-8?B?N3BWZzcvK21DZStKekNUaDV5ZUFJUXZOK2ZqL3cxN0FXY1A1T0N0K3l6Yk9K?=
- =?utf-8?B?R1VFU0lwWkQ4Tm14d3pqWnovWDhZOGVDa2pRdzdsOWZmcnM1QmlKWmtwRmph?=
- =?utf-8?B?c29kdi9rcmh2NldOaDZSaTRlL3pCbS9zdzJYOU0yaGJPN3FoUDBXbm5kVms5?=
- =?utf-8?B?ZlIySG5uWjlEUnRUMHllYkY0VlN3dTNPTmlmTEFUUnAyLzlFODFjTEVaSExQ?=
- =?utf-8?B?R3FGU1ZLOHNRPT0=?=
+ ARA:13230040|82310400026|376014|1800799024|36860700013|13003099007|43062017; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TVBva1ByWWs1ODNNZW5mUXdrOHBIS1llc2UzNFVHL3NreSs0bFgxU29OeTMy?=
+ =?utf-8?B?aGFMbTFlbXFUVG91WXpNTGZFQkJJTUhHbDV0QTBjMklROHVGRU1aVFdFRkN0?=
+ =?utf-8?B?eXVtSkxMU3UzMmVNbnBvMENDd1hud1hRWnNSa3dZSVVoendPUGpHV2VXanNS?=
+ =?utf-8?B?cnZqc3crUlhWL1hyaTlXVk40c2x2am0zOFR1cjgwd25rZXlCVlpYaFk2YmI5?=
+ =?utf-8?B?QlZ5cVltaE5pd0ZkTjZHZUJmdzE4Y1h3Tm96R2lsT1RXeUpmaUtaRTJNb0pM?=
+ =?utf-8?B?Uy92ekFPSlJwQ0w0dGNTMmsyWExubXJQeTdRL21ta0ltd1JUUzB4TFY4c2ps?=
+ =?utf-8?B?OWhMTldSdi8xd005b3k1Rmpab2ZiKzIzWTBnREZzU2tQRmJFUUdwQ29BUmFF?=
+ =?utf-8?B?RGZQL0xKTWp2cm9QeTNzM1FWS3FFWmQ4NGV2Z1BRYVZFSyszLzhqL1JPaHJ2?=
+ =?utf-8?B?d3RYTzNQM3M2b1dPeWlPRWVuaHliR0NKb2p1RzM4Nkl3b1NvMDlpNHdwZXcv?=
+ =?utf-8?B?U1U4MCtOM1RGS0lNclppVEFWak9PcUxFWk1NR3BqKzJqSmdZYUxEcG1RdWhY?=
+ =?utf-8?B?OGZuTVFqM3dPMGE3MG0wWDFka09FT0pUQUVNMEMwZEl2U3hoMjlYb2tDU0Nw?=
+ =?utf-8?B?SFZ0TXpDZnFqUHlDTjM2UDd6NkxPYmFIUDY3bDBLcmZZOElIT3NyYzZFYWkz?=
+ =?utf-8?B?dFR2UXVERnJONnNXMGpzcW9XMlJPWEF5MXVrc21tRHBPQ1hadWN3bEowa0Fh?=
+ =?utf-8?B?eERLZWZOYzk0eHdzWWZwNzhvY1czT2xLYzBoZURUZ2NrdG9HK2tXTXBTWkhP?=
+ =?utf-8?B?cGNKVWJQbG01THFIbDNmMUdDVlp3ZFY0dGFUK1dzL2hYSmgvdTJOeSs2eU9k?=
+ =?utf-8?B?emtGaGNkVWhHUVpQV3Q2RUF0YkxlMjdFSFdzWldMU3hBNERjSXk5ejRCVVRr?=
+ =?utf-8?B?YWJpWVFLVlVPemJPY2tBRFZIRzU5bGpFUkdiUGpoODdpR0p5dm9FWEpqTmg2?=
+ =?utf-8?B?NDgrMytsNVRKbmxlS2FmaXN4bEY4R1RUNndrMnJvOXJLdzFvTVM3dGN0djJE?=
+ =?utf-8?B?NUQ5azRhQXJEN05iVjVmUlc2M3Ixdk9CRFc0QnF0Q2dpdG9LQ3JJVmJVa1lu?=
+ =?utf-8?B?d0tGdnlpUk9RSnU4YmpGL3lNZ29nM0JBWWQ2VHdQVEJNQTVnYlJEbGs3OTR2?=
+ =?utf-8?B?bzE1QWJjSmVyL1NMdE5nMkNPWTJDUGpZeHZkVlFraG44Mmw1bDFNSEZJdlg4?=
+ =?utf-8?B?a05XYzg5NGRXc2FxeFZPaU9lUDVUUzJIaWJkN2JFMnVHQU9NUEdMZ09lMGZR?=
+ =?utf-8?B?WXQ1bkE5T2ZtUFNGeUpoM2JNS3BwVW9rcDZCODBQRXlNQkdvZ01mUzVhcTgy?=
+ =?utf-8?B?RVdTRjlqZ09zR1Q4bFdpTlY5Q0dtVzNXa2lwMnJieXpjM1lJQkI5bEEvM3hz?=
+ =?utf-8?B?d0l6L2E4RWVwK285R1VXVU0rMFZGY1JTemk3bVNUSUxnYkpZbGVEL2xjd3hj?=
+ =?utf-8?B?cFE1bTVFaHpmL0xMWEQzVG1VbHJxVlpiVXlhalY1UUhCUlJDd3pRZ0pyL1A2?=
+ =?utf-8?B?UCs5Ti81MkpkSWd4T0xGSmYwZjBRc0t5UGNyQm51Wm82MW1LV2RGcUUzZTNX?=
+ =?utf-8?B?WGU1SXYwQUNBSnRlTFVZM3lXdE02UUdxUksrV0w4RTE2MTB5SFZKUDBheWJl?=
+ =?utf-8?B?T2w4cFdjbTY1SmFjMTl0Q0NNa3NsenBjbTFLZXlsRjZ4ZXovQlc0T3BEa2Jj?=
+ =?utf-8?B?WjN0MW5RaTFiWSt4TUR6UjRzeE56WEx2SmRXZ3dqQ0R6ZWpGZ2FiR04rUHhJ?=
+ =?utf-8?B?bE4zWnYxRGRDb1Y1eFRxQURNTWVMOWFjbHMxcWloaG1iT2VaN0JrbDNZTGNV?=
+ =?utf-8?B?ZkxwcUxNQ1NkWXBWRHRSa2FPV0tpVXFyVmtrZUFRVkhNRXY4M2FPR0c0cUhX?=
+ =?utf-8?B?UlVZT2tvZXJ1bXZaaHFNVDNIcHhOaGtjUHg5Y1hwSXc2OTlDa1ArQS9sbmJu?=
+ =?utf-8?B?bkNVMkRyenBBPT0=?=
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
  CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(13003099007)(43062017);
+ SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(13003099007)(43062017);
  DIR:OUT; SFP:1101; 
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 14:13:01.5512 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca0cf0a6-8801-4367-5dc0-08dd5befd6d8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 14:13:01.8793 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10d017b8-ab51-422f-6f0f-08dd5befd70a
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF0001E9C1.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB8893
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR07MB10048
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,38 +137,39 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Luka Jankovic <luka.jankovic@ericsson.com>
 
-Add an atomic queue test to the test-eventdev app, which is based on the
-order queue test that exclusively uses atomic queues.
+Add an atomic atq test to the test-eventdev app. The test works
+in the same way as atomic queue, the difference being that only one
+queue capable of all types for both stages.
 
 Signed-off-by: Luka Jankovic <luka.jankovic@ericsson.com>
 Tested-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
  app/test-eventdev/meson.build                 |    1 +
- app/test-eventdev/test_atomic_queue.c         |  234 +++
- .../tools/img/eventdev_atomic_atq_test.svg    | 1588 +++++++++++++++++
- doc/guides/tools/testeventdev.rst             |   92 +
- 4 files changed, 1915 insertions(+)
- create mode 100644 app/test-eventdev/test_atomic_queue.c
- create mode 100644 doc/guides/tools/img/eventdev_atomic_atq_test.svg
+ app/test-eventdev/test_atomic_atq.c           |  220 +++
+ .../tools/img/eventdev_atomic_queue_test.svg  | 1701 +++++++++++++++++
+ doc/guides/tools/testeventdev.rst             |   63 +
+ 4 files changed, 1985 insertions(+)
+ create mode 100644 app/test-eventdev/test_atomic_atq.c
+ create mode 100644 doc/guides/tools/img/eventdev_atomic_queue_test.svg
 
 diff --git a/app/test-eventdev/meson.build b/app/test-eventdev/meson.build
-index 926593b1a6..1f13e1700c 100644
+index 1f13e1700c..10658f69ce 100644
 --- a/app/test-eventdev/meson.build
 +++ b/app/test-eventdev/meson.build
-@@ -16,6 +16,7 @@ sources = files(
+@@ -15,6 +15,7 @@ sources = files(
+         'test_order_atq.c',
          'test_order_common.c',
          'test_order_queue.c',
++        'test_atomic_atq.c',
          'test_atomic_common.c',
-+        'test_atomic_queue.c',
+         'test_atomic_queue.c',
          'test_perf_atq.c',
-         'test_perf_common.c',
-         'test_perf_queue.c',
-diff --git a/app/test-eventdev/test_atomic_queue.c b/app/test-eventdev/test_atomic_queue.c
+diff --git a/app/test-eventdev/test_atomic_atq.c b/app/test-eventdev/test_atomic_atq.c
 new file mode 100644
-index 0000000000..c1a447bbac
+index 0000000000..4810d2eaae
 --- /dev/null
-+++ b/app/test-eventdev/test_atomic_queue.c
-@@ -0,0 +1,234 @@
++++ b/app/test-eventdev/test_atomic_atq.c
+@@ -0,0 +1,220 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Ericsson AB
 + */
@@ -178,13 +179,13 @@ index 0000000000..c1a447bbac
 +
 +#include "test_atomic_common.h"
 +
-+#define NB_QUEUES 2
++#define NB_QUEUES 1
 +#define NB_STAGES 2
 +
 +static rte_spinlock_t *atomic_locks;
 +
 +static inline void
-+atomic_queue_process_stage_0(struct test_order *const t,
++atomic_atq_process_stage_0(struct test_order *const t,
 +		struct rte_event *const ev,
 +		uint32_t nb_flows,
 +		uint32_t port)
@@ -193,7 +194,7 @@ index 0000000000..c1a447bbac
 +
 +	atomic_lock_verify(atomic_locks, 0, flow, nb_flows, t, port);
 +
-+	ev->queue_id = 1;
++	ev->sub_event_type = 1;
 +	ev->op = RTE_EVENT_OP_FORWARD;
 +	ev->sched_type = RTE_SCHED_TYPE_ATOMIC;
 +	ev->event_type = RTE_EVENT_TYPE_CPU;
@@ -202,10 +203,9 @@ index 0000000000..c1a447bbac
 +}
 +
 +static inline void
-+atomic_queue_process_stage_1(struct test_order *const t,
++atomic_atq_process_stage_1(struct test_order *const t,
 +		struct rte_event *const ev,
 +		uint32_t nb_flows,
-+		rte_spinlock_t *atomic_locks,
 +		uint32_t *const expected_flow_seq,
 +		RTE_ATOMIC(uint64_t) * const outstand_pkts,
 +		uint32_t port)
@@ -233,7 +233,7 @@ index 0000000000..c1a447bbac
 +}
 +
 +static int
-+atomic_queue_worker_burst(void *arg, bool flow_id_cap, uint32_t max_burst)
++atomic_atq_worker_burst(void *arg, bool flow_id_cap, uint32_t max_burst)
 +{
 +	ORDER_WORKER_INIT;
 +	struct rte_event ev[BURST_SIZE];
@@ -254,13 +254,13 @@ index 0000000000..c1a447bbac
 +			if (!flow_id_cap)
 +				order_flow_id_copy_from_mbuf(t, &ev[i]);
 +
-+			switch (ev[i].queue_id) {
++			switch (ev[i].sub_event_type) {
 +			case 0:
-+				atomic_queue_process_stage_0(t, &ev[i], nb_flows, port);
++				atomic_atq_process_stage_0(t, &ev[i], nb_flows, port);
 +				break;
 +			case 1:
-+				atomic_queue_process_stage_1(t, &ev[i], nb_flows, atomic_locks,
-+						expected_flow_seq, outstand_pkts, port);
++				atomic_atq_process_stage_1(t, &ev[i], nb_flows, expected_flow_seq,
++						outstand_pkts, port);
 +				break;
 +			default:
 +				order_process_stage_invalid(t, &ev[i]);
@@ -286,11 +286,11 @@ index 0000000000..c1a447bbac
 +	int max_burst = evt_has_burst_mode(w->dev_id) ? BURST_SIZE : 1;
 +	const bool flow_id_cap = evt_has_flow_id(w->dev_id);
 +
-+	return atomic_queue_worker_burst(arg, flow_id_cap, max_burst);
++	return atomic_atq_worker_burst(arg, flow_id_cap, max_burst);
 +}
 +
 +static int
-+atomic_queue_launch_lcores(struct evt_test *test, struct evt_options *opt)
++atomic_atq_launch_lcores(struct evt_test *test, struct evt_options *opt)
 +{
 +	int ret = atomic_launch_lcores(test, opt, worker_wrapper);
 +	rte_free(atomic_locks);
@@ -298,7 +298,7 @@ index 0000000000..c1a447bbac
 +}
 +
 +static int
-+atomic_queue_eventdev_setup(struct evt_test *test, struct evt_options *opt)
++atomic_atq_eventdev_setup(struct evt_test *test, struct evt_options *opt)
 +{
 +	int ret;
 +
@@ -312,29 +312,16 @@ index 0000000000..c1a447bbac
 +		return ret;
 +	}
 +
-+	/* q0 configuration */
-+	struct rte_event_queue_conf q0_atomic_conf = {
++	/* q0 all types queue configuration */
++	struct rte_event_queue_conf q0_conf = {
 +			.priority = RTE_EVENT_DEV_PRIORITY_NORMAL,
-+			.schedule_type = RTE_SCHED_TYPE_ATOMIC,
++			.event_queue_cfg = RTE_EVENT_QUEUE_CFG_ALL_TYPES,
 +			.nb_atomic_flows = opt->nb_flows,
 +			.nb_atomic_order_sequences = opt->nb_flows,
 +	};
-+	ret = rte_event_queue_setup(opt->dev_id, 0, &q0_atomic_conf);
++	ret = rte_event_queue_setup(opt->dev_id, 0, &q0_conf);
 +	if (ret) {
-+		evt_err("failed to setup queue0 eventdev %d err %d", opt->dev_id, ret);
-+		return ret;
-+	}
-+
-+	/* q1 configuration */
-+	struct rte_event_queue_conf q1_atomic_conf = {
-+			.priority = RTE_EVENT_DEV_PRIORITY_NORMAL,
-+			.schedule_type = RTE_SCHED_TYPE_ATOMIC,
-+			.nb_atomic_flows = opt->nb_flows,
-+			.nb_atomic_order_sequences = opt->nb_flows,
-+	};
-+	ret = rte_event_queue_setup(opt->dev_id, 1, &q1_atomic_conf);
-+	if (ret) {
-+		evt_err("failed to setup queue0 eventdev %d err %d", opt->dev_id, ret);
++		evt_err("failed to setup queue0 eventdev %d", opt->dev_id);
 +		return ret;
 +	}
 +
@@ -365,14 +352,14 @@ index 0000000000..c1a447bbac
 +}
 +
 +static void
-+atomic_queue_opt_dump(struct evt_options *opt)
++atomic_atq_opt_dump(struct evt_options *opt)
 +{
 +	order_opt_dump(opt);
 +	evt_dump("nb_evdev_queues", "%d", NB_QUEUES);
 +}
 +
 +static bool
-+atomic_queue_capability_check(struct evt_options *opt)
++atomic_atq_capability_check(struct evt_options *opt)
 +{
 +	struct rte_event_dev_info dev_info;
 +
@@ -388,27 +375,27 @@ index 0000000000..c1a447bbac
 +	return true;
 +}
 +
-+static const struct evt_test_ops atomic_queue = {
-+	.cap_check        = atomic_queue_capability_check,
++static const struct evt_test_ops atomic_atq = {
++	.cap_check        = atomic_atq_capability_check,
 +	.opt_check        = order_opt_check,
-+	.opt_dump         = atomic_queue_opt_dump,
++	.opt_dump         = atomic_atq_opt_dump,
 +	.test_setup       = order_test_setup,
 +	.mempool_setup    = order_mempool_setup,
-+	.eventdev_setup   = atomic_queue_eventdev_setup,
-+	.launch_lcores    = atomic_queue_launch_lcores,
++	.eventdev_setup   = atomic_atq_eventdev_setup,
++	.launch_lcores    = atomic_atq_launch_lcores,
 +	.eventdev_destroy = order_eventdev_destroy,
 +	.mempool_destroy  = order_mempool_destroy,
 +	.test_result      = order_test_result,
 +	.test_destroy     = order_test_destroy,
 +};
 +
-+EVT_TEST_REGISTER(atomic_queue);
-diff --git a/doc/guides/tools/img/eventdev_atomic_atq_test.svg b/doc/guides/tools/img/eventdev_atomic_atq_test.svg
++EVT_TEST_REGISTER(atomic_atq);
+diff --git a/doc/guides/tools/img/eventdev_atomic_queue_test.svg b/doc/guides/tools/img/eventdev_atomic_queue_test.svg
 new file mode 100644
-index 0000000000..f7956ecd6a
+index 0000000000..8d21de77e3
 --- /dev/null
-+++ b/doc/guides/tools/img/eventdev_atomic_atq_test.svg
-@@ -0,0 +1,1588 @@
++++ b/doc/guides/tools/img/eventdev_atomic_queue_test.svg
+@@ -0,0 +1,1701 @@
 +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 +<!-- Created with Inkscape (http://www.inkscape.org/) -->
 +
@@ -424,7 +411,7 @@ index 0000000000..f7956ecd6a
 +   id="svg3868"
 +   version="1.1"
 +   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-+   sodipodi:docname="eventdev_atomic_atq_test.svg"
++   sodipodi:docname="eventdev_atomic_queue_test.svg"
 +   sodipodi:version="0.32"
 +   inkscape:output_extension="org.inkscape.output.svg.inkscape"
 +   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -437,129 +424,87 @@ index 0000000000..f7956ecd6a
 +   xmlns:dc="http://purl.org/dc/elements/1.1/">
 +  <defs
 +     id="defs3870">
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect12084"
++       is_visible="true"
++       lpeversion="1"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
++    <inkscape:path-effect
++       effect="bspline"
++       id="path-effect10830"
++       is_visible="true"
++       lpeversion="1"
++       weight="33.333333"
++       steps="2"
++       helper_size="0"
++       apply_no_weight="true"
++       apply_with_weight="true"
++       only_selected="false" />
 +    <linearGradient
-+       id="linearGradient6545"
++       id="linearGradient6425"
 +       inkscape:swatch="solid">
 +      <stop
-+         style="stop-color:#ffa600;stop-opacity:1;"
++         style="stop-color:#e6860b;stop-opacity:1;"
 +         offset="0"
-+         id="stop6543" />
++         id="stop6423" />
++    </linearGradient>
++    <linearGradient
++       id="linearGradient6391"
++       inkscape:swatch="solid">
++      <stop
++         style="stop-color:#000000;stop-opacity:1;"
++         offset="0"
++         id="stop6389" />
 +    </linearGradient>
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3302"
++       id="path-effect6387"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3294"
++       id="path-effect6037"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3290"
++       id="path-effect6033"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3286"
++       id="path-effect6029"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3228"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3188"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3184"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3180"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3176"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3172"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3168"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3164"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3160"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3120"
++       id="path-effect6025"
 +       is_visible="true" />
 +    <linearGradient
-+       id="linearGradient3114"
++       id="linearGradient5213"
 +       inkscape:swatch="solid">
 +      <stop
-+         style="stop-color:#00f900;stop-opacity:1;"
++         style="stop-color:#ff0009;stop-opacity:1;"
 +         offset="0"
-+         id="stop3112" />
-+    </linearGradient>
-+    <linearGradient
-+       id="linearGradient3088"
-+       inkscape:swatch="solid">
-+      <stop
-+         style="stop-color:#00f900;stop-opacity:1;"
-+         offset="0"
-+         id="stop3086" />
-+    </linearGradient>
-+    <linearGradient
-+       id="linearGradient3058"
-+       inkscape:swatch="solid">
-+      <stop
-+         style="stop-color:#00f900;stop-opacity:1;"
-+         offset="0"
-+         id="stop3056" />
++         id="stop5211" />
 +    </linearGradient>
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3054"
++       id="path-effect4276"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3050"
++       id="path-effect4272"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3046"
++       id="path-effect4268"
 +       is_visible="true" />
 +    <inkscape:path-effect
 +       effect="spiro"
-+       id="path-effect3042"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3038"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3034"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3030"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3008"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3004"
++       id="path-effect4264"
 +       is_visible="true" />
 +    <linearGradient
 +       id="linearGradient2975"
@@ -573,7 +518,7 @@ index 0000000000..f7956ecd6a
 +       id="linearGradient2969"
 +       inkscape:swatch="solid">
 +      <stop
-+         style="stop-color:#69ff72;stop-opacity:1;"
++         style="stop-color:#009a08;stop-opacity:1;"
 +         offset="0"
 +         id="stop2967" />
 +    </linearGradient>
@@ -629,7 +574,7 @@ index 0000000000..f7956ecd6a
 +       id="linearGradient3438"
 +       inkscape:swatch="solid">
 +      <stop
-+         style="stop-color:#b8e132;stop-opacity:1;"
++         style="stop-color:#d18f21;stop-opacity:1;"
 +         offset="0"
 +         id="stop3436" />
 +    </linearGradient>
@@ -1171,126 +1116,261 @@ index 0000000000..f7956ecd6a
 +       gradientUnits="userSpaceOnUse" />
 +    <linearGradient
 +       inkscape:collect="always"
-+       xlink:href="#linearGradient3438"
++       xlink:href="#linearGradient2969"
 +       id="linearGradient2971"
-+       x1="372.12488"
-+       y1="333.32864"
-+       x2="476.58179"
-+       y2="333.32864"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(95.459415,-18.384776)" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3008-3"
-+       is_visible="true" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3114"
-+       id="linearGradient3104"
-+       x1="570.76388"
-+       y1="265.59842"
-+       x2="613.45706"
-+       y2="265.59842"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(-4)" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3114"
-+       id="linearGradient3106"
-+       x1="540.94574"
-+       y1="265.3059"
-+       x2="548.29097"
-+       y2="265.3059"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(-2)" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3114"
-+       id="linearGradient3108"
-+       x1="429.95148"
-+       y1="274.65289"
-+       x2="467.35629"
-+       y2="274.65289"
++       x1="372.12487"
++       y1="333.32863"
++       x2="476.58178"
++       y2="333.32863"
 +       gradientUnits="userSpaceOnUse" />
 +    <linearGradient
 +       inkscape:collect="always"
-+       xlink:href="#linearGradient3114"
-+       id="linearGradient3116"
-+       gradientUnits="userSpaceOnUse"
-+       x1="481.13927"
-+       y1="264.7722"
-+       x2="491.08518"
-+       y2="264.7722"
-+       gradientTransform="translate(0,2)" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3120-7"
-+       is_visible="true" />
-+    <inkscape:path-effect
-+       effect="spiro"
-+       id="path-effect3120-7-3"
-+       is_visible="true" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3993"
-+       id="linearGradient6547"
-+       x1="568.54004"
-+       y1="280.793"
-+       x2="630.64801"
-+       y2="280.793"
-+       gradientUnits="userSpaceOnUse" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3993"
-+       id="linearGradient6549"
-+       x1="499.98608"
-+       y1="268.21176"
-+       x2="522.65869"
-+       y2="268.21176"
-+       gradientUnits="userSpaceOnUse" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3993"
-+       id="linearGradient6551"
-+       x1="449.72733"
-+       y1="267.29733"
-+       x2="480.36688"
-+       y2="267.29733"
-+       gradientUnits="userSpaceOnUse" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient3993"
-+       id="linearGradient6553"
-+       x1="554.2403"
-+       y1="266.57718"
-+       x2="565.97662"
-+       y2="266.57718"
++       xlink:href="#linearGradient2975"
++       id="linearGradient2977"
++       x1="558.08159"
++       y1="336.1407"
++       x2="662.53851"
++       y2="336.1407"
 +       gradientUnits="userSpaceOnUse" />
 +    <marker
 +       inkscape:stockid="Arrow1Mend"
 +       orient="auto"
 +       refY="0"
 +       refX="0"
-+       id="Arrow1Mend-4-3"
++       id="Arrow1Mend-2"
 +       style="overflow:visible">
 +      <path
-+         id="path4533-7-6"
++         id="path4533-6"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3228"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="marker3706"
++       style="overflow:visible">
++      <path
++         id="path3704"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3286"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-1"
++       style="overflow:visible">
++      <path
++         id="path4533-8"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3290"
++       is_visible="true" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient2969"
++       id="linearGradient5215"
++       x1="474.25354"
++       y1="288.07208"
++       x2="607.70117"
++       y2="288.07208"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="translate(2.9619308,1.9381716)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient2969"
++       id="linearGradient5217"
++       x1="475.90207"
++       y1="275.55313"
++       x2="550.59595"
++       y2="275.55313"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="matrix(1.0378669,0,0,1.0378669,-20.849369,-9.3151532)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient2969"
++       id="linearGradient5219"
++       x1="430.01959"
++       y1="275.94962"
++       x2="483.12329"
++       y2="275.94962"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="matrix(1.0526015,0,0,1.1085927,-22.60217,-28.51638)" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient2969"
++       id="linearGradient5221"
++       x1="409.40347"
++       y1="274.47592"
++       x2="424.67188"
++       y2="274.47592"
++       gradientUnits="userSpaceOnUse"
++       gradientTransform="matrix(0.99688019,0,0,1.0540252,2.0081849,-13.414405)" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-3-7"
++       style="overflow:visible">
++      <path
++         id="path4533-75-9"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3120-7"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-4-2"
++       style="overflow:visible">
++      <path
++         id="path4533-7-0"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect6025-2"
++       is_visible="true" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6427"
++       x1="629.66772"
++       y1="279.10413"
++       x2="652.93823"
++       y2="279.10413"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6429"
++       x1="548.02209"
++       y1="278.62817"
++       x2="594.85144"
++       y2="278.62817"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6431"
++       x1="439.92499"
++       y1="294.88806"
++       x2="559.63593"
++       y2="294.88806"
++       gradientUnits="userSpaceOnUse" />
++    <linearGradient
++       inkscape:collect="always"
++       xlink:href="#linearGradient3993"
++       id="linearGradient6433"
++       x1="483.44641"
++       y1="280.99118"
++       x2="564.04688"
++       y2="280.99118"
++       gradientUnits="userSpaceOnUse" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-7"
++       style="overflow:visible">
++      <path
++         id="path4533-5"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3294"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-92"
++       style="overflow:visible">
++      <path
++         id="path4533-28"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3302"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-97"
++       style="overflow:visible">
++      <path
++         id="path4533-36"
++         d="M 0,0 5,-5 -12.5,0 5,5 Z"
++         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
++         transform="matrix(-0.4,0,0,-0.4,-4,0)"
++         inkscape:connector-curvature="0" />
++    </marker>
++    <inkscape:path-effect
++       effect="spiro"
++       id="path-effect3228-1"
++       is_visible="true" />
++    <marker
++       inkscape:stockid="Arrow1Mend"
++       orient="auto"
++       refY="0"
++       refX="0"
++       id="Arrow1Mend-92-7"
++       style="overflow:visible">
++      <path
++         id="path4533-28-5"
 +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
 +         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
 +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
 +         inkscape:connector-curvature="0" />
 +    </marker>
 +    <inkscape:path-effect
-+       effect="bspline"
-+       id="path-effect12084"
++       effect="spiro"
++       id="path-effect3302-3"
 +       is_visible="true"
-+       lpeversion="1"
-+       weight="33.333333"
-+       steps="2"
-+       helper_size="0"
-+       apply_no_weight="true"
-+       apply_with_weight="true"
-+       only_selected="false" />
++       lpeversion="0" />
 +  </defs>
 +  <sodipodi:namedview
 +     id="base"
@@ -1299,16 +1379,16 @@ index 0000000000..f7956ecd6a
 +     borderopacity="1.0"
 +     inkscape:pageopacity="0.0"
 +     inkscape:pageshadow="2"
-+     inkscape:zoom="1.4142136"
-+     inkscape:cx="217.08178"
-+     inkscape:cy="136.11805"
++     inkscape:zoom="4.0000002"
++     inkscape:cx="321.12498"
++     inkscape:cy="71.999996"
 +     inkscape:document-units="px"
 +     inkscape:current-layer="layer1"
 +     showgrid="false"
-+     inkscape:window-width="1883"
-+     inkscape:window-height="1000"
-+     inkscape:window-x="2614"
-+     inkscape:window-y="195"
++     inkscape:window-width="1536"
++     inkscape:window-height="1059"
++     inkscape:window-x="2606"
++     inkscape:window-y="223"
 +     inkscape:window-maximized="0"
 +     fit-margin-top="0.1"
 +     fit-margin-left="0.1"
@@ -1347,17 +1427,17 @@ index 0000000000..f7956ecd6a
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="424.47687"
-+       y="382.4664"
++       x="528.47687"
++       y="380.4664"
 +       id="text2912"
 +       inkscape:export-filename="/home/matz/barracuda/rapports/mbuf-api-v2-images/octeon_multi.png"
 +       inkscape:export-xdpi="112"
 +       inkscape:export-ydpi="112"><tspan
 +         sodipodi:role="line"
-+         x="424.47687"
-+         y="382.4664"
++         x="528.47687"
++         y="380.4664"
 +         id="tspan2916"
-+         style="font-weight:bold;font-size:13.3333px;line-height:1.25">test: atomic_atq(all types queue)</tspan></text>
++         style="font-weight:bold;font-size:13.3333px;line-height:1.25">test: atomic_queue</tspan></text>
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -1400,12 +1480,21 @@ index 0000000000..f7956ecd6a
 +       rx="11.6051"
 +       ry="16.293755" />
 +    <rect
-+       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient2971);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-+       id="rect128-7"
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient2977);stroke-width:1.02699995;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect128"
 +       width="103.42992"
 +       height="57.382355"
-+       x="468.09781"
-+       y="286.25269"
++       x="558.59509"
++       y="307.44952"
++       rx="8.5874901"
++       ry="10.712767" />
++    <rect
++       style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient2971);stroke-width:1.027;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
++       id="rect128-7"
++       width="103.43"
++       height="57.382355"
++       x="372.63837"
++       y="304.63745"
 +       rx="8.5874901"
 +       ry="10.712767" />
 +    <rect
@@ -1427,13 +1516,42 @@ index 0000000000..f7956ecd6a
 +       rx="11.6051"
 +       ry="16.293755" />
 +    <path
-+       style="fill:none;stroke:#009587;stroke-width:0.93883556;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 183.25449,249.08205 c 3.74662,22.85489 17.60919,43.86172 37.14916,56.29446 18.31316,11.65216 40.37703,15.62026 61.91526,18.31267 12.34123,1.54273 24.72858,2.74691 37.14916,3.39123 13.45494,0.69797 26.93497,0.73841 40.40786,0.67825 36.04931,-0.16098 72.09541,-1.04105 108.10962,-2.63952"
++       style="fill:none;stroke:#009587;stroke-width:0.9931457;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 181.86811,247.66582 c 3.58556,24.38192 18.0972,46.94673 38.79478,60.32374 19.0792,12.33104 42.1302,16.69577 64.65795,19.6234 12.88313,1.67425 25.82062,2.9633 38.79477,3.63396 14.05094,0.72632 28.12813,0.72676 42.19783,0.72679 2.04183,0 4.08366,0 6.12549,0"
 +       id="path2852"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect2854"
-+       inkscape:original-d="m 183.25449,249.08205 c 12.38397,18.76387 24.76701,37.52867 37.14916,56.29446 12.38211,18.76578 41.27777,12.20748 61.91526,18.31267 20.6375,6.10516 24.76702,2.25985 37.14916,3.39123 12.38215,1.13134 26.9395,0.4512 40.40786,0.67825 13.46837,0.22702 106.15533,-2.64046 108.10962,-2.63952"
-+       sodipodi:nodetypes="csscsc" />
++       inkscape:original-d="m 181.86811,247.66582 c 12.93255,20.10689 25.86414,40.2148 38.79478,60.32374 12.93062,20.10895 43.10626,13.08124 64.65795,19.6234 21.55169,6.54215 25.86414,2.42161 38.79477,3.63396 12.93064,1.21233 28.13285,0.4835 42.19783,0.72679 14.06498,0.24328 4.08462,-10e-4 6.12549,0" />
++    <path
++       style="fill:none;stroke:#f70000;stroke-width:0.981;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#Arrow1Mend);marker-start:"
++       d="m 640.02293,307.22481 c -12.09421,-24.58854 -24.27852,-49.36025 -30.348,-70.97018 -6.06948,-21.60992 -6.06948,-40.14987 -6.06948,-58.68854"
++       id="path3042"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3044"
++       inkscape:original-d="m 640.02293,307.22481 c -11.90643,-24.6809 -24.27734,-49.36083 -36.41748,-74.03977 9.8e-4,-18.54033 9.8e-4,-37.08028 0,-55.61895" />
++    <path
++       style="stroke:#f90000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1;fill:none;marker-start:url(#Arrow1Mstart)"
++       d="m 541.5074,178.03818 c -5.9138,7.73622 -8.0643,18.21989 -5.67376,27.65957 1.48599,5.86783 4.57531,11.19036 7.80142,16.31206 21.74916,34.52845 51.56536,63.93984 86.38787,85.215"
++       id="path3398"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3400"
++       inkscape:original-d="m 541.5074,178.03818 c -2.36307,8.74604 -3.78151,18.43871 -5.67376,27.65957 -1.89225,9.22086 5.20195,10.87371 7.80142,16.31206 2.59947,5.43835 57.59291,56.809 86.38787,85.215" />
++    <path
++       style="fill:none;stroke:#fc0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
++       d="m 486.31591,175.32896 c -4.56701,3.4939 -7.88094,8.59224 -9.21986,14.18439 -1.17323,4.90013 -0.85198,10.07279 0.32038,14.97313 1.17237,4.90034 3.17163,9.56311 5.35338,14.10489 18.70771,38.94408 52.03948,70.64767 91.8709,87.38319"
++       id="path3402"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3404"
++       inkscape:original-d="m 486.31591,175.32896 c -4.01791,5.67276 -5.19994,8.50963 -9.21986,14.18439 -4.01991,5.67476 2.12866,20.32997 5.67376,29.07802 3.5451,8.74804 61.24827,58.25446 91.8709,87.38319"
++       sodipodi:nodetypes="ccsc" />
++    <path
++       style="fill:none;stroke:#fc0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
++       d="m 438.74144,177.32896 c -2.99229,7.65136 -4.44794,15.90007 -4.25532,24.11347 0.26469,11.28631 3.68787,22.50755 9.92908,31.9149 7.88401,11.88353 19.75202,20.40996 30.49645,29.78723 16.28636,14.21403 30.48909,30.90719 48.22696,43.26242 11.01957,7.67563 23.28348,13.56063 36.16571,17.3546"
++       id="path3406"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3408"
++       inkscape:original-d="m 438.74144,177.32896 c -3.5451,5.90916 -0.2354,18.20231 -4.25532,24.11347 -4.01991,5.91117 4.01991,19.14794 9.92908,31.9149 5.90917,12.76695 20.33197,19.85715 30.49645,29.78723 10.16449,9.93008 36.88044,34.98718 48.22696,43.26242 11.34652,8.27523 19.61974,10.85951 36.16571,17.3546"
++       sodipodi:nodetypes="ccsssc" />
 +    <g
 +       id="g4374">
 +      <text
@@ -1560,14 +1678,25 @@ index 0000000000..f7956ecd6a
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="477.25565"
-+       y="316.59613"
++       x="384.74597"
++       y="334.61694"
 +       id="text5219-6"><tspan
 +         sodipodi:role="line"
-+         x="477.25565"
-+         y="316.59613"
++         x="384.74597"
++         y="334.61694"
 +         id="tspan5223-1"
-+         style="font-size:10px;line-height:1.25">all_types_queue0</tspan></text>
++         style="font-size:10px;line-height:1.25">atomic queue 0</tspan></text>
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="569.64355"
++       y="336.42307"
++       id="text5219-6-5"><tspan
++         sodipodi:role="line"
++         x="569.64355"
++         y="336.42307"
++         id="tspan5223-1-5"
++         style="font-size:10px;line-height:1.25">atomic queue 1</tspan></text>
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -1774,302 +1903,250 @@ index 0000000000..f7956ecd6a
 +       x="538.27478"
 +       y="144.79884" />
 +    <path
-+       style="fill:none;stroke:#5cdcff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       style="fill:none;stroke:#2ce3ea;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
 +       d="m 86.923031,168.93973 c 2.833543,14.16771 5.667239,28.33619 16.884859,38.84515 11.21761,10.50897 30.81628,17.35669 50.41543,24.20459"
 +       id="path3022"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect3024"
 +       inkscape:original-d="m 86.923031,168.93973 c 2.834697,14.16748 5.668393,28.33596 8.50109,42.50544 19.601799,6.84748 39.200469,13.6952 58.799199,20.5443" />
 +    <path
-+       style="fill:none;stroke:#5cdcff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend);marker-start:url(#Arrow1Mstart)"
-+       d="m 146.43066,168.35658 c 2.36123,9.20881 4.72265,18.41832 9.20969,26.09352 4.48705,7.67519 11.09851,13.8144 17.71043,19.95404"
++       style="fill:none;stroke:#2ce3ea;stroke-width:0.94190133px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 146.34977,174.57512 c 2.37508,8.12236 4.75033,16.24527 9.26371,23.01491 4.51339,6.76964 11.16356,12.18449 17.81407,17.59962"
 +       id="path3026"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect3028"
-+       inkscape:original-d="m 146.43066,168.35658 c 2.36241,9.20851 4.72383,18.41802 7.08424,27.62854 6.61346,6.13914 13.22492,12.27835 19.83588,18.41902" />
++       inkscape:original-d="m 146.34977,174.57512 c 2.37625,8.12202 4.7515,16.24493 7.12573,24.36872 6.6522,5.4148 13.30237,10.82966 19.95205,16.24581" />
 +    <path
-+       style="fill:none;stroke:#5cdcff;stroke-width:0.81213671px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
-+       d="m 217.48983,176.52088 c -8.64146,12.7325 -17.28354,25.46592 -25.92626,38.20028"
++       style="fill:none;stroke:#2ce3ea;stroke-width:0.80414414px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 216.07443,175.10554 c -8.16931,13.20464 -16.33919,26.41022 -24.50966,39.61674"
 +       id="path3034"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect3036"
-+       inkscape:original-d="m 217.48983,176.52088 c -8.64125,12.73264 -17.28334,25.46606 -25.92626,38.20028" />
++       inkscape:original-d="m 216.07443,175.10554 c -8.1691,13.20477 -16.33899,26.41034 -24.50966,39.61674" />
 +    <path
-+       style="fill:none;stroke:#5cdcff;stroke-width:0.86425042px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
-+       d="m 272.10856,176.69086 c -0.83331,11.39414 -1.66669,22.78917 -12.50095,31.58588 -10.83426,8.79671 -31.66708,14.99352 -52.5026,21.19113"
++       style="fill:none;stroke:#2ce3ea;stroke-width:0.77416188px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
++       d="m 275.03639,177.69945 c -3.2253,11.1515 -6.45088,22.30399 -17.30887,30.95868 -10.85798,8.65469 -29.34621,14.80993 -47.83697,20.96602"
 +       id="path3038"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect3040"
-+       inkscape:original-d="m 272.10856,176.69086 c -0.83249,11.3942 -1.66587,22.78923 -2.50014,34.18511 -20.83523,6.19695 -41.66805,12.39376 -62.50341,18.5919" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient3108);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 467.27138,304.53077 c -4.47171,0.79203 -9.17911,0.19735 -13.31337,-1.68186 -4.13426,-1.8792 -7.67758,-5.03486 -10.02115,-8.92474 -2.70468,-4.48926 -3.7629,-9.74432 -4.94975,-14.84924 -2.2305,-9.59386 -5.06642,-19.04692 -8.48528,-28.28427"
-+       id="path3040"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3042"
-+       inkscape:original-d="m 467.27138,304.53077 c -7.54147,-3.30083 -15.55535,-7.07207 -23.33452,-10.6066 -7.77917,-3.53453 -3.29883,-9.9005 -4.94975,-14.84924 -1.65091,-4.94875 -5.65585,-17.20727 -8.48528,-28.28427"
-+       sodipodi:nodetypes="cscc" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient3116);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 490.60591,286.02467 c -1.19028,-4.00346 -2.3688,-8.01042 -3.53554,-12.02081 -1.28128,-4.40407 -2.55618,-8.85645 -2.82842,-13.43503 -0.22685,-3.81532 0.25518,-7.67163 1.41421,-11.31371"
-+       id="path3044"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3046"
-+       inkscape:original-d="m 490.60591,286.02467 c -1.17751,-3.53653 -2.35603,-8.01487 -3.53554,-12.02081 -1.17951,-4.00594 -1.88462,-8.95769 -2.82842,-13.43503 -0.94381,-4.47734 0.9438,-7.54347 1.41421,-11.31371" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient3106);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 543.76023,283.31757 c -3.17461,-5.53504 -4.67076,-12.01835 -4.24264,-18.38478 0.38974,-5.79571 2.3658,-11.4769 5.65686,-16.26345"
-+       id="path3048"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3050"
-+       inkscape:original-d="m 543.76023,283.31757 c -1.17751,-5.89356 -2.82742,-12.25752 -4.24264,-18.38478 -1.41521,-6.12726 3.77224,-10.8433 5.65686,-16.26345" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient3104);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 567.52771,286.25269 c -0.89405,-7.05499 0.50327,-14.382 3.93101,-20.61279 3.42237,-6.22103 8.85117,-11.31764 15.27563,-14.34091 6.42445,-3.02328 13.81187,-3.95783 20.78681,-2.62965"
-+       id="path3052"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3054"
-+       inkscape:original-d="m 567.52771,286.25269 c 1.31134,-6.87193 2.62167,-13.74286 3.93101,-20.61279 1.30933,-6.86993 24.04263,-11.31471 36.06244,-16.97056" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient6551);stroke-width:1.23147655px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 449.95502,247.97701 c 7.55606,3.00738 14.27612,8.08523 19.23272,14.53274 4.94601,6.43374 8.12285,14.21372 9.09385,22.27059"
-+       id="path3118"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3120"
-+       inkscape:original-d="m 449.95502,247.97701 c 6.41168,4.84269 12.82258,9.68693 19.23272,14.53274 6.41012,4.84582 6.06333,14.84549 9.09385,22.27059" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient6549);stroke-width:1.02635109px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 500.27242,249.30514 c 5.49861,3.69701 10.16955,8.61776 13.57532,14.30137 3.95545,6.60092 6.18818,14.22417 6.41885,21.91602"
-+       id="path3118-5"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3120-7"
-+       inkscape:original-d="m 500.27242,249.30514 c 4.52565,4.76559 9.05076,9.5327 13.57532,14.30137 4.52456,4.76867 4.27978,14.60913 6.41885,21.91602" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient6553);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 563.4379,247.96223 c -0.93075,1.47255 -1.40195,3.23109 -1.33217,4.97173 0.0873,2.17847 0.98613,4.22982 1.82529,6.24207 0.83917,2.01226 1.64627,4.12194 1.53517,6.29933 -0.10557,2.06901 -1.03996,4.01595 -2.21955,5.71904 -1.17958,1.70309 -2.61086,3.2153 -3.88281,4.85056 -1.79899,2.31284 -3.27787,4.87432 -4.38135,7.58871"
-+       id="path3158"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3160"
-+       inkscape:original-d="m 563.4379,247.96223 c -0.44305,1.65624 -0.88711,3.31349 -1.33217,4.97173 -0.44505,1.65824 2.24131,8.35993 3.36046,12.5414 1.11915,4.18146 -4.06724,7.0454 -6.10236,10.5696 -2.03512,3.5242 -2.9199,5.05814 -4.38135,7.58871" />
-+    <path
-+       style="fill:none;stroke:url(#linearGradient6547);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-9)"
-+       d="m 627.07751,247.25512 c 2.57858,5.21574 3.57603,11.20045 2.82843,16.97056 -0.64544,4.9816 -2.54874,9.72988 -4.94975,14.14214 -5.34434,9.82114 -13.26591,18.22509 -22.75437,24.13997 -9.48846,5.91488 -20.52182,9.327 -31.69285,9.80115"
-+       id="path3170"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3172"
-+       inkscape:original-d="m 627.07751,247.25512 c 0.94381,5.65586 1.88662,11.31271 2.82843,16.97056 0.94181,5.65786 -3.29883,9.42709 -4.94975,14.14214 -1.65091,4.71505 -36.29715,22.62642 -54.44722,33.94112" />
-+    <path
-+       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 472.28159,286.78034 c -4.73891,1.38236 -9.8908,1.31285 -14.59068,-0.19687 -4.69989,-1.50972 -8.9285,-4.45346 -11.97588,-8.33697 -4.6972,-5.98601 -6.39497,-13.73104 -7.77817,-21.2132 -4.74217,-25.65195 -7.34684,-51.69871 -7.77817,-77.78175"
-+       id="path3174"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3176"
-+       inkscape:original-d="m 472.28159,286.78034 c -8.85452,-2.84561 -17.71004,-5.69023 -26.56656,-8.53384 -8.85651,-2.84361 -5.18444,-18.15007 -7.77817,-21.2132 -2.59372,-3.06313 -5.18445,-47.84856 -7.77817,-77.78175"
-+       sodipodi:nodetypes="cscc" />
-+    <path
-+       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 520.26659,285.52253 c -5.12949,-4.21044 -10.95341,-7.57288 -17.1645,-9.90993 -1.06939,-0.40238 -2.15342,-0.77603 -3.17262,-1.29248 -1.0192,-0.51645 -1.98094,-1.18681 -2.68299,-2.08826 -0.72153,-0.92647 -1.14059,-2.06537 -1.31508,-3.22662 -0.1745,-1.16126 -0.1134,-2.34757 0.0547,-3.50977 0.33614,-2.32441 1.09651,-4.58378 1.26041,-6.92664 0.17202,-2.45897 -0.32204,-4.92427 -1.08174,-7.26926 -0.75971,-2.34499 -1.78291,-4.59423 -2.70916,-6.87857 -3.13866,-7.7406 -5.16733,-15.90124 -6.47139,-24.15154 -2.35876,-14.92295 -2.35876,-30.21628 0,-45.13923"
-+       id="path3178"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3180"
-+       inkscape:original-d="m 520.26659,285.52253 c -6.30121,-1.68967 -11.442,-6.60762 -17.1645,-9.90993 -5.7225,-3.30231 -3.90274,-2.25483 -5.85561,-3.38074 -1.95287,-1.12591 10e-4,-9.10969 0,-13.66303 -0.001,-4.55334 -2.52627,-9.43288 -3.7909,-14.14783 -1.26463,-4.71494 -4.31326,-16.10203 -6.47139,-24.15154 -2.15813,-8.04952 10e-4,-30.09382 0,-45.13923" />
-+    <path
-+       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 550.98248,285.63367 c -2.92905,-0.67285 -5.54573,-2.60689 -7.0484,-5.20959 -1.50267,-2.60269 -1.86925,-5.83582 -0.98743,-8.70888 0.60067,-1.95707 1.7332,-3.7028 2.90087,-5.38431 1.16766,-1.68151 2.39383,-3.34436 3.22004,-5.21741 1.05624,-2.39454 1.4169,-5.05627 1.32027,-7.67164 -0.0966,-2.61537 -0.63688,-5.1959 -1.32027,-7.72225 -2.02251,-7.47675 -5.29434,-14.54655 -7.92814,-21.83047 -2.63379,-7.28391 -4.65127,-14.98425 -4.00448,-22.70266 0.8282,-9.88322 6.25638,-19.28511 14.4014,-24.94396"
-+       id="path3182"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3184"
-+       inkscape:original-d="m 550.98248,285.63367 c -2.67761,-4.64049 -5.35622,-9.27998 -8.03583,-13.91847 -2.67961,-4.63849 4.0816,-7.06881 6.12091,-10.60172 2.0393,-3.53291 0.001,-10.26359 0,-15.39389 -10e-4,-5.1303 -7.95408,-29.68975 -11.93262,-44.53313 -3.97854,-14.84337 9.60194,-16.63031 14.4014,-24.94396" />
-+    <path
-+       style="fill:none;stroke:#ff0009;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
-+       d="m 570.50897,312.30894 15.9099,-15.9099 c 1.60179,-1.60179 3.18026,-3.22794 4.83149,-4.77871 1.65122,-1.55077 3.4059,-3.02641 5.42156,-4.06012 3.98852,-2.04548 8.73787,-2.20014 12.72792,-4.24264 2.36474,-1.21051 4.3875,-3.06569 5.84524,-5.28657 1.45774,-2.22089 2.35254,-4.80039 2.64004,-7.44135 0.22981,-2.11099 0.0784,-4.24195 0,-6.36397 -0.10438,-2.827 -0.0784,-5.65744 0,-8.48528 0.10462,-3.77187 0.30241,-7.55251 0,-11.3137 -0.66504,-8.27138 -3.7123,-16.13228 -6.42402,-23.97477 -4.92134,-14.23288 -8.82892,-28.81618 -11.68335,-43.60288"
-+       id="path3186"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3188"
-+       inkscape:original-d="m 570.50897,312.30894 c 5.3043,-5.3043 10.6076,-10.6076 15.9099,-15.9099 5.3023,-5.3023 6.83637,-5.89355 10.25305,-8.83883 3.41668,-2.94528 8.48628,-2.82943 12.72792,-4.24264 4.24164,-1.41322 5.65786,-8.48628 8.48528,-12.72792 2.82743,-4.24164 10e-4,-4.24364 0,-6.36397 -10e-4,-2.12032 10e-4,-5.65785 0,-8.48528 -10e-4,-2.82742 10e-4,-7.54347 0,-11.3137 -10e-4,-3.77024 -4.28168,-15.98418 -6.42402,-23.97477 -2.14234,-7.99059 -7.7879,-29.06959 -11.68335,-43.60288" />
++       inkscape:original-d="m 275.03639,177.69945 c -3.22467,11.15168 -6.45026,22.30417 -9.67676,33.4575 -18.49025,6.1554 -36.97848,12.31064 -55.46908,18.4672" />
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="274.48175"
-+       y="311.57025"
-+       id="text5219-2-62"><tspan
-+         sodipodi:role="line"
-+         x="274.48175"
-+         y="311.57025"
-+         id="tspan5223-0-91"
-+         style="font-size:10px;line-height:1.25">dequeue_atomic_flow, lock(step 2)</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="230.38838"
-+       y="349.16824"
++       x="215.93097"
++       y="349.08289"
 +       id="text5219-2-62-2"><tspan
 +         sodipodi:role="line"
-+         x="230.38838"
-+         y="349.16824"
++         x="215.93097"
++         y="349.08289"
 +         id="tspan5223-0-91-7"
-+         style="font-size:10px;line-height:1.25">enqueue atomic flow(step 1)</tspan></text>
-+    <path
-+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-+       d="m 284.13073,339.88611 c 0.17405,-3.87643 1.69528,-7.6795 4.24264,-10.6066 1.21368,-1.3946 2.65204,-2.59324 4.24264,-3.53554"
-+       id="path3226"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3228"
-+       inkscape:original-d="m 284.13073,339.88611 c 1.65092,-3.53654 2.82943,-7.07207 4.24264,-10.6066 1.41322,-3.53454 2.82943,-2.35803 4.24264,-3.53554" />
++         style="font-size:10px;line-height:1.25">enqueue(step 1)</tspan></text>
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="54.031021"
-+       y="305.13019"
++       x="53.573601"
++       y="307.04483"
 +       id="text5219-2-62-2-0"><tspan
 +         sodipodi:role="line"
-+         x="54.031021"
-+         y="305.13019"
++         x="53.573601"
++         y="307.04483"
 +         id="tspan5223-0-91-7-9"
 +         style="font-size:10px;line-height:1.25">produce atomic flows(step 0)</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="221.4942"
-+       y="271.6572"
-+       id="text5219-2-62-3"><tspan
-+         sodipodi:role="line"
-+         x="221.4942"
-+         y="271.6572"
-+         id="tspan5223-0-91-6"
-+         style="font-size:10px;line-height:1.25"> unlock and enqueue(step 3)</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="228.94464"
-+       y="232.44748"
-+       id="text5219-2-62-3-0"><tspan
-+         sodipodi:role="line"
-+         x="228.94464"
-+         y="232.44748"
-+         id="tspan5223-0-91-6-6"
-+         style="font-size:10px;line-height:1.25">dequeue_atomic_flow, lock (step 4)</tspan></text>
 +    <path
-+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-+       d="m 125.03171,296.7526 c 3.74786,-3.82704 6.25815,-8.84762 7.07106,-14.14214 0.89616,-5.83674 -0.22472,-11.84652 0.70712,-17.67767 0.88602,-5.54438 3.67535,-10.76654 7.79086,-14.58594 4.11551,-3.81939 9.53103,-6.21176 15.12603,-6.68208"
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-2)"
++       d="m 124.57429,298.66726 c 3.67724,-3.88246 6.17144,-8.87087 7.07106,-14.14214 0.99323,-5.81974 0.0756,-11.80766 0.70712,-17.67767 0.68671,-6.38281 3.2487,-12.55246 7.28535,-17.54419 4.03665,-4.99173 9.53369,-8.7879 15.63155,-10.7949"
 +       id="path3284"
 +       inkscape:connector-curvature="0"
 +       inkscape:path-effect="#path-effect3286"
-+       inkscape:original-d="m 125.03171,296.7526 c 2.35802,-4.71505 4.71504,-9.42909 7.07106,-14.14214 2.35603,-4.71304 -4.47734,-16.97156 0.70712,-17.67767 5.18445,-0.70611 8.30435,-19.6191 22.91689,-21.26802"
++       inkscape:original-d="m 124.57429,298.66726 c 2.35802,-4.71505 4.71504,-9.42909 7.07106,-14.14214 2.35603,-4.71304 -4.47734,-16.97156 0.70712,-17.67767 5.18445,-0.70611 8.30435,-26.69017 22.9169,-28.33909"
 +       sodipodi:nodetypes="ccsc" />
-+    <path
-+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-+       d="m 400.09624,301.70234 c 2.99719,-1.5536 6.06561,-2.9698 9.19239,-4.24264 10.36506,-4.21939 21.37433,-6.85204 32.52691,-7.77817"
-+       id="path3288"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3290"
-+       inkscape:original-d="m 400.09624,301.70234 c 3.06513,-1.41521 6.12926,-2.82942 9.19239,-4.24264 3.06313,-1.41321 21.68561,-5.18645 32.52691,-7.77817" />
-+    <path
-+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-+       d="m 366.15512,272.71097 c 3.81527,2.26146 7.84644,4.15848 12.02081,5.65685 11.69951,4.19948 24.37655,5.20587 36.76955,4.24264 17.71147,-1.3766 35.17977,-6.78471 50.20458,-16.26345 1.43767,-0.90698 2.85248,-1.85019 4.24264,-2.82843"
-+       id="path3292"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3294"
-+       inkscape:original-d="m 366.15512,272.71097 c 4.00793,1.88461 8.01487,3.77023 12.02081,5.65685 4.00594,1.88662 24.51404,2.82743 36.76955,4.24264 12.25552,1.41521 33.47072,-10.8433 50.20458,-16.26345 16.73386,-5.42016 2.82943,-1.88662 4.24264,-2.82843" />
-+    <path
-+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-+       d="m 336.45663,221.09217 c 2.28482,-4.91581 5.69736,-9.30336 9.8995,-12.72792 8.26499,-6.7356 19.09721,-9.47021 29.69848,-10.6066 11.02462,-1.18177 22.14702,-0.83857 33.23402,-0.70711 6.83505,0.081 13.67105,0.081 20.5061,0"
-+       id="path3300"
-+       inkscape:connector-curvature="0"
-+       inkscape:path-effect="#path-effect3302"
-+       inkscape:original-d="m 336.45663,221.09217 c 3.30083,-4.24364 6.60067,-8.48628 9.8995,-12.72792 3.29883,-4.24164 19.79999,-7.07207 29.69848,-10.6066 9.8985,-3.53454 22.15701,-0.47241 33.23402,-0.70711 11.07701,-0.2347 13.67173,-0.001 20.5061,0" />
 +    <text
 +       xml:space="preserve"
 +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-+       x="316.1026"
-+       y="170.71103"
++       x="243.45221"
++       y="299.112"
++       id="text5219-2-62"><tspan
++         sodipodi:role="line"
++         x="243.45221"
++         y="299.112"
++         id="tspan5223-0-91"
++         style="font-size:10px;line-height:1.25">dequeue, lock(step 2)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-1)"
++       d="m 369.06669,289.2441 c 2.99719,-1.5536 6.06561,-2.9698 9.19239,-4.24264 10.36506,-4.21939 21.37433,-6.85204 32.52691,-7.77817"
++       id="path3288"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3290"
++       inkscape:original-d="m 369.06669,289.2441 c 3.06513,-1.41521 6.12926,-2.82942 9.19239,-4.24264 3.06313,-1.41321 21.68561,-5.18645 32.52691,-7.77817" />
++    <path
++       style="fill:none;stroke:url(#linearGradient5221);stroke-width:1.02505457px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 412.13462,303.84217 c -1.78221,-8.21339 -1.99449,-16.76454 -0.62202,-25.05624 1.75585,-10.60783 6.12178,-20.77383 12.60532,-29.35128"
++       id="path4262"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect4264"
++       inkscape:original-d="m 412.13462,303.84217 c -0.20635,-8.35314 -0.41368,-16.70522 -0.62202,-25.05624 -0.20832,-8.35102 8.40455,-19.56856 12.60532,-29.35128" />
++    <path
++       style="fill:none;stroke:url(#linearGradient5219);stroke-width:1.08023429px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 430.54474,305.94863 c 1.69515,-6.54525 4.20133,-12.88001 7.44301,-18.81342 3.60164,-6.59226 8.11378,-12.68982 13.39743,-18.02956 9.02277,-9.11854 20.30848,-15.98095 32.55605,-19.79607"
++       id="path4266"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect4268"
++       inkscape:original-d="m 430.54474,305.94863 c 2.23395,-6.01096 4.96307,-12.54338 7.44301,-18.81342 2.47997,-6.27005 8.93268,-12.02081 13.39743,-18.02956 4.46476,-6.00874 21.70509,-13.19849 32.55605,-19.79607" />
++    <path
++       style="fill:none;stroke:url(#linearGradient5217);stroke-width:1.03786695px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 473.24617,306.85798 c 13.16685,-4.64153 26.0551,-10.07323 38.57234,-16.25615 11.0872,-5.47655 22.26981,-11.88166 29.35531,-22.01647 4.21744,-6.03245 6.78064,-13.2094 7.33883,-20.54872"
++       id="path4270"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect4272"
++       inkscape:original-d="m 473.24617,306.85798 c 12.85848,-5.41976 25.71593,-10.83847 38.57234,-16.25615 12.85641,-5.41767 19.57124,-14.67868 29.35531,-22.01647 9.78406,-7.3378 4.89359,-13.70019 7.33883,-20.54872" />
++    <path
++       style="fill:none;stroke:url(#linearGradient5215);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 477.30438,331.21768 c 12.46907,4.50534 26.59382,4.24853 38.89087,-0.70711 15.87809,-6.39877 27.91048,-19.8678 43.24046,-27.48684 5.17938,-2.57417 10.67531,-4.44881 15.95548,-6.80936 5.28016,-2.36055 10.43559,-5.28025 14.34317,-9.54442 5.02516,-5.48374 7.59372,-12.72742 9.8995,-19.79898 1.98775,-6.09621 3.87372,-12.22561 5.65685,-18.38478"
++       id="path4274"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect4276"
++       inkscape:original-d="m 477.30438,331.21768 c 12.96463,-0.23671 25.92825,-0.47241 38.89087,-0.70711 12.96263,-0.2347 28.12086,-20.44688 43.24046,-27.48684 15.11959,-7.03995 20.9072,-8.7822 30.29865,-16.35378 9.39144,-7.57158 4.71505,-14.37883 9.8995,-19.79898 5.18444,-5.42016 5.65785,-11.07901 5.65685,-18.38478"
++       sodipodi:nodetypes="cssscc" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6431);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-4)"
++       d="m 440.40133,248.66934 c 3.19162,10.00334 8.25468,19.40617 14.84924,27.57716 3.66774,4.54451 7.79314,8.69906 12.02081,12.72792 10.2267,9.74579 21.15045,18.84495 33.23402,26.16295 8.57229,5.19151 17.67288,9.45409 26.87006,13.43503 10.00349,4.32995 20.14561,8.33962 30.40559,12.02082"
++       id="path6023"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect6025"
++       inkscape:original-d="m 440.40133,248.66934 c 4.95074,9.19138 9.90049,18.38377 14.84924,27.57716 4.94875,9.19339 8.01488,8.48428 12.02081,12.72792 4.00594,4.24364 22.15702,17.44097 33.23402,26.16295 11.07701,8.72199 17.91437,8.95569 26.87006,13.43503 8.95568,4.47934 20.27139,8.01288 30.40559,12.02082" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6429);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-4)"
++       d="m 548.51265,248.03664 c 1.13857,5.77255 4.23753,11.14011 8.66742,15.01241 4.18454,3.65784 9.3801,5.91956 14.03601,8.95481 11.99609,7.82041 20.2499,21.13301 21.92031,35.35534"
++       id="path6031"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect6033"
++       inkscape:original-d="m 548.51265,248.03664 c 2.72916,4.7243 5.77928,10.00728 8.66742,15.01241 2.88814,5.00514 9.35834,5.96887 14.03601,8.95481 4.67767,2.98593 14.61454,23.56922 21.92031,35.35534" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6427);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend-4)"
++       d="m 629.90594,247.96223 c 4.16076,2.2543 7.64519,5.73873 9.89949,9.89949 3.81368,7.0389 3.96402,15.38981 4.94975,23.33453 1.17967,9.50784 3.68303,18.85051 7.41533,27.67438"
++       id="path6035"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect6037"
++       inkscape:original-d="m 629.90594,247.96223 c 3.18298,3.18098 6.60066,6.59866 9.89949,9.89949 3.29884,3.30084 3.30084,15.55535 4.94975,23.33453 1.64892,7.77917 4.94455,18.44859 7.41533,27.67438" />
++    <path
++       style="fill:none;stroke:url(#linearGradient6433);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
++       d="m 483.94123,249.30958 c 1.1199,7.72101 5.29709,14.95611 11.42373,19.78648 5.29578,4.1753 11.79761,6.49938 17.49811,10.10253 5.44652,3.44261 10.08603,8.00309 15.2195,11.89715 3.38678,2.56908 6.98502,4.84517 10.6066,7.07107 7.74785,4.76198 15.62669,9.31084 23.62461,13.63968"
++       id="path6385"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect6387"
++       inkscape:original-d="m 483.94123,249.30958 c 5.24772,5.24571 7.61682,13.18999 11.42373,19.78648 3.80691,6.59649 11.6664,6.73402 17.49811,10.10253 5.8317,3.36852 10.14733,7.93044 15.2195,11.89715 5.07216,3.96672 7.07206,4.71305 10.6066,7.07107 3.53453,2.35802 15.75074,9.09212 23.62461,13.63968" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="191.27325"
++       y="270.74423"
++       id="text5219-2-62-3"><tspan
++         sodipodi:role="line"
++         x="191.27325"
++         y="270.74423"
++         id="tspan5223-0-91-6"
++         style="font-size:10px;line-height:1.25">update queue id, enqueue, unlock(step 3)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:0.76920223;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.76920221, 1.53840441;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-7)"
++       d="m 357.93205,263.09044 c 3.35603,-1.55628 6.83267,-2.85241 10.38844,-3.87293 10.27369,-2.94859 21.10841,-3.56584 31.77639,-2.90469 15.00358,0.92985 29.94516,4.405 43.38701,11.13467 1.23601,0.61881 2.45857,1.2645 3.66651,1.93647"
++       id="path3292"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3294"
++       inkscape:original-d="m 357.93205,263.09044 c 3.46367,-1.29029 6.92649,-2.58127 10.38844,-3.87293 3.46195,-1.29167 21.18514,-1.93578 31.77639,-2.90469 10.59128,-0.96893 28.92555,7.4238 43.38701,11.13467 14.46147,3.71087 2.44521,1.29166 3.66651,1.93647" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="280.1011"
++       y="200.31314"
++       id="text5219-2-62-3-0"><tspan
++         sodipodi:role="line"
++         x="280.1011"
++         y="200.31314"
++         id="tspan5223-0-91-6-6"
++         style="font-size:10px;line-height:1.25">dequeue, lock(step 4)</tspan></text>
++    <path
++       style="fill:none;stroke:#000000;stroke-width:0.64963406;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.64963409, 1.29926818;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-92)"
++       d="m 347.02887,196.67228 c 2.73089,-2.27942 5.78054,-4.1764 9.03233,-5.6184 8.65182,-3.83663 18.36723,-4.34297 27.82919,-4.5551 10.47734,-0.23489 20.95878,-0.18017 31.43857,-0.11877 6.46997,0.0379 12.93992,0.0784 19.40986,0.12133"
++       id="path3300"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3302"
++       inkscape:original-d="m 347.02887,196.67228 c 3.0117,-1.87323 6.02249,-3.74603 9.03233,-5.6184 3.00986,-1.87236 18.55372,-3.03718 27.82919,-4.5551 9.27549,-1.51794 20.95997,-0.0796 31.43857,-0.11877 10.47862,-0.0391 12.94082,0.0804 19.40986,0.12133" />
++    <path
++       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 2;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-97)"
++       d="m 281.77537,342.34916 c 0.17405,-3.87643 1.69528,-7.6795 4.24264,-10.6066 1.21368,-1.3946 2.65204,-2.59324 4.24264,-3.53554"
++       id="path3226"
++       inkscape:connector-curvature="0"
++       inkscape:path-effect="#path-effect3228-1"
++       inkscape:original-d="m 281.77537,342.34916 c 1.65092,-3.53654 2.82943,-7.07207 4.24264,-10.6066 1.41322,-3.53454 2.82943,-2.35803 4.24264,-3.53554" />
++    <text
++       xml:space="preserve"
++       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
++       x="319.30115"
++       y="168.93935"
 +       id="text5219-2-62-3-0-3"><tspan
 +         sodipodi:role="line"
-+         x="316.1026"
-+         y="170.71103"
++         x="319.30115"
++         y="168.93935"
 +         id="tspan5223-0-91-6-6-6"
 +         style="font-size:10px;line-height:1.25">unlock(step 5)</tspan></text>
 +    <path
-+       style="fill:none;stroke:#000000;stroke-width:0.65;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.65, 1.3;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend-4-3)"
-+       d="m 351.54328,162.29923 c 4.37234,-3.84771 8.74462,-7.69536 17.46372,-9.28631 8.71911,-1.59095 21.78354,-0.92534 34.84719,-0.25978"
++       style="fill:none;stroke:#000000;stroke-width:0.64999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:0.64999998,1.29999995;stroke-dashoffset:0;marker-end:url(#Arrow1Mend-4)"
++       d="m 354.74182,160.52755 c 4.37234,-3.84771 8.74462,-7.69536 17.46372,-9.28631 8.71911,-1.59095 21.78354,-0.92534 34.84719,-0.25978"
 +       id="path12082"
 +       inkscape:path-effect="#path-effect12084"
-+       inkscape:original-d="m 351.54328,162.29923 c 4.37327,-3.84665 8.74555,-7.6943 13.11682,-11.54294 13.06596,0.66663 26.13039,1.33224 39.19409,1.99685" />
++       inkscape:original-d="m 354.74182,160.52755 c 4.37327,-3.84665 8.74555,-7.6943 13.11682,-11.54294 13.06596,0.66663 26.13039,1.33224 39.19409,1.99685" />
 +  </g>
 +</svg>
 diff --git a/doc/guides/tools/testeventdev.rst b/doc/guides/tools/testeventdev.rst
-index aaa0e5f24c..4f91e81240 100644
+index 4f91e81240..424e51ab28 100644
 --- a/doc/guides/tools/testeventdev.rst
 +++ b/doc/guides/tools/testeventdev.rst
-@@ -55,6 +55,7 @@ The following are the application command-line options:
- 
+@@ -56,6 +56,7 @@ The following are the application command-line options:
           order_queue
           order_atq
-+         atomic_queue
+          atomic_queue
++         atomic_atq
           perf_queue
           perf_atq
           pipeline_atq
-@@ -326,6 +327,97 @@ Example command to run order queue test:
-    sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -s 0x10 --vdev=event_sw0 -- \
-                 --test=order_queue --plcores 1 --wlcores 2,3
+@@ -481,6 +482,68 @@ Example command to run order ``all types queue`` test:
+    sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -- \
+                         --test=order_atq --plcores 1 --wlcores 2,3
  
-+ORDER_ATOMIC Test
-+~~~~~~~~~~~~~~~~~
++ATOMIC_ATQ Test
++~~~~~~~~~~~~~~~
 +
-+This is a functional test is similar to the ORDER_QUEUE test, but differs in two
-+critical ways:
++This test verifies the same aspects of ``atomic_queue`` test, the difference is
++the number of queues used, this test operates on a single ``all types queue(atq)``
++instead of two different atomic queues.
 +
-+#. Both queues (q0 and q1) are atomic. This makes it compatible with the
-+   distributed software event device (dsw).
-+#. Atomicity is verified using spinlocks for each combination of flow id and
-+   queue id.
++.. _table_eventdev_atomic_atq_test:
 +
-+.. _table_eventdev_atomic_queue_test:
++.. table:: Order all types queue test eventdev configuration.
 +
-+.. table:: Atomic queue test eventdev configuration.
++   +---+--------------+----------------+------------------------+
++   | # | Items        | Value          | Comments               |
++   |   |              |                |                        |
++   +===+==============+================+========================+
++   | 1 | nb_queues    | 1              | q0(all types queue)    |
++   |   |              |                |                        |
++   +---+--------------+----------------+------------------------+
++   | 2 | nb_producers | 1              |                        |
++   |   |              |                |                        |
++   +---+--------------+----------------+------------------------+
++   | 3 | nb_workers   | >= 1           |                        |
++   |   |              |                |                        |
++   +---+--------------+----------------+------------------------+
++   | 4 | nb_ports     | nb_workers +   | Workers use port 0 to  |
++   |   |              | 1              | port n-1.Producer uses |
++   |   |              |                | port n.                |
++   +---+--------------+----------------+------------------------+
 +
-+   +---+--------------+----------------+---------------------------+
-+   | # | Items        | Value          | Comments                  |
-+   |   |              |                |                           |
-+   +===+==============+================+===========================+
-+   | 1 | nb_queues    | 2              | q0(atomic), q1(atomic)    |
-+   |   |              |                |                           |
-+   +---+--------------+----------------+---------------------------+
-+   | 2 | nb_producers | 1              |                           |
-+   |   |              |                |                           |
-+   +---+--------------+----------------+---------------------------+
-+   | 3 | nb_workers   | >= 1           |                           |
-+   |   |              |                |                           |
-+   +---+--------------+----------------+---------------------------+
-+   | 4 | nb_ports     | nb_workers +   | Workers use port 0 to     |
-+   |   |              | 1              | port n-1.Producer uses    |
-+   |   |              |                | port n.                   |
-+   +---+--------------+----------------+---------------------------+
++.. _figure_eventdev_atomic_atq_test:
 +
-+.. _figure_eventdev_atomic_queue_test:
++.. figure:: img/eventdev_atomic_atq_test.*
 +
-+.. figure:: img/eventdev_atomic_queue_test.*
-+
-+   atomic queue test operation.
-+
-+When an event is dequeued for processing, a spinlock is acquired for the
-+the flow from which the event was dequeued. Once processing is complete,
-+the lock is released. The test will fail if an attempt is made to take a lock
-+that is already held. This indicates that multiple workers attempted to
-+process the same flow at the same time, thereby violating atomicity.
-+
-+.. table:: Atomic queue test queue processing tasks.
-+
-+   +-----------+---------------------------------------------------+
-+   | Queue ID  | Processing Task                                   |
-+   |           |                                                   |
-+   +===========+===================================================+
-+   | 0         | Update queue ID for event and re-enqueue.         |
-+   |           |                                                   |
-+   +-----------+---------------------------------------------------+
-+   | 1         | Verify sequence number.                           |
-+   |           |                                                   |
-+   +-----------+---------------------------------------------------+
++   atomic all types queue test operation.
 +
 +Application options
 +^^^^^^^^^^^^^^^^^^^
@@ -2091,22 +2168,16 @@ index aaa0e5f24c..4f91e81240 100644
 +Example
 +^^^^^^^
 +
-+Example command to run with the software event device:
++Example command to run order ``all types queue`` test:
 +
 +.. code-block:: console
 +
-+   sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -s 0x10 --vdev=event_sw0 -- \
-+                --test=atomic_queue --plcores 1 --wlcores 2,3
++   sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f -- \
++                        --test=atomic_atq --plcores 1 --wlcores 2,3
 +
-+Example command to run with the distributed software event device:
-+
-+.. code-block:: console
-+
-+   sudo <build_dir>/app/dpdk-test-eventdev -c 0x1f --vdev=event_dsw0 -- \
-+                --test=atomic_queue --plcores 1 --wlcores 2,3,4
  
- ORDER_ATQ Test
- ~~~~~~~~~~~~~~
+ PERF_QUEUE Test
+ ~~~~~~~~~~~~~~~
 -- 
 2.34.1
 
