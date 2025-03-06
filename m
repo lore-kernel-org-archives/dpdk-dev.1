@@ -2,40 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B72C282D1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 15:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B868C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 16:13:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E16EB406B6;
-	Thu,  6 Mar 2025 16:53:04 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 33ADB4069F
- for <dev@dpdk.org>; Thu,  6 Mar 2025 16:53:03 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 535BF21104BC; Thu,  6 Mar 2025 07:53:02 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 535BF21104BC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741276382;
- bh=X/RkRdQlas7Ebke7zcJAgdSrJ6m/xb9BqJQJnkFk0xY=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=OZOG1WwQIBS7LTrOLHstewK5MHDoKBztAzGJVEyQxEOKzwOk8uUAT0xbBP1nYhN8p
- O4zBckc8XlA+vgj3IJBj1Xhz9LUz9w2YRHL75FTd/d2EgeQzlQtCjYKMIV0M9lNM1k
- PXiikGiWV5Nc58KBCn1KmukzmZkDOWjNdd13xPto=
-Date: Thu, 6 Mar 2025 07:53:02 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 3/5] eal: update versioning macros
-Message-ID: <20250306155302.GC28298@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
- <1739929198-28432-1-git-send-email-andremue@linux.microsoft.com>
- <1739929198-28432-4-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8xtTE9nfCXLNm_4htFDSohs3=feCsNotDRxQU589rfxEA@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F1238406B6;
+	Thu,  6 Mar 2025 17:13:54 +0100 (CET)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 302194069F
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 17:13:54 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal
+ [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A54441140204;
+ Thu,  6 Mar 2025 11:13:53 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Thu, 06 Mar 2025 11:13:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1741277633;
+ x=1741364033; bh=rgKO0rkZRplrnOBBU4MgEvS21icvck0Zonf8dffcqUk=; b=
+ WcnV4adkb3CYtvmqO5Io5dYeXnz3TwQrqE/nk7RCIA4fxIjW8ybmihAZSQ8oUuGU
+ 4KD33vRrFnNlBFZHM1kR5Kts6qTAXXlHUy7FDtvkOcagQnoX5Fi8kJWZ7xzMP6g6
+ AsZAklJPB1i2VCJloRPSY8zWj4Ih6FW3jPtx7eYsVlU9++Mep0yS/nh7AtDySmVn
+ EM0s5w3+HsZVL0lMmjiI35vM4ze/G5OqwolrhwzCbBzeQIgeat1fuHUfgM+4OO8b
+ ktDDvv/R+BeOB6nNa+a9Kma7pw0ID51nV3y51Jx/HiQE59in4xhZ4qIAFp+nX4rj
+ WrY72YU3gAqDPbcp2QhkVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741277633; x=
+ 1741364033; bh=rgKO0rkZRplrnOBBU4MgEvS21icvck0Zonf8dffcqUk=; b=A
+ seupYd47Lm/rYyOVy8TqQEyL7+dSHAQOeOYVrN34NcGmYI7QyBHSIdmB4PJtVUsU
+ ToZClFccejN2p3QiBiBoi2Sx4lVUXdyXsMBWNAMD7T9+f/gF3DF+V11jHyjVRbba
+ 3mIv8STf85isZ4QgZKo9JrrUx6wN7lDaNowUhEakAA3HpZmWBz6UeVSUcyGofCTf
+ Fh+oty+rbPziE6m6pgHXOxOj9TiRk1fwwCW2Qq/czoQrROKFnaZHuPFrssq9WeA1
+ a5v558zHD6xwCBLmCtptLwzJfLD8Ww/57WGTdKuzdmElNLSVZLOsMBrljVG7K8HA
+ y6lgPHqrSSamLd9K8OYvw==
+X-ME-Sender: <xms:wcnJZ0E_N2aHkqS1Zh2rCTRXYZcCaYtXNFlsNnj2PFED3LoGBVdSMA>
+ <xme:wcnJZ9VwPB5IQtTch8nh90jobvPlmEl8xOtFD83cVX6Qv2h49LzyvqbaywGiXscMq
+ 9j_6vyWDVo0cSb8Vw>
+X-ME-Received: <xmr:wcnJZ-LA1951xMeJeGl7G89g_UdEdxXxpf8HZ-lcORhCwGlAI4KkY7HPrRwWzWkEoHQWOnUpkXYgfibbDg73OH92Ug>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdekvddvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+ evufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhj
+ rghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvg
+ hrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeugfefkeej
+ necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhoh
+ hmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhhouggvpehs
+ mhhtphhouhhtpdhrtghpthhtohepphgshhgrghgrvhgrthhulhgrsehmrghrvhgvlhhlrd
+ gtohhmpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthht
+ ohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:wcnJZ2GYY8qo7hafs4xc6F7rqaNzaCW7vBWz_h4Deuz8zKcbkE2QeQ>
+ <xmx:wcnJZ6XL_nrJTbyQYHpeOP54X108xZ4MNewsQZNdc72ti-7baQywQQ>
+ <xmx:wcnJZ5OPdZynGaOviCKENCzigfLRU5UMZE78oPV5wH3Z142K4iIszQ>
+ <xmx:wcnJZx3FLYVv9MHPjCKpWdInKCjpsnbFb-LTMx7nABSDDGJtO7efpw>
+ <xmx:wcnJZ5Q0OyLFjS6qUtKt18ogeNa2vtjTTOyeEg0IUNYXzTkXlhtedidI>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Mar 2025 11:13:52 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Pavan Nikhilesh <pbhagavatula@marvell.com>
+Cc: jerinj@marvell.com, dev@dpdk.org
+Subject: Re: [PATCH] devtools: fix regex of cnxk skip files
+Date: Thu, 06 Mar 2025 17:13:50 +0100
+Message-ID: <4055192.n0HT0TaD9V@thomas>
+In-Reply-To: <20250306152516.2594-1-pbhagavatula@marvell.com>
+References: <20250306152516.2594-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8xtTE9nfCXLNm_4htFDSohs3=feCsNotDRxQU589rfxEA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,84 +88,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 06, 2025 at 01:59:34PM +0100, David Marchand wrote:
-> On Wed, Feb 19, 2025 at 2:40 AM Andre Muezerie
-> <andremue@linux.microsoft.com> wrote:
-> >
-> > When compiling with MSVC the error below shows up due to function
-> > versioning:
-> >
-> > ../lib/net/rte_net_crc.c(418): error C2061: syntax error:
-> >     identifier '__attribute__'
-> >
-> > MSVC allows alias function names to be exported, but the mechanism is
-> > different than the one used by gcc. It was considered to enhance the logic
-> > in the existing version.map files but that file is also passed to other
-> > tools on Linux, making this challenging. A simpler approach is to have an
-> > optional version.map file to be used only when Microsoft's linker is to be
-> > used. This optional map file is only necessary for libraries that have
-> > versioned code.
-> >
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > ---
-> >  lib/eal/include/rte_function_versioning.h | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >
-> > diff --git a/lib/eal/include/rte_function_versioning.h b/lib/eal/include/rte_function_versioning.h
-> > index eb6dd2bc17..aa3165a659 100644
-> > --- a/lib/eal/include/rte_function_versioning.h
-> > +++ b/lib/eal/include/rte_function_versioning.h
-> > @@ -82,6 +82,13 @@
-> >   */
-> >  #define MAP_STATIC_SYMBOL(f, p)
-> >
-> > +/*
-> > + * MAP_STATIC_BASE_SYMBOL
-> > + * Has the same purpose as MAP_STATIC_SYMBOL, but takes a base function name
-> > + * instead of the whole function prototype. It is used to support MSVC.
-> > + */
-> > +#define MAP_STATIC_BASE_SYMBOL(b, p)
-> > +
-> >  #else
-> >  /*
-> >   * No symbol versioning in use
-> > @@ -90,7 +97,19 @@
-> >  #define VERSION_SYMBOL_EXPERIMENTAL(b, e)
-> >  #define __vsym
-> >  #define BIND_DEFAULT_SYMBOL(b, e, n)
-> > +
-> > +#ifdef RTE_TOOLCHAIN_MSVC
-> > +#define MAP_STATIC_SYMBOL(f, p)
+06/03/2025 16:25, pbhagavatula@marvell.com:
+> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 > 
-> I would prefer we trigger an explicit error when some code calling
-> MAP_STATIC_SYMBOL() is built with MSVC.
+> SKIP_FILES should include the path of the file.
+> Update the regex to match the path.
 > 
+> Fixes: dd88f51a5725 ("devtools: forbid DPDK API in cnxk base driver")
 > 
-> > +#define MAP_STATIC_BASE_SYMBOL(b, p) __pragma(comment(linker, "/alternatename:" #b "=" #p))
-> > +/*
-> > + * version.map file should also be updated with "b=p;", like
-> > + *     rte_net_crc_set_alg=rte_net_crc_set_alg_v26;
-> > + */
-> > +#else
-> >  #define MAP_STATIC_SYMBOL(f, p) f __attribute__((alias(RTE_STR(p))))
-> > +#define MAP_STATIC_BASE_SYMBOL(b, p)
-> > +#endif
-> > +
-> 
-> But in any case, I don't like as we end up with one macro for each linker.
-> 
-> I have been thinking about this topic, and I sent a RFC series, please
-> have a look.
-> https://patchwork.dpdk.org/project/dpdk/list/?series=34798
-> 
-> I hope this type of approach will also make it possible to stop
-> converting from GNU linker type version.map commited in DPDK to
-> Windows linker format.
-> 
+> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> ---
+> -		-v SKIP_FILES='roc_platform*' \
+> +		-v SKIP_FILES='.*roc_platform*' \
 
-I like what you're proposing. This makes DPDK less coupled with the GNU linker and
-therefore easier to be supported by other toolsets.
+I don't think it is what you want.
+The last part should be .*
 
-> 
-> -- 
-> David Marchand
+
