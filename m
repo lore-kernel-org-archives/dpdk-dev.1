@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEDCC282D1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 13:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59777C282EC
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 13:19:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84ADE4065F;
-	Thu,  6 Mar 2025 14:11:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D0F34065F;
+	Thu,  6 Mar 2025 14:19:48 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id ABBB640430
- for <dev@dpdk.org>; Thu,  6 Mar 2025 14:11:04 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D3B3D40430
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 14:19:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741266664;
+ s=mimecast20190719; t=1741267186;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GX6DP6VtG4nYL5pAmqMwdj3XxgUeprG0kEsNGMUdzyI=;
- b=Ma5C9yru9SDij9HQMgmc6TsT0J4BIv1IextOvIQcd6/+7cMI2LX4sVc1Iy1WxXaKWo4BRa
- 0/WNdFcKXtBY60HzULTREs3WIae1OoB3hq05rGYRyA2Rq28SzBe5TbNxHOtJpDXF/aq0WD
- swHkYFFqdfzRVGb67AjXIB9IDYb9Sww=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=f/nO66CXvfpfQMA3tyjm9VqhamUHEAyqiAe1ZUqvsgc=;
+ b=UYP7oHQCsVsPyeONnQ8XaCz8wqwTFqcUhuyWSAGj8Rxml8oAFaimBbXbvWApXJA2CFck3v
+ GJri08BDeQ1LtyxZB8Eaz/QUAwI/qFny7dl6OcTsRiASMs1r6PnMB8x2fd5rnay6GUaUE3
+ RKwo99rIOx6LEI3Nu9eSzDRmpl++obc=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-bCswf97rOluaGqxcJ4fVkA-1; Thu, 06 Mar 2025 08:11:03 -0500
-X-MC-Unique: bCswf97rOluaGqxcJ4fVkA-1
-X-Mimecast-MFC-AGG-ID: bCswf97rOluaGqxcJ4fVkA_1741266662
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5498b25aae9so300314e87.2
- for <dev@dpdk.org>; Thu, 06 Mar 2025 05:11:02 -0800 (PST)
+ us-mta-49-LoraVscANqyWKSZqHQb2ow-1; Thu, 06 Mar 2025 08:19:44 -0500
+X-MC-Unique: LoraVscANqyWKSZqHQb2ow-1
+X-Mimecast-MFC-AGG-ID: LoraVscANqyWKSZqHQb2ow_1741267183
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-30bad8f7228so3327831fa.0
+ for <dev@dpdk.org>; Thu, 06 Mar 2025 05:19:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741266661; x=1741871461;
+ d=1e100.net; s=20230601; t=1741267183; x=1741871983;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GX6DP6VtG4nYL5pAmqMwdj3XxgUeprG0kEsNGMUdzyI=;
- b=TI5p1gf0ExaieeVWu67x4D1uv8uemZNPMdtT370KCq921IoZHS6eFMJHUmV3Y9VmjQ
- qld/spTy+2hSCFbb+qb3OXeDs/gloyQN8r1SCfzg4rIssIS+jWs1CL6B+GMmW6RezaPk
- 9jX6LCnwT4tP6x3JRJW0VxNgM+EfMhuEuGCdrraJ00GxfYCCO4zKQ5Hw51C4/70S/HAO
- ViIQFeY7tJ1l5wYfhnVzVKbr2RnPf5MWr9xqqbgHB8dQVJFoH1Kdhz613JfzUSgjuHsS
- DK0fa+U1yQMAU4CMNSrtKhtYqi2Fe9QC7iyPD3HkHEvaO8Sfxd2cuqKxZm3cQnnvOPGm
- VGOQ==
-X-Gm-Message-State: AOJu0YxIn7+Pk6SPckTFZbiM5gys1TIWEF1RyO5dwP5UJOKnm4Pbn9or
- 2ldMwhgNcPgvdvZZAY134YwNOPvjVGojUwHY9T15WMBN/rVUuRxE0H34x+J2/ptbYxq+giCz0so
- MeejbelYMjzMgEU35pI+EYhIdAOdR2Lp7MFIyZpi9BVNFhipI15FHkG/uYT8IU0usLa48ZJFeuK
- nRORb/NuYpiI0dAVY=
-X-Gm-Gg: ASbGnctEt+XKl5CfsA9LBSEEfmae3Ed9UDbmaxIk5/nwitA0qHjFoK1DKbXOhiY2F1N
- r8vaf6HWLgsJ9F5Ey9bUrrsuGLillkF652m1TDf7oCHaJy4dkYlk2bNWP8cANpZK4qWpzUhzrwC
- U=
-X-Received: by 2002:a05:6512:31c6:b0:546:27f0:21a7 with SMTP id
- 2adb3069b0e04-5497d38379amr3183403e87.49.1741266661460; 
- Thu, 06 Mar 2025 05:11:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEbE0IOwNJYrW3R6NCfMkD2hQSCB/420dx2sDA2uujsvDXqkYS/sSE8Isl37VSyH2nphEPG1QRhhe0qA5xQjsE=
-X-Received: by 2002:a05:6512:31c6:b0:546:27f0:21a7 with SMTP id
- 2adb3069b0e04-5497d38379amr3183391e87.49.1741266661001; Thu, 06 Mar 2025
- 05:11:01 -0800 (PST)
+ bh=f/nO66CXvfpfQMA3tyjm9VqhamUHEAyqiAe1ZUqvsgc=;
+ b=iN54rmjr8o6cnsvQDm77irlLUYPmJr3k1QbhUjzC7RehrePjljbubx5r7D6R8HPXH2
+ LB+IMlmDg+U+fqT3ZG1tX1JJzEWt50AzdoQcNsqXapEiPFY1WqdFyTtZPv6AoUwOTIhy
+ GJN1BFXuQnvf0S7KRrxTnU5Wvi/6A9INGd5keuqkG12DGtW3SsvNdqKCcXuFiUPSt709
+ jPZ5EVixS1Cy5RhK+rC17mkh11VmxEGq6Azgf5BFeETGFSQuP6wCWf2OwjVTltZijVJX
+ wfntmTIaTmixs1m6l2U9AidobPLzatHVKxQnEm2eJTT0S5fFhTbVGgyANvcWWiwiOa5I
+ gxUw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWYzEyduEzbRJXiIOpFqbhazHeuZQ1cmvk4CqamSLUZKr++gsDOmiGHroh2n7+sBAeKghM=@dpdk.org
+X-Gm-Message-State: AOJu0YwNw13y7P0eYL6MNbDgqlna/8ErEm1WYa9GO6PAXdkqc8hBeFHx
+ Xsvn3NWFyWvsLJTSDtcihQTPqdiw5X3XduHozvpr4EA5c+KDUkl2bF6CBBRuykuVpnqL7Dn7vFv
+ eYbD3OY5DLvcHxIv7BL47oZVZD53ZMFQtH+eH9mhiBas/drrEsMD9znw85MYEYSfgylffXuniW5
+ zv3DPCIxTME6xWy/Q=
+X-Gm-Gg: ASbGncuo9xwxS0U7UcSxtimbIpMlsPppWp9mwBDcElcFjYeRCCg711JT8262LCHeIJk
+ W4eE3Hn7hvUpI7CvQ2oQlEHl0Anz0ixl98xIlitU4GwWw2nxr/y7zXI+jxm7mTzztwMVY7sleNR
+ 8=
+X-Received: by 2002:a2e:b8c9:0:b0:308:efa4:d277 with SMTP id
+ 38308e7fff4ca-30bd7a507f6mr24684051fa.15.1741267183342; 
+ Thu, 06 Mar 2025 05:19:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGqsrEdkdHw5HmK5kH+6MKnmANwRYcqhe4d0cjualm5pwroQK6Xupm8Ud07HOGTAb5wdYsw1Hv0/kYNk/1ai9o=
+X-Received: by 2002:a2e:b8c9:0:b0:308:efa4:d277 with SMTP id
+ 38308e7fff4ca-30bd7a507f6mr24683981fa.15.1741267182964; Thu, 06 Mar 2025
+ 05:19:42 -0800 (PST)
 MIME-Version: 1.0
-References: <1733342995-3722-2-git-send-email-andremue@linux.microsoft.com>
- <1738940668-21653-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1738940668-21653-1-git-send-email-andremue@linux.microsoft.com>
+References: <1738632218-5796-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1738632218-5796-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 6 Mar 2025 14:10:48 +0100
-X-Gm-Features: AQ5f1JoqtjrDwqkTsIQFLViVI0nz-arA5wUGB_J3hrKr14pRK3KLQbkvBQVsMJk
-Message-ID: <CAJFAV8xrJ0MzCJ-6Os_9dffmaWzR5uHGm5NT3jScSaV2ck4WPQ@mail.gmail.com>
-Subject: Re: [PATCH v6] eal: define __SIZEOF_LONG__ when using MSVC
+Date: Thu, 6 Mar 2025 14:19:28 +0100
+X-Gm-Features: AQ5f1JochVsqya7mOaeoCAN4ADHti4O9lDfTiOvXuaIwBS1ScB0HHOc-VuWgsJU
+Message-ID: <CAJFAV8zTAAwYHFBdhjrXL0RWX7XKHF=CWgEdithqV1xF3TuGjQ@mail.gmail.com>
+Subject: Re: [PATCH] stack: occasional crash due to uninitialized variable
 To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Olivier Matz <olivier.matz@6wind.com>, 
+ Gage Eads <gage.eads@intel.com>, dev@dpdk.org, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cl-b3X_a2I15TiRVIPbPsJDjfaxRmtlBTlEVme3oMz4_1741266662
+X-Mimecast-MFC-PROC-ID: yfy2X-hhs7mkDu35iyKFEHHl4w0zoMPH3JEBvsehlvQ_1741267183
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,24 +88,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 7, 2025 at 4:04=E2=80=AFPM Andre Muezerie
+On Tue, Feb 4, 2025 at 2:24=E2=80=AFAM Andre Muezerie
 <andremue@linux.microsoft.com> wrote:
 >
-> Macro __SIZEOF_LONG__ is not standardized and MSVC does not define it.
-> Therefore the errors below are seen with MSVC:
+> Variable "success" was not being initialized and there was a code
+> path where the last do/while loop in __rte_stack_lf_pop_elems
+> looked at the value of this variable before it was set to any.
 >
-> ../lib/mldev/mldev_utils_scalar.c(465): error C2065:
->     '__SIZEOF_LONG__': undeclared identifier
-> ../lib/mldev/mldev_utils_scalar.c(478): error C2051:
->     case expression not constant
+> Compiling with msvc resulted in stack_lf_autotest sometimes crashing.
 >
-> ../lib/mldev/mldev_utils_scalar_bfloat16.c(33): error C2065:
->     '__SIZEOF_LONG__': undeclared identifier
-> ../lib/mldev/mldev_utils_scalar_bfloat16.c(49): error C2051:
->     case expression not constant
+> The fix is to initialize the variable. This same fix was applied to
+> stack\rte_stack_lf_generic.h in the past but was missed here.
 >
-> The fix is to define __SIZEOF_LONG__ in a common header when
-> MSVC is used.
+> Fixes: 7e6e609939a8 ("stack: add C11 atomic implementation")
+> Cc: stable@dpdk.org
 >
 > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
