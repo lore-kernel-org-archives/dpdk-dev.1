@@ -2,37 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183E5C19F32
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 02:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD371C19F32
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 03:01:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03E7A402A0;
-	Thu,  6 Mar 2025 03:17:48 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5C15040275
- for <dev@dpdk.org>; Thu,  6 Mar 2025 03:17:46 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 61EE821104AD; Wed,  5 Mar 2025 18:17:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 61EE821104AD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741227465;
- bh=Q0RvR0PyVSHvQazKYjpF+Sc2k3qgylnVfitFKfZf3XQ=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=bm8h9iDDkQDJnjJrpb4p+Qam4TaeF/G/PzXI1tc4cm01ugiK9ChsgBnYvHVzRutrC
- BCkbc5KQ2V6sG/nAYS126ms8EBVpiX5PMispOmaiErYlZZDGa1p7Of8rWKfyAvKjEI
- mQ8Ur1l1d5WnCy9CLY8n1HFqASfLMTqBghhx2PzA=
-Date: Wed, 5 Mar 2025 18:17:45 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: longli@linuxonhyperv.com
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wei Hu <weh@microsoft.com>, dev@dpdk.org, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH] net/mana: avoid the use of variable length array
-Message-ID: <20250306021745.GA9956@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1741135052-2039-1-git-send-email-longli@linuxonhyperv.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D15C0402E6;
+	Thu,  6 Mar 2025 04:01:36 +0100 (CET)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 779CB402A0
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 04:01:36 +0100 (CET)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-2fee05829edso452624a91.3
+ for <dev@dpdk.org>; Wed, 05 Mar 2025 19:01:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1741230095; x=1741834895; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=BSoxkA7BuImnAoNpGTl9O7xXPlO154bN8mwuK6cFTJU=;
+ b=e9jFkVAzOXmGp5SYnaPuJP2v79YqPLavoRBddkya3okXWWDevh7LuZW74fre2UeT8g
+ VxamnWf0NEBNF+a7xm3oHnpkuqnq7LcqOzfrR4i6PW1V3qYOZKFktgOnXwpPQdr+YcAf
+ fLsRTGffswGSD381zerd1Rz69AIzyCiWvY9JM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741230095; x=1741834895;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=BSoxkA7BuImnAoNpGTl9O7xXPlO154bN8mwuK6cFTJU=;
+ b=R+6r6Pc0ZoaYU8sfyHaQnCU73hezSpJUWrb7xfGrN4649TlTMADNJxLyCGjhzrC4ZH
+ DBPgxH9kiuykcL/EzHhsxVsNW3zBvsVMtvhPEo01ab83udyhiMBKpiy9k8qqW1WQ3H9S
+ bDm3RKFJBQd70YnmZtUda58AZ2WXL71AVO29K4Ps27hVd3GNYphl22cu9+BZnbfWkqQC
+ k9DrCL+Sc53SzfjKTM1qpV+aIeAU11jH3BE4NlhgRgT75yWrb1vQqXA6C13qQS5AtNwX
+ zzgvLqYTQQY1e4w2Aq1d+o1I6edJx9IdDAxjptaVlsaiOgdzQCP2RlMik2xj/XQl+p2b
+ laNw==
+X-Gm-Message-State: AOJu0Yz5RdtLXKmoC5X5j/PuO3Lfq1rwDX24Y+bGv2qTJHd6jcDP+ID5
+ ME836xKigWzflFJqxAxK5658TgmlpcaRQ8mEhYfBQCmdgOZoyytHamgOcQYi+xJ2belfZMhLilH
+ MxezLoThxBYWAKBTpL0n8jo4l2UyBm043ryYE/7B1abpKFGeyoy6l4Q==
+X-Gm-Gg: ASbGncuXUKbWO7e+J2jWmMNtg1LDXBv0/f/p9/fQ1bgoKqVDlas3R+inViOgJnw+Qxa
+ 8LTihfHgpqZgmLQtgwouOflAHsXJ9+qaMWabzQBPpV/0e4eN0LSSDZOKiwcXQAzgaohDVTPBRpH
+ VPMEnN8KCUH8gMZP5tzfOc4LqrBEbpaZx/5bjFD5xt9g==
+X-Google-Smtp-Source: AGHT+IFjrp9ycxzFQyIjur0J4h8Vp5wzjzO4kMSmvPQt5sUw9lO8NEpinqGGDuhyr2NcU2BREl3AkujzwtKPJmKPPbU=
+X-Received: by 2002:a17:90b:5250:b0:2ee:45fd:34f2 with SMTP id
+ 98e67ed59e1d1-2ff4978fe9dmr8821596a91.6.1741230095618; Wed, 05 Mar 2025
+ 19:01:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1741135052-2039-1-git-send-email-longli@linuxonhyperv.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+In-Reply-To: <20250305212349.2036410-1-david.marchand@redhat.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Wed, 5 Mar 2025 21:57:58 -0500
+X-Gm-Features: AQ5f1JoVktbmBiNzodMAJ3NBlvuqzaMcKmXc0ZOSK2xLBz0pG16FAPuwy1et5N8
+Message-ID: <CAJvnSUDP6USFKX6CupnTxWNhzvTFsWVOxjQjD0QXoXr6BSDnMg@mail.gmail.com>
+Subject: Re: [RFC] eal: add new function versioning macros
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, andremue@linux.microsoft.com, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000526cb5062fa3b95c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,47 +69,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 04, 2025 at 04:37:32PM -0800, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> The pathname can be defined as name[MAX_PATH]. This makes the driver
-> compilable using MSVC.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
->  drivers/net/mana/mana.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-> index c37c4e3444..d12dff6ce1 100644
-> --- a/drivers/net/mana/mana.c
-> +++ b/drivers/net/mana/mana.c
-> @@ -36,11 +36,8 @@ static rte_spinlock_t mana_shared_data_lock = RTE_SPINLOCK_INITIALIZER;
->  
->  /* Allocate a buffer on the stack and fill it with a printf format string. */
->  #define MANA_MKSTR(name, ...) \
-> -	int mkstr_size_##name = snprintf(NULL, 0, "" __VA_ARGS__); \
-> -	char name[mkstr_size_##name + 1]; \
-> -	\
-> -	memset(name, 0, mkstr_size_##name + 1); \
-> -	snprintf(name, sizeof(name), "" __VA_ARGS__)
-> +	char name[PATH_MAX]; \
-> +	snprintf(name, PATH_MAX, "" __VA_ARGS__)
->  
->  int mana_logtype_driver;
->  int mana_logtype_init;
-> -- 
-> 2.34.1
+--000000000000526cb5062fa3b95c
+Content-Type: text/plain; charset="UTF-8"
 
-Did you try to remove the line below from mana/meson.build?
-That line prevents the compiler from complain about VLAs. If
-the driver is VLA-free after this fix it would be great
-if the compiler was allowed to complain about VLAs (default
-in DPDK project).
+Recheck-request: iol-intel-Performance
 
-If the code still compiles without this line then it should be
-safe to remove it:
+There was an infra failure with the Arm Grace server about 12 hours ago
+which caused this failure - sending a retest request.
 
-cflags += no_wvla_cflag
---
-Andre Muezerie
+--000000000000526cb5062fa3b95c
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr"><div>Recheck-request: iol-intel-Performance<br><br></div>There was an infra failure with the Arm Grace server about 12 hours ago which caused this failure - sending a retest request.</div>
+
+--000000000000526cb5062fa3b95c--
