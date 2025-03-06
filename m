@@ -2,61 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF9FC282EC
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 15:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA16C282D1
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 15:45:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AD064069F;
-	Thu,  6 Mar 2025 16:25:24 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id EE82D4065F
- for <dev@dpdk.org>; Thu,  6 Mar 2025 16:25:21 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5269IQjc018216;
- Thu, 6 Mar 2025 07:25:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Sh19I8NRY2oj6wPn0c2B1rF
- ReQr45hwD/PbpVsX5S1M=; b=XYEqZIPlJvBhGulNzX6jdC17219hJOmWM6q3OMP
- gDUz3YoFSJha3iODjliJe3wtLUOGZzZC39EwvD2xOkbX0noVrJtuBjGhWQJCnAxe
- 4N5CtbvFcaRA1p4IaOrVaLpHDUOF9JVQiwzwNxGdvl/ePWX+sJzZ19mh5gxIihcZ
- zkeodxJ2MMLieHm9LuCZfyTYP+DGnHZl89NTGHgmyS7aFEduNdzZLbMHw4pYzjbc
- EFoe+WB2ubaIkh6mfsMLXxWWfFtAkSjLY7ZTt8I5JIdRKvOxnKT25YMpGt/ktefW
- D0uMoF9OVmOx4DK1XlypksVD1PdFlNV+67bYLPxnqMUxY1g==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4578y68nht-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 06 Mar 2025 07:25:21 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 6 Mar 2025 07:25:20 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 6 Mar 2025 07:25:20 -0800
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 8CCCE5E6879;
- Thu,  6 Mar 2025 07:25:18 -0800 (PST)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
-CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: [PATCH] devtools: fix regex of cnxk skip files
-Date: Thu, 6 Mar 2025 20:55:16 +0530
-Message-ID: <20250306152516.2594-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id F0400406B6;
+	Thu,  6 Mar 2025 16:45:45 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id C4DE34069F
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 16:45:43 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 1DCD4210EAFF; Thu,  6 Mar 2025 07:45:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1DCD4210EAFF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1741275943;
+ bh=HlnDXl5LTLFENSIlfKNex1gkXxt4PDhVJyvWbKV7b6U=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=OOw1WyCoH4OWbSzt7BEz7RQyyEZbOoaggsfp8pKEjJhswKWJKTrn+YdmhfH7glm7j
+ pUJtoNC1XdW0Ia4DFP3RwVy3SnqD1CagB+CZRpzc4AXD+G5miZTRi+Gqh7tndQ8oR8
+ Uu25GJR8wPWft+la8Z5wpmkPAJ0Y8CvR+Hr8tiDA=
+Date: Thu, 6 Mar 2025 07:45:43 -0800
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, bruce.richardson@intel.com,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>
+Subject: Re: [RFC v2 1/2] eal: add new function versioning macros
+Message-ID: <20250306154543.GB28298@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+ <20250306125021.2231121-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=cesormDM c=1 sm=1 tr=0 ts=67c9be61 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=Sh4DNex_L8NkXwtVnqoA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: z1CYZiWcEFO5IbWyRsYjGFFxQ9ZVJ1tS
-X-Proofpoint-ORIG-GUID: z1CYZiWcEFO5IbWyRsYjGFFxQ9ZVJ1tS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306125021.2231121-1-david.marchand@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,31 +48,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+On Thu, Mar 06, 2025 at 01:50:20PM +0100, David Marchand wrote:
+> For versioning symbols:
+> - MSVC uses pragmas on the symbol,
+> - GNU linker uses special asm directives,
+> 
+> To accommodate both GNU linker and MSVC linker, introduce new macros for
+> exporting and versioning symbols that will surround the whole function.
+> 
+> This has the advantage of hiding all the ugly details in the macros.
+> Now versioning a symbol is just a call to a single macro:
+> - RTE_VERSION_SYMBOL (resp. RTE_VERSION_EXPERIMENTAL_SYMBOL), for
+>   keeping an old implementation code under a versioned function (resp.
+>   experimental function),
+> - RTE_DEFAULT_SYMBOL, for declaring the new default versioned function,
+>   and handling the static link special case, instead of
+>   BIND_DEFAULT_SYMBOL + MAP_STATIC_SYMBOL,
+> 
+> Documentation has been updated though it needs some polishing.
+> The experimental macro has not been tested.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+> Changes since RFC v1:
+> - renamed and prefixed macros,
+> - reindented in prevision of second patch,
+> 
+> ---
+>  doc/guides/contributing/abi_versioning.rst | 130 ++++-----------------
+>  lib/eal/include/rte_function_versioning.h  |  27 +++++
+>  lib/net/rte_net_crc.c                      |  30 ++---
+>  3 files changed, 57 insertions(+), 130 deletions(-)
+> 
 
-SKIP_FILES should include the path of the file.
-Update the regex to match the path.
+I like the proposal. Having a single macro able to handle different linkers
+is clearly a good step forward.
 
-Fixes: dd88f51a5725 ("devtools: forbid DPDK API in cnxk base driver")
-
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- devtools/checkpatches.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index 003bb49e04..63638bc7fa 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -236,7 +236,7 @@ check_forbidden_additions() { # <patch>
- 
- 	# forbid rte_ symbols in cnxk base driver
- 	awk -v FOLDERS='drivers/common/cnxk/roc_*' \
--		-v SKIP_FILES='roc_platform*' \
-+		-v SKIP_FILES='.*roc_platform*' \
- 		-v EXPRESSIONS="rte_ RTE_" \
- 		-v RET_ON_FAIL=1 \
- 		-v MESSAGE='Use plt_ symbols instead of rte_ API in cnxk base driver' \
--- 
-2.43.0
-
+Acked-by: Andre Muezerie <andremue@linux.microsoft.com>
