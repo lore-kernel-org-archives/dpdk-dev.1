@@ -2,55 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAE4C282D1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 14:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF9FC282EC
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 15:25:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4127C406B6;
-	Thu,  6 Mar 2025 15:34:53 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 75FA64065F
- for <dev@dpdk.org>; Thu,  6 Mar 2025 15:34:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741271691;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=5zRMZi85ZzIXYrSfOAa1MHgZoSu2fYfHf0aKdbCzRjg=;
- b=aAjs5CXNrfIriezUEpO/lb2j96o3JaC3ytqyJcJFTmw3nqW2KNznkNmRyCDc0KlpYQJbib
- e8f0KN3yf+UDOGpf2d8s2/zjPKmo4Fg1zH4RDVfWWlr5V82Fv3SetoRr4PBHy5skzRJScS
- ojOjaccB+jMArwwFtYuU3E5f2UNC1sU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-IRMoxQa9Po6WI5eID-zkbQ-1; Thu,
- 06 Mar 2025 09:34:49 -0500
-X-MC-Unique: IRMoxQa9Po6WI5eID-zkbQ-1
-X-Mimecast-MFC-AGG-ID: IRMoxQa9Po6WI5eID-zkbQ_1741271688
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D92CC19560B1; Thu,  6 Mar 2025 14:34:47 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.74])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 39A3C180174E; Thu,  6 Mar 2025 14:34:45 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Aaron Conole <aconole@redhat.com>,
- Michael Santana <maicolgabriel@hotmail.com>
-Subject: [PATCH] ci: fix ccache for Ubuntu 22.04
-Date: Thu,  6 Mar 2025 15:34:43 +0100
-Message-ID: <20250306143443.3972030-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2AD064069F;
+	Thu,  6 Mar 2025 16:25:24 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id EE82D4065F
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 16:25:21 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5269IQjc018216;
+ Thu, 6 Mar 2025 07:25:21 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=Sh19I8NRY2oj6wPn0c2B1rF
+ ReQr45hwD/PbpVsX5S1M=; b=XYEqZIPlJvBhGulNzX6jdC17219hJOmWM6q3OMP
+ gDUz3YoFSJha3iODjliJe3wtLUOGZzZC39EwvD2xOkbX0noVrJtuBjGhWQJCnAxe
+ 4N5CtbvFcaRA1p4IaOrVaLpHDUOF9JVQiwzwNxGdvl/ePWX+sJzZ19mh5gxIihcZ
+ zkeodxJ2MMLieHm9LuCZfyTYP+DGnHZl89NTGHgmyS7aFEduNdzZLbMHw4pYzjbc
+ EFoe+WB2ubaIkh6mfsMLXxWWfFtAkSjLY7ZTt8I5JIdRKvOxnKT25YMpGt/ktefW
+ D0uMoF9OVmOx4DK1XlypksVD1PdFlNV+67bYLPxnqMUxY1g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4578y68nht-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 06 Mar 2025 07:25:21 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 6 Mar 2025 07:25:20 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 6 Mar 2025 07:25:20 -0800
+Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
+ [10.28.164.118])
+ by maili.marvell.com (Postfix) with ESMTP id 8CCCE5E6879;
+ Thu,  6 Mar 2025 07:25:18 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH] devtools: fix regex of cnxk skip files
+Date: Thu, 6 Mar 2025 20:55:16 +0530
+Message-ID: <20250306152516.2594-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 463og28XxCMx9-U1_dOCj7MVisXyyRbKAkGsfJcaRmU_1741271688
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=cesormDM c=1 sm=1 tr=0 ts=67c9be61 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=Sh4DNex_L8NkXwtVnqoA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: z1CYZiWcEFO5IbWyRsYjGFFxQ9ZVJ1tS
+X-Proofpoint-ORIG-GUID: z1CYZiWcEFO5IbWyRsYjGFFxQ9ZVJ1tS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,45 +70,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-By default (and if no $HOME/.ccache directory exists), Ubuntu 22.04 ccache
-stores its data in $HOME/.cache/ccache.
-As a result, since the switch to Ubuntu 22.04, ccache has not been
-functional.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Set the ccache directory to the location cached in GHA.
+SKIP_FILES should include the path of the file.
+Update the regex to match the path.
 
-Note: ccache is working with the Fedora containers, as the presence of a
-.ccache directory made ccache use it, still,
-explicitly set CCACHE_DIR for consistency.
+Fixes: dd88f51a5725 ("devtools: forbid DPDK API in cnxk base driver")
 
-Fixes: 8400093195dd ("ci: bump tested distributions in GHA")
-Cc: stable@dpdk.org
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- .github/workflows/build.yml | 2 ++
- 1 file changed, 2 insertions(+)
+ devtools/checkpatches.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index 183b0b1999..a5739a72c6 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -45,6 +45,7 @@ jobs:
-       BUILD_DOCS: ${{ contains(matrix.config.checks, 'doc') }}
-       BUILD_EXAMPLES: ${{ contains(matrix.config.checks, 'examples') }}
-       CC: ccache ${{ matrix.config.compiler }}
-+      CCACHE_DIR: $HOME/.ccache
-       DEF_LIB: ${{ matrix.config.library }}
-       LIBABIGAIL_VERSION: libabigail-2.6
-       MINGW: ${{ matrix.config.cross == 'mingw' }}
-@@ -307,6 +308,7 @@ jobs:
-         mkdir -p ~/.ccache
-         > ~/env
-         echo CC=ccache ${{ matrix.config.compiler }} >> ~/env
-+        echo CCACHE_DIR=/root/.ccache >> ~/env
-         echo DEF_LIB=${{ matrix.config.library }} >> ~/env
-         echo STDATOMIC=false >> ~/env
-     - name: Load the cached image
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index 003bb49e04..63638bc7fa 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -236,7 +236,7 @@ check_forbidden_additions() { # <patch>
+ 
+ 	# forbid rte_ symbols in cnxk base driver
+ 	awk -v FOLDERS='drivers/common/cnxk/roc_*' \
+-		-v SKIP_FILES='roc_platform*' \
++		-v SKIP_FILES='.*roc_platform*' \
+ 		-v EXPRESSIONS="rte_ RTE_" \
+ 		-v RET_ON_FAIL=1 \
+ 		-v MESSAGE='Use plt_ symbols instead of rte_ API in cnxk base driver' \
 -- 
-2.48.1
+2.43.0
 
