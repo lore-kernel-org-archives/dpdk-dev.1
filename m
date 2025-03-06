@@ -2,162 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42553C282D1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 10:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09E2C282D1
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 12:50:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06A534060A;
-	Thu,  6 Mar 2025 11:24:06 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 5C9F04029E
- for <dev@dpdk.org>; Thu,  6 Mar 2025 11:24:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741256644; x=1772792644;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=6SE0jq2dpe/KZJ7XuPBUFxSLQk4qu9yv8kV/aQ7T+Q4=;
- b=CYbgDaUcNvMUl4UVT/OmonKA0u1yHDsnHEaO03n9c7umopAD0rKkM/IV
- 3dJj4A2IoFXzi5bw1mNXOefhEMjLAM/5jMSP37uhJbEPb5HXOuA4vQzUi
- 2uGQZWugJSLrkn0qRHpHlUbDGpWC2cvhqlW2BcwLOR73UYvxeHoPo2a9I
- fDkjeVkoERpt+0+8hKstoIqe4+5GWkY7scb+7Q3YMuu7tQAIOUC+GKl7i
- 3ia3IaYx9qFSxMqjcOR75Mb8AzDGV5KMN61oM1WhoEd7qptcjGVK5fIPQ
- XZof9GjEE6/RFc989vse2Dh2wvwgeJHzaq9cqx8yX0FqPzdZrLYLZoTHk Q==;
-X-CSE-ConnectionGUID: KmlHQSaVQJas2EqNV7098Q==
-X-CSE-MsgGUID: 2IVRozfsTQCnmZQgQTi0ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42146866"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; d="scan'208";a="42146866"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2025 02:24:03 -0800
-X-CSE-ConnectionGUID: Tp+3QFqLQ8SjzIjniUTTPA==
-X-CSE-MsgGUID: 5l+01AKBRt+af0UzRFgYlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; d="scan'208";a="123997837"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2025 02:24:04 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 6 Mar 2025 02:24:02 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 02:24:02 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 6 Mar 2025 02:24:02 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XHthZPywSsMncFLxPo0JPMJuabT7abB1gkGYrCfDvZlUqG1/cW+3CSJjJKV0YX0L0Ma/BoX8T3JclgTF6a1D14lQcqUOdy0dbsYk0xJllHMwo32pIg4MAI/ml5cNWDLRi4qETbBjefm+9o1ETyib/f45VBdxJNjaVazZJa/ZUpOcPbnEypFhTkaeF7ixAzEyI0GI3yzrADR3wZHOT1i3zspj7spiVaN+C0XRdtu7IXdPUSHJYv2+Ci3bdcv9Up+06C5PvqoQMlR1MogCyqQJ+bD3lzj+eV1CV3o5i9OuPMy5KJJ8rOBUqZqNmEHubOwqVIc8jVE32qRLkm3MSXyo0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T4X10Szktged0V8ckOyq6bmTbtAUKP3lWsvv4A9uXnw=;
- b=zQGCyr5a2lh3sUAbNPQXtTZ5/bCtaBD3ERB7Fzj6pG7X2r/QzPgGBqyLljcYdd9A6tsKzlgUpX/eE2eW2XACBhVQRmwYOCDYYxoQOwcZAkN5myjJ+OGuxbxlSwK/Vr0xSoJ9/8do/7ZUEVyShjl/qBln3cpk0BjYWEUFBnCk+KbzlQe14PyXbVGWSTS54hKP5XSJvtsa5lf4KX+v6S6xqC9UuHTmpOyxRphhUi6m8X697gIgd//Yh6tObCLdiWErUSsvoKgP0E2GCeaoltOkEfu9thcB1/7u5DKIXmcckFYeEmTK3Iz0kqjNzq8LtIfoRRo6iaPDNi2Gmk4nop75ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH8PR11MB8259.namprd11.prod.outlook.com (2603:10b6:510:1c2::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 10:23:14 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 10:23:14 +0000
-Date: Thu, 6 Mar 2025 10:23:08 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <andremue@linux.microsoft.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>, Jasvinder Singh
- <jasvinder.singh@intel.com>
-Subject: Re: [RFC] eal: add new function versioning macros
-Message-ID: <Z8l3jMSAeTGN7UrW@bricha3-mobl1.ger.corp.intel.com>
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+	by mails.dpdk.org (Postfix) with ESMTP id BD90040430;
+	Thu,  6 Mar 2025 13:50:31 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 953794029E
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 13:50:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1741265430;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=AvIX72qzlWD6xnUqt86Z9FR+k6MmFMtCkmJL/nQLM/w=;
+ b=NnM+Ix8Z13tJfPTC7qEiHTSGreiv6vr/MXyS99czVlujUnqKKpL0MgqN9/Ay7aSpGn9VSk
+ LMm+JMuDkK51e01cPll21DZ7+paPJ5ddQWhmyqKc6bfBiW4aDQsuZ2h/r4qDyaEVzbsPc0
+ tAhmhAKR4p/bEoUuBP+KSSrBix5Y0o4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-jmhbB_XXPjqUkwi7F-O4vw-1; Thu,
+ 06 Mar 2025 07:50:28 -0500
+X-MC-Unique: jmhbB_XXPjqUkwi7F-O4vw-1
+X-Mimecast-MFC-AGG-ID: jmhbB_XXPjqUkwi7F-O4vw_1741265427
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1520B1956050; Thu,  6 Mar 2025 12:50:27 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.74])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 9A4701800373; Thu,  6 Mar 2025 12:50:24 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, bruce.richardson@intel.com,
+ andremue@linux.microsoft.com,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>
+Subject: [RFC v2 1/2] eal: add new function versioning macros
+Date: Thu,  6 Mar 2025 13:50:20 +0100
+Message-ID: <20250306125021.2231121-1-david.marchand@redhat.com>
 In-Reply-To: <20250305212349.2036410-1-david.marchand@redhat.com>
-X-ClientProxiedBy: DU2PR04CA0020.eurprd04.prod.outlook.com
- (2603:10a6:10:3b::25) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB8259:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98a8d106-4e62-43e9-3b45-08dd5c98e714
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7J1HhGyjsoAAy6SdvTD2sR5Bm7E9QUDcIDyxUVf6dFBc9yz+fUL0eip0sTuR?=
- =?us-ascii?Q?0ovK0JoUQpHNHabxKi4vbD9diVbYT+2yeqvVuJNp1+Mygd1ZT9sOOtsVT1vK?=
- =?us-ascii?Q?j4O3N7/BwlEGU7zQCJQATWvJOR6qC3bVuyKCUAw8aY9w46oVql241D57z0bd?=
- =?us-ascii?Q?QWtmggCSnv/5eUjMb3M4O6hvmRWSZbIrH6W6oOiDFL9ehkhkyLHdrGH71ELQ?=
- =?us-ascii?Q?YNL/ayEe+Xw/f/OqbTAn5qxWe/RwU73MCOFdKwrtM1DYqePibcnK3XV+fVCc?=
- =?us-ascii?Q?N78+zffp6XJkxluc32rhp1Wd2auBI/p9R4yZu38Ihx2nuP19mGFO3VoagDUg?=
- =?us-ascii?Q?fho5gYsFWXRdK4JJVe0gH9CJbHg+vxmycCpwgfFcyEI8yze0KXmiRvxLyjCh?=
- =?us-ascii?Q?PCuTcaWjxQyNO7CtvWo/qaGjQhGTyNsANNf78aaVQmYBFcvUOXrgMFV7fA/W?=
- =?us-ascii?Q?/sCqTcnSmBfurSAQkstUDosTGDhLXaV1ZqtFZsNU0hK/AMwvi6/vQ2RtRu45?=
- =?us-ascii?Q?lW8ZWv1EKLquvLuWfLd15RdRhi8j57NLzsji/XdbKvke/zd4KG1mBztKT58G?=
- =?us-ascii?Q?PY5wIJ5WB6wz/v7KZk2qBcPmRky0De47UI2hzL2zHt0dwa4soNSOiOLatxgi?=
- =?us-ascii?Q?9qguSPdhkUQdl60ozQugOYHAdaTVBFF4/AnlG+1mVcV20/dnr+39zBQKOg7l?=
- =?us-ascii?Q?hEt7m1/xJYwUPgn6Cv92hw0KgVJgCFm0RFGkMflZyazRGRR+l9x+oBPPicfj?=
- =?us-ascii?Q?YCLyXI88CMoXWLMuYofIb5TIrSU3aDETIKatuhFqJSLlRyoOz4NrGAnpvViW?=
- =?us-ascii?Q?zdW9O8daE+yXoLJcSXrUinzfGHpJUN/P7qW/VRgbbJeV+/gQSeNCWVyY+Gu6?=
- =?us-ascii?Q?UEUq+RSpcO+Xhz3Ww2PTtL1S121HjXiXzHWnRPtWpE+58w3xafb2Rfa9TPdm?=
- =?us-ascii?Q?rIuyjXWcmdXfPM43K+lxW5TfIR5lrHwcJ29GNgAAVxonrt8gk0ucXQgTwzOT?=
- =?us-ascii?Q?uI/nlHi2RTV9+xDJXSlTyYgYAGYO0IGCh1NoooMSExganS/BeMiodyCwhTTO?=
- =?us-ascii?Q?aPmADPwGF1y6H34weyif1jilo+JrrwP4Co+/w2eAwmu674ScaYtIQ8/M5oDk?=
- =?us-ascii?Q?hbi1yHn0mKWjnoBoJPgiqgHqy+pK3zNI4kzpcXxJjdS6QtZl4PjL12wfvbpi?=
- =?us-ascii?Q?F+em7i594Yvcsz+IOT+9/IIExiBN9Le+F8BRcTFJVeRKU0GV41ug85oi+cHg?=
- =?us-ascii?Q?o/mUCmkQ5K1t6y9ZbNrM5hcqAmCdHiFAhtmvsDfUK/EvzpENSFleai96M77x?=
- =?us-ascii?Q?s3xfJrmsfiL+ZwAhy/TH9zo7tocFzJK2KyyURNEaoHy+4BilXG0Gd3Z3x4dB?=
- =?us-ascii?Q?b9A+V11eQHTz0LgB2XpdSSJBYYYj?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aGNrmxVgKtaA2yH87ItfNOfE/pGYjL/5BbGSX/hmnC1nw6F5pdevvv6CpGG2?=
- =?us-ascii?Q?BmD3ZA+yjhWw1UOmX8W3/r1X47f5aFk3mDi3Fb+9cFf/x0Ic33MzpERxUpI8?=
- =?us-ascii?Q?moWmX1tXQpQoRLqQpz21lNAlRF5vzK8C6NirUnuJVnHH270XM+UdBl4x1p0/?=
- =?us-ascii?Q?CaHhmQ4oXGqizC2DLeZLTH1/sJQ6Mo9m65d2LAYd3jOZxWaDTmo1e4dIdQ8y?=
- =?us-ascii?Q?D7Zg/hdHUoOkYFp6KpzKIvieDqjyPzOFwZ7MMZWrC3pXUtnsuJfzP/M6/0R0?=
- =?us-ascii?Q?9P5K6+50x8Tfi5vaFD++Qq2g7YcgoAggZXzoLGzrX4cuy2ZFENgv9N2FGzdF?=
- =?us-ascii?Q?X08ggRFnDgdNv71wnI3Ku6BjUc3k0VwWYFe/MKgiLoRA6ViIFn550g6JRDRr?=
- =?us-ascii?Q?50A0R0wz7KCwEP/QKIMQ6wuX4XQKq5CMt/K6A2kjRlyexcPda2lV/1kWaRvy?=
- =?us-ascii?Q?ekYCg5Jhzh9wgBiBOJrJ0MKpdYEC2VlppOrqAi7oxXytQ1qlyUtX/QluIUb1?=
- =?us-ascii?Q?ARBn9QbxikeHHC2gzsCLgXuJVGEJKcIdCcC61ZF+Xf2aL4c4jjutO0MPkUHY?=
- =?us-ascii?Q?LwvL3kDrguLXE+yiJBzQdrS2hB5OKNpK8nle7sFyvgpkI00+t03MFjdBHq2x?=
- =?us-ascii?Q?8QCI38jFxv76si/kw64UPVO+214fTJx7YoCsNpl3ZaP+klAVzAchJx+t9JUb?=
- =?us-ascii?Q?29+7TViIcJCWgTIF0kUpV9OxE2vWC/Ng9HixTdt3dUUQmfr4zJVeH1XAv964?=
- =?us-ascii?Q?jW9EJ6OutC7KaJNHcvDVWaFOnNajyaAJc1Ndp7w/pfWUk+3GzCtEujppNARV?=
- =?us-ascii?Q?6VEzdoZ0qEcbDDJoEAmUEXaFZPalel+Si1ijLirSKLsBcYh9nJVStFdCS4RY?=
- =?us-ascii?Q?GotRxJD+hHgtaWqQYXDtT1E5cGZWFCMnZ6MuTa/Z1hV9LS1vXLg4+BIVlDso?=
- =?us-ascii?Q?deR44nQDCq11vT4Wmh1S4wYDkntcFzKKG3n9uep7/S7hVN5ekukmlcWXUg2M?=
- =?us-ascii?Q?epxtjWnXOkrgpzEAnICqxw43OVcNSMRTnW7PRosf8jJgrv0Yu71W4ZM9J96I?=
- =?us-ascii?Q?7hdfa5mw05FBmYIrX8AfaPAe8/SzOlFueNroYWdb+emzeaoCBsS7Th3OjRMl?=
- =?us-ascii?Q?atq4WPgpBQ8QWlu0pYBaWKk/lV0oM2E1PH9+MLlo9KHMFir+W9fW2M8jm5hZ?=
- =?us-ascii?Q?29szNhqiDWYDxML1xzJTm6TjHG+ovQQevCmH4gkif+JoYFRj/deI93z28Fd8?=
- =?us-ascii?Q?wGvtGtlfjoDIVWJuc+RaP33+Eq3kPp9P/Kc+PM73vrlJK38kvgMh6es6H7iG?=
- =?us-ascii?Q?1tsiwfNIQ7MKHE1bfhLdBcaNq/vCESYencZwlfAlBybIGl+8kuXWh76eoy4g?=
- =?us-ascii?Q?9wnCdhyUvxK/G+UyoGK1bBGkPVAJtp8b8q9EFBnz9ojkGM51j1wQRiw06jda?=
- =?us-ascii?Q?Zr8bCYwcsigYkJwMlty3rEpEt0GH0gj86FApbV2mTJAAuTaPn4ZFPCxeodp3?=
- =?us-ascii?Q?3cgUjebdEeuhCnJlvW3hm0n7ZoplTc5nHY4V62hl0glVrgx/yxRwAhnm0cbR?=
- =?us-ascii?Q?F77S/MfArFsdZOTZteqatxqJAQ+2+myuBozmevnfPWdpU7zIxKSdXfrqahrS?=
- =?us-ascii?Q?dw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98a8d106-4e62-43e9-3b45-08dd5c98e714
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 10:23:13.9578 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5sKjJTcEQzpuIfDMYeUjO5onkoXvItayErno7djARRHoSCrttYPCJNDL6Hg8Tri1slVVKR0GNpQ2fftf4aotOmEdmZAf/gInxX8Ss0hNoVI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8259
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: suNUQUiEqObshFHddVrx4BFfYedBzzhQozOX1--QjBQ_1741265427
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,25 +69,344 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 05, 2025 at 10:23:49PM +0100, David Marchand wrote:
-> For versioning symbols:
-> - MSVC uses pragmas on the function symbol,
-> - GNU linker uses special asm directives,
-> 
-> To accommodate both GNU linker and MSVC linker, introduce new macros for
-> versioning functions that will surround the whole function.
-> 
-> This has the advantage of hiding all the ugly details in the macros.
-> Now versioning a function is just a call to a single macro:
-> - VERSION_FUNCTION (resp. VERSION_FUNCTION_EXPERIMENTAL), for keeping an
->   old implementation code under a versioned function,
-> - DEFAULT_FUNCTION, for declaring the new default versioned function,
->   and handling the static link special case, instead of
->   BIND_DEFAULT_SYMBOL + MAP_STATIC_SYMBOL,
-> 
-> Documentation has been updated though it needs some polishing.
-> The experimental macro has not been tested.
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-This looks a nice improvement to me, thanks.
+For versioning symbols:
+- MSVC uses pragmas on the symbol,
+- GNU linker uses special asm directives,
+
+To accommodate both GNU linker and MSVC linker, introduce new macros for
+exporting and versioning symbols that will surround the whole function.
+
+This has the advantage of hiding all the ugly details in the macros.
+Now versioning a symbol is just a call to a single macro:
+- RTE_VERSION_SYMBOL (resp. RTE_VERSION_EXPERIMENTAL_SYMBOL), for
+  keeping an old implementation code under a versioned function (resp.
+  experimental function),
+- RTE_DEFAULT_SYMBOL, for declaring the new default versioned function,
+  and handling the static link special case, instead of
+  BIND_DEFAULT_SYMBOL + MAP_STATIC_SYMBOL,
+
+Documentation has been updated though it needs some polishing.
+The experimental macro has not been tested.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+Changes since RFC v1:
+- renamed and prefixed macros,
+- reindented in prevision of second patch,
+
+---
+ doc/guides/contributing/abi_versioning.rst | 130 ++++-----------------
+ lib/eal/include/rte_function_versioning.h  |  27 +++++
+ lib/net/rte_net_crc.c                      |  30 ++---
+ 3 files changed, 57 insertions(+), 130 deletions(-)
+
+diff --git a/doc/guides/contributing/abi_versioning.rst b/doc/guides/contributing/abi_versioning.rst
+index 7afd1c1886..c4baf6433a 100644
+--- a/doc/guides/contributing/abi_versioning.rst
++++ b/doc/guides/contributing/abi_versioning.rst
+@@ -277,86 +277,49 @@ list of exported symbols when DPDK is compiled as a shared library.
+ 
+ Next, we need to specify in the code which function maps to the rte_acl_create
+ symbol at which versions.  First, at the site of the initial symbol definition,
+-we need to update the function so that it is uniquely named, and not in conflict
+-with the public symbol name
++we wrap the function with ``RTE_VERSION_SYMBOL``, passing the current ABI version,
++the function return type, and the function name, then the full implementation of the
++function.
+ 
+ .. code-block:: c
+ 
+  -struct rte_acl_ctx *
+  -rte_acl_create(const struct rte_acl_param *param)
+- +struct rte_acl_ctx * __vsym
+- +rte_acl_create_v21(const struct rte_acl_param *param)
++ +RTE_VERSION_SYMBOL(21, struct rte_acl_ctx *, rte_acl_create, (const struct rte_acl_param *param)
+  {
+         size_t sz;
+         struct rte_acl_ctx *ctx;
+         ...
+-
+-Note that the base name of the symbol was kept intact, as this is conducive to
+-the macros used for versioning symbols and we have annotated the function as
+-``__vsym``, an implementation of a versioned symbol . That is our next step,
+-mapping this new symbol name to the initial symbol name at version node 21.
+-Immediately after the function, we add the VERSION_SYMBOL macro.
+-
+-.. code-block:: c
+-
+-   #include <rte_function_versioning.h>
+-
+-   ...
+-   VERSION_SYMBOL(rte_acl_create, _v21, 21);
++ -}
++ +})
+ 
+ Remembering to also add the rte_function_versioning.h header to the requisite c
+ file where these changes are being made. The macro instructs the linker to
+ create a new symbol ``rte_acl_create@DPDK_21``, which matches the symbol created
+-in older builds, but now points to the above newly named function. We have now
+-mapped the original rte_acl_create symbol to the original function (but with a
+-new name).
++in older builds, but now points to the above newly named function ``rte_acl_create_v21``.
++We have now mapped the original rte_acl_create symbol to the original function
++(but with a new name).
+ 
+ Please see the section :ref:`Enabling versioning macros
+ <enabling_versioning_macros>` to enable this macro in the meson/ninja build.
+-Next, we need to create the new ``v22`` version of the symbol. We create a new
+-function name, with the ``v22`` suffix, and implement it appropriately.
++Next, we need to create the new version of the symbol. We create a new
++function name and implement it appropriately, then wrap it in a call to ``RTE_DEFAULT_SYMBOL``.
+ 
+ .. code-block:: c
+ 
+-   struct rte_acl_ctx * __vsym
+-   rte_acl_create_v22(const struct rte_acl_param *param, int debug);
++   RTE_DEFAULT_SYMBOL(22, struct rte_acl_ctx *, rte_acl_create, (const struct rte_acl_param *param,
++        int debug);
+    {
+         struct rte_acl_ctx *ctx = rte_acl_create_v21(param);
+ 
+         ctx->debug = debug;
+ 
+         return ctx;
+-   }
+-
+-This code serves as our new API call. Its the same as our old call, but adds the
+-new parameter in place. Next we need to map this function to the new default
+-symbol ``rte_acl_create@DPDK_22``. To do this, immediately after the function,
+-we add the BIND_DEFAULT_SYMBOL macro.
+-
+-.. code-block:: c
+-
+-   #include <rte_function_versioning.h>
+-
+-   ...
+-   BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
++   })
+ 
+ The macro instructs the linker to create the new default symbol
+-``rte_acl_create@DPDK_22``, which points to the above newly named function.
+-
+-We finally modify the prototype of the call in the public header file,
+-such that it contains both versions of the symbol and the public API.
+-
+-.. code-block:: c
+-
+-   struct rte_acl_ctx *
+-   rte_acl_create(const struct rte_acl_param *param);
+-
+-   struct rte_acl_ctx * __vsym
+-   rte_acl_create_v21(const struct rte_acl_param *param);
+-
+-   struct rte_acl_ctx * __vsym
+-   rte_acl_create_v22(const struct rte_acl_param *param, int debug);
+-
++``rte_acl_create@DPDK_22``, which points to the function named ``rte_acl_create_v22``
++(declared by the macro).
+ 
+ And that's it, on the next shared library rebuild, there will be two versions of
+ rte_acl_create, an old DPDK_21 version, used by previously built applications,
+@@ -365,43 +328,10 @@ and a new DPDK_22 version, used by future built applications.
+ .. note::
+ 
+    **Before you leave**, please take care reviewing the sections on
+-   :ref:`mapping static symbols <mapping_static_symbols>`,
+    :ref:`enabling versioning macros <enabling_versioning_macros>`,
+    and :ref:`ABI deprecation <abi_deprecation>`.
+ 
+ 
+-.. _mapping_static_symbols:
+-
+-Mapping static symbols
+-______________________
+-
+-Now we've taken what was a public symbol, and duplicated it into two uniquely
+-and differently named symbols. We've then mapped each of those back to the
+-public symbol ``rte_acl_create`` with different version tags. This only applies
+-to dynamic linking, as static linking has no notion of versioning. That leaves
+-this code in a position of no longer having a symbol simply named
+-``rte_acl_create`` and a static build will fail on that missing symbol.
+-
+-To correct this, we can simply map a function of our choosing back to the public
+-symbol in the static build with the ``MAP_STATIC_SYMBOL`` macro.  Generally the
+-assumption is that the most recent version of the symbol is the one you want to
+-map.  So, back in the C file where, immediately after ``rte_acl_create_v22`` is
+-defined, we add this
+-
+-
+-.. code-block:: c
+-
+-   struct rte_acl_ctx * __vsym
+-   rte_acl_create_v22(const struct rte_acl_param *param, int debug)
+-   {
+-        ...
+-   }
+-   MAP_STATIC_SYMBOL(struct rte_acl_ctx *rte_acl_create(const struct rte_acl_param *param, int debug), rte_acl_create_v22);
+-
+-That tells the compiler that, when building a static library, any calls to the
+-symbol ``rte_acl_create`` should be linked to ``rte_acl_create_v22``
+-
+-
+ .. _enabling_versioning_macros:
+ 
+ Enabling versioning macros
+@@ -519,26 +449,17 @@ and ``DPDK_22`` version nodes.
+     * Create an acl context object for apps to
+     * manipulate
+     */
+-   struct rte_acl_ctx *
+-   rte_acl_create(const struct rte_acl_param *param)
++   RTE_DEFAULT_SYMBOL(22, struct rte_acl_ctx *, rte_acl_create,
++        (const struct rte_acl_param *param)
+    {
+    ...
+-   }
++   })
+ 
+-   __rte_experimental
+-   struct rte_acl_ctx *
+-   rte_acl_create_e(const struct rte_acl_param *param)
+-   {
+-      return rte_acl_create(param);
+-   }
+-   VERSION_SYMBOL_EXPERIMENTAL(rte_acl_create, _e);
+-
+-   struct rte_acl_ctx *
+-   rte_acl_create_v22(const struct rte_acl_param *param)
++   RTE_VERSION_EXPERIMENTAL_SYMBOL(struct rte_acl_ctx *, rte_acl_create,
++        (const struct rte_acl_param *param)
+    {
+       return rte_acl_create(param);
+-   }
+-   BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
++   })
+ 
+ In the map file, we map the symbol to both the ``EXPERIMENTAL``
+ and ``DPDK_22`` version nodes.
+@@ -564,13 +485,6 @@ and ``DPDK_22`` version nodes.
+         rte_acl_create;
+    };
+ 
+-.. note::
+-
+-   Please note, similar to :ref:`symbol versioning <example_abi_macro_usage>`,
+-   when aliasing to experimental you will also need to take care of
+-   :ref:`mapping static symbols <mapping_static_symbols>`.
+-
+-
+ .. _abi_deprecation:
+ 
+ Deprecating part of a public API
+diff --git a/lib/eal/include/rte_function_versioning.h b/lib/eal/include/rte_function_versioning.h
+index eb6dd2bc17..259b960ef5 100644
+--- a/lib/eal/include/rte_function_versioning.h
++++ b/lib/eal/include/rte_function_versioning.h
+@@ -96,4 +96,31 @@
+  */
+ #endif
+ 
++#ifdef RTE_BUILD_SHARED_LIB
++
++#define RTE_VERSION_SYMBOL(ver, type, name, ...) \
++__rte_used type name ## _v ## ver __VA_ARGS__ \
++__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@DPDK_" RTE_STR(ver));
++
++#define RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, ...) \
++__rte_used type name ## _exp __VA_ARGS__ \
++__asm__(".symver " RTE_STR(name) "_exp, " RTE_STR(name) "@EXPERIMENTAL")
++
++#define RTE_DEFAULT_SYMBOL(ver, type, name, ...) \
++__rte_used type name ## _v ## ver __VA_ARGS__ \
++__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@@DPDK_" RTE_STR(ver));
++
++#else /* !RTE_BUILD_SHARED_LIB */
++
++#define RTE_VERSION_SYMBOL(ver, type, name, ...) \
++type name ## _v ## ver __VA_ARGS__
++
++#define RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, ...) \
++type name ## _exp __VA_ARGS__
++
++#define RTE_DEFAULT_SYMBOL(ver, type, name, ...) \
++type name __VA_ARGS__
++
++#endif /* RTE_BUILD_SHARED_LIB */
++
+ #endif /* _RTE_FUNCTION_VERSIONING_H_ */
+diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
+index 2fb3eec231..dd93d43c2e 100644
+--- a/lib/net/rte_net_crc.c
++++ b/lib/net/rte_net_crc.c
+@@ -345,8 +345,7 @@ handlers_init(enum rte_net_crc_alg alg)
+ 
+ /* Public API */
+ 
+-void
+-rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg)
++RTE_VERSION_SYMBOL(25, void, rte_net_crc_set_alg, (enum rte_net_crc_alg alg)
+ {
+ 	handlers = NULL;
+ 	if (max_simd_bitwidth == 0)
+@@ -372,10 +371,9 @@ rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg)
+ 
+ 	if (handlers == NULL)
+ 		handlers = handlers_scalar;
+-}
+-VERSION_SYMBOL(rte_net_crc_set_alg, _v25, 25);
++})
+ 
+-struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
++RTE_DEFAULT_SYMBOL(26, struct rte_net_crc *, rte_net_crc_set_alg, (enum rte_net_crc_alg alg,
+ 	enum rte_net_crc_type type)
+ {
+ 	uint16_t max_simd_bitwidth;
+@@ -413,20 +411,14 @@ struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
+ 		break;
+ 	}
+ 	return crc;
+-}
+-BIND_DEFAULT_SYMBOL(rte_net_crc_set_alg, _v26, 26);
+-MAP_STATIC_SYMBOL(struct rte_net_crc *rte_net_crc_set_alg(
+-	enum rte_net_crc_alg alg, enum rte_net_crc_type type),
+-	rte_net_crc_set_alg_v26);
++})
+ 
+ void rte_net_crc_free(struct rte_net_crc *crc)
+ {
+ 	rte_free(crc);
+ }
+ 
+-uint32_t
+-rte_net_crc_calc_v25(const void *data,
+-	uint32_t data_len,
++RTE_VERSION_SYMBOL(25, uint32_t, rte_net_crc_calc, (const void *data, uint32_t data_len,
+ 	enum rte_net_crc_type type)
+ {
+ 	uint32_t ret;
+@@ -436,19 +428,13 @@ rte_net_crc_calc_v25(const void *data,
+ 	ret = f_handle(data, data_len);
+ 
+ 	return ret;
+-}
+-VERSION_SYMBOL(rte_net_crc_calc, _v25, 25);
++})
+ 
+-uint32_t
+-rte_net_crc_calc_v26(const struct rte_net_crc *ctx,
++RTE_DEFAULT_SYMBOL(26, uint32_t, rte_net_crc_calc, (const struct rte_net_crc *ctx,
+ 	const void *data, const uint32_t data_len)
+ {
+ 	return handlers_dpdk26[ctx->alg].f[ctx->type](data, data_len);
+-}
+-BIND_DEFAULT_SYMBOL(rte_net_crc_calc, _v26, 26);
+-MAP_STATIC_SYMBOL(uint32_t rte_net_crc_calc(const struct rte_net_crc *ctx,
+-	const void *data, const uint32_t data_len),
+-	rte_net_crc_calc_v26);
++})
+ 
+ /* Call initialisation helpers for all crc algorithm handlers */
+ RTE_INIT(rte_net_crc_init)
+-- 
+2.48.1
+
