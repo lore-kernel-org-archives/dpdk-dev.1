@@ -2,77 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E26C282D1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 13:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A94C282D1
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Mar 2025 13:48:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA9554065F;
-	Thu,  6 Mar 2025 14:47:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 087D04065F;
+	Thu,  6 Mar 2025 14:48:50 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 81F5B40430
- for <dev@dpdk.org>; Thu,  6 Mar 2025 14:47:20 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 350E740430
+ for <dev@dpdk.org>; Thu,  6 Mar 2025 14:48:49 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741268839;
+ s=mimecast20190719; t=1741268928;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=xj7CVG/Rrx8i/mCH8ruFQjjjKg1TLMJJUVMG1SbAmhU=;
- b=d7nTQIg90YzkeH0D6yIhh+0OQDGm6X9Gz0F5wlNMIsg/kXVp1/3P6PeJfDh+FQACNyqon+
- Po9rMf3oJGZ6DQAhUl/iOUmYhcGRzvbMn/B8uBAczQsXzNCxepGQsSgwPSFytgfsGy76FX
- 8NNZolCGACstFQtI0D49PXuin1U1Uzk=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=NgMl/fMXidebCZ9xY6t26jR5byrgHKCBLy5xEI2Ma8Y=;
+ b=jF6MFQikUD0ETX/TZrIKj4bRCCs9xqWyoCnljlYJcpfIUdl24sqZjwxcpeG1unNZVnlcJw
+ JhXa2btwgOfbw8aKP9ZR9OFLkvVtIi59oeczKa8A8s1nDOfElDAcz1tMK0JpIMz0LXK8rv
+ NrUOzJ3CBRoGt/bvtQoNtOIKW0QlxGc=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-V_hNfxwaPzi8N-tOoNzrKA-1; Thu, 06 Mar 2025 08:47:18 -0500
-X-MC-Unique: V_hNfxwaPzi8N-tOoNzrKA-1
-X-Mimecast-MFC-AGG-ID: V_hNfxwaPzi8N-tOoNzrKA_1741268837
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-30baac7c992so4617301fa.1
- for <dev@dpdk.org>; Thu, 06 Mar 2025 05:47:18 -0800 (PST)
+ us-mta-314-vFMRf4N5O4WGj_D1Mz7Hng-1; Thu, 06 Mar 2025 08:48:42 -0500
+X-MC-Unique: vFMRf4N5O4WGj_D1Mz7Hng-1
+X-Mimecast-MFC-AGG-ID: vFMRf4N5O4WGj_D1Mz7Hng_1741268921
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-30b9914aba5so3474751fa.2
+ for <dev@dpdk.org>; Thu, 06 Mar 2025 05:48:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741268837; x=1741873637;
+ d=1e100.net; s=20230601; t=1741268921; x=1741873721;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=xj7CVG/Rrx8i/mCH8ruFQjjjKg1TLMJJUVMG1SbAmhU=;
- b=AtR8RvH32vm2sfjPyTQKGtk0eQKL1vVi1HvItT5p63cLd+FJXl+jQOYDGDuOPgd4il
- VZy4m78wzsRpGHd8fjPDwp9HaD5314QOXa3gjbY9V0DDSzOjK2fJB8vlB+Kk9L9KIe9V
- 1V4FH/IlpRPRobBJU7/62v9YAU7R6zCEhk6WwI5YRlB2H+OJpBtp4bWBoJRRu/th2ULJ
- 7TewC/QLcduskuzxd32OBisahYbZZYfQPMIuI/t07H3yP4nmnL5SFJ9nhsvOQXJJk58o
- oyDArKFU7matdbe9GYc9xKVPec6nQDwWe8qIxL4kpgMNQPDmTkU/5j5Tf7HRx9Oz7fJ5
- 9Qkg==
+ bh=NgMl/fMXidebCZ9xY6t26jR5byrgHKCBLy5xEI2Ma8Y=;
+ b=XKK85i6NkTyIqhnKHdsGVI58iXV83vB3/9gsZVmZ7FaD3VTRru4hrqsLtny+G8eXUp
+ QuYJUEMzVb+HnvCJswIWw8JwXBT0f47H/a8FeyeEksznZTGs4uBoK4jIiJ5wmRElRR23
+ yT3ueLBUJKPhMJXYtNHvYlaQ4rYmPzPAZAGVEc8Qw4X+GYiXfNQBO8AI9F9s20KiAfA5
+ 6iV37gWnhxRsA0gJkS/fynvmYo/GWWWHnfq3ccgJeSA3dehM/OO28FBxIqINV09Q5oSN
+ 0iXfKu3TOmFJo+gvMxQl0Z2X6j0U+MofwRU0gL2/hCqJ0ujLP82Joi9XD7AHtIzNztjU
+ /vKQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXCRPewquNBaQXWweMVqy40ZMEZN82enuriKKYu2kduXIRsvwjdhAozXpxzUHIfdHKOfkw=@dpdk.org
-X-Gm-Message-State: AOJu0Yz1KYPDZOQaQxAS8cLSDVGJxLeI8mJA3dF3RrZd7cl2OAPSv8sw
- lKxnZMtt5djWjAGoyQ0vJG7b0hZwtG7HE5EKpQPpZ6boQA36YtCCtJY3xWqBkU1Im0+N87inB0v
- uOdblLwR2yenLQcGBCeNR8d/48UUarGNgHbIc+B1nPGvwZXKRBfH2CRuR/UeOnR+HUrWmQ6eCZP
- F4KUdTjjWca/Noq4Y=
-X-Gm-Gg: ASbGncvM39Z1zJOPnd22injxmUKAUFBgeI65VLZjgw9Wj75zTR5qq7+uVGPMLLfejbM
- ARhhDnTKiZ8mHevntxQsNXkWdvEd5wPwSS2SFAsaS05bPS9MaIHWiA3zUfcVl0SEZtf4ZEMXD4f
- Y=
-X-Received: by 2002:a2e:9d8f:0:b0:30b:aaca:9b2e with SMTP id
- 38308e7fff4ca-30be3261a4emr12651861fa.0.1741268837246; 
- Thu, 06 Mar 2025 05:47:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHXONssIxcsETXZgt8LVWi3WhsXcl9JUuBiMm0lT98wAUr2O3uyR5/2FCaNVxhUtQDJdursMN+9enEMUZcO+Ko=
-X-Received: by 2002:a2e:9d8f:0:b0:30b:aaca:9b2e with SMTP id
- 38308e7fff4ca-30be3261a4emr12651771fa.0.1741268836891; Thu, 06 Mar 2025
- 05:47:16 -0800 (PST)
+ AJvYcCV4FTA5p/xPO3UzFK9h9HI60x1IMmKmYwwNPlJGIPQRe+CBqWZ0O56/lA+8fqJkd4pr2+4=@dpdk.org
+X-Gm-Message-State: AOJu0YwPnr13B9YVbtJ6oSWNu9RL/64Q4wtvS6tWPWLB7BQw+xUSj4kg
+ 5JxZow7EeD3n/h+3aY31Lud5uOvcYg/dwAHMkUaxnTJ1Yvvrn/nbNSQdsk6d/tHCJ2R1slh4rxx
+ Gcd9GrzFpHtrsePk5EMyKpIohNM+KRB3AJeZ7L6jJNCNkDwJNPGBN+nGlR7VT+Gs2LBNG4lO6Ju
+ k/5GWwFIIgs9VgMwE=
+X-Gm-Gg: ASbGncu5ZtWg70xMsUsDs+ErwYK0z2OJxeDJ+TGkL1Kgz+Bssdwy6pV+fESSxOge8k1
+ YO/fIfRwP8Jj5qZY6mCPqL9yWX2CZJUaB5djPxWG8QepXTHggFe0vK0fG3FU3bKGpPgvcoIXOjX
+ 4=
+X-Received: by 2002:a05:651c:2125:b0:30b:cceb:1e71 with SMTP id
+ 38308e7fff4ca-30bd7a272bemr24576891fa.9.1741268921363; 
+ Thu, 06 Mar 2025 05:48:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGW4inuR3yASPdH0ryDoIA9IPIXnBqvm25Zyhh5Vpq8vvSkQ1VfP5eTmHGFK+GjbWFi5DlANhhEhQUR0Nlleo=
+X-Received: by 2002:a05:651c:2125:b0:30b:cceb:1e71 with SMTP id
+ 38308e7fff4ca-30bd7a272bemr24576801fa.9.1741268920982; Thu, 06 Mar 2025
+ 05:48:40 -0800 (PST)
 MIME-Version: 1.0
-References: <1740757940-10253-1-git-send-email-andremue@linux.microsoft.com>
- <1740780187-5272-1-git-send-email-andremue@linux.microsoft.com>
- <1740780187-5272-2-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1740780187-5272-2-git-send-email-andremue@linux.microsoft.com>
+References: <1740768356-29954-1-git-send-email-andremue@linux.microsoft.com>
+ <1741033501-9318-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741033501-9318-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 6 Mar 2025 14:47:04 +0100
-X-Gm-Features: AQ5f1JqAgpr5GwNyBbBhbEwXqftWasIvFA2khfthL-09YnBDOHogYHfxhuXZsAU
-Message-ID: <CAJFAV8xBHxmDaQGc3NG4F-23LCuBCUoYjCPFjEu9JZ09MUxDfw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] config: move existing code that is common to the
- top
+Date: Thu, 6 Mar 2025 14:48:29 +0100
+X-Gm-Features: AQ5f1JrfcqVjdRjkAeD5xSHsxn5WfpQhlhY6U81Y6QdM0cdHfvjNsCkZ4qycqQw
+Message-ID: <CAJFAV8zTZbaAsFf3AeafVRuJT6JUtpk7M9KpXRMhv9Ux6P7Fxg@mail.gmail.com>
+Subject: Re: [PATCH v2] acl: use common top-level variable for easier
+ maintenance
 To: Andre Muezerie <andremue@linux.microsoft.com>
 Cc: bruce.richardson@intel.com, dev@dpdk.org, konstantin.v.ananyev@yandex.ru
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pyg3U8GHLz6BO_aS586Phx78x1IhH5XDaelmJEDRa34_1741268837
+X-Mimecast-MFC-PROC-ID: MZVYSOVR7vzGsBokuhqSzNrMOo-Y4tSJy_qMW3hAc0I_1741268921
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -89,24 +88,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 28, 2025 at 11:03=E2=80=AFPM Andre Muezerie
+On Mon, Mar 3, 2025 at 9:25=E2=80=AFPM Andre Muezerie
 <andremue@linux.microsoft.com> wrote:
 >
-> In preparation to add better MSVC support, existing common code was
-> moved up.
->
-> A split was added which in future will call an MSVC specific meson.build
-> file:
->
-> if is_ms_compiler
->     subdir_done()
-> endif
+> Updated meson.build to use common variables cc_has_avx512 and
+> cc_avx512_flags.
 >
 > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-In addition to my previous remark, I dropped the change adding
-AVX512CD, so it comes with the change associated to the ACL library.
 Applied, thanks.
 
 
