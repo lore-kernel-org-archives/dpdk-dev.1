@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD5AC28B2E
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 21:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CE1C28B2E
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 21:52:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8527E40ED4;
-	Fri,  7 Mar 2025 22:52:10 +0100 (CET)
-Received: from egress-ip42a.ess.de.barracuda.com
- (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id D604B40ED2
- for <dev@dpdk.org>; Fri,  7 Mar 2025 22:52:08 +0100 (CET)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com
- (mail-am0eur02lp2234.outbound.protection.outlook.com [104.47.11.234]) by
- mx-outbound8-45.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id D18C440EE3;
+	Fri,  7 Mar 2025 22:52:15 +0100 (CET)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id AF6D140EDC
+ for <dev@dpdk.org>; Fri,  7 Mar 2025 22:52:13 +0100 (CET)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2170.outbound.protection.outlook.com [104.47.17.170]) by
+ mx-outbound18-33.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Fri, 07 Mar 2025 21:52:02 +0000
+ Fri, 07 Mar 2025 21:52:04 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QWQPCRMSXGN5byNSJhYJ6r6/mQDLGrvp2AUmgjXXNbbgcmvxcdaXabZ/dJD+uQZZRneZ8Ius9Zz2hqHiHOVdZOTdXu/S83aEO2VEKe5dp8864o9C2nGMz+LXIbiVuoQQMkdLfJE5eRcHRoYkMnJg3n6EwFmkemmWbrVImdqk0T/08tHtvOtPFeiqCtRYLAg4THqp+N00UNcap6s5lwbGd9Y7Pyvsc07wVs/UpODMJFlMgXtAaPRYlP/wpX3RcZ+938gq0iBjooacONWCzXNLlAF5RpDgeUQ9jop4bZc4y5Yy469m4MytZTkABqyj2VcXOe9uMfgrC+RJz3ZIFx32NA==
+ b=QrPNJhdUCADDSYOPlGHT9Q6FFaccbLBF35IAAP8YYSiu6lhoZxSsSkKNwzZiski60k4QlNr6vT28m5PsUfYlUdE1XXP15GqFARwJ7eTa2a7AiYsZESD0CePsrx9cLxypmailp9oZfB2z4NPmHcc5GC2RwSeGR8QOXRRJ+H9uOoDLhFnWHXLD5FBD+aTtANfdlrQ9vuLFcPkuPuU852g0lMRvJX8bqkkPjcvH/z2S1HO3KDkk6kMSMaw87Fw8i8XBJKLVd/PRjkfxyLdUu+Ww5KFOFpZf6GNo6TwA0QOlS+jHI5EyBA669/JA4p/KyIBHK5xCPCAm6YKJW1fvtNG/JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B4wW1soXh//ZTND15x3bcdn2XaA6EcG74AYIKgVqLV0=;
- b=nOWRh5yQDG1dacuU2zWfQOUtwqlyztnYF23Qrcj+lKqh/1GdKVLoyGK4uf7Ec1LLhO9fOiMuP2MsJLUfHqjngAEesNCcIpIivzVUXcTNqG2WqwNlXLrBzIAi3BBzL6BFOoMhakRY/rB++8uA9brQPT4I0656SWdadLpEaoLnfYE9wrs/cfoKZgC9+0dsjJUGbW1972NEJEEZZzw8GOaVFzHKVE5e4gy3KLD0gyjdfwV6SKFVWjZcaaeMoxhPJQJDwzWGvcZU/DR44TfTPxVLkBamy0+0jsLUTmlBX24pYOpkrWZsbSTdhACTnR8KkxGofFqXPJwf/oCS1+ohrb/kIQ==
+ bh=aHjg6KksMcW7IHPpx0sl/XQh8yaGvHksr5pr8cvvr/I=;
+ b=cycUIi6iksh3J2rhJm7KEpFhVBu3jmRmmNaD+rv78RE0Zp2gPI7Fpw+komKuI0JUAdTqmOO6ESAuMhM7trwEFCaIOw9BjV1yRxUzM5jBpWQ5lEGHQ6pSZVXCPK+gopIxM5U6iK9dDB1S7yq27p0Erk6Lyz8BYL/nm+m+p/lsUDl9yrC1ozg9DwzJelWwoKlmpZpsN/sf5Wc1n3JkoTlaUi7ADHCTdH4RIwWDkU4DDRspcJkoERnYlLp7e71mEtRpG1RK0/cCg+vE1StPsJ+LhpZNdOp0zrhobmpjVRnUrXg8E3XrN5/Ouh0LCowlRaTU52+q0FyD3GHhlp7Nt25uiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B4wW1soXh//ZTND15x3bcdn2XaA6EcG74AYIKgVqLV0=;
- b=V9LqVPSX4FC5a+9AR+1LIKeXdFov00OgvDWEYa3tsPGkoFWBFttOZEObTQh4GXVyYGf2PwpupQm/lIGzVqCMTMTxE3nD+S6L/4dc0yQzQW8BT2QJ5zT0pDI6wiWfGHydaYAMN8qyW1QcGfVdj5GjBk02iOBXZIsaGN43VsXjfk4=
-Received: from PR3P191CA0058.EURP191.PROD.OUTLOOK.COM (2603:10a6:102:55::33)
- by AM9P190MB1138.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:271::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Fri, 7 Mar
- 2025 21:52:00 +0000
+ bh=aHjg6KksMcW7IHPpx0sl/XQh8yaGvHksr5pr8cvvr/I=;
+ b=IMhNtmryDS1rFKUfn0gQ/p4IIcIg8nToLLQB8mSwo1laaozV56kiAL6wRTqnaHCmwYDG3iYSnZHTgamko8czuHbcejKWobeAXEVGMLBD4vAm8EE+lskWk15K+hdAKuRflK+Lzly9O9n1qLo+DZcik2rfn/NizjlzRe63JD1/nY4=
+Received: from PR3P191CA0031.EURP191.PROD.OUTLOOK.COM (2603:10a6:102:55::6) by
+ PA4P190MB1182.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:10c::5) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.19; Fri, 7 Mar 2025 21:52:01 +0000
 Received: from AM2PEPF0001C713.eurprd05.prod.outlook.com
- (2603:10a6:102:55:cafe::89) by PR3P191CA0058.outlook.office365.com
- (2603:10a6:102:55::33) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:102:55:cafe::4f) by PR3P191CA0031.outlook.office365.com
+ (2603:10a6:102:55::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
- 7 Mar 2025 21:52:00 +0000
+ 7 Mar 2025 21:52:01 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM2PEPF0001C713.mail.protection.outlook.com (10.167.16.183) with Microsoft
- SMTP Server id 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 21:51:59
+ SMTP Server id 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 21:52:01
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, thomas@monjalon.net
-Subject: [PATCH v1 3/5] net/ntnic: replace assert with RTE assert
-Date: Fri,  7 Mar 2025 22:51:33 +0100
-Message-ID: <20250307215136.3110019-4-sil-plv@napatech.com>
+Subject: [PATCH v1 5/5] net/ntnic: add nthw prefix function names
+Date: Fri,  7 Mar 2025 22:51:35 +0100
+Message-ID: <20250307215136.3110019-6-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250307215136.3110019-1-sil-plv@napatech.com>
 References: <20250307215136.3110019-1-sil-plv@napatech.com>
@@ -66,63 +66,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM2PEPF0001C713:EE_|AM9P190MB1138:EE_
+X-MS-TrafficTypeDiagnostic: AM2PEPF0001C713:EE_|PA4P190MB1182:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 8389b951-e840-416a-8c3d-08dd5dc249da
+X-MS-Office365-Filtering-Correlation-Id: 9a3b8fa8-073a-46d6-329c-08dd5dc24ac4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|82310400026|36860700013|1800799024|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?u5JFbmsFPDetb+K8pD12giYT6pkTgX1brc8rF+gTCdgL+L+L+qSzqk9Ak7FX?=
- =?us-ascii?Q?I6VqwuPjDO0rOKBv0c+FgY1hqCL/2jqFwnRDz1jCwUVCmSUUqLSj2udego44?=
- =?us-ascii?Q?pYixg4dDpoCRhBkAzEcK6L8FnBZU6d4kplQfVBrJyWmdp2cFrM5hfgj7Rq5I?=
- =?us-ascii?Q?lte4vXvckZx/6q6uPr+eew0EM0Nx5Yc02jvzgyZAAZL+9BB6g0NRLum8BZPY?=
- =?us-ascii?Q?AYY6CtV3KVwuAfjJ5eEIcbQG7qTxg2c1ovuSxK3g0ne8qgq+FzTVLYBkO+Nt?=
- =?us-ascii?Q?LkGDedlZZ7CCEnpZkqbZ7WRFY9Vy6WBeHROBdfHasgcqY5gZFis+HKcTNP7Z?=
- =?us-ascii?Q?Hk14VmlwjESTrFWyLHG1yM+fR3eHfrJw3N7k42kEE93mPN8uz9nWL+5Nj/LO?=
- =?us-ascii?Q?ApnU9EbboKotajUY3iMIhcrD/EHwuteVTtlj58vJgETPeLa2gWgcfJsv9XA5?=
- =?us-ascii?Q?orJeavapdVegb52p0vo46e7cDfMZdeS5rBghZH33AseSZ08ZFOK7D3uAWtI5?=
- =?us-ascii?Q?/9/sXKR85Y8PNLqFNlYquM7E6fT4jEOAY7URBGCERbMTOxeP6Gf6prW/P4pM?=
- =?us-ascii?Q?UjQj5+DMjkDqpBuKYy3+86adgUNIdGDFgJlATpilBP+h8Z+22kHFk7kIbSUL?=
- =?us-ascii?Q?clxvPk5BS616sVFRgEN1T9JkIks5HG6XuLyhmRsdfI62RDNWpmhGeUubf1Bf?=
- =?us-ascii?Q?6nWNhndOrbm+p8aK3WArJicQ1nox8RYyPvx/biAmCdJXzQRwPMH4Je5zqH7v?=
- =?us-ascii?Q?83WtEvrXya646VYbcx79WZgfiFSysoQthFjSgDDVxncK0Jqe1YDLbysZ5S5q?=
- =?us-ascii?Q?1fkhpTbRcrX0TCrXJC1ocgfiQYkGPulY81QlWgHvdq3BVXDvwEi+Jb4HvFOS?=
- =?us-ascii?Q?c+jPrBjJTENYc7/z0V8tVLsEYkwcveQhJqtaGcCAEfYrGwZA74I2SvIbvz0u?=
- =?us-ascii?Q?APsKkg0xj9+JsRTt8o/aTa2MhEZKafeUpcTSALan1//aIPa8Dd1FAVGcsOqL?=
- =?us-ascii?Q?PK21v87afwqUtJYgBlPjVhwL0HTjnSOvrUC63oh5Um1dvuaQZcZ5L8zIJ951?=
- =?us-ascii?Q?a9jqfM0hu7qF1DbYAr3ZV9wzuLo+KliDOgwEu57ATSC5OnILGV6Jx5TBEBLI?=
- =?us-ascii?Q?flMmPSzAGPlqRMvAujNPtxBfeSh/T1Wb0WmATIxkHDInN6P5Bt0I1XpfIDM5?=
- =?us-ascii?Q?Gb272t91S0XvTzpUOzzj5cMdBp4t/DM93xMVAI0Iox/1/r59dmU/v4uMP9mS?=
- =?us-ascii?Q?P4zoHU52j/Hxy0Hphim7aIjQLttQ2ybB3N6EyjuGNEpHrG1aFrcYRv8DyVN+?=
- =?us-ascii?Q?dODaB9HbhySBNoaB1X09uvGK1Q2c8CWn141u+fYPouLWSiLQPjvIkdnKneF/?=
- =?us-ascii?Q?kyeXeC06W2w08X5VsBOHcacYzJrYElj/uQaHgzJ9q3FSW25BXmvI36i4KRlH?=
- =?us-ascii?Q?QGmZflX8BYcCnH7pDBR7g9czdZZQY3h+VMlPOMGCnrRD9fuO53SgJA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?BusNeTXBIq6lx4IzT9UaoWIAGA0vMyFGBotwiFCkeM8ETNOBzrzIENuNTfMh?=
+ =?us-ascii?Q?SSF6PZpTXCkTaDkkBpV3KLOOAc+JVII7yt1FuqbD0GXuHukFJpCfU2ZQSLka?=
+ =?us-ascii?Q?z4g+rRSCcEKUvbddD2jZZeCc8VLn341lOky7wmSMG+FNDtNQqUGyNdxwLsPg?=
+ =?us-ascii?Q?AJ3t+higVlk+5PXfNYebDwg2Hl+DbphLf3pTTIsjdGLenOmr+dkXXTO+Z64j?=
+ =?us-ascii?Q?Zaf8R98Z7gjd34qdl0zb8q4F+YmSvynUEOi2hepSr1phpTCRIn3zaJQ/BJ2u?=
+ =?us-ascii?Q?im5kK8jl1iF35yXa7EjiNyxK/WL7DXeCdAOMcuq91ye8O+pIpphB5VxFa8iG?=
+ =?us-ascii?Q?U4dJHbHa4+ypj4IP5xyGOZNUkvVj8FaHoHUElfyKGX8Q43SaBUS1QyKSAWlq?=
+ =?us-ascii?Q?4QOxtZ9uJ2MFGeToWh+nrQQsbvfnion4kjFZu9Z6/VfBX1JuVv3SftjtLADT?=
+ =?us-ascii?Q?7tcMuZYCDGjl99D3+kLbl7VQFS4yXrsyAkd2qdRAo1yOC1oyieSlw1E2gI/L?=
+ =?us-ascii?Q?sL3w7dBZZLwT+CKKC1OfuCAo6t1J2IOJht8Pu+fAMnYPpqVTXYIgFA3BYX87?=
+ =?us-ascii?Q?0f0SU7z5SiqURrilKgxzSXvOkZ7w3JzQKvQSKEzPkZgc4lSJH01n3eHQ0gY/?=
+ =?us-ascii?Q?etIWAf1uTrrUxe7VbUNtR653fsj2HQY2AqbepOm5GWZWE5/Q352II0inIJvY?=
+ =?us-ascii?Q?QUIV1loqRi1AlXyoM/4naJ40WVTciVFhdgAVdRTrLSGt4EQNlOsoq28mQ/vP?=
+ =?us-ascii?Q?eN6eRnJk27NtkQM7Z3mQYl6lwAmP7rhhe30Pf5c/lSkA4na0zRSIFf2pQj93?=
+ =?us-ascii?Q?9b7BNyY96AH0ffJHBDB9/y1HOgvJA3a/RivqTukjvH3J0eKJVEWkLw8iHYkL?=
+ =?us-ascii?Q?6372siGdjXXLqdtN62aZyo6ce8HEuMj6V2Uoq78g7OeSNCwgVfXA2no6Uf7Z?=
+ =?us-ascii?Q?afhMXhp/3DDRmMK2bFt3cpItJSsuJyHxPtrJug0tJr+J/ofI+g663FNeEFOd?=
+ =?us-ascii?Q?flnVCDRKze1x0PmLqHeZponIAKqkgHK6CFYK1KGz5LyNooU6slitmG+GNcJT?=
+ =?us-ascii?Q?ABvzgegB2SbK1y7G1mchl6pEDGvdwUPgf237zeHPtSX5Sd9b0Yop2x3ewtkZ?=
+ =?us-ascii?Q?ixZOz+Ly1TZEvet4NPiyhk5Fs28clTTg1HYi8Wy8XQ8QRLLKsJZai55Z4NN9?=
+ =?us-ascii?Q?J8jQ3fLgvpovZ8CVwxfjneZbIdaqKzcsILdhg6puEIeAJMvoSkUx7heMoyT3?=
+ =?us-ascii?Q?MLD8RRzaHVA+RhZZcU/+2IXwfAWptivtIFXV7ACN9fHWVGhi1cleV9YTRojQ?=
+ =?us-ascii?Q?ac3ftCBWaEYCIU9c/gEXrzZHI2TRjFDyc2hh+TXtV0yh4licOg+eOA3cb8rK?=
+ =?us-ascii?Q?7FNa6N5VKQT3whHmKxiNZhLvqX+h4nIL10nalhpCY7jZcm79mtnuOrRwDcT1?=
+ =?us-ascii?Q?f6w8PtDKYvcO9VsjKXd2C5wUzvZif9iKqztsqDL5boOCNWlxdSlX4A=3D=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
  CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: M27NNgDxENP2uai5GY77loMagYabf9sy/ZeYDJJPJttvAp/LpEV3fKBmFsACH6zChtSDzOgCnz57XndIIaEeOlEl9HawOaa1A76Yz+4XpL86tjPR65e8h5qTh6hKKyyeC8vqD+tfN0fOAb6gyZzZ1YlGUy+7J6DKfJIXmTrvDt6KxmFXdc8bQ+T5YtLvKoAxnuTOKwP10eqZvnaXbwEWSwqe8OHpo2GFZwUk443Wju94HPHlFofmBb/nN8iPNodBaq5+bJOxB748VJ8QJn/jmrPEuZyvtcOaZ/kjSPXKoYjnrJfDmhFU0mCEaeJ0L1cjb8ZSsNTVqN011CDBR8UQfVM8ZLYO/2egWDaTdjdgptGSGEQU9Qz0ARZShxSsMljKHPIenB3dljhZ0gMgNuMvaaTxfZ4P5hY/sGIhghMJkNmU4nWV1Fel8ef7w1ipIjFSmWzpSQvtdL9IY6qrJJ2Z+zwi8lu/ngHBYEEaLCES7UqlCz4gkkbffqfGRi88uiGQBrKCjMe/KbC27MY1okbRfLzQp8VZSJKIBFdp+/aYHm1nxYgIpHL21BZ8pkeY8sgYcFIHHqY0+StwyE8qaRIGgH43b9V8NTpWJWVu5zcMrWq3Fdz7qWutD8xnzDtN/YQIf0CrrNqS/kKea0kXPMbvMw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: mcgUmgiUzF8oR4U5gUSN4swoWZO9n9AuJPEkW1iCJhIWcSGBOQflXVQxFFud8BjWYAgZK59z2LjXRdhe8YdgdtP2+Ea50tzGRxUgZHpx7jpi5phPchBJXLzQTyNtoYbv84OXOGaYz35Dq8wV12svJo/7pe+Zt6O0JDnGrtVV6XDV1New/0aH7ah58+GN/sCJRoSAC3G1M2bCIP41myGVAEb+3Gf4W6MHmdtmRwfjDg2Ekxnh2nLu8F0nc3YBC1znlZd8oCnVwe8Oav2GXjTpYLLmXJNnicos36evtHUhxmKeN1b4ugMri1ZJQFwYgr6GhXpaD8b1VZAFU/Tl3g6WdqWvoAFSxnclzYLWJwRydbV1NOR+h2k6ckNyCi+XkaAqYxlOIQY/o/WRSz3Dc2DXHr89C3al5jiyvU5FpROmZfElfhXcQ8oJbtcWixxfXhgfE+pMlMV7T+DlTusgMfrKvly8wxx71EwJSyB9ugsvTjLeMXGL7D0VJvCvlB93wgj3jt/Js3DhkpcXm7IZTv4TNcpt2Ll3dwBMpz8nfdGD0y47q64SlzGeupfGZ9k88REIgOXBUi5swovoILSQKuI6kpcnAI+qEZd7D79HOnF1xJgcga/sHApBrBxLSOmriH/Vc4YXvHrogIS0uCTpbyV4wQ==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 21:51:59.7139 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8389b951-e840-416a-8c3d-08dd5dc249da
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 21:52:01.4795 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a3b8fa8-073a-46d6-329c-08dd5dc24ac4
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM2PEPF0001C713.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P190MB1138
-X-BESS-ID: 1741384322-302093-7650-43352-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1182
+X-BESS-ID: 1741384324-304641-7657-45499-1
 X-BESS-VER: 2019.1_20250304.2151
-X-BESS-Apparent-Source-IP: 104.47.11.234
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYWJuYGQGYGUNQg1dzMwNI0zT
- TZxCA52SI1ySAxLcXAJC0lMdHY1NwkUak2FgBpE/XmQgAAAA==
+X-BESS-Apparent-Source-IP: 104.47.17.170
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGpoamhkB2BlA4zSzRPDUl2c
+ Q4OTnVyMjCLNUoyTDN2DItJdXcEihspFQbCwBmbz4gQwAAAA==
 X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.262990 [from 
- cloudscan17-38.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan15-48.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -144,2380 +144,3113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use RTE_ASSERT instead of direct calling asserts
+Add nthw prefix to functions with abstract names
+to avoid exposing global symbols
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/adapter/nt4ga_adapter.c     | 14 ++-
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  6 +-
- drivers/net/ntnic/include/flow_api.h          |  2 +-
- .../link_mgmt/link_100g/nt4ga_link_100g.c     | 22 ++---
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 20 ++--
- drivers/net/ntnic/nim/i2c_nim.c               |  6 +-
- .../nthw/core/nt200a0x/nthw_fpga_nt200a0x.c   |  2 +-
- .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |  6 +-
- .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   | 12 +--
- .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |  4 +-
- .../core/nt400dxx/reset/nthw_fpga_rst9574.c   | 18 ++--
- .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |  8 +-
- drivers/net/ntnic/nthw/core/nthw_fpga.c       |  8 +-
- drivers/net/ntnic/nthw/core/nthw_gfg.c        |  4 +-
- drivers/net/ntnic/nthw/core/nthw_gpio_phy.c   |  6 +-
- drivers/net/ntnic/nthw/core/nthw_hif.c        |  6 +-
- drivers/net/ntnic/nthw/core/nthw_iic.c        |  6 +-
- drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    |  4 +-
- drivers/net/ntnic/nthw/core/nthw_pcie3.c      |  2 +-
- drivers/net/ntnic/nthw/core/nthw_spim.c       |  2 +-
- drivers/net/ntnic/nthw/core/nthw_spis.c       |  4 +-
- drivers/net/ntnic/nthw/flow_api/flow_api.c    | 16 ++--
- .../nthw/flow_api/flow_backend/flow_backend.c |  2 +-
- drivers/net/ntnic/nthw/flow_api/flow_km.c     | 31 +++----
- .../nthw/flow_api/hw_mod/hw_mod_backend.c     |  7 +-
- .../flow_api/profile_inline/flm_evt_queue.c   |  1 -
- .../flow_api/profile_inline/flm_lrn_queue.c   |  3 +-
- .../profile_inline/flow_api_profile_inline.c  | 22 ++---
- .../ntnic/nthw/flow_filter/flow_nthw_cat.c    | 40 ++++----
- .../ntnic/nthw/flow_filter/flow_nthw_csu.c    |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_flm.c    | 93 ++++++++++---------
- .../ntnic/nthw/flow_filter/flow_nthw_hfu.c    |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hsh.c    |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_ifr.c    | 18 ++--
- .../ntnic/nthw/flow_filter/flow_nthw_info.c   |  2 +-
- .../net/ntnic/nthw/flow_filter/flow_nthw_km.c |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_pdb.c    |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_qsl.c    |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c | 22 ++---
- .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.c |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c | 16 ++--
- .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.c |  2 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c |  4 +-
- .../net/ntnic/nthw/model/nthw_fpga_model.c    | 58 ++++++------
- drivers/net/ntnic/nthw/nthw_rac.c             | 16 ++--
- drivers/net/ntnic/nthw/stat/nthw_stat.c       |  4 +-
- drivers/net/ntnic/ntnic_ethdev.c              | 18 ++--
- drivers/net/ntnic/ntnic_filter/ntnic_filter.c |  2 +-
- drivers/net/ntnic/ntutil/nt_util.c            |  1 -
- 49 files changed, 279 insertions(+), 275 deletions(-)
+ drivers/net/ntnic/adapter/nt4ga_adapter.c     |   6 +-
+ .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |   6 +-
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  32 +--
+ drivers/net/ntnic/include/create_elements.h   |   8 +-
+ drivers/net/ntnic/include/flow_api.h          |  18 +-
+ drivers/net/ntnic/include/flow_api_engine.h   |  10 +-
+ drivers/net/ntnic/include/flow_filter.h       |   6 +-
+ drivers/net/ntnic/include/hw_mod_backend.h    |  10 +-
+ drivers/net/ntnic/include/ntnic_dbs.h         |  18 +-
+ .../link_mgmt/link_100g/nt4ga_link_100g.c     |  23 +-
+ .../link_agx_100g/nt4ga_agx_link_100g.c       |  31 +-
+ drivers/net/ntnic/link_mgmt/nt4ga_link.c      |   4 +-
+ drivers/net/ntnic/nim/i2c_nim.c               |  16 +-
+ drivers/net/ntnic/nim/i2c_nim.h               |  12 +-
+ drivers/net/ntnic/nthw/dbs/nthw_dbs.c         |  18 +-
+ drivers/net/ntnic/nthw/flow_api/flow_api.c    |  48 ++--
+ .../ntnic/nthw/flow_api/flow_api_nic_setup.h  |   8 +-
+ .../nthw/flow_api/flow_backend/flow_backend.c |   8 +-
+ drivers/net/ntnic/nthw/flow_api/flow_filter.c |  12 +-
+ drivers/net/ntnic/nthw/flow_api/flow_group.c  |  10 +-
+ drivers/net/ntnic/nthw/flow_api/flow_hasher.c |   4 +-
+ drivers/net/ntnic/nthw/flow_api/flow_hasher.h |   4 +-
+ drivers/net/ntnic/nthw/flow_api/flow_km.c     |   4 +-
+ .../nthw/flow_api/hw_mod/hw_mod_backend.c     |  10 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c   |   6 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c   |   5 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c   |   4 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_km.c    |   4 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c   |   4 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c   |   4 +-
+ .../nthw/flow_api/hw_mod/hw_mod_slc_lr.c      |   4 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c   |   4 +-
+ .../flow_api/profile_inline/flm_evt_queue.c   |  12 +-
+ .../flow_api/profile_inline/flm_evt_queue.h   |   8 +-
+ .../profile_inline/flow_api_hw_db_inline.c    |  24 +-
+ .../profile_inline/flow_api_profile_inline.c  | 268 +++++++++---------
+ .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c  |   2 +-
+ drivers/net/ntnic/ntnic_ethdev.c              |  12 +-
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c |  44 +--
+ drivers/net/ntnic/ntnic_mod_reg.c             |  18 +-
+ drivers/net/ntnic/ntnic_mod_reg.h             |  29 +-
+ drivers/net/ntnic/ntutil/nt_util.c            |   4 +-
+ drivers/net/ntnic/ntutil/nt_util.h            |   4 +-
+ 43 files changed, 404 insertions(+), 382 deletions(-)
 
 diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-index fe9d397293..95692d666d 100644
+index 95692d666d..a9ae1fa3f8 100644
 --- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
 +++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-@@ -89,8 +89,10 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
- 	 * IMPORTANT: Most variables cannot be determined before nthw fpga model is instantiated
- 	 * (nthw_fpga_init())
- 	 */
-+#ifdef RTE_ENABLE_ASSERT
- 	int n_phy_ports = -1;
- 	int n_nim_ports = -1;
-+#endif
- 	int res = -1;
- 	nthw_fpga_t *p_fpga = NULL;
+@@ -168,7 +168,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
+ 	nt4ga_filter_t *p_filter = &p_adapter_info->nt4ga_filter;
  
-@@ -152,13 +154,15 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
- 		return res;
+ 	if (flow_filter_ops != NULL) {
+-		res = flow_filter_ops->flow_filter_init(p_fpga, &p_filter->mp_flow_device,
++		res = flow_filter_ops->nthw_flow_filter_init(p_fpga, &p_filter->mp_flow_device,
+ 				p_adapter_info->adapter_no);
+ 
+ 		if (res != 0) {
+@@ -266,7 +266,7 @@ static int nt4ga_adapter_deinit(struct adapter_info_s *p_adapter_info)
+ 	nt4ga_filter_t *p_filter = &p_adapter_info->nt4ga_filter;
+ 
+ 	if (flow_filter_ops != NULL) {
+-		res = flow_filter_ops->flow_filter_done(p_filter->mp_flow_device);
++		res = flow_filter_ops->nthw_flow_filter_done(p_filter->mp_flow_device);
+ 
+ 		if (res != 0) {
+ 			NT_LOG(ERR, NTNIC, "Cannot deinitialize filter");
+@@ -309,7 +309,7 @@ static const struct adapter_ops ops = {
+ 	.show_info = nt4ga_adapter_show_info,
+ };
+ 
+-void adapter_init(void)
++void nthw_adapter_init(void)
+ {
+ 	register_adapter_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+index 2f1e12f891..0ea40fdf42 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
++++ b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+@@ -558,11 +558,13 @@ static int nt4ga_stat_collect_cap_v1_stats(struct adapter_info_s *p_adapter_info
  	}
  
--	assert(fpga_info);
-+#ifdef RTE_ENABLE_ASSERT
-+	RTE_ASSERT(fpga_info);
- 	p_fpga = fpga_info->mp_fpga;
--	assert(p_fpga);
-+	RTE_ASSERT(p_fpga);
- 	n_phy_ports = fpga_info->n_phy_ports;
--	assert(n_phy_ports >= 1);
-+	RTE_ASSERT(n_phy_ports >= 1);
- 	n_nim_ports = fpga_info->n_nims;
--	assert(n_nim_ports >= 1);
-+	RTE_ASSERT(n_nim_ports >= 1);
-+#endif
+ 	/* Update and get FLM stats */
+-	flow_filter_ops->flow_get_flm_stats(ndev, (uint64_t *)p_nt4ga_stat->mp_stat_structs_flm,
++	flow_filter_ops->nthw_flow_get_flm_stats(ndev,
++		(uint64_t *)p_nt4ga_stat->mp_stat_structs_flm,
+ 		sizeof(struct flm_counters_v1) / sizeof(uint64_t));
  
- 	/* Nt4ga Init Filter */
- 	nt4ga_filter_t *p_filter = &p_adapter_info->nt4ga_filter;
-@@ -176,7 +180,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
- 	{
- 		int i;
- 		const struct link_ops_s *link_ops = NULL;
--		assert(fpga_info->n_fpga_prod_id > 0);
-+		RTE_ASSERT(fpga_info->n_fpga_prod_id > 0);
+ 	/* Update and get IFR stats */
+-	flow_filter_ops->flow_get_ifr_stats(ndev, (uint64_t *)p_nt4ga_stat->mp_stat_structs_ifr,
++	flow_filter_ops->nthw_flow_get_ifr_stats(ndev,
++		(uint64_t *)p_nt4ga_stat->mp_stat_structs_ifr,
+ 		p_nt4ga_stat->mn_ifr_counters - 1);
  
- 		for (i = 0; i < NUM_ADAPTER_PORTS_MAX; i++) {
- 			/* Disable all ports. Must be enabled later */
+ 	/*
 diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-index e1eccb647c..222a553684 100644
+index 6ee3beb7bd..69cd184680 100644
 --- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
 +++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-@@ -207,7 +207,7 @@ static void dbs_init_tx_queue(nthw_dbs_t *p_nthw_dbs, uint32_t queue, uint32_t s
+@@ -177,13 +177,13 @@ static void dbs_init_rx_queue(nthw_dbs_t *p_nthw_dbs, uint32_t queue, uint32_t s
+ 	uint32_t dummy;
  
- static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
+ 	do {
+-		get_rx_init(p_nthw_dbs, &init, &dummy, &busy);
++		nthw_get_rx_init(p_nthw_dbs, &init, &dummy, &busy);
+ 	} while (busy != 0);
+ 
+-	set_rx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
++	nthw_set_rx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
+ 
+ 	do {
+-		get_rx_init(p_nthw_dbs, &init, &dummy, &busy);
++		nthw_get_rx_init(p_nthw_dbs, &init, &dummy, &busy);
+ 	} while (busy != 0);
+ }
+ 
+@@ -195,13 +195,13 @@ static void dbs_init_tx_queue(nthw_dbs_t *p_nthw_dbs, uint32_t queue, uint32_t s
+ 	uint32_t dummy;
+ 
+ 	do {
+-		get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
++		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
+ 	} while (busy != 0);
+ 
+ 	set_tx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
+ 
+ 	do {
+-		get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
++		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
+ 	} while (busy != 0);
+ }
+ 
+@@ -250,18 +250,18 @@ static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
+ 	for (i = 0; i < NT_DBS_TX_QUEUES_MAX; ++i)
+ 		dbs_init_tx_queue(p_nthw_dbs, i, 0, 0);
+ 
+-	set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_DISABLE, RX_AM_POLL_SPEED, RX_UW_DISABLE,
++	nthw_set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_DISABLE, RX_AM_POLL_SPEED, RX_UW_DISABLE,
+ 		RX_UW_POLL_SPEED, RX_Q_DISABLE);
+-	set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_ENABLE, RX_AM_POLL_SPEED, RX_UW_ENABLE,
++	nthw_set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_ENABLE, RX_AM_POLL_SPEED, RX_UW_ENABLE,
+ 		RX_UW_POLL_SPEED, RX_Q_DISABLE);
+-	set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_ENABLE, RX_AM_POLL_SPEED, RX_UW_ENABLE,
++	nthw_set_rx_control(p_nthw_dbs, LAST_QUEUE, RX_AM_ENABLE, RX_AM_POLL_SPEED, RX_UW_ENABLE,
+ 		RX_UW_POLL_SPEED, RX_Q_ENABLE);
+ 
+-	set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_DISABLE, TX_AM_POLL_SPEED, TX_UW_DISABLE,
++	nthw_set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_DISABLE, TX_AM_POLL_SPEED, TX_UW_DISABLE,
+ 		TX_UW_POLL_SPEED, TX_Q_DISABLE);
+-	set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_ENABLE, TX_AM_POLL_SPEED, TX_UW_ENABLE,
++	nthw_set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_ENABLE, TX_AM_POLL_SPEED, TX_UW_ENABLE,
+ 		TX_UW_POLL_SPEED, TX_Q_DISABLE);
+-	set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_ENABLE, TX_AM_POLL_SPEED, TX_UW_ENABLE,
++	nthw_set_tx_control(p_nthw_dbs, LAST_QUEUE, TX_AM_ENABLE, TX_AM_POLL_SPEED, TX_UW_ENABLE,
+ 		TX_UW_POLL_SPEED, TX_Q_ENABLE);
+ 
+ 	return 0;
+@@ -464,10 +464,10 @@ static int dbs_wait_on_busy(struct nthw_virt_queue *vq, uint32_t *idle, int rx)
+ 
+ 	do {
+ 		if (rx)
+-			err = get_rx_idle(p_nthw_dbs, idle, &queue, &busy);
++			err = nthw_get_rx_idle(p_nthw_dbs, idle, &queue, &busy);
+ 
+ 		else
+-			err = get_tx_idle(p_nthw_dbs, idle, &queue, &busy);
++			err = nthw_get_tx_idle(p_nthw_dbs, idle, &queue, &busy);
+ 	} while (!err && busy);
+ 
+ 	return err;
+@@ -492,10 +492,10 @@ static int dbs_wait_hw_queue_shutdown(struct nthw_virt_queue *vq, int rx)
+ 
+ 	do {
+ 		if (rx)
+-			err = set_rx_idle(p_nthw_dbs, 1, vq->index);
++			err = nthw_set_rx_idle(p_nthw_dbs, 1, vq->index);
+ 
+ 		else
+-			err = set_tx_idle(p_nthw_dbs, 1, vq->index);
++			err = nthw_set_tx_idle(p_nthw_dbs, 1, vq->index);
+ 
+ 		if (err)
+ 			return -1;
+@@ -1424,7 +1424,7 @@ static struct sg_ops_s sg_ops = {
+ 	.nthw_virt_queue_init = nthw_virt_queue_init
+ };
+ 
+-void sg_init(void)
++void nthw_sg_init(void)
  {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
+ 	NT_LOG(INF, NTNIC, "SG ops initialized");
+ 	register_sg_ops(&sg_ops);
+diff --git a/drivers/net/ntnic/include/create_elements.h b/drivers/net/ntnic/include/create_elements.h
+index f0b9410cb9..dac2cd7cc9 100644
+--- a/drivers/net/ntnic/include/create_elements.h
++++ b/drivers/net/ntnic/include/create_elements.h
+@@ -60,11 +60,11 @@ enum nt_rte_flow_item_type {
  
- 	nthw_fpga_t *const p_fpga = p_fpga_info->mp_fpga;
- 	nthw_dbs_t *p_nthw_dbs;
-@@ -906,8 +906,8 @@ static int nthw_setup_managed_virt_queue_packed(struct nthw_virt_queue *vq,
- 	int rx)
- {
- 	/* page aligned */
--	assert(((uintptr_t)p_virt_struct_area->phys_addr & 0xfff) == 0);
--	assert(p_packet_buffers);
-+	RTE_ASSERT(((uintptr_t)p_virt_struct_area->phys_addr & 0xfff) == 0);
-+	RTE_ASSERT(p_packet_buffers);
+ extern rte_spinlock_t flow_lock;
  
- 	/* clean canvas */
- 	memset(p_virt_struct_area->virt_addr, 0,
+-int interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_flow_item *out);
+-int create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr);
+-int create_match_elements(struct cnv_match_s *match, const struct rte_flow_item items[],
++int nthw_interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_flow_item *out);
++int nthw_create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr);
++int nthw_create_match_elements(struct cnv_match_s *match, const struct rte_flow_item items[],
+ 	int max_elem);
+-int create_action_elements_inline(struct cnv_action_s *action,
++int nthw_create_action_elements_inline(struct cnv_action_s *action,
+ 	const struct rte_flow_action actions[],
+ 	int max_elem,
+ 	uint32_t queue_offset);
 diff --git a/drivers/net/ntnic/include/flow_api.h b/drivers/net/ntnic/include/flow_api.h
-index 7f6aa82ee0..5ffdf90012 100644
+index 5ffdf90012..f80414a185 100644
 --- a/drivers/net/ntnic/include/flow_api.h
 +++ b/drivers/net/ntnic/include/flow_api.h
-@@ -202,7 +202,7 @@ extern const char *dbg_res_descr[];
- 		size_t _temp_index = (index);                                                     \
- 		NT_LOG(DBG, FILTER, "mark resource used: %s idx %zu",                             \
- 		       dbg_res_descr[_temp_res_type], _temp_index);                               \
--		assert(flow_nic_is_bit_set(_temp_ndev->res[_temp_res_type].alloc_bm,              \
-+		RTE_ASSERT(flow_nic_is_bit_set(_temp_ndev->res[_temp_res_type].alloc_bm,          \
- 					   _temp_index) == 0);                                    \
- 		flow_nic_set_bit(_temp_ndev->res[_temp_res_type].alloc_bm, _temp_index);          \
- 	} while (0)
+@@ -27,7 +27,7 @@ struct hw_mod_resource_s {
+ /*
+  * Device Management API
+  */
+-int flow_delete_eth_dev(struct flow_eth_dev *eth_dev);
++int nthw_flow_delete_eth_dev(struct flow_eth_dev *eth_dev);
+ 
+ /**
+  * A structure used to configure the Receive Side Scaling (RSS) feature
+@@ -167,7 +167,7 @@ enum flow_nic_err_msg_e {
+ 	ERR_MSG_END
+ };
+ 
+-void flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *error);
++void nthw_flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *error);
+ 
+ /*
+  * Resources
+@@ -219,17 +219,17 @@ extern const char *dbg_res_descr[];
+ #define flow_nic_is_resource_used(_ndev, res_type, index)                                         \
+ 	(!!flow_nic_is_bit_set((_ndev)->res[res_type].alloc_bm, index))
+ 
+-int flow_nic_alloc_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
++int nthw_flow_nic_alloc_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	uint32_t alignment);
+ 
+-int flow_nic_alloc_resource_config(struct flow_nic_dev *ndev, enum res_type_e res_type,
++int nthw_flow_nic_alloc_resource_config(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	unsigned int num, uint32_t alignment);
+-void flow_nic_free_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int idx);
++void nthw_flow_nic_free_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int idx);
+ 
+-int flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index);
+-int flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index);
++int nthw_flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index);
++int nthw_flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index);
+ 
+-int flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
+-int flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count);
++int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
++int nthw_flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count);
+ 
+ #endif
+diff --git a/drivers/net/ntnic/include/flow_api_engine.h b/drivers/net/ntnic/include/flow_api_engine.h
+index 262317002f..859c76656a 100644
+--- a/drivers/net/ntnic/include/flow_api_engine.h
++++ b/drivers/net/ntnic/include/flow_api_engine.h
+@@ -420,12 +420,12 @@ void kcc_free_ndev_resource_management(void **handle);
+ /*
+  * Group management
+  */
+-int flow_group_handle_create(void **handle, uint32_t group_count);
+-int flow_group_handle_destroy(void **handle);
++int nthw_flow_group_handle_create(void **handle, uint32_t group_count);
++int nthw_flow_group_handle_destroy(void **handle);
+ 
+-int flow_group_translate_get(void *handle, uint8_t owner_id, uint8_t port_id, uint32_t group_in,
+-	uint32_t *group_out);
+-int flow_group_translate_get_orig_group(void *handle, uint32_t translated_group,
++int nthw_flow_group_translate_get(void *handle, uint8_t owner_id, uint8_t port_id,
++	uint32_t group_in, uint32_t *group_out);
++int nthw_flow_group_translate_get_orig_group(void *handle, uint32_t translated_group,
+ 	uint32_t *group_orig);
+ 
+ #endif  /* _FLOW_API_ENGINE_H_ */
+diff --git a/drivers/net/ntnic/include/flow_filter.h b/drivers/net/ntnic/include/flow_filter.h
+index 01777f8c9f..f325e680fb 100644
+--- a/drivers/net/ntnic/include/flow_filter.h
++++ b/drivers/net/ntnic/include/flow_filter.h
+@@ -9,8 +9,8 @@
+ #include "flow_api.h"
+ #include "nthw_fpga_model.h"
+ 
+-int flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, int adapter_no);
+-int flow_filter_done(struct flow_nic_dev *dev);
+-int flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
++int nthw_flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, int adapter_no);
++int nthw_flow_filter_done(struct flow_nic_dev *dev);
++int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
+ 
+ #endif  /* __FLOW_FILTER_HPP__ */
+diff --git a/drivers/net/ntnic/include/hw_mod_backend.h b/drivers/net/ntnic/include/hw_mod_backend.h
+index 594bdab2a6..fcf9ebef8e 100644
+--- a/drivers/net/ntnic/include/hw_mod_backend.h
++++ b/drivers/net/ntnic/include/hw_mod_backend.h
+@@ -29,8 +29,8 @@
+ struct flow_api_backend_s;
+ struct common_func_s;
+ 
+-void *callocate_mod(struct common_func_s *mod, int sets, ...);
+-void zero_module_cache(struct common_func_s *mod);
++void *nthw_callocate_mod(struct common_func_s *mod, int sets, ...);
++void nthw_zero_module_cache(struct common_func_s *mod);
+ 
+ #define ALL_ENTRIES -1000
+ #define ALL_BANK_ENTRIES -1001
+@@ -1164,8 +1164,8 @@ struct flow_api_backend_s {
+ 	unsigned int max_queues;
+ };
+ 
+-int flow_api_backend_init(struct flow_api_backend_s *dev, const struct flow_api_backend_ops *iface,
+-	void *be_dev);
+-int flow_api_backend_done(struct flow_api_backend_s *dev);
++int nthw_flow_api_backend_init(struct flow_api_backend_s *dev,
++	const struct flow_api_backend_ops *iface, void *be_dev);
++int nthw_flow_api_backend_done(struct flow_api_backend_s *dev);
+ 
+ #endif  /* _HW_MOD_BACKEND_H_ */
+diff --git a/drivers/net/ntnic/include/ntnic_dbs.h b/drivers/net/ntnic/include/ntnic_dbs.h
+index d70a7c445e..247ae76d98 100644
+--- a/drivers/net/ntnic/include/ntnic_dbs.h
++++ b/drivers/net/ntnic/include/ntnic_dbs.h
+@@ -236,30 +236,30 @@ nthw_dbs_t *nthw_dbs_new(void);
+ int dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance);
+ void dbs_reset(nthw_dbs_t *p);
+ 
+-int set_rx_control(nthw_dbs_t *p,
++int nthw_set_rx_control(nthw_dbs_t *p,
+ 	uint32_t last_queue,
+ 	uint32_t avail_monitor_enable,
+ 	uint32_t avail_monitor_speed,
+ 	uint32_t used_write_enable,
+ 	uint32_t used_write_speed,
+ 	uint32_t rx_queue_enable);
+-int set_tx_control(nthw_dbs_t *p,
++int nthw_set_tx_control(nthw_dbs_t *p,
+ 	uint32_t last_queue,
+ 	uint32_t avail_monitor_enable,
+ 	uint32_t avail_monitor_speed,
+ 	uint32_t used_write_enable,
+ 	uint32_t used_write_speed,
+ 	uint32_t tx_queue_enable);
+-int set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
++int nthw_set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue);
+-int get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
++int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
+ int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue);
+-int get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
+-int set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
+-int get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
+-int set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
+-int get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
++int nthw_get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
++int nthw_set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
++int nthw_get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
++int nthw_set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
++int nthw_get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
+ int set_rx_am_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
 diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-index 67dc0d01f6..ce52c79f43 100644
+index ce52c79f43..dde185c62f 100644
 --- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
 +++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-@@ -144,7 +144,7 @@ static int _link_state_build(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs,
- 		&lh_remote_fault, &lh_internal_local_fault,
- 		&lh_received_local_fault);
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
- 	state->nim_present = nthw_gpio_phy_is_module_present(gpio_phy, (uint8_t)port);
- 	state->lh_nim_absent = !state->nim_present;
- 	state->link_up = phy_link_state ? true : false;
-@@ -177,7 +177,7 @@ static int _link_state_build(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs,
-  */
- static bool _nim_is_present(nthw_gpio_phy_t *gpio_phy, uint8_t if_no)
- {
--	assert(if_no < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(if_no < NUM_ADAPTER_PORTS_MAX);
- 
- 	return nthw_gpio_phy_is_module_present(gpio_phy, if_no);
- }
-@@ -258,8 +258,8 @@ static int _create_nim(adapter_info_t *drv, int port, bool enable)
- 	nt4ga_link_t *link_info = &drv->nt4ga_link;
- 	nthw_mac_pcs_t *mac_pcs = &link_info->u.var100g.mac_pcs100g[port];
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(link_info->variables_initialized);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(link_info->variables_initialized);
- 
- 	gpio_phy = &link_info->u.var100g.gpio_phy[port];
- 	nim_ctx = &link_info->u.var100g.nim_ctx[port];
-@@ -355,8 +355,8 @@ static int _port_init(adapter_info_t *drv, nthw_fpga_t *fpga, int port)
- 
- 	nthw_mac_pcs_t *mac_pcs;
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(link_info->variables_initialized);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(link_info->variables_initialized);
- 
- 	if (fpga && fpga->p_fpga_info) {
- 		adapter_id = fpga->p_fpga_info->n_nthw_adapter_id;
-@@ -444,7 +444,7 @@ static int _port_init(adapter_info_t *drv, nthw_fpga_t *fpga, int port)
- 
- 	} else {
- 		NT_LOG(ERR, NTNIC, "Unhandled AdapterId/HwId: %02x_hwid%d", adapter_id, hw_id);
--		assert(0);
-+		RTE_ASSERT(0);
+@@ -304,28 +304,28 @@ static int _create_nim(adapter_info_t *drv, int port, bool enable)
+ 		return -1;
  	}
  
- 	_reset_rx(drv, mac_pcs);
-@@ -494,7 +494,7 @@ static int _common_ptp_nim_state_machine(void *data)
- 		goto NT4GA_LINK_100G_MON_EXIT;
+-	res = construct_and_preinit_nim(nim_ctx, NULL);
++	res = nthw_construct_and_preinit_nim(nim_ctx, NULL);
+ 
+ 	if (res)
+ 		return res;
+ 
+-	res = nim_state_build(nim_ctx, &nim);
++	res = nthw_nim_state_build(nim_ctx, &nim);
+ 
+ 	if (res)
+ 		return res;
+ 
+ 	NT_LOG(DBG, NTHW, "%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
+-		drv->mp_port_id_str[port], nim_ctx->nim_id, nim_id_to_text(nim_ctx->nim_id), nim.br,
+-		nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
++		drv->mp_port_id_str[port], nim_ctx->nim_id, nthw_nim_id_to_text(nim_ctx->nim_id),
++		nim.br, nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
+ 
+ 	/*
+ 	 * Does the driver support the NIM module type?
+ 	 */
+ 	if (nim_ctx->nim_id != valid_nim_id) {
+ 		NT_LOG(ERR, NTHW, "%s: The driver does not support the NIM module type %s",
+-			drv->mp_port_id_str[port], nim_id_to_text(nim_ctx->nim_id));
++			drv->mp_port_id_str[port], nthw_nim_id_to_text(nim_ctx->nim_id));
+ 		NT_LOG(DBG, NTHW, "%s: The driver supports the NIM module type %s",
+-			drv->mp_port_id_str[port], nim_id_to_text(valid_nim_id));
++			drv->mp_port_id_str[port], nthw_nim_id_to_text(valid_nim_id));
+ 		return -1;
  	}
  
--	assert(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
-+	RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
- 	nim_ctx = link_info->u.var100g.nim_ctx;
- 	link_state = link_info->link_state;
- 	mac_pcs = link_info->u.var100g.mac_pcs100g;
-@@ -521,7 +521,7 @@ static int _common_ptp_nim_state_machine(void *data)
- 				break;
+@@ -371,7 +371,7 @@ static int _port_init(adapter_info_t *drv, nthw_fpga_t *fpga, int port)
  
- 			/* Has the administrative port state changed? */
--			assert(!(disable_port && enable_port));
-+			RTE_ASSERT(!(disable_port && enable_port));
+ 	/*
+ 	 * Phase 1. Pre-state machine (`port init` functions)
+-	 * 1.1) nt4ga_adapter::port_init()
++	 * 1.1) nt4ga_adapter::nthw_port_init()
+ 	 */
  
- 			if (disable_port) {
- 				memset(&link_state[i], 0, sizeof(link_state[i]));
-@@ -603,7 +603,7 @@ static int _common_ptp_nim_state_machine(void *data)
+ 	/* No adapter set-up here, only state variables */
+@@ -597,7 +597,7 @@ static int _common_ptp_nim_state_machine(void *data)
  					continue;
  				}
  
--				assert(new_state.br);	/* Cannot be zero if NIM is present */
-+				RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
+-				if (nim_state_build(&nim_ctx[i], &new_state)) {
++				if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
+ 					NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
+ 						drv->mp_port_id_str[i]);
+ 					continue;
+@@ -607,8 +607,9 @@ static int _common_ptp_nim_state_machine(void *data)
  				NT_LOG(DBG, NTNIC,
  					"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
  					drv->mp_port_id_str[i], nim_ctx->nim_id,
-@@ -669,7 +669,7 @@ static int nt4ga_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nth
- 	/*
- 	 * Initialize global variables
- 	 */
--	assert(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
-+	RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
+-					nim_id_to_text(nim_ctx->nim_id), (unsigned int)new_state.br,
+-					nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
++					nthw_nim_id_to_text(nim_ctx->nim_id),
++					(unsigned int)new_state.br, nim_ctx->vendor_name,
++					nim_ctx->prod_no, nim_ctx->serial_no);
  
- 	if (res == 0 && !p_adapter_info->nt4ga_link.variables_initialized) {
- 		nthw_mac_pcs_t *mac_pcs = p_adapter_info->nt4ga_link.u.var100g.mac_pcs100g;
+ 				(void)_link_state_build(drv, &mac_pcs[i], &gpio_phy[i], i,
+ 					&link_state[i], is_port_disabled);
+@@ -725,7 +726,7 @@ static struct link_ops_s link_100g_ops = {
+ 	.link_init = nt4ga_link_100g_ports_init,
+ };
+ 
+-void link_100g_init(void)
++void nthw_link_100g_init(void)
+ {
+ 	register_100g_link_ops(&link_100g_ops);
+ }
 diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index 3f59c4a6b8..06ee7e2b95 100644
+index 06ee7e2b95..d27ceeea88 100644
 --- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
 +++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -78,14 +78,14 @@ static void phy_get_link_state(adapter_info_t *drv,
- static void phy_rx_path_rst(adapter_info_t *drv, int port, bool reset)
- {
- 	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
--	NT_LOG(DBG, NTNIC, "Port %d: %s", port, reset ? "assert" : "deassert");
-+	NT_LOG(DBG, NTNIC, "Port %d: %s", port, reset ? "RTE_ASSERT" : "deassert");
- 	nthw_phy_tile_set_rx_reset(p, port, reset);
- }
+@@ -554,12 +554,12 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
+ 	 */
+ 	nt_os_wait_usec(1000000);	/* pause 1.0s */
  
- static void phy_tx_path_rst(adapter_info_t *drv, int port, bool reset)
- {
- 	nthw_phy_tile_t *p = drv->fpga_info.mp_nthw_agx.p_phy_tile;
--	NT_LOG(DBG, NTNIC, "Port %d: %s", port, reset ? "assert" : "deassert");
-+	NT_LOG(DBG, NTNIC, "Port %d: %s", port, reset ? "RTE_ASSERT" : "deassert");
- 	nthw_phy_tile_set_tx_reset(p, port, reset);
- }
+-	res = construct_and_preinit_nim(nim_ctx, NULL);
++	res = nthw_construct_and_preinit_nim(nim_ctx, NULL);
  
-@@ -246,7 +246,7 @@ static void nim_set_reset(struct nim_i2c_ctx *ctx, uint8_t nim_idx, bool reset)
+ 	if (res)
+ 		return res;
  
- static bool nim_is_present(nim_i2c_ctx_p ctx, uint8_t nim_idx)
- {
--	assert(nim_idx < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(nim_idx < NUM_ADAPTER_PORTS_MAX);
+-	res = nim_state_build(nim_ctx, &nim);
++	res = nthw_nim_state_build(nim_ctx, &nim);
  
- 	nthw_pcal6416a_t *p = ctx->hwagx.p_io_nim;
- 	uint8_t data = 0;
-@@ -521,8 +521,8 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
- 	nt4ga_link_t *link_info = &drv->nt4ga_link;
- 	nim_i2c_ctx_t *nim_ctx = &link_info->u.nim_ctx[port];
+ 	if (res)
+ 		return res;
+@@ -568,17 +568,17 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
+ 	nim_ctx->specific_u.qsfp.specific_u.qsfp28.media_side_fec_ena = true;
  
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(link_info->variables_initialized);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(link_info->variables_initialized);
+ 	NT_LOG(DBG, NTHW, "%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
+-		drv->mp_port_id_str[port], nim_ctx->nim_id, nim_id_to_text(nim_ctx->nim_id), nim.br,
+-		nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
++		drv->mp_port_id_str[port], nim_ctx->nim_id, nthw_nim_id_to_text(nim_ctx->nim_id),
++		nim.br, nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
  
- 	if (!enable) {
- 		phy_reset_rx(drv, port);
-@@ -722,8 +722,8 @@ static int _port_init(adapter_info_t *p_info, nthw_fpga_t *fpga, int port)
- 	nthw_phy_tile_t *p_phy_tile = p_info->fpga_info.mp_nthw_agx.p_phy_tile;
- 	nthw_rpf_t *p_rpf = p_info->fpga_info.mp_nthw_agx.p_rpf;
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(link_info->variables_initialized);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(link_info->variables_initialized);
- 
- 	link_info->link_info[port].link_speed = NT_LINK_SPEED_100G;
- 	link_info->link_info[port].link_duplex = NT_LINK_DUPLEX_FULL;
-@@ -794,7 +794,7 @@ static void *_common_ptp_nim_state_machine(void *data)
- 		goto NT4GA_LINK_100G_MON_EXIT;
+ 	/*
+ 	 * Does the driver support the NIM module type?
+ 	 */
+ 	if (nim_ctx->nim_id != valid_nim_id) {
+ 		NT_LOG(ERR, NTHW, "%s: The driver does not support the NIM module type %s",
+-			drv->mp_port_id_str[port], nim_id_to_text(nim_ctx->nim_id));
++			drv->mp_port_id_str[port], nthw_nim_id_to_text(nim_ctx->nim_id));
+ 		NT_LOG(DBG, NTHW, "%s: The driver supports the NIM module type %s",
+-			drv->mp_port_id_str[port], nim_id_to_text(valid_nim_id));
++			drv->mp_port_id_str[port], nthw_nim_id_to_text(valid_nim_id));
+ 		return -1;
  	}
  
--	assert(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
-+	RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
+@@ -612,13 +612,13 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
  
- 	monitor_task_is_running[adapter_no] = 1;
- 	memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
-@@ -828,7 +828,7 @@ static void *_common_ptp_nim_state_machine(void *data)
- 			/*
- 			 * Has the administrative port state changed?
- 			 */
--			assert(!(disable_port && enable_port));
-+			RTE_ASSERT(!(disable_port && enable_port));
+ 	/* Adjust NIM power level */
+ 	if (nim_ctx->pwr_level_req > 4) {
+-		qsfp28_set_high_power(nim_ctx);
++		nthw_qsfp28_set_high_power(nim_ctx);
+ 		nim_ctx->pwr_level_cur = nim_ctx->pwr_level_req;
+ 	}
  
- 			if (disable_port) {
- 				memset(&link_state[i], 0, sizeof(link_state[i]));
-@@ -912,7 +912,7 @@ static void *_common_ptp_nim_state_machine(void *data)
+ 	/* enable_fec is what the end result should be, now find out if it's possible */
+ 	if (enable_fec) {
+-		if (qsfp28_set_fec_enable(nim_ctx, true, false)) {
++		if (nthw_qsfp28_set_fec_enable(nim_ctx, true, false)) {
+ 			/* Prefer NIM media FEC since the NIM is assumed to know the right FEC */
+ 			NT_LOG(DBG, NTNIC, "Port %s: NIM media FEC enabled",
+ 				p_info->mp_port_id_str[port]);
+@@ -635,7 +635,7 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
+ 				return 1;
+ 			}
+ 
+-		} else if (qsfp28_set_fec_enable(nim_ctx, false, false)) {
++		} else if (nthw_qsfp28_set_fec_enable(nim_ctx, false, false)) {
+ 			/* The NIM does not support FEC at all so turn FPGA FEC on instead */
+ 			/* This is relevant to SR4 modules */
+ 			NT_LOG(DBG, NTNIC, "Port %s: No NIM FEC", p_info->mp_port_id_str[port]);
+@@ -643,7 +643,7 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
+ 			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled",
+ 				p_info->mp_port_id_str[port]);
+ 
+-		} else if (qsfp28_set_fec_enable(nim_ctx, true, true)) {
++		} else if (nthw_qsfp28_set_fec_enable(nim_ctx, true, true)) {
+ 			/* This probably not a likely scenario */
+ 			nthw_phy_tile_configure_fec(p_phy_tile, port, false);
+ 			NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled",
+@@ -657,7 +657,7 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
+ 			return 1;
+ 		}
+ 
+-	} else if (qsfp28_set_fec_enable(nim_ctx, false, false)) {
++	} else if (nthw_qsfp28_set_fec_enable(nim_ctx, false, false)) {
+ 		/* The NIM does not support FEC at all - this is relevant to LR4 modules */
+ 		NT_LOG(DBG, NTNIC, "Port %s: No NIM FEC", p_info->mp_port_id_str[port]);
+ 
+@@ -671,7 +671,7 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
+ 			return 1;
+ 		}
+ 
+-	} else if (qsfp28_set_fec_enable(nim_ctx, false, true)) {
++	} else if (nthw_qsfp28_set_fec_enable(nim_ctx, false, true)) {
+ 		nthw_phy_tile_configure_fec(p_phy_tile, port, false);
+ 		/* This probably not a likely scenario */
+ 		NT_LOG(DBG, NTNIC, "Port %s: FPGA FEC enabled", p_info->mp_port_id_str[port]);
+@@ -906,7 +906,7 @@ static void *_common_ptp_nim_state_machine(void *data)
  					continue;
  				}
  
--				assert(new_state.br);	/* Cannot be zero if NIM is present */
-+				RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
+-				if (nim_state_build(&nim_ctx[i], &new_state)) {
++				if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
+ 					NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
+ 						drv->mp_port_id_str[i]);
+ 					continue;
+@@ -916,8 +916,9 @@ static void *_common_ptp_nim_state_machine(void *data)
  				NT_LOG(DBG, NTNIC,
  					"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
  					drv->mp_port_id_str[i], nim_ctx->nim_id,
+-					nim_id_to_text(nim_ctx->nim_id), (unsigned int)new_state.br,
+-					nim_ctx->vendor_name, nim_ctx->prod_no, nim_ctx->serial_no);
++					nthw_nim_id_to_text(nim_ctx->nim_id),
++					(unsigned int)new_state.br, nim_ctx->vendor_name,
++					nim_ctx->prod_no, nim_ctx->serial_no);
+ 				link_state[i].lh_nim_absent = false;
+ 				NT_LOG(DBG, NTNIC, "%s: NIM module initialized",
+ 					drv->mp_port_id_str[i]);
+diff --git a/drivers/net/ntnic/link_mgmt/nt4ga_link.c b/drivers/net/ntnic/link_mgmt/nt4ga_link.c
+index 4dc1c3d467..5ddbb9f1fd 100644
+--- a/drivers/net/ntnic/link_mgmt/nt4ga_link.c
++++ b/drivers/net/ntnic/link_mgmt/nt4ga_link.c
+@@ -153,7 +153,7 @@ static int nt4ga_port_tx_power(struct adapter_info_s *p, int port, bool disable)
+ 		nim_i2c_ctx_t *nim_ctx = &link_info->u.var100g.nim_ctx[port];
+ 
+ 		if (!nim_ctx->specific_u.qsfp.rx_only) {
+-			if (nim_qsfp_plus_nim_set_tx_laser_disable(nim_ctx, disable, -1) != 0)
++			if (nthw_nim_qsfp_plus_nim_set_tx_laser_disable(nim_ctx, disable, -1) != 0)
+ 				return 1;
+ 		}
+ 	}
+@@ -208,7 +208,7 @@ static const struct port_ops ops = {
+ 	.tx_power = nt4ga_port_tx_power,
+ };
+ 
+-void port_init(void)
++void nthw_port_init(void)
+ {
+ 	register_port_ops(&ops);
+ }
 diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
-index 892e1b58b7..3706aaa045 100644
+index 3706aaa045..654e2dd80e 100644
 --- a/drivers/net/ntnic/nim/i2c_nim.c
 +++ b/drivers/net/ntnic/nim/i2c_nim.c
-@@ -302,8 +302,8 @@ static int qsfp_nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state)
+@@ -328,12 +328,12 @@ static int qsfp_nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state)
+ 	return res;
+ }
+ 
+-int nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state)
++int nthw_nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state)
  {
- 	int res = 0;	/* unused due to no readings from HW */
+ 	return qsfp_nim_state_build(ctx, state);
+ }
  
--	assert(ctx && state);
--	assert(ctx->nim_id != NT_NIM_UNKNOWN && "Nim is not initialized");
-+	RTE_ASSERT(ctx && state);
-+	RTE_ASSERT(ctx->nim_id != NT_NIM_UNKNOWN && "Nim is not initialized");
- 
- 	(void)memset(state, 0, sizeof(*state));
- 
-@@ -628,7 +628,7 @@ static void qsfpplus_set_speed_mask(nim_i2c_ctx_p ctx)
- 
- static void qsfpplus_construct(nim_i2c_ctx_p ctx, int8_t lane_idx)
+-const char *nim_id_to_text(uint8_t nim_id)
++const char *nthw_nim_id_to_text(uint8_t nim_id)
  {
--	assert(lane_idx < 4);
-+	RTE_ASSERT(lane_idx < 4);
- 	ctx->specific_u.qsfp.qsfp28 = false;
- 	ctx->lane_idx = lane_idx;
- 	ctx->lane_count = 4;
-diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
-index 670bbd3f7e..bf7a2760a4 100644
---- a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
-+++ b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
-@@ -10,7 +10,7 @@
- 
- static int nthw_fpga_nt200a0x_init(struct fpga_info_s *p_fpga_info)
+ 	switch (nim_id) {
+ 	case 0x0:
+@@ -356,7 +356,7 @@ const char *nim_id_to_text(uint8_t nim_id)
+ /*
+  * Disable laser for specific lane or all lanes
+  */
+-int nim_qsfp_plus_nim_set_tx_laser_disable(nim_i2c_ctx_p ctx, bool disable, int lane_idx)
++int nthw_nim_qsfp_plus_nim_set_tx_laser_disable(nim_i2c_ctx_p ctx, bool disable, int lane_idx)
  {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
+ 	uint8_t value;
+ 	uint8_t mask;
+@@ -419,7 +419,7 @@ static int qsfpplus_read_basic_data(nim_i2c_ctx_t *ctx)
+ 	const char *yes_no[2] = { "No", "Yes" };
+ 	(void)yes_no;
+ 	NT_LOG(DBG, NTNIC, "Instance %d: NIM id: %s (%d)", ctx->instance,
+-		nim_id_to_text(ctx->nim_id), ctx->nim_id);
++		nthw_nim_id_to_text(ctx->nim_id), ctx->nim_id);
  
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
- 	struct nthw_fpga_rst_nt200a0x rst;
-diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-index 319b7bde52..ee2c2453e5 100644
---- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-+++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-@@ -21,7 +21,7 @@ static int nthw_fpga_rst9563_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt2
- 	nthw_module_t *p_mod_rst;
- 	nthw_register_t *p_curr_reg;
+ 	/* Read DMI options */
+ 	if (nim_read_write_data_lin(ctx, pg_addr, QSFP_DMI_OPTION_LIN_ADDR, sizeof(options),
+@@ -788,7 +788,7 @@ static int qsfp28_preinit(nim_i2c_ctx_p ctx, int8_t lane_idx)
+ 	return res;
+ }
  
--	assert(p);
-+	RTE_ASSERT(p);
- 	p->mn_fpga_product_id = n_fpga_product_id;
- 	p->mn_fpga_version = n_fpga_version;
- 	p->mn_fpga_revision = n_fpga_revision;
-@@ -195,8 +195,8 @@ static int nthw_fpga_rst9563_clock_synth_init(nthw_fpga_t *p_fpga,
- static int nthw_fpga_rst9563_init(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt200a0x *p_rst)
+-int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra)
++int nthw_construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra)
  {
--	assert(p_fpga_info);
--	assert(p_rst);
-+	RTE_ASSERT(p_fpga_info);
-+	RTE_ASSERT(p_rst);
+ 	int res = i2c_nim_common_construct(ctx);
  
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
- 	(void)p_adapter_id_str;
-diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-index d35618c6ba..3528792845 100644
---- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-+++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-@@ -224,7 +224,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- 	NT_LOG_DBGX(DBG, NTHW, "%s: FPGA reset sequence: FPGA %04d-%02d-%02d @ HWId%d",
- 		p_adapter_id_str, n_fpga_product_id, n_fpga_version, n_fpga_revision,
- 		n_hw_id);
--	assert(n_fpga_product_id == p_fpga->mn_product_id);
-+	RTE_ASSERT(n_fpga_product_id == p_fpga->mn_product_id);
+@@ -803,7 +803,7 @@ int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra)
  
- 	/*
- 	 * Reset all domains / modules except peripherals
-@@ -296,7 +296,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- 	nthw_field_update_register(p->mp_fld_ctrl_ts_clk_sel);
- 	nthw_field_set_flush(p->mp_fld_ctrl_ts_clk_sel);
- 
--	/* 4: De-assert sys reset, CORE and SYS MMCM resets */
-+	/* 4: De-RTE_ASSERT sys reset, CORE and SYS MMCM resets */
- 	NT_LOG(DBG, NTHW, "%s: De-asserting SYS, CORE and SYS MMCM resets", p_adapter_id_str);
- 	nthw_field_update_register(p->mp_fld_rst_sys);
- 	nthw_field_clr_flush(p->mp_fld_rst_sys);
-@@ -353,7 +353,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- 	nthw_field_clr_flush(p->mp_fld_rst_phy);
- 
- 	/*
--	 * 8: De-assert reset for remaining domains/modules resets except
-+	 * 8: De-RTE_ASSERT reset for remaining domains/modules resets except
- 	 * TS, PTP, PTP_MMCM and TS_MMCM
- 	 */
- 	NT_LOG(DBG, NTHW, "%s: De-asserting TMC RST", p_adapter_id_str);
-@@ -408,7 +408,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- 
- 	/*
- 	 * Timesync/PTP reset sequence
--	 * De-assert TS_MMCM reset
-+	 * De-RTE_ASSERT TS_MMCM reset
- 	 */
- 	NT_LOG(DBG, NTHW, "%s: De-asserting TS MMCM RST", p_adapter_id_str);
- 	nthw_field_clr_flush(p->mp_fld_rst_ts_mmcm);
-@@ -437,7 +437,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- 	if (p->mp_fld_sticky_pci_sys_mmcm_unlocked)
- 		nthw_field_set_flush(p->mp_fld_sticky_pci_sys_mmcm_unlocked);
- 
--	/* De-assert TS reset bit */
-+	/* De-RTE_ASSERT TS reset bit */
- 	NT_LOG(DBG, NTHW, "%s: De-asserting TS RST", p_adapter_id_str);
- 	nthw_field_clr_flush(p->mp_fld_rst_ts);
- 
-@@ -513,7 +513,7 @@ static int nthw_fpga_rst_nt200a0x_reset(nthw_fpga_t *p_fpga,
- static int nthw_fpga_rst_nt200a0x_init(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt200a0x *p_rst)
- {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
- 	int res = -1;
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
-index 121cedbb1f..d610e3a7cc 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
-@@ -112,7 +112,7 @@ static int nthw_fpga_nt400dxx_init_sub_systems(struct fpga_info_s *p_fpga_info)
- 
- static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 	struct rst9574_ops *rst9574_ops = NULL;
- 
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
-@@ -120,7 +120,7 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 	int res = -1;
- 
- 	nthw_fpga_t *p_fpga = p_fpga_info->mp_fpga;
--	assert(p_fpga);
-+	RTE_ASSERT(p_fpga);
- 
- 	switch (p_fpga_info->n_fpga_prod_id) {
- 	case 9574:
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-index b1bbe28709..8cad9fac5a 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-@@ -11,8 +11,8 @@
- 
- static int nthw_fpga_rst9574_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt400dxx *const p)
- {
--	assert(p_fpga);
--	assert(p);
-+	RTE_ASSERT(p_fpga);
-+	RTE_ASSERT(p);
- 
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	const int n_fpga_product_id = p_fpga->mn_product_id;
-@@ -238,8 +238,8 @@ static int nthw_fpga_rst9574_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_
- static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt400dxx *p_rst)
- {
--	assert(p_fpga_info);
--	assert(p_rst);
-+	RTE_ASSERT(p_fpga_info);
-+	RTE_ASSERT(p_rst);
- 
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
- 	int res = -1;
-@@ -253,7 +253,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	 */
- 	nt_os_wait_usec(2000);
- 
--	/* (1) De-assert DDR4 reset: */
-+	/* (1) De-RTE_ASSERT DDR4 reset: */
- 	NT_LOG(DBG, NTHW, "%s: %s: De-asserting DDR4 reset", p_adapter_id_str, __func__);
- 	nthw_fpga_rst9574_ddr4_rst(p_rst, 0);
- 
-@@ -296,7 +296,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 				return res;
- 		}
- 
--		/* (6) De-assert PHY_FTILE reset: */
-+		/* (6) De-RTE_ASSERT PHY_FTILE reset: */
- 		NT_LOG(DBG, NTHW, "%s: %s: De-asserting PHY_FTILE reset", p_adapter_id_str,
- 			__func__);
- 		nthw_fpga_rst9574_phy_ftile_rst(p_rst, 0);
-@@ -349,7 +349,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 
- 	} while (!success);
- 
--	/* (8) De-assert SYS reset: */
-+	/* (8) De-RTE_ASSERT SYS reset: */
- 	NT_LOG(DBG, NTHW, "%s: %s: De-asserting SYS reset", p_adapter_id_str, __func__);
- 	nthw_fpga_rst9574_sys_rst(p_rst, 0);
- 
-@@ -359,8 +359,8 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- static int nthw_fpga_rst9574_init(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt400dxx *p_rst)
- {
--	assert(p_fpga_info);
--	assert(p_rst);
-+	RTE_ASSERT(p_fpga_info);
-+	RTE_ASSERT(p_rst);
- 	int res = nthw_fpga_rst9574_product_reset(p_fpga_info, p_rst);
+ 	default:
+ 		res = 1;
+-		NT_LOG(ERR, NTHW, "NIM type %s is not supported.", nim_id_to_text(ctx->nim_id));
++		NT_LOG(ERR, NTHW, "NIM type %s is not supported", nthw_nim_id_to_text(ctx->nim_id));
+ 	}
  
  	return res;
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-index b93b0a829a..237c19bb95 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-@@ -13,7 +13,7 @@
- 
- static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+@@ -815,7 +815,7 @@ int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra)
+  * When cleared (= 0b), modules with power classes 5 to 7 must dissipate less
+  * than 3.5W (but are not required to be fully functional). Default 0.
+  */
+-void qsfp28_set_high_power(nim_i2c_ctx_p ctx)
++void nthw_qsfp28_set_high_power(nim_i2c_ctx_p ctx)
  {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 	int res = -1;
- 	nthw_fpga_t *p_fpga = NULL;
+ 	const uint16_t addr = 93;
+ 	uint8_t data;
+@@ -834,7 +834,7 @@ void qsfp28_set_high_power(nim_i2c_ctx_p ctx)
+  *  register must be avoided as this introduces I2C errors on NT200A01.
+  */
  
-@@ -191,7 +191,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 	nthw_pcm_nt400dxx_t *p_pcm = p_fpga_info->mp_nthw_agx.p_pcm;
- 	nthw_prm_nt400dxx_t *p_prm = p_fpga_info->mp_nthw_agx.p_prm;
- 
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 
- 	NT_LOG(DBG, NTHW, "%s: %s: BEGIN", p_adapter_id_str, __PRETTY_FUNCTION__);
- 
-@@ -310,7 +310,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+-bool qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec)
++bool nthw_qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec)
+ {
  	/*
- 	 * At this point all system clocks and TS clocks are running.
- 	 * Last thing to do before proceeding to product reset is to
--	 * de-assert the platform reset and enable the RAB buses.
-+	 * de-RTE_ASSERT the platform reset and enable the RAB buses.
- 	 */
+ 	 * If the current FEC state does not match the wanted and the FEC cannot be
+diff --git a/drivers/net/ntnic/nim/i2c_nim.h b/drivers/net/ntnic/nim/i2c_nim.h
+index 888b709135..61dfedaa4f 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.h
++++ b/drivers/net/ntnic/nim/i2c_nim.h
+@@ -16,25 +16,25 @@ typedef struct sfp_nim_state {
+  * Builds an nim state for the port implied by `ctx`, returns zero
+  * if successful, and non-zero otherwise. SFP and QSFP nims are supported
+  */
+-int nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state);
++int nthw_nim_state_build(nim_i2c_ctx_t *ctx, sfp_nim_state_t *state);
  
- 	/* (K1) Force HIF soft reset. */
-@@ -325,7 +325,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 	nt_os_wait_usec(1000);
- 	nthw_hif_delete(p_nthw_hif);
+ /*
+  * Returns a type name such as "SFP/SFP+" for a given NIM type identifier,
+  * or the string "ILLEGAL!".
+  */
+-const char *nim_id_to_text(uint8_t nim_id);
++const char *nthw_nim_id_to_text(uint8_t nim_id);
  
--	/* (L) De-assert platform reset. */
-+	/* (L) De-RTE_ASSERT platform reset. */
- 	nthw_prm_nt400dxx_platform_rst(p_prm, 0);
+-int nim_qsfp_plus_nim_set_tx_laser_disable(nim_i2c_ctx_t *ctx, bool disable, int lane_idx);
++int nthw_nim_qsfp_plus_nim_set_tx_laser_disable(nim_i2c_ctx_t *ctx, bool disable, int lane_idx);
  
- 	/*
-diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-index 3166a2ba51..8831eeb4d3 100644
---- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-@@ -75,7 +75,7 @@ int nthw_fpga_iic_scan(nthw_fpga_t *p_fpga, const int n_instance_no_begin,
- {
- 	int i;
+ /*
+  * This function tries to classify NIM based on it's ID and some register reads
+  * and collects information into ctx structure. The @extra parameter could contain
+  * the initialization argument for specific type of NIMS.
+  */
+-int construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra);
++int nthw_construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra);
  
--	assert(n_instance_no_begin <= n_instance_no_end);
-+	RTE_ASSERT(n_instance_no_begin <= n_instance_no_end);
+-void qsfp28_set_high_power(nim_i2c_ctx_p ctx);
+-bool qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec);
++void nthw_qsfp28_set_high_power(nim_i2c_ctx_p ctx);
++bool nthw_qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec);
  
- 	for (i = n_instance_no_begin; i <= n_instance_no_end; i++) {
- 		nthw_iic_t *p_nthw_iic = nthw_iic_new();
-@@ -606,8 +606,8 @@ int nthw_fpga_si5340_clock_synth_init_fmt2(nthw_fpga_t *p_fpga, const uint8_t n_
- 	nthw_iic_t *p_nthw_iic = nthw_iic_new();
- 	nthw_si5340_t *p_nthw_si5340 = nthw_si5340_new();
- 
--	assert(p_nthw_iic);
--	assert(p_nthw_si5340);
-+	RTE_ASSERT(p_nthw_iic);
-+	RTE_ASSERT(p_nthw_si5340);
- 	nthw_iic_init(p_nthw_iic, p_fpga, 0, 8);/* I2C cycle time 125Mhz ~ 8ns */
- 
- 	nthw_si5340_init(p_nthw_si5340, p_nthw_iic, n_iic_addr);/* si5340_u23_i2c_addr_7bit */
-@@ -636,7 +636,7 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
- 
- 	int res = 0;
- 
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 
- 	{
- 		const uint64_t n_fpga_ident = nthw_fpga_read_ident(p_fpga_info);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_gfg.c b/drivers/net/ntnic/nthw/core/nthw_gfg.c
-index aa71624457..9cee45449b 100644
---- a/drivers/net/ntnic/nthw/core/nthw_gfg.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_gfg.c
-@@ -304,7 +304,7 @@ static int nthw_gfg_setup(nthw_gfg_t *p,
- 		(size_t)n_intf_no >= ARRAY_SIZE(p->mpa_fld_ctrl_size) ||
- 		n_intf_no >= ARRAY_SIZE(p->mpa_fld_stream_id_val) ||
- 		(size_t)n_intf_no >= ARRAY_SIZE(p->mpa_fld_burst_size_val)) {
--		assert(false);
-+		RTE_ASSERT(false);
- 		return -1;
+ void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
+ 	nthw_pca9849_t *p_ca9849);
+diff --git a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
+index 41fd55a466..aed52f67f5 100644
+--- a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
++++ b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
+@@ -403,7 +403,7 @@ void dbs_reset(nthw_dbs_t *p)
  	}
- 
-@@ -312,7 +312,7 @@ static int nthw_gfg_setup(nthw_gfg_t *p,
- 		p->mpa_fld_ctrl_size[n_intf_no] == NULL ||
- 		p->mpa_fld_stream_id_val[n_intf_no] == NULL ||
- 		p->mpa_fld_burst_size_val[n_intf_no] == NULL) {
--		assert(false);
-+		RTE_ASSERT(false);
- 		return -1;
- 	}
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_gpio_phy.c b/drivers/net/ntnic/nthw/core/nthw_gpio_phy.c
-index 29bdddb514..0fa5b15f5b 100644
---- a/drivers/net/ntnic/nthw/core/nthw_gpio_phy.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_gpio_phy.c
-@@ -104,7 +104,7 @@ int nthw_gpio_phy_init(nthw_gpio_phy_t *p, nthw_fpga_t *p_fpga, int n_instance)
- bool nthw_gpio_phy_is_module_present(nthw_gpio_phy_t *p, uint8_t if_no)
- {
- 	if (if_no >= ARRAY_SIZE(p->mpa_fields)) {
--		assert(false);
-+		RTE_ASSERT(false);
- 		return false;
- 	}
- 
-@@ -115,7 +115,7 @@ bool nthw_gpio_phy_is_module_present(nthw_gpio_phy_t *p, uint8_t if_no)
- void nthw_gpio_phy_set_low_power(nthw_gpio_phy_t *p, uint8_t if_no, bool enable)
- {
- 	if (if_no >= ARRAY_SIZE(p->mpa_fields)) {
--		assert(false);
-+		RTE_ASSERT(false);
- 		return;
- 	}
- 
-@@ -131,7 +131,7 @@ void nthw_gpio_phy_set_low_power(nthw_gpio_phy_t *p, uint8_t if_no, bool enable)
- void nthw_gpio_phy_set_reset(nthw_gpio_phy_t *p, uint8_t if_no, bool enable)
- {
- 	if (if_no >= ARRAY_SIZE(p->mpa_fields)) {
--		assert(false);
-+		RTE_ASSERT(false);
- 		return;
- 	}
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_hif.c b/drivers/net/ntnic/nthw/core/nthw_hif.c
-index 630262a7fc..e1ca80046d 100644
---- a/drivers/net/ntnic/nthw/core/nthw_hif.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_hif.c
-@@ -300,7 +300,7 @@ int nthw_hif_stat_req_disable(nthw_hif_t *p)
- 
- int nthw_hif_end_point_counters_sample(nthw_hif_t *p, struct nthw_hif_end_point_counters *epc)
- {
--	assert(epc);
-+	RTE_ASSERT(epc);
- 
- 	/* Get stat rate and maintain rx/tx min/max */
- 	nthw_hif_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
-@@ -341,7 +341,7 @@ int nthw_hif_read_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t *p_value)
- 		break;
- 
- 	default:
--		assert(false);
-+		RTE_ASSERT(false);
- 		return -1;
- 	}
- 
-@@ -384,7 +384,7 @@ int nthw_hif_write_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t value)
- 		break;
- 
- 	default:
--		assert(false);
-+		RTE_ASSERT(false);
- 		return -1;
- 	}
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_iic.c b/drivers/net/ntnic/nthw/core/nthw_iic.c
-index 269754c24a..0d50721710 100644
---- a/drivers/net/ntnic/nthw/core/nthw_iic.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_iic.c
-@@ -66,7 +66,7 @@ static int nthw_iic_reg_tx_fifo_write(nthw_iic_t *p, uint32_t data, bool start,
- 
- static int nthw_iic_reg_read_i2c_rx_fifo(nthw_iic_t *p, uint8_t *p_data)
- {
--	assert(p_data);
-+	RTE_ASSERT(p_data);
- 
- 	*p_data = (uint8_t)nthw_field_get_updated(p->mp_fld_rx_fifo_rxdata);
- 
-@@ -91,7 +91,7 @@ static int nthw_iic_reg_enable(nthw_iic_t *p)
- 
- static int nthw_iic_reg_busbusy(nthw_iic_t *p, bool *pb_flag)
- {
--	assert(pb_flag);
-+	RTE_ASSERT(pb_flag);
- 
- 	*pb_flag = nthw_field_get_updated(p->mp_fld_sr_bb) ? true : false;
- 
-@@ -100,7 +100,7 @@ static int nthw_iic_reg_busbusy(nthw_iic_t *p, bool *pb_flag)
- 
- static int nthw_iic_reg_rxfifo_empty(nthw_iic_t *p, bool *pb_flag)
- {
--	assert(pb_flag);
-+	RTE_ASSERT(pb_flag);
- 
- 	*pb_flag = nthw_field_get_updated(p->mp_fld_sr_rxfifo_empty) ? true : false;
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-index d0fee5dcd0..23ed96e04d 100644
---- a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-@@ -44,7 +44,7 @@ int nthw_mac_pcs_init(nthw_mac_pcs_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 	p->mn_instance = n_instance;
- 	p->mp_mod_mac_pcs = mod;
- 
--	assert(n_instance >= 0 && n_instance <= 255);
-+	RTE_ASSERT(n_instance >= 0 && n_instance <= 255);
- 	nthw_mac_pcs_set_port_no(p, (uint8_t)n_instance);
- 
- 	{
-@@ -131,7 +131,7 @@ int nthw_mac_pcs_init(nthw_mac_pcs_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 
- 		} else {
- 			/* Remember to add new product_ids */
--			assert(0);
-+			RTE_ASSERT(0);
- 		}
- 
- 		p_reg_pcs_config =
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pcie3.c b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-index 5997ebb419..5928f81629 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-@@ -251,7 +251,7 @@ int nthw_pcie3_end_point_counters_sample_post(nthw_pcie3_t *p,
- 	struct nthw_hif_end_point_counters *epc)
- {
- 	NT_LOG_DBGX(DBG, NTHW);
--	assert(epc);
-+	RTE_ASSERT(epc);
- 	nthw_pcie3_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
- 		&epc->n_tags_in_use, &epc->cur_pci_nt_util,
- 		&epc->cur_pci_xil_util);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_spim.c b/drivers/net/ntnic/nthw/core/nthw_spim.c
-index d30c11d0ff..42c40400d3 100644
---- a/drivers/net/ntnic/nthw/core/nthw_spim.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_spim.c
-@@ -105,7 +105,7 @@ uint32_t nthw_spim_write_tx_fifo(nthw_spim_t *p, uint32_t n_data)
- 
- uint32_t nthw_spim_get_tx_fifo_empty(nthw_spim_t *p, bool *pb_empty)
- {
--	assert(pb_empty);
-+	RTE_ASSERT(pb_empty);
- 
- 	*pb_empty = nthw_field_get_updated(p->mp_fld_sr_txempty) ? true : false;
- 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_spis.c b/drivers/net/ntnic/nthw/core/nthw_spis.c
-index 3c34dec936..a6e0357cbc 100644
---- a/drivers/net/ntnic/nthw/core/nthw_spis.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_spis.c
-@@ -104,7 +104,7 @@ uint32_t nthw_spis_enable(nthw_spis_t *p, bool b_enable)
- 
- uint32_t nthw_spis_get_rx_fifo_empty(nthw_spis_t *p, bool *pb_empty)
- {
--	assert(pb_empty);
-+	RTE_ASSERT(pb_empty);
- 
- 	*pb_empty = nthw_field_get_updated(p->mp_fld_sr_rxempty) ? true : false;
- 
-@@ -113,7 +113,7 @@ uint32_t nthw_spis_get_rx_fifo_empty(nthw_spis_t *p, bool *pb_empty)
- 
- uint32_t nthw_spis_read_rx_fifo(nthw_spis_t *p, uint32_t *p_data)
- {
--	assert(p_data);
-+	RTE_ASSERT(p_data);
- 
- 	*p_data = nthw_field_get_updated(p->mp_fld_drr_drr);
- 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-index 022d7a1c0e..0bee86c573 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-@@ -149,7 +149,7 @@ static_assert(RTE_DIM(err_msg) == ERR_MSG_END,
- 
- void flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *error)
- {
--	assert(msg < ERR_MSG_NO_MSG);
-+	RTE_ASSERT(msg < ERR_MSG_NO_MSG);
- 
- 	if (error) {
- 		error->message = err_msg[msg].message;
-@@ -213,7 +213,7 @@ int flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, i
- {
- 	NT_LOG(DBG, FILTER, "Reference resource %s idx %i (before ref cnt %i)",
- 		dbg_res_descr[res_type], index, ndev->res[res_type].ref[index]);
--	assert(flow_nic_is_resource_used(ndev, res_type, index));
-+	RTE_ASSERT(flow_nic_is_resource_used(ndev, res_type, index));
- 
- 	if (ndev->res[res_type].ref[index] == (uint32_t)-1)
- 		return -1;
-@@ -226,8 +226,8 @@ int flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
- {
- 	NT_LOG(DBG, FILTER, "De-reference resource %s idx %i (before ref cnt %i)",
- 		dbg_res_descr[res_type], index, ndev->res[res_type].ref[index]);
--	assert(flow_nic_is_resource_used(ndev, res_type, index));
--	assert(ndev->res[res_type].ref[index]);
-+	RTE_ASSERT(flow_nic_is_resource_used(ndev, res_type, index));
-+	RTE_ASSERT(ndev->res[res_type].ref[index]);
- 	/* deref */
- 	ndev->res[res_type].ref[index]--;
- 
-@@ -520,7 +520,7 @@ int flow_delete_eth_dev(struct flow_eth_dev *eth_dev)
- static int init_resource_elements(struct flow_nic_dev *ndev, enum res_type_e res_type,
- 	uint32_t count)
- {
--	assert(ndev->res[res_type].alloc_bm == NULL);
-+	RTE_ASSERT(ndev->res[res_type].alloc_bm == NULL);
- 	/* allocate bitmap and ref counter */
- 	ndev->res[res_type].alloc_bm =
- 		calloc(1, BIT_CONTAINER_8_ALIGN(count) + count * sizeof(uint32_t));
-@@ -537,7 +537,7 @@ static int init_resource_elements(struct flow_nic_dev *ndev, enum res_type_e res
- 
- static void done_resource_elements(struct flow_nic_dev *ndev, enum res_type_e res_type)
- {
--	assert(ndev);
-+	RTE_ASSERT(ndev);
- 
- 	free(ndev->res[res_type].alloc_bm);
  }
-@@ -598,7 +598,7 @@ static struct flow_eth_dev *flow_get_eth_dev(uint8_t adapter_no, uint8_t port_no
- 		adapter_no, port_no, port_id, alloc_rx_queues, flow_profile);
  
- 	if (MAX_OUTPUT_DEST < FLOW_MAX_QUEUES) {
--		assert(0);
-+		RTE_ASSERT(0);
- 		NT_LOG(ERR, FILTER,
- 			"ERROR: Internal array for multiple queues too small for API");
- 	}
-@@ -821,7 +821,7 @@ struct flow_nic_dev *flow_api_create(uint8_t adapter_no, const struct flow_api_b
- 
- 	/* check all defined has been initialized */
- 	for (int i = 0; i < RES_COUNT; i++)
--		assert(ndev->res[i].alloc_bm);
-+		RTE_ASSERT(ndev->res[i].alloc_bm);
- 
- 	rte_spinlock_init(&ndev->mtx);
- 	list_insert_flow_nic(ndev);
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
-index 9f7ee5decb..64ef5b345a 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
-@@ -1632,7 +1632,7 @@ static uint32_t tpe_get_version(void *be_dev)
- 		return 3;
- 	}
- 
--	assert(false);
-+	RTE_ASSERT(false);
+-int set_rx_control(nthw_dbs_t *p,
++int nthw_set_rx_control(nthw_dbs_t *p,
+ 	uint32_t last_queue,
+ 	uint32_t avail_monitor_enable,
+ 	uint32_t avail_monitor_speed,
+@@ -421,7 +421,7 @@ int set_rx_control(nthw_dbs_t *p,
  	return 0;
  }
  
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_km.c b/drivers/net/ntnic/nthw/flow_api/flow_km.c
-index f79919cb81..5f6b5f98a9 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_km.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_km.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2023 Napatech A/S
+-int set_tx_control(nthw_dbs_t *p,
++int nthw_set_tx_control(nthw_dbs_t *p,
+ 	uint32_t last_queue,
+ 	uint32_t avail_monitor_enable,
+ 	uint32_t avail_monitor_speed,
+@@ -439,7 +439,7 @@ int set_tx_control(nthw_dbs_t *p,
+ 	return 0;
+ }
+ 
+-int set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
++int nthw_set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue)
+ {
+ 	if (p->mp_reg_rx_init_val) {
+@@ -454,7 +454,7 @@ int set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t
+ 	return 0;
+ }
+ 
+-int get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy)
++int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy)
+ {
+ 	*init = nthw_field_get_val32(p->mp_fld_rx_init_init);
+ 	*queue = nthw_field_get_val32(p->mp_fld_rx_init_queue);
+@@ -477,7 +477,7 @@ int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t
+ 	return 0;
+ }
+ 
+-int get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy)
++int nthw_get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy)
+ {
+ 	*init = nthw_field_get_val32(p->mp_fld_tx_init_init);
+ 	*queue = nthw_field_get_val32(p->mp_fld_tx_init_queue);
+@@ -485,7 +485,7 @@ int get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy)
+ 	return 0;
+ }
+ 
+-int set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
++int nthw_set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
+ {
+ 	if (!p->mp_reg_rx_idle)
+ 		return -ENOTSUP;
+@@ -496,7 +496,7 @@ int set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
+ 	return 0;
+ }
+ 
+-int get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy)
++int nthw_get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy)
+ {
+ 	if (!p->mp_reg_rx_idle)
+ 		return -ENOTSUP;
+@@ -507,7 +507,7 @@ int get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy)
+ 	return 0;
+ }
+ 
+-int set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
++int nthw_set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
+ {
+ 	if (!p->mp_reg_tx_idle)
+ 		return -ENOTSUP;
+@@ -518,7 +518,7 @@ int set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue)
+ 	return 0;
+ }
+ 
+-int get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy)
++int nthw_get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy)
+ {
+ 	if (!p->mp_reg_tx_idle)
+ 		return -ENOTSUP;
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+index 0bee86c573..1455a1e508 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+@@ -147,7 +147,7 @@ static const struct {
+ static_assert(RTE_DIM(err_msg) == ERR_MSG_END,
+ 	"The list of error messages is not fully completed.");
+ 
+-void flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *error)
++void nthw_flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *error)
+ {
+ 	RTE_ASSERT(msg < ERR_MSG_NO_MSG);
+ 
+@@ -162,7 +162,7 @@ void flow_nic_set_error(enum flow_nic_err_msg_e msg, struct rte_flow_error *erro
+  * Resources
   */
  
--#include <assert.h>
- #include <stdlib.h>
- 
- #include "hw_mod_backend.h"
-@@ -118,7 +117,7 @@ int km_add_match_elem(struct km_flow_def_s *km, uint32_t e_word[4], uint32_t e_m
- 	}
- 
- 	if (word_len < 1 || word_len > 4) {
--		assert(0);
-+		RTE_ASSERT(0);
- 		return -1;
- 	}
- 
-@@ -284,7 +283,7 @@ int km_key_create(struct km_flow_def_s *km, uint32_t port_id)
- 		}
- 	}
- 
--	assert(next == km->num_ftype_elem);
-+	RTE_ASSERT(next == km->num_ftype_elem);
- 
- 	km->key_word_size = idx;
- 	km->port_id = port_id;
-@@ -670,7 +669,7 @@ int km_rcp_set(struct km_flow_def_s *km, int index)
- 			return -1;
- 		}
- 
--		assert((uint32_t)(km->tcam_start_bank + km->key_word_size) <=
-+		RTE_ASSERT((uint32_t)(km->tcam_start_bank + km->key_word_size) <=
- 			km->be->km.nb_tcam_banks);
- 
- 		for (int i = 0; i < km->key_word_size; i++) {
-@@ -705,7 +704,7 @@ static int cam_populate(struct km_flow_def_s *km, int bank)
- 	km->cam_dist[CAM_KM_DIST_IDX(bank)].km_owner = km;
- 
- 	if (cnt) {
--		assert(km->cam_paired);
-+		RTE_ASSERT(km->cam_paired);
- 
- 		for (uint32_t i = 0; i < km->be->km.nb_cam_record_words && cnt; i++, cnt--) {
- 			res |= hw_mod_km_cam_set(km->be, HW_KM_CAM_W0 + i, bank,
-@@ -738,7 +737,7 @@ static int cam_reset_entry(struct km_flow_def_s *km, int bank)
- 	km->cam_dist[CAM_KM_DIST_IDX(bank)].km_owner = NULL;
- 
- 	if (cnt) {
--		assert(km->cam_paired);
-+		RTE_ASSERT(km->cam_paired);
- 
- 		for (uint32_t i = 0; i < km->be->km.nb_cam_record_words && cnt; i++, cnt--) {
- 			res |= hw_mod_km_cam_set(km->be, HW_KM_CAM_W0 + i, bank,
-@@ -756,7 +755,7 @@ static int cam_reset_entry(struct km_flow_def_s *km, int bank)
- 
- static int move_cuckoo_index(struct km_flow_def_s *km)
+-int flow_nic_alloc_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
++int nthw_flow_nic_alloc_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	uint32_t alignment)
  {
--	assert(km->cam_dist[CAM_KM_DIST_IDX(km->bank_used)].km_owner);
-+	RTE_ASSERT(km->cam_dist[CAM_KM_DIST_IDX(km->bank_used)].km_owner);
+ 	for (unsigned int i = 0; i < ndev->res[res_type].resource_count; i += alignment) {
+@@ -176,7 +176,7 @@ int flow_nic_alloc_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	return -1;
+ }
  
- 	for (uint32_t bank = 0; bank < km->be->km.nb_cam_banks; bank++) {
- 		/* It will not select itself */
-@@ -806,7 +805,7 @@ static int move_cuckoo_index_level(struct km_flow_def_s *km_parent, int bank_idx
+-int flow_nic_alloc_resource_config(struct flow_nic_dev *ndev, enum res_type_e res_type,
++int nthw_flow_nic_alloc_resource_config(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	unsigned int num, uint32_t alignment)
  {
- 	struct km_flow_def_s *km = km_parent->cam_dist[bank_idx].km_owner;
+ 	unsigned int idx_offs;
+@@ -204,12 +204,12 @@ int flow_nic_alloc_resource_config(struct flow_nic_dev *ndev, enum res_type_e re
+ 	return -1;
+ }
  
--	assert(levels <= CUCKOO_MOVE_MAX_DEPTH);
-+	RTE_ASSERT(levels <= CUCKOO_MOVE_MAX_DEPTH);
+-void flow_nic_free_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int idx)
++void nthw_flow_nic_free_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int idx)
+ {
+ 	flow_nic_mark_resource_unused(ndev, res_type, idx);
+ }
+ 
+-int flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index)
++int nthw_flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index)
+ {
+ 	NT_LOG(DBG, FILTER, "Reference resource %s idx %i (before ref cnt %i)",
+ 		dbg_res_descr[res_type], index, ndev->res[res_type].ref[index]);
+@@ -222,7 +222,7 @@ int flow_nic_ref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, i
+ 	return 0;
+ }
+ 
+-int flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index)
++int nthw_flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type, int index)
+ {
+ 	NT_LOG(DBG, FILTER, "De-reference resource %s idx %i (before ref cnt %i)",
+ 		dbg_res_descr[res_type], index, ndev->res[res_type].ref[index]);
+@@ -232,7 +232,7 @@ int flow_nic_deref_resource(struct flow_nic_dev *ndev, enum res_type_e res_type,
+ 	ndev->res[res_type].ref[index]--;
+ 
+ 	if (!ndev->res[res_type].ref[index])
+-		flow_nic_free_resource(ndev, res_type, index);
++		nthw_flow_nic_free_resource(ndev, res_type, index);
+ 
+ 	return !!ndev->res[res_type].ref[index];/* if 0 resource has been freed */
+ }
+@@ -386,7 +386,7 @@ static void flow_ndev_reset(struct flow_nic_dev *ndev)
+ 
+ 	/* Delete all eth-port devices created on this NIC device */
+ 	while (ndev->eth_base) {
+-		flow_delete_eth_dev(ndev->eth_base);
++		nthw_flow_delete_eth_dev(ndev->eth_base);
+ 		ndev->eth_base = NULL;
+ 	}
+ 
+@@ -437,7 +437,7 @@ static void flow_ndev_reset(struct flow_nic_dev *ndev)
+ 
+ }
+ 
+-int flow_delete_eth_dev(struct flow_eth_dev *eth_dev)
++int nthw_flow_delete_eth_dev(struct flow_eth_dev *eth_dev)
+ {
+ 	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
+ 
+@@ -633,7 +633,7 @@ static struct flow_eth_dev *flow_get_eth_dev(uint8_t adapter_no, uint8_t port_no
+ 	if (eth_dev) {
+ 		NT_LOG(DBG, FILTER, "Re-opening existing NIC port device: NIC DEV: %i Port %i",
+ 			adapter_no, port_no);
+-		flow_delete_eth_dev(eth_dev);
++		nthw_flow_delete_eth_dev(eth_dev);
+ 		eth_dev = NULL;
+ 	}
+ 
+@@ -728,8 +728,8 @@ static struct flow_eth_dev *flow_get_eth_dev(uint8_t adapter_no, uint8_t port_no
+ 	return NULL;	/* Error exit */
+ }
+ 
+-struct flow_nic_dev *flow_api_create(uint8_t adapter_no, const struct flow_api_backend_ops *be_if,
+-	void *be_dev)
++struct flow_nic_dev *nthw_flow_api_create(uint8_t adapter_no,
++	const struct flow_api_backend_ops *be_if, void *be_dev)
+ {
+ 	(void)adapter_no;
+ 
+@@ -752,7 +752,7 @@ struct flow_nic_dev *flow_api_create(uint8_t adapter_no, const struct flow_api_b
+ 	 */
+ 	be_if->set_debug_mode(be_dev, FLOW_BACKEND_DEBUG_MODE_NONE);
+ 
+-	if (flow_api_backend_init(&ndev->be, be_if, be_dev) != 0)
++	if (nthw_flow_api_backend_init(&ndev->be, be_if, be_dev) != 0)
+ 		goto err_exit;
+ 
+ 	ndev->adapter_no = adapter_no;
+@@ -831,13 +831,13 @@ struct flow_nic_dev *flow_api_create(uint8_t adapter_no, const struct flow_api_b
+ err_exit:
+ 
+ 	if (ndev)
+-		flow_api_done(ndev);
++		nthw_flow_api_done(ndev);
+ 
+ 	NT_LOG(DBG, FILTER, "ERR: %s", __func__);
+ 	return NULL;
+ }
+ 
+-int flow_api_done(struct flow_nic_dev *ndev)
++int nthw_flow_api_done(struct flow_nic_dev *ndev)
+ {
+ 	NT_LOG(DBG, FILTER, "FLOW API DONE");
+ 
+@@ -848,7 +848,7 @@ int flow_api_done(struct flow_nic_dev *ndev)
+ 		for (int i = 0; i < RES_COUNT; i++)
+ 			done_resource_elements(ndev, i);
+ 
+-		flow_api_backend_done(&ndev->be);
++		nthw_flow_api_backend_done(&ndev->be);
+ 		list_remove_flow_nic(ndev);
+ 		free(ndev);
+ 	}
+@@ -856,7 +856,7 @@ int flow_api_done(struct flow_nic_dev *ndev)
+ 	return 0;
+ }
+ 
+-void *flow_api_get_be_dev(struct flow_nic_dev *ndev)
++void *nthw_flow_api_get_be_dev(struct flow_nic_dev *ndev)
+ {
+ 	if (!ndev) {
+ 		NT_LOG(DBG, FILTER, "ERR: %s", __func__);
+@@ -1213,7 +1213,7 @@ static int flow_async_destroy(struct flow_eth_dev *dev, uint32_t queue_id,
+ 	return profile_inline_ops->flow_async_destroy_profile_inline(dev, queue_id, op_attr, flow,
+ 			user_data, error);
+ }
+-int flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size)
++int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size)
+ {
+ 	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
+ 
+@@ -1226,7 +1226,7 @@ int flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size)
+ 	return -1;
+ }
+ 
+-int flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count)
++int nthw_flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count)
+ {
+ 	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
+ 
+@@ -1242,8 +1242,8 @@ int flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_c
+ }
+ 
+ static const struct flow_filter_ops ops = {
+-	.flow_filter_init = flow_filter_init,
+-	.flow_filter_done = flow_filter_done,
++	.nthw_flow_filter_init = nthw_flow_filter_init,
++	.nthw_flow_filter_done = nthw_flow_filter_done,
+ 	/*
+ 	 * Device Management API
+ 	 */
+@@ -1256,8 +1256,8 @@ static const struct flow_filter_ops ops = {
+ 	.flow_flush = flow_flush,
+ 	.flow_actions_update = flow_actions_update,
+ 	.flow_dev_dump = flow_dev_dump,
+-	.flow_get_flm_stats = flow_get_flm_stats,
+-	.flow_get_ifr_stats = flow_get_ifr_stats,
++	.nthw_flow_get_flm_stats = nthw_flow_get_flm_stats,
++	.nthw_flow_get_ifr_stats = nthw_flow_get_ifr_stats,
+ 	.flow_get_aged_flows = flow_get_aged_flows,
  
  	/*
- 	 * Only move if same pairness
-@@ -821,7 +820,7 @@ static int move_cuckoo_index_level(struct km_flow_def_s *km_parent, int bank_idx
- 	if (levels <= 1)
- 		return 0;
+@@ -1280,7 +1280,7 @@ static const struct flow_filter_ops ops = {
+ 	 .hw_mod_hsh_rcp_flush = hw_mod_hsh_rcp_flush,
+ };
  
--	assert(cam_adr_list_len < CUCKOO_MOVE_MAX_DEPTH);
-+	RTE_ASSERT(cam_adr_list_len < CUCKOO_MOVE_MAX_DEPTH);
- 
- 	cam_addr_reserved_stack[cam_adr_list_len++] = bank_idx;
- 
-@@ -845,7 +844,7 @@ static int move_cuckoo_index_level(struct km_flow_def_s *km_parent, int bank_idx
- 			if (move_cuckoo_index(km))
- 				return 1;
- 
--			assert(0);
-+			RTE_ASSERT(0);
- 		}
- 	}
- 
-@@ -856,8 +855,8 @@ static int km_write_data_to_cam(struct km_flow_def_s *km)
+-void init_flow_filter(void)
++void nthw_init_flow_filter(void)
  {
- 	int res = 0;
- 	int val[MAX_BANKS];
--	assert(km->be->km.nb_cam_banks <= MAX_BANKS);
--	assert(km->cam_dist);
-+	RTE_ASSERT(km->be->km.nb_cam_banks <= MAX_BANKS);
-+	RTE_ASSERT(km->cam_dist);
+ 	register_flow_filter_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api_nic_setup.h b/drivers/net/ntnic/nthw/flow_api/flow_api_nic_setup.h
+index eeb070c569..656751bbf4 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_api_nic_setup.h
++++ b/drivers/net/ntnic/nthw/flow_api/flow_api_nic_setup.h
+@@ -12,9 +12,9 @@
+ /*
+  * Flow capable NIC backend - creating flow api instance for adapter nr (backend)
+  */
+-struct flow_nic_dev *flow_api_create(uint8_t adapter_no, const struct flow_api_backend_ops *be_if,
+-	void *be_dev);
+-int flow_api_done(struct flow_nic_dev *dev);
+-void *flow_api_get_be_dev(struct flow_nic_dev *dev);
++struct flow_nic_dev *nthw_flow_api_create(uint8_t adapter_no,
++	const struct flow_api_backend_ops *be_if, void *be_dev);
++int nthw_flow_api_done(struct flow_nic_dev *dev);
++void *nthw_flow_api_get_be_dev(struct flow_nic_dev *dev);
+ 
+ #endif  /* __FLOW_API_NIC_SETUP_H__ */
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
+index 64ef5b345a..360cbc155a 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
+@@ -65,7 +65,7 @@ static struct backend_dev_s {
+ 			mod##_nthw_set_debug_mode((inst), 0);                                     \
+ 	} while (0)
+ 
+-const struct flow_api_backend_ops *bin_flow_backend_init(nthw_fpga_t *p_fpga, void **be_dev);
++const struct flow_api_backend_ops *nthw_bin_flow_backend_init(nthw_fpga_t *p_fpga, void **be_dev);
+ static void bin_flow_backend_done(void *be_dev);
+ 
+ static int set_debug_mode(void *be_dev, enum debug_mode_e mode)
+@@ -2097,7 +2097,7 @@ const struct flow_api_backend_ops flow_be_iface = {
+ 	tpe_csu_rcp_flush,
+ };
+ 
+-const struct flow_api_backend_ops *bin_flow_backend_init(nthw_fpga_t *p_fpga, void **dev)
++const struct flow_api_backend_ops *nthw_bin_flow_backend_init(nthw_fpga_t *p_fpga, void **dev)
+ {
+ 	uint8_t physical_adapter_no = (uint8_t)p_fpga->p_fpga_info->adapter_no;
+ 
+@@ -2271,11 +2271,11 @@ static void bin_flow_backend_done(void *dev)
+ }
+ 
+ static const struct flow_backend_ops ops = {
+-	.bin_flow_backend_init = bin_flow_backend_init,
++	.nthw_bin_flow_backend_init = nthw_bin_flow_backend_init,
+ 	.bin_flow_backend_done = bin_flow_backend_done,
+ };
+ 
+-void flow_backend_init(void)
++void nthw_flow_backend_init(void)
+ {
+ 	register_flow_backend_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_filter.c b/drivers/net/ntnic/nthw/flow_api/flow_filter.c
+index 9704109454..a4a95746e8 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_filter.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_filter.c
+@@ -7,7 +7,7 @@
+ #include "ntnic_mod_reg.h"
+ #include "flow_api_nic_setup.h"
+ 
+-int flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, int adapter_no)
++int nthw_flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, int adapter_no)
+ {
+ 	void *be_dev = NULL;
+ 	struct flow_nic_dev *flow_nic;
+@@ -21,9 +21,9 @@ int flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, i
+ 
+ 	NT_LOG(DBG, FILTER, "Initializing flow filter api");
+ 	const struct flow_api_backend_ops *iface =
+-		flow_backend_ops->bin_flow_backend_init(p_fpga, &be_dev);
++		flow_backend_ops->nthw_bin_flow_backend_init(p_fpga, &be_dev);
+ 
+-	flow_nic = flow_api_create((uint8_t)adapter_no, iface, be_dev);
++	flow_nic = nthw_flow_api_create((uint8_t)adapter_no, iface, be_dev);
+ 
+ 	if (!flow_nic) {
+ 		*p_flow_device = NULL;
+@@ -34,11 +34,11 @@ int flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device, i
+ 	return 0;
+ }
+ 
+-int flow_filter_done(struct flow_nic_dev *dev)
++int nthw_flow_filter_done(struct flow_nic_dev *dev)
+ {
+-	void *be_dev = flow_api_get_be_dev(dev);
++	void *be_dev = nthw_flow_api_get_be_dev(dev);
+ 
+-	int res = flow_api_done(dev);
++	int res = nthw_flow_api_done(dev);
+ 
+ 	if (be_dev) {
+ 		const struct flow_backend_ops *flow_backend_ops = get_flow_backend_ops();
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_group.c b/drivers/net/ntnic/nthw/flow_api/flow_group.c
+index d1fa0193e1..6e010c1b9e 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_group.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_group.c
+@@ -25,7 +25,7 @@ struct group_handle_s {
+ 	struct group_lookup_entry_s *lookup_entries;
+ };
+ 
+-int flow_group_handle_create(void **handle, uint32_t group_count)
++int nthw_flow_group_handle_create(void **handle, uint32_t group_count)
+ {
+ 	struct group_handle_s *group_handle;
+ 
+@@ -40,7 +40,7 @@ int flow_group_handle_create(void **handle, uint32_t group_count)
+ 	return *handle != NULL ? 0 : -1;
+ }
+ 
+-int flow_group_handle_destroy(void **handle)
++int nthw_flow_group_handle_destroy(void **handle)
+ {
+ 	if (*handle) {
+ 		struct group_handle_s *group_handle = (struct group_handle_s *)*handle;
+@@ -55,8 +55,8 @@ int flow_group_handle_destroy(void **handle)
+ 	return 0;
+ }
+ 
+-int flow_group_translate_get(void *handle, uint8_t owner_id, uint8_t port_id, uint32_t group_in,
+-	uint32_t *group_out)
++int nthw_flow_group_translate_get(void *handle, uint8_t owner_id, uint8_t port_id,
++	uint32_t group_in, uint32_t *group_out)
+ {
+ 	struct group_handle_s *group_handle = (struct group_handle_s *)handle;
+ 	uint32_t *table_ptr;
+@@ -100,7 +100,7 @@ int flow_group_translate_get(void *handle, uint8_t owner_id, uint8_t port_id, ui
+ 	return 0;
+ }
+ 
+-int flow_group_translate_get_orig_group(void *handle, uint32_t translated_group,
++int nthw_flow_group_translate_get_orig_group(void *handle, uint32_t translated_group,
+ 	uint32_t *group_orig)
+ {
+ 	struct group_handle_s *group_handle = (struct group_handle_s *)handle;
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_hasher.c b/drivers/net/ntnic/nthw/flow_api/flow_hasher.c
+index 86dfc16e79..b5945831c8 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_hasher.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_hasher.c
+@@ -126,7 +126,7 @@ static uint32_t calc16(const uint32_t key[16])
+ 	return x;
+ }
+ 
+-uint32_t gethash(struct hasher_s *hsh, const uint32_t key[16], int *result)
++uint32_t nthw_gethash(struct hasher_s *hsh, const uint32_t key[16], int *result)
+ {
+ 	uint64_t val;
+ 	uint32_t res;
+@@ -145,7 +145,7 @@ uint32_t gethash(struct hasher_s *hsh, const uint32_t key[16], int *result)
+ 	return res;
+ }
+ 
+-int init_hasher(struct hasher_s *hsh, int banks, int nb_records)
++int nthw_init_hasher(struct hasher_s *hsh, int banks, int nb_records)
+ {
+ 	hsh->banks = banks;
+ 	hsh->cam_records_bw = (int)(log2(nb_records - 1) + 1);
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_hasher.h b/drivers/net/ntnic/nthw/flow_api/flow_hasher.h
+index 15de8e9933..631a12a8d9 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_hasher.h
++++ b/drivers/net/ntnic/nthw/flow_api/flow_hasher.h
+@@ -15,7 +15,7 @@ struct hasher_s {
+ 	int cam_bw;
+ };
+ 
+-int init_hasher(struct hasher_s *hsh, int _banks, int nb_records);
+-uint32_t gethash(struct hasher_s *hsh, const uint32_t key[16], int *result);
++int nthw_init_hasher(struct hasher_s *hsh, int _banks, int nb_records);
++uint32_t nthw_gethash(struct hasher_s *hsh, const uint32_t key[16], int *result);
+ 
+ #endif	/* _FLOW_HASHER_H_ */
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_km.c b/drivers/net/ntnic/nthw/flow_api/flow_km.c
+index 5f6b5f98a9..e7ba07d7db 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_km.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_km.c
+@@ -93,7 +93,7 @@ void km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle)
+ 		(struct tcam_distrib_s *)((char *)km->cam_dist + CAM_ENTRIES + sizeof(uint32_t));
+ 
+ 	km->hsh = (struct hasher_s *)((char *)km->tcam_dist + TCAM_ENTRIES);
+-	init_hasher(km->hsh, km->be->km.nb_cam_banks, km->be->km.nb_cam_records);
++	nthw_init_hasher(km->hsh, km->be->km.nb_cam_banks, km->be->km.nb_cam_records);
+ }
+ 
+ void km_free_ndev_resource_management(void **handle)
+@@ -859,7 +859,7 @@ static int km_write_data_to_cam(struct km_flow_def_s *km)
+ 	RTE_ASSERT(km->cam_dist);
  
  	/* word list without info set */
- 	gethash(km->hsh, km->entry_word, val);
-@@ -967,7 +966,7 @@ static int tcam_write_word(struct km_flow_def_s *km, int bank, int record, uint3
- 	int rec_bit_shft = record % 32;
- 	uint32_t rec_bit = (1 << rec_bit_shft);
+-	gethash(km->hsh, km->entry_word, val);
++	nthw_gethash(km->hsh, km->entry_word, val);
  
--	assert((km->be->km.nb_tcam_bank_width + 31) / 32 <= 3);
-+	RTE_ASSERT((km->be->km.nb_tcam_bank_width + 31) / 32 <= 3);
- 
- 	for (int byte = 0; byte < 4; byte++) {
- 		uint8_t a = (uint8_t)((word >> (24 - (byte * 8))) & 0xff);
-@@ -994,7 +993,7 @@ static int tcam_write_word(struct km_flow_def_s *km, int bank, int record, uint3
- 	err |= hw_mod_km_tcam_flush(km->be, bank, ALL_BANK_ENTRIES);
- 
- 	if (err == 0) {
--		assert(km->tcam_dist[TCAM_DIST_IDX(bank, record)].km_owner == NULL);
-+		RTE_ASSERT(km->tcam_dist[TCAM_DIST_IDX(bank, record)].km_owner == NULL);
- 		km->tcam_dist[TCAM_DIST_IDX(bank, record)].km_owner = km;
- 	}
- 
-@@ -1044,7 +1043,7 @@ static int tcam_reset_bank(struct km_flow_def_s *km, int bank, int record)
- 	int rec_bit_shft = record % 32;
- 	uint32_t rec_bit = (1 << rec_bit_shft);
- 
--	assert((km->be->km.nb_tcam_bank_width + 31) / 32 <= 3);
-+	RTE_ASSERT((km->be->km.nb_tcam_bank_width + 31) / 32 <= 3);
- 
- 	for (int byte = 0; byte < 4; byte++) {
- 		for (int val = 0; val < 256; val++) {
-@@ -1141,7 +1140,7 @@ int km_clear_data_match_entry(struct km_flow_def_s *km)
- 			km->cam_dist[CAM_KM_DIST_IDX(km->bank_used)].km_owner = km->reference;
- 
- 			if (km->key_word_size + !!km->info_set > 1) {
--				assert(km->cam_paired);
-+				RTE_ASSERT(km->cam_paired);
- 				km->cam_dist[CAM_KM_DIST_IDX(km->bank_used) + 1].km_owner =
- 					km->reference;
- 			}
+ 	for (uint32_t i = 0; i < km->be->km.nb_cam_banks; i++) {
+ 		/* if paired we start always on an even address - reset bit 0 */
 diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
-index a344d1a2f5..fbc53a3e30 100644
+index fbc53a3e30..299b9b913a 100644
 --- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
 +++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
-@@ -4,6 +4,7 @@
-  */
+@@ -32,7 +32,7 @@ static const struct {
+ };
+ #define MOD_COUNT (ARRAY_SIZE(module))
  
- #include "hw_mod_backend.h"
-+#include "rte_debug.h"
+-void *callocate_mod(struct common_func_s *mod, int sets, ...)
++void *nthw_callocate_mod(struct common_func_s *mod, int sets, ...)
+ {
+ #define MAX_SETS 38
+ 	void *base = NULL;
+@@ -84,12 +84,12 @@ void *callocate_mod(struct common_func_s *mod, int sets, ...)
+ 	return base;
+ }
  
- #include <stdlib.h>
- #include <string.h>
-@@ -41,8 +42,8 @@ void *callocate_mod(struct common_func_s *mod, int sets, ...)
- 	unsigned int total_bytes = 0;
- 	int cnt, elem_size;
+-void zero_module_cache(struct common_func_s *mod)
++void nthw_zero_module_cache(struct common_func_s *mod)
+ {
+ 	memset(mod->base, 0, mod->alloced_size);
+ }
  
--	assert(sets <= MAX_SETS);
--	assert(sets > 0);
-+	RTE_ASSERT(sets <= MAX_SETS);
-+	RTE_ASSERT(sets > 0);
- 
- 	va_list args;
- 	va_start(args, sets);
-@@ -92,7 +93,7 @@ int flow_api_backend_init(struct flow_api_backend_s *dev,
+-int flow_api_backend_init(struct flow_api_backend_s *dev,
++int nthw_flow_api_backend_init(struct flow_api_backend_s *dev,
  	const struct flow_api_backend_ops *iface,
  	void *be_dev)
  {
--	assert(dev);
-+	RTE_ASSERT(dev);
- 	dev->iface = iface;
- 	dev->be_dev = be_dev;
- 	dev->num_phy_ports = iface->get_nb_phy_port(be_dev);
+@@ -121,7 +121,7 @@ int flow_api_backend_init(struct flow_api_backend_s *dev,
+ 			FILTER,
+ 			"ERROR: Initialization of NIC module failed : [ %s ]",
+ 			module[mod].name);
+-		flow_api_backend_done(dev);
++		nthw_flow_api_backend_done(dev);
+ 		NT_LOG(ERR,
+ 			FILTER,
+ 			"*************** Failed to create Binary Flow API *******************");
+@@ -137,7 +137,7 @@ int flow_api_backend_init(struct flow_api_backend_s *dev,
+ 	return 0;
+ }
+ 
+-int flow_api_backend_done(struct flow_api_backend_s *dev)
++int nthw_flow_api_backend_done(struct flow_api_backend_s *dev)
+ {
+ 	for (unsigned int mod = 0; mod < MOD_COUNT; mod++)
+ 		module[mod].free(dev);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c
+index 985c821312..abe09bfad2 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c
+@@ -110,7 +110,7 @@ int hw_mod_cat_alloc(struct flow_api_backend_s *be)
+ 	case 18:
+ 		be->cat.cts_num = 11;
+ 
+-		if (!callocate_mod((struct common_func_s *)&be->cat, 12, &be->cat.v18.cfn,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->cat, 12, &be->cat.v18.cfn,
+ 				be->cat.nb_cat_funcs, sizeof(struct cat_v18_cfn_s),
+ 				&be->cat.v18.kce, (be->cat.nb_cat_funcs / 8),
+ 				sizeof(struct cat_v18_kce_s), &be->cat.v18.kcs,
+@@ -140,7 +140,7 @@ int hw_mod_cat_alloc(struct flow_api_backend_s *be)
+ 	case 21:
+ 		be->cat.cts_num = 11;
+ 
+-		if (!callocate_mod((struct common_func_s *)&be->cat, 12, &be->cat.v21.cfn,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->cat, 12, &be->cat.v21.cfn,
+ 				be->cat.nb_cat_funcs, sizeof(struct cat_v21_cfn_s),
+ 				&be->cat.v21.kce, (be->cat.nb_cat_funcs / 8),
+ 				sizeof(struct cat_v21_kce_s), &be->cat.v21.kcs,
+@@ -233,7 +233,7 @@ static int cfn_reset(struct flow_api_backend_s *be, int i)
+ int hw_mod_cat_reset(struct flow_api_backend_s *be)
+ {
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->cat));
++	nthw_zero_module_cache((struct common_func_s *)(&be->cat));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT CAT CFN");
+ 
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
+index 5cf8264909..69dec801f2 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
+@@ -106,7 +106,8 @@ int hw_mod_flm_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 25:
+-		if (!callocate_mod((struct common_func_s *)&be->flm, 38, &be->flm.v25.control, 1,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->flm, 38,
++				&be->flm.v25.control, 1,
+ 				sizeof(struct flm_v25_control_s), &be->flm.v25.status, 1,
+ 				sizeof(struct flm_v25_status_s), &be->flm.v25.load_bin, 1,
+ 				sizeof(struct flm_v25_load_bin_s), &be->flm.v25.load_pps, 1,
+@@ -175,7 +176,7 @@ void hw_mod_flm_free(struct flow_api_backend_s *be)
+ int hw_mod_flm_reset(struct flow_api_backend_s *be)
+ {
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->flm));
++	nthw_zero_module_cache((struct common_func_s *)(&be->flm));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT FLM");
+ 	hw_mod_flm_control_set(be, HW_FLM_CONTROL_SPLIT_SDRAM_USAGE, 0x10);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c
+index d19e72e323..9821247ebb 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c
+@@ -45,7 +45,7 @@ int hw_mod_hsh_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 5:
+-		if (!callocate_mod((struct common_func_s *)&be->hsh, 1, &be->hsh.v5.rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->hsh, 1, &be->hsh.v5.rcp,
+ 				be->hsh.nb_rcp, sizeof(struct hsh_v5_rcp_s)))
+ 			return -1;
+ 
+@@ -71,7 +71,7 @@ void hw_mod_hsh_free(struct flow_api_backend_s *be)
+ int hw_mod_hsh_reset(struct flow_api_backend_s *be)
+ {
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->hsh));
++	nthw_zero_module_cache((struct common_func_s *)(&be->hsh));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT HSH RCP");
+ 	return hw_mod_hsh_rcp_flush(be, 0, be->hsh.nb_rcp);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_km.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_km.c
+index b8a30671c3..e1c97f62f5 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_km.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_km.c
+@@ -84,7 +84,7 @@ int hw_mod_km_alloc(struct flow_api_backend_s *be)
+ 		be->km.nb_km_rcp_mask_a_word_size = 12;
+ 		be->km.nb_km_rcp_mask_b_word_size = 6;
+ 
+-		if (!callocate_mod((struct common_func_s *)&be->km, 5, &be->km.v7.rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->km, 5, &be->km.v7.rcp,
+ 				be->km.nb_categories, sizeof(struct km_v7_rcp_s),
+ 				&be->km.v7.cam, be->km.nb_cam_banks * be->km.nb_cam_records,
+ 				sizeof(struct km_v7_cam_s), &be->km.v7.tcam,
+@@ -119,7 +119,7 @@ int hw_mod_km_reset(struct flow_api_backend_s *be)
+ 	uint32_t tcam_v_set[3] = { 0x00000000, 0x00000000, 0x00000000 };
+ 
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->km));
++	nthw_zero_module_cache((struct common_func_s *)(&be->km));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT KM RCP");
+ 	hw_mod_km_rcp_flush(be, 0, ALL_ENTRIES);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c
+index 147a06ac2b..4e8bd73d90 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c
+@@ -34,7 +34,7 @@ int hw_mod_pdb_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 9:
+-		if (!callocate_mod((struct common_func_s *)&be->pdb, 2, &be->pdb.v9.rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->pdb, 2, &be->pdb.v9.rcp,
+ 				be->pdb.nb_pdb_rcp_categories, sizeof(struct pdb_v9_rcp_s),
+ 				&be->pdb.v9.config, 1, sizeof(struct pdb_v9_config_s)))
+ 			return -1;
+@@ -62,7 +62,7 @@ int hw_mod_pdb_reset(struct flow_api_backend_s *be)
+ {
+ 	int err = 0;
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->hsh));
++	nthw_zero_module_cache((struct common_func_s *)(&be->hsh));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT PDB RCP");
+ 	err |= hw_mod_pdb_rcp_flush(be, 0, ALL_ENTRIES);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c
+index 70fe97a298..261cb84dc2 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c
+@@ -45,7 +45,7 @@ int hw_mod_qsl_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 7:
+-		if (!callocate_mod((struct common_func_s *)&be->qsl, 4, &be->qsl.v7.rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->qsl, 4, &be->qsl.v7.rcp,
+ 				be->qsl.nb_rcp_categories, sizeof(struct qsl_v7_rcp_s),
+ 				&be->qsl.v7.qst, be->qsl.nb_qst_entries,
+ 				sizeof(struct qsl_v7_qst_s), &be->qsl.v7.qen, QSL_QEN_ENTRIES,
+@@ -75,7 +75,7 @@ void hw_mod_qsl_free(struct flow_api_backend_s *be)
+ int hw_mod_qsl_reset(struct flow_api_backend_s *be)
+ {
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->qsl));
++	nthw_zero_module_cache((struct common_func_s *)(&be->qsl));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT QSL RCP");
+ 	hw_mod_qsl_rcp_flush(be, 0, ALL_ENTRIES);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_slc_lr.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_slc_lr.c
+index 30e5e38690..4741a2e310 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_slc_lr.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_slc_lr.c
+@@ -23,7 +23,7 @@ int hw_mod_slc_lr_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 2:
+-		if (!callocate_mod((struct common_func_s *)&be->slc_lr, 1, &be->slc_lr.v2.rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->slc_lr, 1, &be->slc_lr.v2.rcp,
+ 				be->max_categories, sizeof(struct slc_lr_v2_rcp_s)))
+ 			return -1;
+ 
+@@ -48,7 +48,7 @@ void hw_mod_slc_lr_free(struct flow_api_backend_s *be)
+ int hw_mod_slc_lr_reset(struct flow_api_backend_s *be)
+ {
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->slc_lr));
++	nthw_zero_module_cache((struct common_func_s *)(&be->slc_lr));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT SLC LR RCP");
+ 	return hw_mod_slc_lr_rcp_flush(be, 0, be->max_categories);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
+index 0df5b9cf00..b2915efce5 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
+@@ -69,7 +69,7 @@ int hw_mod_tpe_alloc(struct flow_api_backend_s *be)
+ 
+ 	switch (_VER_) {
+ 	case 3:
+-		if (!callocate_mod((struct common_func_s *)&be->tpe, 11, &be->tpe.v3.rpp_rcp,
++		if (!nthw_callocate_mod((struct common_func_s *)&be->tpe, 11, &be->tpe.v3.rpp_rcp,
+ 				be->tpe.nb_rcp_categories, sizeof(struct tpe_v1_rpp_v0_rcp_s),
+ 				&be->tpe.v3.rpp_ifr_rcp, be->tpe.nb_ifr_categories,
+ 				sizeof(struct tpe_v2_rpp_v1_ifr_rcp_s), &be->tpe.v3.ifr_rcp,
+@@ -120,7 +120,7 @@ int hw_mod_tpe_reset(struct flow_api_backend_s *be)
+ 	int err = 0;
+ 
+ 	/* Zero entire cache area */
+-	zero_module_cache((struct common_func_s *)(&be->tpe));
++	nthw_zero_module_cache((struct common_func_s *)(&be->tpe));
+ 
+ 	NT_LOG(DBG, FILTER, "INIT TPE");
+ 	err |= hw_mod_tpe_rpp_rcp_flush(be, 0, ALL_ENTRIES);
 diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
-index 7c825009ad..3e00a78277 100644
+index 3e00a78277..42da580235 100644
 --- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
 +++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2024 Napatech A/S
-  */
+@@ -70,7 +70,7 @@ static void flm_inf_sta_queue_free(uint8_t port, uint8_t caller)
+ 	rte_ring_free(q);
+ }
  
--#include <assert.h>
- #include <stdlib.h>
- #include <string.h>
+-void flm_inf_sta_queue_free_all(uint8_t caller)
++void nthw_flm_inf_sta_queue_free_all(uint8_t caller)
+ {
+ 	int count = 0;
  
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
-index 992b1659a8..f6cc09de9b 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2024 Napatech A/S
-  */
- 
--#include <assert.h>
- #include <stdlib.h>
- #include <string.h>
- 
-@@ -25,7 +24,7 @@ void *flm_lrn_queue_create(void)
- 		QUEUE_SIZE,
- 		SOCKET_ID_ANY,
- 		RING_F_MP_HTS_ENQ | RING_F_SC_DEQ);
--	assert(q != NULL);
-+	RTE_ASSERT(q != NULL);
+@@ -212,7 +212,7 @@ static struct rte_ring *flm_evt_queue_create(uint8_t port, uint8_t caller)
  	return q;
  }
  
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 2cd2eab5cb..1e2836de68 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -386,7 +386,7 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
- static void flm_setup_queues(void)
+-int flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj)
++int nthw_flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj)
  {
- 	flm_lrn_queue_arr = flm_lrn_queue_create();
--	assert(flm_lrn_queue_arr != NULL);
-+	RTE_ASSERT(flm_lrn_queue_arr != NULL);
+ 	struct rte_ring **stat_q = remote ? stat_q_remote : stat_q_local;
+ 
+@@ -232,7 +232,7 @@ int flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj)
+ 	return 0;
  }
  
- static void flm_free_queues(void)
-@@ -774,7 +774,7 @@ struct flm_flow_key_def_s {
- static inline void set_key_def_qw(struct flm_flow_key_def_s *key_def, unsigned int qw,
- 	unsigned int dyn, unsigned int ofs)
+-void flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj)
++void nthw_flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj)
  {
--	assert(qw < 2);
-+	RTE_ASSERT(qw < 2);
+ 	int ret;
  
- 	if (qw == 0) {
- 		key_def->qw0_dyn = dyn & 0x7f;
-@@ -789,7 +789,7 @@ static inline void set_key_def_qw(struct flm_flow_key_def_s *key_def, unsigned i
- static inline void set_key_def_sw(struct flm_flow_key_def_s *key_def, unsigned int sw,
- 	unsigned int dyn, unsigned int ofs)
+@@ -253,7 +253,7 @@ void flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj)
+ 	}
+ }
+ 
+-int flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj)
++int nthw_flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj)
  {
--	assert(sw < 2);
-+	RTE_ASSERT(sw < 2);
+ 	int ret;
  
- 	if (sw == 0) {
- 		key_def->sw8_dyn = dyn & 0x7f;
-@@ -3188,7 +3188,7 @@ static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_d
- 		qsl_data->drop = 1;
+@@ -269,7 +269,7 @@ int flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj)
  
- 	} else {
--		assert(fd->dst_num_avail < HW_DB_INLINE_MAX_QST_PER_QSL);
-+		RTE_ASSERT(fd->dst_num_avail < HW_DB_INLINE_MAX_QST_PER_QSL);
+ 			if (flm_evt_queue_create(port, FLM_INFO_LOCAL) != NULL) {
+ 				/* Recursive call to get data */
+-				return flm_inf_queue_get(port, remote, obj);
++				return nthw_flm_inf_queue_get(port, remote, obj);
+ 			}
+ 		}
  
- 		uint32_t ports[fd->dst_num_avail];
- 		uint32_t queues[fd->dst_num_avail];
-@@ -3314,7 +3314,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+@@ -283,7 +283,7 @@ int flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj)
  
- 	/* Setup TPE EXT */
- 	if (fd->tun_hdr.len > 0) {
--		assert(fd->tun_hdr.len <= HW_DB_INLINE_MAX_ENCAP_SIZE);
-+		RTE_ASSERT(fd->tun_hdr.len <= HW_DB_INLINE_MAX_ENCAP_SIZE);
- 
- 		struct hw_db_inline_tpe_ext_data tpe_ext_data = {
- 			.size = fd->tun_hdr.len,
-@@ -3339,7 +3339,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 		if (flm_evt_queue_create(port, FLM_INFO_REMOTE) != NULL) {
+ 			/* Recursive call to get data */
+-			return flm_inf_queue_get(port, remote, obj);
++			return nthw_flm_inf_queue_get(port, remote, obj);
+ 		}
  	}
  
- 	/* Setup TPE */
--	assert(fd->modify_field_count <= 6);
-+	RTE_ASSERT(fd->modify_field_count <= 6);
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
+index ee8175cf25..1be02c6750 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
+@@ -47,9 +47,9 @@ enum {
+ #define FLM_EVT_ELEM_SIZE sizeof(struct flm_info_event_s)
+ #define FLM_STAT_ELEM_SIZE sizeof(struct flm_status_event_s)
  
- 	struct hw_db_inline_tpe_data tpe_data = {
- 		.insert_len = fd->tun_hdr.len,
-@@ -3882,7 +3882,7 @@ int initialize_flow_management_of_ndev_profile_inline(struct flow_nic_dev *ndev)
- {
- 	if (!ndev->flow_mgnt_prepared) {
- 		/* Check static arrays are big enough */
--		assert(ndev->be.tpe.nb_cpy_writers <= MAX_CPY_WRITERS_SUPPORTED);
-+		RTE_ASSERT(ndev->be.tpe.nb_cpy_writers <= MAX_CPY_WRITERS_SUPPORTED);
- 		/* KM Flow Type 0 is reserved */
- 		flow_nic_mark_resource_used(ndev, RES_KM_FLOW_TYPE, 0);
- 		flow_nic_mark_resource_used(ndev, RES_KM_CATEGORY, 0);
-@@ -4250,8 +4250,8 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
- 	struct flow_handle *fh,
- 	struct rte_flow_error *error)
- {
--	assert(dev);
--	assert(fh);
-+	RTE_ASSERT(dev);
-+	RTE_ASSERT(fh);
+-void flm_inf_sta_queue_free_all(uint8_t caller);
+-void flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj);
+-int flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj);
+-int flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj);
++void nthw_flm_inf_sta_queue_free_all(uint8_t caller);
++void nthw_flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj);
++int nthw_flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj);
++int nthw_flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj);
+ 
+ #endif	/* _FLM_EVT_QUEUE_H_ */
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+index 278be8b180..a016c82458 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+@@ -431,7 +431,7 @@ void hw_db_inline_dump(struct flow_nic_dev *ndev, void *db_handle, const struct
+ 
+ 			if (data->jump) {
+ 				uint32_t group_orig = 0;
+-				if (flow_group_translate_get_orig_group(ndev->group_handle,
++				if (nthw_flow_group_translate_get_orig_group(ndev->group_handle,
+ 					data->jump, &group_orig) < 0)
+ 					fprintf(file, "    Jumps to %d (encoded)\n", data->jump);
+ 				else
+@@ -447,7 +447,7 @@ void hw_db_inline_dump(struct flow_nic_dev *ndev, void *db_handle, const struct
+ 
+ 			if (data->contains_jump) {
+ 				uint32_t group_orig = 0;
+-				if (flow_group_translate_get_orig_group(ndev->group_handle,
++				if (nthw_flow_group_translate_get_orig_group(ndev->group_handle,
+ 					data->jump, &group_orig) < 0)
+ 					fprintf(file, "    Jumps to %d (encoded)\n", data->jump);
+ 
+@@ -1795,7 +1795,7 @@ struct hw_db_qsl_idx hw_db_inline_qsl_add(struct flow_nic_dev *ndev, void *db_ha
+ 		}
+ 	}
+ 
+-	res = flow_nic_alloc_resource(ndev, RES_QSL_RCP, 1);
++	res = nthw_flow_nic_alloc_resource(ndev, RES_QSL_RCP, 1);
+ 
+ 	if (res < 0) {
+ 		qsl_idx.error = 1;
+@@ -1805,10 +1805,10 @@ struct hw_db_qsl_idx hw_db_inline_qsl_add(struct flow_nic_dev *ndev, void *db_ha
+ 	qsl_idx.ids = res & 0xff;
+ 
+ 	if (data->table_size > 0) {
+-		res = flow_nic_alloc_resource_config(ndev, RES_QSL_QST, data->table_size, 1);
++		res = nthw_flow_nic_alloc_resource_config(ndev, RES_QSL_QST, data->table_size, 1);
+ 
+ 		if (res < 0) {
+-			flow_nic_deref_resource(ndev, RES_QSL_RCP, qsl_idx.ids);
++			nthw_flow_nic_deref_resource(ndev, RES_QSL_RCP, qsl_idx.ids);
+ 			qsl_idx.error = 1;
+ 			return qsl_idx;
+ 		}
+@@ -1870,7 +1870,7 @@ void hw_db_inline_qsl_ref(struct flow_nic_dev *ndev, void *db_handle, struct hw_
+ 	(void)db_handle;
+ 
+ 	if (!idx.error && idx.ids != 0)
+-		flow_nic_ref_resource(ndev, RES_QSL_RCP, idx.ids);
++		nthw_flow_nic_ref_resource(ndev, RES_QSL_RCP, idx.ids);
+ }
+ 
+ void hw_db_inline_qsl_deref(struct flow_nic_dev *ndev, void *db_handle, struct hw_db_qsl_idx idx)
+@@ -1880,7 +1880,7 @@ void hw_db_inline_qsl_deref(struct flow_nic_dev *ndev, void *db_handle, struct h
+ 	if (idx.error || idx.ids == 0)
+ 		return;
+ 
+-	if (flow_nic_deref_resource(ndev, RES_QSL_RCP, idx.ids) == 0) {
++	if (nthw_flow_nic_deref_resource(ndev, RES_QSL_RCP, idx.ids) == 0) {
+ 		const int table_size = (int)db->qsl[idx.ids].data.table_size;
+ 
+ 		hw_mod_qsl_rcp_set(&ndev->be, HW_QSL_RCP_PRESET_ALL, idx.ids, 0x0);
+@@ -1892,7 +1892,7 @@ void hw_db_inline_qsl_deref(struct flow_nic_dev *ndev, void *db_handle, struct h
+ 			for (int i = 0; i < (int)table_size; ++i) {
+ 				hw_mod_qsl_qst_set(&ndev->be, HW_QSL_QST_PRESET_ALL,
+ 					table_start + i, 0x0);
+-				flow_nic_free_resource(ndev, RES_QSL_QST, table_start + i);
++				nthw_flow_nic_free_resource(ndev, RES_QSL_QST, table_start + i);
+ 			}
+ 
+ 			hw_mod_qsl_qst_flush(&ndev->be, table_start, table_size);
+@@ -2245,7 +2245,7 @@ struct hw_db_tpe_ext_idx hw_db_inline_tpe_ext_add(struct flow_nic_dev *ndev, voi
+ 		return idx;
+ 	}
+ 
+-	rpl_rpl_index = flow_nic_alloc_resource_config(ndev, RES_TPE_RPL, rpl_rpl_length, 1);
++	rpl_rpl_index = nthw_flow_nic_alloc_resource_config(ndev, RES_TPE_RPL, rpl_rpl_length, 1);
+ 
+ 	if (rpl_rpl_index < 0) {
+ 		idx.error = 1;
+@@ -2303,7 +2303,7 @@ void hw_db_inline_tpe_ext_deref(struct flow_nic_dev *ndev, void *db_handle,
+ 			uint32_t rpl_zero[] = { 0, 0, 0, 0 };
+ 			hw_mod_tpe_rpl_rpl_set(&ndev->be, HW_TPE_RPL_RPL_VALUE, rpl_rpl_index + i,
+ 				rpl_zero);
+-			flow_nic_free_resource(ndev, RES_TPE_RPL, rpl_rpl_index + i);
++			nthw_flow_nic_free_resource(ndev, RES_TPE_RPL, rpl_rpl_index + i);
+ 		}
+ 
+ 		hw_mod_tpe_rpl_rpl_flush(&ndev->be, rpl_rpl_index, rpl_rpl_length);
+@@ -2900,7 +2900,7 @@ void hw_db_inline_hsh_deref(struct flow_nic_dev *ndev, void *db_handle, struct h
+ 			hw_mod_hsh_rcp_flush(&ndev->be, idx.ids, 1);
+ 
+ 			memset(&db->hsh[idx.ids].data, 0x0, sizeof(struct hw_db_inline_hsh_data));
+-			flow_nic_free_resource(ndev, RES_HSH_RCP, idx.ids);
++			nthw_flow_nic_free_resource(ndev, RES_HSH_RCP, idx.ids);
+ 		}
+ 
+ 		db->hsh[idx.ids].ref = 0;
+@@ -3003,7 +3003,7 @@ void hw_db_inline_scrub_deref(struct flow_nic_dev *ndev, void *db_handle,
+ 
+ 			memset(&db->scrub[idx.ids].data, 0x0,
+ 				sizeof(struct hw_db_inline_scrub_data));
+-			flow_nic_free_resource(ndev, RES_SCRUB_RCP, idx.ids);
++			nthw_flow_nic_free_resource(ndev, RES_SCRUB_RCP, idx.ids);
+ 		}
+ 
+ 		db->scrub[idx.ids].ref = 0;
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 1e2836de68..6824b35463 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -466,7 +466,7 @@ static void flm_mtr_read_inf_records(struct flow_eth_dev *dev, uint32_t *data, u
+ 					stat_data.id = mtr_id;
+ 					stat_data.timestamp = inf_data->ts;
+ 					stat_data.cause = inf_data->cause;
+-					flm_inf_queue_put(port, remote_caller, &stat_data);
++					nthw_flm_inf_queue_put(port, remote_caller, &stat_data);
+ 				}
+ 			}
+ 
+@@ -527,7 +527,7 @@ static void flm_mtr_read_sta_records(struct flow_eth_dev *dev, uint32_t *data, u
+ 				.learn_failed = sta_data->lfs,
+ 			};
+ 
+-			flm_sta_queue_put(port, remote_caller, &data);
++			nthw_flm_sta_queue_put(port, remote_caller, &data);
+ 		}
+ 	}
+ }
+@@ -1075,7 +1075,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 	*num_queues = 0;
+ 
+ 	if (action == NULL) {
+-		flow_nic_set_error(ERR_FAILED, error);
++		nthw_flow_nic_set_error(ERR_FAILED, error);
+ 		NT_LOG(ERR, FILTER, "Flow actions missing");
+ 		return -1;
+ 	}
+@@ -1100,7 +1100,8 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 				if (*num_dest_port > 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Multiple port_id actions for one flow is not supported");
+-					flow_nic_set_error(ERR_ACTION_MULTIPLE_PORT_ID_UNSUPPORTED,
++					nthw_flow_nic_set_error(
++						ERR_ACTION_MULTIPLE_PORT_ID_UNSUPPORTED,
+ 						error);
+ 					return -1;
+ 				}
+@@ -1109,13 +1110,13 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 
+ 				if (fd->dst_num_avail == MAX_OUTPUT_DEST) {
+ 					NT_LOG(ERR, FILTER, "Too many output destinations");
+-					flow_nic_set_error(ERR_OUTPUT_TOO_MANY, error);
++					nthw_flow_nic_set_error(ERR_OUTPUT_TOO_MANY, error);
+ 					return -1;
+ 				}
+ 
+ 				if (port >= dev->ndev->be.num_phy_ports) {
+ 					NT_LOG(ERR, FILTER, "Phy port out of range");
+-					flow_nic_set_error(ERR_OUTPUT_INVALID, error);
++					nthw_flow_nic_set_error(ERR_OUTPUT_INVALID, error);
+ 					return -1;
+ 				}
+ 
+@@ -1181,7 +1182,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: RSS hash key length %u exceeds maximum value %u",
+ 						rss->key_len, MAX_RSS_KEY_LEN);
+-					flow_nic_set_error(ERR_RSS_TOO_LONG_KEY, error);
++					nthw_flow_nic_set_error(ERR_RSS_TOO_LONG_KEY, error);
+ 					return -1;
+ 				}
+ 
+@@ -1269,7 +1270,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - Number of METER actions exceeds %d.",
+ 						MAX_FLM_MTRS_SUPPORTED);
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1293,7 +1294,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 				if (encap_decap_order != 1) {
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - RAW_ENCAP must follow RAW_DECAP.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1301,7 +1302,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					encap->item_count < 2) {
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - RAW_ENCAP data/size invalid.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1396,7 +1397,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - Encapsulation with %d vlans not supported.",
+ 						(int)fd->tun_hdr.nb_vlans);
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1425,14 +1426,14 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 				if (encap_decap_order != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - RAW_ENCAP must follow RAW_DECAP.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+ 				if (decap->item_count < 2) {
+ 					NT_LOG(ERR, FILTER,
+ 						"ERROR: - RAW_DECAP must decap something.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1489,14 +1490,14 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 				if (modify_field->src.field != RTE_FLOW_FIELD_VALUE) {
+ 					NT_LOG(ERR, FILTER,
+ 						"MODIFY_FIELD only src type VALUE is supported.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+ 				if (modify_field->dst.level > 2) {
+ 					NT_LOG(ERR, FILTER,
+ 						"MODIFY_FIELD only dst level 0, 1, and 2 is supported.");
+-					flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++					nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1505,14 +1506,16 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					if (modify_field->operation != RTE_FLOW_MODIFY_SUB) {
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD only operation SUB is supported for TTL/HOPLIMIT.");
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+ 					if (fd->ttl_sub_enable) {
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD TTL/HOPLIMIT resource already in use.");
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+@@ -1527,7 +1530,8 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					if (modify_field->operation != RTE_FLOW_MODIFY_SET) {
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD only operation SET is supported in general.");
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+@@ -1536,7 +1540,8 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD exceeded maximum of %u MODIFY_FIELD actions.",
+ 							dev->ndev->be.tpe.nb_cpy_writers);
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+@@ -1626,7 +1631,8 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					default:
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD dst type is not supported.");
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+@@ -1636,7 +1642,8 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 					if (modify_field_use_flag & modify_field_use_flags) {
+ 						NT_LOG(ERR, FILTER,
+ 							"MODIFY_FIELD dst type hardware resource already used.");
+-						flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++						nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED,
++							error);
+ 						return -1;
+ 					}
+ 
+@@ -1675,7 +1682,7 @@ static int interpret_flow_actions(const struct flow_eth_dev *dev,
+ 		default:
+ 			NT_LOG(ERR, FILTER, "Invalid or unsupported flow action received - %i",
+ 				action[aidx].type);
+-			flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
++			nthw_flow_nic_set_error(ERR_ACTION_UNSUPPORTED, error);
+ 			return -1;
+ 		}
+ 	}
+@@ -1710,7 +1717,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 	memset(key_def, 0x0, sizeof(struct flm_flow_key_def_s));
+ 
+ 	if (elem == NULL) {
+-		flow_nic_set_error(ERR_FAILED, error);
++		nthw_flow_nic_set_error(ERR_FAILED, error);
+ 		NT_LOG(ERR, FILTER, "Flow items missing");
+ 		return -1;
+ 	}
+@@ -1774,7 +1781,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 
+ 	if (qw_free < 0) {
+ 		NT_LOG(ERR, FILTER, "Key size too big. Out of QW resources.");
+-		flow_nic_set_error(ERR_FAILED, error);
++		nthw_flow_nic_set_error(ERR_FAILED, error);
+ 		return -1;
+ 	}
+ 
+@@ -1798,7 +1805,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				if (any_count > 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Tunneled L2 ethernet not supported");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -1815,7 +1822,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (qw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -1884,7 +1891,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (sw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -1925,7 +1932,8 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				if (implicit_vlan_vid > 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Multiple VLANs not supported for implicit VLAN patterns.");
+-					flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM,
++					nthw_flow_nic_set_error(
++						ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM,
+ 						error);
+ 					return -1;
+ 				}
+@@ -1977,7 +1985,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				} else {
+ 					NT_LOG(ERR, FILTER,
+ 						"Key size too big. Out of SW-QW resources.");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2014,7 +2022,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					ipv4_mask->hdr.hdr_checksum != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested IPv4 field not support by running SW version.");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2041,7 +2049,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (qw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of QW resources.");
+-						flow_nic_set_error(ERR_FAILED,
++						nthw_flow_nic_set_error(ERR_FAILED,
+ 							error);
+ 						return -1;
+ 					}
+@@ -2080,7 +2088,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (sw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -2101,7 +2109,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (sw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -2122,7 +2130,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (sw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -2171,7 +2179,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					ipv6_mask->hdr.hop_limits != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested IPv6 field not support by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2179,7 +2187,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (qw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -2215,7 +2223,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					if (qw_counter >= 2) {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 
+@@ -2292,7 +2300,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2330,7 +2338,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					udp_mask->hdr.dgram_cksum != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested UDP field not support by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2384,7 +2392,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2424,7 +2432,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				if (sctp_mask->hdr.tag != 0 || sctp_mask->hdr.cksum != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested SCTP field not support by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2478,7 +2486,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2522,7 +2530,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					icmp_mask->hdr.icmp_seq_nb != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested ICMP field not supported by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2577,7 +2585,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2621,7 +2629,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				if (icmp_mask->checksum != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested ICMP6 field not supported by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2676,7 +2684,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2724,7 +2732,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					tcp_mask->hdr.tcp_urp != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested TCP field not support by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2778,7 +2786,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2813,7 +2821,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					gtp_mask->msg_type != 0 || gtp_mask->plen != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested GTP field not support by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2869,7 +2877,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2897,7 +2905,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					gtp_psc_mask->ext_hdr_len != 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Requested GTP PSC field is not supported by running SW version");
+-					flow_nic_set_error(ERR_FAILED, error);
++					nthw_flow_nic_set_error(ERR_FAILED, error);
+ 					return -1;
+ 				}
+ 
+@@ -2953,7 +2961,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					} else {
+ 						NT_LOG(ERR, FILTER,
+ 							"Key size too big. Out of SW-QW resources.");
+-						flow_nic_set_error(ERR_FAILED, error);
++						nthw_flow_nic_set_error(ERR_FAILED, error);
+ 						return -1;
+ 					}
+ 				}
+@@ -2982,7 +2990,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 		default:
+ 			NT_LOG(ERR, FILTER, "Invalid or unsupported flow request: %d",
+ 				(int)elem[eidx].type);
+-			flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
++			nthw_flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
+ 			return -1;
+ 		}
+ 	}
+@@ -3266,7 +3274,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (cot_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference COT resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3277,7 +3285,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (qsl_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference QSL resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3288,7 +3296,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (hsh_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference HSH resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3307,7 +3315,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 		if (slc_lr_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference SLC LR resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			return -1;
+ 		}
+ 	}
+@@ -3330,7 +3338,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 		if (tpe_ext_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference TPE EXT resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			return -1;
+ 		}
+ 
+@@ -3394,7 +3402,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (tpe_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference TPE resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3406,7 +3414,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (scrub_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference FLM SCRUB resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3429,7 +3437,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (action_set_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference Action Set resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3446,7 +3454,7 @@ static int setup_flow_flm_actions(struct flow_eth_dev *dev,
+ 
+ 	if (flm_ft_idx.error) {
+ 		NT_LOG(ERR, FILTER, "Could not reference FLM FT resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		return -1;
+ 	}
+ 
+@@ -3517,7 +3525,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (flm_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference FLM RPC resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3535,7 +3543,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 		/* Program flow */
+ 		if (convert_fh_to_fh_flm(fh, packet_data, flm_idx.id1 + 2, flm_ft, flm_rpl_ext_ptr,
+ 				flm_scrub, attr->priority & 0x3) != 0) {
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 		flm_flow_programming(fh, NT_FLM_OP_LEARN);
+@@ -3553,7 +3561,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 		/* SCRUB/AGE action is not supported for group 0 */
+ 		if (fd->age.timeout != 0 || fd->age.context != NULL) {
+ 			NT_LOG(ERR, FILTER, "Action AGE is not supported for flow in group 0");
+-			flow_nic_set_error(ERR_ACTION_AGE_UNSUPPORTED_GROUP_0, error);
++			nthw_flow_nic_set_error(ERR_ACTION_AGE_UNSUPPORTED_GROUP_0, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3575,7 +3583,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 			/* Group 0 supports only modify action for TTL/Hop limit. */
+ 			if (fd->modify_field_count > 0) {
+ 				NT_LOG(ERR, FILTER, "Unsupported MODIFY ACTION for group 0");
+-				flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++				nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3592,7 +3600,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 			if (cot_idx.error) {
+ 				NT_LOG(ERR, FILTER, "Could not reference COT resource");
+-				flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++				nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3605,7 +3613,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 			if (qsl_idx.error) {
+ 				NT_LOG(ERR, FILTER, "Could not reference QSL resource");
+-				flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++				nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3618,7 +3626,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 			if (hsh_idx.error) {
+ 				NT_LOG(ERR, FILTER, "Could not reference HSH resource");
+-				flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++				nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3641,7 +3649,8 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 				if (tpe_idx.error) {
+ 					NT_LOG(ERR, FILTER, "Could not reference TPE resource");
+-					flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++					nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION,
++						error);
+ 					goto error_out;
+ 				}
+ 			}
+@@ -3655,7 +3664,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (action_set_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference Action Set resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3686,7 +3695,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (cat_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference CAT resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3698,7 +3707,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 			if (km_key_create(&fd->km, fh->port_id)) {
+ 				NT_LOG(ERR, FILTER, "KM creation failed");
+-				flow_nic_set_error(ERR_MATCH_FAILED_BY_HW_LIMITS, error);
++				nthw_flow_nic_set_error(ERR_MATCH_FAILED_BY_HW_LIMITS, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3738,23 +3747,26 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 					found_flow->flm_db_idx_counter);
+ 
+ 				if (other_km_rcp_data == NULL ||
+-					flow_nic_ref_resource(dev->ndev, RES_KM_CATEGORY,
++					nthw_flow_nic_ref_resource(dev->ndev, RES_KM_CATEGORY,
+ 					other_km_rcp_data->rcp)) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Could not reference existing KM RCP resource");
+-					flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++					nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION,
++						error);
+ 					goto error_out;
+ 				}
+ 
+ 				km_rcp_data.rcp = other_km_rcp_data->rcp;
+ 			} else {
+ 				/* Alloc new KM RCP */
+-				int rcp = flow_nic_alloc_resource(dev->ndev, RES_KM_CATEGORY, 1);
++				int rcp = nthw_flow_nic_alloc_resource(dev->ndev,
++					RES_KM_CATEGORY, 1);
+ 
+ 				if (rcp < 0) {
+ 					NT_LOG(ERR, FILTER,
+ 						"Could not reference KM RCP resource (flow_nic_alloc)");
+-					flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++					nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION,
++						error);
+ 					goto error_out;
+ 				}
+ 
+@@ -3770,7 +3782,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (km_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference KM RCP resource (db_inline)");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3786,7 +3798,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (km_ft_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference KM FT resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3795,7 +3807,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 			if (identical_km_entry_ft >= 0 && identical_km_entry_ft != km_ft_idx.id1) {
+ 				NT_LOG(ERR, FILTER,
+ 					"Identical KM matches cannot have different KM FTs");
+-				flow_nic_set_error(ERR_MATCH_FAILED_BY_HW_LIMITS, error);
++				nthw_flow_nic_set_error(ERR_MATCH_FAILED_BY_HW_LIMITS, error);
+ 				goto error_out;
+ 			}
+ 
+@@ -3831,7 +3843,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (match_set_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference Match Set resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -3848,7 +3860,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 
+ 		if (flm_ft_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference FLM FT resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -4054,7 +4066,7 @@ int initialize_flow_management_of_ndev_profile_inline(struct flow_nic_dev *ndev)
+ 		flm_shared_stats->size = FLM_MTR_STAT_SIZE;
+ 		flm_shared_stats->shared = UINT8_MAX;
+ 
+-		if (flow_group_handle_create(&ndev->group_handle, ndev->be.flm.nb_categories))
++		if (nthw_flow_group_handle_create(&ndev->group_handle, ndev->be.flm.nb_categories))
+ 			goto err_exit0;
+ 
+ 		if (hw_db_inline_create(ndev, &ndev->hw_db_handle))
+@@ -4079,14 +4091,14 @@ int done_flow_management_of_ndev_profile_inline(struct flow_nic_dev *ndev)
+ 	if (ndev->flow_mgnt_prepared) {
+ 		flm_sdram_reset(ndev, 0);
+ 
+-		flow_nic_free_resource(ndev, RES_KM_FLOW_TYPE, 0);
+-		flow_nic_free_resource(ndev, RES_KM_CATEGORY, 0);
++		nthw_flow_nic_free_resource(ndev, RES_KM_FLOW_TYPE, 0);
++		nthw_flow_nic_free_resource(ndev, RES_KM_CATEGORY, 0);
+ 
+ 		hw_mod_flm_rcp_set(&ndev->be, HW_FLM_RCP_PRESET_ALL, 0, 0);
+ 		hw_mod_flm_rcp_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_FLM_FLOW_TYPE, 0);
+-		flow_nic_free_resource(ndev, RES_FLM_FLOW_TYPE, 1);
+-		flow_nic_free_resource(ndev, RES_FLM_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_FLM_FLOW_TYPE, 0);
++		nthw_flow_nic_free_resource(ndev, RES_FLM_FLOW_TYPE, 1);
++		nthw_flow_nic_free_resource(ndev, RES_FLM_RCP, 0);
+ 
+ 		for (uint32_t i = 0; i < UINT8_MAX; ++i) {
+ 			struct flm_flow_mtr_handle_s *handle = ndev->flm_mtr_handle;
+@@ -4100,39 +4112,39 @@ int done_flow_management_of_ndev_profile_inline(struct flow_nic_dev *ndev)
+ 
+ 		free(ndev->flm_mtr_handle);
+ 
+-		flow_group_handle_destroy(&ndev->group_handle);
++		nthw_flow_group_handle_destroy(&ndev->group_handle);
+ 		ntnic_id_table_destroy(ndev->id_table_handle);
+ 
+ 		hw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PRESET_ALL, 0, 0, 0);
+ 		hw_mod_cat_cfn_flush(&ndev->be, 0, 1);
+ 		hw_mod_cat_cot_set(&ndev->be, HW_CAT_COT_PRESET_ALL, 0, 0);
+ 		hw_mod_cat_cot_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_CAT_CFN, 0);
++		nthw_flow_nic_free_resource(ndev, RES_CAT_CFN, 0);
+ 
+ 		hw_mod_qsl_rcp_set(&ndev->be, HW_QSL_RCP_PRESET_ALL, 0, 0);
+ 		hw_mod_qsl_rcp_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_QSL_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_QSL_RCP, 0);
+ 
+ 		hw_mod_slc_lr_rcp_set(&ndev->be, HW_SLC_LR_RCP_PRESET_ALL, 0, 0);
+ 		hw_mod_slc_lr_rcp_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_SLC_LR_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_SLC_LR_RCP, 0);
+ 
+ 		hw_mod_tpe_reset(&ndev->be);
+-		flow_nic_free_resource(ndev, RES_TPE_RCP, 0);
+-		flow_nic_free_resource(ndev, RES_TPE_EXT, 0);
+-		flow_nic_free_resource(ndev, RES_TPE_RPL, 0);
++		nthw_flow_nic_free_resource(ndev, RES_TPE_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_TPE_EXT, 0);
++		nthw_flow_nic_free_resource(ndev, RES_TPE_RPL, 0);
+ 
+ 		hw_mod_pdb_rcp_set(&ndev->be, HW_PDB_RCP_PRESET_ALL, 0, 0);
+ 		hw_mod_pdb_rcp_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_PDB_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_PDB_RCP, 0);
+ 
+ 		hw_mod_hsh_rcp_set(&ndev->be, HW_HSH_RCP_PRESET_ALL, 0, 0, 0);
+ 		hw_mod_hsh_rcp_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_HSH_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_HSH_RCP, 0);
+ 
+ 		hw_mod_flm_scrub_set(&ndev->be, HW_FLM_SCRUB_PRESET_ALL, 0, 0);
+ 		hw_mod_flm_scrub_flush(&ndev->be, 0, 1);
+-		flow_nic_free_resource(ndev, RES_SCRUB_RCP, 0);
++		nthw_flow_nic_free_resource(ndev, RES_SCRUB_RCP, 0);
+ 
+ 		hw_db_inline_destroy(ndev->hw_db_handle);
+ 
+@@ -4173,7 +4185,7 @@ struct flow_handle *flow_create_profile_inline(struct flow_eth_dev *dev __rte_un
+ 	if (attr_local.group > 0)
+ 		forced_vlan_vid_local = 0;
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	struct nic_flow_def *fd = allocate_nic_flow_def();
+ 
+@@ -4195,18 +4207,18 @@ struct flow_handle *flow_create_profile_inline(struct flow_eth_dev *dev __rte_un
+ 
+ 	/* Translate group IDs */
+ 	if (fd->jump_to_group != UINT32_MAX &&
+-		flow_group_translate_get(dev->ndev->group_handle, caller_id_local, dev->port,
++		nthw_flow_group_translate_get(dev->ndev->group_handle, caller_id_local, dev->port,
+ 		fd->jump_to_group, &fd->jump_to_group)) {
+ 		NT_LOG(ERR, FILTER, "ERROR: Could not get group resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		goto err_exit;
+ 	}
+ 
+ 	if (attr_local.group > 0 &&
+-		flow_group_translate_get(dev->ndev->group_handle, caller_id_local, dev->port,
++		nthw_flow_group_translate_get(dev->ndev->group_handle, caller_id_local, dev->port,
+ 		attr_local.group, &attr_local.group)) {
+ 		NT_LOG(ERR, FILTER, "ERROR: Could not get group resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		goto err_exit;
+ 	}
+ 
+@@ -4255,7 +4267,7 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
  
  	int err = 0;
  
-@@ -4386,8 +4386,8 @@ int flow_actions_update_profile_inline(struct flow_eth_dev *dev,
- 	const struct rte_flow_action action[],
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	/* take flow out of ndev list - may not have been put there yet */
+ 	if (fh->type == FLOW_HANDLE_TYPE_FLM)
+@@ -4289,7 +4301,7 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
+ 				fh->flm_db_idx_counter);
+ 
+ 			if (other_km_rcp_data != NULL &&
+-				flow_nic_deref_resource(dev->ndev, RES_KM_CATEGORY,
++				nthw_flow_nic_deref_resource(dev->ndev, RES_KM_CATEGORY,
+ 				(int)other_km_rcp_data->rcp) == 0) {
+ 				hw_mod_km_rcp_set(&dev->ndev->be, HW_KM_RCP_PRESET_ALL,
+ 					(int)other_km_rcp_data->rcp, 0, 0);
+@@ -4306,7 +4318,7 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
+ 
+ 	if (err) {
+ 		NT_LOG(ERR, FILTER, "FAILED removing flow: %p", fh);
+-		flow_nic_set_error(ERR_REMOVE_FLOW_FAILED, error);
++		nthw_flow_nic_set_error(ERR_REMOVE_FLOW_FAILED, error);
+ 	}
+ 
+ 	free(fh);
+@@ -4327,7 +4339,7 @@ int flow_destroy_profile_inline(struct flow_eth_dev *dev, struct flow_handle *fl
+ 	if (flow && flow->type == FLOW_HANDLE_TYPE_FLM && flow->flm_async)
+ 		return flow_async_destroy_profile_inline(dev, 0, NULL, flow, NULL, error);
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	if (flow) {
+ 		/* Delete this flow */
+@@ -4345,7 +4357,7 @@ int flow_flush_profile_inline(struct flow_eth_dev *dev,
+ {
+ 	int err = 0;
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	/*
+ 	 * Delete all created FLM flows from this eth device.
+@@ -4394,12 +4406,12 @@ int flow_actions_update_profile_inline(struct flow_eth_dev *dev,
+ 
+ 	int group = (int)flow->flm_kid - 2;
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	if (flow->type != FLOW_HANDLE_TYPE_FLM) {
+ 		NT_LOG(ERR, FILTER,
+ 			"Flow actions update not supported for group 0 or default flows");
+-		flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
++		nthw_flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
+ 		return -1;
+ 	}
+ 
+@@ -4447,7 +4459,7 @@ int flow_actions_update_profile_inline(struct flow_eth_dev *dev,
+ 
+ 		if (flm_data == NULL) {
+ 			NT_LOG(ERR, FILTER, "Could not retrieve FLM RPC resource");
+-			flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
++			nthw_flow_nic_set_error(ERR_MATCH_INVALID_OR_UNSUPPORTED_ELEM, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -4458,7 +4470,7 @@ int flow_actions_update_profile_inline(struct flow_eth_dev *dev,
+ 
+ 		if (flm_idx.error) {
+ 			NT_LOG(ERR, FILTER, "Could not reference FLM RPC resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			goto error_out;
+ 		}
+ 
+@@ -4559,7 +4571,7 @@ int flow_get_aged_flows_profile_inline(struct flow_eth_dev *dev,
  	struct rte_flow_error *error)
  {
--	assert(dev);
--	assert(flow);
-+	RTE_ASSERT(dev);
-+	RTE_ASSERT(flow);
+ 	(void)dev;
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- 	uint32_t num_dest_port = 0;
- 	uint32_t num_queues = 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_cat.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_cat.c
-index d3213593e1..23139b0305 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_cat.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_cat.c
-@@ -41,7 +41,7 @@ int cat_nthw_init(struct cat_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_CAT, n_instance);
+ 	unsigned int queue_size = flm_age_queue_get_size(caller_id);
  
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -401,43 +401,43 @@ void cat_nthw_cfn_ptc_tnl_l4(const struct cat_nthw *p, uint32_t val)
- 
- void cat_nthw_cfn_ptc_cfp(const struct cat_nthw *p, uint32_t val)
+@@ -4607,7 +4619,7 @@ int flow_dev_dump_profile_inline(struct flow_eth_dev *dev,
+ 	FILE *file,
+ 	struct rte_flow_error *error)
  {
--	assert(p->mp_cfn_data_ptc_cfp);
-+	RTE_ASSERT(p->mp_cfn_data_ptc_cfp);
- 	nthw_field_set_val32(p->mp_cfn_data_ptc_cfp, val);
- }
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- void cat_nthw_cfn_err_l3_cs(const struct cat_nthw *p, uint32_t val)
+ 	rte_spinlock_lock(&dev->ndev->mtx);
+ 
+@@ -4802,7 +4814,7 @@ int flow_info_get_profile_inline(struct flow_eth_dev *dev, uint8_t caller_id,
+ 	(void)caller_id;
+ 	int res = 0;
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 	memset(port_info, 0, sizeof(struct rte_flow_port_info));
+ 
+ 	port_info->max_nb_aging_objects = dev->nb_aging_objects;
+@@ -4824,7 +4836,7 @@ int flow_configure_profile_inline(struct flow_eth_dev *dev, uint8_t caller_id,
+ 	(void)queue_attr;
+ 	int res = 0;
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	if (port_attr->nb_aging_objects > 0) {
+ 		if (dev->nb_aging_objects > 0) {
+@@ -4903,7 +4915,7 @@ struct flow_pattern_template *flow_pattern_template_create_profile_inline(struct
+ 
+ 	struct nic_flow_def *fd = allocate_nic_flow_def();
+ 
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+ 	if (fd == NULL) {
+ 		error->type = RTE_FLOW_ERROR_TYPE_UNSPECIFIED;
+@@ -4932,7 +4944,7 @@ int flow_pattern_template_destroy_profile_inline(struct flow_eth_dev *dev,
+ 	struct rte_flow_error *error)
  {
--	assert(p->mp_cfn_data_err_l3_cs);
-+	RTE_ASSERT(p->mp_cfn_data_err_l3_cs);
- 	nthw_field_set_val32(p->mp_cfn_data_err_l3_cs, val);
- }
+ 	(void)dev;
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- void cat_nthw_cfn_err_l4_cs(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_err_l4_cs);
-+	RTE_ASSERT(p->mp_cfn_data_err_l4_cs);
- 	nthw_field_set_val32(p->mp_cfn_data_err_l4_cs, val);
- }
+ 	free(pattern_template->fd);
+ 	free(pattern_template);
+@@ -4955,7 +4967,7 @@ flow_actions_template_create_profile_inline(struct flow_eth_dev *dev,
  
- void cat_nthw_cfn_err_tnl_l3_cs(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_err_tnl_l3_cs);
-+	RTE_ASSERT(p->mp_cfn_data_err_tnl_l3_cs);
- 	nthw_field_set_val32(p->mp_cfn_data_err_tnl_l3_cs, val);
- }
+ 	struct nic_flow_def *fd = allocate_nic_flow_def();
  
- void cat_nthw_cfn_err_tnl_l4_cs(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_err_tnl_l4_cs);
-+	RTE_ASSERT(p->mp_cfn_data_err_tnl_l4_cs);
- 	nthw_field_set_val32(p->mp_cfn_data_err_tnl_l4_cs, val);
- }
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- void cat_nthw_cfn_err_ttl_exp(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_err_ttl_exp);
-+	RTE_ASSERT(p->mp_cfn_data_err_ttl_exp);
- 	nthw_field_set_val32(p->mp_cfn_data_err_ttl_exp, val);
- }
+ 	if (fd == NULL) {
+ 		error->type = RTE_FLOW_ERROR_TYPE_UNSPECIFIED;
+@@ -4973,13 +4985,13 @@ flow_actions_template_create_profile_inline(struct flow_eth_dev *dev,
+ 	/* Translate group IDs */
+ 	if (fd->jump_to_group != UINT32_MAX) {
+ 		rte_spinlock_lock(&dev->ndev->mtx);
+-		res = flow_group_translate_get(dev->ndev->group_handle, caller_id,
++		res = nthw_flow_group_translate_get(dev->ndev->group_handle, caller_id,
+ 				dev->port, fd->jump_to_group, &fd->jump_to_group);
+ 		rte_spinlock_unlock(&dev->ndev->mtx);
  
- void cat_nthw_cfn_err_tnl_ttl_exp(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_err_tnl_ttl_exp);
-+	RTE_ASSERT(p->mp_cfn_data_err_tnl_ttl_exp);
- 	nthw_field_set_val32(p->mp_cfn_data_err_tnl_ttl_exp, val);
- }
- 
-@@ -518,7 +518,7 @@ void cat_nthw_cfn_km0_or(const struct cat_nthw *p, uint32_t val)
- 
- void cat_nthw_cfn_km1_or(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cfn_data_km1_or);
-+	RTE_ASSERT(p->mp_cfn_data_km1_or);
- 	nthw_field_set_val32(p->mp_cfn_data_km1_or, val);
- }
- 
-@@ -638,25 +638,25 @@ void cat_nthw_cte_enable_pdb(const struct cat_nthw *p, uint32_t val)
- 
- void cat_nthw_cte_enable_msk(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cte_data_msk);
-+	RTE_ASSERT(p->mp_cte_data_msk);
- 	nthw_field_set_val32(p->mp_cte_data_msk, val);
- }
- 
- void cat_nthw_cte_enable_hst(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cte_data_hst);
-+	RTE_ASSERT(p->mp_cte_data_hst);
- 	nthw_field_set_val32(p->mp_cte_data_hst, val);
- }
- 
- void cat_nthw_cte_enable_epp(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cte_data_epp);
-+	RTE_ASSERT(p->mp_cte_data_epp);
- 	nthw_field_set_val32(p->mp_cte_data_epp, val);
- }
- 
- void cat_nthw_cte_enable_tpe(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_cte_data_tpe);
-+	RTE_ASSERT(p->mp_cte_data_tpe);
- 	nthw_field_set_val32(p->mp_cte_data_tpe, val);
- }
- 
-@@ -835,38 +835,38 @@ void cat_nthw_len_flush(const struct cat_nthw *p)
- 
- void cat_nthw_kcc_select(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_kcc_addr);
-+	RTE_ASSERT(p->mp_kcc_addr);
- 	nthw_field_set_val32(p->mp_kcc_addr, val);
- }
- 
- void cat_nthw_kcc_cnt(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_kcc_cnt);
-+	RTE_ASSERT(p->mp_kcc_cnt);
- 	nthw_field_set_val32(p->mp_kcc_cnt, val);
- }
- 
- void cat_nthw_kcc_key(const struct cat_nthw *p, uint32_t *val)
- {
--	assert(p->mp_kcc_data_key);
-+	RTE_ASSERT(p->mp_kcc_data_key);
- 	nthw_field_set_val(p->mp_kcc_data_key, val, 2);
- }
- 
- void cat_nthw_kcc_category(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_kcc_data_category);
-+	RTE_ASSERT(p->mp_kcc_data_category);
- 	nthw_field_set_val32(p->mp_kcc_data_category, val);
- }
- 
- void cat_nthw_kcc_id(const struct cat_nthw *p, uint32_t val)
- {
--	assert(p->mp_kcc_data_id);
-+	RTE_ASSERT(p->mp_kcc_data_id);
- 	nthw_field_set_val32(p->mp_kcc_data_id, val);
- }
- 
- void cat_nthw_kcc_flush(const struct cat_nthw *p)
- {
--	assert(p->mp_kcc_ctrl);
--	assert(p->mp_kcc_data);
-+	RTE_ASSERT(p->mp_kcc_ctrl);
-+	RTE_ASSERT(p->mp_kcc_data);
- 	nthw_register_flush(p->mp_kcc_ctrl, 1);
- 	nthw_register_flush(p->mp_kcc_data, 1);
- }
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_csu.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_csu.c
-index c1b73179a8..945d46415c 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_csu.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_csu.c
-@@ -40,7 +40,7 @@ int csu_nthw_init(struct csu_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_CSU, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-index 8855978349..9bae6a32c8 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-@@ -6,6 +6,7 @@
- #include <stdlib.h>
- #include <string.h>
- 
-+#include "rte_debug.h"
- #include "ntlog.h"
- 
- #include "nthw_drv.h"
-@@ -42,7 +43,7 @@ int flm_nthw_init(struct flm_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_FLM, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -316,13 +317,13 @@ void flm_nthw_control_ris(const struct flm_nthw *p, uint32_t val)
- 
- void flm_nthw_control_pds(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_control_pds);
-+	RTE_ASSERT(p->mp_control_pds);
- 	nthw_field_set_val32(p->mp_control_pds, val);
- }
- 
- void flm_nthw_control_pis(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_control_pis);
-+	RTE_ASSERT(p->mp_control_pis);
- 	nthw_field_set_val32(p->mp_control_pis, val);
- }
- 
-@@ -683,7 +684,8 @@ int flm_nthw_buf_ctrl_update(const struct flm_nthw *p, uint32_t *lrn_free, uint3
- 
- 	if (ret == 0) {
- 		nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
--		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : (assert(0), -1);
-+		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-+		RTE_ASSERT(ret == -1);
- 		rte_spinlock_unlock(&rac->m_mutex);
- 
- 		if (ret != 0)
-@@ -732,7 +734,8 @@ int flm_nthw_lrn_data_flush(const struct flm_nthw *p, const uint32_t *data, uint
- 			uint32_t dma_free = nthw_rac_rab_get_free(rac);
- 
- 			if (dma_free != RAB_DMA_BUF_CNT) {
--				assert(0);	/* alert developer that something is wrong */
-+				RTE_ASSERT(0);	/* alert developer that something is wrong */
-+				rte_spinlock_unlock(&rac->m_mutex);
- 				return -1;
- 			}
- 
-@@ -781,9 +784,8 @@ int flm_nthw_lrn_data_flush(const struct flm_nthw *p, const uint32_t *data, uint
- 			/* Read buf ctrl */
- 			nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
- 
--			int ret = rac->m_dma_active ?
--				nthw_rac_rab_dma_commit(rac) :
--				(assert(0), -1);
-+			int ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-+			RTE_ASSERT(ret == -1);
- 			rte_spinlock_unlock(&rac->m_mutex);
- 			if (ret != 0)
- 				return -1;
-@@ -844,7 +846,8 @@ int flm_nthw_inf_sta_data_update(const struct flm_nthw *p, uint32_t *inf_data,
+ 		if (res) {
+ 			NT_LOG(ERR, FILTER, "ERROR: Could not get group resource");
+-			flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++			nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 			free(fd);
+ 			return NULL;
  		}
- 
- 		nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
--		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : (assert(0), -1);
-+		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-+		RTE_ASSERT(ret == -1);
- 		rte_spinlock_unlock(&rac->m_mutex);
- 
- 		if (ret != 0)
-@@ -940,7 +943,7 @@ void flm_nthw_stat_unl_ignore_update(const struct flm_nthw *p)
- 
- void flm_nthw_stat_prb_done_cnt(const struct flm_nthw *p, uint32_t *val, int get)
+@@ -4999,7 +5011,7 @@ int flow_actions_template_destroy_profile_inline(struct flow_eth_dev *dev,
+ 	struct rte_flow_error *error)
  {
--	assert(p->mp_stat_prb_done_cnt);
-+	RTE_ASSERT(p->mp_stat_prb_done_cnt);
+ 	(void)dev;
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_prb_done_cnt);
-@@ -948,13 +951,13 @@ void flm_nthw_stat_prb_done_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_prb_done_update(const struct flm_nthw *p)
+ 	free(actions_template->fd);
+ 	free(actions_template);
+@@ -5014,7 +5026,7 @@ struct flow_template_table *flow_template_table_create_profile_inline(struct flo
+ 	struct flow_actions_template *actions_templates[], uint8_t nb_actions_templates,
+ 	struct rte_flow_error *error)
  {
--	assert(p->mp_stat_prb_done);
-+	RTE_ASSERT(p->mp_stat_prb_done);
- 	nthw_register_update(p->mp_stat_prb_done);
- }
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- void flm_nthw_stat_prb_ignore_cnt(const struct flm_nthw *p, uint32_t *val, int get)
+ 	struct flow_template_table *template_table = calloc(1, sizeof(struct flow_template_table));
+ 
+@@ -5055,14 +5067,14 @@ struct flow_template_table *flow_template_table_create_profile_inline(struct flo
+ 
+ 	rte_spinlock_lock(&dev->ndev->mtx);
+ 	int res =
+-		flow_group_translate_get(dev->ndev->group_handle, caller_id, dev->port,
++		nthw_flow_group_translate_get(dev->ndev->group_handle, caller_id, dev->port,
+ 			template_table->attr.group, &template_table->attr.group);
+ 	rte_spinlock_unlock(&dev->ndev->mtx);
+ 
+ 	/* Translate group IDs */
+ 	if (res) {
+ 		NT_LOG(ERR, FILTER, "ERROR: Could not get group resource");
+-		flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
++		nthw_flow_nic_set_error(ERR_MATCH_RESOURCE_EXHAUSTION, error);
+ 		goto error_out;
+ 	}
+ 
+@@ -5084,7 +5096,7 @@ int flow_template_table_destroy_profile_inline(struct flow_eth_dev *dev,
+ 	struct flow_template_table *template_table,
+ 	struct rte_flow_error *error)
  {
--	assert(p->mp_stat_prb_ignore_cnt);
-+	RTE_ASSERT(p->mp_stat_prb_ignore_cnt);
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_prb_ignore_cnt);
-@@ -962,7 +965,7 @@ void flm_nthw_stat_prb_ignore_cnt(const struct flm_nthw *p, uint32_t *val, int g
+ 	const uint32_t nb_cells =
+ 		template_table->nb_pattern_templates * template_table->nb_actions_templates;
+@@ -5139,7 +5151,7 @@ struct flow_handle *flow_async_create_profile_inline(struct flow_eth_dev *dev,
+ 	uint32_t packet_mask[10];
+ 	struct flm_flow_key_def_s key_def;
  
- void flm_nthw_stat_prb_ignore_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_prb_ignore);
-+	RTE_ASSERT(p->mp_stat_prb_ignore);
- 	nthw_register_update(p->mp_stat_prb_ignore);
- }
+-	flow_nic_set_error(ERR_SUCCESS, error);
++	nthw_flow_nic_set_error(ERR_SUCCESS, error);
  
-@@ -1045,7 +1048,7 @@ void flm_nthw_stat_flows_update(const struct flm_nthw *p)
+ 	struct nic_flow_def *fd = malloc(sizeof(struct nic_flow_def));
  
- void flm_nthw_stat_sta_done_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_sta_done_cnt);
-+	RTE_ASSERT(p->mp_stat_sta_done_cnt);
+@@ -5324,7 +5336,7 @@ int flow_async_destroy_profile_inline(struct flow_eth_dev *dev, uint32_t queue_i
  
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_sta_done_cnt);
-@@ -1053,13 +1056,13 @@ void flm_nthw_stat_sta_done_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_sta_done_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_sta_done);
-+	RTE_ASSERT(p->mp_stat_sta_done);
- 	nthw_register_update(p->mp_stat_sta_done);
- }
- 
- void flm_nthw_stat_inf_done_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_inf_done_cnt);
-+	RTE_ASSERT(p->mp_stat_inf_done_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_inf_done_cnt);
-@@ -1067,13 +1070,13 @@ void flm_nthw_stat_inf_done_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_inf_done_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_inf_done);
-+	RTE_ASSERT(p->mp_stat_inf_done);
- 	nthw_register_update(p->mp_stat_inf_done);
- }
- 
- void flm_nthw_stat_inf_skip_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_inf_skip_cnt);
-+	RTE_ASSERT(p->mp_stat_inf_skip_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_inf_skip_cnt);
-@@ -1081,13 +1084,13 @@ void flm_nthw_stat_inf_skip_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_inf_skip_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_inf_skip);
-+	RTE_ASSERT(p->mp_stat_inf_skip);
- 	nthw_register_update(p->mp_stat_inf_skip);
- }
- 
- void flm_nthw_stat_pck_hit_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_pck_hit_cnt);
-+	RTE_ASSERT(p->mp_stat_pck_hit_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_pck_hit_cnt);
-@@ -1095,13 +1098,13 @@ void flm_nthw_stat_pck_hit_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- 
- void flm_nthw_stat_pck_hit_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_pck_hit);
-+	RTE_ASSERT(p->mp_stat_pck_hit);
- 	nthw_register_update(p->mp_stat_pck_hit);
- }
- 
- void flm_nthw_stat_pck_miss_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_pck_miss_cnt);
-+	RTE_ASSERT(p->mp_stat_pck_miss_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_pck_miss_cnt);
-@@ -1109,13 +1112,13 @@ void flm_nthw_stat_pck_miss_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_pck_miss_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_pck_miss);
-+	RTE_ASSERT(p->mp_stat_pck_miss);
- 	nthw_register_update(p->mp_stat_pck_miss);
- }
- 
- void flm_nthw_stat_pck_unh_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_pck_unh_cnt);
-+	RTE_ASSERT(p->mp_stat_pck_unh_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_pck_unh_cnt);
-@@ -1123,13 +1126,13 @@ void flm_nthw_stat_pck_unh_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- 
- void flm_nthw_stat_pck_unh_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_pck_unh);
-+	RTE_ASSERT(p->mp_stat_pck_unh);
- 	nthw_register_update(p->mp_stat_pck_unh);
- }
- 
- void flm_nthw_stat_pck_dis_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_pck_dis_cnt);
-+	RTE_ASSERT(p->mp_stat_pck_dis_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_pck_dis_cnt);
-@@ -1137,13 +1140,13 @@ void flm_nthw_stat_pck_dis_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- 
- void flm_nthw_stat_pck_dis_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_pck_dis);
-+	RTE_ASSERT(p->mp_stat_pck_dis);
- 	nthw_register_update(p->mp_stat_pck_dis);
- }
- 
- void flm_nthw_stat_csh_hit_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_csh_hit_cnt);
-+	RTE_ASSERT(p->mp_stat_csh_hit_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_csh_hit_cnt);
-@@ -1151,13 +1154,13 @@ void flm_nthw_stat_csh_hit_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- 
- void flm_nthw_stat_csh_hit_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_csh_hit);
-+	RTE_ASSERT(p->mp_stat_csh_hit);
- 	nthw_register_update(p->mp_stat_csh_hit);
- }
- 
- void flm_nthw_stat_csh_miss_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_csh_miss_cnt);
-+	RTE_ASSERT(p->mp_stat_csh_miss_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_csh_miss_cnt);
-@@ -1165,13 +1168,13 @@ void flm_nthw_stat_csh_miss_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_csh_miss_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_csh_miss);
-+	RTE_ASSERT(p->mp_stat_csh_miss);
- 	nthw_register_update(p->mp_stat_csh_miss);
- }
- 
- void flm_nthw_stat_csh_unh_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_csh_unh_cnt);
-+	RTE_ASSERT(p->mp_stat_csh_unh_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_csh_unh_cnt);
-@@ -1179,13 +1182,13 @@ void flm_nthw_stat_csh_unh_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- 
- void flm_nthw_stat_csh_unh_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_csh_unh);
-+	RTE_ASSERT(p->mp_stat_csh_unh);
- 	nthw_register_update(p->mp_stat_csh_unh);
- }
- 
- void flm_nthw_stat_cuc_start_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_cuc_start_cnt);
-+	RTE_ASSERT(p->mp_stat_cuc_start_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_cuc_start_cnt);
-@@ -1193,13 +1196,13 @@ void flm_nthw_stat_cuc_start_cnt(const struct flm_nthw *p, uint32_t *val, int ge
- 
- void flm_nthw_stat_cuc_start_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_cuc_start);
-+	RTE_ASSERT(p->mp_stat_cuc_start);
- 	nthw_register_update(p->mp_stat_cuc_start);
- }
- 
- void flm_nthw_stat_cuc_move_cnt(const struct flm_nthw *p, uint32_t *val, int get)
- {
--	assert(p->mp_stat_cuc_move_cnt);
-+	RTE_ASSERT(p->mp_stat_cuc_move_cnt);
- 
- 	if (get)
- 		*val = nthw_field_get_val32(p->mp_stat_cuc_move_cnt);
-@@ -1207,50 +1210,50 @@ void flm_nthw_stat_cuc_move_cnt(const struct flm_nthw *p, uint32_t *val, int get
- 
- void flm_nthw_stat_cuc_move_update(const struct flm_nthw *p)
- {
--	assert(p->mp_stat_cuc_move);
-+	RTE_ASSERT(p->mp_stat_cuc_move);
- 	nthw_register_update(p->mp_stat_cuc_move);
- }
- 
- void flm_nthw_scrub_select(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_ctrl_adr);
-+	RTE_ASSERT(p->mp_scrub_ctrl_adr);
- 	nthw_field_set_val32(p->mp_scrub_ctrl_adr, val);
- }
- 
- void flm_nthw_scrub_cnt(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_ctrl_cnt);
-+	RTE_ASSERT(p->mp_scrub_ctrl_cnt);
- 	nthw_field_set_val32(p->mp_scrub_ctrl_cnt, val);
- }
- 
- void flm_nthw_scrub_t(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_data_t);
-+	RTE_ASSERT(p->mp_scrub_data_t);
- 	nthw_field_set_val32(p->mp_scrub_data_t, val);
- }
- 
- void flm_nthw_scrub_r(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_data_r);
-+	RTE_ASSERT(p->mp_scrub_data_r);
- 	nthw_field_set_val32(p->mp_scrub_data_r, val);
- }
- 
- void flm_nthw_scrub_del(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_data_del);
-+	RTE_ASSERT(p->mp_scrub_data_del);
- 	nthw_field_set_val32(p->mp_scrub_data_del, val);
- }
- 
- void flm_nthw_scrub_inf(const struct flm_nthw *p, uint32_t val)
- {
--	assert(p->mp_scrub_data_inf);
-+	RTE_ASSERT(p->mp_scrub_data_inf);
- 	nthw_field_set_val32(p->mp_scrub_data_inf, val);
- }
- 
- void flm_nthw_scrub_flush(const struct flm_nthw *p)
- {
--	assert(p->mp_scrub_ctrl);
--	assert(p->mp_scrub_data);
-+	RTE_ASSERT(p->mp_scrub_ctrl);
-+	RTE_ASSERT(p->mp_scrub_data);
- 	nthw_register_flush(p->mp_scrub_ctrl, 1);
- 	nthw_register_flush(p->mp_scrub_data, 1);
- }
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hfu.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hfu.c
-index 4a8b17101d..2559f2ec77 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hfu.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hfu.c
-@@ -40,7 +40,7 @@ int hfu_nthw_init(struct hfu_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_HFU, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hsh.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hsh.c
-index 80ead2729a..ab9c793e3a 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hsh.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_hsh.c
-@@ -40,7 +40,7 @@ int hsh_nthw_init(struct hsh_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- {
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_HSH, n_instance);
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_ifr.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_ifr.c
-index 45f2047916..418dd41a53 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_ifr.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_ifr.c
-@@ -32,7 +32,7 @@ int ifr_nthw_init(struct ifr_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_IFR, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -81,13 +81,13 @@ int ifr_nthw_init(struct ifr_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 
- void ifr_nthw_rcp_select(const struct ifr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_addr);
-+	RTE_ASSERT(p->mp_rcp_addr);
- 	nthw_field_set_val32(p->mp_rcp_addr, val);
- }
- 
- void ifr_nthw_rcp_cnt(const struct ifr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_cnt);
-+	RTE_ASSERT(p->mp_rcp_cnt);
- 	nthw_field_set_val32(p->mp_rcp_cnt, val);
- }
- 
-@@ -117,27 +117,27 @@ void ifr_nthw_rcp_ipv6_drop(const struct ifr_nthw *p, uint32_t val)
- 
- void ifr_nthw_rcp_mtu(const struct ifr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_data_mtu);
-+	RTE_ASSERT(p->mp_rcp_data_mtu);
- 	nthw_field_set_val32(p->mp_rcp_data_mtu, val);
- }
- 
- void ifr_nthw_rcp_flush(const struct ifr_nthw *p)
- {
--	assert(p->mp_rcp_ctrl);
--	assert(p->mp_rcp_data);
-+	RTE_ASSERT(p->mp_rcp_ctrl);
-+	RTE_ASSERT(p->mp_rcp_data);
- 	nthw_register_flush(p->mp_rcp_ctrl, 1);
- 	nthw_register_flush(p->mp_rcp_data, 1);
- }
- 
- void ifr_nthw_counters_select(const struct ifr_nthw *p, uint32_t val)
- {
--	assert(p->mp_counters_addr);
-+	RTE_ASSERT(p->mp_counters_addr);
- 	nthw_field_set_val32(p->mp_counters_addr, val);
- }
- 
- void ifr_nthw_counters_cnt(const struct ifr_nthw *p, uint32_t val)
- {
--	assert(p->mp_counters_cnt);
-+	RTE_ASSERT(p->mp_counters_cnt);
- 	nthw_field_set_val32(p->mp_counters_cnt, val);
- }
- 
-@@ -149,7 +149,7 @@ void ifr_nthw_counters_drop(const struct ifr_nthw *p, uint32_t *val, int get)
- 
- void ifr_nthw_counters_update(const struct ifr_nthw *p)
- {
--	assert(p->mp_counters_data);
-+	RTE_ASSERT(p->mp_counters_data);
- 	nthw_register_flush(p->mp_counters_ctrl, 1);
- 	nthw_register_update(p->mp_counters_data);
- }
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_info.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_info.c
-index 8e0b24dd9a..2db4411c9e 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_info.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_info.c
-@@ -38,7 +38,7 @@ void info_nthw_delete(struct info_nthw *p)
- 
- int info_nthw_init(struct info_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- {
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	p->mp_fpga = p_fpga;
- 	p->m_physical_adapter_no = (uint8_t)n_instance;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_km.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_km.c
-index edc8f58759..57471ef430 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_km.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_km.c
-@@ -50,7 +50,7 @@ int km_nthw_init(struct km_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_KM, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_pdb.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_pdb.c
-index 4a9713965b..80dc8c14c4 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_pdb.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_pdb.c
-@@ -40,7 +40,7 @@ int pdb_nthw_init(struct pdb_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- {
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_PDB, n_instance);
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_qsl.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_qsl.c
-index c887fe25e2..cf4dc2c8eb 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_qsl.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_qsl.c
-@@ -41,7 +41,7 @@ int qsl_nthw_init(struct qsl_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_QSL, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c
-index e69a1ca823..12d9f27e20 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c
-@@ -40,7 +40,7 @@ int rpp_lr_nthw_init(struct rpp_lr_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_RPP_LR, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -84,39 +84,39 @@ int rpp_lr_nthw_init(struct rpp_lr_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 
- void rpp_lr_nthw_rcp_select(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_addr);
-+	RTE_ASSERT(p->mp_rcp_addr);
- 	nthw_field_set_val32(p->mp_rcp_addr, val);
- }
- 
- void rpp_lr_nthw_rcp_cnt(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_cnt);
-+	RTE_ASSERT(p->mp_rcp_cnt);
- 	nthw_field_set_val32(p->mp_rcp_cnt, val);
- }
- 
- void rpp_lr_nthw_rcp_exp(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_data_exp);
-+	RTE_ASSERT(p->mp_rcp_data_exp);
- 	nthw_field_set_val32(p->mp_rcp_data_exp, val);
- }
- 
- void rpp_lr_nthw_rcp_flush(const struct rpp_lr_nthw *p)
- {
--	assert(p->mp_rcp_ctrl);
--	assert(p->mp_rcp_data);
-+	RTE_ASSERT(p->mp_rcp_ctrl);
-+	RTE_ASSERT(p->mp_rcp_data);
- 	nthw_register_flush(p->mp_rcp_ctrl, 1);
- 	nthw_register_flush(p->mp_rcp_data, 1);
- }
- 
- void rpp_lr_nthw_ifr_rcp_select(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_ifr_rcp_addr);
-+	RTE_ASSERT(p->mp_ifr_rcp_addr);
- 	nthw_field_set_val32(p->mp_ifr_rcp_addr, val);
- }
- 
- void rpp_lr_nthw_ifr_rcp_cnt(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_ifr_rcp_cnt);
-+	RTE_ASSERT(p->mp_ifr_rcp_cnt);
- 	nthw_field_set_val32(p->mp_ifr_rcp_cnt, val);
- }
- 
-@@ -146,14 +146,14 @@ void rpp_lr_nthw_ifr_rcp_ipv6_drop(const struct rpp_lr_nthw *p, uint32_t val)
- 
- void rpp_lr_nthw_ifr_rcp_mtu(const struct rpp_lr_nthw *p, uint32_t val)
- {
--	assert(p->mp_ifr_rcp_data_mtu);
-+	RTE_ASSERT(p->mp_ifr_rcp_data_mtu);
- 	nthw_field_set_val32(p->mp_ifr_rcp_data_mtu, val);
- }
- 
- void rpp_lr_nthw_ifr_rcp_flush(const struct rpp_lr_nthw *p)
- {
--	assert(p->mp_ifr_rcp_ctrl);
--	assert(p->mp_ifr_rcp_data);
-+	RTE_ASSERT(p->mp_ifr_rcp_ctrl);
-+	RTE_ASSERT(p->mp_ifr_rcp_data);
- 	nthw_register_flush(p->mp_ifr_rcp_ctrl, 1);
- 	nthw_register_flush(p->mp_ifr_rcp_data, 1);
- }
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_slc_lr.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_slc_lr.c
-index e062a700eb..78cee7ebea 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_slc_lr.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_slc_lr.c
-@@ -41,7 +41,7 @@ int slc_lr_nthw_init(struct slc_lr_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_SLC_LR, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c
-index ee85a1c61b..0ecdeb8893 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c
-@@ -41,7 +41,7 @@ int tx_cpy_nthw_init(struct tx_cpy_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_TX_CPY, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -345,44 +345,44 @@ int tx_cpy_nthw_init(struct tx_cpy_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 
- void tx_cpy_nthw_writer_select(const struct tx_cpy_nthw *p, unsigned int index, uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_ctrl_addr, val);
- }
- 
- void tx_cpy_nthw_writer_cnt(const struct tx_cpy_nthw *p, unsigned int index, uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_ctrl_cnt, val);
- }
- 
- void tx_cpy_nthw_writer_reader_select(const struct tx_cpy_nthw *p, unsigned int index,
- 	uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_data_reader_select, val);
- }
- 
- void tx_cpy_nthw_writer_dyn(const struct tx_cpy_nthw *p, unsigned int index, uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_data_dyn, val);
- }
- 
- void tx_cpy_nthw_writer_ofs(const struct tx_cpy_nthw *p, unsigned int index, uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_data_ofs, val);
- }
- 
- void tx_cpy_nthw_writer_len(const struct tx_cpy_nthw *p, unsigned int index, uint32_t val)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_field_set_val32(p->m_writers[index].mp_writer_data_len, val);
- }
- 
- void tx_cpy_nthw_writer_flush(const struct tx_cpy_nthw *p, unsigned int index)
- {
--	assert(index < p->m_writers_cnt);
-+	RTE_ASSERT(index < p->m_writers_cnt);
- 	nthw_register_flush(p->m_writers[index].mp_writer_ctrl, 1);
- 	nthw_register_flush(p->m_writers[index].mp_writer_data, 1);
- }
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_ins.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_ins.c
-index 47af44945f..3ac44c6743 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_ins.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_ins.c
-@@ -40,7 +40,7 @@ int tx_ins_nthw_init(struct tx_ins_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_TX_INS, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c
-index c40857db0f..9dfcaa99c7 100644
---- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c
-+++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c
-@@ -40,7 +40,7 @@ int tx_rpl_nthw_init(struct tx_rpl_nthw *p, nthw_fpga_t *p_fpga, int n_instance)
- 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_TX_RPL, n_instance);
- 
--	assert(n_instance >= 0 && n_instance < 256);
-+	RTE_ASSERT(n_instance >= 0 && n_instance < 256);
- 
- 	if (p == NULL)
- 		return p_mod == NULL ? -1 : 0;
-@@ -119,7 +119,7 @@ void tx_rpl_nthw_rcp_ext_prio(const struct tx_rpl_nthw *p, uint32_t val)
- 
- void tx_rpl_nthw_rcp_eth_type_wr(const struct tx_rpl_nthw *p, uint32_t val)
- {
--	assert(p->mp_rcp_data_eth_type_wr);
-+	RTE_ASSERT(p->mp_rcp_data_eth_type_wr);
- 	nthw_field_set_val32(p->mp_rcp_data_eth_type_wr, val);
- }
- 
-diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-index 9eaaeb550d..43841b2f7b 100644
---- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-+++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-@@ -62,9 +62,9 @@ static int nthw_read_data(struct fpga_info_s *p_fpga_info, bool trc, int n_bus_t
- {
- 	int rc = -1;
- 
--	assert(p_fpga_info);
--	assert(p_data);
--	assert(len >= 1);
-+	RTE_ASSERT(p_fpga_info);
-+	RTE_ASSERT(p_data);
-+	RTE_ASSERT(len >= 1);
- 
- 	switch (n_bus_type_id) {
- 	case NTHW_FPGA_BUS_TYPE_BAR:
-@@ -74,22 +74,22 @@ static int nthw_read_data(struct fpga_info_s *p_fpga_info, bool trc, int n_bus_t
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB0:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_read32(p_fpga_info->mp_nthw_rac, trc, 0, addr, len, p_data);
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB1:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_read32(p_fpga_info->mp_nthw_rac, trc, 1, addr, len, p_data);
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB2:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_read32(p_fpga_info->mp_nthw_rac, trc, 2, addr, len, p_data);
- 		break;
- 
- 	default:
--		assert(false);
-+		RTE_ASSERT(false);
+ 	if (flm_flow_programming(flow, NT_FLM_OP_UNLEARN)) {
+ 		NT_LOG(ERR, FILTER, "FAILED to destroy flow: %p", flow);
+-		flow_nic_set_error(ERR_REMOVE_FLOW_FAILED, error);
++		nthw_flow_nic_set_error(ERR_REMOVE_FLOW_FAILED, error);
  		return -1;
  	}
  
-@@ -101,9 +101,9 @@ static int nthw_write_data(struct fpga_info_s *p_fpga_info, bool trc, int n_bus_
+diff --git a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+index 33593927a4..66cc02a865 100644
+--- a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
++++ b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+@@ -476,7 +476,7 @@ static struct meter_ops_s meter_ops = {
+ 	.eth_mtr_ops_get = eth_mtr_ops_get,
+ };
+ 
+-void meter_init(void)
++void nthw_meter_init(void)
  {
- 	int rc = -1;
- 
--	assert(p_fpga_info);
--	assert(p_data);
--	assert(len >= 1);
-+	RTE_ASSERT(p_fpga_info);
-+	RTE_ASSERT(p_data);
-+	RTE_ASSERT(len >= 1);
- 
- 	switch (n_bus_type_id) {
- 	case NTHW_FPGA_BUS_TYPE_BAR:
-@@ -113,22 +113,22 @@ static int nthw_write_data(struct fpga_info_s *p_fpga_info, bool trc, int n_bus_
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB0:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_write32(p_fpga_info->mp_nthw_rac, trc, 0, addr, len, p_data);
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB1:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_write32(p_fpga_info->mp_nthw_rac, trc, 1, addr, len, p_data);
- 		break;
- 
- 	case NTHW_FPGA_BUS_TYPE_RAB2:
--		assert(p_fpga_info->mp_nthw_rac);
-+		RTE_ASSERT(p_fpga_info->mp_nthw_rac);
- 		rc = nthw_rac_rab_write32(p_fpga_info->mp_nthw_rac, trc, 2, addr, len, p_data);
- 		break;
- 
- 	default:
--		assert(false);
-+		RTE_ASSERT(false);
- 		return -1;
- 	}
- 
-@@ -691,8 +691,8 @@ static int nthw_register_read_data(const nthw_register_t *p)
- 			if (p->mp_owner->mp_owner)
- 				p_fpga_info = p->mp_owner->mp_owner->p_fpga_info;
- 
--			assert(p_fpga_info);
--			assert(p_data);
-+			RTE_ASSERT(p_fpga_info);
-+			RTE_ASSERT(p_data);
- 
- 			rc = nthw_read_data(p_fpga_info, trc, n_bus_type_id, addr, len, p_data);
- 		}
-@@ -716,8 +716,8 @@ static int nthw_register_write_data(const nthw_register_t *p, uint32_t cnt)
- 			if (p->mp_owner->mp_owner)
- 				p_fpga_info = p->mp_owner->mp_owner->p_fpga_info;
- 
--			assert(p_fpga_info);
--			assert(p_data);
-+			RTE_ASSERT(p_fpga_info);
-+			RTE_ASSERT(p_data);
- 
- 			rc = nthw_write_data(p_fpga_info, trc, n_bus_type_id, addr, (len * cnt),
- 				p_data);
-@@ -733,8 +733,8 @@ void nthw_register_get_val(const nthw_register_t *p, uint32_t *p_data, uint32_t
- 	if (len == (uint32_t)-1 || len > p->mn_len)
- 		len = p->mn_len;
- 
--	assert(len <= p->mn_len);
--	assert(p_data);
-+	RTE_ASSERT(len <= p->mn_len);
-+	RTE_ASSERT(p_data);
- 
- 	for (i = 0; i < len; i++)
- 		p_data[i] = p->mp_shadow[i];
-@@ -801,8 +801,8 @@ void nthw_register_make_dirty(nthw_register_t *p)
- 
- void nthw_register_set_val(nthw_register_t *p, const uint32_t *p_data, uint32_t len)
- {
--	assert(len <= p->mn_len);
--	assert(p_data);
-+	RTE_ASSERT(len <= p->mn_len);
-+	RTE_ASSERT(p_data);
- 
- 	if (len == (uint32_t)-1 || len > p->mn_len)
- 		len = p->mn_len;
-@@ -824,7 +824,7 @@ void nthw_register_flush(const nthw_register_t *p, uint32_t cnt)
- 		uint32_t *const p_data = p->mp_shadow;
- 		uint32_t i;
- 
--		assert(len * cnt <= 256);
-+		RTE_ASSERT(len * cnt <= 256);
- 
- 		if (p->mn_debug_mode & NTHW_REG_DEBUG_ON_WRITE) {
- 			uint32_t i = len * cnt;
-@@ -960,7 +960,7 @@ void nthw_field_get_val(const nthw_field_t *p, uint32_t *p_data, uint32_t len)
- 	} buf;
- 
- 	(void)len;
--	assert(len <= p->mn_words);
-+	RTE_ASSERT(len <= p->mn_words);
- 
- 	/* handle front */
- 	buf.w32[0] = p->mp_owner->mp_shadow[shadow_index++] & p->mn_front_mask;
-@@ -969,7 +969,7 @@ void nthw_field_get_val(const nthw_field_t *p, uint32_t *p_data, uint32_t len)
- 	for (i = 0; i < p->mn_body_length; i++) {
- 		buf.w32[1] = p->mp_owner->mp_shadow[shadow_index++];
- 		buf.w64 = buf.w64 >> (p->mn_first_bit);
--		assert(data_index < len);
-+		RTE_ASSERT(data_index < len);
- 		p_data[data_index++] = buf.w32[0];
- 		buf.w64 = buf.w64 >> (32 - p->mn_first_bit);
- 	}
-@@ -1000,7 +1000,7 @@ void nthw_field_set_val(const nthw_field_t *p, const uint32_t *p_data, uint32_t
- 	} buf;
- 
- 	(void)len;
--	assert(len == p->mn_words);
-+	RTE_ASSERT(len == p->mn_words);
- 
- 	/* handle front */
- 	buf.w32[0] = 0;
-@@ -1014,7 +1014,7 @@ void nthw_field_set_val(const nthw_field_t *p, const uint32_t *p_data, uint32_t
- 	/* handle body */
- 	for (i = 0; i < p->mn_body_length; i++) {
- 		buf.w64 = buf.w64 >> (p->mn_first_bit);
--		assert(data_index < len);
-+		RTE_ASSERT(data_index < len);
- 		buf.w32[1] = p_data[data_index++];
- 		buf.w64 = buf.w64 >> (32 - p->mn_first_bit);
- 		p->mp_owner->mp_shadow[shadow_index++] = buf.w32[0];
-@@ -1095,7 +1095,7 @@ void nthw_field_set_val_flush32(const nthw_field_t *p, uint32_t val)
- 
- void nthw_field_clr_all(const nthw_field_t *p)
- {
--	assert(p->mn_body_length == 0);
-+	RTE_ASSERT(p->mn_body_length == 0);
- 	nthw_field_set_val32(p, 0);
- }
- 
-@@ -1107,7 +1107,7 @@ void nthw_field_clr_flush(const nthw_field_t *p)
- 
- void nthw_field_set_all(const nthw_field_t *p)
- {
--	assert(p->mn_body_length == 0);
-+	RTE_ASSERT(p->mn_body_length == 0);
- 	nthw_field_set_val32(p, ~0);
- }
- 
-diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
-index ca6aba6db2..c22123d936 100644
---- a/drivers/net/ntnic/nthw/nthw_rac.c
-+++ b/drivers/net/ntnic/nthw/nthw_rac.c
-@@ -37,7 +37,7 @@ nthw_rac_t *nthw_rac_new(void)
- 
- int nthw_rac_init(nthw_rac_t *p, nthw_fpga_t *p_fpga, struct fpga_info_s *p_fpga_info)
- {
--	assert(p_fpga_info);
-+	RTE_ASSERT(p_fpga_info);
- 
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_RAC, 0);
-@@ -74,8 +74,8 @@ int nthw_rac_init(nthw_rac_t *p, nthw_fpga_t *p_fpga, struct fpga_info_s *p_fpga
- 	p->mn_fld_rab_init_mask = nthw_field_get_mask(p->mp_fld_rab_init);
- 
- 	/* RAC_RAB_INIT_RAB reg/field sanity checks: */
--	assert(p->mn_fld_rab_init_mask == ((1UL << p->mn_fld_rab_init_bw) - 1));
--	assert(p->mn_fld_rab_init_bw == p->mn_param_rac_rab_interfaces);
-+	RTE_ASSERT(p->mn_fld_rab_init_mask == ((1UL << p->mn_fld_rab_init_bw) - 1));
-+	RTE_ASSERT(p->mn_fld_rab_init_bw == p->mn_param_rac_rab_interfaces);
- 
- 	p->mp_reg_dbg_ctrl = nthw_module_query_register(p->mp_mod_rac, RAC_DBG_CTRL);
- 
-@@ -309,8 +309,8 @@ int nthw_rac_rab_reset(nthw_rac_t *p)
- 
- 	NT_LOG(DBG, NTHW, "%s: NT_RAC_RAB_INTERFACES=%d (0x%02X)", p_adapter_id_str,
- 		n_rac_rab_bus_count, n_rac_rab_bus_mask);
--	assert(n_rac_rab_bus_count);
--	assert(n_rac_rab_bus_mask);
-+	RTE_ASSERT(n_rac_rab_bus_count);
-+	RTE_ASSERT(n_rac_rab_bus_mask);
- 
- 	/* RAC RAB bus "flip/flip" reset first stage - new impl (ref RMT#37020) */
- 	nthw_rac_rab_init(p, 0);
-@@ -452,7 +452,7 @@ uint32_t nthw_rac_rab_get_free(nthw_rac_t *p)
- {
- 	if (!p->m_dma_active) {
- 		/* Expecting mutex not to be locked! */
--		assert(0);      /* alert developer that something is wrong */
-+		RTE_ASSERT(0);      /* alert developer that something is wrong */
- 		return -1;
- 	}
- 
-@@ -469,7 +469,7 @@ int nthw_rac_rab_write32_dma(nthw_rac_t *p, nthw_rab_bus_id_t bus_id, uint32_t a
- 		NT_LOG(ERR, NTHW,
- 			"%s: Failed rab dma write length check - bus: %d addr: 0x%08X wordcount: %d - inBufFree: 0x%08X",
- 			p_adapter_id_str, bus_id, address, word_cnt, p->m_in_free);
--		assert(0);      /* alert developer that something is wrong */
-+		RTE_ASSERT(0);      /* alert developer that something is wrong */
- 		return -1;
- 	}
- 
-@@ -508,7 +508,7 @@ int nthw_rac_rab_read32_dma(nthw_rac_t *p, nthw_rab_bus_id_t bus_id, uint32_t ad
- 		NT_LOG(ERR, NTHW,
- 			"%s: Failed rab dma read length check - bus: %d addr: 0x%08X wordcount: %d - inBufFree: 0x%08X",
- 			p_adapter_id_str, bus_id, address, word_cnt, p->m_in_free);
--		assert(0);      /* alert developer that something is wrong */
-+		RTE_ASSERT(0);      /* alert developer that something is wrong */
- 		return -1;
- 	}
- 
-diff --git a/drivers/net/ntnic/nthw/stat/nthw_stat.c b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-index afa24fd3a9..ed30173bdc 100644
---- a/drivers/net/ntnic/nthw/stat/nthw_stat.c
-+++ b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-@@ -259,7 +259,7 @@ int nthw_stat_init(nthw_stat_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 			p_adapter_id_str, n_module_version_packed64, p->mn_stat_layout_version);
- 	}
- 
--	assert(p->mn_stat_layout_version);
-+	RTE_ASSERT(p->mn_stat_layout_version);
- 
- 	/* STA module 0.2+ adds IPF counters per port (Rx feature) */
- 	if (n_module_version_packed64 >= VERSION_PACKED64(0, 2))
-@@ -332,7 +332,7 @@ int nthw_stat_init(nthw_stat_t *p, nthw_fpga_t *p_fpga, int n_instance)
- int nthw_stat_set_dma_address(nthw_stat_t *p, uint64_t stat_dma_physical,
- 	uint32_t *p_stat_dma_virtual)
- {
--	assert(p_stat_dma_virtual);
-+	RTE_ASSERT(p_stat_dma_virtual);
- 	p->mp_timestamp = NULL;
- 
- 	p->m_stat_dma_physical = stat_dma_physical;
+ 	NT_LOG(DBG, NTNIC, "Meter ops initialized");
+ 	register_meter_ops(&meter_ops);
 diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 88f6b6af6b..4cdc49abc8 100644
+index 4cdc49abc8..9a6667b3be 100644
 --- a/drivers/net/ntnic/ntnic_ethdev.c
 +++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -1197,7 +1197,7 @@ eth_mac_addr_add(struct rte_eth_dev *eth_dev,
- {
- 	struct rte_ether_addr *const eth_addrs = eth_dev->data->mac_addrs;
+@@ -1439,9 +1439,9 @@ drv_deinit(struct drv_s *p_drv)
+ 		profile_inline_ops->flm_free_queues();
+ 		THREAD_JOIN(p_nt_drv->port_event_thread);
+ 		/* Free all local flm event queues */
+-		flm_inf_sta_queue_free_all(FLM_INFO_LOCAL);
++		nthw_flm_inf_sta_queue_free_all(FLM_INFO_LOCAL);
+ 		/* Free all remote flm event queues */
+-		flm_inf_sta_queue_free_all(FLM_INFO_REMOTE);
++		nthw_flm_inf_sta_queue_free_all(FLM_INFO_REMOTE);
+ 		/* Free all aged flow event queues */
+ 		flm_age_queue_free_all();
+ 	}
+@@ -1824,7 +1824,7 @@ THREAD_FUNC port_event_thread_fn(void *context)
+ 				/* Local FLM statistic events */
+ 				struct flm_info_event_s data;
  
--	assert(index < NUM_MAC_ADDRS_PER_PORT);
-+	RTE_ASSERT(index < NUM_MAC_ADDRS_PER_PORT);
- 
- 	if (index >= NUM_MAC_ADDRS_PER_PORT) {
- 		const struct pmd_internals *const internals =
-@@ -1366,8 +1366,8 @@ eth_dev_set_link_up(struct rte_eth_dev *eth_dev)
- 	if (internals->type == PORT_TYPE_VIRTUAL || internals->type == PORT_TYPE_OVERRIDE)
- 		return 0;
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(port == internals->n_intf_no);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(port == internals->n_intf_no);
- 
- 	port_ops->set_adm_state(p_adapter_info, port, true);
- 
-@@ -1392,8 +1392,8 @@ eth_dev_set_link_down(struct rte_eth_dev *eth_dev)
- 	if (internals->type == PORT_TYPE_VIRTUAL || internals->type == PORT_TYPE_OVERRIDE)
- 		return 0;
- 
--	assert(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
--	assert(port == internals->n_intf_no);
-+	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
-+	RTE_ASSERT(port == internals->n_intf_no);
- 
- 	port_ops->set_link_status(p_adapter_info, port, false);
- 
-@@ -1930,7 +1930,7 @@ THREAD_FUNC adapter_stat_thread_fn(void *context)
- 
- 	NT_LOG_DBGX(DBG, NTNIC, "%s: begin", p_adapter_id_str);
- 
--	assert(p_nthw_stat);
-+	RTE_ASSERT(p_nthw_stat);
- 
- 	while (!p_drv->ntdrv.b_shutdown) {
- 		nt_os_wait_usec(10 * 1000);
-@@ -2071,7 +2071,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		kvargs_count = rte_kvargs_count(kvlist, ETH_DEV_NTHW_RXQUEUES_ARG);
+-				if (flm_inf_queue_get(port_no, FLM_INFO_LOCAL, &data) == 0) {
++				if (nthw_flm_inf_queue_get(port_no, FLM_INFO_LOCAL, &data) == 0) {
+ 					if (eth_dev && eth_dev->data &&
+ 						eth_dev->data->dev_private) {
+ 						struct ntnic_flm_statistic_s event_data;
+@@ -2072,7 +2072,8 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
  
  		if (kvargs_count != 0) {
--			assert(kvargs_count == 1);
-+			RTE_ASSERT(kvargs_count == 1);
- 			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_RXQUEUES_ARG, &string_to_u32,
+ 			RTE_ASSERT(kvargs_count == 1);
+-			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_RXQUEUES_ARG, &string_to_u32,
++			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_RXQUEUES_ARG,
++					&nthw_string_to_u32,
  					&nb_rx_queues);
  
-@@ -2095,7 +2095,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		kvargs_count = rte_kvargs_count(kvlist, ETH_DEV_NTHW_TXQUEUES_ARG);
+ 			if (res < 0) {
+@@ -2096,7 +2097,8 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
  
  		if (kvargs_count != 0) {
--			assert(kvargs_count == 1);
-+			RTE_ASSERT(kvargs_count == 1);
- 			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_TXQUEUES_ARG, &string_to_u32,
+ 			RTE_ASSERT(kvargs_count == 1);
+-			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_TXQUEUES_ARG, &string_to_u32,
++			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_TXQUEUES_ARG,
++					&nthw_string_to_u32,
  					&nb_tx_queues);
  
-@@ -2401,7 +2401,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		if (get_flow_filter_ops() != NULL) {
- 			if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE &&
- 				internals->flw_dev->ndev->be.tpe.ver >= 2) {
--				assert(nthw_eth_dev_ops.mtu_set == dev_set_mtu_inline ||
-+				RTE_ASSERT(nthw_eth_dev_ops.mtu_set == dev_set_mtu_inline ||
- 					nthw_eth_dev_ops.mtu_set == NULL);
- 				nthw_eth_dev_ops.mtu_set = dev_set_mtu_inline;
- 				dev_set_mtu_inline(eth_dev, MTUINITVAL);
+ 			if (res < 0) {
 diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-index 43f45ebe34..f548421ce3 100644
+index f548421ce3..1beba22b9d 100644
 --- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
 +++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-@@ -1159,7 +1159,7 @@ static int poll_statistics(struct pmd_internals *internals)
- 	if (!p_nt4ga_stat || if_index < 0 || if_index >= NUM_ADAPTER_PORTS_MAX)
+@@ -28,7 +28,7 @@ static struct rte_flow nt_flows[MAX_RTE_FLOWS];
+ rte_spinlock_t flow_lock = RTE_SPINLOCK_INITIALIZER;
+ static struct rte_flow nt_flows[MAX_RTE_FLOWS];
+ 
+-int interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_flow_item *out)
++int nthw_interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_flow_item *out)
+ {
+ 	int hdri = 0;
+ 	int pkti = 0;
+@@ -246,7 +246,7 @@ int interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct rte_fl
+ 	return hdri + 1;
+ }
+ 
+-int create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr)
++int nthw_create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr)
+ {
+ 	memset(&attribute->attr, 0x0, sizeof(struct rte_flow_attr));
+ 
+@@ -258,7 +258,7 @@ int create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr)
+ 	return 0;
+ }
+ 
+-int create_match_elements(struct cnv_match_s *match, const struct rte_flow_item items[],
++int nthw_create_match_elements(struct cnv_match_s *match, const struct rte_flow_item items[],
+ 	int max_elem)
+ {
+ 	int eidx = 0;
+@@ -308,7 +308,7 @@ int create_match_elements(struct cnv_match_s *match, const struct rte_flow_item
+ 	return (type >= 0) ? 0 : -1;
+ }
+ 
+-int create_action_elements_inline(struct cnv_action_s *action,
++int nthw_create_action_elements_inline(struct cnv_action_s *action,
+ 	const struct rte_flow_action actions[],
+ 	int max_elem,
+ 	uint32_t queue_offset)
+@@ -402,8 +402,8 @@ int create_action_elements_inline(struct cnv_action_s *action,
+ 				const struct rte_flow_action_raw_decap *decap =
+ 					(const struct rte_flow_action_raw_decap *)actions[aidx]
+ 					.conf;
+-				int item_count = interpret_raw_data(decap->data, NULL, decap->size,
+-					action->decap.items);
++				int item_count = nthw_interpret_raw_data(decap->data, NULL,
++					decap->size, action->decap.items);
+ 
+ 				if (item_count < 0)
+ 					return item_count;
+@@ -418,8 +418,8 @@ int create_action_elements_inline(struct cnv_action_s *action,
+ 				const struct rte_flow_action_raw_encap *encap =
+ 					(const struct rte_flow_action_raw_encap *)actions[aidx]
+ 					.conf;
+-				int item_count = interpret_raw_data(encap->data, encap->preserve,
+-					encap->size, action->encap.items);
++				int item_count = nthw_interpret_raw_data(encap->data,
++					encap->preserve, encap->size, action->encap.items);
+ 
+ 				if (item_count < 0)
+ 					return item_count;
+@@ -499,19 +499,19 @@ static int convert_flow(struct rte_eth_dev *eth_dev,
+ 		queue_offset = internals->vpq[0].id;
+ 	}
+ 
+-	if (create_attr(attribute, attr) != 0) {
++	if (nthw_create_attr(attribute, attr) != 0) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ATTR, NULL, "Error in attr");
  		return -1;
+ 	}
  
--	assert(rte_tsc_freq > 0);
-+	RTE_ASSERT(rte_tsc_freq > 0);
+-	if (create_match_elements(match, items, MAX_ELEMENTS) != 0) {
++	if (nthw_create_match_elements(match, items, MAX_ELEMENTS) != 0) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+ 			"Error in items");
+ 		return -1;
+ 	}
  
- 	rte_spinlock_lock(&hwlock);
+ 	if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE) {
+-		if (create_action_elements_inline(action, actions,
++		if (nthw_create_action_elements_inline(action, actions,
+ 			MAX_ACTIONS, queue_offset) != 0) {
+ 			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 				"Error in actions");
+@@ -716,7 +716,7 @@ static int eth_flow_actions_update(struct rte_eth_dev *eth_dev,
+ 				queue_offset = dev_private->vpq[0].id;
+ 			}
  
+-			if (create_action_elements_inline(&action, actions, MAX_ACTIONS,
++			if (nthw_create_action_elements_inline(&action, actions, MAX_ACTIONS,
+ 					queue_offset) != 0) {
+ 				rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 					"Error in actions");
+@@ -873,7 +873,7 @@ static struct rte_flow_pattern_template *eth_flow_pattern_template_create(struct
+ 
+ 	uint16_t caller_id = get_caller_id(dev->data->port_id);
+ 
+-	if (create_match_elements(&match, pattern, MAX_ELEMENTS) != 0) {
++	if (nthw_create_match_elements(&match, pattern, MAX_ELEMENTS) != 0) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+ 			"Error in pattern");
+ 		return NULL;
+@@ -943,14 +943,16 @@ static struct rte_flow_actions_template *eth_flow_actions_template_create(struct
+ 		if (internals->type == PORT_TYPE_OVERRIDE && internals->vpq_nb_vq > 0)
+ 			queue_offset = internals->vpq[0].id;
+ 
+-		if (create_action_elements_inline(&action, actions, MAX_ACTIONS, queue_offset) !=
+-			0) {
++		if (nthw_create_action_elements_inline(&action, actions,
++				MAX_ACTIONS,
++				queue_offset) != 0) {
+ 			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 				"Error in actions");
+ 			return NULL;
+ 		}
+ 
+-		if (create_action_elements_inline(&mask, masks, MAX_ACTIONS, queue_offset) != 0) {
++		if (nthw_create_action_elements_inline(&mask, masks,
++				MAX_ACTIONS, queue_offset) != 0) {
+ 			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 				"Error in masks");
+ 			return NULL;
+@@ -1081,7 +1083,7 @@ static struct rte_flow *eth_flow_async_create(struct rte_eth_dev *dev, uint32_t
+ 	struct cnv_action_s action = { 0 };
+ 	struct cnv_match_s match = { 0 };
+ 
+-	if (create_match_elements(&match, pattern, MAX_ELEMENTS) != 0) {
++	if (nthw_create_match_elements(&match, pattern, MAX_ELEMENTS) != 0) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+ 			"Error in pattern");
+ 		return NULL;
+@@ -1093,8 +1095,8 @@ static struct rte_flow *eth_flow_async_create(struct rte_eth_dev *dev, uint32_t
+ 		if (internals->type == PORT_TYPE_OVERRIDE && internals->vpq_nb_vq > 0)
+ 			queue_offset = internals->vpq[0].id;
+ 
+-		if (create_action_elements_inline(&action, actions, MAX_ACTIONS, queue_offset) !=
+-			0) {
++		if (nthw_create_action_elements_inline(&action, actions,
++				MAX_ACTIONS, queue_offset) != 0) {
+ 			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 				"Error in actions");
+ 			return NULL;
+@@ -1285,7 +1287,7 @@ static const struct rte_flow_ops dev_flow_ops = {
+ 	.template_table_destroy = eth_flow_template_table_destroy,
+ };
+ 
+-void dev_flow_init(void)
++void nthw_dev_flow_init(void)
+ {
+ 	register_dev_flow_ops(&dev_flow_ops);
+ }
+@@ -1295,7 +1297,7 @@ static struct rte_flow_fp_ops async_dev_flow_ops = {
+ 	.async_destroy = eth_flow_async_destroy,
+ };
+ 
+-void dev_fp_flow_init(void)
++void nthw_dev_fp_flow_init(void)
+ {
+ 	register_dev_fp_flow_ops(&async_dev_flow_ops);
+ }
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.c b/drivers/net/ntnic/ntnic_mod_reg.c
+index 054b343fe7..8dc6e48182 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.c
++++ b/drivers/net/ntnic/ntnic_mod_reg.c
+@@ -15,7 +15,7 @@ void register_sg_ops(struct sg_ops_s *ops)
+ const struct sg_ops_s *get_sg_ops(void)
+ {
+ 	if (sg_ops == NULL)
+-		sg_init();
++		nthw_sg_init();
+ 	return sg_ops;
+ }
+ 
+@@ -32,7 +32,7 @@ void register_meter_ops(struct meter_ops_s *ops)
+ const struct meter_ops_s *get_meter_ops(void)
+ {
+ 	if (meter_ops == NULL)
+-		meter_init();
++		nthw_meter_init();
+ 
+ 	return meter_ops;
+ }
+@@ -65,7 +65,7 @@ void register_100g_link_ops(struct link_ops_s *ops)
+ const struct link_ops_s *get_100g_link_ops(void)
+ {
+ 	if (link_100g_ops == NULL)
+-		link_100g_init();
++		nthw_link_100g_init();
+ 	return link_100g_ops;
+ }
+ 
+@@ -96,7 +96,7 @@ void register_port_ops(const struct port_ops *ops)
+ const struct port_ops *get_port_ops(void)
+ {
+ 	if (port_ops == NULL)
+-		port_init();
++		nthw_port_init();
+ 	return port_ops;
+ }
+ 
+@@ -125,7 +125,7 @@ void register_adapter_ops(const struct adapter_ops *ops)
+ const struct adapter_ops *get_adapter_ops(void)
+ {
+ 	if (adapter_ops == NULL)
+-		adapter_init();
++		nthw_adapter_init();
+ 	return adapter_ops;
+ }
+ 
+@@ -211,7 +211,7 @@ struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void)
+ const struct flow_backend_ops *get_flow_backend_ops(void)
+ {
+ 	if (flow_backend_ops == NULL)
+-		flow_backend_init();
++		nthw_flow_backend_init();
+ 
+ 	return flow_backend_ops;
+ }
+@@ -241,7 +241,7 @@ void register_flow_filter_ops(const struct flow_filter_ops *ops)
+ const struct flow_filter_ops *get_flow_filter_ops(void)
+ {
+ 	if (flow_filter_ops == NULL)
+-		init_flow_filter();
++		nthw_init_flow_filter();
+ 
+ 	return flow_filter_ops;
+ }
+@@ -256,7 +256,7 @@ void register_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops)
+ const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void)
+ {
+ 	if (dev_fp_flow_ops == NULL)
+-		dev_fp_flow_init();
++		nthw_dev_fp_flow_init();
+ 
+ 	return dev_fp_flow_ops;
+ }
+@@ -271,7 +271,7 @@ void register_dev_flow_ops(const struct rte_flow_ops *ops)
+ const struct rte_flow_ops *get_dev_flow_ops(void)
+ {
+ 	if (dev_flow_ops == NULL)
+-		dev_flow_init();
++		nthw_dev_flow_init();
+ 
+ 	return dev_flow_ops;
+ }
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
+index 9b3650da89..9d14bebd7a 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.h
++++ b/drivers/net/ntnic/ntnic_mod_reg.h
+@@ -115,7 +115,7 @@ struct sg_ops_s {
+ 
+ void register_sg_ops(struct sg_ops_s *ops);
+ const struct sg_ops_s *get_sg_ops(void);
+-void sg_init(void);
++void nthw_sg_init(void);
+ 
+ /* Meter ops section */
+ struct meter_ops_s {
+@@ -124,7 +124,7 @@ struct meter_ops_s {
+ 
+ void register_meter_ops(struct meter_ops_s *ops);
+ const struct meter_ops_s *get_meter_ops(void);
+-void meter_init(void);
++void nthw_meter_init(void);
+ 
+ /*
+  *
+@@ -143,7 +143,7 @@ struct link_ops_s {
+ 
+ void register_100g_link_ops(struct link_ops_s *ops);
+ const struct link_ops_s *get_100g_link_ops(void);
+-void link_100g_init(void);
++void nthw_link_100g_init(void);
+ 
+ void register_agx_100g_link_ops(struct link_ops_s *ops);
+ const struct link_ops_s *get_agx_100g_link_ops(void);
+@@ -203,7 +203,7 @@ struct port_ops {
+ 
+ void register_port_ops(const struct port_ops *ops);
+ const struct port_ops *get_port_ops(void);
+-void port_init(void);
++void nthw_port_init(void);
+ 
+ struct nt4ga_stat_ops {
+ 	int (*nt4ga_stat_init)(struct adapter_info_s *p_adapter_info);
+@@ -225,7 +225,7 @@ struct adapter_ops {
+ 
+ void register_adapter_ops(const struct adapter_ops *ops);
+ const struct adapter_ops *get_adapter_ops(void);
+-void adapter_init(void);
++void nthw_adapter_init(void);
+ 
+ struct clk9563_ops {
+ 	const int *(*get_n_data_9563_si5340_nt200a02_u23_v5)(void);
+@@ -277,14 +277,14 @@ struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void);
+ void rst_nt400dxx_ops_init(void);
+ 
+ struct flow_backend_ops {
+-	const struct flow_api_backend_ops *(*bin_flow_backend_init)(nthw_fpga_t *p_fpga,
++	const struct flow_api_backend_ops *(*nthw_bin_flow_backend_init)(nthw_fpga_t *p_fpga,
+ 		void **be_dev);
+ 	void (*bin_flow_backend_done)(void *be_dev);
+ };
+ 
+ void register_flow_backend_ops(const struct flow_backend_ops *ops);
+ const struct flow_backend_ops *get_flow_backend_ops(void);
+-void flow_backend_init(void);
++void nthw_flow_backend_init(void);
+ 
+ struct profile_inline_ops {
+ 	/*
+@@ -445,9 +445,9 @@ const struct profile_inline_ops *get_profile_inline_ops(void);
+ void profile_inline_init(void);
+ 
+ struct flow_filter_ops {
+-	int (*flow_filter_init)(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device,
++	int (*nthw_flow_filter_init)(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_device,
+ 		int adapter_no);
+-	int (*flow_filter_done)(struct flow_nic_dev *dev);
++	int (*nthw_flow_filter_done)(struct flow_nic_dev *dev);
+ 	/*
+ 	 * Device Management API
+ 	 */
+@@ -487,8 +487,9 @@ struct flow_filter_ops {
+ 		const struct rte_flow_action action[],
+ 		struct rte_flow_error *error);
+ 
+-	int (*flow_get_flm_stats)(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
+-	int (*flow_get_ifr_stats)(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count);
++	int (*nthw_flow_get_flm_stats)(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size);
++	int (*nthw_flow_get_ifr_stats)(struct flow_nic_dev *ndev, uint64_t *data,
++		uint8_t port_count);
+ 
+ 	/*
+ 	 * Other
+@@ -554,15 +555,15 @@ struct flow_filter_ops {
+ 
+ void register_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops);
+ const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void);
+-void dev_fp_flow_init(void);
++void nthw_dev_fp_flow_init(void);
+ 
+ void register_dev_flow_ops(const struct rte_flow_ops *ops);
+ const struct rte_flow_ops *get_dev_flow_ops(void);
+-void dev_flow_init(void);
++void nthw_dev_flow_init(void);
+ 
+ void register_flow_filter_ops(const struct flow_filter_ops *ops);
+ const struct flow_filter_ops *get_flow_filter_ops(void);
+-void init_flow_filter(void);
++void nthw_init_flow_filter(void);
+ 
+ struct ntnic_xstats_ops {
+ 	int (*nthw_xstats_get_names)(nt4ga_stat_t *p_nt4ga_stat,
 diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
-index 694ab7a3b3..38d8de4e29 100644
+index 38d8de4e29..df382e7a24 100644
 --- a/drivers/net/ntnic/ntutil/nt_util.c
 +++ b/drivers/net/ntnic/ntutil/nt_util.c
-@@ -7,7 +7,6 @@
- #include <stdlib.h>
- #include <stdint.h>
- #include <inttypes.h>
--#include <assert.h>
+@@ -181,7 +181,7 @@ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
+ }
  
- #include <rte_ethdev.h>
- #include <rte_malloc.h>
+ /* Converts link speed provided in Mbps to NT specific definitions.*/
+-nt_link_speed_t convert_link_speed(int link_speed_mbps)
++nt_link_speed_t nthw_convert_link_speed(int link_speed_mbps)
+ {
+ 	switch (link_speed_mbps) {
+ 	case 10:
+@@ -234,7 +234,7 @@ int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
+ 	return eth_link_duplex;
+ }
+ 
+-int string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args)
++int nthw_string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args)
+ {
+ 	if (!value_str || !extra_args)
+ 		return -1;
+diff --git a/drivers/net/ntnic/ntutil/nt_util.h b/drivers/net/ntnic/ntutil/nt_util.h
+index f2eccf3501..5be84be9c3 100644
+--- a/drivers/net/ntnic/ntutil/nt_util.h
++++ b/drivers/net/ntnic/ntutil/nt_util.h
+@@ -66,9 +66,9 @@ void nt_util_vfio_init(struct nt_util_vfio_impl *impl);
+ 
+ int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed);
+ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa);
+-nt_link_speed_t convert_link_speed(int link_speed_mbps);
++nt_link_speed_t nthw_convert_link_speed(int link_speed_mbps);
+ int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex);
+ 
+-int string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args);
++int nthw_string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args);
+ 
+ #endif	/* NTOSS_SYSTEM_NT_UTIL_H */
 -- 
 2.45.0
 
