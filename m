@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2EFC282EC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 01:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F760C282D1
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 02:13:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CC5840A81;
-	Fri,  7 Mar 2025 02:40:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A4BBF40A75;
+	Fri,  7 Mar 2025 03:13:10 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id DBEA640A75
- for <dev@dpdk.org>; Fri,  7 Mar 2025 02:40:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 103AD4029E
+ for <dev@dpdk.org>; Fri,  7 Mar 2025 03:13:09 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 000D4211049F; Thu,  6 Mar 2025 17:40:18 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 000D4211049F
+ id 4EAE82038F21; Thu,  6 Mar 2025 18:13:08 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4EAE82038F21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741311619;
- bh=WrqYfN8gGGf/wbDPuBeZudE8jfHTlmilIcx6ojWRKSw=;
+ s=default; t=1741313588;
+ bh=WzOG/65X5vDNlkGmKsPfo4DKIkJSTThT1WES4pk3ZzI=;
  h=From:To:Cc:Subject:Date:From;
- b=Eta7fpmxyB2xS1S0gHQCxEr9eRQ9t4KKUi/RUBC9Qa+GNaNXELEgdw8ouD4eNOqA2
- SsB/YnQdib88Z8ag0APj0HB1k6/DJfqjjjCmGEXpQUtYQBlUjL7iN9SvshZlPNBF2j
- Ta9/MjT+se35+1KiBHeNFyoQVFmUlecu2v9M68kE=
+ b=s2RjhMuFSdqBvE0Fr215hD3wHmexLE2cIsKW8PXepeaNRukqXJmOPBUTR7oIgwqc0
+ rgtS+iDuBBj5cf1BHpCH02CivUDOSn6qLAKXd/892NmYbjH6EDnpXW63EZYhBFzoel
+ c9JtHniyEXH3AkKOGPmRnfp1hgAO8wVtTX7ke/ig=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH] rcu: remove VLAs
-Date: Thu,  6 Mar 2025 17:40:12 -0800
-Message-Id: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH] test_ipfrag: remove array of size zero
+Date: Thu,  6 Mar 2025 18:13:01 -0800
+Message-Id: <1741313581-14300-1-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -41,71 +41,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are two lines that were using VLAs, which are not supported by
-MSVC.
+When compiling with MSVC the error below pops up:
 
-1)
-../lib/rcu/rte_rcu_qsbr.c:326:12: warning: variable length array used [-Wvla]
-  326 |         char data[dq->esize];
-      |                   ^~~~~~~~~
-2)
-../lib/rcu/rte_rcu_qsbr.c:389:12: warning: variable length array used [-Wvla]
-  389 |         char data[dq->esize];
-      |                   ^~~~~~~~~
+../app/test/test_ipfrag.c(39): error C2466:
+    cannot allocate an array of constant size 0
+../app/test/test_ipfrag.c(157): warning C4034: sizeof returns 0
+../app/test/test_ipfrag.c(160): warning C4034: sizeof returns 0
 
-The short-term fix is to use alloca, to allow progress with the msvc
-compatibility work.
-The long-term plan involves API changes and therefore can only be applied
-with a new release. This long-term plan consists of introducing some
-reasonable limitation on RCU DQ element size.
+The fix is to simplify the code and remove the zero-size array.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- lib/rcu/meson.build    | 7 -------
- lib/rcu/rte_rcu_qsbr.c | 6 +++---
- 2 files changed, 3 insertions(+), 10 deletions(-)
+ app/test/test_ipfrag.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/lib/rcu/meson.build b/lib/rcu/meson.build
-index fb1f49ba63..71143f5210 100644
---- a/lib/rcu/meson.build
-+++ b/lib/rcu/meson.build
-@@ -11,10 +11,3 @@ sources = files('rte_rcu_qsbr.c')
- headers = files('rte_rcu_qsbr.h')
+diff --git a/app/test/test_ipfrag.c b/app/test/test_ipfrag.c
+index 18d6727157..95d7952b4d 100644
+--- a/app/test/test_ipfrag.c
++++ b/app/test/test_ipfrag.c
+@@ -36,8 +36,6 @@ uint8_t expected_first_frag_ipv4_opts_nocopied[] = {
+ 	0x00, 0x00, 0x00, 0x00,
+ };
  
- deps += ['ring']
+-uint8_t expected_sub_frag_ipv4_opts_nocopied[0];
 -
--# FIXME: this library was enabled for mingw target (a Windows target).
--# Relying on no_wvla_cflag would trigger a build error until the VLA in rte_rcu_qsbr.c is removed.
--# Disable the warning here for now.
--if cc.has_argument('-Wvla')
--    cflags += '-Wno-vla'
--endif
-diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
-index dbf31501a6..3f619e1607 100644
---- a/lib/rcu/rte_rcu_qsbr.c
-+++ b/lib/rcu/rte_rcu_qsbr.c
-@@ -323,7 +323,7 @@ int rte_rcu_qsbr_dq_enqueue(struct rte_rcu_qsbr_dq *dq, void *e)
- 		return 1;
+ struct test_opt_data {
+ 	bool is_first_frag;		 /**< offset is 0 */
+ 	bool opt_copied;		 /**< ip option copied flag */
+@@ -153,11 +151,8 @@ test_get_ipv4_opt(bool is_first_frag, bool opt_copied,
+ 				expected_sub_frag_ipv4_opts_copied,
+ 				sizeof(expected_sub_frag_ipv4_opts_copied));
+ 		} else {
+-			expected_opt->len =
+-				sizeof(expected_sub_frag_ipv4_opts_nocopied);
+-			memcpy(expected_opt->data,
+-				expected_sub_frag_ipv4_opts_nocopied,
+-				sizeof(expected_sub_frag_ipv4_opts_nocopied));
++			expected_opt->len = 0;
++			/* No data to be copied */
+ 		}
  	}
- 
--	char data[dq->esize];
-+	char *data = alloca(dq->esize);
- 	dq_elem = (__rte_rcu_qsbr_dq_elem_t *)data;
- 	/* Start the grace period */
- 	dq_elem->token = rte_rcu_qsbr_start(dq->v);
-@@ -386,10 +386,10 @@ rte_rcu_qsbr_dq_reclaim(struct rte_rcu_qsbr_dq *dq, unsigned int n,
- 
- 	cnt = 0;
- 
--	char data[dq->esize];
-+	char *data = alloca(dq->esize);
- 	/* Check reader threads quiescent state and reclaim resources */
- 	while (cnt < n &&
--		rte_ring_dequeue_bulk_elem_start(dq->r, &data,
-+		rte_ring_dequeue_bulk_elem_start(dq->r, data,
- 					dq->esize, 1, available) != 0) {
- 		dq_elem = (__rte_rcu_qsbr_dq_elem_t *)data;
- 
+ }
 -- 
 2.48.1.vfs.0.0
 
