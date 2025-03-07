@@ -2,134 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D141BC19F32
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 18:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BE8C28B23
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 18:55:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6D8540E50;
-	Fri,  7 Mar 2025 19:15:32 +0100 (CET)
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com
- (mail-sn1nam02on2052.outbound.protection.outlook.com [40.107.96.52])
- by mails.dpdk.org (Postfix) with ESMTP id 572B040E36
- for <dev@dpdk.org>; Fri,  7 Mar 2025 19:15:31 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iRR/XoICzA+CDfe7WRBCS9wFfxgaKzgjrkaHeOnXInLwl+xhiI3vyQ/7ILDmfVuTRvMITM9zTbq+knTHljW3r8JRpV3DawxxbbsN9W7pX3ds8m3JUcnNcFxkVtPc/xzpuLKMM7/3E6FLkgLmAgRoY2daGIuB5MmUS1UHuysrrlkPIdzDuUvOmHMv4Wkh+6Mb8hn4WaqHv3EMqCmr1E4sDSj/WPfN4S+fsD0ROWjSzWcTVxHRK0X72fLUevbXUIxquEjqy17NSNCju2Ci7czh+HLQXWlv9v3KGlVyIkRQA0rreNv1vXpArZImqb0TdnAzQ8tLLsHa4kZUJgdDKUwlFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TzdHl9ZhqbqdkZ7fKvUSblBcU15OfbQ3BK+2K0BQ9Hk=;
- b=R958YsMk7tlND3nNqQ5BDWhGc2huqNRhVK8I9Cz2/Oe4+EEqqZmI9rFkUqnSWopMyts/qFzy6pADZJsDAr7OJ84VCBRwTVrUwRyF1gYaDpp7sZzi/KfClVYDjmMtUAmgPZpfiULC94McujiiP5XXhCjGymuhxKMGktNxXnUvtR1qf19Ias/JdGQVophJBT3vm38U/8xyxLS/wtq4Snrqrd+7RCW7w/rgpYlCaBXmBXtXfmuX1l2FaEPev6hyiurjzvkr9E45q4h9fJDXwWCabI8IE2KagMmP+XTJ/09Nr6HrduAuQFroQaNDqpXw76Dkj3jlYagq2x4EIgt7q35jxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TzdHl9ZhqbqdkZ7fKvUSblBcU15OfbQ3BK+2K0BQ9Hk=;
- b=b8dt1+Vxub1oJjvUJfsPvBfO4o4h3zQppI9A09cR3ZPpmDlqKvOrteNh/6XEoECFuHtKd2pNh5dniexZ+QkJos+xchnSeW8SyJUXLDxX32rylVlGxaRy8QC1iNuSDFsKApFfI1CPxalAoIn1o8E6BEzqIREylyn8PwzlgoN+zVGiVOzNygz0nkDMKXmbnV4BrVT0O8nI/QTkjdC7+buUMFFrpqIwAJhEroWSs60GtiJLVIzW5vuLm540icALAMEMrVn9Vba5QWVtL3+35ztM2376TIp3fsIqN7nRRvH0/Fqu7rTlOnN0bnPGjcaf5Xt7rumzotGM5NKNBV6LBMULgA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB6811.namprd12.prod.outlook.com (2603:10b6:510:1b5::9)
- by DS0PR12MB8217.namprd12.prod.outlook.com (2603:10b6:8:f1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Fri, 7 Mar
- 2025 18:15:28 +0000
-Received: from PH7PR12MB6811.namprd12.prod.outlook.com
- ([fe80::8f8e:db0b:ddfc:a5b8]) by PH7PR12MB6811.namprd12.prod.outlook.com
- ([fe80::8f8e:db0b:ddfc:a5b8%4]) with mapi id 15.20.8511.020; Fri, 7 Mar 2025
- 18:15:28 +0000
-Date: Fri, 7 Mar 2025 20:15:23 +0200 (IST)
-From: "Etelson, Gregory" <getelson@nvidia.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-cc: "Van Haaren, Harry" <harry.van.haaren@intel.com>, 
- Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>, 
- "thomas@monjalon.net" <thomas@monjalon.net>, 
- "mkashani@nvidia.com" <mkashani@nvidia.com>
-Subject: Re: [PATCH] rust: support DPDK API
-In-Reply-To: <Z8sczC2L6zRKvGk4@bricha3-mobl1.ger.corp.intel.com>
-Message-ID: <170e1f75-782e-4717-c5ed-8aecea25132d@nvidia.com>
-References: <20250306133713.393057-1-getelson@nvidia.com>
- <PH8PR11MB6803599C6A152CD6B70465A7D7D52@PH8PR11MB6803.namprd11.prod.outlook.com>
- <Z8sczC2L6zRKvGk4@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-ClientProxiedBy: LO2P265CA0289.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::13) To PH7PR12MB6811.namprd12.prod.outlook.com
- (2603:10b6:510:1b5::9)
+	by mails.dpdk.org (Postfix) with ESMTP id 12AB140E50;
+	Fri,  7 Mar 2025 19:55:44 +0100 (CET)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
+ [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id B103E40E36
+ for <dev@dpdk.org>; Fri,  7 Mar 2025 19:55:42 +0100 (CET)
+Received: by mail-ej1-f50.google.com with SMTP id
+ a640c23a62f3a-aaec61d0f65so441849066b.1
+ for <dev@dpdk.org>; Fri, 07 Mar 2025 10:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1741373742; x=1741978542; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=zzA+nYTgNdWRnB4bgVCRjGKp/5AfX/pYpwbZUjtj9Zg=;
+ b=D1EXY5L6xjfOlzJRCW8slvLw0mZze5pQxccZ6M6IFgU7uX11yqwk6WGaStl/iIsv44
+ IDeyNhJzkb0LHbmdW0xeiHrHr+x2nax/tIoit7nS9RGZMLTzlLz2ay6dAEn4hke8JrKy
+ IKM8e3IdPZ+0+CwORPtR2m6/G5ZJ60bya/GkQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741373742; x=1741978542;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=zzA+nYTgNdWRnB4bgVCRjGKp/5AfX/pYpwbZUjtj9Zg=;
+ b=NaPIq1MDtiG+KE3dFxJnpnOxhFBlLyVPttXabv3B4mtv4MNAHogP3oEv2YU7iUmBa0
+ 66oWsqIVZpqmwzuUlRI2yp4iu1ndKLskKMzk3XK4+qwizbcURlCugj9MAY0KnbLpAJZB
+ /IE5mn3eeXn9v45Cp8+nwAd3u8EvpneR1fYoy3PeepP3NpiRVuy26XO3EWlN9B2siH3e
+ i9Wp0ZxFfJPQQ3dQst+ido+SuGEqncH0fNp2kLCEfoeUDA6q0H4XSdPizGjWKf/cqscE
+ EbJfvcRdUWcqf+6wjHKSEpbXp22pxdW9Haa2D0NsxqI7tkqZwGNpeiR7fSzAPPoJ5pyY
+ nJFQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXFuPtuaQ56Rf+OG47tKUiFaXI3H0a3NepmxOFr+qjQOoCnBZaxk0D5I2Yke6ubiDB3sXI=@dpdk.org
+X-Gm-Message-State: AOJu0YwmvfLpWBActQrfqG5XxNW11ejf66SMMQOowkSvaEU3zzPhSjUX
+ fferXieDLcziVGWy8QvJVYYx9dl8S/u2hGd1aqGb8BC2F3YgTktn2m9v4HtPnCXfer+zSqwScio
+ 1j7oLZEJyqgWRia949UXUezAIN1qb+5+m12tXrhvEdkS0SvMnDxxokfjW0rxZWaj5u3G2t2NeTu
+ 9Cmn0x
+X-Gm-Gg: ASbGncsxilGbxUScQAq+A5RkDrf3xHSz4lyUSvL4qseg4JoLzInm8wVGDoUyYPObIDq
+ 72f6un+k/UWZMN2FVI3IB8/ywwrDo1JjonzO1gvTfdtw+AChowMvLPGZNB9IhQswT6GysDFs5tC
+ o7xWtWVBrvF8YWrXI+kJ7Hi6FzSKY=
+X-Google-Smtp-Source: AGHT+IHSkw0s8LsRRvLe7OBIBg9r4eppIj/wuubzvtl88PRQVq+oZeNZkLsU3WWrLzxyuvZcdZ2pT79pVGsatlQmJAI=
+X-Received: by 2002:a17:907:c994:b0:abf:7940:dba2 with SMTP id
+ a640c23a62f3a-ac2526d9b1dmr406194066b.30.1741373742164; Fri, 07 Mar 2025
+ 10:55:42 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6811:EE_|DS0PR12MB8217:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac6ff590-55e3-4b85-0f03-08dd5da409d9
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|10070799003|366016|1800799024|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9qq3bxmb6cf9TvviR+2CVKG7cW8W2lCebynocUHa9gY3eA1nmkMgEBUCY7Gh?=
- =?us-ascii?Q?meRG2EebjsY13OxTBtdStQmZ2DpBCoSI30804ZG0/mXQwVTV/q+vvhZdO79+?=
- =?us-ascii?Q?wvgx/ssZr8CdRjFeiA60iJriTl6tZKL9874IOHRf/mkzfpLBPRA3LHrdo0xC?=
- =?us-ascii?Q?Rn9dPoLAxLnXaHT4oWtFeAPVuNLomrfDDYD8esi7KwU+emnRqIqFz7HbwdSo?=
- =?us-ascii?Q?0DVEzPUqHAdccTCsNf6pcNP3bh43X+WfdV6neSBV5mycBQHlMtvvWvW8KYNj?=
- =?us-ascii?Q?hRtIT79p0MZgM0pTf1547BsqQYN+I//E0zeyR+Rf7PMMgTKBxRA9mlY48j1o?=
- =?us-ascii?Q?RLa4NkE9NfzWFv8vwn7uFdPGnIOI5i2v0hb7KupcNMm67pIyJwCPCXRhhH0L?=
- =?us-ascii?Q?4H1bSS1+KrzccMABEwgrG/m4FjVDWpr69hY1N3WWkNaP6IxlUPR1jeoiFInb?=
- =?us-ascii?Q?LoWIG+BcuuMrLNBdRPRkIGTk5pjkKmALHYr19jB/P6b8vOO62lotfr9dgltw?=
- =?us-ascii?Q?eHj8QZm4UnrCn+IsJo6LQKg+Oj/ljD08mw8Ihyv+27Xavyy11PJLZr3NZ1rd?=
- =?us-ascii?Q?t67PXu9q4Bq4+6eMlH6RaVwGhNOcXlDS2+SkiA7jr2jA5eeqtUTLkjEyC4sD?=
- =?us-ascii?Q?A0IgmDzlq9gv+l//n600SP320cnl6u59ihyu76glzRTijQvQh4TLffwq12+3?=
- =?us-ascii?Q?yOaNzRGAYhm5s26Ur0St6VcJrc+xfSaxgKdu4bDjpSAS08kYuBeLbMBymCTK?=
- =?us-ascii?Q?Apth/zbpnOujpeSC+zpBWrxB7ZvfEJkjAzCQ4hrVayl7TK8lZdL6rn1gR4D3?=
- =?us-ascii?Q?VQIfItKVHbC18Vw7zUuINVpj6mYf8S4UsJ3hjVQez2EWU7ahSQXyS6C61wli?=
- =?us-ascii?Q?QJal6NTGS8nJALJS9bn6LzNkTtNhdcfUToNTV4HHY1iSXF7/u1ipo9mP8Y49?=
- =?us-ascii?Q?nLsrYWzjjTx0dQcowqduFiSCBLcvGTorfLnj5wS8/Zpquxbz1Cs5FnXR7cI4?=
- =?us-ascii?Q?tp31wCQkpJeClImgickdGjvf14PnondqH3I7bwoY/ayS6W2yH9sgjRVsLnbO?=
- =?us-ascii?Q?06Be9qbo9kOiQpgNNfMVT6uD3uaPjyyd8k3q41rNcU1upl3brWnRJXLHqVki?=
- =?us-ascii?Q?sVlIi/ru0mA/w6LJ0KXnZZGcJk7cVHbuiCuNJ8zjMg5+gmOY+4eP7wJnq1ua?=
- =?us-ascii?Q?zznH/1hQekg7Pa54NvAH5p3jGrFDo2tb+OiSs7wcrtzzx7ooUs3IxaFiorSw?=
- =?us-ascii?Q?YBtk9wR1kPNbTP97TL/fa0gbbtHUywRvclcrYSttoz+PXfZ7iAIcYEE+0bye?=
- =?us-ascii?Q?0k6BXRLc0wVXMz+YAEAuq6FDJn+vARjsoWt8CIV5uSkYv7wJUZO7nRy02C/M?=
- =?us-ascii?Q?rzcbvL4B+NwDfQrROp6metNSY1ev?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH7PR12MB6811.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(7053199007); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?psEnGYiR3S15M4dKBvFEf7g22rkh4F7Z0wIbnx+wo6rTLQmYVUW4lrqt7gSd?=
- =?us-ascii?Q?oY4z9NCzGarOcCMy/VYtAx5pL+QqGwshpVBfanuzVGSN7uG0AJY/00mkjn0K?=
- =?us-ascii?Q?YsBoLTcWqR2zfnQDQF2jX4Y8cRQS+MDSZxu+4+W4s37gcgQu8zxnr0SPvwjD?=
- =?us-ascii?Q?bxPb1PYu4poFy1hYo2YjDOOjw9mNkNO+JOEthvdMGC3/R9oM2mxygITlenZz?=
- =?us-ascii?Q?WLWO+cql6KL/uo5vdksOwtcEQIAGNmsolziRGVH0QY1a2MtUbiaIt+92J9qG?=
- =?us-ascii?Q?RRg/6zY5iApLdK9Su4Peb626orichXEkFX2JzBKmUW/wgb8cOEkyy+yHoET3?=
- =?us-ascii?Q?ZVsW93WaxR4TMCpKnSXandPiRT/1MMva+/vzmK7NNhonx+zNBGEnJ8aurRE3?=
- =?us-ascii?Q?HdkMDN0tmlVPNnWdroC7rUl18AU92+3Xv4GeG0KI4xmLSKg+KhNge1DrEcUM?=
- =?us-ascii?Q?f7EUA3xHYi7QVwCv/E8I5D5Gjc4mGn128uVmsZi1ocGlmlEicNTThkFDe5Yf?=
- =?us-ascii?Q?BXvAu/Cekx/31hTciag1WQzZJKWnE94kxWOB6RwqwGsmBJJmXabkU2NtKc/8?=
- =?us-ascii?Q?JmIDLjtzNhRmV0zW9KOp+OUwleq+tyXR1xlCT/dsAT2sDVo0iOD4ne9UODSY?=
- =?us-ascii?Q?EwcBXYpUM1f0GTc3posbDyjxvRj36AtSwzhJB25mU/LpOTdNWA8cR/96/Dou?=
- =?us-ascii?Q?YMIPhSDUttgH4OWsHnQ0kJc4f4L75EY9kqhx2gX7m7Cik0k8O4xCmmHgNJf3?=
- =?us-ascii?Q?VFaW4cFnXzV4Pykk0o/RIsaP36EBb/223rEEZm84OgVH5ItWzsMKv+eW4TFm?=
- =?us-ascii?Q?9/ZzMoCMe9LQO0FUrGae9xGHo+cX/4xm8vgEMT6Me01B0dhk7y/rmMC2Dkvu?=
- =?us-ascii?Q?7ot2XgdKARYBi24DCzHXb/q5rT258+psjX++PG07CRMYiMa2MNQNvNdwTCp3?=
- =?us-ascii?Q?yDlg7ldeI+EWJbjp3po2utTCc5P/OTgtFiSZ+yPww2KujRFgy0CTGzsEIDZi?=
- =?us-ascii?Q?0JZC6n+TMemeZohBwaO/Rf50ePMVhiubHI4+hy8vq2EtjO3+GiXWuY+RGs0l?=
- =?us-ascii?Q?NPjChK/h8c6k8nfXsuQdiNsZtZA4w+FBh6NxfRw8D6gNAR+CNzKGxOB0igo/?=
- =?us-ascii?Q?e9czc4LzFn/zC6DmRxlr4JBMX6J7idUcJspJf/ZsMVbGhVYJqbxCYvKka5ZN?=
- =?us-ascii?Q?yui5brENGnoqEpZFa0O351IhpQ5caqy0g6sMZP+5O0HVtUYG4/GpZ2hnv/GS?=
- =?us-ascii?Q?U6i+SwR+fU//mNRcTmZ8Rd7OU0RNfZK9f7E5MhkHjLvaFLnLPk8kYsvKfkVA?=
- =?us-ascii?Q?9JY2Pqo7HeWwVad9n6wxAWomipKjjdMRe78AQOif5MBm6Rdcdzb+c99G9wJp?=
- =?us-ascii?Q?BcuoT6hqp+mYdhwWkJCTPV8GQYggyWbjp4stMmMYe2QmhtW66vStaze6ypxO?=
- =?us-ascii?Q?eCSrtZkrdK2eQCMoWUoJZkql8aQFqSRcVxoca5N/O5EQzzAsE76+GwIjF2XI?=
- =?us-ascii?Q?IpuvzXp3jV4uBMg2ywJB/giixDyEuOa55KgxzmjS1NX4XQUcWdo/KGvysyCr?=
- =?us-ascii?Q?v9ncCsMSFbJsncHrQXasye2q6BO3sfGDJ7RmLPf+bfIPZNKn5xbsFzShOFSv?=
- =?us-ascii?Q?EwkfVFVvSn2mVdG+KnCnLT0ieMjjbt9PrY7AgF3+biYt?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac6ff590-55e3-4b85-0f03-08dd5da409d9
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6811.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 18:15:27.9424 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cjxu3rGseJdXezELK4KVBlAuYzq2FoEE6gCnewjMNRMUDbUrBlG313mOJ4h9O1PSPUTMHVUfIdt5mgJbOOFGVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8217
+References: <b62e330e086126415f7b4987a9747ce2@mail.gmail.com>
+ <CACZ4nhuSCiD6gNzF2GFXVoAD__f0oOgu8fXCwRYy6UGMDy3atQ@mail.gmail.com>
+ <15378777.dW097sEU6C@thomas>
+ <CA+BST0ksp01yEEparBXw=WfqYxRZR7Yekq_dWoJbA+xZF-Dk4A@mail.gmail.com>
+In-Reply-To: <CA+BST0ksp01yEEparBXw=WfqYxRZR7Yekq_dWoJbA+xZF-Dk4A@mail.gmail.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Date: Fri, 7 Mar 2025 13:55:26 -0500
+X-Gm-Features: AQ5f1Jq40PX-92ZQbinuN_U2xaX26U9CdF20GU8yVP42fhc-X--KgAaTm56jodM
+Message-ID: <CA+BST0nNBzWGGCOoCeC1MFBntKEL=S5+RW0WBwOGiYu_ViPzcw@mail.gmail.com>
+Subject: Re: MPLS Push action
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, Ferruh.yigit@xilinx.com, 
+ qi.z.zhang@intel.com, dev@dpdk.org, 
+ Stephen Hemminger <stephen@networkplumber.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="000000000000589314062fc52b8c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -143,50 +76,297 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--000000000000589314062fc52b8c
+Content-Type: multipart/alternative; boundary="00000000000052da20062fc52b06"
+
+--00000000000052da20062fc52b06
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Thomas,
+
+Any update on this.
+
+Thanks,
+Kishore
 
 
-On Fri, 7 Mar 2025, Bruce Richardson wrote:
+On Tue, Mar 4, 2025 at 12:48=E2=80=AFPM Kishore Padmanabha <
+kishore.padmanabha@broadcom.com> wrote:
 
-> External email: Use caution opening links or attachments
+> Hi Thomas,
 >
+> On Mon, Mar 3, 2025 at 2:25=E2=80=AFPM Thomas Monjalon <thomas@monjalon.n=
+et>
+> wrote:
 >
-> On Fri, Mar 07, 2025 at 03:54:33PM +0000, Van Haaren, Harry wrote:
->>> From: Gregory Etelson <getelson@nvidia.com>
->>> Sent: Thursday, March 6, 2025 1:37 PM
->>> To: dev@dpdk.org <dev@dpdk.org>
->>> Cc: getelson@nvidia.com <getelson@nvidia.com>; thomas@monjalon.net <thomas@monjalon.net>; mkashani@nvidia.com <mkashani@nvidia.com>; Richardson, Bruce <bruce.richardson@intel.com>
->>> Subject: [PATCH] rust: support DPDK API
+>> Hi,
 >>
-> <snip>
->
->> +
->>> +use dpdklib::rte_ethdev::{
+>> This is the related code:
 >>
->> As per first reply, I'd like to see the end-result safe-Rust namespacing be shortened.
->>
->> This can be easily done by renaming the name= in Cargo.toml, and
->> removing the "rte_" prefix at bindgen output stage for each file.
->> dpdk::ethdev:: { RTE_ETH_NAME_MAX_LEN, ... };
->>
->> Perhaps its a good method to put the generated (unsafe, raw-C-bindings) in this
->> namespace, and build a safe crate (with the dpdk::ethdev::* namespacing) over it.
->> Thoughts?
+>> /**
+>>  * RTE_FLOW_ACTION_TYPE_OF_PUSH_MPLS
+>>  *
+>>  * Implements OFPAT_PUSH_MPLS ("push a new MPLS tag") as defined by the
+>>  * OpenFlow Switch Specification.
+>>  */
+>> struct rte_flow_action_of_push_mpls {
+>>     rte_be16_t ethertype; /**< EtherType. */
+>> };
 >>
 >
-> I love naming discussions :-)
+>  That is correct, it is related to the MPLS push action.
 >
-> +1 to separate namespaces for low-level DPDK wraps, and more rustic
-> higher-level APIs. However, that doesn't mean that the names get to be
-> ugly! Let's definitely remove the "lib" in dpdklib (or libdpdk), and the
-> "rte_" prefix from libs.
+>>
+>>
 >
-> How about having "dpdk::raw::*" e.g. "dpdk::raw::ethdev" for low-level
-> wraps and "dpdk::*" e.g. "dpdk::ethdev" for higher level apis?
+>> > On Mon, Mar 3, 2025 at 8:02=E2=80=AFAM Kishore Padmanabha
+>> > <kishore.padmanabha@broadcom.com> wrote:
+>> > >
+>> > > Hi,
+>> > >
+>> > > Anyone has any inputs on this. Or should I add new CLI commands in
+>> testpmd to support action for push MPLS tag.
+>>
+>> This action was designed as an OpenFlow implementation.
+>> Is what you require an OpenFlow spec?
+>> If yes, we may consider an update,
+>> if no, we should create a new action.
+>>
+>>  The openflow spec
+> https://opennetworking.org/wp-content/uploads/2014/10/openflow-switch-v1.=
+5.1.pdf
+> has mention of the MPLS push action but it does not mention how to specif=
+y
+> how to configure the mpls label, TC and BOS.
+>
+>> > >
+>> > > Thanks,
+>> > >
+>> > > Kishore
+>> > >
+>> > > From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+>> > > Sent: Thursday, February 27, 2025 6:35 PM
+>> > > To: 'dev@dpdk.org' <dev@dpdk.org>
+>> > > Subject: MPLS Push action
+>> > >
+>> > > Hi,
+>> > >
+>> > > When MPLS push action is used, using testpmd action  of_push_mpls, i=
+t
+>> accepts the ethertype only. How do I specify the MPLS label and other
+>> fields for the MPLS header to be added ? In the doc, in section 7.2.3.7
+>> there is mention of OFXPMT_OFB_MPLS_LABEL and other MPLS fields, but I
+>> could not find that in dpdk implementation.
+>>
+>> What is this documentation?
+>> Please provide a link.
+>>
+>> The above label is only mentioned for match and it is documented in
+> https://opennetworking.org/wp-content/uploads/2014/10/openflow-switch-v1.=
+5.1.pdf
+> section 7.2.3.7
+>
 >
 
-I think that is good idea.
-Application can use ether dpdk::raw::* or dpdk::* API depending on internal 
-logic.
+--=20
+This electronic communication and the information and any files transmitted=
+=20
+with it, or attached to it, are confidential and are intended solely for=20
+the use of the individual or entity to whom it is addressed and may contain=
+=20
+information that is confidential, legally privileged, protected by privacy=
+=20
+laws, or otherwise restricted from disclosure to anyone else. If you are=20
+not the intended recipient or the person responsible for delivering the=20
+e-mail to the intended recipient, you are hereby notified that any use,=20
+copying, distributing, dissemination, forwarding, printing, or copying of=
+=20
+this e-mail is strictly prohibited. If you received this e-mail in error,=
+=20
+please return the e-mail to the sender, delete it from your computer, and=
+=20
+destroy any printed copy of it.
 
-> /Bruce
+--00000000000052da20062fc52b06
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Thomas,<div><br></div><div>Any update on this.</div><di=
+v><br></div><div>Thanks,</div><div>Kishore</div><div><br></div></div><br><d=
+iv class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gm=
+ail_attr">On Tue, Mar 4, 2025 at 12:48=E2=80=AFPM Kishore Padmanabha &lt;<a=
+ href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.padmanabha@broadco=
+m.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
+1ex"><div dir=3D"ltr"><div>Hi Thomas,</div><br><div class=3D"gmail_quote"><=
+div dir=3D"ltr" class=3D"gmail_attr">On Mon, Mar 3, 2025 at 2:25=E2=80=AFPM=
+ Thomas Monjalon &lt;<a href=3D"mailto:thomas@monjalon.net" target=3D"_blan=
+k">thomas@monjalon.net</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
+uote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,2=
+04);padding-left:1ex">Hi,<br>
+<br>
+This is the related code:<br>
+<br>
+/**<br>
+=C2=A0* RTE_FLOW_ACTION_TYPE_OF_PUSH_MPLS<br>
+=C2=A0*<br>
+=C2=A0* Implements OFPAT_PUSH_MPLS (&quot;push a new MPLS tag&quot;) as def=
+ined by the<br>
+=C2=A0* OpenFlow Switch Specification.<br>
+=C2=A0*/<br>
+struct rte_flow_action_of_push_mpls {<br>
+=C2=A0 =C2=A0 rte_be16_t ethertype; /**&lt; EtherType. */<br>
+};<br></blockquote><div>=C2=A0</div><div>=C2=A0That is correct, it is relat=
+ed to the MPLS push action.</div><blockquote class=3D"gmail_quote" style=3D=
+"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-le=
+ft:1ex"><br></blockquote><div>=C2=A0</div><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);p=
+adding-left:1ex">
+&gt; On Mon, Mar 3, 2025 at 8:02=E2=80=AFAM Kishore Padmanabha<br>
+&gt; &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com" target=3D"_blan=
+k">kishore.padmanabha@broadcom.com</a>&gt; wrote:<br>
+&gt; &gt;<br>
+&gt; &gt; Hi,<br>
+&gt; &gt;<br>
+&gt; &gt; Anyone has any inputs on this. Or should I add new CLI commands i=
+n testpmd to support action for push MPLS tag.<br>
+<br>
+This action was designed as an OpenFlow implementation.<br>
+Is what you require an OpenFlow spec?<br>
+If yes, we may consider an update,<br>
+if no, we should create a new action.<br>
+<br></blockquote><div>=C2=A0The openflow spec=C2=A0<a href=3D"https://openn=
+etworking.org/wp-content/uploads/2014/10/openflow-switch-v1.5.1.pdf" target=
+=3D"_blank">https://opennetworking.org/wp-content/uploads/2014/10/openflow-=
+switch-v1.5.1.pdf</a></div><div>has mention=C2=A0of the MPLS push action bu=
+t it does not mention how to specify how to configure the mpls label, TC an=
+d BOS.</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
+.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+&gt; &gt;<br>
+&gt; &gt; Thanks,<br>
+&gt; &gt;<br>
+&gt; &gt; Kishore<br>
+&gt; &gt;<br>
+&gt; &gt; From: Kishore Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha=
+@broadcom.com" target=3D"_blank">kishore.padmanabha@broadcom.com</a>&gt;<br=
 >
+&gt; &gt; Sent: Thursday, February 27, 2025 6:35 PM<br>
+&gt; &gt; To: &#39;<a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dp=
+dk.org</a>&#39; &lt;<a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@d=
+pdk.org</a>&gt;<br>
+&gt; &gt; Subject: MPLS Push action<br>
+&gt; &gt;<br>
+&gt; &gt; Hi,<br>
+&gt; &gt;<br>
+&gt; &gt; When MPLS push action is used, using testpmd action=C2=A0 of_push=
+_mpls, it accepts the ethertype only. How do I specify the MPLS label and o=
+ther fields for the MPLS header to be added ? In the doc, in section 7.2.3.=
+7 there is mention of OFXPMT_OFB_MPLS_LABEL and other MPLS fields, but I co=
+uld not find that in dpdk implementation.<br>
+<br>
+What is this documentation?<br>
+Please provide a link.<br>
+<br></blockquote><div>The above label is only mentioned for match and it is=
+ documented in=C2=A0<a href=3D"https://opennetworking.org/wp-content/upload=
+s/2014/10/openflow-switch-v1.5.1.pdf" target=3D"_blank">https://opennetwork=
+ing.org/wp-content/uploads/2014/10/openflow-switch-v1.5.1.pdf</a> section 7=
+.2.3.7</div><div><br></div></div></div>
+</blockquote></div>
+
+<br>
+<span style=3D"background-color:rgb(255,255,255)"><font size=3D"2">This ele=
+ctronic communication and the information and any files transmitted with it=
+, or attached to it, are confidential and are intended solely for the use o=
+f the individual or entity to whom it is addressed and may contain informat=
+ion that is confidential, legally privileged, protected by privacy laws, or=
+ otherwise restricted from disclosure to anyone else. If you are not the in=
+tended recipient or the person responsible for delivering the e-mail to the=
+ intended recipient, you are hereby notified that any use, copying, distrib=
+uting, dissemination, forwarding, printing, or copying of this e-mail is st=
+rictly prohibited. If you received this e-mail in error, please return the =
+e-mail to the sender, delete it from your computer, and destroy any printed=
+ copy of it.</font></span>
+--00000000000052da20062fc52b06--
+
+--000000000000589314062fc52b8c
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBV4wggRGoAMCAQICDGgm/w/0NSlGWEAE2zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODE5MTJaFw0yNTA5MTAwODE5MTJaMIGa
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGzAZBgNVBAMTEktpc2hvcmUgUGFkbWFuYWJoYTEuMCwGCSqG
+SIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBAO2KIuHym2NK8LJKtVibxyL/jOwnjzOIbXwiGiJPTo8T3NfkkTIJ4jDc
+o06M9E2KoIo4ve+92WrMmLwu6T+HphBMDOfwXxaFLJqYOTdp/DuZNUCmlXtWkO6YZ60qdFOP+pZI
+0kEta7Kj9i8JM6kC6NChp3t27AlN/Cmo7PEvyRBXKKzBuKV8xxlaTxbs5z63gvCk4AACEUoMhT3G
+OFoe9ghMyQPTG+PhUrwVfqQhB5Cq/UEBY+ML9HK5T2vnfQ6/7Ujo6SRjlDcMKCMt1fsldmDnws3R
+dW+s1pbDZSF3o7LAMPaZD1K6+7+kfhg5PhpHobmqdkKh77/wagvxKPOjt2ECAwEAAaOCAeAwggHc
+MA4GA1UdDwEB/wQEAwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9z
+ZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+dDBBBggrBgEFBQcwAYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFs
+c2lnbjJjYTIwMjAwTQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBz
+Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+
+oDygOoY4aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
+MC5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTATBgNVHSUE
+DDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU
+sUAuVxt1XArsF6SqOey0deblHSAwDQYJKoZIhvcNAQELBQADggEBABnnHNuTT9JPO0hVqI1+MhBA
+mqeMl+tCr/6T161Uv4ra668I1pNZsS/xjmtHYG6uH7m0k09RdNZFerHwtvsaDs1ueuDic62X1xzE
+d5pE71+eY7IXZyt7JOzujKMjBT1ll9ksv900PSfepOhlts+qt39mfsK3GFpWucs5yPQW4QdANh1g
+QQvpKuVIATCT7bbi97PnmyBbqR4lilWpd720IqWfp2so0ihV+YqcZebbT5leoAa/bHgoDUx+ejzc
+Uk12jX97cL/DKIHD0pff67TlZq5ZjltzVjTA0XaUzEak9bSqclhSSbSbYHhRDR4syFcEWXQRxou7
+RctJp8+CIW2Aci4xggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxT
+aWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAy
+MDIwAgxoJv8P9DUpRlhABNswDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIO87yq1Z
+75VkJlronG7kQXNnqLUDX3y9b7EkHVNh+1HWMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJ
+KoZIhvcNAQkFMQ8XDTI1MDMwNzE4NTU0MlowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASow
+CwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZI
+AWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBALKWuNJdDHPj10yePFuichGse713oRwgyK/G1hPWuW33
+tCruSuXwpUyUmrcyVS6s7UVCWa3r6Nm8wLThTb4BcajN0y2GelsRrZXPCNoHyrLa7BrALb0jqJSY
+D5uipiAkH84R2XEEtX45WKbnVKn/Oj3sOpu8c2NVvsfdaMHZYLPfeiyPfzhVZGYff+NGvena9jkE
+zbRVuBDAVWCbGWs3NL5TeL8DIqGhkIxVVZYrFS4IUuOf8kJJRqG8W1ZEvHHAIXiauNMYgkifrLQD
+CzBBaKG32zhSyvB1HsZ/MQzGZM2iOjVyHzCpTphw/NILrrfONOP+reTgRRede5/xTaYr36s=
+--000000000000589314062fc52b8c--
