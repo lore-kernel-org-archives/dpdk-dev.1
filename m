@@ -2,39 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D067C282DE
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Mar 2025 22:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE82C282EC
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Mar 2025 08:59:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B334140656;
-	Fri,  7 Mar 2025 23:34:03 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 2E8154025F
- for <dev@dpdk.org>; Fri,  7 Mar 2025 23:34:02 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 365B62038F3B; Fri,  7 Mar 2025 14:34:01 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 365B62038F3B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741386841;
- bh=g8pfdR2x5LPYB/+fGsxRAqvKd3qD81+XIAI3O7b3m2I=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=NVgNN/iTBUbAaf1kKHfJLJ9QLJbznb2f0WV5Q4wcuMo5CLdDFH8IJLvZOhWGmOXr3
- oNCQVKODEmrj2xoc+89t7ykRCb/0qD0BJUdKDtBQpEfVvYYoYNrG/mgCJjSsGYZJpp
- 3Nt4rjOYkL7+pXyZ5UVr9aPJkdjj16ioC1fq6zFg=
-Date: Fri, 7 Mar 2025 14:34:01 -0800
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] hash_readwrite_autotest: fix printf parameters
-Message-ID: <20250307223401.GA27687@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
- <Z8q16Ikzl4_flbpK@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4246640150;
+	Sat,  8 Mar 2025 09:59:14 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id B4D8740144
+ for <dev@dpdk.org>; Sat,  8 Mar 2025 09:59:11 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5288oL86008748;
+ Sat, 8 Mar 2025 00:59:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=nz5OAtzAQnNYWeb/rdfSLKg
+ B1uW4sRIefAO1i7I6oUg=; b=Uc4YuMl8h8O5ON53tOfxHkxoM5M5UHFNCWpyyLe
+ FXWDCoDXsVvD158rtf+zlvpiPSkyVbfNH16Pm7xhwHelkPxArcU9FpHd+jVHBYPY
+ ElVjXtChdpHeIO9MeFGiZx9tcEEXIaqwQDNJNzSOh8SnDH5v8HYac16r28+y14Ld
+ ne/fHsor0R1McJUSegX1r7vHaM8QDH9g0nXlEuN2UTsjnbNzGvrQA9CanFncI3Xd
+ tXQI5AZj/zALFHSTyY1DIb2/LQANfmfVzcb3ZfofTla3iHAfF0Lbbbt5Lj5tIFvy
+ a0Z+IO6cIOkVRrTE8zFU2HZjLuWSSgkYW0oJm1MPUd0bV7w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 458ev9g8x4-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sat, 08 Mar 2025 00:59:07 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sat, 8 Mar 2025 00:59:07 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sat, 8 Mar 2025 00:59:06 -0800
+Received: from MININT-80QBFE8.corp.innovium.com (unknown [10.28.164.118])
+ by maili.marvell.com (Postfix) with ESMTP id 0AFE73F7043;
+ Sat,  8 Mar 2025 00:59:04 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH] config/arm: fix march features not being set
+Date: Sat, 8 Mar 2025 14:29:02 +0530
+Message-ID: <20250308085902.4383-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8q16Ikzl4_flbpK@bricha3-mobl1.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: jtR4VgOQnbNB0srrKNeDz99f-LvOV7rq
+X-Proofpoint-GUID: jtR4VgOQnbNB0srrKNeDz99f-LvOV7rq
+X-Authority-Analysis: v=2.4 cv=Mrqo63ae c=1 sm=1 tr=0 ts=67cc06db cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=wKhTIz0uthSbCaeEdTYA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-08_03,2025-03-07_03,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,52 +70,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 07, 2025 at 09:01:28AM +0000, Bruce Richardson wrote:
-> On Thu, Mar 06, 2025 at 12:03:28PM -0800, Andre Muezerie wrote:
-> > Compiling with MSVC logs the warnings below, which result in
-> > build error:
-> > 
-> > ../app/test/test_hash_readwrite.c(73): warning C4476: 'printf' :
-> >     unknown type field character ''' in format specifier
-> > ../app/test/test_hash_readwrite.c(75): warning C4474: 'printf' :
-> >     too many arguments passed for format string
-> > ../app/test/test_hash_readwrite.c(75): note: placeholders and
-> >     their parameters expect 2 variadic arguments, but 4 were provided
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > ---
-> >  app/test/test_hash_readwrite.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> IF the "'" character is not supported, is there some other method to do
-> thousands grouping in MSVC?
-> 
-> /Bruce
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-The problem exists with all compilers I tried on Windows:
+Fix extra_march_features not being added to
+mcpu flags when SoC configuration advertises
+them.
 
-1) MSVC logs the error I mentioned above
+Fixes: c02c01dbf907 ("config/arm: prefer strict use of -mcpu if supported")
 
-2) GCC and Clang don't complain at compile time, but don't honor the "'" as a special
-character. As an example,
-printf("%'d\n", 1024);
-results in
-'d 
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ config/arm/meson.build | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-It seems that for this syntax to work as you would expect, support needs to exist in both the
-compiler and the libraries used.
+diff --git a/config/arm/meson.build b/config/arm/meson.build
+index dea329ceb7..7f85b088c9 100644
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -841,6 +841,7 @@ if update_flags
+         implementer_config = implementers[implementer_id]
+         part_number = soc_config['part_number']
+         soc_flags = soc_config.get('flags', [])
++        extra_features = soc_config.get('extra_march_features', [])
+         if not soc_config.get('numa', true)
+             has_libnuma = false
+         endif
+@@ -909,11 +910,15 @@ if update_flags
+         machine_args += march
+     else
+         candidate_mcpu = '-mcpu=' + mcpu
+-        if (cc.has_argument(candidate_mcpu))
+-            machine_args += candidate_mcpu
+-        else
++        if not cc.has_argument(candidate_mcpu)
+             error('Compiler does not support -mcpu=@0@.'.format(mcpu))
+         endif
++        foreach flag: extra_features
++            if cc.has_argument('+'.join([candidate_mcpu, flag]))
++                candidate_mcpu = '+'.join([candidate_mcpu, flag])
++            endif
++        endforeach
++        machine_args += candidate_mcpu
+     endif
+ 
+     # apply supported compiler options
+-- 
+2.43.0
 
-Back to your question: there's no equivalent syntax on Windows that provides the thousands grouping.
-If really needed (and I understand it is useful for large numbers), we could get the same result
-by calling a helper function that would convert the number in the formatted string and use that
-in the printf statement.
-
-There is a Win32 API that does that. It takes a string as input though: GetNumberFormatA.
-(https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getnumberformata)
-
-We could use ifdefs to keep the old logic on Linux and use new logic on Windows (for all compilers).
-
-Let me know if this is something that would need to be done, or if the current output
-without thousands grouping is good enough.
---
-Andre Muezerie
