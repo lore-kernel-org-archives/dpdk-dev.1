@@ -2,75 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4338CC282EC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Mar 2025 14:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0ADC282EC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Mar 2025 15:01:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19E6A402E1;
-	Mon, 10 Mar 2025 15:59:54 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 99F49400D7
- for <dev@dpdk.org>; Mon, 10 Mar 2025 15:59:52 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2241053582dso69308255ad.1
- for <dev@dpdk.org>; Mon, 10 Mar 2025 07:59:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5AED7402E1;
+	Mon, 10 Mar 2025 16:01:03 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 8F0F1400D7
+ for <dev@dpdk.org>; Mon, 10 Mar 2025 16:01:01 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-223fb0f619dso81885435ad.1
+ for <dev@dpdk.org>; Mon, 10 Mar 2025 08:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741618791;
- x=1742223591; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741618860;
+ x=1742223660; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=44MhMkyNVL1XXf2o6oJe/G+WCeEmBJsWNoVbWl/OjYI=;
- b=mJ5G1DHf50F2gBFCWHWADPMGdtd//5nDUD85Q64Yin9OxFn0pPwJGw7Bt8kDEWrLwl
- TXfdS0GYa0LhUs7J0pjFmFyDbi2XPjaXsFC52KRweEaxu4sevW7jNDsKeb+0T4qZoElm
- +D4+/kQ1XhjaVdSgyLn6fRm0gL5sVRD7HjYLx+N5rin47Jz2HQv8CKRLZClUzjQpqCiR
- iwFguK3S73D79rZubLl4oQKMk69hrig/fhxnTWIIytlujvtxY5KSzaXu9fTtEDEhMwNQ
- s5nXbHsLOhb5ZnG3CkFnGfdearG2LyQan93CC6amJXLr7a2PZ4j4fcXXFj3AKzwPJmbn
- 9J1Q==
+ bh=hmct3OLGq18FoT4e9EGp44KacJnRK1gXWHlB0BPE+HE=;
+ b=sm1W8qNFc8/4D4UI8tNt5tnYX9zSApHq3VPtclx6cAvFo6ggfotCDbiyqja1qc1mPz
+ nYJTtf+UPC89RFTQGuGRU8Br+RgPF69q3rwfUQ94KS10tQON0KsWUNLd1sTdwZWC1OQI
+ sL5r0Nt7LUrxX7IyFAtxW8s1LjSpzkrpI0GMWOy6gYoq8aHP9GwQwpmed+1Q3RDZgoPo
+ nVB3LbVu5CaRJIZfOIakn8xRkrI7rJxy+KCo54o9FLlgYZBlulgq+JneuC/AdRLafsZI
+ rRWDNxhxUOBlcWdE1eRQkM4omkxqIEMEZz9wGLJOHGvTaqFBXsbhRN+LjpZCSAB8Kcv1
+ s5DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741618791; x=1742223591;
+ d=1e100.net; s=20230601; t=1741618860; x=1742223660;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=44MhMkyNVL1XXf2o6oJe/G+WCeEmBJsWNoVbWl/OjYI=;
- b=FKvSsFMi6TK1KzobCEbZm1PTUHj2ieq7qH8MYdIjnm3kMK0Nf/pv0u4l2BSbOQin2I
- n/I+CcSegCrI8FQxWJSG6DPofC1D8ZsAwIvjPo9ljS3s0bWKWB2paNaOKq11Dcveiicp
- njfGDnZDoGHmchwWkoJ63ZbA655DHOGmvVorjr1mm8sUolbWBrDbavokcQQvEKJ3W8un
- k2q1qtHqKAodxVsSvp/4m7Ndb9LRJmN7roxzzb9B7Wa10uc7KGYDeOyx1QgsUERsAKHP
- eI2MHjVqUR6inB3PzyineJmlTUbNVhKUeef0RFJG+1zQx/9hCJnV9QSIuzLUgvcpT2zC
- Y/2A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUjJeBZBW7Py31/Blemyx4UHwDui+h8VekGxasFMYLl6woZcYoodPkvD85lMWZVzx8iRiw=@dpdk.org
-X-Gm-Message-State: AOJu0Yz3MiX62HVxbrwdMC4M7UDhdBZNzWlmVUeqM4D36cQz1Iphask4
- 76MNDXdrhzou/qvesF/sKOZ2GIK2ByBJc5zB3GFRrQQtKFHd56r7l65wFAtj4zo=
-X-Gm-Gg: ASbGncsryqrwi2R/lcAIWdFIHBMZYtbFp48D29rj9eov1yK9hW7n8BjDwwSUgd/psYI
- Q1T0sM+sN3aq3sR2b112CgE0z9Ll5mJdin/1B0i7RFjiagqVhmf9ElaCgvqvtA5sNxY3FnTZQ0r
- XRj5jr9s+yhd2SFFGDMfk5I8LENu41AcuXc3ybct0Os668Kr9Y5y7ye5qV2kd5ZvsnmSLE6ZLSz
- 8DizapjL7fKT3nekWB+HQJ3a6EYo8tpk85llcdHwJ+2XIZRegdhomZZjbkxIe8OUSTPTFyokcdD
- lagkPU+mizhQ9JOvOB27UurtE/dnWdVq1ve4kOPgydSiGc8LhquIuIA7afQ9cLRGjomFRcP5w7z
- Q/AUFmjbOKLktlctVRsOcrxRufKEXJoZX
-X-Google-Smtp-Source: AGHT+IGhWtuiWq3LC7dEwsnlJ/kgcmgcPxJCusK6KWXZQsS4O79BfyL5iqtogi1Pe6+e6Ho/oCgsnA==
-X-Received: by 2002:a17:903:181:b0:21f:7082:1137 with SMTP id
- d9443c01a7336-224288974bbmr260030735ad.22.1741618790322; 
- Mon, 10 Mar 2025 07:59:50 -0700 (PDT)
+ bh=hmct3OLGq18FoT4e9EGp44KacJnRK1gXWHlB0BPE+HE=;
+ b=semjZdAIhvxIuftB7XxnsFQb3Q8HvGX4JNLlpaMCAFQjj2h+tZh9c8IXgphaUbu346
+ 7s6kiTUEJWbUxtq3/aNQ8ZY5UU0i++S77Hk0sv2PNNrkO618DjwJMma0rKsJQ2E8DKdv
+ Y7/QQSK0IoP9N3vNNbiNITYB3kPrROny9lEE3IAuiuPBkdUYS8Yk0KHXUbaJTPWxiNwR
+ pMjQvEH+n2uH77USxphfMafew3BuopSANHju1rbaKok5fcdHgXBOpUUXVVFPmdWS72ri
+ +gr5ybKCACCvfcvj1Dj5+m6zhavDogcpHRF3Xo27ASLVgH1w9ou91n8M7okkSn+7MBit
+ nxyA==
+X-Gm-Message-State: AOJu0YyKoXjz+dS1/zRyKCllVlUXlr8FFraNLW4El+Y0MLL3KZDCmBuT
+ qB6wy1KcCkbCqnvY7VWnuRB8blFYsadc04VU0yCQssj2Tj6BM/mKA69Flk9bAgk=
+X-Gm-Gg: ASbGnctuA7Dx79oCRlgXEyRYQCT9BG7f3OvWMWKIDdH47xCFNt2SjoPfs3ZomA+gnUM
+ 6d5ne2qJa3iVrsx2ArvXpbGrMAogtGYEQY+VJFh3T87VD0vQuDkCbAJT30KinIRRkZtTcKdhfuC
+ rjmVizvAvg5gsC9w9+MkG/UuQxFEZl2qJUFiQoyRJtfDH12FLwKD7kfYtRTBpOEP62omlexYKMD
+ aiU4QU+vq19jmV0TS+zYWuxEgPNvVAKpfbX54DuhUf9ZGMnrlJ4TvBg93NXiMqS7ae4doDwYwus
+ qx9jLraT3ib93yM+LUYvRB6xaeLsZHmdv/dqpCM/fdPTRE+Yj8A46rwVvwQSHXwcPQ4m56r0Ww1
+ yAzSLm6Od4W7Jj+wWSvXo/F0wLZI+70dD
+X-Google-Smtp-Source: AGHT+IGMK73yi3I849C51NkcQ5b0VzI6Wzn/WKT0mLYoRCoubX3gbNTT+EzxRsGG0cPxNnaPzZG96Q==
+X-Received: by 2002:a17:902:d2cd:b0:224:255b:c934 with SMTP id
+ d9443c01a7336-225931af86amr1695955ad.51.1741618860637; 
+ Mon, 10 Mar 2025 08:01:00 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-224109e9850sm79238365ad.86.2025.03.10.07.59.49
+ d9443c01a7336-224109ddf86sm79040895ad.6.2025.03.10.08.01.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Mar 2025 07:59:50 -0700 (PDT)
-Date: Mon, 10 Mar 2025 07:59:48 -0700
+ Mon, 10 Mar 2025 08:01:00 -0700 (PDT)
+Date: Mon, 10 Mar 2025 08:00:58 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bing Zhao <bingz@nvidia.com>
-Cc: Yang Ming <ming.1.yang@nokia-sbell.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH 2/2] net/mlx5: improve log file path
-Message-ID: <20250310075948.56109517@hermes.local>
-In-Reply-To: <SN7PR12MB69096FB0FD4930E9CE8A8F80D0C82@SN7PR12MB6909.namprd12.prod.outlook.com>
-References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
- <20241213092444.2987-2-ming.1.yang@nokia-sbell.com>
- <SN7PR12MB69096FB0FD4930E9CE8A8F80D0C82@SN7PR12MB6909.namprd12.prod.outlook.com>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <mkashani@nvidia.com>, "Bruce
+ Richardson" <bruce.richardson@intel.com>
+Subject: Re: [PATCH] rust: support DPDK API
+Message-ID: <20250310080058.3ae00bd3@hermes.local>
+In-Reply-To: <20250306133713.393057-1-getelson@nvidia.com>
+References: <20250306133713.393057-1-getelson@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -87,55 +81,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 4 Mar 2025 06:23:06 +0000
-Bing Zhao <bingz@nvidia.com> wrote:
+On Thu, 6 Mar 2025 15:37:13 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-> Hi Ming,
-> 
-> > -----Original Message-----
-> > From: Yang Ming <ming.1.yang@nokia-sbell.com>
-> > Sent: Friday, December 13, 2024 5:25 PM
-> > To: Dariusz Sosnowski <dsosnowski@nvidia.com>; Slava Ovsiienko
-> > <viacheslavo@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam
-> > <orika@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>; Matan Azrad
-> > <matan@nvidia.com>
-> > Cc: dev@dpdk.org; Yang Ming <ming.1.yang@nokia-sbell.com>
-> > Subject: [PATCH 2/2] net/mlx5: improve log file path
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > 1. /var/log is hard code which is not a good coding style.
-> > 2. /var/log may be not allowed to be written via container's read-only
-> > mode.
-> > 
-> > Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
-> > ---
-> >  drivers/net/mlx5/mlx5_rxtx.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
-> > index eadadcdffb..a0da73c9c3 100644
-> > --- a/drivers/net/mlx5/mlx5_rxtx.c
-> > +++ b/drivers/net/mlx5/mlx5_rxtx.c
-> > @@ -12,6 +12,7 @@
-> >  #include <rte_prefetch.h>
-> >  #include <rte_common.h>
-> >  #include <rte_branch_prediction.h>
-> > +#include <rte_eal.h>
-> >  #include <rte_ether.h>
-> >  #include <rte_cycles.h>
-> >  #include <rte_flow.h>
-> > @@ -311,7 +312,7 @@ mlx5_set_swp_types_table(void)
-> >         }
-> >  }
-> > 
-> > -#define MLX5_SYSTEM_LOG_DIR "/var/log"
-> > +#define MLX5_SYSTEM_LOG_DIR rte_eal_get_runtime_dir()  
-> 
-> I agree that using the fixed PATH is not a good practice. Can you ensure that the runtime DIR is with RW+ permissions?
+> diff --git a/examples/rust/helloworld/Cargo.toml b/examples/rust/helloworld/Cargo.toml
+> new file mode 100644
+> index 0000000000..7f9a77968a
+> --- /dev/null
+> +++ b/examples/rust/helloworld/Cargo.toml
+> @@ -0,0 +1,7 @@
+> +[package]
+> +name = "helloworld"
+> +version = "0.1.0"
+> +edition = "2024"
+> +
+> +[dependencies]
+> +dpdklib = {path = "MESON_INSTALL_DESTDIR_PREFIX/rust"}
+> \ No newline at end of file
 
-Drivers doing any kind of custom logging is bad practice.
-This should be handled by EAL logging, not private fprintf's
-
-
+Bad practice.
+Don't forget EOL
