@@ -2,72 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0ADC282EC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Mar 2025 15:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41398C282DE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Mar 2025 15:18:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5AED7402E1;
-	Mon, 10 Mar 2025 16:01:03 +0100 (CET)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 8F0F1400D7
- for <dev@dpdk.org>; Mon, 10 Mar 2025 16:01:01 +0100 (CET)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-223fb0f619dso81885435ad.1
- for <dev@dpdk.org>; Mon, 10 Mar 2025 08:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741618860;
- x=1742223660; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hmct3OLGq18FoT4e9EGp44KacJnRK1gXWHlB0BPE+HE=;
- b=sm1W8qNFc8/4D4UI8tNt5tnYX9zSApHq3VPtclx6cAvFo6ggfotCDbiyqja1qc1mPz
- nYJTtf+UPC89RFTQGuGRU8Br+RgPF69q3rwfUQ94KS10tQON0KsWUNLd1sTdwZWC1OQI
- sL5r0Nt7LUrxX7IyFAtxW8s1LjSpzkrpI0GMWOy6gYoq8aHP9GwQwpmed+1Q3RDZgoPo
- nVB3LbVu5CaRJIZfOIakn8xRkrI7rJxy+KCo54o9FLlgYZBlulgq+JneuC/AdRLafsZI
- rRWDNxhxUOBlcWdE1eRQkM4omkxqIEMEZz9wGLJOHGvTaqFBXsbhRN+LjpZCSAB8Kcv1
- s5DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741618860; x=1742223660;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=hmct3OLGq18FoT4e9EGp44KacJnRK1gXWHlB0BPE+HE=;
- b=semjZdAIhvxIuftB7XxnsFQb3Q8HvGX4JNLlpaMCAFQjj2h+tZh9c8IXgphaUbu346
- 7s6kiTUEJWbUxtq3/aNQ8ZY5UU0i++S77Hk0sv2PNNrkO618DjwJMma0rKsJQ2E8DKdv
- Y7/QQSK0IoP9N3vNNbiNITYB3kPrROny9lEE3IAuiuPBkdUYS8Yk0KHXUbaJTPWxiNwR
- pMjQvEH+n2uH77USxphfMafew3BuopSANHju1rbaKok5fcdHgXBOpUUXVVFPmdWS72ri
- +gr5ybKCACCvfcvj1Dj5+m6zhavDogcpHRF3Xo27ASLVgH1w9ou91n8M7okkSn+7MBit
- nxyA==
-X-Gm-Message-State: AOJu0YyKoXjz+dS1/zRyKCllVlUXlr8FFraNLW4El+Y0MLL3KZDCmBuT
- qB6wy1KcCkbCqnvY7VWnuRB8blFYsadc04VU0yCQssj2Tj6BM/mKA69Flk9bAgk=
-X-Gm-Gg: ASbGnctuA7Dx79oCRlgXEyRYQCT9BG7f3OvWMWKIDdH47xCFNt2SjoPfs3ZomA+gnUM
- 6d5ne2qJa3iVrsx2ArvXpbGrMAogtGYEQY+VJFh3T87VD0vQuDkCbAJT30KinIRRkZtTcKdhfuC
- rjmVizvAvg5gsC9w9+MkG/UuQxFEZl2qJUFiQoyRJtfDH12FLwKD7kfYtRTBpOEP62omlexYKMD
- aiU4QU+vq19jmV0TS+zYWuxEgPNvVAKpfbX54DuhUf9ZGMnrlJ4TvBg93NXiMqS7ae4doDwYwus
- qx9jLraT3ib93yM+LUYvRB6xaeLsZHmdv/dqpCM/fdPTRE+Yj8A46rwVvwQSHXwcPQ4m56r0Ww1
- yAzSLm6Od4W7Jj+wWSvXo/F0wLZI+70dD
-X-Google-Smtp-Source: AGHT+IGMK73yi3I849C51NkcQ5b0VzI6Wzn/WKT0mLYoRCoubX3gbNTT+EzxRsGG0cPxNnaPzZG96Q==
-X-Received: by 2002:a17:902:d2cd:b0:224:255b:c934 with SMTP id
- d9443c01a7336-225931af86amr1695955ad.51.1741618860637; 
- Mon, 10 Mar 2025 08:01:00 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-224109ddf86sm79040895ad.6.2025.03.10.08.01.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Mar 2025 08:01:00 -0700 (PDT)
-Date: Mon, 10 Mar 2025 08:00:58 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gregory Etelson <getelson@nvidia.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <mkashani@nvidia.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-Subject: Re: [PATCH] rust: support DPDK API
-Message-ID: <20250310080058.3ae00bd3@hermes.local>
-In-Reply-To: <20250306133713.393057-1-getelson@nvidia.com>
-References: <20250306133713.393057-1-getelson@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0DE7C402E1;
+	Mon, 10 Mar 2025 16:18:38 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 73BF2400D7
+ for <dev@dpdk.org>; Mon, 10 Mar 2025 16:18:36 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2D68D210C5;
+ Mon, 10 Mar 2025 16:18:36 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] net/intel: allow fast-free to empty cache
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 10 Mar 2025 16:18:35 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FADC@smartserver.smartshare.dk>
+In-Reply-To: <20250310132540.1341258-1-bruce.richardson@intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] net/intel: allow fast-free to empty cache
+Thread-Index: AduRv/Y5d+yQjREOTVSD8BmUVrearAAD4Vdg
+References: <98CBD80474FA8B44BF855DF32C47DC35E9FA63@smartserver.smartshare.dk>
+ <20250310132540.1341258-1-bruce.richardson@intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+	<dev@dpdk.org>
+Cc: <anatoly.burakov@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,23 +48,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 6 Mar 2025 15:37:13 +0200
-Gregory Etelson <getelson@nvidia.com> wrote:
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Monday, 10 March 2025 14.26
+>=20
+> When freeing transmitted mbufs, there is no reason to send the freed
+> mbufs directly to the ring if the cache is empty - only if it is zero
+> size (in which case the cache pointer is NULL). Therefore, remove the
+> empty check and only check for a null cache pointer.
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  drivers/net/intel/common/tx.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/intel/common/tx.h
+> b/drivers/net/intel/common/tx.h
+> index d9cf4474fc..d361fe64ab 100644
+> --- a/drivers/net/intel/common/tx.h
+> +++ b/drivers/net/intel/common/tx.h
+> @@ -143,7 +143,7 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq,
+> ci_desc_done_fn desc_done, bool ctx
+>  		void **cache_objs;
+>  		struct rte_mempool_cache *cache =3D
+> rte_mempool_default_cache(mp, rte_lcore_id());
+>=20
+> -		if (!cache || cache->len =3D=3D 0)
+> +		if (cache =3D=3D NULL)
+>  			goto normal;
+>=20
+>  		cache_objs =3D &cache->objs[cache->len];
+> --
+> 2.43.0
 
-> diff --git a/examples/rust/helloworld/Cargo.toml b/examples/rust/helloworld/Cargo.toml
-> new file mode 100644
-> index 0000000000..7f9a77968a
-> --- /dev/null
-> +++ b/examples/rust/helloworld/Cargo.toml
-> @@ -0,0 +1,7 @@
-> +[package]
-> +name = "helloworld"
-> +version = "0.1.0"
-> +edition = "2024"
-> +
-> +[dependencies]
-> +dpdklib = {path = "MESON_INSTALL_DESTDIR_PREFIX/rust"}
-> \ No newline at end of file
+Yep, it did look strange.
+Reviewed-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
-Bad practice.
-Don't forget EOL
