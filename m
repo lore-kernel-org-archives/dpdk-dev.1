@@ -2,60 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E342FC28B25
-	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Mar 2025 12:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B85AC28B28
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Mar 2025 02:33:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B11F402A0;
-	Sun,  9 Mar 2025 13:48:37 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 883B940B94
- for <dev@dpdk.org>; Thu,  6 Mar 2025 22:09:19 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-2ff694d2d4dso1679736a91.0
- for <dev@dpdk.org>; Thu, 06 Mar 2025 13:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1741295358; x=1741900158; darn=dpdk.org;
- h=content-transfer-encoding:to:subject:message-id:date:from
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=r0xrMbyIH1bjxAiqUX0E/ec6UO/fFY1yXq5hcLRYgKk=;
- b=nlVNc9mLQh7d8LukPE1HVOktI9lBDgjZ5A6l3Q1JPfInWG80hq7IFiAo2MqqhuoYfB
- ISY0Aaoa0NA+Ro1SLSwCoOMt/3TO06qLKiGOPWUFyjsQWfOLSFzwDBw8pVIJLLnoykBY
- m+bjUed2A4KAujIRffbAE2kZr28Fe3UxrQq4Kov4X5PRAWUOljSPx4Itkc0eiCPR+EJB
- pODEeubiF7nmkmRr6BDLRp4tefbkp4TItsWiKkou2UPZ13CYBbHSSr4LsCaTNcIuF5XO
- UNfWbWoXnG9WqWCU3vivocOEHkxxocSKQE+sX3i9k3GmY6zCp3NHz+3VrLNQsiEfW3aV
- TNEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741295358; x=1741900158;
- h=content-transfer-encoding:to:subject:message-id:date:from
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=r0xrMbyIH1bjxAiqUX0E/ec6UO/fFY1yXq5hcLRYgKk=;
- b=amrKH5Tz8pK3PkfX8awuzVkNnSrPoeU+TtBessepJSEvR7czwNb34Ljsw8bVH16a3m
- u+7YW8rS4wBN8zveSgKAo/v6MzXQVi/S4An+BiMISIzHlpUZ54qrBehLnCGJLd3Q2/8h
- gmyQgrxsFBvytvBCbuIjc36OtnTaSgXSG9qnexm4Jhj2tts/urSQPSxGxoxt3IUwlwRr
- Ye9zQpzb34qIf5YQkyUi/Ev/D7/j+OExfXkpz6lHMPLUuaEdbRf+PadUYJM2ZfDg+S63
- Y1uH582xkO2W6zKKGNmbFTQNeh/QTbF7RXri8lnMtWWNVE6sD1CS/JKwuuThbR0SO4sw
- rpBQ==
-X-Gm-Message-State: AOJu0Yxl/nUxMq2iqtiRsA8fN1bW9O9+sjED45ftwYF7dcT7cmVpzEUj
- sRHNTUDW76f9L/+WNwEZO+TQio8ZSHa61WfOisGIipf/gXBXLhvmEVBA2JVMRtFogyX5tuuKNIa
- I/Bt/LQ3g0GLT1U5ELDr5plB9qNsbfg6N
-X-Gm-Gg: ASbGncspqqBYqzebxPbD5dl1triWYdAF3+vlAJ6++C8o1v68Km/uzymgBiLtHXAsmoE
- vT9AampDcQ/YAr8Rq6q1BK3nNsMvVZSEjyNzOWFVzvE2+HXerrSZGj2HUVIqCeCub8y0aLGOwVw
- nma0X+2vmE20xyE2ib+TeXxGRUWyufsn2Hs3PepUEUyQDvV4hshwI8HSQ=
-X-Google-Smtp-Source: AGHT+IGZVCSvkusVCb4w01+a3fEw2fZGeOXBPXIW0c9wSzZoCGsrKQHsl7Hinr/4FRnPHuoyNukTZJuoDmugcPGxxiI=
-X-Received: by 2002:a17:90a:d450:b0:2ff:5ed8:83d0 with SMTP id
- 98e67ed59e1d1-2ff7ce91ff0mr1359536a91.16.1741295358446; Thu, 06 Mar 2025
- 13:09:18 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id F3FA84021F;
+	Mon, 10 Mar 2025 03:33:53 +0100 (CET)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 25FBD40151
+ for <dev@dpdk.org>; Mon, 10 Mar 2025 03:33:51 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZB1875PRYzCs86;
+ Mon, 10 Mar 2025 10:30:15 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 878AF1800C9;
+ Mon, 10 Mar 2025 10:33:47 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 10 Mar 2025 10:33:47 +0800
+Message-ID: <f4637840-110f-4680-9c22-7b2c07241e27@huawei.com>
+Date: Mon, 10 Mar 2025 10:33:46 +0800
 MIME-Version: 1.0
-From: =?UTF-8?B?SmFyb23DrXIgU21yxI1law==?= <4plague@gmail.com>
-Date: Thu, 6 Mar 2025 22:09:08 +0100
-X-Gm-Features: AQ5f1JoUy-hoziPCj7Og7aRTIMlK3gVEsTMb90e1O6ZBkfEnYugMz19u1jr2KT0
-Message-ID: <CA++ArTjpo7QE5t4F0eevDsiuWtB_WN12FU9nxakxQ2a=nFxp5w@mail.gmail.com>
-Subject: [PATCH v2] doc/guides: Mention needed kernel option for mlx5
-To: dev@dpdk.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma\ae4dma: added AMD user space DMA driver
+To: Bhagyada Modali <bhagyada.modali@amd.com>, <dev@dpdk.org>
+CC: <ssebasti@amd.com>, <rningoji@amd.com>
+References: <20250309084526.972512-1-bhagyada.modali@amd.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250309084526.972512-1-bhagyada.modali@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailman-Approved-At: Sun, 09 Mar 2025 13:48:36 +0100
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,37 +49,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On some kernels (Debian 6.6, 6.9 and 6.10 tested),
-there is a missing option for "TC recirculation"
-that prevents MLX5 driver to include CONFIG_MLX5_CLS_ACT
-in the compilation, thus preventing PF1
-from properly working in multiport-eswitch mode.
+Hi,
 
-Fixes: 11c73de9ef63 ("net/mlx5: probe multi-port E-Switch device")
+This commit modify the test-dma-perf and rte_mempool.h, but I can't get useful info
+from the commit log.
 
-v2:
-- Added additional MLX5 kernel option
-- Fixed patch formatting
-- Added "Fixes" tag
+So I recommend you split it to multiple commits, each commit implements a small function,
+and well doc in commit log, this will help reviewer better understand.
 
-Signed-off-by: Jarom=C3=ADr Smr=C4=8Dek <4plague@gmail.com>
----
- doc/guides/nics/mlx5.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 30c40f767b..06c6e80f83 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -1713,7 +1713,7 @@ Supported HCAs:
+On 2025/3/9 16:45, Bhagyada Modali wrote:
+> Added a user-space driver with support for the AMD EPYC
+> 4th Generation DMA (AE4DMA) offload engine.
+> 
+> Implementation of new user-space driver supporting
+> DMA memory copy offload on AMD EYPC 9004 & 8004 systems
+> (Genoa and Siena processors).
+> 
+> Signed-off-by: Bhagyada Modali <bhagyada.modali@amd.com>
+> ---
+>  app/test-dma-perf/benchmark.c        |  24 +-
+>  app/test-dma-perf/config.ini         | 134 ++++--
+>  app/test-dma-perf/main.c             |   2 -
+>  app/test/test_dmadev.c               |  43 +-
+>  drivers/dma/ae4dma/ae4dma_dmadev.c   | 656 +++++++++++++++++++++++++++
+>  drivers/dma/ae4dma/ae4dma_hw_defs.h  | 225 +++++++++
+>  drivers/dma/ae4dma/ae4dma_internal.h | 125 +++++
+>  drivers/dma/ae4dma/meson.build       |   7 +
+>  drivers/dma/meson.build              |   1 +
+>  lib/mempool/rte_mempool.h            |   2 +-
+>  usertools/dpdk-devbind.py            |   5 +-
+>  11 files changed, 1146 insertions(+), 78 deletions(-)
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_dmadev.c
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_hw_defs.h
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_internal.h
+>  create mode 100644 drivers/dma/ae4dma/meson.build
 
- Supported mlx5 kernel modules versions:
-
--- Upstream Linux - from version 6.3.
-+- Upstream Linux - from version 6.3. with CONFIG_NET_TC_SKB_EXT and
-CONFIG_MLX5_CLS_ACT enabled
- - Modules packaged in MLNX_OFED - from version v23.04-0.5.3.3.
-
- Configuration
---
-2.39.2
