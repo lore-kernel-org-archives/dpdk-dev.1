@@ -2,46 +2,139 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1703C28B2E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 02:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D4BC28B2E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 07:30:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D07840261;
-	Tue, 11 Mar 2025 03:31:22 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id B71FE400D7
- for <dev@dpdk.org>; Tue, 11 Mar 2025 03:31:20 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 72141463B0; Tue, 11 Mar 2025 03:31:20 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1672] [dpdk-25.03]
- vf_offload/checksum_offload_tunnel_enable: gtpu packet checksum error packet
-Date: Tue, 11 Mar 2025 02:31:19 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: songx.jiale@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1672-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17416602800.CF1f.41625
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 16CD640261;
+	Tue, 11 Mar 2025 08:30:06 +0100 (CET)
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
+ by mails.dpdk.org (Postfix) with ESMTP id E705B400D7;
+ Tue, 11 Mar 2025 08:30:03 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gwUsHd0jDCXkhgUuoJZVNA+9xJ4ELlhlUjV46qO3934FKz994Dhph0ZYqH9lFILJ8OJeuEB2zNA4OrNLMkpDRhxBLYoxTNMH0vkWx6RVdOEIytgr27d7D/8H080REf4wtFN9HDK5SuZeb7LcAFNgfW4P9S2WSN+3vcTKeoNNavOVnN45gDrYfQXDNQtOyPEisrmrRDsRezOGsSyP4Fk6EJ+RzIgKKNI6Xa+dTlyT+GPrLUkWGAwiG2IwtJE4VvKDz5mfyrhcCa6yU+b5Ksi7iaYwV5jxxog0QipQXnM0UAWQp8Egs9Pk7sN7PToLE+jtKI+jYK8Bw59MRLuPiDTKAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GSblYI/a5m7m0T3U/WoK55Y9eCVuA9cLgJ6r/yrS1ZE=;
+ b=ry0XNz9T5kJQHHbyeMApXeK726+cYeBkScE8SowUjDSFRPH7vSGQxqG6etbTOMYakE/xUPiizypLpJLT22mJOftg8bpDP3lHlxUWuMA121jQ8ak9voikUvtrJxNDbF3F6ctonc2tKrIFWDM0ZZGuAGo3E+G44A2xscvHaNrST3gt2AGvt9tALa81OCHecW3yDSQtnnoni+kc7Il8ujJ+7Qgv0592EJgSeOL1mKtWv0QX5XC9GlLxnAT06yJoJdWzHCVm2FbFJXiQUsWGzlnx3021ZM2B6qqF6Yjx1dAgYIjmLj++UH/27O0mv3Iv5eiyc+bC49wPyIkfSdJcIj4loA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GSblYI/a5m7m0T3U/WoK55Y9eCVuA9cLgJ6r/yrS1ZE=;
+ b=QYQRqG0VNiA/Y8cPSu7vZ5IHP040q5HQPIWLRMxWtYO1knrrduvEumSxxweEs8mgAn4NXKTKZB+mfRK/Bt1Wg1T5fESh1c5GJ6mJq6b1/gbzvFIe1hxnnDdiNtrPJX9WuXPy5eMS61u5RUyjKOYfQYJvNM84Okf/1Lb4op5+bm0drSqyqLku5Fa+YbuVfLbsMs8jjm+acggicT/AmbhT3YEx20i1l3CyyLbNO/jQQQGNNhqEY/8kABfr+OkqpAI69vi0vSFoYGkw1MB+5HBzB2hKVHRXMDNTo9dfWsp3pQYGC98/cgyal1Jt0+y1Qtdf43okb1ap0WMYwmIS3/dtIw==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by PH7PR12MB7940.namprd12.prod.outlook.com (2603:10b6:510:275::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 07:30:01 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 07:30:01 +0000
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: Maayan Kashani <mkashani@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Dariusz Sosnowski <dsosnowski@nvidia.com>, "stable@dpdk.org"
+ <stable@dpdk.org>, Slava Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Xueming Li
+ <xuemingl@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: fix assert failure on hairpin queue release
+Thread-Topic: [PATCH] net/mlx5: fix assert failure on hairpin queue release
+Thread-Index: AQHbiQBo758FN9hgvkKrzKznqJdGDLNtnDnW
+Date: Tue, 11 Mar 2025 07:30:01 +0000
+Message-ID: <CH3PR12MB8460E523E13221FBA82135C6CFD12@CH3PR12MB8460.namprd12.prod.outlook.com>
+References: <20250227101415.89079-1-mkashani@nvidia.com>
+In-Reply-To: <20250227101415.89079-1-mkashani@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|PH7PR12MB7940:EE_
+x-ms-office365-filtering-correlation-id: 7fb12382-dc1a-4645-a7ca-08dd606e88be
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|38070700018|7053199007; 
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?aAyxX4MLleh620aorrLzG2dHZEchvh4F+6+hJY3wK3Qh48UDFu+dJ7k6f5?=
+ =?iso-8859-1?Q?YKyJ43NuzGBagJWUvi7Ilimsmqzu9SIuLV1aOLXyiao5D/HUCqwej1eAVy?=
+ =?iso-8859-1?Q?CJ+FgRngNceUrz0fzKxQsUuUuiNW7CwlSkprBPIbiRd9yXvgSSacnuZRQ8?=
+ =?iso-8859-1?Q?U4HY9+Do9ZWWygj+WGuJ4l1X2aTChEcTo4bz3EMDQTGbf/3h31PxyWoohu?=
+ =?iso-8859-1?Q?FJJO2cq+GN+fhdje4CJB8Sf5ZWrJTTRjRHBXDETH6ogNi/XCOltn5QS7Q4?=
+ =?iso-8859-1?Q?e9ja73nMHE3V4iOEBimq6XTkFLsQFEA99fPEhExugvE6chnVQumwGKwY2k?=
+ =?iso-8859-1?Q?SSuD23zhW51CzH7SuaSRz1/ZUWJSOJJ6W70Cv90C3BIwV4Gk4LMIONOd5m?=
+ =?iso-8859-1?Q?4GR4bm7Ogn49oiAGatZFNQ/pdUVUUSxl4m4rt7gpXFd4K8YrX7tXXFVKJw?=
+ =?iso-8859-1?Q?Za0LMqSltX58PM4dBLCSenHSEVIMZCvpCJ8P9nA0NfYIvQysF0DM7rG7iT?=
+ =?iso-8859-1?Q?ErKpGhDdlVKPoZUIj8iX4EVAUXOoqfjIOMtFj+MOxgzH0AIB8qPGjPFob8?=
+ =?iso-8859-1?Q?e3Cprg8UZ02OM3FEalQuAXTi9GNmkNGPTSRpeSQCt9rC6epTrdEM6X+58E?=
+ =?iso-8859-1?Q?o5ZKqOdORhoN5kWKh9cg2HLum3mmmoBD1ggluo5fZ41qzDOuZie8W1CjEf?=
+ =?iso-8859-1?Q?s1daZkp3wBvHVAkec2ed2z+GaKGwjPVuQT3Cweh108ScYYzwZq8mg4zhiu?=
+ =?iso-8859-1?Q?Fmc39n7zRxC/f8N0UPO46YkoN3IrBvbl/3BILfM9AGHXWWUZ9kjn6fwzdn?=
+ =?iso-8859-1?Q?wxlZTH2TgCcoIai6+w4qXcHrWGhg7wgnGylSMoAqyioKHl1ETuTHDSsMVf?=
+ =?iso-8859-1?Q?e6C4N33eDfCHN7Bvbe2DjOxzrJb8ycvUDJXunDbDcZkccYeZh4QupR5LBl?=
+ =?iso-8859-1?Q?sbUQx8eFlSruBGi5egAxb3hRI5zioGTVuKkV8s+nG7Lg9z8YLR7rW6ZTdg?=
+ =?iso-8859-1?Q?n2/fBGP3bGaFLcLDVd40un1broUnahYUgiDW+KKexrYNFxVyz48BpMRlOv?=
+ =?iso-8859-1?Q?9vcdk5tcMPBpkJEJGmBNMaXIy/fBLTXlm0XfH4GtgD3ZUTN57t79ritrPj?=
+ =?iso-8859-1?Q?rsJI/17SP8LDKRd6vlgkJyDVVX1eJNvv0J7gs71FZoJxzIJD0U2vrAvCMW?=
+ =?iso-8859-1?Q?CYNNtzpRkDy2seIN0a3n0qff0GoVWb3O0v05xNEcXgwkVpOnhf90t6jcRP?=
+ =?iso-8859-1?Q?giYc+BWkXv9dY9U3QJDFi9CH+yL3NvdTdZy//CH/iGIyDC7NkABY/V3Nk4?=
+ =?iso-8859-1?Q?XxTmpP2AcDCmi1UB9flX9ZlVn8gadEdkMnPGPHYfPTYScfNL8+pKgJNKTN?=
+ =?iso-8859-1?Q?KcGyO0g1Fbzco8qdJFUtTfJlp3pgA8Rx0ml+ZduhuYADkkUPx6zB75AdfY?=
+ =?iso-8859-1?Q?uBlAQ+J4sNr2z6KtyBAm/Fyd1vae95w4keYm2iQaWGTjV8t69rr+kVwRFN?=
+ =?iso-8859-1?Q?dYTCoVA+a1zMPIEU8gn+h9?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(7053199007); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?dJouSiYdKAVC54r7jlrtbC7dM9yZ7h/7TfICZNKNYmWyApbVKVLffVNjbZ?=
+ =?iso-8859-1?Q?K8JGIlqmLofeqJguoY097Sli1W2pqIAukWKIx6c1SBBmSkIpKPmUtK74W9?=
+ =?iso-8859-1?Q?1dSY/9gXI1lDlrmAOUyU1zlVNW/IAU/BlkCZqD9VePYzD6nflavfDnk7dY?=
+ =?iso-8859-1?Q?65OXLyvzFbCKwy3ps5S5vCGMGUqag0mnBmF1onRbeiLpV/3nZeO5Mj6ZS5?=
+ =?iso-8859-1?Q?gne/f5C7mEOzMCmSsbP1RBZ1BobXCoTg6vdY4skfpPjkQvmjGKK/HgKrVl?=
+ =?iso-8859-1?Q?w/9NHYfCdCKV7uH8psLz7cQJ7kF9CIrrCLuvMepf5Z8CRhLFThH/8yC+pP?=
+ =?iso-8859-1?Q?VncrNScET1XEVXv9yTpLO6Y+CS8E8V4iot/5ipQxdpS3Ex6Ltt6uhDD+WH?=
+ =?iso-8859-1?Q?XF04+CjuJ1aUFoR7ghPcT088RSiG5xN/2QsNJvtLDY0/Ny1Y24VLUErneV?=
+ =?iso-8859-1?Q?bfHQH2bpz32T2o/e+ZMawHcpdLxopnT3QkVZXfCKPsElep9/CtNADT/k2I?=
+ =?iso-8859-1?Q?NEn8uRm69bCglroewW+Vg7Ic5mO7NxsguLXAjyvZlt2GTMHnDE5K8j8Djp?=
+ =?iso-8859-1?Q?BdNvClMlebIPOEbXo9ewg3QpkYm6lPdcDHyRtnGtWSIBY+OEluXxDcqIux?=
+ =?iso-8859-1?Q?RmUXIQpTKfgMrPtG3vwW94L8YOTdxjP4+UE/GSPc5HLy2dSkLwKvF+5EEu?=
+ =?iso-8859-1?Q?2hiPPmIaAqoy/oeyZcvN+ffHi96Z8JQzcW7ZpBcF0ccfB0xC41yGCV55H6?=
+ =?iso-8859-1?Q?X79awR4ox7tVhKI664FhgTXgKC8CQVtpk0wPXOhJv1klqOO/232+e5/UKZ?=
+ =?iso-8859-1?Q?4iVmEtVVjVPTyJ4leFp4lpjykhhepzqd+vnD3JgNFXk3ZoT2FSrrtlQ6ci?=
+ =?iso-8859-1?Q?AiGWDaGgza565OwR9vECCZ75bHaqP/WWRZ/ERCuwqsaZtrDRIh33vF16Va?=
+ =?iso-8859-1?Q?qJXFVIILKu+i2u+gS9HRRGwfYXGESnwQhOAOk9mR+TCeZjJ7ebf9Si+iug?=
+ =?iso-8859-1?Q?XRxXKf16r5IyoUqwyc3eGDLtruUouLBZdRioWgZUTmU5DG0KGXJ0b4BKEg?=
+ =?iso-8859-1?Q?kFpMX6HjHGlqeacC3+qj/wpafiJKUdy03YbdTu8g85uU7BpHuMuRD3gfDo?=
+ =?iso-8859-1?Q?U04bCIxo7CRgyOvwYnR0R0cTifAUQIhn6DtOva9ZNCRSoHR3ywcl/mO7M6?=
+ =?iso-8859-1?Q?VI735tJ46xgnMsh1z/g5UDxxPXZXPhfBJ1SbeSNKyAJjGUmP07wdBqAe6B?=
+ =?iso-8859-1?Q?7Wnq9kswaXVLi/7Pzauk6p585GodqGK4oOPoPgHBASIm+enAvoEZG62jYM?=
+ =?iso-8859-1?Q?YyF2VGzx5NcfnNqz5FvLqSPkIja6RS9tDxu/TN4JqosW5A4Q+Z8Yw9CJPi?=
+ =?iso-8859-1?Q?W1R/Qmoyz5O+tgz8pj/eCFsgvX0BWl4h0oNkOqoLf0qdu9I7+ZyRJ5BHEj?=
+ =?iso-8859-1?Q?OnDBndEleXT6fle4r46evLi6cDGHde5CiWzXArX8+7t24xxJL01E8RHeAf?=
+ =?iso-8859-1?Q?hXWOtbtvVH3ob5dPQfl3QGYQ3aKuIGD/A7LLgqpcS0l18XN8QJblBeZrlb?=
+ =?iso-8859-1?Q?QTCYfwsdg45y0yLE8aQI2+Ob2eQ26EyEybP+lwxLPRzzAN1VA+xydyx/+f?=
+ =?iso-8859-1?Q?Zl0Hv/4whvY1Q=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb12382-dc1a-4645-a7ca-08dd606e88be
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2025 07:30:01.3309 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kNOoUGqh0w7sk9FO6MXe3g5ViP3Z+3713GTnky5z7FHRE3ltBo9HuJdSyaSAcviCcMdtVz6R5zoP6kTTRAq/NA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7940
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,566 +148,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17416602800.CF1f.41625
-Date: Tue, 11 Mar 2025 03:31:20 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1672
-
-            Bug ID: 1672
-           Summary: [dpdk-25.03]
-                    vf_offload/checksum_offload_tunnel_enable: gtpu packet
-                    checksum error packet
-           Product: DPDK
-           Version: 25.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: testpmd
-          Assignee: dev@dpdk.org
-          Reporter: songx.jiale@intel.com
-  Target Milestone: ---
-
-Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
-OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
-Compiler:  gcc version 13.2.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
-NIC hardware: CVL(Intel Corporation Ethernet Controller E810-C for SFP
-[8086:1593])
-NIC firmware:=20
-  driver: vfio-pci
-  kdriver: ice-1.16.3
-  firmware-version: 4.70 0x8001f79e 1.3755.0
-  pkg: ice comms 1.3.53.0
-scapy:2.4.4
-
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. create 1 vf and set vf=20
-echo 1 > /sys/bus/pci/devices/0000\:18\:00.0/sriov_numvfs
-ip link set enp24s0f0np0 vf 0 trust on
-ip link set enp24s0f0np0 vf 0 spoofchk off
-modprobe vfio-pci
-./usertools/dpdk-devbind.py -b vfio-pci 0000:18:01.0
-
-2. start testpmd=20
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-3 -n 4 -a 0000:18:01.0 -- =
--i
---enable-rx-cksum
-
-3. set testpmd=20
-set verbose 1
-set promisc 0 on
-set fwd csum
-port stop all
-csum set ip hw 0
-csum set udp hw 0
-csum set tcp hw 0
-csum set sctp hw 0
-csum set outer-ip hw 0
-csum set outer-udp hw 0
-csum parse-tunnel on 0
-port start all
-start
-
-4. tcpdump captures packets forwarded by testpmd
-tcpdump -ei ens8 -Q in -w 1.pcap
-
-5. scapy send packets
-from scapy.contrib.gtp import *
-p=3DEther(dst=3D"76:D4:6B:F1:BF:7A", src=3D"52:00:00:00:00:00") / IP(src =3D
-"10.0.0.1", chksum =3D 0xff) / UDP(dport =3D 2182, chksum =3D 0xff) /
-GTP_U_Header(gtp_type=3D255, teid=3D0x123456) / IP(src =3D "10.0.0.1", chks=
-um =3D 0xff)
-/ UDP(sport =3D 29999, dport =3D 30000, chksum =3D 0xff) / Raw("x" * 100)=20
-sendp(p, iface=3D'ens8', count=3D1)
-
-6. ^C exit tcpdump and scapy or wireshark parsing data packets
-scapy parsing data packets:
-from scapy.contrib.gtp import *
-pkt=3Drdpcap('1.pcap')
-pkt[0].show2()
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
->>> pkt[0].show2()
-###[ Ethernet ]###
-  dst=3D 02:00:00:00:00:00
-  src=3D 7e:45:ee:26:3a:23
-  type=3D IPv4
-###[ IP ]###
-     version=3D 4
-     ihl=3D 5
-     tos=3D 0x0
-     len=3D 164
-     id=3D 1
-     flags=3D
-     frag=3D 0
-     ttl=3D 64
-     proto=3D udp
-     chksum=3D 0xf146
-     src=3D 10.0.0.1
-     dst=3D 127.0.0.1
-     \options\
-###[ UDP ]###
-        sport=3D 2152
-        dport=3D 2182
-        len=3D 144
-        chksum=3D 0x7c10
-###[ GTP-U Header ]###
-           version=3D 1
-           PT=3D 1
-           reserved=3D 0
-           E=3D 0
-           S=3D 0
-           PN=3D 0
-           gtp_type=3D g_pdu
-           length=3D 128
-           teid=3D 1193046
-###[ IP ]###
-              version=3D 4
-              ihl=3D 5
-              tos=3D 0x0
-              len=3D 128
-              id=3D 1
-              flags=3D
-              frag=3D 0
-              ttl=3D 64
-              proto=3D udp
-              chksum=3D 0xff
-              src=3D 10.0.0.1
-              dst=3D 127.0.0.1
-              \options\
-###[ UDP ]###
-                 sport=3D 29999
-                 dport=3D 30000
-                 len=3D 108
-                 chksum=3D 0xff
-###[ Raw ]###
-                    load=3D
-'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
-xxxxxxxxxxxxxxxxxxxxxxxxxx'
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>> pkt[0].show2()
-###[ Ethernet ]###
-  dst=3D 02:00:00:00:00:00
-  src=3D 7e:45:ee:26:3a:23
-  type=3D IPv4
-###[ IP ]###
-     version=3D 4
-     ihl=3D 5
-     tos=3D 0x0
-     len=3D 164
-     id=3D 1
-     flags=3D
-     frag=3D 0
-     ttl=3D 64
-     proto=3D udp
-     chksum=3D 0xf146
-     src=3D 10.0.0.1
-     dst=3D 127.0.0.1
-     \options\
-###[ UDP ]###
-        sport=3D 2152
-        dport=3D 2182
-        len=3D 144
-        chksum=3D 0x8894
-###[ GTP-U Header ]###
-           version=3D 1
-           PT=3D 1
-           reserved=3D 0
-           E=3D 0
-           S=3D 0
-           PN=3D 0
-           gtp_type=3D g_pdu
-           length=3D 128
-           teid=3D 1193046
-###[ IP ]###
-              version=3D 4
-              ihl=3D 5
-              tos=3D 0x0
-              len=3D 128
-              id=3D 1
-              flags=3D
-              frag=3D 0
-              ttl=3D 64
-              proto=3D udp
-              chksum=3D 0xf16a
-              src=3D 10.0.0.1
-              dst=3D 127.0.0.1
-              \options\
-###[ UDP ]###
-                 sport=3D 29999
-                 dport=3D 30000
-                 len=3D 108
-                 chksum=3D 0x42d
-###[ Raw ]###
-                    load=3D
-'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
-xxxxxxxxxxxxxxxxxxxxxxxxxx'
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 76730c7b9b5a35d1a74d45a08153a03bdb1b26f8
-Author: Jie Hai <haijie1@huawei.com>
-Date:   Fri Feb 14 09:56:38 2025 +0800
-
-    app/testpmd: use packet type parsing API
-
-    1. Use rte_net_get_ptype() to parse packets instead.
-    2. Support TSO for packets with IPv6 extension header.
-
-    Signed-off-by: Jie Hai <haijie1@huawei.com>
-
- app/test-pmd/csumonly.c | 522 ++++++++++++--------------------------------=
-----
- 1 file changed, 128 insertions, 394 deletions
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17416602800.CF1f.41625
-Date: Tue, 11 Mar 2025 03:31:20 +0100
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - [dpdk-25.03] vf_offload/checksum_offload_tunnel_e=
-nable: gtpu packet checksum error packet"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1672">1672</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>[dpdk-25.03] vf_offload/checksum_offload_tunnel_enable: gtpu =
-packet checksum error packet
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>testpmd
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>songx.jiale&#64;intel.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
-OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
-Compiler:  gcc version 13.2.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU &#64; 2.30GHz
-NIC hardware: CVL(Intel Corporation Ethernet Controller E810-C for SFP
-[8086:1593])
-NIC firmware:=20
-  driver: vfio-pci
-  kdriver: ice-1.16.3
-  firmware-version: 4.70 0x8001f79e 1.3755.0
-  pkg: ice comms 1.3.53.0
-scapy:2.4.4
-
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. create 1 vf and set vf=20
-echo 1 &gt; /sys/bus/pci/devices/0000\:18\:00.0/sriov_numvfs
-ip link set enp24s0f0np0 vf 0 trust on
-ip link set enp24s0f0np0 vf 0 spoofchk off
-modprobe vfio-pci
-./usertools/dpdk-devbind.py -b vfio-pci 0000:18:01.0
-
-2. start testpmd=20
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-3 -n 4 -a 0000:18:01.0 -- =
--i
---enable-rx-cksum
-
-3. set testpmd=20
-set verbose 1
-set promisc 0 on
-set fwd csum
-port stop all
-csum set ip hw 0
-csum set udp hw 0
-csum set tcp hw 0
-csum set sctp hw 0
-csum set outer-ip hw 0
-csum set outer-udp hw 0
-csum parse-tunnel on 0
-port start all
-start
-
-4. tcpdump captures packets forwarded by testpmd
-tcpdump -ei ens8 -Q in -w 1.pcap
-
-5. scapy send packets
-from scapy.contrib.gtp import *
-p=3DEther(dst=3D&quot;76:D4:6B:F1:BF:7A&quot;, src=3D&quot;52:00:00:00:00:0=
-0&quot;) / IP(src =3D
-&quot;10.0.0.1&quot;, chksum =3D 0xff) / UDP(dport =3D 2182, chksum =3D 0xf=
-f) /
-GTP_U_Header(gtp_type=3D255, teid=3D0x123456) / IP(src =3D &quot;10.0.0.1&q=
-uot;, chksum =3D 0xff)
-/ UDP(sport =3D 29999, dport =3D 30000, chksum =3D 0xff) / Raw(&quot;x&quot=
-; * 100)=20
-sendp(p, iface=3D'ens8', count=3D1)
-
-6. ^C exit tcpdump and scapy or wireshark parsing data packets
-scapy parsing data packets:
-from scapy.contrib.gtp import *
-pkt=3Drdpcap('1.pcap')
-pkt[0].show2()
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-<span class=3D"quote">&gt;&gt;&gt; pkt[0].show2()</span >
-###[ Ethernet ]###
-  dst=3D 02:00:00:00:00:00
-  src=3D 7e:45:ee:26:3a:23
-  type=3D IPv4
-###[ IP ]###
-     version=3D 4
-     ihl=3D 5
-     tos=3D 0x0
-     len=3D 164
-     id=3D 1
-     flags=3D
-     frag=3D 0
-     ttl=3D 64
-     proto=3D udp
-     chksum=3D 0xf146
-     src=3D 10.0.0.1
-     dst=3D 127.0.0.1
-     \options\
-###[ UDP ]###
-        sport=3D 2152
-        dport=3D 2182
-        len=3D 144
-        chksum=3D 0x7c10
-###[ GTP-U Header ]###
-           version=3D 1
-           PT=3D 1
-           reserved=3D 0
-           E=3D 0
-           S=3D 0
-           PN=3D 0
-           gtp_type=3D g_pdu
-           length=3D 128
-           teid=3D 1193046
-###[ IP ]###
-              version=3D 4
-              ihl=3D 5
-              tos=3D 0x0
-              len=3D 128
-              id=3D 1
-              flags=3D
-              frag=3D 0
-              ttl=3D 64
-              proto=3D udp
-              chksum=3D 0xff
-              src=3D 10.0.0.1
-              dst=3D 127.0.0.1
-              \options\
-###[ UDP ]###
-                 sport=3D 29999
-                 dport=3D 30000
-                 len=3D 108
-                 chksum=3D 0xff
-###[ Raw ]###
-                    load=3D
-'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
-xxxxxxxxxxxxxxxxxxxxxxxxxx'
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-<span class=3D"quote">&gt;&gt;&gt; pkt[0].show2()</span >
-###[ Ethernet ]###
-  dst=3D 02:00:00:00:00:00
-  src=3D 7e:45:ee:26:3a:23
-  type=3D IPv4
-###[ IP ]###
-     version=3D 4
-     ihl=3D 5
-     tos=3D 0x0
-     len=3D 164
-     id=3D 1
-     flags=3D
-     frag=3D 0
-     ttl=3D 64
-     proto=3D udp
-     chksum=3D 0xf146
-     src=3D 10.0.0.1
-     dst=3D 127.0.0.1
-     \options\
-###[ UDP ]###
-        sport=3D 2152
-        dport=3D 2182
-        len=3D 144
-        chksum=3D 0x8894
-###[ GTP-U Header ]###
-           version=3D 1
-           PT=3D 1
-           reserved=3D 0
-           E=3D 0
-           S=3D 0
-           PN=3D 0
-           gtp_type=3D g_pdu
-           length=3D 128
-           teid=3D 1193046
-###[ IP ]###
-              version=3D 4
-              ihl=3D 5
-              tos=3D 0x0
-              len=3D 128
-              id=3D 1
-              flags=3D
-              frag=3D 0
-              ttl=3D 64
-              proto=3D udp
-              chksum=3D 0xf16a
-              src=3D 10.0.0.1
-              dst=3D 127.0.0.1
-              \options\
-###[ UDP ]###
-                 sport=3D 29999
-                 dport=3D 30000
-                 len=3D 108
-                 chksum=3D 0x42d
-###[ Raw ]###
-                    load=3D
-'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
-xxxxxxxxxxxxxxxxxxxxxxxxxx'
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 76730c7b9b5a35d1a74d45a08153a03bdb1b26f8
-Author: Jie Hai &lt;<a href=3D"mailto:haijie1&#64;huawei.com">haijie1&#64;h=
-uawei.com</a>&gt;
-Date:   Fri Feb 14 09:56:38 2025 +0800
-
-    app/testpmd: use packet type parsing API
-
-    1. Use rte_net_get_ptype() to parse packets instead.
-    2. Support TSO for packets with IPv6 extension header.
-
-    Signed-off-by: Jie Hai &lt;<a href=3D"mailto:haijie1&#64;huawei.com">ha=
-ijie1&#64;huawei.com</a>&gt;
-
- app/test-pmd/csumonly.c | 522 ++++++++++++--------------------------------=
-----
- 1 file changed, 128 insertions, 394 deletions
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1672">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17416602800.CF1f.41625--
+Hi,=0A=
+=0A=
+>From: Maayan Kashani <mkashani@nvidia.com>=0A=
+>Sent: Thursday, February 27, 2025 12:14 PM=0A=
+>To: dev@dpdk.org=0A=
+>Cc: Maayan Kashani; Dariusz Sosnowski; Raslan Darawsheh; stable@dpdk.org; =
+Slava Ovsiienko; Bing Zhao; Ori Kam; Suanming Mou; Matan Azrad; >Xueming Li=
+=0A=
+>Subject: [PATCH] net/mlx5: fix assert failure on hairpin queue release=0A=
+=0A=
+>Assert was triggered because of ctrl_ref mismatch on hairpin queue.=0A=
+>Fixed the mismatch.=0A=
+=0A=
+>Fixes: 09c2555 ("net/mlx5: support shared Rx queue")=0A=
+you are using wrong fixes tag, I'll fix during integration.=0A=
+>Cc: stable@dpdk.org=0A=
+=0A=
+>Signed-off-by: Maayan Kashani <mkashani@nvidia.com>=0A=
+>Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>=0A=
+=0A=
+Patch applied to next-net-mlx,=0A=
+=0A=
+Kindest regards,=0A=
+Raslan Darawsheh=0A=
+=0A=
