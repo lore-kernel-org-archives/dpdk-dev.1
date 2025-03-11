@@ -2,46 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4254BC282EC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 15:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC790C28B2F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 15:33:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36DB64027F;
-	Tue, 11 Mar 2025 16:01:07 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7B61640263
- for <dev@dpdk.org>; Tue, 11 Mar 2025 16:01:05 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2B14622065;
- Tue, 11 Mar 2025 16:01:05 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] hash_readwrite_autotest: fix printf parameters
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 11 Mar 2025 16:01:04 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FAEC@smartserver.smartshare.dk>
-In-Reply-To: <20250311143948.GA16011@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] hash_readwrite_autotest: fix printf parameters
-Thread-Index: AduSk3Njo5YuHf6ITK6GunrnhXU5HwAAmPGQ
+	by mails.dpdk.org (Postfix) with ESMTP id 8A29A4027F;
+	Tue, 11 Mar 2025 16:33:29 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 09D9A4027F
+ for <dev@dpdk.org>; Tue, 11 Mar 2025 16:33:28 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 519922111432; Tue, 11 Mar 2025 08:33:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 519922111432
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1741707207;
+ bh=92KNLA9Q/04Nwmeg6IxaeY+w5OS78fe8bG+cSQ7G6bw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=KBkOTaxh4pPVUeTEb9b5EF0IqbMoVZNi1X8swng9ZYJnoQ8XQEuFLRze5WhcwMiim
+ FbJLw+qO1r0jPp3mEiUSxuv2ujwriSBoQIoIhklQdGYnyzJgjYAmBE5ISkyN4CIdqR
+ xo2WlqEQ+YGsZGZyZ69leGiVknfxbLju2LZEfbQ8=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: andremue@linux.microsoft.com
+Cc: bruce.richardson@intel.com, dev@dpdk.org, sameh.gobriel@intel.com,
+ vladimir.medvedkin@intel.com, yipeng1.wang@intel.com
+Subject: [PATCH v2 3/3] hash_readwrite_autotest: fix printf parameters
+Date: Tue, 11 Mar 2025 08:33:15 -0700
+Message-Id: <1741707195-26880-3-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1741707195-26880-1-git-send-email-andremue@linux.microsoft.com>
 References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
- <Z8q16Ikzl4_flbpK@bricha3-mobl1.ger.corp.intel.com>
- <20250307223401.GA27687@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <Z87ER_iHAgTw1wuO@bricha3-mobl1.ger.corp.intel.com>
- <20250310083640.46df23bb@hermes.local>
- <20250311143948.GA16011@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Andre Muezerie" <andremue@linux.microsoft.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: "Yipeng Wang" <yipeng1.wang@intel.com>,
- "Sameh Gobriel" <sameh.gobriel@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, <dev@dpdk.org>
+ <1741707195-26880-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,96 +44,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Andre Muezerie [mailto:andremue@linux.microsoft.com]
-> Sent: Tuesday, 11 March 2025 15.40
->=20
-> On Mon, Mar 10, 2025 at 08:36:40AM -0700, Stephen Hemminger wrote:
-> > On Mon, 10 Mar 2025 10:51:51 +0000
-> > Bruce Richardson <bruce.richardson@intel.com> wrote:
-> >
-> > > On Fri, Mar 07, 2025 at 02:34:01PM -0800, Andre Muezerie wrote:
-> > > > On Fri, Mar 07, 2025 at 09:01:28AM +0000, Bruce Richardson =
-wrote:
-> > > > > On Thu, Mar 06, 2025 at 12:03:28PM -0800, Andre Muezerie =
-wrote:
-> > > > > > Compiling with MSVC logs the warnings below, which result in
-> > > > > > build error:
-> > > > > >
-> > > > > > ../app/test/test_hash_readwrite.c(73): warning C4476:
-> 'printf' :
-> > > > > >     unknown type field character ''' in format specifier
-> > > > > > ../app/test/test_hash_readwrite.c(75): warning C4474:
-> 'printf' :
-> > > > > >     too many arguments passed for format string
-> > > > > > ../app/test/test_hash_readwrite.c(75): note: placeholders =
-and
-> > > > > >     their parameters expect 2 variadic arguments, but 4 were
-> provided
-> > > > > >
-> > > > > > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > > > > > ---
-> > > > > >  app/test/test_hash_readwrite.c | 2 +-
-> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > >
-> > > > > IF the "'" character is not supported, is there some other
-> method to do
-> > > > > thousands grouping in MSVC?
-> > > > >
-> > > > > /Bruce
-> > > >
-> > > > The problem exists with all compilers I tried on Windows:
-> > > >
-> > > > 1) MSVC logs the error I mentioned above
-> > > >
-> > > > 2) GCC and Clang don't complain at compile time, but don't honor
-> the "'" as a special
-> > > > character. As an example,
-> > > > printf("%'d\n", 1024);
-> > > > results in
-> > > > 'd
-> > > >
-> > > > It seems that for this syntax to work as you would expect,
-> support needs to exist in both the
-> > > > compiler and the libraries used.
-> > > >
-> > > > Back to your question: there's no equivalent syntax on Windows
-> that provides the thousands grouping.
-> > > > If really needed (and I understand it is useful for large
-> numbers), we could get the same result
-> > > > by calling a helper function that would convert the number in =
-the
-> formatted string and use that
-> > > > in the printf statement.
-> > > >
-> > > > There is a Win32 API that does that. It takes a string as input
-> though: GetNumberFormatA.
-> > > > (https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-
-> winnls-getnumberformata)
-> > > >
-> > > > We could use ifdefs to keep the old logic on Linux and use new
-> logic on Windows (for all compilers).
-> > > >
-> > > > Let me know if this is something that would need to be done, or
-> if the current output
-> > > > without thousands grouping is good enough.
-> > > > --
-> > > The thousands grouping is incredibly helpful when working with
-> large
-> > > numbers, but given the lack of support for this on Windows, we'll
-> just have
-> > > to go without, I think.
-> > >
-> > > /Bruce
-> >
-> > Maybe some variation of the pretty printing code that iproute2 has
-> > (see print_num) would be useful. Feel free to reuse it.
-> > I wrote the initial version.
->=20
-> That's an interesting suggestion. I'll use that.
+Compiling with MSVC logs the warnings below, which result in
+build error:
 
-Often "123 M" is better than "123123123", but sometimes seeing the last =
-digit move is important, e.g. when looking at packet counters.
+../app/test/test_hash_readwrite.c(73): warning C4476: 'printf' :
+    unknown type field character ''' in format specifier
+../app/test/test_hash_readwrite.c(75): warning C4474: 'printf' :
+    too many arguments passed for format string
+../app/test/test_hash_readwrite.c(75): note: placeholders and
+    their parameters expect 2 variadic arguments, but 4 were provided
 
-Just mentioning, so you consider which format is better every time you =
-use it.
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ app/test/test_hash_readwrite.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/app/test/test_hash_readwrite.c b/app/test/test_hash_readwrite.c
+index 1867376ade..3fa7003bfb 100644
+--- a/app/test/test_hash_readwrite.c
++++ b/app/test/test_hash_readwrite.c
+@@ -25,6 +25,8 @@
+ #define NUM_TEST 3
+ unsigned int core_cnt[NUM_TEST] = {2, 4, 8};
+ 
++#define OFFSET_STR_LEN 16
++
+ unsigned int worker_core_ids[RTE_MAX_LCORE];
+ struct perf {
+ 	uint32_t single_read;
+@@ -57,10 +59,13 @@ static RTE_ATOMIC(uint64_t) gwrites;
+ static int
+ test_hash_readwrite_worker(__rte_unused void *arg)
+ {
++	char offset_start[OFFSET_STR_LEN];
++	char offset_end[OFFSET_STR_LEN];
+ 	uint64_t i, offset;
+ 	uint32_t lcore_id = rte_lcore_id();
+ 	uint64_t begin, cycles;
+ 	int *ret;
++	const bool use_iec = true;
+ 
+ 	ret = rte_malloc(NULL, sizeof(int) *
+ 				tbl_rw_test_param.num_insert, 0);
+@@ -70,9 +75,13 @@ test_hash_readwrite_worker(__rte_unused void *arg)
+ 	}
+ 	offset = tbl_rw_test_param.num_insert * i;
+ 
+-	printf("Core #%d inserting and reading %d: %'"PRId64" - %'"PRId64"\n",
++	rte_size_to_str(offset_start, sizeof(offset_start), offset, use_iec);
++	rte_size_to_str(offset_end, sizeof(offset_end),
++			offset + tbl_rw_test_param.num_insert - 1, use_iec);
++
++	printf("Core #%u inserting and reading %u: %s - %s\n",
+ 	       lcore_id, tbl_rw_test_param.num_insert,
+-	       offset, offset + tbl_rw_test_param.num_insert - 1);
++	       offset_start, offset_end);
+ 
+ 	begin = rte_rdtsc_precise();
+ 
+-- 
+2.48.1.vfs.0.1
 
