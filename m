@@ -2,40 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86EFC282EC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 10:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A28C28B2E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 10:30:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 335A040279;
-	Tue, 11 Mar 2025 11:18:36 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C73D740268
- for <dev@dpdk.org>; Tue, 11 Mar 2025 11:18:34 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BDBC320B6F;
- Tue, 11 Mar 2025 11:18:33 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id A6376402E6;
+	Tue, 11 Mar 2025 11:30:31 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id C4755402E5;
+ Tue, 11 Mar 2025 11:30:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1741689030; x=1773225030;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=GQktAtkKps6B4WquT702TaA9ABO0rRtOLK1jdgvPmtk=;
+ b=oAXRZGjT84GEaTF20VfJBo3+GtF9nGLtFy/1StVM9Yuajb0mqc9wiVbi
+ Klwzev8tjcmdKgVsl4FSzss3aNHkZzokO1cdnzizi3CfC7opLK8PgEZAI
+ kKfLej5qYyhK2pWmLtnoXwWNWkd8IUjdiQj2ky2f4olR7E0fOz+U98rvu
+ OmIbTEXz3y+BfXm/s/ETP043kBA2+cy8KVdNlVcJtScWa66kUZxuKyFj1
+ +zDIOMJo29iZB6pEOjVFMaTujxAdmu12RZOlpcDA13+Zk7OxUA+uYoWmt
+ vZiTb/suEVY8Z6CuJU73vceHGAC3BVNY4AEBFsUjorycUdNiampcq3RJL Q==;
+X-CSE-ConnectionGUID: c5OPiv6bR/yR89826b7rAw==
+X-CSE-MsgGUID: avDCafjrRG259sZ14nmEYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="54102236"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; d="scan'208";a="54102236"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Mar 2025 03:30:29 -0700
+X-CSE-ConnectionGUID: UAQkWHBuSlSEGqXUMgIvag==
+X-CSE-MsgGUID: /jTRAtnaRtCOt/J9en5qxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; d="scan'208";a="121189887"
+Received: from silpixa00400465.ir.intel.com ([10.55.129.27])
+ by orviesa008.jf.intel.com with ESMTP; 11 Mar 2025 03:30:28 -0700
+From: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+To: dev@dpdk.org
+Cc: gakhil@marvell.com, brian.dooley@intel.com,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>, stable@dpdk.org
+Subject: [PATCH v2] common/qat: fix incorrect size in the parser
+Date: Tue, 11 Mar 2025 10:30:24 +0000
+Message-ID: <20250311103024.1186285-1-arkadiuszx.kusztal@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [RFC v3 0/8] Symbol versioning and export rework
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 11 Mar 2025 11:18:33 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FAE4@smartserver.smartshare.dk>
-In-Reply-To: <20250311095609.194523-1-david.marchand@redhat.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC v3 0/8] Symbol versioning and export rework
-Thread-Index: AduSa9rgjdLoI2p5TCazkoAJBShYUQAAaoPA
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250311095609.194523-1-david.marchand@redhat.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>,
-	<dev@dpdk.org>
-Cc: <thomas@monjalon.net>, <bruce.richardson@intel.com>,
- <andremue@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,45 +58,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: David Marchand [mailto:david.marchand@redhat.com]
-> Sent: Tuesday, 11 March 2025 10.56
->=20
-> So far, each DPDK library (or driver) exposing symbols in an ABI had =
-to
-> maintain a version.map and use some macros for symbol versioning,
-> specially crafted with the GNU linker in mind.
->=20
-> This series proposes to rework the whole principle, and instead rely =
-on
-> marking the symbol exports in the source code itself, then let it to
-> the
-> build framework to produce a version script adapted to the linker in
-> use
-> (think GNU linker vs MSVC linker).
->=20
-> This greatly simplifies versioning symbols: a developer does not need
-> to
-> know anything about version.map, or that a versioned symbol must be
-> renamed with _v26, annotated with __vsym, exported in a header etc...
->=20
-> Checking symbol maps becomes unnecessary since generated by the build
-> framework.
->=20
-> Updating to a new ABI is just a matter of bumping the value in
-> ABI_VERSION.
->=20
->=20
-> Comments please.
+The function `strlen` returns the size of the string without a terminating
+null-character, therefore a request to allocate memory space for a parsed
+argument is too small by 1.
 
-Excellent. I'm all for automating this!
+Fixes: 99ab2806687b ("common/qat: isolate parser arguments configuration")
+Cc: stable@dpdk.org
 
-Feature creep:
+Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+---
+v2:
+- changed the placement of `len` incrementation
 
-Have you thought about how this (or related automation) can possibly =
-also benefit the CI, e.g. for ABI breakage testing?
+ drivers/common/qat/qat_device.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Or possible benefits to (automated) documentation of versioned =
-functions?
-Or possible benefits to remembering all versioned ABIs when writing the =
-release notes?
+diff --git a/drivers/common/qat/qat_device.c b/drivers/common/qat/qat_device.c
+index bca88fd9bd..b582e3bf8b 100644
+--- a/drivers/common/qat/qat_device.c
++++ b/drivers/common/qat/qat_device.c
+@@ -229,6 +229,7 @@ qat_dev_parse_command_line(struct qat_pci_device *qat_dev,
+ 	len = strlen(devargs->drv_str);
+ 	if (len == 0)
+ 		return 0;
++	++len;
+ 	/* Allocate per-device command line */
+ 	qat_dev->command_line = rte_malloc(NULL, len, 0);
+ 	if (qat_dev->command_line == NULL) {
+-- 
+2.43.0
 
