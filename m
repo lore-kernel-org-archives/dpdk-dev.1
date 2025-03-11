@@ -2,78 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A20AC282EC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 13:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDBEC282EC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 14:39:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26DB14027F;
-	Tue, 11 Mar 2025 14:43:49 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id AEB4840263
- for <dev@dpdk.org>; Tue, 11 Mar 2025 14:43:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741700627;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=AxIN0y2cHtADAxH8//9n5qzMw/awDhvxmPXa/8WYGQs=;
- b=icWT3XChImLeRQf6CPzoOTROXPgs0t9dwKmyPSCmNmow5Y3j7dEZDcmB8ewFPFfPTDQBDG
- jzSCOAuAl6d++vI/cypxkE/x1xBVw/RYhWPBfX7CqXYCcP75qwjpunt7IdgvlScfEfSyev
- FZ0B/mnmsO6ghtlFVRSEjYAez7z9dm4=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-YGZA6R3ZPrGCaGYEAgYz3g-1; Tue, 11 Mar 2025 09:43:44 -0400
-X-MC-Unique: YGZA6R3ZPrGCaGYEAgYz3g-1
-X-Mimecast-MFC-AGG-ID: YGZA6R3ZPrGCaGYEAgYz3g_1741700623
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5499c383444so1536860e87.2
- for <dev@dpdk.org>; Tue, 11 Mar 2025 06:43:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741700623; x=1742305423;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=AxIN0y2cHtADAxH8//9n5qzMw/awDhvxmPXa/8WYGQs=;
- b=a2+87muZl2lb/jJKIS3R1QCBNHm7KwAZoAaFT/lVE/OE0QhOLwZ5Jo/Flp2KhrTnuG
- PKyLSidVp1cAj3Erx0UKndwzKqnrbaRowqyrs9jFJ3trBPooFmUR4r/yhn9Hzh4grn9J
- Vfi0A29BzT4l3NI+xt3q/MdNOvDNnAJ6OMcWzAnAbMKzBQZquc2ZxryWejBJ2KX2Omv6
- qW8eyYHBb27TLKNAiav9kSetMUi5TiG5HnNrY+qrKn5s9Y4kLMp+i91IIvIRYidG5kDg
- WVSObLTMMnd1GsX9gKdunSWFlsKTawIsjwfvr55p+2xGdvPmNUl+b1oPmAwSYJjxlTfm
- 4xXQ==
-X-Gm-Message-State: AOJu0Yy7asEiPMbEDitab60KzVkQgA0SDyNSM+mdXJCwcSVJyNiViAuZ
- xDywYTQMgcgfLAcuS8tpJSzcppKEKB3JNwws3cvoSmAgxwQBoCCCacXTkjajfWGjAOHf8lBxX2Q
- zTgwaqrjBV0jEwoqyK9YtISTPiPDAAnnmq53A4TCLFVCK5kfzUO4THyPoRo47K5StE87GO7SbZG
- bJ1MhkjuSLC84TVqE=
-X-Gm-Gg: ASbGncv0SUF7TsEtH1IYDGS84crw5enxx2qiVbPDAs+R2qie98bJULppXBZKk0fBw7Q
- aNuKRNTfnUmxBREhNrY9HMNYDr0YF6rJGJovB/bqwDCW5XYVwcwCGuYmscSrRh6ZA02/HmJvRNf
- M=
-X-Received: by 2002:a05:6512:3da4:b0:545:d27:e375 with SMTP id
- 2adb3069b0e04-54990ec180dmr5520917e87.42.1741700623325; 
- Tue, 11 Mar 2025 06:43:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxRGei5kmzc3rIqx5w8DENCkNhxF8xc0qCeEdJzENOSo+R1jITG68kVi6YWSG8Ij1qfu/IiWkkl5e7O3V/LQI=
-X-Received: by 2002:a05:6512:3da4:b0:545:d27:e375 with SMTP id
- 2adb3069b0e04-54990ec180dmr5520908e87.42.1741700622946; Tue, 11 Mar 2025
- 06:43:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B6E84027F;
+	Tue, 11 Mar 2025 15:39:51 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E01840263
+ for <dev@dpdk.org>; Tue, 11 Mar 2025 15:39:49 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 80C70211142C; Tue, 11 Mar 2025 07:39:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 80C70211142C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1741703988;
+ bh=U7GM0FYq+fn/cQjOvf+xiAX8lyPNKANmy+NKE4Totsg=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=H8iIbzqR3k9LAipvIj902fcmlBXBc6NFWIAOpLuC5QH8WF31hYfxqWxAamXDv3ExR
+ z7hELJ91c8VKupIHzcbLPW+psXqbenAfdekiX3rTOoQhVzLN+x3eFYvVdAEQwoMjB2
+ o4sfTFGM0X8dn+IuG9ZNAta2HmNkPFGDBtkOSrXw=
+Date: Tue, 11 Mar 2025 07:39:48 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
+Subject: Re: [PATCH] hash_readwrite_autotest: fix printf parameters
+Message-ID: <20250311143948.GA16011@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
+ <Z8q16Ikzl4_flbpK@bricha3-mobl1.ger.corp.intel.com>
+ <20250307223401.GA27687@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <Z87ER_iHAgTw1wuO@bricha3-mobl1.ger.corp.intel.com>
+ <20250310083640.46df23bb@hermes.local>
 MIME-Version: 1.0
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250311095609.194523-1-david.marchand@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FAE4@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FAE4@smartserver.smartshare.dk>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 11 Mar 2025 14:43:31 +0100
-X-Gm-Features: AQ5f1JrRV8ft0aX3J_gFhG3RlkyqV5sRWFDYrVtHCK9u3_DEGyLXtWmBu7jfuIQ
-Message-ID: <CAJFAV8zNjzL3LarMQ2g2t9j9yMEEBjFhO01_tn4P33kyacUyRA@mail.gmail.com>
-Subject: Re: [RFC v3 0/8] Symbol versioning and export rework
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, bruce.richardson@intel.com, 
- andremue@linux.microsoft.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1px45nIXhS0p2XCPJTQzae4GjZXWU6-f8qg13-HWtxE_1741700623
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310083640.46df23bb@hermes.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,55 +52,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 11, 2025 at 11:18=E2=80=AFAM Morten Br=C3=B8rup <mb@smartshares=
-ystems.com> wrote:
->
-> > From: David Marchand [mailto:david.marchand@redhat.com]
-> > Sent: Tuesday, 11 March 2025 10.56
-> >
-> > So far, each DPDK library (or driver) exposing symbols in an ABI had to
-> > maintain a version.map and use some macros for symbol versioning,
-> > specially crafted with the GNU linker in mind.
-> >
-> > This series proposes to rework the whole principle, and instead rely on
-> > marking the symbol exports in the source code itself, then let it to
-> > the
-> > build framework to produce a version script adapted to the linker in
-> > use
-> > (think GNU linker vs MSVC linker).
-> >
-> > This greatly simplifies versioning symbols: a developer does not need
-> > to
-> > know anything about version.map, or that a versioned symbol must be
-> > renamed with _v26, annotated with __vsym, exported in a header etc...
-> >
-> > Checking symbol maps becomes unnecessary since generated by the build
-> > framework.
-> >
-> > Updating to a new ABI is just a matter of bumping the value in
-> > ABI_VERSION.
-> >
-> >
-> > Comments please.
->
-> Excellent. I'm all for automating this!
->
-> Feature creep:
->
-> Have you thought about how this (or related automation) can possibly also=
- benefit the CI, e.g. for ABI breakage testing?
->
-> Or possible benefits to (automated) documentation of versioned functions?
-> Or possible benefits to remembering all versioned ABIs when writing the r=
-elease notes?
+On Mon, Mar 10, 2025 at 08:36:40AM -0700, Stephen Hemminger wrote:
+> On Mon, 10 Mar 2025 10:51:51 +0000
+> Bruce Richardson <bruce.richardson@intel.com> wrote:
+> 
+> > On Fri, Mar 07, 2025 at 02:34:01PM -0800, Andre Muezerie wrote:
+> > > On Fri, Mar 07, 2025 at 09:01:28AM +0000, Bruce Richardson wrote:  
+> > > > On Thu, Mar 06, 2025 at 12:03:28PM -0800, Andre Muezerie wrote:  
+> > > > > Compiling with MSVC logs the warnings below, which result in
+> > > > > build error:
+> > > > > 
+> > > > > ../app/test/test_hash_readwrite.c(73): warning C4476: 'printf' :
+> > > > >     unknown type field character ''' in format specifier
+> > > > > ../app/test/test_hash_readwrite.c(75): warning C4474: 'printf' :
+> > > > >     too many arguments passed for format string
+> > > > > ../app/test/test_hash_readwrite.c(75): note: placeholders and
+> > > > >     their parameters expect 2 variadic arguments, but 4 were provided
+> > > > > 
+> > > > > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> > > > > ---
+> > > > >  app/test/test_hash_readwrite.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >   
+> > > > IF the "'" character is not supported, is there some other method to do
+> > > > thousands grouping in MSVC?
+> > > > 
+> > > > /Bruce  
+> > > 
+> > > The problem exists with all compilers I tried on Windows:
+> > > 
+> > > 1) MSVC logs the error I mentioned above
+> > > 
+> > > 2) GCC and Clang don't complain at compile time, but don't honor the "'" as a special
+> > > character. As an example,
+> > > printf("%'d\n", 1024);
+> > > results in
+> > > 'd 
+> > > 
+> > > It seems that for this syntax to work as you would expect, support needs to exist in both the
+> > > compiler and the libraries used.
+> > > 
+> > > Back to your question: there's no equivalent syntax on Windows that provides the thousands grouping.
+> > > If really needed (and I understand it is useful for large numbers), we could get the same result
+> > > by calling a helper function that would convert the number in the formatted string and use that
+> > > in the printf statement.
+> > > 
+> > > There is a Win32 API that does that. It takes a string as input though: GetNumberFormatA.
+> > > (https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getnumberformata)
+> > > 
+> > > We could use ifdefs to keep the old logic on Linux and use new logic on Windows (for all compilers).
+> > > 
+> > > Let me know if this is something that would need to be done, or if the current output
+> > > without thousands grouping is good enough.
+> > > --  
+> > The thousands grouping is incredibly helpful when working with large
+> > numbers, but given the lack of support for this on Windows, we'll just have
+> > to go without, I think.
+> > 
+> > /Bruce
+> 
+> Maybe some variation of the pretty printing code that iproute2 has
+> (see print_num) would be useful. Feel free to reuse it.
+> I wrote the initial version.
 
-Not really, this series is already touching enough code and needs in
-detail reviews.
-A simple ack is pointless.
-
-I prefer focusing on just making this part right.
-
-
---=20
-David Marchand
-
+That's an interesting suggestion. I'll use that.
