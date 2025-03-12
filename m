@@ -2,73 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FCBC28B2F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 23:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D57C282EC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 00:33:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 338BE40678;
-	Wed, 12 Mar 2025 00:54:53 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 8A7BB4065D
- for <dev@dpdk.org>; Wed, 12 Mar 2025 00:54:47 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-22423adf751so90258275ad.2
- for <dev@dpdk.org>; Tue, 11 Mar 2025 16:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741737287;
- x=1742342087; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9bqcUhDvYz1RjDzcogE1lUg0Z1NAof+pNDYWuTQQVOg=;
- b=M8qkW2jgNr6gKcL01s4sQnCBUnOb+wEvY4+Lluxve/JWj4ZiCIBJDz9o8VmgkPUkpa
- 3+mKh/mQ/lZQC57kPg1olvJstoTVg+shdK3h26oZ9joDoG4ZERHrg8NBEzGtF78/UTTp
- EuuABd9SXkIAxhBfSjph2EPWDwN61oX3zLzvz9MhRFTCvQfBGdILWTRiUIXFj1g7lvgI
- DrikLJR5Tp/Q0U1sGejYA2qSdrqKCHWlupTbzPxR4PGx9FSMQl2DmEO2E7vNN+q13AaV
- SQ+OEjbppoQHHCRhcddy/s7KxZz7R/b1TAOhR8P8y5IPak+QdN6FVXUWILgoiInwEG6t
- /hjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741737287; x=1742342087;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=9bqcUhDvYz1RjDzcogE1lUg0Z1NAof+pNDYWuTQQVOg=;
- b=A/L8v4qyGpdZdC08i28VZ+6zF6/kRIkQLAWk07eQ7EFeX9emVPNVxovT75qCtzWnFh
- IbAmD8Du96/VfE5TglFNNy+HyZ0He2DeG1xKoAcBAsha5Gv2i904F3y0et8MhT8vPedo
- ZAZsETE1JMvO5M3y3pZo82MCk0tVReECKH3uUtrp0OQoAXW6euWYKbjIaGqTL8qR2FvW
- hkdshPE/BJfTH5q7gDgYbRKnDPCbPS4rFVcM49v2UL24G8S2DptmtFnVXC/HWWjKI+o9
- vykRKhk+PeitHPTFy4fEX7ZT45cnUv9XnixugOlvsSnKV8bwkk0EUaON33VLQnqgnxbq
- eFGw==
-X-Gm-Message-State: AOJu0YyxLVdsFYm/8mCsJdSxgQHUfE9CCoTFH6+qhUmHKe2ZpnijIQKE
- moahj7z0bn0AI3vHpyN1VlVVL36pVAWPPSCM7gMQhRXvlkUEF+1zXG8Mmnr4tdNMlXIqH0VAD3U
- q
-X-Gm-Gg: ASbGncsvZwA/MtPDzjabxlq7cqVbmkKMYvLJhS+2hrvewxbBbNXgknKvX2vGKXNAXMe
- neGGn1gkQbfY6PtjbwgIxQXcjYBy5kjuJ8TzY1gQ85e85sJu3KCh1qhxJ+r+9KgMYJD1A93nS02
- lARJ7IV216ariaUjpamTYsdcXxIWrJeQcwtlh9KByz2Ak1Wblq+fVRGPrg4/YjWHdO37JOWmozF
- gd4FeFwqNQ5C7HaziOQqU2UH/+h836ltKi4nLZ4P81vn0Q3rDAt/9gVx9MpcFPjCJvFKf5ZS80G
- +jMsGxazvQ18/OxS5LsB67gYoGimSvYd+mGKhVOb1XmDybihrEn1Kay3BPk0vR+mbS37VIxnnm9
- it1dT8smsC4NioE9mLoFIfg==
-X-Google-Smtp-Source: AGHT+IGF6Lbr/BgThll0O4v3eycfaXKBpschc8xecFM7fqXKwW8ayo3iKPlX+oqbX7kVpcEE60QIWg==
-X-Received: by 2002:a17:903:244c:b0:223:2630:6b82 with SMTP id
- d9443c01a7336-22592e207e9mr79021585ad.10.1741737286777; 
- Tue, 11 Mar 2025 16:54:46 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22410a91cf4sm103734145ad.200.2025.03.11.16.54.46
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Mar 2025 16:54:46 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 9/9] net/ioring: support multi-segment Rx and Tx
-Date: Tue, 11 Mar 2025 16:51:27 -0700
-Message-ID: <20250311235424.172440-10-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250311235424.172440-1-stephen@networkplumber.org>
-References: <20241210212757.83490-1-stephen@networkplumber.org>
- <20250311235424.172440-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 0CBE140265;
+	Wed, 12 Mar 2025 01:33:55 +0100 (CET)
+Received: from CY4PR02CU008.outbound.protection.outlook.com
+ (mail-westcentralusazon11021106.outbound.protection.outlook.com
+ [40.93.199.106]) by mails.dpdk.org (Postfix) with ESMTP id 424AC40264
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 01:33:54 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O4LyKLifRO8HNGWRLsKuLZwm4ztUXLRN1M95QTOmhdM641jmFIiTF2hT1c5LYkiYqNHq3Klw0C1A6ucfBaPrdrv0fa5q0HYZ8hmRUJ8uDdUQz+edrlJT0w27ScoKbmASPS/9R4nARfnfNcCE0HN516S5AswbTmF5qS/QfqMBuB/sufYk0cFXsSS5D0TmSs4O1emYttAD2BeI7EU2XccrIHbjq+7i3wN9DXgwHcZS5kVJeHAN101N9hMA5elNmyAqjNU/3lksonioZqY+qdO5I/KRSPCxsHxggQ8nRAYrSJVwgAhsmCflxh3aRlRFQKDLKRMNXqpeGL97Y3+sssrB0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NUwjne5bY9xP+KUkLyM7GKcMlK+n5h5HXFBcuSfi81Q=;
+ b=CsFv29ljwbnf7hCnaL7+7JF86Y3xKUuCmtWzD++n99BqIjsr8EZMH047pyag3gMhSdGst6GkL8xShDd8SMBLqK1cObOSjJ/zNT+id0qyX6emOtY60QnZnbhb3gr2SvMM8n85GwPqB81Z8tiMTE+F5NZayvtcQGq7LDMcB92TIgulKQSKVLj2f7S/4AjYmIgm9YjT6ZKYDmC8bK3D3Z5T2OMtpAu+dhCciAOuZh1xAZsP5heIYThHchLuRefS13+M9BTQ5cHQlcaJ2qwFCJIcfIQvukW4mHIItvYS3cbs4TBwrvTr139GKjs3avDsgf5BVdRS61TfGNH9FMf2oqWtjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUwjne5bY9xP+KUkLyM7GKcMlK+n5h5HXFBcuSfi81Q=;
+ b=ODfwQ6q/kTGe3mx7MBQC1Bdg0p5e8SHDLdN2uTK8TYh2nxJ5P1yP4D/HuGYCHlSHjeaAVRlZO5yWGLD08M+ajerz8hCsG0TPmT3SF3p+T8CsF80KcSjuWLqY6UYMbtm7qBD/KLBBO5qY+4KL1TzZ8bTE5VtyzDNIJ5jD4bAIdbE=
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
+ by PH8PR21MB3926.namprd21.prod.outlook.com (2603:10b6:510:254::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.21; Wed, 12 Mar
+ 2025 00:33:52 +0000
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff%4]) with mapi id 15.20.8534.012; Wed, 12 Mar 2025
+ 00:33:52 +0000
+From: Long Li <longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "longli@linuxonhyperv.com"
+ <longli@linuxonhyperv.com>
+CC: Wei Hu <weh@microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [patch v2 0/6] Support VMBUS channels without
+ monitoring enabled
+Thread-Topic: [EXTERNAL] Re: [patch v2 0/6] Support VMBUS channels without
+ monitoring enabled
+Thread-Index: AQHbkhMMqddCMyfSsUuQ4ghuHsMq3bNulhjQ
+Date: Wed, 12 Mar 2025 00:33:52 +0000
+Message-ID: <SA6PR21MB4231702177B6AACAF54FF40DCED02@SA6PR21MB4231.namprd21.prod.outlook.com>
+References: <1741642977-14297-1-git-send-email-longli@linuxonhyperv.com>
+ <20250310162038.5c05ce8b@hermes.local>
+In-Reply-To: <20250310162038.5c05ce8b@hermes.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=18470bc3-b783-4f0f-a84e-b94d2857ea52;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-11T23:27:15Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|PH8PR21MB3926:EE_
+x-ms-office365-filtering-correlation-id: 0a19c51d-9a15-4fd2-9e5f-08dd60fd905e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?UsRGUPgTKgKtAumByesWjUjVcvqCGKs/9yJSrnjIf9Ir2TxZOtRKFBMF+Lwg?=
+ =?us-ascii?Q?ex0sD9mvtsKgetoP4iLD5SrMQdGZehj0qVe9oELejg9cSa2THWkLyL5rgDeo?=
+ =?us-ascii?Q?8TtbHRB+75OQoO2xN8Dldbz+qEizwOV3ICkzIwre6g5StctNisSE7wDsd/JQ?=
+ =?us-ascii?Q?PNQgkb8nS1LTCRUS1LCJXLG1IjDHhNaHzbytu+w8opek5ROee16Z2JTVbZYU?=
+ =?us-ascii?Q?N9IJRE+C9OTR49eZGb0m12JRyOLjMCHqDwlvIi+2Kozw2tSiuLW5/lPAyL29?=
+ =?us-ascii?Q?IfdV1084QYtJYxBkkUQg9kQJM63BKg0teZqD3hsGHi11nnJ/Ywzx8PahwHbk?=
+ =?us-ascii?Q?Eaeyj5ypeg9fND1IySuzS/sSPZLoF9Q3zua4oWNcU7zIozkAvaGt6D80yYuP?=
+ =?us-ascii?Q?D1aR2TKpG4rkeCOnkTkAX8es6x9WOQu56Walt2vhYz6/nDMhtQYNUMk+z5/f?=
+ =?us-ascii?Q?Kmc+Bafi0P8LfG7Ybzh9EhOL5jHI/zD2QYUG6PjMUryyMpW+pkEcbKYKQAiV?=
+ =?us-ascii?Q?34JZnRycLP3fIYh1vfDvYvmRkHR/jyJzdHR9eYyXVBzKUJtHHDdLvHUndKUJ?=
+ =?us-ascii?Q?c/u/sFDQpySwhL4rrk+HkXevtzq6qC0PLmcmndADKtbctjjh1ykZLkAfbeuL?=
+ =?us-ascii?Q?ZXrmN1n3KyqMlk5jFguFxeih2oxJQi0B38/yp6PaIluzxm02Gjz2EMQ9QATd?=
+ =?us-ascii?Q?/Md0oJtTYrFZxz49/+WljucwIMpRZ9GG644L1mZQocW8UVMkouH20ILoS2E4?=
+ =?us-ascii?Q?W0G7pequo/6VQJEi4GMKQudLGOxZGSVlZPnLNNHrPKykOKygVdNLXvdiYwDX?=
+ =?us-ascii?Q?rPFEUqlZQJpyW/+M9v8MqPApEugJrsVfxcUs2DccY5YIWnEloeFVhUj3wNX0?=
+ =?us-ascii?Q?u5//yEf7u/99O4YiStPBNQflH6OcO42/RK0fAIwaYRPKFboB9Wbh8LIUuY7s?=
+ =?us-ascii?Q?unlvmBesiBjY+P4NvEgFw2dX70hRI5eieYADDCy6d9Q4YOC2QZNZUth1PfFw?=
+ =?us-ascii?Q?4mXcJapsOYcuFOelAjv8oiBBz9q03UI1m1rRcxohGa2PiuTf3vGsEEKDASDl?=
+ =?us-ascii?Q?eCgtZWtbcLhLDxOLZL3eaZ477pX8ugVOZePfXI+HPzSb464W97qJg6yHgZej?=
+ =?us-ascii?Q?p1f6D6NsTzbUfGfD06x4Oxr/vh+4iVZakyxV+dm4K8JHd+Y8KVlOVJZAmNpK?=
+ =?us-ascii?Q?p/Pzi1mSM0l071YOFaSEmCsWGdgS6xGfLT4HtqfCJ9OjInUN7r/Ib4IM8PCw?=
+ =?us-ascii?Q?nRiM5kCASPPsI4vXgD+5hZDw97PJ1TrTpAScLybvFn+m1DU3cQQZ727I85Ns?=
+ =?us-ascii?Q?UFotg9YQ2N6D56HuQhcb+XAQCpbnMSTmcmG9WoupLrG51xNbvFGGylDtA688?=
+ =?us-ascii?Q?lLFynPDm4F5X7HMIHLY3cFOtRFhptGWgn/ZdmJJzwsbjH/wnsDMLxIztTfoE?=
+ =?us-ascii?Q?q3LzysvK4Q+MBGKv6lRAL6CY4nmMII3L?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA6PR21MB4231.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GWdajKl5y+pTYa523eMZuBW18P5u93ZMEAbN7XwmE7KLUKeNusmJ/mt6VUzo?=
+ =?us-ascii?Q?9pRkt56QTheq0AOuyXhr9hoteguYuRz0OqnZNmmI7FC/51munaoVHhF+KUKC?=
+ =?us-ascii?Q?LBFv17Ij7rbF123ikB2jlBsTtnTTpZHxYxBZZDYI4I0RiTmFnVgO7Ee37oxJ?=
+ =?us-ascii?Q?eaihf2edI9jNO/260digk6bn512pKhsq7VuKfH3vCgdDxeSJm4OXo6AYEs24?=
+ =?us-ascii?Q?phzDegigCPWkEUnx0rwIjXxFt8ZM+IwTfpk37Qnny17j7QpmuZMpQPDSLD5S?=
+ =?us-ascii?Q?XIGErNvEgKtUHkGUpcnGTliV/HKnTw6uKjmbKO2pTS92QKD38w9QnFb4GKv3?=
+ =?us-ascii?Q?pquvG/b6A14mer9b4OPO27Sdm35t+/fLzBW0P/KB7mnJDLiua+U7d7tx/4Ih?=
+ =?us-ascii?Q?mrMoMG1zJBTFgBUq54i3OANC9+YXd81gwwegTNZX75NqoIbLk8ikXuGZz4Ti?=
+ =?us-ascii?Q?gBPP87jQ+H7oi3CGG6gjK4sSzBBBKoTH+nfGMTzpmgZ6ixkEZRBGe/1OM6Ys?=
+ =?us-ascii?Q?1fq5z4qrELu5EqkyZU+rhzZIOEbQuRfmx+YVthD6ptrqdwtw02hUKz7mHmxm?=
+ =?us-ascii?Q?M5O95mPshncBNsVGksfPCsCkWVA0iyt6V+B8vrz5E0jFO+oS0jYkQ6OJhxqP?=
+ =?us-ascii?Q?9wh/yxotKexpOxi3+P/GF1Ycp187HZNkDv9lC4AGM0UkHHJSDi2DhAXaB9VX?=
+ =?us-ascii?Q?hC0SWrpgBczAxMDuk5j1PYPDidzK1r0ldRh2lrCD7NUdmXpWFfT9X6yySmZz?=
+ =?us-ascii?Q?iToyVxuxzDWlnNYxr7Z61MAyXEfxD7/xInq6adyzX78+fmVcLYcDmBN+lzNh?=
+ =?us-ascii?Q?kbeQuG/bR2/E5Iy0SxSCOISq1NXuBy4ctA4jwhihR2e5a5+n071WyzTBzX8S?=
+ =?us-ascii?Q?puE1ZyB54ysf/NICgxFS4h3sy34InyvgAFEDJZ0G934j9PH59Q3SksBg5ycJ?=
+ =?us-ascii?Q?fpEkNSXIPeUvaWgzTHXtQlLvSHIuEkqDq4U9a3Ym+hSyHwuzr1Yjyw+4CsHt?=
+ =?us-ascii?Q?QJm0dqqTLJUddExsEhzeSLTcTaQ608qg52QzAM6tlbUsHVPYNe6NkitwxCDZ?=
+ =?us-ascii?Q?glVvEFRC/4jdfo7wEg5nx4NusWa1APhJK4x6QV6uiYTzr3NovqFDDPumIw/j?=
+ =?us-ascii?Q?yDB0Su20neL8DBPqdTptqv7uMfeBUeeff/bBARiWhNG7SYLb5MbGmQHm+bvy?=
+ =?us-ascii?Q?nzhp78ThHrgea3hfZB44pOm05+CofiIFum6XsnSCe0t/tNYZN71kVwBUmOLv?=
+ =?us-ascii?Q?OzmKGHbeAKjvMLiHTUvugqzA8c2JMeye5nBDhdDisqg4Qe7oZ+pVNawKGDF9?=
+ =?us-ascii?Q?YfLsa/HF3G6crVaoCgJ7axVwuRn3aYrbBFIFEVsgst4USiZp+CYW4OseYp6p?=
+ =?us-ascii?Q?xCOsvTLq5jxHjuOWmmNRr55v4ybucQVfpfAgtdfMYnwKZhUZCE2iQ/D7Wvdk?=
+ =?us-ascii?Q?Ag9vgmplucu0yp15g4E0kQEqmgt62Kkr8gFVnlcYli9QiSdwitrb/KfRpuRQ?=
+ =?us-ascii?Q?hKEabNYOPmORVUXyoHcmYYOJeWzmIpqlj6KPfd5vJuB1aT6KK8PYWWqfvlYN?=
+ =?us-ascii?Q?qwD+h+8wbf7p1dOu6SnTl+ztVmo0m8j1ld4P2P3p?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a19c51d-9a15-4fd2-9e5f-08dd60fd905e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2025 00:33:52.1126 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0xkEV6Fzlv3DkvhkHIrOHjCwY91qUztuHvdJkj9N7uMQZWDRlCrONhn9fIfBxgFz6aPIZ7UGZnrABBzwslLuJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR21MB3926
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,253 +151,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use readv/writev to handle multi-segment transmit and receive.
-Account for virtio header that will be used for offload (later).
+> Subject: [EXTERNAL] Re: [patch v2 0/6] Support VMBUS channels without
+> monitoring enabled
+>=20
+> On Mon, 10 Mar 2025 14:42:51 -0700
+> longli@linuxonhyperv.com wrote:
+>=20
+> > From: Long Li <longli@microsoft.com>
+> >
+> > Hyperv may expose VMBUS channels without monitoring enabled. In this
+> > case, it programs almost all the data traffic to VF.
+> >
+> > This patchset enabled vmbus/netvsc to use channels without monitoring
+> > enabled.
+>=20
+>=20
+> CI still reports a build issue
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/ioring/rte_eth_ioring.c | 140 ++++++++++++++++++++--------
- 1 file changed, 102 insertions(+), 38 deletions(-)
+There are ABI changes to rte_vmbus_* calls. This patch added rte_vmbus_devi=
+ce* as the 1st parameter to those calls.
 
-diff --git a/drivers/net/ioring/rte_eth_ioring.c b/drivers/net/ioring/rte_eth_ioring.c
-index 83446dc660..a803a9820b 100644
---- a/drivers/net/ioring/rte_eth_ioring.c
-+++ b/drivers/net/ioring/rte_eth_ioring.c
-@@ -18,6 +18,7 @@
- #include <linux/if.h>
- #include <linux/if_arp.h>
- #include <linux/if_tun.h>
-+#include <linux/virtio_net.h>
- 
- #include <bus_vdev_driver.h>
- #include <ethdev_driver.h>
-@@ -35,8 +36,11 @@
- #define IORING_MAX_QUEUES	128
- static_assert(IORING_MAX_QUEUES <= RTE_MP_MAX_FD_NUM, "Max queues exceeds MP fd limit");
- 
--#define IORING_TX_OFFLOAD	RTE_ETH_TX_OFFLOAD_VLAN_INSERT
--#define IORING_RX_OFFLOAD	RTE_ETH_RX_OFFLOAD_VLAN_STRIP
-+#define IORING_TX_OFFLOAD	(RTE_ETH_TX_OFFLOAD_VLAN_INSERT | \
-+				 RTE_ETH_TX_OFFLOAD_MULTI_SEGS)
-+
-+#define IORING_RX_OFFLOAD	(RTE_ETH_RX_OFFLOAD_VLAN_STRIP | \
-+				 RTE_ETH_RX_OFFLOAD_SCATTER)
- 
- #define IORING_DEFAULT_IFNAME	"itap%d"
- #define IORING_MP_KEY		"ioring_mp_send_fds"
-@@ -166,7 +170,7 @@ tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
- 		goto error;
- 	}
- 
--	int flags = IFF_TAP | IFF_MULTI_QUEUE | IFF_NO_PI;
-+	int flags = IFF_TAP | IFF_MULTI_QUEUE | IFF_NO_PI | IFF_VNET_HDR;
- 	if ((features & flags) != flags) {
- 		PMD_LOG(ERR, "TUN features %#x missing support for %#x",
- 			features, features & flags);
-@@ -354,6 +358,8 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_rx_queues = IORING_MAX_QUEUES;
- 	dev_info->max_tx_queues = IORING_MAX_QUEUES;
- 	dev_info->min_rx_bufsize = 0;
-+	dev_info->tx_queue_offload_capa = IORING_TX_OFFLOAD;
-+	dev_info->tx_offload_capa = dev_info->tx_queue_offload_capa;
- 
- 	dev_info->default_rxportconf = (struct rte_eth_dev_portconf) {
- 		.burst_size = IORING_DEFAULT_BURST,
-@@ -487,13 +493,44 @@ eth_rx_submit(struct rx_queue *rxq, int fd, struct rte_mbuf *mb)
- 		PMD_LOG(DEBUG, "io_uring no rx sqe");
- 		rxq->rx_errors++;
- 		rte_pktmbuf_free(mb);
--	} else {
--		void *base = rte_pktmbuf_mtod(mb, void *);
--		size_t len = mb->buf_len;
-+		return;
-+	}
- 
--		io_uring_prep_read(sqe, fd, base, len, 0);
--		io_uring_sqe_set_data(sqe, mb);
-+	RTE_VERIFY(mb->nb_segs < IOV_MAX);
-+	struct iovec iovs[IOV_MAX];
-+
-+	for (uint16_t i = 0; i < mb->nb_segs; i++) {
-+		iovs[i].iov_base = rte_pktmbuf_mtod(mb, void *);
-+		iovs[i].iov_len = rte_pktmbuf_tailroom(mb);
-+		mb = mb->next;
- 	}
-+	io_uring_sqe_set_data(sqe, mb);
-+	io_uring_prep_readv(sqe, fd, iovs, mb->nb_segs, 0);
-+}
-+
-+static struct rte_mbuf *
-+eth_ioring_rx_alloc(struct rx_queue *rxq)
-+{
-+	const struct rte_eth_dev *dev = &rte_eth_devices[rxq->port_id];
-+	int buf_size = dev->data->mtu + sizeof(struct virtio_net_hdr);
-+	struct rte_mbuf *m = NULL;
-+	struct rte_mbuf **tail = &m;
-+
-+	do {
-+		struct rte_mbuf *seg = rte_pktmbuf_alloc(rxq->mb_pool);
-+		if (unlikely(seg == NULL)) {
-+			rte_pktmbuf_free(m);
-+			return NULL;
-+		}
-+		*tail = seg;
-+		tail = &seg->next;
-+		if (seg != m)
-+			++m->nb_segs;
-+
-+		buf_size -= rte_pktmbuf_tailroom(seg);
-+	} while (buf_size > 0);
-+
-+	return m;
- }
- 
- static uint16_t
-@@ -513,7 +550,8 @@ eth_ioring_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		PMD_RX_LOG(DEBUG, "cqe %u len %zd", num_cqe, len);
- 		num_cqe++;
- 
--		if (unlikely(len < RTE_ETHER_HDR_LEN)) {
-+		struct virtio_net_hdr *hdr;
-+		if (unlikely(len < (ssize_t)(sizeof(*hdr) + RTE_ETHER_HDR_LEN))) {
- 			if (len < 0)
- 				PMD_LOG(ERR, "io_uring_read: %s", strerror(-len));
- 			else
-@@ -523,19 +561,31 @@ eth_ioring_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			goto resubmit;
- 		}
- 
--		struct rte_mbuf *nmb = rte_pktmbuf_alloc(rxq->mb_pool);
--		if (unlikely(nmb == 0)) {
--			PMD_LOG(DEBUG, "Rx mbuf alloc failed");
-+		hdr = rte_pktmbuf_mtod(mb, struct virtio_net_hdr *);
-+
-+		struct rte_mbuf *nmb = eth_ioring_rx_alloc(rxq);
-+		if (!nmb) {
- 			++rxq->rx_nombuf;
- 			goto resubmit;
- 		}
- 
--		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
--			rte_vlan_strip(mb);
-+		len -= sizeof(*hdr);
-+		mb->data_off += sizeof(*hdr);
- 
- 		mb->pkt_len = len;
--		mb->data_len = len;
- 		mb->port = rxq->port_id;
-+		struct rte_mbuf *seg = mb;
-+		for (;;) {
-+			seg->data_len = RTE_MIN(len, mb->buf_len);
-+			seg = seg->next;
-+			len -= seg->data_len;
-+		} while (len > 0 && seg != NULL);
-+
-+		RTE_VERIFY(!(seg == NULL && len > 0));
-+
-+		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
-+			rte_vlan_strip(mb);
-+
- 		__rte_mbuf_sanity_check(mb, 1);
- 
- 		num_bytes += len;
-@@ -555,6 +605,7 @@ eth_ioring_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	return num_rx;
- }
- 
-+
- static int
- eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_desc,
- 		   unsigned int socket_id, const struct rte_eth_rxconf *rx_conf,
-@@ -587,20 +638,17 @@ eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_de
- 		return -1;
- 	}
- 
--	struct rte_mbuf **mbufs = alloca(nb_rx_desc * sizeof(struct rte_mbuf *));
--	if (mbufs == NULL) {
--		PMD_LOG(ERR, "alloca for %u failed", nb_rx_desc);
--		return -1;
--	}
-+	int fd = eth_queue_fd(rxq->port_id, rxq->queue_id);
- 
--	if (rte_pktmbuf_alloc_bulk(mb_pool, mbufs, nb_rx_desc) < 0) {
--		PMD_LOG(ERR, "Rx mbuf alloc %u bufs failed", nb_rx_desc);
--		return -1;
--	}
-+	for (uint16_t i = 0; i < nb_rx_desc; i++) {
-+		struct rte_mbuf *mb = eth_ioring_rx_alloc(rxq);
-+		if (mb == NULL) {
-+			PMD_LOG(ERR, "Rx mbuf alloc buf failed");
-+			return -1;
-+		}
- 
--	int fd = eth_queue_fd(rxq->port_id, rxq->queue_id);
--	for (uint16_t i = 0; i < nb_rx_desc; i++)
--		eth_rx_submit(rxq, fd, mbufs[i]);
-+		eth_rx_submit(rxq, fd, mb);
-+	}
- 
- 	io_uring_submit(&rxq->io_ring);
- 	return 0;
-@@ -740,31 +788,47 @@ eth_ioring_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 	PMD_TX_LOG(DEBUG, "%d packets to xmit", nb_pkts);
- 
--	if (io_uring_sq_space_left(&txq->io_ring) < txq->free_thresh)
-+	if (likely(io_uring_sq_space_left(&txq->io_ring) < txq->free_thresh))
- 		eth_ioring_tx_cleanup(txq);
- 
- 	int fd = eth_queue_fd(txq->port_id, txq->queue_id);
- 
- 	for (num_tx = 0; num_tx < nb_pkts; num_tx++) {
- 		struct rte_mbuf *mb = bufs[num_tx];
-+		struct virtio_net_hdr *hdr;
- 
- 		struct io_uring_sqe *sqe = io_uring_get_sqe(&txq->io_ring);
- 		if (sqe == NULL)
- 			break;	/* submit ring is full */
- 
--		io_uring_sqe_set_data(sqe, mb);
-+		if (rte_mbuf_refcnt_read(mb) == 1 && RTE_MBUF_DIRECT(mb) &&
-+		    rte_pktmbuf_headroom(mb) >= sizeof(*hdr)) {
-+			hdr = (struct virtio_net_hdr *)rte_pktmbuf_prepend(mb, sizeof(*hdr));
-+		} else {
-+			struct rte_mbuf *mh = rte_pktmbuf_alloc(mb->pool);
-+			if (unlikely(mh == NULL))
-+				break;
-+			hdr = (struct virtio_net_hdr *)rte_pktmbuf_append(mh, sizeof(*hdr));
- 
--		if (rte_mbuf_refcnt_read(mb) == 1 &&
--		    RTE_MBUF_DIRECT(mb) && mb->nb_segs == 1) {
--			void *base = rte_pktmbuf_mtod(mb, void *);
--			io_uring_prep_write(sqe, fd, base, mb->pkt_len, 0);
-+			mh->next = mb;
-+			mh->nb_segs = mb->nb_segs + 1;
-+			mh->pkt_len += mb->pkt_len;
-+			mh->ol_flags = mb->ol_flags & RTE_MBUF_F_TX_OFFLOAD_MASK;
-+			mb = mh;
-+		}
-+		memset(hdr, 0, sizeof(*hdr));
- 
--			PMD_TX_LOG(DEBUG, "tx mbuf: %p submit", mb);
--		} else {
--			PMD_LOG(ERR, "Can't do mbuf without space yet!");
--			++txq->tx_errors;
--			continue;
-+		io_uring_sqe_set_data(sqe, mb);
-+
-+		struct iovec iovs[RTE_MBUF_MAX_NB_SEGS + 1];
-+		unsigned int niov = mb->nb_segs;
-+		for (unsigned int i = 0; i < niov; i++) {
-+			iovs[i].iov_base = rte_pktmbuf_mtod(mb, char *);
-+			iovs[i].iov_len = mb->data_len;
-+			mb = mb->next;
- 		}
-+
-+		io_uring_prep_writev(sqe, fd, iovs, niov, 0);
- 	}
- 	if (num_tx > 0)
- 		io_uring_submit(&txq->io_ring);
--- 
-2.47.2
+This will be a breaking change, and it only affects hn_netvsc as it's the o=
+nly PMD using the vmbus.
 
+Reading ./doc/guides/contributing/abi_policy.rst, I think the best option i=
+s to use RTE_NEXT_ABI. But I can't find its definition in the code base.
+
+Please advise on how to proceed with making those breaking ABI changes.
+
+Thanks,
+Long
