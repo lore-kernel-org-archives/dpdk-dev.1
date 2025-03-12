@@ -2,104 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A641C28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 15:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8261C28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 15:30:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29FB74029E;
-	Wed, 12 Mar 2025 16:28:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A4B44029E;
+	Wed, 12 Mar 2025 16:30:00 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 245B540265
- for <dev@dpdk.org>; Wed, 12 Mar 2025 16:28:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E625E40265
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 16:29:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741793286;
+ s=mimecast20190719; t=1741793398;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=T3Xl/J+PNqYlM57bsrb7+Fail7BZ7YXiDIkOLN2tesc=;
- b=Ug9VnAgZY6Qt/uVY3Tny2pOxBTMzDrRDuOJah6dvTYBQOczIhmPBqNvnVh9i68XAufQ0/w
- 5mFoVWpiU8mpqK/lE/nhzGHzqsHoRWilUSZ4wz0w/hMEIIJqruRCGYdAUAKIyld6Cx6Yce
- ++T3jJ8nl6kXYD84vRajXTaQhUhjMVA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-yF39VFAqPP-7fuSgKwaO2Q-1; Wed,
- 12 Mar 2025 11:28:03 -0400
-X-MC-Unique: yF39VFAqPP-7fuSgKwaO2Q-1
-X-Mimecast-MFC-AGG-ID: yF39VFAqPP-7fuSgKwaO2Q_1741793282
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E66DF19560AD; Wed, 12 Mar 2025 15:28:01 +0000 (UTC)
-Received: from [10.45.242.17] (unknown [10.45.242.17])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 34CC71954B01; Wed, 12 Mar 2025 15:27:59 +0000 (UTC)
-Message-ID: <7798878e-8eab-44ba-a95e-9365fd180ec0@redhat.com>
-Date: Wed, 12 Mar 2025 16:27:56 +0100
+ in-reply-to:in-reply-to:references:references;
+ bh=w2AKCpBSz42G3iPUFWWsM/vfALWCeas7ak9b6YNFDXI=;
+ b=gvViVsFhW+ZFu02nLJRu+FgJoiZabVWGvCCrYeMAarb0JF0ThUa8+l0UpoDTVMOIKZWCKY
+ nuIOUZxrI6n/NuybvwIP71xaSozHMNkBF1igLJruWSgo9d7S3IxrpmGHYlMZuZ9qn7dw/8
+ lvQLcx7/0icT1sL5w2tKMDOZt3BXWiU=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-216-V9EcoPfmNOqqxwikYrkEMA-1; Wed, 12 Mar 2025 11:29:54 -0400
+X-MC-Unique: V9EcoPfmNOqqxwikYrkEMA-1
+X-Mimecast-MFC-AGG-ID: V9EcoPfmNOqqxwikYrkEMA_1741793393
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5495a1c0be4so3884367e87.2
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 08:29:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741793392; x=1742398192;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=w2AKCpBSz42G3iPUFWWsM/vfALWCeas7ak9b6YNFDXI=;
+ b=nY15p0RFgH36spwkePvwo5/m+06dCImp+5zjv7KGlJaA+GZAHKaI5AjtBAcxIuqm29
+ e3Ou4moAGywQhVZmBe2bydI7DM4XaLclu3UJdQGyGEsHxjwbcN7yG8YQdleosIFxdjJD
+ LjeWr8Z9yGktbhRIrvwavV1iy9Mv3tmp6wTR7RRonVFUkq0RS3iEfTmtQKmV/gi9d8df
+ VhaW/XFxEVrl99odzk4BGSUY/5vwardVsctuTZrN0+/gZAkyMKt1zZX2+N7iLBBIWmZj
+ PwZBZ3xhmdlE9GZKaznj8co8plwj5gkSVxm0TAY4XNtMtBpoeu3uqImw3KMdR1gw5Wfn
+ oWDA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW3zFOuEUnWqTdI6NhDcERKq13AXLRN8XJuzCC4yArEZ323nzeKqO4ZZOVuDHcm8uezkPQ=@dpdk.org
+X-Gm-Message-State: AOJu0Yx5vcFSi+jCH6IhYXDxKqKUWt7iuIZZHs4+yX7UbJE2IIh/QSJV
+ 3gIE6R7EA0Bf/fw3ls6Vcn16EN5nbNwfADSnEWzmhegrWijnudcj0oWWNcP522pWRdoQJATmRmC
+ QaARK78mVAPXaFkR0t0CGlVaL54bHzBCaucfS5s5BADeIwwY6uXHhrF02MkwgTLIQSp2lAc3f/o
+ ATxRN6YUTK89P5G1Q=
+X-Gm-Gg: ASbGncswM/S+jm93kHybV10ZrpdzEl9QIz9XwxN8eVQXsBe6kzXqD7SXH2Ax7m8Y3jw
+ VSp9boIXaBevoRT4Nzl8g4Q0Amt965xYdgGKncSxTD1Wln2JPPhLhSnsckVaeRneK+xIsEJeIHA
+ o=
+X-Received: by 2002:a05:6512:3993:b0:545:353:4d46 with SMTP id
+ 2adb3069b0e04-54990e6335emr6250456e87.25.1741793392540; 
+ Wed, 12 Mar 2025 08:29:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWVIK94N65RCi0//VHBgk9H3Wne1dq0aLahKTXQZtTDCFHBYXWjYEmxDJa6IQoYIbwUzsK77xHtOx0BXudw/8=
+X-Received: by 2002:a05:6512:3993:b0:545:353:4d46 with SMTP id
+ 2adb3069b0e04-54990e6335emr6250447e87.25.1741793392188; Wed, 12 Mar 2025
+ 08:29:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] baseband/acc: fix queue setup failure clean up
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
-Cc: hernan.vargas@intel.com, stable@dpdk.org
-References: <20250305182716.773937-1-nicolas.chautru@intel.com>
- <20250305182716.773937-2-nicolas.chautru@intel.com>
- <5a54acd0-1cee-46c2-8b94-37a2bbd581bd@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <5a54acd0-1cee-46c2-8b94-37a2bbd581bd@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <1741745636-20165-1-git-send-email-andremue@linux.microsoft.com>
+ <Z9Glyi4qOjAFBHTG@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <Z9Glyi4qOjAFBHTG@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 12 Mar 2025 16:29:40 +0100
+X-Gm-Features: AQ5f1JryfjAlmAAGcU90XlkcMyvDG4XmEmFW-DqeJhGctgvpoRHegk7Y97fYro4
+Message-ID: <CAJFAV8yS=Lfcv=q0JwrU2+57z=jMz5K2grAsYTU2omOxR62Xww@mail.gmail.com>
+Subject: Re: [PATCH] drivers: remove invalid options for MSVC
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Andre Muezerie <andremue@linux.microsoft.com>,
+ Ian Stokes <ian.stokes@intel.com>, 
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: iEzx3DDBnHG1-o2POuqb3z_GDHFiv-atU8snAwlcXik_1741793282
+X-Mimecast-MFC-PROC-ID: RegqZlx8wGgjT2r8ICzfymOGEt8IFOBPKOR1fDG8yms_1741793393
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -113,46 +90,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Wed, Mar 12, 2025 at 4:19=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> > diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ix=
+gbe/meson.build
+> > index 0ae12dd5ff..3553b0ffe1 100644
+> > --- a/drivers/net/intel/ixgbe/meson.build
+> > +++ b/drivers/net/intel/ixgbe/meson.build
+> > @@ -27,7 +27,7 @@ deps +=3D ['hash', 'security']
+> >  if arch_subdir =3D=3D 'x86'
+> >      sources +=3D files('ixgbe_rxtx_vec_sse.c')
+> >      sources +=3D files('ixgbe_recycle_mbufs_vec_common.c')
+> > -    if is_windows and cc.get_id() !=3D 'clang'
+> > +    if is_windows and cc.get_id() =3D=3D 'gcc'
+> >          cflags +=3D ['-fno-asynchronous-unwind-tables']
+> >      endif
+> >  elif arch_subdir =3D=3D 'arm'
+>
+> Out of interest I've just tried compiling up DPDK builds without these
+> unwind-tables flag, and they all pass, including the mingw build. This is
+> using:
+>
+> $ x86_64-w64-mingw32-gcc --version
+> x86_64-w64-mingw32-gcc (GCC) 13-win32
+> Copyright (C) 2023 Free Software Foundation, Inc.
+> This is free software; see the source for copying conditions.  There is N=
+O
+> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOS=
+E.
+>
+> Therefore, I wonder if we can just remove all these flags completely for
+> mingw now? They may only be needed for historical versions.
+
+Here is the original issue:
+https://inbox.dpdk.org/dev/CAJFAV8z3qFhT9Vv5xOpLhi74BYAht2YCfL2ffLrmei4hfSG=
+5jg@mail.gmail.com/
+
+It happened with mingw 8.1.0 apparently.
 
 
-On 3/12/25 2:48 PM, Maxime Coquelin wrote:
-> 
-> 
-> On 3/5/25 7:27 PM, Nicolas Chautru wrote:
->> Incomplete clean up for vrb2 variant when queue setup fails
->> to complete successfully.
->>
->> Fixes: fc65d3dcabe01 ("baseband/acc: refactor queue allocation")
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
->> ---
->>   drivers/baseband/acc/rte_vrb_pmd.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/ 
->> acc/rte_vrb_pmd.c
->> index 27620ccc10..2c10ef2c94 100644
->> --- a/drivers/baseband/acc/rte_vrb_pmd.c
->> +++ b/drivers/baseband/acc/rte_vrb_pmd.c
->> @@ -1156,6 +1156,8 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t 
->> queue_id,
->>   free_q:
->>       rte_free(q);
->>       q = NULL;
->> +    if (d->device_variant == VRB2_VARIANT)
->> +        d->queue_index[conf->op_type]--;
->>       return ret;
->>   }
-> 
-> Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> 
-> Thanks,
-> Maxime
-> 
-
-Applied to next-baseband.
-
-Thanks,
-Maxime
+--=20
+David Marchand
 
