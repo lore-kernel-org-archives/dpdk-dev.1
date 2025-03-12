@@ -2,52 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0756BC28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 14:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C32C28B30
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 14:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 149C74029E;
-	Wed, 12 Mar 2025 15:53:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 603294029E;
+	Wed, 12 Mar 2025 15:56:15 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7114E40265
- for <dev@dpdk.org>; Wed, 12 Mar 2025 15:53:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 279E140265
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 15:56:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741791191;
+ s=mimecast20190719; t=1741791372;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=x1E9uQMj/ICh0YJbIXcQ6/9FSeHVBX1Zdo+QMR24wNY=;
- b=IEo6PFXVwKN+OFDjIxFDhJd29cYewMnm7fyFrVscWFrqwKK3+hAs7kaI5nU8ddxqbel9QB
- cSv1VInEdO4YHUqIpsyLvoZdH50C213f5mFLYHY8m67mCh/QVbK69m/4qPczfkROybMTMZ
- 04radv/m1MwPIg7nOX4iWYyOajOekCM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ bh=gFsp4v19rSs0DOHdfuxKnP+I0NA3l/2FL/FEqzloW6I=;
+ b=Hs4iKV1nO7k/8n4KxJArZ12KHPlGshUBKYuJeOrGtb0IPknnHnMK8gv0pT9NaQpZ31Evcy
+ w6zH1S9pX9gbkqpRVw5QJlhkKyR45OedRF/v/xGYNRczswYCwZSCC/XMueLepb7jo3S/ye
+ cWRwdVQXJn3TvdHbwtAwhroH7b7xjyI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-mIbYnSwHNFqX3UB1g-H_oQ-1; Wed,
- 12 Mar 2025 10:53:05 -0400
-X-MC-Unique: mIbYnSwHNFqX3UB1g-H_oQ-1
-X-Mimecast-MFC-AGG-ID: mIbYnSwHNFqX3UB1g-H_oQ_1741791184
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-317-5919PBMlOR-Ok1GjZXyt3w-1; Wed,
+ 12 Mar 2025 10:56:09 -0400
+X-MC-Unique: 5919PBMlOR-Ok1GjZXyt3w-1
+X-Mimecast-MFC-AGG-ID: 5919PBMlOR-Ok1GjZXyt3w_1741791368
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D29ED1800263; Wed, 12 Mar 2025 14:53:03 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E31931828B40; Wed, 12 Mar 2025 14:56:07 +0000 (UTC)
 Received: from [10.45.242.17] (unknown [10.45.242.17])
  by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 37B4F1955BCB; Wed, 12 Mar 2025 14:53:00 +0000 (UTC)
-Message-ID: <a88e25eb-2184-4363-a4cd-30e43f0eeef0@redhat.com>
-Date: Wed, 12 Mar 2025 15:52:58 +0100
+ id 8EB5C1944E42; Wed, 12 Mar 2025 14:56:06 +0000 (UTC)
+Message-ID: <08829190-b0c8-4fe5-ab88-c24bfa8fdd4d@redhat.com>
+Date: Wed, 12 Mar 2025 15:56:03 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] doc: update virtio prog guide with new feature list
-To: Kommula Shiva Shankar <kshankar@marvell.com>, dev@dpdk.org,
- chenbox@nvidia.com
-Cc: david.marchand@redhat.com, jerinj@marvell.com, ndabilpuram@marvell.com,
- schalla@marvell.com
-References: <20250304174236.280764-1-kshankar@marvell.com>
+Subject: Re: [PATCH] bbdev: enable to be compiled with MSVC
+To: Andre Muezerie <andremue@linux.microsoft.com>,
+ Nicolas Chautru <nicolas.chautru@intel.com>
+Cc: dev@dpdk.org
+References: <1741720646-22892-1-git-send-email-andremue@linux.microsoft.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -92,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250304174236.280764-1-kshankar@marvell.com>
+In-Reply-To: <1741720646-22892-1-git-send-email-andremue@linux.microsoft.com>
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 42Efcq8Lz7d8pkSAJHWMdGl7LfsP70KUo9dmSTSQPzc_1741791184
+X-Mimecast-MFC-PROC-ID: Rx5OL-q5FSRb05MuBYikJNPyqfnIE4p2zysyqr_18Ss_1741791368
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,39 +114,59 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 3/4/25 6:42 PM, Kommula Shiva Shankar wrote:
-> This patch adds newly added virtio hash report feature
-> to prog guide.
+On 3/11/25 8:17 PM, Andre Muezerie wrote:
+> The errors below popped up when compiling with MSVC:
 > 
-> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
+> ../lib/bbdev/rte_bbdev.c(79): error C2061:
+>      syntax error: identifier 'TAILQ_ENTRY'
+> ../lib/bbdev/rte_bbdev.c(85): error C2059:
+>      syntax error: '}'
+> 
+> This was caused by a missing include.
+> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 > ---
->   doc/guides/nics/virtio.rst | 3 +++
->   1 file changed, 3 insertions(+)
+>   lib/bbdev/meson.build | 6 ------
+>   lib/bbdev/rte_bbdev.c | 1 +
+>   2 files changed, 1 insertion(+), 6 deletions(-)
 > 
-> diff --git a/doc/guides/nics/virtio.rst b/doc/guides/nics/virtio.rst
-> index c22ce56a02..0615abfaaf 100644
-> --- a/doc/guides/nics/virtio.rst
-> +++ b/doc/guides/nics/virtio.rst
-> @@ -56,6 +56,7 @@ In this release, the virtio PMD provides the basic functionality of packet recep
->       command line. Note that, mac/vlan filter is best effort: unwanted packets could still arrive.
+> diff --git a/lib/bbdev/meson.build b/lib/bbdev/meson.build
+> index d8b95a400e..2e48d5f3da 100644
+> --- a/lib/bbdev/meson.build
+> +++ b/lib/bbdev/meson.build
+> @@ -1,12 +1,6 @@
+>   # SPDX-License-Identifier: BSD-3-Clause
+>   # Copyright(c) 2017 Intel Corporation
 >   
->   *   "RTE_PKTMBUF_HEADROOM" should be defined
-> +    no less than "sizeof(struct virtio_net_hdr_hash_report)", which is 20 bytes when using hash report or
->       no less than "sizeof(struct virtio_net_hdr_mrg_rxbuf)", which is 12 bytes when mergeable or
->       "VIRTIO_F_VERSION_1" is set.
->       no less than "sizeof(struct virtio_net_hdr)", which is 10 bytes, when using non-mergeable.
-> @@ -68,6 +69,8 @@ In this release, the virtio PMD provides the basic functionality of packet recep
->   
->   *   Virtio supports software vlan stripping and inserting.
->   
-> +*   Virtio supports hash report feature in packed queue mode.
-> +
->   *   Virtio supports using port IO to get PCI resource when UIO module is not available.
->   
->   *   Virtio supports RSS Rx mode with 40B configurable hash key length, 128
+> -if is_windows
+> -    build = false
+> -    reason = 'not supported on Windows'
+> -    subdir_done()
+> -endif
+> -
+>   sources = files('rte_bbdev.c',
+>           'bbdev_trace_points.c')
+>   headers = files('rte_bbdev.h',
+> diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
+> index d7901cd29d..2c626806f3 100644
+> --- a/lib/bbdev/rte_bbdev.c
+> +++ b/lib/bbdev/rte_bbdev.c
+> @@ -16,6 +16,7 @@
+>   #include <rte_lcore.h>
+>   #include <rte_spinlock.h>
+>   #include <rte_interrupts.h>
+> +#include <sys/queue.h>
 
-Applied to next-virtio.
+It should be included with other general includes, not with RTE ones.
+I can fix it while applying.
+
+With this fixed:
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
 Maxime
+
+>   
+>   #include "rte_bbdev_op.h"
+>   #include "rte_bbdev.h"
 
