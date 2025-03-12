@@ -2,75 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6F1C28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 16:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA28C28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 16:22:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88E4C40663;
-	Wed, 12 Mar 2025 17:11:15 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 99BDB402D3
- for <dev@dpdk.org>; Wed, 12 Mar 2025 17:11:14 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-224191d92e4so319275ad.3
- for <dev@dpdk.org>; Wed, 12 Mar 2025 09:11:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D8B5940B9D;
+	Wed, 12 Mar 2025 17:22:19 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 020ED40663
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 17:22:18 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-223fd89d036so799815ad.1
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 09:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741795873;
- x=1742400673; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741796538;
+ x=1742401338; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aI4QP+CmTwpZ/YWxctGXTTaM1zcLUfJC6GOvBPOjkCA=;
- b=AjCbxakvjuDK6wIncnXKXcM7o8t+hZJlxVmMqZ/tJ9aTiToJNJH1lffVzr4aHXzMPv
- QZ8MllxvUJHn67P157ee3AqWAqRJKQdBGAjNmDDBVWVkFdig1nxag36/JNGVR45RMoN4
- n02OBiaB2jOOOxhEL6S82K+cYUTlsVYS8NZaKrojEj4sBKPFUzMvwUyub21SbQDhyXvG
- +5o1SJny/t2+kH1prMCRoLyD7mTS2rqRnPHBAjrRrvoh+CcQzDQFE33biWVsalqOdWm7
- MiWOpXcYG5j6NN4q6wBJe2smNN1eYIsFNkaVVeZgdfaUtyogl0viFqH4VzwimBlq4Urn
- sZnA==
+ bh=YCarUWHj6DhxPjdIYs/8XgRV1Ob/5Y+K5uv3D5imDMs=;
+ b=3FxwPlLfYRz7N95VH/VxTBgwgLxFrZBfoIATTdBUZCX7JRB5R2vWVHcrjrJK9ZzRla
+ YOkm6SubFA2BL4V4+3AZWYB2pi4ND1KmkTVpY6vZ+npO+GezmNMK0Rsa/eGtFNRcNZPV
+ bSORjVeas+il4CR9LjgFq4MsGhYVWUQKOGvZWx0baF5stCB82+DbUBILIkw/QIO2bqca
+ k/Cm4Fai33/HbnA/JCQcmVetESVUIbcU7Sc2PyUGrIq70adPYqEUbu5m6CQNTcp+rWYG
+ gVu3r8FQTtE4hgRGKGGIyM4GdODVct/T2XIB4PS7xw3vEno2b4DngMYjQTHRXzAWaBLN
+ /XFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741795873; x=1742400673;
+ d=1e100.net; s=20230601; t=1741796538; x=1742401338;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=aI4QP+CmTwpZ/YWxctGXTTaM1zcLUfJC6GOvBPOjkCA=;
- b=i5GND5toDYStI/tidnKudZSQyOOQ+5ki2hYlpc/WhKReOgosYd8dDbWWaMDdHmXINz
- Eh7UIKgkIeYVQVsmsG1TN8mggXgX+e1Mb5uNYLufrI1S/9fepsv8KsGQtWBCdAZl4vFv
- SeJpIeX5MV3xKFc7eNY3Q1Ewt8FOPsccH/aBsak3/GJx45BWuY036vdpVMoa0Q8bnQBH
- 0wJeVfKEaPOe9EsUo4QhFAPdMxECpBX9WFGVDygeoDhQSFh/pPVhNlqDHc96bOPmSrZU
- c4Mi7PRwsYKyuczzkkTLKXA+s7TyFaGTBxmrY7ygsiU8XjJdYFQFghDzydymJlCLdLHj
- KnSw==
+ bh=YCarUWHj6DhxPjdIYs/8XgRV1Ob/5Y+K5uv3D5imDMs=;
+ b=hEQuztUGtxXjNc9Hsj1AoRk+z2yYJ2ABRb4Oyt9di4HzxcSu4DDOp5r9Z7oiMdL8ti
+ 1YZLrg/EyZK5NyP25tUcljTYINjm/emKdmadoM7VoXrfvLLnWaz+Vcvt4RWAJZSefhWv
+ QMK8FrKs6cPU8/sxQKKC2fXSSI3i6fGYasQbB1vgwGfdyDnxoFhxfGJZgAYYNCJLBOub
+ JoqexVqqj3w8/myAsNm99fkt0eKQ5d5HCaxWt2WjfaIDM0XoqJ6AoyJURV97NVHscKxK
+ Lf6mIvejK9lB5kmi9/7tLJMSFX/ovGq/HyhnbO66YZNuyZj4N/6baTlVMq7o8EvYLVU9
+ Ei6Q==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXoHbZL9Fft6VbUF32pSsoGKVriO0vQnHIFtlAVpGjipxb38Qo4ATg2Pdrsi8uJfzK3n+c=@dpdk.org
-X-Gm-Message-State: AOJu0YwYxl5b3NkZkMmngHlTjnmNE3T4IfRIpb9+do2Z6b9kJlawWvTX
- p+AJ0NJtaJSAfxDPhRhUV05rePSoCTdidwtviACSHAMeFQDnlWaF23PWNpxoOFI=
-X-Gm-Gg: ASbGncvtOTBfjplso9ysQnX6SCFqgXKg7S3QBY6D1/loVVxwWl9zyr1ZqLmO+7P7WvV
- z3HyFuuC9cBD3EQ5HaxJeXBD478sMufKeiw171VBwvadnFaNH3q6PXeBQhBSp5VzhgCVS2454vb
- QEHSqVHfYAnK5nz73PqsA01TssxDgvAKGlkFm7wWxH5zaMoehqPyImiEgoAFkeO0JV1r6EqJVJg
- WOFm3/e4k3acLYbeedjxcuo4dcGpNSERdM5up5zmFXOOXyyeUtTuXsOTxE1uSH49GfjcGRRZDWg
- DfTztWs/21gTVuK859gb1/Jg8du8sTNwp2ahrp3kRjzj6M/sAWZB4eNk1UhwpGMzVU1QFe8ZVce
- bT0piaLNe3gjAXBYZIdQWFA==
-X-Google-Smtp-Source: AGHT+IFedYUqtdcqkvc7iLDP13hqi1GTXH4if3UspAwv1v92PSQTIdMmc7bScQ2EbZqHuZaeqyPR6w==
-X-Received: by 2002:a17:902:e745:b0:223:88af:2c30 with SMTP id
- d9443c01a7336-2242889760dmr330460735ad.16.1741795873658; 
- Wed, 12 Mar 2025 09:11:13 -0700 (PDT)
+ AJvYcCXoQ4kIp7fwmExx0WKFVPXDKwzhaaKV6HTnv2XN4hRhR5KMwTWdulH5QRMCdSdpzMQfFWk=@dpdk.org
+X-Gm-Message-State: AOJu0YwEBREi/nXYnydocAKqOLd6QaHL2sU3cJ2JCPuggspsTTndg476
+ 1fL4UyweA+vjWKadsL+c5fHmCC0XfnzPySry6qv2+NiXteWeYrGBQp8ciNOQl4c=
+X-Gm-Gg: ASbGncuYRubE7pEodxXLb/ife4ksBZyCYfe50G+ZflinfFkuNXLd22vBYkyp0NuZWQl
+ GqycPPOgf6Ly3PvSbA27GgJWjimNbqAgR2OxxDsDgK6p3wiWj0QtjSkYZXnMHaKSEoUahjGALnO
+ eu+lOlG9VWMmZdGGO1e0nZ8SmOeEyI+dfvx/70U9xiBqgt4/vZrGQnKpcu6nmicE6DxjDBRI6aZ
+ wgWvPubIfIqeLHuYvTcnSlycunn3uaTLzNE//nYUWaO31G1FOudN/bKKr5N6x3HCBd/p5lDPukd
+ ClAnNDZPqd3BEbybyh85eqMl6D9CcCsLihtGO9ZmEg8YOagUOrrA/l/iSUtUiFjKWEmjjReE1f0
+ OKYluDEryeeCLeCtEBLq+cYNMH4EFM0Uo
+X-Google-Smtp-Source: AGHT+IFUsDuRb0nc6GdsfMtp65BjK6UuNE3/5pU5heGWjw3Rb6SxxwBu9mr/rXeC0jJNJ2OiYCM8CQ==
+X-Received: by 2002:aa7:88cd:0:b0:736:621d:fd32 with SMTP id
+ d2e1a72fcca58-736aaae44efmr29438616b3a.22.1741796538047; 
+ Wed, 12 Mar 2025 09:22:18 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22410ab9e39sm117837945ad.252.2025.03.12.09.11.13
+ d2e1a72fcca58-736be7845c8sm9244598b3a.109.2025.03.12.09.22.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Mar 2025 09:11:13 -0700 (PDT)
-Date: Wed, 12 Mar 2025 09:11:10 -0700
+ Wed, 12 Mar 2025 09:22:17 -0700 (PDT)
+Date: Wed, 12 Mar 2025 09:22:16 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, William Tu
- <u9012063@gmail.com>, dev@dpdk.org, andremue@linux.microsoft.com
-Subject: Re: [PATCH] net/intel: remove unnecessary compiler flag for mingw
-Message-ID: <20250312091110.64b77903@hermes.local>
-In-Reply-To: <CAJFAV8zAhG3U9h1A=UEu_eUjLBEV+FjuZffZg8+SwEcSuwN9ww@mail.gmail.com>
-References: <20250312155458.1395709-1-bruce.richardson@intel.com>
- <CAJFAV8zAhG3U9h1A=UEu_eUjLBEV+FjuZffZg8+SwEcSuwN9ww@mail.gmail.com>
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] eal/linux: enhance ASLR verification
+Message-ID: <20250312092216.2c3ddb6f@hermes.local>
+In-Reply-To: <20250228094405.1437-1-ming.1.yang@nokia-sbell.com>
+References: <20250228094405.1437-1-ming.1.yang@nokia-sbell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,22 +82,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Mar 2025 16:58:49 +0100
-David Marchand <david.marchand@redhat.com> wrote:
+On Fri, 28 Feb 2025 17:44:04 +0800
+Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
 
-> On Wed, Mar 12, 2025 at 4:55=E2=80=AFPM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > There was an issue with building DPDK using mingw v8.1[1], which
-> > required using the "-fno-asynchronous-unwind-tables" compiler flag when
-> > building using the mingw compiler. However, recent versions of the
-> > compiler no longer seem to need this flag, so remove it.
-> >
-> > [1] https://inbox.dpdk.org/dev/CAJFAV8z3qFhT9Vv5xOpLhi74BYAht2YCfL2ffLr=
-mei4hfSG5jg@mail.gmail.com
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com> =20
->=20
-> Adding William in the loop.
+> @@ -26,7 +27,6 @@
+>  #include <numa.h>
+>  #include <numaif.h>
+>  #endif
+> -
+>  #include <rte_errno.h>
+>  #include <rte_log.h>
+>  #include <rte_memory.h>
 
-Should add documentation and check for required version of mingw?
+Best to keep blank line there
