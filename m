@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCD8C28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 23:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE9AC28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 23:17:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6FB640289;
-	Thu, 13 Mar 2025 00:02:29 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 3239740144
- for <dev@dpdk.org>; Thu, 13 Mar 2025 00:02:29 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-22359001f1aso8528695ad.3
- for <dev@dpdk.org>; Wed, 12 Mar 2025 16:02:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7368B40289;
+	Thu, 13 Mar 2025 00:17:27 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 4564640144
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 00:17:26 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-22403cbb47fso7494325ad.0
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 16:17:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741820548;
- x=1742425348; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741821445;
+ x=1742426245; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=myjk8ut7k56J73Kh0PELDnP1QPgt7KWTgYnZBN7iqGk=;
- b=ZWvmQpqSOLnePkESl+tu+kQbfbbWnjkX4dg30xJqLioJ7CpCACsuyceNVIXPJ5y9ks
- y+S0ZeOx48qp/XWR65hoYynjch0CI5Kvcwf0386cwF2XTadW/AiOf4Pxf5GDhGbNaeDb
- 66PnDWK7K5uiiUIhaqrbSizdTmDMj2snF3h2IFEGSg30M5AekOqU8aSWWm+xxZz7UFTN
- K8VY7aeCBBAqWbrdyRBfwOQy8NeX7/QkV5WLlMldhXVBFM9nHrKYQAFeNtQhNn24eyU5
- r3+/60BTPLw7aVKyKT10wM/EH6aFEnhdjXJ0GHQFH1ro7+A9ASigntZA1bZvibYYC2DE
- aWkg==
+ bh=cGqUmywTBHo9l74/5er8l86n2fBpZGGrB/Q3n1Bj5M0=;
+ b=SfBJxrILylu/FrZobJ7OLC0LnSpZbBS/x3+FyV0MO1b7wPGXMKl3e3sSg3p8CmEcxx
+ vdRIug0HaWigRqPTspFMeqthIzjL2fYBexQducK+IuwHt44pYVF/zV3gciMhyyPXyaWk
+ rIziiSJqrIe+I+PrPgZN36J93/sWgBoDs21wSPLui2Z1c61dFqcDyehD63to3ys+nAiM
+ ZDeXHVo3PH2E4x6vFB24b2Z8xgnHWUdoJU1nPiES9s0rbPiz91GMfF8pb/ebfAxIKsXK
+ kcbgkjwxRD1GYC3mss5tiO3xFLGFiCVehirwMrdJ0sPFrff3HTc7AQ11Iki2z/QyHjL5
+ z36A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741820548; x=1742425348;
+ d=1e100.net; s=20230601; t=1741821445; x=1742426245;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=myjk8ut7k56J73Kh0PELDnP1QPgt7KWTgYnZBN7iqGk=;
- b=jsxvXo8gpT55Xyo0XS2hOjhSJ+8unItWt8y+x4dYp9XMfoOZlXKSZaHXHBUQr/EY0K
- iIwCVehGxtzKUePhJerbdweUfVfvwZGAcNkPcqET4WpCReD1phSrciFqhoT8mIad+Nam
- xs0a86n2pu6gwpVpM33rmVLgOK7KAb0gWPtZjRFRQvPhtQhvl2eT8qLAq+ZkOB1I+F3h
- DF7zPrMZEHX5j0X5k1rWaHCnbVri4tJgXZHXZCo8LbcKTVsux4sLZu/1OpveTdvl/X+M
- rw4g8cAMjrBMbUUU83EFCD2v9q3itB4cXjTQsk8wJ+u2u+eNgdoHK7v8ronkfQsqczes
- /EoQ==
-X-Gm-Message-State: AOJu0Yzp3Amcrmdiut83OT7OTZSfRbJi0JYod7+3nFpFfwks/R3q8RBr
- LJyAknJD6qRi1ZE88f3qPCBaySBmkM5i4GG7eD5zwMTrM+y+rlYudBA8RssSFJU=
-X-Gm-Gg: ASbGnctG8RYXHpn+DOpPwC6OKcZ5hiLHltcgsRsswuXA0PhnoQZgjAaYeCcAKuXIHHc
- fEdvSdjnVlt/F+4G8ZtHS3AsFXX4uVUPZEP1Xp/y1svUFyPfyEcW3GGqNGFeFfuJVVH++5/oHFW
- q9AcISWiiraDGVx/B08mb4rMvGAwDSqS/TuIUlXtaTDNLZr7Rk+fdHGLMkEyGWGydNnq4LOoiwL
- YnULeSsadFrnTbIPtNj1SypW9hm8IIsqxwPGNG4Cw2oUvOvlRChYCD9J6G0jUErhB3lwtHz74ks
- bjsjf2NgVhv5NdVXLAkiRx+mjhO/SIfuaYB9g+zYzAig1Ge2FBgvHImAYzxh/Ap236h8VWF4Msr
- HV92auvuVi0baof55CktX0Q==
-X-Google-Smtp-Source: AGHT+IGYa++S1ZOMCzS3ucHGmoJPgROs6F84L7eQukdZuxQM9fFfn3t4f4lPK1zODFrGGn6+4r7cUQ==
-X-Received: by 2002:a17:902:ce0a:b0:223:fd7f:2752 with SMTP id
- d9443c01a7336-2242899463dmr368708055ad.29.1741820548109; 
- Wed, 12 Mar 2025 16:02:28 -0700 (PDT)
+ bh=cGqUmywTBHo9l74/5er8l86n2fBpZGGrB/Q3n1Bj5M0=;
+ b=S0gVMDaaNx7hpV+0m4KiD/IZNSfNLPfhZt9rdAFwgPlC1FzjzRBSV6gQvs0QBCJwBR
+ QYWj022SIRluPNyzeW35w0P/1moqps3wL4xcv8xcaH1HYOcoZC0X9CWV8dUGwyyXV4ja
+ t1zMyksF3KCCAxFNsoe429JWFrwYBaY5gdPV5HjmiyjOw38gqeuoY6dKNuS08esvrSI2
+ f03o6uRPntstyseqqermZ1Uyh2Mjy0XMXB0l3pS3UDQO05MW3DmhqsEWsbYFKtauiskQ
+ prFs6J8nmco8ig5O/gCa5jUMvTR4b74DNbztgjYGXmcK9bcH6eNc+zxI86xB/agAeLI0
+ SSEQ==
+X-Gm-Message-State: AOJu0YzaBuVsC3hTU5uijSF9yp7ZhAfMe9XD8lpYgHLOli3yI4+ZTtxf
+ 0Y6b75WMPqcxIJ/G7qx9/lt3pev22qbj/dyBJcLlzZb0eArbQRQg6wGi+pYJiVj40UDzqhNyYnV
+ J
+X-Gm-Gg: ASbGnctiWm1oOrNFedv7U55vsztNwQ3y+3emEqzdhaMkDyN9pJFt8ocRr+rsIzxpGb1
+ V1133oZ7a2fWwwJ4Tp6gLtnmt9Ov0wapRlVxiQ15xKIzULI+3SexYhBRernP5haIIGty/G1N25p
+ zYX+sPmpnC0Q0bEhk+dGMkAPtwBxFDUAyot3MoKUImtBe5ZfjeqnDWQhAxy7r9fKxqfIKh7427y
+ y7oh9g+n0pLXftBBVNduVXSh1Q4epyATaRj9D52c7XPWjnNJZCSqhQQtFQEb0igvZTAblf1d80l
+ wgTqD4OHfXu+/ypKY0drBMxtn9r1S2LA//Ss6A/a9Pto+yHGDUxilVLwDFTSO6qMJKl0LFBEeSY
+ E4+gi8S4NKZO1G2EfCPogYA==
+X-Google-Smtp-Source: AGHT+IEU8nimF1r6QGepPBSskK9ZCk+N11Ytz9AuQch1IwM5POSv+jg/hYAqloAzSUj/LOMPZR6BRQ==
+X-Received: by 2002:a17:902:ec92:b0:218:a43c:571e with SMTP id
+ d9443c01a7336-22428a8aa35mr418342485ad.28.1741821445368; 
+ Wed, 12 Mar 2025 16:17:25 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6bbe7ccsm866545ad.174.2025.03.12.16.02.27
+ d9443c01a7336-225c6ba6f38sm1028305ad.129.2025.03.12.16.17.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Mar 2025 16:02:27 -0700 (PDT)
-Date: Wed, 12 Mar 2025 16:02:25 -0700
+ Wed, 12 Mar 2025 16:17:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Message-ID: <20250312160225.2d90e78a@hermes.local>
-In-Reply-To: <12279496.nUPlyArG6x@thomas>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
+Date: Wed, 12 Mar 2025 16:15:29 -0700
+Message-ID: <20250312231715.222149-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250127180842.97907-1-stephen@networkplumber.org>
 References: <20250127180842.97907-1-stephen@networkplumber.org>
- <20250214172134.73908-1-stephen@networkplumber.org>
- <20250214172134.73908-2-stephen@networkplumber.org>
- <12279496.nUPlyArG6x@thomas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,28 +81,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 19 Feb 2025 15:55:17 +0100
-Thomas Monjalon <thomas@monjalon.net> wrote:
+This series adds common macros for safe iteration over lists.
+It is a subset copy of the macros from FreeBSD that are
+missing from the Linux header sys/queue.h
 
-> 14/02/2025 18:20, Stephen Hemminger:
-> > The Linux version of sys/queue.h is frozen at an older version
-> > and is missing the _SAFE macro variants. Several drivers started
-> > introducing the own workarounds for this. Should be handled in EAL.
-> > 
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>  
-> 
-> We may want to unify with lib/eal/windows/include/sys/queue.h
-> 
-> 
+Chose this over several other options:
+  - let each driver define their own as needed.
+    One Intel driver got it wrong, others will as well.
+  - rename all the queue macros to RTE_XXX variants.
+    Seems like useless renaming and confusion.
+  - Several distros have libbsd package with the correct macros.
+    But adding yet another dependency to DPDK would be annoying
+    for something this basic.
 
-Not sure, we have several options here:
-  1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
-  2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is what Windows did)
-  3. Use the bsd version of queue.h.
-     On Debian/Ubuntu this in libbsd-dev package and referred to as bsd/sys/queue.h
+There are more macros in FreeBSD header that could be useful,
+but we can add those later as needed here.
 
-I chose #1 as simplest. But all of these could work. #3 means DPDK has least new
-code, but adds another dependency to the build.
+v3 - add a few more open coded loops that can use a macro
 
-No matter what, should add to checkpatch to block any new files that include sys/queue.h
-directly.
+Stephen Hemminger (9):
+  eal: add queue macro extensions from FreeBSD
+  net/qede: fix use after free
+  bus/fslmc: fix use after free
+  net/bnxt: fix use after free
+  net/iavf: replace local version of TAILQ_FOREACH_SAFE
+  vhost: replace open coded TAILQ_FOREACH_SAFE
+  raw/ifpga: use EAL version of TAILQ_FOREACH_SAFE
+  net/i40e: replace open coded version of LIST_FOREACH_SAFE
+  net/ice: replace open coded version of LIST_FOREACH_SAFE
+
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c |   5 +-
+ drivers/net/bnxt/bnxt_filter.c           |   8 +-
+ drivers/net/intel/i40e/i40e_ethdev.c     |   9 +-
+ drivers/net/intel/iavf/iavf_vchnl.c      |   8 +-
+ drivers/net/intel/ice/ice_ethdev.c       |   9 +-
+ drivers/net/qede/qede_ethdev.h           |   3 +-
+ drivers/net/qede/qede_filter.c           |  13 +-
+ drivers/raw/ifpga/base/ifpga_enumerate.c |   4 +-
+ drivers/raw/ifpga/base/opae_osdep.h      |   1 +
+ lib/eal/include/meson.build              |   3 +-
+ lib/eal/include/rte_queue.h              | 174 +++++++++++++++++++++++
+ lib/vhost/socket.c                       |  11 +-
+ 12 files changed, 200 insertions(+), 48 deletions(-)
+ create mode 100644 lib/eal/include/rte_queue.h
+
+-- 
+2.47.2
+
