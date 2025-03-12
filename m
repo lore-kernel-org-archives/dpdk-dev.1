@@ -2,104 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BE2C28B2F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 15:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AF8C28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 15:36:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB0A34029E;
-	Wed, 12 Mar 2025 16:32:15 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id BC7C840265
- for <dev@dpdk.org>; Wed, 12 Mar 2025 16:32:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741793533;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=eYOF6TNhTiQP2/0GyEG0gxoELHMHE7zqcuN2GbcVIU8=;
- b=iz4I/k793CUtnc/HJDcM14F9pQlZtthMcnGTvIw4mdHBQNWlxnW0FX1tfyzKcDgtwlsoZF
- yjtNe/yxDBi4p5/PPDznQ4X843/15lz5Xm8e0Pdbqfi3AmGR8Svqg4v+Djo2DrhM0cuduV
- hCZtKfjpJGTDSvBxZqkHamb6Pv9tcvk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-VfIYc8M3OISo2-wH97N61Q-1; Wed,
- 12 Mar 2025 11:32:09 -0400
-X-MC-Unique: VfIYc8M3OISo2-wH97N61Q-1
-X-Mimecast-MFC-AGG-ID: VfIYc8M3OISo2-wH97N61Q_1741793528
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 13664180882E; Wed, 12 Mar 2025 15:32:08 +0000 (UTC)
-Received: from [10.45.242.17] (unknown [10.45.242.17])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id BA7061955BFE; Wed, 12 Mar 2025 15:32:06 +0000 (UTC)
-Message-ID: <acee2230-8dd5-46ee-989c-928d041273e5@redhat.com>
-Date: Wed, 12 Mar 2025 16:32:03 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 75BC74029E;
+	Wed, 12 Mar 2025 16:36:17 +0100 (CET)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 4FF1540265
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 16:36:15 +0100 (CET)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-22185cddbffso20640025ad.1
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 08:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741793774;
+ x=1742398574; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=P/2+WflOB4mHP8YlRDldi0exnr22U95yBqThVo2a5Y0=;
+ b=OFY1sFbIo+0aAblftB5suZLfqY1FFe6PskDGH8ZX5KudL9lR4iMEatZ/8IUu36aSql
+ Cq8yOG8PU7/5crUPQJmDqSPJh541gITQX074Ju5DltBwpvuP4Y5F/OdLfA7huBC5JNpN
+ LWVMUHNQ5o7/VhfjTn3S/VS2h5pfbI+EOr4IvjfdfixQjRGMO543KD38DJmxhkSB7Lp0
+ +DkoaAb5j1Mn/oTP4NpIHgifipIhHthjWpJADoUIlxokYYudIxiQxyfxZfHStYsbcUEv
+ B8XoG4duNZt09msSFo3B4JEswHE0By3Y8oKc/tJVx9KOww888M80ekB+7BpA4pyedxIL
+ dJXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741793774; x=1742398574;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=P/2+WflOB4mHP8YlRDldi0exnr22U95yBqThVo2a5Y0=;
+ b=d5Z12RQp7vJCIGVCQA6U7VyQ/HCT/UaWP+ZZ1fJJ3BH9B0slOzGoVzh+phNKMq9Z1v
+ Ac9CVE992Szte1fhw2oaQew2RkoOYzCkxaQpIUaUhiewPXPlvcB9XYSvWnSqBVOEMsDM
+ D0kO8k1PnOqZiqb6acpXhaa9RkRynYI0pTEWylNzBoGVPGPUZPObbL0j81IILfS+R6n2
+ PcDHAzxJAXbTDtzSKiaB2JM7Ehd1iBvR5Jlxuz6s34is5vrhmyz1hneqiE9naQbH5xon
+ z5UIbT61sLi8GU1aAZeQd7IMcbTHp9t83SK1sb13Y//KMIULSr+ytkSyL1lKknrah1nE
+ n90A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXBduBROpDQ2Ip4xh05xd+yNKcuilUlZACpuS2XNdYuiBVPVwhY+aepB4GYSC5GK3dKMjs=@dpdk.org
+X-Gm-Message-State: AOJu0Yy5BSzYNrgSHMB5BUTM4SQZjapDgCwoE30YVqC6KvlltUkl1nf+
+ hRqah6kLcr49E4jnOEEvUepzeuGh/x7sDm/6dakb+wL9iKzQcgWzjTgWhq0qXxY=
+X-Gm-Gg: ASbGnct70sVu4eY0ii1hR8JWtnjppQ5zn6ugOCRqCW8HfMESDwjkWleK+LBVHhL4iUi
+ s9qRxrw3KIyg93mVlj30EYSIE3BRXALHHgP3ZitThmZo06soyDAEw1ZPejFc7yHMdhFGblZ94LJ
+ ojZYb4+82NzPTd7y5eu3GBMxS1ymPYNvl0Ay1UNSSsnnWrtseaFsyfvzt8ZbahZVz3BMVdQFNF1
+ DJIjutRHHH2+e6NJwDWH1fPeIP0KqmcNZtUbQ1uHE7SL4Tp7+0rxGC4vu+HtKScIhEgqGXu1wlS
+ SMNXtoGtdpUs+6CZE+ujkiNFvFD8Sk6nZB7QU/slA4D1c/DNRaCdLUaTPT9KPOJl2faDh605mqo
+ 1gJXrb/RrgLAqFgGWX/14Xg==
+X-Google-Smtp-Source: AGHT+IHsLOFyga7Vzz6H3k4NE6/vzMQQVkz1SXeR6mDfOlapvbSmdME3qKoOJkPsbYjiW03Xeoylyw==
+X-Received: by 2002:a17:902:e54a:b0:21f:6ce8:29df with SMTP id
+ d9443c01a7336-225c1c84d80mr1373075ad.3.1741793774361; 
+ Wed, 12 Mar 2025 08:36:14 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2257d5d4d1dsm55078935ad.231.2025.03.12.08.36.13
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 12 Mar 2025 08:36:14 -0700 (PDT)
+Date: Wed, 12 Mar 2025 08:36:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Long Li <longli@microsoft.com>
+Cc: "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>, Wei Hu
+ <weh@microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [EXTERNAL] Re: [patch v2 0/6] Support VMBUS channels without
+ monitoring enabled
+Message-ID: <20250312083611.5d34cd99@hermes.local>
+In-Reply-To: <SA6PR21MB4231702177B6AACAF54FF40DCED02@SA6PR21MB4231.namprd21.prod.outlook.com>
+References: <1741642977-14297-1-git-send-email-longli@linuxonhyperv.com>
+ <20250310162038.5c05ce8b@hermes.local>
+ <SA6PR21MB4231702177B6AACAF54FF40DCED02@SA6PR21MB4231.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bbdev: enable to be compiled with MSVC
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: Andre Muezerie <andremue@linux.microsoft.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>
-Cc: dev@dpdk.org
-References: <1741720646-22892-1-git-send-email-andremue@linux.microsoft.com>
- <08829190-b0c8-4fe5-ab88-c24bfa8fdd4d@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <08829190-b0c8-4fe5-ab88-c24bfa8fdd4d@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Dhu0f3-oBS5eBeMzgmosRZLW_lZjdS3mSKVJJX20YNA_1741793528
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -113,68 +86,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Wed, 12 Mar 2025 00:33:52 +0000
+Long Li <longli@microsoft.com> wrote:
 
-
-On 3/12/25 3:56 PM, Maxime Coquelin wrote:
+> > Subject: [EXTERNAL] Re: [patch v2 0/6] Support VMBUS channels without
+> > monitoring enabled
+> > 
+> > On Mon, 10 Mar 2025 14:42:51 -0700
+> > longli@linuxonhyperv.com wrote:
+> >   
+> > > From: Long Li <longli@microsoft.com>
+> > >
+> > > Hyperv may expose VMBUS channels without monitoring enabled. In this
+> > > case, it programs almost all the data traffic to VF.
+> > >
+> > > This patchset enabled vmbus/netvsc to use channels without monitoring
+> > > enabled.  
+> > 
+> > 
+> > CI still reports a build issue  
 > 
+> There are ABI changes to rte_vmbus_* calls. This patch added rte_vmbus_device* as the 1st parameter to those calls.
 > 
-> On 3/11/25 8:17 PM, Andre Muezerie wrote:
->> The errors below popped up when compiling with MSVC:
->>
->> ../lib/bbdev/rte_bbdev.c(79): error C2061:
->>      syntax error: identifier 'TAILQ_ENTRY'
->> ../lib/bbdev/rte_bbdev.c(85): error C2059:
->>      syntax error: '}'
->>
->> This was caused by a missing include.
->>
->> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
->> ---
->>   lib/bbdev/meson.build | 6 ------
->>   lib/bbdev/rte_bbdev.c | 1 +
->>   2 files changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/lib/bbdev/meson.build b/lib/bbdev/meson.build
->> index d8b95a400e..2e48d5f3da 100644
->> --- a/lib/bbdev/meson.build
->> +++ b/lib/bbdev/meson.build
->> @@ -1,12 +1,6 @@
->>   # SPDX-License-Identifier: BSD-3-Clause
->>   # Copyright(c) 2017 Intel Corporation
->> -if is_windows
->> -    build = false
->> -    reason = 'not supported on Windows'
->> -    subdir_done()
->> -endif
->> -
->>   sources = files('rte_bbdev.c',
->>           'bbdev_trace_points.c')
->>   headers = files('rte_bbdev.h',
->> diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
->> index d7901cd29d..2c626806f3 100644
->> --- a/lib/bbdev/rte_bbdev.c
->> +++ b/lib/bbdev/rte_bbdev.c
->> @@ -16,6 +16,7 @@
->>   #include <rte_lcore.h>
->>   #include <rte_spinlock.h>
->>   #include <rte_interrupts.h>
->> +#include <sys/queue.h>
+> This will be a breaking change, and it only affects hn_netvsc as it's the only PMD using the vmbus.
 > 
-> It should be included with other general includes, not with RTE ones.
-> I can fix it while applying.
+> Reading ./doc/guides/contributing/abi_policy.rst, I think the best option is to use RTE_NEXT_ABI. But I can't find its definition in the code base.
 > 
-> With this fixed:
-> Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> Please advise on how to proceed with making those breaking ABI changes.
 > 
 > Thanks,
-> Maxime
-> 
->>   #include "rte_bbdev_op.h"
->>   #include "rte_bbdev.h"
-> 
+> Long
 
-Applied to next-baseband.
+Can't take it as is, here are some options:
 
-Thanks,
-Maxime
+1. Version the API even though should only be used internally. Use API versioning
+   as transistion until 25.11.
+2. Wait for 25.11 and just fix it now, and do deprecation notice now.
+
+3. Mark the API's as internal (in 25.11) and do deprecation notice now.
+
+4. Make new functions with different names, and mark old ones as deprecated, then remove in 25.11
 
