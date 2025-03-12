@@ -2,152 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49EBC282EC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 02:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63163C282EC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 02:56:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 81D4E40265;
-	Wed, 12 Mar 2025 03:33:00 +0100 (CET)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11013022.outbound.protection.outlook.com [52.101.67.22])
- by mails.dpdk.org (Postfix) with ESMTP id 4FD3540264
- for <dev@dpdk.org>; Wed, 12 Mar 2025 03:32:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7050C40265;
+	Wed, 12 Mar 2025 03:56:06 +0100 (CET)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11011054.outbound.protection.outlook.com [52.101.65.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 0632740264
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 03:56:05 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vki9Kfcq64YUoi3MiMo7tM4Rsf4bpSwAniAiX7gildsxCHfjiO6aP/ZC43g9XR7dDHjUBZ6KWcrCbmoYQLRvPLFNmaSn4H0OWgOSsbWo9SXW/mETgbsXN5yJX7kL1AamtIqMlgmvap9Dwn700rQfkaI/WA+T3aj68OdFahud9y4uy/CDi/KRW+DUTo/0bgvWKK/okhk+weryQsHVY23jJ2fq4B1N+Ih8C58+UbzIKmJz+G4WyWQ3QN0teD284J6CgaIRRdQJUC0R3MNSueFC8roUSGbd100fRPle01Hup2grme1bKFLpM7Gaep4NIBxrHnl9lk2ztIROvX9LVBdsSw==
+ b=oUHpGHprzKHWN7YGJQQKoJNEbUxjKky952FSPHvKbiUkXq/PLZmNFIJ36q7OsRSn2pDYv0FPNY93/3sj+OE7BoGpoKuRATSXVC+tYmS24hP0WzFU5eRTfFz+jgh9mOAv9p5xXRIOl8ajVY2V+ge6470Q2VrqJ68gUHy7SepyiwdD4CcaMYOm2e4qsmZEaZsDO18sWURRekOVNEWi0PjpZ0LTWQ8cn6XhzZNObxXSXxcaeYX4dmtfFyUbe13dwiTlcZ8qGr8H1rD2gtZJHvG++O1JHfughHbZAW0bB7S+M3mAED5uGuTaQyPZgTaroU5xE5P7WXSrwePlwc+/0x5BGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=62v1l2MXtc58eIYfruW/0MFNmQNBRLV6mEnV3L7yIbM=;
- b=WOwnlfbcKEPayrTuWCPBm69JiVhrOfFC0y9Vko29gCwn+CcG5VC1X4DgY/ToafpKkfjp0AkWShpKZ1AcWZrusl/+KD2Ye/Q9eW/SYuB9W440x4HaLU7sRFulQqdaDss9COShEO/WdmfA7cH6BEPqUnJ8uLG+Rm+PU7ugyD8Y4Mq5sZf6h56R6/b8L9uGUINcbbYMvajBnJ+S0wdBdLrKPVaYH5F6/OeTnurnw2pn5O4eOj2EiQmJ6rWs11NIySDFdTGWweN4Js+YG1Sj2yF2h/FW8JWaoCJ9ogVaXICOZ1fqTBMIW8d9y8VpexWQzCXTbFUOC6uaVT/BrGtA4Md5ug==
+ bh=fCdaYltGbsoobCZ5qmjIgNbWK1ZzKRy2zBK20cGofek=;
+ b=RwtlAf8JWepWcO13LNhq0yasCsAX3DM5m1Ioi2fsRHCbPLOEpgqeZQPsKqH4aYLoq85pjfUUaRRtE6ByxXL78xuQuMy0P+2tjNGINqvuEV5rka+T+eTIkwfuoy14unCAVbxSyp4YSaC0v3aU2Na6o+59ka2KQ/q8IR2KNOLtJ6w1zYHlHLOPouVpp3X/zlsIeu4uJPkmR5yeNbUQySx1mVGdONhj40iBiMxSoKqm/ZaaPeTexAyTKsgVU5wOTHTnz+dOChxpbyMIfq/EcRX6ffQkE/dgEtGFy0DqHDYnQiQOtXzEwyXyOwhx84k5P8vYqPe//SveYlsYUtInPkvmiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nokia-sbell.com; dmarc=pass action=none
  header.from=nokia-sbell.com; dkim=pass header.d=nokia-sbell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia-sbell.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=62v1l2MXtc58eIYfruW/0MFNmQNBRLV6mEnV3L7yIbM=;
- b=Iw7q/+i3LhTNpv+llOUxYtXUPkV3WksLjIygt/G0WByETezQX5jCpRIS4UZi5cHyEGZZmT5EnpRMu2A+iHZi9a/t8vrU41dWOufy7nT5M4DkudhiOlzntCZxI+sqApLaTb6gBzD6DODMcCofYq2DDf2cHmEOLaAfQK3PCzcczz00Tim3REO5IrO7Npi1s+tIuxHO6gBVg6a3igq4fjFHAm34cieIZeOMzljYz4bwMJ0xHSx4EBRt1Db7Hle2wVJUc7n0XJzzVhns7dPh1Lsxtl1P/ZtsqRvynKRvgiXEu+uy6Hl6Su75sB+qoLdaCU4byTymZNgvjDF9GgZTkRgNFQ==
+ bh=fCdaYltGbsoobCZ5qmjIgNbWK1ZzKRy2zBK20cGofek=;
+ b=VA3E4pP/eL7y3XGFveYka3wp0zzc4+e02DbXBc4gXZhky9rhsv1klfymPhkSfMswSsiLHH4+kMx8tDLqsc7ObPREeElV6BN3xc06eEmeHEPrJHvSLK/jc4tuLMlD4e/JGaKjpyH5sCpgXlPMynlLFkqYXUF6DUclrEcrKvEhCqcpFOCWT2wC2W3npUvnQyK5c100RJX3HYZf7/KMqrEYUEBc0VBksske1brpy/4CIPrVPz4e7b2OtFL/lPORSwFaN40eEYQDpxs2hpTYRvX01eDflOOOxc467PMDrjD4ApvAXcu+NphqvUqzB6ng+P7JK2YAfjG+kbMetbF//HhiBg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nokia-sbell.com;
 Received: from VI1PR07MB9898.eurprd07.prod.outlook.com (2603:10a6:800:119::6)
- by AM9PR07MB7761.eurprd07.prod.outlook.com (2603:10a6:20b:308::9)
- with Microsoft SMTP Server (version=TLS1_2,
+ by DU2PR07MB8077.eurprd07.prod.outlook.com (2603:10a6:10:2b6::6) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 02:32:58 +0000
+ 2025 02:56:03 +0000
 Received: from VI1PR07MB9898.eurprd07.prod.outlook.com
  ([fe80::1928:4afb:4eee:1f21]) by VI1PR07MB9898.eurprd07.prod.outlook.com
  ([fe80::1928:4afb:4eee:1f21%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 02:32:58 +0000
-Message-ID: <b415f31f-2816-4689-9294-fd385880ba9c@nokia-sbell.com>
-Date: Wed, 12 Mar 2025 10:32:50 +0800
+ 02:56:03 +0000
+Content-Type: multipart/alternative;
+ boundary="------------d03esiLCKTX0oqjybOJ3E0wC"
+Message-ID: <47f4086f-b1eb-4d18-a433-e53593afceb4@nokia-sbell.com>
+Date: Wed, 12 Mar 2025 10:55:55 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH 2/2] net/mlx5: improve log file path
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Bing Zhao <bingz@nvidia.com>
-Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
- <20241213092444.2987-2-ming.1.yang@nokia-sbell.com>
- <SN7PR12MB69096FB0FD4930E9CE8A8F80D0C82@SN7PR12MB6909.namprd12.prod.outlook.com>
- <20250310075948.56109517@hermes.local>
-Content-Language: en-US
+Subject: Re: [PATCH 1/2] net/mlx5: improve socket file path
 From: Yang Ming <ming.1.yang@nokia-sbell.com>
-In-Reply-To: <20250310075948.56109517@hermes.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0116.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::20) To VI1PR07MB9898.eurprd07.prod.outlook.com
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Matan Azrad <matan@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
+ <20241213091239.7934b8b4@hermes.local>
+ <Z1xr5-FXBgEN4QM3@bricha3-mobl1.ger.corp.intel.com>
+ <c941592f-f98d-42c7-9849-b48b6b8d8f5e@nokia-sbell.com>
+Content-Language: en-US
+In-Reply-To: <c941592f-f98d-42c7-9849-b48b6b8d8f5e@nokia-sbell.com>
+X-ClientProxiedBy: SI2PR01CA0037.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::9) To VI1PR07MB9898.eurprd07.prod.outlook.com
  (2603:10a6:800:119::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR07MB9898:EE_|AM9PR07MB7761:EE_
-X-MS-Office365-Filtering-Correlation-Id: d980f573-9285-4560-4089-08dd610e3367
+X-MS-TrafficTypeDiagnostic: VI1PR07MB9898:EE_|DU2PR07MB8077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ef0667d-5eac-4009-228c-08dd61116cf9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dXBCT2dtbENUNUYzT3VCcUpJdzVvaXl1WW82bVpyMzVlZHc3c242aE1LSXpz?=
- =?utf-8?B?YUorN2lGdUFkK25Eend1dnV6Y0U0cFEvcGhUeDRxYkVJOFlxN3VuUVptUHBZ?=
- =?utf-8?B?cWtzc1JPZXduRUhraHlpWnU0T1NpaGllUU4xZGlLTTF2Yk1Zd1c5MDRtZERT?=
- =?utf-8?B?b1hic0syQlJPTHJxU2xXUnV3M08vWDcrTnZjcTI2V1A3VzJBQ2RRM05VQ2NM?=
- =?utf-8?B?VTl3NG1OZjViZlZDRjZMS3pLa3grQ213YWZTTmhTemZBYkZxa2UvZzNoTnJR?=
- =?utf-8?B?RktBOW9kMEhkWjZBWEljUEc1MVNLTUhxSG93TnNEYi84RnROakh1aVZPNENi?=
- =?utf-8?B?SnhaQzFaOFRIK1R4MFoxdTZyQ2RyV1UxVFJpM3IvSG5LMnNaSFp1T2E5V1RI?=
- =?utf-8?B?bVVNQ3JreE1VOGMwZFRPbXBiL0tnUEZ1ZkdDQzlPV0dnM0hwYUdiMXdYMXpX?=
- =?utf-8?B?aVZBaEc1c2NPMG93VlRwQStjd3pvQTh3aUtMa1JQd2F5ZkkzSWtQSzJWYUNP?=
- =?utf-8?B?dWorazFoUXpia0Nma0hsV2dPdXFhRll2dUtJMVJkaXI4SzBpUlJjRGpQYVBl?=
- =?utf-8?B?dEczNitZd1IraDhSWGRXbWRUT1pScmtFb3lXRCtoMkc5SmdqUkFjNlFBQ2Vk?=
- =?utf-8?B?Q3B3empuOGVoQUFIQzM3Nkh4RTMrby9ERHM2dHFCSkFqaENKeGhJVUwvTk0w?=
- =?utf-8?B?Q0lVTkJhZnBMVUd3YnArVzVlMnBKb3pJVWE2VkRlcDFVZno2bkpJWlBnRTc2?=
- =?utf-8?B?cTh1UDFVZG10NmRRY0x2Q1hiNFh2TnVtTzZzODdnc2ErSTdXenJWTVI1OTY2?=
- =?utf-8?B?V1JKV2o3TVU4VzNzM3lFN2x0UVpBdHVMeEJJY2pwOFBpZ3ltbkVIMHB5ZW1Y?=
- =?utf-8?B?bWdjQlBrSi9qVEZUVjZ4Z0FSZ2J1R0Vmc0FRUHVXZC8rN3dHREhiZWMwZzlt?=
- =?utf-8?B?TEQwYWtCcmkwMWVDTm1QTkUraCtUMks3NitPaitKREJFUzRtQ3dIMVY2cS90?=
- =?utf-8?B?VThJOE51ZmVvS0RpUGdEbk9UVGFSb1pxaExJT2lqSnIrNkdXMmhPT2o0Mjkv?=
- =?utf-8?B?RzQ1SFp5Rmt0cFdXU29jR2lGNGNocmNZcG1BUSsyM3gwbHFhbzl5WFRFNGdC?=
- =?utf-8?B?Z2x1RTlQL2NSdnlrK0ZzRHhyejdvQWJiWGN2Z0pzcVFnWlUrWEZFVzBtMU1M?=
- =?utf-8?B?NXdQcnVjVmVQZGMvdHNFa05GQVJWYlRkNkhhRjkveE40OGVVSll2UWQ0cmRl?=
- =?utf-8?B?OUdrUFRhMnJEY0ZtYWFBNkQxblJLcnRqT2xwZzBta2t1OFVIQm9KNkNTUUhK?=
- =?utf-8?B?SHFseklMOGhwKzE1NjVlU0VNeW9MK1hjbG9LZVJRbm5JeUFkbDBNQ3l2bUNT?=
- =?utf-8?B?VVhhaUdvbzdKMFlHWnNFdlc2YTNpRE1nTU9tOXlVSjRYMjRuRzFpd2dKVlkr?=
- =?utf-8?B?eFcrNExmRlZMQXY2YTczdTZLeXNTajkvdDNQeExuZnRFT0FZa0JoOUVST2ha?=
- =?utf-8?B?TGZPSnBqejZETVhxbmNsS1g4VVByb1Naekl1RzZURnRpMm5lOVV0TVYrZmJ1?=
- =?utf-8?B?OTd6dVBLS0VETFZYU3R2d25sMjRuWEpaRDdrUTVvcU5WNkVCYWdkczhyLzB3?=
- =?utf-8?B?QUVZdjRZbG1KeE9hcUxtL2NDR0NySDN2SHh5VjhINGxnNXQ0VU50SjZZQ05O?=
- =?utf-8?B?aENhL0tyVXp5eTlEMUxtQ05JQy9kV050Nk5hc3E3a2dRTEJSOUtxQnNiUmpl?=
- =?utf-8?B?bk5YN0FYUEJiRytLZFRkVG5UMnJrbXZBcTViOWNsZkpNQ0VNWVlmemlIR3Vm?=
- =?utf-8?B?MU1MWHZhT2dGODNyd0lTdz09?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|8096899003;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aGEwaHlDejFNbXpkS2V4Y3R1MEJJTUNYcSttSjRsZUNQSDlBenUxZ1V6eDlQ?=
+ =?utf-8?B?UUx3aFljTUJjL2I5MXZCL0JPLy9acVZsL2ZyOVFqdmpaSlpxNS9IZ2FxN1k2?=
+ =?utf-8?B?V250bjRwZldhWlJWbitYV2FuUmVmdjk2a3FBMXV4d0FHL2h2M0R1NUJXZ1Fy?=
+ =?utf-8?B?NElyVTVIeE0vbTUrT2lXTU5ZblJPTGVaQVBhUHdJQit1SWZtTEhsTDE5bGVw?=
+ =?utf-8?B?ZURpSlU1UXEzaDhJWmNpRHNBL0NpK25JOG12c1VIUitkeGdJY0RyWSs4Tkw4?=
+ =?utf-8?B?RTBxbnZmb3BYZmp1STlnVkxWeTdoWHpIU0FLdVNsbjFyQmtZY0lOSkpMeDBq?=
+ =?utf-8?B?VFhBWEdDdk9KNTc4OUxPc1J1SHRnNVJpMzZpVHhYY2FIbFR5di9LdnduU052?=
+ =?utf-8?B?UXBhcWoxY3RvNTVSVmpwL1htUUU1eGVURnFFWnU0S05OdWZiRmdvYU9HcWJh?=
+ =?utf-8?B?WS9lUUpYQjRJb3BxWE9zQStNMXNWbDM0U1ptenlHWk5ETkpkdzV1QXA1bnNk?=
+ =?utf-8?B?b0pLclUwcjROYUhPQkpGMlJLNUZmSlhvbmVvM1RDTkVIS3dYczJsck1FQ0px?=
+ =?utf-8?B?T1NDZ0duamZCRHk3SWxPTlBYUXkyLzdKNDNkcHhQeUNqY2o3ZjVCUjg3SzA4?=
+ =?utf-8?B?OElleHJFWFVKdzhlcnhJOTdkNkM4YjJXeUt1dVh4VVNDWnY0NzNidjlxb3Rm?=
+ =?utf-8?B?OFZJcnI3cEgzb2d1SCs0YVpUdE1ycGVueFJCemtlVkZuRVlpOHhXbVlPZ203?=
+ =?utf-8?B?VzdxS1JRVGdqNUVUU0hBTGowYXF3ZHl1Q0VGandhcTVnS2hIWVhwYjNjcS9u?=
+ =?utf-8?B?SkdMdXF0K3NWNHE1TmVMYzFyeFdBRDNvTnFNQ1B2eklUaFhnZzI1MFk1M3ZC?=
+ =?utf-8?B?WTJHVXBQd0FIdDVsaEoxL0lBVFptckZqaXFCeHJ6UzhkV2ZnTjU5bTI3dWs4?=
+ =?utf-8?B?aHhZNDJIVmZTb1NCOWxlUEZLOVJJSHZsbXJ5OWltK3c5a0ZFa0tWZnBlbTN3?=
+ =?utf-8?B?WW4zQkF4cFFkdXZUa3Y0VlpnVnpmN09MVTlBUWY5Rmd3ZkJTN0FWY1YzQTRM?=
+ =?utf-8?B?YkRnWnFnRmJPNEVrR2U3L1hJc295NWZ0S0x2L3kxRW5la0grMGxrMUVmKy8x?=
+ =?utf-8?B?VVhkK09Ma0JSYit3eTBIUVRiYjNSVVJRTlBkK3h4SFZKaTRQUlU4WDBoRUFz?=
+ =?utf-8?B?TnBJblBUcVlaOFp0TVJ6VFV5V28rTmRoTjlYY1k4NDdDUUdjRGROTFhQNzVE?=
+ =?utf-8?B?Y1VYYjBiMkZoZU5wckNtcVAxRzV2RVZPc3Q3Ky9pMDhPcmNVNkZLMXJwcnRP?=
+ =?utf-8?B?bjl6dFJ4R01VMWRZSUsyN2RteUMrSXJNbE5TUlZReWtiYlBzRDM2elE0WkdH?=
+ =?utf-8?B?M3dLNDdVazdsRmJxS1hMMkkxdVVUdEh0NzNEMWZHOGl5aHBiREdLLzdHcThv?=
+ =?utf-8?B?MFBueFpxckhEc1hnc0hHNFVKaDV1R2xmTmRUaHVyUEdpZWkrQ3ZqT25PWkpw?=
+ =?utf-8?B?YnRwUmJSOHNxb0N3ZS9Na0UvUjRXK1JhaVJOS09ZaCtjTmZSZHg5dVVGZVBk?=
+ =?utf-8?B?aXlvTHhhRHpUQW5CcUM4N2FVS05obzNpK0NuY1MxWWlXdEdOTDN0R2EwMFB2?=
+ =?utf-8?B?aitueXpZSlI5WlhldU4vUHEvVmdoUXNlZjJheHo4NzB6N1R5WmZJcytlYW1Y?=
+ =?utf-8?B?QVhJSnRibGJQODNpSkcwT1YvenFKOExSdjdMSDU1LzNqdm1hOHMrN2tRSDRt?=
+ =?utf-8?B?ZDJyS09kNlNPTTVac3VSOVlMT2lOelB3Z1BpOFRyQlYwTWZUdHZhQ2FXbnd2?=
+ =?utf-8?B?Y3NuRXd6TnMvdG5OTjMrTGoxWkZrVnFjUWViQlJiNjZzM09ubHlLQVZDMTc4?=
+ =?utf-8?Q?yv3R7LaQ/RzOD?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:VI1PR07MB9898.eurprd07.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(376014)(366016)(1800799024)(8096899003); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dFVSUW1WVi9EL3RPNE5XakNTTnd4UmNja0UyUThiRkl0Rlp2R0F0UkxrS0Fx?=
- =?utf-8?B?QkdwRVlPZ3NDMVhKMEhkNkpRUnNSV1BmeEI5TjNxZEV3TGRzeGovSjNDeXJY?=
- =?utf-8?B?MU5aVFp0eDMxS1NwSnZUOU1JQTBKOHdZN3EvUlErNENONjhvYU5pbVNqRW4v?=
- =?utf-8?B?SGVPRURMa1NBeFptS3l2eUt1eDk2dTdENWFlVXQvVUdIbWNRWFVvRUVGbHcx?=
- =?utf-8?B?Vm1BTWlKSzFHYURZSFhRR3drK1dBWjR3WTdMRVhsYi9ibnFJcENjMVBINlIx?=
- =?utf-8?B?OUsrWWtCMDV4K2FkcWdVNExVS0lJUFBaL2N1S0lmM1hmMi93V2gwTGkzRUJ6?=
- =?utf-8?B?dEdjSHhOVlM0QXFBeEZ0SjYvMm5PdFh0c0o3YytQaVhPSjdKcFdUZDlZWHlr?=
- =?utf-8?B?b2hLaDB1bU51RTdGR2hjRXkxV3QrME1LQVVIWVFCZWVBcFdhbThDTktwcE9x?=
- =?utf-8?B?VG55TVEzWk5vSWsxdFM3eHFPL2hFdTF0R3dLU0lrSnZ1NmU4MG5ZS0lxUHly?=
- =?utf-8?B?M3cvdDVvemVtd1BqdXFrTUxCQWdGWjdOc0FNKzUvYjRtWG1BWmpwbXZEOWtn?=
- =?utf-8?B?ZWJOZmpnR3ArSklUSFpOM2lBdjZrN0FMZmFna1plbTlwUkNKdmZRRnBUVjRG?=
- =?utf-8?B?b05uSWhyVWdNR2VHaFg1bmtvUUFDZi9VbUYzRVd6RG1iS3QvczNweE5Eb0Np?=
- =?utf-8?B?MG1BdXVYMHZySmYwWVZwQ1lUN0pXRFJKZEdGUGllQjJwVzdLYlRDb2xRR0FK?=
- =?utf-8?B?SXA4bXprTnhKMzF2eHlYVE5ONC9wNWF3aDFZbmRQVnc5OG01dUJnRUJnZUdl?=
- =?utf-8?B?VmVHL2tQY2srbCtCTVdaM0pOSTZTU2V3b2N0dWJZWjJJMDA1NjNKeGh2am5X?=
- =?utf-8?B?TlhIYm9xalpLRkJudnBRWU5VSmxZMk42TEc1eVArU0JDcHZ3QWRjejdDQmhQ?=
- =?utf-8?B?QlZscEF3UUw2NDdKOEdWbmlob2ZCeFVnQ3MvUXdXc09UaE1QNUVkamlsUllS?=
- =?utf-8?B?ZitzeG1QTlJmMzQ1MVI1YnA2Tzd6dVZNQmhwN2RTaUN5QjBIMjc1b1RwR0Zx?=
- =?utf-8?B?OXNNS2kzUVBnalZmaFhTRE5kQ2VPM0ZuSTU3UEt2d1pnYzBGVXlwemNpVHdk?=
- =?utf-8?B?alF5eDVJVThJSDhqSDdsVzJZdDNLUDFqVCthUGxzcjhFOGdOc0NWQUp6WGVo?=
- =?utf-8?B?WWNYTkNpYTUvMUZkOGljNmVRL09ENER6Mkd4Z3hLQXBaYkcxUGVFZVpHcWhn?=
- =?utf-8?B?RXM4VHNodThzamh2d3BGeW9iTXMyYVBoL2YrK2xXYngyOTNBblQ4cFdNQ0Ji?=
- =?utf-8?B?Z3ZWemZtaUFMMVRsNGhXaWRBd1ViSW5JMTE4SDFKOHFXK0g1SXhJRDFWQ0hC?=
- =?utf-8?B?Zld2VHljS3pKVVIxdFEvRUN4cXJMQVA1K21UM3lUZlRVT2ZpVXJyRVlVMjdz?=
- =?utf-8?B?ekRsd21LSjlnZEdqQ1FZcUxSejFoKzVMaFdKTzJtSTZpWlBDdUdpSFNIektH?=
- =?utf-8?B?bE5kdlk4WGNhUEcrQ2lJZE5pTjVVUWRCd1NaVU9odGJWYWNZSXI4Qjd2c01H?=
- =?utf-8?B?eEhNOTVLTjA2eEhUNFM4WitHcW9FakU4bkdxTWF6Wnk1aFRlZ09LekxUUjUv?=
- =?utf-8?B?SGlPdWZ4Q0lCNXZaZHp2ZGlRS3kzU0FJenpjbVdlVm1NRHBjbjhYRm1YMmN0?=
- =?utf-8?B?Z2JCeFl5cWh0VDlrc212Y3FkUGhnMFU4Y3FDeURWak1QNjZVbTNINk91Z1Nz?=
- =?utf-8?B?U0c3NXk5QzJoNWZaem5LcnZaTUVSZlZsaGNqYW5VUW4zam54QS93SlpnT1lZ?=
- =?utf-8?B?SVJvSjM0RmVCR3QyL1E0WDlrN0hreUkyRys5d0JwdG1FMWIyMWlwTkFBV1NR?=
- =?utf-8?B?dDh3RzJQMjVMRXNWK3h6Z2FlVGppZ1c1a1NMT3FQazR2dkJrbExkTkIrTWQ5?=
- =?utf-8?B?UHp6U1RsRVlFQm5jL3pKNnUwR2RwMUlwUmVIL2w2ZmliQjltbm5ObVk2VE0z?=
- =?utf-8?B?blFzZCtaUy9SZWtSbVExWGN5ZndVYk8xcjZNODNrMFAxV2MyNi9taWkrNzd0?=
- =?utf-8?B?MVNPR3BkWGcrVTdJQmZub2YyNklyV1N3NGlqM3lYT2N5TTBuZ25NVVUveHg4?=
- =?utf-8?B?VkpWSEgva1pqMkx6NHI3czZrWmJHTURENVNlSHQ4RlRpeE0zSklSV0dhQ0g3?=
- =?utf-8?B?aVE9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NWxpR1NvTXlRN1NlNkNaWGlXaDdoR2lHcEdiVjg4blJBQjkxM2grT3haZGZs?=
+ =?utf-8?B?TUFEVkJuUDE4NVZRbHpoSWsyYkhsbjBrdnpqMzdCOUMvTW5TS2tvY1dIWmlz?=
+ =?utf-8?B?aklGQTNvNGpmbklZT2VMbS9NaXVkeXpOTjNvbG9Sb0xUQkN3czVFT0M5bHV1?=
+ =?utf-8?B?YjY5NXNLam1Vb2ZxNmw1Uzc5cmx5NEkvMG9HMTJpWGtaeGtlM003RFVWQ2lu?=
+ =?utf-8?B?MXRKejJyTnN6bzk1dE1RamJzSGJ6Ulc5SUEwNGRYU3MwN1ZzemRZL0hRMUIr?=
+ =?utf-8?B?WDNBU2JiL2tMWFBqSEhtdjFYL0tsOFN1R1F5ZFEzajl1dHkyVVRDTk1NdlFr?=
+ =?utf-8?B?UkpGNU1GL3pkQXBaT3lVclJQc1p5SFJHanRuWlFVS2NiQXFEK0RxR0F2c0Yz?=
+ =?utf-8?B?dFRGSFdHWGVqOGlFU2FtRXU2dUMzKzl3Q1VKcThqRDB0T3BJVDhjWkZKT3VP?=
+ =?utf-8?B?b3krVTA5ejFtbEhML2lSRjlzM3Qxc2NaUk42a3RWMGJHV0xFVnZrS1M2V2lK?=
+ =?utf-8?B?M2MyQlNWb1ovNWdjZUlxdCs2VWdTTzZmL04rVldERE5vOW9Kalk2WUhHYkJU?=
+ =?utf-8?B?T2pCbVk0cDVBdERWcTZ6YjJkbzNiVEhLd0VUVFBpUU5Bb3EwcGdyRE53R0xy?=
+ =?utf-8?B?SERVTHQreE1KQ25XRUhZRGhyOVUyNUpobWxialBSUXhBbGZFQzZDeTlhdVU3?=
+ =?utf-8?B?SWFsVEwzL2xPTlJJckQ4YUdncFh3aWd3aUVJTVN2Q0pla3IwSi9CYzRCNmRB?=
+ =?utf-8?B?ZnNIZWx0bWE3U1YyRjJmSmFEL2hOUUZKenFoWWlyWDlvaTRsU2xqbHVwMURJ?=
+ =?utf-8?B?TXpTN25JM1Zjd3c4emp3Nm0xZUNWSUlxemxzTE00VXZiNm5wWDU5ZFJpeHZC?=
+ =?utf-8?B?dmU3VlBRU0RhMC9TYTYvZFMwNklTNXRLNWFqeWRKbGxJNStDeWptYTFDdlJx?=
+ =?utf-8?B?MGNjSjdkeU9KdWJEUUpOTFdFTWg5TlBrcTNSaWFybUNaZFJkMkpMcktjMW1o?=
+ =?utf-8?B?ejZOR0UzWklmTWNUbVhMS0NrMWt1MlBhSnI5bXYyTDA4QktvdFV4SW5VRldm?=
+ =?utf-8?B?ZFVDRENpdHFIazJscjZRZ1ZvMzVsdGgyeHhodTNIenQrRU1QanNQckJvSEZs?=
+ =?utf-8?B?UVIzQkJnWlY3RmpVVlBEY2lmZ3FTRWVURXBBY3BrUjU3TkVkTnBxTlYyTGww?=
+ =?utf-8?B?UnZlWkhOUDUwWkQ0bnVNS2QramdNQUJKcDRBSXNZVkpsUHY3MUV5L2VUMHRy?=
+ =?utf-8?B?eWYxUmZkYTFtTENoenRMckRvQXQ2UVcrb2ltMitvelBaYzhLOERVQkdKS2o2?=
+ =?utf-8?B?UzliMUQydkp0Y0dkZjh3V3RvMHl4Y0szRTROM0RYQTNjK0drWkZacE5TMGxR?=
+ =?utf-8?B?Z0dIWm80Z2wyeHlHRUtVN2ExWHVQem1PNWpUTDlOL0JhYnNWcFlCbWp6SzJS?=
+ =?utf-8?B?MnFpZm9NbTFjSHI2U092ODBGVThVRW1hcWpBdDFHMHJZYzZBRzNpNHJHRkFx?=
+ =?utf-8?B?TUsyd3R6Yk9tQlVXRy9PTER0RytWdm5YUWR2NWUxRVN1cWphakR6K0cyMGdi?=
+ =?utf-8?B?STRMb0Y4NDlZNEVaZkZCU1UzNG9NbklpUlpLV2cvcFJrRmZRTmp1Q056TzJv?=
+ =?utf-8?B?akJLYzI3OEpPd216YmdhZTEyM2tGczZzRmFYZEo5MUdaelEydFRVTzE0blI3?=
+ =?utf-8?B?VXYvMkpOVUFZVE1wVEllZzBuTkw2THhpcnlKY1JzS2JWUWZ0Zk1aTGF4VVc2?=
+ =?utf-8?B?REsybGZqamttYjVmZUdRblFMMGJocEtnazFZeUxxaWkyMC8vOWpJNnN5Qnpt?=
+ =?utf-8?B?bmVsdnFRTHgzdHdMckpKMWFHOE5vVGt6cGV2VmJJeldUMklXZnljRTNFUnhm?=
+ =?utf-8?B?TTJBKzZJTmFvVTRKT0VlWGdRQThzT01FN1prR2RIeTU2TC9NckpxQXJUTW5k?=
+ =?utf-8?B?WFVBWmh4czlScFpia0Zkb3N6Tml0UFlyd3RZaitJK0RoUlc3ejZ0VHJqSWdF?=
+ =?utf-8?B?cjlpQkRDMU1hVUdwNUNSMUZHSFc2dXBzVWJZZ3Y5VGQ4eFZuTzFDSVF2VDdQ?=
+ =?utf-8?B?YzVWY3l0WmdVK3F1SUIrNDBmall3N1hnWkhORndpejdnVmZqSXBYanh4QXFF?=
+ =?utf-8?B?ZWl0MmZjVHhnL3UxYnhVY2ZaTXVLbUVDZFU5YThlci9BbEdIaW9WZDI5cEtI?=
+ =?utf-8?B?T3c9PQ==?=
 X-OriginatorOrg: nokia-sbell.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d980f573-9285-4560-4089-08dd610e3367
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ef0667d-5eac-4009-228c-08dd61116cf9
 X-MS-Exchange-CrossTenant-AuthSource: VI1PR07MB9898.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 02:32:57.9551 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 02:56:02.9838 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b2MLM1Q/ZOY0qCfgO3522hiv9DrGh26+qAd8euXx1D/xuDR2tHVqQoqL3hRLinmig+F6wbax4alDDGEtZjCN3bgHrIWUkKnP4Cr7Kxs/SJ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR07MB7761
+X-MS-Exchange-CrossTenant-UserPrincipalName: eJ3tpTxnzEcx/yxjZ2lYvZGJBeoggk3B5ZLdBsm3DGBt0ZGlPxfHcZTbVwcjtn4qx1WUAMV6Cyx+X46fheiaKDd43Ts0L7go79gZT3aYm8E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR07MB8077
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -161,74 +162,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--------------d03esiLCKTX0oqjybOJ3E0wC
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025/3/10 22:59, Stephen Hemminger wrote:
-> Caution: This is an external email. Please be very careful when clicking links or opening attachments. See http://nok.it/nsb for additional information.
+
+On 2025/1/3 10:51, Ming 1. Yang (NSB) wrote:
 >
-> On Tue, 4 Mar 2025 06:23:06 +0000
-> Bing Zhao <bingz@nvidia.com> wrote:
 >
->> Hi Ming,
+> On 2024/12/14 01:16, Bruce Richardson wrote:
+>> On Fri, Dec 13, 2024 at 09:12:39AM -0800, Stephen Hemminger wrote:
+>>> On Fri, 13 Dec 2024 17:24:42 +0800
+>>> Yang Ming<ming.1.yang@nokia-sbell.com>  wrote:
+>>>
+>>>> 1. /var/tmp is hard code which is not a good style
+>>>> 2. /var/tmp may be not allowed to be written via container's
+>>>> read only mode.
+>>>>
+>>>> Signed-off-by: Yang Ming<ming.1.yang@nokia-sbell.com>
+>>> Since this is a unix domain socket, why not use abstract socket
+>>> that doesn't have to be associated with filesystem?
+>> In general, I think we should avoid abstract sockets in DPDK. Primary
+>> reason is that they are linux-specific. Last time I checked other unixes,
+>> like BSD, don't support them. A secondary concern is that having a
+>> filesystem path allows permission checks, so for e.g. telemetry sockets,
+>> only users with appropriate permissions can connect. With an abstract socket
+>> we'd have to open up the area of user authentication.
 >>
->>> -----Original Message-----
->>> From: Yang Ming <ming.1.yang@nokia-sbell.com>
->>> Sent: Friday, December 13, 2024 5:25 PM
->>> To: Dariusz Sosnowski <dsosnowski@nvidia.com>; Slava Ovsiienko
->>> <viacheslavo@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam
->>> <orika@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>; Matan Azrad
->>> <matan@nvidia.com>
->>> Cc: dev@dpdk.org; Yang Ming <ming.1.yang@nokia-sbell.com>
->>> Subject: [PATCH 2/2] net/mlx5: improve log file path
->>>
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> 1. /var/log is hard code which is not a good coding style.
->>> 2. /var/log may be not allowed to be written via container's read-only
->>> mode.
->>>
->>> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
->>> ---
->>>   drivers/net/mlx5/mlx5_rxtx.c | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
->>> index eadadcdffb..a0da73c9c3 100644
->>> --- a/drivers/net/mlx5/mlx5_rxtx.c
->>> +++ b/drivers/net/mlx5/mlx5_rxtx.c
->>> @@ -12,6 +12,7 @@
->>>   #include <rte_prefetch.h>
->>>   #include <rte_common.h>
->>>   #include <rte_branch_prediction.h>
->>> +#include <rte_eal.h>
->>>   #include <rte_ether.h>
->>>   #include <rte_cycles.h>
->>>   #include <rte_flow.h>
->>> @@ -311,7 +312,7 @@ mlx5_set_swp_types_table(void)
->>>          }
->>>   }
->>>
->>> -#define MLX5_SYSTEM_LOG_DIR "/var/log"
->>> +#define MLX5_SYSTEM_LOG_DIR rte_eal_get_runtime_dir()
->> I agree that using the fixed PATH is not a good practice. Can you ensure that the runtime DIR is with RW+ permissions?
-> Drivers doing any kind of custom logging is bad practice.
-> This should be handled by EAL logging, not private fprintf's
+>> /Bruce
+>>
+> Hi Stephen & Bruce,
+>
+> I'm not sure whether abstract socket is a good idea. Maybe it can be improved further or step by step. But we don't need to discuss it for this commit.
+> We do this improvement because "/var/tmp" and "/var/log" can't be write in Readonly mode of container except that we add /var/ specfic for DPDK application in container's setting. But nearly all DPDK modules have already used common runtime path returned from `rte_eal_get_runtime_dir()`. Why not we apply this common path for Mellanox NIC?
 >
 >
 >
 Hi Stephen,
 
-Yes, I completely agree with you. The DPDK driver should utilize EAL 
-logging instead of fprintf. We have recently addressed an issue where 
-DPDK was applied in a container with a read-only file system mode. In 
-this mode, the /var/log directory is read-only. However, when DPDK is 
-running, the directory specified by rte_eal_get_runtime_dir() must be 
-configured with read-write permissions. Therefore, we have made this 
-minor improvement.
-
-Please note that we are not the developers of the Mellanox CX4/CX5 NIC, 
-nor are we affiliated with the manufacturer of these NICs. As such, we 
-are unable to make the improvements you described.
+I'm not entirely sure whether using an abstract socket is the best 
+approach. It might be possible to improve it further or incrementally. 
+However, we don't need to discuss this for the current commit.
+We made this improvement because the directories "/var/tmp" and 
+"/var/log" cannot be written to in a container with read-only mode, 
+unless we specifically configure the /var/ directory for the DPDK 
+application in the container's settings. Nearly all DPDK modules already 
+use the common runtime path returned by rte_eal_get_runtime_dir(). 
+Therefore, it makes sense to apply this common path for the Mellanox NIC 
+as well.
+Actually, the objective of this patch series is to prevent the DPDK 
+Mellanox driver from crashing when attempting to access the read-only 
+directories "/var/" in a container.
 
 Brs,
 Yang Ming
+--------------d03esiLCKTX0oqjybOJ3E0wC
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+    <p><br>
+    </p>
+    <div class="moz-cite-prefix">On 2025/1/3 10:51, Ming 1. Yang (NSB)
+      wrote:<br>
+    </div>
+    <blockquote type="cite" cite="mid:c941592f-f98d-42c7-9849-b48b6b8d8f5e@nokia-sbell.com">
+      
+      <p><br>
+      </p>
+      <div class="moz-cite-prefix">On 2024/12/14 01:16, Bruce Richardson
+        wrote:<span style="white-space: pre-wrap">
+</span></div>
+      <blockquote type="cite" cite="mid:Z1xr5-FXBgEN4QM3@bricha3-mobl1.ger.corp.intel.com">
+        <pre class="moz-quote-pre" wrap="">On Fri, Dec 13, 2024 at 09:12:39AM -0800, Stephen Hemminger wrote:
+</pre>
+        <blockquote type="cite">
+          <pre class="moz-quote-pre" wrap="">On Fri, 13 Dec 2024 17:24:42 +0800
+Yang Ming <a class="moz-txt-link-rfc2396E" href="mailto:ming.1.yang@nokia-sbell.com" moz-do-not-send="true">&lt;ming.1.yang@nokia-sbell.com&gt;</a> wrote:
+
+</pre>
+          <blockquote type="cite">
+            <pre class="moz-quote-pre" wrap="">1. /var/tmp is hard code which is not a good style
+2. /var/tmp may be not allowed to be written via container's
+read only mode.
+
+Signed-off-by: Yang Ming <a class="moz-txt-link-rfc2396E" href="mailto:ming.1.yang@nokia-sbell.com" moz-do-not-send="true">&lt;ming.1.yang@nokia-sbell.com&gt;</a>
+</pre>
+          </blockquote>
+          <pre class="moz-quote-pre" wrap="">Since this is a unix domain socket, why not use abstract socket
+that doesn't have to be associated with filesystem?
+</pre>
+        </blockquote>
+        <pre class="moz-quote-pre" wrap="">In general, I think we should avoid abstract sockets in DPDK. Primary
+reason is that they are linux-specific. Last time I checked other unixes,
+like BSD, don't support them. A secondary concern is that having a
+filesystem path allows permission checks, so for e.g. telemetry sockets,
+only users with appropriate permissions can connect. With an abstract socket
+we'd have to open up the area of user authentication.
+
+/Bruce
+
+</pre>
+      </blockquote>
+      <p>Hi <span style="white-space: pre-wrap">Stephen &amp; Bruce,</span></p>
+      <pre class="moz-quote-pre" wrap="">I'm not sure whether abstract socket is a good idea. Maybe it can be improved further or step by step. But we don't need to discuss it for this commit. 
+We do this improvement because &quot;/var/tmp&quot; and &quot;/var/log&quot; can't be write in Readonly mode of container except that we add /var/ specfic for DPDK application in container's setting. But nearly all DPDK modules have already used common runtime path returned from `rte_eal_get_runtime_dir()`. Why not we apply this common path for Mellanox NIC?
+
+
+</pre>
+      <p><br>
+      </p>
+    </blockquote>
+    Hi Stephen,<br>
+    <br>
+    I'm not entirely sure whether using an abstract socket is the best
+    approach. It might be possible to improve it further or
+    incrementally. However, we don't need to discuss this for the
+    current commit.<br>
+    We made this improvement because the directories &quot;/var/tmp&quot; and
+    &quot;/var/log&quot; cannot be written to in a container with read-only mode,
+    unless we specifically configure the /var/ directory for the DPDK
+    application in the container's settings. Nearly all DPDK modules
+    already use the common runtime path returned by
+    rte_eal_get_runtime_dir(). Therefore, it makes sense to apply this
+    common path for the Mellanox NIC as well.<br>
+    Actually, the objective of this patch series is to prevent the DPDK
+    Mellanox driver from crashing when attempting to access the
+    read-only directories &quot;/var/&quot; in a container.<br>
+    <br>
+    Brs,<br>
+    Yang Ming<br>
+  </body>
+</html>
+
+--------------d03esiLCKTX0oqjybOJ3E0wC--
