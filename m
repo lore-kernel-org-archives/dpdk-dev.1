@@ -2,52 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56690C28B2F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 13:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E63C28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 13:53:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FA56402CE;
-	Wed, 12 Mar 2025 14:51:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BAB30402CE;
+	Wed, 12 Mar 2025 14:53:35 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id A519440265
- for <dev@dpdk.org>; Wed, 12 Mar 2025 14:51:48 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id AB4FE40265
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 14:53:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741787507;
+ s=mimecast20190719; t=1741787614;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=JWsfHBDm3ygBsGiWisz/lduhlQwZHWXX3xyjfxcLjK0=;
- b=JKkGSHgJskAYRPGeG+oQD4fHbGKni90o2hGo7YgBV0Wc/4gvX5ZJZW7L+9xwkG09sjHk2Y
- rzDUjTkhgdR2x33sfeHoUDnGbgxycg4c3dSysXfMcBSpUpL/778xkxF3dPDaWGFnkZfaFm
- h+rhaeAner65BryTxqQoeOTMVNkySbY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=jtJzRkHhDf9Yq4IxqsmZdKZFn6XJ4Pr/ZeFmo1LbJGo=;
+ b=JxQKPtrlH+/Og3k08PHUmX+ZNPayJnWkaiRL0V0IxXVXJETOncbz5aj98GCPoGw1TuZUuP
+ XnikFnuL45z2avWdPY5j+c2gMU4DUPpsDDwvq3xARwsD0xZSGiWR7PAM3ssnOMjX5OU8IV
+ i8Yn0vTtoZg6i3Oq4peiROdyHzURpZ0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-kSYJucv6MyeNxALXr9dIlg-1; Wed,
- 12 Mar 2025 09:51:43 -0400
-X-MC-Unique: kSYJucv6MyeNxALXr9dIlg-1
-X-Mimecast-MFC-AGG-ID: kSYJucv6MyeNxALXr9dIlg_1741787501
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-bfJ6DhboPCKiLtkthq4bcA-1; Wed,
+ 12 Mar 2025 09:48:23 -0400
+X-MC-Unique: bfJ6DhboPCKiLtkthq4bcA-1
+X-Mimecast-MFC-AGG-ID: bfJ6DhboPCKiLtkthq4bcA_1741787302
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id A09A51955BC9; Wed, 12 Mar 2025 13:51:41 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id F14771956080; Wed, 12 Mar 2025 13:48:21 +0000 (UTC)
 Received: from [10.45.242.17] (unknown [10.45.242.17])
  by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 297351955BCB; Wed, 12 Mar 2025 13:51:37 +0000 (UTC)
-Message-ID: <a217f532-2b1a-4136-90c7-bb08506eef2c@redhat.com>
-Date: Wed, 12 Mar 2025 14:51:35 +0100
+ id 370DE1944F2F; Wed, 12 Mar 2025 13:48:19 +0000 (UTC)
+Message-ID: <5a54acd0-1cee-46c2-8b94-37a2bbd581bd@redhat.com>
+Date: Wed, 12 Mar 2025 14:48:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] doc: update virtio prog guide with new feature list
-To: Kommula Shiva Shankar <kshankar@marvell.com>, dev@dpdk.org,
- chenbox@nvidia.com
-Cc: david.marchand@redhat.com, jerinj@marvell.com, ndabilpuram@marvell.com,
- schalla@marvell.com
-References: <20250304174236.280764-1-kshankar@marvell.com>
+Subject: Re: [PATCH v1 1/1] baseband/acc: fix queue setup failure clean up
+To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
+Cc: hernan.vargas@intel.com, stable@dpdk.org
+References: <20250305182716.773937-1-nicolas.chautru@intel.com>
+ <20250305182716.773937-2-nicolas.chautru@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -92,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250304174236.280764-1-kshankar@marvell.com>
+In-Reply-To: <20250305182716.773937-2-nicolas.chautru@intel.com>
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Uy2TM3O4yojD8kHg13lNmy98WwGpzuMxqgFgUR9T1dA_1741787501
+X-Mimecast-MFC-PROC-ID: pdF6GElXZ3CxEnIGc_KgLcmjCZ-JvP2zZwpfMWmsZAk_1741787302
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,36 +114,31 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 3/4/25 6:42 PM, Kommula Shiva Shankar wrote:
-> This patch adds newly added virtio hash report feature
-> to prog guide.
+On 3/5/25 7:27 PM, Nicolas Chautru wrote:
+> Incomplete clean up for vrb2 variant when queue setup fails
+> to complete successfully.
 > 
-> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
+> Fixes: fc65d3dcabe01 ("baseband/acc: refactor queue allocation")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
 > ---
->   doc/guides/nics/virtio.rst | 3 +++
->   1 file changed, 3 insertions(+)
+>   drivers/baseband/acc/rte_vrb_pmd.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> diff --git a/doc/guides/nics/virtio.rst b/doc/guides/nics/virtio.rst
-> index c22ce56a02..0615abfaaf 100644
-> --- a/doc/guides/nics/virtio.rst
-> +++ b/doc/guides/nics/virtio.rst
-> @@ -56,6 +56,7 @@ In this release, the virtio PMD provides the basic functionality of packet recep
->       command line. Note that, mac/vlan filter is best effort: unwanted packets could still arrive.
+> diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/acc/rte_vrb_pmd.c
+> index 27620ccc10..2c10ef2c94 100644
+> --- a/drivers/baseband/acc/rte_vrb_pmd.c
+> +++ b/drivers/baseband/acc/rte_vrb_pmd.c
+> @@ -1156,6 +1156,8 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+>   free_q:
+>   	rte_free(q);
+>   	q = NULL;
+> +	if (d->device_variant == VRB2_VARIANT)
+> +		d->queue_index[conf->op_type]--;
 >   
->   *   "RTE_PKTMBUF_HEADROOM" should be defined
-> +    no less than "sizeof(struct virtio_net_hdr_hash_report)", which is 20 bytes when using hash report or
->       no less than "sizeof(struct virtio_net_hdr_mrg_rxbuf)", which is 12 bytes when mergeable or
->       "VIRTIO_F_VERSION_1" is set.
->       no less than "sizeof(struct virtio_net_hdr)", which is 10 bytes, when using non-mergeable.
-> @@ -68,6 +69,8 @@ In this release, the virtio PMD provides the basic functionality of packet recep
->   
->   *   Virtio supports software vlan stripping and inserting.
->   
-> +*   Virtio supports hash report feature in packed queue mode.
-> +
->   *   Virtio supports using port IO to get PCI resource when UIO module is not available.
->   
->   *   Virtio supports RSS Rx mode with 40B configurable hash key length, 128
+>   	return ret;
+>   }
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
