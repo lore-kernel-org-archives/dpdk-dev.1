@@ -2,129 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1890EC28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 14:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0756BC28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 14:53:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6235A4029E;
-	Wed, 12 Mar 2025 15:30:36 +0100 (CET)
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam04on2052.outbound.protection.outlook.com [40.107.101.52])
- by mails.dpdk.org (Postfix) with ESMTP id 9A13C40265
- for <dev@dpdk.org>; Wed, 12 Mar 2025 15:30:34 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FvScQMikB1Ric/R85aY06+Yf5TOnvXdAd9vCfOAbaEbvl6ZKOWB3Wcc2TNqayB92WmFVU/pNcRY6LVP95afSJ2L+qjQQ/oZtNWoSuv1dovf6et2u3WcA6WLQSmmlt/QY+fUuDyZ/8PfBTh/poCgZeLQdMpDnlThWp84lMTyuE4jkmaGX2RChNhoSPS2TMiToklYw9v5GkDtwBLUDNsyAcauNJwv8KL0g0rmqvTw5msmQBYQYQZvGlQR76TVeyFe66WUJBbLaTeDCUGzGpfseRWPMamy07V4eof1+pV1zAJk6PkqtunGU1cdY+UZ8N7qRAYZlriN/L1Reh5gm/LQIdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=36iAfsCZL2+JHi37IyTgTGL3lcPVWNZ83SrcfXvWcz0=;
- b=Rz77B0Rq2fKo6YNI/lPMznHzrIkd80UZ0Yaid+DPyZEmrYCWqdaew9oW7p6Dhm/HEadjAwRVOHN2b0DDr5iMTf1YVXaH1fcJ2eNQ2qqJJS7IQ14b4JSjyDGDRyrhv16b7cl4eg9Mc5hygQwe1fZKfBV+tHy7O19jxoIJjJXHocHcyCF18FfA4WT0wprUU1MwSJeGAvalb5AmZ7UbeWnHnYscVcK4j+rzVNH/cWUEDnFmLF5JqmxnN29AaUU/dFaksMaLB0OdBJ6EuizqBO0VbugpLsPDCV+5GItaD96ZFI69K7xWnkN5bvqxfo+cFHWdsG9WhqMTtJuQMiuXr2IVgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=36iAfsCZL2+JHi37IyTgTGL3lcPVWNZ83SrcfXvWcz0=;
- b=toLn8XaKp5iGS+58Yj+gaeVymRuSZe6dQOhuWvQEzU0i8/Rg1cmAG0N5DWWs2M6TB0GCkiwoTPmdsu1j5Dr3wa5zkd5ipkteZMa70ktQWKyg7ejIWdawtxgBsXR2KRBBj8k2rssyW1eOkomlxfYQNOM7E+l5GXtzH+a0VZU9fy89+PdZDyBWAOLfTUv/WrwjwW1y8DTY8st+ppwSlhmPoHlF64cs7in+yByVB/v7MCwS8g+LeTvZP+aojsKu0GHDVt9ub8BmL54f1lyL64Mw4FAOBeP5nmfB7IVhPGzfCZvx3jmcspPZcYV5iOGvQ1UtSN+g5j7m98vFF1ECkf7PDQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB6811.namprd12.prod.outlook.com (2603:10b6:510:1b5::9)
- by DS7PR12MB5981.namprd12.prod.outlook.com (2603:10b6:8:7c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 14:30:29 +0000
-Received: from PH7PR12MB6811.namprd12.prod.outlook.com
- ([fe80::8f8e:db0b:ddfc:a5b8]) by PH7PR12MB6811.namprd12.prod.outlook.com
- ([fe80::8f8e:db0b:ddfc:a5b8%4]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 14:30:29 +0000
-Date: Wed, 12 Mar 2025 16:30:24 +0200 (IST)
-From: "Etelson, Gregory" <getelson@nvidia.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-cc: Gregory Etelson <getelson@nvidia.com>, dev@dpdk.org, thomas@monjalon.net, 
- mkashani@nvidia.com, Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] rust: support DPDK API
-In-Reply-To: <20250310091844.4a3ff0d1@hermes.local>
-Message-ID: <d380333c-4c47-116e-f917-14b101898e6f@nvidia.com>
-References: <20250306133713.393057-1-getelson@nvidia.com>
- <20250310091844.4a3ff0d1@hermes.local>
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-ClientProxiedBy: FR3P281CA0136.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:95::9) To PH7PR12MB6811.namprd12.prod.outlook.com
- (2603:10b6:510:1b5::9)
+	by mails.dpdk.org (Postfix) with ESMTP id 149C74029E;
+	Wed, 12 Mar 2025 15:53:14 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 7114E40265
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 15:53:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1741791191;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=x1E9uQMj/ICh0YJbIXcQ6/9FSeHVBX1Zdo+QMR24wNY=;
+ b=IEo6PFXVwKN+OFDjIxFDhJd29cYewMnm7fyFrVscWFrqwKK3+hAs7kaI5nU8ddxqbel9QB
+ cSv1VInEdO4YHUqIpsyLvoZdH50C213f5mFLYHY8m67mCh/QVbK69m/4qPczfkROybMTMZ
+ 04radv/m1MwPIg7nOX4iWYyOajOekCM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-mIbYnSwHNFqX3UB1g-H_oQ-1; Wed,
+ 12 Mar 2025 10:53:05 -0400
+X-MC-Unique: mIbYnSwHNFqX3UB1g-H_oQ-1
+X-Mimecast-MFC-AGG-ID: mIbYnSwHNFqX3UB1g-H_oQ_1741791184
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D29ED1800263; Wed, 12 Mar 2025 14:53:03 +0000 (UTC)
+Received: from [10.45.242.17] (unknown [10.45.242.17])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 37B4F1955BCB; Wed, 12 Mar 2025 14:53:00 +0000 (UTC)
+Message-ID: <a88e25eb-2184-4363-a4cd-30e43f0eeef0@redhat.com>
+Date: Wed, 12 Mar 2025 15:52:58 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6811:EE_|DS7PR12MB5981:EE_
-X-MS-Office365-Filtering-Correlation-Id: d89a5896-87b3-42ef-0946-08dd61726fef
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0; ARA:13230040|10070799003|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?lrE8CDEo3MCEunAHM0j9D0t4uqngECihFTP7nTD4bj8A3E8NwCAd9cO1cglg?=
- =?us-ascii?Q?wh0FLWnyW/4yehPC/eTU7gWuUzLmRD+MDpWKisF3AiyxxV2qa1RhjXhqVTA3?=
- =?us-ascii?Q?0LnNccyhnk/ttCoiF6hRNDvMgfSBKyH8gfnBBKUz+CYHkc0J/A3dyJQOAfMz?=
- =?us-ascii?Q?zbGD14HnhqgqGLg2y++Iodtdc/7fDA1EHbCvUivMphWDNzEwXUIcmFhUFKfU?=
- =?us-ascii?Q?BB4BpPEABiPHeZ11kQZwqvncEELilifflRZPh/T1mUetkXAW8f4M6jWOxLAT?=
- =?us-ascii?Q?8kxyXr24PRi8esM/0qKqO240IAJam6fyr/f+JITJvqXuWBjsqAod7PsxHHx+?=
- =?us-ascii?Q?5QFXEyuLwyFK6hHAU5Qsc9wx2c9EkEkpCeKfwH7qrMluNyxpvur3ogBP5OY0?=
- =?us-ascii?Q?PcnQ6ND+E7hp1P55PxKc4mlOktzc7asXSC47Om+5h+0zKNGv+brdOQWTzwlw?=
- =?us-ascii?Q?Z1MRVJSFqnezmd4yZbMoBThLufI82y0VwiRA2t+ZQqa5/6beATHrM+6zz26t?=
- =?us-ascii?Q?de3PrzR907arySGCBNuiGuVUbkg7pzunTlphWbBN5IcisPhF69uo59PeL12Q?=
- =?us-ascii?Q?2tv9Pr1lcGMuxz+FEhDqAMk/ug58sLGs+SUQe7Nnfc8cMPeTCXbN3XUdme+C?=
- =?us-ascii?Q?isqipKxDuumSkxJS7qAAjXw/xl3JwThJEKy1DvhUkjUDvWBLqIcPMUVZbYwt?=
- =?us-ascii?Q?wOpz+wM9r3Rz2JoX+BBibHnBxmXKzUne5WqEDxsaJaWN7SQ2+cQAOytmnC+U?=
- =?us-ascii?Q?E4GU4DHsXPLZEwggtJ0rN9qX5t3vTNLVxAuyP4yVOB3nlf4tg+x6bonuPS33?=
- =?us-ascii?Q?l6Q0xqDt+m9uArwE0pE0E4e9VFOLBlYHYczcm7zTyCt0jie164aQYtchJQHs?=
- =?us-ascii?Q?jLLrnuGyJ+tKG2k+jYDFrNGpbvINTInP3PamNyhnj4xEVkGG5l1ORWkd9J/1?=
- =?us-ascii?Q?xMEy4Tiyg2qw9hdGDqoBuaUmjFIkgvK5FM1cAlHsihe/r6E/ydP7OLctPyZO?=
- =?us-ascii?Q?gTW2DFL0db+h2+T4fRTnv9t9MdIGTj1wVk2gwrxU3v24+eL4AkQ3VZQwEKH/?=
- =?us-ascii?Q?xeJf5aUD8WneeAF5BAw8UklZoJW97s4G4dU/w946TcC1ebQzirW5NhZUEtWT?=
- =?us-ascii?Q?LUYgGAPRTVpFtBgjmwa+VuNTymixiZQkoaDZg2P+84ZPbhkSKDJBktHPDEWW?=
- =?us-ascii?Q?1d0AM3XhpklpPc//ikmE1syPA1kRzv9v07/wAZTE+N1Tl4ZMy+xWm8hwOP+P?=
- =?us-ascii?Q?fcPWC4TTe+V53+zGRoPobnR5PgCHJGssAtahPZZo5ystHuWvzeT9vEmUGrOJ?=
- =?us-ascii?Q?V6c7b/k4BcyFTXsRv8YT0UM963gyjUcnYqyN/t66XfpzRrs8EJ8J4n7ss6TU?=
- =?us-ascii?Q?umSYpm8kn+EHira4MDc2S3Pe/2/z?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH7PR12MB6811.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(10070799003)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yv+epg6fA/J8hlXtE9uFbHwUjFph4o5xVwT60mAWOCympP4eSxoP3J5kwYkJ?=
- =?us-ascii?Q?uqeMgDSDzyiyMmj7c/pcY1qgvtiHeU0rYG593cS34xeHHdhMwiguYUaJZTH7?=
- =?us-ascii?Q?UIMemWckHS0dJIF2XZLuZCvYtRRNfFfkLabUGjvVOljVkvq3D2emP7DutWt0?=
- =?us-ascii?Q?H+SzrFuYLTmAuS08juePamCajyHBf7ry4waCcM8VhEfBxCmOTBmLHBbY8Wve?=
- =?us-ascii?Q?8CoJScsJEIAYEUj+gCS1ZDBHQ4I2YNMWwGcbnSy6gH1GKd3b823wlzr93ZRi?=
- =?us-ascii?Q?gT/T6OmlSwiskeo8+HXYvFjCw6/hH8ov3idOboDEMgwvwSkdHAST+psyWzkk?=
- =?us-ascii?Q?JdkC/UkH7p1Qk0SEOrnzWb60s/39MwK0hg3BVn7Aibir0jAoyNkLpS0LuUUs?=
- =?us-ascii?Q?pDHOtIcFrxLZ97q28OCRFZn/LK9/+y9mXSjmda9UrCDiL06snC1CASEROq6r?=
- =?us-ascii?Q?BHwNiiKNtCeQ7qPTyA97cRawO69jQwMnQXzUS6DUeRh2bxxqZNP1OIyeMvst?=
- =?us-ascii?Q?EGOKDQOxPRsRPHVxpuzPqKaLDuVApZ9Fiv8/LnnmAaSt4QLRfksu9i7ZDD2d?=
- =?us-ascii?Q?n8ByVkXJ2n54FQoEbil1xHMuINVWhwbFYmDTekWTT2fG7bZEiedxqlkKXLnZ?=
- =?us-ascii?Q?pa4S0Lwq1OgNfipXkElGhz/m6h433DZIw9On+5o9Z43b0nIndRnLyQhZf3mM?=
- =?us-ascii?Q?T4ONa708ktLbwW9sJ8q7wQ6Zi0UE6GPr+kAIZbvHfwTpvz8xdctW3jU+o4x/?=
- =?us-ascii?Q?aOHpOWee7oXyLLhc3Mq+Fp1nt4spnauWG/vM6b03uzSimdSVcBfg7pn0QG/J?=
- =?us-ascii?Q?rwRUVhGRiP/uFV6ee5m4tCTYeM8lvooazGOnI4hXI3I1STUzeTGJm+yl1KqD?=
- =?us-ascii?Q?K77CB+jux9qfXwazRSl8VIYykbenahnGtWuPJm/p4m68LKxK3n+bMgADHSJa?=
- =?us-ascii?Q?igylXJryr4AsbJamnCYiM9LANKMC8Zsn+nWG4ynBeLadnbLfqA0wkU686kxI?=
- =?us-ascii?Q?Od5SgkZV8IIt7Dk/4jOmxOxNHc/d8/A7i8kkq6beR8BjP+Ox/7Rp0g++2cwW?=
- =?us-ascii?Q?lS+KiQiMlpxkZVzyaSv/kkyy+NnckeBQ+GZMnytxXdtyZhTLIQ5m5GqSOQDk?=
- =?us-ascii?Q?09q3eceQM31917XF4GUhhS4Zma6M2eOHmcP3L++hQmPsO6Hx1E0Y1FTsYgxg?=
- =?us-ascii?Q?G5fPrst3icGVHp7GPEy1OMlAlw96GfOjmmr4bjdMzr2MGoE+hGL51s/6aDu2?=
- =?us-ascii?Q?n18mifZmkDFoIMd0wbVBvqogyK/BTjD3VBVfVvtPdoSRkVUtv6VhoV7j+i9b?=
- =?us-ascii?Q?QeHwFOQmaGaMEv8uBss8aP+/R0W4QCxnupyXyNjNA7H9inLJ7ISmupVuiF2q?=
- =?us-ascii?Q?TiuIMIP1kZlJgOByRqqMmRFTbeS9uQk56yHbfU5V/L/Qcjhb0l2jPhaAuW3V?=
- =?us-ascii?Q?8OcyGLkiX6P7G2ThYh2Wf4czX2ph+0cmEXQffABIWRgkqAsRlSG6Sp8H21TI?=
- =?us-ascii?Q?kJt9K+006hnhGeLcRg0AKX4rwPCD8TYP1ezjWTUdLqZ6LM1PGK6SbFysGnsZ?=
- =?us-ascii?Q?QAQGTx4ufA0oci8HyRWFH6srVWs8hDwfyOmD48lrb0upSXXd3FBUoza6O+LP?=
- =?us-ascii?Q?jwG+ihkBKSxNywdGXTLHdFNv/nKdZ1sUL238uF+rvFA9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d89a5896-87b3-42ef-0946-08dd61726fef
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6811.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 14:30:29.6859 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Iqj0rVITQX7qcDcLDzWd7BmIgMP1juILUx4DhVqx5iq1znsPKqhIpjD54BgErtBddrjYvui/lVZ1KL81r/PYUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5981
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] doc: update virtio prog guide with new feature list
+To: Kommula Shiva Shankar <kshankar@marvell.com>, dev@dpdk.org,
+ chenbox@nvidia.com
+Cc: david.marchand@redhat.com, jerinj@marvell.com, ndabilpuram@marvell.com,
+ schalla@marvell.com
+References: <20250304174236.280764-1-kshankar@marvell.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20250304174236.280764-1-kshankar@marvell.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 42Efcq8Lz7d8pkSAJHWMdGl7LfsP70KUo9dmSTSQPzc_1741791184
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -138,20 +113,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->
-> Re-implementing test-pmd, l3fwd, etc in Rust is OK but not huge leap.
-
-DPDK examples and applications are part of inner infrastructure.
-The patch allows external RUST application as well.
 
 
-> The real benefit would the ability to support PMD's built in Rust.
-> That would be much more invasive
->
+On 3/4/25 6:42 PM, Kommula Shiva Shankar wrote:
+> This patch adds newly added virtio hash report feature
+> to prog guide.
+> 
+> Signed-off-by: Kommula Shiva Shankar <kshankar@marvell.com>
+> ---
+>   doc/guides/nics/virtio.rst | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/doc/guides/nics/virtio.rst b/doc/guides/nics/virtio.rst
+> index c22ce56a02..0615abfaaf 100644
+> --- a/doc/guides/nics/virtio.rst
+> +++ b/doc/guides/nics/virtio.rst
+> @@ -56,6 +56,7 @@ In this release, the virtio PMD provides the basic functionality of packet recep
+>       command line. Note that, mac/vlan filter is best effort: unwanted packets could still arrive.
+>   
+>   *   "RTE_PKTMBUF_HEADROOM" should be defined
+> +    no less than "sizeof(struct virtio_net_hdr_hash_report)", which is 20 bytes when using hash report or
+>       no less than "sizeof(struct virtio_net_hdr_mrg_rxbuf)", which is 12 bytes when mergeable or
+>       "VIRTIO_F_VERSION_1" is set.
+>       no less than "sizeof(struct virtio_net_hdr)", which is 10 bytes, when using non-mergeable.
+> @@ -68,6 +69,8 @@ In this release, the virtio PMD provides the basic functionality of packet recep
+>   
+>   *   Virtio supports software vlan stripping and inserting.
+>   
+> +*   Virtio supports hash report feature in packed queue mode.
+> +
+>   *   Virtio supports using port IO to get PCI resource when UIO module is not available.
+>   
+>   *   Virtio supports RSS Rx mode with 40B configurable hash key length, 128
 
-It's not sure when and even if vendors decide to work on RUST PMD.
-Before that happens, there must be native RUST API with RUST-DPDK library 
-functions.
+Applied to next-virtio.
 
-In the meanwhile, RUST application can use existing C API.
-Also, having RUST inside DPDK can shape existing API for future conversion.
+Thanks,
+Maxime
+
