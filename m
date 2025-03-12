@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43BEC28B30
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 23:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1C5C28B28
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 23:17:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 992FD40E0F;
-	Thu, 13 Mar 2025 00:17:28 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 703C84025D
- for <dev@dpdk.org>; Thu, 13 Mar 2025 00:17:27 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2239aa5da08so6625935ad.3
- for <dev@dpdk.org>; Wed, 12 Mar 2025 16:17:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D2B0440E13;
+	Thu, 13 Mar 2025 00:17:29 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 48F1D40E01
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 00:17:28 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-224171d6826so7801235ad.3
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 16:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741821446;
- x=1742426246; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741821447;
+ x=1742426247; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cRVkWanDu++5rr6M2yo7H/RqGliIDt0WcYsW++/MGH8=;
- b=mw6/hHlAlirEChoRbBRmP8ISvSyYyv3QS5izi99yCs8aPm99Ih5Um1140zlOCq8As9
- qDcwCtIFZ91XoIAvSMkwgmCRv+6manC3DdRLQ6WGcL49Da9+l6efw3IHuDG5mj9W6nDj
- sqyj8H3i3aI8McHN17UKgPks8bXSkt3q5jYpUDqPj9LsL7JUfSG+w3wJU48SIccUbd5C
- rXMYNKkDN09bYGLR5STsbHTGo6NA4ZE/xA6ltxv2re3qM9RjXVVV4BUvOq0HCZe60FcH
- LSC9ovZWOwXznTFHlIUso2klCe2qNzlgITfb1aRBhlYRPeZttdg63kfcCzjg5f1jyhvE
- zxtA==
+ bh=NG0mwUzmw7cwMjhGyMB/MhgT9FfBfaMB/HdVwTgE4xI=;
+ b=DRGM/k9APTBMNEz43qbAOZYo/+Zqzzw15CWP5mDExC/BM3Yz12L28aF6DhG+T+YCZS
+ w1BuPVN3mqF9MNqGUNNTCsbJvN0F/SqaU2MyMbdmtS3/w5ovtj8cw13ddCaQnBRcbZDJ
+ dkM50E9dGvxboCiaIqhAgq7Bb3S43QWfj0ecWQUlEH26TWEg6rhEtsr++0PgGNHE4v6E
+ +zWCxItPd1ZG2Qa8ucu2qeD8VzeCzT0oZmmyKYLYdLYm1586+KNamwlCKcpxpSOBNNuW
+ FdZtVsFBDdnXJLRiIp+1/OOaqKyWl3y5kZ3XSGdUVLx3UfgZYmWr0kq8Ol5ruLJO6rEL
+ Kg0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741821446; x=1742426246;
+ d=1e100.net; s=20230601; t=1741821447; x=1742426247;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cRVkWanDu++5rr6M2yo7H/RqGliIDt0WcYsW++/MGH8=;
- b=YFpKSb/pCohj83szujLEUpBtiAf6Hk/bJkqs7enPfAZ3ssGttxECTVVqSmwGaycwYr
- c7bCFhIzxNOR3hWxkw8MZict1Cz3QKsMJrIvHjtddmtO1GE4GvsARlxA38uqrZGRy3WJ
- J8Vu5O+uL67MLzuXT6pwOo47UOuudEXS+qNrvxIMaAAhQEY3QehFPhnSFSpdKFXn7l19
- 2Ej+WvlBT1FZlIHWsmbradRRKmHVNGbDwJYT4R+tKHNtaAn7V/b6d+/dEwpy0kjvbhWb
- +x0u0gEDUrgbk+FNeI8v4rmaVY4i7gWEoUI+sGJl/PqKivlcboh748Bm2hApxd9ecgNw
- mi7Q==
-X-Gm-Message-State: AOJu0YwWZXvkRHxcIyMlDbeGJ2UtyjXBbgqMdYvANIvsvK6ZqIlB5kNz
- ZNT9dLqqDv5QSijfVoaexbgtx7IezSq5Y8ZU37f3NbNkZFNe+7bvGAglPS/H66Gd20oiuj8NH1/
- T
-X-Gm-Gg: ASbGncuQLzVkk/t4GEDwuk4VpTVZAC79lcEOjnXORGrfXu9KLaG1JqqqZra6HsniiZP
- D5nFrAhJtjUiVPQDU1ny9u+E3F58AVGfvOSI8DK6HyW/NOVXawDqw61mvWcOqI9ffiUsvxlajlK
- FL+s1Dz/2FB4T4u3baWrXnvjwgXDcRFqWElPLQ6l3J4hCDHf8pp8yUcmQgXWkqrgwaWgl8tIzY3
- /3qyRYtXRop0AcW9m9V5RUASDK8cr9A4DFIjy7OwNhpKCaT65Hgvmic1hyYFW93F/6ok2PLCFf0
- TeOvbcotoFNfuYtx+W/hCFqmpDhYfR9vdzfcwK+CXQH0iNe2ZPJ2aiinU2Hugddkt+47MIwflfC
- hzn5GD8Rkv27BRd/tjoJsrA==
-X-Google-Smtp-Source: AGHT+IFW1ZORj4UbKfa3yyr2nNYJEYkCcjGyEPS7uzdcjEuxFNO4JY4oPB3tYaTja+M+ELoKumUUIg==
-X-Received: by 2002:a17:902:ce0a:b0:221:85:f384 with SMTP id
- d9443c01a7336-2242889b34emr357606495ad.16.1741821446377; 
- Wed, 12 Mar 2025 16:17:26 -0700 (PDT)
+ bh=NG0mwUzmw7cwMjhGyMB/MhgT9FfBfaMB/HdVwTgE4xI=;
+ b=vp6sRo+buU/I/XH+Ls7lhDUQdTU8W9q+YbNyXWhQrWCgB/DrwHgN8f6onP2cGTLQCw
+ y3uYDCdopd25vWDJKRsW3DCP/koBLNCUfXIXVBMSjDM4BRhCrmCADUYUlKdldcFVkFxw
+ crwCR3W20yb8da3/95jxbUtn2QA4fHuschQRFcYhUPsghLgmTLQ3XjQAogG8bKnq1/JO
+ HcT99pVt6spruMZbS693LJ7RaCiS0VSXyjfIp4t9jl0TfqA0Ij5cSOWQmSSjZ5o4iBO2
+ v5+t4ZPPA2yPFxlkMGSeQ6MxlX1O+V/E7IRv2ogz4TXLnfWtviQBCI7W2Y88PvOg55Uy
+ acDw==
+X-Gm-Message-State: AOJu0Yyj2E+76wjQjoQunixDTBR7Z7yLYeaAy3oL+RJXHkgiSYjNK1wD
+ kNCc4Z++WL+n2R6EwZc5sNjQazCahQ8RvP4l23MHQiyClr0QVb7CvTtlW9W83YuiXY9K4t7sU9r
+ x
+X-Gm-Gg: ASbGncs/yzLk0eMxHJ1+pWaCvFTpiUO2GJ1ZHfmRcBgotfUm9Py6mWkiuhqovTCZpUt
+ 2EgByvbPBxnQavkPBYxZ5EvG5iclyiDN6WEy0lpOa2EgO766SCdwd/uvccqPqg6h2ZP1oQp1jw+
+ 1oqls+alFwh5CmSD6o2Hw6FLkH0r9gAydOJBmQzN6450UnqQ/nRbwLMMOQFFKJ6V/D3oHgaUSPm
+ uc4YnM5Vepw7sPzDuMyIhP3AE7o9gjXHl7B27OEMtpwCA4LIsk74Bxznm3k8ochU8I3+zOP2CYf
+ humrVTOEmgpIhpWP2jgo4SvrJoobCkszn8hxokoBITpFzX3H5oslbUh9Izj8hKqRDPZGsaFXQZm
+ DhOm99v3hCPUuvfXn9rWsFaJB17h32Gw4
+X-Google-Smtp-Source: AGHT+IEMPNKeIZDIbCqG3xXm65PV1+sI1Kz2HyTg0oCy8frNBMmYJ2WTZLitkgxMVKOB3qld2z4K1Q==
+X-Received: by 2002:a17:903:22c8:b0:224:1dd5:4878 with SMTP id
+ d9443c01a7336-2242887b34fmr292887625ad.7.1741821447467; 
+ Wed, 12 Mar 2025 16:17:27 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6ba6f38sm1028305ad.129.2025.03.12.16.17.25
+ d9443c01a7336-225c6ba6f38sm1028305ad.129.2025.03.12.16.17.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Mar 2025 16:17:25 -0700 (PDT)
+ Wed, 12 Mar 2025 16:17:27 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v3 1/9] eal: add queue macro extensions from FreeBSD
-Date: Wed, 12 Mar 2025 16:15:30 -0700
-Message-ID: <20250312231715.222149-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, shahed.shaikh@cavium.com,
+ stable@dpdk.org, Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>, Shahed Shaikh <shshaikh@marvell.com>
+Subject: [PATCH v3 2/9] net/qede: fix use after free
+Date: Wed, 12 Mar 2025 16:15:31 -0700
+Message-ID: <20250312231715.222149-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250312231715.222149-1-stephen@networkplumber.org>
 References: <20250127180842.97907-1-stephen@networkplumber.org>
@@ -83,219 +84,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Linux version of sys/queue.h is frozen at an older version
-and is missing the _SAFE macro variants. Several drivers started
-introducing the own workarounds for this. Should be handled in EAL.
+The loop cleaning up flowdir resources was using SLIST_FOREACH
+but the inner loop would call rte_free. Found by building with
+address sanitizer undefined check.
+
+Also remove needless initialization, and null check.
+
+Fixes: f5765f66f9bb ("net/qede: refactor flow director into generic aRFS")
+Cc: shahed.shaikh@cavium.com
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/include/meson.build |   3 +-
- lib/eal/include/rte_queue.h | 174 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 176 insertions(+), 1 deletion(-)
- create mode 100644 lib/eal/include/rte_queue.h
+ drivers/net/qede/qede_ethdev.h |  3 +--
+ drivers/net/qede/qede_filter.c | 13 +++++--------
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/lib/eal/include/meson.build b/lib/eal/include/meson.build
-index d903577caa..75bf09381f 100644
---- a/lib/eal/include/meson.build
-+++ b/lib/eal/include/meson.build
-@@ -19,8 +19,8 @@ headers += files(
-         'rte_eal.h',
-         'rte_eal_memconfig.h',
-         'rte_eal_trace.h',
--        'rte_errno.h',
-         'rte_epoll.h',
-+        'rte_errno.h',
-         'rte_fbarray.h',
-         'rte_hexdump.h',
-         'rte_hypervisor.h',
-@@ -38,6 +38,7 @@ headers += files(
-         'rte_pci_dev_features.h',
-         'rte_per_lcore.h',
-         'rte_pflock.h',
-+        'rte_queue.h',
-         'rte_random.h',
-         'rte_reciprocal.h',
-         'rte_seqcount.h',
-diff --git a/lib/eal/include/rte_queue.h b/lib/eal/include/rte_queue.h
-new file mode 100644
-index 0000000000..7ec807b15d
---- /dev/null
-+++ b/lib/eal/include/rte_queue.h
-@@ -0,0 +1,174 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ *
-+ * Original Copyright (c) 1991, 1993
-+ *	The Regents of the University of California.  All rights reserved.
-+ */
-+
-+#ifndef _RTE_QUEUE_H_
-+#define _RTE_QUEUE_H_
-+
-+/**
-+ * @file
-+ *  Defines macro's that exist in the FreeBSD version of queue.h
-+ *  which are missing in other versions.
-+ */
-+
-+#include <sys/queue.h>
-+
-+/*
-+ * This file defines four types of data structures: singly-linked lists,
-+ * singly-linked tail queues, lists and tail queues.
-+ *
-+ * Below is a summary of implemented functions where:
-+ *  o  means the macro exists in original version
-+ *  +  means the macro is added here
-+ *  -  means the macro is not available
-+ *  s  means the macro is available but is slow (runs in O(n) time)
-+ *
-+ *				SLIST	LIST	STAILQ	TAILQ
-+ * _HEAD			o	o	o	o
-+ * _HEAD_INITIALIZER		o	o	o	o
-+ * _ENTRY			o	o	o	o
-+ * _INIT			o	o	o	o
-+ * _EMPTY			o	o	o	o
-+ * _FIRST			o	o	o	o
-+ * _NEXT			o	o	o	o
-+ * _FOREACH			o	o	o	o
-+ * _FOREACH_FROM		+	+	+	+
-+ * _FOREACH_SAFE		+	+	+	+
-+ * _FOREACH_FROM_SAFE		+	+	+	+
-+ * _FOREACH_REVERSE		-	-	-	o
-+ * _FOREACH_REVERSE_FROM	-	-	-	+
-+ * _FOREACH_REVERSE_SAFE	-	-	-       +
-+ * _FOREACH_REVERSE_FROM_SAFE	-	-	-	+
-+ * _INSERT_HEAD			o	o	o	o
-+ * _INSERT_BEFORE		-	o	-	o
-+ * _INSERT_AFTER		o	o	o	o
-+ * _INSERT_TAIL			-	-	o	o
-+ * _CONCAT			s	s	o	o
-+ * _REMOVE_AFTER		o	-	o	-
-+ * _REMOVE_HEAD			o	o	o	o
-+ * _REMOVE			s	o	s	o
-+ *
-+ */
-+
-+
-+/*
-+ * Singly-linked List declarations.
-+ */
-+#ifndef SLIST_FOREACH_FROM
-+#define	SLIST_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = SLIST_NEXT((var), field))
-+#endif
-+
-+#ifndef SLIST_FOREACH_SAFE
-+#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = SLIST_FIRST((head));				\
-+	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef SLIST_FOREACH_FROM_SAFE
-+#define	SLIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
-+	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+
-+/*
-+ * Singly-linked Tail queue declarations.
-+ */
-+#ifndef STAILQ_FOREACH_FROM
-+#define	STAILQ_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
-+	   (var);							\
-+	   (var) = STAILQ_NEXT((var), field))
-+#endif
-+
-+#ifndef STAILQ_FOREACH_SAFE
-+#define	STAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = STAILQ_FIRST((head));				\
-+	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef STAILQ_FOREACH_FROM_SAFE
-+#define	STAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)		\
-+	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
-+	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+/*
-+ * List declarations.
-+ */
-+#ifndef LIST_FOREACH_FROM
-+#define	LIST_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = LIST_NEXT((var), field))
-+#endif
-+
-+#ifndef LIST_FOREACH_SAFE
-+#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = LIST_FIRST((head));				\
-+	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef LIST_FOREACH_FROM_SAFE
-+#define	LIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
-+	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+/*
-+ * Tail queue declarations.
-+ */
-+#ifndef TAILQ_FOREACH_FROM
-+#define TAILQ_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = TAILQ_NEXT((var), field))
-+#endif
-+
-+#ifndef TAILQ_FOREACH_SAFE
-+#define TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = TAILQ_FIRST((head));				\
-+	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef TAILQ_FOREACH_FROM_SAFE
-+#define TAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
-+	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef TAILQ_FOREACH_REVERSE_FROM
-+#define TAILQ_FOREACH_REVERSE_FROM(var, head, headname, field)		\
-+	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
-+	    (var);							\
-+	    (var) = TAILQ_PREV((var), headname, field))
-+#endif
-+
-+#ifndef TAILQ_FOREACH_REVERSE_SAFE
-+#define TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-+	for ((var) = TAILQ_LAST((head), headname);			\
-+	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
-+	    (var) = (tvar))
-+#endif
-+
-+#ifndef TAILQ_FOREACH_REVERSE_FROM_SAFE
-+#define TAILQ_FOREACH_REVERSE_FROM_SAFE(var, head, headname, field, tvar)\
-+	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
-+	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
-+	    (var) = (tvar))
-+#endif
-+
-+#endif /* !_RTE_QUEUE_H_ */
+diff --git a/drivers/net/qede/qede_ethdev.h b/drivers/net/qede/qede_ethdev.h
+index 3015c18504..b502658425 100644
+--- a/drivers/net/qede/qede_ethdev.h
++++ b/drivers/net/qede/qede_ethdev.h
+@@ -8,8 +8,7 @@
+ #ifndef _QEDE_ETHDEV_H_
+ #define _QEDE_ETHDEV_H_
+ 
+-#include <sys/queue.h>
+-
++#include <rte_queue.h>
+ #include <rte_ether.h>
+ #include <ethdev_driver.h>
+ #include <ethdev_pci.h>
+diff --git a/drivers/net/qede/qede_filter.c b/drivers/net/qede/qede_filter.c
+index 14fb4338e9..c3f74c89d9 100644
+--- a/drivers/net/qede/qede_filter.c
++++ b/drivers/net/qede/qede_filter.c
+@@ -154,15 +154,12 @@ int qede_check_fdir_support(struct rte_eth_dev *eth_dev)
+ void qede_fdir_dealloc_resc(struct rte_eth_dev *eth_dev)
+ {
+ 	struct qede_dev *qdev = QEDE_INIT_QDEV(eth_dev);
+-	struct qede_arfs_entry *tmp = NULL;
++	struct qede_arfs_entry *tmp, *tmp2;
+ 
+-	SLIST_FOREACH(tmp, &qdev->arfs_info.arfs_list_head, list) {
+-		if (tmp) {
+-			rte_memzone_free(tmp->mz);
+-			SLIST_REMOVE(&qdev->arfs_info.arfs_list_head, tmp,
+-				     qede_arfs_entry, list);
+-			rte_free(tmp);
+-		}
++	SLIST_FOREACH_SAFE(tmp, &qdev->arfs_info.arfs_list_head, list, tmp2) {
++		rte_memzone_free(tmp->mz);
++		SLIST_REMOVE(&qdev->arfs_info.arfs_list_head, tmp, qede_arfs_entry, list);
++		rte_free(tmp);
+ 	}
+ }
+ 
 -- 
 2.47.2
 
