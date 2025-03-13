@@ -2,73 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DECBC282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 21:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F46C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 22:55:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 183B94066F;
-	Thu, 13 Mar 2025 22:52:18 +0100 (CET)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id B3A6F40648
- for <dev@dpdk.org>; Thu, 13 Mar 2025 22:52:11 +0100 (CET)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-22409077c06so39600925ad.1
- for <dev@dpdk.org>; Thu, 13 Mar 2025 14:52:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 20AAA40280;
+	Thu, 13 Mar 2025 23:55:28 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 040754025A
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 23:55:27 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2243803b776so44217705ad.0
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741902731;
- x=1742507531; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=R9sgKgUyuBTZRLmXsP7d+K5iygbV3EEQBEnKjMwFTLQ=;
- b=VDrFtV1WdIGSuDDJMyTELSkA0w1Nq18YfdonTZ0xzW93EJ0veLCvsrpYYZqwiOlxSh
- SuXF1snqFgPdMxxMJzeaac8VTWFBi7+7Va6eJ/74z6c0dat6VX2BPplxpT/3BWQr5066
- DKVPzIX0RdcNEuj+NxoEPPoJpP9X9Ok1F9GU5fZRp3+GcTPt5WIo4HaWY6BBjOYBFGna
- QADt/4BITMa8hD2UxqUzwv4d/nP2IvPpd6I8/lfIlHGG1clSbWmXDHZROZBKJh/IaTg0
- nE+waWZakwTxa8RJWjEvTgllT6V/wg5O+nzjm4CEpTB8riFZUPk+apULdbDULPRda5aF
- XUmg==
+ d=iol.unh.edu; s=unh-iol; t=1741906526; x=1742511326; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=kXYv5rwkV7PrQ8YuvFU7QLtzGnUZja9x9C+PD9oBNXE=;
+ b=auZkUEva1B5hDvR9fOUuPIMY9qPqdBz/hrFsDScXcrNEAf5Z7Iu2PgqLwKjUKfQSjv
+ 7ywDzs385khg5ipkcserRrKGNwGDoAT05fy0/GkbPzrJcXEFSTvTxAPffoaYn63kTrHT
+ 8kIFKF2EiTwmOnjO76+GDkz8S6jtbwBe7HxIA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741902731; x=1742507531;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=R9sgKgUyuBTZRLmXsP7d+K5iygbV3EEQBEnKjMwFTLQ=;
- b=vy2+ilq4G+pwVpnAr8MFa1ID+9zvTzPOcxK1bUpgpKu0dHDQryhoI8Wh+A636BwO2w
- evO8fuKiqkeiI6QqdXyN2i2WNpg8b5L0+GWbkONhsz2nhLNyYX++zp1XXK/QyoFRkKNT
- FOFowOFkGWBQQLpc2pO2Z8IXG9jxI8AXrEBY2jj1aYS77o/3JfjTJOJ+GagH7rUJag7F
- FVPQVlW+D/nn0CiP7287m7z8i8lbqQioStc96dRkTfXriZ65JZcnR89yrea5WQvLbyGm
- 3cW4QnoDwTdzlo5PovWo+vf/BLreXrz2gK0+oMWIsjaVP2lYyxZ083hK3ny9FXCKYlXi
- fi1A==
-X-Gm-Message-State: AOJu0YynKWyDDH6QIqmPEZ3RBxaEScSexlrr3dLUXEnkZPRzSy3c0axX
- fwZCnCITy90EMJqIvp8nWDeGI5OAqMdFiUhqdNlAaL2RfzImBEaj3s6EhQi3HPDO9BZ8XULa5v6
- F
-X-Gm-Gg: ASbGncsBt3QYIe0Vu+3WfcmTJeV02Cols3Rga7rQ7uSNeXOBfY94FAByxE7r1tyRwGg
- YqR9ZlZoD5myhjuzs1QO7aHmn9mVkiyi87xgJWouaZtytUejjHO0IOd9UVxmsODp2579bJNJKQH
- sCOGIwvlaOd+GLXO5RslUDrrFBuNoZ5C1eexnNG45AZwXQuuCQUvHHalz5YHyb/xFzs78h/kXxC
- Ga7oKIVz2KdSEsHhGNSoOAFsjvWBzh5XFtSFeFZEtpV7+gqaY0DX7eX42Z+1/E2juGKfCtOWMMG
- I6H1xlxoJ/IQeP7MVdzVEZiTY3zxQYGaN0ie+SXh5WlhKDS5Bwj6Izq//7PvhQt1tnVh5KoULZP
- pgRJMwbCIDe7xHlaLQVyYqA==
-X-Google-Smtp-Source: AGHT+IFNzhYKEXTye/iqZjd6/vGezPHRRbtfqLULttWVpTLoNjYG0Yv8unos/whMrlvKae1G6RTn5g==
-X-Received: by 2002:a17:903:2a88:b0:223:4bd6:3869 with SMTP id
- d9443c01a7336-225e0a3907cmr2608595ad.15.1741902730909; 
- Thu, 13 Mar 2025 14:52:10 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6bd3d5bsm18337775ad.217.2025.03.13.14.52.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 14:52:10 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 10/10] net/ioring: add support for Rx offload
-Date: Thu, 13 Mar 2025 14:51:01 -0700
-Message-ID: <20250313215151.292944-11-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250313215151.292944-1-stephen@networkplumber.org>
-References: <20241210212757.83490-1-stephen@networkplumber.org>
- <20250313215151.292944-1-stephen@networkplumber.org>
+ d=1e100.net; s=20230601; t=1741906526; x=1742511326;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=kXYv5rwkV7PrQ8YuvFU7QLtzGnUZja9x9C+PD9oBNXE=;
+ b=L9hicHZ0/SEBzr/P603inrIOXBlgLsyFR7resjP0xXo71U5YnKU947kN/x4o9fGeQp
+ nb9lyRXhMsmo4/wFmByDwDdwHXVkivIVDQhHzVYowb0awUnndqDGyhN5ReLpDVnHQl+i
+ /laQf4L/ZrL1unb6zjtZ8D+/Z7Wem4t0oWUQuseGqym/jqLwhnN2sHBXADEC4XxkbJRB
+ 68KuJERgNm4ghOI7VeobIZlh4YMkGkL5fg4YeNNufLL2Mjd+PXvKpy/5bljtSrmFn8Jj
+ Z0ub9ib4Vs4jeGfoHKeGPTER27QFRlE5dRVKbhW6GpAKzD3JxKZKZVq58jhUx/mFv7e8
+ 0wgw==
+X-Gm-Message-State: AOJu0Yx7Lo2qtsPsKBP5jLOsTbzTrFTXSwp6F/B1CusGMn7RYq5x8MEO
+ jUuVM6N21wJv5laFtbU87Owai3a6PeMa0JTQfZRwfZUNJVBh5S/neupXvKxBJ5GJpLSYF1DIjK0
+ 83ob/tjmUejpUxHhX19M8USaI+8iqMIsuVMGFUv1UsqvD483087nPPQ==
+X-Gm-Gg: ASbGncvkNAPIko+s16FxS5SXCkO6JUHaZg6jkPGnjRL6azTd9A4ZeDjCdTlnHuNekQO
+ +yafkNhRYEziTxFpCHeamNARzAHLigcgig9C2Y0rS6CrGe624fwqinSa99XhpV4OxiWtEYXbZAs
+ tI2ZhYfuNoU+79JPx9KPBkAJ+o2s/zk9O6h5c68Na66OtuW0aXTmU6KYZHKOI=
+X-Google-Smtp-Source: AGHT+IEK3J/lT6WRNs9q24YyayMuz5isR3AUIuBBLkKhVTBVVlD7z8cFXW+UbLARmOI1omrUwMJaQc6FCy+17cOkAwY=
+X-Received: by 2002:a17:903:2ec8:b0:224:1609:a747 with SMTP id
+ d9443c01a7336-225e0a9c84amr3896575ad.31.1741906525693; Thu, 13 Mar 2025
+ 15:55:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 13 Mar 2025 18:51:43 -0400
+X-Gm-Features: AQ5f1JoyUyfCWLiwX6UV7QtouAuHdvH6MUtlgYKNtMz9K8e-jiX3Gjp6dlAVVbM
+Message-ID: <CAJvnSUDYfj1EgDVKv6RR14hV5cZirHJeuwfNsPLSnJjDt5NFaQ@mail.gmail.com>
+Subject: DTS WG Meeting Minutes - December 19, 2024
+To: dev <dev@dpdk.org>
+Cc: ci@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000b240ce063041373b"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,161 +65,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The TAP device supports receive offload.
+--000000000000b240ce063041373b
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/ioring/rte_eth_ioring.c | 98 ++++++++++++++++++++++++++++-
- 1 file changed, 96 insertions(+), 2 deletions(-)
+#####################################################################
+December 19, 2024
+Attendees
+* Patrick Robb
+* Paul Szczepanek
+* Luca Vizzarro
+* Thomas Wilks
 
-diff --git a/drivers/net/ioring/rte_eth_ioring.c b/drivers/net/ioring/rte_eth_ioring.c
-index 704b887d36..7c60d49b23 100644
---- a/drivers/net/ioring/rte_eth_ioring.c
-+++ b/drivers/net/ioring/rte_eth_ioring.c
-@@ -30,6 +30,7 @@
- #include <rte_ether.h>
- #include <rte_kvargs.h>
- #include <rte_log.h>
-+#include <rte_net.h>
- 
- static_assert(RTE_PKTMBUF_HEADROOM >= sizeof(struct virtio_net_hdr));
- 
-@@ -44,7 +45,10 @@ static_assert(IORING_MAX_QUEUES <= RTE_MP_MAX_FD_NUM, "Max queues exceeds MP fd
- 				 RTE_ETH_TX_OFFLOAD_TCP_CKSUM | \
- 				 RTE_ETH_TX_OFFLOAD_TCP_TSO)
- 
--#define IORING_RX_OFFLOAD	RTE_ETH_RX_OFFLOAD_SCATTER
-+#define IORING_RX_OFFLOAD	(RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
-+				 RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
-+				 RTE_ETH_RX_OFFLOAD_TCP_LRO | \
-+				 RTE_ETH_RX_OFFLOAD_SCATTER)
- 
- #define IORING_DEFAULT_IFNAME	"itap%d"
- #define IORING_MP_KEY		"ioring_mp_send_fds"
-@@ -349,10 +353,31 @@ eth_dev_stop(struct rte_eth_dev *dev)
- static int
- eth_dev_configure(struct rte_eth_dev *dev)
- {
-+	struct pmd_internals *pmd = dev->data->dev_private;
-+
- 	/* rx/tx must be paired */
- 	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues)
- 		return -EINVAL;
- 
-+	/*
-+	 * Set offload flags visible on the kernel network interface.
-+	 * This controls whether kernel will use checksum offload etc.
-+	 * Note: kernel transmit is DPDK receive.
-+	 */
-+	const struct rte_eth_rxmode *rx_mode = &dev->data->dev_conf.rxmode;
-+	unsigned int offload = 0;
-+	if (rx_mode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM) {
-+		offload |= TUN_F_CSUM;
-+
-+		if (rx_mode->offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO)
-+			offload |= TUN_F_TSO4 | TUN_F_TSO6 | TUN_F_TSO_ECN;
-+	}
-+
-+	if (ioctl(pmd->keep_fd, TUNSETOFFLOAD, offload) != 0) {
-+		PMD_LOG(ERR, "ioctl(TUNSETOFFLOAD) failed: %s", strerror(errno));
-+		return -1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -558,7 +583,6 @@ eth_ioring_rx_alloc(struct rx_queue *rxq)
- 	return m;
- }
- 
--
- /* set length of received mbuf segments */
- static inline void
- eth_ioring_rx_adjust(struct rte_mbuf *mb, size_t len)
-@@ -582,6 +606,69 @@ eth_ioring_rx_adjust(struct rte_mbuf *mb, size_t len)
- 	}
- }
- 
-+static int
-+eth_ioring_rx_offload(struct rte_mbuf *m, const struct virtio_net_hdr *hdr)
-+{
-+	uint32_t ptype;
-+	bool l4_supported = false;
-+	struct rte_net_hdr_lens hdr_lens;
-+
-+	/* nothing to do */
-+	if (hdr->flags == 0 && hdr->gso_type == VIRTIO_NET_HDR_GSO_NONE)
-+		return 0;
-+
-+	m->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN;
-+
-+	ptype = rte_net_get_ptype(m, &hdr_lens, RTE_PTYPE_ALL_MASK);
-+	m->packet_type = ptype;
-+	if ((ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_TCP ||
-+	    (ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_UDP ||
-+	    (ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_SCTP)
-+		l4_supported = true;
-+
-+	if (hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) {
-+		uint32_t hdrlen = hdr_lens.l2_len + hdr_lens.l3_len + hdr_lens.l4_len;
-+		if (hdr->csum_start <= hdrlen && l4_supported) {
-+			m->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_NONE;
-+		} else {
-+			/* Unknown proto or tunnel, do sw cksum. */
-+			uint16_t csum = 0, off;
-+
-+			if (rte_raw_cksum_mbuf(m, hdr->csum_start,
-+					       rte_pktmbuf_pkt_len(m) - hdr->csum_start,
-+					       &csum) < 0)
-+				return -EINVAL;
-+			if (likely(csum != 0xffff))
-+				csum = ~csum;
-+			off = hdr->csum_offset + hdr->csum_start;
-+			if (rte_pktmbuf_data_len(m) >= off + 1)
-+				*rte_pktmbuf_mtod_offset(m, uint16_t *, off) = csum;
-+		}
-+	} else if ((hdr->flags & VIRTIO_NET_HDR_F_DATA_VALID) && l4_supported) {
-+		m->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD;
-+	}
-+
-+	/* GSO request, save required information in mbuf */
-+	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
-+		/* Check unsupported modes */
-+		if ((hdr->gso_type & VIRTIO_NET_HDR_GSO_ECN) || hdr->gso_size == 0)
-+			return -EINVAL;
-+
-+		/* Update mss lengths in mbuf */
-+		m->tso_segsz = hdr->gso_size;
-+		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-+		case VIRTIO_NET_HDR_GSO_TCPV4:
-+		case VIRTIO_NET_HDR_GSO_TCPV6:
-+			m->ol_flags |= RTE_MBUF_F_RX_LRO | RTE_MBUF_F_RX_L4_CKSUM_NONE;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static uint16_t
- eth_ioring_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
-@@ -626,6 +713,13 @@ eth_ioring_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		else
- 			eth_ioring_rx_adjust(mb, len);
- 
-+		if (unlikely(eth_ioring_rx_offload(mb, hdr) < 0)) {
-+			PMD_RX_LOG(ERR, "invalid rx offload");
-+			++rxq->rx_errors;
-+			goto resubmit;
-+		}
-+
-+		__rte_mbuf_sanity_check(mb, 1);
- 		num_bytes += mb->pkt_len;
- 		bufs[num_rx++] = mb;
- 
--- 
-2.47.2
+#####################################################################
+Minutes
 
+=====================================================================
+General Discussion
+* 25.03 DTS roadmap was mailed out:
+https://inbox.dpdk.org/ci/CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA@mail.gmail.com/T/#u
+* December 26 CI meeting is cancelled
+* January 2 DTS meeting is cancelled
+
+=====================================================================
+Patch discussions
+* Nick has submitted a bugfix for the paramiko interactive shell, which
+forces the close method to wait for 1 byte to enter the stdout buffer
+before calling paramiko close():
+   *
+https://patchwork.dpdk.org/project/dpdk/patch/20241212193902.31789-1-npratte@iol.unh.edu/
+* Queue start/stop:
+   * Dean reviewed this again yesterday, submitted a new patch which
+rewrote the commit message and requested a review and merge
+   * Stephen Hemminger replied to the latest patch, requesting that an
+additional testcase be added to the suite which uses deferred start.
+      * This will be added by Dean ASAP and then Patrick will review to
+merge to next-dts.
+* Hello world replacement series:
+https://patchwork.dpdk.org/project/dpdk/patch/20241209215406.6982-2-dmarx@iol.unh.edu/
+   * Brings up testpmd app, does nothing, closes
+   * Paul will review
+* Ruff: Patrick will provide a review by end of week
+   * There is a scapy/mypy update series which depends on this
+* A linting bugfix patch for python 3.12 was submitted, which affects dts
+file and regular DPDK files. We are unsure of whether this should go to the
+next-dts tree or not, which Patrick asked about on the mailing list. If
+there is no comment we will merge the series to next-dts next week.
+* Config persistency testsuite is submitted by Thomas Wilks
+   *
+https://patchwork.dpdk.org/project/dpdk/patch/20241212132807.263829-3-thomas.wilks@arm.com/
+   * Patrick will review tomorrow
+* Shell conversation: create a list of shells per node, references are
+stored, then at the end of each testcase check if there are still any open
+shells in this list and if so, closes them.
+
+=====================================================================
+Bugzilla discussions
+* Dockerfile upgrade to 24.04 ticket: Dean has been playing around with
+upgrading the Dockerfile to 24.04 and trying to understand which
+dependencies are broken by this.
+   * Dean should assign this ticket to himself on bugzilla if he means to
+do this in 25.03
+   * Patrick/Dean create a bugzilla ticket for this
+
+=====================================================================
+Any other business
+* Next meeting January 16, 2025
+
+--000000000000b240ce063041373b
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">##########################################################=
+###########<br>December 19, 2024<br>Attendees<br>* Patrick Robb<br>* Paul S=
+zczepanek<br>* Luca Vizzarro<br>* Thomas Wilks<br><br>#####################=
+################################################<br>Minutes<br><br>=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<b=
+r>* 25.03 DTS roadmap was mailed out: <a href=3D"https://inbox.dpdk.org/ci/=
+CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA@mail.gmail.com/T/#u">ht=
+tps://inbox.dpdk.org/ci/CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA=
+@mail.gmail.com/T/#u</a><br>* December 26 CI meeting is cancelled<br>* Janu=
+ary 2 DTS meeting is cancelled<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D<br>Patch discussions<br>* Nick has submitted a bugfix=
+ for the paramiko interactive shell, which forces the close method to wait =
+for 1 byte to enter the stdout buffer before calling paramiko close():<br>=
+=C2=A0 =C2=A0* <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/202=
+41212193902.31789-1-npratte@iol.unh.edu/">https://patchwork.dpdk.org/projec=
+t/dpdk/patch/20241212193902.31789-1-npratte@iol.unh.edu/</a><br>* Queue sta=
+rt/stop:<br>=C2=A0 =C2=A0* Dean reviewed this again yesterday, submitted a =
+new patch which rewrote the commit message and requested a review and merge=
+<br>=C2=A0 =C2=A0* Stephen Hemminger replied to the latest patch, requestin=
+g that an additional testcase be added to the suite which uses deferred sta=
+rt. <br>=C2=A0 =C2=A0 =C2=A0 * This will be added by Dean ASAP and then Pat=
+rick will review to merge to next-dts.<br>* Hello world replacement series:=
+ <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/20241209215406.69=
+82-2-dmarx@iol.unh.edu/">https://patchwork.dpdk.org/project/dpdk/patch/2024=
+1209215406.6982-2-dmarx@iol.unh.edu/</a><br>=C2=A0 =C2=A0* Brings up testpm=
+d app, does nothing, closes<br>=C2=A0 =C2=A0* Paul will review<br>* Ruff: P=
+atrick will provide a review by end of week<br>=C2=A0 =C2=A0* There is a sc=
+apy/mypy update series which depends on this<br>* A linting bugfix patch fo=
+r python 3.12 was submitted, which affects dts file and regular DPDK files.=
+ We are unsure of whether this should go to the next-dts tree or not, which=
+ Patrick asked about on the mailing list. If there is no comment we will me=
+rge the series to next-dts next week.<br>* Config persistency testsuite is =
+submitted by Thomas Wilks<br>=C2=A0 =C2=A0* <a href=3D"https://patchwork.dp=
+dk.org/project/dpdk/patch/20241212132807.263829-3-thomas.wilks@arm.com/">ht=
+tps://patchwork.dpdk.org/project/dpdk/patch/20241212132807.263829-3-thomas.=
+wilks@arm.com/</a><br>=C2=A0 =C2=A0* Patrick will review tomorrow<br>* Shel=
+l conversation: create a list of shells per node, references are stored, th=
+en at the end of each testcase check if there are still any open shells in =
+this list and if so, closes them. <br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzilla discussions<br>* Dockerfile upgrade to=
+ 24.04 ticket: Dean has been playing around with upgrading the Dockerfile t=
+o 24.04 and trying to understand which dependencies are broken by this.<br>=
+=C2=A0 =C2=A0* Dean should assign this ticket to himself on bugzilla if he =
+means to do this in 25.03<br>=C2=A0 =C2=A0* Patrick/Dean create a bugzilla =
+ticket for this<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Next meeting January 16, 2025=
+</div>
+
+--000000000000b240ce063041373b--
