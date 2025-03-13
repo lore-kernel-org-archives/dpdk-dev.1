@@ -2,78 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EA4C282EC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF80C282EC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:40:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 347AE41141;
-	Thu, 13 Mar 2025 17:25:02 +0100 (CET)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 6EB1B40ED3
- for <dev@dpdk.org>; Thu, 13 Mar 2025 17:25:01 +0100 (CET)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-301302a328bso2477939a91.2
- for <dev@dpdk.org>; Thu, 13 Mar 2025 09:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741883100;
- x=1742487900; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=RCzJbOPAH6tG8vEmd1no/Al34RxIvoosmiLn5VUTzsQ=;
- b=ayzxN/Wa5jwM+mdroUGyo42ItQrjr7nuAlRmcCunkhPsjUI1jpdwOUTZLlIus/SqDT
- qsrinCFNwUYcCA/us4C8HQd89tjzWEuDIFEircaw20ls6KVRycEJL0odVEnR1OLzIz90
- Ggkyp1WyUtI1PE5apoFThBmmfMkOdvqfA1C69oq8DkfX5tA+gAISh5JLqVnNBddErWn/
- /VX6HBqfCBYLUitDJECISs5JnJnmvVQyp/Y2cJDzJzWJLEIWhkfRffurBIRRLZW/g3V3
- ZnV5IhV4+Fjgp2XiB+s/12ofrRZIJ/wgbWuQcN7KmVh2+DWNEjEBX234OMmVZIydkfJy
- jQnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741883100; x=1742487900;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=RCzJbOPAH6tG8vEmd1no/Al34RxIvoosmiLn5VUTzsQ=;
- b=GREwNxfro0/Wv8sf3A22UWxurlxK8hLiyDtNkcpGzAJ8bz076Z8s6TNJuetfWgyr56
- J8xG0/CN2wtrSBu8BKQQIz90Cu3+hBg70tGKchG+N+egxwfDYUw5M7T7sRGqRKHtoBDH
- KuWT1oVklMlvX3TseQbF80QHJjfCvSR3vYD1alcsg5wPF8+PCedYUwOr4RxhxNiEmncJ
- qPGcJxBlhof3o1ssq6yescBVhPZ+rc/rZU5YegEJ/y0OT4sEAZVnzM+oJUSy+viZL9qp
- tAFlDHrxtPx0WfmfO5Z8ps6fKKkLlrMZmhPxkoY9mPyR1x8rEzKDAUi1Rwk6NirwEzhD
- fLXg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUB155y3aPr0hTGT0W+3oHIrb2LLRxXWYQR4NGv+pinQ7EWvKedM8huicb1qv7+nXVimxo=@dpdk.org
-X-Gm-Message-State: AOJu0YxMZJZBrDr02jQzomNEfWffBIwHW0kSy1wYvr54rPyKfYovhfjL
- Ahy69rGzy0Shx/ycjZGFSgx2Lp2eRgsVCgaARbJUXn0qKQeStgxPu6aHxhAyVuk=
-X-Gm-Gg: ASbGncsRFkVF9FA35Vs1Tu5ZMX9Aap5G1PPn7jpSVyN5Gy7imKfTwRAJ3L/vLmlRJjr
- Br0f0OhCvQTQdWu6V59FGErn/uraUGd7tIqV1b46d3hZ+wqHPGXXwnGVeFEcQ6KNxLx8ZuXrt0M
- /QjoBRurOErU9ouQNxH0/kCwDhWNlay090P85k34igyGzoo2XPMNYPbZgDYLo/c81BIGwfbLIFd
- gm09NWwX0Sqka5Ca8evgPEErN3jQrggTaGhlJ8iGCWlO1E1BHnxKKYZ7/mwhwcywYz1uKfprSA6
- yMCtA+ipMW/mJ/9FlmNWbfNajM61CKiyWTBow4JXK5QbYAakFnv1lct968o/YAyLkmHrNs1ROS1
- kMV6Txqq7MQqiqhjKkpa2nA==
-X-Google-Smtp-Source: AGHT+IG2nqMeXWBZ6/AYWQPl7hIeShYmlG2vWjOE2aRhGiAj95mK3PVrQvoVfnhyVgBT/gqe2QyJXw==
-X-Received: by 2002:a17:90b:540d:b0:2ee:edae:75e with SMTP id
- 98e67ed59e1d1-3014e844d4dmr208170a91.13.1741883100317; 
- Thu, 13 Mar 2025 09:25:00 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-30118218707sm4033680a91.3.2025.03.13.09.24.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 09:25:00 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:24:57 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: "Thomas Monjalon" <thomas@monjalon.net>, "Bruce Richardson"
- <bruce.richardson@intel.com>, <dev@dpdk.org>, "Tyler Retzlaff"
- <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Message-ID: <20250313092457.35c2148e@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
- <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
- <3711940.zToM8qfIzz@thomas>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 5C2304114B;
+	Thu, 13 Mar 2025 17:40:29 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id DD36641141
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 17:40:28 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A31002208E;
+ Thu, 13 Mar 2025 17:40:28 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 13 Mar 2025 17:40:26 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB12@smartserver.smartshare.dk>
+In-Reply-To: <20250313092457.35c2148e@hermes.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Thread-Index: AduUNHkdFcgY2TfNTui6TZiUARRv0wAASO2A
+References: <20250127180842.97907-1-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk><Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com><3711940.zToM8qfIzz@thomas><98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
+ <20250313092457.35c2148e@hermes.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>,
+ "Bruce Richardson" <bruce.richardson@intel.com>, <dev@dpdk.org>,
+ "Tyler Retzlaff" <roretzla@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,94 +49,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Mar 2025 15:41:33 +0100
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-
-> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
-> >=20
-> > 13/03/2025 09:56, Bruce Richardson: =20
-> > > On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Br=C3=B8rup wrote: =
-=20
-> > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > > > Sent: Thursday, 13 March 2025 00.02
-> > > > >
-> > > > > On Wed, 19 Feb 2025 15:55:17 +0100
-> > > > > Thomas Monjalon <thomas@monjalon.net> wrote:
-> > > > > =20
-> > > > > > 14/02/2025 18:20, Stephen Hemminger: =20
-> > > > > > > The Linux version of sys/queue.h is frozen at an older =20
-> > version =20
-> > > > > > > and is missing the _SAFE macro variants. Several drivers =20
-> > started =20
-> > > > > > > introducing the own workarounds for this. Should be handled =
-=20
-> > in EAL. =20
-> > > > > > >
-> > > > > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>=
- =20
-> > > > > >
-> > > > > > We may want to unify with lib/eal/windows/include/sys/queue.h
-> > > > > >
-> > > > > > =20
-> > > > >
-> > > > > Not sure, we have several options here:
-> > > > >   1. Keep using Linux sys/queue.h and add enhancements in =20
-> > rte_queue.h =20
-> > > > >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that =
-=20
-> > is =20
-> > > > > what Windows did)
-> > > > >   3. Use the bsd version of queue.h.
-> > > > >      On Debian/Ubuntu this in libbsd-dev package and referred to =
-=20
-> > as =20
-> > > > > bsd/sys/queue.h
-> > > > >
-> > > > > I chose #1 as simplest. But all of these could work. #3 means =20
-> > DPDK has =20
-> > > > > least new
-> > > > > code, but adds another dependency to the build. =20
-> > > >
-> > > > +1 to #2:
-> > > > If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h,=
- =20
-> > #2 would consolidate all the queue macros in one file. =20
-> > > > That seems easier to navigate (for a developer/reviewer looking at =
-=20
-> > the macro definitions/implementations) than including sys/queue.h,
-> > queue.h or lib/eal/windows/include/sys/queue.h depending on O/S, and
-> > then defining the missing macros in rte_queue.h. =20
-> > > > A comment at the top of the rte_queue.h file could mention that it =
-=20
-> > is a copy of the FreeBSD queue.h file. =20
-> > > >
-> > > > -1 to #3; it adds an unnecessary dependency.
-> > > > =20
-> > > > >
-> > > > > No matter what, should add to checkpatch to block any new files =
-=20
-> > that =20
-> > > > > include sys/queue.h
-> > > > > directly. =20
-> > > >
-> > > > +1 to this.
-> > > > =20
-> > >
-> > > I agree with Morten, #2 looks the best option to me too. =20
-> >=20
-> > It means we want to remove lib/eal/windows/include/sys/queue.h, right? =
-=20
->=20
-> Correct.
-> All queue macros are consolidated into rte_queue.h.
->=20
-
-I have been trying this, and it possible but there is some fallout.
-If application includes <sys/queue.h> and other DPDK headers include <rte_q=
-ueue.h>
-there are declaration conflicts. Ends up being a compilation failure.
-Tedious, but not hard to fix all of DPDK to use rte_queue.h instead of sys/=
-queue.h
-but what about user applications?
-
-Since that would be API break, best to put it off to 25.11.
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgMTMgTWFyY2ggMjAyNSAxNy4yNQ0KPiANCj4gT24gVGh1
+LCAxMyBNYXIgMjAyNSAxNTo0MTozMyArMDEwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
+aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiBGcm9tOiBUaG9tYXMgTW9uamFsb24g
+W21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiA+ID4NCj4gPiA+IDEzLzAzLzIwMjUgMDk6
+NTYsIEJydWNlIFJpY2hhcmRzb246DQo+ID4gPiA+IE9uIFRodSwgTWFyIDEzLCAyMDI1IGF0IDA5
+OjAwOjA5QU0gKzAxMDAsIE1vcnRlbiBCcsO4cnVwIHdyb3RlOg0KPiA+ID4gPiA+ID4gRnJvbTog
+U3RlcGhlbiBIZW1taW5nZXIgW21haWx0bzpzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZ10NCj4g
+PiA+ID4gPiA+IFNlbnQ6IFRodXJzZGF5LCAxMyBNYXJjaCAyMDI1IDAwLjAyDQo+ID4gPiA+ID4g
+Pg0KPiA+ID4gPiA+ID4gT24gV2VkLCAxOSBGZWIgMjAyNSAxNTo1NToxNyArMDEwMA0KPiA+ID4g
+PiA+ID4gVGhvbWFzIE1vbmphbG9uIDx0aG9tYXNAbW9uamFsb24ubmV0PiB3cm90ZToNCj4gPiA+
+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IDE0LzAyLzIwMjUgMTg6MjAsIFN0ZXBoZW4gSGVtbWluZ2Vy
+Og0KPiA+ID4gPiA+ID4gPiA+IFRoZSBMaW51eCB2ZXJzaW9uIG9mIHN5cy9xdWV1ZS5oIGlzIGZy
+b3plbiBhdCBhbiBvbGRlcg0KPiA+ID4gdmVyc2lvbg0KPiA+ID4gPiA+ID4gPiA+IGFuZCBpcyBt
+aXNzaW5nIHRoZSBfU0FGRSBtYWNybyB2YXJpYW50cy4gU2V2ZXJhbCBkcml2ZXJzDQo+ID4gPiBz
+dGFydGVkDQo+ID4gPiA+ID4gPiA+ID4gaW50cm9kdWNpbmcgdGhlIG93biB3b3JrYXJvdW5kcyBm
+b3IgdGhpcy4gU2hvdWxkIGJlDQo+IGhhbmRsZWQNCj4gPiA+IGluIEVBTC4NCj4gPiA+ID4gPiA+
+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyDQo+
+IDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+
+ID4gV2UgbWF5IHdhbnQgdG8gdW5pZnkgd2l0aA0KPiBsaWIvZWFsL3dpbmRvd3MvaW5jbHVkZS9z
+eXMvcXVldWUuaA0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4NCj4g
+PiA+ID4gPiA+IE5vdCBzdXJlLCB3ZSBoYXZlIHNldmVyYWwgb3B0aW9ucyBoZXJlOg0KPiA+ID4g
+PiA+ID4gICAxLiBLZWVwIHVzaW5nIExpbnV4IHN5cy9xdWV1ZS5oIGFuZCBhZGQgZW5oYW5jZW1l
+bnRzIGluDQo+ID4gPiBydGVfcXVldWUuaA0KPiA+ID4gPiA+ID4gICAyLiBNYWtlIHJ0ZV9xdWV1
+ZS5oIGEgY29weSBvZiBGcmVlQlNEIHZlcnNpb24gb2YgcXVldWUuaA0KPiAodGhhdA0KPiA+ID4g
+aXMNCj4gPiA+ID4gPiA+IHdoYXQgV2luZG93cyBkaWQpDQo+ID4gPiA+ID4gPiAgIDMuIFVzZSB0
+aGUgYnNkIHZlcnNpb24gb2YgcXVldWUuaC4NCj4gPiA+ID4gPiA+ICAgICAgT24gRGViaWFuL1Vi
+dW50dSB0aGlzIGluIGxpYmJzZC1kZXYgcGFja2FnZSBhbmQgcmVmZXJyZWQNCj4gdG8NCj4gPiA+
+IGFzDQo+ID4gPiA+ID4gPiBic2Qvc3lzL3F1ZXVlLmgNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
+PiBJIGNob3NlICMxIGFzIHNpbXBsZXN0LiBCdXQgYWxsIG9mIHRoZXNlIGNvdWxkIHdvcmsuICMz
+IG1lYW5zDQo+ID4gPiBEUERLIGhhcw0KPiA+ID4gPiA+ID4gbGVhc3QgbmV3DQo+ID4gPiA+ID4g
+PiBjb2RlLCBidXQgYWRkcyBhbm90aGVyIGRlcGVuZGVuY3kgdG8gdGhlIGJ1aWxkLg0KPiA+ID4g
+PiA+DQo+ID4gPiA+ID4gKzEgdG8gIzI6DQo+ID4gPiA+ID4gSWYgTGludXggc3lzL3F1ZXVlLmgg
+aXMgZnJvemVuLCBhbmQgaXMgYSBzdWJzZXQgb2YgRnJlZUJTRA0KPiBxdWV1ZS5oLA0KPiA+ID4g
+IzIgd291bGQgY29uc29saWRhdGUgYWxsIHRoZSBxdWV1ZSBtYWNyb3MgaW4gb25lIGZpbGUuDQo+
+ID4gPiA+ID4gVGhhdCBzZWVtcyBlYXNpZXIgdG8gbmF2aWdhdGUgKGZvciBhIGRldmVsb3Blci9y
+ZXZpZXdlciBsb29raW5nDQo+IGF0DQo+ID4gPiB0aGUgbWFjcm8gZGVmaW5pdGlvbnMvaW1wbGVt
+ZW50YXRpb25zKSB0aGFuIGluY2x1ZGluZyBzeXMvcXVldWUuaCwNCj4gPiA+IHF1ZXVlLmggb3Ig
+bGliL2VhbC93aW5kb3dzL2luY2x1ZGUvc3lzL3F1ZXVlLmggZGVwZW5kaW5nIG9uIE8vUywNCj4g
+YW5kDQo+ID4gPiB0aGVuIGRlZmluaW5nIHRoZSBtaXNzaW5nIG1hY3JvcyBpbiBydGVfcXVldWUu
+aC4NCj4gPiA+ID4gPiBBIGNvbW1lbnQgYXQgdGhlIHRvcCBvZiB0aGUgcnRlX3F1ZXVlLmggZmls
+ZSBjb3VsZCBtZW50aW9uIHRoYXQNCj4gaXQNCj4gPiA+IGlzIGEgY29weSBvZiB0aGUgRnJlZUJT
+RCBxdWV1ZS5oIGZpbGUuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiAtMSB0byAjMzsgaXQgYWRkcyBh
+biB1bm5lY2Vzc2FyeSBkZXBlbmRlbmN5Lg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gPg0KPiA+ID4g
+PiA+ID4gTm8gbWF0dGVyIHdoYXQsIHNob3VsZCBhZGQgdG8gY2hlY2twYXRjaCB0byBibG9jayBh
+bnkgbmV3DQo+IGZpbGVzDQo+ID4gPiB0aGF0DQo+ID4gPiA+ID4gPiBpbmNsdWRlIHN5cy9xdWV1
+ZS5oDQo+ID4gPiA+ID4gPiBkaXJlY3RseS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+ICsxIHRvIHRo
+aXMuDQo+ID4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gSSBhZ3JlZSB3aXRoIE1vcnRlbiwgIzIg
+bG9va3MgdGhlIGJlc3Qgb3B0aW9uIHRvIG1lIHRvby4NCj4gPiA+DQo+ID4gPiBJdCBtZWFucyB3
+ZSB3YW50IHRvIHJlbW92ZSBsaWIvZWFsL3dpbmRvd3MvaW5jbHVkZS9zeXMvcXVldWUuaCwNCj4g
+cmlnaHQ/DQo+ID4NCj4gPiBDb3JyZWN0Lg0KPiA+IEFsbCBxdWV1ZSBtYWNyb3MgYXJlIGNvbnNv
+bGlkYXRlZCBpbnRvIHJ0ZV9xdWV1ZS5oLg0KPiA+DQo+IA0KPiBJIGhhdmUgYmVlbiB0cnlpbmcg
+dGhpcywgYW5kIGl0IHBvc3NpYmxlIGJ1dCB0aGVyZSBpcyBzb21lIGZhbGxvdXQuDQo+IElmIGFw
+cGxpY2F0aW9uIGluY2x1ZGVzIDxzeXMvcXVldWUuaD4gYW5kIG90aGVyIERQREsgaGVhZGVycyBp
+bmNsdWRlDQo+IDxydGVfcXVldWUuaD4NCj4gdGhlcmUgYXJlIGRlY2xhcmF0aW9uIGNvbmZsaWN0
+cy4gRW5kcyB1cCBiZWluZyBhIGNvbXBpbGF0aW9uIGZhaWx1cmUuDQo+IFRlZGlvdXMsIGJ1dCBu
+b3QgaGFyZCB0byBmaXggYWxsIG9mIERQREsgdG8gdXNlIHJ0ZV9xdWV1ZS5oIGluc3RlYWQgb2YN
+Cj4gc3lzL3F1ZXVlLmgNCj4gYnV0IHdoYXQgYWJvdXQgdXNlciBhcHBsaWNhdGlvbnM/DQoNClBl
+cmhhcHMgdGhpcyBjb3VsZCB3b3JrOg0KDQpJZiBfU1lTX1FVRVVFX0hfIGlzIGRlZmluZWQgaW4g
+cnRlX3F1ZXVlLmgsIGluY2x1ZGluZyA8c3lzL3F1ZXVlLmg+IGFmdGVyIDxydGVfcXVldWUuaD4g
+d2lsbCBiZSBoYXJtbGVzcy4NCg0KSWYgZWFjaCBtYWNybyBpbiBydGVfcXVldWUuaCBpcyBzdXJy
+b3VuZGVkIGJ5ICNpZm5kZWYgTUFDUk9OQU1FLCBpbmNsdWRpbmcgPHJ0ZV9xdWV1ZS5oPiBhZnRl
+ciA8c3lzL3F1ZXVlLmg+IHdpbGwgYmUgaGFybWxlc3MuDQpBbHRlcm5hdGl2ZWx5LCBzdXJyb3Vu
+ZCBhIGdyb3VwIG9mIG1hY3JvcyBpbiBydGVfcXVldWUuaCBieSAjaWZuZGVmIF9TWVNfUVVFVUVf
+SF8uDQoNCj4gDQo+IFNpbmNlIHRoYXQgd291bGQgYmUgQVBJIGJyZWFrLCBiZXN0IHRvIHB1dCBp
+dCBvZmYgdG8gMjUuMTEuDQoNCkl0IG1pZ2h0IGJlIGltcG9zc2libGUgcHJvaGliaXRpbmcgdXNl
+ciBsaWJyYXJpZXMgZnJvbSBpbmNsdWRpbmcgPHN5cy9xdWV1ZS5oPiwgZXNwZWNpYWxseSBpZiBz
+b21lIDNyZCBwYXJ0eSBsaWJyYXJ5IGluY2x1ZGVzIDxzeXMvcXVldWUuaD4gaW4gdGhlIGxpYnJh
+cnkncyBoZWFkZXIgZmlsZS4gVGhlIGFwcGxpY2F0aW9uIGRldmVsb3BlciB3b3VsZCBub3Qgd2Fu
+dCB0byBtb2RpZnkgdGhlIGhlYWRlciBmaWxlcyBvZiAzcmQgcGFydHkgbGlicmFyaWVzLg0KDQoN
+Cg==
