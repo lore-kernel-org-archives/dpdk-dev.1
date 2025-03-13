@@ -2,126 +2,168 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE85CC28B28
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 08:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D3C28B28
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 08:56:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B59940ED6;
-	Thu, 13 Mar 2025 09:34:33 +0100 (CET)
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com
- (mail-dm3nam02on2084.outbound.protection.outlook.com [40.107.95.84])
- by mails.dpdk.org (Postfix) with ESMTP id CDCEB40EAB
- for <dev@dpdk.org>; Thu, 13 Mar 2025 09:34:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1601640EAB;
+	Thu, 13 Mar 2025 09:56:23 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 66A7540E49
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 09:56:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1741856181; x=1773392181;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=C5krbZT4gHdNUkUi/n1iZDRAB8qqOa5n8jSWCEcD2dA=;
+ b=UWVVn7gYAahMCfRJ9ZbJDDBPsaMKfPLM8L1Fm8KoFKDzfpIZ9TKcVRk3
+ i9Szrw2lDUPoYQmxocaUl2/IrJHLbS+2Tal1JuAFm1L3NBKBFraVQJBrv
+ YlDp5JXJcLXi5Nvq8yLLIhHMnomCfNf/uQ9NuicDYvizAbYlkS7r8/EyI
+ iWEDLanETJazKyg5V21yrOdUppmjg7c5ZIG2tLK+WbKgZD9J3r//E/pgp
+ DFojcKKxShKaGluSBlvfmh0FC/MCwdNk1JK2AiPbIAyF1Iyl3L/QZTqlO
+ MGO/taPMSHtVkOjqc4CKZX51ZNzJU2uZ75Dz4fSShXD10KRUXdMMT7i1i Q==;
+X-CSE-ConnectionGUID: hQe0ue5NQSCOT5xIR6ETag==
+X-CSE-MsgGUID: svBMvdy+QEuN6lN/flbQIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42991871"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="42991871"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Mar 2025 01:56:18 -0700
+X-CSE-ConnectionGUID: +LiJthITR4mnMmgkFVyeMw==
+X-CSE-MsgGUID: hAEEwStkR2qdwRrdnMvhPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="121382392"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Mar 2025 01:56:16 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Mar 2025 01:56:14 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 01:56:14 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Mar 2025 01:56:14 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Eq6kwREC3KTGI53xFthIBkMZM9tkcwFYNXUwathL3n0SWjKVvAIvZReTLXeSqpCWUgTjYgTqWcExuDKuNO2DUzd0y66yhVG6El6cQUHqx4x8gzQAxpsU54wy5nIbXL7JjfTxZvIbbASFCtMGSLXVwgfnigCHM7eeDPCjyVYOkvhh5SUhKm3d84VTga5PnFXj4hsoKR5F2Co+gKZlezGp31er+cbbwuohqzk44X/7CvnffQk8MO9n3LnEZgpTRNLOlDs/J/Lx74kGG0IGKl3btgNJQpwbcI+KzSub9/CVH4CYqZIxsAr8hmdy8eHKXIVb8d/2xJSw318Hq6maCRJkgQ==
+ b=O0AB39mIP6GICPe9vTQcjRD82lXK8BMvleMYkC3xAhBb5FFDrJFVlCpelPWMgchmeoznWdwlX6anXL/V6EPoQnuQtVkEGoddG4SyNcvc3fLNjYHYiS51ajeYTDleGX9dkurO36oOPG2JjDuHR8BPSNQp0pO1matGXeZURJCHC+ghhF26+UHfO1cJGzkrEecq2KO4mpyLzyXmXyTRbehtRiGN38RD1qYr+GWJzI0PjZptS2vSms+9NPAZD2E02AGOmJA+CmhLaKq22qzBw7kM4Q898ArW3JSXxN6OG3f1AzX/XlwztypaQXD6LBhFcZ63koiTorqfcLdPrW3f0Xsa5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=11owmUlVn4q/TuUSioT/1Hdq8z5PLHpbx3aPkCjJkbI=;
- b=gOJ4oPcg6XGcYC6F6G8Epwu19MQr95/rJScW4QYAFHBmsQPdFj9LZsahaYrciQG+1HTsPzkqQ2aVEaPrjyWo8CgfVnnx50u9HabmI5zhWVDy3ezZNCsdAu+rE/KNx1idMme3amWmkvPUMjtKdr3D/0fWtH7p6KT5p9SYILgT2TC9qLABo2TJafDGnFdwwHzfmx/cbSSrP+87pddI7elPCRmJEAQOXdHT5m4JMcMbDcBvgy86+NOkjt4YCpe9ZIDSDF4kpgegshjQXwv9VAoKEimVzGTuOLs+d5ZManZNn5aCl8O40+GHsvH6kT4l0N0fO3waFlhivj3Q67B8A71Iww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=11owmUlVn4q/TuUSioT/1Hdq8z5PLHpbx3aPkCjJkbI=;
- b=RvW3l8DbPW7c+7DAA+S92TFUzuvq7kWSyoSNieDkq+yWneSvRcBqtInppKM2n1OaeLyfwYdjLxB9oNFiV5G5nnV07Q8mgc/cFxL97o9A5yi0RY+v4Gwcin3AVK+cXJd0GAEnhrZK7cj18W++Ggl1iQQOT3vxOr0jHU8CCgx94zHRZQiIQCC5girJI7RpRwoPw13j1sSPr+bh2G5NcBrA4t/SLJHDI9ToqoP1VIRsmUpeU78hVJvumUhlw66bYgA4S9HJbEFFRwnYPoDW4RjWh1jhAW7sjvdXSdBE3CHIEy3DcjHG3x7qJA4e/aJXouDqdTOozF6ubV41aUVx5UDqVg==
-Received: from CH2PR07CA0038.namprd07.prod.outlook.com (2603:10b6:610:5b::12)
- by SA3PR12MB9105.namprd12.prod.outlook.com (2603:10b6:806:382::18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 08:34:28 +0000
-Received: from CH1PEPF0000AD7B.namprd04.prod.outlook.com
- (2603:10b6:610:5b:cafe::d8) by CH2PR07CA0038.outlook.office365.com
- (2603:10b6:610:5b::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.21 via Frontend Transport; Thu,
- 13 Mar 2025 08:34:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD7B.mail.protection.outlook.com (10.167.244.58) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 08:34:28 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Mar
- 2025 01:34:17 -0700
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 13 Mar
- 2025 01:34:12 -0700
-From: Gregory Etelson <getelson@nvidia.com>
-To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
- <rasland@nvidia.com>, Michael Baum <michaelba@nvidia.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing
- Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH 2/2] net/mlx5: fix GENEVE parser cleanup
-Date: Thu, 13 Mar 2025 10:33:51 +0200
-Message-ID: <20250313083351.25559-2-getelson@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250313083351.25559-1-getelson@nvidia.com>
-References: <20250313083351.25559-1-getelson@nvidia.com>
-MIME-Version: 1.0
+ bh=SN0dCZt+mJbprqZCyeGXdLlsgPmGotJk04odvZuIM24=;
+ b=ALGXbEmVpmeipZtz+CbOCyKZEkraym12oHnaPPG1R0b9H2DHEfk2XvLHnsv51lqgiFdwz5mxtso0oqccrbUfUy8aliIQ+4395aYCbBvMvNwMpYkDPymCx+BQfEfUfmGCHqeteFuwCtjdJ4M9GPHgfcvHZnIy2c+U3sLgr/KBB1lY7WlDXZOBAlseeD7EaVpbCrY1LWysSFAhm7E4lyuBTyUCF8LumNpkQTw0LRWrCp2exjJ/R+2UHm6/p7fagl2GzVEsJQEdgGjysYpbVHBOGZugBnMjRwlCrOk3eK75LdBQ9DAzENftLDsCVbKpwP4LwbrhRm4a31MyV3wH5IWYEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ2PR11MB7428.namprd11.prod.outlook.com (2603:10b6:a03:4cf::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 08:56:12 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
+ 08:56:12 +0000
+Date: Thu, 13 Mar 2025 08:56:07 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Thomas Monjalon
+ <thomas@monjalon.net>, <dev@dpdk.org>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Message-ID: <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <20250214172134.73908-1-stephen@networkplumber.org>
+ <20250214172134.73908-2-stephen@networkplumber.org>
+ <12279496.nUPlyArG6x@thomas> <20250312160225.2d90e78a@hermes.local>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+X-ClientProxiedBy: DB3PR06CA0024.eurprd06.prod.outlook.com (2603:10a6:8:1::37)
+ To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7B:EE_|SA3PR12MB9105:EE_
-X-MS-Office365-Filtering-Correlation-Id: cdd320c8-7177-407a-41cb-08dd6209deb4
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ2PR11MB7428:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02fd82c4-acfe-4651-4914-08dd620ce7ab
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dusKPt9+Andp24LEATlH8MOEPdwHKOZd6nkkCihMXtiiPvlhFLfWSxj53k8N?=
- =?us-ascii?Q?AdjT7JNnoGN1ZP5pN6QBIHhPTn8LIHw43VEQS4bmOl1PHrT+HHSra45kPX81?=
- =?us-ascii?Q?iz5ifR9HxM6MjLP1CMF1Vnx4TCpbWV7rwSDaW8s64u4O1P6JxtftAlZC33Ay?=
- =?us-ascii?Q?mDzdNu02OTFqxrra1LTJtnTpuNE18YE5Jz4oekXpkh8J4CcJUh6yxdSRBZSp?=
- =?us-ascii?Q?2EfErj95UFs0Wzjg7cI6ozi1kVq5mL+iEDtsbhjZm/bZAH+h7qkq18Yui1Hm?=
- =?us-ascii?Q?jckzreQTCjTWwxMpDdL7+RqZXfLldqBpokJgVk/OFgVKAxDPuL/oBLl1rcUk?=
- =?us-ascii?Q?ISVGp66gKIh9E0MTiIii6U4t6/LKHiU2x0UCA9yfIyU1gX21drlMM90yTXhl?=
- =?us-ascii?Q?5QnZLGx7MV6p7i73WavE1BMuR4babDEoebaxFYziy46UTE4nGONZYocZkFxy?=
- =?us-ascii?Q?/89kmPjgDkSI1MSSYbrkQPBI5lgitfSorHAD2Z/7AcwqCdsN+FvOUGei9cuf?=
- =?us-ascii?Q?jZlSPt2sHisYK9hIota/c6LOszQMMC7Fw1nJIGueouv62KQbkH/L7TiL/qbx?=
- =?us-ascii?Q?3uoAkLNRcVY6np6A4f4lILR/CHdZ7uqcUw1mk4hxggGcywhGxcAvQLd+JSCq?=
- =?us-ascii?Q?6FrdwxfSynyLyKIGYJXgJcbsgpGRZg/9RYl7TnhaeyuDKOlqBFD80jGfEt5B?=
- =?us-ascii?Q?fRrJvfpXtMg6bzbvUcNudS9SAM6pbhhNP3FhuyVTf1aDzy+OenvjyBrH9EpL?=
- =?us-ascii?Q?SL4es2eZaJHsB6xIrvK79MKkml1ygARDB53w95NDQyuUsQHZHHwuGeGYj1Xr?=
- =?us-ascii?Q?RTnN+B7lriTnagBt/uR9245Bi8n5Y8uaNFfg0eI8beUt+oDWpSkk1a/dFYwQ?=
- =?us-ascii?Q?E28nSHGTMABZTlhw0P7CPT+izgw01uGUJyVQn8r3y1H/V/KFLX8jVpdeCQ0E?=
- =?us-ascii?Q?H08FWpjcccdu/Tn2sdtXzaawr0Eoc1Ovf0OQlywnn6vF9LAm2t1Q5QOkWZw6?=
- =?us-ascii?Q?u3K2iMN3kbIC8UyE1S7hqCYZD7g27yC4C079P+3bvWembWZmHsVpERckLZzz?=
- =?us-ascii?Q?ZCk+19rsboB5DEIWnG+OV7t0qcCZsIH4/svHbLf3yfC8OMaAILjhCqJ++623?=
- =?us-ascii?Q?u1AiOFl6zC18fXIKxdaQDyhzX6b0Z02Xmw2dpnTCYop54sT1CqcNASmFhN3C?=
- =?us-ascii?Q?+kd1ws1hfM7Gywf8V136tj7fedkhyMhGzgthv2RhztDX3UlqnoxpnMRDXvXT?=
- =?us-ascii?Q?k794o8cAk3TzV8Hp7zz80/vPcl9PE1PoNDPdTyFCmVpkpGnqPILrHkDY+6Jv?=
- =?us-ascii?Q?cSbStWD7BK9yfIvT5rB0oJh3dX6Y2v2NFtfZ5l/chHOOEoLpzFS5FKTTFKQs?=
- =?us-ascii?Q?HF4gR3Pr7NebJwjIvnr3RQcLEXBWxVV4nByL/XqIPIgfRPWgokt4MRO8ntm/?=
- =?us-ascii?Q?JWUzPiR++tC0sXmnOigeMpMQJ0cUHRNld/sdLpqQxDuN9drJCsweTw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 08:34:28.5498 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdd320c8-7177-407a-41cb-08dd6209deb4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000AD7B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9105
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?O2vNiY9a2S+u/ZX2VMgfWggBoc4mQG+lhDBxvkM8eXhFg7q9RXvtM7xxL0?=
+ =?iso-8859-1?Q?An9YUk3Cj29PWbgsGW4UVUDoUFwAd+3C6NRxmlMreDrkNFTWC0M/RoEyoD?=
+ =?iso-8859-1?Q?B+IIuFMSiqDmeo4UoA/lYYgUmL+HhBTUp3/wb5Mf4imhY/zJcOYXfoO5Re?=
+ =?iso-8859-1?Q?XeEEOL//9ZsRDM6uTqmkmtpqc7pAjMQFTAmhwxWDQkjstfsqurHQbaoQeX?=
+ =?iso-8859-1?Q?NE/kAN9K9yJgqoKWISsx1ycqGbv8mgK/6QSCcb6su44KcPTDdMG5paFuIQ?=
+ =?iso-8859-1?Q?MbVcFUBr2OEmZHNys5wUex70h7eyWp/aa93aJbembrESYOxKWo2AULUUtw?=
+ =?iso-8859-1?Q?HbRBc99ltooA7S/lZkZQ5fPYH6zotJEdoNt0DneCfxxyjuWzNpga5j+6Jv?=
+ =?iso-8859-1?Q?d7y5vAXiSxQwqByxHUdLkGOPtYTNEpuWqW37c9Az2XpAr+E6Mj3yLwHE8N?=
+ =?iso-8859-1?Q?YFZLYpxyRjOG0+A51UuCnfnK7nu4PJEycCLxaBK5JgQy1E+rmCIaVZZLCs?=
+ =?iso-8859-1?Q?S6UmTukAQFxuRdi9Di5xqvLU24xoheokHXIpmtyv1KOSgFsIB9qe8UA/Q5?=
+ =?iso-8859-1?Q?FjXEh1xDn/7TkFHSdvoTP6/RjIF4m049ZoD7y8Q596RyfFfAn20qv14ugn?=
+ =?iso-8859-1?Q?KICXu1E6/t40o5dCIsLAqkVU0AG/Egx+eueE0cH666EvDmEutWOrwXV32L?=
+ =?iso-8859-1?Q?rgGXGypAwMIzkOlHkxrVxTNWvuM8VhwmMjYhrfrYUFpfGxHfqNX909id5Y?=
+ =?iso-8859-1?Q?st1OGZuPkTcZXpLHIWlbpPp4YGVRTnjcReKyWs1Amrd1SF446oH2GxPhxL?=
+ =?iso-8859-1?Q?3nLr9jt2w669gpqUDzkszKkszkM3FLFjcY80tWOmSG6GNJAhHzZzEz/weA?=
+ =?iso-8859-1?Q?vbcZn9I8wWyH++q8kW0HZp6ZvxC21CWEuEwu+Fn6YSaiYsTmT+08SIDBsJ?=
+ =?iso-8859-1?Q?fdVYHpGtdrl1K1fe+OQpkN+MyQEGOeyu7wvou6dRYIaChmcwfPNSszzVIK?=
+ =?iso-8859-1?Q?8IqPWcREH5WRUNN5PkTTzbZZsyLiGQ+2qA+KnGAbbTIVFPEjbkwK2AZR/K?=
+ =?iso-8859-1?Q?gursX4snKJvxtCIHnTO7aq5pXOOJ6UzHlZxLV3Y3gse/0aeZHrIRtKFF9o?=
+ =?iso-8859-1?Q?ss8UyfmFThu5jaHAq94MQCeII+gwote9dfA4DIwH/q70huSroLnC1sEghq?=
+ =?iso-8859-1?Q?TT6Y3diFDtyw1m14CIPSF3II75e7Y/eTIyUX2PXpXLSQqo7SAqbzxJbQN8?=
+ =?iso-8859-1?Q?Q6mOeGUx5jkj+DHBklmsZoi169i4KktXOGmqxuIpJRXaSm9dcB3tpuw8EW?=
+ =?iso-8859-1?Q?6eSXd9jrIM1aJCjTkyCL5AHOqVh7DlfFoaH2GG15BcrCls+P5pflkhW4dq?=
+ =?iso-8859-1?Q?d9CZvPN2P7tvb9PJP+YT5Q0OU/cMjKQRvJZZvwjYkM+i425c8FYHgtNeD3?=
+ =?iso-8859-1?Q?N7F9baBBwmu2VQsQ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?u91k+aVQ5wg5lFfADanDCr9JTKD+hWCQP1t+5DDifbGldXfs6FPt0F9gPa?=
+ =?iso-8859-1?Q?Slh+h9YPTbFiW8ZcdVj+r3TnaM14dv4AeVJW17fQjTHgixDS2r7z2jNKEt?=
+ =?iso-8859-1?Q?KUPFcR3ox62AbrsGEI2Bhe9pyjSJ2QuBs5UFJFX/e/nIIMMS9wKpmWaXnd?=
+ =?iso-8859-1?Q?RC7VBOi8szl2RKj10gZ85XwvWVqVFabXjywFkPI+nF64JptvlHiHFQPUWH?=
+ =?iso-8859-1?Q?H1y6Mjj0lB16S/JlpeT+6iXSZaAYzUSjC0Kixid8d0pYo3mQoyGJZaP2v+?=
+ =?iso-8859-1?Q?R0knLhe9Xb1BFW9YjDhEN8ZhKt1CBXW2ovSKHwdckeDv4Im76ZJVd1VGJJ?=
+ =?iso-8859-1?Q?n/d103zTwSMK2HIIgCkkaIhgdrMOKLXf6Q2A/68NZyP2/N6267DK5u7i5+?=
+ =?iso-8859-1?Q?sYaUyiOS5OMU16w2xPZEjZRasV/kZY9BnU3TIM2Ko3JXzC2qTsOGAOUBIb?=
+ =?iso-8859-1?Q?zR4wsLE0fETy08bmD/PPnpnUl+te8DtgIsg1Aj5ZYSzyjCl17NAB8N0VBN?=
+ =?iso-8859-1?Q?Iyhz68MTAlnko5W3FJeIftnNXV74pCtU2F/8Y4UKG2YvQ00aZKKPaZcK5x?=
+ =?iso-8859-1?Q?TL0nD7kr2DTyn9pnCA4bS8gtH3PFzfwT54KGx39UnSTx2+qwiIGhP+3EOq?=
+ =?iso-8859-1?Q?TzEzs/1axgPp/kYbQQ96z319hq/LhF99ajBFjhDAsciKLogZQW3WRQXynU?=
+ =?iso-8859-1?Q?3MPnjK1Mi6TIAkI3fS8xuSJIgw/i8CRDij668tjUmS3i1z+PFNdNybXu90?=
+ =?iso-8859-1?Q?MAVdU4QKtsm0/BdSBCx7HQCoYLc5WfoowTtcH0ulHsJtNtCLj5LC80s+oE?=
+ =?iso-8859-1?Q?SkVQ6rTmIzokz6bPNSXILfupF3He0IcBNf9Oeu2dW0GQO2G1zSNideXxgB?=
+ =?iso-8859-1?Q?M/ouAj88DtJ+VwWsBgGIQSYaDOhwbjE8jIlQJW+Pb2zq0YMcmWu/rDhKUT?=
+ =?iso-8859-1?Q?hKVR6jiA8HuKMXUgjF/s2Hvhdfw/qcw+lnPGhFwOpVuou2nWNTvu1JNLYY?=
+ =?iso-8859-1?Q?24CsvirYvroqe8HMUgsqwod1A9fTHFMiKruq8SkCN53QMcp8KNYGAzMq1k?=
+ =?iso-8859-1?Q?10/LPnSLAEegMM1bFppPvc/zLpMlsBVEuHSMNvZWPMB+wJ12aTXNGYLW2p?=
+ =?iso-8859-1?Q?ZjX39+OrWIhK/nb0tzdn4sYWp3uzJb3ZaUTC6aTn/4LbjPh1bXFvzNdRL7?=
+ =?iso-8859-1?Q?Hvn4P3+g9WVYcOZ0AjY9l8qQc+LrAZ4ciYnGWBqDYMJ2EuPPvOod1SsmLk?=
+ =?iso-8859-1?Q?AvF9BmcRaMho4SCoEdHgkwn97gKFHXZHh8P0bbnPJ5ZPm5Ac6lHsbrVIgG?=
+ =?iso-8859-1?Q?ROUmDp08tlHfAg53p4HdsFYJXcH1dmXtKm4jlJasIk9vPG7zUR7PVKQERG?=
+ =?iso-8859-1?Q?Dm5oSIMtT1idut5H3+4s7IxTRuBzb6tbauY6aOWgb2c28mdwSvOixJ53yV?=
+ =?iso-8859-1?Q?pMtfgK3ryjRsU+vAHXMMVTpdvK6Q9sZ79pt9hvO3o9BIOOoYneQ5ShOXiN?=
+ =?iso-8859-1?Q?LeCZAd3aWdgP6XvdWm36aJAt+4XG+62Px4Ri0uuuCXEX3z7oo1m0I/c9kC?=
+ =?iso-8859-1?Q?ZMrd05t1uAslXqIFa9cDw8dOV8VfWyuWraq0UGRypKfm36wtjRtm5+SdI5?=
+ =?iso-8859-1?Q?efUTdCGX311Pyg9EFJ8eu+xSAehwKou1Jj89FaAt114ZTM5aJee8W40Q?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02fd82c4-acfe-4651-4914-08dd620ce7ab
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 08:56:12.4453 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gJtp7T6UoaDKOAyxWolKr5LcNmLw3TjKqyj2AV7P8AgS9+U9FjaiEGY92shSIh3dbpfe5K37vpseCf9vqANjxy2V3k0gHhQfu2UbZnCHR0g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7428
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,211 +177,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Michael Baum <michaelba@nvidia.com>
+On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Brørup wrote:
+> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > Sent: Thursday, 13 March 2025 00.02
+> > 
+> > On Wed, 19 Feb 2025 15:55:17 +0100
+> > Thomas Monjalon <thomas@monjalon.net> wrote:
+> > 
+> > > 14/02/2025 18:20, Stephen Hemminger:
+> > > > The Linux version of sys/queue.h is frozen at an older version
+> > > > and is missing the _SAFE macro variants. Several drivers started
+> > > > introducing the own workarounds for this. Should be handled in EAL.
+> > > >
+> > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > >
+> > > We may want to unify with lib/eal/windows/include/sys/queue.h
+> > >
+> > >
+> > 
+> > Not sure, we have several options here:
+> >   1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
+> >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is
+> > what Windows did)
+> >   3. Use the bsd version of queue.h.
+> >      On Debian/Ubuntu this in libbsd-dev package and referred to as
+> > bsd/sys/queue.h
+> > 
+> > I chose #1 as simplest. But all of these could work. #3 means DPDK has
+> > least new
+> > code, but adds another dependency to the build.
+> 
+> +1 to #2:
+> If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h, #2 would consolidate all the queue macros in one file.
+> That seems easier to navigate (for a developer/reviewer looking at the macro definitions/implementations) than including sys/queue.h, queue.h or lib/eal/windows/include/sys/queue.h depending on O/S, and then defining the missing macros in rte_queue.h.
+> A comment at the top of the rte_queue.h file could mention that it is a copy of the FreeBSD queue.h file.
+> 
+> -1 to #3; it adds an unnecessary dependency.
+> 
+> > 
+> > No matter what, should add to checkpatch to block any new files that
+> > include sys/queue.h
+> > directly.
+> 
+> +1 to this.
+> 
 
-The GENEVE parser is shared across ports on the same physical device. It
-is created once for the first port and increments a reference counter
-for each additional port. The parser is created using the InfiniBand
-(IBV) context (CTX) of the first port, and cleanup should use the same
-context.
-
-Previously, if the port owning the context closed while another port
-still used the parser, the port closure would fail due to the shared
-parser dependency.
-
-This patch addresses the issue by changing the approach: the physical
-device now creates its own distinct context by importing the context
-from the first initialized port. This ensures that parser creation and
-cleanup use a consistent context, independent of individual port
-lifecycles.
-
-Fixes: f5177bdc8b76 ("net/mlx5: add GENEVE TLV options parser API")
-Cc: michaelba@nvidia.com
-
-Signed-off-by: Michael Baum <michaelba@nvidia.com>
----
- drivers/net/mlx5/mlx5.c             | 21 ++++++------
- drivers/net/mlx5/mlx5.h             |  2 +-
- drivers/net/mlx5/mlx5_flow.h        |  2 --
- drivers/net/mlx5/mlx5_flow_geneve.c | 50 +++--------------------------
- 4 files changed, 18 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index 0f49cb5e5b..a16568ff22 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -1724,6 +1724,16 @@ mlx5_get_physical_device(struct mlx5_common_device *cdev)
- 		rte_errno = ENOMEM;
- 		return NULL;
- 	}
-+	/*
-+	 * The same CTX create the physical device objects should destroy them.
-+	 * Since we can't be sure it will be done by same CTX, we prepare for
-+	 * the physical device a special CTX used by objects creation.
-+	 */
-+	phdev->ctx = mlx5_os_get_physical_device_ctx(cdev);
-+	if (!phdev->ctx) {
-+		mlx5_free(phdev);
-+		return NULL;
-+	}
- 	phdev->guid = attr->system_image_guid;
- 	phdev->refcnt = 1;
- 	LIST_INSERT_HEAD(&phdev_list, phdev, next);
-@@ -1767,6 +1777,8 @@ mlx5_physical_device_destroy(struct mlx5_physical_device *phdev)
- 		return;
- 	/* Remove physical device from the global device list. */
- 	LIST_REMOVE(phdev, next);
-+	MLX5_ASSERT(phdev->ctx);
-+	claim_zero(mlx5_glue->close_device(phdev->ctx));
- 	mlx5_free(phdev);
- }
- 
-@@ -2323,15 +2335,6 @@ mlx5_dev_close(struct rte_eth_dev *dev)
- 		rte_errno = EBUSY;
- 		return -EBUSY;
- 	}
--#ifdef HAVE_MLX5_HWS_SUPPORT
--	/* Check if shared GENEVE options created on context being closed. */
--	ret = mlx5_geneve_tlv_options_check_busy(priv);
--	if (ret) {
--		DRV_LOG(ERR, "port %u maintains shared GENEVE TLV options",
--			dev->data->port_id);
--		return ret;
--	}
--#endif
- 	DRV_LOG(DEBUG, "port %u closing device \"%s\"",
- 		dev->data->port_id, sh->ibdev_name);
- 	/*
-diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 6df99c25e2..0194887a8b 100644
---- a/drivers/net/mlx5/mlx5.h
-+++ b/drivers/net/mlx5/mlx5.h
-@@ -1527,7 +1527,7 @@ struct mlx5_common_nic_config {
-  */
- struct mlx5_physical_device {
- 	LIST_ENTRY(mlx5_physical_device) next;
--	struct mlx5_dev_ctx_shared *sh; /* Created on sherd context. */
-+	void *ctx; /* CTX for creation of options. */
- 	uint64_t guid; /* System image guid, the uniq ID of physical device. */
- 	struct mlx5_geneve_tlv_options *tlv_options;
- 	struct mlx5_common_nic_config config;
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index a5bde158ca..9816ed9238 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -3469,8 +3469,6 @@ flow_hw_resource_release(struct rte_eth_dev *dev);
- int
- mlx5_geneve_tlv_options_destroy(struct mlx5_geneve_tlv_options *options,
- 				struct mlx5_physical_device *phdev);
--int
--mlx5_geneve_tlv_options_check_busy(struct mlx5_priv *priv);
- void
- flow_hw_rxq_flag_set(struct rte_eth_dev *dev, bool enable);
- int flow_dv_action_validate(struct rte_eth_dev *dev,
-diff --git a/drivers/net/mlx5/mlx5_flow_geneve.c b/drivers/net/mlx5/mlx5_flow_geneve.c
-index 6bf53e1270..4d57bb763f 100644
---- a/drivers/net/mlx5/mlx5_flow_geneve.c
-+++ b/drivers/net/mlx5/mlx5_flow_geneve.c
-@@ -590,8 +590,8 @@ mlx5_geneve_tlv_option_copy(struct rte_pmd_mlx5_geneve_tlv *dst,
- /**
-  * Create list of GENEVE TLV options according to user configuration list.
-  *
-- * @param sh
-- *   Shared context the options are being created on.
-+ * @param ctx
-+ *   Context returned from mlx5 open_device() glue function.
-  * @param tlv_list
-  *   A list of GENEVE TLV options to create parser for them.
-  * @param nb_options
-@@ -604,7 +604,7 @@ mlx5_geneve_tlv_option_copy(struct rte_pmd_mlx5_geneve_tlv *dst,
-  *   NULL otherwise and rte_errno is set.
-  */
- static struct mlx5_geneve_tlv_options *
--mlx5_geneve_tlv_options_create(struct mlx5_dev_ctx_shared *sh,
-+mlx5_geneve_tlv_options_create(void *ctx,
- 			       const struct rte_pmd_mlx5_geneve_tlv tlv_list[],
- 			       uint8_t nb_options, uint8_t sample_id)
- {
-@@ -625,7 +625,7 @@ mlx5_geneve_tlv_options_create(struct mlx5_dev_ctx_shared *sh,
- 	}
- 	for (i = 0; i < nb_options; ++i) {
- 		spec = &tlv_list[i];
--		ret = mlx5_geneve_tlv_option_create(sh->cdev->ctx, spec,
-+		ret = mlx5_geneve_tlv_option_create(ctx, spec,
- 						    &options->options[i], sample_id);
- 		if (ret < 0)
- 			goto error;
-@@ -633,8 +633,6 @@ mlx5_geneve_tlv_options_create(struct mlx5_dev_ctx_shared *sh,
- 		data_mask = options->buffer + i * MAX_GENEVE_OPTION_DATA_SIZE;
- 		mlx5_geneve_tlv_option_copy(&options->spec[i], spec, data_mask);
- 	}
--	MLX5_ASSERT(sh->phdev->sh == NULL);
--	sh->phdev->sh = sh;
- 	options->nb_options = nb_options;
- 	options->refcnt = 1;
- 	return options;
-@@ -676,41 +674,9 @@ mlx5_geneve_tlv_options_destroy(struct mlx5_geneve_tlv_options *options,
- 	}
- 	mlx5_free(options);
- 	phdev->tlv_options = NULL;
--	phdev->sh = NULL;
- 	return 0;
- }
- 
--/**
-- * Check if GENEVE TLV options are hosted on the current port
-- * and the port can be closed
-- *
-- * @param priv
-- *   Device private data.
-- *
-- * @return
-- *   0 on success, a negative EBUSY and rte_errno is set.
-- */
--int
--mlx5_geneve_tlv_options_check_busy(struct mlx5_priv *priv)
--{
--	struct mlx5_physical_device *phdev = mlx5_get_locked_physical_device(priv);
--	struct mlx5_dev_ctx_shared *sh = priv->sh;
--
--	if (!phdev || phdev->sh != sh) {
--		mlx5_unlock_physical_device();
--		return 0;
--	}
--	if (!sh->phdev->tlv_options || sh->phdev->tlv_options->refcnt == 1) {
--		/* Mark port as being closed one */
--		sh->phdev->sh = NULL;
--		mlx5_unlock_physical_device();
--		return 0;
--	}
--	mlx5_unlock_physical_device();
--	rte_errno = EBUSY;
--	return -EBUSY;
--}
--
- /**
-  * Validate GENEVE TLV option user request structure.
-  *
-@@ -955,18 +921,12 @@ mlx5_geneve_tlv_parser_create(uint16_t port_id,
- 			rte_errno = EEXIST;
- 			return NULL;
- 		}
--		if (phdev->sh == NULL) {
--			mlx5_unlock_physical_device();
--			DRV_LOG(ERR, "GENEVE TLV options are hosted on port being closed.");
--			rte_errno = EBUSY;
--			return NULL;
--		}
- 		/* Use existing options. */
- 		options->refcnt++;
- 		goto exit;
- 	}
- 	/* Create GENEVE TLV options for this physical device. */
--	options = mlx5_geneve_tlv_options_create(priv->sh, tlv_list, nb_options, sample_id);
-+	options = mlx5_geneve_tlv_options_create(phdev->ctx, tlv_list, nb_options, sample_id);
- 	if (!options) {
- 		mlx5_unlock_physical_device();
- 		return NULL;
--- 
-2.45.2
-
+I agree with Morten, #2 looks the best option to me too.
+/Bruce
