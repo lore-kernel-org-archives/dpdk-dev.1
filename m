@@ -2,70 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B089C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 07:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E4AC282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 08:00:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46AC740E49;
-	Thu, 13 Mar 2025 08:57:35 +0100 (CET)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id 719C140B94
- for <dev@dpdk.org>; Thu, 13 Mar 2025 08:57:34 +0100 (CET)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-223fb0f619dso12012115ad.1
- for <dev@dpdk.org>; Thu, 13 Mar 2025 00:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1741852653; x=1742457453; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=q64sgOJDSfV9ohzqJlkWBqTs1cOVZU+CL4Lc5y+jewE=;
- b=mtolC6iCO/HxbOXUW+sM1skEZFn6MnT1K/OQruLhgs0A2hyhxbGruu5du3kWSc5yKD
- KboKEfmcZRTVxUgd4J0dmz+ANiVSu4oeCstT8tztTrzfdiZlS7g9dcyS+HwdF5iN4+E1
- K3UMTssn83XOYC2x/m7wPsJYm97Yh6xqi7iRO8DUyRnl1QlN2cLMlRQ+ucDqFTg5GMPI
- iio2cR9eGaho9sEkMQbmeGjgnweqVDBtYzNoqJD5Mt3NlhUAY4a/HkMLCIjLQHb3fPU/
- J1KqhjY6goBkdsbX4FwDki4sgAnI7WIuEczEXUSP0KmiyZj0EcpQik/DZkXyun4vDKIq
- SjPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741852653; x=1742457453;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=q64sgOJDSfV9ohzqJlkWBqTs1cOVZU+CL4Lc5y+jewE=;
- b=uehBdHsGOYP6KOCY/7ZEL8UC8jE1o7euL1z4pHjw5z93VIalQp/9t5h9Q/uWpc7cTd
- gZ2mER85HC+JzPvAOnG4H6fLbyg3GAyxbYFojoq5NiFdXuaz99r+lfyOYKm88v2ifxB3
- SX1hVhkjHKEfCCk1elSOqw+2Sdv/x2D3xlcc4jl7DnBxQAjZ4rm5Um4UC2AOsi13kdKc
- RMS+Om+zSby6+xshdF31Rwcl7en3fX9KWLsi7ZqU1tGaF0VeFb+imA6ZyJRv1Gsv/W+9
- I97mOzITu7yaViAZ0qZISItxDp7Hrc18Eikc4fTr/5i54uSC72heMkMEp8GpmYSeU+yW
- sCFg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVJgFs6FRODVUHCqdQYQRqGoqQ08scb9xTZBARLZxwWrAMDt8WRxzWeAiLVGtUJChGlCSo=@dpdk.org
-X-Gm-Message-State: AOJu0Yxwt45G6pRIxrnhTzvO82sTC1QdVpcHs/O+juyBObR04+4A0dlQ
- EEeBOv1eSV0wYx+1Op59S916F/E02rhQv/RJo1jnOLOC/qA7QRQdsGzTa4wEQlFNbjCaxaoiegv
- VMPe7Sm2H/qxfhkHgclUPDeTat7Q=
-X-Gm-Gg: ASbGncveG6anBcIHzgx9IcvSUKZnizVOHXWBYwUFaojQnovc3cW24Ohp4aKnT4Gz/Bv
- EO1hG2ofo2I8RRpVQBQQkx5crLYOwFZHfz0dHB927p167t9Yk0FNtxGijgT9ioZshUJn486aJNt
- 9tzr3YpqsxxKg8Cs3UrpHhq8SOZe11rtmqWZsDLQ==
-X-Google-Smtp-Source: AGHT+IHosm7xJgGI4MPqSx+nDmQ5PNCoX7qjIEMT7zp3BFAvzKjRffWsviDjSaeqkYl00gVEYh5mnIE7xxYYmDg1dkw=
-X-Received: by 2002:a17:902:e5cb:b0:220:f7bb:842 with SMTP id
- d9443c01a7336-22593184dbcmr129985395ad.42.1741852653480; Thu, 13 Mar 2025
- 00:57:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AFE2340E49;
+	Thu, 13 Mar 2025 09:00:11 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FE3240DFD
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 09:00:10 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6B5AF20FF3;
+ Thu, 13 Mar 2025 09:00:10 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20250306133713.393057-1-getelson@nvidia.com>
- <20250310091844.4a3ff0d1@hermes.local>
- <d380333c-4c47-116e-f917-14b101898e6f@nvidia.com>
-In-Reply-To: <d380333c-4c47-116e-f917-14b101898e6f@nvidia.com>
-From: Igor Gutorov <igootorov@gmail.com>
-Date: Thu, 13 Mar 2025 10:56:57 +0300
-X-Gm-Features: AQ5f1JqwvKKmYtsQyuAZ0M8Z8DWJI0XMZ_m7TZQ_0QAWq0-IDx-HisG5NbKnLmc
-Message-ID: <CAL7bPf1wxMiCUQNhpavLZnWdaSQ-cj8nXjBZ4XDZubYaZ5gRFg@mail.gmail.com>
-Subject: Re: [PATCH] rust: support DPDK API
-To: "Etelson, Gregory" <getelson@nvidia.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
- thomas@monjalon.net, 
- mkashani@nvidia.com, Bruce Richardson <bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 13 Mar 2025 09:00:09 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+In-Reply-To: <20250312160225.2d90e78a@hermes.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Thread-Index: AduTotXyWBNXD2sVT7C6m9id4XRe6wASbrTg
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <20250214172134.73908-1-stephen@networkplumber.org>
+ <20250214172134.73908-2-stephen@networkplumber.org>
+ <12279496.nUPlyArG6x@thomas> <20250312160225.2d90e78a@hermes.local>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Thomas Monjalon" <thomas@monjalon.net>
+Cc: <dev@dpdk.org>,
+	"Tyler Retzlaff" <roretzla@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,10 +51,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 12, 2025 at 5:49=E2=80=AFPM Etelson, Gregory <getelson@nvidia.c=
-om> wrote:
->
-> It's not sure when and even if vendors decide to work on RUST PMD.
+> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> Sent: Thursday, 13 March 2025 00.02
+>=20
+> On Wed, 19 Feb 2025 15:55:17 +0100
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+>=20
+> > 14/02/2025 18:20, Stephen Hemminger:
+> > > The Linux version of sys/queue.h is frozen at an older version
+> > > and is missing the _SAFE macro variants. Several drivers started
+> > > introducing the own workarounds for this. Should be handled in =
+EAL.
+> > >
+> > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> >
+> > We may want to unify with lib/eal/windows/include/sys/queue.h
+> >
+> >
+>=20
+> Not sure, we have several options here:
+>   1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
+>   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is
+> what Windows did)
+>   3. Use the bsd version of queue.h.
+>      On Debian/Ubuntu this in libbsd-dev package and referred to as
+> bsd/sys/queue.h
+>=20
+> I chose #1 as simplest. But all of these could work. #3 means DPDK has
+> least new
+> code, but adds another dependency to the build.
 
-A PMD could be software based (e.g. net_pcap). For such PMDs, Rust can
-be a good option.
++1 to #2:
+If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h, #2 =
+would consolidate all the queue macros in one file.
+That seems easier to navigate (for a developer/reviewer looking at the =
+macro definitions/implementations) than including sys/queue.h, queue.h =
+or lib/eal/windows/include/sys/queue.h depending on O/S, and then =
+defining the missing macros in rte_queue.h.
+A comment at the top of the rte_queue.h file could mention that it is a =
+copy of the FreeBSD queue.h file.
+
+-1 to #3; it adds an unnecessary dependency.
+
+>=20
+> No matter what, should add to checkpatch to block any new files that
+> include sys/queue.h
+> directly.
+
++1 to this.
+
