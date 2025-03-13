@@ -2,50 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F94AC28B2E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 11:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C940FC28B2E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 12:57:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53E49410E4;
-	Thu, 13 Mar 2025 12:38:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 466F2410D0
- for <dev@dpdk.org>; Thu, 13 Mar 2025 12:38:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741865919; x=1773401919;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=aC09X+IXNg9b2ObYaQeycqswM8sa8zOMqsNej54RCxs=;
- b=OG9aDeRhef/JqcSVYbayyR13CmdApFzm9i9SmyMZZqQ/3bzyRFxRKCQN
- 6MeVVF4DhSL1C64HL4xLAGaLIZTNOELxf3+/F3tWRgSABYa7is5RGNygd
- y3eei+uB3JyZJXcoPxKrLJcVn+A2cRSVNqctyTFc+ujy7Se1cJsQW7SWZ
- M1MXPS3JcgjiBd8VLn2v4dL7P9TlojhtFl86lWDLfwBINPqQ71y0fF8QM
- rvfucxOBo1mVN3Eiq4DM8tIIMbUxgueoHRVesZ//BgTz2mTBxX8G6GJqV
- OTFzhNzxn+9jMDPM0QI0J7ZKYpNZ31npN+7HCMkQUrknw9Ll5rBPoMKri Q==;
-X-CSE-ConnectionGUID: 12JVBAiATGWkOK1M8p3Oaw==
-X-CSE-MsgGUID: YTjGb/HhRKSsw83afOwIQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42145709"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="42145709"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Mar 2025 04:38:39 -0700
-X-CSE-ConnectionGUID: 6+SVWFQvSo2PJhaGzMR03Q==
-X-CSE-MsgGUID: Ga27TS94TCGFCxBhGMcAHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="120888958"
-Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by orviesa010.jf.intel.com with ESMTP; 13 Mar 2025 04:38:37 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 3/3] eal: allow automatic mapping of high lcore ids
-Date: Thu, 13 Mar 2025 11:38:29 +0000
-Message-ID: <20250313113829.1480907-4-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250313113829.1480907-1-bruce.richardson@intel.com>
-References: <20250313113829.1480907-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C42C340FDE;
+	Thu, 13 Mar 2025 13:57:40 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 438B840EF1
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 13:57:39 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-22409077c06so23181555ad.1
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 05:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1741870658; x=1742475458; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=BJEHGk0ieq/CNRfrtlaTpN0lBcbZt24U48DULMFQ6QY=;
+ b=US8a1q3bvo2af5Ma+YhM3EyKZ0UY3OXO04E0ftsn0YQF1pWU5OMJhwGBM1nBgHNmsC
+ zAPmH0MCs+M1pCLui7tjlDJ3w0YPyq/y6YF+f33wTNF49AFswUC4LF6bblqANZjpKUgn
+ 8uqzguK+AKLKlbpWE27SDqiFSHmoZTgsz2EVA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741870658; x=1742475458;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=BJEHGk0ieq/CNRfrtlaTpN0lBcbZt24U48DULMFQ6QY=;
+ b=pJum69uBaskzMn49VV8/D4+ARHaRVxUH8gxUQtomX9uhVwV69Hn0iZz/sqffR6Cm1F
+ S0RrrOLTcnbzGKgvIRV6T+96a7jCtFeHwgzNW/KIUtj/4lRWm7ZJx7pXT/9QnR/cblcz
+ weSOVJxIEWoNQBXD1cM18gC6LQaGHhSpwpw+uj5BxDfXJ6xvihU4L0/5ui+e9p/9NW2l
+ PMNocqGbCf6IcZm3gyrdnXO3mLimwla/o09y0OVnDEis29PmSRajqqVRqGvIuU8KHSmy
+ HBbuUUUsBLMivL8De59mvRJj0ThVdTvoFrpejPYPaDIkdGnDXMIDj1BZZfKiUQFxF+4t
+ 3rcA==
+X-Gm-Message-State: AOJu0YxeOm7evw8E44sCvZdjuPM7YWMhFt94PWP9fnbaXIus3cM2I3bs
+ du/3Kd2rdXjfIWssbarNIf7rZYIAsAfpqi/u629Unt74k/T1I69hTpe/ikYdlJvxblz2HSANKjP
+ Yxu4rTz8Tn5ld876542RPPTw/T/oMFMJeF084mg==
+X-Gm-Gg: ASbGncu1Os1wMWOz7dQMeEamaTOTxuXwr5ufABObekH/ZerXk7it0uGP03y5ivoTWTA
+ R0moqlFwpo2HnExwooDwxcuFdIuSG6oTRDfVVr9eiuUMh9mqjPx77bQt0AIuG6/EmZk2aKld6f3
+ miEmZXjcq7en3OMAdQtZhbh4c1
+X-Google-Smtp-Source: AGHT+IGyDkA9pR7ztc9R/U/zVUpXC+OHwPKUrU4Dxk0dIYcnIu8vXp3DUn6IGslehrbJTCZ+ILlKxvOC9WFKvya6YbU=
+X-Received: by 2002:a17:903:2405:b0:224:376:7a21 with SMTP id
+ d9443c01a7336-22428bdee20mr377318275ad.42.1741870658408; Thu, 13 Mar 2025
+ 05:57:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240821191557.18744-1-jspewock@iol.unh.edu>
+ <20250313033611.1896695-1-probb@iol.unh.edu>
+ <20250313033611.1896695-2-probb@iol.unh.edu>
+In-Reply-To: <20250313033611.1896695-2-probb@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 13 Mar 2025 08:53:56 -0400
+X-Gm-Features: AQ5f1JoSG-QDRqefEYFER8b3-vRcbTZo0vgsbH_d5EFk0E5_SIpvNhotEIYgUiM
+Message-ID: <CAJvnSUA+gEEZKq8r6GT_DigwUFKDuri90E+kvXkQa+JD-RGUMw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dts: add OS abstractions for creating virtual
+ functions
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu, 
+ dmarx@iol.unh.edu
+Content-Type: multipart/alternative; boundary="000000000000d6e75d063038dd9e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,171 +72,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-To use cores with IDs greater than RTE_MAX_LCORE the user must provide a
-mapping of those higher core numbers to ids within the 0 - RTE_MAX_LCORE
-range. This can be awkward to do manually when more than a few lcores
-are involved, so instead we can provide an extra option to EAL to do
-this manually.
+--000000000000d6e75d063038dd9e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch therefore introduces the "map-lcore-ids" flag, which
-automatically maps all provided lcore numbers to start at zero.
+On Wed, Mar 12, 2025 at 11:40=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> w=
+rote:
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/event/dlb2/pf/base/dlb2_resource.c |  2 +-
- lib/eal/common/eal_common_options.c        | 32 ++++++++++++++--------
- lib/eal/common/eal_options.h               |  2 ++
- lib/eal/include/rte_eal.h                  |  2 +-
- 4 files changed, 25 insertions(+), 13 deletions(-)
+>
+> +    def create_vfs(self, pf_port: Port) -> None:
+> +        """Overrides :meth:`~.os_session.OSSession.create_vfs`.
+> +
+> +        Raises:
+> +            InternalError: If the number of VFs is greater than 0 but
+> less than the
+> +            maximum for `pf_port`.
+> +        """
+> +        sys_bus_path =3D f"/sys/bus/pci/devices/{pf_port.pci}".replace("=
+:",
+> "\\:")
+> +        curr_num_vfs =3D int(self.send_command(f"cat
+> {sys_bus_path}/sriov_numvfs").stdout)
+> +        max_num_vfs =3D int(
+> +            self.send_command(f"cat {sys_bus_path}/sriov_totalvfs",
+> privileged=3DTrue).stdout
+> +        )
+> +        if 0 < curr_num_vfs < max_num_vfs:
+> +            raise InternalError("There are existing VFs on the port whic=
+h
+> must be deleted.")
+>
 
-diff --git a/drivers/event/dlb2/pf/base/dlb2_resource.c b/drivers/event/dlb2/pf/base/dlb2_resource.c
-index c4bc248afc..541a16db24 100644
---- a/drivers/event/dlb2/pf/base/dlb2_resource.c
-+++ b/drivers/event/dlb2/pf/base/dlb2_resource.c
-@@ -931,7 +931,7 @@ dlb2_resource_probe(struct dlb2_hw *hw, const void *probe_args)
- 	cpu = rte_get_next_lcore(-1, 1, 0);
- 	hw->num_prod_cores = 0;
- 	if (mask) {
--		int n = rte_eal_parse_coremask(mask, hw->prod_core_list);
-+		int n = rte_eal_parse_coremask(mask, hw->prod_core_list, true);
- 		if (n <= 0) {
- 			DLB2_HW_ERR(hw, ": Invalid producer coremask=%s\n", mask);
- 			return -1;
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 807ba760ce..107b9eaad5 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -106,6 +106,7 @@ eal_long_options[] = {
- 	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
- 	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
- 	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
-+	{OPT_MAP_LCORE_IDS,     0, NULL, OPT_MAP_LCORE_IDS_NUM    },
- 
- 	{0,                     0, NULL, 0                        }
- };
-@@ -152,6 +153,7 @@ TAILQ_HEAD_INITIALIZER(devopt_list);
- static int main_lcore_parsed;
- static int mem_parsed;
- static struct lcore_options {
-+	bool map_lcore_ids;
- 	const char *core_mask_opt;
- 	const char *core_list_opt;
- 	const char *core_map_opt;
-@@ -723,13 +725,14 @@ check_core_list(int *lcores, unsigned int count)
- 	if (len > 0)
- 		lcorestr[len - 1] = 0;
- 	EAL_LOG(ERR, "To use high physical core ids, "
--		"please use --lcores to map them to lcore ids below RTE_MAX_LCORE, "
-+		"please use --map-lcore-ids flag to map core ids automatically, "
-+		"or use --lcores to map them manually to lcore ids below RTE_MAX_LCORE, "
- 		"e.g. --lcores %s", lcorestr);
- 	return -1;
- }
- 
- int
--rte_eal_parse_coremask(const char *coremask, int *cores)
-+rte_eal_parse_coremask(const char *coremask, int *cores, bool no_check)
- {
- 	const char *coremask_orig = coremask;
- 	unsigned int count = 0;
-@@ -784,7 +787,7 @@ rte_eal_parse_coremask(const char *coremask, int *cores)
- 		return -1;
- 	}
- 
--	if (check_core_list(cores, count) != 0)
-+	if (!no_check && check_core_list(cores, count) != 0)
- 		return -1;
- 
- 	return count;
-@@ -869,7 +872,7 @@ eal_parse_service_corelist(const char *corelist)
- }
- 
- static int
--eal_parse_corelist(const char *corelist, int *cores)
-+eal_parse_corelist(const char *corelist, int *cores, bool no_check)
- {
- 	unsigned int count = 0, i;
- 	char *end = NULL;
-@@ -932,7 +935,7 @@ eal_parse_corelist(const char *corelist, int *cores)
- 		return -1;
- 	}
- 
--	if (check_core_list(cores, count))
-+	if (!no_check && check_core_list(cores, count))
- 		return -1;
- 
- 	return count;
-@@ -1767,6 +1770,9 @@ eal_parse_common_option(int opt, const char *optarg,
- 			return -1;
- 		}
- 		break;
-+	case OPT_MAP_LCORE_IDS_NUM:
-+		lcore_options.map_lcore_ids = true;
-+		break;
- 
- 	/* don't know what to do, leave this to caller */
- 	default:
-@@ -1866,10 +1872,11 @@ eal_adjust_config(struct internal_config *internal_cfg)
- 
- 
- 	if (lcore_options.core_mask_opt || lcore_options.core_list_opt) {
--		int lcore_indexes[RTE_MAX_LCORE];
-+		bool map_ids = lcore_options.map_lcore_ids;
-+		int idxs[RTE_MAX_LCORE];
- 		int nb_indexes = lcore_options.core_list_opt ?
--				eal_parse_corelist(lcore_options.core_list_opt, lcore_indexes) :
--				rte_eal_parse_coremask(lcore_options.core_mask_opt, lcore_indexes);
-+				eal_parse_corelist(lcore_options.core_list_opt, idxs, map_ids) :
-+				rte_eal_parse_coremask(lcore_options.core_mask_opt, idxs, map_ids);
- 
- 		if (nb_indexes < 0)
- 			return -1;
-@@ -1877,13 +1884,16 @@ eal_adjust_config(struct internal_config *internal_cfg)
- 		char *core_map_opt = malloc(RTE_MAX_LCORE * 10);
- 		size_t core_map_len = 0;
- 		for (i = 0; i < nb_indexes; i++) {
--			if (!eal_cpu_detected(lcore_indexes[i])) {
--				EAL_LOG(ERR, "core %d not present", lcore_indexes[i]);
-+			if (!eal_cpu_detected(idxs[i])) {
-+				EAL_LOG(ERR, "core %d not present", idxs[i]);
- 				return -1;
- 			}
- 			int n = snprintf(core_map_opt + core_map_len,
- 					(RTE_MAX_LCORE * 10) - core_map_len,
--					"%s%d", i == 0 ? "" : ",", lcore_indexes[i]);
-+					"%s%d@%d",
-+					i == 0 ? "" : ",",
-+					map_ids ? i: idxs[i],
-+					idxs[i]);
- 			if (n < 0 || (size_t)n >= (RTE_MAX_LCORE * 10) - core_map_len) {
- 				EAL_LOG(ERR, "core map string too long");
- 				return -1;
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index 95fb4f6108..384c2d016e 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -93,6 +93,8 @@ enum {
- 	OPT_FORCE_MAX_SIMD_BITWIDTH_NUM,
- #define OPT_HUGE_WORKER_STACK  "huge-worker-stack"
- 	OPT_HUGE_WORKER_STACK_NUM,
-+#define OPT_MAP_LCORE_IDS  "map-lcore-ids"
-+	OPT_MAP_LCORE_IDS_NUM,
- 
- 	OPT_LONG_MAX_NUM
- };
-diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
-index c826e143f1..a53fb29c45 100644
---- a/lib/eal/include/rte_eal.h
-+++ b/lib/eal/include/rte_eal.h
-@@ -508,7 +508,7 @@ rte_eal_get_runtime_dir(void);
-  */
- __rte_internal
- int
--rte_eal_parse_coremask(const char *coremask, int *cores);
-+rte_eal_parse_coremask(const char *coremask, int *cores, bool nocheck);
- 
- #ifdef __cplusplus
- }
--- 
-2.43.0
+Maybe in this situation we should just delete all VFs, and then create the
+new set of VFs.
 
+--000000000000d6e75d063038dd9e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Mar 12,=
+ 2025 at 11:40=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.=
+edu">probb@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
+uote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,2=
+04);padding-left:1ex"><br>
++=C2=A0 =C2=A0 def create_vfs(self, pf_port: Port) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Overrides :meth:`~.os_sessio=
+n.OSSession.create_vfs`.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Raises:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 InternalError: If the number of =
+VFs is greater than 0 but less than the<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 maximum for `pf_port`.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 sys_bus_path =3D f&quot;/sys/bus/pci/devices/{=
+pf_port.pci}&quot;.replace(&quot;:&quot;, &quot;\\:&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 curr_num_vfs =3D int(self.send_command(f&quot;=
+cat {sys_bus_path}/sriov_numvfs&quot;).stdout)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 max_num_vfs =3D int(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_command(f&quot;cat {sy=
+s_bus_path}/sriov_totalvfs&quot;, privileged=3DTrue).stdout<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 if 0 &lt; curr_num_vfs &lt; max_num_vfs:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 raise InternalError(&quot;There =
+are existing VFs on the port which must be deleted.&quot;)<br></blockquote>=
+<div><br></div><div>Maybe in this situation we should just delete all VFs, =
+and then create the new set of VFs.</div><div>=C2=A0</div></div></div>
+
+--000000000000d6e75d063038dd9e--
