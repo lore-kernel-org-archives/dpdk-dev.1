@@ -2,167 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D3C28B28
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 08:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F373C28B28
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 09:09:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1601640EAB;
-	Thu, 13 Mar 2025 09:56:23 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 66A7540E49
- for <dev@dpdk.org>; Thu, 13 Mar 2025 09:56:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4FFE840EAB;
+	Thu, 13 Mar 2025 10:09:58 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 41C6540E49
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 10:09:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741856181; x=1773392181;
+ t=1741856997; x=1773392997;
  h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=C5krbZT4gHdNUkUi/n1iZDRAB8qqOa5n8jSWCEcD2dA=;
- b=UWVVn7gYAahMCfRJ9ZbJDDBPsaMKfPLM8L1Fm8KoFKDzfpIZ9TKcVRk3
- i9Szrw2lDUPoYQmxocaUl2/IrJHLbS+2Tal1JuAFm1L3NBKBFraVQJBrv
- YlDp5JXJcLXi5Nvq8yLLIhHMnomCfNf/uQ9NuicDYvizAbYlkS7r8/EyI
- iWEDLanETJazKyg5V21yrOdUppmjg7c5ZIG2tLK+WbKgZD9J3r//E/pgp
- DFojcKKxShKaGluSBlvfmh0FC/MCwdNk1JK2AiPbIAyF1Iyl3L/QZTqlO
- MGO/taPMSHtVkOjqc4CKZX51ZNzJU2uZ75Dz4fSShXD10KRUXdMMT7i1i Q==;
-X-CSE-ConnectionGUID: hQe0ue5NQSCOT5xIR6ETag==
-X-CSE-MsgGUID: svBMvdy+QEuN6lN/flbQIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42991871"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="42991871"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Mar 2025 01:56:18 -0700
-X-CSE-ConnectionGUID: +LiJthITR4mnMmgkFVyeMw==
-X-CSE-MsgGUID: hAEEwStkR2qdwRrdnMvhPA==
+ in-reply-to:mime-version;
+ bh=jzN+Ts5O1lhwYIQNuBNOjgEIeQShjuCawbJIHorSVhg=;
+ b=C5CC7AURXBDCwRuVSL0X4q0bPVnrhEjs8tuTiO4PM1xeES4D1bsX0KAt
+ vdgdIL6u1QOF9dWFruJAQJiRoSSr2VuwA2N5sN0s6e2bwNI/gGeb5lYMe
+ 94eMvDuN/WO15EHRRd1+/UMtg3D9i4sqjAA7UOGmgw5YgD6M4VCF5Npaf
+ 3vSVGPzNKFF/rArxh++stW47U2Ajni6gbqFU195e/Vp+DnLBfbJOeguNW
+ 27qkg64GuCQdsbI3ljnG5HFcfTUzMfd6oNoxhXM/AAeKpOUZiwdOyxLp8
+ oif/JYmQ2khGuvKQfTeCtG49S8c7K2LDJCK5TKSl7cix5mzAYcOuAgzz8 Q==;
+X-CSE-ConnectionGUID: XjZ+HEbqRM+guJ/MlHlmig==
+X-CSE-MsgGUID: Gh13a9FaQ3y6OA5yuOzQCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60505250"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="60505250"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Mar 2025 02:09:55 -0700
+X-CSE-ConnectionGUID: /iXewWIUS9+3/E82XVvsKQ==
+X-CSE-MsgGUID: eyoK2L57SAWLpY6+3vDNvg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="121382392"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Mar 2025 01:56:16 -0700
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; d="scan'208";a="120695306"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Mar 2025 02:09:55 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Mar 2025 02:09:54 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 13 Mar 2025 01:56:14 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 02:09:54 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 01:56:14 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 13 Mar 2025 01:56:14 -0700
+ 15.1.2507.44; Thu, 13 Mar 2025 02:09:54 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O0AB39mIP6GICPe9vTQcjRD82lXK8BMvleMYkC3xAhBb5FFDrJFVlCpelPWMgchmeoznWdwlX6anXL/V6EPoQnuQtVkEGoddG4SyNcvc3fLNjYHYiS51ajeYTDleGX9dkurO36oOPG2JjDuHR8BPSNQp0pO1matGXeZURJCHC+ghhF26+UHfO1cJGzkrEecq2KO4mpyLzyXmXyTRbehtRiGN38RD1qYr+GWJzI0PjZptS2vSms+9NPAZD2E02AGOmJA+CmhLaKq22qzBw7kM4Q898ArW3JSXxN6OG3f1AzX/XlwztypaQXD6LBhFcZ63koiTorqfcLdPrW3f0Xsa5Q==
+ b=s07dk14fYRdPKdiqFfmo3725BFIuyNkfBsrkNFlyk/MqxtMRwrVaRzTcRQv/daDTlbQL8invt8MVM8WKgSzzOdNlJ6h8ZVGLkxAYTARScbxAAA3/+tYGAzvWIWH4jbp8oIZ7b0fCtlw0RB5RbL8v18/OU8XF9uQNvl/96TPpG5sc821Soe89dMni735u0mJ5l33sw1vzuklVDqBQN0Eu3JAdz8yFDEaFVcDAzVmxbA/SmAO0RmrMohADfj9p91Kxnr9m+JicHRcYT1k9HhAUQxhuQTMWAhGBp7j9qPSLsD4NOH43HxBkSY5KgXDWAdLK0sPiRq2EJZfHpFqjSteLvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SN0dCZt+mJbprqZCyeGXdLlsgPmGotJk04odvZuIM24=;
- b=ALGXbEmVpmeipZtz+CbOCyKZEkraym12oHnaPPG1R0b9H2DHEfk2XvLHnsv51lqgiFdwz5mxtso0oqccrbUfUy8aliIQ+4395aYCbBvMvNwMpYkDPymCx+BQfEfUfmGCHqeteFuwCtjdJ4M9GPHgfcvHZnIy2c+U3sLgr/KBB1lY7WlDXZOBAlseeD7EaVpbCrY1LWysSFAhm7E4lyuBTyUCF8LumNpkQTw0LRWrCp2exjJ/R+2UHm6/p7fagl2GzVEsJQEdgGjysYpbVHBOGZugBnMjRwlCrOk3eK75LdBQ9DAzENftLDsCVbKpwP4LwbrhRm4a31MyV3wH5IWYEQ==
+ bh=RBewCM2MxCF6UTcMcXreeoUn6XWWD7swJ+1CtPW02Qs=;
+ b=IlqYxv+ODbf4fP+NIrdsLhZOPmFuOajDIr/iWEOiLHWmk6aqOnwjmIrZz91AHE4ctBfRmp+XT9H6A0veZJ6H8rMSiar9+cx5tv8fRs1X9Rzrrjfpeac1knp0Tfy6s/x8P/vlRlkDmowiO+ZYZ/j91QFZ85bLFfwPHpFEmnUbSnVbwDwb9u7ejjQ16MYQI+NyfA2izSr/Y5wpi5bVnMuzy8gK59sj0SpaVP8W63HItU6pothI9LOm793NknsrrabGkB+v7TaTpn1d1Bo9huQyu0YcxOfQ3GySpp4ff9ug3HWosmi8imMWBMlDK9nmT1vPmOYejhB/GfjPUjx/vsk7Tg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ2PR11MB7428.namprd11.prod.outlook.com (2603:10b6:a03:4cf::9) with
+ by CY8PR11MB7315.namprd11.prod.outlook.com (2603:10b6:930:9e::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
- 2025 08:56:12 +0000
+ 2025 09:09:52 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
- 08:56:12 +0000
-Date: Thu, 13 Mar 2025 08:56:07 +0000
+ 09:09:52 +0000
+Date: Thu, 13 Mar 2025 09:09:48 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>, Thomas Monjalon
- <thomas@monjalon.net>, <dev@dpdk.org>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Message-ID: <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <20250214172134.73908-1-stephen@networkplumber.org>
- <20250214172134.73908-2-stephen@networkplumber.org>
- <12279496.nUPlyArG6x@thomas> <20250312160225.2d90e78a@hermes.local>
- <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="iso-8859-1"
+To: Andre Muezerie <andremue@linux.microsoft.com>
+CC: <dev@dpdk.org>, <sameh.gobriel@intel.com>, <vladimir.medvedkin@intel.com>, 
+ <yipeng1.wang@intel.com>
+Subject: Re: [PATCH v3 1/3] eal: add function rte_size_to_str
+Message-ID: <Z9Kg3C-L22fTKebl@bricha3-mobl1.ger.corp.intel.com>
+References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
+ <1741807714-26748-1-git-send-email-andremue@linux.microsoft.com>
+ <1741807714-26748-2-git-send-email-andremue@linux.microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
-X-ClientProxiedBy: DB3PR06CA0024.eurprd06.prod.outlook.com (2603:10a6:8:1::37)
- To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <1741807714-26748-2-git-send-email-andremue@linux.microsoft.com>
+X-ClientProxiedBy: DBBPR09CA0007.eurprd09.prod.outlook.com
+ (2603:10a6:10:c0::19) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ2PR11MB7428:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02fd82c4-acfe-4651-4914-08dd620ce7ab
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CY8PR11MB7315:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca22d30a-cc7f-4f1a-c11c-08dd620ed048
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?O2vNiY9a2S+u/ZX2VMgfWggBoc4mQG+lhDBxvkM8eXhFg7q9RXvtM7xxL0?=
- =?iso-8859-1?Q?An9YUk3Cj29PWbgsGW4UVUDoUFwAd+3C6NRxmlMreDrkNFTWC0M/RoEyoD?=
- =?iso-8859-1?Q?B+IIuFMSiqDmeo4UoA/lYYgUmL+HhBTUp3/wb5Mf4imhY/zJcOYXfoO5Re?=
- =?iso-8859-1?Q?XeEEOL//9ZsRDM6uTqmkmtpqc7pAjMQFTAmhwxWDQkjstfsqurHQbaoQeX?=
- =?iso-8859-1?Q?NE/kAN9K9yJgqoKWISsx1ycqGbv8mgK/6QSCcb6su44KcPTDdMG5paFuIQ?=
- =?iso-8859-1?Q?MbVcFUBr2OEmZHNys5wUex70h7eyWp/aa93aJbembrESYOxKWo2AULUUtw?=
- =?iso-8859-1?Q?HbRBc99ltooA7S/lZkZQ5fPYH6zotJEdoNt0DneCfxxyjuWzNpga5j+6Jv?=
- =?iso-8859-1?Q?d7y5vAXiSxQwqByxHUdLkGOPtYTNEpuWqW37c9Az2XpAr+E6Mj3yLwHE8N?=
- =?iso-8859-1?Q?YFZLYpxyRjOG0+A51UuCnfnK7nu4PJEycCLxaBK5JgQy1E+rmCIaVZZLCs?=
- =?iso-8859-1?Q?S6UmTukAQFxuRdi9Di5xqvLU24xoheokHXIpmtyv1KOSgFsIB9qe8UA/Q5?=
- =?iso-8859-1?Q?FjXEh1xDn/7TkFHSdvoTP6/RjIF4m049ZoD7y8Q596RyfFfAn20qv14ugn?=
- =?iso-8859-1?Q?KICXu1E6/t40o5dCIsLAqkVU0AG/Egx+eueE0cH666EvDmEutWOrwXV32L?=
- =?iso-8859-1?Q?rgGXGypAwMIzkOlHkxrVxTNWvuM8VhwmMjYhrfrYUFpfGxHfqNX909id5Y?=
- =?iso-8859-1?Q?st1OGZuPkTcZXpLHIWlbpPp4YGVRTnjcReKyWs1Amrd1SF446oH2GxPhxL?=
- =?iso-8859-1?Q?3nLr9jt2w669gpqUDzkszKkszkM3FLFjcY80tWOmSG6GNJAhHzZzEz/weA?=
- =?iso-8859-1?Q?vbcZn9I8wWyH++q8kW0HZp6ZvxC21CWEuEwu+Fn6YSaiYsTmT+08SIDBsJ?=
- =?iso-8859-1?Q?fdVYHpGtdrl1K1fe+OQpkN+MyQEGOeyu7wvou6dRYIaChmcwfPNSszzVIK?=
- =?iso-8859-1?Q?8IqPWcREH5WRUNN5PkTTzbZZsyLiGQ+2qA+KnGAbbTIVFPEjbkwK2AZR/K?=
- =?iso-8859-1?Q?gursX4snKJvxtCIHnTO7aq5pXOOJ6UzHlZxLV3Y3gse/0aeZHrIRtKFF9o?=
- =?iso-8859-1?Q?ss8UyfmFThu5jaHAq94MQCeII+gwote9dfA4DIwH/q70huSroLnC1sEghq?=
- =?iso-8859-1?Q?TT6Y3diFDtyw1m14CIPSF3II75e7Y/eTIyUX2PXpXLSQqo7SAqbzxJbQN8?=
- =?iso-8859-1?Q?Q6mOeGUx5jkj+DHBklmsZoi169i4KktXOGmqxuIpJRXaSm9dcB3tpuw8EW?=
- =?iso-8859-1?Q?6eSXd9jrIM1aJCjTkyCL5AHOqVh7DlfFoaH2GG15BcrCls+P5pflkhW4dq?=
- =?iso-8859-1?Q?d9CZvPN2P7tvb9PJP+YT5Q0OU/cMjKQRvJZZvwjYkM+i425c8FYHgtNeD3?=
- =?iso-8859-1?Q?N7F9baBBwmu2VQsQ?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VPfmyOO+7G8VbJucSlQ9WRju9cs//HbMULYtmk7SrRxvb+ZmA2odcUjq+0rh?=
+ =?us-ascii?Q?vLkwwvFUCCdUWFflARteuUZq+o2fJQULaMkNvf0R08QiW6tvpxMc/CTo955k?=
+ =?us-ascii?Q?lRb9n94h2NRbRWGILLOXvC2/7oP8tU1JjYBEdBhE6FLvFRBQvXNknj5+nd43?=
+ =?us-ascii?Q?6RbTBqUF85MGZy1RhbOkYAIey+WVJ6TTrWNyUOHK1FUlUd8U416jpzi6aQl7?=
+ =?us-ascii?Q?UMDmXMiiXaAAOmFS1x919neBvJqT+2ene8E8/T1JVtq2bK5ad+tkcDF90vN0?=
+ =?us-ascii?Q?CLNZCsy4U2vxIPJEa3SA768GfpFwXYg4UQQiRkS8rLuSPKN45FBXW3b/6SKe?=
+ =?us-ascii?Q?PYbz8i0AWtomNOg0FmZBSbRGxr1Cp8dMGtX3OUwc7a8yQOE4nOms5fI2GK7b?=
+ =?us-ascii?Q?rZLvKccC4wjxbHbwVQl17QwV+imKspudVUQgVeKpA1KClElPHnKJIO6mukjF?=
+ =?us-ascii?Q?cwUsVvz/oj+v4tGP9s9R1oyhl15s+yv96YYNcVNcI+qWZaT6N962KDbdpfy2?=
+ =?us-ascii?Q?LKLsjZ53i8Y+quviObjXanjjOPT74caJC2zypwhnsozSWQwXjUbSdPEMlnt0?=
+ =?us-ascii?Q?CPBDNkNmdkeUgxWHe9kKRvA6f2cjSXPNxArZ+RN5VANjLyPzVymwbVYrti4C?=
+ =?us-ascii?Q?fggdE0z2ZNq7jrx/TG1X+do1j3cUUSmINvwU8hujSpgUA0tdBVN/3ok4BM/z?=
+ =?us-ascii?Q?gVKrNs74QVSfcVGubMIuDO9qxBp89V3OGN+gOHRkdTWyfj2RaAvp+Dc350nV?=
+ =?us-ascii?Q?sMpwdAktdJlN5YuZtjC3sYVPCxESahVlFmB1fcR6xGcHAfrb5j257r9bnp9e?=
+ =?us-ascii?Q?6xGH11ORbOjJwZ/md0ee3Z+GXBuWYwu4vYlBRcyD3sUxH9JkkkvTebJ2VD5z?=
+ =?us-ascii?Q?nZlCGhOeKCbN7acg5PyPtEqRq5ZteqRmRCUdYann3HnGK10Nv2q5ZA1M/gOF?=
+ =?us-ascii?Q?x2IXUwz8QM1iIbbf3yNQ6oTnjlx6pdAO2H7xCC7xKUYvnDpMfjpNHDDeXDDe?=
+ =?us-ascii?Q?UDpxvJFIucmfqLTwsnUr1xHUwR9d+gNFFwzzT83fYt7Gu0LzXOyhCS9DEWzg?=
+ =?us-ascii?Q?StIzjGNdPvF8hNfb1NEW9UMRbhUudo6XlN4obDsJEfI4NDHF4PzqKiS+fNQu?=
+ =?us-ascii?Q?6ve70g6GpJfe9jWqFvuI3XxnJjSv+95czaQ7l+XY91kxVVV4m1J/aGplVZdI?=
+ =?us-ascii?Q?j/KbOC9uObPT/TBHei6JlLGBpQMCIzTcTB19K1O32a3UpXMrk8gWCyiXoZDO?=
+ =?us-ascii?Q?s/ctNqBy8C68DkTN/QGSCj35LWwmTXkkDDytc6zsHjW4993whkYir8RI7174?=
+ =?us-ascii?Q?3Tljc6jcoOHlhYD/PHrAs/cUO80wDBBQJ+1QlZcx1MB21h/zE2WehSdaOyhl?=
+ =?us-ascii?Q?m0LZsxHySViREoEJAysbX2SusBnO?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?u91k+aVQ5wg5lFfADanDCr9JTKD+hWCQP1t+5DDifbGldXfs6FPt0F9gPa?=
- =?iso-8859-1?Q?Slh+h9YPTbFiW8ZcdVj+r3TnaM14dv4AeVJW17fQjTHgixDS2r7z2jNKEt?=
- =?iso-8859-1?Q?KUPFcR3ox62AbrsGEI2Bhe9pyjSJ2QuBs5UFJFX/e/nIIMMS9wKpmWaXnd?=
- =?iso-8859-1?Q?RC7VBOi8szl2RKj10gZ85XwvWVqVFabXjywFkPI+nF64JptvlHiHFQPUWH?=
- =?iso-8859-1?Q?H1y6Mjj0lB16S/JlpeT+6iXSZaAYzUSjC0Kixid8d0pYo3mQoyGJZaP2v+?=
- =?iso-8859-1?Q?R0knLhe9Xb1BFW9YjDhEN8ZhKt1CBXW2ovSKHwdckeDv4Im76ZJVd1VGJJ?=
- =?iso-8859-1?Q?n/d103zTwSMK2HIIgCkkaIhgdrMOKLXf6Q2A/68NZyP2/N6267DK5u7i5+?=
- =?iso-8859-1?Q?sYaUyiOS5OMU16w2xPZEjZRasV/kZY9BnU3TIM2Ko3JXzC2qTsOGAOUBIb?=
- =?iso-8859-1?Q?zR4wsLE0fETy08bmD/PPnpnUl+te8DtgIsg1Aj5ZYSzyjCl17NAB8N0VBN?=
- =?iso-8859-1?Q?Iyhz68MTAlnko5W3FJeIftnNXV74pCtU2F/8Y4UKG2YvQ00aZKKPaZcK5x?=
- =?iso-8859-1?Q?TL0nD7kr2DTyn9pnCA4bS8gtH3PFzfwT54KGx39UnSTx2+qwiIGhP+3EOq?=
- =?iso-8859-1?Q?TzEzs/1axgPp/kYbQQ96z319hq/LhF99ajBFjhDAsciKLogZQW3WRQXynU?=
- =?iso-8859-1?Q?3MPnjK1Mi6TIAkI3fS8xuSJIgw/i8CRDij668tjUmS3i1z+PFNdNybXu90?=
- =?iso-8859-1?Q?MAVdU4QKtsm0/BdSBCx7HQCoYLc5WfoowTtcH0ulHsJtNtCLj5LC80s+oE?=
- =?iso-8859-1?Q?SkVQ6rTmIzokz6bPNSXILfupF3He0IcBNf9Oeu2dW0GQO2G1zSNideXxgB?=
- =?iso-8859-1?Q?M/ouAj88DtJ+VwWsBgGIQSYaDOhwbjE8jIlQJW+Pb2zq0YMcmWu/rDhKUT?=
- =?iso-8859-1?Q?hKVR6jiA8HuKMXUgjF/s2Hvhdfw/qcw+lnPGhFwOpVuou2nWNTvu1JNLYY?=
- =?iso-8859-1?Q?24CsvirYvroqe8HMUgsqwod1A9fTHFMiKruq8SkCN53QMcp8KNYGAzMq1k?=
- =?iso-8859-1?Q?10/LPnSLAEegMM1bFppPvc/zLpMlsBVEuHSMNvZWPMB+wJ12aTXNGYLW2p?=
- =?iso-8859-1?Q?ZjX39+OrWIhK/nb0tzdn4sYWp3uzJb3ZaUTC6aTn/4LbjPh1bXFvzNdRL7?=
- =?iso-8859-1?Q?Hvn4P3+g9WVYcOZ0AjY9l8qQc+LrAZ4ciYnGWBqDYMJ2EuPPvOod1SsmLk?=
- =?iso-8859-1?Q?AvF9BmcRaMho4SCoEdHgkwn97gKFHXZHh8P0bbnPJ5ZPm5Ac6lHsbrVIgG?=
- =?iso-8859-1?Q?ROUmDp08tlHfAg53p4HdsFYJXcH1dmXtKm4jlJasIk9vPG7zUR7PVKQERG?=
- =?iso-8859-1?Q?Dm5oSIMtT1idut5H3+4s7IxTRuBzb6tbauY6aOWgb2c28mdwSvOixJ53yV?=
- =?iso-8859-1?Q?pMtfgK3ryjRsU+vAHXMMVTpdvK6Q9sZ79pt9hvO3o9BIOOoYneQ5ShOXiN?=
- =?iso-8859-1?Q?LeCZAd3aWdgP6XvdWm36aJAt+4XG+62Px4Ri0uuuCXEX3z7oo1m0I/c9kC?=
- =?iso-8859-1?Q?ZMrd05t1uAslXqIFa9cDw8dOV8VfWyuWraq0UGRypKfm36wtjRtm5+SdI5?=
- =?iso-8859-1?Q?efUTdCGX311Pyg9EFJ8eu+xSAehwKou1Jj89FaAt114ZTM5aJee8W40Q?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02fd82c4-acfe-4651-4914-08dd620ce7ab
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?90jXOHX0Fu6ENcLz+PrXBQdeZEpA+AisPDH+Xa+s4i81qjW1P+ZZauqa6f8J?=
+ =?us-ascii?Q?9y7wYy3usHrIEb+mPgKWiI/Ty58TfUsLONXBjIwlNFf6THOj0XOf9c4nKcC7?=
+ =?us-ascii?Q?WwUsgkZ+iEuUo5V4ooGGkDxTQh0vwDyZNPRver1l27YEmXJG+v3akhuoR0xE?=
+ =?us-ascii?Q?9olOqd9f5tq98aL7GjWuZUIoq9pYMOlq/IJraUMiO6hfOMQ88fj6ELJEDShs?=
+ =?us-ascii?Q?DfjQIlvLXKl53X8zHp+B7dAH+H0XeuETrmwM0CdqkheP8Nw1u7zKvBSATFnW?=
+ =?us-ascii?Q?uALGCZwqKRENc+X0GOGIrlYlVDkM8WFbh+alveQi6xaUL/FzRrYETUAlnQYQ?=
+ =?us-ascii?Q?MXKcHPOoHUuaDjtg/+0vrp3HlgyNp0eGircw2msnYsfEf9DgyHLiWl5cUZWm?=
+ =?us-ascii?Q?BMq8DF0717DvA7TdXb19pVc4rpy/K+J6/oCjqzakzcdZiS36BA26ncAjMVbO?=
+ =?us-ascii?Q?bqBIiNGi4SuJu7eeu672TFCBkBs2szi/80fw0y1KI9hiyPAXfiFn/uFsql51?=
+ =?us-ascii?Q?qsp8/20ceUv7DBP9Ejepp/g70mi7G1E+nqQP1Xk3iN33ehLE4zr3sFzRmQoa?=
+ =?us-ascii?Q?KNEWRpINkVjD7OwFNBulbRN+nl0qDbreE7ygWbcDL5d2tDDCRTbzj4CYFmRX?=
+ =?us-ascii?Q?0z4DcoEZzGYR1+kJ8Pd/DzdCmTepKz0lV0vGA8NkyArlvnF+rlfnMhhn+/0/?=
+ =?us-ascii?Q?ZF6zRQGs4+i7Flbk5dpTuZ7r3FAUhaQxO7HdCYtVs0Bkr+jBCqVHMtRQiewr?=
+ =?us-ascii?Q?4UxHblw6e6o3FgixSDQCytfXvagsB5fUxTbcqU0ffg9zsa6qIbdMqlj96Ln4?=
+ =?us-ascii?Q?LuWY1n4lIZqW5ImQqkoiN377Pdhog5tyAzOphMeaifMwfe7HOmVKHEeNO6xG?=
+ =?us-ascii?Q?vBUePip8z3nFJmwG4Pro+F6CDSh9izNjJAarVKgAJhNhZ4fCfEEe8R/JlkuY?=
+ =?us-ascii?Q?shVp/rEZ5Shxov8Hlz3hrM6ljs1PPWHDUpSiChB/NEWzseaRLca8007TJ0nc?=
+ =?us-ascii?Q?ZzO8C6sUyAtYfO9ucTUBz8t8Ot/tHtXApyAfEvGEzrfaBtjE9yFvCtgqqMkv?=
+ =?us-ascii?Q?twJIV4X9dCZroPRAax6FJXfcILbARma8r253PesbqzPDOw/7R+wkaiOsHJ6a?=
+ =?us-ascii?Q?1Iu/WxkpCiwXjCHWcug667lZdbSveddT4qhKMtTbsCAz6v7TICn7Vs5cs6RW?=
+ =?us-ascii?Q?vovdsM837T9+CZzP4xZkNq81tcfu/9K/OHclFgZc3OLLzpeNe8lXgJRP1Eau?=
+ =?us-ascii?Q?i+mvwF+jWOcz45ofqkTA8X59kh7rqzladIXb/6CNzOB6/Dl2e5saToIGRtux?=
+ =?us-ascii?Q?54ENBvZPOzTUyUi1b3TU3Em6FcUhzSrLet8B/gcvfrqiWGH+w4URF2iq476w?=
+ =?us-ascii?Q?MUaKNTNy+TRxg8m6JZYFELAoAFj4RUM6KlGb7EwSY2qCk3F60Xy68WzAKtsH?=
+ =?us-ascii?Q?HMAm03z8pMYPDcojMb0nlEX5QzdwVMt0czuTBM9eO2XPzVx7RqHNV8x5XlQC?=
+ =?us-ascii?Q?tjW6Y752S7mAC4+55XifoMI83CPvOgxQ8dNf4+uXc4DTZxEQj66iADw+bFBx?=
+ =?us-ascii?Q?dJUDlWl1rMRwhkadL8dGEFnvYzfX4fECVXKtxWQVGh3M8CyCuyW0WNGgCRp8?=
+ =?us-ascii?Q?Yg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca22d30a-cc7f-4f1a-c11c-08dd620ed048
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 08:56:12.4453 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:09:52.2403 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gJtp7T6UoaDKOAyxWolKr5LcNmLw3TjKqyj2AV7P8AgS9+U9FjaiEGY92shSIh3dbpfe5K37vpseCf9vqANjxy2V3k0gHhQfu2UbZnCHR0g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7428
+X-MS-Exchange-CrossTenant-UserPrincipalName: tUZ9F6luX8KJgP4JRrJBiNwi7UCDHNCW3KvoYQH/5Jb+Qh/aqJahzRNGtN8OtVdLbLubjgRLCQKuvhIw2c/4o+h+ugqsXiYu/aeitgMDC5I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7315
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -177,50 +171,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Brørup wrote:
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Thursday, 13 March 2025 00.02
-> > 
-> > On Wed, 19 Feb 2025 15:55:17 +0100
-> > Thomas Monjalon <thomas@monjalon.net> wrote:
-> > 
-> > > 14/02/2025 18:20, Stephen Hemminger:
-> > > > The Linux version of sys/queue.h is frozen at an older version
-> > > > and is missing the _SAFE macro variants. Several drivers started
-> > > > introducing the own workarounds for this. Should be handled in EAL.
-> > > >
-> > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > >
-> > > We may want to unify with lib/eal/windows/include/sys/queue.h
-> > >
-> > >
-> > 
-> > Not sure, we have several options here:
-> >   1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
-> >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is
-> > what Windows did)
-> >   3. Use the bsd version of queue.h.
-> >      On Debian/Ubuntu this in libbsd-dev package and referred to as
-> > bsd/sys/queue.h
-> > 
-> > I chose #1 as simplest. But all of these could work. #3 means DPDK has
-> > least new
-> > code, but adds another dependency to the build.
+On Wed, Mar 12, 2025 at 12:28:32PM -0700, Andre Muezerie wrote:
+> It's common to use %' in the printf format specifier to make large numbers
+> more easily readable by having the thousands grouped. However, this
+> grouping does not work on Windows. Therefore, a function is needed to make
+> uint64_t numbers more easily readable. There are at least two tests that
+> can benefit from this new function.
 > 
-> +1 to #2:
-> If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h, #2 would consolidate all the queue macros in one file.
-> That seems easier to navigate (for a developer/reviewer looking at the macro definitions/implementations) than including sys/queue.h, queue.h or lib/eal/windows/include/sys/queue.h depending on O/S, and then defining the missing macros in rte_queue.h.
-> A comment at the top of the rte_queue.h file could mention that it is a copy of the FreeBSD queue.h file.
-> 
-> -1 to #3; it adds an unnecessary dependency.
-> 
-> > 
-> > No matter what, should add to checkpatch to block any new files that
-> > include sys/queue.h
-> > directly.
-> 
-> +1 to this.
-> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> ---
 
-I agree with Morten, #2 looks the best option to me too.
+Thanks Andre, comments inline below.
+
 /Bruce
+
+>  lib/eal/common/eal_common_string_fns.c | 44 ++++++++++++++++++++++++++
+>  lib/eal/include/rte_common.h           | 31 ++++++++++++++++++
+>  lib/eal/version.map                    |  3 ++
+>  3 files changed, 78 insertions(+)
+> 
+> diff --git a/lib/eal/common/eal_common_string_fns.c b/lib/eal/common/eal_common_string_fns.c
+> index 9ca2045b18..4cc7f35652 100644
+> --- a/lib/eal/common/eal_common_string_fns.c
+> +++ b/lib/eal/common/eal_common_string_fns.c
+> @@ -4,6 +4,7 @@
+>  
+>  #include <ctype.h>
+>  #include <errno.h>
+> +#include <inttypes.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  
+> @@ -87,6 +88,12 @@ rte_str_to_size(const char *str)
+>  		endptr++; /* allow 1 space gap */
+>  
+>  	switch (*endptr) {
+> +	case 'E': case 'e':
+> +		size *= 1024; /* fall-through */
+> +	case 'P': case 'p':
+> +		size *= 1024; /* fall-through */
+> +	case 'T': case 't':
+> +		size *= 1024; /* fall-through */
+>  	case 'G': case 'g':
+>  		size *= 1024; /* fall-through */
+>  	case 'M': case 'm':
+> @@ -98,3 +105,40 @@ rte_str_to_size(const char *str)
+>  	}
+>  	return size;
+>  }
+> +
+> +int
+> +rte_size_to_str(char *buf, int buf_size,
+> +		uint64_t count, bool use_iec)
+
+Minor nit, I don't think you should need to wrap this, we can have lines up
+to 100 chars long.
+
+> +{
+> +	const char *prefix = "kMGTPE";
+
+Why is "k" in lower case compared to the others all in upper-case?
+Also, these are suffixes not prefixes. :-)
+
+> +	const unsigned int base = use_iec ? 1024 : 1000;
+> +	uint64_t powi = 1;
+> +	uint16_t powj = 1;
+> +	uint8_t precision = 2;
+> +
+> +	if (count < base)
+> +		return snprintf(buf, buf_size, "%"PRIu64" ", count);
+> +
+> +	/* increase value by a factor of 1000/1024 and store
+> +	 * if result is something a human can read
+> +	 */
+> +	for (;;) {
+> +		powi *= base;
+> +		if (count / base < powi)
+
+This would seem more logical to me as "count / powi < base" since it would
+match the initial check for "count < base" (which is essentially the same
+check since powi == 1).
+
+> +			break;
+> +
+> +		if (!prefix[1])
+
+Since prefix is character string, the comparison should be against '\0',
+according to DPDK coding style. The "!" should only be used on bool values.
+So "if (prefix[1] == '\0')" or "if (*(prefix + 1) == '\0')".
+
+> +			break;
+> +		++prefix;
+> +	}
+> +
+> +	/* try to guess a good number of digits for precision */
+> +	for (; precision > 0; precision--) {
+> +		powj *= 10;
+> +		if (count / powi < powj)
+> +			break;
+> +	}
+> +
+> +	return snprintf(buf, buf_size, "%.*f %c%s", precision,
+> +			(double)count / powi, *prefix, use_iec ? "i" : "");
+> +}
+> diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+> index 386f11ae40..781c56adcd 100644
+> --- a/lib/eal/include/rte_common.h
+> +++ b/lib/eal/include/rte_common.h
+> @@ -14,9 +14,11 @@
+>  
+>  #include <assert.h>
+>  #include <limits.h>
+> +#include <stdbool.h>
+>  #include <stdint.h>
+>  #include <stdalign.h>
+>  
+> +#include <rte_compat.h>
+>  #include <rte_config.h>
+>  
+>  /* OS specific include */
+> @@ -919,6 +921,35 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
+>  uint64_t
+>  rte_str_to_size(const char *str);
+>  
+> +/**
+> + * Converts the uint64_t value provided to a human-readable string.
+> + * It null-terminates the string, truncating the data if needed.
+> + *
+> + * Sample outputs with "use_iec" disabled and enabled:
+> + * 0 : "0 ", "0 "
+> + * 700 : "700 ", "700 "
+> + * 1000 : "1.00 k", "1000 "
+> + * 1024 : "1.02 k", "1.00 ki"
+> + * 21474836480 : "21.5 G", "20.0 Gi"
+> + * 109951162777600 : "110 T", "100 Ti"
+> + *
+
+I would omit the space before the suffixes in the output. As well as
+looking better to me, it also solves the issue of the non-suffixed numbers
+having a trailing space.
+
+> + * @param buf
+> + *     Buffer to write the string to.
+> + * @param buf_size
+> + *     Size of the buffer.
+> + * @param count
+> + *     Number to convert.
+> + * @param use_iec
+> + *     If true, use IEC units (1024-based), otherwise use SI units (1000-based).
+> + * @return
+> + *     Number of characters written (not including the null-terminator),
+> + *     or that would have been required when the buffer is too small.
+> + */
+> +__rte_experimental
+> +int
+> +rte_size_to_str(char *buf, int buf_size,
+> +		uint64_t count, bool use_iec);
+
+Again, no need to wrap.
+
+> +
+>  /**
+>   * Function to terminate the application immediately, printing an error
+>   * message and returning the exit_code back to the shell.
+> diff --git a/lib/eal/version.map b/lib/eal/version.map
+> index a20c713eb1..01b6a7c190 100644
+> --- a/lib/eal/version.map
+> +++ b/lib/eal/version.map
+> @@ -398,6 +398,9 @@ EXPERIMENTAL {
+>  	# added in 24.11
+>  	rte_bitset_to_str;
+>  	rte_lcore_var_alloc;
+> +
+> +	# added in 25.07
+> +	rte_size_to_str;
+>  };
+>  
+>  INTERNAL {
+> -- 
+> 2.48.1.vfs.0.1
+> 
