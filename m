@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F46C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 22:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AAFC35FF1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 22:58:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20AAA40280;
-	Thu, 13 Mar 2025 23:55:28 +0100 (CET)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 040754025A
- for <dev@dpdk.org>; Thu, 13 Mar 2025 23:55:27 +0100 (CET)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2243803b776so44217705ad.0
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:55:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DE06C40280;
+	Thu, 13 Mar 2025 23:58:37 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BDF84025D
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 23:58:36 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-22398e09e39so31935065ad.3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:58:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1741906526; x=1742511326; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1741906715; x=1742511515; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=kXYv5rwkV7PrQ8YuvFU7QLtzGnUZja9x9C+PD9oBNXE=;
- b=auZkUEva1B5hDvR9fOUuPIMY9qPqdBz/hrFsDScXcrNEAf5Z7Iu2PgqLwKjUKfQSjv
- 7ywDzs385khg5ipkcserRrKGNwGDoAT05fy0/GkbPzrJcXEFSTvTxAPffoaYn63kTrHT
- 8kIFKF2EiTwmOnjO76+GDkz8S6jtbwBe7HxIA=
+ bh=81zaYvfAjUvHk3+XuxEerKtJekgcbjJSQ1hjOUTcZOY=;
+ b=ebZ/BuR42TTQ7AS3UOXf3XWtcxvKZJwn2rtMtUd4DL8ODyICXvi4GBALlbQiZ3O7bm
+ wZwQ/xac2lKoZPo7difPC3Pl2o6ZfCNI0XVOWkh6i5tZi8+QSmtWKLKGZ2xP5v4sgu1P
+ v4yRRolE9LvKd9b6hH3Y+I0s17lVvQdmee/kc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741906526; x=1742511326;
+ d=1e100.net; s=20230601; t=1741906715; x=1742511515;
  h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to;
- bh=kXYv5rwkV7PrQ8YuvFU7QLtzGnUZja9x9C+PD9oBNXE=;
- b=L9hicHZ0/SEBzr/P603inrIOXBlgLsyFR7resjP0xXo71U5YnKU947kN/x4o9fGeQp
- nb9lyRXhMsmo4/wFmByDwDdwHXVkivIVDQhHzVYowb0awUnndqDGyhN5ReLpDVnHQl+i
- /laQf4L/ZrL1unb6zjtZ8D+/Z7Wem4t0oWUQuseGqym/jqLwhnN2sHBXADEC4XxkbJRB
- 68KuJERgNm4ghOI7VeobIZlh4YMkGkL5fg4YeNNufLL2Mjd+PXvKpy/5bljtSrmFn8Jj
- Z0ub9ib4Vs4jeGfoHKeGPTER27QFRlE5dRVKbhW6GpAKzD3JxKZKZVq58jhUx/mFv7e8
- 0wgw==
-X-Gm-Message-State: AOJu0Yx7Lo2qtsPsKBP5jLOsTbzTrFTXSwp6F/B1CusGMn7RYq5x8MEO
- jUuVM6N21wJv5laFtbU87Owai3a6PeMa0JTQfZRwfZUNJVBh5S/neupXvKxBJ5GJpLSYF1DIjK0
- 83ob/tjmUejpUxHhX19M8USaI+8iqMIsuVMGFUv1UsqvD483087nPPQ==
-X-Gm-Gg: ASbGncvkNAPIko+s16FxS5SXCkO6JUHaZg6jkPGnjRL6azTd9A4ZeDjCdTlnHuNekQO
- +yafkNhRYEziTxFpCHeamNARzAHLigcgig9C2Y0rS6CrGe624fwqinSa99XhpV4OxiWtEYXbZAs
- tI2ZhYfuNoU+79JPx9KPBkAJ+o2s/zk9O6h5c68Na66OtuW0aXTmU6KYZHKOI=
-X-Google-Smtp-Source: AGHT+IEK3J/lT6WRNs9q24YyayMuz5isR3AUIuBBLkKhVTBVVlD7z8cFXW+UbLARmOI1omrUwMJaQc6FCy+17cOkAwY=
-X-Received: by 2002:a17:903:2ec8:b0:224:1609:a747 with SMTP id
- d9443c01a7336-225e0a9c84amr3896575ad.31.1741906525693; Thu, 13 Mar 2025
- 15:55:25 -0700 (PDT)
+ bh=81zaYvfAjUvHk3+XuxEerKtJekgcbjJSQ1hjOUTcZOY=;
+ b=Ic7QTxsF3QOB7tZ3u6d6lWA4077G/axosFJ1ShezOgBaWpoTmDJtLCmgnCX05wQHxt
+ LVwUMZGnNble60gxJWceBNCrpQshA4eSrDgH2rUBv3E0yixXs3zAUz0Q38oHHTCF1T1n
+ 5borR8he5ng/vQKmojWJy85EigTen7wdnNnuTpZ1evO/+KbiJesX9+6g4S1G+OzKaQgt
+ v8hsXTCcF0WSpZW9M/92cBfnzVvdYFRjWxNkzvS69G6MiDZ5tJlOlMOuwk00nOfu+WMB
+ SKCuSc+/95kkf9j1KbnAu75FlphV57pJFHPoDCRSDpg4l905xxUJc8cngPRtPbJ1o5x7
+ 3FEQ==
+X-Gm-Message-State: AOJu0YxdJlzh4s3nOXofMLVFAfPgiP4VejJhZ/7TEwDPZQJZ24xM/u+c
+ JAne5ePLH4ywwd6EC0xvoBeOGg8KzTU3ALDqRAUHGgFlm8TYQgiuzskNI+d/60Oi9geWiYO7Epj
+ Yp/ZolcYPVaALLJgWfBmn29/rB0lXlpu8BmkOqmIn/kV2vzL1ILYliw==
+X-Gm-Gg: ASbGncsdS70jGQ2gLKS9361/OUaxC8vhvrqw2wJ9ALYClIMxITg0LqL32HxvImTlYGQ
+ 0GHATA1LECJhrd3d0dRpoMguDq29O7m3cHHFlPHFhLuJDGQJucKOszJKsHmbvnX6omPb57iKdbZ
+ IzTOut1OcjTxrbOXxG2AFwza30ha2IkUugrrs94/QavtOq1ecABQ7iHkmbI5uE3SDL2UsXsA==
+X-Google-Smtp-Source: AGHT+IHiJ2NCt8nUh0RRrGwlQUuncjUqIZaTso6Ojdd4GCGUDszb/H0HlP5nFb5+VHuBz5EamyQM6KxSuLSCOnX7nN0=
+X-Received: by 2002:a17:902:fc8e:b0:220:cb1a:da5 with SMTP id
+ d9443c01a7336-225e0af57a4mr5312395ad.40.1741906714809; Thu, 13 Mar 2025
+ 15:58:34 -0700 (PDT)
 MIME-Version: 1.0
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 13 Mar 2025 18:51:43 -0400
-X-Gm-Features: AQ5f1JoyUyfCWLiwX6UV7QtouAuHdvH6MUtlgYKNtMz9K8e-jiX3Gjp6dlAVVbM
-Message-ID: <CAJvnSUDYfj1EgDVKv6RR14hV5cZirHJeuwfNsPLSnJjDt5NFaQ@mail.gmail.com>
-Subject: DTS WG Meeting Minutes - December 19, 2024
+Date: Thu, 13 Mar 2025 18:54:52 -0400
+X-Gm-Features: AQ5f1Jpjlm8OyY1ugiLqsPd1FJmWmQ5KdR_lEtvSX9bmcFAMAUVVD1lMf3Aamr4
+Message-ID: <CAJvnSUDW=Odh26v0LO4jwNdXG3HzJftrYjfzS4o+O=nGKkBQUA@mail.gmail.com>
+Subject: Community CI Meeting Minutes - January 9, 2025
 To: dev <dev@dpdk.org>
 Cc: ci@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000b240ce063041373b"
+Content-Type: multipart/alternative; boundary="000000000000f7f09f0630414298"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,130 +65,175 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b240ce063041373b
+--000000000000f7f09f0630414298
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 #####################################################################
-December 19, 2024
+January 9, 2025
 Attendees
-* Patrick Robb
-* Paul Szczepanek
-* Luca Vizzarro
-* Thomas Wilks
+. Patrick Robb
+. Aaron Conole
+. Luca Vizzarro
+. Dean Marx
+. Cody Cheng
+. Aaron Conole
+. Nicholas Pratte
+. Matthew McGovern
+. Manit Mahajan
 
 #####################################################################
 Minutes
 
-=====================================================================
-General Discussion
-* 25.03 DTS roadmap was mailed out:
-https://inbox.dpdk.org/ci/CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA@mail.gmail.com/T/#u
-* December 26 CI meeting is cancelled
-* January 2 DTS meeting is cancelled
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+* Happy New Year!
+* 25.03 release schedule is:
+   * (-rc1): 7 February 2025
+   * (-rc2): 28 February 2025
+   * (-rc3): 7 March 2025
+   * Release: 26 March 2025
 
-=====================================================================
-Patch discussions
-* Nick has submitted a bugfix for the paramiko interactive shell, which
-forces the close method to wait for 1 byte to enter the stdout buffer
-before calling paramiko close():
-   *
-https://patchwork.dpdk.org/project/dpdk/patch/20241212193902.31789-1-npratte@iol.unh.edu/
-* Queue start/stop:
-   * Dean reviewed this again yesterday, submitted a new patch which
-rewrote the commit message and requested a review and merge
-   * Stephen Hemminger replied to the latest patch, requesting that an
-additional testcase be added to the suite which uses deferred start.
-      * This will be added by Dean ASAP and then Patrick will review to
-merge to next-dts.
-* Hello world replacement series:
-https://patchwork.dpdk.org/project/dpdk/patch/20241209215406.6982-2-dmarx@iol.unh.edu/
-   * Brings up testpmd app, does nothing, closes
-   * Paul will review
-* Ruff: Patrick will provide a review by end of week
-   * There is a scapy/mypy update series which depends on this
-* A linting bugfix patch for python 3.12 was submitted, which affects dts
-file and regular DPDK files. We are unsure of whether this should go to the
-next-dts tree or not, which Patrick asked about on the mailing list. If
-there is no comment we will merge the series to next-dts next week.
-* Config persistency testsuite is submitted by Thomas Wilks
-   *
-https://patchwork.dpdk.org/project/dpdk/patch/20241212132807.263829-3-thomas.wilks@arm.com/
-   * Patrick will review tomorrow
-* Shell conversation: create a list of shells per node, references are
-stored, then at the end of each testcase check if there are still any open
-shells in this list and if so, closes them.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CI Status
 
-=====================================================================
-Bugzilla discussions
-* Dockerfile upgrade to 24.04 ticket: Dean has been playing around with
-upgrading the Dockerfile to 24.04 and trying to understand which
-dependencies are broken by this.
-   * Dean should assign this ticket to himself on bugzilla if he means to
-do this in 25.03
-   * Patrick/Dean create a bugzilla ticket for this
+---------------------------------------------------------------------
+UNH-IOL Community Lab
+* OvS install now requires python 3.7, which opensuse 15.6 does not ship
+with. So, options are to either upgrade python on this test container, or
+discontinue the test for this distro.
+* Lab Dashboard updates:
+   * We are adding a patch series search feature for searching by series
+title or series # id. This will deploy before end of week.
+   * Working on embedding the code coverage reports in the dashboard
+   * Working on embedding the code coverage reports in the dashboard such
+that the reports don=E2=80=99t have to be manually downloaded and opened by=
+ users
+      * We should also begin running the coverage reports on a per series
+basis
+         * Can produce json output from gcov/lcov, and compare the
+=E2=80=9Cbasline=E2=80=9D json coverage to a new result
+* ABI testing: We have been running ABI tests for 24.11 and main for the
+past few weeks, but still need to backfill ABI results for patches
+submitted immediately after 24.11 released. We can put these into queue
+today.
+* The lab will have a little downtime next week for infra maintenance,
+which will be announced the day before on the mailing list.
 
-=====================================================================
+---------------------------------------------------------------------
+Intel Lab
+* None
+
+---------------------------------------------------------------------
+Github Actions
+* None
+
+---------------------------------------------------------------------
+Loongarch Lab
+* None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+* Series Patrick should review:
+   * Dean: queue start stop
+   * Nick: ethertype test suite
+   * Softnic testsuite
+      * V3 is submitted
+      * * Perf testing:
+   * UNH team has been investigating performance traffic generators
+      * Trex
+         * Have just been testing the trex api for setting traffic streams,
+collecting stats etc.
+      * Dperf
+      * Need to decide on collecting stats via trex API vs testpmd when
+writing the single core forwarding perf test
+   * Luca proposes an abstraction for creating files on the DTS nodes, such
+that we don=E2=80=99t have to manually create and copy files requires for D=
+TS
+testsuites.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 Any other business
-* Next meeting January 16, 2025
+* Next Meeting January 23
+* Azure:
+   * Currently using a =E2=80=9CLisa=E2=80=9D test framework for managing n=
+odes and running
+some tests
+   * Aiming to leverage DTS in the future
+   * Can we get 2 nodes on the same l2 networking?
+      * Not really on Azure, so we would need to provide support for tests
+through l3 routing.
 
---000000000000b240ce063041373b
+--000000000000f7f09f0630414298
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr">##########################################################=
-###########<br>December 19, 2024<br>Attendees<br>* Patrick Robb<br>* Paul S=
-zczepanek<br>* Luca Vizzarro<br>* Thomas Wilks<br><br>#####################=
-################################################<br>Minutes<br><br>=3D=3D=
+###########<br>January 9, 2025<br>Attendees<br>. Patrick Robb<br>. Aaron Co=
+nole<br>. Luca Vizzarro<br>. Dean Marx<br>. Cody Cheng<br>. Aaron Conole<br=
+>. Nicholas Pratte<br>. Matthew McGovern<br>. Manit Mahajan<br><br>########=
+#############################################################<br>Minutes<br=
+><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General =
+Announcements<br>* Happy New Year!<br>* 25.03 release schedule is:<br>=C2=
+=A0 =C2=A0* (-rc1): 7 February 2025<br>=C2=A0 =C2=A0* (-rc2): 28 February 2=
+025<br>=C2=A0 =C2=A0* (-rc3): 7 March 2025<br>=C2=A0 =C2=A0* Release: 26 Ma=
+rch 2025<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<b=
-r>* 25.03 DTS roadmap was mailed out: <a href=3D"https://inbox.dpdk.org/ci/=
-CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA@mail.gmail.com/T/#u">ht=
-tps://inbox.dpdk.org/ci/CAJvnSUA1gtvVyzSEqBdErYXSwRAeijj5MCOvcxPr5GF3O0ANrA=
-@mail.gmail.com/T/#u</a><br>* December 26 CI meeting is cancelled<br>* Janu=
-ary 2 DTS meeting is cancelled<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+<br>CI Status<br><br>------------------------------------------------------=
+---------------<br>UNH-IOL Community Lab<br>* OvS install now requires pyth=
+on 3.7, which opensuse 15.6 does not ship with. So, options are to either u=
+pgrade python on this test container, or discontinue the test for this dist=
+ro.<br>* Lab Dashboard updates:<br>=C2=A0 =C2=A0* We are adding a patch ser=
+ies search feature for searching by series title or series # id. This will =
+deploy before end of week.<br>=C2=A0 =C2=A0* Working on embedding the code =
+coverage reports in the dashboard<br>=C2=A0 =C2=A0* Working on embedding th=
+e code coverage reports in the dashboard such that the reports don=E2=80=99=
+t have to be manually downloaded and opened by users<br>=C2=A0 =C2=A0 =C2=
+=A0 * We should also begin running the coverage reports on a per series bas=
+is<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Can produce json output from gcov=
+/lcov, and compare the =E2=80=9Cbasline=E2=80=9D json coverage to a new res=
+ult<br>* ABI testing: We have been running ABI tests for 24.11 and main for=
+ the past few weeks, but still need to backfill ABI results for patches sub=
+mitted immediately after 24.11 released. We can put these into queue today.=
+<br>* The lab will have a little downtime next week for infra maintenance, =
+which will be announced the day before on the mailing list.<br><br>--------=
+-------------------------------------------------------------<br>Intel Lab<=
+br>* None<br><br>----------------------------------------------------------=
+-----------<br>Github Actions<br>* None<br><br>----------------------------=
+-----------------------------------------<br>Loongarch Lab<br>* None<br><br=
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improve=
+ments &amp; Test Development<br>* Series Patrick should review:<br>=C2=A0 =
+=C2=A0* Dean: queue start stop<br>=C2=A0 =C2=A0* Nick: ethertype test suite=
+<br>=C2=A0 =C2=A0* Softnic testsuite<br>=C2=A0 =C2=A0 =C2=A0 * V3 is submit=
+ted<br>=C2=A0 =C2=A0 =C2=A0 * * Perf testing:<br>=C2=A0 =C2=A0* UNH team ha=
+s been investigating performance traffic generators<br>=C2=A0 =C2=A0 =C2=A0=
+ * Trex<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Have just been testing the t=
+rex api for setting traffic streams, collecting stats etc.<br>=C2=A0 =C2=A0=
+ =C2=A0 * Dperf<br>=C2=A0 =C2=A0 =C2=A0 * Need to decide on collecting stat=
+s via trex API vs testpmd when writing the single core forwarding perf test=
+<br>=C2=A0 =C2=A0* Luca proposes an abstraction for creating files on the D=
+TS nodes, such that we don=E2=80=99t have to manually create and copy files=
+ requires for DTS testsuites.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D<br>Patch discussions<br>* Nick has submitted a bugfix=
- for the paramiko interactive shell, which forces the close method to wait =
-for 1 byte to enter the stdout buffer before calling paramiko close():<br>=
-=C2=A0 =C2=A0* <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/202=
-41212193902.31789-1-npratte@iol.unh.edu/">https://patchwork.dpdk.org/projec=
-t/dpdk/patch/20241212193902.31789-1-npratte@iol.unh.edu/</a><br>* Queue sta=
-rt/stop:<br>=C2=A0 =C2=A0* Dean reviewed this again yesterday, submitted a =
-new patch which rewrote the commit message and requested a review and merge=
-<br>=C2=A0 =C2=A0* Stephen Hemminger replied to the latest patch, requestin=
-g that an additional testcase be added to the suite which uses deferred sta=
-rt. <br>=C2=A0 =C2=A0 =C2=A0 * This will be added by Dean ASAP and then Pat=
-rick will review to merge to next-dts.<br>* Hello world replacement series:=
- <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/20241209215406.69=
-82-2-dmarx@iol.unh.edu/">https://patchwork.dpdk.org/project/dpdk/patch/2024=
-1209215406.6982-2-dmarx@iol.unh.edu/</a><br>=C2=A0 =C2=A0* Brings up testpm=
-d app, does nothing, closes<br>=C2=A0 =C2=A0* Paul will review<br>* Ruff: P=
-atrick will provide a review by end of week<br>=C2=A0 =C2=A0* There is a sc=
-apy/mypy update series which depends on this<br>* A linting bugfix patch fo=
-r python 3.12 was submitted, which affects dts file and regular DPDK files.=
- We are unsure of whether this should go to the next-dts tree or not, which=
- Patrick asked about on the mailing list. If there is no comment we will me=
-rge the series to next-dts next week.<br>* Config persistency testsuite is =
-submitted by Thomas Wilks<br>=C2=A0 =C2=A0* <a href=3D"https://patchwork.dp=
-dk.org/project/dpdk/patch/20241212132807.263829-3-thomas.wilks@arm.com/">ht=
-tps://patchwork.dpdk.org/project/dpdk/patch/20241212132807.263829-3-thomas.=
-wilks@arm.com/</a><br>=C2=A0 =C2=A0* Patrick will review tomorrow<br>* Shel=
-l conversation: create a list of shells per node, references are stored, th=
-en at the end of each testcase check if there are still any open shells in =
-this list and if so, closes them. <br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzilla discussions<br>* Dockerfile upgrade to=
- 24.04 ticket: Dean has been playing around with upgrading the Dockerfile t=
-o 24.04 and trying to understand which dependencies are broken by this.<br>=
-=C2=A0 =C2=A0* Dean should assign this ticket to himself on bugzilla if he =
-means to do this in 25.03<br>=C2=A0 =C2=A0* Patrick/Dean create a bugzilla =
-ticket for this<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Next meeting January 16, 2025=
-</div>
+=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Next Meeting January 23<br=
+>* Azure:<br>=C2=A0 =C2=A0* Currently using a =E2=80=9CLisa=E2=80=9D test f=
+ramework for managing nodes and running some tests<br>=C2=A0 =C2=A0* Aiming=
+ to leverage DTS in the future<br>=C2=A0 =C2=A0* Can we get 2 nodes on the =
+same l2 networking?<br>=C2=A0 =C2=A0 =C2=A0 * Not really on Azure, so we wo=
+uld need to provide support for tests through l3 routing.</div>
 
---000000000000b240ce063041373b--
+--000000000000f7f09f0630414298--
