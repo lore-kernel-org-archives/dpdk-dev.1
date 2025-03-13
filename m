@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5031C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 21:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59682C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 21:52:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43B4D402E5;
-	Thu, 13 Mar 2025 22:52:11 +0100 (CET)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 0D82D402E4
+	by mails.dpdk.org (Postfix) with ESMTP id 3CB7F4064A;
+	Thu, 13 Mar 2025 22:52:12 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id CF8BD402E5
  for <dev@dpdk.org>; Thu, 13 Mar 2025 22:52:07 +0100 (CET)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-22409077c06so39599525ad.1
- for <dev@dpdk.org>; Thu, 13 Mar 2025 14:52:06 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-224171d6826so36219765ad.3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 14:52:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741902726;
- x=1742507526; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741902727;
+ x=1742507527; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OmWO406VyN9Lqu1KSkQIemKCMrrUnJ8C6PWwYByac3c=;
- b=OlQkczS4MoIBehZhfk0j8lruMjdB69gV/ZFFvd2WESfTKhFgC0n/C1WhrfN5V3PRxm
- ilWp/pnr4QskKE59scCS1TKcnxwg5vBKpXli4nEj622n3viX2ABkjjkV1x1aYpsmgQwo
- ubfv26mn9O+X4KvAmQoVOLUvV7zW6cVF4InZYvcfj8IqUndz1Iyhnq0PnJo3VAPHlrdC
- Ux2u2t+3LcXnbD4wXQXGwvTfKb857TvMRHtGsiMjOTjMAWUehFu6NxmhbfysbaslBGLS
- abQNtUhL+yWAHTv8hfg55Gi1ZK/o1q4BBrM9OrPy8lBQyphQfFkcOd9Pqcm04IJbbAkJ
- vSfg==
+ bh=vqvfxHWei0PkOVocuXwji1cr/h2ai0E6PDra5x/ZlT8=;
+ b=Q2OanRcfDP+bcP/ZWKIsLgt7wjIk6IugqoNTonOkHk9a6zqQOpsV0QerVWSENSFoRo
+ k7cylH1s86R1Q01+eMRQuhiM7wHTpU1YxEpTr16ulSjBFqF4CTtU1B0epdwa6IZAWeen
+ sMeWvizfC7fJ3qNeKkbuhgmoa5WWUhSqsOfL6mgBHYoSO4QXAty6S1TJ++HcLLmHeHz/
+ xneSfFhTtyz0PGQBKW2q632ZjMAXGu5j0nJWtjoA5+8gwxXeC07yzU5hLiL0598mmDJb
+ JwotWKQ0MXxG98pBQ+AhoMpWOqAkfxi/+9agxST5lzuJhx52fFYAKxxAnhy0U+2I1lRa
+ vI+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741902726; x=1742507526;
+ d=1e100.net; s=20230601; t=1741902727; x=1742507527;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=OmWO406VyN9Lqu1KSkQIemKCMrrUnJ8C6PWwYByac3c=;
- b=jFkKda/rH4hPcaTX8vDAZTEgzC1d3DgEVh5P72zB066W5gMw4BnORgpYLSbwC3qjDU
- FqC5Tk+0TS86SUfgL2w7O+XaRZ59YFVM9iHKxOeltSaJC1sJ3etC0nFnvDp3clpYWBCX
- SXuGUX5PE4ltCrZJfhBdLkEdbS90OHDOyHybc+jT5n+IDNdc8N4otM40Fa33EINE+vHB
- KyXK4h2yLuItt3+8IyFJIOlz1HbnoVzLA3eFMxKkVSRojZ5AQ2e38g9CyDPPIkK/KYBI
- KfbyLjjq3XHjGEQ3PGn1QKW/e/WDIcOKyc2OkopQcV8N1QaHFyvt1gn3sW3vjrfRbAKx
- HbrQ==
-X-Gm-Message-State: AOJu0YxnItDhNt3PNqsziA0NYPDlUZWzfbT54DXDwDd1t7vJc0Y2Gj/B
- 7wfRnrRtlACSiSmTvXhFjMxedweYSMaAX7WXeUwqOG6qOfw3tTFm6UgXdH6inrWZjvv7l3ZLDGL
- I
-X-Gm-Gg: ASbGncvW/LdPGWIZ2nqbf+iFIKr5rSOxyUFYhpSgzqk8NqYh0lALDnWSrmoyC7dPthP
- mS7Y5qZZBIMtZgdvF0n/99V8tM8qga9nXAeVjvTOZme7yrHkePZ+QsIqCXOARKwew6F6IQUgPGa
- 14HzZ2Kvstuxh/kFQstPFuUlAOK/FYl7WRiyK5jiIpHzK4fKy+ut4IjtCJl8BVlGpjp1wvEp4Mz
- 2MFb1ouqR1h6oZkPLNaRNEhYbFgc3kPl0h1tMlBogptipG8TeXHKxpi7y4fz3jXrTwnzetoAPGv
- qTyJPtFT8TlXbmAcibGEDNbNDu5nBkuOfTlrRPBro5fNxkYkEUB+cKVjjJqmLr45zXoUM6FUkBD
- 1OrOOVIp0pReBg8YH8+hMlQ==
-X-Google-Smtp-Source: AGHT+IFyqVcGwDp7HLnQLP97BT0gOLHHBs8JvY+5QiCjtbNky1kygpA9UIS88+AGXFXwKfRiToC+kQ==
-X-Received: by 2002:a17:903:41c9:b0:224:1c41:a4bc with SMTP id
- d9443c01a7336-225e0a361aemr2488305ad.12.1741902726288; 
+ bh=vqvfxHWei0PkOVocuXwji1cr/h2ai0E6PDra5x/ZlT8=;
+ b=vfA+5v40a4S/dQsoLwEeYT88ndRe48ulny7OFfIcyly+h2oECn27GgCUfuzVa6s6zy
+ mIORwfurvCaSJhPxIGvOQR8kr/Fg1JYyLHntvO685DKp44Z4bWF3K9fDAI0YErAw/3w/
+ UDu2ZgljmxrmNs3lJWMKCKjzllcLdJHpuTql/LumNxHc3LLzV/qDOz+F/RlJA72kd6Ia
+ jfjsQORQRwy3+YdYqqVuImE61+qaTTFY2iFL0HjrkakS5HusOrJ9CMtA1418NamIrwNU
+ ko+m3skTqEeOmMvQ9qlD+TsOEcCX3sAL6lmwt3WWjbRQcnJh0aQDoKXFT1dhPH8OKZ4e
+ DwSg==
+X-Gm-Message-State: AOJu0Yw8jjEDOXvQ0Iot6vStrkb2SVy7Cucnj/8gVw7FoOmVGa9edF4X
+ SOvURByD+NYvx9c4fQAmi8i9mS4rVMlkMUrV5VQ7/XToqrne2/qMvcMad+zcB8bgTBrvMCUNu0R
+ j
+X-Gm-Gg: ASbGncszFUzulF/R+x9+yPTG+YXSPFKhpmpuFkNX/UsS+DZEwEqzfHVUSvlzV18wsDI
+ VbNi5gtRdLATI9Txmy9hSkQj7+VybeC1QCPXmF9tluqT6/a2Bw6nwjIWfRASNVwji6ORQ9A2WzM
+ N/BrmB+tawA0k7f7Iwp5HgNIRpbVNI159TouOAuTwUAejr5ZS299wAuWrQIp9GejcXIMARzKnUH
+ kpQh/qWgr8ifcVG3xo1x9CVXIcClA230PVEN6A+GYUSo2jq2jquBVQdzm2hGr3W2kAg65gQtYAV
+ AEHhSg2NVLWs8rIy4zd5+THWRuQQu2ViGKXHP2Ao/AIFnLZXrhu1EE/l/EmYR9VLqe/qMyVQ6qD
+ VtXZl3n65txW/cTb2Le5YXQ==
+X-Google-Smtp-Source: AGHT+IE+ORcMZgxWp/F2siXMY/u4mNaOEsigF7b3+Wtf9U4OnpznCtlKlT3fA9IgD++rBr+zPKOvvA==
+X-Received: by 2002:a17:903:198e:b0:215:7421:262 with SMTP id
+ d9443c01a7336-225e0a82a7bmr2231635ad.12.1741902726975; 
  Thu, 13 Mar 2025 14:52:06 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6bd3d5bsm18337775ad.217.2025.03.13.14.52.05
+ d9443c01a7336-225c6bd3d5bsm18337775ad.217.2025.03.13.14.52.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 14:52:05 -0700 (PDT)
+ Thu, 13 Mar 2025 14:52:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 04/10] net/ioring: implement management functions
-Date: Thu, 13 Mar 2025 14:50:55 -0700
-Message-ID: <20250313215151.292944-5-stephen@networkplumber.org>
+Subject: [PATCH v4 05/10] net/ioring: implement secondary process support
+Date: Thu, 13 Mar 2025 14:50:56 -0700
+Message-ID: <20250313215151.292944-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250313215151.292944-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -82,130 +82,233 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add start, stop, configure and info functions.
+Add support for communicating fd's from primary to secondary.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ioring/rte_eth_ioring.c | 72 ++++++++++++++++++++++++++---
- 1 file changed, 66 insertions(+), 6 deletions(-)
+ doc/guides/nics/features/ioring.ini |   1 +
+ doc/guides/nics/ioring.rst          |   6 --
+ drivers/net/ioring/rte_eth_ioring.c | 136 +++++++++++++++++++++++++++-
+ 3 files changed, 135 insertions(+), 8 deletions(-)
 
+diff --git a/doc/guides/nics/features/ioring.ini b/doc/guides/nics/features/ioring.ini
+index 199c7cd31c..da47062adb 100644
+--- a/doc/guides/nics/features/ioring.ini
++++ b/doc/guides/nics/features/ioring.ini
+@@ -8,6 +8,7 @@ Link status          = Y
+ MTU update           = Y
+ Promiscuous mode     = Y
+ Allmulticast mode    = Y
++Multiprocess aware   = Y
+ Linux		     = Y
+ x86-64               = Y
+ Usage doc            = Y
+diff --git a/doc/guides/nics/ioring.rst b/doc/guides/nics/ioring.rst
+index 7d37a6bb37..69102a5b38 100644
+--- a/doc/guides/nics/ioring.rst
++++ b/doc/guides/nics/ioring.rst
+@@ -46,12 +46,6 @@ But this behavior can be overridden by the use of the persist flag, example::
+   --vdev=net_ioring0,iface=io0,persist ...
+ 
+ 
+-Multi-process sharing
+----------------------
+-
+-The IORING device does not support secondary process (yet).
+-
+-
+ Limitations
+ -----------
+ 
 diff --git a/drivers/net/ioring/rte_eth_ioring.c b/drivers/net/ioring/rte_eth_ioring.c
-index fe3c72098c..b5b5ffdee3 100644
+index b5b5ffdee3..f01db960a7 100644
 --- a/drivers/net/ioring/rte_eth_ioring.c
 +++ b/drivers/net/ioring/rte_eth_ioring.c
-@@ -212,12 +212,16 @@ static int
- eth_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- {
- 	struct pmd_internals *pmd = dev->data->dev_private;
-+
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return -errno;
-+
- 	struct ifreq ifr = { .ifr_mtu = mtu };
--	int ret;
+@@ -28,6 +28,7 @@
+ #include <rte_log.h>
  
- 	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
+ #define IORING_DEFAULT_IFNAME	"itap%d"
++#define IORING_MP_KEY		"ioring_mp_send_fds"
  
--	ret = ioctl(pmd->ctl_sock, SIOCSIFMTU, &ifr);
-+	int ret = ioctl(sock, SIOCSIFMTU, &ifr);
- 	if (ret < 0) {
- 		PMD_LOG(ERR, "ioctl(SIOCSIFMTU) failed: %s", strerror(errno));
- 		ret = -errno;
-@@ -230,14 +234,17 @@ static int
- eth_dev_macaddr_set(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
- {
- 	struct pmd_internals *pmd = dev->data->dev_private;
--	struct ifreq ifr = { };
--	int ret;
- 
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { };
- 	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
- 	ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
- 	memcpy(ifr.ifr_hwaddr.sa_data, addr, sizeof(*addr));
- 
--	ret = ioctl(pmd->ctl_sock, SIOCSIFHWADDR, &ifr);
-+	int ret = ioctl(sock, SIOCSIFHWADDR, &ifr);
- 	if (ret < 0) {
- 		PMD_LOG(ERR, "ioctl(SIOCSIFHWADDR) failed: %s", strerror(errno));
- 		ret = -errno;
-@@ -246,6 +253,56 @@ eth_dev_macaddr_set(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
- 	return ret;
+ RTE_LOG_REGISTER_DEFAULT(ioring_logtype, NOTICE);
+ #define RTE_LOGTYPE_IORING ioring_logtype
+@@ -400,6 +401,84 @@ parse_iface_arg(const char *key __rte_unused, const char *value, void *extra_arg
+ 	return 0;
  }
  
++/* Secondary process requests rxq fds from primary. */
 +static int
-+eth_dev_start(struct rte_eth_dev *dev)
++ioring_request_fds(const char *name, struct rte_eth_dev *dev)
 +{
-+	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
-+	eth_dev_set_link_up(dev);
++	struct rte_mp_msg request = { };
 +
-+	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-+		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++	strlcpy(request.name, IORING_MP_KEY, sizeof(request.name));
++	strlcpy((char *)request.param, name, RTE_MP_MAX_PARAM_LEN);
++	request.len_param = strlen(name);
++
++	/* Send the request and receive the reply */
++	PMD_LOG(DEBUG, "Sending multi-process IPC request for %s", name);
++
++	struct timespec timeout = {.tv_sec = 1, .tv_nsec = 0};
++	struct rte_mp_reply replies;
++	int ret = rte_mp_request_sync(&request, &replies, &timeout);
++	if (ret < 0 || replies.nb_received != 1) {
++		PMD_LOG(ERR, "Failed to request fds from primary: %s",
++			rte_strerror(rte_errno));
++		return -1;
 +	}
 +
-+	return 0;
-+}
-+
-+static int
-+eth_dev_stop(struct rte_eth_dev *dev)
-+{
-+	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+	eth_dev_set_link_down(dev);
-+
-+	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+eth_dev_configure(struct rte_eth_dev *dev)
-+{
-+	/* rx/tx must be paired */
-+	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues)
++	struct rte_mp_msg *reply = replies.msgs;
++	PMD_LOG(DEBUG, "Received multi-process IPC reply for %s", name);
++	if (dev->data->nb_rx_queues != reply->num_fds) {
++		PMD_LOG(ERR, "Incorrect number of fds received: %d != %d",
++			reply->num_fds, dev->data->nb_rx_queues);
 +		return -EINVAL;
++	}
 +
++	int *fds = dev->process_private;
++	for (int i = 0; i < reply->num_fds; i++)
++		fds[i] = reply->fds[i];
++
++	free(reply);
 +	return 0;
 +}
 +
++/* Primary process sends rxq fds to secondary. */
 +static int
-+eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
++ioring_mp_send_fds(const struct rte_mp_msg *request, const void *peer)
 +{
-+	struct pmd_internals *pmd = dev->data->dev_private;
++	const char *request_name = (const char *)request->param;
 +
-+	dev_info->if_index = if_nametoindex(pmd->ifname);
-+	dev_info->max_mac_addrs = 1;
-+	dev_info->max_rx_pktlen = RTE_ETHER_MAX_LEN;
++	PMD_LOG(DEBUG, "Received multi-process IPC request for %s", request_name);
 +
++	/* Find the requested port */
++	struct rte_eth_dev *dev = rte_eth_dev_get_by_name(request_name);
++	if (!dev) {
++		PMD_LOG(ERR, "Failed to get port id for %s", request_name);
++		return -1;
++	}
++
++	/* Populate the reply with the xsk fd for each queue */
++	struct rte_mp_msg reply = { };
++	if (dev->data->nb_rx_queues > RTE_MP_MAX_FD_NUM) {
++		PMD_LOG(ERR, "Number of rx queues (%d) exceeds max number of fds (%d)",
++			   dev->data->nb_rx_queues, RTE_MP_MAX_FD_NUM);
++		return -EINVAL;
++	}
++
++	int *fds = dev->process_private;
++	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++)
++		reply.fds[reply.num_fds++] = fds[i];
++
++	/* Send the reply */
++	strlcpy(reply.name, request->name, sizeof(reply.name));
++	strlcpy((char *)reply.param, request_name, RTE_MP_MAX_PARAM_LEN);
++	reply.len_param = strlen(request_name);
++
++	PMD_LOG(DEBUG, "Sending multi-process IPC reply for %s", request_name);
++	if (rte_mp_reply(&reply, peer) < 0) {
++		PMD_LOG(ERR, "Failed to reply to multi-process IPC request");
++		return -1;
++	}
 +	return 0;
 +}
 +
  static int
- eth_dev_close(struct rte_eth_dev *dev)
+ ioring_probe(struct rte_vdev_device *vdev)
  {
-@@ -263,11 +320,14 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		close(pmd->keep_fd);
- 		pmd->keep_fd = -1;
- 	}
--
- 	return 0;
- }
+@@ -407,14 +486,43 @@ ioring_probe(struct rte_vdev_device *vdev)
+ 	const char *params = rte_vdev_device_args(vdev);
+ 	struct rte_kvargs *kvlist = NULL;
+ 	struct rte_eth_dev *eth_dev = NULL;
++	int *fds = NULL;
+ 	char tap_name[IFNAMSIZ] = IORING_DEFAULT_IFNAME;
+ 	uint8_t persist = 0;
+ 	int ret;
  
- static const struct eth_dev_ops ops = {
-+	.dev_start		= eth_dev_start,
-+	.dev_stop		= eth_dev_stop,
-+	.dev_configure		= eth_dev_configure,
-+	.dev_infos_get		= eth_dev_info,
- 	.dev_close		= eth_dev_close,
- 	.link_update		= eth_link_update,
- 	.dev_set_link_up	= eth_dev_set_link_up,
+ 	PMD_LOG(INFO, "Initializing %s", name);
+ 
+-	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
+-		return -1; /* TODO */
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++		struct rte_eth_dev *eth_dev;
++
++		eth_dev = rte_eth_dev_attach_secondary(name);
++		if (!eth_dev) {
++			PMD_LOG(ERR, "Failed to probe %s", name);
++			return -1;
++		}
++		eth_dev->dev_ops = &ops;
++		eth_dev->device = &vdev->device;
++
++		if (!rte_eal_primary_proc_alive(NULL)) {
++			PMD_LOG(ERR, "Primary process is missing");
++			return -1;
++		}
++
++		fds  = calloc(RTE_MAX_QUEUES_PER_PORT, sizeof(int));
++		if (fds == NULL) {
++			PMD_LOG(ERR, "Failed to alloc memory for process private");
++			return -1;
++		}
++
++		eth_dev->process_private = fds;
++
++		if (ioring_request_fds(name, eth_dev))
++			return -1;
++
++		rte_eth_dev_probing_finish(eth_dev);
++		return 0;
++	}
+ 
+ 	if (params != NULL) {
+ 		kvlist = rte_kvargs_parse(params, valid_arguments);
+@@ -432,21 +540,45 @@ ioring_probe(struct rte_vdev_device *vdev)
+ 			persist = 1;
+ 	}
+ 
++	/* Per-queue tap fd's (for primary process) */
++	fds = calloc(RTE_MAX_QUEUES_PER_PORT, sizeof(int));
++	if (fds == NULL) {
++		PMD_LOG(ERR, "Unable to allocate fd array");
++		return -1;
++	}
++	for (unsigned int i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++)
++		fds[i] = -1;
++
+ 	eth_dev = rte_eth_vdev_allocate(vdev, sizeof(struct pmd_internals));
+ 	if (eth_dev == NULL) {
+ 		PMD_LOG(ERR, "%s Unable to allocate device struct", tap_name);
+ 		goto error;
+ 	}
+ 
++	eth_dev->data->dev_flags = RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++	eth_dev->dev_ops = &ops;
++	eth_dev->process_private = fds;
++
+ 	if (ioring_create(eth_dev, tap_name, persist) < 0)
+ 		goto error;
+ 
++	/* register the MP server on the first device */
++	static unsigned int ioring_dev_count;
++	if (ioring_dev_count == 0) {
++		if (rte_mp_action_register(IORING_MP_KEY, ioring_mp_send_fds) < 0) {
++			PMD_LOG(ERR, "Failed to register multi-process callback: %s",
++				rte_strerror(rte_errno));
++			goto error;
++		}
++	}
++	++ioring_dev_count;
+ 	rte_eth_dev_probing_finish(eth_dev);
+ 	return 0;
+ 
+ error:
+ 	if (eth_dev != NULL)
+ 		rte_eth_dev_release_port(eth_dev);
++	free(fds);
+ 	rte_kvargs_free(kvlist);
+ 	return -1;
+ }
 -- 
 2.47.2
 
