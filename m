@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24471C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 21:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B3CC282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 21:52:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 992E2402C3;
-	Thu, 13 Mar 2025 22:52:06 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id E7BB74025A
- for <dev@dpdk.org>; Thu, 13 Mar 2025 22:52:04 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-225b5448519so27969295ad.0
- for <dev@dpdk.org>; Thu, 13 Mar 2025 14:52:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7D0EA402BD;
+	Thu, 13 Mar 2025 22:52:09 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id A816440275
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 22:52:05 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-223fb0f619dso28744415ad.1
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 14:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741902724;
- x=1742507524; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741902725;
+ x=1742507525; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EkOSa/CEdAfWw617Bmg6jyQcp94p4hEh8zY1+B6V1zA=;
- b=rb2UbEQfWVMBJPIt//DUF4SzRP/IIYw5obXvgsEpmIVjjrF2AyWcCT5kuTP8JlaDsR
- se5q2q9bLYKT5sL7Y6JrJusKVmlI2i6ScLY7tqJ2L1dcOdnI7yRRJW81TlRQZcm4CZ9V
- d2y8et7glJTMV3ZCz3nbynZzGg6cCZUg28jRIYNAEddyyu0cWYgkVMrfJ1QfM5uaD9nc
- /HublqfyEgyQWBI6+xCbhY58t8ECOfM3cGHs8k6fHwDDOlm6JXTiVqPCQnci8tn0Ta1u
- xjoc1eurUN8Ir5n4kgG8aEmaNhUqASp+fKi6nLs2tfj37c/4dkr7fW5yEKyhTJCHFiww
- n6og==
+ bh=bjWkTdQd9MfVRfJqngDibwxKy/v3SkwXlQiB4myh1To=;
+ b=W0PBTf4L7ozZhs7f0M5LmvgSc38cVKh6PRe7+jXnJylQKYl1vs5uauZK8njy0+kYzg
+ PMXjBhc7qfwg3fP5DQyTmQ0vFcc+M9pyBPqIqlGpjIY6b8nu/2cwGws6M/xgdNMsXFDO
+ UMdFR0By3p390f3DHovoh68jBfe/aqtWmg2SRUh3WgSqBDeqiyJ7QXqRUPR0LzDw5vtF
+ Wo6XAMD42jfakPgzC4h/UPKGMI/de22LDDZj4xveujLvw2tuoUQISM/C7cP3Qn8lg3HY
+ qPAzjuIfK7udwKs0EAEk5vF4Za2yNxMpwj0qvY7+9LDi1LS6mXuc4+8JUN4KI9ZpsWA+
+ i8Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741902724; x=1742507524;
+ d=1e100.net; s=20230601; t=1741902725; x=1742507525;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EkOSa/CEdAfWw617Bmg6jyQcp94p4hEh8zY1+B6V1zA=;
- b=ok4rFeJ+FzrltadnhFfhsCru4qIids9eCb/VSfT7nVU+PGJeqfUEnEcXD1DjUlpyEo
- 9znwpzYbNORXhfmhtXGHBftrj6zI51iLmBBo0SdeLZ3UswTmQVrf4ocjrUY9XSLA3rTd
- g1Nn4kdFOwutqZshSRmBo9hLNooZABTyke2qcHPRpbKahO4+ZDWb9M+VGVI9dVi+/kiy
- 8mP0OW3HblNCrXz8x5SxuaJ0cX7erxULerdpp/VfcyQo1GzGS/9ZMeKV81FXE6thIQgA
- dJ7zWzt1vuh8hYLlkv8y30qXZzrp+/gf0SYWytI7VDHtcNwSWqjORlMZZNUKAFQ0/zB1
- 3gGQ==
-X-Gm-Message-State: AOJu0YwZxLmNCoqE8uk3Qt+yyGDAGMHgLgZx3YImfnxCrU1izAaIb7Oj
- 47cCjZbRy7qTq155KZSQM5NWmSyEfT7i4yYUxhWAflCuS0NL9TY8cwyEb3fEiqYkS2bnQ5pMr4A
- b
-X-Gm-Gg: ASbGncsNpXHPBH/MGrjr+nIFvHGbNzO5s5ozHt+0S2nWLAje+8Jqnivdx3zezBNPtuu
- HOV7wSCsChupFOBvFW8aoEeZfmhtziOB9zbJ3GLWqN2bAF47U19AA+OCjsMmKy71vylma+oSkG3
- 5icKzzNEt6AnQCg2BvFAMA+6mQJJzoqiYbLVqNckdB0rl/PIB6caR/ZcQtzho9qAkpMCnE15yoI
- 4QuPdqqDYA51s+i+6AkzTbqWKxCJVy0+EglZn00Ra0CZzfJt63BO4DiMmJ1nf09aOOBpqE1BMt5
- CLC1kiJycjlxk3xWo0IcqhCEsVJY1z420/5zd/Fp4yiVnUbzQE0ig0nCPJEv5wzv20T/Sewnpv6
- XIGmNXB5+CX9ShvqA4bU7RQ==
-X-Google-Smtp-Source: AGHT+IHkFHXxS5/R65E/Duy5D3q2AoV41a9sC8u25KphcnYXR9oqmedfl6goSMH5Ia40jaJc5E2O/g==
-X-Received: by 2002:a17:902:e5d2:b0:21f:ba77:c45e with SMTP id
- d9443c01a7336-225e0b194c2mr2042115ad.45.1741902724048; 
+ bh=bjWkTdQd9MfVRfJqngDibwxKy/v3SkwXlQiB4myh1To=;
+ b=ObKCvbUJk2JEyy+0FhyPF3VyFq3PqLoxoAvei9+g/+LB0Dd68MaSt7htGTyimWrvqO
+ NGgOa0HqFQzdqHXHG24OZVdm1iJBZ6H8JP8nncxZ6KOD1jV3eMaYHnn5G3Np94sKeISQ
+ It55PVpDlF1XDyQar2LOyuugVjM94HUqXD+8WV9Zqw27J2iux7apjHaYL4yvEhFVKAE6
+ quN/NSdbkg8PvtQCr4SPEMLR4YdAYaO32+CLXb1gzMpZYkDz5n/fTspX1uHyr7xxHG1k
+ 6ud3QD6TmYcpUueSVRmjH4nl0vXJpd4OCvKcOuqS8nJ+P7hevBjjwT9PjbmI7DeXio6K
+ 7cuQ==
+X-Gm-Message-State: AOJu0Ywog+8oJcxvp5TGXjC8hvFz5bTWFwaSKkBU4zX/tZGS5FqwZFt0
+ niwjk9sVXO/kUYHQuLuZDul44W4Na/z6KFbtDwdCbE89rBu8Y/sWibKMwi0l2qnvhlYiLzRjhJI
+ p
+X-Gm-Gg: ASbGncsGWDjdgdW6FltVr47TnQsSr9KPr/p2qS652bhUlxFtjtoTLVb8sEUL903d1tU
+ BMZZteg1zUTXBTIRj/ta3VzbtSBfNjyzKXf9AsZV0EzTIi2M7ZeQ0m+ceZEPakgApe/jrcoxKFX
+ J11c4RcXeMyVrz9OSTwAbiBO1Ot0PH/xTuEkPUNCcSFdL9IKI2UTYktXJXsZ4sV1xvmR47FlQQe
+ 5+OV06/2egIS0Lt5GO2HqcoBJ2Abw47yNtsIKFX8d1QjOedGPiyCQRo1oucjgzeQmR8f8wFMG04
+ NsRuIeGSdVUv0jBsYS6FQnyDxyIqL9nX4db6tEG5LAILcxbcOC9EzWm8b+lyu4gpuiKiVxMH1zs
+ 0MeWxL8GiUmT66nqfTrIteg==
+X-Google-Smtp-Source: AGHT+IFaf8qKAQD9PekpbwSyNl9wIUmRcmI4EokJ/b9ySo1h6tKKCD53G6jxyhXQSjA3sOesu/48Iw==
+X-Received: by 2002:a17:902:e787:b0:220:f7bb:842 with SMTP id
+ d9443c01a7336-225e0aeeb64mr2196465ad.42.1741902724766; 
  Thu, 13 Mar 2025 14:52:04 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6bd3d5bsm18337775ad.217.2025.03.13.14.52.03
+ d9443c01a7336-225c6bd3d5bsm18337775ad.217.2025.03.13.14.52.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 14:52:03 -0700 (PDT)
+ Thu, 13 Mar 2025 14:52:04 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 01/10] net/ioring: introduce new driver
-Date: Thu, 13 Mar 2025 14:50:52 -0700
-Message-ID: <20250313215151.292944-2-stephen@networkplumber.org>
+Subject: [PATCH v4 02/10] net/ioring: implement link state
+Date: Thu, 13 Mar 2025 14:50:53 -0700
+Message-ID: <20250313215151.292944-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250313215151.292944-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -82,441 +82,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add basic driver initialization, documentation, and device creation
-and basic documentation.
+Add hooks to set kernel link up/down and report state.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS                         |   6 +
- doc/guides/nics/features/ioring.ini |   9 +
- doc/guides/nics/index.rst           |   1 +
- doc/guides/nics/ioring.rst          |  66 +++++++
- drivers/net/ioring/meson.build      |  15 ++
- drivers/net/ioring/rte_eth_ioring.c | 262 ++++++++++++++++++++++++++++
- drivers/net/meson.build             |   1 +
- 7 files changed, 360 insertions(+)
- create mode 100644 doc/guides/nics/features/ioring.ini
- create mode 100644 doc/guides/nics/ioring.rst
- create mode 100644 drivers/net/ioring/meson.build
- create mode 100644 drivers/net/ioring/rte_eth_ioring.c
+ doc/guides/nics/features/ioring.ini |  1 +
+ drivers/net/ioring/rte_eth_ioring.c | 84 +++++++++++++++++++++++++++++
+ 2 files changed, 85 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82f6e2f917..78bf70c5a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -853,6 +853,12 @@ F: drivers/net/intel/ipn3ke/
- F: doc/guides/nics/ipn3ke.rst
- F: doc/guides/nics/features/ipn3ke.ini
- 
-+Ioring - EXPERIMENTAL
-+M: Stephen Hemminger <stephen@networkplumber.org>
-+F: drivers/net/ioring/
-+F: doc/guides/nics/ioring.rst
-+F: doc/guides/nics/features/ioring.ini
-+
- Marvell cnxk
- M: Nithin Dabilpuram <ndabilpuram@marvell.com>
- M: Kiran Kumar K <kirankumark@marvell.com>
 diff --git a/doc/guides/nics/features/ioring.ini b/doc/guides/nics/features/ioring.ini
-new file mode 100644
-index 0000000000..c4c57caaa4
---- /dev/null
+index c4c57caaa4..d4bf70cb4f 100644
+--- a/doc/guides/nics/features/ioring.ini
 +++ b/doc/guides/nics/features/ioring.ini
-@@ -0,0 +1,9 @@
-+;
-+; Supported features of the 'ioring' driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Linux		     = Y
-+x86-64               = Y
-+Usage doc            = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 10a2eca3b0..afb6bf289b 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -41,6 +41,7 @@ Network Interface Controller Drivers
-     igc
-     intel_vf
-     ionic
-+    ioring
-     ipn3ke
-     ixgbe
-     mana
-diff --git a/doc/guides/nics/ioring.rst b/doc/guides/nics/ioring.rst
-new file mode 100644
-index 0000000000..7d37a6bb37
---- /dev/null
-+++ b/doc/guides/nics/ioring.rst
-@@ -0,0 +1,66 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+
-+IORING Poll Mode Driver
-+=======================
-+
-+The IORING Poll Mode Driver (PMD) is a simplified and improved version of the TAP PMD. It is a
-+virtual device that uses Linux ioring to inject packets into the Linux kernel.
-+It is useful when writing DPDK applications, that need to support interaction
-+with the Linux TCP/IP stack for control plane or tunneling.
-+
-+The IORING PMD creates a kernel network device that can be
-+managed by standard tools such as ``ip`` and ``ethtool`` commands.
-+
-+From a DPDK application, the IORING device looks like a DPDK ethdev.
-+It supports the standard DPDK API's to query for information, statistics,
-+and send/receive packets.
-+
-+Requirements
-+------------
-+
-+The IORING requires the io_uring library (liburing) which provides the helper
-+functions to manage io_uring with the kernel.
-+
-+For more info on io_uring, please see:
-+
-+https://kernel.dk/io_uring.pdf
-+
-+
-+Arguments
-+---------
-+
-+IORING devices are created with the command line ``--vdev=net_ioring0`` option.
-+This option may be specified more than once by repeating with a different ``net_ioringX`` device.
-+
-+By default, the Linux interfaces are named ``enio0``, ``enio1``, etc.
-+The interface name can be specified by adding the ``iface=foo0``, for example::
-+
-+   --vdev=net_ioring0,iface=io0 --vdev=net_ioring1,iface=io1, ...
-+
-+The PMD inherits the MAC address assigned by the kernel which will be
-+a locally assigned random Ethernet address.
-+
-+Normally, when the DPDK application exits, the IORING device is removed.
-+But this behavior can be overridden by the use of the persist flag, example::
-+
-+  --vdev=net_ioring0,iface=io0,persist ...
-+
-+
-+Multi-process sharing
-+---------------------
-+
-+The IORING device does not support secondary process (yet).
-+
-+
-+Limitations
-+-----------
-+
-+- IO uring requires io_uring support. This was add in Linux kernl version 5.1
-+  Also, IO uring maybe disabled in some environments or by security policies.
-+
-+- Since IORING device uses a file descriptor to talk to the kernel,
-+  the same number of queues must be specified for receive and transmit.
-+
-+- No flow support. Receive queue selection for incoming packets is determined
-+  by the Linux kernel. See kernel documentation for more info:
-+  https://www.kernel.org/doc/html/latest/networking/scaling.html
-diff --git a/drivers/net/ioring/meson.build b/drivers/net/ioring/meson.build
-new file mode 100644
-index 0000000000..264554d069
---- /dev/null
-+++ b/drivers/net/ioring/meson.build
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2024 Stephen Hemminger
-+
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+endif
-+
-+dep = dependency('liburing', required:false)
-+reason = 'missing dependency, "liburing"'
-+build = dep.found()
-+ext_deps += dep
-+
-+sources = files('rte_eth_ioring.c')
-+require_iova_in_mbuf = false
+@@ -4,6 +4,7 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Link status          = Y
+ Linux		     = Y
+ x86-64               = Y
+ Usage doc            = Y
 diff --git a/drivers/net/ioring/rte_eth_ioring.c b/drivers/net/ioring/rte_eth_ioring.c
-new file mode 100644
-index 0000000000..4d5a5174db
---- /dev/null
+index 4d5a5174db..8c89497b1a 100644
+--- a/drivers/net/ioring/rte_eth_ioring.c
 +++ b/drivers/net/ioring/rte_eth_ioring.c
-@@ -0,0 +1,262 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Stephen Hemminger
-+ */
-+
-+#include <ctype.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <net/if.h>
-+#include <linux/if.h>
-+#include <linux/if_tun.h>
-+
-+#include <bus_vdev_driver.h>
-+#include <ethdev_driver.h>
-+#include <ethdev_vdev.h>
-+#include <rte_common.h>
-+#include <rte_dev.h>
-+#include <rte_eal.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_kvargs.h>
-+#include <rte_log.h>
-+
-+#define IORING_DEFAULT_IFNAME	"itap%d"
-+
-+RTE_LOG_REGISTER_DEFAULT(ioring_logtype, NOTICE);
-+#define RTE_LOGTYPE_IORING ioring_logtype
-+#define PMD_LOG(level, ...) RTE_LOG_LINE_PREFIX(level, IORING, "%s(): ", __func__, __VA_ARGS__)
-+
-+#define IORING_IFACE_ARG	"iface"
-+#define IORING_PERSIST_ARG	"persist"
-+
-+static const char * const valid_arguments[] = {
-+	IORING_IFACE_ARG,
-+	IORING_PERSIST_ARG,
-+	NULL
-+};
-+
-+struct pmd_internals {
-+	int keep_fd;			/* keep alive file descriptor */
-+	char ifname[IFNAMSIZ];		/* name assigned by kernel */
-+	struct rte_ether_addr eth_addr; /* address assigned by kernel */
-+};
-+
-+/* Creates a new tap device, name returned in ifr */
+@@ -47,6 +47,53 @@ struct pmd_internals {
+ 	struct rte_ether_addr eth_addr; /* address assigned by kernel */
+ };
+ 
 +static int
-+tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
-+{
-+	static const char tun_dev[] = "/dev/net/tun";
-+	int tap_fd;
-+
-+	tap_fd = open(tun_dev, O_RDWR | O_CLOEXEC | O_NONBLOCK);
-+	if (tap_fd < 0) {
-+		PMD_LOG(ERR, "Open %s failed: %s", tun_dev, strerror(errno));
-+		return -1;
-+	}
-+
-+	int features = 0;
-+	if (ioctl(tap_fd, TUNGETFEATURES, &features) < 0) {
-+		PMD_LOG(ERR, "ioctl(TUNGETFEATURES) %s", strerror(errno));
-+		goto error;
-+	}
-+
-+	int flags = IFF_TAP | IFF_MULTI_QUEUE | IFF_NO_PI;
-+	if ((features & flags) != flags) {
-+		PMD_LOG(ERR, "TUN features %#x missing support for %#x",
-+			features, features & flags);
-+		goto error;
-+	}
-+
-+#ifdef IFF_NAPI
-+	/* If kernel supports using NAPI enable it */
-+	if (features & IFF_NAPI)
-+		flags |= IFF_NAPI;
-+#endif
-+	/*
-+	 * Sets the device name and packet format.
-+	 * Do not want the protocol information (PI)
-+	 */
-+	strlcpy(ifr->ifr_name, name, IFNAMSIZ);
-+	ifr->ifr_flags = flags;
-+	if (ioctl(tap_fd, TUNSETIFF, ifr) < 0) {
-+		PMD_LOG(ERR, "ioctl(TUNSETIFF) %s: %s",
-+			ifr->ifr_name, strerror(errno));
-+		goto error;
-+	}
-+
-+	/* (Optional) keep the device after application exit */
-+	if (persist && ioctl(tap_fd, TUNSETPERSIST, 1) < 0) {
-+		PMD_LOG(ERR, "ioctl(TUNSETPERIST) %s: %s",
-+			ifr->ifr_name, strerror(errno));
-+		goto error;
-+	}
-+
-+	return tap_fd;
-+error:
-+	close(tap_fd);
-+	return -1;
-+}
-+
-+static int
-+eth_dev_close(struct rte_eth_dev *dev)
++eth_dev_change_flags(struct rte_eth_dev *dev, uint16_t flags, uint16_t mask)
 +{
 +	struct pmd_internals *pmd = dev->data->dev_private;
 +
-+	PMD_LOG(INFO, "Closing %s", pmd->ifname);
++	int sock = socket(AF_INET, SOCK_DGRAM, 0);
++	if (sock < 0)
++		return -errno;
 +
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
-+
-+	/* mac_addrs must not be freed alone because part of dev_private */
-+	dev->data->mac_addrs = NULL;
-+
-+	if (pmd->keep_fd != -1) {
-+		close(pmd->keep_fd);
-+		pmd->keep_fd = -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct eth_dev_ops ops = {
-+	.dev_close		= eth_dev_close,
-+};
-+
-+static int
-+ioring_create(struct rte_eth_dev *dev, const char *tap_name, uint8_t persist)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	struct pmd_internals *pmd = data->dev_private;
-+
-+	pmd->keep_fd = -1;
-+
-+	data->dev_flags = RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
-+	dev->dev_ops = &ops;
-+
-+	/* Get the initial fd used to keep the tap device around */
 +	struct ifreq ifr = { };
-+	pmd->keep_fd = tap_open(tap_name, &ifr, persist);
-+	if (pmd->keep_fd < 0)
++	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
++
++	int ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
++	if (ret < 0)
 +		goto error;
 +
-+	strlcpy(pmd->ifname, ifr.ifr_name, IFNAMSIZ);
++	/* NB: ifr.ifr_flags is type short */
++	ifr.ifr_flags &= mask;
++	ifr.ifr_flags |= flags;
 +
-+	/* Read the MAC address assigned by the kernel */
-+	if (ioctl(pmd->keep_fd, SIOCGIFHWADDR, &ifr) < 0) {
-+		PMD_LOG(ERR, "Unable to get MAC address for %s: %s",
-+			ifr.ifr_name, strerror(errno));
-+		goto error;
-+	}
-+	memcpy(&pmd->eth_addr, &ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
-+	data->mac_addrs = &pmd->eth_addr;
-+
-+	/* Detach this instance, not used for traffic */
-+	ifr.ifr_flags = IFF_DETACH_QUEUE;
-+	if (ioctl(pmd->keep_fd, TUNSETQUEUE, &ifr) < 0) {
-+		PMD_LOG(ERR, "Unable to detach keep-alive queue for %s: %s",
-+			ifr.ifr_name, strerror(errno));
-+		goto error;
-+	}
-+
-+	PMD_LOG(DEBUG, "%s setup", ifr.ifr_name);
-+	return 0;
-+
++	ret = ioctl(sock, SIOCSIFFLAGS, &ifr);
 +error:
-+	if (pmd->keep_fd != -1)
-+		close(pmd->keep_fd);
-+	return -1;
++	close(sock);
++	return (ret < 0) ? -errno : 0;
 +}
 +
 +static int
-+parse_iface_arg(const char *key __rte_unused, const char *value, void *extra_args)
++eth_dev_get_flags(struct rte_eth_dev *dev, short *flags)
 +{
-+	char *name = extra_args;
++	struct pmd_internals *pmd = dev->data->dev_private;
 +
-+	/* must not be null string */
-+	if (name == NULL || name[0] == '\0' ||
-+	    strnlen(name, IFNAMSIZ) == IFNAMSIZ)
-+		return -EINVAL;
++	int sock = socket(AF_INET, SOCK_DGRAM, 0);
++	if (sock < 0)
++		return -errno;
 +
-+	strlcpy(name, value, IFNAMSIZ);
-+	return 0;
++	struct ifreq ifr = { };
++	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
++
++	int ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
++	if (ret == 0)
++		*flags = ifr.ifr_flags;
++
++	close(sock);
++	return (ret < 0) ? -errno : 0;
++}
++
++
+ /* Creates a new tap device, name returned in ifr */
+ static int
+ tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
+@@ -103,6 +150,39 @@ tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
+ 	return -1;
+ }
+ 
++
++static int
++eth_dev_set_link_up(struct rte_eth_dev *dev)
++{
++	return eth_dev_change_flags(dev, IFF_UP, 0);
 +}
 +
 +static int
-+ioring_probe(struct rte_vdev_device *vdev)
++eth_dev_set_link_down(struct rte_eth_dev *dev)
 +{
-+	const char *name = rte_vdev_device_name(vdev);
-+	const char *params = rte_vdev_device_args(vdev);
-+	struct rte_kvargs *kvlist = NULL;
-+	struct rte_eth_dev *eth_dev = NULL;
-+	char tap_name[IFNAMSIZ] = IORING_DEFAULT_IFNAME;
-+	uint8_t persist = 0;
-+	int ret;
++	return eth_dev_change_flags(dev, 0, ~IFF_UP);
++}
 +
-+	PMD_LOG(INFO, "Initializing %s", name);
++static int
++eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
++{
++	struct rte_eth_link *eth_link = &dev->data->dev_link;
++	short flags = 0;
 +
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
-+		return -1; /* TODO */
-+
-+	if (params != NULL) {
-+		kvlist = rte_kvargs_parse(params, valid_arguments);
-+		if (kvlist == NULL)
-+			return -1;
-+
-+		if (rte_kvargs_count(kvlist, IORING_IFACE_ARG) == 1) {
-+			ret = rte_kvargs_process_opt(kvlist, IORING_IFACE_ARG,
-+						     &parse_iface_arg, tap_name);
-+			if (ret < 0)
-+				goto error;
-+		}
-+
-+		if (rte_kvargs_count(kvlist, IORING_PERSIST_ARG) == 1)
-+			persist = 1;
++	if (eth_dev_get_flags(dev, &flags) < 0) {
++		PMD_LOG(ERR, "ioctl(SIOCGIFFLAGS): %s", strerror(errno));
++		return -1;
 +	}
 +
-+	eth_dev = rte_eth_vdev_allocate(vdev, sizeof(struct pmd_internals));
-+	if (eth_dev == NULL) {
-+		PMD_LOG(ERR, "%s Unable to allocate device struct", tap_name);
-+		goto error;
-+	}
-+
-+	if (ioring_create(eth_dev, tap_name, persist) < 0)
-+		goto error;
-+
-+	rte_eth_dev_probing_finish(eth_dev);
++	*eth_link = (struct rte_eth_link) {
++		.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN,
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_status = (flags & IFF_UP) ? RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN,
++		.link_autoneg = RTE_ETH_LINK_FIXED,
++	};
 +	return 0;
-+
-+error:
-+	if (eth_dev != NULL)
-+		rte_eth_dev_release_port(eth_dev);
-+	rte_kvargs_free(kvlist);
-+	return -1;
-+}
-+
-+static int
-+ioring_remove(struct rte_vdev_device *dev)
-+{
-+	struct rte_eth_dev *eth_dev;
-+
-+	eth_dev = rte_eth_dev_allocated(rte_vdev_device_name(dev));
-+	if (eth_dev == NULL)
-+		return 0;
-+
-+	eth_dev_close(eth_dev);
-+	rte_eth_dev_release_port(eth_dev);
-+	return 0;
-+}
-+
-+static struct rte_vdev_driver pmd_ioring_drv = {
-+	.probe = ioring_probe,
-+	.remove = ioring_remove,
 +};
 +
-+RTE_PMD_REGISTER_VDEV(net_ioring, pmd_ioring_drv);
-+RTE_PMD_REGISTER_ALIAS(net_ioring, eth_ioring);
-+RTE_PMD_REGISTER_PARAM_STRING(net_ioring, IORING_IFACE_ARG "=<string> ");
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 460eb69e5b..2e39136a5b 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -34,6 +34,7 @@ drivers = [
-         'intel/ixgbe',
-         'intel/cpfl',  # depends on idpf, so must come after it
-         'ionic',
-+        'ioring',
-         'mana',
-         'memif',
-         'mlx4',
+ static int
+ eth_dev_close(struct rte_eth_dev *dev)
+ {
+@@ -126,8 +206,12 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 
+ static const struct eth_dev_ops ops = {
+ 	.dev_close		= eth_dev_close,
++	.link_update		= eth_link_update,
++	.dev_set_link_up	= eth_dev_set_link_up,
++	.dev_set_link_down	= eth_dev_set_link_down,
+ };
+ 
++
+ static int
+ ioring_create(struct rte_eth_dev *dev, const char *tap_name, uint8_t persist)
+ {
 -- 
 2.47.2
 
