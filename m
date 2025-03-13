@@ -2,40 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E877DC282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C85CC282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:35:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDCBA410E3;
-	Thu, 13 Mar 2025 15:06:33 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id A8B0840FDE
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:06:32 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 9D90B210B176; Thu, 13 Mar 2025 07:06:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9D90B210B176
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1741874791;
- bh=6phbF/sAZRKKPv2myqnScnyOJ38ojbAjeZD2U6u6aQc=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Jkqhjd7mIpjJMIs9nPxbh0WBPTUGL5c8tQiThbsDWNznsCbZhXDgaBRBimlUiWOEm
- RcB7yDGBNdQiD2/k6WfN+mo5OJ/ybWMqmp8jnHXzl2BvjA0jUir26Wl02pUUxb8Tl2
- h0Ec74jTzs6387PSgCQUBNhDe05IqKNzEedvSGV8=
-Date: Thu, 13 Mar 2025 07:06:31 -0700
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, sameh.gobriel@intel.com, vladimir.medvedkin@intel.com,
- yipeng1.wang@intel.com
-Subject: Re: [PATCH v3 1/3] eal: add function rte_size_to_str
-Message-ID: <20250313140631.GA14053@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
- <1741807714-26748-1-git-send-email-andremue@linux.microsoft.com>
- <1741807714-26748-2-git-send-email-andremue@linux.microsoft.com>
- <Z9K2cdB-nL9CSXaP@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 45EFA40FDE;
+	Thu, 13 Mar 2025 15:35:24 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 8577540150
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:35:23 +0100 (CET)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal
+ [10.202.2.50])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 232181140223;
+ Thu, 13 Mar 2025 10:35:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Thu, 13 Mar 2025 10:35:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1741876523;
+ x=1741962923; bh=Gbxz8s3Tqdc0E0m3HaZBhYGGYdQ3hxsRB6OuyufzWIU=; b=
+ oRAI+Za38Tt+KCz/XM7KFHd8zL5IjIxJpX7wdjrwgsOsXSIxZSHJecFku0JoN3nL
+ ej1E2Jh4QLtYZnKiYNkjp5tofR/rk6DTMZrniEgwK1nz9gIhyjVachuZNGtEGIXF
+ rW2xC/piAURIaKb4pjHriq1kqwhaDkbn2RKTCuIMWH4uqIZIiZV37mrzVjOlRBI7
+ DlaYboChbqb8GgIeRJ33S0aeyX8ctSpALLEbcm6dhueqwMfXJBRiyrzxhrIOpPGJ
+ O4F8iKOXhIE38ssIg4/u+aEQLRandld+OXUD6PKA0Ct+8vaFKx3XB6Y/+JBJKyiE
+ iMtD3f6VeYXQLt8Vr5tvbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741876523; x=
+ 1741962923; bh=Gbxz8s3Tqdc0E0m3HaZBhYGGYdQ3hxsRB6OuyufzWIU=; b=k
+ 9TMHaogVsDQxkpGYCmKKuS8NvhyOPP4LXKIoYcJbuqwjWgecDVYDISA1J0ux3GRg
+ fd57t/JSPUQ+GzVr5UjN+PerKrjSn8gCmZa0Sofjg8BjjL+wRhE07neLBgpG9o6a
+ NQB2h4p7I0nLdXsV4vyVkvoXZV0EfL2/hVXgw1hIyoWL9VmGlzqbCWxKpkq639UU
+ c7AosPEJzQSxztC0qvCVlzwE48b/cuuCmFQYlKkD3clbcW7ii0m0exZ6Dgz6TRJR
+ F9Pn+v7uYUkjy7Y7Nuy0Ek8y7taUaCjkTeY55MNXzc6ojuqrl4Ee6odFQnHuKFP8
+ Lw48WLN3OXVYJiL00udjw==
+X-ME-Sender: <xms:Ku3SZ9P88LugM3ruTM3x_HzVF1Joy6PJnnJZ4Xzl231aXxjJvC_vnw>
+ <xme:Ku3SZ_9TO93v51FjTJKL68FdFs8NYVnpzJwPgAsF9s9jEiuBLpZxgCg0AZ4UtD9GC
+ TbENSmAopYyLExQFQ>
+X-ME-Received: <xmr:Ku3SZ8Q1LgjtsBjmb9vbLOHKrmSBP8IFTCnC8PX0iFs_hQk0EBcti2jJQGKQWfOj_xSs64PqPQI707EEx-nK2Me5NA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvddtucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddt
+ jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdej
+ vedtheevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtne
+ curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
+ pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmsg
+ esshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopegsrhhutggv
+ rdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehsthgvphhhvg
+ hnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgu
+ khdrohhrghdprhgtphhtthhopehrohhrvghtiihlrgeslhhinhhugidrmhhitghrohhsoh
+ hfthdrtghomh
+X-ME-Proxy: <xmx:Ku3SZ5tojs3TpSN_85s_BnNLtGHPovbWTowaTwbOvbkd_x_OxL61TA>
+ <xmx:Ku3SZ1eQxYz7DIgga7vEdly0gL9hfuBoMx8iiIWn5e6M7PK9owG8_Q>
+ <xmx:Ku3SZ10753Ip-7BHHe4MJqkzzGiyY5Q_VM8BGtNmQyLZOQAFZRcDdw>
+ <xmx:Ku3SZx9mI34HKjVnjm9abPP7a1GUflUWgpIIYMkPsLJg5BDzjL77Tg>
+ <xmx:K-3SZ-Fmv9DUWmcjlfyEfGjuaBH_Ko2CMzFH4hs_oNh0RAxeNLTzcMLT>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Mar 2025 10:35:21 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Date: Thu, 13 Mar 2025 15:35:20 +0100
+Message-ID: <3711940.zToM8qfIzz@thomas>
+In-Reply-To: <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+ <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9K2cdB-nL9CSXaP@bricha3-mobl1.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,146 +95,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 13, 2025 at 10:41:53AM +0000, Bruce Richardson wrote:
-> On Wed, Mar 12, 2025 at 12:28:32PM -0700, Andre Muezerie wrote:
-> > It's common to use %' in the printf format specifier to make large numbers
-> > more easily readable by having the thousands grouped. However, this
-> > grouping does not work on Windows. Therefore, a function is needed to make
-> > uint64_t numbers more easily readable. There are at least two tests that
-> > can benefit from this new function.
-> > 
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > ---
-> >  lib/eal/common/eal_common_string_fns.c | 44 ++++++++++++++++++++++++++
-> >  lib/eal/include/rte_common.h           | 31 ++++++++++++++++++
-> >  lib/eal/version.map                    |  3 ++
-> >  3 files changed, 78 insertions(+)
-> > 
-> > diff --git a/lib/eal/common/eal_common_string_fns.c b/lib/eal/common/eal_common_string_fns.c
-> > index 9ca2045b18..4cc7f35652 100644
-> > --- a/lib/eal/common/eal_common_string_fns.c
-> > +++ b/lib/eal/common/eal_common_string_fns.c
-> > @@ -4,6 +4,7 @@
-> >  
-> >  #include <ctype.h>
-> >  #include <errno.h>
-> > +#include <inttypes.h>
-> >  #include <stdio.h>
-> >  #include <stdlib.h>
-> >  
-> > @@ -87,6 +88,12 @@ rte_str_to_size(const char *str)
-> >  		endptr++; /* allow 1 space gap */
-> >  
-> >  	switch (*endptr) {
-> > +	case 'E': case 'e':
-> > +		size *= 1024; /* fall-through */
-> > +	case 'P': case 'p':
-> > +		size *= 1024; /* fall-through */
-> > +	case 'T': case 't':
-> > +		size *= 1024; /* fall-through */
-> >  	case 'G': case 'g':
-> >  		size *= 1024; /* fall-through */
-> >  	case 'M': case 'm':
-> > @@ -98,3 +105,40 @@ rte_str_to_size(const char *str)
-> >  	}
-> >  	return size;
-> >  }
-> > +
-> > +int
-> > +rte_size_to_str(char *buf, int buf_size,
-> > +		uint64_t count, bool use_iec)
-> > +{
-> > +	const char *prefix = "kMGTPE";
-> > +	const unsigned int base = use_iec ? 1024 : 1000;
-> > +	uint64_t powi = 1;
-> > +	uint16_t powj = 1;
-> > +	uint8_t precision = 2;
-> > +
-> > +	if (count < base)
-> > +		return snprintf(buf, buf_size, "%"PRIu64" ", count);
-> > +
-> > +	/* increase value by a factor of 1000/1024 and store
-> > +	 * if result is something a human can read
-> > +	 */
-> > +	for (;;) {
-> > +		powi *= base;
-> > +		if (count / base < powi)
-> > +			break;
-> > +
-> > +		if (!prefix[1])
-> > +			break;
-> > +		++prefix;
-> > +	}
-> > +
-> > +	/* try to guess a good number of digits for precision */
-> > +	for (; precision > 0; precision--) {
-> > +		powj *= 10;
-> > +		if (count / powi < powj)
-> > +			break;
-> > +	}
-> > +
-> > +	return snprintf(buf, buf_size, "%.*f %c%s", precision,
-> > +			(double)count / powi, *prefix, use_iec ? "i" : "");
-> > +}
-> > diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-> > index 386f11ae40..781c56adcd 100644
-> > --- a/lib/eal/include/rte_common.h
-> > +++ b/lib/eal/include/rte_common.h
-> > @@ -14,9 +14,11 @@
-> >  
-> >  #include <assert.h>
-> >  #include <limits.h>
-> > +#include <stdbool.h>
-> >  #include <stdint.h>
-> >  #include <stdalign.h>
-> >  
-> > +#include <rte_compat.h>
-> >  #include <rte_config.h>
-> >  
-> >  /* OS specific include */
-> > @@ -919,6 +921,35 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
-> >  uint64_t
-> >  rte_str_to_size(const char *str);
-> >  
-> > +/**
-> > + * Converts the uint64_t value provided to a human-readable string.
-> > + * It null-terminates the string, truncating the data if needed.
-> > + *
-> > + * Sample outputs with "use_iec" disabled and enabled:
-> > + * 0 : "0 ", "0 "
-> > + * 700 : "700 ", "700 "
-> > + * 1000 : "1.00 k", "1000 "
-> > + * 1024 : "1.02 k", "1.00 ki"
-> > + * 21474836480 : "21.5 G", "20.0 Gi"
-> > + * 109951162777600 : "110 T", "100 Ti"
-> > + *
-> > + * @param buf
-> > + *     Buffer to write the string to.
-> > + * @param buf_size
-> > + *     Size of the buffer.
-> > + * @param count
-> > + *     Number to convert.
-> > + * @param use_iec
-> > + *     If true, use IEC units (1024-based), otherwise use SI units (1000-based).
-> > + * @return
-> > + *     Number of characters written (not including the null-terminator),
-> > + *     or that would have been required when the buffer is too small.
-> 
-> Just one further minor query on the API return value.
-> 
-> While this is a good return value for handling error cases, for
-> convenience I wonder if it might be better to have the function return
-> "buf" or NULL on error. For basic usage where the buffer is known to be
-> sufficiently big, that would allow use inline in printfs/logs, rather than
-> requiring a separate call e.g.:
-> 
-> printf("Value is %sB/s\n", rte_size_to_str(buf, RTE_DIM(buf), value, true));
-> 
-> WDYT?
-> /Bruce
+13/03/2025 09:56, Bruce Richardson:
+> On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Br=C3=B8rup wrote:
+> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > Sent: Thursday, 13 March 2025 00.02
+> > >=20
+> > > On Wed, 19 Feb 2025 15:55:17 +0100
+> > > Thomas Monjalon <thomas@monjalon.net> wrote:
+> > >=20
+> > > > 14/02/2025 18:20, Stephen Hemminger:
+> > > > > The Linux version of sys/queue.h is frozen at an older version
+> > > > > and is missing the _SAFE macro variants. Several drivers started
+> > > > > introducing the own workarounds for this. Should be handled in EA=
+L.
+> > > > >
+> > > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > > >
+> > > > We may want to unify with lib/eal/windows/include/sys/queue.h
+> > > >
+> > > >
+> > >=20
+> > > Not sure, we have several options here:
+> > >   1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
+> > >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is
+> > > what Windows did)
+> > >   3. Use the bsd version of queue.h.
+> > >      On Debian/Ubuntu this in libbsd-dev package and referred to as
+> > > bsd/sys/queue.h
+> > >=20
+> > > I chose #1 as simplest. But all of these could work. #3 means DPDK has
+> > > least new
+> > > code, but adds another dependency to the build.
+> >=20
+> > +1 to #2:
+> > If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h, #2 =
+would consolidate all the queue macros in one file.
+> > That seems easier to navigate (for a developer/reviewer looking at the =
+macro definitions/implementations) than including sys/queue.h, queue.h or l=
+ib/eal/windows/include/sys/queue.h depending on O/S, and then defining the =
+missing macros in rte_queue.h.
+> > A comment at the top of the rte_queue.h file could mention that it is a=
+ copy of the FreeBSD queue.h file.
+> >=20
+> > -1 to #3; it adds an unnecessary dependency.
+> >=20
+> > >=20
+> > > No matter what, should add to checkpatch to block any new files that
+> > > include sys/queue.h
+> > > directly.
+> >=20
+> > +1 to this.
+> >=20
+>=20
+> I agree with Morten, #2 looks the best option to me too.
 
-That's a good point. Given that this function is used specifically for converting
-numbers it's a valid assumption that the buffer space needed is always known and
-available. It's not like snprintf which has a more generic use.
+It means we want to remove lib/eal/windows/include/sys/queue.h, right?
 
-Allowing this function to be used inline would be nice. I'll make this change.
+
+
