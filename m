@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33967C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70411C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:52:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 910E34270A;
-	Thu, 13 Mar 2025 17:51:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BB4DA41141;
+	Thu, 13 Mar 2025 17:51:57 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id BAD0C4114B
+ by mails.dpdk.org (Postfix) with ESMTP id DCB5F42686
  for <dev@dpdk.org>; Thu, 13 Mar 2025 17:51:54 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 0FFFB203342A; Thu, 13 Mar 2025 09:51:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0FFFB203342A
+ id 1C6C6203342B; Thu, 13 Mar 2025 09:51:54 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1C6C6203342B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1741884714;
- bh=PNY5TsjlfF0oTrap3rzeDkZTOj1O0f5CtM559LBFN94=;
+ bh=WlKCGKNbQTov7gZVIoDaSG2EIOGOR5FVkeSu5zZAe8o=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=R2a+jCDwRm1nL4Ibo+O3DHLRvfNTy5GCHg12ykDgaT9Hh99LaauJTBEfLDlBTHBXC
- M5XYO8Pdh4GwkFPcFTDCXtjHEcY1zDeMVqdu9ggGiARDDFTTRd5ndldTASE4zqlJ1t
- 24bzEEzBOA/KRSSocbcQP1kGPe2QoqRgSVfaEWNE=
+ b=AmCaZE/6ezU8PmILwBkKxVqFVthd/o6wfxwePV5qBNfOH5nI4/Tb/9o3xdCEQXUh4
+ cYfMIkmYJFW5L6NY9gG0i/F90Q3usrtq8eIGL/EAN+8MiVjt/+qQ/p6vy5ZVDtRliI
+ 0iivBFz7fXguH0ZhmpAj8UxwLbe7tcF/7WJuV5AE=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: bruce.richardson@intel.com, dev@dpdk.org, sameh.gobriel@intel.com,
  vladimir.medvedkin@intel.com, yipeng1.wang@intel.com
-Subject: [PATCH v4 2/3] hash_multiwriter_autotest: fix printf parameters
-Date: Thu, 13 Mar 2025 09:51:45 -0700
-Message-Id: <1741884706-21546-3-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v4 3/3] hash_readwrite_autotest: fix printf parameters
+Date: Thu, 13 Mar 2025 09:51:46 -0700
+Message-Id: <1741884706-21546-4-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1741884706-21546-1-git-send-email-andremue@linux.microsoft.com>
 References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
@@ -47,59 +47,58 @@ Errors-To: dev-bounces@dpdk.org
 Compiling with MSVC logs the warnings below, which result in
 build error:
 
-../app/test/test_hash_multiwriter.c(71): warning C4476: 'printf' :
+../app/test/test_hash_readwrite.c(73): warning C4476: 'printf' :
     unknown type field character ''' in format specifier
-../app/test/test_hash_multiwriter.c(73): warning C4474: 'printf' :
+../app/test/test_hash_readwrite.c(75): warning C4474: 'printf' :
     too many arguments passed for format string
-../app/test/test_hash_multiwriter.c(73): note: placeholders and their
-    parameters expect 2 variadic arguments, but 4 were provided
+../app/test/test_hash_readwrite.c(75): note: placeholders and
+    their parameters expect 2 variadic arguments, but 4 were provided
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- app/test/test_hash_multiwriter.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ app/test/test_hash_readwrite.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/app/test/test_hash_multiwriter.c b/app/test/test_hash_multiwriter.c
-index 33d3147bd8..0af3eb2c33 100644
---- a/app/test/test_hash_multiwriter.c
-+++ b/app/test/test_hash_multiwriter.c
-@@ -32,6 +32,8 @@
- 
- #define RTE_APP_TEST_HASH_MULTIWRITER_FAILED 0
+diff --git a/app/test/test_hash_readwrite.c b/app/test/test_hash_readwrite.c
+index 1867376ade..82fe03cc5a 100644
+--- a/app/test/test_hash_readwrite.c
++++ b/app/test/test_hash_readwrite.c
+@@ -25,6 +25,8 @@
+ #define NUM_TEST 3
+ unsigned int core_cnt[NUM_TEST] = {2, 4, 8};
  
 +#define OFFSET_STR_LEN 16
 +
- struct {
- 	uint32_t *keys;
- 	uint32_t *found;
-@@ -51,11 +53,15 @@ static int use_htm;
+ unsigned int worker_core_ids[RTE_MAX_LCORE];
+ struct perf {
+ 	uint32_t single_read;
+@@ -57,10 +59,14 @@ static RTE_ATOMIC(uint64_t) gwrites;
  static int
- test_hash_multiwriter_worker(void *arg)
+ test_hash_readwrite_worker(__rte_unused void *arg)
  {
 +	char offset_start[OFFSET_STR_LEN];
 +	char offset_end[OFFSET_STR_LEN];
  	uint64_t i, offset;
- 	uint16_t pos_core;
  	uint32_t lcore_id = rte_lcore_id();
  	uint64_t begin, cycles;
- 	uint16_t *enabled_core_ids = (uint16_t *)arg;
+ 	int *ret;
 +	const bool use_iec = true;
 +	const char *unit = NULL;
  
- 	for (pos_core = 0; pos_core < rte_lcore_count(); pos_core++) {
- 		if (enabled_core_ids[pos_core] == lcore_id)
-@@ -68,10 +74,12 @@ test_hash_multiwriter_worker(void *arg)
- 	 */
- 	offset = pos_core * tbl_multiwriter_test_params.nb_tsx_insertion;
+ 	ret = rte_malloc(NULL, sizeof(int) *
+ 				tbl_rw_test_param.num_insert, 0);
+@@ -70,9 +76,13 @@ test_hash_readwrite_worker(__rte_unused void *arg)
+ 	}
+ 	offset = tbl_rw_test_param.num_insert * i;
  
--	printf("Core #%d inserting %d: %'"PRId64" - %'"PRId64"\n",
+-	printf("Core #%d inserting and reading %d: %'"PRId64" - %'"PRId64"\n",
 +	rte_size_to_str(offset_start, RTE_DIM(offset_start), offset, use_iec, unit);
 +	rte_size_to_str(offset_end, RTE_DIM(offset_end),
-+			offset + tbl_multiwriter_test_params.nb_tsx_insertion - 1, use_iec, unit);
-+	printf("Core #%u inserting %u: %s - %s\n",
- 	       lcore_id, tbl_multiwriter_test_params.nb_tsx_insertion,
--	       offset,
--	       offset + tbl_multiwriter_test_params.nb_tsx_insertion - 1);
++			offset + tbl_rw_test_param.num_insert - 1, use_iec, unit);
++
++	printf("Core #%u inserting and reading %u: %s - %s\n",
+ 	       lcore_id, tbl_rw_test_param.num_insert,
+-	       offset, offset + tbl_rw_test_param.num_insert - 1);
 +	       offset_start, offset_end);
  
  	begin = rte_rdtsc_precise();
