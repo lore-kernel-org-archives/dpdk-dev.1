@@ -2,85 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C85CC282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98999C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:37:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45EFA40FDE;
-	Thu, 13 Mar 2025 15:35:24 +0100 (CET)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 8577540150
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:35:23 +0100 (CET)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal
- [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 232181140223;
- Thu, 13 Mar 2025 10:35:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Thu, 13 Mar 2025 10:35:23 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 8C5DF40FDE;
+	Thu, 13 Mar 2025 15:37:26 +0100 (CET)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E32E40150
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:37:25 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal
+ [10.202.2.47])
+ by mailfout.phl.internal (Postfix) with ESMTP id C67091382D05;
+ Thu, 13 Mar 2025 10:37:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Thu, 13 Mar 2025 10:37:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1741876523;
- x=1741962923; bh=Gbxz8s3Tqdc0E0m3HaZBhYGGYdQ3hxsRB6OuyufzWIU=; b=
- oRAI+Za38Tt+KCz/XM7KFHd8zL5IjIxJpX7wdjrwgsOsXSIxZSHJecFku0JoN3nL
- ej1E2Jh4QLtYZnKiYNkjp5tofR/rk6DTMZrniEgwK1nz9gIhyjVachuZNGtEGIXF
- rW2xC/piAURIaKb4pjHriq1kqwhaDkbn2RKTCuIMWH4uqIZIiZV37mrzVjOlRBI7
- DlaYboChbqb8GgIeRJ33S0aeyX8ctSpALLEbcm6dhueqwMfXJBRiyrzxhrIOpPGJ
- O4F8iKOXhIE38ssIg4/u+aEQLRandld+OXUD6PKA0Ct+8vaFKx3XB6Y/+JBJKyiE
- iMtD3f6VeYXQLt8Vr5tvbQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1741876644;
+ x=1741963044; bh=huUyqE2CXdtRAomjn67nOZM+0cPdyz4fx3QoeiiJi3A=; b=
+ TMGE2YkGS4oe3QZC0qtFJ5pPr5blNgzNYUocWws0JcBPoaKt5UFye9wYKMmncH2k
+ aqv7At5wQ88aP4etLyVBmTLi39DuLV4hiP31oqsUwKsIDGiN0UP3TD6UbtDAOaZk
+ DrHB3FalL8AO7Cqr/gf6GmdGisuna8pG5ZGgKqF7CjDc4CPxzgzj2Skd6xt5C5PA
+ SYUJkHh349j2Ul/CuDgXPm6CmlxCOzvKKYIUSPz9Zy/frylJQ/bnWsUgRki8ZJXV
+ v4+dfxCMzSJ09hbUkX9XcllL3OgXMF6t+mIOiWYjcQI6OcGsevb8IvXD5cngo5M8
+ HB+8BHyIg+pQfpsz38mXWA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741876523; x=
- 1741962923; bh=Gbxz8s3Tqdc0E0m3HaZBhYGGYdQ3hxsRB6OuyufzWIU=; b=k
- 9TMHaogVsDQxkpGYCmKKuS8NvhyOPP4LXKIoYcJbuqwjWgecDVYDISA1J0ux3GRg
- fd57t/JSPUQ+GzVr5UjN+PerKrjSn8gCmZa0Sofjg8BjjL+wRhE07neLBgpG9o6a
- NQB2h4p7I0nLdXsV4vyVkvoXZV0EfL2/hVXgw1hIyoWL9VmGlzqbCWxKpkq639UU
- c7AosPEJzQSxztC0qvCVlzwE48b/cuuCmFQYlKkD3clbcW7ii0m0exZ6Dgz6TRJR
- F9Pn+v7uYUkjy7Y7Nuy0Ek8y7taUaCjkTeY55MNXzc6ojuqrl4Ee6odFQnHuKFP8
- Lw48WLN3OXVYJiL00udjw==
-X-ME-Sender: <xms:Ku3SZ9P88LugM3ruTM3x_HzVF1Joy6PJnnJZ4Xzl231aXxjJvC_vnw>
- <xme:Ku3SZ_9TO93v51FjTJKL68FdFs8NYVnpzJwPgAsF9s9jEiuBLpZxgCg0AZ4UtD9GC
- TbENSmAopYyLExQFQ>
-X-ME-Received: <xmr:Ku3SZ8Q1LgjtsBjmb9vbLOHKrmSBP8IFTCnC8PX0iFs_hQk0EBcti2jJQGKQWfOj_xSs64PqPQI707EEx-nK2Me5NA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvddtucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741876644; x=
+ 1741963044; bh=huUyqE2CXdtRAomjn67nOZM+0cPdyz4fx3QoeiiJi3A=; b=I
+ 7Nc+YC8xAV4+LsZyvu3MxJ2rfhjf+gKhVpTCXe6Dw0GMMmgVXX3HewUrwTLQlZhN
+ 3ltth30BGBUagSWA170jT7XASUkemJdGWTqWSMc/QshSMtR9xm+4nCoIZO7d0ATo
+ Uq9yXmyOzLJzuNK0VCAdayAQ5+NHeshG4FNIHCbzDAC/5FYswUTD0S7BmdqERI8w
+ OaNOAsx8LzqH6R77y4FIUAp2nDZrgzsXbbohVarc6kpFG9iV9QAv+TiAWnFaIrOv
+ c8dQL14S47buT7Bi6RVmQwHsJOK5Mvsltf1USTN5jx+MEWLGWLJJSO6c493/rI1J
+ 4nUVxh6gBO55jToWmDKgQ==
+X-ME-Sender: <xms:pO3SZ0tK7KxI6uUYrO1byTWXGOMyGfMCur9GCyns6rXwEkxlwAhBHw>
+ <xme:pO3SZxcgdbqVoONAl45pRuwDLGE-20uuBR6pH7Dye6M1xi1hpEenC2wxSySIBesAU
+ awqMJBzhPS4bbgFLw>
+X-ME-Received: <xmr:pO3SZ_yrRx39NeID1jbjfoX_Ytq4gvcE0H8vfVpPf1nni6m7ud2dTxAxAMJxw37XNz0q31tP3r9dOz7UfYbRRq9Y5A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
- gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddt
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
  jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
- hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdej
- vedtheevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtne
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
+ geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmsg
- esshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopegsrhhutggv
- rdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehsthgvphhhvg
- hnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgu
- khdrohhrghdprhgtphhtthhopehrohhrvghtiihlrgeslhhinhhugidrmhhitghrohhsoh
- hfthdrtghomh
-X-ME-Proxy: <xmx:Ku3SZ5tojs3TpSN_85s_BnNLtGHPovbWTowaTwbOvbkd_x_OxL61TA>
- <xmx:Ku3SZ1eQxYz7DIgga7vEdly0gL9hfuBoMx8iiIWn5e6M7PK9owG8_Q>
- <xmx:Ku3SZ10753Ip-7BHHe4MJqkzzGiyY5Q_VM8BGtNmQyLZOQAFZRcDdw>
- <xmx:Ku3SZx9mI34HKjVnjm9abPP7a1GUflUWgpIIYMkPsLJg5BDzjL77Tg>
- <xmx:K-3SZ-Fmv9DUWmcjlfyEfGjuaBH_Ko2CMzFH4hs_oNh0RAxeNLTzcMLT>
+ pdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehloh
+ hnghhliheslhhinhhugihonhhhhihpvghrvhdrtghomhdprhgtphhtthhopehlohhnghhl
+ ihesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfi
+ horhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeifvghhsehmihgtrhhoshhofhht
+ rdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtg
+ homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:pO3SZ3MOPDXlKB8K7uuOZDifQPDse8Ktt48HsCdXb2YAQpxu-XSRwQ>
+ <xmx:pO3SZ0891edaDV2eGFHGN9JIJXjN6pOHjd8tm7vsbzJfzy994EafHw>
+ <xmx:pO3SZ_WwmtJH560hl-7C2ET3lrMqoVNsP7PGSc_Ei53wr7s3fp9rDw>
+ <xmx:pO3SZ9cHU7HM_8DAiLEylyh1mK9KLtuEruNt1pPTHswjnB_CeStA0Q>
+ <xmx:pO3SZ0zY_DVTz8bcxwNEVSy4RLKCMoKRJrqBwP6zrKTVhZwlZORe4z4M>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Mar 2025 10:35:21 -0400 (EDT)
+ 13 Mar 2025 10:37:23 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Date: Thu, 13 Mar 2025 15:35:20 +0100
-Message-ID: <3711940.zToM8qfIzz@thomas>
-In-Reply-To: <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
- <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
+To: longli@linuxonhyperv.com, Long Li <longli@microsoft.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Wei Hu <weh@microsoft.com>, David Marchand <david.marchand@redhat.com>,
+ dev@dpdk.org
+Subject: Re: [PATCH] doc: announce bus/vmbus API changes
+Date: Thu, 13 Mar 2025 15:37:22 +0100
+Message-ID: <3519006.Zkmt1EvEu4@thomas>
+In-Reply-To: <1741815831-22977-1-git-send-email-longli@linuxonhyperv.com>
+References: <1741815831-22977-1-git-send-email-longli@linuxonhyperv.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -95,61 +93,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-13/03/2025 09:56, Bruce Richardson:
-> On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Br=C3=B8rup wrote:
-> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > Sent: Thursday, 13 March 2025 00.02
-> > >=20
-> > > On Wed, 19 Feb 2025 15:55:17 +0100
-> > > Thomas Monjalon <thomas@monjalon.net> wrote:
-> > >=20
-> > > > 14/02/2025 18:20, Stephen Hemminger:
-> > > > > The Linux version of sys/queue.h is frozen at an older version
-> > > > > and is missing the _SAFE macro variants. Several drivers started
-> > > > > introducing the own workarounds for this. Should be handled in EA=
-L.
-> > > > >
-> > > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > > >
-> > > > We may want to unify with lib/eal/windows/include/sys/queue.h
-> > > >
-> > > >
-> > >=20
-> > > Not sure, we have several options here:
-> > >   1. Keep using Linux sys/queue.h and add enhancements in rte_queue.h
-> > >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that is
-> > > what Windows did)
-> > >   3. Use the bsd version of queue.h.
-> > >      On Debian/Ubuntu this in libbsd-dev package and referred to as
-> > > bsd/sys/queue.h
-> > >=20
-> > > I chose #1 as simplest. But all of these could work. #3 means DPDK has
-> > > least new
-> > > code, but adds another dependency to the build.
-> >=20
-> > +1 to #2:
-> > If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h, #2 =
-would consolidate all the queue macros in one file.
-> > That seems easier to navigate (for a developer/reviewer looking at the =
-macro definitions/implementations) than including sys/queue.h, queue.h or l=
-ib/eal/windows/include/sys/queue.h depending on O/S, and then defining the =
-missing macros in rte_queue.h.
-> > A comment at the top of the rte_queue.h file could mention that it is a=
- copy of the FreeBSD queue.h file.
-> >=20
-> > -1 to #3; it adds an unnecessary dependency.
-> >=20
-> > >=20
-> > > No matter what, should add to checkpatch to block any new files that
-> > > include sys/queue.h
-> > > directly.
-> >=20
-> > +1 to this.
-> >=20
->=20
-> I agree with Morten, #2 looks the best option to me too.
+12/03/2025 22:43, longli@linuxonhyperv.com:
+> From: Long Li <longli@microsoft.com>
+> 
+> All vmbus APIs are used internally by DPDK core and net/netvsc PMD.
+> It's not feasible or practical to use those APIs by the application.
+> Those APIs will be moved from "DPDK" to "Internal" in DPDK 25.11.
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+> +* bus/vmbus: Starting DPDK 25.11, all the vmbus APIs will be moved
+> +  from "DPDK" to "Internal". Those APIs are used only by DPDK core
+> +  and net/netvsc PMD.
 
-It means we want to remove lib/eal/windows/include/sys/queue.h, right?
-
+You should mention that you mean the functions in rte_bus_vmbus.h
 
 
