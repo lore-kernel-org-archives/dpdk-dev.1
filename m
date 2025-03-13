@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5576C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74322C282EC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 15:37:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA98740FDE;
-	Thu, 13 Mar 2025 15:51:41 +0100 (CET)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 8024E4025F
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:51:40 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal
- [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 17EE41382D0A;
- Thu, 13 Mar 2025 10:51:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Thu, 13 Mar 2025 10:51:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:content-type:date:date
- :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm1; t=1741877500; x=1741963900; bh=1qN9ehE6PU
- bvia3/4mzbTATHPtwm25F8LMTBkcd/AEg=; b=oAQG7tW8XH14ECvQLHdtA2b3k2
- IAy9wFRdcDi5uJ42z6d0ne5l0/PSmEZe1tc0Fd2L5kzqFVeuqZC/WZCorAlnbBkS
- dHA2wBAtquy5R5cw8iFqMIGFpP723XvH2gnCqdHNIiQucoyWqKZkIrajdF+QEx/8
- vcEfb+Fql0IkTkM4LLJA2ygVHl3RYvltWRs7i37L3oXd95DEBeii5PHhNTkfnXlT
- voQNyBodxz5+2TqBtvR72rhMqZfkaJ93o9BejKfxRWOqzPcehQ4QMwHZJlswRrsF
- /XWJXcossZTSZc3xwn7XF8GfiNu0yAfkv35qSo7TyAm8p6GQYqcS9GHml58w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1741877500; x=1741963900; bh=1qN9ehE6PUbvia3/4mzbTATHPtwm25F8LMT
- Bkcd/AEg=; b=nPYe3MHzQPyn3vRxcWcqr5jVolmsxYHt08mCv/tRS/fLCmUBRFn
- 68SVq2eMfF0HNl4m9W4xHODH3midBUAvzVYoH8T499TuLJRKWCmDDMNWbosDDlZq
- CSKTB28JTQMrrhfWzaCtBi3MAU6KX6LlPcdYeeB3vGFqkoIg+yUsFbbH+Ujh1SSk
- SICWCT7Kf0ATfSCTbkCEUyVHa8Rzph6s/sYzKAZcgsNBP/g3y5OnvG+UDkIWYNmh
- hAV1YozksZdVr3SSDciw0cgfCs+yyMqRqGruK0n1gqFyorjM8uf2mti8ZdaiDR9D
- vJZi1TL1lo+ZVmRWjhmZonuExH7crQFiAHw==
-X-ME-Sender: <xms:-_DSZ7xMQsq9Hziw-MrdCyBH7GaENhsxwHU1R8MKrfVE-ZqDyqHTtQ>
- <xme:-_DSZzSwcbz9BKyk2WslRRzi5DCOFtHl7y-2PPW0wj_OR8ptIHTZ23vYNo7_Cdjr2
- TvrACbB6dKQKXXzbQ>
-X-ME-Received: <xmr:-_DSZ1UWB-B2E_9mRANPWohdYnPk9Q7OhCbjHDEBSLK2pFRgLtTwmCR98Stqf3F7owPUjhoVH7WJUBv2YdJhAfy2wg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
- pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
- fufffkggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhho
- nhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpe
- fhteeulefhheevudetvdeuleehieevudetheehveevtdfguefffffgfefftdfgleenucff
- ohhmrghinheplhhinhhugihfohhunhgurghtihhonhdrohhrghdpughpughkrdhorhhgne
- cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhm
- rghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepuddpmhhouggvpehsmh
- htphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:-_DSZ1hMVFLjea1ObQfD5wMEVeZ3vzolmSWpQEtrkJDVqmhuEbQdMg>
- <xmx:-_DSZ9BV37co49rWqYOUqwxum8HyYjKkiRIs1_5zsBNG-kTvjEfJIw>
- <xmx:-_DSZ-IF1-3_OhPq_vOi0bDW_TgG81skIhRdIV6IfXFpOg-n5-vaNw>
- <xmx:-_DSZ8AezE7oRRRuhdJOsY_DKGf4cWB5UmupFivjqJnInk-O5lwa4g>
- <xmx:_PDSZ66KV8QqBsJi_aWTtpv8JIrFrOKKUR7mli6yE8spsBT96Fpmtqez>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Thu, 13 Mar 2025 10:51:39 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Subject: Minutes of DPDK Technical Board Meeting, 2025-03-05
-Date: Thu, 13 Mar 2025 15:51:38 +0100
-Message-ID: <5321615.eFTFzoEnKi@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id D06DE4114B;
+	Thu, 13 Mar 2025 16:37:40 +0100 (CET)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id D648540ED3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 16:37:38 +0100 (CET)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2239aa5da08so23111165ad.3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 08:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741880258;
+ x=1742485058; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zg6xiH9I8qG7xl7KWuK99Cy++dAkBhaeETjjxNc7MYY=;
+ b=DlWotDiJaGdAkVHARU0/+yMpXgUKTCtYo+Lt2K4RhB3iby+2CaIEDOoXam4cbo201Z
+ o6bDp/Z5gAlBKKQY1aCSzhAHL/bRVWVCAcu92Uz8hFJwv6/bmZHwz0g66UqNYhLikSdF
+ 4220UlC5Pq3Lo6k5mLLvt0dEe22XMBapoidpiz91Px9uNbp7Ts2ixfzRMpMDv+qOPhCm
+ e6XC7rm+zDHIInVL5Ci324IQYsLWBorlDUtBMaxwzYmNChlKUeQnNZFE/K5iaM9SCsMy
+ wHFFCaQBSMsuCd/IOvGQibNUdJHdP67UI8mnc18kK95mGKacHVWasr/1bg192JUk1qrG
+ UVIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741880258; x=1742485058;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zg6xiH9I8qG7xl7KWuK99Cy++dAkBhaeETjjxNc7MYY=;
+ b=Y98ALlSCywgyMO1KqEyMjFhdjsshoTjQFN2/jL/xCLHB4xW6+fiFSl/tDWGT+wGQsU
+ mSKk9tpd6LAXHBTh1XDDBa9F2gHM3U4noQkKEqhWUv/we0WRcS/exyvU879XeqfcF27m
+ 3f0Vy3Y1nId/u5t4kI6sdqzG3+tt7ml08L/Y/6boXcQ+nTwRtUUVzGJYdutWVgDpOiue
+ NtWULDapWjrXPITMmXbT8F3rDQo84u4WGo4h823gmpBDxxPysImQU++oilUzlBRKhJJm
+ WugKQZ72dHa1TPpiMnf4nQnI07UdQjJ5vtANUyuHnswdvIqQ9fNoKOBpKkR/QJu4pZkL
+ pbQg==
+X-Gm-Message-State: AOJu0YxNklBEP6ONhQvFV/GhKdvcqv6j2bYXr4ZRAA8UGcUgP8q67JrG
+ y4M8XeV3/xknn7rXR7zfzfd0aW27OJ/9LL1Ry11MPnkJ63t5NIGCPXPK8NgeSrk=
+X-Gm-Gg: ASbGncuny9TmpAueFitH6hDg/mDUG9p9ucVccPRjnyyYIp+2dhExxDW6/YKhXcGKo3s
+ O6CBA9D6w9QXyRcEwjGCSXwr35Npahy43NF+y3mfmPYqJvBCQ6rtpvgSHG0/Be0estmHXhS+oKu
+ MjEIUVMSUmeL+wMIC9Yq5whSj1z2MBgH7NkjtJABUnplj41Po/XQ9Wtobw4+OFF+pdpFKaZHpyf
+ 6KcvpiryQspaY7dSq0qzxrLiqwYqfaAFGbW/X2aNXFBIXgpdEaBUH65+p42NIIh1Q9P74Kew3nG
+ uyFoa1qYDOT5qul6PMtHKZ2GksMXdg9OxBfXYCooKNzmAuWi4fxW53qtaQN80n+V3UPaw6fXVEs
+ se2p7VNC8GnFFIHbs4RybQA==
+X-Google-Smtp-Source: AGHT+IFk+4ZaEypK0QhRpZ+aNvK977ME7WyS1scBZMXRt6aa151P3ktsUXKCXV1ydG6gCrwbLVt6zA==
+X-Received: by 2002:a17:903:3d0f:b0:223:f9a4:3fa8 with SMTP id
+ d9443c01a7336-225dd874712mr24025ad.19.1741880257816; 
+ Thu, 13 Mar 2025 08:37:37 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-225c6bd53b5sm14618045ad.241.2025.03.13.08.37.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Mar 2025 08:37:37 -0700 (PDT)
+Date: Thu, 13 Mar 2025 08:37:33 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH v2] eal/linux: improve ASLR check
+Message-ID: <20250313083733.203d132c@hermes.local>
+In-Reply-To: <20250313061904.1466-1-ming.1.yang@nokia-sbell.com>
+References: <20250228094405.1437-1-ming.1.yang@nokia-sbell.com>
+ <20250313061904.1466-1-ming.1.yang@nokia-sbell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,67 +81,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Members Attending: 10/11
-        - Aaron Conole
-        - Bruce Richardson
-        - Hemant Agrawal
-        - Honnappa Nagarahalli
-        - Jerin Jacob
-        - Kevin Traynor
-        - Konstantin Ananyev
-        - Maxime Coquelin
-        - Morten Br=C3=B8rup
-        - Thomas Monjalon (Chair)
+On Thu, 13 Mar 2025 14:19:03 +0800
+Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
 
-NOTE: The Technical Board meetings take place every second Wednesday at 3 p=
-m UTC
-on https://zoom-lfx.platform.linuxfoundation.org/meeting/96459488340?passwo=
-rd=3Dd808f1f6-0a28-4165-929e-5a5bcae7efeb
-Meetings are public, and DPDK community members are welcome to attend.
-Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+> This change ensures that the current process is checked for
+> being run with 'setarch' before verifying the value of
+> '/proc/sys/kernel/randomize_va_space'. The '-R' or
+> '--addr-no-randomize' parameter of the 'setarch' command is used
+> to disable the randomization of the virtual address space.
+> 
+> Fixes: af75078fece3 ("first public release")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
 
-1/ DPDK Summit in Prague
-
-The CFP has been extended by a week.
-A good amount of proposals were submitted.
-
-The techboard meeting will be in Prague at 4pm, May 7.
-A joint meeting both boardswill happen at 7pm the same day.
-
-2/ Board Initiatives
-
-The 3 initiatives about cloud, security and AI need more efforts.
-We may try to work on them with some students mentored by their professors.
-The next step is to find some universities to work with.
-
-3/ Governing Board
-
-The techboard can propose topics to be discussed for the next govboard meet=
-ings.
-
-4/ Code Challenge
-
-The topics are chosen but the format is not decided yet.
-It is proposed to progress on the format and organization
-with the help of a spreadsheet, including votes and decisions.
-
-We should require at least one mentor per topic.
-
-5/ Contribution Policy
-
-Aaron proposed a policy to improve participation on the mailing-list,
-reduce the noise, and help the CI workload.
-
-The RFC is sent:
-https://patches.dpdk.org/project/dpdk/patch/20250305013351.2209789-1-aconol=
-e@redhat.com/
-
-6/ Grout Testing
-
-Patrick (UNH) will check with Robin what is needed to start testing Grout i=
-n the lab.
-It is suggested that a weekly testing may be reasonnable.
-We'll decide how much to invest (effort and machine time) in it during the =
-next meeting.
-
-
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
