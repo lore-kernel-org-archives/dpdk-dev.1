@@ -2,181 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C814C282EC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EA4C282EC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 16:25:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 774F941141;
-	Thu, 13 Mar 2025 17:08:23 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 5F74A40ED3
- for <dev@dpdk.org>; Thu, 13 Mar 2025 17:08:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741882101; x=1773418101;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=KAvYTtptjViHotA2+IReesujuwFlNeEHpJBQpFzdkd0=;
- b=mC7dJ7airPCW3TbDn2dKrWGWvIvciFpx/L2QvMOgcTyUEFysdtDdaNDY
- XDQ2ytC+kxBouSYCm/CxzTes+3XQ+Wpw2R4WQhNfs+E3isq/8L9Q7XQUc
- SXWqv3zzNmNyioDjMKDQ6zklarOMUOB3yWdoSiwb+X/gK1Xp8LSyHmzLD
- esE2Wbf/FOlj81px4O4HVcqUtS7Rl1u1+1bgfF44e7kujAI5YMNKGLASG
- PRhKIJooJp6LQhmigUtBlI73rEq4I69M/GTlgct2MK8KtKEwFc9rn5TLl
- SkMrLXx1xk7xmF5nAh5OFqSA+cWJMW6aw6oHoY7ZMdK6D1sUCYUHVDbXK w==;
-X-CSE-ConnectionGUID: mDm7nboyQUyU39nYVgDkSg==
-X-CSE-MsgGUID: EbosbfYJQny5yJXF85yTDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42260062"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; d="scan'208";a="42260062"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Mar 2025 09:08:20 -0700
-X-CSE-ConnectionGUID: 2hRwX5pBTim0yMjtQfX3jg==
-X-CSE-MsgGUID: 59rUTVXzSlO21Dz8etLkzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; d="scan'208";a="121935725"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
- by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 13 Mar 2025 09:08:20 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 13 Mar 2025 09:08:18 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 09:08:18 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 13 Mar 2025 09:08:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vzj05VfyYLuH/7ruJKerHQxlUOlKAvLN0zTzVnmWfw5ZCjA8Fb2kt0UtgXVaaxOXbmsyyst+wnT5LKuGKumfFMxevM8S4fFYRoQIdcllFOsL5n4ywuYQYRPkt02ESUbJAIJmfIKGzwUL5wu5w5G+f1HUtYV9QvUhABjJEbF6isRr0dCAplgY8P2G0A9Pm9k1QUNOV42rjeMV4xgbu3C7dwQYwlHGdjhTUClD9pIfRFVoLFfLQk+7Mdj67awqb4UV/KSP7JB9fo43m6EhMFhJSdEITN0JmELVBC5wXMbCdikIWjtHW26wbHOYSO0Fa38GgK4tsfvNiP6ldzCkeWgqPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nFiINdJ8aIZcgjIHB9201rNJ3TczlDrprid4rToWTFU=;
- b=nfze4vlaHpxlXAXs28A2ygQio27uINXgdYcKaCAoRKY20erFwCucTpBaoejDoNVT3DbKXiAbkHOsJ9wcTl2zx/0ZOf2zrbhezI9qChHvJmbXYON9AtdNkWUog5oEztyIWhQSuhGkxe5f2U3eMYZLcvnOh6PsyHYbKpBfh3ZDddIAuoXnL6+IYBNEVN1W+vmnaB5YQCalnmCZoPo7wHt9fnrvbetyUHeswqXjgaKks1ej1qCpd4MB3tfTipPEfoi24U9Tu6V50P2DLTArPnkcudiLcqrUjva4W/0Vv4QnCCkXz3gTULiO0MKx++b7gqTNZn2uBTqDgiqSv1AA8yN6kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH7PR11MB6747.namprd11.prod.outlook.com (2603:10b6:510:1b5::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 16:08:11 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
- 16:08:11 +0000
-Date: Thu, 13 Mar 2025 16:08:06 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: David Marchand <david.marchand@redhat.com>, William Tu
- <u9012063@gmail.com>, <dev@dpdk.org>, <andremue@linux.microsoft.com>
-Subject: Re: [PATCH] net/intel: remove unnecessary compiler flag for mingw
-Message-ID: <Z9MC5rVDwDx0ICjO@bricha3-mobl1.ger.corp.intel.com>
-References: <20250312155458.1395709-1-bruce.richardson@intel.com>
- <CAJFAV8zAhG3U9h1A=UEu_eUjLBEV+FjuZffZg8+SwEcSuwN9ww@mail.gmail.com>
- <20250312091110.64b77903@hermes.local>
- <Z9LflQ-mQiuwC9ze@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9LflQ-mQiuwC9ze@bricha3-mobl1.ger.corp.intel.com>
-X-ClientProxiedBy: DU2PR04CA0324.eurprd04.prod.outlook.com
- (2603:10a6:10:2b5::29) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 347AE41141;
+	Thu, 13 Mar 2025 17:25:02 +0100 (CET)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 6EB1B40ED3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 17:25:01 +0100 (CET)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-301302a328bso2477939a91.2
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 09:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741883100;
+ x=1742487900; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=RCzJbOPAH6tG8vEmd1no/Al34RxIvoosmiLn5VUTzsQ=;
+ b=ayzxN/Wa5jwM+mdroUGyo42ItQrjr7nuAlRmcCunkhPsjUI1jpdwOUTZLlIus/SqDT
+ qsrinCFNwUYcCA/us4C8HQd89tjzWEuDIFEircaw20ls6KVRycEJL0odVEnR1OLzIz90
+ Ggkyp1WyUtI1PE5apoFThBmmfMkOdvqfA1C69oq8DkfX5tA+gAISh5JLqVnNBddErWn/
+ /VX6HBqfCBYLUitDJECISs5JnJnmvVQyp/Y2cJDzJzWJLEIWhkfRffurBIRRLZW/g3V3
+ ZnV5IhV4+Fjgp2XiB+s/12ofrRZIJ/wgbWuQcN7KmVh2+DWNEjEBX234OMmVZIydkfJy
+ jQnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741883100; x=1742487900;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=RCzJbOPAH6tG8vEmd1no/Al34RxIvoosmiLn5VUTzsQ=;
+ b=GREwNxfro0/Wv8sf3A22UWxurlxK8hLiyDtNkcpGzAJ8bz076Z8s6TNJuetfWgyr56
+ J8xG0/CN2wtrSBu8BKQQIz90Cu3+hBg70tGKchG+N+egxwfDYUw5M7T7sRGqRKHtoBDH
+ KuWT1oVklMlvX3TseQbF80QHJjfCvSR3vYD1alcsg5wPF8+PCedYUwOr4RxhxNiEmncJ
+ qPGcJxBlhof3o1ssq6yescBVhPZ+rc/rZU5YegEJ/y0OT4sEAZVnzM+oJUSy+viZL9qp
+ tAFlDHrxtPx0WfmfO5Z8ps6fKKkLlrMZmhPxkoY9mPyR1x8rEzKDAUi1Rwk6NirwEzhD
+ fLXg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUB155y3aPr0hTGT0W+3oHIrb2LLRxXWYQR4NGv+pinQ7EWvKedM8huicb1qv7+nXVimxo=@dpdk.org
+X-Gm-Message-State: AOJu0YxMZJZBrDr02jQzomNEfWffBIwHW0kSy1wYvr54rPyKfYovhfjL
+ Ahy69rGzy0Shx/ycjZGFSgx2Lp2eRgsVCgaARbJUXn0qKQeStgxPu6aHxhAyVuk=
+X-Gm-Gg: ASbGncsRFkVF9FA35Vs1Tu5ZMX9Aap5G1PPn7jpSVyN5Gy7imKfTwRAJ3L/vLmlRJjr
+ Br0f0OhCvQTQdWu6V59FGErn/uraUGd7tIqV1b46d3hZ+wqHPGXXwnGVeFEcQ6KNxLx8ZuXrt0M
+ /QjoBRurOErU9ouQNxH0/kCwDhWNlay090P85k34igyGzoo2XPMNYPbZgDYLo/c81BIGwfbLIFd
+ gm09NWwX0Sqka5Ca8evgPEErN3jQrggTaGhlJ8iGCWlO1E1BHnxKKYZ7/mwhwcywYz1uKfprSA6
+ yMCtA+ipMW/mJ/9FlmNWbfNajM61CKiyWTBow4JXK5QbYAakFnv1lct968o/YAyLkmHrNs1ROS1
+ kMV6Txqq7MQqiqhjKkpa2nA==
+X-Google-Smtp-Source: AGHT+IG2nqMeXWBZ6/AYWQPl7hIeShYmlG2vWjOE2aRhGiAj95mK3PVrQvoVfnhyVgBT/gqe2QyJXw==
+X-Received: by 2002:a17:90b:540d:b0:2ee:edae:75e with SMTP id
+ 98e67ed59e1d1-3014e844d4dmr208170a91.13.1741883100317; 
+ Thu, 13 Mar 2025 09:25:00 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-30118218707sm4033680a91.3.2025.03.13.09.24.59
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Mar 2025 09:25:00 -0700 (PDT)
+Date: Thu, 13 Mar 2025 09:24:57 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>, "Bruce Richardson"
+ <bruce.richardson@intel.com>, <dev@dpdk.org>, "Tyler Retzlaff"
+ <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Message-ID: <20250313092457.35c2148e@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+ <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
+ <3711940.zToM8qfIzz@thomas>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6747:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97c24c7c-c816-414c-3d28-08dd6249409a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QlFCbUdZSExaT1BUOWdqb2c1cUFPcTVCSXVrVVR1MW5pQnBZZ3l5aWtYUjVR?=
- =?utf-8?B?ei9Xc21vVzFmMS9zRHUybWtoajV3WG1IL21YN3poUDhDRkFzSkR3aTRoRTNH?=
- =?utf-8?B?d1R2NXZHdm5CV1pvVUtlb1pNWjFjZzZXc1RjUEg5RDNrT0Y0NmxuS1pSbmIv?=
- =?utf-8?B?QzdDbHRRNGFyc1VGQzdlMURlVm1nMk53OW5MeGJxd0pUalZWd2pHVDQxZ3pI?=
- =?utf-8?B?OWRzcDhTQTY4bXF4cmJpK1JnVGhRa1A3bktQeHFiUnNMZjV5VGphcDJSL2Fn?=
- =?utf-8?B?cXVXVzF3Z2UxalJTSDk3SHRvSldXTFdPWU1yTEFySGxCVHZRK3hBZnovMzVO?=
- =?utf-8?B?bzdmclRod3VSVUM4RzdSNzY5Ykl2K0dMaUhSWXh1b2JDRVlGSEJpakRvck5j?=
- =?utf-8?B?TW5TY3ZHTVFYd2IvZEhSTFhpZTFmajc5TS9idGttZXhvemczci9jWU8xb3N6?=
- =?utf-8?B?T0pNZmhVeURXcHl4UUpaYmllNTh6K01iMFNOWU9IQm80clByRk12ZmJSL3po?=
- =?utf-8?B?Qyt4eEdFUjdwaGpvcW5DMEJTWWpDL1hxTE5jRDlHMXlnZnRpMU1ob1d6L1Rx?=
- =?utf-8?B?RFNQa0JRcG41eGIyVFk5cSt2ejF5L2Nzb0xZMzNuWlNvdnZDWUdTRnhxT3Ro?=
- =?utf-8?B?L2RWcHJNYnJTUHUrRzZIaWJKZEthRXVMWGFzWVo4enBuZ1hVWFlKeld4U2s1?=
- =?utf-8?B?N3ZBbXpTVEgrVjJSTFlFa3lBVzRoVlYvcUlYc1JnYSszWFFhaEozZStpMUl4?=
- =?utf-8?B?TjY3RjNqbVhrTDdnR3VoMFZBS21EVGdnRC9CeVNTQzNvUmhLZXJPemVZUFJP?=
- =?utf-8?B?M0srczNQUlFxbVNJS00wdnpoQ0dkbWphWXhjbWNLeUQxd1RGSE5INVZrb1c0?=
- =?utf-8?B?NkFsN0tYYWE5dmIyQTU2NkZ1OTJPMVRqR1FrUHFSd241Sk0vczBoU1lNVW5r?=
- =?utf-8?B?VWJ2RG0rVnBFNENTM0VwNmExTERZUGxNVGluZTJHUi8ybGRnSTlCSzlRZ05a?=
- =?utf-8?B?SzRNUmdFWVBjMkNoMVU2NFNkRW5oSUdhREhpcVpZbm9yQmNzbXZhbTFOWHJh?=
- =?utf-8?B?K3FTU3krdldQWlFhVE9nQVB4TU5DZVRmbC9uZUNIbXU3SWc4LzdWOXZqNmVn?=
- =?utf-8?B?STdFTjhMeWpPNzA3aUNROWNlUC92ZlIyL2pHUWhqOG0xOUlZemNxOTVvaW5Z?=
- =?utf-8?B?S0hSQVJvMnhYbUlNN1VwbXJZcUpHbVg4Z2U5SzZWZm50bjE4WE5hWFhCczhR?=
- =?utf-8?B?UGk3d3lwMGw4dW9KK1BCOU9qVzVySjlLUVk1T2JYd2lLaW1Mbzlud1NqQS9x?=
- =?utf-8?B?b016WVIwMHRCbkRkT2NEYitReElyRXQ3ZlFlVkVXUTRna2l1OVh4eEcyMDFi?=
- =?utf-8?B?Qkpia1dhWE5mTXhIZ2dmM2NhZFJZencyd3JiWEdNYWR0eFAxS1VoRERPQzUw?=
- =?utf-8?B?d1JnNXlRaDBtMEw1bFlZdllCU1pzeVFmakNwbUpob0tVNzRHOFR6ZHlkU3VP?=
- =?utf-8?B?MGptSzkrYjhoMFJIUlJ5bGdHZ2J4NUNTWC9pVFdTSGFsT01sV2FsV3QxK29l?=
- =?utf-8?B?L09WN01pMFZXV1QrU0dsQzBzTXFFYjJIYkxVSG12WFpDTmhDTC9veHU4SmJ1?=
- =?utf-8?B?aVVPenNLaWU2T1IrWnk5OXYrTVlXWENIOGhZL29JNURjUStXMGpVL0c5cml3?=
- =?utf-8?B?Rm5DaExTeFFtQXRpOHBBdFBkekczaTV0UTg5NjBzVGRsTWpRaTJtb0NBd0Mw?=
- =?utf-8?B?ZWlEVkRGLzFPemNjVFpuNXhabjJrZ05sTFlDTmVPUm1kT1FTZytCcVpwWThH?=
- =?utf-8?B?TVozemxRMDZHdzVuWGpQZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UUVpVVkrVEVkNEJIQ25ZNmFiUFhiR1dGdWZVN3gxNk16NEZqcCt1MnA4TWNz?=
- =?utf-8?B?VW5jWVNyRUk0NG5TMmVVQXc2K0diRG5sd20wWkx4YzlxQnZMeUg5OTVxb2I1?=
- =?utf-8?B?Nis4eTNEUU5GbXpXN1FKQzN5K3AxSzBoMEhPWCs3eHhjakZSOVl2ZGFTcE85?=
- =?utf-8?B?SXo0NDA3R2gwOWVWbG5RQzZldVJhSkh6N0phMnYwaEowRjVCQk14YVYxUjJD?=
- =?utf-8?B?MEJpZGxSTS8xeEZxZ09WVmZ4RWNxMmtUT2FJQVVxUHN5VjBVWWdJbjZKSURw?=
- =?utf-8?B?K1JoOXozalc1YUJiRjZDVnc4Ynp0SG1pS3hha01pUWFVbHBYZXFpYzNia2Rl?=
- =?utf-8?B?dTRvMDNNUkdkMFZSdzZwRk1ScTVJKzZ5S1JVRlNOMW9lbFUxeUpMUU5PckhG?=
- =?utf-8?B?NFZ3d041NU1lM2lvS3oyb1o3bk5vNGNyVGNWcHhHMklqL2s2aElER0xRRmdq?=
- =?utf-8?B?R2dyWmpKWnZXb082S3ZzT082Y2NPaU1HNHdPVEVLcnFUM21UelRqc205bnlT?=
- =?utf-8?B?VzQwOS9FSUkwNTVOamp1WFBzNXdGS04rNFVVaGx4NU9sRGo1Sk5WVi9RZnFT?=
- =?utf-8?B?aGc3Z01wOGt6dFBVbm8zcFRRbmhvUDJMV3psMit0Z1VEZ0dMR0l4dU5SZllq?=
- =?utf-8?B?SzVJcmdXSC8wMmJWNEw4a1FlTGZ6VHZqQnNCRlhkQVdiWnVlNFF0SGVwbXpD?=
- =?utf-8?B?UkVVUkJIZ052V1JMVnhmcEt2Mm1iRlB4ek9WRXc3MVV3ckxZcG5hVTgyUzZ2?=
- =?utf-8?B?ekc0RUlJZzJiQU1YU1d6NGppZjZJeFY3YjBPb1htbng2WjlmYUFNQmhnKytZ?=
- =?utf-8?B?M0xBLy9PNVN2eGxaaWhTYm1ORUpwWE95VGZZeXkvNTRyQmkzYkVlVFB3VkND?=
- =?utf-8?B?enNYTkZhcWxQWGN4WjhqeWpHYzBCWXhNVDlRL01BdXd2WUcxZmVBeFdXV3lZ?=
- =?utf-8?B?dU5CRUYzM0NsbmZ4Y0s0Mk0xLy9LckVUOEl0d3RORUFpRUIyQ3FOelRHVS9q?=
- =?utf-8?B?MENuSmxsaElhdGhMaWJqZmdpVkdpK1d4MFdLZDBjSFB3ck9GVUJ1QTV3OVZp?=
- =?utf-8?B?NUdTVU1QdzBFRUNoQUpWZVVsWUVoWUZ4NnBaaEUrVXJhd1hoZGhteVVTb0Zj?=
- =?utf-8?B?Q3E4OWZoaXN2NWdmR1FIazRaNFdYelkvS0xLY0s0a1ZrQm94VXZJUmdGbTU2?=
- =?utf-8?B?c2JWaTRZNlpleHZWRDFyM1pTajJBdmlmMjdDcFRUVGhrbzFVQ25leC9qMU5K?=
- =?utf-8?B?NkhKSm9tNThjQVdTbERzcE9BYWpSc28wV1NOTjdmM2NxdlJTYUVSZFRhNXAr?=
- =?utf-8?B?MmNXenY2c09mUHdGT1BtQjZjSzU5N2xHY2pQeXVaa2d1am9Qb25xYWU1ek54?=
- =?utf-8?B?Qm0zYXU0eG52a2w4V0Noamk1MDZDeVZna2N5S0E2UGVQK09HcVNuN25NK2pO?=
- =?utf-8?B?UlRGVjlCeFIyMUVkUlM1QVJscDdURDVBVVh6U1JvdkNSenhSRTJHVXhSTU16?=
- =?utf-8?B?cE8xWHFaYmU2SGpEOU9MR1IzcVYyekRKTlZHNlNNbVB4K00wUlU2Um1JUGdM?=
- =?utf-8?B?cVBBMTdOcVBvaEg1VS85TXp3MkFhSmdCZzI2dzd1bkQrZzRsd0tKcFhkTGJ0?=
- =?utf-8?B?YnRMcnlpaWc2Snk5Q3poR3I0Wlo5NDRZeXlSNWMrRzZRc1FxV0lKYlZLekh3?=
- =?utf-8?B?WnM4aTRKbDczZklERmYrcURobS9SZG1GRlp0T0M4OXNCRVVPdUlRb2xnelFy?=
- =?utf-8?B?VUVsVm1RYXBVRTNLOUtLTUFnVXBqWGRiZm84dTM3UDkwWHh6Unp5YTMxSDYw?=
- =?utf-8?B?Z1JWVUVZMUFXbDBkejVYa3lidXhOZFFBM0gvREs0ZDlHUHVhZjloRDBCTzVY?=
- =?utf-8?B?cTNpaTg5eXJHM3cvUSt2QkdkT1FjOUJyQlVmZ25sZkkyZDMrdVU1dFk5Qml5?=
- =?utf-8?B?UTFXSFdDdUlpWHNSMXNIOENLdVQrNzJmZ2hZbGIydGxZa0h4bWFsVEtobXdY?=
- =?utf-8?B?STVuYzFLYXpOcXBlRGhXVGdZZ0hkZVhOb3RlUkdqREU1WFB4UDJNek9KRDhH?=
- =?utf-8?B?TjlJeFRtMTgxSWhkRTdvTTVYMnlPTTNKK1lBN1MxOXpRWVdIKzM2M3R3QTBB?=
- =?utf-8?B?SVV3bG1obE5SYzJNQ0FHcnNLaGlHK0F6bFRISG9QRU9jd01lWVpwU0Y5aFBu?=
- =?utf-8?B?aEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97c24c7c-c816-414c-3d28-08dd6249409a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 16:08:11.5944 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zmKQ7AAnbOr5xsyaVl3NcEWqa5zrHU32B1tVrfIblN3wAAK1i8lAVBWEGW9dRtiMQonJRRTxd/Yzcr5ENK5Gs+BAsiHetHkRvi/HhDU4VuU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6747
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -190,31 +87,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 13, 2025 at 01:37:25PM +0000, Bruce Richardson wrote:
-> On Wed, Mar 12, 2025 at 09:11:10AM -0700, Stephen Hemminger wrote:
-> > On Wed, 12 Mar 2025 16:58:49 +0100
-> > David Marchand <david.marchand@redhat.com> wrote:
-> > 
-> > > On Wed, Mar 12, 2025 at 4:55 PM Bruce Richardson
-> > > <bruce.richardson@intel.com> wrote:
-> > > >
-> > > > There was an issue with building DPDK using mingw v8.1[1], which
-> > > > required using the "-fno-asynchronous-unwind-tables" compiler flag when
-> > > > building using the mingw compiler. However, recent versions of the
-> > > > compiler no longer seem to need this flag, so remove it.
-> > > >
-> > > > [1] https://inbox.dpdk.org/dev/CAJFAV8z3qFhT9Vv5xOpLhi74BYAht2YCfL2ffLrmei4hfSG5jg@mail.gmail.com
-> > > >
-> > > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>  
-> > > 
-> > > Adding William in the loop.
-> > 
-> > Should add documentation and check for required version of mingw?
-> 
-> Docs, yes, but don't think we should add a required version check in code.
-> 
+On Thu, 13 Mar 2025 15:41:33 +0100
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Actually, nevermind a v2. Windows GSG already lists MinGW v10 as
-requirement.
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> >=20
+> > 13/03/2025 09:56, Bruce Richardson: =20
+> > > On Thu, Mar 13, 2025 at 09:00:09AM +0100, Morten Br=C3=B8rup wrote: =
+=20
+> > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > > Sent: Thursday, 13 March 2025 00.02
+> > > > >
+> > > > > On Wed, 19 Feb 2025 15:55:17 +0100
+> > > > > Thomas Monjalon <thomas@monjalon.net> wrote:
+> > > > > =20
+> > > > > > 14/02/2025 18:20, Stephen Hemminger: =20
+> > > > > > > The Linux version of sys/queue.h is frozen at an older =20
+> > version =20
+> > > > > > > and is missing the _SAFE macro variants. Several drivers =20
+> > started =20
+> > > > > > > introducing the own workarounds for this. Should be handled =
+=20
+> > in EAL. =20
+> > > > > > >
+> > > > > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>=
+ =20
+> > > > > >
+> > > > > > We may want to unify with lib/eal/windows/include/sys/queue.h
+> > > > > >
+> > > > > > =20
+> > > > >
+> > > > > Not sure, we have several options here:
+> > > > >   1. Keep using Linux sys/queue.h and add enhancements in =20
+> > rte_queue.h =20
+> > > > >   2. Make rte_queue.h a copy of FreeBSD version of queue.h (that =
+=20
+> > is =20
+> > > > > what Windows did)
+> > > > >   3. Use the bsd version of queue.h.
+> > > > >      On Debian/Ubuntu this in libbsd-dev package and referred to =
+=20
+> > as =20
+> > > > > bsd/sys/queue.h
+> > > > >
+> > > > > I chose #1 as simplest. But all of these could work. #3 means =20
+> > DPDK has =20
+> > > > > least new
+> > > > > code, but adds another dependency to the build. =20
+> > > >
+> > > > +1 to #2:
+> > > > If Linux sys/queue.h is frozen, and is a subset of FreeBSD queue.h,=
+ =20
+> > #2 would consolidate all the queue macros in one file. =20
+> > > > That seems easier to navigate (for a developer/reviewer looking at =
+=20
+> > the macro definitions/implementations) than including sys/queue.h,
+> > queue.h or lib/eal/windows/include/sys/queue.h depending on O/S, and
+> > then defining the missing macros in rte_queue.h. =20
+> > > > A comment at the top of the rte_queue.h file could mention that it =
+=20
+> > is a copy of the FreeBSD queue.h file. =20
+> > > >
+> > > > -1 to #3; it adds an unnecessary dependency.
+> > > > =20
+> > > > >
+> > > > > No matter what, should add to checkpatch to block any new files =
+=20
+> > that =20
+> > > > > include sys/queue.h
+> > > > > directly. =20
+> > > >
+> > > > +1 to this.
+> > > > =20
+> > >
+> > > I agree with Morten, #2 looks the best option to me too. =20
+> >=20
+> > It means we want to remove lib/eal/windows/include/sys/queue.h, right? =
+=20
+>=20
+> Correct.
+> All queue macros are consolidated into rte_queue.h.
+>=20
 
-/Bruce
+I have been trying this, and it possible but there is some fallout.
+If application includes <sys/queue.h> and other DPDK headers include <rte_q=
+ueue.h>
+there are declaration conflicts. Ends up being a compilation failure.
+Tedious, but not hard to fix all of DPDK to use rte_queue.h instead of sys/=
+queue.h
+but what about user applications?
+
+Since that would be API break, best to put it off to 25.11.
