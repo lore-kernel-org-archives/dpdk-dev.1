@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B01C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 17:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CB7C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 17:23:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A190D4114B;
-	Thu, 13 Mar 2025 18:17:27 +0100 (CET)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id F40D141141
- for <dev@dpdk.org>; Thu, 13 Mar 2025 18:17:25 +0100 (CET)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-225d66a4839so10210645ad.1
- for <dev@dpdk.org>; Thu, 13 Mar 2025 10:17:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 21B9F4114B;
+	Thu, 13 Mar 2025 18:23:20 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 1003241141
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 18:23:18 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2239aa5da08so25951985ad.3
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 10:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741886245;
- x=1742491045; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=EIhFuRlfad1gVH1Z7jgBnYw0wu64PYbySlUZlCf11Eg=;
- b=Vw0TU9egdv9PLOqTH6RX8NqgcH0XJ1g6vMdfx5XYx5OxjNVVof0yBER41NQBMbBJk6
- D5imwpeH9fATKyiYjgnUWAlK5nS9BjB3ySQt5OI30h6wkHLroE2QrjrUmVBsGUrnLngD
- iAW1BQhx6PgL37wfzhuh8z2pDmUhydZ5ivHVL26Z6AbZHdrTkClfKRMK/7mV+CNUyY6d
- JA4Jn1/GH6mXF7IMyhVlSalWsY2jKWk0WcMdWZRo3pK1oyll6RA/s1bEMTvzfeZi2DZp
- LtH4YLwoi2W2gAN3W3ghQIF5EU5aDW1lO4AU23R5Pq/xXeiw2oq9qGg2Cgy9hpoBUH6f
- pnFQ==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741886597;
+ x=1742491397; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=1XwWgM7tejlnXeOHdbgpL1yf9QYCw7hYaXWbABqWnzg=;
+ b=g33sPAljb4PLCqxDaE0jZaMlcKQGc7cCSZmi2k/0hkXdOIIF6zBoBWPvfyWvrzRien
+ fIHLKuB0rD+GfA5h/+Pri+K+Sk+2KbCtwTwPH3tLsT3ksfVGMxolK+ex0uHSRVARiGi+
+ C3I7NdBdRPdAfPBfnEFq8e7SUFSmQcj+Ph1Mv5Rr6RSb6iFVTcag+PE2ZW/ON21C/f6n
+ BeulUU5/I0faTetF4z2ETQIVy8xHjHYR3304MjQ2Tm5oS6qv+iUTqIHymcybH2Tk72es
+ 5Vzcq3LmiKXlcEI+FDx5xQpd7jB/UnzliDNxwQiQS1GxJf7Xj5Zd2aVs89RWyV6VMMBY
+ ZO2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741886245; x=1742491045;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=EIhFuRlfad1gVH1Z7jgBnYw0wu64PYbySlUZlCf11Eg=;
- b=n0DOsPLtOrVVwJvUp47xsglpuxofimjWJS+Afh6w4WBRbSEwk9QxGMATS+BjsomYfL
- g9AtXbEoNzuKJW7M8+u98ksh+Kxc+M1mXF0XIl/SdL8SnPSP54sPtOq/vJdWo5GdkXea
- A+rHBWxVyOwuwiM11PImUxiDtcbi6dr9grCPAD47jxvLWjek93k8moigdWuqEWo9Co5L
- gGw39vPz8TklO3z/yd/iWORvZ1akYUY9UuJXSMqM4l6pdmYOXvNnkN4Na3YzcZCwzMCV
- AQdVwtUVwcASjh0GTsiPt+QUhl2Ud8OqGQc3cWZeJuQEYbi9QHaF4ICJmbq7JYwtAvQY
- bDZQ==
-X-Gm-Message-State: AOJu0YyR9bgsRX0O7B6Xe5ehWLx5CFW1zoPuy58n4gbwpha2MjqQilS0
- b+h118ygR+ITCm62P+H2fzbczG+y48QIO40aikafPrj6kDnHn0Gp53qWBnKxSHKqdaUE2ifnfPG
- Z
-X-Gm-Gg: ASbGncu1dh3lWPhKZHaZUoPozB7b30qlohRfu4bqfWWgNbjHC8y+8D/TxhqOKqa1ap5
- rlvpMJdiRchYmaSEppVrcS6MKJgwsAEMPz4KPXf7ye8tl3mbXzJjHiGEcOPEzevuobZiIC46vVZ
- cp8CpC13xmc7GQjEXXgj8wfJ6jEu4U4ItOxdcaT8hHiWbRvkBCEakbHQfjCA2DqHRU1tGsdrazK
- vo1UuO8BvWngbV4xoGLebuy+4LEsPzyJ2frY8hKaB0DWkzwsm1rdYezMdcpiYA71AksL2IoHGNf
- p7d0CLQstM8DMbdSkEZwkqUXBaHz+esaFFpImCcsV69dkKBzTAYoDinkImWFS2Zj8PnPx4Z1wRE
- 79fZxWym6Aaa+faBHo+dV3w==
-X-Google-Smtp-Source: AGHT+IF2teXCh7EBgoMtWGwnq4IdqhSJvNQQZ29puZV7D3UXT51gLtVAc8pUOWqpyiqzB3OqASQZ8w==
-X-Received: by 2002:a05:6a00:9293:b0:736:491b:5370 with SMTP id
- d2e1a72fcca58-7371073f919mr4575973b3a.10.1741886245018; 
- Thu, 13 Mar 2025 10:17:25 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1741886597; x=1742491397;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=1XwWgM7tejlnXeOHdbgpL1yf9QYCw7hYaXWbABqWnzg=;
+ b=QR0QVlMvkt6JayDVUrzE/3PNUwJ2voJIiD4Eg/j4TeAvB+s6fq2LRi7MP28rcA8XmQ
+ fvXvpCxsozcGicNYkdYpS/T57IULjYe4G4oCIdbOc9XiYfBEyAI04BPjR4iKxJY5Co7Z
+ c+P1REF9EOCXVSZ8I/mafKzh8FqP/pUJ5iy5mnlzJKgePh2F0La9W+ATLjWLLaFJdPBR
+ VFwiRTpTIj9LQAqfpTo37J+LtMwr0iFqslXcXeulZIJWebQAv3Y0OjHkgcLngY6JHnPs
+ IEwRUU3dgdv9iS0ke9YARmD1Sf5FQMv2MgJ5sAtzusaQg+qzmEXjeoCDpZv4Twa73zP8
+ 3dog==
+X-Gm-Message-State: AOJu0YwzJP3S3LP4swP3wp5U9FBe+KBDr0D/3Lw7xZILXlgbVLXDGBlZ
+ robCdtBG1bxfL2AdDe8CWXGPU+Yc6YSXg1zZUqp52+Ye4gVrhE9/XyCKrlRcpk3/A6tDkkeLuI0
+ I
+X-Gm-Gg: ASbGncthV1q+TJoZ9x2TB6+GISBe3cUC88xYEuwHDc97s7v2wW8AFrrpO3JDdLk7Jfb
+ tgNuaYRcLAwEF3VKOdWhYZfs8rcELm73qIYWfBI+h+dPIJ3ftNqVRu3tySKbimgCXV6aF6Jk6cW
+ BC40DUWd9NRvnG3o4fiZ/pGuXKezXWrjhCbfYOOssvgZ5C1aDOEHQdmYjXfTycUoffx1T7mGhOO
+ 5k2r0eD5N4O7utwpRWApYIHa9jaUVTdY3Ze2rkuAhAX+HcQjdOS90VowWGJycdh00d20dWT3Ikm
+ hOtJnxisCWn1qhUTmTHrO4TlGfkAgNFO41ikI0UPsIeowxRap5+j/p92hk2SZkDSINHAUf1dOJd
+ 7rq/EzuGcIMxwAbaiLWNJ3w==
+X-Google-Smtp-Source: AGHT+IH3M3a1sXl3VAnasomLm9lBVK0FrGYmMGLeYAETqlO4KCFMgz6s3GLOiHsOYuscAk4JmiyHTw==
+X-Received: by 2002:a17:902:ea07:b0:224:a79:5fe4 with SMTP id
+ d9443c01a7336-225dd84bd49mr4042015ad.2.1741886597099; 
+ Thu, 13 Mar 2025 10:23:17 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7371169c3desm1576691b3a.155.2025.03.13.10.17.24
+ d9443c01a7336-225c6ba6c5csm15867995ad.124.2025.03.13.10.23.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 10:17:24 -0700 (PDT)
-Date: Thu, 13 Mar 2025 10:17:23 -0700
+ Thu, 13 Mar 2025 10:23:16 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com, thomas@monjalon.net
-Subject: Re: [PATCH v1] net/ntnic: fix incorrect initializations
-Message-ID: <20250313101723.2d9f154a@hermes.local>
-In-Reply-To: <20250313164204.858692-1-sil-plv@napatech.com>
-References: <20250313164204.858692-1-sil-plv@napatech.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 0/2] fix use after free
+Date: Thu, 13 Mar 2025 10:22:02 -0700
+Message-ID: <20250313172307.274109-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,92 +78,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Mar 2025 17:42:03 +0100
-Serhii Iliushyk <sil-plv@napatech.com> wrote:
+These are bug fixes reported by PVS studio.
+Later patches can consolidate the FOREACH_SAFE macros,
+but these patches are intended to fix the current bugs
+in main and stable branches.
 
-> Compiling without enabled RTE_ASSERT leads to an error during
-> initialization
-> Fix incorrect assert conditions
-> 
-> Fixes: ff04525d90d3 ("net/ntnic: replace assert with RTE assert")
-> 
-> Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
-> ---
->  drivers/net/ntnic/adapter/nt4ga_adapter.c          | 8 +++++---
->  drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c | 6 +++---
->  2 files changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-> index a9ae1fa3f8..cb80c718c3 100644
-> --- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
-> +++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-> @@ -85,6 +85,8 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
->  	fpga_info_t *fpga_info = &p_adapter_info->fpga_info;
->  	hw_info_t *p_hw_info = &p_adapter_info->hw_info;
->  
-> +	RTE_ASSERT(fpga_info);
-> +
->  	/*
->  	 * IMPORTANT: Most variables cannot be determined before nthw fpga model is instantiated
->  	 * (nthw_fpga_init())
-> @@ -155,15 +157,15 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
->  	}
->  
->  #ifdef RTE_ENABLE_ASSERT
-> -	RTE_ASSERT(fpga_info);
-> -	p_fpga = fpga_info->mp_fpga;
-> -	RTE_ASSERT(p_fpga);
->  	n_phy_ports = fpga_info->n_phy_ports;
->  	RTE_ASSERT(n_phy_ports >= 1);
->  	n_nim_ports = fpga_info->n_nims;
->  	RTE_ASSERT(n_nim_ports >= 1);
->  #endif
+Stephen Hemminger (2):
+  net/qede: fix use after free
+  bus/fslmc: fix use after free
 
-This whole #ifdef is bad idea.
-You are depending on implementation and creating side effects.
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 10 +++++++++-
+ drivers/net/qede/qede_filter.c           | 20 ++++++++++++--------
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
-Better to just put all the expressions in the RTE_ASSERT()
-
->  
-> +	p_fpga = fpga_info->mp_fpga;
-> +	RTE_ASSERT(p_fpga);
-
-The RTE_ASSERT() checking for NULL really doesn't add that much safety.
-if p_fpga is NULL RTE_ASSERT will crash the application anyway.
-
-
->  	/* Nt4ga Init Filter */
->  	nt4ga_filter_t *p_filter = &p_adapter_info->nt4ga_filter;
->  
-> diff --git a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-> index 9bae6a32c8..a56d3c5038 100644
-> --- a/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-> +++ b/drivers/net/ntnic/nthw/flow_filter/flow_nthw_flm.c
-> @@ -685,7 +685,7 @@ int flm_nthw_buf_ctrl_update(const struct flm_nthw *p, uint32_t *lrn_free, uint3
->  	if (ret == 0) {
->  		nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
->  		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-> -		RTE_ASSERT(ret == -1);
-> +		RTE_ASSERT(ret != -1);
->  		rte_spinlock_unlock(&rac->m_mutex);
->  
->  		if (ret != 0)
-> @@ -785,7 +785,7 @@ int flm_nthw_lrn_data_flush(const struct flm_nthw *p, const uint32_t *data, uint
->  			nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
->  
->  			int ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-> -			RTE_ASSERT(ret == -1);
-> +			RTE_ASSERT(ret != -1);
->  			rte_spinlock_unlock(&rac->m_mutex);
->  			if (ret != 0)
->  				return -1;
-> @@ -847,7 +847,7 @@ int flm_nthw_inf_sta_data_update(const struct flm_nthw *p, uint32_t *inf_data,
->  
->  		nthw_rac_rab_read32_dma(rac, bus_id, address_bufctrl, 2, &bc_buf);
->  		ret = rac->m_dma_active ? nthw_rac_rab_dma_commit(rac) : -1;
-> -		RTE_ASSERT(ret == -1);
-> +		RTE_ASSERT(ret != -1);
->  		rte_spinlock_unlock(&rac->m_mutex);
->  
->  		if (ret != 0)
+-- 
+2.47.2
 
