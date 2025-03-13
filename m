@@ -2,84 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98999C282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DEAC282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:41:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C5DF40FDE;
-	Thu, 13 Mar 2025 15:37:26 +0100 (CET)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 5E32E40150
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:37:25 +0100 (CET)
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal
- [10.202.2.47])
- by mailfout.phl.internal (Postfix) with ESMTP id C67091382D05;
- Thu, 13 Mar 2025 10:37:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Thu, 13 Mar 2025 10:37:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1741876644;
- x=1741963044; bh=huUyqE2CXdtRAomjn67nOZM+0cPdyz4fx3QoeiiJi3A=; b=
- TMGE2YkGS4oe3QZC0qtFJ5pPr5blNgzNYUocWws0JcBPoaKt5UFye9wYKMmncH2k
- aqv7At5wQ88aP4etLyVBmTLi39DuLV4hiP31oqsUwKsIDGiN0UP3TD6UbtDAOaZk
- DrHB3FalL8AO7Cqr/gf6GmdGisuna8pG5ZGgKqF7CjDc4CPxzgzj2Skd6xt5C5PA
- SYUJkHh349j2Ul/CuDgXPm6CmlxCOzvKKYIUSPz9Zy/frylJQ/bnWsUgRki8ZJXV
- v4+dfxCMzSJ09hbUkX9XcllL3OgXMF6t+mIOiWYjcQI6OcGsevb8IvXD5cngo5M8
- HB+8BHyIg+pQfpsz38mXWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741876644; x=
- 1741963044; bh=huUyqE2CXdtRAomjn67nOZM+0cPdyz4fx3QoeiiJi3A=; b=I
- 7Nc+YC8xAV4+LsZyvu3MxJ2rfhjf+gKhVpTCXe6Dw0GMMmgVXX3HewUrwTLQlZhN
- 3ltth30BGBUagSWA170jT7XASUkemJdGWTqWSMc/QshSMtR9xm+4nCoIZO7d0ATo
- Uq9yXmyOzLJzuNK0VCAdayAQ5+NHeshG4FNIHCbzDAC/5FYswUTD0S7BmdqERI8w
- OaNOAsx8LzqH6R77y4FIUAp2nDZrgzsXbbohVarc6kpFG9iV9QAv+TiAWnFaIrOv
- c8dQL14S47buT7Bi6RVmQwHsJOK5Mvsltf1USTN5jx+MEWLGWLJJSO6c493/rI1J
- 4nUVxh6gBO55jToWmDKgQ==
-X-ME-Sender: <xms:pO3SZ0tK7KxI6uUYrO1byTWXGOMyGfMCur9GCyns6rXwEkxlwAhBHw>
- <xme:pO3SZxcgdbqVoONAl45pRuwDLGE-20uuBR6pH7Dye6M1xi1hpEenC2wxSySIBesAU
- awqMJBzhPS4bbgFLw>
-X-ME-Received: <xmr:pO3SZ_yrRx39NeID1jbjfoX_Ytq4gvcE0H8vfVpPf1nni6m7ud2dTxAxAMJxw37XNz0q31tP3r9dOz7UfYbRRq9Y5A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
- pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
- gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
- jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
- hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
- geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
- curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehloh
- hnghhliheslhhinhhugihonhhhhihpvghrvhdrtghomhdprhgtphhtthhopehlohhnghhl
- ihesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfi
- horhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeifvghhsehmihgtrhhoshhofhht
- rdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtg
- homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:pO3SZ3MOPDXlKB8K7uuOZDifQPDse8Ktt48HsCdXb2YAQpxu-XSRwQ>
- <xmx:pO3SZ0891edaDV2eGFHGN9JIJXjN6pOHjd8tm7vsbzJfzy994EafHw>
- <xmx:pO3SZ_WwmtJH560hl-7C2ET3lrMqoVNsP7PGSc_Ei53wr7s3fp9rDw>
- <xmx:pO3SZ9cHU7HM_8DAiLEylyh1mK9KLtuEruNt1pPTHswjnB_CeStA0Q>
- <xmx:pO3SZ0zY_DVTz8bcxwNEVSy4RLKCMoKRJrqBwP6zrKTVhZwlZORe4z4M>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Mar 2025 10:37:23 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: longli@linuxonhyperv.com, Long Li <longli@microsoft.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wei Hu <weh@microsoft.com>, David Marchand <david.marchand@redhat.com>,
- dev@dpdk.org
-Subject: Re: [PATCH] doc: announce bus/vmbus API changes
-Date: Thu, 13 Mar 2025 15:37:22 +0100
-Message-ID: <3519006.Zkmt1EvEu4@thomas>
-In-Reply-To: <1741815831-22977-1-git-send-email-longli@linuxonhyperv.com>
-References: <1741815831-22977-1-git-send-email-longli@linuxonhyperv.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 044C041109;
+	Thu, 13 Mar 2025 15:41:37 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FFA540FDE
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:41:35 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 55B2820FF3;
+ Thu, 13 Mar 2025 15:41:35 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 13 Mar 2025 15:41:33 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
+In-Reply-To: <3711940.zToM8qfIzz@thomas>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
+Thread-Index: AduUJSgtEVFeTFOWQYejjlH6fI998QAAJW7Q
+References: <20250127180842.97907-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
+ <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
+ <3711940.zToM8qfIzz@thomas>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Thomas Monjalon" <thomas@monjalon.net>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
+ "Tyler Retzlaff" <roretzla@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,19 +51,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/03/2025 22:43, longli@linuxonhyperv.com:
-> From: Long Li <longli@microsoft.com>
-> 
-> All vmbus APIs are used internally by DPDK core and net/netvsc PMD.
-> It's not feasible or practical to use those APIs by the application.
-> Those APIs will be moved from "DPDK" to "Internal" in DPDK 25.11.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
-> +* bus/vmbus: Starting DPDK 25.11, all the vmbus APIs will be moved
-> +  from "DPDK" to "Internal". Those APIs are used only by DPDK core
-> +  and net/netvsc PMD.
-
-You should mention that you mean the functions in rte_bus_vmbus.h
-
-
+PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiAN
+Cj4gMTMvMDMvMjAyNSAwOTo1NiwgQnJ1Y2UgUmljaGFyZHNvbjoNCj4gPiBPbiBUaHUsIE1hciAx
+MywgMjAyNSBhdCAwOTowMDowOUFNICswMTAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4gPiA+
+ID4gRnJvbTogU3RlcGhlbiBIZW1taW5nZXIgW21haWx0bzpzdGVwaGVuQG5ldHdvcmtwbHVtYmVy
+Lm9yZ10NCj4gPiA+ID4gU2VudDogVGh1cnNkYXksIDEzIE1hcmNoIDIwMjUgMDAuMDINCj4gPiA+
+ID4NCj4gPiA+ID4gT24gV2VkLCAxOSBGZWIgMjAyNSAxNTo1NToxNyArMDEwMA0KPiA+ID4gPiBU
+aG9tYXMgTW9uamFsb24gPHRob21hc0Btb25qYWxvbi5uZXQ+IHdyb3RlOg0KPiA+ID4gPg0KPiA+
+ID4gPiA+IDE0LzAyLzIwMjUgMTg6MjAsIFN0ZXBoZW4gSGVtbWluZ2VyOg0KPiA+ID4gPiA+ID4g
+VGhlIExpbnV4IHZlcnNpb24gb2Ygc3lzL3F1ZXVlLmggaXMgZnJvemVuIGF0IGFuIG9sZGVyDQo+
+IHZlcnNpb24NCj4gPiA+ID4gPiA+IGFuZCBpcyBtaXNzaW5nIHRoZSBfU0FGRSBtYWNybyB2YXJp
+YW50cy4gU2V2ZXJhbCBkcml2ZXJzDQo+IHN0YXJ0ZWQNCj4gPiA+ID4gPiA+IGludHJvZHVjaW5n
+IHRoZSBvd24gd29ya2Fyb3VuZHMgZm9yIHRoaXMuIFNob3VsZCBiZSBoYW5kbGVkDQo+IGluIEVB
+TC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIEhlbW1p
+bmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBX
+ZSBtYXkgd2FudCB0byB1bmlmeSB3aXRoIGxpYi9lYWwvd2luZG93cy9pbmNsdWRlL3N5cy9xdWV1
+ZS5oDQo+ID4gPiA+ID4NCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBOb3Qgc3VyZSwgd2Ug
+aGF2ZSBzZXZlcmFsIG9wdGlvbnMgaGVyZToNCj4gPiA+ID4gICAxLiBLZWVwIHVzaW5nIExpbnV4
+IHN5cy9xdWV1ZS5oIGFuZCBhZGQgZW5oYW5jZW1lbnRzIGluDQo+IHJ0ZV9xdWV1ZS5oDQo+ID4g
+PiA+ICAgMi4gTWFrZSBydGVfcXVldWUuaCBhIGNvcHkgb2YgRnJlZUJTRCB2ZXJzaW9uIG9mIHF1
+ZXVlLmggKHRoYXQNCj4gaXMNCj4gPiA+ID4gd2hhdCBXaW5kb3dzIGRpZCkNCj4gPiA+ID4gICAz
+LiBVc2UgdGhlIGJzZCB2ZXJzaW9uIG9mIHF1ZXVlLmguDQo+ID4gPiA+ICAgICAgT24gRGViaWFu
+L1VidW50dSB0aGlzIGluIGxpYmJzZC1kZXYgcGFja2FnZSBhbmQgcmVmZXJyZWQgdG8NCj4gYXMN
+Cj4gPiA+ID4gYnNkL3N5cy9xdWV1ZS5oDQo+ID4gPiA+DQo+ID4gPiA+IEkgY2hvc2UgIzEgYXMg
+c2ltcGxlc3QuIEJ1dCBhbGwgb2YgdGhlc2UgY291bGQgd29yay4gIzMgbWVhbnMNCj4gRFBESyBo
+YXMNCj4gPiA+ID4gbGVhc3QgbmV3DQo+ID4gPiA+IGNvZGUsIGJ1dCBhZGRzIGFub3RoZXIgZGVw
+ZW5kZW5jeSB0byB0aGUgYnVpbGQuDQo+ID4gPg0KPiA+ID4gKzEgdG8gIzI6DQo+ID4gPiBJZiBM
+aW51eCBzeXMvcXVldWUuaCBpcyBmcm96ZW4sIGFuZCBpcyBhIHN1YnNldCBvZiBGcmVlQlNEIHF1
+ZXVlLmgsDQo+ICMyIHdvdWxkIGNvbnNvbGlkYXRlIGFsbCB0aGUgcXVldWUgbWFjcm9zIGluIG9u
+ZSBmaWxlLg0KPiA+ID4gVGhhdCBzZWVtcyBlYXNpZXIgdG8gbmF2aWdhdGUgKGZvciBhIGRldmVs
+b3Blci9yZXZpZXdlciBsb29raW5nIGF0DQo+IHRoZSBtYWNybyBkZWZpbml0aW9ucy9pbXBsZW1l
+bnRhdGlvbnMpIHRoYW4gaW5jbHVkaW5nIHN5cy9xdWV1ZS5oLA0KPiBxdWV1ZS5oIG9yIGxpYi9l
+YWwvd2luZG93cy9pbmNsdWRlL3N5cy9xdWV1ZS5oIGRlcGVuZGluZyBvbiBPL1MsIGFuZA0KPiB0
+aGVuIGRlZmluaW5nIHRoZSBtaXNzaW5nIG1hY3JvcyBpbiBydGVfcXVldWUuaC4NCj4gPiA+IEEg
+Y29tbWVudCBhdCB0aGUgdG9wIG9mIHRoZSBydGVfcXVldWUuaCBmaWxlIGNvdWxkIG1lbnRpb24g
+dGhhdCBpdA0KPiBpcyBhIGNvcHkgb2YgdGhlIEZyZWVCU0QgcXVldWUuaCBmaWxlLg0KPiA+ID4N
+Cj4gPiA+IC0xIHRvICMzOyBpdCBhZGRzIGFuIHVubmVjZXNzYXJ5IGRlcGVuZGVuY3kuDQo+ID4g
+Pg0KPiA+ID4gPg0KPiA+ID4gPiBObyBtYXR0ZXIgd2hhdCwgc2hvdWxkIGFkZCB0byBjaGVja3Bh
+dGNoIHRvIGJsb2NrIGFueSBuZXcgZmlsZXMNCj4gdGhhdA0KPiA+ID4gPiBpbmNsdWRlIHN5cy9x
+dWV1ZS5oDQo+ID4gPiA+IGRpcmVjdGx5Lg0KPiA+ID4NCj4gPiA+ICsxIHRvIHRoaXMuDQo+ID4g
+Pg0KPiA+DQo+ID4gSSBhZ3JlZSB3aXRoIE1vcnRlbiwgIzIgbG9va3MgdGhlIGJlc3Qgb3B0aW9u
+IHRvIG1lIHRvby4NCj4gDQo+IEl0IG1lYW5zIHdlIHdhbnQgdG8gcmVtb3ZlIGxpYi9lYWwvd2lu
+ZG93cy9pbmNsdWRlL3N5cy9xdWV1ZS5oLCByaWdodD8NCg0KQ29ycmVjdC4NCkFsbCBxdWV1ZSBt
+YWNyb3MgYXJlIGNvbnNvbGlkYXRlZCBpbnRvIHJ0ZV9xdWV1ZS5oLg0KDQo=
