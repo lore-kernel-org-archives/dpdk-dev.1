@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7140AC28B28
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Mar 2025 23:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4983EC28B28
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 03:40:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 050AB40E0C;
-	Thu, 13 Mar 2025 00:43:18 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id D2D84402BB
- for <dev@dpdk.org>; Thu, 13 Mar 2025 00:43:16 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-2ff80290e44so980017a91.0
- for <dev@dpdk.org>; Wed, 12 Mar 2025 16:43:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2898C40DFD;
+	Thu, 13 Mar 2025 04:40:02 +0100 (CET)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 4AAC640B94
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 04:40:01 +0100 (CET)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-476805acddaso4970641cf.1
+ for <dev@dpdk.org>; Wed, 12 Mar 2025 20:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741822996;
- x=1742427796; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=F/9DdgWd0/L3v8IE8w8XpNFsZm1Rbzt+n0B28QiAveo=;
- b=MNeqZxkRl10erQigSXPC9+pmK5DC92uNzPVlC4G3TDSM2dYtR36nf7JOl2at8JFtiL
- o10Ez5BUNCuh3H1ru4FPqwm7HAbt+0v5yEwSfd9Up4N1nKe6OFWiq13iFtqahRs4KPwT
- p96dBRRIakpLnsIgePrM/Ybipt2yA+H1N5muxuEmC7T8lpnxQoVJAltcPTw/VDS/mohs
- mTotPJto3cDEq1x/QCu+hIMhLzUZKG+364AVkaJAcjPHDvaIRPmTT+uMvp4vQ4ToMpZ0
- 3NTt1J2FyY7QYsGOiqj6hEhyAmwjyy0BgzUNG4T3tXLuIqXjaUNyV0SQ/AGoxuYQVOjN
- QEjw==
+ d=iol.unh.edu; s=unh-iol; t=1741837200; x=1742442000; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=uvNB0wVdgpQ7lY4C4tpMmWw/PPRmtHZyZYXSlY1p+5A=;
+ b=FdcqNAI9AWSX+2GGVFR1Mv4hTlGNLDwFsKE/0Jyh0TM2LxFgVxwguWgZHpv0NYQsKE
+ Bi3IZvT12hKlWs9fkB8g5aG6pwaWrCCGE+22cZucKELRvFVIYyHga+h1/hNjI4Pq0/IZ
+ psfyUUK+uUWe0zIvCEwEVtDbzs0t1OgR4YM4s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741822996; x=1742427796;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=F/9DdgWd0/L3v8IE8w8XpNFsZm1Rbzt+n0B28QiAveo=;
- b=Sm6P6ueaMOAWIw8QpYm47hNtxbBFfwf0iFpVSa7i/GEWZ5Phr1W5kdkpR2FcEmbJOS
- OoP6sQ7XKrR04srlibKHO5GiFoXu1KRMiSrwul3IWtIqTbfCAtxLbuW86s9AwVBUshk/
- ZIkrqptQFBfky4jN02n62Rm7eIRhHQASxZ1jKF7BkKMDr/ngXMXFtGQzh/NOVRK2ViVO
- Nghogh7CVI2i+ua1a2zeG8UXemO4rIxXjEExCbt4TP9C0vUeOhbqN2z+Cx9Xg5QajVJY
- bnQXrb6BkX2cJt7RREvM+tIiM/zfVKPb3su6mKNPSbLiJmCxeaRScPuzoXR4gUU4fDtJ
- WxOw==
-X-Gm-Message-State: AOJu0YyA++Kbtprk3i9wmogPhg41x2jGyDjXm+xNpYr1kdTggOWRJUWg
- bSkpSvT4skxqLKd1QAmDGzttxe9NxyzJzaGEl1lTPY8GWrtKqeXY6+11jH+EQNX0NUQ8rteXpjt
- Q
-X-Gm-Gg: ASbGncug4YZggVXgbDwCZrDCsaAMci56XRF+p1daiS72Nu9jkqaVTicNLyoXnVvcg9Q
- H7yF2GVaMkM37a9HjIDXSaFtHa683+YrnrzoB6+kLZR8x/GODX4YBrXjucVldh7Bs4jo/S6kqw7
- G+e3nS/nYGroLJBEi/T9eNJ5Wcdh52aw5TXBRve0q/sL+4zINsrxkLPmJGHQjV9pnwOlgGzB6rO
- HiZPFPLMg6584fM9nc2RjH17m99D6gxfdzmmKYcL9kGDFY0+eCxmKOpfX2g4V6Dm69M+PHXCfmV
- zvt7hQfDEguRKgzPKeke/MioDDe6NykhMU9Hz1wDqku2ZTtjcse8Ygz4syhhWFeJBiF4vqk3neX
- hPcPQJbgAAKHsKcwOhAZf/A==
-X-Google-Smtp-Source: AGHT+IFlZYIFWIjW2dr+gpnXzk6PQuh28p4pg6jqcwImaiCIzv/VY4bckYg7e1dOtrCGQTdbRqv8Uw==
-X-Received: by 2002:a17:90b:3911:b0:2fe:b907:562f with SMTP id
- 98e67ed59e1d1-2ff7ce94b2amr37800842a91.14.1741822995849; 
- Wed, 12 Mar 2025 16:43:15 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1741837200; x=1742442000;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=uvNB0wVdgpQ7lY4C4tpMmWw/PPRmtHZyZYXSlY1p+5A=;
+ b=pMpPeoUrnGt6of1w1QehmsR37o/UfmhBqsCRKrNS9c8a8PbbtpNQsnSnwQdCs8WEGY
+ RopXUsOCqCTYkN5OlA1w+VdoQvRpUP1XyIcJBUfcuoA2bo3r4FdP2TZ9nP+pZRRSjoKy
+ PdCf//1jK4L5F+34LqlEeSGyCO+hhTv6QRhZdnhQKhuxDrpgYHiH5Nyh+3mLbVIR6HoB
+ Vm8v65YPmivw+Mw++GRX7f7R8R2YUZ6kYJVRwutrtvIl4+wi9/JsV/SHvQ3rroV6nrmN
+ hvuobyeMQ8JNWccwZIo8DzMHE8hCCHVOapPPc0UimSs4N0D62/pn9Fm2423Y5K72QqYY
+ ruHA==
+X-Gm-Message-State: AOJu0Yxu8o3kdrGe/10GKx3+HybN2T3iNn6Siiqq6TGiPp73SPZm6nJe
+ GzPaZmDqe5UxHDVRn67XMDukrorboaIltbUkKYPjVCrJu8GN/r2Pa1ZgQ/lry70=
+X-Gm-Gg: ASbGncvPpS6qEYLDTINftWkwJf9lWphiVQV3kmfVkdMVqwIAPjUEOst2Olwg6Mqn3HZ
+ J8l+fBptzksDm44V9pHOPC8U+erOJK+aUJ6OXw0Jv4+hNrW/2cGa5YIe8ATnsmwDXtQAS8cQ4oh
+ TvQFO24VhWdNdTZ4ej8nSXZSoNlhHAcnZVgsqq+ELf54loN3i9LwPf56WLfJZGDBCMNC070bAv/
+ 9W3rjh0OH3EcJ47qH3kvASynKqptfwbn9veIgEPMsu74gFffhO8qLnVeSO3h7FmOWm3QgzS5tps
+ rHt95ils/e6o3NmsYPm/4c2MPONTISUbYTsBYnujOh2iok3AA9Bj8DRfF3XApXYiARamXG6Kdyc
+ kKG42xWwm6g==
+X-Google-Smtp-Source: AGHT+IEfHqmcdhIBilPOIQi+hc7BSofEoY1aZyEl6c22XRzJDWEUYMwYZOiWy70sZXxSLi4MY9RJYA==
+X-Received: by 2002:a05:6214:258f:b0:6e8:86d3:be73 with SMTP id
+ 6a1803df08f44-6e900693295mr407964366d6.37.1741837200378; 
+ Wed, 12 Mar 2025 20:40:00 -0700 (PDT)
+Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-301182187d8sm2503850a91.10.2025.03.12.16.43.15
+ 6a1803df08f44-6eade257112sm4119716d6.61.2025.03.12.20.39.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Mar 2025 16:43:15 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-	stable@dpdk.org
-Subject: [PATCH] net/tap: fix documentation about number of queues
-Date: Wed, 12 Mar 2025 16:43:05 -0700
-Message-ID: <20250312234305.229926-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
+ Wed, 12 Mar 2025 20:39:59 -0700 (PDT)
+From: Patrick Robb <probb@iol.unh.edu>
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu,
+ dmarx@iol.unh.edu, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v5 0/2] dts: add VFs to the framework
+Date: Wed, 12 Mar 2025 23:36:09 -0400
+Message-ID: <20250313033611.1896695-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20240821191557.18744-1-jspewock@iol.unh.edu>
+References: <20240821191557.18744-1-jspewock@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,33 +77,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The limit of 8 queues when using a secondary process was removed,
-but documentation was not changed.
+There currently is no method of creating or managing virtual functions
+(VFs) in the new DTS framework but there are multiple test suites in
+the old DTS framework that provide testing coverage using them. This
+patch adds the functionality to the framework that is needed to create
+and use VFs in test suites in the future.
 
-Fixes: 6a2e47a3e26a ("net/tap: increase maximum allowable queues")
-Cc: stable@dpdk.org
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- doc/guides/nics/tap.rst | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This v5 is a continuation of versions 1-4 which were written by 
+Jeremy last year when we were initially looking at VF support.
+The main ways that this version differs from his version is that
+VF management has been moved to the Port class, and the Port class
+has a new attribute, virtual_functions, which is a list of virtual
+functions which were created from that physical function. From this
+patchseries it should be possible to write functions for the
+testsuite API which can leverage VFs on known physical functions.
+This will allow us to run virtual function testsuites.
 
-diff --git a/doc/guides/nics/tap.rst b/doc/guides/nics/tap.rst
-index f01663c700..b37f899ec3 100644
---- a/doc/guides/nics/tap.rst
-+++ b/doc/guides/nics/tap.rst
-@@ -166,10 +166,8 @@ The port attached in a secondary process will give access to the
- statistics and the queues.
- Therefore it can be used for monitoring or Rx/Tx processing.
- 
--The IPC synchronization of Rx/Tx queues is currently limited:
--
--  - Maximum 8 queues shared
--  - Synchronized on probing, but not on later port update
-+The IPC synchronization of Rx/Tx queues is done when when
-+port is probed.
- 
- 
- RSS specifics
+Patrick Robb (2):
+  dts: add OS abstractions for creating virtual functions
+  dts: add VF configuration and workflow
+
+ dts/framework/config/test_run.py             |  2 ++
+ dts/framework/remote_session/dpdk.py         | 11 ++++--
+ dts/framework/test_run.py                    |  7 +++-
+ dts/framework/testbed_model/linux_session.py | 37 +++++++++++++++++++-
+ dts/framework/testbed_model/node.py          |  5 +++
+ dts/framework/testbed_model/os_session.py    | 27 ++++++++++++++
+ dts/framework/testbed_model/port.py          | 16 +++++++++
+ dts/test_run.example.yaml                    |  1 +
+ 8 files changed, 102 insertions(+), 4 deletions(-)
+
 -- 
-2.47.2
+2.48.1
 
