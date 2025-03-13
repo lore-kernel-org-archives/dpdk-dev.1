@@ -2,42 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DEAC282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5576C282DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 14:51:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 044C041109;
-	Thu, 13 Mar 2025 15:41:37 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9FFA540FDE
- for <dev@dpdk.org>; Thu, 13 Mar 2025 15:41:35 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 55B2820FF3;
- Thu, 13 Mar 2025 15:41:35 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id CA98740FDE;
+	Thu, 13 Mar 2025 15:51:41 +0100 (CET)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 8024E4025F
+ for <dev@dpdk.org>; Thu, 13 Mar 2025 15:51:40 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 17EE41382D0A;
+ Thu, 13 Mar 2025 10:51:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Thu, 13 Mar 2025 10:51:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:content-transfer-encoding:content-type:content-type:date:date
+ :from:from:in-reply-to:message-id:mime-version:reply-to:subject
+ :subject:to:to; s=fm1; t=1741877500; x=1741963900; bh=1qN9ehE6PU
+ bvia3/4mzbTATHPtwm25F8LMTBkcd/AEg=; b=oAQG7tW8XH14ECvQLHdtA2b3k2
+ IAy9wFRdcDi5uJ42z6d0ne5l0/PSmEZe1tc0Fd2L5kzqFVeuqZC/WZCorAlnbBkS
+ dHA2wBAtquy5R5cw8iFqMIGFpP723XvH2gnCqdHNIiQucoyWqKZkIrajdF+QEx/8
+ vcEfb+Fql0IkTkM4LLJA2ygVHl3RYvltWRs7i37L3oXd95DEBeii5PHhNTkfnXlT
+ voQNyBodxz5+2TqBtvR72rhMqZfkaJ93o9BejKfxRWOqzPcehQ4QMwHZJlswRrsF
+ /XWJXcossZTSZc3xwn7XF8GfiNu0yAfkv35qSo7TyAm8p6GQYqcS9GHml58w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:content-transfer-encoding:content-type
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1741877500; x=1741963900; bh=1qN9ehE6PUbvia3/4mzbTATHPtwm25F8LMT
+ Bkcd/AEg=; b=nPYe3MHzQPyn3vRxcWcqr5jVolmsxYHt08mCv/tRS/fLCmUBRFn
+ 68SVq2eMfF0HNl4m9W4xHODH3midBUAvzVYoH8T499TuLJRKWCmDDMNWbosDDlZq
+ CSKTB28JTQMrrhfWzaCtBi3MAU6KX6LlPcdYeeB3vGFqkoIg+yUsFbbH+Ujh1SSk
+ SICWCT7Kf0ATfSCTbkCEUyVHa8Rzph6s/sYzKAZcgsNBP/g3y5OnvG+UDkIWYNmh
+ hAV1YozksZdVr3SSDciw0cgfCs+yyMqRqGruK0n1gqFyorjM8uf2mti8ZdaiDR9D
+ vJZi1TL1lo+ZVmRWjhmZonuExH7crQFiAHw==
+X-ME-Sender: <xms:-_DSZ7xMQsq9Hziw-MrdCyBH7GaENhsxwHU1R8MKrfVE-ZqDyqHTtQ>
+ <xme:-_DSZzSwcbz9BKyk2WslRRzi5DCOFtHl7y-2PPW0wj_OR8ptIHTZ23vYNo7_Cdjr2
+ TvrACbB6dKQKXXzbQ>
+X-ME-Received: <xmr:-_DSZ1UWB-B2E_9mRANPWohdYnPk9Q7OhCbjHDEBSLK2pFRgLtTwmCR98Stqf3F7owPUjhoVH7WJUBv2YdJhAfy2wg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+ fufffkggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhho
+ nhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpe
+ fhteeulefhheevudetvdeuleehieevudetheehveevtdfguefffffgfefftdfgleenucff
+ ohhmrghinheplhhinhhugihfohhunhgurghtihhonhdrohhrghdpughpughkrdhorhhgne
+ cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhm
+ rghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepuddpmhhouggvpehsmh
+ htphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:-_DSZ1hMVFLjea1ObQfD5wMEVeZ3vzolmSWpQEtrkJDVqmhuEbQdMg>
+ <xmx:-_DSZ9BV37co49rWqYOUqwxum8HyYjKkiRIs1_5zsBNG-kTvjEfJIw>
+ <xmx:-_DSZ-IF1-3_OhPq_vOi0bDW_TgG81skIhRdIV6IfXFpOg-n5-vaNw>
+ <xmx:-_DSZ8AezE7oRRRuhdJOsY_DKGf4cWB5UmupFivjqJnInk-O5lwa4g>
+ <xmx:_PDSZ66KV8QqBsJi_aWTtpv8JIrFrOKKUR7mli6yE8spsBT96Fpmtqez>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
+ Thu, 13 Mar 2025 10:51:39 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Subject: Minutes of DPDK Technical Board Meeting, 2025-03-05
+Date: Thu, 13 Mar 2025 15:51:38 +0100
+Message-ID: <5321615.eFTFzoEnKi@thomas>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Thu, 13 Mar 2025 15:41:33 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB0F@smartserver.smartshare.dk>
-In-Reply-To: <3711940.zToM8qfIzz@thomas>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 1/7] eal: add queue macro extensions from FreeBSD
-Thread-Index: AduUJSgtEVFeTFOWQYejjlH6fI998QAAJW7Q
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FAF6@smartserver.smartshare.dk>
- <Z9Kdpwgbs9a5sE8n@bricha3-mobl1.ger.corp.intel.com>
- <3711940.zToM8qfIzz@thomas>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
- "Tyler Retzlaff" <roretzla@linux.microsoft.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,46 +82,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiAN
-Cj4gMTMvMDMvMjAyNSAwOTo1NiwgQnJ1Y2UgUmljaGFyZHNvbjoNCj4gPiBPbiBUaHUsIE1hciAx
-MywgMjAyNSBhdCAwOTowMDowOUFNICswMTAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4gPiA+
-ID4gRnJvbTogU3RlcGhlbiBIZW1taW5nZXIgW21haWx0bzpzdGVwaGVuQG5ldHdvcmtwbHVtYmVy
-Lm9yZ10NCj4gPiA+ID4gU2VudDogVGh1cnNkYXksIDEzIE1hcmNoIDIwMjUgMDAuMDINCj4gPiA+
-ID4NCj4gPiA+ID4gT24gV2VkLCAxOSBGZWIgMjAyNSAxNTo1NToxNyArMDEwMA0KPiA+ID4gPiBU
-aG9tYXMgTW9uamFsb24gPHRob21hc0Btb25qYWxvbi5uZXQ+IHdyb3RlOg0KPiA+ID4gPg0KPiA+
-ID4gPiA+IDE0LzAyLzIwMjUgMTg6MjAsIFN0ZXBoZW4gSGVtbWluZ2VyOg0KPiA+ID4gPiA+ID4g
-VGhlIExpbnV4IHZlcnNpb24gb2Ygc3lzL3F1ZXVlLmggaXMgZnJvemVuIGF0IGFuIG9sZGVyDQo+
-IHZlcnNpb24NCj4gPiA+ID4gPiA+IGFuZCBpcyBtaXNzaW5nIHRoZSBfU0FGRSBtYWNybyB2YXJp
-YW50cy4gU2V2ZXJhbCBkcml2ZXJzDQo+IHN0YXJ0ZWQNCj4gPiA+ID4gPiA+IGludHJvZHVjaW5n
-IHRoZSBvd24gd29ya2Fyb3VuZHMgZm9yIHRoaXMuIFNob3VsZCBiZSBoYW5kbGVkDQo+IGluIEVB
-TC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIEhlbW1p
-bmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBX
-ZSBtYXkgd2FudCB0byB1bmlmeSB3aXRoIGxpYi9lYWwvd2luZG93cy9pbmNsdWRlL3N5cy9xdWV1
-ZS5oDQo+ID4gPiA+ID4NCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBOb3Qgc3VyZSwgd2Ug
-aGF2ZSBzZXZlcmFsIG9wdGlvbnMgaGVyZToNCj4gPiA+ID4gICAxLiBLZWVwIHVzaW5nIExpbnV4
-IHN5cy9xdWV1ZS5oIGFuZCBhZGQgZW5oYW5jZW1lbnRzIGluDQo+IHJ0ZV9xdWV1ZS5oDQo+ID4g
-PiA+ICAgMi4gTWFrZSBydGVfcXVldWUuaCBhIGNvcHkgb2YgRnJlZUJTRCB2ZXJzaW9uIG9mIHF1
-ZXVlLmggKHRoYXQNCj4gaXMNCj4gPiA+ID4gd2hhdCBXaW5kb3dzIGRpZCkNCj4gPiA+ID4gICAz
-LiBVc2UgdGhlIGJzZCB2ZXJzaW9uIG9mIHF1ZXVlLmguDQo+ID4gPiA+ICAgICAgT24gRGViaWFu
-L1VidW50dSB0aGlzIGluIGxpYmJzZC1kZXYgcGFja2FnZSBhbmQgcmVmZXJyZWQgdG8NCj4gYXMN
-Cj4gPiA+ID4gYnNkL3N5cy9xdWV1ZS5oDQo+ID4gPiA+DQo+ID4gPiA+IEkgY2hvc2UgIzEgYXMg
-c2ltcGxlc3QuIEJ1dCBhbGwgb2YgdGhlc2UgY291bGQgd29yay4gIzMgbWVhbnMNCj4gRFBESyBo
-YXMNCj4gPiA+ID4gbGVhc3QgbmV3DQo+ID4gPiA+IGNvZGUsIGJ1dCBhZGRzIGFub3RoZXIgZGVw
-ZW5kZW5jeSB0byB0aGUgYnVpbGQuDQo+ID4gPg0KPiA+ID4gKzEgdG8gIzI6DQo+ID4gPiBJZiBM
-aW51eCBzeXMvcXVldWUuaCBpcyBmcm96ZW4sIGFuZCBpcyBhIHN1YnNldCBvZiBGcmVlQlNEIHF1
-ZXVlLmgsDQo+ICMyIHdvdWxkIGNvbnNvbGlkYXRlIGFsbCB0aGUgcXVldWUgbWFjcm9zIGluIG9u
-ZSBmaWxlLg0KPiA+ID4gVGhhdCBzZWVtcyBlYXNpZXIgdG8gbmF2aWdhdGUgKGZvciBhIGRldmVs
-b3Blci9yZXZpZXdlciBsb29raW5nIGF0DQo+IHRoZSBtYWNybyBkZWZpbml0aW9ucy9pbXBsZW1l
-bnRhdGlvbnMpIHRoYW4gaW5jbHVkaW5nIHN5cy9xdWV1ZS5oLA0KPiBxdWV1ZS5oIG9yIGxpYi9l
-YWwvd2luZG93cy9pbmNsdWRlL3N5cy9xdWV1ZS5oIGRlcGVuZGluZyBvbiBPL1MsIGFuZA0KPiB0
-aGVuIGRlZmluaW5nIHRoZSBtaXNzaW5nIG1hY3JvcyBpbiBydGVfcXVldWUuaC4NCj4gPiA+IEEg
-Y29tbWVudCBhdCB0aGUgdG9wIG9mIHRoZSBydGVfcXVldWUuaCBmaWxlIGNvdWxkIG1lbnRpb24g
-dGhhdCBpdA0KPiBpcyBhIGNvcHkgb2YgdGhlIEZyZWVCU0QgcXVldWUuaCBmaWxlLg0KPiA+ID4N
-Cj4gPiA+IC0xIHRvICMzOyBpdCBhZGRzIGFuIHVubmVjZXNzYXJ5IGRlcGVuZGVuY3kuDQo+ID4g
-Pg0KPiA+ID4gPg0KPiA+ID4gPiBObyBtYXR0ZXIgd2hhdCwgc2hvdWxkIGFkZCB0byBjaGVja3Bh
-dGNoIHRvIGJsb2NrIGFueSBuZXcgZmlsZXMNCj4gdGhhdA0KPiA+ID4gPiBpbmNsdWRlIHN5cy9x
-dWV1ZS5oDQo+ID4gPiA+IGRpcmVjdGx5Lg0KPiA+ID4NCj4gPiA+ICsxIHRvIHRoaXMuDQo+ID4g
-Pg0KPiA+DQo+ID4gSSBhZ3JlZSB3aXRoIE1vcnRlbiwgIzIgbG9va3MgdGhlIGJlc3Qgb3B0aW9u
-IHRvIG1lIHRvby4NCj4gDQo+IEl0IG1lYW5zIHdlIHdhbnQgdG8gcmVtb3ZlIGxpYi9lYWwvd2lu
-ZG93cy9pbmNsdWRlL3N5cy9xdWV1ZS5oLCByaWdodD8NCg0KQ29ycmVjdC4NCkFsbCBxdWV1ZSBt
-YWNyb3MgYXJlIGNvbnNvbGlkYXRlZCBpbnRvIHJ0ZV9xdWV1ZS5oLg0KDQo=
+Members Attending: 10/11
+        - Aaron Conole
+        - Bruce Richardson
+        - Hemant Agrawal
+        - Honnappa Nagarahalli
+        - Jerin Jacob
+        - Kevin Traynor
+        - Konstantin Ananyev
+        - Maxime Coquelin
+        - Morten Br=C3=B8rup
+        - Thomas Monjalon (Chair)
+
+NOTE: The Technical Board meetings take place every second Wednesday at 3 p=
+m UTC
+on https://zoom-lfx.platform.linuxfoundation.org/meeting/96459488340?passwo=
+rd=3Dd808f1f6-0a28-4165-929e-5a5bcae7efeb
+Meetings are public, and DPDK community members are welcome to attend.
+Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+
+1/ DPDK Summit in Prague
+
+The CFP has been extended by a week.
+A good amount of proposals were submitted.
+
+The techboard meeting will be in Prague at 4pm, May 7.
+A joint meeting both boardswill happen at 7pm the same day.
+
+2/ Board Initiatives
+
+The 3 initiatives about cloud, security and AI need more efforts.
+We may try to work on them with some students mentored by their professors.
+The next step is to find some universities to work with.
+
+3/ Governing Board
+
+The techboard can propose topics to be discussed for the next govboard meet=
+ings.
+
+4/ Code Challenge
+
+The topics are chosen but the format is not decided yet.
+It is proposed to progress on the format and organization
+with the help of a spreadsheet, including votes and decisions.
+
+We should require at least one mentor per topic.
+
+5/ Contribution Policy
+
+Aaron proposed a policy to improve participation on the mailing-list,
+reduce the noise, and help the CI workload.
+
+The RFC is sent:
+https://patches.dpdk.org/project/dpdk/patch/20250305013351.2209789-1-aconol=
+e@redhat.com/
+
+6/ Grout Testing
+
+Patrick (UNH) will check with Robin what is needed to start testing Grout i=
+n the lab.
+It is suggested that a weekly testing may be reasonnable.
+We'll decide how much to invest (effort and machine time) in it during the =
+next meeting.
+
+
