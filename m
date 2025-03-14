@@ -2,50 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F75BC35FF3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34581C282EC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:45:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E8D340659;
-	Fri, 14 Mar 2025 18:44:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9DB5140613;
+	Fri, 14 Mar 2025 18:44:51 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 8990D402E9
- for <dev@dpdk.org>; Fri, 14 Mar 2025 18:44:47 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5104C400D5
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 18:44:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741974288; x=1773510288;
+ t=1741974291; x=1773510291;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=sF4CEdyAwefkwjNhviasxc0ZbBRIlvQWuExk1nZzlrw=;
- b=gIR1wW2OtlTrze3Ugd4WkfNRHiWreaIwfk6xcCFzXo5ger/vn6fBRC91
- APuIhQIuThx3CCKdkDbA5gz0xPmCaiQyjLuFpJ/BSzMjOsbz1GAy9u6UB
- x4Kk/exvOlVpLfx5UGTKUybqVAMwhpFuX0zzB04/q5Hx2CRsiEpJWqibI
- PY/MM3Jev0pn7KaNkOlhlZiVJyzjprUeXWsamW4iTCA0C5AQLi2GMLvnA
- 2Cbj5OUro4LScb9Wi0EX5UORuxoYkurSVib9daoJ/Va712yjanck9HF65
- B0syUkDpybKaxrNhzMjE/QMDHLoTc5BSB80DbwvSZRHqMKYJqqanUimuk A==;
-X-CSE-ConnectionGUID: 4lSaOAhkRYivmR6DONk4aQ==
-X-CSE-MsgGUID: 8ygquW69Shqa5iHkeUxFsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46925689"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="46925689"
+ bh=2pMqb6f54RP7YLwV429q7l4Nw9K5LaHi4+ko2dlP2Jo=;
+ b=PjIhv/9RNFVZ7MgSrRWBdwiLSoPaisEQPvVDGkf9XbhW6DDa2yXpTgqw
+ ojqG0ycqKjYJiOdqs5+LnXgeGp0Oeew+YVkRN7OEeACgaX4tdlDLZY/Ni
+ SbS+bBF3jZg5Nq9dD5CkmkfIsZ0CkFhjw1AeA32ISPMggI4qytoHFx5Vn
+ uZGy7NgG2/4QL4v33/aiBVcUtqA7r2to6vOmgDdBCEgJ07gm5LTEw64nK
+ P5v3JD0Ats4SvDApeXdOTBOGhJn5jMSbIW3HzFOzgRARf8m6cXCzAd7er
+ aM6vBoo1SQRs9JGVQEBXkqgAIepqpKib5baJ/s7aM5VnVMSDH6d3uPSWi Q==;
+X-CSE-ConnectionGUID: ZhIcGYF5Ty6Smzv7CmVOvQ==
+X-CSE-MsgGUID: isI6EuonT32wlon4SnnILQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46925694"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="46925694"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Mar 2025 10:44:47 -0700
-X-CSE-ConnectionGUID: 59beeqqYQoOjmEsZRlVlMw==
-X-CSE-MsgGUID: C1UQ9TlfRLe1CSHmmPqCmw==
+ 14 Mar 2025 10:44:50 -0700
+X-CSE-ConnectionGUID: NP0IWzO9Tz6Lb7rlmF+dFA==
+X-CSE-MsgGUID: Blliqc1QSyivdEC63zv0pA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="125528734"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="125528751"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa003.fm.intel.com with ESMTP; 14 Mar 2025 10:44:45 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 14 Mar 2025 10:44:47 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Ian Stokes <ian.stokes@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v2 2/4] net/intel: use common AVX build code
-Date: Fri, 14 Mar 2025 17:44:36 +0000
-Message-ID: <20250314174439.112658-3-bruce.richardson@intel.com>
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>,
+ Chaoyong He <chaoyong.he@corigine.com>,
+ Vamsi Attunuru <vattunuru@marvell.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH v2 3/4] drivers/net: build use common AVX handling
+Date: Fri, 14 Mar 2025 17:44:37 +0000
+Message-ID: <20250314174439.112658-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250314174439.112658-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -65,177 +67,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove driver-specific build instructions for the AVX2 and AVX-512 code,
-and rely instead on the generic driver build file.
+Remove from remaining net drivers the special-case code to handle AVX2
+or AVX512 specific files. These can be built instead using
+drivers/meson.build.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/meson.build | 26 ++------------------------
- drivers/net/intel/iavf/meson.build | 25 ++-----------------------
- drivers/net/intel/ice/meson.build  | 25 ++-----------------------
- drivers/net/intel/idpf/meson.build | 25 ++-----------------------
- 4 files changed, 8 insertions(+), 93 deletions(-)
+ drivers/net/bnxt/meson.build      | 10 +---------
+ drivers/net/enic/meson.build      | 10 +---------
+ drivers/net/nfp/meson.build       | 10 +---------
+ drivers/net/octeon_ep/meson.build | 14 ++------------
+ drivers/net/virtio/meson.build    |  9 +--------
+ 5 files changed, 6 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
-index 2973ed1a01..25a3d72714 100644
---- a/drivers/net/intel/i40e/meson.build
-+++ b/drivers/net/intel/i40e/meson.build
-@@ -40,35 +40,13 @@ includes += include_directories('base')
+diff --git a/drivers/net/bnxt/meson.build b/drivers/net/bnxt/meson.build
+index fd82d0c409..dcca7df916 100644
+--- a/drivers/net/bnxt/meson.build
++++ b/drivers/net/bnxt/meson.build
+@@ -58,15 +58,7 @@ subdir('hcapi/cfa_v3')
  
  if arch_subdir == 'x86'
-     sources += files('i40e_rxtx_vec_sse.c')
-+    sources_avx2 = files('i40e_rxtx_vec_avx2.c')
-+    sources_avx512 = files('i40e_rxtx_vec_avx512.c')
- 
-     if is_windows and cc.get_id() != 'clang'
-         cflags += ['-fno-asynchronous-unwind-tables']
-     endif
- 
--    i40e_avx2_lib = static_library('i40e_avx2_lib',
--            'i40e_rxtx_vec_avx2.c',
--            dependencies: [static_rte_ethdev, static_rte_kvargs, static_rte_hash],
+     sources += files('bnxt_rxtx_vec_sse.c')
+-    # build AVX2 code with instruction set explicitly enabled for runtime selection
+-    bnxt_avx2_lib = static_library('bnxt_avx2_lib',
+-            'bnxt_rxtx_vec_avx2.c',
+-            dependencies: [static_rte_ethdev,
+-                static_rte_bus_pci,
+-                static_rte_kvargs, static_rte_hash],
 -            include_directories: includes,
 -            c_args: [cflags, cc_avx2_flags])
--    objs += i40e_avx2_lib.extract_objects('i40e_rxtx_vec_avx2.c')
+-     objs += bnxt_avx2_lib.extract_objects('bnxt_rxtx_vec_avx2.c')
++    sources_avx2 = files('bnxt_rxtx_vec_avx2.c')
+ elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
+     sources += files('bnxt_rxtx_vec_neon.c')
+ endif
+diff --git a/drivers/net/enic/meson.build b/drivers/net/enic/meson.build
+index cfe5ec170a..2b3052fae8 100644
+--- a/drivers/net/enic/meson.build
++++ b/drivers/net/enic/meson.build
+@@ -29,17 +29,9 @@ sources = files(
+ deps += ['hash']
+ includes += include_directories('base')
+ 
+-# Build the avx2 handler for 64-bit X86 targets, even though 'machine'
+-# may not. This is to support users who build for the min supported machine
+-# and need to run the binary on newer CPUs too.
+ if dpdk_conf.has('RTE_ARCH_X86_64')
+     cflags += '-DENIC_RXTX_VEC'
+-    enic_avx2_lib = static_library('enic_avx2_lib',
+-            'enic_rxtx_vec_avx2.c',
+-            dependencies: [static_rte_ethdev, static_rte_bus_pci],
+-            include_directories: includes,
+-            c_args: [cflags, cc_avx2_flags])
+-    objs += enic_avx2_lib.extract_objects('enic_rxtx_vec_avx2.c')
++    sources_avx2 = files('enic_rxtx_vec_avx2.c')
+ endif
+ 
+ annotate_locks = false
+diff --git a/drivers/net/nfp/meson.build b/drivers/net/nfp/meson.build
+index 0a12b7dce7..a98b584042 100644
+--- a/drivers/net/nfp/meson.build
++++ b/drivers/net/nfp/meson.build
+@@ -52,19 +52,11 @@ cflags += no_wvla_cflag
+ if arch_subdir == 'x86'
+         includes += include_directories('../../common/nfp')
+ 
+-        avx2_sources = files(
++        sources_avx2 = files(
+                 'nfdk/nfp_nfdk_vec_avx2_dp.c',
+                 'nfp_rxtx_vec_avx2.c',
+         )
+ 
+-        nfp_avx2_lib = static_library('nfp_avx2_lib',
+-                avx2_sources,
+-                dependencies: [static_rte_ethdev, static_rte_bus_pci],
+-                include_directories: includes,
+-                c_args: [cflags, cc_avx2_flags]
+-        )
 -
--    if cc_has_avx512
+-        objs += nfp_avx2_lib.extract_all_objects(recursive: true)
+ else
+         sources += files(
+                 'nfp_rxtx_vec_stub.c',
+diff --git a/drivers/net/octeon_ep/meson.build b/drivers/net/octeon_ep/meson.build
+index 1b34db3edc..9bf4627894 100644
+--- a/drivers/net/octeon_ep/meson.build
++++ b/drivers/net/octeon_ep/meson.build
+@@ -15,18 +15,8 @@ sources = files(
+ 
+ if arch_subdir == 'x86'
+     sources += files('cnxk_ep_rx_sse.c')
+-    if cc.get_define('__AVX2__', args: machine_args) != ''
+-        cflags += ['-DCC_AVX2_SUPPORT']
+-        sources += files('cnxk_ep_rx_avx.c')
+-    elif cc.has_multi_arguments(cc_avx2_flags)
+-        cflags += ['-DCC_AVX2_SUPPORT']
+-        otx_ep_avx2_lib = static_library('otx_ep_avx2_lib',
+-                        'cnxk_ep_rx_avx.c',
+-                        dependencies: [static_rte_ethdev, static_rte_pci, static_rte_bus_pci],
+-                        include_directories: includes,
+-                        c_args: [cflags, cc_avx2_flags])
+-        objs += otx_ep_avx2_lib.extract_objects('cnxk_ep_rx_avx.c')
+-    endif
++    cflags += ['-DCC_AVX2_SUPPORT']
++    sources_avx2 = files('cnxk_ep_rx_avx.c')
+ endif
+ 
+ if arch_subdir == 'arm'
+diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+index c1c4a85bea..01bfb3c47d 100644
+--- a/drivers/net/virtio/meson.build
++++ b/drivers/net/virtio/meson.build
+@@ -27,15 +27,8 @@ cflags += no_wvla_cflag
+ 
+ if arch_subdir == 'x86'
+     if cc_has_avx512
 -        cflags += ['-DCC_AVX512_SUPPORT']
--        avx512_args = cflags + cc_avx512_flags
--        if cc.has_argument('-march=skylake-avx512')
--            avx512_args += '-march=skylake-avx512'
--            if cc.has_argument('-Wno-overriding-option')
--                avx512_args += '-Wno-overriding-option'
--            endif
--        endif
--        i40e_avx512_lib = static_library('i40e_avx512_lib',
--                'i40e_rxtx_vec_avx512.c',
+         cflags += ['-DVIRTIO_RXTX_PACKED_VEC']
+-        virtio_avx512_lib = static_library('virtio_avx512_lib',
+-                'virtio_rxtx_packed.c',
 -                dependencies: [static_rte_ethdev,
--                    static_rte_kvargs, static_rte_hash],
+-                    static_rte_kvargs, static_rte_bus_pci],
 -                include_directories: includes,
--                c_args: avx512_args)
--        objs += i40e_avx512_lib.extract_objects('i40e_rxtx_vec_avx512.c')
--    endif
- elif arch_subdir == 'ppc'
-        sources += files('i40e_rxtx_vec_altivec.c')
- elif arch_subdir == 'arm'
-diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
-index f7eac7c57a..fc3e4d2f28 100644
---- a/drivers/net/intel/iavf/meson.build
-+++ b/drivers/net/intel/iavf/meson.build
-@@ -28,34 +28,13 @@ includes += include_directories('base')
- 
- if arch_subdir == 'x86'
-     sources += files('iavf_rxtx_vec_sse.c')
-+    sources_avx2 = files('iavf_rxtx_vec_avx2.c')
-+    sources_avx512 = files('iavf_rxtx_vec_avx512.c')
- 
-     if is_windows and cc.get_id() != 'clang'
-         cflags += ['-fno-asynchronous-unwind-tables']
-     endif
- 
--    iavf_avx2_lib = static_library('iavf_avx2_lib',
--            'iavf_rxtx_vec_avx2.c',
--            dependencies: [static_rte_ethdev],
--            include_directories: includes,
--            c_args: [cflags, cc_avx2_flags])
--    objs += iavf_avx2_lib.extract_objects('iavf_rxtx_vec_avx2.c')
--
--    if cc_has_avx512
--        cflags += ['-DCC_AVX512_SUPPORT']
--        avx512_args = cflags + cc_avx512_flags
--        if cc.has_argument('-march=skylake-avx512')
--            avx512_args += '-march=skylake-avx512'
--            if cc.has_argument('-Wno-overriding-option')
--                avx512_args += '-Wno-overriding-option'
--            endif
--        endif
--        iavf_avx512_lib = static_library('iavf_avx512_lib',
--                'iavf_rxtx_vec_avx512.c',
--                dependencies: [static_rte_ethdev],
--                include_directories: includes,
--                c_args: avx512_args)
--        objs += iavf_avx512_lib.extract_objects('iavf_rxtx_vec_avx512.c')
--    endif
- elif arch_subdir == 'arm'
-     sources += files('iavf_rxtx_vec_neon.c')
- endif
-diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
-index cbdf38c1c4..a33ec59272 100644
---- a/drivers/net/intel/ice/meson.build
-+++ b/drivers/net/intel/ice/meson.build
-@@ -34,34 +34,13 @@ endif
- 
- if arch_subdir == 'x86'
-     sources += files('ice_rxtx_vec_sse.c')
-+    sources_avx2 = files('ice_rxtx_vec_avx2.c')
-+    sources_avx512 = files('ice_rxtx_vec_avx512.c')
- 
-     if is_windows and cc.get_id() != 'clang'
-         cflags += ['-fno-asynchronous-unwind-tables']
-     endif
- 
--    ice_avx2_lib = static_library('ice_avx2_lib',
--            'ice_rxtx_vec_avx2.c',
--            dependencies: [static_rte_ethdev, static_rte_hash],
--            include_directories: includes,
--            c_args: [cflags, cc_avx2_flags])
--    objs += ice_avx2_lib.extract_objects('ice_rxtx_vec_avx2.c')
--
--    if cc_has_avx512
--        cflags += ['-DCC_AVX512_SUPPORT']
--        avx512_args = cflags + cc_avx512_flags
--        if cc.has_argument('-march=skylake-avx512')
--            avx512_args += '-march=skylake-avx512'
--            if cc.has_argument('-Wno-overriding-option')
--                avx512_args += '-Wno-overriding-option'
--            endif
--        endif
--        ice_avx512_lib = static_library('ice_avx512_lib',
--                'ice_rxtx_vec_avx512.c',
--                dependencies: [static_rte_ethdev, static_rte_hash],
--                include_directories: includes,
--                c_args: avx512_args)
--        objs += ice_avx512_lib.extract_objects('ice_rxtx_vec_avx512.c')
--    endif
- endif
- 
- sources += files(
-diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
-index 4b272d02b1..10465f0f36 100644
---- a/drivers/net/intel/idpf/meson.build
-+++ b/drivers/net/intel/idpf/meson.build
-@@ -19,29 +19,8 @@ sources = files(
- )
- 
- if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
--    idpf_avx2_lib = static_library('idpf_avx2_lib',
--        'idpf_common_rxtx_avx2.c',
--        dependencies: [static_rte_ethdev, static_rte_hash],
--        include_directories: includes,
--        c_args: [cflags, cc_avx2_flags])
--    objs += idpf_avx2_lib.extract_objects('idpf_common_rxtx_avx2.c')
--
--    if cc_has_avx512
--        cflags += ['-DCC_AVX512_SUPPORT']
--        avx512_args = cflags + cc_avx512_flags
--        if cc.has_argument('-march=skylake-avx512')
--            avx512_args += '-march=skylake-avx512'
--            if cc.has_argument('-Wno-overriding-option')
--                avx512_args += '-Wno-overriding-option'
--            endif
--        endif
--        idpf_common_avx512_lib = static_library('idpf_common_avx512_lib',
--                'idpf_common_rxtx_avx512.c',
--                dependencies: static_rte_mbuf,
--                include_directories: includes,
--                c_args: avx512_args)
--        objs += idpf_common_avx512_lib.extract_objects('idpf_common_rxtx_avx512.c')
--    endif
-+    sources_avx2 = files('idpf_common_rxtx_avx2.c')
-+    sources_avx512 = files('idpf_common_rxtx_avx512.c')
- endif
- 
- subdir('base')
+-                c_args: cflags + cc_avx512_flags)
+-        objs += virtio_avx512_lib.extract_objects('virtio_rxtx_packed.c')
++        sources_avx512 = files('virtio_rxtx_packed.c')
+         if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
+             cflags += '-DVIRTIO_GCC_UNROLL_PRAGMA'
+         elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
 -- 
 2.43.0
 
