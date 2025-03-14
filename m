@@ -2,46 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2848C282EC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F75BC35FF3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:44:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 628DE40651;
-	Fri, 14 Mar 2025 18:44:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7E8D340659;
+	Fri, 14 Mar 2025 18:44:49 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 6A4CB400D5
- for <dev@dpdk.org>; Fri, 14 Mar 2025 18:44:45 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8990D402E9
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 18:44:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741974286; x=1773510286;
+ t=1741974288; x=1773510288;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=oOcZYIcYSb/PNwS3s8I/xpXJsFNl8j22LH4zGgxFvuc=;
- b=HVUdHh4gTCikl1dczH3DnHULhoC7M60lUogpSZ2qhBcj5ZilLQqDxFQb
- QoGBwzJEEq44kCffGPam4WWugzWQT5KjKfBQI8hONnBkGgA81sqbwPcFV
- SWzOL1Wh1t3i6j++BGU0JfYc5k8ZFsToE0JgWJ/fSa4k0GQVybdPGifYQ
- kINabiMTJpPTRMWauWgvsTv6fZf4u427TW4yb+Hs9C51HD1Gd+Zef/Ef/
- ahzhqF+89wP1IB+zcNyS+gGEcHTgNi2wTnbESvFfdKJ5vt9Le0rm4zn91
- SevmOmpCr5uJynHr7LEUTBeaKW5fv6wi7//MZe1SLCqf6//QSaw1kbz0y A==;
-X-CSE-ConnectionGUID: s/poCcg+SbKb5ZTGA7XNGQ==
-X-CSE-MsgGUID: ZAFoUZ23SqmQ8VemXTtfwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46925685"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="46925685"
+ bh=sF4CEdyAwefkwjNhviasxc0ZbBRIlvQWuExk1nZzlrw=;
+ b=gIR1wW2OtlTrze3Ugd4WkfNRHiWreaIwfk6xcCFzXo5ger/vn6fBRC91
+ APuIhQIuThx3CCKdkDbA5gz0xPmCaiQyjLuFpJ/BSzMjOsbz1GAy9u6UB
+ x4Kk/exvOlVpLfx5UGTKUybqVAMwhpFuX0zzB04/q5Hx2CRsiEpJWqibI
+ PY/MM3Jev0pn7KaNkOlhlZiVJyzjprUeXWsamW4iTCA0C5AQLi2GMLvnA
+ 2Cbj5OUro4LScb9Wi0EX5UORuxoYkurSVib9daoJ/Va712yjanck9HF65
+ B0syUkDpybKaxrNhzMjE/QMDHLoTc5BSB80DbwvSZRHqMKYJqqanUimuk A==;
+X-CSE-ConnectionGUID: 4lSaOAhkRYivmR6DONk4aQ==
+X-CSE-MsgGUID: 8ygquW69Shqa5iHkeUxFsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46925689"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="46925689"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Mar 2025 10:44:45 -0700
-X-CSE-ConnectionGUID: QjRPH9fNRtyHRlfZMEkkLQ==
-X-CSE-MsgGUID: BoUccLieR9yKr+fm1pFNJA==
+ 14 Mar 2025 10:44:47 -0700
+X-CSE-ConnectionGUID: 59beeqqYQoOjmEsZRlVlMw==
+X-CSE-MsgGUID: C1UQ9TlfRLe1CSHmmPqCmw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="125528695"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="125528734"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa003.fm.intel.com with ESMTP; 14 Mar 2025 10:44:44 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 14 Mar 2025 10:44:45 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 1/4] build: add generalized AVX handling for drivers
-Date: Fri, 14 Mar 2025 17:44:35 +0000
-Message-ID: <20250314174439.112658-2-bruce.richardson@intel.com>
+Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
+ Ian Stokes <ian.stokes@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>
+Subject: [PATCH v2 2/4] net/intel: use common AVX build code
+Date: Fri, 14 Mar 2025 17:44:36 +0000
+Message-ID: <20250314174439.112658-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250314174439.112658-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -61,63 +65,177 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support to the top-level driver build file for AVX2 and AVX512
-specific sources. This should simplify driver builds by avoiding the
-need to constantly reimplement the same build logic
+Remove driver-specific build instructions for the AVX2 and AVX-512 code,
+and rely instead on the generic driver build file.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/meson.build | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/net/intel/i40e/meson.build | 26 ++------------------------
+ drivers/net/intel/iavf/meson.build | 25 ++-----------------------
+ drivers/net/intel/ice/meson.build  | 25 ++-----------------------
+ drivers/net/intel/idpf/meson.build | 25 ++-----------------------
+ 4 files changed, 8 insertions(+), 93 deletions(-)
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 05391a575d..c42c7764bf 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -126,6 +126,8 @@ foreach subpath:subdirs
-         name = drv
-         annotate_locks = true
-         sources = []
-+        sources_avx2 = []
-+        sources_avx512 = []
-         headers = []
-         driver_sdk_headers = [] # public headers included by drivers
-         objs = []
-@@ -235,6 +237,34 @@ foreach subpath:subdirs
-             dpdk_includes += include_directories(drv_path)
-         endif
+diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
+index 2973ed1a01..25a3d72714 100644
+--- a/drivers/net/intel/i40e/meson.build
++++ b/drivers/net/intel/i40e/meson.build
+@@ -40,35 +40,13 @@ includes += include_directories('base')
  
-+        # handle avx2 and avx512 source files
-+        if arch_subdir == 'x86'
-+            if sources_avx2.length() > 0
-+                avx2_lib = static_library(lib_name + '_avx2_lib',
-+                        sources_avx2,
-+                        dependencies: static_deps,
-+                        include_directories: includes,
-+                        c_args: [cflags, cc_avx2_flags])
-+                objs += avx2_lib.extract_objects(sources_avx2)
-+            endif
-+            if sources_avx512.length() > 0
-+                cflags += '-DCC_AVX512_SUPPORT'
-+                avx512_args = [cflags, cc_avx512_flags]
-+                if cc.has_argument('-march=skylake-avx512')
-+                    avx512_args += '-march=skylake-avx512'
-+                    if cc.has_argument('-Wno-overriding-option')
-+                        avx512_args += '-Wno-overriding-option'
-+                    endif
-+                endif
-+                avx512_lib = static_library(lib_name + '_avx512_lib',
-+                        sources_avx512,
-+                        dependencies: static_deps,
-+                        include_directories: includes,
-+                        c_args: avx512_args)
-+                objs += avx512_lib.extract_objects(sources_avx512)
-+            endif
-+        endif
-+
-         # generate pmdinfo sources by building a temporary
-         # lib and then running pmdinfogen on the contents of
-         # that lib. The final lib reuses the object files and
+ if arch_subdir == 'x86'
+     sources += files('i40e_rxtx_vec_sse.c')
++    sources_avx2 = files('i40e_rxtx_vec_avx2.c')
++    sources_avx512 = files('i40e_rxtx_vec_avx512.c')
+ 
+     if is_windows and cc.get_id() != 'clang'
+         cflags += ['-fno-asynchronous-unwind-tables']
+     endif
+ 
+-    i40e_avx2_lib = static_library('i40e_avx2_lib',
+-            'i40e_rxtx_vec_avx2.c',
+-            dependencies: [static_rte_ethdev, static_rte_kvargs, static_rte_hash],
+-            include_directories: includes,
+-            c_args: [cflags, cc_avx2_flags])
+-    objs += i40e_avx2_lib.extract_objects('i40e_rxtx_vec_avx2.c')
+-
+-    if cc_has_avx512
+-        cflags += ['-DCC_AVX512_SUPPORT']
+-        avx512_args = cflags + cc_avx512_flags
+-        if cc.has_argument('-march=skylake-avx512')
+-            avx512_args += '-march=skylake-avx512'
+-            if cc.has_argument('-Wno-overriding-option')
+-                avx512_args += '-Wno-overriding-option'
+-            endif
+-        endif
+-        i40e_avx512_lib = static_library('i40e_avx512_lib',
+-                'i40e_rxtx_vec_avx512.c',
+-                dependencies: [static_rte_ethdev,
+-                    static_rte_kvargs, static_rte_hash],
+-                include_directories: includes,
+-                c_args: avx512_args)
+-        objs += i40e_avx512_lib.extract_objects('i40e_rxtx_vec_avx512.c')
+-    endif
+ elif arch_subdir == 'ppc'
+        sources += files('i40e_rxtx_vec_altivec.c')
+ elif arch_subdir == 'arm'
+diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
+index f7eac7c57a..fc3e4d2f28 100644
+--- a/drivers/net/intel/iavf/meson.build
++++ b/drivers/net/intel/iavf/meson.build
+@@ -28,34 +28,13 @@ includes += include_directories('base')
+ 
+ if arch_subdir == 'x86'
+     sources += files('iavf_rxtx_vec_sse.c')
++    sources_avx2 = files('iavf_rxtx_vec_avx2.c')
++    sources_avx512 = files('iavf_rxtx_vec_avx512.c')
+ 
+     if is_windows and cc.get_id() != 'clang'
+         cflags += ['-fno-asynchronous-unwind-tables']
+     endif
+ 
+-    iavf_avx2_lib = static_library('iavf_avx2_lib',
+-            'iavf_rxtx_vec_avx2.c',
+-            dependencies: [static_rte_ethdev],
+-            include_directories: includes,
+-            c_args: [cflags, cc_avx2_flags])
+-    objs += iavf_avx2_lib.extract_objects('iavf_rxtx_vec_avx2.c')
+-
+-    if cc_has_avx512
+-        cflags += ['-DCC_AVX512_SUPPORT']
+-        avx512_args = cflags + cc_avx512_flags
+-        if cc.has_argument('-march=skylake-avx512')
+-            avx512_args += '-march=skylake-avx512'
+-            if cc.has_argument('-Wno-overriding-option')
+-                avx512_args += '-Wno-overriding-option'
+-            endif
+-        endif
+-        iavf_avx512_lib = static_library('iavf_avx512_lib',
+-                'iavf_rxtx_vec_avx512.c',
+-                dependencies: [static_rte_ethdev],
+-                include_directories: includes,
+-                c_args: avx512_args)
+-        objs += iavf_avx512_lib.extract_objects('iavf_rxtx_vec_avx512.c')
+-    endif
+ elif arch_subdir == 'arm'
+     sources += files('iavf_rxtx_vec_neon.c')
+ endif
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index cbdf38c1c4..a33ec59272 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -34,34 +34,13 @@ endif
+ 
+ if arch_subdir == 'x86'
+     sources += files('ice_rxtx_vec_sse.c')
++    sources_avx2 = files('ice_rxtx_vec_avx2.c')
++    sources_avx512 = files('ice_rxtx_vec_avx512.c')
+ 
+     if is_windows and cc.get_id() != 'clang'
+         cflags += ['-fno-asynchronous-unwind-tables']
+     endif
+ 
+-    ice_avx2_lib = static_library('ice_avx2_lib',
+-            'ice_rxtx_vec_avx2.c',
+-            dependencies: [static_rte_ethdev, static_rte_hash],
+-            include_directories: includes,
+-            c_args: [cflags, cc_avx2_flags])
+-    objs += ice_avx2_lib.extract_objects('ice_rxtx_vec_avx2.c')
+-
+-    if cc_has_avx512
+-        cflags += ['-DCC_AVX512_SUPPORT']
+-        avx512_args = cflags + cc_avx512_flags
+-        if cc.has_argument('-march=skylake-avx512')
+-            avx512_args += '-march=skylake-avx512'
+-            if cc.has_argument('-Wno-overriding-option')
+-                avx512_args += '-Wno-overriding-option'
+-            endif
+-        endif
+-        ice_avx512_lib = static_library('ice_avx512_lib',
+-                'ice_rxtx_vec_avx512.c',
+-                dependencies: [static_rte_ethdev, static_rte_hash],
+-                include_directories: includes,
+-                c_args: avx512_args)
+-        objs += ice_avx512_lib.extract_objects('ice_rxtx_vec_avx512.c')
+-    endif
+ endif
+ 
+ sources += files(
+diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
+index 4b272d02b1..10465f0f36 100644
+--- a/drivers/net/intel/idpf/meson.build
++++ b/drivers/net/intel/idpf/meson.build
+@@ -19,29 +19,8 @@ sources = files(
+ )
+ 
+ if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
+-    idpf_avx2_lib = static_library('idpf_avx2_lib',
+-        'idpf_common_rxtx_avx2.c',
+-        dependencies: [static_rte_ethdev, static_rte_hash],
+-        include_directories: includes,
+-        c_args: [cflags, cc_avx2_flags])
+-    objs += idpf_avx2_lib.extract_objects('idpf_common_rxtx_avx2.c')
+-
+-    if cc_has_avx512
+-        cflags += ['-DCC_AVX512_SUPPORT']
+-        avx512_args = cflags + cc_avx512_flags
+-        if cc.has_argument('-march=skylake-avx512')
+-            avx512_args += '-march=skylake-avx512'
+-            if cc.has_argument('-Wno-overriding-option')
+-                avx512_args += '-Wno-overriding-option'
+-            endif
+-        endif
+-        idpf_common_avx512_lib = static_library('idpf_common_avx512_lib',
+-                'idpf_common_rxtx_avx512.c',
+-                dependencies: static_rte_mbuf,
+-                include_directories: includes,
+-                c_args: avx512_args)
+-        objs += idpf_common_avx512_lib.extract_objects('idpf_common_rxtx_avx512.c')
+-    endif
++    sources_avx2 = files('idpf_common_rxtx_avx2.c')
++    sources_avx512 = files('idpf_common_rxtx_avx512.c')
+ endif
+ 
+ subdir('base')
 -- 
 2.43.0
 
