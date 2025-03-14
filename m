@@ -2,31 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA37C28B30
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBBEC282EC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:43:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AA1440667;
-	Fri, 14 Mar 2025 14:19:30 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 216E740430
- for <dev@dpdk.org>; Fri, 14 Mar 2025 14:19:27 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 990C21424;
- Fri, 14 Mar 2025 06:19:36 -0700 (PDT)
-Received: from localhost.localdomain (unknown [10.57.40.184])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6BCE3F673;
- Fri, 14 Mar 2025 06:19:25 -0700 (PDT)
-From: Luca Vizzarro <luca.vizzarro@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 596264029E;
+	Fri, 14 Mar 2025 14:43:55 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id B4AD1400D5
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 14:43:54 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal
+ [10.202.2.47])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1F97911400D4;
+ Fri, 14 Mar 2025 09:43:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Fri, 14 Mar 2025 09:43:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm1; t=1741959834; x=1742046234; bh=8P8Yx8c1ufHfwIfzVG0MI
+ fmtlUNjpgFonHS2P/I1ZuQ=; b=Og9HYjaICZi19TU1VlTdXRtVp34rZ2o5xrvVl
+ JJQG1c9nsP8uXig/Uu019PNSAMOztIIysaeDWGtJmOa2bym7ti45mrRWSVoOKMRm
+ UJXPvaHQBqQkUtMM29CLFzDlB9fHiUMwBxpJ7L4JTzMY2DOjQSiZN5vtAkNP+w3Z
+ VTvc7PffuTmHC6AG+aaPPEOxX/G3wat+44gAmiTa1R9htub9vSB2R1PMS3PQbaDW
+ mJAQwJAto1+ucFdI+4l6PgzNDaWCuPaNTEqZcJaF5ikYue8FH/wS4VjqrciR8jxN
+ 6251aI6jWDuc/VdRvVeNZgJFR/nViJ/jXMaR//W6NOr0nAVdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1741959834; x=1742046234; bh=8P8Yx8c1ufHfwIfzVG0MIfmtlUNjpgFonHS
+ 2P/I1ZuQ=; b=mST5S1rSHD/gU8CoPYpqqLczN4nRUwR3D9utdzhDcifgUo0kBMe
+ jHwqOB0RS9GnAvWxMxm3WJ+XGNgyssNF/U+OOYgyiXXBVJqXFvywwFdXXgl3tFwJ
+ UtMDCzJI8kC/d7nRXoZq+N6kgPPD8pkxJDiaRWUjlBUpv5T/fdQqAWEoT5IXdRSF
+ CmNnDM10USH0vkyY0GE+VFDuWYn5PVWBP2T2LHA9hdsx1j6ysL9+hT1LI4qdabp0
+ HyLXYg2+HEU4qJ9KiimWIsDj8EQBoBH6Vb3NrFMWEH6hQ7Vb2zyH0CxhNN27u5mx
+ dUvHNqTB5sLV1vOuZjQBIJkcN4hdaLeDwwA==
+X-ME-Sender: <xms:mTLUZ83gbZm-AQq-wogMokcdz4kgx4rIORcR0LxPLgSr0azGO3DykQ>
+ <xme:mTLUZ3EBs1YYzIAEffZtaPMN1NrwlVu7lCl4gXen7hAx-1ELZaTFUT2jBeFZo5J2z
+ 8cjVnKUZHYfgQregg>
+X-ME-Received: <xmr:mTLUZ057DweLZkMKKuMXE1ezNxFUlBKdFOa94uy0YGWeHlzwEa22kC-9SQFYqqmOhBxAT69MQTgCHZtY6svFnyg0Ug3o5mM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtleekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeevveefveeiiefhtedukeegkeelieeg
+ ffeukeevudetueffieduveetiedukeefleenucevlhhushhtvghrufhiiigvpedtnecurf
+ grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
+ sggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvse
+ guphgukhdrohhrghdprhgtphhtthhopehprghulhdrshiitgiivghprghnvghksegrrhhm
+ rdgtohhmpdhrtghpthhtohepphhrohgssgesihholhdruhhnhhdrvgguuhdprhgtphhtth
+ hopehnphhrrghtthgvsehiohhlrdhunhhhrdgvughupdhrtghpthhtoheplhhutggrrdhv
+ ihiiiigrrhhrohesrghrmhdrtghomh
+X-ME-Proxy: <xmx:mTLUZ10AK3-ZZGThHCZQ81Z_p6TDr_PMPePiiilmho66skvYn71bWg>
+ <xmx:mTLUZ_F5ov929Oxmf_A0j-RfrLanRdUT2kO0Ob6Qq-bO7ur92SFuzQ>
+ <xmx:mTLUZ-8Nz7r3VVM6SijZoBlJhlzncHmjcYap4lhXPxQkq5ewz7KhHg>
+ <xmx:mTLUZ0k6nx3rhk0xBVztWokvwxfYb0Kvc6pc7h9Umk-bk6Cgz7YBLQ>
+ <xmx:mjLUZwMTdq1jBizeT2ysSJjEObNlqhuMZQseN5vTGmUBvz7pVXkpenIV>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Mar 2025 09:43:52 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
- Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 7/7] dts: enable shell pooling
-Date: Fri, 14 Mar 2025 15:18:57 +0200
-Message-ID: <20250314131857.1298247-8-luca.vizzarro@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250314131857.1298247-1-luca.vizzarro@arm.com>
-References: <20241220172337.2194523-1-luca.vizzarro@arm.com>
- <20250314131857.1298247-1-luca.vizzarro@arm.com>
+Cc: Paul Szczepanek <paul.szczepanek@arm.com>,
+ Patrick Robb <probb@iol.unh.edu>, Nicholas Pratte <npratte@iol.unh.edu>,
+ Luca Vizzarro <luca.vizzarro@arm.com>
+Subject: [PATCH] dts: fix SPDX tag
+Date: Fri, 14 Mar 2025 14:43:46 +0100
+Message-ID: <20250314134346.3321517-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -42,174 +88,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable the ShellPool class to be used in the test run, and let
-InteractiveShells register themselves to the pool upon shell startup.
-Moreover, to avoid the ShellPool to call InteractiveShell.close more
-than once if the shell was not unregistered correctly, add a way to
-prevent the method to be called if the shell has already been closed.
+The license in the SPDX tag was incomplete.
 
-Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
-Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+Fixes: d77a4a27bd24 ("dts: remove node distinction")
+
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- .../remote_session/interactive_shell.py       | 24 ++++++++++++++++++-
- dts/framework/remote_session/python_shell.py  |  3 ++-
- dts/framework/remote_session/testpmd_shell.py |  2 ++
- dts/framework/test_run.py                     |  5 ++++
- 4 files changed, 32 insertions(+), 2 deletions(-)
+ dts/framework/remote_session/dpdk.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
-index d7e566e5c4..ba8489eafa 100644
---- a/dts/framework/remote_session/interactive_shell.py
-+++ b/dts/framework/remote_session/interactive_shell.py
-@@ -22,12 +22,14 @@
- """
- 
- from abc import ABC, abstractmethod
-+from collections.abc import Callable
- from pathlib import PurePath
--from typing import ClassVar
-+from typing import ClassVar, Concatenate, ParamSpec, TypeAlias, TypeVar
- 
- from paramiko import Channel, channel
- from typing_extensions import Self
- 
-+from framework.context import get_ctx
- from framework.exception import (
-     InteractiveCommandExecutionError,
-     InteractiveSSHSessionDeadError,
-@@ -38,6 +40,23 @@
- from framework.settings import SETTINGS
- from framework.testbed_model.node import Node
- 
-+P = ParamSpec("P")
-+T = TypeVar("T", bound="InteractiveShell")
-+R = TypeVar("R")
-+InteractiveShellMethod = Callable[Concatenate[T, P], R]
-+InteractiveShellDecorator: TypeAlias = Callable[[InteractiveShellMethod], InteractiveShellMethod]
-+
-+
-+def only_active(func: InteractiveShellMethod) -> InteractiveShellMethod:
-+    """This decorator will skip running the method if the SSH channel is not active."""
-+
-+    def _wrapper(self: "InteractiveShell", *args: P.args, **kwargs: P.kwargs) -> R | None:
-+        if self._ssh_channel.active:
-+            return func(self, *args, **kwargs)
-+        return None
-+
-+    return _wrapper
-+
- 
- class InteractiveShell(ABC):
-     """The base class for managing interactive shells.
-@@ -155,6 +174,7 @@ def start_application(self, prompt: str | None = None) -> None:
-             self.is_alive = False  # update state on failure to start
-             raise InteractiveCommandExecutionError("Failed to start application.")
-         self._ssh_channel.settimeout(self._timeout)
-+        get_ctx().shell_pool.register_shell(self)
- 
-     def send_command(
-         self, command: str, prompt: str | None = None, skip_first_line: bool = False
-@@ -219,6 +239,7 @@ def send_command(
-             self._logger.debug(f"Got output: {out}")
-         return out
- 
-+    @only_active
-     def close(self) -> None:
-         """Close the shell.
- 
-@@ -234,6 +255,7 @@ def close(self) -> None:
-             self._logger.debug("Application failed to exit before set timeout.")
-             raise InteractiveSSHTimeoutError("Application 'exit' command") from e
-         self._ssh_channel.close()
-+        get_ctx().shell_pool.unregister_shell(self)
- 
-     @property
-     @abstractmethod
-diff --git a/dts/framework/remote_session/python_shell.py b/dts/framework/remote_session/python_shell.py
-index 6331d047c4..5b380a5c7a 100644
---- a/dts/framework/remote_session/python_shell.py
-+++ b/dts/framework/remote_session/python_shell.py
-@@ -15,7 +15,7 @@
- from pathlib import PurePath
- from typing import ClassVar
- 
--from .interactive_shell import InteractiveShell
-+from .interactive_shell import InteractiveShell, only_active
- 
- 
- class PythonShell(InteractiveShell):
-@@ -32,6 +32,7 @@ def path(self) -> PurePath:
-         """Path to the Python3 executable."""
-         return PurePath("python3")
- 
-+    @only_active
-     def close(self):
-         """Close Python shell."""
-         return super().close()
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 19437b6233..b1939e4a51 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -33,6 +33,7 @@
- )
- 
- from framework.context import get_ctx
-+from framework.remote_session.interactive_shell import only_active
- from framework.testbed_model.topology import TopologyType
- 
- if TYPE_CHECKING or environ.get("DTS_DOC_BUILD"):
-@@ -2314,6 +2315,7 @@ def rx_vxlan(self, vxlan_id: int, port_id: int, enable: bool, verify: bool = Tru
-                 self._logger.debug(f"Failed to set VXLAN:\n{vxlan_output}")
-                 raise InteractiveCommandExecutionError(f"Failed to set VXLAN:\n{vxlan_output}")
- 
-+    @only_active
-     def close(self) -> None:
-         """Overrides :meth:`~.interactive_shell.close`."""
-         self.stop()
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index f9cfe5e908..7708fe31bd 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -430,6 +430,7 @@ def description(self) -> str:
- 
-     def next(self) -> State | None:
-         """Next state."""
-+        self.test_run.ctx.shell_pool.terminate_current_pool()
-         self.test_run.ctx.tg.teardown(self.test_run.ctx.topology.tg_ports)
-         self.test_run.ctx.dpdk.teardown(self.test_run.ctx.topology.sut_ports)
-         self.test_run.ctx.tg_node.teardown()
-@@ -473,6 +474,7 @@ def description(self) -> str:
- 
-     def next(self) -> State | None:
-         """Next state."""
-+        self.test_run.ctx.shell_pool.start_new_pool()
-         self.test_suite.set_up_suite()
-         self.result.update_setup(Result.PASS)
-         return TestSuiteExecution(self.test_run, self.test_suite, self.result)
-@@ -544,6 +546,7 @@ def next(self) -> State | None:
-         """Next state."""
-         self.test_suite.tear_down_suite()
-         self.test_run.ctx.dpdk.kill_cleanup_dpdk_apps()
-+        self.test_run.ctx.shell_pool.terminate_current_pool()
-         self.result.update_teardown(Result.PASS)
-         return TestRunExecution(self.test_run, self.test_run.result)
- 
-@@ -594,6 +597,7 @@ def description(self) -> str:
- 
-     def next(self) -> State | None:
-         """Next state."""
-+        self.test_run.ctx.shell_pool.start_new_pool()
-         self.test_suite.set_up_test_case()
-         self.result.update_setup(Result.PASS)
-         return TestCaseExecution(
-@@ -670,6 +674,7 @@ def description(self) -> str:
-     def next(self) -> State | None:
-         """Next state."""
-         self.test_suite.tear_down_test_case()
-+        self.test_run.ctx.shell_pool.terminate_current_pool()
-         self.result.update_teardown(Result.PASS)
-         return TestSuiteExecution(self.test_run, self.test_suite, self.test_suite_result)
- 
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index f75ec353ed..d6533cd567 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -1,4 +1,4 @@
+-# SPDX-License-Identifier: BSD-3-C
++# SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2023 PANTHEON.tech s.r.o.
+ # Copyright(c) 2023 University of New Hampshire
+ # Copyright(c) 2025 Arm Limited
 -- 
-2.43.0
+2.47.1
 
