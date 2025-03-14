@@ -2,60 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4244C282EC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 16:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413EAC282EC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:21:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7559A4029E;
-	Fri, 14 Mar 2025 17:54:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 30A0140263;
+	Fri, 14 Mar 2025 18:21:37 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0D38D40289
- for <dev@dpdk.org>; Fri, 14 Mar 2025 17:54:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id EC3C6400D6
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 18:21:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741971255;
+ s=mimecast20190719; t=1741972895;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=0ryWBlWkLr91pc+heYkXAg8Pd8EmDFeOBf+lnOQqdsw=;
- b=gBYSzAb1uV4l4uKl0PHv8MI8m9Lr2yGmWsJ9drZBmZGJP4tWZw3sBGmLN38adcCUeOU6oz
- hv+nHMapnxgMhDNWcJpHSom9nwoOoqkzB8Jk1gRmf/Owncctv4jlVrEr/K9t/dmKG5Bxhz
- JR6eDn/MsLZu1CRn85QCIBsd34oLamE=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=8AlZMUtiNjMhLBr7H+9412Z+D1tZLI5gnum7KXcXLLQ=;
+ b=JBLUApbyuy0HHC4BVfqSCZ5LONcSOmdccN9gnqarcZeCTnpzZ60m+4r/YGCPQkmUoejg3U
+ gNZjK5F3sl69nguSDk/VFp7h8N13iH10Fd/OSlwlUdSocY1HpXdjHQ6r4dbO2KptGtYm4K
+ 16PINWpGL7LxQ5qP6Ejcu1ZMDS0OGL8=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-111-NnVbWHPsNWWFMn94IsqIdQ-1; Fri, 14 Mar 2025 12:54:13 -0400
-X-MC-Unique: NnVbWHPsNWWFMn94IsqIdQ-1
-X-Mimecast-MFC-AGG-ID: NnVbWHPsNWWFMn94IsqIdQ_1741971252
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5498963ebc3so1256711e87.0
- for <dev@dpdk.org>; Fri, 14 Mar 2025 09:54:13 -0700 (PDT)
+ us-mta-21-BbaRb0ZfPzSWt0SZV1Qaww-1; Fri, 14 Mar 2025 13:21:32 -0400
+X-MC-Unique: BbaRb0ZfPzSWt0SZV1Qaww-1
+X-Mimecast-MFC-AGG-ID: BbaRb0ZfPzSWt0SZV1Qaww_1741972891
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-549971b3247so1178223e87.2
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 10:21:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741971252; x=1742576052;
+ d=1e100.net; s=20230601; t=1741972891; x=1742577691;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0ryWBlWkLr91pc+heYkXAg8Pd8EmDFeOBf+lnOQqdsw=;
- b=JbVaeMmRe9RSvwm7iQXlh9NxsrY0MKmEmXTees/j1pG1ro57FiGTK5YFXPY8oSqbu8
- gT3Q12DuB6LEyklbB6gwWqGK/WlQbXLCPTWRGrXLc6tJM3aMZif8mLFvoNjimUuQrlHm
- M4NjCn9zsGuyIRb9PzaZzXh4cmHfy6NkloLNT/or86lP+NS0cklmzX5Rsfn8RIWwB009
- YEGM1WcW/aMtqbmfsboBHmaI+itXIQW/mPG3hnc76blET1xxo5WwzmC2XJ+jUwUJJ1Na
- 15pM7DazL2fUr5ilyXJ4Giwm6Y9DHN0oaO9obAOJYhTlJ493hxqdVP2uP1XdYuADF8Bt
- +ovA==
-X-Gm-Message-State: AOJu0YxYaSEit9+8VPKJXvqjjG8yoZUI6UKHlAMFkfJzwVqjY0YD4Rlz
- uKUvR83BjNkXlkUPYsmUiuFUhSJDNc7hrZSzp5/DjSTENDchqVgJjAZ5ZT9rhOuvVTveKtAIuZA
- u5LNHx6+4xAZKFzo9Q6mvdD3VxqPsH4EbrWu0/ZlNDWUAq3c8T+hehR7ocNP+8AwlYROOV/AtMp
- jeLcLZ9MS+3BA5RPc=
-X-Gm-Gg: ASbGncs+KGp17iVL11lrHyNc73wpLwjSb6bCvl4eg5YdT+kqYOIu+y5RnGdsqmAsjpT
- ebg2r0FDdEDtKF8FQB9AjmX6IA9NIyLwdO77xjCI7PFr84mA+egDF7Of/GIYgDXKi3dxog+Acic
- Q=
-X-Received: by 2002:ac2:4c4d:0:b0:549:2ae5:99db with SMTP id
- 2adb3069b0e04-549c39aab78mr1355574e87.45.1741971251747; 
- Fri, 14 Mar 2025 09:54:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH70/du5M0qop1IjjFK/mEvfZnqEcWw0XdgEsKvfhUveJjUEYQjiZczt1tmN5SLkT2HDWNPWAJZxZJn2WFdKzc=
-X-Received: by 2002:ac2:4c4d:0:b0:549:2ae5:99db with SMTP id
- 2adb3069b0e04-549c39aab78mr1355490e87.45.1741971251147; Fri, 14 Mar 2025
- 09:54:11 -0700 (PDT)
+ bh=8AlZMUtiNjMhLBr7H+9412Z+D1tZLI5gnum7KXcXLLQ=;
+ b=sZbx3mKmt6bUD2yc26gxljW0Ezft3FQyXoFJ+Y+LvouekOxWAE6lgEI7PM1+5XmhKE
+ DcP7BSJN7ZEzobe0h2aetBnsTD+5D3oImGAOhpqbtf9OvkVosMf6CJuBkpTejiPej7R/
+ 3FJxUBmFuQXRYDUDvVrT5UREEdIBHLtO8yyeAyfeUpRvXpj25Io8M+6Y6HuC8ANDx+yi
+ Rzt9yDUGqqVTW7nDk218oADCbBKVLCAaXg218AMZW2we3L4Q3zigigbiAoFRz8X9h4IU
+ tWWwm/3dQFEtsB0AbfD6Jeek/kKuR86ep52aP++/76f1qTtQbt/SUPEJyrTC5kkV5vxS
+ gfMA==
+X-Gm-Message-State: AOJu0YzW9qXH/LFd2K2ByvMfkQvbzLUnI8Z6/cOFcWtM3zJ+/TbmYT0u
+ NNKD8Kvvo/BTg0N9YygXHLJ47OPt2MlgviwCaWpDELbxQ7BdKKPokSfy0iV0ssAoc2R7LfzrJ9l
+ TgML49yY4HxKEGq4uxg2yfAkMWu0Vl+QrfCu1D4IWU9eFdgLtpkqrNYRSwLwxV7KrLLh7GdFgAq
+ rbEdwa+sz0HRVNkOM=
+X-Gm-Gg: ASbGncveyw6Uulax+raDBKr31nVpINt0k61IhV+U1tnMevr3J0f2XPDXUbouAeEW9S8
+ W4mWl0HQ/YmcbPCs4Xp0Inh7Pza39cvs2mKHW6XPXj0eoi0Mb/XKWYUZl/uKG75EbNQjCXjRfQF
+ 0=
+X-Received: by 2002:a05:6512:1282:b0:549:8b94:9b93 with SMTP id
+ 2adb3069b0e04-549c39afa83mr1335328e87.49.1741972890646; 
+ Fri, 14 Mar 2025 10:21:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhX9esVSFWF2RRoAYaIbqV0jZt8S4eui15vR9WauuckdU/jtUgqtcgFbOda7ok0h5Txs7O39vimuEbCuxbzCE=
+X-Received: by 2002:a05:6512:1282:b0:549:8b94:9b93 with SMTP id
+ 2adb3069b0e04-549c39afa83mr1335262e87.49.1741972890072; Fri, 14 Mar 2025
+ 10:21:30 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
  <20250311095609.194523-1-david.marchand@redhat.com>
@@ -63,11 +63,12 @@ References: <20250305212349.2036410-1-david.marchand@redhat.com>
  <Z9MWQR_o3m4T_rFt@bricha3-mobl1.ger.corp.intel.com>
  <CAJFAV8w0MPV7XQpMyiGTsSVDGuW1LctGyrXZ6n52O7AYzij7Zw@mail.gmail.com>
  <Z9RYCXF6Ag23k8Uy@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <Z9RYCXF6Ag23k8Uy@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8zsgxW7goppOjNariu_oA+ET5HeNTOeepDSHsE31KmkNA@mail.gmail.com>
+In-Reply-To: <CAJFAV8zsgxW7goppOjNariu_oA+ET5HeNTOeepDSHsE31KmkNA@mail.gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 14 Mar 2025 17:53:59 +0100
-X-Gm-Features: AQ5f1JrEGj9Az8Jq3hzz6kJKgbEihPGinEZM8XJzZVbObN5bvhXYJiaimaqq5VI
-Message-ID: <CAJFAV8zsgxW7goppOjNariu_oA+ET5HeNTOeepDSHsE31KmkNA@mail.gmail.com>
+Date: Fri, 14 Mar 2025 18:21:18 +0100
+X-Gm-Features: AQ5f1JqdLk6ThwU8UbWZWRaknjhBfCVn04vIYEGiAj8W4jtKutM-EReVWx7Ao2Q
+Message-ID: <CAJFAV8xcNXBSCmcayGJshsTQBXC7raSYELSoCYGtigKr8-044g@mail.gmail.com>
 Subject: Re: [RFC v3 6/8] build: mark exported symbols
 To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: dev@dpdk.org, thomas@monjalon.net, andremue@linux.microsoft.com, 
@@ -136,7 +137,7 @@ Cc: dev@dpdk.org, thomas@monjalon.net, andremue@linux.microsoft.com,
  Gaetan Rivet <grive@u256.net>, Volodymyr Fialko <vfialko@marvell.com>, 
  Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6viSExtZ1pk8_lsomdGVP5RVFe_5n78-Me-ecO1Tnd4_1741971252
+X-Mimecast-MFC-PROC-ID: oCDFkdNjbzErABSDdmIMB8aKtdJv2eAd1C6RLDpdNEc_1741972891
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -153,75 +154,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 14, 2025 at 5:24=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Fri, Mar 14, 2025 at 5:53=E2=80=AFPM David Marchand
+<david.marchand@redhat.com> wrote:
 >
-> On Fri, Mar 14, 2025 at 05:14:34PM +0100, David Marchand wrote:
-> > On Thu, Mar 13, 2025 at 6:31=E2=80=AFPM Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > On Tue, Mar 11, 2025 at 10:56:04AM +0100, David Marchand wrote:
-> > > > Annotate symbols with newly introduced export macros.
+> On Fri, Mar 14, 2025 at 5:24=E2=80=AFPM Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> >
+> > On Fri, Mar 14, 2025 at 05:14:34PM +0100, David Marchand wrote:
+> > > On Thu, Mar 13, 2025 at 6:31=E2=80=AFPM Bruce Richardson
+> > > <bruce.richardson@intel.com> wrote:
 > > > >
-> > > > For code not compiled by lib/meson.build or drivers/meson.build (li=
-ke AVX
-> > > > separate libraries, or sources in /base/ drivers), the exported sym=
-bols
-> > > > are added in some file listed in the sources so they get caught by
-> > > > lib/meson.build or drivers/meson.build.
+> > > > On Tue, Mar 11, 2025 at 10:56:04AM +0100, David Marchand wrote:
+> > > > > Annotate symbols with newly introduced export macros.
+> > > > >
+> > > > > For code not compiled by lib/meson.build or drivers/meson.build (=
+like AVX
+> > > > > separate libraries, or sources in /base/ drivers), the exported s=
+ymbols
+> > > > > are added in some file listed in the sources so they get caught b=
+y
+> > > > > lib/meson.build or drivers/meson.build.
+> > > > >
+> > > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > > > > ---
 > > > >
-> > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > > > ---
+> > > > Just checking: for the AVX2 and similar instruction-set-specific fu=
+nctions,
+> > > > we don't get errors if those are not present in the actual link pha=
+se, e.g.
+> > > > when building on non-x86 platforms? We don't need to put an #ifdef =
+around
+> > > > the exports?
 > > >
-> > > Just checking: for the AVX2 and similar instruction-set-specific func=
-tions,
-> > > we don't get errors if those are not present in the actual link phase=
-, e.g.
-> > > when building on non-x86 platforms? We don't need to put an #ifdef ar=
-ound
-> > > the exports?
+> > > We are not there yet, but it is likely MSVC linker will complain, ind=
+eed.
+> > >
+> > > #ifdef around the exports won't work, we would need a precompiler pas=
+s
+> > > (and exclude rte_exports.h inclusion).
+> > >
+> > > Another option would be to provide stubs for those symbols when the
+> > > additional AVX512 (for example) libraries are not compiled.
+> > >
+> > > But I think the simpler is to let a driver/library provide a set of
+> > > sources to parse for exports... maybe via an extra variable?
+> > > WDYT?
+> > >
+> > Yes, something like that could work.
 > >
-> > We are not there yet, but it is likely MSVC linker will complain, indee=
-d.
+> > What I'd actually like more, but never have had time to actually try ou=
+t is
+> > to generalise the instruction-set-specific build stuff into the higher =
+level
+> > drivers/meson.build code. After all, much of the code for doing so is j=
+ust
+> > duplicated - check for AVX512 or AVX2 and if present build these files =
+with
+> > the extra flags for that instruction set.
 > >
-> > #ifdef around the exports won't work, we would need a precompiler pass
-> > (and exclude rte_exports.h inclusion).
-> >
-> > Another option would be to provide stubs for those symbols when the
-> > additional AVX512 (for example) libraries are not compiled.
-> >
-> > But I think the simpler is to let a driver/library provide a set of
-> > sources to parse for exports... maybe via an extra variable?
-> > WDYT?
-> >
-> Yes, something like that could work.
+> > Something similar with the base code. Most base code builds follow pret=
+ty
+> > much the exact same routine.
 >
-> What I'd actually like more, but never have had time to actually try out =
-is
-> to generalise the instruction-set-specific build stuff into the higher le=
-vel
-> drivers/meson.build code. After all, much of the code for doing so is jus=
-t
-> duplicated - check for AVX512 or AVX2 and if present build these files wi=
-th
-> the extra flags for that instruction set.
+> Having those separate libraries require special cases every time, so
+> yes, it would be great if those could be factored in some shared
+> mechanism in drivers/meson.build.
 >
-> Something similar with the base code. Most base code builds follow pretty
-> much the exact same routine.
+> Putting the AVX stuff aside, and back to why we need those separate
+> libraries for base drivers... I think the main use is to waive some
+> build warnings, is there something else?
+> If so.. I think some drivers could already be cleaned (like net/e1000,
+> net/ngbe, net/octeontx, net/thunderx, net/txgbe, raw/ifpga at a first
+> glance).
+>
+> The AVX stuff seems a bit more complex, as there are multiple combination=
+s...
 
-Having those separate libraries require special cases every time, so
-yes, it would be great if those could be factored in some shared
-mechanism in drivers/meson.build.
+CFLAGS_file.o +=3D -Wno-stuff was so handy ... :-)
 
-Putting the AVX stuff aside, and back to why we need those separate
-libraries for base drivers... I think the main use is to waive some
-build warnings, is there something else?
-If so.. I think some drivers could already be cleaned (like net/e1000,
-net/ngbe, net/octeontx, net/thunderx, net/txgbe, raw/ifpga at a first
-glance).
-
-The AVX stuff seems a bit more complex, as there are multiple combinations.=
-..
 
 --=20
 David Marchand
