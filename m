@@ -2,67 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE3AC282DE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Mar 2025 23:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F4C282DE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 00:58:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1D804028A;
-	Fri, 14 Mar 2025 00:46:11 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 3166340289
- for <dev@dpdk.org>; Fri, 14 Mar 2025 00:46:10 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2feb91a2492so2778264a91.2
- for <dev@dpdk.org>; Thu, 13 Mar 2025 16:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1741909569;
- x=1742514369; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:subject:to:from
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=cN89hwOpDs7i42WHBgoiv2pk6XI6PdlFSkfbtQOSuHw=;
- b=prVVPIlE6O0+gNunLFxuayM8ltRy9SQWmgtUaNsptohiPrKTEMYADRo3soO1gGdQJF
- xSXU3IG8cII5u0n7hBEg8ZfhrWLr9c3Kp9UUVrEqLO5BgzqE0gNL5DZOQ1Z/filOCPbk
- JnS+RNcjpPv6S4hRB/YLjRaGl/gT2FYHBDRHyyqXEK314EAkTNpCYlhoX16Icr8fOJ00
- Bxc5FdnDmy+vdMz4N+2z9mSqXBSuUr+P7LdriXtaygob6Eqhl0LOksua6y4rVUFdMvfL
- sfufGlBsz8uD3m2SQhnqtMfkwacgVzgAoCPWLuUvjZyitfxcCazDxjzwfNyBMzecOhA4
- 4qAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741909569; x=1742514369;
- h=content-transfer-encoding:mime-version:message-id:subject:to:from
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=cN89hwOpDs7i42WHBgoiv2pk6XI6PdlFSkfbtQOSuHw=;
- b=Zos6i4tKqmdGxAlYoOYYgW0X3kc8Ssw70UZ0mqHDgOrR/pOaicIaK7A3qt9dORTy84
- YhXjAWRZ2pnLdqR0yyJ811gpybgwN0ZhPz8rq+Nq6S65NuAmdddgLoYU5iKnU/k4RB4g
- BJFpbnR5vpNZVO4xL3gfWSj74RZhq8YbELLjXOY1ku3r6Oivj4m/79HovIe+mhg+qkrH
- QA3b2IdGThEaYHE9bwm5UVsKlGYJcVBZ0mvNqJB3hal5tyE7X9AesBhTC08MHuViKYhb
- tI2kHkAL40R3NEQED5Zzz5H9PKf3olIw2bTvmQyDEg30F99Syn3dSo3sJnY/hchoTPQW
- 6C6w==
-X-Gm-Message-State: AOJu0Yxz8XKyrCm5ROsCte9WtwhXty2AzaM+CNey7RUUzcH2YCvjqPn6
- 4dyVAAVMyxDFJsx2ATZvn5cZHC8XpBtV3JuTJrLibTxCCZSFN29SJRNcIxPXuSUeG32h10ydSPj
- r
-X-Gm-Gg: ASbGncvOoipSwfbtxwKTTBpKLSNprzzXFC749xDqF69qNA0MDBbgOgwaFLppI0zBMPJ
- rsF2hP1PrsoLQhZL9o+n9YMQDwkLwiVPEzssnW/x6zuiiaExO6BDO94UHJ5ls0T5mF01Ym6jaju
- KXUKLYgxyUf9ZQwioYogVBbAjcrhy/LPjDzRni4tHGZrgu10m13lV5xskXEfqp0GG70snu0R7x8
- yz2UlYjenfd8H87e83XYaiE/gukbt6ZTVbubgJ0qRkW9+ybA8rQbpqkLz/h+a9DWAtfzRO8hwio
- gQFkKMnlbFlvVpeogYECBx+ZaAwewDdb/TottXXd5ZoZmXZ23u3g8s2snVUvwdzvCefMt73roeV
- pFpfn5ts74d669BbVZc9IArULYtle4pn0
-X-Google-Smtp-Source: AGHT+IGAgt6cdKp7yRGrGQoCPUYcl+K9cPkbOOQq8vWNZWC9e6MMQIQtO24mfjvk2ezQA1IC5kQbkA==
-X-Received: by 2002:a17:90b:1343:b0:2ee:693e:ed7a with SMTP id
- 98e67ed59e1d1-30151d81735mr444392a91.35.1741909568968; 
- Thu, 13 Mar 2025 16:46:08 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-301390b05a4sm1997155a91.49.2025.03.13.16.46.08
- for <dev@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Mar 2025 16:46:08 -0700 (PDT)
-Date: Thu, 13 Mar 2025 16:46:06 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id AE3794025D;
+	Fri, 14 Mar 2025 01:58:37 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 890D54025A
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 01:58:36 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 64D40463A3; Fri, 14 Mar 2025 01:58:36 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: Techboard Meeting Minutes 2025-Feb-05
-Message-ID: <20250313164606.3716e5e2@hermes.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: [DPDK/ethdev Bug 1675] Shutting down the link on broadcom bnxt
+ BCM57508 100GbE doesn't shutdown link on peer side
+Date: Fri, 14 Mar 2025 00:58:36 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 21.08
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: major
+X-Bugzilla-Who: saurin.suthar@trellix.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1675-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17419139160.E5b0aF76.3060566
 Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,49 +56,182 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
-Members Attending
--------------------------
-Aaron Conole
-Bruce Richardson
-Hemant Agrawal
-Jerin Jacob
-Kevin Traynor
-Konstantin Ananyev
-Maxime Coquelin
-Stephen Hemminger (chair)
-Thomas Monjalon
+--17419139160.E5b0aF76.3060566
+Date: Fri, 14 Mar 2025 01:58:36 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-NOTE: The technical board meetings are on every second Wednesday at 3pm UTC.
-Meetings are public, and DPDK community members are welcome to
-attend. Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+https://bugs.dpdk.org/show_bug.cgi?id=3D1675
 
-Next meeting will be on Wednesday 2025-Feb-19 @ 3pm UTC, and will be
-chaired by Morten.
+            Bug ID: 1675
+           Summary: Shutting down the link on broadcom bnxt BCM57508
+                    100GbE doesn't shutdown link on peer side
+           Product: DPDK
+           Version: 21.08
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: major
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: saurin.suthar@trellix.com
+  Target Milestone: ---
 
-Agenda Items
+We are using BCM57508 100GbE 2-port NIC AOC-A100G-B2CM
+https://www.supermicro.com/en/products/accessories/addon/AOC-A100G-b2CM.php
 
-1. Video platform for up coming summit in Prague.
-General consensus was that Youtube was easiest and most accessible to remote
-participants. With possible backups of Slack and Discord. There is a problem
-in that many of these platforms are not accessible in China.
+Running alma linux 5.15.133 kernel with dpdk v21.08. Both 100G ports are
+working normal and able to tx/rx. But when I bring the link down using
+"ifconfig ethx down" the link status shows it is down. But on that interfac=
+e,
+packets are still coming, also peer side link is not going down. Is there a
+patch available for this? If I bring the link down from peer side, link goes
+down on my machine side.
 
-2. Code Challenge
-The survey showed that were 5 items that would be worth pursing.
-  - WiFi support
-  - Code coverage
-  - review and bug triaging (using AI?)
-  - document best practices with DPDK
-  - L2 learning bridge
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
-But in order to make progress, need more involvement.
-Stephen is willing to help but doesn't want to be the sole person trying
-to make it happen.
+--17419139160.E5b0aF76.3060566
+Date: Fri, 14 Mar 2025 01:58:36 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-3. Process issues
-Aaron raised the issue that patches come to often and overload the CI
-infrastructure (as well as reviewers). Will work on a draft policy
-to give contributors on guidelines (once per day) and more feedback.
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Shutting down the link on broadcom bnxt BCM57508 =
+100GbE doesn't shutdown link on peer side"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1675">1675</a>
+          </td>
+        </tr>
 
-See "doc: Document frequency and volume limits on patches."
+        <tr>
+          <th>Summary</th>
+          <td>Shutting down the link on broadcom bnxt BCM57508 100GbE doesn=
+'t shutdown link on peer side
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>21.08
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>major
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>saurin.suthar&#64;trellix.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">We are using BCM57508 100GbE 2-por=
+t NIC AOC-A100G-B2CM
+<a href=3D"https://www.supermicro.com/en/products/accessories/addon/AOC-A10=
+0G-b2CM.php">https://www.supermicro.com/en/products/accessories/addon/AOC-A=
+100G-b2CM.php</a>
+
+Running alma linux 5.15.133 kernel with dpdk v21.08. Both 100G ports are
+working normal and able to tx/rx. But when I bring the link down using
+&quot;ifconfig ethx down&quot; the link status shows it is down. But on tha=
+t interface,
+packets are still coming, also peer side link is not going down. Is there a
+patch available for this? If I bring the link down from peer side, link goes
+down on my machine side.
+          </pre>
+        </div>
+      </p>
 
 
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1675">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17419139160.E5b0aF76.3060566--
