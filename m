@@ -2,185 +2,146 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61990C282EC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857D3C35FF1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:40:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D5C3402E9;
-	Fri, 14 Mar 2025 18:38:05 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 970BD400D6
- for <dev@dpdk.org>; Fri, 14 Mar 2025 18:38:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1741973883; x=1773509883;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=Qxp9gql91WLdh3TDXY111hdz8W7IYe15ucsJjDfoYo8=;
- b=cY86Drwds8xVq7R2jj6oZaEPcz+94EQBYw6ZhYKZ9KAB89EI8M//0Ig8
- 8xhzSweAMr36PcsOHUD+L1gvVony5yG+hgmvqIumnAVFbW/248GMsqYJF
- vCsaktXldjuqxd4OES0nXjwVMeV1wyaCkbIzn+Unl/f+vhnmDF3eJC+MR
- +tx5XQ6Kms4FQWEyQRjfp/Q1/nevnzvJi55Q6RjnrpcSAGbrHJt254y/f
- /KhTfzPQnW4b6Afju7LmYSKYwswaMd+SIbM7Z0/vyz5a+HI5gOG1l1saG
- PnUA4YGUCwu3LCPicvrmrZ0r9U3tDIjRgJHEahKlWS82DFPg82w3UkNME A==;
-X-CSE-ConnectionGUID: x4qfrRXWSUa0d/V2OiYXdA==
-X-CSE-MsgGUID: 3m6PjJYrRjOhQhoGQuKQ0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="53343226"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="53343226"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Mar 2025 10:38:02 -0700
-X-CSE-ConnectionGUID: rlQf6BclTnmxTzZoqpat6w==
-X-CSE-MsgGUID: kgxRzoahQva/LYb/c2IuZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="121855956"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Mar 2025 10:38:01 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 14 Mar 2025 10:38:00 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 14 Mar 2025 10:38:00 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 14 Mar 2025 10:38:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qcNaORbjho4UY+btDGjnfu0t0FBuCWJUdGa9lTHlPTketYsFq4p2azz90PobHc8NCjHygfC+BJgF2yd91ISgh+SwN0ZvrkAK4Cos0VqnL+CVEfWUVLtQEmYGCSOdUxcts2qIQSWPWPAmeu9h82KNlhQBZJTHusrIVrFOe/L1R0tnh6T3xlgIKuVe9LZ9+xTry3e4rNIx99ObzrcGeIjnZpEi+oZFr82dlRBXUwUOUkcuARriINpkNzUtBOnnOQ340P1Hc0hgFFlA4T+hdPp+RDZGDoFvXysbd8p/yuWivX7SwXfK1RZO5TkmdCu6npw7vutL6F4z72ZcDQArk6gAhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RGrE1rMUUrrd8waGctGxd6jEFawgkUp98e3Xx5UO3qs=;
- b=QMgnnDkwhe5DejWfsntMyHCM3eAfn3eJgrnZi50GYmiKRRnqhHyAXLEW7KP0HGQLGIOAskZYJS7s9qqPiNSuG8yhmY128/mZ2C6/cENtlDH3KFnokjMLfvb4qTOYm4aRiCPBZ/kDLOJVyM7aEkHRAc4GeoFzp+OT3dfcLtMTie3QB5GWJejS8W2mTCNFD/ldQysHmUB9O+8tOgkUTN4+Ij8ukYqVOaAYrpYIKdMSTnmGHGgCiMaXaT13KCQoUAtv2LaJb4Wpt3AcquVcLyucIInmuWYFjw4NIvIAsCuqzhH3NevCn6qVDKVpEnWsf+pzKuwHAgnB8wtgtZu05gy6uQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DM6PR11MB4516.namprd11.prod.outlook.com (2603:10b6:5:2a5::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
- 2025 17:37:57 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
- 17:37:57 +0000
-Date: Fri, 14 Mar 2025 17:37:52 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Ajit Khaparde <ajit.khaparde@broadcom.com>, Somnath Kotur
- <somnath.kotur@broadcom.com>, John Daley <johndale@cisco.com>,
- Hyong Youb Kim
- <hyonkim@cisco.com>, Chaoyong He <chaoyong.he@corigine.com>, Vamsi Attunuru
- <vattunuru@marvell.com>, Maxime Coquelin <maxime.coquelin@redhat.com>,
- "Chenbo Xia" <chenbox@nvidia.com>
-Subject: Re: [PATCH 3/3] drivers/net: build use common AVX handling
-Message-ID: <Z9RpcED9nSd5qVKG@bricha3-mobl1.ger.corp.intel.com>
-References: <20250314172339.12777-1-bruce.richardson@intel.com>
- <20250314172339.12777-4-bruce.richardson@intel.com>
- <CAJFAV8y7WZN59PpAjCqLnM_=KXMi8U22xvp_K5tDwYCC3+-qyA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8y7WZN59PpAjCqLnM_=KXMi8U22xvp_K5tDwYCC3+-qyA@mail.gmail.com>
-X-ClientProxiedBy: DB8PR06CA0010.eurprd06.prod.outlook.com
- (2603:10a6:10:100::23) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C15A400D6;
+	Fri, 14 Mar 2025 18:40:14 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E808400D5
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 18:40:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1741974012;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ltHdlUdyWJ42LTKxh1EdpUq8w+qWe4Qo66SMsXd8xMo=;
+ b=h+XaeMVvP5o/CCnIL/MTapKPZcZDllEaw3UL9xGsRv89KKmPNwFzrZwN9aiK4U2KTJrzgJ
+ ySF7nSjALRwHCm2ucFXFykK93bS7wSbpg9Lb3b1cN7lR06k7p8hw/XFseLBzEngkn4MwQq
+ RJTX6EZ0Eb/RlvHaUArnyCJ9dEzQRG8=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-SpbTPs1jNnKBzpwuu0nYzA-1; Fri, 14 Mar 2025 13:40:09 -0400
+X-MC-Unique: SpbTPs1jNnKBzpwuu0nYzA-1
+X-Mimecast-MFC-AGG-ID: SpbTPs1jNnKBzpwuu0nYzA_1741974008
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5499a93f894so2051955e87.1
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 10:40:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741974007; x=1742578807;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=ltHdlUdyWJ42LTKxh1EdpUq8w+qWe4Qo66SMsXd8xMo=;
+ b=A2ICV1VSLzsr10m7hYTPUeFriymV94TM0zyEsLeT3AnI0/k6SNfAID10eQr1dRQcJ0
+ ytkT7Nawq6vOQxhyXOwEj2gUiB1KJXrW9wPClsud/Ckq/5aBrKZ2ctwmf5HZT4AVTOpL
+ GmIyYDxIebxkGNmgaRSsbVOBfTdgSBFu6Ck5jydZUg4MEsi1G7Ie+dwvx+hrHvsc41w/
+ a1ZpK6eoM6mvawLxkJgTG94+0KvT0LwOr15OJRh2yta73n+LmTYvfyaMr26K1dBfEnc+
+ fmyT8Bqa9j0YKP89H7xZga3hqGAipABsDUko1O4Wv7XkzI9YmyHhRy4mG0UToACdzstE
+ dJvg==
+X-Gm-Message-State: AOJu0YyjM6tRRlP51hEF2F7u87rULkl8vlB+oQoxwsRdvkuz1bYq7N7W
+ fkPdamhC55E+kTqRvmG9fZz8o19oD+Wh065yh3tpd1BZEgGeuz3VaqDrSSqJdi9v+WScsrml41U
+ sRgv+6VWVkvCh0+6FzErAt2MRL/sRwWaIUHlAszbxzmh9302lXL12qX+DN5wF57tnoTDd+nfQay
+ DuYLHt96YOY2rUiog=
+X-Gm-Gg: ASbGncvjU6l5CCziboplHSGxJH+UMrkMb/SnT7QmhZ0K3b5QDFgLWVv0x5QdYZAqYUf
+ +uoBuKg+uySzgeO1uFE47jRb4lCfxk2cY7lqo4aEwDBVsWZoH/6+MhHEIxzk1NTC6kLawWrOSSq
+ g=
+X-Received: by 2002:a05:6512:3e1e:b0:549:8dd6:fb41 with SMTP id
+ 2adb3069b0e04-549ba44cc1amr3263320e87.24.1741974007336; 
+ Fri, 14 Mar 2025 10:40:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRGKZPpblarKhnwkfWiZnTKR3QSs7TRzqqb+m+I3hZvDSElBO5rOtUEJ1VU2J4899tsr8k+s/JroF0G5YASVc=
+X-Received: by 2002:a05:6512:3e1e:b0:549:8dd6:fb41 with SMTP id
+ 2adb3069b0e04-549ba44cc1amr3263253e87.24.1741974006882; Fri, 14 Mar 2025
+ 10:40:06 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM6PR11MB4516:EE_
-X-MS-Office365-Filtering-Correlation-Id: 935119a7-0228-4185-f8f7-08dd631ef55a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z3M2MFloYk1ON2FxekptOW1BUGgrOG8xU3NlQkZveDRFaVVhTEZ3Qzk1S1Jh?=
- =?utf-8?B?K1N3UFJzMzMwZkcvYU5tQS9RVGtVczM3eERuendKdEdMOU5yU3VSMnFJajZP?=
- =?utf-8?B?dm5GeXVlTU5BYk5FMmZoQmRYdi83M1NMN0h3UmdTUi9GRnBCMEJ3eHN4MDFk?=
- =?utf-8?B?b3pjMlNZb1R3TUxubTUyZVNaV3cwaGg1aEVlMEpUcjJGeU5PVmVkclJQelZR?=
- =?utf-8?B?SXVCNlV1azRZNnJpek1VUmdHVU5CcHpDVnNTdmVTR0pHYjkrKzVwZUt5bXJK?=
- =?utf-8?B?V1ROOHg2UzNFNUVSTmRKczBpQUY1dEhMUk5POHZLOERUQ3ZVemtFdnRpQ3hz?=
- =?utf-8?B?NWNKM0dramhhY0tsRXA1N2QrQ0F6UUI4alVzTjE1T3EwYnNiNTgwVUtDdnlx?=
- =?utf-8?B?TENOYXd4cEVIMEc5ajVHakEybEpNRXNOamZvVzB3NzAzY2d1YmdsSUEvMVpo?=
- =?utf-8?B?dHpaMkZjdVhuQUtrSGhteklrSjlUZDQxckF1QUFWK3FhOTFQbzIxcEhqMjNM?=
- =?utf-8?B?UzBqYUtKSHAvMTNXODF1K1dzVDZjd1VVa29CNlVCYW9rdFdBWlo2TU9SRnpF?=
- =?utf-8?B?Qm01eWJQdXJzTkJZRlJiYk9vTWx4ZDdHSTA4NmdzOE45TTcrVXRaa1BRbzZI?=
- =?utf-8?B?WFIvckw1TW9YYnpTRHFTTHFJNGJyUkJGMTZCalJvcFJSd1hKSXpUd3RlM21N?=
- =?utf-8?B?TXJwNUpkSTVIWTVOcWVldXQ1aUtZbWg4RlhhSE5VMjlWQ2ZrbGRCSm1WWmV6?=
- =?utf-8?B?QllXc2tWWitEMnF1OXRZb2NnM3oxSXdDRWVuZjY0MXdEM29VaWRRKzdWbWVl?=
- =?utf-8?B?TnpkT3AyUDB2N1hhbTlyRG5BcWxQcTBaQU11dzlMVDlWcWVrNm0zUlo0SXE0?=
- =?utf-8?B?REFsNEN3SjdpUjhjemR2N2psN2NKaHIyckQreUZYZkZ1VzJ2VlRoV0s5Z081?=
- =?utf-8?B?UnVlclNucXlKUEV2Z1o0VXNyOHFwelE4dS9Gb1NteU14Y1k3QTJCRm5MNGtF?=
- =?utf-8?B?WXZOY3FmajR2WWF3cUZLQVVBVG0yWXZ6ZEs4dEFvSXVETEx6NlFXdzlGWnpO?=
- =?utf-8?B?SmFFeHAra0xWWXVoakl3NExINEVFZy9YSlhjVFVWZHRZY2Z6NkNlaTF4WENn?=
- =?utf-8?B?aUlsT2UwNGZFYnp1Yk1objYzMCtxVGF4VnBLVTFGdjJURHJueU5zMTVRZEtL?=
- =?utf-8?B?d2VtN1pBMkJYbWZSNEgwNTRuTGExZURmL1lTYWZTSitnSXI1VUJFV3I5Z3Fj?=
- =?utf-8?B?UzQ0TFR6R2VCazlCTzBVMXZwTGQ0M1RsZWk1MGttbFdHNll3QVl2cm52ZllG?=
- =?utf-8?B?UWFVZFcxejZUTFhzcStYNDhhSHo0cHJ4cm9rb0tWNTlxdzFydjFBQkRaLzRW?=
- =?utf-8?B?dy8vdXdJMnAzWFFWZ0IzaURZVFd1RWdqT1BqOUIxVEVpMkwxT2lpdnM4TlBQ?=
- =?utf-8?B?MFJDbXpJR2pRaittL0NhZGR1REhiNzlQVXJkeERpMkNDVjUwYmtJMHlEVlo2?=
- =?utf-8?B?T24yWjRLL1Z6NHlmRGtFcCtMV0tOWjdsbmRDekRpemJRQTVKWkl2dUlpbDdC?=
- =?utf-8?B?cmx5RUlMaVMwTWtLSmVGSWVsbHliMDZobnRnMTZCL0drZHNTbjBMV1h6cTRt?=
- =?utf-8?B?aFhJV1Zrb2J0Kzh0ZG4xNkdPdUsxOUJ6MU9obndKS2ZjWUhNL2d0WVhuWGox?=
- =?utf-8?B?U3VyQTdBNy9zb05zODQwVGkzZTBxSEJaeWVsekJveVFEUmlkMjlhdmlxYzYv?=
- =?utf-8?B?aFg2R0xJTE5KUVV6MlZ5cTg0RzNqZHV5SVUyTHREUGpFdVV1VGR6TG5tUFJT?=
- =?utf-8?B?TUtEWE9QSkhrQUYzWFJCd0tHTHdVSFJnOTRUTURxTFl0VXl4eHRJM3orMm9i?=
- =?utf-8?Q?cs9ipoTN17ehz?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(7416014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dTlRWWNxVXJwRXBqeFlZdWEyM1hxRVAxQ1k0aFlnZ1FoZVQzYWlEcDI1Sjlm?=
- =?utf-8?B?NXF4Wk1jdjEyTHFyT3llckJVVEw3d054ajdGRXV0ekk4d0NqeXkyRXZzRlpS?=
- =?utf-8?B?WEowQkI2d1VFbVZmOUwrdSt5L05aaGkzeGZOK1FlQSt5eHBYK0ZhZUMyRkRW?=
- =?utf-8?B?c0hkY3ZrYnkvSHkzT2ZsTEFlZjd4L0E3NGNzczloa21JcWY1b2M1OEhWNnY5?=
- =?utf-8?B?YUoyVHZnTU9MUTFOWU8yREhPblAvSTJ0ei92YkR0a0VVMy8rcm9iZTFYdDlt?=
- =?utf-8?B?SHF2bkNaYWVkN2ZydWFJTWZhWHVKWlF3YnA0d0gvZ1A2MEF1VDhOcGJtUWM1?=
- =?utf-8?B?bU0vNk4vYU9Ud2c0NTZQWW9sME5wa0dScnowZjB0djVKTDJLNUZFL1FZeW1w?=
- =?utf-8?B?bDdUR1RpQ3ZnTTZhbEJzRWk4R3QxSTJ0UG5LMGJ0cEt4WkZIWWRlR29EMEU5?=
- =?utf-8?B?K1I4UFBHSnM1L0hSclRlNXJ3aEtUUEVqTHk2WlFJOS95RmdzZHV0dEtEc0ho?=
- =?utf-8?B?OHpaL3Y4UDNJWkpKV09QTFRDeGpQNEJpSUpkZ1BsZjdTOGpzcU1KYzNVY254?=
- =?utf-8?B?WlRQNFpHbHZRUjg3azNHNXA0d1J0MUhYd2k1Ti9pK1lsdzYwZDUzdlZJWkJx?=
- =?utf-8?B?R3dxT1FSV0Y3Q2VnM0F6b0tQWkM5QzBoRE9CZE9LVzZ5QTNnb2hqa3UwZzl0?=
- =?utf-8?B?UG9XY2dKaTU1RnpIdFJHWEU2RXBoTHJacHVJdzhSdGFSVGpoTGVPeUM1eFNL?=
- =?utf-8?B?akdxQS90aXBPT0xWb0ZoUzNMdEdOL3pZcnlvTHVhRnlIaW5SbmRiWDhYbFdS?=
- =?utf-8?B?c1NtNzQvK2p4VkJEdlBWUVN3R014amdVOHdEc1BLdU5JNDAwZDNEbHRkNGJY?=
- =?utf-8?B?TXE4Zm01L1BqMUJpUDlvMXBoNk5HM1ZiUmFObUVWV1ZNWmhESHBVN2FpcWs0?=
- =?utf-8?B?VlRxdGxTN0dQYXpkcjZCc1cvekJaLyt2SGNEMWZmUVBzL1N5NzJpdVI4WWJL?=
- =?utf-8?B?TFpGODRPUHVnT1gxaHBidmZrUjJYOVFEc2ltekZmd0lIa1gwZGJQVXV6THVx?=
- =?utf-8?B?WE5KUWxwOEw3QlJ6Q01xdU1EQmhIWHVRNGE2QmE1YytVQUErMWpmOHlJeG9v?=
- =?utf-8?B?OU9DSHlSOGdSM1JqZGRBNGtwbFpWU3dKQUcvb1A0MXhlQmVvVUNsdjVVRVhh?=
- =?utf-8?B?dTYwZ2l0d3l4NjV1VU54SHovSVVZS0FpdjA0dnVFS0tHdXE3OXBZbFhtMnhv?=
- =?utf-8?B?L2E2d2g2bVBubDg3OGxDSnVuMzVyZXhwZmZZKzFxZGlDdE5KcUcwcHpnamdp?=
- =?utf-8?B?T09OZTVVTy9XRW52SENCb0VnUzdKV0pwQk8yYmlsd1g3U3VlKzVtVGFkcWtm?=
- =?utf-8?B?MUFBOGN5eGFRdEpBaWJWUGc1dTBEUE1kMWJwUU5NWDJQQkZVL2d1MEswbmEz?=
- =?utf-8?B?WXZRUlVYcUVEYWJXMWtFNm8vZDh0bEd3Q1RRc1RUOEVlT2wvcFNpM3FCc1Vv?=
- =?utf-8?B?REM5bURjMTY3a2luVzFqazJVU0VzS1NqOWdQdEo0WVh2TjI3WHRUYmh2WCtL?=
- =?utf-8?B?aWZZaTBkOGF6cXA2MWVETTVVaDVsSEZvYmdrNVFydnd6MmFoSUhudkE3T2Fi?=
- =?utf-8?B?WUVCekhtSVh6RDJCZ0xRaGVRb0tVbmoxd0FDb3ZBQXRMS1l3SGJ2MEFsdEp2?=
- =?utf-8?B?ZmJlR1BwNVFsRktyZk4rdWJvUjVqZHFXbzQ3K2JZM085SlY2OUFhZGhMR29y?=
- =?utf-8?B?UC9JaFhzdEQySnphS211NHJEMDlQSi9MSjkzalVOMFRLREZZVDZtNEt1cUJH?=
- =?utf-8?B?SjdlQkFxcTE4Zis3SzJzQmJvZDN3MDkwL084YmlyTFRrTVF1MGxHeTlSY3gv?=
- =?utf-8?B?UkxySTRxMnRvRitTb1ZHMG50Sm80SWgzWCtta096czZ2SDc1RWNkZ2MzRGtp?=
- =?utf-8?B?bWVLR3ZRRE1mOVorRklXeHhNOHFGSFNqNjNSbDhDM0JKU3B5dnkwQmV4eGF0?=
- =?utf-8?B?cTllUXc0QytmNGd4MjR6MDQrN3ppK0lzVHM1Y2VHMDloM1N2dDBwQ0Ywbmtu?=
- =?utf-8?B?ZFNKOSt0U1RSR3NDUEJ0OStvczIvZ0ZUWUR4OEZkZzR0MkxGT1dvQUZzY1RS?=
- =?utf-8?B?MTZMQ0UwajFGQWxaZGh4TjFjZDMrVk83VEJEdUR0cVlxQnNDZGtCRWR2OXlr?=
- =?utf-8?B?b0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 935119a7-0228-4185-f8f7-08dd631ef55a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 17:37:57.5096 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +LYggQ56lIcMDonl7FAwE0Z0Oamob8RZpIUfIP5n+x4KJaN1FWTedbH0yPPWQYpAGF5knxJ5CxhaSaDn9UpO7T7xZoSi4mbh9MG7WJjZ9s4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4516
-X-OriginatorOrg: intel.com
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+ <20250311095609.194523-1-david.marchand@redhat.com>
+ <20250311095609.194523-7-david.marchand@redhat.com>
+ <Z9MWQR_o3m4T_rFt@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8w0MPV7XQpMyiGTsSVDGuW1LctGyrXZ6n52O7AYzij7Zw@mail.gmail.com>
+ <Z9RYCXF6Ag23k8Uy@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8zsgxW7goppOjNariu_oA+ET5HeNTOeepDSHsE31KmkNA@mail.gmail.com>
+ <Z9RnNPIKpBD5Oz0Y@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <Z9RnNPIKpBD5Oz0Y@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 14 Mar 2025 18:39:54 +0100
+X-Gm-Features: AQ5f1JpEWFccSfmsegDt2npFMhGkU0kfsODgx2bo-Hb9S1FEESNB2lh1W2O-P6Y
+Message-ID: <CAJFAV8wrmuhn-nsiDc+RrCqth13hjyrubhqcZK17mqpDaDVuWw@mail.gmail.com>
+Subject: Re: [RFC v3 6/8] build: mark exported symbols
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, andremue@linux.microsoft.com, 
+ Nicolas Chautru <nicolas.chautru@intel.com>, Parav Pandit <parav@nvidia.com>, 
+ Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, 
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, 
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
+ Wei Hu <weh@microsoft.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
+ Anoob Joseph <anoobj@marvell.com>, Andrew Boyer <andrew.boyer@amd.com>, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Liron Himi <lironh@marvell.com>, 
+ Chaoyong He <chaoyong.he@corigine.com>,
+ Nagadheeraj Rottela <rnagadheeraj@marvell.com>, 
+ Srikanth Jampala <jsrikanth@marvell.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
+ Ankur Dwivedi <adwivedi@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, 
+ Gagandeep Singh <g.singh@nxp.com>, Kai Ji <kai.ji@intel.com>, 
+ Vamsi Attunuru <vattunuru@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, 
+ Shijith Thotton <sthotton@marvell.com>, Pravin Pathak <pravin.pathak@intel.com>,
+ Ashwin Sekhar T K <asekhar@marvell.com>, Igor Russkikh <irusskikh@marvell.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>, 
+ Chas Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Ian Stokes <ian.stokes@intel.com>, 
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, 
+ Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty <praveen.shetty@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>, 
+ Maxime Coquelin <maxime.coquelin@redhat.com>, David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
+ Akhil Goyal <gakhil@marvell.com>, 
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Fan Zhang <fanzhang.oss@gmail.com>, 
+ Ashish Gupta <ashish.gupta@marvell.com>, 
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>, 
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, Jerin Jacob <jerinj@marvell.com>,
+ Harry van Haaren <harry.van.haaren@intel.com>, Min Zhou <zhoumin@loongson.cn>, 
+ David Christensen <drc@linux.ibm.com>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>, 
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Byron Marohn <byron.marohn@intel.com>, 
+ Yipeng Wang <yipeng1.wang@intel.com>, Ferruh Yigit <ferruh.yigit@amd.com>, 
+ Abhinandan Gujjar <abhinandan.gujjar@intel.com>, 
+ Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>, 
+ Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
+ Elena Agostini <eagostini@nvidia.com>, 
+ Zhirun Yan <yanzhirun_163@163.com>, Jiayu Hu <hujiayu.hu@foxmail.com>, 
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Reshma Pattan <reshma.pattan@intel.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>, 
+ Gaetan Rivet <grive@u256.net>, Volodymyr Fialko <vfialko@marvell.com>, 
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: g_E5HiFbXXhu0nGEXsIoRxVdsVEmVPfz-bQMHu8QDUM_1741974008
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -194,36 +155,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 14, 2025 at 06:31:08PM +0100, David Marchand wrote:
-> On Fri, Mar 14, 2025 at 6:24 PM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> > diff --git a/drivers/net/octeon_ep/meson.build b/drivers/net/octeon_ep/meson.build
-> > index 1b34db3edc..9bf4627894 100644
-> > --- a/drivers/net/octeon_ep/meson.build
-> > +++ b/drivers/net/octeon_ep/meson.build
-> > @@ -15,18 +15,8 @@ sources = files(
+On Fri, Mar 14, 2025 at 6:29=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> > > What I'd actually like more, but never have had time to actually try =
+out is
+> > > to generalise the instruction-set-specific build stuff into the highe=
+r level
+> > > drivers/meson.build code. After all, much of the code for doing so is=
+ just
+> > > duplicated - check for AVX512 or AVX2 and if present build these file=
+s with
+> > > the extra flags for that instruction set.
+> > >
+> > > Something similar with the base code. Most base code builds follow pr=
+etty
+> > > much the exact same routine.
 > >
-> >  if arch_subdir == 'x86'
-> >      sources += files('cnxk_ep_rx_sse.c')
-> > -    if cc.get_define('__AVX2__', args: machine_args) != ''
-> > -        cflags += ['-DCC_AVX2_SUPPORT']
-> > -        sources += files('cnxk_ep_rx_avx.c')
-> > -    elif cc.has_multi_arguments(cc_avx2_flags)
-> > -        cflags += ['-DCC_AVX2_SUPPORT']
-> > -        otx_ep_avx2_lib = static_library('otx_ep_avx2_lib',
-> > -                        'cnxk_ep_rx_avx.c',
-> > -                        dependencies: [static_rte_ethdev, static_rte_pci, static_rte_bus_pci],
-> > -                        include_directories: includes,
-> > -                        c_args: [cflags, cc_avx2_flags])
-> > -        objs += otx_ep_avx2_lib.extract_objects('cnxk_ep_rx_avx.c')
-> > -    endif
-> > +    cflags += ['-DCC_AVX2_SUPPORT']
-> 
-> Could it be set by drivers/meson.build?
-> Similarly to AVX512.
-> 
-Yes, but really I'd rather see it removed. It's now the same as the defines
-for x86, since we always build AVX2 support when building for x86, because
-all compilers we support can generate AVX2 code.
+> > Having those separate libraries require special cases every time, so
+> > yes, it would be great if those could be factored in some shared
+> > mechanism in drivers/meson.build.
+> >
+> > Putting the AVX stuff aside, and back to why we need those separate
+> > libraries for base drivers... I think the main use is to waive some
+> > build warnings, is there something else?
+> > If so.. I think some drivers could already be cleaned (like net/e1000,
+> > net/ngbe, net/octeontx, net/thunderx, net/txgbe, raw/ifpga at a first
+> > glance).
+> >
+> > The AVX stuff seems a bit more complex, as there are multiple combinati=
+ons...
+> >
+>
+> First attempt seems to go surprisingly smoothly[1]. It still builds, whic=
+h is
+> a start, though obviously some testing will be needed to check nothing el=
+se
+> is broken.
 
-/Bruce
+If it builds.. what more to ask for? :-)
+
+> It really helped that most code just seemed to have been copy-pasted arou=
+nd
+> the place.
+
+I had a quick look, it lgtm on the principle.
+
+Could this be applied to lib/ ? (I see some complications with AVX512
+special instructions in lib/net..).
+
+
+--=20
+David Marchand
+
