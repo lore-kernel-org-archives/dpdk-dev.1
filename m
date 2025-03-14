@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D26F6C28B30
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752ADC282EC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:57:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0DB6940289;
-	Fri, 14 Mar 2025 14:55:56 +0100 (CET)
-Received: from fout-a7-smtp.messagingengine.com
- (fout-a7-smtp.messagingengine.com [103.168.172.150])
- by mails.dpdk.org (Postfix) with ESMTP id 3E88B400D5
- for <dev@dpdk.org>; Fri, 14 Mar 2025 14:55:54 +0100 (CET)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal
- [10.202.2.49])
- by mailfout.phl.internal (Postfix) with ESMTP id 9E1351382DCE;
- Fri, 14 Mar 2025 09:55:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-09.internal (MEProxy); Fri, 14 Mar 2025 09:55:53 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id AE4AA40289;
+	Fri, 14 Mar 2025 14:57:25 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 521EF400D5
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 14:57:24 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id D3F1311400A4;
+ Fri, 14 Mar 2025 09:57:23 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Fri, 14 Mar 2025 09:57:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1741960553;
- x=1742046953; bh=QvJeVpkrpqEwDtJthbFCLpeaEcNUow8v43aMmANFibQ=; b=
- WmoeFqfRS9G3otS0hAVqIDMYc3oRktRVTrjquhEkPwfzv8Cx+ljVXZml8VolxTf8
- 07ilVvB/zEmiHsqDwNKRJkXLA9ll1bbNVntuz+awpC7scz/kML77ziJ3m9buOxzO
- k4f6F/3SN3iiSU3IGIZ8BffdTbBRlO3ot28pyVh7HO/sC1UbNu9yfaju/kXJ9nJx
- yvdh7oftJ2clurzhDonCW2XVLM+69UOKXUbKEnUuJ+bbqVFOiE9qIi41p7wKmjDk
- R3D/NSowG4HIptfqZ1nEbgzhW7dgTuJhRwwofY0CmUammBgbIt2AJXSdqUtMUC52
- iMVGzA3qEl67UbSGGOGMVg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1741960643;
+ x=1742047043; bh=7paG3sA7GCgVCEvHCc+wuphAW2aRuorqB3C9VxCPgK8=; b=
+ f9eZ80UDa7HwvuBH3pV+7+X+kxWUSQ8sX3yJVPiEUaIbI0KxK55fm0VFsQ31mWDc
+ p5qWOAJOm2owK3LOhzAa8tU/cQbeHMKYrzP49elbwkN35PNOGpp2U5LlIravKNZE
+ EFGKSDol/Ge3ScftgFEljx1ZVZEarFp0pJaqiK6sDfCJ5Kip6M1YTnSlilVZeQje
+ Q9U32215MBCHH72bcahSbihmVR80rYBS1duPUhv0CqASqgibWen0k3zRim/3P+0b
+ JSy0FAp7Z37KMjjp0vY6WzXIn1ONvsBvb0GJLgmcdsIbx14xAdS7yc9t6daGci0t
+ 9hW1G66M2UxsTKyN2w5sVQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741960553; x=
- 1742046953; bh=QvJeVpkrpqEwDtJthbFCLpeaEcNUow8v43aMmANFibQ=; b=O
- +hQbasOtvdzl3/rTHwFR3WxXRCheCReLQe3mTNt7n0NMNPbQdfUYEYOemjbJcf1D
- yL0BWm6t7OuT5ig/yVQehT+K9LvIbAYy1vjZgSmtNii7Aox5Eixefh0q2GtabChI
- YDmPvHB/L1xkEmh1Fb/+fa1PbhRoJpZC2NzzyBdtFLNwlJ6qwJ4TQcSxG3Mpw2xJ
- XPhSmdNKb7K/Qnj3Ltx8WtNUknjbTpcOrVaukq7IWoTHTFLQFUUNIsjcugnGaqPz
- uK8rU19c35Mu3ziP9p0GZcAz8uzFqaRoYPMgaiMP+PFLVF7r5eAMk2+ZHE+vPi4t
- uG+4pD3L3kUOZS/mUD+sQ==
-X-ME-Sender: <xms:aTXUZ24OrOuYA5yuuI4kyKqbo5yhPV25J96C4UndYiNEpL32w7yVJg>
- <xme:aTXUZ_4Ul-aR2K9gvD_8qhFT9Ebupd3ekSs8LmGmvcMNVgdnPDjveDVWVWdV2EG8P
- d_ctrO6U8KCWV_WUQ>
-X-ME-Received: <xmr:aTXUZ1d8uIBRnkf8QVcIs8i-Nev0MYg_Y9i11d7TYS31KeeXRIOjXdIi-33rNDlIX-rmWl_aJ6hI7ueLRe_rbtMwPg>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741960643; x=
+ 1742047043; bh=7paG3sA7GCgVCEvHCc+wuphAW2aRuorqB3C9VxCPgK8=; b=s
+ pdXnsCRVC+MZb0ZgMSIKeAdIRKHfd4aTS+Ut9hdJxW4Jlr6iR66+T4+upZiACzL+
+ oyRtEyZ86R9rBMukzIADt38Dq81I1RXjJ9z2guWsx5zmvdS1kNPJ1OJRrYe7NqiI
+ vR8egc4YsfDs0qqL359XL/BmoyyI+e8F23bJ1w0s+cr0lL/JpIbm5Jw2pu/j/phP
+ UaaDIXEn6rt3QePKFMnBb0LSpR+HHTTa2aBt4Gtbo5nPMbVNsNsDqTPgdIYF8HpH
+ 3Oqt95LLCTbyBkeNR/jSi9QOZKsGFQWN9xpJscHD7nlhrUJ2XcWqjke68NRYXjT+
+ NE/dGTCybfD7WVsXco7UA==
+X-ME-Sender: <xms:wzXUZ-p0ST6Z-1FmCckwgsxNaP07nooeDcMSumrlbp64PKz6WILIbw>
+ <xme:wzXUZ8of_3-Vo8m-RlYFFmzLx-YteoNOTEzizF0R1GiNrAZJ6RwrmX4hnIBovCTvW
+ k-7DM0GxnP_m6BPOg>
+X-ME-Received: <xmr:wzXUZzNdyCcbpdqimNDyMiz73RNSwh-QjkHZOgk_uHeU90VMGAG5CJv1zYnB4Wbk7TaKsi0z9raqNnGYQpE7Gv4FRw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedutdduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
@@ -53,25 +53,28 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedutdduucetufdote
  hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
  geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurg
- hvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhg
-X-ME-Proxy: <xmx:aTXUZzKHWuWQwchvQ0a7ScZpA9HQa60GEteYir1clAeAI8oZXsT-Wg>
- <xmx:aTXUZ6JAXjdU6riMmD4iB4_jNtB22HstUjKPTotA4WqiQasqFE2sqg>
- <xmx:aTXUZ0ytcdMtqDXaq9e8ER3CAKjNIuUvxGTjSyonRNQp-Zu5Qaqk_g>
- <xmx:aTXUZ-KixkUaYEwhlU7nYODYh6SnRWOuPSR1DIRzHgNKXDrmOeCDhA>
- <xmx:aTXUZxUAgF910MwN6U0jJfpWuoXPnYqWVhW_GYD8-4hycfSaOld7P_K2>
+ pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluh
+ gtrgdrvhhiiiiirghrrhhosegrrhhmrdgtohhmpdhrtghpthhtohepuggvvhesughpughk
+ rdhorhhgpdhrtghpthhtohepphgruhhlrdhsiigtiigvphgrnhgvkhesrghrmhdrtghomh
+ dprhgtphhtthhopehprhhosggssehiohhlrdhunhhhrdgvughupdhrtghpthhtohepnhhp
+ rhgrthhtvgesihholhdruhhnhhdrvgguuh
+X-ME-Proxy: <xmx:wzXUZ97s8l0Ce4270N3wgXzh8E8l1xS0VWy-JN0LSVdbXxv8Ns8u4A>
+ <xmx:wzXUZ94SKl4hjdAXKPC7IuUds-JUcDrLJUuFm_KOKhz7wkeB4EjBwQ>
+ <xmx:wzXUZ9gYbE5DzQMqoWP8WbBGVqNYjkeL760i4rY8vygCvogXjgIL7g>
+ <xmx:wzXUZ341Fiwqv8ixBr75Vne7-jvHWVY3OlcIKj4HAwX0zxfYuIqJvA>
+ <xmx:wzXUZ7QnG7aCqfltAhRlwveeCGK47Fa1whUu69SCnzONK-mnnOnmheSA>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Mar 2025 09:55:52 -0400 (EDT)
+ 14 Mar 2025 09:57:22 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] devtools: enhance the license check
-Date: Fri, 14 Mar 2025 14:55:51 +0100
-Message-ID: <4046361.22IY78Rhhi@thomas>
-In-Reply-To: <20241210091039.3439504-1-david.marchand@redhat.com>
-References: <20241210091039.3439504-1-david.marchand@redhat.com>
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
+ Patrick Robb <probb@iol.unh.edu>, Nicholas Pratte <npratte@iol.unh.edu>
+Subject: Re: [PATCH] dts: fix SPDX tag
+Date: Fri, 14 Mar 2025 14:57:21 +0100
+Message-ID: <4289370.otXNkdZ6W1@thomas>
+In-Reply-To: <20250314134346.3321517-1-thomas@monjalon.net>
+References: <20250314134346.3321517-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,14 +91,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-10/12/2024 10:10, David Marchand:
-> Reformat the license/exceptions.txt file to make it easier to build
-> a list of exempted files.
-> Display all files committed in DPDK that are non compliant
-> with BSD-3 license.
+14/03/2025 14:43, Thomas Monjalon:
+> The license in the SPDX tag was incomplete.
 > 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Fixes: d77a4a27bd24 ("dts: remove node distinction")
+> 
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-Applied, thanks
+Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
+
+Applied, thanks.
 
 
