@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049ADC28B30
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C246C282EC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 13:19:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D47DD402F2;
-	Fri, 14 Mar 2025 14:19:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E92A34060F;
+	Fri, 14 Mar 2025 14:19:24 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id B195A400D5
- for <dev@dpdk.org>; Fri, 14 Mar 2025 14:19:21 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C725E402E6
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 14:19:22 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CF671424;
- Fri, 14 Mar 2025 06:19:31 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34A071F02;
+ Fri, 14 Mar 2025 06:19:32 -0700 (PDT)
 Received: from localhost.localdomain (unknown [10.57.40.184])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5AD3D3F673;
- Fri, 14 Mar 2025 06:19:20 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 746EF3F673;
+ Fri, 14 Mar 2025 06:19:21 -0700 (PDT)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 2/7] dts: add blocking dpdk app class
-Date: Fri, 14 Mar 2025 15:18:52 +0200
-Message-ID: <20250314131857.1298247-3-luca.vizzarro@arm.com>
+Subject: [PATCH v2 3/7] dts: add shells pool
+Date: Fri, 14 Mar 2025 15:18:53 +0200
+Message-ID: <20250314131857.1298247-4-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250314131857.1298247-1-luca.vizzarro@arm.com>
 References: <20241220172337.2194523-1-luca.vizzarro@arm.com>
@@ -42,198 +42,188 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add BlockingDPDKApp class. Some non-interactive applications are
-blocking and run until the user interrupts them. As their main intended
-usage is to be kept running in the background, this class exploits
-InteractiveShell to spawn a dedicated shell to keep the blocking
-application running, while detaching from it.
+Add a new class ShellPool which acts as a management component for
+InteractiveShells. It pools together all the currently active shells,
+which are meant to be registered to the pool upon start up. This way,
+DTS can control the shells and make sure that these are stopped and
+closed correctly when they go out of scope.
 
-This class works by providing the `wait_until_ready` and `close`
-methods. The former starts up the application and returns only when the
-application readiness output ends in the string provided as an argument
-to the same method. Whereas the latter works by simulating a Ctrl+C
-keystroke, therefore sending a SIGINT to the app.
+The implementation of ShellPool consists of a stack of pools, as each
+pool in the stack is meant to own and control shells in the different
+layers of execution. For example, if a shell is created in a test case,
+which is considered a layer of execution on its own, this can be cleaned
+up properly without affecting shells created on a lower level, like the
+test suite.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- dts/framework/remote_session/dpdk_app.py      | 73 +++++++++++++++++++
- dts/framework/remote_session/dpdk_shell.py    |  3 +-
- .../single_active_interactive_shell.py        | 12 ++-
- dts/framework/remote_session/testpmd_shell.py |  2 +-
- 4 files changed, 85 insertions(+), 5 deletions(-)
- create mode 100644 dts/framework/remote_session/dpdk_app.py
+ doc/api/dts/framework.remote_session.rst      |   1 +
+ .../framework.remote_session.shell_pool.rst   |   8 ++
+ dts/framework/context.py                      |   2 +
+ dts/framework/remote_session/shell_pool.py    | 106 ++++++++++++++++++
+ 4 files changed, 117 insertions(+)
+ create mode 100644 doc/api/dts/framework.remote_session.shell_pool.rst
+ create mode 100644 dts/framework/remote_session/shell_pool.py
 
-diff --git a/dts/framework/remote_session/dpdk_app.py b/dts/framework/remote_session/dpdk_app.py
+diff --git a/doc/api/dts/framework.remote_session.rst b/doc/api/dts/framework.remote_session.rst
+index 79d65e3444..27c9153e64 100644
+--- a/doc/api/dts/framework.remote_session.rst
++++ b/doc/api/dts/framework.remote_session.rst
+@@ -15,6 +15,7 @@ remote\_session - Node Connections Package
+    framework.remote_session.ssh_session
+    framework.remote_session.interactive_remote_session
+    framework.remote_session.interactive_shell
++   framework.remote_session.shell_pool
+    framework.remote_session.dpdk
+    framework.remote_session.dpdk_shell
+    framework.remote_session.testpmd_shell
+diff --git a/doc/api/dts/framework.remote_session.shell_pool.rst b/doc/api/dts/framework.remote_session.shell_pool.rst
 new file mode 100644
-index 0000000000..c9945f302d
+index 0000000000..ef506cdd80
 --- /dev/null
-+++ b/dts/framework/remote_session/dpdk_app.py
-@@ -0,0 +1,73 @@
++++ b/doc/api/dts/framework.remote_session.shell_pool.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++shell\_pool- Shell Pooling Manager
++===========================================
++
++.. automodule:: framework.remote_session.shell_pool
++   :members:
++   :show-inheritance:
+diff --git a/dts/framework/context.py b/dts/framework/context.py
+index ddd7ed4d36..4360bc8699 100644
+--- a/dts/framework/context.py
++++ b/dts/framework/context.py
+@@ -8,6 +8,7 @@
+ from typing import TYPE_CHECKING, ParamSpec
+ 
+ from framework.exception import InternalError
++from framework.remote_session.shell_pool import ShellPool
+ from framework.settings import SETTINGS
+ from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
+ from framework.testbed_model.node import Node
+@@ -70,6 +71,7 @@ class Context:
+     dpdk: "DPDKRuntimeEnvironment"
+     tg: "TrafficGenerator"
+     local: LocalContext = field(default_factory=LocalContext)
++    shell_pool: ShellPool = field(default_factory=ShellPool)
+ 
+ 
+ __current_ctx: Context | None = None
+diff --git a/dts/framework/remote_session/shell_pool.py b/dts/framework/remote_session/shell_pool.py
+new file mode 100644
+index 0000000000..173aa8fd36
+--- /dev/null
++++ b/dts/framework/remote_session/shell_pool.py
+@@ -0,0 +1,106 @@
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2025 Arm Limited
 +
-+"""Class to run blocking DPDK apps in the background.
++"""Module defining the shell pool class.
 +
-+The class won't automatically start the app. The start-up is done as part of the
-+:meth:`BlockingDPDKApp.wait_until_ready` method, which will return execution to the caller only
-+when the desired stdout has been returned by the app. Usually this is used to detect when the app
-+has been loaded and ready to be used.
++The shell pool is used by the test run state machine to control
++the shells spawned by the test suites. Each layer of execution can
++stash the current pool and create a new layer of shells by calling `start_new_pool`.
++You can go back to the previous pool by calling `terminate_current_pool`. These layers are
++identified in the pool as levels where the higher the number, the deeper the layer of execution.
++As an example layers of execution could be: test run, test suite and test case.
++Which could appropriately identified with level numbers 0, 1 and 2 respectively.
 +
-+Example:
-+    ..code:: python
-+
-+        pdump = BlockingDPDKApp(
-+            PurePath("app/dpdk-pdump"),
-+            app_params="--pdump 'port=0,queue=*,rx-dev=/tmp/rx-dev.pcap'"
-+        )
-+        pdump.wait_until_ready("65535") # start app
-+
-+        # pdump is now ready to capture
-+
-+        pdump.close() # stop/close app
++The shell pool layers are implemented as a stack. Therefore, when creating a new pool, this is
++pushed on top of the stack. Similarly, terminating the current pool also means removing the one
++at the top of the stack.
 +"""
 +
-+from pathlib import PurePath
++from typing import TYPE_CHECKING
 +
-+from framework.params.eal import EalParams
-+from framework.remote_session.dpdk_shell import DPDKShell
++from framework.logger import DTSLogger, get_dts_logger
++
++if TYPE_CHECKING:
++    from framework.remote_session.interactive_shell import (
++        InteractiveShell,
++    )
 +
 +
-+class BlockingDPDKApp(DPDKShell):
-+    """Class to manage blocking DPDK apps."""
++class ShellPool:
++    """A pool managing active shells."""
 +
-+    def __init__(
-+        self,
-+        path: PurePath,
-+        name: str | None = None,
-+        privileged: bool = True,
-+        app_params: EalParams | str = "",
-+    ) -> None:
-+        """Constructor.
++    _logger: DTSLogger
++    _pools: list[set["InteractiveShell"]]
 +
-+        Overrides :meth:`~.dpdk_shell.DPDKShell.__init__`.
++    def __init__(self):
++        """Shell pool constructor."""
++        self._logger = get_dts_logger("shell_pool")
++        self._pools = [set()]
 +
-+        Args:
-+            path: Path relative to the DPDK build to the executable.
-+            name: Name to identify this application.
-+            privileged: Run as privileged user.
-+            app_params: The application parameters. If a string or an incomplete :class:`EalParams`
-+                object are passed, the EAL params are computed based on the current context.
++    @property
++    def pool_level(self) -> int:
++        """The current level of shell pool.
++
++        The higher level, the deeper we are in the execution state.
 +        """
-+        if isinstance(app_params, str):
-+            eal_params = EalParams()
-+            eal_params.append_str(app_params)
-+            app_params = eal_params
++        return len(self._pools) - 1
 +
-+        super().__init__(name, privileged, path, app_params)
++    @property
++    def _current_pool(self) -> set["InteractiveShell"]:
++        """The pool in use for the current scope."""
++        return self._pools[-1]
 +
-+    def wait_until_ready(self, end_token: str) -> None:
-+        """Start app and wait until ready.
++    def register_shell(self, shell: "InteractiveShell"):
++        """Register a new shell to the current pool."""
++        self._logger.debug(f"Registering shell {shell} to pool level {self.pool_level}.")
++        self._current_pool.add(shell)
 +
-+        Args:
-+            end_token: The string at the end of a line that indicates the app is ready.
++    def unregister_shell(self, shell: "InteractiveShell"):
++        """Unregister a shell from any pool."""
++        for level, pool in enumerate(self._pools):
++            try:
++                pool.remove(shell)
++                if pool == self._current_pool:
++                    self._logger.debug(
++                        f"Unregistering shell {shell} from pool level {self.pool_level}."
++                    )
++                else:
++                    self._logger.debug(
++                        f"Unregistering shell {shell} from pool level {level}, "
++                        f"but we currently are in level {self.pool_level}. Is this expected?"
++                    )
++            except KeyError:
++                pass
++
++    def start_new_pool(self):
++        """Start a new shell pool."""
++        self._logger.debug(f"Starting new shell pool and advancing to level {self.pool_level+1}.")
++        self._pools.append(set())
++
++    def terminate_current_pool(self):
++        """Terminate all the shells in the current pool, and restore the previous pool if any.
++
++        If any failure occurs while closing any shell, this is tolerated allowing the termination
++        to continue until the current pool is empty and removed. But this function will re-raise the
++        last occurred exception back to the caller.
 +        """
-+        self._start_application(end_token)
++        occurred_exception = None
++        current_pool_level = self.pool_level
++        self._logger.debug(f"Terminating shell pool level {current_pool_level}.")
++        for shell in self._pools.pop():
++            self._logger.debug(f"Closing shell {shell} in shell pool level {current_pool_level}.")
++            try:
++                shell._close()
++            except Exception as e:
++                self._logger.error(f"An exception has occurred while closing shell {shell}:")
++                self._logger.exception(e)
++                occurred_exception = e
 +
-+    def close(self) -> None:
-+        """Close the application.
++        if current_pool_level == 0:
++            self.start_new_pool()
++        else:
++            self._logger.debug(f"Restoring shell pool from level {self.pool_level}.")
 +
-+        Sends a SIGINT to close the application.
-+        """
-+        self.send_command("\x03")
-+        self._close()
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index 0962414876..f7ea2588ca 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -65,13 +65,14 @@ def __init__(
-         self,
-         name: str | None = None,
-         privileged: bool = True,
-+        path: PurePath | None = None,
-         app_params: EalParams = EalParams(),
-     ) -> None:
-         """Extends :meth:`~.interactive_shell.InteractiveShell.__init__`."""
-         app_params = compute_eal_params(app_params)
-         node = get_ctx().sut_node
- 
--        super().__init__(node, name, privileged, app_params)
-+        super().__init__(node, name, privileged, path, app_params)
- 
-     def _update_real_path(self, path: PurePath) -> None:
-         """Extends :meth:`~.interactive_shell.InteractiveShell._update_real_path`.
-diff --git a/dts/framework/remote_session/single_active_interactive_shell.py b/dts/framework/remote_session/single_active_interactive_shell.py
-index c1369ef77e..2257b6156b 100644
---- a/dts/framework/remote_session/single_active_interactive_shell.py
-+++ b/dts/framework/remote_session/single_active_interactive_shell.py
-@@ -92,6 +92,7 @@ def __init__(
-         node: Node,
-         name: str | None = None,
-         privileged: bool = False,
-+        path: PurePath | None = None,
-         app_params: Params = Params(),
-         **kwargs,
-     ) -> None:
-@@ -105,6 +106,7 @@ def __init__(
-             name: Name for the interactive shell to use for logging. This name will be appended to
-                 the name of the underlying node which it is running on.
-             privileged: Enables the shell to run as superuser.
-+            path: Path to the executable. If :data:`None`, then the class' path attribute is used.
-             app_params: The command line parameters to be passed to the application on startup.
-             **kwargs: Any additional arguments if any.
-         """
-@@ -116,7 +118,7 @@ def __init__(
-         self._privileged = privileged
-         self._timeout = SETTINGS.timeout
-         # Ensure path is properly formatted for the host
--        self._update_real_path(self.path)
-+        self._update_real_path(path or self.path)
-         super().__init__(**kwargs)
- 
-     def _setup_ssh_channel(self):
-@@ -133,7 +135,7 @@ def _make_start_command(self) -> str:
-             start_command = self._node.main_session._get_privileged_command(start_command)
-         return start_command
- 
--    def _start_application(self) -> None:
-+    def _start_application(self, prompt: str | None = None) -> None:
-         """Starts a new interactive application based on the path to the app.
- 
-         This method is often overridden by subclasses as their process for starting may look
-@@ -141,6 +143,10 @@ def _start_application(self) -> None:
-         `self._init_attempts` - 1 times. This is done because some DPDK applications need slightly
-         more time after exiting their script to clean up EAL before others can start.
- 
-+        Args:
-+            prompt: When starting up the application, expect this string at the end of stdout when
-+                the application is ready. If :data:`None`, the class' default prompt will be used.
-+
-         Raises:
-             InteractiveCommandExecutionError: If the application fails to start within the allotted
-                 number of retries.
-@@ -151,7 +157,7 @@ def _start_application(self) -> None:
-         self.is_alive = True
-         for attempt in range(self._init_attempts):
-             try:
--                self.send_command(start_command)
-+                self.send_command(start_command, prompt)
-                 break
-             except InteractiveSSHTimeoutError:
-                 self._logger.info(
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 1f291fcb68..db1bfaa9d1 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -1540,7 +1540,7 @@ def __init__(
-         """Overrides :meth:`~.dpdk_shell.DPDKShell.__init__`. Changes app_params to kwargs."""
-         if "port_topology" not in app_params and get_ctx().topology.type is TopologyType.one_link:
-             app_params["port_topology"] = PortTopology.loop
--        super().__init__(name, privileged, TestPmdParams(**app_params))
-+        super().__init__(name, privileged, app_params=TestPmdParams(**app_params))
-         self.ports_started = not self._app_params.disable_device_start
-         self._ports = None
- 
++        # Raise the last occurred exception again to let the system register a failure.
++        if occurred_exception is not None:
++            raise occurred_exception
 -- 
 2.43.0
 
