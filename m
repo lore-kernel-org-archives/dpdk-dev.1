@@ -2,146 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857D3C35FF1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB068C35FF1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Mar 2025 17:44:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C15A400D6;
-	Fri, 14 Mar 2025 18:40:14 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9E808400D5
- for <dev@dpdk.org>; Fri, 14 Mar 2025 18:40:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741974012;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ltHdlUdyWJ42LTKxh1EdpUq8w+qWe4Qo66SMsXd8xMo=;
- b=h+XaeMVvP5o/CCnIL/MTapKPZcZDllEaw3UL9xGsRv89KKmPNwFzrZwN9aiK4U2KTJrzgJ
- ySF7nSjALRwHCm2ucFXFykK93bS7wSbpg9Lb3b1cN7lR06k7p8hw/XFseLBzEngkn4MwQq
- RJTX6EZ0Eb/RlvHaUArnyCJ9dEzQRG8=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-SpbTPs1jNnKBzpwuu0nYzA-1; Fri, 14 Mar 2025 13:40:09 -0400
-X-MC-Unique: SpbTPs1jNnKBzpwuu0nYzA-1
-X-Mimecast-MFC-AGG-ID: SpbTPs1jNnKBzpwuu0nYzA_1741974008
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5499a93f894so2051955e87.1
- for <dev@dpdk.org>; Fri, 14 Mar 2025 10:40:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741974007; x=1742578807;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=ltHdlUdyWJ42LTKxh1EdpUq8w+qWe4Qo66SMsXd8xMo=;
- b=A2ICV1VSLzsr10m7hYTPUeFriymV94TM0zyEsLeT3AnI0/k6SNfAID10eQr1dRQcJ0
- ytkT7Nawq6vOQxhyXOwEj2gUiB1KJXrW9wPClsud/Ckq/5aBrKZ2ctwmf5HZT4AVTOpL
- GmIyYDxIebxkGNmgaRSsbVOBfTdgSBFu6Ck5jydZUg4MEsi1G7Ie+dwvx+hrHvsc41w/
- a1ZpK6eoM6mvawLxkJgTG94+0KvT0LwOr15OJRh2yta73n+LmTYvfyaMr26K1dBfEnc+
- fmyT8Bqa9j0YKP89H7xZga3hqGAipABsDUko1O4Wv7XkzI9YmyHhRy4mG0UToACdzstE
- dJvg==
-X-Gm-Message-State: AOJu0YyjM6tRRlP51hEF2F7u87rULkl8vlB+oQoxwsRdvkuz1bYq7N7W
- fkPdamhC55E+kTqRvmG9fZz8o19oD+Wh065yh3tpd1BZEgGeuz3VaqDrSSqJdi9v+WScsrml41U
- sRgv+6VWVkvCh0+6FzErAt2MRL/sRwWaIUHlAszbxzmh9302lXL12qX+DN5wF57tnoTDd+nfQay
- DuYLHt96YOY2rUiog=
-X-Gm-Gg: ASbGncvjU6l5CCziboplHSGxJH+UMrkMb/SnT7QmhZ0K3b5QDFgLWVv0x5QdYZAqYUf
- +uoBuKg+uySzgeO1uFE47jRb4lCfxk2cY7lqo4aEwDBVsWZoH/6+MhHEIxzk1NTC6kLawWrOSSq
- g=
-X-Received: by 2002:a05:6512:3e1e:b0:549:8dd6:fb41 with SMTP id
- 2adb3069b0e04-549ba44cc1amr3263320e87.24.1741974007336; 
- Fri, 14 Mar 2025 10:40:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRGKZPpblarKhnwkfWiZnTKR3QSs7TRzqqb+m+I3hZvDSElBO5rOtUEJ1VU2J4899tsr8k+s/JroF0G5YASVc=
-X-Received: by 2002:a05:6512:3e1e:b0:549:8dd6:fb41 with SMTP id
- 2adb3069b0e04-549ba44cc1amr3263253e87.24.1741974006882; Fri, 14 Mar 2025
- 10:40:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D5CA8400D6;
+	Fri, 14 Mar 2025 18:44:46 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id C7EB9400D5
+ for <dev@dpdk.org>; Fri, 14 Mar 2025 18:44:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1741974285; x=1773510285;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=K/5+jyYZiXA+R/7suP3vih1Jappp8zjYunchX0gzx40=;
+ b=cj2MQgpSqhzIeP9Rl57TF9WVfi8BFm+yXokbb+YKQFm13nJJiTy3rMAR
+ AKq3RbeoR+78A0bPYq6e9JuwH4EqJrLt9GZQUmMNxLCgRwYkhFaGHNv+E
+ okibjNRy6pba763Fefsy8mjPBEsD7KCxaNtu1/qWD1sCmBdwFiSMSQZfk
+ DYvGkQPrToh8yOx37eQsj+PLbJYwnFDnifHTNrF5JzHqPQXF6c7oOPclW
+ v0mCqFTVYf1CWKo06rXRFjgW1d9oruEONRwkhBvYLLvDeSr2HY1MkO/hB
+ Iyk8TAqd8QDHqXxj7rxj+0hzJMjBVlyfx37tJ1mQj3tovnE9Gnrh09Y5c Q==;
+X-CSE-ConnectionGUID: XRCwBOevSO2dgpt2leIx6Q==
+X-CSE-MsgGUID: DTNwtNTES82ECxlTP7VAEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46925680"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="46925680"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Mar 2025 10:44:44 -0700
+X-CSE-ConnectionGUID: j2xnNUNpScGjFH6zm6i3aA==
+X-CSE-MsgGUID: 8VrUB0LTSkK1tUsTXB5Nvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; d="scan'208";a="125528682"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
+ by fmviesa003.fm.intel.com with ESMTP; 14 Mar 2025 10:44:42 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 0/4] remove driver-specific logic for AVX builds
+Date: Fri, 14 Mar 2025 17:44:34 +0000
+Message-ID: <20250314174439.112658-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250314172339.12777-1-bruce.richardson@intel.com>
+References: <20250314172339.12777-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250311095609.194523-1-david.marchand@redhat.com>
- <20250311095609.194523-7-david.marchand@redhat.com>
- <Z9MWQR_o3m4T_rFt@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8w0MPV7XQpMyiGTsSVDGuW1LctGyrXZ6n52O7AYzij7Zw@mail.gmail.com>
- <Z9RYCXF6Ag23k8Uy@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8zsgxW7goppOjNariu_oA+ET5HeNTOeepDSHsE31KmkNA@mail.gmail.com>
- <Z9RnNPIKpBD5Oz0Y@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <Z9RnNPIKpBD5Oz0Y@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 14 Mar 2025 18:39:54 +0100
-X-Gm-Features: AQ5f1JpEWFccSfmsegDt2npFMhGkU0kfsODgx2bo-Hb9S1FEESNB2lh1W2O-P6Y
-Message-ID: <CAJFAV8wrmuhn-nsiDc+RrCqth13hjyrubhqcZK17mqpDaDVuWw@mail.gmail.com>
-Subject: Re: [RFC v3 6/8] build: mark exported symbols
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, andremue@linux.microsoft.com, 
- Nicolas Chautru <nicolas.chautru@intel.com>, Parav Pandit <parav@nvidia.com>, 
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, 
- Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, 
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
- Wei Hu <weh@microsoft.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Anoob Joseph <anoobj@marvell.com>, Andrew Boyer <andrew.boyer@amd.com>, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, 
- Matan Azrad <matan@nvidia.com>, Liron Himi <lironh@marvell.com>, 
- Chaoyong He <chaoyong.he@corigine.com>,
- Nagadheeraj Rottela <rnagadheeraj@marvell.com>, 
- Srikanth Jampala <jsrikanth@marvell.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Ankur Dwivedi <adwivedi@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, 
- Gagandeep Singh <g.singh@nxp.com>, Kai Ji <kai.ji@intel.com>, 
- Vamsi Attunuru <vattunuru@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>, 
- Shijith Thotton <sthotton@marvell.com>, Pravin Pathak <pravin.pathak@intel.com>,
- Ashwin Sekhar T K <asekhar@marvell.com>, Igor Russkikh <irusskikh@marvell.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>, 
- Chas Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Ian Stokes <ian.stokes@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty <praveen.shetty@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>, 
- Maxime Coquelin <maxime.coquelin@redhat.com>, David Hunt <david.hunt@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
- Akhil Goyal <gakhil@marvell.com>, 
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Fan Zhang <fanzhang.oss@gmail.com>, 
- Ashish Gupta <ashish.gupta@marvell.com>, 
- =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>, 
- Kevin Laatz <kevin.laatz@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>, Jerin Jacob <jerinj@marvell.com>,
- Harry van Haaren <harry.van.haaren@intel.com>, Min Zhou <zhoumin@loongson.cn>, 
- David Christensen <drc@linux.ibm.com>,
- Stanislaw Kardach <stanislaw.kardach@gmail.com>, 
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Byron Marohn <byron.marohn@intel.com>, 
- Yipeng Wang <yipeng1.wang@intel.com>, Ferruh Yigit <ferruh.yigit@amd.com>, 
- Abhinandan Gujjar <abhinandan.gujjar@intel.com>, 
- Amit Prakash Shukla <amitprakashs@marvell.com>,
- Naga Harish K S V <s.v.naga.harish.k@intel.com>, 
- Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
- Elena Agostini <eagostini@nvidia.com>, 
- Zhirun Yan <yanzhirun_163@163.com>, Jiayu Hu <hujiayu.hu@foxmail.com>, 
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Reshma Pattan <reshma.pattan@intel.com>, 
- Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Srikanth Yalavarthi <syalavarthi@marvell.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>, 
- Gaetan Rivet <grive@u256.net>, Volodymyr Fialko <vfialko@marvell.com>, 
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: g_E5HiFbXXhu0nGEXsIoRxVdsVEmVPfz-bQMHu8QDUM_1741974008
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,55 +60,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 14, 2025 at 6:29=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
-> > > What I'd actually like more, but never have had time to actually try =
-out is
-> > > to generalise the instruction-set-specific build stuff into the highe=
-r level
-> > > drivers/meson.build code. After all, much of the code for doing so is=
- just
-> > > duplicated - check for AVX512 or AVX2 and if present build these file=
-s with
-> > > the extra flags for that instruction set.
-> > >
-> > > Something similar with the base code. Most base code builds follow pr=
-etty
-> > > much the exact same routine.
-> >
-> > Having those separate libraries require special cases every time, so
-> > yes, it would be great if those could be factored in some shared
-> > mechanism in drivers/meson.build.
-> >
-> > Putting the AVX stuff aside, and back to why we need those separate
-> > libraries for base drivers... I think the main use is to waive some
-> > build warnings, is there something else?
-> > If so.. I think some drivers could already be cleaned (like net/e1000,
-> > net/ngbe, net/octeontx, net/thunderx, net/txgbe, raw/ifpga at a first
-> > glance).
-> >
-> > The AVX stuff seems a bit more complex, as there are multiple combinati=
-ons...
-> >
->
-> First attempt seems to go surprisingly smoothly[1]. It still builds, whic=
-h is
-> a start, though obviously some testing will be needed to check nothing el=
-se
-> is broken.
+A number of drivers had special optimized AVX2 and AVX512 code paths
+for performance reasons, and these tended to have copy-pasted logic
+to build those files. Centralise that logic in the main
+drivers/meson.build file to avoid duplication.
 
-If it builds.. what more to ask for? :-)
+v2: add patch 4 to remove use of unnecessary CC_AVX2_SUPPORT flag
 
-> It really helped that most code just seemed to have been copy-pasted arou=
-nd
-> the place.
+Bruce Richardson (4):
+  build: add generalized AVX handling for drivers
+  net/intel: use common AVX build code
+  drivers/net: build use common AVX handling
+  drivers/net: remove AVX2 build-time define
 
-I had a quick look, it lgtm on the principle.
+ drivers/meson.build                   | 30 +++++++++++++++++++++++++++
+ drivers/net/bnxt/bnxt_ethdev.c        |  2 --
+ drivers/net/bnxt/meson.build          | 10 +--------
+ drivers/net/enic/meson.build          | 10 +--------
+ drivers/net/intel/i40e/meson.build    | 26 ++---------------------
+ drivers/net/intel/iavf/meson.build    | 25 ++--------------------
+ drivers/net/intel/ice/meson.build     | 25 ++--------------------
+ drivers/net/intel/idpf/meson.build    | 25 ++--------------------
+ drivers/net/nfp/meson.build           | 10 +--------
+ drivers/net/octeon_ep/meson.build     | 13 +-----------
+ drivers/net/octeon_ep/otx_ep_ethdev.c |  4 ----
+ drivers/net/virtio/meson.build        |  9 +-------
+ 12 files changed, 43 insertions(+), 146 deletions(-)
 
-Could this be applied to lib/ ? (I see some complications with AVX512
-special instructions in lib/net..).
-
-
---=20
-David Marchand
+--
+2.43.0
 
