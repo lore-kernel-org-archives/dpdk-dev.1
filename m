@@ -2,46 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DB1C282EC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 13:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1169CC28B30
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 13:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8E46402D1;
-	Mon, 17 Mar 2025 14:46:11 +0100 (CET)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 44760402BB
- for <dev@dpdk.org>; Mon, 17 Mar 2025 14:46:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1742219169;
- bh=VWh0p9gKE325yVAH+LFWOcwpK7+v4bIqmHpADIFFukM=;
- h=Date:From:To:Cc:Subject:In-Reply-To:References;
- b=d+8Os8ZgOtFNA/tUO8Y6jNK8HN2l4N5ZWIIkSNqSTlj4Oc52KRReOWjttevJLDA17
- s733HE7XiX5eKIEIlxBRcFqNvMViJw9wdJEH8srjR7sNzVvJoU04WSTvyx/yEVskb0
- wKcsjGavix5a5QfMwVXLf4uHqhoSbRKROgNRRrmcGNQupRi8Izf49uDKGtB7m+iVWd
- uMK8RB7QueHdqTgVGPGNCcHV7s7A2qRrL5ug31EyxmOnfEUtshr3rt78YytkjPY1QZ
- eolRHG4Vk1F4GoNoJnRolCJ1SFZxWpiJS9eke1iTxYYvENWvP0eaIw3FgF10qrMGyM
- 21Mg7HsMN//nA==
-Received: from coaster.localdomain (viktorin-esprimo.cesnet.cz
- [IPv6:2001:718:812:27::83])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
- server-digest SHA256) (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 5DEC41180072;
- Mon, 17 Mar 2025 14:46:08 +0100 (CET)
-Date: Mon, 17 Mar 2025 14:46:07 +0100
-From: Jan Viktorin <viktorin@cesnet.cz>
-To: Vipin Varghese <vipin.varghese@amd.com>
-Cc: <dev@dpdk.org>, <roretzla@linux.microsoft.com>,
- <bruce.richardson@intel.com>, <john.mcnamara@intel.com>,
- <dmitry.kozliuk@gmail.com>, <pbhagavatula@marvell.com>,
- <jerinj@marvell.com>, <ruifeng.wang@arm.com>,
- <mattias.ronnblom@ericsson.com>, <anatoly.burakov@intel.com>,
- <stephen@networkplumber.org>, <ferruh.yigit@amd.com>,
- <honnappa.nagarahalli@arm.com>, <wathsala.vithanage@arm.com>,
- <konstantin.ananyev@huawei.com>, <mb@smartsharesystems.com>
-Subject: Re: [PATCH v4 0/4] Introduce Topology NUMA grouping for lcores
-Message-ID: <20250317144607.118a40b0@coaster.localdomain>
-In-Reply-To: <20241105102849.1947-1-vipin.varghese@amd.com>
-References: <20241105102849.1947-1-vipin.varghese@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0321E402DF;
+	Mon, 17 Mar 2025 14:56:15 +0100 (CET)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 5417B402BB
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 14:56:12 +0100 (CET)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-224171d6826so31897975ad.3
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 06:56:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742219771;
+ x=1742824571; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=aGa+xEiXpa0BHHbsmgIh9zUyH85ibEECDcr9RvJq3qI=;
+ b=EMe9wggb936VrRVy06LuFja/P/znij3rYwkaJ9eVTpK+D40EI8LF9YQiwJCSx86uHZ
+ cn2OjEcDMZ87EmYMcSx+ge67Ov3DwsyzHqaBwq0l8JxoJK2gU4SRTY2kzpaQ6nF12eCr
+ eaHCDqBT42gOL/VwuAWKCjR1IFUiFC53GGA9BSIsKLtVmo5IaK9mhDJ4Qw0M+NGnz2Dm
+ AMzqaFeL6pwR/LqncwZeav5NCFEaHFLNzFBxAe0OVf6MIcm8oFKxHMkSZ3ge5Uj8LRYQ
+ g9EmtRfhgPtbjaY+VhfVAWde6LKrAmy/vAld6gWeMpxY4tYsodn3Zz9i87xSKK9lD0Md
+ fN1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1742219771; x=1742824571;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=aGa+xEiXpa0BHHbsmgIh9zUyH85ibEECDcr9RvJq3qI=;
+ b=E8Ascb/QY5kia8/F5hDhPcYQJaaBA9KQFVHXOVoPUxOkrhvP05Yx+dlMJ6WMKlb4oF
+ 9VVJvkeibUUclBi391m6buM3gvj7hyk2VSBAJzmV5wTNxMjjs67Piv4WUmwu36ZP8qoN
+ f+2tNHwJkG0VSoO8gIH3sym981+1wdUyj2KMlypR+1UjzCEKRUJtMguEmxbJMiyTh8B1
+ w2lz7EIGghK1iUGqARzLvg6byA7NVZhnSYQ9oXJPxTJW+ADa3Ghxuhq6Lhg1varNwPIe
+ cJ/dn38UDYIc3ncolQzFt2ZkZrxxrh10Z4TIjOmgE2Qtv/ZoGBP5JDVC6C98Qvr7gZj5
+ n7zQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVN+JV+3BBO2pibSWyrQ7tyVfWwR7iv7bxqOLbJV22OOX163ILMsw2xFwV0Gm/Enw3hr1k=@dpdk.org
+X-Gm-Message-State: AOJu0YxOz5weIs3AjhllIbN3c3qQYmJloRpnxJgm6dQu5m824ckYABcR
+ SkYSWMd1kQFr17WuyxfLNjX14Z9MJvb0AiIuEVCoFjOTtxEo7fj/lDDJqQLrwXM=
+X-Gm-Gg: ASbGncszz1K3GC9Khg5mqHuR9QJs31qOCewKUz77a/MjtVDCYI/ptwTdX7hxcD6Xt+U
+ y7NqWEbRpvSjsuw8AsoBAF+xbbvk/N1Fb24gUIFtPNEZn0apl6ji65J4JaaryXGLHWENOqVk5v3
+ pHyB6W9RBJPcgWtEzhJH1jOZIwQvYAWZoQQ3jgMQXzwb57WbhYYDE99yapNTQNSK7V5n6y2M7c7
+ V9JN5IusQ52dnZsphHXumM7IWGQxEylVhJH2IBfjYFLpqQCIoPFDumoh2luYOXbEm1TCiAplTPm
+ DT7z5uHXYTDYaJ5F7m7pjdBB/nWOg99jxlGJhC+yQWQFdZA3wmCCaBOYRJa2eS2tHplF+G4h3MH
+ 0KKl3Ucv0YogteHdoJZZwu/ZlOa7UxXOP
+X-Google-Smtp-Source: AGHT+IEJ+hEvjbmEmBGRVUCEO9xG5qYSF93GZWP6RHumNqslww23XcYBIdBdjGr3KsMKpzkrD14SMA==
+X-Received: by 2002:a17:903:2a8f:b0:220:efc8:60b1 with SMTP id
+ d9443c01a7336-225e0b185fcmr174043945ad.39.1742219771377; 
+ Mon, 17 Mar 2025 06:56:11 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-225c688866asm75429905ad.50.2025.03.17.06.56.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 17 Mar 2025 06:56:11 -0700 (PDT)
+Date: Mon, 17 Mar 2025 06:56:09 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, Bruce
+ Richardson <bruce.richardson@intel.com>, Kevin Laatz
+ <kevin.laatz@intel.com>, dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] eal: prevent socket closure before MP sync
+Message-ID: <20250317065609.79fa3ad7@hermes.local>
+In-Reply-To: <20250314103638.2198-1-ming.1.yang@nokia-sbell.com>
+References: <20250314103638.2198-1-ming.1.yang@nokia-sbell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -58,179 +84,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Vipin and others,
+On Fri, 14 Mar 2025 18:36:38 +0800
+Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
 
-please, will there be any progress or update on this series?
+> The secordary process should not close socket file for MP
+> channel before performing MP request synchronization.
+> This prevents error logs when the secondary process exits
+> without any operation on the crypto device while the primary
+> process starts the device.
+> 
+> Case situation:
+> eal_bus_cleanup has been added in rte_eal_cleanup. But for the
+> secondary process, rte_eal_cleanup firstly performs
+> rte_mp_channel_cleanup, which closes socket file for the MP
+> channel, making mp_fd invalid. Subsequently, eal_bus_cleanup
+> triggers vdev_cleanup, which calls mp_request_sync to send a
+> message via the MP channel. Since mp_fd is invalid, error logs
+> occur.
+> 
+> Error logs occur as below when the secordary process exit:
+> EAL: failed to send to (/tmp/dpdk/l2hicu/mp_socket) due to Bad
+> file descriptor
+> EAL: Fail to send request /tmp/dpdk/l2hicu/mp_socket:
+> ipsec_mb_mp_msg
+> USER1: Create MR request to primary process failed.
+> 
+> Function call trace:
+> 1. rte_eal_cleanup->rte_mp_channel_cleanup->close_socket_fd
+> 2. rte_eal_cleanup->eal_bus_cleanup->vdev_cleanup->
+> rte_vdev_driver->ipsec_mb_remove->ipsec_mb_qp_release->
+> ipsec_mb_secondary_qp_op->rte_mp_request_sync->mp_request_sync->
+> send_msg->sendmsg(mp_fd, &msgh, 0);
+> 
+> Fixes: 1cab1a40ea9b ("bus: cleanup devices on shutdown")
+> Cc: kevin.laatz@intel.com
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
 
-I successfully tested those changes on our Intel and AMD machines and
-would like to use it in production soon.
+Looks good, could there be a test?
 
-The API is a little bit unintuitive, at least for me, but I
-successfully integrated into our software.
-
-I am missing a clear relation to the NUMA socket approach used in DPDK.
-E.g. I would like to be able to easily walk over a list of lcores from
-a specific NUMA node grouped by L3 domain. Yes, there is the
-RTE_LCORE_DOMAIN_IO, but would it always match the appropriate socket
-IDs?
-
-Also, I do not clearly understand what is the purpose of using domain
-selector like:
-
-  RTE_LCORE_DOMAIN_L1 | RTE_LCORE_DOMAIN_L2
-
-or even:
-
-  RTE_LCORE_DOMAIN_L3 | RTE_LCORE_DOMAIN_L2
-
-the documentation does not explain this. I could not spot any kind of
-grouping that would help me in any way. Some "best practices" examples
-would be nice to have to understand the intentions better.
-
-I found a little catch when running DPDK with more lcores than there
-are physical or SMT CPU cores. This happens when using e.g. an option
-like --lcores=(0-15)@(0-1). The results from the topology API would not
-match the lcores because hwloc is not aware of the lcores concept. This
-might be mentioned somewhere.
-
-Anyway, I really appreciate this work and would like to see it upstream.
-Especially for AMD machines, some framework like this is a must.
-
-Kind regards,
-Jan
-
-On Tue, 5 Nov 2024 15:58:45 +0530
-Vipin Varghese <vipin.varghese@amd.com> wrote:
-
-> This patch introduces improvements for NUMA topology awareness in
-> relation to DPDK logical cores. The goal is to expose API which allows
-> users to select optimal logical cores for any application. These
-> logical cores can be selected from various NUMA domains like CPU and
-> I/O.
-> 
-> Change Summary:
->  - Introduces the concept of NUMA domain partitioning based on CPU and
->    I/O topology.
->  - Adds support for grouping DPDK logical cores within the same Cache
->    and I/O domain for improved locality.
->  - Implements topology detection and core grouping logic that
->    distinguishes between the following NUMA configurations:
->     * CPU topology & I/O topology (e.g., AMD SoC EPYC, Intel Xeon SPR)
->     * CPU+I/O topology (e.g., Ampere One with SLC, Intel Xeon SPR
-> with SNC)
->  - Enhances performance by minimizing lcore dispersion across
-> tiles|compute package with different L2/L3 cache or IO domains.
-> 
-> Reason:
->  - Applications using DPDK libraries relies on consistent memory
-> access.
->  - Lcores being closer to same NUMA domain as IO.
->  - Lcores sharing same cache.
-> 
-> Latency is minimized by using lcores that share the same NUMA
-> topology. Memory access is optimized by utilizing cores within the
-> same NUMA domain or tile. Cache coherence is preserved within the
-> same shared cache domain, reducing the remote access from
-> tile|compute package via snooping (local hit in either L2 or L3
-> within same NUMA domain).
-> 
-> Library dependency: hwloc
-> 
-> Topology Flags:
-> ---------------
->  - RTE_LCORE_DOMAIN_L1: to group cores sharing same L1 cache
->  - RTE_LCORE_DOMAIN_SMT: same as RTE_LCORE_DOMAIN_L1
->  - RTE_LCORE_DOMAIN_L2: group cores sharing same L2 cache
->  - RTE_LCORE_DOMAIN_L3: group cores sharing same L3 cache
->  - RTE_LCORE_DOMAIN_L4: group cores sharing same L4 cache
->  - RTE_LCORE_DOMAIN_IO: group cores sharing same IO
-> 
-> < Function: Purpose >
-> ---------------------
->  - rte_get_domain_count: get domain count based on Topology Flag
->  - rte_lcore_count_from_domain: get valid lcores count under each
-> domain
->  - rte_get_lcore_in_domain: valid lcore id based on index
->  - rte_lcore_cpuset_in_domain: return valid cpuset based on index
->  - rte_lcore_is_main_in_domain: return true|false if main lcore is
-> present
->  - rte_get_next_lcore_from_domain: next valid lcore within domain
->  - rte_get_next_lcore_from_next_domain: next valid lcore from next
-> domain
-> 
-> Note:
->  1. Topology is NUMA grouping.
->  2. Domain is various sub-groups within a specific Topology.
-> 
-> Topology example: L1, L2, L3, L4, IO
-> Domian example: IO-A, IO-B
-> 
-> < MACRO: Purpose >
-> ------------------
->  - RTE_LCORE_FOREACH_DOMAIN: iterate lcores from all domains
->  - RTE_LCORE_FOREACH_WORKER_DOMAIN: iterate worker lcores from all
-> domains
->  - RTE_LCORE_FORN_NEXT_DOMAIN: iterate domain select n'th lcore
->  - RTE_LCORE_FORN_WORKER_NEXT_DOMAIN: iterate domain for worker n'th
-> lcore.
-> 
-> Future work (after merge):
-> --------------------------
->  - dma-perf per IO NUMA
->  - eventdev per L3 NUMA
->  - pipeline per SMT|L3 NUMA
->  - distributor per L3 for Port-Queue
->  - l2fwd-power per SMT
->  - testpmd option for IO NUMA per port
-> 
-> Platform tested on:
-> -------------------
->  - INTEL(R) XEON(R) PLATINUM 8562Y+ (support IO numa 1 & 2)
->  - AMD EPYC 8534P (supports IO numa 1 & 2)
->  - AMD EPYC 9554 (supports IO numa 1, 2, 4)
-> 
-> Logs:
-> -----
-> 1. INTEL(R) XEON(R) PLATINUM 8562Y+:
->  - SNC=1
->         Domain (IO): at index (0) there are 48 core, with (0) at
-> index 0
->  - SNC=2
->         Domain (IO): at index (0) there are 24 core, with (0) at
-> index 0 Domain (IO): at index (1) there are 24 core, with (12) at
-> index 0
-> 
-> 2. AMD EPYC 8534P:
->  - NPS=1:
->         Domain (IO): at index (0) there are 128 core, with (0) at
-> index 0
->  - NPS=2:
->         Domain (IO): at index (0) there are 64 core, with (0) at
-> index 0 Domain (IO): at index (1) there are 64 core, with (32) at
-> index 0
-> 
-> Signed-off-by: Vipin Varghese <vipin.varghese@amd.com>
-> 
-> Vipin Varghese (4):
->   eal/lcore: add topology based functions
->   test/lcore: enable tests for topology
->   doc: add topology grouping details
->   examples: update with lcore topology API
-> 
->  app/test/test_lcores.c                        | 528 +++++++++++++
->  config/meson.build                            |  18 +
->  .../prog_guide/env_abstraction_layer.rst      |  22 +
->  examples/helloworld/main.c                    | 154 +++-
->  examples/l2fwd/main.c                         |  56 +-
->  examples/skeleton/basicfwd.c                  |  22 +
->  lib/eal/common/eal_common_lcore.c             | 714
-> ++++++++++++++++++ lib/eal/common/eal_private.h                  |
-> 58 ++ lib/eal/freebsd/eal.c                         |  10 +
->  lib/eal/include/rte_lcore.h                   | 209 +++++
->  lib/eal/linux/eal.c                           |  11 +
->  lib/eal/meson.build                           |   4 +
->  lib/eal/version.map                           |  11 +
->  lib/eal/windows/eal.c                         |  12 +
->  14 files changed, 1819 insertions(+), 10 deletions(-)
-> 
-
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
