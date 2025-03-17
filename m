@@ -2,152 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2A9C282EC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 10:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DB1C282EC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 13:46:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4B6F402D1;
-	Mon, 17 Mar 2025 11:48:46 +0100 (CET)
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com
- (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
- by mails.dpdk.org (Postfix) with ESMTP id 6FDED402BB
- for <dev@dpdk.org>; Mon, 17 Mar 2025 11:48:44 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hZxaDnk8J0AssoP7cHP3QxvJU31KQkGg8yHFysN5cOJnBbYl8kj99cUxNiu+AQe7OGxkail6EcxAJrDC9sbUCY3CUarQgcVA/JVw7q4FH0O0ELHSCrYka25s8Q7vMeSB7gxHLkfZXLX2vWjTLjznsExWVjMA8svwERaNqPoK7EpEGAwws5eO/gWc1rtwnGZTNaGN5SEd9peKTFmFUldHZnlQtYUHQJLdv/o1U8QvRNJqPGALD1dTlEY4BcrdAvyzvGhxcTfaOwGfdYt6124+pdqRK2A4z0lRe18qX/GU2VzaftUvDRWU6VgFSLFO2j/LG1fUhg8nMOv9NYt0YnWNcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dtoR7/F67nLkEZ6yqTPjV3F3C9AmbKerQFIuMyQqbSo=;
- b=PYt0/s8qFvSXRR9lm+DRgJadbsuEUTGUtyNeMOrwuNopWlAJo+8zKPpuocORZTM+jpKQYBspi9I25UW/oRoctzOxfSjJ49hLV/DcAkmVpkUY+H6+s1Amdpa5yHr9fnrmUjfxZrotwKNgpOP9yuO3HRLV6pzXMOG++DyLX/89qEnxrOh/NaBnLeMTXcqL9LtqvurzYsMmA89yTbhxYqIBvFI1CuOdaTrUI3t2IQKO7qffrgeLFO6VSXckrzY5Qnkg0mJEB09Ht4ay4e4SBEmDobIfVwSMJozT43Ccub7JuFTneVXMm0oH98kP9f5Kpuan2lI9w+yJRZuu9lF8c30Sjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dtoR7/F67nLkEZ6yqTPjV3F3C9AmbKerQFIuMyQqbSo=;
- b=RKdpUKBV4jmfAmhu92xBEakL1s4DhPyq8Us6VQ9ibm63w7cwcFJCEOXS87Fr9WdWEsNVXUA7Q0G23B5zj4ltpix1Q2hKIvchVy5DOt4ZPJ5/n0vvWncbRI4pVMshHoqp5jrfwSmvqrmO19B+ERq6wNie6A5d4k+ExAlMO+tCFna4j9wfrRQuVEBrFF6aQKiYoIQ7mIc3FWm4MtbbarTkGSdZm93pKUOf5xHQ534OLYiFtu6cYm6JrLLLta8sS9+RA6pi1QIGIAC1ryYsIlnd9f++5ciBMqTLYQ+26B0c7XGj3G267lTLbKo34UdYl25NCVDqxiwyU6ilIkIR1NwUXw==
-Received: from SA3PR12MB8762.namprd12.prod.outlook.com (2603:10b6:806:31f::9)
- by DM4PR12MB6010.namprd12.prod.outlook.com (2603:10b6:8:6a::7) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.33; Mon, 17 Mar 2025 10:48:40 +0000
-Received: from SA3PR12MB8762.namprd12.prod.outlook.com
- ([fe80::4d77:2c63:4aad:8caf]) by SA3PR12MB8762.namprd12.prod.outlook.com
- ([fe80::4d77:2c63:4aad:8caf%6]) with mapi id 15.20.8511.031; Mon, 17 Mar 2025
- 10:48:40 +0000
-From: Matan Azrad <matan@nvidia.com>
-To: Gregory Etelson <getelson@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Maayan Kashani <mkashani@nvidia.com>, Raslan Darawsheh
- <rasland@nvidia.com>, Michael Baum <michaelba@nvidia.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>
-Subject: RE: [PATCH 2/2] net/mlx5: fix GENEVE parser cleanup
-Thread-Topic: [PATCH 2/2] net/mlx5: fix GENEVE parser cleanup
-Thread-Index: AQHbk/K/GiTOSCqWaki6SgRqqaaNf7N3LEew
-Date: Mon, 17 Mar 2025 10:48:40 +0000
-Message-ID: <SA3PR12MB8762C214DA2564F9A3890899DFDF2@SA3PR12MB8762.namprd12.prod.outlook.com>
-References: <20250313083351.25559-1-getelson@nvidia.com>
- <20250313083351.25559-2-getelson@nvidia.com>
-In-Reply-To: <20250313083351.25559-2-getelson@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA3PR12MB8762:EE_|DM4PR12MB6010:EE_
-x-ms-office365-filtering-correlation-id: ec4f2310-e084-4d7c-63ca-08dd6541478c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?RWtWQmtQZkFxYjdmTUx6UTdZQzRFTVBNeG1YQ3lEWGpPQ3pOckFzcEhHWWpL?=
- =?utf-8?B?N29xUzVkdmtEd1FRTkpOaGNUM2tQUzF2QjVyL01LWldzenhUQ3o3Um8rK2FY?=
- =?utf-8?B?cnRFcVh0V25GN2xsREpxZlJONFZER2VzRzRaOGhlN0tLd2JLNVV3LzFSTlo2?=
- =?utf-8?B?azBENUxhMDVsSTBIL3BYblJLcmlDNGRuSEpIaFZaM3I3NUw3Y1ZnNG96Z1hs?=
- =?utf-8?B?R3B2WWllei9iMnBqNWh1ajV3V2JYWHc2aXpCUWIweUtPTUh4V0VaOW9ZeDlY?=
- =?utf-8?B?MlhBRnlxK0k0NFk5K0M0N1JQVzJJMG1NRUFIdnpKam9OMUVjUXMvME5KdVlD?=
- =?utf-8?B?bmZVMEQ0ZGhzcVprd0syNUZoK1l2R1Z0Mjlwcms1ZUJGYWlnZ0JvT3pNUWpO?=
- =?utf-8?B?T3EvZlZCMWg0SS9Jemo5ZDNjU2t2TTJnOTF2dUtJQzRVY0NUQzB2em00V0U1?=
- =?utf-8?B?SUhPSDJUS29pRk9FbUJoTkpudElwVEdXSUp6TWluTkxyajZWczh4WC9nR2Fw?=
- =?utf-8?B?djgyVTU2YzRkb3ZhUEpNM2Y5UXp1cm1JMG9CYmJDMVB1RFZQeTZCR2FSNkxU?=
- =?utf-8?B?c2c3cWh6RkV5aGttZWZ2NERIR0hJNERuYUg1YUdDTlFua3MyWVFuZnR5NWZh?=
- =?utf-8?B?WTBIVXR6dU1Md0F2dndGcXFTcGtKcXROUzVQeHlsNjZremF4QjRGOXIwL3Jr?=
- =?utf-8?B?enQ3dmhiSFhGTHlpbVNXWDZ4QkZRcVBIcmxEYlc5cVh0VjdRMU5wV25XZTlR?=
- =?utf-8?B?Nm4zRjFpWk1BaWVtWkRQZE1pMkJ2TkxCNEZhdVA5aHUzVWxnMjNzVGNPTVJy?=
- =?utf-8?B?OWJSZUhja1g2R092MDlxT00xK25sUDAwdVBuT1ZyU2tqWHNreTN5Mk9icWsz?=
- =?utf-8?B?eWNxcGIzTjQ0dURuc3RBckhLNk14QVpHcjgxSzhoTHZGRUF2NGZaYVkxcnlK?=
- =?utf-8?B?cFlyRStUQ1ZJc1ZJSHVaUGViNUU3NmhWY2Z6eGlYN2NiK2NCbHRJenR1WWJk?=
- =?utf-8?B?RnFhK0pZUlhLZHpvRDhRcUs3VmhySE5jQmFmVWgrZDZmMjRabVV6TjFDMFZj?=
- =?utf-8?B?M01RQkxYNmJmU0NCWGg0OEIrZk0wNlVHK1FIQ1ZyU0EyMFhyTTVoYWVqOEMx?=
- =?utf-8?B?cURuZFV5bHlvV2JTcEREVllYSDB4ZEl6SzdOMXZ4aHFwUjlZL3FXVG9JMTRi?=
- =?utf-8?B?ejdzc04yUmtHQ214NDJSVHZsN0dMNk5remVqNVNzSkVGWjcwNDRUSWdCVmhl?=
- =?utf-8?B?d2ROWGNrWUl6QmlYM0pSeFV4Z2o1RWYyT0xDR3o5Z3ZjVXBLK2hwWnVKU2pF?=
- =?utf-8?B?b09VZWFOTW5yUFVoM2ozQlFNTFhod3lmcTdQc0JYYUt3OUhwWFhOTThmMk9L?=
- =?utf-8?B?N0xiQ2RONTM1a3dXUWloUEVoUDNZTTJaNkFZRVBCOHFwd2dQZ1pNSXRLZTlk?=
- =?utf-8?B?RGVIOWwrVlM4dHNLVXFTYVhucGIrWXo0cGVrRTZOeUttMjQ5S0IxazJxbTEy?=
- =?utf-8?B?bU80RXdyaTk4TmJKTG4rMThqNW1sYmZHQ2IyZUZjZkordUw5U2FiWWJuWm1W?=
- =?utf-8?B?cEVRM004bXVXc1NwZkRxeG5DV0FhTTBMYUkzcEJ5S0VxM2RMdGRtSS8vTnQ2?=
- =?utf-8?B?VDdyN0x6VFl1UUN0Z2tYMm16TzRsNW5GWmNnM2RHb1dySXMxZDlwZ1B1UlQr?=
- =?utf-8?B?akV6TXdySG0yaFQ1WERDbFNXZEZPdGsyRmxxSVZyYThjU09OeERGQXFwTkhY?=
- =?utf-8?B?K1VTVVI3anJRdEFvREw4ZFdrSFkzYTJmeFJuQnBoUlZYOWdtWmJwaEJ2QUw2?=
- =?utf-8?B?SDFCQU5DbjJabHJvbHVzQTk0eG5Rb0NkNjI0dGJBUGRaSUxKSUEwM2E3NTd6?=
- =?utf-8?B?cWtvYVROK1RrSHlEVmdkTHhUYytNSFRBczN2aDRZYU1SSVcvR2ROdjlsRkFV?=
- =?utf-8?Q?59KcBeHj1CE3Z4P8I8vzTLSasJNN97jL?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA3PR12MB8762.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eVpWRENHaGNJc0hjOGd6ZjVsVU13bDE1QUlheXF3cmwrcENzekRKL3lsSFVn?=
- =?utf-8?B?MmlTS3ZJRGpabTdYNUZON0hDdDhiQXJ6NXJKUnVsR00zWXlHR0JTZG5mb2Zn?=
- =?utf-8?B?N2ZvYTlLZ25KZjMxYmEwMXVCSHRuNEtJYzVIWUZlMUpNcGp5eFg3cXdkZG5D?=
- =?utf-8?B?T2Y0R1UwUEJTK3NEL2N5TXVSRmNmdldYWXo0eDdXUEFDdkJYWkdoMUdlUFh4?=
- =?utf-8?B?M3dFcGxpaGdXRERCYXAySVR4U2VzN0pDcytrcnMzQmpIU3NzOGhXLzVPakhZ?=
- =?utf-8?B?RVRESEZXQWMyRTJlTnJxNW5nVjZnWm5hUWNKc0FibFhpdUozSmxwOW82aGJw?=
- =?utf-8?B?TC9DQ0NxYmVoaXJSOTFSMmZCZ256UWR0eW10NEJlQUhHV1FxK0J1QjlISllM?=
- =?utf-8?B?RzdlTTMwREp5NjZIVStBWVFDc0d4TVZsV21FSUJCOUVLL0daWktZS1JLSjBS?=
- =?utf-8?B?bFNNcHQ4dG1aR2ZYMzJ0enJWNTVjOWZFUmpqNThKNHZVZENmVmM0MXl3anFW?=
- =?utf-8?B?Q1ZmTUU4b0t3NzlScWMrSUpjZFA1V2FWMWxZWkp1Rzl4SldoZnhNdDNPeGVq?=
- =?utf-8?B?S2o2YTFENnVQZkk4TGZwditXVk5hczk3Z3ZsOXVCZGswN21oTy9IYi8rTEhs?=
- =?utf-8?B?SDhNdXhmazB5akVuWDk4Rm5tdzhvaGVUQmEycE5XcFVDLzdNUEJxTkFxdFJQ?=
- =?utf-8?B?aUluM01lTi83NEF1MGM1QU1QNEhqeXhvMVpHUER2MlQzTldiTGxvQVcxdFM2?=
- =?utf-8?B?cXlSWStxSCtzMWh0QmRsZVUvT2VGQUdCTG5CWVQxeDBpS0VnY1UyNTJIdmVs?=
- =?utf-8?B?QjA5OWE0MWlNZ2d5QUw1eU1KRUFUd3BlR1hJVDZ2VmpkQ1B1R1M2QmJXVW5X?=
- =?utf-8?B?cWFzVFZ1aUlxckVRS0pWNXA0dzdZR1N6ZnUxRmtsekdVQzBrS1RTVlpiYkg4?=
- =?utf-8?B?NzhoTllXak9LNDY5NkdOSG5iQU5sR2xnb2hSM0NvQVVyZ3hROHZaQnZqSUYw?=
- =?utf-8?B?MkJ1eGZPRTNwYm9McUxrWWxaQ0pWTE9kaTdvdm9ndjJaSVd6aWZ5bW1iWkJS?=
- =?utf-8?B?V2hadTVmdkRiWi8vRTlVVGpFS3BLVkR5YnliZjJLMUY0OUEzUEhYNzdDbk9a?=
- =?utf-8?B?K2NJcVltSDh4M1J6UUhjN21iQ1R4SkRFZGoxc3lsQWNlcmNUTUhUb3hOVFhx?=
- =?utf-8?B?ZVZXaWVRQnZLTUFpQnIweWxIOVNldDNTNXY2NVlrY3dNR0VESnI4eGJrZDNK?=
- =?utf-8?B?dXJDVHF1ZEVtZVVlWmZyZ2NYUHcySjNqTFJuOXp4V0c5VFlvbCtpNC9WQ2Y4?=
- =?utf-8?B?WlFJVkJSTWJrUVZHRnB6WVFTUTN0ZXlHTXF3bXRKWUlxbnpWRERxbEVwQUxx?=
- =?utf-8?B?WnJBejdldDJKenZnUnJVY2dqdmJ5N0ZZc2wxSkVBNDQ2aHFic0tMMEE4ditI?=
- =?utf-8?B?WE04UjFJTkZ0bXU3cWtmNklmdEpwWnVGWUNBTW5NaUpKWHRzR1JGbTJiZWxt?=
- =?utf-8?B?ejEyTWZlRGtUWFE0djRsR1ZUaVBKWmU1bzhmajZCdzVaMDNsMmM2d2Zoc21U?=
- =?utf-8?B?eUFmYnEya3lKY0hkd2ZDQTU5c2hHSE9VTlFxWHdJbjVkK3NEY2pxUEVDYS9P?=
- =?utf-8?B?UE9GRjc3TStXQTltTktENzlHTU01ZTA3R1BTK1lCTDhodDltNzJ1akR3ZWd5?=
- =?utf-8?B?aHVMVmhtMEV6NWpTOEp3SDl0MVRRRTVpNmFseHZidDVhbGZSZ00rR3FIdjRh?=
- =?utf-8?B?aUFobTVMNzg5UUJqaFNSZlhJVitWV09rSlNyOHRSRmZPT1F3ZW9VdWV6SzlY?=
- =?utf-8?B?dnpLa3V3TTZyN1VnbWloRmVSRmh1VzFvcXV5WHFCQ1A4UUdobldYbjQzR2Zv?=
- =?utf-8?B?UzZ1YzRVWU5US1JjSUlEdVFkU2lxUnczWVA4cm5iQ0lPT2cvYk1IQTVhNW10?=
- =?utf-8?B?bDEwbWNaUHZhUEg1dExGZHVyVGE0UnlWNmloN0pZRkxPeFRBVXY1OStwdWti?=
- =?utf-8?B?UVRyYk5ydkRYSkJnQXhtOXZUUXczSkpLb1RrL1p6V2tBYXY2TFU3ZmozemQz?=
- =?utf-8?B?MVpWM3g3akQxaGlvZk1qYmNUeVVoTnhxblJYdmhpQnJGb1hEQk9CaGhQanVi?=
- =?utf-8?Q?8ll4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id C8E46402D1;
+	Mon, 17 Mar 2025 14:46:11 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 44760402BB
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 14:46:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1742219169;
+ bh=VWh0p9gKE325yVAH+LFWOcwpK7+v4bIqmHpADIFFukM=;
+ h=Date:From:To:Cc:Subject:In-Reply-To:References;
+ b=d+8Os8ZgOtFNA/tUO8Y6jNK8HN2l4N5ZWIIkSNqSTlj4Oc52KRReOWjttevJLDA17
+ s733HE7XiX5eKIEIlxBRcFqNvMViJw9wdJEH8srjR7sNzVvJoU04WSTvyx/yEVskb0
+ wKcsjGavix5a5QfMwVXLf4uHqhoSbRKROgNRRrmcGNQupRi8Izf49uDKGtB7m+iVWd
+ uMK8RB7QueHdqTgVGPGNCcHV7s7A2qRrL5ug31EyxmOnfEUtshr3rt78YytkjPY1QZ
+ eolRHG4Vk1F4GoNoJnRolCJ1SFZxWpiJS9eke1iTxYYvENWvP0eaIw3FgF10qrMGyM
+ 21Mg7HsMN//nA==
+Received: from coaster.localdomain (viktorin-esprimo.cesnet.cz
+ [IPv6:2001:718:812:27::83])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
+ server-digest SHA256) (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 5DEC41180072;
+ Mon, 17 Mar 2025 14:46:08 +0100 (CET)
+Date: Mon, 17 Mar 2025 14:46:07 +0100
+From: Jan Viktorin <viktorin@cesnet.cz>
+To: Vipin Varghese <vipin.varghese@amd.com>
+Cc: <dev@dpdk.org>, <roretzla@linux.microsoft.com>,
+ <bruce.richardson@intel.com>, <john.mcnamara@intel.com>,
+ <dmitry.kozliuk@gmail.com>, <pbhagavatula@marvell.com>,
+ <jerinj@marvell.com>, <ruifeng.wang@arm.com>,
+ <mattias.ronnblom@ericsson.com>, <anatoly.burakov@intel.com>,
+ <stephen@networkplumber.org>, <ferruh.yigit@amd.com>,
+ <honnappa.nagarahalli@arm.com>, <wathsala.vithanage@arm.com>,
+ <konstantin.ananyev@huawei.com>, <mb@smartsharesystems.com>
+Subject: Re: [PATCH v4 0/4] Introduce Topology NUMA grouping for lcores
+Message-ID: <20250317144607.118a40b0@coaster.localdomain>
+In-Reply-To: <20241105102849.1947-1-vipin.varghese@amd.com>
+References: <20241105102849.1947-1-vipin.varghese@amd.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB8762.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec4f2310-e084-4d7c-63ca-08dd6541478c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2025 10:48:40.3710 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: x6k76b3w/ydFZZYLRv1p4nwjPy9z00KcDSKRrdG7k2YyQ9hkOgpvAtbQ0ejDxrcPwA/yl81hIGct72W/P5dOWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6010
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -161,143 +58,179 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gRnJvbTogTWljaGFlbCBCYXVtIDxtaWNoYWVsYmFAbnZpZGlhLmNvbT4NCj4gDQo+IFRo
-ZSBHRU5FVkUgcGFyc2VyIGlzIHNoYXJlZCBhY3Jvc3MgcG9ydHMgb24gdGhlIHNhbWUgcGh5c2lj
-YWwgZGV2aWNlLiBJdCBpcw0KPiBjcmVhdGVkIG9uY2UgZm9yIHRoZSBmaXJzdCBwb3J0IGFuZCBp
-bmNyZW1lbnRzIGEgcmVmZXJlbmNlIGNvdW50ZXIgZm9yIGVhY2gNCj4gYWRkaXRpb25hbCBwb3J0
-LiBUaGUgcGFyc2VyIGlzIGNyZWF0ZWQgdXNpbmcgdGhlIEluZmluaUJhbmQNCj4gKElCVikgY29u
-dGV4dCAoQ1RYKSBvZiB0aGUgZmlyc3QgcG9ydCwgYW5kIGNsZWFudXAgc2hvdWxkIHVzZSB0aGUg
-c2FtZSBjb250ZXh0Lg0KPiANCj4gUHJldmlvdXNseSwgaWYgdGhlIHBvcnQgb3duaW5nIHRoZSBj
-b250ZXh0IGNsb3NlZCB3aGlsZSBhbm90aGVyIHBvcnQgc3RpbGwgdXNlZA0KPiB0aGUgcGFyc2Vy
-LCB0aGUgcG9ydCBjbG9zdXJlIHdvdWxkIGZhaWwgZHVlIHRvIHRoZSBzaGFyZWQgcGFyc2VyIGRl
-cGVuZGVuY3kuDQo+IA0KPiBUaGlzIHBhdGNoIGFkZHJlc3NlcyB0aGUgaXNzdWUgYnkgY2hhbmdp
-bmcgdGhlIGFwcHJvYWNoOiB0aGUgcGh5c2ljYWwgZGV2aWNlDQo+IG5vdyBjcmVhdGVzIGl0cyBv
-d24gZGlzdGluY3QgY29udGV4dCBieSBpbXBvcnRpbmcgdGhlIGNvbnRleHQgZnJvbSB0aGUgZmly
-c3QNCj4gaW5pdGlhbGl6ZWQgcG9ydC4gVGhpcyBlbnN1cmVzIHRoYXQgcGFyc2VyIGNyZWF0aW9u
-IGFuZCBjbGVhbnVwIHVzZSBhIGNvbnNpc3RlbnQNCj4gY29udGV4dCwgaW5kZXBlbmRlbnQgb2Yg
-aW5kaXZpZHVhbCBwb3J0IGxpZmVjeWNsZXMuDQo+IA0KPiBGaXhlczogZjUxNzdiZGM4Yjc2ICgi
-bmV0L21seDU6IGFkZCBHRU5FVkUgVExWIG9wdGlvbnMgcGFyc2VyIEFQSSIpDQo+IENjOiBtaWNo
-YWVsYmFAbnZpZGlhLmNvbQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWljaGFlbCBCYXVtIDxtaWNo
-YWVsYmFAbnZpZGlhLmNvbT4NCkFja2VkLWJ5OiBNYXRhbiBBenJhZCA8bWF0YW5AbnZpZGlhLmNv
-bT4NCg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvbWx4NS9tbHg1LmMgICAgICAgICAgICAgfCAy
-MSArKysrKystLS0tLS0NCj4gIGRyaXZlcnMvbmV0L21seDUvbWx4NS5oICAgICAgICAgICAgIHwg
-IDIgKy0NCj4gIGRyaXZlcnMvbmV0L21seDUvbWx4NV9mbG93LmggICAgICAgIHwgIDIgLS0NCj4g
-IGRyaXZlcnMvbmV0L21seDUvbWx4NV9mbG93X2dlbmV2ZS5jIHwgNTAgKysrLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0NCj4gIDQgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgNTcg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvbWx4NS9tbHg1LmMg
-Yi9kcml2ZXJzL25ldC9tbHg1L21seDUuYyBpbmRleA0KPiAwZjQ5Y2I1ZTViLi5hMTY1NjhmZjIy
-IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9tbHg1L21seDUuYw0KPiArKysgYi9kcml2ZXJz
-L25ldC9tbHg1L21seDUuYw0KPiBAQCAtMTcyNCw2ICsxNzI0LDE2IEBAIG1seDVfZ2V0X3BoeXNp
-Y2FsX2RldmljZShzdHJ1Y3QNCj4gbWx4NV9jb21tb25fZGV2aWNlICpjZGV2KQ0KPiAgCQlydGVf
-ZXJybm8gPSBFTk9NRU07DQo+ICAJCXJldHVybiBOVUxMOw0KPiAgCX0NCj4gKwkvKg0KPiArCSAq
-IFRoZSBzYW1lIENUWCBjcmVhdGUgdGhlIHBoeXNpY2FsIGRldmljZSBvYmplY3RzIHNob3VsZCBk
-ZXN0cm95DQo+IHRoZW0uDQo+ICsJICogU2luY2Ugd2UgY2FuJ3QgYmUgc3VyZSBpdCB3aWxsIGJl
-IGRvbmUgYnkgc2FtZSBDVFgsIHdlIHByZXBhcmUgZm9yDQo+ICsJICogdGhlIHBoeXNpY2FsIGRl
-dmljZSBhIHNwZWNpYWwgQ1RYIHVzZWQgYnkgb2JqZWN0cyBjcmVhdGlvbi4NCj4gKwkgKi8NCj4g
-KwlwaGRldi0+Y3R4ID0gbWx4NV9vc19nZXRfcGh5c2ljYWxfZGV2aWNlX2N0eChjZGV2KTsNCj4g
-KwlpZiAoIXBoZGV2LT5jdHgpIHsNCj4gKwkJbWx4NV9mcmVlKHBoZGV2KTsNCj4gKwkJcmV0dXJu
-IE5VTEw7DQo+ICsJfQ0KPiAgCXBoZGV2LT5ndWlkID0gYXR0ci0+c3lzdGVtX2ltYWdlX2d1aWQ7
-DQo+ICAJcGhkZXYtPnJlZmNudCA9IDE7DQo+ICAJTElTVF9JTlNFUlRfSEVBRCgmcGhkZXZfbGlz
-dCwgcGhkZXYsIG5leHQpOyBAQCAtMTc2Nyw2ICsxNzc3LDgNCj4gQEAgbWx4NV9waHlzaWNhbF9k
-ZXZpY2VfZGVzdHJveShzdHJ1Y3QgbWx4NV9waHlzaWNhbF9kZXZpY2UgKnBoZGV2KQ0KPiAgCQly
-ZXR1cm47DQo+ICAJLyogUmVtb3ZlIHBoeXNpY2FsIGRldmljZSBmcm9tIHRoZSBnbG9iYWwgZGV2
-aWNlIGxpc3QuICovDQo+ICAJTElTVF9SRU1PVkUocGhkZXYsIG5leHQpOw0KPiArCU1MWDVfQVNT
-RVJUKHBoZGV2LT5jdHgpOw0KPiArCWNsYWltX3plcm8obWx4NV9nbHVlLT5jbG9zZV9kZXZpY2Uo
-cGhkZXYtPmN0eCkpOw0KPiAgCW1seDVfZnJlZShwaGRldik7DQo+ICB9DQo+IA0KPiBAQCAtMjMy
-MywxNSArMjMzNSw2IEBAIG1seDVfZGV2X2Nsb3NlKHN0cnVjdCBydGVfZXRoX2RldiAqZGV2KQ0K
-PiAgCQlydGVfZXJybm8gPSBFQlVTWTsNCj4gIAkJcmV0dXJuIC1FQlVTWTsNCj4gIAl9DQo+IC0j
-aWZkZWYgSEFWRV9NTFg1X0hXU19TVVBQT1JUDQo+IC0JLyogQ2hlY2sgaWYgc2hhcmVkIEdFTkVW
-RSBvcHRpb25zIGNyZWF0ZWQgb24gY29udGV4dCBiZWluZyBjbG9zZWQuICovDQo+IC0JcmV0ID0g
-bWx4NV9nZW5ldmVfdGx2X29wdGlvbnNfY2hlY2tfYnVzeShwcml2KTsNCj4gLQlpZiAocmV0KSB7
-DQo+IC0JCURSVl9MT0coRVJSLCAicG9ydCAldSBtYWludGFpbnMgc2hhcmVkIEdFTkVWRSBUTFYN
-Cj4gb3B0aW9ucyIsDQo+IC0JCQlkZXYtPmRhdGEtPnBvcnRfaWQpOw0KPiAtCQlyZXR1cm4gcmV0
-Ow0KPiAtCX0NCj4gLSNlbmRpZg0KPiAgCURSVl9MT0coREVCVUcsICJwb3J0ICV1IGNsb3Npbmcg
-ZGV2aWNlIFwiJXNcIiIsDQo+ICAJCWRldi0+ZGF0YS0+cG9ydF9pZCwgc2gtPmliZGV2X25hbWUp
-Ow0KPiAgCS8qDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9tbHg1L21seDUuaCBiL2RyaXZl
-cnMvbmV0L21seDUvbWx4NS5oIGluZGV4DQo+IDZkZjk5YzI1ZTIuLjAxOTQ4ODdhOGIgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvbmV0L21seDUvbWx4NS5oDQo+ICsrKyBiL2RyaXZlcnMvbmV0L21s
-eDUvbWx4NS5oDQo+IEBAIC0xNTI3LDcgKzE1MjcsNyBAQCBzdHJ1Y3QgbWx4NV9jb21tb25fbmlj
-X2NvbmZpZyB7DQo+ICAgKi8NCj4gIHN0cnVjdCBtbHg1X3BoeXNpY2FsX2RldmljZSB7DQo+ICAJ
-TElTVF9FTlRSWShtbHg1X3BoeXNpY2FsX2RldmljZSkgbmV4dDsNCj4gLQlzdHJ1Y3QgbWx4NV9k
-ZXZfY3R4X3NoYXJlZCAqc2g7IC8qIENyZWF0ZWQgb24gc2hlcmQgY29udGV4dC4gKi8NCj4gKwl2
-b2lkICpjdHg7IC8qIENUWCBmb3IgY3JlYXRpb24gb2Ygb3B0aW9ucy4gKi8NCj4gIAl1aW50NjRf
-dCBndWlkOyAvKiBTeXN0ZW0gaW1hZ2UgZ3VpZCwgdGhlIHVuaXEgSUQgb2YgcGh5c2ljYWwgZGV2
-aWNlLiAqLw0KPiAgCXN0cnVjdCBtbHg1X2dlbmV2ZV90bHZfb3B0aW9ucyAqdGx2X29wdGlvbnM7
-DQo+ICAJc3RydWN0IG1seDVfY29tbW9uX25pY19jb25maWcgY29uZmlnOw0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9uZXQvbWx4NS9tbHg1X2Zsb3cuaCBiL2RyaXZlcnMvbmV0L21seDUvbWx4NV9m
-bG93LmgNCj4gaW5kZXggYTViZGUxNThjYS4uOTgxNmVkOTIzOCAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9uZXQvbWx4NS9tbHg1X2Zsb3cuaA0KPiArKysgYi9kcml2ZXJzL25ldC9tbHg1L21seDVf
-Zmxvdy5oDQo+IEBAIC0zNDY5LDggKzM0NjksNiBAQCBmbG93X2h3X3Jlc291cmNlX3JlbGVhc2Uo
-c3RydWN0IHJ0ZV9ldGhfZGV2DQo+ICpkZXYpOyAgaW50ICBtbHg1X2dlbmV2ZV90bHZfb3B0aW9u
-c19kZXN0cm95KHN0cnVjdCBtbHg1X2dlbmV2ZV90bHZfb3B0aW9ucw0KPiAqb3B0aW9ucywNCj4g
-IAkJCQlzdHJ1Y3QgbWx4NV9waHlzaWNhbF9kZXZpY2UgKnBoZGV2KTsgLWludCAtDQo+IG1seDVf
-Z2VuZXZlX3Rsdl9vcHRpb25zX2NoZWNrX2J1c3koc3RydWN0IG1seDVfcHJpdiAqcHJpdik7ICB2
-b2lkDQo+IGZsb3dfaHdfcnhxX2ZsYWdfc2V0KHN0cnVjdCBydGVfZXRoX2RldiAqZGV2LCBib29s
-IGVuYWJsZSk7ICBpbnQNCj4gZmxvd19kdl9hY3Rpb25fdmFsaWRhdGUoc3RydWN0IHJ0ZV9ldGhf
-ZGV2ICpkZXYsIGRpZmYgLS1naXQNCj4gYS9kcml2ZXJzL25ldC9tbHg1L21seDVfZmxvd19nZW5l
-dmUuYw0KPiBiL2RyaXZlcnMvbmV0L21seDUvbWx4NV9mbG93X2dlbmV2ZS5jDQo+IGluZGV4IDZi
-ZjUzZTEyNzAuLjRkNTdiYjc2M2YgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L21seDUvbWx4
-NV9mbG93X2dlbmV2ZS5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L21seDUvbWx4NV9mbG93X2dlbmV2
-ZS5jDQo+IEBAIC01OTAsOCArNTkwLDggQEAgbWx4NV9nZW5ldmVfdGx2X29wdGlvbl9jb3B5KHN0
-cnVjdA0KPiBydGVfcG1kX21seDVfZ2VuZXZlX3RsdiAqZHN0LA0KPiAgLyoqDQo+ICAgKiBDcmVh
-dGUgbGlzdCBvZiBHRU5FVkUgVExWIG9wdGlvbnMgYWNjb3JkaW5nIHRvIHVzZXIgY29uZmlndXJh
-dGlvbiBsaXN0Lg0KPiAgICoNCj4gLSAqIEBwYXJhbSBzaA0KPiAtICogICBTaGFyZWQgY29udGV4
-dCB0aGUgb3B0aW9ucyBhcmUgYmVpbmcgY3JlYXRlZCBvbi4NCj4gKyAqIEBwYXJhbSBjdHgNCj4g
-KyAqICAgQ29udGV4dCByZXR1cm5lZCBmcm9tIG1seDUgb3Blbl9kZXZpY2UoKSBnbHVlIGZ1bmN0
-aW9uLg0KPiAgICogQHBhcmFtIHRsdl9saXN0DQo+ICAgKiAgIEEgbGlzdCBvZiBHRU5FVkUgVExW
-IG9wdGlvbnMgdG8gY3JlYXRlIHBhcnNlciBmb3IgdGhlbS4NCj4gICAqIEBwYXJhbSBuYl9vcHRp
-b25zDQo+IEBAIC02MDQsNyArNjA0LDcgQEAgbWx4NV9nZW5ldmVfdGx2X29wdGlvbl9jb3B5KHN0
-cnVjdA0KPiBydGVfcG1kX21seDVfZ2VuZXZlX3RsdiAqZHN0LA0KPiAgICogICBOVUxMIG90aGVy
-d2lzZSBhbmQgcnRlX2Vycm5vIGlzIHNldC4NCj4gICAqLw0KPiAgc3RhdGljIHN0cnVjdCBtbHg1
-X2dlbmV2ZV90bHZfb3B0aW9ucyAqIC0NCj4gbWx4NV9nZW5ldmVfdGx2X29wdGlvbnNfY3JlYXRl
-KHN0cnVjdCBtbHg1X2Rldl9jdHhfc2hhcmVkICpzaCwNCj4gK21seDVfZ2VuZXZlX3Rsdl9vcHRp
-b25zX2NyZWF0ZSh2b2lkICpjdHgsDQo+ICAJCQkgICAgICAgY29uc3Qgc3RydWN0IHJ0ZV9wbWRf
-bWx4NV9nZW5ldmVfdGx2IHRsdl9saXN0W10sDQo+ICAJCQkgICAgICAgdWludDhfdCBuYl9vcHRp
-b25zLCB1aW50OF90IHNhbXBsZV9pZCkgIHsgQEAgLQ0KPiA2MjUsNyArNjI1LDcgQEAgbWx4NV9n
-ZW5ldmVfdGx2X29wdGlvbnNfY3JlYXRlKHN0cnVjdA0KPiBtbHg1X2Rldl9jdHhfc2hhcmVkICpz
-aCwNCj4gIAl9DQo+ICAJZm9yIChpID0gMDsgaSA8IG5iX29wdGlvbnM7ICsraSkgew0KPiAgCQlz
-cGVjID0gJnRsdl9saXN0W2ldOw0KPiAtCQlyZXQgPSBtbHg1X2dlbmV2ZV90bHZfb3B0aW9uX2Ny
-ZWF0ZShzaC0+Y2Rldi0+Y3R4LCBzcGVjLA0KPiArCQlyZXQgPSBtbHg1X2dlbmV2ZV90bHZfb3B0
-aW9uX2NyZWF0ZShjdHgsIHNwZWMsDQo+ICAJCQkJCQkgICAgJm9wdGlvbnMtPm9wdGlvbnNbaV0s
-DQo+IHNhbXBsZV9pZCk7DQo+ICAJCWlmIChyZXQgPCAwKQ0KPiAgCQkJZ290byBlcnJvcjsNCj4g
-QEAgLTYzMyw4ICs2MzMsNiBAQCBtbHg1X2dlbmV2ZV90bHZfb3B0aW9uc19jcmVhdGUoc3RydWN0
-DQo+IG1seDVfZGV2X2N0eF9zaGFyZWQgKnNoLA0KPiAgCQlkYXRhX21hc2sgPSBvcHRpb25zLT5i
-dWZmZXIgKyBpICoNCj4gTUFYX0dFTkVWRV9PUFRJT05fREFUQV9TSVpFOw0KPiAgCQltbHg1X2dl
-bmV2ZV90bHZfb3B0aW9uX2NvcHkoJm9wdGlvbnMtPnNwZWNbaV0sIHNwZWMsDQo+IGRhdGFfbWFz
-ayk7DQo+ICAJfQ0KPiAtCU1MWDVfQVNTRVJUKHNoLT5waGRldi0+c2ggPT0gTlVMTCk7DQo+IC0J
-c2gtPnBoZGV2LT5zaCA9IHNoOw0KPiAgCW9wdGlvbnMtPm5iX29wdGlvbnMgPSBuYl9vcHRpb25z
-Ow0KPiAgCW9wdGlvbnMtPnJlZmNudCA9IDE7DQo+ICAJcmV0dXJuIG9wdGlvbnM7DQo+IEBAIC02
-NzYsNDEgKzY3NCw5IEBAIG1seDVfZ2VuZXZlX3Rsdl9vcHRpb25zX2Rlc3Ryb3koc3RydWN0DQo+
-IG1seDVfZ2VuZXZlX3Rsdl9vcHRpb25zICpvcHRpb25zLA0KPiAgCX0NCj4gIAltbHg1X2ZyZWUo
-b3B0aW9ucyk7DQo+ICAJcGhkZXYtPnRsdl9vcHRpb25zID0gTlVMTDsNCj4gLQlwaGRldi0+c2gg
-PSBOVUxMOw0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiANCj4gLS8qKg0KPiAtICogQ2hlY2sgaWYg
-R0VORVZFIFRMViBvcHRpb25zIGFyZSBob3N0ZWQgb24gdGhlIGN1cnJlbnQgcG9ydA0KPiAtICog
-YW5kIHRoZSBwb3J0IGNhbiBiZSBjbG9zZWQNCj4gLSAqDQo+IC0gKiBAcGFyYW0gcHJpdg0KPiAt
-ICogICBEZXZpY2UgcHJpdmF0ZSBkYXRhLg0KPiAtICoNCj4gLSAqIEByZXR1cm4NCj4gLSAqICAg
-MCBvbiBzdWNjZXNzLCBhIG5lZ2F0aXZlIEVCVVNZIGFuZCBydGVfZXJybm8gaXMgc2V0Lg0KPiAt
-ICovDQo+IC1pbnQNCj4gLW1seDVfZ2VuZXZlX3Rsdl9vcHRpb25zX2NoZWNrX2J1c3koc3RydWN0
-IG1seDVfcHJpdiAqcHJpdikgLXsNCj4gLQlzdHJ1Y3QgbWx4NV9waHlzaWNhbF9kZXZpY2UgKnBo
-ZGV2ID0NCj4gbWx4NV9nZXRfbG9ja2VkX3BoeXNpY2FsX2RldmljZShwcml2KTsNCj4gLQlzdHJ1
-Y3QgbWx4NV9kZXZfY3R4X3NoYXJlZCAqc2ggPSBwcml2LT5zaDsNCj4gLQ0KPiAtCWlmICghcGhk
-ZXYgfHwgcGhkZXYtPnNoICE9IHNoKSB7DQo+IC0JCW1seDVfdW5sb2NrX3BoeXNpY2FsX2Rldmlj
-ZSgpOw0KPiAtCQlyZXR1cm4gMDsNCj4gLQl9DQo+IC0JaWYgKCFzaC0+cGhkZXYtPnRsdl9vcHRp
-b25zIHx8IHNoLT5waGRldi0+dGx2X29wdGlvbnMtPnJlZmNudCA9PSAxKSB7DQo+IC0JCS8qIE1h
-cmsgcG9ydCBhcyBiZWluZyBjbG9zZWQgb25lICovDQo+IC0JCXNoLT5waGRldi0+c2ggPSBOVUxM
-Ow0KPiAtCQltbHg1X3VubG9ja19waHlzaWNhbF9kZXZpY2UoKTsNCj4gLQkJcmV0dXJuIDA7DQo+
-IC0JfQ0KPiAtCW1seDVfdW5sb2NrX3BoeXNpY2FsX2RldmljZSgpOw0KPiAtCXJ0ZV9lcnJubyA9
-IEVCVVNZOw0KPiAtCXJldHVybiAtRUJVU1k7DQo+IC19DQo+IC0NCj4gIC8qKg0KPiAgICogVmFs
-aWRhdGUgR0VORVZFIFRMViBvcHRpb24gdXNlciByZXF1ZXN0IHN0cnVjdHVyZS4NCj4gICAqDQo+
-IEBAIC05NTUsMTggKzkyMSwxMiBAQCBtbHg1X2dlbmV2ZV90bHZfcGFyc2VyX2NyZWF0ZSh1aW50
-MTZfdCBwb3J0X2lkLA0KPiAgCQkJcnRlX2Vycm5vID0gRUVYSVNUOw0KPiAgCQkJcmV0dXJuIE5V
-TEw7DQo+ICAJCX0NCj4gLQkJaWYgKHBoZGV2LT5zaCA9PSBOVUxMKSB7DQo+IC0JCQltbHg1X3Vu
-bG9ja19waHlzaWNhbF9kZXZpY2UoKTsNCj4gLQkJCURSVl9MT0coRVJSLCAiR0VORVZFIFRMViBv
-cHRpb25zIGFyZSBob3N0ZWQgb24NCj4gcG9ydCBiZWluZyBjbG9zZWQuIik7DQo+IC0JCQlydGVf
-ZXJybm8gPSBFQlVTWTsNCj4gLQkJCXJldHVybiBOVUxMOw0KPiAtCQl9DQo+ICAJCS8qIFVzZSBl
-eGlzdGluZyBvcHRpb25zLiAqLw0KPiAgCQlvcHRpb25zLT5yZWZjbnQrKzsNCj4gIAkJZ290byBl
-eGl0Ow0KPiAgCX0NCj4gIAkvKiBDcmVhdGUgR0VORVZFIFRMViBvcHRpb25zIGZvciB0aGlzIHBo
-eXNpY2FsIGRldmljZS4gKi8NCj4gLQlvcHRpb25zID0gbWx4NV9nZW5ldmVfdGx2X29wdGlvbnNf
-Y3JlYXRlKHByaXYtPnNoLCB0bHZfbGlzdCwNCj4gbmJfb3B0aW9ucywgc2FtcGxlX2lkKTsNCj4g
-KwlvcHRpb25zID0gbWx4NV9nZW5ldmVfdGx2X29wdGlvbnNfY3JlYXRlKHBoZGV2LT5jdHgsIHRs
-dl9saXN0LA0KPiArbmJfb3B0aW9ucywgc2FtcGxlX2lkKTsNCj4gIAlpZiAoIW9wdGlvbnMpIHsN
-Cj4gIAkJbWx4NV91bmxvY2tfcGh5c2ljYWxfZGV2aWNlKCk7DQo+ICAJCXJldHVybiBOVUxMOw0K
-PiAtLQ0KPiAyLjQ1LjINCg0K
+Hello Vipin and others,
+
+please, will there be any progress or update on this series?
+
+I successfully tested those changes on our Intel and AMD machines and
+would like to use it in production soon.
+
+The API is a little bit unintuitive, at least for me, but I
+successfully integrated into our software.
+
+I am missing a clear relation to the NUMA socket approach used in DPDK.
+E.g. I would like to be able to easily walk over a list of lcores from
+a specific NUMA node grouped by L3 domain. Yes, there is the
+RTE_LCORE_DOMAIN_IO, but would it always match the appropriate socket
+IDs?
+
+Also, I do not clearly understand what is the purpose of using domain
+selector like:
+
+  RTE_LCORE_DOMAIN_L1 | RTE_LCORE_DOMAIN_L2
+
+or even:
+
+  RTE_LCORE_DOMAIN_L3 | RTE_LCORE_DOMAIN_L2
+
+the documentation does not explain this. I could not spot any kind of
+grouping that would help me in any way. Some "best practices" examples
+would be nice to have to understand the intentions better.
+
+I found a little catch when running DPDK with more lcores than there
+are physical or SMT CPU cores. This happens when using e.g. an option
+like --lcores=(0-15)@(0-1). The results from the topology API would not
+match the lcores because hwloc is not aware of the lcores concept. This
+might be mentioned somewhere.
+
+Anyway, I really appreciate this work and would like to see it upstream.
+Especially for AMD machines, some framework like this is a must.
+
+Kind regards,
+Jan
+
+On Tue, 5 Nov 2024 15:58:45 +0530
+Vipin Varghese <vipin.varghese@amd.com> wrote:
+
+> This patch introduces improvements for NUMA topology awareness in
+> relation to DPDK logical cores. The goal is to expose API which allows
+> users to select optimal logical cores for any application. These
+> logical cores can be selected from various NUMA domains like CPU and
+> I/O.
+> 
+> Change Summary:
+>  - Introduces the concept of NUMA domain partitioning based on CPU and
+>    I/O topology.
+>  - Adds support for grouping DPDK logical cores within the same Cache
+>    and I/O domain for improved locality.
+>  - Implements topology detection and core grouping logic that
+>    distinguishes between the following NUMA configurations:
+>     * CPU topology & I/O topology (e.g., AMD SoC EPYC, Intel Xeon SPR)
+>     * CPU+I/O topology (e.g., Ampere One with SLC, Intel Xeon SPR
+> with SNC)
+>  - Enhances performance by minimizing lcore dispersion across
+> tiles|compute package with different L2/L3 cache or IO domains.
+> 
+> Reason:
+>  - Applications using DPDK libraries relies on consistent memory
+> access.
+>  - Lcores being closer to same NUMA domain as IO.
+>  - Lcores sharing same cache.
+> 
+> Latency is minimized by using lcores that share the same NUMA
+> topology. Memory access is optimized by utilizing cores within the
+> same NUMA domain or tile. Cache coherence is preserved within the
+> same shared cache domain, reducing the remote access from
+> tile|compute package via snooping (local hit in either L2 or L3
+> within same NUMA domain).
+> 
+> Library dependency: hwloc
+> 
+> Topology Flags:
+> ---------------
+>  - RTE_LCORE_DOMAIN_L1: to group cores sharing same L1 cache
+>  - RTE_LCORE_DOMAIN_SMT: same as RTE_LCORE_DOMAIN_L1
+>  - RTE_LCORE_DOMAIN_L2: group cores sharing same L2 cache
+>  - RTE_LCORE_DOMAIN_L3: group cores sharing same L3 cache
+>  - RTE_LCORE_DOMAIN_L4: group cores sharing same L4 cache
+>  - RTE_LCORE_DOMAIN_IO: group cores sharing same IO
+> 
+> < Function: Purpose >
+> ---------------------
+>  - rte_get_domain_count: get domain count based on Topology Flag
+>  - rte_lcore_count_from_domain: get valid lcores count under each
+> domain
+>  - rte_get_lcore_in_domain: valid lcore id based on index
+>  - rte_lcore_cpuset_in_domain: return valid cpuset based on index
+>  - rte_lcore_is_main_in_domain: return true|false if main lcore is
+> present
+>  - rte_get_next_lcore_from_domain: next valid lcore within domain
+>  - rte_get_next_lcore_from_next_domain: next valid lcore from next
+> domain
+> 
+> Note:
+>  1. Topology is NUMA grouping.
+>  2. Domain is various sub-groups within a specific Topology.
+> 
+> Topology example: L1, L2, L3, L4, IO
+> Domian example: IO-A, IO-B
+> 
+> < MACRO: Purpose >
+> ------------------
+>  - RTE_LCORE_FOREACH_DOMAIN: iterate lcores from all domains
+>  - RTE_LCORE_FOREACH_WORKER_DOMAIN: iterate worker lcores from all
+> domains
+>  - RTE_LCORE_FORN_NEXT_DOMAIN: iterate domain select n'th lcore
+>  - RTE_LCORE_FORN_WORKER_NEXT_DOMAIN: iterate domain for worker n'th
+> lcore.
+> 
+> Future work (after merge):
+> --------------------------
+>  - dma-perf per IO NUMA
+>  - eventdev per L3 NUMA
+>  - pipeline per SMT|L3 NUMA
+>  - distributor per L3 for Port-Queue
+>  - l2fwd-power per SMT
+>  - testpmd option for IO NUMA per port
+> 
+> Platform tested on:
+> -------------------
+>  - INTEL(R) XEON(R) PLATINUM 8562Y+ (support IO numa 1 & 2)
+>  - AMD EPYC 8534P (supports IO numa 1 & 2)
+>  - AMD EPYC 9554 (supports IO numa 1, 2, 4)
+> 
+> Logs:
+> -----
+> 1. INTEL(R) XEON(R) PLATINUM 8562Y+:
+>  - SNC=1
+>         Domain (IO): at index (0) there are 48 core, with (0) at
+> index 0
+>  - SNC=2
+>         Domain (IO): at index (0) there are 24 core, with (0) at
+> index 0 Domain (IO): at index (1) there are 24 core, with (12) at
+> index 0
+> 
+> 2. AMD EPYC 8534P:
+>  - NPS=1:
+>         Domain (IO): at index (0) there are 128 core, with (0) at
+> index 0
+>  - NPS=2:
+>         Domain (IO): at index (0) there are 64 core, with (0) at
+> index 0 Domain (IO): at index (1) there are 64 core, with (32) at
+> index 0
+> 
+> Signed-off-by: Vipin Varghese <vipin.varghese@amd.com>
+> 
+> Vipin Varghese (4):
+>   eal/lcore: add topology based functions
+>   test/lcore: enable tests for topology
+>   doc: add topology grouping details
+>   examples: update with lcore topology API
+> 
+>  app/test/test_lcores.c                        | 528 +++++++++++++
+>  config/meson.build                            |  18 +
+>  .../prog_guide/env_abstraction_layer.rst      |  22 +
+>  examples/helloworld/main.c                    | 154 +++-
+>  examples/l2fwd/main.c                         |  56 +-
+>  examples/skeleton/basicfwd.c                  |  22 +
+>  lib/eal/common/eal_common_lcore.c             | 714
+> ++++++++++++++++++ lib/eal/common/eal_private.h                  |
+> 58 ++ lib/eal/freebsd/eal.c                         |  10 +
+>  lib/eal/include/rte_lcore.h                   | 209 +++++
+>  lib/eal/linux/eal.c                           |  11 +
+>  lib/eal/meson.build                           |   4 +
+>  lib/eal/version.map                           |  11 +
+>  lib/eal/windows/eal.c                         |  12 +
+>  14 files changed, 1819 insertions(+), 10 deletions(-)
+> 
+
