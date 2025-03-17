@@ -1,41 +1,41 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158A1C282EC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Mar 2025 10:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2C4C282EC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 15:44:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC67B40279;
-	Tue, 11 Mar 2025 11:06:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A00EB40611;
+	Mon, 17 Mar 2025 16:44:48 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5B05040268
- for <dev@dpdk.org>; Tue, 11 Mar 2025 10:57:35 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1D05B402BB
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 16:44:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741687054;
+ s=mimecast20190719; t=1742226276;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=+V64gr+XANfTrvu7Xo36E0x6UlJVhWIgG4F0ba5tzWE=;
- b=VtuMCwrl6GVrYiotAg8zNWW9eugMK0XecHLAOPjGFvr2AbCncOxnKzAn1LzHDKP4ywWG+Q
- 9y8h8MPIo5kyfj5mplmltNtjMIJzBUGlY7pfP5RG/rv/ns63vmnVdwHm17Lus44HSG7LxE
- JNlzBpfm7f11c9d/0il8rWA0zqD+tP8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=osNPxeOpJKn0gR6mLVfXgADmSbZI5/ymvyuxJGGflA8=;
+ b=dW5paMZL8qpcyVwFXTn2l+gsQdbMQM02VR/ur4snu2uY17Rkfv3vYOSYzgDFMxyUDAPpps
+ ho+uUEw8kzooUzKlznCyve2/HRAVBLFWHV+DCy6lfwxzmIr5ZiAOlcXxPeFg1guwbmApVZ
+ 4wE+MpGZBYz3P+DriB7tZtln+aQe92U=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-L9JoG9_DMy6_RP9TGCNfeA-1; Tue,
- 11 Mar 2025 05:57:26 -0400
-X-MC-Unique: L9JoG9_DMy6_RP9TGCNfeA-1
-X-Mimecast-MFC-AGG-ID: L9JoG9_DMy6_RP9TGCNfeA_1741687040
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-EQuqt2zONPeSk9oLnDyvEw-1; Mon,
+ 17 Mar 2025 11:44:25 -0400
+X-MC-Unique: EQuqt2zONPeSk9oLnDyvEw-1
+X-Mimecast-MFC-AGG-ID: EQuqt2zONPeSk9oLnDyvEw_1742226259
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 787FC180AF66; Tue, 11 Mar 2025 09:57:19 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.225.29])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EA1851800373; Tue, 11 Mar 2025 09:56:50 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A649A1800361; Mon, 17 Mar 2025 15:44:18 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.34.22])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 5889D19541A5; Mon, 17 Mar 2025 15:43:49 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
@@ -43,7 +43,7 @@ Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
  Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
  Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>,
  Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
  Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
  Wei Hu <weh@microsoft.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
@@ -106,20 +106,20 @@ Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  Jasvinder Singh <jasvinder.singh@intel.com>, Gaetan Rivet <grive@u256.net>,
  Volodymyr Fialko <vfialko@marvell.com>,
  Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Subject: [RFC v3 6/8] build: mark exported symbols
-Date: Tue, 11 Mar 2025 10:56:04 +0100
-Message-ID: <20250311095609.194523-7-david.marchand@redhat.com>
-In-Reply-To: <20250311095609.194523-1-david.marchand@redhat.com>
+Subject: [RFC v4 6/8] build: mark exported symbols
+Date: Mon, 17 Mar 2025 16:43:02 +0100
+Message-ID: <20250317154308.2782689-7-david.marchand@redhat.com>
+In-Reply-To: <20250317154308.2782689-1-david.marchand@redhat.com>
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250311095609.194523-1-david.marchand@redhat.com>
+ <20250317154308.2782689-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: oYGHaG25oVv6i1orb_Df2OizS2msTwFVMtHlLCg7QXU_1741687040
+X-Mimecast-MFC-PROC-ID: SLLTwtDEVfixvjZdj2dD2oDhJcJdyM_51zzXNBwj0ug_1742226259
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
-X-Mailman-Approved-At: Tue, 11 Mar 2025 11:06:33 +0100
+X-Mailman-Approved-At: Mon, 17 Mar 2025 16:44:48 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,12 +135,15 @@ Errors-To: dev-bounces@dpdk.org
 
 Annotate symbols with newly introduced export macros.
 
-For code not compiled by lib/meson.build or drivers/meson.build (like AVX
-separate libraries, or sources in /base/ drivers), the exported symbols
-are added in some file listed in the sources so they get caught by
-lib/meson.build or drivers/meson.build.
+For code not compiled via drivers/meson.build (think base drivers code),
+the exported symbols are added in some file listed in the sources so they
+get caught by drivers/meson.build.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+Changes since RFC v3:
+- marked exported symbols directly in AVX sources (net/idpf),
+
 ---
  drivers/baseband/acc/rte_acc100_pmd.c         |   1 +
  .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |   1 +
@@ -236,7 +239,9 @@ Signed-off-by: David Marchand <david.marchand@redhat.com>
  drivers/net/intel/iavf/iavf_rxtx.c            |   8 +
  drivers/net/intel/ice/ice_diagnose.c          |   3 +
  drivers/net/intel/idpf/idpf_common_device.c   |  10 +
- drivers/net/intel/idpf/idpf_common_rxtx.c     |  33 ++
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  24 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    |   2 +
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |   5 +
  drivers/net/intel/idpf/idpf_common_virtchnl.c |  29 +
  drivers/net/intel/ipn3ke/ipn3ke_ethdev.c      |   1 +
  drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  37 ++
@@ -527,7 +532,7 @@ Signed-off-by: David Marchand <david.marchand@redhat.com>
  lib/vhost/vhost_crypto.c                      |   6 +
  lib/vhost/vhost_user.c                        |   2 +
  lib/vhost/virtio_net.c                        |   7 +
- 385 files changed, 4123 insertions(+), 2 deletions(-)
+ 387 files changed, 4121 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/baseband/acc/rte_acc100_pmd.c b/drivers/baseband/acc/rte_acc100_pmd.c
 index d33e42c807..3351c337b7 100644
@@ -6686,7 +6691,7 @@ index e9fa024850..e49a1e7859 100644
  idpf_vport_stats_update(struct virtchnl2_vport_stats *oes, struct virtchnl2_vport_stats *nes)
  {
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 7171e27b8d..5764bd0e9b 100644
+index 7171e27b8d..b468e1cd57 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx.c
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
 @@ -10,6 +10,7 @@
@@ -6873,7 +6878,7 @@ index 7171e27b8d..5764bd0e9b 100644
  int __rte_cold
  idpf_qc_singleq_rx_vec_setup(struct idpf_rx_queue *rxq)
  {
-@@ -1617,9 +1640,19 @@ idpf_qc_singleq_rx_vec_setup(struct idpf_rx_queue *rxq)
+@@ -1617,6 +1640,7 @@ idpf_qc_singleq_rx_vec_setup(struct idpf_rx_queue *rxq)
  	return idpf_rxq_vec_setup_default(rxq);
  }
  
@@ -6881,18 +6886,70 @@ index 7171e27b8d..5764bd0e9b 100644
  int __rte_cold
  idpf_qc_splitq_rx_vec_setup(struct idpf_rx_queue *rxq)
  {
- 	rxq->bufq2->ops = &def_rx_ops_vec;
- 	return idpf_rxq_vec_setup_default(rxq->bufq2);
- }
-+
-+/* Export all AVX* symbols */
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
+index 43a95466ae..3ff70955c8 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
+@@ -473,6 +473,7 @@ _idpf_singleq_recv_raw_pkts_vec_avx2(struct idpf_rx_queue *rxq, struct rte_mbuf
+  * Notice:
+  * - nb_pkts < IDPF_DESCS_PER_LOOP, just return no packet
+  */
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_recv_pkts_avx2)
+ uint16_t
+ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ {
+@@ -682,6 +683,7 @@ idpf_singleq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts
+ 	return nb_pkts;
+ }
+ 
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_xmit_pkts_avx2)
+ uint16_t
+ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			       uint16_t nb_pkts)
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index b630d1fcd9..e8bf8149e1 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -530,6 +530,7 @@ _idpf_singleq_recv_raw_pkts_avx512(struct idpf_rx_queue *rxq,
+  * Notice:
+  * - nb_pkts < IDPF_DESCS_PER_LOOP, just return no packet
+  */
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_recv_pkts_avx512)
+ uint16_t
+ idpf_dp_singleq_recv_pkts_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				 uint16_t nb_pkts)
+@@ -987,6 +988,7 @@ _idpf_splitq_recv_raw_pkts_avx512(struct idpf_rx_queue *rxq,
+ }
+ 
+ /* only bufq2 can receive pkts */
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_recv_pkts_avx512)
+ uint16_t
+ idpf_dp_splitq_recv_pkts_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			     uint16_t nb_pkts)
+@@ -1281,6 +1283,7 @@ idpf_singleq_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return nb_tx;
+ }
+ 
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_xmit_pkts_avx512)
+ uint16_t
+ idpf_dp_singleq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				 uint16_t nb_pkts)
+@@ -1584,6 +1587,7 @@ idpf_splitq_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return nb_tx;
+ }
+ 
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx512)
+ uint16_t
+ idpf_dp_splitq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				uint16_t nb_pkts)
+@@ -1619,6 +1623,7 @@ static const struct idpf_txq_ops avx512_tx_vec_ops = {
+ 	.release_mbufs = idpf_tx_release_mbufs_avx512,
+ };
+ 
 +RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_tx_vec_avx512_setup)
+ int __rte_cold
+ idpf_qc_tx_vec_avx512_setup(struct idpf_tx_queue *txq)
+ {
 diff --git a/drivers/net/intel/idpf/idpf_common_virtchnl.c b/drivers/net/intel/idpf/idpf_common_virtchnl.c
 index 0ae1d55d79..1613d7f07e 100644
 --- a/drivers/net/intel/idpf/idpf_common_virtchnl.c
