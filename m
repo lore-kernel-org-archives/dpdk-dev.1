@@ -2,72 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1169CC28B30
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 13:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B745C282EC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Mar 2025 14:11:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0321E402DF;
-	Mon, 17 Mar 2025 14:56:15 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 5417B402BB
- for <dev@dpdk.org>; Mon, 17 Mar 2025 14:56:12 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-224171d6826so31897975ad.3
- for <dev@dpdk.org>; Mon, 17 Mar 2025 06:56:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CD70402D1;
+	Mon, 17 Mar 2025 15:11:26 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id D01E6402BB
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 15:11:24 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-225b5448519so78665265ad.0
+ for <dev@dpdk.org>; Mon, 17 Mar 2025 07:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742219771;
- x=1742824571; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742220684;
+ x=1742825484; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aGa+xEiXpa0BHHbsmgIh9zUyH85ibEECDcr9RvJq3qI=;
- b=EMe9wggb936VrRVy06LuFja/P/znij3rYwkaJ9eVTpK+D40EI8LF9YQiwJCSx86uHZ
- cn2OjEcDMZ87EmYMcSx+ge67Ov3DwsyzHqaBwq0l8JxoJK2gU4SRTY2kzpaQ6nF12eCr
- eaHCDqBT42gOL/VwuAWKCjR1IFUiFC53GGA9BSIsKLtVmo5IaK9mhDJ4Qw0M+NGnz2Dm
- AMzqaFeL6pwR/LqncwZeav5NCFEaHFLNzFBxAe0OVf6MIcm8oFKxHMkSZ3ge5Uj8LRYQ
- g9EmtRfhgPtbjaY+VhfVAWde6LKrAmy/vAld6gWeMpxY4tYsodn3Zz9i87xSKK9lD0Md
- fN1g==
+ bh=l4fyQsf2mElh6DXrWqAWiRtOVhyDfgJUiA8O0sniwTU=;
+ b=g6BkywZvD3E3Nvvl3FdkGW15pRhk3FVKbFbxyOFFGQDCp8awSRd15V3p6WdIxqXEst
+ hkWBKwK/VOWsKkuTI6x2WrpGK1haXi7ZA7SBnuvj1QsWoHWqHQScfp0kxqYPNeXUCCuz
+ uj+bxqCAmLasNZ1Mk1hnd2mYGeMZm/bDHj+i2Zs9vLB28xQpc/ivDpUCLUz/wtmheXa8
+ TPEMb7kuAWKHim6J1jGNwzUvmygG5GzyQJynP438sDub3yy8pomxiYzOGQWYuTqzHH5D
+ gVjcuikqBMvOnnamlgWMFB42EawEeipc7OQzmDz6zKr0zh9h25lJFp/U8A4krGLmR5IT
+ KdJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1742219771; x=1742824571;
+ d=1e100.net; s=20230601; t=1742220684; x=1742825484;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=aGa+xEiXpa0BHHbsmgIh9zUyH85ibEECDcr9RvJq3qI=;
- b=E8Ascb/QY5kia8/F5hDhPcYQJaaBA9KQFVHXOVoPUxOkrhvP05Yx+dlMJ6WMKlb4oF
- 9VVJvkeibUUclBi391m6buM3gvj7hyk2VSBAJzmV5wTNxMjjs67Piv4WUmwu36ZP8qoN
- f+2tNHwJkG0VSoO8gIH3sym981+1wdUyj2KMlypR+1UjzCEKRUJtMguEmxbJMiyTh8B1
- w2lz7EIGghK1iUGqARzLvg6byA7NVZhnSYQ9oXJPxTJW+ADa3Ghxuhq6Lhg1varNwPIe
- cJ/dn38UDYIc3ncolQzFt2ZkZrxxrh10Z4TIjOmgE2Qtv/ZoGBP5JDVC6C98Qvr7gZj5
- n7zQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVN+JV+3BBO2pibSWyrQ7tyVfWwR7iv7bxqOLbJV22OOX163ILMsw2xFwV0Gm/Enw3hr1k=@dpdk.org
-X-Gm-Message-State: AOJu0YxOz5weIs3AjhllIbN3c3qQYmJloRpnxJgm6dQu5m824ckYABcR
- SkYSWMd1kQFr17WuyxfLNjX14Z9MJvb0AiIuEVCoFjOTtxEo7fj/lDDJqQLrwXM=
-X-Gm-Gg: ASbGncszz1K3GC9Khg5mqHuR9QJs31qOCewKUz77a/MjtVDCYI/ptwTdX7hxcD6Xt+U
- y7NqWEbRpvSjsuw8AsoBAF+xbbvk/N1Fb24gUIFtPNEZn0apl6ji65J4JaaryXGLHWENOqVk5v3
- pHyB6W9RBJPcgWtEzhJH1jOZIwQvYAWZoQQ3jgMQXzwb57WbhYYDE99yapNTQNSK7V5n6y2M7c7
- V9JN5IusQ52dnZsphHXumM7IWGQxEylVhJH2IBfjYFLpqQCIoPFDumoh2luYOXbEm1TCiAplTPm
- DT7z5uHXYTDYaJ5F7m7pjdBB/nWOg99jxlGJhC+yQWQFdZA3wmCCaBOYRJa2eS2tHplF+G4h3MH
- 0KKl3Ucv0YogteHdoJZZwu/ZlOa7UxXOP
-X-Google-Smtp-Source: AGHT+IEJ+hEvjbmEmBGRVUCEO9xG5qYSF93GZWP6RHumNqslww23XcYBIdBdjGr3KsMKpzkrD14SMA==
-X-Received: by 2002:a17:903:2a8f:b0:220:efc8:60b1 with SMTP id
- d9443c01a7336-225e0b185fcmr174043945ad.39.1742219771377; 
- Mon, 17 Mar 2025 06:56:11 -0700 (PDT)
+ bh=l4fyQsf2mElh6DXrWqAWiRtOVhyDfgJUiA8O0sniwTU=;
+ b=YR33Wbim737bIbMFn9LGzt4JdE7NdZnRSjjkGjQ6yC4eikZ2Ua8TH0KS03L3wC3Njd
+ 0GH3HDuM13kX2DAkz6vcpJIN3pgQI66Us0ZSnIIMOjE2qLsh86HvofaSwhr9uYWM96Ke
+ g+B0mPiJIq1EVhzAJkHrn9ZsVuH//78kKwp9Dzd5OBokwj2j+1q6rOguHj/DTBUMTNYU
+ ZcWIIzmo7g7CX+zHrxsEeT81oFdzkjbtcoMAx9JJsbP5vz0gr9Jt5TlTsgy7Md17SS6D
+ NaNMptbzpjaA/Ykyzn018pZzr/Z0/NrA3LlfSKsY6Nm+HsD581tglihC90DK26TRluZR
+ ovsA==
+X-Gm-Message-State: AOJu0Yw6FtJ4E3b8V1JSohvlRSU6AYU3bkOqKPJ7yZpXrmlxhqlUnfm+
+ s8jdwTHwIedzGk8+rEkgnRPIm+/4jWEuetSvFesXzKwtyOwE63P/tYpAi4Pbq3o=
+X-Gm-Gg: ASbGnct/6xfowrDjm42Rfv8JAzK5/yGfO0Yb7PoXK4Wxj4eSAKMj7IZGcKxDy/kqSBo
+ FeayUTHQnJUK8mKs2kG9QLMIt5z6Z1ql4lhP3IALLzJExaj88aglmKCV2bICedLnHDlegKM/Zgz
+ PGCs1Mz6ybYI8oM8B+mbSwTMMcFpT71Na1Oszx5rbK/v4a72Eg1j+2FEJu2pqkxaE5Gn9PVaEn2
+ +8vRQwlDS61Md7nHbs3sATi8wgCxcS6CyfsPcKBD57fDxszGziOwebToOdK7xg2jRRambhExHvo
+ BtiFXcr/Z3AlbYgv3vM+KUSbB0yREGGJvFWpDAPZviaze0ET6JTzN0QTr6Ovy+3rfE86Q90F7VQ
+ I8TbJM4M6ZocwqeOWOkJooQ==
+X-Google-Smtp-Source: AGHT+IGj3/v15knJrpjqqkNhW0GQ9J3PX6AG4DEKCTn9FhYQvxnjoMEyYgIfCM7hT6SPy3seHrGvhg==
+X-Received: by 2002:aa7:88c8:0:b0:736:64b7:f104 with SMTP id
+ d2e1a72fcca58-73722338721mr14047745b3a.5.1742220683549; 
+ Mon, 17 Mar 2025 07:11:23 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c688866asm75429905ad.50.2025.03.17.06.56.10
+ d2e1a72fcca58-7371152949csm7858018b3a.17.2025.03.17.07.11.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 17 Mar 2025 06:56:11 -0700 (PDT)
-Date: Mon, 17 Mar 2025 06:56:09 -0700
+ Mon, 17 Mar 2025 07:11:23 -0700 (PDT)
+Date: Mon, 17 Mar 2025 07:11:21 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Yang Ming <ming.1.yang@nokia-sbell.com>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, Bruce
- Richardson <bruce.richardson@intel.com>, Kevin Laatz
- <kevin.laatz@intel.com>, dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] eal: prevent socket closure before MP sync
-Message-ID: <20250317065609.79fa3ad7@hermes.local>
-In-Reply-To: <20250314103638.2198-1-ming.1.yang@nokia-sbell.com>
-References: <20250314103638.2198-1-ming.1.yang@nokia-sbell.com>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>, Parav Pandit <parav@nvidia.com>, Xueming Li
+ <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
+ <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin
+ Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, Chenbo Xia
+ <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, Chengwen
+ Feng <fengchengwen@huawei.com>, "NBU-Contact-longli (EXTERNAL)"
+ <longli@microsoft.com>, Wei Hu <weh@microsoft.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Kevin Laatz <kevin.laatz@intel.com>, Jan
+ Blunck <jblunck@infradead.org>
+Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
+Message-ID: <20250317071121.4508a7e6@hermes.local>
+In-Reply-To: <SA1PR12MB9491E12CFD0E551E742ABCDBBFCA2@SA1PR12MB9491.namprd12.prod.outlook.com>
+References: <20250206105428.237346-1-shperetz@nvidia.com>
+ <20250212163836.178976-1-shperetz@nvidia.com>
+ <20250212163836.178976-2-shperetz@nvidia.com>
+ <20250220103300.7148ddd8@hermes.local>
+ <SA1PR12MB9491E12CFD0E551E742ABCDBBFCA2@SA1PR12MB9491.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,44 +93,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 14 Mar 2025 18:36:38 +0800
-Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
+On Thu, 6 Mar 2025 16:26:50 +0000
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> The secordary process should not close socket file for MP
-> channel before performing MP request synchronization.
-> This prevents error logs when the secondary process exits
-> without any operation on the crypto device while the primary
-> process starts the device.
+> > -----Original Message-----
+> > From: Stephen Hemminger <stephen@networkplumber.org>
+> > Sent: Thursday, 20 February 2025 20:33
+> > To: Shani Peretz <shperetz@nvidia.com>
+> > Cc: dev@dpdk.org; Tyler Retzlaff <roretzla@linux.microsoft.com>; Parav Pandit
+> > <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>; Nipun Gupta
+> > <nipun.gupta@amd.com>; Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant
+> > Agrawal <hemant.agrawal@nxp.com>; Sachin Saxena
+> > <sachin.saxena@nxp.com>; Rosen Xu <rosen.xu@intel.com>; Chenbo Xia
+> > <chenbox@nvidia.com>; Tomasz Duszynski <tduszynski@marvell.com>;
+> > Chengwen Feng <fengchengwen@huawei.com>; NBU-Contact-longli
+> > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
+> > Richardson <bruce.richardson@intel.com>; Kevin Laatz
+> > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
+> > Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
+> > 
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Wed, 12 Feb 2025 18:38:33 +0200
+> > Shani Peretz <shperetz@nvidia.com> wrote:
+> >   
+> > > DPDK supports multiple formats for specifying buses, (such as
+> > > "0000:08:00.0" and "08:00.0" for PCI).
+> > > This flexibility can lead to inconsistencies when using one format
+> > > while running testpmd, then attempts to use the other format in a
+> > > later command, resulting in a failure.
+> > >
+> > > The issue arises from the find_device function, which compares the
+> > > user-provided string directly with the device->name in the rte_device
+> > > structure.
+> > > If we want to accurately compare these names, we'll need to bring both
+> > > sides to the same representation by invoking the parse function on the
+> > > user input.  
+> > 
+> > Could you give an example where this happens please?
+> > Shouldn't find_device string always be changed into canonical form in
+> > find_device handler?  
 > 
-> Case situation:
-> eal_bus_cleanup has been added in rte_eal_cleanup. But for the
-> secondary process, rte_eal_cleanup firstly performs
-> rte_mp_channel_cleanup, which closes socket file for the MP
-> channel, making mp_fd invalid. Subsequently, eal_bus_cleanup
-> triggers vdev_cleanup, which calls mp_request_sync to send a
-> message via the MP channel. Since mp_fd is invalid, error logs
-> occur.
+> The flow I was dealing with was attach_port -> rte_dev_probe - > local_dev_probe -> find_device. 
+> The string passed to attach_port was the short version, directly from the user.
 > 
-> Error logs occur as below when the secordary process exit:
-> EAL: failed to send to (/tmp/dpdk/l2hicu/mp_socket) due to Bad
-> file descriptor
-> EAL: Fail to send request /tmp/dpdk/l2hicu/mp_socket:
-> ipsec_mb_mp_msg
-> USER1: Create MR request to primary process failed.
-> 
-> Function call trace:
-> 1. rte_eal_cleanup->rte_mp_channel_cleanup->close_socket_fd
-> 2. rte_eal_cleanup->eal_bus_cleanup->vdev_cleanup->
-> rte_vdev_driver->ipsec_mb_remove->ipsec_mb_qp_release->
-> ipsec_mb_secondary_qp_op->rte_mp_request_sync->mp_request_sync->
-> send_msg->sendmsg(mp_fd, &msgh, 0);
-> 
-> Fixes: 1cab1a40ea9b ("bus: cleanup devices on shutdown")
-> Cc: kevin.laatz@intel.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
+> So, to clarify - you're saying that find_device simply need to accept the string in its canonical form? Which means we'll only need to fix local_dev_probe to bring it to the canonical form before calling find_device?
+> I tried it but then I noticed that there's no function that gets the user-provided string and returns it's string canonical form. The closest to this is parse, but what it eventually returns is not necessarily a string - it can be anything - for instance pci_parse will give you back a struct rte_pci_addr.
 
-Looks good, could there be a test?
-
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Not sure at this point. There are two options. One would be fixup in attach_port the other would be allowing
+short form in PCI part of find_device. Since the strings from command line are put in canonical form
+for devargs, it seems logical to do it in attach_port path.
