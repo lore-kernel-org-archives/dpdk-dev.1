@@ -2,31 +2,160 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5ECC282EC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Mar 2025 17:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DFCC282EC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Mar 2025 17:42:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8210B402E1;
-	Tue, 18 Mar 2025 18:41:02 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 08314402D1
- for <dev@dpdk.org>; Tue, 18 Mar 2025 18:41:00 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 378BB13D5;
- Tue, 18 Mar 2025 10:41:08 -0700 (PDT)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com
- [172.31.20.19])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EFDDA3F673;
- Tue, 18 Mar 2025 10:40:58 -0700 (PDT)
-From: Luca Vizzarro <luca.vizzarro@arm.com>
-To: dev@dpdk.org
-Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
- Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH] dts: add Scapy asynchronous sniffer
-Date: Tue, 18 Mar 2025 17:40:51 +0000
-Message-ID: <20250318174051.1931041-1-luca.vizzarro@arm.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id AE34A40612;
+	Tue, 18 Mar 2025 18:42:16 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id B9FF9402D1;
+ Tue, 18 Mar 2025 18:42:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1742319735; x=1773855735;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=k6gnDEsEhGOYsO2kI1ENWSTuldvBqBS2pVTCYvfzVes=;
+ b=n5vd6toK2YXUZeM/EEWpUFWwGCowOhjxFM0RE67II+VVgWjB7fhZErrA
+ ymHEibf7bnyw3HNe7wKf9NGVZAlEygV2NaA4B1nbmlZMvb02qJxlyNq/8
+ 4Tu2CfQaw7csuk6eXkf/9P6QKCpuIQeiJRZdPiazzJsFMu3bYDKkDz5Wc
+ eagcVwaTsatJ/ajjsHRRleDjHbCyPUsgVT7Iu2019NStxuKZCA3KiywYJ
+ MQhE6PFME783u2GSowqquxddyhgmwvf5zaXyoLegbIPBVOekIbZ6OU91j
+ broFDCLo0+wiiSstbU2LAD46XxkzOF0kHixO5wml4VwwLSxl6rX7r11Za A==;
+X-CSE-ConnectionGUID: A/lO3ntgRxa1hXF3lP3g6A==
+X-CSE-MsgGUID: USRLozkBTT+Ehnydadh7/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="54470798"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; d="scan'208";a="54470798"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Mar 2025 10:42:14 -0700
+X-CSE-ConnectionGUID: hG/GG/haTXOxuqMKp4wlog==
+X-CSE-MsgGUID: AvSDLFHMSTCzKJrpI/XICA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; d="scan'208";a="127437035"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Mar 2025 10:42:13 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 18 Mar 2025 10:42:13 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 10:42:13 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.171)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 18 Mar 2025 10:42:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C6hkCQ2mDjwxWVZuLm6/4VMPvJaa6ouKjAnQBc1KID75IhDDcjL9FRJzCRtseWWT5gSjvVK03E/ZgErr7b/K5wvAxcdk4BGB9Tl3oy/NDjQ35loaJUOLSrD3LkrPFirgEqeIn2Jmcr4bmDqu0onShP7ZCE25SlqcGGPc1DEn0YzL1vR8bkVwwQf77ten19vGZvOIE6iCflxSJ9JKrFvSlxlzrvuAiCwtJRR3cOA//iHhHPFc20IxFdGj1OzAY4fBDnJy79oITO7WnoL7SEQtZudX4WpQShfJqlZV1nPi+xM9YWtDJX4AUPDzqhjIoaBo2/uvlTaSAye2xK3PSSB9PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a5rSOyQeVTeNm06EiNE7dAf0ZJCTuTtgh4dnyZyaAiY=;
+ b=bZ0gRRtZwFpFpVFwejFtlG58+IE+UI7cJROrbnshWozH5EOuAWz3LgUXxJxozfq5H7fswCp+G6o8OhaQJ7G7fao8GtGHwljBjRjUPPP0khA/xyx+veck4dsmYeRzSp6NnFaHxwslElwRatxONF4PcZ/DieMtmN5aGp1jomdEjhv1cUxZwp9m8A872LYud+HqhKq9zSf9DgUXD+YNli9CoajWKKlmevJZr3iVOWXStD7WK7jasX6RMMelcbjmmCsidXFkedL9TiUl4MxmJhAbpXS/KOB4f3qHM/0pxavyZTP/9RLn2XQgqyubtOoNGYlCeY7IhjuVJzO02K9FjvCK6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CH3PR11MB7842.namprd11.prod.outlook.com (2603:10b6:610:128::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Tue, 18 Mar
+ 2025 17:42:06 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 17:42:05 +0000
+Date: Tue, 18 Mar 2025 17:42:00 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: <dev@dpdk.org>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2] eal: fix undetected NUMA nodes
+Message-ID: <Z9mwaI1dYk_6UR64@bricha3-mobl1.ger.corp.intel.com>
+References: <20250305134720.907347-1-bruce.richardson@intel.com>
+ <20250305162458.1059282-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250305162458.1059282-1-bruce.richardson@intel.com>
+X-ClientProxiedBy: DU2P251CA0018.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:230::21) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB7842:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01d5e940-d371-4d90-057e-08dd664432eb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?b/DGoMHd2nvBQC5LYyhZEiq6CCUV6hQOZyl6zNLBosEaOwBUP7Wgix37H/TF?=
+ =?us-ascii?Q?L1TXFejv7lwhohUsjMW9rvwAycpYEn1KPvvll5CnOwsvCsDX9nh8YNKLRJUE?=
+ =?us-ascii?Q?83+8MYzh3Slt9tboSI2ZPuYinbSvp6S6EeReAR1obZ+x/PNMQORNhT086oBZ?=
+ =?us-ascii?Q?Rc0rZZ3WfNH8oJp1nye9HE6MRV4d6//VEw6kWv3AzR3NFsGDmT/lHPT8F6Ef?=
+ =?us-ascii?Q?+1hETA9/zlzwh7/fEbOH6qXN7eByfSp56RyCXq/NREtotVji3KPQu0njUGZq?=
+ =?us-ascii?Q?fP/mHLfcii4c5nSVJNepdOl63yRqiCs1e+OoPKtniP/9fxzUuC3UxG42oOMN?=
+ =?us-ascii?Q?Ot3fo/RcPvSfBdcnveYKLg5WtOJ2E0RlHLoIr7va129y0gjuzHOm6TRHPX+V?=
+ =?us-ascii?Q?ErTLwMo1Hsr8Q28vO20sfMo1TEVQegRNtk12DpiQ25SkkLZquAFJ4cCi6L5o?=
+ =?us-ascii?Q?C0mg5jgzVX7QuFmv6TmLtBWrTeqgtJqOiV04N5/kEDxbjRB5HynNnceLfraf?=
+ =?us-ascii?Q?7pfeCyEkkfuBJGjBJC9dcJs/An92+ddPOkUadCpni/iQtUXzzctKjuEhcndC?=
+ =?us-ascii?Q?eQEuu415e/4NqA2Bh16rCXTBGFfmG+nnZs3jaujdjF4Ab3Mhs8SAaU4byITi?=
+ =?us-ascii?Q?Bkgbm62qcPrV5HLRaY51i+lwi1nP8CtT+xOunOEmPoM7BB9E7Nj6x8lsKYOv?=
+ =?us-ascii?Q?2RruWS4B0skk9UvyaGCtXe9Hh9e4ibWojb8FEiba51ZDWwY1CF/fTrupdyh7?=
+ =?us-ascii?Q?0HjeSJbRbzyqIbhussqu262ObE1pSqNh+7XMXx7ahZhb5b25269lZUJLbcRr?=
+ =?us-ascii?Q?uivPNcl/foxj4noAM7WsFlKwCsWDX6l2gRld+z/1XXEW/0EwOGE4VMWKrOgW?=
+ =?us-ascii?Q?unPFg5nb0GI4mYZ4m0OgD8zeee/tLlAsF/hr2O7JyDVnlq2ACmggFXj2wvIU?=
+ =?us-ascii?Q?wtiWYmxYk7UXGzuWjbe9b601FRFQOakRT3vxsY03a2HfoccIEZGMgNnTZ6k4?=
+ =?us-ascii?Q?NqSdY5aGQ6TInXcS3hZ3r4TeR7RI+k/rWSFecijHwskEoQcCHPkjA0h6YiEu?=
+ =?us-ascii?Q?b8HRL1mBHxEGnqGxnVmcZmmbVOxlbQ/a5Eyh+eJy81AraRzQ+me/1wyr0n0z?=
+ =?us-ascii?Q?i7S0TzWMd4pUX93OJn/HTKQF8rporGeDV9y1/6YLgH6rTjKbHwplfavYXkD+?=
+ =?us-ascii?Q?VFiT5WFOIDqFXGxNqHRjjk3QBPeaKz4Oo/SVqww0eEoaoTlL6bAR0ECTCVIB?=
+ =?us-ascii?Q?hKy9ZFKupmHhLTXZ659VSNVzQVXJfEtDxFLnrRSKM4J1aur6Bdn9K17TUCVZ?=
+ =?us-ascii?Q?Vpf2qOEmvZc9kyDkz1+Mm9ZwVrSDwizZcwiVLwofX4/h0ufGvFBirLJkqz+n?=
+ =?us-ascii?Q?hrI0zjRn9y0SpPabBB+dj3M5vo0Z?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qTH5J/rIawqjuKgHyVQJFo9dJ8Bgb5T2fKf4uYHaUsB4nuat5amm8ADAqaCt?=
+ =?us-ascii?Q?bRG7ioVGzRPG6A+4IaD8ixz81e7eLsF2TtVrYkV6bb2I6u6VE5qcpPdqmnnv?=
+ =?us-ascii?Q?ZCJfpp6MZGNH1xaBYK3AtHcy4KqrmKP+GUSzeaSpZrsliBOA6TdpRMX1S/6A?=
+ =?us-ascii?Q?4EngDMsF+SuAx7BwDLpy6wY+ofFuutSsgDbKv/FJQKYdqVXVinqZSF8+rZez?=
+ =?us-ascii?Q?13z1Gye/c0wIBDaJf36ySn1uiSeeDylNUGtGhqpxAtGZiEWqzuwZYh47GdDQ?=
+ =?us-ascii?Q?rdhiQVirIagakLyJoOPg8UDIM3XHT1ymGg7vAW8wX7K9VyE47Ddbctrfle0x?=
+ =?us-ascii?Q?r1yoAYZEg9r1k82Oos2W98ZGNTTtBT877Y2dB7Opl29TTAgj1No3mc/KPlQU?=
+ =?us-ascii?Q?pAZAShErDyrXijQwQ7zbJOcG+XSYC8R3Y6aCBLmmiCNsq+/Ue1o4LM7taym8?=
+ =?us-ascii?Q?yQOBys8qhlNkh3bCyvY+nAPupAXEy68KZvhQPF64/Z1T+E1T5qUQD7jOpUnS?=
+ =?us-ascii?Q?mzVlQk3by0c+I7eKnm4Z295Bytb6PiShe/cSGmaNF9C3qnscCCEg/d5cmMUl?=
+ =?us-ascii?Q?XA43agzESvofQXTyQcgUcbUdE5pIL7+CmwzxgRcGHDd0nj9Ldu8yHmpVYxqQ?=
+ =?us-ascii?Q?rEHCBORiheIzCQamQvHsSeqxheqt6M7xuFI2BYqcA6SsH3I7kQvcxkJPCmO6?=
+ =?us-ascii?Q?ClZLVqY/Hmx9ejX7TPi8w9Zy54hZ2/pdRVAbMgLgvR7DE6nd3IPHXXFTj8SQ?=
+ =?us-ascii?Q?7czV45LZhUGIbffFvTYVejo+3TpXR0AxNyKF9FZM7pSqjrKQ9h+Xl0oc0K2B?=
+ =?us-ascii?Q?x83e9q6z+AXPPROaeWnluJJ2vQt3Uhlac2fZe+hcoqV+Pd/SO67cS6Jjxdub?=
+ =?us-ascii?Q?r4p0M2RWuCLKpTbq0s8d1RQ0yov018tV4r0wI+LWQLjONUI4d4A/qxjg55si?=
+ =?us-ascii?Q?whxXKtJRe6/orvcKy9kdhvtkvHJhQbNNR7dnQ3+cTvghilGs27e/VkiArXdV?=
+ =?us-ascii?Q?bAOGT+r+LS3dcjgDD406wRGTU/VgSaBj2XByINGOnDhFoaLfboZQr32fE5hI?=
+ =?us-ascii?Q?WQumTpkt6+djmTsA+AElZ5z6alJEQ0lYnZ2aVEPdKSiu7Tf+LCWz2U15MNSg?=
+ =?us-ascii?Q?6x9VJ/35UzA1+a7s5+yeZhhdosMpbMbVAPYgFXxcaN5bZ0IFDW9Pkc9zSD3o?=
+ =?us-ascii?Q?U4JeeDg+s10uYF+/hYv/A3UWEz1lBTBnjcHedqOtxYDHrW2FNZKe68H8okU7?=
+ =?us-ascii?Q?EuHNwzci687efWdH7Lr41CFNNe7v0ESk/Ov+DWx7PNkrCdGhCnUWoz3q+X3A?=
+ =?us-ascii?Q?X2lDd1nJSiF70P2DPCkTQ5S6mnggOtA6tdic86abB/AOa7Ai7vZtgE/+FPF9?=
+ =?us-ascii?Q?wYpKtO3iJqeRZ/0B4+pRwEhBIGtF8AC9ur36yVo3l3UYmQsl4pFj2QW3EVtn?=
+ =?us-ascii?Q?brK/yglxl12NdTkeJtGYARrou3/lGmRb7x2LuVzYbnZj6viGJkRZRWQq3zGl?=
+ =?us-ascii?Q?XpYNoYN2bil702bidpGDq0Eu4PCOcHoKQHJ1SZVNxeEqpRabZOJ3R209Peiq?=
+ =?us-ascii?Q?l+LTuEKSC9n9QaOxIa/y0P2aWjeyi2mqgMsIFzYTGWXpIgY+TcygaGIYcLxR?=
+ =?us-ascii?Q?pw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01d5e940-d371-4d90-057e-08dd664432eb
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 17:42:05.7442 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fgSW2hLRD3J0i7K1hKlCjquEkRpIBzlE5DqzoKTEmvnIeIO9BQn1NLd+b2oSpyKNZdBimMLk5L7IIctGmL6j/fhhaBa5WPL1f1E/yKRcW3Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7842
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -40,494 +169,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently packet capturing in Scapy is used by running Scapy's own
-class AsyncSniffer in the same shell as packet sending. Because there is
-some start up time involved in the AsyncSniffer, doing this every single
-time a test case requires it can become slow and unreliable if sniffer
-was not ready yet at the time of sending.
+On Wed, Mar 05, 2025 at 04:24:58PM +0000, Bruce Richardson wrote:
+> In cases where the number of cores on a given socket is greater than
+> RTE_MAX_LCORES, then EAL will be unaware of all the sockets/numa nodes
+> on a system. Fix this limitation by having the EAL probe the NUMA node
+> for cores it isn't going to use, and recording that for completeness.
+> 
+> This is necessary as memory is tracked per node, and with the --lcores
+> parameters our app lcores may be on different sockets than the lcore ids
+> may imply. For example, lcore 0 is on socket zero, but if app is run
+> with --lcores=0@64, then DPDK lcore 0 may be on socket one, so DPDK
+> needs to be aware of that socket.
+> 
+> Fixes: 952b20777255 ("eal: provide API for querying valid socket ids")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+> ---
+> v2: handle case where RTE_MAX_LCORE > CPU_SETSIZE (i.e. >1024)
+> ---
+>  lib/eal/common/eal_common_lcore.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+Ping for review.
 
-Add a multi-threaded implementation for sniffing and capturing packets
-on-demand using Scapy. The sniffer lives in its own dedicated shell,
-which is setup for sniffing at the start up of the test run. Packets are
-only captured when requested by the tests through the use of Event
-signals.
+For anyone wanting to test:
+	 To reproduce the issue, do a build of DPDK with max_lcores option
+set to less than the number of physical cores you have on a socket.
+Then when running DPDK, the number of NUMA nodes printed at startup
+will be incorrect. Applying this patch will then correct that.
 
-Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
-Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
----
- dts/framework/test_run.py                     |   2 +-
- .../testbed_model/traffic_generator/scapy.py  | 347 ++++++++++++------
- .../traffic_generator/traffic_generator.py    |   2 +-
- dts/framework/utils.py                        |   1 -
- 4 files changed, 239 insertions(+), 113 deletions(-)
-
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index f9cfe5e908..24e6fe4e94 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -345,7 +345,7 @@ def next(self) -> State | None:
-         test_run.ctx.sut_node.setup()
-         test_run.ctx.tg_node.setup()
-         test_run.ctx.dpdk.setup(test_run.ctx.topology.sut_ports)
--        test_run.ctx.tg.setup(test_run.ctx.topology.tg_ports)
-+        test_run.ctx.tg.setup(test_run.ctx.topology.tg_ports, test_run.ctx.topology.tg_port_ingress)
- 
-         self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
-         self.result.sut_info = test_run.ctx.sut_node.node_info
-diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
-index 520561b2eb..09adcafcd8 100644
---- a/dts/framework/testbed_model/traffic_generator/scapy.py
-+++ b/dts/framework/testbed_model/traffic_generator/scapy.py
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2022 University of New Hampshire
- # Copyright(c) 2023 PANTHEON.tech s.r.o.
-+# Copyright(c) 2025 Arm Limited
- 
- """The Scapy traffic generator.
- 
-@@ -12,9 +13,9 @@
- implement the methods for handling packets by sending commands into the interactive shell.
- """
- 
--import re
--import time
--from collections.abc import Iterable
-+from collections.abc import Callable, Iterable
-+from queue import Empty, SimpleQueue
-+from threading import Event, Thread
- from typing import ClassVar
- 
- from scapy.compat import base64_bytes
-@@ -23,17 +24,227 @@
- 
- from framework.config.node import OS
- from framework.config.test_run import ScapyTrafficGeneratorConfig
-+from framework.exception import InteractiveSSHSessionDeadError, InternalError
- from framework.remote_session.python_shell import PythonShell
- from framework.testbed_model.node import Node
- from framework.testbed_model.port import Port
- from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
- )
--from framework.utils import REGEX_FOR_BASE64_ENCODING
- 
- from .capturing_traffic_generator import CapturingTrafficGenerator
- 
- 
-+class ScapyAsyncSniffer(PythonShell):
-+    """Asynchronous Scapy sniffer class.
-+
-+    Starts its own dedicated :class:`PythonShell` to constantly sniff packets asynchronously to
-+    minimize delays between runs. This is achieved using the synchronous `sniff` Scapy function,
-+    which prints one packet per line in Base 64 notation. This class spawns a thread to constantly
-+    read the stdout for packets. Packets are only parsed and captured, i.e. placed on a thread-safe
-+    queue, when the `_is_capturing` event is set.
-+    """
-+
-+    _sniffer: Thread
-+    _is_sniffing: Event
-+    _is_capturing: Event
-+    _packets: SimpleQueue[Packet]
-+    _packet_filter: Callable[[Packet], bool] | None
-+
-+    def __init__(
-+        self, node: Node, recv_port: Port, name: str | None = None, privileged: bool = True
-+    ):
-+        """Sniffer constructor.
-+
-+        Args:
-+            node: Node to start the sniffer on.
-+            recv_port: Port to sniff packets from.
-+            name: Name identifying the sniffer.
-+            privileged: Enables the shell to run as superuser.
-+        """
-+        super().__init__(node, name, privileged)
-+        self._sniffer = Thread(target=self._sniff, args=(recv_port,))
-+        self._is_sniffing = Event()
-+        self._is_capturing = Event()
-+        self._packets = SimpleQueue()
-+        self._packet_filter = None
-+
-+    def start_capturing(self, filter_config: PacketFilteringConfig) -> None:
-+        """Start packet capturing.
-+
-+        Args:
-+            filter_config: The packet filtering configuration.
-+
-+        Raises:
-+            InternalError: If the sniffer is already capturing packets.
-+        """
-+        if self._is_capturing.is_set():
-+            raise InternalError("Already capturing. Did you intend to do this?")
-+        self._set_packet_filter(filter_config)
-+        self._is_capturing.set()
-+
-+    def collect(
-+        self, stop_condition: Callable[[Packet], bool] | None = None, timeout: float = 1.0
-+    ) -> list[Packet]:
-+        """Collect packets until timeout or stop condition is met.
-+
-+        A `stop_condition` callback can be passed to trigger a capture stop as soon as the last
-+        desired packet has been captured. Without a stop condition, the specified `timeout` is  used
-+        to determine when to stop.
-+
-+        Args:
-+            stop_condition: Callback which decides when to stop capturing packets.
-+            timeout: Time to wait after the last captured packet before stopping.
-+
-+        Raises:
-+            InternalError: If the sniffer is not capturing any packets.
-+            TimeoutError: If a `stop_condition` has been set and was not met before timeout.
-+
-+        Returns:
-+            A list of the captured packets.
-+        """
-+        if not self._is_capturing.is_set():
-+            raise InternalError("Already not capturing. Did you intend to do this?")
-+
-+        collected_packets = []
-+        try:
-+            while packet := self._packets.get(timeout=timeout):
-+                collected_packets.append(packet)
-+                if stop_condition is not None and stop_condition(packet):
-+                    break
-+        except Empty:
-+            if stop_condition is not None:
-+                msg = "The stop condition was not met before timeout."
-+                raise TimeoutError(msg)
-+
-+        return collected_packets
-+
-+    def stop_capturing(self) -> None:
-+        """Stop packet capturing.
-+
-+        It also drains the internal queue from uncollected packets.
-+
-+        Raises:
-+            InternalError: If the sniffer is not capturing any packets.
-+        """
-+        if not self._is_capturing.is_set():
-+            raise InternalError("Already not capturing. Did you intend to do this?")
-+
-+        self._is_capturing.clear()
-+
-+        while True:
-+            try:
-+                self._packets.get_nowait()
-+            except Empty:
-+                break
-+
-+    def stop_capturing_and_collect(
-+        self, stop_condition: Callable[[Packet], bool] | None = None, timeout: float = 1.0
-+    ) -> list[Packet]:
-+        """Stop packet capturing and collect all the captured packets in a list.
-+
-+        A `stop_condition` callback can be passed to trigger a capture stop as soon as the last
-+        desired packet has been captured. Without a stop condition, the specified `timeout` is  used
-+        to determine when to stop.
-+
-+        Args:
-+            stop_condition: Callback which decides when to stop capturing packets.
-+            timeout: Time to wait after the last captured packet before stopping.
-+
-+        Raises:
-+            InternalError: If the sniffer is not capturing any packets.
-+            TimeoutError: If a `stop_condition` has been set and was not met before timeout.
-+
-+        Returns:
-+            A list of the captured packets.
-+        """
-+        if not self._is_capturing.is_set():
-+            raise InternalError("Already not capturing. Did you intend to do this?")
-+
-+        try:
-+            return self.collect(stop_condition, timeout)
-+        finally:
-+            self.stop_capturing()
-+
-+    def start_application(self) -> None:
-+        """Overrides :meth:`framework.remote_session.interactive_shell.start_application`.
-+
-+        Prepares the Python shell for scapy and starts the sniffing in a new thread.
-+        """
-+        super().start_application()
-+        self.send_command("from scapy.all import *")
-+        self._sniffer.start()
-+        self._is_sniffing.wait()
-+
-+    def close(self) -> None:
-+        """Overrides :meth:`framework.remote_session.interactive_shell.start_application`.
-+
-+        Sends a stop signal to the sniffer thread and waits until its exit before closing the shell.
-+        """
-+        self._is_sniffing.clear()
-+        self._sniffer.join()
-+        super().close()
-+
-+    def _sniff(self, recv_port: Port):
-+        """Sniff packets and use events and queue to communicate with the main thread.
-+
-+        Raises:
-+            InteractiveSSHSessionDeadError: If the SSH connection has been unexpectedly interrupted.
-+        """
-+        ready_prompt = "Ready."
-+        self.send_command(
-+            "sniff("
-+            f'iface="{recv_port.logical_name}", quiet=True, store=False, '
-+            "prn=lambda p: bytes_base64(p.build()).decode(), "
-+            f'started_callback=lambda: print("{ready_prompt}")'
-+            ")",
-+            prompt=ready_prompt,
-+        )
-+        self._ssh_channel.settimeout(1)
-+
-+        self._logger.debug("Start sniffing.")
-+        self._is_sniffing.set()
-+        while self._is_sniffing.is_set():
-+            try:
-+                line = self._stdout.readline()
-+                if not line:
-+                    raise InteractiveSSHSessionDeadError(
-+                        self._node.main_session.interactive_session.hostname
-+                    )
-+
-+                if self._is_capturing.is_set():
-+                    packet = Ether(base64_bytes(line.rstrip()))
-+                    if self._packet_filter is None or self._packet_filter(packet):
-+                        self._logger.debug(f"CAPTURING sniffed packet: {repr(packet)}")
-+                        self._packets.put(packet)
-+                    else:
-+                        self._logger.debug(f"DROPPING sniffed packet: {repr(packet)}")
-+            except TimeoutError:
-+                pass
-+
-+        self._logger.debug("Stop sniffing.")
-+        self.send_command("\x03")  # send Ctrl+C to trigger a KeyboardInterrupt in `sniff`.
-+
-+    def _set_packet_filter(self, filter_config: PacketFilteringConfig):
-+        """Make and set a filtering function from `filter_config`.
-+
-+        Args:
-+            filter_config: Config class that specifies which filters should be applied.
-+        """
-+
-+        def _filter(packet: Packet) -> bool:
-+            if ether := packet.getlayer(Ether):
-+                if filter_config.no_arp and ether.type == 0x0806:
-+                    return False
-+
-+                if filter_config.no_lldp and ether.type == 0x88CC:
-+                    return False
-+
-+            return True
-+
-+        self._packet_filter = _filter
-+
-+
- class ScapyTrafficGenerator(PythonShell, CapturingTrafficGenerator):
-     """Provides access to scapy functions on a traffic generator node.
- 
-@@ -41,7 +252,8 @@ class ScapyTrafficGenerator(PythonShell, CapturingTrafficGenerator):
-     processing packets are implemented using an underlying
-     :class:`framework.remote_session.python_shell.PythonShell` which imports the Scapy library. This
-     class also extends :class:`.capturing_traffic_generator.CapturingTrafficGenerator` to expose
--    methods that utilize said packet processing functionality to test suites.
-+    methods that utilize said packet processing functionality to test suites, which are delegated to
-+    a dedicated asynchronous packet sniffer with :class:`ScapyAsyncSniffer`.
- 
-     Because of the double inheritance, this class has both methods that wrap scapy commands
-     sent into the shell (running on the TG node) and methods that run locally to fulfill
-@@ -57,9 +269,10 @@ class also extends :class:`.capturing_traffic_generator.CapturingTrafficGenerato
-     """
- 
-     _config: ScapyTrafficGeneratorConfig
-+    _sniffer: ScapyAsyncSniffer
- 
-     #: Name of sniffer to ensure the same is used in all places
--    _sniffer_name: ClassVar[str] = "sniffer"
-+    _sniffer_name: ClassVar[str] = "scapy_sniffer"
-     #: Name of variable that points to the list of packets inside the scapy shell.
-     _send_packet_list_name: ClassVar[str] = "packets"
-     #: Padding to add to the start of a line for python syntax compliance.
-@@ -85,14 +298,25 @@ def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs)
-         super().__init__(node=tg_node, config=config, tg_node=tg_node, **kwargs)
-         self.start_application()
- 
--    def setup(self, ports: Iterable[Port]):
-+    def setup(self, ports: Iterable[Port], rx_port: Port):
-         """Extends :meth:`.traffic_generator.TrafficGenerator.setup`.
- 
--        Brings up the port links.
-+        Brings up the port links and starts up the async sniffer.
-         """
--        super().setup(ports)
-+        super().setup(ports, rx_port)
-         self._tg_node.main_session.bring_up_link(ports)
- 
-+        self._sniffer = ScapyAsyncSniffer(self._tg_node, rx_port, self._sniffer_name)
-+        self._sniffer.start_application()
-+
-+    def teardown(self, ports):
-+        """Extends :meth:`.traffic_generator.TrafficGenerator.teardown`.
-+
-+        Stops the async sniffer.
-+        """
-+        self._sniffer.close()
-+        super().teardown(ports)
-+
-     def start_application(self) -> None:
-         """Extends :meth:`framework.remote_session.interactive_shell.start_application`.
- 
-@@ -122,23 +346,18 @@ def _send_packets_and_capture(
-         self,
-         packets: list[Packet],
-         send_port: Port,
--        recv_port: Port,
-+        _: Port,
-         filter_config: PacketFilteringConfig,
-         duration: float,
-     ) -> list[Packet]:
-         """Implementation for sending packets and capturing any received traffic.
- 
--        This method first creates an asynchronous sniffer that holds the packets to send, then
--        starts and stops said sniffer, collecting any packets that it had received while it was
--        running.
--
-         Returns:
-             A list of packets received after sending `packets`.
-         """
--        self._shell_create_sniffer(
--            packets, send_port, recv_port, self._create_packet_filter(filter_config)
--        )
--        return self._shell_start_and_stop_sniffing(duration)
-+        self._sniffer.start_capturing(filter_config)
-+        self.send_packets(packets, send_port)
-+        return self._sniffer.stop_capturing_and_collect(timeout=duration)
- 
-     def _shell_set_packet_list(self, packets: list[Packet]) -> None:
-         """Build a list of packets to send later.
-@@ -158,95 +377,3 @@ def _shell_set_packet_list(self, packets: list[Packet]) -> None:
-         self.send_command(
-             f"{self._send_packet_list_name} = [{', '.join(map(Packet.command, packets))}]"
-         )
--
--    def _create_packet_filter(self, filter_config: PacketFilteringConfig) -> str:
--        """Combine filter settings from `filter_config` into a BPF that scapy can use.
--
--        Scapy allows for the use of Berkeley Packet Filters (BPFs) to filter what packets are
--        collected based on various attributes of the packet.
--
--        Args:
--            filter_config: Config class that specifies which filters should be applied.
--
--        Returns:
--            A string representing the combination of BPF filters to be passed to scapy. For
--            example:
--
--            "ether[12:2] != 0x88cc && ether[12:2] != 0x0806"
--        """
--        bpf_filter = []
--        if filter_config.no_arp:
--            bpf_filter.append("ether[12:2] != 0x0806")
--        if filter_config.no_lldp:
--            bpf_filter.append("ether[12:2] != 0x88cc")
--        return " && ".join(bpf_filter)
--
--    def _shell_create_sniffer(
--        self,
--        packets_to_send: list[Packet],
--        send_port: Port,
--        recv_port: Port,
--        filter_config: str,
--    ) -> None:
--        """Create an asynchronous sniffer in the shell.
--
--        A list of packets is passed to the sniffer's callback function so that they are immediately
--        sent at the time sniffing is started.
--
--        Args:
--            packets_to_send: A list of packets to send when sniffing is started.
--            send_port: The port to send the packets on when sniffing is started.
--            recv_port: The port to collect the traffic from.
--            filter_config: An optional BPF format filter to use when sniffing for packets. Omitted
--                when set to an empty string.
--        """
--        self._shell_set_packet_list(packets_to_send)
--
--        self.send_command("import time")
--        sniffer_commands = [
--            f"{self._sniffer_name} = AsyncSniffer(",
--            f"iface='{recv_port.logical_name}',",
--            "store=True,",
--            # *args is used in the arguments of the lambda since Scapy sends parameters to the
--            # callback function which we do not need for our purposes.
--            "started_callback=lambda *args: (time.sleep(1), sendp(",
--            (
--                # Additional indentation is added to this line only for readability of the logs.
--                f"{self._python_indentation}{self._send_packet_list_name},"
--                f" iface='{send_port.logical_name}')),"
--            ),
--            ")",
--        ]
--        if filter_config:
--            sniffer_commands.insert(-1, f"filter='{filter_config}'")
--
--        self.send_command(f"\n{self._python_indentation}".join(sniffer_commands))
--
--    def _shell_start_and_stop_sniffing(self, duration: float) -> list[Packet]:
--        """Start asynchronous sniffer, run for a set `duration`, then collect received packets.
--
--        This method expects that you have first created an asynchronous sniffer inside the shell
--        and will fail if you haven't. Received packets are collected by printing the base64
--        encoding of each packet in the shell and then harvesting these encodings using regex to
--        convert back into packet objects.
--
--        Args:
--            duration: The amount of time in seconds to sniff for received packets.
--
--        Returns:
--            A list of all packets that were received while the sniffer was running.
--        """
--        sniffed_packets_name = "gathered_packets"
--        self.send_command(f"{self._sniffer_name}.start()")
--        # Insert a one second delay to prevent timeout errors from occurring
--        time.sleep(duration + 1)
--        self.send_command(f"{sniffed_packets_name} = {self._sniffer_name}.stop(join=True)")
--        # An extra newline is required here due to the nature of interactive Python shells
--        packet_strs = self.send_command(
--            f"for pakt in {sniffed_packets_name}: print(bytes_base64(pakt.build()))\n"
--        )
--        # In the string of bytes "b'XXXX'", we only want the contents ("XXXX")
--        list_of_packets_base64 = re.findall(
--            rf"^b'({REGEX_FOR_BASE64_ENCODING})'", packet_strs, re.MULTILINE
--        )
--        return [Ether(base64_bytes(pakt)) for pakt in list_of_packets_base64]
-diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-index 804662e114..74fc900a22 100644
---- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-+++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-@@ -50,7 +50,7 @@ def __init__(self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs):
-         self._logger = get_dts_logger(f"{self._tg_node.name} {self._config.type}")
-         super().__init__(**kwargs)
- 
--    def setup(self, ports: Iterable[Port]):
-+    def setup(self, ports: Iterable[Port], rx_port: Port):
-         """Setup the traffic generator."""
- 
-     def teardown(self, ports: Iterable[Port]):
-diff --git a/dts/framework/utils.py b/dts/framework/utils.py
-index d6f4c11d58..a2b51a1d6b 100644
---- a/dts/framework/utils.py
-+++ b/dts/framework/utils.py
-@@ -32,7 +32,6 @@
- _REGEX_FOR_COLON_OR_HYPHEN_SEP_MAC: str = r"(?:[\da-fA-F]{2}[:-]){5}[\da-fA-F]{2}"
- _REGEX_FOR_DOT_SEP_MAC: str = r"(?:[\da-fA-F]{4}.){2}[\da-fA-F]{4}"
- REGEX_FOR_MAC_ADDRESS: str = rf"{_REGEX_FOR_COLON_OR_HYPHEN_SEP_MAC}|{_REGEX_FOR_DOT_SEP_MAC}"
--REGEX_FOR_BASE64_ENCODING: str = r"[-a-zA-Z0-9+\\/]*={0,3}"
- REGEX_FOR_IDENTIFIER: str = r"\w+(?:[\w -]*\w+)?"
- REGEX_FOR_PORT_LINK: str = (
-     rf"(?:(sut|tg)\.)?({REGEX_FOR_IDENTIFIER})"  # left side
--- 
-2.43.0
-
+Thanks,
+/Bruce
