@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C72C35FFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6629FC35FFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8F63402C4;
-	Wed, 19 Mar 2025 18:30:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9508740612;
+	Wed, 19 Mar 2025 18:30:11 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 1F7314026B
- for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id ABB324026B
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1742405409; x=1773941409;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=dMdAIwSGcKLpfQ5lnEBthHyJeLaB1rMRF7LLZ3F8+Cg=;
- b=by6+fJdBiWTZiDjfOW3vRR1XGhtstCXIalfu9rx9mk48dkLHLy7WgUBF
- iDBd0hWTj45ecbhizKP0P+JaWMXCnIkjMnS4k9dmc/tZYUQZtntHUe4C2
- LE9m0450DqtSgSW9XjpH2ZcqWIpyKirERyAC8GbLV9XGOmytQCeZUVpF0
- KoN8EQlkZwAo8wYhkwPMPlL6sI8KytsndL3NMSfEbnz33Y0pqpX9rkv5y
- nAxZvkyaUP3qIxe1W6EsQvlkNVZ2bNWN4M7th/4z+Ax1CnXOMuiqa9c2b
- r235lys03EaAwb/9MQR6gdQm7KbX+Amy0O50G72qyOjDtp9N/PgF0c0Li w==;
-X-CSE-ConnectionGUID: I6TE98NjTZqgtyyDQFHhwg==
-X-CSE-MsgGUID: W+bXxF2NS1+S+0jlNMQdaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741953"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741953"
+ bh=1c4aALzCVR1B4jYBiVDd6WSE4S5f8dPDZ+gbEt4GH7w=;
+ b=LavI6r3dF9sDyY0OoRzi2K1l4oDpZSP2QhrlFqSJdYoee37zeFYBLcUW
+ OxLkV2kcZ6Hw0Fe/IbJj6f4dcVMFitHARQHhbUtzh5nUrfrkHMXoBjTa4
+ bhVMIsQEJpugR/KkxJjwXd53sf6wt9SvtQtTeHGAO+OdNRq2Me/dllupn
+ Ifyw7dIQBAsfMYnQgVK/aSwHe3Cckyd4QviLAa7Ts0kTJRMmB6jYuwKi6
+ UTONO12PK4oCH2lh5mVZ1tJKbcHXNVIGSICzGSKztWsHWruwhJ4dv4j6C
+ 4vImR38GSxitX8oBe0XPDP+DaOpc/9T1D7/J+Q4MF96fl4PVziLcrmYLE w==;
+X-CSE-ConnectionGUID: EjO9yH43SpSGp5qAmdAbgA==
+X-CSE-MsgGUID: uoAz9q5ATayoC2v0sGzfow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741956"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741956"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 10:30:06 -0700
-X-CSE-ConnectionGUID: QRGEiEndTtKDo3NAR3/y+Q==
-X-CSE-MsgGUID: WY93PkxmQuOUABVOufoC9w==
+ 19 Mar 2025 10:30:07 -0700
+X-CSE-ConnectionGUID: v2Oex1tOTBuGbwC75kPh8g==
+X-CSE-MsgGUID: qKt5jhUfQ76ms7UJyKDn9Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722422"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722456"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:05 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:06 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 00/11] remove component-specific logic for AVX builds
-Date: Wed, 19 Mar 2025 17:29:30 +0000
-Message-ID: <20250319172942.2992053-1-bruce.richardson@intel.com>
+Subject: [PATCH v4 01/11] drivers: add generalized AVX build handling
+Date: Wed, 19 Mar 2025 17:29:31 +0000
+Message-ID: <20250319172942.2992053-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250314172339.12777-1-bruce.richardson@intel.com>
+In-Reply-To: <20250319172942.2992053-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
+ <20250319172942.2992053-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,56 +61,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A number of libs and drivers had special optimized AVX2 and AVX512 code
-paths for performance reasons, and these tended to have copy-pasted
-logic to build those files. Centralise that logic in the main
-drivers/ and lib/ meson.build files to avoid duplication.
+Add support to the top-level driver build file for AVX2 and AVX512
+specific sources. This should simplify driver builds by avoiding the
+need to constantly reimplement the same build logic
 
-v4: rebase on latest main branch
-    minor fixes following feedback
-    limit use of -march=skylake-avx512 to when we don't already have a
-      -march flag supporting AVX512.
-v3: add patch for event/dlb2 AVX512 handling.
-    add common code for libraries as well as drivers.
-v2: add patch 4 to remove use of unnecessary CC_AVX2_SUPPORT flag
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/meson.build | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Bruce Richardson (11):
-  drivers: add generalized AVX build handling
-  net/intel: use common AVX build code
-  drivers/net: build use common AVX handling
-  drivers/net: remove AVX2 build-time define
-  event/dlb2: build using common AVX handling
-  lib: add generalized AVX build handling
-  acl: use common AVX build handling
-  fib: use common AVX build handling
-  net: simplify build-time logic for x86
-  net: use common AVX512 build code
-  member: use common AVX512 build support
-
- drivers/event/dlb2/dlb2_sse.c         |  4 ++
- drivers/event/dlb2/meson.build        | 16 +-------
- drivers/meson.build                   | 30 ++++++++++++++
- drivers/net/bnxt/bnxt_ethdev.c        |  2 -
- drivers/net/bnxt/meson.build          | 10 +----
- drivers/net/enic/meson.build          | 10 +----
- drivers/net/intel/i40e/meson.build    | 26 +-----------
- drivers/net/intel/iavf/meson.build    | 25 +-----------
- drivers/net/intel/ice/meson.build     | 25 +-----------
- drivers/net/intel/idpf/meson.build    | 25 +-----------
- drivers/net/nfp/meson.build           | 10 +----
- drivers/net/octeon_ep/meson.build     | 13 +-----
- drivers/net/octeon_ep/otx_ep_ethdev.c |  4 --
- drivers/net/virtio/meson.build        |  9 +----
- lib/acl/meson.build                   | 54 ++-----------------------
- lib/fib/dir24_8.c                     |  6 +--
- lib/fib/meson.build                   | 18 +--------
- lib/fib/trie.c                        |  6 +--
- lib/member/meson.build                | 46 ++++-----------------
- lib/meson.build                       | 34 +++++++++++++++-
- lib/net/meson.build                   | 58 +++------------------------
- lib/net/rte_net_crc.c                 | 16 ++++----
- 22 files changed, 114 insertions(+), 333 deletions(-)
-
---
+diff --git a/drivers/meson.build b/drivers/meson.build
+index 05391a575d..c15319dc24 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -126,6 +126,8 @@ foreach subpath:subdirs
+         name = drv
+         annotate_locks = true
+         sources = []
++        sources_avx2 = []
++        sources_avx512 = []
+         headers = []
+         driver_sdk_headers = [] # public headers included by drivers
+         objs = []
+@@ -235,6 +237,34 @@ foreach subpath:subdirs
+             dpdk_includes += include_directories(drv_path)
+         endif
+ 
++        # handle avx2 and avx512 source files
++        if arch_subdir == 'x86'
++            if sources_avx2.length() > 0
++                avx2_lib = static_library(lib_name + '_avx2_lib',
++                        sources_avx2,
++                        dependencies: static_deps,
++                        include_directories: includes,
++                        c_args: [cflags, cc_avx2_flags])
++                objs += avx2_lib.extract_objects(sources_avx2)
++            endif
++            if sources_avx512.length() > 0 and cc_has_avx512
++                cflags += '-DCC_AVX512_SUPPORT'
++                avx512_args = [cflags, cc_avx512_flags]
++                if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
++                    avx512_args += '-march=skylake-avx512'
++                    if cc.has_argument('-Wno-overriding-option')
++                        avx512_args += '-Wno-overriding-option'
++                    endif
++                endif
++                avx512_lib = static_library(lib_name + '_avx512_lib',
++                        sources_avx512,
++                        dependencies: static_deps,
++                        include_directories: includes,
++                        c_args: avx512_args)
++                objs += avx512_lib.extract_objects(sources_avx512)
++            endif
++        endif
++
+         # generate pmdinfo sources by building a temporary
+         # lib and then running pmdinfogen on the contents of
+         # that lib. The final lib reuses the object files and
+-- 
 2.43.0
 
