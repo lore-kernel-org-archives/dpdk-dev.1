@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE230C35FFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 16:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3494C35FFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 16:27:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B867402C4;
-	Wed, 19 Mar 2025 17:19:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 04785402C4;
+	Wed, 19 Mar 2025 17:27:58 +0100 (CET)
 Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
  [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id B2A644026B
- for <dev@dpdk.org>; Wed, 19 Mar 2025 17:19:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 352604026B
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 17:27:56 +0100 (CET)
 Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2241053582dso44473665ad.1
- for <dev@dpdk.org>; Wed, 19 Mar 2025 09:19:15 -0700 (PDT)
+ d9443c01a7336-22409077c06so179652125ad.1
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 09:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742401155;
- x=1743005955; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742401675;
+ x=1743006475; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZGzvstRgzEPW7PjTzHfo0pvXUkrzlReFl1RFsvGI07o=;
- b=t4Nw1XDOOMZtgdCOTrVzUuVTYx7PL8rsJtmDyfrQOql/kt5SzOnXsIJz1GplY/ACiE
- 1GhTpMtHJjxcr116G56306uhljHSrM7Jq3qgUQyxfnkIe/m2ey61qry9V18a2qWQsKnD
- OuQPI6di27yiOotj9u1O4Vc7aX8ZIiXywSxgv4lj4Z5TKONJwrmERhI39AS746hPaUKh
- knzMVQeWLdiHv6otFMl1f1xnC3bW/jbKFGQVAjyo0dFV+853YIGJ3fy8b0fGZMJWcBq6
- qF6woi/rEbIeKA9BuOcszDgLK5yQ4v9gbxLGEZkh2qlvUNUEoRx9tL0PoMmlospxYliN
- nlWw==
+ bh=+XI7k87Ywyv/GKV17AUov2suYQHUpFSvx5+I5L91qb0=;
+ b=iuL6Wv9vl6K0JY5eknoztAh+RsJyxTEOiQ6cCYk8FG9ZMGgOjL/F+++T8upkvOjmTa
+ YJQNh2SNKRZuxLMP9CQhVUalv/qM24GxXJCd+5FueYBc6w23hi2KWRspd3JpLC/ybwar
+ 8ARCD4l/pLqKwQdmzo62tRT0KMYuP4dErxqtygnvAHj0lEg1gRTKyCZmApY+TGuipjbc
+ OLA+t7BScDrSmeG5MvnmEmaoEPoZXiOvG45Cv9F6dHHdtIeIQNQRwnVOheN8UrthgXjh
+ +T+qii8rA9c8Vkm20OIDrjW00Lrh48qZEUBOyGV73vwHNKd7jdjjQhDoKDRavrfW0Bge
+ /Dzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1742401155; x=1743005955;
+ d=1e100.net; s=20230601; t=1742401675; x=1743006475;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZGzvstRgzEPW7PjTzHfo0pvXUkrzlReFl1RFsvGI07o=;
- b=c9EeHF1j4Uu1Iw04vHcxdGcX6lZ/y0niWZySrpRB7IuYiqBOkTonwcvegOvXpN5CJE
- 41DVywDml+u2sOe/rbBFGvs6Q6CHo7H0v7/H92Jsn79elCL/ItMXzXPEPgAgLUXOCxeL
- DLmVXiq+ZOlNViVTwlmlRp0zSzsg9Y0/lKo1fPBozBBatexaNLwvljdMDGlrUwqpDHtk
- N8a56Vr8vaA//vWHI0AweHRzeB/yTGBmeuNyLHTP3CORW3Ws5vzOlTgBe9MA2JSZ51GY
- qKD4lXWsvVJzpUQsuosmvIExSJiXXPgAxb9NEwO2fmM6Yodb+olZHPCtgzy+h7tv7DrR
- IFRg==
-X-Gm-Message-State: AOJu0YxJABMIenEMbv9HJW6X+/0KrKgC1b6OLZZRpAKLEOV3G2Z09PeE
- 6JSun8eh476Cpi1jQ8WL7xcsiDKTbkTqjVJhVe6N40XXny5p0xkxlBzEoJT07T0=
-X-Gm-Gg: ASbGncvVK/S63zlaMb55o58cvqsRyeb0hf27Drup2bVPOW/u84YUNE5385Hpzjd2Dhy
- 2VuexFxGjtP7j/s/Tx87RTK+cY5aqCN7FIwCy6Wqh/Mwqb4GBKw5m0b5/Ggr5+9bTMi50uCXdZ8
- U6ly2zeaYjw6WqtB8HiAiM3W0idR9M8/ctLBl1ZVtFS6/aHvTlzVZHbsbqTkPW7KMfocD+zHsuX
- 2YpprMwcvHXYvwUKJWnzPN24V2pxiHsIsaIryl3d0b/2VOGnfUNf5qBE+oU1GcT0EE1ziUj6Zi0
- EwFHuVjzdi2dMHFMkOO7TIpIjqRnafFF0rhdR02kWclxtZ23H4qNayGGh15Lu9Zhk15s7M9FA67
- KzfeJH1ckQ1fMDCkaozrMjQ==
-X-Google-Smtp-Source: AGHT+IEzMC/bmm4iifnkjlrxbwA3W9/d3TZxf28mGEyKFkdw/T1aEyNX5CVfYOrVWohB0D60iHQybA==
-X-Received: by 2002:a17:902:d2cf:b0:224:1ce1:a3f4 with SMTP id
- d9443c01a7336-2264981ba8cmr49176985ad.1.1742401154635; 
- Wed, 19 Mar 2025 09:19:14 -0700 (PDT)
+ bh=+XI7k87Ywyv/GKV17AUov2suYQHUpFSvx5+I5L91qb0=;
+ b=VvhjpO+qmjneOTUrUQ7oZix9dRg7PON8zh/ag6Cl7r4GjsyAlXoSl7L2Rm7E7ojhG7
+ Lg4+cPjRRlVogB2OQy2nKjzYRvDocggxsCxpfL6v+NXgjDq/2+QHIuh328N0antGSBDZ
+ HyanRclL3YK93tVIA7X127aOnylamZxiQqpG57bOTpdGcze50obQNJJPmLW7ayZSX84G
+ wZrdkXv9NQE96QTvO/ppL+GFITC42KQhFNES+7vQDptRJxh7YZcatw2qnovW9mgiN6a7
+ 1otNDAhvJW5LJTRmpWmlNO0i06G/gxMfvNLq7GlVkK6u2tEVkF65sr21JSNsWzC4KJDX
+ eVWw==
+X-Gm-Message-State: AOJu0Yyhygm1lQ+YZHZkbsK/U6RCTekcExe6rbl6MVsQge6HvJ/RcVTw
+ tJh7n4PfMotecNpG2gJ+OUwjIMFhbN0jMdBzECw49HYQtuS4Aal2CUMwoG0dLqQ=
+X-Gm-Gg: ASbGncsuGTkWKbRv7jVfcaHi+I+fum9hMeUSeFjj9oF5RsuWP7yA3fr4cSu746/cdgg
+ AkM50lkag1Uwo7ByvfaZZ3m1vKmVYRgAE8yDcWpRIaRuUWzY/XEsHIzabd+yBvegNFVIEHXB79/
+ RtpJSaNqt6y1Dw2O9sMV6EtkfRqrs0aQQywcMbmxjkCm0/8KIGdNmlibx3l5GtWgmgSr3P7ENAX
+ W4elVhT6qgig2g98FNu5/o/3S+pl712WvG/u28S8/pMN4dFV16XVUQ3wDFmJ5xnVKAm5MaeHOuR
+ ATPNnGoFfyOYIPpRJkw6qCB5VBh2GmcINbdvsvdHc99SDO6v+xlnN1auH72NRci1FPAoQlc4Kw7
+ xHTCVrSSJ6ht8jYw1dUKPNw==
+X-Google-Smtp-Source: AGHT+IFA5gt9Pv6cNu6x9+BBqXanNIxPkEdUwsU9iLvuXPadqXpEX7Jk0s3QSpuWchkzWZ3eGt41LA==
+X-Received: by 2002:a05:6a00:9a4:b0:736:3768:6d74 with SMTP id
+ d2e1a72fcca58-7376d61120dmr5137317b3a.7.1742401674942; 
+ Wed, 19 Mar 2025 09:27:54 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-225c6ba6d16sm116568665ad.139.2025.03.19.09.19.14
+ d2e1a72fcca58-73711695b6bsm12243185b3a.148.2025.03.19.09.27.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Mar 2025 09:19:14 -0700 (PDT)
-Date: Wed, 19 Mar 2025 09:19:12 -0700
+ Wed, 19 Mar 2025 09:27:54 -0700 (PDT)
+Date: Wed, 19 Mar 2025 09:27:53 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com
-Subject: Re: [RFC v4 5/8] build: generate symbol maps
-Message-ID: <20250319091912.3b14713e@hermes.local>
-In-Reply-To: <20250317154308.2782689-6-david.marchand@redhat.com>
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250317154308.2782689-1-david.marchand@redhat.com>
- <20250317154308.2782689-6-david.marchand@redhat.com>
+To: "Rajesh Goel (rajegoel)" <rajegoel@cisco.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: Dpdk-pdump not capturing packet for vmxnet3 device
+Message-ID: <20250319092753.210e92df@hermes.local>
+In-Reply-To: <BN9PR11MB53545D51138B2F27A402659EDDD92@BN9PR11MB5354.namprd11.prod.outlook.com>
+References: <BN9PR11MB53545D51138B2F27A402659EDDD92@BN9PR11MB5354.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,41 +80,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 17 Mar 2025 16:43:01 +0100
-David Marchand <david.marchand@redhat.com> wrote:
+On Wed, 19 Mar 2025 07:21:30 +0000
+"Rajesh Goel (rajegoel)" <rajegoel@cisco.com> wrote:
 
-> Rather than maintain a file in parallel of the code, symbols to be
-> exported can be marked with a token RTE_EXPORT_*SYMBOL.
+> Hi DPDK community,
 > 
-> From those marks, the build framework generates map files only for
-> symbols actually compiled (which means that the WINDOWS_NO_EXPORT hack
-> becomes unnecessary).
+> I need some urgent help.
 > 
-> The build framework directly creates a map file in the format that the
-> linker expects (rather than converting from GNU linker to MSVC linker).
+> 1)      Iam running my dpdk application on a VMware based VM. Iam using 20.11.9 dpdk version
+> Iam directly connected to the PCI device to receive pkts on my application.
 > 
-> Empty maps are allowed again as a replacement for drivers/version.map.
+>       :
+>       EAL: Detected 16 lcore(s)
+>       EAL: Detected 1 NUMA nodes
+>       EAL: Detected shared linkage of DPDK
+>       EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+>       EAL: Selected IOVA mode 'PA'
+>       EAL: No available hugepages reported in hugepages-1048576kB
+>       EAL: Probing VFIO support...
+>       EAL: VFIO support initialized
+>       EAL: Probe PCI driver: net_vmxnet3 (15ad:7b0) device: 0000:04:00.0 (socket 0)
+>       EAL: No legacy callbacks, legacy socket not created
+>       :
 > 
-> The symbol check is updated to only support the new format.
+> 2)      Iam trying to use dpdk-pdump application to capture packets.
 > 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-> Changes since RFC v3:
-> - polished python,
-> - fixed doc updates not belonging to this patch,
-> - renamed map files,
-> - changed msvc->mslinker as link mode,
-> - added parsing of AVX sources,
+>       dpdk-pdump -l 3 -- --pdump 'device_id=0000:04:00.0,queue=*,rx-dev=/tmp/rx.pcap,total-num-mbufs=8192,ring-size=128'
 > 
-> Changes since RFC v2:
-> - because of MSVC limitations wrt macro passed via cmdline,
->   used an internal header for defining RTE_EXPORT_* macros,
-> - updated documentation and tooling,
+>       EAL: Detected 16 lcore(s)
+>       EAL: Detected 1 NUMA nodes
+>       EAL: Detected static linkage of DPDK
+>       EAL: Multi-process socket /var/run/dpdk/rte/mp_socket_644376_50d5dc20612f8
+>       EAL: Selected IOVA mode 'PA'
+>       EAL: Probing VFIO support...
+>       EAL: VFIO support initialized
+>       EAL: Probe PCI driver: net_vmxnet3 (15ad:7b0) device: 0000:04:00.0 (socket 0)
+>       Port 1 MAC: 02 70 63 61 70 00
+>        core (3), capture for (1) tuples
+>        - port 0 device (0000:04:00.0) queue 65535
+>       ^C
+> 
+>       Signal 2 received, preparing to exit...
+>       ##### PDUMP DEBUG STATS #####
+>        -packets dequeued:                                       0
+>        -packets transmitted to vdev:            0
+>        -packets freed:                                  0
+> 
+> This is the mempool and ring which got created in app side
+> 
+>             ring <MP_pdump_pool_0>@0x10045db00
+>               flags=0
+>               size=16384
+>               capacity=16383
+>               ct=0
+>               ch=0
+>               pt=8192
+>               ph=8192
+>               used=8192
+>               avail=8191
+>             ring <rx_ring_0>@0x102802680
+>               flags=0
+>               size=128
+>               capacity=127
+>               ct=0
+>               ch=0
+>               pt=0
+>               ph=0
+>               used=0
+>               avail=127
+> 
+> This is the port output, port 0 is application and port 1 is created by pdump and no pkt is seen to be captured.
+> 
+> Port 0 stats:
+>  - link status: 1
+>  - Pkts in:   50
+>  - Pkts out:  0
+>  - total ibytes: 4024
+>  - total obytes: 0
+>  - rx miss: 0
+>  - In Errs:   0
+>  - Out Errs:  0
+>  - Mbuf Errs: 0
+>  - Q Rx Packets:
+> 
+> Port 1 stats:
+>  - link status: 1
+>  - Pkts in:   0
+>  - Pkts out:  0
+>  - total ibytes: 0
+>  - total obytes: 0
+>  - rx miss: 0
+>  - In Errs:   0
+>  - Out Errs:  0
+>  - Mbuf Errs: 0
+>  - Q Rx Packets:
+> 
+> 3)      I see the same result while using dpdk-testpmd on the APP side.
+> 
+> 4)      As per this page, https://doc.dpdk.org/guides/tools/pdump.html.
+>       Is this applicable to vmxnet3 device here ??
+> 
+> *       As of now the dpdk-pdump tool cannot capture the packets of virtual devices in the primary process due to a bug in the ethdev library. Due to this bug, in a multi process context, when the primary and secondary have different ports set, then the secondary process (here the dpdk-pdump tool) overwrites the rte_eth_devices[] entries of the primary process.
+> 
+> Thanks
+> Rajesh
+> 
+> 
 
-Looks like a good idea.
-Is there any way to make symbols in drivers local by default?
-Right now if a driver defines a non-static function it will
-be visible in other code when DPDK application is statically linked.
-
-This can lead to problems where exports are missing or accidental
-name conflicts. Gcc has -fvisiblity=hidden not sure about others.
+Try dpdk-dumpcap instead. Pdump is limited and will not get any new features.
+I am going to propose deprecating pdump in 25.11.
