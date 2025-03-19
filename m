@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18562C28B2F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 02:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF409C282EC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 02:52:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0545402DD;
-	Wed, 19 Mar 2025 03:20:08 +0100 (CET)
-Received: from fout-b1-smtp.messagingengine.com
- (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id E7876402C4
- for <dev@dpdk.org>; Wed, 19 Mar 2025 03:20:07 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal
- [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id 1295C1140238;
- Tue, 18 Mar 2025 22:20:07 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Tue, 18 Mar 2025 22:20:07 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id EACBF402DD;
+	Wed, 19 Mar 2025 03:52:55 +0100 (CET)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTP id BA90D402C4
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 03:52:54 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal
+ [10.202.2.47])
+ by mailfout.stl.internal (Postfix) with ESMTP id DF7EC1140171;
+ Tue, 18 Mar 2025 22:52:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-07.internal (MEProxy); Tue, 18 Mar 2025 22:52:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1742350806;
- x=1742437206; bh=7qTJdSkM5NcyYNCs90XromkZKxHvr+elpmdE1rpovIY=; b=
- V/7yyDoBHBvTZ/QIt7yhXOn+PW3uDfkvEeRXVnXvdVuubVpNM5kc9bn0ngq2ks81
- HokvxVeulFPMELCt56BFMzbAAmGnGMqwBcK3vZyAN3VgGUqCuIvL5THdmEZ/k0K2
- F0Q6wV6C99gH3eE1YwIm62zHH7h3DFhrEOAnnJ/3IEUrcUsCjL9iudg+NLv3KfKY
- et7Ik/6x13/6oBtMmF8mTtQo0RVDRyqMJdHzfb3uub84X5EU0DR0s7l4se6c2HFN
- VhB3e/ezFman+FxGjvD2LjEOW+75c4qJru5b45/BHPpq2RVE+xlQN1EZHDJMGoYU
- Q51WtODrB3e1ex/2etzIkg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1742352773;
+ x=1742439173; bh=1VOJqcSwqRFUSg7FC7wJ2NChpZEeLmtFMyTO7O764/c=; b=
+ M1nMi+7CwzVHP8wnF6qSl2//FFi3LiqH9Xp1UUg09JkSEh609VOIy0ikdyqZPDjW
+ kmR5oYHne3LyGcNENAe5ivcugrerRnZO0y9nv//Sf+Si8zVMRUaq5hHcgWsYgq4j
+ sfBJZs/pGx/5NjV9dlG7BFx2LfaHLCLVnmr2FpN4fiLMB7W2aTqNPjTb5EYg6dla
+ I7HD+Tyw1wsQa7gF96sDhIL+LmOJzAqJkJ9GIGdI8wcGXZSQ3tVLyqgjG1JtbXu7
+ D7O1IeM1OWsACqxxE3Hd4noKXphD9CLqWB3evgNImzs/FjjucXsS5uWLALs7DW5J
+ MXlQc+sRKwbQf8yvBIrIRA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742350806; x=
- 1742437206; bh=7qTJdSkM5NcyYNCs90XromkZKxHvr+elpmdE1rpovIY=; b=K
- 9QftnKaFRHzGi1asiEOGmyazQSkVBFPWGBb1JljhssoJ6LA5W2lmrJUks+9sb4Qw
- sQvq/m0l2tPfrk9Y4rTN/GRHfG5qqVoNnTvfU4WLYAzEN3UfMuSQBybafjoT65pQ
- tNLPPixputGW1pkTIbJ4GqmVfWfdzs3cm8/ca6/71yaY9Pwsm+U3FA7Wib+ivKC8
- AFic8Y/swWyrUNV3lMFvQvBpmGpnYYe7Uekoyglhk2EIIv6GpvdoI6P7fYQQE+KW
- LJNhd8d01OU3jA6Og+uw7LHoGZEFv3ZL9zdjY/DjtZiBkO5CW89CyBFrgNMaBOH+
- aS+JLXe97qvJOsk1al7zg==
-X-ME-Sender: <xms:1inaZ3b8q8hWpvYiQjudzF2GZFOfQ4NTghr34kU0C7eqycdLJ2oEbQ>
- <xme:1inaZ2aeyk588VpM_ZW2ERuuuF9eex160ICRoa-eiweTs1LpJZ8alQv20SkM7C-le
- bGKG824fWQlikkIfA>
-X-ME-Received: <xmr:1inaZ59t_Qc9DD5oxbayTP88-lbv1uZN4BPGup46p7xoGfha8OgvsWwN-qATw3oE0HvA1vZrvIGA0z8iFKOhG2l3hQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegudduucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742352773; x=
+ 1742439173; bh=1VOJqcSwqRFUSg7FC7wJ2NChpZEeLmtFMyTO7O764/c=; b=T
+ M1lDJcxwdBW/n13ZuDbawh+GwRlr3mmB0yhK0f3xCVbFVgMAhFtzr6rjhTEn9g4R
+ RkyyagIq0V/vY3FTz1jBwtDXCayHYkt933U9kjP+4duOF+ZSOdBXJJ8PIh5Q1tGF
+ pyFK0/bX3ZNk5EYsGwadGKJqHmDEim34qgwtaEJ46vYKs00GWrmOdYAn2k9sjJhF
+ eDycNlTWnycsTcs/a2kWJXlo7w131COMEefINHULo1OBnfj3bDoo6Hwkyo3ylsli
+ QKtvdaLJ4tY+WZLIUiZOMMwjvIA4GH/gC3v9ygEDG/WRWcP9CkOnwV6Hvuv58Dv4
+ OhjF+jVaF2eENVQgCsGLw==
+X-ME-Sender: <xms:hTHaZ4BgZgt1Hw1zKYF0Rjxy31coVBFu6mY__GKqk7fDqopXB4QOdw>
+ <xme:hTHaZ6gyQBO977XDQDbDfj-w8Bc-BnyKILyUBxmKf5Ba11JqjHuY1F1grRKcnkM48
+ -vsquPIk6cEfiqAMQ>
+X-ME-Received: <xmr:hTHaZ7nZGDrSldpnYPD7uuVXws4YwW5AGWoFihmtMtWWLFPsSKcq5UVdALhSWkErEcPBNzGml12WiISlrQokqwdEgg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegudekucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
  gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
@@ -53,28 +53,32 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegudduucetufdote
  hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
  geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpsg
- hhrghgrghvrghtuhhlrgesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehjvghrihhn
- jhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeifrghthhhsrghlrgdrvhhithhhrg
- hnrghgvgesrghrmhdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushho
- nhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:1inaZ9ry20xR_PT3-RFc1WgI34hjM7aqTYRI7t8KZGQDvlzLw1srGw>
- <xmx:1inaZyoHEn_PThCyStS-4Z37IBqIvOzHUGkIq8dUZ9tE9-Is079kmg>
- <xmx:1inaZzRlu9TRnMi_3bg-mL7EiMXnKobdudeltTPrn1HaAJS5zHWynQ>
- <xmx:1inaZ6pgRMfccsvqfZEgenMiIg7-rHX5FO3KMoLsSAUFRPT7he0uAA>
- <xmx:1inaZ_AMsjQCQtImqBnv58DxVNZlHqUtet--7I32qhHyoda8vOnSmkUl>
+ pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnh
+ gurhgvmhhuvgeslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopegs
+ rhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvg
+ hvseguphgukhdrohhrghdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhl
+ uhhmsggvrhdrohhrghdprhgtphhtthhopehvlhgrughimhhirhdrmhgvughvvggukhhinh
+ esihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:hTHaZ-xVoHn4qxqv1a5WQ9aBCtQ2kAE7fx8YmRcZOnplJZ4odN2Ktg>
+ <xmx:hTHaZ9RhSvCo3Luk37WIO3YWZ6GGdEL2FA21LQE1LIBT5L3KuWHLiw>
+ <xmx:hTHaZ5a75qtFL2w55F8r8W-CEe3JvvetyjShNlTDuWe5ZvR9M8DSGA>
+ <xmx:hTHaZ2Q0rPIT102cpzETIAcU2N1D4tnpVaiU4MQlNZCBVoJGH85m1A>
+ <xmx:hTHaZ2Kjt_IdbDOe2stmwQC2V_6Yvz2Yw6LSfFx5MLdRmC36eVOv5acv>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Mar 2025 22:20:05 -0400 (EDT)
+ 18 Mar 2025 22:52:52 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Pavan Nikhilesh <pbhagavatula@marvell.com>
-Cc: jerinj@marvell.com, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] config/arm: add crypto to cn9k soc
-Date: Wed, 19 Mar 2025 03:20:04 +0100
-Message-ID: <4526193.B0Pyx7erxp@thomas>
-In-Reply-To: <20250308090130.4696-1-pbhagavatula@marvell.com>
-References: <20250308090130.4696-1-pbhagavatula@marvell.com>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
+ stephen@networkplumber.org,
+ "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v3] app/test: fix stack overflow in lpm6_perf_autotest
+Date: Wed, 19 Mar 2025 03:52:51 +0100
+Message-ID: <7218775.tWeucmBOSa@thomas>
+In-Reply-To: <0513cfe3-ea93-42f5-b052-20df56fc7127@intel.com>
+References: <1734057571-20367-1-git-send-email-andremue@linux.microsoft.com>
+ <20250305144531.GA32194@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <0513cfe3-ea93-42f5-b052-20df56fc7127@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -91,14 +95,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-08/03/2025 10:01, pbhagavatula@marvell.com:
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+05/03/2025 21:04, Medvedkin, Vladimir:
+> On 05/03/2025 14:45, Andre Muezerie wrote:
+> > On Wed, Mar 05, 2025 at 10:08:33AM +0000, Bruce Richardson wrote:
+> >> On Wed, Dec 18, 2024 at 07:21:26AM -0800, Andre Muezerie wrote:
+> >>> Test lpm6_perf_autotest was hitting a stack overflow on Windows
+> >>> with both MSVC and Clang.
+> >>>
+> >>> The fix is to move some of the data from the stack to the heap.
+> >>>
+> >>> Signed-off-by: Andre Muezerie<andremue@linux.microsoft.com>
 > 
-> Add crypto as extra march feature to cn9k soc.
-> 
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
 Applied, thanks.
-
 
 
