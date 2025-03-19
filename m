@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F226CC35FF3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 03:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640CBC35FF1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 03:52:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2210402C4;
-	Wed, 19 Mar 2025 04:26:51 +0100 (CET)
-Received: from fhigh-b2-smtp.messagingengine.com
- (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mails.dpdk.org (Postfix) with ESMTP id F13AC4025A;
- Wed, 19 Mar 2025 04:26:49 +0100 (CET)
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal
- [10.202.2.53])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 13A1525401A1;
- Tue, 18 Mar 2025 23:26:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-13.internal (MEProxy); Tue, 18 Mar 2025 23:26:49 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 6BD82402C4;
+	Wed, 19 Mar 2025 04:52:54 +0100 (CET)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A1514025A
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 04:52:53 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal
+ [10.202.2.47])
+ by mailfout.stl.internal (Postfix) with ESMTP id 7132E1140167;
+ Tue, 18 Mar 2025 23:52:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Tue, 18 Mar 2025 23:52:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1742354808;
- x=1742441208; bh=vw1Pr4OYOrQFaoxCR7rDvEThswZU6yjbJQRQvJ2WOqQ=; b=
- itFL5ya8+4nvsSo2wGpfk7fMaXCofppLZWMBSYD86JCmWvw9tk3ve+gCK/4HhqZu
- CaLfhtSpNzjPKWjb5P4Y8Mwp/Bsg2XOg3WAPKAwHkxckBE+WN/pyNzxzsK+QNMoa
- LS1kWd82D0SSBHRft/TIBZBaa2mMM3UTyNikGKS6gXJwZ21IuMujw0ZE9Gwz7Ni0
- q76IZRpjy073ZYVoTh/CG97HwqWvqU4JLd7A5wu+KFrMML0gEl/Aw23cRB5XFfGG
- eBufXSZF0BLyzpNjZl70QCxKpsMzaLejVa/3jtqcQLrVKkmcRyzVikxIqzV/jBZ/
- TbU8kXDxyNKpgIGyzHOdUw==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1742356372;
+ x=1742442772; bh=MoW8pThnjtwokzZTbKd7MMpP7keEpLp5uHLQ2BXvwIM=; b=
+ thckc9p3p+smXgSG8gm3cd0Uzx1+MD7iTe7WG2gld7bUCjHNlOKPQT7pHD37Mi11
+ EBFUP8H2nPUkIexNvJyTVnp3S7VTstoYVeCM/iT07CxM4PFRUCkcky9CaNq/SmiK
+ NaUFmXz26uqBG275Gf+j6L06ba2Ef0jvDqY1vq7+ZZ7fQm4c1DtZAYG/VRHvFsYt
+ QMfFbP978OVnomcVB+Cd9RxfXoEm2v75es/VT05tBFOsAM+yEQzn43G6tWZIedy2
+ Y2NZikj39NrMVyKgjY3gOWfPhpyuDFKdO6RxcfmIogCIhntUQ/GGfcVIAtFOhlog
+ MEwFp4X79nK/9i6yFIt5vA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742354808; x=
- 1742441208; bh=vw1Pr4OYOrQFaoxCR7rDvEThswZU6yjbJQRQvJ2WOqQ=; b=M
- kOAEYpkd99IcelS6NEUrDYjvPVYoiu/H0SgcRwb9OIsX1rMufcvWrlIBpRwZF3Yo
- Ej+WurOuXguorpL97fnyGHDA+hKe57pBp1lk7m8qyZRNv/qrMmYCgWGNPz9UAHOU
- Pb115Gb5kBcBH6DYoup+YZo2DJKIFrd7dTMVwRTjnhzr0oJyE1oN41Ed6nTKXsZ4
- u+FqiCzNtNTOfOeVX0FimGtKck0h4/kTMQkrMwaQtR0mEqZgvGm/RRQxcJbclmvw
- L3xaLiuZ9PwcniBGViDXJbLP6Tnw2/JTdM7Uf8Z7x7tLC/QI5K257ijdRU4FpuFw
- 3zlV7kFX/Im3YKs5D+5Hw==
-X-ME-Sender: <xms:eDnaZwMDu1o8pglQdCg9oGlYbXzntAEq5NxjA4JF3jKRtUBwzkWtLA>
- <xme:eDnaZ28WD0_zepsDmCIIgHZfa-wc62yPdDOyXLUjw1i8vG1tSCyvU-wWg9ZdN3nhE
- ZIrDMayXi2jrIG_KA>
-X-ME-Received: <xmr:eDnaZ3SfSB93eOU5ySRcs7VkOa9RRJa8qAcbS6xnzT3f1lxgHK8fgkyR6keOGmdOQkZWqADsNwxe5oMLzcTrvjsKEQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegvdehucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742356372; x=
+ 1742442772; bh=MoW8pThnjtwokzZTbKd7MMpP7keEpLp5uHLQ2BXvwIM=; b=t
+ O3HhOPg3wBoyW0tNoeIIMIlE20LZlXBIHyJIQee5YViNaBzXlqe62iWJadNlb3Y7
+ an1EHUG4cB0WQSMyOB2cigpUbv0ky8+ADLyxkGYO+6DuqX0x2ZNUIq4KxuRFZ19J
+ hs+9YdZrQBHHT7jT3XGSY2byf0CTLRYIMfEJM+1SYXDFCV7Lan3tAG71PlCnc3Vh
+ ryiiflOKwMnc0TPijCMv6rciNwJGb0eYdTrU3CfFEGMvYsc5bh8LwZasVmjp5IQe
+ PjPbVVrHNcRsWR28d/H6tCMOCHwBuCTF6OO46tSHTcRvox50/ZCMiEvVFE83krsk
+ 2P7AetruwZFWXGrnkpdjg==
+X-ME-Sender: <xms:lD_aZ43dX2dMWUBOOEgij-dAY1BzyjKtxXSLVo3xqhleJpctj36XpQ>
+ <xme:lD_aZzEf0PCXtFrY3cP8fSy7HND-9ChhLgDtbCz2LMsUjcKuAPp65mBJi-fLZNSRH
+ rzhSZ8rhvxmwsdkPw>
+X-ME-Received: <xmr:lD_aZw6mL7vNpiya6XogmHeAkJgpTJ351uPzmgJDyJyvSRxSs6r5OAkT0q08iPHkvgS0b84BnmwrLGT9ya7Y17svow>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegfedtucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
  gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
@@ -53,33 +53,27 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegvdehucetufdote
  hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
  geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehkth
- gvjhgrshhrvggvsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepghgrkhhhihhlsehm
- rghrvhgvlhhlrdgtohhmpdhrtghpthhtoheprhgrughurdhnihgtohhlrghusehinhhtvg
- hlrdgtohhmpdhrtghpthhtohepvhhfihgrlhhkohesmhgrrhhvvghllhdrtghomhdprhgt
- phhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepjhgvrhhinhhjse
- hmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
- thhtoheprghnohhosghjsehmrghrvhgvlhhlrdgtohhm
-X-ME-Proxy: <xmx:eDnaZ4uIAW337wC-HXusNqB55PvnM7OjfLk1b68Q4uptjkC6zc3cuQ>
- <xmx:eDnaZ4fJu3AUpGCFrYdfL74KcniLfGg77M_RMbGXaZR9qda0ZVGoYg>
- <xmx:eDnaZ820XhIct5gd-9L0LbF-RXEcU-hV22Atj-GjDrXm-FTquG9v0w>
- <xmx:eDnaZ8-6XM4GMmltuKPjbSGZNGhk2BCJgbokZQRo-as5WKLBpxVoZA>
- <xmx:eDnaZ_xM7npD2Ru_NGIMgjyfIg630yQyH-9vEv8Er_2nPEdGMssgvdjH>
+ pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnh
+ grthholhihrdgsuhhrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhgpdhrtghpthhtoheprhhjrghrrhihsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:lD_aZx20RQA7GYUC49zIdSWp1MjPYpHBsnJoovoX_CB_6q7IW9uIKg>
+ <xmx:lD_aZ7GCfyolzujhgDutRdwPJpmeL1PTFXRka9Fxi5NzVOHCi6bJ4w>
+ <xmx:lD_aZ69HyCFatbL4OFt0h1wyzBSI6gtc26Ck07i4ODhw5rArdlCHIQ>
+ <xmx:lD_aZwlRn5y2s_JPORN6ByautJi4H_t4Vjm8TbkY5WrqwOAS8IcVmA>
+ <xmx:lD_aZzBUSrIfY2P80ZaMvUq986l5bsKwhwxdDF-zDp8qNQNJ1rglVLpH>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Mar 2025 23:26:47 -0400 (EDT)
+ 18 Mar 2025 23:52:51 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Tejasree Kondoj <ktejasree@marvell.com>
-Cc: Akhil Goyal <gakhil@marvell.com>, Radu Nicolau <radu.nicolau@intel.com>,
- Volodymyr Fialko <vfialko@marvell.com>, stable@dpdk.org,
- Jerin Jacob <jerinj@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>,
- Anoob Joseph <anoobj@marvell.com>
-Subject: Re: [PATCH] examples/ipsec-secgw: fix cryptodev and eventdev ID
-Date: Wed, 19 Mar 2025 04:26:46 +0100
-Message-ID: <30709127.czjnFlTdjD@thomas>
-In-Reply-To: <PH0PR18MB46723B375FB48ECB0D807CEFDFE02@PH0PR18MB4672.namprd18.prod.outlook.com>
-References: <20241202064906.804328-1-ktejasree@marvell.com>
- <PH0PR18MB46723B375FB48ECB0D807CEFDFE02@PH0PR18MB4672.namprd18.prod.outlook.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Robin Jarry <rjarry@redhat.com>
+Subject: Re: [PATCH v4 1/1] usertools/devbind: allow changing UID/GID for VFIO
+Date: Wed, 19 Mar 2025 04:52:50 +0100
+Message-ID: <3603683.jbyF5MZJ3u@thomas>
+In-Reply-To: <97c9ebdb-4516-4ad6-a53b-77a9080fed59@intel.com>
+References: <4cd0282dabfa59e715028ecf255468529655b487.1725285449.git.anatoly.burakov@intel.com>
+ <c5d0388620157638338f67291f8862c6c96cec96.1733131888.git.anatoly.burakov@intel.com>
+ <97c9ebdb-4516-4ad6-a53b-77a9080fed59@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -96,17 +90,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-23/01/2025 11:27, Anoob Joseph:
-> > Subject: [PATCH] examples/ipsec-secgw: fix cryptodev and eventdev ID
+02/12/2024 10:35, Burakov, Anatoly:
+> On 12/2/2024 10:31 AM, Anatoly Burakov wrote:
+> > Currently, when binding a device to VFIO, the UID/GID for the device will
+> > always stay as system default (`root`). Yet, when running DPDK as non-root
+> > user, one has to change the UID/GID of the device to match the user's
+> > UID/GID to use the device.
 > > 
-> > Fixing cryptodev and eventdev ID numbers.
+> > This patch adds an option to `dpdk-devbind.py` to change the UID/GID of
+> > the device when binding it to VFIO.
 > > 
-> > Fixes: 0dbe550a4af5 ("examples/ipsec-secgw: initialize event crypto adapter")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 > 
-> Acked-by: Anoob Joseph <anoobj@marvell.com>
+> Reviewed-by: Robin Jarry <rjarry@redhat.com>
 
 Applied, thanks.
 
