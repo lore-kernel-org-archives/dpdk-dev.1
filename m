@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB9EC35FFC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BF7C35FFC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E553440657;
-	Wed, 19 Mar 2025 18:30:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0342B4066A;
+	Wed, 19 Mar 2025 18:30:23 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 9D06B40662
- for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:18 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1CBBD4026B
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742405418; x=1773941418;
+ t=1742405420; x=1773941420;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=fPFk9QAMqDEHK7GFYuaRizYOcfyXxqTXI3FOMNiQwnw=;
- b=Oqh5yOssnyhcRleAa7hHxsGmwhjq+VHX7fVWYFMz7RCCYcJW5WBf36Lr
- tZGtufMELbQoUG8sZ0NpmxVnGHqyILhChVZWlAfF48txzftH0DYQkzJDR
- L5/8YFo1q1Wfu9PUqTB+GGaAlDPFBvuX92dTY7qUlCQolLq5iBfK+S5Z0
- ek/g5VyyrdMzGZIngUx/EhqGVAmE1YcF1IDCAq2bSLwIb5d1kBmLCynjs
- G434taRMLy1IwkBLW7Ia8iFDUmjtL8AKiAm4w+yZiNQtKfmr4ECnUVtCa
- pQAn27JHw1axKaI2v8/fNA5/+VdAHEDtmcjmGnH5+gtUa5GU4HmcAHDEc A==;
-X-CSE-ConnectionGUID: 6rmoj5uWQSiIE4OmbB6bCg==
-X-CSE-MsgGUID: s3hnTk40RmWDl8HxlZwSXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741986"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741986"
+ bh=djY+irPAJ8BII7aNrg9KbZ0EXuxlgvDNrec6cti+dU8=;
+ b=EUQaEQtJW81gJlxvwmhdvWwmshfrPBBr5O86N8uMYHr8sJIuacO2FeMF
+ Rr1xfGz+VGdH5g3C/WzOMPO1AnQ5Xtg8v/9pUUmBjIddA+1z3w0mmSgaZ
+ dd/2S93eFD0vDT6gvj5/L5p0YmSQsCJUIJe6OFFSQ706BdKzO/Qc40JY0
+ 5/MS1YQqIlWdmlscpD/nKOob/rtPfjF8z5hsoUFrZj9yse43jGEuPeSP1
+ 2AUI0SlDJdS+RqrNlM6VSvJNInlfEcXQOTyb/6n4WzQVECYoom42LRhdC
+ 9o4NIsmI0AGFOydZbgnu+lo1TjsYvOmg+VfDvfLcLmfobdcV7Qqo0IKvB Q==;
+X-CSE-ConnectionGUID: fTVVGetoQkumQRfC0ANVhg==
+X-CSE-MsgGUID: AjqxuX+AS265kDVwlDBnGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741991"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741991"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 10:30:18 -0700
-X-CSE-ConnectionGUID: xNfYISsIS+6IuTlZ+N558g==
-X-CSE-MsgGUID: Kj3Q1tI2Q7qnvzcTvKo2JA==
+ 19 Mar 2025 10:30:19 -0700
+X-CSE-ConnectionGUID: 0UaVpcYNSI+cDRagJAUUmw==
+X-CSE-MsgGUID: QSjWUynKQRyySkrrmx/kzg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722605"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722612"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:17 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:18 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 06/11] lib: add generalized AVX build handling
-Date: Wed, 19 Mar 2025 17:29:36 +0000
-Message-ID: <20250319172942.2992053-7-bruce.richardson@intel.com>
+Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Subject: [PATCH v4 07/11] acl: use common AVX build handling
+Date: Wed, 19 Mar 2025 17:29:37 +0000
+Message-ID: <20250319172942.2992053-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319172942.2992053-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -61,67 +61,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support to the top-level lib build file for AVX2 and AVX512
-specific sources. This should simplify library builds by avoiding the
-need to constantly reimplement the same build logic
+remove custom logic for building AVX2 and AVX-512 files.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/meson.build | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ lib/acl/meson.build | 54 ++++-----------------------------------------
+ 1 file changed, 4 insertions(+), 50 deletions(-)
 
-diff --git a/lib/meson.build b/lib/meson.build
-index ce92cb5537..e2605e7d68 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -122,6 +122,9 @@ foreach l:libraries
-     use_function_versioning = false
-     annotate_locks = true
-     sources = []
-+    sources_avx2 = []
-+    sources_avx512 = []
-+    cflags_avx512 = [] # extra cflags for the avx512 code, e.g. extra avx512 feature flags
-     headers = []
-     indirect_headers = [] # public headers not directly included by apps
-     driver_sdk_headers = [] # public headers included by drivers
-@@ -242,7 +245,36 @@ foreach l:libraries
-         cflags += '-Wthread-safety'
-     endif
+diff --git a/lib/acl/meson.build b/lib/acl/meson.build
+index a80c172812..87e9f25f8e 100644
+--- a/lib/acl/meson.build
++++ b/lib/acl/meson.build
+@@ -15,57 +15,11 @@ headers = files('rte_acl.h', 'rte_acl_osdep.h')
  
--    # first build static lib
-+    # handle avx2 and avx512 source files
-+    if arch_subdir == 'x86'
-+        if sources_avx2.length() > 0
-+            avx2_lib = static_library(libname + '_avx2_lib',
-+                    sources_avx2,
-+                    dependencies: static_deps,
-+                    include_directories: includes,
-+                    c_args: [cflags, cc_avx2_flags])
-+            objs += avx2_lib.extract_objects(sources_avx2)
-+        endif
-+        if sources_avx512.length() > 0 and cc_has_avx512
-+            cflags += '-DCC_AVX512_SUPPORT'
-+            avx512_args = [cflags, cflags_avx512, cc_avx512_flags]
-+            if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
-+                avx512_args += '-march=skylake-avx512'
-+                if cc.has_argument('-Wno-overriding-option')
-+                    avx512_args += '-Wno-overriding-option'
-+                endif
-+            endif
-+            avx512_lib = static_library(libname + '_avx512_lib',
-+                    sources_avx512,
-+                    dependencies: static_deps,
-+                    include_directories: includes,
-+                    c_args: avx512_args)
-+            objs += avx512_lib.extract_objects(sources_avx512)
-+        endif
-+    endif
-+
-+
-+    # build static lib
-     static_lib = static_library(libname,
-             sources,
-             objects: objs,
+ if dpdk_conf.has('RTE_ARCH_X86')
+     sources += files('acl_run_sse.c')
+-
+-    avx2_tmplib = static_library('avx2_tmp',
+-            'acl_run_avx2.c',
+-            dependencies: static_rte_eal,
+-            c_args: [cflags, cc_avx2_flags])
+-    objs += avx2_tmplib.extract_objects('acl_run_avx2.c')
+-
+-    # compile AVX512 version if:
+-    # we are building 64-bit binary AND binutils can generate proper code
+-
+-    if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
+-
+-        # compile AVX512 version if either:
+-        # a. we have AVX512 supported in minimum instruction set
+-        #    baseline
+-        # b. it's not minimum instruction set, but supported by
+-        #    compiler
+-        #
+-        # in former case, just add avx512 C file to files list
+-        # in latter case, compile c file to static lib, using correct
+-        # compiler flags, and then have the .o file from static lib
+-        # linked into main lib.
+-
+-        # check if all required flags already enabled (variant a).
+-        acl_avx512_flags = ['__AVX512F__', '__AVX512VL__',
+-            '__AVX512CD__', '__AVX512BW__']
+-
+-        acl_avx512_on = true
+-        foreach f:acl_avx512_flags
+-
+-            if cc.get_define(f, args: machine_args) == ''
+-                acl_avx512_on = false
+-            endif
+-        endforeach
+-
+-        if acl_avx512_on == true
+-
+-            sources += files('acl_run_avx512.c')
+-            cflags += '-DCC_AVX512_SUPPORT'
+-
+-        elif cc_has_avx512
+-            avx512_tmplib = static_library('avx512_tmp',
+-                'acl_run_avx512.c',
+-                dependencies: static_rte_eal,
+-                c_args: cflags + cc_avx512_flags)
+-            objs += avx512_tmplib.extract_objects(
+-                    'acl_run_avx512.c')
+-            cflags += '-DCC_AVX512_SUPPORT'
+-        endif
++    sources_avx2 += files('acl_run_avx2.c')
++    # AVX512 is only supported on 64-bit builds
++    if dpdk_conf.has('RTE_ARCH_X86_64')
++        sources_avx512 += files('acl_run_avx512.c')
+     endif
+-
+ elif dpdk_conf.has('RTE_ARCH_ARM')
+     cflags += '-flax-vector-conversions'
+     sources += files('acl_run_neon.c')
 -- 
 2.43.0
 
