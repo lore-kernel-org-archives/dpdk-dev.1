@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BF7C35FFC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FC7C35FFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:31:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0342B4066A;
-	Wed, 19 Mar 2025 18:30:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 934FD4067B;
+	Wed, 19 Mar 2025 18:30:24 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 1CBBD4026B
- for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9A65C40665
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742405420; x=1773941420;
+ t=1742405421; x=1773941421;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=djY+irPAJ8BII7aNrg9KbZ0EXuxlgvDNrec6cti+dU8=;
- b=EUQaEQtJW81gJlxvwmhdvWwmshfrPBBr5O86N8uMYHr8sJIuacO2FeMF
- Rr1xfGz+VGdH5g3C/WzOMPO1AnQ5Xtg8v/9pUUmBjIddA+1z3w0mmSgaZ
- dd/2S93eFD0vDT6gvj5/L5p0YmSQsCJUIJe6OFFSQ706BdKzO/Qc40JY0
- 5/MS1YQqIlWdmlscpD/nKOob/rtPfjF8z5hsoUFrZj9yse43jGEuPeSP1
- 2AUI0SlDJdS+RqrNlM6VSvJNInlfEcXQOTyb/6n4WzQVECYoom42LRhdC
- 9o4NIsmI0AGFOydZbgnu+lo1TjsYvOmg+VfDvfLcLmfobdcV7Qqo0IKvB Q==;
-X-CSE-ConnectionGUID: fTVVGetoQkumQRfC0ANVhg==
-X-CSE-MsgGUID: AjqxuX+AS265kDVwlDBnGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741991"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741991"
+ bh=xTsrZAkdMQ93DB6N1DPryidbzbOHkevkhuqzA2Z5TNU=;
+ b=AYMIHoXFE3qnqHzDV1dv1Xups8idnjR/d3hrn0AswWhJpkMcmC7wU0IB
+ V5wGEqAPYpMHaiaQpV3Ay1XatMifZgDYgteuAoVnereovxOu3Gt4IWpOi
+ 6Vh3UJQlzPSwxM3mKoGrZrSt1m9qshVu60Nv2VWglBd1RO8euyQEwb56o
+ o979cCqQI/xVMiU7AkhfNPU9kr9MbZX0fdj6iFOymUENEXcHgO7M0aDOL
+ hocRlnoD32z4dp6eP5WTPBnE4qcpH8Jq1HImA9Qcp+zTuUF4akUvLAJVB
+ yyF4b4lWc4kXypNglQFgLW2QnwjSrGtJ2QwP4FNv5Fx1IVqgOsAyiREYZ w==;
+X-CSE-ConnectionGUID: limwVdVEQg6FXWZAicRPPg==
+X-CSE-MsgGUID: kPFtVUqsSN6B9DA7ImVi3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741995"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741995"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 10:30:19 -0700
-X-CSE-ConnectionGUID: 0UaVpcYNSI+cDRagJAUUmw==
-X-CSE-MsgGUID: QSjWUynKQRyySkrrmx/kzg==
+ 19 Mar 2025 10:30:21 -0700
+X-CSE-ConnectionGUID: QDKdi82ySNaX/8pEMDR4Vg==
+X-CSE-MsgGUID: nIoo0k/bSMOpoME80yq2UQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722612"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722617"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:18 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:20 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Subject: [PATCH v4 07/11] acl: use common AVX build handling
-Date: Wed, 19 Mar 2025 17:29:37 +0000
-Message-ID: <20250319172942.2992053-8-bruce.richardson@intel.com>
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v4 08/11] fib: use common AVX build handling
+Date: Wed, 19 Mar 2025 17:29:38 +0000
+Message-ID: <20250319172942.2992053-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319172942.2992053-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -61,79 +61,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-remove custom logic for building AVX2 and AVX-512 files.
+Remove custom logic for building AVX2 and AVX-512 files. Within the C
+code this requires some renaming of build macros to use the standard
+defines.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/acl/meson.build | 54 ++++-----------------------------------------
- 1 file changed, 4 insertions(+), 50 deletions(-)
+ lib/fib/dir24_8.c   |  6 +++---
+ lib/fib/meson.build | 18 +-----------------
+ lib/fib/trie.c      |  6 +++---
+ 3 files changed, 7 insertions(+), 23 deletions(-)
 
-diff --git a/lib/acl/meson.build b/lib/acl/meson.build
-index a80c172812..87e9f25f8e 100644
---- a/lib/acl/meson.build
-+++ b/lib/acl/meson.build
-@@ -15,57 +15,11 @@ headers = files('rte_acl.h', 'rte_acl_osdep.h')
+diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
+index c48d962d41..2ba7e93511 100644
+--- a/lib/fib/dir24_8.c
++++ b/lib/fib/dir24_8.c
+@@ -16,11 +16,11 @@
+ #include "dir24_8.h"
+ #include "fib_log.h"
  
- if dpdk_conf.has('RTE_ARCH_X86')
-     sources += files('acl_run_sse.c')
+-#ifdef CC_DIR24_8_AVX512_SUPPORT
++#ifdef CC_AVX512_SUPPORT
+ 
+ #include "dir24_8_avx512.h"
+ 
+-#endif /* CC_DIR24_8_AVX512_SUPPORT */
++#endif /* CC_AVX512_SUPPORT */
+ 
+ #define DIR24_8_NAMESIZE	64
+ 
+@@ -63,7 +63,7 @@ get_scalar_fn_inlined(enum rte_fib_dir24_8_nh_sz nh_sz, bool be_addr)
+ static inline rte_fib_lookup_fn_t
+ get_vector_fn(enum rte_fib_dir24_8_nh_sz nh_sz, bool be_addr)
+ {
+-#ifdef CC_DIR24_8_AVX512_SUPPORT
++#ifdef CC_AVX512_SUPPORT
+ 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) <= 0 ||
+ 			rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512DQ) <= 0 ||
+ 			rte_vect_get_max_simd_bitwidth() < RTE_VECT_SIMD_512)
+diff --git a/lib/fib/meson.build b/lib/fib/meson.build
+index 0c19cc8201..55d9ddcee9 100644
+--- a/lib/fib/meson.build
++++ b/lib/fib/meson.build
+@@ -15,21 +15,5 @@ deps += ['rcu']
+ deps += ['net']
+ 
+ if dpdk_conf.has('RTE_ARCH_X86_64')
+-    if target_has_avx512
+-        cflags += ['-DCC_DIR24_8_AVX512_SUPPORT', '-DCC_TRIE_AVX512_SUPPORT']
+-        sources += files('dir24_8_avx512.c', 'trie_avx512.c')
 -
--    avx2_tmplib = static_library('avx2_tmp',
--            'acl_run_avx2.c',
--            dependencies: static_rte_eal,
--            c_args: [cflags, cc_avx2_flags])
--    objs += avx2_tmplib.extract_objects('acl_run_avx2.c')
--
--    # compile AVX512 version if:
--    # we are building 64-bit binary AND binutils can generate proper code
--
--    if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
--
--        # compile AVX512 version if either:
--        # a. we have AVX512 supported in minimum instruction set
--        #    baseline
--        # b. it's not minimum instruction set, but supported by
--        #    compiler
--        #
--        # in former case, just add avx512 C file to files list
--        # in latter case, compile c file to static lib, using correct
--        # compiler flags, and then have the .o file from static lib
--        # linked into main lib.
--
--        # check if all required flags already enabled (variant a).
--        acl_avx512_flags = ['__AVX512F__', '__AVX512VL__',
--            '__AVX512CD__', '__AVX512BW__']
--
--        acl_avx512_on = true
--        foreach f:acl_avx512_flags
--
--            if cc.get_define(f, args: machine_args) == ''
--                acl_avx512_on = false
--            endif
--        endforeach
--
--        if acl_avx512_on == true
--
--            sources += files('acl_run_avx512.c')
--            cflags += '-DCC_AVX512_SUPPORT'
--
--        elif cc_has_avx512
--            avx512_tmplib = static_library('avx512_tmp',
--                'acl_run_avx512.c',
--                dependencies: static_rte_eal,
+-    elif cc_has_avx512
+-        cflags += ['-DCC_DIR24_8_AVX512_SUPPORT', '-DCC_TRIE_AVX512_SUPPORT']
+-        dir24_8_avx512_tmp = static_library('dir24_8_avx512_tmp',
+-                'dir24_8_avx512.c',
+-                dependencies: [static_rte_eal, static_rte_rcu],
 -                c_args: cflags + cc_avx512_flags)
--            objs += avx512_tmplib.extract_objects(
--                    'acl_run_avx512.c')
--            cflags += '-DCC_AVX512_SUPPORT'
--        endif
-+    sources_avx2 += files('acl_run_avx2.c')
-+    # AVX512 is only supported on 64-bit builds
-+    if dpdk_conf.has('RTE_ARCH_X86_64')
-+        sources_avx512 += files('acl_run_avx512.c')
-     endif
--
- elif dpdk_conf.has('RTE_ARCH_ARM')
-     cflags += '-flax-vector-conversions'
-     sources += files('acl_run_neon.c')
+-        objs += dir24_8_avx512_tmp.extract_objects('dir24_8_avx512.c')
+-        trie_avx512_tmp = static_library('trie_avx512_tmp',
+-                'trie_avx512.c',
+-                dependencies: [static_rte_eal, static_rte_rcu, static_rte_net],
+-                c_args: cflags + cc_avx512_flags)
+-        objs += trie_avx512_tmp.extract_objects('trie_avx512.c')
+-    endif
++    sources_avx512 = files('dir24_8_avx512.c', 'trie_avx512.c')
+ endif
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 4893f6c636..6c20057ac5 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -14,11 +14,11 @@
+ #include <rte_fib6.h>
+ #include "trie.h"
+ 
+-#ifdef CC_TRIE_AVX512_SUPPORT
++#ifdef CC_AVX512_SUPPORT
+ 
+ #include "trie_avx512.h"
+ 
+-#endif /* CC_TRIE_AVX512_SUPPORT */
++#endif /* CC_AVX512_SUPPORT */
+ 
+ #define TRIE_NAMESIZE		64
+ 
+@@ -45,7 +45,7 @@ get_scalar_fn(enum rte_fib_trie_nh_sz nh_sz)
+ static inline rte_fib6_lookup_fn_t
+ get_vector_fn(enum rte_fib_trie_nh_sz nh_sz)
+ {
+-#ifdef CC_TRIE_AVX512_SUPPORT
++#ifdef CC_AVX512_SUPPORT
+ 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) <= 0 ||
+ 			rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512DQ) <= 0 ||
+ 			rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) <= 0 ||
 -- 
 2.43.0
 
