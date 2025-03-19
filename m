@@ -2,181 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2684DC35FFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 16:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C462FC35FFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:12:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FC84402C4;
-	Wed, 19 Mar 2025 17:54:57 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 1E75E4026B;
- Wed, 19 Mar 2025 17:54:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742403296; x=1773939296;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=isAS9wqEkHAuy7V4WGLf01u/F3V9EAq8euVofTFOoUA=;
- b=fwu2wV9T3qINbv6UJGGa2rDtFZYstT/QUq62Y2TkqKZ1FX5AGCObnQ1a
- xs2vQ4JzVdsin8LluNxLAX00FjLBVOlVTecBj0e/uDcdOo7HLPUtCLSKS
- 2AP+xxjSwCVIXvJIH6jHS35ImRSYrVaqh/skZP1gA9e0NsdZhmYQX8Nzk
- zYLSFQe9FAIql+PwTvd7QwSExvY9imxn2fu8EwybxmZJ9jXsQYQJY2jd7
- l5x4Rh3IwjI+5es72SkNz0akan+e6GqVZ9T3gn6njznZ8MRJHmhdmUUSO
- qwv+3L+kpkLCgD2miqyMxFF1rxKR2RQGrEo9TGEgOmea5Rifq8lBh4kpA w==;
-X-CSE-ConnectionGUID: ZAFqbrjcRLKAAjHPy/qbgQ==
-X-CSE-MsgGUID: ArR03mKWRY+r9kfPSsbb0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47256939"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="47256939"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 09:54:55 -0700
-X-CSE-ConnectionGUID: KSWN4TdIR96lFbcLBtubpg==
-X-CSE-MsgGUID: sTI9T9HPTjCURlviQh/DlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153560289"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 09:54:54 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 19 Mar 2025 09:54:53 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 09:54:53 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 19 Mar 2025 09:54:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JTWzJL9WB+Q07DuiEOPL6YbGJRI5Kbc0s1LNWiGRnQ2FLYoIu9gd7vsLtr9lzR9HvTYmoInZBH13xnRA/ntqfsJF43gqa+rMdAOZ4WiQd/5F5h21KzBSfHYMV/V3EyZh/8fifuBektYQrPFGFdxXRTY7adMXt5Gi0JD6uD2HLiHBBvByM6OPEVz1Jw3xubE3n9lCMru5WGzpF7kPUVuNnVKqT0Rt9Ljy4QvWnFQfaeTW0aoNo7T54yT8/6FDvcjOeQa/HSZqtQL6P1+NZSpTH8rZb+7EZBUlr5KxxdwBb6hNV+f6ZqAYxzkURNWdpYlvtVhHzIskFt6Lf/2in8MQYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KONwocPr2eU1JrYD8bGt4FYEJwhFrAdNGsy6CIGL5GA=;
- b=kECw6t3d5yhew/lfC/Q97hD+p7hliuaqIULqorhtiJj08oGW8nDaCHyQqAcRC3EnkAbAYWrqfdmXUkEjjiDCIVcsf6rm1mcbHfhLQnMUEwXt1MFbInxVh9SWiHcqYeMI3LIqSAKHREXVVsMEusclEMF3nXdNT4oX2nXVx+DmV8ljxhCzSMfbUwy4sb+R/1Q9k5evdy6kYP9auXWSr/RLvOGmmVvQ5vKPloishZTSMayv9SC0E4gN5eFiT2xH4CNuPVA5RNMkJx+vnZY2ojGsny2sTY8QUtEpFTmmkc/xW/y3BFT2jJCFUsqWMQG7HqSqv+fTvH1fpyqVZZSomoOrsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by SA1PR11MB7697.namprd11.prod.outlook.com (2603:10b6:806:33a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 16:54:37 +0000
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971]) by CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971%7]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
- 16:54:37 +0000
-Date: Wed, 19 Mar 2025 16:54:31 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>,
- <stable@dpdk.org>
-Subject: Re: [PATCH v2] eal: fix undetected NUMA nodes
-Message-ID: <Z9r2xwbFB2S2200Q@bricha3-mobl1.ger.corp.intel.com>
-References: <20250305134720.907347-1-bruce.richardson@intel.com>
- <20250305162458.1059282-1-bruce.richardson@intel.com>
- <CAJFAV8xA-HK63XxSEYNZBTeghOUgtEEKTe=iBE4syCF_vsoKxQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8xA-HK63XxSEYNZBTeghOUgtEEKTe=iBE4syCF_vsoKxQ@mail.gmail.com>
-X-ClientProxiedBy: DB9PR01CA0016.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::21) To CY8PR11MB7290.namprd11.prod.outlook.com
- (2603:10b6:930:9a::6)
+	by mails.dpdk.org (Postfix) with ESMTP id D7A99402C4;
+	Wed, 19 Mar 2025 18:12:55 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 928914026B
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 18:12:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1742404372;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=NJkYPEHySA0Xt7xQB5PLWymDK3blAOUa8UQmmTTc+zQ=;
+ b=IDJtDdLwyijGnOACUfre+spzXsA4+bIY8aw4lmEZq3nI5x7wBJ7R80v2UHg5xEUCWb+8MW
+ 0Gqu/6TpJhkR9En/3oAsdRFTADuw6C/bT57e+4f+Ij/WTRwBNfjgZj077loidoFjb2nX1c
+ nTeHKTaxWZ8NP3ZUVXDX3QPCLc5qKXg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-302-LfH1F4HqPxWNhhWDIgIIZA-1; Wed, 19 Mar 2025 13:12:51 -0400
+X-MC-Unique: LfH1F4HqPxWNhhWDIgIIZA-1
+X-Mimecast-MFC-AGG-ID: LfH1F4HqPxWNhhWDIgIIZA_1742404370
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-542a77b4a4cso4218335e87.1
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 10:12:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1742404370; x=1743009170;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=NJkYPEHySA0Xt7xQB5PLWymDK3blAOUa8UQmmTTc+zQ=;
+ b=cxunMl2gmdgij40YVNNPfhIP0k5CVHPtzARvZkdNI2KFQ6fB9bjjMV3hOvy52qOgWM
+ wMZxb/Z8xTrjRwniYf8RXlZsgASVISAn9+k751DXQzNYW6licJVsaxQ+kWVwVX5N/fPi
+ M2zAraqN4glXtYEoP0DTJwpDPXWyt4X032ISDEqMV6nTz1J1DPjlnIF4cmr+pwd11qJ+
+ Ya46eDby/YLSyNWMTAQta94H9w43Azf7PuUSKFtcdbAd9PujygocfKfCyCpaRHUvyj0F
+ 7uTrPjscoU+9EXOkfRO1KKRuQbxEEVel34j3TrwyqHhRS/+v2O8dUAGUdsNrW0aAiQi7
+ 47BA==
+X-Gm-Message-State: AOJu0YwRaGvk8l6ioNKreEkyClkJjMGrwuVsOJJaBvbigGja+9RPeurn
+ W+5Ec969P2+muTZAhxWzcY2PM3e1iO9nt2jk8gjuPrjMsuidQvZjqHVO8vgdu66zkhTcnabXOHt
+ oFWXtH74cgFld7mO5FOjMXc+4NuCldhfDcjq/11NaY0B7nXTxSxtGcFensC9V/K1zc0d95vDx1M
+ liemg37TzSsG8saVE=
+X-Gm-Gg: ASbGncvhgyt4BurHUWCO/UDlRc9BjC1JWdYzXgBirCLfjbvl7SYRKLtIigHpWFNZbQN
+ O5JNbXSb4XJz9OMK8B1K3lheXeAC2w84zslnMdXbMCtGXybWVzfDsmg+gkZ8awYbGGa/M9dLxfD
+ HHXin+IQpBmCSzYA9ig1ofMWbUBaIkEQ==
+X-Received: by 2002:a05:6512:1305:b0:545:a2f:22b4 with SMTP id
+ 2adb3069b0e04-54acb1fe2a3mr869234e87.40.1742404369853; 
+ Wed, 19 Mar 2025 10:12:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWuhB9jvrwUQH5FZ6rr3QpHGYv/HMuOV9kxSDIhRKCDbeeXPj15dKciAjYniWhMojg34nR34OF+UR9koewNm0=
+X-Received: by 2002:a05:6512:1305:b0:545:a2f:22b4 with SMTP id
+ 2adb3069b0e04-54acb1fe2a3mr869223e87.40.1742404369369; Wed, 19 Mar 2025
+ 10:12:49 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|SA1PR11MB7697:EE_
-X-MS-Office365-Filtering-Correlation-Id: 368f9f90-6953-4e6f-53df-08dd6706bb7d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Y01IbGZvbVU1WDN1eVBOZmlScVUxQ0RXcWtsSkwvbDU1OEVvNjNxWXljVWZC?=
- =?utf-8?B?UnhkaWJCUzFJN0lva3RMeVFQaTJScDRiSkNFQitpS1NObktsODRzVjFSeHJn?=
- =?utf-8?B?MEV6RW1Sekh1L2UwZUtUL0xCMVJLSXRmT3NSU3dpZmlGMStyRFRIYmdIeW5L?=
- =?utf-8?B?YVhXSTlUOXM4ZHBBbE1KVzlDZVQ3L2xiWFIzVjY3dHJ2eGgyeTBHZ01HTFRG?=
- =?utf-8?B?RkVDRm8zc1owWGFCQThEeWs3eUcxemZVSjhQN1Z2S2NpcHI2dys3RG1ieUVn?=
- =?utf-8?B?a05Ra2d1UWpkb1Z2am94T3JEUGxmVGNWUzhsaVJPbjEzU2JBNFRvQU1HSE1S?=
- =?utf-8?B?KzAxcnRRT3R3NStqaWtQT1dDamhOU3JISzc2OFMrOVJqd2Job2lPQWhZT3c4?=
- =?utf-8?B?MExVbkRoMDNWc21HTlJUSXJhNG1JWkt3NUlOTGx3bHBNaTA3Q0FwcEVhaXR6?=
- =?utf-8?B?VnRQbUhnZGlXckpHa3lWWEoyYm1ZRmYzVjhEallrcFlFL3BIN3REWEhWVXla?=
- =?utf-8?B?Y0d4TmdOQTdzOW9RbVNoNE9rVUh1b1kwVjB6OE1XbGlaMEpFNHhjcjd0M0Yx?=
- =?utf-8?B?R1dCaW1aaDV6MGp4S3p2VUhpeGtDSVpOcUxxZkRvcVdwOUI2dGRXUFhaakUz?=
- =?utf-8?B?UmFPZld5TFVRUVNBUHV6SkwwSmp6MVNTZENvaHhWY1pWSFpjY0l6Umc2Rzdh?=
- =?utf-8?B?NDNmSmlSREJndUVXNlJyY3daL2tsMCtLZnNNeHdYUkQzdlRaL2hRQWZEa3ps?=
- =?utf-8?B?R1VmMlZkU3NzcTB3NWZnWWhJWDBhVEZMd3FCL0ZQOXhuQXBkMEpQbTQvRnlR?=
- =?utf-8?B?eHlSbTJQVnpJK1VIU2hXY1RUbUprcE1mMUNtNmtOR2thMlV6cUQ5YTNaSkJZ?=
- =?utf-8?B?QjRUbSs0eWdqS3RoMStmUWhpanBpQUNMOE84bVVUL3dRV2kvUk9YSE1wZ3J3?=
- =?utf-8?B?ZXNNdVlHN09TcldQSFBRY09kZ1hXNmZiK2hiNm1IS2pwNVBqY0tMb2xpWktE?=
- =?utf-8?B?d0dEMjVReHZQMlAxeXlnT0g5ZHE4R1pSWWRZSXJVd05yK25ZZU1HbytuQjFz?=
- =?utf-8?B?dUd1MUJkRVgrQmllZ1ByemVpcjArZ0x4NDRSbG4vOUVYNzFNWUZLL1F4ZHJQ?=
- =?utf-8?B?UFB0T3ZuMkwzcTRXNDRqdUJrMVFrc0NaQzB3VjBrV3JoMEEyOVpaVk5ZT1d1?=
- =?utf-8?B?d2tGblY0QU1QV0lwMkVqZ1NjcGRuc0ZiMFpmU2FjU0FoaHVlVkF2d3k4V1Jy?=
- =?utf-8?B?WVdLdll6UjVPdGtUYkF0VEU1eUV6UlZYTk1ndytBRGpSUzZESUh1T2lYUVIy?=
- =?utf-8?B?YnFEeFlTVmNQeHZMcWlWdHVwOWEyQUpZOHdHa05QSkZHMTFwMStMRGNLR2gr?=
- =?utf-8?B?Ykk5S3ZaU3Z5dnlxeFJWMVc4Y2NpZUlicys1cGY5anZieHpxQVFhUzAyaVJT?=
- =?utf-8?B?OU9oR2llaXlGM1dWUms4UHphd3NsMlF4dlRQaVZJeFkrUDlOdU51a3l4N3cy?=
- =?utf-8?B?ZjgrYnBneUdQaFpGRk1yY2dLd3pveGZsU1djM21IZlVESURwRXZZMDkyRHZY?=
- =?utf-8?B?dVJDTkdFZEhSU0ZkRVVqS0R4SGNkRUdEODF1VjJBbkVKTlZWMVBYUTZzdkg2?=
- =?utf-8?B?QWdEbWkvQldXTzdZQTViZXZaYUJ3THdXSUJmQ05OQ2NuMHBnWVpDcTQrN0Jt?=
- =?utf-8?B?Q2txVGlEdjN4dmg0L1l3YU0xemhTRGFrTkMzVFovV2ZYWWg1eXJHSHF1QjBK?=
- =?utf-8?B?RkFpbCtNdVBOVUh6cHlwKzNnRnNyNEJLMEZkTG1mMmpRYkgrbU1IODBPSkM4?=
- =?utf-8?B?L3BPK2xwemwvUGxRMnFvNGhIckpnYWhYQkFDWDhwbFlTLzhzMXFObjh1cTdC?=
- =?utf-8?Q?rNzdLOZnUES4j?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WVZZS2FKdDhpcmhYQmZrRWRuZnl1Qzg4NVBWQ3c2N3dNcmwyU2RFNW5JdEtk?=
- =?utf-8?B?QVduTjI4bVBvWENwU3lnbnRWRmRYQnhTdm13MnF3L1ZRVzNFTjRRS3pWczNx?=
- =?utf-8?B?ZTlRc21pWnhzMFkxdTVXaVJiSUFnSTEwZWwzLzRrZW9saHd0WU9kbno1YW8v?=
- =?utf-8?B?c1dSUWluSmdHVW9CWUFUQ0NBVHFqV1RHY045dDVJODVmQ0ZDajhzZWJKOTJF?=
- =?utf-8?B?VCt3ZjloU2JuQWZscjQxZVNuNXdoWmc4R2paNXJMcmV1K0NFaW9uemlRUmpX?=
- =?utf-8?B?SVNSdzB6QjJsYTArSzNRWHZhRXczb2JPeWk2OFQyaERvbmoxQVBlSFZlWnh5?=
- =?utf-8?B?bHRFRHlhRW9hSHZnK0NncFh3d3JadGhLUkNWZkwzUHJPTDBHeEsyTEFINFhx?=
- =?utf-8?B?UTZ4MytIRTVNMk95YnhHT2lXc01MZmoxTGNUcENTeXJQWnVJOHZQaXJ0dEt5?=
- =?utf-8?B?N3hXZ0NvWEZiaHZ6bWEwTDUxeUFwcUF3R2M3a3gwaXgvL1FieVhJL3FKbVdj?=
- =?utf-8?B?b0tEejJZejNIazl5YUNYSmZTMytrMG5jaldvV2VwWk5mUTVvME1tanh1QTBS?=
- =?utf-8?B?Q0pYL2tTNXU2R256SDlJTXJ3S3gxcExVbThtdTVxK3BGSG1KNjRYN0JPV0tD?=
- =?utf-8?B?Zm9LY0dYUG16eEZ3WW5kNkxWOEFrdmYvWTEyOU5lOC9ybnU4aitDVDA5Nk5h?=
- =?utf-8?B?eHU4ckxhY2M5QysxSUhHdHVIOFRUY283bmJYUFpSWkhKZngvbWFiSW0rNkhY?=
- =?utf-8?B?ZWhpMGRidmZOdHgzcHJvNWxHZXZDT0xNaTJhWnNsdzV5Q3dmaGJONU9oM0xj?=
- =?utf-8?B?V01UQUYrZzhMOHNaSkYxTUtzVEFqbzZIU3ZBbkJLSXhtbFUyQytUQVd3TVNB?=
- =?utf-8?B?MTVMbUorTHlKV3VBQm9CY25EUnpRbThtanhHMlZrb0MyNk5hM1hSZG9oYjAy?=
- =?utf-8?B?ZDh5dmFMazh5MnJ1U3BVNzZlSGxCU2VFK2pQM3JuRVZaVWliS0YwOE9nMi94?=
- =?utf-8?B?Y2Y0Tmdad1dLKy9KZklHUVlkbVI2cGFlK2xlVHlXWXNudkc2N3V5RUVnd2xV?=
- =?utf-8?B?S3NXd2N6aWhvNTVveHl2K28rUC9LV0V1KzRJZGJQSUVLVFZuYWt5ZklMWXFJ?=
- =?utf-8?B?QmtXODBQZXdSdDNENFNPeXgvVmFCZ0xOdDAvRTkzMGZGeTZUTnIzN3l0ckVP?=
- =?utf-8?B?S2tDNmVTSzZtb3ZJemlyS2w0eUs0UjBDRi8raTloUzJSZ2FKMDB5V3lPNVBj?=
- =?utf-8?B?YnpNUUdjQVBLODdReG9zUUU3ZU9uYXRKUFNJSStxVDExQ2dqYUZyVVFVaFRJ?=
- =?utf-8?B?SmhTOVg0Smh0cG84ZDlWNldjZklybkFGbTBkYzVCd2tyZUk2T215M3lLTnNO?=
- =?utf-8?B?QVVlczNKWVcyUmN4N1p5Zk5jQUJ3Y21yaTBxdU9Wc2lqS2ZRWWFOZzBGY2Na?=
- =?utf-8?B?YTMreWw0Vm8yYVFYNVUwa21tR1l4OWdOeDFmajBFQ0M1R1R6bDI2Z3F6K3ND?=
- =?utf-8?B?bnRoWVRWUGpGc2V1d21NRWpRS201ZVVOWTcwTnR6L1djU1MxckhZQ3VOQ3pz?=
- =?utf-8?B?ZnhnZXpzQ3p4cndwRmlia3NGbUpNV2lSUy9GTWVzN1lpaXV2UDA2ODBRaHVw?=
- =?utf-8?B?ZnVsMUJFR1o2TDF5VkZ2NDY4SXhBamxJTzlNSkpIckhnTmdyVnl3bjRmZFJW?=
- =?utf-8?B?ekYwOVNRYzFDbkZsWE5CVldERDZ0b29XdTN4NWRiTzZ3bnNuWmtnVG1WTGtY?=
- =?utf-8?B?VHVFT1NRVm1rR3ozY3laN29WWHBqNnRxSHJpL1dzYVZLSkJrTUJiY0RWTDQy?=
- =?utf-8?B?QlFxZHYzZDduZUgvTlBtWEMvSXhDbEN0U2VJSGZJeWZLTXphZDZhUWlvTnRD?=
- =?utf-8?B?dnNKUE9tSm54enJrcFRRS1l5ZWpIa2VQZGpnQzdQckFGaHVjNFVWSHI1WFFZ?=
- =?utf-8?B?YXloNkQ4bEp0Ykw4VWl6Yk80Ly94MzJwVXlwSWI3MC8yczh4QmpMT3FPM0hv?=
- =?utf-8?B?Mk41VEhsM09EOWpVdU1HMmVDci9TT21nM2RySHlOd1dqWDk1cUI2emwzWWZ2?=
- =?utf-8?B?UjdlclQxSG5qSThFSzRyRVNFYm5ld3d2b1RTWEFzRUxYWmlZcmVSWERaZjNK?=
- =?utf-8?B?VlRlZm1oV05xODhWeVk4dEJpMEtjTjlXZm5Hd3hPNFEzMCt5elFGRzMrb05H?=
- =?utf-8?B?T3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 368f9f90-6953-4e6f-53df-08dd6706bb7d
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 16:54:37.1292 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3iesPqdoyNWL0/I9vL5JtqFXtmNu+JJ26ImxKL7yGmB7DZhKflO69t5lBQqYUqiyNtrdC14wxx/YJBWhwF3yEoiKv8CE1lhGtis+lPNLC+g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7697
-X-OriginatorOrg: intel.com
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+ <20250317154308.2782689-1-david.marchand@redhat.com>
+ <20250317154308.2782689-6-david.marchand@redhat.com>
+ <20250319091912.3b14713e@hermes.local>
+In-Reply-To: <20250319091912.3b14713e@hermes.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 19 Mar 2025 18:12:37 +0100
+X-Gm-Features: AQ5f1Jpk2jcMUTBA6xqvrNl2vNOtITLrpVxBfPRkKJB3SwjO_k8xUfCiWFDlfa0
+Message-ID: <CAJFAV8wnNCqWmuz5Kw9097BWE51GiiBmypJca71dMm5=WmBgyg@mail.gmail.com>
+Subject: Re: [RFC v4 5/8] build: generate symbol maps
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, thomas@monjalon.net, bruce.richardson@intel.com, 
+ andremue@linux.microsoft.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: MwQ4cSHkNQhgGdnv4T1MX3K9Bsh85wFwU0g-trPhSJI_1742404370
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -190,72 +88,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 19, 2025 at 05:31:45PM +0100, David Marchand wrote:
-> On Wed, Mar 5, 2025 at 5:25 PM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
+On Wed, Mar 19, 2025 at 5:19=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Mon, 17 Mar 2025 16:43:01 +0100
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> > Rather than maintain a file in parallel of the code, symbols to be
+> > exported can be marked with a token RTE_EXPORT_*SYMBOL.
 > >
-> > In cases where the number of cores on a given socket is greater than
-> > RTE_MAX_LCORES, then EAL will be unaware of all the sockets/numa nodes
-> > on a system. Fix this limitation by having the EAL probe the NUMA node
-> > for cores it isn't going to use, and recording that for completeness.
+> > From those marks, the build framework generates map files only for
+> > symbols actually compiled (which means that the WINDOWS_NO_EXPORT hack
+> > becomes unnecessary).
 > >
-> > This is necessary as memory is tracked per node, and with the --lcores
-> > parameters our app lcores may be on different sockets than the lcore ids
-> > may imply. For example, lcore 0 is on socket zero, but if app is run
-> > with --lcores=0@64, then DPDK lcore 0 may be on socket one, so DPDK
-> > needs to be aware of that socket.
+> > The build framework directly creates a map file in the format that the
+> > linker expects (rather than converting from GNU linker to MSVC linker).
 > >
-> > Fixes: 952b20777255 ("eal: provide API for querying valid socket ids")
-> > Cc: stable@dpdk.org
+> > Empty maps are allowed again as a replacement for drivers/version.map.
 > >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> 
-> On the principle, the fix lgtm.
-> 
-> I have one comment.
-> 
+> > The symbol check is updated to only support the new format.
 > >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > > ---
-> > v2: handle case where RTE_MAX_LCORE > CPU_SETSIZE (i.e. >1024)
-> > ---
-> >  lib/eal/common/eal_common_lcore.c | 17 ++++++++++++-----
-> >  1 file changed, 12 insertions(+), 5 deletions(-)
+> > Changes since RFC v3:
+> > - polished python,
+> > - fixed doc updates not belonging to this patch,
+> > - renamed map files,
+> > - changed msvc->mslinker as link mode,
+> > - added parsing of AVX sources,
 > >
-> > diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-> > index 2ff9252c52..820a6534b1 100644
-> > --- a/lib/eal/common/eal_common_lcore.c
-> > +++ b/lib/eal/common/eal_common_lcore.c
-> > @@ -144,7 +144,11 @@ rte_eal_cpu_init(void)
-> >         unsigned lcore_id;
-> >         unsigned count = 0;
-> >         unsigned int socket_id, prev_socket_id;
-> > -       int lcore_to_socket_id[RTE_MAX_LCORE];
-> > +#if CPU_SETSIZE > RTE_MAX_LCORE
-> > +       int lcore_to_socket_id[CPU_SETSIZE] = {0};
-> > +#else
-> > +       int lcore_to_socket_id[RTE_MAX_LCORE] = {0};
-> > +#endif
-> 
-> This initialisation was unneeded so far because, in the next loop (on
-> each possible lcore), eal_cpu_socket_id() (returning 0 even for
-> errors) was called regardless of eal_cpu_detected().
-> Moving this call after eal_cpu_detected() would be consistent with the
-> rest of this patch.
-> 
+> > Changes since RFC v2:
+> > - because of MSVC limitations wrt macro passed via cmdline,
+> >   used an internal header for defining RTE_EXPORT_* macros,
+> > - updated documentation and tooling,
+>
+> Looks like a good idea.
+> Is there any way to make symbols in drivers local by default?
+> Right now if a driver defines a non-static function it will
+> be visible in other code when DPDK application is statically linked.
+>
+> This can lead to problems where exports are missing or accidental
+> name conflicts. Gcc has -fvisiblity=3Dhidden not sure about others.
 
-So keep the zero-init, and move the function call to set the initial values
-in the array then?
+This could be interesting, though it is a step further the current series.
 
-> 
-> It is unrelated to this patch itself, but I also have some doubt about
-> the socket_id value stored per lcore, as no check against
-> RTE_MAX_NUMA_NODES is done afterwards.
-> (it is probably never hit since the default value for RTE_MAX_NUMA_NODES is 32).
-> 
 
-Well, it's an open question whether RTE_MAX_NUMA_NODES is the max value for a
-node id, or the maximum number of ids which can be handled. I imagine most
-of the code assumes both - that we have sequential numa nodes with value <
-MAX.
+- For clang, I would expect -fvisibility is supported.
 
-/Bruce
+- There is one warning I am not too fond of, in gcc manual:
+           Be aware that headers from outside your project, in
+particular system headers and headers from any other library you use,
+may not be expecting to be compiled with visibility other than the
+default.  You may need to explicitly
+           say "#pragma GCC visibility push(default)" before including
+any such headers.
+
+I also see that this requires annotating symbol at the declaration level.
+That would require to parse headers instead of sources (which seems
+more appropriate as we are talking about symbol exports).
+
+I have some doubt though wrt base driver code, that we are not
+supposed to update...
+The current RTE_EXPORT_* macros of this series were not doing anything
+to the symbol themselves, and could be located anywhere as long as
+meson could parse them.
+
+
+- Not sure what the default for MSVC is, Andr=C3=A9?
+
+
+--=20
+David Marchand
+
