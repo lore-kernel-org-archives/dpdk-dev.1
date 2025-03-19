@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640CBC35FF1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 03:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED62C35FF1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 04:02:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BD82402C4;
-	Wed, 19 Mar 2025 04:52:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 45F1E402C4;
+	Wed, 19 Mar 2025 05:02:50 +0100 (CET)
 Received: from fout-b2-smtp.messagingengine.com
  (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 1A1514025A
- for <dev@dpdk.org>; Wed, 19 Mar 2025 04:52:53 +0100 (CET)
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal
- [10.202.2.47])
- by mailfout.stl.internal (Postfix) with ESMTP id 7132E1140167;
- Tue, 18 Mar 2025 23:52:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Tue, 18 Mar 2025 23:52:52 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 7DAA14025A
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 05:02:49 +0100 (CET)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal
+ [10.202.2.50])
+ by mailfout.stl.internal (Postfix) with ESMTP id A958A1140090;
+ Wed, 19 Mar 2025 00:02:48 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Wed, 19 Mar 2025 00:02:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1742356372;
- x=1742442772; bh=MoW8pThnjtwokzZTbKd7MMpP7keEpLp5uHLQ2BXvwIM=; b=
- thckc9p3p+smXgSG8gm3cd0Uzx1+MD7iTe7WG2gld7bUCjHNlOKPQT7pHD37Mi11
- EBFUP8H2nPUkIexNvJyTVnp3S7VTstoYVeCM/iT07CxM4PFRUCkcky9CaNq/SmiK
- NaUFmXz26uqBG275Gf+j6L06ba2Ef0jvDqY1vq7+ZZ7fQm4c1DtZAYG/VRHvFsYt
- QMfFbP978OVnomcVB+Cd9RxfXoEm2v75es/VT05tBFOsAM+yEQzn43G6tWZIedy2
- Y2NZikj39NrMVyKgjY3gOWfPhpyuDFKdO6RxcfmIogCIhntUQ/GGfcVIAtFOhlog
- MEwFp4X79nK/9i6yFIt5vA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1742356968;
+ x=1742443368; bh=RjNzaz3ddoLRKg3KEKXvJLqOujqCzQQfV5gjcHA7ris=; b=
+ kwzy/HRN6+OMDRQw4YH1azKWztbwQuxzMfPpPqWX77A9w+X2UHHJhTCOaJS4uaT7
+ OEdWbBAOrKE5N5PbgfGhhNLCiaubEX4wMTBWWtP9Vq50y0voSAXdjLV/O+khxErl
+ 1l8AC0fycPNqDY+mbGhv5bqnT93w8Hwp7t/Unc1GyE6NldCdDx+xKeKgyaiv9Qy9
+ 36P/BtFVoFXv9P64UPVsp2066uxV491DjEa1vbY8nehJ6BsAb7JHxDTiwSLF+9Y7
+ /RAh8fD1Lq096Cuvzrsw3TN5hoPgpenrsw6xWPhqnm0XbI1zo1HzzKM5cJ75YZkW
+ IIqS9Hgr4V6qnwbVExaa2A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742356372; x=
- 1742442772; bh=MoW8pThnjtwokzZTbKd7MMpP7keEpLp5uHLQ2BXvwIM=; b=t
- O3HhOPg3wBoyW0tNoeIIMIlE20LZlXBIHyJIQee5YViNaBzXlqe62iWJadNlb3Y7
- an1EHUG4cB0WQSMyOB2cigpUbv0ky8+ADLyxkGYO+6DuqX0x2ZNUIq4KxuRFZ19J
- hs+9YdZrQBHHT7jT3XGSY2byf0CTLRYIMfEJM+1SYXDFCV7Lan3tAG71PlCnc3Vh
- ryiiflOKwMnc0TPijCMv6rciNwJGb0eYdTrU3CfFEGMvYsc5bh8LwZasVmjp5IQe
- PjPbVVrHNcRsWR28d/H6tCMOCHwBuCTF6OO46tSHTcRvox50/ZCMiEvVFE83krsk
- 2P7AetruwZFWXGrnkpdjg==
-X-ME-Sender: <xms:lD_aZ43dX2dMWUBOOEgij-dAY1BzyjKtxXSLVo3xqhleJpctj36XpQ>
- <xme:lD_aZzEf0PCXtFrY3cP8fSy7HND-9ChhLgDtbCz2LMsUjcKuAPp65mBJi-fLZNSRH
- rzhSZ8rhvxmwsdkPw>
-X-ME-Received: <xmr:lD_aZw6mL7vNpiya6XogmHeAkJgpTJ351uPzmgJDyJyvSRxSs6r5OAkT0q08iPHkvgS0b84BnmwrLGT9ya7Y17svow>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegfedtucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742356968; x=
+ 1742443368; bh=RjNzaz3ddoLRKg3KEKXvJLqOujqCzQQfV5gjcHA7ris=; b=3
+ 9tBUf/Oxp8/dZ43nmVZ4qBp0AhHzMcgBIQ1LnN6mnL458j3Wukt2hQ+SVk39jtyZ
+ 7zdLeeuQFI0+0iNoY+7rH27h7OPqZQyeNVMFzjzvjmP0wpDR9k88Ttsmtmx21fDS
+ Ykfcy7U8JANoDabtQ8jSxVLET5XJSGx9y+jyAz/ayLbNQctOV/o8+sJGHKaoZWu6
+ rcDy+Jhmi++/JT5xVShE4VGlT95K+gHR70oGBwf1/CE6WTfPtc9Xd6cJzaKsFZ/m
+ pS5+Lmg8d3t6yKnMbgxkWQfKHyBKOaIDhbATyQdDTUlHFuxRPf+5k7tLTlPddqKP
+ UZVquyWqeKU35gmIosPHw==
+X-ME-Sender: <xms:6EHaZ2hpP8upeOM_ihXCDnfN1anyqtzd5jKpM6IF8P9iYD4TIYcH1g>
+ <xme:6EHaZ3BtiSYJ_6n8R188xf9j4XelfYEYV8dabgsoE3dv1CJ74h5YfyNYAaRJSkMp5
+ U4FImyISMutVm0nKw>
+X-ME-Received: <xmr:6EHaZ-GQdtvY_liEHFTkCjVRAntvxdeuix6EaARlhdaaN-wvfd-LtInO3pSTuY-mloQ57D9dO-igNjspZoizcWPsKQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegfedvucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
  gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
@@ -55,25 +55,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeegfedtucetufdote
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
  pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnh
  grthholhihrdgsuhhrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhgpdhrtghpthhtoheprhhjrghrrhihsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:lD_aZx20RQA7GYUC49zIdSWp1MjPYpHBsnJoovoX_CB_6q7IW9uIKg>
- <xmx:lD_aZ7GCfyolzujhgDutRdwPJpmeL1PTFXRka9Fxi5NzVOHCi6bJ4w>
- <xmx:lD_aZ69HyCFatbL4OFt0h1wyzBSI6gtc26Ck07i4ODhw5rArdlCHIQ>
- <xmx:lD_aZwlRn5y2s_JPORN6ByautJi4H_t4Vjm8TbkY5WrqwOAS8IcVmA>
- <xmx:lD_aZzBUSrIfY2P80ZaMvUq986l5bsKwhwxdDF-zDp8qNQNJ1rglVLpH>
+ ughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinh
+ htvghlrdgtohhm
+X-ME-Proxy: <xmx:6EHaZ_RB9emkM9sKy9U-U7d3etV7HMJC4r3chRsjlebzUus1hY6gcg>
+ <xmx:6EHaZzwR4pe8WKUDfBCEEwwAg38glFTha8cwC8hvpRQp457lmmguxg>
+ <xmx:6EHaZ97a8zIQGcZYMyQmp5auKF_CWD5RQmOSv54EmW3ZeK4LelML1A>
+ <xmx:6EHaZww2vYPAjdJIQiMaISpqnDClD7QQyrymDvTE68MkSJ-2XeXhXg>
+ <xmx:6EHaZz9-HXCbeXYS7dkNFpwZ76RjHa2kn0nghk6cmrR9ArIul_CXaR1e>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Mar 2025 23:52:51 -0400 (EDT)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Mar 2025 00:02:47 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Robin Jarry <rjarry@redhat.com>
-Subject: Re: [PATCH v4 1/1] usertools/devbind: allow changing UID/GID for VFIO
-Date: Wed, 19 Mar 2025 04:52:50 +0100
-Message-ID: <3603683.jbyF5MZJ3u@thomas>
-In-Reply-To: <97c9ebdb-4516-4ad6-a53b-77a9080fed59@intel.com>
-References: <4cd0282dabfa59e715028ecf255468529655b487.1725285449.git.anatoly.burakov@intel.com>
- <c5d0388620157638338f67291f8862c6c96cec96.1733131888.git.anatoly.burakov@intel.com>
- <97c9ebdb-4516-4ad6-a53b-77a9080fed59@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v1 1/1] usertools/devbind: add documentation for no-IOMMU
+ mode
+Date: Wed, 19 Mar 2025 05:02:46 +0100
+Message-ID: <4908462.D8ZAKjAxdT@thomas>
+In-Reply-To: <Z7RW7fTOcGVP4RiE@bricha3-mobl1.ger.corp.intel.com>
+References: <a1a8fce7e0eb311e7ca673867862a549270f5450.1733132101.git.anatoly.burakov@intel.com>
+ <Z7RW7fTOcGVP4RiE@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,19 +91,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/12/2024 10:35, Burakov, Anatoly:
-> On 12/2/2024 10:31 AM, Anatoly Burakov wrote:
-> > Currently, when binding a device to VFIO, the UID/GID for the device will
-> > always stay as system default (`root`). Yet, when running DPDK as non-root
-> > user, one has to change the UID/GID of the device to match the user's
-> > UID/GID to use the device.
-> > 
-> > This patch adds an option to `dpdk-devbind.py` to change the UID/GID of
-> > the device when binding it to VFIO.
+18/02/2025 10:46, Bruce Richardson:
+> On Mon, Dec 02, 2024 at 09:35:01AM +0000, Anatoly Burakov wrote:
+> > Support for `--noiommu-mode` flag was added, but documentation for it was
+> > not. Add documentation for the flag.
 > > 
 > > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 > 
-> Reviewed-by: Robin Jarry <rjarry@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
 Applied, thanks.
 
