@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F904C35FFC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40D8C35FFC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Mar 2025 17:30:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CE394065B;
-	Wed, 19 Mar 2025 18:30:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F3FF740661;
+	Wed, 19 Mar 2025 18:30:20 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 7B6AE4065C
- for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6FA2940659
+ for <dev@dpdk.org>; Wed, 19 Mar 2025 18:30:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742405416; x=1773941416;
+ t=1742405417; x=1773941417;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=HWqlTMZp1SbtkOdkcG+svvtR92lQq8NTO0hoLOcxAto=;
- b=AY0fqjR9XWR9pok0/Wi91g2ZUJVxsOX26HvJ+dNqjuioo5sLg+DM0/gV
- kVZpQMVWWpU38Pj67Rwb32fU80OTB9vIfB2AWbsGxxM6JnYRxmiq4D40p
- e6n9lRM4cdHpIg9NDeCofPuxt6bFMsd2tKoX5WNy3RWXEKp0zijC8Zwcb
- JHp/aIhJsf4BP+X2olFSFCexmI5lFWjHF+4LnjAk4trVCWayJ8ClU4NZW
- qLKzVTAQVqU2Isar2FxGtoS6C9XET5w82YSdtVgJBESf+T8HDe9AxEme+
- ZGAEIAkhVnLxU2lWv2Irni6EMMd6wogif2uh2t83TfICY8A22THodHSll Q==;
-X-CSE-ConnectionGUID: lwKQfMtKT6WzYbl8rUw5ug==
-X-CSE-MsgGUID: aMykvJtERLmCUYamlVXkhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741976"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741976"
+ bh=mLA5vAml6IdRoPzI/CyijusJNd/Xt7PEJFTZY1W+J0Q=;
+ b=LucYhIGp/BrPJfQDiI1ncuWG+oezpEYSNJExl6be8d3n2AQWQggF8UTg
+ 4FKvJ/F6v3QcvmF1JQvxHSrvYFwwaU4f1loqZDbrHNRIRtpNeW6D9P+a0
+ xwBNkDSwSu5+LfmW28Mr9ui0JSywjIc90SVd34rICfpfHO/oF66B1Y8RF
+ tzJg/8QLslWaq+zJMcQVPMkjbEmO1sLuuAcbKAd4Qo2Injw7nxopk+1jo
+ RBDlztZZKa94C+IRywDshr/6zhGSCLNWAE7dDX0nYLysypAhiqkZrpTmT
+ jOTQtOunibbzEIjGTPbnmWA93fvAkEtq2RjslyyXUjE2bzBW483XdVRrS Q==;
+X-CSE-ConnectionGUID: qfnUDoPmSAO7TTXqdy8Ajw==
+X-CSE-MsgGUID: CgiS5u6XTVKw0di3wpdx/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43741982"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="43741982"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2025 10:30:16 -0700
-X-CSE-ConnectionGUID: rF3NB3itQ1aqj+4FWesiQg==
-X-CSE-MsgGUID: 43JbHT/tST697kGfFwtPXA==
+ 19 Mar 2025 10:30:17 -0700
+X-CSE-ConnectionGUID: BH3eJ1sTSu+IUt793P0TMQ==
+X-CSE-MsgGUID: YGqsBiU4R26toct7C5f89Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722558"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; d="scan'208";a="153722600"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.28])
- by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:13 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 19 Mar 2025 10:30:15 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Vamsi Attunuru <vattunuru@marvell.com>
-Subject: [PATCH v4 04/11] drivers/net: remove AVX2 build-time define
-Date: Wed, 19 Mar 2025 17:29:34 +0000
-Message-ID: <20250319172942.2992053-5-bruce.richardson@intel.com>
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Pravin Pathak <pravin.pathak@intel.com>
+Subject: [PATCH v4 05/11] event/dlb2: build using common AVX handling
+Date: Wed, 19 Mar 2025 17:29:35 +0000
+Message-ID: <20250319172942.2992053-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319172942.2992053-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -63,72 +62,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since all supported compilers can generate AVX2 code, we will always
-enable the build of the AVX2 files on x86. This means that
-CC_AVX2_SUPPORT is always true on x86, so it can be removed and a
-regular "#ifdef RTE_ARCH_x86" used in its place.
+remove special-case handling for AVX512, and rely on mechanisms in
+the drivers meson.build file.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c        | 2 --
- drivers/net/octeon_ep/meson.build     | 1 -
- drivers/net/octeon_ep/otx_ep_ethdev.c | 4 ----
- 3 files changed, 7 deletions(-)
+ drivers/event/dlb2/dlb2_sse.c  |  4 ++++
+ drivers/event/dlb2/meson.build | 16 ++--------------
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index a0e3cd8bbe..2f37f5aa10 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -3258,8 +3258,6 @@ static const struct {
- #if defined(RTE_ARCH_X86)
- 	{bnxt_crx_pkts_vec,		"Vector SSE"},
- 	{bnxt_recv_pkts_vec,		"Vector SSE"},
--#endif
--#if defined(RTE_ARCH_X86) && defined(CC_AVX2_SUPPORT)
- 	{bnxt_crx_pkts_vec_avx2,	"Vector AVX2"},
- 	{bnxt_recv_pkts_vec_avx2,	"Vector AVX2"},
- #endif
-diff --git a/drivers/net/octeon_ep/meson.build b/drivers/net/octeon_ep/meson.build
-index 9bf4627894..a4a7663d1d 100644
---- a/drivers/net/octeon_ep/meson.build
-+++ b/drivers/net/octeon_ep/meson.build
-@@ -15,7 +15,6 @@ sources = files(
+diff --git a/drivers/event/dlb2/dlb2_sse.c b/drivers/event/dlb2/dlb2_sse.c
+index f2e1f9fb7e..06474d61dd 100644
+--- a/drivers/event/dlb2/dlb2_sse.c
++++ b/drivers/event/dlb2/dlb2_sse.c
+@@ -5,6 +5,8 @@
+ #include <stdint.h>
+ #include <stdbool.h>
  
- if arch_subdir == 'x86'
-     sources += files('cnxk_ep_rx_sse.c')
--    cflags += ['-DCC_AVX2_SUPPORT']
-     sources_avx2 = files('cnxk_ep_rx_avx.c')
- endif
++#ifndef CC_AVX512_SUPPORT
++
+ #include "dlb2_priv.h"
+ #include "dlb2_iface.h"
+ #include "dlb2_inline_fns.h"
+@@ -226,3 +228,5 @@ dlb2_event_build_hcws(struct dlb2_port *qm_port,
+ 		break;
+ 	}
+ }
++
++#endif /* no CC_AVX512_SUPPORT */
+diff --git a/drivers/event/dlb2/meson.build b/drivers/event/dlb2/meson.build
+index c024edb311..13d0fa544e 100644
+--- a/drivers/event/dlb2/meson.build
++++ b/drivers/event/dlb2/meson.build
+@@ -20,22 +20,10 @@ sources = files(
+         'pf/base/dlb2_resource.c',
+         'rte_pmd_dlb2.c',
+         'dlb2_selftest.c',
++        'dlb2_sse.c',
+ )
  
-diff --git a/drivers/net/octeon_ep/otx_ep_ethdev.c b/drivers/net/octeon_ep/otx_ep_ethdev.c
-index 8b14734b0c..10f2f8a2e0 100644
---- a/drivers/net/octeon_ep/otx_ep_ethdev.c
-+++ b/drivers/net/octeon_ep/otx_ep_ethdev.c
-@@ -91,11 +91,9 @@ otx_ep_set_rx_func(struct rte_eth_dev *eth_dev)
- 		eth_dev->rx_pkt_burst = &cnxk_ep_recv_pkts;
- #ifdef RTE_ARCH_X86
- 		eth_dev->rx_pkt_burst = &cnxk_ep_recv_pkts_sse;
--#ifdef CC_AVX2_SUPPORT
- 		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256 &&
- 		    rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1)
- 			eth_dev->rx_pkt_burst = &cnxk_ep_recv_pkts_avx;
--#endif
- #elif defined(RTE_ARCH_ARM64)
- 		eth_dev->rx_pkt_burst = &cnxk_ep_recv_pkts_neon;
- #endif
-@@ -105,11 +103,9 @@ otx_ep_set_rx_func(struct rte_eth_dev *eth_dev)
- 		eth_dev->rx_pkt_burst = &cn9k_ep_recv_pkts;
- #ifdef RTE_ARCH_X86
- 		eth_dev->rx_pkt_burst = &cn9k_ep_recv_pkts_sse;
--#ifdef CC_AVX2_SUPPORT
- 		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256 &&
- 		    rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1)
- 			eth_dev->rx_pkt_burst = &cn9k_ep_recv_pkts_avx;
--#endif
- #elif defined(RTE_ARCH_ARM64)
- 		eth_dev->rx_pkt_burst = &cn9k_ep_recv_pkts_neon;
- #endif
+-if target_has_avx512
+-    cflags += '-DCC_AVX512_SUPPORT'
+-    sources += files('dlb2_avx512.c')
+-
+-elif cc_has_avx512
+-    cflags += '-DCC_AVX512_SUPPORT'
+-    avx512_tmplib = static_library('avx512_tmp',
+-                               'dlb2_avx512.c',
+-                               dependencies: [static_rte_eal, static_rte_eventdev],
+-                               c_args: cflags + cc_avx512_flags)
+-    objs += avx512_tmplib.extract_objects('dlb2_avx512.c')
+-else
+-    sources += files('dlb2_sse.c')
+-endif
++sources_avx512 += files('dlb2_avx512.c')
+ 
+ headers = files('rte_pmd_dlb2.h')
+ 
 -- 
 2.43.0
 
