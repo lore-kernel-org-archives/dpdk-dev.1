@@ -2,130 +2,131 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482C8C28B30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 08:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE46C36000
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 08:37:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F3C3A402C4;
-	Thu, 20 Mar 2025 09:15:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C9AF402C4;
+	Thu, 20 Mar 2025 09:37:28 +0100 (CET)
 Received: from APC01-TYZ-obe.outbound.protection.outlook.com
- (mail-tyzapc01on2122.outbound.protection.outlook.com [40.107.117.122])
- by mails.dpdk.org (Postfix) with ESMTP id 12259402AF;
- Thu, 20 Mar 2025 09:15:23 +0100 (CET)
+ (mail-tyzapc01on2100.outbound.protection.outlook.com [40.107.117.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C3B1402AF
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 09:37:26 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XHF7CaN8ZorTbCIR/6LPLcHbceQrPQkNrwbnvf7NkQRwWXXsnOw2Ck8cvGQSBG39XzwNoyP/2BcGtOhN/vaH10nDrdeK+laCZmSDXvHgNW/yu+6IIcyQN0jLweEl53wEvxm69v/Lqely0JursGJ5MZpLyesnPEZR9K2zKlXz6INyrfJ4COKqxHIlg3Vqw2x/LO+EhFn/SzvO/C5QqW/VQDtedDk+tWy94hk2CGZtjQgBqhdeKqIwwsC/zJXtIyoxyhy+NF2y5PMC/Hq/OEu/ei1422Yh6ixoBEueJW20I8kDhE/77NGxV9dix5aPWeERjAjz8kBBFBZUfJXjmQ4umw==
+ b=vUDyu94nXb/5a5sOfHPNJFAxGvsIcQqSlKy+/GR3yHEbZnfTAEf3A6bu3xKvPQCgyeGfTOxJkLnEXsPMJBDUoOQSivlzqgPywUZKDHEJmrmpbrIOxq1y05etUBffXSdtA5CLwQavFHx495OV4tBtOH2llPDExketoU6Hfv1jShYhkq06qSvvkTQUK4NgPhyzX72UXkOeESWKB5A/hkxn7EFC7iARBYlVKW6zJ83ar5elyhdSQK72XIqycXMTecNJxndg999L7Cbz9XQshhkGkfAdiAhPSaIc5rcBeFjVCu8yuW+3XaXvzIU2k94M8CU/lTFbwpC9r50FNEImB52SKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CejAZMbaT7o9IgLyJmggRvtpzqizj6umaTMYwL/OXt0=;
- b=RCyEPacI2UdjS6XlWYaBQUsnc1QY0WqYidVyA6n88KC+qeStGHuHxJ7mf289rh4XjT3Gwm25e+ucakIPt+JV9hMOOIgeEmDJj6HOjiAYqJUMB9twAeC5GyjS38f4QTa297Vq6qkj+D/TRb9d7uM7cMpFSKSy52HNuM4zxhnlHMAdLyRifZ6DpgSgWEGrsB+rSgDaBIlkzHussg7XNq0jienpoDQoHZHMTZ5ECaq4tBHiyXVVxwYPDCvUN2ubZPx0rwFNzPuwsAfHOtgFkHv4En3Yweyc897uNWOk6Mh8Yofq0poJp/n1QbwmfGHolpvbj5ugRhskq0+2Xx6kqSbH5A==
+ bh=TVoK1A/CmCkeMjhGxNxyCONStvWuL6VCtu5ogCuYmUw=;
+ b=XezXfNWCmqbTUoCOBiZz2AvwC0/Prb0KX3nrsck1CzmISBFhxiCNEbiZ6tjpZKB9zqYA4NN6kcaL5bV5L5Ob9Ng7M6r9ZHk8dUr9b/+NqJyZ+AZCj8chiFJ3PyEuPUqZ2yFyBxRQE93y1on6n3IYYHflMvvM/taypFz2IqGK3F+nkiPx2eFiwyRndY/D+Y83oXHRfukzpODBQk9XGfuUmRU1aNFDOH1tsqsMsfUbb1c4mirwbrl6sa4oFYYRAlED6HoPm5AYd1J/YpvPjluWPwdsSJp5BFhI0wMvOETvBO6pjfDij9ViwkJLkZlbKW8QtU+yuEqFLieBQ1vhqKIjaw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
  header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CejAZMbaT7o9IgLyJmggRvtpzqizj6umaTMYwL/OXt0=;
- b=qjp/GF2ZWZsZK/qDsZfZoqfD7TI67/SVDAuMkmZaVETDrmc1Z7AaM+Zr9cQXRn8dXx4Z6PFH4pOxI0ytl8UtunLdSDUj6ty24m+XCN7ZZyUUUAn/H3w6+WIAdMuO9m/OY+IxloyBAPUWcjY+YFxdMo33T6XI/6Cu8f1hzHqWi7OuKYYilO7QTmhHXC2171sPtkOZk21uKyAZ/IquBcXA5ztoLPskHAAHTgsKs/nGvRJBYufxPpHOPycvc1qC0S2dxc83UsCSM/zGxZ7TcZJpPG+Yj1JuMWQGXJhoFnAnIfaOKxN2JX1gRVpwTXfURGqE+kBW1ZP7uE/XWSI55PeFkg==
+ bh=TVoK1A/CmCkeMjhGxNxyCONStvWuL6VCtu5ogCuYmUw=;
+ b=h9qjPMbIwulnCBf42M2TmPNb4GIBA6PqJQ1wnPV/XVxh/3WSUoFyzxUwMo4k2B8ftw9TJDILr1yZNuW/2BSAnXmLnxdnOqz0ZjkEsx6axhXKkKop/NZiQWbLY0FjLZCDAkx1om7RwAWmyE4uR4fUDlLuBDPqy4KNqBivMrG/BgVz66aJUqaSsQEdT8KqX8x7lUpWv7j4nbyPUPwZIPYd5DpdfuUa8QFM806mLw5Jl/wDlu3eZfHHyJfAFHi1rIqVnZajN9Kp/YvpEH/Wc/fInEiU6vr/aUCbWiV18Cz3W4m4MO4uScR4hEOXROaiyLx0qM5/09cXBP76bN6Dwh/5ug==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
 Received: from SI2PR06MB4234.apcprd06.prod.outlook.com (2603:1096:4:15c::13)
- by SG2PR06MB5238.apcprd06.prod.outlook.com (2603:1096:4:1d8::8) with
+ by SEYPR06MB6932.apcprd06.prod.outlook.com (2603:1096:101:1da::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 08:15:19 +0000
+ 2025 08:37:20 +0000
 Received: from SI2PR06MB4234.apcprd06.prod.outlook.com
  ([fe80::7c6b:7e04:5448:4be4]) by SI2PR06MB4234.apcprd06.prod.outlook.com
  ([fe80::7c6b:7e04:5448:4be4%6]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 08:15:19 +0000
+ 08:37:20 +0000
 From: Shaokai Zhang <felix.zhang@jaguarmicro.com>
 To: dev@dpdk.org
-Cc: linville@tuxdriver.com, stable@dpdk.org,
- Joey Xing <joey.xing@jaguarmicro.com>
-Subject: [PATCH] net/af_packet: register supported param fanout mode
-Date: Thu, 20 Mar 2025 16:15:03 +0800
-Message-ID: <20250320081503.5505-1-felix.zhang@jaguarmicro.com>
+Cc: linville@tuxdriver.com
+Subject: [PATCH v2 0/1] net/af_packet: register supported param fanout mode
+Date: Thu, 20 Mar 2025 16:37:06 +0800
+Message-ID: <20250320083707.5594-1-felix.zhang@jaguarmicro.com>
 X-Mailer: git-send-email 2.47.1.windows.2
+In-Reply-To: <20250320081503.5505-1-felix.zhang@jaguarmicro.com>
+References: <20250320081503.5505-1-felix.zhang@jaguarmicro.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0170.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::26) To SI2PR06MB4234.apcprd06.prod.outlook.com
+X-ClientProxiedBy: SG3P274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::19)
+ To SI2PR06MB4234.apcprd06.prod.outlook.com
  (2603:1096:4:15c::13)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB4234:EE_|SG2PR06MB5238:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7106e8a7-758b-4fd0-2203-08dd67875a17
+X-MS-TrafficTypeDiagnostic: SI2PR06MB4234:EE_|SEYPR06MB6932:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6889887-5aa2-41d8-0d6d-08dd678a6da5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|52116014|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Zs1+jzcvTJeBeFEaHPnNVPN6X40CqxRqadI3UMxvyslOzawPwMenl+YRqv9B?=
- =?us-ascii?Q?2dRDTmvx35YybMM/gSEu4ayZZQuy+FWOQX0qWJW8vd8xG+UXEIZ2qct1Wv5z?=
- =?us-ascii?Q?r0eW4e+kquonIp5wQTwPAkFd8l3OMTVSBJDbSIiuVJim0H+8lEjDIGzoLEVu?=
- =?us-ascii?Q?NVzhHiG0ESazAQq1jJpqvIxAf7So4aA5jzroQgkcoXxyOVlwPviUJJKT+mSl?=
- =?us-ascii?Q?gMN6W9hqfOlqseEwKbSfuycp8w0bLNO5H8T7hfS2X/jWIfdCXopjZQKEZw2x?=
- =?us-ascii?Q?SelabXaoYE01xVvR789DHZaz2KuJX/ZViix7OQWZyoVciuz6iv65Rc5aMsD3?=
- =?us-ascii?Q?1arxYcnTGAOXs8OCVvCs3jYPlszduRrsk0MlWXrTzS+pTtF/f6R6rSZZWxkF?=
- =?us-ascii?Q?1bKSBB3N9zJl0p4YTPFogrmthAvnLCC/3E0oHODmBauF2jK17HqF7CIfL8LJ?=
- =?us-ascii?Q?VpHtl5Ancolfp1hrprOcfrbSut4H8m7grFc2YomqGkyTimgdNzRbXSi+Opk2?=
- =?us-ascii?Q?GydORbbu610ko1BII3M5WVwX/WjRgFAjvd9iHyoLJfGVovfT83xIy9Bs8dlZ?=
- =?us-ascii?Q?+rZKyRkHLMNWNi/lJg8I/kMiI6t6PMSGzdvh+3TrVpQTa5R2uU/3AbtIK1KS?=
- =?us-ascii?Q?0Yf1hFYhqwt7r7pntGeycXjD61NdXAWvZb5lZyjjPt5pR7r3dbk+yFTCcKOp?=
- =?us-ascii?Q?jI0hRoaGlGt//1nmHmUcOzONNHryTQOULAsob+Zti5GH0ULV08EiKMEtThez?=
- =?us-ascii?Q?dk/3pzZ9hNzAcDlyLofTtY5ezWdRfgxtIta3G7dYXvSEiwOiA6f/Kzt2lBEf?=
- =?us-ascii?Q?oacWv957ph7lMyaHtIuq6Diqm3NlwWxf4+XKv/A3rY1BN4w3hswPkrAtT95h?=
- =?us-ascii?Q?iHBPbYs6xk0EirfRCLj/IgU3KnpLI6foDHw0/UqdOQzs8J/FX9whxaWr/H4n?=
- =?us-ascii?Q?9UJAXg/ZTTMxOvfuDLYsyYpJ9UcHzDf1GixzgdmEnja2c+6n6YNU7leBLLRs?=
- =?us-ascii?Q?AkxMyr84MIZ2TmIostNkExXLChTBCXs5D5w2mHymxJ2Hrob2DDGYiLf0KVm3?=
- =?us-ascii?Q?CUSPvz0jY+T1X0UHKyGVhKQoR8+4fDFpuaeeI6R7k4t4qxmaALJ452ZB66Mj?=
- =?us-ascii?Q?vuW50zsyl6Rf1ZyxLCtk48QFJpXoWTttX/RphfHkHbJx/DO2PJEdmgZNrFrn?=
- =?us-ascii?Q?6Fz5ZV1R5omNTVS8smCUUHpaNyVbnOqKOdtJjSiWUnT06m/aY5CdxBeZZqbZ?=
- =?us-ascii?Q?uL3E9UenwcLUrGoUvsg6COqSwmViKr9aqFa1NprD3SmMz0oL/dGs6oNfc4GI?=
- =?us-ascii?Q?XuaruG1GR4upJs92J++47KFdlpTO+QOitO8+t8oY6Iiib8DmnaFfFdJRumoS?=
- =?us-ascii?Q?R6V0FAOb4WsIqi5CPovYgABvhNzsQikYoyQZonqBen2xt+scTGv/51D1kBAD?=
- =?us-ascii?Q?NlTqMJkXBe3rbKTJTDjwUUROCE3dmR+y?=
+ ARA:13230040|1800799024|52116014|376014|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GTSyfROwuRHZdOVmq3EM2FGOQLWj2kvDumNMlQvbIO4SY/NV3SdWtaE4uZM1?=
+ =?us-ascii?Q?Qk3I/DZqStSKTUsIBjkxE7MVvrSYzSvZmR+fQx8IEhsHxCPhC5qpe4pXBjWa?=
+ =?us-ascii?Q?4m+wmDv6XvGqEz1hTbb4Z8hmHidsbPvsDXUtxFfgLSKrve7QXWKuMUsbBk3C?=
+ =?us-ascii?Q?+UaOHs0Uu6lMCCVCIXnNcQh3oL8K4zxHctQcUhCmea6XRsBH4vfT3syzIREY?=
+ =?us-ascii?Q?kB0/9uNwgf5A7aN93rBSEryLnxTqF55R1Px1QOpuiSN1B1gXN/BvE/uwG9+H?=
+ =?us-ascii?Q?6y0OUYJYtbCpH00OGjxvCfatm5NoWvNQ2FECSscCaqYmMy9ecIKeoquD7hTl?=
+ =?us-ascii?Q?1u165pQGDy05FbO22mcHWptXpUiPjS6OIoygh13w3dwPSHxeNSAAiuttLpht?=
+ =?us-ascii?Q?+XSHxHUhM3hTQtj+Q+hQ2HqcTPGNLm3sMVtHQ/yTW1FVvfz/EWZWV97FkqSd?=
+ =?us-ascii?Q?fHxfdZQb2RjRSBlEIyyTQMpL5FKeitBCPV4l71Xi36s1lGXBYjyHUGDAE1iQ?=
+ =?us-ascii?Q?bllcCoBJhtZ2ptwfov15WKnQCmWSLODhIwJg5oQU4HIfxRnaw1SZC8bxTStU?=
+ =?us-ascii?Q?oDc8SxhOWhepzJaMAvD1VT+hZOASnUzWuIUe9X13dUMy9Nb63mrywqn+DJqJ?=
+ =?us-ascii?Q?Ql6BesYm8aCtemxMBbUCLv/adkS86e/OrVs3RL7Hj96wQS14nWmQcz6Oah6Q?=
+ =?us-ascii?Q?7OiA93VWQ4IaP6LAe6ChfehHoBF2h7F0yEjKpdA42bqmIV0WxWZaEDbDVn43?=
+ =?us-ascii?Q?Hoxpk2dTimrB4G0UwD2+s3HZlN+YHMvY1qFgDQf4WkLoRLGbZkniDmf/093B?=
+ =?us-ascii?Q?wYlZPsldFNxeq2sdUBh/90vj3tgE6SlwCHpXwFXAv/e4BSW5uJWb3qaSGV0P?=
+ =?us-ascii?Q?hq8CdbUdZMxIIryero40ZM7i9sjiJ+2yesizKBJzTJ92q/gWONMwxEOxB40g?=
+ =?us-ascii?Q?N8snYwP5sSe/AHKjtQ75ODDdUwgS2sgafN0bwf5HQQs0JcD2b7gHEUdF4cyQ?=
+ =?us-ascii?Q?fcrPxmcmws7xzLE3a6q5rGB1Q6USi4NxJAjY8Y3Ah5b7MirqYV8RQHyxvmzL?=
+ =?us-ascii?Q?pXlW3gBRqAiWn1D29OX03dkTBl58XMgOjOmcwQDj9dOAVV6HsEFUNg/vhdhE?=
+ =?us-ascii?Q?KFTDSjVKO2pvoE4a7lWWm6lSrUChJkNNVkLeVGm1mEmR6rSIuGGb+Q/7JBsE?=
+ =?us-ascii?Q?z8YWOkvK+zquZogZOjYUOIZ/pres3XrJi3Qw4W/ygX0OWH/iavHjMiGAFx+Y?=
+ =?us-ascii?Q?WsC0q2w11wYl76PNgV6HTj54QQfLfUFo5fGukKoV86FYuRYRxqw+yAUka4aA?=
+ =?us-ascii?Q?h9SQAb7Z9D92jqZnHoupHicpsMgB7KQtFAthajBozrM/K7mhjeuGEAEjMfdA?=
+ =?us-ascii?Q?uDzdH1CxIoaS7j9oMRuhOfQZHR168nf0qPFEFVVAiMKcEOcno+MZyMtYY+Fw?=
+ =?us-ascii?Q?kxjs8SI7DvEZjSRuk/OucCVmrvZc1rbm?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SI2PR06MB4234.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014); DIR:OUT;
+ SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014); DIR:OUT;
  SFP:1102; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bajQWXniExo9f0FnM0kjtX1I36MixMFpsyUXj6OjjZzkf0P9uYVQjKbdFyEb?=
- =?us-ascii?Q?DmWDScKgcTwNgsiey//c1ZMo44TTslNqtpV4R7AWU4MvNLf3gYmfmTJiyCt8?=
- =?us-ascii?Q?pjcO7QyIhqBTmnko0O9rOLWCUOCCsIn9nx7LdpKETcMtTUhhfpQEpJSyV6Z+?=
- =?us-ascii?Q?Vxb3j8Ff3NTXinoe/uFxuX5Sp8Xb9WbyD3TmXCEli8EZJC50R9UsWoymaslU?=
- =?us-ascii?Q?MAlceuSvhb1/Wnr6khclUhaBgTd/lmaVrFCR9J8xd+X5s/HsSPu0VPNzo/Iu?=
- =?us-ascii?Q?CDqD2JjlutBWnOPThC6tvM4hQcppU7gC7HDmJ4YISXuySWdNJ/ljrIzoygTM?=
- =?us-ascii?Q?P1QuQ4cXVXn5YR9Nkv4+46hQfz1j2vfinX4ZsNZwmyorT8FoSrUC6K0lR9fy?=
- =?us-ascii?Q?jzVDaBbneKsB37l7pkI6zdnIrQJ4KIGjh/1y6aYkbagXB38mo5/VNSCjSBYQ?=
- =?us-ascii?Q?h0tbhQQs2bENuuT63ijS55tm+FvrJM4uIDNSvfXHwWobuC9EvIoor/qDJwGP?=
- =?us-ascii?Q?eW0nnUUnH/UNrUuOSeDpgGcqdae6IWgM2m2jPQOyXAuBJafSmWatZfusLiIo?=
- =?us-ascii?Q?x7+/bDIDq0ZqGyozOLJIzGJ02GBBk4lbpodIZM2JjinPR21mX5csnAgtj0nl?=
- =?us-ascii?Q?b9csiAwMUM2Q6M96dQPi1ft150rHq+bwlqb3ESkbEp5jRxfs5J2j/HsGJUvy?=
- =?us-ascii?Q?5OqjvY8aHTDLgWLIX06q9ZygZe/JM5V3C5Nb6yu1fkb/P4v3ka0vT8dom1gk?=
- =?us-ascii?Q?oeLWsyPJbGTfvg6c7wbOBevuBkrJhjlTpQWWmQUe4/dqw/xAJxFglpVo3RB3?=
- =?us-ascii?Q?7UcSHiXBSu19an6iysErRBFgA92dMp7LF5y3pPSNY2f5j1dnKP6QWWTlUbjg?=
- =?us-ascii?Q?hVb7BCIee3FW2HZXg/aLxtuKkDWKaP7vSJjEvy6P1JieC4iWxLRS0ZmpiElG?=
- =?us-ascii?Q?bCGBFqqTz90gd8lpb4/lQLub07svNFUAJTe+WPYLi/bD561OX9QTJvdohgjO?=
- =?us-ascii?Q?HrMnR11nB/2l/1zo/M/rKHJYMGrWxeCJNy+OCJHG1/4VJ6B2Bp7l5OxhyHgH?=
- =?us-ascii?Q?hrd3CYig5bf6UFKv4x8fJlZsavmsJVcH5Jh5Nj/HwC3LvZT0CxM8f6I8emQU?=
- =?us-ascii?Q?DS608CKWUM6RWOZlPH/xNHRTbvTMITEKCrpsVhTBDeOrKq/xyboFrCDYqi8q?=
- =?us-ascii?Q?Ea1/s47gUDZ8hhokKOHvyrRdoUATH9o7t68ho6ftjBFdOj0FnHiFWi5GenNn?=
- =?us-ascii?Q?+rPoJ9Djnd/IN57slCBKmUCSbpFA0pNzV1kJHnjRVl/VpJbXKmf/FkaYebHb?=
- =?us-ascii?Q?5PA9le72yKdmlu9ze8xBAPSoDId8hbz7WNOwf9Q9gOoCr/8ulm5VcUVVBM/l?=
- =?us-ascii?Q?CPk8L0UX7M0PpNyGkm0A2RqBj46KtBC1frtrhZNdSMZxv7uWdlWAtUHB5pMA?=
- =?us-ascii?Q?Q55v/QhWbEqoAjH+Ys8lpwL7byRU2cNwxrvRlWDlr9XmOvK46bbM5m2I783P?=
- =?us-ascii?Q?/nmWSg5Rlbtp+LgTEjF+QquD4Q/gwUdTG/MuZVxrgVzpOxaYtb20FgH/3qyX?=
- =?us-ascii?Q?8k6dQxn7DUR80FzLAFydzuUcE3YzyL1xnMPWXZeG01wP7EnBfYGI7bNiashy?=
- =?us-ascii?Q?Pw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?J9rG9D1oc4B6W9IjZxiNTECckgZrSNONQwAHRUg8xOGxvoz0T6DyKQBnlylm?=
+ =?us-ascii?Q?cARLUNeFlMccDybhQoPdppFemwGKlVYgS0W0yJFqjSv2kCCWViPKEBplVOrk?=
+ =?us-ascii?Q?f6SPkEJAeYhEcxzVcjV+hQC/Hv+zL/u6sbivL1OoSGR+TZQlG/W27cPznZh1?=
+ =?us-ascii?Q?PfjPeWZCQQelDE3PmXAZ4Cj44y4PmV4mfCrXedTdaWvCQisQ4cFhHYEHFFz/?=
+ =?us-ascii?Q?SKXP2swtuPvI0ovoLRKov5N+CezUz5KZF75fsjRwUI8nwgbNbbfu1LAQWJrL?=
+ =?us-ascii?Q?DO9MdQWkb3ivHu7xSFjuiO3P2unJSlzuAHh/8709kjcrLfc0QsURzC8nCzEM?=
+ =?us-ascii?Q?pnomF/GApB/RqjZxBYh9sUsli5W8a1/rH0FpS3JzCUTqgt/qhnxeuM0VpHAh?=
+ =?us-ascii?Q?jIQPSjFAuaNy6f028DPsMWcgpYAPUJydi7M0c9ZhgX/J871xpEk4Ix9hiQ8d?=
+ =?us-ascii?Q?cX1+NbUPOWBVdMiUSQMYuOSNfkZNO7AysM86OXRkSru7cp9HxE/BrmSoDaoL?=
+ =?us-ascii?Q?LLBgckRQ9ywqW5e/srHRfa20uxxouVh3+mpWzBjqKom65qij5FedP4HE5GO7?=
+ =?us-ascii?Q?Q+W01OJAH/tiDoEUDyYEKyiqeQ9Tevuf6f0LpJs+9sQQ6biutb9Mpr2dYv9D?=
+ =?us-ascii?Q?/S2YELxlR6ozDCmUT8yIbs3OSi4mo3sVOVNQcy03Sf/5q+9j8leGD7K3GAzh?=
+ =?us-ascii?Q?PdclpQcrFxKkePJFacthTeEbR9JdqVi2x36kx7+WBtx9ozv+eXKeA/nl210m?=
+ =?us-ascii?Q?QIkZPYlriF0IcpIFfrVy5kja8f/ReMvIt87QeZBWW1SsjeKqAoe3PRAf5R5+?=
+ =?us-ascii?Q?Q65Kq/3gM7sJsGYcEZwwliXD/LgFGxiP2Dp17/StKbdEU6hjUUcCLdIonEST?=
+ =?us-ascii?Q?rod2tA3wsN3jyMgL3Y8xNPDu2DYPoe1BBdyKKOL1KuQ0DXDFa359pqtVVTXn?=
+ =?us-ascii?Q?poCG6p0YZ0SGye0t8dZmgZavAFvtEXKQwXCimOxiDH4kdkc+ANyC6fArNG++?=
+ =?us-ascii?Q?Dbcr3o4zTLQhv5eEXXCAEA0azvN3cLyT55rJr32airVAcAdq4fY0T5k/3gsf?=
+ =?us-ascii?Q?Z0YF8x1Hs9xqgHyUu77k7jHaPh31hCWptx2e1FkG+6ytCZnqIPlXCqesjyQk?=
+ =?us-ascii?Q?yu7A65gEMk76i50QIrVq9D6UChsAINdFjWxGN3qzLhtS2pMeCG/C0QRG/gAn?=
+ =?us-ascii?Q?oLFaz0FDUwcZznxKnSRYxze1EuWYxM0Spg5CfziFShAbNJ297ksPkFxKYfj5?=
+ =?us-ascii?Q?GhmHZ3F1Z9Vdt0at+aUwiRLRYI1Jr4mNxctNv2q7wWbIlZtjrTUiaq2AlTSI?=
+ =?us-ascii?Q?jDDn1ctaNgOIgmfYrXDM1anLcec1X6H7Kvx6lire07rOFILLOQnNvqYQT2Pv?=
+ =?us-ascii?Q?mRvb38IaIPzFJ+fTDwJ8nd9OWlH1GQGISgqY4DIReSjcX2o4KyzIKc+dRyPn?=
+ =?us-ascii?Q?0bnTUIVYum36v1NvGuogpOdj7EBFyp1k+CL4SzH7uP17d9gEP2fkwiFqpCjF?=
+ =?us-ascii?Q?6Qbuo9OmnqdjJKNJ14mL1SjfpUxpYdsLbPS7o7NxRpPpsz7Md62PpMe1zsVs?=
+ =?us-ascii?Q?9s4DXM7TgXypjSHtEX4zZ72Z22i8o0+/GShVyQzeOWmMNujJPGc/eGVZOUon?=
+ =?us-ascii?Q?Ig=3D=3D?=
 X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7106e8a7-758b-4fd0-2203-08dd67875a17
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6889887-5aa2-41d8-0d6d-08dd678a6da5
 X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB4234.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 08:15:18.9678 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 08:37:20.2339 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S+RxnceqYmcPN6XhZ9eEHzzteyhD3KHC4LSdBfdQbdaR6DlOFvDcJ28aFiaXBEzKTh/g/rMkPjilu1BLpzmHKMGZZQML2tDiETRNksn89HQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5238
+X-MS-Exchange-CrossTenant-UserPrincipalName: C/dbNmYwqs2fwrv4GJth/E3IVb84QV3SUSpgiy8rqpHsaAjoVs/cP/fDCUA1wf4didHe5M5WvMj9a1TkKleFcGCPZ7ETLqpOQEfOnGUh3qg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6932
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,55 +140,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Although af_packet PMD supports setting the fanout algorithm, it is not
-explicitly declared during registration. Add fanout parameter registration
-to facilitate users in quickly obtaining supported fanout algorithms.
+*** BLURB HERE ***
 
-Additionally, add configuration parameter printing during initialization.
+Shaokai Zhang (1):
+  net/af_packet: register supported param fanout mode
 
-Fixes: d3bc77ab05a4 ("net/af_packet: allow changing fanout mode")
-Cc: stable@dpdk.org
+ drivers/net/af_packet/rte_eth_af_packet.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Signed-off-by: Shaokai Zhang <felix.zhang@jaguarmicro.com>
-Reviewed-by: Joey Xing <joey.xing@jaguarmicro.com>
----
- drivers/net/af_packet/rte_eth_af_packet.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index ab34285ed9..76f09dbe01 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -791,8 +791,8 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
-                        unsigned int blockcnt,
-                        unsigned int framesize,
-                        unsigned int framecnt,
--		       unsigned int qdisc_bypass,
--		       const char *fanout_mode,
-+                       unsigned int qdisc_bypass,
-+                       const char *fanout_mode,
-                        struct pmd_internals **internals,
-                        struct rte_eth_dev **eth_dev,
-                        struct rte_kvargs *kvlist)
-@@ -1172,6 +1172,11 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	PMD_LOG(INFO, "%s:\tblock count %d", name, blockcount);
- 	PMD_LOG(INFO, "%s:\tframe size %d", name, framesize);
- 	PMD_LOG(INFO, "%s:\tframe count %d", name, framecount);
-+	PMD_LOG(INFO, "%s:\tqdisc bypass %d", name, qdisc_bypass);
-+	if (fanout_mode)
-+		PMD_LOG(INFO, "%s:\tfanout mode %s", name, fanout_mode);
-+	else
-+		PMD_LOG(INFO, "%s:\tfanout mode %s", name, "default PACKET_FANOUT_HASH");
- 
- 	if (rte_pmd_init_internals(dev, *sockfd, qpairs,
- 				   blocksize, blockcount,
-@@ -1274,4 +1279,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_packet,
- 	"blocksz=<int> "
- 	"framesz=<int> "
- 	"framecnt=<int> "
--	"qdisc_bypass=<0|1>");
-+	"qdisc_bypass=<0|1> "
-+	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm>");
 -- 
 2.47.1.windows.2
 
