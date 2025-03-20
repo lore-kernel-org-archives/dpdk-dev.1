@@ -2,49 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8F2C28B30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 16:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E046C35FFF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 17:44:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0DEF40615;
-	Thu, 20 Mar 2025 17:57:10 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 6F185402AF;
- Thu, 20 Mar 2025 17:57:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742489829; x=1774025829;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Reuktz5Zb813ewmjQ98tW4baP9APyduDIJVEcH/4RqI=;
- b=UBkw4/mE8M//YaxzyXaqZG9sYhlKNB4NZh+W55Im5dSCGJS9BF7oLsJn
- Aw5DY9tpvoo85bs2WTTL4JFwH7qiAvFh3hoXGWUURB+c9OfbV5aPRw9M7
- bnyZotL6hyIx3vzECOufG16iw5kqgosfnG7ZCMFG0XceG7R5bEmmOvocr
- sdcGGremHy8v3jPG/raqs9mbcY7K4/TC04LpGsMT4Jif7CbJjrZ68KP8/
- Yscj4tBoxD3l79xKL4elSHc6kaSEBTmA1I0zSsixdKH5XiCj6XiAYQSBK
- KaaiKoXA5R0oAc+pUVP0zlWaOQA9RT6HgQLyy5DhGE6DjL7ddajtL3wZQ Q==;
-X-CSE-ConnectionGUID: yZKsRnR6TuKZlboK5agwFQ==
-X-CSE-MsgGUID: X3GGDNMTTw28FBTSr559/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="47615750"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; d="scan'208";a="47615750"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Mar 2025 09:57:07 -0700
-X-CSE-ConnectionGUID: xmacGIv4QsmuMfZx0/rI6w==
-X-CSE-MsgGUID: F6uyyLuwSZGqrfWAYFQbGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; d="scan'208";a="123166765"
-Received: from silpixa00400465.ir.intel.com ([10.55.129.27])
- by orviesa006.jf.intel.com with ESMTP; 20 Mar 2025 09:57:06 -0700
-From: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
-To: dev@dpdk.org
-Cc: gakhil@marvell.com, kai.ji@intel.com, brian.dooley@intel.com,
- Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>, stable@dpdk.org
-Subject: [PATCH] crypto/qat: fix out-of-place header bytes in aead raw api
-Date: Thu, 20 Mar 2025 16:57:02 +0000
-Message-ID: <20250320165702.1439228-1-arkadiuszx.kusztal@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 9658A40151;
+	Thu, 20 Mar 2025 18:44:11 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 15519400D6
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 18:44:09 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2260c91576aso20570705ad.3
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 10:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742492649;
+ x=1743097449; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DhxliL967a69cBwiLD0WQ4ZoGLzXgcQmhbq1BlMxeKY=;
+ b=NfbaCz69bilT/YSDpdShm7Xv/8VEHEypB8xIb2b7MJX1BOkicGifKOzOyaIjwQRz8D
+ k/uzfW5JnqMbLMUy/0gCV/vrh6fXd69MyBpOM2tacmEfLUuolSio98G5ideakOR90vNA
+ IglNj2Kep6m7FuMfPcWoPpolAXyWmORoiQYiaUvlLO09LYCpxIgsy09LjIxzFQ0CDouI
+ uUHNbYGuq8QjIG73xEdrZAfhGUPpDpi5ei3F2FlOqt0LvohlVF9LgRQMwQlBtsDbjZLG
+ 6Uzo8Hotx+bGFCjuLye/LKCwWO2EI5infYahllZ7Jq27n8FTmx/uDAvWn68kvPxJDX69
+ VFdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1742492649; x=1743097449;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=DhxliL967a69cBwiLD0WQ4ZoGLzXgcQmhbq1BlMxeKY=;
+ b=IqC6uVdYghEjE0MI9HUP1QGj+w8hLWfldhffHw7Ew7o4Lnwayb5FRY6n8F2IgcOEnk
+ stm+LncMpT3mJkhovtQC8SS3yL1zc4jO7t1f9VIUy4AR/CYm0J37Ht+7tS0ocUPnaauV
+ a2rfjML8jf7eCefhiK+k6bUmccIYmQEC1qqBbrouyvUgaseH73nLw+pWO0XBcvjIF3Wr
+ SA6wfTiI8rSDuwckQXxLTfkMYgSj8r0E4O09QN6PegRv7Q8m32z18Ap1tPEcfB68SJ3J
+ OMw2k46I4GAKHP4wG0PIUlBF6Pkt7Ca8YhvwpZ0xR+XxBpuAsHdyyG1s4/UvxFb8CyhY
+ hlfA==
+X-Gm-Message-State: AOJu0YypFGVn+YOwxEbtAoVV2+rQVMQVzlJPsSO7WF4dLjCMNnBTfLeh
+ T7NKOMtgMT66q4VKWlGvI2fZtaNrd85ZxgkNYOXf2swRO8v/zqb7rCyGJwn7n3o=
+X-Gm-Gg: ASbGncsJGffyobaVsNZ8jCyjhFwEeoLACAZ75UN8WPMdER8dPP1cudwxwr4Lj5tSQ6+
+ AgvTAdz9R/qRqYoMfMu/G2i5NsLDH45OWzK6gkzQTjgT3B1NKYmZ3akiuCVn4kVfz6Z4SlA7bXk
+ leUko/mRK1wETkPLwovU5pWQ625r5IfQxS80vY6ZIzghWUD348Vn5SJElgRXL6leo1FGX0iJ2eR
+ h5hvVBmGRW2iJ5E8bjcodvRCayMEStrgGYqIKI83jwXQqHBGWlqQ7RnhsKo49Bvh7UXFUDkXbmF
+ 6ndLZKusXGMVwWqZe711Ck9VgHniS6kWPN81ZSzEtmGPGmnwSahQdrMU4zhFqGOzmnLshroDYOi
+ cVQjHcGy2mYXWZ7nPNI/yHw==
+X-Google-Smtp-Source: AGHT+IGu7rqP/VEPpOEXjdOhDilgEKQMYhl8Q8yGsaHIB5oZ6u0a1DWcg+p2GUUezfbrpogCgA1amw==
+X-Received: by 2002:a17:902:d549:b0:223:619e:71e9 with SMTP id
+ d9443c01a7336-22780c551e8mr4978565ad.11.1742492648999; 
+ Thu, 20 Mar 2025 10:44:08 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-227811bf5a8sm599605ad.134.2025.03.20.10.44.08
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 20 Mar 2025 10:44:08 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:44:05 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Rajesh Goel (rajegoel)" <rajegoel@cisco.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: Dpdk-pdump not capturing packet for vmxnet3 device
+Message-ID: <20250320104405.5d3d405d@hermes.local>
+In-Reply-To: <BN9PR11MB5354FF359EB7E5609CB494BADDD82@BN9PR11MB5354.namprd11.prod.outlook.com>
+References: <BN9PR11MB53545D51138B2F27A402659EDDD92@BN9PR11MB5354.namprd11.prod.outlook.com>
+ <20250319092753.210e92df@hermes.local>
+ <BN9PR11MB5354FF359EB7E5609CB494BADDD82@BN9PR11MB5354.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,210 +82,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit fixes a problem with overwriting data in the OOP header
-in RAW API crypto processing when using AEAD algorithms.
+On Thu, 20 Mar 2025 09:38:16 +0000
+"Rajesh Goel (rajegoel)" <rajegoel@cisco.com> wrote:
 
-Fixes: 85fec6fd9674 ("crypto/qat: unify raw data path functions")
-Cc: stable@dpdk.org
+> Thanks Stephen.
+> 
+> I checked this module is not present in 20.11 dpdk version, but its in 23.11
+> But can you suggest if I need to port this back to 20.11, any necessary steps I can follow or any dependencies with the new version etc,
+> 
+> Thanks
+> Rajesh
 
-Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
----
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 134 +++++++++++++++++++
- drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    |  13 +-
- 2 files changed, 142 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-index 35c1888082..c447f2cb45 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -6,9 +6,12 @@
- #define _QAT_CRYPTO_PMD_GENS_H_
- 
- #include <rte_cryptodev.h>
-+#include <rte_common.h>
-+#include <rte_branch_prediction.h>
- #include "qat_crypto.h"
- #include "qat_sym_session.h"
- #include "qat_sym.h"
-+#include "icp_qat_fw_la.h"
- 
- #define AES_OR_3DES_MISALIGNED (ctx->qat_mode == ICP_QAT_HW_CIPHER_CBC_MODE && \
- 			((((ctx->qat_cipher_alg == ICP_QAT_HW_CIPHER_ALGO_AES128) || \
-@@ -146,6 +149,137 @@ qat_cipher_is_len_in_bits(struct qat_sym_session *ctx,
- 	return 0;
- }
- 
-+static inline
-+uint32_t qat_reqs_mid_set(int *error, struct icp_qat_fw_la_bulk_req *const req,
-+	struct qat_sym_op_cookie *const cookie, const void *const opaque,
-+	const struct rte_crypto_sgl *sgl_src, const struct rte_crypto_sgl *sgl_dst,
-+	const union rte_crypto_sym_ofs ofs)
-+{
-+	uint32_t src_tot_length = 0; /* Returned value */
-+	uint32_t dst_tot_length = 0; /* Used only for input validity checks */
-+	uint32_t src_length = 0;
-+	uint32_t dst_length = 0;
-+	uint64_t src_data_addr = 0;
-+	uint64_t dst_data_addr = 0;
-+	const struct rte_crypto_vec * const vec_src = sgl_src->vec;
-+	const struct rte_crypto_vec * const vec_dst = sgl_dst->vec;
-+	const uint32_t n_src = sgl_src->num;
-+	const uint32_t n_dst = sgl_dst->num;
-+	const uint16_t offset = RTE_MAX(ofs.ofs.cipher.head, ofs.ofs.auth.head);
-+	const uint8_t is_flat = !(n_src > 1 || n_dst > 1); /* Flat buffer or the SGL */
-+	const uint8_t is_in_place = !n_dst; /* In-place or out-of-place */
-+
-+	*error = 0;
-+	if (unlikely((n_src < 1 || n_src > QAT_SYM_SGL_MAX_NUMBER) ||
-+			n_dst > QAT_SYM_SGL_MAX_NUMBER)) {
-+		QAT_LOG(DEBUG,
-+			"Invalid number of sgls, source no: %u, dst no: %u, opaque: %p",
-+			n_src, n_dst, opaque);
-+		*error = -1;
-+		return 0;
-+	}
-+
-+	/* --- Flat buffer --- */
-+	if (is_flat) {
-+		src_data_addr = vec_src->iova;
-+		dst_data_addr = vec_src->iova;
-+		src_length = vec_src->len;
-+		dst_length = vec_src->len;
-+
-+		if (is_in_place)
-+			goto done;
-+		/* Out-of-place
-+		 * If OOP, we need to keep in mind that offset needs to
-+		 * start where the aead starts
-+		 */
-+		dst_length = vec_dst->len;
-+		/* Integer promotion here, but it does not bother this time */
-+		if (unlikely(offset > src_length || offset > dst_length)) {
-+			QAT_LOG(DEBUG,
-+				"Invalid size of the vector parameters, source length: %u, dst length: %u, opaque: %p",
-+				src_length, dst_length, opaque);
-+			*error = -1;
-+			return 0;
-+		}
-+		src_data_addr += offset;
-+		dst_data_addr = vec_dst->iova + offset;
-+		src_length -= offset;
-+		dst_length -= offset;
-+		src_tot_length = src_length;
-+		dst_tot_length = dst_length;
-+		goto check;
-+	}
-+
-+	/* --- Scatter-gather list --- */
-+	struct qat_sgl * const qat_sgl_src = (struct qat_sgl *)&cookie->qat_sgl_src;
-+	uint16_t i;
-+
-+	ICP_QAT_FW_COMN_PTR_TYPE_SET(req->comn_hdr.comn_req_flags,
-+		QAT_COMN_PTR_TYPE_SGL);
-+	qat_sgl_src->num_bufs = n_src;
-+	src_data_addr = cookie->qat_sgl_src_phys_addr;
-+	/* Fill all the source buffers but the first one */
-+	for (i = 1; i < n_src; i++) {
-+		qat_sgl_src->buffers[i].len = (vec_src + i)->len;
-+		qat_sgl_src->buffers[i].addr = (vec_src + i)->iova;
-+		src_tot_length += qat_sgl_src->buffers[i].len;
-+	}
-+
-+	if (is_in_place) {
-+		/* SGL source first entry, no OOP */
-+		qat_sgl_src->buffers[0].len = vec_src->len;
-+		qat_sgl_src->buffers[0].addr = vec_src->iova;
-+		dst_data_addr = src_data_addr;
-+		goto done;
-+	}
-+	/* Out-of-place */
-+	struct qat_sgl * const qat_sgl_dst =
-+			(struct qat_sgl *)&cookie->qat_sgl_dst;
-+	/*
-+	 * Offset reaching outside of the first buffer is not supported (RAW api).
-+	 * Integer promotion here, but it does not bother this time
-+	 */
-+	if (unlikely(offset > vec_src->len || offset > vec_dst->len)) {
-+		QAT_LOG(DEBUG,
-+			"Invalid size of the vector parameters, source length: %u, dst length: %u, opaque: %p",
-+			vec_src->len, vec_dst->len, opaque);
-+		*error = -1;
-+		return 0;
-+	}
-+	/* SGL source first entry, adjusted to OOP offsets */
-+	qat_sgl_src->buffers[0].addr = vec_src->iova + offset;
-+	qat_sgl_src->buffers[0].len = vec_src->len - offset;
-+	/* SGL destination first entry, adjusted to OOP offsets */
-+	qat_sgl_dst->buffers[0].addr = vec_dst->iova + offset;
-+	qat_sgl_dst->buffers[0].len = vec_dst->len - offset;
-+	/* Fill the remaining destination buffers */
-+	for (i = 1; i < n_dst; i++) {
-+		qat_sgl_dst->buffers[i].len = (vec_dst + i)->len;
-+		qat_sgl_dst->buffers[i].addr = (vec_dst + i)->iova;
-+		dst_tot_length += qat_sgl_dst->buffers[i].len;
-+	}
-+	dst_tot_length += qat_sgl_dst->buffers[0].len;
-+	qat_sgl_dst->num_bufs = n_dst;
-+	dst_data_addr = cookie->qat_sgl_dst_phys_addr;
-+
-+check:	/* If error, return directly. If success, jump to one of these labels */
-+	if (src_tot_length != dst_tot_length) {
-+		QAT_LOG(DEBUG,
-+			"Source length is not equal to the destination length %u, dst no: %u, opaque: %p",
-+			src_tot_length, dst_tot_length, opaque);
-+		*error = -1;
-+		return 0;
-+	}
-+done:
-+	req->comn_mid.opaque_data = (uintptr_t)opaque;
-+	req->comn_mid.src_data_addr = src_data_addr;
-+	req->comn_mid.dest_data_addr = dst_data_addr;
-+	req->comn_mid.src_length = src_length;
-+	req->comn_mid.dst_length = dst_length;
-+
-+	return src_tot_length;
-+}
-+
- static __rte_always_inline int32_t
- qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,
- 		void *opaque, struct qat_sym_op_cookie *cookie,
-diff --git a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-index 24e51a9318..3976d03179 100644
---- a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-+++ b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-@@ -942,16 +942,19 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void *qp_data, uint8_t *drv_ctx,
- 	for (i = 0; i < n; i++) {
- 		struct qat_sym_op_cookie *cookie =
- 			qp->op_cookies[tail >> tx_queue->trailz];
-+		int error = 0;
- 
- 		req  = (struct icp_qat_fw_la_bulk_req *)(
- 			(uint8_t *)tx_queue->base_addr + tail);
- 		rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
- 
- 		if (vec->dest_sgl) {
--			data_len = qat_sym_build_req_set_data(req,
--				user_data[i], cookie,
--				vec->src_sgl[i].vec, vec->src_sgl[i].num,
--				vec->dest_sgl[i].vec, vec->dest_sgl[i].num);
-+			data_len = qat_reqs_mid_set(&error, req, cookie, user_data[i],
-+					&vec->src_sgl[i], &vec->dest_sgl[i], ofs);
-+			/* In oop there is no offset, src/dst addresses are moved
-+			 * to avoid overwriting the dst header
-+			 */
-+			ofs.ofs.cipher.head = 0;
- 		} else {
- 			data_len = qat_sym_build_req_set_data(req,
- 				user_data[i], cookie,
-@@ -959,7 +962,7 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void *qp_data, uint8_t *drv_ctx,
- 				vec->src_sgl[i].num, NULL, 0);
- 		}
- 
--		if (unlikely(data_len < 0))
-+		if (unlikely(data_len < 0) || error)
- 			break;
- 
- 		enqueue_one_aead_job_gen1(ctx, req, &vec->iv[i],
--- 
-2.43.0
-
+Too hard to backport, you need to not be running a more recent version.
