@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E046C35FFF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 17:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4A1C28B30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 17:46:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9658A40151;
-	Thu, 20 Mar 2025 18:44:11 +0100 (CET)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 15519400D6
- for <dev@dpdk.org>; Thu, 20 Mar 2025 18:44:09 +0100 (CET)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2260c91576aso20570705ad.3
- for <dev@dpdk.org>; Thu, 20 Mar 2025 10:44:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 01E5740656;
+	Thu, 20 Mar 2025 18:46:02 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C84E40151
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 18:46:00 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-224171d6826so30979115ad.3
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 10:46:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742492649;
- x=1743097449; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742492759;
+ x=1743097559; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DhxliL967a69cBwiLD0WQ4ZoGLzXgcQmhbq1BlMxeKY=;
- b=NfbaCz69bilT/YSDpdShm7Xv/8VEHEypB8xIb2b7MJX1BOkicGifKOzOyaIjwQRz8D
- k/uzfW5JnqMbLMUy/0gCV/vrh6fXd69MyBpOM2tacmEfLUuolSio98G5ideakOR90vNA
- IglNj2Kep6m7FuMfPcWoPpolAXyWmORoiQYiaUvlLO09LYCpxIgsy09LjIxzFQ0CDouI
- uUHNbYGuq8QjIG73xEdrZAfhGUPpDpi5ei3F2FlOqt0LvohlVF9LgRQMwQlBtsDbjZLG
- 6Uzo8Hotx+bGFCjuLye/LKCwWO2EI5infYahllZ7Jq27n8FTmx/uDAvWn68kvPxJDX69
- VFdA==
+ bh=SXrZ10bTXpeGbFbJA3N0wDVDgdMrITiwlSs/wx36Bu0=;
+ b=sJQ+ZbhZ2w0yBJhT0uWu7KPAAkkZ6PmTWjICpqlhy0a233BOFxjPpLxSAPGwaV4Zar
+ epIZyVTLAO5nYb8gsS5PcRtc66EPKi99KwQkpmH1/NzbKPnqfWxGKSLvDtIoPkxC5d3r
+ 5zfZSA7Wsk2764jg5ou+vCle8T1DtZ+gJZF7fxg1/wGsobuYeGyKcInuJa9FgtjmYE+F
+ XuNmHg8Ipe+WsVi5VK6RfjgOPIZLghMJzu5a9nie2NC81xeXn1dmVCVjYQHCcXOhdd15
+ 6ZQ3narwuCTEMsknLbicOSEYwqyoIYd+f2/ZIHPNZirZ1IEKw8Vx/wyQ9I6yFvFbTaj0
+ OClA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1742492649; x=1743097449;
+ d=1e100.net; s=20230601; t=1742492759; x=1743097559;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=DhxliL967a69cBwiLD0WQ4ZoGLzXgcQmhbq1BlMxeKY=;
- b=IqC6uVdYghEjE0MI9HUP1QGj+w8hLWfldhffHw7Ew7o4Lnwayb5FRY6n8F2IgcOEnk
- stm+LncMpT3mJkhovtQC8SS3yL1zc4jO7t1f9VIUy4AR/CYm0J37Ht+7tS0ocUPnaauV
- a2rfjML8jf7eCefhiK+k6bUmccIYmQEC1qqBbrouyvUgaseH73nLw+pWO0XBcvjIF3Wr
- SA6wfTiI8rSDuwckQXxLTfkMYgSj8r0E4O09QN6PegRv7Q8m32z18Ap1tPEcfB68SJ3J
- OMw2k46I4GAKHP4wG0PIUlBF6Pkt7Ca8YhvwpZ0xR+XxBpuAsHdyyG1s4/UvxFb8CyhY
- hlfA==
-X-Gm-Message-State: AOJu0YypFGVn+YOwxEbtAoVV2+rQVMQVzlJPsSO7WF4dLjCMNnBTfLeh
- T7NKOMtgMT66q4VKWlGvI2fZtaNrd85ZxgkNYOXf2swRO8v/zqb7rCyGJwn7n3o=
-X-Gm-Gg: ASbGncsJGffyobaVsNZ8jCyjhFwEeoLACAZ75UN8WPMdER8dPP1cudwxwr4Lj5tSQ6+
- AgvTAdz9R/qRqYoMfMu/G2i5NsLDH45OWzK6gkzQTjgT3B1NKYmZ3akiuCVn4kVfz6Z4SlA7bXk
- leUko/mRK1wETkPLwovU5pWQ625r5IfQxS80vY6ZIzghWUD348Vn5SJElgRXL6leo1FGX0iJ2eR
- h5hvVBmGRW2iJ5E8bjcodvRCayMEStrgGYqIKI83jwXQqHBGWlqQ7RnhsKo49Bvh7UXFUDkXbmF
- 6ndLZKusXGMVwWqZe711Ck9VgHniS6kWPN81ZSzEtmGPGmnwSahQdrMU4zhFqGOzmnLshroDYOi
- cVQjHcGy2mYXWZ7nPNI/yHw==
-X-Google-Smtp-Source: AGHT+IGu7rqP/VEPpOEXjdOhDilgEKQMYhl8Q8yGsaHIB5oZ6u0a1DWcg+p2GUUezfbrpogCgA1amw==
-X-Received: by 2002:a17:902:d549:b0:223:619e:71e9 with SMTP id
- d9443c01a7336-22780c551e8mr4978565ad.11.1742492648999; 
- Thu, 20 Mar 2025 10:44:08 -0700 (PDT)
+ bh=SXrZ10bTXpeGbFbJA3N0wDVDgdMrITiwlSs/wx36Bu0=;
+ b=WsyMvVAk592JVMA9ox90dDJTp1n7mP0046RSLQCgwWhUvgVd9Oruh6h79dFaKP3H9W
+ 8ghrcpIcjbO8kXaefmD0VQ00WY5EGg6umhgBXchxfGs7UStR10tSDm82vSnIulwfnhI8
+ CvRCiMEUmiynMCuNCOaPcHn1/tCiZrnJvHhVxPMhYvnRp67g9hXz8Dyy1uhgtzvoB2uh
+ B1wK7P5RIx5sWObPuQHgMezCZPAZcedjLPHj7W0e/eGuT34JH0Ou4CvZwfRxMBOlWwx+
+ 21/czCVe4xXzIcL9Q+JdFp074zKUY0ul3xbZRvjpdtacudaeBcBbIU4h5EtefmiPS7pE
+ 0RAw==
+X-Gm-Message-State: AOJu0YwuCzYvpLxhD63c0QAxD/6m71gdkaJyBbK++wbL6kIEkSAIA1d6
+ pIvR9P6U8dheHMGrbeKFtY1X7Kn/IYW/1H+QtekRZrTXOPEx1ejwYaxr1pA+76c=
+X-Gm-Gg: ASbGnct7mZD5dDYZzbZoK5lHqlY+L88cGT/wknr3w0Txlkc8urW+CJVAPpu85fzMo5o
+ 9ibPdecF1tO9UTQ3aGnYR2yynTikqnlM5kldfPc9zxfK/t+Gf7WDcWm26RVftJ8DGFbJpyrw1y6
+ DP+zLA6nmylv5+Y+mHFGhJLzrh0IN+D/cSXGSj6OjDrV1HEW2rLPppwqMdyXVAbkfK/PGJERUaJ
+ qhnNHjbpLdRhV3TSWcJuw3m1xArp5qOu8f2s1C4MkjGdv/ri5c10n6E3xXWmK6vRB0XODnhYklU
+ QGCgDzZk0ZXvdbTGl96Tx5JMGMgZlSehQJvIb8qskmtlJ+0vneLBB/Zz6FU6VNdK4O29eCOCVlC
+ wf8smAV4YOa2n2a0DI3RxMg==
+X-Google-Smtp-Source: AGHT+IFJuKS5J0ZAg487sASPECWb1z8z4CsL4koP9iGMXpPYNSx3BKnnnggaakrsqv8KPNRGLjmG6w==
+X-Received: by 2002:a05:6a20:258a:b0:1f5:7280:1cdb with SMTP id
+ adf61e73a8af0-1fe42f2c9d0mr519555637.16.1742492759267; 
+ Thu, 20 Mar 2025 10:45:59 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-227811bf5a8sm599605ad.134.2025.03.20.10.44.08
+ d2e1a72fcca58-739061562e4sm65636b3a.139.2025.03.20.10.45.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Mar 2025 10:44:08 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:44:05 -0700
+ Thu, 20 Mar 2025 10:45:58 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:45:55 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Rajesh Goel (rajegoel)" <rajegoel@cisco.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: Dpdk-pdump not capturing packet for vmxnet3 device
-Message-ID: <20250320104405.5d3d405d@hermes.local>
-In-Reply-To: <BN9PR11MB5354FF359EB7E5609CB494BADDD82@BN9PR11MB5354.namprd11.prod.outlook.com>
-References: <BN9PR11MB53545D51138B2F27A402659EDDD92@BN9PR11MB5354.namprd11.prod.outlook.com>
- <20250319092753.210e92df@hermes.local>
- <BN9PR11MB5354FF359EB7E5609CB494BADDD82@BN9PR11MB5354.namprd11.prod.outlook.com>
+To: Shaokai Zhang <felix.zhang@jaguarmicro.com>
+Cc: dev@dpdk.org, linville@tuxdriver.com, stable@dpdk.org, Joey Xing
+ <joey.xing@jaguarmicro.com>
+Subject: Re: [PATCH v2 1/1] net/af_packet: register supported param fanout mode
+Message-ID: <20250320104555.476b834e@hermes.local>
+In-Reply-To: <20250320083707.5594-2-felix.zhang@jaguarmicro.com>
+References: <20250320081503.5505-1-felix.zhang@jaguarmicro.com>
+ <20250320083707.5594-1-felix.zhang@jaguarmicro.com>
+ <20250320083707.5594-2-felix.zhang@jaguarmicro.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,15 +83,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Mar 2025 09:38:16 +0000
-"Rajesh Goel (rajegoel)" <rajegoel@cisco.com> wrote:
+On Thu, 20 Mar 2025 16:37:07 +0800
+Shaokai Zhang <felix.zhang@jaguarmicro.com> wrote:
 
-> Thanks Stephen.
-> 
-> I checked this module is not present in 20.11 dpdk version, but its in 23.11
-> But can you suggest if I need to port this back to 20.11, any necessary steps I can follow or any dependencies with the new version etc,
-> 
-> Thanks
-> Rajesh
+> diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+> index ab34285ed9..55171944cc 100644
+> --- a/drivers/net/af_packet/rte_eth_af_packet.c
+> +++ b/drivers/net/af_packet/rte_eth_af_packet.c
+> @@ -1172,6 +1172,11 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+>  	PMD_LOG(INFO, "%s:\tblock count %d", name, blockcount);
+>  	PMD_LOG(INFO, "%s:\tframe size %d", name, framesize);
+>  	PMD_LOG(INFO, "%s:\tframe count %d", name, framecount);
+> +	PMD_LOG(INFO, "%s:\tqdisc bypass %d", name, qdisc_bypass);
+> +	if (fanout_mode)
+> +		PMD_LOG(INFO, "%s:\tfanout mode %s", name, fanout_mode);
+> +	else
+> +		PMD_LOG(INFO, "%s:\tfanout mode %s", name, "default PACKET_FANOUT_HASH")
 
-Too hard to backport, you need to not be running a more recent version.
+All these debug messages are too noisy for my taste.
+Should all be removed or made DEBUG level.
+There is no point in echoing the arguments in a working driver.
