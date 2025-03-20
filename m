@@ -2,133 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DCFC36000
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 08:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5CBC28B30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Mar 2025 08:45:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 209434060C;
-	Thu, 20 Mar 2025 09:37:29 +0100 (CET)
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com
- (mail-tyzapc01on2100.outbound.protection.outlook.com [40.107.117.100])
- by mails.dpdk.org (Postfix) with ESMTP id DF9DB402AF;
- Thu, 20 Mar 2025 09:37:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B4742402C4;
+	Thu, 20 Mar 2025 09:45:22 +0100 (CET)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+ by mails.dpdk.org (Postfix) with ESMTP id 12E92402AF
+ for <dev@dpdk.org>; Thu, 20 Mar 2025 09:45:22 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JBGCFrVkGysaOdbB+5a6oaJCjqYIdrOnMLkjadQ1qcXPdYUC+TIcqxA7c9DogIFjF9cQkF70RaclkK+EzebL2+r9c/toV080fMACsT9cPw5LCIoOMcGX88E/aMmOojiUrseqQ9AYOXxyBVmTbk6v2pwqJW04lod8tVquasDZoXUKeJ/0WsbnmgQH1gnvAmovqnPVu7M9OH4kdyYAZVvrYrnhZCqhzFmi+H09401AfJHhN9COfoClrAVSwqkV35obU0u4ZLFfrtiVeB+jN8SKDrmyTWfuSZoIBacDHEimEeAT1899WBvDnpa5fpdYyKRwxRiMt2qaiIN7Wh9vGnJwmA==
+ b=e0DxO73EiuZmL/GNF0K4Mh9y2TQAA4Tao1bQKLQq8zeC5byBDTeu3bzlfLM82Q3x3ZVzAgJx7SpzrYsMzkJh7QtYDSuFRwWdyAFIHGbBTCtZd6dkv5QHmdSECOE11JxG1vrRN2LHYTHCc+DUUd0yOaVLS6/mDZBfBXrH9c+ABpVmXqKkZ87jUS/9b07BgAiXCP/Gc0ZUlSPGUtg5CYkGkMsSzReLmuZyYul7SLkqLjnkJG1IH48l2KwEHh0P3415omYGkwZo3PR3JqPeudIvPBT/ocUjRkvaoNUB+D7gLOdfJYuXWsyvsAYaTdrIyoYwzHJvmSukfCwnTnVVB0qo5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nhVkM4hWWblkTP5F8MS4WKArVFE8H821gWHkUccrwSI=;
- b=b8TYRIO/g4YsrbCwf05oAEZoM/g2b4ktUrhyvDUKKW1lH56aHeaxSGOj/QcGG6Fqd5LAYk0XBZyCiZNvAHYpp/wSM8LRZyCgGlNyu/QXu9FCPRMuczpu4lbSDTrENpV5NtsshNqelk/7dQfnDbEEplXVwoNLe4PWAZplz8n8h3L5r4m7MY5t2F/1t8MpNebIjORaUfmExpby6eh+P+NqtfwT5ecpuUVwj+sAWoywmo9FfTZhH33Zs4v3QvgQebu9tLfAxHnRFsr/1jMdVbeXb5T4AEFBwiw3q+PxtoJWw6LWM54gunOHFgWRVdgvq48HzlChiZmsYvE/DbPmNcNX5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
- header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ bh=9GsF6ofOWQ4PMzhrAkRVATZ53w4V+/bsaHR8ul2vlsk=;
+ b=ORwDjAgZszax+xxopxaTcv+e46sfMH4Ru6E5ZeMGQOa9MhWQJJAWi6O/GDd6kHyTEM7l7unTH7XwEQ8+P8fLLo9JYb3IXoyM20c/IIqcrdQ6bmin3tYgoCtyx98ytkO77xJ5J1WBjUHRaBpYcczzDyxqTgum+Ehbw7zB5MmSGCRCETVEPJLq6pcRiS+leF3UYEjm4od0deLvgPd/lY3YpFHFH3rR5RLuM/r3w1JICRMoCBKPER9RrR4b0Cn2SShVQLQCckpJy4wyzydfBBqZzirb72PGfuXd5KR+6DNdVc9SbN6jui9X3VJNwTqrvSJa9HRySXGa5+Sz/VUFHM2hoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nhVkM4hWWblkTP5F8MS4WKArVFE8H821gWHkUccrwSI=;
- b=gkny5WmrSZScrQVQivRU268P9SlCU3GZfkZDpPoSKbN/ztAivIEdU4Y6lAhA5bX2MK23MlbNK6QHY201nW8B1Ah3M1MFwOLzweP+S8AE2i2Ik2twdlG0SZWNwE18/49tV21dzCUOjO8T13ssmTpRYfOWMx+LZVWp2P49+WzMNmTgbKbHL/JxFqUyiqoT7WuAE8Q6WQayyTKXL+cLbK8ahShU+619RA0sjJn09SQFcr9gd7B7FsrNWBPzOR8V9VHS2DA29567epvmz0mBtMVypYkWr/OY3WO4uyCyIEK5fU980nFWZug5BQCJHpwIe7se3kagqIt+HBJRdktNYGXHnQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
-Received: from SI2PR06MB4234.apcprd06.prod.outlook.com (2603:1096:4:15c::13)
- by SEYPR06MB6932.apcprd06.prod.outlook.com (2603:1096:101:1da::12) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=9GsF6ofOWQ4PMzhrAkRVATZ53w4V+/bsaHR8ul2vlsk=;
+ b=QOrbRt7rImxvvIVstxvFfVY4W8qmVLykETib2iBTuXwdtoJQMi/qJj1DCR6qSNMEjOA968a4oJuD7ayDXTDgWjBxf1noU0ilfwlgKtXYe9iFNHIIyplhCUfGY2kcjBKhQcoVVBqDJmsm4n8b4JQg5wIZlvEN4J1jbCHw5lX5SPg4ipcb1+tLx1wqoqkuh9Cnlm0++tYzFrAV/RYPOJlRAfNTqCnnwb2a/UFrdhJmqv/1Ub/F4M2aFTF3t8T3VzINIBHvz3rzuX1EXr+vqQeQFnyhNyWGepTgAcUkNAzFd0vcIN0ofyizKMaVDQFBRSMUp41zy5OH7UbnDp66sHWc3A==
+Received: from CH0P223CA0020.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::10)
+ by SJ1PR12MB6147.namprd12.prod.outlook.com (2603:10b6:a03:45a::22)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 08:37:25 +0000
-Received: from SI2PR06MB4234.apcprd06.prod.outlook.com
- ([fe80::7c6b:7e04:5448:4be4]) by SI2PR06MB4234.apcprd06.prod.outlook.com
- ([fe80::7c6b:7e04:5448:4be4%6]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 08:37:25 +0000
-From: Shaokai Zhang <felix.zhang@jaguarmicro.com>
-To: dev@dpdk.org
-Cc: linville@tuxdriver.com, stable@dpdk.org,
- Joey Xing <joey.xing@jaguarmicro.com>
-Subject: [PATCH v2 1/1] net/af_packet: register supported param fanout mode
-Date: Thu, 20 Mar 2025 16:37:07 +0800
-Message-ID: <20250320083707.5594-2-felix.zhang@jaguarmicro.com>
-X-Mailer: git-send-email 2.47.1.windows.2
-In-Reply-To: <20250320083707.5594-1-felix.zhang@jaguarmicro.com>
-References: <20250320081503.5505-1-felix.zhang@jaguarmicro.com>
- <20250320083707.5594-1-felix.zhang@jaguarmicro.com>
+ 2025 08:45:18 +0000
+Received: from CH1PEPF0000AD77.namprd04.prod.outlook.com
+ (2603:10b6:610:116:cafe::f6) by CH0P223CA0020.outlook.office365.com
+ (2603:10b6:610:116::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Thu,
+ 20 Mar 2025 08:45:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD77.mail.protection.outlook.com (10.167.244.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 08:45:17 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Mar
+ 2025 01:45:04 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 20 Mar
+ 2025 01:45:01 -0700
+From: Raslan Darawsheh <rasland@nvidia.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>
+Subject: [PATCH] doc: add tested platforms with NVIDIA NICs
+Date: Thu, 20 Mar 2025 10:44:46 +0200
+Message-ID: <20250320084446.82777-1-rasland@nvidia.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG3P274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::19)
- To SI2PR06MB4234.apcprd06.prod.outlook.com
- (2603:1096:4:15c::13)
-MIME-Version: 1.0
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB4234:EE_|SEYPR06MB6932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11ea8d55-5963-4d30-db22-08dd678a708e
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD77:EE_|SJ1PR12MB6147:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1fc1b64-c830-49ac-42f6-08dd678b8a51
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|52116014|376014|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HJkA6WrN6P1IxWrPqouTrrFXoizzBqCk81uigdlYQEMJb+h9D8oXVbnsjFKP?=
- =?us-ascii?Q?sucZkQPfaMtqC6IaqxlHQnwtOP4t+veSjb9SpH8IRNQJyvCWNs2f/BGtb4Tn?=
- =?us-ascii?Q?KGvzWrF+nBgfs8sGNuwoWt9ZJ6u7yq46vOWMJKSTp/ng8Zh4wojjBOowk+KK?=
- =?us-ascii?Q?yQ1DzC0RsQ4xNiKMNKuAg17zHK2orKUs7DLoR7gdR53pNkwkuVhSr1Ll2pB8?=
- =?us-ascii?Q?enfmuwWQIVixQ4+XbCscNRsl/XvpyaHTCxElbXNyvpx6jsfRFCugIYbSL0Bs?=
- =?us-ascii?Q?vD69FdoHbM+cuV14xmRKq882IPIs2BzaToy42l/1+0NmDprmqR4sN7MhhtKy?=
- =?us-ascii?Q?TNFx+HmI9FKLI3naCc4uMOwD3lWAzR69uMwJH1DuCNavUxvoIPWNXQp0quIv?=
- =?us-ascii?Q?+nqaPWwuwsje87b7nla672rysjONEc7dTIA18haIPG7UJrppZkgOR3GyHzIB?=
- =?us-ascii?Q?KLNQYobp0UVZ+4QZLHdGOM2m9G0E4R4MaLbKO6iFqCZTJSklZH1cmnMhh3Qe?=
- =?us-ascii?Q?5LkbNsu0fX/nBm2x+7nIf7itwEaAIFJmT5zYW85x4740uRGDJGt+17WPX2Wu?=
- =?us-ascii?Q?h3ae7hVqPphpxFZao79j7B/i/U01uVIisOBcMa8vOJT18ea9Ctdr7ZOzk/0x?=
- =?us-ascii?Q?ZvCp36+XQX6ngDtV4T8/f39ajabEnO8tgdXCU1DRm0/QcuAjVLDwozokm3aS?=
- =?us-ascii?Q?a/7O167dgRqh+4ag4AHRSiJuWn/ZMHDv09DD0Tdyy0xrR+KhG5zrikNNKdNH?=
- =?us-ascii?Q?4IGRhN4d5yElurxmmFQspr9KR209tbIcRftDTDMTspXbDxENFj8LRIgstz5l?=
- =?us-ascii?Q?ZVgtcyiZ85rCKcH39qWy6o2Dqxfo8F1z4LUmnYuoiRO108Se2U2Qyh/xbXHa?=
- =?us-ascii?Q?lkRBZDJrxEw2KVzi3eqgAEnAc5aWX9jy0gb+zLtDfFdYWNIU6l+VFHThuJeg?=
- =?us-ascii?Q?CF2VHINsGJW6K9bJvTYHExWBpY9QoEJW1Dc/5EgzgkmKOGgIozz/Q0jyd+nA?=
- =?us-ascii?Q?AH9lX1iPHdR+nSRoOuN2xXJrCD1NNrjbkEPpXcSZgMUfb0r64ctWV61xACov?=
- =?us-ascii?Q?jf+e+rBxXOGsuqHJ4bu0xNb3p0ZW9tJ76SYFGwnrozq0fTRaB+VWJPn9fTxh?=
- =?us-ascii?Q?IoEhKWWzq6WY4JuIq5K+D18Y2K0Xh9JuI0LVnL+9C/BhKCnGjEmb/IbGK9PU?=
- =?us-ascii?Q?PulONgDogNsTZ3b5mB4z/nxGCBBKqQNVfBqNl28dcChWC5guBfL4+XSlynr+?=
- =?us-ascii?Q?y/8Xe4TjKer2esLeGY0hOZ3jzeHZdIhZ6hqCkmvDgVMcylhZ+mj7R9XvHdn8?=
- =?us-ascii?Q?Kg/32ZfoJOjFkuG43PMeVHRC4ZANYwaGJrL5oTlzIMHtbB/H5kgRGHEbbJsI?=
- =?us-ascii?Q?UrfqSlkdeK6lGlF59vBsMME1BjTUCG8lKbWbALmUxj6u4gSbVcf1Xj6mnXO1?=
- =?us-ascii?Q?ju5yaJvmiz5I9lCmyGIV4Kj6rsQC98mL?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SI2PR06MB4234.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014); DIR:OUT;
- SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TEKgSCEek85SM2kS2YPIOFBUyuQYBS6vS6fYDDZbzEIi7HhlWulPVIRMRNeM?=
- =?us-ascii?Q?yAmnA7i3O+ZyiPkrCy8+yZ2by1udPixkXbAeVgir97k+0tj0rvKB5BcfE0xf?=
- =?us-ascii?Q?lwaWSaQe2x+ITHIqBONAy3An9nSng5cLtYAk+7UP3c+BaA50NzKUi/Rup/j0?=
- =?us-ascii?Q?lp+uywCvI+yC9HNExD9nx5Lo+LXXY9OysPszw6Zh0yt6lcY0HNUzLXbYVXhq?=
- =?us-ascii?Q?ACnsEFrZ+oOrUEpSehnKkZXGA7DSNhuJyBn9AJKtVRgSZV2DlZ/IxHl6XJV/?=
- =?us-ascii?Q?NV8I07TOOqHVcztqPppRcNrE61rYFJRYaqCWw+PSPZESdvOZeyCtwms6bdSY?=
- =?us-ascii?Q?OZBkzruWeOLPsAUcdJi7Pj7ScPhYD9Ms1b1kJnLVIMUaYAFLYQgrfmiNLRdA?=
- =?us-ascii?Q?7btFTbHm7nS2bT/u5CPMd+R9t/c7TjUxq3TnzQ8N0n93tKTaI+xBWfL8eOoq?=
- =?us-ascii?Q?Ryjgccbmn+7TCuMs44XWJRbogzMMgG/BzOigSMeIdNHDHr2cSnOyCCUghTcQ?=
- =?us-ascii?Q?8sLSxtgv62l7Wl6s9XxRKXeJl8x95Ev+6O4vUc+/FnDpAXLrsGJFH2yAJhre?=
- =?us-ascii?Q?+ImqFbr5MG06ly02FoPWMURY2vN8O+ZqilTftezZQhFtcx2Q1f0ie66hhDjL?=
- =?us-ascii?Q?FNBROXeAqbLJ2hdJJC/A14Nu7mdxYdvLgDGimt3k6mFG3Tn2yeARIAhNQg/W?=
- =?us-ascii?Q?ynG7KLwZpdnqqxN+bKe4vPQirH674nKtMLhyplhfuEvMas0gKuAqhYIbW1sn?=
- =?us-ascii?Q?kpHk8dU19gALzMqXutueezghDOt1IhcebNo1gcruYWPZ2ncHOzsQxVe9g4si?=
- =?us-ascii?Q?NrCOYEzvKUgy+42bprrdmVSsfPfAojz89zdA8mnhQSPT/zgsD2vtFQnGooyT?=
- =?us-ascii?Q?wX8R49wjalmM6I7VsRp89QF9SrCaivj3K04S2JmY7TN38TCwBWdL4rs0FAj0?=
- =?us-ascii?Q?ExiL3PwizmvJl8689LW4aHYTfu0YovODg0BCAv9eQ/ouTZpkxRZbZDXvA5ww?=
- =?us-ascii?Q?ENujT18dPqWlulG9lDSjpbqJGjtt7YmFuHqQwx2zMg5BSz3AXNBWJKRrGXbX?=
- =?us-ascii?Q?vbpS+3d9/OIUaSH9C3KE5k1DKnOyW7b9/n7jxchH+Nt5t/c3pgJ0g/9qvjls?=
- =?us-ascii?Q?ly1aFua/XLfVn35xcDxasRQcoH7YMT7daaBzrsPGeCw3A1BvKZ9cHkJQp6B0?=
- =?us-ascii?Q?E9lDI2bzM06RkvVwfeELXlfNt91mxRzXBhZvtvUMUTI68eA2gYlZFE0WOLvf?=
- =?us-ascii?Q?YanKKwTOoDdtb1Vr3/CqEhpbwbbI0zhzda0Tnm/LtCN9ivykRP0xKPd/6KJE?=
- =?us-ascii?Q?KKAoA4ycL5F2dBs0My+eridav5hj1geJIUstN/6AWDaW/3sq1QhZmIsxM3kX?=
- =?us-ascii?Q?71+BM7JyszovYFDCfcNVN443rjE68kmIR08cqZsURnkOKGA4eXOXOnhjNj4c?=
- =?us-ascii?Q?TaBWqWi0orGEyiSf8vx+FLECczvW9uI4l1RaS+5EVk2wfUX38FnPV/gO6NcT?=
- =?us-ascii?Q?du4zchBlOvZgNa+pHt5AQIoiSt6S5xUnI0Kj1mEERdfCTqZWUGfuPSqrPMag?=
- =?us-ascii?Q?yERZUq7vVzns65njD/L7qM0GTXhb3a9Nm9JaqhUV+KIZAH304XRk3ErLYOVG?=
- =?us-ascii?Q?qg=3D=3D?=
-X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11ea8d55-5963-4d30-db22-08dd678a708e
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB4234.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 08:37:24.9907 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KIVpP99CTpUNFhRTTFreHVOeAX6lWDaNCakWcPpKI4RWkXZod4Y1XOKXcFV6eKBWNtjgJnHtU24BxKxpS/Bux8HrkyoFOrkCh/nShGlFH5o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6932
+ ARA:13230040|376014|82310400026|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DEOM4YRAIsCl7QlNL3lTo37AoSaiy+SvgxxkRNWALVGUjlW8RQfsTm0ghgdV?=
+ =?us-ascii?Q?ER8WcIkVgcGJyHkGmux0iBMKDVmkiOE8kTDGiDC4RtTD8KqDau8RgthF/t0v?=
+ =?us-ascii?Q?xaQEJsJqXvKbuUiAebgdm7ynMz1QxtFjphe7ldVtyAeFAwnLjkmCkyjfqin5?=
+ =?us-ascii?Q?IUjcnOS5aL7+VBoQodJCWk/xi5v15NKXnFTQ7Y9u790SuaYInVta8vH530rg?=
+ =?us-ascii?Q?e3+Qg9XgtVGnUlUOONMoYqrlkpi/gA54nUapNqHVHBqnq+mCtH1VuvZGI0ns?=
+ =?us-ascii?Q?TeRky0DWqZZ8GVNdYvjkXLlF3iT2WkC6OQ3Fd3IUoEBZlLS6XRDeOPt8LRCo?=
+ =?us-ascii?Q?QvT1JIpSsHDJR3l+a0yO1vh0wWjImpiuW4Vg7WMCNTCHL6TQLoZeKsdsFZEE?=
+ =?us-ascii?Q?NF2AiQbSgNCbQVZVJEZXzBVcVGMkLi9PwFQZJSUGs5ivlYcr+rW43NxdDWu0?=
+ =?us-ascii?Q?kh000yOk5+Hm7HrWhLBlMINSvoqsSj1V1+u0YHyOdnPt/R9RMyyCUhmOHZfO?=
+ =?us-ascii?Q?2jjUuy1DGqUXf5oZbwKMvFEmwPacMxjcZOU2tJ74FT2c4b9zC5eBWwP09Hrb?=
+ =?us-ascii?Q?akwnjMp3UQbmLhg0fGtOHyetW99UgDGXI09/AwNyFq6CJGnePwpruMMBIFrZ?=
+ =?us-ascii?Q?cyZz6xSskJhwQJfVgcHanfLKkuQJwD+Qq49NEUPvF31eq7nig3tT9r76zSMq?=
+ =?us-ascii?Q?cjUMz5j1s+s4U5o3ELyysXmossxkC6W8BrqasBToHr4H1/niebRcaKwIQMIR?=
+ =?us-ascii?Q?mjk0tUkvzOf55vFd7kS2DH48We2HJTu0aIJnlAGsZqaoK4BRTQEkusKg+Ux5?=
+ =?us-ascii?Q?tIYkQn4feSeos0nw6GeYDY6lvnPiEYzt2FZiO35MxIHkvyxlKGSLA6lv/14P?=
+ =?us-ascii?Q?vSoZSyZqquACkuzUvgFeA/vNXIXcokLuspQELO7dGQCHX5oDV2jCexnkBxLX?=
+ =?us-ascii?Q?aq6BBy2WW+IJgq55mG/uv1iYxj28IZ8I6aETEbCpA+hOexZZutEpv3oJ+oeD?=
+ =?us-ascii?Q?/AQ5Vpeo1kifinyCbfMV9llpxoieEPt5D1rlxOgfS0jmFm7I/jUD9kqr/uqm?=
+ =?us-ascii?Q?5/MBwjRcTJAakXlrexTY2oivfZy195eqq/FNoD6QJclZ4mzcPc37QPkwZRbU?=
+ =?us-ascii?Q?q1N4whUH5l5HZvZCifds0DxhUgEz5cWPVnULrPCHOy1tbU/3tbHOEb+TZFLd?=
+ =?us-ascii?Q?8c448XwGKwC3bwUTDaHhgTvD++ncQ5PGxpacxtwyXkrrPVdVjvqIo5VEXdSu?=
+ =?us-ascii?Q?PE7p4Iq6BYopTSskB3FbVKg8/3HBN68NWEe/YMUHzJZckQZAm1zc7GjDOupo?=
+ =?us-ascii?Q?LUjxyZPXc9LgK6e/bN3OOecZDkYqD5jDT2zHuWXjf30cv2Nd5s0DZhH2QBHP?=
+ =?us-ascii?Q?vNWBU4nmcBAjRs9884ECzc1kO3kuO8pecEThWV9AgN+q2scxVCVs7Tbgd0kR?=
+ =?us-ascii?Q?6KsQRbZjZSuev1eNDliEc8otULeDIn8Wn+QrQ9jb9L49JLHFjXj4Ds02w8Mu?=
+ =?us-ascii?Q?Q4W4n2e9D8z3u3I=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 08:45:17.3612 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1fc1b64-c830-49ac-42f6-08dd678b8a51
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000AD77.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6147
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,44 +131,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Although af_packet PMD supports setting the fanout algorithm, it is not
-explicitly declared during registration. Add fanout parameter registration
-to facilitate users in quickly obtaining supported fanout algorithms.
+Add tested platforms with NVIDIA NICs to the 25.03 release notes.
 
-Additionally, add configuration parameter printing during initialization.
-
-Fixes: d3bc77ab05a4 ("net/af_packet: allow changing fanout mode")
-Cc: stable@dpdk.org
-
-Signed-off-by: Shaokai Zhang <felix.zhang@jaguarmicro.com>
-Reviewed-by: Joey Xing <joey.xing@jaguarmicro.com>
+Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ doc/guides/rel_notes/release_25_03.rst | 111 +++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index ab34285ed9..55171944cc 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -1172,6 +1172,11 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	PMD_LOG(INFO, "%s:\tblock count %d", name, blockcount);
- 	PMD_LOG(INFO, "%s:\tframe size %d", name, framesize);
- 	PMD_LOG(INFO, "%s:\tframe count %d", name, framecount);
-+	PMD_LOG(INFO, "%s:\tqdisc bypass %d", name, qdisc_bypass);
-+	if (fanout_mode)
-+		PMD_LOG(INFO, "%s:\tfanout mode %s", name, fanout_mode);
-+	else
-+		PMD_LOG(INFO, "%s:\tfanout mode %s", name, "default PACKET_FANOUT_HASH");
- 
- 	if (rte_pmd_init_internals(dev, *sockfd, qpairs,
- 				   blocksize, blockcount,
-@@ -1274,4 +1279,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_packet,
- 	"blocksz=<int> "
- 	"framesz=<int> "
- 	"framecnt=<int> "
--	"qdisc_bypass=<0|1>");
-+	"qdisc_bypass=<0|1> "
-+	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm>");
+diff --git a/doc/guides/rel_notes/release_25_03.rst b/doc/guides/rel_notes/release_25_03.rst
+index caadd05d00..9189e83124 100644
+--- a/doc/guides/rel_notes/release_25_03.rst
++++ b/doc/guides/rel_notes/release_25_03.rst
+@@ -306,3 +306,114 @@ Tested Platforms
+    This section is a comment. Do not overwrite or remove it.
+    Also, make sure to start the actual text at the margin.
+    =======================================================
++
++* Intel\ |reg| platforms with NVIDIA\ |reg| NICs combinations
++
++  * CPU:
++
++    * Intel\ |reg| Xeon\ |reg| Gold 6154 CPU @ 3.00GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2697A v4 @ 2.60GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2697 v3 @ 2.60GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2680 v2 @ 2.80GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2670 0 @ 2.60GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 v4 @ 2.20GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 v3 @ 2.30GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2640 @ 2.50GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 0 @ 2.00GHz
++    * Intel\ |reg| Xeon\ |reg| CPU E5-2620 v4 @ 2.10GHz
++
++  * OS:
++
++    * Red Hat Enterprise Linux release 9.1 (Plow)
++    * Red Hat Enterprise Linux release 8.6 (Ootpa)
++    * Red Hat Enterprise Linux release 8.4 (Ootpa)
++    * Ubuntu 22.04
++    * Ubuntu 20.04
++    * SUSE Enterprise Linux 15 SP2
++
++  * DOCA:
++    * doca 2.10.0-0.5.3 and above
++
++  * upstream kernel:
++
++    * Linux 6.12.0 and above
++
++  * rdma-core:
++
++    * rdma-core-54.0 and above
++
++  * NICs
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-6 Dx EN 100G MCX623106AN-CDAT (2x100G)
++
++      * Host interface: PCI Express 4.0 x16
++      * Device ID: 15b3:101d
++      * Firmware version: 22.44.1036 and above
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-6 Lx EN 25G MCX631102AN-ADAT (2x25G)
++
++      * Host interface: PCI Express 4.0 x8
++      * Device ID: 15b3:101f
++      * Firmware version: 26.44.1036 and above
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-7 200G CX713106AE-HEA_QP1_Ax (2x200G)
++
++      * Host interface: PCI Express 5.0 x16
++      * Device ID: 15b3:1021
++      * Firmware version: 28.44.1036 and above
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-8 SuperNIC 400G  MT4131 - 900-9X81Q-00CN-STA (2x400G)
++
++      * Host interface: PCI Express 6.0 x16
++      * Device ID: 15b3:1023
++      * Firmware version: 40.44.1036 and above
++
++
++
++* NVIDIA\ |reg| BlueField\ |reg| SmartNIC
++
++  * NVIDIA\ |reg| BlueField\ |reg|-2 SmartNIC MT41686 - MBF2H332A-AEEOT_A1 (2x25G)
++
++    * Host interface: PCI Express 3.0 x16
++    * Device ID: 15b3:a2d6
++    * Firmware version: 24.44.1036 and above
++
++  * NVIDIA\ |reg| BlueField\ |reg|-3 P-Series DPU MT41692 - 900-9D3B6-00CV-AAB (2x200G)
++
++    * Host interface: PCI Express 5.0 x16
++    * Device ID: 15b3:a2dc
++    * Firmware version: 32.44.1036 and above
++
++  * Embedded software:
++
++    * Ubuntu 22.04
++    * MLNX_OFED 25.01-0.6.0.0
++    * bf-bundle-2.10.0-147_25.01_ubuntu-22.04
++    * DPDK application running on ARM cores
++
++* IBM Power 9 platforms with NVIDIA\ |reg| NICs combinations
++
++  * CPU:
++
++    * POWER9 2.2 (pvr 004e 1202)
++
++  * OS:
++
++    * Ubuntu 20.04
++
++  * NICs:
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-6 Dx 100G MCX623106AN-CDAT (2x100G)
++
++      * Host interface: PCI Express 4.0 x16
++      * Device ID: 15b3:101d
++      * Firmware version: 22.44.1036 and above
++
++    * NVIDIA\ |reg| ConnectX\ |reg|-7 200G CX713106AE-HEA_QP1_Ax (2x200G)
++
++      * Host interface: PCI Express 5.0 x16
++      * Device ID: 15b3:1021
++      * Firmware version: 28.44.1036 and above
++
++   * DOCA:
++      * doca 2.10.0-0.5.3 and above
 -- 
-2.47.1.windows.2
+2.39.5 (Apple Git-154)
 
