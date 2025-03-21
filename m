@@ -2,166 +2,165 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3F3C35FFF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 10:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12A4C35FFF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 10:34:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE5A840276;
-	Fri, 21 Mar 2025 11:31:42 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 70C4540269
- for <dev@dpdk.org>; Fri, 21 Mar 2025 11:31:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A963940276;
+	Fri, 21 Mar 2025 11:34:57 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id AEC6D40269;
+ Fri, 21 Mar 2025 11:34:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742553102; x=1774089102;
+ t=1742553296; x=1774089296;
  h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=6fR8Wt8iYLE8RHak4PygddNxvDhjocEIOjthwDD1+wU=;
- b=SQFgIIKYCV1kpJskQRkFVy60oN+irBe8T8g1iXkqgI2taz8tNqBiihlW
- FVClMH0ANOyVJbHbv2bfYceIGIDlk9lR1oP8bXez506/D8Bqxy8IxVqgg
- RxV9uX0XxuDh8JvspiZRqi8R67agiQxUKE46CNuHlzyJZy+yx0B0ufV/F
- secCnGXbhjvrPgNZQbUU6rQAWgTO+/SDciG7ONgLbcVMQPZUYONiW2tE9
- tccEl5mOxJE6JlKPtFpEAWRMGs1aZTZDEkjJsPbcvHxhJvPUj3KSAvILw
- 9NvQLT3wClc+PstnSpE8dOPko8qcKb9GMk/DEgVYs8lB3LsUfM4t3j8Mw g==;
-X-CSE-ConnectionGUID: ML2fdAT8RoKwtrxAcfkEWQ==
-X-CSE-MsgGUID: Z/dAKzZsTCmgPL/NgefaAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43741373"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; d="scan'208,217";a="43741373"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Mar 2025 03:31:41 -0700
-X-CSE-ConnectionGUID: t+a/ZvrxToSvwy5nnxoB1Q==
-X-CSE-MsgGUID: 8KzFYVWKSI6a2ninAAeORA==
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=Qoh5rVGuj22IdJ/G0+DLgY0Vkt6v2thy5C68LRrvNlc=;
+ b=hXan4CVGd4zWB5lPqlpVN6P2ZPuIY3Zd14pprwCJide5mnHvwrkLa1nc
+ tA4OdErIWLpi2XpA5DYHYEHZP4hmrWGK+V0Tfb258B3sm6Gx2FPZMawi4
+ N/K2fJPJMYRev+Y6z+Kn7nivx0ppZlNR0tQFrpqwoDdmagi0IEToy9SBV
+ u8tg+A6xF3oRW20wrYcM7p5JguRFHds51nNQlJsa/ulmGF45nDjOQa+3i
+ UAEKXPiINL0RDzj5wnu4s6WaJpyo+849qowlDYQ/+MyqkabdggVehlL/z
+ GRocSkI2vFfpa6Wvn88ua9XetaphvYHGr5vCa7vWw9KePoGbMuT7YYjhV Q==;
+X-CSE-ConnectionGUID: 7Oazl7uORCSCguWuhIFPIg==
+X-CSE-MsgGUID: UOL4K3VCTUaWfQz8DKoKZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="31405640"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; d="scan'208";a="31405640"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Mar 2025 03:34:53 -0700
+X-CSE-ConnectionGUID: rT1ug2FASOyUrXrMthL0jQ==
+X-CSE-MsgGUID: MOEqo984Qi2NYu4cFVYvHg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
- d="scan'208,217";a="128472467"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Mar 2025 03:31:40 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; d="scan'208";a="123347834"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Mar 2025 03:34:48 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 21 Mar 2025 03:31:39 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.1544.14; Fri, 21 Mar 2025 03:34:46 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 21 Mar 2025 03:31:39 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.2.1544.14 via Frontend Transport; Fri, 21 Mar 2025 03:34:46 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.48) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 21 Mar 2025 03:31:39 -0700
+ 15.1.2507.44; Fri, 21 Mar 2025 03:34:46 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V/+YhfT0N/bHvoMysVe2gcSXsfmjLf1+Sa32fUxVSVuYfokdRsjx3sEanzLfufo+MHaNjpNkzt6nPL2QzKLtKv+atSQe/tEwUA1CKQW3fokhcLNHJKuBn3RJlLCEzzF4ynmdy5gAybRw5RoJbMPrUKVOtM5/otL0b3/C3FF/E4DoRGSb3wUGfPqK1eEvGsFbCa9KKUNJnj35j5+lCsF0EWV6XI1p+tV6RtEEMYiS0/YurDuSGFpvA3Mf2va0ff4P9w0rvQSpI59d8lrqQbqCWSj+YHNCYndzEtXC3ZFLBxwXJVunr8/14/TBtxxGLZrXgBdJ9YDB0xwi9mdRZnaVIA==
+ b=egCdj10n6WnGga5KrhTAMShpaj4jqF+Sl59XBzFscqi3Gvzwy1PPbzs2UcdVQt1hUgZJfJ0Kp1ae76f4DdQn8GSmawKliCdm1N4Z+tV9oud3NOVQInr4O1nSDs1aFA8HQVfqKrJPZL3CTdbUDBE5u9Vi2rKNCQLcF5SleycteiylkpIfHMYXISxqq3I3CdOM9Y02qjg9x+/mm5ZwlZvI2QjbwoBhOxHrkrheZmyC3U4dZ1np0g3IqkKrTCnHNWqJ/oarplOY5Ycmzdwxf8cjjh1Z7aB57KVtxHbiB3MKjH671vv6jrAKXG8RihwqnbnBcIxZTwdfgAXAEh6QZ5Hcgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6fR8Wt8iYLE8RHak4PygddNxvDhjocEIOjthwDD1+wU=;
- b=SIUA6MTYV9Ac3ptI5Z8I50FnMVtiGTn18sDpWTbideg/tkaULIixjFt6Vn82tCEFvaLTIuEz85VoUCieY6ZrN6T0EButb5UUsID9/v1dfA1M1LQdsNpKM48n3DJuhZ62HRdMFtFtCW8QKDKICgylQXqXSWgyMihfT+hlSnYqW2P7DpLLmhTgP/jevxs82QVlZaUoxIdi5lY89pw1bekKkDnmtmwqAyAFMhDooiCQxU8RtL/SdwvNVaf6JEleXshuedqRnesuOAgFVtv/fvDMagibRlMghKS1k9sN1/QTKVMMdCgEPlkubIJvFqoiFm5+7PnSTi+X7V/YpCHe9IxSlQ==
+ bh=C3IyIe1i5ehbR1IeU1vU8Tuo+NLzO6NHyVYSYxTLl7s=;
+ b=ufpanbYdevq7qZD+ic5uhlU3wFtMBB6Uup1QY1Y2xIuj9KSv5N3H04J05HL/AmDELLYeZ5JURDbfFELipiL1+/whazT8DrXa2JtDWpdZIxjzQ66uWvHMVxjpf0vLbRT9RU/0HJ3u69mLbLVbJyzPiEPKGEPlFVc451+iu5NmDk4AIyk284UsQHi5b0KNcWUsipC/0CfWJYw+1+a9mqJW3tiN9j5uKwgnCJSwuDZbQ6SfkfYQ0hdH0yuZWSBOcuzCsRX+4fmCUkFjIDG/de0PS510VcQ7bG1gu9iW0z6P4qCmSD2UDBoic1m4fS07UG8l+HGnTsqTQCKCeo8cyslMBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13)
- by IA0PR11MB7792.namprd11.prod.outlook.com (2603:10b6:208:409::16) with
- Microsoft SMTP Server (version=TLS1_2,
+Received: from SJ0PR11MB5056.namprd11.prod.outlook.com (2603:10b6:a03:2d5::6)
+ by SA0PR11MB4623.namprd11.prod.outlook.com (2603:10b6:806:95::18)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
- 2025 10:30:56 +0000
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::1a9e:53a6:9603:8f79]) by DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::1a9e:53a6:9603:8f79%7]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
- 10:30:56 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Dooley, Brian" <brian.dooley@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "gakhil@marvell.com" <gakhil@marvell.com>
-Subject: Re: [PATCH v1 1/2] maintainers: update for crypto performance test
-Thread-Topic: [PATCH v1 1/2] maintainers: update for crypto performance test
-Thread-Index: AQHbmaNiYsoo04WpLUKO5YGTXB9GhrN9ZTLO
-Date: Fri, 21 Mar 2025 10:30:56 +0000
-Message-ID: <DS0PR11MB7458FE1EF46B36E8F91FE6C781DB2@DS0PR11MB7458.namprd11.prod.outlook.com>
-References: <20250320142113.1130872-1-brian.dooley@intel.com>
-In-Reply-To: <20250320142113.1130872-1-brian.dooley@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
+ 2025 10:34:44 +0000
+Received: from SJ0PR11MB5056.namprd11.prod.outlook.com
+ ([fe80::4f35:279e:a725:ad08]) by SJ0PR11MB5056.namprd11.prod.outlook.com
+ ([fe80::4f35:279e:a725:ad08%7]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 10:34:43 +0000
+From: "Dooley, Brian" <brian.dooley@intel.com>
+To: "Kusztal, ArkadiuszX" <arkadiuszx.kusztal@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "gakhil@marvell.com" <gakhil@marvell.com>, "Ji, Kai" <kai.ji@intel.com>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH] crypto/qat: fix out-of-place header bytes in aead raw api
+Thread-Topic: [PATCH] crypto/qat: fix out-of-place header bytes in aead raw api
+Thread-Index: AQHbmbkj/suZMv4upUekQKW2v6fL3rN9ZWOQ
+Date: Fri, 21 Mar 2025 10:34:43 +0000
+Message-ID: <SJ0PR11MB50568CBA098F7CB0222CA6FC83DB2@SJ0PR11MB5056.namprd11.prod.outlook.com>
+References: <20250320165702.1439228-1-arkadiuszx.kusztal@intel.com>
+In-Reply-To: <20250320165702.1439228-1-arkadiuszx.kusztal@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7458:EE_|IA0PR11MB7792:EE_
-x-ms-office365-filtering-correlation-id: 6dcdf5cf-3f7d-4f53-5892-08dd686376df
+x-ms-traffictypediagnostic: SJ0PR11MB5056:EE_|SA0PR11MB4623:EE_
+x-ms-office365-filtering-correlation-id: e8db604e-222c-4e88-6fa4-08dd6863fe71
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700018|8096899003|7053199007; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?H8O59nPpypRqg6rJj+1hItS5IIbfm/IcvcE8qIVd4Wm9s7RZe9PmwlD1I6xh?=
- =?us-ascii?Q?DZYHYMrCu8LskjTPI3ajsEKrGvZq2tlNCiUyNBBl32UoE2yqlLcsWMhJXT38?=
- =?us-ascii?Q?GBffk/RF12I0hmxIt5LKbgDSdkoqZn/xp5P3nXLWukw+EfhCUgwQZB6npd6e?=
- =?us-ascii?Q?IBbPr6pnXgyO6QZcmbASojEW1g65zGqK5KKOVYxlyEDc4EMW+cYbGgPSuU9c?=
- =?us-ascii?Q?MwcfwQdX+dc80CJV9MQ83Auz5GD3EZuUqVh6DrhErOOBqrrI/2mcw4rmcfqF?=
- =?us-ascii?Q?g6DBCJQaHgvwK6YVNL7RWEoOzvKyH3GXY4O6PwnmuaL2a+SbZ4p09KMnZffP?=
- =?us-ascii?Q?8YEVvlHS79QpahmAdTTUsF81hFsjRA8M9IKuJ2iUogl3iwzN/q7xW58WGGGg?=
- =?us-ascii?Q?HeSMBzigaCzz2KAJrHSAqxhFyZ3i3Eu/aMf0VyRsYijxvu3ghNWd0RTohC5D?=
- =?us-ascii?Q?aMfcfSf8+qwQglz4VkXNWIV0TCyYjrEdssCBVxCMZmQPPd2Nv6ATTdbfdxbk?=
- =?us-ascii?Q?yDwZrqyANEaUvxJkd62e5EAB0fPm2tEd7B6Ud3dksaKvzu6KcEFaRbgh7uM+?=
- =?us-ascii?Q?B65OOlimaSfQWgTSKBfsGC6P7l3a+hAIfmhPU49onObHJWbUT7WagpfL3U6B?=
- =?us-ascii?Q?K5I/oA6U/hRgLp5D4rpw0kuhsug2vgyuuQvqd2+0vbvPSQXO6ZUmUjKoAmRl?=
- =?us-ascii?Q?YM1f3R0q32LUhy6L0gC8YTORiGT3COGLRBJ+oN+LyHjh8Nrj1TRi/E4VLOxJ?=
- =?us-ascii?Q?X0LF5Y6XXNfZC0jpHwwWI8ZUObRqHoqgLc8pcEbW4GyPquEFrCuHLlujwgGF?=
- =?us-ascii?Q?U4uY6XeXtz0vu0VrXxYRbzGMprg8ZiPVmmTgFPqzqcv0BvskGmdJqqj0sg7r?=
- =?us-ascii?Q?Ip34etZxV1FMwZ/OTm5CE622Z8qtm9KsnykjeS49eE0LHSCmhA3YtGVHGpCJ?=
- =?us-ascii?Q?LzDwwlxXKQuxEvgYg5iCDyfVrGlbflFKDFA+Z3IsrYy9kVfHk0OI4106Ncs4?=
- =?us-ascii?Q?okfMVjPT+kxT59+ZOVxaIELESEdfCEQczjju1XWLnrG+fnRqoHCQ+kcZ0n+S?=
- =?us-ascii?Q?ipkQoga7ahkKjb1fROwujG3b6JAn2THFqDFgOFnuim1MZZ6n8Y5nVM/unyuz?=
- =?us-ascii?Q?VYnS8L48hxIc8GjQqNqMRQHaCDFLtcVc41vbM1a1OKkI71fCHF3iBK1eXTu8?=
- =?us-ascii?Q?Rwd94nNJ0dPidWTp9K1Bg0GhK7SIZ5rscTIfJPgBt6qIUCMMUpvbtqFCQb+r?=
- =?us-ascii?Q?GoowxwpeRHIikxSrrLzFNNYKxDTHqRMBBSghAgcZqMMUD8okzTNGU2nwkUF/?=
- =?us-ascii?Q?Smn8HZxaif4InbFwKKkIDQXJjT+CqgWHD4+Rqoi+VWAug1UrXB8D6UOtm3HK?=
- =?us-ascii?Q?vGTlIIL2UtIMCATcLNf/EyLTeHP67EEZgdtw95R+a6DnN8J7Pa9O1ZzXw/I2?=
- =?us-ascii?Q?Ezas16z/j+AYUgNGQz8YlIhwBTGEu2p3?=
+ ARA:13230040|366016|1800799024|376014|38070700018|7053199007; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?gfVc4gW6KWWwRmFo54MbTgvcPUfxgPUfEKqp1wAIJV/cXstsKTbV4v/oJf4q?=
+ =?us-ascii?Q?kOQ9tZ/+nJZaYDdsehiSNGW1Tt/xR4le5xfie7wYymE1S7Y4TbEwkCp57TP+?=
+ =?us-ascii?Q?3dG1Lx2mj1AAcWjmp5MigNhf20SrdQ+jEale2UMr4CUaDGNafgtEXfIZ37iJ?=
+ =?us-ascii?Q?MEn8UNkYjsXgdOO+mBd6c4/FLGn80vqsnwBe7Rrh9eL3R2ypxkjyELV9TI94?=
+ =?us-ascii?Q?WKvVAIg0JqqmU2dz0LfDZk2q+5YDjKod2xdN3UgezatGGxKzgvN5V10X7msd?=
+ =?us-ascii?Q?tx3riqDd9uWsab/xW4uT7cqvpsQ9EpkZfECYaKPpppCHVwGkKs1eOcLrviyD?=
+ =?us-ascii?Q?9VV0Hu8UPT5m1rtkC5D4BJDECxiVCnHl/EGfxG3TrJWDJifpXXpslmtYos/P?=
+ =?us-ascii?Q?+9ADeMtBW4p8+5EXDMJ/6SJPYWnbVfh67/Cr5faB3GOBxlKZ/RBkJjBiuwo/?=
+ =?us-ascii?Q?UXVUxHDHiN4PfR/kNHo2mI//7EAHBv0oPus06Sz00GInO6ijxAl9afxDtAve?=
+ =?us-ascii?Q?sENmt+2uAJrOUl+7aIAx3wiYEHDpMamESam1rGHKCz7zUZ4KuIEWIntTxjfd?=
+ =?us-ascii?Q?4u7DFh0eVnWwJz3YU+sjH2qWvwqM6OuXrNKy/KDsr9Q5FKZnj+YJtIkTwCMy?=
+ =?us-ascii?Q?+3HSj269HH4GH3gADgdxIVisWF4RHvQvFQQVAmhwXJxKQ/rIno02H6y3sJmI?=
+ =?us-ascii?Q?O2YNl8YKeWNYlsJrol7D4f5I1YcL/LgPbHY6Fjnb4gkQdr/q3kjOZGuNiQOk?=
+ =?us-ascii?Q?3MUHQweVhMcHtF9Lp6AJUFR00EK6slYXSEK7kxt2xcr+BvtYy36rO6yunm49?=
+ =?us-ascii?Q?NlAgprKA2YKCXNZEYp9/AWnzHG4b4zLRnBxiNH7auWt2ejn8c05AbaKQEGzC?=
+ =?us-ascii?Q?7Uz0qH1CXN6P4dw901fYAfW4ZOwR3Tuq+gdw6pHhuQRBR4eI/WqlPhMp/pqJ?=
+ =?us-ascii?Q?BjJT5xhH00FopuRstRynx5OGYwHRMqIjV9ksSbWv8brikuu6pb8VII5gaPel?=
+ =?us-ascii?Q?4W++HyIKQB/hNN6EpRXVEyNnH/98RLLh127BPIhcVIHh3STdDD1LIX2otr13?=
+ =?us-ascii?Q?xm/bApFvh3Sf734kkL1DvaVv5KHMSnVoHKRqTD8WqnWUtPnfOySuUvN3sgQ/?=
+ =?us-ascii?Q?rXlU85NDpkslTaTXCczCb8xRqHxAl5zGlNLYoIucjXAUNre95UzB0W90/RZ0?=
+ =?us-ascii?Q?KgraJY8R+S+OAPTQejMbJ5rQDGoM5Tw+qFWHmElabm7A+xGcnQnj3cSAmb+U?=
+ =?us-ascii?Q?P+XxB1NapinPQGTVUsECgCh0EYupCV+nKGqfyRlE35TuwqvLxtJClg4OJV2c?=
+ =?us-ascii?Q?XwpIPg4e1dC7JaBRDfG3Iy2r1jFdB4KzJ046PGbKzumOmuT13FSM16IYaKto?=
+ =?us-ascii?Q?GszMj5B+BqZMBUxjEMHLKQNwVNnL1Sl40gcIJEWyGc4n0j2+sKnVY7NAslG4?=
+ =?us-ascii?Q?3lm2SB1oYjCHMfCAEQE7GlFLHbx4Qwq/?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7458.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700018)(8096899003)(7053199007);
- DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:SJ0PR11MB5056.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(7053199007); DIR:OUT;
+ SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ai1i0dMsCoSaepnJzvNTxXkKbWHkaVvJM+aVNzTC5FfqC4NWIZAdkRdw8lcZ?=
- =?us-ascii?Q?aWdwJ7zlLfWVNSRVBknnEkBFWWMpWFSChM7XY8jfvV9Rdp3xOpVkXUQilgKg?=
- =?us-ascii?Q?B7+t8/hqVPYUNNvkjeGvQ1t87h4PCxUtwX1nIlouQ5SAqMl5Tou8ly4x3cgR?=
- =?us-ascii?Q?J9Q3I+TcXpgB48PhxaY50fYyA8jflTnUVCI3ypWDf8wPP+w/kpQDpC+O+Qxi?=
- =?us-ascii?Q?KQTfmDscOWWsy0CZfjMC9Syofm67lh72YU7+T7Tmu7E/SVPuAzp27DxS2hQ8?=
- =?us-ascii?Q?KxgFq7DBagBQUdY27zOY5mHGhREyCsn1Id+x+2HAzxGRKlbNHB7u0zmaD6qL?=
- =?us-ascii?Q?j6GWDsbbrfbOwKbf1S1RJOnycIZZ0Mdhq9y9xUx4gnNNMI49MPyjJPOGi2NZ?=
- =?us-ascii?Q?hAyTU6rSXIZa8omHehmc5pc9w0P/fitpeDV15iGLWdwFhyMOcY9rxH0tGZQc?=
- =?us-ascii?Q?dZ/qYy3vjsJat1Pzb3MVkMyhGcwtoYUEwJ0rnMS2OFVAO/XGXwUq89WnxEi9?=
- =?us-ascii?Q?o4VesbHIma9bc7TY8RZ0h7pk9uwNF1ldVJTmtO3R24Zn/hTbfCBJUAVRElmF?=
- =?us-ascii?Q?Gj2tG/IHpfijCuphauRWnWgde/rOwMByAd4B50p1K/nPE6JxeLwTjcml//4Y?=
- =?us-ascii?Q?QXUUiwA0hAlPZBNkSZQfKJ2hFdFyeiHeBCUI4PcEnxECGEFOf8ucA7s0uZpo?=
- =?us-ascii?Q?f3P1TPRSeKrowqCxthjvnc4rCndMl5gHhG92UR/EVno2fTS1VXf6Kd4BSdHR?=
- =?us-ascii?Q?6K3OzoIANgDHSq1+d1CtAtdsJ2iWxEgAuuRdFP280tyuL9W9rE8XC0KMnh78?=
- =?us-ascii?Q?oYDPLxP89DnwgFD206aTlcX/JyJEkFC3mPWEmrnJBnfLxmlqBHJhA+KV04mt?=
- =?us-ascii?Q?mIr1G3WtoJqrrtueSmHA7RieCwpsP00em1MyZTMZ3ly+17RU/JDMBpMu3XP/?=
- =?us-ascii?Q?W1dPXn/Fjl1HEO+KC+hnHTTO8zbzOslrEwb/Yb4N/VyoyE017b18I+DFnLD4?=
- =?us-ascii?Q?109aOXBMP+nyLKkGrO6nU3Lv/TP+K4zq7vSxuz/azUa28XEJftXPZazHmQBB?=
- =?us-ascii?Q?8lcniZeXidNH3LdZvCmuhS7T/FqfnCTSJ/UpEI5q5IPMHQcoXpy8LidveXyM?=
- =?us-ascii?Q?Mllic5Rx91ATN5dWmhlSGYI9OaxxfRIXJtNjJs1gi5r3xSsyHAypv8ByI6xG?=
- =?us-ascii?Q?8eUFWJk30CA7xG8F0u8fpEVbshOlvCxHIW5KQPLDtj5X0ODShhF6cNwCXs9c?=
- =?us-ascii?Q?tS0V3cYqFpiPUwBUzyOxdNCcQZhvFiSb2s4IvNO802TRhksvdhNc6CUqVbwB?=
- =?us-ascii?Q?iTFay8KILJob0cms0PTaHENrAG+L+WXtpEmoDIcyMYWYuQFCuPPxNGuu+G7P?=
- =?us-ascii?Q?hG+j0ohlPzv8j87c6RhtcrAB3w0REatv4qixPQXWwhkdOq+SZjQ49cuf4xT6?=
- =?us-ascii?Q?Mts6ECSJ7F5Gayy0W1YokTkfHdYGfOMF3UKDZ1q/jPbZm9FKVHBQBt5oCRcL?=
- =?us-ascii?Q?LatUdjn9FSBbDUp1U7iYATM9XM74oW460tSqiynJM/X33Zhy4hkcHbwiLY1V?=
- =?us-ascii?Q?42HDuQKS5FxbhQIJ/UE=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DS0PR11MB7458FE1EF46B36E8F91FE6C781DB2DS0PR11MB7458namp_"
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/TqmjVlErwzwF9WHcDIxvUU/DFXTg18XcIrg9oH3wnMHMV/K/QH6qvIfeSBL?=
+ =?us-ascii?Q?moCk4NZyBDFZOajsVaX6bEoC/obR0o4OWQVODMaMkNrko0mT1pks243BoaKN?=
+ =?us-ascii?Q?1TatiVq2DJS9pI6VnqVhdN1O5rZlLwuIdIRcFAc5Q+uCFaaWthN9OAmBpY+U?=
+ =?us-ascii?Q?FWLZv3eilqpUOdWGUs+ZBT60D/Erx/07vh7Imd0pXqLmRNtVAM78jCC2gzY5?=
+ =?us-ascii?Q?wgTuC3h6eFm/yEbjdc9KTFhCj0PK1HnFM+DUCJ0WcmvOZGcXde/zMzZQd/OL?=
+ =?us-ascii?Q?WU4m4lI+zlH9nxPzXKU9JeeLTU9ntxHTTNGkkcp5gZjxyrjv+zS/o2vFyVMI?=
+ =?us-ascii?Q?4YKU1HbQVlr3Qb9clR33cWk3xXf/zTh4ptnOepcjUfsosaX5cP2Ran8M7AXn?=
+ =?us-ascii?Q?SI1hFpvdXco/q+FSPCvekN0tsPlmZ0KhrbQDImsZyFg8jtkkXc1+2G3wi8qT?=
+ =?us-ascii?Q?CLBToOAAjaBWY1rvK4j3pZ6+CwAkh3UDg1yg6AXHTZ/1clLJPhtHzLaO+hBU?=
+ =?us-ascii?Q?8J0exz/nUmzPds1K1kkGwjcQQejud7hkQlejZj6mFDKT2KS3aSufFGWQFa6/?=
+ =?us-ascii?Q?MZAxPn//gcEikXw2Nn6Gh+ioOoz9VpH2mSBZXqDB6pugZ3rLh2hWMdDiZz8H?=
+ =?us-ascii?Q?9gIiGE/Fwkw67NOIaplEm1pohjSCj9TNjJ69UZAT/gFdsb5mTIDwsPMMNl2P?=
+ =?us-ascii?Q?lCJMV49tY3onNKbQ5HhPV9HoSrqQyXDn/n63VsxMoCod6dZ56C3oceJX16kM?=
+ =?us-ascii?Q?et6B6MMZkeNbcrNuPkLFrGJf8K8GHywdUrbmn/U80HLedSFEqaInvjbUOIBJ?=
+ =?us-ascii?Q?yttfDotjL2AccRSt+Cm+F07ivF2NQj7iRJ153qhTZrkKl0pSmQuaS/FT9kda?=
+ =?us-ascii?Q?+QBs8uMZXEYyw1TpRYzFyuH7sJKiUQHGi9sFo0C2JQnto+HXumyKqubFULKf?=
+ =?us-ascii?Q?LSxAZ4A6aXvHZWFSLRhgUoxM/gLWrBRoalFC4BvgXgcyMEZJPH65aSJRB1WM?=
+ =?us-ascii?Q?k8rH15tj5kudVx27r7AfEG1ALJTbWIi+eJIFKOPX9Woxu15exejxIBr18WGy?=
+ =?us-ascii?Q?sG852NeG8eyiP8eITHdnCf9+roWUtkzbnCpf66TGvjRhqLVaMD52WqAHs270?=
+ =?us-ascii?Q?7PIKT9fEU37DqgQssR4o/JP2QZYamimRgj3phOkO41TyW5lonzZH+a4SUMvO?=
+ =?us-ascii?Q?tMSwyjmZxD+BE+0ypX2CTUcPjF/obUH8fRMvYy1ywg8m8hLLy9rT/w5yuW3T?=
+ =?us-ascii?Q?WkVpYDhukAyHWGJIpWrjafR8Ib690F+OK6vWjYOKl4ibdnKl40hHEkjeC72I?=
+ =?us-ascii?Q?WmET+KY4BfHAZJ49gse2qRQ7JuafOjj6jwt5VaiFH9bH+9NaExbWnVb1Eqdz?=
+ =?us-ascii?Q?JcfYfYYYGcgypSOCnd8r4F2hXlf6lc2+S53L26y9VFdegeYo0Aq8Emu6cPXs?=
+ =?us-ascii?Q?I4I0gnmkxL+n0YLK+gHf34KWemjuy8hsUOLCYpbZL0kI4E691z/UQra8aPVt?=
+ =?us-ascii?Q?GR+L4xILfvdbkJ7m7i0nSDuF/O3shy5BgZ1hToo+5cj7JWL2dFDFvmHzMTiL?=
+ =?us-ascii?Q?Z4HvHs9W9aS+74P72+MLHjc+mBkXAxHB7xYEY+v+?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7458.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6dcdf5cf-3f7d-4f53-5892-08dd686376df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2025 10:30:56.1788 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5056.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8db604e-222c-4e88-6fa4-08dd6863fe71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2025 10:34:43.5783 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0wJxe74ABCr25qkW4irKQgWyseuuKYPHAYIcAYghoHPUuGRdVM1H5IgP0/l1xDxLdVroXdx3yeICA3RYRSohkA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7792
+X-MS-Exchange-CrossTenant-userprincipalname: HKL4m4G/DqwT4tVZyVgs6ZDClOQSBVAQ0gLhKvhXOO8tabAIMrEqwmOP+I+pJ1lYzHnok5MBHL7VtUKhAb69JA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4623
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -176,106 +175,250 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS0PR11MB7458FE1EF46B36E8F91FE6C781DB2DS0PR11MB7458namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Hey Arek
 
-Acked-by: Kai Ji <kai.ji@intel.com>
+> -----Original Message-----
+> From: Kusztal, ArkadiuszX <arkadiuszx.kusztal@intel.com>
+> Sent: Thursday 20 March 2025 16:57
+> To: dev@dpdk.org
+> Cc: gakhil@marvell.com; Ji, Kai <kai.ji@intel.com>; Dooley, Brian
+> <brian.dooley@intel.com>; Kusztal, ArkadiuszX
+> <arkadiuszx.kusztal@intel.com>; stable@dpdk.org
+> Subject: [PATCH] crypto/qat: fix out-of-place header bytes in aead raw ap=
+i
+>=20
+> This commit fixes a problem with overwriting data in the OOP header in RA=
+W
+> API crypto processing when using AEAD algorithms.
+>=20
+> Fixes: 85fec6fd9674 ("crypto/qat: unify raw data path functions")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+> ---
+>  drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 134
+> +++++++++++++++++++
+>  drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    |  13 +-
+>  2 files changed, 142 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
+> b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
+> index 35c1888082..c447f2cb45 100644
+> --- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
+> +++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
+> @@ -6,9 +6,12 @@
+>  #define _QAT_CRYPTO_PMD_GENS_H_
+>=20
+>  #include <rte_cryptodev.h>
+> +#include <rte_common.h>
+> +#include <rte_branch_prediction.h>
+>  #include "qat_crypto.h"
+>  #include "qat_sym_session.h"
+>  #include "qat_sym.h"
+> +#include "icp_qat_fw_la.h"
+>=20
+>  #define AES_OR_3DES_MISALIGNED (ctx->qat_mode =3D=3D
+> ICP_QAT_HW_CIPHER_CBC_MODE && \
+>  			((((ctx->qat_cipher_alg =3D=3D
+> ICP_QAT_HW_CIPHER_ALGO_AES128) || \ @@ -146,6 +149,137 @@
+> qat_cipher_is_len_in_bits(struct qat_sym_session *ctx,
+>  	return 0;
+>  }
+>=20
+> +static inline
+> +uint32_t qat_reqs_mid_set(int *error, struct icp_qat_fw_la_bulk_req *con=
+st
+> req,
+> +	struct qat_sym_op_cookie *const cookie, const void *const opaque,
+> +	const struct rte_crypto_sgl *sgl_src, const struct rte_crypto_sgl
+> *sgl_dst,
+> +	const union rte_crypto_sym_ofs ofs)
+> +{
+> +	uint32_t src_tot_length =3D 0; /* Returned value */
+> +	uint32_t dst_tot_length =3D 0; /* Used only for input validity checks *=
+/
+> +	uint32_t src_length =3D 0;
+> +	uint32_t dst_length =3D 0;
+> +	uint64_t src_data_addr =3D 0;
+> +	uint64_t dst_data_addr =3D 0;
+> +	const struct rte_crypto_vec * const vec_src =3D sgl_src->vec;
+> +	const struct rte_crypto_vec * const vec_dst =3D sgl_dst->vec;
+> +	const uint32_t n_src =3D sgl_src->num;
+> +	const uint32_t n_dst =3D sgl_dst->num;
+> +	const uint16_t offset =3D RTE_MAX(ofs.ofs.cipher.head,
+> ofs.ofs.auth.head);
+> +	const uint8_t is_flat =3D !(n_src > 1 || n_dst > 1); /* Flat buffer or =
+the
+> SGL */
+> +	const uint8_t is_in_place =3D !n_dst; /* In-place or out-of-place */
+> +
+> +	*error =3D 0;
+> +	if (unlikely((n_src < 1 || n_src > QAT_SYM_SGL_MAX_NUMBER) ||
+> +			n_dst > QAT_SYM_SGL_MAX_NUMBER)) {
+> +		QAT_LOG(DEBUG,
+> +			"Invalid number of sgls, source no: %u, dst no: %u,
+> opaque: %p",
+> +			n_src, n_dst, opaque);
+> +		*error =3D -1;
+> +		return 0;
+> +	}
+> +
+> +	/* --- Flat buffer --- */
+> +	if (is_flat) {
+> +		src_data_addr =3D vec_src->iova;
+> +		dst_data_addr =3D vec_src->iova;
+> +		src_length =3D vec_src->len;
+> +		dst_length =3D vec_src->len;
+> +
+> +		if (is_in_place)
+> +			goto done;
+> +		/* Out-of-place
+> +		 * If OOP, we need to keep in mind that offset needs to
+> +		 * start where the aead starts
+> +		 */
+> +		dst_length =3D vec_dst->len;
+> +		/* Integer promotion here, but it does not bother this time */
+> +		if (unlikely(offset > src_length || offset > dst_length)) {
+> +			QAT_LOG(DEBUG,
+> +				"Invalid size of the vector parameters, source
+> length: %u, dst length: %u, opaque: %p",
+> +				src_length, dst_length, opaque);
+> +			*error =3D -1;
+> +			return 0;
+> +		}
+> +		src_data_addr +=3D offset;
+> +		dst_data_addr =3D vec_dst->iova + offset;
+> +		src_length -=3D offset;
+> +		dst_length -=3D offset;
+> +		src_tot_length =3D src_length;
+> +		dst_tot_length =3D dst_length;
+> +		goto check;
+> +	}
+> +
+> +	/* --- Scatter-gather list --- */
+> +	struct qat_sgl * const qat_sgl_src =3D (struct qat_sgl *)&cookie-
+> >qat_sgl_src;
+> +	uint16_t i;
+> +
+> +	ICP_QAT_FW_COMN_PTR_TYPE_SET(req-
+> >comn_hdr.comn_req_flags,
+> +		QAT_COMN_PTR_TYPE_SGL);
+> +	qat_sgl_src->num_bufs =3D n_src;
+> +	src_data_addr =3D cookie->qat_sgl_src_phys_addr;
+> +	/* Fill all the source buffers but the first one */
+> +	for (i =3D 1; i < n_src; i++) {
+> +		qat_sgl_src->buffers[i].len =3D (vec_src + i)->len;
+> +		qat_sgl_src->buffers[i].addr =3D (vec_src + i)->iova;
+> +		src_tot_length +=3D qat_sgl_src->buffers[i].len;
+> +	}
+> +
+> +	if (is_in_place) {
+> +		/* SGL source first entry, no OOP */
+> +		qat_sgl_src->buffers[0].len =3D vec_src->len;
+> +		qat_sgl_src->buffers[0].addr =3D vec_src->iova;
+> +		dst_data_addr =3D src_data_addr;
+> +		goto done;
+> +	}
+> +	/* Out-of-place */
+> +	struct qat_sgl * const qat_sgl_dst =3D
+> +			(struct qat_sgl *)&cookie->qat_sgl_dst;
+> +	/*
+> +	 * Offset reaching outside of the first buffer is not supported (RAW
+> api).
+> +	 * Integer promotion here, but it does not bother this time
+> +	 */
+> +	if (unlikely(offset > vec_src->len || offset > vec_dst->len)) {
+> +		QAT_LOG(DEBUG,
+> +			"Invalid size of the vector parameters, source length:
+> %u, dst length: %u, opaque: %p",
+> +			vec_src->len, vec_dst->len, opaque);
+> +		*error =3D -1;
+> +		return 0;
+> +	}
+> +	/* SGL source first entry, adjusted to OOP offsets */
+> +	qat_sgl_src->buffers[0].addr =3D vec_src->iova + offset;
+> +	qat_sgl_src->buffers[0].len =3D vec_src->len - offset;
+> +	/* SGL destination first entry, adjusted to OOP offsets */
+> +	qat_sgl_dst->buffers[0].addr =3D vec_dst->iova + offset;
+> +	qat_sgl_dst->buffers[0].len =3D vec_dst->len - offset;
+> +	/* Fill the remaining destination buffers */
+> +	for (i =3D 1; i < n_dst; i++) {
+> +		qat_sgl_dst->buffers[i].len =3D (vec_dst + i)->len;
+> +		qat_sgl_dst->buffers[i].addr =3D (vec_dst + i)->iova;
+> +		dst_tot_length +=3D qat_sgl_dst->buffers[i].len;
+> +	}
+> +	dst_tot_length +=3D qat_sgl_dst->buffers[0].len;
+> +	qat_sgl_dst->num_bufs =3D n_dst;
+> +	dst_data_addr =3D cookie->qat_sgl_dst_phys_addr;
+> +
+> +check:	/* If error, return directly. If success, jump to one of these la=
+bels */
+> +	if (src_tot_length !=3D dst_tot_length) {
+> +		QAT_LOG(DEBUG,
+> +			"Source length is not equal to the destination length
+> %u, dst no: %u, opaque: %p",
+> +			src_tot_length, dst_tot_length, opaque);
+> +		*error =3D -1;
+> +		return 0;
+> +	}
+> +done:
+> +	req->comn_mid.opaque_data =3D (uintptr_t)opaque;
+> +	req->comn_mid.src_data_addr =3D src_data_addr;
+> +	req->comn_mid.dest_data_addr =3D dst_data_addr;
+> +	req->comn_mid.src_length =3D src_length;
+> +	req->comn_mid.dst_length =3D dst_length;
+> +
+> +	return src_tot_length;
+> +}
+> +
+>  static __rte_always_inline int32_t
+>  qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,
+>  		void *opaque, struct qat_sym_op_cookie *cookie, diff --git
+> a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
+> b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
+> index 24e51a9318..3976d03179 100644
+> --- a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
+> +++ b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
+> @@ -942,16 +942,19 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void
+> *qp_data, uint8_t *drv_ctx,
+>  	for (i =3D 0; i < n; i++) {
+>  		struct qat_sym_op_cookie *cookie =3D
+>  			qp->op_cookies[tail >> tx_queue->trailz];
+> +		int error =3D 0;
+>=20
+>  		req  =3D (struct icp_qat_fw_la_bulk_req *)(
+>  			(uint8_t *)tx_queue->base_addr + tail);
+>  		rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
+>=20
+>  		if (vec->dest_sgl) {
+> -			data_len =3D qat_sym_build_req_set_data(req,
+> -				user_data[i], cookie,
+> -				vec->src_sgl[i].vec, vec->src_sgl[i].num,
+> -				vec->dest_sgl[i].vec, vec->dest_sgl[i].num);
+> +			data_len =3D qat_reqs_mid_set(&error, req, cookie,
+> user_data[i],
+> +					&vec->src_sgl[i], &vec->dest_sgl[i],
+> ofs);
+> +			/* In oop there is no offset, src/dst addresses are
+> moved
+> +			 * to avoid overwriting the dst header
+> +			 */
+> +			ofs.ofs.cipher.head =3D 0;
+>  		} else {
+>  			data_len =3D qat_sym_build_req_set_data(req,
+>  				user_data[i], cookie,
+> @@ -959,7 +962,7 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void
+> *qp_data, uint8_t *drv_ctx,
+>  				vec->src_sgl[i].num, NULL, 0);
+>  		}
+>=20
+> -		if (unlikely(data_len < 0))
+> +		if (unlikely(data_len < 0) || error)
+>  			break;
+>=20
+>  		enqueue_one_aead_job_gen1(ctx, req, &vec->iv[i],
+> --
+> 2.43.0
 
-________________________________
-From: Dooley, Brian <brian.dooley@intel.com>
-Sent: 20 March 2025 14:21
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org <dev@dpdk.org>; gakhil@marvell.com <gakhil@marvell.com>; J=
-i, Kai <kai.ji@intel.com>; Dooley, Brian <brian.dooley@intel.com>
-Subject: [PATCH v1 1/2] maintainers: update for crypto performance test
+Acked-by: Brian Dooley <brian.dooley@intel.com>
 
-Replacing myself as Crypto Perf App maintainer with Kai Ji.
-
-Signed-off-by: Brian Dooley <brian.dooley@intel.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82f6e2f917..cdcea9aa72 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1936,7 +1936,7 @@ F: app/test-compress-perf/
- F: doc/guides/tools/comp_perf.rst
-
- Crypto performance test application
--M: Brian Dooley <brian.dooley@intel.com>
-+M: Kai Ji <kai.ji@intel.com>
- T: git://dpdk.org/next/dpdk-next-crypto
- F: app/test-crypto-perf/
- F: doc/guides/tools/cryptoperf.rst
---
-2.25.1
-
-
---_000_DS0PR11MB7458FE1EF46B36E8F91FE6C781DB2DS0PR11MB7458namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
-t;; font-size: 10pt; color: rgb(0, 0, 0);">
-Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
-t;; font-size: 10pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Dooley, Brian &lt;bri=
-an.dooley@intel.com&gt;<br>
-<b>Sent:</b> 20 March 2025 14:21<br>
-<b>To:</b> Thomas Monjalon &lt;thomas@monjalon.net&gt;<br>
-<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; gakhil@marvell.com &lt;gakhil=
-@marvell.com&gt;; Ji, Kai &lt;kai.ji@intel.com&gt;; Dooley, Brian &lt;brian=
-.dooley@intel.com&gt;<br>
-<b>Subject:</b> [PATCH v1 1/2] maintainers: update for crypto performance t=
-est</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">Replacing myself as Crypto Perf App maintainer wit=
-h Kai Ji.<br>
-<br>
-Signed-off-by: Brian Dooley &lt;brian.dooley@intel.com&gt;<br>
----<br>
-&nbsp;MAINTAINERS | 2 +-<br>
-&nbsp;1 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/MAINTAINERS b/MAINTAINERS<br>
-index 82f6e2f917..cdcea9aa72 100644<br>
---- a/MAINTAINERS<br>
-+++ b/MAINTAINERS<br>
-@@ -1936,7 +1936,7 @@ F: app/test-compress-perf/<br>
-&nbsp;F: doc/guides/tools/comp_perf.rst<br>
-&nbsp;<br>
-&nbsp;Crypto performance test application<br>
--M: Brian Dooley &lt;brian.dooley@intel.com&gt;<br>
-+M: Kai Ji &lt;kai.ji@intel.com&gt;<br>
-&nbsp;T: git://dpdk.org/next/dpdk-next-crypto<br>
-&nbsp;F: app/test-crypto-perf/<br>
-&nbsp;F: doc/guides/tools/cryptoperf.rst<br>
--- <br>
-2.25.1<br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_DS0PR11MB7458FE1EF46B36E8F91FE6C781DB2DS0PR11MB7458namp_--
