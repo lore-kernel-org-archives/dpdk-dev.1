@@ -2,74 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAE2C36000
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 15:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B847C36005
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 17:12:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 641C740B9D;
-	Fri, 21 Mar 2025 16:58:38 +0100 (CET)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7CA6240276
- for <dev@dpdk.org>; Fri, 21 Mar 2025 16:58:36 +0100 (CET)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-225fbdfc17dso36054075ad.3
- for <dev@dpdk.org>; Fri, 21 Mar 2025 08:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1742572715;
- x=1743177515; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=fA9SEzqZ18cBF1gOVVYcB2w1j+3+dwjalmN/+//hupk=;
- b=DVd9YRJJXoelgNokX40tS+rIeLR35NOkEPa7AfvgG5z+ePHVR5s2tAoUGj404OeIx3
- yBKAlNpYHQhNEshqirJuiVc6E1VbUJTULiiHbMWiYbS5zAAzhTkNsQKmr1BIyrcuBKe7
- Ub9GPFatZcraskcm964ybvbIUWRIsDQO7ckHBxYA4CH2RB8BrBqPlPxrQ2PAedvQWX6P
- cd8JFx3MoASv9d+iZp7+5ZAVgXG3690LpbusIQ/LvYynDlihRKZt8e+IXR0lGny7I4+m
- Tgsg+1mdynQCQUiwLqDEcfrq3YvxjnvM2XnAXnA5GhkOwK+BgdISsYQQ2t9hBUqNR6+I
- gj1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1742572715; x=1743177515;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=fA9SEzqZ18cBF1gOVVYcB2w1j+3+dwjalmN/+//hupk=;
- b=D3uouvu7VOJBHCEFT5qqOvgIrVEH/N8jCuH9zfYbwdGylVT4ZAWkLK06pU+iRVuRTo
- LbtBhgVxYWsvR3K7c2olSREw7Itrb4LIas+WKsyBjrSlbSa0/Ds7qVzjyICDZgkkuUUn
- TBOptYTk6u7OodjCS/SdBGdbHQRYNLLZ+Yt/EDsz8V4TK/YL/z5VfmQLA7PbgIRdw/Qf
- be9T3bNabn376DDdMsWC5ZM/kb6lG4xRF07VrJC/txcutIyF0ZVR2qYgGSwoqblTGaPw
- GmFYr+7yxVU3sZrvkgI6u449ZkCbA7QccKEhJe7FwHd5bL6ZFTm8+a53/M8XecGdheuI
- e9UQ==
-X-Gm-Message-State: AOJu0Yy5rYB1oqRMo9OP+579CeJw81TO0/AXHg3TvGfO4bCyTwUM8D15
- AdCTYORrClWdz1/JyVL9Wv8hGGYA4gncMwh1csWZi7LdB7MHlE8QqK4cCwL/Fvg=
-X-Gm-Gg: ASbGnctrAz+wjfxHW6mke/FpA13J0HSBkztYRNfTzuk4MqdEZHO5tMWrQEhrk8X76v4
- /j7OqYd64LRLRuH+aJ7jLmBZiAN76neu0WUlzr++mYqa8Z5SLI7dtpkgI/SIp7+HgrWQ3ykxptX
- nNgPLsPZzndfx8nx36Bm+TzdcPRjfItnVXKWTQJ4LR6L5h+cRRydNdp++HyhWYGIq6DR4PrDAuw
- giqmEgL06qyozfb38IlOfho5gXhG+YgfrarwZz5gAzUESAJc3KQT1e9SR8FORcQErqQCTfy9Vgj
- zCtBLUpkTA6WPIt5J3jjv4+APLR4pMIFOfP+UwCx7NRMyMkqCkbaQHSk4wTV1wm1y4OumWgNQsj
- kzNsB1N4KFhBMPDWWEkbS7A==
-X-Google-Smtp-Source: AGHT+IFYpadxr/gKvIxRxpio2AVOkyfUXxHWoiat4bNvDtUGbpXaqBuN7rbdXWwhbCY2e3rjQ1gYog==
-X-Received: by 2002:a05:6a20:e196:b0:1f5:87ea:2a10 with SMTP id
- adf61e73a8af0-1fe42f08ecfmr6730344637.9.1742572715343; 
- Fri, 21 Mar 2025 08:58:35 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7390618beafsm2087745b3a.161.2025.03.21.08.58.34
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Mar 2025 08:58:35 -0700 (PDT)
-Date: Fri, 21 Mar 2025 08:58:31 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dengdui Huang <huangdengdui@huawei.com>
-Cc: <dev@dpdk.org>, <honest.jiang@foxmail.com>, <fengchengwen@huawei.com>,
- <roretzla@linux.microsoft.com>, <lihuisong@huawei.com>,
- <haijie1@huawei.com>, <liuyonglong@huawei.com>
-Subject: Re: [PATCH 2/2] app/dma-perf: fix infinite loop
-Message-ID: <20250321085831.09215a83@hermes.local>
-In-Reply-To: <20250321040316.104126-3-huangdengdui@huawei.com>
-References: <20250321040316.104126-1-huangdengdui@huawei.com>
- <20250321040316.104126-3-huangdengdui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A8DD640276;
+	Fri, 21 Mar 2025 18:12:23 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D1AE40156;
+ Fri, 21 Mar 2025 18:12:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1742577141; x=1774113141;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=80DkGGlzbB5pgIm8TvjR1OOMr2rLycelPjc0xtr+psI=;
+ b=N3EeFETy6vRhyaHkLgGAjLo87e3C+bct8S3va35VNdb9DFU1UtAC3Zj3
+ xjRcaFi6xFM/1efUYmW9j2+5wEK9pFXv68T1EbFhfQtICXqjMMwgGF3de
+ 7RpqnfHTWNGyzQRGyID91uFpyw6SsgWHXWYb0I0YYJQ7/V0aozpIOgx5a
+ /Zp2um2d14zxEGwjf+eZJhk3s+4t6ifVugtCSHf7BBZK4U0YJr/9r9drX
+ hPLyHgbnxVetRoueez6wa+pUZ8KQOJVVqxZhrCKK1qtSBpO8sj2DmhjV8
+ xM/W7JSho36FCRuIYLfNhpFo29BQO7KEfO0ASomBw1rOJz16vVDhGxLJl w==;
+X-CSE-ConnectionGUID: zaDiUCtfSQqPtcZIj3fcoA==
+X-CSE-MsgGUID: 3Z4tizP4Rj+dUVR7wJJ/TQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="66313566"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; d="scan'208";a="66313566"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Mar 2025 10:12:20 -0700
+X-CSE-ConnectionGUID: +YnL1RdQShiJTXKDUADVng==
+X-CSE-MsgGUID: QeeXPM/jSGG/+vJS1erTEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; d="scan'208";a="154460591"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
+ by fmviesa001.fm.intel.com with ESMTP; 21 Mar 2025 10:12:18 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH] net/ixgbe: fix missing checks for E610 VFs
+Date: Fri, 21 Mar 2025 17:12:11 +0000
+Message-ID: <20250321171211.386594-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.45.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,32 +59,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 21 Mar 2025 12:03:16 +0800
-Dengdui Huang <huangdengdui@huawei.com> wrote:
+A number of places in the ixgbe code check for a virtual function, but
+these checks were missing the identifier for the E610 VF. Add them into
+the conditionals.
 
-> When a core that is not used by the rte is specified in the config
-> for testing, the problem of infinite loop occurs. The root cause
-> is that the program waits for the completion of the test task when
-> the test worker fails to be started on the lcore. This patch fix it.
-> 
-> Fixes: 533d7e7f66f3 ("app/dma-perf: support config per device")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
-> ---
->  app/test-dma-perf/benchmark.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-> index 6d617ea200..351c1c966e 100644
-> --- a/app/test-dma-perf/benchmark.c
-> +++ b/app/test-dma-perf/benchmark.c
-> @@ -751,7 +751,10 @@ mem_copy_benchmark(struct test_configure *cfg)
->  				goto out;
->  		}
->  
-> -		rte_eal_remote_launch(get_work_function(cfg), (void *)(lcores[i]), lcore_id);
-> +		if (rte_eal_remote_launch(get_work_function(cfg), (void *)(lcores[i]), lcore_id)) {
-> +			printf("Error: Fail to start the test on lcore %d\n", lcore_id);
+Fixes: f678f3dea8fd ("net/ixgbe: fix missing VF PCI ID")
+Cc: stable@dpdk.org
 
-Convention is to log errors on stderr and lcore_id is unsigned not signed value.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index 3b7a6a6f0e..0c8a9ec763 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -2767,6 +2767,7 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	 * Modification to set VFTDT for virtual function if vf is detected
+ 	 */
+ 	if (hw->mac.type == ixgbe_mac_82599_vf ||
++	    hw->mac.type == ixgbe_mac_E610_vf ||
+ 	    hw->mac.type == ixgbe_mac_X540_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x_vf ||
+@@ -2987,6 +2988,7 @@ ixgbe_is_vf(struct rte_eth_dev *dev)
+ 	case ixgbe_mac_X550_vf:
+ 	case ixgbe_mac_X550EM_x_vf:
+ 	case ixgbe_mac_X550EM_a_vf:
++	case ixgbe_mac_E610_vf:
+ 		return 1;
+ 	default:
+ 		return 0;
+@@ -3153,6 +3155,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	 * Modified to setup VFRDT for Virtual Function
+ 	 */
+ 	if (hw->mac.type == ixgbe_mac_82599_vf ||
++	    hw->mac.type == ixgbe_mac_E610_vf ||
+ 	    hw->mac.type == ixgbe_mac_X540_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x_vf ||
+@@ -5835,6 +5838,7 @@ ixgbevf_dev_rx_init(struct rte_eth_dev *dev)
+ 	case ixgbe_mac_X550_vf:
+ 	case ixgbe_mac_X550EM_x_vf:
+ 	case ixgbe_mac_X550EM_a_vf:
++	case ixgbe_mac_E610_vf:
+ 		switch (dev->data->dev_conf.rxmode.mq_mode) {
+ 		case RTE_ETH_MQ_RX_RSS:
+ 		case RTE_ETH_MQ_RX_DCB_RSS:
+-- 
+2.45.2
+
