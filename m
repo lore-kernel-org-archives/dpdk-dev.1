@@ -2,42 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A78FC28B30
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 03:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123A9C35FF3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Mar 2025 04:03:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B8BD940276;
-	Fri, 21 Mar 2025 04:23:28 +0100 (CET)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
- by mails.dpdk.org (Postfix) with ESMTP id AECE640268
- for <dev@dpdk.org>; Fri, 21 Mar 2025 04:23:26 +0100 (CET)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZJnpM150kz8QrkZ;
- Fri, 21 Mar 2025 11:23:23 +0800 (CST)
-Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
- by mse-fl1.zte.com.cn with SMTP id 52L3N8ki024497;
- Fri, 21 Mar 2025 11:23:08 +0800 (+08)
- (envelope-from chen.bingbin@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Fri, 21 Mar 2025 11:23:09 +0800
-X-Zmail-TransId: 3e8167dcdb97008-083fd
-From: Bingbin Chen <chen.bingbin@zte.com.cn>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 14/14] net/zxdh: fix debugging errors
-Date: Fri, 21 Mar 2025 11:07:57 +0800
-Message-ID: <20250321030757.2004831-1-chen.bingbin@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250319085808.1912523-15-chen.bingbin@zte.com.cn>
-References: <20250319085808.1912523-15-chen.bingbin@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 1F7B340276;
+	Fri, 21 Mar 2025 05:03:24 +0100 (CET)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 26C7140268
+ for <dev@dpdk.org>; Fri, 21 Mar 2025 05:03:22 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZJph83Rbtz13Kp6;
+ Fri, 21 Mar 2025 12:03:04 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id 68EB61800E4;
+ Fri, 21 Mar 2025 12:03:20 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 21 Mar 2025 12:03:19 +0800
+From: Dengdui Huang <huangdengdui@huawei.com>
+To: <dev@dpdk.org>
+CC: <honest.jiang@foxmail.com>, <fengchengwen@huawei.com>,
+ <roretzla@linux.microsoft.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>, 
+ <liuyonglong@huawei.com>, <stephen@networkplumber.org>
+Subject: [PATCH 1/2] eal: fix wake a incorrect lcore
+Date: Fri, 21 Mar 2025 12:03:15 +0800
+Message-ID: <20250321040316.104126-2-huangdengdui@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250321040316.104126-1-huangdengdui@huawei.com>
+References: <20250321040316.104126-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl1.zte.com.cn 52L3N8ki024497
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67DCDBAB.000/4ZJnpM150kz8QrkZ
+Content-Type: text/plain
+X-Originating-IP: [10.50.165.33]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,139 +50,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+If the core is not used in the rte, we can't wake it up to work.
+The worker_id may come from user input. So it is necessary to
+verify it.
 
+Fixes: a95d70547c57 ("eal: factorize lcore main loop")
+Cc: stable@dpdk.org
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+---
+ lib/eal/unix/eal_unix_thread.c | 3 +++
+ lib/eal/windows/eal_thread.c   | 3 +++
+ 2 files changed, 6 insertions(+)
 
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-Pj4gICtzdHJ1Y3QgenhkaF9pZmNfaHdfbnBfc3RhdHNfYml0cyB7DQo+PiAgKyAgICB1aW50OF90
-IHJ4X3VuaWNhc3RfcGt0c1sweDQwXTsNCj4+ICArICAgIHVpbnQ4X3QgdHhfdW5pY2FzdF9wa3Rz
-WzB4NDBdOw0KPj4gICsgICAgdWludDhfdCByeF91bmljYXN0X2J5dGVzWzB4NDBdOw0KPj4gICsg
-ICAgdWludDhfdCB0eF91bmljYXN0X2J5dGVzWzB4NDBdOw0KPj4gICsgICAgdWludDhfdCByeF9t
-dWx0aWNhc3RfcGt0c1sweDQwXTsNCj4+ICArICAgIHVpbnQ4X3QgdHhfbXVsdGljYXN0X3BrdHNb
-MHg0MF07DQo+PiAgKyAgICB1aW50OF90IHJ4X211bHRpY2FzdF9ieXRlc1sweDQwXTsNCj4+ICAr
-ICAgIHVpbnQ4X3QgdHhfbXVsdGljYXN0X2J5dGVzWzB4NDBdOw0KPj4gICsgICAgdWludDhfdCBy
-eF9icm9hZGNhc3RfcGt0c1sweDQwXTsNCj4+ICArICAgIHVpbnQ4X3QgdHhfYnJvYWRjYXN0X3Br
-dHNbMHg0MF07DQo+PiAgKyAgICB1aW50OF90IHJ4X2Jyb2FkY2FzdF9ieXRlc1sweDQwXTsNCj4+
-ICArICAgIHVpbnQ4X3QgdHhfYnJvYWRjYXN0X2J5dGVzWzB4NDBdOw0KPj4gICsgICAgdWludDhf
-dCByeF9tdHVfZHJvcF9wa3RzWzB4NDBdOw0KPj4gICsgICAgdWludDhfdCB0eF9tdHVfZHJvcF9w
-a3RzWzB4NDBdOw0KPj4gICsgICAgdWludDhfdCByeF9tdHVfZHJvcF9ieXRlc1sweDQwXTsNCj4+
-ICArICAgIHVpbnQ4X3QgdHhfbXR1X2Ryb3BfYnl0ZXNbMHg0MF07DQo+PiAgKyAgICB1aW50OF90
-IHJ4X210cl9kcm9wX3BrdHNbMHg0MF07DQo+PiAgKyAgICB1aW50OF90IHR4X210cl9kcm9wX3Br
-dHNbMHg0MF07DQo+PiAgKyAgICB1aW50OF90IHJ4X210cl9kcm9wX2J5dGVzWzB4NDBdOw0KPj4g
-ICsgICAgdWludDhfdCB0eF9tdHJfZHJvcF9ieXRlc1sweDQwXTsNCj4+ICArICAgIHVpbnQ4X3Qg
-dHhfc3N2cGNfcGt0c1sweDQwXTsNCj4+ICArfTsNCg0KPiBTZWVtcyBsaWtlIDB4NDAgKGllIDY0
-KSBpcyBhIG1hZ2ljIGNvbnN0YW50IGhlcmUuIElzIGl0IGJhc2VkDQo+IG9uIG51bWJlciBvZiBW
-RidzIG9yIG90aGVyIHZhbHVlLiBTaG91bGQgYmUgZGVmaW5lZCBhcyBjb25zdGFudA0KPiByYXRo
-ZXIgdGhhbiBvcGVuIGNvZGVkLg0KDQpIaSBtYWludGFpbmVyLA0KICAgIGl0J3Mgbm90IGJhc2Vk
-IG9uIG51bWJlciBvZiBWRidzIG9yIG90aGVyIHZhbHVlLiBpdCBpcyBqdXN0IGEgdWludDY0X3Qg
-bnVtYmVyLg0KICAgIGFuZCB0aGUgbnVtYmVyIHdpbGwgbm90IGJlIG1vZGlmaWVkIGluIHRoZSBm
-dXR1cmUuDQoNCiAgICBEdWUgdG8gdGhlIGZhY3QgdGhhdCBvdXIgUEYgYW5kIFZGIHVzZSBtZXNz
-YWdlIHJldHJpZXZhbCBzdGF0aXN0aWNzLA0KICAgIHdoZW4gZGVmaW5pbmcgdGhlIHJldHVybiBt
-ZXNzYWdlIHJlc3VsdCwgdGhlIGZpcm13YXJlIGRpZCBub3QgYWxpZ24gdGhlIGhlYWRlciBtZXNz
-YWdlIGFjY29yZGluZyB0byA0IGJ5dGVzLg0KICAgIFRoZXJlZm9yZSwgd2UgdXNlZCBhIGJ5dGUg
-c3RyZWFtIGFwcHJvYWNoIHRvIHJldHJpZXZlIHRoZSBtZXNzYWdlIGJ5IGJ5dGUgaGVyZS4NCg0K
-ICAgIGhlcmUgaXMgd2UgdXNlZCB0byBjb252ZXJ0IHN0cnVjdCB6eGRoX2lmY19od19ucF9zdGF0
-c19iaXRzIHRvIGJ5dGUgc3RyZWFtLg0KDQogICAgI2RlZmluZSBaWERIX1NUX1NaX0JZVEVTKHR5
-cCkgKHNpemVvZihzdHJ1Y3QgenhkaF9pZmNfIyN0eXAjI19iaXRzKSAvIDgpDQoNCiAgICAjZGVm
-aW5lIFpYREhfR0VUKHR5cCwgcCwgZmxkKSAoeyBcDQoJQlVJTERfQlVHX09OKF9fenhkaF9iaXRf
-c3oodHlwLCBmbGQpICUgOCk7IFwNCgl1aW50MzJfdCBmbGRfc3ogPSBfX3p4ZGhfYml0X3N6KHR5
-cCwgZmxkKSAvIDg7IFwNCgl1aW50OF90ICphZGRyID0gWlhESF9BRERSX09GKHR5cCwgcCwgZmxk
-KTsgXA0KCXp4ZGhfZ2V0X3ZhbHVlKGZsZF9zeiwgYWRkcik7IFwNCiAgICB9KQ0KDQpUaGFua3Mu
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-Jmd0OyZndDsmbmJzcDsmbmJzcDsrc3RydWN0Jm5ic3A7enhkaF9pZmNfaHdfbnBfc3RhdHNfYml0
-cyZuYnNwO3s8YnIgLz4mZ3Q7Jmd0OyZuYnNwOyZuYnNwOysmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDt1aW50OF90Jm5ic3A7cnhfdW5pY2FzdF9wa3RzWzB4NDBdOzxiciAvPiZndDsmZ3Q7Jm5ic3A7
-Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3QmbmJzcDt0eF91bmljYXN0X3Br
-dHNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7dWludDhfdCZuYnNwO3J4X3VuaWNhc3RfYnl0ZXNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJz
-cDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZuYnNwO3R4X3VuaWNhc3Rf
-Ynl0ZXNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7dWludDhfdCZuYnNwO3J4X211bHRpY2FzdF9wa3RzWzB4NDBdOzxiciAvPiZndDsmZ3Q7
-Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3QmbmJzcDt0eF9tdWx0
-aWNhc3RfcGt0c1sweDQwXTs8YnIgLz4mZ3Q7Jmd0OyZuYnNwOyZuYnNwOysmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDt1aW50OF90Jm5ic3A7cnhfbXVsdGljYXN0X2J5dGVzWzB4NDBdOzxiciAvPiZn
-dDsmZ3Q7Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3QmbmJzcDt0
-eF9tdWx0aWNhc3RfYnl0ZXNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsmbmJzcDsrJm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZuYnNwO3J4X2Jyb2FkY2FzdF9wa3RzWzB4NDBdOzxi
-ciAvPiZndDsmZ3Q7Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3Qm
-bmJzcDt0eF9icm9hZGNhc3RfcGt0c1sweDQwXTs8YnIgLz4mZ3Q7Jmd0OyZuYnNwOyZuYnNwOysm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt1aW50OF90Jm5ic3A7cnhfYnJvYWRjYXN0X2J5dGVzWzB4
-NDBdOzxiciAvPiZndDsmZ3Q7Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3Vp
-bnQ4X3QmbmJzcDt0eF9icm9hZGNhc3RfYnl0ZXNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsm
-bmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZuYnNwO3J4X210dV9kcm9wX3Br
-dHNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7dWludDhfdCZuYnNwO3R4X210dV9kcm9wX3BrdHNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJz
-cDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZuYnNwO3J4X210dV9kcm9w
-X2J5dGVzWzB4NDBdOzxiciAvPiZndDsmZ3Q7Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwO3VpbnQ4X3QmbmJzcDt0eF9tdHVfZHJvcF9ieXRlc1sweDQwXTs8YnIgLz4mZ3Q7Jmd0
-OyZuYnNwOyZuYnNwOysmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt1aW50OF90Jm5ic3A7cnhfbXRy
-X2Ryb3BfcGt0c1sweDQwXTs8YnIgLz4mZ3Q7Jmd0OyZuYnNwOyZuYnNwOysmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDt1aW50OF90Jm5ic3A7dHhfbXRyX2Ryb3BfcGt0c1sweDQwXTs8YnIgLz4mZ3Q7
-Jmd0OyZuYnNwOyZuYnNwOysmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt1aW50OF90Jm5ic3A7cnhf
-bXRyX2Ryb3BfYnl0ZXNbMHg0MF07PGJyIC8+Jmd0OyZndDsmbmJzcDsmbmJzcDsrJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZuYnNwO3R4X210cl9kcm9wX2J5dGVzWzB4NDBdOzxiciAv
-PiZndDsmZ3Q7Jm5ic3A7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3QmbmJz
-cDt0eF9zc3ZwY19wa3RzWzB4NDBdOzxiciAvPiZndDsmZ3Q7Jm5ic3A7Jm5ic3A7K307PGJyIC8+
-DTxiciAvPiZndDsmbmJzcDtTZWVtcyZuYnNwO2xpa2UmbmJzcDsweDQwJm5ic3A7KGllJm5ic3A7
-NjQpJm5ic3A7aXMmbmJzcDthJm5ic3A7bWFnaWMmbmJzcDtjb25zdGFudCZuYnNwO2hlcmUuJm5i
-c3A7SXMmbmJzcDtpdCZuYnNwO2Jhc2VkPGJyIC8+Jmd0OyZuYnNwO29uJm5ic3A7bnVtYmVyJm5i
-c3A7b2YmbmJzcDtWRiZhcG9zO3MmbmJzcDtvciZuYnNwO290aGVyJm5ic3A7dmFsdWUuJm5ic3A7
-U2hvdWxkJm5ic3A7YmUmbmJzcDtkZWZpbmVkJm5ic3A7YXMmbmJzcDtjb25zdGFudDxiciAvPiZn
-dDsmbmJzcDtyYXRoZXImbmJzcDt0aGFuJm5ic3A7b3BlbiZuYnNwO2NvZGVkLjxiciAvPg08YnIg
-Lz5IaSZuYnNwO21haW50YWluZXIsPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aXQmYXBv
-cztzJm5ic3A7bm90Jm5ic3A7YmFzZWQmbmJzcDtvbiZuYnNwO251bWJlciZuYnNwO29mJm5ic3A7
-VkYmYXBvcztzJm5ic3A7b3ImbmJzcDtvdGhlciZuYnNwO3ZhbHVlLiZuYnNwO2l0Jm5ic3A7aXMm
-bmJzcDtqdXN0Jm5ic3A7YSZuYnNwO3VpbnQ2NF90Jm5ic3A7bnVtYmVyLjxiciAvPiZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwO2FuZCZuYnNwO3RoZSZuYnNwO251bWJlciZuYnNwO3dpbGwmbmJzcDtu
-b3QmbmJzcDtiZSZuYnNwO21vZGlmaWVkJm5ic3A7aW4mbmJzcDt0aGUmbmJzcDtmdXR1cmUuPGJy
-IC8+DTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO0R1ZSZuYnNwO3RvJm5ic3A7dGhlJm5i
-c3A7ZmFjdCZuYnNwO3RoYXQmbmJzcDtvdXImbmJzcDtQRiZuYnNwO2FuZCZuYnNwO1ZGJm5ic3A7
-dXNlJm5ic3A7bWVzc2FnZSZuYnNwO3JldHJpZXZhbCZuYnNwO3N0YXRpc3RpY3MsPGJyIC8+Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7d2hlbiZuYnNwO2RlZmluaW5nJm5ic3A7dGhlJm5ic3A7cmV0
-dXJuJm5ic3A7bWVzc2FnZSZuYnNwO3Jlc3VsdCwmbmJzcDt0aGUmbmJzcDtmaXJtd2FyZSZuYnNw
-O2RpZCZuYnNwO25vdCZuYnNwO2FsaWduJm5ic3A7dGhlJm5ic3A7aGVhZGVyJm5ic3A7bWVzc2Fn
-ZSZuYnNwO2FjY29yZGluZyZuYnNwO3RvJm5ic3A7NCZuYnNwO2J5dGVzLjxiciAvPiZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwO1RoZXJlZm9yZSwmbmJzcDt3ZSZuYnNwO3VzZWQmbmJzcDthJm5ic3A7
-Ynl0ZSZuYnNwO3N0cmVhbSZuYnNwO2FwcHJvYWNoJm5ic3A7dG8mbmJzcDtyZXRyaWV2ZSZuYnNw
-O3RoZSZuYnNwO21lc3NhZ2UmbmJzcDtieSZuYnNwO2J5dGUmbmJzcDtoZXJlLjxiciAvPg08YnIg
-Lz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtoZXJlJm5ic3A7aXMmbmJzcDt3ZSZuYnNwO3VzZWQm
-bmJzcDt0byZuYnNwO2NvbnZlcnQmbmJzcDtzdHJ1Y3QmbmJzcDt6eGRoX2lmY19od19ucF9zdGF0
-c19iaXRzJm5ic3A7dG8mbmJzcDtieXRlJm5ic3A7c3RyZWFtLjxiciAvPg08YnIgLz4mbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsjZGVmaW5lJm5ic3A7WlhESF9TVF9TWl9CWVRFUyh0eXApJm5ic3A7
-KHNpemVvZihzdHJ1Y3QmbmJzcDt6eGRoX2lmY18jI3R5cCMjX2JpdHMpJm5ic3A7LyZuYnNwOzgp
-PGJyIC8+DTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyNkZWZpbmUmbmJzcDtaWERIX0dF
-VCh0eXAsJm5ic3A7cCwmbmJzcDtmbGQpJm5ic3A7KHsmbmJzcDtcPGJyIC8+Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7QlVJTERfQlVHX09OKF9fenhkaF9iaXRfc3oodHlwLCZuYnNwO2ZsZCkmbmJz
-cDslJm5ic3A7OCk7Jm5ic3A7XDxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQzMl90
-Jm5ic3A7ZmxkX3N6Jm5ic3A7PSZuYnNwO19fenhkaF9iaXRfc3oodHlwLCZuYnNwO2ZsZCkmbmJz
-cDsvJm5ic3A7ODsmbmJzcDtcPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7dWludDhfdCZu
-YnNwOyphZGRyJm5ic3A7PSZuYnNwO1pYREhfQUREUl9PRih0eXAsJm5ic3A7cCwmbmJzcDtmbGQp
-OyZuYnNwO1w8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt6eGRoX2dldF92YWx1ZShmbGRf
-c3osJm5ic3A7YWRkcik7Jm5ic3A7XDxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO30pPGJy
-IC8+DTxiciAvPlRoYW5rcy4=
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+diff --git a/lib/eal/unix/eal_unix_thread.c b/lib/eal/unix/eal_unix_thread.c
+index ef6cbff0ee..103571cabf 100644
+--- a/lib/eal/unix/eal_unix_thread.c
++++ b/lib/eal/unix/eal_unix_thread.c
+@@ -17,6 +17,9 @@ eal_thread_wake_worker(unsigned int worker_id)
+ 	char c = 0;
+ 	int n;
+ 
++	if (m2w == 0 || w2m == 0)
++		return -EINVAL;
++
+ 	do {
+ 		n = write(m2w, &c, 1);
+ 	} while (n == 0 || (n < 0 && errno == EINTR));
+diff --git a/lib/eal/windows/eal_thread.c b/lib/eal/windows/eal_thread.c
+index 9e3df200b9..82bb974868 100644
+--- a/lib/eal/windows/eal_thread.c
++++ b/lib/eal/windows/eal_thread.c
+@@ -24,6 +24,9 @@ eal_thread_wake_worker(unsigned int worker_id)
+ 	char c = 0;
+ 	int n;
+ 
++	if (m2w == 0 || w2m == 0)
++		return -EINVAL;
++
+ 	do {
+ 		n = _write(m2w, &c, 1);
+ 	} while (n == 0 || (n < 0 && errno == EINTR));
+-- 
+2.33.0
 
