@@ -2,83 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7A5C28B30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Mar 2025 09:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B94BC28B30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Mar 2025 10:13:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B48F8402CB;
-	Sun, 23 Mar 2025 10:35:05 +0100 (CET)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id BB38E4028F;
- Sun, 23 Mar 2025 10:35:02 +0100 (CET)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal
- [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 04C6E11400EF;
- Sun, 23 Mar 2025 05:35:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Sun, 23 Mar 2025 05:35:02 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 3FCB9402CB;
+	Sun, 23 Mar 2025 11:13:09 +0100 (CET)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DC974028F;
+ Sun, 23 Mar 2025 11:13:05 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal
+ [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id E4A611140083;
+ Sun, 23 Mar 2025 06:13:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Sun, 23 Mar 2025 06:13:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1742722501;
- x=1742808901; bh=kZv9uR3rn7oK/TFDlDRXgDgMASRXE/B0nY/evc6eKPg=; b=
- WRs8i63S0uxLMavQj40d9Isc/uAM9VgBZ0exhcaPhFe67aCdt3BXjmmb2j5GBVzw
- HQhGHfgGhwfTmdt5WvY0Ixyexa9eA3eJYcfJVgcdS0hds/BOlno6FLyqMQqRVVcz
- 0UtO4IK7zBOSFWIYU50EZ7A+9NeiRZDRKpBXOaYfy9hmvHhNpoPC8L/t2ToV+FCo
- T4u2q4hpDXVrNuwc3m+gvVTIYrTK60xoC/jk7rQQv8oRvS4QhhiZST6F4eXGvMwb
- 83zPlr8G1Fqx89VSNz1HIl4rYxQnbOp2co3Nw9nseYLoO4Ybzg8KvgILVVHntFWP
- LsMaX98nqLPYPyQdMjLifg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1742724784;
+ x=1742811184; bh=g4zOC/3L+GeT1nFSrIqdm2ptvWJ1P2HtrMDjyN2MUWY=; b=
+ mM0Ex2tQTmk/MoibgiCaoYqGaDKwiteLvv/yxZbb0GyDC3pXkTYrK3gYqAyOA3kE
+ GYNRz7BGl3XOTxI+xGeRDYAmS6WV+3BO+jO/+CRnxL8i6ydYF46CDRftvilfCqpb
+ JXFXpF8HfFkg6DreJiYX8zXWSXy+27ztdwO/J9IdEDlSQowuKS7BQVhnv6LzyH55
+ cqI0573ckR+LnhffQKlwcIQizoSHCNXMXkqMgeWUGilXUg6edpm9Morxg6x7hHUW
+ 7SwENFycNJ9B/jqnbxhcYwXIsSg4SUjOT234Ghfq/UkRRl3gvKtq43GOUBB8mWKj
+ I+pq4rJ+k4B9IMm26c27VA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742722501; x=
- 1742808901; bh=kZv9uR3rn7oK/TFDlDRXgDgMASRXE/B0nY/evc6eKPg=; b=W
- w0WA32m/O649evrD/MtAf087c5zrTKDTdKKWznhUkJhI1alT2RZi/odLNZzjrfLG
- 5Z2dGlIbPWz68wwDVkbf3O8WpO4yuLDMUbjeAnhwgLLChqUmb2i5j8af2lmQ/hlv
- GoVZ3cRhB38YBjWiR2Nkuhl3nT5xm6nF2przb8+sXWFAbShF2s757zlLA8d2PNuk
- XJLF3M0EpqLkZv/BIqVOvJrPSTvdpVPc/M23SBZeNtoS8yCmYjULP0hyAocKRsS+
- RQPjCp2AEks/SdvpApEM1T/uZj86r18MoAdanJrqt7rdDwswqBtsk8PYluo5n3rv
- Oek+rQPujCF1gFTvQRZGw==
-X-ME-Sender: <xms:xdXfZ8lTsl3GO0BoiVHI7vX1_p-EqpELzgr9WXvr9FQL2xqM2D7SLQ>
- <xme:xdXfZ71edu9v1djnZcQH6Tg-hsCCMqlHzsq8A83-on6awXKLFMOWYUPh08_PGLkod
- OXI6J_1mWcknL0ryg>
-X-ME-Received: <xmr:xdXfZ6p8IIJ0k9KNR2IjX-gXjn5DPLl16p3dyfssNZY4T71YNLAynVYAd8dPhTnhrk9ExJ79mCE_FgU7R7RB4Yk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheeihedvucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742724784; x=
+ 1742811184; bh=g4zOC/3L+GeT1nFSrIqdm2ptvWJ1P2HtrMDjyN2MUWY=; b=e
+ M83E/vyY+pjtzAxQrU3vqFbgONVvgrdnLLBmOLKNpswjjW6IJWUmHiNNoYC0azy4
+ KrLJIGnSCCF7xnhmb43eGp52vDxPpbL+U4Kf9ch+BQRBYeRsMbSuGU/oKVEDeYbj
+ 56nxiuPx0fKCPv1Rm6PAxIxtJAAAZ2II1EP+5UcF7VNgNAjsjZo7xh83ZxmugfY6
+ 0jdw4hpD5riZsiA8Z0MIdXRqgQ2dZI/20YTNWn6Arn1AmER6qr9WTvlC9oavowBq
+ r3xXxtOwztYS4kfY2Df+jyeoDHQ7+WiT/JwRKaWGDcGGB7lI+kfWp7PRcLz2huzS
+ tpkbTeIeJajlkJqAJmeLw==
+X-ME-Sender: <xms:sN7fZ0kMmVamP8RgYLMjCXgWd3AoSvOqVm7yIUsHzwv4NL4OMFJtYw>
+ <xme:sN7fZz3tdUk9u6fodfx5wLDRguiCuoL7-b8WPG9C0eOxjRofhRTOM8KtEInarkKO-
+ crOPmskmt6XZvoz4g>
+X-ME-Received: <xmr:sN7fZyop98sKYEb-naMnhq7rdoh54kQjalkio9S8MAqzNaFLu3zmqR29HpLWaOXrAVDMstZdVlpm0olbdRMGQso>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheeiieduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
- gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddt
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
  jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
- hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdej
- vedtheevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtne
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
+ geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
  pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrh
  hutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvghv
- seguphgukhdrohhrghdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinh
- htvghlrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphht
- thhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:xdXfZ4k8cTVf6MLIn3H_NLNs1rRTS8OfiG6Ao0MZCKLc-4lIeXgKEQ>
- <xmx:xdXfZ62gKVasDIDYiQFlKGbbxKV2qtCYonX3U_VI8xQHKkBBd7JHYA>
- <xmx:xdXfZ_tzd7wSeYcHREdS7PPOHPrMfLCZy-i3FZYfEXhHH2L_4T74dg>
- <xmx:xdXfZ2V1EZnMa6W8hGN5aYVkEVNBzvLfI0r6Tjx5vjFjlNwNgAsFUw>
- <xmx:xdXfZ29Xa2tmQVfm6LGD_KSOKc8YxhWVVHH-QXIxAKYQB_BTYRcrCUhh>
+ seguphgukhdrohhrghdprhgtphhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhrtg
+ hpthhtoheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlhdrtghomhdprhgtphht
+ thhopehvlhgrughimhhirhdrmhgvughvvggukhhinhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:sN7fZwmv04qwCpW1y5C18JP1sE7dn_inXVsl_bh6ks2CYGpoLaEo7A>
+ <xmx:sN7fZy1h87FPjGkGKZZt09aOrzFSqBnp4lYvzgor0Ynz4XrmT9VhYA>
+ <xmx:sN7fZ3tqUYrMUYphvDPJSuML7hk6fs689W5SB_ttUBfYTIx8fc7TWQ>
+ <xmx:sN7fZ-VpVlCtKa2ZVDA67j1WkC_qxsnisoOhfnZYgVuustfT7bCDlA>
+ <xmx:sN7fZ-9BS8zzd3O_9YOBcmLYwn3WyahFfWfevomAYXfwNFL6jCwjJ32H>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Mar 2025 05:35:00 -0400 (EDT)
+ 23 Mar 2025 06:12:59 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
- stable@dpdk.org, David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v2] eal: fix undetected NUMA nodes
-Date: Sun, 23 Mar 2025 10:34:57 +0100
-Message-ID: <25090855.EfDdHjke4D@thomas>
-In-Reply-To: <CAJFAV8xA-HK63XxSEYNZBTeghOUgtEEKTe=iBE4syCF_vsoKxQ@mail.gmail.com>
-References: <20250305134720.907347-1-bruce.richardson@intel.com>
- <20250305162458.1059282-1-bruce.richardson@intel.com>
- <CAJFAV8xA-HK63XxSEYNZBTeghOUgtEEKTe=iBE4syCF_vsoKxQ@mail.gmail.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
+ "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH] net/ixgbe: fix missing checks for E610 VFs
+Date: Sun, 23 Mar 2025 11:12:56 +0100
+Message-ID: <6322230.kQq0lBPeGt@thomas>
+In-Reply-To: <a8d5bb3e-4a16-415f-8fda-6251d5101ec4@intel.com>
+References: <20250321171211.386594-1-bruce.richardson@intel.com>
+ <a8d5bb3e-4a16-415f-8fda-6251d5101ec4@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -93,30 +92,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/03/2025 17:31, David Marchand:
-> On Wed, Mar 5, 2025 at 5:25=E2=80=AFPM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
+21/03/2025 18:15, Medvedkin, Vladimir:
+> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+> 
+> On 21/03/2025 17:12, Bruce Richardson wrote:
+> > A number of places in the ixgbe code check for a virtual function, but
+> > these checks were missing the identifier for the E610 VF. Add them into
+> > the conditionals.
 > >
-> > In cases where the number of cores on a given socket is greater than
-> > RTE_MAX_LCORES, then EAL will be unaware of all the sockets/numa nodes
-> > on a system. Fix this limitation by having the EAL probe the NUMA node
-> > for cores it isn't going to use, and recording that for completeness.
-> >
-> > This is necessary as memory is tracked per node, and with the --lcores
-> > parameters our app lcores may be on different sockets than the lcore ids
-> > may imply. For example, lcore 0 is on socket zero, but if app is run
-> > with --lcores=3D0@64, then DPDK lcore 0 may be on socket one, so DPDK
-> > needs to be aware of that socket.
-> >
-> > Fixes: 952b20777255 ("eal: provide API for querying valid socket ids")
+> > Fixes: f678f3dea8fd ("net/ixgbe: fix missing VF PCI ID")
 > > Cc: stable@dpdk.org
 > >
 > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
->=20
-> On the principle, the fix lgtm.
-
-It is very late in the release cycle, but we have discussed it
-and decided to merge this fix in 25.03.
 
 Applied, thanks.
 
