@@ -2,82 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CBDC28B30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Mar 2025 12:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB90C28B30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Mar 2025 13:14:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF1C04064A;
-	Sun, 23 Mar 2025 13:35:36 +0100 (CET)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 1879C40277
- for <dev@dpdk.org>; Sun, 23 Mar 2025 13:35:35 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal
- [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 5130B11400D9;
- Sun, 23 Mar 2025 08:35:34 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Sun, 23 Mar 2025 08:35:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1742733334;
- x=1742819734; bh=xmdnJdj298Zkr0z9frNvUN9vGiG02VSz45Sf1Lu5yGg=; b=
- rR45defnSa0bcRYkVU+11Ilxgt9l+ocGvv07LyCsjaBOeXWpBJ1xkRDRnRFMOZH0
- 7SsHOnNxwMMGwsZPEh2xXzexvIxIKroz/tjST6yBJb9e5u9k2lAufGcMFY9QyJOH
- 0oDq4ecagcxYgqZHmF9B2BBMor1KPPDt9AKkXCxZimLJ0x4ZTRwhY3GmczH3g/8X
- fYcuUvsDR2KF6KjCrc4swydaW5GsPXEJ04dh/kGgSdqq6lv4bD9QjQD3i520il+f
- CkxmjycYUmALVDfCKYq1NC9R+WcB+yG64Xad3xu+Pps8rvuxuVkm5VnQK6m4F9s5
- dQWrf5Urqb5XdVYicRlEFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742733334; x=
- 1742819734; bh=xmdnJdj298Zkr0z9frNvUN9vGiG02VSz45Sf1Lu5yGg=; b=q
- XlWd0wyJ9LXr7iNGRIjDEvWPOkP8yJ3GghdWoG9tpxamlhcR3+f+LzrSMY0/73A/
- N/bimAz+4yXLJqPVDrRJNpUuja09yE5RRMR6mIUbF08torIRtcdATsN1cW0yatxj
- qta9Xpvjor/IYJXU8HRGbMfqZzwIX3f664HLf9cPJfEucRvWYL67+jsPS1naFcSF
- UddiWIQNYUDmvpNJGscW7+pdjBoX4qYeuTLXR98EIl6R/TtfKaVK3HD/PMPIjxxF
- HdWzhof4dO5bnv9fUEhNY+lyKP2iG3A4U32DLz+kK3MGN6vrQpylJyG4ILzRhcv3
- DSATlD/D9LdVW2B1jjUIg==
-X-ME-Sender: <xms:FQDgZ7K2ur4Ts7aF4LuXq31_i-BLEO1GfqsaZ-4TQFGkoTu3In8a8g>
- <xme:FQDgZ_LRsQWXDpN7BqTTJ7aTpuNQWjrfdLXt2GChhomj8NPINWXnbkYk6eslxoFhf
- 3lAJGHaz753pHO8sA>
-X-ME-Received: <xmr:FQDgZzsozo2Z7esC0AzKME9z4hvbko12rF2l5op07V8mZNt4axe9sfYilOYHcpECbHElTr6-0NU9EpA1LYUB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheeikeelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
- pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
- evufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhj
- rghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvg
- hrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeugfefkeej
- necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhoh
- hmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehs
- mhhtphhouhhtpdhrtghpthhtohephhgrihhlihhngidrgihusehinhhtvghlrdgtohhmpd
- hrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhi
- tghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtoheprhgrjhgvshhhrdhtrd
- hpuhhtthgrshifrghmhiesihhnthgvlhdrtghomhdprhgtphhtthhopehjohhhnhdrmhgt
- nhgrmhgrrhgrsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:FgDgZ0aPMx4b5PmJeukclmvZscj9lIEWo5aJi8Dv1d6KMrb4VeqI7g>
- <xmx:FgDgZyapeDM5xOJqydmzMHhX7FjX0Ce8HNsQDi0g45G1oj8C93rLIw>
- <xmx:FgDgZ4DFRrZUHLNmSprUUeNBXLjh3J7oHH2vuyv6iHa4JcvRzrHNQg>
- <xmx:FgDgZwapMLZN66ftVnRW2vLO7Ay7792hkZohmJAQTbkhjBFZtT-2Ig>
- <xmx:FgDgZ5y9Lk2TrlVL9HIN1wBA6PvKuxPaVM-T56UpL1LlrBRlMgD6V1SX>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Mar 2025 08:35:32 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: hailinx <hailinx.xu@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, rajesh.t.puttaswamy@intel.com,
- john.mcnamara@intel.com
-Subject: Re: [PATCH v1] net/ice: updated latest recommended matching list
-Date: Sun, 23 Mar 2025 13:35:28 +0100
-Message-ID: <8488315.MhkbZ0Pkbq@thomas>
-In-Reply-To: <20250321003622.988446-1-hailinx.xu@intel.com>
-References: <20250321003622.988446-1-hailinx.xu@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 53F334064A;
+	Sun, 23 Mar 2025 14:14:50 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 28B6D40277
+ for <dev@dpdk.org>; Sun, 23 Mar 2025 14:14:49 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E1FA0204FE;
+ Sun, 23 Mar 2025 14:14:48 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] app/testpmd: fix VLAN header parsing
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sun, 23 Mar 2025 14:14:47 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB3D@smartserver.smartshare.dk>
+In-Reply-To: <20250323122822.90407-1-rasland@nvidia.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] app/testpmd: fix VLAN header parsing
+Thread-Index: Adub7ychN6qp7eAbQ9WlHC+vhidkVwABZcsg
+References: <20250323122822.90407-1-rasland@nvidia.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Raslan Darawsheh" <rasland@nvidia.com>,
+	<thomas@monjalon.net>
+Cc: <dev@dpdk.org>,
+	<haijie1@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,11 +48,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-21/03/2025 01:36, hailinx:
-> Signed-off-by: hailinx <hailinx.xu@intel.com>
+> From: Raslan Darawsheh [mailto:rasland@nvidia.com]
+> Sent: Sunday, 23 March 2025 13.28
+>=20
+> Updated the `get_ethertype_by_ptype` function to correctly parse VLAN
+> headers.
+>=20
+> Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+> Cc: haijie1@huawei.com
+>=20
+> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
 > ---
-> +   |    25.03  |     1.16.3    |      1.3.39     |  1.3.53   |    1.3.14    |    4.7    |
+>  app/test-pmd/csumonly.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+> index 5b906eaa53..302cc4cc66 100644
+> --- a/app/test-pmd/csumonly.c
+> +++ b/app/test-pmd/csumonly.c
+> @@ -468,6 +468,7 @@ get_ethertype_by_ptype(struct rte_ether_hdr
+> *eth_hdr, uint32_t ptype)
+>  {
+>  	struct rte_vlan_hdr *vlan_hdr;
+>  	uint16_t ethertype;
+> +	uint32_t i =3D 0;
+>=20
+>  	switch (ptype) {
+>  	case RTE_PTYPE_L3_IPV4:
+> @@ -486,10 +487,11 @@ get_ethertype_by_ptype(struct rte_ether_hdr
+> *eth_hdr, uint32_t ptype)
+>  		return _htons(RTE_ETHER_TYPE_IPV6);
+>  	default:
+>  		ethertype =3D eth_hdr->ether_type;
+> -		while (eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_VLAN)
+> ||
+> -			eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
+> +		while (ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
+> +			ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
+>  			vlan_hdr =3D (struct rte_vlan_hdr *)
+> -				((char *)eth_hdr + sizeof(*eth_hdr));
+> +				((char *)eth_hdr + sizeof(*eth_hdr) +
+> +				(i * sizeof(struct rte_vlan_hdr)));
 
-Applied, thanks.
+Doesn't work; "i" is not incremented, and remains 0.
+Instead do this: Initialize (struct rte_vlan_hdr =
+*)vlan_hdr=3DRTE_PTR_ADD(eth_hdr, offsetof(rte_ether_hdr, ether_type)) =
+before the loop, and move vlan_hdr+=3DRTE_VLAN_HLEN inside the loop.
 
+>  			ethertype =3D vlan_hdr->eth_proto;
+>  		}
+>  		return ethertype;
+> --
+> 2.39.5 (Apple Git-154)
 
