@@ -2,46 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C958CC36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 09:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7AAC36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 09:04:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD2BB40655;
-	Mon, 24 Mar 2025 10:00:58 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id BA552402DA
- for <dev@dpdk.org>; Mon, 24 Mar 2025 10:00:56 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 92BE346465; Mon, 24 Mar 2025 10:00:56 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1679] rte_ipv6_hdr.version is encoded in the wrong
- byte on little-endian platforms
-Date: Mon, 24 Mar 2025 09:00:55 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: maxime@leroys.fr
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1679-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17428068560.Fe374f.3283473
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 1EB0540655;
+	Mon, 24 Mar 2025 10:04:20 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 8058C402DA
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 10:04:18 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 56F8C2206C;
+ Mon, 24 Mar 2025 10:04:18 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2] app/testpmd: fix VLAN header parsing
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 24 Mar 2025 10:04:16 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB4A@smartserver.smartshare.dk>
+In-Reply-To: <20250324085023.23721-1-rasland@nvidia.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2] app/testpmd: fix VLAN header parsing
+Thread-Index: Aducmd6wc+OCOKI2QimTeLW2EcJ1PAAALODg
+References: <20250323122822.90407-1-rasland@nvidia.com>
+ <20250324085023.23721-1-rasland@nvidia.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Raslan Darawsheh" <rasland@nvidia.com>,
+	<thomas@monjalon.net>
+Cc: <dev@dpdk.org>,
+	<stephen@networkplumber.org>,
+	<haijie1@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,275 +50,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+> From: Raslan Darawsheh [mailto:rasland@nvidia.com]
+> Sent: Monday, 24 March 2025 09.50
+>=20
+> When processing VLAN or QinQ packets, an infinite loop occurred,
+> preventing the csum forward engine from proceeding and causing
+> testpmd to hang during shutdown attempts.
+>=20
+> Updated the `get_ethertype_by_ptype` function to correctly parse
+> VLAN headers.
+>=20
+> Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+> Cc: haijie1@huawei.com
+>=20
+> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
+> ---
+> v2: update commit log
+>     fixed pointer handling to actually move the pointer
+> ---
+>  app/test-pmd/csumonly.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+> index 5b906eaa53..7bd1040c72 100644
+> --- a/app/test-pmd/csumonly.c
+> +++ b/app/test-pmd/csumonly.c
+> @@ -486,10 +486,11 @@ get_ethertype_by_ptype(struct rte_ether_hdr
+> *eth_hdr, uint32_t ptype)
+>  		return _htons(RTE_ETHER_TYPE_IPV6);
+>  	default:
+>  		ethertype =3D eth_hdr->ether_type;
+> -		while (eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_VLAN)
+> ||
+> -			eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
+> -			vlan_hdr =3D (struct rte_vlan_hdr *)
+> -				((char *)eth_hdr + sizeof(*eth_hdr));
+> +		vlan_hdr =3D (struct rte_vlan_hdr *) RTE_PTR_ADD(eth_hdr,
+> +				 offsetof(struct rte_ether_hdr, ether_type));
+> +		while ((ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
+> +			ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ))) {
 
---17428068560.Fe374f.3283473
-Date: Mon, 24 Mar 2025 10:00:56 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Two details:
+1. Lines continuing on the next line must be indented by two TABs.
+2. Please add the boundary check, as requested by Stephen. (I realize =
+this mail may have crossed my response arguing why it is required.)
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1679
+> +			vlan_hdr++;
+>  			ethertype =3D vlan_hdr->eth_proto;
+>  		}
+>  		return ethertype;
+> --
+> 2.39.5 (Apple Git-154)
 
-            Bug ID: 1679
-           Summary: rte_ipv6_hdr.version is encoded in the wrong byte on
-                    little-endian platforms
-           Product: DPDK
-           Version: 24.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: maxime@leroys.fr
-  Target Milestone: ---
-
-Created attachment 304
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D304&action=3Dedit
-patch to reproduce the issue with testpmd
-
-When setting the version field in a struct rte_ipv6_hdr, the compiler-gener=
-ated
-code stores the value in the wrong byte of the vtc_flow field on little-end=
-ian
-architectures such as x86_64. As a result, the encoded IPv6 version value is
-not in the expected network byte order, and version checks (such as
-rte_ipv6_check_version()) fail.
-
-I encountered this issue while writing new unit tests for the DPDK Grout
-project, which exposed the incorrect version encoding. The issue is
-reproducible with GCC 13 and 14 and Clang 15, 16, and 18 on Ubuntu 24.04
-(x86_64), but it does not reproduce on ARM.
-
-Example output with the patch provided:
-
-$ ./build/app/dpdk-testpmd
-version is bad
-0 0 0 60
-
-This suggests that 0x60 (i.e., version =3D 6) is incorrectly stored in the =
-4th
-byte of vtc_flow (i.e., ((uint8_t *)&vtc_flow)[3]), whereas the 1st byte ([=
-0],
-the MSB in network byte order) should hold the version field.
-
-Assembly dump with objdump:
-
-memset(&ip, 0, sizeof(ip));
-movzbl -0x9d(%rbp), %eax  ; =E2=86=90 accesses byte offset +3 from ip
-and    $0xf, %eax
-or     $0x60, %eax
-mov    %al, -0x9d(%rbp)   ; =E2=86=90 stores version into 4th byte
-
-If ip is located at -0xa0(%rbp), then the offset -0x9d(%rbp) corresponds to
-byte 3 (i.e., ip + 3).
-But the version field should be encoded in the first byte (ip + 0) to follow
-network byte order.
-
-
-This problem appears since we added bitfield for the version field in
-rte_ipv6_hdr in : https://git.dpdk.org/dpdk/commit/?id=3Dcba27998dc8
-
-The behavior of bitfield layout in C is implementation-defined, as stated in
-WG14/N1256 (C99 draft standard), section 6.7.2.1, paragraphs 10 and 11:
-
-    =E2=80=9CThe order of allocation of bit-fields within a unit (high-orde=
-r to
-low-order or low-order to high-order) is implementation-defined.=E2=80=9D
-
-Grout PR demonstrating the issue:
-- https://github.com/DPDK/grout/pull/189
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17428068560.Fe374f.3283473
-Date: Mon, 24 Mar 2025 10:00:56 +0100
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - rte_ipv6_hdr.version is encoded in the wrong byte=
- on little-endian platforms"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1679">1679</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>rte_ipv6_hdr.version is encoded in the wrong byte on little-e=
-ndian platforms
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>24.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>core
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>maxime&#64;leroys.fr
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D304" name=3D"attach_304" title=3D"patch to reproduc=
-e the issue with testpmd">attachment 304</a> <a href=3D"attachment.cgi?id=
-=3D304&amp;action=3Dedit" title=3D"patch to reproduce the issue with testpm=
-d">[details]</a></span>
-patch to reproduce the issue with testpmd
-
-When setting the version field in a struct rte_ipv6_hdr, the compiler-gener=
-ated
-code stores the value in the wrong byte of the vtc_flow field on little-end=
-ian
-architectures such as x86_64. As a result, the encoded IPv6 version value is
-not in the expected network byte order, and version checks (such as
-rte_ipv6_check_version()) fail.
-
-I encountered this issue while writing new unit tests for the DPDK Grout
-project, which exposed the incorrect version encoding. The issue is
-reproducible with GCC 13 and 14 and Clang 15, 16, and 18 on Ubuntu 24.04
-(x86_64), but it does not reproduce on ARM.
-
-Example output with the patch provided:
-
-$ ./build/app/dpdk-testpmd
-version is bad
-0 0 0 60
-
-This suggests that 0x60 (i.e., version =3D 6) is incorrectly stored in the =
-4th
-byte of vtc_flow (i.e., ((uint8_t *)&amp;vtc_flow)[3]), whereas the 1st byt=
-e ([0],
-the MSB in network byte order) should hold the version field.
-
-Assembly dump with objdump:
-
-memset(&amp;ip, 0, sizeof(ip));
-movzbl -0x9d(%rbp), %eax  ; =E2=86=90 accesses byte offset +3 from ip
-and    $0xf, %eax
-or     $0x60, %eax
-mov    %al, -0x9d(%rbp)   ; =E2=86=90 stores version into 4th byte
-
-If ip is located at -0xa0(%rbp), then the offset -0x9d(%rbp) corresponds to
-byte 3 (i.e., ip + 3).
-But the version field should be encoded in the first byte (ip + 0) to follow
-network byte order.
-
-
-This problem appears since we added bitfield for the version field in
-rte_ipv6_hdr in : <a href=3D"https://git.dpdk.org/dpdk/commit/?id=3Dcba2799=
-8dc8">https://git.dpdk.org/dpdk/commit/?id=3Dcba27998dc8</a>
-
-The behavior of bitfield layout in C is implementation-defined, as stated in
-WG14/N1256 (C99 draft standard), section 6.7.2.1, paragraphs 10 and 11:
-
-    =E2=80=9CThe order of allocation of bit-fields within a unit (high-orde=
-r to
-low-order or low-order to high-order) is implementation-defined.=E2=80=9D
-
-Grout PR demonstrating the issue:
-- <a href=3D"https://github.com/DPDK/grout/pull/189">https://github.com/DPD=
-K/grout/pull/189</a>
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1679">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17428068560.Fe374f.3283473--
