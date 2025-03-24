@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374EEC36008
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 07:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFABC36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 07:38:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 215A7402E5;
-	Mon, 24 Mar 2025 08:37:18 +0100 (CET)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
- by mails.dpdk.org (Postfix) with ESMTP id 66D3340151
- for <dev@dpdk.org>; Mon, 24 Mar 2025 08:37:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 84AB3402E9;
+	Mon, 24 Mar 2025 08:38:44 +0100 (CET)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D606402E5
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 08:38:43 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NmM2Iu6Ut1tEQnhBW67fZof5cYzwTVi9VXVZ2lmhfv2ilnimW5BPdb5YZIBdeU7L/iYSiJenRMQtwQjH3nOxNbhQ6SwgGxMNxf9xCNSmn23/+IEw0BQsJhSQMZ7gfQEIAm8tLVYrvVEFAibXnixd4nwto2ZpxkBZ/zP+zoJzp2uHvuHYO7a1Yc0eePExpvmDKrjd7YGpxK2HV/nWQJv4rbe369S2UZMUSQjXI/lp0hBCesE9JKERGtUT164Fi9iPK5IS1uoXtF1YV5QdwRqeg8gNpKfUz820rm4mK2Lj+8uG0i8aquvKJp6WBqmehd5ENYoxGziSdoiFWhbBcGkzQQ==
+ b=rv/dBCng8OyfoGaLDCprBSeKtFTD+VHHcyuZtevwaDXEBCenRLuP+nlAOnw78w8wtnyaDL3QEPQQPlfrxTMCtVFS93lyFRmTepRkbreh/JrgQkE/uwojWFeQ8l5tc+R7AGJ0xXibsDCs0mUZtfffSj7aM6or2OypshxUuhiXbxwYPQquPbJ+ALjqH8zTMcv/zCG9CPk4WNGAnJMr+XIknK2ydyoxDeiquCyfDssFUmIEFN28pZF6rnkY1otUmXwWTotPafVii27Y2vqNHNuSRzLu1jsq45FfFyuUcaWYNU1Zf4vY1FFG3cbipKHLgurXdpHWkklAgm/Z6P3HaySkOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M5xjKpYBwymNHHs95Y8zcKIJzfzSwnpyCFKcLsS+hhU=;
- b=MC7Szbnso7svq+/rJ28IY87521ak5YF5lh48MZoqteBXgzD3S0mCNPHpRbEJ8fH/BCkFDsLDbMatWT/cQoCN1KKyn/leyX6SFBUjMdWY+YSh7bIXxp6Lv0sbuES46Hzh/0kh8wlc4o/vixJoJgdnR9CAnD6OYu5m+7dUndnO5JfFArZLTSGFT2rZycviO0860CKgIKxVYVMeLQL9iSAMt3OnReqw8JA8Umx98a8ISjZELVYL5AVPAIm2tMVGpOKqj6nzSmIxR3+WU9KM9oRQWG4Zh8AjKvJRfwhxbTQK6+gNKcjvm3Wg187lxqZZEMgAkzGBotyrtEzaz1GtTxiJ1A==
+ bh=XIczkhZhV6FsQR2yoJrb9vZdVvyIbFOdcHfbPD/W9QM=;
+ b=I+A4MTZPmEF/P75Mtvj7+uSx4DlJk6StXFb6lGtcYYmdanLUvC7WJZcp8nom9bPARyZO9Um9gM0OBOffDrs38URmbczUwa/u/hRqvt1RBj0AYnCq34FC0S8HRxura0fJW/fTqnlq8typvI4tg3VHPpiZJBSDcJxFq75cpxva73RzMYto3LG8cxl2M6R1KHmYosbC+Gra2tG/azLBNeB/aa3sqXs/0SUmijobBhjcfxB2h0cOOH2s2Sg2qDSu0Y/KqNSbU6eYzit8XAmK6vP8dXICxvSy7SGTB+z7U56fkIcWyc1BEqsdDAoVAYIKcfHj9mGzyQ/aMB0ocHxPiTxaPQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M5xjKpYBwymNHHs95Y8zcKIJzfzSwnpyCFKcLsS+hhU=;
- b=CdTEsRuWfFdYTPl6rxmpsrSLfB3qeuKzVw0xG5TRFMcBvCU2WjH92GEJyOnB9cKjfFch13e3OwFai+VK9MoHt7nBzFPMBY9cbhVVys7rVjPbPDTqWptGyvmfUKB856I3fYfBkCmsx09bSYT8eO/W2uE1EACGXHpin/vICOGoN1eFf8275OO91OmGjbvwMBcy6Mn7L64mh7dDKRE+ts0W9IvqB3lvXYyX3MQ7+EloQ+PUaFWA23OcofohtcmOnqJ/sEVwWMm2b5XZxFhTrf2ix8akxllnnk84FpiAztqpOkCaJAOYPwsUKKN2P3nZ0Uf1hgANFwzrVHwSR/dWP2DSzA==
+ bh=XIczkhZhV6FsQR2yoJrb9vZdVvyIbFOdcHfbPD/W9QM=;
+ b=JtyhHOMSxS8zTimfMVA+YDG1YmWmdVxieie4HfE6I89tyxtNXylpfIzOYF+swBa6GaEXYnI2pIxyEYyIO5O2OcFslRP9TzPWRD/u7Q53AOJqs/KIKngEcRLfxzVDX3UgtSLKxTRlMGwuiZZuy8BjwxRv4+n21WJdph+zGULrifg2KuZuJ5WkmxS2mW34IIBB5MtiIWGkQzvn+6uFKFfrrj90vqR6zcDf1sFfVFRXsbn55ijGswlLZhJClmuS4MTBrAM60OIlkxKzFzN3PZbYUtYIkRaJvWosQe0XVJjkUmONFQB/iGQOpyqBN9VqzvquPRDSf7C0GyoXhPzg+9+SQQ==
 Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
  by SJ2PR12MB7799.namprd12.prod.outlook.com (2603:10b6:a03:4d3::12)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 07:37:13 +0000
+ 2025 07:38:40 +0000
 Received: from CH3PR12MB8460.namprd12.prod.outlook.com
  ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
  ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 07:37:13 +0000
+ 07:38:40 +0000
 From: Raslan Darawsheh <rasland@nvidia.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>,
- "dev@dpdk.org" <dev@dpdk.org>, "haijie1@huawei.com" <haijie1@huawei.com>
+To: "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "haijie1@huawei.com" <haijie1@huawei.com>
 Subject: Re: [PATCH] app/testpmd: fix VLAN header parsing
 Thread-Topic: [PATCH] app/testpmd: fix VLAN header parsing
-Thread-Index: AQHbm+8qBy++gaakq0m8DcV6iO248LOA4YoAgAEFOSY=
-Date: Mon, 24 Mar 2025 07:37:13 +0000
-Message-ID: <CH3PR12MB8460CCD964AC2680AAA9F2FFCFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
+Thread-Index: AQHbm+8qBy++gaakq0m8DcV6iO248LOA7GQAgAD632o=
+Date: Mon, 24 Mar 2025 07:38:40 +0000
+Message-ID: <CH3PR12MB846087E8B2CE0A1A443C9903CFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
 References: <20250323122822.90407-1-rasland@nvidia.com>
- <20250323090032.06d6aa45@hermes.local>
-In-Reply-To: <20250323090032.06d6aa45@hermes.local>
+ <5993081.QJadu78ljV@thomas>
+In-Reply-To: <5993081.QJadu78ljV@thomas>
 Accept-Language: en-US
 Content-Language: en-GB
 X-MS-Has-Attach: 
@@ -56,86 +55,86 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|SJ2PR12MB7799:EE_
-x-ms-office365-filtering-correlation-id: 3fe25019-668e-4151-d297-08dd6aa6b1a0
+x-ms-office365-filtering-correlation-id: aa7c1582-50ea-4b18-a3a7-08dd6aa6e570
 x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|1800799024|366016|376014|38070700018|8096899003; 
-x-microsoft-antispam-message-info: =?Windows-1252?Q?+C2Kj0aZi48sYn1LLUUMoxnsYfdPvxvG14pvkJb5asXrNY1l4W4/GDnH?=
- =?Windows-1252?Q?ke9Tj2tGtMgWvjE+W6BGpxJbdpZMzU3WlQxa+vVhmwBwio8DthJRLhyw?=
- =?Windows-1252?Q?clOymVFy7zlsa1+q7yo07TNlDGWfw6f89EKaPpLcceV6FFSikw4Bfkm+?=
- =?Windows-1252?Q?YSje5pvndnPrkNOoQ3usoRjPiqOMhV6FAhWSab7OQPbkdaKPIhmu9uVg?=
- =?Windows-1252?Q?gEduyQ8PldcurlkkyhCq0sJwTeawt1sj88kbh2va6dH2WBgJvpGVzuy1?=
- =?Windows-1252?Q?/xK4KY1qbvpFm3jsx+SWDO7Q3bm9sNn8wQV3bmghb82zZ/vOcbsx2KtZ?=
- =?Windows-1252?Q?oNmpLhSj6j2r1Qqx/XfmNz+pR+8tQ0/lv+K8qmlpDCbpFe5Ji1gN8kl/?=
- =?Windows-1252?Q?P0V6ME91YDhwKgPKrzeKaj1Qo4+92NRbrjXu3p8JNwJcekepou6lJRTH?=
- =?Windows-1252?Q?S/9CwR1l8PHFt+Y4GiyR1bYRMCWyIZK6/QiINeoEyOhQ5RwUkLow5QUX?=
- =?Windows-1252?Q?tQXeQUbNd3MCZPnz6Q7ml/5sRZBkrY15895gsQE762Xd6oOqggHPjOKY?=
- =?Windows-1252?Q?XFJHdoe5S5u4lp3ouoAurHBXS1YM243hj1qlANxv8wGwnVGWf5zovuup?=
- =?Windows-1252?Q?sOY1yajlBAaiZzulZuZ/Mt/Rn+kVF6dN/Nw2aGapIPfFOSVuQ+5qBjE0?=
- =?Windows-1252?Q?O/+bUNIIC/uQfTGevUZzJ7bzv69mjWBy5r1qMfbQNLubyJNxKHtFf70Q?=
- =?Windows-1252?Q?4phs5Ua8vUbOYMibMv8M43Bb47P7MeY2nsfoXRp9qLhaVURW6GW7Bsen?=
- =?Windows-1252?Q?tLXTX7vHWoGOLPcV5wlnD/XI4JOOXPdzVjnMZQkFomHyKmGjWoSEvxwY?=
- =?Windows-1252?Q?NE3QW9xIXekyTw+XFmWG+3mHhQxt74axAzIUf/mX98/ejeU6TSeZfkxX?=
- =?Windows-1252?Q?T86jfZ+alGVlskac2yWByAquT92utcKiP0R8OKXurj64bkBxipFPVErm?=
- =?Windows-1252?Q?ihAiIJNpLA9PaSwyr5cwOdrYR8zqpIKq4RzHamTOuIjMreNA1EtU5M6z?=
- =?Windows-1252?Q?fL8x/m6ndXH6p+ogoO5mROKuDWxmzA0l9ZZQtdj7hQZ1K2smjstQFW/e?=
- =?Windows-1252?Q?i5BSXZ8+pF8Rot3CBQGJMe1Okv6EEOghi4IpIKtlAnFylvFWXzir62Mw?=
- =?Windows-1252?Q?p8cs7Vgb9I5gC5w/dz23EDa7AIqN2LjuzHsrqhWVfsKuhvRMCJmivx9F?=
- =?Windows-1252?Q?/cJm9mZIxnw/K7TfjC5YyspmWZVUdMlaaXsfFNIMtBvU6rEnDtNptv0B?=
- =?Windows-1252?Q?HpMSu1ZXFB17h77aTOr93ft+oKC+sXTpzw2MVq8hqe1AEwdIMdIjFwLW?=
- =?Windows-1252?Q?lpwHVO2tKavx1DQwkJVCMXHTjETx2ipJLg5lvxcKlmWw78pxA/QslzA0?=
- =?Windows-1252?Q?v1qYmVrraF8YDdDlymes3RaVGBQPtr3T7qXQjPBvAaNKkSlLy55H2jgC?=
- =?Windows-1252?Q?MuyHY4lvRq/VMx9gUA+U3PJOo1rCh34s3gHRw2r7zrDDZ7v7v/ycbgvl?=
- =?Windows-1252?Q?Uwbsv9PdFu5jN4EZ?=
+x-microsoft-antispam-message-info: =?Windows-1252?Q?dDkpntyQDkBnJT4V90ix/MDwmzrCXpTG/+w61MMVurDYHd9o8mPM03/c?=
+ =?Windows-1252?Q?eP/Nuo/7a8Qun0lVqJzQzglL6OeLG/26t+cEbkyzl430XgirEQlp0MZR?=
+ =?Windows-1252?Q?JZFWOr1sB8+qoE9oU+FSiAS3uuA3LYafHNsQbiXEBHS+HoZ/FAqJLYfr?=
+ =?Windows-1252?Q?4cBS+QBsd4Cp/Hc1otoJqX8+sG72E/xYUE1ThIzEUsRSwlE7KdLDGN23?=
+ =?Windows-1252?Q?S11ZqyV6uFFwv/uQprf3mk0rwmJ2teXz3+r478M/nrd66gqlG63GcRZi?=
+ =?Windows-1252?Q?dPAnpFI2aceS4eF8TMqbqGY4fEZ5LgaXBY3vkzB2VLrlHlF6MDY6HVbm?=
+ =?Windows-1252?Q?aAxgglyygFRXlCmN9bCv9duNpOmBGMzGNcfXVToTAa6W/el60AD3c835?=
+ =?Windows-1252?Q?Ul4UfotEniwZBlaGbyHt5XuIvYeCP4O2QFF3VrbDAyVNSeW/LPQDWrM9?=
+ =?Windows-1252?Q?5SV610DhBfdtY5CwccNlpwo7WlZfGcAs3lapbc04EnxulchyWtRwO6/P?=
+ =?Windows-1252?Q?13Lfg9mtlBh6bBAsv/xhATvudAC445vRUZEesxMmM1zm9m5Nk1zs6sjm?=
+ =?Windows-1252?Q?m2meHZ+RjXxNc/nCZ+uVA8vzSYVOmRD6R1FYUWkVK6Ri95ouegFA1paK?=
+ =?Windows-1252?Q?OBWylhRg9lQmIDNbx9WKEjg3qCRwHlU+JwIY2oQ4d+45+O590Q/x2+ko?=
+ =?Windows-1252?Q?WOxgF6O4y/QkPpsdOGlSvF9ZNonM4cAQteQD/C/mJx01p/+5/x08ykZF?=
+ =?Windows-1252?Q?Q9Yccz3HLIwgUoI+Ap4sQk5eiW+5CT8z6+lQrE2cRGRSJUv54nx3w/7l?=
+ =?Windows-1252?Q?OGnD1iWPEuxR3V6E0uIleitubCMlt9XZnkzwMbWmH6CuNXDWbq77Z2/H?=
+ =?Windows-1252?Q?ZSemIhgLUcDn8fUcJtAvcJY6GNH2WI2lCeZNcOSwNKsnJLfHnv5tdDDj?=
+ =?Windows-1252?Q?HGB18WyuyIyQOqkLaicQvB/lN+UNYZOakOExdpOiVtk+7YvvqXM5WBW5?=
+ =?Windows-1252?Q?58uYHIJtiTSwtcE03HGOZOyXKceUoXpuECsGQNwetGMPyirhg000+SVa?=
+ =?Windows-1252?Q?8TiydUDmNDoJXm/p2HPQqcPyEJ9t8FEI/npk/crn0OOZLI2eAmqkdxD+?=
+ =?Windows-1252?Q?qpdGAs9/v0Ch2tN6830adAokKRYQBUKp5mkbF4e9DSWHPyIXpsnQLP9u?=
+ =?Windows-1252?Q?cdWSWzRmkCJVxKjlfWlMHF2WOOfLc3Vh2BOR0qxMiuCfvOb9v6SK9Qp1?=
+ =?Windows-1252?Q?7nM4lULWvCmRuBVjml6CBtTZwcy7anid8JnQr+c7/nW10RMaZzjUiFk9?=
+ =?Windows-1252?Q?hOZjpztZtJ97ytrum8XYP/ds0kABgH16CjApEdRBRHTHipYJzR3pZ8P8?=
+ =?Windows-1252?Q?COppZ2M1AGeg2Hxa7znJsJaBImSZngCNflHTwUH5NZSXH6MO43ORNpfR?=
+ =?Windows-1252?Q?dgUiDzlZwhvP233JohQbKhhh1//cRxIwizStso52bbH/P6MCPEPy+4g3?=
+ =?Windows-1252?Q?rD9bl+sxGuytTh2QQdH/2ZQhxSpBFA9NY15ZpnV3MuM2vDeJ4wasJKwW?=
+ =?Windows-1252?Q?paIWDmkzA0Bgx+MS?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(8096899003); DIR:OUT;
  SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?mWuH9LQxuhZosBgTSkH1XPBLEQ8Iz7tgq1FpJ/orvUAw6QJt3UCrx8oX?=
- =?Windows-1252?Q?SXvBiTSb0rNnkZzKwKQiV2sDTazUy+K7k7UiqjQkVCyTk8fcpxIjbXVy?=
- =?Windows-1252?Q?mv/Q2QDmYzGNzOFyb2gpY1e1C6fcKsKXWhBUK9ByGs/HqW//BtqimJMv?=
- =?Windows-1252?Q?b6s7aUKKk7Vm3eXsfZgHMQFJXrKxa0LkGjdSK8RRqJzcca2cjN1G6Ff5?=
- =?Windows-1252?Q?CKSHMWN1cQRRKOIcya42JT/nu6IjeP32ULsQ78LQOgW7DUzLN+87FnPn?=
- =?Windows-1252?Q?XjbLuWlDyQt4wRXqCEMsHGjLI8rCU1SRofj04KdEyWHH8JcFR91zJJ2N?=
- =?Windows-1252?Q?M3JN+aQ+hegoxq3FVvRzwJ7zoA408NUdZ2dZipp2zS9HhSbGIuq5xV3y?=
- =?Windows-1252?Q?34sb92xhppmOEmQv6a6pyvdUFfx32uhXWQUrPJ+zqWdyATuPttEfL16t?=
- =?Windows-1252?Q?t1vsBE4xgRuM/5KXK9O+D5oOI34+qhWYP9H6SOM2wEWPDaJ35MgEnHyo?=
- =?Windows-1252?Q?OnJQlxPL6/XLZhTakvm64pvMgSQTvSmcAACoViHC8hAMA3WPHqRG+1bp?=
- =?Windows-1252?Q?csS6FhzjLfEj5MylLITXcP1u/a5Cc1Mi8wjSsJ47ErwtOEuNq6V5BuV0?=
- =?Windows-1252?Q?wTf3OfufVY+QT8uFOHyCN/gDivrboL0tFgQxQEGtaejfav2RzXRVZvJc?=
- =?Windows-1252?Q?TJa7F47ulEIigsoEeZfYuvLgmQu2mjZoxMcZPEV1LQbjMAmhvxb3Z0It?=
- =?Windows-1252?Q?9si1R/aJz8cgjYASJnXMjQqV2G6nZFi7Yi0OpdfEP4lywdNITfDFijxA?=
- =?Windows-1252?Q?YfJsJVVK38Y+vpo9PAefkgMgmIRmSty8OJ3Zg885HqOiVc9uJrIen/t1?=
- =?Windows-1252?Q?KaW2OtSZ5SC9LDhmV2275P1FG3TB3cf2Jlqpq/9qwyn9gcfPJQ3OMcpl?=
- =?Windows-1252?Q?ZwKGhvLPLn/c9X2pMJ6liWb15wb/45ZBaUiLeIcNaxHE9e5nohcmVz1J?=
- =?Windows-1252?Q?gxE376sbjNhMAwdiC7eiSEuv9hN7Je7EOIxMgkF3UyQnzh8rP0IQU5ov?=
- =?Windows-1252?Q?lYHeiWSDocZXuq4VaBMeo3M8sg7YfTQ9nHxPee3dsYWLnwH90rYI/z/s?=
- =?Windows-1252?Q?N3ULd0zvY5BRzdeGaPZJO+jQOsUSXZPZv8zTnyrNi+rphmbILoBAjMJY?=
- =?Windows-1252?Q?QmIWJSk/9HdcWIEx0tRU8jcSgj3U97aHZREgzg/eereC266+GX5LBdF+?=
- =?Windows-1252?Q?iTAxgwkm2XAGUcJZfrSbTrpIfWqqDy3LdcFRg9J7/VeEFXntycLz1R4J?=
- =?Windows-1252?Q?CBzWSO2UksyMq9L2VMnwggINtPnUiXls2FE6+0UefG/AOh5cpbcuropR?=
- =?Windows-1252?Q?5AqV0wxKqMQYJeqzdupi99iIEMxR84Di8WuvLCLoNcjQjejBqoiRbTJK?=
- =?Windows-1252?Q?ohztECy87jJKUQ0+4f/c5gR9jWUD+YVFvvWRV4dvBG5IxaJI/VpmeByU?=
- =?Windows-1252?Q?ON9OCIkoXHurL1j0JbDC0rO0VjjTbszbeBR+uCfyhIli3VeB6oKjpTcJ?=
- =?Windows-1252?Q?88g/dBcL7hXD3sw5OIxgLa23HDhM6aUp/tyF8b95wS+gv4YGukbeAgOR?=
- =?Windows-1252?Q?iv7OtEC/QUlentj0TXB3y2Pc45dlRB+YpJ2tP0kfHfBvuZeVTzVQO0uC?=
- =?Windows-1252?Q?5ZShfalbG+V1+1SSi80Nqr4Ff72vY0bOczBGiOH9tw2EgAfKJ4cfGA?=
+x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?dtwYVphTWpjZNyyl+pJBSApAhFt8e0U+YpKc1Gcn0Qm7n89MHv+yj3kX?=
+ =?Windows-1252?Q?OWFl2KzHNPosRlSQQ5yigw8OekUCnwxkbxOW/lnbubrW6D9OjWscuU3O?=
+ =?Windows-1252?Q?kgzQ8i8Q3c5bEQfxRR9XR9W3EJ6lmc/eaNXRsMQkNl5YgtynGTAG+my2?=
+ =?Windows-1252?Q?8b35R93jtlFcsta8nJd5w7qRL58+hVWy7gF1vobWeycFBYvkFje3hMps?=
+ =?Windows-1252?Q?rEbLwBlnWHh26AUJ/iIiNe+PkKxAmkpbnq3HS3Z9dplYUajpdGeubcZt?=
+ =?Windows-1252?Q?A6eDJdd9ZGuthODlfa7u0Dp949SQXeAtuOdlB+MBuxqTjUMzxcr3RABD?=
+ =?Windows-1252?Q?9qrSKKd8KF83xe9yAMVsKJ9LYzqrV2bDjcGZtNpVSYrfPjwCmxZbaCQu?=
+ =?Windows-1252?Q?fduH+hWkq3lqZ0XB+5Azq7JEmjl4XJfMtJWyyAKniFBh16NSUISjX1Y6?=
+ =?Windows-1252?Q?dOlrNoBu2NomO5x6oxWNNfFtlikomAIJysLUDv586sPEoU0MSJ2OjtSx?=
+ =?Windows-1252?Q?vdK02mLdOplpd+JgjvkSdw3OhxpE38cum0foKEzorN+S3Gq/td2L43Ed?=
+ =?Windows-1252?Q?w4/1sT/S9uBd57JmfQHIQF6yD9obq1p7vr22iySRCPDfut0x61Z2QNkS?=
+ =?Windows-1252?Q?bRsSvEre38a5FMQq9/26kBs3pmHF+PHjUWVyRttlhC/8zPhgSSlMi1nl?=
+ =?Windows-1252?Q?apb5+cz+IFwwjNpl+z6l2c+T0+11bJ6w+bxUaL9XDPheAAUFdbC3NKer?=
+ =?Windows-1252?Q?Mi3tDB85zvkEOB1FKBcI+gwc89SLiZir/3Mv6DFjidmUzryyCZun4LaR?=
+ =?Windows-1252?Q?vl/Hroa5kncPYxlBZZ5QDm4Scq4WyWsUCxy/sLcjMTyF3yKWo5mAMA1i?=
+ =?Windows-1252?Q?2+W/Mat7ZLA8DBSM0cqgwojEALMncnCWB/8vEqU/rZ6/i7VWlbBGwQhx?=
+ =?Windows-1252?Q?OJtGRWjyHcH+AXTfMeyNaKvcM2fvgNuAV/aHNTk1TuBlAgjHAcx7V57H?=
+ =?Windows-1252?Q?A5EV0rC0FIXelRNpg7/nG5as6hrGqgJsmkUYyTxbK2zReWcvnyY9OGwz?=
+ =?Windows-1252?Q?ffHwy8TptZkLZMCnC9vv6zeofEBjucs3e2lZMfc366FtbLJCuP07vcDf?=
+ =?Windows-1252?Q?ih46IdplJdKoCLU7zK+ISTpCOku0edk2Yu2ZqomvxaoMFku/l/1og+JO?=
+ =?Windows-1252?Q?BbGjV40ynDc7xBISgpVobWiua/He0qO3LXnwcW7RjdBmd2bY/f0zLvWF?=
+ =?Windows-1252?Q?yPjusT/jerxkTbF1ZYk0Q+htbOokZqd+DY5/8lQpjQCop7HiKs736nIB?=
+ =?Windows-1252?Q?X+EK+UONKYfUwqxbkROVKqFCl9ghbslwlnADiX/dMFuExSs0TSes0Mwt?=
+ =?Windows-1252?Q?tWFOpY8g+DEoWXU2wpfOCGXsSW75451VCOHELNeYO+FRUiLPiF1Hhgb6?=
+ =?Windows-1252?Q?bjbmvlSCLteT7BmZ/GWP88FTH8KYS8XcqtSFZAcXb67b5Zl+DK2a+Kw0?=
+ =?Windows-1252?Q?0y73BCfsewVFB6vt/sH/VKojuuH9imaTy+eZg9EcpWYepG+1VnFv07aS?=
+ =?Windows-1252?Q?EOgkCYholhH2RZeJWprodOS4GkCFoI5XIMaxN9s54f4RC1xzAIcEQjHZ?=
+ =?Windows-1252?Q?zJPY/L/HLOQbr20+KKFb/zxA75VLcs+Ho+zs/aYoQAjSaZDZJTBMq5hh?=
+ =?Windows-1252?Q?Eq5CEewFxJpT7H6j3iAwFhc9JIHskVCenIhhL6DRKiwBkCHxdxqyyQ?=
  =?Windows-1252?Q?=3D=3D?=
 Content-Type: multipart/alternative;
- boundary="_000_CH3PR12MB8460CCD964AC2680AAA9F2FFCFA42CH3PR12MB8460namp_"
+ boundary="_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_"
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fe25019-668e-4151-d297-08dd6aa6b1a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 07:37:13.3599 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa7c1582-50ea-4b18-a3a7-08dd6aa6e570
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 07:38:40.2690 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7y14dYhlBT4/oRSYcNbfHhiwASzClKDmwou7fgfgJdJspUymnFlTrhU5ketjf1UMaFykdeC/RI8jgKSeRDJDaw==
+X-MS-Exchange-CrossTenant-userprincipalname: L8CBe5Iu+UVRo+Rr4jTLgm/RSUCSSPSCOB+sdT6xycLU5WxnCS/xzltQ9ZQb1EyXOcFUYZ3ORaxphN7Pzht6xg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7799
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -150,60 +149,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_CH3PR12MB8460CCD964AC2680AAA9F2FFCFA42CH3PR12MB8460namp_
+--_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_
 Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
 
 
->> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
->> ---
->>  app/test-pmd/csumonly.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
->> index 5b906eaa53..302cc4cc66 100644
->> --- a/app/test-pmd/csumonly.c
->> +++ b/app/test-pmd/csumonly.c
->> @@ -468,6 +468,7 @@ get_ethertype_by_ptype(struct rte_ether_hdr *eth_hdr=
-, uint32_t ptype)
->>  {
->>        struct rte_vlan_hdr *vlan_hdr;
->>        uint16_t ethertype;
->> +     uint32_t i =3D 0;
->>
->>        switch (ptype) {
->>        case RTE_PTYPE_L3_IPV4:
->> @@ -486,10 +487,11 @@ get_ethertype_by_ptype(struct rte_ether_hdr *eth_h=
-dr, uint32_t ptype)
->>                return _htons(RTE_ETHER_TYPE_IPV6);
->>        default:
->>                ethertype =3D eth_hdr->ether_type;
->> -             while (eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_VL=
-AN) ||
->> -                     eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_Q=
-INQ)) {
->> +             while (ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
->> +                     ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
->>                        vlan_hdr =3D (struct rte_vlan_hdr *)
->> -                             ((char *)eth_hdr + sizeof(*eth_hdr));
-v> +                             ((char *)eth_hdr + sizeof(*eth_hdr) +
-v> +                             (i * sizeof(struct rte_vlan_hdr)));
->>                        ethertype =3D vlan_hdr->eth_proto;
->>                }
->>                return ethertype;
+>> Updated the `get_ethertype_by_ptype` function to correctly parse VLAN
+>> headers.
 
->A loop like this is prone to getting attacked with a malicious packet.
->You should cut it off after a few vlan headers.
->Also. what if packet is truncated, shouldn't be reading past end of data.
->And what if packet is fragmented, you need to use rte_pktmbuf_read()
-I=92m trying to fix the current loop not really changing the logic, and I=
-=92m not sure we handled these cases originally.
-If needed, we can issue a separate patch for fixing these cases.
+>You should describe what is broken and how.
+I=92ll handle in v2
 
-Kindest regards
-Raslan Darawsheh
+>> Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+>> Cc: haijie1@huawei.com
 
---_000_CH3PR12MB8460CCD964AC2680AAA9F2FFCFA42CH3PR12MB8460namp_
+>Do you think it is critical for the release?
+Yes, as it=92s causing an infinite loop if you send a QinQ packet with csum=
+ fwd, and it will cause tested to get stuck forever.
+
+
+
+--_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_
 Content-Type: text/html; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
 
@@ -249,135 +215,38 @@ break-word">
 <div>
 <div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><br>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
+ize:11.0pt"><br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; Signed-off-by: Raslan Darawsheh &lt;rasland@nv=
-idia.com&gt;<br>
+le=3D"font-size:11.0pt">&gt; Updated the `get_ethertype_by_ptype` function =
+to correctly parse VLAN<br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; ---<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp; app/test-pmd/csumonly.c | 8 +++++---<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp; 1 file changed, 5 insertions(+), 3 delet=
-ions(-)<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;
+le=3D"font-size:11.0pt">&gt; headers.<br>
 <br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; diff --git a/app/test-pmd/csumonly.c b/app/tes=
-t-pmd/csumonly.c<br>
+le=3D"font-size:11.0pt">You should describe what is broken and how.</span><=
+span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-size:11.0pt">I=92ll handle in v2<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
+ize:11.0pt"><br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; index 5b906eaa53..302cc4cc66 100644<br>
+le=3D"font-size:11.0pt">&gt; Fixes: 76730c7b9b5a (&quot;app/testpmd: use pa=
+cket type parsing API&quot;)<br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; --- a/app/test-pmd/csumonly.c<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; +++ b/app/test-pmd/csumonly.c<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; @@ -468,6 +468,7 @@ get_ethertype_by_ptype(str=
-uct rte_ether_hdr *eth_hdr, uint32_t ptype)<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp; {<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stru=
-ct rte_vlan_hdr *vlan_hdr;<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uint=
-16_t ethertype;<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp; uint32_t i =3D 0;<br=
->
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;
+le=3D"font-size:11.0pt">&gt; Cc: haijie1@huawei.com<br>
 <br>
 </span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; swit=
-ch (ptype) {<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case=
- RTE_PTYPE_L3_IPV4:<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; @@ -486,10 +487,11 @@ get_ethertype_by_ptype(s=
-truct rte_ether_hdr *eth_hdr, uint32_t ptype)<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return _htons(RTE_ETHER_TYPE_IP=
-V6);<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; defa=
-ult:<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ethertype =3D eth_hdr-&gt;ether=
-_type;<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp; while (eth_hdr-&gt;ether_type =3D=3D _htons(RTE=
-_ETHER_TYPE_VLAN) ||<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
- eth_hdr-&gt;ether_type =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp; while (ethertype =3D=3D _htons(RTE_ETHER_TYPE_V=
-LAN) ||<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
- ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; vlan_hdr =3D (struct rte_vlan_hdr *)<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((char *)eth_hdr + sizeof(=
-*eth_hdr));<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">v</span><span style=
-=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((char *)eth_hdr + sizeof(*e=
-th_hdr) +<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">v</span><span style=
-=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (i * sizeof(struct rte_vlan_=
-hdr)));<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; ethertype =3D vlan_hdr-&gt;eth_proto;<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return ethertype;<br>
+le=3D"font-size:11.0pt">Do you think it is critical for the release?</span>=
+<span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-size:11.0pt">Yes, as it=92s causing an infinite loop if you s=
+end a QinQ packet with csum fwd, and it will cause tested to get stuck fore=
+ver.<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
+ize:11.0pt"><br>
 <br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">A loop like this is prone to getting attacked with =
-a malicious packet.<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">You should cut it off after a few vlan headers.<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">Also. what if packet is truncated, shouldn't be rea=
-ding past end of data.<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">And what if packet is fragmented, you need to use r=
-te_pktmbuf_read()</span><span lang=3D"EN-US" style=3D"font-size:11.0pt"><br=
->
-I=92m trying to fix the current loop not really changing the logic, and I=
-=92m not sure we handled these cases originally.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">If n=
-eeded, we can issue a separate patch for fixing these cases.
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
->&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Kind=
-est regards<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Rasl=
-an Darawsheh<o:p></o:p></span></p>
 </div>
 </div>
 </div>
@@ -386,4 +255,4 @@ an Darawsheh<o:p></o:p></span></p>
 </body>
 </html>
 
---_000_CH3PR12MB8460CCD964AC2680AAA9F2FFCFA42CH3PR12MB8460namp_--
+--_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_--
