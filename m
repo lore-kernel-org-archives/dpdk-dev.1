@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5305AC36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A972C36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:30:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C31840B99;
-	Mon, 24 Mar 2025 18:30:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 404E240DCE;
+	Mon, 24 Mar 2025 18:30:44 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6D3C440A7F
+ by mails.dpdk.org (Postfix) with ESMTP id 0959840A7F
  for <dev@dpdk.org>; Mon, 24 Mar 2025 18:30:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1742837442; x=1774373442;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=2mWl5JOd1AZZXgNhydlhBoMLcFME+RkvBcdj1s7XYaE=;
- b=VJqUBmXb7Y3++9gST8TQklWOajl5c+FBemEyJhHanfQczcHkn3AeENe5
- BzVLtyUeYKu6cKAHcZvW/dzm1EmenII4JXq+yD5C9inog+qWS8RXX5aob
- 54Og8RHkxEhNwIvBzw9LN8kz27aXtn5mR1z6b0ZlFjqE4/SIG+sGsclsS
- bcwA5J3WWWpLlDV+1ZsWPeoztgCDFWy6x6jrdRVS+G65vBcZ/9By1DOmh
- DUO/JUpzgXwXpQpmvczh5QrWJsMZZMcJDqPe9GFvmKvJQvUPTjS6bWOkv
- prpzuqfRuH7d2IV3ggHmfn6GUsITuEo291SgMsB+bMZaZlEK3V1YmpELB g==;
-X-CSE-ConnectionGUID: rzx4pyFnRPCUKM0VNbrXrg==
-X-CSE-MsgGUID: Yp5Dr9nJRxaqh31NIvfazQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47715559"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="47715559"
+ bh=nMkdlwTIDKo/N7OUdE77eC9LPWQfAAdL5rihKL5681Y=;
+ b=IeqnftoRMacJ2cVbIumpQ61nn6ImHf1pqFCiliXIgM0/2qT8ok2YtIMW
+ uwHLDAanOE/6jia6wuP0ZXDbJ7LadMncwvJ2zYoZV0ctoc2WRsWqJorDt
+ g72ukG0LMmd8Qat8jVlTsCLZx783Yf/WGEgNdCFyrhUWvjt17UsXrcTMe
+ C2QquagVkq4edpARU9255FvcYn2vV/3WN2ybih/XYf9yxaX/8JpXL+c8o
+ +vk/+Ph4uiWWQoBVzrHplXqTsaI70shJFiztDlIBY9bPx7Iat6c+J50fq
+ A9uDfC5qutthEy1ftB4buVylVa+wJV4oTVzwCtEeRQvsZzAkbAE69QTty w==;
+X-CSE-ConnectionGUID: OmNJdsr6QqSwdSkGOgOgDw==
+X-CSE-MsgGUID: C6KHmO4FSaORZKEyob2Ymg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47715561"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="47715561"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Mar 2025 10:30:40 -0700
-X-CSE-ConnectionGUID: DAoEyZo8Rx2eKBTi+2JSVQ==
-X-CSE-MsgGUID: FIVlAaKrSma5CJRjp2l2dw==
+ 24 Mar 2025 10:30:41 -0700
+X-CSE-ConnectionGUID: TrTuapIWTsq5MGoXiI1XCA==
+X-CSE-MsgGUID: b5UxdHHPTR2l3w3C3K6h5g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="124141939"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="124141945"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 24 Mar 2025 10:30:39 -0700
+ by orviesa006.jf.intel.com with ESMTP; 24 Mar 2025 10:30:40 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 0/3] allow easier use of high lcore-ids
-Date: Mon, 24 Mar 2025 17:30:26 +0000
-Message-ID: <20250324173030.3733517-1-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v2 1/3] eal: centralize core parameter parsing
+Date: Mon, 24 Mar 2025 17:30:27 +0000
+Message-ID: <20250324173030.3733517-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250313113829.1480907-1-bruce.richardson@intel.com>
+In-Reply-To: <20250324173030.3733517-1-bruce.richardson@intel.com>
 References: <20250313113829.1480907-1-bruce.richardson@intel.com>
+ <20250324173030.3733517-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,57 +61,268 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Traditionally, DPDK has had a direct mapping of internal lcore-ids, to
-the actual core numbers in use. With higher core count servers becoming
-more prevalent the issue becomes one of increasing memory footprint when
-using such a scheme, due to the need to have all arrays dimensioned for
-all cores on the system, whether or not those cores are in use by the
-app.
+Rather than parsing the lcore parameters as they are encountered, just
+save off the lcore parameters and then parse them at the end. This
+allows better knowledge of what parameters are available or not when
+parsing.
 
-Therefore, the decision was made in the past to not expand the
-build-time RTE_MAX_LCORE value beyond 128. Instead, it was recommended
-that users use the "--lcores" EAL parameter to take the high-numbered
-cores they wish to use and map them to lcore-ids within the 0 - 128
-range. While this works, this is a little clunky as it means that
-instead of just passing, for example, "-l 130-139", the user must
-instead pass "--lcores 0@130,1@131,2@132,3@133,...."
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/eal/common/eal_common_options.c | 183 +++++++++++++---------------
+ 1 file changed, 84 insertions(+), 99 deletions(-)
 
-This patchset attempts to simplify the situation by adding a new flag to
-do this mapping automatically. To use cores 130-139 and map them to ids
-0-9 internally, the EAL args now become: "-l 130-139 --map-lcore-ids",
-or using the shorter "-M" version of the flag: "-Ml 130-139".
-
-Adding this new parameter required some rework of the existing arg
-parsing code, because in current DPDK the args are parsed and checked in
-the order they appear on the commandline. This means that using the
-example above, the core parameter 130-139 will be rejected immediately
-before the "map-lcore-ids" parameter is seen. To work around this, the
-core (and service core) parameters are not parsed when seen, instead
-they are only saved off and parsed after all arguments are parsed. The
-"-l" and "-c" parameters are converted into "--lcores" arguments, so all
-assigning of lcore ids is done there in all cases.
-
-RFC->v2:
-* converted printf to DEBUG log
-* added "-M" as shorter version of flag
-* added documentation
-* renamed internal API that was changed to avoid any potential hidden
-  runtime issues.
-
-Bruce Richardson (3):
-  eal: centralize core parameter parsing
-  eal: convert core masks and lists to core sets
-  eal: allow automatic mapping of high lcore ids
-
- doc/guides/linux_gsg/eal_args.include.rst  |  26 +-
- drivers/event/dlb2/dlb2_priv.h             |   2 -
- drivers/event/dlb2/pf/base/dlb2_resource.c |  48 +--
- lib/eal/common/eal_common_options.c        | 340 +++++++--------------
- lib/eal/common/eal_options.h               |   3 +
- lib/eal/include/rte_eal.h                  |  14 +-
- lib/eal/version.map                        |   2 +-
- 7 files changed, 161 insertions(+), 274 deletions(-)
-
---
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 79db9a47dd..55c49a923f 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -151,7 +151,13 @@ TAILQ_HEAD_INITIALIZER(devopt_list);
+ 
+ static int main_lcore_parsed;
+ static int mem_parsed;
+-static int core_parsed;
++static struct lcore_options {
++	const char *core_mask_opt;
++	const char *core_list_opt;
++	const char *core_map_opt;
++	const char *service_mask_opt;
++	const char *service_list_opt;
++} lcore_options = {0};
+ 
+ /* Allow the application to print its usage message too if set */
+ static rte_usage_hook_t rte_application_usage_hook;
+@@ -674,7 +680,7 @@ eal_parse_service_coremask(const char *coremask)
+ 	if (count == 0)
+ 		return -1;
+ 
+-	if (core_parsed && taken_lcore_count != count) {
++	if (taken_lcore_count != count) {
+ 		EAL_LOG(WARNING,
+ 			"Not all service cores are in the coremask. "
+ 			"Please ensure -c or -l includes service cores");
+@@ -684,17 +690,6 @@ eal_parse_service_coremask(const char *coremask)
+ 	return 0;
+ }
+ 
+-static int
+-eal_service_cores_parsed(void)
+-{
+-	int idx;
+-	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
+-		if (lcore_config[idx].core_role == ROLE_SERVICE)
+-			return 1;
+-	}
+-	return 0;
+-}
+-
+ static int
+ update_lcore_config(int *cores)
+ {
+@@ -903,7 +898,7 @@ eal_parse_service_corelist(const char *corelist)
+ 	if (count == 0)
+ 		return -1;
+ 
+-	if (core_parsed && taken_lcore_count != count) {
++	if (taken_lcore_count != count) {
+ 		EAL_LOG(WARNING,
+ 			"Not all service cores were in the coremask. "
+ 			"Please ensure -c or -l includes service cores");
+@@ -1673,83 +1668,20 @@ eal_parse_common_option(int opt, const char *optarg,
+ 		a_used = 1;
+ 		break;
+ 	/* coremask */
+-	case 'c': {
+-		int lcore_indexes[RTE_MAX_LCORE];
+-
+-		if (eal_service_cores_parsed())
+-			EAL_LOG(WARNING,
+-				"Service cores parsed before dataplane cores. Please ensure -c is before -s or -S");
+-		if (rte_eal_parse_coremask(optarg, lcore_indexes) < 0) {
+-			EAL_LOG(ERR, "invalid coremask syntax");
+-			return -1;
+-		}
+-		if (update_lcore_config(lcore_indexes) < 0) {
+-			char *available = available_cores();
+-
+-			EAL_LOG(ERR,
+-				"invalid coremask, please check specified cores are part of %s",
+-				available);
+-			free(available);
+-			return -1;
+-		}
+-
+-		if (core_parsed) {
+-			EAL_LOG(ERR, "Option -c is ignored, because (%s) is set!",
+-				(core_parsed == LCORE_OPT_LST) ? "-l" :
+-				(core_parsed == LCORE_OPT_MAP) ? "--lcores" :
+-				"-c");
+-			return -1;
+-		}
+-
+-		core_parsed = LCORE_OPT_MSK;
++	case 'c':
++		lcore_options.core_mask_opt = optarg;
+ 		break;
+-	}
+ 	/* corelist */
+-	case 'l': {
+-		int lcore_indexes[RTE_MAX_LCORE];
+-
+-		if (eal_service_cores_parsed())
+-			EAL_LOG(WARNING,
+-				"Service cores parsed before dataplane cores. Please ensure -l is before -s or -S");
+-
+-		if (eal_parse_corelist(optarg, lcore_indexes) < 0) {
+-			EAL_LOG(ERR, "invalid core list syntax");
+-			return -1;
+-		}
+-		if (update_lcore_config(lcore_indexes) < 0) {
+-			char *available = available_cores();
+-
+-			EAL_LOG(ERR,
+-				"invalid core list, please check specified cores are part of %s",
+-				available);
+-			free(available);
+-			return -1;
+-		}
+-
+-		if (core_parsed) {
+-			EAL_LOG(ERR, "Option -l is ignored, because (%s) is set!",
+-				(core_parsed == LCORE_OPT_MSK) ? "-c" :
+-				(core_parsed == LCORE_OPT_MAP) ? "--lcores" :
+-				"-l");
+-			return -1;
+-		}
+-
+-		core_parsed = LCORE_OPT_LST;
++	case 'l':
++		lcore_options.core_list_opt = optarg;
+ 		break;
+-	}
+ 	/* service coremask */
+ 	case 's':
+-		if (eal_parse_service_coremask(optarg) < 0) {
+-			EAL_LOG(ERR, "invalid service coremask");
+-			return -1;
+-		}
++		lcore_options.service_mask_opt = optarg;
+ 		break;
+ 	/* service corelist */
+ 	case 'S':
+-		if (eal_parse_service_corelist(optarg) < 0) {
+-			EAL_LOG(ERR, "invalid service core list");
+-			return -1;
+-		}
++		lcore_options.service_list_opt = optarg;
+ 		break;
+ 	/* size of memory */
+ 	case 'm':
+@@ -1918,21 +1850,7 @@ eal_parse_common_option(int opt, const char *optarg,
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
+ 
+ 	case OPT_LCORES_NUM:
+-		if (eal_parse_lcores(optarg) < 0) {
+-			EAL_LOG(ERR, "invalid parameter for --"
+-				OPT_LCORES);
+-			return -1;
+-		}
+-
+-		if (core_parsed) {
+-			EAL_LOG(ERR, "Option --lcores is ignored, because (%s) is set!",
+-				(core_parsed == LCORE_OPT_LST) ? "-l" :
+-				(core_parsed == LCORE_OPT_MSK) ? "-c" :
+-				"--lcores");
+-			return -1;
+-		}
+-
+-		core_parsed = LCORE_OPT_MAP;
++		lcore_options.core_map_opt = optarg;
+ 		break;
+ 	case OPT_LEGACY_MEM_NUM:
+ 		conf->legacy_mem = 1;
+@@ -1973,6 +1891,7 @@ eal_parse_common_option(int opt, const char *optarg,
+ 
+ 	}
+ 
++
+ 	return 0;
+ 
+ ba_conflict:
+@@ -2046,8 +1965,74 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 	struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 
+-	if (!core_parsed)
++	/* handle all the various core options, ignoring order of them.
++	 * First check that multiple lcore options (coremask, corelist, coremap) are
++	 * not used together. Then check that the service options (coremask, corelist)
++	 * are not both set. In both cases error out if multiple options are set.
++	 */
++	if ((lcore_options.core_mask_opt && lcore_options.core_list_opt) ||
++			(lcore_options.core_mask_opt && lcore_options.core_map_opt) ||
++			(lcore_options.core_list_opt && lcore_options.core_map_opt)) {
++		EAL_LOG(ERR, "Only one of -c, -l and --"OPT_LCORES" may be given at a time");
++		return -1;
++	}
++	if ((lcore_options.service_mask_opt && lcore_options.service_list_opt)) {
++		EAL_LOG(ERR, "Only one of -s and -S may be given at a time");
++		return -1;
++	}
++
++	if (lcore_options.core_mask_opt) {
++		int lcore_indexes[RTE_MAX_LCORE];
++
++		if (rte_eal_parse_coremask(lcore_options.core_mask_opt, lcore_indexes) < 0) {
++			EAL_LOG(ERR, "invalid coremask syntax");
++			return -1;
++		}
++		if (update_lcore_config(lcore_indexes) < 0) {
++			char *available = available_cores();
++
++			EAL_LOG(ERR,
++				"invalid coremask, please check specified cores are part of %s",
++				available);
++			free(available);
++			return -1;
++		}
++	} else if (lcore_options.core_list_opt) {
++		int lcore_indexes[RTE_MAX_LCORE];
++
++		if (eal_parse_corelist(lcore_options.core_list_opt, lcore_indexes) < 0) {
++			EAL_LOG(ERR, "invalid core list syntax");
++			return -1;
++		}
++		if (update_lcore_config(lcore_indexes) < 0) {
++			char *available = available_cores();
++
++			EAL_LOG(ERR,
++				"invalid core list, please check specified cores are part of %s",
++				available);
++			free(available);
++			return -1;
++		}
++	} else if (lcore_options.core_map_opt) {
++		if (eal_parse_lcores(lcore_options.core_map_opt) < 0) {
++			EAL_LOG(ERR, "invalid parameter for --"	OPT_LCORES);
++			return -1;
++		}
++	} else {
+ 		eal_auto_detect_cores(cfg);
++	}
++
++	if (lcore_options.service_mask_opt) {
++		if (eal_parse_service_coremask(lcore_options.service_mask_opt) < 0) {
++			EAL_LOG(ERR, "invalid service coremask");
++			return -1;
++		}
++	} else if (lcore_options.service_list_opt) {
++		if (eal_parse_service_corelist(lcore_options.service_list_opt) < 0) {
++			EAL_LOG(ERR, "invalid service core list");
++			return -1;
++		}
++	}
+ 
+ 	if (internal_conf->process_type == RTE_PROC_AUTO)
+ 		internal_conf->process_type = eal_proc_type_detect();
+-- 
 2.45.2
 
