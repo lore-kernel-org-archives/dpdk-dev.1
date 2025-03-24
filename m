@@ -2,125 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A933BC3600C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 09:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E20EC36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 09:40:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C58740655;
-	Mon, 24 Mar 2025 10:34:29 +0100 (CET)
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam12on2063.outbound.protection.outlook.com [40.107.237.63])
- by mails.dpdk.org (Postfix) with ESMTP id 80CEB402DA
- for <dev@dpdk.org>; Mon, 24 Mar 2025 10:34:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B7F9B40655;
+	Mon, 24 Mar 2025 10:40:43 +0100 (CET)
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam04on2050.outbound.protection.outlook.com [40.107.100.50])
+ by mails.dpdk.org (Postfix) with ESMTP id A8773402DA
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 10:40:42 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FQPE/YI1FK81XBT6OB2g6TN/a9uErRFWRz5ENMxNauR1+jheRYnHwQ247IoLpaGQV+d3asBUFbm2WOQS2s3A1x5BDIAo4fEAojDGWIZqlqQ/uCCIM8bRefQED6W3mQ7DTeDnL+KmCPe171JBJoIjgqt+OvL797bPVouN48nkqrx3voqLrmaDOjM6bO7A9X5GxWRwP+gaLWiW1OBdldFADixN0tcrRzQ/MhNofE7Qo/4D8NtyTFn1bMxcACowh7sTvYQBvr8Lm97F2gjtyBORbkAcnFu6YslAhbBAlRtgH3H54CaEoYy8fZTDF+SZhWiXllfBoAMNKHDQ5zOb4Kor+g==
+ b=baeERIVJRHC50AJisZNVzd4sZGPw89QqA2WOVbOXetu+Z6QdGLgD+n5bkv4thZUkDLVrb1o4v7+wULcJSW8WCT2QZNt4uuCDZkQcgHzqELbAhpYN9v9acc2xhhL0BuYOaVfgqwk5BoBw456Hj9KSRQi2begTDW1vLEfCPwGsVESQ+dPfSkuufojwth4IoyhazeTBtonYCOBz99xSOd/fPQKTvgeJZ1slvCf6Lhf3xibE+8ojXUUNU/STWyIB5BqpM0yE2QRUL9RiJ3/RJNgZ6szBPF0hrabhIdFyJ/JJs2umeuSCP6pwN5cOhOSRwzoSSXJakrQP3Gss0SKAbAFmJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7Lcms1LGKFyFpS077oV/l2UJ/4WaOW/HEij8+4m2tw4=;
- b=tYRiAYwM+j7nO1O1tZZItUj/U0Sjb0pq2Zs3qsPH+jNzwZnxA8FRkxqUOM2wN9pJf6HIdRu7jsD/1NCMXPpUD++6/Krej+pb1RiWNfJH2S/7C9DopgDPnHwLC1fXuGUnv/+/Yt1TwyXRhogBXynxkUZPJzqeur+1qb7W0+Qsk2jn4pgTjYRmuE5bkEdRRDc8oBIxAGfk3ip0zn44T5M6uY17zwv6s5d8ATDL1OBQLluhaMIfYm3nEL5aikg243wLM3F41qZLj3DKVhDTUF2m9kuW/t21KMM2K2qUa/NanitlhPuJujndB20y/oJ/0LKpiarsy2K4iZhKflxoqwVf+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=rIOXeMiB3PDpS3L0+KFEv2P8qjxEQcEYKSGOjUb8emA=;
+ b=ocnCcDCip3h0V0R/Zn2yStPwxlmQSJUyVkcn8L072Cs9VKLbiYsPCBKD2X2llfJlJ+b4TzKoV7le4U0SsrIqec8R40MU0DkndwORZ4DGO0VldXPvqXXV8sfPjlt02FdrAFnheHDNhiaomBUHKPc9cx3tPv61Mca9B8vh1Lrxk/bHIjre0+RTe78UuFfWxmV/K73ed7ONeAC7WBAvMboqpLuW/4ARbhw9DD8eH/0wB9Ke8/P7PPhR+/ClcYFuEuNALt85B1NYDtBeZPzHd2GHzKjB6p6/y0IKJZHSuh4VLSyOi3Roa2H7Evuioe112hURwtYNSOItFSuPoJUVyD9PaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Lcms1LGKFyFpS077oV/l2UJ/4WaOW/HEij8+4m2tw4=;
- b=gE+NSQEWN9EDrUbzyu+F1S3WfWVH+tOpryTZyLQ4WbQ4AqFMZ4Gdk8DM1UaSybjGanGL8B7I0+Raqi2+riVDREwQ1no5KeSuwiq0n+w/wxbzdlbHOmmThjyOwdUOT5mqBQmwY0BPQUMR2Q3PZdB196g6vafCNIvwagV15MpepDBhuloTyxQ+GKnoCRUeh8DQUoizd7vh+YXWK79l+YJrSFpWQXvPBEFlMCUpG+gO6jWoAVIXqiB35Hk3ldu9e6Wcjdqnh3VMRVm582eK9LFdp6VYUhlcS2ruRJHlbCOLLHBmEFg3K22ILbK+vQfhE8T4sdFhqhxVe9CnH2qeVQU9Vg==
-Received: from BL0PR02CA0093.namprd02.prod.outlook.com (2603:10b6:208:51::34)
- by CY5PR12MB6081.namprd12.prod.outlook.com (2603:10b6:930:2b::15)
+ bh=rIOXeMiB3PDpS3L0+KFEv2P8qjxEQcEYKSGOjUb8emA=;
+ b=SLtnH0pHpU85a9f0DuQczM7oqVQFm3s92bEE/IcMlrV2sZUqldE+Rtk7/NhMmyfuAIuaWHJ33WBvLv3GmFrQ+U55KAAbW0SK7BUA2UXVLZilHAFHc0CjcV9e45xZlZ2hqXMacuUL1g6NuPrfevoXvV2/EYya7591Lmlsu5zd27XFce4TLVQA0lzLYHAXNnv16Pye49WhM8BwzsdUdP8nqlF8WMbuyFD4ZywHPVejOpS4+FyU2UoRDd7MuNpB9TO70VUuHiO6nR69uD85OH1vQEJqIwCHMW+Ae5tpDtiXZXRsx+3+xHSUQj5bXJRkDiveXYUgMv/LUy37Y1puaFKXLg==
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by MN2PR12MB4271.namprd12.prod.outlook.com (2603:10b6:208:1d7::16)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 09:34:23 +0000
-Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
- (2603:10b6:208:51:cafe::55) by BL0PR02CA0093.outlook.office365.com
- (2603:10b6:208:51::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Mon,
- 24 Mar 2025 09:34:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 09:34:22 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
- 2025 02:34:07 -0700
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
- 2025 02:34:04 -0700
+ 2025 09:40:40 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 09:40:40 +0000
 From: Raslan Darawsheh <rasland@nvidia.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>, <mb@smartsharesystems.com>, <stephen@networkplumber.org>, 
- <haijie1@huawei.com>
-Subject: [PATCH v3] app/testpmd: fix VLAN header parsing
-Date: Mon, 24 Mar 2025 11:33:49 +0200
-Message-ID: <20250324093349.26509-1-rasland@nvidia.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250323122822.90407-1-rasland@nvidia.com>
+To: =?Windows-1252?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>, "haijie1@huawei.com" <haijie1@huawei.com>
+Subject: Re: [PATCH v2] app/testpmd: fix VLAN header parsing
+Thread-Topic: [PATCH v2] app/testpmd: fix VLAN header parsing
+Thread-Index: AQHbnJnkEuAP/W1w7kKEo5NXIqQSVrOB/jwAgAAJ3aw=
+Date: Mon, 24 Mar 2025 09:40:40 +0000
+Message-ID: <CH3PR12MB84609D51CB1C8A9B3EE5EA66CFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
 References: <20250323122822.90407-1-rasland@nvidia.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|CY5PR12MB6081:EE_
-X-MS-Office365-Filtering-Correlation-Id: 043168f6-ba2e-4f5a-3a27-08dd6ab70f81
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?du+rwW7Ah3MRketakz2KxqDqXpolYxRwi3RWqKZGXkmvDNfCSjkBmcXDMF6/?=
- =?us-ascii?Q?zYuHpwhtU/6r+JrBGhye7IAvlpTkyXsypxDVrUZwiNuLYgaz0IbOCYz+BJ62?=
- =?us-ascii?Q?BdiXUp2Rf5HvtUq/9FbwS2tiRT7Dz9L0GUuswfsjyZjhAGR83cpj9xRO0z49?=
- =?us-ascii?Q?VXyTpEm6nCvfyGhwB0UG1vvbblVoQI2aF3vcvBlNBlD16gzwmEBVmxNdk+GJ?=
- =?us-ascii?Q?y80eyP737pZYt6sk69lg49K+X5J/yMqlscU+F7jEI+G/OemkX0PywNfvpJHd?=
- =?us-ascii?Q?Lxy80DT6GzMaKVuTaoz/ur5upsak6u3I5ahZiOcIngEfOaZOhOuh+FXqF5Fg?=
- =?us-ascii?Q?/RuylwUc2RGLTOETsyH9/UEC2UxATguUut3oZ8ARKDnwQRoJCBF0H/kfN3v3?=
- =?us-ascii?Q?I+YdlU3sdZfQ3QawM8Gy7pkc92gsToOgqiCoTD6OQYCwV2F1dwwsNxAU+qxz?=
- =?us-ascii?Q?vY8u1TPJekMIyzlHSFscTK0rt4c5F6MTCvIw6i0PfM/EuQELIbTiyeMZeLUh?=
- =?us-ascii?Q?yUe4lYkwugXRAb8CSjHp1GFFfGpPeUeYD9iEaJAJqgq2asx6pOgDR3HlEBMm?=
- =?us-ascii?Q?KRRruPcx6mooA4eIKJr2pNzYYl/tNfG8JtsrL6jTX/AVfGfRiQlhBQK/lw6c?=
- =?us-ascii?Q?qjYdVrlvjOgD5oJtUJPHml18VKCBP5V2bMN3pI1zuz3EngSAts0pFsB5mmLd?=
- =?us-ascii?Q?2DXIjA3T31iT9NkNqzbkylEyV+5+rdBDg8TkGTQV+CMP8X9c8DeDus6W9mWR?=
- =?us-ascii?Q?mToSA9lxeNn7qdwFPL9sdXwFNKJNbnw0ezimR5/ECklIEvPBMEO6Igh5Pts9?=
- =?us-ascii?Q?G0rfcDmGD9YMftR/jIdsrHpuo59BPQVR46zvsu5cOCkiJ6fctGZ0Mt3Pk+DI?=
- =?us-ascii?Q?yrb4mTLqfy13VqUROzqlxjZvUN81x6m2U0+LiWRF09rOPyKxwwDxkTbPGmt4?=
- =?us-ascii?Q?D8IywenfUh4yy/CiIw6L3V/QRJfsHaHhWqeH8aG9EFDeWgFFlnrnLlf9kcaw?=
- =?us-ascii?Q?hlEb6pJWt3Y8w2o9dRRVP08GQJkdh6sNJydoa8OZqP7WsDXDsrtNrkRQFH56?=
- =?us-ascii?Q?r4SRSVPYt08Q2dgXe4qSqmxE+4dWp+r3NI7FGiH7+roEjCyjX5GyXPWmvsOJ?=
- =?us-ascii?Q?G09D81fVuM+IYOJwjvi6jeIBD3uh9aLXmNZZT902g6CJFvYp4dUDTDwRIX7I?=
- =?us-ascii?Q?SqxJhg/IiV5FaaY226hp97p9H9HPKDy83MyEK6gSWgN5vTU3vbR/G7o/dZPY?=
- =?us-ascii?Q?X6IhfX/wAnAVJieyGtcHeyTXAvxwkgFxJXw/uXH4l00wTNQZ1T5atrXwa4pQ?=
- =?us-ascii?Q?vEitJPCws4UH5pnX3Nlcyb3zzIuWYuilQvxQupNHjtVYq5GFNF/OKIhsu7cX?=
- =?us-ascii?Q?0VPmo0bU1jYpOO7pUfY6EUNGQ/rCVt1HJ5D763jwzdyV73q1IdqOWYfK1vRG?=
- =?us-ascii?Q?dfaWNXy/NoxotOx3X8zprFXQqX/TXEHvbuigqvqfeNwk26pDPpo3HQEwzeZv?=
- =?us-ascii?Q?itRz+oRCE7ED+3E=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026); DIR:OUT;
+ <20250324085023.23721-1-rasland@nvidia.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB4A@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB4A@smartserver.smartshare.dk>
+Accept-Language: en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-reactions: allow
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|MN2PR12MB4271:EE_
+x-ms-office365-filtering-correlation-id: b53a6c6b-5c71-4ffb-f83c-08dd6ab7f09d
+x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|8096899003|38070700018; 
+x-microsoft-antispam-message-info: =?Windows-1252?Q?j/b7rH0IPnkPW3Y8g+ESbeTwL4kK0i2WdRVOuAL+z6bdRh6GsMps6n/r?=
+ =?Windows-1252?Q?v3ZFrkO5HHSuS13T6essJcboGzoiUsCFWPWn02hTx1MvJSua1o0osNWd?=
+ =?Windows-1252?Q?FiYxQjzJG2/bCpdUg0gXx3TDLJP9QLQTeamEQJ6pLFrqb2WV7ogF8Q67?=
+ =?Windows-1252?Q?f1taWxD8W8gS9Q94hQB996QAnHoQo7YyVxZxeNVdjp0yfIDS2hC6NJb5?=
+ =?Windows-1252?Q?i6aM+S8L2Q+40JLKimdfPdBxU7wbB/LbzfsSkA42MI2d3dLg6nNPljQC?=
+ =?Windows-1252?Q?4bpDGwW5k+fNtogmEr/kKXIGCT6/sq6KwsRNwu7EDVp7T78Mfn7cJWRR?=
+ =?Windows-1252?Q?CXZxmmzSNPU0CzRagEwTFHdRu5G+Gj60GR/XW9P+iOhUygFJ8I2N1sOK?=
+ =?Windows-1252?Q?9H7cSCnVapwsNKmgjUy2oYNHnxjVjYcqjN9FPE2mJWk3ien0yxUFkzU+?=
+ =?Windows-1252?Q?RXZWaWHFZtPoUZDZIyQXuYzrr9IfNm+dtX44YGfn/2hjXvuw5aitZNe+?=
+ =?Windows-1252?Q?3/y64frrp3zAL7mjawjwrKKE7XiJCMg6PWuWv2chLgewpzpMUElXeKv5?=
+ =?Windows-1252?Q?4cP7p1jVTYoGBlWjQo2Kq2hNkk29zz0AwUJF55Wpfn/oiLKPjt2pfB99?=
+ =?Windows-1252?Q?Rgw8bDTTfufs4VwKxnwmKKTlrV0xkWvNvfT4EgGda6ztLhKYY9wDaLy5?=
+ =?Windows-1252?Q?Vdbjli1/WbDJn0oTEAU/4I1AocvqWmdzTSDJ3bbitdKDWBC4EFHAvrqC?=
+ =?Windows-1252?Q?HGKEzJEFWjUE0htOzFAcPToZWVkhtW87bZS5wcjeG+I+vw1WN1SG5JDW?=
+ =?Windows-1252?Q?HjkjZc66l1/JEWCtIzeja8U12ZjRmaVREW5V7HzVPt7BCB2+4aKLpM/r?=
+ =?Windows-1252?Q?eNcPVPN8APHZd/kkd2E1/WTzGTvOF242S73m/ITD6HQMwe56S6BJMf2L?=
+ =?Windows-1252?Q?JwDMswdktpxWMYTFH/ry/I7CX1l0qUplNvXrIbfVLi1ae0MuwqgdUHVn?=
+ =?Windows-1252?Q?M0HWKmV5FNzsHJadmJYx6J8g3Qqdbighq6z/QnNdpmzhCPAR2Q1v8iZA?=
+ =?Windows-1252?Q?KNRqoSpduA1Tnay4NMxx/uWpA8Ntz2SBzBsCSpWoFyI+YNZj+GNNRJh9?=
+ =?Windows-1252?Q?P35p1lkfqIAxe+FMUoiVa4yQFhegm3rzBL6tZaOXtC4Wg3M+bM9NMaqd?=
+ =?Windows-1252?Q?Dag3cC3cKffE/SKYEYd55b6VjiZNI80zOfhNwKWDXCGqBjLUk3kBOeNH?=
+ =?Windows-1252?Q?J6uNox3HDN3GVwt5e+fHAuUbARmqInkhwGh4owbK464sGAnTlvy4+kyM?=
+ =?Windows-1252?Q?3zNcFpBrVxjzVYgUgxW27UotNCJAzFJDyypd9GYzDnJhHigBQobmhRxn?=
+ =?Windows-1252?Q?OiPJVy6l346lxpS0QMiqteCgPex5DTrkFr51PvjC+pY6AuPjm9OA+oX3?=
+ =?Windows-1252?Q?h/W36oR87WKPcHd1pnkMUloi/KckzZlI4GqyrXWEhyBXKJBMEyZmQHja?=
+ =?Windows-1252?Q?uOyN+XpCGEY+3JxND0PxcEDayHJEtJrOyFMfpz2yOIs7t4FZ/12gRCr/?=
+ =?Windows-1252?Q?v/dR9OWOtZwoHWAM?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(8096899003)(38070700018); DIR:OUT;
  SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?NMRTLgGiX4fMvvRSsRp7cd14WRniFxKqKEPWJBUiqtvhIKLidWYYP+hQ?=
+ =?Windows-1252?Q?n/DOxWf5rOwPLV0EWqFxzXIy9NCFDhCtGRasLYOlfffHOIpsuhFUKMHc?=
+ =?Windows-1252?Q?V8d2PpSZlXPbPJZrOkQ1RyE0nT1yH6O8Y48QAlbcJs7rV+rPdBeM4q9h?=
+ =?Windows-1252?Q?heyIAvus0tOSYjkLU6DTpJ/0dy3M++bLy4+PZXe2BSQ2phiZPGnqii7B?=
+ =?Windows-1252?Q?spMOBglU7/+BisSqcHouYbWTBsjZLQw5CubAuLAUSz+5/YPPnMMV7pCn?=
+ =?Windows-1252?Q?K8RsafxR+azQDVJkHYM2fCVKvFeAmPYePUGWqvUIewi4Lu7I+1AvAOT9?=
+ =?Windows-1252?Q?KbbJLpNfqjxPbUFhxpPjThZ/Ru3QrjMVXPglU2orJ5TBFA9gbKcx8nTM?=
+ =?Windows-1252?Q?41ZpUIZdYr4wNm8uMUFltzTEBMIT+sv/A5g5SsCXr2ft6RzTrkZD9HcS?=
+ =?Windows-1252?Q?yhIsHdm3YyphhTV8VQgb5+QlZ7+LWUQJrZ2p03e2cymkQoc7ieTcx63L?=
+ =?Windows-1252?Q?VUK3r0eWI4b/bnQrAlM9OOMjH/C0daQ3gaYdy+2nXGCVJc9F3N+KJByc?=
+ =?Windows-1252?Q?YJmlmPAZHU34Y6bP89rw0frQX81y0nidRnnpclIrxsTxB6fBfcfVJ8j5?=
+ =?Windows-1252?Q?0VwYbLSA7s2bPlEY0E2CCMuRo+YpeEID3MXXNG7uzkb1TRyc4W/cWYAz?=
+ =?Windows-1252?Q?nT4tZwU8IoRz+cnsaWkwX2SUgTp2ciAKNAO+RoUTtMrN36MWXCzRZz4n?=
+ =?Windows-1252?Q?bTtFXabx/oTYz9YXdI683wO9PiFmyeafbZPVROELQc3RnebP1whMqJ2r?=
+ =?Windows-1252?Q?0s90wIN5jMivrmmoeYiZ4Q4I7iQ4Q/1j+xWiVdGK1piUduE8fkA8UirW?=
+ =?Windows-1252?Q?pwNCdEnlxTdHEycESTA1X747PeEZeK84RdmECACh2RQChR/o6Strg4aw?=
+ =?Windows-1252?Q?SlsVTg4HqiqKrIq4CurG0lxswYfPrOJU7tBjVRqrd3tleOy5pOXrmsM2?=
+ =?Windows-1252?Q?tXmYeCbYpniNVBcija2phq2uFN0dM1ZO2dW1qCKHHpIeg9Hg9BX63CT4?=
+ =?Windows-1252?Q?lsi1JWXwdX4RdkdwN3A+mk+r/16ZmOt7m4wgbpPOlW5KXeuZ7sFXZ240?=
+ =?Windows-1252?Q?M1SsBMixe1y/SZyY64l3yygUbsWGpGvIiUDXqYLw8U6WUQkfbinLbphm?=
+ =?Windows-1252?Q?sQl021+JglnuolbcdPLUkfBZzQUlLWPWN66z2qzwwLatTVxddEsJuXb+?=
+ =?Windows-1252?Q?NwFMx9kWCQ7VGpxkcWORoJmSDcEWcUhrcsRyN7COWDBGSYGnci+O1nGR?=
+ =?Windows-1252?Q?Kp1LjOmQYl2bqMqnn45gAjWFmb7KsokKUoLCokqtEiweSI+Z3EMaWrlJ?=
+ =?Windows-1252?Q?NQ67P9XsivP8srM/4c9M9JgcXx3IZArh18KMt38KmPp2NFF2tb4qbrPO?=
+ =?Windows-1252?Q?4W4n2vBJck9Eq4FgEQVA5GMXKT7uc5kkIOrzbZvcFGt1/s5gcAYEyqDr?=
+ =?Windows-1252?Q?bLDrtvbqaa5mt6gTs54sOfOCsEI0pwjzXfy97q4oGm1xKCOMSKGyE7GZ?=
+ =?Windows-1252?Q?PyZfTO92/pFVR0kEyS/jc0rSPbj6hF0dNck7ToS1+SvaHbwe1qdyPN9p?=
+ =?Windows-1252?Q?f9wKbL7qCseDQ2xULjRlk5OyQSoy7XO5D43m1LK4cEekdpNSoD1x8mrd?=
+ =?Windows-1252?Q?dpagTLjlpXY1XiAyefVd7CauppLEkbSm8wwG0QQOcNVK2+vRK6K/XA?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: multipart/alternative;
+ boundary="_000_CH3PR12MB84609D51CB1C8A9B3EE5EA66CFA42CH3PR12MB8460namp_"
+MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 09:34:22.6133 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 043168f6-ba2e-4f5a-3a27-08dd6ab70f81
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6081
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b53a6c6b-5c71-4ffb-f83c-08dd6ab7f09d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 09:40:40.4586 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /BUcoAYmdcHGVgJ1K8rNFjEbGFjanWgsmHT9zxmCe+NnFZgqF1uFZWbt1JDv9njqK9B21boa/5yidA6SGa6zeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4271
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,70 +152,154 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When processing VLAN or QinQ packets, an infinite loop occurred,
-preventing the csum forward engine from proceeding and causing
-testpmd to hang during shutdown attempts.
+--_000_CH3PR12MB84609D51CB1C8A9B3EE5EA66CFA42CH3PR12MB8460namp_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-Updated the `get_ethertype_by_ptype` function to correctly parse
-VLAN headers.
+>> -                     eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_Q=
+INQ)) {
+>> -                     vlan_hdr =3D (struct rte_vlan_hdr *)
+>> -                             ((char *)eth_hdr + sizeof(*eth_hdr));
+>> +             vlan_hdr =3D (struct rte_vlan_hdr *) RTE_PTR_ADD(eth_hdr,
+>> +                              offsetof(struct rte_ether_hdr, ether_type=
+));
+>> +             while ((ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
+>> +                     ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ))) {
 
-Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
-Cc: haijie1@huawei.com
+>Two details:
+>1. Lines continuing on the next line must be indented by two TABs.
+>2. Please add the boundary check, as requested by Stephen. (I realize this=
+ mail may have crossed my response arguing why it is required.)
 
-Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
----
-v3: fixed wrong indentation
-    add boundaries check for 8 VLANs at max
- 
-v2: update commit log
-    fixed pointer handling to actually move the pointer
----
- app/test-pmd/csumonly.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Sure, I=92ve sent a V3 having these fixed thanks for your review and commen=
+ts.
 
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index 5b906eaa53..710967ca4d 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -59,6 +59,8 @@
- #define GRE_SUPPORTED_FIELDS	(GRE_CHECKSUM_PRESENT | GRE_KEY_PRESENT |\
- 				 GRE_SEQUENCE_PRESENT)
- 
-+#define MAX_VLAN_HEADERS 8
-+
- /* We cannot use rte_cpu_to_be_16() on a constant in a switch/case */
- #if RTE_BYTE_ORDER == RTE_LITTLE_ENDIAN
- #define _htons(x) ((uint16_t)((((x) & 0x00ffU) << 8) | (((x) & 0xff00U) >> 8)))
-@@ -466,9 +468,10 @@ pkts_ip_csum_recalc(struct rte_mbuf **pkts_burst, const uint16_t nb_pkts, uint64
- static uint32_t
- get_ethertype_by_ptype(struct rte_ether_hdr *eth_hdr, uint32_t ptype)
- {
--	struct rte_vlan_hdr *vlan_hdr;
-+	struct rte_vlan_hdr *vlan_hdr, *max_vlans;
- 	uint16_t ethertype;
- 
-+
- 	switch (ptype) {
- 	case RTE_PTYPE_L3_IPV4:
- 	case RTE_PTYPE_L3_IPV4_EXT:
-@@ -486,10 +489,13 @@ get_ethertype_by_ptype(struct rte_ether_hdr *eth_hdr, uint32_t ptype)
- 		return _htons(RTE_ETHER_TYPE_IPV6);
- 	default:
- 		ethertype = eth_hdr->ether_type;
--		while (eth_hdr->ether_type == _htons(RTE_ETHER_TYPE_VLAN) ||
--			eth_hdr->ether_type == _htons(RTE_ETHER_TYPE_QINQ)) {
--			vlan_hdr = (struct rte_vlan_hdr *)
--				((char *)eth_hdr + sizeof(*eth_hdr));
-+		vlan_hdr = (struct rte_vlan_hdr *) RTE_PTR_ADD(eth_hdr,
-+					offsetof(struct rte_ether_hdr, ether_type));
-+		max_vlans = vlan_hdr + MAX_VLAN_HEADERS;
-+		while (((ethertype == _htons(RTE_ETHER_TYPE_VLAN) ||
-+			ethertype == _htons(RTE_ETHER_TYPE_QINQ))) &&
-+			vlan_hdr < max_vlans) {
-+			vlan_hdr++;
- 			ethertype = vlan_hdr->eth_proto;
- 		}
- 		return ethertype;
--- 
-2.39.5 (Apple Git-154)
+>> +                     vlan_hdr++;
+>>                        ethertype =3D vlan_hdr->eth_proto;
+>>                }
+>>                return ethertype;
+>> --
+>> 2.39.5 (Apple Git-154)
 
+--_000_CH3PR12MB84609D51CB1C8A9B3EE5EA66CFA42CH3PR12MB8460namp_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
+hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
+fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;
+	panose-1:2 11 0 4 2 2 2 2 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:10.0pt;
+	font-family:"Aptos",sans-serif;}
+span.EmailStyle19
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style>
+</head>
+<body lang=3D"en-PS" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
+k-word">
+<div class=3D"WordSection1">
+<div id=3D"mail-editor-reference-message-container">
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-size:11.0pt">&gt;</span><span style=3D"font-size:11.0pt">&gt;=
+ -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eth_hdr-&gt;ether_type =3D=
+=3D _htons(RTE_ETHER_TYPE_QINQ)) {<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ vlan_hdr =3D (struct rte_vlan_hdr *)<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((char *)eth_hdr + sizeof(=
+*eth_hdr));<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; vlan_hdr =3D (struct rte_vlan_hdr *) RTE_PTR_AD=
+D(eth_hdr,<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; offsetof(struct rte_=
+ether_hdr, ether_type));<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; while ((ethertype =3D=3D _htons(RTE_ETHER_TYPE_=
+VLAN) ||<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ))) {<br>
+<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">Two details:<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">1. Lines continuing on the next line must be indent=
+ed by two TABs.<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">2. Please add the boundary check, as requested by S=
+tephen. (I realize this mail may have crossed my response arguing why it is=
+ required.)<br>
+<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p></o:p></span></=
+p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-size:11.0pt">Sure, I=92ve sent a V3 having these fixed thanks=
+ for your review and comments.<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
+ize:11.0pt"><br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ vlan_hdr++;<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp; ethertype =3D vlan_hdr-&gt;eth_proto;<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return ethertype;<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; --<br>
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
+le=3D"font-size:11.0pt">&gt; 2.39.5 (Apple Git-154)<o:p></o:p></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_CH3PR12MB84609D51CB1C8A9B3EE5EA66CFA42CH3PR12MB8460namp_--
