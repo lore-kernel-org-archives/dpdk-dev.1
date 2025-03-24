@@ -2,84 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5A1C36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5305AC36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:30:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 840FA40BA6;
-	Mon, 24 Mar 2025 18:00:03 +0100 (CET)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id 31F9940A71
- for <dev@dpdk.org>; Mon, 24 Mar 2025 18:00:02 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal
- [10.202.2.45])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 9BE39114021D;
- Mon, 24 Mar 2025 13:00:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Mon, 24 Mar 2025 13:00:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1742835601;
- x=1742922001; bh=Il28qzjed933gJl5uKk4pmiw4R0oNlU+F2i+VOPPxDw=; b=
- lARwfo9LLIGmRkz2gG5zXUEhxNBhIBZ5ug+M04aOowz/37yimLqxkocYsM1Gs9z1
- /L8L9GhOFrxg+TiM4jaZ+V0zTE6JUgKtBKwxUUiOyAviQYgZxHZyEcOQAww3F0Nz
- p5P3BOWl4lxc1qQDdE1KwNarkJe1i6vmRrpDrbJNzaKNwrVcMhDsluNqctv1nya5
- cXvomVMFr46fCW4zdcRwoVkdJgDADDpMAPK3DjdSRzqmkVLIChpBJuF+WPnaCSOh
- xPInlZexDOhnUfNiX5H+iT97c9xO0fukcW87oWWro8s7Ky6YvgOJ1swm4C9H1wBE
- I79p+63w2mk5hlBHwdi7yA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742835601; x=
- 1742922001; bh=Il28qzjed933gJl5uKk4pmiw4R0oNlU+F2i+VOPPxDw=; b=K
- JXsr5plMCMJImrlvlTrGQva3g9aR1HG6jl5GCqO39qXmaXAGsE9i7rm6y8E7RNC+
- ijyjr+tF8UBSxkOrI8IaJU3yvmc8fTKGXe4dj38sBon7pV7dCe5XynnJLGTSkHFL
- Kd2B44jICNzWxUxJvSYavlcIWWEITXtJUt/IlNvpqacn/sqCJGT1KZY8F65M9+eQ
- 9jvoU5ryRsHnefZcXjbvBDy5C2qMeSA11HzGpBFQQtKkWDScR7/li+s8B2FJWDp2
- WkipFxXAvdu8ZyNLYNryxUUCjcJwl8b4rdDJbYqL4razh9VrdrPwgd0/2Fr7D2IA
- 3aJFxJTFJEp1T1uQi5u1Q==
-X-ME-Sender: <xms:kI_hZ2chLjF0LVHYJFeYmtFEyc4TcDtNxwddV6HWONlcdbaPTwezNw>
- <xme:kI_hZwPfkMfcL8lH9w9iryeR318mpbpOpzjFS-8iFZm3x6nA2i9hr5fpHqCIlveiW
- ArDDVlyeU5JaqlDjA>
-X-ME-Received: <xmr:kI_hZ3j-L0kFKvfaKoSUektpwHP1gwx7ari7CxC3jCXDAScLqcfzXhAY_K6mQM7dGW0UNTUew7uJMwAI0HCDSSPwVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtfeduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
- pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
- gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddt
- jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
- hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdej
- vedtheevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtne
- curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrrg
- hslhgrnhgusehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhr
- ghdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrgh
- dprhgtphhtthhopehhrghijhhivgdusehhuhgrfigvihdrtghomhdprhgtphhtthhopehm
- sgesshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomh
-X-ME-Proxy: <xmx:kI_hZz-VkjM6-9q9omy_4XRUn2Xc3xcIu5uzR8wCNzioVqO_kcn0Vw>
- <xmx:kI_hZyvq1xtEmWJ5EHph0C4Yde-Z4bvOyOlH6rH2H97aLcvwfEfJAA>
- <xmx:kI_hZ6Hy24FkQuAxlbCN8EQgmJ0KMDxPGfa5TD2usgLfMH6-Yc0q8g>
- <xmx:kI_hZxOGrKP26rF5jxkXSRiUQ8AG3OR1vOYag8YOZOriQZB2u77S_Q>
- <xmx:kY_hZ0UysV8X1TYmqmyklbwPbGSKbRvvShqntq87VkAoVxDMf1Dd55Km>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 12:59:59 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Raslan Darawsheh <rasland@nvidia.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, haijie1@huawei.com,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH v3] app/testpmd: fix VLAN header parsing
-Date: Mon, 24 Mar 2025 17:59:57 +0100
-Message-ID: <6263413.MHq7AAxBmi@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB4B@smartserver.smartshare.dk>
-References: <20250323122822.90407-1-rasland@nvidia.com>
- <20250324093349.26509-1-rasland@nvidia.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB4B@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 1C31840B99;
+	Mon, 24 Mar 2025 18:30:43 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D3C440A7F
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 18:30:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1742837442; x=1774373442;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=2mWl5JOd1AZZXgNhydlhBoMLcFME+RkvBcdj1s7XYaE=;
+ b=VJqUBmXb7Y3++9gST8TQklWOajl5c+FBemEyJhHanfQczcHkn3AeENe5
+ BzVLtyUeYKu6cKAHcZvW/dzm1EmenII4JXq+yD5C9inog+qWS8RXX5aob
+ 54Og8RHkxEhNwIvBzw9LN8kz27aXtn5mR1z6b0ZlFjqE4/SIG+sGsclsS
+ bcwA5J3WWWpLlDV+1ZsWPeoztgCDFWy6x6jrdRVS+G65vBcZ/9By1DOmh
+ DUO/JUpzgXwXpQpmvczh5QrWJsMZZMcJDqPe9GFvmKvJQvUPTjS6bWOkv
+ prpzuqfRuH7d2IV3ggHmfn6GUsITuEo291SgMsB+bMZaZlEK3V1YmpELB g==;
+X-CSE-ConnectionGUID: rzx4pyFnRPCUKM0VNbrXrg==
+X-CSE-MsgGUID: Yp5Dr9nJRxaqh31NIvfazQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47715559"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="47715559"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Mar 2025 10:30:40 -0700
+X-CSE-ConnectionGUID: DAoEyZo8Rx2eKBTi+2JSVQ==
+X-CSE-MsgGUID: FIVlAaKrSma5CJRjp2l2dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="124141939"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
+ by orviesa006.jf.intel.com with ESMTP; 24 Mar 2025 10:30:39 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 0/3] allow easier use of high lcore-ids
+Date: Mon, 24 Mar 2025 17:30:26 +0000
+Message-ID: <20250324173030.3733517-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250313113829.1480907-1-bruce.richardson@intel.com>
+References: <20250313113829.1480907-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,101 +59,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/03/2025 14:18, Morten Br=C3=B8rup:
-> > From: Raslan Darawsheh [mailto:rasland@nvidia.com]
-> > Sent: Monday, 24 March 2025 10.34
-> >=20
-> > When processing VLAN or QinQ packets, an infinite loop occurred,
-> > preventing the csum forward engine from proceeding and causing
-> > testpmd to hang during shutdown attempts.
-> >=20
-> > Updated the `get_ethertype_by_ptype` function to correctly parse
-> > VLAN headers.
-> >=20
-> > Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
-> > Cc: haijie1@huawei.com
-> >=20
-> > Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
-> > ---
-> > v3: fixed wrong indentation
-> >     add boundaries check for 8 VLANs at max
-> >=20
-> > v2: update commit log
-> >     fixed pointer handling to actually move the pointer
-> > ---
-> >  app/test-pmd/csumonly.c | 16 +++++++++++-----
-> >  1 file changed, 11 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-> > index 5b906eaa53..710967ca4d 100644
-> > --- a/app/test-pmd/csumonly.c
-> > +++ b/app/test-pmd/csumonly.c
-> > @@ -59,6 +59,8 @@
-> >  #define GRE_SUPPORTED_FIELDS	(GRE_CHECKSUM_PRESENT | GRE_KEY_PRESENT
-> > |\
-> >  				 GRE_SEQUENCE_PRESENT)
-> >=20
-> > +#define MAX_VLAN_HEADERS 8
-> > +
-> >  /* We cannot use rte_cpu_to_be_16() on a constant in a switch/case */
-> >  #if RTE_BYTE_ORDER =3D=3D RTE_LITTLE_ENDIAN
-> >  #define _htons(x) ((uint16_t)((((x) & 0x00ffU) << 8) | (((x) &
-> > 0xff00U) >> 8)))
-> > @@ -466,9 +468,10 @@ pkts_ip_csum_recalc(struct rte_mbuf **pkts_burst,
-> > const uint16_t nb_pkts, uint64
-> >  static uint32_t
-> >  get_ethertype_by_ptype(struct rte_ether_hdr *eth_hdr, uint32_t ptype)
-> >  {
-> > -	struct rte_vlan_hdr *vlan_hdr;
-> > +	struct rte_vlan_hdr *vlan_hdr, *max_vlans;
-> >  	uint16_t ethertype;
-> >=20
-> > +
->=20
-> Please omit adding an extra empty line.
->=20
-> >  	switch (ptype) {
-> >  	case RTE_PTYPE_L3_IPV4:
-> >  	case RTE_PTYPE_L3_IPV4_EXT:
-> > @@ -486,10 +489,13 @@ get_ethertype_by_ptype(struct rte_ether_hdr
-> > *eth_hdr, uint32_t ptype)
-> >  		return _htons(RTE_ETHER_TYPE_IPV6);
-> >  	default:
-> >  		ethertype =3D eth_hdr->ether_type;
-> > -		while (eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_VLAN)
-> > ||
-> > -			eth_hdr->ether_type =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
-> > -			vlan_hdr =3D (struct rte_vlan_hdr *)
-> > -				((char *)eth_hdr + sizeof(*eth_hdr));
-> > +		vlan_hdr =3D (struct rte_vlan_hdr *) RTE_PTR_ADD(eth_hdr,
+Traditionally, DPDK has had a direct mapping of internal lcore-ids, to
+the actual core numbers in use. With higher core count servers becoming
+more prevalent the issue becomes one of increasing memory footprint when
+using such a scheme, due to the need to have all arrays dimensioned for
+all cores on the system, whether or not those cores are in use by the
+app.
 
-useless type cast
+Therefore, the decision was made in the past to not expand the
+build-time RTE_MAX_LCORE value beyond 128. Instead, it was recommended
+that users use the "--lcores" EAL parameter to take the high-numbered
+cores they wish to use and map them to lcore-ids within the 0 - 128
+range. While this works, this is a little clunky as it means that
+instead of just passing, for example, "-l 130-139", the user must
+instead pass "--lcores 0@130,1@131,2@132,3@133,...."
 
-> > +					offsetof(struct rte_ether_hdr,
-> > ether_type));
->=20
-> Above line indentation with 2, not 3 TABs.
->=20
-> > +		max_vlans =3D vlan_hdr + MAX_VLAN_HEADERS;
-> > +		while (((ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
->=20
-> Superfluous parenthesis: "while ( ((x || y)) && z)".
->=20
-> > +			ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ))) &&
-> > +			vlan_hdr < max_vlans) {
->=20
-> Above two lines indentation with 2, not 1 TAB.
->=20
-> > +			vlan_hdr++;
-> >  			ethertype =3D vlan_hdr->eth_proto;
-> >  		}
-> >  		return ethertype;
-> > --
-> > 2.39.5 (Apple Git-154)
->=20
-> With above nits fixed (can be fixed when merging),
-> Reviewed-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+This patchset attempts to simplify the situation by adding a new flag to
+do this mapping automatically. To use cores 130-139 and map them to ids
+0-9 internally, the EAL args now become: "-l 130-139 --map-lcore-ids",
+or using the shorter "-M" version of the flag: "-Ml 130-139".
 
-All nits fixed and applied, thanks.
+Adding this new parameter required some rework of the existing arg
+parsing code, because in current DPDK the args are parsed and checked in
+the order they appear on the commandline. This means that using the
+example above, the core parameter 130-139 will be rejected immediately
+before the "map-lcore-ids" parameter is seen. To work around this, the
+core (and service core) parameters are not parsed when seen, instead
+they are only saved off and parsed after all arguments are parsed. The
+"-l" and "-c" parameters are converted into "--lcores" arguments, so all
+assigning of lcore ids is done there in all cases.
 
+RFC->v2:
+* converted printf to DEBUG log
+* added "-M" as shorter version of flag
+* added documentation
+* renamed internal API that was changed to avoid any potential hidden
+  runtime issues.
+
+Bruce Richardson (3):
+  eal: centralize core parameter parsing
+  eal: convert core masks and lists to core sets
+  eal: allow automatic mapping of high lcore ids
+
+ doc/guides/linux_gsg/eal_args.include.rst  |  26 +-
+ drivers/event/dlb2/dlb2_priv.h             |   2 -
+ drivers/event/dlb2/pf/base/dlb2_resource.c |  48 +--
+ lib/eal/common/eal_common_options.c        | 340 +++++++--------------
+ lib/eal/common/eal_options.h               |   3 +
+ lib/eal/include/rte_eal.h                  |  14 +-
+ lib/eal/version.map                        |   2 +-
+ 7 files changed, 161 insertions(+), 274 deletions(-)
+
+--
+2.45.2
 
