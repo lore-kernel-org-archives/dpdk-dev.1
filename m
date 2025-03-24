@@ -2,140 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFABC36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 07:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF85C36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 07:43:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84AB3402E9;
-	Mon, 24 Mar 2025 08:38:44 +0100 (CET)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
- by mails.dpdk.org (Postfix) with ESMTP id 0D606402E5
- for <dev@dpdk.org>; Mon, 24 Mar 2025 08:38:43 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rv/dBCng8OyfoGaLDCprBSeKtFTD+VHHcyuZtevwaDXEBCenRLuP+nlAOnw78w8wtnyaDL3QEPQQPlfrxTMCtVFS93lyFRmTepRkbreh/JrgQkE/uwojWFeQ8l5tc+R7AGJ0xXibsDCs0mUZtfffSj7aM6or2OypshxUuhiXbxwYPQquPbJ+ALjqH8zTMcv/zCG9CPk4WNGAnJMr+XIknK2ydyoxDeiquCyfDssFUmIEFN28pZF6rnkY1otUmXwWTotPafVii27Y2vqNHNuSRzLu1jsq45FfFyuUcaWYNU1Zf4vY1FFG3cbipKHLgurXdpHWkklAgm/Z6P3HaySkOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XIczkhZhV6FsQR2yoJrb9vZdVvyIbFOdcHfbPD/W9QM=;
- b=I+A4MTZPmEF/P75Mtvj7+uSx4DlJk6StXFb6lGtcYYmdanLUvC7WJZcp8nom9bPARyZO9Um9gM0OBOffDrs38URmbczUwa/u/hRqvt1RBj0AYnCq34FC0S8HRxura0fJW/fTqnlq8typvI4tg3VHPpiZJBSDcJxFq75cpxva73RzMYto3LG8cxl2M6R1KHmYosbC+Gra2tG/azLBNeB/aa3sqXs/0SUmijobBhjcfxB2h0cOOH2s2Sg2qDSu0Y/KqNSbU6eYzit8XAmK6vP8dXICxvSy7SGTB+z7U56fkIcWyc1BEqsdDAoVAYIKcfHj9mGzyQ/aMB0ocHxPiTxaPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XIczkhZhV6FsQR2yoJrb9vZdVvyIbFOdcHfbPD/W9QM=;
- b=JtyhHOMSxS8zTimfMVA+YDG1YmWmdVxieie4HfE6I89tyxtNXylpfIzOYF+swBa6GaEXYnI2pIxyEYyIO5O2OcFslRP9TzPWRD/u7Q53AOJqs/KIKngEcRLfxzVDX3UgtSLKxTRlMGwuiZZuy8BjwxRv4+n21WJdph+zGULrifg2KuZuJ5WkmxS2mW34IIBB5MtiIWGkQzvn+6uFKFfrrj90vqR6zcDf1sFfVFRXsbn55ijGswlLZhJClmuS4MTBrAM60OIlkxKzFzN3PZbYUtYIkRaJvWosQe0XVJjkUmONFQB/iGQOpyqBN9VqzvquPRDSf7C0GyoXhPzg+9+SQQ==
-Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
- by SJ2PR12MB7799.namprd12.prod.outlook.com (2603:10b6:a03:4d3::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 07:38:40 +0000
-Received: from CH3PR12MB8460.namprd12.prod.outlook.com
- ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
- ([fe80::2e9d:7265:3b84:59b5%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 07:38:40 +0000
-From: Raslan Darawsheh <rasland@nvidia.com>
-To: "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "haijie1@huawei.com" <haijie1@huawei.com>
-Subject: Re: [PATCH] app/testpmd: fix VLAN header parsing
-Thread-Topic: [PATCH] app/testpmd: fix VLAN header parsing
-Thread-Index: AQHbm+8qBy++gaakq0m8DcV6iO248LOA7GQAgAD632o=
-Date: Mon, 24 Mar 2025 07:38:40 +0000
-Message-ID: <CH3PR12MB846087E8B2CE0A1A443C9903CFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
-References: <20250323122822.90407-1-rasland@nvidia.com>
- <5993081.QJadu78ljV@thomas>
-In-Reply-To: <5993081.QJadu78ljV@thomas>
-Accept-Language: en-US
-Content-Language: en-GB
+	by mails.dpdk.org (Postfix) with ESMTP id 592C3402E5;
+	Mon, 24 Mar 2025 08:43:22 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A833402E5
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 08:43:21 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B388D204FE;
+ Mon, 24 Mar 2025 08:43:20 +0100 (CET)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="----_=_NextPart_001_01DB9C90.69FD7361"
+Subject: RE: [PATCH] app/testpmd: fix VLAN header parsing
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 24 Mar 2025 08:43:18 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB40@smartserver.smartshare.dk>
+In-Reply-To: <CH3PR12MB8460B2A2A61615F589182A32CFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-reactions: allow
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR12MB8460:EE_|SJ2PR12MB7799:EE_
-x-ms-office365-filtering-correlation-id: aa7c1582-50ea-4b18-a3a7-08dd6aa6e570
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|38070700018|8096899003; 
-x-microsoft-antispam-message-info: =?Windows-1252?Q?dDkpntyQDkBnJT4V90ix/MDwmzrCXpTG/+w61MMVurDYHd9o8mPM03/c?=
- =?Windows-1252?Q?eP/Nuo/7a8Qun0lVqJzQzglL6OeLG/26t+cEbkyzl430XgirEQlp0MZR?=
- =?Windows-1252?Q?JZFWOr1sB8+qoE9oU+FSiAS3uuA3LYafHNsQbiXEBHS+HoZ/FAqJLYfr?=
- =?Windows-1252?Q?4cBS+QBsd4Cp/Hc1otoJqX8+sG72E/xYUE1ThIzEUsRSwlE7KdLDGN23?=
- =?Windows-1252?Q?S11ZqyV6uFFwv/uQprf3mk0rwmJ2teXz3+r478M/nrd66gqlG63GcRZi?=
- =?Windows-1252?Q?dPAnpFI2aceS4eF8TMqbqGY4fEZ5LgaXBY3vkzB2VLrlHlF6MDY6HVbm?=
- =?Windows-1252?Q?aAxgglyygFRXlCmN9bCv9duNpOmBGMzGNcfXVToTAa6W/el60AD3c835?=
- =?Windows-1252?Q?Ul4UfotEniwZBlaGbyHt5XuIvYeCP4O2QFF3VrbDAyVNSeW/LPQDWrM9?=
- =?Windows-1252?Q?5SV610DhBfdtY5CwccNlpwo7WlZfGcAs3lapbc04EnxulchyWtRwO6/P?=
- =?Windows-1252?Q?13Lfg9mtlBh6bBAsv/xhATvudAC445vRUZEesxMmM1zm9m5Nk1zs6sjm?=
- =?Windows-1252?Q?m2meHZ+RjXxNc/nCZ+uVA8vzSYVOmRD6R1FYUWkVK6Ri95ouegFA1paK?=
- =?Windows-1252?Q?OBWylhRg9lQmIDNbx9WKEjg3qCRwHlU+JwIY2oQ4d+45+O590Q/x2+ko?=
- =?Windows-1252?Q?WOxgF6O4y/QkPpsdOGlSvF9ZNonM4cAQteQD/C/mJx01p/+5/x08ykZF?=
- =?Windows-1252?Q?Q9Yccz3HLIwgUoI+Ap4sQk5eiW+5CT8z6+lQrE2cRGRSJUv54nx3w/7l?=
- =?Windows-1252?Q?OGnD1iWPEuxR3V6E0uIleitubCMlt9XZnkzwMbWmH6CuNXDWbq77Z2/H?=
- =?Windows-1252?Q?ZSemIhgLUcDn8fUcJtAvcJY6GNH2WI2lCeZNcOSwNKsnJLfHnv5tdDDj?=
- =?Windows-1252?Q?HGB18WyuyIyQOqkLaicQvB/lN+UNYZOakOExdpOiVtk+7YvvqXM5WBW5?=
- =?Windows-1252?Q?58uYHIJtiTSwtcE03HGOZOyXKceUoXpuECsGQNwetGMPyirhg000+SVa?=
- =?Windows-1252?Q?8TiydUDmNDoJXm/p2HPQqcPyEJ9t8FEI/npk/crn0OOZLI2eAmqkdxD+?=
- =?Windows-1252?Q?qpdGAs9/v0Ch2tN6830adAokKRYQBUKp5mkbF4e9DSWHPyIXpsnQLP9u?=
- =?Windows-1252?Q?cdWSWzRmkCJVxKjlfWlMHF2WOOfLc3Vh2BOR0qxMiuCfvOb9v6SK9Qp1?=
- =?Windows-1252?Q?7nM4lULWvCmRuBVjml6CBtTZwcy7anid8JnQr+c7/nW10RMaZzjUiFk9?=
- =?Windows-1252?Q?hOZjpztZtJ97ytrum8XYP/ds0kABgH16CjApEdRBRHTHipYJzR3pZ8P8?=
- =?Windows-1252?Q?COppZ2M1AGeg2Hxa7znJsJaBImSZngCNflHTwUH5NZSXH6MO43ORNpfR?=
- =?Windows-1252?Q?dgUiDzlZwhvP233JohQbKhhh1//cRxIwizStso52bbH/P6MCPEPy+4g3?=
- =?Windows-1252?Q?rD9bl+sxGuytTh2QQdH/2ZQhxSpBFA9NY15ZpnV3MuM2vDeJ4wasJKwW?=
- =?Windows-1252?Q?paIWDmkzA0Bgx+MS?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(8096899003); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?dtwYVphTWpjZNyyl+pJBSApAhFt8e0U+YpKc1Gcn0Qm7n89MHv+yj3kX?=
- =?Windows-1252?Q?OWFl2KzHNPosRlSQQ5yigw8OekUCnwxkbxOW/lnbubrW6D9OjWscuU3O?=
- =?Windows-1252?Q?kgzQ8i8Q3c5bEQfxRR9XR9W3EJ6lmc/eaNXRsMQkNl5YgtynGTAG+my2?=
- =?Windows-1252?Q?8b35R93jtlFcsta8nJd5w7qRL58+hVWy7gF1vobWeycFBYvkFje3hMps?=
- =?Windows-1252?Q?rEbLwBlnWHh26AUJ/iIiNe+PkKxAmkpbnq3HS3Z9dplYUajpdGeubcZt?=
- =?Windows-1252?Q?A6eDJdd9ZGuthODlfa7u0Dp949SQXeAtuOdlB+MBuxqTjUMzxcr3RABD?=
- =?Windows-1252?Q?9qrSKKd8KF83xe9yAMVsKJ9LYzqrV2bDjcGZtNpVSYrfPjwCmxZbaCQu?=
- =?Windows-1252?Q?fduH+hWkq3lqZ0XB+5Azq7JEmjl4XJfMtJWyyAKniFBh16NSUISjX1Y6?=
- =?Windows-1252?Q?dOlrNoBu2NomO5x6oxWNNfFtlikomAIJysLUDv586sPEoU0MSJ2OjtSx?=
- =?Windows-1252?Q?vdK02mLdOplpd+JgjvkSdw3OhxpE38cum0foKEzorN+S3Gq/td2L43Ed?=
- =?Windows-1252?Q?w4/1sT/S9uBd57JmfQHIQF6yD9obq1p7vr22iySRCPDfut0x61Z2QNkS?=
- =?Windows-1252?Q?bRsSvEre38a5FMQq9/26kBs3pmHF+PHjUWVyRttlhC/8zPhgSSlMi1nl?=
- =?Windows-1252?Q?apb5+cz+IFwwjNpl+z6l2c+T0+11bJ6w+bxUaL9XDPheAAUFdbC3NKer?=
- =?Windows-1252?Q?Mi3tDB85zvkEOB1FKBcI+gwc89SLiZir/3Mv6DFjidmUzryyCZun4LaR?=
- =?Windows-1252?Q?vl/Hroa5kncPYxlBZZ5QDm4Scq4WyWsUCxy/sLcjMTyF3yKWo5mAMA1i?=
- =?Windows-1252?Q?2+W/Mat7ZLA8DBSM0cqgwojEALMncnCWB/8vEqU/rZ6/i7VWlbBGwQhx?=
- =?Windows-1252?Q?OJtGRWjyHcH+AXTfMeyNaKvcM2fvgNuAV/aHNTk1TuBlAgjHAcx7V57H?=
- =?Windows-1252?Q?A5EV0rC0FIXelRNpg7/nG5as6hrGqgJsmkUYyTxbK2zReWcvnyY9OGwz?=
- =?Windows-1252?Q?ffHwy8TptZkLZMCnC9vv6zeofEBjucs3e2lZMfc366FtbLJCuP07vcDf?=
- =?Windows-1252?Q?ih46IdplJdKoCLU7zK+ISTpCOku0edk2Yu2ZqomvxaoMFku/l/1og+JO?=
- =?Windows-1252?Q?BbGjV40ynDc7xBISgpVobWiua/He0qO3LXnwcW7RjdBmd2bY/f0zLvWF?=
- =?Windows-1252?Q?yPjusT/jerxkTbF1ZYk0Q+htbOokZqd+DY5/8lQpjQCop7HiKs736nIB?=
- =?Windows-1252?Q?X+EK+UONKYfUwqxbkROVKqFCl9ghbslwlnADiX/dMFuExSs0TSes0Mwt?=
- =?Windows-1252?Q?tWFOpY8g+DEoWXU2wpfOCGXsSW75451VCOHELNeYO+FRUiLPiF1Hhgb6?=
- =?Windows-1252?Q?bjbmvlSCLteT7BmZ/GWP88FTH8KYS8XcqtSFZAcXb67b5Zl+DK2a+Kw0?=
- =?Windows-1252?Q?0y73BCfsewVFB6vt/sH/VKojuuH9imaTy+eZg9EcpWYepG+1VnFv07aS?=
- =?Windows-1252?Q?EOgkCYholhH2RZeJWprodOS4GkCFoI5XIMaxN9s54f4RC1xzAIcEQjHZ?=
- =?Windows-1252?Q?zJPY/L/HLOQbr20+KKFb/zxA75VLcs+Ho+zs/aYoQAjSaZDZJTBMq5hh?=
- =?Windows-1252?Q?Eq5CEewFxJpT7H6j3iAwFhc9JIHskVCenIhhL6DRKiwBkCHxdxqyyQ?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_"
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa7c1582-50ea-4b18-a3a7-08dd6aa6e570
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 07:38:40.2690 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L8CBe5Iu+UVRo+Rr4jTLgm/RSUCSSPSCOB+sdT6xycLU5WxnCS/xzltQ9ZQb1EyXOcFUYZ3ORaxphN7Pzht6xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7799
+Thread-Topic: [PATCH] app/testpmd: fix VLAN header parsing
+Thread-Index: AQHbm+8qBy++gaakq0m8DcV6iO248LOAszuAgAEyu+qAAAERkA==
+References: <20250323122822.90407-1-rasland@nvidia.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB3D@smartserver.smartshare.dk>
+ <CH3PR12MB8460B2A2A61615F589182A32CFA42@CH3PR12MB8460.namprd12.prod.outlook.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Raslan Darawsheh" <rasland@nvidia.com>,
+ "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	<haijie1@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -149,110 +50,272 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_
-Content-Type: text/plain; charset="Windows-1252"
+This is a multi-part message in MIME format.
+
+------_=_NextPart_001_01DB9C90.69FD7361
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
+Comment inline below.
 
+=20
+
+From: Raslan Darawsheh [mailto:rasland@nvidia.com]=20
+Sent: Monday, 24 March 2025 08.35
+
+
+
+=20
+
+>> From: Raslan Darawsheh [mailto:rasland@nvidia.com]
+>> Sent: Sunday, 23 March 2025 13.28
+>>=20
 >> Updated the `get_ethertype_by_ptype` function to correctly parse VLAN
 >> headers.
-
->You should describe what is broken and how.
-I=92ll handle in v2
-
+>>=20
 >> Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
 >> Cc: haijie1@huawei.com
+>>=20
+>>> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
+>> ---
+>>  app/test-pmd/csumonly.c | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+>> index 5b906eaa53..302cc4cc66 100644
+>> --- a/app/test-pmd/csumonly.c
+>> +++ b/app/test-pmd/csumonly.c
+>> @@ -468,6 +468,7 @@ get_ethertype_by_ptype(struct rte_ether_hdr
+>> *eth_hdr, uint32_t ptype)
+>>  {
+>>        struct rte_vlan_hdr *vlan_hdr;
+>>        uint16_t ethertype;
+>> +     uint32_t i =3D 0;
+>>=20
+>>        switch (ptype) {
+>>        case RTE_PTYPE_L3_IPV4:
+>> @@ -486,10 +487,11 @@ get_ethertype_by_ptype(struct rte_ether_hdr
+>> *eth_hdr, uint32_t ptype)
+>>                return _htons(RTE_ETHER_TYPE_IPV6);
+>>        default:
+>>                ethertype =3D eth_hdr->ether_type;
+>> -             while (eth_hdr->ether_type =3D=3D =
+_htons(RTE_ETHER_TYPE_VLAN)
+>> ||
+>> -                     eth_hdr->ether_type =3D=3D =
+_htons(RTE_ETHER_TYPE_QINQ)) {
+>> +             while (ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||
+>> +                     ethertype =3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {
+>>                        vlan_hdr =3D (struct rte_vlan_hdr *)
+>> -                             ((char *)eth_hdr + sizeof(*eth_hdr));
+>> +                             ((char *)eth_hdr + sizeof(*eth_hdr) +
+>> +                             (i * sizeof(struct rte_vlan_hdr)));
 
->Do you think it is critical for the release?
-Yes, as it=92s causing an infinite loop if you send a QinQ packet with csum=
- fwd, and it will cause tested to get stuck forever.
+>Doesn't work; "i" is not incremented, and remains 0.
+>Instead do this: Initialize (struct rte_vlan_hdr =
+*)vlan_hdr=3DRTE_PTR_ADD(eth_hdr, offsetof(rte_ether_hdr, ether_type)) =
+before the loop, and move vlan_hdr+=3DRTE_VLAN_HLEN inside the loop.
+Yes you are correct I had a (i++ *) but must have slipped while rebasing =
+will handle your way in v2=20
+
+MB: Noticed a bug in my suggestion: Due to the type of vlan_hdr, moving =
+it should be vlan_hdr++, not vlan_hdr+=3DRTE_VLAN_HLEN.
+
+MB: And you might want to impose a maximum boundary to the loop, as =
+suggested by Stephen. E.g. break out of the loop if =
+vlan_hdr>RTE_PTR_ADD(eth_hdr, offsetof(rte_ether_hdr, =
+ether_type))+4*sizeof(struct rte_vlan_hdr). Supporting up to 4 stacked =
+VLAN tags should suffice.
 
 
+>>                        ethertype =3D vlan_hdr->eth_proto;
+>>                }
+>>                return ethertype;
+>> --
+>> 2.39.5 (Apple Git-154)
 
---_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_
-Content-Type: text/html; charset="Windows-1252"
+=20
+
+Kindest regards
+
+Raslan Darawsheh
+
+
+------_=_NextPart_001_01DB9C90.69FD7361
+Content-Type: text/html;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
-hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
-fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
-252">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40"><head><meta =
+http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1"><meta name=3DGenerator content=3D"Microsoft Word =
+12 (filtered medium)"><style><!--
 /* Font Definitions */
 @font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
-	{font-family:Aptos;
-	panose-1:2 11 0 4 2 2 2 2 2 4;}
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+	{font-family:Aptos;}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{margin:0cm;
+	margin-bottom:.0001pt;
 	font-size:10.0pt;
-	font-family:"Aptos",sans-serif;}
-span.EmailStyle19
-	{mso-style-type:personal-reply;
-	font-family:"Aptos",sans-serif;
+	font-family:Aptos;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:purple;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal;
+	font-family:Aptos;
 	color:windowtext;}
+span.EmailStyle18
+	{mso-style-type:personal-reply;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
 .MsoChpDefault
 	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
+	font-size:10.0pt;}
 @page WordSection1
 	{size:612.0pt 792.0pt;
 	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
 div.WordSection1
 	{page:WordSection1;}
---></style>
-</head>
-<body lang=3D"en-PS" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<div id=3D"mail-editor-reference-message-container">
-<div>
-<div>
-<div>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
-ize:11.0pt"><br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; Updated the `get_ethertype_by_ptype` function =
-to correctly parse VLAN<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; headers.<br>
-<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">You should describe what is broken and how.</span><=
-span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
-style=3D"font-size:11.0pt">I=92ll handle in v2<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
-ize:11.0pt"><br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; Fixes: 76730c7b9b5a (&quot;app/testpmd: use pa=
-cket type parsing API&quot;)<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">&gt; Cc: haijie1@huawei.com<br>
-<br>
-</span><span lang=3D"EN-US" style=3D"font-size:11.0pt">&gt;</span><span sty=
-le=3D"font-size:11.0pt">Do you think it is critical for the release?</span>=
-<span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
-style=3D"font-size:11.0pt">Yes, as it=92s causing an infinite loop if you s=
-end a QinQ packet with csum fwd, and it will cause tested to get stuck fore=
-ver.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
-ize:11.0pt"><br>
-<br>
-<o:p></o:p></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</body>
-</html>
-
---_000_CH3PR12MB846087E8B2CE0A1A443C9903CFA42CH3PR12MB8460namp_--
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]--></head><body lang=3DEN-US link=3Dblue =
+vlink=3Dpurple style=3D'word-wrap:break-word'><div =
+class=3DWordSection1><div><p class=3DMsoNormal><a =
+name=3D"_MailEndCompose"><span =
+style=3D'font-size:11.0pt;font-family:"Calibri","sans-serif";color:#1F497=
+D'>Comment inline below.</span></a><span lang=3DDA =
+style=3D'font-size:11.0pt;font-family:"Calibri","sans-serif";color:#1F497=
+D'><o:p></o:p></span></p></div><p class=3DMsoNormal><span lang=3DDA =
+style=3D'font-size:11.0pt;font-family:"Calibri","sans-serif";color:#1F497=
+D'><o:p>&nbsp;</o:p></span></p><div =
+style=3D'border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt'><div><div style=3D'border:none;border-top:solid #B5C4DF =
+1.0pt;padding:3.0pt 0cm 0cm 0cm'><p class=3DMsoNormal><b><span =
+style=3D'font-family:"Tahoma","sans-serif"'>From:</span></b><span =
+style=3D'font-family:"Tahoma","sans-serif"'> Raslan Darawsheh =
+[mailto:rasland@nvidia.com] <br><b>Sent:</b> Monday, 24 March 2025 =
+08.35<br><br><o:p></o:p></span></p></div></div><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><div =
+id=3Dmail-editor-reference-message-container><div><div><div><p =
+class=3DMsoNormal =
+style=3D'mso-margin-top-alt:0cm;margin-right:0cm;margin-bottom:12.0pt;mar=
+gin-left:36.0pt'><span style=3D'font-size:11.0pt'>&gt;&gt; From: Raslan =
+Darawsheh [<a =
+href=3D"mailto:rasland@nvidia.com">mailto:rasland@nvidia.com</a>]<br>&gt;=
+&gt; Sent: Sunday, 23 March 2025 13.28<br>&gt;&gt; <br>&gt;&gt; Updated =
+the `get_ethertype_by_ptype` function to correctly parse =
+VLAN<br>&gt;&gt; headers.<br>&gt;&gt; <br>&gt;&gt; Fixes: 76730c7b9b5a =
+(&quot;app/testpmd: use packet type parsing API&quot;)<br>&gt;&gt; Cc: =
+haijie1@huawei.com<br>&gt;&gt; <br>&gt;&gt;&gt; Signed-off-by: Raslan =
+Darawsheh &lt;rasland@nvidia.com&gt;<br>&gt;&gt; ---<br>&gt;&gt;&nbsp; =
+app/test-pmd/csumonly.c | 8 +++++---<br>&gt;&gt;&nbsp; 1 file changed, 5 =
+insertions(+), 3 deletions(-)<br>&gt;&gt; <br>&gt;&gt; diff --git =
+a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c<br>&gt;&gt; index =
+5b906eaa53..302cc4cc66 100644<br>&gt;&gt; --- =
+a/app/test-pmd/csumonly.c<br>&gt;&gt; +++ =
+b/app/test-pmd/csumonly.c<br>&gt;&gt; @@ -468,6 +468,7 @@ =
+get_ethertype_by_ptype(struct rte_ether_hdr<br>&gt;&gt; *eth_hdr, =
+uint32_t ptype)<br>&gt;&gt;&nbsp; =
+{<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct =
+rte_vlan_hdr =
+*vlan_hdr;<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+uint16_t ethertype;<br>&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp; uint32_t i =3D =
+0;<br>&gt;&gt; <br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+switch (ptype) {<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+case RTE_PTYPE_L3_IPV4:<br>&gt;&gt; @@ -486,10 +487,11 @@ =
+get_ethertype_by_ptype(struct rte_ether_hdr<br>&gt;&gt; *eth_hdr, =
+uint32_t =
+ptype)<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return =
+_htons(RTE_ETHER_TYPE_IPV6);<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp; =
+default:<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ethertype =3D =
+eth_hdr-&gt;ether_type;<br>&gt;&gt; =
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ while (eth_hdr-&gt;ether_type =3D=3D =
+_htons(RTE_ETHER_TYPE_VLAN)<br>&gt;&gt; ||<br>&gt;&gt; =
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eth_hdr-&gt;ether_type =
+=3D=3D _htons(RTE_ETHER_TYPE_QINQ)) {<br>&gt;&gt; =
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ while (ethertype =3D=3D _htons(RTE_ETHER_TYPE_VLAN) ||<br>&gt;&gt; =
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ethertype =3D=3D =
+_htons(RTE_ETHER_TYPE_QINQ)) =
+{<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp; vlan_hdr =3D (struct rte_vlan_hdr *)<br>&gt;&gt; =
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; ((char *)eth_hdr + =
+sizeof(*eth_hdr));<br>&gt;&gt; =
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; ((char *)eth_hdr + sizeof(*eth_hdr) =
++<br>&gt;&gt; =
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; (i * sizeof(struct =
+rte_vlan_hdr)));<br><br>&gt;Doesn't work; &quot;i&quot; is not =
+incremented, and remains 0.<br>&gt;Instead do this: Initialize (struct =
+rte_vlan_hdr *)vlan_hdr=3DRTE_PTR_ADD(eth_hdr, offsetof(rte_ether_hdr, =
+ether_type)) before the loop, and move vlan_hdr+=3DRTE_VLAN_HLEN inside =
+the loop.<br>Yes you are correct I had a (i++ *) but must have slipped =
+while rebasing will handle your way in v2 <span =
+style=3D'color:#1F497D'><o:p></o:p></span></span></p><p =
+class=3DMsoNormal style=3D'margin-bottom:12.0pt'><span =
+style=3D'font-size:11.0pt;font-family:"Calibri","sans-serif";color:#1F497=
+D'>MB: Noticed a bug in my suggestion: Due to the type of vlan_hdr, =
+moving it should be vlan_hdr++, not =
+vlan_hdr+=3DRTE_VLAN_HLEN.<o:p></o:p></span></p><p class=3DMsoNormal =
+style=3D'margin-bottom:12.0pt'><span =
+style=3D'font-size:11.0pt;font-family:"Calibri","sans-serif";color:#1F497=
+D'>MB: And you might want to impose a maximum boundary to the loop, as =
+suggested by Stephen. E.g. break out of the loop if =
+vlan_hdr&gt;RTE_PTR_ADD(eth_hdr, offsetof(rte_ether_hdr, =
+ether_type))+4*sizeof(struct rte_vlan_hdr). Supporting up to 4 stacked =
+VLAN tags should suffice.<o:p></o:p></span></p><p class=3DMsoNormal =
+style=3D'mso-margin-top-alt:0cm;margin-right:0cm;margin-bottom:12.0pt;mar=
+gin-left:36.0pt'><span =
+style=3D'font-size:11.0pt'><br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ethertype =3D =
+vlan_hdr-&gt;eth_proto;<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+}<br>&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return ethertype;<br>&gt;&gt; =
+--<br>&gt;&gt; 2.39.5 (Apple Git-154)<o:p></o:p></span></p><p =
+class=3DMsoNormal style=3D'margin-bottom:12.0pt'><span =
+style=3D'font-size:11.0pt'><o:p>&nbsp;</o:p></span></p><p =
+class=3DMsoNormal style=3D'margin-bottom:12.0pt'><span =
+style=3D'font-size:11.0pt'>Kindest regards<o:p></o:p></span></p><p =
+class=3DMsoNormal style=3D'margin-bottom:12.0pt'><span =
+style=3D'font-size:11.0pt'>Raslan =
+Darawsheh<o:p></o:p></span></p></div></div></div></div></div></div></body=
+></html>
+------_=_NextPart_001_01DB9C90.69FD7361--
