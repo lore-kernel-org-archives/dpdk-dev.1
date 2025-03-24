@@ -2,60 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA91C36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 11:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85BFC36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 12:38:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2585B40655;
-	Mon, 24 Mar 2025 12:10:42 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7A4E2402DA
- for <dev@dpdk.org>; Mon, 24 Mar 2025 12:10:40 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9oY20008305
- for <dev@dpdk.org>; Mon, 24 Mar 2025 04:10:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=rt7c8ImmBU4nNJttdtE+lLT
- r7feiwfHM/oho4fwRGvc=; b=kZWDGyE/MAYaACshG1s1p4+2R6TtgZ0fQdhal0b
- uGQpAou7zv2FDfExwvllD8YxaIJrIAfWS7hBkob8dbJi0VZSfXYy7BGI93XhSvki
- B8LL+Hk9NNPDYjRRtoDKjVXShWMY6XgpKGJvHIN/BVk4t7gb8NdaEELl+/K8psYL
- Nw6q0SUTXCmHpm3HGxQLkjt6jB+2CZUL2e0/ZXyJia5/XH1QDbGGDONCtYV1P0c+
- s7FRe3QivOZ4gIrdCC5BTXAdh8hnX4x0CvPQUHaZdnrRUgxPDvrcl9XWdCCcVY7f
- c5hOa+YcKo+M04iWF7F0v3lgQiuxNl45pdxMGAOAL+2OldA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45k548r3p5-3
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 24 Mar 2025 04:10:38 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 24 Mar 2025 04:10:37 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 24 Mar 2025 04:10:37 -0700
-Received: from cavium-VAMSI-BM.. (unknown [10.28.36.156])
- by maili.marvell.com (Postfix) with ESMTP id 740B765E6B1;
- Mon, 24 Mar 2025 04:10:35 -0700 (PDT)
-From: Vamsi Krishna <vattunuru@marvell.com>
-To: <dev@dpdk.org>
-CC: <jerinj@marvell.com>, <vattunuru@marvell.com>, <vvelumuri@marvell.com>
-Subject: [PATCH v0 1/1] net/octeon_ep: fix buffer refill failure
-Date: Mon, 24 Mar 2025 16:38:50 +0530
-Message-ID: <20250324110850.92072-1-vattunuru@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 987F640A6F;
+	Mon, 24 Mar 2025 13:38:41 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 8CFFC402DA
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 13:38:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1742819920; x=1774355920;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=zhGwFFB/pd1IINfhXcRFUIp2Lw6t7bZtPke0wrPB3ks=;
+ b=D4qWrqhuYd+Ge55Evn6Ui0Hp+F8j2bEmT/HUEdbjhMj+pdx4mM6dmkYB
+ dmwgfGDkCckGWE8oETQdxH7Y8h+N62JRZQMA2ueF5y3MzXl9kLc7JepXw
+ t6h22wuf7MsCHCh3Rfk8nuQvNu/PnGctswrkvQMR3JP0ImgM5+z6iF+ch
+ DTwfd0/UKybrVVxORIZth1XpFJ+CKe88FL8HGvs8kPQqCy+MsTJ/ZG0dX
+ xweaEt/EslKs6cwQweHw2OBWCRTfkH6yY34OGsKL4WJ1yvY6WXBC6Qqwf
+ wQkULrN8HNsZ/352uYDPgFaHgNN0s0Y+rrDsDzeXAu3v/4u4JEun/Rlhj A==;
+X-CSE-ConnectionGUID: FwubnYxER3mBxQ77kHFkSw==
+X-CSE-MsgGUID: yVRXJasvRNKsaD2cZPwrSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="54227005"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="54227005"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Mar 2025 05:38:39 -0700
+X-CSE-ConnectionGUID: 6i1I+ZNtQQKoHVQ+T2ncCw==
+X-CSE-MsgGUID: gobYUPvfSdO/VFl9n+5DCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="154943685"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by orviesa002.jf.intel.com with ESMTP; 24 Mar 2025 05:38:37 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH v2 0/4] Use common structures and fns in IDPF and
+Date: Mon, 24 Mar 2025 18:09:57 +0530
+Message-Id: <20250324124001.1282624-1-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250312155351.409879-1-shaiq.wani@intel.com>
+References: <20250312155351.409879-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=av6yCTZV c=1 sm=1 tr=0 ts=67e13daf cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=tRCzY3Og-PgeT2zr7AQA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: Yx4nIt4sIScl8zJyWXq08FVO6RGrx0d8
-X-Proofpoint-ORIG-GUID: Yx4nIt4sIScl8zJyWXq08FVO6RGrx0d8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,36 +60,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
+Using common code from net/intel/common in idpf and cpfl drivers.
 
-Fix the buffer refill for SDP output queue
-Fixes: ab09499e809c ("net/octeon_ep: add SSE Rx")
+Shaiq Wani (4):
+  net/intel: use common Tx queue structure
+  net/intel: align Tx queue struct field names
+  net/intel: use common Tx entry structure
+  net/idpf: use common Tx free fn in idpf
 
-Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
-Acked-by: Vamsi Krishna Attunuru <vattunuru@marvell.com>
----
- drivers/net/octeon_ep/cnxk_ep_rx.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/intel/common/tx.h                 |  18 +
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |   3 +-
+ drivers/net/intel/cpfl/cpfl_ethdev.h          |   2 +-
+ drivers/net/intel/cpfl/cpfl_rxtx.c            |  66 ++--
+ drivers/net/intel/cpfl/cpfl_rxtx.h            |   3 +-
+ drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |   7 +-
+ drivers/net/intel/idpf/idpf_common_rxtx.c     | 112 +++---
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  69 +---
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 115 ++-----
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 323 +++---------------
+ drivers/net/intel/idpf/idpf_common_virtchnl.c |   8 +-
+ drivers/net/intel/idpf/idpf_common_virtchnl.h |   2 +-
+ drivers/net/intel/idpf/idpf_ethdev.c          |   3 +-
+ drivers/net/intel/idpf/idpf_rxtx.c            |  48 ++-
+ drivers/net/intel/idpf/idpf_rxtx.h            |   1 +
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |   9 +-
+ drivers/net/intel/idpf/meson.build            |   2 +-
+ 17 files changed, 241 insertions(+), 550 deletions(-)
 
-diff --git a/drivers/net/octeon_ep/cnxk_ep_rx.h b/drivers/net/octeon_ep/cnxk_ep_rx.h
-index 83677e1c6f..5db32c4448 100644
---- a/drivers/net/octeon_ep/cnxk_ep_rx.h
-+++ b/drivers/net/octeon_ep/cnxk_ep_rx.h
-@@ -72,11 +72,10 @@ cnxk_ep_rx_refill(struct otx_ep_droq *droq)
- 		desc_refilled = count;
- 		count = droq->read_idx;
- 		rc = cnxk_ep_rx_refill_mbuf(droq, count);
--		if (unlikely(rc)) {
-+		if (unlikely(rc))
- 			droq->stats.rx_alloc_failure++;
--			return;
--		}
--		desc_refilled += count;
-+		else
-+			desc_refilled += count;
- 	}
- 
- 	/* Flush the droq descriptor data to memory to be sure
 -- 
 2.34.1
 
