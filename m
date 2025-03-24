@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A972C36002
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E129C36002
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Mar 2025 17:30:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 404E240DCE;
-	Mon, 24 Mar 2025 18:30:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F232B40DCA;
+	Mon, 24 Mar 2025 18:30:46 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 0959840A7F
- for <dev@dpdk.org>; Mon, 24 Mar 2025 18:30:41 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2EEF640DCA
+ for <dev@dpdk.org>; Mon, 24 Mar 2025 18:30:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742837442; x=1774373442;
+ t=1742837444; x=1774373444;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=nMkdlwTIDKo/N7OUdE77eC9LPWQfAAdL5rihKL5681Y=;
- b=IeqnftoRMacJ2cVbIumpQ61nn6ImHf1pqFCiliXIgM0/2qT8ok2YtIMW
- uwHLDAanOE/6jia6wuP0ZXDbJ7LadMncwvJ2zYoZV0ctoc2WRsWqJorDt
- g72ukG0LMmd8Qat8jVlTsCLZx783Yf/WGEgNdCFyrhUWvjt17UsXrcTMe
- C2QquagVkq4edpARU9255FvcYn2vV/3WN2ybih/XYf9yxaX/8JpXL+c8o
- +vk/+Ph4uiWWQoBVzrHplXqTsaI70shJFiztDlIBY9bPx7Iat6c+J50fq
- A9uDfC5qutthEy1ftB4buVylVa+wJV4oTVzwCtEeRQvsZzAkbAE69QTty w==;
-X-CSE-ConnectionGUID: OmNJdsr6QqSwdSkGOgOgDw==
-X-CSE-MsgGUID: C6KHmO4FSaORZKEyob2Ymg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47715561"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="47715561"
+ bh=213or89ZAgxDau0JgP8hddwvYXqmDh+0IAz+h4D7WYk=;
+ b=Ye66GElkxOfmZXVE/dhzISrZerdlBafjBmOY/a1LKjxdWs7vB1OvkpAW
+ IxZE9QJY8DqUOvYN8QQ+vDS93yyUoolRWRoHlvlDchBXT/DUVSosDsCnl
+ ZlPfxnZdAMq2NXzIoBPju42nHkZ4RRT/t+lC8C9KpiM5JpLptnk957FKm
+ dz2oY847k2DCSzjVrfkeJwwwiH4NT8LdePKIxnEaqblZiaJRnw2M7UvjA
+ FtDZ0Wl1mKBUMk2DJvYYMjkXSZkSxIvakjEkH3LSGdqZRuX9Cn9Axyt4/
+ CuhzdEWJTyTudZ9b3KlB6OFhC3vs820TquWcd2JihZj3DNS4L8D+N9RRt A==;
+X-CSE-ConnectionGUID: GOCNvOEtRXO2O7vvmBbFww==
+X-CSE-MsgGUID: qSZA9YPwT1qJyVV7sqKU7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47715567"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="47715567"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Mar 2025 10:30:41 -0700
-X-CSE-ConnectionGUID: TrTuapIWTsq5MGoXiI1XCA==
-X-CSE-MsgGUID: b5UxdHHPTR2l3w3C3K6h5g==
+ 24 Mar 2025 10:30:43 -0700
+X-CSE-ConnectionGUID: cCrKfZHKTYGkMMlwN37K+Q==
+X-CSE-MsgGUID: hmznWQ+DS+2eIurSlrKq8Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="124141945"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; d="scan'208";a="124141952"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 24 Mar 2025 10:30:40 -0700
+ by orviesa006.jf.intel.com with ESMTP; 24 Mar 2025 10:30:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Pravin Pathak <pravin.pathak@intel.com>,
  Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v2 1/3] eal: centralize core parameter parsing
-Date: Mon, 24 Mar 2025 17:30:27 +0000
-Message-ID: <20250324173030.3733517-2-bruce.richardson@intel.com>
+Subject: [PATCH v2 2/3] eal: convert core masks and lists to core sets
+Date: Mon, 24 Mar 2025 17:30:28 +0000
+Message-ID: <20250324173030.3733517-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250324173030.3733517-1-bruce.richardson@intel.com>
 References: <20250313113829.1480907-1-bruce.richardson@intel.com>
@@ -61,268 +62,442 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than parsing the lcore parameters as they are encountered, just
-save off the lcore parameters and then parse them at the end. This
-allows better knowledge of what parameters are available or not when
-parsing.
+Rather than directly parsing and working with the core mask and core
+list parameters, convert them into core maps, and centralise all core
+parsing there. This allows future work to adjust the mappings of cores
+when generating that mapping parameter.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 183 +++++++++++++---------------
- 1 file changed, 84 insertions(+), 99 deletions(-)
 
+NOTE: this patch changes the behaviour of the exported, but internal API
+rte_eal_parse_core_mask, used by dlb driver. Since this is an internal
+API changing behaviour is allowed. However, to prevent issues -  in case
+any external app is using the API - we rename the function to
+rte_eal_expand_coremask.
+---
+ drivers/event/dlb2/dlb2_priv.h             |   2 -
+ drivers/event/dlb2/pf/base/dlb2_resource.c |  48 ++---
+ lib/eal/common/eal_common_options.c        | 195 +++++----------------
+ lib/eal/include/rte_eal.h                  |  12 +-
+ lib/eal/version.map                        |   2 +-
+ 5 files changed, 60 insertions(+), 199 deletions(-)
+
+diff --git a/drivers/event/dlb2/dlb2_priv.h b/drivers/event/dlb2/dlb2_priv.h
+index 52da31ed31..63c0bea155 100644
+--- a/drivers/event/dlb2/dlb2_priv.h
++++ b/drivers/event/dlb2/dlb2_priv.h
+@@ -737,8 +737,6 @@ void dlb2_event_build_hcws(struct dlb2_port *qm_port,
+ 			   uint8_t *sched_type,
+ 			   uint8_t *queue_id);
+ 
+-/* Extern functions */
+-extern int rte_eal_parse_coremask(const char *coremask, int *cores);
+ 
+ /* Extern globals */
+ extern struct process_local_port_data dlb2_port[][DLB2_NUM_PORT_TYPES];
+diff --git a/drivers/event/dlb2/pf/base/dlb2_resource.c b/drivers/event/dlb2/pf/base/dlb2_resource.c
+index 3004902118..9b087b03b5 100644
+--- a/drivers/event/dlb2/pf/base/dlb2_resource.c
++++ b/drivers/event/dlb2/pf/base/dlb2_resource.c
+@@ -922,49 +922,31 @@ dlb2_resource_probe(struct dlb2_hw *hw, const void *probe_args)
+ {
+ 	const struct dlb2_devargs *args = (const struct dlb2_devargs *)probe_args;
+ 	const char *mask = args ? args->producer_coremask : NULL;
+-	int cpu = 0, cnt = 0, cores[RTE_MAX_LCORE], i;
++	int cpu = 0;
+ 
+ 	if (args) {
+ 		mask = (const char *)args->producer_coremask;
+ 	}
+ 
+-	if (mask && rte_eal_parse_coremask(mask, cores)) {
+-		DLB2_HW_ERR(hw, ": Invalid producer coremask=%s\n", mask);
+-		return -1;
+-	}
+-
++	cpu = rte_get_next_lcore(-1, 1, 0);
+ 	hw->num_prod_cores = 0;
+-	for (i = 0; i < RTE_MAX_LCORE; i++) {
+-		bool is_pcore = (mask && cores[i] != -1);
+-
+-		if (rte_lcore_is_enabled(i)) {
+-			if (is_pcore) {
+-				/*
+-				 * Populate the producer cores from parsed
+-				 * coremask
+-				 */
+-				hw->prod_core_list[cores[i]] = i;
+-				hw->num_prod_cores++;
+-
+-			} else if ((++cnt == DLB2_EAL_PROBE_CORE ||
+-			   rte_lcore_count() < DLB2_EAL_PROBE_CORE)) {
+-				/*
+-				 * If no producer coremask is provided, use the
+-				 * second EAL core to probe
+-				 */
+-				cpu = i;
+-				break;
+-			}
+-		} else if (is_pcore) {
+-			DLB2_HW_ERR(hw, "Producer coremask(%s) must be a subset of EAL coremask\n",
+-				     mask);
++	if (mask) {
++		int n = rte_eal_expand_coremask(mask, hw->prod_core_list);
++		if (n <= 0) {
++			DLB2_HW_ERR(hw, ": Invalid producer coremask=%s\n", mask);
+ 			return -1;
+ 		}
++		hw->num_prod_cores = n;
++		cpu = hw->prod_core_list[0];
+ 
++		for (u8 i = 0; i < hw->num_prod_cores; i++) {
++			if (!rte_lcore_is_enabled(hw->prod_core_list[i])) {
++				DLB2_HW_ERR(hw, "Producer coremask(%s) must be a subset of EAL coremask\n",
++					     mask);
++				return -1;
++			}
++		}
+ 	}
+-	/* Use the first core in producer coremask to probe */
+-	if (hw->num_prod_cores)
+-		cpu = hw->prod_core_list[0];
+ 
+ 	dlb2_get_pp_allocation(hw, cpu, DLB2_LDB_PORT);
+ 	dlb2_get_pp_allocation(hw, cpu, DLB2_DIR_PORT);
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 79db9a47dd..55c49a923f 100644
+index 55c49a923f..22ea6b24e4 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -151,7 +151,13 @@ TAILQ_HEAD_INITIALIZER(devopt_list);
- 
- static int main_lcore_parsed;
- static int mem_parsed;
--static int core_parsed;
-+static struct lcore_options {
-+	const char *core_mask_opt;
-+	const char *core_list_opt;
-+	const char *core_map_opt;
-+	const char *service_mask_opt;
-+	const char *service_list_opt;
-+} lcore_options = {0};
- 
- /* Allow the application to print its usage message too if set */
- static rte_usage_hook_t rte_application_usage_hook;
-@@ -674,7 +680,7 @@ eal_parse_service_coremask(const char *coremask)
- 	if (count == 0)
- 		return -1;
- 
--	if (core_parsed && taken_lcore_count != count) {
-+	if (taken_lcore_count != count) {
- 		EAL_LOG(WARNING,
- 			"Not all service cores are in the coremask. "
- 			"Please ensure -c or -l includes service cores");
-@@ -684,17 +690,6 @@ eal_parse_service_coremask(const char *coremask)
+@@ -690,33 +690,6 @@ eal_parse_service_coremask(const char *coremask)
  	return 0;
  }
  
 -static int
--eal_service_cores_parsed(void)
+-update_lcore_config(int *cores)
 -{
--	int idx;
--	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
--		if (lcore_config[idx].core_role == ROLE_SERVICE)
--			return 1;
+-	struct rte_config *cfg = rte_eal_get_configuration();
+-	unsigned int count = 0;
+-	unsigned int i;
+-	int ret = 0;
+-
+-	for (i = 0; i < RTE_MAX_LCORE; i++) {
+-		if (cores[i] != -1) {
+-			if (eal_cpu_detected(i) == 0) {
+-				EAL_LOG(ERR, "lcore %u unavailable", i);
+-				ret = -1;
+-				continue;
+-			}
+-			cfg->lcore_role[i] = ROLE_RTE;
+-			count++;
+-		} else {
+-			cfg->lcore_role[i] = ROLE_OFF;
+-		}
+-		lcore_config[i].core_index = cores[i];
 -	}
--	return 0;
+-	if (!ret)
+-		cfg->lcore_count = count;
+-	return ret;
 -}
 -
  static int
- update_lcore_config(int *cores)
+ check_core_list(int *lcores, unsigned int count)
  {
-@@ -903,7 +898,7 @@ eal_parse_service_corelist(const char *corelist)
- 	if (count == 0)
+@@ -756,10 +729,9 @@ check_core_list(int *lcores, unsigned int count)
+ }
+ 
+ int
+-rte_eal_parse_coremask(const char *coremask, int *cores)
++rte_eal_expand_coremask(const char *coremask, int *cores)
+ {
+ 	const char *coremask_orig = coremask;
+-	int lcores[RTE_MAX_LCORE];
+ 	unsigned int count = 0;
+ 	int i, j, idx;
+ 	int val;
+@@ -803,30 +775,19 @@ rte_eal_parse_coremask(const char *coremask, int *cores)
+ 						RTE_MAX_LCORE);
+ 					return -1;
+ 				}
+-				lcores[count++] = idx;
++				cores[count++] = idx;
+ 			}
+ 		}
+ 	}
+ 	if (count == 0) {
+-		EAL_LOG(ERR, "No lcores in coremask: [%s]",
+-			coremask_orig);
++		EAL_LOG(ERR, "No lcores in coremask: [%s]", coremask_orig);
+ 		return -1;
+ 	}
+ 
+-	if (check_core_list(lcores, count))
++	if (check_core_list(cores, count) != 0)
  		return -1;
  
--	if (core_parsed && taken_lcore_count != count) {
-+	if (taken_lcore_count != count) {
- 		EAL_LOG(WARNING,
- 			"Not all service cores were in the coremask. "
- 			"Please ensure -c or -l includes service cores");
-@@ -1673,83 +1668,20 @@ eal_parse_common_option(int opt, const char *optarg,
- 		a_used = 1;
- 		break;
- 	/* coremask */
--	case 'c': {
+-	/*
+-	 * Now that we've got a list of cores no longer than RTE_MAX_LCORE,
+-	 * and no lcore in that list is greater than RTE_MAX_LCORE, populate
+-	 * the cores array.
+-	 */
+-	do {
+-		count--;
+-		cores[lcores[count]] = count;
+-	} while (count != 0);
+-
+-	return 0;
++	return count;
+ }
+ 
+ static int
+@@ -911,7 +872,6 @@ static int
+ eal_parse_corelist(const char *corelist, int *cores)
+ {
+ 	unsigned int count = 0, i;
+-	int lcores[RTE_MAX_LCORE];
+ 	char *end = NULL;
+ 	int min, max;
+ 	int idx;
+@@ -949,7 +909,7 @@ eal_parse_corelist(const char *corelist, int *cores)
+ 
+ 				/* Check if this idx is already present */
+ 				for (i = 0; i < count; i++) {
+-					if (lcores[i] == idx)
++					if (cores[i] == idx)
+ 						dup = true;
+ 				}
+ 				if (dup)
+@@ -959,7 +919,7 @@ eal_parse_corelist(const char *corelist, int *cores)
+ 						RTE_MAX_LCORE);
+ 					return -1;
+ 				}
+-				lcores[count++] = idx;
++				cores[count++] = idx;
+ 			}
+ 			min = -1;
+ 		} else
+@@ -967,23 +927,15 @@ eal_parse_corelist(const char *corelist, int *cores)
+ 		corelist = end + 1;
+ 	} while (*end != '\0');
+ 
+-	if (count == 0)
++	if (count == 0) {
++		EAL_LOG(ERR, "No lcores in corelist");
+ 		return -1;
++	}
+ 
+-	if (check_core_list(lcores, count))
++	if (check_core_list(cores, count))
+ 		return -1;
+ 
+-	/*
+-	 * Now that we've got a list of cores no longer than RTE_MAX_LCORE,
+-	 * and no lcore in that list is greater than RTE_MAX_LCORE, populate
+-	 * the cores array.
+-	 */
+-	do {
+-		count--;
+-		cores[lcores[count]] = count;
+-	} while (count != 0);
+-
+-	return 0;
++	return count;
+ }
+ 
+ /* Changes the lcore id of the main thread */
+@@ -1500,75 +1452,6 @@ eal_parse_base_virtaddr(const char *arg)
+ 	return 0;
+ }
+ 
+-/* caller is responsible for freeing the returned string */
+-static char *
+-available_cores(void)
+-{
+-	char *str = NULL;
+-	int previous;
+-	int sequence;
+-	char *tmp;
+-	int idx;
+-
+-	/* find the first available cpu */
+-	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
+-		if (eal_cpu_detected(idx) == 0)
+-			continue;
+-		break;
+-	}
+-	if (idx >= RTE_MAX_LCORE)
+-		return NULL;
+-
+-	/* first sequence */
+-	if (asprintf(&str, "%d", idx) < 0)
+-		return NULL;
+-	previous = idx;
+-	sequence = 0;
+-
+-	for (idx++ ; idx < RTE_MAX_LCORE; idx++) {
+-		if (eal_cpu_detected(idx) == 0)
+-			continue;
+-
+-		if (idx == previous + 1) {
+-			previous = idx;
+-			sequence = 1;
+-			continue;
+-		}
+-
+-		/* finish current sequence */
+-		if (sequence) {
+-			if (asprintf(&tmp, "%s-%d", str, previous) < 0) {
+-				free(str);
+-				return NULL;
+-			}
+-			free(str);
+-			str = tmp;
+-		}
+-
+-		/* new sequence */
+-		if (asprintf(&tmp, "%s,%d", str, idx) < 0) {
+-			free(str);
+-			return NULL;
+-		}
+-		free(str);
+-		str = tmp;
+-		previous = idx;
+-		sequence = 0;
+-	}
+-
+-	/* finish last sequence */
+-	if (sequence) {
+-		if (asprintf(&tmp, "%s-%d", str, previous) < 0) {
+-			free(str);
+-			return NULL;
+-		}
+-		free(str);
+-		str = tmp;
+-	}
+-
+-	return str;
+-}
+-
+ #define HUGE_UNLINK_NEVER "never"
+ 
+ static int
+@@ -1981,43 +1864,43 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 		return -1;
+ 	}
+ 
+-	if (lcore_options.core_mask_opt) {
 -		int lcore_indexes[RTE_MAX_LCORE];
 -
--		if (eal_service_cores_parsed())
--			EAL_LOG(WARNING,
--				"Service cores parsed before dataplane cores. Please ensure -c is before -s or -S");
--		if (rte_eal_parse_coremask(optarg, lcore_indexes) < 0) {
+-		if (rte_eal_parse_coremask(lcore_options.core_mask_opt, lcore_indexes) < 0) {
 -			EAL_LOG(ERR, "invalid coremask syntax");
 -			return -1;
 -		}
 -		if (update_lcore_config(lcore_indexes) < 0) {
 -			char *available = available_cores();
--
+ 
 -			EAL_LOG(ERR,
 -				"invalid coremask, please check specified cores are part of %s",
 -				available);
 -			free(available);
 -			return -1;
 -		}
--
--		if (core_parsed) {
--			EAL_LOG(ERR, "Option -c is ignored, because (%s) is set!",
--				(core_parsed == LCORE_OPT_LST) ? "-l" :
--				(core_parsed == LCORE_OPT_MAP) ? "--lcores" :
--				"-c");
--			return -1;
--		}
--
--		core_parsed = LCORE_OPT_MSK;
-+	case 'c':
-+		lcore_options.core_mask_opt = optarg;
- 		break;
--	}
- 	/* corelist */
--	case 'l': {
--		int lcore_indexes[RTE_MAX_LCORE];
--
--		if (eal_service_cores_parsed())
--			EAL_LOG(WARNING,
--				"Service cores parsed before dataplane cores. Please ensure -l is before -s or -S");
--
--		if (eal_parse_corelist(optarg, lcore_indexes) < 0) {
+-	} else if (lcore_options.core_list_opt) {
++	if (lcore_options.core_mask_opt || lcore_options.core_list_opt) {
+ 		int lcore_indexes[RTE_MAX_LCORE];
++		int nb_indexes = lcore_options.core_list_opt ?
++				eal_parse_corelist(lcore_options.core_list_opt, lcore_indexes) :
++				rte_eal_expand_coremask(lcore_options.core_mask_opt, lcore_indexes);
+ 
+-		if (eal_parse_corelist(lcore_options.core_list_opt, lcore_indexes) < 0) {
 -			EAL_LOG(ERR, "invalid core list syntax");
--			return -1;
++		if (nb_indexes < 0)
+ 			return -1;
 -		}
 -		if (update_lcore_config(lcore_indexes) < 0) {
 -			char *available = available_cores();
--
+ 
 -			EAL_LOG(ERR,
 -				"invalid core list, please check specified cores are part of %s",
 -				available);
 -			free(available);
 -			return -1;
--		}
--
--		if (core_parsed) {
--			EAL_LOG(ERR, "Option -l is ignored, because (%s) is set!",
--				(core_parsed == LCORE_OPT_MSK) ? "-c" :
--				(core_parsed == LCORE_OPT_MAP) ? "--lcores" :
--				"-l");
--			return -1;
--		}
--
--		core_parsed = LCORE_OPT_LST;
-+	case 'l':
-+		lcore_options.core_list_opt = optarg;
- 		break;
--	}
- 	/* service coremask */
- 	case 's':
--		if (eal_parse_service_coremask(optarg) < 0) {
--			EAL_LOG(ERR, "invalid service coremask");
--			return -1;
--		}
-+		lcore_options.service_mask_opt = optarg;
- 		break;
- 	/* service corelist */
- 	case 'S':
--		if (eal_parse_service_corelist(optarg) < 0) {
--			EAL_LOG(ERR, "invalid service core list");
--			return -1;
--		}
-+		lcore_options.service_list_opt = optarg;
- 		break;
- 	/* size of memory */
- 	case 'm':
-@@ -1918,21 +1850,7 @@ eal_parse_common_option(int opt, const char *optarg,
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
- 	case OPT_LCORES_NUM:
--		if (eal_parse_lcores(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameter for --"
--				OPT_LCORES);
--			return -1;
--		}
--
--		if (core_parsed) {
--			EAL_LOG(ERR, "Option --lcores is ignored, because (%s) is set!",
--				(core_parsed == LCORE_OPT_LST) ? "-l" :
--				(core_parsed == LCORE_OPT_MSK) ? "-c" :
--				"--lcores");
--			return -1;
--		}
--
--		core_parsed = LCORE_OPT_MAP;
-+		lcore_options.core_map_opt = optarg;
- 		break;
- 	case OPT_LEGACY_MEM_NUM:
- 		conf->legacy_mem = 1;
-@@ -1973,6 +1891,7 @@ eal_parse_common_option(int opt, const char *optarg,
- 
- 	}
- 
-+
- 	return 0;
- 
- ba_conflict:
-@@ -2046,8 +1965,74 @@ eal_adjust_config(struct internal_config *internal_cfg)
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 
--	if (!core_parsed)
-+	/* handle all the various core options, ignoring order of them.
-+	 * First check that multiple lcore options (coremask, corelist, coremap) are
-+	 * not used together. Then check that the service options (coremask, corelist)
-+	 * are not both set. In both cases error out if multiple options are set.
-+	 */
-+	if ((lcore_options.core_mask_opt && lcore_options.core_list_opt) ||
-+			(lcore_options.core_mask_opt && lcore_options.core_map_opt) ||
-+			(lcore_options.core_list_opt && lcore_options.core_map_opt)) {
-+		EAL_LOG(ERR, "Only one of -c, -l and --"OPT_LCORES" may be given at a time");
-+		return -1;
-+	}
-+	if ((lcore_options.service_mask_opt && lcore_options.service_list_opt)) {
-+		EAL_LOG(ERR, "Only one of -s and -S may be given at a time");
-+		return -1;
++		char *core_map_opt = malloc(RTE_MAX_LCORE * 10);
++		size_t core_map_len = 0;
++		for (i = 0; i < nb_indexes; i++) {
++			if (!eal_cpu_detected(lcore_indexes[i])) {
++				EAL_LOG(ERR, "core %d not present", lcore_indexes[i]);
++				return -1;
++			}
++			int n = snprintf(core_map_opt + core_map_len,
++					(RTE_MAX_LCORE * 10) - core_map_len,
++					"%s%d", i == 0 ? "" : ",", lcore_indexes[i]);
++			if (n < 0 || (size_t)n >= (RTE_MAX_LCORE * 10) - core_map_len) {
++				EAL_LOG(ERR, "core map string too long");
++				return -1;
++			}
++			core_map_len += n;
+ 		}
+-	} else if (lcore_options.core_map_opt) {
++		lcore_options.core_map_opt = core_map_opt;
++		EAL_LOG(DEBUG, "Generated core map: '%s'", lcore_options.core_map_opt);
 +	}
 +
-+	if (lcore_options.core_mask_opt) {
-+		int lcore_indexes[RTE_MAX_LCORE];
-+
-+		if (rte_eal_parse_coremask(lcore_options.core_mask_opt, lcore_indexes) < 0) {
-+			EAL_LOG(ERR, "invalid coremask syntax");
-+			return -1;
-+		}
-+		if (update_lcore_config(lcore_indexes) < 0) {
-+			char *available = available_cores();
-+
-+			EAL_LOG(ERR,
-+				"invalid coremask, please check specified cores are part of %s",
-+				available);
-+			free(available);
-+			return -1;
-+		}
-+	} else if (lcore_options.core_list_opt) {
-+		int lcore_indexes[RTE_MAX_LCORE];
-+
-+		if (eal_parse_corelist(lcore_options.core_list_opt, lcore_indexes) < 0) {
-+			EAL_LOG(ERR, "invalid core list syntax");
-+			return -1;
-+		}
-+		if (update_lcore_config(lcore_indexes) < 0) {
-+			char *available = available_cores();
-+
-+			EAL_LOG(ERR,
-+				"invalid core list, please check specified cores are part of %s",
-+				available);
-+			free(available);
-+			return -1;
-+		}
-+	} else if (lcore_options.core_map_opt) {
-+		if (eal_parse_lcores(lcore_options.core_map_opt) < 0) {
-+			EAL_LOG(ERR, "invalid parameter for --"	OPT_LCORES);
-+			return -1;
-+		}
-+	} else {
++	if (lcore_options.core_map_opt) {
+ 		if (eal_parse_lcores(lcore_options.core_map_opt) < 0) {
+ 			EAL_LOG(ERR, "invalid parameter for --"	OPT_LCORES);
+ 			return -1;
+ 		}
++		if (lcore_options.core_mask_opt || lcore_options.core_list_opt)
++			free(RTE_CAST_PTR(void *, lcore_options.core_map_opt));
+ 	} else {
  		eal_auto_detect_cores(cfg);
-+	}
-+
-+	if (lcore_options.service_mask_opt) {
-+		if (eal_parse_service_coremask(lcore_options.service_mask_opt) < 0) {
-+			EAL_LOG(ERR, "invalid service coremask");
-+			return -1;
-+		}
-+	} else if (lcore_options.service_list_opt) {
-+		if (eal_parse_service_corelist(lcore_options.service_list_opt) < 0) {
-+			EAL_LOG(ERR, "invalid service core list");
-+			return -1;
-+		}
-+	}
+ 	}
+diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
+index c826e143f1..013075487c 100644
+--- a/lib/eal/include/rte_eal.h
++++ b/lib/eal/include/rte_eal.h
+@@ -493,22 +493,20 @@ rte_eal_get_runtime_dir(void);
+ /**
+  * Convert a string describing a mask of core ids into an array of core ids.
+  *
+- * On success, the passed array is filled with the orders of the core ids
+- * present in the mask (-1 indicating that a core id is absent).
+- * For example, passing a 0xa coremask results in cores[1] = 0, cores[3] = 1,
+- * and the rest of the array is set to -1.
++ * On success, the passed array is filled with the core ids present in the mask.
+  *
+  * @param coremask
+  *   A string describing a mask of core ids.
+  * @param cores
+- *   An array where to store the core ids orders.
++ *   The output array to store the core ids.
+  *   This array must be at least RTE_MAX_LCORE large.
+  * @return
+- *   0 on success, -1 if the string content was invalid.
++ *  The number of cores in the coremask, and in the returned "cores" array,
++ *  -1 if the string content was invalid.
+  */
+ __rte_internal
+ int
+-rte_eal_parse_coremask(const char *coremask, int *cores);
++rte_eal_expand_coremask(const char *coremask, int *cores);
  
- 	if (internal_conf->process_type == RTE_PROC_AUTO)
- 		internal_conf->process_type = eal_proc_type_detect();
+ #ifdef __cplusplus
+ }
+diff --git a/lib/eal/version.map b/lib/eal/version.map
+index a20c713eb1..b51051ee38 100644
+--- a/lib/eal/version.map
++++ b/lib/eal/version.map
+@@ -405,8 +405,8 @@ INTERNAL {
+ 
+ 	rte_bus_register;
+ 	rte_bus_unregister;
++	rte_eal_expand_coremask;
+ 	rte_eal_get_baseaddr;
+-	rte_eal_parse_coremask;
+ 	rte_firmware_read;
+ 	rte_intr_allow_others;
+ 	rte_intr_cap_multiple;
 -- 
 2.45.2
 
