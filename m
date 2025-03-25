@@ -2,51 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2235C3600B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 16:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE06C36008
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 17:22:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A455E40685;
-	Tue, 25 Mar 2025 17:03:38 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 240DA40685
- for <dev@dpdk.org>; Tue, 25 Mar 2025 17:03:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 209354029A;
+	Tue, 25 Mar 2025 18:22:25 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id F2D404027C
+ for <dev@dpdk.org>; Tue, 25 Mar 2025 18:22:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742918617; x=1774454617;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=TnFz8MgLX5UjE4X8Q/+XzbRgxTil94Abxmd6l8Zy9Y4=;
- b=LNzjVknCDl7r6jUHTPEm62TnliQKCsTAFjFs5/obG3XebST+e2UY6lFs
- i2N6XhJqaUEqJsGBVudkWnoA3IsO2GOJmbppnNdIJ+lmKEsUcv6hSgvZO
- 8R3Uwk6kFxbeTJ12HYqukH2WhADNFV/9P4SDd6lylH3ldY7EHJBcHfd5Y
- jTYIvbothWE5bzjY+rUo5D8UDVmRR4mjj0Gf0ofC13JGfBi+njxc/L0BG
- FY7PgRU2HqBA/DWXsp2tu62FckKFKcGQA93QY8OlVbEG/goXM92+0upZt
- EhQpFs3E8j8wEh3HqXme94UkyQxTZXvAiQH02ecYuPsTCfBowuKeSYLOI A==;
-X-CSE-ConnectionGUID: srKN+PwGRPWVy7V5zWULZA==
-X-CSE-MsgGUID: s1n4GzqNTRmfBVzt6/VFXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61565813"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="61565813"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2025 09:03:37 -0700
-X-CSE-ConnectionGUID: JnzplJnzT9K2Ufss7kApwA==
-X-CSE-MsgGUID: geVjpp4xQNi7cthxvzieTA==
+ t=1742923345; x=1774459345;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=bQsj3DdLjFUYi5sFmKxmvMXYigVnXYBv9iKIVZhXe2w=;
+ b=ZZPbzEDq5WIPVGp6kIm96XlxQ1eRmjvuBbmp7bB4sw56PMrb//6Ell9T
+ LRnpG762eY/Kz5S42toQbFcnVn3galw51bbQ/IethRjkNzbND3aB/dFa4
+ tqdgHR395fkMgV1r+7kzoWtAoJ2a3AfPZw/HUdUQQ4YEd4u9q1YTgqvyP
+ AbzBCOOFHFReRAKmVHdlp8V3wyEp/fSTA2fEHc/9NOGteIYlPfPoomalr
+ 5L9SlzTYW0CcL9XCrAuA7TinhOeoCo7ib8y2q4TFKUX+sFnpp+5NX60wc
+ 1GM6Xd2+/YpFpR1l732i2LoYWceewzO+48i0/I19igJizFaN/qJ5shpB0 w==;
+X-CSE-ConnectionGUID: FAllyvu2SJCAE2+woFWVRw==
+X-CSE-MsgGUID: m+rDT5wySL+IvfzpHyesNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="43910693"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="43910693"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Mar 2025 10:22:23 -0700
+X-CSE-ConnectionGUID: ZzKqg1o6RymkJWSNWmNeEw==
+X-CSE-MsgGUID: vXVO3wjeRkuO/J3aSlQnRA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="129086754"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="124913753"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by fmviesa005.fm.intel.com with ESMTP; 25 Mar 2025 09:03:35 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 25 Mar 2025 10:22:22 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>
-Subject: [PATCH v5 11/11] member: use common AVX512 build support
-Date: Tue, 25 Mar 2025 16:02:53 +0000
-Message-ID: <20250325160254.1724560-12-bruce.richardson@intel.com>
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH] build: reduce use of AVX compiler flags
+Date: Tue, 25 Mar 2025 17:22:15 +0000
+Message-ID: <20250325172215.3360590-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250325160254.1724560-1-bruce.richardson@intel.com>
-References: <20250314172339.12777-1-bruce.richardson@intel.com>
- <20250325160254.1724560-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,70 +58,164 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the support for building AVX512 code present in lib/meson.build
-rather than reimplementing it in the library meson.build file.
+When doing a build for a target that already has the instruction sets
+for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
+skylake-avx512 '-march' flags, as they are unnecessary. Instead, when
+the default flags produce the desired output, just use them unmodified.
+
+Depends-on: series-34915 ("remove component-specific logic for AVX builds")
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/member/meson.build | 46 +++++++-----------------------------------
- 1 file changed, 7 insertions(+), 39 deletions(-)
 
-diff --git a/lib/member/meson.build b/lib/member/meson.build
-index 4341b424df..07f9afaed9 100644
---- a/lib/member/meson.build
-+++ b/lib/member/meson.build
-@@ -20,44 +20,12 @@ sources = files(
- 
- deps += ['hash', 'ring']
- 
--# compile AVX512 version if:
--if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
--    # compile AVX512 version if either:
--    # a. we have AVX512 supported in minimum instruction set
--    #    baseline
--    # b. it's not minimum instruction set, but supported by
--    #    compiler
--    #
--    # in former case, just add avx512 C file to files list
--    # in latter case, compile c file to static lib, using correct
--    # compiler flags, and then have the .o file from static lib
--    # linked into main lib.
--
--    member_avx512_args = cc_avx512_flags
--    if not is_ms_compiler
--            member_avx512_args += '-mavx512ifma'
--    endif
--
--    # check if all required flags already enabled
--    sketch_avx512_flags = ['__AVX512F__', '__AVX512DQ__', '__AVX512IFMA__']
--
--    sketch_avx512_on = true
--    foreach f:sketch_avx512_flags
--        if cc.get_define(f, args: machine_args) == ''
--            sketch_avx512_on = false
--        endif
--    endforeach
--
--    if sketch_avx512_on == true
--        cflags += ['-DCC_AVX512_SUPPORT']
--        sources += files('rte_member_sketch_avx512.c')
--    elif cc.has_multi_arguments(member_avx512_args)
--        sketch_avx512_tmp = static_library('sketch_avx512_tmp',
--            'rte_member_sketch_avx512.c',
--            include_directories: includes,
--            dependencies: [static_rte_eal, static_rte_hash],
--            c_args: cflags + member_avx512_args)
--        objs += sketch_avx512_tmp.extract_objects('rte_member_sketch_avx512.c')
--        cflags += ['-DCC_AVX512_SUPPORT']
-+# compile AVX512 version if we have avx512 on MSVC or the 'ifma' flag on GCC/Clang
-+if dpdk_conf.has('RTE_ARCH_X86_64')
-+    if is_ms_compiler
-+        sources_avx512 += files('rte_member_sketch_avx512.c')
-+    elif cc.has_argument('-mavx512ifma')
-+        sources_avx512 += files('rte_member_sketch_avx512.c')
-+        cflags_avx512 += '-mavx512ifma'
+This patchset depends on the previous AVX rework. However, sending it
+separately as a new RFC because it effectively increases the minimum
+compiler versions needed for x86 builds - from GCC 5 to 6, and
+Clang 3.6 to 3.9.
+
+For now, I've just documented that as an additional note in the GSG that
+these versions are recommended, but it would be simpler if we could just
+set them as the required minimum baseline (at least in the docs).
+
+Feedback on these compiler version requirements welcome.
+
+---
+ config/x86/meson.build            | 31 ++++++++++++++++++++-----------
+ doc/guides/linux_gsg/sys_reqs.rst |  8 ++++++++
+ drivers/meson.build               |  9 +--------
+ lib/meson.build                   |  9 +--------
+ 4 files changed, 30 insertions(+), 27 deletions(-)
+
+diff --git a/config/x86/meson.build b/config/x86/meson.build
+index c3564b0011..97f790b0d4 100644
+--- a/config/x86/meson.build
++++ b/config/x86/meson.build
+@@ -4,11 +4,13 @@
+ if is_ms_compiler
+     cc_avx2_flags = ['/arch:AVX2']
+ else
+-    cc_avx2_flags = ['-mavx2']
++    cc_avx2_flags = []
++    if cc.get_define('__AVX2__', args: machine_args) == ''
++        cc_avx2_flags = ['-mavx2']
++    endif
+ endif
+
+ cc_has_avx512 = false
+-target_has_avx512 = false
+
+ dpdk_conf.set('RTE_ARCH_X86', 1)
+ if dpdk_conf.get('RTE_ARCH_64')
+@@ -65,26 +67,33 @@ if is_linux or cc.get_id() == 'gcc'
      endif
  endif
--- 
+
+-cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw', '-mavx512cd']
+-if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
++avx512_march_flag = '-march=skylake-avx512'
++cc_avx512_flags = []
++if (binutils_ok and cc.has_argument(avx512_march_flag)
+         and '-mno-avx512f' not in get_option('c_args'))
+     # check if compiler is working with _mm512_extracti64x4_epi64
+     # Ref: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82887
+     code = '''#include <immintrin.h>
+     void test(__m512i zmm){
+         __m256i ymm = _mm512_extracti64x4_epi64(zmm, 0);}'''
+-    result = cc.compiles(code, args : cc_avx512_flags, name : 'AVX512 checking')
++    result = cc.compiles(code, args : [avx512_march_flag], name : 'AVX512 checking')
+     if result == false
+         machine_args += '-mno-avx512f'
+         warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
+     else
+         cc_has_avx512 = true
+-        target_has_avx512 = (
+-                cc.get_define('__AVX512F__', args: machine_args) != '' and
+-                cc.get_define('__AVX512BW__', args: machine_args) != '' and
+-                cc.get_define('__AVX512DQ__', args: machine_args) != '' and
+-                cc.get_define('__AVX512VL__', args: machine_args) != ''
+-            )
++        if cc.get_define('__AVX512F__', args: machine_args) == ''
++            cc_avx512_flags = [avx512_march_flag]
++            if cc.has_argument('-Wno-overriding-option')
++                cc_avx512_args += '-Wno-overriding-option'
++            endif
++        endif
++    endif
++endif
++if developer_mode
++    message('Extra C flags needed for AVX2 output: @0@'.format(cc_avx2_flags))
++    if cc_has_avx512
++        message('Extra C flags needed for AVX512 output: @0@'.format(cc_avx512_flags))
+     endif
+ endif
+
+diff --git a/doc/guides/linux_gsg/sys_reqs.rst b/doc/guides/linux_gsg/sys_reqs.rst
+index 5a7d9e4a43..55e9fe4724 100644
+--- a/doc/guides/linux_gsg/sys_reqs.rst
++++ b/doc/guides/linux_gsg/sys_reqs.rst
+@@ -35,6 +35,14 @@ Compilation of the DPDK
+     * For Ubuntu/Debian systems these can be installed using ``apt install build-essential``
+     * For Alpine Linux, ``apk add alpine-sdk bsd-compat-headers``
+
++.. note::
++
++   When compiling for x86 platforms,
++   GCC version 6.1 or higher,
++   or Clang version 3.9 or higher is recommended.
++   Earlier versions of these compilers do not support the compiler flags used by DPDK for AVX-512 code.
++   As such, any builds using earlier compilers will be missing AVX-512 support.
++
+ .. note::
+
+    pkg-config 0.27, supplied with RHEL-7,
+diff --git a/drivers/meson.build b/drivers/meson.build
+index c15319dc24..bb33b0a7a0 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -249,18 +249,11 @@ foreach subpath:subdirs
+             endif
+             if sources_avx512.length() > 0 and cc_has_avx512
+                 cflags += '-DCC_AVX512_SUPPORT'
+-                avx512_args = [cflags, cc_avx512_flags]
+-                if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
+-                    avx512_args += '-march=skylake-avx512'
+-                    if cc.has_argument('-Wno-overriding-option')
+-                        avx512_args += '-Wno-overriding-option'
+-                    endif
+-                endif
+                 avx512_lib = static_library(lib_name + '_avx512_lib',
+                         sources_avx512,
+                         dependencies: static_deps,
+                         include_directories: includes,
+-                        c_args: avx512_args)
++                        c_args: [cflags, cc_avx512_flags])
+                 objs += avx512_lib.extract_objects(sources_avx512)
+             endif
+         endif
+diff --git a/lib/meson.build b/lib/meson.build
+index e2605e7d68..887e0ed56d 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -257,18 +257,11 @@ foreach l:libraries
+         endif
+         if sources_avx512.length() > 0 and cc_has_avx512
+             cflags += '-DCC_AVX512_SUPPORT'
+-            avx512_args = [cflags, cflags_avx512, cc_avx512_flags]
+-            if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
+-                avx512_args += '-march=skylake-avx512'
+-                if cc.has_argument('-Wno-overriding-option')
+-                    avx512_args += '-Wno-overriding-option'
+-                endif
+-            endif
+             avx512_lib = static_library(libname + '_avx512_lib',
+                     sources_avx512,
+                     dependencies: static_deps,
+                     include_directories: includes,
+-                    c_args: avx512_args)
++                    c_args: [cflags, cflags_avx512, cc_avx512_flags])
+             objs += avx512_lib.extract_objects(sources_avx512)
+         endif
+     endif
+--
 2.45.2
 
