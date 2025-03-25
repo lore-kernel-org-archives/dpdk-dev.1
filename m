@@ -2,64 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C919FC36002
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 02:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3879C36002
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 02:40:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8511140B9C;
-	Tue, 25 Mar 2025 03:39:15 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 8E724402E2
- for <dev@dpdk.org>; Tue, 25 Mar 2025 03:39:14 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-30332dfc820so4105105a91.2
- for <dev@dpdk.org>; Mon, 24 Mar 2025 19:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1742870353; x=1743475153; darn=dpdk.org;
- h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Hhqdglag6Xr+XraUPW3CcVb+tX/+aoLHNcBL7o+4elw=;
- b=LVJWgR4hlZr8fGW68P2O7r3B6EfcvAITP5XAHvImYGM+3CU2JanQbFqpQ2UVwlxiHb
- bB09McwlY5bGcy2BhtcDRIdH6PD6vATxlt6kYRuDah/+pHe3n0rdCGtTkgwTAAGY446A
- kqmDQl1lcM0jmUF6vjreIrm8+8mK1P/0J6Prl6waIOOuRlNueNihdExkGh4KqIQGGuNN
- YjIIJsrNKDX34DbZaFErX/es6YB2r6YNJTMW4lpXmRIsgtxwFrIhCr5VplARNnBGssP+
- kKB2lD+XUPcbDB1nnZaNRrDlvpHG3gnFEaa39wutj/bUCceOb/kU1iyMrJkJUtKzYEiY
- OpuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1742870353; x=1743475153;
- h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Hhqdglag6Xr+XraUPW3CcVb+tX/+aoLHNcBL7o+4elw=;
- b=MKjI5Vl/Y1h54jGJ27Ksi+tbCIxb2dvWFRv+uutCiYhCNzpC0ikxHXV28zcUBSrTM/
- 5oBt4knXQb0mk2Q2yGcjce+IkzspAnebF3CTq+T280pWp72IAC2VK/toxrD5AqlySBOe
- 6uO4a1euPbkI3jZHBnTzjwX0gAbhBmavtMOEiDlNPjOeD4YPeL+6Mp4aiy6r1FxdSpuo
- I16kZGNRHcau2y0W80WqbfXCW0jbCYc04ovO3QJVPRD8BEyH/nBTrrg6hLzV0+HzwoPo
- SjmSyKVj91Q2/DaUpdq/+2HcdDWLSRpz0ZqgvUjSoxnhecP/LkElyN+oQhtyvd3AxDpz
- WyuA==
-X-Gm-Message-State: AOJu0YxwmnbH5qPJmHD9LctyHtilNDrPlRE/B9wLzJu9bxxtJcR9oXG7
- z5DJZ4ZhCZQEkfCUBlA1JgD4gCdTjyx/Yh4UwsntikyugGWF3IYL
-X-Gm-Gg: ASbGnctMmwNvPQeN62Hs1QLJdd80OBdVnOOTmoIUYLhpbs3PdRefmqTDT3c2IWb9WOZ
- /E61+Ix33nfQ55Vl8wKF5bDhgFOeIplu0tdE5FW2hBvuMQq42IjrOOVBdvg77pNUhA8Jzg7O+5f
- EUUox6M/1DUYTY29JTPEEXGhAf33MiYh90AUZwecvsBUZy99ZuunHh8tXS4uzDw98hl8vhlAJo9
- gAlAmtBANS7X/BJlkfNdsepaZK7DDuovjuWZ8FOUgRvg5R93xNtZITpImncSMzpRoStK817yO32
- 13WdpUFUz0jKww4utRpLuakM1woekPHvVqLsiNHjzZfvchgtgr/nX82EauUWVNw2Z6oY6DZk8wf
- tdt74rJES5g==
-X-Google-Smtp-Source: AGHT+IEOrBQK5LUX9P3WUK+xKQlpK51YcNfFXztO/KotvfpHVMszjD2co0VAzLieuqP6AJtxRqC17g==
-X-Received: by 2002:a17:90b:4c43:b0:2fc:c262:ef4b with SMTP id
- 98e67ed59e1d1-3030feb2497mr28263518a91.18.1742870353452; 
- Mon, 24 Mar 2025 19:39:13 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([114.254.2.167])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3030f5d4f0asm9031728a91.17.2025.03.24.19.39.11
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 24 Mar 2025 19:39:13 -0700 (PDT)
-From: Wenbo Liu <liuwenbo109@gmail.com>
-To: rasland@nvidia.com
-Cc: dev@dpdk.org,
-	Wenbo Liu <liuwenbo109@gmail.com>
-Subject: [PATCH] drivers/net/mlx5: fix mlx5 send packet failed
-Date: Tue, 25 Mar 2025 18:39:00 +0800
-Message-Id: <1742899140-2013-1-git-send-email-liuwenbo109@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id DC27040B9C;
+	Tue, 25 Mar 2025 03:40:16 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 31B47402E2
+ for <dev@dpdk.org>; Tue, 25 Mar 2025 03:40:15 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 1F8AF46470; Tue, 25 Mar 2025 03:40:15 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/vhost/virtio Bug 1681] [dpdk-25.03]
+ loopback_multi_paths_port_restart: core dumped occurred when exiting testpmd
+Date: Tue, 25 Mar 2025 02:40:14 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: songx.jiale@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1681-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17428704140.a92aaAf.138103
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,45 +55,282 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Test Environment: ARM architecture, OpenEuler operating system
-CPU: HUAWEI Kunpeng 920 5220, BIOS Vendor ID: HiSilicon
-Network Card: Mellanox Technologies MT27800 Family [ConnectX-5]
-DPDK program sending self-encapsulated packets with MAC, IP, and UDP headers
-continuously prints the following errors and ceases packet transmission
 
-mlx5_common: Failed to modify SQ using DevX
-mlx5_net: Cannot change the Tx SQ state to RESET Remote I/O error
+--17428704140.a92aaAf.138103
+Date: Tue, 25 Mar 2025 03:40:14 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Signed-off-by: Wenbo Liu <liuwenbo109@gmail.com>
----
- drivers/net/mlx5/mlx5_tx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+https://bugs.dpdk.org/show_bug.cgi?id=3D1681
 
-diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
-index 4286876..5cf9873 100644
---- a/drivers/net/mlx5/mlx5_tx.c
-+++ b/drivers/net/mlx5/mlx5_tx.c
-@@ -186,6 +186,7 @@
- 	volatile struct mlx5_cqe *last_cqe = NULL;
- 	bool ring_doorbell = false;
- 	int ret;
-+	int offset = 0;
- 
- 	do {
- 		volatile struct mlx5_cqe *cqe;
-@@ -205,8 +206,11 @@
- 			 * here, before we might perform SQ reset.
- 			 */
- 			rte_wmb();
-+#if (RTE_CACHE_LINE_SIZE == 128)
-+                        offset = 64;
-+#endif
- 			ret = mlx5_tx_error_cqe_handle
--				(txq, (volatile struct mlx5_error_cqe *)cqe);
-+				(txq, (volatile struct mlx5_err_cqe *)(((char *)cqe) + offset));
- 			if (unlikely(ret < 0)) {
- 				/*
- 				 * Some error occurred on queue error
--- 
-1.8.3.1
+            Bug ID: 1681
+           Summary: [dpdk-25.03] loopback_multi_paths_port_restart: core
+                    dumped occurred when exiting testpmd
+           Product: DPDK
+           Version: 25.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: vhost/virtio
+          Assignee: dev@dpdk.org
+          Reporter: songx.jiale@intel.com
+  Target Milestone: ---
 
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
+OS: Anolis OS 8.9/5.10.134-16.2.an8.x86_64
+Compiler: gcc version 8.5.0 20210514
+Hardware platform: Intel(R) Xeon(R) Gold 6139 CPU @ 2.30GHz
+NIC hardware: N/A
+NIC firmware: N/A
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. start testpmd with vhost-net
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 3-5 -n 4 --no-pci --vdev
+'net_vhost0,iface=3Dvhost-net,queues=3D1,client=3D0' -- -i --nb-cores=3D1 -=
+-txd=3D1024
+--rxd=3D1024
+
+2. exit testpmd
+note: Currently only reproduced on Anolis OS.
+testpmd> quit
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+testpmd> quitStopping port 0...
+Stopping ports...
+DoneShutting down port 0...
+Closing ports...
+Port 0 is closed
+DoneBye...
+Segmentation fault (core dumped)
+
+Expected Result:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testpmd exits normally without core dumped.
+
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit 0e38b42bf61c03b9350f3c96fa421c2c28e815cc
+Author: David Marchand <david.marchand@redhat.com>
+Date:   Tue Jun 11 15:39:57 2024 +0200
+
+    vhost: manage FD with epoll
+
+    Switch to epoll so that the concern over the poll() fd array
+    is removed.
+    Add a simple list of used entries and track the next free entry.
+
+    epoll() is thread safe, we no more need a synchronization
+    mechanism and so can remove the notification pipe.
+
+    Signed-off-by: David Marchand <david.marchand@redhat.com>
+    Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+    Acked-by: David Marchand <david.marchand@redhat.com>
+
+ lib/vhost/fd_man.c | 439 +++++++++++++++++--------------------------------=
+----
+ lib/vhost/fd_man.h |   5 +-
+ 2 files changed, 144 insertions, 300 deletions
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17428704140.a92aaAf.138103
+Date: Tue, 25 Mar 2025 03:40:14 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - [dpdk-25.03] loopback_multi_paths_port_restart: c=
+ore dumped occurred when exiting testpmd"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1681">1681</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>[dpdk-25.03] loopback_multi_paths_port_restart: core dumped o=
+ccurred when exiting testpmd
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>vhost/virtio
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>songx.jiale&#64;intel.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
+OS: Anolis OS 8.9/5.10.134-16.2.an8.x86_64
+Compiler: gcc version 8.5.0 20210514
+Hardware platform: Intel(R) Xeon(R) Gold 6139 CPU &#64; 2.30GHz
+NIC hardware: N/A
+NIC firmware: N/A
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. start testpmd with vhost-net
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 3-5 -n 4 --no-pci --vdev
+'net_vhost0,iface=3Dvhost-net,queues=3D1,client=3D0' -- -i --nb-cores=3D1 -=
+-txd=3D1024
+--rxd=3D1024
+
+2. exit testpmd
+note: Currently only reproduced on Anolis OS.
+testpmd&gt; quit
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+testpmd&gt; quitStopping port 0...
+Stopping ports...
+DoneShutting down port 0...
+Closing ports...
+Port 0 is closed
+DoneBye...
+Segmentation fault (core dumped)
+
+Expected Result:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testpmd exits normally without core dumped.
+
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit 0e38b42bf61c03b9350f3c96fa421c2c28e815cc
+Author: David Marchand &lt;<a href=3D"mailto:david.marchand&#64;redhat.com"=
+>david.marchand&#64;redhat.com</a>&gt;
+Date:   Tue Jun 11 15:39:57 2024 +0200
+
+    vhost: manage FD with epoll
+
+    Switch to epoll so that the concern over the poll() fd array
+    is removed.
+    Add a simple list of used entries and track the next free entry.
+
+    epoll() is thread safe, we no more need a synchronization
+    mechanism and so can remove the notification pipe.
+
+    Signed-off-by: David Marchand &lt;<a href=3D"mailto:david.marchand&#64;=
+redhat.com">david.marchand&#64;redhat.com</a>&gt;
+    Signed-off-by: Maxime Coquelin &lt;<a href=3D"mailto:maxime.coquelin&#6=
+4;redhat.com">maxime.coquelin&#64;redhat.com</a>&gt;
+    Acked-by: David Marchand &lt;<a href=3D"mailto:david.marchand&#64;redha=
+t.com">david.marchand&#64;redhat.com</a>&gt;
+
+ lib/vhost/fd_man.c | 439 +++++++++++++++++--------------------------------=
+----
+ lib/vhost/fd_man.h |   5 +-
+ 2 files changed, 144 insertions, 300 deletions
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1681">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17428704140.a92aaAf.138103--
