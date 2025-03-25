@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CD0C3600D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 16:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2235C3600B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Mar 2025 16:04:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 909494067E;
-	Tue, 25 Mar 2025 17:03:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A455E40685;
+	Tue, 25 Mar 2025 17:03:38 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 7105640678
- for <dev@dpdk.org>; Tue, 25 Mar 2025 17:03:34 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 240DA40685
+ for <dev@dpdk.org>; Tue, 25 Mar 2025 17:03:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742918614; x=1774454614;
+ t=1742918617; x=1774454617;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ofk1+EQiq+sKuIl43TP4yrwzlw5KtwOIegOf7i2asII=;
- b=L1AnrpY0fpV4XOzFfkar+EhFy5C2RMbD7sjyABc1FD9TKg9J5/fsM8wE
- SXzyUu936SGYw283KNsGd1kzswatJQGCphFq12cwtFi70DyQ43OUIp3OD
- qEdX7UQ8fxKAELkuVnHyObzsSvpRjDCx+R3L8Zjg0BsNnd7roaRMaxP1e
- faOAtGXfGsf02MhsITw9eJ1LlEeSuxuTYU8JoLKQP5YIZEqOHmUZXWN1W
- pgy+lqYK7tXxIPQoiiddtLy1AzRCTFvpdYvRAdRISCm3QEXvTvkvxM+OE
- GthkiEDQD62C1ca0FsQYVmm6V+kCOC+L9o5sBTqlH9543IZyRugQo83Uq Q==;
-X-CSE-ConnectionGUID: VprrPhhSQ2aSWVkghdlKDg==
-X-CSE-MsgGUID: V3ctmqQcTFKB3AY11DUBog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61565807"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="61565807"
+ bh=TnFz8MgLX5UjE4X8Q/+XzbRgxTil94Abxmd6l8Zy9Y4=;
+ b=LNzjVknCDl7r6jUHTPEm62TnliQKCsTAFjFs5/obG3XebST+e2UY6lFs
+ i2N6XhJqaUEqJsGBVudkWnoA3IsO2GOJmbppnNdIJ+lmKEsUcv6hSgvZO
+ 8R3Uwk6kFxbeTJ12HYqukH2WhADNFV/9P4SDd6lylH3ldY7EHJBcHfd5Y
+ jTYIvbothWE5bzjY+rUo5D8UDVmRR4mjj0Gf0ofC13JGfBi+njxc/L0BG
+ FY7PgRU2HqBA/DWXsp2tu62FckKFKcGQA93QY8OlVbEG/goXM92+0upZt
+ EhQpFs3E8j8wEh3HqXme94UkyQxTZXvAiQH02ecYuPsTCfBowuKeSYLOI A==;
+X-CSE-ConnectionGUID: srKN+PwGRPWVy7V5zWULZA==
+X-CSE-MsgGUID: s1n4GzqNTRmfBVzt6/VFXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61565813"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="61565813"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2025 09:03:34 -0700
-X-CSE-ConnectionGUID: fieQQkp7Sc+XC/OQR54j0A==
-X-CSE-MsgGUID: KX8PRDuDS2egJCg3LMNTiA==
+ 25 Mar 2025 09:03:37 -0700
+X-CSE-ConnectionGUID: JnzplJnzT9K2Ufss7kApwA==
+X-CSE-MsgGUID: geVjpp4xQNi7cthxvzieTA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="129086751"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; d="scan'208";a="129086754"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by fmviesa005.fm.intel.com with ESMTP; 25 Mar 2025 09:03:32 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 25 Mar 2025 09:03:35 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>
-Subject: [PATCH v5 10/11] net: use common AVX512 build code
-Date: Tue, 25 Mar 2025 16:02:52 +0000
-Message-ID: <20250325160254.1724560-11-bruce.richardson@intel.com>
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>
+Subject: [PATCH v5 11/11] member: use common AVX512 build support
+Date: Tue, 25 Mar 2025 16:02:53 +0000
+Message-ID: <20250325160254.1724560-12-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250325160254.1724560-1-bruce.richardson@intel.com>
 References: <20250314172339.12777-1-bruce.richardson@intel.com>
@@ -61,79 +62,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the common support for AVX512 code present in lib/meson.build,
-rather than hard-coding it. The only complication is an extra check for
-the "-mvpclmulqdq" command-line flag before adding the AVX512 sources.
+Use the support for building AVX512 code present in lib/meson.build
+rather than reimplementing it in the library meson.build file.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/net/meson.build   | 12 ++++--------
- lib/net/rte_net_crc.c |  8 ++++----
- 2 files changed, 8 insertions(+), 12 deletions(-)
+ lib/member/meson.build | 46 +++++++-----------------------------------
+ 1 file changed, 7 insertions(+), 39 deletions(-)
 
-diff --git a/lib/net/meson.build b/lib/net/meson.build
-index cd49b4d758..7a6c419f40 100644
---- a/lib/net/meson.build
-+++ b/lib/net/meson.build
-@@ -44,14 +44,10 @@ use_function_versioning = true
- if dpdk_conf.has('RTE_ARCH_X86_64')
-     sources += files('net_crc_sse.c')
-     cflags += ['-mpclmul', '-maes']
--    if cc.has_argument('-mvpclmulqdq') and cc_has_avx512
--        cflags += ['-DCC_X86_64_AVX512_VPCLMULQDQ_SUPPORT']
--        net_crc_avx512_lib = static_library(
--                'net_crc_avx512_lib',
--                'net_crc_avx512.c',
--                dependencies: static_rte_eal,
--                c_args: [cflags, cc_avx512_flags, '-mvpclmulqdq'])
--        objs += net_crc_avx512_lib.extract_objects('net_crc_avx512.c')
-+    # only build AVX-512 support if we also have PCLMULQDQ support
-+    if cc.has_argument('-mvpclmulqdq')
-+        sources_avx512 += files('net_crc_avx512.c')
-+        cflags_avx512 += ['-mvpclmulqdq']
+diff --git a/lib/member/meson.build b/lib/member/meson.build
+index 4341b424df..07f9afaed9 100644
+--- a/lib/member/meson.build
++++ b/lib/member/meson.build
+@@ -20,44 +20,12 @@ sources = files(
+ 
+ deps += ['hash', 'ring']
+ 
+-# compile AVX512 version if:
+-if dpdk_conf.has('RTE_ARCH_X86_64') and binutils_ok
+-    # compile AVX512 version if either:
+-    # a. we have AVX512 supported in minimum instruction set
+-    #    baseline
+-    # b. it's not minimum instruction set, but supported by
+-    #    compiler
+-    #
+-    # in former case, just add avx512 C file to files list
+-    # in latter case, compile c file to static lib, using correct
+-    # compiler flags, and then have the .o file from static lib
+-    # linked into main lib.
+-
+-    member_avx512_args = cc_avx512_flags
+-    if not is_ms_compiler
+-            member_avx512_args += '-mavx512ifma'
+-    endif
+-
+-    # check if all required flags already enabled
+-    sketch_avx512_flags = ['__AVX512F__', '__AVX512DQ__', '__AVX512IFMA__']
+-
+-    sketch_avx512_on = true
+-    foreach f:sketch_avx512_flags
+-        if cc.get_define(f, args: machine_args) == ''
+-            sketch_avx512_on = false
+-        endif
+-    endforeach
+-
+-    if sketch_avx512_on == true
+-        cflags += ['-DCC_AVX512_SUPPORT']
+-        sources += files('rte_member_sketch_avx512.c')
+-    elif cc.has_multi_arguments(member_avx512_args)
+-        sketch_avx512_tmp = static_library('sketch_avx512_tmp',
+-            'rte_member_sketch_avx512.c',
+-            include_directories: includes,
+-            dependencies: [static_rte_eal, static_rte_hash],
+-            c_args: cflags + member_avx512_args)
+-        objs += sketch_avx512_tmp.extract_objects('rte_member_sketch_avx512.c')
+-        cflags += ['-DCC_AVX512_SUPPORT']
++# compile AVX512 version if we have avx512 on MSVC or the 'ifma' flag on GCC/Clang
++if dpdk_conf.has('RTE_ARCH_X86_64')
++    if is_ms_compiler
++        sources_avx512 += files('rte_member_sketch_avx512.c')
++    elif cc.has_argument('-mavx512ifma')
++        sources_avx512 += files('rte_member_sketch_avx512.c')
++        cflags_avx512 += '-mavx512ifma'
      endif
- 
- elif (dpdk_conf.has('RTE_ARCH_ARM64') and
-diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
-index 8d11515712..b5a5dabd4f 100644
---- a/lib/net/rte_net_crc.c
-+++ b/lib/net/rte_net_crc.c
-@@ -60,7 +60,7 @@ static const rte_net_crc_handler handlers_scalar[] = {
- 	[RTE_NET_CRC16_CCITT] = rte_crc16_ccitt_handler,
- 	[RTE_NET_CRC32_ETH] = rte_crc32_eth_handler,
- };
--#ifdef CC_X86_64_AVX512_VPCLMULQDQ_SUPPORT
-+#ifdef CC_AVX512_SUPPORT
- static const rte_net_crc_handler handlers_avx512[] = {
- 	[RTE_NET_CRC16_CCITT] = rte_crc16_ccitt_avx512_handler,
- 	[RTE_NET_CRC32_ETH] = rte_crc32_eth_avx512_handler,
-@@ -185,7 +185,7 @@ rte_crc32_eth_handler(const uint8_t *data, uint32_t data_len)
- static const rte_net_crc_handler *
- avx512_vpclmulqdq_get_handlers(void)
- {
--#ifdef CC_X86_64_AVX512_VPCLMULQDQ_SUPPORT
-+#ifdef CC_AVX512_SUPPORT
- 	if (AVX512_VPCLMULQDQ_CPU_SUPPORTED &&
- 			max_simd_bitwidth >= RTE_VECT_SIMD_512)
- 		return handlers_avx512;
-@@ -197,7 +197,7 @@ avx512_vpclmulqdq_get_handlers(void)
- static void
- avx512_vpclmulqdq_init(void)
- {
--#ifdef CC_X86_64_AVX512_VPCLMULQDQ_SUPPORT
-+#ifdef CC_AVX512_SUPPORT
- 	if (AVX512_VPCLMULQDQ_CPU_SUPPORTED)
- 		rte_net_crc_avx512_init();
- #endif
-@@ -305,7 +305,7 @@ handlers_init(enum rte_net_crc_alg alg)
- 
- 	switch (alg) {
- 	case RTE_NET_CRC_AVX512:
--#ifdef CC_X86_64_AVX512_VPCLMULQDQ_SUPPORT
-+#ifdef CC_AVX512_SUPPORT
- 		if (AVX512_VPCLMULQDQ_CPU_SUPPORTED) {
- 			handlers_dpdk26[alg].f[RTE_NET_CRC16_CCITT] =
- 				rte_crc16_ccitt_avx512_handler;
+ endif
 -- 
 2.45.2
 
