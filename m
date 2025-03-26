@@ -2,71 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A954C3600C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 14:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D21BC36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 15:52:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A99440613;
-	Wed, 26 Mar 2025 15:47:55 +0100 (CET)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com
- [209.85.167.44]) by mails.dpdk.org (Postfix) with ESMTP id A6C83402E0
- for <dev@dpdk.org>; Wed, 26 Mar 2025 15:47:54 +0100 (CET)
-Received: by mail-lf1-f44.google.com with SMTP id
- 2adb3069b0e04-54996d30bfbso6441822e87.2
- for <dev@dpdk.org>; Wed, 26 Mar 2025 07:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1743000474; x=1743605274; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=pJyZscT9jgyThkKCJZ1/lx/PQUYmOdDr89attjb19OU=;
- b=H9XiuNG/q7T2lnB8nmymcRSN2kyEKTiphtrhYbWshr9+PW5XQJ1VLuGTtgDLtLacs3
- 9xmiqpVNVg+cAu8cDu8XMbVHCcS9LNb2L/ebym9GXwZp3nlnLtb3bSnfsLWd/lXoFUe9
- qjiRNoj4chwG+qd95dQuoc7zSdFWYhBlbdab4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743000474; x=1743605274;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=pJyZscT9jgyThkKCJZ1/lx/PQUYmOdDr89attjb19OU=;
- b=R83BrHh5QV8xRCmnDtRJx4rtOXxak4xvM9Q34IoqSDmTUKPNcuJx6aXA5YpsAGoY9g
- bZWKXKMxWZXVI4ChaW5hKqUwIJrQASZgZ7tLePOVQjPyttMU+mSlNxk/SiQLvh1L2I42
- OMfqcO/Ky/ITFHEKEK49N4ktLDqg9b0oxuXOunTE6nuN9mqhYSsFCO9+m4E1smSuTiT8
- whv+b2OxST+JKFbUD38aAXpbgab5p/C5NKyoyaxq8tOfAvYDZutRUbPBXPFKoTxScH2p
- FFsZQkMRTh9hruCMUruvPyhF2RHVecJdae9XhlEhywToScTL1ElQ5BBHXl8++9VtLb/p
- 9b5w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUusbW/OPhx/2Q/ACtbesG7KmlmuvLs1TvgxggLPBY5w2M/gA1m5WWDKAAjViiujc2+sww=@dpdk.org
-X-Gm-Message-State: AOJu0Yx+l6K/PpZUV4LkPheVer/Eov/YSuLKqAxpu45YS1vSMoO9jPVR
- j4qf0ExoS50Pkl9yq6eyjL/2+jvYlRsvj9LJopqPhUxpBcmSZTpiuydGNTw4CTSHQwIg9uDykh3
- QSZ+3XaH4dA+XXAt0yRk4H8/dgUBWO5NLpWhf9A==
-X-Gm-Gg: ASbGnctCwWyH0m6sSOhcpjSv9PkGQSq1yMh2Mk7MHvsAO5JuA7Mo5iwMoCJjLVwatQJ
- 6XvEwenkBOEnUaiLVNtj47nmSJYhyFVoLDunLijXVWlks/2Fh73MpuRQRBDlTSpK7P+avqDDZg2
- DJnJw9pOoRerHVKMCKAaOZP53R2WuEneU1EfB3bQCq8N0wwJ/f6iUpbbDXZKtM
-X-Google-Smtp-Source: AGHT+IEoVgE8ReMg22C9WIRoY+Zb3CexaEWve4lz0vdqMrgEjYvBL2zGLL13RsQ8j7DZXClyA4PFVma/CQjT65ykFtg=
-X-Received: by 2002:a05:6512:1589:b0:549:4bf7:6463 with SMTP id
- 2adb3069b0e04-54ad65004abmr8117515e87.44.1743000473876; Wed, 26 Mar 2025
- 07:47:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 18047402CD;
+	Wed, 26 Mar 2025 16:52:40 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 66042402A9
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 16:52:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1743004358; x=1774540358;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=+4TbYZLpu76dKwY5oUhi5+WrIFrktRTvvNDsN9/renw=;
+ b=b9X37qY2vXAc1lWh0aNRGdsHP5hixT/VLS+ajdjsFTVMUTJCGqvMo4Nb
+ iaz3o10ev0/ZwFHuVCueGwd+r/QKZjlkgAm5Ag12imZNkJiRBIAbv4NDm
+ hP/PA2fVdyVXEKR5pXyUjrhynORqNMqKwWSDy7gTHaZuhux/tqjVxu5vZ
+ fjp2ISIN+Sdm7IIHL7RrUXGNOijtWGQ4IOW4GCMLERRCGg+OUjJ44W+yW
+ 8qDLVJxabnu8CsZI889p4kfup1R6maR3QHJsM/RmuAoqTBFmE6q2mWmiJ
+ lbeDyWGHbMbXwMaDUhbD1wzNg50F8+9H3VyG6xbziuiPYefmFxby7ZOcG g==;
+X-CSE-ConnectionGUID: UmxEmtUuTp6f3GdK83xNSw==
+X-CSE-MsgGUID: gtpFNZbXSYizXXrFrwgM5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44188318"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="44188318"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Mar 2025 08:52:37 -0700
+X-CSE-ConnectionGUID: vz0ppsr0Rl+WUiWn8aubHg==
+X-CSE-MsgGUID: TJLrdMBAQIiPOjjqDwgeVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="124550885"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
+ by orviesa009.jf.intel.com with ESMTP; 26 Mar 2025 08:52:36 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/7] net/intel: clean up base code build
+Date: Wed, 26 Mar 2025 15:52:22 +0000
+Message-ID: <20250326155230.1315056-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.45.2
 MIME-Version: 1.0
-References: <CAMEVEZvCoVpMjFpmY29-x0zB2tQvNrJsTacs6-Zzx4jJB_GsoQ@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB37@smartserver.smartshare.dk>
- <20250321085259.095bd234@hermes.local>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB3B@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB3B@smartserver.smartshare.dk>
-From: Cody Cheng <ccheng@iol.unh.edu>
-Date: Wed, 26 Mar 2025 10:47:42 -0400
-X-Gm-Features: AQ5f1Jpeqo-Dw7d7cB34avSA4LNRdMuPJILea2WOOJzfY1ToFrLLduYMoloP39s
-Message-ID: <CAMEVEZutf4sJ=EQFONw_bJW0tGTWqTbF_Tk_y38qzBLccco46Q@mail.gmail.com>
-Subject: Re: Clarification on Minimum Supported Kernel Version for DPDK
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Kevin Traynor <ktraynor@redhat.com>, 
- Bruce Richardson <bruce.richardson@intel.com>, techboard@dpdk.org, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- David Marchand <david.marchand@redhat.com>, dev@dpdk.org,
- Ali Alnubani <alialnu@nvidia.com>, galco@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,114 +57,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I=E2=80=99ll set up the CI testing environment on kernel 4.19 as per the
-current minimum requirement then.
+Simplify the build of the various intel base code directories, by
+clearing compiler warnings so the files can be compiled directly along
+with the regular driver files.
 
-Thanks,
-Cody Cheng
+Bruce Richardson (7):
+  net/iavf/base: remove unused meson.build file
+  net/ixgbe/base: correct definition of macro
+  net/ixgbe/base: fix compilation warnings
+  net/i40e/base: fix unused value warnings
+  net/i40e/base: fix compiler warnings
+  net/ice/base: reduce warnings for unused variables
+  net/intel: simplify base code builds
 
+ drivers/net/intel/e1000/base/meson.build    |  9 ++------
+ drivers/net/intel/e1000/meson.build         |  4 ++--
+ drivers/net/intel/fm10k/base/meson.build    |  9 ++------
+ drivers/net/intel/fm10k/meson.build         |  4 ++--
+ drivers/net/intel/i40e/base/i40e_diag.c     |  2 +-
+ drivers/net/intel/i40e/base/i40e_nvm.c      |  2 +-
+ drivers/net/intel/i40e/base/i40e_osdep.h    |  4 ++--
+ drivers/net/intel/i40e/base/i40e_type.h     | 14 ++++++++-----
+ drivers/net/intel/i40e/base/meson.build     | 23 ++-------------------
+ drivers/net/intel/i40e/i40e_ethdev.c        |  1 +
+ drivers/net/intel/i40e/meson.build          |  4 ++--
+ drivers/net/intel/iavf/base/meson.build     | 10 ---------
+ drivers/net/intel/ice/base/ice_osdep.h      |  6 +++---
+ drivers/net/intel/ice/base/ice_switch.c     |  2 --
+ drivers/net/intel/ice/base/ice_type.h       |  2 +-
+ drivers/net/intel/ice/base/meson.build      |  1 -
+ drivers/net/intel/ice/ice_fdir_filter.c     |  2 +-
+ drivers/net/intel/idpf/base/meson.build     |  2 +-
+ drivers/net/intel/idpf/meson.build          |  7 ++++---
+ drivers/net/intel/ixgbe/base/ixgbe_common.c |  4 ++--
+ drivers/net/intel/ixgbe/base/ixgbe_e610.c   |  2 ++
+ drivers/net/intel/ixgbe/base/ixgbe_osdep.h  | 21 +++++++++++--------
+ drivers/net/intel/ixgbe/base/meson.build    | 20 ++----------------
+ drivers/net/intel/ixgbe/meson.build         |  4 ++--
+ 24 files changed, 56 insertions(+), 103 deletions(-)
+ delete mode 100644 drivers/net/intel/iavf/base/meson.build
 
-On Sat, Mar 22, 2025 at 9:02=E2=80=AFAM Morten Br=C3=B8rup <mb@smartsharesy=
-stems.com> wrote:
->
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Friday, 21 March 2025 16.53
-> >
-> > On Fri, 21 Mar 2025 07:28:45 +0100
-> > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-> >
-> > > @Kevin, @Stephen, @Bruce,
-> > >
-> > > I cannot reliably answer Cody's question, and it may need further
-> > discussion.
-> > >
-> > > What is your opinion on minimum Linux kernel version requirements?
-> > >
-> > > @Thomas: In the future, the DPDK release notes should mention the
-> > minimum Linux kernel requirements.
-> > >
-> > > > From: Cody Cheng [mailto:ccheng@iol.unh.edu]
-> > > > Sent: Thursday, 20 March 2025 21.28
-> > > >
-> > > > Hi Morten,
-> > > >
-> > > > I am in the process of setting up a test environment at the UNH
-> > DPDK
-> > > > Community Test Lab that follows the minimum supported kernel
-> > version
-> > > > for DPDK. According to the DPDK documentation, the minimum
-> > supported
-> > > > kernel version is 4.19. However, the oldest long term stable kernel
-> > > > version listed on kernel.org is 5.4.291.
-> > > >
-> > > > Should the test environment be set up on kernel version 4.19 or
-> > > > 5.4.291?
-> > >
-> > > The kernel 4.19 support stems from still supporting RHEL/CentOS 7.
-> > > I wonder if this exception mentioned in the documentation [1] is
-> > still valid, or if we should bump it to RHEL/CentOS 8, which ships with
-> > kernel 4.18 [1].
-> > >
-> > > RHEL/CentOS 7 support was discussed at by tech board long ago [2],
-> > but I cannot find a conclusion about the kernel version; the discussion
-> > was mostly about compiler support.
-> > >
-> > > [1]: https://doc.dpdk.org/guides/linux_gsg/sys_reqs.html#system-
-> > software
-> > > [2]:
-> > https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/htm
-> > l-single/8.0_release_notes/index#overview
-> > > [3]: https://mails.dpdk.org/archives/dev/2023-February/263516.html
-> >
-> > My opinion has always been that DPDK only offers certain guarantees
-> > about testing:
-> >   - oldest current LTS
-> >   - oldest supported version of Redhat/Ubuntu/SUSE enterprise kernels
-> >
-> > after that in the embedded space, the user is likely to be ok but any
-> > kernel
-> > related issues are their problem not the communities to deal with.
->
-> Generally, if some new DPDK feature requires a new kernel (or new kernel =
-feature), the details should be mentioned in the release notes.
-> And preferably, that feature should degrade gracefully when the feature i=
-s not present.
->
-> For the embedded space, we could support the oldest current version avail=
-able as Super LTS [4], which is 4.4. And for now, we could stick with the s=
-econd oldest, 4.19, which is what we currently have.
->
-> [4]: https://wiki.linuxfoundation.org/civilinfrastructureplatform/start#k=
-ernel_maintainership
->
-> Some old kernel version might not be officially supported by the Kernel c=
-ommunity, but an embedded vendor might have tested the relevant features ex=
-tensively and thus trust it more than some new and officially supported ver=
-sion.
-> So let's not require a newer version than we absolutely must, on technica=
-l grounds.
-> It seems that kernel 4.19 is the current minimum requirement, so let's st=
-ick with that, until there are valid technical reasons for requiring a newe=
-r version.
->
-> Anyway, it seems we need to clarify the policy for kernel version require=
-ments.
-> It's easy regarding the distros; DPDK running on those require their ship=
-ped kernel version, at minimum.
-> It's for everything else clarification is needed.
->
-> And it's not just embedded. Virtual appliances can be tricky too... with =
-our SmartShare VM we had to add support for running as a guest under an anc=
-ient QEMU host version, because that is the hypervisor used by one of the b=
-ig system providers in our most important target market.
->
-> In non-cloud market segments, a lot of really old stuff is still being us=
-ed in production, working perfectly fine.
->
-> >
-> > The two parts most likely to cause issues are vfio-pci and vhost
-> > related stuff.
-> > There is also small chance of issues with the memory handling in EAL.
-> And maybe handling of many CPU cores, and most likely something related t=
-o the new cache steering feature.
->
+--
+2.45.2
+
