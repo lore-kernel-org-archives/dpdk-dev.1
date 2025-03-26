@@ -2,57 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9F4C36008
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 10:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17612C36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 11:51:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9569D402DF;
-	Wed, 26 Mar 2025 11:39:46 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 99A25402DA
- for <dev@dpdk.org>; Wed, 26 Mar 2025 11:39:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1742985585;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=fdlpuvW5Al8PoY+am9yIppgy/zsFJ22RJ6AywcNypkg=;
- b=cEJloBmciGsLRCEWI2fQq1faNWOdKKgkqGGvXNmgzQSYJkOx/ow0HbvsgNfqqOn9D5zsXR
- ONexhc2DscwA+CGFoppgxNQ8/8nzJP9kTIwSdxiBQSk/9mlGIZ6ng6NeKM44du4NkLTZpX
- s4CCB5pF3NAN+ko3kzxYL4TNgfLePKs=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-8CSougsDPeyJ8lnPA1Nw6A-1; Wed,
- 26 Mar 2025 06:39:41 -0400
-X-MC-Unique: 8CSougsDPeyJ8lnPA1Nw6A-1
-X-Mimecast-MFC-AGG-ID: 8CSougsDPeyJ8lnPA1Nw6A_1742985580
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1D122180025A; Wed, 26 Mar 2025 10:39:40 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.228])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 7DAD4180175A; Wed, 26 Mar 2025 10:39:37 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: bluca@debian.org, stable@dpdk.org,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- David Christensen <drc@linux.ibm.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH] acl: fix build with GCC 15 on aarch64
-Date: Wed, 26 Mar 2025 11:39:28 +0100
-Message-ID: <20250326103928.1189243-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A8DF5402DF;
+	Wed, 26 Mar 2025 12:51:40 +0100 (CET)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42])
+ by mails.dpdk.org (Postfix) with ESMTP id 59D01402DA;
+ Wed, 26 Mar 2025 12:51:39 +0100 (CET)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-38a25d4b9d4so3545362f8f.0; 
+ Wed, 26 Mar 2025 04:51:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1742989898; x=1743594698; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=fFI2ZYOy+PQP28V5h5l09cesQFbIMsfjz35Sm+5pm6A=;
+ b=nruS4jbeVyArNcYbLGMUfqIjIVhmFEqAwxrxFkqjRRejd3tbpZJ87gSS9CbQL97enl
+ FYoZ83ifCTzMOzjqpJ7GdhCc76Qs9afy1YSddVxHckgYKnM6PUZcqVYgDR0c96q0C2Kx
+ tHpwY/mI5DNKmTfNpNAf+nP9nwWIVkrtjj9U6c9rUgWMBKTvm83i5uYLkzKW47GUg4u0
+ S6wiTGdotRtl/4uU7RhoyoznF0IKeZ+rv2hdN0wZBjZoewZPTehWoIdWCHeVQZahwwjE
+ I5QtwJn1hdsb/mLKP+YE3hnVjGzLbv19XbLcLyqFv6BW5B5vNXEgmae4EyQJEa/KfCbn
+ Nh/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1742989898; x=1743594698;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=fFI2ZYOy+PQP28V5h5l09cesQFbIMsfjz35Sm+5pm6A=;
+ b=P+vvvL0QdyCO61lKvXNJ5n8Ftrg7vDx9RG+/CHqm9Hn0/sCIqTFlGAbiURTpdCMxTJ
+ FQNJx3hC1Y4fDu++WypHvmB7j0I9bh7CGIqPCUDpm+DR54UQXGbkY/mLH0CJRias13wm
+ lRmEdQE/UxEJdkfQspp8ZJxRKWuVT+7aVzbvDl+N3/W+4tVIKFSkfWG7K3/z8COV4sAF
+ hf9eSvx23Fe1W6dBkhDp7pdKj/+5UgNcIQKXdxiGtL2IkImQYgznIrwzM+47ZmuWupVx
+ oi35TopVqcK2IGvz9Wpb72SfAMkbLXlzC3pFbfDXZ7aCdCDnoYnMuQFmrTM2i8k/LioO
+ 9SLw==
+X-Gm-Message-State: AOJu0YwKlkav27QDsWtOFgP2eGEfN0Xty1n6jrQNZWNBKGj254z+oD14
+ Q7tTd9rZEMkt0gECKZVlZioXJtBAUb+HEla/Dp4wHPN5cSCHeijIvgk/EQ==
+X-Gm-Gg: ASbGncviESoK1OJZ+S7Rx0XRUshCiXNLTovrb8HKOw4J+ZxMf51dnBFBuUnMROJ/YSp
+ q6EPDGpq2Kf3t+UUQtchtgnIB9mvcRf7FFMGC2EhYK249x+VG5RpAfHR0RBAEbiIJOptK6/Be4+
+ 5ak1npeS+NGdg0/ayMCICaoVjT6nW5OSBuBHulbFdKHTNNHu8h+hGBnOxbASL10KNO6CDVo9F4v
+ fNFfxENAX7CkM4FhXG6D7t9ofJnJ0Kp75/FvNvN/+YjuLtAaCuozotkIO6k4P/TKb3FUcn53a4M
+ YMezSeJ1U/VWUdsQkAIOAZeDYSfn5SA+NjEdCiN4e1si34eW9hI=
+X-Google-Smtp-Source: AGHT+IFlR63Qw/5r4gG9WVTKZ8yCA389xmabhuwe8mUV3etHHqeEQGWBIzjvNFkO+9ZzCYOjZeBrJg==
+X-Received: by 2002:a05:6000:43c9:b0:391:2f15:c1f4 with SMTP id
+ ffacd0b85a97d-3997f95b727mr11340827f8f.55.1742989898341; 
+ Wed, 26 Mar 2025 04:51:38 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:c885:591e:b773:689e])
+ by smtp.gmail.com with UTF8SMTPSA id
+ 5b1f17b1804b1-43d43f332adsm232715165e9.3.2025.03.26.04.51.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 26 Mar 2025 04:51:37 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: stable@dpdk.org
+Cc: dev@dpdk.org, Ali Alnubani <alialnu@nvidia.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Kevin Traynor <ktraynor@redhat.com>, Luca Boccassi <bluca@debian.org>,
+ Pei Zhang <pezhang@redhat.com>, Raslan Darawsheh <rasland@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>
+Subject: 22.11.8 patches review and test
+Date: Wed, 26 Mar 2025 11:51:17 +0000
+Message-ID: <20250326115132.1444530-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -D9K7KBS-BVUvpgeHRKUVGahoEWB-gp6wU7uJ5HjCPo_1742985580
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,184 +81,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Caught in OBS for Fedora Rawhide on aarch64:
+Hi all,
 
-[  198s] In file included from ../lib/acl/acl_run_neon.h:7,
-[  198s]                  from ../lib/acl/acl_run_neon.c:5:
-[  198s] In function ‘alloc_completion’,
-[  198s]     inlined from ‘acl_start_next_trie’ at
-	../lib/acl/acl_run.h:140:24,
-[  198s]     inlined from ‘search_neon_4.isra’ at
-	../lib/acl/acl_run_neon.h:239:20:
-[  198s] ../lib/acl/acl_run.h:93:25: error: ‘cmplt’ may be used
-	uninitialized [-Werror=maybe-uninitialized]
-[  198s]    93 |                 if (p[n].count == 0) {
-[  198s]       |                     ~~~~^~~~~~
-[  198s] ../lib/acl/acl_run_neon.h: In function ‘search_neon_4.isra’:
-[  198s] ../lib/acl/acl_run_neon.h:230:27: note: ‘cmplt’ declared here
-[  198s]   230 |         struct completion cmplt[4];
-[  198s]       |                           ^~~~~
+Here is a list of patches targeted for stable release 22.11.8.
 
-The code was resetting sequentially cmpl[].count at the exact index that
-later call to alloc_completion uses.
-While this code seems correct, GCC 15 does not understand this (probably
-when applying some optimisations).
+The planned date for the final release is 2025/04/10.
 
-Instead, reset cmpl[].count all at once in acl_set_flow, and cleanup the
-various vectorized implementations accordingly.
+Please help with testing and validation of your use cases and report
+any issues/results with reply-all to this mail. For the final release
+the fixes and reported validations will be added to the release notes.
 
-Bugzilla ID: 1678
-Cc: stable@dpdk.org
+A release candidate tarball can be found at:
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+    https://dpdk.org/browse/dpdk-stable/tag/?id=v22.11.8-rc1
+
+These patches are located at branch 22.11 of dpdk-stable repo:
+    https://dpdk.org/browse/dpdk-stable/
+
+Thanks.
+
+Luca Boccassi
+
 ---
- lib/acl/acl_run.h         | 5 +++++
- lib/acl/acl_run_altivec.h | 8 ++------
- lib/acl/acl_run_avx2.h    | 4 +---
- lib/acl/acl_run_neon.h    | 8 ++------
- lib/acl/acl_run_scalar.c  | 4 +---
- lib/acl/acl_run_sse.h     | 8 ++------
- 6 files changed, 13 insertions(+), 24 deletions(-)
+Aleksandr Loktionov (2):
+      net/igc/base: fix MAC address hash bit shift
+      net/e1000/base: fix MAC address hash bit shift
 
-diff --git a/lib/acl/acl_run.h b/lib/acl/acl_run.h
-index 7f092413cd..9fd3e60021 100644
---- a/lib/acl/acl_run.h
-+++ b/lib/acl/acl_run.h
-@@ -176,6 +176,8 @@ acl_set_flow(struct acl_flow_data *flows, struct completion *cmplt,
- 	uint32_t cmplt_size, const uint8_t **data, uint32_t *results,
- 	uint32_t data_num, uint32_t categories, const uint64_t *trans)
- {
-+	unsigned int i;
-+
- 	flows->num_packets = 0;
- 	flows->started = 0;
- 	flows->trie = 0;
-@@ -187,6 +189,9 @@ acl_set_flow(struct acl_flow_data *flows, struct completion *cmplt,
- 	flows->data = data;
- 	flows->results = results;
- 	flows->trans = trans;
-+
-+	for (i = 0; i < cmplt_size; i++)
-+		cmplt[i].count = 0;
- }
- 
- typedef void (*resolve_priority_t)
-diff --git a/lib/acl/acl_run_altivec.h b/lib/acl/acl_run_altivec.h
-index 2d398ffded..d5ccdb94f0 100644
---- a/lib/acl/acl_run_altivec.h
-+++ b/lib/acl/acl_run_altivec.h
-@@ -199,10 +199,8 @@ search_altivec_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < MAX_SEARCHES_ALTIVEC8; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < MAX_SEARCHES_ALTIVEC8; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	 /* Check for any matches. */
- 	acl_match_check_x4(0, ctx, parms, &flows, (uint64_t *)&index_array[0]);
-@@ -270,10 +268,8 @@ search_altivec_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < MAX_SEARCHES_ALTIVEC4; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < MAX_SEARCHES_ALTIVEC4; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	/* Check for any matches. */
- 	acl_match_check_x4(0, ctx, parms, &flows, index_array);
-diff --git a/lib/acl/acl_run_avx2.h b/lib/acl/acl_run_avx2.h
-index 0b8967f22e..e069fb85b2 100644
---- a/lib/acl/acl_run_avx2.h
-+++ b/lib/acl/acl_run_avx2.h
-@@ -171,10 +171,8 @@ search_avx2x16(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < RTE_DIM(cmplt); n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < RTE_DIM(cmplt); n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	t0 = _mm256_set_epi64x(index_array[5], index_array[4],
- 		index_array[1], index_array[0]);
-diff --git a/lib/acl/acl_run_neon.h b/lib/acl/acl_run_neon.h
-index 63074f871d..3b9bd0cc39 100644
---- a/lib/acl/acl_run_neon.h
-+++ b/lib/acl/acl_run_neon.h
-@@ -172,10 +172,8 @@ search_neon_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		     total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < 8; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < 8; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	 /* Check for any matches. */
- 	acl_match_check_x4(0, ctx, parms, &flows, &index_array[0]);
-@@ -234,10 +232,8 @@ search_neon_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		     total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < 4; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < 4; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	/* Check for any matches. */
- 	acl_match_check_x4(0, ctx, parms, &flows, index_array);
-diff --git a/lib/acl/acl_run_scalar.c b/lib/acl/acl_run_scalar.c
-index 3d61e79409..a3661b1b6b 100644
---- a/lib/acl/acl_run_scalar.c
-+++ b/lib/acl/acl_run_scalar.c
-@@ -121,10 +121,8 @@ rte_acl_classify_scalar(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results, num,
- 		categories, ctx->trans_table);
- 
--	for (n = 0; n < MAX_SEARCHES_SCALAR; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < MAX_SEARCHES_SCALAR; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	transition0 = index_array[0];
- 	transition1 = index_array[1];
-diff --git a/lib/acl/acl_run_sse.h b/lib/acl/acl_run_sse.h
-index 93286a2c38..4ec819a215 100644
---- a/lib/acl/acl_run_sse.h
-+++ b/lib/acl/acl_run_sse.h
-@@ -205,10 +205,8 @@ search_sse_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < MAX_SEARCHES_SSE8; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < MAX_SEARCHES_SSE8; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	/*
- 	 * indices1 contains index_array[0,1]
-@@ -293,10 +291,8 @@ search_sse_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
- 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
- 		total_packets, categories, ctx->trans_table);
- 
--	for (n = 0; n < MAX_SEARCHES_SSE4; n++) {
--		cmplt[n].count = 0;
-+	for (n = 0; n < MAX_SEARCHES_SSE4; n++)
- 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
--	}
- 
- 	indices1 = _mm_loadu_si128((xmm_t *) &index_array[0]);
- 	indices2 = _mm_loadu_si128((xmm_t *) &index_array[2]);
--- 
-2.48.1
+Amir Avivi (2):
+      net/igc/base: fix iterator type
+      net/e1000/base: fix iterator type
 
+Anatoly Burakov (3):
+      net/e1000/base: correct mPHY access logic
+      net/e1000: fix crashes in secondary processes
+      net/ixgbe: fix crashes in secondary processes
+
+Andre Muezerie (5):
+      eal/x86: fix some intrinsics header include for Windows
+      net/bnxt: fix indication of allocation
+      common/idpf: fix void function returning a value
+      net/intel: fix void functions returning a value
+      stack: fix pop in C11 implementation
+
+Andrew Boyer (1):
+      doc: update ionic driver guide
+
+Ariel Otilibili (5):
+      net/sfc: remove unnecessary assignment
+      net/enetfec: remove useless assignment
+      use Python raw string notation
+      eal/linux: remove useless assignments
+      mempool: fix errno in empty create
+
+Arkadiusz Kusztal (1):
+      test/crypto: fix check for OOP header data
+
+Barbara Skobiej (3):
+      net/igc/base: fix data type in MAC hash
+      net/e1000/base: fix data type in MAC hash
+      net/e1000/base: fix reset for 82580
+
+Bruce Richardson (6):
+      net/iavf: remove reset of Tx prepare function pointer
+      net/intel: fix build with icx
+      test/dma: fix pointers in IOVA as PA mode
+      net/iavf: check interrupt registration failure
+      net/iavf: fix crash on app exit on FreeBSD
+      eal: fix undetected NUMA nodes
+
+Carolyn Wyborny (1):
+      net/e1000/base: skip management check for 82575
+
+Chengwen Feng (2):
+      app/testpmd: show all DCB priority TC map
+      app/testpmd: avoid crash in DCB config
+
+David Marchand (2):
+      net/mlx5: fix leak in HWS flow counter action
+      ci: point at GitHub mirror
+
+Dengdui Huang (3):
+      net/hns3: fix mbuf freeing in simple Tx path
+      net/hns3: fix copper port initialization
+      net/hns3: fix reset timeout
+
+Dima Ruinskiy (5):
+      net/igc/base: fix deadlock when writing i225 register
+      net/igc/base: fix infinite loop
+      net/igc/base: fix typo in LTR calculation
+      net/igc/base: fix unused value
+      net/e1000/base: fix unchecked return
+
+Ferruh Yigit (1):
+      ethdev: convert string initialization
+
+Gavin Hu (1):
+      net/mlx5: fix polling CQEs
+
+Gowrishankar Muthukrishnan (3):
+      crypto/virtio: fix data queues iteration
+      examples/vhost_crypto: fix user callbacks
+      crypto/openssl: validate incorrect RSA signature
+
+Gregory Etelson (1):
+      net/mlx5: fix IPIP tunnel verification
+
+Huisong Li (1):
+      ethdev: fix functions available in new device event
+
+Jakub Buchocki (1):
+      net/e1000/base: fix uninitialized variable
+
+Jianping Zhao (1):
+      vhost: clear ring addresses when getting vring base
+
+Jie Hai (2):
+      net/hns3: remove PVID info dump for VF
+      net/hns3: rename RAS module
+
+Junfeng Guo (1):
+      net/mlx5: fix actions translation error overwrite
+
+Kevin Traynor (1):
+      vhost: add null callback checks
+
+Konstantin Ananyev (1):
+      test/ring: fix init with custom number of lcores
+
+Long Li (3):
+      net/netvsc: scan all net devices under the PCI device
+      net/netvsc: remove device if its net devices removed
+      net/mana: fix multi-process tracking
+
+Long Wu (1):
+      net/bonding: fix dedicated queue setup
+
+Maayan Kashani (7):
+      net/mlx5: adjust actions per rule limitation
+      net/mlx5: fix flush of non-template flow rules
+      net/mlx5: fix GRE flow match with SWS
+      net/mlx5: fix LACP packet handling in isolated mode
+      net/mlx5/hws: fix crash using represented port without ID
+      net/mlx5/hws: fix GTP flags matching
+      net/mlx5: fix GRE matching on root table
+
+Matthew Smith (1):
+      net/ice: fix dropped packets when using VRRP
+
+Minggang Li (Gavin) (1):
+      net/mlx5: fix Netlink socket leak
+
+Mingjin Ye (1):
+      net/ixgbe: fix minimum Rx/Tx descriptors
+
+Nawal Kishor (1):
+      common/cnxk: fix atomic load in batch ops
+
+Nicolas Chautru (1):
+      test/bbdev: update FFT test vectors
+
+Nithin Dabilpuram (1):
+      common/cnxk: fix inbound IPsec SA setup
+
+Nithinsen Kaithakadan (1):
+      examples/ipsec-secgw: fix IV length in CTR 192/256
+
+Pawel Malinowski (2):
+      net/igc/base: fix semaphore timeout value
+      net/e1000/base: fix semaphore timeout value
+
+Przemyslaw Ciesielski (4):
+      net/igc/base: fix bitwise operation type
+      net/igc/base: fix NVM data type in bit shift
+      net/e1000/base: fix bitwise operation type
+      net/e1000/base: fix NVM data type in bit shift
+
+Rahul Bhansali (1):
+      net/cnxk: fix NIX send header L3 type
+
+Rajesh Mudimadugula (1):
+      crypto/virtio: fix redundant queue free
+
+Sangtani Parag Satishbhai (1):
+      net/bnxt: fix crash when representor is re-attached
+
+Sasha Neftin (3):
+      net/igc/base: increase PHY power up delay
+      net/igc/base: reset loop variable
+      net/igc/base: fix LTR for i225
+
+Shani Peretz (1):
+      bus/pci: fix registered device name
+
+Shaokai Zhang (2):
+      test/crypto: fix AES-ECB test lengths
+      test/crypto: remove unused variable
+
+Shijith Thotton (1):
+      test/event: fix number of queues in eventdev conf
+
+Stephen Hemminger (21):
+      crypto/cnxk: fix build with GCC 15
+      net/thunderx/base: fix build with GCC 15
+      build: force GCC 15 to initialize padding bits
+      raw/cnxk_gpio: fix file descriptor leak
+      net/i40e: remove duplicate code
+      eal: fix devargs layers parsing out of bounds
+      net/qede: fix debug messages array
+      examples/ptpclient: fix message parsing
+      net/hinic: fix flow type bitmask overflow
+      crypto/dpaa2_sec: fix bitmask truncation
+      crypto/dpaa_sec: fix bitmask truncation
+      event/dpaa: fix bitmask truncation
+      net/dpaa: fix bitmask truncation
+      net/dpaa2: fix bitmask truncation
+      net/qede: fix nested loops
+      examples/l3fwd: fix socket ID check
+      common/cnxk: fix null check
+      test/bonding: fix active backup receive test
+      doc: fix feature flags for queue start/stop
+      app/testpmd: fix out-of-bound reference in offload config
+      pdump: clear statistics when enabled
+
+Tejasree Kondoj (1):
+      examples/ipsec-secgw: fix cryptodev and eventdev IDs
+
+Tudor Cornea (1):
+      net/af_packet: fix socket close on device stop
+
+Vamsi Attunuru (1):
+      common/cnxk: fix DPI mailbox structure
+
+Viacheslav Ovsiienko (1):
+      net/mlx5: fix hardware packet type translation
+
+Vladimir Medvedkin (1):
+      net/ice: fix memory leak in scalar Rx
+
+Wathsala Vithanage (1):
+      crypto/openssl: fix CMAC auth context update
+
+Yang Ming (2):
+      eal/linux: fix memseg length in legacy mem init
+      net/iavf: fix mbuf release in Arm multi-process
+
+Yunjian Wang (2):
+      vhost: check GSO size validity
+      vhost: check descriptor chains length
+
+Zaiyu Wang (1):
+      net/txgbe: remove useless condition for SW-FW sync
