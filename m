@@ -2,55 +2,158 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2ADC3600B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFEEC36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:22:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9D7740A70;
-	Wed, 26 Mar 2025 17:06:00 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 2BA28409FA
- for <dev@dpdk.org>; Wed, 26 Mar 2025 17:05:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BEEDA40649;
+	Wed, 26 Mar 2025 17:22:16 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 870FC402CD;
+ Wed, 26 Mar 2025 17:22:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743005159; x=1774541159;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=zM8lpY9d4Cltdy8u8MezUaNnq5/fFHRHzPfGni3JeVs=;
- b=XwJ4IPKTIyBgRUJdS1KKRLI3y7xaUf5p4YvdTstocjtOJVswGfQXRBYV
- rvcCXnc7wY7z6vn8kkUUdXLlK4+3l5Muu2BIP3uxZ5VdMAW7fPcHSxpcz
- M62e2JXq/FVc4F/6J5IkGXN1pmIn5aFgOWvaZWY4q1yykv1U658EiyPCf
- F+AWqIOfAUlMuj2e4fGR8vJFs9J43oxiC0oqdkH9UAt46GzQHMEPT0MHs
- 8uklzcI+D++MaY7lJg6nfJfdxEdo+aMuXzobLH14VqzNVb9y+PfumZiWL
- V0okKqd/4qH6UWPGP7RdWnr9xzuWSatzV3PqwKgbz7KKc1XsJiGn6R560 A==;
-X-CSE-ConnectionGUID: +BjhrNyvQoaqKdbKvge8MA==
-X-CSE-MsgGUID: 1klIOjK5TpqSP7WPMd2WVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="54955006"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="54955006"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 09:05:59 -0700
-X-CSE-ConnectionGUID: lGwyHFWNR0efmj8YCE1OoA==
-X-CSE-MsgGUID: M1EVoPQ7Sy6dFfJ4F4TJQg==
+ t=1743006135; x=1774542135;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=NigcC7vaZp98aEctS497kmlLNxkMKW7j1wdFfl2ILv0=;
+ b=kDX1baDO4u/5nS0szNI823NatNWpM6KlfGTjWN8aLvNl2V8Qnjvigcgw
+ CGp9f3vCyYDbRRd2zzZu3DaDFcrzAQqU8BTKvbaAgkUAkql8iGG59lJ3+
+ U5AYmFu/Ptr7PaOi11l8F6VL5lB1riJYip04EI7FSfAlGGZNIErPq7oOj
+ 25uFh+UsCtuoJRiPvbR1KhLOAkwhQTphdAEKOXHAfr0mrgwMQ7MyHXqtz
+ n2bT+zvR9opxpjGYzzdcaaWK5E78pyIVcj+AEjLeoOxu+5X9m03Npgf0c
+ OyUt1L10LqT89hQwN05bHzQ5pm8Zp1ZoYlBwEmJu2CdlyoV42DL/PJdSl w==;
+X-CSE-ConnectionGUID: cD0+DnnwRiO5mVprK3oCRg==
+X-CSE-MsgGUID: sYVo1pzIRoWfO4CHEE+LAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="31910929"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="31910929"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Mar 2025 09:22:02 -0700
+X-CSE-ConnectionGUID: 3558uV5lRiiuxy11kT4l8A==
+X-CSE-MsgGUID: F1s+vmJvSPSByJN4Fwt57g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="125280805"
-Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by fmviesa010.fm.intel.com with ESMTP; 26 Mar 2025 09:05:57 -0700
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="129862233"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Mar 2025 09:22:02 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 26 Mar 2025 09:22:01 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Mar 2025 09:22:01 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 26 Mar 2025 09:22:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rYBb2KmuoWtRc6CQsTFWfylECpFn7Ejh+V6RMdYNLx+tgmqpBhBpJLyHLIrY/Saxc2UIpr1KCbOzg6O6RB4sp0/c6KiLCY9tLkVu6Hx2KQQc2QQ7dAzCiVnj1/zp17CTKt6afCcQc5VFMvw/dJ1fNBH9pU/XyjzusdKxGm2QqQ/9bsCMcqknE7VI8iwCFa5Zmmje+u2E72vLL7sI3VW4u3I9TmLLQSexmAXSyc0cV2TPFS/BZpOMk78BUUiC6lPXiip6nWvbAZ6pSCaKZBY5q9tpApYwPrOAtqxs7cJ+UWKCWlqc89DvQOj2MlmrsFBF7o3xYVWJ+/Mn6u7bzahCow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mo9NkkMor8ZIG3uqrRbrwg5kNMXPJNisuSHBuq/GkvU=;
+ b=jg5L9CIHoQZ8jfT4/9IwILK3keqTaeY5pmtOcuCZaPPtdB1xDaPkVfp7kEk5t/RSCdzhPYPxxi4gEDHPeFltbFTR5ekcK8u6wZXYA6bRxsNh95eN9ZUZqyr4QKQauSEN2pFl0lvjTgN+yCFfFq963GcQFyYIh5HYimX+IkR8PqKATBMkPB+wOlHGID8LgJWWA/MfkIpPTR0rgbL0JSbytzyY9UB7xETCoHqUgdVYMPrTSKRbr6QtpbB4DHN68qUQ/+r03D8Yh0VFrOh2RQuqwSOCbF5uQ/m3+cG+OTN+x73REKW1YkJsGO8xT2LqehdTIPLSF/xxX1BNRgss3ghSJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA1PR11MB7680.namprd11.prod.outlook.com (2603:10b6:208:3fb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 16:21:59 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
+ 16:21:59 +0000
+Date: Wed, 26 Mar 2025 16:21:54 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Ian Stokes <ian.stokes@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 8/8] net/intel: simplify base code builds
-Date: Wed, 26 Mar 2025 16:05:38 +0000
-Message-ID: <20250326160539.1316499-9-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250326160539.1316499-1-bruce.richardson@intel.com>
-References: <20250326155230.1315056-1-bruce.richardson@intel.com>
- <20250326160539.1316499-1-bruce.richardson@intel.com>
+To: <dev@dpdk.org>
+CC: <techboard@dpdk.org>
+Subject: Re: [RFC PATCH] build: reduce use of AVX compiler flags
+Message-ID: <Z-QposchDMAmn83I@bricha3-mobl1.ger.corp.intel.com>
+References: <20250325172215.3360590-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250325172215.3360590-1-bruce.richardson@intel.com>
+X-ClientProxiedBy: DU2PR04CA0315.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b5::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB7680:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2fb884d-e565-4460-546f-08dd6c82555b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WHYuCypzA4vURnnUTUbwJKFZKrxQiytKlcdALgW0nZfmm8quib5qtA3HUzzZ?=
+ =?us-ascii?Q?O7oDnmOlaF4L2tRvo1SGt3HcfRNh0D9+JbGI+qBzITGWH+5DaAUX99WSgu92?=
+ =?us-ascii?Q?1YBtnZIRE0d0FC73WG3qvGHSn5yPj+4DMy4nucPkYl7X3A30ZfvOjmbx6rNI?=
+ =?us-ascii?Q?CY6zdJXuYgNKyZ5j3VSn453/0ktGX34xdeKCBb4TwYGnQDUuX1rf3xlKF1Ng?=
+ =?us-ascii?Q?IQIRw44zPgzXShJ21YyWLV+b6SHo15DGCDNqohVXnPjX7R9WstA6jSLbk0dZ?=
+ =?us-ascii?Q?9mwssxNYT1LT7YN7y3RKLBloPaApFAEAGy6Oqz3YpI8TxsjDIyT6sXBc9fEz?=
+ =?us-ascii?Q?mvQeHeqjhjJqb+QhymNlNCy0vcluWRZ/HzfnKrWM7Q0gjAvGGZL8DICcqEn4?=
+ =?us-ascii?Q?tgS+M/CjLXP4GseERNPDdijL9Rjsp4pZwNSsBgjQ9LcZq0WDBMokbSmPQ2lO?=
+ =?us-ascii?Q?IH9cBA50cUIvWpaTRi7ykueq2Uus6whUAOFmhavMH3Y+8VBowaejACBDL8wn?=
+ =?us-ascii?Q?2zAedCwJmtQboWRHgfa+lG1rZv36MyIDUyqr5Wm/cWW8qWWyGAGYH0iyqCo8?=
+ =?us-ascii?Q?mkMKTG7kwe8P31RQJeJukyoDTnbgMgWAbORwZf+yfUXW3BZUJGZYJk7j6hGi?=
+ =?us-ascii?Q?e7wv+WJ0Og/qft4Xik+XzeaXU0kWuk7KIbPGUd7qj9iK8l+doxWt3ufukARv?=
+ =?us-ascii?Q?CsCnme+2Uyur+mrHgVBfgA8YWbLT8iTq1HJVn2BOGmZZK1hXRSD1vZgdjqiM?=
+ =?us-ascii?Q?8bHcDwF368b+9IwWG95/zLCbHz5oHJ8LPcCEH/I2t7N/zspyLhZyaERw9hx9?=
+ =?us-ascii?Q?4wtwSU8leWd3Kc0+nBIAifplw7CwJeTREsTVGEoTgFeuPwUuGhJG6dH9UUck?=
+ =?us-ascii?Q?UjWKOjeOHpJcyvY3Nn02oL01BISlq3VyfHSqJQEcAMqQkkCpmAu8p2nLrf8Z?=
+ =?us-ascii?Q?NITdC4v53namAch/6jWAx1WapLdp0lUPi+I0IbJzLoc6AXEONfJBAG3BZa3I?=
+ =?us-ascii?Q?jCkiTNLvagYl7kkhlWge/O+vwtaYjLb6BkgSHXYDw3HBg3vrNzFrNllOhsqB?=
+ =?us-ascii?Q?iMxmyxMaMjpcHoGSpvLff2MkWuehrq1DSn8bAzFWPENc1YjnuZqr2g5m7pnX?=
+ =?us-ascii?Q?EKdHn1B8hul9y2SMdxjeruOwk8usRaYgoine34SdupMul0bMR/RKRER5RO+N?=
+ =?us-ascii?Q?1IOmN7XK8WTmdTx+RZBwEayfcEK/6NusZ95kGtEswI1ROAYWKWC/cm0WB4NX?=
+ =?us-ascii?Q?nEFxB3cOdzqROkxh3R1JsgtBk98aL7tkhuia5vbBp3unM6lsk1bc1X20oM/S?=
+ =?us-ascii?Q?1BC3ZteK/SZudO+uOitwlqoU?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QMzdRoyrFBUtqX7/mz6GWdv4FIn+fikqAoAwnN99qQmoeFZ/iWHUxMSkDPof?=
+ =?us-ascii?Q?6IeWQprjPX2PFtoWIfSmpGTzGo7e8ApIxHSUwg0uorZIgRKm8b3RDroyOMt0?=
+ =?us-ascii?Q?GxCnMxEnTD026n81Ww8fdqOx802WL4Oq/T0A0ULmAo+Acd+h8oCWdyg8D3RV?=
+ =?us-ascii?Q?GMVCURj6/cX3B9tMPIWN+qIhYYfiZKkca5AozqQUdcJI6qFgoR2N+3BD2KEG?=
+ =?us-ascii?Q?MtuirrdOT5Hq8ahTq+sBnIdHZtP6F2S9Q/4Ip8K2UegzLeg5GLOifi+gdhfF?=
+ =?us-ascii?Q?po7/mK+3EpVHplBYSQdZgJOJnneN2K+lmVmcIQZ3zkP848ijW/fWTH5QBfUW?=
+ =?us-ascii?Q?RAyqGqVpNCi/IPvDwhRh2oc5NgSnmVFUCPorU1JPgmXQVVWhL/YU4DYjY0GZ?=
+ =?us-ascii?Q?FQq+vnCx/2r/PzC7yqci0RJOj1AyaBXLFJ7y2uQmHNk4IHwZcpRtuufqIkPv?=
+ =?us-ascii?Q?gqm3sz7KBuKa9YEpkS97EgUE57sJKHZDAKgSMQDZ9TjFN5y75PAKCjSjjA8x?=
+ =?us-ascii?Q?Y+ektlHngzY7hUvtuMc0kWfnY6Xdk9SlRVflZ3EtjDABgmEnuZoyavA8UT/U?=
+ =?us-ascii?Q?rX0B4EABzpwmoTf4GLiByetd6bNi21losj+8wNl+fZV0gVQRCTHEAPaJSHo+?=
+ =?us-ascii?Q?YC79TgsnR73NqWopFMuP7fLyGgORPeqaCHgY7sfpKKvFycyVgMpAkAPfu9Vc?=
+ =?us-ascii?Q?rlotRvZqi8EY/rzvxhFJ1kYAOThNPDShSV8ExPifPVJ5sLS3k0Vn+S7jrxbm?=
+ =?us-ascii?Q?mxaBBQJbNCtq2gOygt/ZIV7jaYWzyKO3cTH8onT3APXzjBoBV2/I1I9UNEmb?=
+ =?us-ascii?Q?O0VJY7d+bxMGzwt7/6KGJBOP2P1gmCXF/47LrsiTpVyxlXs/do0mDlYH8jL4?=
+ =?us-ascii?Q?fku3Wa47mQBrIs/+xBW6Jz1b/EHdJjnEEBo7nzGTFZA97xpXdvyRLVt5XiH1?=
+ =?us-ascii?Q?TizWUnOy47SHwz6Pbr1S7z1U/wbhMDwbATo3J9EpfyD8zWZnLlCL765lRe4D?=
+ =?us-ascii?Q?2WzcXMFTfu/y8JkdVb/iOIGfl1QGow/eNkaRJUAAkp5p6SRffRaE/jP44O+Y?=
+ =?us-ascii?Q?daLxy4/DkIm3OVu5SeFCrCACbHi/tve/CEVNUH7tvhdquMdTSXcJsaiehFie?=
+ =?us-ascii?Q?EWcf7hhfh1C3g+js+XMzXTxWQvWgUMXH9jg3tFfgK8dV7LbTeFVpbC6Yl8mD?=
+ =?us-ascii?Q?DSMoIc0rlbvlzvV3hZk9x1tjereF67cLjB3wJoTozgIRRhiHfEQfIR4gtjD3?=
+ =?us-ascii?Q?ai3KzSREdTxTY+ru1Kk9RJSdFd7eNVONbcfeuXX7QITL3GeSZ3Bcf1FzK9yw?=
+ =?us-ascii?Q?79k2A2qx14xTLtspyYPDE5z+iH8GZ3bgsMjqBJyaOSohuThIOO+0Ik+R7vnB?=
+ =?us-ascii?Q?889RVfLtW0PUCbOFBTvfX2mOWXS7K/I0/+du8kKB1a7fw1d4l6iUnHOhRAZf?=
+ =?us-ascii?Q?UToOZVVsSngACndLBKcs5RLK9A5LFSODB5Z5h1U+yjW5ZD6P52auTgGT9c5y?=
+ =?us-ascii?Q?8F/x6QU2sezTSEKOdspBv6VHD88g4Ys14/QPSt3IDHPqKvb+VJ5GaehJzAmN?=
+ =?us-ascii?Q?k03OE1PWBHq13Mlz5A9IxLacqLmH1MG3HLtL+cYYx/H+yracWOsnHKvZHqgj?=
+ =?us-ascii?Q?lw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2fb884d-e565-4460-546f-08dd6c82555b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 16:21:59.2964 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yjSVS6yzIEaTTEcb65C6OmKAA7TXJCPBLK07Fi+iWRgIU6C2OVcx3ITL+HHvqC0zx3JSpq4EjiE7KQHQzVnQ+Br7HdI8VMl4Jx8sDi2zBWo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7680
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,221 +167,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that base-code warning flags have been removed from a number of
-drivers, we can simplify their build configuration by just including the
-base code files in the regular list of driver files passed back. There
-is no need to use pre-compiled objects.
+On Tue, Mar 25, 2025 at 05:22:15PM +0000, Bruce Richardson wrote:
+> When doing a build for a target that already has the instruction sets
+> for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
+> skylake-avx512 '-march' flags, as they are unnecessary. Instead, when
+> the default flags produce the desired output, just use them unmodified.
+> 
+> Depends-on: series-34915 ("remove component-specific logic for AVX builds")
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+> 
+> This patchset depends on the previous AVX rework. However, sending it
+> separately as a new RFC because it effectively increases the minimum
+> compiler versions needed for x86 builds - from GCC 5 to 6, and
+> Clang 3.6 to 3.9.
+> 
+> For now, I've just documented that as an additional note in the GSG that
+> these versions are recommended, but it would be simpler if we could just
+> set them as the required minimum baseline (at least in the docs).
+> 
+> Feedback on these compiler version requirements welcome.
+>
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/intel/e1000/base/meson.build | 9 ++-------
- drivers/net/intel/e1000/meson.build      | 4 ++--
- drivers/net/intel/fm10k/base/meson.build | 9 ++-------
- drivers/net/intel/fm10k/meson.build      | 4 ++--
- drivers/net/intel/i40e/base/meson.build  | 9 ++-------
- drivers/net/intel/i40e/meson.build       | 4 ++--
- drivers/net/intel/idpf/base/meson.build  | 2 +-
- drivers/net/intel/idpf/meson.build       | 7 ++++---
- drivers/net/intel/ixgbe/base/meson.build | 9 ++-------
- drivers/net/intel/ixgbe/meson.build      | 4 ++--
- 10 files changed, 21 insertions(+), 40 deletions(-)
++techboard
 
-diff --git a/drivers/net/intel/e1000/base/meson.build b/drivers/net/intel/e1000/base/meson.build
-index 8cbd9f62e6..4fe86dc6df 100644
---- a/drivers/net/intel/e1000/base/meson.build
-+++ b/drivers/net/intel/e1000/base/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
--sources = [
-+base_sources = files(
-         'e1000_base.c',
-         'e1000_80003es2lan.c',
-         'e1000_82540.c',
-@@ -21,9 +21,4 @@ sources = [
-         'e1000_osdep.c',
-         'e1000_phy.c',
-         'e1000_vf.c',
--]
--
--base_lib = static_library('e1000_base', sources,
--    dependencies: static_rte_eal,
--    c_args: cflags)
--base_objs = base_lib.extract_all_objects(recursive: true)
-+)
-diff --git a/drivers/net/intel/e1000/meson.build b/drivers/net/intel/e1000/meson.build
-index cd42c0042a..b52a843228 100644
---- a/drivers/net/intel/e1000/meson.build
-+++ b/drivers/net/intel/e1000/meson.build
-@@ -2,9 +2,9 @@
- # Copyright(c) 2017 Intel Corporation
- 
- subdir('base')
--objs = [base_objs]
- 
--sources = files(
-+sources += base_sources
-+sources += files(
-         'e1000_logs.c',
-         'em_ethdev.c',
-         'em_rxtx.c',
-diff --git a/drivers/net/intel/fm10k/base/meson.build b/drivers/net/intel/fm10k/base/meson.build
-index a2640d1ee8..c45b31d6b2 100644
---- a/drivers/net/intel/fm10k/base/meson.build
-+++ b/drivers/net/intel/fm10k/base/meson.build
-@@ -1,16 +1,11 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
--sources = [
-+base_sources = files(
-         'fm10k_api.c',
-         'fm10k_common.c',
-         'fm10k_mbx.c',
-         'fm10k_pf.c',
-         'fm10k_tlv.c',
-         'fm10k_vf.c',
--]
--
--base_lib = static_library('fm10k_base', sources,
--    dependencies: static_rte_eal,
--    c_args: cflags)
--base_objs = base_lib.extract_all_objects(recursive: true)
-+)
-diff --git a/drivers/net/intel/fm10k/meson.build b/drivers/net/intel/fm10k/meson.build
-index 69566add96..e08a00cb49 100644
---- a/drivers/net/intel/fm10k/meson.build
-+++ b/drivers/net/intel/fm10k/meson.build
-@@ -8,9 +8,9 @@ if is_windows
- endif
- 
- subdir('base')
--objs = [base_objs]
- 
--sources = files(
-+sources += base_sources
-+sources += files(
-         'fm10k_ethdev.c',
-         'fm10k_rxtx.c',
- )
-diff --git a/drivers/net/intel/i40e/base/meson.build b/drivers/net/intel/i40e/base/meson.build
-index 766383101b..7b4882ad1d 100644
---- a/drivers/net/intel/i40e/base/meson.build
-+++ b/drivers/net/intel/i40e/base/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017-2020 Intel Corporation
- 
--sources = [
-+base_sources = files(
-         'i40e_adminq.c',
-         'i40e_common.c',
-         'i40e_dcb.c',
-@@ -9,9 +9,4 @@ sources = [
-         'i40e_hmc.c',
-         'i40e_lan_hmc.c',
-         'i40e_nvm.c',
--]
--
--base_lib = static_library('i40e_base', sources,
--    dependencies: static_rte_eal,
--    c_args: cflags)
--base_objs = base_lib.extract_all_objects(recursive: true)
-+)
-diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
-index 15993393fb..17b6715cd9 100644
---- a/drivers/net/intel/i40e/meson.build
-+++ b/drivers/net/intel/i40e/meson.build
-@@ -18,9 +18,9 @@ if dpdk_conf.get('RTE_IOVA_IN_MBUF') == 0
- endif
- 
- subdir('base')
--objs = [base_objs]
- 
--sources = files(
-+sources += base_sources
-+sources += files(
-         'i40e_ethdev.c',
-         'i40e_rxtx.c',
-         'i40e_pf.c',
-diff --git a/drivers/net/intel/idpf/base/meson.build b/drivers/net/intel/idpf/base/meson.build
-index 7316e0a805..78782e463e 100644
---- a/drivers/net/intel/idpf/base/meson.build
-+++ b/drivers/net/intel/idpf/base/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2023 Intel Corporation
- 
--sources += files(
-+base_sources = files(
-         'idpf_controlq.c',
-         'idpf_controlq_setup.c',
- )
-diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
-index 4b272d02b1..a8690da87b 100644
---- a/drivers/net/intel/idpf/meson.build
-+++ b/drivers/net/intel/idpf/meson.build
-@@ -7,9 +7,12 @@ if is_windows
-     subdir_done()
- endif
- 
-+subdir('base')
-+
- includes += include_directories('../iavf/base')
- 
--sources = files(
-+sources += base_sources
-+sources += files(
-         'idpf_common_device.c',
-         'idpf_common_rxtx.c',
-         'idpf_common_virtchnl.c',
-@@ -43,5 +46,3 @@ if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
-         objs += idpf_common_avx512_lib.extract_objects('idpf_common_rxtx_avx512.c')
-     endif
- endif
--
--subdir('base')
-diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
-index 64e0bfd7be..df42a34369 100644
---- a/drivers/net/intel/ixgbe/base/meson.build
-+++ b/drivers/net/intel/ixgbe/base/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017-2024 Intel Corporation
- 
--sources = [
-+base_sources = files(
-         'ixgbe_82598.c',
-         'ixgbe_82599.c',
-         'ixgbe_api.c',
-@@ -17,9 +17,4 @@ sources = [
-         'ixgbe_vf.c',
-         'ixgbe_x540.c',
-         'ixgbe_x550.c',
--]
--
--base_lib = static_library('ixgbe_base', sources,
--    dependencies: [static_rte_eal, static_rte_net],
--    c_args: c_args)
--base_objs = base_lib.extract_all_objects(recursive: true)
-+)
-diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 0bee736a2c..23f5a6cb3e 100644
---- a/drivers/net/intel/ixgbe/meson.build
-+++ b/drivers/net/intel/ixgbe/meson.build
-@@ -4,9 +4,9 @@
- cflags += ['-DRTE_LIBRTE_IXGBE_BYPASS']
- 
- subdir('base')
--objs = [base_objs]
- 
--sources = files(
-+sources += base_sources
-+sources += files(
-         'ixgbe_82599_bypass.c',
-         'ixgbe_bypass.c',
-         'ixgbe_ethdev.c',
--- 
-2.45.2
+Ping for a little bit of feedback for this. Are we ok to bump the minimum
+compiler versions as described above, or will I continue with the approach
+in this RFC of keeping the minimum and just recommending the higher
+versions for x86 platforms?
 
+For reference GCC 6.1 was released April 2016[1], and, Clang 3.9 was
+released Sept 2016[2]
+
+/Bruce
+
+[1] https://gcc.gnu.org/gcc-6/
+[2] https://releases.llvm.org/
