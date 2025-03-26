@@ -2,180 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3BCC36008
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 10:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9F4C36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 10:39:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFA91402DF;
-	Wed, 26 Mar 2025 11:37:41 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 22394402DA
- for <dev@dpdk.org>; Wed, 26 Mar 2025 11:37:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1742985460; x=1774521460;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=9Wvvx652fxVdATwaxfq1p/cm+h+jWpGQrCanPdAeeEQ=;
- b=VhXMNL/XyKm6GTZT6eEdhxzBn/ccMnw9Yajn+N0pFr4sdV4gKzxaaqHR
- uT+Ywn+6L6VIWXv4rmclp7yOD64pm8cKZBBdapB4jChIdUhD7Nbw47AJ+
- y5LgAxz7AS3BoLsoWGudwygiXT2PwAlICgdOyeJJPu4xiG161UBFwMvAZ
- 6Ou+h099XBHnE79goftcDIEEgsXdCOSr5NPcF+qDdKfnnu0xj4bVRt8++
- g999UlwJVPJWhAPuHeiHKRM0fSeiFurBLynnW1oEJliRSJgMKyM3NwdHe
- LH4tg2zlXpbgF1my+hJNEtkekos2vTakamfD9yZcoAtXTYksU3/LK4c5d A==;
-X-CSE-ConnectionGUID: m0Vxh6z2T2Gzdl64G6dxSw==
-X-CSE-MsgGUID: HRVCEODrQpG3rK2uQPCTng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44144737"
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; d="scan'208";a="44144737"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 03:37:34 -0700
-X-CSE-ConnectionGUID: VUr9Ik5jQNqaP5Y1fZiNxA==
-X-CSE-MsgGUID: l4CuMiA4R+e4IrRbnYUY5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; d="scan'208";a="161923922"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 03:37:34 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 26 Mar 2025 03:37:33 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Mar 2025 03:37:33 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 26 Mar 2025 03:37:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JGqUOUEBIUmS13GC4iAfTO5kTHDG+Gb5RVRsiWy62+nl1DV4q76NPawtGx6Wg9kynx0ClZtSF2EGMrClPz+fIY5CoYYUJzXWEmG9jgsgFEkxkzFo5ska2Ee7yRaDq8qkmE7z3sbesQM+fWp0i/2DqJtRwBTSmaFdl/cRt7VnYAIrepO9L3tp6T8fYgHrf11SVT6REI1KRfEJmjo2EsDnkyw/qQMBc9bAo/YCjoCJ0Tixw9cPr4O0wCZFe4zYz2Ekfl9vlIwiX3UqH/33Za2SC644ORgNx4KppMSIMErS6io1qo170mksXuMbxgvU2Tv1QXmR95oShF3f/9VEcAmx4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ctyIv/6iznrskFYKKwuwrFq4iPADxOr5+td69LewpTo=;
- b=IMMD/ekpN0CVG+r8ai7iSX5P8veAW+mxHNJLKLU3Er1Re5sFkRYWj3kSKs54n3jfj/T7007i3p4uDgHPhn3kW2H6kJ8lcUwnBKma2C4FxXYZMFvMM4fjbTdPU7HLhsP1uiUyd8g9qPJaURwPopW5nQnOR3vqhdvVQS6i0xAEHWmLewD6jmuGkisBl5K56CCUEnl/qPovV2WSRjesaxjiCARQBFtw6ol7J3dsdnCw+xsb3EkdEp0vzMXxmjXXo0v9THEXrcdNV2tww23t3yZWJG9vXFgogIh5DUzf/87H4bCKrdrvIjfZQxbMS9SxTdvy3fGtHJtm79fVqbiGHrzIbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ0PR11MB4816.namprd11.prod.outlook.com (2603:10b6:a03:2ad::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 10:37:16 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 10:37:16 +0000
-Date: Wed, 26 Mar 2025 10:37:11 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>
-Subject: Re: [PATCH] version: 25.07-rc0
-Message-ID: <Z-PY13RS1eeZHCKd@bricha3-mobl1.ger.corp.intel.com>
-References: <20250326090003.858426-1-david.marchand@redhat.com>
- <Z-PEn4gSkJyCEbUs@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8yY10dBOHf-fT3gK39RqDDZJfx8u5BWpsVthEuz3Gr+GA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8yY10dBOHf-fT3gK39RqDDZJfx8u5BWpsVthEuz3Gr+GA@mail.gmail.com>
-X-ClientProxiedBy: DU2PR04CA0343.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::29) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 9569D402DF;
+	Wed, 26 Mar 2025 11:39:46 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 99A25402DA
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 11:39:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1742985585;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=fdlpuvW5Al8PoY+am9yIppgy/zsFJ22RJ6AywcNypkg=;
+ b=cEJloBmciGsLRCEWI2fQq1faNWOdKKgkqGGvXNmgzQSYJkOx/ow0HbvsgNfqqOn9D5zsXR
+ ONexhc2DscwA+CGFoppgxNQ8/8nzJP9kTIwSdxiBQSk/9mlGIZ6ng6NeKM44du4NkLTZpX
+ s4CCB5pF3NAN+ko3kzxYL4TNgfLePKs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-8CSougsDPeyJ8lnPA1Nw6A-1; Wed,
+ 26 Mar 2025 06:39:41 -0400
+X-MC-Unique: 8CSougsDPeyJ8lnPA1Nw6A-1
+X-Mimecast-MFC-AGG-ID: 8CSougsDPeyJ8lnPA1Nw6A_1742985580
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1D122180025A; Wed, 26 Mar 2025 10:39:40 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.228])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 7DAD4180175A; Wed, 26 Mar 2025 10:39:37 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: bluca@debian.org, stable@dpdk.org,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ David Christensen <drc@linux.ibm.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH] acl: fix build with GCC 15 on aarch64
+Date: Wed, 26 Mar 2025 11:39:28 +0100
+Message-ID: <20250326103928.1189243-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB4816:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2495a817-f70a-4d56-218b-08dd6c522d66
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WXVKa1BCUkNZV3BDemdWYzdvb2xwYXpHWlZ2THJPYVR5SGxSdnhyNS9wV2xO?=
- =?utf-8?B?ZVBENkR5R1FPa3pnM3JTN3Yrc2tYUlREY2ZSc3RWTmZYN080QzdzRVlDNGll?=
- =?utf-8?B?NTdlblZFZHZKU3BETmZIMW1jaWEwTGRxZy84UEVFMm1TdWdGWWVIZW1tNlpp?=
- =?utf-8?B?dHlkTUNHQlZkdjVtSGNwQ1o0MVFjSXR3L1BTYzd3RjhkZDQ3NGlEY1JRWCtO?=
- =?utf-8?B?bkdvMFprZVk1cGt0L0t2aklDc0lSTlpQRTk2Q2VxRDlxVDVjN1lXMzNCQWp4?=
- =?utf-8?B?Yk1XQXc2TU9IbThEMG8yNTVTRkh0N0ZMYzd4KzhMNjduL09BakNYaHh4SjRW?=
- =?utf-8?B?V2dqbjZYWDZnOERCS2srTkVac2tCam4wRXR0TEFIVXFKWGt5Rk5MdnpkRVdl?=
- =?utf-8?B?U3F1T3hDclMrVzR5dXh0VmFmVEVRcG0rWUVzbTFwVU9SNFNCN1dTeExmM2dL?=
- =?utf-8?B?QkdFRU1HWU1Qa2w5dUlobzliVlN6c1N0MU5mTlNIcmZQR2pmY0xZdjhmdnV2?=
- =?utf-8?B?L1I3N3pmMUwrWGR2bUxVT3pGSVdaTG1XSzZBYnpibzhveVJqL01uWmE4a3A4?=
- =?utf-8?B?bHBTQndDRFkzSkRLaVJJWXdlSFFtQkM0RlZDdTJiSmFJcU94REZwR3JHU3BQ?=
- =?utf-8?B?b1UrL1N0OXJOVDRmNUZwQVowVWFBZ09FdkZiL2hKUkRteGZKVUN4T2FsaWtW?=
- =?utf-8?B?V2pBRmNHS2pPd1ZEYmtMdmRqaXdaTXR2Zmw3WkZhbHR5cHhRbTMyVmxmelJv?=
- =?utf-8?B?NGxvVHlvU2dCNXdQdnhzV2YwT2I0YmdkS01LUmxKdjZrSGRuak9ZRSszOFZt?=
- =?utf-8?B?UlhCWFVnYWtXb0pYUDh5NHNlb09lZ241Z0ZhUDJ6Q0JzRDNObnZvRjZyeEVi?=
- =?utf-8?B?dmlVK2daOTY5Rmh6Z1hUOGI3MldsdmNKellpRmlQUlVtWmZUdHhHMnNxOTNo?=
- =?utf-8?B?ZmJOaVcxem0xWEFxNGU1eG1VOHpOTlo3NTdoNCs2dmdxemY1NmhpbE9JOUEx?=
- =?utf-8?B?UGZGdkpMMXZaUkMyRU5OSW1XS2ZPUmI1Z0g5K0M2Z0gyVG9zcXlMMWEvZGxP?=
- =?utf-8?B?c3cxb2J0Z2RpOFg1RFkrODVuR0tJdDg4UXpqdVJGeDhRaHNkUWlTaTk0cjhj?=
- =?utf-8?B?YUlMYTJPUmJPZDlVbzhtSDhCRndQTU40bVNTRmYyK2NCeW1iR0RXNmdrdXow?=
- =?utf-8?B?N3pzYmtCaWRYQ1J4dHJxaGkwNDVFamlyeU9IamRnQzBrMmtHRTJsS3pIZUo1?=
- =?utf-8?B?NnJiK2FDaVFzcVh0LzZOYkVQZlRVYnNsMGJ5RmpCRC9QaWcvQytYb1dMbnpM?=
- =?utf-8?B?UUluckNLWkNxMzU3WVdESEVTU2c1WklBUDNEZHZoMFVKL21FdCt6Q3UzVnVu?=
- =?utf-8?B?c21Eb0NUTWdzeko5SUpuRFY5OFl4dWxhRmNBM3Bna0JsbXMxbVhlc3kzYVQ1?=
- =?utf-8?B?aVpuTENiSm13clhDckRZNmpqV1FEcllSck9QaHlQVC9CTjNGK3JNazFqQkdU?=
- =?utf-8?B?VFlueHIxT0dGV1ZBWXZnSldReUtGbmIvYWVNNHBnSE5GanNuQmQxd0pOQXVs?=
- =?utf-8?B?SWVUNUhLdGMyMVdUa0xSMXBPdlhBb2pRU3JzNjdBNXUxVkFyRnM1bmVacSty?=
- =?utf-8?B?bzIzWERTQUhuS2hmcXBMQmJGVkt6bnZOMHFWUlJhTlNsb0liSTRqYU5VZzVB?=
- =?utf-8?B?S2p3YjFScEMvUDczakFzK0lZeUcxYXdqY1RNT3JaUG9yTW1WMXhjclI3bnUr?=
- =?utf-8?B?Ynp5WFo1Z1pXYlUzUHV2ZUpwRTN5UU56N3VhWldEdHJhcFpzWGFzNGk2UDFn?=
- =?utf-8?B?TXUxS3R4MHNQVUlNMkhxUWFDVHdxNmZLbTdrNWdqcko3QXdDb0t6YXBZc09Q?=
- =?utf-8?Q?Czv6KyGyZlxMQ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VkswczZucVJQRklESFJZTGdScElnMXkzTVJYdTdWaE9FOUlsYVBQL3kvM1B6?=
- =?utf-8?B?akxTWGhUNCtsVWptKy8rZWQ0QlBLZGxpQ2lwWDZpcXNBN1VNRXVWNkcyaUJL?=
- =?utf-8?B?K3YxWWNFZlFZM3kzNmF3cXMrVDQzRFNsRTZ5MGFoZDh6dzlOTDVTNG5mR0FV?=
- =?utf-8?B?Q3k4M1Q2elFUU05Ubi9hUTd1SEZMazJYSUFOTmVPWGsvV1pzNWp4SUhvUkRL?=
- =?utf-8?B?a0xRbWZYOUdUV0RTUUtZaHg0M09iR2xpbTJzeXprRGNvRDM5OUtRdXV4U1NT?=
- =?utf-8?B?clcyTTc3ejZ0UldiOHl1OWFjRHNYcjZXYzBOeXkvTEVwYlN5MWs0YUNJbVIw?=
- =?utf-8?B?SGgxaEVvVFpzS005SXZ4UWpnRTVSanRwTjRvY2hobFErZDlTbVhFNnNMNjhN?=
- =?utf-8?B?L1V0V2VHWTB5aWpUTGM1RlU4alUyVXo3SmFxeVI5ZHdBMVNOcGhyUHBpOXJn?=
- =?utf-8?B?a1E4UmlPaSszdHVYaUh6akZyV1BYVFV6aXd1MW9hZ2tFVURhTHgzeXlkcjVS?=
- =?utf-8?B?cEsrYkNLNWpHOEd3NDBjbzRWSUdWS0VYUUQ1aThnK1JSTHJjRG1MRmR6WnJY?=
- =?utf-8?B?UUs0Q0dveE1tWGFrakxXTlNrL0xuWDF2MzRSbjBMdkJQdGlXYkQ0TWJXMzlw?=
- =?utf-8?B?YnBtTm11VjFjUmRPZ1ZoaytlME9mYk1LY2RQRUNGS0FaeGtuVTNwYUZFZTFP?=
- =?utf-8?B?ZlRwU3F0WmZCY2U2MjNjVlhycElnUFJpdDFZaGp6K05vQmt4N2l5eXppVFhz?=
- =?utf-8?B?Q0l5SUNKenZ4VGNvNmpaVlBDQUJkN2FjSkdXZDlWSWlLS1NTQzUvRWV5Y3dv?=
- =?utf-8?B?UE1CYUJ2QnkvQURuZjdZWFY3cFMxWWVuNW9OUlJLT1Z3YzlQL1EvaTVHdm1l?=
- =?utf-8?B?MnZHSHk5aXRsSzVxLzQrdnE5RlZWbnlWSkE1dnRqaEFFUHFBeTQzQU4xaHNw?=
- =?utf-8?B?eGJ5Y1NqNDB2S3NQNmJWSlMrVXVwNlRuOUczd3RmTkJpd090OHIyQm5vK0RC?=
- =?utf-8?B?dzdqTWsrbDFETEc3MlVwUEJnK3RZWlE2YXZWT0xiUkhtYVZtcDd3VW9nWkpi?=
- =?utf-8?B?OWYrSkZZYTdPWU0zelUzWDhVcUlqV1QxYnpuVHRISnA4VlBsSmQ0a25KSkEx?=
- =?utf-8?B?ZkJ4Z3Q0TWczRUlMME42MHlZeFc1OHVXbjRNaU9nNEsraXhpVUoxbllXSzIz?=
- =?utf-8?B?NjJvdGVLSmFlSlhxWElGYkJ3emdFZE5QaU85Qm55M2NSNGpPd3lVV3hVeHd2?=
- =?utf-8?B?ZGFkeGcvTGN3bEJEeDJxTjFFUllOcDBQaVZEL2llUzl3V1djenNQLzZobjRq?=
- =?utf-8?B?bThTZlRJQThLUXFhNG5pMExXVnUwR25wNDVucmRRanZYTllrZXZER0JJMXJP?=
- =?utf-8?B?RktJS0VFdHh4eGg1M0pjanJGOHlKMzl2Tm9scWsxcFM4anVlVWF2V2dvZEVj?=
- =?utf-8?B?RHhJREpERVNLSy9KYTdncEdHOUpKRDRUNDFFdjlaRWtXSXU1KzdUZmMwYlRU?=
- =?utf-8?B?a2R0NkdiMk9qQmZrQi9jeFJaeWVvQW1SemdPL1JRMDVvMnJkVmRmeC9iL3Fn?=
- =?utf-8?B?RlVXMGlBeEU2ZURlUFVya2FJa3JQNml2bVVBbTljaDJpZXlzdHJjWWJYV2ZI?=
- =?utf-8?B?VHJDdXVkaFdqM1FCV3VsNWdMRzIrR2pRWkFQRGwxcm9takw1YVhodU0vZENt?=
- =?utf-8?B?VTVqcWFYN3BZa08zd1BMM3p3NnAyTWJEaUhaQ3crdGhIM00wUWF0dU9vZUoy?=
- =?utf-8?B?OHZQNmxkQ0ttT2R0ZDEvSVo3MVArRkVOdkFqTnRZNjR4WUppditMcis4cDZ3?=
- =?utf-8?B?UlNVdlpOcHdjcm0vSnRKNXpDVXl1c3MvMm95VGM0bjNzOTVBME40ZGZwN1Fo?=
- =?utf-8?B?QkJ1S1F3eDlPQVdUaW41amZXVHYraUllOXJCR3Fwc0ZWbVAxc2d3bS9Xa2I1?=
- =?utf-8?B?aW8xdnFtZXNxazNmMHhvQzJhQzVKZUd3SEZwOUxoZlVlNDZpYjI1ZlIwcFNq?=
- =?utf-8?B?YTNSeG9nL0hZUkFCcGJvVjBNMWVPTGFuYmRpeVdKTEtJRjE2UWVPRXFFMmls?=
- =?utf-8?B?bFdCZEl5Wk52TGJCV3JnYno2K2ZCZEY1MmxWS1hCSXVENXBZN2FmTUlWaGF4?=
- =?utf-8?B?YzlTUkxlekliTGlxeFJFNWJIYmQ0S0Uwd04rdG5GZDVMTWd2SjIvRXhnZi9E?=
- =?utf-8?B?ZWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2495a817-f70a-4d56-218b-08dd6c522d66
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 10:37:16.2538 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y/HYDu/jXjYmtPvZyeAFtMF9d8DYLzW+SPPPtzxjMY2oHp+6dlH0J0TyIEdR4dq7i7ds/26tYfvTvVK8JgkInYZMx8yd2Q0sdDBXLeJTciI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4816
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -D9K7KBS-BVUvpgeHRKUVGahoEWB-gp6wU7uJ5HjCPo_1742985580
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,26 +67,184 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 26, 2025 at 11:09:50AM +0100, David Marchand wrote:
-> On Wed, Mar 26, 2025 at 10:11 AM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> > > diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-> > > index fba46b920f..0cc4d12b0b 100644
-> > > --- a/.github/workflows/build.yml
-> > > +++ b/.github/workflows/build.yml
-> > > @@ -12,7 +12,7 @@ defaults:
-> > >  env:
-> > >    REF_GIT_BRANCH: main
-> > >    REF_GIT_REPO: https://github.com/DPDK/dpdk
-> > > -  REF_GIT_TAG: v24.11
-> > > +  REF_GIT_TAG: v25.03
-> > >
-> > Do we not keep comparing against 24.11 for the whole of the 25-ABI cycle?
-> 
-> Comparing the new release against v24.11 would not detect breakage of
-> symbols introduced for the next ABI, during v25.03.
-> Like for example the changes in 52633e3a3fa8 ("net: add thread-safe CRC API").
-> 
-Ah, yes, thanks for the explanation.
+Caught in OBS for Fedora Rawhide on aarch64:
 
-/Bruce
+[  198s] In file included from ../lib/acl/acl_run_neon.h:7,
+[  198s]                  from ../lib/acl/acl_run_neon.c:5:
+[  198s] In function ‘alloc_completion’,
+[  198s]     inlined from ‘acl_start_next_trie’ at
+	../lib/acl/acl_run.h:140:24,
+[  198s]     inlined from ‘search_neon_4.isra’ at
+	../lib/acl/acl_run_neon.h:239:20:
+[  198s] ../lib/acl/acl_run.h:93:25: error: ‘cmplt’ may be used
+	uninitialized [-Werror=maybe-uninitialized]
+[  198s]    93 |                 if (p[n].count == 0) {
+[  198s]       |                     ~~~~^~~~~~
+[  198s] ../lib/acl/acl_run_neon.h: In function ‘search_neon_4.isra’:
+[  198s] ../lib/acl/acl_run_neon.h:230:27: note: ‘cmplt’ declared here
+[  198s]   230 |         struct completion cmplt[4];
+[  198s]       |                           ^~~~~
+
+The code was resetting sequentially cmpl[].count at the exact index that
+later call to alloc_completion uses.
+While this code seems correct, GCC 15 does not understand this (probably
+when applying some optimisations).
+
+Instead, reset cmpl[].count all at once in acl_set_flow, and cleanup the
+various vectorized implementations accordingly.
+
+Bugzilla ID: 1678
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ lib/acl/acl_run.h         | 5 +++++
+ lib/acl/acl_run_altivec.h | 8 ++------
+ lib/acl/acl_run_avx2.h    | 4 +---
+ lib/acl/acl_run_neon.h    | 8 ++------
+ lib/acl/acl_run_scalar.c  | 4 +---
+ lib/acl/acl_run_sse.h     | 8 ++------
+ 6 files changed, 13 insertions(+), 24 deletions(-)
+
+diff --git a/lib/acl/acl_run.h b/lib/acl/acl_run.h
+index 7f092413cd..9fd3e60021 100644
+--- a/lib/acl/acl_run.h
++++ b/lib/acl/acl_run.h
+@@ -176,6 +176,8 @@ acl_set_flow(struct acl_flow_data *flows, struct completion *cmplt,
+ 	uint32_t cmplt_size, const uint8_t **data, uint32_t *results,
+ 	uint32_t data_num, uint32_t categories, const uint64_t *trans)
+ {
++	unsigned int i;
++
+ 	flows->num_packets = 0;
+ 	flows->started = 0;
+ 	flows->trie = 0;
+@@ -187,6 +189,9 @@ acl_set_flow(struct acl_flow_data *flows, struct completion *cmplt,
+ 	flows->data = data;
+ 	flows->results = results;
+ 	flows->trans = trans;
++
++	for (i = 0; i < cmplt_size; i++)
++		cmplt[i].count = 0;
+ }
+ 
+ typedef void (*resolve_priority_t)
+diff --git a/lib/acl/acl_run_altivec.h b/lib/acl/acl_run_altivec.h
+index 2d398ffded..d5ccdb94f0 100644
+--- a/lib/acl/acl_run_altivec.h
++++ b/lib/acl/acl_run_altivec.h
+@@ -199,10 +199,8 @@ search_altivec_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < MAX_SEARCHES_ALTIVEC8; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < MAX_SEARCHES_ALTIVEC8; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	 /* Check for any matches. */
+ 	acl_match_check_x4(0, ctx, parms, &flows, (uint64_t *)&index_array[0]);
+@@ -270,10 +268,8 @@ search_altivec_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < MAX_SEARCHES_ALTIVEC4; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < MAX_SEARCHES_ALTIVEC4; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	/* Check for any matches. */
+ 	acl_match_check_x4(0, ctx, parms, &flows, index_array);
+diff --git a/lib/acl/acl_run_avx2.h b/lib/acl/acl_run_avx2.h
+index 0b8967f22e..e069fb85b2 100644
+--- a/lib/acl/acl_run_avx2.h
++++ b/lib/acl/acl_run_avx2.h
+@@ -171,10 +171,8 @@ search_avx2x16(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < RTE_DIM(cmplt); n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < RTE_DIM(cmplt); n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	t0 = _mm256_set_epi64x(index_array[5], index_array[4],
+ 		index_array[1], index_array[0]);
+diff --git a/lib/acl/acl_run_neon.h b/lib/acl/acl_run_neon.h
+index 63074f871d..3b9bd0cc39 100644
+--- a/lib/acl/acl_run_neon.h
++++ b/lib/acl/acl_run_neon.h
+@@ -172,10 +172,8 @@ search_neon_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		     total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < 8; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < 8; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	 /* Check for any matches. */
+ 	acl_match_check_x4(0, ctx, parms, &flows, &index_array[0]);
+@@ -234,10 +232,8 @@ search_neon_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		     total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < 4; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < 4; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	/* Check for any matches. */
+ 	acl_match_check_x4(0, ctx, parms, &flows, index_array);
+diff --git a/lib/acl/acl_run_scalar.c b/lib/acl/acl_run_scalar.c
+index 3d61e79409..a3661b1b6b 100644
+--- a/lib/acl/acl_run_scalar.c
++++ b/lib/acl/acl_run_scalar.c
+@@ -121,10 +121,8 @@ rte_acl_classify_scalar(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results, num,
+ 		categories, ctx->trans_table);
+ 
+-	for (n = 0; n < MAX_SEARCHES_SCALAR; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < MAX_SEARCHES_SCALAR; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	transition0 = index_array[0];
+ 	transition1 = index_array[1];
+diff --git a/lib/acl/acl_run_sse.h b/lib/acl/acl_run_sse.h
+index 93286a2c38..4ec819a215 100644
+--- a/lib/acl/acl_run_sse.h
++++ b/lib/acl/acl_run_sse.h
+@@ -205,10 +205,8 @@ search_sse_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < MAX_SEARCHES_SSE8; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < MAX_SEARCHES_SSE8; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	/*
+ 	 * indices1 contains index_array[0,1]
+@@ -293,10 +291,8 @@ search_sse_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
+ 		total_packets, categories, ctx->trans_table);
+ 
+-	for (n = 0; n < MAX_SEARCHES_SSE4; n++) {
+-		cmplt[n].count = 0;
++	for (n = 0; n < MAX_SEARCHES_SSE4; n++)
+ 		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
+-	}
+ 
+ 	indices1 = _mm_loadu_si128((xmm_t *) &index_array[0]);
+ 	indices2 = _mm_loadu_si128((xmm_t *) &index_array[2]);
+-- 
+2.48.1
+
