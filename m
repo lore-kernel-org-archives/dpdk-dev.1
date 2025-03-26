@@ -2,76 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D1DC3600E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 20:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2533C3600E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 21:36:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 384634021F;
-	Wed, 26 Mar 2025 21:25:54 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 0691F40156
- for <dev@dpdk.org>; Wed, 26 Mar 2025 21:25:52 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-301a4d5156aso326526a91.1
- for <dev@dpdk.org>; Wed, 26 Mar 2025 13:25:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 83CF54028F;
+	Wed, 26 Mar 2025 22:36:21 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id C62B240156
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 22:36:19 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-223fb0f619dso7591535ad.1
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 14:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743020752;
- x=1743625552; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=KwdwbatOBd6du6JgRaIH5lRUo6tm9bEfsSKesNL5w1E=;
- b=V2Ob/QkfTcYk/vnd66izmjoKu0H2OKXSg9J7qKfETCbp1ZCPBaz80CUbV1THIqZWD7
- IO3i6yLrSsAPIUFL+jG0XGo25EgczQA5YcqgyId8ME/XATDGxALOeYF6xL69WLnECuLx
- QQ9wPWg0eZ52EykNCaBPKV11ZNdqoMjh4JQ0MIQYKJ10vbN/w5dzWloKC0pwj+IkvZpX
- lq8nvQgKE8a+27gHO5r2BEHMYP0/0QnFgQtLNk/zhsO41H71RgYIj43jFcDXEigb3FbM
- CZRLasqnWjCp/qckeEozvNGZc5S+gjjBpu+zD8PE2VsW23Ms7faKmQenzDl9Nt4NL1Z6
- 8nkw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743024979;
+ x=1743629779; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=1vzyXNtNyIqt5/7+d+TcqplB0lrTR9m/nE3L/prPQHo=;
+ b=rOyPh2x+0nhVoR+Fh31YuDMFt8rGLaBTM8ZGaTg/cNG9ZJ0+kQf+RjM+4IbC6tQxoV
+ ATEDBshVJVa8ya6TASzfdsTtDqEI/IuyyiLXaZDMf1GwWd7HP3PsAbJDoDXlPmAeQnu6
+ u5o6pvHIbxZutgDCpUr9RECVVMbktdfm9Ko/ZD7hHWav2+mfxVROGiAkUCCUJPlXSN1k
+ nO3ZAaYyLFPmWnOWhbqHtbe0XnJ4mHyZbk+z52iFTDmCT1U9xmnSj1Id66ZQJ3tRrhAR
+ i0UuBO8eyBCRAjbMXyzjppQOLVMgiegTwYdQSp4U4J7V8tuATKkyaHnz4fGpDicKMgAl
+ 5pww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743020752; x=1743625552;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=KwdwbatOBd6du6JgRaIH5lRUo6tm9bEfsSKesNL5w1E=;
- b=mo5kw4d5MHwQf7iQ/0FwWgGB9agPpi80zdPrgG51EuJMtHE+nqrYKitrTZbNzgTchP
- C29GV8vO8NXy10VxdWY0ODvdDNBvM05hd4hiZ8DQa367cRLjvv93Qi6J923hGRs93hBx
- byVFzbuYdawz1k6f+V/GSyQWziwpmkD54qU8oAgSYAjpdujvnG4zTs96xrmpR0DiaxGn
- HvvhHkQicXZDNYm9EdmpSEZibial+5t1HXwGKvjrYOvv1fZt6lhH6ggse3CF+BAceqZp
- E5wxMQ2I33tvieCi2yYOUuGEtLqKCbzaPjAdmeGdQCy0cWaqfN5K7+f1CUIszwpj1si0
- C1xg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXJzjhewyobxwxl8KBtiuDchtOqCNVPDWRkuHaOP2IPY/fu4ua/XwGIWqXc3llTAkmB/+Y=@dpdk.org
-X-Gm-Message-State: AOJu0Yxtp8+wlHvCBHzGSM+a3ElpiyxsaE/hLFlt8yS5w0aFkoX325qA
- 6qQPJdTAyCE/8dpSdcUj8hy4gJpz8tqPPhv73jElU76LQbppeYWKdpFmOxsReZo=
-X-Gm-Gg: ASbGncu7hcylyGWPP/CzZqCPyh3LbquJAdiT/OrPPx/xNtzjPWmt9HNsRKwRZ38iPi0
- /cAzPq4jyE+W4ZpJY111TzxjadXLdGQ0bWJm5847MyJjLZApbFaP6RbR+ompULB91YSGjvgS9Cp
- CN/NOx/YN1GpPxERn4ouqcNl0/VGZLENwRl7+psrEiVuxyDCUPkbAHaswfXjTwnqx3aG11I2rIA
- k29yDbNgOsoK5KRXMhbfg3y0sYEKWtf2edGOQKyPZE2QRsFu01nEjc/Fz5fOz72VoFQXl648p9k
- tLFDyp64Dsivwbqb3sserYbRDO2qOSyVr1tvxz2K5xt0R76FTdgiBudwWtVfm/SSYOARxr5UqKA
- lG85NN9fpgFRVsZ1QPtqt
-X-Google-Smtp-Source: AGHT+IHElR3J7oVweWNV65VFTXG3ajqPLMSPlxp3+LBgBvuYctpYafHCjIUT5Rpqqk1G3vQkEuJMRg==
-X-Received: by 2002:a17:90b:2fc6:b0:2fa:17dd:6afa with SMTP id
- 98e67ed59e1d1-303a7f6d40amr1789286a91.17.1743020751659; 
- Wed, 26 Mar 2025 13:25:51 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1743024979; x=1743629779;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=1vzyXNtNyIqt5/7+d+TcqplB0lrTR9m/nE3L/prPQHo=;
+ b=wlLd7bFwbj4H2J8oPjGqqP0UcJt9OGEg1skZTjXSkKmXsd+es6uviMcq7O/KvSmBRm
+ iwA6D3V3ZLMxiTr5tNh3wADQgTrGuPnxqqoO7LF0H3Yp5LGDM4n6ESTn0aqIEhpMC+c8
+ zwvhDcD3J15RjSuv5gQK4FGCsehG2byTiFO3MGMiqvI/gJ6xKlwan9x6Mh1sKwVzj52T
+ Ku/bNb/ej4fO3DFgqUmwY7hyGylwS4FTh8LDmKUVyzFIsksRgFT9q1Sn536Zho2ikYcz
+ B+By5+OmIuBgiOMW8ov0oHLRDtooQpnZdHf0p02N9dbrJeycQZcHRfvQ32RQmd5XVIE2
+ Z3MQ==
+X-Gm-Message-State: AOJu0YzjPt9jtqBNjdy7o1qUNdsNC5KVK4/YsxXjcSpnNTkkUKl7ydH/
+ TlZaExgkeLZdNgB3nA1nk9VrSSeJUvsvsZ1KusD1pZCelgt9BeivxgxutrI0hnWINqMfuO9FI0N
+ d
+X-Gm-Gg: ASbGnctqs/k5Cbkh6YcVX5SYOL6F2a9mNh0mwDGKWHLYfv2xH9U0aRFEVgmTLBjEnaK
+ Q4EW1HdG/bteaiarIk/1NaN/dqb1fbYJhsfBbA0tQ3PQfM8BG3HtugwZy+pwFNm2ZVTkFSVGxQp
+ A9mPvVAHLY1zCdZqA8El5I0qI5+A81age96k8/atxMQq1al8YTv0Je/qzOXYeDrZcrk8TSQlw6D
+ 9q6udJLo17uQIZElut+md8ZkstZ76RnNDNlNgZZubixUuapFLuKOOLt+j0Jshg4zl8dJdNScVJa
+ 9Mc7jsCA6+NtSKKN6M0/Wx+/cDW31WKx9BnEVAf0p/OGXKEIFFnjBckUotFlZxwTdvxTM1HwA62
+ JJkmss49YQH69I/l4zHJA
+X-Google-Smtp-Source: AGHT+IHm6oWR1j5EkthStgL5qtyOOQm09j/B827kp2MHc8DTOWhKNhwhDQ3Jj9Pw9OjQqf6iUn9i5A==
+X-Received: by 2002:a17:902:ebc3:b0:21f:136a:a374 with SMTP id
+ d9443c01a7336-2280493c09dmr19445145ad.43.1743024978499; 
+ Wed, 26 Mar 2025 14:36:18 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3039dff0534sm682376a91.17.2025.03.26.13.25.51
+ d9443c01a7336-22780f4597csm115807525ad.75.2025.03.26.14.36.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Mar 2025 13:25:51 -0700 (PDT)
-Date: Wed, 26 Mar 2025 13:25:48 -0700
+ Wed, 26 Mar 2025 14:36:18 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [EXTERNAL] Re: [RFC 2/2] eventdev: add default software vector
- adapter
-Message-ID: <20250326132548.18a7e8ad@hermes.local>
-In-Reply-To: <CO6PR18MB40846EBB54A664C6202851C7DEA62@CO6PR18MB4084.namprd18.prod.outlook.com>
-References: <20250326131441.5965-1-pbhagavatula@marvell.com>
- <20250326131441.5965-3-pbhagavatula@marvell.com>
- <20250326071857.7ef4a050@hermes.local>
- <CO6PR18MB40846EBB54A664C6202851C7DEA62@CO6PR18MB4084.namprd18.prod.outlook.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 0/4] net/null optimizations
+Date: Wed, 26 Mar 2025 14:35:24 -0700
+Message-ID: <20250326213608.581345-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,23 +78,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 26 Mar 2025 17:25:32 +0000
-Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com> wrote:
+While reviewing use of null device for testing, noticed several things
+this driver is doing which are unnecessary.
 
-> > On Wed, 26 Mar 2025 18:44:36 +0530
-> > <pbhagavatula@marvell.com> wrote:
-> >   
-> > > +struct sw_vector_adapter_service_data {
-> > > +	uint32_t service_id;
-> > > +	RTE_ATOMIC(rte_mcslock_t *) lock;
-> > > +	RTE_TAILQ_HEAD(, sw_vector_adapter_data) adapter_list;
-> > > +};  
-> > 
-> > Why the indirect pointer to the lock? rather than embedding it in
-> > the structure?  
-> 
-> IIUC, the lock itself is declared and used as a pointer right?
-> I looked at examples from test_mcslock.c, and this seemed correct.
-> 
+Stephen Hemminger (4):
+  net/null: Tx optimizations
+  net/null: fix packet copy
+  net/null: optimize Rx
+  net/null: count all queues
 
-Forgot, these locks used linked list of waiters, and root is a pointer.
+ drivers/net/null/#rte_eth_null.c# | 754 ++++++++++++++++++++++++++++++
+ drivers/net/null/rte_eth_null.c   |  95 ++--
+ 2 files changed, 788 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/net/null/#rte_eth_null.c#
+
+-- 
+2.47.2
+
