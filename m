@@ -2,158 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFEEC36008
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C91BC36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:27:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEEDA40649;
-	Wed, 26 Mar 2025 17:22:16 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 870FC402CD;
- Wed, 26 Mar 2025 17:22:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743006135; x=1774542135;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=NigcC7vaZp98aEctS497kmlLNxkMKW7j1wdFfl2ILv0=;
- b=kDX1baDO4u/5nS0szNI823NatNWpM6KlfGTjWN8aLvNl2V8Qnjvigcgw
- CGp9f3vCyYDbRRd2zzZu3DaDFcrzAQqU8BTKvbaAgkUAkql8iGG59lJ3+
- U5AYmFu/Ptr7PaOi11l8F6VL5lB1riJYip04EI7FSfAlGGZNIErPq7oOj
- 25uFh+UsCtuoJRiPvbR1KhLOAkwhQTphdAEKOXHAfr0mrgwMQ7MyHXqtz
- n2bT+zvR9opxpjGYzzdcaaWK5E78pyIVcj+AEjLeoOxu+5X9m03Npgf0c
- OyUt1L10LqT89hQwN05bHzQ5pm8Zp1ZoYlBwEmJu2CdlyoV42DL/PJdSl w==;
-X-CSE-ConnectionGUID: cD0+DnnwRiO5mVprK3oCRg==
-X-CSE-MsgGUID: sYVo1pzIRoWfO4CHEE+LAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="31910929"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="31910929"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 09:22:02 -0700
-X-CSE-ConnectionGUID: 3558uV5lRiiuxy11kT4l8A==
-X-CSE-MsgGUID: F1s+vmJvSPSByJN4Fwt57g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="129862233"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 09:22:02 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 26 Mar 2025 09:22:01 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Mar 2025 09:22:01 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 26 Mar 2025 09:22:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rYBb2KmuoWtRc6CQsTFWfylECpFn7Ejh+V6RMdYNLx+tgmqpBhBpJLyHLIrY/Saxc2UIpr1KCbOzg6O6RB4sp0/c6KiLCY9tLkVu6Hx2KQQc2QQ7dAzCiVnj1/zp17CTKt6afCcQc5VFMvw/dJ1fNBH9pU/XyjzusdKxGm2QqQ/9bsCMcqknE7VI8iwCFa5Zmmje+u2E72vLL7sI3VW4u3I9TmLLQSexmAXSyc0cV2TPFS/BZpOMk78BUUiC6lPXiip6nWvbAZ6pSCaKZBY5q9tpApYwPrOAtqxs7cJ+UWKCWlqc89DvQOj2MlmrsFBF7o3xYVWJ+/Mn6u7bzahCow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mo9NkkMor8ZIG3uqrRbrwg5kNMXPJNisuSHBuq/GkvU=;
- b=jg5L9CIHoQZ8jfT4/9IwILK3keqTaeY5pmtOcuCZaPPtdB1xDaPkVfp7kEk5t/RSCdzhPYPxxi4gEDHPeFltbFTR5ekcK8u6wZXYA6bRxsNh95eN9ZUZqyr4QKQauSEN2pFl0lvjTgN+yCFfFq963GcQFyYIh5HYimX+IkR8PqKATBMkPB+wOlHGID8LgJWWA/MfkIpPTR0rgbL0JSbytzyY9UB7xETCoHqUgdVYMPrTSKRbr6QtpbB4DHN68qUQ/+r03D8Yh0VFrOh2RQuqwSOCbF5uQ/m3+cG+OTN+x73REKW1YkJsGO8xT2LqehdTIPLSF/xxX1BNRgss3ghSJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA1PR11MB7680.namprd11.prod.outlook.com (2603:10b6:208:3fb::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 16:21:59 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 16:21:59 +0000
-Date: Wed, 26 Mar 2025 16:21:54 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: <dev@dpdk.org>
-CC: <techboard@dpdk.org>
-Subject: Re: [RFC PATCH] build: reduce use of AVX compiler flags
-Message-ID: <Z-QposchDMAmn83I@bricha3-mobl1.ger.corp.intel.com>
-References: <20250325172215.3360590-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250325172215.3360590-1-bruce.richardson@intel.com>
-X-ClientProxiedBy: DU2PR04CA0315.eurprd04.prod.outlook.com
- (2603:10a6:10:2b5::20) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 94CBF40649;
+	Wed, 26 Mar 2025 17:27:18 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D565402CD
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 17:27:17 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 1B25346482; Wed, 26 Mar 2025 17:27:17 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1683] use after on interrupt thread during EAL cleanup
+Date: Wed, 26 Mar 2025 16:27:16 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: david.marchand@redhat.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1683-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17430064360.b6528.2425440
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB7680:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2fb884d-e565-4460-546f-08dd6c82555b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WHYuCypzA4vURnnUTUbwJKFZKrxQiytKlcdALgW0nZfmm8quib5qtA3HUzzZ?=
- =?us-ascii?Q?O7oDnmOlaF4L2tRvo1SGt3HcfRNh0D9+JbGI+qBzITGWH+5DaAUX99WSgu92?=
- =?us-ascii?Q?1YBtnZIRE0d0FC73WG3qvGHSn5yPj+4DMy4nucPkYl7X3A30ZfvOjmbx6rNI?=
- =?us-ascii?Q?CY6zdJXuYgNKyZ5j3VSn453/0ktGX34xdeKCBb4TwYGnQDUuX1rf3xlKF1Ng?=
- =?us-ascii?Q?IQIRw44zPgzXShJ21YyWLV+b6SHo15DGCDNqohVXnPjX7R9WstA6jSLbk0dZ?=
- =?us-ascii?Q?9mwssxNYT1LT7YN7y3RKLBloPaApFAEAGy6Oqz3YpI8TxsjDIyT6sXBc9fEz?=
- =?us-ascii?Q?mvQeHeqjhjJqb+QhymNlNCy0vcluWRZ/HzfnKrWM7Q0gjAvGGZL8DICcqEn4?=
- =?us-ascii?Q?tgS+M/CjLXP4GseERNPDdijL9Rjsp4pZwNSsBgjQ9LcZq0WDBMokbSmPQ2lO?=
- =?us-ascii?Q?IH9cBA50cUIvWpaTRi7ykueq2Uus6whUAOFmhavMH3Y+8VBowaejACBDL8wn?=
- =?us-ascii?Q?2zAedCwJmtQboWRHgfa+lG1rZv36MyIDUyqr5Wm/cWW8qWWyGAGYH0iyqCo8?=
- =?us-ascii?Q?mkMKTG7kwe8P31RQJeJukyoDTnbgMgWAbORwZf+yfUXW3BZUJGZYJk7j6hGi?=
- =?us-ascii?Q?e7wv+WJ0Og/qft4Xik+XzeaXU0kWuk7KIbPGUd7qj9iK8l+doxWt3ufukARv?=
- =?us-ascii?Q?CsCnme+2Uyur+mrHgVBfgA8YWbLT8iTq1HJVn2BOGmZZK1hXRSD1vZgdjqiM?=
- =?us-ascii?Q?8bHcDwF368b+9IwWG95/zLCbHz5oHJ8LPcCEH/I2t7N/zspyLhZyaERw9hx9?=
- =?us-ascii?Q?4wtwSU8leWd3Kc0+nBIAifplw7CwJeTREsTVGEoTgFeuPwUuGhJG6dH9UUck?=
- =?us-ascii?Q?UjWKOjeOHpJcyvY3Nn02oL01BISlq3VyfHSqJQEcAMqQkkCpmAu8p2nLrf8Z?=
- =?us-ascii?Q?NITdC4v53namAch/6jWAx1WapLdp0lUPi+I0IbJzLoc6AXEONfJBAG3BZa3I?=
- =?us-ascii?Q?jCkiTNLvagYl7kkhlWge/O+vwtaYjLb6BkgSHXYDw3HBg3vrNzFrNllOhsqB?=
- =?us-ascii?Q?iMxmyxMaMjpcHoGSpvLff2MkWuehrq1DSn8bAzFWPENc1YjnuZqr2g5m7pnX?=
- =?us-ascii?Q?EKdHn1B8hul9y2SMdxjeruOwk8usRaYgoine34SdupMul0bMR/RKRER5RO+N?=
- =?us-ascii?Q?1IOmN7XK8WTmdTx+RZBwEayfcEK/6NusZ95kGtEswI1ROAYWKWC/cm0WB4NX?=
- =?us-ascii?Q?nEFxB3cOdzqROkxh3R1JsgtBk98aL7tkhuia5vbBp3unM6lsk1bc1X20oM/S?=
- =?us-ascii?Q?1BC3ZteK/SZudO+uOitwlqoU?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QMzdRoyrFBUtqX7/mz6GWdv4FIn+fikqAoAwnN99qQmoeFZ/iWHUxMSkDPof?=
- =?us-ascii?Q?6IeWQprjPX2PFtoWIfSmpGTzGo7e8ApIxHSUwg0uorZIgRKm8b3RDroyOMt0?=
- =?us-ascii?Q?GxCnMxEnTD026n81Ww8fdqOx802WL4Oq/T0A0ULmAo+Acd+h8oCWdyg8D3RV?=
- =?us-ascii?Q?GMVCURj6/cX3B9tMPIWN+qIhYYfiZKkca5AozqQUdcJI6qFgoR2N+3BD2KEG?=
- =?us-ascii?Q?MtuirrdOT5Hq8ahTq+sBnIdHZtP6F2S9Q/4Ip8K2UegzLeg5GLOifi+gdhfF?=
- =?us-ascii?Q?po7/mK+3EpVHplBYSQdZgJOJnneN2K+lmVmcIQZ3zkP848ijW/fWTH5QBfUW?=
- =?us-ascii?Q?RAyqGqVpNCi/IPvDwhRh2oc5NgSnmVFUCPorU1JPgmXQVVWhL/YU4DYjY0GZ?=
- =?us-ascii?Q?FQq+vnCx/2r/PzC7yqci0RJOj1AyaBXLFJ7y2uQmHNk4IHwZcpRtuufqIkPv?=
- =?us-ascii?Q?gqm3sz7KBuKa9YEpkS97EgUE57sJKHZDAKgSMQDZ9TjFN5y75PAKCjSjjA8x?=
- =?us-ascii?Q?Y+ektlHngzY7hUvtuMc0kWfnY6Xdk9SlRVflZ3EtjDABgmEnuZoyavA8UT/U?=
- =?us-ascii?Q?rX0B4EABzpwmoTf4GLiByetd6bNi21losj+8wNl+fZV0gVQRCTHEAPaJSHo+?=
- =?us-ascii?Q?YC79TgsnR73NqWopFMuP7fLyGgORPeqaCHgY7sfpKKvFycyVgMpAkAPfu9Vc?=
- =?us-ascii?Q?rlotRvZqi8EY/rzvxhFJ1kYAOThNPDShSV8ExPifPVJ5sLS3k0Vn+S7jrxbm?=
- =?us-ascii?Q?mxaBBQJbNCtq2gOygt/ZIV7jaYWzyKO3cTH8onT3APXzjBoBV2/I1I9UNEmb?=
- =?us-ascii?Q?O0VJY7d+bxMGzwt7/6KGJBOP2P1gmCXF/47LrsiTpVyxlXs/do0mDlYH8jL4?=
- =?us-ascii?Q?fku3Wa47mQBrIs/+xBW6Jz1b/EHdJjnEEBo7nzGTFZA97xpXdvyRLVt5XiH1?=
- =?us-ascii?Q?TizWUnOy47SHwz6Pbr1S7z1U/wbhMDwbATo3J9EpfyD8zWZnLlCL765lRe4D?=
- =?us-ascii?Q?2WzcXMFTfu/y8JkdVb/iOIGfl1QGow/eNkaRJUAAkp5p6SRffRaE/jP44O+Y?=
- =?us-ascii?Q?daLxy4/DkIm3OVu5SeFCrCACbHi/tve/CEVNUH7tvhdquMdTSXcJsaiehFie?=
- =?us-ascii?Q?EWcf7hhfh1C3g+js+XMzXTxWQvWgUMXH9jg3tFfgK8dV7LbTeFVpbC6Yl8mD?=
- =?us-ascii?Q?DSMoIc0rlbvlzvV3hZk9x1tjereF67cLjB3wJoTozgIRRhiHfEQfIR4gtjD3?=
- =?us-ascii?Q?ai3KzSREdTxTY+ru1Kk9RJSdFd7eNVONbcfeuXX7QITL3GeSZ3Bcf1FzK9yw?=
- =?us-ascii?Q?79k2A2qx14xTLtspyYPDE5z+iH8GZ3bgsMjqBJyaOSohuThIOO+0Ik+R7vnB?=
- =?us-ascii?Q?889RVfLtW0PUCbOFBTvfX2mOWXS7K/I0/+du8kKB1a7fw1d4l6iUnHOhRAZf?=
- =?us-ascii?Q?UToOZVVsSngACndLBKcs5RLK9A5LFSODB5Z5h1U+yjW5ZD6P52auTgGT9c5y?=
- =?us-ascii?Q?8F/x6QU2sezTSEKOdspBv6VHD88g4Ys14/QPSt3IDHPqKvb+VJ5GaehJzAmN?=
- =?us-ascii?Q?k03OE1PWBHq13Mlz5A9IxLacqLmH1MG3HLtL+cYYx/H+yracWOsnHKvZHqgj?=
- =?us-ascii?Q?lw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2fb884d-e565-4460-546f-08dd6c82555b
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 16:21:59.2964 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yjSVS6yzIEaTTEcb65C6OmKAA7TXJCPBLK07Fi+iWRgIU6C2OVcx3ITL+HHvqC0zx3JSpq4EjiE7KQHQzVnQ+Br7HdI8VMl4Jx8sDi2zBWo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7680
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -167,40 +54,426 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 25, 2025 at 05:22:15PM +0000, Bruce Richardson wrote:
-> When doing a build for a target that already has the instruction sets
-> for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
-> skylake-avx512 '-march' flags, as they are unnecessary. Instead, when
-> the default flags produce the desired output, just use them unmodified.
-> 
-> Depends-on: series-34915 ("remove component-specific logic for AVX builds")
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
-> 
-> This patchset depends on the previous AVX rework. However, sending it
-> separately as a new RFC because it effectively increases the minimum
-> compiler versions needed for x86 builds - from GCC 5 to 6, and
-> Clang 3.6 to 3.9.
-> 
-> For now, I've just documented that as an additional note in the GSG that
-> these versions are recommended, but it would be simpler if we could just
-> set them as the required minimum baseline (at least in the docs).
-> 
-> Feedback on these compiler version requirements welcome.
->
 
-+techboard
+--17430064360.b6528.2425440
+Date: Wed, 26 Mar 2025 17:27:16 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Ping for a little bit of feedback for this. Are we ok to bump the minimum
-compiler versions as described above, or will I continue with the approach
-in this RFC of keeping the minimum and just recommending the higher
-versions for x86 platforms?
+https://bugs.dpdk.org/show_bug.cgi?id=3D1683
 
-For reference GCC 6.1 was released April 2016[1], and, Clang 3.9 was
-released Sept 2016[2]
+            Bug ID: 1683
+           Summary: use after on interrupt thread during EAL cleanup
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: david.marchand@redhat.com
+  Target Milestone: ---
 
-/Bruce
+This was caught with ASan in a CI run in my GHA:
 
-[1] https://gcc.gnu.org/gcc-6/
-[2] https://releases.llvm.org/
++ devtools/test-null.sh
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /run/user/1001/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+testpmd: create a new mbuf pool <mb_pool_0>: n=3D2048, size=3D2176, socket=
+=3D0
+testpmd: preferred mempool ops selected: ring_mp_mc
+Interactive-mode selected
+Auto-start selected
+Configuring Port 0 (socket 0)
+...
+
+Shutting down port 1...
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D46768=3D=3DERROR: AddressSanitizer: heap-use-after-free on address 0x=
+606000008e44
+at pc 0x5613ec543091 bp 0x7f87065fd1d0 sp 0x7f87065fd1c8
+READ of size 4 at 0x606000008e44 thread T1
+    #0 0x5613ec543090 in rte_intr_fd_get
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:210:22
+    #1 0x5613ec5a350b in eal_alarm_callback
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_alarm.c:125:19
+    #2 0x5613ec5acef1 in eal_intr_process_interrupts
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1026:5
+    #3 0x5613ec5acef1 in eal_intr_handle_interrupts
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1100:7
+    #4 0x5613ec5aba06 in eal_intr_thread_main
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1172:3
+    #5 0x7f870b294ac2 in start_thread nptl/./nptl/pthread_create.c:442:8
+    #6 0x7f870b32684f  misc/../sysdeps/unix/sysv/linux/x86_64/clone3.S:81
+
+0x606000008e44 is located 4 bytes inside of 64-byte region
+[0x606000008e40,0x606000008e80)
+freed by thread T0 here:
+    #0 0x5613eb24ba32 in free
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb8ca32) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec5a1b7f in rte_eal_cleanup
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1333:2
+    #2 0x5613eb3bf7bc in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4583:8
+    #3 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+previously allocated by thread T0 here:
+    #0 0x5613eb24bec8 in __interceptor_calloc
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb8cec8) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec542b56 in rte_intr_instance_alloc
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:51:17
+    #2 0x5613ec5a26ed in rte_eal_alarm_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_alarm.c:66:16
+    #3 0x5613ec59f5a3 in rte_eal_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1011:6
+    #4 0x5613eb3be5b3 in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4369:9
+    #5 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+Thread T1 created by T0 here:
+    #0 0x5613eb23515c in __interceptor_pthread_create
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb7615c) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec59d50c in rte_thread_create
+/home/runner/work/dpdk/dpdk/build/../lib/eal/unix/rte_thread.c:199:8
+    #2 0x5613ec56011b in rte_thread_create_control
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_thread.c:308=
+:8
+    #3 0x5613ec56096c in rte_thread_create_internal_control
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_thread.c:358=
+:9
+    #4 0x5613ec5ab811 in rte_eal_intr_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1200:8
+    #5 0x5613ec59f58a in rte_eal_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1006:6
+    #6 0x5613eb3be5b3 in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4369:9
+    #7 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+SUMMARY: AddressSanitizer: heap-use-after-free
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:210:22
+in rte_intr_fd_get
+Shadow bytes around the buggy address:
+  0x0c0c7fff9170: fa fa fa fa fd fd fd fd fd fd fd fa fa fa fa fa
+  0x0c0c7fff9180: fd fd fd fd fd fd fd fa fa fa fa fa 00 00 00 00
+  0x0c0c7fff9190: 00 00 06 fa fa fa fa fa fd fd fd fd fd fd fd fa
+  0x0c0c7fff91a0: fa fa fa fa fd fd fd fd fd fd fd fa fa fa fa fa
+  0x0c0c7fff91b0: fd fd fd fd fd fd fd fd fa fa fa fa fd fd fd fd
+=3D>0x0c0c7fff91c0: fd fd fd fa fa fa fa fa[fd]fd fd fd fd fd fd fd
+  0x0c0c7fff91d0: fa fa fa fa 00 00 00 00 00 00 00 00 fa fa fa fa
+  0x0c0c7fff91e0: fd fd fd fd fd fd fd fa fa fa fa fa fd fd fd fd
+  0x0c0c7fff91f0: fd fd fd fd fa fa fa fa fd fd fd fd fd fd fd fd
+  0x0c0c7fff9200: fa fa fa fa 00 00 00 00 00 00 00 00 fa fa fa fa
+  0x0c0c7fff9210: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07=20
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+=3D=3D46768=3D=3DABORTING
+
+
+From a quick reading of the cleanup code, the reason is probably that the
+interrupt thread was not killed before releasing the interrupt handler in
+rte_eal_alarm_cleanup() call.
+
+There may be a need for killing the interrupt thread or adding some
+synchronisation point.
+
+This issue probably affects all OS implementations.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17430064360.b6528.2425440
+Date: Wed, 26 Mar 2025 17:27:16 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - use after on interrupt thread during EAL cleanup"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1683">1683</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>use after on interrupt thread during EAL cleanup
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>unspecified
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>core
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>david.marchand&#64;redhat.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">This was caught with ASan in a CI =
+run in my GHA:
+
++ devtools/test-null.sh
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /run/user/1001/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+testpmd: create a new mbuf pool &lt;mb_pool_0&gt;: n=3D2048, size=3D2176, s=
+ocket=3D0
+testpmd: preferred mempool ops selected: ring_mp_mc
+Interactive-mode selected
+Auto-start selected
+Configuring Port 0 (socket 0)
+...
+
+Shutting down port 1...
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D46768=3D=3DERROR: AddressSanitizer: heap-use-after-free on address 0x=
+606000008e44
+at pc 0x5613ec543091 bp 0x7f87065fd1d0 sp 0x7f87065fd1c8
+READ of size 4 at 0x606000008e44 thread T1
+    #0 0x5613ec543090 in rte_intr_fd_get
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:210:22
+    #1 0x5613ec5a350b in eal_alarm_callback
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_alarm.c:125:19
+    #2 0x5613ec5acef1 in eal_intr_process_interrupts
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1026:5
+    #3 0x5613ec5acef1 in eal_intr_handle_interrupts
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1100:7
+    #4 0x5613ec5aba06 in eal_intr_thread_main
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1172:3
+    #5 0x7f870b294ac2 in start_thread nptl/./nptl/pthread_create.c:442:8
+    #6 0x7f870b32684f  misc/../sysdeps/unix/sysv/linux/x86_64/clone3.S:81
+
+0x606000008e44 is located 4 bytes inside of 64-byte region
+[0x606000008e40,0x606000008e80)
+freed by thread T0 here:
+    #0 0x5613eb24ba32 in free
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb8ca32) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec5a1b7f in rte_eal_cleanup
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1333:2
+    #2 0x5613eb3bf7bc in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4583:8
+    #3 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+previously allocated by thread T0 here:
+    #0 0x5613eb24bec8 in __interceptor_calloc
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb8cec8) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec542b56 in rte_intr_instance_alloc
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:51:17
+    #2 0x5613ec5a26ed in rte_eal_alarm_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_alarm.c:66:16
+    #3 0x5613ec59f5a3 in rte_eal_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1011:6
+    #4 0x5613eb3be5b3 in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4369:9
+    #5 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+Thread T1 created by T0 here:
+    #0 0x5613eb23515c in __interceptor_pthread_create
+(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0xb7615c) (BuildId:
+1c1d93dcb4fec8b525f3ed4b97885f75ba17fcb1)
+    #1 0x5613ec59d50c in rte_thread_create
+/home/runner/work/dpdk/dpdk/build/../lib/eal/unix/rte_thread.c:199:8
+    #2 0x5613ec56011b in rte_thread_create_control
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_thread.c:308=
+:8
+    #3 0x5613ec56096c in rte_thread_create_internal_control
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_thread.c:358=
+:9
+    #4 0x5613ec5ab811 in rte_eal_intr_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:1200:8
+    #5 0x5613ec59f58a in rte_eal_init
+/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1006:6
+    #6 0x5613eb3be5b3 in main
+/home/runner/work/dpdk/dpdk/build/../app/test-pmd/testpmd.c:4369:9
+    #7 0x7f870b229d8f in __libc_start_call_main
+csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+
+SUMMARY: AddressSanitizer: heap-use-after-free
+/home/runner/work/dpdk/dpdk/build/../lib/eal/common/eal_common_interrupts.c=
+:210:22
+in rte_intr_fd_get
+Shadow bytes around the buggy address:
+  0x0c0c7fff9170: fa fa fa fa fd fd fd fd fd fd fd fa fa fa fa fa
+  0x0c0c7fff9180: fd fd fd fd fd fd fd fa fa fa fa fa 00 00 00 00
+  0x0c0c7fff9190: 00 00 06 fa fa fa fa fa fd fd fd fd fd fd fd fa
+  0x0c0c7fff91a0: fa fa fa fa fd fd fd fd fd fd fd fa fa fa fa fa
+  0x0c0c7fff91b0: fd fd fd fd fd fd fd fd fa fa fa fa fd fd fd fd
+=3D&gt;0x0c0c7fff91c0: fd fd fd fa fa fa fa fa[fd]fd fd fd fd fd fd fd
+  0x0c0c7fff91d0: fa fa fa fa 00 00 00 00 00 00 00 00 fa fa fa fa
+  0x0c0c7fff91e0: fd fd fd fd fd fd fd fa fa fa fa fa fd fd fd fd
+  0x0c0c7fff91f0: fd fd fd fd fa fa fa fa fd fd fd fd fd fd fd fd
+  0x0c0c7fff9200: fa fa fa fa 00 00 00 00 00 00 00 00 fa fa fa fa
+  0x0c0c7fff9210: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07=20
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+=3D=3D46768=3D=3DABORTING
+
+
+From a quick reading of the cleanup code, the reason is probably that the
+interrupt thread was not killed before releasing the interrupt handler in
+rte_eal_alarm_cleanup() call.
+
+There may be a need for killing the interrupt thread or adding some
+synchronisation point.
+
+This issue probably affects all OS implementations.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1683">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17430064360.b6528.2425440--
