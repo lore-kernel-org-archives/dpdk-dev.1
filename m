@@ -2,76 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304F4C36010
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 19:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93048C36008
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 19:36:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0D34402F1;
-	Wed, 26 Mar 2025 20:20:43 +0100 (CET)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id D3FD94021F
- for <dev@dpdk.org>; Wed, 26 Mar 2025 20:20:42 +0100 (CET)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-2255003f4c6so5741315ad.0
- for <dev@dpdk.org>; Wed, 26 Mar 2025 12:20:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743016842;
- x=1743621642; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=DIQUk15O/C9RIcQvFcTD/tjLbDb1j9kb2Ocsnyt2Ywg=;
- b=mNgdOy20vAe2aTL+WPEqtERaDISj+t2/MXy46S+foVUdMxE+EeHJSd1F2efVZEquDI
- uar05nt4GiEFIFrxfYikVKLDjUtmXwEC4UbYD0TwtZCEZIqhvOc0DjH+dtHLl9ty7MHd
- J8jNJz5KXjmY1TNNRorr9wQdfdQazvXWClJRe+r/3+7OPtSoQdsYtc+Lo9pocqV0w1ej
- 5Unx6m2g1gSpIxzOrutdHo/+rxoMUA88JYj5wRdszGp5MoiASBy6ZW7Bvs5s5k5Bx8UZ
- GFLKBiXqNyVC06gmM7FKZqylVe3jMGYtFQjv63AfYEVSP8gfczpzl4zl9UfWSvJ4mgUD
- lWOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743016842; x=1743621642;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=DIQUk15O/C9RIcQvFcTD/tjLbDb1j9kb2Ocsnyt2Ywg=;
- b=wVa8mgpOUWcCxfpoROxInzX6GIiNXnjxZ2+td/vOWSEkLJII9m66q0HQH+g0JfGGQt
- ildBljtmw6fDXOkE2qt/AC8kuy5mPjaWpjuccVbVBWQ7+Gq9pkbRN0RHakcnvF16qkhO
- h5MI1Y/USW6hKHu53g2xNdbF5wDU3r1Uw0AcuP2lD5xgs96WoflMpiakH8EUw4HNahAB
- GDWfoLn2/57mTvECOGu8VV2hIid/Qp9rMlYcBYolzCwhtfHqcMEHbJ7upV/2STvGOls4
- 413tFgbVweeDf1Ac47oelDZEl7gksihuJmjCBIW4A0BCLrRKYXJi0MMeGVszBsJY9S+R
- rMJw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWPUb2AOL3nbaVuyiso4fQ08HdGiDRwU6BEJcKV8qTaHsShB3Qgi/a+7CWKiNIqHWNMDcg=@dpdk.org
-X-Gm-Message-State: AOJu0Yzp/R4xXMpp/NbF3y1V+HA553jqf6Zyb6QojLbhPvCLkqtLwP9V
- o4sKt7WmXqx5LYMrYc8GwMQZFX4eE5uwhuZTPNbv/wFm//lDYxujoA+ZFbmULhk=
-X-Gm-Gg: ASbGncv7RwP4ybou+qlgp2yY7Zjn9W83aoJIAFlCR+m1PlKsoXJpqcApMJmgM8jQvkj
- QG7iiu1y5/4QiC1tGhyAav4I8wlIqtp3zKOeLWFHsazvPUB/AAMrxO3NreSeFYFzBD1ejoR6/el
- Q/mihAaOHOscFqtWGGI+iVqwjNbE2AqZOdtvge/xH07KbHugLB9rsMBYtIQdGsmnds3pMX6m8/9
- hfVZvzE0bdzKdSNFEahls6c/lvy0zWGIOIbzIeJfSfFhs0USmvZstyXI89tiY9GDEbrXiecurj9
- qpcUkzgQRS4eN0M5GEtYH0UnWDE+snzrbXPPx5HW+ut6xOwOrNfJENyXN+NaWRuSidN013aVWu1
- GZVoss1MKYERVbyce/s72
-X-Google-Smtp-Source: AGHT+IFltztHLL92Kl/+3vEBY4yj9qw3np6uqzpU2tyqKZ4Tjqp06NJBYk2RrQIQ54Ps3N0C6BPFMw==
-X-Received: by 2002:a17:902:ecd0:b0:224:24d3:60f4 with SMTP id
- d9443c01a7336-228048521e8mr11518485ad.15.1743016841851; 
- Wed, 26 Mar 2025 12:20:41 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22780f3a2b5sm113817055ad.50.2025.03.26.12.20.41
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Mar 2025 12:20:41 -0700 (PDT)
-Date: Wed, 26 Mar 2025 12:20:36 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: "Bruce Richardson" <bruce.richardson@intel.com>, <dev@dpdk.org>,
- <techboard@dpdk.org>
-Subject: Re: [RFC PATCH] build: reduce use of AVX compiler flags
-Message-ID: <20250326122036.6cc7c02e@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB76@smartserver.smartshare.dk>
-References: <20250325172215.3360590-1-bruce.richardson@intel.com>
- <Z-QposchDMAmn83I@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB76@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 652714021F;
+	Wed, 26 Mar 2025 20:36:52 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 962BA40156
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 20:36:50 +0100 (CET)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QIeNCY007938
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 12:36:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
+ 8oJsyd5zz9TDVuURgJvzdsbtk2MFyCwgIYLgl1dI/E=; b=f3vRK0dFCUU3WchSN
+ 34cwSdtRn7hBNKYCiEBuw2OLfP41WjfmF9unSd/y9UX10XAr9L07Wq7obcMdz6Bt
+ kgc3VNjjJyAz2qpYoL4O1H4DL0OAmo6vTfgMnkH/1DKFdqctUDbP25pQzG7WqSK+
+ 0LlRe5LFlOv7W97KAl2hlczzsFvBRFVTwAedc5bIgnqZi5hNnPFA5IwZCipijus+
+ IMCS0YDRJji4NAWKeO8j1n+G/cff+TelWEbK267vT3bglVrKuS10e/Q0wtOBRnZD
+ 8r3UKU7PsRu59u/GmrZigZMIRn8c2KoGQGtkr+dwTPC0qWsalYfv0VRTSIRBLOvm
+ q/PbQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45meyk1d7g-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 12:36:49 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 26 Mar 2025 12:36:48 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 26 Mar 2025 12:36:48 -0700
+Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
+ [10.28.164.118])
+ by maili.marvell.com (Postfix) with ESMTP id C437A5C68F3;
+ Wed, 26 Mar 2025 12:36:46 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [RFC v2 0/3] Introduce DMA enqueue/dequeue operations
+Date: Thu, 27 Mar 2025 01:06:33 +0530
+Message-ID: <20250326193637.12557-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250129143649.3887989-1-kshankar@marvell.com>
+References: <20250129143649.3887989-1-kshankar@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=G+wcE8k5 c=1 sm=1 tr=0 ts=67e45751 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=92pHrIvrNbpdVixIpVQA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: ktmN67Bsto33LRs-ThO3FaeWREO2LOvK
+X-Proofpoint-GUID: ktmN67Bsto33LRs-ThO3FaeWREO2LOvK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,75 +73,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 26 Mar 2025 19:06:58 +0100
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Wednesday, 26 March 2025 17.22
-> >=20
-> > On Tue, Mar 25, 2025 at 05:22:15PM +0000, Bruce Richardson wrote: =20
-> > > When doing a build for a target that already has the instruction sets
-> > > for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
-> > > skylake-avx512 '-march' flags, as they are unnecessary. Instead, when
-> > > the default flags produce the desired output, just use them =20
-> > unmodified. =20
-> > >
-> > > Depends-on: series-34915 ("remove component-specific logic for AVX =20
-> > builds") =20
-> > >
-> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > ---
-> > >
-> > > This patchset depends on the previous AVX rework. However, sending it
-> > > separately as a new RFC because it effectively increases the minimum
-> > > compiler versions needed for x86 builds - from GCC 5 to 6, and
-> > > Clang 3.6 to 3.9.
-> > >
-> > > For now, I've just documented that as an additional note in the GSG =
-=20
-> > that =20
-> > > these versions are recommended, but it would be simpler if we could =
-=20
-> > just =20
-> > > set them as the required minimum baseline (at least in the docs).
-> > >
-> > > Feedback on these compiler version requirements welcome.
-> > > =20
-> >=20
-> > +techboard
-> >=20
-> > Ping for a little bit of feedback for this. Are we ok to bump the
-> > minimum
-> > compiler versions as described above, or will I continue with the
-> > approach
-> > in this RFC of keeping the minimum and just recommending the higher
-> > versions for x86 platforms?
-> >=20
-> > For reference GCC 6.1 was released April 2016[1], and, Clang 3.9 was
-> > released Sept 2016[2]
-> >=20
-> > /Bruce
-> >=20
-> > [1] https://gcc.gnu.org/gcc-6/
-> > [2] https://releases.llvm.org/ =20
->=20
-> Considering GCC versions shipped with RHEL [3]...
-> We kind of support RHEL 7, but we already require a newer compiler (GCC 5=
-) than shipped with RHEL 7 (GCC 4.8).
-> RHEL 8 ships with GCC 8, which was released in May 2018 [4]. Maybe we can=
- jump to GCC 8?
->=20
-> BTW, we should also apply the same principle I argued [5] should apply fo=
-r upgrading the Kernel requirements: There should be a need for specific fe=
-ature or similar - which there is with your patch - and the details should =
-be mentioned in the release notes.
->=20
-> [3]: https://access.redhat.com/solutions/19458
-> [4]: https://gcc.gnu.org/gcc-8/
-> [5]: https://inbox.dpdk.org/dev/CAMEVEZutf4sJ=3DEQFONw_bJW0tGTWqTbF_Tk_y3=
-8qzBLccco46Q@mail.gmail.com/T/#me7c8f1dbe4331ccf232d43512d6ddb51458c568a
->=20
+Introduce DMA enqueue/dequeue operations to the DMA device library.
 
-RHEL 7 reached end of life on June 30, 2024.
-DPDK need no longer support it on future versions.
+The enqueue/dequeue operations allow applications to communicate with the
+DMA device using the rte_dma_op structure, providing a more flexible and
+efficient way to manage DMA operations.
+
+The programming model for the enqueue/dequeue operations is as follows:
+
+* Query DMA devices capability for RTE_DMA_CAPA_OPS_ENQ_DEQ through
+  rte_dma_info::dev_capa.
+* Enable enqueue/dequeue operations on DMA device by enabling
+  rte_dma_conf::enable_enq_deq during device configuration.
+* Allocate a mempool for rte_dma_ops with object size of
+  rte_dma_op + (sizeof(struct rte_dma_sge) * rte_dma_info::max_sges * 2).
+* Configure vchans and start the dma device.
+* Get an rte_dma_op from the mempool, fill it with the necessary
+  information and use rte_dma_enqueue() to enqueue the operation.
+* Call rte_dma_dequeue() operation to get the array of finished operations.
+* Free the rte_dma_op back to the mempool.
+
+The enqueue dequeue operations are not compatible with rte_dma_copy,
+rte_dma_copy_sg, rte_dma_fill, rte_dma_submit, rte_dma_completed and
+rte_dma_completed_status range of APIs.
+
+Pavan Nikhilesh (3):
+  dmadev: add enqueue dequeue operations
+  dma/cnxk: implement enqueue dequeue ops
+  eventdev: refactor DMA adapter ops
+
+ app/test-eventdev/test_perf_common.c          |   6 +-
+ app/test-eventdev/test_perf_common.h          |   4 +-
+ app/test/test_event_dma_adapter.c             |   6 +-
+ .../prog_guide/eventdev/event_dma_adapter.rst |   6 +-
+ drivers/dma/cnxk/cnxk_dmadev.c                |  27 +++-
+ drivers/dma/cnxk/cnxk_dmadev.h                |   7 +
+ drivers/dma/cnxk/cnxk_dmadev_fp.c             | 152 +++++++++++++++++-
+ lib/dmadev/rte_dmadev.c                       |  18 +++
+ lib/dmadev/rte_dmadev.h                       | 145 +++++++++++++++++
+ lib/dmadev/rte_dmadev_core.h                  |  10 ++
+ lib/dmadev/rte_dmadev_trace_fp.h              |  20 +++
+ lib/dmadev/rte_dmadev_trace_points.c          |   6 +
+ lib/eventdev/rte_event_dma_adapter.c          |  18 +--
+ lib/eventdev/rte_event_dma_adapter.h          |  57 -------
+ 14 files changed, 397 insertions(+), 85 deletions(-)
+
+--
+2.43.0
 
