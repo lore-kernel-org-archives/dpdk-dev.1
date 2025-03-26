@@ -2,48 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594AEC3600B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFECC3600B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Mar 2025 16:06:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 772FF406FF;
-	Wed, 26 Mar 2025 17:05:58 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BAD3340A6D;
+	Wed, 26 Mar 2025 17:05:59 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 157CA4066E;
- Wed, 26 Mar 2025 17:05:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 513EB4069D
+ for <dev@dpdk.org>; Wed, 26 Mar 2025 17:05:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743005156; x=1774541156;
+ t=1743005158; x=1774541158;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Dt/5HkJlz/PyeGj2Ssqd1lfYkVoZ8yPCgnBj5IZvYco=;
- b=oCttbsheYeKQlldmpSKMlrixmAW7O9a4qLXfSKjgUVwv/yASttXju2Z0
- JQ7X/fOVHeV19+tV2xiJR1fHa7WMr+s/FwXPOCEu31rYCqF9KaXb0Osq4
- jXpQtJepThUjWmcDwXaGm6OG11snmkiAPsPbnHGKioMVey3qWfvKWAabg
- VWcQKHng5FR6Sm4MOsBAiV5GkDi41GHC0dVwJRYHNLzaFilw3n1wOLSpQ
- JsLcIHXatghtTAwatPBNw5YA9E0e7xXgWjrAo+m5ADMauIQJuy9YrQk60
- pWtSYKoUi9DBOiE3vwjG/fQ4vbJDZI3s4H4Lx+qsZFD3U9uzoqh+rtL1j Q==;
-X-CSE-ConnectionGUID: OvICl3gbRx+xeEk2g0tL6Q==
-X-CSE-MsgGUID: /1lcyGCnQdCPJ7fP3jgj8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="54954994"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="54954994"
+ bh=ell4aqzGb8sclHsIxrYJMXIhfB3sIOUSfbftg5teMc4=;
+ b=mlIPZqEU6dohOV0MqGLiG2BqUiWlp3/cIFYL1UdebJ7rVOP5rqHIjg0s
+ l61UH1/5wJFTVROQF7t0T0A1mDNRjuXL8jIiRgGmz1eRDCg6Ryi1T1hdm
+ dE1UezK99tTRD+geFijFULA9M6WWDNQwZChoabqKauvft0TRyh7C8jgz9
+ Urcj/1Edxmo4kYMJ7Dby0DLog3xEhJYww3m2a7+RXOXYeWYg+R7eluCXi
+ 2mFXWJuB6qbob9+WO8IIRuCW099V8Qst/ghSx3VbH7nnp0df2ePDPzx9c
+ CCGfp7XUBZS7eNjcwRem+f7n/xCbOSDsVd4CLT9LfLauqxgvZ1B4+MkGB A==;
+X-CSE-ConnectionGUID: bJBfpQtmT72LaXu0JaU5LQ==
+X-CSE-MsgGUID: xsyteAdcRGW4LM0S59G9KA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="54955001"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="54955001"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Mar 2025 09:05:56 -0700
-X-CSE-ConnectionGUID: v+UaBYmkQpalpgunG1VeLQ==
-X-CSE-MsgGUID: bR/mF83eRJKO9qDJra+81w==
+ 26 Mar 2025 09:05:57 -0700
+X-CSE-ConnectionGUID: Q9AG7loSSQ6ecffs8DKBvg==
+X-CSE-MsgGUID: ViPfemR+QvWy5T5T6flw6g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="125280786"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; d="scan'208";a="125280793"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by fmviesa010.fm.intel.com with ESMTP; 26 Mar 2025 09:05:54 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 26 Mar 2025 09:05:56 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Ian Stokes <ian.stokes@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
- Heqing Zhu <heqing.zhu@intel.com>, Jijiang Liu <jijiang.liu@intel.com>,
- Jing Chen <jing.d.chen@intel.com>, Cunming Liang <cunming.liang@intel.com>
-Subject: [PATCH v2 6/8] net/i40e/base: fix compiler warnings
-Date: Wed, 26 Mar 2025 16:05:36 +0000
-Message-ID: <20250326160539.1316499-7-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v2 7/8] net/ice/base: reduce warnings for unused variables
+Date: Wed, 26 Mar 2025 16:05:37 +0000
+Message-ID: <20250326160539.1316499-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250326160539.1316499-1-bruce.richardson@intel.com>
 References: <20250326155230.1315056-1-bruce.richardson@intel.com>
@@ -63,56 +61,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a single-line fix to the base code, and then the remaining two
-compiler warning disable flags can be removed from the driver base code
-build file.
-
-Fixes: 8db9e2a1b232 ("i40e: base driver")
-Cc: stable@dpdk.org
+Improve base code macros to reduce the number of issues with unused
+variables in the code. Issues still remain with unused-but-set
+variables, but completely unused variable warnings are eliminated.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/base/i40e_diag.c |  2 +-
- drivers/net/intel/i40e/base/meson.build | 13 +------------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ drivers/net/intel/ice/base/ice_osdep.h  | 6 +++---
+ drivers/net/intel/ice/base/ice_switch.c | 2 --
+ drivers/net/intel/ice/base/ice_type.h   | 2 +-
+ drivers/net/intel/ice/base/meson.build  | 1 -
+ drivers/net/intel/ice/ice_fdir_filter.c | 2 +-
+ 5 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/base/i40e_diag.c b/drivers/net/intel/i40e/base/i40e_diag.c
-index 4ca102cdd5..71b2e53e85 100644
---- a/drivers/net/intel/i40e/base/i40e_diag.c
-+++ b/drivers/net/intel/i40e/base/i40e_diag.c
-@@ -34,7 +34,7 @@ static enum i40e_status_code i40e_diag_reg_pattern_test(struct i40e_hw *hw,
- {
- 	const u32 patterns[] = {0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFF};
- 	u32 pat, val, orig_val;
--	int i;
-+	unsigned int i;
+diff --git a/drivers/net/intel/ice/base/ice_osdep.h b/drivers/net/intel/ice/base/ice_osdep.h
+index 7b96fcde03..ad6cde9896 100644
+--- a/drivers/net/intel/ice/base/ice_osdep.h
++++ b/drivers/net/intel/ice/base/ice_osdep.h
+@@ -196,9 +196,9 @@ struct __rte_packed_begin ice_virt_mem {
+ 	u32 size;
+ } __rte_packed_end;
  
- 	orig_val = rd32(hw, reg);
- 	for (i = 0; i < ARRAY_SIZE(patterns); i++) {
-diff --git a/drivers/net/intel/i40e/base/meson.build b/drivers/net/intel/i40e/base/meson.build
-index 2648e5d0c4..766383101b 100644
---- a/drivers/net/intel/i40e/base/meson.build
-+++ b/drivers/net/intel/i40e/base/meson.build
-@@ -11,18 +11,7 @@ sources = [
-         'i40e_nvm.c',
- ]
+-#define ice_malloc(h, s)    rte_zmalloc(NULL, s, 0)
+-#define ice_calloc(h, c, s) rte_calloc(NULL, c, s, 0)
+-#define ice_free(h, m)         rte_free(m)
++#define ice_malloc(h, s)    ((void)h, rte_zmalloc(NULL, s, 0))
++#define ice_calloc(h, c, s) ((void)h, rte_calloc(NULL, c, s, 0))
++#define ice_free(h, m)      ((void)h, rte_free(m))
  
--error_cflags = [
--        '-Wno-sign-compare',
--        '-Wno-strict-aliasing',
--]
--c_args = cflags
--foreach flag: error_cflags
--    if cc.has_argument(flag)
--        c_args += flag
--    endif
--endforeach
--
- base_lib = static_library('i40e_base', sources,
-     dependencies: static_rte_eal,
--    c_args: c_args)
-+    c_args: cflags)
- base_objs = base_lib.extract_all_objects(recursive: true)
+ #define ice_memset(a, b, c, d) memset((a), (b), (c))
+ #define ice_memcpy(a, b, c, d) rte_memcpy((a), (b), (c))
+diff --git a/drivers/net/intel/ice/base/ice_switch.c b/drivers/net/intel/ice/base/ice_switch.c
+index a3786961e6..468a9f055d 100644
+--- a/drivers/net/intel/ice/base/ice_switch.c
++++ b/drivers/net/intel/ice/base/ice_switch.c
+@@ -8190,7 +8190,6 @@ ice_add_adv_recipe(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
+ 	struct ice_sw_recipe *rm;
+ 	u8 i;
+ 	int status = ICE_SUCCESS;
+-	u16 cnt;
+ 
+ 	if (!ice_is_prof_rule(rinfo->tun_type) && !lkups_cnt)
+ 		return ICE_ERR_PARAM;
+@@ -9795,7 +9794,6 @@ ice_rem_adv_rule(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
+ 	bool remove_rule = false;
+ 	struct ice_lock *rule_lock; /* Lock to protect filter rule list */
+ 	u16 i, rid, vsi_handle;
+-	bool is_add = false;
+ 	int status = ICE_SUCCESS;
+ 
+ 	ice_memset(&lkup_exts, 0, sizeof(lkup_exts), ICE_NONDMA_MEM);
+diff --git a/drivers/net/intel/ice/base/ice_type.h b/drivers/net/intel/ice/base/ice_type.h
+index 35f832eb9f..297a5ea890 100644
+--- a/drivers/net/intel/ice/base/ice_type.h
++++ b/drivers/net/intel/ice/base/ice_type.h
+@@ -153,7 +153,7 @@ static inline u32 ice_round_to_num(u32 N, u32 R)
+ #define ICE_DBG_USER		BIT_ULL(31)
+ #define ICE_DBG_ALL		0xFFFFFFFFFFFFFFFFULL
+ 
+-#define __ALWAYS_UNUSED
++#define __ALWAYS_UNUSED __rte_unused
+ 
+ #define IS_ETHER_ADDR_EQUAL(addr1, addr2) \
+ 	(((bool)((((u16 *)(addr1))[0] == ((u16 *)(addr2))[0]))) && \
+diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/ice/base/meson.build
+index 38d092c370..e7ba9c34bc 100644
+--- a/drivers/net/intel/ice/base/meson.build
++++ b/drivers/net/intel/ice/base/meson.build
+@@ -39,7 +39,6 @@ if is_ms_compiler
+ else
+     error_cflags = [
+             '-Wno-unused-but-set-variable',
+-            '-Wno-unused-variable',
+             '-Wno-unused-parameter',
+     ]
+ endif
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index 940fe171b6..2ff0090aca 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -1090,7 +1090,7 @@ ice_fdir_input_set_conf(struct ice_pf *pf, enum ice_fltr_ptype flow,
+ 		return -EINVAL;
+ 
+ 	seg_tun = (struct ice_flow_seg_info *)
+-		ice_malloc(hw, sizeof(*seg_tun) * ICE_FD_HW_SEG_MAX);
++		ice_malloc(pf->adapter->hw, sizeof(*seg_tun) * ICE_FD_HW_SEG_MAX);
+ 	if (!seg_tun) {
+ 		PMD_DRV_LOG(ERR, "No memory can be allocated");
+ 		return -ENOMEM;
 -- 
 2.45.2
 
