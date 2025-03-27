@@ -2,43 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B4DC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 09:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E9FC3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 10:30:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 624464066C;
-	Thu, 27 Mar 2025 10:32:03 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 20E5040275
- for <dev@dpdk.org>; Thu, 27 Mar 2025 10:32:02 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E22C121733;
- Thu, 27 Mar 2025 10:32:01 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v2 1/2] eal: fix uncheck worker ID
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Thu, 27 Mar 2025 10:32:02 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB7A@smartserver.smartshare.dk>
-In-Reply-To: <20250327090116.3357137-2-huangdengdui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 990FB40687;
+	Thu, 27 Mar 2025 11:30:43 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 392D64066C;
+ Thu, 27 Mar 2025 11:30:40 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZNfwY6stnz6M4fk;
+ Thu, 27 Mar 2025 18:27:09 +0800 (CST)
+Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
+ by mail.maildlp.com (Postfix) with ESMTPS id CE5231407DB;
+ Thu, 27 Mar 2025 18:30:39 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 27 Mar 2025 11:30:39 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 27 Mar 2025 11:30:39 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "bluca@debian.org" <bluca@debian.org>, "stable@dpdk.org"
+ <stable@dpdk.org>, Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ "David Christensen" <drc@linux.ibm.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: RE: [PATCH] acl: fix build with GCC 15 on aarch64
+Thread-Topic: [PATCH] acl: fix build with GCC 15 on aarch64
+Thread-Index: AQHbnjt5qhsCVMI9iE2kqI1U+hvMxLOGyZmA
+Date: Thu, 27 Mar 2025 10:30:39 +0000
+Message-ID: <182c1c9cc7714a649a8e098d7311b74f@huawei.com>
+References: <20250326103928.1189243-1-david.marchand@redhat.com>
+In-Reply-To: <20250326103928.1189243-1-david.marchand@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 1/2] eal: fix uncheck worker ID
-Thread-Index: Adue9tBED5ua1VQcRgyiH1ywJzeU5wAAS67g
-References: <20250321040316.104126-1-huangdengdui@huawei.com>
- <20250327090116.3357137-1-huangdengdui@huawei.com>
- <20250327090116.3357137-2-huangdengdui@huawei.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Dengdui Huang" <huangdengdui@huawei.com>,
-	<dev@dpdk.org>
-Cc: <honest.jiang@foxmail.com>, <fengchengwen@huawei.com>,
- <roretzla@linux.microsoft.com>, <lihuisong@huawei.com>,
- <haijie1@huawei.com>, <liuyonglong@huawei.com>,
- <stephen@networkplumber.org>
+x-originating-ip: [10.126.172.251]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,58 +58,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Dengdui Huang [mailto:huangdengdui@huawei.com]
-> Sent: Thursday, 27 March 2025 10.01
->=20
-> The worker_id may come from user input.
-> So it is necessary to verify it.
->=20
-> Fixes: a95d70547c57 ("eal: factorize lcore main loop")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
-> ---
->  lib/eal/common/eal_common_launch.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/lib/eal/common/eal_common_launch.c
-> b/lib/eal/common/eal_common_launch.c
-> index 5320c3bd3c..76313d5cdf 100644
-> --- a/lib/eal/common/eal_common_launch.c
-> +++ b/lib/eal/common/eal_common_launch.c
-> @@ -35,6 +35,9 @@ rte_eal_remote_launch(lcore_function_t *f, void =
-*arg,
-> unsigned int worker_id)
->  {
->  	int rc =3D -EBUSY;
->=20
-
-Also check the lcore_id:
-+	if (unlikely(lcore_id >=3D RTE_MAX_LCORE))
-+		return -EINVAL;
-+
-
-> +	if (!rte_lcore_has_role(worker_id, ROLE_RTE))
-> +		return -EINVAL;
-> +
-
-Although rte_lcore_has_role() checks the lcore_id and returns -EINVAL if =
-invalid, "if (!-EINVAL))" will not take the branch to return -EINVAL =
-here. So this check alone does not suffice. You could change it to "if =
-(rte_lcore_has_role(worker_id, ROLE_RTE) <=3D 0) return -EINVAL;".
-However, I prefer the separate lcore_id check, as mentioned above, =
-rather than changing this check.
-
->  	/* Check if the worker is in 'WAIT' state. Use acquire order
->  	 * since 'state' variable is used as the guard variable.
->  	 */
-> --
-> 2.33.0
-
-<feature creep>
-While you are at it, please also add "if (unlikely(lcore_id >=3D =
-RTE_MAX_LCORE)) return -EINVAL;" checks in the other functions in =
-eal_common_lcore.c where lcore_id comes from user input and the check is =
-missing.
-</feature creep>
-
+DQoNCj4gDQo+IENhdWdodCBpbiBPQlMgZm9yIEZlZG9yYSBSYXdoaWRlIG9uIGFhcmNoNjQ6DQo+
+IA0KPiBbICAxOThzXSBJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vbGliL2FjbC9hY2xfcnVuX25l
+b24uaDo3LA0KPiBbICAxOThzXSAgICAgICAgICAgICAgICAgIGZyb20gLi4vbGliL2FjbC9hY2xf
+cnVuX25lb24uYzo1Og0KPiBbICAxOThzXSBJbiBmdW5jdGlvbiDigJhhbGxvY19jb21wbGV0aW9u
+4oCZLA0KPiBbICAxOThzXSAgICAgaW5saW5lZCBmcm9tIOKAmGFjbF9zdGFydF9uZXh0X3RyaWXi
+gJkgYXQNCj4gCS4uL2xpYi9hY2wvYWNsX3J1bi5oOjE0MDoyNCwNCj4gWyAgMTk4c10gICAgIGlu
+bGluZWQgZnJvbSDigJhzZWFyY2hfbmVvbl80LmlzcmHigJkgYXQNCj4gCS4uL2xpYi9hY2wvYWNs
+X3J1bl9uZW9uLmg6MjM5OjIwOg0KPiBbICAxOThzXSAuLi9saWIvYWNsL2FjbF9ydW4uaDo5Mzoy
+NTogZXJyb3I6IOKAmGNtcGx04oCZIG1heSBiZSB1c2VkDQo+IAl1bmluaXRpYWxpemVkIFstV2Vy
+cm9yPW1heWJlLXVuaW5pdGlhbGl6ZWRdDQo+IFsgIDE5OHNdICAgIDkzIHwgICAgICAgICAgICAg
+ICAgIGlmIChwW25dLmNvdW50ID09IDApIHsNCj4gWyAgMTk4c10gICAgICAgfCAgICAgICAgICAg
+ICAgICAgICAgIH5+fn5efn5+fn4NCj4gWyAgMTk4c10gLi4vbGliL2FjbC9hY2xfcnVuX25lb24u
+aDogSW4gZnVuY3Rpb24g4oCYc2VhcmNoX25lb25fNC5pc3Jh4oCZOg0KPiBbICAxOThzXSAuLi9s
+aWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzMDoyNzogbm90ZTog4oCYY21wbHTigJkgZGVjbGFyZWQg
+aGVyZQ0KPiBbICAxOThzXSAgIDIzMCB8ICAgICAgICAgc3RydWN0IGNvbXBsZXRpb24gY21wbHRb
+NF07DQo+IFsgIDE5OHNdICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+fg0K
+PiANCj4gVGhlIGNvZGUgd2FzIHJlc2V0dGluZyBzZXF1ZW50aWFsbHkgY21wbFtdLmNvdW50IGF0
+IHRoZSBleGFjdCBpbmRleCB0aGF0DQo+IGxhdGVyIGNhbGwgdG8gYWxsb2NfY29tcGxldGlvbiB1
+c2VzLg0KPiBXaGlsZSB0aGlzIGNvZGUgc2VlbXMgY29ycmVjdCwgR0NDIDE1IGRvZXMgbm90IHVu
+ZGVyc3RhbmQgdGhpcyAocHJvYmFibHkNCj4gd2hlbiBhcHBseWluZyBzb21lIG9wdGltaXNhdGlv
+bnMpLg0KPiANCj4gSW5zdGVhZCwgcmVzZXQgY21wbFtdLmNvdW50IGFsbCBhdCBvbmNlIGluIGFj
+bF9zZXRfZmxvdywgYW5kIGNsZWFudXAgdGhlDQo+IHZhcmlvdXMgdmVjdG9yaXplZCBpbXBsZW1l
+bnRhdGlvbnMgYWNjb3JkaW5nbHkuDQo+IA0KPiBCdWd6aWxsYSBJRDogMTY3OA0KPiBDYzogc3Rh
+YmxlQGRwZGsub3JnDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQu
+bWFyY2hhbmRAcmVkaGF0LmNvbT4NCj4gLS0tDQo+ICBsaWIvYWNsL2FjbF9ydW4uaCAgICAgICAg
+IHwgNSArKysrKw0KPiAgbGliL2FjbC9hY2xfcnVuX2FsdGl2ZWMuaCB8IDggKystLS0tLS0NCj4g
+IGxpYi9hY2wvYWNsX3J1bl9hdngyLmggICAgfCA0ICstLS0NCj4gIGxpYi9hY2wvYWNsX3J1bl9u
+ZW9uLmggICAgfCA4ICsrLS0tLS0tDQo+ICBsaWIvYWNsL2FjbF9ydW5fc2NhbGFyLmMgIHwgNCAr
+LS0tDQo+ICBsaWIvYWNsL2FjbF9ydW5fc3NlLmggICAgIHwgOCArKy0tLS0tLQ0KPiAgNiBmaWxl
+cyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
+LS1naXQgYS9saWIvYWNsL2FjbF9ydW4uaCBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+IGluZGV4IDdm
+MDkyNDEzY2QuLjlmZDNlNjAwMjEgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bi5oDQo+
+ICsrKyBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+IEBAIC0xNzYsNiArMTc2LDggQEAgYWNsX3NldF9m
+bG93KHN0cnVjdCBhY2xfZmxvd19kYXRhICpmbG93cywgc3RydWN0IGNvbXBsZXRpb24gKmNtcGx0
+LA0KPiAgCXVpbnQzMl90IGNtcGx0X3NpemUsIGNvbnN0IHVpbnQ4X3QgKipkYXRhLCB1aW50MzJf
+dCAqcmVzdWx0cywNCj4gIAl1aW50MzJfdCBkYXRhX251bSwgdWludDMyX3QgY2F0ZWdvcmllcywg
+Y29uc3QgdWludDY0X3QgKnRyYW5zKQ0KPiAgew0KPiArCXVuc2lnbmVkIGludCBpOw0KPiArDQo+
+ICAJZmxvd3MtPm51bV9wYWNrZXRzID0gMDsNCj4gIAlmbG93cy0+c3RhcnRlZCA9IDA7DQo+ICAJ
+Zmxvd3MtPnRyaWUgPSAwOw0KPiBAQCAtMTg3LDYgKzE4OSw5IEBAIGFjbF9zZXRfZmxvdyhzdHJ1
+Y3QgYWNsX2Zsb3dfZGF0YSAqZmxvd3MsIHN0cnVjdCBjb21wbGV0aW9uICpjbXBsdCwNCj4gIAlm
+bG93cy0+ZGF0YSA9IGRhdGE7DQo+ICAJZmxvd3MtPnJlc3VsdHMgPSByZXN1bHRzOw0KPiAgCWZs
+b3dzLT50cmFucyA9IHRyYW5zOw0KPiArDQo+ICsJZm9yIChpID0gMDsgaSA8IGNtcGx0X3NpemU7
+IGkrKykNCj4gKwkJY21wbHRbaV0uY291bnQgPSAwOw0KPiAgfQ0KPiANCj4gIHR5cGVkZWYgdm9p
+ZCAoKnJlc29sdmVfcHJpb3JpdHlfdCkNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wvYWNsX3J1bl9h
+bHRpdmVjLmggYi9saWIvYWNsL2FjbF9ydW5fYWx0aXZlYy5oDQo+IGluZGV4IDJkMzk4ZmZkZWQu
+LmQ1Y2NkYjk0ZjAgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9hbHRpdmVjLmgNCj4g
+KysrIGIvbGliL2FjbC9hY2xfcnVuX2FsdGl2ZWMuaA0KPiBAQCAtMTk5LDEwICsxOTksOCBAQCBz
+ZWFyY2hfYWx0aXZlY184KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50
+OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBs
+dCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCXRvdGFsX3BhY2tldHMsIGNhdGVnb3JpZXMsIGN0eC0+
+dHJhbnNfdGFibGUpOw0KPiANCj4gLQlmb3IgKG4gPSAwOyBuIDwgTUFYX1NFQVJDSEVTX0FMVElW
+RUM4OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4g
+PCBNQVhfU0VBUkNIRVNfQUxUSVZFQzg7IG4rKykNCj4gIAkJaW5kZXhfYXJyYXlbbl0gPSBhY2xf
+c3RhcnRfbmV4dF90cmllKCZmbG93cywgcGFybXMsIG4sIGN0eCk7DQo+IC0JfQ0KPiANCj4gIAkg
+LyogQ2hlY2sgZm9yIGFueSBtYXRjaGVzLiAqLw0KPiAgCWFjbF9tYXRjaF9jaGVja194NCgwLCBj
+dHgsIHBhcm1zLCAmZmxvd3MsICh1aW50NjRfdCAqKSZpbmRleF9hcnJheVswXSk7DQo+IEBAIC0y
+NzAsMTAgKzI2OCw4IEBAIHNlYXJjaF9hbHRpdmVjXzQoY29uc3Qgc3RydWN0IHJ0ZV9hY2xfY3R4
+ICpjdHgsIGNvbnN0IHVpbnQ4X3QgKipkYXRhLA0KPiAgCWFjbF9zZXRfZmxvdygmZmxvd3MsIGNt
+cGx0LCBSVEVfRElNKGNtcGx0KSwgZGF0YSwgcmVzdWx0cywNCj4gIAkJdG90YWxfcGFja2V0cywg
+Y2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCBN
+QVhfU0VBUkNIRVNfQUxUSVZFQzQ7IG4rKykgew0KPiAtCQljbXBsdFtuXS5jb3VudCA9IDA7DQo+
+ICsJZm9yIChuID0gMDsgbiA8IE1BWF9TRUFSQ0hFU19BTFRJVkVDNDsgbisrKQ0KPiAgCQlpbmRl
+eF9hcnJheVtuXSA9IGFjbF9zdGFydF9uZXh0X3RyaWUoJmZsb3dzLCBwYXJtcywgbiwgY3R4KTsN
+Cj4gLQl9DQo+IA0KPiAgCS8qIENoZWNrIGZvciBhbnkgbWF0Y2hlcy4gKi8NCj4gIAlhY2xfbWF0
+Y2hfY2hlY2tfeDQoMCwgY3R4LCBwYXJtcywgJmZsb3dzLCBpbmRleF9hcnJheSk7DQo+IGRpZmYg
+LS1naXQgYS9saWIvYWNsL2FjbF9ydW5fYXZ4Mi5oIGIvbGliL2FjbC9hY2xfcnVuX2F2eDIuaA0K
+PiBpbmRleCAwYjg5NjdmMjJlLi5lMDY5ZmI4NWIyIDEwMDY0NA0KPiAtLS0gYS9saWIvYWNsL2Fj
+bF9ydW5fYXZ4Mi5oDQo+ICsrKyBiL2xpYi9hY2wvYWNsX3J1bl9hdngyLmgNCj4gQEAgLTE3MSwx
+MCArMTcxLDggQEAgc2VhcmNoX2F2eDJ4MTYoY29uc3Qgc3RydWN0IHJ0ZV9hY2xfY3R4ICpjdHgs
+IGNvbnN0IHVpbnQ4X3QgKipkYXRhLA0KPiAgCWFjbF9zZXRfZmxvdygmZmxvd3MsIGNtcGx0LCBS
+VEVfRElNKGNtcGx0KSwgZGF0YSwgcmVzdWx0cywNCj4gIAkJdG90YWxfcGFja2V0cywgY2F0ZWdv
+cmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCBSVEVfRElN
+KGNtcGx0KTsgbisrKSB7DQo+IC0JCWNtcGx0W25dLmNvdW50ID0gMDsNCj4gKwlmb3IgKG4gPSAw
+OyBuIDwgUlRFX0RJTShjbXBsdCk7IG4rKykNCj4gIAkJaW5kZXhfYXJyYXlbbl0gPSBhY2xfc3Rh
+cnRfbmV4dF90cmllKCZmbG93cywgcGFybXMsIG4sIGN0eCk7DQo+IC0JfQ0KPiANCj4gIAl0MCA9
+IF9tbTI1Nl9zZXRfZXBpNjR4KGluZGV4X2FycmF5WzVdLCBpbmRleF9hcnJheVs0XSwNCj4gIAkJ
+aW5kZXhfYXJyYXlbMV0sIGluZGV4X2FycmF5WzBdKTsNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wv
+YWNsX3J1bl9uZW9uLmggYi9saWIvYWNsL2FjbF9ydW5fbmVvbi5oDQo+IGluZGV4IDYzMDc0Zjg3
+MWQuLjNiOWJkMGNjMzkgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9uZW9uLmgNCj4g
+KysrIGIvbGliL2FjbC9hY2xfcnVuX25lb24uaA0KPiBAQCAtMTcyLDEwICsxNzIsOCBAQCBzZWFy
+Y2hfbmVvbl84KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50OF90ICoq
+ZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBsdCksIGRh
+dGEsIHJlc3VsdHMsDQo+ICAJCSAgICAgdG90YWxfcGFja2V0cywgY2F0ZWdvcmllcywgY3R4LT50
+cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCA4OyBuKyspIHsNCj4gLQkJY21w
+bHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCA4OyBuKyspDQo+ICAJCWluZGV4
+X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgmZmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0K
+PiAtCX0NCj4gDQo+ICAJIC8qIENoZWNrIGZvciBhbnkgbWF0Y2hlcy4gKi8NCj4gIAlhY2xfbWF0
+Y2hfY2hlY2tfeDQoMCwgY3R4LCBwYXJtcywgJmZsb3dzLCAmaW5kZXhfYXJyYXlbMF0pOw0KPiBA
+QCAtMjM0LDEwICsyMzIsOCBAQCBzZWFyY2hfbmVvbl80KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0
+eCAqY3R4LCBjb25zdCB1aW50OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBj
+bXBsdCwgUlRFX0RJTShjbXBsdCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCSAgICAgdG90YWxfcGFj
+a2V0cywgY2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7
+IG4gPCA0OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7
+IG4gPCA0OyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgm
+Zmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJLyogQ2hlY2sgZm9yIGFueSBt
+YXRjaGVzLiAqLw0KPiAgCWFjbF9tYXRjaF9jaGVja194NCgwLCBjdHgsIHBhcm1zLCAmZmxvd3Ms
+IGluZGV4X2FycmF5KTsNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wvYWNsX3J1bl9zY2FsYXIuYyBi
+L2xpYi9hY2wvYWNsX3J1bl9zY2FsYXIuYw0KPiBpbmRleCAzZDYxZTc5NDA5Li5hMzY2MWIxYjZi
+IDEwMDY0NA0KPiAtLS0gYS9saWIvYWNsL2FjbF9ydW5fc2NhbGFyLmMNCj4gKysrIGIvbGliL2Fj
+bC9hY2xfcnVuX3NjYWxhci5jDQo+IEBAIC0xMjEsMTAgKzEyMSw4IEBAIHJ0ZV9hY2xfY2xhc3Np
+Znlfc2NhbGFyKGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50OF90ICoq
+ZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBsdCksIGRh
+dGEsIHJlc3VsdHMsIG51bSwNCj4gIAkJY2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+
+IA0KPiAtCWZvciAobiA9IDA7IG4gPCBNQVhfU0VBUkNIRVNfU0NBTEFSOyBuKyspIHsNCj4gLQkJ
+Y21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCBNQVhfU0VBUkNIRVNfU0NB
+TEFSOyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgmZmxv
+d3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJdHJhbnNpdGlvbjAgPSBpbmRleF9h
+cnJheVswXTsNCj4gIAl0cmFuc2l0aW9uMSA9IGluZGV4X2FycmF5WzFdOw0KPiBkaWZmIC0tZ2l0
+IGEvbGliL2FjbC9hY2xfcnVuX3NzZS5oIGIvbGliL2FjbC9hY2xfcnVuX3NzZS5oDQo+IGluZGV4
+IDkzMjg2YTJjMzguLjRlYzgxOWEyMTUgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9z
+c2UuaA0KPiArKysgYi9saWIvYWNsL2FjbF9ydW5fc3NlLmgNCj4gQEAgLTIwNSwxMCArMjA1LDgg
+QEAgc2VhcmNoX3NzZV84KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50
+OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBs
+dCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCXRvdGFsX3BhY2tldHMsIGNhdGVnb3JpZXMsIGN0eC0+
+dHJhbnNfdGFibGUpOw0KPiANCj4gLQlmb3IgKG4gPSAwOyBuIDwgTUFYX1NFQVJDSEVTX1NTRTg7
+IG4rKykgew0KPiAtCQljbXBsdFtuXS5jb3VudCA9IDA7DQo+ICsJZm9yIChuID0gMDsgbiA8IE1B
+WF9TRUFSQ0hFU19TU0U4OyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25l
+eHRfdHJpZSgmZmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJLyoNCj4gIAkg
+KiBpbmRpY2VzMSBjb250YWlucyBpbmRleF9hcnJheVswLDFdDQo+IEBAIC0yOTMsMTAgKzI5MSw4
+IEBAIHNlYXJjaF9zc2VfNChjb25zdCBzdHJ1Y3QgcnRlX2FjbF9jdHggKmN0eCwgY29uc3QgdWlu
+dDhfdCAqKmRhdGEsDQo+ICAJYWNsX3NldF9mbG93KCZmbG93cywgY21wbHQsIFJURV9ESU0oY21w
+bHQpLCBkYXRhLCByZXN1bHRzLA0KPiAgCQl0b3RhbF9wYWNrZXRzLCBjYXRlZ29yaWVzLCBjdHgt
+PnRyYW5zX3RhYmxlKTsNCj4gDQo+IC0JZm9yIChuID0gMDsgbiA8IE1BWF9TRUFSQ0hFU19TU0U0
+OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCBN
+QVhfU0VBUkNIRVNfU1NFNDsgbisrKQ0KPiAgCQlpbmRleF9hcnJheVtuXSA9IGFjbF9zdGFydF9u
+ZXh0X3RyaWUoJmZsb3dzLCBwYXJtcywgbiwgY3R4KTsNCj4gLQl9DQo+IA0KPiAgCWluZGljZXMx
+ID0gX21tX2xvYWR1X3NpMTI4KCh4bW1fdCAqKSAmaW5kZXhfYXJyYXlbMF0pOw0KPiAgCWluZGlj
+ZXMyID0gX21tX2xvYWR1X3NpMTI4KCh4bW1fdCAqKSAmaW5kZXhfYXJyYXlbMl0pOw0KPiAtLQ0K
+DQpMR1RNLiBBbHNvIHJ1biBhIHF1aWNrIHRlc3Qgb24gbXkgYm94IC0gYWxsIHNlZW1zIG9rLiAN
+Cg0KQWNrZWQtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdl
+aS5jb20+DQpUZXN0ZWQtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2
+QGh1YXdlaS5jb20+DQogDQoNCj4gMi40OC4xDQoNCg==
