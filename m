@@ -2,49 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA26FC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 15:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B906DC3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 15:12:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EC9640E2A;
-	Thu, 27 Mar 2025 16:12:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4478B40E41;
+	Thu, 27 Mar 2025 16:12:40 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 674C240E28;
- Thu, 27 Mar 2025 16:12:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1ED2D40E38
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 16:12:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743088354; x=1774624354;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ong7xEdq6w4qm1X8t7S2TOhsCHOpVOVLCTn/YgRtDwc=;
- b=ljAJwOPoNKRlR8gFp4uoDB5sUNuALkerB+uuz5QgfxrGXOL7yRz/jRlO
- YDvOfChRYMRkW8m9nsYR9voEHyWNsoV5RRbKURNOlNvPpAGSp85fwJ0MK
- U1JkthHKMb2oUDa7m7VPleA6BXvAWc7WhUen2uXQHk7OD/wWSCY7qzy5a
- KqxDNsytdJ09DaXXuNsXlP4n+ewVfrJdp4GlztzpwoOh9TxLW+gHfrgJg
- nA7oTfW4m9+oDNkT5yb+0F1W6oq59uwE2wM43ng7uGEd9k/L6GwVLd8qn
- 6lus9mQyfBSmcGCYZsVEHtbFSA9Q4gQsIeNRmHle3WHRbMWjgCqCtLNYY Q==;
-X-CSE-ConnectionGUID: A7PTom+gRXCYc9dVFgTA6w==
-X-CSE-MsgGUID: 0mzUZ23oQ/OGX3x8OhD0SQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="61959422"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="61959422"
+ t=1743088358; x=1774624358;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=KFdOaAOTnkZ/HBCSYmzC5mzC/+h2cNE4wcIiyNhN6xs=;
+ b=aikDGcegif1r2pWrYUWRyaAKxleduo2PvkF0luXBiUAhmzeWGSb5GY4A
+ uGOqHn2B150fUK9o9cwHlE7ZHZPDsn43WBdHTKmJZrgEq6/6lyt4X3Ifi
+ OS3G8DRvjx/XGOhOq8e56HxEs78ogboxoremkbmNWbIGArYE0BsRy8X+c
+ Iyw8HXPULWyixNePFtVsn2VXUS/jix5V0rhcBGMbj//RrbRBBXM0s0dth
+ NjyLTSU//IXfDwapSDyfrEztcNxliU4GURtuO1e4fm2KnkJG+KCqsaVKh
+ FSyicY5HJ/sMo4g3FiiAouZpCR6GQ2qjIFKTRHomlkPf76dwVFR4gQ5Z0 A==;
+X-CSE-ConnectionGUID: XySyFGNUSRuqwoEP+mv0hg==
+X-CSE-MsgGUID: 0+81AteLRzmlZaGkRpH72Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="61959453"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="61959453"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2025 08:12:25 -0700
-X-CSE-ConnectionGUID: S+kLql/lTty32vQhlh4gCQ==
-X-CSE-MsgGUID: ikuO54lpSbe2HxibKadNqw==
+ 27 Mar 2025 08:12:27 -0700
+X-CSE-ConnectionGUID: /ayMbTa3TGiWbdVITbNyNw==
+X-CSE-MsgGUID: icgg9A81S5yepCayQMio4g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="156162862"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="156162869"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa001.fm.intel.com with ESMTP; 27 Mar 2025 08:12:23 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 27 Mar 2025 08:12:25 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
- Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
- Carolyn Wyborny <carolyn.wyborny@intel.com>
-Cc: bruce.richardson@intel.com,
-	stable@dpdk.org
-Subject: [PATCH v2 2/3] net/ixgbe: fix VF registers for E610
-Date: Thu, 27 Mar 2025 15:12:18 +0000
-Message-ID: <d4abfd7295d5440eab3b481f20dca75034d9e406.1743088329.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v2 3/3] net/ixgbe: support MDD on VF Tx path
+Date: Thu, 27 Mar 2025 15:12:19 +0000
+Message-ID: <d30294bcc7a2d1a59ab623857003f997ad6bccef.1743088329.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <91f6e1e3f59faf66e6d5f32e4198bfd13b30a317.1743088329.git.anatoly.burakov@intel.com>
 References: 
@@ -63,38 +59,356 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When adding E610 support, some case statements for VF definitions were
-missing, resulting in picking incorrect registers to write to in certain
-cases. Fix it by adding necessary case statements for E610 VF.
+According to datasheet for 82599 and similar NICs, the Tx path must set
+CC (Check Context) bit in the descriptor in cases when Tx switching is
+enabled in the PF. In case of using VF functions, the fact that it is a
+VF function implies that Tx switching is enabled, and thus the CC bit
+must always be set for all packet descriptors in the VF Tx path.
 
-Fixes: 316637762a5f ("net/ixgbe/base: enable E610 device")
-Cc: stable@dpdk.org
+However, even though it is specified in the datasheet that this should be
+the case, it was never checked in hardware, and not setting this bit did
+not cause any problems, so VF Tx have not been setting this bit since the
+beginning of ixgbe PMD. In later hardware revisions (X550 onwards), a
+hardware feature called MDD (malicious driver detection) was introduced,
+which, when enabled, will (among other things) check if CC bit is set,
+and will stop the Tx queue when it is not. As of this writing, this
+feature is not enabled by default on most configurations, but it may be
+enabled on some, and may be enabled by default in the future.
+
+To ensure DPDK ixgbe VF driver works across all possible configurations,
+this patch enables setting the CC bit across all VF Tx paths (simple,
+offload, and vectorized), as well as ensures that the VF driver will set
+up relevant context descriptor (as setting CC bit implies a valid context
+descriptor must be set up prior to using the Tx path) whenever the VF
+driver is being used.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index b80d5894f8..0fa4898aba 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -7515,6 +7515,7 @@ ixgbe_mrqc_reg_get(enum ixgbe_mac_type mac_type) {
- 	case ixgbe_mac_X550_vf:
- 	case ixgbe_mac_X550EM_x_vf:
- 	case ixgbe_mac_X550EM_a_vf:
-+	case ixgbe_mac_E610_vf:
- 		return IXGBE_VFMRQC;
- 	default:
- 		return IXGBE_MRQC;
-@@ -7527,6 +7528,7 @@ ixgbe_rssrk_reg_get(enum ixgbe_mac_type mac_type, uint8_t i) {
- 	case ixgbe_mac_X550_vf:
- 	case ixgbe_mac_X550EM_x_vf:
- 	case ixgbe_mac_X550EM_a_vf:
-+	case ixgbe_mac_E610_vf:
- 		return IXGBE_VFRSSRK(i);
- 	default:
- 		return IXGBE_RSSRK(i);
+Notes:
+    v1 -> v2:
+    - Wrap CC flag in rte_cpu_to_le32() for generic path
+
+ drivers/net/intel/common/tx.h                 |   2 +
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 133 ++++++++++++++++--
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.h   |   4 +
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  |   6 +-
+ 5 files changed, 136 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index d9cf4474fc..3b862536f6 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -97,6 +97,8 @@ struct ci_tx_queue {
+ 			uint8_t hthresh;   /**< Host threshold register. */
+ 			uint8_t wthresh;   /**< Write-back threshold reg. */
+ 			uint8_t using_ipsec;  /**< indicates that IPsec TX feature is in use */
++			uint8_t is_vf;   /**< indicates that this is a VF queue */
++			uint8_t vf_ctx_initialized; /**< VF context descriptors initialized */
+ 		};
+ 	};
+ };
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index b216e0612a..77773d56ef 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -89,6 +89,7 @@
+ 
+ /* forward-declare some functions */
+ static int ixgbe_is_vf(struct rte_eth_dev *dev);
++static int ixgbe_write_default_ctx_desc(struct ci_tx_queue *txq, struct rte_mempool *mp, bool vec);
+ 
+ /*********************************************************************
+  *
+@@ -151,7 +152,8 @@ ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
+ 
+ /* Populate 4 descriptors with data from 4 mbufs */
+ static inline void
+-tx4(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts)
++tx4(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts,
++		const uint32_t olinfo_flags)
+ {
+ 	uint64_t buf_dma_addr;
+ 	uint32_t pkt_len;
+@@ -168,7 +170,8 @@ tx4(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts)
+ 			rte_cpu_to_le_32((uint32_t)DCMD_DTYP_FLAGS | pkt_len);
+ 
+ 		txdp->read.olinfo_status =
+-			rte_cpu_to_le_32(pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT);
++			rte_cpu_to_le_32(pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT) |
++				olinfo_flags;
+ 
+ 		rte_prefetch0(&(*pkts)->pool);
+ 	}
+@@ -176,7 +179,8 @@ tx4(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts)
+ 
+ /* Populate 1 descriptor with data from 1 mbuf */
+ static inline void
+-tx1(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts)
++tx1(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts,
++		const uint32_t olinfo_flags)
+ {
+ 	uint64_t buf_dma_addr;
+ 	uint32_t pkt_len;
+@@ -189,7 +193,8 @@ tx1(volatile union ixgbe_adv_tx_desc *txdp, struct rte_mbuf **pkts)
+ 	txdp->read.cmd_type_len =
+ 			rte_cpu_to_le_32((uint32_t)DCMD_DTYP_FLAGS | pkt_len);
+ 	txdp->read.olinfo_status =
+-			rte_cpu_to_le_32(pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT);
++			rte_cpu_to_le_32(pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT) |
++				olinfo_flags;
+ 	rte_prefetch0(&(*pkts)->pool);
+ }
+ 
+@@ -205,6 +210,8 @@ ixgbe_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+ 	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
+ 	const int N_PER_LOOP = 4;
+ 	const int N_PER_LOOP_MASK = N_PER_LOOP-1;
++	/* for VF queues, need to set CC bit. context idx is always 0. */
++	const uint32_t olinfo_flags = txq->is_vf ? rte_cpu_to_le_32(IXGBE_ADVTXD_CC) : 0;
+ 	int mainpart, leftover;
+ 	int i, j;
+ 
+@@ -219,13 +226,13 @@ ixgbe_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+ 		for (j = 0; j < N_PER_LOOP; ++j) {
+ 			(txep + i + j)->mbuf = *(pkts + i + j);
+ 		}
+-		tx4(txdp + i, pkts + i);
++		tx4(txdp + i, pkts + i, olinfo_flags);
+ 	}
+ 
+ 	if (unlikely(leftover > 0)) {
+ 		for (i = 0; i < leftover; ++i) {
+ 			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
+-			tx1(txdp + mainpart + i, pkts + mainpart + i);
++			tx1(txdp + mainpart + i, pkts + mainpart + i, olinfo_flags);
+ 		}
+ 	}
+ }
+@@ -320,8 +327,18 @@ uint16_t
+ ixgbe_xmit_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		       uint16_t nb_pkts)
+ {
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
+ 	uint16_t nb_tx;
+ 
++	/* we might check first packet's mempool */
++	if (unlikely(nb_pkts == 0))
++		return nb_pkts;
++
++	/* check if we need to initialize default context descriptor */
++	if (unlikely(!txq->vf_ctx_initialized) &&
++			ixgbe_write_default_ctx_desc(txq, tx_pkts[0]->pool, false))
++		return 0;
++
+ 	/* Try to transmit at least chunks of TX_MAX_BURST pkts */
+ 	if (likely(nb_pkts <= RTE_PMD_IXGBE_TX_MAX_BURST))
+ 		return tx_xmit_pkts(tx_queue, tx_pkts, nb_pkts);
+@@ -349,6 +366,15 @@ ixgbe_xmit_pkts_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	uint16_t nb_tx = 0;
+ 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
+ 
++	/* we might check first packet's mempool */
++	if (unlikely(nb_pkts == 0))
++		return nb_pkts;
++
++	/* check if we need to initialize default context descriptor */
++	if (unlikely(!txq->vf_ctx_initialized) &&
++			ixgbe_write_default_ctx_desc(txq, tx_pkts[0]->pool, true))
++		return 0;
++
+ 	while (nb_pkts) {
+ 		uint16_t ret, num;
+ 
+@@ -707,6 +733,14 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			/* Only allocate context descriptor if required*/
+ 			new_ctx = (ctx == IXGBE_CTX_NUM);
+ 			ctx = txq->ctx_curr;
++		} else if (txq->is_vf) {
++			/* create default context descriptor for VF */
++			tx_offload.l2_len = RTE_ETHER_HDR_LEN;
++			/* If new context need be built or reuse the exist ctx. */
++			ctx = what_advctx_update(txq, 0, tx_offload);
++			/* Only allocate context descriptor if required */
++			new_ctx = (ctx == IXGBE_CTX_NUM);
++			ctx = txq->ctx_curr;
+ 		}
+ 
+ 		/*
+@@ -831,7 +865,7 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ #endif
+ 
+ 		olinfo_status = 0;
+-		if (tx_ol_req) {
++		if (tx_ol_req || new_ctx) {
+ 
+ 			if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
+ 				/* when TSO is on, paylen in descriptor is the
+@@ -877,7 +911,11 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			olinfo_status |= tx_desc_cksum_flags_to_olinfo(ol_flags);
+ 			olinfo_status |= ctx << IXGBE_ADVTXD_IDX_SHIFT;
+ 		}
+-
++		/* for VF, always set CC bit and set valid ctx */
++		if (txq->is_vf) {
++			olinfo_status |= IXGBE_ADVTXD_CC;
++			olinfo_status |= ctx << IXGBE_ADVTXD_IDX_SHIFT;
++		}
+ 		olinfo_status |= (pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT);
+ #ifdef RTE_LIB_SECURITY
+ 		if (use_ipsec)
+@@ -2337,6 +2375,49 @@ ixgbe_recv_pkts_lro_bulk_alloc(void *rx_queue, struct rte_mbuf **rx_pkts,
+  *
+  **********************************************************************/
+ 
++static inline int
++ixgbe_write_default_ctx_desc(struct ci_tx_queue *txq, struct rte_mempool *mp, bool vec)
++{
++	volatile struct ixgbe_adv_tx_context_desc *ctx_txd;
++	struct rte_mbuf *dummy;
++	uint32_t vlan_macip_lens, type_tucmd_mlhl;
++
++	/* allocate a dummy mbuf from tx pool to make sure it can be freed later */
++	dummy = rte_pktmbuf_alloc(mp);
++	if (dummy == NULL) {
++		PMD_INIT_LOG(ERR, "Failed to allocate dummy mbuf for VF context descriptor");
++		return -1;
++	}
++
++	/* take first buffer in the ring and make it a context descriptor */
++	ctx_txd = (volatile struct ixgbe_adv_tx_context_desc *)&txq->ixgbe_tx_ring[txq->tx_tail];
++
++	/* populate default context descriptor for VF */
++	vlan_macip_lens = RTE_ETHER_HDR_LEN << IXGBE_ADVTXD_MACLEN_SHIFT;
++	type_tucmd_mlhl = IXGBE_ADVTXD_TUCMD_L4T_RSV |
++			IXGBE_ADVTXD_DTYP_CTXT | IXGBE_ADVTXD_DCMD_DEXT;
++	ctx_txd->vlan_macip_lens = rte_cpu_to_le_32(vlan_macip_lens);
++	ctx_txd->type_tucmd_mlhl = rte_cpu_to_le_32(type_tucmd_mlhl);
++
++	/* update SW ring */
++	if (vec) {
++		struct ci_tx_entry_vec *txve;
++		txve = &txq->sw_ring_vec[txq->tx_tail];
++		txve->mbuf = dummy;
++	} else {
++		struct ci_tx_entry *txe;
++		txe = &txq->sw_ring[txq->tx_tail];
++		txe->mbuf = dummy;
++	}
++	txq->nb_tx_free--;
++	txq->tx_tail++;
++
++	/* never come back until queue reset */
++	txq->vf_ctx_initialized = 1;
++
++	return 0;
++}
++
+ static int
+ ixgbe_tx_done_cleanup_full(struct ci_tx_queue *txq, uint32_t free_cnt)
+ {
+@@ -2510,7 +2591,34 @@ ixgbe_reset_tx_queue(struct ci_tx_queue *txq)
+ 	txq->last_desc_cleaned = (uint16_t)(txq->nb_tx_desc - 1);
+ 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_desc - 1);
+ 	txq->ctx_curr = 0;
+-	memset(txq->ctx_cache, 0, IXGBE_CTX_NUM * sizeof(struct ixgbe_advctx_info));
++	/*
++	 * When doing Tx on a VF queue, we need to set CC bit and specify a
++	 * valid context descriptor regardless of whether we are using any
++	 * offloads.
++	 *
++	 * For simple/vector Tx paths, a default context descriptor will always
++	 * be created on Tx start, so we do not need any special handling here.
++	 * However, for full offload path, we will be dynamically switching
++	 * between two context descriptors (and create new ones when necessary)
++	 * based on what kind of offloads are enabled for each packet, so we
++	 * need to prepare the offload cache accordingly.
++	 *
++	 * In case of VF, because we might be transmitting packets with and
++	 * without offloads (both of which require context descriptors), we need
++	 * to distinguish between "packet with no offloads" and "packet with no
++	 * offloads but we've already created a context for it" cases. This
++	 * works fine on switchover from having filled offload context cache
++	 * previously as no-offload case won't match previously created context,
++	 * but to make this work in cases where no previous packets had offloads
++	 * (such as on Tx start), we poison the offload cache, so that
++	 * no-offload packet also triggers creation of new context descriptor
++	 * due to offload cache mismatch.
++	 */
++	memset(txq->ctx_cache, 0xFF, IXGBE_CTX_NUM * sizeof(struct ixgbe_advctx_info));
++
++	/* for PF, we do not need to initialize the context descriptor */
++	if (!txq->is_vf)
++		txq->vf_ctx_initialized = 1;
+ }
+ 
+ static const struct ixgbe_txq_ops def_txq_ops = {
+@@ -2769,10 +2877,13 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	/*
+ 	 * Modification to set VFTDT for virtual function if vf is detected
+ 	 */
+-	if (ixgbe_is_vf(dev))
++	if (ixgbe_is_vf(dev)) {
++		/* mark this queue as VF, because VF needs special Tx behavior */
++		txq->is_vf = 1;
+ 		txq->qtx_tail = IXGBE_PCI_REG_ADDR(hw, IXGBE_VFTDT(queue_idx));
+-	else
++	} else {
+ 		txq->qtx_tail = IXGBE_PCI_REG_ADDR(hw, IXGBE_TDT(txq->reg_idx));
++	}
+ 
+ 	txq->tx_ring_dma = tz->iova;
+ 	txq->ixgbe_tx_ring = (union ixgbe_adv_tx_desc *)tz->addr;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+index 3768e99039..018010820f 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+@@ -141,6 +141,10 @@ _ixgbe_reset_tx_queue_vec(struct ci_tx_queue *txq)
+ 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_desc - 1);
+ 	txq->ctx_curr = 0;
+ 	memset(txq->ctx_cache, 0, IXGBE_CTX_NUM * sizeof(struct ixgbe_advctx_info));
++
++	/* for PF, we do not need to initialize the context descriptor */
++	if (!txq->is_vf)
++		txq->vf_ctx_initialized = 1;
+ }
+ 
+ static inline int
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+index 93e2949660..9ccd8eba25 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+@@ -573,8 +573,10 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile union ixgbe_adv_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = DCMD_DTYP_FLAGS;
+-	uint64_t rs = IXGBE_ADVTXD_DCMD_RS | DCMD_DTYP_FLAGS;
++	/* for VF, we need to set CC bit */
++	const uint64_t cc = txq->is_vf ? (uint64_t)IXGBE_ADVTXD_CC << 32ULL : 0;
++	uint64_t flags = DCMD_DTYP_FLAGS | cc;
++	uint64_t rs = IXGBE_ADVTXD_DCMD_RS | DCMD_DTYP_FLAGS | cc;
+ 	int i;
+ 
+ 	/* cross rx_thresh boundary is not allowed */
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+index 9fc3447257..e125f52cc5 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+@@ -693,8 +693,10 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile union ixgbe_adv_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = DCMD_DTYP_FLAGS;
+-	uint64_t rs = IXGBE_ADVTXD_DCMD_RS|DCMD_DTYP_FLAGS;
++	/* for VF, we need to set CC bit */
++	const uint64_t cc = txq->is_vf ? (uint64_t)IXGBE_ADVTXD_CC << 32ULL : 0;
++	uint64_t flags = DCMD_DTYP_FLAGS | cc;
++	uint64_t rs = IXGBE_ADVTXD_DCMD_RS | DCMD_DTYP_FLAGS | cc;
+ 	int i;
+ 
+ 	/* cross rx_thresh boundary is not allowed */
 -- 
 2.47.1
 
