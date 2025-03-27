@@ -2,61 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678B1C3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF886C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:17:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 899B7402E6;
-	Thu, 27 Mar 2025 12:13:52 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 354B8402C8
- for <dev@dpdk.org>; Thu, 27 Mar 2025 12:13:51 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RAFkkD009964;
- Thu, 27 Mar 2025 04:13:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Xn7ww9HY6Aqot/kFRNuxm9W
- /7WwAeNT9i8iTu+fTXeA=; b=Ljc9tVhyr87suw+UgT2HJkRe4fvkDpYeypp5SA4
- p8qbJ3oXwq7Aq47ZRaEJ102ZNRl6ecgB/6IiFWRNZkxUprTIbS8SmEMRHJtUeFkp
- NEtAXJSH29TfWct5vZFyVHNcVypxgY8DViuCHf1Dza8htXrEQkZpC/EdDRj1n9n3
- SyTj3UDkQE3xZiStuYtiSKwKr80eoiGNqy34xn/+KeRxUx6hTJC0YiUoM3eoqv3B
- MaSvK3aKiFggsuICNAzBQ4wSWpxMBVNctz8Q+mxCyFps3La7rZKGXYUpVislK4e8
- WsdbeynHqJ+pPVyiYkYRCN+HmA+BgtsIqu5inLxENa/qeVQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45n4rx83p3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 27 Mar 2025 04:13:50 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 27 Mar 2025 04:13:49 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 27 Mar 2025 04:13:49 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 89DA63F7048;
- Thu, 27 Mar 2025 04:13:47 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
-CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: [PATCH] devtools: exclude atomic checks for common cnxk
-Date: Thu, 27 Mar 2025 16:43:44 +0530
-Message-ID: <20250327111344.2205-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id E9C48402E6;
+	Thu, 27 Mar 2025 12:17:09 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 0C0F0402C8;
+ Thu, 27 Mar 2025 12:17:09 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C6FC721733;
+ Thu, 27 Mar 2025 12:17:08 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=N/0pF39B c=1 sm=1 tr=0 ts=67e532ee cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Vs1iUdzkB0EA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=suZZMOYg9eVWFssnuagA:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: HtMdBCa4drz-OzuU8WxpGJ5VPJ96jvgN
-X-Proofpoint-ORIG-GUID: HtMdBCa4drz-OzuU8WxpGJ5VPJ96jvgN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] acl: fix build with GCC 15 on aarch64
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 27 Mar 2025 12:17:08 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB7B@smartserver.smartshare.dk>
+In-Reply-To: <Z-UtrQn9cud4oNA8@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] acl: fix build with GCC 15 on aarch64
+Thread-Index: AdufBjfTIFjDr8uWRrOA2PIt4Kko9wAAoolg
+References: <20250326103928.1189243-1-david.marchand@redhat.com>
+ <Z-USgmK7lRZsjcIn@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8xLbR_UD3=i_fR3aLzuciuWbbkkV8DgiXYm6Y1C7RXQug@mail.gmail.com>
+ <243684416b27483b89f1c5e5ffcc249c@huawei.com>
+ <Z-UtrQn9cud4oNA8@bricha3-mobl1.ger.corp.intel.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "David Marchand" <david.marchand@redhat.com>
+Cc: <dev@dpdk.org>, <bluca@debian.org>, <stable@dpdk.org>,
+ "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
+ "David Christensen" <drc@linux.ibm.com>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,32 +55,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
-Since driver/common/cnxk has common code that is
-used across multiple platforms, allow use of
-GCC builtin atomic functions.
-
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- Rest of drivers i.e., drivers/*/cnxk have been migrated to use stdatomics in:
- https://patchwork.dpdk.org/project/dpdk/patch/20250327111120.1641-1-pbhagavatula@marvell.com/
-
- devtools/checkpatches.sh | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index c9088bb403..2470d4fa83 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -139,6 +139,7 @@ check_forbidden_additions() { # <patch>
-
- 	# refrain from using compiler __atomic_xxx builtins
- 	awk -v FOLDERS="lib drivers app examples" \
-+		-v SKIP_FILES='drivers/common/cnxk/' \
- 		-v EXPRESSIONS="__atomic_.*\\\( __ATOMIC_(RELAXED|CONSUME|ACQUIRE|RELEASE|ACQ_REL|SEQ_CST)" \
- 		-v RET_ON_FAIL=1 \
- 		-v MESSAGE='Using __atomic_xxx/__ATOMIC_XXX built-ins, prefer rte_atomic_xxx/rte_memory_order_xxx' \
---
-2.43.0
-
+PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
+b21dDQo+IFNlbnQ6IFRodXJzZGF5LCAyNyBNYXJjaCAyMDI1IDExLjUxDQo+IA0KPiBPbiBUaHUs
+IE1hciAyNywgMjAyNSBhdCAxMDozOTowOUFNICswMDAwLCBLb25zdGFudGluIEFuYW55ZXYgd3Jv
+dGU6DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZy
+b206IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29tPg0KPiA+ID4gU2Vu
+dDogVGh1cnNkYXksIE1hcmNoIDI3LCAyMDI1IDEwOjM3IEFNDQo+ID4gPiBUbzogQnJ1Y2UgUmlj
+aGFyZHNvbiA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQo+ID4gPiBDYzogZGV2QGRwZGsu
+b3JnOyBibHVjYUBkZWJpYW4ub3JnOyBzdGFibGVAZHBkay5vcmc7IEtvbnN0YW50aW4NCj4gQW5h
+bnlldiA8a29uc3RhbnRpbi52LmFuYW55ZXZAeWFuZGV4LnJ1PjsgRGF2aWQgQ2hyaXN0ZW5zZW4N
+Cj4gPiA+IDxkcmNAbGludXguaWJtLmNvbT47IFdhdGhzYWxhIFZpdGhhbmFnZQ0KPiA8d2F0aHNh
+bGEudml0aGFuYWdlQGFybS5jb20+DQo+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIXSBhY2w6IGZp
+eCBidWlsZCB3aXRoIEdDQyAxNSBvbiBhYXJjaDY0DQo+ID4gPg0KPiA+ID4gT24gVGh1LCBNYXIg
+MjcsIDIwMjUgYXQgOTo1NeKAr0FNIEJydWNlIFJpY2hhcmRzb24NCj4gPiA+IDxicnVjZS5yaWNo
+YXJkc29uQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IE9uIFdlZCwgTWFyIDI2
+LCAyMDI1IGF0IDExOjM5OjI4QU0gKzAxMDAsIERhdmlkIE1hcmNoYW5kIHdyb3RlOg0KPiA+ID4g
+PiA+IENhdWdodCBpbiBPQlMgZm9yIEZlZG9yYSBSYXdoaWRlIG9uIGFhcmNoNjQ6DQo+ID4gPiA+
+ID4NCj4gPiA+ID4gPiBbICAxOThzXSBJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vbGliL2FjbC9h
+Y2xfcnVuX25lb24uaDo3LA0KPiA+ID4gPiA+IFsgIDE5OHNdICAgICAgICAgICAgICAgICAgZnJv
+bSAuLi9saWIvYWNsL2FjbF9ydW5fbmVvbi5jOjU6DQo+ID4gPiA+ID4gWyAgMTk4c10gSW4gZnVu
+Y3Rpb24g4oCYYWxsb2NfY29tcGxldGlvbuKAmSwNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgaW5s
+aW5lZCBmcm9tIOKAmGFjbF9zdGFydF9uZXh0X3RyaWXigJkgYXQNCj4gPiA+ID4gPiAgICAgICAu
+Li9saWIvYWNsL2FjbF9ydW4uaDoxNDA6MjQsDQo+ID4gPiA+ID4gWyAgMTk4c10gICAgIGlubGlu
+ZWQgZnJvbSDigJhzZWFyY2hfbmVvbl80LmlzcmHigJkgYXQNCj4gPiA+ID4gPiAgICAgICAuLi9s
+aWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzOToyMDoNCj4gPiA+ID4gPiBbICAxOThzXSAuLi9saWIv
+YWNsL2FjbF9ydW4uaDo5MzoyNTogZXJyb3I6IOKAmGNtcGx04oCZIG1heSBiZSB1c2VkDQo+ID4g
+PiA+ID4gICAgICAgdW5pbml0aWFsaXplZCBbLVdlcnJvcj1tYXliZS11bmluaXRpYWxpemVkXQ0K
+PiA+ID4gPiA+IFsgIDE5OHNdICAgIDkzIHwgICAgICAgICAgICAgICAgIGlmIChwW25dLmNvdW50
+ID09IDApIHsNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgICB8ICAgICAgICAgICAgICAgICAgICAg
+fn5+fl5+fn5+fg0KPiA+ID4gPiA+IFsgIDE5OHNdIC4uL2xpYi9hY2wvYWNsX3J1bl9uZW9uLmg6
+IEluIGZ1bmN0aW9uDQo+IOKAmHNlYXJjaF9uZW9uXzQuaXNyYeKAmToNCj4gPiA+ID4gPiBbICAx
+OThzXSAuLi9saWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzMDoyNzogbm90ZTog4oCYY21wbHTigJkN
+Cj4gZGVjbGFyZWQgaGVyZQ0KPiA+ID4gPiA+IFsgIDE5OHNdICAgMjMwIHwgICAgICAgICBzdHJ1
+Y3QgY29tcGxldGlvbiBjbXBsdFs0XTsNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgICB8ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgXn5+fn4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoZSBjb2Rl
+IHdhcyByZXNldHRpbmcgc2VxdWVudGlhbGx5IGNtcGxbXS5jb3VudCBhdCB0aGUgZXhhY3QNCj4g
+aW5kZXggdGhhdA0KPiA+ID4gPiA+IGxhdGVyIGNhbGwgdG8gYWxsb2NfY29tcGxldGlvbiB1c2Vz
+Lg0KPiA+ID4gPiA+IFdoaWxlIHRoaXMgY29kZSBzZWVtcyBjb3JyZWN0LCBHQ0MgMTUgZG9lcyBu
+b3QgdW5kZXJzdGFuZCB0aGlzDQo+IChwcm9iYWJseQ0KPiA+ID4gPiA+IHdoZW4gYXBwbHlpbmcg
+c29tZSBvcHRpbWlzYXRpb25zKS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEluc3RlYWQsIHJlc2V0
+IGNtcGxbXS5jb3VudCBhbGwgYXQgb25jZSBpbiBhY2xfc2V0X2Zsb3csIGFuZA0KPiBjbGVhbnVw
+IHRoZQ0KPiA+ID4gPiA+IHZhcmlvdXMgdmVjdG9yaXplZCBpbXBsZW1lbnRhdGlvbnMgYWNjb3Jk
+aW5nbHkuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBCdWd6aWxsYSBJRDogMTY3OA0KPiA+ID4gPiA+
+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
+IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29tPg0KPiA+ID4gPiA+IC0t
+LQ0KPiA+ID4gPiA+ICBsaWIvYWNsL2FjbF9ydW4uaCAgICAgICAgIHwgNSArKysrKw0KPiA+ID4g
+PiA+ICBsaWIvYWNsL2FjbF9ydW5fYWx0aXZlYy5oIHwgOCArKy0tLS0tLQ0KPiA+ID4gPiA+ICBs
+aWIvYWNsL2FjbF9ydW5fYXZ4Mi5oICAgIHwgNCArLS0tDQo+ID4gPiA+ID4gIGxpYi9hY2wvYWNs
+X3J1bl9uZW9uLmggICAgfCA4ICsrLS0tLS0tDQo+ID4gPiA+ID4gIGxpYi9hY2wvYWNsX3J1bl9z
+Y2FsYXIuYyAgfCA0ICstLS0NCj4gPiA+ID4gPiAgbGliL2FjbC9hY2xfcnVuX3NzZS5oICAgICB8
+IDggKystLS0tLS0NCj4gPiA+ID4gPiAgNiBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCsp
+LCAyNCBkZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9saWIv
+YWNsL2FjbF9ydW4uaCBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+ID4gPiA+ID4gaW5kZXggN2YwOTI0
+MTNjZC4uOWZkM2U2MDAyMSAxMDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9saWIvYWNsL2FjbF9ydW4u
+aA0KPiA+ID4gPiA+ICsrKyBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+ID4gPiA+ID4gQEAgLTE3Niw2
+ICsxNzYsOCBAQCBhY2xfc2V0X2Zsb3coc3RydWN0IGFjbF9mbG93X2RhdGEgKmZsb3dzLA0KPiBz
+dHJ1Y3QgY29tcGxldGlvbiAqY21wbHQsDQo+ID4gPiA+ID4gICAgICAgdWludDMyX3QgY21wbHRf
+c2l6ZSwgY29uc3QgdWludDhfdCAqKmRhdGEsIHVpbnQzMl90DQo+ICpyZXN1bHRzLA0KPiA+ID4g
+PiA+ICAgICAgIHVpbnQzMl90IGRhdGFfbnVtLCB1aW50MzJfdCBjYXRlZ29yaWVzLCBjb25zdCB1
+aW50NjRfdA0KPiAqdHJhbnMpDQo+ID4gPiA+ID4gIHsNCj4gPiA+ID4gPiArICAgICB1bnNpZ25l
+ZCBpbnQgaTsNCj4gPiA+ID4gPiArDQo+ID4gPiA+ID4gICAgICAgZmxvd3MtPm51bV9wYWNrZXRz
+ID0gMDsNCj4gPiA+ID4gPiAgICAgICBmbG93cy0+c3RhcnRlZCA9IDA7DQo+ID4gPiA+ID4gICAg
+ICAgZmxvd3MtPnRyaWUgPSAwOw0KPiA+ID4gPiA+IEBAIC0xODcsNiArMTg5LDkgQEAgYWNsX3Nl
+dF9mbG93KHN0cnVjdCBhY2xfZmxvd19kYXRhICpmbG93cywNCj4gc3RydWN0IGNvbXBsZXRpb24g
+KmNtcGx0LA0KPiA+ID4gPiA+ICAgICAgIGZsb3dzLT5kYXRhID0gZGF0YTsNCj4gPiA+ID4gPiAg
+ICAgICBmbG93cy0+cmVzdWx0cyA9IHJlc3VsdHM7DQo+ID4gPiA+ID4gICAgICAgZmxvd3MtPnRy
+YW5zID0gdHJhbnM7DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsgICAgIGZvciAoaSA9IDA7IGkg
+PCBjbXBsdF9zaXplOyBpKyspDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICBjbXBsdFtpXS5jb3Vu
+dCA9IDA7DQo+ID4gPiA+ID4gIH0NCj4gPiA+ID4NCj4gPiA+ID4gTWlub3Igbml0LCBidXQgc2lu
+Y2Ugd2UgYXJlIHVzaW5nIGMxMSBzdGFuZGFyZCwgaXMgaXQgbm90IGJldHRlcg0KPiB0byBkZWNs
+YXJlDQo+ID4gPiA+ICJpIiBpbnNpZGUgdGhlICJmb3IiIHN0YXRlbWVudC4gS2VlcHMgZGlmZnMg
+c2ltcGxlciBmb3INCj4gYWRkaW5nL3JlbW92aW5nDQo+ID4gPiA+IGNvZGUsIEkgdGhpbmsuDQo+
+ID4gPg0KPiA+ID4gSSBzdGlsbCBoYXZlIHRoaXMgKGJhZCkgaGFiaXQgYnV0IHllcywgaXQgbG9v
+a3MgbmljZXIgd2l0aA0KPiBkZWNsYXJpbmcNCj4gPiA+IGluIGZvcigpIGl0c2VsZi4NCj4gPg0K
+PiA+IE15IHZvdGUgd291bGQgYmUgdG8ga2VlcCBpdCBpbiBhbiBvbGQgZmFzaGlvbmVkIHdheS4N
+Cj4gPiBOb3RoaW5nIGlzIHdyb25nIGluIGRlZmluaW5nIHZhcmlhYmxlIHRvIHVzZSBhdCB0aGUg
+c3RhcnQgb2YgdGhlDQo+IGZ1bmN0aW9uIDopDQo+ID4NCj4gDQo+IE5vLCB0aGVyZSBpc24ndC4g
+SG93ZXZlciwgdGhlcmUgaXMgYWxzbyBhIHJlYXNvbiB3aHkgbGF0ZXIgR0NDDQo+IHJldmlzaW9u
+cw0KPiBhbmQgbW9kZXJuIGxhbmd1YWdlcyBhbGxvdyB1c2Ugb2YgYSB0ZW1wb3JhcnkgdmFyaWFi
+bGUgZGVmaW5lZCB3aXRoaW4NCj4gdGhlDQo+IGxvb3AgaXRzZWxmLiBDb2duaXRpdmVseSwgaXQn
+cyBlYXNpZXIgdG8gaGF2ZSB2YXJpYWJsZXMgZGVmaW5lZCBhdA0KPiBwb2ludCBvZg0KPiB1c2Us
+IGFzIGl0IHNhdmVzIHRoZSB1c2VyIGhhdmluZyB0byBtZW50YWxseSB0cmFjayB0aGVtIG9yIG1v
+dmUgdXAgYW5kDQo+IGRvd24gdGhlDQo+IGNvZGUuIEZ1cnRoZXJtb3JlLCB3aGVuIGRlYnVnZ2lu
+ZyBvciByZXdvcmtpbmcgdGhlIGNvZGUsIGl0J3MgZmFyDQo+IGVhc2llciB0bw0KPiBoYXZlIHRo
+ZSB2YXJpYWJsZSBpbnNpZGUgdGhlICJmb3IiIHN0YXRlbWVudCBhcyBpdCBtZWFucyB0aGF0IGFz
+IHdlDQo+IGNvbW1lbnQvdW5jb21tZW50LCBvciByZW1vdmUvcmUtYWRkLCB0aGUgY29kZSBibG9j
+aywgdGhlIHZhcmlhYmxlDQo+IGRlZmluaXRpb24NCj4gYWxzbyBnZXRzIGNvbW1lbnRlZC91bmNv
+bW1lbnRlZCB0b28sIHdpdGhvdXQgaGF2aW5nIHRvIGNvbnN0YW50bHkNCj4gc2Nyb2xsIHVwDQo+
+IHRvIG1ha2UgY2hhbmdlcyBpbiB0d28gcGxhY2VzLiBMYXN0bHksIGl0IG1ha2VzIGZvciBzbWFs
+bGVyIGdpdCBkaWZmcw0KPiB0b28uDQo+IA0KPiAvQnJ1Y2UNCg0KSSBhZ3JlZSB3aXRoIEJydWNl
+Lg0KQWxzbywgbWluaW1pemluZyB0aGUgc2NvcGUgb2YgbG9jYWwgdmFyaWFibGVzIHJlZHVjZXMg
+dGhlIHJpc2sgb2YgYnVncyBjYXVzZWQgYnkgdW5pbnRlbmRlZCByZXVzZSB3aXRob3V0IHJlLWlu
+aXRpYWxpemF0aW9uLiBSZWR1Y2luZyB0aGUgcmlzayBvZiBidWdzIGlzIGltcG9ydGFudC4NCg0K
+QlRXOiBUaGUgQ29kaW5nIFN0eWxlIGRvY3VtZW50YXRpb24gW0NPRElOR1NUWUxFXSBpcyBzdGls
+bCBiYXNlZCBvbiBhbiBhbmNpZW50IEMgdmVyc2lvbiwgYW5kIG5lZWRzIHRvIGJlIHVwZGF0ZWQu
+DQoNCltDT0RJTkdTVFlMRV06IGh0dHBzOi8vZG9jLmRwZGsub3JnL2d1aWRlcy9jb250cmlidXRp
+bmcvY29kaW5nX3N0eWxlLmh0bWwjbG9jYWwtdmFyaWFibGVzDQoNCg==
