@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF886C3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5743FC3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:59:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9C48402E6;
-	Thu, 27 Mar 2025 12:17:09 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 0C0F0402C8;
- Thu, 27 Mar 2025 12:17:09 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C6FC721733;
- Thu, 27 Mar 2025 12:17:08 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 66836402E6;
+	Thu, 27 Mar 2025 12:59:34 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 0138B402C8
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 12:59:32 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id DF84A46492; Thu, 27 Mar 2025 12:59:32 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/examples Bug 1684] Colt Python holster
+Date: Thu, 27 Mar 2025 11:59:32 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: examples
+X-Bugzilla-Version: 24.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: devismiller097@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1684-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17430767720.3F9096Fe1.3571754
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] acl: fix build with GCC 15 on aarch64
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Thu, 27 Mar 2025 12:17:08 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB7B@smartserver.smartshare.dk>
-In-Reply-To: <Z-UtrQn9cud4oNA8@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] acl: fix build with GCC 15 on aarch64
-Thread-Index: AdufBjfTIFjDr8uWRrOA2PIt4Kko9wAAoolg
-References: <20250326103928.1189243-1-david.marchand@redhat.com>
- <Z-USgmK7lRZsjcIn@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8xLbR_UD3=i_fR3aLzuciuWbbkkV8DgiXYm6Y1C7RXQug@mail.gmail.com>
- <243684416b27483b89f1c5e5ffcc249c@huawei.com>
- <Z-UtrQn9cud4oNA8@bricha3-mobl1.ger.corp.intel.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "David Marchand" <david.marchand@redhat.com>
-Cc: <dev@dpdk.org>, <bluca@debian.org>, <stable@dpdk.org>,
- "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
- "David Christensen" <drc@linux.ibm.com>,
- "Wathsala Vithanage" <wathsala.vithanage@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,99 +54,192 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
-b21dDQo+IFNlbnQ6IFRodXJzZGF5LCAyNyBNYXJjaCAyMDI1IDExLjUxDQo+IA0KPiBPbiBUaHUs
-IE1hciAyNywgMjAyNSBhdCAxMDozOTowOUFNICswMDAwLCBLb25zdGFudGluIEFuYW55ZXYgd3Jv
-dGU6DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZy
-b206IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29tPg0KPiA+ID4gU2Vu
-dDogVGh1cnNkYXksIE1hcmNoIDI3LCAyMDI1IDEwOjM3IEFNDQo+ID4gPiBUbzogQnJ1Y2UgUmlj
-aGFyZHNvbiA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQo+ID4gPiBDYzogZGV2QGRwZGsu
-b3JnOyBibHVjYUBkZWJpYW4ub3JnOyBzdGFibGVAZHBkay5vcmc7IEtvbnN0YW50aW4NCj4gQW5h
-bnlldiA8a29uc3RhbnRpbi52LmFuYW55ZXZAeWFuZGV4LnJ1PjsgRGF2aWQgQ2hyaXN0ZW5zZW4N
-Cj4gPiA+IDxkcmNAbGludXguaWJtLmNvbT47IFdhdGhzYWxhIFZpdGhhbmFnZQ0KPiA8d2F0aHNh
-bGEudml0aGFuYWdlQGFybS5jb20+DQo+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIXSBhY2w6IGZp
-eCBidWlsZCB3aXRoIEdDQyAxNSBvbiBhYXJjaDY0DQo+ID4gPg0KPiA+ID4gT24gVGh1LCBNYXIg
-MjcsIDIwMjUgYXQgOTo1NeKAr0FNIEJydWNlIFJpY2hhcmRzb24NCj4gPiA+IDxicnVjZS5yaWNo
-YXJkc29uQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IE9uIFdlZCwgTWFyIDI2
-LCAyMDI1IGF0IDExOjM5OjI4QU0gKzAxMDAsIERhdmlkIE1hcmNoYW5kIHdyb3RlOg0KPiA+ID4g
-PiA+IENhdWdodCBpbiBPQlMgZm9yIEZlZG9yYSBSYXdoaWRlIG9uIGFhcmNoNjQ6DQo+ID4gPiA+
-ID4NCj4gPiA+ID4gPiBbICAxOThzXSBJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vbGliL2FjbC9h
-Y2xfcnVuX25lb24uaDo3LA0KPiA+ID4gPiA+IFsgIDE5OHNdICAgICAgICAgICAgICAgICAgZnJv
-bSAuLi9saWIvYWNsL2FjbF9ydW5fbmVvbi5jOjU6DQo+ID4gPiA+ID4gWyAgMTk4c10gSW4gZnVu
-Y3Rpb24g4oCYYWxsb2NfY29tcGxldGlvbuKAmSwNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgaW5s
-aW5lZCBmcm9tIOKAmGFjbF9zdGFydF9uZXh0X3RyaWXigJkgYXQNCj4gPiA+ID4gPiAgICAgICAu
-Li9saWIvYWNsL2FjbF9ydW4uaDoxNDA6MjQsDQo+ID4gPiA+ID4gWyAgMTk4c10gICAgIGlubGlu
-ZWQgZnJvbSDigJhzZWFyY2hfbmVvbl80LmlzcmHigJkgYXQNCj4gPiA+ID4gPiAgICAgICAuLi9s
-aWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzOToyMDoNCj4gPiA+ID4gPiBbICAxOThzXSAuLi9saWIv
-YWNsL2FjbF9ydW4uaDo5MzoyNTogZXJyb3I6IOKAmGNtcGx04oCZIG1heSBiZSB1c2VkDQo+ID4g
-PiA+ID4gICAgICAgdW5pbml0aWFsaXplZCBbLVdlcnJvcj1tYXliZS11bmluaXRpYWxpemVkXQ0K
-PiA+ID4gPiA+IFsgIDE5OHNdICAgIDkzIHwgICAgICAgICAgICAgICAgIGlmIChwW25dLmNvdW50
-ID09IDApIHsNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgICB8ICAgICAgICAgICAgICAgICAgICAg
-fn5+fl5+fn5+fg0KPiA+ID4gPiA+IFsgIDE5OHNdIC4uL2xpYi9hY2wvYWNsX3J1bl9uZW9uLmg6
-IEluIGZ1bmN0aW9uDQo+IOKAmHNlYXJjaF9uZW9uXzQuaXNyYeKAmToNCj4gPiA+ID4gPiBbICAx
-OThzXSAuLi9saWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzMDoyNzogbm90ZTog4oCYY21wbHTigJkN
-Cj4gZGVjbGFyZWQgaGVyZQ0KPiA+ID4gPiA+IFsgIDE5OHNdICAgMjMwIHwgICAgICAgICBzdHJ1
-Y3QgY29tcGxldGlvbiBjbXBsdFs0XTsNCj4gPiA+ID4gPiBbICAxOThzXSAgICAgICB8ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgXn5+fn4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoZSBjb2Rl
-IHdhcyByZXNldHRpbmcgc2VxdWVudGlhbGx5IGNtcGxbXS5jb3VudCBhdCB0aGUgZXhhY3QNCj4g
-aW5kZXggdGhhdA0KPiA+ID4gPiA+IGxhdGVyIGNhbGwgdG8gYWxsb2NfY29tcGxldGlvbiB1c2Vz
-Lg0KPiA+ID4gPiA+IFdoaWxlIHRoaXMgY29kZSBzZWVtcyBjb3JyZWN0LCBHQ0MgMTUgZG9lcyBu
-b3QgdW5kZXJzdGFuZCB0aGlzDQo+IChwcm9iYWJseQ0KPiA+ID4gPiA+IHdoZW4gYXBwbHlpbmcg
-c29tZSBvcHRpbWlzYXRpb25zKS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEluc3RlYWQsIHJlc2V0
-IGNtcGxbXS5jb3VudCBhbGwgYXQgb25jZSBpbiBhY2xfc2V0X2Zsb3csIGFuZA0KPiBjbGVhbnVw
-IHRoZQ0KPiA+ID4gPiA+IHZhcmlvdXMgdmVjdG9yaXplZCBpbXBsZW1lbnRhdGlvbnMgYWNjb3Jk
-aW5nbHkuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBCdWd6aWxsYSBJRDogMTY3OA0KPiA+ID4gPiA+
-IENjOiBzdGFibGVAZHBkay5vcmcNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
-IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29tPg0KPiA+ID4gPiA+IC0t
-LQ0KPiA+ID4gPiA+ICBsaWIvYWNsL2FjbF9ydW4uaCAgICAgICAgIHwgNSArKysrKw0KPiA+ID4g
-PiA+ICBsaWIvYWNsL2FjbF9ydW5fYWx0aXZlYy5oIHwgOCArKy0tLS0tLQ0KPiA+ID4gPiA+ICBs
-aWIvYWNsL2FjbF9ydW5fYXZ4Mi5oICAgIHwgNCArLS0tDQo+ID4gPiA+ID4gIGxpYi9hY2wvYWNs
-X3J1bl9uZW9uLmggICAgfCA4ICsrLS0tLS0tDQo+ID4gPiA+ID4gIGxpYi9hY2wvYWNsX3J1bl9z
-Y2FsYXIuYyAgfCA0ICstLS0NCj4gPiA+ID4gPiAgbGliL2FjbC9hY2xfcnVuX3NzZS5oICAgICB8
-IDggKystLS0tLS0NCj4gPiA+ID4gPiAgNiBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCsp
-LCAyNCBkZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9saWIv
-YWNsL2FjbF9ydW4uaCBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+ID4gPiA+ID4gaW5kZXggN2YwOTI0
-MTNjZC4uOWZkM2U2MDAyMSAxMDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9saWIvYWNsL2FjbF9ydW4u
-aA0KPiA+ID4gPiA+ICsrKyBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+ID4gPiA+ID4gQEAgLTE3Niw2
-ICsxNzYsOCBAQCBhY2xfc2V0X2Zsb3coc3RydWN0IGFjbF9mbG93X2RhdGEgKmZsb3dzLA0KPiBz
-dHJ1Y3QgY29tcGxldGlvbiAqY21wbHQsDQo+ID4gPiA+ID4gICAgICAgdWludDMyX3QgY21wbHRf
-c2l6ZSwgY29uc3QgdWludDhfdCAqKmRhdGEsIHVpbnQzMl90DQo+ICpyZXN1bHRzLA0KPiA+ID4g
-PiA+ICAgICAgIHVpbnQzMl90IGRhdGFfbnVtLCB1aW50MzJfdCBjYXRlZ29yaWVzLCBjb25zdCB1
-aW50NjRfdA0KPiAqdHJhbnMpDQo+ID4gPiA+ID4gIHsNCj4gPiA+ID4gPiArICAgICB1bnNpZ25l
-ZCBpbnQgaTsNCj4gPiA+ID4gPiArDQo+ID4gPiA+ID4gICAgICAgZmxvd3MtPm51bV9wYWNrZXRz
-ID0gMDsNCj4gPiA+ID4gPiAgICAgICBmbG93cy0+c3RhcnRlZCA9IDA7DQo+ID4gPiA+ID4gICAg
-ICAgZmxvd3MtPnRyaWUgPSAwOw0KPiA+ID4gPiA+IEBAIC0xODcsNiArMTg5LDkgQEAgYWNsX3Nl
-dF9mbG93KHN0cnVjdCBhY2xfZmxvd19kYXRhICpmbG93cywNCj4gc3RydWN0IGNvbXBsZXRpb24g
-KmNtcGx0LA0KPiA+ID4gPiA+ICAgICAgIGZsb3dzLT5kYXRhID0gZGF0YTsNCj4gPiA+ID4gPiAg
-ICAgICBmbG93cy0+cmVzdWx0cyA9IHJlc3VsdHM7DQo+ID4gPiA+ID4gICAgICAgZmxvd3MtPnRy
-YW5zID0gdHJhbnM7DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsgICAgIGZvciAoaSA9IDA7IGkg
-PCBjbXBsdF9zaXplOyBpKyspDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICBjbXBsdFtpXS5jb3Vu
-dCA9IDA7DQo+ID4gPiA+ID4gIH0NCj4gPiA+ID4NCj4gPiA+ID4gTWlub3Igbml0LCBidXQgc2lu
-Y2Ugd2UgYXJlIHVzaW5nIGMxMSBzdGFuZGFyZCwgaXMgaXQgbm90IGJldHRlcg0KPiB0byBkZWNs
-YXJlDQo+ID4gPiA+ICJpIiBpbnNpZGUgdGhlICJmb3IiIHN0YXRlbWVudC4gS2VlcHMgZGlmZnMg
-c2ltcGxlciBmb3INCj4gYWRkaW5nL3JlbW92aW5nDQo+ID4gPiA+IGNvZGUsIEkgdGhpbmsuDQo+
-ID4gPg0KPiA+ID4gSSBzdGlsbCBoYXZlIHRoaXMgKGJhZCkgaGFiaXQgYnV0IHllcywgaXQgbG9v
-a3MgbmljZXIgd2l0aA0KPiBkZWNsYXJpbmcNCj4gPiA+IGluIGZvcigpIGl0c2VsZi4NCj4gPg0K
-PiA+IE15IHZvdGUgd291bGQgYmUgdG8ga2VlcCBpdCBpbiBhbiBvbGQgZmFzaGlvbmVkIHdheS4N
-Cj4gPiBOb3RoaW5nIGlzIHdyb25nIGluIGRlZmluaW5nIHZhcmlhYmxlIHRvIHVzZSBhdCB0aGUg
-c3RhcnQgb2YgdGhlDQo+IGZ1bmN0aW9uIDopDQo+ID4NCj4gDQo+IE5vLCB0aGVyZSBpc24ndC4g
-SG93ZXZlciwgdGhlcmUgaXMgYWxzbyBhIHJlYXNvbiB3aHkgbGF0ZXIgR0NDDQo+IHJldmlzaW9u
-cw0KPiBhbmQgbW9kZXJuIGxhbmd1YWdlcyBhbGxvdyB1c2Ugb2YgYSB0ZW1wb3JhcnkgdmFyaWFi
-bGUgZGVmaW5lZCB3aXRoaW4NCj4gdGhlDQo+IGxvb3AgaXRzZWxmLiBDb2duaXRpdmVseSwgaXQn
-cyBlYXNpZXIgdG8gaGF2ZSB2YXJpYWJsZXMgZGVmaW5lZCBhdA0KPiBwb2ludCBvZg0KPiB1c2Us
-IGFzIGl0IHNhdmVzIHRoZSB1c2VyIGhhdmluZyB0byBtZW50YWxseSB0cmFjayB0aGVtIG9yIG1v
-dmUgdXAgYW5kDQo+IGRvd24gdGhlDQo+IGNvZGUuIEZ1cnRoZXJtb3JlLCB3aGVuIGRlYnVnZ2lu
-ZyBvciByZXdvcmtpbmcgdGhlIGNvZGUsIGl0J3MgZmFyDQo+IGVhc2llciB0bw0KPiBoYXZlIHRo
-ZSB2YXJpYWJsZSBpbnNpZGUgdGhlICJmb3IiIHN0YXRlbWVudCBhcyBpdCBtZWFucyB0aGF0IGFz
-IHdlDQo+IGNvbW1lbnQvdW5jb21tZW50LCBvciByZW1vdmUvcmUtYWRkLCB0aGUgY29kZSBibG9j
-aywgdGhlIHZhcmlhYmxlDQo+IGRlZmluaXRpb24NCj4gYWxzbyBnZXRzIGNvbW1lbnRlZC91bmNv
-bW1lbnRlZCB0b28sIHdpdGhvdXQgaGF2aW5nIHRvIGNvbnN0YW50bHkNCj4gc2Nyb2xsIHVwDQo+
-IHRvIG1ha2UgY2hhbmdlcyBpbiB0d28gcGxhY2VzLiBMYXN0bHksIGl0IG1ha2VzIGZvciBzbWFs
-bGVyIGdpdCBkaWZmcw0KPiB0b28uDQo+IA0KPiAvQnJ1Y2UNCg0KSSBhZ3JlZSB3aXRoIEJydWNl
-Lg0KQWxzbywgbWluaW1pemluZyB0aGUgc2NvcGUgb2YgbG9jYWwgdmFyaWFibGVzIHJlZHVjZXMg
-dGhlIHJpc2sgb2YgYnVncyBjYXVzZWQgYnkgdW5pbnRlbmRlZCByZXVzZSB3aXRob3V0IHJlLWlu
-aXRpYWxpemF0aW9uLiBSZWR1Y2luZyB0aGUgcmlzayBvZiBidWdzIGlzIGltcG9ydGFudC4NCg0K
-QlRXOiBUaGUgQ29kaW5nIFN0eWxlIGRvY3VtZW50YXRpb24gW0NPRElOR1NUWUxFXSBpcyBzdGls
-bCBiYXNlZCBvbiBhbiBhbmNpZW50IEMgdmVyc2lvbiwgYW5kIG5lZWRzIHRvIGJlIHVwZGF0ZWQu
-DQoNCltDT0RJTkdTVFlMRV06IGh0dHBzOi8vZG9jLmRwZGsub3JnL2d1aWRlcy9jb250cmlidXRp
-bmcvY29kaW5nX3N0eWxlLmh0bWwjbG9jYWwtdmFyaWFibGVzDQoNCg==
+
+--17430767720.3F9096Fe1.3571754
+Date: Thu, 27 Mar 2025 12:59:32 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1684
+
+            Bug ID: 1684
+           Summary: Colt Python holster
+           Product: DPDK
+           Version: 24.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: examples
+          Assignee: dev@dpdk.org
+          Reporter: devismiller097@gmail.com
+  Target Milestone: ---
+
+Hello! I am Davis Miller, a travel enthusiast who loves exploring new
+destinations around the world. For my safety, I carry firearms during my
+travels, and finding the right gear is essential. Recently, I was in search=
+ of
+a Colt Python holster and discovered Wright Leather Works, a premier custom
+leather holster maker based in Ohio. They specialize in creating high-quali=
+ty
+holsters that offer comfort, security, and confidence for concealed carry. =
+The
+Colt Python holster I received from them is exceptional=E2=80=94crafted wit=
+h attention
+to detail and providing a perfect fit. If you're in need of a reliable and
+custom holster for your Colt Python, I highly recommend Wright Leather Work=
+s.
+Their dedication to quality craftsmanship ensures you'll carry comfortably =
+and
+securely on your travels.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17430767720.3F9096Fe1.3571754
+Date: Thu, 27 Mar 2025 12:59:32 +0100
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Colt Python holster"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1684">1684</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>Colt Python holster
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>24.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>examples
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>devismiller097&#64;gmail.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Hello! I am Davis Miller, a travel=
+ enthusiast who loves exploring new
+destinations around the world. For my safety, I carry firearms during my
+travels, and finding the right gear is essential. Recently, I was in search=
+ of
+a Colt Python holster and discovered Wright Leather Works, a premier custom
+leather holster maker based in Ohio. They specialize in creating high-quali=
+ty
+holsters that offer comfort, security, and confidence for concealed carry. =
+The
+Colt Python holster I received from them is exceptional=E2=80=94crafted wit=
+h attention
+to detail and providing a perfect fit. If you're in need of a reliable and
+custom holster for your Colt Python, I highly recommend Wright Leather Work=
+s.
+Their dedication to quality craftsmanship ensures you'll carry comfortably =
+and
+securely on your travels.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1684">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17430767720.3F9096Fe1.3571754--
