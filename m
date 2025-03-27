@@ -2,35 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803FFC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 08:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5725C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 08:58:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB2A340275;
-	Thu, 27 Mar 2025 09:58:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A6B0E40672;
+	Thu, 27 Mar 2025 09:58:20 +0100 (CET)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id 4B83A40261
+ by mails.dpdk.org (Postfix) with ESMTP id 7744640275
  for <dev@dpdk.org>; Thu, 27 Mar 2025 09:58:18 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZNcwL0PGJztRbs;
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZNcwL5fn0ztRfJ;
  Thu, 27 Mar 2025 16:56:50 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 61BED180087;
- Thu, 27 Mar 2025 16:58:16 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 238BE1800EC;
+ Thu, 27 Mar 2025 16:58:17 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 27 Mar 2025 16:58:15 +0800
+ 15.2.1544.11; Thu, 27 Mar 2025 16:58:16 +0800
 From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <honest.jiang@foxmail.com>, <fengchengwen@huawei.com>,
  <roretzla@linux.microsoft.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>, 
  <liuyonglong@huawei.com>, <stephen@networkplumber.org>
-Subject: [PATCH] app/dma-perf: fix infinite loop
-Date: Thu, 27 Mar 2025 16:58:13 +0800
-Message-ID: <20250327085815.3346159-1-huangdengdui@huawei.com>
+Subject: [PATCH 2/2] app/dma-perf: fix infinite loop
+Date: Thu, 27 Mar 2025 16:58:15 +0800
+Message-ID: <20250327085815.3346159-3-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250321040316.104126-1-huangdengdui@huawei.com>
+In-Reply-To: <20250327085815.3346159-1-huangdengdui@huawei.com>
 References: <20250321040316.104126-1-huangdengdui@huawei.com>
+ <20250327085815.3346159-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
