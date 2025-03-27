@@ -2,133 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25B2C3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D20C36010
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 11:11:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDD13402E6;
-	Thu, 27 Mar 2025 12:11:14 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E91C9402E6
- for <dev@dpdk.org>; Thu, 27 Mar 2025 12:11:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743073871;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=10LGOrxERDSYRjJHpklTZzgG6aVlfUQd1g6JbXhNwJg=;
- b=EC+lRxv/uSnltq1RisegwVJsGTRb1irVgt3/5FYSnDo+3aLo1o9uzJq+JNIhf3bZuXwQft
- LCFuVbXOKA2VZCShnKQEIMD1A/q6+zpHFj0KoNE+GSzR1dPYfluSAkDbwdAnYIKwSmyEM2
- UkOlePWdasP2UVjJ19VfeKtqMbg0phM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-TKc3Ylg5NsiA027YvVIvDw-1; Thu, 27 Mar 2025 07:11:10 -0400
-X-MC-Unique: TKc3Ylg5NsiA027YvVIvDw-1
-X-Mimecast-MFC-AGG-ID: TKc3Ylg5NsiA027YvVIvDw_1743073869
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-43cf327e9a2so8215435e9.3
- for <dev@dpdk.org>; Thu, 27 Mar 2025 04:11:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743073869; x=1743678669;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=10LGOrxERDSYRjJHpklTZzgG6aVlfUQd1g6JbXhNwJg=;
- b=CmJk1ItQhz9v+uxNkf4PTgUtT+MzcxwB9d6/Jrdzdo7EmdYvkjnK0HRH2VGuEwdpXa
- uehnsg5IBoqSJJcx+nfZ5F8Znpqs+oBXAtLi3UqfBNQ7yxwjhqIKIvui4MHeel4xdY5u
- zJLDevhkr8OubOIpoVcgVxYyzY6ktav3oYzgD/lzshBqMhARlZb8qk9q7vMxcc9XzRDR
- EzeER0GGqCgazobVc6rD5lKDhHm9VmCjcqaS4AKfuzHdQFBN5/vRDbxdqRvvrgvNZePI
- OG/IabZDzweBt4zgTBiTAFWOwQJpLeJ9MpParxcABCG2SqN79cJ0SLBCfSH5l8ujV6+q
- +vGA==
-X-Gm-Message-State: AOJu0Yw+QhpJdbd5rEI+tNN+0MBrDvFTFXqXoRWadb+iSmAH8Rm2IfUE
- Uid6Pb86aDhiAN0TjyvDUUS0SEIjLxztxP1EccYbnGSSS8lBW+usqP1l4klTlFyQZTZr9uGXGYj
- /q0+LHMDAqqMrfBRu/J/tW3m84VnYaOGv/yQAZids
-X-Gm-Gg: ASbGncuEGGQR0j+/HesvzNg6xKFW4zyQJuLJUD+5DVxHZZjV/a86iygJ7yYPKO2SVcv
- kGMfW+NsJqhDLcMsppZPN/xsgaUYYYtfUAa4MdBYgfV0tyIzoLzGC3RjdYFpA8kfnP4lzJDBnwK
- 0vDQkcoGwkkMBHoDy1DodroaTdAnAH8OKs3odctVGOmA7CF8MKOmetnf0CZfPrwQYR++TobeZd5
- xFXxr6wYz4gzViwjPPLqZHJHgbMoIrTMsFdVUBepsQn2nZZn+qbxskbLrGm7lRsw7OVXKKa8wHf
- 9a7TCdds3qDVAqiW
-X-Received: by 2002:a05:600c:1381:b0:43c:f64c:44a4 with SMTP id
- 5b1f17b1804b1-43d84f8aa39mr24092765e9.8.1743073869038; 
- Thu, 27 Mar 2025 04:11:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwUcFpFft5PspfAM1ClmvYY2INsIL6Tv9uCHLqHtLc86JCWNSa+r4IF4NzLZHqoHqZ/nU6qA==
-X-Received: by 2002:a05:600c:1381:b0:43c:f64c:44a4 with SMTP id
- 5b1f17b1804b1-43d84f8aa39mr24092465e9.8.1743073868671; 
- Thu, 27 Mar 2025 04:11:08 -0700 (PDT)
-Received: from [192.168.0.56] ([78.16.129.32])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-39ad32bd464sm1543936f8f.57.2025.03.27.04.11.07
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 27 Mar 2025 04:11:08 -0700 (PDT)
-Message-ID: <f7934653-c782-4b62-b2c4-229530349ede@redhat.com>
-Date: Thu, 27 Mar 2025 11:11:07 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 0DC8B40A7F;
+	Thu, 27 Mar 2025 12:11:31 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 91B0340A79
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 12:11:28 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R76qtQ008146
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 04:11:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=YQFg3eWax3F698M9cFBES5l
+ hFeguhIYx5j1x/EVkmxI=; b=UDSrtClKl//53ocA+PoUvS1j2jlOzYUnMv33gb3
+ 86L3B/428wF6LOvryfoSoRZGKIUXImIMPmsnJfDoofVprBIYxC1yQ3KFP9vvj4u6
+ jSRsjm2cj9zG101SHqyKtlbhaSfQa4UsYdG0KsFuWadXeGkDQZizt79+VBPe+3Ix
+ eADUbCTxRatZJjz7TGS/f38zCHoY7Q9ko07Ho02Y61WrhsQmoEFyiG1DSQafOxCK
+ ZEJ9VYs8z4iF0Pi3UJjul/2kbQxkkdALsxypqYJ44OxSASmp8kFebl4PJJDAmwY7
+ C0SIuzhTmX1pEg0tENzZfS1Te9faldOrFccl4vOdup8+MKg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45n20agg9x-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 04:11:27 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 27 Mar 2025 04:11:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 27 Mar 2025 04:11:26 -0700
+Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
+ [10.28.164.118])
+ by maili.marvell.com (Postfix) with ESMTP id 3D8993F707F;
+ Thu, 27 Mar 2025 04:11:23 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph
+ <anoobj@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, "Nithin
+ Dabilpuram" <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH] cnxk: use stdatomic API
+Date: Thu, 27 Mar 2025 16:41:20 +0530
+Message-ID: <20250327111120.1641-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: DPDK compilers and RHEL 7 support
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Aaron Conole <aconole@redhat.com>, maxime.coquelin@redhat.com
-Cc: dev@dpdk.org, techboard@dpdk.org
-References: <20250325172215.3360590-1-bruce.richardson@intel.com>
- <Z-QposchDMAmn83I@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB76@smartserver.smartshare.dk>
- <20250326122036.6cc7c02e@hermes.local>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB78@smartserver.smartshare.dk>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB78@smartserver.smartshare.dk>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jw2OlOGFHV7sMwlm5TqI2gGjkEL4GDDvJfrxgwsUSMU_1743073869
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 5FCyQiZuwAkEKWeHE-KrlJ-n9hFSN2Qa
+X-Proofpoint-ORIG-GUID: 5FCyQiZuwAkEKWeHE-KrlJ-n9hFSN2Qa
+X-Authority-Analysis: v=2.4 cv=UtRjN/wB c=1 sm=1 tr=0 ts=67e5325f cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=lUobqt4Twj8pGbyGuNwA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,110 +74,489 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 27/03/2025 07:55, Morten Brørup wrote:
-> + Red Hat tech board members
-> 
->> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
->> Sent: Wednesday, 26 March 2025 20.21
->>
->> On Wed, 26 Mar 2025 19:06:58 +0100
->> Morten Brørup <mb@smartsharesystems.com> wrote:
->>
->>>> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
->>>> Sent: Wednesday, 26 March 2025 17.22
->>>>
->>>> On Tue, Mar 25, 2025 at 05:22:15PM +0000, Bruce Richardson wrote:
->>>>> When doing a build for a target that already has the instruction
->> sets
->>>>> for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or
->> the
->>>>> skylake-avx512 '-march' flags, as they are unnecessary. Instead,
->> when
->>>>> the default flags produce the desired output, just use them
->>>> unmodified.
->>>>>
->>>>> Depends-on: series-34915 ("remove component-specific logic for
->> AVX
->>>> builds")
->>>>>
->>>>> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
->>>>> ---
->>>>>
->>>>> This patchset depends on the previous AVX rework. However,
->> sending it
->>>>> separately as a new RFC because it effectively increases the
->> minimum
->>>>> compiler versions needed for x86 builds - from GCC 5 to 6, and
->>>>> Clang 3.6 to 3.9.
->>>>>
->>>>> For now, I've just documented that as an additional note in the
->> GSG
->>>> that
->>>>> these versions are recommended, but it would be simpler if we
->> could
->>>> just
->>>>> set them as the required minimum baseline (at least in the docs).
->>>>>
->>>>> Feedback on these compiler version requirements welcome.
->>>>>
->>>>
->>>> +techboard
->>>>
->>>> Ping for a little bit of feedback for this. Are we ok to bump the
->>>> minimum
->>>> compiler versions as described above, or will I continue with the
->>>> approach
->>>> in this RFC of keeping the minimum and just recommending the higher
->>>> versions for x86 platforms?
->>>>
->>>> For reference GCC 6.1 was released April 2016[1], and, Clang 3.9
->> was
->>>> released Sept 2016[2]
->>>>
->>>> /Bruce
->>>>
->>>> [1] https://gcc.gnu.org/gcc-6/
->>>> [2] https://releases.llvm.org/
->>>
->>> Considering GCC versions shipped with RHEL [3]...
->>> We kind of support RHEL 7, but we already require a newer compiler
->> (GCC 5) than shipped with RHEL 7 (GCC 4.8).
->>> RHEL 8 ships with GCC 8, which was released in May 2018 [4]. Maybe we
->> can jump to GCC 8?
->>>
->>> BTW, we should also apply the same principle I argued [5] should
->> apply for upgrading the Kernel requirements: There should be a need for
->> specific feature or similar - which there is with your patch - and the
->> details should be mentioned in the release notes.
->>>
->>> [3]: https://access.redhat.com/solutions/19458
->>> [4]: https://gcc.gnu.org/gcc-8/
->>> [5]:
->> https://inbox.dpdk.org/dev/CAMEVEZutf4sJ=EQFONw_bJW0tGTWqTbF_Tk_y38qzBL
->> ccco46Q@mail.gmail.com/T/#me7c8f1dbe4331ccf232d43512d6ddb51458c568a
->>>
->>
->> RHEL 7 reached end of life on June 30, 2024.
->> DPDK need no longer support it on future versions.
-> 
-> CentOS 7 reached EOL June 2024, yes.
-> RHEL 7 reached End of Maintenance June 2024, but RHEL 7 Extended Life Cycle Support is available until June 2028 [6].
-> 
-> Although RHEL 7 not fully EOL, I would consider "End Of Maintenance" sufficiently dead for future DPDK versions not needing to support it.
-> If you are running a production system on a distro that's on Extended Life Cycle Support, you shouldn't deploy a new DPDK version - and if you do anyway, it's your own problem, not the DPDK community's problem.
-> @Aaron, @Kevin, @Maxime - speak up if you disagree!
-> 
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-+1
+Replace GCC inbuilt atomic functions with rte_atomic_xxx API.
 
-Red Hat will not release new RHEL 7 DPDK packages now and there are no
-new features/versions of RHEL 7.
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ drivers/crypto/cnxk/cn10k_cryptodev_ops.c | 36 ++++++++++---------
+ drivers/crypto/cnxk/cn9k_cryptodev_ops.c  | 20 +++++------
+ drivers/net/cnxk/cn10k_tx.h               | 42 +++++++++++++----------
+ drivers/net/cnxk/cn20k_tx.h               | 39 ++++++++++++---------
+ drivers/net/cnxk/cn9k_tx.h                |  5 +--
+ 5 files changed, 79 insertions(+), 63 deletions(-)
 
-I agree if anyone is running RHEL(/CentOS) 7 at this point, they should
-not expect that they can just use new versions of DPDK on it without
-having to resolve the dependencies themselves.
-
-> 
-> [6]: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/rhel-7-end-of-maintenance
-> 
+diff --git a/drivers/crypto/cnxk/cn10k_cryptodev_ops.c b/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
+index dbebc5aef1..fe28c7529d 100644
+--- a/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
++++ b/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
+@@ -292,7 +292,7 @@ cn10k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct
+ 	}
+ 
+ 	inst[0].res_addr = (uint64_t)&infl_req->res;
+-	__atomic_store_n(&infl_req->res.u64[0], res.u64[0], __ATOMIC_RELAXED);
++	rte_atomic_store_explicit(&infl_req->res.u64[0], res.u64[0], rte_memory_order_relaxed);
+ 	infl_req->cop = op;
+ 
+ 	inst[0].w7.u64 = w7;
+@@ -361,7 +361,7 @@ cn10k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops,
+ 	inst = (struct cpt_inst_s *)lmt_base;
+ 
+ again:
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh)) {
+ 		i = 0;
+ 		goto pend_q_commit;
+@@ -392,7 +392,7 @@ cn10k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops,
+ 	}
+ 
+ pend_q_commit:
+-	rte_atomic_thread_fence(__ATOMIC_RELEASE);
++	rte_atomic_thread_fence(rte_memory_order_release);
+ 
+ 	pend_q->head = head;
+ 	pend_q->time_out = rte_get_timer_cycles() +
+@@ -541,7 +541,7 @@ cn10k_cpt_vec_inst_fill(struct vec_request *vec_req, struct cpt_inst_s *inst,
+ 	infl_req->qp = qp;
+ 
+ 	inst->res_addr = (uint64_t)&infl_req->res;
+-	__atomic_store_n(&infl_req->res.u64[0], res.u64[0], __ATOMIC_RELAXED);
++	rte_atomic_store_explicit(&infl_req->res.u64[0], res.u64[0], rte_memory_order_relaxed);
+ 
+ 	inst->w0.u64 = 0;
+ 	inst->w2.u64 = vec_req->w2;
+@@ -593,7 +593,7 @@ cn10k_cpt_vec_submit(struct vec_request vec_tbl[], uint16_t vec_tbl_len, struct
+ 		cn10k_cpt_vec_inst_fill(&vec_tbl[i], &inst[i], qp, vec_tbl[0].w7);
+ 
+ 	do {
+-		fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++		fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 		if (likely(fc.s.qsize < fc_thresh))
+ 			break;
+ 		if (unlikely(rte_get_timer_cycles() > timeout))
+@@ -644,7 +644,7 @@ ca_lmtst_vec_submit(struct ops_burst *burst, struct vec_request vec_tbl[], uint1
+ #endif
+ 
+ 	/* Perform fc check before putting packets into vectors */
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh)) {
+ 		rte_errno = EAGAIN;
+ 		return 0;
+@@ -789,7 +789,7 @@ ca_lmtst_burst_submit(struct ops_burst *burst, const bool is_sg_ver2)
+ 		inst->w3.u64 = CNXK_CPT_INST_W3(1, infl_req);
+ 	}
+ 
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh)) {
+ 		rte_errno = EAGAIN;
+ 		for (j = 0; j < i; j++) {
+@@ -1237,7 +1237,7 @@ cn10k_cpt_crypto_adapter_dequeue(uintptr_t get_work1)
+ 	cop = infl_req->cop;
+ 	qp = infl_req->qp;
+ 
+-	res.u64[0] = __atomic_load_n(&infl_req->res.u64[0], __ATOMIC_RELAXED);
++	res.u64[0] = rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 	cn10k_cpt_dequeue_post_process(qp, infl_req->cop, infl_req, &res.cn10k);
+ 
+@@ -1267,7 +1267,7 @@ cn10k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1)
+ 	req_mp = qp->ca.req_mp;
+ 
+ #ifdef CNXK_CRYPTODEV_DEBUG
+-	res.u64[0] = __atomic_load_n(&vec_infl_req->res.u64[0], __ATOMIC_RELAXED);
++	res.u64[0] = rte_atomic_load_explicit(&vec_infl_req->res.u64[0], rte_memory_order_relaxed);
+ 	PLT_ASSERT(res.cn10k.compcode == CPT_COMP_GOOD);
+ 	PLT_ASSERT(res.cn10k.uc_compcode == 0);
+ #endif
+@@ -1276,7 +1276,8 @@ cn10k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1)
+ 		infl_req = vec->ptrs[i];
+ 		cop = infl_req->cop;
+ 
+-		res.u64[0] = __atomic_load_n(&infl_req->res.u64[0], __ATOMIC_RELAXED);
++		res.u64[0] =
++			rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 		cn10k_cpt_dequeue_post_process(qp, cop, infl_req, &res.cn10k);
+ 
+ 		vec->ptrs[i] = cop;
+@@ -1316,8 +1317,8 @@ cn10k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ 	for (i = 0; i < nb_ops; i++) {
+ 		infl_req = &pend_q->req_queue[pq_tail];
+ 
+-		res.u64[0] = __atomic_load_n(&infl_req->res.u64[0],
+-					     __ATOMIC_RELAXED);
++		res.u64[0] =
++			rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 		if (unlikely(res.cn10k.compcode == CPT_COMP_NOT_DONE)) {
+ 			if (unlikely(rte_get_timer_cycles() >
+@@ -1569,7 +1570,7 @@ cn10k_cpt_raw_fill_inst(struct cnxk_iov *iov, struct cnxk_cpt_qp *qp,
+ 		return 0;
+ 
+ 	inst[0].res_addr = (uint64_t)&infl_req->res;
+-	__atomic_store_n(&infl_req->res.u64[0], res.u64[0], __ATOMIC_RELAXED);
++	rte_atomic_store_explicit(&infl_req->res.u64[0], res.u64[0], rte_memory_order_relaxed);
+ 	infl_req->opaque = opaque;
+ 
+ 	inst[0].w7.u64 = sess->cpt_inst_w7;
+@@ -1615,7 +1616,7 @@ cn10k_cpt_raw_enqueue_burst(void *qpair, uint8_t *drv_ctx, struct rte_crypto_sym
+ 
+ 	dp_ctx = (struct cnxk_sym_dp_ctx *)drv_ctx;
+ again:
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh)) {
+ 		i = 0;
+ 		goto pend_q_commit;
+@@ -1716,7 +1717,7 @@ cn10k_cpt_raw_enqueue(void *qpair, uint8_t *drv_ctx, struct rte_crypto_vec *data
+ 	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
+ 	inst = (struct cpt_inst_s *)lmt_base;
+ 
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh))
+ 		return -1;
+ 
+@@ -1819,7 +1820,8 @@ cn10k_cpt_sym_raw_dequeue_burst(void *qptr, uint8_t *drv_ctx,
+ 		is_op_success = 0;
+ 		infl_req = &pend_q->req_queue[pq_tail];
+ 
+-		res.u64[0] = __atomic_load_n(&infl_req->res.u64[0], __ATOMIC_RELAXED);
++		res.u64[0] =
++			rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 		if (unlikely(res.cn10k.compcode == CPT_COMP_NOT_DONE)) {
+ 			if (unlikely(rte_get_timer_cycles() > pend_q->time_out)) {
+@@ -1880,7 +1882,7 @@ cn10k_cpt_sym_raw_dequeue(void *qptr, uint8_t *drv_ctx, int *dequeue_status,
+ 
+ 	infl_req = &pend_q->req_queue[pq_tail];
+ 
+-	res.u64[0] = __atomic_load_n(&infl_req->res.u64[0], __ATOMIC_RELAXED);
++	res.u64[0] = rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 	if (unlikely(res.cn10k.compcode == CPT_COMP_NOT_DONE)) {
+ 		if (unlikely(rte_get_timer_cycles() > pend_q->time_out)) {
+diff --git a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
+index 2b1bd70c6d..e55f5690a3 100644
+--- a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
++++ b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
+@@ -194,12 +194,12 @@ cn9k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ 		infl_req_1->op_flags = 0;
+ 		infl_req_2->op_flags = 0;
+ 
+-		__atomic_store_n(&infl_req_1->res.u64[0], res.u64[0],
+-				 __ATOMIC_RELAXED);
++		rte_atomic_store_explicit(&infl_req_1->res.u64[0], res.u64[0],
++					  rte_memory_order_relaxed);
+ 		inst[0].res_addr = (uint64_t)&infl_req_1->res;
+ 
+-		__atomic_store_n(&infl_req_2->res.u64[0], res.u64[0],
+-				 __ATOMIC_RELAXED);
++		rte_atomic_store_explicit(&infl_req_2->res.u64[0], res.u64[0],
++					  rte_memory_order_relaxed);
+ 		inst[1].res_addr = (uint64_t)&infl_req_2->res;
+ 
+ 		ret = cn9k_cpt_inst_prep(qp, op_1, infl_req_1, &inst[0]);
+@@ -223,7 +223,7 @@ cn9k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ 		count += 2;
+ 	}
+ 
+-	rte_atomic_thread_fence(__ATOMIC_RELEASE);
++	rte_atomic_thread_fence(rte_memory_order_release);
+ 
+ 	pend_q->head = head;
+ 	pend_q->time_out = rte_get_timer_cycles() +
+@@ -385,7 +385,7 @@ cn9k_cpt_crypto_adapter_enqueue(uintptr_t base, struct rte_crypto_op *op)
+ 
+ 	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
+ 
+-	fc.u64[0] = __atomic_load_n(fc_addr, __ATOMIC_RELAXED);
++	fc.u64[0] = rte_atomic_load_explicit(fc_addr, rte_memory_order_relaxed);
+ 	if (unlikely(fc.s.qsize > fc_thresh)) {
+ 		rte_mempool_put(qp->ca.req_mp, infl_req);
+ 		rte_errno = EAGAIN;
+@@ -604,7 +604,7 @@ cn9k_cpt_crypto_adapter_dequeue(uintptr_t get_work1)
+ 	cop = infl_req->cop;
+ 	qp = infl_req->qp;
+ 
+-	res.u64[0] = __atomic_load_n(&infl_req->res.u64[0], __ATOMIC_RELAXED);
++	res.u64[0] = rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 	cn9k_cpt_dequeue_post_process(qp, infl_req->cop, infl_req, &res.cn9k);
+ 
+@@ -635,13 +635,13 @@ cn9k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ 	nb_ops = RTE_MIN(nb_ops, infl_cnt);
+ 
+ 	/* Ensure infl_cnt isn't read before data lands */
+-	rte_atomic_thread_fence(__ATOMIC_ACQUIRE);
++	rte_atomic_thread_fence(rte_memory_order_acquire);
+ 
+ 	for (i = 0; i < nb_ops; i++) {
+ 		infl_req = &pend_q->req_queue[pq_tail];
+ 
+-		res.u64[0] = __atomic_load_n(&infl_req->res.u64[0],
+-					     __ATOMIC_RELAXED);
++		res.u64[0] =
++			rte_atomic_load_explicit(&infl_req->res.u64[0], rte_memory_order_relaxed);
+ 
+ 		if (unlikely(res.cn9k.compcode == CPT_COMP_NOT_DONE)) {
+ 			if (unlikely(rte_get_timer_cycles() >
+diff --git a/drivers/net/cnxk/cn10k_tx.h b/drivers/net/cnxk/cn10k_tx.h
+index 809fafb2f7..f6dc69983c 100644
+--- a/drivers/net/cnxk/cn10k_tx.h
++++ b/drivers/net/cnxk/cn10k_tx.h
+@@ -55,17 +55,19 @@
+ 		int64_t val, newval;                                                               \
+ 	retry:                                                                                     \
+ 		/* Reduce the cached count */                                                      \
+-		val = (int64_t)__atomic_fetch_sub(fc_cache, pkts, __ATOMIC_RELAXED);               \
++		val = (int64_t)rte_atomic_fetch_sub_explicit(fc_cache, pkts,                       \
++							     rte_memory_order_relaxed);            \
+ 		val -= pkts;                                                                       \
+ 		/* Cached value is low, Update the fc_cache_pkts */                                \
+ 		if (unlikely(val < 0)) {                                                           \
+ 			/* Multiply with sqe_per_sqb to express in pkts */                         \
+-			newval = txq->nb_sqb_bufs_adj - __atomic_load_n(txq->fc_mem,               \
+-									__ATOMIC_RELAXED);         \
++			newval = txq->nb_sqb_bufs_adj -                                            \
++				 rte_atomic_load_explicit(txq->fc_mem, rte_memory_order_relaxed);  \
+ 			newval = (newval << (txq)->sqes_per_sqb_log2) - newval;                    \
+ 			newval -= pkts;                                                            \
+-			if (!__atomic_compare_exchange_n(fc_cache, &val, newval, false,            \
+-							 __ATOMIC_RELAXED, __ATOMIC_RELAXED)) {    \
++			if (!rte_atomic_compare_exchange_strong_explicit(                          \
++				    fc_cache, &val, newval, rte_memory_order_relaxed,              \
++				    rte_memory_order_relaxed)) {                                   \
+ 				if (retry_count) {                                                 \
+ 					retry_count--;                                             \
+ 					goto retry;                                                \
+@@ -164,10 +166,11 @@ cn10k_nix_vwqe_wait_fc(struct cn10k_eth_txq *txq, uint16_t req)
+ 		     : "memory");
+ #else
+ 	RTE_SET_USED(pkts);
+-	while (__atomic_load_n(&txq->fc_cache_pkts, __ATOMIC_RELAXED) < 0)
++	while (rte_atomic_load_explicit(&txq->fc_cache_pkts, rte_memory_order_relaxed) < 0)
+ 		;
+ #endif
+-	cached = __atomic_fetch_sub(&txq->fc_cache_pkts, req, __ATOMIC_ACQUIRE) - req;
++	cached = rte_atomic_fetch_sub_explicit(&txq->fc_cache_pkts, req, rte_memory_order_acquire) -
++		 req;
+ 	/* Check if there is enough space, else update and retry. */
+ 	if (cached >= 0)
+ 		return;
+@@ -200,14 +203,15 @@ cn10k_nix_vwqe_wait_fc(struct cn10k_eth_txq *txq, uint16_t req)
+ 		     : "memory");
+ #else
+ 	do {
+-		refill = (txq->nb_sqb_bufs_adj - __atomic_load_n(txq->fc_mem, __ATOMIC_RELAXED));
++		refill = (txq->nb_sqb_bufs_adj -
++			  rte_atomic_load_explicit(txq->fc_mem, rte_memory_order_relaxed));
+ 		refill = (refill << txq->sqes_per_sqb_log2) - refill;
+ 		refill -= req;
+ 	} while (refill < 0);
+ #endif
+-	if (!__atomic_compare_exchange(&txq->fc_cache_pkts, &cached, &refill,
+-				  0, __ATOMIC_RELEASE,
+-				  __ATOMIC_RELAXED))
++	if (!rte_atomic_compare_exchange_strong_explicit(&txq->fc_cache_pkts, &cached, refill,
++							 rte_memory_order_release,
++							 rte_memory_order_relaxed))
+ 		goto retry;
+ }
+ 
+@@ -365,7 +369,7 @@ cn10k_nix_sec_fc_wait_one(struct cn10k_eth_txq *txq)
+ 		     : "memory");
+ #else
+ 	RTE_SET_USED(fc);
+-	while (nb_desc <= __atomic_load_n(txq->cpt_fc, __ATOMIC_RELAXED))
++	while (nb_desc <= rte_atomic_load_explicit(txq->cpt_fc, rte_memory_order_relaxed))
+ 		;
+ #endif
+ }
+@@ -397,11 +401,11 @@ cn10k_nix_sec_fc_wait(struct cn10k_eth_txq *txq, uint16_t nb_pkts)
+ 		     : "memory");
+ #else
+ 	/* Wait for primary core to refill FC. */
+-	while (__atomic_load_n(fc_sw, __ATOMIC_RELAXED) < 0)
++	while (rte_atomic_load_explicit(fc_sw, rte_memory_order_relaxed) < 0)
+ 		;
+ #endif
+ 
+-	val = __atomic_fetch_sub(fc_sw, nb_pkts, __ATOMIC_ACQUIRE) - nb_pkts;
++	val = rte_atomic_fetch_sub_explicit(fc_sw, nb_pkts, rte_memory_order_acquire) - nb_pkts;
+ 	if (likely(val >= 0))
+ 		return;
+ 
+@@ -427,15 +431,16 @@ cn10k_nix_sec_fc_wait(struct cn10k_eth_txq *txq, uint16_t nb_pkts)
+ 		     : "memory");
+ #else
+ 	while (true) {
+-		newval = nb_desc - __atomic_load_n(fc, __ATOMIC_RELAXED);
++		newval = nb_desc - rte_atomic_load_explicit(fc, rte_memory_order_relaxed);
+ 		newval -= nb_pkts;
+ 		if (newval >= 0)
+ 			break;
+ 	}
+ #endif
+ 
+-	if (!__atomic_compare_exchange_n(fc_sw, &val, newval, false, __ATOMIC_RELEASE,
+-					 __ATOMIC_RELAXED))
++	if (!rte_atomic_compare_exchange_strong_explicit(fc_sw, &val, newval,
++							 rte_memory_order_release,
++							 rte_memory_order_relaxed))
+ 		goto again;
+ }
+ 
+@@ -763,7 +768,8 @@ cn10k_nix_prefree_seg(struct rte_mbuf *m, struct rte_mbuf **extm, struct cn10k_e
+ 			m->next = prev;
+ 			txq->tx_compl.ptr[sqe_id] = m;
+ 		} else {
+-			sqe_id = __atomic_fetch_add(&txq->tx_compl.sqe_id, 1, __ATOMIC_RELAXED);
++			sqe_id = rte_atomic_fetch_add_explicit(&txq->tx_compl.sqe_id, 1,
++							       rte_memory_order_relaxed);
+ 			send_hdr->w0.pnc = 1;
+ 			send_hdr->w1.sqe_id = sqe_id &
+ 				txq->tx_compl.nb_desc_mask;
+diff --git a/drivers/net/cnxk/cn20k_tx.h b/drivers/net/cnxk/cn20k_tx.h
+index c419778970..8c3cb05e7d 100644
+--- a/drivers/net/cnxk/cn20k_tx.h
++++ b/drivers/net/cnxk/cn20k_tx.h
+@@ -53,17 +53,19 @@
+ 		int64_t val, newval;                                                               \
+ 	retry:                                                                                     \
+ 		/* Reduce the cached count */                                                      \
+-		val = (int64_t)__atomic_fetch_sub(fc_cache, pkts, __ATOMIC_RELAXED);               \
++		val = (int64_t)rte_atomic_fetch_sub_explicit(fc_cache, pkts,                       \
++							     rte_memory_order_relaxed);            \
+ 		val -= pkts;                                                                       \
+ 		/* Cached value is low, Update the fc_cache_pkts */                                \
+ 		if (unlikely(val < 0)) {                                                           \
+ 			/* Multiply with sqe_per_sqb to express in pkts */                         \
+ 			newval = txq->nb_sqb_bufs_adj -                                            \
+-				 __atomic_load_n(txq->fc_mem, __ATOMIC_RELAXED);                   \
++				 rte_atomic_load_explicit(txq->fc_mem, rte_memory_order_relaxed);  \
+ 			newval = (newval << (txq)->sqes_per_sqb_log2) - newval;                    \
+ 			newval -= pkts;                                                            \
+-			if (!__atomic_compare_exchange_n(fc_cache, &val, newval, false,            \
+-							 __ATOMIC_RELAXED, __ATOMIC_RELAXED)) {    \
++			if (!rte_atomic_compare_exchange_strong_explicit(                          \
++				    fc_cache, &val, newval, rte_memory_order_relaxed,              \
++				    rte_memory_order_relaxed)) {                                   \
+ 				if (retry_count) {                                                 \
+ 					retry_count--;                                             \
+ 					goto retry;                                                \
+@@ -162,10 +164,11 @@ cn20k_nix_vwqe_wait_fc(struct cn20k_eth_txq *txq, uint16_t req)
+ 		     : "memory");
+ #else
+ 	RTE_SET_USED(pkts);
+-	while (__atomic_load_n(&txq->fc_cache_pkts, __ATOMIC_RELAXED) < 0)
++	while (rte_atomic_load_explicit(&txq->fc_cache_pkts, rte_memory_order_relaxed) < 0)
+ 		;
+ #endif
+-	cached = __atomic_fetch_sub(&txq->fc_cache_pkts, req, __ATOMIC_ACQUIRE) - req;
++	cached = rte_atomic_fetch_sub_explicit(&txq->fc_cache_pkts, req, rte_memory_order_acquire) -
++		 req;
+ 	/* Check if there is enough space, else update and retry. */
+ 	if (cached >= 0)
+ 		return;
+@@ -198,13 +201,15 @@ cn20k_nix_vwqe_wait_fc(struct cn20k_eth_txq *txq, uint16_t req)
+ 		     : "memory");
+ #else
+ 	do {
+-		refill = (txq->nb_sqb_bufs_adj - __atomic_load_n(txq->fc_mem, __ATOMIC_RELAXED));
++		refill = (txq->nb_sqb_bufs_adj -
++			  rte_atomic_load_explicit(txq->fc_mem, rte_memory_order_relaxed));
+ 		refill = (refill << txq->sqes_per_sqb_log2) - refill;
+ 		refill -= req;
+ 	} while (refill < 0);
+ #endif
+-	if (!__atomic_compare_exchange(&txq->fc_cache_pkts, &cached, &refill, 0, __ATOMIC_RELEASE,
+-				       __ATOMIC_RELAXED))
++	if (!rte_atomic_compare_exchange_strong_explicit(&txq->fc_cache_pkts, &cached, refill,
++							 rte_memory_order_release,
++							 rte_memory_order_relaxed))
+ 		goto retry;
+ }
+ 
+@@ -354,7 +359,7 @@ cn20k_nix_sec_fc_wait_one(struct cn20k_eth_txq *txq)
+ 		     : "memory");
+ #else
+ 	RTE_SET_USED(fc);
+-	while (nb_desc <= __atomic_load_n(txq->cpt_fc, __ATOMIC_RELAXED))
++	while (nb_desc <= rte_atomic_load_explicit(txq->cpt_fc, rte_memory_order_relaxed))
+ 		;
+ #endif
+ }
+@@ -386,11 +391,11 @@ cn20k_nix_sec_fc_wait(struct cn20k_eth_txq *txq, uint16_t nb_pkts)
+ 		     : "memory");
+ #else
+ 	/* Wait for primary core to refill FC. */
+-	while (__atomic_load_n(fc_sw, __ATOMIC_RELAXED) < 0)
++	while (rte_atomic_load_explicit(fc_sw, rte_memory_order_relaxed) < 0)
+ 		;
+ #endif
+ 
+-	val = __atomic_fetch_sub(fc_sw, nb_pkts, __ATOMIC_ACQUIRE) - nb_pkts;
++	val = rte_atomic_fetch_sub_explicit(fc_sw, nb_pkts, rte_memory_order_acquire) - nb_pkts;
+ 	if (likely(val >= 0))
+ 		return;
+ 
+@@ -416,15 +421,16 @@ cn20k_nix_sec_fc_wait(struct cn20k_eth_txq *txq, uint16_t nb_pkts)
+ 		     : "memory");
+ #else
+ 	while (true) {
+-		newval = nb_desc - __atomic_load_n(fc, __ATOMIC_RELAXED);
++		newval = nb_desc - rte_atomic_load_explicit(fc, rte_memory_order_relaxed);
+ 		newval -= nb_pkts;
+ 		if (newval >= 0)
+ 			break;
+ 	}
+ #endif
+ 
+-	if (!__atomic_compare_exchange_n(fc_sw, &val, newval, false, __ATOMIC_RELEASE,
+-					 __ATOMIC_RELAXED))
++	if (!rte_atomic_compare_exchange_strong_explicit(fc_sw, &val, newval,
++							 rte_memory_order_release,
++							 rte_memory_order_relaxed))
+ 		goto again;
+ }
+ 
+@@ -747,7 +753,8 @@ cn20k_nix_prefree_seg(struct rte_mbuf *m, struct rte_mbuf **extm, struct cn20k_e
+ 			m->next = prev;
+ 			txq->tx_compl.ptr[sqe_id] = m;
+ 		} else {
+-			sqe_id = __atomic_fetch_add(&txq->tx_compl.sqe_id, 1, __ATOMIC_RELAXED);
++			sqe_id = rte_atomic_fetch_add_explicit(&txq->tx_compl.sqe_id, 1,
++							       rte_memory_order_relaxed);
+ 			send_hdr->w0.pnc = 1;
+ 			send_hdr->w1.sqe_id = sqe_id & txq->tx_compl.nb_desc_mask;
+ 			txq->tx_compl.ptr[send_hdr->w1.sqe_id] = m;
+diff --git a/drivers/net/cnxk/cn9k_tx.h b/drivers/net/cnxk/cn9k_tx.h
+index 902a17860c..af7a5bdfe9 100644
+--- a/drivers/net/cnxk/cn9k_tx.h
++++ b/drivers/net/cnxk/cn9k_tx.h
+@@ -112,7 +112,8 @@ cn9k_nix_prefree_seg(struct rte_mbuf *m, struct rte_mbuf **extm, struct cn9k_eth
+ 			m->next = prev;
+ 			txq->tx_compl.ptr[sqe_id] = m;
+ 		} else {
+-			sqe_id = __atomic_fetch_add(&txq->tx_compl.sqe_id, 1, __ATOMIC_RELAXED);
++			sqe_id = rte_atomic_fetch_add_explicit(&txq->tx_compl.sqe_id, 1,
++							       rte_memory_order_relaxed);
+ 			send_hdr->w0.pnc = 1;
+ 			send_hdr->w1.sqe_id = sqe_id &
+ 				txq->tx_compl.nb_desc_mask;
+@@ -599,7 +600,7 @@ cn9k_nix_sec_fc_wait_one(const struct cn9k_eth_txq *txq)
+ 	uint64_t nb_desc = txq->cpt_desc;
+ 	uint64_t *fc = txq->cpt_fc;
+ 
+-	while (nb_desc <= __atomic_load_n(fc, __ATOMIC_RELAXED))
++	while (nb_desc <= rte_atomic_load_explicit(fc, rte_memory_order_relaxed))
+ 		;
+ }
+ 
+-- 
+2.43.0
 
