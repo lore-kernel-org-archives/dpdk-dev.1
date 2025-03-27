@@ -2,49 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E9FC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 10:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33615C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 10:37:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 990FB40687;
-	Thu, 27 Mar 2025 11:30:43 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 392D64066C;
- Thu, 27 Mar 2025 11:30:40 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZNfwY6stnz6M4fk;
- Thu, 27 Mar 2025 18:27:09 +0800 (CST)
-Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
- by mail.maildlp.com (Postfix) with ESMTPS id CE5231407DB;
- Thu, 27 Mar 2025 18:30:39 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Mar 2025 11:30:39 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Thu, 27 Mar 2025 11:30:39 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "bluca@debian.org" <bluca@debian.org>, "stable@dpdk.org"
- <stable@dpdk.org>, Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- "David Christensen" <drc@linux.ibm.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH] acl: fix build with GCC 15 on aarch64
-Thread-Topic: [PATCH] acl: fix build with GCC 15 on aarch64
-Thread-Index: AQHbnjt5qhsCVMI9iE2kqI1U+hvMxLOGyZmA
-Date: Thu, 27 Mar 2025 10:30:39 +0000
-Message-ID: <182c1c9cc7714a649a8e098d7311b74f@huawei.com>
-References: <20250326103928.1189243-1-david.marchand@redhat.com>
-In-Reply-To: <20250326103928.1189243-1-david.marchand@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.172.251]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 379DD4069D;
+	Thu, 27 Mar 2025 11:37:09 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id EECE64066C
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 11:37:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1743071827;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=YzvddFLkynuuETfhxZkKw3eE+0anQYpNeKjoFw7QVQ8=;
+ b=ZIElkOfiJh35RkbnEwKVsG++fG2vV5MtVlWuDt7I54MI4/4cke3L8k0Wvm1Q3WoLBxkqpl
+ ydvfrYuFzfeN91nvpcU1yg4XzMkaYnEgJ+cAoSmlG109c5MJ4UsRR448itSgj/kFEkN2Ms
+ E89G6wl885KKnetjbvK47Um3OhezSHE=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-7nFoSp6LMgiKEOrK8Vk-9A-1; Thu, 27 Mar 2025 06:37:06 -0400
+X-MC-Unique: 7nFoSp6LMgiKEOrK8Vk-9A-1
+X-Mimecast-MFC-AGG-ID: 7nFoSp6LMgiKEOrK8Vk-9A_1743071824
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5498ee86adfso899938e87.0
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 03:37:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1743071824; x=1743676624;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=YzvddFLkynuuETfhxZkKw3eE+0anQYpNeKjoFw7QVQ8=;
+ b=PASkkitL8wxpbmvgoBg1Em+AXoF97mYMr2NPVElQikXdXPaWFOvXUnYmyMWySK386q
+ 6XcrC1sA8859gH3EcsevXNc+wcuC5w6pTUsr/+8+QmaKOMv1671/BAFntz8suT3E6k1C
+ UaF5xpuqBpJxEMd/pEWShZhrJGi3laZDDv8yLTWc9jqZKLSDHOf3laQBO1di4j/76jNy
+ aU71P9i98Selevb3bG0O4JpbAtm0wHN9YgmKt4FdiYJmK+Eo0iKH6TR5pikaQxTV7Zrn
+ 2KzWTRIp4Gn7hL1iTCpoxm2hDOfaECvj8lWLevHJLpBIHm/lttE/gGQjUhO1JmpIp/C7
+ tCUA==
+X-Gm-Message-State: AOJu0YzdKThFbUZi3wXDsr9Fh9n6JnR3J3TTMYkq9A0+na3EBEWqtlkQ
+ yk6D/j1W59isUoyx3+PVkH9Iu/g49Z+YYxRFKeHFECGhatN/n/QwXMvN5YPgZ1ixYtS9SEZgVrv
+ oZ99mBAZEyWeRHhuDpkE7zjzPN7HO2+gz0RvhApdIlZImV1aSVUV/Ke6BuK1MdS/RCFOOhPkTya
+ S/biK/7X70/Nex1zQ=
+X-Gm-Gg: ASbGncuM1KwxspMQcbLH5u4hQePYJ/4prMIl48j5Akb5W0bdKZtCp60siO/7z5StCpm
+ PprwmkAD3oty1puetO6YLcbJQk2N7ZkYiVRG7QGNAKZ83WYsufueN0Exga4yIXo5b2ObTLWd+QV
+ Y=
+X-Received: by 2002:a05:6512:acb:b0:549:8c0c:f059 with SMTP id
+ 2adb3069b0e04-54b0107f795mr1123427e87.10.1743071824393; 
+ Thu, 27 Mar 2025 03:37:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjc58i8Sn8EOBTlYDmh7+ecZPEAZ3PSdtypS46146s37lFp7+AHveoKbhDF1SNKMRar4UGMwoHffTAXhXTdgQ=
+X-Received: by 2002:a05:6512:acb:b0:549:8c0c:f059 with SMTP id
+ 2adb3069b0e04-54b0107f795mr1123414e87.10.1743071823964; Thu, 27 Mar 2025
+ 03:37:03 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250326103928.1189243-1-david.marchand@redhat.com>
+ <Z-USgmK7lRZsjcIn@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <Z-USgmK7lRZsjcIn@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 27 Mar 2025 11:36:52 +0100
+X-Gm-Features: AQ5f1JpLNrDpWEjgFd2j8bvErK2wEGhoVYFGIMk8QmFhdLCdHg6ys4TYLcE6EKY
+Message-ID: <CAJFAV8xLbR_UD3=i_fR3aLzuciuWbbkkV8DgiXYm6Y1C7RXQug@mail.gmail.com>
+Subject: Re: [PATCH] acl: fix build with GCC 15 on aarch64
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, bluca@debian.org, stable@dpdk.org, 
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ David Christensen <drc@linux.ibm.com>, 
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: PJHFp0NAoB9-5Ce6y6sMwXEnspCeu0Xr5jngWbtcDiI_1743071824
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,135 +88,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gDQo+IENhdWdodCBpbiBPQlMgZm9yIEZlZG9yYSBSYXdoaWRlIG9uIGFhcmNoNjQ6DQo+
-IA0KPiBbICAxOThzXSBJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vbGliL2FjbC9hY2xfcnVuX25l
-b24uaDo3LA0KPiBbICAxOThzXSAgICAgICAgICAgICAgICAgIGZyb20gLi4vbGliL2FjbC9hY2xf
-cnVuX25lb24uYzo1Og0KPiBbICAxOThzXSBJbiBmdW5jdGlvbiDigJhhbGxvY19jb21wbGV0aW9u
-4oCZLA0KPiBbICAxOThzXSAgICAgaW5saW5lZCBmcm9tIOKAmGFjbF9zdGFydF9uZXh0X3RyaWXi
-gJkgYXQNCj4gCS4uL2xpYi9hY2wvYWNsX3J1bi5oOjE0MDoyNCwNCj4gWyAgMTk4c10gICAgIGlu
-bGluZWQgZnJvbSDigJhzZWFyY2hfbmVvbl80LmlzcmHigJkgYXQNCj4gCS4uL2xpYi9hY2wvYWNs
-X3J1bl9uZW9uLmg6MjM5OjIwOg0KPiBbICAxOThzXSAuLi9saWIvYWNsL2FjbF9ydW4uaDo5Mzoy
-NTogZXJyb3I6IOKAmGNtcGx04oCZIG1heSBiZSB1c2VkDQo+IAl1bmluaXRpYWxpemVkIFstV2Vy
-cm9yPW1heWJlLXVuaW5pdGlhbGl6ZWRdDQo+IFsgIDE5OHNdICAgIDkzIHwgICAgICAgICAgICAg
-ICAgIGlmIChwW25dLmNvdW50ID09IDApIHsNCj4gWyAgMTk4c10gICAgICAgfCAgICAgICAgICAg
-ICAgICAgICAgIH5+fn5efn5+fn4NCj4gWyAgMTk4c10gLi4vbGliL2FjbC9hY2xfcnVuX25lb24u
-aDogSW4gZnVuY3Rpb24g4oCYc2VhcmNoX25lb25fNC5pc3Jh4oCZOg0KPiBbICAxOThzXSAuLi9s
-aWIvYWNsL2FjbF9ydW5fbmVvbi5oOjIzMDoyNzogbm90ZTog4oCYY21wbHTigJkgZGVjbGFyZWQg
-aGVyZQ0KPiBbICAxOThzXSAgIDIzMCB8ICAgICAgICAgc3RydWN0IGNvbXBsZXRpb24gY21wbHRb
-NF07DQo+IFsgIDE5OHNdICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+fg0K
-PiANCj4gVGhlIGNvZGUgd2FzIHJlc2V0dGluZyBzZXF1ZW50aWFsbHkgY21wbFtdLmNvdW50IGF0
-IHRoZSBleGFjdCBpbmRleCB0aGF0DQo+IGxhdGVyIGNhbGwgdG8gYWxsb2NfY29tcGxldGlvbiB1
-c2VzLg0KPiBXaGlsZSB0aGlzIGNvZGUgc2VlbXMgY29ycmVjdCwgR0NDIDE1IGRvZXMgbm90IHVu
-ZGVyc3RhbmQgdGhpcyAocHJvYmFibHkNCj4gd2hlbiBhcHBseWluZyBzb21lIG9wdGltaXNhdGlv
-bnMpLg0KPiANCj4gSW5zdGVhZCwgcmVzZXQgY21wbFtdLmNvdW50IGFsbCBhdCBvbmNlIGluIGFj
-bF9zZXRfZmxvdywgYW5kIGNsZWFudXAgdGhlDQo+IHZhcmlvdXMgdmVjdG9yaXplZCBpbXBsZW1l
-bnRhdGlvbnMgYWNjb3JkaW5nbHkuDQo+IA0KPiBCdWd6aWxsYSBJRDogMTY3OA0KPiBDYzogc3Rh
-YmxlQGRwZGsub3JnDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQu
-bWFyY2hhbmRAcmVkaGF0LmNvbT4NCj4gLS0tDQo+ICBsaWIvYWNsL2FjbF9ydW4uaCAgICAgICAg
-IHwgNSArKysrKw0KPiAgbGliL2FjbC9hY2xfcnVuX2FsdGl2ZWMuaCB8IDggKystLS0tLS0NCj4g
-IGxpYi9hY2wvYWNsX3J1bl9hdngyLmggICAgfCA0ICstLS0NCj4gIGxpYi9hY2wvYWNsX3J1bl9u
-ZW9uLmggICAgfCA4ICsrLS0tLS0tDQo+ICBsaWIvYWNsL2FjbF9ydW5fc2NhbGFyLmMgIHwgNCAr
-LS0tDQo+ICBsaWIvYWNsL2FjbF9ydW5fc3NlLmggICAgIHwgOCArKy0tLS0tLQ0KPiAgNiBmaWxl
-cyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9saWIvYWNsL2FjbF9ydW4uaCBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+IGluZGV4IDdm
-MDkyNDEzY2QuLjlmZDNlNjAwMjEgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bi5oDQo+
-ICsrKyBiL2xpYi9hY2wvYWNsX3J1bi5oDQo+IEBAIC0xNzYsNiArMTc2LDggQEAgYWNsX3NldF9m
-bG93KHN0cnVjdCBhY2xfZmxvd19kYXRhICpmbG93cywgc3RydWN0IGNvbXBsZXRpb24gKmNtcGx0
-LA0KPiAgCXVpbnQzMl90IGNtcGx0X3NpemUsIGNvbnN0IHVpbnQ4X3QgKipkYXRhLCB1aW50MzJf
-dCAqcmVzdWx0cywNCj4gIAl1aW50MzJfdCBkYXRhX251bSwgdWludDMyX3QgY2F0ZWdvcmllcywg
-Y29uc3QgdWludDY0X3QgKnRyYW5zKQ0KPiAgew0KPiArCXVuc2lnbmVkIGludCBpOw0KPiArDQo+
-ICAJZmxvd3MtPm51bV9wYWNrZXRzID0gMDsNCj4gIAlmbG93cy0+c3RhcnRlZCA9IDA7DQo+ICAJ
-Zmxvd3MtPnRyaWUgPSAwOw0KPiBAQCAtMTg3LDYgKzE4OSw5IEBAIGFjbF9zZXRfZmxvdyhzdHJ1
-Y3QgYWNsX2Zsb3dfZGF0YSAqZmxvd3MsIHN0cnVjdCBjb21wbGV0aW9uICpjbXBsdCwNCj4gIAlm
-bG93cy0+ZGF0YSA9IGRhdGE7DQo+ICAJZmxvd3MtPnJlc3VsdHMgPSByZXN1bHRzOw0KPiAgCWZs
-b3dzLT50cmFucyA9IHRyYW5zOw0KPiArDQo+ICsJZm9yIChpID0gMDsgaSA8IGNtcGx0X3NpemU7
-IGkrKykNCj4gKwkJY21wbHRbaV0uY291bnQgPSAwOw0KPiAgfQ0KPiANCj4gIHR5cGVkZWYgdm9p
-ZCAoKnJlc29sdmVfcHJpb3JpdHlfdCkNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wvYWNsX3J1bl9h
-bHRpdmVjLmggYi9saWIvYWNsL2FjbF9ydW5fYWx0aXZlYy5oDQo+IGluZGV4IDJkMzk4ZmZkZWQu
-LmQ1Y2NkYjk0ZjAgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9hbHRpdmVjLmgNCj4g
-KysrIGIvbGliL2FjbC9hY2xfcnVuX2FsdGl2ZWMuaA0KPiBAQCAtMTk5LDEwICsxOTksOCBAQCBz
-ZWFyY2hfYWx0aXZlY184KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50
-OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBs
-dCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCXRvdGFsX3BhY2tldHMsIGNhdGVnb3JpZXMsIGN0eC0+
-dHJhbnNfdGFibGUpOw0KPiANCj4gLQlmb3IgKG4gPSAwOyBuIDwgTUFYX1NFQVJDSEVTX0FMVElW
-RUM4OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4g
-PCBNQVhfU0VBUkNIRVNfQUxUSVZFQzg7IG4rKykNCj4gIAkJaW5kZXhfYXJyYXlbbl0gPSBhY2xf
-c3RhcnRfbmV4dF90cmllKCZmbG93cywgcGFybXMsIG4sIGN0eCk7DQo+IC0JfQ0KPiANCj4gIAkg
-LyogQ2hlY2sgZm9yIGFueSBtYXRjaGVzLiAqLw0KPiAgCWFjbF9tYXRjaF9jaGVja194NCgwLCBj
-dHgsIHBhcm1zLCAmZmxvd3MsICh1aW50NjRfdCAqKSZpbmRleF9hcnJheVswXSk7DQo+IEBAIC0y
-NzAsMTAgKzI2OCw4IEBAIHNlYXJjaF9hbHRpdmVjXzQoY29uc3Qgc3RydWN0IHJ0ZV9hY2xfY3R4
-ICpjdHgsIGNvbnN0IHVpbnQ4X3QgKipkYXRhLA0KPiAgCWFjbF9zZXRfZmxvdygmZmxvd3MsIGNt
-cGx0LCBSVEVfRElNKGNtcGx0KSwgZGF0YSwgcmVzdWx0cywNCj4gIAkJdG90YWxfcGFja2V0cywg
-Y2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCBN
-QVhfU0VBUkNIRVNfQUxUSVZFQzQ7IG4rKykgew0KPiAtCQljbXBsdFtuXS5jb3VudCA9IDA7DQo+
-ICsJZm9yIChuID0gMDsgbiA8IE1BWF9TRUFSQ0hFU19BTFRJVkVDNDsgbisrKQ0KPiAgCQlpbmRl
-eF9hcnJheVtuXSA9IGFjbF9zdGFydF9uZXh0X3RyaWUoJmZsb3dzLCBwYXJtcywgbiwgY3R4KTsN
-Cj4gLQl9DQo+IA0KPiAgCS8qIENoZWNrIGZvciBhbnkgbWF0Y2hlcy4gKi8NCj4gIAlhY2xfbWF0
-Y2hfY2hlY2tfeDQoMCwgY3R4LCBwYXJtcywgJmZsb3dzLCBpbmRleF9hcnJheSk7DQo+IGRpZmYg
-LS1naXQgYS9saWIvYWNsL2FjbF9ydW5fYXZ4Mi5oIGIvbGliL2FjbC9hY2xfcnVuX2F2eDIuaA0K
-PiBpbmRleCAwYjg5NjdmMjJlLi5lMDY5ZmI4NWIyIDEwMDY0NA0KPiAtLS0gYS9saWIvYWNsL2Fj
-bF9ydW5fYXZ4Mi5oDQo+ICsrKyBiL2xpYi9hY2wvYWNsX3J1bl9hdngyLmgNCj4gQEAgLTE3MSwx
-MCArMTcxLDggQEAgc2VhcmNoX2F2eDJ4MTYoY29uc3Qgc3RydWN0IHJ0ZV9hY2xfY3R4ICpjdHgs
-IGNvbnN0IHVpbnQ4X3QgKipkYXRhLA0KPiAgCWFjbF9zZXRfZmxvdygmZmxvd3MsIGNtcGx0LCBS
-VEVfRElNKGNtcGx0KSwgZGF0YSwgcmVzdWx0cywNCj4gIAkJdG90YWxfcGFja2V0cywgY2F0ZWdv
-cmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCBSVEVfRElN
-KGNtcGx0KTsgbisrKSB7DQo+IC0JCWNtcGx0W25dLmNvdW50ID0gMDsNCj4gKwlmb3IgKG4gPSAw
-OyBuIDwgUlRFX0RJTShjbXBsdCk7IG4rKykNCj4gIAkJaW5kZXhfYXJyYXlbbl0gPSBhY2xfc3Rh
-cnRfbmV4dF90cmllKCZmbG93cywgcGFybXMsIG4sIGN0eCk7DQo+IC0JfQ0KPiANCj4gIAl0MCA9
-IF9tbTI1Nl9zZXRfZXBpNjR4KGluZGV4X2FycmF5WzVdLCBpbmRleF9hcnJheVs0XSwNCj4gIAkJ
-aW5kZXhfYXJyYXlbMV0sIGluZGV4X2FycmF5WzBdKTsNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wv
-YWNsX3J1bl9uZW9uLmggYi9saWIvYWNsL2FjbF9ydW5fbmVvbi5oDQo+IGluZGV4IDYzMDc0Zjg3
-MWQuLjNiOWJkMGNjMzkgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9uZW9uLmgNCj4g
-KysrIGIvbGliL2FjbC9hY2xfcnVuX25lb24uaA0KPiBAQCAtMTcyLDEwICsxNzIsOCBAQCBzZWFy
-Y2hfbmVvbl84KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50OF90ICoq
-ZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBsdCksIGRh
-dGEsIHJlc3VsdHMsDQo+ICAJCSAgICAgdG90YWxfcGFja2V0cywgY2F0ZWdvcmllcywgY3R4LT50
-cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7IG4gPCA4OyBuKyspIHsNCj4gLQkJY21w
-bHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCA4OyBuKyspDQo+ICAJCWluZGV4
-X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgmZmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0K
-PiAtCX0NCj4gDQo+ICAJIC8qIENoZWNrIGZvciBhbnkgbWF0Y2hlcy4gKi8NCj4gIAlhY2xfbWF0
-Y2hfY2hlY2tfeDQoMCwgY3R4LCBwYXJtcywgJmZsb3dzLCAmaW5kZXhfYXJyYXlbMF0pOw0KPiBA
-QCAtMjM0LDEwICsyMzIsOCBAQCBzZWFyY2hfbmVvbl80KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0
-eCAqY3R4LCBjb25zdCB1aW50OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBj
-bXBsdCwgUlRFX0RJTShjbXBsdCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCSAgICAgdG90YWxfcGFj
-a2V0cywgY2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+IA0KPiAtCWZvciAobiA9IDA7
-IG4gPCA0OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7
-IG4gPCA0OyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgm
-Zmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJLyogQ2hlY2sgZm9yIGFueSBt
-YXRjaGVzLiAqLw0KPiAgCWFjbF9tYXRjaF9jaGVja194NCgwLCBjdHgsIHBhcm1zLCAmZmxvd3Ms
-IGluZGV4X2FycmF5KTsNCj4gZGlmZiAtLWdpdCBhL2xpYi9hY2wvYWNsX3J1bl9zY2FsYXIuYyBi
-L2xpYi9hY2wvYWNsX3J1bl9zY2FsYXIuYw0KPiBpbmRleCAzZDYxZTc5NDA5Li5hMzY2MWIxYjZi
-IDEwMDY0NA0KPiAtLS0gYS9saWIvYWNsL2FjbF9ydW5fc2NhbGFyLmMNCj4gKysrIGIvbGliL2Fj
-bC9hY2xfcnVuX3NjYWxhci5jDQo+IEBAIC0xMjEsMTAgKzEyMSw4IEBAIHJ0ZV9hY2xfY2xhc3Np
-Znlfc2NhbGFyKGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50OF90ICoq
-ZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBsdCksIGRh
-dGEsIHJlc3VsdHMsIG51bSwNCj4gIAkJY2F0ZWdvcmllcywgY3R4LT50cmFuc190YWJsZSk7DQo+
-IA0KPiAtCWZvciAobiA9IDA7IG4gPCBNQVhfU0VBUkNIRVNfU0NBTEFSOyBuKyspIHsNCj4gLQkJ
-Y21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCBNQVhfU0VBUkNIRVNfU0NB
-TEFSOyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25leHRfdHJpZSgmZmxv
-d3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJdHJhbnNpdGlvbjAgPSBpbmRleF9h
-cnJheVswXTsNCj4gIAl0cmFuc2l0aW9uMSA9IGluZGV4X2FycmF5WzFdOw0KPiBkaWZmIC0tZ2l0
-IGEvbGliL2FjbC9hY2xfcnVuX3NzZS5oIGIvbGliL2FjbC9hY2xfcnVuX3NzZS5oDQo+IGluZGV4
-IDkzMjg2YTJjMzguLjRlYzgxOWEyMTUgMTAwNjQ0DQo+IC0tLSBhL2xpYi9hY2wvYWNsX3J1bl9z
-c2UuaA0KPiArKysgYi9saWIvYWNsL2FjbF9ydW5fc3NlLmgNCj4gQEAgLTIwNSwxMCArMjA1LDgg
-QEAgc2VhcmNoX3NzZV84KGNvbnN0IHN0cnVjdCBydGVfYWNsX2N0eCAqY3R4LCBjb25zdCB1aW50
-OF90ICoqZGF0YSwNCj4gIAlhY2xfc2V0X2Zsb3coJmZsb3dzLCBjbXBsdCwgUlRFX0RJTShjbXBs
-dCksIGRhdGEsIHJlc3VsdHMsDQo+ICAJCXRvdGFsX3BhY2tldHMsIGNhdGVnb3JpZXMsIGN0eC0+
-dHJhbnNfdGFibGUpOw0KPiANCj4gLQlmb3IgKG4gPSAwOyBuIDwgTUFYX1NFQVJDSEVTX1NTRTg7
-IG4rKykgew0KPiAtCQljbXBsdFtuXS5jb3VudCA9IDA7DQo+ICsJZm9yIChuID0gMDsgbiA8IE1B
-WF9TRUFSQ0hFU19TU0U4OyBuKyspDQo+ICAJCWluZGV4X2FycmF5W25dID0gYWNsX3N0YXJ0X25l
-eHRfdHJpZSgmZmxvd3MsIHBhcm1zLCBuLCBjdHgpOw0KPiAtCX0NCj4gDQo+ICAJLyoNCj4gIAkg
-KiBpbmRpY2VzMSBjb250YWlucyBpbmRleF9hcnJheVswLDFdDQo+IEBAIC0yOTMsMTAgKzI5MSw4
-IEBAIHNlYXJjaF9zc2VfNChjb25zdCBzdHJ1Y3QgcnRlX2FjbF9jdHggKmN0eCwgY29uc3QgdWlu
-dDhfdCAqKmRhdGEsDQo+ICAJYWNsX3NldF9mbG93KCZmbG93cywgY21wbHQsIFJURV9ESU0oY21w
-bHQpLCBkYXRhLCByZXN1bHRzLA0KPiAgCQl0b3RhbF9wYWNrZXRzLCBjYXRlZ29yaWVzLCBjdHgt
-PnRyYW5zX3RhYmxlKTsNCj4gDQo+IC0JZm9yIChuID0gMDsgbiA8IE1BWF9TRUFSQ0hFU19TU0U0
-OyBuKyspIHsNCj4gLQkJY21wbHRbbl0uY291bnQgPSAwOw0KPiArCWZvciAobiA9IDA7IG4gPCBN
-QVhfU0VBUkNIRVNfU1NFNDsgbisrKQ0KPiAgCQlpbmRleF9hcnJheVtuXSA9IGFjbF9zdGFydF9u
-ZXh0X3RyaWUoJmZsb3dzLCBwYXJtcywgbiwgY3R4KTsNCj4gLQl9DQo+IA0KPiAgCWluZGljZXMx
-ID0gX21tX2xvYWR1X3NpMTI4KCh4bW1fdCAqKSAmaW5kZXhfYXJyYXlbMF0pOw0KPiAgCWluZGlj
-ZXMyID0gX21tX2xvYWR1X3NpMTI4KCh4bW1fdCAqKSAmaW5kZXhfYXJyYXlbMl0pOw0KPiAtLQ0K
-DQpMR1RNLiBBbHNvIHJ1biBhIHF1aWNrIHRlc3Qgb24gbXkgYm94IC0gYWxsIHNlZW1zIG9rLiAN
-Cg0KQWNrZWQtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdl
-aS5jb20+DQpUZXN0ZWQtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2
-QGh1YXdlaS5jb20+DQogDQoNCj4gMi40OC4xDQoNCg==
+On Thu, Mar 27, 2025 at 9:55=E2=80=AFAM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> On Wed, Mar 26, 2025 at 11:39:28AM +0100, David Marchand wrote:
+> > Caught in OBS for Fedora Rawhide on aarch64:
+> >
+> > [  198s] In file included from ../lib/acl/acl_run_neon.h:7,
+> > [  198s]                  from ../lib/acl/acl_run_neon.c:5:
+> > [  198s] In function =E2=80=98alloc_completion=E2=80=99,
+> > [  198s]     inlined from =E2=80=98acl_start_next_trie=E2=80=99 at
+> >       ../lib/acl/acl_run.h:140:24,
+> > [  198s]     inlined from =E2=80=98search_neon_4.isra=E2=80=99 at
+> >       ../lib/acl/acl_run_neon.h:239:20:
+> > [  198s] ../lib/acl/acl_run.h:93:25: error: =E2=80=98cmplt=E2=80=99 may=
+ be used
+> >       uninitialized [-Werror=3Dmaybe-uninitialized]
+> > [  198s]    93 |                 if (p[n].count =3D=3D 0) {
+> > [  198s]       |                     ~~~~^~~~~~
+> > [  198s] ../lib/acl/acl_run_neon.h: In function =E2=80=98search_neon_4.=
+isra=E2=80=99:
+> > [  198s] ../lib/acl/acl_run_neon.h:230:27: note: =E2=80=98cmplt=E2=80=
+=99 declared here
+> > [  198s]   230 |         struct completion cmplt[4];
+> > [  198s]       |                           ^~~~~
+> >
+> > The code was resetting sequentially cmpl[].count at the exact index tha=
+t
+> > later call to alloc_completion uses.
+> > While this code seems correct, GCC 15 does not understand this (probabl=
+y
+> > when applying some optimisations).
+> >
+> > Instead, reset cmpl[].count all at once in acl_set_flow, and cleanup th=
+e
+> > various vectorized implementations accordingly.
+> >
+> > Bugzilla ID: 1678
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > ---
+> >  lib/acl/acl_run.h         | 5 +++++
+> >  lib/acl/acl_run_altivec.h | 8 ++------
+> >  lib/acl/acl_run_avx2.h    | 4 +---
+> >  lib/acl/acl_run_neon.h    | 8 ++------
+> >  lib/acl/acl_run_scalar.c  | 4 +---
+> >  lib/acl/acl_run_sse.h     | 8 ++------
+> >  6 files changed, 13 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/lib/acl/acl_run.h b/lib/acl/acl_run.h
+> > index 7f092413cd..9fd3e60021 100644
+> > --- a/lib/acl/acl_run.h
+> > +++ b/lib/acl/acl_run.h
+> > @@ -176,6 +176,8 @@ acl_set_flow(struct acl_flow_data *flows, struct co=
+mpletion *cmplt,
+> >       uint32_t cmplt_size, const uint8_t **data, uint32_t *results,
+> >       uint32_t data_num, uint32_t categories, const uint64_t *trans)
+> >  {
+> > +     unsigned int i;
+> > +
+> >       flows->num_packets =3D 0;
+> >       flows->started =3D 0;
+> >       flows->trie =3D 0;
+> > @@ -187,6 +189,9 @@ acl_set_flow(struct acl_flow_data *flows, struct co=
+mpletion *cmplt,
+> >       flows->data =3D data;
+> >       flows->results =3D results;
+> >       flows->trans =3D trans;
+> > +
+> > +     for (i =3D 0; i < cmplt_size; i++)
+> > +             cmplt[i].count =3D 0;
+> >  }
+>
+> Minor nit, but since we are using c11 standard, is it not better to decla=
+re
+> "i" inside the "for" statement. Keeps diffs simpler for adding/removing
+> code, I think.
+
+I still have this (bad) habit but yes, it looks nicer with declaring
+in for() itself.
+
+
+--=20
+David Marchand
+
