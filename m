@@ -2,162 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C885EC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 16:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300D6C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 16:22:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4A1A406BB;
-	Thu, 27 Mar 2025 17:17:57 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7E38840654;
- Thu, 27 Mar 2025 17:17:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5AC1B406BB;
+	Thu, 27 Mar 2025 17:22:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 3D0D740654
+ for <dev@dpdk.org>; Thu, 27 Mar 2025 17:22:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743092276; x=1774628276;
+ t=1743092573; x=1774628573;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=6zasd91YSAa5UPE3ypalzlhtHGTPXWtTTaAHAWU68ts=;
- b=EO4v/y3WfJ/sNhogLzWiLY8VOAq/G62CkxOqWp0aJ4EEaeP3XHxJIQ3Z
- V4hNtlX3TKZ36FnAOhHY3AQqS4/BQEQD7ckdLUwOp+UwbKr+p5mK8laAk
- Zp1ur/tn3yMSbQvsN1mefVuTjAh/PUsAjBqoWVV43g08j85mMRRf0lbve
- 38uPAeWqv//X4XJ4tm/D1rmerSQEXmNJRcZTUlwp3QVse/5GYsBxUG/cJ
- qqx232KJpYOOYMXcMlHNX4V7rwhLzSh1yLR6R4PNTflvVHaTT7YhYxNsi
- sMgZWChebTuqnmGxQ5wmzUA4hZE0aWrev9XXNibL0GZKCNW2rK9Ywp8NW A==;
-X-CSE-ConnectionGUID: jsMXCQ/ITOOwOyKz/Ko4qQ==
-X-CSE-MsgGUID: UMCgCxY8QS+P4QC5YE5xDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="55805285"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="55805285"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2025 09:17:54 -0700
-X-CSE-ConnectionGUID: H9RgTPfeThqU51Ki8w681g==
-X-CSE-MsgGUID: G78KzV0tQWGSchmAXCGxPg==
+ bh=P8FYOui8wMyajdGsHbjemV3N/0vB1iWj9nO1miKWQ2o=;
+ b=VhtU/6klv1cmwuimwECgrSSGdx/Sxe2KBHqBIBVlQRUpZLgYZjG/Atw4
+ nuXw3hYHjuo2OD4hYU1+iCm1GZ3NZArqYqlIXvWS/otKevTm5AHFKYa/s
+ M0JwVNT4gCkaWeCr5nhjK33Z9NbseakzcJRS/KvW86tiQxIVyojOUQTig
+ 5KQY5nK5/IyJYIhiE+73afwZibP9wPf1By8akPqBWYigW7trv/Ji9FL+p
+ 0w/r0n0WUMkvvj73Yd7IS+gAjTf4QyTQ4nEevT25jKFwc//pACsp5WKEQ
+ M7OMTTXuRyn2n2K6Sm8nLBq/jO+DTAbswjuB+MWdGdYDsgejdziiereSZ A==;
+X-CSE-ConnectionGUID: eLKvA5eqTj6/KtIhhCLzUA==
+X-CSE-MsgGUID: iFVuuzruQWyvLzmI2q2Gyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44353920"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="44353920"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 09:22:52 -0700
+X-CSE-ConnectionGUID: DcpxwRJ3T1S5Vriv7feI/w==
+X-CSE-MsgGUID: pkZExl77QUeh4QZ2p/ylZw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="130054691"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2025 09:17:55 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 27 Mar 2025 09:17:53 -0700
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="148375939"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 09:22:51 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Thu, 27 Mar 2025 09:22:50 -0700
 Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 27 Mar 2025 09:17:53 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 27 Mar 2025 09:22:50 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.176)
  by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 27 Mar 2025 09:17:53 -0700
+ 15.1.2507.44; Thu, 27 Mar 2025 09:22:50 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=djTqlcd5c/AZgsQqiKIkO3yWJFT8EP1bPXaN0ioj4lny2P6WCRL6jdI2f7S0kDWHXj37q/mGFg85LR3goAjR9rl8bi3ba4lBHWmP5qvSERzCLevRG80lIF0FgbKcV7DHqyqkMvYJj7W/AYSkYT150qRCOi9Yxjn3K/TbJc7ahZX3zOmCzHeFLYii3dkwnitSkdiAL5Wx4U/HObE0iRJoTVbRxX5JLfoipT9T1i6kpWlXlRG2Ap5WKjcWgodD21Y0ms4uwtXLlPatTqy8CPfyoqZEISBAhFUd4m233BSbQGKHYIYEfIL6zFVLCszoKHaCXJhDaj82TJ/6CDeLDPS0bQ==
+ b=iNz9T3X2xSo8UYUD26VaShVTkCYE66vm3jiTvqSHRjfdP4uoRNlHleA6v9MDtIKruQQWqu1HrifIDZ6B3mHUqR0Q+lBZorRPVuh8mKFN2arWU0UusApfIYQw3JUrxec5pcrJ5dsLCgl6CiImf2oMqqyaInPrU3EN3n6nfkwy0qLgj4g6nvAkEg1kL7CEQyHfh0Z6GP489zhDKsklp6Nb8Og3HnJgk/uNByWYAFVfYpmJNLD52G+u7e9wvxzxaQ1ojeVkrxJkjcBXWAt97iW8hJRnQH1TWIsvmYAzumzQoDmvl4Zm03bqYxvN8/SDcDTEbHfrjEQTIhaprYMGoqkPJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KzM4V2Ugmo1DSFTpDA3mgnWGVxuQrxH3JLjj4uhcjJk=;
- b=r+dHDr89VrHIdbXc7q0asQ88Y9JBxncWNV6ME1zGqMbYHUpH9tuuY3VYJ3XEgrrO0stsM3RgbkRcnetMw9pfIrrVSL1qivREvAP4SM2zc2BGiVoeMl02WBJG+YC0aYaZWYjIlUSJ3lSccuOWq4iHBCQNpXu/vE0x+4GXDbFsq3iALh30i2eb21mVM2y3WkwOoAe6jLIf+BvQXSsJY7ikZiExSbHPEI+pl31Z/LoRBqYfQwpNcESmNlbYmR0Kjcd8GTSbsmJj7hlmbz8aQvn8lT1Lq5Be64hrQVNJwm//0kkZhvS5Yc3HqwXDJS4Qn6WC/ByoOKL8aF8nS+bryKxpbw==
+ bh=82UiI33CWU/vMvB8yLFJLVplDtM4BWvOjfUgC7CS9II=;
+ b=brjPl4PhqdfxcvzI3OD2NmBKh4QPOChlWpZtJZLvhXB05UmC7qB9/72BGcZvgiWJL3G9ypI7+G1CZ4jCx8PhAwIn0qSFArIFcpzUeLlLWHofrin3s2V8GAEy/Z3KXmOiI5bOG2h5AsbM4jnmkjFQfAJY6mzkFEa/uWkyFEdXEmIpUDSxLu9xNHomG7Pf/RZCm4kChdd35ReZs0M3+6UTDc7rfG9au0Da9MKXxcw9i9djhV901bBw1g63x+lNmG9XaEsH/z6eUIOV6k7EBTCBWJ6ovSRnwTNFJjPgH2w77CnYhPBdERhdmYX8n2ykZFRSl3En33cUrCSlmjPEV8nBkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB7381.namprd11.prod.outlook.com (2603:10b6:8:134::14) with
+ by CY8PR11MB7313.namprd11.prod.outlook.com (2603:10b6:930:9c::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 16:17:35 +0000
+ 2025 16:22:48 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 16:17:35 +0000
-Date: Thu, 27 Mar 2025 16:17:30 +0000
+ 16:22:48 +0000
+Date: Thu, 27 Mar 2025 16:22:42 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Etelson, Gregory" <getelson@nvidia.com>
-CC: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>,
- <dev@dpdk.org>, <techboard@dpdk.org>, <thomas@monjalon.net>,
- <mkashani@nvidia.com>
-Subject: Re: DPDK for rust
-Message-ID: <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
+To: Gregory Etelson <getelson@nvidia.com>
+CC: <dev@dpdk.org>, <dsosnowski@nvidia.com>, <harry.van.haaren@intel.com>,
+ <igootorov@gmail.com>, <mkashani@nvidia.com>, <stephen@networkplumber.org>,
+ <thomas@monjalon.net>
+Subject: Re: [PATCH v4] rust: support raw DPDK API
+Message-ID: <Z-V7UmCfYEbkWOeY@bricha3-mobl1.ger.corp.intel.com>
 References: <20250306133713.393057-1-getelson@nvidia.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB79@smartserver.smartshare.dk>
- <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
+ <20250322105911.12378-1-getelson@nvidia.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
-X-ClientProxiedBy: DB8PR06CA0057.eurprd06.prod.outlook.com
- (2603:10a6:10:120::31) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <20250322105911.12378-1-getelson@nvidia.com>
+X-ClientProxiedBy: DU6P191CA0050.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::13) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7381:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21bc2da5-b626-44ed-66ae-08dd6d4ae2c7
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CY8PR11MB7313:EE_
+X-MS-Office365-Filtering-Correlation-Id: d314cb11-b3bb-442f-b25f-08dd6d4b9ce1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3qI4bO14+w7pjVWBO7RQpjE6RQZn6w7HTVRphjRL4B+OPY07zY26Wyk9RMQ+?=
- =?us-ascii?Q?XhfT7qoOcjxzrEJp+Utmg+GgistwV4jdQJx3k+OPy3fz/B0JZ2ZwMqvvp1dp?=
- =?us-ascii?Q?miZsTqefx+OCTfUyctI74UKJE5unRmYWD+frZ7DjdVFGnSmpeiTUAIqlRMMH?=
- =?us-ascii?Q?eIzKW0TKqaM6OttUBkaO9JBgASWqnbzEpknwwcbyp4BzaqQsgXK9RzgUHnwh?=
- =?us-ascii?Q?YhhUssjaMrZfWgbiiftHXYTMciNBE3W6YzCvYt6ITFN/9I2013NgACQXQ/HT?=
- =?us-ascii?Q?0ovZZsFoJywaqM31kfygNMqSxW265wpIlsVJ7YgjJLzKzBpWL+WD5OlW5thk?=
- =?us-ascii?Q?1huHWFmuR+DJMBovHXJxiz3TwU2/NckySqKvk2RcgHZhs8o23DJng0VvSy62?=
- =?us-ascii?Q?clxMQUdtZ9bTrkjczVtGzjbKm3uXGlFcU2R7k4LCScNlPUJsEL1GW26nak1u?=
- =?us-ascii?Q?2m40KQYnoJr9SX2JXhngU6vp4JQ/oR2O59y4PKWUFLDJRi/q2CTwTwtI4011?=
- =?us-ascii?Q?E1ibQQb9LisxjOxmA0jYeuPpLJ3wfrHLuP2Big5ew3uqYNO3uquIR9COJix6?=
- =?us-ascii?Q?m72n9nnyryCz1AqqwxRNfYi+eadrJrppJYdMA73gE6qh2A6R0P0yZAs7OmJL?=
- =?us-ascii?Q?XchhV4TXuuq9mh5UACVd7y1xYSEswkyu98sajJiGSChwAJ+FmEGIsOhBn2WR?=
- =?us-ascii?Q?7czCfw+prvPw2lLZoLMNkEb8CCq8FyHwh2n5MB4mKjr7xAhDBAl/AWHAKdgX?=
- =?us-ascii?Q?ndYuhGdpvCNiiG2jVuSXqDByeKk3AsAXcnv5ahWmbzv6yai/Ccc3W3UkDEW7?=
- =?us-ascii?Q?vX4Ao2QstxIFGxF6rJ3EU/zuWIC9doT39jELvRJNkmABKl69uJBtTgZzeoyG?=
- =?us-ascii?Q?ybKZJFUh0jez6qtojxJiN5P+dfYB+GPIk+mPVuWHpEhKrfZMk43iSMRBiSJd?=
- =?us-ascii?Q?UzNFYk06rzkT5/7yNic8N+UuoAK7J1OtiB2GJ5lrHJUR5WD1u8G2qbUJXhRu?=
- =?us-ascii?Q?TOCsQwjJp3iYwIA+xmM2x6om4KAC20iviheltIxZQW8/Ft3+zxbbgiJ/1njG?=
- =?us-ascii?Q?iN5H46adluqmNk6FG33wyTUlwSCktkFzb4zBS47tr1B133XS77Ffp1Hw2nyB?=
- =?us-ascii?Q?dzbb64Oid+KbyKWBuXZTwc++thSzBUjDmeYZrTf7sc2nq/LyKt76KTr5gI+G?=
- =?us-ascii?Q?J1m+KOJo+NrrV23PSkRRsNqtGpF5bO4lopveYouhg8o/G8k4Zon4/PzTtZbR?=
- =?us-ascii?Q?Xj+nGFLWcOa8Xx85udDRZ4xQWQW42RVPdWjTJ0X/8q/pd/euaK1MuKZvQZdk?=
- =?us-ascii?Q?01MPgubwk8bxZ3myRrM9SCI08J2hpXv5j/MwdwjIU6Bbj8aXeQl/c9s/1p5p?=
- =?us-ascii?Q?c3ar9B74Ozb3iIa84mXd3Zp5xyFY?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MxmAWXU00KciYSdS9M3mFNGrUm6Cho08XIxD5Gi8AjrAH60QIJ4LbPYYVftL?=
+ =?us-ascii?Q?v/dznnVITU3ehb+TF5rGZwMHBadbdjjbGJkIMyUSo79As1lk+Ll4CucbZ6uV?=
+ =?us-ascii?Q?I3Hou6OkgEPqYMqMczh7H4z0gP6F8nAnW8qypbOfKtCDFCT/j8rdec2DbNt9?=
+ =?us-ascii?Q?UXV6XxBVsFoJ9ntEwb1GYrJ1eo6ykzR2FUrDctRPQ9WZEM7RZOf5Rrw5T0pJ?=
+ =?us-ascii?Q?OXwITvmY+gnMPktiS/0ncfGFSImYsD/5VDK/oqmwN/0f5nCMMoqT8BvWBZ2P?=
+ =?us-ascii?Q?4n3nNvHTdWFTrdj3dnX/FLGJi2rHJHh2Pg1JEexVrdxwaZGr0oj6Fu0M+qc0?=
+ =?us-ascii?Q?HJsmCGAsszWCr9n1FmfVu33UiGU6PDYE6XaWsiBhmunuMDssSGq6q1qX1O+E?=
+ =?us-ascii?Q?6PeGtmsroZP5tKgkMqHJy10fo2atxEwbGR3bAWEZrH5bX/nz8i8Hu3tK/W36?=
+ =?us-ascii?Q?2RFAJq05zrusZ+CPjKFnh9e7ZTW0xm2IdCm8lt5f59eBMU7YakjYlpwavOuZ?=
+ =?us-ascii?Q?WIHRfWu69fluRjOaDCr8BjyvMzFw4Sbmf9r7g894AiHGmCx80e9DO+c3Wpyv?=
+ =?us-ascii?Q?z9BAhvXgWAi4Iey/azM6CCBdBrket918mKRcv30fKAm2oe7M5GZCrH7R0llw?=
+ =?us-ascii?Q?jVoTI4Gk+JkX2m6HB1nJ+I0d4g43h9SkdQ4quUZNABvXdXd464aDX3HLE7xv?=
+ =?us-ascii?Q?ZqDD56GPHHZyMZeVnGveihXqTgA5BRRlz/0lnFC9EpKoRmfxOmDmuRkTYilQ?=
+ =?us-ascii?Q?NW3SB7cXkfi8sc33LXlHYgCGEL/AIZ7BjZF8sCOhh0GydK9Kmjj6eq8i6bcA?=
+ =?us-ascii?Q?dInpiaJwj5KIMVRmN7tyHAom3uvMMkgxKZ/0JEgMrrEPtTi7PiBdCo1fXwkS?=
+ =?us-ascii?Q?WVi7ccPDkMFYTvzYRRq7iHeROgb37XfTLgr3wXfAUMoI++wENyeNErq8x4Xt?=
+ =?us-ascii?Q?b1idxIosrWwnfpLGIG+Kyju7Thrd99X4d5kMlFRkgSGRGG1y51Tin6QJOyAj?=
+ =?us-ascii?Q?TiuVh6wBWnJ+trqH7Obiu782cNFxQE5zyIN//d9lLMaP0k+sLazP1U1aGjps?=
+ =?us-ascii?Q?+ZXOOYtdntBtySYzocUMGkkJHF/QdnlDDmrBBzPxp71W3YxOiSsSK9rGo/PD?=
+ =?us-ascii?Q?W3siGj8KdB/gUwz3ZiV0C9Nll8JQyAX5sCVbCdIBFAdmKR+a19O4H/kNYfkn?=
+ =?us-ascii?Q?UD1rDmBl99DMivV9TQ5nyRXP+iswK9B7KS3YqPgMaVTH2IzZU/c50pLQXQmM?=
+ =?us-ascii?Q?OvaY5UZDVVBH5FR3jPKs1it3pqL6ihHUhKhBvDy+lD49n4T06bslmVmEGijO?=
+ =?us-ascii?Q?VNB3MY4kHULE2QRoFBVOiXeXiAsQFsh93sM90aBrMGXqGCT4NvuD7IgGogLr?=
+ =?us-ascii?Q?Rlx4eFu+I/2TAys+BKiFc9jiYdO7?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JhviOg0NPpqhf0Sll7JwHCHyITaiC5yUFHe37yTVlTVXDtohF5a5avJZ7U4A?=
- =?us-ascii?Q?Sfb4XI58Pr22suJqUuJ/ED111g3+V9aRoIvlqK1wO/MIpaC1C//nRtrwGuG4?=
- =?us-ascii?Q?W33CWMNOGDNBXS9lmBEc1S7gyCyhWfJsEiAlWRiiMt4iOtl7WmfFGSjORsFG?=
- =?us-ascii?Q?v4JxMhIJ9NYnTUhvQNV0wYs6Gp6dK2UzrqALCBb7h4DAjJuKTSk6yTh6sjIN?=
- =?us-ascii?Q?dwaEBzGFzM6D7IkxOxQab+fSOCvRsuy4wOUtQBzYNIrFoIVJQwk6mqh+XYEI?=
- =?us-ascii?Q?eVaMncYTK5TL0O3HXNkol0neKTxzqINEaumxpyW3wUVDkInRdJt857d7Ltuq?=
- =?us-ascii?Q?E1ePfEjdxwcdOUv0C1dLSemV4a2Coo1qxT6KLcz+PkFtyLtK3N+1ffwrSNzw?=
- =?us-ascii?Q?L3UD16hQKddWbnEAVIEOWSszpURzOZ+wK03iItNagth/gb0/TMd2dguZPJlb?=
- =?us-ascii?Q?7GKDtpicthly37uUBr/xOAWDAqZm1bthGL/EsOlTgHWgQYncSa8SL/CTFmay?=
- =?us-ascii?Q?BYAMYDZ40W+ZOT6CtbKCW/fRoS2jYB5XYGlxEzq8z4wD5D+0Pm1Vrmy22lZf?=
- =?us-ascii?Q?TsKXFZ83bgcyvy6mTsG10dZVuZNcCzul2MG5W6+xoTwbaCXuloH5ovPuqrZo?=
- =?us-ascii?Q?3RkjZfFgOIkynUKn0ApFWeTvFu9Y7UJMqJsi+Deif/llsZ4ec/rq+TI9K/qB?=
- =?us-ascii?Q?gIuDFktvQYRQA4agOcKEUj6NkXMZAAQG9AuI6d2pFvr0gSthoWq4ryKkfABN?=
- =?us-ascii?Q?CcrQjeQ1tGkIJIXe1ykJR2zYyrIdBqNtUpspyeSnaCUhDVq5Tz6virTUi8fM?=
- =?us-ascii?Q?x2JZ66qI5pzbUaNnjawkdI6OiadxPMGbqUNooKd/K349udlzcB+CfAIVJm6y?=
- =?us-ascii?Q?Zs+6Ov9fohR2XcwVBxGG30TTrvQAqVSiWT4YrRQ/mEEKpbFQxRWNZq0+qGJq?=
- =?us-ascii?Q?o9it45gH90wAdJTIQLu7Ib0dgrhQoyU7Ys1TUiFBCbuY5FTiP4pZo77QI9BQ?=
- =?us-ascii?Q?lhJqfQn3UM9Yb4z2Xs49eQZzP125Kwq554gF5XPTaWapPs7TqU4jrIg0iAeM?=
- =?us-ascii?Q?SV9QyO2UOGsPGM0SGrZRXaVo8Z1ss8c1iPf02iD8Ni6gzYKWYVw7EXPA2sms?=
- =?us-ascii?Q?He6se2aFZLfWIIxaRwe60QLFOL2l6v7VGPJZSyBA3nhLW7e+UhWF+FOZBogs?=
- =?us-ascii?Q?5kNY86sRH05LioRrPmXJdzQW4GV7HqOosq6QPMfWQCikBcEPcQT7QdIx/fPH?=
- =?us-ascii?Q?zkfUT31eDETMCPUQUdhfv5cKMKVrDdbxDEiYZLzlICTTZT11iy3ZvwVcHK5m?=
- =?us-ascii?Q?Hy10Teg5B798B6acGRtjGUTgdHQt8Dwyu6+jLM6eWVVOG0y6m1R1e0212NZJ?=
- =?us-ascii?Q?iUZGtb3aIDgL++8ABs7sfck1nB3TVsTcUsQAzeY3F1ycwpUtSZ4LhrQzIVZa?=
- =?us-ascii?Q?kep6PYzRH4xU3Rpw467l6ai8cb/3yMBDXviFEMNrdNKCn5dpzbNd+L9bsjYH?=
- =?us-ascii?Q?/t+iyE1jCEewZORlI3kmAvY6XxsnPE3zHzEskvWco5Z44kCYKoV/rZ/4jEb2?=
- =?us-ascii?Q?dblXjH4+gFdGe0ws/JTmnFhvlLiNZce0p5AQaIrIHAoVw8ag9tCIFMI19pNS?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21bc2da5-b626-44ed-66ae-08dd6d4ae2c7
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DSjYI/yJZGli0aY0m3l5XTo50ntwPxc4jQnre3WHHvTB6zI2J2oeU8bjpQ0R?=
+ =?us-ascii?Q?SXPTif/Tu6HyxRwJHYjwuWQn9TMC79Mto6gIIeb5nADi/1XXByyvtPIv7QQJ?=
+ =?us-ascii?Q?T6A6tnYBg60kC8LLhwPhU0gl/dtkjo8WHO9o2xdAglO0Aw1tdZ9eUgOw8xvt?=
+ =?us-ascii?Q?h9uavmsYfh/bpeRBw7cjHG6blS3PSiXlZawS/ifMK9UM0sd2pybvEgy8RFb2?=
+ =?us-ascii?Q?dgeHqkptiuzv9yDxTi7Vf2TgJi2Mgpn3NXpy8VmItThB7vr+xHvTG3vVeL1X?=
+ =?us-ascii?Q?5GAhuXDF6msbD6NkGnl/LJdUbT1G4pSHW7CGGQ12iAiBjlUr+Z9C1DNtFAgQ?=
+ =?us-ascii?Q?06YQikYMw5nmYFgn1tUS0rTaAW1t1ZTIkm19tSRLMqIog6sSGjvz05KU8dbj?=
+ =?us-ascii?Q?0l0NuYZTbFvVF5vdk2Dd/6NNmQ3c8sqXOQ07uZptDPoLDCjhZUd/YLjvp9rq?=
+ =?us-ascii?Q?aWyFkqooKiINagn4xsfdn++IxjaarlSyAndupuq3foMHfN5RLaO0lBI6YHbh?=
+ =?us-ascii?Q?pGpFG7EYVNeWh8RRbBLg1qgh+gO5M1ivu0+XTzfDHDrWxzayWvaqxubsVTUP?=
+ =?us-ascii?Q?mrXXr3bPFLFGYi0JkUn/610/FduwWAJOR9zKpxik0aBTXmTWtn0oDpO+EjaA?=
+ =?us-ascii?Q?V/Jw1xqziwu+cCh6JETr3hQm+N+qC1FD/NXqa4ij+Jalg1J+WWPpbqwRsqaf?=
+ =?us-ascii?Q?2qCISIJxW9Q6CNq0c4pN7PVQ9pXpmWnJlDezKEumUHQ2b6b6arzt9zMi/ogy?=
+ =?us-ascii?Q?SR0SyrdNkgsSN5AO+BEPr+vyrsBEL02cEOg3EuiswNJrL6fbtxxTTDyq+Npx?=
+ =?us-ascii?Q?Tl1e7fT9Pjg12dAXU0ErhxHVudA8XPfV5xEBG90zp7Q1yjBOMNT3kLl2EQEY?=
+ =?us-ascii?Q?BuqkK/lZZjSIeWvAB9undlc8ioryhkhDmfQZGf4TWaDcq6wN49UUuRNVk0KW?=
+ =?us-ascii?Q?ffRiue6qtu2YUYnhq2cDFSn6PXxlbY4knHwcLKYem3MDwk2wsTeY5s1HFm6a?=
+ =?us-ascii?Q?NP0wCNMLEtuW4HlPK1mjYb3yzjPO6WTmavZm3Tg1D1nV69gYPkWtkKlW0q+F?=
+ =?us-ascii?Q?tRJZ8JKkZm0REkxA/oIxM5X0yKvCSQxzy/Crl8r5YpSj471i+YWddLyoTQqc?=
+ =?us-ascii?Q?ZuKQ8qK+C1YK+FtTAqIYCmdkrEVM2MP0XSGQJNddnZ99egsHdHgJhahhapkP?=
+ =?us-ascii?Q?d0cnGFu3BCUcDvTWEvwSIp9YRlNMPf5aleRPmbH/kPdxp8OeQ7lRTRQFvMAq?=
+ =?us-ascii?Q?aYtSbe1ZRtWMWWcbSaxKBy/uE4Wg7Z+0ycT/I2I+nT7t+oq3rSft4cO9TP8S?=
+ =?us-ascii?Q?dMo7u7PccbxNs8JrWOybbttn+T/K+eJL2zFMURizhozcgjmcSO/aApTiAqRS?=
+ =?us-ascii?Q?f4YlXLAxq8H6cf3qZI/WV1ypY2vl3qAR2TCC0GoEP+V5e2ZYL/xfT0uEp1my?=
+ =?us-ascii?Q?Y31N/7KbeVQlmZpqRrqpDukhUjE1mGRvHWuTuunsygm/5ElcEG4Vb+zfvs0h?=
+ =?us-ascii?Q?6qUQPa4z3cBQV2KErRMdXKjuCGkccip8HkihJIPmCUHM9IgXYDz0oTHLlrXx?=
+ =?us-ascii?Q?RLgS2V2er3Vx8mVjjX1rXIUZEi6/mfqx6v5eBWp6JaxHBCt1lNtkvFoi4J0o?=
+ =?us-ascii?Q?FA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d314cb11-b3bb-442f-b25f-08dd6d4b9ce1
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 16:17:35.7508 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 16:22:48.0999 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zuXjT05ge/1R9NvKwwrecVAIba3qjGtiN0vJe0ygL415ogQaNLiGlMwm93wFyZ6ttovCGvEyPAdeYdFcsdbIYI3y0yWF4dCiR5M747K0JdM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7381
+X-MS-Exchange-CrossTenant-UserPrincipalName: +Ytw92CBksWg2bcGoJdSjDOTPEaU54VURAc7JWIG1jm9VofHw9nSHOhW2dJ9+4lLpkyEZeOoOaCAgJe2K27yEKsxbUEBoP4Y1N4WVDtnX4U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7313
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -172,18 +171,138 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 27, 2025 at 11:00:40AM +0200, Etelson, Gregory wrote:
-> Hello Morten,
+On Sat, Mar 22, 2025 at 12:59:11PM +0200, Gregory Etelson wrote:
+> The patch converts include files with DPDK API to RUST and binds new
+> RUST API files into raw module under dpdk crate.
 > 
-> Thank you for raising these questions !
+> The RUST files and DPDK libraries build from C sources
+> allow creation of DPDK application in RUST.
 > 
-> > 
-> > Do we want the DPDK project itself to support rust?
-> > Or should parts of this be a DPDK hosted project, like grout?
+> RUST DPDK application must specify the `dpdk` crate as
+> dependency in Cargo.toml file.
 > 
-> Rust packages management is different.
-> Also DPDK Rust code will eventually provide a different API.
-> At this stage, DPDK hosted project looks like a good idea.
+> RUST `dpdk` crate is installed into
+> $MESON_INSTALL_DESTDIR_PREFIX/$libdir/rust directory.
 > 
+> Software requirements:
+> - clang
+> - RUST installation
+> - bindgen-cli crate
+> 
+> RUST dpdk installation instructions:
+> 1. Configure DPDK with `-Deanble_rust=true`
+> 2. Build and install DPDK. The installation procedure will create
+>    $MESON_INSTALL_DESTDIR_PREFIX/$libdir/rust crate.
+> 3. Update PKG_CONFIG_PATH to point to DPDK installation.
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 
-For ease of use, that would mean hosting a cargo registry, no?
+Hi Gregory,
+
+some additional thoughts and comments inline below.
+
+/Bruce
+
+> ---
+> v2:
+> Change rust crate name from dpdklib to dpdk.
+> Add raw module for to link with C API.
+> Add "cargo:rerun-if-changed=build.rs".
+> v3:
+> Move init_port_config() to Port.
+> Move start_port() to Port.
+> Remove Cargo.lock from git repository
+> Reformat code.
+> v4:
+> Blocked bindgen to convert stdlib functions with u128 type.
+> Allow compilation of C style symbols.
+
+When using bindgen, are we better to take the approach (as in this patch)
+of running it on everything in the headers and just excluding some things,
+or taking the opposite conservative approach of just listing the functions
+and defines we actually do want exposed (with wildcarding as necessary)?
+When playing with rust apps on top of DPDK myself, I've tended toward the
+latter scheme, but maybe for this effort we may want the former.
+
+> ---
+>  buildtools/meson.build               |   4 +
+>  buildtools/rust-env.sh               |  96 ++++++++++++
+>  examples/rust/helloworld/Cargo.toml  |   7 +
+>  examples/rust/helloworld/build.rs    |  24 +++
+>  examples/rust/helloworld/src/main.rs | 219 +++++++++++++++++++++++++++
+>  meson_options.txt                    |   2 +
+>  6 files changed, 352 insertions(+)
+>  create mode 100755 buildtools/rust-env.sh
+>  create mode 100644 examples/rust/helloworld/Cargo.toml
+>  create mode 100644 examples/rust/helloworld/build.rs
+>  create mode 100644 examples/rust/helloworld/src/main.rs
+> 
+> diff --git a/buildtools/meson.build b/buildtools/meson.build
+> index 4e2c1217a2..b9d0092f07 100644
+> --- a/buildtools/meson.build
+> +++ b/buildtools/meson.build
+> @@ -50,3 +50,7 @@ else
+>      pmdinfo += 'ar'
+>      pmdinfogen += 'elf'
+>  endif
+> +
+> +if get_option('enable_rust')
+> +    meson.add_install_script(['rust-env.sh', get_option('libdir')])
+> +endif
+
+I'm not convinced by having this done as a post-install script. Instead I'd
+tend towards having a rust crate hosted somewhere that does the bindgen as
+part of the rust build.
+
+> diff --git a/buildtools/rust-env.sh b/buildtools/rust-env.sh
+> new file mode 100755
+> index 0000000000..a239432a28
+> --- /dev/null
+> +++ b/buildtools/rust-env.sh
+> @@ -0,0 +1,96 @@
+> +#! /bin/sh
+> +
+> +# Convert DPDK API files into RUST.
+> +# DPDK files selection is on demand.
+> +#
+
+<snip>
+
+> diff --git a/examples/rust/helloworld/build.rs b/examples/rust/helloworld/build.rs
+> new file mode 100644
+> index 0000000000..bd5737d209
+> --- /dev/null
+> +++ b/examples/rust/helloworld/build.rs
+> @@ -0,0 +1,24 @@
+> +use std::process::Command;
+> +
+> +pub fn main() {
+> +    let mut pkgconfig = Command::new("pkg-config");
+> +
+> +    match pkgconfig.args(["--libs", "libdpdk"]).output() {
+
+This work of using pkgconfig should not be necessary in the application
+build.rs file. If we switch to actually producing a proper crate, the
+pkgconfig handling and linking should be covered there (I would hope,
+anyway).
+
+> +        Ok(output) => {
+> +            let stdout = String::from_utf8_lossy(&output.stdout)
+> +                .trim_end()
+> +                .to_string();
+> +            for token in stdout.split_ascii_whitespace().filter(|s| !s.is_empty()) {
+> +                if token.starts_with("-L") {
+> +                    println!("cargo::rustc-link-search=native={}", &token[2..]);
+> +                } else if token.starts_with("-l") {
+> +                    println!("cargo::rustc-link-lib={}", &token[2..]);
+> +                }
+> +            }
+> +            println!("cargo:rerun-if-changed=build.rs");
+> +        }
+> +        Err(error) => {
+> +            panic!("failed to read libdpdk package: {:?}", error);
+> +        }
+> +    }
+> +}
+
+<snip>
