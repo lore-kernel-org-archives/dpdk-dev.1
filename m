@@ -2,174 +2,188 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630EAC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 12:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20331C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 12:25:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 798F2402E6;
-	Thu, 27 Mar 2025 13:13:30 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 6AA31402C8
- for <dev@dpdk.org>; Thu, 27 Mar 2025 13:13:29 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R75sNF013524;
- Thu, 27 Mar 2025 05:13:26 -0700
-Received: from nam10-bn7-obe.outbound.protection.outlook.com
- (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45n1yv8m6u-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 27 Mar 2025 05:13:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CAFF740B9C;
+	Thu, 27 Mar 2025 13:25:29 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 1CC23402E6;
+ Thu, 27 Mar 2025 13:25:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1743078329; x=1774614329;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=lgoqcq0sk8qyzSl2PtFkzqbO+gHPzNo3mydor1Z3/rM=;
+ b=UDQlYIBtumfkMtUwShp1yI6LOhRDhYVQr6c8SzxHa2A3bMofeZJy5GvD
+ A870J8NjK67S4/mneS9FP7TTgrkibU5lxzGSqx1fyCRVpqPH1/7VctMW+
+ HlMpqdt85uznTgLMhC2y6n9G4fmBkCylHozadDmO9tGMJzXCYT6FRBZPW
+ FXbeiDvLpOkz3ZDs+nMxxHCQqmnQeKiPXIkycEtE0mNvLQ3HDeqRT/ZQF
+ t5sTNXRhFaHrMrVsGqwY/m0840l6JVpfexxS8U8oMtwy6eSp8qJsgN+Ad
+ pEPkjeeFIOSxJoDM8qhy8xRwE/s5YuSAwb3Bs+5k5R+CEKBOCbMQCLCbE w==;
+X-CSE-ConnectionGUID: zIWGpmMHTmCdQojy3+Frpg==
+X-CSE-MsgGUID: /nlSwkivRTS9mMWoTFJ88A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="61800219"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="61800219"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 05:25:22 -0700
+X-CSE-ConnectionGUID: MxBYUYetSXOTUMV9UaRsHA==
+X-CSE-MsgGUID: RPpEw8eaQ1Wh1EheyKJ0oQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="125344472"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 05:25:22 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 27 Mar 2025 05:25:21 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 27 Mar 2025 05:25:21 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 27 Mar 2025 05:25:20 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Amy7oerHph9elKcXLvOFGIttPCKpG9lh+r5YSCL3YIOvKryBtmpH2M9/fr2wbgZ2tjW9fISxNrXbbXsOl1vUvVg94QGMLa1LlEaoRMd+knNWUSig2XkhdVH4KDWOIUQ+tzTPcVYPexQhtSFYfn/EpPFlrumiGfGYk6+OUFb13lwNQ3TP2hh3Sdnd8PWcH6VSXBv3Q6bxyuNCKZkCEpMCjyUHRAbH1pz77is7bLQPcbzQ16fbFxsERfDLShNTjnyGhFsYydlRUSoXG719ZG2AcFxqSUVCC3SPGulSVS9UcJTLy3Y8WeowjKfD1zFTXWX7Q2lYnzBn7r4uVax9chj8ng==
+ b=r1T8MnWXXLM/KPp7LZmffFyj3Pz2umT3tZPZGwnTDCmw7fqXHGLMdP8ZfD1cszM11/r1L5KRAE+T8mxgubxrAbGPeQwekcF4SUs+e5zkezb5a/RFa1CTKdouhZRqRyupmSQBpRvtJzBZ617efKWGLd2Wrk28sCzHYBrRIzn9/dy9fC6nTCvZFCYE3RmLF/PZMUWYOfBK6gwFX3ShNXKoBSSOANimHbzBwvuYGqSBfGB8komkjveFl4zp2T6al3zQKOm2LDNdhs0hta7cxPXKa7djn0gDm5MBVhpzkzYEsSykV97SrSDu2gQvQLAkDLrraB5CY1nBbowRKnC27IOevA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TP1ekakR7jqi2PoArcM6S1bG1/0Nj2wadU45NyKTn3s=;
- b=FHsB3rMRUXzeiD0cpU0XMLDKuEsF21+aBbAlUofeDPrKZ5dAuUb7VYpq2AxeCxH4D6aQsk9HVxiIsP1ybM5GhoesLXCduf/3hMp9CmsT6N7x0f/IEGp8i7AE7ssvWnBoGVUKBBzOt8anzJ1rUK/uZ3k34kHeNTPRNTPkqQGgnWkHdpihh+9sWzAs+Vj1A1IkL6x+18HBcp0R8LVMYZdtQmP8YZMGQWVCprf53KKkvPJG4jRqFxCatWpBLEQwTE+/6AiJyOTnUFom/Kv2btSMiMj0MGZrZ0aTL/bh6HHNCgIH1nCD8WwOeB3AgyEu5zEVz7PgEoO+C+wtDUzF70/HkQ==
+ bh=BfXSky6VAAL/jqStqv8a1d0vse549Myrk4Hn6ksznYU=;
+ b=RN2jCxYcUjBz9nKhs8kJphcVs0jdmi+o3y2GqxeFwEcW563dPDegJtnKJrq/4gSuVmZsgGx0jwyHYg1n09dUi77jN07QeDFv1r3eTEdjzyToxv1u2gHZH9e4TAoEawuZJYf2lIeRliAfr7dwL8MR1xIhPNvz/icw3aPjcUbKgYvqc0UCOIz6tkRIRTynz1XlVV/yodB27cifz78M/DCyqP2Mhhuvr/U3/IRkTi7KRZZ4/ouhdfuVApFcyQUxsZFTzOnfDus3NxWRdXgx2KBH/fv/GZNz4T6nP1X5xQUBHg410sf/SEbjFOTnNt8Kd98NoNswjsfSWILg6TTssXs3ag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TP1ekakR7jqi2PoArcM6S1bG1/0Nj2wadU45NyKTn3s=;
- b=gyJA9LRoesNub6rItuQAwHF7fecYPIDs4YS6mZ88p9UYztEHUhq/uCFZPocrOncr0NwjxmpiJnezhxSHKm6W1TGzGMqZnYV+tXIIBNZEjl/7o+0vY6Ju3iBKMkc4JigexDBRNYi9mkt3ghXxo7LseKANDLF+zOWbOZnfYNZjs4A=
-Received: from CO1PR18MB4796.namprd18.prod.outlook.com (2603:10b6:303:ef::23)
- by IA1PR18MB5490.namprd18.prod.outlook.com (2603:10b6:208:44e::18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Thu, 27 Mar
- 2025 12:13:21 +0000
-Received: from CO1PR18MB4796.namprd18.prod.outlook.com
- ([fe80::f8a2:222b:6611:ba0]) by CO1PR18MB4796.namprd18.prod.outlook.com
- ([fe80::f8a2:222b:6611:ba0%3]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 12:13:21 +0000
-From: Jerin Jacob <jerinj@marvell.com>
-To: Pravin Pathak <pravin.pathak@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "mike.ximing.chen@intel.com" <mike.ximing.chen@intel.com>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- "thomas@monjalon.net" <thomas@monjalon.net>, "david.marchand@redhat.com"
- <david.marchand@redhat.com>, "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
- "chenbox@nvidia.com" <chenbox@nvidia.com>, "tirthendu.sarkar@intel.com"
- <tirthendu.sarkar@intel.com>
-Subject: RE: [EXTERNAL] [PATCH v1] event/dlb2: enhancement to DLB credit
- management
-Thread-Topic: [EXTERNAL] [PATCH v1] event/dlb2: enhancement to DLB credit
- management
-Thread-Index: AQHbh8qtteOOZoyNhUmRija8BJF76bOHE4VQ
-Date: Thu, 27 Mar 2025 12:13:21 +0000
-Message-ID: <CO1PR18MB47962F090F2A3AAE835A5F65C8A12@CO1PR18MB4796.namprd18.prod.outlook.com>
-References: <20250225211715.412663-1-pravin.pathak@intel.com>
-In-Reply-To: <20250225211715.412663-1-pravin.pathak@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR18MB4796:EE_|IA1PR18MB5490:EE_
-x-ms-office365-filtering-correlation-id: 96e7addc-2a44-48e8-a4ad-08dd6d28c41a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?RVF0Z2d2cU5TWjRxbVQ1b1RuWG9RYjBUb2ZzQjdYcWxXTE9qVjFCR0JwTWJi?=
- =?utf-8?B?M2Zna2VWTGExNUNoT2k5VmFWdnNqQ2RLQVFUcTVRRXdyMmhqc0FKZ3VxeThj?=
- =?utf-8?B?NFRxNEV4R3ArM0E4MkVTcmhZbHN6Z3JYM0lNWTIxazB5aStsdDNjbXpvRjhF?=
- =?utf-8?B?bGs0RWpXdXQ2enRoQ3JUeldjQWc1T3dUN1UwTXljR1NVNU9lcjFjd3ZTeUdB?=
- =?utf-8?B?ZXAxKys5VXR0aFhMa2dtQ0drcEpaVVpnYXhCcnRXRTIxZzA3Zk15TzJlenIz?=
- =?utf-8?B?eDM1citFcXpUcTc4a2MySzdXZzg4R3hHdEhySlJuaUVSd1NtMjVWc29uZHRE?=
- =?utf-8?B?UEQxYVI3YUdNQWk1ZGhmemkwVzFZcTY2eWhHZDdldVRoZTZPeU1mQTBkZ2FQ?=
- =?utf-8?B?SUh1NGVZQW5ucGpWQ1FqbGltb3BjNzJxU1ZqOFdBY1l5WGREcDkwbjkrdmJ1?=
- =?utf-8?B?WVFFaXVHK2h2a3FsU2h1QUFUMGFnUjF3RzRpdWlIbHFPTTA1RDg2RTJ1eFZw?=
- =?utf-8?B?SUtpYnlGMHVBb2ZTU1VSUlFybjM4S2pSY2xBWVZtRVV5ckFyZTk3QTZIcndt?=
- =?utf-8?B?T3RUM2xlOFhSbmsvOHlNVmxSNXl3N1BhOHBvaHk5VjZTb21GaW5aZVA2VllR?=
- =?utf-8?B?cEpLYktha3RTRmVOeTFHV3VTRGNJUWhyaVV2TE9NVUp5ayt4eTczNzVnM1RY?=
- =?utf-8?B?anZkWnFSL04zalExakdZd1M2b3p6R2xBOEtQdFlYOUhmNzhKTmJvODRQRUhQ?=
- =?utf-8?B?amhoa0p0Znk0UVk5VHdRVU9PSmVGNTRDQ25jM0hLb2diTVB1MnFZRllMakVz?=
- =?utf-8?B?YjdiVU9naGJyVFpiOVMyVGI2K1hxTDVDbG9wa1pqSUFabTV5UGd5S1JWWEE2?=
- =?utf-8?B?U1pHbDA4UE9XWFhDSFVDaGhMbUtTWWRCemZ5ajFHTW0rekg2eDB4WjdaZnBz?=
- =?utf-8?B?dUdJYU9IREZadjZQa3JCRlBwSm5EQk4zdzlSZDVnT3dpeUx2RVM4dUZtTzFK?=
- =?utf-8?B?Y1F3SnhiOHh1L3NTaVE3eCtQNkhPSE9KMnB6WWNoV1VkR1pNTGVMcUM0Z3By?=
- =?utf-8?B?TTJjRSs5SFlhaXJpeWp4dlJ4T0RzNFlac0YxYlBrMnRLNUxicVhNYW5KTTRB?=
- =?utf-8?B?NEx4VloxYjJBWnFoY0JMY0xUNE1QWW5oZ04vclpTbk5iY2gyaWE3bDQvb01F?=
- =?utf-8?B?LzFMMlRFNGxPMk1KbEVpdWV5c0dLVm1jVkpJdFE1Ti9ZaHA0d1B2anpvckFh?=
- =?utf-8?B?WTBWOWlIb1duVy9VVDJlcEZuVllIWHloV2FCclBjYk9GNnorRGRKK2JZZEVQ?=
- =?utf-8?B?c2dKZ1ZubjlKTVFxYnBBNE1ZUlFvUWFFSjQ0MVY4VkVEc00zSm9BMHUxaWJo?=
- =?utf-8?B?WDFEL3E4cmp4UTNWeTFkdU81WnJGMG5LVGN4ZXlORU9PdW5MQjhsdmtXVmUv?=
- =?utf-8?B?REJ6NGFnQVVscDJPenFUTGVSQkNsbTRLV01vYXQweVR5WGxnS0UyR0dHVWlP?=
- =?utf-8?B?Wk1RbVZZeGNDS1l4S05VTlp2eVkwcVgzM0Y4b29aU1VxdEdxQy9xREo4czlP?=
- =?utf-8?B?bHp6T2VmcW1DdDZmNUQvZFVtL1pCQTF4OUIyQmVkdElsdDFhd1ZjNE55NEg1?=
- =?utf-8?B?QmZGL1hOTExXVk4yQ3h2bVZ1RS9va3ZIZElJYzFSVzBqeitsellyNjlML2Zy?=
- =?utf-8?B?Uks0UUIxakxaZzJzTUFQZ2c4YUxuYUpDVkJJSGVhSGdPT05SMGJnWGEreGFD?=
- =?utf-8?B?M0hKU2d0N3ZkMU1KOXVyekR5T3dCMStja1NNbjNaRmY1eGlNaTF1VzA5d3Fx?=
- =?utf-8?B?Z3JBbUYvaUJISmVGZ0RTZDlrN0RNdWdoUDRmREtjMU10a0JQT3FvUkVzU2ll?=
- =?utf-8?B?MHlNTjY2bXc2MGcxTEE3ZmlzcEs1K3BkK3R1Rk8yZWJSYUp6U0R5MVVzUWI1?=
- =?utf-8?Q?hw2fgWOLjS8=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO1PR18MB4796.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aHBCdDNSTUlQcnl1MXZSR0hXdDI1Vlcwb2lhSW9xVzQ1ZXpScHdGSWZFVmpN?=
- =?utf-8?B?a1EvUmNqWFpsYzhpY2hBYnZjb0lwa2FDSG1CRFFQUVEvbHdPRHZYK2JhMEVo?=
- =?utf-8?B?MUJrdFRSZjU1clVlRy9EOElFa3dtSVFHM1duREdWVU5PSjlvalJHdEIzdnZS?=
- =?utf-8?B?YjBJOURFR2ttRmpYNU5rbnF5STR0ejJ2RTE2aDhoeHpGOVVIKzlQUTFLUWJM?=
- =?utf-8?B?MXFTMG1BMjlLMVhqcjd5c2w3MjVxMjlvaDFrTXpReDI2QmxzVmZoOWprZEl5?=
- =?utf-8?B?KzJQR3lTb2s3ZHB3NktOZ3RVeXVsQWxpMXdkSmUvaUw1Rk9QOXllNkp1eDl5?=
- =?utf-8?B?cGtlZko2WnFQRGVwdndtY1AxTFdxSkw4cGJ1NEFwQ1pHYU1SbDdnTHJOMzJH?=
- =?utf-8?B?Z0MyMXBsanp3Wkl5cTJGS2lpNmtna1B2b3l0WUVqbFJHWHFMTnA3a1VoTUxh?=
- =?utf-8?B?d1NESXVaR1ZRZU1xdXQvektaM0Y0L0RlaE9kMUdtc2NTTVlhZWwzUStvKzZ0?=
- =?utf-8?B?YzlMTUtRTGNIMDg0Y1lrMGtudk1vOUJ5UTRjaUp6STlZbDJPUTgrY3dxbU15?=
- =?utf-8?B?cy9zWXhNZy9JaDFIdm1pL05oM0x2K3RZeEFnZnRqOXFFeHZVMDRNSCtaTndB?=
- =?utf-8?B?U0FnNWp1YjRTaGU4dCthZFVPNGo5MFFkRDcvS056c2l0bEx6TWdsd01VcXlT?=
- =?utf-8?B?K0hQK1lQL1RMR3JMemtiWEwvN2hBdnM3QlNGenZGbTRGRSttRE5wbmh6bWFr?=
- =?utf-8?B?WjI4SDdVRW5rMTR6QzZQNXlJcjdrd2ZJZnZKVHBUYnJWaDN1VWRMWnhreVNE?=
- =?utf-8?B?a24rc0RaWFovdlZHaDZ3UHI3YU9xYytBbjZVcEphdGFoWTdWaGNzRitWLzdk?=
- =?utf-8?B?SmNieHVlQ2QwK1hiWkhLODNCK1RFMHUyNXpVQTFLRFgya21UMW9GT3ZPOWFB?=
- =?utf-8?B?YUd2TmJ1YUcrRFlFajRyUUxveTlqMmxML0JjS3Nsa0NZNmM3YytHQkx1V3FH?=
- =?utf-8?B?SXRPY2tKZjdRcStscHVxaUQxZUFaUC93eFhuVk1ib2FDQ1UreXRxL0NIclJN?=
- =?utf-8?B?VVNTRm5FNUY2RjNGZ2hmanpqaWpicUx3WVhSRUFwWFFMZlRsZjVJNjFmQlJH?=
- =?utf-8?B?VE5lcWsvQkdYdkQ1by9KMWs2WVF1VmZFU01CVENiaVlYQ0Fia3YyOXE1L0lM?=
- =?utf-8?B?WlVlQ2RiY0ZURGhUbXU1RkwySXkyMHBUSEVrWjVCL3RkeUk2SStSR0NyOEZk?=
- =?utf-8?B?bnNMUXhQUmhiRk9Gc29Ud0dMRzNBY1E0TkRSdThDdGJSQ1h3TERXcWRPdnJs?=
- =?utf-8?B?WjZSZDNLaGtMVm5LbUtpQ3lKcnhJOTF1M0dHV1F4Z050UlBoZlh6Ry9oZ2lI?=
- =?utf-8?B?SEViTjdtUGx3dlYrVTlaYm9DakFtZk5Edjk3SDd0LzVpV0FIRTdGVlVDd1pk?=
- =?utf-8?B?VW9Eek5MZ3JqVEtTNmN3SSt3cWJQb1JIb05YZys3ZHZXaFBlVkxvRFZsaUxN?=
- =?utf-8?B?RkxSNmJvTWFxUVozRERHcU8rbGlpZnRMcDE3S0UrVVdVanpjY2xvTXAxTjIv?=
- =?utf-8?B?V0FHeU1pU1FTUDJPbW9raklCeWMvaWxRMG41UUlZd3FaQlJ1RitMSC9SWjVl?=
- =?utf-8?B?R2pKMXN2TGJvVzZrQnZtUjdaWjRKaHZNSDYwditvMWpTbzRuT0EwM1RoMGhZ?=
- =?utf-8?B?SFlvMEhxUElzbXVJemtsOTlEVDhmU0g3dTZwOEdrMXZVSlhEL2ZLMkNLS2Fo?=
- =?utf-8?B?QmRuQzNsakpDcU5mQS9MNS9LVmg0b1NIdS9nWnVoNnc1K09TT2E5dDRSS0Ew?=
- =?utf-8?B?UEdrMVRUbUJHYnYxUDg1cHhjckJ2QnJ3akRUMkRNSmV4aU43alJxM1RkYTdu?=
- =?utf-8?B?akpvMzlPWGkvMElpcUpYNzU0YitOWkJUUVVUa0FFa0h5d0ozR1hBQVU4dkU0?=
- =?utf-8?B?eXl6cXBJcjYvVjg2VDR1aXFDM3NvS2haelBmWXhzS21RcXVidUpVa1h1Q3Vo?=
- =?utf-8?B?cTJrTk9VMjBLejNaR1ZuL05PeG9JREFPclU4a0NKNWdqSXJuS1M1Nm1hcmlB?=
- =?utf-8?B?UGhlS1lWZHNHR3FZQUlXcDBvanBmTENPNE4rMWpKZHp6T0d4NHVPbmFucm1t?=
- =?utf-8?Q?vZMbEhekSJ8zuxuJx2XDYMbFi?=
-MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4796.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96e7addc-2a44-48e8-a4ad-08dd6d28c41a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2025 12:13:21.2367 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G992lo6kAfVgS3S9CafEtNPtiCqIhzbfgHKD7Jg4HU391AhRtNGVck59CWgoQVS0BDEfSNj3dcbIuKxZYnLe8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR18MB5490
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS0PR11MB6494.namprd11.prod.outlook.com (2603:10b6:8:c2::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
+ 2025 12:25:03 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
+ 12:25:03 +0000
+Date: Thu, 27 Mar 2025 12:24:58 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+CC: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>, "David
+ Marchand" <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ "bluca@debian.org" <bluca@debian.org>, "stable@dpdk.org" <stable@dpdk.org>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, David Christensen
+ <drc@linux.ibm.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: Re: [PATCH] acl: fix build with GCC 15 on aarch64
+Message-ID: <Z-VDmvUi-XPYPYtl@bricha3-mobl1.ger.corp.intel.com>
+References: <20250326103928.1189243-1-david.marchand@redhat.com>
+ <Z-USgmK7lRZsjcIn@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8xLbR_UD3=i_fR3aLzuciuWbbkkV8DgiXYm6Y1C7RXQug@mail.gmail.com>
+ <243684416b27483b89f1c5e5ffcc249c@huawei.com>
+ <Z-UtrQn9cud4oNA8@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB7B@smartserver.smartshare.dk>
+ <cc6776a7e8ad4f519c66d0b204b30f08@huawei.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: 8A4yo9k0wy9sbBNNg6lcFPdH4iP2lLMj
-X-Authority-Analysis: v=2.4 cv=dKCmmPZb c=1 sm=1 tr=0 ts=67e540e6 cx=c_pps
- a=zz2QubYGG/9FVtTd3zWqHQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=-AAbraWEqlQA:10 a=QyXUC8HyAAAA:8
- a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=bt5KbKNvAAAA:8 a=20KFwNOVAAAA:8
- a=zd2uoN0lAAAA:8 a=Ikd4Dj_1AAAA:8 a=RpNjiQI2AAAA:8 a=zSJyLDGILjiGCiDo06oA:9
- a=QEXdDO2ut3YA:10
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22 a=a-zEBD5cKgE7DNtTSb7C:22
-X-Proofpoint-GUID: 8A4yo9k0wy9sbBNNg6lcFPdH4iP2lLMj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cc6776a7e8ad4f519c66d0b204b30f08@huawei.com>
+X-ClientProxiedBy: DUZPR01CA0258.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b5::18) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB6494:EE_
+X-MS-Office365-Filtering-Correlation-Id: c12942c8-dab4-46b2-a611-08dd6d2a66bb
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?em9RdTUzUm5MSVZyS1FSMjBabnZSZXlBcXdDWVVDY1ZOQnB1SXZxUTgvYnZ5?=
+ =?utf-8?B?OHQxVTR1bkp3NXU0RHFybTBVbFNVUE8rYUpOcUoyNVpKbEdLKy9UdTRkUHRX?=
+ =?utf-8?B?VHU5dElNWWg2SzJWT3hVOEVMQUtWTjFYQ3VPYnJsdFl4blEwckhhZG1OclE5?=
+ =?utf-8?B?SVRyYUlBUE5QMi9SUHlrNnJiZ0lXNFljQmMzZWtjNHY5L0ZsY2pWaWRyckZx?=
+ =?utf-8?B?eWhqSmZ0NmtuQ0hjd1I2czlZZVFiNTYxNXoyME1raGtwQ3BJbjBkRFRtcldJ?=
+ =?utf-8?B?WkZqdjdrN0Mydys1TGlQUjhXelY4ZGd0Q1BVRFM5enVTc05VQitYcUN5OTky?=
+ =?utf-8?B?Qi9DdkFBREdWSGJDOVdSb1ZPdW5QajEwM0dqcXdQSkdVNFZsQ1FhUEtLMlF6?=
+ =?utf-8?B?NlF1OWZlS1FlWGJWNXd0cmdWSWlFeS91RDBNOWZzQUYrQUw0RUNJRzBUVEw3?=
+ =?utf-8?B?REh4VDlHU0t3eDY5TGNpL0JDeEJwOVFsYmdLWDhqOGZuQWJkUW1SUWFHSFRD?=
+ =?utf-8?B?TlMwWGkwU3FPZEtLZjlqSVQxNTllR0YrNlJWR3UzSUdscG5kOFVsdlZlS3hH?=
+ =?utf-8?B?YkJrZmw0cmxiL1I0RkFVVEpNekZ4dTF6dU5PdXNMcWxpZTd1N3o5MXJHdXFT?=
+ =?utf-8?B?a1F2TGdjOWZnSllzcm1MYkNRdXE4cjBoaW4vVHVtUGVEM0ZFcThNN0l2QnRm?=
+ =?utf-8?B?TFdRSVpCR3dURngrcStuNUtERURCeWNBTnFMeTZrdWViVEpvUVA2RmRwbWZ4?=
+ =?utf-8?B?dDJDUjlwK3oxMVN5aUhkT2V2R3RsZlF3MThoWWJUdnM3TllMaVo2aEU0U3Q3?=
+ =?utf-8?B?WWJsMkVTeG8weGU3NUEybmtickl5NmhLajl1dWNreGtpRGg0dEg2WkRvZ0xJ?=
+ =?utf-8?B?QldhSVRmVmpKSTZmblJmbHprVlZjL28yUGJ5am93NHBoNGhTUnlxTDJERnMr?=
+ =?utf-8?B?YWs1azdyVEFEVWxGTWJScWRnS3FIdkg2YnZSaGJkNUxYZG9xTTlKUE9RUkNE?=
+ =?utf-8?B?bU85N08vSE43YjRPdlRhR0hKZU4wZm9OTzEvcU82dWRzOXdxZ3ZnckN6VlFj?=
+ =?utf-8?B?NHBmTGtmUjRoMDlKRW5wbm5uY2dwMTQvcWFidmUrdzZiajdCSUxlcHF2bExM?=
+ =?utf-8?B?OHNtRmZUY0xRcW5TNE9ZSFkzMGU3S3dFczNWZVFaVGljUExpYmQwaisrZ0pm?=
+ =?utf-8?B?dHBSQUp5eWtjOWU4OEFUVXhUUlNNYmw4Zko1WEl0QWh6VmpYZHI0K1B2RFMv?=
+ =?utf-8?B?NEJUdnB2QnRaT2h3ck9EWll5T29OdlV0elFTN1ppMTVzWThDWURiZXU5eVB0?=
+ =?utf-8?B?K1hRSThudGhPaC95S1JJa0RaRDkvSXUyY2hOWllWVGdBdFA4NGF4RU1WeWZC?=
+ =?utf-8?B?Rk9HODNsaTd0aDI4bERoeHVzMFY4NnpQei94UkMxcUpxdHZVOUpsT2dMb1hn?=
+ =?utf-8?B?OE9pK2lTR0Yzc1oyWGF6Y0gxL3FRcTZxK1lPa2RDdHBINkJYb1JuSFg3ZVFs?=
+ =?utf-8?B?VU5KbkhuR2F0alZHVElWSXRwc0M1VERHUDRTL21IQUZ1VUg4bmlXOGxGNkF3?=
+ =?utf-8?B?Yk9DL0NHc2hwRzZxb0I4dThibkRQcndGVDdjUkEycThlQWY0SEkzOFRoK0Na?=
+ =?utf-8?B?OTl5TmN2RjNwcFUzL2czb25pLzFXaDFDZXpoRHJNd0l0dXBNRDVLQ0dpRnMv?=
+ =?utf-8?B?eE5VY3VLckV0MmZIM1BMM0tKQms0N0xWNFdGMUR5VFNZbE5BNzZocDcva1BY?=
+ =?utf-8?B?WDBZcVMrbFE1aS9TMnlOdWY3L3RWMXdNNE9jMmxNbW1vMGdzNnJmOFZJTVF2?=
+ =?utf-8?B?RERxS1NkcWpuOEVZQ1EwcHFqc0dhVGN2WXR3STNCbVdtaXpta0dpWXpJalVy?=
+ =?utf-8?Q?4gLPk0otwi8KT?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MGludHk3cjJKcEkwZTFqNEZZM1A0R0cvdEU4a2ZlOXBDWTd2NHgyNmdUU3lC?=
+ =?utf-8?B?WnZIR3hNZjByUmRqSVI2MUpIejZPd0ZrVzcvRGVmTWl3enVlRzFoTkJCdW9u?=
+ =?utf-8?B?cWFPOFo4SnZzN25iVFJ1aTVYOExzRjkwbkxKYTF6UnVrdGNDUkZ2ZVdMd0Vx?=
+ =?utf-8?B?N2xXQXZkUVZrT3dPRmpjZjlBTTUwSkZTV3NHOWtNVkNIZW5iZm5lRk1Dbmd6?=
+ =?utf-8?B?eXArTHpMNHRPVVFVWWIwdG9CWFN0NzA1M2d0Q2Fyczc3VE1KWHpVcEtpeDI2?=
+ =?utf-8?B?OU4ybXBNMlpvL2NqS1hOVTBXbGVIZkJDZlNPV1laT1VYbEh4MDJVT1ZaU2tN?=
+ =?utf-8?B?TERqR2FZSTF5VklDWVpacFIrL2ZpdkZxK1ViUmpyamZCZi9BNDFNQ3VualhR?=
+ =?utf-8?B?U0VpampBNjFxZUNPOWVaZmtrYVZhVWg5ODhXOWQwWlY2NWpQT0N1SFFTVnJx?=
+ =?utf-8?B?LzMrR1lLQ21YbXl1a2ROck1xQm9SWkgxQmdDNGdhTDM4ZWs4R0Y1L3FoZ3pM?=
+ =?utf-8?B?KzZtZThuN1hIYVVCd3R0Q3dSdGI0ckxnUTRLWVJNTk1NNTJ0amNYM3VQR1g0?=
+ =?utf-8?B?dENFazFJRXpvd3ZrNGI3NU5pY2twSzNOSndwVFk4NUdWaXhhL1lkRXRPTUNo?=
+ =?utf-8?B?OFRxN3J1dHNQa3A2cFFTcVN6Szk1QU9RckF1bEp5SVpoRWxTWVBCNUN6Zi9x?=
+ =?utf-8?B?VWQ2WWdKbTVBYkY1Mkp2OWVyOVo1OURtR2VpQ0kvYkdYb0p4VVFWSm9PYXNY?=
+ =?utf-8?B?c0M4dC9UdWZvR0tQVjhod3BDTjFnVkg5MFRlUVRYSTMzZnBkT0cweFUxMllq?=
+ =?utf-8?B?cGtxSjBESUxyOS9xTWJDeWZBTVNCTER2bGtDQzJXaDNYNVkrZmZWOEM1Z2U2?=
+ =?utf-8?B?UVhjS2MxYWV4OVZvZC8yNXJTT21ZS3JNa0NkOEJ2R3hEbUJOVkM3dmNxUHEr?=
+ =?utf-8?B?MjA3UFQzUmR5RW1wL3FQWmI0ckh6MnkxaEQ3NUZKYmtyWWc2c2Z6N1J2dDJq?=
+ =?utf-8?B?c1FZam1lR0FNbDQvTGg0OGwxcVhEM25pakF5T3o3RTdnMkJHNHhwMDRpbTRD?=
+ =?utf-8?B?aVBwSFZEUmdKeS9sQWhwNXB3eWtiTHA3Sks4STIvNjByeDdXWDd3UitNTFBl?=
+ =?utf-8?B?TmlGMjdidzZ5OTZuYVV4VlhQWE9wV1dlRDF1RUFWY0FTcGlHV2VEKytKNVpL?=
+ =?utf-8?B?Q0lEQk51VVVYdGdDcnBrQTZ5S0U4bk9Qdi8wcWY5MGNEUnc2V2hkS0lMc2hi?=
+ =?utf-8?B?dE5YKzdVN1pXakhwUXZ4TmNNWkNBUUR2TUJZb2NJOGM0YXo0ajZBOVV0eTBY?=
+ =?utf-8?B?RUNUNkJEcHA3NS92VXg2M0wwSm9ZUXN0WmtLM3UyekE3d2xndlB6K0w3dlRG?=
+ =?utf-8?B?eUNxaUxVeExPeG1KdTFoSnBEU3krTVprNnd2bkxPbDJmZmIxbTh3YTA0U2Iy?=
+ =?utf-8?B?K1cva2tYT0NtWnRlbEVqNnBTMXo3YUEybWVLZVZpeG1HRFJEb0RjbzJDTFFp?=
+ =?utf-8?B?aTlMVWlLMGVmdlVUaTZIQmh6QmdZazBvWE50d2tpd0lmL0JSd0Z5ZVpFYVdh?=
+ =?utf-8?B?S3dsL0JNclR5ellpVVROdFp2VXl3WkhzN3dnVDRZZm9Yd1k3L3JHTzFKbGxF?=
+ =?utf-8?B?T2YrMjc1OHpWNkVoY2JHcG5Mdmcrc3R3TVdsMWhzZ3pNQVlmSk41WVNKSWND?=
+ =?utf-8?B?eUxUNjVUdndOUkdnV3VhQ3B2SjBmZmt2aEo4TTh6K2dsdWpndHVQTW0yOEZZ?=
+ =?utf-8?B?NjZMa2Y2eDRub25YSG9CUE1UaTE3QUFieEVURFhHNWFabUZ3cFBQRlFkOElz?=
+ =?utf-8?B?NlVwVlQ5WW1Cd2ZabU9JckJwbHFaNDJva2U5aStkbTgzRW0vZjBFU3ZqQVFB?=
+ =?utf-8?B?cWUwQnBvWWVsZFl0TDVZVmxvVXV3ZHl0VzNvc2xwL1kyQ28xTzBvVWlVYUJn?=
+ =?utf-8?B?ODNPd3pERyt3QWsyYWY2SVJVbHVuNnJsaWczZG8yZUllQ3RaRE92MFZ1ZXJR?=
+ =?utf-8?B?VVhWTXB4Y0lsMDkzUk5hSUN5RVE2Tk1OYmZ5bG1VWlZhNzluS2tVdVpQVEpy?=
+ =?utf-8?B?ZUM1ektBZ2k5cjhya1hIOGdqeTRERWU5c3duL3ZGM1NYVjdMb1dRV21vRGh5?=
+ =?utf-8?B?bzRyQTQ1Ukw4SlBvZGhDUEF0Y3lETk1iS3JlU3VsY3ZqN2l5U1I1b2JzeXpj?=
+ =?utf-8?B?Znc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c12942c8-dab4-46b2-a611-08dd6d2a66bb
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 12:25:03.8415 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fDk7uQiID8pcvGqoI8/tXhVhyja7fU2MUil22HAnCM4TAxtw246D/4r6m5Pzjj3l2rjmIqbDWYscEK1ItoHJ27Ix5ir2zZ4wl5JTpaHZQeA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6494
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -183,37 +197,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, Mar 27, 2025 at 12:10:12PM +0000, Konstantin Ananyev wrote:
+> 
+> 
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: David Marchand <david.marchand@redhat.com>
+> > > > > Sent: Thursday, March 27, 2025 10:37 AM
+> > > > > To: Bruce Richardson <bruce.richardson@intel.com>
+> > > > > Cc: dev@dpdk.org; bluca@debian.org; stable@dpdk.org; Konstantin
+> > > Ananyev <konstantin.v.ananyev@yandex.ru>; David Christensen
+> > > > > <drc@linux.ibm.com>; Wathsala Vithanage
+> > > <wathsala.vithanage@arm.com>
+> > > > > Subject: Re: [PATCH] acl: fix build with GCC 15 on aarch64
+> > > > >
+> > > > > On Thu, Mar 27, 2025 at 9:55 AM Bruce Richardson
+> > > > > <bruce.richardson@intel.com> wrote:
+> > > > > >
+> > > > > > On Wed, Mar 26, 2025 at 11:39:28AM +0100, David Marchand wrote:
+> > > > > > > Caught in OBS for Fedora Rawhide on aarch64:
+> > > > > > >
+> > > > > > > [  198s] In file included from ../lib/acl/acl_run_neon.h:7,
+> > > > > > > [  198s]                  from ../lib/acl/acl_run_neon.c:5:
+> > > > > > > [  198s] In function ‘alloc_completion’,
+> > > > > > > [  198s]     inlined from ‘acl_start_next_trie’ at
+> > > > > > >       ../lib/acl/acl_run.h:140:24,
+> > > > > > > [  198s]     inlined from ‘search_neon_4.isra’ at
+> > > > > > >       ../lib/acl/acl_run_neon.h:239:20:
+> > > > > > > [  198s] ../lib/acl/acl_run.h:93:25: error: ‘cmplt’ may be used
+> > > > > > >       uninitialized [-Werror=maybe-uninitialized]
+> > > > > > > [  198s]    93 |                 if (p[n].count == 0) {
+> > > > > > > [  198s]       |                     ~~~~^~~~~~
+> > > > > > > [  198s] ../lib/acl/acl_run_neon.h: In function
+> > > ‘search_neon_4.isra’:
+> > > > > > > [  198s] ../lib/acl/acl_run_neon.h:230:27: note: ‘cmplt’
+> > > declared here
+> > > > > > > [  198s]   230 |         struct completion cmplt[4];
+> > > > > > > [  198s]       |                           ^~~~~
+> > > > > > >
+> > > > > > > The code was resetting sequentially cmpl[].count at the exact
+> > > index that
+> > > > > > > later call to alloc_completion uses.
+> > > > > > > While this code seems correct, GCC 15 does not understand this
+> > > (probably
+> > > > > > > when applying some optimisations).
+> > > > > > >
+> > > > > > > Instead, reset cmpl[].count all at once in acl_set_flow, and
+> > > cleanup the
+> > > > > > > various vectorized implementations accordingly.
+> > > > > > >
+> > > > > > > Bugzilla ID: 1678
+> > > > > > > Cc: stable@dpdk.org
+> > > > > > >
+> > > > > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > > > > > > ---
+> > > > > > >  lib/acl/acl_run.h         | 5 +++++
+> > > > > > >  lib/acl/acl_run_altivec.h | 8 ++------
+> > > > > > >  lib/acl/acl_run_avx2.h    | 4 +---
+> > > > > > >  lib/acl/acl_run_neon.h    | 8 ++------
+> > > > > > >  lib/acl/acl_run_scalar.c  | 4 +---
+> > > > > > >  lib/acl/acl_run_sse.h     | 8 ++------
+> > > > > > >  6 files changed, 13 insertions(+), 24 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/lib/acl/acl_run.h b/lib/acl/acl_run.h
+> > > > > > > index 7f092413cd..9fd3e60021 100644
+> > > > > > > --- a/lib/acl/acl_run.h
+> > > > > > > +++ b/lib/acl/acl_run.h
+> > > > > > > @@ -176,6 +176,8 @@ acl_set_flow(struct acl_flow_data *flows,
+> > > struct completion *cmplt,
+> > > > > > >       uint32_t cmplt_size, const uint8_t **data, uint32_t
+> > > *results,
+> > > > > > >       uint32_t data_num, uint32_t categories, const uint64_t
+> > > *trans)
+> > > > > > >  {
+> > > > > > > +     unsigned int i;
+> > > > > > > +
+> > > > > > >       flows->num_packets = 0;
+> > > > > > >       flows->started = 0;
+> > > > > > >       flows->trie = 0;
+> > > > > > > @@ -187,6 +189,9 @@ acl_set_flow(struct acl_flow_data *flows,
+> > > struct completion *cmplt,
+> > > > > > >       flows->data = data;
+> > > > > > >       flows->results = results;
+> > > > > > >       flows->trans = trans;
+> > > > > > > +
+> > > > > > > +     for (i = 0; i < cmplt_size; i++)
+> > > > > > > +             cmplt[i].count = 0;
+> > > > > > >  }
+> > > > > >
+> > > > > > Minor nit, but since we are using c11 standard, is it not better
+> > > to declare
+> > > > > > "i" inside the "for" statement. Keeps diffs simpler for
+> > > adding/removing
+> > > > > > code, I think.
+> > > > >
+> > > > > I still have this (bad) habit but yes, it looks nicer with
+> > > declaring
+> > > > > in for() itself.
+> > > >
+> > > > My vote would be to keep it in an old fashioned way.
+> > > > Nothing is wrong in defining variable to use at the start of the
+> > > function :)
+> > > >
+> > >
+> > > No, there isn't. However, there is also a reason why later GCC
+> > > revisions
+> > > and modern languages allow use of a temporary variable defined within
+> > > the
+> > > loop itself. Cognitively, it's easier to have variables defined at
+> > > point of
+> > > use, as it saves the user having to mentally track them or move up and
+> > > down the
+> > > code. Furthermore, when debugging or reworking the code, it's far
+> > > easier to
+> > > have the variable inside the "for" statement as it means that as we
+> > > comment/uncomment, or remove/re-add, the code block, the variable
+> > > definition
+> > > also gets commented/uncommented too, without having to constantly
+> > > scroll up
+> > > to make changes in two places. Lastly, it makes for smaller git diffs
+> > > too.
+> 
+> I understand that it is probably more convenient, though from my perspective it is also more error prone.
+> I saw several times people unintentionally defined new variable (in a local scope) with the same name
+> that was already used in an outer scope, especially when function becomes large and clunky.
 
+There is a gcc warning flag to indicate such cases "-Wshadow" or
+"-Wshadow-local" [1].
 
-> -----Original Message-----
-> From: Pravin Pathak <pravin.pathak@intel.com>
-> Sent: Wednesday, February 26, 2025 2:47 AM
-> To: dev@dpdk.org
-> Cc: Jerin Jacob <jerinj@marvell.com>; mike.ximing.chen@intel.com;
-> bruce.richardson@intel.com; thomas@monjalon.net;
-> david.marchand@redhat.com; nipun.gupta@amd.com; chenbox@nvidia.com;
-> tirthendu.sarkar@intel.com; Pravin Pathak <pravin.pathak@intel.com>
-> Subject: [EXTERNAL] [PATCH v1] event/dlb2: enhancement to DLB credit
-> management
->=20
-> Updates are added to enable releasing of unused credits by threads to avo=
-id
-> deadlock and starving of other active threads needing credits. It also ad=
-ds
-> compile time options to enable/disable credit checks. Signed-off-by: Prav=
-in
-> Pathak <pravin.=E2=80=8Apathak@=E2=80=8Aintel.=E2=80=8Acom>=20
-> Updates are added to enable releasing of unused credits by threads to avo=
-id
-> deadlock and starving of other active threads needing credits.
-> It also adds compile time options to enable/disable credit checks.
->=20
-> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
-> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-
-
-Updated the git commit as follows and applied to dpdk-next-net-eventdev/for=
--main. Thanks
-
-    event/dlb2: enhance DLB credit management
+[1] https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 
