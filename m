@@ -2,76 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425DFC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 07:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E62C3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 07:55:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F19F840275;
-	Thu, 27 Mar 2025 08:39:59 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 721D040261
- for <dev@dpdk.org>; Thu, 27 Mar 2025 08:39:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743061197;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=VmYlBE1tlYr8+bZ0bpWa9Eunj0wOg89ts26sk7xweg0=;
- b=iu2LkaT9gRPTTF0pQEhTPregZoaaSXoM1/8QolVwSL37KDaMBCEjpwJU4D9x+xOYCKWzu+
- hv/JHGElyxpAbEnSS3QTpamj+EtGFKWt/6+GijRQZaZjBWwI6u51Z/1496Icv2bCWm1+LS
- hwG8rq1/fEjT4vsa0Ae2eYw3HQIFuHc=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-464-qI1WkDYTMcasWG7N2P_Qgg-1; Thu, 27 Mar 2025 03:39:54 -0400
-X-MC-Unique: qI1WkDYTMcasWG7N2P_Qgg-1
-X-Mimecast-MFC-AGG-ID: qI1WkDYTMcasWG7N2P_Qgg_1743061193
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-30bff0c526cso3363131fa.0
- for <dev@dpdk.org>; Thu, 27 Mar 2025 00:39:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743061192; x=1743665992;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=VmYlBE1tlYr8+bZ0bpWa9Eunj0wOg89ts26sk7xweg0=;
- b=J3Aqf9F1zV6IT0kB4AIDDQrI/pyrOJmI1Nb145G6i7Ll/+BLCTX+CrBHHjtxnOuxqP
- Vwi+jniXeUrYNTwMRVwjvatJorO/oKZ+oibeCrGtGRHy+Wjm2RhwQ03L8ZoCl9BicUgf
- r1i2r8RrMLWH0NR2DHVO2DgBbln63gii3orAXirxKZ+uTsSG+Mo4GBmbbHLmqn41UVYM
- SpwKT+DDgbrQeQsNfKZDXHjeJ0sj8QIkxeGIkt1PqlFV2R3tyvypakV4X4MeJGQel2z4
- A2Mbh0BMan8Ku0jLA/JTwchRsFGBnGWA8fFyHtiLnugGJ40eBGMki+SHRMg0G7ScgfF+
- U+tQ==
-X-Gm-Message-State: AOJu0Yw2+RqQllpXsO5D6cLsdSQY/q79T9GmkmZ/hRL3BuSsYodf26Vx
- zLrOQISEeH/pWvFKDWVVjdvBRqKuaJIhAwItY7k3WuMTAOMLZRGBEc3TRErNOtpHpy7YcvvKxWE
- OeeDDzDMiTXUKjS8NEmQAa5/clCdBjfYVaJiQ1G7+938dMSPTDbjC306zIYO6ZzIixfpSUgUmc7
- 3hHXzG/xc8z3bCe90=
-X-Gm-Gg: ASbGncuypER6TgXLSobBCFAMizSxYvsaCrWABwlHT9MCvg+zqzFZ+zaMi0aRJOWaVSi
- 2e3Dyn7kDkkZuGWha0dIom6DAFopL8jnh/TnbEaWlXvLez0zc86gEYGCZASsPhvzTUeArvrwBbJ
- M=
-X-Received: by 2002:ac2:4e05:0:b0:549:6cac:6717 with SMTP id
- 2adb3069b0e04-54b01273163mr835125e87.53.1743061192598; 
- Thu, 27 Mar 2025 00:39:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFI/Pu9Q1dikZnWY6teDorC6WNZ7bSz2Php42iqj3rlke/ZYExImp1KpiE2iaXqg9AK8IozS6O/Rmxc2nMENdk=
-X-Received: by 2002:ac2:4e05:0:b0:549:6cac:6717 with SMTP id
- 2adb3069b0e04-54b01273163mr835120e87.53.1743061192193; Thu, 27 Mar 2025
- 00:39:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4E4D74065A;
+	Thu, 27 Mar 2025 08:55:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id BA8CD40261;
+ Thu, 27 Mar 2025 08:55:56 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8744A21733;
+ Thu, 27 Mar 2025 08:55:56 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20250326090003.858426-1-david.marchand@redhat.com>
-In-Reply-To: <20250326090003.858426-1-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 27 Mar 2025 08:39:40 +0100
-X-Gm-Features: AQ5f1Jq980tncuIlWqycXzfHEO7dxgmKqAfLNn04brJfna0PkVxaimPZeL4ZGag
-Message-ID: <CAJFAV8xbETVfKBD6ZhKkHYZt_bfGb_uCK8Rf_L-e1Cme8_39MQ@mail.gmail.com>
-Subject: Re: [PATCH] version: 25.07-rc0
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, 
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jtcc_zYVd7bu4qYgZWnMKuVyk6r9i6-NYAv_hPVrEJg_1743061193
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: DPDK compilers and RHEL 7 support
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 27 Mar 2025 08:55:56 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB78@smartserver.smartshare.dk>
+In-Reply-To: <20250326122036.6cc7c02e@hermes.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: DPDK compilers and RHEL 7 support
+Thread-Index: AduehCvgX2I2YABLRMK+D6+2XccSjgAZTLww
+References: <20250325172215.3360590-1-bruce.richardson@intel.com><Z-QposchDMAmn83I@bricha3-mobl1.ger.corp.intel.com><98CBD80474FA8B44BF855DF32C47DC35E9FB76@smartserver.smartshare.dk>
+ <20250326122036.6cc7c02e@hermes.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Aaron Conole" <aconole@redhat.com>, "Kevin Traynor" <ktraynor@redhat.com>,
+ <maxime.coquelin@redhat.com>
+Cc: <dev@dpdk.org>,
+	<techboard@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,18 +51,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 26, 2025 at 10:00=E2=80=AFAM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> Start a new release cycle with empty release notes.
-> Bump version and ABI minor.
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-Applied, thanks.
-
-
---=20
-David Marchand
-
+KyBSZWQgSGF0IHRlY2ggYm9hcmQgbWVtYmVycw0KDQo+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2Vy
+IFttYWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+IFNlbnQ6IFdlZG5lc2RheSwg
+MjYgTWFyY2ggMjAyNSAyMC4yMQ0KPiANCj4gT24gV2VkLCAyNiBNYXIgMjAyNSAxOTowNjo1OCAr
+MDEwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPiB3cm90ZToN
+Cj4gDQo+ID4gPiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNv
+bkBpbnRlbC5jb21dDQo+ID4gPiBTZW50OiBXZWRuZXNkYXksIDI2IE1hcmNoIDIwMjUgMTcuMjIN
+Cj4gPiA+DQo+ID4gPiBPbiBUdWUsIE1hciAyNSwgMjAyNSBhdCAwNToyMjoxNVBNICswMDAwLCBC
+cnVjZSBSaWNoYXJkc29uIHdyb3RlOg0KPiA+ID4gPiBXaGVuIGRvaW5nIGEgYnVpbGQgZm9yIGEg
+dGFyZ2V0IHRoYXQgYWxyZWFkeSBoYXMgdGhlIGluc3RydWN0aW9uDQo+IHNldHMNCj4gPiA+ID4g
+Zm9yIEFWWDIvQVZYNTEyIGVuYWJsZWQsIHNraXAgZW1pdHRpbmcgdGhlIEFWWCBjb21waWxlciBm
+bGFncywgb3INCj4gdGhlDQo+ID4gPiA+IHNreWxha2UtYXZ4NTEyICctbWFyY2gnIGZsYWdzLCBh
+cyB0aGV5IGFyZSB1bm5lY2Vzc2FyeS4gSW5zdGVhZCwNCj4gd2hlbg0KPiA+ID4gPiB0aGUgZGVm
+YXVsdCBmbGFncyBwcm9kdWNlIHRoZSBkZXNpcmVkIG91dHB1dCwganVzdCB1c2UgdGhlbQ0KPiA+
+ID4gdW5tb2RpZmllZC4NCj4gPiA+ID4NCj4gPiA+ID4gRGVwZW5kcy1vbjogc2VyaWVzLTM0OTE1
+ICgicmVtb3ZlIGNvbXBvbmVudC1zcGVjaWZpYyBsb2dpYyBmb3INCj4gQVZYDQo+ID4gPiBidWls
+ZHMiKQ0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBCcnVjZSBSaWNoYXJkc29uIDxi
+cnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+DQo+ID4gPiA+
+IFRoaXMgcGF0Y2hzZXQgZGVwZW5kcyBvbiB0aGUgcHJldmlvdXMgQVZYIHJld29yay4gSG93ZXZl
+ciwNCj4gc2VuZGluZyBpdA0KPiA+ID4gPiBzZXBhcmF0ZWx5IGFzIGEgbmV3IFJGQyBiZWNhdXNl
+IGl0IGVmZmVjdGl2ZWx5IGluY3JlYXNlcyB0aGUNCj4gbWluaW11bQ0KPiA+ID4gPiBjb21waWxl
+ciB2ZXJzaW9ucyBuZWVkZWQgZm9yIHg4NiBidWlsZHMgLSBmcm9tIEdDQyA1IHRvIDYsIGFuZA0K
+PiA+ID4gPiBDbGFuZyAzLjYgdG8gMy45Lg0KPiA+ID4gPg0KPiA+ID4gPiBGb3Igbm93LCBJJ3Zl
+IGp1c3QgZG9jdW1lbnRlZCB0aGF0IGFzIGFuIGFkZGl0aW9uYWwgbm90ZSBpbiB0aGUNCj4gR1NH
+DQo+ID4gPiB0aGF0DQo+ID4gPiA+IHRoZXNlIHZlcnNpb25zIGFyZSByZWNvbW1lbmRlZCwgYnV0
+IGl0IHdvdWxkIGJlIHNpbXBsZXIgaWYgd2UNCj4gY291bGQNCj4gPiA+IGp1c3QNCj4gPiA+ID4g
+c2V0IHRoZW0gYXMgdGhlIHJlcXVpcmVkIG1pbmltdW0gYmFzZWxpbmUgKGF0IGxlYXN0IGluIHRo
+ZSBkb2NzKS4NCj4gPiA+ID4NCj4gPiA+ID4gRmVlZGJhY2sgb24gdGhlc2UgY29tcGlsZXIgdmVy
+c2lvbiByZXF1aXJlbWVudHMgd2VsY29tZS4NCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiArdGVjaGJv
+YXJkDQo+ID4gPg0KPiA+ID4gUGluZyBmb3IgYSBsaXR0bGUgYml0IG9mIGZlZWRiYWNrIGZvciB0
+aGlzLiBBcmUgd2Ugb2sgdG8gYnVtcCB0aGUNCj4gPiA+IG1pbmltdW0NCj4gPiA+IGNvbXBpbGVy
+IHZlcnNpb25zIGFzIGRlc2NyaWJlZCBhYm92ZSwgb3Igd2lsbCBJIGNvbnRpbnVlIHdpdGggdGhl
+DQo+ID4gPiBhcHByb2FjaA0KPiA+ID4gaW4gdGhpcyBSRkMgb2Yga2VlcGluZyB0aGUgbWluaW11
+bSBhbmQganVzdCByZWNvbW1lbmRpbmcgdGhlIGhpZ2hlcg0KPiA+ID4gdmVyc2lvbnMgZm9yIHg4
+NiBwbGF0Zm9ybXM/DQo+ID4gPg0KPiA+ID4gRm9yIHJlZmVyZW5jZSBHQ0MgNi4xIHdhcyByZWxl
+YXNlZCBBcHJpbCAyMDE2WzFdLCBhbmQsIENsYW5nIDMuOQ0KPiB3YXMNCj4gPiA+IHJlbGVhc2Vk
+IFNlcHQgMjAxNlsyXQ0KPiA+ID4NCj4gPiA+IC9CcnVjZQ0KPiA+ID4NCj4gPiA+IFsxXSBodHRw
+czovL2djYy5nbnUub3JnL2djYy02Lw0KPiA+ID4gWzJdIGh0dHBzOi8vcmVsZWFzZXMubGx2bS5v
+cmcvDQo+ID4NCj4gPiBDb25zaWRlcmluZyBHQ0MgdmVyc2lvbnMgc2hpcHBlZCB3aXRoIFJIRUwg
+WzNdLi4uDQo+ID4gV2Uga2luZCBvZiBzdXBwb3J0IFJIRUwgNywgYnV0IHdlIGFscmVhZHkgcmVx
+dWlyZSBhIG5ld2VyIGNvbXBpbGVyDQo+IChHQ0MgNSkgdGhhbiBzaGlwcGVkIHdpdGggUkhFTCA3
+IChHQ0MgNC44KS4NCj4gPiBSSEVMIDggc2hpcHMgd2l0aCBHQ0MgOCwgd2hpY2ggd2FzIHJlbGVh
+c2VkIGluIE1heSAyMDE4IFs0XS4gTWF5YmUgd2UNCj4gY2FuIGp1bXAgdG8gR0NDIDg/DQo+ID4N
+Cj4gPiBCVFcsIHdlIHNob3VsZCBhbHNvIGFwcGx5IHRoZSBzYW1lIHByaW5jaXBsZSBJIGFyZ3Vl
+ZCBbNV0gc2hvdWxkDQo+IGFwcGx5IGZvciB1cGdyYWRpbmcgdGhlIEtlcm5lbCByZXF1aXJlbWVu
+dHM6IFRoZXJlIHNob3VsZCBiZSBhIG5lZWQgZm9yDQo+IHNwZWNpZmljIGZlYXR1cmUgb3Igc2lt
+aWxhciAtIHdoaWNoIHRoZXJlIGlzIHdpdGggeW91ciBwYXRjaCAtIGFuZCB0aGUNCj4gZGV0YWls
+cyBzaG91bGQgYmUgbWVudGlvbmVkIGluIHRoZSByZWxlYXNlIG5vdGVzLg0KPiA+DQo+ID4gWzNd
+OiBodHRwczovL2FjY2Vzcy5yZWRoYXQuY29tL3NvbHV0aW9ucy8xOTQ1OA0KPiA+IFs0XTogaHR0
+cHM6Ly9nY2MuZ251Lm9yZy9nY2MtOC8NCj4gPiBbNV06DQo+IGh0dHBzOi8vaW5ib3guZHBkay5v
+cmcvZGV2L0NBTUVWRVp1dGY0c0o9RVFGT053X2JKVzB0R1RXcVRiRl9Ua195MzhxekJMDQo+IGNj
+Y280NlFAbWFpbC5nbWFpbC5jb20vVC8jbWU3YzhmMWRiZTQzMzFjY2YyMzJkNDM1MTJkNmRkYjUx
+NDU4YzU2OGENCj4gPg0KPiANCj4gUkhFTCA3IHJlYWNoZWQgZW5kIG9mIGxpZmUgb24gSnVuZSAz
+MCwgMjAyNC4NCj4gRFBESyBuZWVkIG5vIGxvbmdlciBzdXBwb3J0IGl0IG9uIGZ1dHVyZSB2ZXJz
+aW9ucy4NCg0KQ2VudE9TIDcgcmVhY2hlZCBFT0wgSnVuZSAyMDI0LCB5ZXMuDQpSSEVMIDcgcmVh
+Y2hlZCBFbmQgb2YgTWFpbnRlbmFuY2UgSnVuZSAyMDI0LCBidXQgUkhFTCA3IEV4dGVuZGVkIExp
+ZmUgQ3ljbGUgU3VwcG9ydCBpcyBhdmFpbGFibGUgdW50aWwgSnVuZSAyMDI4IFs2XS4NCg0KQWx0
+aG91Z2ggUkhFTCA3IG5vdCBmdWxseSBFT0wsIEkgd291bGQgY29uc2lkZXIgIkVuZCBPZiBNYWlu
+dGVuYW5jZSIgc3VmZmljaWVudGx5IGRlYWQgZm9yIGZ1dHVyZSBEUERLIHZlcnNpb25zIG5vdCBu
+ZWVkaW5nIHRvIHN1cHBvcnQgaXQuDQpJZiB5b3UgYXJlIHJ1bm5pbmcgYSBwcm9kdWN0aW9uIHN5
+c3RlbSBvbiBhIGRpc3RybyB0aGF0J3Mgb24gRXh0ZW5kZWQgTGlmZSBDeWNsZSBTdXBwb3J0LCB5
+b3Ugc2hvdWxkbid0IGRlcGxveSBhIG5ldyBEUERLIHZlcnNpb24gLSBhbmQgaWYgeW91IGRvIGFu
+eXdheSwgaXQncyB5b3VyIG93biBwcm9ibGVtLCBub3QgdGhlIERQREsgY29tbXVuaXR5J3MgcHJv
+YmxlbS4NCkBBYXJvbiwgQEtldmluLCBATWF4aW1lIC0gc3BlYWsgdXAgaWYgeW91IGRpc2FncmVl
+IQ0KDQoNCls2XTogaHR0cHM6Ly93d3cucmVkaGF0LmNvbS9lbi90ZWNobm9sb2dpZXMvbGludXgt
+cGxhdGZvcm1zL2VudGVycHJpc2UtbGludXgvcmhlbC03LWVuZC1vZi1tYWludGVuYW5jZQ0KDQo=
