@@ -2,63 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B25FC3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 16:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C885EC3600B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 16:17:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 480B3406BB;
-	Thu, 27 Mar 2025 17:09:26 +0100 (CET)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 1C37640654
- for <dev@dpdk.org>; Thu, 27 Mar 2025 17:09:25 +0100 (CET)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-6e8f94c2698so6276756d6.0
- for <dev@dpdk.org>; Thu, 27 Mar 2025 09:09:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1743091764; x=1743696564; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=JRiDuRgcClsJ9AY6lOMLh91Z0ibQL4H86u0ymUTCDZU=;
- b=X2mDJsevK6fe45LfJr40kuXmCrworYIUGHJogOIlwVXpF85dcMp+QoYLt+VEMn+qLq
- aCEx2zVDunjV7/GeDGxVGm0x/FwQRFSkdch+LBJDWB8l67i8J8gZcB6R1bX2UtuEQEQu
- es3SREJe+Kqb9tD2QMV+jiTeRMK7Xooo4VoCc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743091764; x=1743696564;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=JRiDuRgcClsJ9AY6lOMLh91Z0ibQL4H86u0ymUTCDZU=;
- b=i+kG/Bg8ayN+zsQjOQ1PbX7xn7YVmDKaZLgpK36ljm6IpbJJiXoWA2cmGtqw9bg5eu
- sWcJvBJDmVuzE2P/CnMz7VY+FaRM8K3VsdfhCsJ9VdDjmmip/YgQSA4dDXQoyAOwTJOK
- DqwXQqZgM9JDYjjsuoFVDIBhRtSJ6Yl04ese9C9DL+YCenA6xoV1ELVPHuz5OIvP5l9w
- uJcJX3na5IlRbZTd2cDhmydFun11ZQBqkEuTYw1wg+eukh0d9B+X5yctUFySObWM0xFx
- qMlx3vPBFGCuOXxeN2MgV12E/QvBzHHRnE7wgUKYxjqWegI89NDR6gOgq5/E20O4HHFK
- qayw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX2UhQ58kEE55TTgovAEZhBpsOlZwBJTq3oGayG5HCkSxqgkSdkc4LzFrnRmLLBtffEpn4=@dpdk.org
-X-Gm-Message-State: AOJu0Yxxz4QZn6KexSCRyecFaP/HdTjyI/aFHuEGBbGpZ0nXxXDDNz6X
- dbE2ZwsetuEr+q+88amopotEcEtKeHV4tQdLsWEvpGnn1QVj6RVVojm7N0qtyPbWvmX3K5/wwtm
- k6a5XiB8mb9yg3mxuaQOefrDk/FSkhgdYgtTt
-X-Gm-Gg: ASbGncvkxpS+enE7Q/7Uc21cb04LLB9j8ODrh4yCdlEe1j63x17bHpTMz/1NOwfN7C7
- WCZLdbWNO8HaXV0KcntYqE+bEZYB76wR5jfixQNyxgwSeFp9uOUFji9u+fibIcLV4iGcAd72PB3
- hxmaMnMDQWtgbXu/5fyP0o4+P1J/A=
-X-Google-Smtp-Source: AGHT+IHCqiUT4rcTf7y5+THiYXs4rVoRIivRjz5pCT1WdcmXYWDiUur79GSxfYUfTrEJhyqXly3dzfOC1a58ZiICPeQ=
-X-Received: by 2002:ad4:5bae:0:b0:6e8:9e9c:d212 with SMTP id
- 6a1803df08f44-6ed236eae21mr58572706d6.0.1743091764136; Thu, 27 Mar 2025
- 09:09:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A4A1A406BB;
+	Thu, 27 Mar 2025 17:17:57 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 7E38840654;
+ Thu, 27 Mar 2025 17:17:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1743092276; x=1774628276;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=6zasd91YSAa5UPE3ypalzlhtHGTPXWtTTaAHAWU68ts=;
+ b=EO4v/y3WfJ/sNhogLzWiLY8VOAq/G62CkxOqWp0aJ4EEaeP3XHxJIQ3Z
+ V4hNtlX3TKZ36FnAOhHY3AQqS4/BQEQD7ckdLUwOp+UwbKr+p5mK8laAk
+ Zp1ur/tn3yMSbQvsN1mefVuTjAh/PUsAjBqoWVV43g08j85mMRRf0lbve
+ 38uPAeWqv//X4XJ4tm/D1rmerSQEXmNJRcZTUlwp3QVse/5GYsBxUG/cJ
+ qqx232KJpYOOYMXcMlHNX4V7rwhLzSh1yLR6R4PNTflvVHaTT7YhYxNsi
+ sMgZWChebTuqnmGxQ5wmzUA4hZE0aWrev9XXNibL0GZKCNW2rK9Ywp8NW A==;
+X-CSE-ConnectionGUID: jsMXCQ/ITOOwOyKz/Ko4qQ==
+X-CSE-MsgGUID: UMCgCxY8QS+P4QC5YE5xDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="55805285"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="55805285"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 09:17:54 -0700
+X-CSE-ConnectionGUID: H9RgTPfeThqU51Ki8w681g==
+X-CSE-MsgGUID: G78KzV0tQWGSchmAXCGxPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; d="scan'208";a="130054691"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Mar 2025 09:17:55 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 27 Mar 2025 09:17:53 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 27 Mar 2025 09:17:53 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 27 Mar 2025 09:17:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=djTqlcd5c/AZgsQqiKIkO3yWJFT8EP1bPXaN0ioj4lny2P6WCRL6jdI2f7S0kDWHXj37q/mGFg85LR3goAjR9rl8bi3ba4lBHWmP5qvSERzCLevRG80lIF0FgbKcV7DHqyqkMvYJj7W/AYSkYT150qRCOi9Yxjn3K/TbJc7ahZX3zOmCzHeFLYii3dkwnitSkdiAL5Wx4U/HObE0iRJoTVbRxX5JLfoipT9T1i6kpWlXlRG2Ap5WKjcWgodD21Y0ms4uwtXLlPatTqy8CPfyoqZEISBAhFUd4m233BSbQGKHYIYEfIL6zFVLCszoKHaCXJhDaj82TJ/6CDeLDPS0bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KzM4V2Ugmo1DSFTpDA3mgnWGVxuQrxH3JLjj4uhcjJk=;
+ b=r+dHDr89VrHIdbXc7q0asQ88Y9JBxncWNV6ME1zGqMbYHUpH9tuuY3VYJ3XEgrrO0stsM3RgbkRcnetMw9pfIrrVSL1qivREvAP4SM2zc2BGiVoeMl02WBJG+YC0aYaZWYjIlUSJ3lSccuOWq4iHBCQNpXu/vE0x+4GXDbFsq3iALh30i2eb21mVM2y3WkwOoAe6jLIf+BvQXSsJY7ikZiExSbHPEI+pl31Z/LoRBqYfQwpNcESmNlbYmR0Kjcd8GTSbsmJj7hlmbz8aQvn8lT1Lq5Be64hrQVNJwm//0kkZhvS5Yc3HqwXDJS4Qn6WC/ByoOKL8aF8nS+bryKxpbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS0PR11MB7381.namprd11.prod.outlook.com (2603:10b6:8:134::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
+ 2025 16:17:35 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
+ 16:17:35 +0000
+Date: Thu, 27 Mar 2025 16:17:30 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Etelson, Gregory" <getelson@nvidia.com>
+CC: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>,
+ <dev@dpdk.org>, <techboard@dpdk.org>, <thomas@monjalon.net>,
+ <mkashani@nvidia.com>
+Subject: Re: DPDK for rust
+Message-ID: <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
+References: <20250306133713.393057-1-getelson@nvidia.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB79@smartserver.smartshare.dk>
+ <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
+X-ClientProxiedBy: DB8PR06CA0057.eurprd06.prod.outlook.com
+ (2603:10a6:10:120::31) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <CAOFFPToi31bmGM76Uuiy0VAOsH=5YM6z0x1UH9EyyPGM-CF4tw@mail.gmail.com>
- <20250110100425.598c939c@hermes.local>
- <CAOFFPTrA3fu7kxBcdwMPJvLjeNeSurms+dsXXK5Cg4gogfwa8w@mail.gmail.com>
-In-Reply-To: <CAOFFPTrA3fu7kxBcdwMPJvLjeNeSurms+dsXXK5Cg4gogfwa8w@mail.gmail.com>
-From: Ajit Khaparde <ajit.khaparde@broadcom.com>
-Date: Thu, 27 Mar 2025 09:09:08 -0700
-X-Gm-Features: AQ5f1Jptf1tRf_uekYLPkLSuEX40_I0Jm7bsvrpfuln-9TkEQBsBKpm-jj-IQi4
-Message-ID: <CACZ4nhv1VL=GMX+ofj1mMEs2t1F7KkwgnCQsWNJXWQ5ErT8NZw@mail.gmail.com>
-Subject: Re: Driver: bnxt_en
-To: Eldho Paul Mathew <eldho789@gmail.com>
-Cc: stephen@networkplumber.org, dev@dpdk.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000729ede0631552dd9"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7381:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21bc2da5-b626-44ed-66ae-08dd6d4ae2c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3qI4bO14+w7pjVWBO7RQpjE6RQZn6w7HTVRphjRL4B+OPY07zY26Wyk9RMQ+?=
+ =?us-ascii?Q?XhfT7qoOcjxzrEJp+Utmg+GgistwV4jdQJx3k+OPy3fz/B0JZ2ZwMqvvp1dp?=
+ =?us-ascii?Q?miZsTqefx+OCTfUyctI74UKJE5unRmYWD+frZ7DjdVFGnSmpeiTUAIqlRMMH?=
+ =?us-ascii?Q?eIzKW0TKqaM6OttUBkaO9JBgASWqnbzEpknwwcbyp4BzaqQsgXK9RzgUHnwh?=
+ =?us-ascii?Q?YhhUssjaMrZfWgbiiftHXYTMciNBE3W6YzCvYt6ITFN/9I2013NgACQXQ/HT?=
+ =?us-ascii?Q?0ovZZsFoJywaqM31kfygNMqSxW265wpIlsVJ7YgjJLzKzBpWL+WD5OlW5thk?=
+ =?us-ascii?Q?1huHWFmuR+DJMBovHXJxiz3TwU2/NckySqKvk2RcgHZhs8o23DJng0VvSy62?=
+ =?us-ascii?Q?clxMQUdtZ9bTrkjczVtGzjbKm3uXGlFcU2R7k4LCScNlPUJsEL1GW26nak1u?=
+ =?us-ascii?Q?2m40KQYnoJr9SX2JXhngU6vp4JQ/oR2O59y4PKWUFLDJRi/q2CTwTwtI4011?=
+ =?us-ascii?Q?E1ibQQb9LisxjOxmA0jYeuPpLJ3wfrHLuP2Big5ew3uqYNO3uquIR9COJix6?=
+ =?us-ascii?Q?m72n9nnyryCz1AqqwxRNfYi+eadrJrppJYdMA73gE6qh2A6R0P0yZAs7OmJL?=
+ =?us-ascii?Q?XchhV4TXuuq9mh5UACVd7y1xYSEswkyu98sajJiGSChwAJ+FmEGIsOhBn2WR?=
+ =?us-ascii?Q?7czCfw+prvPw2lLZoLMNkEb8CCq8FyHwh2n5MB4mKjr7xAhDBAl/AWHAKdgX?=
+ =?us-ascii?Q?ndYuhGdpvCNiiG2jVuSXqDByeKk3AsAXcnv5ahWmbzv6yai/Ccc3W3UkDEW7?=
+ =?us-ascii?Q?vX4Ao2QstxIFGxF6rJ3EU/zuWIC9doT39jELvRJNkmABKl69uJBtTgZzeoyG?=
+ =?us-ascii?Q?ybKZJFUh0jez6qtojxJiN5P+dfYB+GPIk+mPVuWHpEhKrfZMk43iSMRBiSJd?=
+ =?us-ascii?Q?UzNFYk06rzkT5/7yNic8N+UuoAK7J1OtiB2GJ5lrHJUR5WD1u8G2qbUJXhRu?=
+ =?us-ascii?Q?TOCsQwjJp3iYwIA+xmM2x6om4KAC20iviheltIxZQW8/Ft3+zxbbgiJ/1njG?=
+ =?us-ascii?Q?iN5H46adluqmNk6FG33wyTUlwSCktkFzb4zBS47tr1B133XS77Ffp1Hw2nyB?=
+ =?us-ascii?Q?dzbb64Oid+KbyKWBuXZTwc++thSzBUjDmeYZrTf7sc2nq/LyKt76KTr5gI+G?=
+ =?us-ascii?Q?J1m+KOJo+NrrV23PSkRRsNqtGpF5bO4lopveYouhg8o/G8k4Zon4/PzTtZbR?=
+ =?us-ascii?Q?Xj+nGFLWcOa8Xx85udDRZ4xQWQW42RVPdWjTJ0X/8q/pd/euaK1MuKZvQZdk?=
+ =?us-ascii?Q?01MPgubwk8bxZ3myRrM9SCI08J2hpXv5j/MwdwjIU6Bbj8aXeQl/c9s/1p5p?=
+ =?us-ascii?Q?c3ar9B74Ozb3iIa84mXd3Zp5xyFY?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JhviOg0NPpqhf0Sll7JwHCHyITaiC5yUFHe37yTVlTVXDtohF5a5avJZ7U4A?=
+ =?us-ascii?Q?Sfb4XI58Pr22suJqUuJ/ED111g3+V9aRoIvlqK1wO/MIpaC1C//nRtrwGuG4?=
+ =?us-ascii?Q?W33CWMNOGDNBXS9lmBEc1S7gyCyhWfJsEiAlWRiiMt4iOtl7WmfFGSjORsFG?=
+ =?us-ascii?Q?v4JxMhIJ9NYnTUhvQNV0wYs6Gp6dK2UzrqALCBb7h4DAjJuKTSk6yTh6sjIN?=
+ =?us-ascii?Q?dwaEBzGFzM6D7IkxOxQab+fSOCvRsuy4wOUtQBzYNIrFoIVJQwk6mqh+XYEI?=
+ =?us-ascii?Q?eVaMncYTK5TL0O3HXNkol0neKTxzqINEaumxpyW3wUVDkInRdJt857d7Ltuq?=
+ =?us-ascii?Q?E1ePfEjdxwcdOUv0C1dLSemV4a2Coo1qxT6KLcz+PkFtyLtK3N+1ffwrSNzw?=
+ =?us-ascii?Q?L3UD16hQKddWbnEAVIEOWSszpURzOZ+wK03iItNagth/gb0/TMd2dguZPJlb?=
+ =?us-ascii?Q?7GKDtpicthly37uUBr/xOAWDAqZm1bthGL/EsOlTgHWgQYncSa8SL/CTFmay?=
+ =?us-ascii?Q?BYAMYDZ40W+ZOT6CtbKCW/fRoS2jYB5XYGlxEzq8z4wD5D+0Pm1Vrmy22lZf?=
+ =?us-ascii?Q?TsKXFZ83bgcyvy6mTsG10dZVuZNcCzul2MG5W6+xoTwbaCXuloH5ovPuqrZo?=
+ =?us-ascii?Q?3RkjZfFgOIkynUKn0ApFWeTvFu9Y7UJMqJsi+Deif/llsZ4ec/rq+TI9K/qB?=
+ =?us-ascii?Q?gIuDFktvQYRQA4agOcKEUj6NkXMZAAQG9AuI6d2pFvr0gSthoWq4ryKkfABN?=
+ =?us-ascii?Q?CcrQjeQ1tGkIJIXe1ykJR2zYyrIdBqNtUpspyeSnaCUhDVq5Tz6virTUi8fM?=
+ =?us-ascii?Q?x2JZ66qI5pzbUaNnjawkdI6OiadxPMGbqUNooKd/K349udlzcB+CfAIVJm6y?=
+ =?us-ascii?Q?Zs+6Ov9fohR2XcwVBxGG30TTrvQAqVSiWT4YrRQ/mEEKpbFQxRWNZq0+qGJq?=
+ =?us-ascii?Q?o9it45gH90wAdJTIQLu7Ib0dgrhQoyU7Ys1TUiFBCbuY5FTiP4pZo77QI9BQ?=
+ =?us-ascii?Q?lhJqfQn3UM9Yb4z2Xs49eQZzP125Kwq554gF5XPTaWapPs7TqU4jrIg0iAeM?=
+ =?us-ascii?Q?SV9QyO2UOGsPGM0SGrZRXaVo8Z1ss8c1iPf02iD8Ni6gzYKWYVw7EXPA2sms?=
+ =?us-ascii?Q?He6se2aFZLfWIIxaRwe60QLFOL2l6v7VGPJZSyBA3nhLW7e+UhWF+FOZBogs?=
+ =?us-ascii?Q?5kNY86sRH05LioRrPmXJdzQW4GV7HqOosq6QPMfWQCikBcEPcQT7QdIx/fPH?=
+ =?us-ascii?Q?zkfUT31eDETMCPUQUdhfv5cKMKVrDdbxDEiYZLzlICTTZT11iy3ZvwVcHK5m?=
+ =?us-ascii?Q?Hy10Teg5B798B6acGRtjGUTgdHQt8Dwyu6+jLM6eWVVOG0y6m1R1e0212NZJ?=
+ =?us-ascii?Q?iUZGtb3aIDgL++8ABs7sfck1nB3TVsTcUsQAzeY3F1ycwpUtSZ4LhrQzIVZa?=
+ =?us-ascii?Q?kep6PYzRH4xU3Rpw467l6ai8cb/3yMBDXviFEMNrdNKCn5dpzbNd+L9bsjYH?=
+ =?us-ascii?Q?/t+iyE1jCEewZORlI3kmAvY6XxsnPE3zHzEskvWco5Z44kCYKoV/rZ/4jEb2?=
+ =?us-ascii?Q?dblXjH4+gFdGe0ws/JTmnFhvlLiNZce0p5AQaIrIHAoVw8ag9tCIFMI19pNS?=
+ =?us-ascii?Q?Kw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21bc2da5-b626-44ed-66ae-08dd6d4ae2c7
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 16:17:35.7508 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zuXjT05ge/1R9NvKwwrecVAIba3qjGtiN0vJe0ygL415ogQaNLiGlMwm93wFyZ6ttovCGvEyPAdeYdFcsdbIYI3y0yWF4dCiR5M747K0JdM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7381
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,175 +172,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000729ede0631552dd9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 27, 2025 at 11:00:40AM +0200, Etelson, Gregory wrote:
+> Hello Morten,
+> 
+> Thank you for raising these questions !
+> 
+> > 
+> > Do we want the DPDK project itself to support rust?
+> > Or should parts of this be a DPDK hosted project, like grout?
+> 
+> Rust packages management is different.
+> Also DPDK Rust code will eventually provide a different API.
+> At this stage, DPDK hosted project looks like a good idea.
+> 
 
-On Thu, Mar 27, 2025 at 6:49=E2=80=AFAM Eldho Paul Mathew <eldho789@gmail.c=
-om> wrote:
->
-> Hi All,
->
-> What is the importance of the 'ice' driver?
->
-> Right now I am using 18.05.1. Does it have 'ice' driver support?
->
-> We bought a new card: BCM57508 NetXtreme-E 10Gb/25Gb/40Gb/50Gb/100Gb/200G=
-b Ethernet
->
-> To support this card using the 'ice' driver, is the DPDK 18.05.1 version =
-sufficient, or is there any other driver that is the placeholder for 'ice' =
-in 18.05.1?
->
-> If I need to go for an upgrade, which is the minimum version to support t=
-his card by 'ice'?
-ice driver will not work with the card you have listed. It is for an Intel =
-NIC.
-Support for BCM5708 was added in 2019 in the Broadcom bnxt PMD.
-You can either use the 19.11 - an LTS version. But that is not
-maintained anymore.
-You can use the 22.11 release which is still maintained. Refer to the
-DPDK roadmap
-for EOL releases.
-https://core.dpdk.org/roadmap/
-
-Thanks
-Ajit
-
->
-> Kindly help!
->
->
->
-> On Fri, Jan 10, 2025 at 11:34=E2=80=AFPM Stephen Hemminger <stephen@netwo=
-rkplumber.org> wrote:
->>
->> On Fri, 10 Jan 2025 10:02:48 +0530
->> Eldho Paul Mathew <eldho789@gmail.com> wrote:
->>
->> > We are using DPDK 18.05.1
->> >
->> > We received a new network card.
->> >
->> > Broadcom Inc. and subsidiaries BCM57414 NetXtreme-E 10Gb/25Gb RDMA Eth=
-ernet
->> > Controller
->> >
->> > DPDK 18.05.1 has support for this card and driver bnxt_en?
->> >
->> > If not, which stable version onwards has this driver support added?
->>
->> Release 18.05 is not a stable LTS version.
->>
->> Let me teach you how to look this question up.
->>
->> To look up device you need the actual PCI-ID, using pcilookup.com
->>         14e4:16d7
->>
->> Look at source of drivers/net/bnxt/bnxt_ethdev.c for the pci table bnxt_=
-id_pci_map.
->> The entry for 16d7 is
->>         #define BROADCOM_DEV_ID_57414           0x16d7
->>
->> Using git blame find the commit that added that:
->>
->> $ git blame drivers/net/bnxt/bnxt_ethdev.c | grep BROADCOM_DEV_ID_57414
->> 3fab7694403 (Ajit Khaparde                   2017-04-26 14:20:02 -0500  =
- 51)    { RTE_PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, BROADCOM_DEV_ID_57414_VF) =
-},
->> 1f4a84672ec (Ajit Khaparde                   2017-01-06 13:55:17 -0600  =
- 60)    { RTE_PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, BROADCOM_DEV_ID_57414) },
->> 1f4a84672ec (Ajit Khaparde                   2017-01-06 13:55:17 -0600  =
- 68)    { RTE_PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, BROADCOM_DEV_ID_57414_MF) =
-},
->> 3f6d59b0c88 (Kalesh AP                       2019-12-02 09:48:07 +0530 4=
-999)    case BROADCOM_DEV_ID_57414_VF:
->>
->> So we want 1f4a84672ec
->>
->> If you look at that commit with a tool like gitk it shows it happened wa=
-y back in 17.02
->> And the card is listed in driver for 18.11
->>
-
---000000000000729ede0631552dd9
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-pZEyqKnwS1lKCzjX7mV5W955rFsFxChdAKfw0HilwtqdY24mhy62+GeaEkD0gYIj1tCmw9gnQToc
-K+0s7xEunfR9pBrzmOwS3OQbcP0nJ8SmQ8R+reroH6LYuFpaqK1rgQIDAQABo4IB2zCCAdcwDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAlBgNVHREEHjAcgRphaml0LmtoYXBhcmRlQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEF
-BQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUbrcTuh0mr2qP
-xYdtyDgFeRIiE/gwDQYJKoZIhvcNAQELBQADggEBALrc1TljKrDhXicOaZlzIQyqOEkKAZ324i8X
-OwzA0n2EcPGmMZvgARurvanSLD3mLeeuyq1feCcjfGM1CJFh4+EY7EkbFbpVPOIdstSBhbnAJnOl
-aC/q0wTndKoC/xXBhXOZB8YL/Zq4ZclQLMUO6xi/fFRyHviI5/IrosdrpniXFJ9ukJoOXtvdrEF+
-KlMYg/Deg9xo3wddCqQIsztHSkR4XaANdn+dbLRQpctZ13BY1lim4uz5bYn3M0IxyZWkQ1JuPHCK
-aRJv0SfR88PoI4RB7NCEHqFwARTj1KvFPQi8pK/YISFydZYbZrxQdyWDidqm4wSuJfpE6i0cWvCd
-u50xggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNh
-MTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwM2Vrj
-4nZK0WWosNswDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIFoP3VT42hPQWKvL6eGq
-uSmxiyEvGi6rvDmTcDIsh0V7MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
-MQ8XDTI1MDMyNzE2MDkyNFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUD
-BAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0G
-CSqGSIb3DQEBAQUABIIBAJmE9MYnCsHwPWxbDJVH+zg7rQWYPQZi4MZDwfmd+VSivpeJY33yiaUq
-Zk57zjjXpYXHp83XOHknSxS9Vz/iEPrk2RiMPCbkxVOzEgrHAjgyW+9Giv8asGaPJer6GjCDB3Zk
-zAtnfWlP8qh5JKdrKjlhTNBUYAHBx3b+TvSEOpo+I9BhZEAImTy5hDBKO+tp2NpHSX70z8OtzkpN
-6NSzKtvyKwvLeMW1dJS62AmMLy4VeaLtfrZnz8avJPkNzTWIy1PMTD9bOXgObsivC8eEXn480WkC
-narf4HkP0JXQ+UFxgOX41xOum17BrCfhubObg0U0yUKn+4dW2CRykXoER8U=
---000000000000729ede0631552dd9--
+For ease of use, that would mean hosting a cargo registry, no?
