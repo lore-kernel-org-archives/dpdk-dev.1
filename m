@@ -2,53 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C34C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09336C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:15:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46DFD40261;
-	Fri, 28 Mar 2025 06:15:00 +0100 (CET)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id 122B34021E
- for <dev@dpdk.org>; Fri, 28 Mar 2025 06:14:56 +0100 (CET)
-X-QQ-mid: bizesmtpsz12t1743138889tzi8px
-X-QQ-Originating-IP: LMi9qSMRPYtn0XQlehn8srZH6+irBonubJ3G/rDM4AA=
+	by mails.dpdk.org (Postfix) with ESMTP id AD9A540395;
+	Fri, 28 Mar 2025 06:15:03 +0100 (CET)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 65BF440299
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:00 +0100 (CET)
+X-QQ-mid: bizesmtpsz12t1743138894t15eej
+X-QQ-Originating-IP: +qbqYAKJlZQhLdeE76rvW0zxt3xRLL0OPfeQvw4+B/w=
 Received: from steven.localdomain ( [103.233.162.252])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 28 Mar 2025 13:14:47 +0800 (CST)
+ id ; Fri, 28 Mar 2025 13:14:53 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4705048113088406320
+X-BIZMAIL-ID: 16688384082987645965
 EX-QQ-RecipientCnt: 5
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net
 Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
  Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v17 00/29] [v17]drivers/net Add Support mucse N10 Pmd Driver
-Date: Fri, 28 Mar 2025 05:14:15 +0000
-Message-Id: <20250328051444.1019208-1-caowenbo@mucse.com>
+Subject: [PATCH v17 02/29] net/rnp: add ethdev probe and remove
+Date: Fri, 28 Mar 2025 05:14:17 +0000
+Message-Id: <20250328051444.1019208-3-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250328051444.1019208-1-caowenbo@mucse.com>
+References: <20250328051444.1019208-1-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: NRnIqN6C21qSzXQhvBM/aIUTXJn2Qmo4BfOnqbRSheU4gItjlzfik3fl
- bAG6fpWEFn5eatbtikZ4mgoS813Pq4x3qY2jCyeB8zsveTzQvPBVoZIp4q/0fkW/0fMkty8
- OD9GhfHkaVM87GgizqLzo44V+kiMGgb6X8H7cdCXorY6+OSYz2TcH2M08WEob/I093IZ/Qt
- V3/VJdkA7reV2Arwt7XhUGajdX2/wmRY7C3dszvUjEm9KUZhGfio7CyzeKZbJu++lh06cUf
- tK6nYgMQzxVK+G8bMdyGga5K3CLhLOjaGa3Z3evnDfQJt3U83kezEbmXlEYyec3YUL6i1Xp
- XI/Xyis1od6smI/G0eOa4snxp5xEdAHfrMc/C4W0L/F6+4t1iXpInpPNYbl7yaICPgelK0w
- ZV4AaK0D8c+ekf19wILpTqint2faRI1McgZfMBsobXhkMCsTNSbNLq5vvkNxgweaj0sW+D6
- O1qGbj57GK3kml/36thLnaQ0igYkNdCCDNU7Z9tVmnk2hSYluVVXuSiZMq4prX83Mf5ZJ9v
- abuvbgS2NwnRB+CYtYZLMIgvEOMPQhX1wLJai0S91ES4xqyQoJ1ZT+vml3fW9LggiRB17A9
- vZI4WcYctyfGFYj3JI3xffJ8aVSKg00mvSCWxfHAMeAjW2xT8yyNuon+1rBJnXG6adn/rf0
- xX4Nc+Hn51rDprHfP672Ip/04f6ws9CWVrfKa6tzmO1RMUpmp2grwmF/BJwBtI8ziV25Weh
- MscJTSQO7kMvD3lzovM16SIFIyyF+wKyYW+QE5neZtOk8CwDLaJz7LC1USvc2sFLroP8tJM
- N21uhMZf6jR0A6aj5EXWq+FdLlfOTMSmCdyLTNSOFk2giSMqQ1S0bgfm2LVgWkTwhsSCGFC
- 2ad2oaSYjfT1OWaBF6fQ3Mom9h5aGYlfzLaobrSmwL1QDe7aQ+B7/mSKtStCwHPsla7qVst
- mDRrmhis9+xqv+bsrg22N2Lbnc3SwZOdW/okAnCnAOFdVGsBoN5Hz031Kd7Ro6RLtp8J06W
- x9kr+pnHIUY60mgkTsS0Ro03Lexj0nGSUzC9+3z9P3x5DlfB4z408VH/1EirOcXaMgoOoHE
- aZ/+AuHGnoiLjHk39O2D0U=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-XMAILINFO: M/ESU50hZOEXtsIDlDyNanqMcrEDY+gcMnLZIM0f1ib99h26LzYhlRHq
+ PHB0Ja7PdN+RJHEbo8AiICIE/hu/368hI+uJSNcMwpk09LJiLsZxxArCbKT4DZho5v+9mO7
+ kLQ42dJ/TVjTuBA0WX2MnF5yy6OlJSOIf80ssq/206eODHgnmSnNCLQgy4q3OmZGaswi9d8
+ vPTYalUyb2xV3L9CiER83nKRrfkEsofGHa1e2l3YJp8twXnejg5KUm6zUFOWuOghbsugzdI
+ CFBFKwki25QCqCXfFBg8g1Cv+clrV9tlkIcr2ZDOU6CCdtETxB2qnNn7f4aHSmU+Yn3UfUr
+ ISCOoW0eYEytaagGyec1VlbkVidLzWnFAhW22UdNBImrX1jIpfei+UEXB+/yvrLw8+ZeZF8
+ SFIJcPEcbg0SCpe94FJfNLD4Vqyl5qPOSB5ANSLcUu+Lcifw9Yf96LYq8D7FeAiQ+AxqJn5
+ QxyyThomDxZYTXFR41ReeA33k1eD/PeC5Oc2rFATm98sU7QIWeGDwii9LlHuWPuz8MKd99x
+ GUWLUPpS7m75jAQ0UHZX0wninCSuOa0eP3bc74Eb6I3qzwY1lEA6KYSA6CKNiFYfQRsGb6h
+ rj+iNOKnmQywS+MaNo4hUXtfdSHppCUswGc5d0sGTm2BHTWQFLdotE7LbvhmyjWRa6W0DMq
+ fM4/5wVP7By15DG6FOEk8Z3CfpUHbaUZlm6ZdxWDLRC0qYBJMwksmXcAEQSuQP6/LZHPVsN
+ EOAHGp5I5ih1pd/aK6OG+qMZtVuTT8jK2e7+tbbmsy0M7kNW/S/DkdmVwOQKPrWgfdNn19+
+ zVCpo+VQ8t/fEegpk6sgZxnXsc0GX/qOHWE7FXyyh/5eVGydqtebYQKV+UwbJ71n+mOCqzn
+ 9ch16j2TRl+26YnNs7fbsxOxx+LrywbTIP2K88lR8+97u2jTLqsr26sy0BTdUMD24nmeQn1
+ oRI+HvbNpYKWzA9q9P6pXSFRXSz2KrZl6BLVEmQ8tLfZxiCFGYtlQKgJJkTNTqeIz2DBfNe
+ Ts4BsrvZN1TReznqapsFqKOzeTxKU=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,193 +64,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For This patchset just to support the basic chip init work
-and user can just found the eth_dev, but can't control more.
-For Now just support 2*10g nic,the chip can support
-2*10g,4*10g,4*1g,8*1g,8*10g.
-The Feature rx side can support rx-cksum-offload,rss,vlan-filter
-flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
-The Feature tx side can support tx-cksum-offload,tso,vxlan-tso 
-flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
-for sriov is also support.
+Add basic PCIe ethdev probe and remove.
 
-Because of the chip design defect, for multiple-port mode
-one pci-bdf will have multiple-port (max can have four ports)
-so this code must be care of one bdf init multiple-port.
-
-v17
-  * base 25.07 porting
-  * change rte_memcpy to memcpy
-  * doc rnp.rst remove ocp support, change nic-card description
-
-v16
-  * fixed rxq/txq stop/start not add to eth_ops as rnp doc descript.
-
-v15:
-  * fixed scatter recv for jumbo frame test by dts mtu.
-
-v14:
-  * add multicast mac filter feature for basic nic feature.
-  * fixed pvs studio low,media,high level warning as the below cmd
-    pvs-studio-analyzer analyze -f build/compile_commands.json -j 8
-    plog-converter -a GA:1,2,3 -t fullhtml PVS-Studio.log -o /root/report
-
-v13:
-  * Supplementary document about n10 network card characteristics.
-  * update release_25_03.rst.
-  * fixed the code style advisea Stephen Hemminger.
-  * fixed the code issue check PVS-stdio for Static compilation error.
-
-v12:
-  * fixed __rte_packed __deprecated__ compile issue.
-
-v11:
-  * fixed array-bounds issue when used rte_memcpy src addr is
-  * not enough to hold align dst.
-  * improve efficient_code advised by Stephen
-
-v10:
-  * fixed mingw windows meson issue
-  * rnp not support windows for now.
-
-v9:
-  * fixed commit log format check by devtools.
-  * fixed code compile issue.
-
-v8:
-  * fixed codespell issue.
-  * fixed MAINTAINERS file
-
-v7:
-  * add support nic basic feature such as rss vlan strip/filter,
-  * mtu-change recv/send scater-recv/mutltiple-send.
-  * fixed code rationality, advised by Ferruh Yigit.
-v6:
-  * fixed the doc(rst) format problem advise by Thomas Monjalon
-
-v5:
-  * fixed the symbol name require by the style documentation
-
-v4:
-  * one patch has been forgot to upload :(
-
-v3:
-  * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
-  * change iobar type to void suggest by Stephen Hemminger
-  * add KMOD_DEP support for vfio-pci
-  * change run-cmd argument parse check for invalid extra_args
-
-v2:
-  * fixed MAINTAIN maillist fullname format
-  * fixed driver/net/meson the order issue of new driver to driver list
-  * improve virtual point function usage suggest by Stephen Hemminger
-
-Wenbo Cao (29):
-  net/rnp: add skeleton
-  net/rnp: add ethdev probe and remove
-  net/rnp: add log
-  net/rnp: support mailbox basic operate
-  net/rnp: add device init and uninit
-  net/rnp: add get device information operation
-  net/rnp: add support MAC promisc mode
-  net/rnp: add queue setup and release operations
-  net/rnp: add queue stop and start operations
-  net/rnp: add support device start stop operations
-  net/rnp: add RSS support operations
-  net/rnp: add support link update operations
-  net/rnp: add support link setup operations
-  net/rnp: add Rx burst simple support
-  net/rnp: add Tx burst simple support
-  net/rnp: add MTU set operation
-  net/rnp: add Rx scatter segment version
-  net/rnp: add Tx multiple segment version
-  net/rnp: add support basic stats operation
-  net/rnp: add support xstats operation
-  net/rnp: add unicast MAC filter operation
-  net/rnp: add supported packet types
-  net/rnp: add support Rx checksum offload
-  net/rnp: add support Tx TSO offload
-  net/rnp: support VLAN offloads
-  net/rnp: add support VLAN filters operations
-  net/rnp: add queue info operation
-  net/rnp: support Rx/Tx burst mode info
-  net/rnp: add multicast MAC filter operation
-
- .mailmap                               |    1 +
- MAINTAINERS                            |    6 +
- doc/guides/nics/features/rnp.ini       |   34 +
- doc/guides/nics/img/mucse_nic_port.svg | 4023 ++++++++++++++++++++++++
- doc/guides/nics/index.rst              |    1 +
- doc/guides/nics/rnp.rst                |  123 +
- doc/guides/rel_notes/release_25_07.rst |    5 +
- drivers/net/meson.build                |    1 +
- drivers/net/rnp/base/meson.build       |   18 +
- drivers/net/rnp/base/rnp_bdq_if.c      |  398 +++
- drivers/net/rnp/base/rnp_bdq_if.h      |  154 +
- drivers/net/rnp/base/rnp_bitrev.h      |   64 +
- drivers/net/rnp/base/rnp_common.c      |  103 +
- drivers/net/rnp/base/rnp_common.h      |   17 +
- drivers/net/rnp/base/rnp_crc32.c       |   53 +
- drivers/net/rnp/base/rnp_crc32.h       |   11 +
- drivers/net/rnp/base/rnp_dma_regs.h    |   68 +
- drivers/net/rnp/base/rnp_eth_regs.h    |   94 +
- drivers/net/rnp/base/rnp_fw_cmd.c      |  162 +
- drivers/net/rnp/base/rnp_fw_cmd.h      |  357 +++
- drivers/net/rnp/base/rnp_hw.h          |  141 +
- drivers/net/rnp/base/rnp_mac.c         |  480 +++
- drivers/net/rnp/base/rnp_mac.h         |   36 +
- drivers/net/rnp/base/rnp_mac_regs.h    |  210 ++
- drivers/net/rnp/base/rnp_mbx.c         |  507 +++
- drivers/net/rnp/base/rnp_mbx.h         |   59 +
- drivers/net/rnp/base/rnp_mbx_fw.c      |  495 +++
- drivers/net/rnp/base/rnp_mbx_fw.h      |   24 +
- drivers/net/rnp/base/rnp_osdep.h       |  176 ++
- drivers/net/rnp/meson.build            |   27 +
- drivers/net/rnp/rnp.h                  |  262 ++
- drivers/net/rnp/rnp_ethdev.c           | 1868 +++++++++++
- drivers/net/rnp/rnp_link.c             |  436 +++
- drivers/net/rnp/rnp_link.h             |   52 +
- drivers/net/rnp/rnp_logs.h             |   36 +
- drivers/net/rnp/rnp_rss.c              |  367 +++
- drivers/net/rnp/rnp_rss.h              |   44 +
- drivers/net/rnp/rnp_rxtx.c             | 1822 +++++++++++
- drivers/net/rnp/rnp_rxtx.h             |  162 +
- 39 files changed, 12897 insertions(+)
- create mode 100644 doc/guides/nics/features/rnp.ini
- create mode 100644 doc/guides/nics/img/mucse_nic_port.svg
- create mode 100644 doc/guides/nics/rnp.rst
- create mode 100644 drivers/net/rnp/base/meson.build
- create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
- create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
- create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
- create mode 100644 drivers/net/rnp/base/rnp_common.c
- create mode 100644 drivers/net/rnp/base/rnp_common.h
- create mode 100644 drivers/net/rnp/base/rnp_crc32.c
- create mode 100644 drivers/net/rnp/base/rnp_crc32.h
- create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
- create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
- create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
- create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
- create mode 100644 drivers/net/rnp/base/rnp_hw.h
- create mode 100644 drivers/net/rnp/base/rnp_mac.c
- create mode 100644 drivers/net/rnp/base/rnp_mac.h
- create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
- create mode 100644 drivers/net/rnp/base/rnp_mbx.c
- create mode 100644 drivers/net/rnp/base/rnp_mbx.h
- create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
- create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
- create mode 100644 drivers/net/rnp/base/rnp_osdep.h
- create mode 100644 drivers/net/rnp/meson.build
+Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ doc/guides/nics/rnp.rst      | 10 ++++++
+ drivers/net/rnp/rnp.h        | 16 +++++++++
+ drivers/net/rnp/rnp_ethdev.c | 66 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 92 insertions(+)
  create mode 100644 drivers/net/rnp/rnp.h
- create mode 100644 drivers/net/rnp/rnp_ethdev.c
- create mode 100644 drivers/net/rnp/rnp_link.c
- create mode 100644 drivers/net/rnp/rnp_link.h
- create mode 100644 drivers/net/rnp/rnp_logs.h
- create mode 100644 drivers/net/rnp/rnp_rss.c
- create mode 100644 drivers/net/rnp/rnp_rss.h
- create mode 100644 drivers/net/rnp/rnp_rxtx.c
- create mode 100644 drivers/net/rnp/rnp_rxtx.h
 
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index b76c60349c..89c2f64d35 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -14,6 +14,16 @@ Supported Chipsets and NICs
+ 
+ - MUCSE Ethernet Controller N10 Series for 10GbE or 40GbE (Dual-port)
+ 
++Support of Ethernet Network Controllers
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++PCIE NICS
++^^^^^^^^^
++
++* ``N10G-X2-DC .... Dual-port 10 Gigabit SFP Ethernet Adapter``
++* ``N10G-X4-QC .... Quad-port 10 Gigabit SFP Ethernet Adapter``
++* ``N10G-X8-OC .... Octa-port 10 Gigabit SFP Ethernet Adapter``
++
+ Chip Basic Overview
+ -------------------
+ N10 has two functions, each function support muiple ports(1 to 8),which not same as normal pcie network card(one pf for each port).
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+new file mode 100644
+index 0000000000..4413a03d9d
+--- /dev/null
++++ b/drivers/net/rnp/rnp.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2023 Mucse IC Design Ltd.
++ */
++
++#ifndef __RNP_H__
++#define __RNP_H__
++
++#define PCI_VENDOR_ID_MUCSE	(0x8848)
++#define RNP_DEV_ID_N10G_X2	(0x1000)
++#define RNP_DEV_ID_N10G_X4	(0x1020)
++#define RNP_DEV_ID_N10G_X8	(0x1060)
++
++struct rnp_eth_port {
++};
++
++#endif /* __RNP_H__ */
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index 9ce3c0b497..e2eb80ba69 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -1,3 +1,69 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(C) 2023 Mucse IC Design Ltd.
+  */
++
++#include <ethdev_pci.h>
++#include <rte_io.h>
++
++#include "rnp.h"
++
++static int
++rnp_eth_dev_init(struct rte_eth_dev *eth_dev)
++{
++	RTE_SET_USED(eth_dev);
++
++	return -ENODEV;
++}
++
++static int
++rnp_eth_dev_uninit(struct rte_eth_dev *eth_dev)
++{
++	RTE_SET_USED(eth_dev);
++
++	return -ENODEV;
++}
++
++static int
++rnp_pci_remove(struct rte_pci_device *pci_dev)
++{
++	struct rte_eth_dev *eth_dev;
++
++	eth_dev = rte_eth_dev_allocated(pci_dev->device.name);
++
++	if (eth_dev)
++		/* Cleanup eth dev */
++		return rte_eth_dev_pci_generic_remove(pci_dev,
++				rnp_eth_dev_uninit);
++	return -ENODEV;
++}
++
++static int
++rnp_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
++{
++	int rc;
++
++	RTE_SET_USED(pci_drv);
++
++	rc = rte_eth_dev_pci_generic_probe(pci_dev, sizeof(struct rnp_eth_port),
++			rnp_eth_dev_init);
++
++	return rc;
++}
++
++static const struct rte_pci_id pci_id_rnp_map[] = {
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_MUCSE, RNP_DEV_ID_N10G_X2) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_MUCSE, RNP_DEV_ID_N10G_X4) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_MUCSE, RNP_DEV_ID_N10G_X8) },
++	{ .vendor_id = 0, },
++};
++
++static struct rte_pci_driver rte_rnp_pmd = {
++	.id_table = pci_id_rnp_map,
++	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
++	.probe = rnp_pci_probe,
++	.remove = rnp_pci_remove,
++};
++
++RTE_PMD_REGISTER_PCI(net_rnp, rte_rnp_pmd);
++RTE_PMD_REGISTER_PCI_TABLE(net_rnp, pci_id_rnp_map);
++RTE_PMD_REGISTER_KMOD_DEP(net_rnp, "igb_uio | uio_pci_generic | vfio-pci");
 -- 
 2.25.1
 
