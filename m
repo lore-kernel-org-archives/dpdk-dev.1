@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E6C36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C73C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:17:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0D3940677;
-	Fri, 28 Mar 2025 12:16:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 23C7740687;
+	Fri, 28 Mar 2025 12:16:40 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 9FC0940668;
- Fri, 28 Mar 2025 12:16:35 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6C0494066A;
+ Fri, 28 Mar 2025 12:16:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743160596; x=1774696596;
+ t=1743160598; x=1774696598;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=I2L+i6K7bAziiy5Tk2INWAkXyhJSzRDIRTonCKRWtAY=;
- b=gCUDYr4s8pFA8ElYIRLFhEf3XSNEOIHywy4cc1Gj7gD/8gE/dXk4XSAH
- XYIWlwY95lw5XQNFUMi2Bg0Aqdr4jBwBbp9J3tn9sAAgTrMvBIFGM7jRg
- E8jpNmM0R9DHvJWnSKryPAvrTGfL/kJkcYIuDt3f5uBAesuEAX3lh6yVy
- FtwaHRVNFZsiONNjwPn9K2o+9JbuZ6OMishQrh62U/VA9wgf9zRy3vVyH
- M93GcgPssvCzaDfx60nd6BziYdijuOMTvLR6e5WMCbowj3VF+p636HV4a
- +ZnqpINxfm2XoUALwgkWy6RHYbKCkEdPDhtvln6187dCwHTHgnx85yCuH w==;
-X-CSE-ConnectionGUID: tHGpnZdlSmSvAHSOrW2AYg==
-X-CSE-MsgGUID: EiGyzF6IQK2CiGhynyz6XA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435468"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435468"
+ bh=3xoepa9QqiNxMZPc7r86JOirzXIoIjElWrylIbN40u4=;
+ b=iGB8a84woHmQ7Cqj+4+dymtEl/rGx7CMBF20uJArdRivuqs7y2UGx9q8
+ bOWVMVDqx+RQ/VHKWsBmoKnW53szQB2flm0vfrd7v1d3k7cjKYw/HtnNa
+ wnld9jx/fU8nUYricx9H29Gg+7srAofVE8ChfZI6KyibxVuyOgZ/t9l4q
+ bG+OPbCNJuWb0ewZrMCREwilk0HPdaXjyk8IWPIXRjbGHHuwlptr3zmcX
+ nEx0CJRNRnJtksK5A+Coeog6KhaZLYYexGAHcC4KV0mF5t1C24eE6SBuQ
+ nFPGMbF4EvoIoQRKVe7DafdRsPB2YHe/XqiyvhyENs9+wN6wdZ4O0r8vw Q==;
+X-CSE-ConnectionGUID: Mf3o0fDhR2Wtluq0D2yiJw==
+X-CSE-MsgGUID: PyJA1567Q3+x+gwqJuL1iA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435470"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435470"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 04:16:36 -0700
-X-CSE-ConnectionGUID: EjiqxRY/TcOCqJEv7kOnZA==
-X-CSE-MsgGUID: 6oy+gS8FQz6PGi4Za6Rpgg==
+ 28 Mar 2025 04:16:37 -0700
+X-CSE-ConnectionGUID: BWHH5dx7SCquLrlH8qMoaA==
+X-CSE-MsgGUID: wGUX4ChOTXeBJPIf2a9RPg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423293"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423300"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:33 -0700
+ by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:35 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: David Marchand <david.marchand@redhat.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org
-Subject: [PATCH v4 4/9] net/ixgbe/base: fix compilation warnings
-Date: Fri, 28 Mar 2025 11:16:16 +0000
-Message-ID: <20250328111621.2665257-5-bruce.richardson@intel.com>
+Subject: [PATCH v4 5/9] net/ixgbe/base: fix lock checker errors
+Date: Fri, 28 Mar 2025 11:16:17 +0000
+Message-ID: <20250328111621.2665257-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328111621.2665257-1-bruce.richardson@intel.com>
 References: <20250326155230.1315056-1-bruce.richardson@intel.com>
@@ -63,102 +63,138 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-We can remove almost all of the "unused parameter" and "unused variable"
-warnings by just improving the macro definitions in the osdep.h header.
-Remaining two instances can be fixed by just one-line additions to the
-code, so add those to give us a clean build with the warnings enabled.
+When building on FreeBSD, errors are reported in the base code by the
+lock checker (-Wthread-safety). For example:
 
-Fixes: af75078fece3 ("first public release")
-Fixes: c6cb313da739 ("net/ixgbe/base: add link management for E610")
+../drivers/net/intel/ixgbe/base/ixgbe_osdep.c:42:1: error: mutex 'lock->mutex' is still held at the end of function [-Werror,-Wthread-safety-analysis]
+   42 | }
+      | ^
+
+These errors are due to the checker not recognising the lock wrapper
+functions. We can avoid these errors by converting these functions into
+macros. While converting the lock macros, we can also convert the memory
+allocation functions too, which allows us to remove the osdep.c file
+entirely from the build.
+
+Fixes: 30b19d1b5c43 ("net/ixgbe/base: add definitions for E610")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ixgbe/base/ixgbe_e610.c  |  2 ++
- drivers/net/intel/ixgbe/base/ixgbe_osdep.h | 19 +++++++++++--------
- drivers/net/intel/ixgbe/base/meson.build   | 11 -----------
- 3 files changed, 13 insertions(+), 19 deletions(-)
+ drivers/net/intel/ixgbe/base/ixgbe_osdep.c | 47 ----------------------
+ drivers/net/intel/ixgbe/base/ixgbe_osdep.h | 18 +++++----
+ drivers/net/intel/ixgbe/base/meson.build   |  1 -
+ 3 files changed, 10 insertions(+), 56 deletions(-)
+ delete mode 100644 drivers/net/intel/ixgbe/base/ixgbe_osdep.c
 
-diff --git a/drivers/net/intel/ixgbe/base/ixgbe_e610.c b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-index 5474c3012a..7420c78d07 100644
---- a/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-+++ b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-@@ -1054,6 +1054,7 @@ static void ixgbe_parse_vsi_func_caps(struct ixgbe_hw *hw,
- 				      struct ixgbe_hw_func_caps *func_p,
- 				      struct ixgbe_aci_cmd_list_caps_elem *cap)
- {
-+	UNREFERENCED_PARAMETER(cap);
- 	func_p->guar_num_vsi = ixgbe_get_num_per_func(hw, IXGBE_MAX_VSI);
- }
- 
-@@ -1770,6 +1771,7 @@ s32 ixgbe_aci_set_event_mask(struct ixgbe_hw *hw, u8 port_num, u16 mask)
- 	struct ixgbe_aci_cmd_set_event_mask *cmd;
- 	struct ixgbe_aci_desc desc;
- 
-+	UNREFERENCED_PARAMETER(port_num);
- 	cmd = &desc.params.set_event_mask;
- 
- 	ixgbe_fill_dflt_direct_cmd_desc(&desc, ixgbe_aci_opc_set_event_mask);
+diff --git a/drivers/net/intel/ixgbe/base/ixgbe_osdep.c b/drivers/net/intel/ixgbe/base/ixgbe_osdep.c
+deleted file mode 100644
+index d3d7e8e116..0000000000
+--- a/drivers/net/intel/ixgbe/base/ixgbe_osdep.c
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2024 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-
+-#include <rte_common.h>
+-
+-#include "ixgbe_osdep.h"
+-
+-void *
+-ixgbe_calloc(struct ixgbe_hw __rte_unused *hw, size_t count, size_t size)
+-{
+-	return malloc(count * size);
+-}
+-
+-void *
+-ixgbe_malloc(struct ixgbe_hw __rte_unused *hw, size_t size)
+-{
+-	return malloc(size);
+-}
+-
+-void
+-ixgbe_free(struct ixgbe_hw __rte_unused *hw, void *addr)
+-{
+-	free(addr);
+-}
+-
+-void ixgbe_init_lock(struct ixgbe_lock *lock)
+-{
+-	pthread_mutex_init(&lock->mutex, NULL);
+-}
+-
+-void ixgbe_destroy_lock(struct ixgbe_lock *lock)
+-{
+-	pthread_mutex_destroy(&lock->mutex);
+-}
+-
+-void ixgbe_acquire_lock(struct ixgbe_lock *lock)
+-{
+-	pthread_mutex_lock(&lock->mutex);
+-}
+-
+-void ixgbe_release_lock(struct ixgbe_lock *lock)
+-{
+-	pthread_mutex_unlock(&lock->mutex);
+-}
 diff --git a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-index 6e5f7b4ae8..398c38bffd 100644
+index 398c38bffd..53d0422193 100644
 --- a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
 +++ b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-@@ -57,13 +57,16 @@
- 
- /* Bunch of defines for shared code bogosity */
- #ifndef UNREFERENCED_PARAMETER
--#define UNREFERENCED_PARAMETER(_p)  
-+#define UNREFERENCED_PARAMETER(_p) (void)(_p)
+@@ -11,6 +11,8 @@
+ #include <stdio.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
++#include <malloc.h>
++
+ #include <rte_common.h>
+ #include <rte_debug.h>
+ #include <rte_cycles.h>
+@@ -50,7 +52,7 @@
+ #define false               0
+ #define true                1
+ #ifndef RTE_EXEC_ENV_WINDOWS
+-#define min(a,b)	RTE_MIN(a,b) 
++#define min(a,b)	RTE_MIN(a,b)
  #endif
--#define UNREFERENCED_1PARAMETER(_p) 
--#define UNREFERENCED_2PARAMETER(_p, _q)
--#define UNREFERENCED_3PARAMETER(_p, _q, _r) 
--#define UNREFERENCED_4PARAMETER(_p, _q, _r, _s) 
--#define UNREFERENCED_5PARAMETER(_p, _q, _r, _s, _t)
-+#define UNREFERENCED_1PARAMETER(_p) (void)(_p)
-+#define UNREFERENCED_2PARAMETER(_p, _q) do { (void)(_p); (void)(_q); } while(0)
-+#define UNREFERENCED_3PARAMETER(_p, _q, _r) \
-+	do { (void)(_p); (void)(_q); (void)(_r); } while(0)
-+#define UNREFERENCED_4PARAMETER(_p, _q, _r, _s) \
-+	do { (void)(_p); (void)(_q); (void)(_r); (void)(_s); } while(0)
-+#define UNREFERENCED_5PARAMETER(_p, _q, _r, _s, _t) \
-+	do { (void)(_p); (void)(_q); (void)(_r); (void)(_s); (void)(_t); } while(0)
  
- /* Shared code error reporting */
- enum {
-@@ -130,8 +133,8 @@ static inline uint32_t ixgbe_read_addr(volatile void* addr)
- 	IXGBE_PCI_REG_ADDR((hw), (reg) + ((index) << 2))
+ #define EWARN(hw, S, ...)         DEBUGOUT1(S, ##__VA_ARGS__)
+@@ -163,13 +165,13 @@ struct ixgbe_lock {
+ 	pthread_mutex_t mutex;
+ };
  
- /* Not implemented !! */
--#define IXGBE_READ_PCIE_WORD(hw, reg) 0	
--#define IXGBE_WRITE_PCIE_WORD(hw, reg, value) do { } while(0)
-+#define IXGBE_READ_PCIE_WORD(hw, reg)  ((void)hw, (void)(reg), 0)
-+#define IXGBE_WRITE_PCIE_WORD(hw, reg, value) do { (void)hw; (void)reg; (void)value; } while(0)
+-void *ixgbe_calloc(struct ixgbe_hw *hw, size_t count, size_t size);
+-void *ixgbe_malloc(struct ixgbe_hw *hw, size_t size);
+-void ixgbe_free(struct ixgbe_hw *hw, void *addr);
++#define ixgbe_calloc(hw, c, s) ((void)hw, calloc(c, s))
++#define ixgbe_malloc(hw, s) ((void)hw, malloc(s))
++#define ixgbe_free(hw, a) ((void)hw, free(a))
  
- #define IXGBE_WRITE_FLUSH(a) IXGBE_READ_REG(a, IXGBE_STATUS)
+-void ixgbe_init_lock(struct ixgbe_lock *lock);
+-void ixgbe_destroy_lock(struct ixgbe_lock *lock);
+-void ixgbe_acquire_lock(struct ixgbe_lock *lock);
+-void ixgbe_release_lock(struct ixgbe_lock *lock);
++#define ixgbe_init_lock(lock) pthread_mutex_init(&(lock)->mutex, NULL)
++#define ixgbe_destroy_lock(lock) pthread_mutex_destroy(&(lock)->mutex)
++#define ixgbe_acquire_lock(lock) pthread_mutex_lock(&(lock)->mutex)
++#define ixgbe_release_lock(lock)	pthread_mutex_unlock(&(lock)->mutex)
  
+ #endif /* _IXGBE_OS_H_ */
 diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
-index f8b2ee6341..64e0bfd7be 100644
+index 64e0bfd7be..2af8a55e92 100644
 --- a/drivers/net/intel/ixgbe/base/meson.build
 +++ b/drivers/net/intel/ixgbe/base/meson.build
-@@ -19,17 +19,6 @@ sources = [
-         'ixgbe_x550.c',
- ]
- 
--error_cflags = [
--        '-Wno-unused-but-set-variable',
--        '-Wno-unused-parameter',
--        ]
--c_args = cflags
--foreach flag: error_cflags
--    if cc.has_argument(flag)
--        c_args += flag
--    endif
--endforeach
--
- base_lib = static_library('ixgbe_base', sources,
-     dependencies: [static_rte_eal, static_rte_net],
-     c_args: c_args)
+@@ -12,7 +12,6 @@ sources = [
+         'ixgbe_e610.c',
+         'ixgbe_hv_vf.c',
+         'ixgbe_mbx.c',
+-        'ixgbe_osdep.c',
+         'ixgbe_phy.c',
+         'ixgbe_vf.c',
+         'ixgbe_x540.c',
 -- 
 2.45.2
 
