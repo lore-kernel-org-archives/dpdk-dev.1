@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB32C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BC9C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:17:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA9A040A6E;
-	Fri, 28 Mar 2025 12:16:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id ECBE740691;
+	Fri, 28 Mar 2025 12:16:46 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 996EA4069F
- for <dev@dpdk.org>; Fri, 28 Mar 2025 12:16:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 37B0B409FA
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 12:16:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743160603; x=1774696603;
+ t=1743160605; x=1774696605;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ell4aqzGb8sclHsIxrYJMXIhfB3sIOUSfbftg5teMc4=;
- b=FVOCxRHhFPixbKMUTZbfwKE7q9ejXKHArk/uV5cpGY/4TkeOdTmq98nK
- RByYY9TMaptxpTd9q8HufMubf22C9UOfIsqmN857WC/JiGRbkfNqdhvzd
- VXMrvvO8gVcbE8a9iq8gMjZky0YiVEOsJeNu/pVpDLRsBk4tc1RH4Rf4C
- jolir+vmbwhGeY1ILGpSHlDT8W2L8JWcNma8Kj4Zl0wxwUc3SP+xzZV4H
- aqIienjuwJkG6ZZW2uFwl/e6EsJBkdnUCBXdaOUhWMffqorpU64mO1/KI
- 6SdEB1/yQ0ROvFuDFItTaaahCYVBqKBImc4s/8tE2mQdxC0P0L+KlIFgV Q==;
-X-CSE-ConnectionGUID: elpQEXgFTpWM4mePpfh+bg==
-X-CSE-MsgGUID: NXAH7TjeRvWoDsoDSJx+Dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435479"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435479"
+ bh=Dewk3UAJNAPqnX8DsJ31/Uwg9BR+3fIsEDnNgPNq584=;
+ b=Z1mnVRiH/OpumwBsAkroIbziJVaam9tsRa9Pcz5598juKY0gAbL3hEm7
+ wK8PacMlNfuwKJJWdUI5cjBIvZe+4+Lu4jmFZYvK63sAHU08xY8yET71M
+ 0Th7m006TdoMv3k7NZYoOwR12F+B5dT7JE8AYPNE/ED9qQQcKVylGYiaK
+ l6TNJgitO/coWLptimt7+rbrJHlofYJ7HpvJPldzGTQj7Ps4VAre5eeFM
+ yZlZOZ+UnzFC41VCywl74JuhDSm/xTli7t9M42VOEeSHgIqDG4NwfScX8
+ QTdno3+Ht8aczIgsUeKm9waoRo/cNGxJTbpr4//PDiIBaHv+hy1l462oI Q==;
+X-CSE-ConnectionGUID: CEmvSEE8TNyz1VR+zYnb2g==
+X-CSE-MsgGUID: WaWmoC9mRjqi71em2agp9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435482"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435482"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 04:16:43 -0700
-X-CSE-ConnectionGUID: i4wK6D1dTgGs3hzcN5U54w==
-X-CSE-MsgGUID: ffk7JS43QT+tLtBUfMySqw==
+ 28 Mar 2025 04:16:44 -0700
+X-CSE-ConnectionGUID: HyB7XZqWTymJpIRHeU7J7w==
+X-CSE-MsgGUID: 6fv3ebK2T6GPITKYjvuAWw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423317"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423323"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:40 -0700
+ by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: David Marchand <david.marchand@redhat.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 8/9] net/ice/base: reduce warnings for unused variables
-Date: Fri, 28 Mar 2025 11:16:20 +0000
-Message-ID: <20250328111621.2665257-9-bruce.richardson@intel.com>
+Subject: [PATCH v4 9/9] net/intel: simplify base code builds
+Date: Fri, 28 Mar 2025 11:16:21 +0000
+Message-ID: <20250328111621.2665257-10-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328111621.2665257-1-bruce.richardson@intel.com>
 References: <20250326155230.1315056-1-bruce.richardson@intel.com>
@@ -63,94 +63,221 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve base code macros to reduce the number of issues with unused
-variables in the code. Issues still remain with unused-but-set
-variables, but completely unused variable warnings are eliminated.
+Now that base-code warning flags have been removed from a number of
+drivers, we can simplify their build configuration by just including the
+base code files in the regular list of driver files passed back. There
+is no need to use pre-compiled objects.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/base/ice_osdep.h  | 6 +++---
- drivers/net/intel/ice/base/ice_switch.c | 2 --
- drivers/net/intel/ice/base/ice_type.h   | 2 +-
- drivers/net/intel/ice/base/meson.build  | 1 -
- drivers/net/intel/ice/ice_fdir_filter.c | 2 +-
- 5 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/net/intel/e1000/base/meson.build | 9 ++-------
+ drivers/net/intel/e1000/meson.build      | 4 ++--
+ drivers/net/intel/fm10k/base/meson.build | 9 ++-------
+ drivers/net/intel/fm10k/meson.build      | 4 ++--
+ drivers/net/intel/i40e/base/meson.build  | 9 ++-------
+ drivers/net/intel/i40e/meson.build       | 4 ++--
+ drivers/net/intel/idpf/base/meson.build  | 2 +-
+ drivers/net/intel/idpf/meson.build       | 7 ++++---
+ drivers/net/intel/ixgbe/base/meson.build | 9 ++-------
+ drivers/net/intel/ixgbe/meson.build      | 4 ++--
+ 10 files changed, 21 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_osdep.h b/drivers/net/intel/ice/base/ice_osdep.h
-index 7b96fcde03..ad6cde9896 100644
---- a/drivers/net/intel/ice/base/ice_osdep.h
-+++ b/drivers/net/intel/ice/base/ice_osdep.h
-@@ -196,9 +196,9 @@ struct __rte_packed_begin ice_virt_mem {
- 	u32 size;
- } __rte_packed_end;
+diff --git a/drivers/net/intel/e1000/base/meson.build b/drivers/net/intel/e1000/base/meson.build
+index 8cbd9f62e6..4fe86dc6df 100644
+--- a/drivers/net/intel/e1000/base/meson.build
++++ b/drivers/net/intel/e1000/base/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
  
--#define ice_malloc(h, s)    rte_zmalloc(NULL, s, 0)
--#define ice_calloc(h, c, s) rte_calloc(NULL, c, s, 0)
--#define ice_free(h, m)         rte_free(m)
-+#define ice_malloc(h, s)    ((void)h, rte_zmalloc(NULL, s, 0))
-+#define ice_calloc(h, c, s) ((void)h, rte_calloc(NULL, c, s, 0))
-+#define ice_free(h, m)      ((void)h, rte_free(m))
+-sources = [
++base_sources = files(
+         'e1000_base.c',
+         'e1000_80003es2lan.c',
+         'e1000_82540.c',
+@@ -21,9 +21,4 @@ sources = [
+         'e1000_osdep.c',
+         'e1000_phy.c',
+         'e1000_vf.c',
+-]
+-
+-base_lib = static_library('e1000_base', sources,
+-    dependencies: static_rte_eal,
+-    c_args: cflags)
+-base_objs = base_lib.extract_all_objects(recursive: true)
++)
+diff --git a/drivers/net/intel/e1000/meson.build b/drivers/net/intel/e1000/meson.build
+index cd42c0042a..b52a843228 100644
+--- a/drivers/net/intel/e1000/meson.build
++++ b/drivers/net/intel/e1000/meson.build
+@@ -2,9 +2,9 @@
+ # Copyright(c) 2017 Intel Corporation
  
- #define ice_memset(a, b, c, d) memset((a), (b), (c))
- #define ice_memcpy(a, b, c, d) rte_memcpy((a), (b), (c))
-diff --git a/drivers/net/intel/ice/base/ice_switch.c b/drivers/net/intel/ice/base/ice_switch.c
-index a3786961e6..468a9f055d 100644
---- a/drivers/net/intel/ice/base/ice_switch.c
-+++ b/drivers/net/intel/ice/base/ice_switch.c
-@@ -8190,7 +8190,6 @@ ice_add_adv_recipe(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
- 	struct ice_sw_recipe *rm;
- 	u8 i;
- 	int status = ICE_SUCCESS;
--	u16 cnt;
+ subdir('base')
+-objs = [base_objs]
  
- 	if (!ice_is_prof_rule(rinfo->tun_type) && !lkups_cnt)
- 		return ICE_ERR_PARAM;
-@@ -9795,7 +9794,6 @@ ice_rem_adv_rule(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
- 	bool remove_rule = false;
- 	struct ice_lock *rule_lock; /* Lock to protect filter rule list */
- 	u16 i, rid, vsi_handle;
--	bool is_add = false;
- 	int status = ICE_SUCCESS;
+-sources = files(
++sources += base_sources
++sources += files(
+         'e1000_logs.c',
+         'em_ethdev.c',
+         'em_rxtx.c',
+diff --git a/drivers/net/intel/fm10k/base/meson.build b/drivers/net/intel/fm10k/base/meson.build
+index a2640d1ee8..c45b31d6b2 100644
+--- a/drivers/net/intel/fm10k/base/meson.build
++++ b/drivers/net/intel/fm10k/base/meson.build
+@@ -1,16 +1,11 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
  
- 	ice_memset(&lkup_exts, 0, sizeof(lkup_exts), ICE_NONDMA_MEM);
-diff --git a/drivers/net/intel/ice/base/ice_type.h b/drivers/net/intel/ice/base/ice_type.h
-index 35f832eb9f..297a5ea890 100644
---- a/drivers/net/intel/ice/base/ice_type.h
-+++ b/drivers/net/intel/ice/base/ice_type.h
-@@ -153,7 +153,7 @@ static inline u32 ice_round_to_num(u32 N, u32 R)
- #define ICE_DBG_USER		BIT_ULL(31)
- #define ICE_DBG_ALL		0xFFFFFFFFFFFFFFFFULL
- 
--#define __ALWAYS_UNUSED
-+#define __ALWAYS_UNUSED __rte_unused
- 
- #define IS_ETHER_ADDR_EQUAL(addr1, addr2) \
- 	(((bool)((((u16 *)(addr1))[0] == ((u16 *)(addr2))[0]))) && \
-diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/ice/base/meson.build
-index 38d092c370..e7ba9c34bc 100644
---- a/drivers/net/intel/ice/base/meson.build
-+++ b/drivers/net/intel/ice/base/meson.build
-@@ -39,7 +39,6 @@ if is_ms_compiler
- else
-     error_cflags = [
-             '-Wno-unused-but-set-variable',
--            '-Wno-unused-variable',
-             '-Wno-unused-parameter',
-     ]
+-sources = [
++base_sources = files(
+         'fm10k_api.c',
+         'fm10k_common.c',
+         'fm10k_mbx.c',
+         'fm10k_pf.c',
+         'fm10k_tlv.c',
+         'fm10k_vf.c',
+-]
+-
+-base_lib = static_library('fm10k_base', sources,
+-    dependencies: static_rte_eal,
+-    c_args: cflags)
+-base_objs = base_lib.extract_all_objects(recursive: true)
++)
+diff --git a/drivers/net/intel/fm10k/meson.build b/drivers/net/intel/fm10k/meson.build
+index 69566add96..e08a00cb49 100644
+--- a/drivers/net/intel/fm10k/meson.build
++++ b/drivers/net/intel/fm10k/meson.build
+@@ -8,9 +8,9 @@ if is_windows
  endif
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index 940fe171b6..2ff0090aca 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1090,7 +1090,7 @@ ice_fdir_input_set_conf(struct ice_pf *pf, enum ice_fltr_ptype flow,
- 		return -EINVAL;
  
- 	seg_tun = (struct ice_flow_seg_info *)
--		ice_malloc(hw, sizeof(*seg_tun) * ICE_FD_HW_SEG_MAX);
-+		ice_malloc(pf->adapter->hw, sizeof(*seg_tun) * ICE_FD_HW_SEG_MAX);
- 	if (!seg_tun) {
- 		PMD_DRV_LOG(ERR, "No memory can be allocated");
- 		return -ENOMEM;
+ subdir('base')
+-objs = [base_objs]
+ 
+-sources = files(
++sources += base_sources
++sources += files(
+         'fm10k_ethdev.c',
+         'fm10k_rxtx.c',
+ )
+diff --git a/drivers/net/intel/i40e/base/meson.build b/drivers/net/intel/i40e/base/meson.build
+index 766383101b..7b4882ad1d 100644
+--- a/drivers/net/intel/i40e/base/meson.build
++++ b/drivers/net/intel/i40e/base/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017-2020 Intel Corporation
+ 
+-sources = [
++base_sources = files(
+         'i40e_adminq.c',
+         'i40e_common.c',
+         'i40e_dcb.c',
+@@ -9,9 +9,4 @@ sources = [
+         'i40e_hmc.c',
+         'i40e_lan_hmc.c',
+         'i40e_nvm.c',
+-]
+-
+-base_lib = static_library('i40e_base', sources,
+-    dependencies: static_rte_eal,
+-    c_args: cflags)
+-base_objs = base_lib.extract_all_objects(recursive: true)
++)
+diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
+index 15993393fb..17b6715cd9 100644
+--- a/drivers/net/intel/i40e/meson.build
++++ b/drivers/net/intel/i40e/meson.build
+@@ -18,9 +18,9 @@ if dpdk_conf.get('RTE_IOVA_IN_MBUF') == 0
+ endif
+ 
+ subdir('base')
+-objs = [base_objs]
+ 
+-sources = files(
++sources += base_sources
++sources += files(
+         'i40e_ethdev.c',
+         'i40e_rxtx.c',
+         'i40e_pf.c',
+diff --git a/drivers/net/intel/idpf/base/meson.build b/drivers/net/intel/idpf/base/meson.build
+index 7316e0a805..78782e463e 100644
+--- a/drivers/net/intel/idpf/base/meson.build
++++ b/drivers/net/intel/idpf/base/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2023 Intel Corporation
+ 
+-sources += files(
++base_sources = files(
+         'idpf_controlq.c',
+         'idpf_controlq_setup.c',
+ )
+diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
+index 4b272d02b1..a8690da87b 100644
+--- a/drivers/net/intel/idpf/meson.build
++++ b/drivers/net/intel/idpf/meson.build
+@@ -7,9 +7,12 @@ if is_windows
+     subdir_done()
+ endif
+ 
++subdir('base')
++
+ includes += include_directories('../iavf/base')
+ 
+-sources = files(
++sources += base_sources
++sources += files(
+         'idpf_common_device.c',
+         'idpf_common_rxtx.c',
+         'idpf_common_virtchnl.c',
+@@ -43,5 +46,3 @@ if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
+         objs += idpf_common_avx512_lib.extract_objects('idpf_common_rxtx_avx512.c')
+     endif
+ endif
+-
+-subdir('base')
+diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
+index 2af8a55e92..c0b14a1db3 100644
+--- a/drivers/net/intel/ixgbe/base/meson.build
++++ b/drivers/net/intel/ixgbe/base/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017-2024 Intel Corporation
+ 
+-sources = [
++base_sources = files(
+         'ixgbe_82598.c',
+         'ixgbe_82599.c',
+         'ixgbe_api.c',
+@@ -16,9 +16,4 @@ sources = [
+         'ixgbe_vf.c',
+         'ixgbe_x540.c',
+         'ixgbe_x550.c',
+-]
+-
+-base_lib = static_library('ixgbe_base', sources,
+-    dependencies: [static_rte_eal, static_rte_net],
+-    c_args: c_args)
+-base_objs = base_lib.extract_all_objects(recursive: true)
++)
+diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
+index 0bee736a2c..23f5a6cb3e 100644
+--- a/drivers/net/intel/ixgbe/meson.build
++++ b/drivers/net/intel/ixgbe/meson.build
+@@ -4,9 +4,9 @@
+ cflags += ['-DRTE_LIBRTE_IXGBE_BYPASS']
+ 
+ subdir('base')
+-objs = [base_objs]
+ 
+-sources = files(
++sources += base_sources
++sources += files(
+         'ixgbe_82599_bypass.c',
+         'ixgbe_bypass.c',
+         'ixgbe_ethdev.c',
 -- 
 2.45.2
 
