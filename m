@@ -2,58 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C456C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 10:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0D8C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 10:55:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2726740689;
-	Fri, 28 Mar 2025 11:54:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C337C40652;
+	Fri, 28 Mar 2025 11:55:58 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DCD6A402C1
- for <dev@dpdk.org>; Fri, 28 Mar 2025 11:54:42 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3A4F3402C1
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 11:55:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743159282;
+ s=mimecast20190719; t=1743159356;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=vE6vB3JET0Z4qSTEo5b3T5sQMqrYDBw4yYwX9mQQYGU=;
- b=elAUhypeMrpI2NnTrWA6W7WcelovQMasnenqCvRDEuaEMIRd3THWZ+Amn+NP+u1S5kkS33
- mFd73bc+p9xH2rv5JljnGPt6MR0W+SMDwunw3Qw0q1eeg0lpyuUxRgiiya5P9lW8J7A6wM
- C6kl4d4qhLjiODKzTLKXRIaom2Ton/Q=
+ bh=OHD11OjCUwxFJrhRcC+sEAo5Z45E23Nacs7oNe6FWHE=;
+ b=XNAmHv1UbSzLp2HcFviR1rOB0nwrRbYj7mJnbeu8VbK6Or1tdZeKU8CGSZGO5SYOd/OciW
+ JAaZfztJrG0Nqesmm2dlWfnrKa5mXc6YxpSI2sgZuA8JvhuJshIHZCUsSATriDqKDrDasl
+ wPCPl+VkTCHGVx3bnyeYKe98k5vfdfs=
 Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-d6t2EiNaOQa4Kactw2TP4g-1; Fri,
- 28 Mar 2025 06:54:37 -0400
-X-MC-Unique: d6t2EiNaOQa4Kactw2TP4g-1
-X-Mimecast-MFC-AGG-ID: d6t2EiNaOQa4Kactw2TP4g_1743159275
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-tsXeFIHYNEi-LBNtFaSYsA-1; Fri,
+ 28 Mar 2025 06:53:23 -0400
+X-MC-Unique: tsXeFIHYNEi-LBNtFaSYsA-1
+X-Mimecast-MFC-AGG-ID: tsXeFIHYNEi-LBNtFaSYsA_1743159202
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id BF0E718CDDEF; Fri, 28 Mar 2025 10:54:35 +0000 (UTC)
+ id D6A9118EBE8A; Fri, 28 Mar 2025 10:53:21 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.224.228])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 4BA63191F268; Fri, 28 Mar 2025 10:54:33 +0000 (UTC)
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 7B6F71801750; Fri, 28 Mar 2025 10:53:18 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andremue@linux.microsoft.com,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>
-Subject: [PATCH v6 8/8] eal: rework function versioning macros
-Date: Fri, 28 Mar 2025 11:52:45 +0100
-Message-ID: <20250328105250.3082414-9-david.marchand@redhat.com>
+ andremue@linux.microsoft.com, Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v6 4/8] build: generate symbol maps
+Date: Fri, 28 Mar 2025 11:52:41 +0100
+Message-ID: <20250328105250.3082414-5-david.marchand@redhat.com>
 In-Reply-To: <20250328105250.3082414-1-david.marchand@redhat.com>
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
  <20250328105250.3082414-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hHayJR8VNoKoT3Fqx87pg4cWS2IY4usFCpXK3_hkxlY_1743159275
+X-Mimecast-MFC-PROC-ID: Cz5UdN6_yD1_Xrf92p_J0jeykBTfOWFrKFIlBdQtquY_1743159202
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -70,746 +68,1035 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For versioning symbols:
-- MSVC uses pragmas on the symbol,
-- GNU linker uses special asm directives,
+Rather than maintain a file in parallel of the code, symbols to be
+exported can be marked with a token RTE_EXPORT_*SYMBOL.
 
-To accommodate both GNU linker and MSVC linker, introduce new macros for
-exporting and versioning symbols that will surround the whole function.
+From those marks, the build framework generates map files only for
+symbols actually compiled (which means that the WINDOWS_NO_EXPORT hack
+becomes unnecessary).
 
-This has the advantage of hiding all the ugly details in the macros.
-Now versioning a symbol is just a call to a single macro:
-- RTE_VERSION_SYMBOL (resp. RTE_VERSION_EXPERIMENTAL_SYMBOL), for
-  keeping an old implementation code under a versioned function (resp.
-  experimental function),
-- RTE_DEFAULT_SYMBOL, for declaring the new default versioned function,
-  and handling the static link special case, instead of
-  BIND_DEFAULT_SYMBOL + MAP_STATIC_SYMBOL,
+The build framework directly creates a map file in the format that the
+linker expects (rather than converting from GNU linker to MSVC linker).
 
-This replaces the macros from rte_function_versioning.h that were
-previously publicly exported.
+Empty maps are allowed again as a replacement for drivers/version.map.
 
-Update lib/net accordingly.
+The symbol check is updated to only support the new format.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
 Changes since RFC v4:
-- moved new macros to eal_symbol_exports.h and simply dropped legacy
-  macros/header,
-- added release notes update,
+- fixed MSVC export map (a msvc->mslinker update was missing),
+- fixed join() error (with older meson? I don't see this on Fedora),
+- explicit inclusion of header is now required,
+- header has been renamed and moved to lib/eal/common/,
+- because lib/log does not depend on EAL, added explicit
+  include_directories,
+- symbol versioning update has been moved later in the series,
+  so updated gen-version-map.py accordingly,
+- fixed bug when checking symbol removal,
 
 Changes since RFC v3:
-- fixed documentation and simplified examples,
+- polished python,
+- fixed doc updates not belonging to this patch,
+- renamed map files,
+- changed msvc->mslinker as link mode,
+- added parsing of AVX sources,
 
-Changes since RFC v1:
-- renamed and prefixed macros,
-- reindented in prevision of second patch,
+Changes since RFC v2:
+- because of MSVC limitations wrt macro passed via cmdline,
+  used an internal header for defining RTE_EXPORT_* macros,
+- updated documentation and tooling,
 
 ---
- buildtools/gen-version-map.py              |  15 +-
- devtools/check-symbol-change.py            |   8 +-
- doc/api/doxy-api-index.md                  |   1 -
- doc/guides/contributing/abi_versioning.rst | 192 ++++++---------------
- doc/guides/rel_notes/release_25_07.rst     |   2 +
- lib/eal/common/eal_symbol_exports.h        |  66 +++++++
- lib/eal/include/rte_function_versioning.h  |  99 -----------
- lib/net/net_crc.h                          |  15 --
- lib/net/rte_net_crc.c                      |  29 +---
- 9 files changed, 135 insertions(+), 292 deletions(-)
- delete mode 100644 lib/eal/include/rte_function_versioning.h
+ MAINTAINERS                                |   2 +
+ buildtools/gen-version-map.py              | 106 ++++++++++
+ buildtools/map-list-symbol.sh              |  10 +-
+ buildtools/meson.build                     |   1 +
+ devtools/check-symbol-change.py            |  90 ++++++++
+ devtools/check-symbol-maps.sh              |  14 --
+ devtools/checkpatches.sh                   |   2 +-
+ doc/guides/contributing/abi_versioning.rst | 227 ++-------------------
+ drivers/meson.build                        |  96 +++++----
+ drivers/version.map                        |   3 -
+ lib/eal/common/eal_symbol_exports.h        |  16 ++
+ lib/meson.build                            |  94 ++++++---
+ 12 files changed, 365 insertions(+), 296 deletions(-)
+ create mode 100755 buildtools/gen-version-map.py
+ create mode 100755 devtools/check-symbol-change.py
+ delete mode 100644 drivers/version.map
+ create mode 100644 lib/eal/common/eal_symbol_exports.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4b01103f8e..42ea07854b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -95,6 +95,7 @@ F: devtools/check-maintainers.sh
+ F: devtools/check-forbidden-tokens.awk
+ F: devtools/check-git-log.sh
+ F: devtools/check-spdx-tag.sh
++F: devtools/check-symbol-change.py
+ F: devtools/check-symbol-change.sh
+ F: devtools/check-symbol-maps.sh
+ F: devtools/checkpatches.sh
+@@ -127,6 +128,7 @@ F: config/
+ F: buildtools/check-symbols.sh
+ F: buildtools/chkincs/
+ F: buildtools/call-sphinx-build.py
++F: buildtools/gen-version-map.py
+ F: buildtools/get-cpu-count.py
+ F: buildtools/get-numa-count.py
+ F: buildtools/list-dir-globs.py
 diff --git a/buildtools/gen-version-map.py b/buildtools/gen-version-map.py
-index c7dfc9b8c2..7ee80ec640 100755
---- a/buildtools/gen-version-map.py
+new file mode 100755
+index 0000000000..c7dfc9b8c2
+--- /dev/null
 +++ b/buildtools/gen-version-map.py
-@@ -13,10 +13,9 @@
- export_exp_sym_regexp = re.compile(r"^RTE_EXPORT_EXPERIMENTAL_SYMBOL\(([^,]+), ([0-9]+.[0-9]+)\)")
- export_int_sym_regexp = re.compile(r"^RTE_EXPORT_INTERNAL_SYMBOL\(([^)]+)\)")
- export_sym_regexp = re.compile(r"^RTE_EXPORT_SYMBOL\(([^)]+)\)")
--# From rte_function_versioning.h
--ver_sym_regexp = re.compile(r"^VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
--ver_exp_sym_regexp = re.compile(r"^VERSION_SYMBOL_EXPERIMENTAL\([^,]+, ([^,]+)\)")
--default_sym_regexp = re.compile(r"^BIND_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
-+ver_sym_regexp = re.compile(r"^RTE_VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+),")
-+ver_exp_sym_regexp = re.compile(r"^RTE_VERSION_EXPERIMENTAL_SYMBOL\([^,]+, ([^,]+),")
-+default_sym_regexp = re.compile(r"^RTE_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+),")
- 
- with open(abi_version_file) as f:
-     abi = 'DPDK_{}'.format(re.match("([0-9]+).[0-9]", f.readline()).group(1))
-@@ -40,14 +39,14 @@
-                 node = abi
-                 symbol = export_sym_regexp.match(ln).group(1)
-             elif ver_sym_regexp.match(ln):
--                node = 'DPDK_{}'.format(ver_sym_regexp.match(ln).group(2))
--                symbol = ver_sym_regexp.match(ln).group(1)
-+                node = 'DPDK_{}'.format(ver_sym_regexp.match(ln).group(1))
-+                symbol = ver_sym_regexp.match(ln).group(2)
-             elif ver_exp_sym_regexp.match(ln):
-                 node = 'EXPERIMENTAL'
-                 symbol = ver_exp_sym_regexp.match(ln).group(1)
-             elif default_sym_regexp.match(ln):
--                node = 'DPDK_{}'.format(default_sym_regexp.match(ln).group(2))
--                symbol = default_sym_regexp.match(ln).group(1)
-+                node = 'DPDK_{}'.format(default_sym_regexp.match(ln).group(1))
-+                symbol = default_sym_regexp.match(ln).group(2)
- 
-             if not symbol:
-                 continue
+@@ -0,0 +1,106 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright (c) 2025 Red Hat, Inc.
++
++"""Generate a version map file used by GNU or MSVC linker."""
++
++import re
++import sys
++
++scriptname, link_mode, abi_version_file, output, *files = sys.argv
++
++# From eal_symbol_exports.h
++export_exp_sym_regexp = re.compile(r"^RTE_EXPORT_EXPERIMENTAL_SYMBOL\(([^,]+), ([0-9]+.[0-9]+)\)")
++export_int_sym_regexp = re.compile(r"^RTE_EXPORT_INTERNAL_SYMBOL\(([^)]+)\)")
++export_sym_regexp = re.compile(r"^RTE_EXPORT_SYMBOL\(([^)]+)\)")
++# From rte_function_versioning.h
++ver_sym_regexp = re.compile(r"^VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
++ver_exp_sym_regexp = re.compile(r"^VERSION_SYMBOL_EXPERIMENTAL\([^,]+, ([^,]+)\)")
++default_sym_regexp = re.compile(r"^BIND_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
++
++with open(abi_version_file) as f:
++    abi = 'DPDK_{}'.format(re.match("([0-9]+).[0-9]", f.readline()).group(1))
++
++symbols = {}
++
++for file in files:
++    with open(file, encoding="utf-8") as f:
++        for ln in f.readlines():
++            node = None
++            symbol = None
++            comment = ''
++            if export_exp_sym_regexp.match(ln):
++                node = 'EXPERIMENTAL'
++                symbol = export_exp_sym_regexp.match(ln).group(1)
++                comment = ' # added in {}'.format(export_exp_sym_regexp.match(ln).group(2))
++            elif export_int_sym_regexp.match(ln):
++                node = 'INTERNAL'
++                symbol = export_int_sym_regexp.match(ln).group(1)
++            elif export_sym_regexp.match(ln):
++                node = abi
++                symbol = export_sym_regexp.match(ln).group(1)
++            elif ver_sym_regexp.match(ln):
++                node = 'DPDK_{}'.format(ver_sym_regexp.match(ln).group(2))
++                symbol = ver_sym_regexp.match(ln).group(1)
++            elif ver_exp_sym_regexp.match(ln):
++                node = 'EXPERIMENTAL'
++                symbol = ver_exp_sym_regexp.match(ln).group(1)
++            elif default_sym_regexp.match(ln):
++                node = 'DPDK_{}'.format(default_sym_regexp.match(ln).group(2))
++                symbol = default_sym_regexp.match(ln).group(1)
++
++            if not symbol:
++                continue
++
++            if node not in symbols:
++                symbols[node] = {}
++            symbols[node][symbol] = comment
++
++if link_mode == 'mslinker':
++    with open(output, "w") as outfile:
++        print(f"EXPORTS", file=outfile)
++        for key in (abi, 'EXPERIMENTAL', 'INTERNAL'):
++            if key not in symbols:
++                continue
++            for symbol in sorted(symbols[key].keys()):
++                print(f"\t{symbol}", file=outfile)
++            del symbols[key]
++else:
++    with open(output, "w") as outfile:
++        local_token = False
++        for key in (abi, 'EXPERIMENTAL', 'INTERNAL'):
++            if key not in symbols:
++                continue
++            print(f"{key} {{\n\tglobal:\n", file=outfile)
++            for symbol in sorted(symbols[key].keys()):
++                if link_mode == 'mingw' and symbol.startswith('per_lcore'):
++                    prefix = '__emutls_v.'
++                else:
++                    prefix = ''
++                comment = symbols[key][symbol]
++                print(f"\t{prefix}{symbol};{comment}", file=outfile)
++            if not local_token:
++                print("\n\tlocal: *;", file=outfile)
++                local_token = True
++            print("};", file=outfile)
++            del symbols[key]
++        for key in sorted(symbols.keys()):
++            print(f"{key} {{\n\tglobal:\n", file=outfile)
++            for symbol in sorted(symbols[key].keys()):
++                if link_mode == 'mingw' and symbol.startswith('per_lcore'):
++                    prefix = '__emutls_v.'
++                else:
++                    prefix = ''
++                comment = symbols[key][symbol]
++                print(f"\t{prefix}{symbol};{comment}", file=outfile)
++            print(f"}} {abi};", file=outfile)
++            if not local_token:
++                print("\n\tlocal: *;", file=outfile)
++                local_token = True
++            del symbols[key]
++        # No exported symbol, add a catch all
++        if not local_token:
++            print(f"{abi} {{", file=outfile)
++            print("\n\tlocal: *;", file=outfile)
++            local_token = True
++            print("};", file=outfile)
+diff --git a/buildtools/map-list-symbol.sh b/buildtools/map-list-symbol.sh
+index eb98451d8e..0829df4be5 100755
+--- a/buildtools/map-list-symbol.sh
++++ b/buildtools/map-list-symbol.sh
+@@ -62,10 +62,14 @@ for file in $@; do
+ 		if (current_section == "") {
+ 			next;
+ 		}
++		symbol_version = current_version
++		if (/^[^}].*[^:*]; # added in /) {
++			symbol_version = $5
++		}
+ 		if ("'$version'" != "") {
+-			if ("'$version'" == "unset" && current_version != "") {
++			if ("'$version'" == "unset" && symbol_version != "") {
+ 				next;
+-			} else if ("'$version'" != "unset" && "'$version'" != current_version) {
++			} else if ("'$version'" != "unset" && "'$version'" != symbol_version) {
+ 				next;
+ 			}
+ 		}
+@@ -73,7 +77,7 @@ for file in $@; do
+ 		if ("'$symbol'" == "all" || $1 == "'$symbol'") {
+ 			ret = 0;
+ 			if ("'$quiet'" == "") {
+-				print "'$file' "current_section" "$1" "current_version;
++				print "'$file' "current_section" "$1" "symbol_version;
+ 			}
+ 			if ("'$symbol'" != "all") {
+ 				exit 0;
+diff --git a/buildtools/meson.build b/buildtools/meson.build
+index 4e2c1217a2..b745e9afa4 100644
+--- a/buildtools/meson.build
++++ b/buildtools/meson.build
+@@ -16,6 +16,7 @@ else
+     py3 = ['meson', 'runpython']
+ endif
+ echo = py3 + ['-c', 'import sys; print(*sys.argv[1:])']
++gen_version_map = py3 + files('gen-version-map.py')
+ list_dir_globs = py3 + files('list-dir-globs.py')
+ map_to_win_cmd = py3 + files('map_to_win.py')
+ sphinx_wrapper = py3 + files('call-sphinx-build.py')
 diff --git a/devtools/check-symbol-change.py b/devtools/check-symbol-change.py
-index d522fbb1ec..d59ecaddd7 100755
---- a/devtools/check-symbol-change.py
+new file mode 100755
+index 0000000000..d522fbb1ec
+--- /dev/null
 +++ b/devtools/check-symbol-change.py
-@@ -12,10 +12,10 @@
- export_exp_sym_regexp = re.compile(r"^.RTE_EXPORT_EXPERIMENTAL_SYMBOL\(([^,]+),")
- export_int_sym_regexp = re.compile(r"^.RTE_EXPORT_INTERNAL_SYMBOL\(([^)]+)\)")
- export_sym_regexp = re.compile(r"^.RTE_EXPORT_SYMBOL\(([^)]+)\)")
--# TODO, handle versioned symbols from rte_function_versioning.h
--# ver_sym_regexp = re.compile(r"^VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
--# ver_exp_sym_regexp = re.compile(r"^VERSION_SYMBOL_EXPERIMENTAL\([^,]+, ([^,]+)\)")
--# default_sym_regexp = re.compile(r"^BIND_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
-+# TODO, handle versioned symbols
-+# ver_sym_regexp = re.compile(r"^.RTE_VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+),")
-+# ver_exp_sym_regexp = re.compile(r"^.RTE_VERSION_EXPERIMENTAL_SYMBOL\([^,]+, ([^,]+),")
-+# default_sym_regexp = re.compile(r"^.RTE_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+),")
+@@ -0,0 +1,90 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright (c) 2025 Red Hat, Inc.
++
++"""Check exported symbols change in a patch."""
++
++import re
++import sys
++
++file_header_regexp = re.compile(r"^(\-\-\-|\+\+\+) [ab]/(lib|drivers)/([^/]+)/([^/]+)")
++# From eal_symbol_exports.h
++export_exp_sym_regexp = re.compile(r"^.RTE_EXPORT_EXPERIMENTAL_SYMBOL\(([^,]+),")
++export_int_sym_regexp = re.compile(r"^.RTE_EXPORT_INTERNAL_SYMBOL\(([^)]+)\)")
++export_sym_regexp = re.compile(r"^.RTE_EXPORT_SYMBOL\(([^)]+)\)")
++# TODO, handle versioned symbols from rte_function_versioning.h
++# ver_sym_regexp = re.compile(r"^VERSION_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
++# ver_exp_sym_regexp = re.compile(r"^VERSION_SYMBOL_EXPERIMENTAL\([^,]+, ([^,]+)\)")
++# default_sym_regexp = re.compile(r"^BIND_DEFAULT_SYMBOL\(([^,]+), [^,]+, ([^,]+)\)")
++
++symbols = {}
++
++for file in sys.argv[1:]:
++    with open(file, encoding="utf-8") as f:
++        for ln in f.readlines():
++            if file_header_regexp.match(ln):
++                if file_header_regexp.match(ln).group(2) == "lib":
++                    lib = '/'.join(file_header_regexp.match(ln).group(2, 3))
++                elif file_header_regexp.match(ln).group(3) == "intel":
++                    lib = '/'.join(file_header_regexp.match(ln).group(2, 3, 4))
++                else:
++                    lib = '/'.join(file_header_regexp.match(ln).group(2, 3))
++
++                if lib not in symbols:
++                    symbols[lib] = {}
++                continue
++
++            if export_exp_sym_regexp.match(ln):
++                symbol = export_exp_sym_regexp.match(ln).group(1)
++                node = 'EXPERIMENTAL'
++            elif export_int_sym_regexp.match(ln):
++                node = 'INTERNAL'
++                symbol = export_int_sym_regexp.match(ln).group(1)
++            elif export_sym_regexp.match(ln):
++                symbol = export_sym_regexp.match(ln).group(1)
++                node = 'stable'
++            else:
++                continue
++
++            if symbol not in symbols[lib]:
++                symbols[lib][symbol] = {}
++            added = ln[0] == '+'
++            if added and 'added' in symbols[lib][symbol] and node != symbols[lib][symbol]['added']:
++                print(f"{symbol} in {lib} was found in multiple ABI, please check.")
++            if not added and 'removed' in symbols[lib][symbol] and node != symbols[lib][symbol]['removed']:
++                print(f"{symbol} in {lib} was found in multiple ABI, please check.")
++            if added:
++                symbols[lib][symbol]['added'] = node
++            else:
++                symbols[lib][symbol]['removed'] = node
++
++    for lib in sorted(symbols.keys()):
++        error = False
++        for symbol in sorted(symbols[lib].keys()):
++            if 'removed' not in symbols[lib][symbol]:
++                # Symbol addition
++                node = symbols[lib][symbol]['added']
++                if node == 'stable':
++                    print(f"ERROR: {symbol} in {lib} has been added directly to stable ABI.")
++                    error = True
++                else:
++                    print(f"INFO: {symbol} in {lib} has been added to {node} ABI.")
++                continue
++
++            if 'added' not in symbols[lib][symbol]:
++                # Symbol removal
++                node = symbols[lib][symbol]['removed']
++                if node == 'stable':
++                    print(f"INFO: {symbol} in {lib} has been removed from stable ABI.")
++                    print(f"Please check it has gone though the deprecation process.")
++                continue
++
++            if symbols[lib][symbol]['added'] == symbols[lib][symbol]['removed']:
++                # Symbol was moved around
++                continue
++
++            # Symbol modifications
++            added = symbols[lib][symbol]['added']
++            removed = symbols[lib][symbol]['removed']
++            print(f"INFO: {symbol} in {lib} is moving from {removed} to {added}")
++            print(f"Please check it has gone though the deprecation process.")
+diff --git a/devtools/check-symbol-maps.sh b/devtools/check-symbol-maps.sh
+index 6121f78ec6..fcd3931e5d 100755
+--- a/devtools/check-symbol-maps.sh
++++ b/devtools/check-symbol-maps.sh
+@@ -60,20 +60,6 @@ if [ -n "$local_miss_maps" ] ; then
+     ret=1
+ fi
  
- symbols = {}
+-find_empty_maps ()
+-{
+-    for map in $@ ; do
+-        [ $(buildtools/map-list-symbol.sh $map | wc -l) != '0' ] || echo $map
+-    done
+-}
+-
+-empty_maps=$(find_empty_maps $@)
+-if [ -n "$empty_maps" ] ; then
+-    echo "Found empty maps:"
+-    echo "$empty_maps"
+-    ret=1
+-fi
+-
+ find_bad_format_maps ()
+ {
+     abi_version=$(cut -d'.' -f 1 ABI_VERSION)
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index c9088bb403..9180c2b070 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -33,7 +33,7 @@ VOLATILE,PREFER_PACKED,PREFER_ALIGNED,PREFER_PRINTF,STRLCPY,\
+ PREFER_KERNEL_TYPES,PREFER_FALLTHROUGH,BIT_MACRO,CONST_STRUCT,\
+ SPLIT_STRING,LONG_LINE_STRING,C99_COMMENT_TOLERANCE,\
+ LINE_SPACING,PARENTHESIS_ALIGNMENT,NETWORKING_BLOCK_COMMENT_STYLE,\
+-NEW_TYPEDEFS,COMPARISON_TO_NULL,AVOID_BUG"
++NEW_TYPEDEFS,COMPARISON_TO_NULL,AVOID_BUG,EXPORT_SYMBOL"
+ options="$options $DPDK_CHECKPATCH_OPTIONS"
  
-diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index b2fc24b3e4..5c425a2cb9 100644
---- a/doc/api/doxy-api-index.md
-+++ b/doc/api/doxy-api-index.md
-@@ -248,7 +248,6 @@ The public API headers are grouped by topics:
-   [EAL config](@ref rte_eal.h),
-   [common](@ref rte_common.h),
-   [experimental APIs](@ref rte_compat.h),
--  [ABI versioning](@ref rte_function_versioning.h),
-   [version](@ref rte_version.h)
- 
- - **tests**:
+ print_usage () {
 diff --git a/doc/guides/contributing/abi_versioning.rst b/doc/guides/contributing/abi_versioning.rst
-index b6b6bf64d7..a0ce0ce1c9 100644
+index 7afd1c1886..b6b6bf64d7 100644
 --- a/doc/guides/contributing/abi_versioning.rst
 +++ b/doc/guides/contributing/abi_versioning.rst
-@@ -132,32 +132,25 @@ functionality or behavior. When that occurs, it is may be required to allow for
- backward compatibility for a time with older binaries that are dynamically
- linked to the DPDK.
+@@ -58,12 +58,12 @@ persists over multiple releases.
  
--To support backward compatibility the ``rte_function_versioning.h``
-+To support backward compatibility the ``eal_symbol_exports.h``
+ .. code-block:: none
+ 
+- $ head ./lib/acl/version.map
++ $ head ./build/lib/acl_exports.map
+  DPDK_21 {
+         global:
+  ...
+ 
+- $ head ./lib/eal/version.map
++ $ head ./build/lib/eal_exports.map
+  DPDK_21 {
+         global:
+  ...
+@@ -77,7 +77,7 @@ that library.
+ 
+ .. code-block:: none
+ 
+- $ head ./lib/acl/version.map
++ $ head ./build/lib/acl_exports.map
+  DPDK_21 {
+         global:
+  ...
+@@ -88,7 +88,7 @@ that library.
+  } DPDK_21;
+  ...
+ 
+- $ head ./lib/eal/version.map
++ $ head ./build/lib/eal_exports.map
+  DPDK_21 {
+         global:
+  ...
+@@ -100,12 +100,12 @@ how this may be done.
+ 
+ .. code-block:: none
+ 
+- $ head ./lib/acl/version.map
++ $ head ./build/lib/acl_exports.map
+  DPDK_22 {
+         global:
+  ...
+ 
+- $ head ./lib/eal/version.map
++ $ head ./build/lib/eal_exports.map
+  DPDK_22 {
+         global:
+  ...
+@@ -134,8 +134,7 @@ linked to the DPDK.
+ 
+ To support backward compatibility the ``rte_function_versioning.h``
  header file provides macros to use when updating exported functions. These
- macros allow multiple versions of a symbol to exist in a shared
+-macros are used in conjunction with the ``version.map`` file for
+-a given library to allow multiple versions of a symbol to exist in a shared
++macros allow multiple versions of a symbol to exist in a shared
  library so that older binaries need not be immediately recompiled.
  
--The macros exported are:
-+The macros are:
- 
--* ``VERSION_SYMBOL(b, e, n)``: Creates a symbol version table entry binding
--  versioned symbol ``b@DPDK_n`` to the internal function ``be``.
-+* ``RTE_VERSION_SYMBOL(ver, type, name, args)``: Creates a symbol version table
-+  entry binding symbol ``<name>@DPDK_<ver>`` to the internal function name
-+  ``<name>_v<ver>``.
- 
--* ``BIND_DEFAULT_SYMBOL(b, e, n)``: Creates a symbol version entry instructing
--  the linker to bind references to symbol ``b`` to the internal symbol
--  ``be``.
-+* ``RTE_DEFAULT_SYMBOL(ver, type, name, args)``: Creates a symbol version entry
-+  instructing the linker to bind references to symbol ``<name>`` to the internal
-+  symbol ``<name>_v<ver>``.
- 
--* ``MAP_STATIC_SYMBOL(f, p)``: Declare the prototype ``f``, and map it to the
--  fully qualified function ``p``, so that if a symbol becomes versioned, it
--  can still be mapped back to the public symbol name.
--
--* ``__vsym``:  Annotation to be used in a declaration of the internal symbol
--  ``be`` to signal that it is being used as an implementation of a particular
--  version of symbol ``b``.
--
--* ``VERSION_SYMBOL_EXPERIMENTAL(b, e)``: Creates a symbol version table entry
--  binding versioned symbol ``b@EXPERIMENTAL`` to the internal function ``be``.
--  The macro is used when a symbol matures to become part of the stable ABI, to
--  provide an alias to experimental until the next major ABI version.
-+* ``RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, args)``:  Similar to RTE_VERSION_SYMBOL
-+  but for experimental API symbols. The macro is used when a symbol matures
-+  to become part of the stable ABI, to provide an alias to experimental
-+  until the next major ABI version.
- 
- .. _example_abi_macro_usage:
- 
-@@ -176,8 +169,8 @@ Assume we have a function as follows
+ The macros exported are:
+@@ -176,6 +175,7 @@ Assume we have a function as follows
+   * Create an acl context object for apps to
    * manipulate
    */
-  RTE_EXPORT_SYMBOL(rte_acl_create)
-- struct rte_acl_ctx *
-- rte_acl_create(const struct rte_acl_param *param)
-+ int
-+ rte_acl_create(struct rte_acl_param *param)
++ RTE_EXPORT_SYMBOL(rte_acl_create)
+  struct rte_acl_ctx *
+  rte_acl_create(const struct rte_acl_param *param)
   {
-         ...
-  }
-@@ -195,8 +188,8 @@ private, is safe), but it also requires modifying the code as follows
+@@ -194,6 +194,7 @@ private, is safe), but it also requires modifying the code as follows
+   * Create an acl context object for apps to
    * manipulate
    */
-  RTE_EXPORT_SYMBOL(rte_acl_create)
-- struct rte_acl_ctx *
-- rte_acl_create(const struct rte_acl_param *param, int debug)
-+ int
-+ rte_acl_create(struct rte_acl_param *param, int debug)
++ RTE_EXPORT_SYMBOL(rte_acl_create)
+  struct rte_acl_ctx *
+  rte_acl_create(const struct rte_acl_param *param, int debug)
   {
-         ...
-  }
-@@ -215,87 +208,48 @@ application was linked to it.
+@@ -210,78 +211,16 @@ The addition of a parameter to the function is ABI breaking as the function is
+ public, and existing application may use it in its current form. However, the
+ compatibility macros in DPDK allow a developer to use symbol versioning so that
+ multiple functions can be mapped to the same public symbol based on when an
+-application was linked to it. To see how this is done, we start with the
+-requisite libraries version map file. Initially the version map file for the acl
+-library looks like this
++application was linked to it.
  
- We need to specify in the code which function maps to the rte_acl_create
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-
+-        rte_acl_add_rules;
+-        rte_acl_build;
+-        rte_acl_classify;
+-        rte_acl_classify_alg;
+-        rte_acl_classify_scalar;
+-        rte_acl_create;
+-        rte_acl_dump;
+-        rte_acl_find_existing;
+-        rte_acl_free;
+-        rte_acl_ipv4vlan_add_rules;
+-        rte_acl_ipv4vlan_build;
+-        rte_acl_list_dump;
+-        rte_acl_reset;
+-        rte_acl_reset_rules;
+-        rte_acl_set_ctx_classify;
+-
+-        local: *;
+-   };
+-
+-This file needs to be modified as follows
+-
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-
+-        rte_acl_add_rules;
+-        rte_acl_build;
+-        rte_acl_classify;
+-        rte_acl_classify_alg;
+-        rte_acl_classify_scalar;
+-        rte_acl_create;
+-        rte_acl_dump;
+-        rte_acl_find_existing;
+-        rte_acl_free;
+-        rte_acl_ipv4vlan_add_rules;
+-        rte_acl_ipv4vlan_build;
+-        rte_acl_list_dump;
+-        rte_acl_reset;
+-        rte_acl_reset_rules;
+-        rte_acl_set_ctx_classify;
+-
+-        local: *;
+-   };
+-
+-   DPDK_22 {
+-        global:
+-        rte_acl_create;
+-
+-   } DPDK_21;
+-
+-The addition of the new block tells the linker that a new version node
+-``DPDK_22`` is available, which contains the symbol rte_acl_create, and inherits
+-the symbols from the DPDK_21 node. This list is directly translated into a
+-list of exported symbols when DPDK is compiled as a shared library.
+-
+-Next, we need to specify in the code which function maps to the rte_acl_create
++We need to specify in the code which function maps to the rte_acl_create
  symbol at which versions.  First, at the site of the initial symbol definition,
--we need to update the function so that it is uniquely named, and not in conflict
--with the public symbol name
-+we wrap the function with ``RTE_VERSION_SYMBOL``, passing the current ABI version,
-+the function return type, the function name and its arguments.
+ we need to update the function so that it is uniquely named, and not in conflict
+ with the public symbol name
  
  .. code-block:: c
  
-  -RTE_EXPORT_SYMBOL(rte_acl_create)
-- -struct rte_acl_ctx *
-- -rte_acl_create(const struct rte_acl_param *param)
-- +struct rte_acl_ctx * __vsym
-- +rte_acl_create_v21(const struct rte_acl_param *param)
-+ -int
-+ -rte_acl_create(struct rte_acl_param *param)
-+ +RTE_VERSION_SYMBOL(21, int, rte_acl_create, (struct rte_acl_param *param))
-  {
-         size_t sz;
-         struct rte_acl_ctx *ctx;
-         ...
++ -RTE_EXPORT_SYMBOL(rte_acl_create)
+  -struct rte_acl_ctx *
+  -rte_acl_create(const struct rte_acl_param *param)
+  +struct rte_acl_ctx * __vsym
+@@ -358,9 +297,9 @@ such that it contains both versions of the symbol and the public API.
+    rte_acl_create_v22(const struct rte_acl_param *param, int debug);
  
--Note that the base name of the symbol was kept intact, as this is conducive to
--the macros used for versioning symbols and we have annotated the function as
--``__vsym``, an implementation of a versioned symbol . That is our next step,
--mapping this new symbol name to the initial symbol name at version node 21.
--Immediately after the function, we add the VERSION_SYMBOL macro.
--
--.. code-block:: c
--
--   #include <rte_function_versioning.h>
--
--   ...
--   VERSION_SYMBOL(rte_acl_create, _v21, 21);
--
--Remembering to also add the rte_function_versioning.h header to the requisite c
--file where these changes are being made. The macro instructs the linker to
--create a new symbol ``rte_acl_create@DPDK_21``, which matches the symbol created
--in older builds, but now points to the above newly named function. We have now
--mapped the original rte_acl_create symbol to the original function (but with a
--new name).
-+The macro instructs the linker to create a new symbol ``rte_acl_create@DPDK_21``,
-+which matches the symbol created in older builds,
-+but now points to the above newly named function ``rte_acl_create_v21``.
-+We have now mapped the original rte_acl_create symbol to the original function
-+(but with a new name).
  
- Please see the section :ref:`Enabling versioning macros
- <enabling_versioning_macros>` to enable this macro in the meson/ninja build.
--Next, we need to create the new ``v22`` version of the symbol. We create a new
--function name, with the ``v22`` suffix, and implement it appropriately.
-+
-+Next, we need to create the new version of the symbol. We create a new
-+function name and implement it appropriately, then wrap it in a call to ``RTE_DEFAULT_SYMBOL``.
+-And that's it, on the next shared library rebuild, there will be two versions of
+-rte_acl_create, an old DPDK_21 version, used by previously built applications,
+-and a new DPDK_22 version, used by future built applications.
++And that's it. On the next shared library rebuild, there will be two versions of rte_acl_create,
++an old DPDK_21 version, used by previously built applications, and a new DPDK_22 version,
++used by newly built applications.
  
- .. code-block:: c
- 
--   struct rte_acl_ctx * __vsym
--   rte_acl_create_v22(const struct rte_acl_param *param, int debug);
-+   RTE_DEFAULT_SYMBOL(22, int, rte_acl_create, (struct rte_acl_param *param, int debug))
-    {
--        struct rte_acl_ctx *ctx = rte_acl_create_v21(param);
-+        int ret = rte_acl_create_v21(param);
- 
--        ctx->debug = debug;
-+        if (debug) {
-+        ...
-+        }
- 
--        return ctx;
-+        return ret;
-    }
- 
--This code serves as our new API call. Its the same as our old call, but adds the
--new parameter in place. Next we need to map this function to the new default
--symbol ``rte_acl_create@DPDK_22``. To do this, immediately after the function,
--we add the BIND_DEFAULT_SYMBOL macro.
--
--.. code-block:: c
--
--   #include <rte_function_versioning.h>
--
--   ...
--   BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
--
- The macro instructs the linker to create the new default symbol
--``rte_acl_create@DPDK_22``, which points to the above newly named function.
--
--We finally modify the prototype of the call in the public header file,
--such that it contains both versions of the symbol and the public API.
--
--.. code-block:: c
--
--   struct rte_acl_ctx *
--   rte_acl_create(const struct rte_acl_param *param);
--
--   struct rte_acl_ctx * __vsym
--   rte_acl_create_v21(const struct rte_acl_param *param);
--
--   struct rte_acl_ctx * __vsym
--   rte_acl_create_v22(const struct rte_acl_param *param, int debug);
--
-+``rte_acl_create@DPDK_22``, which points to the function named ``rte_acl_create_v22``
-+(declared by the macro).
- 
- And that's it. On the next shared library rebuild, there will be two versions of rte_acl_create,
- an old DPDK_21 version, used by previously built applications, and a new DPDK_22 version,
-@@ -304,43 +258,10 @@ used by newly built applications.
  .. note::
  
-    **Before you leave**, please take care reviewing the sections on
--   :ref:`mapping static symbols <mapping_static_symbols>`,
-    :ref:`enabling versioning macros <enabling_versioning_macros>`,
-    and :ref:`ABI deprecation <abi_deprecation>`.
- 
- 
--.. _mapping_static_symbols:
--
--Mapping static symbols
--______________________
--
--Now we've taken what was a public symbol, and duplicated it into two uniquely
--and differently named symbols. We've then mapped each of those back to the
--public symbol ``rte_acl_create`` with different version tags. This only applies
--to dynamic linking, as static linking has no notion of versioning. That leaves
--this code in a position of no longer having a symbol simply named
--``rte_acl_create`` and a static build will fail on that missing symbol.
--
--To correct this, we can simply map a function of our choosing back to the public
--symbol in the static build with the ``MAP_STATIC_SYMBOL`` macro.  Generally the
--assumption is that the most recent version of the symbol is the one you want to
--map.  So, back in the C file where, immediately after ``rte_acl_create_v22`` is
--defined, we add this
--
--
--.. code-block:: c
--
--   struct rte_acl_ctx * __vsym
--   rte_acl_create_v22(const struct rte_acl_param *param, int debug)
--   {
--        ...
--   }
--   MAP_STATIC_SYMBOL(struct rte_acl_ctx *rte_acl_create(const struct rte_acl_param *param, int debug), rte_acl_create_v22);
--
--That tells the compiler that, when building a static library, any calls to the
--symbol ``rte_acl_create`` should be linked to ``rte_acl_create_v22``
--
--
- .. _enabling_versioning_macros:
- 
- Enabling versioning macros
-@@ -384,8 +305,8 @@ Assume we have an experimental function ``rte_acl_create`` as follows:
-     */
-    RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_create)
-    __rte_experimental
--   struct rte_acl_ctx *
--   rte_acl_create(const struct rte_acl_param *param)
-+   int
-+   rte_acl_create(struct rte_acl_param *param)
-    {
-    ...
-    }
-@@ -400,8 +321,8 @@ When we promote the symbol to the stable ABI, we simply strip the
-     * manipulate
-     */
-    RTE_EXPORT_SYMBOL(rte_acl_create)
--   struct rte_acl_ctx *
--   rte_acl_create(const struct rte_acl_param *param)
-+   int
-+   rte_acl_create(struct rte_acl_param *param)
-    {
-           ...
-    }
-@@ -416,33 +337,20 @@ and ``DPDK_22`` version nodes.
- .. code-block:: c
- 
-    #include <rte_compat.h>;
--   #include <rte_function_versioning.h>
- 
-    /*
+@@ -443,6 +382,7 @@ Assume we have an experimental function ``rte_acl_create`` as follows:
      * Create an acl context object for apps to
      * manipulate
      */
--   RTE_EXPORT_SYMBOL(rte_acl_create)
--   struct rte_acl_ctx *
--   rte_acl_create(const struct rte_acl_param *param)
-+   RTE_DEFAULT_SYMBOL(22, int, rte_acl_create, (struct rte_acl_param *param))
-    {
++   RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_create)
+    __rte_experimental
+    struct rte_acl_ctx *
+    rte_acl_create(const struct rte_acl_param *param)
+@@ -450,27 +390,8 @@ Assume we have an experimental function ``rte_acl_create`` as follows:
     ...
     }
  
--   __rte_experimental
--   struct rte_acl_ctx *
--   rte_acl_create_e(const struct rte_acl_param *param)
--   {
--      return rte_acl_create(param);
--   }
--   VERSION_SYMBOL_EXPERIMENTAL(rte_acl_create, _e);
+-In the map file, experimental symbols are listed as part of the ``EXPERIMENTAL``
+-version node.
 -
--   struct rte_acl_ctx *
--   rte_acl_create_v22(const struct rte_acl_param *param)
-+   RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_acl_create, (struct rte_acl_param *param))
-    {
-       return rte_acl_create(param);
-    }
--   BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
- 
- .. _abi_deprecation:
- 
-@@ -458,10 +366,10 @@ Next remove the corresponding versioned export.
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-        ...
+-
+-        local: *;
+-   };
+-
+-   EXPERIMENTAL {
+-        global:
+-
+-        rte_acl_create;
+-   };
+-
+ When we promote the symbol to the stable ABI, we simply strip the
+-``__rte_experimental`` annotation from the function and move the symbol from the
+-``EXPERIMENTAL`` node, to the node of the next major ABI version as follow.
++``__rte_experimental`` annotation from the function.
  
  .. code-block:: c
  
-- -VERSION_SYMBOL(rte_acl_create, _v21, 21);
-+ -RTE_VERSION_SYMBOL(21, int, rte_acl_create, (struct rte_acl_param *param))
+@@ -478,31 +399,13 @@ When we promote the symbol to the stable ABI, we simply strip the
+     * Create an acl context object for apps to
+     * manipulate
+     */
++   RTE_EXPORT_SYMBOL(rte_acl_create)
+    struct rte_acl_ctx *
+    rte_acl_create(const struct rte_acl_param *param)
+    {
+           ...
+    }
  
+-We then update the map file, adding the symbol ``rte_acl_create``
+-to the ``DPDK_22`` version node.
+-
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-        ...
+-
+-        local: *;
+-   };
+-
+-   DPDK_22 {
+-        global:
+-
+-        rte_acl_create;
+-   } DPDK_21;
+-
+-
+ Although there are strictly no guarantees or commitments associated with
+ :ref:`experimental symbols <experimental_apis>`, a maintainer may wish to offer
+ an alias to experimental. The process to add an alias to experimental,
+@@ -519,6 +422,7 @@ and ``DPDK_22`` version nodes.
+     * Create an acl context object for apps to
+     * manipulate
+     */
++   RTE_EXPORT_SYMBOL(rte_acl_create)
+    struct rte_acl_ctx *
+    rte_acl_create(const struct rte_acl_param *param)
+    {
+@@ -540,37 +444,6 @@ and ``DPDK_22`` version nodes.
+    }
+    BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
  
--Note that the internal function definition could also be removed, but its used
-+Note that the internal function definition must also be removed, but it is used
- in our example by the newer version ``v22``, so we leave it in place and declare
- it as static. This is a coding style choice.
+-In the map file, we map the symbol to both the ``EXPERIMENTAL``
+-and ``DPDK_22`` version nodes.
+-
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-        ...
+-
+-        local: *;
+-   };
+-
+-   DPDK_22 {
+-        global:
+-
+-        rte_acl_create;
+-   } DPDK_21;
+-
+-   EXPERIMENTAL {
+-        global:
+-
+-        rte_acl_create;
+-   };
+-
+-.. note::
+-
+-   Please note, similar to :ref:`symbol versioning <example_abi_macro_usage>`,
+-   when aliasing to experimental you will also need to take care of
+-   :ref:`mapping static symbols <mapping_static_symbols>`.
+-
+-
+ .. _abi_deprecation:
  
-@@ -476,18 +384,16 @@ of a major ABI version. If a version node completely specifies an API, then
+ Deprecating part of a public API
+@@ -579,38 +452,7 @@ ________________________________
+ Lets assume that you've done the above updates, and in preparation for the next
+ major ABI version you decide you would like to retire the old version of the
+ function. After having gone through the ABI deprecation announcement process,
+-removal is easy. Start by removing the symbol from the requisite version map
+-file:
+-
+-.. code-block:: none
+-
+-   DPDK_21 {
+-        global:
+-
+-        rte_acl_add_rules;
+-        rte_acl_build;
+-        rte_acl_classify;
+-        rte_acl_classify_alg;
+-        rte_acl_classify_scalar;
+-        rte_acl_dump;
+- -      rte_acl_create
+-        rte_acl_find_existing;
+-        rte_acl_free;
+-        rte_acl_ipv4vlan_add_rules;
+-        rte_acl_ipv4vlan_build;
+-        rte_acl_list_dump;
+-        rte_acl_reset;
+-        rte_acl_reset_rules;
+-        rte_acl_set_ctx_classify;
+-
+-        local: *;
+-   };
+-
+-   DPDK_22 {
+-        global:
+-        rte_acl_create;
+-   } DPDK_21;
+-
++removal is easy.
+ 
+ Next remove the corresponding versioned export.
+ 
+@@ -634,36 +476,9 @@ of a major ABI version. If a version node completely specifies an API, then
  removing part of it, typically makes it incomplete. In those cases it is better
  to remove the entire node.
  
-- };
+-To do this, start by modifying the version map file, such that all symbols from
+-the node to be removed are merged into the next node in the map.
 -
--Any uses of BIND_DEFAULT_SYMBOL that pointed to the old node should be
-+Any uses of RTE_DEFAULT_SYMBOL that pointed to the old node should be
+-In the case of our map above, it would transform to look as follows
+-
+-.. code-block:: none
+-
+-   DPDK_22 {
+-        global:
+-
+-        rte_acl_add_rules;
+-        rte_acl_build;
+-        rte_acl_classify;
+-        rte_acl_classify_alg;
+-        rte_acl_classify_scalar;
+-        rte_acl_dump;
+-        rte_acl_create
+-        rte_acl_find_existing;
+-        rte_acl_free;
+-        rte_acl_ipv4vlan_add_rules;
+-        rte_acl_ipv4vlan_build;
+-        rte_acl_list_dump;
+-        rte_acl_reset;
+-        rte_acl_reset_rules;
+-        rte_acl_set_ctx_classify;
+-
+-        local: *;
+  };
+ 
+-Then any uses of BIND_DEFAULT_SYMBOL that pointed to the old node should be
++Any uses of BIND_DEFAULT_SYMBOL that pointed to the old node should be
  updated to point to the new version node in any header files for all affected
  symbols.
  
- .. code-block:: c
+diff --git a/drivers/meson.build b/drivers/meson.build
+index c15319dc24..5368d38363 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -275,14 +275,14 @@ foreach subpath:subdirs
+                 dependencies: static_deps,
+                 c_args: cflags)
+         objs += tmp_lib.extract_all_objects(recursive: true)
+-        sources = custom_target(out_filename,
++        sources_pmd_info = custom_target(out_filename,
+                 command: [pmdinfo, tmp_lib.full_path(), '@OUTPUT@', pmdinfogen],
+                 output: out_filename,
+                 depends: [tmp_lib])
  
-- -BIND_DEFAULT_SYMBOL(rte_acl_create, _v21, 21);
-- +BIND_DEFAULT_SYMBOL(rte_acl_create, _v22, 22);
-+ -RTE_DEFAULT_SYMBOL(21, int, rte_acl_create, (struct rte_acl_param *param, int debug))
-+ +RTE_DEFAULT_SYMBOL(22, int, rte_acl_create, (struct rte_acl_param *param, int debug))
+         # now build the static driver
+         static_lib = static_library(lib_name,
+-                sources,
++                sources_pmd_info,
+                 objects: objs,
+                 include_directories: includes,
+                 dependencies: static_deps,
+@@ -292,48 +292,70 @@ foreach subpath:subdirs
+         # now build the shared driver
+         version_map = '@0@/@1@/version.map'.format(meson.current_source_dir(), drv_path)
  
--Lastly, any VERSION_SYMBOL macros that point to the old version nodes
-+Lastly, any RTE_VERSION_SYMBOL macros that point to the old version nodes
- should be removed, taking care to preserve any code that is shared
- with the new version node.
+-        lk_deps = []
+-        lk_args = []
+         if not fs.is_file(version_map)
+-            version_map = '@0@/version.map'.format(meson.current_source_dir())
+-            lk_deps += [version_map]
+-        else
+-            lk_deps += [version_map]
+-            if not is_windows and developer_mode
+-                # on unix systems check the output of the
+-                # check-symbols.sh script, using it as a
+-                # dependency of the .so build
+-                lk_deps += custom_target(lib_name + '.sym_chk',
+-                        command: [check_symbols, version_map, '@INPUT@'],
+-                        capture: true,
+-                        input: static_lib,
+-                        output: lib_name + '.sym_chk')
+-            endif
+-        endif
+-
+-        if is_windows
+             if is_ms_linker
+-                def_file = custom_target(lib_name + '_def',
+-                        command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
+-                        input: version_map,
+-                        output: '@0@_exports.def'.format(lib_name))
+-                lk_deps += [def_file]
+-
+-                lk_args = ['-Wl,/def:' + def_file.full_path()]
++                link_mode = 'mslinker'
++            elif is_windows
++                link_mode = 'mingw'
+             else
+-                mingw_map = custom_target(lib_name + '_mingw',
+-                        command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
+-                        input: version_map,
+-                        output: '@0@_mingw.map'.format(lib_name))
+-                lk_deps += [mingw_map]
+-
+-                lk_args = ['-Wl,--version-script=' + mingw_map.full_path()]
++                link_mode = 'gnu'
++            endif
++            version_map = custom_target(lib_name + '_map',
++                    command: [gen_version_map, link_mode, abi_version_file, '@OUTPUT@', '@INPUT@'],
++                    input: sources + sources_avx2 + sources_avx512,
++                    output: '_'.join([class, name, 'exports.map']))
++            version_map_path = version_map.full_path()
++            version_map_dep = [version_map]
++            lk_deps = [version_map]
++
++            if is_ms_linker and is_ms_compiler
++                lk_args = ['/def:' + version_map.full_path()]
++            elif is_ms_linker
++                lk_args = ['-Wl,/def:' + version_map.full_path()]
++            else
++                lk_args = ['-Wl,--version-script=' + version_map.full_path()]
+             endif
+         else
+-            lk_args = ['-Wl,--version-script=' + version_map]
++            version_map_path = version_map
++            version_map_dep = []
++            lk_deps = [version_map]
++
++            if is_windows
++                if is_ms_linker
++                    def_file = custom_target(lib_name + '_def',
++                            command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
++                            input: version_map,
++                            output: '@0@_exports.def'.format(lib_name))
++                    lk_deps += [def_file]
++
++                    lk_args = ['-Wl,/def:' + def_file.full_path()]
++                else
++                    mingw_map = custom_target(lib_name + '_mingw',
++                            command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
++                            input: version_map,
++                            output: '@0@_mingw.map'.format(lib_name))
++                    lk_deps += [mingw_map]
++
++                    lk_args = ['-Wl,--version-script=' + mingw_map.full_path()]
++                endif
++            else
++                lk_args = ['-Wl,--version-script=' + version_map]
++            endif
++        endif
++
++        if not is_windows and developer_mode
++            # on unix systems check the output of the
++            # check-symbols.sh script, using it as a
++            # dependency of the .so build
++            lk_deps += custom_target(lib_name + '.sym_chk',
++                    command: [check_symbols, version_map_path, '@INPUT@'],
++                    capture: true,
++                    input: static_lib,
++                    output: lib_name + '.sym_chk',
++                    depends: version_map_dep)
+         endif
  
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index cd1025aac0..093b85d206 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -68,6 +68,8 @@ Removed Items
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* eal: Removed the ``rte_function_versioning.h`` header from the exported headers.
-+
- 
- API Changes
- -----------
-diff --git a/lib/eal/common/eal_symbol_exports.h b/lib/eal/common/eal_symbol_exports.h
-index b3033dd336..b66ca8fa68 100644
---- a/lib/eal/common/eal_symbol_exports.h
-+++ b/lib/eal/common/eal_symbol_exports.h
-@@ -5,6 +5,8 @@
- #ifndef EAL_SYMBOL_EXPORTS_H
- #define EAL_SYMBOL_EXPORTS_H
- 
-+#include <rte_common.h>
-+
- /* Internal macros for exporting symbols, used by the build system.
-  * For RTE_EXPORT_EXPERIMENTAL_SYMBOL, ver indicates the
-  * version this symbol was introduced in.
-@@ -13,4 +15,68 @@
- #define RTE_EXPORT_INTERNAL_SYMBOL(a)
- #define RTE_EXPORT_SYMBOL(a)
- 
-+#if !defined(RTE_USE_FUNCTION_VERSIONING) && (defined(RTE_CC_GCC) || defined(RTE_CC_CLANG))
-+#define VERSIONING_WARN RTE_PRAGMA_WARNING(Use of function versioning disabled. \
-+	Is "use_function_versioning=true" in meson.build?)
-+#else
-+#define VERSIONING_WARN
-+#endif
-+
-+/*
-+ * Provides backwards compatibility when updating exported functions.
-+ * When a symbol is exported from a library to provide an API, it also provides a
-+ * calling convention (ABI) that is embodied in its name, return type,
-+ * arguments, etc.  On occasion that function may need to change to accommodate
-+ * new functionality, behavior, etc.  When that occurs, it is desirable to
-+ * allow for backwards compatibility for a time with older binaries that are
-+ * dynamically linked to the dpdk.
-+ */
-+
-+#ifdef RTE_BUILD_SHARED_LIB
-+
-+/*
-+ * RTE_VERSION_SYMBOL
-+ * Creates a symbol version table entry binding symbol <name>@DPDK_<ver> to the internal
-+ * function name <name>_v<ver>.
-+ */
-+#define RTE_VERSION_SYMBOL(ver, type, name, args) VERSIONING_WARN \
-+__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@DPDK_" RTE_STR(ver)); \
-+__rte_used type name ## _v ## ver args; \
-+type name ## _v ## ver args
-+
-+/*
-+ * RTE_VERSION_EXPERIMENTAL_SYMBOL
-+ * Similar to RTE_VERSION_SYMBOL but for experimental API symbols.
-+ * This is mainly used for keeping compatibility for symbols that get promoted to stable ABI.
-+ */
-+#define RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, args) VERSIONING_WARN \
-+__asm__(".symver " RTE_STR(name) "_exp, " RTE_STR(name) "@EXPERIMENTAL") \
-+__rte_used type name ## _exp args; \
-+type name ## _exp args
-+
-+/*
-+ * RTE_DEFAULT_SYMBOL
-+ * Creates a symbol version entry instructing the linker to bind references to
-+ * symbol <name> to the internal symbol <name>_v<ver>.
-+ */
-+#define RTE_DEFAULT_SYMBOL(ver, type, name, args) VERSIONING_WARN \
-+__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@@DPDK_" RTE_STR(ver)); \
-+__rte_used type name ## _v ## ver args; \
-+type name ## _v ## ver args
-+
-+#else /* !RTE_BUILD_SHARED_LIB */
-+
-+#define RTE_VERSION_SYMBOL(ver, type, name, args) VERSIONING_WARN \
-+type name ## _v ## ver args; \
-+type name ## _v ## ver args
-+
-+#define RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, args) VERSIONING_WARN \
-+type name ## _exp args; \
-+type name ## _exp args
-+
-+#define RTE_DEFAULT_SYMBOL(ver, type, name, args) VERSIONING_WARN \
-+type name args
-+
-+#endif /* RTE_BUILD_SHARED_LIB */
-+
- #endif /* EAL_SYMBOL_EXPORTS_H */
-diff --git a/lib/eal/include/rte_function_versioning.h b/lib/eal/include/rte_function_versioning.h
+-        shared_lib = shared_library(lib_name, sources,
++        shared_lib = shared_library(lib_name, sources_pmd_info,
+                 objects: objs,
+                 include_directories: includes,
+                 dependencies: shared_deps,
+diff --git a/drivers/version.map b/drivers/version.map
 deleted file mode 100644
-index eb6dd2bc17..0000000000
---- a/lib/eal/include/rte_function_versioning.h
+index 17cc97bda6..0000000000
+--- a/drivers/version.map
 +++ /dev/null
-@@ -1,99 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2015 Neil Horman <nhorman@tuxdriver.com>.
-- * All rights reserved.
-- */
--
--#ifndef _RTE_FUNCTION_VERSIONING_H_
--#define _RTE_FUNCTION_VERSIONING_H_
--#include <rte_common.h>
--
--#ifndef RTE_USE_FUNCTION_VERSIONING
--#error Use of function versioning disabled, is "use_function_versioning=true" in meson.build?
--#endif
--
--#ifdef RTE_BUILD_SHARED_LIB
--
--/*
-- * Provides backwards compatibility when updating exported functions.
-- * When a symbol is exported from a library to provide an API, it also provides a
-- * calling convention (ABI) that is embodied in its name, return type,
-- * arguments, etc.  On occasion that function may need to change to accommodate
-- * new functionality, behavior, etc.  When that occurs, it is desirable to
-- * allow for backwards compatibility for a time with older binaries that are
-- * dynamically linked to the dpdk.  To support that, the __vsym and
-- * VERSION_SYMBOL macros are created.  They, in conjunction with the
-- * version.map file for a given library allow for multiple versions of
-- * a symbol to exist in a shared library so that older binaries need not be
-- * immediately recompiled.
-- *
-- * Refer to the guidelines document in the docs subdirectory for details on the
-- * use of these macros
-- */
--
--/*
-- * Macro Parameters:
-- * b - function base name
-- * e - function version extension, to be concatenated with base name
-- * n - function symbol version string to be applied
-- * f - function prototype
-- * p - full function symbol name
-- */
--
--/*
-- * VERSION_SYMBOL
-- * Creates a symbol version table entry binding symbol <b>@DPDK_<n> to the internal
-- * function name <b><e>
-- */
--#define VERSION_SYMBOL(b, e, n) __asm__(".symver " RTE_STR(b) RTE_STR(e) ", " RTE_STR(b) "@DPDK_" RTE_STR(n))
--
--/*
-- * VERSION_SYMBOL_EXPERIMENTAL
-- * Creates a symbol version table entry binding the symbol <b>@EXPERIMENTAL to the internal
-- * function name <b><e>. The macro is used when a symbol matures to become part of the stable ABI,
-- * to provide an alias to experimental for some time.
-- */
--#define VERSION_SYMBOL_EXPERIMENTAL(b, e) __asm__(".symver " RTE_STR(b) RTE_STR(e) ", " RTE_STR(b) "@EXPERIMENTAL")
--
--/*
-- * BIND_DEFAULT_SYMBOL
-- * Creates a symbol version entry instructing the linker to bind references to
-- * symbol <b> to the internal symbol <b><e>
-- */
--#define BIND_DEFAULT_SYMBOL(b, e, n) __asm__(".symver " RTE_STR(b) RTE_STR(e) ", " RTE_STR(b) "@@DPDK_" RTE_STR(n))
--
--/*
-- * __vsym
-- * Annotation to be used in declaration of the internal symbol <b><e> to signal
-- * that it is being used as an implementation of a particular version of symbol
-- * <b>.
-- */
--#define __vsym __rte_used
--
--/*
-- * MAP_STATIC_SYMBOL
-- * If a function has been bifurcated into multiple versions, none of which
-- * are defined as the exported symbol name in the map file, this macro can be
-- * used to alias a specific version of the symbol to its exported name.  For
-- * example, if you have 2 versions of a function foo_v1 and foo_v2, where the
-- * former is mapped to foo@DPDK_1 and the latter is mapped to foo@DPDK_2 when
-- * building a shared library, this macro can be used to map either foo_v1 or
-- * foo_v2 to the symbol foo when building a static library, e.g.:
-- * MAP_STATIC_SYMBOL(void foo(), foo_v2);
-- */
--#define MAP_STATIC_SYMBOL(f, p)
--
--#else
--/*
-- * No symbol versioning in use
-- */
--#define VERSION_SYMBOL(b, e, n)
--#define VERSION_SYMBOL_EXPERIMENTAL(b, e)
--#define __vsym
--#define BIND_DEFAULT_SYMBOL(b, e, n)
--#define MAP_STATIC_SYMBOL(f, p) f __attribute__((alias(RTE_STR(p))))
--/*
-- * RTE_BUILD_SHARED_LIB=n
-- */
--#endif
--
--#endif /* _RTE_FUNCTION_VERSIONING_H_ */
-diff --git a/lib/net/net_crc.h b/lib/net/net_crc.h
-index 4930e2f0b3..320b0edca8 100644
---- a/lib/net/net_crc.h
-+++ b/lib/net/net_crc.h
-@@ -7,21 +7,6 @@
+@@ -1,3 +0,0 @@
+-DPDK_25 {
+-	local: *;
+-};
+diff --git a/lib/eal/common/eal_symbol_exports.h b/lib/eal/common/eal_symbol_exports.h
+new file mode 100644
+index 0000000000..b3033dd336
+--- /dev/null
++++ b/lib/eal/common/eal_symbol_exports.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Red Hat, Inc.
++ */
++
++#ifndef EAL_SYMBOL_EXPORTS_H
++#define EAL_SYMBOL_EXPORTS_H
++
++/* Internal macros for exporting symbols, used by the build system.
++ * For RTE_EXPORT_EXPERIMENTAL_SYMBOL, ver indicates the
++ * version this symbol was introduced in.
++ */
++#define RTE_EXPORT_EXPERIMENTAL_SYMBOL(a, ver)
++#define RTE_EXPORT_INTERNAL_SYMBOL(a)
++#define RTE_EXPORT_SYMBOL(a)
++
++#endif /* EAL_SYMBOL_EXPORTS_H */
+diff --git a/lib/meson.build b/lib/meson.build
+index 91efc65c4b..a9cbea5fea 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017-2019 Intel Corporation
  
- #include "rte_net_crc.h"
++fs = import('fs')
  
--void
--rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg);
+ # process all libraries equally, as far as possible
+ # "core" libs first, then others alphabetically as far as possible
+@@ -137,9 +138,12 @@ foreach l:libraries
+     # external package/library requirements
+     ext_deps = []
+     deps = []
+-    # eal is standard dependency once built
+     if dpdk_conf.has('RTE_LIB_EAL')
++        # eal is standard dependency once built
+         deps += ['eal']
++    else
++        # otherwise, make private headers available (like eal_symbol_exports.h)
++        includes += include_directories('eal/common')
+     endif
+ 
+     if dpdk_libs_deprecated.contains(l)
+@@ -285,42 +289,58 @@ foreach l:libraries
+             include_directories: includes,
+             dependencies: static_deps)
+ 
+-    if not use_function_versioning or is_windows
+-        # use pre-build objects to build shared lib
+-        sources = []
+-        objs += static_lib.extract_all_objects(recursive: false)
+-    else
+-        # for compat we need to rebuild with
+-        # RTE_BUILD_SHARED_LIB defined
+-        cflags += '-DRTE_BUILD_SHARED_LIB'
+-    endif
 -
--struct rte_net_crc *
--rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
--	enum rte_net_crc_type type);
+-    version_map = '@0@/@1@/version.map'.format(meson.current_source_dir(), l)
+-    lk_deps = [version_map]
 -
--uint32_t
--rte_net_crc_calc_v25(const void *data,
--	uint32_t data_len, enum rte_net_crc_type type);
--
--uint32_t
--rte_net_crc_calc_v26(const struct rte_net_crc *ctx,
--	const void *data, const uint32_t data_len);
--
- /*
-  * Different implementations of CRC
-  */
-diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
-index 4efb095bc4..e769c7e22e 100644
---- a/lib/net/rte_net_crc.c
-+++ b/lib/net/rte_net_crc.c
-@@ -11,7 +11,6 @@
- #include <rte_net_crc.h>
- #include <rte_log.h>
- #include <rte_vect.h>
--#include <rte_function_versioning.h>
- #include <rte_malloc.h>
+-    if is_ms_linker
+-        def_file = custom_target(libname + '_def',
+-                command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
+-                input: version_map,
+-                output: '@0@_exports.def'.format(libname))
+-        lk_deps += [def_file]
++    if not fs.is_file('@0@/@1@/version.map'.format(meson.current_source_dir(), l))
++        if is_ms_linker
++            link_mode = 'mslinker'
++        elif is_windows
++            link_mode = 'mingw'
++        else
++            link_mode = 'gnu'
++        endif
++        version_map = custom_target(libname + '_map',
++                command: [gen_version_map, link_mode, abi_version_file, '@OUTPUT@', '@INPUT@'],
++                input: sources,
++                output: '_'.join([name, 'exports.map']))
++        version_map_path = version_map.full_path()
++        version_map_dep = [version_map]
++        lk_deps = [version_map]
  
- #include "net_crc.h"
-@@ -346,8 +345,7 @@ handlers_init(enum rte_net_crc_alg alg)
+-        if is_ms_compiler
+-            lk_args = ['/def:' + def_file.full_path()]
++        if is_ms_linker and is_ms_compiler
++            lk_args = ['/def:' + version_map.full_path()]
++        elif is_ms_linker
++            lk_args = ['-Wl,/def:' + version_map.full_path()]
+         else
+-            lk_args = ['-Wl,/def:' + def_file.full_path()]
++            lk_args = ['-Wl,--version-script=' + version_map.full_path()]
+         endif
+     else
+-        if is_windows
+-            mingw_map = custom_target(libname + '_mingw',
++        version_map = '@0@/@1@/version.map'.format(meson.current_source_dir(), l)
++        version_map_path = version_map
++        version_map_dep = []
++        lk_deps = [version_map]
++        if is_ms_linker
++            def_file = custom_target(libname + '_def',
+                     command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
+                     input: version_map,
+-                    output: '@0@_mingw.map'.format(libname))
+-            lk_deps += [mingw_map]
++                    output: '@0@_exports.def'.format(libname))
++            lk_deps += [def_file]
  
- /* Public API */
+-            lk_args = ['-Wl,--version-script=' + mingw_map.full_path()]
++            if is_ms_compiler
++                lk_args = ['/def:' + def_file.full_path()]
++            else
++                lk_args = ['-Wl,/def:' + def_file.full_path()]
++            endif
+         else
+-            lk_args = ['-Wl,--version-script=' + version_map]
++            if is_windows
++                mingw_map = custom_target(libname + '_mingw',
++                        command: [map_to_win_cmd, '@INPUT@', '@OUTPUT@'],
++                        input: version_map,
++                        output: '@0@_mingw.map'.format(libname))
++                lk_deps += [mingw_map]
++
++                lk_args = ['-Wl,--version-script=' + mingw_map.full_path()]
++            else
++                lk_args = ['-Wl,--version-script=' + version_map]
++            endif
+         endif
+     endif
  
--void
--rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg)
-+RTE_VERSION_SYMBOL(25, void, rte_net_crc_set_alg, (enum rte_net_crc_alg alg))
- {
- 	handlers = NULL;
- 	if (max_simd_bitwidth == 0)
-@@ -374,10 +372,9 @@ rte_net_crc_set_alg_v25(enum rte_net_crc_alg alg)
- 	if (handlers == NULL)
- 		handlers = handlers_scalar;
- }
--VERSION_SYMBOL(rte_net_crc_set_alg, _v25, 25);
+@@ -329,11 +349,21 @@ foreach l:libraries
+         # check-symbols.sh script, using it as a
+         # dependency of the .so build
+         lk_deps += custom_target(name + '.sym_chk',
+-                command: [check_symbols,
+-                    version_map, '@INPUT@'],
++                command: [check_symbols, version_map_path, '@INPUT@'],
+                 capture: true,
+                 input: static_lib,
+-                output: name + '.sym_chk')
++                output: name + '.sym_chk',
++                depends: version_map_dep)
++    endif
++
++    if not use_function_versioning or is_windows
++        # use pre-build objects to build shared lib
++        sources = []
++        objs += static_lib.extract_all_objects(recursive: false)
++    else
++        # for compat we need to rebuild with
++        # RTE_BUILD_SHARED_LIB defined
++        cflags += '-DRTE_BUILD_SHARED_LIB'
+     endif
  
--struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
--	enum rte_net_crc_type type)
-+RTE_DEFAULT_SYMBOL(26, struct rte_net_crc *, rte_net_crc_set_alg, (enum rte_net_crc_alg alg,
-+	enum rte_net_crc_type type))
- {
- 	uint16_t max_simd_bitwidth;
- 	struct rte_net_crc *crc;
-@@ -415,10 +412,6 @@ struct rte_net_crc *rte_net_crc_set_alg_v26(enum rte_net_crc_alg alg,
- 	}
- 	return crc;
- }
--BIND_DEFAULT_SYMBOL(rte_net_crc_set_alg, _v26, 26);
--MAP_STATIC_SYMBOL(struct rte_net_crc *rte_net_crc_set_alg(
--	enum rte_net_crc_alg alg, enum rte_net_crc_type type),
--	rte_net_crc_set_alg_v26);
- 
- RTE_EXPORT_SYMBOL(rte_net_crc_free)
- void rte_net_crc_free(struct rte_net_crc *crc)
-@@ -426,10 +419,8 @@ void rte_net_crc_free(struct rte_net_crc *crc)
- 	rte_free(crc);
- }
- 
--uint32_t
--rte_net_crc_calc_v25(const void *data,
--	uint32_t data_len,
--	enum rte_net_crc_type type)
-+RTE_VERSION_SYMBOL(25, uint32_t, rte_net_crc_calc, (const void *data, uint32_t data_len,
-+	enum rte_net_crc_type type))
- {
- 	uint32_t ret;
- 	rte_net_crc_handler f_handle;
-@@ -439,18 +430,12 @@ rte_net_crc_calc_v25(const void *data,
- 
- 	return ret;
- }
--VERSION_SYMBOL(rte_net_crc_calc, _v25, 25);
- 
--uint32_t
--rte_net_crc_calc_v26(const struct rte_net_crc *ctx,
--	const void *data, const uint32_t data_len)
-+RTE_DEFAULT_SYMBOL(26, uint32_t, rte_net_crc_calc, (const struct rte_net_crc *ctx,
-+	const void *data, const uint32_t data_len))
- {
- 	return handlers_dpdk26[ctx->alg].f[ctx->type](data, data_len);
- }
--BIND_DEFAULT_SYMBOL(rte_net_crc_calc, _v26, 26);
--MAP_STATIC_SYMBOL(uint32_t rte_net_crc_calc(const struct rte_net_crc *ctx,
--	const void *data, const uint32_t data_len),
--	rte_net_crc_calc_v26);
- 
- /* Call initialisation helpers for all crc algorithm handlers */
- RTE_INIT(rte_net_crc_init)
+     shared_lib = shared_library(libname,
 -- 
 2.48.1
 
