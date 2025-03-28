@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CD4C3600C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0D9C3600C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:15:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54AA040666;
-	Fri, 28 Mar 2025 06:15:09 +0100 (CET)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id 7139B402C6
- for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:04 +0100 (CET)
-X-QQ-mid: bizesmtpsz12t1743138898texnvy
-X-QQ-Originating-IP: A8tjedcZnRvMcg+cah3TKeh2TbYb/JWGJCXiSzWXpo0=
+	by mails.dpdk.org (Postfix) with ESMTP id 4DA1140663;
+	Fri, 28 Mar 2025 06:15:11 +0100 (CET)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+ by mails.dpdk.org (Postfix) with ESMTP id 29B8240663
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:08 +0100 (CET)
+X-QQ-mid: bizesmtpsz12t1743138903t8hduc
+X-QQ-Originating-IP: VVFXhwDehcRZ/Zuf3/HNifEKbYJW5EKiipgWDoWRt3Y=
 Received: from steven.localdomain ( [103.233.162.252])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 28 Mar 2025 13:14:57 +0800 (CST)
+ id ; Fri, 28 Mar 2025 13:15:02 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11016993764974801267
+X-BIZMAIL-ID: 7964358279796786946
 EX-QQ-RecipientCnt: 5
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net
 Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
  Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v17 04/29] net/rnp: support mailbox basic operate
-Date: Fri, 28 Mar 2025 05:14:19 +0000
-Message-Id: <20250328051444.1019208-5-caowenbo@mucse.com>
+Subject: [PATCH v17 06/29] net/rnp: add get device information operation
+Date: Fri, 28 Mar 2025 05:14:21 +0000
+Message-Id: <20250328051444.1019208-7-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250328051444.1019208-1-caowenbo@mucse.com>
 References: <20250328051444.1019208-1-caowenbo@mucse.com>
@@ -33,23 +33,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: MItaGWvx4ZPeyRZr9W77Ca8k/6qljNJTtc/iVbBe0tD8rjURbeFzQbq/
- 8PZzozmd68BqUpQETx1F6yZxiZ1ybvzouZ1jFMKMY3IbSTS4kqW5GuANiVPxvl/kGyLceRt
- TbaOG4ZzbvAtRSdHs0mWht5cIQFi1vN8FLhAfNhAS2Sy58A8+EdNxWEGa4/nicBCMK1sate
- 8+amJGpToeiUmjEn4xtZ+QYAa43ATYjLLjnK1NeRDyWhxK419cedyL+iucitTryJcvaP5ez
- bJvrkXt4cmbs4q+zdRz0zmlLeoMfQAe0Zil3LbOtoJSnAxiOE6IQI0h5rI0DF+u8ThB2vuP
- HQRZE1sGC0MSgrdxbNMoQBYengkWfP3Dq3TOAUG6BwYPOAftU8734EDPn+TqDDkwnd21iqx
- 1WozoDqnE2JjtAVVDY3B8kXnDwXYw4o7wRcNyF2gdBrgWqLyrYuVm1hmpSM8iX527wfeTm9
- xAe/DtbNTHmMvBOAnbeSAWBA4olwJc96olddNXNWmRHI96bK0vhtLkeNfPiFK3bQtMJBdCh
- ULNRYNwluxgFjM6gO3YTDu0v4ASEkmLo0xWrBgUnx2oHQO0gSjv0oL0Q4e5naR/0ta1eD/n
- h0cIADA+HPeXZHIAKauJpIHT79BeTBnPYBVd+yrUqEyAWkvj9Ou7jEVDgHy2JtjFedJra7E
- fdCVqSHgfF1I2nnMqgbTbFaKcKYFwYEgE/1O/bORooR97X143g7s3G5mZ4wqbAE+Tuqrg5Q
- HZ0tX76dFcILfhUqF29GbwEPrWA2OcceZ6wH6PzUwBzI+9TqCF2EEgQUqh7DAoQ5ag+wcLq
- zEWxYYZDBUVfACwALKGGngmqBNkbacyZ7P+oR2+soob9o6D+SUMGCsC1A/gCTey1q3L5aYL
- KMFue7XxqmcAB2sBt3KS/hk/F1HTi2NPI4J+FWbFycTIWTHiqPIjkW8W9j9F/xxAHRRkJBt
- Ru+GFRtEDP5B2/KCz9e944N8XFndDh1nliF62GfXK6Lp1Dht4nuPYsg5AMkPfGtZxLpX5Vj
- 5VlOUslYR0ogcKBKpUmWeRDSeJUnvTQ8yVxD4cxQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: M8w/1a60XBli98gLYsb1A2xTykT2qtAxUkf5l87xg3ey72tx/iK8/Nvs
+ s0ElEGh3jNmw5b0J+IdguKlryFng4vxI+Zne4GOrA33kKWuvs3cPZsopaTKi+1N9JZ0gpuz
+ +Ku8J+IR7ZLs4tqpCTBpNsuvLhRn0hTv1Mu2eakVl3XieiMIMkKqSpUjCm/Lptb9xCVXLR3
+ dc2ep8K04DuWQId8F6DV6+fzGAHW9ld69Wnzitubeqv8+spcDNklJQFY3+GqNs4ftpgXc83
+ KEx47jE11UV+HPlU66m7/mLMfMYaD2idWFZNX7JYO4zzYLvxluUaVhiiD0c6TWKJSfxR70a
+ HuNxszUHGH8CzkJTQMFa7ru7n4bYL9u5OzPISzX+dLyyjKJs49YVyWoMOTAW1oIXIRGhLOS
+ DDL5JKXwSBr97tkgkV1JpwIASHWyH7ZOLR3m/opFonwsG1qTPo940l1SP4R4Q/SCNFjgrKk
+ Bm3rkFwKnvvIso+Q1KXMWpYUCO2hQMdOZPBvlGqatqaykqonEnBTTx6U053c0B5SZH62Jmy
+ QAu3vX7r+1OUdUTn7Gympq1Fz12rnYEOi+vbUaZsTs/TLXeByxOTVTKupaNPb1nCpkdSP8G
+ m1DZKdAz8TashexgITqGezR7AxIYEofAf+NL4ubtzj/f2jSFlGjAFsvQEV9XRcHDlD+RYEy
+ zS7oi+BsY5NQSWah0ZR0HBSyWJTWtT3VT4HOaeMPuXe22FTi0xwQhDa0G0A9+ARuvyJdOig
+ 5xoyM3+UyBusSoCzj6ahpJsfT8I4dTqEE3QOFNaDr68Q3hmnQDAjLmCJoWHd/VKdXxhKEkr
+ DfY6fiEiAojjs3gFqXriqj9/CJ3J5veVw7ifFmf5fmhp1u0EU8lfAY9T6qHkKZ+pA7boS4Q
+ MaaL0h8eBiyX/I/DR8coV8w5QKJrFRkE+YLEFgeSHAnHwF2n4dwjCgCUy0C22jhDHYpnCqC
+ PxExw8ZEXg6lFTvxZ8qR5avkshQNHGNW+4wmZ/56pwcsZpHTsBBSfrylBIXObkfvmPnPZ1a
+ fK7OhkHHpsVyxFZ3OMn1qPW9g+W8Y=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,819 +64,482 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds support for mailbox of rnp PMD driver,
-mailbox is used for communication between pf with fw
-and vf driver.
+add get device hardware capability function
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/rnp/base/meson.build |  12 +
- drivers/net/rnp/base/rnp_hw.h    |  77 +++++
- drivers/net/rnp/base/rnp_mbx.c   | 507 +++++++++++++++++++++++++++++++
- drivers/net/rnp/base/rnp_mbx.h   |  59 ++++
- drivers/net/rnp/base/rnp_osdep.h |  55 ++++
- drivers/net/rnp/meson.build      |   5 +
- drivers/net/rnp/rnp.h            |  19 ++
- 7 files changed, 734 insertions(+)
- create mode 100644 drivers/net/rnp/base/meson.build
- create mode 100644 drivers/net/rnp/base/rnp_hw.h
- create mode 100644 drivers/net/rnp/base/rnp_mbx.c
- create mode 100644 drivers/net/rnp/base/rnp_mbx.h
- create mode 100644 drivers/net/rnp/base/rnp_osdep.h
+ doc/guides/nics/features/rnp.ini  |   1 +
+ doc/guides/nics/rnp.rst           |   1 +
+ drivers/net/rnp/base/rnp_fw_cmd.c |  20 ++++++
+ drivers/net/rnp/base/rnp_fw_cmd.h |  80 +++++++++++++++++++++
+ drivers/net/rnp/base/rnp_mbx_fw.c |  55 ++++++++++++++
+ drivers/net/rnp/base/rnp_mbx_fw.h |   1 +
+ drivers/net/rnp/rnp.h             |  73 ++++++++++++++++++-
+ drivers/net/rnp/rnp_ethdev.c      | 115 +++++++++++++++++++++++++++++-
+ 8 files changed, 344 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/rnp/base/meson.build b/drivers/net/rnp/base/meson.build
-new file mode 100644
-index 0000000000..22e7d0ee4b
---- /dev/null
-+++ b/drivers/net/rnp/base/meson.build
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(C) 2023 Mucse IC Design Ltd.
-+
-+sources = [
-+        'rnp_mbx.c',
-+]
-+
-+c_args = cflags
-+base_lib = static_library('rnp_base', sources,
-+    dependencies: [static_rte_eal, static_rte_net, static_rte_ethdev],
-+    c_args: c_args)
-+base_objs = base_lib.extract_all_objects(recursive: true)
-diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-new file mode 100644
-index 0000000000..326b850560
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -0,0 +1,77 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#ifndef _RNP_HW_H_
-+#define _RNP_HW_H_
-+
-+#include "rnp_osdep.h"
-+
-+struct rnp_hw;
-+/* Mailbox Operate Info */
-+enum RNP_MBX_ID {
-+	RNP_MBX_PF = 0,
-+	RNP_MBX_VF,
-+	RNP_MBX_FW = 64,
-+};
-+
-+struct rnp_mbx_ops {
-+	int (*read)(struct rnp_hw *hw,
-+			u32 *msg,
-+			u16 size,
-+			enum RNP_MBX_ID);
-+	int (*write)(struct rnp_hw *hw,
-+			u32 *msg,
-+			u16 size,
-+			enum RNP_MBX_ID);
-+	int (*read_posted)(struct rnp_hw *hw,
-+			u32 *msg,
-+			u16 size,
-+			enum RNP_MBX_ID);
-+	int (*write_posted)(struct rnp_hw *hw,
-+			u32 *msg,
-+			u16 size,
-+			enum RNP_MBX_ID);
-+	int (*check_for_msg)(struct rnp_hw *hw, enum RNP_MBX_ID);
-+	int (*check_for_ack)(struct rnp_hw *hw, enum RNP_MBX_ID);
-+	int (*check_for_rst)(struct rnp_hw *hw, enum RNP_MBX_ID);
-+};
-+
-+struct rnp_mbx_sync {
-+	u16 req;
-+	u16 ack;
-+};
-+
-+struct rnp_mbx_info {
-+	const struct rnp_mbx_ops *ops;
-+	u32 usec_delay;         /* retry interval delay time */
-+	u32 timeout;            /* retry ops timeout limit */
-+	u16 size;               /* data buffer size*/
-+	u16 vf_num;             /* Virtual Function num */
-+	u16 pf_num;             /* Physical Function num */
-+	u16 sriov_st;           /* Sriov state */
-+	u16 en_vfs;		/* user enabled vf num */
-+	bool is_pf;
-+
-+	struct rnp_mbx_sync syncs[RNP_MBX_FW + 1];
-+};
-+
-+struct rnp_eth_adapter;
-+
-+/* hw device description */
-+struct rnp_hw {
-+	struct rnp_eth_adapter *back;	/* backup to the adapter handle */
-+	void __iomem *e_ctrl;           /* ethernet control bar */
-+	void __iomem *c_ctrl;           /* crypto control bar */
-+	u32 c_blen;                     /* crypto bar size */
-+
-+	/* pci device info */
-+	u16 device_id;
-+	u16 vendor_id;
-+	u16 max_vfs;			/* device max support vf */
-+
-+	u16 pf_vf_num;
-+	struct rnp_mbx_info mbx;
-+};
-+
-+#endif /* _RNP_HW_H_ */
-diff --git a/drivers/net/rnp/base/rnp_mbx.c b/drivers/net/rnp/base/rnp_mbx.c
-new file mode 100644
-index 0000000000..09d490cc54
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_mbx.c
-@@ -0,0 +1,507 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#include <string.h>
-+
-+#include "rnp_hw.h"
-+#include "rnp_mbx.h"
-+#include "../rnp.h"
-+
-+/****************************PF MBX OPS************************************/
-+static inline u16
-+rnp_mbx_get_req(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	u32 reg = 0;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		reg = RNP_FW2PF_SYNC;
-+	else
-+		reg = RNP_VF2PF_SYNC(mbx_id);
-+	mb();
-+
-+	return RNP_E_REG_RD(hw, reg) & RNP_MBX_SYNC_REQ_MASK;
-+}
-+
-+static inline u16
-+rnp_mbx_get_ack(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	u32 reg = 0;
-+	u32 v = 0;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		reg = RNP_FW2PF_SYNC;
-+	else
-+		reg = RNP_VF2PF_SYNC(mbx_id);
-+	mb();
-+	v = RNP_E_REG_RD(hw, reg);
-+
-+	return (v & RNP_MBX_SYNC_ACK_MASK) >> RNP_MBX_SYNC_ACK_S;
-+}
-+
-+/*
-+ * rnp_mbx_inc_pf_ack - increase ack num of mailbox sync info
-+ * @hw pointer to the HW structure
-+ * @sync_base: addr of sync
-+ */
+diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
+index 2ad04ee330..6766130a68 100644
+--- a/doc/guides/nics/features/rnp.ini
++++ b/doc/guides/nics/features/rnp.ini
+@@ -4,5 +4,6 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Speed capabilities   = Y
+ Linux                = Y
+ x86-64               = Y
+diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
+index 77337a68ad..d6934ffdb9 100644
+--- a/doc/guides/nics/rnp.rst
++++ b/doc/guides/nics/rnp.rst
+@@ -57,3 +57,4 @@ rte_eth APIs
+ Listed below are the rte_eth functions supported:
+ * ``rte_eth_dev_close``
+ * ``rte_eth_dev_stop``
++* ``rte_eth_dev_infos_get``
+diff --git a/drivers/net/rnp/base/rnp_fw_cmd.c b/drivers/net/rnp/base/rnp_fw_cmd.c
+index 676c5a2521..3891249499 100644
+--- a/drivers/net/rnp/base/rnp_fw_cmd.c
++++ b/drivers/net/rnp/base/rnp_fw_cmd.c
+@@ -51,6 +51,23 @@ rnp_build_get_macaddress_req(struct rnp_mbx_fw_cmd_req *req,
+ 	arg->pfvf_num = req_arg->param1;
+ }
+ 
 +static inline void
-+rnp_mbx_inc_pf_req(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
++rnp_build_get_lane_status_req(struct rnp_mbx_fw_cmd_req *req,
++			      struct rnp_fw_req_arg *req_arg,
++			      void *cookie)
 +{
-+	u32 sync_base;
-+	u32 req;
-+	u32 v;
++	struct rnp_get_lane_st_req *arg = (struct rnp_get_lane_st_req *)req->data;
 +
-+	if (mbx_id == RNP_MBX_FW)
-+		sync_base = RNP_PF2FW_SYNC;
-+	else
-+		sync_base = RNP_PF2VF_SYNC(mbx_id);
-+	v = RNP_E_REG_RD(hw, sync_base);
-+	req = (v & RNP_MBX_SYNC_REQ_MASK);
-+	req++;
-+	/* clear sync req value */
-+	v &= ~(RNP_MBX_SYNC_REQ_MASK);
-+	v |= req;
++	req->flags = 0;
++	req->opcode = RNP_GET_LANE_STATUS;
++	req->datalen = sizeof(*arg);
++	req->cookie = cookie;
++	req->reply_lo = 0;
++	req->reply_hi = 0;
 +
-+	mb();
-+	RNP_E_REG_WR(hw, sync_base, v);
++	arg->nr_lane = req_arg->param0;
 +}
 +
-+/*
-+ * rnp_mbx_inc_pf_ack - increase ack num of maixbox sync info
-+ * @hw pointer to the HW structure
-+ * @sync_base: addr of sync
-+ */
-+static inline void
-+rnp_mbx_inc_pf_ack(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	u32 ack;
-+	u32 reg;
-+	u32 v;
+ int rnp_build_fwcmd_req(struct rnp_mbx_fw_cmd_req *req,
+ 			struct rnp_fw_req_arg *arg,
+ 			void *cookie)
+@@ -67,6 +84,9 @@ int rnp_build_fwcmd_req(struct rnp_mbx_fw_cmd_req *req,
+ 	case RNP_GET_MAC_ADDRESS:
+ 		rnp_build_get_macaddress_req(req, arg, cookie);
+ 		break;
++	case RNP_GET_LANE_STATUS:
++		rnp_build_get_lane_status_req(req, arg, cookie);
++		break;
+ 	default:
+ 		err = -EOPNOTSUPP;
+ 	}
+diff --git a/drivers/net/rnp/base/rnp_fw_cmd.h b/drivers/net/rnp/base/rnp_fw_cmd.h
+index 87f0823dba..5f60ac6187 100644
+--- a/drivers/net/rnp/base/rnp_fw_cmd.h
++++ b/drivers/net/rnp/base/rnp_fw_cmd.h
+@@ -129,6 +129,80 @@ struct rnp_mac_addr_rep {
+ 	u32 pcode;
+ };
+ 
++#define RNP_SPEED_CAP_UNKNOWN    (0)
++#define RNP_SPEED_CAP_10M_FULL   RTE_BIT32(2)
++#define RNP_SPEED_CAP_100M_FULL  RTE_BIT32(3)
++#define RNP_SPEED_CAP_1GB_FULL   RTE_BIT32(4)
++#define RNP_SPEED_CAP_10GB_FULL  RTE_BIT32(5)
++#define RNP_SPEED_CAP_40GB_FULL  RTE_BIT32(6)
++#define RNP_SPEED_CAP_25GB_FULL  RTE_BIT32(7)
++#define RNP_SPEED_CAP_50GB_FULL  RTE_BIT32(8)
++#define RNP_SPEED_CAP_100GB_FULL RTE_BIT32(9)
++#define RNP_SPEED_CAP_10M_HALF   RTE_BIT32(10)
++#define RNP_SPEED_CAP_100M_HALF  RTE_BIT32(11)
++#define RNP_SPEED_CAP_1GB_HALF   RTE_BIT32(12)
 +
-+	if (mbx_id == RNP_MBX_FW)
-+		reg = RNP_PF2FW_SYNC;
-+	else
-+		reg = RNP_PF2VF_SYNC(mbx_id);
-+	v = RNP_E_REG_RD(hw, reg);
-+	ack = (v & RNP_MBX_SYNC_ACK_MASK) >> RNP_MBX_SYNC_ACK_S;
-+	ack++;
-+	/* clear old sync ack */
-+	v &= ~RNP_MBX_SYNC_ACK_MASK;
-+	v |= (ack << RNP_MBX_SYNC_ACK_S);
-+	mb();
-+	RNP_E_REG_WR(hw, reg, v);
-+}
-+
-+static void
-+rnp_mbx_write_msg(struct rnp_hw *hw,
-+		  u32 *msg, u16 size,
-+		  enum RNP_MBX_ID mbx_id)
-+{
-+	u32 msg_base;
-+	u16 i = 0;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		msg_base = RNP_FW2PF_MSG_DATA;
-+	else
-+		msg_base = RNP_PF2VF_MSG_DATA(mbx_id);
-+	for (i = 0; i < size; i++)
-+		RNP_E_REG_WR(hw, msg_base + i * 4, msg[i]);
-+}
-+
-+static void
-+rnp_mbx_read_msg(struct rnp_hw *hw,
-+		 u32 *msg, u16 size,
-+		 enum RNP_MBX_ID mbx_id)
-+{
-+	u32 msg_base;
-+	u16 i = 0;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		msg_base = RNP_FW2PF_MSG_DATA;
-+	else
-+		msg_base = RNP_PF2VF_MSG_DATA(mbx_id);
-+	for (i = 0; i < size; i++)
-+		msg[i] = RNP_E_REG_RD(hw, msg_base + 4 * i);
-+	mb();
-+	/* clear msg cmd */
-+	RNP_E_REG_WR(hw, msg_base, 0);
-+}
-+
-+/*
-+ *  rnp_poll_for_msg - Wait for message notification
-+ *  @hw: pointer to the HW structure
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if it successfully received a message notification
-+ */
-+static int
-+rnp_poll_for_msg(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	u32 countdown = mbx->timeout;
-+
-+	if (!countdown || !mbx->ops->check_for_msg)
-+		goto out;
-+
-+	while (countdown && mbx->ops->check_for_msg(hw, mbx_id)) {
-+		countdown--;
-+		if (!countdown)
-+			break;
-+		udelay(mbx->usec_delay);
-+	}
-+out:
-+	return countdown ? 0 : -ETIMEDOUT;
-+}
-+
-+/*
-+ *  rnp_poll_for_ack - Wait for message acknowledgment
-+ *  @hw: pointer to the HW structure
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if it successfully received a message acknowledgment
-+ */
-+static int
-+rnp_poll_for_ack(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	u32 countdown = mbx->timeout;
-+
-+	if (!countdown || !mbx->ops->check_for_ack)
-+		goto out;
-+
-+	while (countdown && mbx->ops->check_for_ack(hw, mbx_id)) {
-+		countdown--;
-+		if (!countdown)
-+			break;
-+		udelay(mbx->usec_delay);
-+	}
-+
-+out:
-+	return countdown ? 0 : -ETIMEDOUT;
-+}
-+
-+static int
-+rnp_read_mbx_msg(struct rnp_hw *hw, u32 *msg, u16 size,
-+		 enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	int ret = RNP_ERR_MBX;
-+
-+	if (size > mbx->size)
-+		return -EINVAL;
-+	if (mbx->ops->read)
-+		return mbx->ops->read(hw, msg, size, mbx_id);
-+	return ret;
-+}
-+
-+static int
-+rnp_write_mbx_msg(struct rnp_hw *hw, u32 *msg, u16 size,
-+		  enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	int ret = RNP_ERR_MBX;
-+
-+	/* exit if either we can't write or there isn't a defined timeout */
-+	if (size > mbx->size)
-+		return -EINVAL;
-+	if (mbx->ops->write)
-+		return mbx->ops->write(hw, msg, size, mbx_id);
-+	return ret;
-+}
-+
-+/*
-+ *  rnp_obtain_mbx_lock_pf - obtain mailbox lock
-+ *  @hw: pointer to the HW structure
-+ *  @ctrl_base: ctrl mbx addr
-+ *
-+ *  return SUCCESS if we obtained the mailbox lock
-+ */
-+static int rnp_obtain_mbx_lock_pf(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	int ret_val = -ETIMEDOUT;
-+	u32 try_cnt = 5000;  /* 500ms */
-+	u32 ctrl_base;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		ctrl_base = RNP_PF2FW_MBX_CTRL;
-+	else
-+		ctrl_base = RNP_PF2VF_MBX_CTRL(mbx_id);
-+	while (try_cnt-- > 0) {
-+		/* take ownership of the buffer */
-+		RNP_E_REG_WR(hw, ctrl_base, RNP_MBX_CTRL_PF_HOLD);
-+		wmb();
-+		/* reserve mailbox for pf used */
-+		if (RNP_E_REG_RD(hw, ctrl_base) & RNP_MBX_CTRL_PF_HOLD)
-+			return 0;
-+		udelay(100);
-+	}
-+
-+	RNP_PMD_LOG(WARNING, "%s: failed to get:lock",
-+			__func__);
-+	return ret_val;
-+}
-+
-+static void
-+rnp_obtain_mbx_unlock_pf(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	u32 ctrl_base;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		ctrl_base = RNP_PF2FW_MBX_CTRL;
-+	else
-+		ctrl_base = RNP_PF2VF_MBX_CTRL(mbx_id);
-+	RNP_E_REG_WR(hw, ctrl_base, 0);
-+}
-+
-+static void
-+rnp_mbx_send_irq_pf(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	u32 ctrl_base;
-+
-+	if (mbx_id == RNP_MBX_FW)
-+		ctrl_base = RNP_PF2FW_MBX_CTRL;
-+	else
-+		ctrl_base = RNP_PF2VF_MBX_CTRL(mbx_id);
-+
-+	RNP_E_REG_WR(hw, ctrl_base, RNP_MBX_CTRL_REQ);
-+}
-+/*
-+ *  rnp_read_mbx_pf - Read a message from the mailbox
-+ *  @hw: pointer to the HW structure
-+ *  @msg: The message buffer
-+ *  @size: Length of buffer
-+ *  @mbx_id: id of request mbx target
-+ *
-+ *  This function copies a message from the mailbox buffer to the caller's
-+ *  memory buffer.  The presumption is that the caller knows that there was
-+ *  a message due to a VF/FW request so no polling for message is needed.
-+ */
-+static int rnp_read_mbx_pf(struct rnp_hw *hw, u32 *msg,
-+			   u16 size, enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_sync *sync = &hw->mbx.syncs[mbx_id];
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	int ret_val = -EBUSY;
-+
-+	if (size > mbx->size) {
-+		RNP_PMD_LOG(ERR, "%s: mbx msg block size:%d should <%d",
-+				__func__, size, mbx->size);
-+		return -EINVAL;
-+	}
-+	memset(msg, 0, sizeof(*msg) * size);
-+	/* lock the mailbox to prevent pf/vf race condition */
-+	ret_val = rnp_obtain_mbx_lock_pf(hw, mbx_id);
-+	if (ret_val)
-+		goto out_no_read;
-+	/* copy the message from the mailbox memory buffer */
-+	rnp_mbx_read_msg(hw, msg, size, mbx_id);
-+	/* update req. sync with fw or vf */
-+	sync->req = rnp_mbx_get_req(hw, mbx_id);
-+	/* Acknowledge receipt and release mailbox, then we're done */
-+	rnp_mbx_inc_pf_ack(hw, mbx_id);
-+	mb();
-+	/* free ownership of the buffer */
-+	rnp_obtain_mbx_unlock_pf(hw, mbx_id);
-+
-+out_no_read:
-+
-+	return ret_val;
-+}
-+
-+/*
-+ *  rnp_write_mbx_pf - Places a message in the mailbox
-+ *  @hw: pointer to the HW structure
-+ *  @msg: The message buffer
-+ *  @size: Length of buffer
-+ *  @mbx_id: id of request mbx target
-+ *
-+ *  returns SUCCESS if it successfully copied message into the buffer
-+ */
-+static int rnp_write_mbx_pf(struct rnp_hw *hw, u32 *msg, u16 size,
-+			    enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_sync *sync = &hw->mbx.syncs[mbx_id];
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	int ret_val = 0;
-+
-+	if (size > mbx->size) {
-+		RNP_PMD_LOG(ERR, "%s: size:%d should <%d", __func__, size,
-+				mbx->size);
-+		return -EINVAL;
-+	}
-+	/* lock the mailbox to prevent pf/vf/cpu race condition */
-+	ret_val = rnp_obtain_mbx_lock_pf(hw, mbx_id);
-+	if (ret_val) {
-+		RNP_PMD_LOG(ERR, "%s: get mbx:%d wlock failed. "
-+				"msg:0x%08x-0x%08x", __func__, mbx_id,
-+				msg[0], msg[1]);
-+		goto out_no_write;
-+	}
-+	/* copy the caller specified message to the mailbox memory buffer */
-+	rnp_mbx_write_msg(hw, msg, size, mbx_id);
-+	/* flush msg and acks as we are overwriting the message buffer */
-+	sync->ack = rnp_mbx_get_ack(hw, mbx_id);
-+	rnp_mbx_inc_pf_req(hw, mbx_id);
-+	udelay(300);
-+	mb();
-+	/* interrupt VF/FW to tell it a message has been sent and release buf */
-+	rnp_mbx_send_irq_pf(hw, mbx_id);
-+
-+out_no_write:
-+
-+	return ret_val;
-+}
-+
-+/*
-+ *  rnp_read_posted_mbx - Wait for message notification and receive message
-+ *  @hw: pointer to the HW structure
-+ *  @msg: The message buffer
-+ *  @size: Length of buffer
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if it successfully received a message notification and
-+ *  copied it into the receive buffer.
-+ */
-+static int32_t
-+rnp_read_posted_mbx(struct rnp_hw *hw,
-+		    u32 *msg, u16 size, enum RNP_MBX_ID mbx_id)
-+{
-+	int ret_val = -EINVAL;
-+
-+	ret_val = rnp_poll_for_msg(hw, mbx_id);
-+	/* if ack received read message, otherwise we timed out */
-+	if (!ret_val)
-+		return rnp_read_mbx_msg(hw, msg, size, mbx_id);
-+	return ret_val;
-+}
-+
-+/*
-+ *  rnp_write_posted_mbx - Write a message to the mailbox, wait for ack
-+ *  @hw: pointer to the HW structure
-+ *  @msg: The message buffer
-+ *  @size: Length of buffer
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if it successfully copied message into the buffer and
-+ *  received an ack to that message within delay * timeout period
-+ */
-+static int rnp_write_posted_mbx(struct rnp_hw *hw,
-+				u32 *msg, u16 size,
-+				enum RNP_MBX_ID mbx_id)
-+{
-+	int ret_val = RNP_ERR_MBX;
-+
-+	ret_val = rnp_write_mbx_msg(hw, msg, size, mbx_id);
-+	if (ret_val < 0)
-+		return ret_val;
-+	/* if msg sent wait until we receive an ack */
-+	return rnp_poll_for_ack(hw, mbx_id);
-+}
-+
-+/*
-+ *  rnp_check_for_msg_pf - checks to see if the VF/FW has sent mail
-+ *  @hw: pointer to the HW structure
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if the VF has set the Status bit or else ERR_MBX
-+ */
-+static int rnp_check_for_msg_pf(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_sync *sync = &hw->mbx.syncs[mbx_id];
-+	int ret_val = RNP_ERR_MBX;
-+
-+	if (rnp_mbx_get_req(hw, mbx_id) != sync->req)
-+		ret_val = 0;
-+
-+	return ret_val;
-+}
-+
-+/*
-+ *  rnp_check_for_ack_pf - checks to see if the VF/FW has ACKed
-+ *  @hw: pointer to the HW structure
-+ *  @mbx_id: id of mailbox to write
-+ *
-+ *  returns SUCCESS if the VF has set the Status bit or else ERR_MBX
-+ */
-+static int rnp_check_for_ack_pf(struct rnp_hw *hw, enum RNP_MBX_ID mbx_id)
-+{
-+	struct rnp_mbx_sync *sync = &hw->mbx.syncs[mbx_id];
-+	int ret_val = RNP_ERR_MBX;
-+
-+	if (rnp_mbx_get_ack(hw, mbx_id) != sync->ack)
-+		ret_val = 0;
-+
-+	return ret_val;
-+}
-+
-+const struct rnp_mbx_ops rnp_mbx_ops_pf = {
-+	.read = rnp_read_mbx_pf,
-+	.write = rnp_write_mbx_pf,
-+	.read_posted = rnp_read_posted_mbx,
-+	.write_posted = rnp_write_posted_mbx,
-+	.check_for_msg = rnp_check_for_msg_pf,
-+	.check_for_ack = rnp_check_for_ack_pf,
++enum rnp_pma_phy_type {
++	RNP_PHY_TYPE_NONE = 0,
++	RNP_PHY_TYPE_1G_BASE_KX,
++	RNP_PHY_TYPE_SGMII,
++	RNP_PHY_TYPE_10G_BASE_KR,
++	RNP_PHY_TYPE_25G_BASE_KR,
++	RNP_PHY_TYPE_40G_BASE_KR4,
++	RNP_PHY_TYPE_10G_BASE_SR,
++	RNP_PHY_TYPE_40G_BASE_SR4,
++	RNP_PHY_TYPE_40G_BASE_CR4,
++	RNP_PHY_TYPE_40G_BASE_LR4,
++	RNP_PHY_TYPE_10G_BASE_LR,
++	RNP_PHY_TYPE_10G_BASE_ER,
++	RNP_PHY_TYPE_10G_TP,
 +};
 +
-+static u32 rnp_get_pfvfnum(struct rnp_hw *hw)
++struct rnp_lane_stat_rep {
++	u8 nr_lane;		/* 0-3 cur port correspond with hw lane */
++	u8 pci_gen		: 4; /* nic cur pci speed genX: 1,2,3 */
++	u8 pci_lanes		: 4; /* nic cur pci x1 x2 x4 x8 x16 */
++	u8 pma_type;
++	u8 phy_type;		/* interface media type */
++
++	u16 linkup		: 1; /* cur port link state */
++	u16 duplex		: 1; /* duplex state only RJ45 valid */
++	u16 autoneg		: 1; /* autoneg state */
++	u16 fec			: 1; /* fec state */
++	u16 rev_an		: 1;
++	u16 link_traing		: 1; /* link-traing state */
++	u16 media_available	: 1;
++	u16 is_sgmii		: 1; /* 1: Twisted Pair 0: FIBRE */
++	u16 link_fault		: 4;
++#define RNP_LINK_LINK_FAULT	RTE_BIT32(0)
++#define RNP_LINK_TX_FAULT	RTE_BIT32(1)
++#define RNP_LINK_RX_FAULT	RTE_BIT32(2)
++#define RNP_LINK_REMOTE_FAULT	RTE_BIT32(3)
++	u16 is_backplane	: 1;   /* Backplane Mode */
++	u16 is_speed_10G_1G_auto_switch_enabled : 1;
++	u16 rsvd0		: 2;
++	union {
++		u8 phy_addr;	/* Phy MDIO address */
++		struct {
++			u8 mod_abs : 1;
++			u8 fault   : 1;
++			u8 tx_dis  : 1;
++			u8 los     : 1;
++			u8 rsvd1   : 4;
++		} sfp;
++	};
++	u8 sfp_connector;
++	u32 speed;		/* Current Speed Value */
++
++	u32 si_main;
++	u32 si_pre;
++	u32 si_post;
++	u32 si_tx_boost;
++	u32 supported_link;	/* Cur nic Support Link cap */
++	u32 phy_id;
++	u32 rsvd;
++};
++
+ #define RNP_FW_REP_DATA_NUM	(40)
+ struct rnp_mbx_fw_cmd_reply {
+ 	u16 flags;
+@@ -174,6 +248,12 @@ struct rnp_get_phy_ablity {
+ 	u32 rsv[7];
+ };
+ 
++struct rnp_get_lane_st_req {
++	u32 nr_lane;
++
++	u32 rsv[7];
++};
++
+ struct rnp_mbx_fw_cmd_req {
+ 	u16 flags;
+ 	u16 opcode;
+diff --git a/drivers/net/rnp/base/rnp_mbx_fw.c b/drivers/net/rnp/base/rnp_mbx_fw.c
+index 43197cb4c6..065fc9c2e7 100644
+--- a/drivers/net/rnp/base/rnp_mbx_fw.c
++++ b/drivers/net/rnp/base/rnp_mbx_fw.c
+@@ -335,3 +335,58 @@ rnp_mbx_fw_get_macaddr(struct rnp_eth_port *port,
+ 
+ 	return -ENOMSG;
+ }
++
++int
++rnp_mbx_fw_get_lane_stat(struct rnp_eth_port *port)
 +{
-+	u32 val = 0;
++	struct rnp_phy_meta *phy_meta = &port->attr.phy_meta;
++	u8 data[RNP_FW_REP_DATA_NUM] = {0};
++	struct rnp_lane_stat_rep *lane_stat;
++	u32 nr_lane = port->attr.nr_lane;
++	struct rnp_fw_req_arg arg;
++	u32 user_set_speed = 0;
++	int err;
 +
-+	val = RNP_C_REG_RD(hw, RNP_SRIOV_INFO);
++	RTE_BUILD_BUG_ON(sizeof(*lane_stat) != RNP_FW_REP_DATA_NUM);
++	memset(&arg, 0, sizeof(arg));
++	lane_stat = (struct rnp_lane_stat_rep *)&data;
++	arg.opcode = RNP_GET_LANE_STATUS;
++	arg.param0 = nr_lane;
 +
-+	return val >> RNP_PFVF_SHIFT;
-+}
-+
-+static void rnp_mbx_reset(struct rnp_hw *hw)
-+{
-+	struct rnp_mbx_sync *sync = hw->mbx.syncs;
-+	int idx = 0;
-+	u32 v = 0;
-+
-+	for (idx = 0; idx < hw->mbx.en_vfs; idx++) {
-+		v = RNP_E_REG_RD(hw, RNP_VF2PF_SYNC(idx));
-+		sync[idx].ack = (v & RNP_MBX_SYNC_ACK_MASK) >> RNP_MBX_SYNC_ACK_S;
-+		sync[idx].req = v & RNP_MBX_SYNC_REQ_MASK;
-+		/* release pf<->vf pf used buffer lock */
-+		RNP_E_REG_WR(hw, RNP_PF2VF_MBX_CTRL(idx), 0);
++	err = rnp_fw_send_cmd(port, &arg, &data);
++	if (err) {
++		RNP_PMD_LOG(ERR, "%s: failed. err:%d", __func__, err);
++		return err;
 +	}
-+	/* reset pf->fw status */
-+	v = RNP_E_REG_RD(hw, RNP_FW2PF_SYNC);
-+	sync[RNP_MBX_FW].ack = (v & RNP_MBX_SYNC_ACK_MASK) >> RNP_MBX_SYNC_ACK_S;
-+	sync[RNP_MBX_FW].req = v & RNP_MBX_SYNC_REQ_MASK;
++	phy_meta->supported_link = lane_stat->supported_link;
++	phy_meta->is_backplane = lane_stat->is_backplane;
++	phy_meta->phy_identifier = lane_stat->phy_addr;
++	phy_meta->link_autoneg = lane_stat->autoneg;
++	phy_meta->link_duplex = lane_stat->duplex;
++	phy_meta->phy_type = lane_stat->phy_type;
++	phy_meta->is_sgmii = lane_stat->is_sgmii;
++	phy_meta->fec = lane_stat->fec;
 +
-+	RNP_PMD_LOG(INFO, "now fw_req %d fw_ack %d",
-+			hw->mbx.syncs[idx].req, hw->mbx.syncs[idx].ack);
-+	/* release pf->fw buffer lock */
-+	RNP_E_REG_WR(hw, RNP_PF2FW_MBX_CTRL, 0);
-+	/* setup mailbox vec id */
-+	RNP_E_REG_WR(hw, RNP_FW2PF_MBOX_VEC, RNP_MISC_VEC_ID);
-+	/* enable 0-31 vf interrupt */
-+	RNP_E_REG_WR(hw, RNP_PF2VF_INTR_MASK(0), 0);
-+	/* enable 32-63 vf interrupt */
-+	RNP_E_REG_WR(hw, RNP_PF2VF_INTR_MASK(33), 0);
-+	/* enable firmware interrupt */
-+	RNP_E_REG_WR(hw, RNP_FW2PF_INTR_MASK, 0);
-+	RNP_C_REG_WR(hw, RNP_SRIOV_ADDR_CTRL, RNP_SRIOV_ADDR_EN);
-+}
-+
-+int rnp_init_mbx_pf(struct rnp_hw *hw)
-+{
-+	struct rnp_proc_priv *proc_priv = RNP_DEV_TO_PROC_PRIV(hw->back->eth_dev);
-+	struct rnp_mbx_info *mbx = &hw->mbx;
-+	u32 pf_vf_num;
-+
-+	pf_vf_num = rnp_get_pfvfnum(hw);
-+	mbx->usec_delay = RNP_MBX_DELAY_US;
-+	mbx->timeout = RNP_MBX_MAX_TM_SEC / mbx->usec_delay;
-+	mbx->size = RNP_MBX_MSG_BLOCK_SIZE;
-+	mbx->pf_num = (pf_vf_num & RNP_PF_BIT_MASK) ? 1 : 0;
-+	mbx->vf_num = UINT16_MAX;
-+	mbx->ops = &rnp_mbx_ops_pf;
-+	proc_priv->mbx_ops = &rnp_mbx_ops_pf;
-+	hw->pf_vf_num = pf_vf_num;
-+	mbx->is_pf = 1;
-+	rnp_mbx_reset(hw);
++	if (phy_meta->is_sgmii) {
++		phy_meta->media_type = RNP_MEDIA_TYPE_COPPER;
++		phy_meta->supported_link |=
++			RNP_SPEED_CAP_100M_HALF | RNP_SPEED_CAP_10M_HALF;
++	} else if (phy_meta->is_backplane) {
++		phy_meta->media_type = RNP_MEDIA_TYPE_BACKPLANE;
++	} else {
++		phy_meta->media_type = RNP_MEDIA_TYPE_FIBER;
++	}
++	if (phy_meta->phy_type == RNP_PHY_TYPE_10G_TP) {
++		phy_meta->supported_link |= RNP_SPEED_CAP_1GB_FULL;
++		phy_meta->supported_link |= RNP_SPEED_CAP_10GB_FULL;
++	}
++	if (!phy_meta->link_autoneg &&
++	    phy_meta->media_type == RNP_MEDIA_TYPE_COPPER) {
++		/* firmware don't support upload info just use user info */
++		user_set_speed = port->eth_dev->data->dev_conf.link_speeds;
++		if (!(user_set_speed & RTE_ETH_LINK_SPEED_FIXED))
++			phy_meta->link_autoneg = 1;
++	}
 +
 +	return 0;
 +}
-diff --git a/drivers/net/rnp/base/rnp_mbx.h b/drivers/net/rnp/base/rnp_mbx.h
-new file mode 100644
-index 0000000000..3d3d298047
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_mbx.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#ifndef __RNP_MBX_H__
-+#define __RNP_MBX_H__
-+
-+#include "rnp_osdep.h"
-+
-+#include "rnp_hw.h"
-+
-+#define RNP_SRIOV_ADDR_CTRL	(0x7982fc)
-+#define RNP_SRIOV_ADDR_EN      RTE_BIT32(0)
-+#define RNP_SRIOV_INFO		(0x75f000)
-+#define RNP_PFVF_SHIFT		(4)
-+#define RNP_PF_BIT_MASK		RTE_BIT32(6)
-+
-+#define RNP_MBX_MSG_BLOCK_SIZE	(14)
-+/* mailbox share memory detail divide */
-+/*|0------------------15|---------------------31|
-+ *|------master-req-----|-------master-ack------|
-+ *|------slave-req------|-------slave-ack-------|
-+ *|---------------------|-----------------------|
-+ *|		data(56 bytes)			|
-+ *----------------------------------------------|
-+ */
-+/* FW <--> PF */
-+#define RNP_FW2PF_MBOX_VEC	_MSI_(0x5300)
-+#define RNP_FW2PF_MEM_BASE	_MSI_(0xa000)
-+#define RNP_FW2PF_SYNC		(RNP_FW2PF_MEM_BASE + 0)
-+#define RNP_PF2FW_SYNC		(RNP_FW2PF_MEM_BASE + 4)
-+#define RNP_FW2PF_MSG_DATA	(RNP_FW2PF_MEM_BASE + 8)
-+#define RNP_PF2FW_MBX_CTRL	_MSI_(0xa100)
-+#define RNP_FW2PF_MBX_CTRL	_MSI_(0xa200)
-+#define RNP_FW2PF_INTR_MASK	_MSI_(0xa300)
-+/* PF <-> VF */
-+#define RNP_PF2VF_MBOX_VEC(vf)	_MSI_(0x5100 + (4 * (vf)))
-+#define RNP_PF2VF_MEM_BASE(vf)	_MSI_(0x6000 + (64 * (vf)))
-+#define RNP_PF2VF_SYNC(vf)	(RNP_PF2VF_MEM_BASE(vf) + 0)
-+#define RNP_VF2PF_SYNC(vf)	(RNP_PF2VF_MEM_BASE(vf) + 4)
-+#define RNP_PF2VF_MSG_DATA(vf)	(RNP_PF2VF_MEM_BASE(vf) + 8)
-+#define RNP_VF2PF_MBX_CTRL(vf)	_MSI_(0x7000 + ((vf) * 4))
-+#define RNP_PF2VF_MBX_CTRL(vf)	_MSI_(0x7100 + ((vf) * 4))
-+#define RNP_PF2VF_INTR_MASK(vf)	_MSI_(0x7200 + ((((vf) & 32) / 32) * 0x4))
-+/* sync memory define */
-+#define RNP_MBX_SYNC_REQ_MASK	RTE_GENMASK32(15, 0)
-+#define RNP_MBX_SYNC_ACK_MASK	RTE_GENMASK32(31, 16)
-+#define RNP_MBX_SYNC_ACK_S	(16)
-+/* for pf <--> fw/vf */
-+#define RNP_MBX_CTRL_PF_HOLD	RTE_BIT32(3) /* VF:RO, PF:WR */
-+#define RNP_MBX_CTRL_REQ	RTE_BIT32(0) /* msg write request */
-+
-+#define RNP_MBX_DELAY_US	(100) /* delay us for retry */
-+#define RNP_MBX_MAX_TM_SEC	(4 * 1000 * 1000) /* 4 sec */
-+
-+#define RNP_ERR_MBX		(-100)
-+int rnp_init_mbx_pf(struct rnp_hw *hw);
-+
-+#endif /* _RNP_MBX_H_ */
-diff --git a/drivers/net/rnp/base/rnp_osdep.h b/drivers/net/rnp/base/rnp_osdep.h
-new file mode 100644
-index 0000000000..ded32ba37f
---- /dev/null
-+++ b/drivers/net/rnp/base/rnp_osdep.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2023 Mucse IC Design Ltd.
-+ */
-+
-+#ifndef _RNP_OSDEP_H
-+#define _RNP_OSDEP_H
-+
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <inttypes.h>
-+
-+#include <rte_io.h>
-+#include <rte_log.h>
-+#include <rte_cycles.h>
-+
-+#include "../rnp_logs.h"
-+
-+typedef uint8_t u8;
-+typedef uint16_t u16;
-+typedef uint32_t u32;
-+
-+#define mb()	rte_mb()
-+#define wmb()	rte_wmb()
-+
-+#define udelay(x) rte_delay_us(x)
-+
-+#define _MSI_(off)	((off) + (0xA0000))
-+
-+#define __iomem
-+static inline u32
-+rnp_reg_read32(const void *base, size_t offset)
-+{
-+	u32 v = rte_read32(((const u8 *)base + offset));
-+
-+	RNP_PMD_REG_LOG(DEBUG, "offset=%p val=%#"PRIx32"", offset, v);
-+	return v;
-+}
-+
-+static inline void
-+rnp_reg_write32(volatile void *base, size_t offset, u32 val)
-+{
-+	RNP_PMD_REG_LOG(DEBUG, "offset=%p val=%#"PRIx32"", offset, val);
-+	rte_write32(val, ((volatile u8 *)base + offset));
-+}
-+
-+#define RNP_REG_RD(base, offset)	rnp_reg_read32(base, offset)
-+#define RNP_REG_WR(base, offset, value)	rnp_reg_write32(base, offset, value)
-+#define RNP_E_REG_WR(hw, off, value)	rnp_reg_write32((hw)->e_ctrl, (off), (value))
-+#define RNP_E_REG_RD(hw, off)		rnp_reg_read32((hw)->e_ctrl, (off))
-+#define RNP_C_REG_WR(hw, off, value)	\
-+	rnp_reg_write32((hw)->c_ctrl, ((off) & ((hw)->c_blen - 1)), (value))
-+#define RNP_C_REG_RD(hw, off)		\
-+	rnp_reg_read32((hw)->c_ctrl, ((off) & ((hw)->c_blen - 1)))
-+
-+#endif /* _RNP_OSDEP_H_ */
-diff --git a/drivers/net/rnp/meson.build b/drivers/net/rnp/meson.build
-index a52b85c48f..af7957d5c6 100644
---- a/drivers/net/rnp/meson.build
-+++ b/drivers/net/rnp/meson.build
-@@ -13,6 +13,11 @@ if arch_subdir == 'riscv'
-     subdir_done()
- endif
+diff --git a/drivers/net/rnp/base/rnp_mbx_fw.h b/drivers/net/rnp/base/rnp_mbx_fw.h
+index 255d913a97..fd0110b539 100644
+--- a/drivers/net/rnp/base/rnp_mbx_fw.h
++++ b/drivers/net/rnp/base/rnp_mbx_fw.h
+@@ -12,6 +12,7 @@ struct rnp_eth_port;
  
-+subdir('base')
-+objs = [base_objs]
-+
-+includes += include_directories('base')
-+
- sources = files(
-         'rnp_ethdev.c',
- )
+ int rnp_mbx_fw_get_macaddr(struct rnp_eth_port *port, u8 *mac_addr);
+ int rnp_mbx_fw_get_capability(struct rnp_eth_port *port);
++int rnp_mbx_fw_get_lane_stat(struct rnp_eth_port *port);
+ int rnp_mbx_fw_reset_phy(struct rnp_hw *hw);
+ int rnp_fw_init(struct rnp_hw *hw);
+ 
 diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index 4413a03d9d..acace75765 100644
+index 1750b6f0f3..1e315310d2 100644
 --- a/drivers/net/rnp/rnp.h
 +++ b/drivers/net/rnp/rnp.h
-@@ -5,12 +5,31 @@
- #ifndef __RNP_H__
- #define __RNP_H__
+@@ -17,10 +17,81 @@
+ #define RNP_MAX_VF_NUM		(64)
+ #define RNP_MISC_VEC_ID		RTE_INTR_VEC_ZERO_OFFSET
+ /* maximum frame size supported */
++#define RNP_ETH_OVERHEAD \
++	(RTE_ETHER_HDR_LEN + RTE_VLAN_HLEN * 2)
+ #define RNP_MAC_MAXFRM_SIZE	(9590)
  
-+#include <ethdev_driver.h>
-+#include <rte_interrupts.h>
-+
-+#include "base/rnp_hw.h"
-+
- #define PCI_VENDOR_ID_MUCSE	(0x8848)
- #define RNP_DEV_ID_N10G_X2	(0x1000)
- #define RNP_DEV_ID_N10G_X4	(0x1020)
- #define RNP_DEV_ID_N10G_X8	(0x1060)
-+#define RNP_MAX_VF_NUM		(64)
-+#define RNP_MISC_VEC_ID		RTE_INTR_VEC_ZERO_OFFSET
-+
-+struct rnp_proc_priv {
-+	const struct rnp_mbx_ops *mbx_ops;
++#define RNP_RX_MAX_MTU_SEG	(64)
++#define RNP_TX_MAX_MTU_SEG	(32)
++#define RNP_RX_MAX_SEG		(150)
++#define RNP_TX_MAX_SEG		(UINT8_MAX)
++#define RNP_MIN_DMA_BUF_SIZE	(1024)
++/* rss support info */
++#define RNP_RSS_INDIR_SIZE	(128)
++#define RNP_MAX_HASH_KEY_SIZE	(10)
++#define RNP_SUPPORT_RSS_OFFLOAD_ALL ( \
++		RTE_ETH_RSS_IPV4 | \
++		RTE_ETH_RSS_FRAG_IPV4 | \
++		RTE_ETH_RSS_NONFRAG_IPV4_OTHER | \
++		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++		RTE_ETH_RSS_NONFRAG_IPV4_SCTP |\
++		RTE_ETH_RSS_IPV6 | \
++		RTE_ETH_RSS_FRAG_IPV6 | \
++		RTE_ETH_RSS_NONFRAG_IPV6_OTHER | \
++		RTE_ETH_RSS_IPV6_EX | \
++		RTE_ETH_RSS_IPV6_TCP_EX | \
++		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
++		RTE_ETH_RSS_IPV6_UDP_EX | \
++		RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++/* Ring info special */
++#define RNP_MAX_BD_COUNT	(4096)
++#define RNP_MIN_BD_COUNT	(128)
++#define RNP_BD_ALIGN		(2)
++/* Hardware resource info */
++#define RNP_MAX_MSIX_NUM		(64)
++#define RNP_MAX_RX_QUEUE_NUM		(128)
++#define RNP_MAX_TX_QUEUE_NUM		(128)
++/* l2 filter hardware resource info */
++#define RNP_MAX_MAC_ADDRS		(128)	/* max unicast extract mac num */
++#define RNP_MAX_HASH_UC_MAC_SIZE	(4096)	/* max unicast hash mac num */
++#define RNP_MAX_HASH_MC_MAC_SIZE	(4096)	/* max multicast hash mac num */
++#define RNP_MAX_UC_HASH_TABLE		(128)	/* max unicast hash mac filter table */
++#define RNP_MAC_MC_HASH_TABLE		(128)	/* max multicast hash mac filter table*/
++/* hardware media type */
++enum rnp_media_type {
++	RNP_MEDIA_TYPE_UNKNOWN,
++	RNP_MEDIA_TYPE_FIBER,
++	RNP_MEDIA_TYPE_COPPER,
++	RNP_MEDIA_TYPE_BACKPLANE,
++	RNP_MEDIA_TYPE_NONE,
 +};
++
++struct rnp_phy_meta {
++	uint32_t speed_cap;
++	uint32_t supported_link;
++	uint16_t link_duplex;
++	uint16_t link_autoneg;
++	uint32_t phy_identifier;
++	uint16_t phy_type;
++	uint8_t media_type;
++	bool is_sgmii;
++	bool is_backplane;
++	bool fec;
++};
++
+ struct rnp_port_attr {
+-	uint16_t max_mac_addrs;	/* max support mac address */
++	uint16_t max_mac_addrs;	  /* max support mac address */
++	uint16_t max_uc_mac_hash; /* max hash unicast mac size */
++	uint16_t max_mc_mac_hash; /* max hash multicast mac size */
++	uint16_t uc_hash_tb_size; /* max unicast hash table block num */
++	uint16_t mc_hash_tb_size; /* max multicast hash table block num */
++	uint16_t max_rx_queues;   /* belong to this port rxq resource */
++	uint16_t max_tx_queues;   /* belong to this port txq resource */
++
++	struct rnp_phy_meta phy_meta;
++
+ 	uint16_t port_id;	/* platform manage port sequence id */
+ 	uint8_t port_offset;	/* port queue offset */
+ 	uint8_t sw_id;		/* software port init sequence id */
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index ad77c48e61..30f5b8a1bf 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -10,6 +10,8 @@
+ #include "rnp.h"
+ #include "rnp_logs.h"
+ #include "base/rnp_mbx.h"
++#include "base/rnp_fw_cmd.h"
++#include "base/rnp_mbx_fw.h"
+ #include "base/rnp_mac.h"
+ #include "base/rnp_eth_regs.h"
+ #include "base/rnp_common.h"
+@@ -87,10 +89,112 @@ static int rnp_dev_close(struct rte_eth_dev *eth_dev)
+ 	return 0;
+ }
  
- struct rnp_eth_port {
++static uint32_t
++rnp_get_speed_caps(struct rte_eth_dev *dev)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	uint32_t speed_cap = 0;
++	uint32_t i = 0, speed;
++	uint32_t support_link;
++	uint32_t link_types;
++
++	support_link = port->attr.phy_meta.supported_link;
++	link_types = rte_popcount64(support_link);
++	if (!link_types)
++		return 0;
++	for (i = 0; i < link_types; i++) {
++		speed = ffs(support_link) - 1;
++		switch (RTE_BIT32(speed)) {
++		case RNP_SPEED_CAP_10M_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_10M;
++			break;
++		case RNP_SPEED_CAP_100M_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_100M;
++			break;
++		case RNP_SPEED_CAP_1GB_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_1G;
++			break;
++		case RNP_SPEED_CAP_10GB_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_10G;
++			break;
++		case RNP_SPEED_CAP_40GB_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_40G;
++			break;
++		case RNP_SPEED_CAP_25GB_FULL:
++			speed_cap |= RTE_ETH_LINK_SPEED_25G;
++			break;
++		case RNP_SPEED_CAP_10M_HALF:
++			speed_cap |= RTE_ETH_LINK_SPEED_10M_HD;
++			break;
++		case RNP_SPEED_CAP_100M_HALF:
++			speed_cap |= RTE_ETH_LINK_SPEED_100M_HD;
++			break;
++		default:
++			speed_cap |= 0;
++		}
++		support_link &= ~RTE_BIT32(speed);
++	}
++	if (!port->attr.phy_meta.link_autoneg)
++		speed_cap |= RTE_ETH_LINK_SPEED_FIXED;
++
++	return speed_cap;
++}
++
++static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
++			     struct rte_eth_dev_info *dev_info)
++{
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
++
++	PMD_INIT_FUNC_TRACE();
++
++	dev_info->rx_desc_lim = (struct rte_eth_desc_lim){
++		.nb_max = RNP_MAX_BD_COUNT,
++		.nb_min = RNP_MIN_BD_COUNT,
++		.nb_align = RNP_BD_ALIGN,
++		.nb_seg_max = RNP_RX_MAX_SEG,
++		.nb_mtu_seg_max = RNP_RX_MAX_MTU_SEG,
++	};
++	dev_info->tx_desc_lim = (struct rte_eth_desc_lim){
++		.nb_max = RNP_MAX_BD_COUNT,
++		.nb_min = RNP_MIN_BD_COUNT,
++		.nb_align = RNP_BD_ALIGN,
++		.nb_seg_max = RNP_TX_MAX_SEG,
++		.nb_mtu_seg_max = RNP_TX_MAX_MTU_SEG,
++	};
++
++	dev_info->max_rx_pktlen = RNP_MAC_MAXFRM_SIZE;
++	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
++	dev_info->max_mtu = dev_info->max_rx_pktlen - RNP_ETH_OVERHEAD;
++	dev_info->min_rx_bufsize = RNP_MIN_DMA_BUF_SIZE;
++	dev_info->max_rx_queues = port->attr.max_rx_queues;
++	dev_info->max_tx_queues = port->attr.max_tx_queues;
++	/* mac filter info */
++	dev_info->max_mac_addrs = port->attr.max_mac_addrs;
++	dev_info->max_hash_mac_addrs = port->attr.max_uc_mac_hash;
++	/* for RSS offload just support four tuple */
++	dev_info->flow_type_rss_offloads = RNP_SUPPORT_RSS_OFFLOAD_ALL;
++	dev_info->hash_key_size = RNP_MAX_HASH_KEY_SIZE * sizeof(uint32_t);
++	dev_info->reta_size = RNP_RSS_INDIR_SIZE;
++	/* speed cap info */
++	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
++
++	dev_info->default_rxconf = (struct rte_eth_rxconf) {
++		.rx_drop_en = 0,
++		.offloads = 0,
++	};
++
++	dev_info->default_txconf = (struct rte_eth_txconf) {
++		.offloads = 0,
++	};
++
++	return 0;
++}
++
+ /* Features supported by this driver */
+ static const struct eth_dev_ops rnp_eth_dev_ops = {
+ 	.dev_close                    = rnp_dev_close,
+ 	.dev_stop                     = rnp_dev_stop,
++	.dev_infos_get                = rnp_dev_infos_get,
  };
  
-+struct rnp_eth_adapter {
-+	struct rnp_hw hw;
-+	struct rte_eth_dev *eth_dev; /* alloc eth_dev by platform */
-+};
+ static void
+@@ -109,7 +213,16 @@ rnp_setup_port_attr(struct rnp_eth_port *port,
+ 	attr->port_offset = RNP_E_REG_RD(hw, RNP_TC_PORT_OFFSET(lane));
+ 	attr->nr_lane = lane;
+ 	attr->sw_id = sw_id;
+-	attr->max_mac_addrs = 1;
 +
-+#define RNP_DEV_TO_PROC_PRIV(eth_dev) \
-+	((struct rnp_proc_priv *)(eth_dev)->process_private)
++	attr->max_rx_queues = RNP_MAX_RX_QUEUE_NUM / hw->max_port_num;
++	attr->max_tx_queues = RNP_MAX_TX_QUEUE_NUM / hw->max_port_num;
 +
- #endif /* __RNP_H__ */
++	attr->max_mac_addrs = RNP_MAX_MAC_ADDRS;
++	attr->max_uc_mac_hash = RNP_MAX_HASH_UC_MAC_SIZE;
++	attr->max_mc_mac_hash = RNP_MAX_HASH_MC_MAC_SIZE;
++	attr->uc_hash_tb_size = RNP_MAX_UC_HASH_TABLE;
++	attr->mc_hash_tb_size = RNP_MAC_MC_HASH_TABLE;
++	rnp_mbx_fw_get_lane_stat(port);
+ 
+ 	RNP_PMD_INFO("PF[%d] SW-ETH-PORT[%d]<->PHY_LANE[%d]",
+ 			hw->mbx.pf_num, sw_id, lane);
 -- 
 2.25.1
 
