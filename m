@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2220C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12126C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:16:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 587BB40661;
-	Fri, 28 Mar 2025 12:16:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7009040665;
+	Fri, 28 Mar 2025 12:16:35 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 0E26A40653
- for <dev@dpdk.org>; Fri, 28 Mar 2025 12:16:31 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CA4414065C;
+ Fri, 28 Mar 2025 12:16:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743160593; x=1774696593;
+ t=1743160594; x=1774696594;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=IfeKqJhhW7BJRZdZ0WRdGEBedqcVYRWIFZ5eeHEL8vA=;
- b=g1CAxKmG7IRKYx3qoOZfYw2qOqWzxmGjz/gXK1u17HcSrSIScBxOa5xW
- X8lSQ+gnmyhMN8W2kVbQhrZK2ysmqbugF07Qu6UpSv8PMwgDsjdnbzudv
- 0Yi7ylSZAvmkPq+3pORPyMNe9AokRGFCbqQ7EojFqhEEYxK9PJA3GnfgV
- h3gPwgJpChns8U9SH32+QjkY0n4tVLDp/vvjId+/d6NDUxCgDxmHnsBQJ
- wgeOxWmBmDEgiyFO1OEwhGx0I+y2Gr24iCiodM4UP6xj7xs2S3rCHYLFn
- 55vcIIJ1/RdeDHPIQ/LS6BV1pSUkLPe5mBC2VqjCF5mUXPzCNUSr8b6/s A==;
-X-CSE-ConnectionGUID: LcCjAi2vTGCI64wbjIAdgg==
-X-CSE-MsgGUID: +WBzcKvRQ6C8c6B5ZZm+rQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435463"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435463"
+ bh=0tFhfciWvwoyFiDHFtOyKO0CNmgPvuFXoXtuBgq9nVI=;
+ b=A6KOXHTu+Od4PmKN9JI1y6dUJk6whFBvftFPdSCFUJ0NUOgAl7VcmEH4
+ ejPblzC6LsFTsz/DsGNgnwU2IvUdcRPSZu/OYSu8MG3ulXyicc3SV0TXY
+ iP9UUjmE2rD2z7W2+ho4tEsP+IovKCuGLUY/00Dq1Do4vSc1XNTkfGDK3
+ yOcmDwU76Gkx8PaiNK0zRMjg40Tz26jP+TxnA/pUDVGiMM98uYKJuktov
+ LibFzJkYBODaIONCUCXQnPfKBfRYghCdHzS06J1H69hqDaEGo1AC7dlVt
+ vocSfmJ3L4Pp1wjChn/j5JVPCylvrEAcIiyHWKLOOM7ILVJh5r3qHH2C0 w==;
+X-CSE-ConnectionGUID: i2YIeZqCSJ+MxMRlZxCI7A==
+X-CSE-MsgGUID: nOTDPA5uSfevoccxL1pA7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435465"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435465"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 04:16:32 -0700
-X-CSE-ConnectionGUID: zzPenC1aSPy79VYYIG3FRQ==
-X-CSE-MsgGUID: Z9N9cXwmRDCVevZS+LV+zQ==
+ 28 Mar 2025 04:16:34 -0700
+X-CSE-ConnectionGUID: 2tGj+KHeQpe0gV+WfsdtZw==
+X-CSE-MsgGUID: f5Yim+/uRPa1yawrn99LNA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423286"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423289"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:30 -0700
+ by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:31 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: David Marchand <david.marchand@redhat.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 2/9] net/iavf/base: remove unused meson.build file
-Date: Fri, 28 Mar 2025 11:16:14 +0000
-Message-ID: <20250328111621.2665257-3-bruce.richardson@intel.com>
+ Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org
+Subject: [PATCH v4 3/9] net/ixgbe/base: correct definition of macro
+Date: Fri, 28 Mar 2025 11:16:15 +0000
+Message-ID: <20250328111621.2665257-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328111621.2665257-1-bruce.richardson@intel.com>
 References: <20250326155230.1315056-1-bruce.richardson@intel.com>
@@ -63,33 +63,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The meson.build file in the base folder was never used, as the base
-files were just included in the main sources list for iavf.
+The definition of IXGBE_LE32_TO_CPUS macro is meant to modify the value
+in place - similar to the le32_to_cpus() macro in kernel. Fixing the
+definition allows us to remove some warning flags, and removes the need
+for the uintptr_t typecasts.
 
-Fixes: f1fdc9ddba5e ("drivers: move iavf common folder to iavf net")
+Fixes: aa4fc14d2cee ("ixgbe: update base driver")
+Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/base/meson.build | 10 ----------
- 1 file changed, 10 deletions(-)
- delete mode 100644 drivers/net/intel/iavf/base/meson.build
+ drivers/net/intel/ixgbe/base/ixgbe_common.c | 4 ++--
+ drivers/net/intel/ixgbe/base/ixgbe_osdep.h  | 2 +-
+ drivers/net/intel/ixgbe/base/meson.build    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/base/meson.build b/drivers/net/intel/iavf/base/meson.build
-deleted file mode 100644
-index 273e88e921..0000000000
---- a/drivers/net/intel/iavf/base/meson.build
-+++ /dev/null
-@@ -1,10 +0,0 @@
--# SPDX-License-Identifier: BSD-3-Clause
--# Copyright(c) 2019-2021 Intel Corporation
--
--sources = files('iavf_adminq.c', 'iavf_common.c', 'iavf_impl.c')
--
--if cc.has_argument('-Wno-pointer-to-int-cast')
--        cflags += '-Wno-pointer-to-int-cast'
--endif
--
--require_iova_in_mbuf = false
+diff --git a/drivers/net/intel/ixgbe/base/ixgbe_common.c b/drivers/net/intel/ixgbe/base/ixgbe_common.c
+index d6425c5b78..fbc9605e4d 100644
+--- a/drivers/net/intel/ixgbe/base/ixgbe_common.c
++++ b/drivers/net/intel/ixgbe/base/ixgbe_common.c
+@@ -4610,7 +4610,7 @@ s32 ixgbe_host_interface_command(struct ixgbe_hw *hw, u32 *buffer,
+ 	/* first pull in the header so we know the buffer length */
+ 	for (bi = 0; bi < dword_len; bi++) {
+ 		buffer[bi] = IXGBE_READ_REG_ARRAY(hw, IXGBE_FLEX_MNG, bi);
+-		IXGBE_LE32_TO_CPUS((uintptr_t)&buffer[bi]);
++		IXGBE_LE32_TO_CPUS(&buffer[bi]);
+ 	}
+ 
+ 	/*
+@@ -4646,7 +4646,7 @@ s32 ixgbe_host_interface_command(struct ixgbe_hw *hw, u32 *buffer,
+ 	/* Pull in the rest of the buffer (bi is where we left off) */
+ 	for (; bi <= dword_len; bi++) {
+ 		buffer[bi] = IXGBE_READ_REG_ARRAY(hw, IXGBE_FLEX_MNG, bi);
+-		IXGBE_LE32_TO_CPUS((uintptr_t)&buffer[bi]);
++		IXGBE_LE32_TO_CPUS(&buffer[bi]);
+ 	}
+ 
+ rel_out:
+diff --git a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
+index cffc6a4ce8..6e5f7b4ae8 100644
+--- a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
++++ b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
+@@ -83,7 +83,7 @@ enum {
+ #define IXGBE_LE16_TO_CPU(_i)  rte_le_to_cpu_16(_i)
+ #define IXGBE_LE32_TO_CPU(_i)  rte_le_to_cpu_32(_i)
+ #define IXGBE_LE64_TO_CPU(_i)  rte_le_to_cpu_64(_i)
+-#define IXGBE_LE32_TO_CPUS(_i) rte_le_to_cpu_32(_i)
++#define IXGBE_LE32_TO_CPUS(_i) do { *_i = rte_le_to_cpu_32(*_i); } while(0)
+ #define IXGBE_CPU_TO_BE16(_i)  rte_cpu_to_be_16(_i)
+ #define IXGBE_CPU_TO_BE32(_i)  rte_cpu_to_be_32(_i)
+ #define IXGBE_BE32_TO_CPU(_i)  rte_be_to_cpu_32(_i)
+diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
+index 7e4fbdfa0f..f8b2ee6341 100644
+--- a/drivers/net/intel/ixgbe/base/meson.build
++++ b/drivers/net/intel/ixgbe/base/meson.build
+@@ -19,7 +19,7 @@ sources = [
+         'ixgbe_x550.c',
+ ]
+ 
+-error_cflags = ['-Wno-unused-value',
++error_cflags = [
+         '-Wno-unused-but-set-variable',
+         '-Wno-unused-parameter',
+         ]
 -- 
 2.45.2
 
