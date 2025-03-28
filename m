@@ -2,39 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E469C3600B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 19:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C34C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:15:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFDE140654;
-	Thu, 27 Mar 2025 20:30:20 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id A8575402A7
- for <dev@dpdk.org>; Thu, 27 Mar 2025 20:30:19 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 64C3B21733;
- Thu, 27 Mar 2025 20:30:19 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 46DFD40261;
+	Fri, 28 Mar 2025 06:15:00 +0100 (CET)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 122B34021E
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:14:56 +0100 (CET)
+X-QQ-mid: bizesmtpsz12t1743138889tzi8px
+X-QQ-Originating-IP: LMi9qSMRPYtn0XQlehn8srZH6+irBonubJ3G/rDM4AA=
+Received: from steven.localdomain ( [103.233.162.252])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Fri, 28 Mar 2025 13:14:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4705048113088406320
+EX-QQ-RecipientCnt: 5
+From: Wenbo Cao <caowenbo@mucse.com>
+To: thomas@monjalon.net
+Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
+ Wenbo Cao <caowenbo@mucse.com>
+Subject: [PATCH v17 00/29] [v17]drivers/net Add Support mucse N10 Pmd Driver
+Date: Fri, 28 Mar 2025 05:14:15 +0000
+Message-Id: <20250328051444.1019208-1-caowenbo@mucse.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] mempool: micro optimizations
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Thu, 27 Mar 2025 20:30:18 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB7D@smartserver.smartshare.dk>
-In-Reply-To: <Z-WHzgriLwWC_3Mu@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mempool: micro optimizations
-Thread-Index: AdufO+79NeVnobzHRtGUckI3dsV5cwAD228A
-References: <20250226155923.128859-1-mb@smartsharesystems.com>
- <Z-WHzgriLwWC_3Mu@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
-	<dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: NRnIqN6C21qSzXQhvBM/aIUTXJn2Qmo4BfOnqbRSheU4gItjlzfik3fl
+ bAG6fpWEFn5eatbtikZ4mgoS813Pq4x3qY2jCyeB8zsveTzQvPBVoZIp4q/0fkW/0fMkty8
+ OD9GhfHkaVM87GgizqLzo44V+kiMGgb6X8H7cdCXorY6+OSYz2TcH2M08WEob/I093IZ/Qt
+ V3/VJdkA7reV2Arwt7XhUGajdX2/wmRY7C3dszvUjEm9KUZhGfio7CyzeKZbJu++lh06cUf
+ tK6nYgMQzxVK+G8bMdyGga5K3CLhLOjaGa3Z3evnDfQJt3U83kezEbmXlEYyec3YUL6i1Xp
+ XI/Xyis1od6smI/G0eOa4snxp5xEdAHfrMc/C4W0L/F6+4t1iXpInpPNYbl7yaICPgelK0w
+ ZV4AaK0D8c+ekf19wILpTqint2faRI1McgZfMBsobXhkMCsTNSbNLq5vvkNxgweaj0sW+D6
+ O1qGbj57GK3kml/36thLnaQ0igYkNdCCDNU7Z9tVmnk2hSYluVVXuSiZMq4prX83Mf5ZJ9v
+ abuvbgS2NwnRB+CYtYZLMIgvEOMPQhX1wLJai0S91ES4xqyQoJ1ZT+vml3fW9LggiRB17A9
+ vZI4WcYctyfGFYj3JI3xffJ8aVSKg00mvSCWxfHAMeAjW2xT8yyNuon+1rBJnXG6adn/rf0
+ xX4Nc+Hn51rDprHfP672Ip/04f6ws9CWVrfKa6tzmO1RMUpmp2grwmF/BJwBtI8ziV25Weh
+ MscJTSQO7kMvD3lzovM16SIFIyyF+wKyYW+QE5neZtOk8CwDLaJz7LC1USvc2sFLroP8tJM
+ N21uhMZf6jR0A6aj5EXWq+FdLlfOTMSmCdyLTNSOFk2giSMqQ1S0bgfm2LVgWkTwhsSCGFC
+ 2ad2oaSYjfT1OWaBF6fQ3Mom9h5aGYlfzLaobrSmwL1QDe7aQ+B7/mSKtStCwHPsla7qVst
+ mDRrmhis9+xqv+bsrg22N2Lbnc3SwZOdW/okAnCnAOFdVGsBoN5Hz031Kd7Ro6RLtp8J06W
+ x9kr+pnHIUY60mgkTsS0Ro03Lexj0nGSUzC9+3z9P3x5DlfB4z408VH/1EirOcXaMgoOoHE
+ aZ/+AuHGnoiLjHk39O2D0U=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,219 +63,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Thursday, 27 March 2025 18.16
->=20
-> On Wed, Feb 26, 2025 at 03:59:22PM +0000, Morten Br=F8rup wrote:
-> > The comparisons lcore_id < RTE_MAX_LCORE and lcore_id !=3D =
-LCORE_ID_ANY
-> are
-> > equivalent, but the latter compiles to fewer bytes of code space.
-> > Similarly for lcore_id >=3D RTE_MAX_LCORE and lcore_id =3D=3D =
-LCORE_ID_ANY.
-> >
-> > The rte_mempool_get_ops() function is also used in the fast path, so
-> > RTE_VERIFY() was replaced by RTE_ASSERT().
-> >
-> > Compilers implicitly consider comparisons of variable =3D=3D 0 =
-likely, so
-> > unlikely() was added to the check for no mempool cache (mp-
-> >cache_size =3D=3D
-> > 0) in the rte_mempool_default_cache() function.
-> >
-> > The rte_mempool_do_generic_put() function for adding objects to a
-> mempool
-> > was refactored as follows:
-> > - The comparison for the request itself being too big, which is
-> considered
-> >   unlikely, was moved down and out of the code path where the cache
-> has
-> >   sufficient room for the added objects, which is considered the =
-most
-> >   likely code path.
-> > - Added __rte_assume() about the cache length, size and threshold,
-> for
-> >   compiler optimization when "n" is compile time constant.
-> > - Added __rte_assume() about "ret" being zero, so other functions
-> using
-> >   the value returned by this function can be potentially optimized =
-by
-> the
-> >   compiler; especially when it merges multiple sequential code paths
-> of
-> >   inlined code depending on the return value being either zero or
-> >   negative.
-> > - The refactored source code (with comments) made the separate
-> comment
-> >   describing the cache flush/add algorithm superfluous, so it was
-> removed.
-> >
-> > A few more likely()/unlikely() were added.
->=20
-> In general not a big fan of using likely/unlikely, but if they give a
-> perf
-> benefit, we should probably take them.
+For This patchset just to support the basic chip init work
+and user can just found the eth_dev, but can't control more.
+For Now just support 2*10g nic,the chip can support
+2*10g,4*10g,4*1g,8*1g,8*10g.
+The Feature rx side can support rx-cksum-offload,rss,vlan-filter
+flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
+The Feature tx side can support tx-cksum-offload,tso,vxlan-tso 
+flow director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type
+for sriov is also support.
 
-They can also be a hint to the code reviewer.
+Because of the chip design defect, for multiple-port mode
+one pci-bdf will have multiple-port (max can have four ports)
+so this code must be care of one bdf init multiple-port.
 
-The benefit varies depending on the architecture's dynamic branch =
-predictor. Some architectures don't consume a branch predictor entry if =
-the code follows the expected path (according to static branch =
-prediction); but I don't know if this is the case for architectures =
-supported by DPDK, or ancient architectures only.
+v17
+  * base 25.07 porting
+  * change rte_memcpy to memcpy
+  * doc rnp.rst remove ocp support, change nic-card description
 
-I like them enough to probably some day provide an EAL patch offering =
-superlikely() and superunlikely() based on =
-__builtin_expect_with_probability().
-I have seen compilers emit different assembly output when using =
-superlikely() vs. likely().
-Moving away the super-unlikely code from the cache lines holding the =
-common code path reduces the L1 instruction cache pressure.
+v16
+  * fixed rxq/txq stop/start not add to eth_ops as rnp doc descript.
 
-In other words: Not even a perfect dynamic branch predictor can =
-substitute all the benefits from using likely()/unlikely().
+v15:
+  * fixed scatter recv for jumbo frame test by dts mtu.
 
->=20
-> Few more comments inline below.
->=20
-> > A few comments were improved for readability.
-> >
-> > Some assertions, RTE_ASSERT(), were added. Most importantly to =
-assert
-> that
-> > the return values of the mempool drivers' enqueue and dequeue
-> operations
-> > are API compliant, i.e. 0 (for success) or negative (for failure),
-> and
-> > never positive.
-> >
-> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
->=20
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->=20
-> > ---
-> >  lib/mempool/rte_mempool.h | 67 =
-++++++++++++++++++++++---------------
-> --
-> >  1 file changed, 38 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-> > index c495cc012f..aedc100964 100644
-> > --- a/lib/mempool/rte_mempool.h
-> > +++ b/lib/mempool/rte_mempool.h
-> > @@ -334,7 +334,7 @@ struct __rte_cache_aligned rte_mempool {
-> >  #ifdef RTE_LIBRTE_MEMPOOL_STATS
-> >  #define RTE_MEMPOOL_STAT_ADD(mp, name, n) do {
-> \
-> >  		unsigned int __lcore_id =3D rte_lcore_id();
-> \
-> > -		if (likely(__lcore_id < RTE_MAX_LCORE))
-> \
-> > +		if (likely(__lcore_id !=3D LCORE_ID_ANY))
-> \
->=20
-> Is this not opening up the possibility of runtime crashes, if
-> __lcore_id is
-> invalid? I see from the commit log, you say the change in comparison
-> results in smaller code gen, but it does leave undefined behaviour =
-when
-> __lcore_id =3D=3D 500, for example.
+v14:
+  * add multicast mac filter feature for basic nic feature.
+  * fixed pvs studio low,media,high level warning as the below cmd
+    pvs-studio-analyzer analyze -f build/compile_commands.json -j 8
+    plog-converter -a GA:1,2,3 -t fullhtml PVS-Studio.log -o /root/report
 
-In this case, __lcore_id comes from rte_lcore_id(), and if that is =
-invalid, everything breaks everywhere.
+v13:
+  * Supplementary document about n10 network card characteristics.
+  * update release_25_03.rst.
+  * fixed the code style advisea Stephen Hemminger.
+  * fixed the code issue check PVS-stdio for Static compilation error.
 
->=20
-> >  			(mp)->stats[__lcore_id].name +=3D (n);
-> \
-> >  		else
-> \
-> >  			rte_atomic_fetch_add_explicit(&((mp)-
-> >stats[RTE_MAX_LCORE].name),  \
-> > @@ -751,7 +751,7 @@ extern struct rte_mempool_ops_table
-> rte_mempool_ops_table;
-> >  static inline struct rte_mempool_ops *
-> >  rte_mempool_get_ops(int ops_index)
-> >  {
-> > -	RTE_VERIFY((ops_index >=3D 0) && (ops_index <
-> RTE_MEMPOOL_MAX_OPS_IDX));
-> > +	RTE_ASSERT((ops_index >=3D 0) && (ops_index <
-> RTE_MEMPOOL_MAX_OPS_IDX));
-> >
-> >  	return &rte_mempool_ops_table.ops[ops_index];
-> >  }
-> > @@ -791,7 +791,8 @@ rte_mempool_ops_dequeue_bulk(struct rte_mempool
-> *mp,
-> >  	rte_mempool_trace_ops_dequeue_bulk(mp, obj_table, n);
-> >  	ops =3D rte_mempool_get_ops(mp->ops_index);
-> >  	ret =3D ops->dequeue(mp, obj_table, n);
-> > -	if (ret =3D=3D 0) {
-> > +	RTE_ASSERT(ret <=3D 0);
-> > +	if (likely(ret =3D=3D 0)) {
-> >  		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_bulk, 1);
-> >  		RTE_MEMPOOL_STAT_ADD(mp, get_common_pool_objs, n);
-> >  	}
-> > @@ -816,11 +817,14 @@ rte_mempool_ops_dequeue_contig_blocks(struct
-> rte_mempool *mp,
-> >  		void **first_obj_table, unsigned int n)
-> >  {
-> >  	struct rte_mempool_ops *ops;
-> > +	int ret;
-> >
-> >  	ops =3D rte_mempool_get_ops(mp->ops_index);
-> >  	RTE_ASSERT(ops->dequeue_contig_blocks !=3D NULL);
-> >  	rte_mempool_trace_ops_dequeue_contig_blocks(mp, first_obj_table,
-> n);
-> > -	return ops->dequeue_contig_blocks(mp, first_obj_table, n);
-> > +	ret =3D ops->dequeue_contig_blocks(mp, first_obj_table, n);
-> > +	RTE_ASSERT(ret <=3D 0);
-> > +	return ret;
-> >  }
-> >
-> >  /**
-> > @@ -848,6 +852,7 @@ rte_mempool_ops_enqueue_bulk(struct rte_mempool
-> *mp, void * const *obj_table,
-> >  	rte_mempool_trace_ops_enqueue_bulk(mp, obj_table, n);
-> >  	ops =3D rte_mempool_get_ops(mp->ops_index);
-> >  	ret =3D ops->enqueue(mp, obj_table, n);
-> > +	RTE_ASSERT(ret <=3D 0);
-> >  #ifdef RTE_LIBRTE_MEMPOOL_DEBUG
-> >  	if (unlikely(ret < 0))
-> >  		RTE_MEMPOOL_LOG(CRIT, "cannot enqueue %u objects to mempool
-> %s",
-> > @@ -1333,10 +1338,10 @@ rte_mempool_cache_free(struct
-> rte_mempool_cache *cache);
-> >  static __rte_always_inline struct rte_mempool_cache *
-> >  rte_mempool_default_cache(struct rte_mempool *mp, unsigned =
-lcore_id)
-> >  {
-> > -	if (mp->cache_size =3D=3D 0)
-> > +	if (unlikely(mp->cache_size =3D=3D 0))
-> >  		return NULL;
-> >
-> > -	if (lcore_id >=3D RTE_MAX_LCORE)
-> > +	if (unlikely(lcore_id =3D=3D LCORE_ID_ANY))
-> >  		return NULL;
-> >
->=20
-> Again, I'd be concerned about the resiliency of this. But I suppose
-> having
-> an invalid lcore id is just asking for problems and crashes later.
+v12:
+  * fixed __rte_packed __deprecated__ compile issue.
 
-I was through the same line of thinking...
-This introduces a risk.
-However, DPDK is built on a design requirement that parameters passed to =
-fast path APIs must be valid.
-So I trust the API contract here.
+v11:
+  * fixed array-bounds issue when used rte_memcpy src addr is
+  * not enough to hold align dst.
+  * improve efficient_code advised by Stephen
 
-And, as you say, if someone starts passing an invalid lcore_id around, =
-lots of stuff will break anyway.
+v10:
+  * fixed mingw windows meson issue
+  * rnp not support windows for now.
 
->=20
-> >  	rte_mempool_trace_default_cache(mp, lcore_id,
-> > @@ -1383,32 +1388,33 @@ rte_mempool_do_generic_put(struct =
-rte_mempool
-> *mp, void * const *obj_table,
-> >  {
+v9:
+  * fixed commit log format check by devtools.
+  * fixed code compile issue.
 
-Thank you for the feedback and ack, Bruce.
+v8:
+  * fixed codespell issue.
+  * fixed MAINTAINERS file
+
+v7:
+  * add support nic basic feature such as rss vlan strip/filter,
+  * mtu-change recv/send scater-recv/mutltiple-send.
+  * fixed code rationality, advised by Ferruh Yigit.
+v6:
+  * fixed the doc(rst) format problem advise by Thomas Monjalon
+
+v5:
+  * fixed the symbol name require by the style documentation
+
+v4:
+  * one patch has been forgot to upload :(
+
+v3:
+  * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
+  * change iobar type to void suggest by Stephen Hemminger
+  * add KMOD_DEP support for vfio-pci
+  * change run-cmd argument parse check for invalid extra_args
+
+v2:
+  * fixed MAINTAIN maillist fullname format
+  * fixed driver/net/meson the order issue of new driver to driver list
+  * improve virtual point function usage suggest by Stephen Hemminger
+
+Wenbo Cao (29):
+  net/rnp: add skeleton
+  net/rnp: add ethdev probe and remove
+  net/rnp: add log
+  net/rnp: support mailbox basic operate
+  net/rnp: add device init and uninit
+  net/rnp: add get device information operation
+  net/rnp: add support MAC promisc mode
+  net/rnp: add queue setup and release operations
+  net/rnp: add queue stop and start operations
+  net/rnp: add support device start stop operations
+  net/rnp: add RSS support operations
+  net/rnp: add support link update operations
+  net/rnp: add support link setup operations
+  net/rnp: add Rx burst simple support
+  net/rnp: add Tx burst simple support
+  net/rnp: add MTU set operation
+  net/rnp: add Rx scatter segment version
+  net/rnp: add Tx multiple segment version
+  net/rnp: add support basic stats operation
+  net/rnp: add support xstats operation
+  net/rnp: add unicast MAC filter operation
+  net/rnp: add supported packet types
+  net/rnp: add support Rx checksum offload
+  net/rnp: add support Tx TSO offload
+  net/rnp: support VLAN offloads
+  net/rnp: add support VLAN filters operations
+  net/rnp: add queue info operation
+  net/rnp: support Rx/Tx burst mode info
+  net/rnp: add multicast MAC filter operation
+
+ .mailmap                               |    1 +
+ MAINTAINERS                            |    6 +
+ doc/guides/nics/features/rnp.ini       |   34 +
+ doc/guides/nics/img/mucse_nic_port.svg | 4023 ++++++++++++++++++++++++
+ doc/guides/nics/index.rst              |    1 +
+ doc/guides/nics/rnp.rst                |  123 +
+ doc/guides/rel_notes/release_25_07.rst |    5 +
+ drivers/net/meson.build                |    1 +
+ drivers/net/rnp/base/meson.build       |   18 +
+ drivers/net/rnp/base/rnp_bdq_if.c      |  398 +++
+ drivers/net/rnp/base/rnp_bdq_if.h      |  154 +
+ drivers/net/rnp/base/rnp_bitrev.h      |   64 +
+ drivers/net/rnp/base/rnp_common.c      |  103 +
+ drivers/net/rnp/base/rnp_common.h      |   17 +
+ drivers/net/rnp/base/rnp_crc32.c       |   53 +
+ drivers/net/rnp/base/rnp_crc32.h       |   11 +
+ drivers/net/rnp/base/rnp_dma_regs.h    |   68 +
+ drivers/net/rnp/base/rnp_eth_regs.h    |   94 +
+ drivers/net/rnp/base/rnp_fw_cmd.c      |  162 +
+ drivers/net/rnp/base/rnp_fw_cmd.h      |  357 +++
+ drivers/net/rnp/base/rnp_hw.h          |  141 +
+ drivers/net/rnp/base/rnp_mac.c         |  480 +++
+ drivers/net/rnp/base/rnp_mac.h         |   36 +
+ drivers/net/rnp/base/rnp_mac_regs.h    |  210 ++
+ drivers/net/rnp/base/rnp_mbx.c         |  507 +++
+ drivers/net/rnp/base/rnp_mbx.h         |   59 +
+ drivers/net/rnp/base/rnp_mbx_fw.c      |  495 +++
+ drivers/net/rnp/base/rnp_mbx_fw.h      |   24 +
+ drivers/net/rnp/base/rnp_osdep.h       |  176 ++
+ drivers/net/rnp/meson.build            |   27 +
+ drivers/net/rnp/rnp.h                  |  262 ++
+ drivers/net/rnp/rnp_ethdev.c           | 1868 +++++++++++
+ drivers/net/rnp/rnp_link.c             |  436 +++
+ drivers/net/rnp/rnp_link.h             |   52 +
+ drivers/net/rnp/rnp_logs.h             |   36 +
+ drivers/net/rnp/rnp_rss.c              |  367 +++
+ drivers/net/rnp/rnp_rss.h              |   44 +
+ drivers/net/rnp/rnp_rxtx.c             | 1822 +++++++++++
+ drivers/net/rnp/rnp_rxtx.h             |  162 +
+ 39 files changed, 12897 insertions(+)
+ create mode 100644 doc/guides/nics/features/rnp.ini
+ create mode 100644 doc/guides/nics/img/mucse_nic_port.svg
+ create mode 100644 doc/guides/nics/rnp.rst
+ create mode 100644 drivers/net/rnp/base/meson.build
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.c
+ create mode 100644 drivers/net/rnp/base/rnp_bdq_if.h
+ create mode 100644 drivers/net/rnp/base/rnp_bitrev.h
+ create mode 100644 drivers/net/rnp/base/rnp_common.c
+ create mode 100644 drivers/net/rnp/base/rnp_common.h
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.c
+ create mode 100644 drivers/net/rnp/base/rnp_crc32.h
+ create mode 100644 drivers/net/rnp/base/rnp_dma_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c
+ create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.h
+ create mode 100644 drivers/net/rnp/base/rnp_hw.h
+ create mode 100644 drivers/net/rnp/base/rnp_mac.c
+ create mode 100644 drivers/net/rnp/base/rnp_mac.h
+ create mode 100644 drivers/net/rnp/base/rnp_mac_regs.h
+ create mode 100644 drivers/net/rnp/base/rnp_mbx.c
+ create mode 100644 drivers/net/rnp/base/rnp_mbx.h
+ create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.c
+ create mode 100644 drivers/net/rnp/base/rnp_mbx_fw.h
+ create mode 100644 drivers/net/rnp/base/rnp_osdep.h
+ create mode 100644 drivers/net/rnp/meson.build
+ create mode 100644 drivers/net/rnp/rnp.h
+ create mode 100644 drivers/net/rnp/rnp_ethdev.c
+ create mode 100644 drivers/net/rnp/rnp_link.c
+ create mode 100644 drivers/net/rnp/rnp_link.h
+ create mode 100644 drivers/net/rnp/rnp_logs.h
+ create mode 100644 drivers/net/rnp/rnp_rss.c
+ create mode 100644 drivers/net/rnp/rnp_rss.h
+ create mode 100644 drivers/net/rnp/rnp_rxtx.c
+ create mode 100644 drivers/net/rnp/rnp_rxtx.h
+
+-- 
+2.25.1
 
