@@ -1,41 +1,41 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50206C36010
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Mar 2025 13:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F543C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 10:54:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27C0140E0A;
-	Thu, 27 Mar 2025 14:49:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6877140664;
+	Fri, 28 Mar 2025 11:54:20 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 29E8040DD6
- for <dev@dpdk.org>; Thu, 27 Mar 2025 14:38:06 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 53A20402C1
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 11:54:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743082685;
+ s=mimecast20190719; t=1743159250;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=HDDOz38BH/sWxsFhc9UsFaXFNb8AEQIZqwzjFFytsvM=;
- b=CBpzlsqRfFAfyr5vSRDi0LVwemOzwhg1k3WLhGFLAdIAwqLtvSWqHk4kvHd5UAc3t45ygu
- Z5faKMIKucYKcdXh48vDQUFQ9gii68jY8jJb63aEM1a4EGbAIz5fZrJoiRd3R9ESVTe3Gq
- WiVmc7Uome1rx/Bi2Ci/DF9ejkLz3aw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=TYyxCJwiVgy4lOO0yH2TAuiTOZl0aB3P03jNddJR5vY=;
+ b=IRCpDGGamao3XVicxwc8v0zVO6xZX/bXqSdW6oDYSbIYpYz8sModup1xqTpsSb4N8tBxlI
+ fJ1LS8jpyAwGy9MZxiH3MhOSncL+9tdW99Qvdpy4OG9wPSjGYLwWrtkiIidzJ9X+aBxjSn
+ uT19QHDYEwoZn4pxiMR72WbyGa2LDDU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-473-nnZV6h7WNXGrYFiPdVhWxQ-1; Thu,
- 27 Mar 2025 09:37:53 -0400
-X-MC-Unique: nnZV6h7WNXGrYFiPdVhWxQ-1
-X-Mimecast-MFC-AGG-ID: nnZV6h7WNXGrYFiPdVhWxQ_1743082668
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-yrOswwc_OeKXUI67E2DlgA-1; Fri,
+ 28 Mar 2025 06:54:02 -0400
+X-MC-Unique: yrOswwc_OeKXUI67E2DlgA-1
+X-Mimecast-MFC-AGG-ID: yrOswwc_OeKXUI67E2DlgA_1743159237
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id EFE8A1956070; Thu, 27 Mar 2025 13:37:46 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3B9091945103; Fri, 28 Mar 2025 10:53:56 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.224.228])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 922361801747; Thu, 27 Mar 2025 13:37:20 +0000 (UTC)
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0D97319560AB; Fri, 28 Mar 2025 10:53:26 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
@@ -106,20 +106,20 @@ Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  Jasvinder Singh <jasvinder.singh@intel.com>, Gaetan Rivet <grive@u256.net>,
  Volodymyr Fialko <vfialko@marvell.com>,
  Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Subject: [PATCH v5 5/8] build: mark exported symbols
-Date: Thu, 27 Mar 2025 14:36:25 +0100
-Message-ID: <20250327133638.2983276-6-david.marchand@redhat.com>
-In-Reply-To: <20250327133638.2983276-1-david.marchand@redhat.com>
+Subject: [PATCH v6 5/8] build: mark exported symbols
+Date: Fri, 28 Mar 2025 11:52:42 +0100
+Message-ID: <20250328105250.3082414-6-david.marchand@redhat.com>
+In-Reply-To: <20250328105250.3082414-1-david.marchand@redhat.com>
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250327133638.2983276-1-david.marchand@redhat.com>
+ <20250328105250.3082414-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WaZ8AVkzrOni6dUouqH3OjhqI06FhMJCkgSE8LB8-n4_1743082668
+X-Mimecast-MFC-PROC-ID: TU8dpV7mDLbuWgDAK_lRwau9UEKfYf8ADMoZ6D8LXv4_1743159237
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Thu, 27 Mar 2025 14:49:31 +0100
+X-Mailman-Approved-At: Fri, 28 Mar 2025 11:54:18 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -141,6 +141,9 @@ get caught by drivers/meson.build.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
+Changes since v5:
+- fixed Windows symbol exports for net/mlx5,                                                        
+
 Changes since RFC v4:
 - rebased and fixed mlx5 new export,
 - moved base driver exports in a separate file,
@@ -208,7 +211,7 @@ Changes since RFC v3:
  drivers/common/mlx5/mlx5_common_utils.c       |  12 +
  drivers/common/mlx5/mlx5_devx_cmds.c          |  52 ++
  drivers/common/mlx5/mlx5_malloc.c             |   5 +
- drivers/common/mlx5/windows/mlx5_common_os.c  |   6 +
+ drivers/common/mlx5/windows/mlx5_common_os.c  |   7 +
  drivers/common/mlx5/windows/mlx5_glue.c       |   4 +-
  drivers/common/mvep/mvep_common.c             |   3 +
  drivers/common/nfp/nfp_common.c               |   9 +
@@ -546,7 +549,7 @@ Changes since RFC v3:
  lib/vhost/vhost_crypto.c                      |   7 +
  lib/vhost/vhost_user.c                        |   3 +
  lib/vhost/virtio_net.c                        |   8 +
- 396 files changed, 4556 insertions(+), 2 deletions(-)
+ 396 files changed, 4557 insertions(+), 2 deletions(-)
  create mode 100644 drivers/bus/dpaa/dpaa_bus_symbols.c
  create mode 100644 drivers/common/cnxk/roc_platform_symbols.c
  create mode 100644 drivers/common/sfc_efx/sfc_symbols.c
@@ -5072,7 +5075,7 @@ index ef6dabedbd..a2813357bd 100644
  mlx5_memory_stat_dump(void)
  {
 diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
-index 68f1981193..068e0589bd 100644
+index 68f1981193..ead2f2ac2c 100644
 --- a/drivers/common/mlx5/windows/mlx5_common_os.c
 +++ b/drivers/common/mlx5/windows/mlx5_common_os.c
 @@ -6,6 +6,7 @@
@@ -5083,7 +5086,15 @@ index 68f1981193..068e0589bd 100644
  #include <rte_mempool.h>
  #include <bus_pci_driver.h>
  #include <rte_malloc.h>
-@@ -312,6 +313,7 @@ mlx5_os_get_physical_device_ctx(struct mlx5_common_device *cdev)
+@@ -281,6 +282,7 @@ mlx5_os_open_device(struct mlx5_common_device *cdev, uint32_t classes)
+  * @return
+  *   Pointer to an `ibv_context` on success, or NULL on failure, with `rte_errno` set.
+  */
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_get_physical_device_ctx)
+ void *
+ mlx5_os_get_physical_device_ctx(struct mlx5_common_device *cdev)
+ {
+@@ -312,6 +314,7 @@ mlx5_os_get_physical_device_ctx(struct mlx5_common_device *cdev)
   * @return
   *   umem on successful registration, NULL and errno otherwise
   */
@@ -5091,7 +5102,7 @@ index 68f1981193..068e0589bd 100644
  void *
  mlx5_os_umem_reg(void *ctx, void *addr, size_t size, uint32_t access)
  {
-@@ -342,6 +344,7 @@ mlx5_os_umem_reg(void *ctx, void *addr, size_t size, uint32_t access)
+@@ -342,6 +345,7 @@ mlx5_os_umem_reg(void *ctx, void *addr, size_t size, uint32_t access)
   * @return
   *   0 on successful release, negative number otherwise
   */
@@ -5099,7 +5110,7 @@ index 68f1981193..068e0589bd 100644
  int
  mlx5_os_umem_dereg(void *pumem)
  {
-@@ -442,6 +445,7 @@ mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+@@ -442,6 +446,7 @@ mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
   *   Pointer to dereg_mr func
   *
   */
@@ -5107,7 +5118,7 @@ index 68f1981193..068e0589bd 100644
  void
  mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
  {
-@@ -453,6 +457,7 @@ mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
+@@ -453,6 +458,7 @@ mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
   * In Windows, no need to wrap the MR, no known issue for it in kernel.
   * Use the regular function to create direct MR.
   */
@@ -5115,7 +5126,7 @@ index 68f1981193..068e0589bd 100644
  int
  mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
  			    size_t length, struct mlx5_pmd_wrapped_mr *wpmd_mr)
-@@ -472,6 +477,7 @@ mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
+@@ -472,6 +478,7 @@ mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
  	return 0;
  }
  
