@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12126C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E6C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:16:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7009040665;
-	Fri, 28 Mar 2025 12:16:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E0D3940677;
+	Fri, 28 Mar 2025 12:16:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id CA4414065C;
- Fri, 28 Mar 2025 12:16:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9FC0940668;
+ Fri, 28 Mar 2025 12:16:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743160594; x=1774696594;
+ t=1743160596; x=1774696596;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=0tFhfciWvwoyFiDHFtOyKO0CNmgPvuFXoXtuBgq9nVI=;
- b=A6KOXHTu+Od4PmKN9JI1y6dUJk6whFBvftFPdSCFUJ0NUOgAl7VcmEH4
- ejPblzC6LsFTsz/DsGNgnwU2IvUdcRPSZu/OYSu8MG3ulXyicc3SV0TXY
- iP9UUjmE2rD2z7W2+ho4tEsP+IovKCuGLUY/00Dq1Do4vSc1XNTkfGDK3
- yOcmDwU76Gkx8PaiNK0zRMjg40Tz26jP+TxnA/pUDVGiMM98uYKJuktov
- LibFzJkYBODaIONCUCXQnPfKBfRYghCdHzS06J1H69hqDaEGo1AC7dlVt
- vocSfmJ3L4Pp1wjChn/j5JVPCylvrEAcIiyHWKLOOM7ILVJh5r3qHH2C0 w==;
-X-CSE-ConnectionGUID: i2YIeZqCSJ+MxMRlZxCI7A==
-X-CSE-MsgGUID: nOTDPA5uSfevoccxL1pA7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435465"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435465"
+ bh=I2L+i6K7bAziiy5Tk2INWAkXyhJSzRDIRTonCKRWtAY=;
+ b=gCUDYr4s8pFA8ElYIRLFhEf3XSNEOIHywy4cc1Gj7gD/8gE/dXk4XSAH
+ XYIWlwY95lw5XQNFUMi2Bg0Aqdr4jBwBbp9J3tn9sAAgTrMvBIFGM7jRg
+ E8jpNmM0R9DHvJWnSKryPAvrTGfL/kJkcYIuDt3f5uBAesuEAX3lh6yVy
+ FtwaHRVNFZsiONNjwPn9K2o+9JbuZ6OMishQrh62U/VA9wgf9zRy3vVyH
+ M93GcgPssvCzaDfx60nd6BziYdijuOMTvLR6e5WMCbowj3VF+p636HV4a
+ +ZnqpINxfm2XoUALwgkWy6RHYbKCkEdPDhtvln6187dCwHTHgnx85yCuH w==;
+X-CSE-ConnectionGUID: tHGpnZdlSmSvAHSOrW2AYg==
+X-CSE-MsgGUID: EiGyzF6IQK2CiGhynyz6XA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44435468"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44435468"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 04:16:34 -0700
-X-CSE-ConnectionGUID: 2tGj+KHeQpe0gV+WfsdtZw==
-X-CSE-MsgGUID: f5Yim+/uRPa1yawrn99LNA==
+ 28 Mar 2025 04:16:36 -0700
+X-CSE-ConnectionGUID: EjiqxRY/TcOCqJEv7kOnZA==
+X-CSE-MsgGUID: 6oy+gS8FQz6PGi4Za6Rpgg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423289"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="125423293"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:31 -0700
+ by orviesa006.jf.intel.com with ESMTP; 28 Mar 2025 04:16:33 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: David Marchand <david.marchand@redhat.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org
-Subject: [PATCH v4 3/9] net/ixgbe/base: correct definition of macro
-Date: Fri, 28 Mar 2025 11:16:15 +0000
-Message-ID: <20250328111621.2665257-4-bruce.richardson@intel.com>
+Subject: [PATCH v4 4/9] net/ixgbe/base: fix compilation warnings
+Date: Fri, 28 Mar 2025 11:16:16 +0000
+Message-ID: <20250328111621.2665257-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328111621.2665257-1-bruce.richardson@intel.com>
 References: <20250326155230.1315056-1-bruce.richardson@intel.com>
@@ -63,69 +63,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The definition of IXGBE_LE32_TO_CPUS macro is meant to modify the value
-in place - similar to the le32_to_cpus() macro in kernel. Fixing the
-definition allows us to remove some warning flags, and removes the need
-for the uintptr_t typecasts.
+We can remove almost all of the "unused parameter" and "unused variable"
+warnings by just improving the macro definitions in the osdep.h header.
+Remaining two instances can be fixed by just one-line additions to the
+code, so add those to give us a clean build with the warnings enabled.
 
-Fixes: aa4fc14d2cee ("ixgbe: update base driver")
+Fixes: af75078fece3 ("first public release")
+Fixes: c6cb313da739 ("net/ixgbe/base: add link management for E610")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ixgbe/base/ixgbe_common.c | 4 ++--
- drivers/net/intel/ixgbe/base/ixgbe_osdep.h  | 2 +-
- drivers/net/intel/ixgbe/base/meson.build    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/intel/ixgbe/base/ixgbe_e610.c  |  2 ++
+ drivers/net/intel/ixgbe/base/ixgbe_osdep.h | 19 +++++++++++--------
+ drivers/net/intel/ixgbe/base/meson.build   | 11 -----------
+ 3 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/base/ixgbe_common.c b/drivers/net/intel/ixgbe/base/ixgbe_common.c
-index d6425c5b78..fbc9605e4d 100644
---- a/drivers/net/intel/ixgbe/base/ixgbe_common.c
-+++ b/drivers/net/intel/ixgbe/base/ixgbe_common.c
-@@ -4610,7 +4610,7 @@ s32 ixgbe_host_interface_command(struct ixgbe_hw *hw, u32 *buffer,
- 	/* first pull in the header so we know the buffer length */
- 	for (bi = 0; bi < dword_len; bi++) {
- 		buffer[bi] = IXGBE_READ_REG_ARRAY(hw, IXGBE_FLEX_MNG, bi);
--		IXGBE_LE32_TO_CPUS((uintptr_t)&buffer[bi]);
-+		IXGBE_LE32_TO_CPUS(&buffer[bi]);
- 	}
+diff --git a/drivers/net/intel/ixgbe/base/ixgbe_e610.c b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
+index 5474c3012a..7420c78d07 100644
+--- a/drivers/net/intel/ixgbe/base/ixgbe_e610.c
++++ b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
+@@ -1054,6 +1054,7 @@ static void ixgbe_parse_vsi_func_caps(struct ixgbe_hw *hw,
+ 				      struct ixgbe_hw_func_caps *func_p,
+ 				      struct ixgbe_aci_cmd_list_caps_elem *cap)
+ {
++	UNREFERENCED_PARAMETER(cap);
+ 	func_p->guar_num_vsi = ixgbe_get_num_per_func(hw, IXGBE_MAX_VSI);
+ }
  
- 	/*
-@@ -4646,7 +4646,7 @@ s32 ixgbe_host_interface_command(struct ixgbe_hw *hw, u32 *buffer,
- 	/* Pull in the rest of the buffer (bi is where we left off) */
- 	for (; bi <= dword_len; bi++) {
- 		buffer[bi] = IXGBE_READ_REG_ARRAY(hw, IXGBE_FLEX_MNG, bi);
--		IXGBE_LE32_TO_CPUS((uintptr_t)&buffer[bi]);
-+		IXGBE_LE32_TO_CPUS(&buffer[bi]);
- 	}
+@@ -1770,6 +1771,7 @@ s32 ixgbe_aci_set_event_mask(struct ixgbe_hw *hw, u8 port_num, u16 mask)
+ 	struct ixgbe_aci_cmd_set_event_mask *cmd;
+ 	struct ixgbe_aci_desc desc;
  
- rel_out:
++	UNREFERENCED_PARAMETER(port_num);
+ 	cmd = &desc.params.set_event_mask;
+ 
+ 	ixgbe_fill_dflt_direct_cmd_desc(&desc, ixgbe_aci_opc_set_event_mask);
 diff --git a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-index cffc6a4ce8..6e5f7b4ae8 100644
+index 6e5f7b4ae8..398c38bffd 100644
 --- a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
 +++ b/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-@@ -83,7 +83,7 @@ enum {
- #define IXGBE_LE16_TO_CPU(_i)  rte_le_to_cpu_16(_i)
- #define IXGBE_LE32_TO_CPU(_i)  rte_le_to_cpu_32(_i)
- #define IXGBE_LE64_TO_CPU(_i)  rte_le_to_cpu_64(_i)
--#define IXGBE_LE32_TO_CPUS(_i) rte_le_to_cpu_32(_i)
-+#define IXGBE_LE32_TO_CPUS(_i) do { *_i = rte_le_to_cpu_32(*_i); } while(0)
- #define IXGBE_CPU_TO_BE16(_i)  rte_cpu_to_be_16(_i)
- #define IXGBE_CPU_TO_BE32(_i)  rte_cpu_to_be_32(_i)
- #define IXGBE_BE32_TO_CPU(_i)  rte_be_to_cpu_32(_i)
+@@ -57,13 +57,16 @@
+ 
+ /* Bunch of defines for shared code bogosity */
+ #ifndef UNREFERENCED_PARAMETER
+-#define UNREFERENCED_PARAMETER(_p)  
++#define UNREFERENCED_PARAMETER(_p) (void)(_p)
+ #endif
+-#define UNREFERENCED_1PARAMETER(_p) 
+-#define UNREFERENCED_2PARAMETER(_p, _q)
+-#define UNREFERENCED_3PARAMETER(_p, _q, _r) 
+-#define UNREFERENCED_4PARAMETER(_p, _q, _r, _s) 
+-#define UNREFERENCED_5PARAMETER(_p, _q, _r, _s, _t)
++#define UNREFERENCED_1PARAMETER(_p) (void)(_p)
++#define UNREFERENCED_2PARAMETER(_p, _q) do { (void)(_p); (void)(_q); } while(0)
++#define UNREFERENCED_3PARAMETER(_p, _q, _r) \
++	do { (void)(_p); (void)(_q); (void)(_r); } while(0)
++#define UNREFERENCED_4PARAMETER(_p, _q, _r, _s) \
++	do { (void)(_p); (void)(_q); (void)(_r); (void)(_s); } while(0)
++#define UNREFERENCED_5PARAMETER(_p, _q, _r, _s, _t) \
++	do { (void)(_p); (void)(_q); (void)(_r); (void)(_s); (void)(_t); } while(0)
+ 
+ /* Shared code error reporting */
+ enum {
+@@ -130,8 +133,8 @@ static inline uint32_t ixgbe_read_addr(volatile void* addr)
+ 	IXGBE_PCI_REG_ADDR((hw), (reg) + ((index) << 2))
+ 
+ /* Not implemented !! */
+-#define IXGBE_READ_PCIE_WORD(hw, reg) 0	
+-#define IXGBE_WRITE_PCIE_WORD(hw, reg, value) do { } while(0)
++#define IXGBE_READ_PCIE_WORD(hw, reg)  ((void)hw, (void)(reg), 0)
++#define IXGBE_WRITE_PCIE_WORD(hw, reg, value) do { (void)hw; (void)reg; (void)value; } while(0)
+ 
+ #define IXGBE_WRITE_FLUSH(a) IXGBE_READ_REG(a, IXGBE_STATUS)
+ 
 diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
-index 7e4fbdfa0f..f8b2ee6341 100644
+index f8b2ee6341..64e0bfd7be 100644
 --- a/drivers/net/intel/ixgbe/base/meson.build
 +++ b/drivers/net/intel/ixgbe/base/meson.build
-@@ -19,7 +19,7 @@ sources = [
+@@ -19,17 +19,6 @@ sources = [
          'ixgbe_x550.c',
  ]
  
--error_cflags = ['-Wno-unused-value',
-+error_cflags = [
-         '-Wno-unused-but-set-variable',
-         '-Wno-unused-parameter',
-         ]
+-error_cflags = [
+-        '-Wno-unused-but-set-variable',
+-        '-Wno-unused-parameter',
+-        ]
+-c_args = cflags
+-foreach flag: error_cflags
+-    if cc.has_argument(flag)
+-        c_args += flag
+-    endif
+-endforeach
+-
+ base_lib = static_library('ixgbe_base', sources,
+     dependencies: [static_rte_eal, static_rte_net],
+     c_args: c_args)
 -- 
 2.45.2
 
