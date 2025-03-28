@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256D1C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A02C3600C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:18:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F111D40DFB;
-	Fri, 28 Mar 2025 06:15:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7640640E03;
+	Fri, 28 Mar 2025 06:15:49 +0100 (CET)
 Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id 4A9D440DCE
- for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:43 +0100 (CET)
-X-QQ-mid: bizesmtpsz12t1743138939tbj47a
-X-QQ-Originating-IP: zqCT9JfNfZTX5xE2hJUXlAT0XUqLu9lFB2mGGM18ylo=
+ by mails.dpdk.org (Postfix) with ESMTP id 284C040E03
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:46 +0100 (CET)
+X-QQ-mid: bizesmtpsz12t1743138941tjp4j1
+X-QQ-Originating-IP: pJ9PmYP+GZ4PqXwGd6DtNCO+xhVB6VV3pjct/lKnfKY=
 Received: from steven.localdomain ( [103.233.162.252])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 28 Mar 2025 13:15:38 +0800 (CST)
+ id ; Fri, 28 Mar 2025 13:15:40 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 155168607836645944
+X-BIZMAIL-ID: 7697864366925224596
 EX-QQ-RecipientCnt: 5
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net
 Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
  Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v17 22/29] net/rnp: add supported packet types
-Date: Fri, 28 Mar 2025 05:14:37 +0000
-Message-Id: <20250328051444.1019208-23-caowenbo@mucse.com>
+Subject: [PATCH v17 23/29] net/rnp: add support Rx checksum offload
+Date: Fri, 28 Mar 2025 05:14:38 +0000
+Message-Id: <20250328051444.1019208-24-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250328051444.1019208-1-caowenbo@mucse.com>
 References: <20250328051444.1019208-1-caowenbo@mucse.com>
@@ -33,23 +33,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: Oel5xuXd1h7Eh9ZZSVR89C8kBYHO6vR+27Y5eHeB7PPciwMZWRY6TDD+
- +rm7zD+Pvpyvj0UpLHkCWtE8vCg3Hif1uzIifUNecTm4IWSa8FhTDtIA7b1PCIH3pSG4+0Y
- 7znzSgbys2Afb08K02YE1lFLaIsC9bZrnhIXFrQF+uKBq/aDRT3iMByPDBe2MhoFtif3OBB
- CPZH4I895UtvSJFkfZOZQKYBo+39YuYe7MYET4eJWiOJoeug49KDJK/F7KsQXTRmUKl+TNa
- sX87epsVYNW5dYLdAVU1rqA8NiLE1RtAkrd3MOE0ASUxE378aetduT2EX8rsIX0XWtTqS+d
- LcxO+nakAjbR4eAZhWfsFdU8K5ig07NAyo9h0WU71byPL3SvE3QFhiupgNYkV+Z0f7uquF2
- Bue4xJ20Tbb1Q88/KK5drotyl4O/1+2n3BQEGY/ky5a/+yxcrn5ERCeovqD9UC3voqqFXS2
- wW92tMCFM58gR0zXKYdpvL6CedsJ6zgsjxIjUTkT2rFIjTeqHHw3jKZL8shoZhX3LuADPi+
- Igt/AC+g6U+CGI7hOz64ZqEPw0yr+81BC/cvT2tEe+wccyZq3SrxZ/YcJ+Jjs4p6dxqlKhf
- EfYxYQiIKzYpU6YQVu6U8Kw0DvwxNaZ2XVmpXrJldKXcaWCISxX99aVW1p1X8+AgpayId/q
- NJAblg9sGS0kBUngk/4vXSXhp5O7lJ1N+3c5vSBiXlw+0iQUl4BtSNbI6XhnWOoe5oISoIU
- efHOKtd3/m4x0qwwqdxLYjk4qVLqRr48F1KOsRxlPf2/Wle1jBXQWrsWR2GTAlrCNmbjZgw
- Pvrc6SnEeEcPm21W83f7phnlxuLuUIn59e5wyRI0nqroZKmNXO7Pn6DI7vdjiyYWtL3nyVn
- Bc/EMrV0Ow095okBG17Llq37sIbMmIf0ajts0pXsNfHhNXQIhkuTlgjAG6ykSRn8lbFlU1d
- UqsZUG0Pjg/8qLYpHsEclY8egssnXZMs+vqcjrZsIwfzd75gHkPLWwgGABmNX1/EcDGwgQf
- 2w8eOtAfcKH9uRxpyl3DWe4CEncNDxduwGm/ROGkgSQwLVPnKj
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-XMAILINFO: MGf0zeB6Hs/wPPm0xttEWhutWOyLW3Ns3y4UlnzcBAa1cPXSarbU6GWP
+ qrsf3EEKfPHW7ErJf1m2GPAbX/aKmfyCvBMGwibfW67C+jRJPv4B2Vb0rj8ldOHgqrn2h39
+ tpKVa1XZ4+FDGRuWWi1/xHaY7lhYyspHR0BKlYSXNuBrGKTAeJ4DNXvEEAsyA932tk3RYX5
+ PUyRxfL4V3dz8xONCyiBZn0ihiyqaUG7k2RcKJJtKETNlFoWR8rm+fk+kkvOMSoFAcN6SE7
+ LaMoegnaZ2AWOtuMRJivb1Xt4hhw+KvE7zNI8iSFhnDVJqr5Vr2/eEqhaMZ3pSs8dKs/Ux3
+ Zgx9rWS0kUPIlFQUccTnm0kzEDIAOSi95FrJXYHqOU6CcHqc698u9ivJomjmGo+WR/qYamm
+ HtG/gas7nGuVVAFaiH/wo6+IDTyrSuE4ENc04Fz9ORdmDHIZGgK3RhdLDycAjXgUWQH/sXu
+ kuwApl9vRcFCG6vrHRSc8YOjsROwitDcovDfoKv2viGAB2Twk5wBLaXsaSuYHo9IN7+eqsn
+ RrEDMOzqiUUyE52mJUbBnjbhr9lu/+XIQMf1gbgBXUe8ws846DNV4qfgu7jc59KkE4ypFaE
+ Y9a80VJ9pVd2TZXG9I+CIrc9UWtXAywml6K8Ovl1tb4wmwihTVUWmNiXGmXUfaIWZN4qOHH
+ +7V5c5UpmLoBy716YzeTrgy6eD7hc9BDMAqoXsD9ZdYSBCli+EDAO62GpHRxThbV1qO0mXP
+ jgSIDIQ3P6noZWUBEl5EmfI9iTsjVDboFC1bNvnTcAAIISCp8phdvafhDYJUsiipDhCeVkg
+ Bo0C3Xow/Y37DKnye6CCH1Pdo7b9r3/yx63Vp5JLiM3bm+XpQlnBIkHRNjCzi3COm2N+2yX
+ +dIS8VYRO8RH1uVMGCdR3pbI0nClItEY6uajnaRVQuHTEb/aOxum4lj1aHvoZJzRXXYUDyY
+ gNmOuz8OCOEldTean2I9S9fGxZX9GnFSjN1HAuMpvr6X0p3r12EoMxbowZCvgqz8dtAQmn6
+ jAKd+DxSMH9lr5tB2crls93pwtyksu3iN3Bev4sA0/YhyLvDUgHa2tEHORwXo=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,193 +64,294 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support parse hw packet types result.
+Add support Rx l3/l4 checum and tunnel
+inner l3/l4, out l3 chksum.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- doc/guides/nics/features/rnp.ini  |  1 +
- doc/guides/nics/rnp.rst           |  2 ++
- drivers/net/rnp/base/rnp_bdq_if.h |  4 +++
- drivers/net/rnp/rnp_ethdev.c      | 31 +++++++++++++++++++++
- drivers/net/rnp/rnp_rxtx.c        | 45 +++++++++++++++++++++++++++++++
- 5 files changed, 83 insertions(+)
+ doc/guides/nics/features/rnp.ini    |  4 ++
+ doc/guides/nics/rnp.rst             |  1 +
+ drivers/net/rnp/base/rnp_eth_regs.h | 13 ++++
+ drivers/net/rnp/rnp.h               |  7 +++
+ drivers/net/rnp/rnp_ethdev.c        | 65 ++++++++++++++++++-
+ drivers/net/rnp/rnp_rxtx.c          | 97 ++++++++++++++++++++++++++++-
+ 6 files changed, 185 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 00b23b0fa2..eb1c27a3d3 100644
+index eb1c27a3d3..ceac0beff8 100644
 --- a/doc/guides/nics/features/rnp.ini
 +++ b/doc/guides/nics/features/rnp.ini
-@@ -7,6 +7,7 @@
- Speed capabilities   = Y
+@@ -8,6 +8,10 @@ Speed capabilities   = Y
  Link status          = Y
  Link status event    = Y
-+Packet type parsing  = Y
+ Packet type parsing  = Y
++L3 checksum offload  = P
++L4 checksum offload  = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
  Basic stats          = Y
  Stats per queue      = Y
  Extended stats       = Y
 diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 1e1f471673..fefe243656 100644
+index fefe243656..f59c6ecb48 100644
 --- a/doc/guides/nics/rnp.rst
 +++ b/doc/guides/nics/rnp.rst
-@@ -48,6 +48,7 @@ Features
- - Jumbo frames
+@@ -49,6 +49,7 @@ Features
  - Scatter-Gather IO support
  - Port hardware statistic
-+- Packet type parsing
+ - Packet type parsing
++- Checksum offload
  
  Prerequisites and Pre-conditions
  --------------------------------
-@@ -90,6 +91,7 @@ Listed below are the rte_eth functions supported:
- * ``rte_eth_dev_default_mac_addr_set``
- * ``rte_eth_dev_mac_addr_add``
- * ``rte_eth_dev_mac_addr_remove``
-+* ``rte_eth_dev_get_supported_ptypes``
- * ``rte_eth_promiscuous_disable``
- * ``rte_eth_promiscuous_enable``
- * ``rte_eth_allmulticast_enable``
-diff --git a/drivers/net/rnp/base/rnp_bdq_if.h b/drivers/net/rnp/base/rnp_bdq_if.h
-index 61a38323e5..a7d27bdebb 100644
---- a/drivers/net/rnp/base/rnp_bdq_if.h
-+++ b/drivers/net/rnp/base/rnp_bdq_if.h
-@@ -73,6 +73,7 @@ struct rnp_tx_desc {
- #define RNP_RX_L3TYPE_IPV4	(0x00UL << RNP_RX_L3TYPE_S)
- #define RNP_RX_L3TYPE_IPV6	(0x01UL << RNP_RX_L3TYPE_S)
- #define RNP_RX_L4TYPE_S		(6)
-+#define RNP_RX_L4TYPE_MASK	RTE_GENMASK32(7, 6)
- #define RNP_RX_L4TYPE_TCP	(0x01UL << RNP_RX_L4TYPE_S)
- #define RNP_RX_L4TYPE_SCTP	(0x02UL << RNP_RX_L4TYPE_S)
- #define RNP_RX_L4TYPE_UDP	(0x03UL << RNP_RX_L4TYPE_S)
-@@ -83,9 +84,12 @@ struct rnp_tx_desc {
- #define RNP_RX_IN_L3_ERR	RTE_BIT32(11)
- #define RNP_RX_IN_L4_ERR	RTE_BIT32(12)
- #define RNP_RX_TUNNEL_TYPE_S	(13)
-+#define RNP_RX_TUNNEL_MASK	RTE_GENMASK32(14, 13)
- #define RNP_RX_PTYPE_VXLAN	(0x01UL << RNP_RX_TUNNEL_TYPE_S)
- #define RNP_RX_PTYPE_NVGRE	(0x02UL << RNP_RX_TUNNEL_TYPE_S)
- #define RNP_RX_PTYPE_VLAN	RTE_BIT32(15)
-+/* mark_data */
-+#define RNP_RX_L3TYPE_VALID	RTE_BIT32(31)
- /* tx data cmd */
- #define RNP_TX_TSO_EN		RTE_BIT32(4)
- #define RNP_TX_L3TYPE_S		(5)
+diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
+index 49860135bd..e096ec90e6 100644
+--- a/drivers/net/rnp/base/rnp_eth_regs.h
++++ b/drivers/net/rnp/base/rnp_eth_regs.h
+@@ -16,6 +16,19 @@
+ #define RNP_RX_ETH_F_CTRL(n)	_ETH_(0x8070 + ((n) * 0x8))
+ #define RNP_RX_ETH_F_OFF	(0x7ff)
+ #define RNP_RX_ETH_F_ON		(0x270)
++/* rx checksum ctrl */
++#define RNP_HW_SCTP_CKSUM_CTRL		_ETH_(0x8038)
++#define RNP_HW_CHECK_ERR_CTRL		_ETH_(0x8060)
++#define RNP_HW_ERR_HDR_LEN		RTE_BIT32(0)
++#define RNP_HW_ERR_PKTLEN		RTE_BIT32(1)
++#define RNP_HW_L3_CKSUM_ERR		RTE_BIT32(2)
++#define RNP_HW_L4_CKSUM_ERR		RTE_BIT32(3)
++#define RNP_HW_SCTP_CKSUM_ERR		RTE_BIT32(4)
++#define RNP_HW_INNER_L3_CKSUM_ERR	RTE_BIT32(5)
++#define RNP_HW_INNER_L4_CKSUM_ERR	RTE_BIT32(6)
++#define RNP_HW_CKSUM_ERR_MASK		RTE_GENMASK32(6, 2)
++#define RNP_HW_CHECK_ERR_MASK		RTE_GENMASK32(6, 0)
++#define RNP_HW_ERR_RX_ALL_MASK		RTE_GENMASK32(1, 0)
+ /* max/min pkts length receive limit ctrl */
+ #define RNP_MIN_FRAME_CTRL	_ETH_(0x80f0)
+ #define RNP_MAX_FRAME_CTRL	_ETH_(0x80f4)
+diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
+index e4c677a179..694ce1409a 100644
+--- a/drivers/net/rnp/rnp.h
++++ b/drivers/net/rnp/rnp.h
+@@ -45,6 +45,13 @@
+ 		RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
+ 		RTE_ETH_RSS_IPV6_UDP_EX | \
+ 		RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++/* rx checksum offload */
++#define RNP_RX_CHECKSUM_SUPPORT ( \
++		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM | \
++		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM)
+ /* Ring info special */
+ #define RNP_MAX_BD_COUNT	(4096)
+ #define RNP_MIN_BD_COUNT	(128)
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index c963cc755f..fe0dd7bede 100644
+index fe0dd7bede..646a723efe 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -1186,6 +1186,36 @@ rnp_dev_mac_addr_remove(struct rte_eth_dev *dev,
- 	rnp_clear_macaddr(port, index);
+@@ -411,6 +411,67 @@ static int rnp_disable_all_tx_queue(struct rte_eth_dev *dev)
+ 	return ret;
  }
  
-+static uint32_t *rnp_support_ptypes_get(void)
++static void rnp_set_rx_cksum_offload(struct rte_eth_dev *dev)
 +{
-+	static uint32_t ptypes[] = {
-+		RTE_PTYPE_L2_ETHER,
-+		RTE_PTYPE_L2_ETHER_TIMESYNC,
-+		RTE_PTYPE_L3_IPV4_EXT_UNKNOWN,
-+		RTE_PTYPE_L3_IPV6_EXT_UNKNOWN,
-+		RTE_PTYPE_L4_TCP,
-+		RTE_PTYPE_L4_UDP,
-+		RTE_PTYPE_L4_SCTP,
-+		RTE_PTYPE_TUNNEL_VXLAN,
-+		RTE_PTYPE_TUNNEL_GRE,
-+		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN,
-+		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN,
-+		RTE_PTYPE_INNER_L4_TCP,
-+		RTE_PTYPE_INNER_L4_UDP,
-+		RTE_PTYPE_INNER_L4_SCTP,
-+		RTE_PTYPE_UNKNOWN,
-+	};
++	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
++	struct rnp_hw *hw = port->hw;
++	uint32_t cksum_ctrl;
++	uint64_t offloads;
 +
-+	return ptypes;
++	offloads = dev->data->dev_conf.rxmode.offloads;
++	cksum_ctrl = RNP_HW_CHECK_ERR_MASK;
++	/* enable rx checksum feature */
++	if (!rnp_pf_is_multiple_ports(hw->device_id)) {
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* Tunnel Option Cksum L4_Option */
++			cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_INNER_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l4_option */
++			cksum_ctrl |= RNP_HW_INNER_L4_CKSUM_ERR;
++			if (offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++						RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
++				cksum_ctrl &= ~RNP_HW_L4_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L4_CKSUM_ERR;
++		}
++		if (offloads & RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM) {
++			/* tunnel option cksum l3_option */
++			cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_INNER_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++		} else {
++			/* no tunnel option cksum l3_option */
++			cksum_ctrl |= RNP_HW_INNER_L3_CKSUM_ERR;
++			if (offloads & RTE_ETH_RX_OFFLOAD_IPV4_CKSUM)
++				cksum_ctrl &= ~RNP_HW_L3_CKSUM_ERR;
++			else
++				cksum_ctrl |= RNP_HW_L3_CKSUM_ERR;
++		}
++		/* sctp option */
++		if (offloads & RTE_ETH_RX_OFFLOAD_SCTP_CKSUM) {
++			cksum_ctrl &= ~RNP_HW_SCTP_CKSUM_ERR;
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++		} else {
++			RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, false);
++		}
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, cksum_ctrl);
++	} else {
++		/* Enabled all support checksum features
++		 * use software mode support per port rx checksum
++		 * feature enabled/disabled for multiple port mode
++		 */
++		RNP_E_REG_WR(hw, RNP_HW_CHECK_ERR_CTRL, RNP_HW_ERR_RX_ALL_MASK);
++		RNP_E_REG_WR(hw, RNP_HW_SCTP_CKSUM_CTRL, true);
++	}
 +}
 +
-+static const uint32_t *
-+rnp_dev_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
-+			     size_t *no_of_elements __rte_unused)
-+{
-+	return rnp_support_ptypes_get();
-+}
-+
- /* Features supported by this driver */
- static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.dev_configure                = rnp_dev_configure,
-@@ -1228,6 +1258,7 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.mac_addr_set                 = rnp_dev_mac_addr_set,
- 	.mac_addr_add                 = rnp_dev_mac_addr_add,
- 	.mac_addr_remove              = rnp_dev_mac_addr_remove,
-+	.dev_supported_ptypes_get     = rnp_dev_supported_ptypes_get,
- };
+ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ {
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(eth_dev);
+@@ -420,6 +481,7 @@ static int rnp_dev_configure(struct rte_eth_dev *eth_dev)
+ 	else
+ 		port->rxq_num_changed = false;
+ 	port->last_rx_num = eth_dev->data->nb_rx_queues;
++	rnp_set_rx_cksum_offload(eth_dev);
  
- static void
+ 	return 0;
+ }
+@@ -606,7 +668,8 @@ static int rnp_dev_infos_get(struct rte_eth_dev *eth_dev,
+ 	/* speed cap info */
+ 	dev_info->speed_capa = rnp_get_speed_caps(eth_dev);
+ 	/* rx support offload cap */
+-	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
++	dev_info->rx_offload_capa = RNP_RX_CHECKSUM_SUPPORT |
++				    RTE_ETH_RX_OFFLOAD_SCATTER;
+ 	/* tx support offload cap */
+ 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+ 	/* default ring configure */
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index 8d67e04990..dd8cde8aff 100644
+index dd8cde8aff..c6c80f3a76 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -639,6 +639,49 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
+@@ -639,8 +639,102 @@ int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx)
  	return 0;
  }
  
-+static __rte_always_inline void
-+rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
-+		 struct rte_mbuf *m,
-+		 volatile struct rnp_rx_desc rxbd)
-+{
-+	uint32_t mark_data = rxbd.wb.qword0.mark_data;
-+	uint16_t vlan_tci = rxbd.wb.qword1.vlan_tci;
-+	uint32_t cmd = rxbd.wb.qword1.cmd;
++struct rnp_rx_cksum_parse {
++	uint64_t offloads;
++	uint64_t packet_type;
++	uint16_t hw_offload;
++	uint64_t good;
++	uint64_t bad;
++};
 +
-+	/* clear mbuf packet_type and ol_flags */
-+	m->packet_type = 0;
-+	m->ol_flags = 0;
-+	if (mark_data & RNP_RX_L3TYPE_VALID) {
-+		if (cmd & RNP_RX_L3TYPE_IPV6)
-+			m->packet_type |= RTE_PTYPE_L3_IPV6;
-+		else
-+			m->packet_type |= RTE_PTYPE_L3_IPV4;
++#define RNP_RX_OFFLOAD_L4_CKSUM (RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_SCTP_CKSUM)
++static const struct rnp_rx_cksum_parse rnp_rx_cksum_tunnel[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM | RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4 | RTE_PTYPE_TUNNEL_MASK, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD
++	},
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_IN_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM, RTE_PTYPE_L4_MASK,
++	  RNP_RX_IN_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
 +	}
-+	if (vlan_tci)
-+		m->packet_type |= RTE_PTYPE_L2_ETHER_VLAN;
-+	switch (cmd & RNP_RX_L4TYPE_MASK) {
-+	case RNP_RX_L4TYPE_UDP:
-+		m->packet_type |= RTE_PTYPE_L4_UDP;
-+		break;
-+	case RNP_RX_L4TYPE_TCP:
-+		m->packet_type |= RTE_PTYPE_L4_TCP;
-+		break;
-+	case RNP_RX_L4TYPE_SCTP:
-+		m->packet_type |= RTE_PTYPE_L4_SCTP;
-+		break;
++};
++
++static const struct rnp_rx_cksum_parse rnp_rx_cksum[] = {
++	{ RTE_ETH_RX_OFFLOAD_IPV4_CKSUM,
++	  RTE_PTYPE_L3_IPV4, RNP_RX_L3_ERR,
++	  RTE_MBUF_F_RX_IP_CKSUM_GOOD, RTE_MBUF_F_RX_IP_CKSUM_BAD
++	},
++	{ RNP_RX_OFFLOAD_L4_CKSUM,
++	  RTE_PTYPE_L4_MASK, RNP_RX_L4_ERR | RNP_RX_SCTP_ERR,
++	  RTE_MBUF_F_RX_L4_CKSUM_GOOD, RTE_MBUF_F_RX_L4_CKSUM_BAD
 +	}
-+	switch (cmd & RNP_RX_TUNNEL_MASK) {
-+	case RNP_RX_PTYPE_VXLAN:
-+		m->packet_type |= RTE_PTYPE_TUNNEL_VXLAN;
-+		break;
-+	case RNP_RX_PTYPE_NVGRE:
-+		m->packet_type |= RTE_PTYPE_TUNNEL_NVGRE;
-+		break;
++};
++
++static void
++rnp_rx_parse_tunnel_cksum(struct rnp_rx_queue *rxq,
++			  struct rte_mbuf *m, uint16_t cksum_cmd)
++{
++	uint16_t idx = 0;
++
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum_tunnel); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum_tunnel[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum_tunnel[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum_tunnel[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum_tunnel[idx].good;
++		}
 +	}
-+	if (!(m->packet_type & RTE_PTYPE_L2_MASK))
-+		m->packet_type |= RTE_PTYPE_L2_ETHER;
 +}
 +
- #define RNP_CACHE_FETCH_RX (4)
- static __rte_always_inline int
- rnp_refill_rx_ring(struct rnp_rx_queue *rxq)
-@@ -738,6 +781,7 @@ rnp_recv_pkts(void *_rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 			nmb->ol_flags = 0;
- 			nmb->nb_segs = 1;
++static void
++rnp_rx_parse_cksum(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m, uint16_t cksum_cmd)
++{
++	uint16_t idx = 0;
++
++	for (idx = 0; idx < RTE_DIM(rnp_rx_cksum); idx++) {
++		if (rxq->rx_offloads & rnp_rx_cksum[idx].offloads &&
++		    m->packet_type & rnp_rx_cksum[idx].packet_type) {
++			if (cksum_cmd & rnp_rx_cksum[idx].hw_offload)
++				m->ol_flags |= rnp_rx_cksum[idx].bad;
++			else
++				m->ol_flags |= rnp_rx_cksum[idx].good;
++		}
++	}
++}
++
++static __rte_always_inline void
++rnp_dev_rx_offload(struct rnp_rx_queue *rxq,
++		   struct rte_mbuf *m,
++		   volatile struct rnp_rx_desc rxbd)
++{
++	uint32_t rss = rte_le_to_cpu_32(rxbd.wb.qword0.rss_hash);
++	uint16_t cmd = rxbd.wb.qword1.cmd;
++
++	if (rxq->rx_offloads & RNP_RX_CHECKSUM_SUPPORT) {
++		if (m->packet_type & RTE_PTYPE_TUNNEL_MASK) {
++			rnp_rx_parse_tunnel_cksum(rxq, m, cmd);
++		} else {
++			if (m->packet_type & RTE_PTYPE_L3_MASK ||
++			    m->packet_type & RTE_PTYPE_L4_MASK)
++				rnp_rx_parse_cksum(rxq, m, cmd);
++		}
++	}
++	if (rxq->rx_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH && rss) {
++		m->hash.rss = rss;
++		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
++	}
++}
++
+ static __rte_always_inline void
+-rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
++rnp_dev_rx_parse(struct rnp_rx_queue *rxq,
+ 		 struct rte_mbuf *m,
+ 		 volatile struct rnp_rx_desc rxbd)
+ {
+@@ -680,6 +774,7 @@ rnp_dev_rx_parse(struct rnp_rx_queue *rxq __rte_unused,
+ 	}
+ 	if (!(m->packet_type & RTE_PTYPE_L2_MASK))
+ 		m->packet_type |= RTE_PTYPE_L2_ETHER;
++	rnp_dev_rx_offload(rxq, m, rxbd);
+ }
  
-+			rnp_dev_rx_parse(rxq, nmb, rxbd[j]);
- 			rxq->stats.ibytes += nmb->data_len;
- 		}
- 		for (j = 0; j < nb_dd; ++j) {
-@@ -938,6 +982,7 @@ rnp_scattered_rx(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		}
- 		rxm->next = NULL;
- 		first_seg->port = rxq->attr.port_id;
-+		rnp_dev_rx_parse(rxq, first_seg, rxd);
- 		rxq->stats.ibytes += first_seg->pkt_len;
- 		/* this the end of packet the large pkt has been recv finish */
- 		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr,
+ #define RNP_CACHE_FETCH_RX (4)
 -- 
 2.25.1
 
