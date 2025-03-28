@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1358CC3600C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0616CC3600C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:18:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C941040E24;
-	Fri, 28 Mar 2025 06:15:59 +0100 (CET)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
- by mails.dpdk.org (Postfix) with ESMTP id 589D8402A7
- for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:56 +0100 (CET)
-X-QQ-mid: bizesmtpsz12t1743138950t7c07q
-X-QQ-Originating-IP: yeR/moiymBDM+2BF2kdDn6rbnRCXHXFscdrh+UbOahM=
+	by mails.dpdk.org (Postfix) with ESMTP id 608AB402E3;
+	Fri, 28 Mar 2025 06:16:01 +0100 (CET)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id 9B15C40E20
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:15:57 +0100 (CET)
+X-QQ-mid: bizesmtpsz12t1743138952tv979a
+X-QQ-Originating-IP: G2vG9BetA2nUlOZDt/fjwzc6ltwzt8ixoKKHb1tsWW8=
 Received: from steven.localdomain ( [103.233.162.252])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 28 Mar 2025 13:15:48 +0800 (CST)
+ id ; Fri, 28 Mar 2025 13:15:50 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17762436488043338033
+X-BIZMAIL-ID: 13301628341681190967
 EX-QQ-RecipientCnt: 5
 From: Wenbo Cao <caowenbo@mucse.com>
 To: thomas@monjalon.net
 Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
  Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v17 27/29] net/rnp: add queue info operation
-Date: Fri, 28 Mar 2025 05:14:42 +0000
-Message-Id: <20250328051444.1019208-28-caowenbo@mucse.com>
+Subject: [PATCH v17 28/29] net/rnp: support Rx/Tx burst mode info
+Date: Fri, 28 Mar 2025 05:14:43 +0000
+Message-Id: <20250328051444.1019208-29-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250328051444.1019208-1-caowenbo@mucse.com>
 References: <20250328051444.1019208-1-caowenbo@mucse.com>
@@ -33,23 +33,22 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: McBWBoQOJCkjZCMCeLhLrnqeQdYCrphVblyZtwIQyY7+lyV4xwGQc21d
- eUedYyXgdT6FfjoesbphhuAFkAZFxc/vxmqbh4Ya2p+1cBAw0+XPtb/BhWy0G9v1P7o968k
- 7zUiUlqBqE8Mn2tt20ljtC2EgDinz6c9nFXZjutb/VY8IR2x22FedfyUHusYet397TQE4bs
- V2f2tGk/U3tCFZGpk52vQF7M6KQ57ILPvy/CEJ9FOT+357EenvlxHfgz/kBbaIHdBa1Bj9j
- 3JMnXjYEf9WZBsukrEA1QLRctvCs7s2IuHNaPHrjJgsg5Yvp1R/x5md0Dex3/mmX37kuyj3
- hVCczQAXq6SgKefXtRd1fDxKykb94B3ipdRWQRFY6J0FtRunJBxAESUrZ4R28CaGIOwZhZd
- Bjm2wk+z8T+k5U8U8Ogvc2QQk/j/NQwK7cxb3AJnjAQUhF0+EGk/Vn+eEg4NiN02I4MW/lU
- baQCVvKUsddqJV/xEmFXrLfEYs6rSahW93U4n/7J4tH+8ZcUzNPiXLx+1JK4bc+NikGHujv
- +VMyHRqqVDqxjcwvPDo7/GF1l0o08gQUPbRPmmZK3b/mv2+HpNanQ2YbnqDkZfdG/GRy2Am
- KrzWNRWGLk5kMSnwHZrCPpXSt8WreivpnR8PqfSrEHn3nbXyU9iWJs9gK7AP13ne1m/Ie1x
- zZqURM+LfaR85NZDyhWmcuHWf8zeBFyyxn9oFUO9PaDdfXH4JRcBn0QWgCc3fnC7hzcJeAL
- xKbyjvTiYegn8KvFqDhLyZSemmSi3EwbaYj0kF/zLPp/FHdswehWh6wWuHw8Z7eevr+qkGr
- YNR7UVJYhAZo+PPboz/p8/cUjsmlePOt0n6iaP5Ak5hG21zQOGeMTC4Bv/iJTAcu5oTOJSC
- VMrzppn1aY/9jU/V/Y8RNsNrPhv5E7uNZmuibOjcyATyOR2L5CqV/Ooh9+TrSAiayHZ3O8n
- +7G2eMGz6fwkSW1rUSemYH5FbC98TGR7eLNx3reeIZ6bH+MGwMyT48UhjurO8A9bq4Cf/LE
- kHNatye8pGdG81WhdYeiuRcMHVemNNuSfAaprZnXCcTTZFBBfW+s01hKEuhIUr5gCpOjZge
- T8HSFagYJfCoYQ4xw29+aY=
+X-QQ-XMAILINFO: N/DcPz7jUYXlnrXT+IvLT0I6tQOrFXr/67lh030I6Jh5h8LU+K/V01bU
+ lcDWIM5CPDeo7+HqVXsizKAKrHUnamNrCrK++iwCAPveT3yNMA2exojN2qtgVC7NGEsM3rm
+ zN7q9N5gGYAagg/Xiy0j9ayAixn50c7gqv0CBintIvpSMoT2q45WDMd/wslCvdlGmdCwJIX
+ rl2X0gr653E7uJGH+6pKUZmR4AHxN6Z8H1mZ/QvyJbCNBSHHRjDTbbuZIqZ2jM/btTG56r9
+ heRDsTpf/D4VdTbFasR7yTg3rA5w9LtZKbAAQMuiJ+0/lv2OQ6+LoBau5qMX9M7ZIl1TalF
+ Etsp6lJr63msR8cN7ZDc1pMz/Lel+2Do6J5PX+YI7J84GW53A2ven4SzEXsHP1CppLi3Dxe
+ y86Eokj7BMJdL7srdsFAkViVF9IQ+yZv/2p7jh2ZdY/qHbIvpn6BCOZHSoJRWfZtKEDmTMP
+ ljg0onTTFSWmWWdhUu5v24tMFxnwO+UAVnt2CCicMePR+/wRUUFGH47BIaQ8wCih/QAo9rZ
+ cbntTnCqMnisMwomLlWyVYWiPCCFLRZMIJTbSMl60LHdyl3erdbd61AVbjJmumQpncUVL75
+ H2hgKAPO1j6bWfSVHObMMQbyhzNDcXFtiOo39Cclol2GvZ7h0vfX7sb9uhlX+VncGEe6NxB
+ Mk3LuInJoHAFtNOF4mW/0/2fSEjLzur5S/Z09eTx2/dzC02rh4n9+u+buctyJFD36yqaErh
+ xokwxEnhScHxbNbZMESvB5djfsSrSBkg2Qzwu+jinel1Lmsk6/1AWy905oe9auuap+bB1Vf
+ HX4qcFfecdhF4vIqNQ2okV86viHaVLn5RMNG6RGQRMPVzFzR00relmBx/yqwmb1Ij0um9ep
+ nFfAzOgp1YqN9pMGfIhIHadWk773ZanOzx2PM/g56kbbHPDyJuFtxI1XTlAbJiLlO5cO7YE
+ kcNUImwcWniz1CSltMGuNsDEhdmVhaXlZdbzDVl2V05ZOquta6U8uyM3+9OiqNysVAsKHfy
+ oOba2jz9ONwFmss5YV
 X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -65,109 +64,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add support get queue configure info for user debug
+add platform method for get rx/tx burst function select
+by upload func name.
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
  doc/guides/nics/rnp.rst      |  2 ++
  drivers/net/rnp/rnp_ethdev.c |  2 ++
- drivers/net/rnp/rnp_rxtx.c   | 42 ++++++++++++++++++++++++++++++++++++
- drivers/net/rnp/rnp_rxtx.h   |  4 ++++
- 4 files changed, 50 insertions(+)
+ drivers/net/rnp/rnp_rxtx.c   | 58 ++++++++++++++++++++++++++++++++++++
+ drivers/net/rnp/rnp_rxtx.h   |  6 ++++
+ 4 files changed, 68 insertions(+)
 
 diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index 2713d03765..671bb28112 100644
+index 671bb28112..f0afea9cd4 100644
 --- a/doc/guides/nics/rnp.rst
 +++ b/doc/guides/nics/rnp.rst
-@@ -106,7 +106,9 @@ Listed below are the rte_eth functions supported:
- * ``rte_eth_promiscuous_get``
+@@ -107,8 +107,10 @@ Listed below are the rte_eth functions supported:
  * ``rte_eth_allmulticast_get``
  * ``rte_eth_rx_queue_setup``
-+* ``rte_eth_rx_queue_info_get``
+ * ``rte_eth_rx_queue_info_get``
++* ``rte_eth_rx_burst_mode_get``
  * ``rte_eth_tx_queue_setup``
-+* ``rte_eth_tx_queue_info_get``
+ * ``rte_eth_tx_queue_info_get``
++* ``rte_eth_tx_burst_mode_get``
  * ``rte_eth_link_get``
  * ``rte_eth_link_get_nowait``
  * ``rte_eth_stats_get``
 diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 9ce0779592..84352509a1 100644
+index 84352509a1..484e40f3be 100644
 --- a/drivers/net/rnp/rnp_ethdev.c
 +++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -1480,10 +1480,12 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.rx_queue_release             = rnp_dev_rx_queue_release,
+@@ -1481,11 +1481,13 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
  	.rx_queue_stop                = rnp_rx_queue_stop,
  	.rx_queue_start               = rnp_rx_queue_start,
-+	.rxq_info_get                 = rnp_rx_queue_info_get,
+ 	.rxq_info_get                 = rnp_rx_queue_info_get,
++	.rx_burst_mode_get            = rnp_rx_burst_mode_get,
  	.tx_queue_setup               = rnp_tx_queue_setup,
  	.tx_queue_release             = rnp_dev_tx_queue_release,
  	.tx_queue_stop                = rnp_tx_queue_stop,
  	.tx_queue_start               = rnp_tx_queue_start,
-+	.txq_info_get                 = rnp_tx_queue_info_get,
+ 	.txq_info_get                 = rnp_tx_queue_info_get,
++	.tx_burst_mode_get            = rnp_tx_burst_mode_get,
  	/* rss impl */
  	.reta_update                  = rnp_dev_rss_reta_update,
  	.reta_query                   = rnp_dev_rss_reta_query,
 diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
-index 6504d62f62..d58b0412ce 100644
+index d58b0412ce..da08728198 100644
 --- a/drivers/net/rnp/rnp_rxtx.c
 +++ b/drivers/net/rnp/rnp_rxtx.c
-@@ -1720,3 +1720,45 @@ int rnp_tx_func_select(struct rte_eth_dev *dev)
- 
- 	return 0;
+@@ -1762,3 +1762,61 @@ rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	qinfo->conf.tx_thresh.hthresh = txq->pburst;
+ 	qinfo->conf.offloads = txq->tx_offloads;
  }
 +
-+void
-+rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+		      struct rte_eth_rxq_info *qinfo)
++static const struct {
++	eth_rx_burst_t pkt_burst;
++	const char *info;
++} rnp_rx_burst_infos[] = {
++	{ rnp_scattered_rx,		"Scalar Scattered" },
++	{ rnp_recv_pkts,		"Scalar" },
++};
++
++static const struct {
++	eth_tx_burst_t pkt_burst;
++	const char *info;
++} rnp_tx_burst_infos[] = {
++	{ rnp_xmit_simple,		"Scalar Simple" },
++	{ rnp_multiseg_xmit_pkts,	"Scalar" },
++};
++
++int
++rnp_rx_burst_mode_get(struct rte_eth_dev *dev,
++		      __rte_unused uint16_t queue_id,
++		      struct rte_eth_burst_mode *mode)
 +{
-+	struct rnp_rx_queue *rxq;
++	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
++	int ret = -EINVAL;
++	unsigned int i;
 +
-+	rxq = dev->data->rx_queues[queue_id];
-+	if (!rxq)
-+		return;
-+	qinfo->mp = rxq->mb_pool;
-+	qinfo->scattered_rx = dev->data->scattered_rx;
-+	qinfo->queue_state = rxq->rxq_started;
-+	qinfo->nb_desc = rxq->attr.nb_desc;
-+	qinfo->rx_buf_size = rxq->rx_buf_len;
++	for (i = 0; i < RTE_DIM(rnp_rx_burst_infos); ++i) {
++		if (pkt_burst == rnp_rx_burst_infos[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++					rnp_rx_burst_infos[i].info);
++			ret = 0;
++			break;
++		}
++	}
 +
-+	qinfo->conf.rx_deferred_start = rxq->rx_deferred_start;
-+	qinfo->conf.rx_free_thresh = rxq->rx_free_thresh;
-+	qinfo->conf.rx_thresh.pthresh = rxq->pthresh;
-+	qinfo->conf.rx_thresh.hthresh = rxq->pburst;
-+	qinfo->conf.offloads = rxq->rx_offloads;
++	return ret;
 +}
 +
-+void
-+rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+		      struct rte_eth_txq_info *qinfo)
++int
++rnp_tx_burst_mode_get(struct rte_eth_dev *dev,
++		      __rte_unused uint16_t queue_id,
++		      struct rte_eth_burst_mode *mode)
 +{
-+	struct rnp_tx_queue *txq;
++	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
++	int ret = -EINVAL;
++	unsigned int i;
 +
-+	txq = dev->data->tx_queues[queue_id];
-+	if (!txq)
-+		return;
-+	qinfo->queue_state = txq->txq_started;
-+	qinfo->nb_desc = txq->attr.nb_desc;
++	for (i = 0; i < RTE_DIM(rnp_tx_burst_infos); ++i) {
++		if (pkt_burst == rnp_tx_burst_infos[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++					rnp_tx_burst_infos[i].info);
++			ret = 0;
++			break;
++		}
++	}
 +
-+	qinfo->conf.tx_deferred_start = txq->tx_deferred_start;
-+	qinfo->conf.tx_free_thresh = txq->tx_free_thresh;
-+	qinfo->conf.tx_rs_thresh = txq->tx_rs_thresh;
-+	qinfo->conf.tx_thresh.pthresh = txq->pthresh;
-+	qinfo->conf.tx_thresh.hthresh = txq->pburst;
-+	qinfo->conf.offloads = txq->tx_offloads;
++	return ret;
 +}
 diff --git a/drivers/net/rnp/rnp_rxtx.h b/drivers/net/rnp/rnp_rxtx.h
-index 51e5d4b600..dc4a8ea9dd 100644
+index dc4a8ea9dd..8639f0892d 100644
 --- a/drivers/net/rnp/rnp_rxtx.h
 +++ b/drivers/net/rnp/rnp_rxtx.h
-@@ -148,5 +148,9 @@ int rnp_rx_queue_stop(struct rte_eth_dev *eth_dev, uint16_t qidx);
- int rnp_rx_queue_start(struct rte_eth_dev *eth_dev, uint16_t qidx);
- int rnp_rx_func_select(struct rte_eth_dev *dev);
- int rnp_tx_func_select(struct rte_eth_dev *dev);
-+void rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			   struct rte_eth_rxq_info *qinfo);
-+void rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			   struct rte_eth_txq_info *qinfo);
+@@ -152,5 +152,11 @@ void rnp_rx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			   struct rte_eth_rxq_info *qinfo);
+ void rnp_tx_queue_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			   struct rte_eth_txq_info *qinfo);
++int rnp_rx_burst_mode_get(struct rte_eth_dev *dev,
++			  __rte_unused uint16_t queue_id,
++			  struct rte_eth_burst_mode *mode);
++int rnp_tx_burst_mode_get(struct rte_eth_dev *dev,
++			  __rte_unused uint16_t queue_id,
++			  struct rte_eth_burst_mode *mode);
  
  #endif /* _RNP_RXTX_H_ */
 -- 
