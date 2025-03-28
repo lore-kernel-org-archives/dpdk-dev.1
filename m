@@ -2,49 +2,183 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3DFC36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45797C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:14:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05D0C402C1;
-	Fri, 28 Mar 2025 12:01:03 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id D1E304021E
- for <dev@dpdk.org>; Fri, 28 Mar 2025 12:01:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 53745402C1;
+	Fri, 28 Mar 2025 12:14:13 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 719164021E
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 12:14:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743159661; x=1774695661;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=iSQBkcOeTDE4YgT6DrQiknB21gDtb85wMGNe6kREXmI=;
- b=KhNDIorAX3omylJjLfXu/60xsM9yeY1f9KCrafuJqnbLXf0UNPFKHKWS
- 0RfgtlovMIGwuChC//6SFYrO/jnQ2OpM3mqyIckS5brfZEoQMArwmzxMg
- bVxuMfGTwlb8jYdQybKH//xFFi1/vZA6ttqLb25eFvS2Cvv29hRdPrNqd
- BHClVNqQvrulEQXjKSHM/Jhh++DNBBmPZCNB03IJA2ukmzmzjA9i6Zwrx
- Fw8D/Xh7YgfvBnqOr+POz7yl/9C56QZYd4XaBQIVP/jxQAbeyuzNlQ83k
- 3R4LsV6wJGJH4O0gsc15OdjVD0GM67bwjLbepwl6ryVa/pSIbqinBtvjT Q==;
-X-CSE-ConnectionGUID: 3PEJeCqSTk2/v3aiP42ozg==
-X-CSE-MsgGUID: L+FyT2s2QgGICMfCoebXBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="62051772"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="62051772"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 04:01:00 -0700
-X-CSE-ConnectionGUID: TxTp36FVQpKLgTnu/tg9AQ==
-X-CSE-MsgGUID: Z3dg5TjoS/SnCw6+rWlGHQ==
+ t=1743160452; x=1774696452;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=T7gEYmSw9jVcrlZamnIHTnUqBbMofLmPsX3VAVpGs3s=;
+ b=C9I+69dkMK5nnqS8YqgytNucUqTKSMhVhy1EBw1stn7nr8vDcnXWioMy
+ NUrtfp3Y3OPnv8mJ3ap3OHWYXBg6hWigY3P+kItaLbOVfO7DoD8/x2V8d
+ 0Gu7S0Q9zdAg2VScISb6pBgkC+6zFqLWYe7bS46OUUmxWs8FgvyJPwVlr
+ oub1dhEUHMTxNxNwaZFTKAf0DoAgTju3DQAzDJP/BeBrQdFHG1coqAFwW
+ W/cZvQDF2MuQQsMsnAHPaD5N08PUtqoaDnUKaC+r8v8zZsh5cRGwXlCRt
+ tAVi6kaqXmmuswO5DbLJWxR8pEOLAqfqRilsXEAoKQy0cDB4NKyB05JBw Q==;
+X-CSE-ConnectionGUID: iLbP3DkAQTy2b2xmbHH5vw==
+X-CSE-MsgGUID: QWrwsNEcTfeNj9SJsuurNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44411249"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="44411249"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Mar 2025 04:14:08 -0700
+X-CSE-ConnectionGUID: jX0natw4Qm+jcAAArXO8Og==
+X-CSE-MsgGUID: CpHCwYFpSJ+aDhtWAX0Zag==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="162655697"
-Received: from txanpdk03.an.intel.com ([10.123.117.78])
- by orviesa001.jf.intel.com with ESMTP; 28 Mar 2025 04:00:59 -0700
-From: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, pravin.pathak@intel.com,
- Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-Subject: [PATCH v2] event/dlb2: consolidate AVX512 and SSE changes
-Date: Fri, 28 Mar 2025 06:00:44 -0500
-Message-Id: <20250328110044.2458497-1-tirthendu.sarkar@intel.com>
-X-Mailer: git-send-email 2.39.1
-MIME-Version: 1.0
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; d="scan'208";a="126231236"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Mar 2025 04:14:08 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 28 Mar 2025 04:14:07 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 28 Mar 2025 04:14:07 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.40) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 28 Mar 2025 04:14:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eRSF4p6NcH/BowBmRfCvyJG5DAxru1VLYxbbr/LJg7ez9seR3LxlCObA5+EhyMtGc2ps/BqxFefMw0Ybcg4tu/ZDB3jRf9YE+hz24yC60mneamX1D7gQdzfV+xvB7NkulEKeYGXzRZtusfvrFwLTNVshyz/8sQ5T5jAHt4r7J5B5mTKJ400pJB85re+A5Oo724n7F+UHUjltFcfuXduPXqF9NwXZClvXGo2NAG0UgMWRD6o4w9sbNaLIKqxo+APerzxtMdPkop9STBBVZ4bbX0wQXzVC89E+rlWvvebZETIYmgWV3NoMUtAfJQU+yc5eTf3KknFVl4GiTHswOtDmvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=anbS5+6/NAWybz5CTmBQ3St1pcMHjph7+xWOzonmIzU=;
+ b=Jn+A9M0PRb542D9yua2e2T+vZZUT30SH+Tc3J00gjqq+8pQLVYZ96yMfV12LZymiB/Za5PuhaH8aSSGoIi3otMuO+IM6XtY8rrk0w8FifdY3KQIvj2HeO4DX2ddILhSrR4n+Xi5VXiZ7iORJEpsbsrTS4ZM9LKNabKIxVHFxobgnhuGmIa9PGv2sjb71cFCgp1vK2UTYMIphITHRJ1oSJLRYostnZunPH/MnX/L4XODAWTlsTmv0SjxsSpmwz+UXxsnPRQzDBNMp04zSHC3fUKO2dKKO/XUdUhKBUKTZ+YpIqjz0/o2ZvJTBlp5wQX8abOSmriLbYvkzUJ/Syv8wtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by BL1PR11MB6001.namprd11.prod.outlook.com (2603:10b6:208:385::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
+ 2025 11:13:30 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
+ 11:13:30 +0000
+Date: Fri, 28 Mar 2025 11:13:25 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>, "Vladimir
+ Medvedkin" <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v3 5/9] net/ixgbe/base: fix lock checker errors
+Message-ID: <Z-aEVfpMjF8-Ycwk@bricha3-mobl1.ger.corp.intel.com>
+References: <20250326155230.1315056-1-bruce.richardson@intel.com>
+ <20250327145202.2220153-1-bruce.richardson@intel.com>
+ <20250327145202.2220153-6-bruce.richardson@intel.com>
+ <CAJFAV8w8YT=2DVbxrXef=60AquicaU8xehG2fvdHye_9dMi98Q@mail.gmail.com>
+ <Z-Z9ZPs8k_lQERpT@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z-Z9ZPs8k_lQERpT@bricha3-mobl1.ger.corp.intel.com>
+X-ClientProxiedBy: DB8PR06CA0016.eurprd06.prod.outlook.com
+ (2603:10a6:10:100::29) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|BL1PR11MB6001:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24c9bc9e-097b-439c-124c-08dd6de991f0
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WTltUGdpdXFIdjAyUWx1ZEFsTmtRNnNndXBqQnF2aVRRVDRVblc4NDRsTCtS?=
+ =?utf-8?B?WWkyb3J3cWR1N3BpdWxRdlJrQmVsK09wYzMyR0IyeWVqdVVGSE9vN1ZKK1E2?=
+ =?utf-8?B?WjBsSTdUbVplTUZjVENHWFY1VzhINlNCRjE3K1JrcmxxUFRnZUFuZjBwTHVB?=
+ =?utf-8?B?OGJZSkRaeWtaWnUrMldLL0ZvbHllaDQ4ZjhITHNrUHEwTmVlVENJZ1FMQXBC?=
+ =?utf-8?B?RnJxNFlwMzhsL1lZemc1NnQ5VlRZdWNtQjJheFNPR1pYYjhCWG9Ec20zLzRx?=
+ =?utf-8?B?N3FLWVhuMyt0dDJSRC9mZXY3SUpKWklUOGFDeXNnUjViUUF6QngxRUJtdVF6?=
+ =?utf-8?B?VWpOSlREMDYrMGVzM2tSdVlvVkJvUmhJZk9CZVdQSEoyOVJKNFl3Si9ZejBP?=
+ =?utf-8?B?b2ZiM2dYOUMrT2kzemY5S2psZlIybjc4ZWxwbkowbzhBKzZXTWxqMllvR091?=
+ =?utf-8?B?SGpJYmVQanhZcjNMK0g2by85dGJGUkQ5NTk2OWRGTlEwVHp3NFlueC9zQzJk?=
+ =?utf-8?B?T3BqMHZmRy9qOTl5aDR3UnEwYk54ME1YdXBXaTdMS0lNaThuWkxMazROMlFv?=
+ =?utf-8?B?cERScjBVaEVZMkdVSS9HZGpqVzRrbXUzcSsySDdKd283OGp5NTVCUkhmSmJW?=
+ =?utf-8?B?ekhIREtjekFaN2l6Z2JQQmFDWjdXb2I3a3FRbENxakkvWnEycVVPOTBmTHNV?=
+ =?utf-8?B?RXdpT2g3b01UbFpCZVFQSUF3akFBUy9TRndGMmJzR1NuMEtwUUlqaWpvUHFo?=
+ =?utf-8?B?RjI1SlVCMnN3QTYxS3FUaUNnQSt4NDhxZFZIM2Eva2pMMmdaQVdlVDMybUts?=
+ =?utf-8?B?VGNlWG9jdzJhczQvcVh5VEtGSVhhRXIxMG42NWN2N2poc1lRajh0TFlqMThm?=
+ =?utf-8?B?V1BVWHBueG1zOG5mdE1ONXI1Y3hqM2l4TVU2UVdienpoNmYxQ2MyYmpsc2dl?=
+ =?utf-8?B?K1NpSU1rbDdsSjhBWjlCTmg5RFAva3RmenNkQ0h3R25KTzN5dHJOalk1OVo1?=
+ =?utf-8?B?QkV2MkY1T2dXT1ZPbHJrRDF1TTRDWUJyNzZGZkdSM0lDZ0xTdVF4enZFci95?=
+ =?utf-8?B?R1kvK0RYNmhDS05DL2Nreno0T2Y3UGNSOFNkaHlLaVBSbXgwN25OR0NMRWxK?=
+ =?utf-8?B?VTBIZDZVZ2dMcHpDcWFLWkZudUxPOVJVVlJhVDBtaDlucFJDTml0VHdzWWR0?=
+ =?utf-8?B?anlNQWNwWUlGNDEyQWpkZldzQW0wVHVERVhzenZNaWNhcDhqc05HeUJYME1w?=
+ =?utf-8?B?djJNdHFaTTkySENMc0V0ZCs2QUYzL1VuYVpFaEFZcWhmRXRJOVNMNjlKektF?=
+ =?utf-8?B?TVIvODk1aFgvMnNzSmhxZFNMS3h1NTZvWUNmUUdXTmlMZmxvZkN3K1p0M0Fu?=
+ =?utf-8?B?bUIvU3M5cDZTZVAyVFA0OWRZOFNTd1RDR0RqM24yWjRMTk9aZFRXeWVTblpu?=
+ =?utf-8?B?eDZGNDMrczhHbWgxTGFtYmxWOFlLT0ZwUkxWZ1MxbjFmR2Yrbmx2RVhNTmJK?=
+ =?utf-8?B?Y0xzZkRxZDErOXJ1V0MrZTlwSGNQdy92RVltdHNrdllSR3cwbWJiSm9pa0FZ?=
+ =?utf-8?B?VGV4cXhoWVJ3VjFGa0lpTXpIUDRDMlkwM2FMWmdkL2Rja3pJVGwvU1IrZ2pu?=
+ =?utf-8?B?UVVMTGZvSUtwMEF2R015OWFFWGhielhTNzczS1RsTko4U21JMEhxT0x6cEF2?=
+ =?utf-8?B?SlJiVThVK3RtRnd5VnY5d0Q0cjZBS05SS3gyMnVhNks5c0MvMDg5QzVQR3JV?=
+ =?utf-8?B?ak9XbzBISGkvR3NZYlgrVStzcFNrbkJhcUw2L3h0Q0ZDeFB2VCtxaHRtNWFJ?=
+ =?utf-8?B?SDN3ZXpvMU55VFR1NmtENzl6Ukp3YVNQejNncXFudUFTelZvN3dwZFhzMVB3?=
+ =?utf-8?Q?ZHAjIXauuXZ7J?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UlpPV1ZQTWVabWF0R0dqb2VvUmYvK3k0aUh0QTBCT25relFuTXdZYmtZWTRZ?=
+ =?utf-8?B?aFdBcDNNZ2sycUp4TmRIenRJajdVaUYydjdsdzBTUkh3dmhOa3ZodUUwMDBy?=
+ =?utf-8?B?RnpnRThWRWpKWDEvMG05SUM0ODAwMitzbjFSQjdTNXlSckZGVlpmWHM4R0NL?=
+ =?utf-8?B?RjdKMDlEOS8wck5IOGhJY3NnZlN3WDZaTDgwNkZWd1JXMEdDR1lGcXJkR1BS?=
+ =?utf-8?B?cjZDYTVrelQrWCtSSHhKY2tMbkpRZUdjay9pcFplQ0ZrbTA5ajJabEVNa2NL?=
+ =?utf-8?B?TU04N1NsU2EzTXRyZUZwODNQclNZUXNGRDZjUVF0SWhxZ1Rtc1d1QWZjUDBi?=
+ =?utf-8?B?TEwybmNadldkTnpjVU9hRGdremlhVmlsazU3eS9qUUo2S3haR3dFMkxxbU5I?=
+ =?utf-8?B?d0FPZ3pnbWZncmh3eVQ1YndiSVZCTk9MSmtHajdQNWpTUGpZSXJxSFF4aUJq?=
+ =?utf-8?B?czZvU2k3ZXZqc082Yjk5bTFkV3o1eHI2NjJVcklOU05ZR29FVDB3cVZwVk9Z?=
+ =?utf-8?B?VmxSdmlOdHBpVkJIZ0gveVNhY1NIdHkzeXEwNERJVUsyRk1kZWFET1hhbnV3?=
+ =?utf-8?B?S0NaMUNWUk1lMDRid1lMK3pWWTBXOTBoU21xalU5ZU1kTGJZajdYdkFwTzUy?=
+ =?utf-8?B?QWFZNGxqTFI0VTl5R0lwYmp1TGRqd3ZLUUJuNUh6bk95c0F1WXpnUUdxdm1t?=
+ =?utf-8?B?MXJLbDlpUlNXTVJBRkIwNWpUWnJPanpqbzJHY1dNTWpTdjlyWnJueEhpSFA5?=
+ =?utf-8?B?bjZKeCtoaTR5dVBwUFh6WURkY0RSTVBwRzdLYytaMitnOVduMkx4bERGbnQ4?=
+ =?utf-8?B?SVJ2RmJTVXZ5NkN1NndBNW43MlVvVHdONGRNM0NIbXl5eDlkcFplVjdSUERF?=
+ =?utf-8?B?WWRDNC9iblBXMUl6TnFNOTdIKytCUSsrc05HY2o3R2tEemZlYzRFeE9BUncr?=
+ =?utf-8?B?ZEhzZG5ZeXF1bC94RTZzMlE0Tll3TzI4eE91cDhoRTFtbUJhOTQ2bG1IUVZL?=
+ =?utf-8?B?VnJNa2Z4R3c2S3g3VXVHU2svWmc2OUpPTzlUd3Y1b0dtRHFlNnpUbE5Ieksv?=
+ =?utf-8?B?Q0N3K0FaWlpSVHR6VjNMNjNXZDcvVVR1T2QvdnpYTWd0QnBGcGpERTBkQ2di?=
+ =?utf-8?B?REFtS09DVzNqVngrVXBRZWhqcDEwSUxLMHV2Ry9xTTZicXpTR1h1OGxMT21j?=
+ =?utf-8?B?bVFwdHM2L2M1dTdPSkhLTWkxZG1TbGQ2cTFPRmZMSTZmWWtSeU44aEo2OGFY?=
+ =?utf-8?B?VnVpR2dJQldjcDZWMjd6WDlmTXVSdjdSOUJNMkxvNitlL3g3WmdRbW1mbUl0?=
+ =?utf-8?B?TmRLRW4relpOWUJ3N3hWVjJMcUhVRXRGUGhEdmpqdXBqVXZpNkxGakdKcmFy?=
+ =?utf-8?B?VzNzdFlQUHllMWc5c0R0dVVUVDMwQzE0VWtmLzErcFJzMmdxZ0FoVFJPcTBU?=
+ =?utf-8?B?R091UmM3czkyeU9pUW5MZ3MvMnQ5OGNlM3RzT2FxOThMNjlkbTRYRFlCNnRz?=
+ =?utf-8?B?cTEycGpXenVra3c3cFpUeWFCeVlCdk95aEoyTkh0N05wekhzemlJckp3ckp5?=
+ =?utf-8?B?dDhUeGowN3BpblU4TnFUUU1JY1FjeExCaVN4N1JHemVPci9ybDNoQW1xWmc2?=
+ =?utf-8?B?QklWczhkTjZhQmhNeDJKZDJ5dHdHbGNoMlloaUFKbm0zQ1lyWmtvc1dYTGxP?=
+ =?utf-8?B?ZGxGYjY5S29sMkQrY1ZoSllqV1RaMEJkMnV4cG5kVXg4cVBSK2dPeWhINXlQ?=
+ =?utf-8?B?K0dVc3I4bnBPNkJPc0Y0ZGI1SXhGZDlhelROcWtUbFFWTHY0SUx0MU9CUDFo?=
+ =?utf-8?B?aWN2TmVvb2I1dThzUGJVV2UzSFpWdzFibm1lRGRsbmZNbUtqQlFRYkNTSnBp?=
+ =?utf-8?B?RFZ4cGZDUU9uQWQ2Zm5FRFRhRkt5Qm9YTGwxWGdzYllyaG5vdFZXRmxKakxF?=
+ =?utf-8?B?djZRRE5oRlA2N1FFMmZtV3lhSmxrcTA1bkwvYnN4KzZiZ0xiNXlZK2FZRE8w?=
+ =?utf-8?B?K1Z1bWFKOUNTMEVoUmlyeE5wU1hQMmxEZUlhVVZQZGxRTWlLU2RQOUg0NkFD?=
+ =?utf-8?B?YWZBKzVsem83dU9NWmczVzlJYk5kR0x4dzBaaDVhMXc3bVZDM0dnV0Q4TDht?=
+ =?utf-8?B?Y1NBakJ0WEFOUVdxQUx5UnBTeUhxdVV2THFPbmc3OWZuczhiRWpCcFBzYXBO?=
+ =?utf-8?B?a0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24c9bc9e-097b-439c-124c-08dd6de991f0
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 11:13:30.2029 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kZ/52rQMGcnaOAkusXgHNvOridXt3otLVRBDaiPhvI3HF1dBMNGoeezmDTbUgtAjwhASLl572mcYhykule/uavH+xPAMDrOjqyT6lplDvLo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6001
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,836 +192,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Streamline code for AVX512 and SSE by consolidating the common code and
-adding runtime check for selecting appropriate path based on CPU
-capability.
+On Fri, Mar 28, 2025 at 10:43:48AM +0000, Bruce Richardson wrote:
+> On Fri, Mar 28, 2025 at 09:20:16AM +0100, David Marchand wrote:
+> > On Thu, Mar 27, 2025 at 3:53 PM Bruce Richardson
+> > <bruce.richardson@intel.com> wrote:
+> > >
+> > > When building on FreeBSD, errors are reported in the base code by the
+> > > lock checker (-Wthread-safety). For example:
+> > >
+> > > ../drivers/net/intel/ixgbe/base/ixgbe_osdep.c:42:1: error: mutex 'lock->mutex' is still held at the end of function [-Werror,-Wthread-safety-analysis]
+> > >    42 | }
+> > >       | ^
+> > >
+> > > These errors are due to the checker not recognising the lock wrapper
+> > > functions. We can avoid these errors by converting these functions into
+> > > macros.
+> > >
+> > > Fixes: 30b19d1b5c43 ("net/ixgbe/base: add definitions for E610")
+> > > Cc: stable@dpdk.org
+> > >
+> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > 
+> > This is the best solution, given that FreeBSD pthread is instrumented
+> > with clang thread safety annotations.
+> > 
+> > As a sidenote, I don't see much value with the remaining
+> > malloc/calloc/free wrappers in this osdep.c file.
+> > I suspect this makes some other annotations non working.
+> > 
+> Yes, I would tend to agree. Question is whether it is better to convert
+> them to macros or just move them to the header file as static inlines. I'd
+> tend towards the latter, because otherwise we'd need to use "," syntax to
+> avoid potentially introducing other warnings for unused "hw" variable.
+> 
+> Here are two option examples, WDYT of each?
+> 
+> static inline void *
+> ixgbe_malloc(struct ixgbe_hw __rte_unused *hw, size_t s) { return malloc(s); }
+> 
+> or
+> 
+> #define ixgbe_malloc(hw, s) ((void)hw, malloc(s))
+> 
 
-Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
----
-v2:
- - Addressed review comments [Bruce Richardson]
+Doing a new patch revision, actually using the macro syntax, since it keeps
+all the changes consistent, with all 7 functions being converted to macros,
+and allowing osdep.c to be removed.
 
- drivers/event/dlb2/dlb2.c        | 199 ++++++++++++++++++++-
- drivers/event/dlb2/dlb2_avx512.c | 298 ++++---------------------------
- drivers/event/dlb2/dlb2_priv.h   |   9 +-
- drivers/event/dlb2/dlb2_sse.c    | 210 +---------------------
- 4 files changed, 241 insertions(+), 475 deletions(-)
-
-diff --git a/drivers/event/dlb2/dlb2.c b/drivers/event/dlb2/dlb2.c
-index 934fcafcfe..4c0b4686a4 100644
---- a/drivers/event/dlb2/dlb2.c
-+++ b/drivers/event/dlb2/dlb2.c
-@@ -90,6 +90,9 @@ static struct rte_event_dev_info evdev_dlb2_default_info = {
- struct process_local_port_data
- dlb2_port[DLB2_MAX_NUM_PORTS_ALL][DLB2_NUM_PORT_TYPES];
- 
-+static void
-+(*dlb2_build_qes)(struct dlb2_enqueue_qe *qe, const struct rte_event ev[], __m128i sse_qe[]);
-+
- static void
- dlb2_free_qe_mem(struct dlb2_port *qm_port)
- {
-@@ -2069,9 +2072,9 @@ dlb2_eventdev_port_setup(struct rte_eventdev *dev,
- 
- 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512VL) &&
- 	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512)
--		ev_port->qm_port.use_avx512 = true;
-+		dlb2_build_qes = dlb2_build_qes_avx512;
- 	else
--		ev_port->qm_port.use_avx512 = false;
-+		dlb2_build_qes = dlb2_build_qes_sse;
- 
- 	return 0;
- }
-@@ -2669,6 +2672,21 @@ dlb2_eventdev_start(struct rte_eventdev *dev)
- 	return 0;
- }
- 
-+static uint8_t cmd_byte_map[DLB2_NUM_PORT_TYPES][DLB2_NUM_HW_SCHED_TYPES] = {
-+	{
-+		/* Load-balanced cmd bytes */
-+		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
-+		[RTE_EVENT_OP_FORWARD] = DLB2_FWD_CMD_BYTE,
-+		[RTE_EVENT_OP_RELEASE] = DLB2_COMP_CMD_BYTE,
-+	},
-+	{
-+		/* Directed cmd bytes */
-+		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
-+		[RTE_EVENT_OP_FORWARD] = DLB2_NEW_CMD_BYTE,
-+		[RTE_EVENT_OP_RELEASE] = DLB2_NOOP_CMD_BYTE,
-+	},
-+};
-+
- static inline uint32_t
- dlb2_port_credits_get(struct dlb2_port *qm_port,
- 		      enum dlb2_hw_queue_types type)
-@@ -2887,6 +2905,183 @@ dlb2_construct_token_pop_qe(struct dlb2_port *qm_port, int idx)
- 	qm_port->owed_tokens = 0;
- }
- 
-+static inline void
-+dlb2_event_build_hcws(struct dlb2_port *qm_port,
-+		      const struct rte_event ev[],
-+		      int num,
-+		      uint8_t *sched_type,
-+		      uint8_t *queue_id)
-+{
-+	struct dlb2_enqueue_qe *qe;
-+	uint16_t sched_word[4];
-+	__m128i sse_qe[2];
-+	int i;
-+
-+	qe = qm_port->qe4;
-+
-+	sse_qe[0] = _mm_setzero_si128();
-+	sse_qe[1] = _mm_setzero_si128();
-+
-+	switch (num) {
-+	case 4:
-+		/* Construct the metadata portion of two HCWs in one 128b SSE
-+		 * register. HCW metadata is constructed in the SSE registers
-+		 * like so:
-+		 * sse_qe[0][63:0]:   qe[0]'s metadata
-+		 * sse_qe[0][127:64]: qe[1]'s metadata
-+		 * sse_qe[1][63:0]:   qe[2]'s metadata
-+		 * sse_qe[1][127:64]: qe[3]'s metadata
-+		 */
-+
-+		/* Convert the event operation into a command byte and store it
-+		 * in the metadata:
-+		 * sse_qe[0][63:56]   = cmd_byte_map[is_directed][ev[0].op]
-+		 * sse_qe[0][127:120] = cmd_byte_map[is_directed][ev[1].op]
-+		 * sse_qe[1][63:56]   = cmd_byte_map[is_directed][ev[2].op]
-+		 * sse_qe[1][127:120] = cmd_byte_map[is_directed][ev[3].op]
-+		 */
-+#define DLB2_QE_CMD_BYTE 7
-+		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
-+				cmd_byte_map[qm_port->is_directed][ev[0].op],
-+				DLB2_QE_CMD_BYTE);
-+		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
-+				cmd_byte_map[qm_port->is_directed][ev[1].op],
-+				DLB2_QE_CMD_BYTE + 8);
-+		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
-+				cmd_byte_map[qm_port->is_directed][ev[2].op],
-+				DLB2_QE_CMD_BYTE);
-+		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
-+				cmd_byte_map[qm_port->is_directed][ev[3].op],
-+				DLB2_QE_CMD_BYTE + 8);
-+
-+		/* Store priority, scheduling type, and queue ID in the sched
-+		 * word array because these values are re-used when the
-+		 * destination is a directed queue.
-+		 */
-+		sched_word[0] = EV_TO_DLB2_PRIO(ev[0].priority) << 10 |
-+				sched_type[0] << 8 |
-+				queue_id[0];
-+		sched_word[1] = EV_TO_DLB2_PRIO(ev[1].priority) << 10 |
-+				sched_type[1] << 8 |
-+				queue_id[1];
-+		sched_word[2] = EV_TO_DLB2_PRIO(ev[2].priority) << 10 |
-+				sched_type[2] << 8 |
-+				queue_id[2];
-+		sched_word[3] = EV_TO_DLB2_PRIO(ev[3].priority) << 10 |
-+				sched_type[3] << 8 |
-+				queue_id[3];
-+
-+		/* Store the event priority, scheduling type, and queue ID in
-+		 * the metadata:
-+		 * sse_qe[0][31:16] = sched_word[0]
-+		 * sse_qe[0][95:80] = sched_word[1]
-+		 * sse_qe[1][31:16] = sched_word[2]
-+		 * sse_qe[1][95:80] = sched_word[3]
-+		 */
-+#define DLB2_QE_QID_SCHED_WORD 1
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+					     sched_word[0],
-+					     DLB2_QE_QID_SCHED_WORD);
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+					     sched_word[1],
-+					     DLB2_QE_QID_SCHED_WORD + 4);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+					     sched_word[2],
-+					     DLB2_QE_QID_SCHED_WORD);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+					     sched_word[3],
-+					     DLB2_QE_QID_SCHED_WORD + 4);
-+
-+		/* If the destination is a load-balanced queue, store the lock
-+		 * ID. If it is a directed queue, DLB places this field in
-+		 * bytes 10-11 of the received QE, so we format it accordingly:
-+		 * sse_qe[0][47:32]  = dir queue ? sched_word[0] : flow_id[0]
-+		 * sse_qe[0][111:96] = dir queue ? sched_word[1] : flow_id[1]
-+		 * sse_qe[1][47:32]  = dir queue ? sched_word[2] : flow_id[2]
-+		 * sse_qe[1][111:96] = dir queue ? sched_word[3] : flow_id[3]
-+		 */
-+#define DLB2_QE_LOCK_ID_WORD 2
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+				(sched_type[0] == DLB2_SCHED_DIRECTED) ?
-+					sched_word[0] : ev[0].flow_id,
-+				DLB2_QE_LOCK_ID_WORD);
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+				(sched_type[1] == DLB2_SCHED_DIRECTED) ?
-+					sched_word[1] : ev[1].flow_id,
-+				DLB2_QE_LOCK_ID_WORD + 4);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+				(sched_type[2] == DLB2_SCHED_DIRECTED) ?
-+					sched_word[2] : ev[2].flow_id,
-+				DLB2_QE_LOCK_ID_WORD);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+				(sched_type[3] == DLB2_SCHED_DIRECTED) ?
-+					sched_word[3] : ev[3].flow_id,
-+				DLB2_QE_LOCK_ID_WORD + 4);
-+
-+		/* Store the event type and sub event type in the metadata:
-+		 * sse_qe[0][15:0]  = flow_id[0]
-+		 * sse_qe[0][79:64] = flow_id[1]
-+		 * sse_qe[1][15:0]  = flow_id[2]
-+		 * sse_qe[1][79:64] = flow_id[3]
-+		 */
-+#define DLB2_QE_EV_TYPE_WORD 0
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+					     ev[0].sub_event_type << 4 |
-+						ev[0].event_type << 12,
-+					     DLB2_QE_EV_TYPE_WORD);
-+		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
-+					     ev[1].sub_event_type << 4 |
-+						ev[1].event_type << 12,
-+					     DLB2_QE_EV_TYPE_WORD + 4);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+					     ev[2].sub_event_type << 4 |
-+						ev[2].event_type << 12,
-+					     DLB2_QE_EV_TYPE_WORD);
-+		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
-+					     ev[3].sub_event_type << 4 |
-+						ev[3].event_type << 12,
-+					     DLB2_QE_EV_TYPE_WORD + 4);
-+
-+		dlb2_build_qes(qe, ev, sse_qe);
-+
-+		/* will only be set for DLB 2.5 + */
-+		if (qm_port->dlb2->enable_cq_weight) {
-+			qe[0].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[0]);
-+			qe[1].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[1]);
-+			qe[2].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[2]);
-+			qe[3].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[3]);
-+		}
-+
-+		break;
-+	case 3:
-+	case 2:
-+	case 1:
-+		for (i = 0; i < num; i++) {
-+			qe[i].cmd_byte =
-+				cmd_byte_map[qm_port->is_directed][ev[i].op];
-+			qe[i].sched_type = sched_type[i];
-+			qe[i].data = ev[i].u64;
-+			qe[i].qid = queue_id[i];
-+			qe[i].priority = EV_TO_DLB2_PRIO(ev[i].priority);
-+			qe[i].lock_id = ev[i].flow_id;
-+			if (sched_type[i] == DLB2_SCHED_DIRECTED) {
-+				struct dlb2_msg_info *info =
-+					(struct dlb2_msg_info *)&qe[i].lock_id;
-+
-+				info->qid = queue_id[i];
-+				info->sched_type = DLB2_SCHED_DIRECTED;
-+				info->priority = qe[i].priority;
-+			}
-+			qe[i].u.event_type.major = ev[i].event_type;
-+			qe[i].u.event_type.sub = ev[i].sub_event_type;
-+			qe[i].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[i]);
-+		}
-+		break;
-+	case 0:
-+		break;
-+	}
-+}
-+
- static inline int
- dlb2_event_enqueue_prep(struct dlb2_eventdev_port *ev_port,
- 			struct dlb2_port *qm_port,
-diff --git a/drivers/event/dlb2/dlb2_avx512.c b/drivers/event/dlb2/dlb2_avx512.c
-index 4f8c490f8c..64faf87227 100644
---- a/drivers/event/dlb2/dlb2_avx512.c
-+++ b/drivers/event/dlb2/dlb2_avx512.c
-@@ -1,13 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2022 Intel Corporation
-  */
--
--#include <stdint.h>
--#include <stdbool.h>
--
- #include "dlb2_priv.h"
--#include "dlb2_iface.h"
--#include "dlb2_inline_fns.h"
- 
- /*
-  * This source file is used when the compiler on the build machine
-@@ -15,262 +9,42 @@
-  * executing those instructions.
-  */
- 
--static uint8_t cmd_byte_map[DLB2_NUM_PORT_TYPES][DLB2_NUM_HW_SCHED_TYPES] = {
--	{
--		/* Load-balanced cmd bytes */
--		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_FORWARD] = DLB2_FWD_CMD_BYTE,
--		[RTE_EVENT_OP_RELEASE] = DLB2_COMP_CMD_BYTE,
--	},
--	{
--		/* Directed cmd bytes */
--		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_FORWARD] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_RELEASE] = DLB2_NOOP_CMD_BYTE,
--	},
--};
--
- void
--dlb2_event_build_hcws(struct dlb2_port *qm_port,
--		      const struct rte_event ev[],
--		      int num,
--		      uint8_t *sched_type,
--		      uint8_t *queue_id)
-+dlb2_build_qes_avx512(struct dlb2_enqueue_qe *qe, const struct rte_event ev[], __m128i sse_qe[])
- {
--	struct dlb2_enqueue_qe *qe;
--	uint16_t sched_word[4];
--	__m128i sse_qe[2];
--	int i;
--
--	qe = qm_port->qe4;
--
--	sse_qe[0] = _mm_setzero_si128();
--	sse_qe[1] = _mm_setzero_si128();
--
--	switch (num) {
--	case 4:
--		/* Construct the metadata portion of two HCWs in one 128b SSE
--		 * register. HCW metadata is constructed in the SSE registers
--		 * like so:
--		 * sse_qe[0][63:0]:   qe[0]'s metadata
--		 * sse_qe[0][127:64]: qe[1]'s metadata
--		 * sse_qe[1][63:0]:   qe[2]'s metadata
--		 * sse_qe[1][127:64]: qe[3]'s metadata
--		 */
--
--		/* Convert the event operation into a command byte and store it
--		 * in the metadata:
--		 * sse_qe[0][63:56]   = cmd_byte_map[is_directed][ev[0].op]
--		 * sse_qe[0][127:120] = cmd_byte_map[is_directed][ev[1].op]
--		 * sse_qe[1][63:56]   = cmd_byte_map[is_directed][ev[2].op]
--		 * sse_qe[1][127:120] = cmd_byte_map[is_directed][ev[3].op]
--		 */
--#define DLB2_QE_CMD_BYTE 7
--		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
--				cmd_byte_map[qm_port->is_directed][ev[0].op],
--				DLB2_QE_CMD_BYTE);
--		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
--				cmd_byte_map[qm_port->is_directed][ev[1].op],
--				DLB2_QE_CMD_BYTE + 8);
--		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
--				cmd_byte_map[qm_port->is_directed][ev[2].op],
--				DLB2_QE_CMD_BYTE);
--		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
--				cmd_byte_map[qm_port->is_directed][ev[3].op],
--				DLB2_QE_CMD_BYTE + 8);
--
--		/* Store priority, scheduling type, and queue ID in the sched
--		 * word array because these values are re-used when the
--		 * destination is a directed queue.
--		 */
--		sched_word[0] = EV_TO_DLB2_PRIO(ev[0].priority) << 10 |
--				sched_type[0] << 8 |
--				queue_id[0];
--		sched_word[1] = EV_TO_DLB2_PRIO(ev[1].priority) << 10 |
--				sched_type[1] << 8 |
--				queue_id[1];
--		sched_word[2] = EV_TO_DLB2_PRIO(ev[2].priority) << 10 |
--				sched_type[2] << 8 |
--				queue_id[2];
--		sched_word[3] = EV_TO_DLB2_PRIO(ev[3].priority) << 10 |
--				sched_type[3] << 8 |
--				queue_id[3];
--
--		/* Store the event priority, scheduling type, and queue ID in
--		 * the metadata:
--		 * sse_qe[0][31:16] = sched_word[0]
--		 * sse_qe[0][95:80] = sched_word[1]
--		 * sse_qe[1][31:16] = sched_word[2]
--		 * sse_qe[1][95:80] = sched_word[3]
--		 */
--#define DLB2_QE_QID_SCHED_WORD 1
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     sched_word[0],
--					     DLB2_QE_QID_SCHED_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     sched_word[1],
--					     DLB2_QE_QID_SCHED_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     sched_word[2],
--					     DLB2_QE_QID_SCHED_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     sched_word[3],
--					     DLB2_QE_QID_SCHED_WORD + 4);
--
--		/* If the destination is a load-balanced queue, store the lock
--		 * ID. If it is a directed queue, DLB places this field in
--		 * bytes 10-11 of the received QE, so we format it accordingly:
--		 * sse_qe[0][47:32]  = dir queue ? sched_word[0] : flow_id[0]
--		 * sse_qe[0][111:96] = dir queue ? sched_word[1] : flow_id[1]
--		 * sse_qe[1][47:32]  = dir queue ? sched_word[2] : flow_id[2]
--		 * sse_qe[1][111:96] = dir queue ? sched_word[3] : flow_id[3]
--		 */
--#define DLB2_QE_LOCK_ID_WORD 2
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--				(sched_type[0] == DLB2_SCHED_DIRECTED) ?
--					sched_word[0] : ev[0].flow_id,
--				DLB2_QE_LOCK_ID_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--				(sched_type[1] == DLB2_SCHED_DIRECTED) ?
--					sched_word[1] : ev[1].flow_id,
--				DLB2_QE_LOCK_ID_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--				(sched_type[2] == DLB2_SCHED_DIRECTED) ?
--					sched_word[2] : ev[2].flow_id,
--				DLB2_QE_LOCK_ID_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--				(sched_type[3] == DLB2_SCHED_DIRECTED) ?
--					sched_word[3] : ev[3].flow_id,
--				DLB2_QE_LOCK_ID_WORD + 4);
--
--		/* Store the event type and sub event type in the metadata:
--		 * sse_qe[0][15:0]  = flow_id[0]
--		 * sse_qe[0][79:64] = flow_id[1]
--		 * sse_qe[1][15:0]  = flow_id[2]
--		 * sse_qe[1][79:64] = flow_id[3]
--		 */
--#define DLB2_QE_EV_TYPE_WORD 0
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     ev[0].sub_event_type << 4 |
--						ev[0].event_type << 12,
--					     DLB2_QE_EV_TYPE_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     ev[1].sub_event_type << 4 |
--						ev[1].event_type << 12,
--					     DLB2_QE_EV_TYPE_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     ev[2].sub_event_type << 4 |
--						ev[2].event_type << 12,
--					     DLB2_QE_EV_TYPE_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     ev[3].sub_event_type << 4 |
--						ev[3].event_type << 12,
--					     DLB2_QE_EV_TYPE_WORD + 4);
--
--		if (qm_port->use_avx512) {
--
--			/*
--			 * 1) Build avx512 QE store and build each
--			 *    QE individually as XMM register
--			 * 2) Merge the 4 XMM registers/QEs into single AVX512
--			 *    register
--			 * 3) Store single avx512 register to &qe[0] (4x QEs
--			 *    stored in 1x store)
--			 */
--
--			__m128i v_qe0 = _mm_setzero_si128();
--			uint64_t meta = _mm_extract_epi64(sse_qe[0], 0);
--			v_qe0 = _mm_insert_epi64(v_qe0, ev[0].u64, 0);
--			v_qe0 = _mm_insert_epi64(v_qe0, meta, 1);
--
--			__m128i v_qe1 = _mm_setzero_si128();
--			meta = _mm_extract_epi64(sse_qe[0], 1);
--			v_qe1 = _mm_insert_epi64(v_qe1, ev[1].u64, 0);
--			v_qe1 = _mm_insert_epi64(v_qe1, meta, 1);
--
--			__m128i v_qe2 = _mm_setzero_si128();
--			meta = _mm_extract_epi64(sse_qe[1], 0);
--			v_qe2 = _mm_insert_epi64(v_qe2, ev[2].u64, 0);
--			v_qe2 = _mm_insert_epi64(v_qe2, meta, 1);
--
--			__m128i v_qe3 = _mm_setzero_si128();
--			meta = _mm_extract_epi64(sse_qe[1], 1);
--			v_qe3 = _mm_insert_epi64(v_qe3, ev[3].u64, 0);
--			v_qe3 = _mm_insert_epi64(v_qe3, meta, 1);
--
--			/* we have 4x XMM registers, one per QE. */
--			__m512i v_all_qes = _mm512_setzero_si512();
--			v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe0, 0);
--			v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe1, 1);
--			v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe2, 2);
--			v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe3, 3);
--
--			/*
--			 * store the 4x QEs in a single register to the scratch
--			 * space of the PMD
--			 */
--			_mm512_store_si512(&qe[0], v_all_qes);
--
--		} else {
--
--			/*
--			 * Store the metadata to memory (use the double-precision
--			 * _mm_storeh_pd because there is no integer function for
--			 * storing the upper 64b):
--			 * qe[0] metadata = sse_qe[0][63:0]
--			 * qe[1] metadata = sse_qe[0][127:64]
--			 * qe[2] metadata = sse_qe[1][63:0]
--			 * qe[3] metadata = sse_qe[1][127:64]
--			 */
--			_mm_storel_epi64((__m128i *)&qe[0].u.opaque_data,
--					 sse_qe[0]);
--			_mm_storeh_pd((double *)&qe[1].u.opaque_data,
--				      (__m128d)sse_qe[0]);
--			_mm_storel_epi64((__m128i *)&qe[2].u.opaque_data,
--					 sse_qe[1]);
--			_mm_storeh_pd((double *)&qe[3].u.opaque_data,
--				      (__m128d)sse_qe[1]);
--
--			qe[0].data = ev[0].u64;
--			qe[1].data = ev[1].u64;
--			qe[2].data = ev[2].u64;
--			qe[3].data = ev[3].u64;
--		}
--
--			/* will only be set for DLB 2.5 + */
--		if (qm_port->dlb2->enable_cq_weight) {
--			qe[0].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[0]);
--			qe[1].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[1]);
--			qe[2].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[2]);
--			qe[3].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[3]);
--		}
--
--		break;
--	case 3:
--	case 2:
--	case 1:
--		for (i = 0; i < num; i++) {
--			qe[i].cmd_byte =
--				cmd_byte_map[qm_port->is_directed][ev[i].op];
--			qe[i].sched_type = sched_type[i];
--			qe[i].data = ev[i].u64;
--			qe[i].qid = queue_id[i];
--			qe[i].priority = EV_TO_DLB2_PRIO(ev[i].priority);
--			qe[i].lock_id = ev[i].flow_id;
--			if (sched_type[i] == DLB2_SCHED_DIRECTED) {
--				struct dlb2_msg_info *info =
--					(struct dlb2_msg_info *)&qe[i].lock_id;
--
--				info->qid = queue_id[i];
--				info->sched_type = DLB2_SCHED_DIRECTED;
--				info->priority = qe[i].priority;
--			}
--			qe[i].u.event_type.major = ev[i].event_type;
--			qe[i].u.event_type.sub = ev[i].sub_event_type;
--			qe[i].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[i]);
--		}
--		break;
--	case 0:
--		break;
--	}
-+	/*
-+	 * 1) Build avx512 QE store and build each QE individualy as XMM register
-+	 * 2) Merge the 4 XMM registers/QEs into single AVX512 register
-+	 * 3) Store single avx512 register to &qe[0] (4x QEs stored in 1x store)
-+	 */
-+
-+	__m128i v_qe0 = _mm_setzero_si128();
-+	uint64_t meta = _mm_extract_epi64(sse_qe[0], 0);
-+	v_qe0 = _mm_insert_epi64(v_qe0, ev[0].u64, 0);
-+	v_qe0 = _mm_insert_epi64(v_qe0, meta, 1);
-+
-+	__m128i v_qe1 = _mm_setzero_si128();
-+	meta = _mm_extract_epi64(sse_qe[0], 1);
-+	v_qe1 = _mm_insert_epi64(v_qe1, ev[1].u64, 0);
-+	v_qe1 = _mm_insert_epi64(v_qe1, meta, 1);
-+
-+	__m128i v_qe2 = _mm_setzero_si128();
-+	meta = _mm_extract_epi64(sse_qe[1], 0);
-+	v_qe2 = _mm_insert_epi64(v_qe2, ev[2].u64, 0);
-+	v_qe2 = _mm_insert_epi64(v_qe2, meta, 1);
-+
-+	__m128i v_qe3 = _mm_setzero_si128();
-+	meta = _mm_extract_epi64(sse_qe[1], 1);
-+	v_qe3 = _mm_insert_epi64(v_qe3, ev[3].u64, 0);
-+	v_qe3 = _mm_insert_epi64(v_qe3, meta, 1);
-+
-+	/* we have 4x XMM registers, one per QE. */
-+	__m512i v_all_qes = _mm512_setzero_si512();
-+	v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe0, 0);
-+	v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe1, 1);
-+	v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe2, 2);
-+	v_all_qes = _mm512_inserti32x4(v_all_qes, v_qe3, 3);
-+
-+	/* store the 4x QEs in a single register to the scratch space of the PMD */
-+	_mm512_store_si512(&qe[0], v_all_qes);
- }
-diff --git a/drivers/event/dlb2/dlb2_priv.h b/drivers/event/dlb2/dlb2_priv.h
-index 52da31ed31..39718284c8 100644
---- a/drivers/event/dlb2/dlb2_priv.h
-+++ b/drivers/event/dlb2/dlb2_priv.h
-@@ -387,7 +387,6 @@ struct dlb2_port {
- 	struct dlb2_eventdev_port *ev_port; /* back ptr */
- 	bool use_scalar; /* force usage of scalar code */
- 	uint16_t hw_credit_quanta;
--	bool use_avx512;
- 	bool is_producer; /* True if port is of type producer */
- 	uint8_t reorder_id; /* id used for reordering events coming back into the scheduler */
- 	bool reorder_en;
-@@ -731,11 +730,9 @@ int dlb2_parse_params(const char *params,
- 		      struct dlb2_devargs *dlb2_args,
- 		      uint8_t version);
- 
--void dlb2_event_build_hcws(struct dlb2_port *qm_port,
--			   const struct rte_event ev[],
--			   int num,
--			   uint8_t *sched_type,
--			   uint8_t *queue_id);
-+void dlb2_build_qes_sse(struct dlb2_enqueue_qe *qe, const struct rte_event ev[], __m128i sse_qe[]);
-+void dlb2_build_qes_avx512(struct dlb2_enqueue_qe *qe, const struct rte_event ev[],
-+			   __m128i sse_qe[]);
- 
- /* Extern functions */
- extern int rte_eal_parse_coremask(const char *coremask, int *cores);
-diff --git a/drivers/event/dlb2/dlb2_sse.c b/drivers/event/dlb2/dlb2_sse.c
-index fefd7acdb3..55190dc171 100644
---- a/drivers/event/dlb2/dlb2_sse.c
-+++ b/drivers/event/dlb2/dlb2_sse.c
-@@ -2,172 +2,15 @@
-  * Copyright(c) 2022 Intel Corporation
-  */
- 
--#include <stdint.h>
--#include <stdbool.h>
--
--#ifndef CC_AVX512_SUPPORT
--
- #include "dlb2_priv.h"
--#include "dlb2_iface.h"
--#include "dlb2_inline_fns.h"
--
- /*
-  * This source file is only used when the compiler on the build machine
-  * does not support AVX512VL.
-  */
- 
--static uint8_t cmd_byte_map[DLB2_NUM_PORT_TYPES][DLB2_NUM_HW_SCHED_TYPES] = {
--	{
--		/* Load-balanced cmd bytes */
--		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_FORWARD] = DLB2_FWD_CMD_BYTE,
--		[RTE_EVENT_OP_RELEASE] = DLB2_COMP_CMD_BYTE,
--	},
--	{
--		/* Directed cmd bytes */
--		[RTE_EVENT_OP_NEW] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_FORWARD] = DLB2_NEW_CMD_BYTE,
--		[RTE_EVENT_OP_RELEASE] = DLB2_NOOP_CMD_BYTE,
--	},
--};
--
- void
--dlb2_event_build_hcws(struct dlb2_port *qm_port,
--		      const struct rte_event ev[],
--		      int num,
--		      uint8_t *sched_type,
--		      uint8_t *queue_id)
-+dlb2_build_qes_sse(struct dlb2_enqueue_qe *qe, const struct rte_event ev[], __m128i sse_qe[])
- {
--	struct dlb2_enqueue_qe *qe;
--	uint16_t sched_word[4];
--	__m128i sse_qe[2];
--	int i;
--
--	qe = qm_port->qe4;
--
--	sse_qe[0] = _mm_setzero_si128();
--	sse_qe[1] = _mm_setzero_si128();
--
--	switch (num) {
--	case 4:
--		/* Construct the metadata portion of two HCWs in one 128b SSE
--		 * register. HCW metadata is constructed in the SSE registers
--		 * like so:
--		 * sse_qe[0][63:0]:   qe[0]'s metadata
--		 * sse_qe[0][127:64]: qe[1]'s metadata
--		 * sse_qe[1][63:0]:   qe[2]'s metadata
--		 * sse_qe[1][127:64]: qe[3]'s metadata
--		 */
--
--		/* Convert the event operation into a command byte and store it
--		 * in the metadata:
--		 * sse_qe[0][63:56]   = cmd_byte_map[is_directed][ev[0].op]
--		 * sse_qe[0][127:120] = cmd_byte_map[is_directed][ev[1].op]
--		 * sse_qe[1][63:56]   = cmd_byte_map[is_directed][ev[2].op]
--		 * sse_qe[1][127:120] = cmd_byte_map[is_directed][ev[3].op]
--		 */
--#define DLB2_QE_CMD_BYTE 7
--		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
--				cmd_byte_map[qm_port->is_directed][ev[0].op],
--				DLB2_QE_CMD_BYTE);
--		sse_qe[0] = _mm_insert_epi8(sse_qe[0],
--				cmd_byte_map[qm_port->is_directed][ev[1].op],
--				DLB2_QE_CMD_BYTE + 8);
--		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
--				cmd_byte_map[qm_port->is_directed][ev[2].op],
--				DLB2_QE_CMD_BYTE);
--		sse_qe[1] = _mm_insert_epi8(sse_qe[1],
--				cmd_byte_map[qm_port->is_directed][ev[3].op],
--				DLB2_QE_CMD_BYTE + 8);
--
--		/* Store priority, scheduling type, and queue ID in the sched
--		 * word array because these values are re-used when the
--		 * destination is a directed queue.
--		 */
--		sched_word[0] = EV_TO_DLB2_PRIO(ev[0].priority) << 10 |
--				sched_type[0] << 8 |
--				queue_id[0];
--		sched_word[1] = EV_TO_DLB2_PRIO(ev[1].priority) << 10 |
--				sched_type[1] << 8 |
--				queue_id[1];
--		sched_word[2] = EV_TO_DLB2_PRIO(ev[2].priority) << 10 |
--				sched_type[2] << 8 |
--				queue_id[2];
--		sched_word[3] = EV_TO_DLB2_PRIO(ev[3].priority) << 10 |
--				sched_type[3] << 8 |
--				queue_id[3];
--
--		/* Store the event priority, scheduling type, and queue ID in
--		 * the metadata:
--		 * sse_qe[0][31:16] = sched_word[0]
--		 * sse_qe[0][95:80] = sched_word[1]
--		 * sse_qe[1][31:16] = sched_word[2]
--		 * sse_qe[1][95:80] = sched_word[3]
--		 */
--#define DLB2_QE_QID_SCHED_WORD 1
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     sched_word[0],
--					     DLB2_QE_QID_SCHED_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     sched_word[1],
--					     DLB2_QE_QID_SCHED_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     sched_word[2],
--					     DLB2_QE_QID_SCHED_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     sched_word[3],
--					     DLB2_QE_QID_SCHED_WORD + 4);
--
--		/* If the destination is a load-balanced queue, store the lock
--		 * ID. If it is a directed queue, DLB places this field in
--		 * bytes 10-11 of the received QE, so we format it accordingly:
--		 * sse_qe[0][47:32]  = dir queue ? sched_word[0] : flow_id[0]
--		 * sse_qe[0][111:96] = dir queue ? sched_word[1] : flow_id[1]
--		 * sse_qe[1][47:32]  = dir queue ? sched_word[2] : flow_id[2]
--		 * sse_qe[1][111:96] = dir queue ? sched_word[3] : flow_id[3]
--		 */
--#define DLB2_QE_LOCK_ID_WORD 2
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--				(sched_type[0] == DLB2_SCHED_DIRECTED) ?
--					sched_word[0] : ev[0].flow_id,
--				DLB2_QE_LOCK_ID_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--				(sched_type[1] == DLB2_SCHED_DIRECTED) ?
--					sched_word[1] : ev[1].flow_id,
--				DLB2_QE_LOCK_ID_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--				(sched_type[2] == DLB2_SCHED_DIRECTED) ?
--					sched_word[2] : ev[2].flow_id,
--				DLB2_QE_LOCK_ID_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--				(sched_type[3] == DLB2_SCHED_DIRECTED) ?
--					sched_word[3] : ev[3].flow_id,
--				DLB2_QE_LOCK_ID_WORD + 4);
--
--		/* Store the event type and sub event type in the metadata:
--		 * sse_qe[0][15:0]  = flow_id[0]
--		 * sse_qe[0][79:64] = flow_id[1]
--		 * sse_qe[1][15:0]  = flow_id[2]
--		 * sse_qe[1][79:64] = flow_id[3]
--		 */
--#define DLB2_QE_EV_TYPE_WORD 0
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     ev[0].sub_event_type << 8 |
--						ev[0].event_type,
--					     DLB2_QE_EV_TYPE_WORD);
--		sse_qe[0] = _mm_insert_epi16(sse_qe[0],
--					     ev[1].sub_event_type << 8 |
--						ev[1].event_type,
--					     DLB2_QE_EV_TYPE_WORD + 4);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     ev[2].sub_event_type << 8 |
--						ev[2].event_type,
--					     DLB2_QE_EV_TYPE_WORD);
--		sse_qe[1] = _mm_insert_epi16(sse_qe[1],
--					     ev[3].sub_event_type << 8 |
--						ev[3].event_type,
--					     DLB2_QE_EV_TYPE_WORD + 4);
--
- 		/*
- 		 * Store the metadata to memory (use the double-precision
- 		 * _mm_storeh_pd because there is no integer function for
-@@ -177,56 +20,13 @@ dlb2_event_build_hcws(struct dlb2_port *qm_port,
- 		 * qe[2] metadata = sse_qe[1][63:0]
- 		 * qe[3] metadata = sse_qe[1][127:64]
- 		 */
--		_mm_storel_epi64((__m128i *)&qe[0].u.opaque_data,
--				 sse_qe[0]);
--		_mm_storeh_pd((double *)&qe[1].u.opaque_data,
--			      (__m128d)sse_qe[0]);
--		_mm_storel_epi64((__m128i *)&qe[2].u.opaque_data,
--				 sse_qe[1]);
--		_mm_storeh_pd((double *)&qe[3].u.opaque_data,
--				      (__m128d)sse_qe[1]);
-+		_mm_storel_epi64((__m128i *)&qe[0].u.opaque_data, sse_qe[0]);
-+		_mm_storeh_pd((double *)&qe[1].u.opaque_data, (__m128d)sse_qe[0]);
-+		_mm_storel_epi64((__m128i *)&qe[2].u.opaque_data, sse_qe[1]);
-+		_mm_storeh_pd((double *)&qe[3].u.opaque_data, (__m128d)sse_qe[1]);
- 
- 		qe[0].data = ev[0].u64;
- 		qe[1].data = ev[1].u64;
- 		qe[2].data = ev[2].u64;
- 		qe[3].data = ev[3].u64;
--
--		/* will only be set for DLB 2.5 + */
--		if (qm_port->dlb2->enable_cq_weight) {
--			qe[0].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[0]);
--			qe[1].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[1]);
--			qe[2].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[2]);
--			qe[3].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[3]);
--		}
--
--		break;
--	case 3:
--	case 2:
--	case 1:
--		for (i = 0; i < num; i++) {
--			qe[i].cmd_byte =
--				cmd_byte_map[qm_port->is_directed][ev[i].op];
--			qe[i].sched_type = sched_type[i];
--			qe[i].weight = RTE_PMD_DLB2_GET_QE_WEIGHT(&ev[i]);
--			qe[i].data = ev[i].u64;
--			qe[i].qid = queue_id[i];
--			qe[i].priority = EV_TO_DLB2_PRIO(ev[i].priority);
--			qe[i].lock_id = ev[i].flow_id;
--			if (sched_type[i] == DLB2_SCHED_DIRECTED) {
--				struct dlb2_msg_info *info =
--					(struct dlb2_msg_info *)&qe[i].lock_id;
--
--				info->qid = queue_id[i];
--				info->sched_type = DLB2_SCHED_DIRECTED;
--				info->priority = qe[i].priority;
--			}
--			qe[i].u.event_type.major = ev[i].event_type;
--			qe[i].u.event_type.sub = ev[i].sub_event_type;
--		}
--		break;
--	case 0:
--		break;
--	}
- }
--
--#endif /* !CC_AVX512_SUPPORT */
--- 
-2.39.1
-
+/Bruce
