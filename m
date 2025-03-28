@@ -2,60 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0889C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 13:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F352C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 13:20:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0DC2402DB;
-	Fri, 28 Mar 2025 14:19:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9092B402CB;
+	Fri, 28 Mar 2025 14:20:45 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 03F00402C1
- for <dev@dpdk.org>; Fri, 28 Mar 2025 14:19:18 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 47A9F402C1
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 14:20:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743167958;
+ s=mimecast20190719; t=1743168043;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=r0BtEoXI5SoO2uBXCYDNq2i0Dr7RgqeOVXQUywxiYjk=;
- b=gq7cHxAO4sOERcgfISBUynmurlLAc4atY0qZtkrAoCZ2JX40FJubSrBFnAsBRuy3FmIOel
- FE+eW2qTg+1V1HCq2825oVTPa+wO9LBxwf57N8LGIvXV6aPlhND/xV4bMuA07a6jC5RIp3
- 3kGDXs+ZAMjoXOtMDtRWu/nFk8lFL9c=
+ bh=QZzGhn/4l3WSLEzHF0/97FeEy3jszQJsdmqIxTPmZ2s=;
+ b=RVIz3Y5Sn7d6exRsqX20i8kSJrSZTdUvrOku7PjMJwRAu2Vy0MyPkE1n+HQqR9i1OcVMB7
+ cofZtq26cWMzXHSXnidQRiu+sAg89T/982FryK4L7AMgmf+gv6UoW87zIBn/P7sqvU06MY
+ qiJbnolYN+wcED37qcGR5lV53uwa/P4=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-446-CtrSjRRaOo2TAwqz0XpKig-1; Fri,
- 28 Mar 2025 09:19:12 -0400
-X-MC-Unique: CtrSjRRaOo2TAwqz0XpKig-1
-X-Mimecast-MFC-AGG-ID: CtrSjRRaOo2TAwqz0XpKig_1743167951
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-yiL-U51fNH2bnDUR1jqA2w-1; Fri,
+ 28 Mar 2025 09:20:40 -0400
+X-MC-Unique: yiL-U51fNH2bnDUR1jqA2w-1
+X-Mimecast-MFC-AGG-ID: yiL-U51fNH2bnDUR1jqA2w_1743168039
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 11AF91800260; Fri, 28 Mar 2025 13:19:11 +0000 (UTC)
+ id 21CF018001F7; Fri, 28 Mar 2025 13:20:39 +0000 (UTC)
 Received: from RHTRH0061144 (unknown [10.22.89.226])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id DE46D19560AB; Fri, 28 Mar 2025 13:19:07 +0000 (UTC)
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 511F4195DF83; Fri, 28 Mar 2025 13:20:36 +0000 (UTC)
 From: Aaron Conole <aconole@redhat.com>
 To: David Marchand <david.marchand@redhat.com>
 Cc: dev@dpdk.org,  thomas@monjalon.net,  bruce.richardson@intel.com,
  andremue@linux.microsoft.com,  Michael Santana
  <maicolgabriel@hotmail.com>,  Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
  Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v5 6/8] build: use dynamically generated version maps
-In-Reply-To: <20250327133638.2983276-7-david.marchand@redhat.com> (David
- Marchand's message of "Thu, 27 Mar 2025 14:36:26 +0100")
+Subject: Re: [PATCH v6 6/8] build: use dynamically generated version maps
+In-Reply-To: <20250328105250.3082414-7-david.marchand@redhat.com> (David
+ Marchand's message of "Fri, 28 Mar 2025 11:52:43 +0100")
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250327133638.2983276-1-david.marchand@redhat.com>
- <20250327133638.2983276-7-david.marchand@redhat.com>
-Date: Fri, 28 Mar 2025 09:19:05 -0400
-Message-ID: <f7tzfh5qomu.fsf@redhat.com>
+ <20250328105250.3082414-1-david.marchand@redhat.com>
+ <20250328105250.3082414-7-david.marchand@redhat.com>
+Date: Fri, 28 Mar 2025 09:20:34 -0400
+Message-ID: <f7tv7rtqokd.fsf@redhat.com>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: RFM4Q-xv--xh-D4hhmcVy3uY-aduaXkj_SD_L-1MN6M_1743167951
+X-Mimecast-MFC-PROC-ID: zGBMSgME8ZwOMzUMO1wIPl0h9r-ktuQUKJW4E2JxtQc_1743168039
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
@@ -81,9 +81,8 @@ David Marchand <david.marchand@redhat.com> writes:
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
 
-Just a minor (non-blocking) nit below.
+Ugh. replied to the wrong one.  Anyway, my previous note still applies.
 
-Otherwise,
 Acked-by: Aaron Conole <aconole@redhat.com>
 
 >  .github/workflows/build.yml                   |   1 -
@@ -926,12 +925,6 @@ Acked-by: Aaron Conole <aconole@redhat.com>
 > -version map script.
 > +must be annotated with a RTE_EXPORT_EXPERIMENTAL_SYMBOL call in the corresponding libraries'
 > +sources.
-
-When reading through, this line stuck out as getting very long (92
-characters).  I know it's .rst file so generally more like a markup
-language, but maybe consider breaking ~79 characters region.  If you
-agree, it's okay for this to be on apply.
-
 >  Experimental symbols must be commented so that it is clear in which DPDK
 >  version they were introduced.
 >  
