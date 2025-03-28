@@ -2,180 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FABC28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 09:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 296D2C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 10:14:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 892CC40273;
-	Fri, 28 Mar 2025 10:02:07 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id A9E0440261
- for <dev@dpdk.org>; Fri, 28 Mar 2025 10:02:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743152526; x=1774688526;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=u9DSphU3onv4SNzU06a/Cn8h3Vm/s5rmCIz04zsRdvw=;
- b=InwEMul397SYXe2bHqUgeaa9nENI9pj30EmnzSQ6LH1FvDzO7pfwsQ+Z
- Jcbt1tuW/zfZjWeiX8PdfG6kjaCvqEsesgRRM6S1/8UGUwI2Ac+SqwSSr
- 9un06CJH2frr9WM5Gha5LlUsQqp8vxo89Nz5W1AT259PaJCwrpiq383GJ
- XpYmJ67ir6W2ar8u0Me1eDJaeNHMq1rhKLB2F5nAnuXudYod5L+KDK9hP
- FAzj3mnEtXf8WhvQEZhS9MtpuHzjLU0EOyIu78+aYMPv+cO3Ev0nti1rW
- mlOorglO4O1Vlt4uWegtdLDAQV78PmjWA0IYphKENN3NqGX3hcOdnhqBo A==;
-X-CSE-ConnectionGUID: uHSd/1EdRq6H3fHjVwccrw==
-X-CSE-MsgGUID: kBqyHZ0iT4mR77GXBoUTRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48166765"
-X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; d="scan'208";a="48166765"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Mar 2025 02:02:03 -0700
-X-CSE-ConnectionGUID: 5sQRBNwGQ1+Rjz0oYguHYw==
-X-CSE-MsgGUID: oOEvGkYNT+mpXoIgFUMYJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; d="scan'208";a="130109325"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 28 Mar 2025 02:02:01 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 28 Mar 2025 02:02:00 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 28 Mar 2025 02:02:00 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.173)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 28 Mar 2025 02:01:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cLLUzA5n0nNwlBwngF/9VgFg7cySYGUtxdvDir8+c7PjSZXzNtIFUq5jqCfC+UVCMi7ANWcnR+KorVfdxG3FE4/VMTTe0oiPc6IybMQAhJ+RAfPsViFpOfYoYojFqo+V123HF8bZ9qSWfQ62pJTatLeAVHenuY0ognvh57QbsHLn2fWCjsNHHVN+hEUikhK0zF/v7mk6Jz/mX0/klo2fqaGrwk8iLAayDQWjduYdg7r4U1JIhHnDiH2v943K1WlqG0pbNwe/X3hHn9ThY6B9f3d0HgEbiTibxPX9L3KZt21aQ5bXbrO1T2jE2AGTbL66b8LrKYVyAv7lvBSSbQqNaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HruSbt75j+OHHIG5rrXh3kFsQp6sHAnOiUg740egMaE=;
- b=wBXTYXxJK0Pi9vKH5leTViawY+0YQXOL3K5kdP1LaCqWbAgXPH73SAAE87xpa1GkEnuxRhDaxKlImpxqpzpszToDoczvfalJJWf7isd2wrrUQtvtsfABS4B+pa+iWofQ+Bz2bM/gFfqFnVFUpeqeEyq2UEB7nzJiCCEMH63clP3RqoLD15ctncOjwkegJpkFNCvWZbNTZNxo/JnVHmq5oFTl2rNxebQS+YpIvxB/tZCaiHehQH50PaPMJmh0plrJP7Um1CcCH4DVb0cheM8/sHZpAM3bppFTDBi7SIfYXSbdg1U1QsvSJWGSKhenXoyoq4649X3/nKXMOq2f4FZV4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CH3PR11MB7249.namprd11.prod.outlook.com (2603:10b6:610:146::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
- 2025 09:01:57 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
- 09:01:57 +0000
-Date: Fri, 28 Mar 2025 09:01:53 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 0/9] net/intel: clean up base code build
-Message-ID: <Z-ZlgQHcTo0tOI63@bricha3-mobl1.ger.corp.intel.com>
-References: <20250326155230.1315056-1-bruce.richardson@intel.com>
- <20250327145202.2220153-1-bruce.richardson@intel.com>
- <CAJFAV8y8eqnTDmsku8=HrF1fQdDuBNYyaKfzWCg9J1Z5P8iYVw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8y8eqnTDmsku8=HrF1fQdDuBNYyaKfzWCg9J1Z5P8iYVw@mail.gmail.com>
-X-ClientProxiedBy: DU2PR04CA0228.eurprd04.prod.outlook.com
- (2603:10a6:10:2b1::23) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 80902402E6;
+	Fri, 28 Mar 2025 11:14:57 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 22C02402C1
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 11:14:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1743156895;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=mfaLfNiF8cMQQdsKC0KgUok+bhUg21dkq3jLY3rBDgw=;
+ b=HU7yUjzKLKRwbU/dfZqpeCNTUuAAPWZ/OOdg5QthPAeDRN3CX4uBEAvYufBVkOCnQLEt+Z
+ N7JuXFvnNs8pUJgKOXQSc+TNp8a6mpyI1/tTbxdYndj9Nc97MLJ0Wil7rkrHZjQk/TcS0W
+ dF4ieFPjuBDKqrUyneECVGxoBMrrPbE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-cSrfpI_aPRqFKftQ1Cu1DA-1; Fri,
+ 28 Mar 2025 06:14:52 -0400
+X-MC-Unique: cSrfpI_aPRqFKftQ1Cu1DA-1
+X-Mimecast-MFC-AGG-ID: cSrfpI_aPRqFKftQ1Cu1DA_1743156890
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2E224190308B; Fri, 28 Mar 2025 10:14:50 +0000 (UTC)
+Received: from rh.redhat.com (unknown [10.44.32.16])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id F15B21828A9E; Fri, 28 Mar 2025 10:14:43 +0000 (UTC)
+From: Kevin Traynor <ktraynor@redhat.com>
+To: stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ Ali Alnubani <alialnu@nvidia.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
+ Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
+ Raslan Darawsheh <rasland@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>, yanghliu@redhat.com
+Subject: 24.11.2 patches review and test
+Date: Fri, 28 Mar 2025 10:14:33 +0000
+Message-ID: <20250328101435.250876-1-ktraynor@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB7249:EE_
-X-MS-Office365-Filtering-Correlation-Id: f40ebe89-a46d-450a-530f-08dd6dd7315c
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?L3pPR1Y5ZFl5MHZwY1FYdUxWRWZ4aXZWdUhiTGZuemZQbkFFdmVWVHFYYm5n?=
- =?utf-8?B?MlR4RngwYVUyM2c5enlEaWxaTHBFTG0zL0RtNFZGSWtoempDWm9WamlWd21x?=
- =?utf-8?B?a2kxY0lHNXFIRzQzVWE4T3VUOXFzZzdOTk55U1piUUFnL3JPblpiaXFCMHJm?=
- =?utf-8?B?RVdrdXFKckFIdnhabm5QaHhlWllKYmJkdzJFTXpHL3RoS3ZhZjRqUng1OUsx?=
- =?utf-8?B?NmZsa25GTVpLc1ZFTXVpcmJmcXhIZk9JU3F4dmo2SHVPMVBtVjVqTTRoK0Zt?=
- =?utf-8?B?b0I1U2FZWUtvejVHMEFOWlNhNnFnZnpDQmVhc3FNKzRrL1RGSGRiaFpBS2kz?=
- =?utf-8?B?K0lYL25OOE5ULzQ4YnFsTGdEbzhMbzRBdzdrTWhZU3VOMUMxam1uRy9jcU5K?=
- =?utf-8?B?YkxkMnRBREJzK2FRUm1yR2x2bzAyVTM4czBHSFBNUVgwNnBUcXBWTlJDOTdC?=
- =?utf-8?B?Tlpid01aUm4wMThXZUo5Y0txemZxbEZZM2FhMEc5Q1NucDFld211WmNhNXgv?=
- =?utf-8?B?Rzc2ckgvOEZEMlIrdkRyaFNwT0p0Zm5GVFdGbVBGNE1kTjRGTlp1VmRRV3V6?=
- =?utf-8?B?RDhOZy9WTUNqZ1JOQTFpKzJ6YU4ra2hTTVhobVBHMjZsTVg5Y0RLbVNsdDBp?=
- =?utf-8?B?WkRDd0VVMXJ1VkY0Z0hxeWVLZkNrL2hSL2VJQ09zNldBUHhQejZCRXNMSjBk?=
- =?utf-8?B?REhUZGVhSVQ1aEJsUGNIT0wvQlJYVCtLT1B3eVlvYnBuSVd2K09xc2RoU2pF?=
- =?utf-8?B?R2gwbGw5MCt2eGJTK0FHWXp0M005YVRkOEczOGVMaGVnZGxTaXdGWEk3UGdo?=
- =?utf-8?B?MVl0c05zUXMwaWo3RFdmQ093USt5Zmd3ZmJSWGVkTHU1Z1pwR2xRakEraXA2?=
- =?utf-8?B?Z0hzK3duSm1kM2paa1VUVktoOXZMbThzMTJHNktrUmo0blFSWjF3Sk5rSVQz?=
- =?utf-8?B?UWJDdkMzRktCMEZTN2FCbk5wc1BhRXJ5WHhvSUNKQ3habVYvV05hUk50SE4x?=
- =?utf-8?B?cmg5Z1JvVUFubXYrSS85c1FQNTRGSWdJTzBGdm9OZlBlaEJVMmo4SEJUU0xN?=
- =?utf-8?B?L0RRNVNLQ1I0N25oRnBEbnhTL3d3Q041Y1Vidm5Ub1VianNYSWgxWU5rOHNY?=
- =?utf-8?B?Y1lQbzRpeVorTy95dmZRRUNvbjFnOFBBekNwOGVTaGRhVittdU8rcGs0VFVq?=
- =?utf-8?B?eEFyS3hmZjE3L0ZyVldaM1RCdUJjbzFXeDlsN0JKa1FjZklCQlV0MXRQU3Fn?=
- =?utf-8?B?dHRrRE5xVWZ1WWdjVHB5VTMvaVB5VVdCbkgvOSt3VHp5b2hkdHBoWTh1RzBJ?=
- =?utf-8?B?ZXB4M3dsYzJSeHhVU3lWM28xa0xrdXp2M3hKSFUwdkR3ZXFPVEJpNUdyTDNn?=
- =?utf-8?B?RGdod3V5TUVuU3lLaExJYm9XbXdUUThsbjh5MzQwcWJSVlMxVVMxZjBQN252?=
- =?utf-8?B?eWxWTXFsWjJJSHZqMEFEZDFQM3ZFV29RenNqMmxod0JxVmRtaUpENXM4aGpp?=
- =?utf-8?B?YjNEa0ZycStYVUZWNW8rczdJY09hREExVEVrd2hnVmFHclZCN2xYV1Y4K04z?=
- =?utf-8?B?RUkvNXRtOTQ5VWtGZVVHelcwYzF0alMyZExGUEFUUTlyN2ErcVN2U3lNRDdp?=
- =?utf-8?B?UFdhUmlqaDdKbmJvSGgyRXhKUGZXY3RqN0t4MWdlVmhuTVAxTEg1ZTFLclBB?=
- =?utf-8?B?WU9XaWl4ekJVMm0zVncyL3ZILzBkbVpPTzJpY05UV0JhWmVXK1ExWjJmRnhJ?=
- =?utf-8?B?RlZWd0RmZ1Z2RmlmTDAwa01DdUR3M0xRczBLWmU1OUl3STZ5Skt4bHZISzJK?=
- =?utf-8?B?WDlpNktlYVBtc2M3MThPT3hyVDRJclRrZ3hjQWliZzRZbzlsZjRVYnIxbFNq?=
- =?utf-8?Q?JnuPG/k/XAhr6?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eno0eC9ldkhwZVYwL0hReXg5TXVtTnI0U1FmWmcxc1dpeVFueFBhbEpNVE8y?=
- =?utf-8?B?a1FCUFVKR0liWWZyTHM4K1FzLzBDUit6RmQ2NmVpMEEyUkdXTUlPLzU4YXdo?=
- =?utf-8?B?OGJkSEdWbDR6d1IvazJoSlAxWit3Sk04T0VSVFFsYmdJRUlidHFPbUJLT3k3?=
- =?utf-8?B?TjczaGFYSEl1eGFRQW01R3RLcUI0ZWtMVTQzYlV0VU0rTmRtclhodjUvSGJO?=
- =?utf-8?B?K204Y2Q1cFRSVWdnOFgxU0VQbng1UU1vVU9CbTBLRHBSTWEvYUZ3dHdOaEN1?=
- =?utf-8?B?RGJ1ZGxRcFNmaU1mYW9EcjQvOVBHVzJoWTN3Mm1yay9IQ0ZQSW9xMUY3bW9L?=
- =?utf-8?B?UktrdlhybDlEYk1LV0xxN0hieXNWU2NYdWdIUXllcy8vNEx3QWtyTXYrb1Vp?=
- =?utf-8?B?OGw2d1VkSmNrMlh1eGpzNGNRQU1oMDRjL21RZXJ6cEp2M3dTeEIrcG95cHdG?=
- =?utf-8?B?b1NYN1lRdlFxMlNnOXlQVDhVU055Y2krcm05RHRGdElpY01nbGVFYVZEU3BW?=
- =?utf-8?B?bldGNGdmd0c3Y1BMQUJLNVgvK3h5VXRFc0MrWW9zeXRFR1FuRXpSVVZBQTFz?=
- =?utf-8?B?aVYwY0Q3UVp3L2JDNWdnRUJUcEJKdjN1UU9TZHBSZWFhVlZicFNmQjVFZ1FZ?=
- =?utf-8?B?M211NFFxbWNGS1RCMmhNT2xwOGY1OFZVakk0ejMySGpZMG4zak5zMXlsOHB6?=
- =?utf-8?B?bzBsdnRHSStENXdWNXdJMUxRMFM4dkprLzRxTXVvN1JyT2FVQ3ZtdkVuZTJQ?=
- =?utf-8?B?eDFnWTIwQjN4UWlITjY2SVp2RVlkQzFHZmUzY3FCWEVidTBsMCtZelNKUlZG?=
- =?utf-8?B?SWFXNjA1ZGVXOUhnQXhySFVRd2pnQ3NIY2l2N1FvZFdpTkpNTlNPV2FHVldG?=
- =?utf-8?B?VDRXNzlNUlU4cVNwVUVWVU4wMXVrMUpPVlh1bEdNamd6QmFRVWxpWmxuRnpU?=
- =?utf-8?B?c3drUkgvMURxcUVWZ3IzaGd2azUvQ3BuU0NxRXF3Ykhnbm0rc1dIa0tHT1Fi?=
- =?utf-8?B?R3JmUlo0RnQ1WXE5RThwNm5tdjdLVFB4bTlkOW9meXhVRGE5bEFheGM1ejBB?=
- =?utf-8?B?MnVCMEJkemk4ckhjOVdzL0Y0cTdDZWRPSFBmV1g1a3lGT0J5UHhBZ1Mrd2l2?=
- =?utf-8?B?NExzNUxFNFVJbk0wZDQ5bm9NTlovUFRrNUxqMU9XeDc4aWFvRGNpYmV6WXFm?=
- =?utf-8?B?RGYwVkovdWsxREFRZURZTkFERWJGR2xlNUNlOEY5OG5tVTU4eUx2SEdtelhD?=
- =?utf-8?B?VFhmTXp4MWNtV3p4WUw4UkJsUm5vNEVFWFp3dDVkbUNnMUsxbFlnSVk1cmph?=
- =?utf-8?B?M2tDWDRra0hZTFFqY1laUWU2dzZqUUp3MWRpamZTRXlwOUtlTVVWbzh1eEtJ?=
- =?utf-8?B?cWQwbUNjcVI1SXdrTkVUQUhVeWY1ZSsyMFdMeE5MUzAzUzllRFhtNSthMFJl?=
- =?utf-8?B?cFA4UWp0cUtHUER1TTNNeTdSMk80NGIyMC9hUlZDMmo2YmN6RFhZVWJ6WFF1?=
- =?utf-8?B?MU02SUhIWDl4cVI5MWNBRnFMb2RobWxiK01ZeVNLdmQ1eS85a2QvLytsZWMy?=
- =?utf-8?B?SmVZLzRuRWZoNW9hVE1VU0t2QXh5K1hWZEdaWHB1T0NXdWF4TlVDdGRodkJD?=
- =?utf-8?B?ekJnWWpxUmVjbnhaUEtzcE1RSmsrc0NUajk1UGc3ZCs3WDhEN1hnSW5PRE1M?=
- =?utf-8?B?eEdvSU1BSFh5L2tRQkxNdkZLOU9OcWNkQ01WenNITXdEZ2docXE2VytGMVJW?=
- =?utf-8?B?WFhnS1JJbVBHa1dzU09KR2JLazhDUHVPcVcxZGRpbGlhUFBQcVNMRzZ1WnBQ?=
- =?utf-8?B?d0dvZmFRQ0lxYXJVTDNFbU8vaTR5OWFVa3oxWTNFNllHUHVLTmxrTFVxb0xu?=
- =?utf-8?B?L0NLWlJkQWtWT2NwWVIxTnp5K1Z3V3hxdllNaDcxK1N3WjE1TUZMTitHbkxQ?=
- =?utf-8?B?NVBUVE5rb3JYYkVtWG1XTXEramw5Z0NTdW9kT2RtSVdDUGxBUzBXYTdQckg5?=
- =?utf-8?B?ZFNSRFNCYTRtZXZuT3ltVnRoZklqWGxpaUd2QjRGbmdlOEY5OUU1bDBPc1dL?=
- =?utf-8?B?RDNLMG53UmhsTDhYeUplQXlQQzM4eFQ4UHNFaG02ZjJHRTBIK21jbWUzazhV?=
- =?utf-8?B?TE55R3ZqRm5PR1FJaHRESHNiT3NoTnZ4dUhKWUJuZHVaN2RPS21uZWZ2OWpm?=
- =?utf-8?B?aEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f40ebe89-a46d-450a-530f-08dd6dd7315c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 09:01:57.1285 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WS3VBz8QqKyqn9Ks9SbrrDdG6Z2OHLjB/dYwX2iRP8SR4TReMPvXRU2I/aH94ZHKGDRJeNNMeTREq9lGFJDZ7LQaLNQcZ8cp0IKE8qI2cnI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7249
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5CM2JETjkNAkYLQf_gDIGb3uxGb__NnrNfKBO8PjBeY_1743156890
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,66 +71,380 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 28, 2025 at 09:21:03AM +0100, David Marchand wrote:
-> On Thu, Mar 27, 2025 at 3:52 PM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > Simplify the build of the various intel base code directories, by
-> > clearing compiler warnings so the files can be compiled directly along
-> > with the regular driver files.
-> >
-> > v3: add fix for lock checker issues on FreeBSD v2: added missing patch
-> > for fm10k
-> >
-> > Bruce Richardson (9): net/fm10k/base: fix compilation warnings
-> > net/iavf/base: remove unused meson.build file net/ixgbe/base: correct
-> > definition of macro net/ixgbe/base: fix compilation warnings
-> > net/ixgbe/base: fix lock checker errors net/i40e/base: fix unused value
-> > warnings net/i40e/base: fix compiler warnings net/ice/base: reduce
-> > warnings for unused variables net/intel: simplify base code builds
-> >
-> >  drivers/net/intel/e1000/base/meson.build    |  9 ++-----
-> >  drivers/net/intel/e1000/meson.build         |  4 +--
-> >  drivers/net/intel/fm10k/base/fm10k_mbx.c    |  2 +-
-> >  drivers/net/intel/fm10k/base/fm10k_osdep.h  |  2 +-
-> >  drivers/net/intel/fm10k/base/fm10k_pf.c     |  8 +++---
-> >  drivers/net/intel/fm10k/base/fm10k_type.h   |  6 ++---
-> >  drivers/net/intel/fm10k/base/meson.build    | 21 ++-------------
-> >  drivers/net/intel/fm10k/meson.build         |  4 +--
-> >  drivers/net/intel/i40e/base/i40e_diag.c     |  2 +-
-> >  drivers/net/intel/i40e/base/i40e_nvm.c      |  2 +-
-> >  drivers/net/intel/i40e/base/i40e_osdep.h    |  4 +--
-> >  drivers/net/intel/i40e/base/i40e_type.h     | 14 ++++++----
-> >  drivers/net/intel/i40e/base/meson.build     | 23 ++--------------
-> >  drivers/net/intel/i40e/i40e_ethdev.c        |  1 +
-> >  drivers/net/intel/i40e/meson.build          |  4 +--
-> >  drivers/net/intel/iavf/base/meson.build     | 10 -------
-> >  drivers/net/intel/ice/base/ice_osdep.h      |  6 ++---
-> >  drivers/net/intel/ice/base/ice_switch.c     |  2 --
-> >  drivers/net/intel/ice/base/ice_type.h       |  2 +-
-> >  drivers/net/intel/ice/base/meson.build      |  1 -
-> >  drivers/net/intel/ice/ice_fdir_filter.c     |  2 +-
-> >  drivers/net/intel/idpf/base/meson.build     |  2 +-
-> >  drivers/net/intel/idpf/meson.build          |  7 ++---
-> >  drivers/net/intel/ixgbe/base/ixgbe_common.c |  4 +--
-> >  drivers/net/intel/ixgbe/base/ixgbe_e610.c   |  2 ++
-> >  drivers/net/intel/ixgbe/base/ixgbe_osdep.c  | 20 --------------
-> >  drivers/net/intel/ixgbe/base/ixgbe_osdep.h  | 29 ++++++++++++---------
-> >  drivers/net/intel/ixgbe/base/meson.build    | 20 ++------------
-> >  drivers/net/intel/ixgbe/meson.build         |  4 +-- 29 files changed,
-> >  69 insertions(+), 148 deletions(-) delete mode 100644
-> >  drivers/net/intel/iavf/base/meson.build
-> 
-> I see that you kept the base/meson.build in most drivers, though those
-> only provides a list of base sources.  Is this because you expect having
-> to restore this special handling in the future?
-> 
-Not especially, no. I would hope we wouldn't need additional warning
-handling in future, though one never knows. I did consider removing them in
-this set, but have decided against it (for now anyway).
+Hi all,
 
-I am planning on doing a follow-up set to move the handling of the base
-code builds to the "drivers/meson.build" file. At that point, I'll maybe
-decide to remove the files - though again I'm in two-minds about it, still.
+Here is a list of patches targeted for stable release 24.11.2.
 
-/Bruce
+The planned date for the final release is 14 April.
+
+Please help with testing and validation of your use cases and report
+any issues/results with reply-all to this mail. For the final release
+the fixes and reported validations will be added to the release notes.
+
+A release candidate tarball can be found at:
+
+    https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.2-rc1
+
+These patches are located at branch 24.11 of dpdk-stable repo:
+    https://dpdk.org/browse/dpdk-stable/
+
+Thanks.
+
+Kevin
+
+---
+Ajit Khaparde (2):
+      net/bnxt: fix Rx handler
+      net/bnxt: fix epoch bit calculation
+
+Aleksandr Loktionov (2):
+      net/igc/base: fix MAC address hash bit shift
+      net/e1000/base: fix MAC address hash bit shift
+
+Alex Vesker (1):
+      net/mlx5/hws: fix DV FT type convert
+
+Alexander Kozyrev (1):
+      net/mlx5/hws: fix fragmented packet type matching
+
+Amir Avivi (2):
+      net/igc/base: fix iterator type
+      net/e1000/base: fix iterator type
+
+Anatoly Burakov (4):
+      net/e1000/base: correct mPHY access logic
+      net/e1000: fix crashes in secondary processes
+      net/ixgbe: fix crashes in secondary processes
+      doc: add no-IOMMU mode in devbind tool guide
+
+Andre Muezerie (6):
+      eal/x86: fix some intrinsics header include for Windows
+      eventdev: fix format string data type in log messages
+      net/bnxt: fix indication of allocation
+      common/idpf: fix void function returning a value
+      net/intel: fix void functions returning a value
+      stack: fix pop in C11 implementation
+
+Andrew Boyer (1):
+      doc: update ionic driver guide
+
+Ariel Otilibili (8):
+      examples/flow_filtering: remove duplicate assignment
+      net/sfc: remove unnecessary assignment
+      net/octeon_ep: remove useless assignment
+      net/enetfec: remove useless assignment
+      buildtools: fix some Python regex syntax warnings
+      use Python raw string notation
+      eal/linux: remove useless assignments
+      mempool: fix errno in empty create
+
+Arkadiusz Kusztal (3):
+      test/crypto: fix check for OOP header data
+      crypto/qat: fix SM3 state size
+      common/qat: fix devargs parsing
+
+Barbara Skobiej (3):
+      net/igc/base: fix data type in MAC hash
+      net/e1000/base: fix data type in MAC hash
+      net/e1000/base: fix reset for 82580
+
+Bing Zhao (3):
+      net/mlx5: fix leak of flow action data list
+      net/mlx5: fix unneeded stub flow table allocation
+      net/mlx5: fix flow group ID for action translation
+
+Bruce Richardson (9):
+      net/iavf: remove reset of Tx prepare function pointer
+      net/intel: fix build with icx
+      event/dlb2: fix event weight handling in SSE code path
+      test/dma: fix pointers in IOVA as PA mode
+      net/iavf: check interrupt registration failure
+      net/iavf: fix crash on app exit on FreeBSD
+      eal: fix undetected NUMA nodes
+      net/ixgbe: add checks for E610 VF
+      dma/idxd: add device ids for new HW versions
+
+Carolyn Wyborny (1):
+      net/e1000/base: skip management check for 82575
+
+Chaoyong He (2):
+      net/nfp: fix firmware load from flash
+      net/nfp: fix init failure handling
+
+Chengwen Feng (2):
+      app/testpmd: show all DCB priority TC map
+      app/testpmd: avoid crash in DCB config
+
+Dan Nowlin (1):
+      net/ixgbe/base: add missing buffer copy for ACI
+
+Dariusz Sosnowski (1):
+      net/mlx5: fix NAT64 register selection
+
+David Marchand (7):
+      random: defer seeding to EAL init
+      power: defer lcore variable allocation
+      eal/x86: defer power intrinsics variable allocation
+      ci: build with MSVC in GHA
+      net/mlx5: fix leak in HWS flow counter action
+      ci: point at GitHub mirror
+      ci: fix ccache for Ubuntu 22.04
+
+Dean Marx (1):
+      dts: fix pass rate edge case in results
+
+Dengdui Huang (3):
+      net/hns3: fix mbuf freeing in simple Tx path
+      net/hns3: fix copper port initialization
+      net/hns3: fix reset timeout
+
+Dima Ruinskiy (5):
+      net/igc/base: fix deadlock when writing i225 register
+      net/igc/base: fix infinite loop
+      net/igc/base: fix typo in LTR calculation
+      net/igc/base: fix unused value
+      net/e1000/base: fix unchecked return
+
+Gavin Hu (1):
+      net/mlx5: fix polling CQEs
+
+Gowrishankar Muthukrishnan (5):
+      crypto/virtio: fix data queues iteration
+      vhost/crypto: skip fetch before vring init
+      examples/vhost_crypto: fix user callbacks
+      crypto/cnxk: fix asymmetric operation status code
+      crypto/openssl: validate incorrect RSA signature
+
+Gregory Etelson (2):
+      net/mlx5: fix IPIP tunnel verification
+      net/mlx5: fix mark action validation in FDB mode
+
+Huisong Li (1):
+      ethdev: fix functions available in new device event
+
+Jakub Buchocki (1):
+      net/e1000/base: fix uninitialized variable
+
+Jianping Zhao (1):
+      vhost: clear ring addresses when getting vring base
+
+Jie Hai (2):
+      net/hns3: remove PVID info dump for VF
+      net/hns3: rename RAS module
+
+Junfeng Guo (1):
+      net/mlx5: fix actions translation error overwrite
+
+Kevin Traynor (3):
+      vhost: add null callback checks
+      net/mlx5: fix crash with null flow list creation
+      doc: fix year of final LTS release
+
+Konstantin Ananyev (2):
+      test/ring: fix init with custom number of lcores
+      gro: fix unprocessed IPv4 packets
+
+Lingli Chen (1):
+      doc: add two more tested Intel NICs in 24.11
+
+Long Li (3):
+      net/netvsc: scan all net devices under the PCI device
+      net/netvsc: remove device if its net devices removed
+      net/mana: fix multi-process tracking
+
+Long Wu (3):
+      net/nfp: fix VF link speed
+      net/bonding: fix dedicated queue setup
+      net/nfp: fix representor port statistics
+
+Luca Vizzarro (2):
+      dts: fix MTU set command
+      dts: fix smoke tests docstring
+
+Lukasz Krakowiak (1):
+      net/ixgbe/base: fix TSAM checking return value
+
+Maayan Kashani (14):
+      net/mlx5: adjust actions per rule limitation
+      net/mlx5: fix crash in non-template metadata split
+      net/mlx5: fix flush of non-template flow rules
+      net/mlx5: fix GRE flow match with SWS
+      net/mlx5: fix hairpin queue release
+      net/mlx5: fix LACP packet handling in isolated mode
+      net/mlx5/hws: fix crash using represented port without ID
+      net/mlx5: fix non-template set VLAN VID
+      net/mlx5: fix error info in actions construct
+      net/mlx5/hws: fix GTP flags matching
+      net/mlx5: fix non-template flow validation
+      net/mlx5: fix non-template flow validation on create
+      net/mlx5: fix flow matching GENEVE options
+      net/mlx5: fix GRE matching on root table
+
+Matthew Smith (1):
+      net/ice: fix dropped packets when using VRRP
+
+Maxime Coquelin (3):
+      vhost: fix log when setting max queue num
+      vhost: reset packets count when not ready
+      vhost: fix FD entries cleanup
+
+Michael Baum (2):
+      common/mlx5: add device duplication function
+      net/mlx5: fix GENEVE parser cleanup
+
+Minggang Li (Gavin) (3):
+      net/mlx5: fix Netlink socket leak
+      doc: add VXLAN matching requirement in mlx5 guide
+      app/testpmd: use VXLAN flow flags from user if set
+
+Mingjin Ye (1):
+      net/ixgbe: fix minimum Rx/Tx descriptors
+
+Nawal Kishor (1):
+      common/cnxk: fix atomic load in batch ops
+
+Nicolas Chautru (2):
+      test/bbdev: update FFT test vectors
+      baseband/acc: fix queue setup failure clean up
+
+Nithin Dabilpuram (2):
+      ptr_compress: fix build with Arm SVE
+      common/cnxk: fix inbound IPsec SA setup
+
+Nithinsen Kaithakadan (1):
+      examples/ipsec-secgw: fix IV length in CTR 192/256
+
+Pawel Malinowski (2):
+      net/igc/base: fix semaphore timeout value
+      net/e1000/base: fix semaphore timeout value
+
+Peng Zhang (1):
+      net/nfp: fix multi-PF control flag
+
+Peter Spreadborough (4):
+      net/bnxt: fix dead code
+      net/bnxt: fix overflow
+      net/bnxt: fix overflow
+      net/bnxt: address uninitialized variables
+
+Piotr Krzewinski (1):
+      service: fix getting service lcore attributes
+
+Piotr Kwapulinski (2):
+      net/ixgbe/base: remove 2.5/5G from auto-negotiation for E610
+      net/ixgbe/base: fix driver hang in VM
+
+Praveen Kaligineedi (1):
+      net/gve: allocate Rx QPL pages using malloc
+
+Przemyslaw Ciesielski (4):
+      net/igc/base: fix bitwise operation type
+      net/igc/base: fix NVM data type in bit shift
+      net/e1000/base: fix bitwise operation type
+      net/e1000/base: fix NVM data type in bit shift
+
+Rahul Bhansali (1):
+      net/cnxk: fix NIX send header L3 type
+
+Rajesh Mudimadugula (1):
+      crypto/virtio: fix redundant queue free
+
+Raslan Darawsheh (1):
+      doc: add tested platforms with NVIDIA NICs in 24.11
+
+Robin Jarry (1):
+      log: fix double free on cleanup
+
+Sangtani Parag Satishbhai (1):
+      net/bnxt: fix crash when representor is re-attached
+
+Sasha Neftin (3):
+      net/igc/base: increase PHY power up delay
+      net/igc/base: reset loop variable
+      net/igc/base: fix LTR for i225
+
+Shai Brandes (1):
+      net/ena: fix missing default LLQ policy
+
+Shani Peretz (2):
+      bus/pci: fix registered device name
+      examples/flow_filtering: fix IPv4 matching snippet
+
+Shaokai Zhang (2):
+      test/crypto: fix AES-ECB test lengths
+      test/crypto: remove unused variable
+
+Shijith Thotton (1):
+      test/event: fix number of queues in eventdev conf
+
+Stephen Hemminger (23):
+      crypto/cnxk: fix build with GCC 15
+      net/thunderx/base: fix build with GCC 15
+      examples/flow_filtering: fix build with GCC 15
+      test/bonding: fix active backup receive test
+      log: fix systemd journal socket open
+      build: force GCC 15 to initialize padding bits
+      net/cpfl: fix representor parsing log
+      raw/cnxk_gpio: fix file descriptor leak
+      eal: fix devargs layers parsing out of bounds
+      net/qede: fix debug messages array
+      examples/ptpclient: fix message parsing
+      net/hinic: fix flow type bitmask overflow
+      crypto/dpaa2_sec: fix bitmask truncation
+      crypto/dpaa_sec: fix bitmask truncation
+      event/dpaa: fix bitmask truncation
+      net/dpaa: fix bitmask truncation
+      net/dpaa2: fix bitmask truncation
+      net/qede: fix nested loops
+      examples/l3fwd: fix socket ID check
+      common/cnxk: fix null check
+      doc: fix feature flags for queue start/stop
+      app/testpmd: fix out-of-bound reference in offload config
+      pdump: clear statistics when enabled
+
+Tejasree Kondoj (1):
+      examples/ipsec-secgw: fix cryptodev and eventdev IDs
+
+Thierry Herbelot (1):
+      ethdev: fix registers info request
+
+Thomas Monjalon (1):
+      cryptodev: fix C++ include
+
+Tudor Cornea (1):
+      net/af_packet: fix socket close on device stop
+
+Vamsi Attunuru (1):
+      common/cnxk: fix DPI mailbox structure
+
+Viacheslav Ovsiienko (1):
+      net/mlx5: fix hardware packet type translation
+
+Vladimir Medvedkin (4):
+      net/ixgbe: fix E610 support in flow engine
+      net/ice: fix memory leak in scalar Rx
+      net/ice: fix flows handling
+      net/ice: fix flow engines order
+
+Wathsala Vithanage (1):
+      crypto/openssl: fix CMAC auth context update
+
+Wei Hu (1):
+      net/mana: do not ring short doorbell for every mbuf alloc
+
+Yang Ming (2):
+      eal/linux: fix memseg length in legacy mem init
+      net/iavf: fix mbuf release in Arm multi-process
+
+Yunjian Wang (2):
+      vhost: check GSO size validity
+      vhost: check descriptor chains length
+
+Zaiyu Wang (2):
+      net/ngbe: fix WOL and NCSI capabilities
+      net/txgbe: remove useless condition for SW-FW sync
+
+Zerun Fu (2):
+      net/nfp: fix multiple PFs check from NSP
+      net/nfp: fix misuse of function return values
+
