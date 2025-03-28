@@ -2,80 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C521C36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 11:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0349FC28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 12:35:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A041402CD;
-	Fri, 28 Mar 2025 12:48:24 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 27A2F402C1
- for <dev@dpdk.org>; Fri, 28 Mar 2025 12:48:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743162502;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=NpscF4GHdeFSe6vw4R2oi1VqpyvXN4YksUDuTQMuUU8=;
- b=jEVnPk357Y1Qmj0D8ChkTrh9Vrr8iOm6K7FsTPeoprMO1Fy5lW4TuHkh1vMV+jgjSRCEgB
- SCev8nvb6Ae6WvHeb28GL51/0GMufpMTIdc5d/RvRcArDSGrgi7ZAcqQsb7fX3GU/sJgXg
- lrouIxvilDGQOELxVbUFNgP9lAmd5c0=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-558-QvnAJ9GQP5aC5qA_XxXIcg-1; Fri, 28 Mar 2025 07:48:21 -0400
-X-MC-Unique: QvnAJ9GQP5aC5qA_XxXIcg-1
-X-Mimecast-MFC-AGG-ID: QvnAJ9GQP5aC5qA_XxXIcg_1743162500
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5428d385b93so1440256e87.3
- for <dev@dpdk.org>; Fri, 28 Mar 2025 04:48:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743162500; x=1743767300;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=NpscF4GHdeFSe6vw4R2oi1VqpyvXN4YksUDuTQMuUU8=;
- b=BuiPLxTD9BQ4KmxLUEkWMB2TgrNk41y6nHCEx681U9v2EhhfgYBW9dALGyj0xlj05l
- NiGJ/e1jdvcF8oyxieIw6iPI2Ufkf1uJbhSEsC450K425Fe0dL9h/nsdV+6GGLA+3lqD
- 1NX840SsRKKHe7AKAhsjZ/435CaI0PFQqY0tOVj4wvB7giAIJOHgGU24n1v1uwqeNqhg
- 2iFwE91TXL3SlmrPsUjAafPl+AD1YQdSVOBfoV8g3P5vzw5pHg3LYj/8gu82tYIx0gFM
- 63f/ZtsNMf7klzZgYgPvJZSv9S3MNI73IyL4RWN/x8sO7msdmEBMD6QlFdFa9TbSLUae
- cKQw==
-X-Gm-Message-State: AOJu0Yxp3DqMAP3L64YqhiYPLV8Iha8QBMSuDqUIgxOP/pXz5yeKgaZF
- XcB0EwH35gll681oAQTEeSG6998QGLVoNZAAtz07EfunSmhyTNY0ZmL3HWq4O5qbMIW6kCLVMnV
- QgDTQMvwbC6L5Wjjl9KUbNpYVwsoER1sqKbcZmNltx4IxeoImOmSrxunK544HKEIkLc6NAFXcAd
- aJDXlJSZEVNsjGYMQ=
-X-Gm-Gg: ASbGnctDG+xDRVTyxtZmR20zu0jtwFB4wmygJaCXV54bw5fSSZjwQjK8r5EOZd3RFUg
- 3SUtNrTn21gjBJhnVdzanQ+4EB4VMSa/lfAoG7nh5ErICgABRob6mLjw+7WvGUnTFu6gvOmy1n0
- 8=
-X-Received: by 2002:a05:6512:3ba3:b0:545:2f5d:d5ab with SMTP id
- 2adb3069b0e04-54b01222080mr2952971e87.37.1743162499800; 
- Fri, 28 Mar 2025 04:48:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvPOD5dHIiOMdM5Fy2lJ+t/VdSeH1n4oUZAQB8l6/FCRCTujVF+uc0I3MuhpKPamPv1mF1P93i++/LeCu6+CQ=
-X-Received: by 2002:a05:6512:3ba3:b0:545:2f5d:d5ab with SMTP id
- 2adb3069b0e04-54b01222080mr2952961e87.37.1743162499405; Fri, 28 Mar 2025
- 04:48:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D7E6D402CB;
+	Fri, 28 Mar 2025 13:35:53 +0100 (CET)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 594B1402C1
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 13:35:50 +0100 (CET)
+X-QQ-mid: bizesmtp88t1743165344tge4fvrl
+X-QQ-Originating-IP: fkSvd4W0y/Xi+tVQO7IRZdih4vAxU7CkO3yQpydFKOg=
+Received: from LAPTOP96V0OHHN ( [103.233.162.252])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Fri, 28 Mar 2025 20:35:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15950028692985401726
+EX-QQ-RecipientCnt: 4
+From: "11" <caowenbo@mucse.com>
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <thomas@monjalon.net>,
+	<dev@dpdk.org>,
+	<yaojun@mucse.com>
+References: <1740555736-19894-1-git-send-email-caowenbo@mucse.com>
+ <20250327102917.5d3b1ade@hermes.local>
+In-Reply-To: <20250327102917.5d3b1ade@hermes.local>
+Subject: RE: [PATCH v16 00/28] [v16]drivers/net Add Support mucse N10 Pmd
+ Driver
+Date: Fri, 28 Mar 2025 20:35:28 +0800
+Message-ID: <837AB9FFC7D3B790+003601db9fdd$ed0d4420$c727cc60$@mucse.com>
 MIME-Version: 1.0
-References: <20250326155230.1315056-1-bruce.richardson@intel.com>
- <20250327145202.2220153-1-bruce.richardson@intel.com>
- <20250327145202.2220153-6-bruce.richardson@intel.com>
- <CAJFAV8w8YT=2DVbxrXef=60AquicaU8xehG2fvdHye_9dMi98Q@mail.gmail.com>
- <Z-Z9ZPs8k_lQERpT@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <Z-Z9ZPs8k_lQERpT@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 28 Mar 2025 12:48:08 +0100
-X-Gm-Features: AQ5f1Jp91gHO3OXGZd2g1RUqbQezIXlhgVRuDj7H7sboJmcrhKJSw2hxSSK4EL4
-Message-ID: <CAJFAV8zEbLALLNzP5Znfn0yygHRg=0tpNXo5qhiDP1k5B-TOiw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] net/ixgbe/base: fix lock checker errors
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 17Zx1Kv7SU989SDql9RCW-WIgeO-2PQlqjqhagy4_HQ_1743162500
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="gb2312"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHmWlp8uSRLFRnsJwF7bFAlAInk4AGsXzePs2WhG7A=
+Content-Language: zh-cn
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: MmIUUz9KGMMd5XJW/vUFHmPYXL89Ds56D+MOaf9oHHeLug2siNPcF2wZ
+ +r1oP/geKr4zl8M4FFknaDtTo73jFdVQCukCIHLOirn538LI+Gud7sc+sD4lTrMbNRIOwfx
+ o0MVueAq4jM+FZqxuZYTAs4OXWuAkG25sisOzgleym8OB23Pl6wcHrPQ/+0Y+eJ80T/Sf2P
+ mi+V5lvxP2WiQdcuMEeO9VNEnBPCA5UatB5PNRI9WfCxxj8xq08Yx0G1p2m0/qVxsf/mksl
+ s8tn8yPykjEnAnNgHUxscKNHG7mhBLfRLq+6HvThQVIRcTQEstUkpljYUrddEiYgWvV+Yln
+ pnkS9eQBts7e4z2DTL4HstqcWa7OqqkNxYy9KbDKJ06Mf/bfSnKPKqiIu9wizO9obcdORXD
+ aDXQzXUK3TvhiSu1LN0L6Z24CNT8KfDXG6bghvGvh5OPidOyspWMZjhLE4qDWDyha4Niu5H
+ RloZt6I4wlcxASqEwBgfs50+MSLyU2Mq8mJCLPck/z+CWm6c7tbQmnrKvRPv3X2Obq9IrX7
+ LxPK/mZudFBmiiyMuS643KEipbnPVd2pSd3NXwpzc4S+mLTZcXD6ptfnkCUIqqtADuYkldh
+ uN1kQmqb+R9zpxWTGkmqkowiOKi1bYQ0nptwmXYXfEjIfvdzTgNVz3lMmjW+7k+KyGq2JG7
+ GxeQYAhpI3njFqipLlH1MRsHmcLDc0yrQVBatRTmc+xDx5Oclf0F75YP+uBLgb1WAoHC0XW
+ P1f/maCx8JKw4SA8wJWzlBdbBnpnKOpwEqnje9OK1NR+j3dwKuyeD7wiFqmvwpH4xOklfll
+ ujHN1OwaM+l2xAtlHNmLlqzkVEwNz/UK/l2fyfuS01slJkRmJmAlaxMnqNJRudon7j/Y0QD
+ dD7xjhTBcfxWkxOX22Xw7gxuitcdy2NnAKZNvmvXyoc1FOkWBjIDoT7f0X8BqQIrebZe6GU
+ KGUfoJgpwoFt2pw==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,59 +70,223 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 28, 2025 at 11:44=E2=80=AFAM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Fri, Mar 28, 2025 at 09:20:16AM +0100, David Marchand wrote:
-> > On Thu, Mar 27, 2025 at 3:53=E2=80=AFPM Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > When building on FreeBSD, errors are reported in the base code by the
-> > > lock checker (-Wthread-safety). For example:
-> > >
-> > > ../drivers/net/intel/ixgbe/base/ixgbe_osdep.c:42:1: error: mutex 'loc=
-k->mutex' is still held at the end of function [-Werror,-Wthread-safety-ana=
-lysis]
-> > >    42 | }
-> > >       | ^
-> > >
-> > > These errors are due to the checker not recognising the lock wrapper
-> > > functions. We can avoid these errors by converting these functions in=
-to
-> > > macros.
-> > >
-> > > Fixes: 30b19d1b5c43 ("net/ixgbe/base: add definitions for E610")
-> > > Cc: stable@dpdk.org
-> > >
-> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> >
-> > This is the best solution, given that FreeBSD pthread is instrumented
-> > with clang thread safety annotations.
-> >
-> > As a sidenote, I don't see much value with the remaining
-> > malloc/calloc/free wrappers in this osdep.c file.
-> > I suspect this makes some other annotations non working.
-> >
-> Yes, I would tend to agree. Question is whether it is better to convert
-> them to macros or just move them to the header file as static inlines. I'=
-d
-> tend towards the latter, because otherwise we'd need to use "," syntax to
-> avoid potentially introducing other warnings for unused "hw" variable.
->
-> Here are two option examples, WDYT of each?
->
-> static inline void *
-> ixgbe_malloc(struct ixgbe_hw __rte_unused *hw, size_t s) { return malloc(=
-s); }
->
-> or
->
-> #define ixgbe_malloc(hw, s) ((void)hw, malloc(s))
+Hi Stephen,
 
-I think we don't have much choice but to use macros, as attributes on
-a symbol won't get inherited by an inline wrapper.
+I wanted to extend my sincere thanks for your tremendous help and =
+valuable
+advice during patch submit.
+The next submit will be soon. Thank for your patience and understanding.
 
+Regards Wenbo
 
---=20
-David Marchand
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: 2025=C4=EA3=D4=C228=C8=D5 1:29
+> To: Wenbo Cao <caowenbo@mucse.com>
+> Cc: thomas@monjalon.net; dev@dpdk.org; yaojun@mucse.com
+> Subject: Re: [PATCH v16 00/28] [v16]drivers/net Add Support mucse N10 =
+Pmd
+> Driver
+>=20
+> On Wed, 26 Feb 2025 15:41:47 +0800
+> Wenbo Cao <caowenbo@mucse.com> wrote:
+>=20
+> > For This patchset just to support the basic chip init work and user
+> > can just found the eth_dev, but can't control more.
+> > For Now just support 2*10g nic,the chip can support
+> > 2*10g,4*10g,4*1g,8*1g,8*10g.
+> > The Feature rx side can support rx-cksum-offload,rss,vlan-filter
+> > flow_clow,uncast_filter,mcast_filter,1588,Jumbo-frame
+> > The Feature tx side can support tx-cksum-offload,tso,vxlan-tso flow
+> > director base on ntuple pattern of tcp/udp/ip/ eth_hdr->type for =
+sriov
+> > is also support.
+> >
+> > Because of the chip design defect, for multiple-port mode one =
+pci-bdf
+> > will have multiple-port (max can have four ports) so this code must =
+be
+> > care of one bdf init multiple-port.
+> >
+> > v16
+> >   * fixed rxq/txq stop/start not add to eth_ops as rnp doc descript.
+> >
+> > v15:
+> >   * fixed scatter recv for jumbo frame test by dts mtu.
+> >
+> > v14:
+> >   * add multicast mac filter feature for basic nic feature.
+> >   * fixed pvs studio low,media,high level warning as the below cmd
+> >     pvs-studio-analyzer analyze -f build/compile_commands.json -j 8
+> >     plog-converter -a GA:1,2,3 -t fullhtml PVS-Studio.log -o
+> > /root/report
+> >
+> > v13:
+> >   * Supplementary document about n10 network card characteristics.
+> >   * update release_25_03.rst.
+> >   * fixed the code style advisea Stephen Hemminger.
+> >   * fixed the code issue check PVS-stdio for Static compilation =
+error.
+> >
+> > v12:
+> >   * fixed __rte_packed __deprecated__ compile issue.
+> >
+> > v11:
+> >   * fixed array-bounds issue when used rte_memcpy src addr is
+> >   * not enough to hold align dst.
+> >   * improve efficient_code advised by Stephen
+> >
+> > v10:
+> >   * fixed mingw windows meson issue
+> >   * rnp not support windows for now.
+> >
+> > v9:
+> >   * fixed commit log format check by devtools.
+> >   * fixed code compile issue.
+> >
+> > v8:
+> >   * fixed codespell issue.
+> >   * fixed MAINTAINERS file
+> >
+> > v7:
+> >   * add support nic basic feature such as rss vlan strip/filter,
+> >   * mtu-change recv/send scater-recv/mutltiple-send.
+> >   * fixed code rationality, advised by Ferruh Yigit.
+> > v6:
+> >   * fixed the doc(rst) format problem advise by Thomas Monjalon
+> >
+> > v5:
+> >   * fixed the symbol name require by the style documentation
+> >
+> > v4:
+> >   * one patch has been forgot to upload :(
+> >
+> > v3:
+> >   * fixed http://dpdk.org/patch/129830 FreeBSD 13 compile Issue
+> >   * change iobar type to void suggest by Stephen Hemminger
+> >   * add KMOD_DEP support for vfio-pci
+> >   * change run-cmd argument parse check for invalid extra_args
+> >
+> > v2:
+> >   * fixed MAINTAIN maillist fullname format
+> >   * fixed driver/net/meson the order issue of new driver to driver =
+list
+> >   * improve virtual point function usage suggest by Stephen =
+Hemminger
+> >
+> > Wenbo Cao (29):
+> >   net/rnp: add skeleton
+> >   net/rnp: add ethdev probe and remove
+> >   net/rnp: add log
+> >   net/rnp: support mailbox basic operate
+> >   net/rnp: add device init and uninit
+> >   net/rnp: add get device information operation
+> >   net/rnp: add support MAC promisc mode
+> >   net/rnp: add queue setup and release operations
+> >   net/rnp: add queue stop and start operations
+> >   net/rnp: add support device start stop operations
+> >   net/rnp: add RSS support operations
+> >   net/rnp: add support link update operations
+> >   net/rnp: add support link setup operations
+> >   net/rnp: add Rx burst simple support
+> >   net/rnp: add Tx burst simple support
+> >   net/rnp: add MTU set operation
+> >   net/rnp: add Rx scatter segment version
+> >   net/rnp: add Tx multiple segment version
+> >   net/rnp: add support basic stats operation
+> >   net/rnp: add support xstats operation
+> >   net/rnp: add unicast MAC filter operation
+> >   net/rnp: add supported packet types
+> >   net/rnp: add support Rx checksum offload
+> >   net/rnp: add support Tx TSO offload
+> >   net/rnp: support VLAN offloads
+> >   net/rnp: add support VLAN filters operations
+> >   net/rnp: add queue info operation
+> >   net/rnp: support Rx/Tx burst mode info
+> >   net/rnp: add multicast MAC filter operation
+> >
+> >  .mailmap                               |    1 +
+> >  MAINTAINERS                            |    6 +
+> >  doc/guides/nics/features/rnp.ini       |   34 +
+> >  doc/guides/nics/img/mucse_nic_port.svg | 4023 =
+++++++++++++++++++++++++
+> >  doc/guides/nics/index.rst              |    1 +
+> >  doc/guides/nics/rnp.rst                |  130 +
+> >  doc/guides/rel_notes/release_25_03.rst |    5 +
+> >  drivers/net/meson.build                |    1 +
+> >  drivers/net/rnp/base/meson.build       |   18 +
+> >  drivers/net/rnp/base/rnp_bdq_if.c      |  398 +++
+> >  drivers/net/rnp/base/rnp_bdq_if.h      |  154 +
+> >  drivers/net/rnp/base/rnp_bitrev.h      |   64 +
+> >  drivers/net/rnp/base/rnp_common.c      |  103 +
+> >  drivers/net/rnp/base/rnp_common.h      |   17 +
+> >  drivers/net/rnp/base/rnp_crc32.c       |   53 +
+> >  drivers/net/rnp/base/rnp_crc32.h       |   11 +
+> >  drivers/net/rnp/base/rnp_dma_regs.h    |   68 +
+> >  drivers/net/rnp/base/rnp_eth_regs.h    |   94 +
+> >  drivers/net/rnp/base/rnp_fw_cmd.c      |  162 +
+> >  drivers/net/rnp/base/rnp_fw_cmd.h      |  357 +++
+> >  drivers/net/rnp/base/rnp_hw.h          |  141 +
+> >  drivers/net/rnp/base/rnp_mac.c         |  480 +++
+> >  drivers/net/rnp/base/rnp_mac.h         |   36 +
+> >  drivers/net/rnp/base/rnp_mac_regs.h    |  210 ++
+> >  drivers/net/rnp/base/rnp_mbx.c         |  507 +++
+> >  drivers/net/rnp/base/rnp_mbx.h         |   59 +
+> >  drivers/net/rnp/base/rnp_mbx_fw.c      |  495 +++
+> >  drivers/net/rnp/base/rnp_mbx_fw.h      |   24 +
+> >  drivers/net/rnp/base/rnp_osdep.h       |  176 ++
+> >  drivers/net/rnp/meson.build            |   27 +
+> >  drivers/net/rnp/rnp.h                  |  262 ++
+> >  drivers/net/rnp/rnp_ethdev.c           | 1868 +++++++++++
+> >  drivers/net/rnp/rnp_link.c             |  436 +++
+> >  drivers/net/rnp/rnp_link.h             |   52 +
+> >  drivers/net/rnp/rnp_logs.h             |   36 +
+> >  drivers/net/rnp/rnp_rss.c              |  367 +++
+> >  drivers/net/rnp/rnp_rss.h              |   44 +
+> >  drivers/net/rnp/rnp_rxtx.c             | 1822 +++++++++++
+> >  drivers/net/rnp/rnp_rxtx.h             |  162 +
+> >  39 files changed, 12904 insertions(+)  create mode 100644
+> > doc/guides/nics/features/rnp.ini  create mode 100644
+> > doc/guides/nics/img/mucse_nic_port.svg
+> >  create mode 100644 doc/guides/nics/rnp.rst  create mode 100644
+> > drivers/net/rnp/base/meson.build  create mode 100644
+> > drivers/net/rnp/base/rnp_bdq_if.c  create mode 100644
+> > drivers/net/rnp/base/rnp_bdq_if.h  create mode 100644
+> > drivers/net/rnp/base/rnp_bitrev.h  create mode 100644
+> > drivers/net/rnp/base/rnp_common.c  create mode 100644
+> > drivers/net/rnp/base/rnp_common.h  create mode 100644
+> > drivers/net/rnp/base/rnp_crc32.c  create mode 100644
+> > drivers/net/rnp/base/rnp_crc32.h  create mode 100644
+> > drivers/net/rnp/base/rnp_dma_regs.h
+> >  create mode 100644 drivers/net/rnp/base/rnp_eth_regs.h
+> >  create mode 100644 drivers/net/rnp/base/rnp_fw_cmd.c  create mode
+> > 100644 drivers/net/rnp/base/rnp_fw_cmd.h  create mode 100644
+> > drivers/net/rnp/base/rnp_hw.h  create mode 100644
+> > drivers/net/rnp/base/rnp_mac.c  create mode 100644
+> > drivers/net/rnp/base/rnp_mac.h  create mode 100644
+> > drivers/net/rnp/base/rnp_mac_regs.h
+> >  create mode 100644 drivers/net/rnp/base/rnp_mbx.c  create mode =
+100644
+> > drivers/net/rnp/base/rnp_mbx.h  create mode 100644
+> > drivers/net/rnp/base/rnp_mbx_fw.c  create mode 100644
+> > drivers/net/rnp/base/rnp_mbx_fw.h  create mode 100644
+> > drivers/net/rnp/base/rnp_osdep.h  create mode 100644
+> > drivers/net/rnp/meson.build  create mode 100644 =
+drivers/net/rnp/rnp.h
+> > create mode 100644 drivers/net/rnp/rnp_ethdev.c  create mode 100644
+> > drivers/net/rnp/rnp_link.c  create mode 100644
+> > drivers/net/rnp/rnp_link.h  create mode 100644
+> > drivers/net/rnp/rnp_logs.h  create mode 100644
+> > drivers/net/rnp/rnp_rss.c  create mode 100644
+> > drivers/net/rnp/rnp_rss.h  create mode 100644
+> > drivers/net/rnp/rnp_rxtx.c  create mode 100644
+> > drivers/net/rnp/rnp_rxtx.h
+> >
+>=20
+> Added this patch series to next-net with a couple of small changes.
+>   1. Moved the release note to 25.07
+>   2. Replaced rte_memcpy() of process private data in rnp_ethdev.c =
+with
+memcpy
+
 
