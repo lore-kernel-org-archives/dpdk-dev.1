@@ -2,56 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90461C28B20
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E5C28B20
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 05:55:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A47F40E38;
-	Fri, 28 Mar 2025 06:16:03 +0100 (CET)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id 31ABC40E35
- for <dev@dpdk.org>; Fri, 28 Mar 2025 06:16:00 +0100 (CET)
-X-QQ-mid: bizesmtpsz12t1743138954timal6
-X-QQ-Originating-IP: +HxcxpkaHBWpNtLaFkzwQ56hAqMFFzjdBKJl7oERZyA=
-Received: from steven.localdomain ( [103.233.162.252])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 28 Mar 2025 13:15:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3888121629804233926
-EX-QQ-RecipientCnt: 5
-From: Wenbo Cao <caowenbo@mucse.com>
-To: thomas@monjalon.net
-Cc: stephen@networkplumber.org, dev@dpdk.org, yaojun@mucse.com,
- Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v17 29/29] net/rnp: add multicast MAC filter operation
-Date: Fri, 28 Mar 2025 05:14:44 +0000
-Message-Id: <20250328051444.1019208-30-caowenbo@mucse.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E97D540273;
+	Fri, 28 Mar 2025 06:55:17 +0100 (CET)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+ (mail-am6eur05on2075.outbound.protection.outlook.com [40.107.22.75])
+ by mails.dpdk.org (Postfix) with ESMTP id 7ED7340261
+ for <dev@dpdk.org>; Fri, 28 Mar 2025 06:55:16 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jNwX+BbF+ZGkAfwFtIwkS+yu62QvKTqwUGF0u7hz+Qtn/hwlMnB1gM+ukm3jwLWeH2+agN67Hh+S+o6JOlOOciEdOOJUdfkKn+JxCGEXc5UCNprdjPlqid/AgnZO8eK7ZKPETuInSKgXbQxxqk8x/Xeh2ETt+fJmaUsP85EbjGdDxM99yYtHQmDM2gMvmg2Qo5AbSQ44NbSMFv3cjZfJzgi0xKDco1nW4blrdzj18jGOyjojFIiPLzhh9pu4ixX//jZ/qPfC/8BQK9RKZFGCyAbjC9ykW9du7Ln9erDNNqVCl1wKgU+zyyXJ9XqTo1q5NeqtZyY6OBzkQCBO4dFi5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fSAb4vCrA/2O+k7gUPyPjSho24Q7cyW8/Q6Hr4lmzb4=;
+ b=uwldVQwbStw5xCe478P62ckiWBtPdwwl1hiAYeIIjA2VsgcIWX6wSp5NjgWacOLRfhg0KVPkljQYnH+80S/6xfC6/0mCyDtLz3OBsJgU3ucXHyr+goFLktJ5XfozwoHdOQ6q1jOqh2CR3zeJ0HhfYL5GhgeAA2VKyzts0JqxVJVx+sm1knEr+3klo19RnQILIJXrO8CmU73Uv8LNFId0zTa/AZNSPth++ziETgmXAcDJd5940zeNg6FGRqcO2A3C1ypGSecq3FEkAv7boid6R+aRaGGQ5cLxjEcY/+0dYIZYliPjfarqi7XvG7lW/m40lU97V+1vIJ1ynuDd6GVpyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fSAb4vCrA/2O+k7gUPyPjSho24Q7cyW8/Q6Hr4lmzb4=;
+ b=AkpIMLIV4xoR912JJ1iOqQVQ/dws3oCksmEtmIKm/xwGIMhuuSu1MO06ZNSRAa2Yc4U63d7S4MwU1qK/5gMbvn/Qx9sGcspm5aXK6sYFAVuPYLAN6TcQ3F78WlP2DYfESBhliafcagKgoJYnJGCgV4vk2Zc0kkl01+S5lrStaUEFysk4dK3WpgIkII+iy9PBPI42BCkBEigSwbzSA6fyYsTl8cej8CyLDqCPNO6Dl3VfoBZNJQ6+LHv7Bit8KAGtWBBv8Qc4mox5Q5fXQiNwjiOZa7kl9hctu/xzMvNhbUFc3XkESnCfeVSdKndmLm6v8POycTFlLR9CIEw2Dlfz7g==
+Received: from DU2PR04CA0169.eurprd04.prod.outlook.com (2603:10a6:10:2b0::24)
+ by PAWPR07MB10047.eurprd07.prod.outlook.com (2603:10a6:102:382::15)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.28; Fri, 28 Mar
+ 2025 05:55:14 +0000
+Received: from DB1PEPF000509F2.eurprd02.prod.outlook.com
+ (2603:10a6:10:2b0:cafe::f8) by DU2PR04CA0169.outlook.office365.com
+ (2603:10a6:10:2b0::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.44 via Frontend Transport; Fri,
+ 28 Mar 2025 05:55:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender)
+ receiver=protection.outlook.com; 
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ DB1PEPF000509F2.mail.protection.outlook.com (10.167.242.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Fri, 28 Mar 2025 05:55:13 +0000
+Received: from seliicinfr00049.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.61) with Microsoft SMTP Server
+ id 15.2.1544.14; Fri, 28 Mar 2025 06:55:13 +0100
+Received: from breslau.. (seliicwb00002.seli.gic.ericsson.se [10.156.25.100])
+ by seliicinfr00049.seli.gic.ericsson.se (Postfix) with ESMTP id
+ 1A7B6380070; Fri, 28 Mar 2025 06:55:13 +0100 (CET)
+From: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+To: <dev@dpdk.org>
+CC: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <hofors@lysator.liu.se>, "Naga Harish
+ K S V" <s.v.naga.harish.k@intel.com>, Jerin Jacob <jerinj@marvell.com>,
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>, "Peter
+ Nilsson" <peter.j.nilsson@ericsson.com>
+Subject: [PATCH] event/eth_tx: prefetch mbuf headers
+Date: Fri, 28 Mar 2025 06:43:39 +0100
+Message-ID: <20250328054339.489914-1-mattias.ronnblom@ericsson.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250328051444.1019208-1-caowenbo@mucse.com>
-References: <20250328051444.1019208-1-caowenbo@mucse.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: M5ijqkBWpgeqn213MyVH0VynqcxaFW1nVxmi+Fs/055Hl7r4HldPhSNA
- 5XPxXE2Zr90gnRmoeHhg2XhUtz9rphWgaPSmrCb6HP7cd4eNncRxwjdGK7eZ6iKCkfZBIZ1
- StO6H7AOFCYUyhsV5GiJORkm3EZLnu1FYBlE2tToZvi7VIL9m9QiUaoZtL2CLc6TRyMKwe6
- CViGCtlENRIJVd8m5fzZ8q+lgyrhauDNyVbbP3dko05pp0W4dvP25Z2TfdqQtquBmkmjJaC
- vuootamxOjbMXwq2KX1wE74eegklqdbaNc254h6J+cByoD72KnfYuuDdTY3Gp5ckDOCe0M1
- y4NBuPGLSjZu90VfN4noSBei6kJge3mfK1yPnKcyBp9smWyhstRr/mWt3Wi3nAoImV8HsIy
- kltpl9wo67Q4fSxHXzPl+B5t8UZMWhqL2ZcuW3g2OvXxwasiCrjoPz2CEOKqYx/DnmIDFJk
- YpVjZkMF3O4MA7QM/DLS/sXype2dqZDUVEEuBO1cCPdpm3/IBIh9VFgPIlNqorXGPLHZaIo
- OAa62pNtmxRF0/48tb+EQzfws8n2Hca2OkVUYa2Ugny8msBTpdk5m7iSc746z42ScuBK4pW
- imiew4DZF7me/NeaFMmoKc1UBXrJcqC45Kl4UVPYwD4IzDliWkPJJllrxxacADHGOKdynBF
- 4uzkHgSc7Wr9iWiGkpVeMU6lTO/F1q0yljr4bHofH4QiS2+Mae1jkF/aLCPyT3ujwQeayz/
- KTf1EimMGizg7pdkLTUYKzlXBmQbq/j76l9LxQVtbUY4zUMLV1d0oS0tOaW5gC920hIdkkc
- +t9vInk7m5uI2BIMukLREjmlFzKri6TWk0btFJaV0PCbxE0/pFXPFwyzrzUWvf3dzuqsX4X
- TkTOGsa9MbgbrMLGxOUcSy3f2zkLSl5Dg3Wq33C6E6Of/w6iBnnrAFFVlERZpbJn88tzY0j
- w0FRywMTalgCewAaAwUEgk7HwPaB0uVuKOkOwzrtSl/oMtGhoM3FbQnhJt/3Czqsj47TXxs
- ZS4TLsVSKOCVEPt9QFRtLiluwBPhNMqEj16qIAD25kdLNZDz/yEZ/LvxbPEp6B80mB9xz8J
- Jhhdlyi9Lss
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F2:EE_|PAWPR07MB10047:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5eb97c2-3a36-4996-7f0a-08dd6dbd1bb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MVVSUEZJN1RFVGhSdWdaVkdPSUlJOStUbGFNdmdTWTlmRzV5cktvY1lJdHBi?=
+ =?utf-8?B?OUJEVWVsUkt1amRKK3NmS3VRS3VYOW1aYUtGWW1LQ1ZwM3RuQTNYNUQvSDQw?=
+ =?utf-8?B?WTFkS3dDaE5NODN1QW5yRmtwdVdGbC82Nm5aalN6UW9nbnoya3N0a25HaW12?=
+ =?utf-8?B?LzZubklQRHBjekNTTVQ3SjF1bFBMWWxvRjJ4RHkvMEFqclF3cTJMQnd1YWlY?=
+ =?utf-8?B?ZUgyUzc2RStSbXFXWFFzcmZGU0ZZTTF3TVUvOEh3SjhuUHRnS3pBdzFpaGVU?=
+ =?utf-8?B?UEZaRkw1bG5iaS93OVhQOC8vTTNpbFdRV3JOSDRvVGliTG1VZGh5TGlnL3Qz?=
+ =?utf-8?B?Y28vV0VnMjR0cExabktSTXlRQUgxdzNVUDVGMW1zcTNNNVlNcDkwMTUxSHlv?=
+ =?utf-8?B?aG1vaWMwRGpCMkt2dGxmYk05NlF2dXBIaVBmemNZYldVUWo0aGhINEl2UDlo?=
+ =?utf-8?B?dkFMMUpPOGNDbzdsZ1ZEOUlCODBnSENIb2R2d0JoT3FzRXprTGdNUVhEVmI1?=
+ =?utf-8?B?WFhoRjdjWllicnhSRDVDd1lhT05HV0xhUVZwZnJaQjZNU1g5ZEtvREFnaU1V?=
+ =?utf-8?B?ZXlmK1l6WnFYSmt6T1QvUXZpMzRVNFBCZzBxTWdNcklNVWZmakpNK3ZiMG1W?=
+ =?utf-8?B?dUtPS0lZVEF1NGxNOU5KNE1TaE02VmRJR2hQNUZWQzgzT0JKYjZsdktLKzBV?=
+ =?utf-8?B?RnVCUjdoQUxPNmVuTnBmeWJqdXlxWkhmWkdPemoxWnFMU210NTNxcWwrUHBu?=
+ =?utf-8?B?WG5VbVl4bDBzV2l1N0JhM2picFpZT3NwMUR5NTN1L1pRVjZPVGpaUTlTdUJS?=
+ =?utf-8?B?bW4zZkVZTGRTMDdiampZV3JuZEYyRkh4ekk2anZaNS9ad29yRE9vUDFWTU5Q?=
+ =?utf-8?B?OWx5K2JFUFYwMllqWDEyNkFQYWZyZWcybjJzZUhqelR0UUdhR2lFY0RhRE9a?=
+ =?utf-8?B?ZHBjZlgycmRzYUVhNkhuaDV3QjB1Tmp3MnJSN0xFYXNRTGpULzJKdzVERklG?=
+ =?utf-8?B?RXdaWEtRY2lSUmNubFVpMWY5MTRHbVA3bU1pYlE4VGllRG9kQmxKWEVHQVJj?=
+ =?utf-8?B?YzZnZUpPSVFyTHI1dVpoamxXalByTmJpWE9ycHhUUEZoanZXS3lYQVRqWTMy?=
+ =?utf-8?B?NmNvak1wdTAwdjlZZlpCY0MrQjFWZnRhdzBTOEtaejIrK2tyOUZaSDFWb2hl?=
+ =?utf-8?B?eGZZT3gxc1lNWDRmVFl5OGRCV2gzN21tTjJKZ2h4MW1pVThZbnVoajM2OFdl?=
+ =?utf-8?B?dTB4OTVCSVZMMlo3RXhUWHEwRGZXay9NaFFQSDdiODlma1VRU3cySjNneEFY?=
+ =?utf-8?B?Tm5GUno5Y28yL0pkNDJGd2gzYVUxMzNkS2ZCYkxaa2FSWmlVRVNYc2M5ZDd5?=
+ =?utf-8?B?bE1iNHBGNDBlbFRRRy9Xa1BHYTBNaWsvS3NuVEUrRkhGQWNzMnJNN3dDaTM0?=
+ =?utf-8?B?S0RnQ1RqeGRTU1hyV0kxTnh5U1h0aDlGeFFXWlRrRiszbENSeXRNbGY2QTdW?=
+ =?utf-8?B?MXNYSkdtLzlZQmt0YmhpUEVqQ3FZaHFVa0trcW1ZOCtrbkkwNFdaT0tZUzZQ?=
+ =?utf-8?B?NXZxb2ZPWW9yQ1BaREI1ZUhheEg3T1RJL1ZYQ2d3NXpYNXJqcXR4cGpxM0Fk?=
+ =?utf-8?B?b1dBcjA0NEM4UktzZ3RyNHhDR1NBQmJTeWlWaW1QZW51d1hSeS8rMEwzb3Yy?=
+ =?utf-8?B?dFh3MDltNEgyUzRZem9ERmpMQm9VOGNUR2ZTYVJPOERpQnpQSXl2S25Nblhx?=
+ =?utf-8?B?YjZyNE9iWVZFL0YzZDVUQ2NOZXRkSS9EWSs3dTNwelM5T1dSN0ROSzlld1NZ?=
+ =?utf-8?B?WDlRaE5Mc1ZicnphSUNXUmhoZnRzWTVtSTdRSy9kTWVkclFjKytFTFg4alRi?=
+ =?utf-8?B?ejhsU2lhQzEyd3RiM3RXZXZpSDJBUEczV3BsZjRlbEc5RTFtSzJSbWwySnRZ?=
+ =?utf-8?B?ZWdYY1R5K0plSHhtVlBTdCtOMjZhL0p6RVBTZ2VBTURwRVY3UXhlVnVnMHhU?=
+ =?utf-8?B?eGJBYThiZWNLZTBBSHBXN1pMTXV5VUdYdFdWUktqUENFYUxnckdYUkZVejVC?=
+ =?utf-8?Q?7vavWA?=
+X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
+ CAT:NONE; SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 05:55:13.6954 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5eb97c2-3a36-4996-7f0a-08dd6dbd1bb7
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
+ Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F2.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR07MB10047
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,399 +137,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add mac filter for single/multiple port.
+Prefetch mbuf headers, resulting in ~10% throughput improvement when
+the Ethernet RX and TX Adapters are hosted on the same core (likely
+~2x in case a dedicated TX core is used).
 
-Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
+Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+Tested-by: Peter Nilsson <peter.j.nilsson@ericsson.com>
 ---
- doc/guides/nics/features/rnp.ini    |   1 +
- doc/guides/nics/rnp.rst             |   1 +
- drivers/net/rnp/base/rnp_crc32.c    |  18 ++++-
- drivers/net/rnp/base/rnp_crc32.h    |   1 +
- drivers/net/rnp/base/rnp_eth_regs.h |   3 +
- drivers/net/rnp/base/rnp_hw.h       |   4 +
- drivers/net/rnp/base/rnp_mac.c      | 121 +++++++++++++++++++++++++++-
- drivers/net/rnp/base/rnp_mac.h      |   2 +
- drivers/net/rnp/base/rnp_mac_regs.h |   2 +
- drivers/net/rnp/rnp.h               |   4 +
- drivers/net/rnp/rnp_ethdev.c        |  26 ++++++
- 11 files changed, 181 insertions(+), 2 deletions(-)
+ lib/eventdev/rte_event_eth_tx_adapter.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/doc/guides/nics/features/rnp.ini b/doc/guides/nics/features/rnp.ini
-index 48d250c86b..801a8de711 100644
---- a/doc/guides/nics/features/rnp.ini
-+++ b/doc/guides/nics/features/rnp.ini
-@@ -20,6 +20,7 @@ Promiscuous mode     = Y
- Allmulticast mode    = Y
- MTU update           = Y
- Unicast MAC filter   = Y
-+Multicast MAC filter = Y
- VLAN filter          = Y
- VLAN offload         = Y
- QinQ offload         = P
-diff --git a/doc/guides/nics/rnp.rst b/doc/guides/nics/rnp.rst
-index f0afea9cd4..7b5cfed97b 100644
---- a/doc/guides/nics/rnp.rst
-+++ b/doc/guides/nics/rnp.rst
-@@ -94,6 +94,7 @@ Listed below are the rte_eth functions supported:
- * ``rte_eth_dev_default_mac_addr_set``
- * ``rte_eth_dev_mac_addr_add``
- * ``rte_eth_dev_mac_addr_remove``
-+* ``rte_eth_dev_set_mc_addr_list``
- * ``rte_eth_dev_get_supported_ptypes``
- * ``rte_eth_dev_get_vlan_offload``
- * ``rte_eth_dev_set_vlan_offload``
-diff --git a/drivers/net/rnp/base/rnp_crc32.c b/drivers/net/rnp/base/rnp_crc32.c
-index c287b35759..9d03754a4b 100644
---- a/drivers/net/rnp/base/rnp_crc32.c
-+++ b/drivers/net/rnp/base/rnp_crc32.c
-@@ -5,6 +5,7 @@
- #include "rnp_osdep.h"
- #include "rnp_crc32.h"
- 
-+#define RNP_CRC32_POLY_LE 0xedb88320
- static inline int get_bitmask_order(u32 count)
- {
- 	int order;
-@@ -30,7 +31,22 @@ u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le)
- 		crc >>= 1;
- 		data_byte >>= 1;
- 		if (temp)
--			crc ^= 0xedb88320;
-+			crc ^= RNP_CRC32_POLY_LE;
-+	}
-+
-+	return crc;
-+}
-+
-+u32 rnp_calc_crc32(u32 seed, u8 *mac, u32 len)
-+{
-+	u32 crc = seed;
-+	u32 i;
-+
-+	while (len--) {
-+		crc ^= *mac++;
-+		for (i = 0; i < 8; i++)
-+			crc = (crc >> 1) ^ ((crc & 1) ?
-+					RNP_CRC32_POLY_LE : 0);
- 	}
- 
- 	return crc;
-diff --git a/drivers/net/rnp/base/rnp_crc32.h b/drivers/net/rnp/base/rnp_crc32.h
-index e117dcfc2f..dc3026ddf8 100644
---- a/drivers/net/rnp/base/rnp_crc32.h
-+++ b/drivers/net/rnp/base/rnp_crc32.h
-@@ -6,5 +6,6 @@
- #define _RNP_CRC32_H_
- 
- u32 rnp_vid_crc32_calc(u32 crc_init, u16 vid_le);
-+u32 rnp_calc_crc32(u32 seed, u8 *mac, u32 len);
- 
- #endif /* _RNP_CRC32_H_ */
-diff --git a/drivers/net/rnp/base/rnp_eth_regs.h b/drivers/net/rnp/base/rnp_eth_regs.h
-index 5c3f7f906c..1378328add 100644
---- a/drivers/net/rnp/base/rnp_eth_regs.h
-+++ b/drivers/net/rnp/base/rnp_eth_regs.h
-@@ -57,6 +57,8 @@
- #define RNP_MAC_HASH_MASK		RTE_GENMASK32(11, 0)
- #define RNP_MAC_MULTICASE_TBL_EN	RTE_BIT32(2)
- #define RNP_MAC_UNICASE_TBL_EN		RTE_BIT32(3)
-+#define RNP_HTA_BIT_SHIFT		(5)
-+#define RNP_HTA_BIT_MASK		((1 << RNP_HTA_BIT_SHIFT) - 1)
- /* vlan strip ctrl */
- #define RNP_VLAN_Q_STRIP_CTRL(n)	_ETH_(0x8040 + 0x4 * ((n) / 32))
- /* vlan filter ctrl */
-@@ -87,5 +89,6 @@
- #define RNP_RAL_BASE_ADDR(n)	_ETH_(0xA000 + (0x04 * (n)))
- #define RNP_RAH_BASE_ADDR(n)	_ETH_(0xA400 + (0x04 * (n)))
- #define RNP_MAC_FILTER_EN	RTE_BIT32(31)
-+#define RNP_MC_HASH_TABLE(n)	_ETH_(0xAC00 + ((0x04) * ((n))))
- 
- #endif /* _RNP_ETH_REGS_H */
-diff --git a/drivers/net/rnp/base/rnp_hw.h b/drivers/net/rnp/base/rnp_hw.h
-index 8cf57db185..8dc29b6873 100644
---- a/drivers/net/rnp/base/rnp_hw.h
-+++ b/drivers/net/rnp/base/rnp_hw.h
-@@ -74,6 +74,10 @@ struct rnp_mac_ops {
- 	/* Receive Address Filter table */
- 	int (*set_rafb)(struct rnp_eth_port *port, const u8 *mac, u32 index);
- 	int (*clear_rafb)(struct rnp_eth_port *port, u32 index);
-+	/* update multicast address table */
-+	int (*update_mta)(struct rnp_eth_port *port, u8 *mc_addr);
-+	/* clear all multicast hash table */
-+	int (*clear_mta)(struct rnp_eth_port *port, bool en);
- 	/* receive vlan filter */
- 	int (*vlan_f_en)(struct rnp_eth_port *port, bool en);
- 	int (*update_vlan)(struct rnp_eth_port *port, u16 vid, bool en);
-diff --git a/drivers/net/rnp/base/rnp_mac.c b/drivers/net/rnp/base/rnp_mac.c
-index b723c29ac5..96750e1cde 100644
---- a/drivers/net/rnp/base/rnp_mac.c
-+++ b/drivers/net/rnp/base/rnp_mac.c
-@@ -46,7 +46,7 @@ rnp_update_mpfm_indep(struct rnp_eth_port *port, u32 mode, bool en)
- 		reg |= disable;
- 	}
- 	/* disable common filter when indep mode */
--	reg |= RNP_MAC_HPF;
-+	reg |= RNP_MAC_HPF | RNP_MAC_HMC;
- 	RNP_MAC_REG_WR(hw, nr_lane, RNP_MAC_PKT_FLT_CTRL, reg);
- 	RNP_MAC_REG_WR(hw, nr_lane, RNP_MAC_FCTRL, RNP_MAC_FCTRL_BYPASS);
- 
-@@ -283,11 +283,112 @@ rnp_update_vlan_filter_indep(struct rnp_eth_port *port,
- 	return 0;
+diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
+index 67fff8b7d6..d740ae00f9 100644
+--- a/lib/eventdev/rte_event_eth_tx_adapter.c
++++ b/lib/eventdev/rte_event_eth_tx_adapter.c
+@@ -598,6 +598,12 @@ txa_process_event_vector(struct txa_service_data *txa,
+ 	return nb_tx;
  }
  
-+static u32
-+rnp_sample_mac_vector(struct rnp_eth_port *port, u8 *mc_addr)
++static inline void
++txa_prefetch_mbuf(struct rte_mbuf *mbuf)
 +{
-+	u32 vector = 0;
-+
-+	switch (port->hash_filter_type) {
-+	case 0:   /* Use bits [11:0] of the address */
-+		vector = ((mc_addr[4] << 8) | (((u16)mc_addr[5])));
-+		break;
-+	case 1:   /* Use bits [12:1] of the address */
-+		vector = ((mc_addr[4] << 7) | (((u16)mc_addr[5]) >> 1));
-+		break;
-+	case 2:   /* Use bits [13:2] of the address */
-+		vector = ((mc_addr[4] << 6) | (((u16)mc_addr[5]) >> 2));
-+		break;
-+	case 3:   /* Use bits [14:3] of the address */
-+		vector = ((mc_addr[4] << 4) | (((u16)mc_addr[5]) >> 4));
-+		break;
-+	default:  /* Invalid mc_filter_type */
-+		RNP_PMD_ERR("Mac Hash filter type param set incorrect");
-+		break;
-+	}
-+	vector &= RNP_MAC_HASH_MASK;
-+
-+	return vector;
++	rte_mbuf_prefetch_part1(mbuf);
 +}
 +
-+static int
-+rnp_update_mta_pf(struct rnp_eth_port *port, u8 *mc_addr)
-+{
-+	struct rnp_hw *hw = port->hw;
-+	u32 vector, hash_bit;
-+	u32 mta_row, mta_col;
-+	u32 value, reg;
+ static void
+ txa_service_tx(struct txa_service_data *txa, struct rte_event *ev,
+ 	uint32_t n)
+@@ -608,6 +614,20 @@ txa_service_tx(struct txa_service_data *txa, struct rte_event *ev,
+ 
+ 	stats = &txa->stats;
+ 
++	for (i = 0; i < n; i++) {
++		struct rte_event *event = &ev[i];
 +
-+	vector = rnp_sample_mac_vector(port, mc_addr);
-+	mta_row = (vector >> RNP_HTA_BIT_SHIFT) & 0x7f;
-+	mta_col = vector & (RNP_HTA_BIT_MASK);
-+	hash_bit = 1 << mta_col;
-+	value = port->mc_hash_table[mta_row];
-+	if (!(value & hash_bit)) {
-+		port->mc_hash_table[mta_row] |= hash_bit;
-+		reg = port->mc_hash_table[mta_row];
-+		RNP_E_REG_WR(hw, RNP_MC_HASH_TABLE(mta_row), reg);
++		if (unlikely(event->event_type & RTE_EVENT_TYPE_VECTOR)) {
++			struct rte_event_vector *vec = event->vec;
++			struct rte_mbuf **mbufs = vec->mbufs;
++			uint32_t k;
++
++			for (k = 0; k < vec->nb_elem; k++)
++				txa_prefetch_mbuf(mbufs[k]);
++		} else
++			txa_prefetch_mbuf(event->mbuf);
 +	}
 +
-+	return 0;
-+}
-+
-+static int
-+rnp_clear_mta_pf(struct rnp_eth_port *port, bool en __rte_unused)
-+{
-+	struct rnp_hw *hw = port->hw;
-+	u16 idx = 0;
-+
-+	for (idx = 0; idx < port->attr.mc_hash_tb_size; idx++)
-+		RNP_E_REG_WR(hw, RNP_MC_HASH_TABLE(idx), 0);
-+	memset(&port->mc_hash_table, 0, sizeof(port->mc_hash_table));
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_update_mta_indep(struct rnp_eth_port *port, u8 *mc_addr)
-+{
-+	u32 hash_bit, mta_row, mta_col;
-+	u16 lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	u32 crc, value, reg;
-+
-+	crc = bitrev32(~rnp_calc_crc32(~0, mc_addr, RTE_ETHER_ADDR_LEN));
-+	crc >>= port->attr.hash_table_shift;
-+	mta_row = (crc >> RNP_HTA_BIT_SHIFT) & 0x07;
-+	mta_col = crc & RNP_HTA_BIT_MASK;
-+	value = port->mc_hash_table[mta_row];
-+	hash_bit = 1 << mta_col;
-+	if (!(value & hash_bit)) {
-+		port->mc_hash_table[mta_row] |= hash_bit;
-+		reg = port->mc_hash_table[mta_row];
-+		RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_HASH_TB(mta_row), reg);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+rnp_clear_mta_indep(struct rnp_eth_port *port, bool en __rte_unused)
-+{
-+	u16 lane = port->attr.nr_lane;
-+	struct rnp_hw *hw = port->hw;
-+	u16 idx = 0;
-+
-+	for (idx = 0; idx < port->attr.mc_hash_tb_size; idx++)
-+		RNP_MAC_REG_WR(hw, lane, RNP_MAC_ADDR_HASH_TB(idx), 0);
-+	memset(&port->mc_hash_table, 0, sizeof(port->mc_hash_table));
-+
-+	return 0;
-+}
-+
- const struct rnp_mac_ops rnp_mac_ops_pf = {
- 	.get_macaddr = rnp_mbx_fw_get_macaddr,
- 	.update_mpfm = rnp_update_mpfm_pf,
- 	.set_rafb = rnp_set_mac_addr_pf,
- 	.clear_rafb = rnp_clear_mac_pf,
-+	.update_mta = rnp_update_mta_pf,
-+	.clear_mta = rnp_clear_mta_pf,
- 	.vlan_f_en = rnp_en_vlan_filter_pf,
- 	.update_vlan = rnp_update_vlan_filter_pf,
- };
-@@ -297,6 +398,8 @@ const struct rnp_mac_ops rnp_mac_ops_indep = {
- 	.update_mpfm = rnp_update_mpfm_indep,
- 	.set_rafb = rnp_set_mac_addr_indep,
- 	.clear_rafb = rnp_clear_mac_indep,
-+	.update_mta = rnp_update_mta_indep,
-+	.clear_mta = rnp_clear_mta_indep,
- 	.vlan_f_en = rnp_en_vlan_filter_indep,
- 	.update_vlan = rnp_update_vlan_filter_indep,
- };
-@@ -334,6 +437,22 @@ int rnp_clear_macaddr(struct rnp_eth_port *port, u32 index)
- 	return rnp_call_hwif_impl(port, mac_ops->clear_rafb, index);
- }
- 
-+int rnp_update_mc_hash(struct rnp_eth_port *port, u8 *mc_addr)
-+{
-+	const struct rnp_mac_ops *mac_ops =
-+		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
-+
-+	return rnp_call_hwif_impl(port, mac_ops->update_mta, mc_addr);
-+}
-+
-+int rnp_clear_mc_hash(struct rnp_eth_port *port)
-+{
-+	const struct rnp_mac_ops *mac_ops =
-+		RNP_DEV_PP_TO_MAC_OPS(port->eth_dev);
-+
-+	return rnp_call_hwif_impl(port, mac_ops->clear_mta, TRUE);
-+}
-+
- int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en)
- {
- 	const struct rnp_mac_ops *mac_ops =
-diff --git a/drivers/net/rnp/base/rnp_mac.h b/drivers/net/rnp/base/rnp_mac.h
-index 6f22c8279a..44d500a9df 100644
---- a/drivers/net/rnp/base/rnp_mac.h
-+++ b/drivers/net/rnp/base/rnp_mac.h
-@@ -26,6 +26,8 @@ void rnp_mac_ops_init(struct rnp_hw *hw);
- int rnp_get_mac_addr(struct rnp_eth_port *port, u8 *mac);
- int rnp_set_macaddr(struct rnp_eth_port *port, u8 *mac, u32 index);
- int rnp_clear_macaddr(struct rnp_eth_port *port, u32 index);
-+int rnp_update_mc_hash(struct rnp_eth_port *port, u8 *mc_addr);
-+int rnp_clear_mc_hash(struct rnp_eth_port *port);
- int rnp_update_mpfm(struct rnp_eth_port *port,
- 		    u32 mode, bool en);
- int rnp_rx_vlan_filter_en(struct rnp_eth_port *port, bool en);
-diff --git a/drivers/net/rnp/base/rnp_mac_regs.h b/drivers/net/rnp/base/rnp_mac_regs.h
-index f15d7b2d72..d76efb2f39 100644
---- a/drivers/net/rnp/base/rnp_mac_regs.h
-+++ b/drivers/net/rnp/base/rnp_mac_regs.h
-@@ -114,6 +114,8 @@
- #define RNP_MAC_VLAN_VLC_REPLACE	(0x3 << RNP_MAC_VLAN_VLC_SHIFT)
- /* VLAN Tag for Transmit Packets For Insert/Remove */
- #define RNP_MAC_VLAN_VLT		RTE_GENMASK32(15, 0)
-+/* Mac Hash Table */
-+#define RNP_MAC_ADDR_HASH_TB(n)	(0x10 + ((n) * 0x4))
- /* mac link ctrl */
- #define RNP_MAC_LPI_CTRL	(0xd0)
- /* PHY Link Status Disable */
-diff --git a/drivers/net/rnp/rnp.h b/drivers/net/rnp/rnp.h
-index 301e6ef203..3a2185329d 100644
---- a/drivers/net/rnp/rnp.h
-+++ b/drivers/net/rnp/rnp.h
-@@ -71,6 +71,7 @@
- #define RNP_PORT_MAX_MACADDR         (32)
- #define RNP_PORT_MAX_MC_HASH_TB      (8)
- #define RNP_PORT_MAX_MC_MAC_SIZE     (RNP_PORT_MAX_MC_HASH_TB * 32)
-+#define RNP_PORT_HASH_SHIFT          (26 - (RNP_PORT_MAX_MC_MAC_SIZE >> 7))
- /* hardware media type */
- enum rnp_media_type {
- 	RNP_MEDIA_TYPE_UNKNOWN,
-@@ -99,6 +100,7 @@ struct rnp_port_attr {
- 	uint16_t max_mc_mac_hash; /* max hash multicast mac size */
- 	uint16_t uc_hash_tb_size; /* max unicast hash table block num */
- 	uint16_t mc_hash_tb_size; /* max multicast hash table block num */
-+	uint16_t hash_table_shift;/* hash mac table shift num */
- 	uint16_t max_rx_queues;   /* belong to this port rxq resource */
- 	uint16_t max_tx_queues;   /* belong to this port txq resource */
- 
-@@ -200,6 +202,8 @@ struct rnp_eth_port {
- 	bool reta_has_cfg;
- 	bool hw_rss_en;
- 	uint32_t indirtbl[RNP_RSS_INDIR_SIZE];
-+	uint32_t mc_hash_table[RNP_MAC_MC_HASH_TABLE];
-+	uint8_t hash_filter_type;
- 
- 	uint16_t cur_mtu;
- 	bool jumbo_en;
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index 484e40f3be..de1c077f61 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -1431,6 +1431,29 @@ rnp_dev_mac_addr_remove(struct rte_eth_dev *dev,
- 	rnp_clear_macaddr(port, index);
- }
- 
-+static int
-+rnp_dev_set_mc_addr_list(struct rte_eth_dev *dev,
-+			 struct rte_ether_addr *mc_addr_list,
-+			 uint32_t nb_mc_addr)
-+{
-+	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-+	uint32_t idx = 0;
-+
-+	if (nb_mc_addr > port->attr.max_mc_mac_hash)
-+		return -EINVAL;
-+	rnp_clear_mc_hash(port);
-+	for (idx = 0; idx < nb_mc_addr; idx++) {
-+		if (!rte_is_multicast_ether_addr(&mc_addr_list[idx])) {
-+			RNP_PMD_ERR("mc_list[%d] isn't a valid multicast", idx);
-+			return -EINVAL;
-+		}
-+	}
-+	for (idx = 0; idx < nb_mc_addr; idx++)
-+		rnp_update_mc_hash(port, (uint8_t *)&mc_addr_list[idx]);
-+
-+	return 0;
-+}
-+
- static uint32_t *rnp_support_ptypes_get(void)
- {
- 	static uint32_t ptypes[] = {
-@@ -1507,6 +1530,7 @@ static const struct eth_dev_ops rnp_eth_dev_ops = {
- 	.mac_addr_set                 = rnp_dev_mac_addr_set,
- 	.mac_addr_add                 = rnp_dev_mac_addr_add,
- 	.mac_addr_remove              = rnp_dev_mac_addr_remove,
-+	.set_mc_addr_list             = rnp_dev_set_mc_addr_list,
- 	/* vlan offload */
- 	.vlan_offload_set             = rnp_vlan_offload_set,
- 	.vlan_strip_queue_set         = rnp_vlan_strip_queue_set,
-@@ -1540,12 +1564,14 @@ rnp_setup_port_attr(struct rnp_eth_port *port,
- 		attr->max_mc_mac_hash = RNP_PORT_MAX_MC_MAC_SIZE;
- 		attr->uc_hash_tb_size = 0;
- 		attr->mc_hash_tb_size = RNP_PORT_MAX_MC_HASH_TB;
-+		attr->hash_table_shift = RNP_PORT_HASH_SHIFT;
- 	} else {
- 		attr->max_mac_addrs = RNP_MAX_MAC_ADDRS;
- 		attr->max_uc_mac_hash = RNP_MAX_HASH_UC_MAC_SIZE;
- 		attr->max_mc_mac_hash = RNP_MAX_HASH_MC_MAC_SIZE;
- 		attr->uc_hash_tb_size = RNP_MAX_UC_HASH_TABLE;
- 		attr->mc_hash_tb_size = RNP_MAC_MC_HASH_TABLE;
-+		attr->hash_table_shift = 0;
- 	}
- 	port->outvlan_type = RNP_SVLAN_TYPE;
- 	port->invlan_type = RNP_CVLAN_TYPE;
+ 	nb_tx = 0;
+ 	for (i = 0; i < n; i++) {
+ 		uint16_t port;
 -- 
-2.25.1
+2.43.0
 
