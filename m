@@ -2,153 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F3EC28B20
-	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Mar 2025 09:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5C4C28B20
+	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Mar 2025 13:47:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE0EC402AB;
-	Sun, 30 Mar 2025 11:49:30 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013056.outbound.protection.outlook.com
- [40.107.162.56])
- by mails.dpdk.org (Postfix) with ESMTP id E2AF6402A4;
- Sun, 30 Mar 2025 11:49:28 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G1HXpRMBP6jpCLsiiynAqR1eNmQnf/wkkWpbmLDVvB71MeMDuy3XRezpYvBZdkNFMFxGAU4rZGE1jVm/sB7JL9gkvy961NwAn6wP2AIZ/hdea/+UixB23aOTqWUPZpBWnSQtB6/sABuZRk5Hb+MqgsE3drdDClEpONHSNngiz/Zwb9KSarhQ8mQWxu243u3XtGK0KoUHTbNHrRc/5Nlca+HIQnd1H4YESyWpUGR5D+/5+oZcMpDJnhJGns/6FI4JHQr9ZXPr2ji5ovHBfoTEQ2ocW65bQtWIc0D/TfY5IyN11u2dsFFAbHiYsLeJ53xgzdIlzCxiUJ6aV2o0Ocv3iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fB8xIOh6qmugFdP+hPWjIYqsONqE62xBuk2lH/vgSVQ=;
- b=isf6yDxNHGJZ2KrOsW5BuwsS1jQO3Qy6vgbU3f+niv//26UdjjTPwFqOtpubNoNECqBvWC8Faa/Vxe1e0MDtm1Ptw14OKEsztFP2Z+fcBIKDaOm6fvyn36dF8c2Aw7yajKy6aqlDw86JzfQQy0czV2PUEMRZYeZ4+4BwYDOSshVm1oHB2f22gT9MRmwO6XjQan3pwf8Fhq9RqfyPpNHGDIEL4tWXS4gf3GWSZM4JBMYSJKqo4dYL80hA1YXbyF89F9F/ccVQe7UJc+WlCaNqR2iM6RP2SGGOzjqbOb81lK3cyY1VAi/0TEZMlnU3/zgG2ompQtnKxMyxJEJ1YEV/4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia-sbell.com; dmarc=pass action=none
- header.from=nokia-sbell.com; dkim=pass header.d=nokia-sbell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia-sbell.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fB8xIOh6qmugFdP+hPWjIYqsONqE62xBuk2lH/vgSVQ=;
- b=Aojl/o+XnkvG0liVYtfJKlyqoJ65JLueVt0AHA9ULnMYIUpH5J/g2mCJmABLjDpMNsV/zWvfp8b86NTzErQsHVSjegt2kgB9L4vfqaOK3t5otgkcjqAD/kqCHGs54Wz/ElbvSdaGWkq21ReI00ks3leq/6RhTYg1lIel3jX2H9htdrcySC9YJZF0tOOcCwQuO+HiTmqHjF6/Of72O5TLmXweR46EuQBJVq6TJIYpgptVGAizM5lznqBddkwhxUvq50AbgsfN9TSnMaqSu7GGn4pp3qDj4M3mW85hxL6jV4rVHCvtDJ5UDtHkLmEeLTYIZh8cr038QTZZwYLExDv2YA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nokia-sbell.com;
-Received: from VI1PR07MB9898.eurprd07.prod.outlook.com (2603:10a6:800:119::6)
- by PAXPR07MB7885.eurprd07.prod.outlook.com (2603:10a6:102:13f::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.37; Sun, 30 Mar
- 2025 09:49:27 +0000
-Received: from VI1PR07MB9898.eurprd07.prod.outlook.com
- ([fe80::1928:4afb:4eee:1f21]) by VI1PR07MB9898.eurprd07.prod.outlook.com
- ([fe80::1928:4afb:4eee:1f21%6]) with mapi id 15.20.8534.043; Sun, 30 Mar 2025
- 09:49:26 +0000
-Message-ID: <941b7789-cbf2-472c-b61e-baec5569669b@nokia-sbell.com>
-Date: Sun, 30 Mar 2025 17:49:17 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH v2] eal/linux: improve ASLR check
-To: David Marchand <david.marchand@redhat.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
- stable@dpdk.org
-References: <20250228094405.1437-1-ming.1.yang@nokia-sbell.com>
- <20250313061904.1466-1-ming.1.yang@nokia-sbell.com>
- <20250313083733.203d132c@hermes.local>
- <9fa6a076-e187-461f-9899-a53e891efb21@nokia-sbell.com>
- <CAJFAV8wGCJhHBMTOz0+PYqZRzFRUrO_zy8UzF8s4EVyqG8N=rw@mail.gmail.com>
-Content-Language: en-US
-From: Yang Ming <ming.1.yang@nokia-sbell.com>
-In-Reply-To: <CAJFAV8wGCJhHBMTOz0+PYqZRzFRUrO_zy8UzF8s4EVyqG8N=rw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYWPR01CA0046.jpnprd01.prod.outlook.com
- (2603:1096:400:17f::10) To VI1PR07MB9898.eurprd07.prod.outlook.com
- (2603:10a6:800:119::6)
+	by mails.dpdk.org (Postfix) with ESMTP id 1290A402AB;
+	Sun, 30 Mar 2025 15:47:13 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 26F2E402A4
+ for <dev@dpdk.org>; Sun, 30 Mar 2025 15:47:12 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-301493f461eso4580539a91.3
+ for <dev@dpdk.org>; Sun, 30 Mar 2025 06:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1743342431; x=1743947231; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=XgnXbfz5cIUtIQmdYamA54/5z1izjzp2XE1nuXTguPs=;
+ b=cKmunXl8xBSIdj9YvDH0ZIGoBDHb/DcpyWwW/7HK92h9MSKwE0fvc09B/JueNqXu3b
+ +TSF2PvF545nHyzTKr8EhceZWbYKT0wpFbofY6F7LioKr0sfu2eNBWNtq6uNF1jePp3R
+ 9CvNYf4/kv1THOf4GNWbyxXOvnRMSAfokvWwTYlZ5SP9Y/WsnQXh3Y6p5sYqvF07fZ6C
+ XQeiZDPZSQjVfGP+aGvDfX4iF5tk+XXzgg7ntaVOzxPkjQUidbK/YCwe/xUJe6pM8lHa
+ j38ztw6CeIDI1PqNQdDjydGfxABcE1AymZ8IHA43a85zrPzlSvQFb/vx6Onq0i9c870w
+ kWYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1743342431; x=1743947231;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=XgnXbfz5cIUtIQmdYamA54/5z1izjzp2XE1nuXTguPs=;
+ b=UG82cwsiOxTDAOYGOOL3gGP+DITjEhY5uzbomI7/T5c0LNkhT2SiCGp1Icn5+TpaHO
+ wgchEOhryv1QdL+4NvnzAys7YNpEbWEzUN708YObLnkEiWuuMZ+9xPcr6fQyk4fQRyXP
+ JGC1ebMspv7Q68a5tD6VbB5o8pvtltwmI1dtUhcByNoq0GES0jgvd1mtjrpA/TliuI6a
+ qZWOdcatTw76skweEG/NLI4US23ntTcuQ5O5Ue3FJekgWF3tScKdgh5H97h9tZF2C2VJ
+ Hl8jjH+Rdi9QCpq+C0G3llwF5EJ0oAPDAOCexNlZgefqlBu/5OMrjYsoQW3dJ5hehmhx
+ gNgw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWu8bJwpebRP3UwPmvxvwaGuBU511qoTtdCW0NZDEi+ppa2MaLPknSg8GtbGO3wqfBkmCY=@dpdk.org
+X-Gm-Message-State: AOJu0YznlmNFivccAvidxsARjpVsfR1lJHjfHKy47AZVG1bS2Ng09bJ2
+ CLDWK84b9jFLgBmjt6GVbz+dBWk1SCAigEwMJaZKSv0W+gX2l0C3vTsdDt2bLUQkSdswdaxEMYC
+ 076Y+PGuFsnZMmLsOUlEQbdKedf0=
+X-Gm-Gg: ASbGncuVjVQb/gnup7CC+lEAdxnqbkJrQZHD9ZZI7a8cPVa9QNtLL03uVSx4TvDUlOv
+ k6SfMEIRQGbH+rH3g6N64JaGJMTeqI/P3AB5iY20t6N4gIxPf1liNBiZ7trmfdED/eD0ApH5Bvo
+ FoO8sEQ1+sA/uDaLyQTZJ3yzfLlUY=
+X-Google-Smtp-Source: AGHT+IGWN+dy/RvCtAPvHWw6tt2M4lwm1JfYgh8xVNjkU6YzeUk9DHPfHpw1gArgnqTYVLHfR6/uEQab30fmV/AwpWg=
+X-Received: by 2002:a17:90a:f946:b0:2ee:94d1:7a89 with SMTP id
+ 98e67ed59e1d1-30531f7c875mr7163441a91.1.1743342430596; Sun, 30 Mar 2025
+ 06:47:10 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR07MB9898:EE_|PAXPR07MB7885:EE_
-X-MS-Office365-Filtering-Correlation-Id: a16673c8-2f36-4e91-254e-08dd6f702857
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RkVMSE8zenJ4V1RmVXFkSnZqN0MvU29FTGM2U0NsUW5jOEw2Nnc0aDRQQURl?=
- =?utf-8?B?VzFFbjVITGR2RXVITUhvSFNPMzFLSVBHSngvcjFzckJnRG1Ddmh4djhpYzND?=
- =?utf-8?B?Q0ZPUDl5WFAvbEtCS2pwYnZDYzFiLzV3OHhiQ0NGYVJBYnhudlZBLzI1dnBx?=
- =?utf-8?B?SmZ1WFhadmFTMXRhMXExaEJNN0dQSG1QbXFLRzVTZ0lFbGhMQk9iaXlRTWd2?=
- =?utf-8?B?ZzZwWVRCeUlNeVBJMkQzcXY3K3Y4QVNjZ1JNd1ZacXRxTEFnM01jYzh0SG55?=
- =?utf-8?B?Vk9oeGs0RitsK0NxK2xZMkZzT2MxRmVQRWF2WkFSY1ZONGJueUQ0VERsUUMr?=
- =?utf-8?B?UGFhdzQ4L1NkVm1RQUdvOVIvMHJ5ZnBLb0FmV0tyNGUrTlZrUWY2MWxhZ25I?=
- =?utf-8?B?RTM1VWUzNCtsRHBGQ0VvUk13OFlZbXVTdkRVOWIwM2Foc2ZRMmdIVlFrVngx?=
- =?utf-8?B?T2k1NXZpUWJMd0FMb0JBM2x3R0F6V3IzVGR1UVJVQngzK2g3RFFnTzFuV0NQ?=
- =?utf-8?B?NmVCWGJLQVB3bXlYTVpyUnBkb0xVTTQ0Z282NTZ2VkR3Uk9kZ1VHbCtmRVpP?=
- =?utf-8?B?b2xWNmFSR3dEOUlBc1plcklGUTBKWUV1S08rbGdvT0h4OTgrekl1cjVEa0U3?=
- =?utf-8?B?SXVDemxRL3lPRVNhWW1vMTFrVjJleEZhc3hxNndsRVFPZlhDbG1NYnZxNlpR?=
- =?utf-8?B?YTV0bERVMTlacEc1TFNVR3dpbGFOMC9HUXd3K0tOUDJqRFhJbFdueXQvVVZj?=
- =?utf-8?B?a0hZNXgrckpLYTBrVm1XeTRjaUdjNWduaGdTaWU1SFZwR1Y0SittL3kzRVJF?=
- =?utf-8?B?cTR0dnFHbUlNM1JoQWZDWk1HeUQ4eWlmbVQ4OXM3MlJ5U3NjbHFGM1ZxbDFP?=
- =?utf-8?B?QXc2NjIvNGRYaW92enJMaHVZZlBnU1I4L0Fwb1JpUldJeHhlbk5rZjFaL0c2?=
- =?utf-8?B?UzQ2MnFEZmJoVWlOejlmQ1NCSTVXQXp0RlhGaWU0QVJuUEl3QVZRQzhvRFhX?=
- =?utf-8?B?MVFzWXd2NE5wckl4bzR3bkpPRklMeTM2MTFVRGd5d1dlMWlwSVZVbDBmaTFB?=
- =?utf-8?B?MjNKYWhROHRYdVFPQ1RFWlJXMFAvOW5DREpDdmFiUWx4aVZLZm5KV291Q0pJ?=
- =?utf-8?B?STk1MFhXK3RVcTVEVW02cGc1SVJ0NGN4YU5EQmhtREg1TnU3YlcvWWVvUzdI?=
- =?utf-8?B?Q01DWkowT2MwSjVtckE3V2oxTXgwamZlNmJUUTFWKzhYN0djSzdSVEFOTWpx?=
- =?utf-8?B?UllKUE82ZnhOYm9GNi94YU9RUzlHR1JIMDlrSXoxNmNiMDlOZTdCSVZzend5?=
- =?utf-8?B?anEvR1pXNlBraXdxZkZYNEV5TmEwNkdWZXRPS2gyRVBSekw2N1lKa0lLTnk0?=
- =?utf-8?B?Q3hvRUIxcDJRUHhDTzVoV0tja0M2bzRjSTRyV3JFT0R3b1JTdElyTVIzNVc0?=
- =?utf-8?B?SnplTnRoMWhCOU5SaVp2MCt5a0pOYmNrQVhFOFA0V0N0djVHcmlMZFNtcjhM?=
- =?utf-8?B?UmZWM0NsdlF3Y3lFd3hVOHJkSTNKQjN5NllFQVBpRmdvQXN2Yy9jT2ozOHE3?=
- =?utf-8?B?L1JZZmpMb0RITDNOZi9HREJwMUFFc1pCc0doQ3RySFBrczlDdGFXdGIzd2RP?=
- =?utf-8?B?aHhjU09WQnVVUUR1c3VpOUoxNFBhYTU2blljS3dBUERZNEozbmNkZTM3MTRD?=
- =?utf-8?B?K0ZoSVhnT3RzWnYzeDBINlJTQU01cXF3R0NnV1FEdEdhVldIWEhFNGgrUisw?=
- =?utf-8?B?NldZcGo0SnFGY2tCcThrMDNsZE5GbERtUGtwOWZiVG9ZN2REOEpTNDl2OWtZ?=
- =?utf-8?B?a083bFZQRmYya2pjcmN5YnBkUWsxcTR0ZG5OakYybUZWWnVxaTI0S0RwblI2?=
- =?utf-8?B?OEVPQWxhc2pGNlc3RTlaSFY5RFBOc2tqd1NsajJuL0ZwV0JpQ2doZ3IzYnVN?=
- =?utf-8?Q?N1jA5jYY6zc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:VI1PR07MB9898.eurprd07.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkhoRERuY0VXalJLR0ZpeUloM3BQanp0ZmdCcmZFUWh1a0VmK3RrRmc1S1dn?=
- =?utf-8?B?QTNQUk9na1lzS0tuT0ZtWXUwSVhDa3VkRFJxeVJJd2UveHdLa0wrc3pHSHVk?=
- =?utf-8?B?VDRtMERVMC9vdzM0RlV6dGpPWU1ZbHF6enozbVcyb2hiTkRtQ2xDZ2xmZWtr?=
- =?utf-8?B?M0dMSmNCTWFsUFpmcWNzK01laTIrSWIrY05FVzArZXEwVU1oNzQ5aFBvMnhP?=
- =?utf-8?B?TFVTaW9nYmxpWFVFMnhjN0tGNlpJQjUva0hPM3NYK1UyYW5wQ0VkQVFjNmhY?=
- =?utf-8?B?cHU4VnJjUnlhQ2VwNm5UTmwzdW1CdkJhQmdwcy9MUnFVWlhUTjJpVGFXR01u?=
- =?utf-8?B?c01zbHY3VnNubkVTdjEydWlwcjhMRmhzZGZrTkZMZnhiSTFsaU9qN1lPcnI4?=
- =?utf-8?B?dTFDd3RreHZJc1lJNnJWNng3LzJmM0ZqQW1SSWM3L24xU0dNTjlJY1QxVzhK?=
- =?utf-8?B?Q0FtbVFhTkJPUVp1enpiY0EwMVdpMGhyRGZmNE16MVRvelprL21WczU0WTU4?=
- =?utf-8?B?VmIzZkhRRTFnR2ZwWTVBL1RtaSs1L2h0aHFXZ1F4WGUxbS9hc3J1R3pJUnd1?=
- =?utf-8?B?czEzUEdQR0F4NGNwbmpBSGVoNC9oeE13cThIaWJoc3FkT0c0ZEQ5andmZHBS?=
- =?utf-8?B?dVVLdzdXRzNkZzhjMlJaV3NwK2JRVnZpNXFDNmtaeEltTkQyVUVnYTYvSHVQ?=
- =?utf-8?B?RVRWYlgwZDlIaUpYdXlBOTlTa0lKV01NYStUMFVMYllvcW9jUzVRRGV0dkZo?=
- =?utf-8?B?ZjlUWHpJQW9WREo0MEN6OHlkd1RxNHJ5OWVpb25YQm9yNDRRZGdoeEV1UjRn?=
- =?utf-8?B?MmZpVDN3MDRNZ3pPY3UwVUR6aDU3UStmSUxES0Z2ekVhVzlpUXJMVWcva3VQ?=
- =?utf-8?B?aFgzSlYxczQ5VmVMU2JtZm16OEQ2QmQzc1RRd1BiTGtTRUNXZndySG5KL0kx?=
- =?utf-8?B?UzBiaUJUZ1EwbFY0VHV1L0Nwa1BNZ0N1MHViY3NiVVNWaWRNaGRYa0dzTVB1?=
- =?utf-8?B?N0V5RUx4Tjl2RHRZMDdDblMyU3BzZTFONnBFeVpHcStwU2RYY3FaeU9MeXNj?=
- =?utf-8?B?aVpnZGlrb3YwdklxL1pBOEtIektZUDVpdXF0TlF6ZVZMTVZ4UGV3NUN5ZFdl?=
- =?utf-8?B?ejVueDNZbWxNTGYyeCtabHdRVCt2WXNGM0tqWG05QlBaUU5EUUJCVW55bTJS?=
- =?utf-8?B?VUVJdWhsdGVBQ1NiMVY2SXQ5andDNE5rS0FYVTl2c0ZyYkZlN1REUFBvMktF?=
- =?utf-8?B?c210eERDOHo0cG5CelFUTmx5eDBxUnBuV2trZmJtcG5EcjdGTkk2VHNZcGFq?=
- =?utf-8?B?Sm05bE1udlFwYkF1OGRqcG1tOXhJcnRQNFFVNGhvK3pXTEljdzNQR1ZQeGZ4?=
- =?utf-8?B?dXkwRUpacU9vcGFqOS84cEdqWGlSS3ljT3JkbDVvNWdKTXBoTzU4cnVPNzlC?=
- =?utf-8?B?MzNsNWFNWFJlZUJ0THQwSUthWmlKUFZEWmMxaktmQ2crRzY1cG4yODBLVDhy?=
- =?utf-8?B?dzJHWE8xem96bWtQSGkzMUNRWDNNNm15SE4wWDlwRGxZdkhia1FzdDZ6Z0Nl?=
- =?utf-8?B?TzdqcGtaS2djZ0IrdENzWDZrYld0S0pMUmdaTW43bGs2VjZoMVl4VVpacWVH?=
- =?utf-8?B?VHVsSGI3VWMwL0dkQW9Lall4eW9hbENsVzNYREZuVVl1WFpTaEpObFc5cWl2?=
- =?utf-8?B?RExYdEQzM1EvNUtkenk0Sm16ZWlDTTI3QTM2R0o5UHptNjJFYUFqaVJrSCtI?=
- =?utf-8?B?MUkxS3JXTWFpMGNOMnBId09nZ2lTRUNlTUY0Y2FRTWpSdnhDd1NJZzFwY3hT?=
- =?utf-8?B?LzJlWWVUeXlmWmR6K3F1dVgvTUNLVDg5bWEycGRISmVpT3ZTOS81aFFnWkZZ?=
- =?utf-8?B?VllDUXc0M1cwTVd5eElIK1I1ZEJFQTNoK3k1QnovVnFYRGswcXFPVlZidjE5?=
- =?utf-8?B?bXYwZjNoek1kSjl0QTZabHNLM1VIeVhNYkpwVXNpR1dka3l0Tm01Z002M2Jw?=
- =?utf-8?B?VEU3dTNsUUtHbWRJS0pwZE1HNENqWGRTWFJmS0hVNzRjcVdoNGpjeU9hWkhC?=
- =?utf-8?B?dE5adXF5eWJrc3BGTUZlcUE5d21SQ0tsUW1SdXhucjBOZkl3dXoxTGhnWUJ1?=
- =?utf-8?B?aDRuQ0ZKT3dSdWdBcml1VFZYWTJsMmtBV2lnSmM3TEFUOXY4Q2ZrTmY5eXFi?=
- =?utf-8?B?MHc9PQ==?=
-X-OriginatorOrg: nokia-sbell.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a16673c8-2f36-4e91-254e-08dd6f702857
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR07MB9898.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2025 09:49:26.4865 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TKtPiszUbvw8D/TSdsNaaIcjrd28WkWLK5nk/eIG7B7SFQAncNVmpj9fYf1f0Wal7hvK83M4smOsMcUAJAP0mgmQtiAW0J6v5grs+Q3FlAM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR07MB7885
+References: <20241024110129.791362-1-mb@smartsharesystems.com>
+ <20241104105220.1421305-1-mb@smartsharesystems.com>
+ <20241104105220.1421305-2-mb@smartsharesystems.com>
+ <f942d7c7-7aa6-4ba0-a624-384d11b118ac@broadcom.com>
+ <a28fa969-d4fc-435c-945c-e510a70bf69e@amd.com>
+In-Reply-To: <a28fa969-d4fc-435c-945c-e510a70bf69e@amd.com>
+From: spyroot <spyroot@gmail.com>
+Date: Sun, 30 Mar 2025 17:46:58 +0400
+X-Gm-Features: AQ5f1JrX3RebtuUc6x6oFBg5pfhaZIgh-0wmUnqAlXoMlcHaDUFYzTFeW92ny8g
+Message-ID: <CABsV3rA0zJYXShScu5i-zXM6L-UGhK4PWYDq3a4cNZWjXbM+ZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] net/vmxnet3: support larger MTU with version 6
+To: Ferruh Yigit <ferruh.yigit@amd.com>,
+ Jochen Behrens <jochen.behrens@broadcom.com>
+Cc: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org, 
+ Ronak Doshi <ronak.doshi@broadcom.com>
+Content-Type: multipart/alternative; boundary="0000000000004c390506318f8a7c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -162,42 +78,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--0000000000004c390506318f8a7c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/3/27 16:14, David Marchand wrote:
-> Caution: This is an external email. Please be very careful when clicking links or opening attachments. See http://nok.it/nsb for additional information.
+Hi Folks, how can you bump them VMXNET3 version, and do we have a VMXNET3
+unit test for RSS / Max mtu and 32 queue?
+
+On Wed, Nov 6, 2024 at 8:00=E2=80=AFAM Ferruh Yigit <ferruh.yigit@amd.com> =
+wrote:
+
+> On 11/4/2024 9:44 PM, Jochen Behrens wrote:
 >
-> Hello,
+> > On 11/4/24 02:52, Morten Br=C3=B8rup wrote:
+> >> Virtual hardware version 6 supports larger max MTU, but the device
+> >> information (dev_info) did not reflect this, so it could not be used.
+> >>
+> >> Fixes: b1584dd0affe ("net/vmxnet3: support version 6")
+> >>
+> >> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> >
+> > Acked-by: Jochen Behrens jochen.behrens@broadcom.com
+> >
 >
-> On Thu, Mar 27, 2025 at 9:02 AM Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
->> On 2025/3/13 23:37, Stephen Hemminger wrote:
->>> On Thu, 13 Mar 2025 14:19:03 +0800
->>> Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
->>>
->>>> This change ensures that the current process is checked for
->>>> being run with 'setarch' before verifying the value of
->>>> '/proc/sys/kernel/randomize_va_space'. The '-R' or
->>>> '--addr-no-randomize' parameter of the 'setarch' command is used
->>>> to disable the randomization of the virtual address space.
->>>>
->>>> Fixes: af75078fece3 ("first public release")
->>>> Cc: stable@dpdk.org
->>>>
->>>> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
->>> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
->>>
->> Hi Experts,
->>
->> is there any chance to review and accept this patch?
-> I just merged rc0 which means the patch merging fest is opened.
+> Applied to dpdk-next-net/main, thanks.
 >
-> I put this patch and a few other EAL patches on my rc1 queue, as those
-> changes don't belong to next-net.
->
-Hi David,
 
-Got it. Thanks for your update. Looking forward to seeing it in rc1.
+--0000000000004c390506318f8a7c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Brs,
+<div dir=3D"ltr">Hi Folks, how can you=C2=A0bump=C2=A0them VMXNET3 version,=
+ and do we have a VMXNET3 unit test for RSS / Max mtu and 32 queue?</div><b=
+r><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=
+=3D"gmail_attr">On Wed, Nov 6, 2024 at 8:00=E2=80=AFAM Ferruh Yigit &lt;<a =
+href=3D"mailto:ferruh.yigit@amd.com">ferruh.yigit@amd.com</a>&gt; wrote:<br=
+></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;=
+border-left:1px solid rgb(204,204,204);padding-left:1ex">On 11/4/2024 9:44 =
+PM, Jochen Behrens wrote:<br>
+<br>
+&gt; On 11/4/24 02:52, Morten Br=C3=B8rup wrote:<br>
+&gt;&gt; Virtual hardware version 6 supports larger max MTU, but the device=
+<br>
+&gt;&gt; information (dev_info) did not reflect this, so it could not be us=
+ed.<br>
+&gt;&gt;<br>
+&gt;&gt; Fixes: b1584dd0affe (&quot;net/vmxnet3: support version 6&quot;)<b=
+r>
+&gt;&gt;<br>
+&gt;&gt; Signed-off-by: Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsh=
+aresystems.com" target=3D"_blank">mb@smartsharesystems.com</a>&gt;<br>
+&gt;<br>
+&gt; Acked-by: Jochen Behrens <a href=3D"mailto:jochen.behrens@broadcom.com=
+" target=3D"_blank">jochen.behrens@broadcom.com</a><br>
+&gt;<br>
+<br>
+Applied to dpdk-next-net/main, thanks.<br>
+</blockquote></div>
 
-Yang Ming
-
+--0000000000004c390506318f8a7c--
