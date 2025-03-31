@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF2FC3600B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86CBC3600B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E782640B91;
-	Mon, 31 Mar 2025 18:10:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 05E8540B95;
+	Mon, 31 Mar 2025 18:10:51 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id E3D1C40B8D
- for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F412540B94
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743437447; x=1774973447;
+ t=1743437449; x=1774973449;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=3s/I7QUGE1fdScd20s/exUKDXKaHY1+lz5JDIfodIWY=;
- b=Yli6PL1KSrS8N3Ximo4MxSd2CRCV5x7Z8bB8Vbmevs51/wnVBjFgBDRU
- Lp2eiVdjoOuIN3L3LdgPoYGlVJs5SKhX4FdhwNRC8i0IO3xRE/OX9Mgk2
- oFfmQyQOGhNprjqvDXPh5jhvEBKCto+KnAGbkI5DEpaAxGS0oHk62OjY3
- TAMZti/GXZkO3PnBZr2GAkNAIbaY4v+3qKj18koddTd/uEkp4y7YHXmB9
- /GFETuJRjnjXPYigEry5kNfmN0fgjcLHidp77qNVCY7ohxivDrTd9C15s
- sCwhP0sokVOS7uMc1+DWyKH82UrHYmKk+kYZ/060QxT+7sRWT94SE4LEz Q==;
-X-CSE-ConnectionGUID: MCKEuqGOQ9ebj/ppybhIxA==
-X-CSE-MsgGUID: GvQ4ujwdR+euh4FByBSmDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125729"
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125729"
+ bh=PYtQC7bgcuwo06DNX7miP6FiwMRNaCDQzb2KC3lrUsI=;
+ b=bYGphojKi4rIu9RJv4x7g3+gaV5Xlui4JuDYq9GqQEOAtiiw/Qwk9ftW
+ xph7mq6iju32mBCzaRNeihV84lBe4BmUW6KeqFTmmsCOhjVGKgkFCjjHI
+ IIYK73BR9/ThNvY0bgB6DL5peeiyknByNAG+mshvW2xV8oUDMJrmYMAvo
+ k/KTTPVFj1V88ndZeWd54TukLjGOM97RJ1n2dpR1yr2kKQqvcKQo0FpEd
+ XzPE/cvanvQoUIxyUK63hzAIZjc9OPxpolHBYQhyhLx7aA/Rjwiax5EJB
+ T1L6H3ZVbKegzFKr73XGy/38GU6joNYGgy4cmRD8zC53yvApzBhV58n1k w==;
+X-CSE-ConnectionGUID: ywLwjQG+TYaK0yEdda2coQ==
+X-CSE-MsgGUID: 6go+m6THRGug8J89stDpsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125735"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125735"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Mar 2025 09:10:46 -0700
-X-CSE-ConnectionGUID: aJPKRuAzTgi78qUKsemFKA==
-X-CSE-MsgGUID: EqoX1xLuQG+yzOeU/1bA1g==
+ 31 Mar 2025 09:10:49 -0700
+X-CSE-ConnectionGUID: LD6oxnb9R0KUj3B/5qKIWg==
+X-CSE-MsgGUID: 9QpzhlRnSIGc0jhEgMptuA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132776"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132781"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:45 -0700
+ by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:47 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Devendra Singh Rawat <dsinghrawat@marvell.com>,
- Alok Prasad <palok@marvell.com>
-Subject: [PATCH 07/10] net/qede: use common base code build handling
-Date: Mon, 31 Mar 2025 17:09:57 +0100
-Message-ID: <20250331161000.9886-9-bruce.richardson@intel.com>
+ Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
+Subject: [PATCH 08/10] net/thunderx: use common base code build handling
+Date: Mon, 31 Mar 2025 17:09:58 +0100
+Message-ID: <20250331161000.9886-10-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
 References: <20250331161000.9886-1-bruce.richardson@intel.com>
@@ -66,63 +65,50 @@ rather than re-implementing it in the driver itself.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/qede/base/meson.build | 17 +++++------------
- drivers/net/qede/meson.build      |  1 -
- 2 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/net/thunderx/base/meson.build | 10 +---------
+ drivers/net/thunderx/meson.build      |  3 ---
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/net/qede/base/meson.build b/drivers/net/qede/base/meson.build
-index 66251360bf..a6dad3ec7b 100644
---- a/drivers/net/qede/base/meson.build
-+++ b/drivers/net/qede/base/meson.build
-@@ -1,7 +1,7 @@
+diff --git a/drivers/net/thunderx/base/meson.build b/drivers/net/thunderx/base/meson.build
+index cec45d0ae1..abf0b64e79 100644
+--- a/drivers/net/thunderx/base/meson.build
++++ b/drivers/net/thunderx/base/meson.build
+@@ -1,16 +1,8 @@
  # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2018 Luca Boccassi <bluca@debian.org>
+ # Copyright(c) 2017 Cavium, Inc
  
 -sources = [
 +base_sources = files(
-         'bcm_osal.c',
-         'ecore_cxt.c',
-         'ecore_dcbx.c',
-@@ -16,8 +16,7 @@ sources = [
-         'ecore_spq.c',
-         'ecore_sriov.c',
-         'ecore_vf.c',
+         'nicvf_hw.c',
+         'nicvf_mbox.c',
+         'nicvf_bsvf.c',
 -]
 -
-+)
- 
- if is_ms_compiler
-         error_cflags = [
-@@ -51,14 +50,8 @@ else
-         ]
- endif
- 
 -c_args = cflags
- foreach flag: error_cflags
--        if cc.has_argument(flag)
--                c_args += flag
--        endif
-+    if cc.has_argument(flag)
-+        base_cflags += flag
-+    endif
- endforeach
+-base_lib = static_library('nicvf_base', sources,
+-    c_args: c_args,
+-    dependencies: static_rte_ethdev
+ )
 -
--base_lib = static_library('qede_base', sources,
--    dependencies: [static_rte_net, static_rte_bus_pci],
--    c_args: c_args)
 -base_objs = base_lib.extract_all_objects(recursive: true)
-diff --git a/drivers/net/qede/meson.build b/drivers/net/qede/meson.build
-index 3783e24db7..e1b21d6ff5 100644
---- a/drivers/net/qede/meson.build
-+++ b/drivers/net/qede/meson.build
-@@ -8,7 +8,6 @@ if is_windows
+diff --git a/drivers/net/thunderx/meson.build b/drivers/net/thunderx/meson.build
+index da665bd76f..03262af8ca 100644
+--- a/drivers/net/thunderx/meson.build
++++ b/drivers/net/thunderx/meson.build
+@@ -8,7 +8,6 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
  endif
  
  subdir('base')
 -objs = [base_objs]
  
  sources = files(
-         'qede_debug.c',
+         'nicvf_ethdev.c',
+@@ -23,5 +22,3 @@ endif
+ if cc.has_argument('-Wno-maybe-uninitialized')
+     cflags += '-Wno-maybe-uninitialized'
+ endif
+-
+-includes += include_directories('base')
 -- 
 2.45.2
 
