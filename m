@@ -2,44 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72052C3600C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 14:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217A8C3600B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 15:01:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42EA24067E;
-	Mon, 31 Mar 2025 16:48:44 +0200 (CEST)
-Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 5CB594067C
- for <dev@dpdk.org>; Mon, 31 Mar 2025 16:48:43 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 976B84A
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1743432522;
- bh=xD03h5YC+VA1hI/xwtgNm2pEcTSTa/quQvorD+wRYIw=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=TUu98CgUNl17MbziKiYgedJHZrzQTcAD8Xut8SbkR8gKgD/NOSpA1GZ2Ym+l9mh8r
- uuzSdjBsxSk97zPu+wvFSkzHihedrhkkJWFxeXp7f/NpqE6xE93MKVtrRNZhQH7Th5
- sRQn+nSKMwmJDBVjrIu4MhFRal6kApnx7BWiM1NM=
-Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
- (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 976B84A;
- Mon, 31 Mar 2025 17:48:42 +0300 (MSK)
-Message-ID: <3fd8b3ab-27e9-4972-850f-60466652e223@oktetlabs.ru>
-Date: Mon, 31 Mar 2025 17:48:42 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id D903840650;
+	Mon, 31 Mar 2025 17:01:38 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 69F5C402DF
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 17:01:37 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 64D1E464CA; Mon, 31 Mar 2025 17:01:37 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/vhost/virtio Bug 1685] [dpdk-22.11.8RC1]
+ virtio_ipsec_cryptodev_func/test_aesni_mb_aes_cbc_sha1_hmac: 
+ dpdk-vhost_crypto Segmentation fault (core dumped)  when launch qemu
+Date: Mon, 31 Mar 2025 15:01:37 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: luca.boccassi@gmail.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: FIXED
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: resolution bug_status
+Message-ID: <bug-1685-3-hiMjfOa0CZ@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1685-3@http.bugs.dpdk.org/>
+References: <bug-1685-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17434332970.16C3.380025
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mempool perf test: test random bulk sizes
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
-References: <20250228164858.274204-1-mb@smartsharesystems.com>
- <20250331100343.213430-1-mb@smartsharesystems.com>
- <20250331100343.213430-5-mb@smartsharesystems.com>
-Content-Language: en-US
-From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Organization: OKTET Labs
-In-Reply-To: <20250331100343.213430-5-mb@smartsharesystems.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,69 +56,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 3/31/25 13:03, Morten Brørup wrote:
-> Bulk requests to get or put objects in a mempool often vary in size.
-> A series of tests with pseudo random request sizes, to mitigate the
-> benefits of the CPU's dynamic branch predictor, was added.
-> 
-> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
-> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
-[snip]
+--17434332970.16C3.380025
+Date: Mon, 31 Mar 2025 17:01:37 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-> @@ -181,9 +240,9 @@ per_lcore_mempool_test(void *arg)
->   	}
->   
->   	/* n_get_bulk and n_put_bulk must be divisors of n_keep */
-> -	if (((n_keep / n_get_bulk) * n_get_bulk) != n_keep)
-> +	if (!n_max_bulk && (((n_keep / n_get_bulk) * n_get_bulk) != n_keep))
+https://bugs.dpdk.org/show_bug.cgi?id=3D1685
 
-IMHO n_max_bulk == 0 would be easier to read and as far as I remember
-DPDK coding style recommends the same style.
+Luca Boccassi (luca.boccassi@gmail.com) changed:
 
->   		GOTO_ERR(ret, out);
-> -	if (((n_keep / n_put_bulk) * n_put_bulk) != n_keep)
-> +	if (!n_max_bulk && (((n_keep / n_put_bulk) * n_put_bulk) != n_keep))
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Resolution|---                         |FIXED
+             Status|UNCONFIRMED                 |RESOLVED
 
-same
+--- Comment #3 from Luca Boccassi (luca.boccassi@gmail.com) ---
+Fixed by reverting, thanks
 
->   		GOTO_ERR(ret, out);
->   	/* for constant n, n_get_bulk and n_put_bulk must be the same */
->   	if (use_constant_values && n_put_bulk != n_get_bulk)
-> @@ -200,7 +259,9 @@ per_lcore_mempool_test(void *arg)
->   	start_cycles = rte_get_timer_cycles();
->   
->   	while (time_diff/hz < TIME_S) {
-> -		if (!use_constant_values)
-> +		if (n_max_bulk)
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
-n_max_bulk != 0
-as DPDK coding style says
+--17434332970.16C3.380025
+Date: Mon, 31 Mar 2025 17:01:37 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-> +			ret = test_loop_random(mp, cache, n_keep, n_max_bulk);
-> +		else if (!use_constant_values)
->   			ret = test_loop(mp, cache, n_keep, n_get_bulk, n_put_bulk);
->   		else if (n_get_bulk == 1)
->   			ret = test_loop(mp, cache, n_keep, 1, 1);
-> @@ -261,9 +322,13 @@ launch_cores(struct rte_mempool *mp, unsigned int cores)
->   	       use_external_cache ? external_cache_size : (unsigned int) mp->cache_size,
->   	       cores,
->   	       n_keep);
-> -	printf("n_get_bulk=%3u n_put_bulk=%3u constant_n=%u ",
-> -	       n_get_bulk, n_put_bulk,
-> -	       use_constant_values);
-> +	if (n_max_bulk)
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:luca.bocc=
+assi&#64;gmail.com" title=3D"Luca Boccassi (luca.boccassi&#64;gmail.com)"> =
+<span class=3D"fn">Luca Boccassi</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-22.11.8RC1] virtio_ipsec_cryptodev_func/=
+test_aesni_mb_aes_cbc_sha1_hmac: dpdk-vhost_crypto Segmentation fault (core=
+ dumped) when launch qemu"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1685">bug 1685</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
 
-same
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>FIXED
+           </td>
+         </tr>
 
-> +		printf("n_max_bulk=%3u ",
-> +		       n_max_bulk);
-> +	else
-> +		printf("n_get_bulk=%3u n_put_bulk=%3u constant_n=%u ",
-> +		       n_get_bulk, n_put_bulk,
-> +		       use_constant_values);
->   
->   	if (rte_mempool_avail_count(mp) != MEMPOOL_SIZE) {
->   		printf("mempool is not full\n");
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-22.11.8RC1] virtio_ipsec_cryptodev_func/=
+test_aesni_mb_aes_cbc_sha1_hmac: dpdk-vhost_crypto Segmentation fault (core=
+ dumped) when launch qemu"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1685#c3">Comment # 3</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-22.11.8RC1] virtio_ipsec_cryptodev_func/=
+test_aesni_mb_aes_cbc_sha1_hmac: dpdk-vhost_crypto Segmentation fault (core=
+ dumped) when launch qemu"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1685">bug 1685</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+luca.boccassi&#64;gmail.com" title=3D"Luca Boccassi (luca.boccassi&#64;gmai=
+l.com)"> <span class=3D"fn">Luca Boccassi</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Fixed by reverting, thanks
+          </pre>
+        </div>
+      </p>
 
-[snip]
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1685#c3">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17434332970.16C3.380025--
