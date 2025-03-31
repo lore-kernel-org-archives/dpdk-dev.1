@@ -2,166 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5935C36014
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 09:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65672C3600C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 09:20:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2024A40650;
-	Mon, 31 Mar 2025 11:12:12 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 99F4A40156;
- Mon, 31 Mar 2025 11:12:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743412331; x=1774948331;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=O3FE1qqdLkDFPE6+K31pi+3312BpRR1yzbF5e6Bm/BE=;
- b=jL8bhzqq9LEM1/P8+5BApZ9yOk4TAvc0rY7B4EeWgfkebC1c6BBWTeNw
- SgwbiIC8B8pCwlljjSQILjRnsV9/Edn2XDCOL8aR4RCq0pTSaP62imYlm
- VEB4EyUp4+Ko9LaFfDbolQalN3j6XECwxFy37aSisZpiOL24KRzr1TLIF
- ZKMy7vPXDDV0sU0tIU1VrmgWW5Xu0v5EmDFh++mnls1d/YanvSPly3B4w
- 6ZZiurHnQ79xpXLyzFOY28z9GqaU6KubOz8LcaC2Kd2j8aQOiVYTV8wK4
- 23K5Y0WiISNrVmxtAeeSETqdfwpfNMowTiPnYLcjNeckRML4yNDaJo1lc w==;
-X-CSE-ConnectionGUID: MV+Ysv1ETq6taHSDhGdyhA==
-X-CSE-MsgGUID: Mb0xqv9ESeS1A/6Vj1YCCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="44580156"
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; d="scan'208";a="44580156"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Mar 2025 02:12:09 -0700
-X-CSE-ConnectionGUID: E1Avne1XSr60K2smf3e09g==
-X-CSE-MsgGUID: pab8erWQROiwfzirGF8z5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; d="scan'208";a="125796115"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
- by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384;
- 31 Mar 2025 02:12:10 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 31 Mar 2025 02:12:09 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 31 Mar 2025 02:12:09 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.175)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 31 Mar 2025 02:12:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xvN9AX7nhjD5V0Udd5C0LZOnNl5yznEFv2CNPPUAqovJTmpCDBC+DEoda7EWPIcAaHUc8Y2PLuZRyNi8l0sQOTNi8Fihj29BHMYCiLFTQX/XSJUcL97ifZLABXqoRjFWEpva4jRC9isodocVLyS8Qh/jyPBCBnOH+ZX8SIfpUiJLNTfRNAK3HI+37DT/TLA1KTcWzAGo4F6VR5YMIuHJknEAeE530zEFMsSaHzMHNRBNglJHrRcluJI458msedMUkNzBElAWPKsJoRvyajp3IG0AL3JAuFIbLrV72v46uu5j+hSXYzJyvCuaHHQ2oGHzwnHTa81msUefJhwZwdU6gA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DYupGLu8MxoTKI+oTr3o2IXLt1lHJnte0hq6MSAIqR0=;
- b=liE7ct2jQOcuuDt0QuhMDYyRvTT2m5rtL4XW01IrfSnU+23zz5ST7QpGIsDXShNCyQcJgzCoROQKurGIkpwNRfqllHHyMwDgrPSeEjs8QgtWvgLRaRfQUjtMGidLKJ6WiuSa5/Mc/jJvj+V8DA2grtV9Ael4ianIV7UjhPiFADDsuAiDBDCU0cLROR148HF0PS1GRPhjMk/ZJao/eHnBOoTbCqhNhcea1B4/puv3smNyM5GJQJns10spsRIxxUtdzvMm2iIpNbo7sLR5FsV40UTcZkNGsVVx/ffFhlMAPC+C5pF+y/pfIcN0/P4QgZLcKFdmgGgk1aQNrOa4Kz3ykQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by LV3PR11MB8602.namprd11.prod.outlook.com (2603:10b6:408:1b3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 09:11:40 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Mon, 31 Mar 2025
- 09:11:33 +0000
-Date: Mon, 31 Mar 2025 10:11:27 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "Etelson, Gregory" <getelson@nvidia.com>, Morten =?iso-8859-1?Q?Br=F8rup?=
- <mb@smartsharesystems.com>, <dev@dpdk.org>, <techboard@dpdk.org>,
- <thomas@monjalon.net>, <mkashani@nvidia.com>
-Subject: Re: DPDK for rust
-Message-ID: <Z-pcP_sbk5T-e7EE@bricha3-mobl1.ger.corp.intel.com>
-References: <20250306133713.393057-1-getelson@nvidia.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB79@smartserver.smartshare.dk>
- <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
- <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
- <2e308be8-8ef3-963-cbb2-5cf68a3d3b3d@nvidia.com>
- <20250328122516.733217af@hermes.local>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250328122516.733217af@hermes.local>
-X-ClientProxiedBy: DU7P251CA0018.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:551::9) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 771F440650;
+	Mon, 31 Mar 2025 11:20:07 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 7770B40156
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 11:20:05 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 5BBD5464C7; Mon, 31 Mar 2025 11:20:05 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/cryptodev Bug 1686] [dpdk-22.11.8RC1]
+ unit_tests_cryptodev_func/cryptodev_aesni_gcm_autotest: test
+ failing-Segmentation fault
+Date: Mon, 31 Mar 2025 09:20:05 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: cryptodev
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: yux.jiang@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1686-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17434128050.eCBD37.285735
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|LV3PR11MB8602:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03e03658-8a0c-4bbc-7ae7-08dd703407d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FLIuuTI7+6F1t14pGHF2tDMWKRL1z9qOJ3doLC6xTKYu8wSjABJXaxYWk39W?=
- =?us-ascii?Q?YBzrqEQbXbC2U7aFVmFUgAMo0Q9Ex7cQROmpKc0i2z2I+Z+cSNH5xiOigDCw?=
- =?us-ascii?Q?973gyOrlar9JABenFQdGH625iSlnBmWukmphCezjSj6cAI9199okIGD/HR/6?=
- =?us-ascii?Q?g9ZfCoeKtoZWo+VcNpBwf5k/XR6vPizTuV1bdyOybUiIp9FnrlUn8opJYxJ/?=
- =?us-ascii?Q?gUXL6vUqasX3gK4OG8Tz36z3102/UH0taKxVcEGel9aP1JGjnNamgP28CAAp?=
- =?us-ascii?Q?TCnJAi9Csow8u4uQdEo/UvVhUvPS9aGYocxFJGmJNBk0CZzUE86XZ8eQGJIV?=
- =?us-ascii?Q?e6KdCdxOLWYMLCUxmj8CkzpC0PHJbtNzvbSQPQ9i8Zn+WsCk8Wsrg9mkjW2E?=
- =?us-ascii?Q?nnRlF20eHk1It3p89+EQEG9A3urwhQy2gfpAcLMlLcJltMbjUZSfmz2H9Iqt?=
- =?us-ascii?Q?12M2E/3wQG0+EJuSxwdyiTJYmLgLvsvu6COJAeGbaBH1T0o4AyaGj64oLLUl?=
- =?us-ascii?Q?smQxZJhT0EGWyCozH5z33dHWAb7wuqJPzvSP8Nt4uPeM24iLHDJgDLDGnKux?=
- =?us-ascii?Q?eny52vWTC3Bujit90OJbqR7O9PuLsUnVn6WdN0/rtRl7UCF9QFpfH+CF5GBQ?=
- =?us-ascii?Q?3kPuz5UlUA4ysDGUMr/tXO/AIZSf0THy7NYT9X0e6C+Vpx2HCsM+MrWsXnD7?=
- =?us-ascii?Q?3TNPq11pTCjvLwGUbT4wNJxEO1PKHBHTbjOVpCaxGoZrKKwX8XMDUGqU2W30?=
- =?us-ascii?Q?Gp2iryi85TIzxavEHGHvx1pwBwIobYIm89gn6wYQPeZMIViGzYKBttMzrPUG?=
- =?us-ascii?Q?ZIBQc+NbCrUtJ9irM4zfBSa8QPw2CxqEnKSYPZcRs+qDa5M/lwMx6+WsdSGy?=
- =?us-ascii?Q?4pDFGDLt6Sc+giJQNzAN4cyI84CwPu/duDwvgD4uVqqIG9Sf3hjoC3PhD0Qr?=
- =?us-ascii?Q?srDYQ7rqltjU5VotpRLCM5iPwtX+GlCBgx8H02Z9cAuBDyf4FzpaQLQ5U9gh?=
- =?us-ascii?Q?Hk/aPriY38doxaFOH6UhffGJSZlI3/K48djdo1kWpxZwOclL4g6Q7xCwqSDp?=
- =?us-ascii?Q?mQf4WYekgyLIzCTtpcvDg3OHOBt8nFLb0pjgyLFgUDpclGote6ywUSkxNTES?=
- =?us-ascii?Q?mSWTgx9QgrqoA9WeliIErvKV87B6z+/EzmfSXGaG7TyTVnfYY2Th048JVj++?=
- =?us-ascii?Q?d+EjnKT8H5RqqSVEbIXaeU1IO9CxHmRAkaFt7hQII8ZwwfrthVkNpgwEIKZx?=
- =?us-ascii?Q?vco8FLrdBypspRJBZ9w4wfsWeTip8WTsQthaoLmqWZ0B/XGD5Ho3dCWX6CR8?=
- =?us-ascii?Q?Ed1Eo36Nu2ASF3IrERr3zJk93Ro4iIlPd63KGdNk8RLtGLb6IK92Oryg1klW?=
- =?us-ascii?Q?ajsl1Xz3BZxsiR5jQ9Zfd3XLknDV?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?59dQKeWtchDP/ieMe8D0egKDg1f8ZJn4lZh84BU8OZ35497IX1uOAIZ+x+D3?=
- =?us-ascii?Q?t/fIJA70yhBY+ZQgSspY+rZW74o3YNfSdPsFyZOqddVlD0mD+0DY5abXFaf5?=
- =?us-ascii?Q?JoLPiotdJ0b7le+trUURQDqPmeMtiDXURHlc1VUiCIIJUvCKRuHwq+lPigoD?=
- =?us-ascii?Q?6RHXvo4Z98jZktIWZ4J29NWDjLYMGVDwI1hGpT5yaNCr88QgLwMaa3CD4/Ml?=
- =?us-ascii?Q?a6wWy3FYkFdXZ08+g4nWu2NkndUiRpTuyhTcd7N7qlpSEOOY5DrzzfSnxTsy?=
- =?us-ascii?Q?J9D+E3aaxpmVqXafJrGBClOp3KlWr4gmcDgtE/35refbM4krLXAOOgqg4gXi?=
- =?us-ascii?Q?w+pMHQBfbC7Q+4istrPFowpllzw2YYPZQbJwqeD5KRuTx4dKNbtjoxsYTbgi?=
- =?us-ascii?Q?w1RyMZyr3k9nS9TfILNsE16rtmSeRR73aAeo+F/oq0j/dyUCLR7Y0b/rfRRN?=
- =?us-ascii?Q?4J805guaGw43xPZhVcPXWwvpNT8UkaEfIS8fCc/DPB0Udh3p0OR4y4mBG1MI?=
- =?us-ascii?Q?cqCCLhb+HbONKyB0W47YB3UFVXWNF/OETNOmKk7hiuYn7j/jeMpZYFnGVNTY?=
- =?us-ascii?Q?NmxfUYR0lpFzczPWe1eTVk74v62ho1iAP2Mh4uleJYvCFcGYCm7YPwMiXe/+?=
- =?us-ascii?Q?4i95pMRh/d+jgNZCFd1TBEOqEciOTMLn8gp5sNaHEHr+ButEKIp4AyJ3/mh3?=
- =?us-ascii?Q?nOlcIDtRfcobvKmBa5bG2i8G5IjDg0eeIWvHq4lBkwdIT/3vllipyIh3528X?=
- =?us-ascii?Q?jTQ8B7dK8PG1/rty7v4rVLeQTUQXoQT6wxRiJzKY+7C+6kYQdP4MNxilMbto?=
- =?us-ascii?Q?ySWdnz+nCkCqw75q2+XyQSlheuxMlejsWwx8irwDQY3qziaAS9SfmjA9b2Kz?=
- =?us-ascii?Q?qH+mQQ7p7GjB49AcQ5J1Z9tPVXe7tTiOFoo4uRg2xcNWNKXfV2lyIecG0BQz?=
- =?us-ascii?Q?aamkME7Y3q0jbjGENlpIxv1hmNdQoMCTWRh2UErfbZfGjqTkt9ZOyaEjJQez?=
- =?us-ascii?Q?GWHPzvUKupNcqfhlxWQEQVhpSqsPlQdQoT5ICykkCqqMW0eaJhGTHKq1UUBU?=
- =?us-ascii?Q?sbfOrtjhgZ6MTsNWPn7L2dGvDv4wJOFl6NyAd7OjweJ2PP6FGtqCbTuQtjKu?=
- =?us-ascii?Q?gFQyHwZEd/D7Hxqq1tcrQo0xWLIY3VcHqNNfCOPZxNXnpYA1GpZ5/NmVicG8?=
- =?us-ascii?Q?wr0v4AbzXeeB7So0A0bDuFfRz5bh4jO2l7FdovtKkYZw/MVpVnkFTPiDA8qn?=
- =?us-ascii?Q?dya+Hd4+46MpwjOGQ8LjAcWWtOpjwaLUBxVD3zXnsfTr833vOGH4ffmEuAcb?=
- =?us-ascii?Q?ZYCX3Ea4DjiyIUNZVnDM+3dj7kzWsvea2HZnHtdQmNuLmIE/XhOzyY518Qhv?=
- =?us-ascii?Q?Gu30NC+Uq+FMxQXJIZcorN7u/IrmAXmjG/ZEcEm2CnxJaDLS6FtePNvfCvOP?=
- =?us-ascii?Q?pv50MJBmbxhc41ndEcxW2hWrVz9UORlvXcfhueJdJ/cIS7Q+pQ6UCw8VopGr?=
- =?us-ascii?Q?FFzC6ZmzNmbhhktvfYAl/0bKyFgVY06UKLg1ofSZd0dW+TliFOjZ6/uhEIjR?=
- =?us-ascii?Q?tlEXpcyJtYSRYv4eLBFgBAIME5dqZ+rPXKefW3a9csn8wD6cthL69vI84ypT?=
- =?us-ascii?Q?yA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03e03658-8a0c-4bbc-7ae7-08dd703407d9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 09:11:33.0883 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JPxKyP1xAs/Qp6F59YPN0TmbtlnsRAD6P5UKc/Gze5IksuiSOwCiz4EngYMMx/GqB47t9WupinwoLKWC8c/Kyl3LSH2vQZE/JLTDg5za0Xw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8602
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -175,37 +56,373 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 28, 2025 at 12:25:16PM -0700, Stephen Hemminger wrote:
-> On Fri, 28 Mar 2025 21:09:21 +0300 (IDT)
-> "Etelson, Gregory" <getelson@nvidia.com> wrote:
-> 
-> > >> Hello Morten,
-> > >>
-> > >> Thank you for raising these questions !
-> > >>  
-> > >>>
-> > >>> Do we want the DPDK project itself to support rust?
-> > >>> Or should parts of this be a DPDK hosted project, like grout?  
-> > >>
-> > >> Rust packages management is different.
-> > >> Also DPDK Rust code will eventually provide a different API.
-> > >> At this stage, DPDK hosted project looks like a good idea.
-> > >>  
-> > >
-> > > For ease of use, that would mean hosting a cargo registry, no?
-> > >  
-> > 
-> > That's correct - cargo registry is the native way.
-> > Also we may consider splitting the code between several crates.
-> > That approach can provide more flexible way to arrange files.
-> 
-> Talk to Luca. The current rust cargo registry model is causing
-> lots of grief for distro's such as Debian, Redhat, Ubuntu and SUSE.
-> 
-> Packaging is always a pain
 
-Yes, but cargo is just the way the rust ecosystem works right now. If we
-want to have DPDK available for rust developers it needs to be accessible
-via cargo.
+--17434128050.eCBD37.285735
+Date: Mon, 31 Mar 2025 11:20:05 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-/Bruce
+https://bugs.dpdk.org/show_bug.cgi?id=3D1686
+
+            Bug ID: 1686
+           Summary: [dpdk-22.11.8RC1]
+                    unit_tests_cryptodev_func/cryptodev_aesni_gcm_autotest
+                    : test failing-Segmentation fault
+           Product: DPDK
+           Version: 22.11
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: cryptodev
+          Assignee: dev@dpdk.org
+          Reporter: yux.jiang@intel.com
+  Target Milestone: ---
+
+[Environment]
+DPDK version:=20=20
+commit 684d996a201182b5335012055df33284e753d832 (tag: v22.11.8-rc1,
+origin/22.11)
+Author: Luca Boccassi <luca.boccassi@gmail.com>
+Date:   Wed Mar 26 11:26:26 2025 +0000    version: 22.11.8-rc1=20=20=20
+Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+OS:  Ubuntu 18.04.5 LTS/5.4.0-150-generic
+Compiler:  gcc version 7.5.0
+Hardware platform:  Intel(R) Xeon(R) Platinum 8180 CPU @ 2.50GHz
+intel-ipsec-mb: tag v1.5
+
+[Test Setup]
+Steps to reproduce
+List the steps to reproduce the issue.
+
+1, Build dpdk
+
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Dlibdir=3Dlib  --default-library=3Dstatic x86_64-native-lin=
+uxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+2, Run unit tests: cryptodev_aesni_gcm_autotest cryptodev_aesni_mb_autotest
+cryptodev_openssl_autotest
+
+x86_64-native-linuxapp-gcc/app/test/dpdk-test -c 0xff --vdev=3Dcrypto_aesni=
+_mb
+--vdev=3Dcrypto_aesni_gcm --vdev=3Dcrypto_openssl
+RTE>>cryptodev_aesni_gcm_autotest=20
+
+[Actual Result]:
+ root@dpdk-yaobing-purely147:~/dpdk#
+x86_64-native-linuxapp-gcc/app/test/dpdk-test -c 0xff --vdev=3Dcrypto_aesni=
+_mb
+--vdev=3Dcrypto_aesni_gcm --vdev=3Dcrypto_openssl -a 0000:00:00.0
+EAL: Detected CPU lcores: 112
+EAL: Detected NUMA nodes: 2
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+CRYPTODEV: Creating cryptodev crypto_aesni_mb
+CRYPTODEV: Initialisation parameters - name: crypto_aesni_mb,socket id: 0, =
+max
+queue pairs: 8
+ipsec_mb_create() line 169: IPSec Multi-buffer library version used:
+1.5.0CRYPTODEV: Creating cryptodev crypto_aesni_gcm
+CRYPTODEV: Initialisation parameters - name: crypto_aesni_gcm,socket id: 0,=
+ max
+queue pairs: 8
+ipsec_mb_create() line 169: IPSec Multi-buffer library version used:
+1.5.0CRYPTODEV: Creating cryptodev crypto_openssl
+CRYPTODEV: Initialisation parameters - name: crypto_openssl,socket id: 0, m=
+ax
+queue pairs: 8
+APP: HPET is not enabled, using TSC as default timer
+RTE>>cryptodev_aesni_gcm_autotest
+ + TestCase [55] : test_AES_GCM_authenticated_decryption_oop_test_case_1
+succeeded
+aad: at [0x17d9e3700], len=3D8
+00000000: FE ED FA CE DE AD BE EF                         | ........
+iv: at [0x17d5275f8], len=3D12
+00000000: CA FE BA BE FA CE DB AD DE CA F8 88             | ............
+plaintext: at [0x17d9e3710], len=3D60
+00000000: D9 31 32 25 F8 84 06 E5 A5 59 09 C5 AF F5 26 9A | .12%.....Y....&.
+00000010: 86 A7 A9 53 15 34 F7 DA 2E 4C 30 3D 8A 31 8A 72 | ...S.4...L0=3D.=
+1.r
+00000020: 1C 3C 0C 95 95 68 09 53 2F CF 0E 24 49 A6 B5 25 | .<...h.S/..$I..%
+00000030: B1 6A ED F5 AA 0D E6 57 BA 63 7B 39             | .j.....W.c{9
+key: at [0x7ffe52c4eb20], len=3D16
+00000000: FE FF E9 92 86 65 73 1C 6D 6A 8F 94 67 30 83 08 | .....es.mj..g0..
+Segmentation fault (core dumped)
+root@dpdk-yaobing-purely147:~/dpdk#
+
+[Expected Result]
+Test OK
+
+Is this issue a regression: Y
+Version the regression was introduced:=20
+Bad commit bb8feaacb4897e3ee4341dd838de538869d8225e (HEAD -> bb8feaacb4)
+Author: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+Date:   Wed Feb 26 08:16:45 2025 +0000
+
+    test/crypto: fix check for OOP header data
+
+    [ upstream commit 27eb74ea6e25966d3857539cb15ddd4f20f05ebe ]
+
+    The data of the out-of-place header is never checked. Therefore,
+    the faulty PMD, which overwrites this data, will not be able to
+    verify that with tests. New checks to support that were added to
+    the GCM OOP functions.
+
+    Fixes: 51e202f0596f ("test/crypto: rename GCM test code")
+
+    Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+
+Stack Trace or Log
+1, Revert the bad commit, unit test can work well.
+2, Impact three cases:=E3=80=80
+    cryptodev_aesni_gcm_autotest=20
+    cryptodev_aesni_mb_autotest=20
+    cryptodev_openssl_autotest
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17434128050.eCBD37.285735
+Date: Mon, 31 Mar 2025 11:20:05 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - [dpdk-22.11.8RC1] unit_tests_cryptodev_func/crypt=
+odev_aesni_gcm_autotest: test failing-Segmentation fault"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1686">1686</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>[dpdk-22.11.8RC1] unit_tests_cryptodev_func/cryptodev_aesni_g=
+cm_autotest: test failing-Segmentation fault
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>22.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>cryptodev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>yux.jiang&#64;intel.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">[Environment]
+DPDK version:=20=20
+commit 684d996a201182b5335012055df33284e753d832 (tag: v22.11.8-rc1,
+origin/22.11)
+Author: Luca Boccassi &lt;<a href=3D"mailto:luca.boccassi&#64;gmail.com">lu=
+ca.boccassi&#64;gmail.com</a>&gt;
+Date:   Wed Mar 26 11:26:26 2025 +0000    version: 22.11.8-rc1=20=20=20
+Signed-off-by: Luca Boccassi &lt;<a href=3D"mailto:luca.boccassi&#64;gmail.=
+com">luca.boccassi&#64;gmail.com</a>&gt;
+OS:  Ubuntu 18.04.5 LTS/5.4.0-150-generic
+Compiler:  gcc version 7.5.0
+Hardware platform:  Intel(R) Xeon(R) Platinum 8180 CPU &#64; 2.50GHz
+intel-ipsec-mb: tag v1.5
+
+[Test Setup]
+Steps to reproduce
+List the steps to reproduce the issue.
+
+1, Build dpdk
+
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Dlibdir=3Dlib  --default-library=3Dstatic x86_64-native-lin=
+uxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+2, Run unit tests: cryptodev_aesni_gcm_autotest cryptodev_aesni_mb_autotest
+cryptodev_openssl_autotest
+
+x86_64-native-linuxapp-gcc/app/test/dpdk-test -c 0xff --vdev=3Dcrypto_aesni=
+_mb
+--vdev=3Dcrypto_aesni_gcm --vdev=3Dcrypto_openssl
+RTE&gt;&gt;cryptodev_aesni_gcm_autotest=20
+
+[Actual Result]:
+ root&#64;dpdk-yaobing-purely147:~/dpdk#
+x86_64-native-linuxapp-gcc/app/test/dpdk-test -c 0xff --vdev=3Dcrypto_aesni=
+_mb
+--vdev=3Dcrypto_aesni_gcm --vdev=3Dcrypto_openssl -a 0000:00:00.0
+EAL: Detected CPU lcores: 112
+EAL: Detected NUMA nodes: 2
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+CRYPTODEV: Creating cryptodev crypto_aesni_mb
+CRYPTODEV: Initialisation parameters - name: crypto_aesni_mb,socket id: 0, =
+max
+queue pairs: 8
+ipsec_mb_create() line 169: IPSec Multi-buffer library version used:
+1.5.0CRYPTODEV: Creating cryptodev crypto_aesni_gcm
+CRYPTODEV: Initialisation parameters - name: crypto_aesni_gcm,socket id: 0,=
+ max
+queue pairs: 8
+ipsec_mb_create() line 169: IPSec Multi-buffer library version used:
+1.5.0CRYPTODEV: Creating cryptodev crypto_openssl
+CRYPTODEV: Initialisation parameters - name: crypto_openssl,socket id: 0, m=
+ax
+queue pairs: 8
+APP: HPET is not enabled, using TSC as default timer
+RTE&gt;&gt;cryptodev_aesni_gcm_autotest
+ + TestCase [55] : test_AES_GCM_authenticated_decryption_oop_test_case_1
+succeeded
+aad: at [0x17d9e3700], len=3D8
+00000000: FE ED FA CE DE AD BE EF                         | ........
+iv: at [0x17d5275f8], len=3D12
+00000000: CA FE BA BE FA CE DB AD DE CA F8 88             | ............
+plaintext: at [0x17d9e3710], len=3D60
+00000000: D9 31 32 25 F8 84 06 E5 A5 59 09 C5 AF F5 26 9A | .12%.....Y....&=
+amp;.
+00000010: 86 A7 A9 53 15 34 F7 DA 2E 4C 30 3D 8A 31 8A 72 | ...S.4...L0=3D.=
+1.r
+00000020: 1C 3C 0C 95 95 68 09 53 2F CF 0E 24 49 A6 B5 25 | .&lt;...h.S/..$=
+I..%
+00000030: B1 6A ED F5 AA 0D E6 57 BA 63 7B 39             | .j.....W.c{9
+key: at [0x7ffe52c4eb20], len=3D16
+00000000: FE FF E9 92 86 65 73 1C 6D 6A 8F 94 67 30 83 08 | .....es.mj..g0..
+Segmentation fault (core dumped)
+root&#64;dpdk-yaobing-purely147:~/dpdk#
+
+[Expected Result]
+Test OK
+
+Is this issue a regression: Y
+Version the regression was introduced:=20
+Bad commit bb8feaacb4897e3ee4341dd838de538869d8225e (HEAD -&gt; bb8feaacb4)
+Author: Arkadiusz Kusztal &lt;<a href=3D"mailto:arkadiuszx.kusztal&#64;inte=
+l.com">arkadiuszx.kusztal&#64;intel.com</a>&gt;
+Date:   Wed Feb 26 08:16:45 2025 +0000
+
+    test/crypto: fix check for OOP header data
+
+    [ upstream commit 27eb74ea6e25966d3857539cb15ddd4f20f05ebe ]
+
+    The data of the out-of-place header is never checked. Therefore,
+    the faulty PMD, which overwrites this data, will not be able to
+    verify that with tests. New checks to support that were added to
+    the GCM OOP functions.
+
+    Fixes: 51e202f0596f (&quot;test/crypto: rename GCM test code&quot;)
+
+    Signed-off-by: Arkadiusz Kusztal &lt;<a href=3D"mailto:arkadiuszx.kuszt=
+al&#64;intel.com">arkadiuszx.kusztal&#64;intel.com</a>&gt;
+
+Stack Trace or Log
+1, Revert the bad commit, unit test can work well.
+2, Impact three cases:=E3=80=80
+    cryptodev_aesni_gcm_autotest=20
+    cryptodev_aesni_mb_autotest=20
+    cryptodev_openssl_autotest
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1686">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17434128050.eCBD37.285735--
