@@ -2,82 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95998C3600C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 09:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B79AC3600C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 09:08:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A035A40156;
-	Mon, 31 Mar 2025 11:08:31 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6613240150
- for <dev@dpdk.org>; Mon, 31 Mar 2025 11:08:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743412109;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=XbdmNgD64a7fW1ToNh7hexGasqODHky7HfNupvZ6Z5I=;
- b=aqcCC7XLPGhmfwa35JsUSA1QWlEfljDn6mZyAutQj7iHlynGh6hSC2NLJ5osKVOz+EQtLe
- FsrPS03ZsI2UThQKmVHugklW3sHhtmbmHaw9gdeGFRqcB510qTQ6ZCD3LQ3qdmYDBcZucc
- MttAJIeaODQdRwPjuNrTdk5fOBddUAY=
-Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
- [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-3-w_lsyLv5MgCrsfxpR_4ASw-1; Mon, 31 Mar 2025 05:08:28 -0400
-X-MC-Unique: w_lsyLv5MgCrsfxpR_4ASw-1
-X-Mimecast-MFC-AGG-ID: w_lsyLv5MgCrsfxpR_4ASw_1743412108
-Received: by mail-oa1-f72.google.com with SMTP id
- 586e51a60fabf-2c2b9ab3829so3139861fac.0
- for <dev@dpdk.org>; Mon, 31 Mar 2025 02:08:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743412105; x=1744016905;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=XbdmNgD64a7fW1ToNh7hexGasqODHky7HfNupvZ6Z5I=;
- b=tLSBNYl1wmr8XGiQyZooJn9aJYNQC8Sv0qh1/riJ6pdu0/0kIpbM8WQvA9WJmbU2QZ
- qF4pEkJ2Q8mxhBuOHBnXU+diTnhHMb8teaLnMd3N7oirQKHboOW6udmouCv9sWYJbIPV
- 18VJx8V40JPP/Ou1Z6/XCwlYbpOPiDRBVfd4ojT4pQwIN5vICtj1E2uZtMrYfx6qsRfl
- dHzpn0k922xTwFn+RRtiRzMxH57oDesEVQStxMrKWW5pBtkl/5EuoMdDKQ3xHtgPQCIH
- ++4XHGczORjq0xrAgeRpJfU8UUlN5FvJtkWIIYJ2OjDmk1Co4hYxX/i937aw8B8f5pOL
- vjTA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVX+nGjgoD1MIAXT2Gx6WwQ3Ej9EOsV3s9U31YpPsR1Zqu2ToPsMzA1BBj0WMVFAkY3CNQ=@dpdk.org
-X-Gm-Message-State: AOJu0YzyeQ1dxG4jjK/RUTAPMR+yb3FKqUAXbmkJhCx2M2z82x4fV3+J
- OE5rTaSH1Ef2WM8c9bCOi+nuPWM3sRxJITyrOlkx0q3rUABlwVwiqn9KNdNFftGvRfin1xq3rZX
- MU7OfZ2QgWMtxIrKU7z4rOi+9/8H4T5UH34TQlM6c8ozGlXwL5H9OO8+ZBp80HIaTp4pMUeCC5v
- hgMzuFX9h1PstPRpc=
-X-Gm-Gg: ASbGncuArKQNN6f09Bsxc09AmKJQITSk8hQBZCv/xZhiHA6vp0UEV8taZGq4Yf7Xklo
- /GlEZocQnRRyHVor0OZ9EarUkoiww864cRFjhfT5TVBiiL5k0tkDP0JpBBUSBoGSVJdjOuGbi4Q
- ==
-X-Received: by 2002:a05:6870:9b04:b0:29e:1325:760a with SMTP id
- 586e51a60fabf-2cbcf477387mr4517197fac.8.1743412104704; 
- Mon, 31 Mar 2025 02:08:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUw5CYffP/iFKdBw4mDkbpz0rCeQ39zBImmWFr/kocJWBT5FybR33cVYZgn2ApPMBb6LaBCkf7qmHKrEUlZ5g=
-X-Received: by 2002:a05:6870:9b04:b0:29e:1325:760a with SMTP id
- 586e51a60fabf-2cbcf477387mr4517177fac.8.1743412104335; Mon, 31 Mar 2025
- 02:08:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5AE5740656;
+	Mon, 31 Mar 2025 11:08:48 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 573FC40657
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 11:08:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1743412126; x=1774948126;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=tQZuyHc1TTOjE/cara4kW/h9xhXP3LIZGS+ktgyrMPI=;
+ b=QLHEQ5iKk/cROg8BQNUvBKsb/DvVwUlKYe0YBWV4gu+5Q7pBx8zMRntA
+ mYfyy7lCkLDIf5feyJEi9nld48HRbxHzZ983prGHhCNoUcAS3B4e1CThj
+ 3QIMKBsc77pcjWYdR5hgW3D+ahHThlU9KFZLDNIRryYHFSPu+GcfR6S7D
+ huYPKg58Yjfe3JpB1obAAJm4239Yi1nw39xDDb7aIVHXBy4qU2rsoEu0x
+ 0QGxCvYfkqKAF3eas8cvqy91IugZB9u9jTw1mA5eeB6D7dry2UQNE9atX
+ CW/IqEQVletACLfU+ve0RGgcPw6qWUxQ9fGoVJHUC0hc08mSfSV44jR5Y A==;
+X-CSE-ConnectionGUID: PIxTL5JgREi+uGsGirJaig==
+X-CSE-MsgGUID: K5xxn+QvQJWGdF6lIZENXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="44870261"
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; d="scan'208";a="44870261"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 31 Mar 2025 02:08:45 -0700
+X-CSE-ConnectionGUID: wH1FvI1nRxyUjNhwxBvLPA==
+X-CSE-MsgGUID: NB2ztSaqRlG4gne2wf/6VA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; d="scan'208";a="126267048"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 31 Mar 2025 02:08:45 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 31 Mar 2025 02:08:45 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 31 Mar 2025 02:08:45 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 31 Mar 2025 02:08:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VB0n2vSbXRP/p4M17bNLpa2iFhsxG74cAYo5+w86QnXTfPQ9pXYfZTM2OddyVa82OwJig7FYK+Ygek/mFLNknMgXBl5xmjdcXhbtmO/PbLEs726uJNzUi9fJW0HghyvmKlYkLtI3S7wVq+fpfZMi7VaeAXF//LOkf5cAmwcvWIgmY5K2us/XtNzkVYqbIVH3/kZZQ13993CJjGvpEQm5ef/jWZ14wSJVbh8nlZE3yY9QYCZJ6jFZqAz7ZzGExNZeVEuJI8Slpkjly2LLIllgmTlyXaZV6D1PSSUIMLF9pVKtOkx6C7kmh2Hl8phWqQyEof9Fa0+oVx24F3f8ojrGYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4/IZIi28vKPhJy0LwKh1hs7R0yLbIjZlTbZwTAqxLJc=;
+ b=iPcjpebpJExr7EstuFIkquyqmoagJR0vJ2j5szkcal9mRUkfbxj7MD6TRvnaBqUpW2gogv7+LKOVmYotuRnUvuqRhhzOOD08qQXVLrnaLJAaGYfdPg4U7GDd9b13ZkLnGSRSiQvTDr+4oUGeY5mxGf1vZbT1bnOw9mJgYqOmfxJOWvThFwA+CwnXGEuVQ7IqDYQDqDyjwCzo63jo5C78BIf57ZrRIs2j4zlWuAPB0VpTQ+n1DfLFefXa2qIHiN2erRM6ZLAjHXwdrrI+tQ4FXh3VS7OaqxxvYs//sGNsfvRWxewq/1HudX+5B7+P9jcTe/VSHiOqLQWiYQSa23/r+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CH3PR11MB8342.namprd11.prod.outlook.com (2603:10b6:610:167::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.50; Mon, 31 Mar
+ 2025 09:08:29 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%7]) with mapi id 15.20.8534.043; Mon, 31 Mar 2025
+ 09:08:28 +0000
+Date: Mon, 31 Mar 2025 10:08:24 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Eldho Paul Mathew <eldho789@gmail.com>
+CC: <dev@dpdk.org>
+Subject: Re: Migrate DPDK 18.05.1 -> DPDK 24.11.1 LTS
+Message-ID: <Z-pbiOzSc3-mngxv@bricha3-mobl1.ger.corp.intel.com>
+References: <CAOFFPTpNTn7=y91beCJ+hvf+q-sR5xr3OUhkEa7wgcYNT7zyXQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAOFFPTpNTn7=y91beCJ+hvf+q-sR5xr3OUhkEa7wgcYNT7zyXQ@mail.gmail.com>
+X-ClientProxiedBy: DU2PR04CA0278.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::13) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <20250326115132.1444530-1-luca.boccassi@gmail.com>
-In-Reply-To: <20250326115132.1444530-1-luca.boccassi@gmail.com>
-From: Yanghang Liu <yanghliu@redhat.com>
-Date: Mon, 31 Mar 2025 17:08:13 +0800
-X-Gm-Features: AQ5f1JoFDWsXQWq7ZCoIrD6oLAjT3PS0XdP-gICeogY7TlIE8EMrkLVYp6Q_Lb4
-Message-ID: <CAGYh1E-M+DHvhyVb0CMTL9t4yw9LE2WOvOi58yGF69J1bA=fGg@mail.gmail.com>
-Subject: Re: 22.11.8 patches review and test
-To: luca.boccassi@gmail.com
-Cc: stable@dpdk.org, dev@dpdk.org, Ali Alnubani <alialnu@nvidia.com>, 
- David Christensen <drc@linux.vnet.ibm.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Ian Stokes <ian.stokes@intel.com>, Jerin Jacob <jerinj@marvell.com>, 
- John McNamara <john.mcnamara@intel.com>, Kevin Traynor <ktraynor@redhat.com>, 
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>, 
- Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
- Chao Yang <chayang@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Kyrq9wR1YgrI5Si1GJFF3540yiDxVHPLnBulzgC85Dk_1743412108
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/alternative; boundary="0000000000002d2ded06319fc38d"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB8342:EE_
+X-MS-Office365-Filtering-Correlation-Id: b823f043-c601-4a16-87dd-08dd703399fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+dPJXXdkZybFJVzT4/ypZtigP/Wi2Mz+OcuobcNXudI03yvyFhgmdeI00FtK?=
+ =?us-ascii?Q?ndXoECg/XmbVAuzruZ7Q+Rm1XMHg/zEnsd26ZyuGP/EhRtSLomOT/dg6mBrz?=
+ =?us-ascii?Q?xXEia64k7gchgY8fs2lrlDYI33R9twu3zc0z8uWbbmpiJsgbFEusgahbOa+0?=
+ =?us-ascii?Q?goZq1adcgXX+6VnUqUHkv6R8Gx08y20iqqqN9QkmQSFLQ2Lw8vary0GcZkQC?=
+ =?us-ascii?Q?tCtt7eQUfjXC70OQBoAbewkP3HH+w9L5T2T+5B1H+VKrL8HamlmpRiXHHBkJ?=
+ =?us-ascii?Q?SFZkdXTres/8ouN9B3OGvclbxNoCG+G/vhe0wYhbtMGMYdoOr5KvUyIHPFGY?=
+ =?us-ascii?Q?X1v9fAWGUwSGlCUHPXqHTb1dCmKPBhVH5ZnduRioJQJfB1NjCH/8WyQVbX+O?=
+ =?us-ascii?Q?ArMgjtQEUoPwnog/oiqkPHrUuggO6T/6KcYQBTXYUrkfVMy8La0wrbgk05W3?=
+ =?us-ascii?Q?NeZk2StheLc+sPtd5Op9+ZCNfEUDeHjTLqRMF+tn1mjRDZ2XFCCVxHXpWkHt?=
+ =?us-ascii?Q?cdt5q0Zw0j/X/UQhSCZZhYZdZzKd2273JxaOF+jMNsM3+EwbJac4baJ+a0uE?=
+ =?us-ascii?Q?VevtfV95A1NRZw8jqkb/fqN6NjY6GOMwNBzA1QbJlYQ10MBlvxNnccpqn1EE?=
+ =?us-ascii?Q?yMbvSuJvsApKT7LgQtItBbEwAsldeObafk1YDF0e1VFBycpW7GtV25EzJJ28?=
+ =?us-ascii?Q?l5D9EI8pv/6r4fqiLLhQuRZkEH+/7dfpSdWV3c0yKPJVIbcwLv/jQmEXBA0v?=
+ =?us-ascii?Q?wGNp3QvvYhNSwn2uI5WVjk65IMcA5x/mUcW64vIIRI3z+h/Wo/v5g/fcQVdk?=
+ =?us-ascii?Q?q35XGQeW4pd28VM/qbks95eTrNDLB8r/tZynzmCE3symqACoFRnrGCb0H06X?=
+ =?us-ascii?Q?GBTw32xdCy2kMAkoMfBqN/bYQmkIUNGZhIY0aZcNGV95PMFG8mKWl6TMpH4k?=
+ =?us-ascii?Q?ubjUvj8YxxMP5RJ4CfZ3loUPJDpXgo2VxHUOIRMNjOlo192j77cvtdAzagcF?=
+ =?us-ascii?Q?z5GsH/ky90fbnWvNWDP0BjCyK+rPhv/bPRV5K9GRtbZ/LiYv3FNHc5sY0NXd?=
+ =?us-ascii?Q?QlggkSv73i7nkvZ9XGiEmRE3QT6OgfeRPttN6f0R/kb9NT6a0MuSUl2mzRnE?=
+ =?us-ascii?Q?IXwf9gijhMEHYsVkJxTqMs/0IPdBVjESSOxfb5DLZ5VnE82G0W8PULg8OYQy?=
+ =?us-ascii?Q?kkGzDFmfoNtKDmGyW9KRBFnUDnZmHBefwbwLkNCLu2P3WaXJnqnuH/gRFWl6?=
+ =?us-ascii?Q?gSNxbQ/BDvxDRBNaTBwOQ5daID3bwrYdog5I1PvTAf6h2cR9Bb28G5+p9l/m?=
+ =?us-ascii?Q?J0RXRUjC7JVoxiJo2H5QPD2qWkQlaBVjB0q1OuQtCIHxnkfWgevzUCvdpqdb?=
+ =?us-ascii?Q?9dDcXC6g0Ifi8b73UwFab2jibI/v?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CuTCCuN+CBx7Lz14D0W42Hi1XRNkbFyh3cIBBusoE/Hzrq0EsZtHO5adYIvM?=
+ =?us-ascii?Q?Wr+bhCO9WNduvGlWgEWFAOwcSodSf+mnLWw2icqLPoUj5+ryuiMSmyvT+Pa8?=
+ =?us-ascii?Q?KNdAref25TVKjZtCtgxbd2bEAx0toTX0MQUnTK2wzbvElHjDYy4C4y8A0rfd?=
+ =?us-ascii?Q?i7CovxTyrQfLH6MuDE4ltnvCRMk7fwqQJsPdLJbqY6PbNG6EdJzyZM5do+yo?=
+ =?us-ascii?Q?cbiL4Ev9AR/PR6S+ApoLQGKatvDaLhSla9VoBxJKp58sHpohXqkfqJm3xh+N?=
+ =?us-ascii?Q?fenHpExmhXDwo3zloh2vF5b5RCahe/g8TIYQBU7PuqvRwJirKIXyKchDiUhO?=
+ =?us-ascii?Q?aP1A+FT6JHZ6NtJFw+PCor3qsAESvmKbMTA55Pi+tC4hnrL1OxOGsQ/XSU/A?=
+ =?us-ascii?Q?ud4YmZ1OfZpNvUq7eeTAKSbU8RRSSVKUteabkdXmwAyLQ1bSj+FQLDt1RyI2?=
+ =?us-ascii?Q?exsQPkD+N8i/l/CtRjnxuyDeB6JlciVjepk5hWz5FwEzJmwMMXMxK0qctsSU?=
+ =?us-ascii?Q?i/QhZLkxztcDO4NYBE3ghIuf9L/wwkfneW72WgcujUXsexTDeMLhdyV221Bd?=
+ =?us-ascii?Q?p4WoE4Mk8PSPxd2x/FexX/nT+iqUeQoR9ngYZKkPta8fuLvGd16IZMENlGZL?=
+ =?us-ascii?Q?sjYza94atuxS050A2RamDbZcPAmbC/0aZr2UUX9h8UN69uf0d+ZzgvKziJoo?=
+ =?us-ascii?Q?U418wEMyg2lBQa2N/d+C7dvOX+8YQpqVggvKM0smFP5WWZvWH8EMzVkOoBmC?=
+ =?us-ascii?Q?ooHjkZS/PkGKRTwAftntXOAy6dmb3O9JssTeGSWX4st8F9vd9bInp7Tsu+xC?=
+ =?us-ascii?Q?JNiilKAHGvNMB8cfSW58hNkuEJdsiHklWlkG9mCuCTyVXfiQdo0s5/x9QMM4?=
+ =?us-ascii?Q?13LIYB26mD593puLECXSKxuaEQ5/qQjuoN02AZP6wE25R5l3EFx4xJ1kwJJQ?=
+ =?us-ascii?Q?ZXZkj7B1UEwjaefYnaUQwKKtItQ1J/iW3ED1nSictwI5qF8ybOaLvVSIHtmj?=
+ =?us-ascii?Q?gGiaDc/Gzg2oFlhwi/FZSSjfap/3sb1n7RI4zx3kmBtqd47yxLRg+8378q0u?=
+ =?us-ascii?Q?kQp+Tg+SF4A2DbK/toCn9e/C1a3Nrl3ki1O/fLc6MBE0Bm7K8ZhxPs/APpXd?=
+ =?us-ascii?Q?52DJNZJjCiD3GoI+uGuYMr4AslxR6QzZnxY7hbS1eSKA5kD4cz9Jg1U8K2PF?=
+ =?us-ascii?Q?aJVaRLcohOb3yVvg7lFhvBur4OjWjC1wmI+5Wn+6Ygkwx3Pf5lm+bwtenWdn?=
+ =?us-ascii?Q?XgS62y/2DbsKCSUyzYkRoDP2ohfzAhQU2Lcb3uh5XrUhXzoob+XAVEb4ZnVe?=
+ =?us-ascii?Q?mCZs6G/CybuMTFzqy10i1hjUsT+V7ysjnxbXK7QKyErUnC+8Pbqk4U+bz7lZ?=
+ =?us-ascii?Q?s0VETF2RsqwQhIAzyE4v4UZZ7GtwD0BQSz6r9x2Z1ClEOLRc0BgJnpKGhTeG?=
+ =?us-ascii?Q?hBxQmN4mcQ3rNtqZK3jCEA7qnlREE+TGwWXCFwtLKFYP3Y8tlDCzEHSLZbh2?=
+ =?us-ascii?Q?LF9XLU8KFCJM1xuoEfOxZDYHDTShha5szDoCMiMvp6fKYjTKsfHu4ImvQnH7?=
+ =?us-ascii?Q?G85n1n7FuKSTvAquiIjsFqCfPxbNcbhLWTNvqgAPQ67HhhMhPnxjJ6al5oZp?=
+ =?us-ascii?Q?pA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b823f043-c601-4a16-87dd-08dd703399fc
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 09:08:28.7538 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Db2tzwocdaI3EQwxEsvbq79GZ1Ri1mEhOn/M+lGvtPwhUEn+gd26wwwBzXuFoLAi3cVSmGfO9dL8qx3A2RYtJUdu+gcZeCpMOWB1UNi4GhE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8342
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,657 +168,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002d2ded06319fc38d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 28, 2025 at 07:18:18PM +0530, Eldho Paul Mathew wrote:
+>    Hi,
+>    In the 24.11.1 build, I have specific questions
+>    1) I need the DPDK output in static lib format. How can I switch off
+>    the shared lib build?
 
-I tested below 18 scenarios on RHEL 9.2 hosts and didn't find any new dpdk
-issues.
+Hi,
 
-   - VM with device assignment(PF) throughput testing(1G hugepage size):
-   PASS
-   - VM with device assignment(PF) throughput testing(2M hugepage size) :
-   PASS
-   - VM with device assignment(VF) throughput testing: PASS
-   - PVP (host dpdk testpmd as vswitch) 1Q: throughput testing: PASS
-   - PVP vhost-user 2Q throughput testing: PASS
-   - PVP vhost-user 1Q - cross numa node throughput testing: PASS
-   - VM with vhost-user 2 queues throughput testing: PASS
-   - vhost-user reconnect with dpdk-client, qemu-server(qemu reconnect):
-   PASS
-   - vhost-user reconnect with dpdk-client, qemu-server(ovs reconnect): PAS=
-S
-   - PVP  reconnect with dpdk-client, qemu-server: PASS
-   - PVP 1Q live migration testing: PASS
-   - PVP 1Q cross numa node live migration testing: PASS
-   - VM with ovs+dpdk+vhost-user 1Q live migration testing: PASS
-   - VM with ovs+dpdk+vhost-user 1Q live migration testing (2M): PASS
-   - VM with ovs+dpdk+vhost-user 2Q live migration testing: PASS
-   - VM with ovs+dpdk+vhost-user 4Q live migration testing: PASS
-   - Host PF + DPDK testing: PASS
-   - Host VF + DPDK testing: PASS
+Both static and shared libraries are built, you do not need to disable
+shared libraries in order to use the static libs. To get the appropriate
+linker flags you can use the pkgconfig .pc files output from the DPDK
+build, or installed when you do a "ninja install". For static linkage:
 
+"pkg-config --libs --static libdpdk"
 
-Test Versions:
+For a not-installed build, you can use the same command, just set
+PKG_CONFIG_PATH to "<builddir>/meson-private" so the .pc files can be
+found.
 
-   - qemu-kvm-7.2.0
-   - kernel 5.14
-   - libvirt 9.0
-   - ovs 3.1
-   - git log
+>    2) I need to build librte_kni. a - Is this module deprecated in DPDK
+>    24.11.1
 
-commit 684d996a201182b5335012055df33284e753d832
+yes. Recommend to use an in-kernel alternative, such as TAP or
+virtio-vhost.
 
-Author: Luca Boccassi <luca.boccassi@gmail.com>
+>    3) How can I enable librte_pmd_* modules? In the driver/net folder,
+>    many pmd are available, but none of them are built in the default ninja
+>    build.?
+>    How to enable this?
 
-Date:   Wed Mar 26 11:26:26 2025 +0000
+All buildable drivers are built by default. You will find them in the
+<builddir>/drivers folder. NOTE: the names may have changed in some cases,
+e.g. network drivers are now named with "librte_net_*" rather than
+"librte_pmd_*", since all drivers in DPDK are of "pmd" type.
 
-version: 22.11.8-rc1
+>    I used the build steps listed below
+>    cd dpdk
+>     meson build
+>     ninja -C build
+>    Will you please help?
 
-Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-
-
-   - Test device : X540-AT2 NIC(ixgbe, 10G)
-
-Tested-by: Yanghang Liu <yanghliu@redhat.com>
-
-
-Best Regards,
-Yanghang Liu
-
-
-On Wed, Mar 26, 2025 at 7:51=E2=80=AFPM <luca.boccassi@gmail.com> wrote:
-
-> Hi all,
->
-> Here is a list of patches targeted for stable release 22.11.8.
->
-> The planned date for the final release is 2025/04/10.
->
-> Please help with testing and validation of your use cases and report
-> any issues/results with reply-all to this mail. For the final release
-> the fixes and reported validations will be added to the release notes.
->
-> A release candidate tarball can be found at:
->
->     https://dpdk.org/browse/dpdk-stable/tag/?id=3Dv22.11.8-rc1
->
-> These patches are located at branch 22.11 of dpdk-stable repo:
->     https://dpdk.org/browse/dpdk-stable/
->
-> Thanks.
->
-> Luca Boccassi
->
-> ---
-> Aleksandr Loktionov (2):
->       net/igc/base: fix MAC address hash bit shift
->       net/e1000/base: fix MAC address hash bit shift
->
-> Amir Avivi (2):
->       net/igc/base: fix iterator type
->       net/e1000/base: fix iterator type
->
-> Anatoly Burakov (3):
->       net/e1000/base: correct mPHY access logic
->       net/e1000: fix crashes in secondary processes
->       net/ixgbe: fix crashes in secondary processes
->
-> Andre Muezerie (5):
->       eal/x86: fix some intrinsics header include for Windows
->       net/bnxt: fix indication of allocation
->       common/idpf: fix void function returning a value
->       net/intel: fix void functions returning a value
->       stack: fix pop in C11 implementation
->
-> Andrew Boyer (1):
->       doc: update ionic driver guide
->
-> Ariel Otilibili (5):
->       net/sfc: remove unnecessary assignment
->       net/enetfec: remove useless assignment
->       use Python raw string notation
->       eal/linux: remove useless assignments
->       mempool: fix errno in empty create
->
-> Arkadiusz Kusztal (1):
->       test/crypto: fix check for OOP header data
->
-> Barbara Skobiej (3):
->       net/igc/base: fix data type in MAC hash
->       net/e1000/base: fix data type in MAC hash
->       net/e1000/base: fix reset for 82580
->
-> Bruce Richardson (6):
->       net/iavf: remove reset of Tx prepare function pointer
->       net/intel: fix build with icx
->       test/dma: fix pointers in IOVA as PA mode
->       net/iavf: check interrupt registration failure
->       net/iavf: fix crash on app exit on FreeBSD
->       eal: fix undetected NUMA nodes
->
-> Carolyn Wyborny (1):
->       net/e1000/base: skip management check for 82575
->
-> Chengwen Feng (2):
->       app/testpmd: show all DCB priority TC map
->       app/testpmd: avoid crash in DCB config
->
-> David Marchand (2):
->       net/mlx5: fix leak in HWS flow counter action
->       ci: point at GitHub mirror
->
-> Dengdui Huang (3):
->       net/hns3: fix mbuf freeing in simple Tx path
->       net/hns3: fix copper port initialization
->       net/hns3: fix reset timeout
->
-> Dima Ruinskiy (5):
->       net/igc/base: fix deadlock when writing i225 register
->       net/igc/base: fix infinite loop
->       net/igc/base: fix typo in LTR calculation
->       net/igc/base: fix unused value
->       net/e1000/base: fix unchecked return
->
-> Ferruh Yigit (1):
->       ethdev: convert string initialization
->
-> Gavin Hu (1):
->       net/mlx5: fix polling CQEs
->
-> Gowrishankar Muthukrishnan (3):
->       crypto/virtio: fix data queues iteration
->       examples/vhost_crypto: fix user callbacks
->       crypto/openssl: validate incorrect RSA signature
->
-> Gregory Etelson (1):
->       net/mlx5: fix IPIP tunnel verification
->
-> Huisong Li (1):
->       ethdev: fix functions available in new device event
->
-> Jakub Buchocki (1):
->       net/e1000/base: fix uninitialized variable
->
-> Jianping Zhao (1):
->       vhost: clear ring addresses when getting vring base
->
-> Jie Hai (2):
->       net/hns3: remove PVID info dump for VF
->       net/hns3: rename RAS module
->
-> Junfeng Guo (1):
->       net/mlx5: fix actions translation error overwrite
->
-> Kevin Traynor (1):
->       vhost: add null callback checks
->
-> Konstantin Ananyev (1):
->       test/ring: fix init with custom number of lcores
->
-> Long Li (3):
->       net/netvsc: scan all net devices under the PCI device
->       net/netvsc: remove device if its net devices removed
->       net/mana: fix multi-process tracking
->
-> Long Wu (1):
->       net/bonding: fix dedicated queue setup
->
-> Maayan Kashani (7):
->       net/mlx5: adjust actions per rule limitation
->       net/mlx5: fix flush of non-template flow rules
->       net/mlx5: fix GRE flow match with SWS
->       net/mlx5: fix LACP packet handling in isolated mode
->       net/mlx5/hws: fix crash using represented port without ID
->       net/mlx5/hws: fix GTP flags matching
->       net/mlx5: fix GRE matching on root table
->
-> Matthew Smith (1):
->       net/ice: fix dropped packets when using VRRP
->
-> Minggang Li (Gavin) (1):
->       net/mlx5: fix Netlink socket leak
->
-> Mingjin Ye (1):
->       net/ixgbe: fix minimum Rx/Tx descriptors
->
-> Nawal Kishor (1):
->       common/cnxk: fix atomic load in batch ops
->
-> Nicolas Chautru (1):
->       test/bbdev: update FFT test vectors
->
-> Nithin Dabilpuram (1):
->       common/cnxk: fix inbound IPsec SA setup
->
-> Nithinsen Kaithakadan (1):
->       examples/ipsec-secgw: fix IV length in CTR 192/256
->
-> Pawel Malinowski (2):
->       net/igc/base: fix semaphore timeout value
->       net/e1000/base: fix semaphore timeout value
->
-> Przemyslaw Ciesielski (4):
->       net/igc/base: fix bitwise operation type
->       net/igc/base: fix NVM data type in bit shift
->       net/e1000/base: fix bitwise operation type
->       net/e1000/base: fix NVM data type in bit shift
->
-> Rahul Bhansali (1):
->       net/cnxk: fix NIX send header L3 type
->
-> Rajesh Mudimadugula (1):
->       crypto/virtio: fix redundant queue free
->
-> Sangtani Parag Satishbhai (1):
->       net/bnxt: fix crash when representor is re-attached
->
-> Sasha Neftin (3):
->       net/igc/base: increase PHY power up delay
->       net/igc/base: reset loop variable
->       net/igc/base: fix LTR for i225
->
-> Shani Peretz (1):
->       bus/pci: fix registered device name
->
-> Shaokai Zhang (2):
->       test/crypto: fix AES-ECB test lengths
->       test/crypto: remove unused variable
->
-> Shijith Thotton (1):
->       test/event: fix number of queues in eventdev conf
->
-> Stephen Hemminger (21):
->       crypto/cnxk: fix build with GCC 15
->       net/thunderx/base: fix build with GCC 15
->       build: force GCC 15 to initialize padding bits
->       raw/cnxk_gpio: fix file descriptor leak
->       net/i40e: remove duplicate code
->       eal: fix devargs layers parsing out of bounds
->       net/qede: fix debug messages array
->       examples/ptpclient: fix message parsing
->       net/hinic: fix flow type bitmask overflow
->       crypto/dpaa2_sec: fix bitmask truncation
->       crypto/dpaa_sec: fix bitmask truncation
->       event/dpaa: fix bitmask truncation
->       net/dpaa: fix bitmask truncation
->       net/dpaa2: fix bitmask truncation
->       net/qede: fix nested loops
->       examples/l3fwd: fix socket ID check
->       common/cnxk: fix null check
->       test/bonding: fix active backup receive test
->       doc: fix feature flags for queue start/stop
->       app/testpmd: fix out-of-bound reference in offload config
->       pdump: clear statistics when enabled
->
-> Tejasree Kondoj (1):
->       examples/ipsec-secgw: fix cryptodev and eventdev IDs
->
-> Tudor Cornea (1):
->       net/af_packet: fix socket close on device stop
->
-> Vamsi Attunuru (1):
->       common/cnxk: fix DPI mailbox structure
->
-> Viacheslav Ovsiienko (1):
->       net/mlx5: fix hardware packet type translation
->
-> Vladimir Medvedkin (1):
->       net/ice: fix memory leak in scalar Rx
->
-> Wathsala Vithanage (1):
->       crypto/openssl: fix CMAC auth context update
->
-> Yang Ming (2):
->       eal/linux: fix memseg length in legacy mem init
->       net/iavf: fix mbuf release in Arm multi-process
->
-> Yunjian Wang (2):
->       vhost: check GSO size validity
->       vhost: check descriptor chains length
->
-> Zaiyu Wang (1):
->       net/txgbe: remove useless condition for SW-FW sync
->
->
-
---0000000000002d2ded06319fc38d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div><div dir=3D"ltr" class=3D"gmail_signature"><div dir=
-=3D"ltr"><div dir=3D"ltr" class=3D"gmail_signature"><div dir=3D"ltr"><font =
-face=3D"arial, sans-serif">I tested below 18 scenarios on RHEL 9.2 hosts an=
-d didn&#39;t find any new dpdk issues.</font></div><div dir=3D"ltr"><ul><li=
- style=3D"margin-left:15px">VM with device assignment(PF) throughput testin=
-g(1G hugepage size): PASS</li><li style=3D"margin-left:15px">VM with device=
- assignment(PF) throughput testing(2M hugepage size) : PASS</li><li style=
-=3D"margin-left:15px">VM with device assignment(VF) throughput testing: PAS=
-S</li><li style=3D"margin-left:15px">PVP (host dpdk testpmd as vswitch) 1Q:=
- throughput testing: PASS</li><li style=3D"margin-left:15px">PVP vhost-user=
- 2Q throughput testing: PASS</li><li style=3D"margin-left:15px">PVP vhost-u=
-ser 1Q - cross numa node throughput testing: PASS</li><li style=3D"margin-l=
-eft:15px">VM with vhost-user 2 queues throughput testing: PASS</li><li styl=
-e=3D"margin-left:15px">vhost-user reconnect with dpdk-client, qemu-server(q=
-emu reconnect): PASS</li><li style=3D"margin-left:15px">vhost-user reconnec=
-t with dpdk-client, qemu-server(ovs reconnect): PASS</li><li style=3D"margi=
-n-left:15px">PVP =C2=A0reconnect with dpdk-client, qemu-server: PASS</li><l=
-i style=3D"margin-left:15px">PVP 1Q live migration testing: PASS</li><li st=
-yle=3D"margin-left:15px">PVP 1Q cross numa node live migration testing: PAS=
-S</li><li style=3D"margin-left:15px">VM with ovs+dpdk+vhost-user 1Q live mi=
-gration testing: PASS</li><li style=3D"margin-left:15px">VM with ovs+dpdk+v=
-host-user 1Q live migration testing (2M): PASS</li><li style=3D"margin-left=
-:15px">VM with ovs+dpdk+vhost-user 2Q live migration testing: PASS</li><li =
-style=3D"margin-left:15px">VM with ovs+dpdk+vhost-user 4Q live migration te=
-sting: PASS</li><li style=3D"margin-left:15px">Host PF + DPDK testing: PASS=
-</li><li style=3D"margin-left:15px">Host VF + DPDK testing: PASS</li></ul><=
-/div><div><br><font face=3D"arial, sans-serif">Test Versions:<br><ul><li st=
-yle=3D"margin-left:15px">qemu-kvm-7.2.0</li><li style=3D"margin-left:15px">=
-kernel 5.14</li><li style=3D"margin-left:15px">libvirt 9.0</li><li style=3D=
-"margin-left:15px">ovs 3.1</li><li style=3D"margin-left:15px">git log</li><=
-/ul></font></div></div></div></div></div><blockquote style=3D"margin:0 0 0 =
-40px;border:none;padding:0px"><blockquote style=3D"margin:0 0 0 40px;border=
-:none;padding:0px"><div><div class=3D"gmail_signature"><div><div class=3D"g=
-mail_signature"><div><font face=3D"arial, sans-serif"><div>commit 684d996a2=
-01182b5335012055df33284e753d832</div></font></div></div></div></div></div><=
-/blockquote><blockquote style=3D"margin:0 0 0 40px;border:none;padding:0px"=
-><div><div class=3D"gmail_signature"><div><div class=3D"gmail_signature"><d=
-iv><font face=3D"arial, sans-serif"><div>Author: Luca Boccassi &lt;<a href=
-=3D"mailto:luca.boccassi@gmail.com">luca.boccassi@gmail.com</a>&gt;</div></=
-font></div></div></div></div></div></blockquote><blockquote style=3D"margin=
-:0 0 0 40px;border:none;padding:0px"><div><div class=3D"gmail_signature"><d=
-iv><div class=3D"gmail_signature"><div><font face=3D"arial, sans-serif"><di=
-v>Date: =C2=A0 Wed Mar 26 11:26:26 2025 +0000</div></font></div></div></div=
-></div></div></blockquote><blockquote style=3D"margin:0 0 0 40px;border:non=
-e;padding:0px"><div><div class=3D"gmail_signature"><div><div class=3D"gmail=
-_signature"><div><font face=3D"arial, sans-serif"><div>version: 22.11.8-rc1=
-</div></font></div></div></div></div></div></blockquote><blockquote style=
-=3D"margin:0 0 0 40px;border:none;padding:0px"><div><div class=3D"gmail_sig=
-nature"><div><div class=3D"gmail_signature"><div><font face=3D"arial, sans-=
-serif"><div>Signed-off-by: Luca Boccassi &lt;<a href=3D"mailto:luca.boccass=
-i@gmail.com">luca.boccassi@gmail.com</a>&gt;</div></font></div></div></div>=
-</div></div></blockquote></blockquote><div><div dir=3D"ltr" class=3D"gmail_=
-signature"><div dir=3D"ltr"><div dir=3D"ltr" class=3D"gmail_signature"><fon=
-t face=3D"arial, sans-serif"><ul><li style=3D"margin-left:15px">Test device=
- : X540-AT2 NIC(ixgbe, 10G)</li></ul></font></div></div></div><div dir=3D"l=
-tr" class=3D"gmail_signature"><div dir=3D"ltr"><div dir=3D"ltr" class=3D"gm=
-ail_signature"><div dir=3D"ltr"><div><font face=3D"arial, sans-serif">Teste=
-d-by: Yanghang Liu &lt;<a href=3D"mailto:yanghliu@redhat.com" target=3D"_bl=
-ank">yanghliu@redhat.com</a>&gt;</font></div></div></div></div></div></div>=
-<div><br></div><div><br></div><div><div dir=3D"ltr" class=3D"gmail_signatur=
-e" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div>Best Regards,</=
-div><div>Yanghang Liu<br></div></div></div></div><br></div><br><div class=
-=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr=
-">On Wed, Mar 26, 2025 at 7:51=E2=80=AFPM &lt;<a href=3D"mailto:luca.boccas=
-si@gmail.com">luca.boccassi@gmail.com</a>&gt; wrote:<br></div><blockquote c=
-lass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px soli=
-d rgb(204,204,204);padding-left:1ex">Hi all,<br>
-<br>
-Here is a list of patches targeted for stable release 22.11.8.<br>
-<br>
-The planned date for the final release is 2025/04/10.<br>
-<br>
-Please help with testing and validation of your use cases and report<br>
-any issues/results with reply-all to this mail. For the final release<br>
-the fixes and reported validations will be added to the release notes.<br>
-<br>
-A release candidate tarball can be found at:<br>
-<br>
-=C2=A0 =C2=A0 <a href=3D"https://dpdk.org/browse/dpdk-stable/tag/?id=3Dv22.=
-11.8-rc1" rel=3D"noreferrer" target=3D"_blank">https://dpdk.org/browse/dpdk=
--stable/tag/?id=3Dv22.11.8-rc1</a><br>
-<br>
-These patches are located at branch 22.11 of dpdk-stable repo:<br>
-=C2=A0 =C2=A0 <a href=3D"https://dpdk.org/browse/dpdk-stable/" rel=3D"noref=
-errer" target=3D"_blank">https://dpdk.org/browse/dpdk-stable/</a><br>
-<br>
-Thanks.<br>
-<br>
-Luca Boccassi<br>
-<br>
----<br>
-Aleksandr Loktionov (2):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix MAC address hash bit shift<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix MAC address hash bit shift<br>
-<br>
-Amir Avivi (2):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix iterator type<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix iterator type<br>
-<br>
-Anatoly Burakov (3):<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: correct mPHY access logic<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000: fix crashes in secondary processes<br>
-=C2=A0 =C2=A0 =C2=A0 net/ixgbe: fix crashes in secondary processes<br>
-<br>
-Andre Muezerie (5):<br>
-=C2=A0 =C2=A0 =C2=A0 eal/x86: fix some intrinsics header include for Window=
-s<br>
-=C2=A0 =C2=A0 =C2=A0 net/bnxt: fix indication of allocation<br>
-=C2=A0 =C2=A0 =C2=A0 common/idpf: fix void function returning a value<br>
-=C2=A0 =C2=A0 =C2=A0 net/intel: fix void functions returning a value<br>
-=C2=A0 =C2=A0 =C2=A0 stack: fix pop in C11 implementation<br>
-<br>
-Andrew Boyer (1):<br>
-=C2=A0 =C2=A0 =C2=A0 doc: update ionic driver guide<br>
-<br>
-Ariel Otilibili (5):<br>
-=C2=A0 =C2=A0 =C2=A0 net/sfc: remove unnecessary assignment<br>
-=C2=A0 =C2=A0 =C2=A0 net/enetfec: remove useless assignment<br>
-=C2=A0 =C2=A0 =C2=A0 use Python raw string notation<br>
-=C2=A0 =C2=A0 =C2=A0 eal/linux: remove useless assignments<br>
-=C2=A0 =C2=A0 =C2=A0 mempool: fix errno in empty create<br>
-<br>
-Arkadiusz Kusztal (1):<br>
-=C2=A0 =C2=A0 =C2=A0 test/crypto: fix check for OOP header data<br>
-<br>
-Barbara Skobiej (3):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix data type in MAC hash<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix data type in MAC hash<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix reset for 82580<br>
-<br>
-Bruce Richardson (6):<br>
-=C2=A0 =C2=A0 =C2=A0 net/iavf: remove reset of Tx prepare function pointer<=
-br>
-=C2=A0 =C2=A0 =C2=A0 net/intel: fix build with icx<br>
-=C2=A0 =C2=A0 =C2=A0 test/dma: fix pointers in IOVA as PA mode<br>
-=C2=A0 =C2=A0 =C2=A0 net/iavf: check interrupt registration failure<br>
-=C2=A0 =C2=A0 =C2=A0 net/iavf: fix crash on app exit on FreeBSD<br>
-=C2=A0 =C2=A0 =C2=A0 eal: fix undetected NUMA nodes<br>
-<br>
-Carolyn Wyborny (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: skip management check for 82575<br>
-<br>
-Chengwen Feng (2):<br>
-=C2=A0 =C2=A0 =C2=A0 app/testpmd: show all DCB priority TC map<br>
-=C2=A0 =C2=A0 =C2=A0 app/testpmd: avoid crash in DCB config<br>
-<br>
-David Marchand (2):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix leak in HWS flow counter action<br>
-=C2=A0 =C2=A0 =C2=A0 ci: point at GitHub mirror<br>
-<br>
-Dengdui Huang (3):<br>
-=C2=A0 =C2=A0 =C2=A0 net/hns3: fix mbuf freeing in simple Tx path<br>
-=C2=A0 =C2=A0 =C2=A0 net/hns3: fix copper port initialization<br>
-=C2=A0 =C2=A0 =C2=A0 net/hns3: fix reset timeout<br>
-<br>
-Dima Ruinskiy (5):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix deadlock when writing i225 register<=
-br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix infinite loop<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix typo in LTR calculation<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix unused value<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix unchecked return<br>
-<br>
-Ferruh Yigit (1):<br>
-=C2=A0 =C2=A0 =C2=A0 ethdev: convert string initialization<br>
-<br>
-Gavin Hu (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix polling CQEs<br>
-<br>
-Gowrishankar Muthukrishnan (3):<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/virtio: fix data queues iteration<br>
-=C2=A0 =C2=A0 =C2=A0 examples/vhost_crypto: fix user callbacks<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/openssl: validate incorrect RSA signature<br>
-<br>
-Gregory Etelson (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix IPIP tunnel verification<br>
-<br>
-Huisong Li (1):<br>
-=C2=A0 =C2=A0 =C2=A0 ethdev: fix functions available in new device event<br=
->
-<br>
-Jakub Buchocki (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix uninitialized variable<br>
-<br>
-Jianping Zhao (1):<br>
-=C2=A0 =C2=A0 =C2=A0 vhost: clear ring addresses when getting vring base<br=
->
-<br>
-Jie Hai (2):<br>
-=C2=A0 =C2=A0 =C2=A0 net/hns3: remove PVID info dump for VF<br>
-=C2=A0 =C2=A0 =C2=A0 net/hns3: rename RAS module<br>
-<br>
-Junfeng Guo (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix actions translation error overwrite<br>
-<br>
-Kevin Traynor (1):<br>
-=C2=A0 =C2=A0 =C2=A0 vhost: add null callback checks<br>
-<br>
-Konstantin Ananyev (1):<br>
-=C2=A0 =C2=A0 =C2=A0 test/ring: fix init with custom number of lcores<br>
-<br>
-Long Li (3):<br>
-=C2=A0 =C2=A0 =C2=A0 net/netvsc: scan all net devices under the PCI device<=
-br>
-=C2=A0 =C2=A0 =C2=A0 net/netvsc: remove device if its net devices removed<b=
-r>
-=C2=A0 =C2=A0 =C2=A0 net/mana: fix multi-process tracking<br>
-<br>
-Long Wu (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/bonding: fix dedicated queue setup<br>
-<br>
-Maayan Kashani (7):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: adjust actions per rule limitation<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix flush of non-template flow rules<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix GRE flow match with SWS<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix LACP packet handling in isolated mode<br=
->
-=C2=A0 =C2=A0 =C2=A0 net/mlx5/hws: fix crash using represented port without=
- ID<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5/hws: fix GTP flags matching<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix GRE matching on root table<br>
-<br>
-Matthew Smith (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/ice: fix dropped packets when using VRRP<br>
-<br>
-Minggang Li (Gavin) (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix Netlink socket leak<br>
-<br>
-Mingjin Ye (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/ixgbe: fix minimum Rx/Tx descriptors<br>
-<br>
-Nawal Kishor (1):<br>
-=C2=A0 =C2=A0 =C2=A0 common/cnxk: fix atomic load in batch ops<br>
-<br>
-Nicolas Chautru (1):<br>
-=C2=A0 =C2=A0 =C2=A0 test/bbdev: update FFT test vectors<br>
-<br>
-Nithin Dabilpuram (1):<br>
-=C2=A0 =C2=A0 =C2=A0 common/cnxk: fix inbound IPsec SA setup<br>
-<br>
-Nithinsen Kaithakadan (1):<br>
-=C2=A0 =C2=A0 =C2=A0 examples/ipsec-secgw: fix IV length in CTR 192/256<br>
-<br>
-Pawel Malinowski (2):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix semaphore timeout value<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix semaphore timeout value<br>
-<br>
-Przemyslaw Ciesielski (4):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix bitwise operation type<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix NVM data type in bit shift<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix bitwise operation type<br>
-=C2=A0 =C2=A0 =C2=A0 net/e1000/base: fix NVM data type in bit shift<br>
-<br>
-Rahul Bhansali (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/cnxk: fix NIX send header L3 type<br>
-<br>
-Rajesh Mudimadugula (1):<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/virtio: fix redundant queue free<br>
-<br>
-Sangtani Parag Satishbhai (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/bnxt: fix crash when representor is re-attached<br=
->
-<br>
-Sasha Neftin (3):<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: increase PHY power up delay<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: reset loop variable<br>
-=C2=A0 =C2=A0 =C2=A0 net/igc/base: fix LTR for i225<br>
-<br>
-Shani Peretz (1):<br>
-=C2=A0 =C2=A0 =C2=A0 bus/pci: fix registered device name<br>
-<br>
-Shaokai Zhang (2):<br>
-=C2=A0 =C2=A0 =C2=A0 test/crypto: fix AES-ECB test lengths<br>
-=C2=A0 =C2=A0 =C2=A0 test/crypto: remove unused variable<br>
-<br>
-Shijith Thotton (1):<br>
-=C2=A0 =C2=A0 =C2=A0 test/event: fix number of queues in eventdev conf<br>
-<br>
-Stephen Hemminger (21):<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/cnxk: fix build with GCC 15<br>
-=C2=A0 =C2=A0 =C2=A0 net/thunderx/base: fix build with GCC 15<br>
-=C2=A0 =C2=A0 =C2=A0 build: force GCC 15 to initialize padding bits<br>
-=C2=A0 =C2=A0 =C2=A0 raw/cnxk_gpio: fix file descriptor leak<br>
-=C2=A0 =C2=A0 =C2=A0 net/i40e: remove duplicate code<br>
-=C2=A0 =C2=A0 =C2=A0 eal: fix devargs layers parsing out of bounds<br>
-=C2=A0 =C2=A0 =C2=A0 net/qede: fix debug messages array<br>
-=C2=A0 =C2=A0 =C2=A0 examples/ptpclient: fix message parsing<br>
-=C2=A0 =C2=A0 =C2=A0 net/hinic: fix flow type bitmask overflow<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/dpaa2_sec: fix bitmask truncation<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/dpaa_sec: fix bitmask truncation<br>
-=C2=A0 =C2=A0 =C2=A0 event/dpaa: fix bitmask truncation<br>
-=C2=A0 =C2=A0 =C2=A0 net/dpaa: fix bitmask truncation<br>
-=C2=A0 =C2=A0 =C2=A0 net/dpaa2: fix bitmask truncation<br>
-=C2=A0 =C2=A0 =C2=A0 net/qede: fix nested loops<br>
-=C2=A0 =C2=A0 =C2=A0 examples/l3fwd: fix socket ID check<br>
-=C2=A0 =C2=A0 =C2=A0 common/cnxk: fix null check<br>
-=C2=A0 =C2=A0 =C2=A0 test/bonding: fix active backup receive test<br>
-=C2=A0 =C2=A0 =C2=A0 doc: fix feature flags for queue start/stop<br>
-=C2=A0 =C2=A0 =C2=A0 app/testpmd: fix out-of-bound reference in offload con=
-fig<br>
-=C2=A0 =C2=A0 =C2=A0 pdump: clear statistics when enabled<br>
-<br>
-Tejasree Kondoj (1):<br>
-=C2=A0 =C2=A0 =C2=A0 examples/ipsec-secgw: fix cryptodev and eventdev IDs<b=
-r>
-<br>
-Tudor Cornea (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/af_packet: fix socket close on device stop<br>
-<br>
-Vamsi Attunuru (1):<br>
-=C2=A0 =C2=A0 =C2=A0 common/cnxk: fix DPI mailbox structure<br>
-<br>
-Viacheslav Ovsiienko (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/mlx5: fix hardware packet type translation<br>
-<br>
-Vladimir Medvedkin (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/ice: fix memory leak in scalar Rx<br>
-<br>
-Wathsala Vithanage (1):<br>
-=C2=A0 =C2=A0 =C2=A0 crypto/openssl: fix CMAC auth context update<br>
-<br>
-Yang Ming (2):<br>
-=C2=A0 =C2=A0 =C2=A0 eal/linux: fix memseg length in legacy mem init<br>
-=C2=A0 =C2=A0 =C2=A0 net/iavf: fix mbuf release in Arm multi-process<br>
-<br>
-Yunjian Wang (2):<br>
-=C2=A0 =C2=A0 =C2=A0 vhost: check GSO size validity<br>
-=C2=A0 =C2=A0 =C2=A0 vhost: check descriptor chains length<br>
-<br>
-Zaiyu Wang (1):<br>
-=C2=A0 =C2=A0 =C2=A0 net/txgbe: remove useless condition for SW-FW sync<br>
-<br>
-</blockquote></div>
-
---0000000000002d2ded06319fc38d--
-
+/Bruce
