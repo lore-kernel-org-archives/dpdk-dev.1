@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB294C3600C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 08:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DD4C3600C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 09:03:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F1ED40156;
-	Mon, 31 Mar 2025 10:45:10 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 39F8740150
- for <dev@dpdk.org>; Mon, 31 Mar 2025 10:45:09 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal
- [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 694BD2540139;
- Mon, 31 Mar 2025 04:45:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Mon, 31 Mar 2025 04:45:08 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 0F52E40156;
+	Mon, 31 Mar 2025 11:03:17 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id D74FD40150;
+ Mon, 31 Mar 2025 11:03:15 +0200 (CEST)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal
+ [10.202.2.48])
+ by mailfout.stl.internal (Postfix) with ESMTP id EFC31114019A;
+ Mon, 31 Mar 2025 05:03:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-08.internal (MEProxy); Mon, 31 Mar 2025 05:03:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1743410708;
- x=1743497108; bh=ll7vOm4Zrh6zij45nvOatKqhsYT4vMAUPIp4tGNzlLM=; b=
- UfGVQMMIMooFwrjB5Y4raxFPOEUqfbcA+Nt+cQvumaFrpvgJTcc+XgX15MQPLX/H
- 4TFsxCRHPUM1cAFgQ9jI3cJb8Ld0ntntw+AtrsNc1DB7N0Komer2hDMo/sKGnEik
- IN0VzCZOo+eZEf+NMP0xOI3KOmfLYfLP+Qf+CpI66vTs35aqTPfLIQdnNdWr9jpM
- JG7x+P2ohCs1cNTTCEjk+0j6SMObUSrm6TpW2S3scFABIw9RKiwXmKVlLgQQywax
- p/F1u3xahSRcq8c5yoRDJ+99RUDKMl/6m+miv14bIbRQMHusPY30oMuq+qCqpn8k
- x/CgzUhuVDEVr/i0owu+Ug==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1743411794;
+ x=1743498194; bh=GumTTEDN4zb8n1XFRpj1e+/6KGfcQ8tw3R8trFDBz8A=; b=
+ Ijk5wEfzvvVqJfT1nKSt0T2+1WD9uQEeiHOOeKsFZd5GbwRIf8AsIONN+xF6E0B9
+ 93DASb8VtiD4NQtE6H1GzuTyEUOV3OFuKcKEERRV7GBADhzPvDojiNrX3cbmlZuu
+ wKMGOzpRCPwqxDSfnNwuA0yuzGUKHiRjnTCsZBnXHG5h5Vy9mrmE+meXD3EcKWDo
+ xeFEBbcMCCpUGYjUt34NiuXK4gdgV2mY/ftCEnvYV8OImWG3pk7BXIrGtbfnyeAk
+ wNcT1lLhe8HClre9RwIydH65c7pmujpAbFiMnYv0KlDmjM5GYkHUTLyMYuG4HYx/
+ xZsXPjXXfsVF7bR1GmKLNw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743410708; x=
- 1743497108; bh=ll7vOm4Zrh6zij45nvOatKqhsYT4vMAUPIp4tGNzlLM=; b=P
- hAVZyKfzRaf2vce0Lq5HxTQ6w748KwZWkQiEYOY/l/cyvpC0p3w9ZV9m+nSbZPSJ
- aoeUiLNuhtnXt/SZ4oCFExCiDHo3gSOkxPRs9aFtFlzV6098jtZhfygc8zA5kPPw
- gopXc52CzslSwGSylPJFYEK3PoER5olYsYkpXe6TMydOC3R3hk58/tPJxqk2qTYm
- cqf/o99dY5EWVjBNFugB+ueODEZ4BBV39pv6cn6/qTf5RCQUD8vAf+IRwg8MQq9d
- 8nl53aZ86/JpWKnwI3lV0sEgRqhgTWG8x/pf8yj1nRJtE6j+A8bYS+6dtcZTg2SC
- AY1eh4tqdLGcpotZyZOhA==
-X-ME-Sender: <xms:E1bqZx4docWpxEquimQpg0FbIZl2PqUh8dg0eaZmmQOS3qcCPahZIQ>
- <xme:E1bqZ-51YAlmBtt02iwOUC36hCcBSVpKNTh3UkVET_odaxztHBHRg8TLssFt_cOfx
- _eCvD0j-PEyZVYuVA>
-X-ME-Received: <xmr:E1bqZ4dizroncFB2AVEHqVtTIkW0L9nOcbi5U0A3LZOJtuPbWag40RD-jfHC53sRHn8Igy2smyAZQCUZwZWFL4UeLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelgeekucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743411794; x=
+ 1743498194; bh=GumTTEDN4zb8n1XFRpj1e+/6KGfcQ8tw3R8trFDBz8A=; b=x
+ s7VPlX8vnC75aJT5G1f+LYyWjYgUKfFPYil5TsGSyriCZ+ONaanb1iruJpdI0K8o
+ dhIsk4o77gJwYJjLry7Dr97zAv41f+tQSD1ls9Pu3yPbU8KyKGYbtcEq9w4M7uHj
+ MgHBBC+Cw0t6OTF4YhKbnNWTN6SVr8i0TsWulzF7lT8BZ4tb0Lpiza4Z9QXby/Cc
+ Nu2Vw7OwoC0y2ha7TGLSjlCSCF61WXmJSRmAUENPIQRlT/7rSiylqXoAIIQbTG5L
+ ba2WkZ8dz4Hx8IuuIUgXY2Db1DgXc9ir+Hql8Lxk7YByuC+bXKxCuiW3C+aNkQwu
+ 24495SNxJ7tTl3ug8JZiQ==
+X-ME-Sender: <xms:UlrqZ4TXpxGSCMQIdNnDj6oWx0UMig2cD0lPcQFuBzf-QvHVnkWOvw>
+ <xme:UlrqZ1x3vb2oyO9TN7kgOmb9iy3tgcbT8n7qaRFjOecIhqJwtzCzOICTeRVX4-EVN
+ 0eZC5zlAydvyxOM4A>
+X-ME-Received: <xmr:UlrqZ13SGMseM2r9GN7p8XGse-p3zlfMLaYGv_r0aI9bvfZlaZv0YguDiEZdK2sp7TsKZp07nMDY0DdE93Jh1wML6Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelheduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
  pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
  gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
@@ -53,26 +53,32 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelgeekucetufdote
  hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
  geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
  curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtrg
- hniigvvghlrghhmhgvugejudefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepohhrihhk
- rgesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
- hpthhtohepshhhphgvrhgvthiisehnvhhiughirgdrtghomh
-X-ME-Proxy: <xmx:FFbqZ6KpvCHk7UZ-uc-0g2WxWU6o2TyK_1PYTEVOtNGKlw838AGQ-w>
- <xmx:FFbqZ1KKV_e_U0-n6MwhUbJD1GZTb1B4UDysKz2P2suP2zE-j3hP-g>
- <xmx:FFbqZzwtChfRKxpdLy61u6XrN3hmWfN9UvVkE7ZxxIyLyATtNEohjw>
- <xmx:FFbqZxK85iFZqpasJd26a7iKoHeObFccufCEWNrqv0ZimygX_s8yog>
- <xmx:FFbqZyH7GF-EluvXmzvyuE5h3czoo0TfGBC3SYtrQm9y27LvkRwQ6yQW>
+ pdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrh
+ hutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehgvght
+ vghlshhonhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrg
+ hrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhr
+ tghpthhtohepthgvtghhsghorghrugesughpughkrdhorhhgpdhrtghpthhtohepmhhkrg
+ hshhgrnhhisehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:UlrqZ8CLMJ_Xlrq99zkguNaxHbZIlKc1bOBcC-8NLzO_JF_nrLEQkA>
+ <xmx:UlrqZxjFffY5RHDmTEwGjHNpby94Y91SjGwm2IHduu8Evm_mF-4_Ig>
+ <xmx:UlrqZ4oXp_XEsGKI3YRXTUpXhxVFQQbpRi-_S7m_n3Tu9jsucUxaxw>
+ <xmx:UlrqZ0iTIImMaREV_1AvN3_csY7BVVnR01Fsv1sCWUOdNOShnGjPPw>
+ <xmx:UlrqZ8Ulip55t-WOOYrDQlksahhKqHIoMRqNflXnla57gFN4b9lCs1cj>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 31 Mar 2025 04:45:07 -0400 (EDT)
+ 31 Mar 2025 05:03:13 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Tanzeel Ahmed <tanzeelahmed713@gmail.com>
-Cc: orika@nvidia.com, dev@dpdk.org, Shani Peretz <shperetz@nvidia.com>
-Subject: Re: [PATCH] examples/flow_filtering: fix make clean
-Date: Mon, 31 Mar 2025 10:45:05 +0200
-Message-ID: <5791577.oiGErgHkdL@thomas>
-In-Reply-To: <20250329195333.324178-1-tanzeelahmed713@gmail.com>
-References: <20250329195333.324178-1-tanzeelahmed713@gmail.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: "Etelson, Gregory" <getelson@nvidia.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, dev@dpdk.org,
+ techboard@dpdk.org, mkashani@nvidia.com
+Subject: Re: DPDK for rust
+Date: Mon, 31 Mar 2025 11:03:11 +0200
+Message-ID: <9241799.4vTCxPXJkl@thomas>
+In-Reply-To: <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
+References: <20250306133713.393057-1-getelson@nvidia.com>
+ <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
+ <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -89,13 +95,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/03/2025 20:53, Tanzeel Ahmed:
-> make clean is unable to delete build directory
-> because *.o files are not removed.
+27/03/2025 17:17, Bruce Richardson:
+> On Thu, Mar 27, 2025 at 11:00:40AM +0200, Etelson, Gregory wrote:
+> > Hello Morten,
+> > 
+> > Thank you for raising these questions !
+> > 
+> > > 
+> > > Do we want the DPDK project itself to support rust?
+> > > Or should parts of this be a DPDK hosted project, like grout?
+> > 
+> > Rust packages management is different.
+> > Also DPDK Rust code will eventually provide a different API.
+> > At this stage, DPDK hosted project looks like a good idea.
+> > 
 > 
-> The other way to fix this would be to add all the
-> c files into SRCS-y.
+> For ease of use, that would mean hosting a cargo registry, no?
 
-How adding all C files into SRCS-y would help?
+Please could you explain why it is easier to have a cargo registry?
 
 
