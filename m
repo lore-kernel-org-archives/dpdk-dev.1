@@ -2,46 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1024BC3600B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A55C3600B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:10:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1EE554068A;
-	Mon, 31 Mar 2025 18:10:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 243CD406BA;
+	Mon, 31 Mar 2025 18:10:18 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id E697640689
- for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EA05C40689
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743437413; x=1774973413;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=GC+ze0KW3jDQnvKpoBEOIy++DfqnDRM6UwUG5ThupOo=;
- b=eBw+B9dsvYMHf0FFWrkaMFgQB29Ks1xa643O3qrV1r5IHvHKLkIHpFH6
- d+enKczQBuyfPsX85g7qnhmg1WJ5otJkxQIPVGogq0EYzdluQrKDUp+PR
- QkcfbZOpWo+1Hb81lkM8K1QeJE6+7g3dCXKt1s/qg0EnebgvVaVuTJd26
- IQ7DzLwlGUlXAvfVlIoUeJ6CFQti/jtbodL7xLFXiT+U6WhFoW/GcawMC
- UoF7sftLwDS7PS8xqiUf7qjRPHFUz3K7D3nsbeRCGjM72KzNDZ6G7yxGZ
- 1SxtotuApQb3AXggIxAWRYO1y96TkcZD/03inVzVhyoZ+0kjOi2HeIs39 A==;
-X-CSE-ConnectionGUID: zzWL9Eb2RbeSxnyEfIiAzA==
-X-CSE-MsgGUID: T/zKeWXuQ3eaZuk808mg7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125615"
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125615"
+ t=1743437417; x=1774973417;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=NNU/0d+l51+SpIVPBgrA0j/98tInPUKtGEaS8MoZLLE=;
+ b=SnXhlcUdnFb7CE6yknCkAmbyrMYV3nEXbOH3cPRs/1jB2YspiQYvdE7N
+ Tktu/jZNYjK11Ni7IX3bX7KN63tqjuBL0JhSHU4q91jsTn4eTkeUeKh7h
+ nRtymO79NYLylfYvrMRGKA3IoIsgsa3RlQRcfVpbesmzF4+tOC4Vgil0J
+ 4JQx62m8Zv81PYYf84QcNEmSjTiZ849sBprc/fulogKqbTMrLLUuXr9T+
+ d3LJsu3dgO6dHFzvQrZaT1csbCN73CiuCDo09K63PFbbo9e6tl9V4S8Bp
+ 2bHi9/0FpYGlA31EK+aJNBvyHXMbsl4zVrwW1ocwdUtfX5hhP0i0sEmLc A==;
+X-CSE-ConnectionGUID: Qu5blijiRom3LxfnQbKCLg==
+X-CSE-MsgGUID: 9MAWbDN6SkywXxIn7dAQiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125632"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125632"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Mar 2025 09:10:12 -0700
-X-CSE-ConnectionGUID: xKrPPp0uStygtuCN9ilNig==
-X-CSE-MsgGUID: 6K29AUo6Q4KJuMweqfCJNg==
+ 31 Mar 2025 09:10:16 -0700
+X-CSE-ConnectionGUID: MO/TEA5STS+SYxr2VTDylQ==
+X-CSE-MsgGUID: RbjEo9c+SFidHnuqENVPBg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132496"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132522"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:11 -0700
+ by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:16 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 00/10] centralise base code handling for drivers
-Date: Mon, 31 Mar 2025 17:09:49 +0100
-Message-ID: <20250331161000.9886-1-bruce.richardson@intel.com>
+Subject: [PATCH 01/10] build: add generic support for base code in drivers
+Date: Mon, 31 Mar 2025 17:09:50 +0100
+Message-ID: <20250331161000.9886-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
+References: <20250331161000.9886-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,58 +59,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Many DPDK drivers use the same pattern for base code handling, having
-a meson.build file in the base code directory which optionally defines
-some custom cflags for the base code build, then builds the code as a
-static library and extracts the objects from it. (The reason behind this
-is that, in meson, cflags apply per-object, so we need to have a
-separate build object for the base code to use custom flags)
+Add support to the drivers meson.build file for base code files with
+extra cflags for compilation. This should remove the need for custom
+logic in each driver.
 
-This patchset deduplicates this logic by putting it into the
-drivers/meson.build file, and allowing individual drivers to then just
-specify values for "base_sources" and "base_cflags".
+In future, we may want to move the base code handling down the file a
+little in order to get lock checking. However, this lock checking is not
+done currently on base code builds, so not all drivers can safely pass
+these checks. Therefore, we handle the base code files before we add on
+the extra lock annotation flags.
 
-Depends-on: Series-34946 ("net/intel: clean up base code build")
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/meson.build | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Bruce Richardson (10):
-  build: add generic support for base code in drivers
-  common/sfc_efx: use common base code build handling
-  net/hinic: use common base code build handling
-  net/intel: use common base code build handling
-  net/ngbe: use common base code build handling
-  net/octeontx: use common base code build handling
-  net/qede: use common base code build handling
-  net/thunderx: use common base code build handling
-  net/txgbe: use common base code build handling
-  raw/ifpga: use common base code build handling
-
- drivers/common/sfc_efx/base/meson.build | 18 +++---------------
- drivers/common/sfc_efx/meson.build      |  3 ---
- drivers/meson.build                     | 20 ++++++++++++++++++++
- drivers/net/hinic/base/meson.build      | 16 +++++-----------
- drivers/net/hinic/meson.build           |  1 -
- drivers/net/intel/e1000/meson.build     |  3 ---
- drivers/net/intel/fm10k/meson.build     |  3 ---
- drivers/net/intel/i40e/meson.build      |  2 --
- drivers/net/intel/iavf/meson.build      |  1 -
- drivers/net/intel/ice/base/meson.build  | 22 +++++++---------------
- drivers/net/intel/ice/meson.build       |  2 --
- drivers/net/intel/idpf/meson.build      |  1 -
- drivers/net/intel/ixgbe/meson.build     |  3 ---
- drivers/net/ngbe/base/meson.build       | 12 ++----------
- drivers/net/ngbe/meson.build            |  3 ---
- drivers/net/octeontx/base/meson.build   | 19 +------------------
- drivers/net/octeontx/meson.build        |  3 ---
- drivers/net/qede/base/meson.build       | 17 +++++------------
- drivers/net/qede/meson.build            |  1 -
- drivers/net/thunderx/base/meson.build   | 10 +---------
- drivers/net/thunderx/meson.build        |  3 ---
- drivers/net/txgbe/base/meson.build      | 18 ++----------------
- drivers/net/txgbe/meson.build           |  3 ---
- drivers/raw/ifpga/base/meson.build      | 21 ++-------------------
- drivers/raw/ifpga/meson.build           | 15 ++++++++++++---
- 25 files changed, 60 insertions(+), 160 deletions(-)
-
---
+diff --git a/drivers/meson.build b/drivers/meson.build
+index c15319dc24..b2d2537dc8 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -145,7 +145,13 @@ foreach subpath:subdirs
+         pkgconfig_extra_libs = []
+         testpmd_sources = []
+         require_iova_in_mbuf = true
++        # for handling base code files which may need extra cflags
++        base_sources = []
++        base_cflags = []
+ 
++        if fs.is_dir(drv_path / 'base')
++            includes += include_directories(drv_path / 'base')
++        endif
+         if name.contains('/')
+             name = name.split('/')[1]
+         endif
+@@ -216,6 +222,20 @@ foreach subpath:subdirs
+             continue
+         endif
+ 
++        # not all drivers base code is lock annotation safe, so do base code builds before
++        # adding on the lock annotation flags. NOTE: If no custom cflags, the lock annotation
++        # checks will be done though.
++        if base_cflags != []
++            base_lib = static_library(lib_name + '_base_lib',
++                    base_sources,
++                    dependencies: static_deps,
++                    include_directories: includes,
++                    c_args: cflags + base_cflags)
++            objs += base_lib.extract_objects(base_sources)
++        else
++            sources += base_sources
++        endif
++
+         enabled_drivers += name
+         lib_name = '_'.join(['rte', class, name])
+         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
+-- 
 2.45.2
 
