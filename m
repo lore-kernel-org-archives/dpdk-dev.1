@@ -2,66 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A796C3600B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 10:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A061C3600B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 10:26:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A13574065A;
-	Mon, 31 Mar 2025 12:09:08 +0200 (CEST)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com
- [209.85.219.182])
- by mails.dpdk.org (Postfix) with ESMTP id 92B4140650;
- Mon, 31 Mar 2025 12:09:07 +0200 (CEST)
-Received: by mail-yb1-f182.google.com with SMTP id
- 3f1490d57ef6-e60b75f8723so3009738276.0; 
- Mon, 31 Mar 2025 03:09:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C424C4065A;
+	Mon, 31 Mar 2025 12:26:40 +0200 (CEST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com
+ [209.85.219.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 7843340650;
+ Mon, 31 Mar 2025 12:26:39 +0200 (CEST)
+Received: by mail-yb1-f180.google.com with SMTP id
+ 3f1490d57ef6-e53c9035003so3731466276.2; 
+ Mon, 31 Mar 2025 03:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1743415747; x=1744020547; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1743416799; x=1744021599; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=vXpZrzgtQh7h4bbKv+C8cUPe8LYs6D/P8q/GFsZJBNw=;
- b=evaV2/EWPs+OOffIyZClG2gfhT0rS5nJ7YSvJD6AK9MQWzuYdzw3AaHzt0KrVrj9Pg
- wXvUtJXUrVKnaMK4Z2SmQzinhxAHPVENTeEk5sIV4OTp0NAI+MTHjSVXQ0DPBx4qL6T6
- HP/UUHChdMelB88ZT069nHXUbJDnusfh3RP1n0bA+79vLMup3TcfYwSQWKvPWEzXqcQi
- ejyJ763JmMOir6hBZgiH3CRkLdy0++tRgTCH5Y6lwbUoeRkX0Oh8ciWj5FrGQYNjTB0D
- lNVqj5wfpIeFCw297lCKwdgCn4g8CUm8vpnekuDycyPH23Kxlj9/94IlWriGslSWUshz
- CBGg==
+ bh=oEguJA7sxiNzRu7SAaD4SSfHU1luGrPb5151zv8BajI=;
+ b=Uu7vvSfqalqQ5melj8lf0LnzCXsM0kqJq7xpez0WfeE0Ofo26nWNAtCt8sbQEdfjj6
+ svbxLbggKD6q+lCMUE6XRe7Xo4LKEKY0wSNE4jAbkP2Z5IGI8Y6E0hrXNENymZvfrZ4j
+ 1tz0js4C7WFet3fmflIRsh/5nT+99HM2QLoLYLGzXU8v6eEOpNto1wAlk47+dxHv8ccq
+ bX++unEM759Dp3pAiGX+SDk4TX2mwzHrY+eIx+pCxCFTs2mvwp+fFVF9oDd/J+a4VTk9
+ IGozU+5WLECv0A5FC3iAE6QjBJxdx+LulF6QwCdBShz5j12BznLa2Vq9eUKku4q24rjs
+ Lc3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743415747; x=1744020547;
+ d=1e100.net; s=20230601; t=1743416799; x=1744021599;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=vXpZrzgtQh7h4bbKv+C8cUPe8LYs6D/P8q/GFsZJBNw=;
- b=tT0u8BmUmJzVpwwz+5gcEeGXHnC04OLCPhcQ5oxaYigx6MPyHuaMQGjokGkOsRH1JI
- 7xi2/fp8cy1UsRKEBgzUZKe5iUGJ6B1H6+S9woTehXG8qz30EcspOYV1fvit35WnFuNB
- H8wYeo+f5Lhrdxy/6fWVpz1wVwJWSEyprfDHod0wkW4ItBqeDKz5f7c2i4S5/yxMG4C8
- /JNIr3WL0UtPSCIRwab1NiRyRuw/8NoQRul7DjQWdmtp+JiVtkOl7IxH3SWbiXEbyUU7
- JFP0ps8h+a4SSjlQAW6h7FQlqUAmixQCkfMaGxHHDUhVZchj6Yvq31J69nJa0beEd5wz
- XxJg==
+ bh=oEguJA7sxiNzRu7SAaD4SSfHU1luGrPb5151zv8BajI=;
+ b=XMpE3S+DeGNIS7wCPYgG16Ekzh0jgmQ/lc+VOmYr8WXfKVc8JREB7HVmX0h6R9x+CQ
+ BFHThikG77qXZEwcic2JH74IXhDVo8XS3RljR/h73nNjvFb9P8OiQm9iHCnte22fhM45
+ 5VkjS+E3qjscbjLBifnSKmkZ14TeVzHJHqSa1itnsr5yBqK2irQDGsSn6UQwZ9AgTJN1
+ QIzh8c8G+DqJWeO+MwiGqC4XAh4aYJMvtvJOkds2WcH+4Gcvf9hsRs5U/QOWGyCKnp3D
+ 5CUx5wyzKJXKG4WyamnvNX8kuSYBOVZbIDOb/PZOg+v5L6568C9NZOnHl+vWIdez44o6
+ cYzA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVknjU7jugRrZLLHtldK/5i980XkO+wx3V+EGlT0WdcGt77Tp2AcG9lP+BqFevw05IKT4s=@dpdk.org
-X-Gm-Message-State: AOJu0Yysg93H+U5SnhDUjkzu8Ntmfg2DobJOmBCRXHDJDB0VBJXPm6xv
- DXITSrlwmplXrcyqgkyr9YZyVeZLRIOgetqgfnt6+4o6oT/fYRT6Xcjgbe3Lme6H2Gliuvcw3LN
- NgCLgS1y+mchZG5DnDAi/jaOm39I=
-X-Gm-Gg: ASbGncvmcIOTHSHNWy2pAr21zW0MzBoMwjRhI+lPU/ZgtXi6PPALSJ7GI1rZR56IXo7
- pDgwUwZ9eVLkgOLJKmfHQ8hcrOqmDD1L7OVutDGKWL7/fFRE5OgrFjf6KskL+iDnAj6Z2R2fGX5
- SiNpdB0q11JAqaJ6JQ6A3/ISq8OXUvPB5LDrpgr0u1l/QdlTvSiwLLg2ObuMc=
-X-Google-Smtp-Source: AGHT+IGteRVcVef4aNe4qEh3ovdO2jya7/MUCdzuezDqNFtYd6xn2OcqEVQajDnAWzuFYcXajlPSaETtyZpIDUFIMgc=
-X-Received: by 2002:a05:6902:e04:b0:e63:d299:8719 with SMTP id
- 3f1490d57ef6-e6b83ad958cmr9739739276.39.1743415746716; Mon, 31 Mar 2025
- 03:09:06 -0700 (PDT)
+ AJvYcCWAi9p/qkoqwxlVf/xCdSNGpfLslI+Z1/MqtsY51oyD32I3NJN8WfC5c/oqNJm1ZmJmJpZsGmffAMoT@dpdk.org,
+ AJvYcCXEzaZ9qHE8n6NPlaBzMksyE2VtpvrVBD08N2aEd62kAPa6bG1uXCKpRfTxodUbmb9A8Do=@dpdk.org
+X-Gm-Message-State: AOJu0YxEfCeEeutRq4LbyD0SaJWiYTzJF4M26a5fbzpiUYJaFrWScE49
+ 5HU4ORQcYOLYSpfTQRR/JtAcQzfz4LQgMP0YZ3s/a9HBV9HXJTjZYL5cCSzCd0GqPCyKkrXNf+r
+ Fqzuwou+tru8svJWcn3DJ879koQ0=
+X-Gm-Gg: ASbGncvMRAoIy6l5LPIKvP2SU7zn+NTmCNSCzp8PWgxQk5TV/3MHfsmI4EWMT+mQ0pI
+ Pu+PPuJByiB2ryec1vdHZe68eY03O6xZv4GJsRsARHCgzT9zrwwAeuHE+81RxwR62bvWPbxwE0f
+ lfVfBQfamRRUKzyEpg1OtIMrnnqnKTf+6lmXWiUoVOJzzeNR7EGTLMpY3Lgt0=
+X-Google-Smtp-Source: AGHT+IGFaKBQo6jjONDh5BJLNzTkZp3/pmM1IvfGnz57nLcp30fm8p4B0nNhM2+tYZnRGEy4JqGwyuierwIdZ4EmbEk=
+X-Received: by 2002:a05:6902:2102:b0:e60:a3f1:b13b with SMTP id
+ 3f1490d57ef6-e6b839a0918mr10857486276.18.1743416798747; Mon, 31 Mar 2025
+ 03:26:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250326115132.1444530-1-luca.boccassi@gmail.com>
- <CAGYh1E-M+DHvhyVb0CMTL9t4yw9LE2WOvOi58yGF69J1bA=fGg@mail.gmail.com>
-In-Reply-To: <CAGYh1E-M+DHvhyVb0CMTL9t4yw9LE2WOvOi58yGF69J1bA=fGg@mail.gmail.com>
+References: <20250306133713.393057-1-getelson@nvidia.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FB79@smartserver.smartshare.dk>
+ <461725d-3c36-9b7f-c02d-f630dc8bc725@nvidia.com>
+ <Z-V6GohKhnK0ywu2@bricha3-mobl1.ger.corp.intel.com>
+ <2e308be8-8ef3-963-cbb2-5cf68a3d3b3d@nvidia.com>
+ <20250328122516.733217af@hermes.local>
+ <Z-pcP_sbk5T-e7EE@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <Z-pcP_sbk5T-e7EE@bricha3-mobl1.ger.corp.intel.com>
 From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Mon, 31 Mar 2025 10:08:55 +0000
-X-Gm-Features: AQ5f1Jryx6cHLR_NO8Sm75DU3adezDz-5MgVusHeLUiSykuj5mKjzd_MftECaRw
-Message-ID: <CAMw=ZnTc9PjQ-JyCq_+X_p-s0cug14AwKasQtWTsTPuaCbht6A@mail.gmail.com>
-Subject: Re: 22.11.8 patches review and test
-To: Yanghang Liu <yanghliu@redhat.com>
-Cc: stable@dpdk.org, dev@dpdk.org, John McNamara <john.mcnamara@intel.com>, 
- Kevin Traynor <ktraynor@redhat.com>, Pei Zhang <pezhang@redhat.com>,
- Chao Yang <chayang@redhat.com>
+Date: Mon, 31 Mar 2025 10:26:27 +0000
+X-Gm-Features: AQ5f1JoIgejrcEUG8ZS-5q9-2YBgMdrSCUwObPRdPJgF_CJg5m8MsjGlw3wZVLU
+Message-ID: <CAMw=ZnRoc8n-FMi6F0vLtGnZGwcqAgXc3h=35wqNkKK1qc3BQw@mail.gmail.com>
+Subject: Re: DPDK for rust
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, "Etelson,
+ Gregory" <getelson@nvidia.com>, 
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org, 
+ techboard@dpdk.org, thomas@monjalon.net, mkashani@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -76,54 +83,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 31 Mar 2025 at 10:08, Yanghang Liu <yanghliu@redhat.com> wrote:
+On Mon, 31 Mar 2025 at 10:20, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> I tested below 18 scenarios on RHEL 9.2 hosts and didn't find any new dpdk issues.
+> On Fri, Mar 28, 2025 at 12:25:16PM -0700, Stephen Hemminger wrote:
+> > On Fri, 28 Mar 2025 21:09:21 +0300 (IDT)
+> > "Etelson, Gregory" <getelson@nvidia.com> wrote:
+> >
+> > > >> Hello Morten,
+> > > >>
+> > > >> Thank you for raising these questions !
+> > > >>
+> > > >>>
+> > > >>> Do we want the DPDK project itself to support rust?
+> > > >>> Or should parts of this be a DPDK hosted project, like grout?
+> > > >>
+> > > >> Rust packages management is different.
+> > > >> Also DPDK Rust code will eventually provide a different API.
+> > > >> At this stage, DPDK hosted project looks like a good idea.
+> > > >>
+> > > >
+> > > > For ease of use, that would mean hosting a cargo registry, no?
+> > > >
+> > >
+> > > That's correct - cargo registry is the native way.
+> > > Also we may consider splitting the code between several crates.
+> > > That approach can provide more flexible way to arrange files.
+> >
+> > Talk to Luca. The current rust cargo registry model is causing
+> > lots of grief for distro's such as Debian, Redhat, Ubuntu and SUSE.
+> >
+> > Packaging is always a pain
 >
-> VM with device assignment(PF) throughput testing(1G hugepage size): PASS
-> VM with device assignment(PF) throughput testing(2M hugepage size) : PASS
-> VM with device assignment(VF) throughput testing: PASS
-> PVP (host dpdk testpmd as vswitch) 1Q: throughput testing: PASS
-> PVP vhost-user 2Q throughput testing: PASS
-> PVP vhost-user 1Q - cross numa node throughput testing: PASS
-> VM with vhost-user 2 queues throughput testing: PASS
-> vhost-user reconnect with dpdk-client, qemu-server(qemu reconnect): PASS
-> vhost-user reconnect with dpdk-client, qemu-server(ovs reconnect): PASS
-> PVP  reconnect with dpdk-client, qemu-server: PASS
-> PVP 1Q live migration testing: PASS
-> PVP 1Q cross numa node live migration testing: PASS
-> VM with ovs+dpdk+vhost-user 1Q live migration testing: PASS
-> VM with ovs+dpdk+vhost-user 1Q live migration testing (2M): PASS
-> VM with ovs+dpdk+vhost-user 2Q live migration testing: PASS
-> VM with ovs+dpdk+vhost-user 4Q live migration testing: PASS
-> Host PF + DPDK testing: PASS
-> Host VF + DPDK testing: PASS
->
->
-> Test Versions:
->
-> qemu-kvm-7.2.0
-> kernel 5.14
-> libvirt 9.0
-> ovs 3.1
-> git log
->
-> commit 684d996a201182b5335012055df33284e753d832
->
-> Author: Luca Boccassi <luca.boccassi@gmail.com>
->
-> Date:   Wed Mar 26 11:26:26 2025 +0000
->
-> version: 22.11.8-rc1
->
-> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
->
-> Test device : X540-AT2 NIC(ixgbe, 10G)
->
-> Tested-by: Yanghang Liu <yanghliu@redhat.com>
->
->
-> Best Regards,
-> Yanghang Liu
+> Yes, but cargo is just the way the rust ecosystem works right now. If we
+> want to have DPDK available for rust developers it needs to be accessible
+> via cargo.
 
-That's great to hear, thanks!
+Making DPDK available on it is not an issue - the problems start
+popping up if it is _used by_ DPDK to pull in dozens of dependencies,
+as it becomes way, way too hard to manage. If you only use the
+compiler and the standard library then it's doable
