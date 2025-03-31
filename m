@@ -2,68 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC35C36011
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 08:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB294C3600C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 08:45:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C9DF4060C;
-	Mon, 31 Mar 2025 10:42:47 +0200 (CEST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 1BABD402CD
- for <dev@dpdk.org>; Sat, 29 Mar 2025 20:53:45 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-4393dc02b78so21488415e9.3
- for <dev@dpdk.org>; Sat, 29 Mar 2025 12:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1743278024; x=1743882824; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=lZdioLeaD9q2Pt9v4lfH4j5cE00Yl0Aa8XDuhmLZQhY=;
- b=J5Z2n0oPJ8HPxrEyfiScpkoDY4tDFzcRQ3IbSI9ur66tQnIjotDex+vEsc2iVLwcmf
- ohIjrHUgGwdB+2CEfMFJk8DFJq8LNee2UdTR65nRSdl4H98JmOFyVSKYljItNUDpNHor
- 6CD+Nb7p+gz++tpcvPJR1INVBH2KBTcOs9oULIdPP1BRdAzC2zYE5CJ/8j1FhPoduFtw
- VbaOahLE1PtnsLX9WicahVZD2xLJRHKQbxIGjUznbS5RIUOsrx97OLmn+H89egUKlm0m
- 81iAX7PSO9v4ShNiW9Ij5XzaJfXZVVgpRm5B/3p2G523Y8vPWbSQpMgKk/N9Aifl90Sm
- xd3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743278024; x=1743882824;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=lZdioLeaD9q2Pt9v4lfH4j5cE00Yl0Aa8XDuhmLZQhY=;
- b=Q89g+bAOiC/4hnwe5VT2FCxGnaeX5K9DoGomtG0FfagX7BnonF19y4PB2Urm/0YLJf
- e27oMFL7sBSMhn38Kqg+pSg/G71G0ER6V9kvWrSjoes4wHPV4drE/UQm7PHhmP9BH1Du
- FOCpv2vssbxUspO5RTK3xlQcmn2iak6DGQzEle/athuQVzKtWMFW5/9XE7XPxH1z/6Wl
- LNrqHxNyyNuT0UR2xGpJt1E+Jsz+ZkfhNn/OOik2X/n536BqldqRpiCSQOTb8On7HPIx
- 2mATrjX/19U+pmYvZzk6fmsqaqCiEBSpmtCx0kOAmPagbOOCYju/+nt/BncRqncw33VM
- sjWQ==
-X-Gm-Message-State: AOJu0YwtzFOnwj24qd6Lfbf6x1HYMiC200c9q4QRmyZ/GMK42LBoq7Vb
- X0V6E2e+WcAyLNOq2bGBEGMFNtuZQczgChOya8vabwlZ2nXmKZooABKUy68r
-X-Gm-Gg: ASbGncuCc/4bSzmYMZj0EIKd2HNswhNhbr02H4P4CmRmeUgYaQ7TIhzbHnPnwdsA/zn
- 3XShikxg7rtURqlRdjGzPP19jvrN9deQ5Rx196Iua9lYQnWBxpG6OpXIx6H5l0AkxwMJraCX/zt
- iFVE4Z6nwdSuqD+Kqq3+Qs9CX2Gqhfd25de9slZoUE1a7lRvtmfjLNAResK7Loco7cgllM4Fgh+
- VFBhz3W4txZ5iiMZVmoIch/3EjzpLm3DYnRvW8tyfb8ZWq7KPoLReayTXZHax5hPqt6OlKBh1gP
- NMIP4Iuhws1BsgypVemCOKinnLAukiEeEslPzJ3YsNMB01KK/jfyqcFpmXQxlf+VSRsfIgZNjQ=
- =
-X-Google-Smtp-Source: AGHT+IHdy0VkGonCLTM5/12inOhxygp+acv7oNfOQ9rdSprjn2jPzMgtwbe3BdBilErZ8HRG3PBADw==
-X-Received: by 2002:a05:600c:198c:b0:43c:fe90:1279 with SMTP id
- 5b1f17b1804b1-43db6289b35mr27260045e9.21.1743278024491; 
- Sat, 29 Mar 2025 12:53:44 -0700 (PDT)
-Received: from ubuntu.localdomain ([202.165.248.249])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-39c0b60a9ddsm6684145f8f.0.2025.03.29.12.53.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 29 Mar 2025 12:53:44 -0700 (PDT)
-From: Tanzeel Ahmed <tanzeelahmed713@gmail.com>
-To: orika@nvidia.com
-Cc: dev@dpdk.org,
-	Tanzeel Ahmed <tanzeelahmed713@gmail.com>
-Subject: [PATCH] examples/flow_filtering: fix make clean
-Date: Sat, 29 Mar 2025 12:53:33 -0700
-Message-Id: <20250329195333.324178-1-tanzeelahmed713@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 9F1ED40156;
+	Mon, 31 Mar 2025 10:45:10 +0200 (CEST)
+Received: from fhigh-b6-smtp.messagingengine.com
+ (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+ by mails.dpdk.org (Postfix) with ESMTP id 39F8740150
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 10:45:09 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 694BD2540139;
+ Mon, 31 Mar 2025 04:45:08 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Mon, 31 Mar 2025 04:45:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1743410708;
+ x=1743497108; bh=ll7vOm4Zrh6zij45nvOatKqhsYT4vMAUPIp4tGNzlLM=; b=
+ UfGVQMMIMooFwrjB5Y4raxFPOEUqfbcA+Nt+cQvumaFrpvgJTcc+XgX15MQPLX/H
+ 4TFsxCRHPUM1cAFgQ9jI3cJb8Ld0ntntw+AtrsNc1DB7N0Komer2hDMo/sKGnEik
+ IN0VzCZOo+eZEf+NMP0xOI3KOmfLYfLP+Qf+CpI66vTs35aqTPfLIQdnNdWr9jpM
+ JG7x+P2ohCs1cNTTCEjk+0j6SMObUSrm6TpW2S3scFABIw9RKiwXmKVlLgQQywax
+ p/F1u3xahSRcq8c5yoRDJ+99RUDKMl/6m+miv14bIbRQMHusPY30oMuq+qCqpn8k
+ x/CgzUhuVDEVr/i0owu+Ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743410708; x=
+ 1743497108; bh=ll7vOm4Zrh6zij45nvOatKqhsYT4vMAUPIp4tGNzlLM=; b=P
+ hAVZyKfzRaf2vce0Lq5HxTQ6w748KwZWkQiEYOY/l/cyvpC0p3w9ZV9m+nSbZPSJ
+ aoeUiLNuhtnXt/SZ4oCFExCiDHo3gSOkxPRs9aFtFlzV6098jtZhfygc8zA5kPPw
+ gopXc52CzslSwGSylPJFYEK3PoER5olYsYkpXe6TMydOC3R3hk58/tPJxqk2qTYm
+ cqf/o99dY5EWVjBNFugB+ueODEZ4BBV39pv6cn6/qTf5RCQUD8vAf+IRwg8MQq9d
+ 8nl53aZ86/JpWKnwI3lV0sEgRqhgTWG8x/pf8yj1nRJtE6j+A8bYS+6dtcZTg2SC
+ AY1eh4tqdLGcpotZyZOhA==
+X-ME-Sender: <xms:E1bqZx4docWpxEquimQpg0FbIZl2PqUh8dg0eaZmmQOS3qcCPahZIQ>
+ <xme:E1bqZ-51YAlmBtt02iwOUC36hCcBSVpKNTh3UkVET_odaxztHBHRg8TLssFt_cOfx
+ _eCvD0j-PEyZVYuVA>
+X-ME-Received: <xmr:E1bqZ4dizroncFB2AVEHqVtTIkW0L9nOcbi5U0A3LZOJtuPbWag40RD-jfHC53sRHn8Igy2smyAZQCUZwZWFL4UeLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelgeekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
+ jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
+ geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
+ curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
+ pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtrg
+ hniigvvghlrghhmhgvugejudefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepohhrihhk
+ rgesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
+ hpthhtohepshhhphgvrhgvthiisehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:FFbqZ6KpvCHk7UZ-uc-0g2WxWU6o2TyK_1PYTEVOtNGKlw838AGQ-w>
+ <xmx:FFbqZ1KKV_e_U0-n6MwhUbJD1GZTb1B4UDysKz2P2suP2zE-j3hP-g>
+ <xmx:FFbqZzwtChfRKxpdLy61u6XrN3hmWfN9UvVkE7ZxxIyLyATtNEohjw>
+ <xmx:FFbqZxK85iFZqpasJd26a7iKoHeObFccufCEWNrqv0ZimygX_s8yog>
+ <xmx:FFbqZyH7GF-EluvXmzvyuE5h3czoo0TfGBC3SYtrQm9y27LvkRwQ6yQW>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 31 Mar 2025 04:45:07 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Tanzeel Ahmed <tanzeelahmed713@gmail.com>
+Cc: orika@nvidia.com, dev@dpdk.org, Shani Peretz <shperetz@nvidia.com>
+Subject: Re: [PATCH] examples/flow_filtering: fix make clean
+Date: Mon, 31 Mar 2025 10:45:05 +0200
+Message-ID: <5791577.oiGErgHkdL@thomas>
+In-Reply-To: <20250329195333.324178-1-tanzeelahmed713@gmail.com>
+References: <20250329195333.324178-1-tanzeelahmed713@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Mon, 31 Mar 2025 10:42:44 +0200
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,28 +89,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-make clean is unable to delete build directory
-because *.o files are not removed.
+29/03/2025 20:53, Tanzeel Ahmed:
+> make clean is unable to delete build directory
+> because *.o files are not removed.
+> 
+> The other way to fix this would be to add all the
+> c files into SRCS-y.
 
-The other way to fix this would be to add all the
-c files into SRCS-y.
+How adding all C files into SRCS-y would help?
 
-Signed-off-by: Tanzeel Ahmed <tanzeelahmed713@gmail.com>
----
- examples/flow_filtering/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/examples/flow_filtering/Makefile b/examples/flow_filtering/Makefile
-index 9998ed10b5..653e3319a2 100644
---- a/examples/flow_filtering/Makefile
-+++ b/examples/flow_filtering/Makefile
-@@ -50,5 +50,5 @@ build:
- 
- .PHONY: clean
- clean:
--	rm -f build/$(APP) build/$(APP)-static build/$(APP)-shared
-+	rm -f build/$(APP) build/$(APP)-static build/$(APP)-shared build/*.o
- 	test -d build && rmdir -p build || true
--- 
-2.25.1
 
