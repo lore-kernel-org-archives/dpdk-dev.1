@@ -2,69 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5C4C28B20
-	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Mar 2025 13:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C7DC36017
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 07:26:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1290A402AB;
-	Sun, 30 Mar 2025 15:47:13 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 26F2E402A4
- for <dev@dpdk.org>; Sun, 30 Mar 2025 15:47:12 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-301493f461eso4580539a91.3
- for <dev@dpdk.org>; Sun, 30 Mar 2025 06:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1743342431; x=1743947231; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=XgnXbfz5cIUtIQmdYamA54/5z1izjzp2XE1nuXTguPs=;
- b=cKmunXl8xBSIdj9YvDH0ZIGoBDHb/DcpyWwW/7HK92h9MSKwE0fvc09B/JueNqXu3b
- +TSF2PvF545nHyzTKr8EhceZWbYKT0wpFbofY6F7LioKr0sfu2eNBWNtq6uNF1jePp3R
- 9CvNYf4/kv1THOf4GNWbyxXOvnRMSAfokvWwTYlZ5SP9Y/WsnQXh3Y6p5sYqvF07fZ6C
- XQeiZDPZSQjVfGP+aGvDfX4iF5tk+XXzgg7ntaVOzxPkjQUidbK/YCwe/xUJe6pM8lHa
- j38ztw6CeIDI1PqNQdDjydGfxABcE1AymZ8IHA43a85zrPzlSvQFb/vx6Onq0i9c870w
- kWYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743342431; x=1743947231;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=XgnXbfz5cIUtIQmdYamA54/5z1izjzp2XE1nuXTguPs=;
- b=UG82cwsiOxTDAOYGOOL3gGP+DITjEhY5uzbomI7/T5c0LNkhT2SiCGp1Icn5+TpaHO
- wgchEOhryv1QdL+4NvnzAys7YNpEbWEzUN708YObLnkEiWuuMZ+9xPcr6fQyk4fQRyXP
- JGC1ebMspv7Q68a5tD6VbB5o8pvtltwmI1dtUhcByNoq0GES0jgvd1mtjrpA/TliuI6a
- qZWOdcatTw76skweEG/NLI4US23ntTcuQ5O5Ue3FJekgWF3tScKdgh5H97h9tZF2C2VJ
- Hl8jjH+Rdi9QCpq+C0G3llwF5EJ0oAPDAOCexNlZgefqlBu/5OMrjYsoQW3dJ5hehmhx
- gNgw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWu8bJwpebRP3UwPmvxvwaGuBU511qoTtdCW0NZDEi+ppa2MaLPknSg8GtbGO3wqfBkmCY=@dpdk.org
-X-Gm-Message-State: AOJu0YznlmNFivccAvidxsARjpVsfR1lJHjfHKy47AZVG1bS2Ng09bJ2
- CLDWK84b9jFLgBmjt6GVbz+dBWk1SCAigEwMJaZKSv0W+gX2l0C3vTsdDt2bLUQkSdswdaxEMYC
- 076Y+PGuFsnZMmLsOUlEQbdKedf0=
-X-Gm-Gg: ASbGncuVjVQb/gnup7CC+lEAdxnqbkJrQZHD9ZZI7a8cPVa9QNtLL03uVSx4TvDUlOv
- k6SfMEIRQGbH+rH3g6N64JaGJMTeqI/P3AB5iY20t6N4gIxPf1liNBiZ7trmfdED/eD0ApH5Bvo
- FoO8sEQ1+sA/uDaLyQTZJ3yzfLlUY=
-X-Google-Smtp-Source: AGHT+IGWN+dy/RvCtAPvHWw6tt2M4lwm1JfYgh8xVNjkU6YzeUk9DHPfHpw1gArgnqTYVLHfR6/uEQab30fmV/AwpWg=
-X-Received: by 2002:a17:90a:f946:b0:2ee:94d1:7a89 with SMTP id
- 98e67ed59e1d1-30531f7c875mr7163441a91.1.1743342430596; Sun, 30 Mar 2025
- 06:47:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 706C440156;
+	Mon, 31 Mar 2025 09:26:29 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 9BA8B40150
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 09:26:27 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 795CC464C5; Mon, 31 Mar 2025 09:26:27 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/vhost/virtio Bug 1685] [dpdk-22.11.8RC1]
+ virtio_ipsec_cryptodev_func/test_aesni_mb_aes_cbc_sha1_hmac: 
+ dpdk-vhost_crypto Segmentation fault (core dumped)  when launch qemu
+Date: Mon, 31 Mar 2025 07:26:27 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: yux.jiang@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1685-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17434059870.7d3b.250896
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20241024110129.791362-1-mb@smartsharesystems.com>
- <20241104105220.1421305-1-mb@smartsharesystems.com>
- <20241104105220.1421305-2-mb@smartsharesystems.com>
- <f942d7c7-7aa6-4ba0-a624-384d11b118ac@broadcom.com>
- <a28fa969-d4fc-435c-945c-e510a70bf69e@amd.com>
-In-Reply-To: <a28fa969-d4fc-435c-945c-e510a70bf69e@amd.com>
-From: spyroot <spyroot@gmail.com>
-Date: Sun, 30 Mar 2025 17:46:58 +0400
-X-Gm-Features: AQ5f1JrX3RebtuUc6x6oFBg5pfhaZIgh-0wmUnqAlXoMlcHaDUFYzTFeW92ny8g
-Message-ID: <CABsV3rA0zJYXShScu5i-zXM6L-UGhK4PWYDq3a4cNZWjXbM+ZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] net/vmxnet3: support larger MTU with version 6
-To: Ferruh Yigit <ferruh.yigit@amd.com>,
- Jochen Behrens <jochen.behrens@broadcom.com>
-Cc: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org, 
- Ronak Doshi <ronak.doshi@broadcom.com>
-Content-Type: multipart/alternative; boundary="0000000000004c390506318f8a7c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,62 +56,597 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000004c390506318f8a7c
-Content-Type: text/plain; charset="UTF-8"
+
+--17434059870.7d3b.250896
+Date: Mon, 31 Mar 2025 09:26:27 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Hi Folks, how can you bump them VMXNET3 version, and do we have a VMXNET3
-unit test for RSS / Max mtu and 32 queue?
+https://bugs.dpdk.org/show_bug.cgi?id=3D1685
 
-On Wed, Nov 6, 2024 at 8:00=E2=80=AFAM Ferruh Yigit <ferruh.yigit@amd.com> =
-wrote:
+            Bug ID: 1685
+           Summary: [dpdk-22.11.8RC1]
+                    virtio_ipsec_cryptodev_func/test_aesni_mb_aes_cbc_sha1
+                    _hmac:  dpdk-vhost_crypto Segmentation fault (core
+                    dumped)  when launch qemu
+           Product: DPDK
+           Version: 22.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: vhost/virtio
+          Assignee: dev@dpdk.org
+          Reporter: yux.jiang@intel.com
+  Target Milestone: ---
 
-> On 11/4/2024 9:44 PM, Jochen Behrens wrote:
->
-> > On 11/4/24 02:52, Morten Br=C3=B8rup wrote:
-> >> Virtual hardware version 6 supports larger max MTU, but the device
-> >> information (dev_info) did not reflect this, so it could not be used.
-> >>
-> >> Fixes: b1584dd0affe ("net/vmxnet3: support version 6")
-> >>
-> >> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> >
-> > Acked-by: Jochen Behrens jochen.behrens@broadcom.com
-> >
->
-> Applied to dpdk-next-net/main, thanks.
->
+[Environment]
 
---0000000000004c390506318f8a7c
-Content-Type: text/html; charset="UTF-8"
+DPDK version: commit 684d996a20 (HEAD -> v22.11.8-rc1, tag: v22.11.8-rc1,
+origin/22.11) version: 22.11.8-rc1
+OS: Ubuntu 18.04.5 LTS (Bionic Beaver); 5.4.0-150-generic
+Compiler: gcc version 7.5.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8180 CPU @ 2.50GHz
+QEMU: qemu-2.12
+qemu version >=3D 2.12 in qemu enable vhost-user-crypto:
+        ./configure --target-list=3Dx86_64-softmmu --enable-vhost-crypto
+--prefix=3D/root/qemu-2.12 && make && make install
+Qemu version: 2.12
+QAT: C62x Chipset QuickAssist Technology 37c8
+
+[Test Setup]
+Steps to reproduce
+List the steps to reproduce the issue.
+
+1, Build dpdk
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson --werror -Denable_kmods=3DFalse -Dlibdir=3Dlib -Dexamples=3D=
+all
+--default-library=3Dstatic x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc -j 110
+ls x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto
+
+2, Bind QAT device and run the dpdk vhost sample in HOST side
+usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:1a:01.0 0000:1c:01=
+.0
+0000:1e:01.0
+x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto  -l 1,2,3,4,5 -a
+0000:1a:01.0 -a 0000:1c:01.0 -a 0000:1e:01.0 --vdev
+crypto_scheduler_pmd_1,worker=3D0000:1a:01.0_qat_sym,worker=3D0000:1c:01.0_=
+qat_sym,worker=3D0000:1e:01.0_qat_sym,mode=3Dround-robin,ordering=3Denable
+--socket-mem 2048,0 -n 4  -- --config "(2,0,0),(3,0,0),(4,0,0),(5,0,0)"
+--socket-file 2,/tmp/vm0_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D3,/tmp/vm0_crypto1.sock=20=20=20=20=20=20=20
+--socket-file=3D4,/tmp/vm1_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D5,/tmp/vm1_crypto1.sock
+
+3, Bind NIC PF to vfio-pci
+usertools/dpdk-devbind.py --bind=3Dvfio-pci 0000:60:00.0 0000:60:00.1
+0000:3b:00.0 0000:3b:00.1
+
+4, Start VM0 by the qemu:
+taskset -c 11,12,13,14 /usr/local/qemu-2.12.0/bin/qemu-system-x86_64  -name=
+ vm0
+-enable-kvm -pidfile /tmp/.vm0.pid -daemonize -monitor
+unix:/tmp/vm0_monitor.sock,server,nowait -device e1000,netdev=3Dnttsip1  -n=
+etdev
+user,id=3Dnttsip1,hostfwd=3Dtcp:10.67.118.199:6410-:22 -device
+vfio-pci,host=3D0000:3b:00.0,id=3Dpt_0 -device vfio-pci,host=3D0000:3b:00.1=
+,id=3Dpt_1
+-cpu host -smp 4 -m 4096 -object
+memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
+=3Don -numa
+node,memdev=3Dmem -mem-prealloc -chardev
+socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -device virtio=
+-serial
+-device virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 -vn=
+c :1
+-chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
+virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 -chardev
+socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
+cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
+virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 -drive
+file=3D/root/VMs/ubuntu2004-0.img
+
+
+[Actual Result]
+VM logs:
+root@dpdk-yaobing-purely147:~/dpdk# taskset -c 11,12,13,14
+/usr/local/qemu-2.12.0/bin/qemu-system-x86_64  -name vm0 -enable-kvm -pidfi=
+le
+/tmp/.vm0.pid -daemonize -monitor unix:/tmp/vm0_monitor.sock,server,nowait
+-device e1000,netdev=3Dnttsip1  -netdev
+user,id=3Dnttsip1,hostfwd=3Dtcp:10.67.118.199:6010-:22 -device
+vfio-pci,host=3D0000:3b:00.0,id=3Dpt_0 -device vfio-pci,host=3D0000:3b:00.1=
+,id=3Dpt_1
+-cpu host -smp 4 -m 4096 -object
+memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
+=3Don -numa
+node,memdev=3Dmem -mem-prealloc -chardev
+socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -device virtio=
+-serial
+-device virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 -vn=
+c :1
+-chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
+virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 -chardev
+socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
+cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
+virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 -drive
+file=3D/root/VMs/ubuntu2004-0.img
+qemu-system-x86_64: -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0: Failed to read =
+msg
+header. Read 0 instead of 12. Original request 1.
+qemu-system-x86_64: -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0: failed to init
+vhost_crypto for queue 0
+
+
+DPDK VHOST sample HOST log:=20
+root@dpdk-yaobing-purely147:~/dpdk#
+x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto  -l 1,2,3,4,5 -a
+0000:1a:01.0 -a 0000:1c:01.0 -a 0000:1e:01.0 --vdev
+crypto_scheduler_pmd_1,worker=3D0000:1a:01.0_qat_sym,worker=3D0000:1c:01.0_=
+qat_sym,worker=3D0000:1e:01.0_qat_sym,mode=3Dround-robin,ordering=3Denable
+--socket-mem 2048,0 -n 4  -- --config "(2,0,0),(3,0,0),(4,0,0),(5,0,0)"
+--socket-file 2,/tmp/vm0_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D3,/tmp/vm0_crypto1.sock=20=20=20=20=20=20=20
+--socket-file=3D4,/tmp/vm1_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D5,/tmp/vm1_crypto1.sock
+EAL: Detected CPU lcores: 112
+EAL: Detected NUMA nodes: 2
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1a:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1a:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1a:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1a:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1a:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1c:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1c:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1c:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1c:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1c:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1e:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1e:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1e:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1e:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1e:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+CRYPTODEV: Creating cryptodev crypto_scheduler_pmd_1
+CRYPTODEV: Initialisation parameters - name: crypto_scheduler_pmd_1,socket =
+id:
+0, max queue pairs: 8
+cryptodev_scheduler_create() line 140:   Scheduling mode =3D round-robin
+cryptodev_scheduler_create() line 195:   Packet ordering =3D enable
+USER1: Processing on Core 2 started
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) vhost-user server: socket created, fd=
+: 49
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) vhost-user server: socket created, fd=
+: 53
+USER1: Processing on Core 3 started
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) vhost-user server: socket created, fd=
+: 54
+USER1: Processing on Core 4 started
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) vhost-user server: socket created, fd=
+: 55
+USER1: Processing on Core 5 started
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) binding succeeded
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) new vhost user connection is 56
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) new device, handle is 0
+USER1: New Vhost-crypto Device /tmp/vm0_crypto0.sock, Device ID 0
+Segmentation fault (core dumped)
+
+[Regression]
+Is this issue a regression: (Y/N) Y
+Bad commit id: 6816d998b0 examples/vhost_crypto: fix user callbacks
+commit 6816d998b04e26ca4468356e0a3c10daf65412eb
+Author: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+Date:   Fri Feb 28 19:17:11 2025 +0530
+
+    examples/vhost_crypto: fix user callbacks
+
+    [ upstream commit f7cf44d49b1115238a87c5852db4b47290bfdc25 ]
+
+    In order to handle new vhost user connection, use new_connection
+    and destroy_connection callbacks.
+
+    Fixes: f5188211c721 ("examples/vhost_crypto: add sample application")
+
+    Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+    Acked-by: Akhil Goyal <gakhil@marvell.com>
+    Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17434059870.7d3b.250896
+Date: Mon, 31 Mar 2025 09:26:27 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-<div dir=3D"ltr">Hi Folks, how can you=C2=A0bump=C2=A0them VMXNET3 version,=
- and do we have a VMXNET3 unit test for RSS / Max mtu and 32 queue?</div><b=
-r><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=
-=3D"gmail_attr">On Wed, Nov 6, 2024 at 8:00=E2=80=AFAM Ferruh Yigit &lt;<a =
-href=3D"mailto:ferruh.yigit@amd.com">ferruh.yigit@amd.com</a>&gt; wrote:<br=
-></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;=
-border-left:1px solid rgb(204,204,204);padding-left:1ex">On 11/4/2024 9:44 =
-PM, Jochen Behrens wrote:<br>
-<br>
-&gt; On 11/4/24 02:52, Morten Br=C3=B8rup wrote:<br>
-&gt;&gt; Virtual hardware version 6 supports larger max MTU, but the device=
-<br>
-&gt;&gt; information (dev_info) did not reflect this, so it could not be us=
-ed.<br>
-&gt;&gt;<br>
-&gt;&gt; Fixes: b1584dd0affe (&quot;net/vmxnet3: support version 6&quot;)<b=
-r>
-&gt;&gt;<br>
-&gt;&gt; Signed-off-by: Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsh=
-aresystems.com" target=3D"_blank">mb@smartsharesystems.com</a>&gt;<br>
-&gt;<br>
-&gt; Acked-by: Jochen Behrens <a href=3D"mailto:jochen.behrens@broadcom.com=
-" target=3D"_blank">jochen.behrens@broadcom.com</a><br>
-&gt;<br>
-<br>
-Applied to dpdk-next-net/main, thanks.<br>
-</blockquote></div>
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - [dpdk-22.11.8RC1] virtio_ipsec_cryptodev_func/tes=
+t_aesni_mb_aes_cbc_sha1_hmac: dpdk-vhost_crypto Segmentation fault (core du=
+mped) when launch qemu"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1685">1685</a>
+          </td>
+        </tr>
 
---0000000000004c390506318f8a7c--
+        <tr>
+          <th>Summary</th>
+          <td>[dpdk-22.11.8RC1] virtio_ipsec_cryptodev_func/test_aesni_mb_a=
+es_cbc_sha1_hmac:  dpdk-vhost_crypto Segmentation fault (core dumped)  when=
+ launch qemu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>22.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>vhost/virtio
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>yux.jiang&#64;intel.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">[Environment]
+
+DPDK version: commit 684d996a20 (HEAD -&gt; v22.11.8-rc1, tag: v22.11.8-rc1,
+origin/22.11) version: 22.11.8-rc1
+OS: Ubuntu 18.04.5 LTS (Bionic Beaver); 5.4.0-150-generic
+Compiler: gcc version 7.5.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8180 CPU &#64; 2.50GHz
+QEMU: qemu-2.12
+qemu version &gt;=3D 2.12 in qemu enable vhost-user-crypto:
+        ./configure --target-list=3Dx86_64-softmmu --enable-vhost-crypto
+--prefix=3D/root/qemu-2.12 &amp;&amp; make &amp;&amp; make install
+Qemu version: 2.12
+QAT: C62x Chipset QuickAssist Technology 37c8
+
+[Test Setup]
+Steps to reproduce
+List the steps to reproduce the issue.
+
+1, Build dpdk
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson --werror -Denable_kmods=3DFalse -Dlibdir=3Dlib -Dexamples=3D=
+all
+--default-library=3Dstatic x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc -j 110
+ls x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto
+
+2, Bind QAT device and run the dpdk vhost sample in HOST side
+usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:1a:01.0 0000:1c:01=
+.0
+0000:1e:01.0
+x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto  -l 1,2,3,4,5 -a
+0000:1a:01.0 -a 0000:1c:01.0 -a 0000:1e:01.0 --vdev
+crypto_scheduler_pmd_1,worker=3D0000:1a:01.0_qat_sym,worker=3D0000:1c:01.0_=
+qat_sym,worker=3D0000:1e:01.0_qat_sym,mode=3Dround-robin,ordering=3Denable
+--socket-mem 2048,0 -n 4  -- --config &quot;(2,0,0),(3,0,0),(4,0,0),(5,0,0)=
+&quot;
+--socket-file 2,/tmp/vm0_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D3,/tmp/vm0_crypto1.sock=20=20=20=20=20=20=20
+--socket-file=3D4,/tmp/vm1_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D5,/tmp/vm1_crypto1.sock
+
+3, Bind NIC PF to vfio-pci
+usertools/dpdk-devbind.py --bind=3Dvfio-pci 0000:60:00.0 0000:60:00.1
+0000:3b:00.0 0000:3b:00.1
+
+4, Start VM0 by the qemu:
+taskset -c 11,12,13,14 /usr/local/qemu-2.12.0/bin/qemu-system-x86_64  -name=
+ vm0
+-enable-kvm -pidfile /tmp/.vm0.pid -daemonize -monitor
+unix:/tmp/vm0_monitor.sock,server,nowait -device e1000,netdev=3Dnttsip1  -n=
+etdev
+user,id=3Dnttsip1,hostfwd=3Dtcp:10.67.118.199:6410-:22 -device
+vfio-pci,host=3D0000:3b:00.0,id=3Dpt_0 -device vfio-pci,host=3D0000:3b:00.1=
+,id=3Dpt_1
+-cpu host -smp 4 -m 4096 -object
+memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
+=3Don -numa
+node,memdev=3Dmem -mem-prealloc -chardev
+socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -device virtio=
+-serial
+-device virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 -vn=
+c :1
+-chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
+virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 -chardev
+socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
+cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
+virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 -drive
+file=3D/root/VMs/ubuntu2004-0.img
+
+
+[Actual Result]
+VM logs:
+root&#64;dpdk-yaobing-purely147:~/dpdk# taskset -c 11,12,13,14
+/usr/local/qemu-2.12.0/bin/qemu-system-x86_64  -name vm0 -enable-kvm -pidfi=
+le
+/tmp/.vm0.pid -daemonize -monitor unix:/tmp/vm0_monitor.sock,server,nowait
+-device e1000,netdev=3Dnttsip1  -netdev
+user,id=3Dnttsip1,hostfwd=3Dtcp:10.67.118.199:6010-:22 -device
+vfio-pci,host=3D0000:3b:00.0,id=3Dpt_0 -device vfio-pci,host=3D0000:3b:00.1=
+,id=3Dpt_1
+-cpu host -smp 4 -m 4096 -object
+memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
+=3Don -numa
+node,memdev=3Dmem -mem-prealloc -chardev
+socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -device virtio=
+-serial
+-device virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 -vn=
+c :1
+-chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
+virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 -chardev
+socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
+cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
+virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 -drive
+file=3D/root/VMs/ubuntu2004-0.img
+qemu-system-x86_64: -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0: Failed to read =
+msg
+header. Read 0 instead of 12. Original request 1.
+qemu-system-x86_64: -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0: failed to init
+vhost_crypto for queue 0
+
+
+DPDK VHOST sample HOST log:=20
+root&#64;dpdk-yaobing-purely147:~/dpdk#
+x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto  -l 1,2,3,4,5 -a
+0000:1a:01.0 -a 0000:1c:01.0 -a 0000:1e:01.0 --vdev
+crypto_scheduler_pmd_1,worker=3D0000:1a:01.0_qat_sym,worker=3D0000:1c:01.0_=
+qat_sym,worker=3D0000:1e:01.0_qat_sym,mode=3Dround-robin,ordering=3Denable
+--socket-mem 2048,0 -n 4  -- --config &quot;(2,0,0),(3,0,0),(4,0,0),(5,0,0)=
+&quot;
+--socket-file 2,/tmp/vm0_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D3,/tmp/vm0_crypto1.sock=20=20=20=20=20=20=20
+--socket-file=3D4,/tmp/vm1_crypto0.sock=20=20=20=20=20=20=20
+--socket-file=3D5,/tmp/vm1_crypto1.sock
+EAL: Detected CPU lcores: 112
+EAL: Detected NUMA nodes: 2
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1a:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1a:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1a:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1a:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1a:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1c:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1c:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1c:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1c:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1c:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+EAL: Probe PCI driver: qat (8086:37c9) device: 0000:1e:01.0 (socket 0)
+CRYPTODEV: Creating cryptodev 0000:1e:01.0_qat_sym
+CRYPTODEV: Initialisation parameters - name: 0000:1e:01.0_qat_sym,socket id=
+: 0,
+max queue pairs: 0
+CRYPTODEV: Creating cryptodev 0000:1e:01.0_qat_asym
+CRYPTODEV: Initialisation parameters - name: 0000:1e:01.0_qat_asym,socket i=
+d:
+0, max queue pairs: 0
+CRYPTODEV: Creating cryptodev crypto_scheduler_pmd_1
+CRYPTODEV: Initialisation parameters - name: crypto_scheduler_pmd_1,socket =
+id:
+0, max queue pairs: 8
+cryptodev_scheduler_create() line 140:   Scheduling mode =3D round-robin
+cryptodev_scheduler_create() line 195:   Packet ordering =3D enable
+USER1: Processing on Core 2 started
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) vhost-user server: socket created, fd=
+: 49
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) vhost-user server: socket created, fd=
+: 53
+USER1: Processing on Core 3 started
+VHOST_CONFIG: (/tmp/vm0_crypto1.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) vhost-user server: socket created, fd=
+: 54
+USER1: Processing on Core 4 started
+VHOST_CONFIG: (/tmp/vm1_crypto0.sock) binding succeeded
+CRYPTODEV: rte_cryptodev_start() line 1208: Device with dev_id=3D0 already
+started
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) logging feature is disabled in async =
+copy
+mode
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) vhost-user server: socket created, fd=
+: 55
+USER1: Processing on Core 5 started
+VHOST_CONFIG: (/tmp/vm1_crypto1.sock) binding succeeded
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) new vhost user connection is 56
+VHOST_CONFIG: (/tmp/vm0_crypto0.sock) new device, handle is 0
+USER1: New Vhost-crypto Device /tmp/vm0_crypto0.sock, Device ID 0
+Segmentation fault (core dumped)
+
+[Regression]
+Is this issue a regression: (Y/N) Y
+Bad commit id: 6816d998b0 examples/vhost_crypto: fix user callbacks
+commit 6816d998b04e26ca4468356e0a3c10daf65412eb
+Author: Gowrishankar Muthukrishnan &lt;<a href=3D"mailto:gmuthukrishn&#64;m=
+arvell.com">gmuthukrishn&#64;marvell.com</a>&gt;
+Date:   Fri Feb 28 19:17:11 2025 +0530
+
+    examples/vhost_crypto: fix user callbacks
+
+    [ upstream commit f7cf44d49b1115238a87c5852db4b47290bfdc25 ]
+
+    In order to handle new vhost user connection, use new_connection
+    and destroy_connection callbacks.
+
+    Fixes: f5188211c721 (&quot;examples/vhost_crypto: add sample applicatio=
+n&quot;)
+
+    Signed-off-by: Gowrishankar Muthukrishnan &lt;<a href=3D"mailto:gmuthuk=
+rishn&#64;marvell.com">gmuthukrishn&#64;marvell.com</a>&gt;
+    Acked-by: Akhil Goyal &lt;<a href=3D"mailto:gakhil&#64;marvell.com">gak=
+hil&#64;marvell.com</a>&gt;
+    Reviewed-by: Maxime Coquelin &lt;<a href=3D"mailto:maxime.coquelin&#64;=
+redhat.com">maxime.coquelin&#64;redhat.com</a>&gt;
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1685">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17434059870.7d3b.250896--
