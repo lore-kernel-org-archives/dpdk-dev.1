@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A55C3600B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51D8C3600B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Mar 2025 16:10:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 243CD406BA;
-	Mon, 31 Mar 2025 18:10:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1450040A6C;
+	Mon, 31 Mar 2025 18:10:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id EA05C40689
- for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D1AE640A6C
+ for <dev@dpdk.org>; Mon, 31 Mar 2025 18:10:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743437417; x=1774973417;
+ t=1743437421; x=1774973421;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=NNU/0d+l51+SpIVPBgrA0j/98tInPUKtGEaS8MoZLLE=;
- b=SnXhlcUdnFb7CE6yknCkAmbyrMYV3nEXbOH3cPRs/1jB2YspiQYvdE7N
- Tktu/jZNYjK11Ni7IX3bX7KN63tqjuBL0JhSHU4q91jsTn4eTkeUeKh7h
- nRtymO79NYLylfYvrMRGKA3IoIsgsa3RlQRcfVpbesmzF4+tOC4Vgil0J
- 4JQx62m8Zv81PYYf84QcNEmSjTiZ849sBprc/fulogKqbTMrLLUuXr9T+
- d3LJsu3dgO6dHFzvQrZaT1csbCN73CiuCDo09K63PFbbo9e6tl9V4S8Bp
- 2bHi9/0FpYGlA31EK+aJNBvyHXMbsl4zVrwW1ocwdUtfX5hhP0i0sEmLc A==;
-X-CSE-ConnectionGUID: Qu5blijiRom3LxfnQbKCLg==
-X-CSE-MsgGUID: 9MAWbDN6SkywXxIn7dAQiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125632"
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125632"
+ bh=9ivePJiyr9mM6851yUVFTDfvASalWp+TzGkIxcK4/C4=;
+ b=SdnkZoMg67cg48Ia5ymU56bE66rxv5+c1LBCwuJbl0pd9ew6nhbLazmG
+ m0FoYc09CsumQ6NAZXguVPx3080RVT2OwM9ZB56MT63x1Dl0ls7uiAslN
+ G8BA8i0epgl8ejPmC73rlhGizNUDXZ1pdU8ALx5DSSZz11IAVGLdGTM/9
+ V1vJ4mLDRLfjxsD6m4LitWPdnuq4OVGpJ8Dy+V8fe24w8mf1gykgGsKt0
+ JGc33hQPAsizJ4qenDvjGLuW+cv3zdvbYbgz3V6Jpmbr6QU7HsCjR9JMG
+ tj7bzaiaez96A3c326f5Luyh919kbod/HoUFtF5ji6XU9Jlj+Olqb2sSE A==;
+X-CSE-ConnectionGUID: Z5hhWOs2RHqC2kA+6+8Iyw==
+X-CSE-MsgGUID: uGvZ97ErQMKpjZ8jZlaGDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="62125644"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="62125644"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Mar 2025 09:10:16 -0700
-X-CSE-ConnectionGUID: MO/TEA5STS+SYxr2VTDylQ==
-X-CSE-MsgGUID: RbjEo9c+SFidHnuqENVPBg==
+ 31 Mar 2025 09:10:20 -0700
+X-CSE-ConnectionGUID: K8qeuqeWQTioV1oPD1Gm8A==
+X-CSE-MsgGUID: jbZEpAUjQdKFBaQDddWUug==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132522"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; d="scan'208";a="131132632"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
- by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:16 -0700
+ by orviesa004.jf.intel.com with ESMTP; 31 Mar 2025 09:10:19 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 01/10] build: add generic support for base code in drivers
-Date: Mon, 31 Mar 2025 17:09:50 +0100
-Message-ID: <20250331161000.9886-2-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH 02/10] common/sfc_efx: use common base code build handling
+Date: Mon, 31 Mar 2025 17:09:51 +0100
+Message-ID: <20250331161000.9886-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
 References: <20250331161000.9886-1-bruce.richardson@intel.com>
@@ -59,60 +60,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support to the drivers meson.build file for base code files with
-extra cflags for compilation. This should remove the need for custom
-logic in each driver.
-
-In future, we may want to move the base code handling down the file a
-little in order to get lock checking. However, this lock checking is not
-done currently on base code builds, so not all drivers can safely pass
-these checks. Therefore, we handle the base code files before we add on
-the extra lock annotation flags.
+Use the base code build handling logic in the drivers/meson.build file,
+rather than re-implementing it in the driver itself.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/meson.build | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/common/sfc_efx/base/meson.build | 18 +++---------------
+ drivers/common/sfc_efx/meson.build      |  3 ---
+ 2 files changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index c15319dc24..b2d2537dc8 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -145,7 +145,13 @@ foreach subpath:subdirs
-         pkgconfig_extra_libs = []
-         testpmd_sources = []
-         require_iova_in_mbuf = true
-+        # for handling base code files which may need extra cflags
-+        base_sources = []
-+        base_cflags = []
+diff --git a/drivers/common/sfc_efx/base/meson.build b/drivers/common/sfc_efx/base/meson.build
+index c8deb4555e..58bb5f7b4a 100644
+--- a/drivers/common/sfc_efx/base/meson.build
++++ b/drivers/common/sfc_efx/base/meson.build
+@@ -5,7 +5,7 @@
+ # This software was jointly developed between OKTET Labs (under contract
+ # for Solarflare) and Solarflare Communications, Inc.
  
-+        if fs.is_dir(drv_path / 'base')
-+            includes += include_directories(drv_path / 'base')
-+        endif
-         if name.contains('/')
-             name = name.split('/')[1]
-         endif
-@@ -216,6 +222,20 @@ foreach subpath:subdirs
-             continue
-         endif
+-sources = [
++base_sources = files(
+         'efx_bootcfg.c',
+         'efx_crc32.c',
+         'efx_ev.c',
+@@ -64,7 +64,7 @@ sources = [
+         'rhead_tunnel.c',
+         'rhead_tx.c',
+         'rhead_virtio.c',
+-]
++)
  
-+        # not all drivers base code is lock annotation safe, so do base code builds before
-+        # adding on the lock annotation flags. NOTE: If no custom cflags, the lock annotation
-+        # checks will be done though.
-+        if base_cflags != []
-+            base_lib = static_library(lib_name + '_base_lib',
-+                    base_sources,
-+                    dependencies: static_deps,
-+                    include_directories: includes,
-+                    c_args: cflags + base_cflags)
-+            objs += base_lib.extract_objects(base_sources)
-+        else
-+            sources += base_sources
-+        endif
-+
-         enabled_drivers += name
-         lib_name = '_'.join(['rte', class, name])
-         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
+ if is_ms_compiler
+     extra_flags = [
+@@ -80,20 +80,8 @@ else
+     ]
+ endif
+ 
+-c_args = cflags
+ foreach flag: extra_flags
+     if cc.has_argument(flag)
+-        c_args += flag
++        base_cflags += flag
+     endif
+ endforeach
+-
+-if build
+-    base_lib = static_library('sfc_base', sources,
+-        include_directories: includes,
+-        dependencies: static_rte_eal,
+-        c_args: c_args)
+-
+-    base_objs = base_lib.extract_all_objects(recursive: true)
+-else
+-    base_objs = []
+-endif
+diff --git a/drivers/common/sfc_efx/meson.build b/drivers/common/sfc_efx/meson.build
+index 0cf0a23bf8..d8cb6d7b96 100644
+--- a/drivers/common/sfc_efx/meson.build
++++ b/drivers/common/sfc_efx/meson.build
+@@ -35,12 +35,9 @@ foreach flag: extra_flags
+ endforeach
+ 
+ subdir('base')
+-objs = [base_objs]
+ 
+ deps += ['bus_pci']
+ sources = files(
+         'sfc_efx.c',
+         'sfc_efx_mcdi.c',
+ )
+-
+-includes += include_directories('base')
 -- 
 2.45.2
 
