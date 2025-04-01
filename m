@@ -2,60 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F92C36010
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 16:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A910CC36010
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 19:04:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A871140275;
-	Tue,  1 Apr 2025 18:37:41 +0200 (CEST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com
- [209.85.219.171])
- by mails.dpdk.org (Postfix) with ESMTP id AA7BB40269
- for <dev@dpdk.org>; Tue,  1 Apr 2025 18:37:39 +0200 (CEST)
-Received: by mail-yb1-f171.google.com with SMTP id
- 3f1490d57ef6-e60b75f87aaso4345111276.2
- for <dev@dpdk.org>; Tue, 01 Apr 2025 09:37:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1743525459; x=1744130259; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=lWafZHFu/sLAbQYtNRjSNGm0TIsvnrO4iPo3X3rYxMs=;
- b=StuElmHhCHsDErImRuRllgC/g0TOHodBS9rC2gCCfAGT1OUNm4rQO2hjgWeIYwrpSN
- smQKU69gM7YmY/H/pu+6SMiy05+Ke9S8QgG7pKskdCnb2azt0fc9ayiQCNrWi8vxZ/Y+
- B868BjG+0RFmSJWo7m9PVBC/ixuooLWG58u1Q=
+	by mails.dpdk.org (Postfix) with ESMTP id 6996640150;
+	Tue,  1 Apr 2025 21:04:55 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CB920400EF
+ for <dev@dpdk.org>; Tue,  1 Apr 2025 21:04:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1743534293;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=m+xzEolsTwYy6XK+5GHqWXxi2K2LeO9lvuYCbaCQpkI=;
+ b=I5Y0eblxaLaaC0GLsJW2dXdOpue+HAujXeHOZA+5EBT/WJJRIgjJqfs5Az2kxbrCVQRxQB
+ Lpoav+yse95E7S6VBael8uPHG3SE39bN4RHOnrN++0Knv7JS4CrRwET3Vn2rlSvuEu0fzw
+ RRR/dFA7hKNX8JylMcHmV8GdUSngJBc=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-_aT1f9qaPyiYR5EUHcs1Bw-1; Tue, 01 Apr 2025 15:04:42 -0400
+X-MC-Unique: _aT1f9qaPyiYR5EUHcs1Bw-1
+X-Mimecast-MFC-AGG-ID: _aT1f9qaPyiYR5EUHcs1Bw_1743534281
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-549948b27a7so2480915e87.3
+ for <dev@dpdk.org>; Tue, 01 Apr 2025 12:04:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743525459; x=1744130259;
+ d=1e100.net; s=20230601; t=1743534281; x=1744139081;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=lWafZHFu/sLAbQYtNRjSNGm0TIsvnrO4iPo3X3rYxMs=;
- b=MyNWUaGd36f9ANtWC18OTtN/JNKm2TtdHJfYWS8W7ghE57aMbK7pRNb003GMDwrrHH
- lNjNwH77ASY5fmINrrmIAywk87yGWsu/CvePMVjMNYDW1mtItjqnp5pOUFoIE4IqEmnc
- /RehDFL3a9qMGRfTumxJPbR8kJQGrq+ZK8e+wTFU19c4TUleAqG9t9iTG1VJmOm3vTbB
- oN22mNveluXjxtJO2hOMCv1jGDz8FZGAwJDqYBmqfoVOIsMWlmzhkSsNxun0vkjS1npv
- BNgsJiI/KbU2HhYbmAxC31jKgDCV4O0u5MQyVZ+07aAIrzywjm2wRfUoX0A+4DfeLFsB
- UxkQ==
-X-Gm-Message-State: AOJu0YzaCMoR+1XpuL8LoTaUVxsGE5hE1KuypeOAy+h9yPrtwGDoCrZN
- ZTXNpnZ4D2QSnu5rBLSaF/N9C5yIY2N+PL3ncA/FnOicenPHTMRXb+zoDYbLVpXP4f0s5eCMHtD
- jz0dhP5lTqsGTXObcFfsvYEvJaGoqMfd1WLmyLQ==
-X-Gm-Gg: ASbGncuHciPxO3TC4oyfn8hmAD3bcVMHRsZLeoAdCUliLClQK1Kfd3a/J78Qe969KHz
- ZN3nvXvUQ++UVn2Xc8MEeu5eudDfuh82KQz68sVOzzcYQHildkbcaarxQ8TiWR0WsfN1C+kAvll
- cgSe2DJ102HPm+bFvBpZOb5BTPfHBQBnq7xfnCF3t/rCURopG8ahRzwt+D0Ye7
-X-Google-Smtp-Source: AGHT+IEil9etmAqRO4rBw23Lujuld3uKziPNhZ8Ro+SXMfeBoP3E55CDrK6ZPcvfXyl8rmIdq34CrUZptybiX7AfkkA=
-X-Received: by 2002:a05:6902:a85:b0:e66:b52d:24fe with SMTP id
- 3f1490d57ef6-e6b8392b977mr18073863276.28.1743525458767; Tue, 01 Apr 2025
- 09:37:38 -0700 (PDT)
+ bh=m+xzEolsTwYy6XK+5GHqWXxi2K2LeO9lvuYCbaCQpkI=;
+ b=VeQqKFLj7psC4XuCOoPjkpBId1DT1m3Ws9oDQ1GjralTAWnM+ATktjlJRhcOZe8RLJ
+ O2Y6UBdDBi6QVzkkSFMARKRuRiFKDCak+oXF1OwoYnEZBteH/2gKUIban7uZZ/pjGkKG
+ nhLJmvN6m3sdSKnY4R+drjHV9jlUuhFG7db1TIlQEDWAP6cTM3GAPwSOqHidJDBnjmj4
+ 2c+atT2CsBMjmBq/DXOHjCk2alCTqochceVfSpLDWn03grybfbIyQOwZwSruWElVSmG1
+ UmDUHfRtZ47TqJD5UeS9AiDWsAV96nMchRqoYtY1SHEzuP+ANPO0/L5WQlnSE2Pq03Wc
+ prCA==
+X-Gm-Message-State: AOJu0Yxh3RqRJ5CYjvbsgQ9L6+ueW7M8JkIFVIUUKuBAYcEX9iUEcQ/p
+ xYzhDYgp1Dp2B6fwxn3/7wtiXgislWrAMJoCAojbpg9Tk366VdqiC5JxGffSaLReUPSlFsUbVtL
+ ybdL/o/UVPcBUz5qECNAGS4sqd4qy1PnG3VLp0K82ir4828BcbXTxgQTiV7WwCevKSqc9bMpKFg
+ PrNqWSKJY2m1UVIS8=
+X-Gm-Gg: ASbGncsNjw0wmjLAwUdKccsz6nWWpMbO6gWUeTtCLSFPuJ7hQcUOsxfXyPJXyBJU4w/
+ J2+IzaJKegG6XYp3gQg6nj3ApxwrhE8Fq5YdiqjqYV0GVMHKQk8uJe8mRdUqJ20G8yucN2aSytA
+ 4=
+X-Received: by 2002:a05:651c:221e:b0:30b:f0fd:fd19 with SMTP id
+ 38308e7fff4ca-30de024b487mr45548081fa.16.1743534281067; 
+ Tue, 01 Apr 2025 12:04:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcTunolPFeaShGbr5iKIbfNliXX8ZET+sGvpPBJBmdhbEitgINEjDwFHfFSG1B7wgewxp7KWCMTcJyFR7fVmU=
+X-Received: by 2002:a05:651c:221e:b0:30b:f0fd:fd19 with SMTP id
+ 38308e7fff4ca-30de024b487mr45548041fa.16.1743534280713; Tue, 01 Apr 2025
+ 12:04:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250318174051.1931041-1-luca.vizzarro@arm.com>
-In-Reply-To: <20250318174051.1931041-1-luca.vizzarro@arm.com>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 1 Apr 2025 12:37:27 -0400
-X-Gm-Features: AQ5f1Jrni6Np_QtN6d7p22DpIIZnt0wcgfVBBg-uVG-uRl9DJDCaIOj_0ukavaY
-Message-ID: <CABD7UXNenBtZrvUWR_HbHUPSMLAn3EF1x25Avme6iYy+y4=exA@mail.gmail.com>
-Subject: Re: [PATCH] dts: add Scapy asynchronous sniffer
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
- Patrick Robb <probb@iol.unh.edu>
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+ <20250328105250.3082414-1-david.marchand@redhat.com>
+ <20250328105250.3082414-4-david.marchand@redhat.com>
+ <19551467.geO5KgaWL5@thomas>
+In-Reply-To: <19551467.geO5KgaWL5@thomas>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 1 Apr 2025 21:04:29 +0200
+X-Gm-Features: AQ5f1Jo8nMCu0oBmRjAJvZ3ghW8p3TixZKDpqAdLHmTaJOCl6HPb4FXNS1TJKas
+Message-ID: <CAJFAV8wgCaQOSabF3wUNyE6pocQVj_Pqhz+aXsrsE-C02KOggQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/8] buildtools: display version when listing symbols
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, andremue@linux.microsoft.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: cxxLQHfCcqzB9k9want5bS5Z_mFsKtcRbmBtlhJicHU_1743534281
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -71,22 +87,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 18, 2025 at 1:41=E2=80=AFPM Luca Vizzarro <luca.vizzarro@arm.co=
-m> wrote:
+On Tue, Apr 1, 2025 at 6:11=E2=80=AFPM Thomas Monjalon <thomas@monjalon.net=
+> wrote:
 >
-> Currently packet capturing in Scapy is used by running Scapy's own
-> class AsyncSniffer in the same shell as packet sending. Because there is
-> some start up time involved in the AsyncSniffer, doing this every single
-> time a test case requires it can become slow and unreliable if sniffer
-> was not ready yet at the time of sending.
+> 28/03/2025 11:52, David Marchand:
+> > Display the version when a symbol was introduced.
+> > This is needed for scripting the conversion from static to dynamically
+> > generated version maps.
+> > It is also useful when listing experimental symbols.
 >
-> Add a multi-threaded implementation for sniffing and capturing packets
-> on-demand using Scapy. The sniffer lives in its own dedicated shell,
-> which is setup for sniffing at the start up of the test run. Packets are
-> only captured when requested by the tests through the use of Event
-> signals.
->
-> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
-> Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+> I feel the title needs a bit more context, maybe adding "map"?
+> buildtools: display version when listing symbols from map
+> buildtools: display symbols version from map
 
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+The second form lgtm.
+
+
+> Do we still need this script after this series?
+
+It is still used in check-symbols.sh, to catch symbols present in
+binaries that are not marked as experimental / internal.
+I don't think there is a way to replace this check.
+
+
+> Should we remove some scripts?
+
+I tried to remove as many as I could, but maybe I overlooked some.
+
+
+--=20
+David Marchand
+
