@@ -2,130 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69227C36018
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 08:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EA9C36014
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 09:00:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 356DF40DCE;
-	Tue,  1 Apr 2025 10:13:07 +0200 (CEST)
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam11on2137.outbound.protection.outlook.com [40.107.236.137])
- by mails.dpdk.org (Postfix) with ESMTP id 2D2044067E;
- Tue,  1 Apr 2025 10:13:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A0D640DC9;
+	Tue,  1 Apr 2025 11:00:33 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 42DB84067E
+ for <dev@dpdk.org>; Tue,  1 Apr 2025 11:00:32 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5311mndx004016;
+ Tue, 1 Apr 2025 02:00:31 -0700
+Received: from nam11-co1-obe.outbound.protection.outlook.com
+ (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45r6t88pg5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 01 Apr 2025 02:00:31 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JSgOjOemX4n/lHTncsQ4WHKSnbnOXd57hhX+tyrqCs+B3XdWgq5E/ALBoFe9M5n3EAUcrK6JeN02ONHEyHD0JohakI570kH3+OhGRM3rDgOArBmiYJ13uKkP8IA9mVEvdygw6QqIXxqnD6Z4WHi219zUXrdQk3See2tNivXxHTxz5ip6SeqbbEZTEIAX0yaQhxKgtkJFmSRDURDCqIGFXP1kp+dJYGf+TV1wIzgpeqgv8oJC0LUU/LjWJawoC7hlSQrteBYT0/+A+A04YpxUd+cIV3aoIdtHFAReaBJz7OzVmgiRnM3GlKJhqLfm1n8zT46IwnFYowCIN+JvPK3txw==
+ b=HyXvaWfS9sthkLvvNM/YYIRHOeAxzwdlZCf9QR6ahp1EvByjnv1XO+IXaIBNWG5pJ7221HOgKnyzD9NvsJgAYqZKs2ZpC4nnsdvLD63ypghtGOLI4xXQDHi/kw09+SFEeUqXM6kXqMsMQ4v08hZJQSxhZCwBRaVNamcrvHtIiym4POm7kUDlKGjNPKetMwjyRtWrU1K1fhv6GIMJd1Ug2jzgxzS4qwG2Vroikwdt/zLywKqgSZz5lTO4Jqqr/Mb3bveF+tfP6s20ufMBDNORZ1XJOERid9vP1vYyANwDx7WGIap1m+ISlbnt8uchzebQaOTVKfSDylUe0jr/w7eQmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hvca402u7BPQulmY4fgTMOlDr+JbUTQ9UC9d79J4E94=;
- b=X2YoZhNXEIecJv/m9CvdLjqxwXWrKF8g4kTm5a7ac2X7//FboLEo6YS/j5+4dXl7PKCi8ZPuBeNmgbv9bapyIuow4PumqrymQDfynpanurB23Nl7ruwG7gnyQnGLUeYHkh/L+bXfwF95GTDQTXdZFGQPR/fMKywZFaOdQUYhIRiczphjsfwSvCziluSXKrU2atjWEL7qF4jdrUx/9U5LHMckq3P5KNui57RvDNp+JYfHKOz4cOLG0phjf5N42IaKZa2+mw5pRyxiEpvfWqpPMqTWWlo2AVbY60+rfRa6/l7DQKeIvUYAxEVuaAiLlR5LRX54CHwZlv0d8lB5mQP01Q==
+ bh=/9kaN0ZXm0X8QBSpUJAuylEULQWf3U4KVxwKdm0HYiY=;
+ b=CbtWICD838c6GBo3O+0K8RLD49SMDp7SzumBE+lv49G6w8EpQxdBZxZ9AlRNGMAT+DHY6mlBDqaYHbTeFcW12hTs6OckCeMP5qewXMD4UkeM5A6uJkV8Z52gCe8mX4o69ZYYq1o9vClFHYa58kurrlZBMtYWjytzCxnuN5W2MThZXtFrERGp0m9nWArfg1GxjeKjXdjsDWWBXYypG4bCEv4lGhydu6ZB98i0JwoyOSU7nu6cQSyE/nwc+MQXDNES4I7XU+JNUILtyVvLNXOgAgQinKQOmfA0Uym86Ycizrehr6DdoACbNBygo2HrlgB0TypXOmL7ykf6XjT+SVHwRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hvca402u7BPQulmY4fgTMOlDr+JbUTQ9UC9d79J4E94=;
- b=YFGt803k4VO2ul8aoQ/cBgKEy7/5h5Eg6KyFafy2BoxlqviAnIOwivKHX7Sm/Brk1cvQUy6fwyWvlKu36p+pZ4yRed21wJhu/oZA8mZQCQZPPaK9dDUEZeR7WBEJunB9gc9R2hP44GTu5thTTKFLeO9ZGtTZ0irqXlPTH9P71aA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from SJ0PR13MB5545.namprd13.prod.outlook.com (2603:10b6:a03:424::5)
- by PH0PR13MB6107.namprd13.prod.outlook.com (2603:10b6:510:29d::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.38; Tue, 1 Apr
- 2025 08:13:02 +0000
-Received: from SJ0PR13MB5545.namprd13.prod.outlook.com
- ([fe80::b900:5f05:766f:833]) by SJ0PR13MB5545.namprd13.prod.outlook.com
- ([fe80::b900:5f05:766f:833%4]) with mapi id 15.20.8583.030; Tue, 1 Apr 2025
- 08:13:02 +0000
-From: Chaoyong He <chaoyong.he@corigine.com>
-To: dev@dpdk.org
-Cc: oss-drivers@corigine.com, Chaoyong He <chaoyong.he@corigine.com>,
- stable@dpdk.org, Peng Zhang <peng.zhang@corigine.com>
-Subject: [PATCH] net/nfp: fix the hash key length logic problem
-Date: Tue,  1 Apr 2025 16:12:35 +0800
-Message-ID: <20250401081235.4127956-1-chaoyong.he@corigine.com>
-X-Mailer: git-send-email 2.43.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0182.apcprd06.prod.outlook.com (2603:1096:4:1::14)
- To SJ0PR13MB5545.namprd13.prod.outlook.com
- (2603:10b6:a03:424::5)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR13MB5545:EE_|PH0PR13MB6107:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6467648-c7cf-454f-6162-08dd70f505aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|52116014|376014|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PbmWMBcS/81LPwvHVInanULzh9I6Rxm17J52aBV73nVuLgYbOCqJd25W7e7l?=
- =?us-ascii?Q?YfyHey05shd+5IAcp73W3bwbJ8bsjczrTPq7rZj6aCjxtFtffc8xntIOXovO?=
- =?us-ascii?Q?zbrAKP6fm+nlS34tXlCmXk042hZatZzAos3M2p42pzQWtP4MbNfIAz/X0+8h?=
- =?us-ascii?Q?GH5woS3aPpEFtrW5JbeQ8/wsXmy7dsjAI0Tq1606mk3p88/IDyvIlgLHDsFM?=
- =?us-ascii?Q?mKO5/55rEiK+LAGGoP3BdEP3Bzjg6ZWM0GWpiOu9TjoFdnQwXtpLph59+shp?=
- =?us-ascii?Q?gQ2l1id5ikgQmjgOsY9TFnl3HyXziX1pt+abvbCAz4CYi5QHCrQWWx0c11qv?=
- =?us-ascii?Q?XgEdiCSbpJxAPUeMwtO/xQCpdzkDkFht8/6n18BaUdSPQznRkv2lhDHxws1i?=
- =?us-ascii?Q?TxR/GNbSyELaA9vvXuWKngmX3gJH0bJpurStU2UVs8QMl2075HWr421nu8dc?=
- =?us-ascii?Q?o/X9aYvJE+SgmdwcDWHfjHDYatGwwaS10RnR7+vqkElA1ceTYBOOXriC1tQH?=
- =?us-ascii?Q?WhUYHtUBnmWx/w25C6fzvU8QeuMeggAEESwCl+NY6QU2A1vuYnOLDCzgU5DB?=
- =?us-ascii?Q?CynxFKTq7yJ4eirvkZgEqOp2UETxnfjSxQlVigNUUZEMAtkvH9BJHY199lw9?=
- =?us-ascii?Q?qcGtydtiYL3ljtESyKPldz2oDoAiLiKp4ZzZbiPG0CwpzdPqXqccKCxaTQfC?=
- =?us-ascii?Q?crNQVPBjaTAar4udXoLa4aqCV0I4h0G6e5U7tR4va5cljyaliwGZo6csS1X7?=
- =?us-ascii?Q?WFYN9TYRyVgfrvG/BNyXSGEpkXLy9sc6/XOFA+zAQO4hJZmzCyEpdOXTBqbh?=
- =?us-ascii?Q?x0fCPXKypEg58+7UAr5WLp9RsZvYC0FC30m7EJEe6ZRriSTcWFTFEnYQtmjw?=
- =?us-ascii?Q?P6qk0gOjWqJ9+lR1GU7VeCOOS8X7ygmsm6zvtVu1Hgcs3/xn9NdXGxslCbiD?=
- =?us-ascii?Q?2h4F/EcHPMspoDkCGZmnCYSLGKBidmChLZRpqWKCoRQx8vZG/EmF64EiROrh?=
- =?us-ascii?Q?XX6am5oTiDrnELGyywONyIJQRPE7L7QiYltK3O0OhRGLkAXMWuioKei0kGKf?=
- =?us-ascii?Q?k5BfsalpOt9AtT/wCVxk6+Rnj6OWOTu/G8q6rcvaXG9GvdMlZBPkk7y3XVF4?=
- =?us-ascii?Q?9YpVgNROwD/O7R7e2UvGkl/dcUXi1HApchaXvGeOsU1HvC+5ICRGghz4E2Mt?=
- =?us-ascii?Q?TUmfDtsT9iJRg9xR+UScot+n8JzlxNvwqgSIU6aKF10Q7cQ0t6R3O/YC/lIb?=
- =?us-ascii?Q?MbWfEqYbpbSQG6iZ+TrmstD7qHqgcvlZQJn6x1rpK4c0wqrlhhmt5oZ5D6OM?=
- =?us-ascii?Q?j/zE1Y8eQmbyNe0RpVwmcOTZ5NehXNGmuYcagLUVqFIARARvaXz9d0GBBFm6?=
- =?us-ascii?Q?4qDS3nhBYvot/WJw9O9jhohn7is9C8eXO7AlkFpt670j8YGOpGTVt1wSsEH2?=
- =?us-ascii?Q?H8qZlpeS2ZmPuM8e/KEclpzgAnCcjq1+xSfOsI9Iq2ibkNfkrnBM0g=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ0PR13MB5545.namprd13.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014); DIR:OUT;
+ bh=/9kaN0ZXm0X8QBSpUJAuylEULQWf3U4KVxwKdm0HYiY=;
+ b=glBU+gP3Z2rUppxSb32pAt0HyiOwdjcy1vTmBP26Fnyln7kWnUPb7NO/MOc1DFTZoCN5MbVZ2bjdplw5bAe4Z5eZpcFkH8UdJ0cfXz6UY9VXp42mnpnVW+TLQLLbmHXl9aAxXQPprkGYPDJgUx5TEpwaggnZFlxMz+rtqpPH6vg=
+Received: from BY3PR18MB4785.namprd18.prod.outlook.com (2603:10b6:a03:3cc::18)
+ by DS1PR18MB6228.namprd18.prod.outlook.com (2603:10b6:8:1f0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.54; Tue, 1 Apr
+ 2025 09:00:27 +0000
+Received: from BY3PR18MB4785.namprd18.prod.outlook.com
+ ([fe80::4f9f:e101:dad7:c576]) by BY3PR18MB4785.namprd18.prod.outlook.com
+ ([fe80::4f9f:e101:dad7:c576%3]) with mapi id 15.20.8534.045; Tue, 1 Apr 2025
+ 09:00:27 +0000
+From: Jerin Jacob <jerinj@marvell.com>
+To: Luka Jankovic <luka.jankovic@ericsson.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [EXTERNAL] [PATCH] eventdev: fix dereferencing null atomic locks
+ pointer in test-eventdev
+Thread-Topic: [EXTERNAL] [PATCH] eventdev: fix dereferencing null atomic locks
+ pointer in test-eventdev
+Thread-Index: AQHbnjdY233nM/sTWk+Q9imLzZ1gd7OOjCZQ
+Date: Tue, 1 Apr 2025 09:00:27 +0000
+Message-ID: <BY3PR18MB4785DFD4760032CCB055DA6AC8AC2@BY3PR18MB4785.namprd18.prod.outlook.com>
+References: <20250326100952.114143-1-luka.jankovic@ericsson.com>
+In-Reply-To: <20250326100952.114143-1-luka.jankovic@ericsson.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4785:EE_|DS1PR18MB6228:EE_
+x-ms-office365-filtering-correlation-id: b8dcef56-a4a7-482a-56e6-08dd70fba57c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?utf-8?B?MW1obHFnVThDYVZLRXhtZ29tbkZyT3pvbEFuQk9TVVhYT1o0OG1jSHF4bkJo?=
+ =?utf-8?B?Qnp2cjMxTlhqNms5L2xUVXpLTXhnSnpqcHEyVjdDSFhnKzBkZDZ1NFFOUlBl?=
+ =?utf-8?B?K2dZWTNjM1ovNWJLMElmVFJwd1JJZnI0Nll2eS8reE5xZ093SGR3dldYaDJP?=
+ =?utf-8?B?K3liWkZ3OW9JOVFOc01yQWVoMDNxMW9xMWUzbW9EbWZjc2ZYekFuTE0wQ3ov?=
+ =?utf-8?B?cmRxTHllS3VxNWZFcVdrWHJ3eTJRMllXK1QwalBkckV4b2tnbGRkck13L1BR?=
+ =?utf-8?B?S3FTN2NRdHpNYkg2cnlOMjNqcE4rUi9IQUswdWQ3L1BtckZoUzFPeUNLTTM3?=
+ =?utf-8?B?MUt2K29LNExnUjJLaDZzc3Uwem9jZm9naERBVnprU0pLTWQ2T05FZ1ZlUFJX?=
+ =?utf-8?B?ZHloZWYwNVZ5bUtFZDQyUmYrQlBhM2FVdFdoZ3B2RjJaSFhzTmMzMmZHLzNY?=
+ =?utf-8?B?YnRNbUFsSW5IQlBxbStxWXN5V3o2c0xsSURFclVTdHVLZ3hhenczZFBCdE1S?=
+ =?utf-8?B?bmx5cVA3Y2ozbWtpY3IzcEFMUjZMTFhVeE10eHl0b3J1YUlxRVB3cjFDWDdX?=
+ =?utf-8?B?ODFocytvemhzZ2IrcnphT3hKZm1MeExvcW1nY25sTk9GQ3lFcjFUNjc1akhq?=
+ =?utf-8?B?S0cwRGRZV1pNTHpGWnBVb2MycXhJVXA2M3dhR3ROazhQOTlWUWhuTUtaQmhY?=
+ =?utf-8?B?MnJhbi9MU2Qvelp6dTFrREZxVmxHcTlyR2ZuaWo4VlA5OEhCVFZUTENQSEZO?=
+ =?utf-8?B?UVlWemFSZTRsakV0OUdKM3VsQjE0aEo1ejJtLzd5NEtwbDlYZEFjMHQyOStE?=
+ =?utf-8?B?bkhnOE5yN05CTHdscWlTUnpTWENvS1RaQWZjaGRRSEo5RUtnRElNZHY0ZkZh?=
+ =?utf-8?B?cVZDZlp5MkNYQm1ZVjBnQ0RNM3pwaUVVVFRYd0YwUDBQQWE4V2lwWlR4SVhn?=
+ =?utf-8?B?RTYvQXh5SWd3QVU3WWpzbnlFWDUxUEdlYnovQXo0T3NZUUY4K2ZoQnVNVHE0?=
+ =?utf-8?B?M1VZaHgydC9KL0x2MExRL015T3M5Njh4NmlVZitrWXdEeGtMbGIvWnkwV2E2?=
+ =?utf-8?B?cXAzRFZOS2tiY203b3kzZXF3ZWR3RUpqN09RS09MYmtlV0pZY3ZaOXhRcDNk?=
+ =?utf-8?B?WS9heUNiMVNrR1E0WVVMaVdYcXNQb25oRWg0UkowZHZWTjd6MEVRdHc3c2E3?=
+ =?utf-8?B?QWd1SFpNK1NrYlRodFo0N0tmSkxvWlh5NFJ3ZDZTZU5xZVBzNTNYcjBWY0Fn?=
+ =?utf-8?B?bHJBWnJuZnJTb2JUZHFyS3YrTUxPRWEzVE1hU0d4RlY3WFcyZ0Q5V0dkelpI?=
+ =?utf-8?B?Z1FPVXZUR2pIQnhyWHNEeko5aFRybWdmMFVqa0VtVG0vSXZxM252MnB6d0tF?=
+ =?utf-8?B?alNRc3h0MlloU3Q5Vmo2WmpFL3Nrck82K2kvYTI4M2JBN2JPVXIxVlJmUWRv?=
+ =?utf-8?B?WlozcDgzc293Tjk3REtVSEVhcmgzSU5zY3ZNNU9zTGVTWUFqVmRJVWZVdkFD?=
+ =?utf-8?B?TmRDNXBhK1U2YVMvejJoc3htK05IaHJkY2ZmNDN1c3JCcDNXVVZOcmJWN1NF?=
+ =?utf-8?B?d1U1eE1DYzNaVnc0WjFoOEpYb3g5L2tnbFg5VHY3YWlldFZKc0dIY1hNd3ZQ?=
+ =?utf-8?B?SWNlTWxIV0ZOV0ZWTFJONnhZVDZnOWFidnY4ZXdJOXlUOFBDdk8yNnAwUkds?=
+ =?utf-8?B?YUhaVnBYMFc1MlB5bWxsUUVNcmRmU3hMZkdFUmxNeXQvYXhRTmpXUkpubEM1?=
+ =?utf-8?B?YzZxcGlvdmNTKzZPL00rUnpESmRuaGhHM1Q5UllPbTdwcjFCMVQ1UlV1Y2Fy?=
+ =?utf-8?B?alp6MU1aTHFvTGE3aTdMUENJazFOWlhxanFtNUVlZEtpUGVzbDZ3NTBwQVp6?=
+ =?utf-8?Q?mSdt26l/yo6I/?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:BY3PR18MB4785.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(38070700018); DIR:OUT;
  SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YONyf9B6D95vMZLqM9sxad/s1MV5WPFPpSPBYOCsmR2ltQPIVpVGQTnAuwXu?=
- =?us-ascii?Q?9H5U2P0o2zSIqu5nUeqaQDvl1Y68P+1F1uSEfpB636Lk9InTsBY8yzdMaZL5?=
- =?us-ascii?Q?oHvvykfJh20WjTzbJv1ke/h67ppSlxm1qX3KN4evpvtu1sQ3YHaECrhMHTgC?=
- =?us-ascii?Q?2oAAVfMwt7h1hg0/n4Y/ykh24S1VSLGWJEoAJPpLSra4hnNtRjPfgcBxKBgU?=
- =?us-ascii?Q?ZoTVpVw1FbEEaFes8x0TTxOQ11owN4Ozo9Nqx4zGhg/aV3JvE9OEB7g0sgbr?=
- =?us-ascii?Q?IEWVTLUjXiDBlk/IuSzBzDGG9z0tVSX8eGq9xh0VXS6HKBuwkhgUwg4D46TF?=
- =?us-ascii?Q?tgX60hCfdSTDcI+vxQZJj5ycbWm17xNxLJUhwGAU+py+NsNMYWRhNrkS/rpu?=
- =?us-ascii?Q?eKIWVy6haQOcwgh+kZZiZQY3wK9iVOA5x5WWjYgCkePs58Wxlde5FXoe6y9V?=
- =?us-ascii?Q?yaS86FwCpBKgkxjXBxqrn7ixsfIFwjgB5JALuaUTJPVPnUtVwvUUZ0z/CRan?=
- =?us-ascii?Q?voZR/xt+8RnZYyPNYrywlGSom0zog+6Nj5yTFD0h0v++2NUM4bFCDdpStx+U?=
- =?us-ascii?Q?d3AI2AqDoHY8vJBMdHA2Ia0+qVwCDAIbESY/8kLE/2INao/TeB1Iukdv4KIn?=
- =?us-ascii?Q?nOTDJt2Gs0KCbGZYxVaDmNr/pXQKFJJ1raj+PlPmr8C4ycCJRC2lfKzcx8Gx?=
- =?us-ascii?Q?Jsgmhvy53DM5VoopQKsQiOFIo32+AcpUXfCAafx82uL5RKkThTIeMNGPVaq0?=
- =?us-ascii?Q?vIXUmvvw5ANsRLhNeJVeEVwWr62ugwTKR3jW1UU3grRFxOiqrP2DPpViO3W/?=
- =?us-ascii?Q?3z48Jr6pI6xDcY88vcv/AGbMZCcU/pgTr5NhY/Nw3ujCsc8C2dCSJ8ONk3mn?=
- =?us-ascii?Q?4IOvIP+zXX5XryDe/MT1dj6k/euIGrta6UaqVauDLIjp62UwZ5y7G9K4u1SK?=
- =?us-ascii?Q?B3dcrrlutc+wEglZ2Dq+teVMgyxGgqRtdAPuNX3KYEx4QLkffIFzO1gLa4ud?=
- =?us-ascii?Q?JvQmS4X+kxzuApuZ3wgezSlWEwZgJL2gMJxZUh7ZHB+9m+so8xvLxm9bFuwm?=
- =?us-ascii?Q?u7q83d3tEKLrDdTuhg89kwyhRDOyzGGB45glZW3R03cY3khD/nXAhG+c0Oo5?=
- =?us-ascii?Q?fv8mX8sI88/oLCZ8YCutEdkNLiM6babTewgX+m7jAnlbdEnj30FkKKeyuJ0j?=
- =?us-ascii?Q?Ddxa3p/MBpgPvuSFCmG8+EUSU57CqGgvQI/DgQhdbAJMjsYacE1hYWQSfvOR?=
- =?us-ascii?Q?Blvv88unDthsmhoTv2lVNFlH/4yyO1pJhOu3k8V1txRMwh+J5A+8NAw1xV4+?=
- =?us-ascii?Q?+jI/5P9febwNyIZVqQqo2efhoJdmSmM4aqVQ3WGnkAjcPJ3+XTUI5Qn5Jo9Q?=
- =?us-ascii?Q?5mbTB4RpoxeJUaiTMIuc6cavVi78gNqXKo3AaJ+Dwi5Rjdz5jWAnUxc2B3gc?=
- =?us-ascii?Q?iyfIfq3VS719ZhMcMzZ3OGlcLOGboFb0NY2eXcz5LHKCo4csUAlLri6zRC8L?=
- =?us-ascii?Q?tQejnPHL8CiJVouXeZcSc2ZZVWGyG49t01UGx5Vv3X2pqjUuUvcA8mgrWa40?=
- =?us-ascii?Q?WOSJ8Gr5TK0/qXLEwNmy1hr0Amm3eZeLHgTHDpf/7ORhbOP+iL5FZASv0jmQ?=
- =?us-ascii?Q?ZA=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6467648-c7cf-454f-6162-08dd70f505aa
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR13MB5545.namprd13.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OVh1THZrTlE3SDAzNmJrTHVyR3JpYkx4Y1RHTVorZlBhVlNEaXpTWlRIYzNu?=
+ =?utf-8?B?V2prRGlBZU1QYnNxZmhoNU5vUkxVMnQyVFEzayt4ZVYwWS9BZ0ZSTVlWcitH?=
+ =?utf-8?B?c0hOMW5TeXVmL3JhNlMrZHhpcThXWU5uMVFPUk9ka3pPQWo0RDIyTTFUbnBG?=
+ =?utf-8?B?Vzg5TlJGdnJHWkIvMUhLRXpFSzNuNS9JNHN3cnFseXFYUFMwdC9PYWtmODBq?=
+ =?utf-8?B?NEh5TXMydGUycFlIMFIxempPaTZIbEhwandGcGpwZkNQRnEySVhIOVdTYkx0?=
+ =?utf-8?B?UWYxYzZmczFJWlV3SFZhb2NLejZ0OUVQYUg1MHI2aFp6T1JuYkFsM3NIYlFX?=
+ =?utf-8?B?M3RLR3lSbXozUGIvbzdGdEpyMmw5ODB3NnRqWEo5bnMxcldPYis3OEZrMEht?=
+ =?utf-8?B?bDhtOWMvcEY0MDl6cnp2akN4ZldyWTlyNlFmVEtXbXFhY1orU1ZQcktkR0Ro?=
+ =?utf-8?B?K1hkUms4dVpWQ0p1dXc2VVY0S1U1b3N4M1ExMzJlZVJtU1VHb3U5VGlnR3dK?=
+ =?utf-8?B?dXJTZW5oVnNqQTdrMXd1MlczUGF2SDFrUDFYR2FQSzhlVkJ5M2pGY2x1WWR0?=
+ =?utf-8?B?UFpiaEdteHk1NElqdm1GTEd1ejIySHpHRzFvcGk1eWhiT0c0b2pMbFNRNUgy?=
+ =?utf-8?B?K3NPQkF3Wk42V3gyWk44b3lmTHFocnJtMGJWczlyVmJpTEhNSjRvZUhnVEpa?=
+ =?utf-8?B?TUVySzA3TlN5UG1yb2lnTFNRRTlZZ2d0WVlLZTVad3hmYnRDQnc2ekhYdkdn?=
+ =?utf-8?B?cmhsMmRoVnBwdnVHb0tON2FoKzBFd3RmTE5vd1Q1R29PWkhzZ2VBaUtzUmIw?=
+ =?utf-8?B?LzhKR3FNS0Q3b0xQaDZwMDhMS3Baa3FqSFhsYVczL2tkTlM4U3ROUTJrVmp6?=
+ =?utf-8?B?UHBNM0VQdGFZZVpGdU93WXpTdlNYeUxla3h1akxSSHdmV1U3YXpUUHVCWGEx?=
+ =?utf-8?B?eURDLy9ZaWs4MWovV01vbkpyNW54aCtJQVZpVzRXbnV1eVB2WlE3bmI2SnN2?=
+ =?utf-8?B?NkhWZGhPTERncXBsenhlb3RLM3lRSmdHWHFwUWZPTU10QWZrMWpSTnkwUkQy?=
+ =?utf-8?B?VUNteUxTWjIvczlsY2krbU1sdWVrVTM5czlXNi9QbXVvSUtPNXgzcG1VUzM1?=
+ =?utf-8?B?SUpmVnYvYXlTdlA4SlVLT2JZaHBCU1NyWEZUNDNTUFNnVmgrOU9NMEtXYmU0?=
+ =?utf-8?B?aitjRHpGd3ZXL0JYb1Vua3NWbTRsUVl5Q0taRHN6KytxNjJLQlBwTTlLVVp3?=
+ =?utf-8?B?bjJPK1Y2ZmFnZzdteFRWNDZ4VEZ6a0ZpemNHR0UrVWpxcUZ0UUlkRGdWdm1m?=
+ =?utf-8?B?OStCd0pHVTNLTnBxbnNMQmFzdVA2OFkyZll4ZGNVM2N6VmQzR2wzQkU1eWxT?=
+ =?utf-8?B?bmV6b05DQ1FrUUdLQWlzT0VLQXRadnRSWVUycnZMVVhjSFJJblZjV2kwcnU1?=
+ =?utf-8?B?bHRUNXA5WitTaVlTelV1UTZReEU4S0pVVUluREI2T25ESHQvZUY2YjZjUnZN?=
+ =?utf-8?B?YW1CTWpERWN2bWJjVXdSRGU3NjZQcXllTGJqK25jZy8rb0V0WE02cVV0c21B?=
+ =?utf-8?B?NXUyTjM3alo0SlhaZXlkaHZUUEtpU0R6RzFsQ3hORFVSZktJd1NCaUhuV3pl?=
+ =?utf-8?B?Q2htS0dZZmRsSWEwTnprMU5zSkx1VTBrelE3TUNhYUFucHRHOEFCejF5ZTFv?=
+ =?utf-8?B?QUZTSlZJdDdSVzl2VTRIbkRGcjhsT1pNbmpFRTNNeDQ2TmRZYlA1L0xrZmtH?=
+ =?utf-8?B?V0c1R1B1SVAvVFRyakhNUlpUZWxNVVZMSkVJeko3VGtsVkZORWJoNnF1TVBR?=
+ =?utf-8?B?a3dUUkttTW1PZnE5ZHo5Z3gwQndLbTVWR3ZhRkF6TFU3VzRock12YW1PWTRO?=
+ =?utf-8?B?YU1ja040alRUMUJNbk9xbmJCWW9JWVErNzBjdnZhc0JqckUzcW5SOHZzYnFq?=
+ =?utf-8?B?LzJhL3hNbzZGdE56eTJJRGNSQkVhUVFsQ0Y5T09WOC9YbHZheTRVNmpiZGpN?=
+ =?utf-8?B?YnpUdUhrM29CN3FxdVltNzFQRUhTamkxNkRUckdLNE54eiswZGRrVnd6UEFC?=
+ =?utf-8?B?cHRWZFhUNnB2UGhmRHJ3MHl6djJtK1oxNGRLeFVKZGpWSFNqN2J4c2JkS1dT?=
+ =?utf-8?Q?u6oc=3D?=
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2025 08:13:02.2967 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jAgma67yR6w1CZUfrTwpbWvaAaeqOq61Ltu05ZtHnq6mRVwgcWUqJqsK2PfcqSRWeEhRlD3daSlAajVK4w5Dw/FDDTPr56/u+tClG769WOI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB6107
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4785.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8dcef56-a4a7-482a-56e6-08dd70fba57c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2025 09:00:27.1490 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Gy8M0GnnuMabh0/4nrzkwIjTmsFMqwL+sT70R/AnJ92mnw55iMNTPYZxXF5AEKjw+Tc9/s5ksWVk53jjBqIKUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR18MB6228
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: buJht-vOMgcjHfO7CE4ke44w7F1FJ29b
+X-Authority-Analysis: v=2.4 cv=QZRmvtbv c=1 sm=1 tr=0 ts=67ebab2f cx=c_pps
+ a=kqCqMoaEgQjRYYKBKtAp1Q==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=XR8D0OoHHMoA:10 a=H5OGdu5hBBwA:10 a=-AAbraWEqlQA:10 a=0FD05c-RAAAA:8
+ a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=RpNjiQI2AAAA:8 a=dwzdsqvyiRBxaUfyJGMA:9
+ a=QEXdDO2ut3YA:10 a=l1rpMCqCXRGZwUSuRcM3:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: buJht-vOMgcjHfO7CE4ke44w7F1FJ29b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-01_03,2025-03-27_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,51 +178,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There does not exist an API for driver to get/set the hash key length
-from/to the firmware.
 
----
-	#define NFP_NET_CFG_RSS_KEY_SZ          0x28
-	#define NFP_NET_CFG_MACADDR             0x0024
----
 
-The original logic try to use the 'NFP_NET_CFG_RSS_KEY_SZ' as the
-inexistent API, read from this address will get wrong hash key length
-and write to this address will overwrite the MAC address unexpected,
-which will cause very strange problem.
+> -----Original Message-----
+> From: Luka Jankovic <luka.jankovic@ericsson.com>
+> Sent: Wednesday, March 26, 2025 3:40 PM
+> To: luka.jankovic@ericsson.com
+> Cc: Jerin Jacob <jerinj@marvell.com>; dev@dpdk.org
+> Subject: [EXTERNAL] [PATCH] eventdev: fix dereferencing null atomic locks
+> pointer in test-eventdev
+>=20
+> Update atomic_init_locks to immediately return if memory allocation fails.
+> Atomic queue and atq tests updated to handle atomic locks being null. Cov=
+erity
+> issue: 457876 Fixes: 9d619f82321b ("app/eventdev: introduce atomic tests")
+> Signed-off-by:=20
+> Update atomic_init_locks to immediately return if memory allocation fails.
+> Atomic queue and atq tests updated to handle atomic locks being null.
+>=20
+> Coverity issue: 457876
+> Fixes: 9d619f82321b ("app/eventdev: introduce atomic tests")
+>=20
+> Signed-off-by: Luka Jankovic <luka.jankovic@ericsson.com>
 
-Fixes: 934e4c60fbff ("nfp: add RSS")
-Cc: stable@dpdk.org
 
-Signed-off-by: Chaoyong He <chaoyong.he@corigine.com>
-Reviewed-by: Peng Zhang <peng.zhang@corigine.com>
----
- drivers/net/nfp/nfp_net_common.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Please check the git history of the file to know the starting tag.
 
-diff --git a/drivers/net/nfp/nfp_net_common.c b/drivers/net/nfp/nfp_net_common.c
-index aaa515bac2..62550e4cad 100644
---- a/drivers/net/nfp/nfp_net_common.c
-+++ b/drivers/net/nfp/nfp_net_common.c
-@@ -1966,9 +1966,6 @@ nfp_net_rss_hash_write(struct rte_eth_dev *dev,
- 	/* Configuring where to apply the RSS hash */
- 	nn_cfg_writel(hw, NFP_NET_CFG_RSS_CTRL, cfg_rss_ctrl);
- 
--	/* Writing the key size */
--	nn_cfg_writeb(hw, NFP_NET_CFG_RSS_KEY_SZ, rss_conf->rss_key_len);
--
- 	return 0;
- }
- 
-@@ -2059,7 +2056,7 @@ nfp_net_rss_hash_conf_get(struct rte_eth_dev *dev,
- 	rss_conf->rss_hf = rss_hf;
- 
- 	/* Reading the key size */
--	rss_conf->rss_key_len = nn_cfg_readl(hw, NFP_NET_CFG_RSS_KEY_SZ);
-+	rss_conf->rss_key_len = NFP_NET_CFG_RSS_KEY_SZ;
- 
- 	/* Reading the key byte a byte */
- 	for (i = 0; i < rss_conf->rss_key_len; i++) {
--- 
-2.43.5
+Updated the git commit as follows and applied to dpdk-next-net-eventdev/for=
+-main. Thanks
 
+
+    app/eventdev: fix dereferencing null
+
+    Update atomic_init_locks to immediately return if memory allocation
+    fails.
+    Atomic queue and ATQ tests updated to handle atomic locks being NULL
+
+    Coverity issue: 457876
+    Fixes: 9d619f82321b ("app/eventdev: introduce atomic tests")
+    Cc: stable@dpdk.org
+
+    Signed-off-by: Luka Jankovic <luka.jankovic@ericsson.com>
