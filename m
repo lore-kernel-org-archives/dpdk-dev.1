@@ -2,66 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F16C36008
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 04:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F9AC36014
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Apr 2025 07:10:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D480D40DD0;
-	Tue,  1 Apr 2025 06:21:05 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 6BCF340DCE
- for <dev@dpdk.org>; Tue,  1 Apr 2025 06:21:04 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5311n0Za005476;
- Mon, 31 Mar 2025 21:21:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
- +3/WoSen5UYSFXYSc8SisxkqHGYI0fiE2HAFwKisiI=; b=iFoyQR4Y1rx/ux9lT
- jsFXtKjW5M6X2hYiYbZK0FqE1/ztZcqxdZGhuBf2z67wfcjQuJdjDf6dWaxfQpf/
- BJ7HL1ToXOnojC7XLrUfe0IaUl5dwOVdvhKjzBvGN3OOqoQLAEJh9wH9z0h5AmGu
- wL/JwJzCdO9YaITQe0DREvxzvbw1zY1yiSJTcBexhaprZdzjQzKcAbtekFH1RgfT
- 3bP0ud1JIN2BUL2/byGtquFvG5F+6FNIq1RhLt+MgCFEWoP4ixU/+FdLL59iNIzm
- DoKv2SkPla/XKFUA35bWnWlRrZFZmHrenGTY3n1d2R4saK3pxb2/hD8HA/GIaznz
- 8YhGw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45r6t887n3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 31 Mar 2025 21:21:03 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 31 Mar 2025 21:21:02 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 31 Mar 2025 21:21:02 -0700
-Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
- by maili.marvell.com (Postfix) with ESMTP id 6B5B55C68E9;
- Mon, 31 Mar 2025 21:21:00 -0700 (PDT)
-From: Nitin Saxena <nsaxena@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
- <pbhagavatula@marvell.com>, Robin Jarry <rjarry@redhat.com>, "Christophe
- Fontaine" <cfontain@redhat.com>
-CC: <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Nitin Saxena
- <nsaxena16@gmail.com>
-Subject: [PATCH 2/2] node: use node mbuf dynfield in ip4 nodes
-Date: Tue, 1 Apr 2025 09:50:47 +0530
-Message-ID: <20250401042053.3518757-3-nsaxena@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250401042053.3518757-1-nsaxena@marvell.com>
-References: <20250401042053.3518757-1-nsaxena@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 60E544067E;
+	Tue,  1 Apr 2025 09:10:05 +0200 (CEST)
+Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
+ by mails.dpdk.org (Postfix) with ESMTP id 50C26402EE
+ for <dev@dpdk.org>; Tue,  1 Apr 2025 09:10:03 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 0F5B138
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
+ s=default; t=1743491402;
+ bh=M5Scj/fT2Vyr52/LyqY/sJ5BhrAcmiIDW7GIhGmWL3I=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=KES3UHyigv+YGl+fa5WnLvedmMO16aJJ9FHf2w5UyQncR81P67bc7//0T9VZ4CaxU
+ YIqg+kZo29seXojZYsVZHS05hojcq2cm9Mc6b/YhSWVZl9lXhWSeUC+qejZbhw7Y4c
+ Z5CBUW0po68Ki+EIU0IIu8aenqmemYR2r6AMSvag=
+Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
+ (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 0F5B138;
+ Tue,  1 Apr 2025 10:10:02 +0300 (MSK)
+Message-ID: <6d5cadb8-55e4-45bf-8c61-dad1ff176a49@oktetlabs.ru>
+Date: Tue, 1 Apr 2025 10:10:00 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: OtE4Bypeo0PQD1UB_Im9cB3eZ2QWwm4K
-X-Authority-Analysis: v=2.4 cv=QZRmvtbv c=1 sm=1 tr=0 ts=67eb69af cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=OmIwWo6MbU-M1zZkRmMA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: OtE4Bypeo0PQD1UB_Im9cB3eZ2QWwm4K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-01_01,2025-03-27_02,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] common/sfc_efx: use common base code build handling
+To: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
+References: <20250331161000.9886-1-bruce.richardson@intel.com>
+ <20250331161000.9886-3-bruce.richardson@intel.com>
+Content-Language: en-US
+From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Organization: OKTET Labs
+In-Reply-To: <20250331161000.9886-3-bruce.richardson@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,245 +51,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-- Used global node mbuf in ip[4|6]_lookup/rewrite nodes
-- Redefine node_mbuf_priv1() to rte_node_mbuf_overload_fields_get()
+On 3/31/25 19:09, Bruce Richardson wrote:
+> Use the base code build handling logic in the drivers/meson.build file,
+> rather than re-implementing it in the driver itself.
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
----
- lib/node/ip4_lookup.c             | 14 ++++-------
- lib/node/ip4_rewrite.c            | 15 +++++-------
- lib/node/ip6_lookup.c             | 15 +++++-------
- lib/node/ip6_rewrite.c            | 14 ++++-------
- lib/node/node_private.h           | 40 +++----------------------------
- lib/node/rte_node_mbuf_dynfield.h |  9 +++++++
- 6 files changed, 34 insertions(+), 73 deletions(-)
-
-diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-index 0b474cd2bc..7e9d21a9c9 100644
---- a/lib/node/ip4_lookup.c
-+++ b/lib/node/ip4_lookup.c
-@@ -31,8 +31,6 @@ struct ip4_lookup_node_ctx {
- 	int mbuf_priv1_off;
- };
-
--int node_mbuf_priv1_dynfield_offset = -1;
--
- static struct ip4_lookup_node_main ip4_lookup_nm;
-
- #define IP4_LOOKUP_NODE_LPM(ctx) \
-@@ -180,17 +178,15 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
- {
- 	uint16_t socket, lcore_id;
- 	static uint8_t init_once;
--	int rc;
-+	int rc, dyn;
-
- 	RTE_SET_USED(graph);
- 	RTE_BUILD_BUG_ON(sizeof(struct ip4_lookup_node_ctx) > RTE_NODE_CTX_SZ);
-
-+	dyn = rte_node_mbuf_dynfield_register();
-+	if (dyn < 0)
-+		return -rte_errno;
- 	if (!init_once) {
--		node_mbuf_priv1_dynfield_offset = rte_mbuf_dynfield_register(
--				&node_mbuf_priv1_dynfield_desc);
--		if (node_mbuf_priv1_dynfield_offset < 0)
--			return -rte_errno;
--
- 		/* Setup LPM tables for all sockets */
- 		RTE_LCORE_FOREACH(lcore_id)
- 		{
-@@ -208,7 +204,7 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
-
- 	/* Update socket's LPM and mbuf dyn priv1 offset in node ctx */
- 	IP4_LOOKUP_NODE_LPM(node->ctx) = ip4_lookup_nm.lpm_tbl[graph->socket];
--	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = node_mbuf_priv1_dynfield_offset;
-+	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
-
- #if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
- 	if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
-diff --git a/lib/node/ip4_rewrite.c b/lib/node/ip4_rewrite.c
-index 34a920df5e..b05decc1a3 100644
---- a/lib/node/ip4_rewrite.c
-+++ b/lib/node/ip4_rewrite.c
-@@ -258,19 +258,16 @@ ip4_rewrite_node_process(struct rte_graph *graph, struct rte_node *node,
- static int
- ip4_rewrite_node_init(const struct rte_graph *graph, struct rte_node *node)
- {
--	static bool init_once;
-+	int dyn;
-
- 	RTE_SET_USED(graph);
- 	RTE_BUILD_BUG_ON(sizeof(struct ip4_rewrite_node_ctx) > RTE_NODE_CTX_SZ);
-
--	if (!init_once) {
--		node_mbuf_priv1_dynfield_offset = rte_mbuf_dynfield_register(
--				&node_mbuf_priv1_dynfield_desc);
--		if (node_mbuf_priv1_dynfield_offset < 0)
--			return -rte_errno;
--		init_once = true;
--	}
--	IP4_REWRITE_NODE_PRIV1_OFF(node->ctx) = node_mbuf_priv1_dynfield_offset;
-+	dyn = rte_node_mbuf_dynfield_register();
-+	if (dyn < 0)
-+		return -rte_errno;
-+
-+	IP4_REWRITE_NODE_PRIV1_OFF(node->ctx) = dyn;
-
- 	node_dbg("ip4_rewrite", "Initialized ip4_rewrite node initialized");
-
-diff --git a/lib/node/ip6_lookup.c b/lib/node/ip6_lookup.c
-index f378d2d064..c140aa9cf3 100644
---- a/lib/node/ip6_lookup.c
-+++ b/lib/node/ip6_lookup.c
-@@ -316,18 +316,16 @@ ip6_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
- {
- 	uint16_t socket, lcore_id;
- 	static uint8_t init_once;
--	int rc;
-+	int rc, dyn;
-
- 	RTE_SET_USED(graph);
- 	RTE_BUILD_BUG_ON(sizeof(struct ip6_lookup_node_ctx) > RTE_NODE_CTX_SZ);
-
--	if (!init_once) {
--		node_mbuf_priv1_dynfield_offset =
--			rte_mbuf_dynfield_register(
--				&node_mbuf_priv1_dynfield_desc);
--		if (node_mbuf_priv1_dynfield_offset < 0)
--			return -rte_errno;
-+	dyn = rte_node_mbuf_dynfield_register();
-+	if (dyn < 0)
-+		return -rte_errno;
-
-+	if (!init_once) {
- 		/* Setup LPM tables for all sockets */
- 		RTE_LCORE_FOREACH(lcore_id)
- 		{
-@@ -345,8 +343,7 @@ ip6_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
-
- 	/* Update socket's LPM and mbuf dyn priv1 offset in node ctx */
- 	IP6_LOOKUP_NODE_LPM(node->ctx) = ip6_lookup_nm.lpm_tbl[graph->socket];
--	IP6_LOOKUP_NODE_PRIV1_OFF(node->ctx) =
--					node_mbuf_priv1_dynfield_offset;
-+	IP6_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
-
- 	node_dbg("ip6_lookup", "Initialized ip6_lookup node");
-
-diff --git a/lib/node/ip6_rewrite.c b/lib/node/ip6_rewrite.c
-index 198d8d8820..b9e223ab3a 100644
---- a/lib/node/ip6_rewrite.c
-+++ b/lib/node/ip6_rewrite.c
-@@ -242,19 +242,15 @@ ip6_rewrite_node_process(struct rte_graph *graph, struct rte_node *node,
- static int
- ip6_rewrite_node_init(const struct rte_graph *graph, struct rte_node *node)
- {
--	static bool init_once;
-+	int dyn;
-
- 	RTE_SET_USED(graph);
- 	RTE_BUILD_BUG_ON(sizeof(struct ip6_rewrite_node_ctx) > RTE_NODE_CTX_SZ);
-
--	if (!init_once) {
--		node_mbuf_priv1_dynfield_offset = rte_mbuf_dynfield_register(
--				&node_mbuf_priv1_dynfield_desc);
--		if (node_mbuf_priv1_dynfield_offset < 0)
--			return -rte_errno;
--		init_once = true;
--	}
--	IP6_REWRITE_NODE_PRIV1_OFF(node->ctx) = node_mbuf_priv1_dynfield_offset;
-+	dyn = rte_node_mbuf_dynfield_register();
-+	if (dyn < 0)
-+		return -rte_errno;
-+	IP6_REWRITE_NODE_PRIV1_OFF(node->ctx) = dyn;
-
- 	node_dbg("ip6_rewrite", "Initialized ip6_rewrite node");
-
-diff --git a/lib/node/node_private.h b/lib/node/node_private.h
-index 4fafab19be..7fb2aff0b8 100644
---- a/lib/node/node_private.h
-+++ b/lib/node/node_private.h
-@@ -13,6 +13,7 @@
- #include <rte_mbuf_dyn.h>
-
- #include <rte_graph_worker_common.h>
-+#include <rte_node_mbuf_dynfield.h>
-
- extern int rte_node_logtype;
- #define RTE_LOGTYPE_NODE rte_node_logtype
-@@ -26,28 +27,8 @@ extern int rte_node_logtype;
- #define node_info(node_name, ...) NODE_LOG(INFO, node_name, __VA_ARGS__)
- #define node_dbg(node_name, ...) NODE_LOG(DEBUG, node_name, __VA_ARGS__)
-
--/**
-- * Node mbuf private data to store next hop, ttl and checksum.
-- */
--struct node_mbuf_priv1 {
--	union {
--		/* IP4/IP6 rewrite */
--		struct {
--			uint16_t nh;
--			uint16_t ttl;
--			uint32_t cksum;
--		};
--
--		uint64_t u;
--	};
--};
--
--static const struct rte_mbuf_dynfield node_mbuf_priv1_dynfield_desc = {
--	.name = "rte_node_dynfield_priv1",
--	.size = sizeof(struct node_mbuf_priv1),
--	.align = alignof(struct node_mbuf_priv1),
--};
--extern int node_mbuf_priv1_dynfield_offset;
-+/* define internal function used by nodes */
-+#define node_mbuf_priv1 rte_node_mbuf_overload_fields_get
-
- /**
-  * Node mbuf private area 2.
-@@ -60,21 +41,6 @@ struct __rte_cache_aligned node_mbuf_priv2 {
-
- #define OBJS_PER_CLINE (RTE_CACHE_LINE_SIZE / sizeof(void *))
-
--/**
-- * Get mbuf_priv1 pointer from rte_mbuf.
-- *
-- * @param
-- *   Pointer to the rte_mbuf.
-- *
-- * @return
-- *   Pointer to the mbuf_priv1.
-- */
--static __rte_always_inline struct node_mbuf_priv1 *
--node_mbuf_priv1(struct rte_mbuf *m, const int offset)
--{
--	return RTE_MBUF_DYNFIELD(m, offset, struct node_mbuf_priv1 *);
--}
--
- /**
-  * Get mbuf_priv2 pointer from rte_mbuf.
-  *
-diff --git a/lib/node/rte_node_mbuf_dynfield.h b/lib/node/rte_node_mbuf_dynfield.h
-index 91eec33a56..a69661f41b 100644
---- a/lib/node/rte_node_mbuf_dynfield.h
-+++ b/lib/node/rte_node_mbuf_dynfield.h
-@@ -34,6 +34,15 @@ extern "C" {
-  */
- typedef struct rte_node_mbuf_overload_fields {
- 	union {
-+		/* Following fields used by ip[4|6]-lookup -> ip[4|6]-rewrite nodes */
-+		union {
-+			struct {
-+				uint16_t nh;
-+				uint16_t ttl;
-+				uint32_t cksum;
-+			};
-+			uint64_t u;
-+		};
- 		uint8_t data[RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE];
- 	};
- } rte_node_mbuf_overload_fields_t;
---
-2.43.0
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
