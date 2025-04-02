@@ -2,55 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81679C28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 06:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF6FC28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 06:58:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54F26402B5;
-	Wed,  2 Apr 2025 08:54:08 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E12FD4029A
- for <dev@dpdk.org>; Wed,  2 Apr 2025 08:54:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743576846;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=DHpy1QnQImOOAJLYuRWm5Jh2Ksdo0ugFd1Erk99PneM=;
- b=QoetctOwiX07+E8MLenvEqTs2sKQuZkmJBJgqMteWBAwdoWIg9lWeWDkGEvIFisTj+Pcoq
- Tl6CzdgMi6Sw8PqwHxt5cESU5rh+gVKBqYSTBD9syVw6fyR102Bd+HwDKEnaTG5U4mCpIJ
- HTINr70kq7CvJ8EZG+hMzQiSKhZKBu0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-582-1sTRu2iyPzSikaGmcxi0ww-1; Wed,
- 02 Apr 2025 02:54:05 -0400
-X-MC-Unique: 1sTRu2iyPzSikaGmcxi0ww-1
-X-Mimecast-MFC-AGG-ID: 1sTRu2iyPzSikaGmcxi0ww_1743576844
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 79DF1180899B; Wed,  2 Apr 2025 06:54:04 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.228])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 51815180A803; Wed,  2 Apr 2025 06:54:02 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DA03E402B5;
+	Wed,  2 Apr 2025 08:58:51 +0200 (CEST)
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net
+ (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E93E4029A
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 08:58:50 +0200 (CEST)
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+ by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwC3p48l4Oxn95TOEQ--.58242S2;
+ Wed, 02 Apr 2025 14:58:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [218.76.62.144])
+ by mail (Coremail) with SMTP id AQAAfwC3vIgj4Oxn_yJeAA--.10255S3;
+ Wed, 02 Apr 2025 14:58:44 +0800 (CST)
+From: liwencheng <liwencheng@phytium.com.cn>
 To: dev@dpdk.org
-Cc: stable@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH] vhost: fix wrapping on control virtqueue rings
-Date: Wed,  2 Apr 2025 08:53:58 +0200
-Message-ID: <20250402065358.3612788-1-david.marchand@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: H9j8ny2J_ccgPU_nz2_3cX5zQSirtJ8J6-V-B_ltJwQ_1743576844
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Subject: [PATCH v4 1/4] usertools/dpdk-devbind: add bind/unbind for platform
+ device
+Date: Wed,  2 Apr 2025 06:58:32 +0000
+Message-Id: <1743577112-119739-1-git-send-email-liwencheng@phytium.com.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: AQAAfwC3vIgj4Oxn_yJeAA--.10255S3
+X-CM-SenderInfo: polzv0xfkh0wo6sk53xlxphulrpou0/
+Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=liwencheng
+ @phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoW3Jr4DWry3Kw18Ww4UtF4DXFb_yoWxZr4fpr
+ 4rAa9ayr1xGrn7Kr9xZ3Wa9FZYkwsFva4rKrnrXw1q93s8Z395tFWvyF1fu3srJr1fZ3Z8
+ t3Z8XFWvka17ZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+ DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+ UUUUU
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,70 +46,207 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The idx field of a virtqueue available ring is increased by the driver
-regardless of the ring size. It is for the device to mask this index
-modulo the ring size (2.7.6 of the virtio 1.3 specification).
-The same applies to the used ring.
+This patch mainly adds functions for bind and unbind platform devices,
+such as bind_platform_one and unbind_platform_one.
 
-Failing to mask triggers:
-- crashes when popping message received on the cvq,
-- system lockups (in the case of VDUSE) when the virtio-net driver waits
-  infinitely,
-
-Fixes: 474f4d7840ad ("vhost: add control virtqueue")
-Cc: stable@dpdk.org
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+Signed-off-by: liwencheng <liwencheng@phytium.com.cn>
 ---
- lib/vhost/virtio_net_ctrl.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ usertools/dpdk-devbind.py | 131 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 114 insertions(+), 17 deletions(-)
 
-diff --git a/lib/vhost/virtio_net_ctrl.c b/lib/vhost/virtio_net_ctrl.c
-index 999e84db7c..63c0a06b4f 100644
---- a/lib/vhost/virtio_net_ctrl.c
-+++ b/lib/vhost/virtio_net_ctrl.c
-@@ -40,7 +40,7 @@ virtio_net_ctrl_pop(struct virtio_net *dev, struct vhost_virtqueue *cvq,
- 		return 0;
- 	}
+diff --git a/usertools/dpdk-devbind.py b/usertools/dpdk-devbind.py
+index 06ae25a..600c4ba 100755
+--- a/usertools/dpdk-devbind.py
++++ b/usertools/dpdk-devbind.py
+@@ -65,7 +65,7 @@
+ intel_idxd_spr = {'Class': '08', 'Vendor': '8086', 'Device': '0b25',
+                   'SVendor': None, 'SDevice': None}
+ intel_idxd_gnrd = {'Class': '08', 'Vendor': '8086', 'Device': '11fb',
+-                  'SVendor': None, 'SDevice': None}
++                   'SVendor': None, 'SDevice': None}
+ intel_idxd_dmr = {'Class': '08', 'Vendor': '8086', 'Device': '1212',
+                   'SVendor': None, 'SDevice': None}
+ intel_ntb_skx = {'Class': '06', 'Vendor': '8086', 'Device': '201c',
+@@ -156,10 +156,32 @@ def module_is_loaded(module):
+     return module in loaded_modules
  
--	desc_idx = cvq->avail->ring[cvq->last_avail_idx];
-+	desc_idx = cvq->avail->ring[cvq->last_avail_idx & (cvq->size - 1)];
- 	if (desc_idx >= cvq->size) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR, "Out of range desc index, dropping");
- 		goto err;
-@@ -167,8 +167,6 @@ virtio_net_ctrl_pop(struct virtio_net *dev, struct vhost_virtqueue *cvq,
- 	}
  
- 	cvq->last_avail_idx++;
--	if (cvq->last_avail_idx >= cvq->size)
--		cvq->last_avail_idx -= cvq->size;
- 	vhost_virtqueue_reconnect_log_split(cvq);
++def get_platform_devices():
++    global platform_devices
++
++    platform_device_path = "/sys/bus/platform/devices/"
++    platform_devices = os.listdir(platform_device_path)
++
++
++def devices_are_platform(devs):
++    all_devices_are_platform = True
++
++    get_platform_devices()
++    for d in devs:
++        if d not in platform_devices:
++            all_devices_are_platform = False
++            break
++
++    return all_devices_are_platform
++
++
+ def check_modules():
+     '''Checks that igb_uio is loaded'''
+     global dpdk_drivers
  
- 	if (dev->features & (1ULL << VIRTIO_RING_F_EVENT_IDX))
-@@ -180,8 +178,6 @@ virtio_net_ctrl_pop(struct virtio_net *dev, struct vhost_virtqueue *cvq,
- 	free(ctrl_elem->ctrl_req);
- err:
- 	cvq->last_avail_idx++;
--	if (cvq->last_avail_idx >= cvq->size)
--		cvq->last_avail_idx -= cvq->size;
- 	vhost_virtqueue_reconnect_log_split(cvq);
++    if devices_are_platform(args):
++        return
++
+     # list of supported modules
+     mods = [{"Name": driver, "Found": False} for driver in dpdk_drivers]
  
- 	if (dev->features & (1ULL << VIRTIO_RING_F_EVENT_IDX))
-@@ -231,13 +227,11 @@ virtio_net_ctrl_push(struct virtio_net *dev, struct virtio_net_ctrl_elem *ctrl_e
- 	struct vhost_virtqueue *cvq = dev->cvq;
- 	struct vring_used_elem *used_elem;
+@@ -330,11 +352,38 @@ def dev_id_from_dev_name(dev_name):
+     for d in devices.keys():
+         if dev_name in devices[d]["Interface"].split(","):
+             return devices[d]["Slot"]
++
++    # Check if it is a platform device
++    if dev_name in platform_devices:
++        return dev_name
++
+     # if nothing else matches - error
+     raise ValueError("Unknown device: %s. "
+                      "Please specify device in \"bus:slot.func\" format" % dev_name)
  
--	used_elem = &cvq->used->ring[cvq->last_used_idx];
-+	used_elem = &cvq->used->ring[cvq->last_used_idx & (cvq->size - 1)];
- 	used_elem->id = ctrl_elem->head_idx;
- 	used_elem->len = ctrl_elem->n_descs;
  
- 	cvq->last_used_idx++;
--	if (cvq->last_used_idx >= cvq->size)
--		cvq->last_used_idx -= cvq->size;
++def unbind_platform_one(dev_name):
++    filename = "/sys/bus/platform/devices/%s/driver" % dev_name
++
++    if exists(filename):
++        try:
++            f = open(os.path.join(filename, "unbind"), "w")
++        except OSError as err:
++            sys.exit("Error: unbind failed for %s - Cannot open %s: %s" %
++                     (dev_name, os.path.join(filename, "unbind"), err))
++        f.write(dev_name)
++        f.close()
++        filename = "/sys/bus/platform/devices/%s/driver_override" % dev_name
++        try:
++            f = open(filename, "w")
++        except OSError as err:
++            sys.exit("Error: unbind failed for %s - Cannot open %s: %s" %
++                     (dev_name, filename, err))
++        f.write("")
++        f.close()
++        print("Successfully unbind platform device %s" % dev_name)
++
++
+ def unbind_one(dev_id, force):
+     '''Unbind the device identified by "dev_id" from its current driver'''
+     dev = devices[dev_id]
+@@ -360,6 +409,48 @@ def unbind_one(dev_id, force):
+     f.close()
  
- 	rte_atomic_store_explicit((unsigned short __rte_atomic *)&cvq->used->idx,
- 		cvq->last_used_idx, rte_memory_order_release);
+ 
++def bind_platform_one(dev_name, driver):
++    filename = "/sys/bus/platform/drivers/%s" % driver
++
++    if not exists(filename):
++        print("The driver %s is not loaded" % driver)
++        return
++    # unbind any existing drivers we don't want
++    filename = "/sys/bus/platform/devices/%s/driver" % dev_name
++    if exists(filename):
++        unbind_platform_one(dev_name)
++    # driver_override can be used to specify the driver
++    filename = "/sys/bus/platform/devices/%s/driver_override" % dev_name
++    if exists(filename):
++        try:
++            f = open(filename, "w")
++        except OSError as err:
++            sys.exit("Error: unbind failed for %s - Cannot open %s: %s"
++                     % (dev_name, filename, err))
++        try:
++            f.write(driver)
++            f.close()
++        except OSError as err:
++            sys.exit("Error: unbind failed for %s - Cannot write %s: %s"
++                     % (dev_name, filename, err))
++    # do the bind by writing to /sys
++    filename = "/sys/bus/platform/drivers/%s/bind" % driver
++    try:
++        f = open(filename, "w")
++    except OSError as err:
++        print("Error: bind failed for %s - Cannot open %s: %s"
++              % (dev_name, filename, err), file=sys.stderr)
++        return
++    try:
++        f.write(dev_name)
++        f.close()
++    except OSError as err:
++        print("Error: bind failed for %s - Cannot bind to driver %s: %s"
++              % (dev_name, driver, err), file=sys.stderr)
++        return
++    print("Successfully bind platform device %s to driver %s" % (dev_name, driver))
++
++
+ def bind_one(dev_id, driver, force):
+     '''Bind the device given by "dev_id" to the driver "driver". If the device
+     is already bound to a different driver, it will be unbound first'''
+@@ -484,7 +575,10 @@ def unbind_all(dev_list, force=False):
+         sys.exit(1)
+ 
+     for d in dev_list:
+-        unbind_one(d, force)
++        if d in platform_devices:
++            unbind_platform_one(d)
++        else:
++            unbind_one(d, force)
+ 
+ 
+ def has_iommu():
+@@ -500,7 +594,7 @@ def check_noiommu_mode():
+     try:
+         with open(filename, "r") as f:
+             value = f.read(1)
+-            if value in ("1", "y" ,"Y"):
++            if value in ("1", "y", "Y"):
+                 return
+     except OSError as err:
+         sys.exit(f"Error: failed to check unsafe noiommu mode - Cannot open {filename}: {err}")
+@@ -547,20 +641,23 @@ def bind_all(dev_list, driver, force=False):
+         check_noiommu_mode()
+ 
+     for d in dev_list:
+-        bind_one(d, driver, force)
+-        # if we're binding to vfio-pci, set the IOMMU user/group ownership if one was specified
+-        if driver == "vfio-pci" and (vfio_uid != -1 or vfio_gid != -1):
+-            # find IOMMU group for a particular PCI device
+-            iommu_grp_base_path = os.path.join("/sys/bus/pci/devices", d, "iommu_group")
+-            # extract the IOMMU group number
+-            iommu_grp = os.path.basename(os.readlink(iommu_grp_base_path))
+-            # find VFIO device correspondiong to this IOMMU group
+-            dev_path = os.path.join("/dev/vfio", iommu_grp)
+-            # set ownership
+-            try:
+-                os.chown(dev_path, vfio_uid, vfio_gid)
+-            except OSError as err:
+-                sys.exit(f"Error: failed to set IOMMU group ownership for {d}: {err}")
++        if d in platform_devices:
++            bind_platform_one(d, driver)
++        else:
++            bind_one(d, driver, force)
++            # if we're binding to vfio-pci, set the IOMMU user/group ownership if one was specified
++            if driver == "vfio-pci" and (vfio_uid != -1 or vfio_gid != -1):
++                # find IOMMU group for a particular PCI device
++                iommu_grp_base_path = os.path.join("/sys/bus/pci/devices", d, "iommu_group")
++                # extract the IOMMU group number
++                iommu_grp = os.path.basename(os.readlink(iommu_grp_base_path))
++                # find VFIO device correspondiong to this IOMMU group
++                dev_path = os.path.join("/dev/vfio", iommu_grp)
++                # set ownership
++                try:
++                    os.chown(dev_path, vfio_uid, vfio_gid)
++                except OSError as err:
++                    sys.exit(f"Error: failed to set IOMMU group ownership for {d}: {err}")
+ 
+     # For kernels < 3.15 when binding devices to a generic driver
+     # (i.e. one that doesn't have a PCI ID table) using new_id, some devices
 -- 
-2.48.1
+2.7.4
 
