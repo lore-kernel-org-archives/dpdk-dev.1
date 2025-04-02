@@ -2,66 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F462C28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2C5C28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:22:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B48CC40649;
-	Wed,  2 Apr 2025 16:13:02 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 94EB140616
- for <dev@dpdk.org>; Wed,  2 Apr 2025 16:13:00 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532CkCO6005120
- for <dev@dpdk.org>; Wed, 2 Apr 2025 07:12:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=3
- 6kNZDEgq7UZe/47m9CZne3EwhiuIvMJBbyrYynkPro=; b=KaJEPb2f0Ky6yyQYg
- VAupthpl5oCi2TrjbcpbrVPTj0FwZBd2vulctnDtFnEanDXq8hDLFGT/MpQT4pRT
- CGOp9dYjLVBtNOYIVfEw8tyo67EqkVrWY6Y7UGc3a12SwQxBNh+JWEYtSvQoJ/Ev
- 7Z+bvnx599nXHQkm2sTeg4Rz8hPs04c3WGrWSBLd/KPcZuJlA46NeabPIylyKTx0
- BhZs53Un8E3+7qSF2N4vLk/KrE9981TLC5yax5hb/uhEZN90L3OxsSFEPIR340IF
- k860nKuOoblyBKcY9BDltkEz9hYZpXgY4kozLNNAAiweaunWYoRAIp8lzBan4x8D
- gCddQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45s5h5086g-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 02 Apr 2025 07:12:56 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 2 Apr 2025 07:12:45 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 2 Apr 2025 07:12:45 -0700
-Received: from localhost.localdomain (unknown [10.28.36.158])
- by maili.marvell.com (Postfix) with ESMTP id 1FB335E687C;
- Wed,  2 Apr 2025 07:12:42 -0700 (PDT)
-From: Rahul Bhansali <rbhansali@marvell.com>
-To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v2 2/3] common/cnxk: update cn20k part numbers
-Date: Wed, 2 Apr 2025 19:42:27 +0530
-Message-ID: <20250402141228.3773691-2-rbhansali@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250402141228.3773691-1-rbhansali@marvell.com>
-References: <20250321100343.1081664-1-rbhansali@marvell.com>
- <20250402141228.3773691-1-rbhansali@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C612C40273;
+	Wed,  2 Apr 2025 16:22:39 +0200 (CEST)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 942D640261
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 16:22:37 +0200 (CEST)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-224019ad9edso54143805ad.1
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 07:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743603756;
+ x=1744208556; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Q5CkbDn4fS/uqjo1GHSY9IzBgWpJ2HR6uKpt5PLy1dI=;
+ b=ZgVH6ehaz27nI9nMepSX3/PTEm0Na8jxmHEcUam9RaDplUDe4wutWYIt9z15RAVvwU
+ Yp7Ixpa20ZyL1zYxYWjOmJgDfwqUz6PmzNDpfFRYyoLrSwl2dnxmxGZ8rmcREZrlpha4
+ qeWdh7Th9tLUqFztDkqG7ZxYQVsqoC41JiK19DBtMuSnZdOcMj1mCjcTmhAefQ+N/C16
+ qbFMa+nk91pvww2+tWd44OjWFUWO9DdhYNlo3L2o5A6j382e7BuqPsPYSCj1rF4lOMGJ
+ 0FwtVLuVAFyNme/TehD9kyg5L14uh1FxYkz0FSzGCfBmXWVDoH8dUDmmpLQynFu1Ojq6
+ rSHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1743603756; x=1744208556;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=Q5CkbDn4fS/uqjo1GHSY9IzBgWpJ2HR6uKpt5PLy1dI=;
+ b=WLME6Xa8Bau6Q1yJ5tz5Rphtg+aSIsN5LA2qdOs1OnihugtzLXLaxJiRxpLMhLNRIz
+ JIYPOKfF/jPI2nyTsqcc6Alzg64oMgNmTe8e2eyvIRvLDs1D9K+246OLIPVScG2ErazP
+ OixGn8NZ8XmXSgF5TkBSNDJAfP3HjiArhgXkfc0IKIxSwmOFf+qSfSlADycqwd2yUK/P
+ 7nDS36lCKMGY8WokT7GyNc6Knh/seKCaE4ok5Pau2ueBNXA+s7JqAhCT+fKQmHxxdbCf
+ eI1tswAcCejmQ3vtFVkRen2sgv32V7lD9ZMjT/tyIRo0T2yysgIEjm+sLe1xEgPVYl7D
+ wrgg==
+X-Gm-Message-State: AOJu0Yxovbq1cVurYXHVOFPpzbtxuiRrfIMmzQZTfqCxzAHGoEI4+tZh
+ BtR+6wL2iVLN6oofUW9u3eZn1IDFrwzN/Ejx3D1BFh6ELIjrFOOgx4E7XO21rEA=
+X-Gm-Gg: ASbGnctrStVOTrXE4CXDkg31JtO+5tNC98dhgHNo3ihXuasC8xu2SlN+FZh6QXce09O
+ W4Qpme3MDCg4A60JMjsa6qnFdNCSiSgguY4Xf/xvjU7f1JpOdFU2yWoG1naQdxaDG8qOA1QsAeV
+ CXPYddAVpsFpGPT4RIycHRlzcfQK3YhTWmOQMSAwR+7CFEE247/eaZjhMO70ygjyxKo5SI8IFOK
+ ehKI95MCDQDS9Zba795fN5jSA/0JivkA3VgVEaAyghBD3L5u33J1of6tjWtRulnL8vgWZuI/fs+
+ OPx1+YopFrJu3TxFremiVkv55jXWvj0PryQ4e/zJXer1iMhgBsV8ePS0Pd6WJQM8wK/k/bBqSlx
+ 72y1KLbWg9E2CyXhFgXSv
+X-Google-Smtp-Source: AGHT+IGQgw366MUWcF0ohJtbE0YPQR04eQUkWh1pb2M+HTwpC2QNrGnIsaAcfhcZvapYF+Stx+9VIw==
+X-Received: by 2002:a17:902:db05:b0:21f:1bd:efd4 with SMTP id
+ d9443c01a7336-2296c65f460mr33384695ad.19.1743603756418; 
+ Wed, 02 Apr 2025 07:22:36 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2291eeca0a7sm108983845ad.39.2025.04.02.07.22.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 02 Apr 2025 07:22:36 -0700 (PDT)
+Date: Wed, 2 Apr 2025 07:22:34 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, "Tyler Retzlaff" <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v7 3/4] app/test: add tests to find devices
+Message-ID: <20250402072234.4226fbb5@hermes.local>
+In-Reply-To: <20250212163836.178976-3-shperetz@nvidia.com>
+References: <20250206105428.237346-1-shperetz@nvidia.com>
+ <20250212163836.178976-1-shperetz@nvidia.com>
+ <20250212163836.178976-3-shperetz@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 0R7hxn9u_Uw2l0EM9c6qayhqZt6FkXAV
-X-Authority-Analysis: v=2.4 cv=FYE3xI+6 c=1 sm=1 tr=0 ts=67ed45e8 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=eOnVWreZ_NyDHwaek8EA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 0R7hxn9u_Uw2l0EM9c6qayhqZt6FkXAV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-02_05,2025-04-02_02,2024-11-22_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,110 +82,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-- Update cn20k part number
-- Add cnf205 support
-- Add APIs for respective cn20k models
+On Wed, 12 Feb 2025 18:38:34 +0200
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
-Signed-off-by: Harman Kalra <hkalra@marvell.com>
----
-Changes in v2: No change
+> @@ -317,6 +431,12 @@ test_devargs(void)
+>  	printf("== test devargs parsing invalid case ==\n");
+>  	if (test_invalid_devargs_parsing() < 0)
+>  		return -1;
+> +	printf("== test find device valid case ==\n");
+> +	if (test_valid_cmp_dev_name() < 0)
+> +		return -1;
+> +	printf("== test find device invalid case ==\n");
+> +	if (test_invalid_cmp_dev_name() < 0)
+> +		return -1;
+>  
 
- drivers/common/cnxk/roc_constants.h |  4 ++--
- drivers/common/cnxk/roc_model.c     |  4 +++-
- drivers/common/cnxk/roc_model.h     | 28 +++++++++++++++++++++++++++-
- 3 files changed, 32 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/common/cnxk/roc_constants.h b/drivers/common/cnxk/roc_constants.h
-index ac492651de..795869c9df 100644
---- a/drivers/common/cnxk/roc_constants.h
-+++ b/drivers/common/cnxk/roc_constants.h
-@@ -66,8 +66,8 @@
- #define PCI_SUBSYSTEM_DEVID_CN10KB  0xBD00
- #define PCI_SUBSYSTEM_DEVID_CNF10KB 0xBC00
-
--#define PCI_SUBSYSTEM_DEVID_CN20KA 0xA020
--#define PCI_SUBSYSTEM_DEVID_CNF20KA 0xA000
-+#define PCI_SUBSYSTEM_DEVID_CN20KA 0xC220
-+#define PCI_SUBSYSTEM_DEVID_CNF20KA 0xC200
-
- #define PCI_SUBSYSTEM_DEVID_CN9KA  0x0000
- #define PCI_SUBSYSTEM_DEVID_CN9KB  0xb400
-diff --git a/drivers/common/cnxk/roc_model.c b/drivers/common/cnxk/roc_model.c
-index 6289461db4..f0312a5400 100644
---- a/drivers/common/cnxk/roc_model.c
-+++ b/drivers/common/cnxk/roc_model.c
-@@ -18,7 +18,8 @@ struct roc_model *roc_model;
- #define SOC_PART_CN10K 0xD49
- #define SOC_PART_CN20K 0xD8E
-
--#define PART_206xx  0xA0
-+#define PART_206xx  0xC2
-+#define PART_205xxN 0xC3
- #define PART_106xx  0xB9
- #define PART_105xx  0xBA
- #define PART_105xxN 0xBC
-@@ -62,6 +63,7 @@ static const struct model_db {
- 	char name[ROC_MODEL_STR_LEN_MAX];
- } model_db[] = {
- 	{VENDOR_ARM, PART_206xx, 0, 0, ROC_MODEL_CN206xx_A0, "cn20ka_a0"},
-+	{VENDOR_ARM, PART_205xxN, 0, 0, ROC_MODEL_CNF205xxN_A0, "cnf20ka_a0"},
- 	{VENDOR_ARM, PART_106xx, 0, 0, ROC_MODEL_CN106xx_A0, "cn10ka_a0"},
- 	{VENDOR_ARM, PART_106xx, 0, 1, ROC_MODEL_CN106xx_A1, "cn10ka_a1"},
- 	{VENDOR_ARM, PART_106xx, 1, 0, ROC_MODEL_CN106xx_B0, "cn10ka_b0"},
-diff --git a/drivers/common/cnxk/roc_model.h b/drivers/common/cnxk/roc_model.h
-index 0de141b0cc..38001a3a23 100644
---- a/drivers/common/cnxk/roc_model.h
-+++ b/drivers/common/cnxk/roc_model.h
-@@ -37,6 +37,7 @@ struct roc_model {
- #define ROC_MODEL_CNF105xxN_B0 BIT_ULL(27)
- /* CN20k Models*/
- #define ROC_MODEL_CN206xx_A0   BIT_ULL(40)
-+#define ROC_MODEL_CNF205xxN_A0 BIT_ULL(41)
-
- /* Following flags describe platform code is running on */
- #define ROC_ENV_HW   BIT_ULL(61)
-@@ -75,7 +76,8 @@ struct roc_model {
-
- /* CN20K models */
- #define ROC_MODEL_CN206xx   (ROC_MODEL_CN206xx_A0)
--#define ROC_MODEL_CN20K     (ROC_MODEL_CN206xx)
-+#define ROC_MODEL_CNF205xxN (ROC_MODEL_CNF205xxN_A0)
-+#define ROC_MODEL_CN20K     (ROC_MODEL_CN206xx | ROC_MODEL_CNF205xxN)
-
- /* Runtime variants */
- static inline uint64_t
-@@ -320,6 +322,30 @@ roc_model_is_cn10kb(void)
- 	return roc_model->flag & ROC_MODEL_CN103xx;
- }
-
-+static inline uint64_t
-+roc_model_is_cn20ka(void)
-+{
-+	return roc_model->flag & ROC_MODEL_CN206xx;
-+}
-+
-+static inline uint64_t
-+roc_model_is_cn20ka_a0(void)
-+{
-+	return roc_model->flag & ROC_MODEL_CN206xx_A0;
-+}
-+
-+static inline uint64_t
-+roc_model_is_cnf20ka(void)
-+{
-+	return roc_model->flag & ROC_MODEL_CNF205xxN;
-+}
-+
-+static inline uint64_t
-+roc_model_is_cnf20ka_a0(void)
-+{
-+	return roc_model->flag & ROC_MODEL_CNF205xxN_A0;
-+}
-+
- static inline bool
- roc_env_is_hw(void)
- {
---
-2.25.1
-
+The tests should be converted to use unit_test_suit_runnner() API.
+But that can be done as a follow on patch.
