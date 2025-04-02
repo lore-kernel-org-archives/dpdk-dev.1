@@ -2,75 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FCFC28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52685C28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:45:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9135140273;
-	Wed,  2 Apr 2025 16:28:42 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id CD36840261
- for <dev@dpdk.org>; Wed,  2 Apr 2025 16:28:41 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-7359aca7ef2so317330b3a.2
- for <dev@dpdk.org>; Wed, 02 Apr 2025 07:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743604121;
- x=1744208921; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=O8GeR7as/yPeZlRQuOyubh6QlVvR+mCQ60YZKpE9jxM=;
- b=ffLTggIsjq5scwxTP8j0jYq+kFv/x/YF5UzK+/Pe9FtWCHpp2IqY9olipYseSKHKlO
- tNNtYYvKyTTxMrr3ta3UhCTuePXgrzQrht5GgEDvApoYn0l78/NXluKSNFmuj87EElXR
- AHRMAlmxQlGdjSzANi7tbzarxHNLelcuRFvBrkfayBvolLQvrIbGPRqCvh7f9Edhqky6
- cfULWo1KaPGKxQGTCMGql7n5q9bBWCSGOhhMQttpILQxne9JIwdaZUv8ykOddZYaVeii
- KWt4snXlcdSagRsPUTRfiLgKUQn15MDLxWIjb6CWtf0ykE0QLYa1WB8/QFdZWPXqO8Lq
- Tekw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743604121; x=1744208921;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=O8GeR7as/yPeZlRQuOyubh6QlVvR+mCQ60YZKpE9jxM=;
- b=rCn+N94JE0G4CvCp+YDywsBMnn0sqrUKrVVsRCcuADO/D5CNTE4Frk4fwRi7k40oUH
- KvCwGBWUpNqvuheYQv7fSv8t2yf5eYT8+/pqmiz/ZAVO31zqNt80owEI0sH2bD+Ud8Fs
- HiDJkI3/OqLd6kjsWpz6UXWkpvRlxe05kw9aLH+Wkt/x9YdYyD4l3JsTBOlTULFx7Dp5
- nhJPjL1RhfTjA5hCA8Tb6Sz9V/5q7k5NfyPwo7SKbr4L1fFRtBcxjdeFE6Ic8rrRNTQc
- WWJBDXiyytjMeHII61o/pCw1LOrgfK1EV5oTZFoNmSf4dzPFMBuGb8Y0SaiIHxiB5Ar3
- m80A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXd3s6mCS1Xo3mbwHl72yh4312jEqhxvgzF7dKZ3KHjCNYACba1c0he3JwR28he4lD5zp8=@dpdk.org
-X-Gm-Message-State: AOJu0YykoBZOUYeXjpaJwJAUXb2qJRISmMFVv1VSru3J05oZ21+2rebE
- Loci+6O2PIZcaU/bLmuu7Bq6PeTmMEsRggViMvsPzkvHNiNDtOp2yZgA1sSGjh8=
-X-Gm-Gg: ASbGncuHzCeatk+sFlxMHzylH7V9wpvu11tiHX5ozf4lrMUQh5zHsQ1shqs7L29KdXc
- 88T/wKn4RoChlLCtO6gVbkK00QcQcFZOjHzhNcCMQoz6TbS7i0uQyJ5j8GWF6EqmULOGasJ8HwD
- 8to5/g2safla7QXq1BhKcZo4Z4nrZNxP3P/FOldG4EfzKM0Pv10mPL0zbAPDT4YNm0CbMosG97I
- 9kuBTGfpAFaq9oatbrB8jWvbmblNirWprQCnasCjSJ8LoMsIsbVrGFOkozMHVatYWEZBAxXS9Gf
- Ve/d8940TQtItps0duxdSgSqZBUmAPCYDR3hXiijk164ToCUKr7SH9ovwyB9ip/hWszoQNroYdk
- qBD2UQobX+r0hVnzsk4ho
-X-Google-Smtp-Source: AGHT+IGGis8JX6vkpJI082ujC9pYF7OexGc5i7ifJ3pAJQyblAAlT9uORI9OeOiaNBVr0SGF5S6EmQ==
-X-Received: by 2002:a05:6a20:c78e:b0:1f5:837b:186a with SMTP id
- adf61e73a8af0-2009f5ba6b5mr29678899637.6.1743604120969; 
- Wed, 02 Apr 2025 07:28:40 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73970e1d922sm11059985b3a.37.2025.04.02.07.28.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Apr 2025 07:28:40 -0700 (PDT)
-Date: Wed, 2 Apr 2025 07:28:38 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Nandini Persad <nandinipersad361@gmail.com>
-Cc: Ori Kam <orika@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
- Ferruh Yigit <ferruh.yigit@amd.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org
-Subject: Re: [PATCH] doc: reword flow offload and api docs
-Message-ID: <20250402072838.6479484c@hermes.local>
-In-Reply-To: <20250331214036.17295-1-nandinipersad361@gmail.com>
-References: <20250331214036.17295-1-nandinipersad361@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 781A040275;
+	Wed,  2 Apr 2025 16:45:16 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 40A0A40273
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 16:45:15 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E21C521791;
+ Wed,  2 Apr 2025 16:45:14 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v3 2/3] eal: fix unckeck pipe
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Wed, 2 Apr 2025 16:45:12 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB8D@smartserver.smartshare.dk>
+In-Reply-To: <20250402122454.2148612-3-huangdengdui@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 2/3] eal: fix unckeck pipe
+Thread-Index: AdujykF+pDPU+xISRgexPSmRKH5EAgAD+9Sg
+References: <20250321040316.104126-1-huangdengdui@huawei.com>
+ <20250402122454.2148612-1-huangdengdui@huawei.com>
+ <20250402122454.2148612-3-huangdengdui@huawei.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Dengdui Huang" <huangdengdui@huawei.com>,
+	<dev@dpdk.org>
+Cc: <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>,
+ <liuyonglong@huawei.com>, <roretzla@linux.microsoft.com>,
+ <dmitry.kozliuk@gmail.com>, <david.marchand@redhat.com>,
+ <stephen@networkplumber.org>,
+ "Harry van Haaren" <harry.van.haaren@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,25 +53,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 31 Mar 2025 14:40:36 -0700
-Nandini Persad <nandinipersad361@gmail.com> wrote:
-
-> I removed low level details of the code and simplified the
-> Flow Offload section of Programmer's Guide to be more about the
-> general usage of the APIs. The specifics were moved to API docs if
-> the details did not already exist there.
-> 
-> Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
+> From: Dengdui Huang [mailto:huangdengdui@huawei.com]
+> Sent: Wednesday, 2 April 2025 14.25
+>=20
+> The communication pipe may be unavailable, for example,
+> when the lcore role is ROLE_OFF or ROLE_NON_EAL.
+> So check whether the pipe is available before using it.
+>=20
+> Fixes: a95d70547c57 ("eal: factorize lcore main loop")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 > ---
+>  lib/eal/unix/eal_unix_thread.c | 3 +++
+>  lib/eal/windows/eal_thread.c   | 3 +++
+>  2 files changed, 6 insertions(+)
+>=20
+> diff --git a/lib/eal/unix/eal_unix_thread.c
+> b/lib/eal/unix/eal_unix_thread.c
+> index ef6cbff0ee..103571cabf 100644
+> --- a/lib/eal/unix/eal_unix_thread.c
+> +++ b/lib/eal/unix/eal_unix_thread.c
+> @@ -17,6 +17,9 @@ eal_thread_wake_worker(unsigned int worker_id)
+>  	char c =3D 0;
+>  	int n;
+>=20
+> +	if (m2w =3D=3D 0 || w2m =3D=3D 0)
+> +		return -EINVAL;
+> +
+>  	do {
+>  		n =3D write(m2w, &c, 1);
+>  	} while (n =3D=3D 0 || (n < 0 && errno =3D=3D EINTR));
+> diff --git a/lib/eal/windows/eal_thread.c
+> b/lib/eal/windows/eal_thread.c
+> index 9e3df200b9..82bb974868 100644
+> --- a/lib/eal/windows/eal_thread.c
+> +++ b/lib/eal/windows/eal_thread.c
+> @@ -24,6 +24,9 @@ eal_thread_wake_worker(unsigned int worker_id)
+>  	char c =3D 0;
+>  	int n;
+>=20
+> +	if (m2w =3D=3D 0 || w2m =3D=3D 0)
+> +		return -EINVAL;
+> +
+>  	do {
+>  		n =3D _write(m2w, &c, 1);
+>  	} while (n =3D=3D 0 || (n < 0 && errno =3D=3D EINTR));
+> --
+> 2.33.0
 
-Looks good, fix the spelling errors and resubmit please.
+This internal function eal_thread_wake_worker() is only called from =
+rte_eal_remote_launch().
+It would be better to check the lcore role there.
 
-WARNING:TYPO_SPELLING: 'wih' may be misspelled - perhaps 'with'?
-#3558: FILE: doc/guides/prog_guide/ethdev/flow_offload.rst:579:
-+- Flush: The function ``rte_flow_flush`` destroys all flow rules associated wih a port.
+References:
+https://elixir.bootlin.com/dpdk/v25.03-rc2/A/ident/eal_thread_wake_worker=
 
-WARNING:TYPO_SPELLING: 'behvaior' may be misspelled - perhaps 'behaviour'?
-#4142: FILE: lib/ethdev/rte_flow.h:4403:
-+ * is missing at the specified index, then the behvaior is undefined and
+https://elixir.bootlin.com/dpdk/v25.03-rc2/source/lib/eal/common/eal_comm=
+on_launch.c#L52
 
-total: 0 errors, 2 warnings, 4087 lines checked
+Furthermore, in theory, file descriptor 0 is a valid file descriptor; if =
+"stdin" has been closed, a newly opened file (or pipe) may be assigned =
+file descriptor 0.
+
