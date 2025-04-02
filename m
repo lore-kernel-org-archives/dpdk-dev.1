@@ -2,76 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1BCC28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 13:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F51C28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 13:09:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64D4740273;
-	Wed,  2 Apr 2025 15:05:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C2C0440273;
+	Wed,  2 Apr 2025 15:09:02 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 54FB540261
- for <dev@dpdk.org>; Wed,  2 Apr 2025 15:05:23 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 06D5F40261
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 15:09:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743599122;
+ s=mimecast20190719; t=1743599340;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=VEQjEhV5Zg/JoZb6BKXAaRfnX48a2FaQXbEFTEgk2EI=;
- b=DVwOCgtCZ5JAV/mt/2Yldx70aSnizwA3q6xZ59QDrwHMK1qFVR8F0fsHUwvAGe6kQTk2DR
- Vy+4yvpYGd56aiJs+rytD/F0tL6SiKOtQYu8tv1alZJE/E3Y6d0l8xYKYeBrwHGN6h+wrx
- 0QfiuWKnYyWw7t/PjBHViaxYK1Knypw=
+ bh=cObhcTZWu2zqhSUpPa+k7wLmoKt2Nas5gNOQ7ynSnds=;
+ b=cRA0nvPz/+ehAMaEkDTen5R52FXLGGJov5Z4CPshon6R5pSnsCPzEHBDdR3Kj7MGoRG8/1
+ RRACeK1MdxkUMMJAhXKetwh88SYFbcUJxkuRql/+boFYDaYlsmgF5ncxkAUXpVKkhlJQDF
+ Zn/381pG3JouEVdhO/Wu1FkZ65t78y0=
 Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
  [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-YcrBoGU1OzWSG1ALkMibig-1; Wed, 02 Apr 2025 09:05:20 -0400
-X-MC-Unique: YcrBoGU1OzWSG1ALkMibig-1
-X-Mimecast-MFC-AGG-ID: YcrBoGU1OzWSG1ALkMibig_1743599119
+ us-mta-450-4IVYJWYvMQuq2d7h9xStOg-1; Wed, 02 Apr 2025 09:08:59 -0400
+X-MC-Unique: 4IVYJWYvMQuq2d7h9xStOg-1
+X-Mimecast-MFC-AGG-ID: 4IVYJWYvMQuq2d7h9xStOg_1743599337
 Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5496d38f725so3238365e87.2
- for <dev@dpdk.org>; Wed, 02 Apr 2025 06:05:20 -0700 (PDT)
+ 2adb3069b0e04-54991f28058so3330687e87.3
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 06:08:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743599119; x=1744203919;
+ d=1e100.net; s=20230601; t=1743599337; x=1744204137;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=VEQjEhV5Zg/JoZb6BKXAaRfnX48a2FaQXbEFTEgk2EI=;
- b=YdxjPFg3NXv0Ta3VfwDZp0pjmnOC8og6B8mMu6ZYjqPMKnTlxQ+EfLyeg8Gvgs8Q7y
- Y0aUMPa/4jx5semlvKJJ9mAjGs6FwVmmsd74mdLCkI9X3ALrLA/CUrNdDves71XFWZBe
- J3p/72KzIcoyjh2sZGPyuFearyW1bBsbWsl9AUU51GjIBSeLECstn6exoi3gMLoh9jJl
- BHjkI9exNz9pFiT7BXFzNmoY2Oj3CkPoKzB72atrw3syhgzVnuScuy1vYCIlcvqAw8Rz
- UU+pUog7c85GAZ7iOLoVkIBV2wjEB91aPGvyeHSY/mSZp5N4rsRfqUtFTkz9FkJl6d5I
- O/9Q==
-X-Gm-Message-State: AOJu0YyvIRJJMBZrLoaIjesCw8bJ+kKeYAdJcB3F040eKrptGywEJCMU
- PKixt11hfB+Y24CzP9tGay1sHnOmE+zh2Tvw8FhoxvDubWwdfJ4wvw6TLw4I9uQgiBnqGwjhM0S
- QDlVA3Ze1gg8/lqgh8PObRUMSM/xymzUtm95L4fhMNkZDDTTwhatp4Lzssyk40QTO09VVUf7UKo
- YHgb8874kZjBHtHaM=
-X-Gm-Gg: ASbGnctYffAPMCrvYbL3V/7Nyi35B3+NAYMV6C3/04vm6JB5B8wNBqX0ryAXpUnB9Ak
- nZx4ZPnCm8NdiKI5/SS9Qsn+/o+YRGEL8gl9nMk3VGDY5aI/ONw9LjiJMPHmtWH7kXHivIXCS2P
+ bh=cObhcTZWu2zqhSUpPa+k7wLmoKt2Nas5gNOQ7ynSnds=;
+ b=nrU/MYaxCGWOmgsaU9XYyb4KTxOa2kDtnLCaIf5YtOikMRVMMtqcBA+YXMAosoXk75
+ lIpgZw6uMvKr3x7GzjwcB4JDyXqhcVbL+yMTjc0TkUeCTLw/sEp3FOHuNornGhrf6VzU
+ n14SXVnEBuGn3FyrrxYVud6vQB7vN6q827+nng/HRjHP4oQWzMAymn5zwNQeIl2KlvRe
+ +B4isfwbT3Kzf1z+qrS68jswpv/UwENoZvz0A9GQ+8maHXAMRm5fx4Ci7ZMfmMCeflv9
+ PGFY+6s2ExLoriSSfNMLSONaWHp5VjuAaO1cLhWMjobJv0t6ar84BDkcTEyWO8x7IhzJ
+ 3Igg==
+X-Gm-Message-State: AOJu0Yz9iGT2DIvenV62ylZqMEO3boZDRpgHrQgoCUWGnZurp5d1k8SX
+ MFh+2jqE/bu8JUTJ68keM78FNcVzDAeyklyF7sN5K8lYcSFZjpYMK2Dav3zyoRoVYddjDjEaow9
+ vO+VCl2cnL3wwNobD3l1OyNXDKTxMmpiTzsk8LBXXRu5Z8/S5hY3iESAk1BgWPGG7DgYiQgPbwE
+ oN9SLjmgYoDC4DwEw=
+X-Gm-Gg: ASbGncv3jE3D4GTSs4HHbWDugiBHtMckzb9MjsE9A7wyyO0/yEON4sDURoeZAChEuVH
+ ueXsLr9+Kab2sYGtRhXMrOHjtlZBjXmKZKGtkdWTjqUq8wMr2xdtMCXFOpU99mndM/4FgGprrNA
  8=
-X-Received: by 2002:a05:6512:2508:b0:54b:102b:af56 with SMTP id
- 2adb3069b0e04-54b10d93684mr6530677e87.4.1743599118896; 
- Wed, 02 Apr 2025 06:05:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGecPE1VlpedKi5oiwiFc0FW/f05kgHxAn1nk1tRHu7ZfFR11yqbRhx0iqIyr0tN0NzCmxL0XYwKMYoXXlLLdk=
-X-Received: by 2002:a05:6512:2508:b0:54b:102b:af56 with SMTP id
- 2adb3069b0e04-54b10d93684mr6530624e87.4.1743599118469; Wed, 02 Apr 2025
- 06:05:18 -0700 (PDT)
+X-Received: by 2002:a05:6512:138c:b0:549:4e79:d4c0 with SMTP id
+ 2adb3069b0e04-54c19c9a0fdmr686992e87.53.1743599337331; 
+ Wed, 02 Apr 2025 06:08:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRFmPVM9Z3Nkgwbk4L6DMIGpOzLkbjx9fdhRTWhK1GzDgQBXWqIZbk/V2TP1xjOp40DJxueAu37Bu2pmMzzUg=
+X-Received: by 2002:a05:6512:138c:b0:549:4e79:d4c0 with SMTP id
+ 2adb3069b0e04-54c19c9a0fdmr686981e87.53.1743599336948; Wed, 02 Apr 2025
+ 06:08:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250331161000.9886-1-bruce.richardson@intel.com>
- <20250331161000.9886-6-bruce.richardson@intel.com>
-In-Reply-To: <20250331161000.9886-6-bruce.richardson@intel.com>
+In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 2 Apr 2025 15:05:07 +0200
-X-Gm-Features: AQ5f1JobOUJt_wg-NcaXL5rHirVxSb5LmyJ4eXmDJdZGL6-SmenNLbwdfLsYMjI
-Message-ID: <CAJFAV8yOLW2SiTDg6QdyDmZJN29aV=Mtu0OBWP=0mRwOuerZiA@mail.gmail.com>
-Subject: Re: [PATCH 04/10] net/intel: use common base code build handling
+Date: Wed, 2 Apr 2025 15:08:45 +0200
+X-Gm-Features: AQ5f1Jrc6QPfzlQIrWSvNYpluI1xBmXkqQ1Jw3ik-9TdBYDMc4z_iObTwv95MGk
+Message-ID: <CAJFAV8w3uth7PNR8e9gD0vOhmdd29TdaLtcT0mE2Y2D6eRV9Ag@mail.gmail.com>
+Subject: Re: [PATCH 00/10] centralise base code handling for drivers
 To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Ian Stokes <ian.stokes@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty <praveen.shetty@intel.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Stephen Hemminger <stephen@networkplumber.org>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cPppAjvW8Azw8k24SAA5p3Zy-GryoiLIJOQCOr6gBy4_1743599119
+X-Mimecast-MFC-PROC-ID: lIZsnYfQZLJKHuesOTb3UnHpp8JbosdTV39CjFH7VD8_1743599337
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -90,52 +87,33 @@ Errors-To: dev-bounces@dpdk.org
 
 On Mon, Mar 31, 2025 at 6:10=E2=80=AFPM Bruce Richardson
 <bruce.richardson@intel.com> wrote:
-> diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/i=
-ce/base/meson.build
-> index e7ba9c34bc..f453005a1d 100644
-> --- a/drivers/net/intel/ice/base/meson.build
-> +++ b/drivers/net/intel/ice/base/meson.build
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: BSD-3-Clause
->  # Copyright(c) 2018-2021 Intel Corporation
 >
-> -sources =3D [
-> +base_sources =3D files(
->          'ice_controlq.c',
->          'ice_common.c',
->          'ice_sched.c',
-> @@ -29,7 +29,7 @@ sources =3D [
->          'ice_ddp.c',
->          'ice_fwlog.c',
->          'ice_vf_mbx.c',
-> -]
-> +)
+> Many DPDK drivers use the same pattern for base code handling, having
+> a meson.build file in the base code directory which optionally defines
+> some custom cflags for the base code build, then builds the code as a
+> static library and extracts the objects from it. (The reason behind this
+> is that, in meson, cflags apply per-object, so we need to have a
+> separate build object for the base code to use custom flags)
 >
->  if is_ms_compiler
->      error_cflags =3D [
-> @@ -41,22 +41,14 @@ else
->              '-Wno-unused-but-set-variable',
->              '-Wno-unused-parameter',
->      ]
-> +    # Bugzilla ID: 678
-> +    #if (toolchain =3D=3D 'gcc' and cc.version().version_compare('>=3D11=
-.0.0'))
-> +    #    error_cflags +=3D ['-Wno-array-bounds']
-> +    #endif
+> This patchset deduplicates this logic by putting it into the
+> drivers/meson.build file, and allowing individual drivers to then just
+> specify values for "base_sources" and "base_cflags".
 
-Why keep it commented?
+In general, this series lgtm.
+
+> Depends-on: Series-34946 ("net/intel: clean up base code build")
+
+This dependency is a bit problematic, as this series is already merged
+in next-net-intel.
+There will be some merge conflict to resolve.
+Instead, it would have been better if next-net-intel relied on this new ser=
+ies.
 
 
->  endif
->
-> -# Bugzilla ID: 678
-> -if (toolchain =3D=3D 'gcc' and cc.version().version_compare('>=3D11.0.0'=
-))
-> -    error_cflags +=3D ['-Wno-array-bounds']
-> -endif
-> -
-> -c_args =3D cflags
-> -
+After this series, the only remaining special case is for SVE stuff in
+net/hns3 and we would have all source compiling handled by
+drivers/meson.build.
+Do you plan to clean it too?
 
 
 --=20
