@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB6AC3601B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 23:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E144BC3601B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 23:25:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2865540656;
-	Thu,  3 Apr 2025 01:24:54 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 1047540653
- for <dev@dpdk.org>; Thu,  3 Apr 2025 01:24:52 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-6e90b8d4686so2937796d6.2
- for <dev@dpdk.org>; Wed, 02 Apr 2025 16:24:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BBE8D4065D;
+	Thu,  3 Apr 2025 01:24:55 +0200 (CEST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 7319940656
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 01:24:53 +0200 (CEST)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-7c5e39d1db2so16905585a.3
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 16:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743636291;
- x=1744241091; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743636293;
+ x=1744241093; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PYOCZkYTCA6nkNT2fSnkg6LFZYwB3bJTDcIJHGOdUKE=;
- b=IDKJkgCCpyeqoxl2qQEadqnsLDlR+MVJHzz6PGubbawD0s5voWbr87AcPNAnTWg4ej
- 7lz3d5yIiUGg52D/kuc8NaZftUw2Wh47j2dPiG12FHQ4dzDm7TzomSMxlBQw1F4mX7Ej
- Iw7F5t63r7Xbq3d8KBhHUMVH08JHnpudfJ5/0XGOCPKbaHnI3X2WF+rTIufQiyKC61XO
- tPe5d8kakV1jjPOV+AyCPHaGNDs/GX4ZEwekcfXORDF4qifk44Hji0Kk3L/jGSIZ8qZU
- Wj5lqdSGLkEyg/CtROHjAKjRK6L51/8V7ZX/meyAPgWqPcLC8Vi6R3t8+7b4TAF0Qh/f
- AMvw==
+ bh=UI2tTP5STXxqQD1JzZfwIJKUWqB2PP+Wr4PkrgGsjzA=;
+ b=yV1QKqSwODkxxKajCukvQWft+ihH1YwqZhbQQso1DsszxHvems155Ul7He1dLKuduS
+ IweKNFzMIozpxG9o6DzpfTTHLi+SA6xli4qjiiKkt7oanBNLvOo4JtBBjGHDD5DkVvE6
+ fPMEY+eLSsTnP21squ4yBsWA/j0sFEyGJ2vrpzaLaXujACLfFpoyE36BvPcM/C2OVbVI
+ ty5uYQ1vB11tvBw4TuWnsAAqZyFHQjDjI8gQbxDtnl0SYWJfvOOsSWH5sFJA0hSDjFe1
+ Yd2uqJWn/87Uwo+ptu/vTKUuCap+qjLS1LXrBnK2aa0h3NSOoxK2fGOnFAlfYe+76ZNi
+ Fhhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743636291; x=1744241091;
+ d=1e100.net; s=20230601; t=1743636293; x=1744241093;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=PYOCZkYTCA6nkNT2fSnkg6LFZYwB3bJTDcIJHGOdUKE=;
- b=mlR4LofSG1RCB4m/yEp7fyiubESblurICzTqDZ3dW/hholp2DIy8/SpbpKBzvjJVwV
- hbv+qFWXUAHp0tf5yWTbXxAMwcuKlBQct1DDLat1wP8FLfEFBrHaO7Bn62n8uxpaFH1m
- sGINCEqK3voVJ+jK1uf+ZaLG92IjC2gvjao03k5D75slIVTOHwcQ+9sfvP5uB1QS4pT7
- 7ZEdUF4qJf40j2Q8f9nRL3sJv1HmFBkTQvz1XfhnO2z/nz+PelpRBc7QBszJntaYNSyu
- JMBUGMq8mTqsFMfva0K6CU28hshqI7A3N0MH3RNXblKjJ7/HiInDf2hetmPKHOMGDC2H
- 2wow==
-X-Gm-Message-State: AOJu0YwclKdozqow9EKUP0qovYDNBJnnEYt3jNdEGCo3CfLgaFWk4sba
- Pzkh3/MQl8xHmUwahpnRkTv7DcHQA61JMxDQaxTxdFjWpK3I13uRI7MvjZb6De4hBAfsh28rWym
- q
-X-Gm-Gg: ASbGncsEjkabbx0590UvukjIkLfltsjE5UrnwHaT12Tncb0PG02GSa66pRUz7mny6d0
- vt3/hVf7S7+qb2l0e3F9VtsPPdeDcyt3o8pqMwR/fGy0zT1l7eVnfofxtkbPUMyzLhSxMaqMomZ
- 2gLu+dEOT11MDrs4ILdGi1FhyuohZJbzPyQjf6HQiZSx/t+ROKKEsLINXgiZCdbRi+lnlJLO/M8
- 0/RvONXcNvbRYVdZnE7q2B+12z470Y7kDbLK8oTCDqdrCUD8nyNNnbe5OK47/OJxt7xGas2Vj9B
- i4W6/OdLyAWIuH9UT1KaxxVcd++Ou+ooENJF5ABzrTNCGSKgy0ir01GwRUywTcDFgjOrSiFP/Qp
- 4Wb+2U/KDLWShQOba6A==
-X-Google-Smtp-Source: AGHT+IE78Wguyi0IjnG9B1LzmbizNrmn0dLRvNFsFjbw1FFuSYoB7JEEBLSryKfedMJmkZjz+pd8tA==
-X-Received: by 2002:a05:6214:2a4f:b0:6e4:4331:aae6 with SMTP id
- 6a1803df08f44-6ef0f69572amr868356d6.39.1743636291434; 
- Wed, 02 Apr 2025 16:24:51 -0700 (PDT)
+ bh=UI2tTP5STXxqQD1JzZfwIJKUWqB2PP+Wr4PkrgGsjzA=;
+ b=K4u0NTafVt+oROgtt3/TFVBaN/j3LFoJlPThKuPuQoz9IycbAarNoA+4bkjymu7QDj
+ ke4yTtSddqibqlOwoVjbs6Hzdx/VOy03VTD7PZcaPnlh69k0wkvgXp6UIra4RYDfmYn6
+ 2C1p6qIn+Sn47wuWs/zFIouLP7DEGU0/Morw6+5NuF4mf9ozxkQo+joBk0WsLILLWKxu
+ GpZ0Tl8TBo9cGckQDCBwIcsVHeEXsveTywCq7Sh9SImA83SirCrcPxrvgeYgJYENTGu+
+ KBj9Vqvr2sqR025CKbPqUGcpPamhSFVYOpAxcau/FVAWduCCeVMzx85hGAoQffntW71O
+ 7bgw==
+X-Gm-Message-State: AOJu0YyGZCorvUSRbcHuGFpQ+FT4PQLiC/6Ql9aV8gN5iFuuUCana9kL
+ MK6YLD4ih0WMyGD7dhGVcJOBi055XCNgXdXUmQBXBtzCuDOdO79oZtrMlm4rQ4OOZUDfsrSKn+l
+ S
+X-Gm-Gg: ASbGncu1S0sz5WqV+4GS5Bq/pp+sfVFbbboQQu3MMZxHV7OAvwZ6yDwQFTbVZy1Xz/P
+ /hVVQwTgcL3wPW6QYkdnSGITE+wBibMbvHOGvqLrYCxt9GsRVaM8eCJBIq4n8JXTSsiOtyftr+0
+ h/dygx3V4lF6PzdKs1svw4QJOXMwr+3EPC35n+DC44JxVOATIBP0lurFFUC/LRJdq8wTxkls12o
+ CkrXz6lh14cslHwHv72YyldFAPxJixq5LiT03lu+MPF+pVhTTjjkvzvpY9jFJB7NoWZR1skwCRI
+ UOIyt1EMOzhw08l6vp5cTGGYAI6KVRu1YdLB6I4mT0J6qAGlqjy/+vTZP0i7ng48H5zHfJTTO0U
+ HBViTtc82NWgBo1LZvA==
+X-Google-Smtp-Source: AGHT+IFy7GfIveDJ/Y25ws4vbM3edz0FCjUZJt6ikGE1YsEB3f7PWl9vkx4KiXTAkLTm2Pm4BwCBUg==
+X-Received: by 2002:a05:6214:dab:b0:6e8:f88f:b96b with SMTP id
+ 6a1803df08f44-6eed5f616e6mr321011006d6.9.1743636292866; 
+ Wed, 02 Apr 2025 16:24:52 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6ef0f14e993sm672826d6.112.2025.04.02.16.24.50
+ 6a1803df08f44-6ef0f14e993sm672826d6.112.2025.04.02.16.24.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Apr 2025 16:24:51 -0700 (PDT)
+ Wed, 02 Apr 2025 16:24:52 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v12 03/10] net/sfc: replace use of rte_mbuf_sanity_check
-Date: Wed,  2 Apr 2025 16:23:13 -0700
-Message-ID: <20250402232441.440346-4-stephen@networkplumber.org>
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v12 04/10] examples: remove term sanity
+Date: Wed,  2 Apr 2025 16:23:14 -0700
+Message-ID: <20250402232441.440346-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250402232441.440346-1-stephen@networkplumber.org>
 References: <20240529233811.663211-1-stephen@networkplumber.org>
@@ -82,104 +84,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Renamed to rte_mbuf_verify.
+Do not use non-inclusive terms.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/sfc/sfc_ef100_rx.c     | 6 +++---
- drivers/net/sfc/sfc_ef10_essb_rx.c | 4 ++--
- drivers/net/sfc/sfc_ef10_rx.c      | 4 ++--
- drivers/net/sfc/sfc_rx.c           | 2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ examples/ipsec-secgw/event_helper.c | 2 +-
+ examples/ipv4_multicast/main.c      | 2 +-
+ examples/qos_sched/args.c           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/sfc/sfc_ef100_rx.c b/drivers/net/sfc/sfc_ef100_rx.c
-index e283879e6b..5ebfba4dcf 100644
---- a/drivers/net/sfc/sfc_ef100_rx.c
-+++ b/drivers/net/sfc/sfc_ef100_rx.c
-@@ -179,7 +179,7 @@ sfc_ef100_rx_qrefill(struct sfc_ef100_rxq *rxq)
- 			struct sfc_ef100_rx_sw_desc *rxd;
- 			rte_iova_t dma_addr;
+diff --git a/examples/ipsec-secgw/event_helper.c b/examples/ipsec-secgw/event_helper.c
+index fc9fa1b000..b2f387e2c2 100644
+--- a/examples/ipsec-secgw/event_helper.c
++++ b/examples/ipsec-secgw/event_helper.c
+@@ -2106,7 +2106,7 @@ eh_launch_worker(struct eh_conf *conf, struct eh_app_worker_params *app_wrkr,
+ 		goto clean_and_exit;
+ 	}
  
--			__rte_mbuf_raw_sanity_check(m);
-+			__rte_mbuf_raw_verify(m);
+-	/* Verify sanity of the matched worker */
++	/* Verify validity of the matched worker */
+ 	if (eh_verify_match_worker(match_wrkr) != 1) {
+ 		EH_LOG_ERR("Failed to validate the matched worker");
+ 		goto clean_and_exit;
+diff --git a/examples/ipv4_multicast/main.c b/examples/ipv4_multicast/main.c
+index 1eed645d02..3bfab37012 100644
+--- a/examples/ipv4_multicast/main.c
++++ b/examples/ipv4_multicast/main.c
+@@ -258,7 +258,7 @@ mcast_out_pkt(struct rte_mbuf *pkt, int use_clone)
+ 	hdr->pkt_len = (uint16_t)(hdr->data_len + pkt->pkt_len);
+ 	hdr->nb_segs = pkt->nb_segs + 1;
  
- 			dma_addr = rte_mbuf_data_iova_default(m);
- 			if (rxq->flags & SFC_EF100_RXQ_NIC_DMA_MAP) {
-@@ -551,7 +551,7 @@ sfc_ef100_rx_process_ready_pkts(struct sfc_ef100_rxq *rxq,
- 		rxq->ready_pkts--;
- 
- 		pkt = sfc_ef100_rx_next_mbuf(rxq);
--		__rte_mbuf_raw_sanity_check(pkt);
-+		__rte_mbuf_raw_verify(pkt);
- 
- 		RTE_BUILD_BUG_ON(sizeof(pkt->rearm_data[0]) !=
- 				 sizeof(rxq->rearm_data));
-@@ -575,7 +575,7 @@ sfc_ef100_rx_process_ready_pkts(struct sfc_ef100_rxq *rxq,
- 			struct rte_mbuf *seg;
- 
- 			seg = sfc_ef100_rx_next_mbuf(rxq);
--			__rte_mbuf_raw_sanity_check(seg);
-+			__rte_mbuf_raw_verify(seg);
- 
- 			seg->data_off = RTE_PKTMBUF_HEADROOM;
- 
-diff --git a/drivers/net/sfc/sfc_ef10_essb_rx.c b/drivers/net/sfc/sfc_ef10_essb_rx.c
-index 78bd430363..74647e2792 100644
---- a/drivers/net/sfc/sfc_ef10_essb_rx.c
-+++ b/drivers/net/sfc/sfc_ef10_essb_rx.c
-@@ -125,7 +125,7 @@ sfc_ef10_essb_next_mbuf(const struct sfc_ef10_essb_rxq *rxq,
- 	struct rte_mbuf *m;
- 
- 	m = (struct rte_mbuf *)((uintptr_t)mbuf + rxq->buf_stride);
--	__rte_mbuf_raw_sanity_check(m);
-+	__rte_mbuf_raw_verify(m);
- 	return m;
+-	__rte_mbuf_sanity_check(hdr, 1);
++	__rte_mbuf_verify(hdr, 1);
+ 	return hdr;
  }
+ /* >8 End of mcast_out_kt. */
+diff --git a/examples/qos_sched/args.c b/examples/qos_sched/args.c
+index 886542b3c1..1e77e8c547 100644
+--- a/examples/qos_sched/args.c
++++ b/examples/qos_sched/args.c
+@@ -386,7 +386,7 @@ app_parse_args(int argc, char **argv)
+ 		return -1;
+ 	}
  
-@@ -136,7 +136,7 @@ sfc_ef10_essb_mbuf_by_index(const struct sfc_ef10_essb_rxq *rxq,
- 	struct rte_mbuf *m;
- 
- 	m = (struct rte_mbuf *)((uintptr_t)mbuf + idx * rxq->buf_stride);
--	__rte_mbuf_raw_sanity_check(m);
-+	__rte_mbuf_raw_verify(m);
- 	return m;
- }
- 
-diff --git a/drivers/net/sfc/sfc_ef10_rx.c b/drivers/net/sfc/sfc_ef10_rx.c
-index 60442930b3..f4fc815570 100644
---- a/drivers/net/sfc/sfc_ef10_rx.c
-+++ b/drivers/net/sfc/sfc_ef10_rx.c
-@@ -148,7 +148,7 @@ sfc_ef10_rx_qrefill(struct sfc_ef10_rxq *rxq)
- 			struct sfc_ef10_rx_sw_desc *rxd;
- 			rte_iova_t phys_addr;
- 
--			__rte_mbuf_raw_sanity_check(m);
-+			__rte_mbuf_raw_verify(m);
- 
- 			SFC_ASSERT((id & ~ptr_mask) == 0);
- 			rxd = &rxq->sw_ring[id];
-@@ -297,7 +297,7 @@ sfc_ef10_rx_process_event(struct sfc_ef10_rxq *rxq, efx_qword_t rx_ev,
- 		rxd = &rxq->sw_ring[pending++ & ptr_mask];
- 		m = rxd->mbuf;
- 
--		__rte_mbuf_raw_sanity_check(m);
-+		__rte_mbuf_raw_verify(m);
- 
- 		m->data_off = RTE_PKTMBUF_HEADROOM;
- 		rte_pktmbuf_data_len(m) = seg_len;
-diff --git a/drivers/net/sfc/sfc_rx.c b/drivers/net/sfc/sfc_rx.c
-index a193229265..c885ce2b05 100644
---- a/drivers/net/sfc/sfc_rx.c
-+++ b/drivers/net/sfc/sfc_rx.c
-@@ -120,7 +120,7 @@ sfc_efx_rx_qrefill(struct sfc_efx_rxq *rxq)
- 		     ++i, id = (id + 1) & rxq->ptr_mask) {
- 			m = objs[i];
- 
--			__rte_mbuf_raw_sanity_check(m);
-+			__rte_mbuf_raw_verify(m);
- 
- 			rxd = &rxq->sw_desc[id];
- 			rxd->mbuf = m;
+-	/* sanity check for cores assignment */
++	/* check for cores assignment */
+ 	for(i = 0; i < nb_pfc; i++) {
+ 		if (qos_conf[i].rx_core >= RTE_MAX_LCORE) {
+ 			RTE_LOG(ERR, APP, "pfc %u: invalid RX lcore index %u\n", i + 1,
 -- 
 2.47.2
 
