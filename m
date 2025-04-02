@@ -2,76 +2,139 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62189C36014
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 09:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED88C28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 09:23:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7183B402B5;
-	Wed,  2 Apr 2025 11:22:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 72DAC402B5;
+	Wed,  2 Apr 2025 11:23:53 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2FF8940275
- for <dev@dpdk.org>; Wed,  2 Apr 2025 11:22:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DFF9A40275
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 11:23:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743585732;
+ s=mimecast20190719; t=1743585831;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=+bJ89IYCpYHGMrJ2vXb86XD9W2yl0NR4TwvFQcxJHS0=;
- b=Y4EOUV9Dn2k/4YZn/vJuZ9ie5Km9N2trG4Vz/RGlYx0h5ykbB0lBhBkFHGOB0FUfKFnngX
- dwhRpiw5n7ZMgzNYUZBe1nyVViC7ziiv9Bg3AOBNt16zRpPKZBO6/3G6VSdzUq07eTw3oB
- lxoY8fhhQjoy/Iv2hJipqNtxRzSdVug=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=UXox06yLbglajwJlHCgdtNyGYQbKNbBwLQ352YNPrdU=;
+ b=R9mqBv4zLf60x6CBiP6QYOeI9rzouUCtQaserLYxhe0yevU6NW9vtGzYszb9VqdKsDLKbt
+ 7K+oXUtOELWcaL6pHEIkz+feAOO0lz9S+wTbD6VoNIfY/AMyUISgAOkFSBUvHUN06Y0M3N
+ QEBnQyOjGyG4LWcDI31SmeHTQeL25RI=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-WSGVM-1WOjSS6zh_PckrnQ-1; Wed, 02 Apr 2025 05:22:09 -0400
-X-MC-Unique: WSGVM-1WOjSS6zh_PckrnQ-1
-X-Mimecast-MFC-AGG-ID: WSGVM-1WOjSS6zh_PckrnQ_1743585728
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-30bff47a93cso33422861fa.1
- for <dev@dpdk.org>; Wed, 02 Apr 2025 02:22:09 -0700 (PDT)
+ us-mta-655-V_mQJP3WNaKq90K7XiyGzg-1; Wed, 02 Apr 2025 05:23:50 -0400
+X-MC-Unique: V_mQJP3WNaKq90K7XiyGzg-1
+X-Mimecast-MFC-AGG-ID: V_mQJP3WNaKq90K7XiyGzg_1743585829
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5498963ebc3so3011135e87.0
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 02:23:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743585728; x=1744190528;
+ d=1e100.net; s=20230601; t=1743585828; x=1744190628;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=+bJ89IYCpYHGMrJ2vXb86XD9W2yl0NR4TwvFQcxJHS0=;
- b=eFK66EZ88nsGIH926QcrYRn2De6O+LQhtmdqWJUk2YxBMpsqBHFTY4cscvgHGF3QZk
- zUQVSpdJm4Fv7ntKHhPKdU75YhOhf5Y4zAQA5ifhLOz5d58l85ZRxaMc6y6W1SYxuiOm
- pvrJIemilrkoRSnwppyDCJkN5BXX+59xzZCrKyHt8Y4f45sLi5lanmnaSKeeoS1LHovm
- AIv0wsQNSaS0m1bmII3i14c71qTAscdde0+9iiYok/mnNteTXCX2i+knUBLIYFI+z2IN
- vZeh10gPb2ICS9Fkwm7DVxFSWDNa7EQyeOUDEa7Y2dLS8A4d0c0OIWnY3eInGPq6v4RA
- IqYA==
-X-Gm-Message-State: AOJu0Yzb6R7cziDkQmSSD4rxjp+bxpkWp7E/FsXpWUG5fsTcs0+GkJc7
- g1n1U5MyYVJ5LdrL+pORFRWPJYlVqZSngEJP5S+NjVcIysf0z+OMOrYy4UjVYSSlTZ5hHM17jw/
- YCghzZ1GpZ0SnWvbgWOruwGzVDrQWcvF5iAlWIEpLZSb4q+ia/erBSL+c5W1f2vaTzdwBV3TRGY
- FewUYHX+rH4a+FNwE=
-X-Gm-Gg: ASbGncvu6jgmc6Y4L282nx6KCxeWY5pp91IyGuIoKcbDryjw+y07sVUb2HUDNxiKEDR
- r6bAlPT/G9Al89zZFU/EC3IFJ+/+vF+afr1JHMq2brPaAo/ar7A5LwRGVoJv1Yp2S4md64GZQxD
- Y=
-X-Received: by 2002:a2e:b8c7:0:b0:308:eb58:6591 with SMTP id
- 38308e7fff4ca-30de02fa8ffmr54790701fa.25.1743585728015; 
- Wed, 02 Apr 2025 02:22:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtfvvIvhQ/udSI1U7E4J+BT7pyuiEmW1KkYRjv5BsPH9AnXtwvuQbuwpBjPSgtEdNj+8D0S/bXo5PoGS2JStE=
-X-Received: by 2002:a2e:b8c7:0:b0:308:eb58:6591 with SMTP id
- 38308e7fff4ca-30de02fa8ffmr54790511fa.25.1743585727655; Wed, 02 Apr 2025
- 02:22:07 -0700 (PDT)
+ bh=UXox06yLbglajwJlHCgdtNyGYQbKNbBwLQ352YNPrdU=;
+ b=ad4ppDMJ0E0Hc8FjYC2dmVFpWotevkPz5h4b2QVfAEofY4DWeP2otAbB83k4M/D9dR
+ 9Ojy9LsjP+jDd3HvfEGvxZwqzVirngTJJO3lcBcMu/cG57YK//sXoZ7T24xpHtbmCIQM
+ s4QRPQuO3XIV/d8GX6geutDbH3PzGDR+mmU39wdmI4Ctb63N5r16WDYNljqJCxubRX21
+ v2Fqy2Nw2GAYp1rVOfeCuKqoISh1zukKRN+xjHN8xbahHKVGO9rCZ4RbHNtyAgon3muR
+ eiX/6i1qCqs8fw9CxzQcw8FIUfTRgh/D9hdJ89184UjQLZMwLTF/cEy2DKBJGIfcw6I6
+ tpZA==
+X-Gm-Message-State: AOJu0Yz56cBJVtk9Npi2NLUJHfEYyajmm0NHVWRGLu0+hcIDrxSxdFNn
+ jMy14jtBA+k8UIiwXVGgDGqdsojKvGcRy8g0Z2i+Jm6cQg6vSBa7Ekp9EBuDGmsNhua3ub1RVnH
+ 3qTPV0jYhHIcx9/QCDEU2FCNQLciLcvlpPUIxyz+x2xIp1118Pvxg3qJDoUtNZcp2ewXOl/NIFd
+ lE1aw9MN3ocgTdQ2E=
+X-Gm-Gg: ASbGnctJDQiFHnTD2aDrtbpUR5L45LM+AqFw/lh3I6mRcpCqNhJg+lHWHNdLgY10bYa
+ AQ3rqNzqdLQvZY0S+LZjUv1smjod+VqL5n4aV0+LwrxT89+92q7hP83wxGJjrnDcOqmZMrI14qY
+ o=
+X-Received: by 2002:a05:6512:1247:b0:54a:cc04:ea24 with SMTP id
+ 2adb3069b0e04-54b11139421mr4499015e87.46.1743585828545; 
+ Wed, 02 Apr 2025 02:23:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8Co8QFfAunUQ61lXtJx741b9mOzLidtesoIKB0He5ASoc69hqMl4dkoHDfnWv3dGu752ULlSIhTBVrpL9PhI=
+X-Received: by 2002:a05:6512:1247:b0:54a:cc04:ea24 with SMTP id
+ 2adb3069b0e04-54b11139421mr4498951e87.46.1743585828048; Wed, 02 Apr 2025
+ 02:23:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
  <20250328105250.3082414-1-david.marchand@redhat.com>
- <20250328105250.3082414-5-david.marchand@redhat.com>
- <6827973.mogB4TqSGs@thomas>
-In-Reply-To: <6827973.mogB4TqSGs@thomas>
+ <20250328105250.3082414-6-david.marchand@redhat.com>
+ <4410598.IobQ9Gjlxr@thomas>
+In-Reply-To: <4410598.IobQ9Gjlxr@thomas>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 2 Apr 2025 11:21:56 +0200
-X-Gm-Features: AQ5f1JpRhZ8zQtdNgp_BXobD97HGDI6VSsx835FsXxdvqHCnhhWpRMBTpOThjVU
-Message-ID: <CAJFAV8xJ+puwWM5dFgyTnhdXE7oMd3hEXYyWM5sWSzoHHP_4kA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/8] build: generate symbol maps
+Date: Wed, 2 Apr 2025 11:23:36 +0200
+X-Gm-Features: AQ5f1Jpr5bp8SflsIQpdMlTCEd6G_e_uXgLtu3NJCmFJLvQnuxu7T8UsXT3_T2w
+Message-ID: <CAJFAV8ygq6pxW3dThVur2KYL4USCq5urpYdYGPuybrtXb43Dpw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/8] build: mark exported symbols
 To: Thomas Monjalon <thomas@monjalon.net>
 Cc: dev@dpdk.org, bruce.richardson@intel.com, andremue@linux.microsoft.com, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>
+ Nicolas Chautru <nicolas.chautru@intel.com>, Parav Pandit <parav@nvidia.com>, 
+ Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, 
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>, 
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
+ Wei Hu <weh@microsoft.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
+ Anoob Joseph <anoobj@marvell.com>, Andrew Boyer <andrew.boyer@amd.com>, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Liron Himi <lironh@marvell.com>, 
+ Chaoyong He <chaoyong.he@corigine.com>,
+ Nagadheeraj Rottela <rnagadheeraj@marvell.com>, 
+ Srikanth Jampala <jsrikanth@marvell.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
+ Ankur Dwivedi <adwivedi@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, 
+ Gagandeep Singh <g.singh@nxp.com>, Kai Ji <kai.ji@intel.com>, 
+ Vamsi Attunuru <vattunuru@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, 
+ Shijith Thotton <sthotton@marvell.com>, Pravin Pathak <pravin.pathak@intel.com>,
+ Ashwin Sekhar T K <asekhar@marvell.com>, Igor Russkikh <irusskikh@marvell.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>, 
+ Chas Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Ian Stokes <ian.stokes@intel.com>, 
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, 
+ Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty <praveen.shetty@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>, 
+ Maxime Coquelin <maxime.coquelin@redhat.com>, David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
+ Akhil Goyal <gakhil@marvell.com>, 
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Fan Zhang <fanzhang.oss@gmail.com>, 
+ Ashish Gupta <ashish.gupta@marvell.com>, 
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>, 
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, Jerin Jacob <jerinj@marvell.com>,
+ Harry van Haaren <harry.van.haaren@intel.com>, Min Zhou <zhoumin@loongson.cn>, 
+ David Christensen <drc@linux.ibm.com>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>, 
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Byron Marohn <byron.marohn@intel.com>, 
+ Yipeng Wang <yipeng1.wang@intel.com>, Ferruh Yigit <ferruh.yigit@amd.com>, 
+ Abhinandan Gujjar <abhinandan.gujjar@intel.com>, 
+ Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>, 
+ Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
+ Elena Agostini <eagostini@nvidia.com>, 
+ Zhirun Yan <yanzhirun_163@163.com>, Jiayu Hu <hujiayu.hu@foxmail.com>, 
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Reshma Pattan <reshma.pattan@intel.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>, 
+ Gaetan Rivet <grive@u256.net>, Volodymyr Fialko <vfialko@marvell.com>, 
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8eu9NrrFwyj5PMnt8To6SU0xEhARKetwHd6sSD87yBw_1743585728
+X-Mimecast-MFC-PROC-ID: UrB3zKCxAuUDvhSrn6oM1vDrCBHbg4Be1_UH7QDfZEk_1743585829
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,38 +151,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Apr 2, 2025 at 10:06=E2=80=AFAM Thomas Monjalon <thomas@monjalon.ne=
+On Wed, Apr 2, 2025 at 11:02=E2=80=AFAM Thomas Monjalon <thomas@monjalon.ne=
 t> wrote:
 >
 > 28/03/2025 11:52, David Marchand:
 > > --- /dev/null
-> > +++ b/lib/eal/common/eal_symbol_exports.h
-> > @@ -0,0 +1,16 @@
+> > +++ b/drivers/bus/dpaa/dpaa_bus_symbols.c
+>
+> This is a special case for base drivers,
+> so we should mention "base" in the filename.
+>
+> > @@ -0,0 +1,99 @@
 > > +/* SPDX-License-Identifier: BSD-3-Clause
 > > + * Copyright (c) 2025 Red Hat, Inc.
 > > + */
 > > +
-> > +#ifndef EAL_SYMBOL_EXPORTS_H
-> > +#define EAL_SYMBOL_EXPORTS_H
+> > +#include <eal_symbol_exports.h>
 > > +
-> > +/* Internal macros for exporting symbols, used by the build system.
-> > + * For RTE_EXPORT_EXPERIMENTAL_SYMBOL, ver indicates the
-> > + * version this symbol was introduced in.
-> > + */
-> > +#define RTE_EXPORT_EXPERIMENTAL_SYMBOL(a, ver)
-> > +#define RTE_EXPORT_INTERNAL_SYMBOL(a)
-> > +#define RTE_EXPORT_SYMBOL(a)
-> > +
-> > +#endif /* EAL_SYMBOL_EXPORTS_H */
 >
-> Another thought, there is no specific reason to have a "s"
-> at the end of this filename.
->
-> eal_symbol_export.h looks better to me.
-> Or simply eal_export.h ?
+> Please add a comment here to explain this long list of exports:
+> /* Symbols from the base driver are exported separately below. */
 
-I don't think there is other notions that will be about "exporting",
-so implicit eal_export.h looks ok.
+Ack.
 
 
 --=20
