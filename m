@@ -2,37 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795E2C36017
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 12:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8CCC28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 12:43:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1547340273;
-	Wed,  2 Apr 2025 14:25:05 +0200 (CEST)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id D9A2F40261
- for <dev@dpdk.org>; Wed,  2 Apr 2025 14:25:01 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.254])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZSP9Q4X9lzWfnK;
- Wed,  2 Apr 2025 20:21:14 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id C285640275;
+	Wed,  2 Apr 2025 14:43:04 +0200 (CEST)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+ by mails.dpdk.org (Postfix) with ESMTP id DA3FF40273
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 14:43:02 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZSPcP4nbwz1R7S9;
+ Wed,  2 Apr 2025 20:41:09 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id B2968180103;
- Wed,  2 Apr 2025 20:24:56 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 245B51402A5;
+ Wed,  2 Apr 2025 20:43:00 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 2 Apr 2025 20:24:56 +0800
+ 15.2.1544.11; Wed, 2 Apr 2025 20:42:59 +0800
 From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>,
  <liuyonglong@huawei.com>, <roretzla@linux.microsoft.com>,
- <dmitry.kozliuk@gmail.com>, <david.marchand@redhat.com>,
- <stephen@networkplumber.org>, <mb@smartsharesystems.com>
-Subject: [PATCH v3 2/3] eal: fix unckeck pipe
-Date: Wed, 2 Apr 2025 20:24:53 +0800
-Message-ID: <20250402122454.2148612-3-huangdengdui@huawei.com>
+ <anatoly.burakov@intel.com>, <stephen@networkplumber.org>,
+ <mb@smartsharesystems.com>
+Subject: [PATCH] mem: fix infinite loop
+Date: Wed, 2 Apr 2025 20:42:58 +0800
+Message-ID: <20250402124258.2299435-1-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250402122454.2148612-1-huangdengdui@huawei.com>
-References: <20250321040316.104126-1-huangdengdui@huawei.com>
- <20250402122454.2148612-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -52,47 +49,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The communication pipe may be unavailable, for example,
-when the lcore role is ROLE_OFF or ROLE_NON_EAL.
-So check whether the pipe is available before using it.
+When the process address space is insufficient,
+mmap will fail, which will cause an infinite loop.
+This pathc fix it.
 
-Fixes: a95d70547c57 ("eal: factorize lcore main loop")
+Fixes: c4b89ecb64ea ("eal: introduce memory management wrappers")
 Cc: stable@dpdk.org
 
 Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 ---
- lib/eal/unix/eal_unix_thread.c | 3 +++
- lib/eal/windows/eal_thread.c   | 3 +++
- 2 files changed, 6 insertions(+)
+ lib/eal/common/eal_common_memory.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/lib/eal/unix/eal_unix_thread.c b/lib/eal/unix/eal_unix_thread.c
-index ef6cbff0ee..103571cabf 100644
---- a/lib/eal/unix/eal_unix_thread.c
-+++ b/lib/eal/unix/eal_unix_thread.c
-@@ -17,6 +17,9 @@ eal_thread_wake_worker(unsigned int worker_id)
- 	char c = 0;
- 	int n;
+diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
+index a185e0b580..0c997201bd 100644
+--- a/lib/eal/common/eal_common_memory.c
++++ b/lib/eal/common/eal_common_memory.c
+@@ -101,8 +101,12 @@ eal_get_virtual_area(void *requested_addr, size_t *size,
  
-+	if (m2w == 0 || w2m == 0)
-+		return -EINVAL;
-+
- 	do {
- 		n = write(m2w, &c, 1);
- 	} while (n == 0 || (n < 0 && errno == EINTR));
-diff --git a/lib/eal/windows/eal_thread.c b/lib/eal/windows/eal_thread.c
-index 9e3df200b9..82bb974868 100644
---- a/lib/eal/windows/eal_thread.c
-+++ b/lib/eal/windows/eal_thread.c
-@@ -24,6 +24,9 @@ eal_thread_wake_worker(unsigned int worker_id)
- 	char c = 0;
- 	int n;
+ 		mapped_addr = eal_mem_reserve(
+ 			requested_addr, (size_t)map_sz, reserve_flags);
+-		if ((mapped_addr == NULL) && allow_shrink)
+-			*size -= page_sz;
++		if (mapped_addr == NULL) {
++			if (allow_shrink)
++				*size -= page_sz;
++			else
++				break;
++		}
  
-+	if (m2w == 0 || w2m == 0)
-+		return -EINVAL;
-+
- 	do {
- 		n = _write(m2w, &c, 1);
- 	} while (n == 0 || (n < 0 && errno == EINTR));
+ 		if ((mapped_addr != NULL) && addr_is_hint &&
+ 				(mapped_addr != requested_addr)) {
 -- 
 2.33.0
 
