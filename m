@@ -2,85 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495B9C28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 08:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE54C36014
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 08:13:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54B68402B5;
-	Wed,  2 Apr 2025 10:06:01 +0200 (CEST)
-Received: from fhigh-b3-smtp.messagingengine.com
- (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id E4CA24029A
- for <dev@dpdk.org>; Wed,  2 Apr 2025 10:05:59 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal
- [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 12F78254022B;
- Wed,  2 Apr 2025 04:05:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 02 Apr 2025 04:05:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1743581158;
- x=1743667558; bh=rpM2atjWqTfVb8k7kxxHiYCYVxvDVKZWeMj3T95p7UQ=; b=
- dpM7YuBQ0c1QZcuLJ4Yp69gU/GmAfsHBqKlAiA8zDfnDe7Ku3/95XxiOrkEIAbrT
- JIPlvuMQjCjtCtow30eBt+JMMn1fHfZa2P02aAkIHrTGg68yBA2qhu60a2QBLuwM
- 4TsGxk9AdyPTs7NFBJtlJd2Tq1Ej+NB21BhRh+K5yv4Xb5SFxMtEr5CeWKJ/Id7H
- Rsg9gVZen2HX9qvnd80EniK7piNAvPNLD35wpDiKYdagtyPp7R0itbDuXepfY1Rj
- FPdBWizwOUTcmpWaprk0jJSlX/dpfcwSVsaEoJ2YBP97YWuupIEZW8AaLL0ZPLrY
- 3zgPXnr2Vltp5a8osgrwKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743581158; x=
- 1743667558; bh=rpM2atjWqTfVb8k7kxxHiYCYVxvDVKZWeMj3T95p7UQ=; b=F
- 7kKCfRL4aCbfBkFi8fZGMithMHSkeJuP5wKIut8ZDT0iz/RTvDZFJP6M5E1QtbXU
- rY0N/akaewLKoXLKn2j9F9ojz5ev1VpQRLFGRKp2EcE7FxUd4kC/xfA6pMH9xJF3
- IVSf3v2ao1JmxpBOfibHDlKtd/Vey87iJqid7J9YI5ZYrr7fAetMZE0ZRwDGas9G
- 4sl2ET/DqjMA68ZJp2qVxDfvI5uPAV73taJGh4rYaMn4A9Cnb5buG+Hg6lpN0tZj
- TMp1fxmwoGJ/xT2u4jZHQj23T2MjuOugr2CpIKPGm0VjY3oPsl9dvU6dDfYa7gf+
- j4ILOwKoOdaCSkaj+J2ng==
-X-ME-Sender: <xms:5u_sZ27f8ax25SeAi4gJ5MC1JPJm3SfHSSy_v_MFRYJdxj-FqWyTHw>
- <xme:5u_sZ_4RF5fB6rasZvsKFltuVFUlQwLfJGEAl5R6zouervhJJJfCf-ZmZt1Ix5Lja
- 267x5JmTEG1SGMmBQ>
-X-ME-Received: <xmr:5u_sZ1c1heAnqNXBGVFNoFNYt02HNOJrYLHlkDw-_ykOTM_mDsjCe06zIrkEYZW6bBH1_V9zH-YBKVxF322TGtbg4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehudegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
- pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
- gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
- jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
- hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
- geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
- curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurg
- hvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinh
- htvghlrdgtohhmpdhrtghpthhtoheprghnughrvghmuhgvsehlihhnuhigrdhmihgtrhho
- shhofhhtrdgtohhmpdhrtghpthhtoheprhhorhgvthiilhgrsehlihhnuhigrdhmihgtrh
- hoshhofhhtrdgtohhm
-X-ME-Proxy: <xmx:5u_sZzJMuymIJDa5pZZDA9jnKC2YKrGdVPo_J9Kpp4-u5Gy6nOyEVQ>
- <xmx:5u_sZ6IhkOF_4JOAdtX5F6C6zLmOuivzwAraK7WSln0BBTvwq0QZow>
- <xmx:5u_sZ0x61IaPUNpHw4W90cqIHv_4pSwJYMxdBZX6dOHo-ZrSMwHEhQ>
- <xmx:5u_sZ-LrBWezjaZYN4CTrj1sH9ws-c4ntywuFy_D69VilQNqxGsHiw>
- <xmx:5u_sZ3cUdChUeH8Kg3Fl76vUr93FN4vqRBEeOVklhGyGBf1KWopquSLc>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Apr 2025 04:05:57 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, andremue@linux.microsoft.com,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v6 4/8] build: generate symbol maps
-Date: Wed, 02 Apr 2025 10:05:56 +0200
-Message-ID: <6827973.mogB4TqSGs@thomas>
-In-Reply-To: <20250328105250.3082414-5-david.marchand@redhat.com>
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250328105250.3082414-1-david.marchand@redhat.com>
- <20250328105250.3082414-5-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 03A05402B5;
+	Wed,  2 Apr 2025 10:13:26 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id E157E4029A
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 10:13:24 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZSHZp1q43zvWqD;
+ Wed,  2 Apr 2025 16:09:22 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1FF4A1800E5;
+ Wed,  2 Apr 2025 16:13:22 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Apr 2025 16:13:21 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 2 Apr
+ 2025 16:13:21 +0800
+Message-ID: <946a6e12-6271-42f5-b402-99806b54486a@huawei.com>
+Date: Wed, 2 Apr 2025 16:13:16 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] maintainers: update for hns3
+To: <dev@dpdk.org>, <thomas@monjalon.net>, <ferruh.yigit@amd.com>,
+ <stephen@networkplumber.org>
+CC: <fengcengwen@huawei.com>, <huangdengdui@huawei.com>, Jie Hai
+ <haijie1@huawei.com>
+References: <20250402032943.3544535-1-haijie1@huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250402032943.3544535-1-haijie1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.59]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,31 +54,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-28/03/2025 11:52, David Marchand:
-> --- /dev/null
-> +++ b/lib/eal/common/eal_symbol_exports.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright (c) 2025 Red Hat, Inc.
-> + */
-> +
-> +#ifndef EAL_SYMBOL_EXPORTS_H
-> +#define EAL_SYMBOL_EXPORTS_H
-> +
-> +/* Internal macros for exporting symbols, used by the build system.
-> + * For RTE_EXPORT_EXPERIMENTAL_SYMBOL, ver indicates the
-> + * version this symbol was introduced in.
-> + */
-> +#define RTE_EXPORT_EXPERIMENTAL_SYMBOL(a, ver)
-> +#define RTE_EXPORT_INTERNAL_SYMBOL(a)
-> +#define RTE_EXPORT_SYMBOL(a)
-> +
-> +#endif /* EAL_SYMBOL_EXPORTS_H */
++Stephen
 
-Another thought, there is no specific reason to have a "s"
-at the end of this filename.
+在 2025/4/2 11:29, Jie Hai 写道:
+> Update maintainer for the hns3 driver.
+>
+> Signed-off-by: Jie Hai <haijie1@huawei.com>
 
-eal_symbol_export.h looks better to me.
-Or simply eal_export.h ?
+Thanks for your contributions to hns3.
 
+Acked-by: Huisong Li <lihuisong@huawei.com>
 
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4b01103f8e83..bcc9fdaf0c92 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -765,7 +765,7 @@ F: doc/guides/nics/gve.rst
+>   F: doc/guides/nics/features/gve.ini
+>   
+>   Hisilicon hns3
+> -M: Jie Hai <haijie1@huawei.com>
+> +M: Dengdui Huang <huangdengdui@huawei.com>
+>   F: drivers/net/hns3/
+>   F: doc/guides/nics/hns3.rst
+>   F: doc/guides/nics/features/hns3.ini
