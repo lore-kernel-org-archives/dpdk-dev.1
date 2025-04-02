@@ -2,45 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA5EC36018
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 21:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0AEC36018
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 23:24:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A53944021E;
-	Wed,  2 Apr 2025 23:54:01 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id D785B4014F
- for <dev@dpdk.org>; Wed,  2 Apr 2025 23:54:00 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B2E6A464EB; Wed,  2 Apr 2025 23:54:00 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 812E84014F;
+	Thu,  3 Apr 2025 01:24:49 +0200 (CEST)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id EB6F640144
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 01:24:47 +0200 (CEST)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-6eb16dfa988so3115706d6.2
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 16:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743636287;
+ x=1744241087; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=iBvawC/CQXIBBua5lMO4ZcWjC3WSErb3ITricABw3gQ=;
+ b=hi+oZ2Z/9kk0J2RrjDsPQO7MDwbewHrrNA7Sk7U+nncH9gQDykWf3d70nC/PkzWfva
+ lwE+o70nY+ffyG1/x2Tiscy6dMEJP2wDUHnxVlwRZNsKlDw1wEMq94EMDxorPFJnkucz
+ 2RgXdjFO4LzGxjZTaETelOKY1ZkEPmm8vevx9b1rL+n6LFo4TthhNhJQUz3g5juPjwBD
+ 9IfKTLJinbfZSEYrkD57p2wutpDR+aPUabhh5il5ZAyUwpCYJIqFTJw6l7zTWADtJJZS
+ HgFF2e7t38bRdAQPOOwMU+m2C41GlXacOn+BLSWpVzu3gLYFX8qjPniwybXnxWp28hiW
+ 5Yjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1743636287; x=1744241087;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=iBvawC/CQXIBBua5lMO4ZcWjC3WSErb3ITricABw3gQ=;
+ b=fqhaaC/KUxfVx/AdVVGsD1fON1wbvAaosCjKVnZdK9yF2Fij2gi8sLekZFIyHmV597
+ Hwt5mV28Le9hLRmWAs98KhYpWHgIZ7m6cZUZFd8a4sm+egEUvjccyE8IrVNsCS48Pbn+
+ HL1/79no9B7G1RENmQo2Y2yFG5sy3RIad5wAvul45YI3pzY3xpxJe8pstiPeL8HfLtbL
+ zjuiEQJ0X2NCQqu2tGeJGiZLV9hMgo9yS5rk1v0BRGx/hSQ3wCqC1xdTR1yqdwFYpKd8
+ 4FK3Zlq9++qFtJpZLo7Q9dlD+0i68yyDBnoc0dgdnS2qSeWBWkZx9x/d4Gz4L3zGj/Zi
+ TJxA==
+X-Gm-Message-State: AOJu0Yxxq9iz0LtVO2WfbvKR2XzdZlYtABjpFj9yCO0hEu/q2aWmqOSZ
+ vlsIIC0dsh/ym63DNB4PhsR6Gzpb7CWu5e1Zit1AGzFz+Skk1QXjfZxOvYFNQJUih5/oStqq6If
+ 9
+X-Gm-Gg: ASbGnctEjVfKHpQFplGfGfWeyM0gRt6XWKG9kAAy+4W3dgZiSUEXHTGAP+C5i2RWmLf
+ MSAQbvmT0rJBTaxNaSbE0umLII0htGERUKUwTI28DgPYl1/R2oD6bmu1TYhsMkfCnwZL1s7/7mo
+ 536re/RXgOZUvcbnAV40hboyTo+lzbKMM84I+M8x/vx3d0lK2a2dRd7ZiPWkHeadPDrHAzsQAQU
+ wtbxEcdiwa9q+CQU41/JugGvKnfsAfshGu/qhZRA5yi6iJ4CvS9euiuegVx5XBhpcWbJaKb62aW
+ ACFYAmTWLGO7RhUC+D4hW95AoZE+Hmff9SNPG1sIRmjU1NbsgtuwHMNhlRIQRh+P4+LJJRjsW0F
+ q3h/RSJSFfrBen8sh/Tfc5nu72v8F
+X-Google-Smtp-Source: AGHT+IEnvvG9bYTwV937FMnt0fQvGtDZ2kUEsXs7hCEpAEQfWhxX1twP/bq/eStspfCdWlUsbRXh1w==
+X-Received: by 2002:a05:6214:234e:b0:6eb:26ed:4d87 with SMTP id
+ 6a1803df08f44-6eed6211263mr308502376d6.31.1743636286907; 
+ Wed, 02 Apr 2025 16:24:46 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-6ef0f14e993sm672826d6.112.2025.04.02.16.24.45
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 02 Apr 2025 16:24:46 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1687] ring PMD uses unsafe internal devarg
-Date: Wed, 02 Apr 2025 21:54:00 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1687-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17436308400.FF2D58eA3.1506399
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v12 00/10] replace use of term sanity check
+Date: Wed,  2 Apr 2025 16:23:10 -0700
+Message-ID: <20250402232441.440346-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20240529233811.663211-1-stephen@networkplumber.org>
+References: <20240529233811.663211-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,190 +81,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Remove use of expression sanity check across DPDK drivers
+and documentation.
 
---17436308400.FF2D58eA3.1506399
-Date: Wed, 2 Apr 2025 23:54:00 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+The term sanity-check is on the Tier 2 word list from the Inclusive
+Naming project.
+   https://inclusivenaming.org/word-lists/tier-2/sanity-check/
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1687
+Rationale
+	This term might be derogatory to neurodiverse people.
+	Jargon, such as “sanity test”, is difficult to translate and is difficult
+	to understand by readers whose first language is not English.
 
-            Bug ID: 1687
-           Summary: ring PMD uses unsafe internal devarg
-           Product: DPDK
-           Version: 25.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
+v12 - rebase on 25.07
+      mark old mbuf API functions as deprecated
 
-The ring PMD uses and undocumented devarg of "internal=3D" to create network
-device from ring parameters. The problem is that it passes a pointer across
-devargs which leads to ruin.  There is no way to validate that pointer real=
-ly
-points to valid data.
+Stephen Hemminger (10):
+  mbuf: replace term sanity check
+  net/avp: replace use of rte_mbuf_sanity_check
+  net/sfc: replace use of rte_mbuf_sanity_check
+  examples: remove term sanity
+  eal: replace use of sanity check in comments and messages
+  test: replace use word sanity
+  dts: replace use of sanity check in comment
+  doc: remove sanity
+  lib: replace use of sanity check in comments and
+  drivers: remove use of term sanity check
 
-Example:
-dpdk-testpmd --vdev=3Dnet_ring0,internal=3D0xdeadbeef -- -i
-EAL: Detected CPU lcores: 20
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'VA'
-Segmentation fault
+ app/test/test_bitmap.c                        |  4 +-
+ app/test/test_bpf.c                           |  6 +-
+ app/test/test_common.c                        |  2 +-
+ app/test/test_cryptodev.c                     |  2 +-
+ app/test/test_distributor.c                   | 46 +++++------
+ app/test/test_eal_flags.c                     | 20 ++---
+ app/test/test_hash.c                          |  2 +-
+ app/test/test_interrupts.c                    |  9 ++-
+ app/test/test_link_bonding_mode4.c            |  2 +-
+ app/test/test_mbuf.c                          | 30 +++----
+ app/test/test_rawdev.c                        |  2 +-
+ app/test/test_timer.c                         | 10 +--
+ doc/guides/gpus/cuda.rst                      |  2 +-
+ doc/guides/prog_guide/mbuf_lib.rst            |  4 +-
+ doc/guides/rel_notes/deprecation.rst          |  3 +
+ .../sample_app_ug/eventdev_pipeline.rst       |  2 +-
+ doc/guides/tools/testbbdev.rst                |  8 +-
+ drivers/bus/fslmc/qbman/qbman_sys_decl.h      |  2 +-
+ drivers/common/cnxk/roc_nix_tm_ops.c          |  2 +-
+ drivers/common/cnxk/roc_npa.c                 |  6 +-
+ drivers/common/dpaax/caamflib/desc.h          |  2 +-
+ drivers/common/mlx5/linux/mlx5_common_os.c    |  2 +-
+ drivers/common/sfc_efx/base/ef10_nvram.c      |  4 +-
+ drivers/common/sfc_efx/base/efx_rx.c          |  2 +-
+ drivers/crypto/bcmfs/hw/bcmfs4_rm.c           |  6 +-
+ drivers/crypto/bcmfs/hw/bcmfs5_rm.c           |  6 +-
+ drivers/dma/idxd/idxd_pci.c                   |  2 +-
+ drivers/event/opdl/opdl_evdev.c               |  2 +-
+ drivers/event/opdl/opdl_evdev_init.c          |  2 +-
+ drivers/net/ark/ark_ethdev.c                  |  8 +-
+ drivers/net/ark/ark_ethdev_rx.c               |  2 +-
+ drivers/net/avp/avp_ethdev.c                  | 18 ++---
+ drivers/net/bnx2x/bnx2x.c                     |  2 +-
+ drivers/net/bnx2x/bnx2x_stats.c               |  8 +-
+ drivers/net/bnx2x/ecore_sp.c                  |  2 +-
+ drivers/net/bnx2x/elink.c                     |  4 +-
+ drivers/net/bnxt/bnxt_hwrm.c                  |  2 +-
+ drivers/net/bnxt/hsi_struct_def_dpdk.h        |  2 +-
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |  2 +-
+ drivers/net/cnxk/cnxk_ethdev.c                |  4 +-
+ drivers/net/cxgbe/cxgbe_ethdev.c              | 10 +--
+ drivers/net/cxgbe/cxgbevf_main.c              |  4 +-
+ drivers/net/intel/fm10k/fm10k_ethdev.c        |  2 +-
+ drivers/net/intel/fm10k/fm10k_rxtx.c          |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          |  2 +-
+ drivers/net/mlx4/mlx4.c                       |  2 +-
+ drivers/net/mlx4/mlx4_flow.c                  |  6 +-
+ drivers/net/mlx5/mlx5_flow_dv.c               |  2 +-
+ drivers/net/mlx5/mlx5_flow_hw.c               |  6 +-
+ drivers/net/mlx5/mlx5_rxq.c                   |  2 +-
+ drivers/net/mlx5/mlx5_rxtx_vec.h              |  2 +-
+ drivers/net/mvpp2/mrvl_qos.c                  |  2 +-
+ drivers/net/nfp/flower/nfp_flower_flow.c      |  2 +-
+ drivers/net/nfp/nfp_net_flow.c                |  2 +-
+ drivers/net/ntnic/nthw/nthw_rac.c             |  2 +-
+ drivers/net/qede/qede_rxtx.c                  |  6 +-
+ drivers/net/ring/rte_eth_ring.c               |  7 +-
+ drivers/net/sfc/sfc_dp_rx.h                   |  2 +-
+ drivers/net/sfc/sfc_ef100_rx.c                |  6 +-
+ drivers/net/sfc/sfc_ef10_essb_rx.c            |  4 +-
+ drivers/net/sfc/sfc_ef10_rx.c                 |  4 +-
+ drivers/net/sfc/sfc_rx.c                      |  2 +-
+ drivers/net/txgbe/txgbe_ipsec.c               |  2 +-
+ drivers/net/txgbe/txgbe_rxtx.c                |  2 +-
+ dts/tests/TestSuite_blocklist.py              |  2 +-
+ examples/ipsec-secgw/event_helper.c           |  2 +-
+ examples/ipv4_multicast/main.c                |  2 +-
+ examples/qos_sched/args.c                     |  2 +-
+ lib/eal/common/eal_common_memory.c            |  2 +-
+ lib/eal/common/eal_common_proc.c              |  3 +-
+ lib/eal/common/eal_common_trace.c             |  2 +-
+ lib/eal/common/eal_memcfg.h                   |  2 +-
+ lib/eal/common/rte_malloc.c                   |  2 +-
+ lib/eal/freebsd/eal.c                         |  2 +-
+ lib/eal/linux/eal.c                           |  2 +-
+ lib/eal/linux/eal_timer.c                     |  2 +-
+ lib/eal/windows/eal.c                         |  2 +-
+ lib/graph/graph.c                             |  2 +-
+ lib/graph/graph_stats.c                       |  2 +-
+ lib/graph/node.c                              |  2 +-
+ lib/jobstats/rte_jobstats.c                   |  6 +-
+ lib/mbuf/rte_mbuf.c                           | 23 ++++--
+ lib/mbuf/rte_mbuf.h                           | 79 ++++++++++---------
+ lib/mbuf/version.map                          |  1 +
+ lib/metrics/rte_metrics.c                     |  2 +-
+ lib/pcapng/rte_pcapng.c                       |  2 +-
+ 88 files changed, 244 insertions(+), 235 deletions(-)
 
-This is a design flaw.
+-- 
+2.47.2
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17436308400.FF2D58eA3.1506399
-Date: Wed, 2 Apr 2025 23:54:00 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - ring PMD uses unsafe internal devarg"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1687">1687</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>ring PMD uses unsafe internal devarg
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>stephen&#64;networkplumber.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The ring PMD uses and undocumented=
- devarg of &quot;internal=3D&quot; to create network
-device from ring parameters. The problem is that it passes a pointer across
-devargs which leads to ruin.  There is no way to validate that pointer real=
-ly
-points to valid data.
-
-Example:
-dpdk-testpmd --vdev=3Dnet_ring0,internal=3D0xdeadbeef -- -i
-EAL: Detected CPU lcores: 20
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'VA'
-Segmentation fault
-
-This is a design flaw.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1687">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17436308400.FF2D58eA3.1506399--
