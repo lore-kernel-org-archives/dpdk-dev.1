@@ -2,142 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED88C28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 09:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF969C36014
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 09:35:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72DAC402B5;
-	Wed,  2 Apr 2025 11:23:53 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DFF9A40275
- for <dev@dpdk.org>; Wed,  2 Apr 2025 11:23:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743585831;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=UXox06yLbglajwJlHCgdtNyGYQbKNbBwLQ352YNPrdU=;
- b=R9mqBv4zLf60x6CBiP6QYOeI9rzouUCtQaserLYxhe0yevU6NW9vtGzYszb9VqdKsDLKbt
- 7K+oXUtOELWcaL6pHEIkz+feAOO0lz9S+wTbD6VoNIfY/AMyUISgAOkFSBUvHUN06Y0M3N
- QEBnQyOjGyG4LWcDI31SmeHTQeL25RI=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-V_mQJP3WNaKq90K7XiyGzg-1; Wed, 02 Apr 2025 05:23:50 -0400
-X-MC-Unique: V_mQJP3WNaKq90K7XiyGzg-1
-X-Mimecast-MFC-AGG-ID: V_mQJP3WNaKq90K7XiyGzg_1743585829
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5498963ebc3so3011135e87.0
- for <dev@dpdk.org>; Wed, 02 Apr 2025 02:23:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D66D140273;
+	Wed,  2 Apr 2025 11:35:32 +0200 (CEST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com
+ [209.85.167.51]) by mails.dpdk.org (Postfix) with ESMTP id D7B0340273
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 11:35:31 +0200 (CEST)
+Received: by mail-lf1-f51.google.com with SMTP id
+ 2adb3069b0e04-54afb5fcebaso875356e87.3
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 02:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=interfacemasters.com; s=google; t=1743586531; x=1744191331; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=tNlf2qgNUQSDezqY2JYgZ43QeCY62uoDIUXliVo6yok=;
+ b=XriOWtsF0jDHlqGcrV5SAE9CX0GKQNmBRupQnsX81gSlsU6VbuD4EE6i+/LM7xDbWQ
+ jtk6tmdwFUYA1BGl2fkuTYETIfm4ovJOQ5zOH4EwN4dwN7JOo3M6pJlhhSGFpfSqmGnK
+ vZNgG8D8U8lrCe+8mT9fIIlZ1csrlu7h0/Ep8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743585828; x=1744190628;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=UXox06yLbglajwJlHCgdtNyGYQbKNbBwLQ352YNPrdU=;
- b=ad4ppDMJ0E0Hc8FjYC2dmVFpWotevkPz5h4b2QVfAEofY4DWeP2otAbB83k4M/D9dR
- 9Ojy9LsjP+jDd3HvfEGvxZwqzVirngTJJO3lcBcMu/cG57YK//sXoZ7T24xpHtbmCIQM
- s4QRPQuO3XIV/d8GX6geutDbH3PzGDR+mmU39wdmI4Ctb63N5r16WDYNljqJCxubRX21
- v2Fqy2Nw2GAYp1rVOfeCuKqoISh1zukKRN+xjHN8xbahHKVGO9rCZ4RbHNtyAgon3muR
- eiX/6i1qCqs8fw9CxzQcw8FIUfTRgh/D9hdJ89184UjQLZMwLTF/cEy2DKBJGIfcw6I6
- tpZA==
-X-Gm-Message-State: AOJu0Yz56cBJVtk9Npi2NLUJHfEYyajmm0NHVWRGLu0+hcIDrxSxdFNn
- jMy14jtBA+k8UIiwXVGgDGqdsojKvGcRy8g0Z2i+Jm6cQg6vSBa7Ekp9EBuDGmsNhua3ub1RVnH
- 3qTPV0jYhHIcx9/QCDEU2FCNQLciLcvlpPUIxyz+x2xIp1118Pvxg3qJDoUtNZcp2ewXOl/NIFd
- lE1aw9MN3ocgTdQ2E=
-X-Gm-Gg: ASbGnctJDQiFHnTD2aDrtbpUR5L45LM+AqFw/lh3I6mRcpCqNhJg+lHWHNdLgY10bYa
- AQ3rqNzqdLQvZY0S+LZjUv1smjod+VqL5n4aV0+LwrxT89+92q7hP83wxGJjrnDcOqmZMrI14qY
- o=
-X-Received: by 2002:a05:6512:1247:b0:54a:cc04:ea24 with SMTP id
- 2adb3069b0e04-54b11139421mr4499015e87.46.1743585828545; 
- Wed, 02 Apr 2025 02:23:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8Co8QFfAunUQ61lXtJx741b9mOzLidtesoIKB0He5ASoc69hqMl4dkoHDfnWv3dGu752ULlSIhTBVrpL9PhI=
-X-Received: by 2002:a05:6512:1247:b0:54a:cc04:ea24 with SMTP id
- 2adb3069b0e04-54b11139421mr4498951e87.46.1743585828048; Wed, 02 Apr 2025
- 02:23:48 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1743586531; x=1744191331;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=tNlf2qgNUQSDezqY2JYgZ43QeCY62uoDIUXliVo6yok=;
+ b=dp8pzLYu0M+N5duURlMigriusbHx8wfH+y75sASS+nxhgNHgaWwHEq8hT/MwuVA5Kt
+ NThv+ouMZiVEjiLTv2DSXDBFRXElUwJTJiMq3WlUx0RFwrjDOmggkyhVJEhGVggElvX3
+ y22AQw8A/qsUMumC0jz9oqZe58APIZ6tX6M3gqhDrhoFopjR2UsLs/xk77EjR00aLsR7
+ E7s/d/B+ySrDXPYSfvLPdx9pb8GC8ul7SSKDGMaICF84M+WEdkKFIIxSO8ym5qbRSBhr
+ 7XD8f6Lb+llccGiGRPCl9d5mEf3KbX5WWyk0FxrldCS1yX7J3YqSJaj7sxeXCh9bitHb
+ 9JBg==
+X-Gm-Message-State: AOJu0YwIQu/yxcEM0h+outlxWEyI++xVRuHl/J5oNi8Y05H5v8g9ouik
+ aw1ukjjJh18FNFtXl0KqB/3oPw+ZtWLNPQ+Gxv0t6rBmjmgTtJy0hzvH/ONX1Ek=
+X-Gm-Gg: ASbGncv3PU59W0m5VWArU4ofW3DOSdJCdnvG6+p6gG76WPrPiTfiBhgavLnT+9LyiLT
+ /9Btht3Zu05S8JPQhiLQAwl9EpWY98ib4NEL2W9vaFTDahKQoGPZMs2WCRgk0su30GAGigM10CZ
+ lHINkkGQm1AfsiMpWYyuN4rFafWPW5J/rsc7RPbda0lV9b2eq3JW6JLcGqNW4bYJJ06l19B3bgH
+ v7GVJClUuoIWrYSnf1HOJq613lLDTIizcaZgY/v+we1DQgpgUQ3rzJk9QcJ2E8VtHryNwZfYtZH
+ +YxfZS/gJiCb935o/6h5viVARGrz2yK0bgDfQyXLFYGsUhhVVI/fmmZPww==
+X-Google-Smtp-Source: AGHT+IEkVAOVS8a8pvMiArWMm4OR7Bk8FEWODsCSmKTKtw6qB30DWpX5e56P2cHiD69ZBV8vTPIyhQ==
+X-Received: by 2002:a05:6512:3f1e:b0:549:912a:d051 with SMTP id
+ 2adb3069b0e04-54c19c1adfamr535495e87.0.1743586531098; 
+ Wed, 02 Apr 2025 02:35:31 -0700 (PDT)
+Received: from fedora.. ([185.143.144.104]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-54b0959324bsm1578465e87.163.2025.04.02.02.35.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 02 Apr 2025 02:35:30 -0700 (PDT)
+From: Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
+To: Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org,
+ Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
+Subject: [PATCH] trace: fix out of bounds write in __rte_trace_mem_get
+Date: Wed,  2 Apr 2025 12:33:09 +0300
+Message-ID: <20250402093309.10394-1-oleksandrn@interfacemasters.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250328105250.3082414-1-david.marchand@redhat.com>
- <20250328105250.3082414-6-david.marchand@redhat.com>
- <4410598.IobQ9Gjlxr@thomas>
-In-Reply-To: <4410598.IobQ9Gjlxr@thomas>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 2 Apr 2025 11:23:36 +0200
-X-Gm-Features: AQ5f1Jpr5bp8SflsIQpdMlTCEd6G_e_uXgLtu3NJCmFJLvQnuxu7T8UsXT3_T2w
-Message-ID: <CAJFAV8ygq6pxW3dThVur2KYL4USCq5urpYdYGPuybrtXb43Dpw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/8] build: mark exported symbols
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, andremue@linux.microsoft.com, 
- Nicolas Chautru <nicolas.chautru@intel.com>, Parav Pandit <parav@nvidia.com>, 
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, 
- Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>, 
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
- Wei Hu <weh@microsoft.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Anoob Joseph <anoobj@marvell.com>, Andrew Boyer <andrew.boyer@amd.com>, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, 
- Matan Azrad <matan@nvidia.com>, Liron Himi <lironh@marvell.com>, 
- Chaoyong He <chaoyong.he@corigine.com>,
- Nagadheeraj Rottela <rnagadheeraj@marvell.com>, 
- Srikanth Jampala <jsrikanth@marvell.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Ankur Dwivedi <adwivedi@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, 
- Gagandeep Singh <g.singh@nxp.com>, Kai Ji <kai.ji@intel.com>, 
- Vamsi Attunuru <vattunuru@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>, 
- Shijith Thotton <sthotton@marvell.com>, Pravin Pathak <pravin.pathak@intel.com>,
- Ashwin Sekhar T K <asekhar@marvell.com>, Igor Russkikh <irusskikh@marvell.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>, 
- Chas Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Ian Stokes <ian.stokes@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty <praveen.shetty@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>, 
- Maxime Coquelin <maxime.coquelin@redhat.com>, David Hunt <david.hunt@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
- Akhil Goyal <gakhil@marvell.com>, 
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Fan Zhang <fanzhang.oss@gmail.com>, 
- Ashish Gupta <ashish.gupta@marvell.com>, 
- =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>, 
- Kevin Laatz <kevin.laatz@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>, Jerin Jacob <jerinj@marvell.com>,
- Harry van Haaren <harry.van.haaren@intel.com>, Min Zhou <zhoumin@loongson.cn>, 
- David Christensen <drc@linux.ibm.com>,
- Stanislaw Kardach <stanislaw.kardach@gmail.com>, 
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Byron Marohn <byron.marohn@intel.com>, 
- Yipeng Wang <yipeng1.wang@intel.com>, Ferruh Yigit <ferruh.yigit@amd.com>, 
- Abhinandan Gujjar <abhinandan.gujjar@intel.com>, 
- Amit Prakash Shukla <amitprakashs@marvell.com>,
- Naga Harish K S V <s.v.naga.harish.k@intel.com>, 
- Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
- Elena Agostini <eagostini@nvidia.com>, 
- Zhirun Yan <yanzhirun_163@163.com>, Jiayu Hu <hujiayu.hu@foxmail.com>, 
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Reshma Pattan <reshma.pattan@intel.com>, 
- Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Srikanth Yalavarthi <syalavarthi@marvell.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>, 
- Gaetan Rivet <grive@u256.net>, Volodymyr Fialko <vfialko@marvell.com>, 
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: UrB3zKCxAuUDvhSrn6oM1vDrCBHbg4Be1_UH7QDfZEk_1743585829
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -151,30 +73,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Apr 2, 2025 at 11:02=E2=80=AFAM Thomas Monjalon <thomas@monjalon.ne=
-t> wrote:
->
-> 28/03/2025 11:52, David Marchand:
-> > --- /dev/null
-> > +++ b/drivers/bus/dpaa/dpaa_bus_symbols.c
->
-> This is a special case for base drivers,
-> so we should mention "base" in the filename.
->
-> > @@ -0,0 +1,99 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause
-> > + * Copyright (c) 2025 Red Hat, Inc.
-> > + */
-> > +
-> > +#include <eal_symbol_exports.h>
-> > +
->
-> Please add a comment here to explain this long list of exports:
-> /* Symbols from the base driver are exported separately below. */
+Offset should be aligned first before checking if there is free space for
+another write.
 
-Ack.
+Bugzilla ID: 1665
+Fixes: ebaee6409702 ("trace: simplify trace point headers")
 
+Signed-off-by: Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
+---
+ lib/eal/include/rte_trace_point.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---=20
-David Marchand
+diff --git a/lib/eal/include/rte_trace_point.h b/lib/eal/include/rte_trace_point.h
+index 8a317d31d2..343e0271b3 100644
+--- a/lib/eal/include/rte_trace_point.h
++++ b/lib/eal/include/rte_trace_point.h
+@@ -328,7 +328,7 @@ __rte_trace_mem_get(uint64_t in)
+ 			return NULL;
+ 	}
+ 	/* Check the wrap around case */
+-	uint32_t offset = trace->offset;
++	uint32_t offset = RTE_ALIGN_CEIL(trace->offset, __RTE_TRACE_EVENT_HEADER_SZ);
+ 	if (unlikely((offset + sz) >= trace->len)) {
+ 		/* Disable the trace event if it in DISCARD mode */
+ 		if (unlikely(in & __RTE_TRACE_FIELD_ENABLE_DISCARD))
+@@ -336,8 +336,6 @@ __rte_trace_mem_get(uint64_t in)
+ 
+ 		offset = 0;
+ 	}
+-	/* Align to event header size */
+-	offset = RTE_ALIGN_CEIL(offset, __RTE_TRACE_EVENT_HEADER_SZ);
+ 	void *mem = RTE_PTR_ADD(&trace->mem[0], offset);
+ 	offset += sz;
+ 	trace->offset = offset;
+-- 
+2.49.0
 
