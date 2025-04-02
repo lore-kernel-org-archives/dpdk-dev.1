@@ -2,99 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E44DC28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 15:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70F4C36018
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 21:16:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5872B402A7;
-	Wed,  2 Apr 2025 17:06:50 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 79B6040273
- for <dev@dpdk.org>; Wed,  2 Apr 2025 17:06:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743606408;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
- bh=VwEz9jwpmY8Vso++MnQp/jINlMFXuSwQoRZQu9Zpaxk=;
- b=C6NontoM3PsD4obflVC13WVzWYbas9Q4MFU4rr+6MhMzpt1Oc3kPRF0BqVHps1PryOphF2
- hRdI+B0dM7w+7p6VZGhGRuSze/CePzsNjYLErGOntLMsaGQzVn3h2exo2LNnkgfNEjP7l6
- Pk8lpIS2bCBxPNWu8jM+iJ4J4McpWJw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-loSpT0wMPUmKemvXQmtvTA-1; Wed,
- 02 Apr 2025 11:06:46 -0400
-X-MC-Unique: loSpT0wMPUmKemvXQmtvTA-1
-X-Mimecast-MFC-AGG-ID: loSpT0wMPUmKemvXQmtvTA_1743606406
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 26E25183DBE2; Wed,  2 Apr 2025 15:06:30 +0000 (UTC)
-Received: from [10.44.22.6] (unknown [10.44.22.6])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 18FE6195609D; Wed,  2 Apr 2025 15:06:28 +0000 (UTC)
-Message-ID: <631e0b36-1df5-4f3b-87d7-9edacff77b59@redhat.com>
-Date: Wed, 2 Apr 2025 17:06:25 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 967024021E;
+	Wed,  2 Apr 2025 23:16:20 +0200 (CEST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com
+ [209.85.167.43]) by mails.dpdk.org (Postfix) with ESMTP id 53F0E4014F
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 23:16:19 +0200 (CEST)
+Received: by mail-lf1-f43.google.com with SMTP id
+ 2adb3069b0e04-54298ec925bso401056e87.3
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 14:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1743628578; x=1744233378; darn=dpdk.org;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=qvp7q/tyygvzjdRu+KDrWc7Tk2P6xiplVLx1ZTk5DOI=;
+ b=K5kxkYfALQWYxOXh+mm4oWNxxefRANg456con2pobwKtXW5G/vU6hzpZyF5cIiUmZH
+ pwdjuBeITftyOHziDuGukzL7qf2gk/LoVK1AqnIISLAmIlic0dzhNxKmwJbAZzb+FopA
+ 4dMQXaRFKOZay3osbYIJvKv+GuOUvDgSYePyuyG90F/ld2UAafYdo5ggeJv8qrx6bIfS
+ dpd6ii9n3dHISPtOTEpahQbQDSZt0Igw2nTe9BJhNHUoAOLGKhtv/30jNAEC+Tm/AAwV
+ GgVpNSCr4d5tOm/+Gx3PxoJwk6mU4dwrILCsyCXooApaPp2wR3sDQUjk1xnIdxxlCEsN
+ 47Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1743628578; x=1744233378;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=qvp7q/tyygvzjdRu+KDrWc7Tk2P6xiplVLx1ZTk5DOI=;
+ b=cJEe3id05g0vDenO5CIGqnxC6SMvoomMneFTLDWw73chXkNAhahsOspdgwbshwVWrZ
+ WgupSrAquebu96K9VHYrqodx8q7JAI/fph8HLhhLc07uztYLXFjaeGLtMiHuh0mFpbuN
+ RKTnTQO6JkWf2fYrkEu2j8Zis7GqxWRJ+P3W3d6epZK9GA5ewkTVjjiosOl97dWbxKwP
+ NuZUTNAovVST/ekWKQ079R45ziQ3DspRJsUtNvPvO2hGzxsqP30B4NUXOnZLQCU9Hy1j
+ W5jayo5apyNIm3JmvNQarFUhfcagbhuzjY30al8hNYrPKbfEYp5B4Mu0Uqj541Z6WrdH
+ 08RQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCViDJzxqXHkpd3e8vA6ETvMz8HSFL5yLpcyGEOqYV5tD/sYsV+bklBxxoC9ALSd2mFHHFA=@dpdk.org
+X-Gm-Message-State: AOJu0YwRu3KDymEWpPseNW41urd9Fql6wTDUk/8GUgXOGFK5dn9hp3zR
+ qToPlLspghXs19p7GPhoayxWEPfHejyxzMCTm0Rrmkv8NUPXqsCq
+X-Gm-Gg: ASbGncuGGFdmgBqhJJ2Me/c9LxuAleZrguYMA8DwxNu1Ga3N+jfKmnTjxkMa2NygwLX
+ /O+7WiKGEwmxQ8OgC+G79nHtaRzWet487m7/iZw3dwfrGwAkR3GkqXiQVUw3YX6NSKwjtqm3FCN
+ 8wZHLUYyWNYOdMO8B0+C8zL/8GgcKeioBeqzfoa85sgmKLwryB2ZVB9sZvS0T0G/wzTD/aFS3gH
+ GV6Itv6hZXQZ+/Wx2ulUUsNzS/C8cpOMUEWrFoWHIBC2Fp2xlSsi7Zzapahyr3XPKT4cs0T5ys0
+ 5YQtXlrKwSf58hNWkFWxfS8spcbELCpyCZVA8O78maPQCfWa0GtOhtMavBlek/Ug7TKddZjWh8h
+ iHJmDhPUTS445dZ6q5H8/1ZYCWixv/+2zEtm1
+X-Google-Smtp-Source: AGHT+IEPa25/kUpHaYgC6KmltenSNt5IYXwqwnP8S1ddFVYXn0PGt+MFREuUGZSJiPiOQMhyJ08nnw==
+X-Received: by 2002:a05:6512:124f:b0:545:2a96:34f7 with SMTP id
+ 2adb3069b0e04-54b10eccbc4mr5422151e87.31.1743628578256; 
+ Wed, 02 Apr 2025 14:16:18 -0700 (PDT)
+Received: from [192.168.88.232] (broadband-109-173-43-194.ip.moscow.rt.ru.
+ [109.173.43.194]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-54b094c191esm1723118e87.82.2025.04.02.14.16.15
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Wed, 02 Apr 2025 14:16:16 -0700 (PDT)
+Message-ID: <a063308e-448d-4881-a661-17adb52888a4@gmail.com>
+Date: Thu, 3 Apr 2025 00:16:15 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: Tech Board Meeting Minutes - 2025-Jan-22
-To: "dev@dpdk.org" <dev@dpdk.org>
-Cc: dpdk-techboard <techboard@dpdk.org>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -i8afbGCi1b-MDvpbdy19TOtzPVh0y-t9iKbiVlrQYk_1743606406
-X-Mimecast-Originator: redhat.com
+Subject: Re: [PATCH] mem: fix infinite loop
+To: Dengdui Huang <huangdengdui@huawei.com>, dev@dpdk.org
+Cc: fengchengwen@huawei.com, lihuisong@huawei.com, haijie1@huawei.com,
+ liuyonglong@huawei.com, roretzla@linux.microsoft.com,
+ anatoly.burakov@intel.com, stephen@networkplumber.org,
+ mb@smartsharesystems.com
+References: <20250402124258.2299435-1-huangdengdui@huawei.com>
 Content-Language: en-US
+From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+In-Reply-To: <20250402124258.2299435-1-huangdengdui@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,42 +85,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On 02.04.2025 15:42, Dengdui Huang wrote:
+> When the process address space is insufficient,
+> mmap will fail, which will cause an infinite loop.
+> This pathc fix it.
+>
+> Fixes: c4b89ecb64ea ("eal: introduce memory management wrappers")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 
-Members Attending
-------------------
-Aaron Conole
-Bruce Richardson
-Hemant Agrawal
-Jerin Jacob
-Kevin Traynor
-Maxime Coquelin (chair)
-Stephen Hemminger
-Thomas Monjalon
-Honnappa Nagarahalli
+Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 
-NOTE: The technical board meetings are on every second Wednesday at 3pm UTC.
-Meetings are public, and DPDK community members are welcome to attend.
-Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+Typo: "pathc fix" -> "patch fixes", or, better:
+"This patch stops attempting mmap if it fails and the requested size 
+cannot be reduced."
 
-Next meeting will be on Wednesday 2025-Feb-15 @ 3pm UTC, and will be
-chaired by Stephen.
+The bug is actually older, but it doesn't matter since both c4b89ecb64ea 
+and b7cc54187ea4 belong to all LTS:
 
-Agenda Items:
-=============
-
-1. Prague 2025 Summit update (Nathan)
-  * Likely May 8th/9th at Grandio hotel, will be announced soon on dpdk.org
-  * 100 in-person attendees expected + virtual attendance
-
-2. Actions items from the last Governing and Technical boards joint 
-meeting (Thomas)
-  * Discussions about extending the scope of the Tech board
-   - Its members could be in charge of specific tasks related to the 
-identified topics (AI/Security protocols/Cloud)
-   - It would likely require changes in the charter
-   - Idea to involve universities, but would require good supervision
-
-3. CI overloaded by new revisions of big series being sent back to back 
-(Aaron)
-  * Would require enforcing some policies
+Fixes: b7cc54187ea4 ("mem: move virtual area function in common directory")
 
