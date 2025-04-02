@@ -2,64 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF969C36014
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 09:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F7FC28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 11:53:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D66D140273;
-	Wed,  2 Apr 2025 11:35:32 +0200 (CEST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com
- [209.85.167.51]) by mails.dpdk.org (Postfix) with ESMTP id D7B0340273
- for <dev@dpdk.org>; Wed,  2 Apr 2025 11:35:31 +0200 (CEST)
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-54afb5fcebaso875356e87.3
- for <dev@dpdk.org>; Wed, 02 Apr 2025 02:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=interfacemasters.com; s=google; t=1743586531; x=1744191331; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=tNlf2qgNUQSDezqY2JYgZ43QeCY62uoDIUXliVo6yok=;
- b=XriOWtsF0jDHlqGcrV5SAE9CX0GKQNmBRupQnsX81gSlsU6VbuD4EE6i+/LM7xDbWQ
- jtk6tmdwFUYA1BGl2fkuTYETIfm4ovJOQ5zOH4EwN4dwN7JOo3M6pJlhhSGFpfSqmGnK
- vZNgG8D8U8lrCe+8mT9fIIlZ1csrlu7h0/Ep8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743586531; x=1744191331;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=tNlf2qgNUQSDezqY2JYgZ43QeCY62uoDIUXliVo6yok=;
- b=dp8pzLYu0M+N5duURlMigriusbHx8wfH+y75sASS+nxhgNHgaWwHEq8hT/MwuVA5Kt
- NThv+ouMZiVEjiLTv2DSXDBFRXElUwJTJiMq3WlUx0RFwrjDOmggkyhVJEhGVggElvX3
- y22AQw8A/qsUMumC0jz9oqZe58APIZ6tX6M3gqhDrhoFopjR2UsLs/xk77EjR00aLsR7
- E7s/d/B+ySrDXPYSfvLPdx9pb8GC8ul7SSKDGMaICF84M+WEdkKFIIxSO8ym5qbRSBhr
- 7XD8f6Lb+llccGiGRPCl9d5mEf3KbX5WWyk0FxrldCS1yX7J3YqSJaj7sxeXCh9bitHb
- 9JBg==
-X-Gm-Message-State: AOJu0YwIQu/yxcEM0h+outlxWEyI++xVRuHl/J5oNi8Y05H5v8g9ouik
- aw1ukjjJh18FNFtXl0KqB/3oPw+ZtWLNPQ+Gxv0t6rBmjmgTtJy0hzvH/ONX1Ek=
-X-Gm-Gg: ASbGncv3PU59W0m5VWArU4ofW3DOSdJCdnvG6+p6gG76WPrPiTfiBhgavLnT+9LyiLT
- /9Btht3Zu05S8JPQhiLQAwl9EpWY98ib4NEL2W9vaFTDahKQoGPZMs2WCRgk0su30GAGigM10CZ
- lHINkkGQm1AfsiMpWYyuN4rFafWPW5J/rsc7RPbda0lV9b2eq3JW6JLcGqNW4bYJJ06l19B3bgH
- v7GVJClUuoIWrYSnf1HOJq613lLDTIizcaZgY/v+we1DQgpgUQ3rzJk9QcJ2E8VtHryNwZfYtZH
- +YxfZS/gJiCb935o/6h5viVARGrz2yK0bgDfQyXLFYGsUhhVVI/fmmZPww==
-X-Google-Smtp-Source: AGHT+IEkVAOVS8a8pvMiArWMm4OR7Bk8FEWODsCSmKTKtw6qB30DWpX5e56P2cHiD69ZBV8vTPIyhQ==
-X-Received: by 2002:a05:6512:3f1e:b0:549:912a:d051 with SMTP id
- 2adb3069b0e04-54c19c1adfamr535495e87.0.1743586531098; 
- Wed, 02 Apr 2025 02:35:31 -0700 (PDT)
-Received: from fedora.. ([185.143.144.104]) by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-54b0959324bsm1578465e87.163.2025.04.02.02.35.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Apr 2025 02:35:30 -0700 (PDT)
-From: Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
-To: Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
+	by mails.dpdk.org (Postfix) with ESMTP id 2498D40273;
+	Wed,  2 Apr 2025 13:53:29 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 3DFF740261
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 13:53:28 +0200 (CEST)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal
+ [10.202.2.48])
+ by mailfout.stl.internal (Postfix) with ESMTP id 5099E1140175;
+ Wed,  2 Apr 2025 07:53:27 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-08.internal (MEProxy); Wed, 02 Apr 2025 07:53:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1743594807;
+ x=1743681207; bh=7bv8G+Bf/IYOv8I3LnWbOr9YVivrPvM762PZAwSp5jQ=; b=
+ FghmHvMcsQUwAUg1Klr22IVjdRqf4XqE84J7kFPM6PjI1g2s32JdhOaVDH6ZrIZs
+ MVVVM2kp5ikjQ9ejw181empKzQP/4u2HAiJ4yfRypW89xz8HKSlQRVsQGaHKU/Ad
+ CrqWwb3Z4tLcH9MrrdkdZ//QI0CBlFu7S7GkpUOcQ0/Ty3Z0miEjypI1MVSi+9/C
+ cVBWu8HeEP1mHLFeg9zF+uOyMBnK9sSjxHDvDZwfN8rjuOzVJaEhnX2seoRPD2FM
+ XSx4a/FsusEuLXcKeXvSyjOmI3QffmP/ypM5zWjjHCxEwSDTXw2/2IoheRAKAUhz
+ oG2Cn7nTwBOVZPuQY7G+IA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743594807; x=
+ 1743681207; bh=7bv8G+Bf/IYOv8I3LnWbOr9YVivrPvM762PZAwSp5jQ=; b=h
+ nyTwRR7UAlYaymyKy/ecYk+4cTVTOmOgTKlxY68JilhoBDTYutnYJhQM6qgHtySO
+ ycX2VpgIQIM+OBciO9rRZ5asCpVOgKlMQfaF3y8dt/HOnohnG/4OlpR+/Vd46b/H
+ 8v1Jl5x2s/FdGdbL1CGYXwfdPVnNlBhiLIhvGPbKwiFAfxxVBO5IuSDoVl2oJpLD
+ cDMgkQGJQUuPbm4Y8YpvjGAMvdmOHS4JfLkSNcpsa2w/MqYCDcDYqApmAktS551Z
+ PwbvtGwO3p5uFeffisIv2kPmvZmK6MRgCSeBpZuuapRB+qEq8WefK1QnB5bewuRu
+ s4b3KrfQA6+NnrSutMbfw==
+X-ME-Sender: <xms:NiXtZ6nUgYKt4mvx73RvE77L8OgA6qf_q9HfSJPEEUCbcnDO6MJlqw>
+ <xme:NiXtZx1-GRhyf7UatdQWBG15TlPiJaOIigGVoYjkzhFFiY2wykIG2Cf2tYk4A7s9z
+ kQtMGPzvzQtW7zWsA>
+X-ME-Received: <xmr:NiXtZ4oYRYpxz-fu9NTXJOH8ln7wKl-S9aHa1n67DpRZxKCBT5FupP9Hru8G3Fse8rhd9IZ4_QyXXt2S0FVxryxlqA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehieduucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddt
+ jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdt
+ geekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtne
+ curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
+ pdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurg
+ hvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinh
+ htvghlrdgtohhmpdhrtghpthhtoheprghnughrvghmuhgvsehlihhnuhigrdhmihgtrhho
+ shhofhhtrdgtohhmpdhrtghpthhtoheprhhorhgvthiilhgrsehlihhnuhigrdhmihgtrh
+ hoshhofhhtrdgtohhmpdhrtghpthhtohepjhgrshhvihhnuggvrhdrshhinhhghhesihhn
+ thgvlhdrtghomh
+X-ME-Proxy: <xmx:NiXtZ-nakoPZyrXKrLgyId937xfe8vz3BKJPSY3whF8NZiP0wOqJqg>
+ <xmx:NiXtZ41PRA_RMUCyv0BqIaFmtYBZc8yGiESorIMNpcpN-g3epaFSQw>
+ <xmx:NiXtZ1spcfwH_s2zI3nVA-dKFUYiqgsA6vSnuSWK2Ql_TpKnDW8qCw>
+ <xmx:NiXtZ0Xv16M7tY62l1K6YKhVRfPMlNURI02VgrNNH4Nn9VWFGbqJCA>
+ <xmx:NyXtZ-9TyN3I_7j4A-P8FVfVeyp7OcunF50NrLrm1MSCnpIApX_hRVBF>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Apr 2025 07:53:25 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, andremue@linux.microsoft.com,
  Tyler Retzlaff <roretzla@linux.microsoft.com>,
- David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
-Subject: [PATCH] trace: fix out of bounds write in __rte_trace_mem_get
-Date: Wed,  2 Apr 2025 12:33:09 +0300
-Message-ID: <20250402093309.10394-1-oleksandrn@interfacemasters.com>
-X-Mailer: git-send-email 2.49.0
+ Jasvinder Singh <jasvinder.singh@intel.com>
+Subject: Re: [PATCH v6 8/8] eal: rework function versioning macros
+Date: Wed, 02 Apr 2025 13:53:23 +0200
+Message-ID: <5048875.4XsnlVU6TS@thomas>
+In-Reply-To: <20250328105250.3082414-9-david.marchand@redhat.com>
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
+ <20250328105250.3082414-1-david.marchand@redhat.com>
+ <20250328105250.3082414-9-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,39 +96,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Offset should be aligned first before checking if there is free space for
-another write.
+28/03/2025 11:52, David Marchand:
+> --- a/lib/eal/common/eal_symbol_exports.h
+> +++ b/lib/eal/common/eal_symbol_exports.h
+> @@ -5,6 +5,8 @@
+>  #ifndef EAL_SYMBOL_EXPORTS_H
+>  #define EAL_SYMBOL_EXPORTS_H
+>  
+> +#include <rte_common.h>
+> +
+>  /* Internal macros for exporting symbols, used by the build system.
+>   * For RTE_EXPORT_EXPERIMENTAL_SYMBOL, ver indicates the
+>   * version this symbol was introduced in.
+> @@ -13,4 +15,68 @@
+>  #define RTE_EXPORT_INTERNAL_SYMBOL(a)
+>  #define RTE_EXPORT_SYMBOL(a)
+>  
+> +#if !defined(RTE_USE_FUNCTION_VERSIONING) && (defined(RTE_CC_GCC) || defined(RTE_CC_CLANG))
+> +#define VERSIONING_WARN RTE_PRAGMA_WARNING(Use of function versioning disabled. \
+> +       Is "use_function_versioning=true" in meson.build?)
+> +#else
+> +#define VERSIONING_WARN
+> +#endif
 
-Bugzilla ID: 1665
-Fixes: ebaee6409702 ("trace: simplify trace point headers")
+Why no warning for other compilers?
+Why not warn at Meson level?
 
-Signed-off-by: Oleksandr Nahnybida <oleksandrn@interfacemasters.com>
----
- lib/eal/include/rte_trace_point.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> +
+> +/*
+> + * Provides backwards compatibility when updating exported functions.
 
-diff --git a/lib/eal/include/rte_trace_point.h b/lib/eal/include/rte_trace_point.h
-index 8a317d31d2..343e0271b3 100644
---- a/lib/eal/include/rte_trace_point.h
-+++ b/lib/eal/include/rte_trace_point.h
-@@ -328,7 +328,7 @@ __rte_trace_mem_get(uint64_t in)
- 			return NULL;
- 	}
- 	/* Check the wrap around case */
--	uint32_t offset = trace->offset;
-+	uint32_t offset = RTE_ALIGN_CEIL(trace->offset, __RTE_TRACE_EVENT_HEADER_SZ);
- 	if (unlikely((offset + sz) >= trace->len)) {
- 		/* Disable the trace event if it in DISCARD mode */
- 		if (unlikely(in & __RTE_TRACE_FIELD_ENABLE_DISCARD))
-@@ -336,8 +336,6 @@ __rte_trace_mem_get(uint64_t in)
- 
- 		offset = 0;
- 	}
--	/* Align to event header size */
--	offset = RTE_ALIGN_CEIL(offset, __RTE_TRACE_EVENT_HEADER_SZ);
- 	void *mem = RTE_PTR_ADD(&trace->mem[0], offset);
- 	offset += sz;
- 	trace->offset = offset;
--- 
-2.49.0
+I feel a word is missing. What "provides" it?
+
+> + * When a symbol is exported from a library to provide an API, it also provides a
+> + * calling convention (ABI) that is embodied in its name, return type,
+> + * arguments, etc.  On occasion that function may need to change to accommodate
+> + * new functionality, behavior, etc.  When that occurs, it is desirable to
+> + * allow for backwards compatibility for a time with older binaries that are
+> + * dynamically linked to the dpdk.
+> + */
+> +
+> +#ifdef RTE_BUILD_SHARED_LIB
+> +
+> +/*
+
+Why not Doxygen style?
+
+> + * RTE_VERSION_SYMBOL
+
+No need to repeat the macro name here.
+
+> + * Creates a symbol version table entry binding symbol <name>@DPDK_<ver> to the internal
+
+Imperative form is more usual.
+
+> + * function name <name>_v<ver>.
+> + */
+> +#define RTE_VERSION_SYMBOL(ver, type, name, args) VERSIONING_WARN \
+> +__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@DPDK_" RTE_STR(ver)); \
+> +__rte_used type name ## _v ## ver args; \
+> +type name ## _v ## ver args
+
+This is only GNU style. It should be highlighted both in this file and the commit log.
+
+> +
+> +/*
+> + * RTE_VERSION_EXPERIMENTAL_SYMBOL
+> + * Similar to RTE_VERSION_SYMBOL but for experimental API symbols.
+> + * This is mainly used for keeping compatibility for symbols that get promoted to stable ABI.
+> + */
+> +#define RTE_VERSION_EXPERIMENTAL_SYMBOL(type, name, args) VERSIONING_WARN \
+> +__asm__(".symver " RTE_STR(name) "_exp, " RTE_STR(name) "@EXPERIMENTAL") \
+> +__rte_used type name ## _exp args; \
+> +type name ## _exp args
+> +
+> +/*
+> + * RTE_DEFAULT_SYMBOL
+> + * Creates a symbol version entry instructing the linker to bind references to
+> + * symbol <name> to the internal symbol <name>_v<ver>.
+> + */
+> +#define RTE_DEFAULT_SYMBOL(ver, type, name, args) VERSIONING_WARN \
+> +__asm__(".symver " RTE_STR(name) "_v" RTE_STR(ver) ", " RTE_STR(name) "@@DPDK_" RTE_STR(ver)); \
+> +__rte_used type name ## _v ## ver args; \
+> +type name ## _v ## ver args
+
+Only 3 macros, that's simple and clean, thank you.
+
 
