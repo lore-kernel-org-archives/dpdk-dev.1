@@ -2,76 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70F4C36018
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 21:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA5EC36018
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 21:54:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 967024021E;
-	Wed,  2 Apr 2025 23:16:20 +0200 (CEST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com
- [209.85.167.43]) by mails.dpdk.org (Postfix) with ESMTP id 53F0E4014F
- for <dev@dpdk.org>; Wed,  2 Apr 2025 23:16:19 +0200 (CEST)
-Received: by mail-lf1-f43.google.com with SMTP id
- 2adb3069b0e04-54298ec925bso401056e87.3
- for <dev@dpdk.org>; Wed, 02 Apr 2025 14:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1743628578; x=1744233378; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=qvp7q/tyygvzjdRu+KDrWc7Tk2P6xiplVLx1ZTk5DOI=;
- b=K5kxkYfALQWYxOXh+mm4oWNxxefRANg456con2pobwKtXW5G/vU6hzpZyF5cIiUmZH
- pwdjuBeITftyOHziDuGukzL7qf2gk/LoVK1AqnIISLAmIlic0dzhNxKmwJbAZzb+FopA
- 4dMQXaRFKOZay3osbYIJvKv+GuOUvDgSYePyuyG90F/ld2UAafYdo5ggeJv8qrx6bIfS
- dpd6ii9n3dHISPtOTEpahQbQDSZt0Igw2nTe9BJhNHUoAOLGKhtv/30jNAEC+Tm/AAwV
- GgVpNSCr4d5tOm/+Gx3PxoJwk6mU4dwrILCsyCXooApaPp2wR3sDQUjk1xnIdxxlCEsN
- 47Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743628578; x=1744233378;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=qvp7q/tyygvzjdRu+KDrWc7Tk2P6xiplVLx1ZTk5DOI=;
- b=cJEe3id05g0vDenO5CIGqnxC6SMvoomMneFTLDWw73chXkNAhahsOspdgwbshwVWrZ
- WgupSrAquebu96K9VHYrqodx8q7JAI/fph8HLhhLc07uztYLXFjaeGLtMiHuh0mFpbuN
- RKTnTQO6JkWf2fYrkEu2j8Zis7GqxWRJ+P3W3d6epZK9GA5ewkTVjjiosOl97dWbxKwP
- NuZUTNAovVST/ekWKQ079R45ziQ3DspRJsUtNvPvO2hGzxsqP30B4NUXOnZLQCU9Hy1j
- W5jayo5apyNIm3JmvNQarFUhfcagbhuzjY30al8hNYrPKbfEYp5B4Mu0Uqj541Z6WrdH
- 08RQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCViDJzxqXHkpd3e8vA6ETvMz8HSFL5yLpcyGEOqYV5tD/sYsV+bklBxxoC9ALSd2mFHHFA=@dpdk.org
-X-Gm-Message-State: AOJu0YwRu3KDymEWpPseNW41urd9Fql6wTDUk/8GUgXOGFK5dn9hp3zR
- qToPlLspghXs19p7GPhoayxWEPfHejyxzMCTm0Rrmkv8NUPXqsCq
-X-Gm-Gg: ASbGncuGGFdmgBqhJJ2Me/c9LxuAleZrguYMA8DwxNu1Ga3N+jfKmnTjxkMa2NygwLX
- /O+7WiKGEwmxQ8OgC+G79nHtaRzWet487m7/iZw3dwfrGwAkR3GkqXiQVUw3YX6NSKwjtqm3FCN
- 8wZHLUYyWNYOdMO8B0+C8zL/8GgcKeioBeqzfoa85sgmKLwryB2ZVB9sZvS0T0G/wzTD/aFS3gH
- GV6Itv6hZXQZ+/Wx2ulUUsNzS/C8cpOMUEWrFoWHIBC2Fp2xlSsi7Zzapahyr3XPKT4cs0T5ys0
- 5YQtXlrKwSf58hNWkFWxfS8spcbELCpyCZVA8O78maPQCfWa0GtOhtMavBlek/Ug7TKddZjWh8h
- iHJmDhPUTS445dZ6q5H8/1ZYCWixv/+2zEtm1
-X-Google-Smtp-Source: AGHT+IEPa25/kUpHaYgC6KmltenSNt5IYXwqwnP8S1ddFVYXn0PGt+MFREuUGZSJiPiOQMhyJ08nnw==
-X-Received: by 2002:a05:6512:124f:b0:545:2a96:34f7 with SMTP id
- 2adb3069b0e04-54b10eccbc4mr5422151e87.31.1743628578256; 
- Wed, 02 Apr 2025 14:16:18 -0700 (PDT)
-Received: from [192.168.88.232] (broadband-109-173-43-194.ip.moscow.rt.ru.
- [109.173.43.194]) by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-54b094c191esm1723118e87.82.2025.04.02.14.16.15
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 02 Apr 2025 14:16:16 -0700 (PDT)
-Message-ID: <a063308e-448d-4881-a661-17adb52888a4@gmail.com>
-Date: Thu, 3 Apr 2025 00:16:15 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id A53944021E;
+	Wed,  2 Apr 2025 23:54:01 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id D785B4014F
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 23:54:00 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id B2E6A464EB; Wed,  2 Apr 2025 23:54:00 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1687] ring PMD uses unsafe internal devarg
+Date: Wed, 02 Apr 2025 21:54:00 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1687-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17436308400.FF2D58eA3.1506399
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mem: fix infinite loop
-To: Dengdui Huang <huangdengdui@huawei.com>, dev@dpdk.org
-Cc: fengchengwen@huawei.com, lihuisong@huawei.com, haijie1@huawei.com,
- liuyonglong@huawei.com, roretzla@linux.microsoft.com,
- anatoly.burakov@intel.com, stephen@networkplumber.org,
- mb@smartsharesystems.com
-References: <20250402124258.2299435-1-huangdengdui@huawei.com>
-Content-Language: en-US
-From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-In-Reply-To: <20250402124258.2299435-1-huangdengdui@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,24 +54,190 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 02.04.2025 15:42, Dengdui Huang wrote:
-> When the process address space is insufficient,
-> mmap will fail, which will cause an infinite loop.
-> This pathc fix it.
->
-> Fixes: c4b89ecb64ea ("eal: introduce memory management wrappers")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 
-Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+--17436308400.FF2D58eA3.1506399
+Date: Wed, 2 Apr 2025 23:54:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Typo: "pathc fix" -> "patch fixes", or, better:
-"This patch stops attempting mmap if it fails and the requested size 
-cannot be reduced."
+https://bugs.dpdk.org/show_bug.cgi?id=3D1687
 
-The bug is actually older, but it doesn't matter since both c4b89ecb64ea 
-and b7cc54187ea4 belong to all LTS:
+            Bug ID: 1687
+           Summary: ring PMD uses unsafe internal devarg
+           Product: DPDK
+           Version: 25.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
-Fixes: b7cc54187ea4 ("mem: move virtual area function in common directory")
+The ring PMD uses and undocumented devarg of "internal=3D" to create network
+device from ring parameters. The problem is that it passes a pointer across
+devargs which leads to ruin.  There is no way to validate that pointer real=
+ly
+points to valid data.
 
+Example:
+dpdk-testpmd --vdev=3Dnet_ring0,internal=3D0xdeadbeef -- -i
+EAL: Detected CPU lcores: 20
+EAL: Detected NUMA nodes: 1
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+Segmentation fault
+
+This is a design flaw.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17436308400.FF2D58eA3.1506399
+Date: Wed, 2 Apr 2025 23:54:00 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - ring PMD uses unsafe internal devarg"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1687">1687</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>ring PMD uses unsafe internal devarg
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>stephen&#64;networkplumber.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">The ring PMD uses and undocumented=
+ devarg of &quot;internal=3D&quot; to create network
+device from ring parameters. The problem is that it passes a pointer across
+devargs which leads to ruin.  There is no way to validate that pointer real=
+ly
+points to valid data.
+
+Example:
+dpdk-testpmd --vdev=3Dnet_ring0,internal=3D0xdeadbeef -- -i
+EAL: Detected CPU lcores: 20
+EAL: Detected NUMA nodes: 1
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+Segmentation fault
+
+This is a design flaw.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1687">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17436308400.FF2D58eA3.1506399--
