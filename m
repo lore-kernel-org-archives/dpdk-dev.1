@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2C5C28B20
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FCFC28B20
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Apr 2025 14:28:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C612C40273;
-	Wed,  2 Apr 2025 16:22:39 +0200 (CEST)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 942D640261
- for <dev@dpdk.org>; Wed,  2 Apr 2025 16:22:37 +0200 (CEST)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-224019ad9edso54143805ad.1
- for <dev@dpdk.org>; Wed, 02 Apr 2025 07:22:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9135140273;
+	Wed,  2 Apr 2025 16:28:42 +0200 (CEST)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id CD36840261
+ for <dev@dpdk.org>; Wed,  2 Apr 2025 16:28:41 +0200 (CEST)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-7359aca7ef2so317330b3a.2
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 07:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743603756;
- x=1744208556; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743604121;
+ x=1744208921; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Q5CkbDn4fS/uqjo1GHSY9IzBgWpJ2HR6uKpt5PLy1dI=;
- b=ZgVH6ehaz27nI9nMepSX3/PTEm0Na8jxmHEcUam9RaDplUDe4wutWYIt9z15RAVvwU
- Yp7Ixpa20ZyL1zYxYWjOmJgDfwqUz6PmzNDpfFRYyoLrSwl2dnxmxGZ8rmcREZrlpha4
- qeWdh7Th9tLUqFztDkqG7ZxYQVsqoC41JiK19DBtMuSnZdOcMj1mCjcTmhAefQ+N/C16
- qbFMa+nk91pvww2+tWd44OjWFUWO9DdhYNlo3L2o5A6j382e7BuqPsPYSCj1rF4lOMGJ
- 0FwtVLuVAFyNme/TehD9kyg5L14uh1FxYkz0FSzGCfBmXWVDoH8dUDmmpLQynFu1Ojq6
- rSHw==
+ bh=O8GeR7as/yPeZlRQuOyubh6QlVvR+mCQ60YZKpE9jxM=;
+ b=ffLTggIsjq5scwxTP8j0jYq+kFv/x/YF5UzK+/Pe9FtWCHpp2IqY9olipYseSKHKlO
+ tNNtYYvKyTTxMrr3ta3UhCTuePXgrzQrht5GgEDvApoYn0l78/NXluKSNFmuj87EElXR
+ AHRMAlmxQlGdjSzANi7tbzarxHNLelcuRFvBrkfayBvolLQvrIbGPRqCvh7f9Edhqky6
+ cfULWo1KaPGKxQGTCMGql7n5q9bBWCSGOhhMQttpILQxne9JIwdaZUv8ykOddZYaVeii
+ KWt4snXlcdSagRsPUTRfiLgKUQn15MDLxWIjb6CWtf0ykE0QLYa1WB8/QFdZWPXqO8Lq
+ Tekw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743603756; x=1744208556;
+ d=1e100.net; s=20230601; t=1743604121; x=1744208921;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Q5CkbDn4fS/uqjo1GHSY9IzBgWpJ2HR6uKpt5PLy1dI=;
- b=WLME6Xa8Bau6Q1yJ5tz5Rphtg+aSIsN5LA2qdOs1OnihugtzLXLaxJiRxpLMhLNRIz
- JIYPOKfF/jPI2nyTsqcc6Alzg64oMgNmTe8e2eyvIRvLDs1D9K+246OLIPVScG2ErazP
- OixGn8NZ8XmXSgF5TkBSNDJAfP3HjiArhgXkfc0IKIxSwmOFf+qSfSlADycqwd2yUK/P
- 7nDS36lCKMGY8WokT7GyNc6Knh/seKCaE4ok5Pau2ueBNXA+s7JqAhCT+fKQmHxxdbCf
- eI1tswAcCejmQ3vtFVkRen2sgv32V7lD9ZMjT/tyIRo0T2yysgIEjm+sLe1xEgPVYl7D
- wrgg==
-X-Gm-Message-State: AOJu0Yxovbq1cVurYXHVOFPpzbtxuiRrfIMmzQZTfqCxzAHGoEI4+tZh
- BtR+6wL2iVLN6oofUW9u3eZn1IDFrwzN/Ejx3D1BFh6ELIjrFOOgx4E7XO21rEA=
-X-Gm-Gg: ASbGnctrStVOTrXE4CXDkg31JtO+5tNC98dhgHNo3ihXuasC8xu2SlN+FZh6QXce09O
- W4Qpme3MDCg4A60JMjsa6qnFdNCSiSgguY4Xf/xvjU7f1JpOdFU2yWoG1naQdxaDG8qOA1QsAeV
- CXPYddAVpsFpGPT4RIycHRlzcfQK3YhTWmOQMSAwR+7CFEE247/eaZjhMO70ygjyxKo5SI8IFOK
- ehKI95MCDQDS9Zba795fN5jSA/0JivkA3VgVEaAyghBD3L5u33J1of6tjWtRulnL8vgWZuI/fs+
- OPx1+YopFrJu3TxFremiVkv55jXWvj0PryQ4e/zJXer1iMhgBsV8ePS0Pd6WJQM8wK/k/bBqSlx
- 72y1KLbWg9E2CyXhFgXSv
-X-Google-Smtp-Source: AGHT+IGQgw366MUWcF0ohJtbE0YPQR04eQUkWh1pb2M+HTwpC2QNrGnIsaAcfhcZvapYF+Stx+9VIw==
-X-Received: by 2002:a17:902:db05:b0:21f:1bd:efd4 with SMTP id
- d9443c01a7336-2296c65f460mr33384695ad.19.1743603756418; 
- Wed, 02 Apr 2025 07:22:36 -0700 (PDT)
+ bh=O8GeR7as/yPeZlRQuOyubh6QlVvR+mCQ60YZKpE9jxM=;
+ b=rCn+N94JE0G4CvCp+YDywsBMnn0sqrUKrVVsRCcuADO/D5CNTE4Frk4fwRi7k40oUH
+ KvCwGBWUpNqvuheYQv7fSv8t2yf5eYT8+/pqmiz/ZAVO31zqNt80owEI0sH2bD+Ud8Fs
+ HiDJkI3/OqLd6kjsWpz6UXWkpvRlxe05kw9aLH+Wkt/x9YdYyD4l3JsTBOlTULFx7Dp5
+ nhJPjL1RhfTjA5hCA8Tb6Sz9V/5q7k5NfyPwo7SKbr4L1fFRtBcxjdeFE6Ic8rrRNTQc
+ WWJBDXiyytjMeHII61o/pCw1LOrgfK1EV5oTZFoNmSf4dzPFMBuGb8Y0SaiIHxiB5Ar3
+ m80A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXd3s6mCS1Xo3mbwHl72yh4312jEqhxvgzF7dKZ3KHjCNYACba1c0he3JwR28he4lD5zp8=@dpdk.org
+X-Gm-Message-State: AOJu0YykoBZOUYeXjpaJwJAUXb2qJRISmMFVv1VSru3J05oZ21+2rebE
+ Loci+6O2PIZcaU/bLmuu7Bq6PeTmMEsRggViMvsPzkvHNiNDtOp2yZgA1sSGjh8=
+X-Gm-Gg: ASbGncuHzCeatk+sFlxMHzylH7V9wpvu11tiHX5ozf4lrMUQh5zHsQ1shqs7L29KdXc
+ 88T/wKn4RoChlLCtO6gVbkK00QcQcFZOjHzhNcCMQoz6TbS7i0uQyJ5j8GWF6EqmULOGasJ8HwD
+ 8to5/g2safla7QXq1BhKcZo4Z4nrZNxP3P/FOldG4EfzKM0Pv10mPL0zbAPDT4YNm0CbMosG97I
+ 9kuBTGfpAFaq9oatbrB8jWvbmblNirWprQCnasCjSJ8LoMsIsbVrGFOkozMHVatYWEZBAxXS9Gf
+ Ve/d8940TQtItps0duxdSgSqZBUmAPCYDR3hXiijk164ToCUKr7SH9ovwyB9ip/hWszoQNroYdk
+ qBD2UQobX+r0hVnzsk4ho
+X-Google-Smtp-Source: AGHT+IGGis8JX6vkpJI082ujC9pYF7OexGc5i7ifJ3pAJQyblAAlT9uORI9OeOiaNBVr0SGF5S6EmQ==
+X-Received: by 2002:a05:6a20:c78e:b0:1f5:837b:186a with SMTP id
+ adf61e73a8af0-2009f5ba6b5mr29678899637.6.1743604120969; 
+ Wed, 02 Apr 2025 07:28:40 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2291eeca0a7sm108983845ad.39.2025.04.02.07.22.35
+ d2e1a72fcca58-73970e1d922sm11059985b3a.37.2025.04.02.07.28.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Apr 2025 07:22:36 -0700 (PDT)
-Date: Wed, 2 Apr 2025 07:22:34 -0700
+ Wed, 02 Apr 2025 07:28:40 -0700 (PDT)
+Date: Wed, 2 Apr 2025 07:28:38 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: <dev@dpdk.org>, "Tyler Retzlaff" <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v7 3/4] app/test: add tests to find devices
-Message-ID: <20250402072234.4226fbb5@hermes.local>
-In-Reply-To: <20250212163836.178976-3-shperetz@nvidia.com>
-References: <20250206105428.237346-1-shperetz@nvidia.com>
- <20250212163836.178976-1-shperetz@nvidia.com>
- <20250212163836.178976-3-shperetz@nvidia.com>
+To: Nandini Persad <nandinipersad361@gmail.com>
+Cc: Ori Kam <orika@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
+ Ferruh Yigit <ferruh.yigit@amd.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org
+Subject: Re: [PATCH] doc: reword flow offload and api docs
+Message-ID: <20250402072838.6479484c@hermes.local>
+In-Reply-To: <20250331214036.17295-1-nandinipersad361@gmail.com>
+References: <20250331214036.17295-1-nandinipersad361@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,20 +84,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Feb 2025 18:38:34 +0200
-Shani Peretz <shperetz@nvidia.com> wrote:
+On Mon, 31 Mar 2025 14:40:36 -0700
+Nandini Persad <nandinipersad361@gmail.com> wrote:
 
-> @@ -317,6 +431,12 @@ test_devargs(void)
->  	printf("== test devargs parsing invalid case ==\n");
->  	if (test_invalid_devargs_parsing() < 0)
->  		return -1;
-> +	printf("== test find device valid case ==\n");
-> +	if (test_valid_cmp_dev_name() < 0)
-> +		return -1;
-> +	printf("== test find device invalid case ==\n");
-> +	if (test_invalid_cmp_dev_name() < 0)
-> +		return -1;
->  
+> I removed low level details of the code and simplified the
+> Flow Offload section of Programmer's Guide to be more about the
+> general usage of the APIs. The specifics were moved to API docs if
+> the details did not already exist there.
+> 
+> Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
+> ---
 
-The tests should be converted to use unit_test_suit_runnner() API.
-But that can be done as a follow on patch.
+Looks good, fix the spelling errors and resubmit please.
+
+WARNING:TYPO_SPELLING: 'wih' may be misspelled - perhaps 'with'?
+#3558: FILE: doc/guides/prog_guide/ethdev/flow_offload.rst:579:
++- Flush: The function ``rte_flow_flush`` destroys all flow rules associated wih a port.
+
+WARNING:TYPO_SPELLING: 'behvaior' may be misspelled - perhaps 'behaviour'?
+#4142: FILE: lib/ethdev/rte_flow.h:4403:
++ * is missing at the specified index, then the behvaior is undefined and
+
+total: 0 errors, 2 warnings, 4087 lines checked
