@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66CCC36014
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 02:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64237C36014
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 02:57:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA3A54066E;
-	Thu,  3 Apr 2025 04:54:46 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id D617E4029A
- for <dev@dpdk.org>; Thu,  3 Apr 2025 04:54:44 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.214])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZSmZ16TC6z27g4h;
- Thu,  3 Apr 2025 10:55:21 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 561AC4066E;
+	Thu,  3 Apr 2025 04:57:42 +0200 (CEST)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+ by mails.dpdk.org (Postfix) with ESMTP id A0F814029A
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 04:57:40 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZSmW42VwYz1f1Np;
+ Thu,  3 Apr 2025 10:52:48 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id A6AB71A016C;
- Thu,  3 Apr 2025 10:54:42 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 251F3140144;
+ Thu,  3 Apr 2025 10:57:38 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Apr 2025 10:54:42 +0800
+ 15.2.1544.11; Thu, 3 Apr 2025 10:57:37 +0800
 From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>,
@@ -27,14 +27,16 @@ CC: <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>,
  <anatoly.burakov@intel.com>, <stephen@networkplumber.org>,
  <mb@smartsharesystems.com>, <dmitry.kozliuk@gmail.com>
 Subject: [PATCH v2] mem: fix infinite loop
-Date: Thu, 3 Apr 2025 10:54:41 +0800
-Message-ID: <20250403025441.127747-1-huangdengdui@huawei.com>
+Date: Thu, 3 Apr 2025 10:57:36 +0800
+Message-ID: <20250403025736.135846-1-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250402124258.2299435-1-huangdengdui@huawei.com>
+References: <20250402124258.2299435-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
