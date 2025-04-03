@@ -2,42 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28333C3600C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 11:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A341EC36014
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 12:22:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35CE440B8F;
-	Thu,  3 Apr 2025 13:27:39 +0200 (CEST)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 866144060C
- for <dev@dpdk.org>; Thu,  3 Apr 2025 13:27:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1743679658;
- bh=gRluVDarptC1Iw5+MjmDuWaIY6qzoXhfPlvjVU+Rf9s=;
- h=Date:To:Cc:From:Subject;
- b=LJQwc43W6YEydEwWUHEMxflJAl71ouKWaReeK0IMvM3sFfQ1swyXzF20QJm2wH08X
- 0zN3NasNhAZG7skHRN3Hpq1kW+V+yxPzxH72qmO5L0UYH0tpPzZM0dJH/8LxMz7lKX
- iZamVQX0SadBvmZL1RZwmZkE7OtsOVUordXPGDJ5Lijcf3ZwkAIts71Du+s1r+1+lL
- /eKsXHCGkR3XR2Cr1qkm9elI3yorSe6e4nNU+2rTmci75nqxtHAfa+foVTWbEEoQ64
- eobWia5C80NC+PahIvNL2gLqVMc/oKElOOpV9c7Ffq1l7Ri3Nc6cvnPFLZGiP/7F0i
- yKK8IadiW/nSg==
-Received: from [IPV6:2001:718:812:27::92] (gtx92.cesnet.cz
- [IPv6:2001:718:812:27::92])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 443701180078;
- Thu,  3 Apr 2025 13:27:38 +0200 (CEST)
-Message-ID: <f2317379-ee61-42b2-bee6-10efaa91e2ca@cesnet.cz>
-Date: Thu, 3 Apr 2025 13:27:37 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 6A55140B8F;
+	Thu,  3 Apr 2025 14:22:56 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C8E14060C
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 14:22:54 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 533AI0Lh020914;
+ Thu, 3 Apr 2025 05:22:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=AR2ANH7BlxR+/8bgMm77CUq
+ GAosi7MUeMbvKXuRXeQc=; b=AsYes0mwY50+vft5sWHnrIDGdRcB7c68lf0APBi
+ vdP85gHNaRQQK3lE2X/xKBYZu9ddH+bGSc+F5SqzfKAkYMlQCApgCRkiCdqUdPux
+ dwZ5RCmbKaHyEhdv+ZqSSRQT4xsmTthEfzEKNRykbcwmYupHtroZYMOQE0/IFVJE
+ /JB185PbsU2A5dfJ35jqjRpHNnaqvAkgyKUfYmtmf5lD6jsL0yfwuGbSC+FamcOG
+ y5aUrKpraE4umB0N2lSXp7BoyToroIAW+9r+ZIOu92156bXCJPkdA0EmDKkYdrhS
+ 23cAFJYoAUkuX4+f4x9ywSiP1dCH2Xszme4mryAk0Te3tkw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45srf0g835-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 03 Apr 2025 05:22:52 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 3 Apr 2025 05:22:47 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 3 Apr 2025 05:22:47 -0700
+Received: from Dell640-transport-1.sclab.marvell.com (unknown [10.106.48.36])
+ by maili.marvell.com (Postfix) with ESMTP id B940C3F70DE;
+ Thu,  3 Apr 2025 05:22:46 -0700 (PDT)
+From: Rajesh Mudimadugula <rmudimadugul@marvell.com>
+To: <dev@dpdk.org>
+CC: <maxime.coquelin@redhat.com>, <chenbox@nvidia.com>, Rajesh Mudimadugula
+ <rmudimadugul@marvell.com>
+Subject: [PATCH 1/2] vhost: fix cipher data length
+Date: Thu, 3 Apr 2025 12:22:34 +0000
+Message-ID: <20250403122234.3508100-1-rmudimadugul@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: cs, en-US
-To: dev@dpdk.org
-Cc: Jan Viktorin <viktorin@cesnet.cz>
-From: Kamil Vojanec <vojanec@cesnet.cz>
-Subject: ConnectX-7 performance anomaly
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="------------ms020504060704060306090000"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: eIFM5de-lCe0NsIhob608t2th3MBd0BK
+X-Proofpoint-GUID: eIFM5de-lCe0NsIhob608t2th3MBd0BK
+X-Authority-Analysis: v=2.4 cv=QYRmvtbv c=1 sm=1 tr=0 ts=67ee7d9c cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=YpsJ9D7ZE14GsfVIoVwA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_05,2025-04-02_03,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,127 +70,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a cryptographically signed message in MIME format.
+This patch fixes cipher data length, in the event of algorithm
+chaining. When enqueuing crypto op to vhost backend
+cipher.data.length is set correctly which is in
+virtqueue_crypto_sym_pkt_header_arrange(). This field is computed
+and assigned wrongly instead of using passed value. This is
+rectified and using correct cipher data length in vhost crypto.
 
---------------ms020504060704060306090000
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Fixes: 3bb595ecd682 ("vhost/crypto: add request handler")
 
-SGVsbG8sDQoNCndoaWxlIGJlbmNobWFya2luZyB0aGUgTnZpZGlhIENvbm5lY3RYLTcgNDAw
-R2JlIE5JQywgSSBlbmNvdW50ZXJlZCBzb21lIA0KaW50ZXJlc3RpbmcgYmVoYXZpb3I6IHdo
-ZW4gcHJvY2Vzc2luZyBzaG9ydCBwYWNrZXRzICg3MiBCKSwgdGhlIG1heGltdW0gDQpwYWNr
-ZXQgcmF0ZSBJIGNhbiBhY2hpZXZlIGlzIDIzMCBNcHBzLiBIb3dldmVyLCB3aGVuIEkgaW5j
-cmVhc2UgdGhlIA0KcGFja2V0IHNpemUgdG8gNTEyIEIgYnJpZWZseSBhbmQgdGhlbiBicmlu
-ZyB0aGUgcGFja2V0IHNpemUgZG93biB0byA3MiBCIA0KYWdhaW4sIHRoZSBtYXhpbXVtIHRo
-cm91Z2hwdXQgaXMgbm93IDI2MCBNcHBzIGFuZCBzZWVtcyB0byBzdGFiaWxpemUgYXQgDQp0
-aGF0IHZhbHVlLiBBY2NvcmRpbmcgdG8gdGhlIE52aWRpYSBwZXJmb3JtYW5jZSByZXBvcnQg
-DQooaHR0cHM6Ly9mYXN0LmRwZGsub3JnL2RvYy9wZXJmL0RQREtfMjRfMDdfTlZJRElBX05J
-Q19wZXJmb3JtYW5jZV9yZXBvcnQucGRmKSwgDQp0aGUgbWF4aW11bSBhY2hpZXZhYmxlIHBh
-Y2tldCByYXRlIG9mIENvbm5lY3RYLTcgTklDcyBpcyAyNjYgTXBwcyBhbmQgDQp0aGF0IGlz
-IHdoYXQgSSBhbSB0cnlpbmcgdG8gcmVwcm9kdWNlLiBJIGhhdmUgb2JzZXJ2ZWQgdGhpcyBi
-ZWhhdmlvciANCndpdGggZHBkay1sM2Z3ZCBhcyB3ZWxsIGFzIHdpdGggbXkgb3duIERQREsg
-YXBwbGljYXRpb24uDQoNCk15IHNldHVwIGlzIGFzIGZvbGxvd3M6DQoNCkNQVTogQU1EIEVQ
-WUMgOTU1NFAgNjQtQ29yZSBQcm9jZXNzb3INCg0KQXBwbGljYXRpb24gY29tbWFuZGxpbmU6
-DQoNCnN1ZG8gZHBka19leGFtcGxlX2wzZndkIC1hMDAwMDowNTowMC4wIC1sMC0zMiAtLW1h
-aW4tbGNvcmU9MzLCoCAtLSAtcDB4MSANCi0tY29uZmlnIA0KIigwLDAsMCksKDAsMSwxKSwo
-MCwyLDIpLCgwLDMsMyksKDAsNCw0KSwoMCw1LDUpLCgwLDYsNiksKDAsNyw3KSwoMCw4LDgp
-LCgwLDksOSksKDAsMTAsMTApLCgwLDExLDExKSwoMCwxMiwxMiksKDAsMTMsMTMpLCgwLDE0
-LDE0KSwoMCwxNSwxNSksKDAsMTYsMTYpLCgwLDE3LDE3KSwoMCwxOCwxOCksKDAsMTksMTkp
-LCgwLDIwLDIwKSwoMCwyMSwyMSksKDAsMjIsMjIpLCgwLDIzLDIzKSwoMCwyNCwyNCksKDAs
-MjUsMjUpLCgwLDI2LDI2KSwoMCwyNywyNyksKDAsMjgsMjgpLCgwLDI5LDI5KSwoMCwzMCwz
-MCksKDAsMzEsMzEpIiANCi0tZXRoLWRlc3Q9MCwwMDoxMDo5NDowMDowMDowMg0KDQpHZW5l
-cmF0b3I6IFNwaXJlbnQgNDAwRyBnZW5lcmF0b3INCg0KV291bGQgYW55b25lIGJlIGFibGUg
-dG8gc2hhcmUgc29tZSBpbnNpZ2h0IGFzIHRvIHdoYXQgbWlnaHQgYmUgaGFwcGVuaW5nIA0K
-aGVyZT8NCg0KS2FtaWwgVm9qYW5lYw0KQ0VTTkVUIHoucy5wLm8uDQoNCg==
+Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
+---
+ lib/vhost/vhost_crypto.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---------------ms020504060704060306090000
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
+index 3c6c5dc114..ddcd93738b 100644
+--- a/lib/vhost/vhost_crypto.c
++++ b/lib/vhost/vhost_crypto.c
+@@ -1358,8 +1358,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
+ 	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
+ 
+ 	op->sym->cipher.data.offset = chain->para.cipher_start_src_offset;
+-	op->sym->cipher.data.length = chain->para.src_data_len -
+-			chain->para.cipher_start_src_offset;
++	op->sym->cipher.data.length = chain->para.len_to_cipher;
+ 
+ 	op->sym->auth.data.offset = chain->para.hash_start_src_offset;
+ 	op->sym->auth.data.length = chain->para.len_to_hash;
+-- 
+2.34.1
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DWcwggZ5MIIEYaADAgECAhBPDiJIpZ2uf5YS4aKrZamyMA0GCSqGSIb3DQEBDAUAMEYxCzAJ
-BgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQ
-ZXJzb25hbCBDQSA0MB4XDTI0MDcwODAwMDAwMFoXDTI2MDcwODIzNTk1OVowgd4xCzAJBgNV
-BAYTAkNaMR4wHAYDVQQIDBVQcmFoYSwgSGxhdm7DrSBtxJtzdG8xODA2BgNVBAoML0NFU05F
-VCwgesOham1vdsOpIHNkcnXFvmVuw60gcHLDoXZuaWNrw71jaCBvc29iMRkwFwYDVQRhExBO
-VFJDWi02MzggMzkgMTcyMSAwHgYJKoZIhvcNAQkBFhF2b2phbmVjQGNlc25ldC5jejEQMA4G
-A1UEBBMHVm9qYW5lYzEOMAwGA1UEKhMFS2FtaWwxFjAUBgNVBAMTDUthbWlsIFZvamFuZWMw
-ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCpXa79vz2a0HSuvHOAz1Rm4wYEnQwO
-2OvlrC0T+28e4/psLYQILiRt+pFkNXzKWNiWPA1gTe539ia5vL6DDIdHmv/9Azo2AFaAUb3b
-i0KciVu/NkNDdz/N4w+Sx+XL3WUkg6e8C0p98f5Oo0R1Umh6PCxaoNO2x3JHCH46b7tojaZd
-xZpKJUA3NYGPHHV/4vajzQHjmcflobwCFImBy6hgNzGEUJsryXQ5W2cjyfF7obFS3KW5g+nA
-Lwc6DLy4Hrr2T2zbrE4wxuyhxBFhQvEqvvZShRyorUepU9+VvE03Gvphtqw+UcKGVVJ1vlkh
-O5IqtGQc6zzb6O97oCKmruNlAgMBAAGjggHIMIIBxDAfBgNVHSMEGDAWgBRpAKHHIVj44MUb
-ILAK3adRvxPZ5DAdBgNVHQ4EFgQUUmkRzoyy03Y7iH7iUkfc2cRhYX0wDgYDVR0PAQH/BAQD
-AgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMFAGA1Ud
-IARJMEcwOgYMKwYBBAGyMQECAQoEMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vc2VjdGlnby5j
-b20vU01JTUVDUFMwCQYHZ4EMAQUDAjBCBgNVHR8EOzA5MDegNaAzhjFodHRwOi8vR0VBTlQu
-Y3JsLnNlY3RpZ28uY29tL0dFQU5UUGVyc29uYWxDQTQuY3JsMHgGCCsGAQUFBwEBBGwwajA9
-BggrBgEFBQcwAoYxaHR0cDovL0dFQU5ULmNydC5zZWN0aWdvLmNvbS9HRUFOVFBlcnNvbmFs
-Q0E0LmNydDApBggrBgEFBQcwAYYdaHR0cDovL0dFQU5ULm9jc3Auc2VjdGlnby5jb20wNQYD
-VR0RBC4wLIEXS2FtaWwuVm9qYW5lY0BjZXNuZXQuY3qBEXZvamFuZWNAY2VzbmV0LmN6MA0G
-CSqGSIb3DQEBDAUAA4ICAQBEgjY/QWOlBX+hcrFMb5C4AWP2xhEq5qLHncX4QIyH2MBmjVJB
-kkYLvm+wQ9pEi9fMiSDZ7sYS2rBAtO/zn1TnAvCqgP0HizqE5/KZSranBrKo7hQ+sP2NDqr3
-1XfqBDibbUTKIRCcYXVW2QYRQeABtx6voMVLaTAdgpCPm/tY2R+gcrmwPopuyHgppuKBg07/
-AbI/zhxDS41Ypd8EyiCrSUZzJIVpyd/4zh0COmV1ZVppv3EW4sj2R6OXc5cPk8VnzqWz0o/2
-a8zZ8A88NZDhdewRTk2rDQqPQnnANuhcWsp85OoZwkYBf7WlHVRBcAUV2YVB+oAHiubk+R4j
-y00aUAnsslRjWAuAaHgR5CY9vUrIiOdujD0J7jkL+JsK+W7vc8JduJHfmRQZ3M7C9GUPw+oL
-6Kh0mqV9gWjsIG/6/T/J4gqimqkHCckDuHvLwxqp2EInRKELYOsyXjAg8/yqcZk50CFnj0oR
-D5KJqOYgMA34ef4Upr5rQHb2ResP1r8a9xY1xUO5LjAhFSyM/lXEYBgEhqumdvi7l9CokcIa
-T+BgGtn+jV76f5hG+qxziR5Mev+OaVT0C28fR1yXnV4yKXXOQ64L0frPWjaLwawoUABNabAk
-83kMatV5UkQxFv9IhdiR+wGY6sY2HF83jEx+KZApJrvG1uLuKAxl/BzMbTCCBuYwggTOoAMC
-AQICEDECcNQ1vpskmvhW0OHihUkwDQYJKoZIhvcNAQEMBQAwgYgxCzAJBgNVBAYTAlVTMRMw
-EQYDVQQIEwpOZXcgSmVyc2V5MRQwEgYDVQQHEwtKZXJzZXkgQ2l0eTEeMBwGA1UEChMVVGhl
-IFVTRVJUUlVTVCBOZXR3b3JrMS4wLAYDVQQDEyVVU0VSVHJ1c3QgUlNBIENlcnRpZmljYXRp
-b24gQXV0aG9yaXR5MB4XDTIwMDIxODAwMDAwMFoXDTMzMDUwMTIzNTk1OVowRjELMAkGA1UE
-BhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNv
-bmFsIENBIDQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCzSuIiXidb6QRbFAQ1
-MiAUrrTSMUDGzVDAHqFEyq+eSmF/LZDeYpszai2kQsqWATz/cBA9gGjunvJ45G48ycC4D6gw
-ZFvbBt5JotxlunBeB8K+crGar3v+RCQ4VfvToX07v+HTJ6EeEONR3IzJPTMyzgAwENGsAWf9
-va9HePQFJiChCzXqhKpp0zen53S+8f9itEy06GS8aku7Mvyb4tMBBa9An3Y3ALIqIeymg/iY
-s8m9WkSkMyekNtFRB1+1KlnNUpM05G8+sY9EucnQQRUIdHzYsvqjP3XlaSuB4Jj0ia66UGfi
-5Wx31mm5sKAz8Re9UGVWIqq6wKFKxkSfuO4iwYiIPJoiGEux3dqabwFLduAroDF1IxE40PqG
-IdPXzYuZ/wL6BEfFAb0xy8bfm5S9G7y/ts9mIlFpPtkLZ/nQ/iVOWdsu9ale/nK/uGF47xsx
-eW2LIvB4sH5U2+D4ad8vpNbcCrXIXXKtkBnNHgxumNNZ0R1Isq/Pz7TALCxxDzWdsM7AO32/
-Jn7R4ldtGRZmKpJyfACDn8HU1QPhOtiWsjifrMWnanJhQ6K7M/5qz8BmfPrca+MUrr1Y4NHZ
-b9MrgPtWKQQyGDXy+G5F/iHGdZk7LS+F8NH+Ddolt2wZpz52JqGMTDPIH5Qok4LLO95wbxtn
-+79Tw+wQxmDTuIg+LwIDAQABo4IBizCCAYcwHwYDVR0jBBgwFoAUU3m/WqorSs9UgOHYm8Cd
-8rIDZsswHQYDVR0OBBYEFGkAocchWPjgxRsgsArdp1G/E9nkMA4GA1UdDwEB/wQEAwIBhjAS
-BgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDA4BgNV
-HSAEMTAvMC0GBFUdIAAwJTAjBggrBgEFBQcCARYXaHR0cHM6Ly9zZWN0aWdvLmNvbS9DUFMw
-UAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUFBwEBBGowaDA/BggrBgEFBQcw
-AoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJTQUFkZFRydXN0Q0EuY3J0
-MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0GCSqGSIb3DQEBDAUA
-A4ICAQAKBU57DY8fEzkA/W/sYsbD7e0XquMBzHjcP0eXXXRD4EAEAGCWSs+QRL9XIxmx+52z
-x9wMa8YTejlR+NKejiyKPTF0q63zMxrO/z/hUwo8IDcRRLS0NSgvTW6AN2rCXJe5iLN5fIfY
-gIBB9cy1L6trPuZ/vjUJm87nQ7ExQzGqWN5F9U8MlAk0c5iLanG7GCMoNjHiF1n0baj6guUe
-G7n5qcwOQTyDS19+NEqfwjUPUGasN1ZH8h1sE6PrzvRpti+rKzWpiU+i2/k3l2b5fFDy+Wu9
-jv6R9BoBh47es/UMzwEZ2kSrIVVr4jSukk+FpmR5ZbtwiYNAV6sdb1srMGsILzXlrdasSE2n
-GHvZklk2zUdgn7b01MHq67g0mNozGmT6Dam41Kbhv25WMFs871XqwVIb4gGoT1yRf/VePMm1
-jwauqijhKJFvrNweGnebGPeipaLxIo2iEA4qdRztEg/qyzWGogXK/TFdmivg322fMPQWjQkM
-hRGMM8SCjlZN22L8x0ZOYoVA2rHJm5P25IjZe+HPyn7ikJiSJmqlqFmUeowXF3D1dFlCCs/5
-yC06RYRqI2REFu+28t2nswIvY6xCFAR0RtS8Mz2yXNld0js2MmiRUGrc7imWzdUPbPcv9sdU
-F7SsERGPIzYL8dIiHzit+YCoGCSXMg6peF37hHNp1TGCA+YwggPiAgEBMFowRjELMAkGA1UE
-BhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNv
-bmFsIENBIDQCEE8OIkilna5/lhLhoqtlqbIwDQYJYIZIAWUDBAIBBQCgggJdMBgGCSqGSIb3
-DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDQwMzExMjczN1owLwYJKoZI
-hvcNAQkEMSIEIOGsu1RkSPmYdPAjpFg9vHcBiMimw4dHzQBQ0Isu81KJMGkGCSsGAQQBgjcQ
-BDFcMFowRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNV
-BAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEE8OIkilna5/lhLhoqtlqbIwawYLKoZIhvcNAQkQ
-AgsxXKBaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYD
-VQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhBPDiJIpZ2uf5YS4aKrZamyMIIBGAYJKoZIhvcN
-AQkPMYIBCTCCAQUwCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBglg
-hkgBZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZI
-AWUDBAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3
-DQEBATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EE
-AQsDMAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQB
-DgMwDQYJKoZIhvcNAQEBBQAEggEAoXBHISzQVF2zg7qAfNUxfnui+TmKZSy13gBDlEmHGwdF
-SPNigN4Gysvp6qFVP+hHx8hLVpD7pyaUV13g6RThHNivSkgkbHbYBDW3pRX8dRObsRaAq1bF
-fVDRCVd2vC0srv/LTB2hKsu8R5fs3YBhJ+8S3eN++UCo4E94pdSeb5pb5ZEfFEOXTGgtVd3+
-4DxGen5ftx5dMpL2WxHCPSs9U8dm4o5S7ysZNm8HaYBlsU5Jk7eDqumkrbuaj9GBd8HkdKK1
-V0tDTzII1DgASqt4wAieCQQTfSlVz9tRnmpYBVOxiRyzm91qgBs46k3aFL2tC7pEi6+AkX0+
-UL6KRoRnXwAAAAAAAA==
---------------ms020504060704060306090000--
