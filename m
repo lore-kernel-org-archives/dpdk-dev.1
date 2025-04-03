@@ -2,52 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EB2C3600C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 11:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28333C3600C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 11:27:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED79F40DDA;
-	Thu,  3 Apr 2025 13:23:29 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 8210440DD1
- for <dev@dpdk.org>; Thu,  3 Apr 2025 13:23:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1743679409; x=1775215409;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=SevDlo800rwSLYhckdP/m55R1J5/0CDlHbDuUdEb5Ps=;
- b=dHS5lBi2yS7OEI1SnD+mvlKjjWXb0PpNtICcLssGHV+AbYJ4+Tw6C/X7
- /7E4g3gaWYFwYOI9ITuQh1s5CAMYqcUw5GmcjaT32dUexYl6JSvTZ7j5P
- 35MhcZ9lMlZcUeHLIWW95S4LW0LNeJA6Li+OCGdo/ldOQoXsAEF0YoSPW
- vdTZOGGSDDKgJD0YasXrriRWu47QfA3x2uRU7MnNqTsOzCgdQsnNbArol
- eezuyIquoBGltZSuGWFxpSi4dT0LvYhFY4vBWZOoFgYGOA/tl70YTVFhw
- oAdfaJKGzs59MnD/tlpsl2zNb16V0CfNItJOTKRlg60bvHxXC/XMqwxXw w==;
-X-CSE-ConnectionGUID: trdxnHJaQ3eoG5pwXzAS3Q==
-X-CSE-MsgGUID: IcJnfiInQX6FgNeeg6Hz2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="45257320"
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; d="scan'208";a="45257320"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Apr 2025 04:23:28 -0700
-X-CSE-ConnectionGUID: sZEhv1tASnidhunTYBEN4A==
-X-CSE-MsgGUID: 7KMfxTA7Qcy9Z2Dqau0VNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; d="scan'208";a="127833272"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa009.fm.intel.com with ESMTP; 03 Apr 2025 04:23:27 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v6 4/4] net/idpf: use common Tx free fn in idpf
-Date: Thu,  3 Apr 2025 16:54:29 +0530
-Message-Id: <20250403112429.2741138-5-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250403112429.2741138-1-shaiq.wani@intel.com>
-References: <20250312155351.409879-1-shaiq.wani@intel.com>
- <20250403112429.2741138-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 35CE440B8F;
+	Thu,  3 Apr 2025 13:27:39 +0200 (CEST)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 866144060C
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 13:27:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1743679658;
+ bh=gRluVDarptC1Iw5+MjmDuWaIY6qzoXhfPlvjVU+Rf9s=;
+ h=Date:To:Cc:From:Subject;
+ b=LJQwc43W6YEydEwWUHEMxflJAl71ouKWaReeK0IMvM3sFfQ1swyXzF20QJm2wH08X
+ 0zN3NasNhAZG7skHRN3Hpq1kW+V+yxPzxH72qmO5L0UYH0tpPzZM0dJH/8LxMz7lKX
+ iZamVQX0SadBvmZL1RZwmZkE7OtsOVUordXPGDJ5Lijcf3ZwkAIts71Du+s1r+1+lL
+ /eKsXHCGkR3XR2Cr1qkm9elI3yorSe6e4nNU+2rTmci75nqxtHAfa+foVTWbEEoQ64
+ eobWia5C80NC+PahIvNL2gLqVMc/oKElOOpV9c7Ffq1l7Ri3Nc6cvnPFLZGiP/7F0i
+ yKK8IadiW/nSg==
+Received: from [IPV6:2001:718:812:27::92] (gtx92.cesnet.cz
+ [IPv6:2001:718:812:27::92])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 443701180078;
+ Thu,  3 Apr 2025 13:27:38 +0200 (CEST)
+Message-ID: <f2317379-ee61-42b2-bee6-10efaa91e2ca@cesnet.cz>
+Date: Thu, 3 Apr 2025 13:27:37 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: cs, en-US
+To: dev@dpdk.org
+Cc: Jan Viktorin <viktorin@cesnet.cz>
+From: Kamil Vojanec <vojanec@cesnet.cz>
+Subject: ConnectX-7 performance anomaly
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="------------ms020504060704060306090000"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,392 +51,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Switch the idpf driver to use the common Tx free function for
-AVX2 and AVX512
+This is a cryptographically signed message in MIME format.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    |  61 +----
- .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 230 +-----------------
- drivers/net/intel/idpf/idpf_rxtx_vec_common.h |   8 +
- 3 files changed, 16 insertions(+), 283 deletions(-)
+--------------ms020504060704060306090000
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 83797ce13e..1d4712b973 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -6,6 +6,7 @@
- 
- #include "idpf_common_rxtx.h"
- #include "idpf_common_device.h"
-+#include "idpf_rxtx_vec_common.h"
- 
- static __rte_always_inline void
- idpf_singleq_rx_rearm(struct idpf_rx_queue *rxq)
-@@ -479,64 +480,6 @@ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16
- 	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
- }
- 
--static __rte_always_inline int
--idpf_singleq_tx_free_bufs_vec(struct ci_tx_queue *txq)
--{
--	struct ci_tx_entry *txep;
--	uint32_t n;
--	uint32_t i;
--	int nb_free = 0;
--	struct rte_mbuf *m;
--	struct rte_mbuf **free = alloca(sizeof(struct rte_mbuf *) * txq->tx_rs_thresh);
--
--	/* check DD bits on threshold descriptor */
--	if ((txq->idpf_tx_ring[txq->tx_next_dd].qw1 &
--			rte_cpu_to_le_64(IDPF_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(IDPF_TX_DESC_DTYPE_DESC_DONE))
--		return 0;
--
--	n = txq->tx_rs_thresh;
--
--	 /* first buffer to free from S/W ring is at index
--	  * tx_next_dd - (tx_rs_thresh-1)
--	  */
--	txep = &txq->sw_ring[txq->tx_next_dd - (n - 1)];
--	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
--	if (likely(m)) {
--		free[0] = m;
--		nb_free = 1;
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (likely(m)) {
--				if (likely(m->pool == free[0]->pool)) {
--					free[nb_free++] = m;
--				} else {
--					rte_mempool_put_bulk(free[0]->pool,
--							     (void *)free,
--							     nb_free);
--					free[0] = m;
--					nb_free = 1;
--				}
--			}
--		}
--		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
--	} else {
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (m)
--				rte_mempool_put(m->pool, m);
--		}
--	}
--
--	/* buffers were freed, update counters */
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--
--	return txq->tx_rs_thresh;
--}
--
- static inline void
- idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
- 		  struct rte_mbuf *pkt, uint64_t flags)
-@@ -621,7 +564,7 @@ idpf_singleq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts
- 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
- 
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		idpf_singleq_tx_free_bufs_vec(txq);
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
- 
- 	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
- 	if (unlikely(nb_pkts == 0))
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index 715be52046..752f254fe3 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-@@ -5,6 +5,7 @@
- #include <rte_vect.h>
- #include "idpf_common_device.h"
- #include "idpf_common_rxtx.h"
-+#include "idpf_rxtx_vec_common.h"
- 
- #define IDPF_DESCS_PER_LOOP_AVX 8
- #define PKTLEN_SHIFT 10
-@@ -995,122 +996,6 @@ idpf_dp_splitq_recv_pkts_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- 						 nb_pkts);
- }
- 
--static __rte_always_inline int
--idpf_tx_singleq_free_bufs_avx512(struct ci_tx_queue *txq)
--{
--	struct ci_tx_entry_vec *txep;
--	uint32_t n;
--	uint32_t i;
--	int nb_free = 0;
--	struct rte_mbuf *m;
--	struct rte_mbuf **free = alloca(sizeof(struct rte_mbuf *) * txq->tx_rs_thresh);
--
--	/* check DD bits on threshold descriptor */
--	if ((txq->idpf_tx_ring[txq->tx_next_dd].qw1 &
--			rte_cpu_to_le_64(IDPF_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(IDPF_TX_DESC_DTYPE_DESC_DONE))
--		return 0;
--
--	n = txq->tx_rs_thresh;
--
--	 /* first buffer to free from S/W ring is at index
--	  * tx_next_dd - (tx_rs_thresh-1)
--	  */
--	txep = (void *)txq->sw_ring;
--	txep += txq->tx_next_dd - (n - 1);
--
--	if (txq->offloads & IDPF_TX_OFFLOAD_MBUF_FAST_FREE && (n & 31) == 0) {
--		struct rte_mempool *mp = txep[0].mbuf->pool;
--		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp,
--								rte_lcore_id());
--		void **cache_objs;
--
--		if (cache == NULL || cache->len == 0)
--			goto normal;
--
--		cache_objs = &cache->objs[cache->len];
--
--		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
--			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
--			goto done;
--		}
--
--		/* The cache follows the following algorithm
--		 *   1. Add the objects to the cache
--		 *   2. Anything greater than the cache min value (if it crosses the
--		 *   cache flush threshold) is flushed to the ring.
--		 */
--		/* Add elements back into the cache */
--		uint32_t copied = 0;
--		/* n is multiple of 32 */
--		while (copied < n) {
--#ifdef RTE_ARCH_64
--			const __m512i a = _mm512_loadu_si512(&txep[copied]);
--			const __m512i b = _mm512_loadu_si512(&txep[copied + 8]);
--			const __m512i c = _mm512_loadu_si512(&txep[copied + 16]);
--			const __m512i d = _mm512_loadu_si512(&txep[copied + 24]);
--
--			_mm512_storeu_si512(&cache_objs[copied], a);
--			_mm512_storeu_si512(&cache_objs[copied + 8], b);
--			_mm512_storeu_si512(&cache_objs[copied + 16], c);
--			_mm512_storeu_si512(&cache_objs[copied + 24], d);
--#else
--			const __m512i a = _mm512_loadu_si512(&txep[copied]);
--			const __m512i b = _mm512_loadu_si512(&txep[copied + 16]);
--			_mm512_storeu_si512(&cache_objs[copied], a);
--			_mm512_storeu_si512(&cache_objs[copied + 16], b);
--#endif
--			copied += 32;
--		}
--		cache->len += n;
--
--		if (cache->len >= cache->flushthresh) {
--			rte_mempool_ops_enqueue_bulk(mp,
--						     &cache->objs[cache->size],
--						     cache->len - cache->size);
--			cache->len = cache->size;
--		}
--		goto done;
--	}
--
--normal:
--	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
--	if (likely(m != NULL)) {
--		free[0] = m;
--		nb_free = 1;
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (likely(m != NULL)) {
--				if (likely(m->pool == free[0]->pool)) {
--					free[nb_free++] = m;
--				} else {
--					rte_mempool_put_bulk(free[0]->pool,
--							     (void *)free,
--							     nb_free);
--					free[0] = m;
--					nb_free = 1;
--				}
--			}
--		}
--		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
--	} else {
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (m != NULL)
--				rte_mempool_put(m->pool, m);
--		}
--	}
--
--done:
--	/* buffers were freed, update counters */
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--
--	return txq->tx_rs_thresh;
--}
--
- static __rte_always_inline void
- idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
- 	  struct rte_mbuf *pkt, uint64_t flags)
-@@ -1194,7 +1079,7 @@ idpf_singleq_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pk
- 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
- 
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		idpf_tx_singleq_free_bufs_avx512(txq);
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
- 
- 	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
- 	nb_commit = nb_pkts;
-@@ -1310,110 +1195,6 @@ idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
- 	cq->tx_tail = cq_qid;
- }
- 
--static __rte_always_inline int
--idpf_tx_splitq_free_bufs_avx512(struct ci_tx_queue *txq)
--{
--	struct ci_tx_entry_vec *txep;
--	uint32_t n;
--	uint32_t i;
--	int nb_free = 0;
--	struct rte_mbuf *m;
--	struct rte_mbuf **free = alloca(sizeof(struct rte_mbuf *) * txq->tx_rs_thresh);
--
--	n = txq->tx_rs_thresh;
--
--	 /* first buffer to free from S/W ring is at index
--	  * tx_next_dd - (tx_rs_thresh-1)
--	  */
--	txep = (void *)txq->sw_ring;
--	txep += txq->tx_next_dd - (n - 1);
--
--	if (txq->offloads & IDPF_TX_OFFLOAD_MBUF_FAST_FREE && (n & 31) == 0) {
--		struct rte_mempool *mp = txep[0].mbuf->pool;
--		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp,
--								rte_lcore_id());
--		void **cache_objs;
--
--		if (!cache || cache->len == 0)
--			goto normal;
--
--		cache_objs = &cache->objs[cache->len];
--
--		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
--			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
--			goto done;
--		}
--
--		/* The cache follows the following algorithm
--		 *   1. Add the objects to the cache
--		 *   2. Anything greater than the cache min value (if it crosses the
--		 *   cache flush threshold) is flushed to the ring.
--		 */
--		/* Add elements back into the cache */
--		uint32_t copied = 0;
--		/* n is multiple of 32 */
--		while (copied < n) {
--			const __m512i a = _mm512_loadu_si512(&txep[copied]);
--			const __m512i b = _mm512_loadu_si512(&txep[copied + 8]);
--			const __m512i c = _mm512_loadu_si512(&txep[copied + 16]);
--			const __m512i d = _mm512_loadu_si512(&txep[copied + 24]);
--
--			_mm512_storeu_si512(&cache_objs[copied], a);
--			_mm512_storeu_si512(&cache_objs[copied + 8], b);
--			_mm512_storeu_si512(&cache_objs[copied + 16], c);
--			_mm512_storeu_si512(&cache_objs[copied + 24], d);
--			copied += 32;
--		}
--		cache->len += n;
--
--		if (cache->len >= cache->flushthresh) {
--			rte_mempool_ops_enqueue_bulk(mp,
--						     &cache->objs[cache->size],
--						     cache->len - cache->size);
--			cache->len = cache->size;
--		}
--		goto done;
--	}
--
--normal:
--	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
--	if (likely(m)) {
--		free[0] = m;
--		nb_free = 1;
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (likely(m)) {
--				if (likely(m->pool == free[0]->pool)) {
--					free[nb_free++] = m;
--				} else {
--					rte_mempool_put_bulk(free[0]->pool,
--							     (void *)free,
--							     nb_free);
--					free[0] = m;
--					nb_free = 1;
--				}
--			}
--		}
--		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
--	} else {
--		for (i = 1; i < n; i++) {
--			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (m)
--				rte_mempool_put(m->pool, m);
--		}
--	}
--
--done:
--	/* buffers were freed, update counters */
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--	txq->ctype[IDPF_TXD_COMPLT_RS] -= txq->tx_rs_thresh;
--
--	return txq->tx_rs_thresh;
--}
--
- #define IDPF_TXD_FLEX_QW1_TX_BUF_SZ_S	48
- 
- static __rte_always_inline void
-@@ -1555,11 +1336,12 @@ idpf_splitq_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	while (nb_pkts) {
- 		uint16_t ret, num;
--
- 		idpf_splitq_scan_cq_ring(txq->complq);
- 
--		if (txq->ctype[IDPF_TXD_COMPLT_RS] > txq->tx_free_thresh)
--			idpf_tx_splitq_free_bufs_avx512(txq);
-+		if (txq->ctype[IDPF_TXD_COMPLT_RS] > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->ctype[IDPF_TXD_COMPLT_RS] -= txq->tx_rs_thresh;
-+		}
- 
- 		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
- 		ret = idpf_splitq_xmit_fixed_burst_vec_avx512(tx_queue,
-diff --git a/drivers/net/intel/idpf/idpf_rxtx_vec_common.h b/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
-index e444addf85..cd75c050c9 100644
---- a/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
-+++ b/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
-@@ -28,6 +28,14 @@
- 		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |	\
- 		RTE_ETH_TX_OFFLOAD_TCP_CKSUM)
- 
-+static inline int
-+idpf_tx_desc_done(struct ci_tx_queue *txq, uint16_t idx)
-+{
-+	return (txq->idpf_tx_ring[idx].qw1 &
-+			rte_cpu_to_le_64(IDPF_TXD_QW1_DTYPE_M)) ==
-+				rte_cpu_to_le_64(IDPF_TX_DESC_DTYPE_DESC_DONE);
-+}
-+
- static inline int
- idpf_rx_vec_queue_default(struct idpf_rx_queue *rxq)
- {
--- 
-2.34.1
+SGVsbG8sDQoNCndoaWxlIGJlbmNobWFya2luZyB0aGUgTnZpZGlhIENvbm5lY3RYLTcgNDAw
+R2JlIE5JQywgSSBlbmNvdW50ZXJlZCBzb21lIA0KaW50ZXJlc3RpbmcgYmVoYXZpb3I6IHdo
+ZW4gcHJvY2Vzc2luZyBzaG9ydCBwYWNrZXRzICg3MiBCKSwgdGhlIG1heGltdW0gDQpwYWNr
+ZXQgcmF0ZSBJIGNhbiBhY2hpZXZlIGlzIDIzMCBNcHBzLiBIb3dldmVyLCB3aGVuIEkgaW5j
+cmVhc2UgdGhlIA0KcGFja2V0IHNpemUgdG8gNTEyIEIgYnJpZWZseSBhbmQgdGhlbiBicmlu
+ZyB0aGUgcGFja2V0IHNpemUgZG93biB0byA3MiBCIA0KYWdhaW4sIHRoZSBtYXhpbXVtIHRo
+cm91Z2hwdXQgaXMgbm93IDI2MCBNcHBzIGFuZCBzZWVtcyB0byBzdGFiaWxpemUgYXQgDQp0
+aGF0IHZhbHVlLiBBY2NvcmRpbmcgdG8gdGhlIE52aWRpYSBwZXJmb3JtYW5jZSByZXBvcnQg
+DQooaHR0cHM6Ly9mYXN0LmRwZGsub3JnL2RvYy9wZXJmL0RQREtfMjRfMDdfTlZJRElBX05J
+Q19wZXJmb3JtYW5jZV9yZXBvcnQucGRmKSwgDQp0aGUgbWF4aW11bSBhY2hpZXZhYmxlIHBh
+Y2tldCByYXRlIG9mIENvbm5lY3RYLTcgTklDcyBpcyAyNjYgTXBwcyBhbmQgDQp0aGF0IGlz
+IHdoYXQgSSBhbSB0cnlpbmcgdG8gcmVwcm9kdWNlLiBJIGhhdmUgb2JzZXJ2ZWQgdGhpcyBi
+ZWhhdmlvciANCndpdGggZHBkay1sM2Z3ZCBhcyB3ZWxsIGFzIHdpdGggbXkgb3duIERQREsg
+YXBwbGljYXRpb24uDQoNCk15IHNldHVwIGlzIGFzIGZvbGxvd3M6DQoNCkNQVTogQU1EIEVQ
+WUMgOTU1NFAgNjQtQ29yZSBQcm9jZXNzb3INCg0KQXBwbGljYXRpb24gY29tbWFuZGxpbmU6
+DQoNCnN1ZG8gZHBka19leGFtcGxlX2wzZndkIC1hMDAwMDowNTowMC4wIC1sMC0zMiAtLW1h
+aW4tbGNvcmU9MzLCoCAtLSAtcDB4MSANCi0tY29uZmlnIA0KIigwLDAsMCksKDAsMSwxKSwo
+MCwyLDIpLCgwLDMsMyksKDAsNCw0KSwoMCw1LDUpLCgwLDYsNiksKDAsNyw3KSwoMCw4LDgp
+LCgwLDksOSksKDAsMTAsMTApLCgwLDExLDExKSwoMCwxMiwxMiksKDAsMTMsMTMpLCgwLDE0
+LDE0KSwoMCwxNSwxNSksKDAsMTYsMTYpLCgwLDE3LDE3KSwoMCwxOCwxOCksKDAsMTksMTkp
+LCgwLDIwLDIwKSwoMCwyMSwyMSksKDAsMjIsMjIpLCgwLDIzLDIzKSwoMCwyNCwyNCksKDAs
+MjUsMjUpLCgwLDI2LDI2KSwoMCwyNywyNyksKDAsMjgsMjgpLCgwLDI5LDI5KSwoMCwzMCwz
+MCksKDAsMzEsMzEpIiANCi0tZXRoLWRlc3Q9MCwwMDoxMDo5NDowMDowMDowMg0KDQpHZW5l
+cmF0b3I6IFNwaXJlbnQgNDAwRyBnZW5lcmF0b3INCg0KV291bGQgYW55b25lIGJlIGFibGUg
+dG8gc2hhcmUgc29tZSBpbnNpZ2h0IGFzIHRvIHdoYXQgbWlnaHQgYmUgaGFwcGVuaW5nIA0K
+aGVyZT8NCg0KS2FtaWwgVm9qYW5lYw0KQ0VTTkVUIHoucy5wLm8uDQoNCg==
 
+--------------ms020504060704060306090000
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DWcwggZ5MIIEYaADAgECAhBPDiJIpZ2uf5YS4aKrZamyMA0GCSqGSIb3DQEBDAUAMEYxCzAJ
+BgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQ
+ZXJzb25hbCBDQSA0MB4XDTI0MDcwODAwMDAwMFoXDTI2MDcwODIzNTk1OVowgd4xCzAJBgNV
+BAYTAkNaMR4wHAYDVQQIDBVQcmFoYSwgSGxhdm7DrSBtxJtzdG8xODA2BgNVBAoML0NFU05F
+VCwgesOham1vdsOpIHNkcnXFvmVuw60gcHLDoXZuaWNrw71jaCBvc29iMRkwFwYDVQRhExBO
+VFJDWi02MzggMzkgMTcyMSAwHgYJKoZIhvcNAQkBFhF2b2phbmVjQGNlc25ldC5jejEQMA4G
+A1UEBBMHVm9qYW5lYzEOMAwGA1UEKhMFS2FtaWwxFjAUBgNVBAMTDUthbWlsIFZvamFuZWMw
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCpXa79vz2a0HSuvHOAz1Rm4wYEnQwO
+2OvlrC0T+28e4/psLYQILiRt+pFkNXzKWNiWPA1gTe539ia5vL6DDIdHmv/9Azo2AFaAUb3b
+i0KciVu/NkNDdz/N4w+Sx+XL3WUkg6e8C0p98f5Oo0R1Umh6PCxaoNO2x3JHCH46b7tojaZd
+xZpKJUA3NYGPHHV/4vajzQHjmcflobwCFImBy6hgNzGEUJsryXQ5W2cjyfF7obFS3KW5g+nA
+Lwc6DLy4Hrr2T2zbrE4wxuyhxBFhQvEqvvZShRyorUepU9+VvE03Gvphtqw+UcKGVVJ1vlkh
+O5IqtGQc6zzb6O97oCKmruNlAgMBAAGjggHIMIIBxDAfBgNVHSMEGDAWgBRpAKHHIVj44MUb
+ILAK3adRvxPZ5DAdBgNVHQ4EFgQUUmkRzoyy03Y7iH7iUkfc2cRhYX0wDgYDVR0PAQH/BAQD
+AgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMFAGA1Ud
+IARJMEcwOgYMKwYBBAGyMQECAQoEMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vc2VjdGlnby5j
+b20vU01JTUVDUFMwCQYHZ4EMAQUDAjBCBgNVHR8EOzA5MDegNaAzhjFodHRwOi8vR0VBTlQu
+Y3JsLnNlY3RpZ28uY29tL0dFQU5UUGVyc29uYWxDQTQuY3JsMHgGCCsGAQUFBwEBBGwwajA9
+BggrBgEFBQcwAoYxaHR0cDovL0dFQU5ULmNydC5zZWN0aWdvLmNvbS9HRUFOVFBlcnNvbmFs
+Q0E0LmNydDApBggrBgEFBQcwAYYdaHR0cDovL0dFQU5ULm9jc3Auc2VjdGlnby5jb20wNQYD
+VR0RBC4wLIEXS2FtaWwuVm9qYW5lY0BjZXNuZXQuY3qBEXZvamFuZWNAY2VzbmV0LmN6MA0G
+CSqGSIb3DQEBDAUAA4ICAQBEgjY/QWOlBX+hcrFMb5C4AWP2xhEq5qLHncX4QIyH2MBmjVJB
+kkYLvm+wQ9pEi9fMiSDZ7sYS2rBAtO/zn1TnAvCqgP0HizqE5/KZSranBrKo7hQ+sP2NDqr3
+1XfqBDibbUTKIRCcYXVW2QYRQeABtx6voMVLaTAdgpCPm/tY2R+gcrmwPopuyHgppuKBg07/
+AbI/zhxDS41Ypd8EyiCrSUZzJIVpyd/4zh0COmV1ZVppv3EW4sj2R6OXc5cPk8VnzqWz0o/2
+a8zZ8A88NZDhdewRTk2rDQqPQnnANuhcWsp85OoZwkYBf7WlHVRBcAUV2YVB+oAHiubk+R4j
+y00aUAnsslRjWAuAaHgR5CY9vUrIiOdujD0J7jkL+JsK+W7vc8JduJHfmRQZ3M7C9GUPw+oL
+6Kh0mqV9gWjsIG/6/T/J4gqimqkHCckDuHvLwxqp2EInRKELYOsyXjAg8/yqcZk50CFnj0oR
+D5KJqOYgMA34ef4Upr5rQHb2ResP1r8a9xY1xUO5LjAhFSyM/lXEYBgEhqumdvi7l9CokcIa
+T+BgGtn+jV76f5hG+qxziR5Mev+OaVT0C28fR1yXnV4yKXXOQ64L0frPWjaLwawoUABNabAk
+83kMatV5UkQxFv9IhdiR+wGY6sY2HF83jEx+KZApJrvG1uLuKAxl/BzMbTCCBuYwggTOoAMC
+AQICEDECcNQ1vpskmvhW0OHihUkwDQYJKoZIhvcNAQEMBQAwgYgxCzAJBgNVBAYTAlVTMRMw
+EQYDVQQIEwpOZXcgSmVyc2V5MRQwEgYDVQQHEwtKZXJzZXkgQ2l0eTEeMBwGA1UEChMVVGhl
+IFVTRVJUUlVTVCBOZXR3b3JrMS4wLAYDVQQDEyVVU0VSVHJ1c3QgUlNBIENlcnRpZmljYXRp
+b24gQXV0aG9yaXR5MB4XDTIwMDIxODAwMDAwMFoXDTMzMDUwMTIzNTk1OVowRjELMAkGA1UE
+BhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNv
+bmFsIENBIDQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCzSuIiXidb6QRbFAQ1
+MiAUrrTSMUDGzVDAHqFEyq+eSmF/LZDeYpszai2kQsqWATz/cBA9gGjunvJ45G48ycC4D6gw
+ZFvbBt5JotxlunBeB8K+crGar3v+RCQ4VfvToX07v+HTJ6EeEONR3IzJPTMyzgAwENGsAWf9
+va9HePQFJiChCzXqhKpp0zen53S+8f9itEy06GS8aku7Mvyb4tMBBa9An3Y3ALIqIeymg/iY
+s8m9WkSkMyekNtFRB1+1KlnNUpM05G8+sY9EucnQQRUIdHzYsvqjP3XlaSuB4Jj0ia66UGfi
+5Wx31mm5sKAz8Re9UGVWIqq6wKFKxkSfuO4iwYiIPJoiGEux3dqabwFLduAroDF1IxE40PqG
+IdPXzYuZ/wL6BEfFAb0xy8bfm5S9G7y/ts9mIlFpPtkLZ/nQ/iVOWdsu9ale/nK/uGF47xsx
+eW2LIvB4sH5U2+D4ad8vpNbcCrXIXXKtkBnNHgxumNNZ0R1Isq/Pz7TALCxxDzWdsM7AO32/
+Jn7R4ldtGRZmKpJyfACDn8HU1QPhOtiWsjifrMWnanJhQ6K7M/5qz8BmfPrca+MUrr1Y4NHZ
+b9MrgPtWKQQyGDXy+G5F/iHGdZk7LS+F8NH+Ddolt2wZpz52JqGMTDPIH5Qok4LLO95wbxtn
++79Tw+wQxmDTuIg+LwIDAQABo4IBizCCAYcwHwYDVR0jBBgwFoAUU3m/WqorSs9UgOHYm8Cd
+8rIDZsswHQYDVR0OBBYEFGkAocchWPjgxRsgsArdp1G/E9nkMA4GA1UdDwEB/wQEAwIBhjAS
+BgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDA4BgNV
+HSAEMTAvMC0GBFUdIAAwJTAjBggrBgEFBQcCARYXaHR0cHM6Ly9zZWN0aWdvLmNvbS9DUFMw
+UAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUFBwEBBGowaDA/BggrBgEFBQcw
+AoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJTQUFkZFRydXN0Q0EuY3J0
+MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0GCSqGSIb3DQEBDAUA
+A4ICAQAKBU57DY8fEzkA/W/sYsbD7e0XquMBzHjcP0eXXXRD4EAEAGCWSs+QRL9XIxmx+52z
+x9wMa8YTejlR+NKejiyKPTF0q63zMxrO/z/hUwo8IDcRRLS0NSgvTW6AN2rCXJe5iLN5fIfY
+gIBB9cy1L6trPuZ/vjUJm87nQ7ExQzGqWN5F9U8MlAk0c5iLanG7GCMoNjHiF1n0baj6guUe
+G7n5qcwOQTyDS19+NEqfwjUPUGasN1ZH8h1sE6PrzvRpti+rKzWpiU+i2/k3l2b5fFDy+Wu9
+jv6R9BoBh47es/UMzwEZ2kSrIVVr4jSukk+FpmR5ZbtwiYNAV6sdb1srMGsILzXlrdasSE2n
+GHvZklk2zUdgn7b01MHq67g0mNozGmT6Dam41Kbhv25WMFs871XqwVIb4gGoT1yRf/VePMm1
+jwauqijhKJFvrNweGnebGPeipaLxIo2iEA4qdRztEg/qyzWGogXK/TFdmivg322fMPQWjQkM
+hRGMM8SCjlZN22L8x0ZOYoVA2rHJm5P25IjZe+HPyn7ikJiSJmqlqFmUeowXF3D1dFlCCs/5
+yC06RYRqI2REFu+28t2nswIvY6xCFAR0RtS8Mz2yXNld0js2MmiRUGrc7imWzdUPbPcv9sdU
+F7SsERGPIzYL8dIiHzit+YCoGCSXMg6peF37hHNp1TGCA+YwggPiAgEBMFowRjELMAkGA1UE
+BhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNv
+bmFsIENBIDQCEE8OIkilna5/lhLhoqtlqbIwDQYJYIZIAWUDBAIBBQCgggJdMBgGCSqGSIb3
+DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDQwMzExMjczN1owLwYJKoZI
+hvcNAQkEMSIEIOGsu1RkSPmYdPAjpFg9vHcBiMimw4dHzQBQ0Isu81KJMGkGCSsGAQQBgjcQ
+BDFcMFowRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNV
+BAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEE8OIkilna5/lhLhoqtlqbIwawYLKoZIhvcNAQkQ
+AgsxXKBaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYD
+VQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhBPDiJIpZ2uf5YS4aKrZamyMIIBGAYJKoZIhvcN
+AQkPMYIBCTCCAQUwCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBglg
+hkgBZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZI
+AWUDBAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3
+DQEBATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EE
+AQsDMAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQB
+DgMwDQYJKoZIhvcNAQEBBQAEggEAoXBHISzQVF2zg7qAfNUxfnui+TmKZSy13gBDlEmHGwdF
+SPNigN4Gysvp6qFVP+hHx8hLVpD7pyaUV13g6RThHNivSkgkbHbYBDW3pRX8dRObsRaAq1bF
+fVDRCVd2vC0srv/LTB2hKsu8R5fs3YBhJ+8S3eN++UCo4E94pdSeb5pb5ZEfFEOXTGgtVd3+
+4DxGen5ftx5dMpL2WxHCPSs9U8dm4o5S7ysZNm8HaYBlsU5Jk7eDqumkrbuaj9GBd8HkdKK1
+V0tDTzII1DgASqt4wAieCQQTfSlVz9tRnmpYBVOxiRyzm91qgBs46k3aFL2tC7pEi6+AkX0+
+UL6KRoRnXwAAAAAAAA==
+--------------ms020504060704060306090000--
