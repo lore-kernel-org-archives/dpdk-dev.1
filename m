@@ -2,71 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC23C36014
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 01:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC86C36014
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 02:34:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AAEA4029A;
-	Thu,  3 Apr 2025 03:45:52 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id D1A704014F
- for <dev@dpdk.org>; Thu,  3 Apr 2025 03:45:51 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-226185948ffso4338895ad.0
- for <dev@dpdk.org>; Wed, 02 Apr 2025 18:45:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 69F734066E;
+	Thu,  3 Apr 2025 04:34:57 +0200 (CEST)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
+ [209.85.222.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 85A074014F
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 04:34:55 +0200 (CEST)
+Received: by mail-qk1-f176.google.com with SMTP id
+ af79cd13be357-7c592764e54so48548085a.3
+ for <dev@dpdk.org>; Wed, 02 Apr 2025 19:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743644751;
- x=1744249551; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rxSYwPWCChD8iqLe9dwjRSpBANIJSeZyYFsKE8tfdFA=;
- b=DZZQDaRxXTTYjjtB/1pW8kiqECtkheSLIuPLNsXlbpGJQGzsdTN8yivWGOF5ZcUM46
- 4a735CqS9j+jMH5zVtyj8FXJfhTHwvBNR9ay2+3C9ZvScuWtrp8bknpXpEAlgEmF62ck
- fVKXEyj2cyNyD0+vkCtml87OEtcmebJER3V0RiC2h9Qv+8AqxHy4/1M0ZSGFPDKpjqV3
- EILeNN8YByOxBpjvcAa48sCp6SRaLNhulqp26al+S9KXFn/zITKI5uNuBeey1wjoIoXW
- kMb0Ech9xioRmoVrtOFy89+wtC744WiSbZSzSdmWqStJGnYYm9qiVQd1W7AY+5WVGdOs
- feeg==
+ d=iol.unh.edu; s=unh-iol; t=1743647695; x=1744252495; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=2ReFOJT9rdO/6TpJim2Jv9o/Ci181lFav1AI2bizjaQ=;
+ b=VDIQwt3kqMjYzfIQ/SjusBSpRu5DOkpIa0HIC4hqR21xQUF455DZ2CTRmEK2PjZ6d0
+ IMtWt0drcm4U070jGoURSZTZ53Wxo1qzngejEY4i1J2JwmD6K5qtXA8fpp5WRp5UcRQQ
+ S97fWGIOT9MXQ3+m36S0je0PekCpdj0/sDlro=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743644751; x=1744249551;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=rxSYwPWCChD8iqLe9dwjRSpBANIJSeZyYFsKE8tfdFA=;
- b=DBye7qKe1jNKubNKySBsqR8ioFGqKuhW6PTEkTinh+jz991HD9jrzvlCQ1D3txSrKG
- g86qBovO3T8WHaYQ/bBBldxXENfVUww+rntr7IlAG+PYb2WImiMCcD1jV8bAZEX8gn3t
- 9yEHmXNchaMBa6jx8c4iSURQ9hyWeDUz8j0s9cxgmStl2ZHBlq4/MnewXJ7RMa/vZsQN
- Wr6D/HSOg5WQdiV4m05VtQjBMbJ+356zUz4FV780P+Xsn7Ow7pcFu54gACFTCz3GWiQC
- OiAkRFsBe/w6M/6YKDtg59EKMstAZ0ZHapA5VcFty2aJjVb2TMwoY2P2ZU0KitQ7dE1V
- y48Q==
-X-Gm-Message-State: AOJu0YwKuSRKNqQQ59FtAMZFRz9oZ8OddrMsKK6s21CGQdKuw/qlH5BZ
- 9Spjf1ugU1XEVdvfEydyUggc4mSaD5hGRIK6jrod4rS+4fhrjhVSxyX7oGmhurw=
-X-Gm-Gg: ASbGncvxfm2vW7SF5nGcLcI5qT1w1aDsrVovqnanL8r8Wi8p1y7lx/cVrSVAFUN3BQ1
- o+U5rjS8KGtBlrfwGvfOYD4zqaLcy0G2zWFEmomJ298cQoq/wT2xRNHkbk8iWSsA879oBHmODKJ
- fk1jmqZp+yfPW06IdfVhv0LqzPomBeCx1Z77gsqIq7hOO41FRrhx/nvDdmXZeGlfpgBXZKUftKj
- CrqaWILzyy+1aF8Pa4C9UAK0+/DnqN/xpDsTszhGpjx9Eeu3r0ejegC3i+/3pmPUY3+S+Iflqtd
- yYlkvucVBbiuN4o3uzWMcJ3v3QOr0w86YGmDD8wDufsqrVqrNGvgKFvi1A/Hlxk7k0tz7khm4XF
- Cl3IaVQ2g9dFcoZ8OyPv7
-X-Google-Smtp-Source: AGHT+IHKOhdtV+65JoU3inS2Jlns22AGDyIL0lrVDzy3rq1DNLdCOGb36+CwK7iCEY19/p/SfT93uQ==
-X-Received: by 2002:a17:902:d484:b0:224:c46:d167 with SMTP id
- d9443c01a7336-2296c65fd70mr57989315ad.16.1743644750906; 
- Wed, 02 Apr 2025 18:45:50 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1743647695; x=1744252495;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=2ReFOJT9rdO/6TpJim2Jv9o/Ci181lFav1AI2bizjaQ=;
+ b=txhAuu12qpzexrn1W4Pio8rZCevJzzDJpcPwp/w/MpiLZtr34KjST/+TQAeJUhlklV
+ 40gZca2V7EHKQfJOr8q0UFTRgWvC/duVwgmZo6APOrtcb5ymTNPN1KQKfLaEcyCmgSTk
+ dNigO0yKT+Wz9SQ+CJvzE3oDGCzI0f8AkHfubRhkAiUYvGjAetpsbYlVGshKDrHJlLyt
+ JciBreeeQEujqcB38AtM8UXIcXdFMTvd76dlLD2XDHBS7jPBeeL3gz+WgeShC5dsGCwd
+ PV4eqE6/a6NNyk6KD7ryhtp/qdBXbr+I3RayU+NBOryeBLEWNi7D1ouYvWK5IM+ofwLt
+ tjxA==
+X-Gm-Message-State: AOJu0YwH2EuQts4K9s/a1XzOEfSR4FytlHZNW9xMdpiVgLCyZOwB3xZ7
+ S+Uqf9ZJuFBt882U4p7TwwSypISPiCbqN80wGIkWAfhwiRVilPLdaNJsgsbmSRs=
+X-Gm-Gg: ASbGnct+T3zVYouoFB9PihlXXUxX+amw/EOG9T5+o75P5YCajooYxOm9/UONqO+yphL
+ r+0OT/8CaqSnqMEagSuWOp6EuykFzkJAHue+PVtgrEBca0lm4INdF7J897QroDiPMooGec3sYlR
+ 3eKvsZSgA7o7hTAVqfQ0raNAxh8qkMtY6vl7kBx0lCcGFL03ml/GdTNzzFjPXxC97gV6BcQOKnz
+ EyhahE3Rckgoy113DkFzSKIc239y/9EdFI0yZ1aFqMa3BLISGViVaHjRkM+jQNacbz/H2RTbE0Z
+ LM+gAz7cstBoOh/gqcAowP+bZ25gVBOFzWZxPK4IKasrOot9Ab5+k77DWmQB1swar5RnSBJ/hA8
+ =
+X-Google-Smtp-Source: AGHT+IGxTdvZHZLDk7XnTf/313DiYFnErQHb5HyRv2n+l7JG68Sb4NqtYZWurjvvjunNt5s3lFFffg==
+X-Received: by 2002:a05:620a:24ce:b0:7c5:48bc:8c77 with SMTP id
+ af79cd13be357-7c6862e5a34mr2828308185a.12.1743647694869; 
+ Wed, 02 Apr 2025 19:34:54 -0700 (PDT)
+Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2297866e612sm2625315ad.200.2025.04.02.18.45.50
+ af79cd13be357-7c76ea7efebsm23764585a.91.2025.04.02.19.34.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Apr 2025 18:45:50 -0700 (PDT)
-Date: Wed, 2 Apr 2025 18:45:31 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: liwencheng <liwencheng@phytium.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 2/4] net/macb: add new poll mode driver
-Message-ID: <20250402184531.2b90d0bf@hermes.local>
-In-Reply-To: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
-References: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
+ Wed, 02 Apr 2025 19:34:54 -0700 (PDT)
+From: Patrick Robb <probb@iol.unh.edu>
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, dmarx@iol.unh.edu,
+ npratte@iol.unh.edu, thomas.wilks@arm.com, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH 0/2] dts: smoke test bugfixes
+Date: Wed,  2 Apr 2025 22:30:57 -0400
+Message-ID: <20250403023059.1762841-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,64 +74,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  2 Apr 2025 06:58:56 +0000
-liwencheng <liwencheng@phytium.com.cn> wrote:
+There are two smoke test bugfixes which have come in from our 25.03 DTS
+development and which should be resolved with this series.
 
-> add Phytium NIC MACB ethdev PMD driver.
-> 
-> v4:
-> * Changed functions that always return 0 and whose return value
-> is unused to void type, improving code simplicity and readability.
-> * Fixed the implicit conversion issues in the
-> macb_usxgmii_pcs_check_for_link and
-> macb_usxgmii_pcs_check_for_link functions.
-> * Added the missing SPDX license tags.
-> * Fix tab errors in meson.build file.
-> * Use RTE_LOG_LINE instead of rte_log.
-> * Replace %l with %PRI*64.
-> * Replace rte_smp_[r/w]mb with rte_[r/w]mb.
-> * Do not use variadic arguments in macros.
-> * Do not use variable-length array pkts[nb_bufs].
-> * Use __rte_cache_aligned only for struct or union types alignment.
-> * Support hardware Rx/Tx checksum offload.
-> * Fixed some code style issues.
-> 
-> Signed-off-by: liwencheng <liwencheng@phytium.com.cn>
-> ---
->  drivers/net/macb/base/generic_phy.c |  271 +++++
->  drivers/net/macb/base/generic_phy.h |  202 ++++
->  drivers/net/macb/base/macb_common.c |  670 +++++++++++++
->  drivers/net/macb/base/macb_common.h |  254 +++++
->  drivers/net/macb/base/macb_errno.h  |   58 ++
->  drivers/net/macb/base/macb_hw.h     | 1138 +++++++++++++++++++++
->  drivers/net/macb/base/macb_type.h   |   23 +
->  drivers/net/macb/base/macb_uio.c    |  351 +++++++
->  drivers/net/macb/base/macb_uio.h    |   50 +
->  drivers/net/macb/base/meson.build   |   26 +
->  drivers/net/macb/base/motorcomm.c   |  645 ++++++++++++
->  drivers/net/macb/base/motorcomm.h   |   85 ++
->  drivers/net/macb/macb_ethdev.c      | 1866 +++++++++++++++++++++++++++++++++++
->  drivers/net/macb/macb_ethdev.h      |   96 ++
->  drivers/net/macb/macb_log.h         |   19 +
->  drivers/net/macb/macb_rxtx.c        | 1391 ++++++++++++++++++++++++++
->  drivers/net/macb/macb_rxtx.h        |  325 ++++++
->  drivers/net/macb/meson.build        |   18 +
->  drivers/net/meson.build             |    1 +
->  19 files changed, 7489 insertions(+)
->  create mode 100644 drivers/net/macb/base/generic_phy.c
->  create mode 100644 drivers/net/macb/base/generic_phy.h
->  create mode 100644 drivers/net/macb/base/macb_common.c
->  create mode 100644 drivers/net/macb/base/macb_common.h
->  create mode 100644 drivers/net/macb/base/macb_errno.h
->  create mode 100644 drivers/net/macb/base/macb_hw.h
->  create mode 100644 drivers/net/macb/base/macb_type.h
->  create mode 100644 drivers/net/macb/base/macb_uio.c
->  create mode 100644 drivers/net/macb/base/macb_uio.h
->  create mode 100644 drivers/net/macb/base/meson.build
->  create mode 100644 drivers/net/macb/base/motorcomm.c
->  create mode 100644 drivers/net/macb/base/motorcomm.h
+1. The patchseries which we merged for 25.03 which added the testsuite
+specific configs inadvertently broke enabling smoke tests, as we build
+the tests config model using the test suite list coming in from the
+parsed test_run.yaml, before smoke_tests have been added. Then, later in
+the execution this produces a key error. I think that adding a
+placeholder smoke tests test suite config is the most reasonable
+solution to this. Users are unlikely to specify any test config for
+smoke tests as they don't require any, although if they happen to do so,
+I understand this change to be non-breaking (and I gave it a test run).
 
-File missing requires SPDX tag.
-$ ./devtools/check-spdx-tag.sh 
-drivers/net/macb/base/motorcomm.h
-total: 1 missing SPDX, 0 license errors, 0 warnings
+2. I am also seeing the smoke test which relies on regex on
+dpdk-devbind.py status output is failing on at least one of our systems
+currently. The fact that this broke is rather peculiar since regex
+syntax is obviously stable, and my reading of the current regex is that
+it "should" work. In any case, I simply changed the regex to a pattern
+which is more permissive and still captures the driver in use, which is
+what is needed for the testsuite.
+
+Patrick Robb (2):
+  dts: include smoke tests in tests config
+  dts: update dpdk-devbind script regex
+
+ dts/framework/config/test_run.py   | 3 +++
+ dts/tests/TestSuite_smoke_tests.py | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+-- 
+2.48.1
+
