@@ -1,41 +1,41 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F543C36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Mar 2025 10:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E29AC3600C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 18:11:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6877140664;
-	Fri, 28 Mar 2025 11:54:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6410A40A7D;
+	Thu,  3 Apr 2025 20:11:13 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 53A20402C1
- for <dev@dpdk.org>; Fri, 28 Mar 2025 11:54:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A67F740E09
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 19:00:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1743159250;
+ s=mimecast20190719; t=1743699614;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=TYyxCJwiVgy4lOO0yH2TAuiTOZl0aB3P03jNddJR5vY=;
- b=IRCpDGGamao3XVicxwc8v0zVO6xZX/bXqSdW6oDYSbIYpYz8sModup1xqTpsSb4N8tBxlI
- fJ1LS8jpyAwGy9MZxiH3MhOSncL+9tdW99Qvdpy4OG9wPSjGYLwWrtkiIidzJ9X+aBxjSn
- uT19QHDYEwoZn4pxiMR72WbyGa2LDDU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=SQAlOCgG4O6njBI4w4H4CG4v0Re8SevZiZGFiDPl9UA=;
+ b=Y6FRKq/3YRiNTGWPBEh8450HA0h3cyxNPYiUMxhD7/MR0ZMvMyKXrAQVB70eszW9eJ79Tz
+ W6gKr2jZGkgMV88dFrrIuT48cYL5fR1fIOHH7hOL5qElaS7SsZAHlxkSNuCQ6agfoLpo+G
+ 9nDgDAc8dTXEUFvJMYctYGttEbJDnnU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-yrOswwc_OeKXUI67E2DlgA-1; Fri,
- 28 Mar 2025 06:54:02 -0400
-X-MC-Unique: yrOswwc_OeKXUI67E2DlgA-1
-X-Mimecast-MFC-AGG-ID: yrOswwc_OeKXUI67E2DlgA_1743159237
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-g-gR9xDKMaGwDHjBm6lVOw-1; Thu,
+ 03 Apr 2025 13:00:04 -0400
+X-MC-Unique: g-gR9xDKMaGwDHjBm6lVOw-1
+X-Mimecast-MFC-AGG-ID: g-gR9xDKMaGwDHjBm6lVOw_1743699598
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3B9091945103; Fri, 28 Mar 2025 10:53:56 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id EFB131801A06; Thu,  3 Apr 2025 16:59:56 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.224.228])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0D97319560AB; Fri, 28 Mar 2025 10:53:26 +0000 (UTC)
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id EE00C1801766; Thu,  3 Apr 2025 16:59:20 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
@@ -106,20 +106,20 @@ Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  Jasvinder Singh <jasvinder.singh@intel.com>, Gaetan Rivet <grive@u256.net>,
  Volodymyr Fialko <vfialko@marvell.com>,
  Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Subject: [PATCH v6 5/8] build: mark exported symbols
-Date: Fri, 28 Mar 2025 11:52:42 +0100
-Message-ID: <20250328105250.3082414-6-david.marchand@redhat.com>
-In-Reply-To: <20250328105250.3082414-1-david.marchand@redhat.com>
+Subject: [PATCH v7 5/8] build: mark exported symbols
+Date: Thu,  3 Apr 2025 18:58:34 +0200
+Message-ID: <20250403165845.1315380-6-david.marchand@redhat.com>
+In-Reply-To: <20250403165845.1315380-1-david.marchand@redhat.com>
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
- <20250328105250.3082414-1-david.marchand@redhat.com>
+ <20250403165845.1315380-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TU8dpV7mDLbuWgDAK_lRwau9UEKfYf8ADMoZ6D8LXv4_1743159237
+X-Mimecast-MFC-PROC-ID: jXRUNKpdqBvZnrtc9wZ8lFm-ny_kFHzDnKJ_R-MB0m8_1743699598
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Fri, 28 Mar 2025 11:54:18 +0100
+X-Mailman-Approved-At: Thu, 03 Apr 2025 20:11:11 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,11 +136,15 @@ Errors-To: dev-bounces@dpdk.org
 Annotate symbols with newly introduced export macros.
 
 For code not compiled via drivers/meson.build (think base drivers code),
-the exported symbols are added in some new .c listed in the sources so they
-get caught by drivers/meson.build.
+the exported symbols are added in some new XX_base_symbols.c file added
+to the sources variable so they get caught by drivers/meson.build.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
+Changes since v6:
+- annotated net/dpaa2 symbols directly in base driver code,
+- renamed special case base symbol files and added comment,
+
 Changes since v5:
 - fixed Windows symbol exports for net/mlx5,                                                        
 
@@ -160,7 +164,7 @@ Changes since RFC v3:
  drivers/bus/cdx/cdx.c                         |   5 +
  drivers/bus/cdx/cdx_vfio.c                    |   5 +
  drivers/bus/dpaa/dpaa_bus.c                   |  10 +
- drivers/bus/dpaa/dpaa_bus_symbols.c           |  99 ++++
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c      | 100 ++++
  drivers/bus/dpaa/meson.build                  |   1 +
  drivers/bus/fslmc/fslmc_bus.c                 |   5 +
  drivers/bus/fslmc/fslmc_vfio.c                |  13 +
@@ -191,7 +195,7 @@ Changes since RFC v3:
  drivers/common/cnxk/cnxk_utils.c              |   2 +
  drivers/common/cnxk/meson.build               |   1 +
  drivers/common/cnxk/roc_platform.c            |  19 +
- drivers/common/cnxk/roc_platform_symbols.c    | 545 ++++++++++++++++++
+ .../common/cnxk/roc_platform_base_symbols.c   | 546 ++++++++++++++++++
  drivers/common/cpt/cpt_fpm_tables.c           |   3 +
  drivers/common/cpt/cpt_pmd_ops_helper.c       |   4 +
  drivers/common/dpaax/caamflib.c               |   3 +
@@ -222,9 +226,9 @@ Changes since RFC v3:
  drivers/common/nitrox/nitrox_qp.c             |   3 +
  drivers/common/octeontx/octeontx_mbox.c       |   7 +
  drivers/common/sfc_efx/meson.build            |   1 +
+ drivers/common/sfc_efx/sfc_base_symbols.c     | 276 +++++++++
  drivers/common/sfc_efx/sfc_efx.c              |   3 +
  drivers/common/sfc_efx/sfc_efx_mcdi.c         |   3 +
- drivers/common/sfc_efx/sfc_symbols.c          | 275 +++++++++
  drivers/crypto/cnxk/cn10k_cryptodev_ops.c     |   8 +
  drivers/crypto/cnxk/cn9k_cryptodev_ops.c      |   3 +
  drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |   8 +
@@ -245,14 +249,14 @@ Changes since RFC v3:
  drivers/net/cnxk/cnxk_ethdev.c                |   4 +
  drivers/net/cnxk/cnxk_ethdev_sec.c            |  10 +
  drivers/net/dpaa/dpaa_ethdev.c                |   4 +
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |   2 +
+ drivers/net/dpaa2/base/dpaa2_tlu_hash.c       |   3 +
  drivers/net/dpaa2/dpaa2_ethdev.c              |   8 +
  drivers/net/dpaa2/dpaa2_mux.c                 |   4 +
  drivers/net/dpaa2/dpaa2_rxtx.c                |   2 +
- drivers/net/dpaa2/dpaa2_symbols.c             |   8 +
- drivers/net/dpaa2/meson.build                 |   1 +
  drivers/net/intel/i40e/rte_pmd_i40e.c         |  40 ++
+ drivers/net/intel/iavf/iavf_base_symbols.c    |  14 +
  drivers/net/intel/iavf/iavf_rxtx.c            |   9 +
- drivers/net/intel/iavf/iavf_symbols.c         |  13 +
  drivers/net/intel/iavf/meson.build            |   1 +
  drivers/net/intel/ice/ice_diagnose.c          |   4 +
  drivers/net/intel/idpf/idpf_common_device.c   |  11 +
@@ -550,21 +554,20 @@ Changes since RFC v3:
  lib/vhost/vhost_user.c                        |   3 +
  lib/vhost/virtio_net.c                        |   8 +
  396 files changed, 4557 insertions(+), 2 deletions(-)
- create mode 100644 drivers/bus/dpaa/dpaa_bus_symbols.c
- create mode 100644 drivers/common/cnxk/roc_platform_symbols.c
- create mode 100644 drivers/common/sfc_efx/sfc_symbols.c
- create mode 100644 drivers/net/dpaa2/dpaa2_symbols.c
- create mode 100644 drivers/net/intel/iavf/iavf_symbols.c
+ create mode 100644 drivers/bus/dpaa/dpaa_bus_base_symbols.c
+ create mode 100644 drivers/common/cnxk/roc_platform_base_symbols.c
+ create mode 100644 drivers/common/sfc_efx/sfc_base_symbols.c
+ create mode 100644 drivers/net/intel/iavf/iavf_base_symbols.c
 
 diff --git a/drivers/baseband/acc/rte_acc100_pmd.c b/drivers/baseband/acc/rte_acc100_pmd.c
-index d33e42c807..274ec14b90 100644
+index d33e42c807..b7f02f56e1 100644
 --- a/drivers/baseband/acc/rte_acc100_pmd.c
 +++ b/drivers/baseband/acc/rte_acc100_pmd.c
 @@ -4,6 +4,7 @@
  
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <dev_driver.h>
@@ -577,14 +580,14 @@ index d33e42c807..274ec14b90 100644
  rte_acc_configure(const char *dev_name, struct rte_acc_conf *conf)
  {
 diff --git a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
-index 65b7e118cd..f0b7ae9126 100644
+index 65b7e118cd..82cf98da5d 100644
 --- a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
 +++ b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
 @@ -4,6 +4,7 @@
  
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <dev_driver.h>
@@ -597,14 +600,14 @@ index 65b7e118cd..f0b7ae9126 100644
  {
  	struct rte_bbdev *bbdev = rte_bbdev_get_named_dev(dev_name);
 diff --git a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
-index 04c1f95180..20647acb29 100644
+index 04c1f95180..4723a51dcf 100644
 --- a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
 +++ b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
 @@ -4,6 +4,7 @@
  
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <dev_driver.h>
@@ -617,14 +620,14 @@ index 04c1f95180..20647acb29 100644
  rte_fpga_lte_fec_configure(const char *dev_name,
  		const struct rte_fpga_lte_fec_conf *conf)
 diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index b444eb43ef..c5dd47701f 100644
+index b444eb43ef..5c6c6b0ef2 100644
 --- a/drivers/bus/auxiliary/auxiliary_common.c
 +++ b/drivers/bus/auxiliary/auxiliary_common.c
 @@ -9,6 +9,7 @@
  #include <stdlib.h>
  #include <stdio.h>
  #include <sys/queue.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_interrupts.h>
  #include <rte_log.h>
@@ -645,14 +648,14 @@ index b444eb43ef..c5dd47701f 100644
  rte_auxiliary_unregister(struct rte_auxiliary_driver *driver)
  {
 diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-index 62b108e082..ab642a5eca 100644
+index 62b108e082..729d54337c 100644
 --- a/drivers/bus/cdx/cdx.c
 +++ b/drivers/bus/cdx/cdx.c
 @@ -75,6 +75,7 @@
  #include <rte_malloc.h>
  #include <rte_vfio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_filesystem.h>
  
  #include "bus_cdx_driver.h"
@@ -687,14 +690,14 @@ index 62b108e082..ab642a5eca 100644
  rte_cdx_unregister(struct rte_cdx_driver *driver)
  {
 diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
-index 664f267471..b9d74600ba 100644
+index 664f267471..37e0c424d4 100644
 --- a/drivers/bus/cdx/cdx_vfio.c
 +++ b/drivers/bus/cdx/cdx_vfio.c
 @@ -17,6 +17,7 @@
  #include <sys/socket.h>
  #include <sys/ioctl.h>
  #include <sys/mman.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_paging.h>
  #include <rte_malloc.h>
  #include <rte_vfio.h>
@@ -731,14 +734,14 @@ index 664f267471..b9d74600ba 100644
  rte_cdx_vfio_bm_disable(struct rte_cdx_device *dev)
  {
 diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 9ffbe07c93..7be8896453 100644
+index 9ffbe07c93..5420733019 100644
 --- a/drivers/bus/dpaa/dpaa_bus.c
 +++ b/drivers/bus/dpaa/dpaa_bus.c
 @@ -15,6 +15,7 @@
  #include <sys/types.h>
  #include <sys/eventfd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_byteorder.h>
  #include <rte_common.h>
  #include <rte_interrupts.h>
@@ -802,18 +805,19 @@ index 9ffbe07c93..7be8896453 100644
  void
  rte_dpaa_driver_unregister(struct rte_dpaa_driver *driver)
  {
-diff --git a/drivers/bus/dpaa/dpaa_bus_symbols.c b/drivers/bus/dpaa/dpaa_bus_symbols.c
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
 new file mode 100644
-index 0000000000..a5aeadfa26
+index 0000000000..522cdca27e
 --- /dev/null
-+++ b/drivers/bus/dpaa/dpaa_bus_symbols.c
-@@ -0,0 +1,99 @@
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -0,0 +1,100 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (c) 2025 Red Hat, Inc.
 + */
 +
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
++/* Symbols from the base driver are exported separately below. */
 +RTE_EXPORT_INTERNAL_SYMBOL(fman_ip_rev)
 +RTE_EXPORT_INTERNAL_SYMBOL(fman_dealloc_bufs_mask_hi)
 +RTE_EXPORT_INTERNAL_SYMBOL(fman_dealloc_bufs_mask_lo)
@@ -908,26 +912,26 @@ index 0000000000..a5aeadfa26
 +RTE_EXPORT_INTERNAL_SYMBOL(qman_fq_portal_thread_irq)
 +RTE_EXPORT_INTERNAL_SYMBOL(fsl_qman_fq_portal_create)
 diff --git a/drivers/bus/dpaa/meson.build b/drivers/bus/dpaa/meson.build
-index 5506f2bffc..2bef6cfd84 100644
+index 5506f2bffc..d1f03bb093 100644
 --- a/drivers/bus/dpaa/meson.build
 +++ b/drivers/bus/dpaa/meson.build
 @@ -19,6 +19,7 @@ sources = files(
          'base/qbman/qman.c',
          'base/qbman/qman_driver.c',
          'dpaa_bus.c',
-+        'dpaa_bus_symbols.c',
++        'dpaa_bus_base_symbols.c',
  )
  
  if cc.has_argument('-Wno-cast-qual')
 diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 68ad2b801e..9e45f089ee 100644
+index 68ad2b801e..ebc0c1fb4f 100644
 --- a/drivers/bus/fslmc/fslmc_bus.c
 +++ b/drivers/bus/fslmc/fslmc_bus.c
 @@ -9,6 +9,7 @@
  #include <stdalign.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <bus_driver.h>
  #include <rte_malloc.h>
@@ -959,14 +963,14 @@ index 68ad2b801e..9e45f089ee 100644
  rte_fslmc_driver_unregister(struct rte_dpaa2_driver *driver)
  {
 diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 7a584b9280..66d58a598c 100644
+index 7a584b9280..68439cbd8c 100644
 --- a/drivers/bus/fslmc/fslmc_vfio.c
 +++ b/drivers/bus/fslmc/fslmc_vfio.c
 @@ -21,6 +21,7 @@
  #include <sys/eventfd.h>
  #include <ctype.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_filesystem.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
@@ -1066,14 +1070,14 @@ index 7a584b9280..66d58a598c 100644
  {
  	struct vfio_irq_set *irq_set;
 diff --git a/drivers/bus/fslmc/mc/dpbp.c b/drivers/bus/fslmc/mc/dpbp.c
-index d9103409cf..e59c44733f 100644
+index d9103409cf..08f24d33e8 100644
 --- a/drivers/bus/fslmc/mc/dpbp.c
 +++ b/drivers/bus/fslmc/mc/dpbp.c
 @@ -9,6 +9,8 @@
  #include <fsl_dpbp.h>
  #include <fsl_dpbp_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * dpbp_open() - Open a control session for the specified object.
@@ -1127,14 +1131,14 @@ index d9103409cf..e59c44733f 100644
  			   uint32_t cmd_flags,
  			   uint16_t token,
 diff --git a/drivers/bus/fslmc/mc/dpci.c b/drivers/bus/fslmc/mc/dpci.c
-index 7e31327afa..9bfc958d87 100644
+index 7e31327afa..9df3827f92 100644
 --- a/drivers/bus/fslmc/mc/dpci.c
 +++ b/drivers/bus/fslmc/mc/dpci.c
 @@ -9,6 +9,8 @@
  #include <fsl_dpci.h>
  #include <fsl_dpci_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * dpci_open() - Open a control session for the specified object
@@ -1164,14 +1168,14 @@ index 7e31327afa..9bfc958d87 100644
  		 uint32_t cmd_flags,
  		 uint16_t token,
 diff --git a/drivers/bus/fslmc/mc/dpcon.c b/drivers/bus/fslmc/mc/dpcon.c
-index 2c46638dcb..f9c9fe1735 100644
+index 2c46638dcb..b9f2f50e12 100644
 --- a/drivers/bus/fslmc/mc/dpcon.c
 +++ b/drivers/bus/fslmc/mc/dpcon.c
 @@ -9,6 +9,8 @@
  #include <fsl_dpcon.h>
  #include <fsl_dpcon_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * dpcon_open() - Open a control session for the specified object
@@ -1225,14 +1229,14 @@ index 2c46638dcb..f9c9fe1735 100644
  			 uint32_t cmd_flags,
  			 uint16_t token,
 diff --git a/drivers/bus/fslmc/mc/dpdmai.c b/drivers/bus/fslmc/mc/dpdmai.c
-index 9c2f3bf9d5..515f549b68 100644
+index 9c2f3bf9d5..97e90b09f1 100644
 --- a/drivers/bus/fslmc/mc/dpdmai.c
 +++ b/drivers/bus/fslmc/mc/dpdmai.c
 @@ -7,6 +7,8 @@
  #include <fsl_dpdmai.h>
  #include <fsl_dpdmai_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * dpdmai_open() - Open a control session for the specified object
@@ -1302,14 +1306,14 @@ index 9c2f3bf9d5..515f549b68 100644
  			uint32_t cmd_flags,
  			uint16_t token,
 diff --git a/drivers/bus/fslmc/mc/dpio.c b/drivers/bus/fslmc/mc/dpio.c
-index 97c08fa713..03365d2854 100644
+index 97c08fa713..8cdf8f432a 100644
 --- a/drivers/bus/fslmc/mc/dpio.c
 +++ b/drivers/bus/fslmc/mc/dpio.c
 @@ -9,6 +9,8 @@
  #include <fsl_dpio.h>
  #include <fsl_dpio_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * dpio_open() - Open a control session for the specified object
@@ -1419,14 +1423,14 @@ index 97c08fa713..03365d2854 100644
  				       uint32_t cmd_flags,
  				       uint16_t token,
 diff --git a/drivers/bus/fslmc/mc/dpmng.c b/drivers/bus/fslmc/mc/dpmng.c
-index 277080876d..b10c6f9091 100644
+index 277080876d..47c85cd80d 100644
 --- a/drivers/bus/fslmc/mc/dpmng.c
 +++ b/drivers/bus/fslmc/mc/dpmng.c
 @@ -9,6 +9,8 @@
  #include <fsl_dpmng.h>
  #include <fsl_dpmng_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /**
   * mc_get_version() - Retrieves the Management Complex firmware
@@ -1448,14 +1452,14 @@ index 277080876d..b10c6f9091 100644
  		       uint32_t cmd_flags,
  		       struct mc_soc_version *mc_platform_info)
 diff --git a/drivers/bus/fslmc/mc/mc_sys.c b/drivers/bus/fslmc/mc/mc_sys.c
-index 76fdcd5c8a..1948875e7f 100644
+index 76fdcd5c8a..ef4c8dd3b8 100644
 --- a/drivers/bus/fslmc/mc/mc_sys.c
 +++ b/drivers/bus/fslmc/mc/mc_sys.c
 @@ -7,6 +7,7 @@
  #include <fsl_mc_sys.h>
  #include <fsl_mc_cmd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_spinlock.h>
  #include <rte_cycles.h>
  
@@ -1468,14 +1472,14 @@ index 76fdcd5c8a..1948875e7f 100644
  {
  	enum mc_cmd_status status;
 diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
-index 0ca3b2b2e4..d43f2b0abe 100644
+index 0ca3b2b2e4..925e83e97d 100644
 --- a/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
 +++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
 @@ -13,6 +13,7 @@
  #include <fcntl.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_memcpy.h>
  #include <rte_string_fns.h>
@@ -1504,14 +1508,14 @@ index 0ca3b2b2e4..d43f2b0abe 100644
  {
  	if (TAILQ_EMPTY(&dpbp_dev_list))
 diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
-index 0ea859f887..87e713ead4 100644
+index 0ea859f887..b546da82f6 100644
 --- a/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
 +++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
 @@ -12,6 +12,7 @@
  #include <fcntl.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_memcpy.h>
  #include <rte_string_fns.h>
@@ -1532,14 +1536,14 @@ index 0ea859f887..87e713ead4 100644
  {
  	struct dpaa2_dpci_dev *dpci_dev = NULL;
 diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index 2dfcf7a498..aacd9abb66 100644
+index 2dfcf7a498..bad25a0ec2 100644
 --- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
 +++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
 @@ -23,6 +23,7 @@
  #include <sys/eventfd.h>
  #include <sys/syscall.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
  #include <rte_malloc.h>
@@ -1612,14 +1616,14 @@ index 2dfcf7a498..aacd9abb66 100644
  dpaa2_free_eq_descriptors(void)
  {
 diff --git a/drivers/bus/fslmc/qbman/qbman_debug.c b/drivers/bus/fslmc/qbman/qbman_debug.c
-index 0e471ec3fd..c79a7c59b0 100644
+index 0e471ec3fd..f13168dce3 100644
 --- a/drivers/bus/fslmc/qbman/qbman_debug.c
 +++ b/drivers/bus/fslmc/qbman/qbman_debug.c
 @@ -7,6 +7,8 @@
  #include <fsl_qbman_debug.h>
  #include "qbman_portal.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* QBMan portal management command code */
  #define QBMAN_BP_QUERY            0x32
@@ -1641,14 +1645,14 @@ index 0e471ec3fd..c79a7c59b0 100644
  {
  	return (r->frm_cnt & 0x00FFFFFF);
 diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
-index 5d0cedc136..1a84c4a9fa 100644
+index 5d0cedc136..84853924e7 100644
 --- a/drivers/bus/fslmc/qbman/qbman_portal.c
 +++ b/drivers/bus/fslmc/qbman/qbman_portal.c
 @@ -8,6 +8,8 @@
  #include "qbman_sys.h"
  #include "qbman_portal.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* QBMan portal management command codes */
  #define QBMAN_MC_ACQUIRE       0x30
@@ -1960,14 +1964,14 @@ index 5d0cedc136..1a84c4a9fa 100644
  {
  	struct qbman_result *dq;
 diff --git a/drivers/bus/ifpga/ifpga_bus.c b/drivers/bus/ifpga/ifpga_bus.c
-index 11b31eee4f..d2ca452604 100644
+index 11b31eee4f..ca9e49f548 100644
 --- a/drivers/bus/ifpga/ifpga_bus.c
 +++ b/drivers/bus/ifpga/ifpga_bus.c
 @@ -13,6 +13,7 @@
  #include <unistd.h>
  #include <fcntl.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <bus_driver.h>
  #include <rte_per_lcore.h>
@@ -1996,14 +2000,14 @@ index 11b31eee4f..d2ca452604 100644
  rte_ifpga_find_afu_by_name(const char *name)
  {
 diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-index 2f88252418..3c8880bc4c 100644
+index 2f88252418..5e2e09d5a4 100644
 --- a/drivers/bus/pci/bsd/pci.c
 +++ b/drivers/bus/pci/bsd/pci.c
 @@ -39,6 +39,7 @@
  #include <rte_debug.h>
  #include <rte_devargs.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  #include "private.h"
  
@@ -2088,14 +2092,14 @@ index 2f88252418..3c8880bc4c 100644
  rte_pci_ioport_unmap(struct rte_pci_ioport *p)
  {
 diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index 9056035b33..a056f047e3 100644
+index 9056035b33..c20d159218 100644
 --- a/drivers/bus/pci/linux/pci.c
 +++ b/drivers/bus/pci/linux/pci.c
 @@ -13,6 +13,7 @@
  #include <rte_memcpy.h>
  #include <rte_vfio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  
  #include "private.h"
@@ -2180,14 +2184,14 @@ index 9056035b33..a056f047e3 100644
  rte_pci_ioport_unmap(struct rte_pci_ioport *p)
  {
 diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index 70faae4e44..8902016d6b 100644
+index 70faae4e44..5df4086f31 100644
 --- a/drivers/bus/pci/pci_common.c
 +++ b/drivers/bus/pci/pci_common.c
 @@ -10,6 +10,7 @@
  #include <stdlib.h>
  #include <stdio.h>
  #include <sys/queue.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_interrupts.h>
  #include <rte_log.h>
@@ -2271,14 +2275,14 @@ index 70faae4e44..8902016d6b 100644
  rte_pci_pasid_set_state(const struct rte_pci_device *dev,
  		off_t offset, bool enable)
 diff --git a/drivers/bus/pci/windows/pci.c b/drivers/bus/pci/windows/pci.c
-index 36e6f89093..64bcd229d2 100644
+index 36e6f89093..e7e449306e 100644
 --- a/drivers/bus/pci/windows/pci.c
 +++ b/drivers/bus/pci/windows/pci.c
 @@ -4,6 +4,7 @@
  
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_windows.h>
  #include <rte_errno.h>
  #include <rte_log.h>
@@ -2363,14 +2367,14 @@ index 36e6f89093..64bcd229d2 100644
  rte_pci_ioport_write(struct rte_pci_ioport *p __rte_unused,
  		const void *data __rte_unused, size_t len __rte_unused,
 diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 11892caa24..da36fc0db4 100644
+index 11892caa24..0f50027236 100644
 --- a/drivers/bus/platform/platform.c
 +++ b/drivers/bus/platform/platform.c
 @@ -13,6 +13,7 @@
  
  #include <bus_driver.h>
  #include <bus_platform_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_filesystem.h>
  #include <rte_bus.h>
  #include <rte_devargs.h>
@@ -2390,14 +2394,14 @@ index 11892caa24..da36fc0db4 100644
  rte_platform_unregister(struct rte_platform_driver *pdrv)
  {
 diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index 9ca048122d..23995cbc04 100644
+index 9ca048122d..9b8ac23952 100644
 --- a/drivers/bus/uacce/uacce.c
 +++ b/drivers/bus/uacce/uacce.c
 @@ -13,6 +13,7 @@
  #include <sys/stat.h>
  #include <sys/types.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_bitops.h>
  #include <rte_common.h>
  #include <rte_devargs.h>
@@ -2474,14 +2478,14 @@ index 9ca048122d..23995cbc04 100644
  rte_uacce_unregister(struct rte_uacce_driver *driver)
  {
 diff --git a/drivers/bus/vdev/vdev.c b/drivers/bus/vdev/vdev.c
-index ec7abe7cda..633e9c49b9 100644
+index ec7abe7cda..beee8c4033 100644
 --- a/drivers/bus/vdev/vdev.c
 +++ b/drivers/bus/vdev/vdev.c
 @@ -10,6 +10,7 @@
  #include <stdbool.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <dev_driver.h>
  #include <bus_driver.h>
@@ -2533,14 +2537,14 @@ index ec7abe7cda..633e9c49b9 100644
  rte_vdev_uninit(const char *name)
  {
 diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
-index 01d8111b85..272366aa28 100644
+index 01d8111b85..ed18d4da96 100644
 --- a/drivers/bus/vmbus/linux/vmbus_bus.c
 +++ b/drivers/bus/vmbus/linux/vmbus_bus.c
 @@ -19,6 +19,7 @@
  #include <rte_malloc.h>
  #include <rte_bus_vmbus.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  #include "private.h"
  
@@ -2589,14 +2593,14 @@ index 01d8111b85..272366aa28 100644
  {
  	return vmbus_uio_irq_read(device);
 diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
-index 925c2aa081..b78c564cea 100644
+index 925c2aa081..a876c909dd 100644
 --- a/drivers/bus/vmbus/vmbus_channel.c
 +++ b/drivers/bus/vmbus/vmbus_channel.c
 @@ -8,6 +8,7 @@
  #include <string.h>
  #include <sys/uio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_tailq.h>
  #include <rte_log.h>
@@ -2703,14 +2707,14 @@ index 925c2aa081..b78c564cea 100644
  {
  	const struct rte_vmbus_device *device = chan->device;
 diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 8a965d10d9..4dd5f09742 100644
+index 8a965d10d9..ac04ee11f8 100644
 --- a/drivers/bus/vmbus/vmbus_common.c
 +++ b/drivers/bus/vmbus/vmbus_common.c
 @@ -10,6 +10,7 @@
  #include <sys/queue.h>
  #include <sys/mman.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_eal.h>
  #include <rte_tailq.h>
@@ -2739,14 +2743,14 @@ index 8a965d10d9..4dd5f09742 100644
  rte_vmbus_unregister(struct rte_vmbus_driver *driver)
  {
 diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
-index a3c06c1e88..4b53fc6486 100644
+index a3c06c1e88..ea3b87e65c 100644
 --- a/drivers/common/cnxk/cnxk_security.c
 +++ b/drivers/common/cnxk/cnxk_security.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2021 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_udp.h>
  
  #include "roc_api.h"
@@ -2845,14 +2849,14 @@ index a3c06c1e88..4b53fc6486 100644
  cnxk_ow_ipsec_outb_sa_fill(struct roc_ow_ipsec_outb_sa *sa,
  			   struct rte_security_ipsec_xform *ipsec_xfrm,
 diff --git a/drivers/common/cnxk/cnxk_utils.c b/drivers/common/cnxk/cnxk_utils.c
-index 4e56adc659..fd120142c4 100644
+index 4e56adc659..8ca4664d25 100644
 --- a/drivers/common/cnxk/cnxk_utils.c
 +++ b/drivers/common/cnxk/cnxk_utils.c
 @@ -1,6 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   * Copyright(C) 2021 Marvell.
   */
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_tm_driver.h>
  
@@ -2865,26 +2869,26 @@ index 4e56adc659..fd120142c4 100644
  roc_nix_tm_err_to_rte_err(int errorcode)
  {
 diff --git a/drivers/common/cnxk/meson.build b/drivers/common/cnxk/meson.build
-index 59f4eacf84..b3efece422 100644
+index 59f4eacf84..daffc15afd 100644
 --- a/drivers/common/cnxk/meson.build
 +++ b/drivers/common/cnxk/meson.build
 @@ -64,6 +64,7 @@ sources = files(
          'roc_npc_parse.c',
          'roc_npc_utils.c',
          'roc_platform.c',
-+        'roc_platform_symbols.c',
++        'roc_platform_base_symbols.c',
          'roc_se.c',
          'roc_sso.c',
          'roc_sso_debug.c',
 diff --git a/drivers/common/cnxk/roc_platform.c b/drivers/common/cnxk/roc_platform.c
-index 401f737ad4..6c8867f059 100644
+index 401f737ad4..88f229163a 100644
 --- a/drivers/common/cnxk/roc_platform.c
 +++ b/drivers/common/cnxk/roc_platform.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2021 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  
  #include "roc_api.h"
@@ -2952,18 +2956,19 @@ index 401f737ad4..6c8867f059 100644
  RTE_LOG_REGISTER_SUFFIX(cnxk_logtype_esw, esw, NOTICE);
 +RTE_EXPORT_INTERNAL_SYMBOL(cnxk_logtype_ree)
  RTE_LOG_REGISTER_SUFFIX(cnxk_logtype_ree, ree, NOTICE);
-diff --git a/drivers/common/cnxk/roc_platform_symbols.c b/drivers/common/cnxk/roc_platform_symbols.c
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
 new file mode 100644
-index 0000000000..2bfa599677
+index 0000000000..5d99129987
 --- /dev/null
-+++ b/drivers/common/cnxk/roc_platform_symbols.c
-@@ -0,0 +1,545 @@
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -0,0 +1,546 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (c) 2025 Red Hat, Inc.
 + */
 +
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
++/* Symbols from the base driver are exported separately below. */
 +RTE_EXPORT_INTERNAL_SYMBOL(roc_ae_ec_grp_get)
 +RTE_EXPORT_INTERNAL_SYMBOL(roc_ae_ec_grp_put)
 +RTE_EXPORT_INTERNAL_SYMBOL(roc_ae_fpm_get)
@@ -3504,14 +3509,14 @@ index 0000000000..2bfa599677
 +RTE_EXPORT_INTERNAL_SYMBOL(roc_error_msg_get)
 +RTE_EXPORT_INTERNAL_SYMBOL(roc_clk_freq_get)
 diff --git a/drivers/common/cpt/cpt_fpm_tables.c b/drivers/common/cpt/cpt_fpm_tables.c
-index 15b665db01..4bc2612cda 100644
+index 15b665db01..0cb14733d9 100644
 --- a/drivers/common/cpt/cpt_fpm_tables.c
 +++ b/drivers/common/cpt/cpt_fpm_tables.c
 @@ -2,6 +2,7 @@
   * Copyright (C) 2019 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  
@@ -3532,14 +3537,14 @@ index 15b665db01..4bc2612cda 100644
  {
  	rte_spinlock_lock(&lock);
 diff --git a/drivers/common/cpt/cpt_pmd_ops_helper.c b/drivers/common/cpt/cpt_pmd_ops_helper.c
-index 2cddddf4ce..d2c8d43040 100644
+index 2cddddf4ce..c7e6f37026 100644
 --- a/drivers/common/cpt/cpt_pmd_ops_helper.c
 +++ b/drivers/common/cpt/cpt_pmd_ops_helper.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2018 Cavium, Inc
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  
  #include "cpt_common.h"
@@ -3568,14 +3573,14 @@ index 2cddddf4ce..d2c8d43040 100644
  cpt_pmd_ops_helper_asym_get_mlen(void)
  {
 diff --git a/drivers/common/dpaax/caamflib.c b/drivers/common/dpaax/caamflib.c
-index 55e20281ca..f28945a533 100644
+index 55e20281ca..82a7413b5f 100644
 --- a/drivers/common/dpaax/caamflib.c
 +++ b/drivers/common/dpaax/caamflib.c
 @@ -6,6 +6,8 @@
  
  #include <rta.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /*
   * SEC HW block revision.
@@ -3587,14 +3592,14 @@ index 55e20281ca..f28945a533 100644
 +RTE_EXPORT_INTERNAL_SYMBOL(rta_sec_era)
  enum rta_sec_era rta_sec_era;
 diff --git a/drivers/common/dpaax/dpaa_of.c b/drivers/common/dpaax/dpaa_of.c
-index bb2c8fc66b..f1dea8cfe4 100644
+index bb2c8fc66b..23035f530d 100644
 --- a/drivers/common/dpaax/dpaa_of.c
 +++ b/drivers/common/dpaax/dpaa_of.c
 @@ -7,6 +7,7 @@
  
  #include <dpaa_of.h>
  #include <assert.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <dpaax_logs.h>
  
@@ -3695,14 +3700,14 @@ index bb2c8fc66b..f1dea8cfe4 100644
  {
  	const void *addr;
 diff --git a/drivers/common/dpaax/dpaax_iova_table.c b/drivers/common/dpaax/dpaax_iova_table.c
-index 860e702333..4602c6a5a3 100644
+index 860e702333..1220d9654b 100644
 --- a/drivers/common/dpaax/dpaax_iova_table.c
 +++ b/drivers/common/dpaax/dpaax_iova_table.c
 @@ -2,12 +2,14 @@
   * Copyright 2018-2023 NXP
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memory.h>
  
  #include "dpaax_iova_table.h"
@@ -3752,14 +3757,14 @@ index 860e702333..4602c6a5a3 100644
 +RTE_EXPORT_INTERNAL_SYMBOL(dpaax_logger)
  RTE_LOG_REGISTER_DEFAULT(dpaax_logger, ERR);
 diff --git a/drivers/common/ionic/ionic_common_uio.c b/drivers/common/ionic/ionic_common_uio.c
-index c647b22eaf..0d5e4ee8c7 100644
+index c647b22eaf..aaefab918c 100644
 --- a/drivers/common/ionic/ionic_common_uio.c
 +++ b/drivers/common/ionic/ionic_common_uio.c
 @@ -15,6 +15,7 @@
  #include <fcntl.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_eal.h>
  #include <rte_string_fns.h>
@@ -3796,14 +3801,14 @@ index c647b22eaf..0d5e4ee8c7 100644
  ionic_uio_rel_rsrc(const char *name, int idx, struct ionic_dev_bar *bar)
  {
 diff --git a/drivers/common/mlx5/linux/mlx5_common_auxiliary.c b/drivers/common/mlx5/linux/mlx5_common_auxiliary.c
-index 33479ffd68..fd7519cdf9 100644
+index 33479ffd68..b4ea604820 100644
 --- a/drivers/common/mlx5/linux/mlx5_common_auxiliary.c
 +++ b/drivers/common/mlx5/linux/mlx5_common_auxiliary.c
 @@ -10,6 +10,7 @@
  #include <rte_errno.h>
  #include <bus_auxiliary_driver.h>
  #include <rte_common.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  
  #include "mlx5_common_utils.h"
@@ -3816,14 +3821,14 @@ index 33479ffd68..fd7519cdf9 100644
  mlx5_auxiliary_get_child_name(const char *dev, const char *node,
  			      char *child, size_t size)
 diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
-index 2f5032f0da..035b61347e 100644
+index 2f5032f0da..2867e21618 100644
 --- a/drivers/common/mlx5/linux/mlx5_common_os.c
 +++ b/drivers/common/mlx5/linux/mlx5_common_os.c
 @@ -13,6 +13,7 @@
  #include <net/if.h>
  #include <fcntl.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_string_fns.h>
  #include <bus_pci_driver.h>
@@ -3904,14 +3909,14 @@ index 2f5032f0da..035b61347e 100644
  mlx5_os_interrupt_handler_destroy(struct rte_intr_handle *intr_handle,
  				  rte_intr_callback_fn cb, void *cb_arg)
 diff --git a/drivers/common/mlx5/linux/mlx5_common_verbs.c b/drivers/common/mlx5/linux/mlx5_common_verbs.c
-index cf2f7ecbf3..d58ec2a716 100644
+index cf2f7ecbf3..98260df470 100644
 --- a/drivers/common/mlx5/linux/mlx5_common_verbs.c
 +++ b/drivers/common/mlx5/linux/mlx5_common_verbs.c
 @@ -10,6 +10,7 @@
  #include <sys/mman.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_eal_paging.h>
  
@@ -3940,14 +3945,14 @@ index cf2f7ecbf3..d58ec2a716 100644
  mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
  {
 diff --git a/drivers/common/mlx5/linux/mlx5_glue.c b/drivers/common/mlx5/linux/mlx5_glue.c
-index 99761ea0b2..137db54919 100644
+index 99761ea0b2..a91eaa429d 100644
 --- a/drivers/common/mlx5/linux/mlx5_glue.c
 +++ b/drivers/common/mlx5/linux/mlx5_glue.c
 @@ -16,6 +16,8 @@
  
  #include "mlx5_glue.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  static int
  mlx5_glue_fork_init(void)
@@ -3961,14 +3966,14 @@ index 99761ea0b2..137db54919 100644
  const struct mlx5_glue *mlx5_glue = &(const struct mlx5_glue) {
  	.version = MLX5_GLUE_VERSION,
 diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
-index 12f1a620f3..09df162d26 100644
+index 12f1a620f3..86166e92d0 100644
 --- a/drivers/common/mlx5/linux/mlx5_nl.c
 +++ b/drivers/common/mlx5/linux/mlx5_nl.c
 @@ -17,6 +17,7 @@
  #include <sys/socket.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  
  #include "mlx5_nl.h"
@@ -4140,14 +4145,14 @@ index 12f1a620f3..09df162d26 100644
  mlx5_nl_rdma_monitor_cap_get(int nl, uint8_t *cap)
  {
 diff --git a/drivers/common/mlx5/mlx5_common.c b/drivers/common/mlx5/mlx5_common.c
-index 9abae4a374..857e1b2427 100644
+index 9abae4a374..4f25127582 100644
 --- a/drivers/common/mlx5/mlx5_common.c
 +++ b/drivers/common/mlx5/mlx5_common.c
 @@ -7,6 +7,7 @@
  #include <stdio.h>
  #include <pthread.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_mempool.h>
  #include <rte_class.h>
@@ -4224,14 +4229,14 @@ index 9abae4a374..857e1b2427 100644
  mlx5_devx_uar_prepare(struct mlx5_common_device *cdev, struct mlx5_uar *uar)
  {
 diff --git a/drivers/common/mlx5/mlx5_common_devx.c b/drivers/common/mlx5/mlx5_common_devx.c
-index 431d8361ce..0ffc2b0647 100644
+index 431d8361ce..cd1292b92b 100644
 --- a/drivers/common/mlx5/mlx5_common_devx.c
 +++ b/drivers/common/mlx5/mlx5_common_devx.c
 @@ -3,6 +3,7 @@
   */
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_common.h>
  #include <rte_eal_paging.h>
@@ -4308,14 +4313,14 @@ index 431d8361ce..0ffc2b0647 100644
  mlx5_devx_qp2rts(struct mlx5_devx_qp *qp, uint32_t remote_qp_id)
  {
 diff --git a/drivers/common/mlx5/mlx5_common_mp.c b/drivers/common/mlx5/mlx5_common_mp.c
-index a7a671b7c5..801928d5a5 100644
+index a7a671b7c5..1ff268f348 100644
 --- a/drivers/common/mlx5/mlx5_common_mp.c
 +++ b/drivers/common/mlx5/mlx5_common_mp.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <time.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_errno.h>
  
@@ -4384,14 +4389,14 @@ index a7a671b7c5..801928d5a5 100644
  mlx5_mp_uninit_secondary(const char *name)
  {
 diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
-index 50922ad398..bcf377d542 100644
+index 50922ad398..c41ffff2d5 100644
 --- a/drivers/common/mlx5/mlx5_common_mr.c
 +++ b/drivers/common/mlx5/mlx5_common_mr.c
 @@ -4,6 +4,7 @@
   */
  #include <stddef.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_eal_paging.h>
  #include <rte_errno.h>
@@ -4484,14 +4489,14 @@ index 50922ad398..bcf377d542 100644
  mlx5_mr_mb2mr_bh(struct mlx5_mr_ctrl *mr_ctrl, struct rte_mbuf *mb)
  {
 diff --git a/drivers/common/mlx5/mlx5_common_pci.c b/drivers/common/mlx5/mlx5_common_pci.c
-index 04aad0963c..a2669a3b2c 100644
+index 04aad0963c..819b799bb8 100644
 --- a/drivers/common/mlx5/mlx5_common_pci.c
 +++ b/drivers/common/mlx5/mlx5_common_pci.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_devargs.h>
  #include <rte_errno.h>
@@ -4511,14 +4516,14 @@ index 04aad0963c..a2669a3b2c 100644
  mlx5_dev_is_vf_pci(const struct rte_pci_device *pci_dev)
  {
 diff --git a/drivers/common/mlx5/mlx5_common_utils.c b/drivers/common/mlx5/mlx5_common_utils.c
-index 4b95d35d35..ee267f50e0 100644
+index 4b95d35d35..14056cebcb 100644
 --- a/drivers/common/mlx5/mlx5_common_utils.c
 +++ b/drivers/common/mlx5/mlx5_common_utils.c
 @@ -2,6 +2,7 @@
   * Copyright 2019 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_hash_crc.h>
  #include <rte_errno.h>
@@ -4611,14 +4616,14 @@ index 4b95d35d35..ee267f50e0 100644
  mlx5_hlist_destroy(struct mlx5_hlist *h)
  {
 diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
-index 440820fd4f..e15deb1e5e 100644
+index 440820fd4f..39a4298b58 100644
 --- a/drivers/common/mlx5/mlx5_devx_cmds.c
 +++ b/drivers/common/mlx5/mlx5_devx_cmds.c
 @@ -4,6 +4,7 @@
  
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_malloc.h>
  #include <rte_eal_paging.h>
@@ -5031,14 +5036,14 @@ index 440820fd4f..e15deb1e5e 100644
  mlx5_devx_cmd_query_lag(void *ctx,
  			struct mlx5_devx_lag_context *lag_ctx)
 diff --git a/drivers/common/mlx5/mlx5_malloc.c b/drivers/common/mlx5/mlx5_malloc.c
-index ef6dabedbd..a2813357bd 100644
+index ef6dabedbd..d56b4fb5a8 100644
 --- a/drivers/common/mlx5/mlx5_malloc.c
 +++ b/drivers/common/mlx5/mlx5_malloc.c
 @@ -3,6 +3,7 @@
   */
  
  #include <errno.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <malloc.h>
  #include <stdbool.h>
@@ -5075,14 +5080,14 @@ index ef6dabedbd..a2813357bd 100644
  mlx5_memory_stat_dump(void)
  {
 diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
-index 68f1981193..ead2f2ac2c 100644
+index 68f1981193..7fac361460 100644
 --- a/drivers/common/mlx5/windows/mlx5_common_os.c
 +++ b/drivers/common/mlx5/windows/mlx5_common_os.c
 @@ -6,6 +6,7 @@
  #include <string.h>
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mempool.h>
  #include <bus_pci_driver.h>
  #include <rte_malloc.h>
@@ -5135,14 +5140,14 @@ index 68f1981193..ead2f2ac2c 100644
  mlx5_os_wrapped_mkey_destroy(struct mlx5_pmd_wrapped_mr *wpmd_mr)
  {
 diff --git a/drivers/common/mlx5/windows/mlx5_glue.c b/drivers/common/mlx5/windows/mlx5_glue.c
-index 6935811bf4..756aa067f2 100644
+index 6935811bf4..066e2fdce3 100644
 --- a/drivers/common/mlx5/windows/mlx5_glue.c
 +++ b/drivers/common/mlx5/windows/mlx5_glue.c
 @@ -9,6 +9,7 @@
  #include <stdlib.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  
  #include "mlx5_glue.h"
@@ -5157,14 +5162,14 @@ index 6935811bf4..756aa067f2 100644
  const struct mlx5_glue *mlx5_glue = &(const struct mlx5_glue){
  	.version = MLX5_GLUE_VERSION,
 diff --git a/drivers/common/mvep/mvep_common.c b/drivers/common/mvep/mvep_common.c
-index 67fa65b574..70cadf62c9 100644
+index 67fa65b574..2035300cce 100644
 --- a/drivers/common/mvep/mvep_common.c
 +++ b/drivers/common/mvep/mvep_common.c
 @@ -2,6 +2,7 @@
   *  Copyright(c) 2018 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  
  #include <env/mv_autogen_comp_flags.h>
@@ -5185,14 +5190,14 @@ index 67fa65b574..70cadf62c9 100644
  {
  	mvep.ref_count--;
 diff --git a/drivers/common/nfp/nfp_common.c b/drivers/common/nfp/nfp_common.c
-index 0df8332dfb..2df131b981 100644
+index 0df8332dfb..475f64daab 100644
 --- a/drivers/common/nfp/nfp_common.c
 +++ b/drivers/common/nfp/nfp_common.c
 @@ -7,12 +7,15 @@
  
  #include "nfp_common_log.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /*
   * This is used by the reconfig protocol. It sets the maximum time waiting in
@@ -5253,14 +5258,14 @@ index 0df8332dfb..2df131b981 100644
  nfp_disable_queues(struct nfp_hw *hw)
  {
 diff --git a/drivers/common/nfp/nfp_common_pci.c b/drivers/common/nfp/nfp_common_pci.c
-index 856f3917a2..651ae1a28b 100644
+index 856f3917a2..4a2fb5e82d 100644
 --- a/drivers/common/nfp/nfp_common_pci.c
 +++ b/drivers/common/nfp/nfp_common_pci.c
 @@ -7,6 +7,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_class.h>
  #include <rte_devargs.h>
  #include <rte_kvargs.h>
@@ -5273,14 +5278,14 @@ index 856f3917a2..651ae1a28b 100644
  nfp_class_driver_register(struct nfp_class_driver *driver)
  {
 diff --git a/drivers/common/nfp/nfp_dev.c b/drivers/common/nfp/nfp_dev.c
-index f29b7e0711..91fd18f4ee 100644
+index f29b7e0711..486ed2cdfe 100644
 --- a/drivers/common/nfp/nfp_dev.c
 +++ b/drivers/common/nfp/nfp_dev.c
 @@ -6,6 +6,7 @@
  #include "nfp_dev.h"
  
  #include <nfp_platform.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_bitops.h>
  
  /*
@@ -5293,14 +5298,14 @@ index f29b7e0711..91fd18f4ee 100644
  nfp_dev_info_get(uint16_t device_id)
  {
 diff --git a/drivers/common/nitrox/nitrox_device.c b/drivers/common/nitrox/nitrox_device.c
-index 6cd57faaa4..68cdaa9422 100644
+index 6cd57faaa4..74c7a859a4 100644
 --- a/drivers/common/nitrox/nitrox_device.c
 +++ b/drivers/common/nitrox/nitrox_device.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2019 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  
  #include "nitrox_device.h"
@@ -5313,27 +5318,27 @@ index 6cd57faaa4..68cdaa9422 100644
  nitrox_register_driver(struct nitrox_driver *ndrv)
  {
 diff --git a/drivers/common/nitrox/nitrox_logs.c b/drivers/common/nitrox/nitrox_logs.c
-index 0e0a94648c..0fbc05a964 100644
+index 0e0a94648c..e4ebb39ff1 100644
 --- a/drivers/common/nitrox/nitrox_logs.c
 +++ b/drivers/common/nitrox/nitrox_logs.c
 @@ -2,6 +2,8 @@
   * Copyright(C) 2019 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  
 +RTE_EXPORT_INTERNAL_SYMBOL(nitrox_logtype)
  RTE_LOG_REGISTER_DEFAULT(nitrox_logtype, NOTICE);
 diff --git a/drivers/common/nitrox/nitrox_qp.c b/drivers/common/nitrox/nitrox_qp.c
-index d6a5ddd641..c0673c06ef 100644
+index d6a5ddd641..8f481e6876 100644
 --- a/drivers/common/nitrox/nitrox_qp.c
 +++ b/drivers/common/nitrox/nitrox_qp.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2019 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memzone.h>
  #include <rte_malloc.h>
  
@@ -5354,14 +5359,14 @@ index d6a5ddd641..c0673c06ef 100644
  nitrox_qp_release(struct nitrox_qp *qp, uint8_t *bar_addr)
  {
 diff --git a/drivers/common/octeontx/octeontx_mbox.c b/drivers/common/octeontx/octeontx_mbox.c
-index f98942c79c..cb0860329f 100644
+index f98942c79c..9e0bbf453f 100644
 --- a/drivers/common/octeontx/octeontx_mbox.c
 +++ b/drivers/common/octeontx/octeontx_mbox.c
 @@ -5,6 +5,7 @@
  #include <errno.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_atomic.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
@@ -5414,85 +5419,30 @@ index f98942c79c..cb0860329f 100644
  octeontx_get_global_domain(void)
  {
 diff --git a/drivers/common/sfc_efx/meson.build b/drivers/common/sfc_efx/meson.build
-index 0cf0a23bf8..25061d58bf 100644
+index 0cf0a23bf8..74b4a2fd93 100644
 --- a/drivers/common/sfc_efx/meson.build
 +++ b/drivers/common/sfc_efx/meson.build
 @@ -41,6 +41,7 @@ deps += ['bus_pci']
  sources = files(
          'sfc_efx.c',
          'sfc_efx_mcdi.c',
-+        'sfc_symbols.c',
++        'sfc_base_symbols.c',
  )
  
  includes += include_directories('base')
-diff --git a/drivers/common/sfc_efx/sfc_efx.c b/drivers/common/sfc_efx/sfc_efx.c
-index 458efacba5..dcda0af89c 100644
---- a/drivers/common/sfc_efx/sfc_efx.c
-+++ b/drivers/common/sfc_efx/sfc_efx.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <string.h>
-+#include <eal_symbol_exports.h>
- #include <rte_log.h>
- #include <rte_kvargs.h>
- #include <rte_devargs.h>
-@@ -35,6 +36,7 @@ sfc_efx_kvarg_dev_class_handler(__rte_unused const char *key,
- 	return 0;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_dev_class_get)
- enum sfc_efx_dev_class
- sfc_efx_dev_class_get(struct rte_devargs *devargs)
- {
-@@ -93,6 +95,7 @@ sfc_efx_pci_config_readd(efsys_pci_config_t *configp, uint32_t offset,
- 	return (rc < 0 || rc != sizeof(*edp)) ? EIO : 0;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_family)
- int
- sfc_efx_family(struct rte_pci_device *pci_dev,
- 	       efx_bar_region_t *mem_ebrp, efx_family_t *family)
-diff --git a/drivers/common/sfc_efx/sfc_efx_mcdi.c b/drivers/common/sfc_efx/sfc_efx_mcdi.c
-index 0d17616589..17a174fb33 100644
---- a/drivers/common/sfc_efx/sfc_efx_mcdi.c
-+++ b/drivers/common/sfc_efx/sfc_efx_mcdi.c
-@@ -7,6 +7,7 @@
-  * for Solarflare) and Solarflare Communications, Inc.
-  */
- 
-+#include <eal_symbol_exports.h>
- #include <rte_cycles.h>
- 
- #include "efx.h"
-@@ -264,6 +265,7 @@ sfc_efx_mcdi_ev_proxy_response(void *arg, uint32_t handle, efx_rc_t result)
- 	mcdi->proxy_result = result;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_mcdi_init)
- int
- sfc_efx_mcdi_init(struct sfc_efx_mcdi *mcdi,
- 		  uint32_t logtype, const char *log_prefix, efx_nic_t *nic,
-@@ -320,6 +322,7 @@ sfc_efx_mcdi_init(struct sfc_efx_mcdi *mcdi,
- 	return rc;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_mcdi_fini)
- void
- sfc_efx_mcdi_fini(struct sfc_efx_mcdi *mcdi)
- {
-diff --git a/drivers/common/sfc_efx/sfc_symbols.c b/drivers/common/sfc_efx/sfc_symbols.c
+diff --git a/drivers/common/sfc_efx/sfc_base_symbols.c b/drivers/common/sfc_efx/sfc_base_symbols.c
 new file mode 100644
-index 0000000000..0da4d12546
+index 0000000000..ae6605632d
 --- /dev/null
-+++ b/drivers/common/sfc_efx/sfc_symbols.c
-@@ -0,0 +1,275 @@
++++ b/drivers/common/sfc_efx/sfc_base_symbols.c
+@@ -0,0 +1,276 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (c) 2025 Red Hat, Inc.
 + */
 +
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
++/* Symbols from the base driver are exported separately below. */
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_crc32_calculate)
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_ev_init)
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_evq_size)
@@ -5762,15 +5712,71 @@ index 0000000000..0da4d12546
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_virtio_get_doorbell_offset)
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_virtio_get_features)
 +RTE_EXPORT_INTERNAL_SYMBOL(efx_virtio_verify_features)
+diff --git a/drivers/common/sfc_efx/sfc_efx.c b/drivers/common/sfc_efx/sfc_efx.c
+index 458efacba5..60f20ef262 100644
+--- a/drivers/common/sfc_efx/sfc_efx.c
++++ b/drivers/common/sfc_efx/sfc_efx.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <string.h>
++#include <eal_export.h>
+ #include <rte_log.h>
+ #include <rte_kvargs.h>
+ #include <rte_devargs.h>
+@@ -35,6 +36,7 @@ sfc_efx_kvarg_dev_class_handler(__rte_unused const char *key,
+ 	return 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_dev_class_get)
+ enum sfc_efx_dev_class
+ sfc_efx_dev_class_get(struct rte_devargs *devargs)
+ {
+@@ -93,6 +95,7 @@ sfc_efx_pci_config_readd(efsys_pci_config_t *configp, uint32_t offset,
+ 	return (rc < 0 || rc != sizeof(*edp)) ? EIO : 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_family)
+ int
+ sfc_efx_family(struct rte_pci_device *pci_dev,
+ 	       efx_bar_region_t *mem_ebrp, efx_family_t *family)
+diff --git a/drivers/common/sfc_efx/sfc_efx_mcdi.c b/drivers/common/sfc_efx/sfc_efx_mcdi.c
+index 0d17616589..1fe3515d2d 100644
+--- a/drivers/common/sfc_efx/sfc_efx_mcdi.c
++++ b/drivers/common/sfc_efx/sfc_efx_mcdi.c
+@@ -7,6 +7,7 @@
+  * for Solarflare) and Solarflare Communications, Inc.
+  */
+ 
++#include <eal_export.h>
+ #include <rte_cycles.h>
+ 
+ #include "efx.h"
+@@ -264,6 +265,7 @@ sfc_efx_mcdi_ev_proxy_response(void *arg, uint32_t handle, efx_rc_t result)
+ 	mcdi->proxy_result = result;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_mcdi_init)
+ int
+ sfc_efx_mcdi_init(struct sfc_efx_mcdi *mcdi,
+ 		  uint32_t logtype, const char *log_prefix, efx_nic_t *nic,
+@@ -320,6 +322,7 @@ sfc_efx_mcdi_init(struct sfc_efx_mcdi *mcdi,
+ 	return rc;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(sfc_efx_mcdi_fini)
+ void
+ sfc_efx_mcdi_fini(struct sfc_efx_mcdi *mcdi)
+ {
 diff --git a/drivers/crypto/cnxk/cn10k_cryptodev_ops.c b/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
-index dbebc5aef1..3c58571cbd 100644
+index dbebc5aef1..851e6f0a88 100644
 --- a/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cn10k_cryptodev_ops.c
 @@ -3,6 +3,7 @@
   */
  
  #include <cryptodev_pmd.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cryptodev.h>
  #include <rte_event_crypto_adapter.h>
  #include <rte_hexdump.h>
@@ -5830,14 +5836,14 @@ index dbebc5aef1..3c58571cbd 100644
  cn10k_cryptodev_sec_rx_inject_configure(void *device, uint16_t port_id, bool enable)
  {
 diff --git a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
-index 2b1bd70c6d..74e4423bd4 100644
+index 2b1bd70c6d..ee35ed1eba 100644
 --- a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2021 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cryptodev.h>
  #include <cryptodev_pmd.h>
  #include <rte_event_crypto_adapter.h>
@@ -5858,14 +5864,14 @@ index 2b1bd70c6d..74e4423bd4 100644
  cn9k_cpt_crypto_adapter_dequeue(uintptr_t get_work1)
  {
 diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index a82db13a8e..909182a378 100644
+index a82db13a8e..c3a0a58c8f 100644
 --- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2021 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_atomic.h>
  #include <rte_cryptodev.h>
  #include <cryptodev_pmd.h>
@@ -5926,14 +5932,14 @@ index a82db13a8e..909182a378 100644
  rte_pmd_cnxk_crypto_qp_stats_get(struct rte_pmd_cnxk_crypto_qptr *qptr,
  				 struct rte_pmd_cnxk_crypto_qp_stats *stats)
 diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 7ad8fd47dd..7063d1a26f 100644
+index 7ad8fd47dd..0ccadecff4 100644
 --- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
 +++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
 @@ -9,6 +9,7 @@
  #include <net/if.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ip.h>
  #include <rte_udp.h>
  #include <rte_mbuf.h>
@@ -5954,14 +5960,14 @@ index 7ad8fd47dd..7063d1a26f 100644
  dpaa2_sec_eventq_detach(const struct rte_cryptodev *dev,
  			int qp_id)
 diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index e117cd77a6..5941efb8a8 100644
+index e117cd77a6..bcea4ff3ab 100644
 --- a/drivers/crypto/dpaa_sec/dpaa_sec.c
 +++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
 @@ -10,6 +10,7 @@
  #include <sched.h>
  #include <net/if.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_byteorder.h>
  #include <rte_common.h>
  #include <cryptodev_pmd.h>
@@ -5982,14 +5988,14 @@ index e117cd77a6..5941efb8a8 100644
  dpaa_sec_eventq_detach(const struct rte_cryptodev *dev,
  			int qp_id)
 diff --git a/drivers/crypto/octeontx/otx_cryptodev_ops.c b/drivers/crypto/octeontx/otx_cryptodev_ops.c
-index 9a758cd297..9944689700 100644
+index 9a758cd297..88657f49cc 100644
 --- a/drivers/crypto/octeontx/otx_cryptodev_ops.c
 +++ b/drivers/crypto/octeontx/otx_cryptodev_ops.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2018 Cavium, Inc
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_alarm.h>
  #include <bus_pci_driver.h>
  #include <rte_cryptodev.h>
@@ -6010,14 +6016,14 @@ index 9a758cd297..9944689700 100644
  otx_crypto_adapter_dequeue(uintptr_t get_work1)
  {
 diff --git a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-index 6013f66aa5..fc67f310d5 100644
+index 6013f66aa5..1ca8443431 100644
 --- a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
 +++ b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
 @@ -1,6 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   * Copyright(c) 2017 Intel Corporation
   */
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_reorder.h>
  #include <rte_cryptodev.h>
@@ -6102,14 +6108,14 @@ index 6013f66aa5..fc67f310d5 100644
  rte_cryptodev_scheduler_option_get(uint8_t scheduler_id,
  		enum rte_cryptodev_schedule_option_type option_type,
 diff --git a/drivers/dma/cnxk/cnxk_dmadev_fp.c b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-index 36fc40c7e0..1b836ba4e9 100644
+index 36fc40c7e0..dea73c5b41 100644
 --- a/drivers/dma/cnxk/cnxk_dmadev_fp.c
 +++ b/drivers/dma/cnxk/cnxk_dmadev_fp.c
 @@ -2,6 +2,7 @@
   * Copyright (C) 2021 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_vect.h>
  
  #include "cnxk_dmadev.h"
@@ -6146,14 +6152,14 @@ index 36fc40c7e0..1b836ba4e9 100644
  cnxk_dma_adapter_dequeue(uintptr_t get_work1)
  {
 diff --git a/drivers/event/cnxk/cnxk_worker.c b/drivers/event/cnxk/cnxk_worker.c
-index a07c9185d9..f0aa83ada4 100644
+index a07c9185d9..5e5beb6aac 100644
 --- a/drivers/event/cnxk/cnxk_worker.c
 +++ b/drivers/event/cnxk/cnxk_worker.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2023 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_pmd_cnxk_eventdev.h>
  #include <rte_eventdev.h>
@@ -6174,14 +6180,14 @@ index a07c9185d9..f0aa83ada4 100644
  rte_pmd_cnxk_eventdev_is_head(uint8_t dev, uint8_t port)
  {
 diff --git a/drivers/event/dlb2/rte_pmd_dlb2.c b/drivers/event/dlb2/rte_pmd_dlb2.c
-index 43990e46ac..f6c06ae83a 100644
+index 43990e46ac..08f4d5f3d1 100644
 --- a/drivers/event/dlb2/rte_pmd_dlb2.c
 +++ b/drivers/event/dlb2/rte_pmd_dlb2.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2020 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eventdev.h>
  #include <eventdev_pmd.h>
  
@@ -6194,14 +6200,14 @@ index 43990e46ac..f6c06ae83a 100644
  rte_pmd_dlb2_set_token_pop_mode(uint8_t dev_id,
  				uint8_t port_id,
 diff --git a/drivers/mempool/cnxk/cn10k_hwpool_ops.c b/drivers/mempool/cnxk/cn10k_hwpool_ops.c
-index b234481ec1..73ed5a8846 100644
+index b234481ec1..e83e872f40 100644
 --- a/drivers/mempool/cnxk/cn10k_hwpool_ops.c
 +++ b/drivers/mempool/cnxk/cn10k_hwpool_ops.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2023 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mempool.h>
  #include <rte_pmd_cnxk_mempool.h>
  
@@ -6229,14 +6235,14 @@ index b234481ec1..73ed5a8846 100644
  rte_pmd_cnxk_mempool_range_check_disable(struct rte_mempool *mp)
  {
 diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 74bfcab509..71933d69aa 100644
+index 74bfcab509..7dacaa9513 100644
 --- a/drivers/mempool/dpaa/dpaa_mempool.c
 +++ b/drivers/mempool/dpaa/dpaa_mempool.c
 @@ -15,6 +15,7 @@
  #include <sys/types.h>
  #include <sys/syscall.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_byteorder.h>
  #include <rte_common.h>
  #include <rte_log.h>
@@ -6253,14 +6259,14 @@ index 74bfcab509..71933d69aa 100644
  
  RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_mempool, NOTICE);
 diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-index c054988513..fdad38c9f5 100644
+index c054988513..09729d2828 100644
 --- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
 +++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
 @@ -13,6 +13,7 @@
  #include <fcntl.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
  #include <rte_malloc.h>
@@ -6305,14 +6311,14 @@ index c054988513..fdad38c9f5 100644
  rte_dpaa2_mbuf_alloc_bulk(struct rte_mempool *pool,
  			  void **obj_table, unsigned int count)
 diff --git a/drivers/net/atlantic/rte_pmd_atlantic.c b/drivers/net/atlantic/rte_pmd_atlantic.c
-index 00fc2872e5..a603c4e9a7 100644
+index 00fc2872e5..b5b6ab7d4b 100644
 --- a/drivers/net/atlantic/rte_pmd_atlantic.c
 +++ b/drivers/net/atlantic/rte_pmd_atlantic.c
 @@ -4,10 +4,12 @@
  
  #include <ethdev_driver.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_pmd_atlantic.h"
  #include "atl_ethdev.h"
  
@@ -6362,14 +6368,14 @@ index 00fc2872e5..a603c4e9a7 100644
  rte_pmd_atl_macsec_select_rxsa(uint16_t port, uint8_t idx, uint8_t an,
  				 uint32_t pn, uint8_t *key)
 diff --git a/drivers/net/bnxt/rte_pmd_bnxt.c b/drivers/net/bnxt/rte_pmd_bnxt.c
-index e9b5739050..e72641148a 100644
+index e9b5739050..4974e390e7 100644
 --- a/drivers/net/bnxt/rte_pmd_bnxt.c
 +++ b/drivers/net/bnxt/rte_pmd_bnxt.c
 @@ -9,6 +9,7 @@
  
  #include <dev_driver.h>
  #include <ethdev_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_cycles.h>
  #include <rte_byteorder.h>
@@ -6502,14 +6508,14 @@ index e9b5739050..e72641148a 100644
  {
  	struct rte_eth_dev_info dev_info;
 diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
-index 7f885ab521..599935d632 100644
+index 7f885ab521..1677615435 100644
 --- a/drivers/net/bonding/rte_eth_bond_8023ad.c
 +++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
 @@ -6,6 +6,7 @@
  #include <string.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_alarm.h>
  #include <rte_malloc.h>
  #include <rte_errno.h>
@@ -6610,14 +6616,14 @@ index 7f885ab521..599935d632 100644
  rte_eth_bond_8023ad_dedicated_queues_disable(uint16_t port)
  {
 diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
-index ffc1322047..56b67400f7 100644
+index ffc1322047..9e5df67c18 100644
 --- a/drivers/net/bonding/rte_eth_bond_api.c
 +++ b/drivers/net/bonding/rte_eth_bond_api.c
 @@ -4,6 +4,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  #include <ethdev_driver.h>
@@ -6742,14 +6748,14 @@ index ffc1322047..56b67400f7 100644
  rte_eth_bond_link_monitoring_set(uint16_t bonding_port_id, uint32_t internal_ms)
  {
 diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index 289ae96afa..33c870ce54 100644
+index 289ae96afa..026c61f2c7 100644
 --- a/drivers/net/cnxk/cnxk_ethdev.c
 +++ b/drivers/net/cnxk/cnxk_ethdev.c
 @@ -3,6 +3,7 @@
   */
  #include <cnxk_ethdev.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eventdev.h>
  #include <rte_pmd_cnxk.h>
  
@@ -6777,14 +6783,14 @@ index 289ae96afa..33c870ce54 100644
  cnxk_nix_inb_mode_set(struct cnxk_eth_dev *dev, bool use_inl_dev)
  {
 diff --git a/drivers/net/cnxk/cnxk_ethdev_sec.c b/drivers/net/cnxk/cnxk_ethdev_sec.c
-index 6f0340ec0f..a697a25e2b 100644
+index 6f0340ec0f..614997bd3d 100644
 --- a/drivers/net/cnxk/cnxk_ethdev_sec.c
 +++ b/drivers/net/cnxk/cnxk_ethdev_sec.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2021 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_pmd_cnxk.h>
  
  #include <cnxk_ethdev.h>
@@ -6859,14 +6865,14 @@ index 6f0340ec0f..a697a25e2b 100644
  rte_pmd_cnxk_hw_inline_inb_cfg_set(uint16_t portid, struct rte_pmd_cnxk_ipsec_inb_cfg *cfg)
  {
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index ce4bbbb8f0..24719c87d8 100644
+index ce4bbbb8f0..00b57cb715 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
 @@ -16,6 +16,7 @@
  #include <sys/syscall.h>
  #include <sys/ioctl.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_byteorder.h>
  #include <rte_common.h>
@@ -6894,15 +6900,56 @@ index ce4bbbb8f0..24719c87d8 100644
  int
  rte_pmd_dpaa_set_tx_loopback(uint16_t port, uint8_t on)
  {
+diff --git a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+index 20b37a97bb..8d00a86032 100644
+--- a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
++++ b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+@@ -8,6 +8,7 @@
+ #include <time.h>
+ #include <net/if.h>
+ 
++#include <eal_export.h>
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+@@ -28,6 +29,7 @@ dpaa2_distset_to_dpkg_profile_cfg(
+ 		uint64_t req_dist_set,
+ 		struct dpkg_profile_cfg *kg_cfg);
+ 
++RTE_EXPORT_SYMBOL(rte_pmd_dpaa2_set_custom_hash)
+ int
+ rte_pmd_dpaa2_set_custom_hash(uint16_t port_id,
+ 	uint16_t offset, uint8_t size)
+diff --git a/drivers/net/dpaa2/base/dpaa2_tlu_hash.c b/drivers/net/dpaa2/base/dpaa2_tlu_hash.c
+index 9eb127c07c..8c685120bd 100644
+--- a/drivers/net/dpaa2/base/dpaa2_tlu_hash.c
++++ b/drivers/net/dpaa2/base/dpaa2_tlu_hash.c
+@@ -4,6 +4,8 @@
+ #include <stdio.h>
+ #include <inttypes.h>
+ #include <unistd.h>
++
++#include <eal_export.h>
+ #include <rte_pmd_dpaa2.h>
+ 
+ static unsigned int sbox(unsigned int x)
+@@ -142,6 +144,7 @@ static void hash_init(void)
+ 		}
+ }
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_dpaa2_get_tlu_hash, 21.11)
+ uint32_t rte_pmd_dpaa2_get_tlu_hash(uint8_t *data, int size)
+ {
+ 	static int init;
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 8624bba0ce..abbe24e240 100644
+index 8624bba0ce..c53c2d0549 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
 @@ -8,6 +8,7 @@
  #include <time.h>
  #include <net/if.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
  #include <rte_malloc.h>
@@ -6963,14 +7010,14 @@ index 8624bba0ce..abbe24e240 100644
  rte_pmd_dpaa2_set_one_step_ts(uint16_t port_id, uint16_t offset, uint8_t ch_update)
  {
 diff --git a/drivers/net/dpaa2/dpaa2_mux.c b/drivers/net/dpaa2/dpaa2_mux.c
-index 2f124313fa..91f098a641 100644
+index 2f124313fa..a4ac566e26 100644
 --- a/drivers/net/dpaa2/dpaa2_mux.c
 +++ b/drivers/net/dpaa2/dpaa2_mux.c
 @@ -10,6 +10,7 @@
  #include <unistd.h>
  #include <stdarg.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_log.h>
  #include <rte_malloc.h>
@@ -6999,14 +7046,14 @@ index 2f124313fa..91f098a641 100644
  rte_pmd_dpaa2_mux_dump_counter(FILE *f, uint32_t dpdmux_id, int num_if)
  {
 diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index cad15d8f75..113528d186 100644
+index cad15d8f75..67d065bb7c 100644
 --- a/drivers/net/dpaa2/dpaa2_rxtx.c
 +++ b/drivers/net/dpaa2/dpaa2_rxtx.c
 @@ -8,6 +8,7 @@
  #include <time.h>
  #include <net/if.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
  #include <rte_malloc.h>
@@ -7018,41 +7065,15 @@ index cad15d8f75..113528d186 100644
  uint16_t
  dpaa2_dev_tx_multi_txq_ordered(void **queue,
  		struct rte_mbuf **bufs, uint16_t nb_pkts)
-diff --git a/drivers/net/dpaa2/dpaa2_symbols.c b/drivers/net/dpaa2/dpaa2_symbols.c
-new file mode 100644
-index 0000000000..5954d81af4
---- /dev/null
-+++ b/drivers/net/dpaa2/dpaa2_symbols.c
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 Red Hat, Inc.
-+ */
-+
-+#include <eal_symbol_exports.h>
-+
-+RTE_EXPORT_SYMBOL(rte_pmd_dpaa2_set_custom_hash)
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_dpaa2_get_tlu_hash, 21.11)
-diff --git a/drivers/net/dpaa2/meson.build b/drivers/net/dpaa2/meson.build
-index 89932b3037..146d079fb0 100644
---- a/drivers/net/dpaa2/meson.build
-+++ b/drivers/net/dpaa2/meson.build
-@@ -17,6 +17,7 @@ sources = files(
-         'dpaa2_recycle.c',
-         'dpaa2_rxtx.c',
-         'dpaa2_sparser.c',
-+        'dpaa2_symbols.c',
-         'dpaa2_ptp.c',
-         'mc/dprtc.c',
-         'mc/dpkg.c',
 diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-index 9d39984ea1..9bfadd7505 100644
+index 9d39984ea1..ff99cc4de3 100644
 --- a/drivers/net/intel/i40e/rte_pmd_i40e.c
 +++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2017 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_malloc.h>
  #include <rte_tailq.h>
@@ -7368,15 +7389,35 @@ index 9d39984ea1..9bfadd7505 100644
  int
  rte_pmd_i40e_set_pf_src_prune(uint16_t port, uint8_t on)
  {
+diff --git a/drivers/net/intel/iavf/iavf_base_symbols.c b/drivers/net/intel/iavf/iavf_base_symbols.c
+new file mode 100644
+index 0000000000..2111b14aa8
+--- /dev/null
++++ b/drivers/net/intel/iavf/iavf_base_symbols.c
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Red Hat, Inc.
++ */
++
++#include <eal_export.h>
++
++/* Symbols from the base driver are exported separately below. */
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_init_adminq)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_shutdown_adminq)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_clean_arq_element)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_set_mac_type)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_aq_send_msg_to_pf)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_vf_parse_hw_config)
++RTE_EXPORT_INTERNAL_SYMBOL(iavf_vf_reset)
 diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index a999073691..c67e3cd6ca 100644
+index a999073691..533e0c78a2 100644
 --- a/drivers/net/intel/iavf/iavf_rxtx.c
 +++ b/drivers/net/intel/iavf/iavf_rxtx.c
 @@ -12,6 +12,7 @@
  #include <inttypes.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_memzone.h>
  #include <rte_mbuf.h>
@@ -7404,46 +7445,27 @@ index a999073691..c67e3cd6ca 100644
  uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
  
  uint8_t
-diff --git a/drivers/net/intel/iavf/iavf_symbols.c b/drivers/net/intel/iavf/iavf_symbols.c
-new file mode 100644
-index 0000000000..88f6547b4f
---- /dev/null
-+++ b/drivers/net/intel/iavf/iavf_symbols.c
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 Red Hat, Inc.
-+ */
-+
-+#include <eal_symbol_exports.h>
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_init_adminq)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_shutdown_adminq)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_clean_arq_element)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_set_mac_type)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_aq_send_msg_to_pf)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_vf_parse_hw_config)
-+RTE_EXPORT_INTERNAL_SYMBOL(iavf_vf_reset)
 diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
-index 7e03881529..561836c7af 100644
+index 7e03881529..8cbb006201 100644
 --- a/drivers/net/intel/iavf/meson.build
 +++ b/drivers/net/intel/iavf/meson.build
-@@ -23,6 +23,7 @@ sources = files(
-         'iavf_tm.c',
-         'iavf_ipsec_crypto.c',
-         'iavf_fsub.c',
-+        'iavf_symbols.c',
- )
- includes += include_directories('base')
+@@ -14,6 +14,7 @@ sources = files(
+         'base/iavf_common.c',
+         'base/iavf_impl.c',
  
++        'iavf_base_symbols.c',
+         'iavf_ethdev.c',
+         'iavf_rxtx.c',
+         'iavf_vchnl.c',
 diff --git a/drivers/net/intel/ice/ice_diagnose.c b/drivers/net/intel/ice/ice_diagnose.c
-index a50068441a..adeef0e46d 100644
+index a50068441a..298d1eda5c 100644
 --- a/drivers/net/intel/ice/ice_diagnose.c
 +++ b/drivers/net/intel/ice/ice_diagnose.c
 @@ -6,6 +6,7 @@
  #include <unistd.h>
  #include <sys/stat.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_malloc.h>
  #include <rte_tailq.h>
@@ -7472,14 +7494,14 @@ index a50068441a..adeef0e46d 100644
  rte_pmd_ice_dump_txsched(uint16_t port, bool detail, FILE *stream)
  {
 diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
-index e9fa024850..37a3d64df5 100644
+index e9fa024850..ff1fbcd2b4 100644
 --- a/drivers/net/intel/idpf/idpf_common_device.c
 +++ b/drivers/net/intel/idpf/idpf_common_device.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2023 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include "idpf_common_device.h"
  #include "idpf_common_virtchnl.h"
@@ -7564,14 +7586,14 @@ index e9fa024850..37a3d64df5 100644
  idpf_vport_stats_update(struct virtchnl2_vport_stats *oes, struct virtchnl2_vport_stats *nes)
  {
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 7171e27b8d..3180d77538 100644
+index 7171e27b8d..0e785daff4 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx.c
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2023 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf_dyn.h>
  #include <rte_errno.h>
  
@@ -7768,14 +7790,14 @@ index 7171e27b8d..3180d77538 100644
  idpf_qc_splitq_rx_vec_setup(struct idpf_rx_queue *rxq)
  {
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 43a95466ae..818be419ea 100644
+index 43a95466ae..79b8d80ea9 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2023 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_vect.h>
  
  #include "idpf_common_rxtx.h"
@@ -7796,14 +7818,14 @@ index 43a95466ae..818be419ea 100644
  idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
  			       uint16_t nb_pkts)
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index b630d1fcd9..7a3bbe6e7c 100644
+index b630d1fcd9..1299346cbc 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2023 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_vect.h>
  #include "idpf_common_device.h"
  #include "idpf_common_rxtx.h"
@@ -7848,14 +7870,14 @@ index b630d1fcd9..7a3bbe6e7c 100644
  idpf_qc_tx_vec_avx512_setup(struct idpf_tx_queue *txq)
  {
 diff --git a/drivers/net/intel/idpf/idpf_common_virtchnl.c b/drivers/net/intel/idpf/idpf_common_virtchnl.c
-index 0ae1d55d79..cab624eb91 100644
+index 0ae1d55d79..c152a11811 100644
 --- a/drivers/net/intel/idpf/idpf_common_virtchnl.c
 +++ b/drivers/net/intel/idpf/idpf_common_virtchnl.c
 @@ -5,6 +5,8 @@
  #include "idpf_common_virtchnl.h"
  #include "idpf_common_logs.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  static int
  idpf_vc_clean(struct idpf_adapter *adapter)
@@ -8093,14 +8115,14 @@ index 0ae1d55d79..cab624eb91 100644
  idpf_vc_ctlq_post_rx_buffs(struct idpf_hw *hw, struct idpf_ctlq_info *cq,
  			   u16 *buff_count, struct idpf_dma_mem **buffs)
 diff --git a/drivers/net/intel/ipn3ke/ipn3ke_ethdev.c b/drivers/net/intel/ipn3ke/ipn3ke_ethdev.c
-index c8f06a06cb..2d72c9cf05 100644
+index c8f06a06cb..2ee87c94c2 100644
 --- a/drivers/net/intel/ipn3ke/ipn3ke_ethdev.c
 +++ b/drivers/net/intel/ipn3ke/ipn3ke_ethdev.c
 @@ -5,6 +5,7 @@
  #include <stdint.h>
  
  #include <bus_pci_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_pci.h>
  #include <rte_malloc.h>
@@ -8113,14 +8135,14 @@ index c8f06a06cb..2d72c9cf05 100644
  
  static int
 diff --git a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-index 5a7d66d9b9..3779f28693 100644
+index 5a7d66d9b9..c2300a8955 100644
 --- a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
 +++ b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
 @@ -7,8 +7,10 @@
  #include "base/ixgbe_api.h"
  #include "base/ixgbe_x550.h"
  #include "ixgbe_ethdev.h"
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_pmd_ixgbe.h"
  
 +RTE_EXPORT_SYMBOL(rte_pmd_ixgbe_set_vf_mac_addr)
@@ -8416,14 +8438,14 @@ index 5a7d66d9b9..3779f28693 100644
  rte_pmd_ixgbe_get_fdir_stats(uint16_t port,
  			     struct rte_eth_fdir_stats *fdir_stats)
 diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index 646da8e846..e6a25c7d66 100644
+index 646da8e846..b4bd43aae2 100644
 --- a/drivers/net/mlx5/mlx5.c
 +++ b/drivers/net/mlx5/mlx5.c
 @@ -11,6 +11,7 @@
  #include <errno.h>
  #include <fcntl.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <ethdev_driver.h>
  #include <rte_pci.h>
@@ -8436,14 +8458,14 @@ index 646da8e846..e6a25c7d66 100644
  rte_pmd_mlx5_get_dyn_flag_names(char *names[], unsigned int n)
  {
 diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index e2f4bd8cef..ac2794a212 100644
+index e2f4bd8cef..cb91f4dfbe 100644
 --- a/drivers/net/mlx5/mlx5_flow.c
 +++ b/drivers/net/mlx5/mlx5_flow.c
 @@ -9,6 +9,7 @@
  #include <stdbool.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_ether.h>
  #include <ethdev_driver.h>
@@ -8480,14 +8502,14 @@ index e2f4bd8cef..ac2794a212 100644
  rte_pmd_mlx5_destroy_geneve_tlv_parser(void *handle)
  {
 diff --git a/drivers/net/mlx5/mlx5_rx.c b/drivers/net/mlx5/mlx5_rx.c
-index 5e58eb8bc9..55b7d7311b 100644
+index 5e58eb8bc9..b0b0ce250e 100644
 --- a/drivers/net/mlx5/mlx5_rx.c
 +++ b/drivers/net/mlx5/mlx5_rx.c
 @@ -7,6 +7,7 @@
  #include <string.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_mempool.h>
  #include <rte_prefetch.h>
@@ -8508,14 +8530,14 @@ index 5e58eb8bc9..55b7d7311b 100644
  {
  	struct rte_eth_dev *dev;
 diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
-index 5cf7d4971b..cbc16fac14 100644
+index 5cf7d4971b..ab29b43875 100644
 --- a/drivers/net/mlx5/mlx5_rxq.c
 +++ b/drivers/net/mlx5/mlx5_rxq.c
 @@ -10,6 +10,7 @@
  #include <fcntl.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  #include <ethdev_driver.h>
@@ -8536,14 +8558,14 @@ index 5cf7d4971b..cbc16fac14 100644
  rte_pmd_mlx5_external_rx_queue_id_unmap(uint16_t port_id, uint16_t dpdk_idx)
  {
 diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
-index 4286876e12..d7af38b7f9 100644
+index 4286876e12..39afca3d64 100644
 --- a/drivers/net/mlx5/mlx5_tx.c
 +++ b/drivers/net/mlx5/mlx5_tx.c
 @@ -7,6 +7,7 @@
  #include <string.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_mempool.h>
  #include <rte_prefetch.h>
@@ -8556,14 +8578,14 @@ index 4286876e12..d7af38b7f9 100644
  {
  	struct rte_eth_dev *dev;
 diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
-index 3e93517323..9ab0a30fec 100644
+index 3e93517323..3b3f775ba7 100644
 --- a/drivers/net/mlx5/mlx5_txq.c
 +++ b/drivers/net/mlx5/mlx5_txq.c
 @@ -10,6 +10,7 @@
  #include <unistd.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  #include <ethdev_driver.h>
@@ -8592,14 +8614,14 @@ index 3e93517323..9ab0a30fec 100644
  rte_pmd_mlx5_external_tx_queue_id_unmap(uint16_t port_id, uint16_t dpdk_idx)
  {
 diff --git a/drivers/net/octeontx/octeontx_ethdev.c b/drivers/net/octeontx/octeontx_ethdev.c
-index 3b8d717797..d58b270c7e 100644
+index 3b8d717797..9451431144 100644
 --- a/drivers/net/octeontx/octeontx_ethdev.c
 +++ b/drivers/net/octeontx/octeontx_ethdev.c
 @@ -11,6 +11,7 @@
  #include <unistd.h>
  
  #include <eventdev_pmd.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_alarm.h>
  #include <rte_branch_prediction.h>
  #include <bus_vdev_driver.h>
@@ -8612,14 +8634,14 @@ index 3b8d717797..d58b270c7e 100644
  rte_octeontx_pchan_map[OCTEONTX_MAX_BGX_PORTS][OCTEONTX_MAX_LMAC_PER_BGX];
  
 diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
-index 146bdc8e02..b1f565ad35 100644
+index 146bdc8e02..b1085bf390 100644
 --- a/drivers/net/ring/rte_eth_ring.c
 +++ b/drivers/net/ring/rte_eth_ring.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_eth_ring.h"
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
@@ -8640,14 +8662,14 @@ index 146bdc8e02..b1f565ad35 100644
  rte_eth_from_ring(struct rte_ring *r)
  {
 diff --git a/drivers/net/softnic/rte_eth_softnic.c b/drivers/net/softnic/rte_eth_softnic.c
-index 2147ea35f6..ecb158ebb6 100644
+index 2147ea35f6..91a1c3a98e 100644
 --- a/drivers/net/softnic/rte_eth_softnic.c
 +++ b/drivers/net/softnic/rte_eth_softnic.c
 @@ -8,6 +8,7 @@
  
  #include <ethdev_driver.h>
  #include <ethdev_vdev.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <bus_vdev_driver.h>
  #include <rte_kvargs.h>
@@ -8660,14 +8682,14 @@ index 2147ea35f6..ecb158ebb6 100644
  rte_pmd_softnic_manage(uint16_t port_id)
  {
 diff --git a/drivers/net/softnic/rte_eth_softnic_thread.c b/drivers/net/softnic/rte_eth_softnic_thread.c
-index 888af6caf4..9fccd230a6 100644
+index 888af6caf4..f72c836199 100644
 --- a/drivers/net/softnic/rte_eth_softnic_thread.c
 +++ b/drivers/net/softnic/rte_eth_softnic_thread.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
  #include <rte_lcore.h>
@@ -8680,14 +8702,14 @@ index 888af6caf4..9fccd230a6 100644
  rte_pmd_softnic_run(uint16_t port_id)
  {
 diff --git a/drivers/net/vhost/rte_eth_vhost.c b/drivers/net/vhost/rte_eth_vhost.c
-index 87c05caccd..997648a769 100644
+index 87c05caccd..44bf2e3241 100644
 --- a/drivers/net/vhost/rte_eth_vhost.c
 +++ b/drivers/net/vhost/rte_eth_vhost.c
 @@ -8,6 +8,7 @@
  #include <stdbool.h>
  #include <sys/epoll.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <ethdev_driver.h>
  #include <ethdev_vdev.h>
@@ -8708,14 +8730,14 @@ index 87c05caccd..997648a769 100644
  rte_eth_vhost_get_vid_from_port_id(uint16_t port_id)
  {
 diff --git a/drivers/power/kvm_vm/guest_channel.c b/drivers/power/kvm_vm/guest_channel.c
-index 35cd4cfe6f..db619f8a61 100644
+index 35cd4cfe6f..42bfcedb56 100644
 --- a/drivers/power/kvm_vm/guest_channel.c
 +++ b/drivers/power/kvm_vm/guest_channel.c
 @@ -12,6 +12,7 @@
  #include <poll.h>
  
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_power_guest_channel.h>
  
@@ -8736,14 +8758,14 @@ index 35cd4cfe6f..db619f8a61 100644
  		size_t pkt_len,
  		unsigned int lcore_id)
 diff --git a/drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c b/drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c
-index 54c58a8552..8700268624 100644
+index 54c58a8552..60c2080740 100644
 --- a/drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c
 +++ b/drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c
 @@ -3,6 +3,7 @@
   */
  
  #include <bus_pci_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <dev_driver.h>
  #include <rte_eal.h>
@@ -8826,14 +8848,14 @@ index 54c58a8552..8700268624 100644
  rte_pmd_rvu_lf_pf_func_get(uint8_t dev_id)
  {
 diff --git a/drivers/raw/ifpga/rte_pmd_ifpga.c b/drivers/raw/ifpga/rte_pmd_ifpga.c
-index a47d5a0350..e9681bf6ce 100644
+index a47d5a0350..620b35624b 100644
 --- a/drivers/raw/ifpga/rte_pmd_ifpga.c
 +++ b/drivers/raw/ifpga/rte_pmd_ifpga.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2021 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_pci.h>
  #include <bus_pci_driver.h>
  #include <rte_rawdev.h>
@@ -8926,14 +8948,14 @@ index a47d5a0350..e9681bf6ce 100644
  rte_pmd_ifpga_cleanup(void)
  {
 diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
-index 56e3b31ed6..b6ef020943 100644
+index 56e3b31ed6..7056b1c117 100644
 --- a/lib/acl/acl_bld.c
 +++ b/lib/acl/acl_bld.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_acl.h>
  #include <rte_log.h>
  
@@ -8946,14 +8968,14 @@ index 56e3b31ed6..b6ef020943 100644
  rte_acl_build(struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
  {
 diff --git a/lib/acl/acl_run_scalar.c b/lib/acl/acl_run_scalar.c
-index 3d61e79409..f6e9a7fc43 100644
+index 3d61e79409..8ffb40776c 100644
 --- a/lib/acl/acl_run_scalar.c
 +++ b/lib/acl/acl_run_scalar.c
 @@ -4,6 +4,8 @@
  
  #include "acl_run.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /*
   * Resolve priority for multiple results (scalar version).
@@ -8967,14 +8989,14 @@ index 3d61e79409..f6e9a7fc43 100644
  rte_acl_classify_scalar(const struct rte_acl_ctx *ctx, const uint8_t **data,
  	uint32_t *results, uint32_t num, uint32_t categories)
 diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
-index 245b9b6d7a..71a496e5d5 100644
+index 245b9b6d7a..8c0ca29618 100644
 --- a/lib/acl/rte_acl.c
 +++ b/lib/acl/rte_acl.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_string_fns.h>
  #include <rte_acl.h>
@@ -9067,14 +9089,14 @@ index 245b9b6d7a..71a496e5d5 100644
  rte_acl_list_dump(void)
  {
 diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index e7007afc6a..138112a801 100644
+index e7007afc6a..18290e0c38 100644
 --- a/lib/argparse/rte_argparse.c
 +++ b/lib/argparse/rte_argparse.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  
  #include "rte_argparse.h"
@@ -9095,14 +9117,14 @@ index e7007afc6a..138112a801 100644
  rte_argparse_parse_type(const char *str, uint64_t val_type, void *val)
  {
 diff --git a/lib/bbdev/bbdev_trace_points.c b/lib/bbdev/bbdev_trace_points.c
-index 6f90e2aa65..4b0e394d76 100644
+index 6f90e2aa65..942c7be819 100644
 --- a/lib/bbdev/bbdev_trace_points.c
 +++ b/lib/bbdev/bbdev_trace_points.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2025 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include "bbdev_trace.h"
@@ -9117,14 +9139,14 @@ index 6f90e2aa65..4b0e394d76 100644
  RTE_TRACE_POINT_REGISTER(rte_bbdev_trace_dequeue,
  	lib.bbdev.deq)
 diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-index f341e6f3b9..bf9b58c62a 100644
+index f341e6f3b9..6ca91c7cf1 100644
 --- a/lib/bbdev/rte_bbdev.c
 +++ b/lib/bbdev/rte_bbdev.c
 @@ -7,6 +7,7 @@
  #include <stdbool.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_errno.h>
  #include <rte_log.h>
@@ -9376,14 +9398,14 @@ index f341e6f3b9..bf9b58c62a 100644
  rte_bbdev_ops_param_string(void *op, enum rte_bbdev_op_type op_type, char *str, uint32_t len)
  {
 diff --git a/lib/bitratestats/rte_bitrate.c b/lib/bitratestats/rte_bitrate.c
-index 1664e4863b..c1b69fb691 100644
+index 1664e4863b..592e478e06 100644
 --- a/lib/bitratestats/rte_bitrate.c
 +++ b/lib/bitratestats/rte_bitrate.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2017 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_ethdev.h>
  #include <rte_malloc.h>
@@ -9419,14 +9441,14 @@ index 1664e4863b..c1b69fb691 100644
  rte_stats_bitrate_calc(struct rte_stats_bitrates *bitrate_data,
  			uint16_t port_id)
 diff --git a/lib/bpf/bpf.c b/lib/bpf/bpf.c
-index bbe75c8bfe..120ce24634 100644
+index bbe75c8bfe..5239b3e11e 100644
 --- a/lib/bpf/bpf.c
 +++ b/lib/bpf/bpf.c
 @@ -6,10 +6,12 @@
  #include <errno.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  
  #include "bpf_impl.h"
@@ -9444,14 +9466,14 @@ index bbe75c8bfe..120ce24634 100644
  rte_bpf_get_jit(const struct rte_bpf *bpf, struct rte_bpf_jit *jit)
  {
 diff --git a/lib/bpf/bpf_convert.c b/lib/bpf/bpf_convert.c
-index e7e298c9cb..fda06c1268 100644
+index e7e298c9cb..86e703299d 100644
 --- a/lib/bpf/bpf_convert.c
 +++ b/lib/bpf/bpf_convert.c
 @@ -17,6 +17,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_bpf.h>
  #include <rte_log.h>
@@ -9464,14 +9486,14 @@ index e7e298c9cb..fda06c1268 100644
  rte_bpf_convert(const struct bpf_program *prog)
  {
 diff --git a/lib/bpf/bpf_dump.c b/lib/bpf/bpf_dump.c
-index b86977b96d..8e01ade803 100644
+index b86977b96d..6ee0e32b43 100644
 --- a/lib/bpf/bpf_dump.c
 +++ b/lib/bpf/bpf_dump.c
 @@ -7,6 +7,7 @@
  #include <stdio.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_bpf.h"
  
  #define BPF_OP_INDEX(x) (BPF_OP(x) >> 4)
@@ -9484,14 +9506,14 @@ index b86977b96d..8e01ade803 100644
  {
  	uint32_t i;
 diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
-index 5d597ec170..5cf6f94d89 100644
+index 5d597ec170..4b5ea9f1a4 100644
 --- a/lib/bpf/bpf_exec.c
 +++ b/lib/bpf/bpf_exec.c
 @@ -5,6 +5,7 @@
  #include <stdio.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_debug.h>
@@ -9512,14 +9534,14 @@ index 5d597ec170..5cf6f94d89 100644
  rte_bpf_exec(const struct rte_bpf *bpf, void *ctx)
  {
 diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-index de43347405..70162754e2 100644
+index de43347405..556e613762 100644
 --- a/lib/bpf/bpf_load.c
 +++ b/lib/bpf/bpf_load.c
 @@ -7,6 +7,7 @@
  #include <errno.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_errno.h>
  
@@ -9532,14 +9554,14 @@ index de43347405..70162754e2 100644
  rte_bpf_load(const struct rte_bpf_prm *prm)
  {
 diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
-index e0abd3c856..646166d48e 100644
+index e0abd3c856..1d30ba17e2 100644
 --- a/lib/bpf/bpf_load_elf.c
 +++ b/lib/bpf/bpf_load_elf.c
 @@ -17,6 +17,7 @@
  
  #include <libelf.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_debug.h>
@@ -9552,14 +9574,14 @@ index e0abd3c856..646166d48e 100644
  rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
  	const char *sname)
 diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index aaca935f2d..831e4b1ded 100644
+index aaca935f2d..01f813c56b 100644
 --- a/lib/bpf/bpf_pkt.c
 +++ b/lib/bpf/bpf_pkt.c
 @@ -9,6 +9,7 @@
  
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -9596,14 +9618,14 @@ index aaca935f2d..831e4b1ded 100644
  rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
  	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
 diff --git a/lib/bpf/bpf_stub.c b/lib/bpf/bpf_stub.c
-index 1babb16bde..103f8ce0a0 100644
+index 1babb16bde..dea0d703ca 100644
 --- a/lib/bpf/bpf_stub.c
 +++ b/lib/bpf/bpf_stub.c
 @@ -3,6 +3,7 @@
   */
  
  #include "bpf_impl.h"
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  
  /**
@@ -9624,14 +9646,14 @@ index 1babb16bde..103f8ce0a0 100644
  rte_bpf_convert(const struct bpf_program *prog)
  {
 diff --git a/lib/cfgfile/rte_cfgfile.c b/lib/cfgfile/rte_cfgfile.c
-index 13ba3957bc..2ee43b9781 100644
+index 13ba3957bc..8bbdcf146e 100644
 --- a/lib/cfgfile/rte_cfgfile.c
 +++ b/lib/cfgfile/rte_cfgfile.c
 @@ -7,6 +7,7 @@
  #include <string.h>
  #include <ctype.h>
  #include <errno.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_common.h>
  #include <rte_log.h>
@@ -9771,14 +9793,14 @@ index 13ba3957bc..2ee43b9781 100644
  rte_cfgfile_has_entry(struct rte_cfgfile *cfg, const char *sectionname,
  		const char *entryname)
 diff --git a/lib/cmdline/cmdline.c b/lib/cmdline/cmdline.c
-index 08721ee919..3ae9d23972 100644
+index 08721ee919..d1003f0b8e 100644
 --- a/lib/cmdline/cmdline.c
 +++ b/lib/cmdline/cmdline.c
 @@ -11,6 +11,7 @@
  #include <stdarg.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "cmdline_private.h"
@@ -9854,14 +9876,14 @@ index 08721ee919..3ae9d23972 100644
  cmdline_interact(struct cmdline *cl)
  {
 diff --git a/lib/cmdline/cmdline_cirbuf.c b/lib/cmdline/cmdline_cirbuf.c
-index 829a8af563..e4590332b4 100644
+index 829a8af563..07d9fc6b90 100644
 --- a/lib/cmdline/cmdline_cirbuf.c
 +++ b/lib/cmdline/cmdline_cirbuf.c
 @@ -10,7 +10,10 @@
  
  #include "cmdline_cirbuf.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  
 +
 +RTE_EXPORT_SYMBOL(cirbuf_init)
@@ -10013,14 +10035,14 @@ index 829a8af563..e4590332b4 100644
  cirbuf_get_tail(struct cirbuf * cbuf)
  {
 diff --git a/lib/cmdline/cmdline_parse.c b/lib/cmdline/cmdline_parse.c
-index 76a212d001..351885830f 100644
+index 76a212d001..201fddb8c3 100644
 --- a/lib/cmdline/cmdline_parse.c
 +++ b/lib/cmdline/cmdline_parse.c
 @@ -9,6 +9,7 @@
  #include <string.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "cmdline_private.h"
@@ -10055,14 +10077,14 @@ index 76a212d001..351885830f 100644
  cmdline_complete(struct cmdline *cl, const char *buf, int *state,
  		 char *dst, unsigned int size)
 diff --git a/lib/cmdline/cmdline_parse_bool.c b/lib/cmdline/cmdline_parse_bool.c
-index aa7bf88d5a..df7ab9cc6c 100644
+index aa7bf88d5a..e03cc3d545 100644
 --- a/lib/cmdline/cmdline_parse_bool.c
 +++ b/lib/cmdline/cmdline_parse_bool.c
 @@ -6,6 +6,7 @@
  #include <stdint.h>
  #include <inttypes.h>
  #include <string.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <stdlib.h>
  
@@ -10075,14 +10097,14 @@ index aa7bf88d5a..df7ab9cc6c 100644
  	.parse = cmdline_parse_bool,
  	.complete_get_nb = NULL,
 diff --git a/lib/cmdline/cmdline_parse_etheraddr.c b/lib/cmdline/cmdline_parse_etheraddr.c
-index 433b828a72..4e5a13a0d4 100644
+index 433b828a72..7358572ba1 100644
 --- a/lib/cmdline/cmdline_parse_etheraddr.c
 +++ b/lib/cmdline/cmdline_parse_etheraddr.c
 @@ -7,12 +7,14 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_ether.h>
  
@@ -10110,14 +10132,14 @@ index 433b828a72..4e5a13a0d4 100644
  cmdline_get_help_etheraddr(__rte_unused cmdline_parse_token_hdr_t *tk,
  			       char *dstbuf, unsigned int size)
 diff --git a/lib/cmdline/cmdline_parse_ipaddr.c b/lib/cmdline/cmdline_parse_ipaddr.c
-index 5e278c963f..c6bde1cae5 100644
+index 5e278c963f..55522016c8 100644
 --- a/lib/cmdline/cmdline_parse_ipaddr.c
 +++ b/lib/cmdline/cmdline_parse_ipaddr.c
 @@ -9,11 +9,13 @@
  #include <string.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "cmdline_parse.h"
@@ -10144,14 +10166,14 @@ index 5e278c963f..c6bde1cae5 100644
  			    unsigned int size)
  {
 diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
-index 6dc325e6da..d76a17f5ae 100644
+index 6dc325e6da..f21796bedb 100644
 --- a/lib/cmdline/cmdline_parse_num.c
 +++ b/lib/cmdline/cmdline_parse_num.c
 @@ -8,6 +8,7 @@
  #include <stdint.h>
  #include <inttypes.h>
  #include <string.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <stdlib.h>
  
@@ -10180,14 +10202,14 @@ index 6dc325e6da..d76a17f5ae 100644
  cmdline_get_help_num(cmdline_parse_token_hdr_t *tk, char *dstbuf, unsigned int size)
  {
 diff --git a/lib/cmdline/cmdline_parse_portlist.c b/lib/cmdline/cmdline_parse_portlist.c
-index 2e2294553a..f3ba08f7c9 100644
+index 2e2294553a..ef6ce223b5 100644
 --- a/lib/cmdline/cmdline_parse_portlist.c
 +++ b/lib/cmdline/cmdline_parse_portlist.c
 @@ -9,10 +9,12 @@
  #include <string.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include "cmdline_parse.h"
  #include "cmdline_parse_portlist.h"
@@ -10213,14 +10235,14 @@ index 2e2294553a..f3ba08f7c9 100644
  cmdline_get_help_portlist(__rte_unused cmdline_parse_token_hdr_t *tk,
  		char *dstbuf, unsigned int size)
 diff --git a/lib/cmdline/cmdline_parse_string.c b/lib/cmdline/cmdline_parse_string.c
-index d756638905..0b9b4e2ad5 100644
+index d756638905..731947159f 100644
 --- a/lib/cmdline/cmdline_parse_string.c
 +++ b/lib/cmdline/cmdline_parse_string.c
 @@ -6,11 +6,13 @@
  
  #include <stdio.h>
  #include <string.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "cmdline_parse.h"
@@ -10263,14 +10285,14 @@ index d756638905..0b9b4e2ad5 100644
  			    unsigned int size)
  {
 diff --git a/lib/cmdline/cmdline_rdline.c b/lib/cmdline/cmdline_rdline.c
-index 5cf723a012..97c030bba6 100644
+index 5cf723a012..3b8d435e98 100644
 --- a/lib/cmdline/cmdline_rdline.c
 +++ b/lib/cmdline/cmdline_rdline.c
 @@ -14,6 +14,8 @@
  #include "cmdline_private.h"
  #include "cmdline_rdline.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  static void rdline_puts(struct rdline *rdl, const char *buf);
  static void rdline_miniprintf(struct rdline *rdl,
@@ -10393,14 +10415,14 @@ index 5cf723a012..97c030bba6 100644
  rdline_clear_history(struct rdline * rdl)
  {
 diff --git a/lib/cmdline/cmdline_socket.c b/lib/cmdline/cmdline_socket.c
-index 78fb67c474..36a780e1c9 100644
+index 78fb67c474..f3d62acdae 100644
 --- a/lib/cmdline/cmdline_socket.c
 +++ b/lib/cmdline/cmdline_socket.c
 @@ -12,6 +12,9 @@
  #include "cmdline_private.h"
  #include "cmdline_socket.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
 +RTE_EXPORT_SYMBOL(cmdline_file_new)
  struct cmdline *
@@ -10423,14 +10445,14 @@ index 78fb67c474..36a780e1c9 100644
  cmdline_stdin_exit(struct cmdline *cl)
  {
 diff --git a/lib/cmdline/cmdline_vt100.c b/lib/cmdline/cmdline_vt100.c
-index 4c9a46c953..229e3ef2b1 100644
+index 4c9a46c953..272088a0c6 100644
 --- a/lib/cmdline/cmdline_vt100.c
 +++ b/lib/cmdline/cmdline_vt100.c
 @@ -10,6 +10,8 @@
  
  #include "cmdline_vt100.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  const char *cmdline_vt100_commands[] = {
  	vt100_up_arr,
@@ -10452,14 +10474,14 @@ index 4c9a46c953..229e3ef2b1 100644
  vt100_parser(struct cmdline_vt100 *vt, char ch)
  {
 diff --git a/lib/compressdev/rte_comp.c b/lib/compressdev/rte_comp.c
-index f060c68557..e3e2adde61 100644
+index f060c68557..662691796a 100644
 --- a/lib/compressdev/rte_comp.c
 +++ b/lib/compressdev/rte_comp.c
 @@ -2,9 +2,11 @@
   * Copyright(c) 2017-2018 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_comp.h"
  #include "rte_compressdev_internal.h"
  
@@ -10508,14 +10530,14 @@ index f060c68557..e3e2adde61 100644
  rte_comp_op_bulk_free(struct rte_comp_op **ops, uint16_t nb_ops)
  {
 diff --git a/lib/compressdev/rte_compressdev.c b/lib/compressdev/rte_compressdev.c
-index 5bc7ea5250..79e9df33ec 100644
+index 5bc7ea5250..33de3f511b 100644
 --- a/lib/compressdev/rte_compressdev.c
 +++ b/lib/compressdev/rte_compressdev.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_malloc.h>
  #include <dev_driver.h>
@@ -10719,14 +10741,14 @@ index 5bc7ea5250..79e9df33ec 100644
  rte_compressdev_name_get(uint8_t dev_id)
  {
 diff --git a/lib/compressdev/rte_compressdev_pmd.c b/lib/compressdev/rte_compressdev_pmd.c
-index 762b44f03e..73ed342a44 100644
+index 762b44f03e..7e11ad7148 100644
 --- a/lib/compressdev/rte_compressdev_pmd.c
 +++ b/lib/compressdev/rte_compressdev_pmd.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_malloc.h>
  #include <rte_kvargs.h>
@@ -10755,14 +10777,14 @@ index 762b44f03e..73ed342a44 100644
  rte_compressdev_pmd_destroy(struct rte_compressdev *compressdev)
  {
 diff --git a/lib/cryptodev/cryptodev_pmd.c b/lib/cryptodev/cryptodev_pmd.c
-index 87ced122b4..19cfbf29a1 100644
+index 87ced122b4..d79d561bf6 100644
 --- a/lib/cryptodev/cryptodev_pmd.c
 +++ b/lib/cryptodev/cryptodev_pmd.c
 @@ -6,6 +6,7 @@
  #include <sys/queue.h>
  
  #include <dev_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_string_fns.h>
  #include <rte_malloc.h>
@@ -10823,14 +10845,14 @@ index 87ced122b4..19cfbf29a1 100644
  rte_cryptodev_session_event_mdata_get(struct rte_crypto_op *op)
  {
 diff --git a/lib/cryptodev/cryptodev_trace_points.c b/lib/cryptodev/cryptodev_trace_points.c
-index 6f37780595..0de523ba8e 100644
+index 6f37780595..69737adcbe 100644
 --- a/lib/cryptodev/cryptodev_trace_points.c
 +++ b/lib/cryptodev/cryptodev_trace_points.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2020 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include "cryptodev_trace.h"
@@ -10854,14 +10876,14 @@ index 6f37780595..0de523ba8e 100644
  RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_qp_depth_used,
  	lib.cryptodev.qp_depth_used)
 diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 57b0e4ce14..229fc79486 100644
+index 57b0e4ce14..bb7bab4dd5 100644
 --- a/lib/cryptodev/rte_cryptodev.c
 +++ b/lib/cryptodev/rte_cryptodev.c
 @@ -11,6 +11,7 @@
  #include <stdint.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_debug.h>
  #include <dev_driver.h>
@@ -11525,14 +11547,14 @@ index 57b0e4ce14..229fc79486 100644
  rte_cryptodev_allocate_driver(struct cryptodev_driver *crypto_drv,
  		const struct rte_driver *drv)
 diff --git a/lib/dispatcher/rte_dispatcher.c b/lib/dispatcher/rte_dispatcher.c
-index 79349172bc..a6ec4333cc 100644
+index 79349172bc..a35967f7b7 100644
 --- a/lib/dispatcher/rte_dispatcher.c
 +++ b/lib/dispatcher/rte_dispatcher.c
 @@ -5,6 +5,7 @@
  #include <stdbool.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_branch_prediction.h>
  #include <rte_common.h>
  #include <rte_lcore.h>
@@ -11640,14 +11662,14 @@ index 79349172bc..a6ec4333cc 100644
  rte_dispatcher_stats_reset(struct rte_dispatcher *dispatcher)
  {
 diff --git a/lib/distributor/rte_distributor.c b/lib/distributor/rte_distributor.c
-index e58727cdc2..ae1e3bf469 100644
+index e58727cdc2..dde7ce2677 100644
 --- a/lib/distributor/rte_distributor.c
 +++ b/lib/distributor/rte_distributor.c
 @@ -7,6 +7,7 @@
  #include <stdlib.h>
  #include <sys/queue.h>
  #include <string.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_cycles.h>
  #include <rte_memzone.h>
@@ -11724,14 +11746,14 @@ index e58727cdc2..ae1e3bf469 100644
  rte_distributor_create(const char *name,
  		unsigned int socket_id,
 diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
-index 4a075ee1c6..45c5cf4428 100644
+index 4a075ee1c6..17ee0808a9 100644
 --- a/lib/dmadev/rte_dmadev.c
 +++ b/lib/dmadev/rte_dmadev.c
 @@ -7,6 +7,7 @@
  #include <inttypes.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_lcore.h>
  #include <rte_log.h>
@@ -11888,14 +11910,14 @@ index 4a075ee1c6..45c5cf4428 100644
  rte_dma_dump(int16_t dev_id, FILE *f)
  {
 diff --git a/lib/dmadev/rte_dmadev_trace_points.c b/lib/dmadev/rte_dmadev_trace_points.c
-index 4c74356346..7971532997 100644
+index 4c74356346..1c8998fb98 100644
 --- a/lib/dmadev/rte_dmadev_trace_points.c
 +++ b/lib/dmadev/rte_dmadev_trace_points.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2023 HiSilicon Limited
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include "rte_dmadev_trace.h"
@@ -11931,14 +11953,14 @@ index 4c74356346..7971532997 100644
  RTE_TRACE_POINT_REGISTER(rte_dma_trace_burst_capacity,
  	lib.dmadev.burst_capacity)
 diff --git a/lib/eal/arm/rte_cpuflags.c b/lib/eal/arm/rte_cpuflags.c
-index 88e10c6da0..bcb0890183 100644
+index 88e10c6da0..32243f293a 100644
 --- a/lib/eal/arm/rte_cpuflags.c
 +++ b/lib/eal/arm/rte_cpuflags.c
 @@ -3,6 +3,7 @@
   * Copyright(c) 2015 RehiveTech. All rights reserved.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
  #include <elf.h>
@@ -11967,14 +11989,14 @@ index 88e10c6da0..bcb0890183 100644
  rte_cpu_get_intrinsics_support(struct rte_cpu_intrinsics *intrinsics)
  {
 diff --git a/lib/eal/arm/rte_hypervisor.c b/lib/eal/arm/rte_hypervisor.c
-index 08a1c97d10..2088000602 100644
+index 08a1c97d10..51b224fb94 100644
 --- a/lib/eal/arm/rte_hypervisor.c
 +++ b/lib/eal/arm/rte_hypervisor.c
 @@ -2,8 +2,10 @@
   * Copyright 2017 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
 +RTE_EXPORT_SYMBOL(rte_hypervisor_get)
@@ -11982,14 +12004,14 @@ index 08a1c97d10..2088000602 100644
  rte_hypervisor_get(void)
  {
 diff --git a/lib/eal/arm/rte_power_intrinsics.c b/lib/eal/arm/rte_power_intrinsics.c
-index 6475bbca04..6a0e32baa2 100644
+index 6475bbca04..4826b370ea 100644
 --- a/lib/eal/arm/rte_power_intrinsics.c
 +++ b/lib/eal/arm/rte_power_intrinsics.c
 @@ -4,6 +4,7 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  #include "rte_power_intrinsics.h"
  
@@ -12026,14 +12048,14 @@ index 6475bbca04..6a0e32baa2 100644
  rte_power_monitor_multi(const struct rte_power_monitor_cond pmc[],
  		const uint32_t num, const uint64_t tsc_timestamp)
 diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index 7cbd09c421..63b2e31201 100644
+index 7cbd09c421..0a2311a342 100644
 --- a/lib/eal/common/eal_common_bus.c
 +++ b/lib/eal/common/eal_common_bus.c
 @@ -11,17 +11,20 @@
  #include <rte_string_fns.h>
  #include <rte_errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  static struct rte_bus_list rte_bus_list =
@@ -12115,14 +12137,14 @@ index 7cbd09c421..63b2e31201 100644
  rte_bus_get_iommu_class(void)
  {
 diff --git a/lib/eal/common/eal_common_class.c b/lib/eal/common/eal_common_class.c
-index 4938ec6707..afcd7e1f0a 100644
+index 4938ec6707..0f10c6894b 100644
 --- a/lib/eal/common/eal_common_class.c
 +++ b/lib/eal/common/eal_common_class.c
 @@ -9,11 +9,13 @@
  #include <rte_class.h>
  #include <rte_debug.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  static struct rte_class_list rte_class_list =
@@ -12157,14 +12179,14 @@ index 4938ec6707..afcd7e1f0a 100644
  rte_class_find_by_name(const char *name)
  {
 diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
-index d3494d6e21..3b0c943193 100644
+index d3494d6e21..7fc7611a07 100644
 --- a/lib/eal/common/eal_common_config.c
 +++ b/lib/eal/common/eal_common_config.c
 @@ -4,6 +4,7 @@
  
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_memcfg.h"
  
@@ -12224,14 +12246,14 @@ index d3494d6e21..3b0c943193 100644
  rte_eal_has_pci(void)
  {
 diff --git a/lib/eal/common/eal_common_cpuflags.c b/lib/eal/common/eal_common_cpuflags.c
-index dc5f75d053..83c3a7760c 100644
+index dc5f75d053..cbd49a151b 100644
 --- a/lib/eal/common/eal_common_cpuflags.c
 +++ b/lib/eal/common/eal_common_cpuflags.c
 @@ -4,9 +4,11 @@
  
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cpuflags.h>
  
@@ -12240,14 +12262,14 @@ index dc5f75d053..83c3a7760c 100644
  rte_cpu_is_supported(void)
  {
 diff --git a/lib/eal/common/eal_common_debug.c b/lib/eal/common/eal_common_debug.c
-index bcfcd6df6f..75f5307028 100644
+index bcfcd6df6f..7a42546da2 100644
 --- a/lib/eal/common/eal_common_debug.c
 +++ b/lib/eal/common/eal_common_debug.c
 @@ -11,8 +11,10 @@
  #include <rte_debug.h>
  #include <rte_errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
 +RTE_EXPORT_SYMBOL(__rte_panic)
@@ -12263,14 +12285,14 @@ index bcfcd6df6f..75f5307028 100644
  rte_exit(int exit_code, const char *format, ...)
  {
 diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index 70aa04dcd9..e17f822ca9 100644
+index 70aa04dcd9..7185de0cb9 100644
 --- a/lib/eal/common/eal_common_dev.c
 +++ b/lib/eal/common/eal_common_dev.c
 @@ -17,45 +17,53 @@
  #include <rte_spinlock.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "hotplug_mp.h"
  
@@ -12417,14 +12439,14 @@ index 70aa04dcd9..e17f822ca9 100644
  rte_dev_dma_unmap(struct rte_device *dev, void *addr, uint64_t iova,
  		  size_t len)
 diff --git a/lib/eal/common/eal_common_devargs.c b/lib/eal/common/eal_common_devargs.c
-index dd857fc839..be834b26b3 100644
+index dd857fc839..c523429d67 100644
 --- a/lib/eal/common/eal_common_devargs.c
 +++ b/lib/eal/common/eal_common_devargs.c
 @@ -20,6 +20,7 @@
  #include <rte_log.h>
  #include <rte_tailq.h>
  #include <rte_string_fns.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  /** user device double-linked queue type definition */
@@ -12501,14 +12523,14 @@ index dd857fc839..be834b26b3 100644
  rte_devargs_next(const char *busname, const struct rte_devargs *start)
  {
 diff --git a/lib/eal/common/eal_common_errno.c b/lib/eal/common/eal_common_errno.c
-index fff8c1ffe4..64000316eb 100644
+index fff8c1ffe4..3f933c3f7b 100644
 --- a/lib/eal/common/eal_common_errno.c
 +++ b/lib/eal/common/eal_common_errno.c
 @@ -9,6 +9,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_per_lcore.h>
  #include <rte_errno.h>
  
@@ -12524,14 +12546,14 @@ index fff8c1ffe4..64000316eb 100644
  rte_strerror(int errnum)
  {
 diff --git a/lib/eal/common/eal_common_fbarray.c b/lib/eal/common/eal_common_fbarray.c
-index 22b43073c6..46eb87194e 100644
+index 22b43073c6..b5e7bf498c 100644
 --- a/lib/eal/common/eal_common_fbarray.c
 +++ b/lib/eal/common/eal_common_fbarray.c
 @@ -15,6 +15,7 @@
  #include <rte_log.h>
  #include <rte_spinlock.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  #include "eal_private.h"
  
@@ -12732,14 +12754,14 @@ index 22b43073c6..46eb87194e 100644
  rte_fbarray_dump_metadata(struct rte_fbarray *arr, FILE *f)
  {
 diff --git a/lib/eal/common/eal_common_hexdump.c b/lib/eal/common/eal_common_hexdump.c
-index 6fd6e21e1e..57092d1847 100644
+index 6fd6e21e1e..28159f298a 100644
 --- a/lib/eal/common/eal_common_hexdump.c
 +++ b/lib/eal/common/eal_common_hexdump.c
 @@ -2,11 +2,13 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  #include <stdio.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_hexdump.h>
  #include <rte_string_fns.h>
  
@@ -12758,14 +12780,14 @@ index 6fd6e21e1e..57092d1847 100644
  rte_memdump(FILE *f, const char *title, const void *buf, unsigned int len)
  {
 diff --git a/lib/eal/common/eal_common_hypervisor.c b/lib/eal/common/eal_common_hypervisor.c
-index 5388b81a51..1825c69c52 100644
+index 5388b81a51..7158fd25de 100644
 --- a/lib/eal/common/eal_common_hypervisor.c
 +++ b/lib/eal/common/eal_common_hypervisor.c
 @@ -2,8 +2,10 @@
   * Copyright 2017 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
 +RTE_EXPORT_SYMBOL(rte_hypervisor_get_name)
@@ -12773,14 +12795,14 @@ index 5388b81a51..1825c69c52 100644
  rte_hypervisor_get_name(enum rte_hypervisor id)
  {
 diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index b4d7b18fae..33de73f004 100644
+index b4d7b18fae..b42fa862f3 100644
 --- a/lib/eal/common/eal_common_interrupts.c
 +++ b/lib/eal/common/eal_common_interrupts.c
 @@ -10,6 +10,7 @@
  #include <rte_log.h>
  #include <rte_malloc.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_interrupts.h"
  #include "eal_private.h"
  
@@ -13001,14 +13023,14 @@ index b4d7b18fae..33de73f004 100644
  	void *windows_handle)
  {
 diff --git a/lib/eal/common/eal_common_launch.c b/lib/eal/common/eal_common_launch.c
-index 5320c3bd3c..d02a3f30b1 100644
+index 5320c3bd3c..a7deac6ecd 100644
 --- a/lib/eal/common/eal_common_launch.c
 +++ b/lib/eal/common/eal_common_launch.c
 @@ -4,6 +4,7 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_launch.h>
  #include <rte_pause.h>
@@ -13053,14 +13075,14 @@ index 5320c3bd3c..d02a3f30b1 100644
  rte_eal_mp_wait_lcore(void)
  {
 diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index 820a6534b1..6ef32911bf 100644
+index 820a6534b1..294267177d 100644
 --- a/lib/eal/common/eal_common_lcore.c
 +++ b/lib/eal/common/eal_common_lcore.c
 @@ -15,19 +15,23 @@
  #include <rte_telemetry.h>
  #endif
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_thread.h"
  
@@ -13191,14 +13213,14 @@ index 820a6534b1..6ef32911bf 100644
  rte_lcore_dump(FILE *f)
  {
 diff --git a/lib/eal/common/eal_common_lcore_var.c b/lib/eal/common/eal_common_lcore_var.c
-index a1b2458839..cabedb80ec 100644
+index a1b2458839..8a7920ed0f 100644
 --- a/lib/eal/common/eal_common_lcore_var.c
 +++ b/lib/eal/common/eal_common_lcore_var.c
 @@ -15,6 +15,7 @@
  
  #include <rte_lcore_var.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_lcore_var.h"
  
@@ -13211,14 +13233,14 @@ index a1b2458839..cabedb80ec 100644
  rte_lcore_var_alloc(size_t size, size_t align)
  {
 diff --git a/lib/eal/common/eal_common_mcfg.c b/lib/eal/common/eal_common_mcfg.c
-index dabb80eaf5..d3370c9f89 100644
+index dabb80eaf5..84ee3f3959 100644
 --- a/lib/eal/common/eal_common_mcfg.c
 +++ b/lib/eal/common/eal_common_mcfg.c
 @@ -5,6 +5,7 @@
  #include <rte_eal_memconfig.h>
  #include <rte_version.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_internal_cfg.h"
  #include "eal_memcfg.h"
  #include "eal_private.h"
@@ -13364,14 +13386,14 @@ index dabb80eaf5..d3370c9f89 100644
  rte_mcfg_get_single_file_segments(void)
  {
 diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
-index a185e0b580..1498520208 100644
+index a185e0b580..a2f64408f4 100644
 --- a/lib/eal/common/eal_common_memory.c
 +++ b/lib/eal/common/eal_common_memory.c
 @@ -21,6 +21,7 @@
  #include <rte_telemetry.h>
  #endif
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_memalloc.h"
  #include "eal_private.h"
  #include "eal_internal_cfg.h"
@@ -13605,14 +13627,14 @@ index a185e0b580..1498520208 100644
  rte_extmem_detach(void *va_addr, size_t len)
  {
 diff --git a/lib/eal/common/eal_common_memzone.c b/lib/eal/common/eal_common_memzone.c
-index e7002f8447..c40b9dfe98 100644
+index e7002f8447..db43af13a8 100644
 --- a/lib/eal/common/eal_common_memzone.c
 +++ b/lib/eal/common/eal_common_memzone.c
 @@ -8,6 +8,7 @@
  #include <string.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_log.h>
  #include <rte_memory.h>
@@ -13689,14 +13711,14 @@ index e7002f8447..c40b9dfe98 100644
  		      void *arg)
  {
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 79db9a47dd..c1fb883359 100644
+index 79db9a47dd..b6fff7ec05 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
 @@ -33,6 +33,7 @@
  #endif
  #include <rte_vect.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_internal_cfg.h"
  #include "eal_options.h"
  #include "eal_filesystem.h"
@@ -13733,14 +13755,14 @@ index 79db9a47dd..c1fb883359 100644
  rte_vect_set_max_simd_bitwidth(uint16_t bitwidth)
  {
 diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 201973c5db..e6a7be2ba5 100644
+index 201973c5db..0dea787e38 100644
 --- a/lib/eal/common/eal_common_proc.c
 +++ b/lib/eal/common/eal_common_proc.c
 @@ -28,6 +28,7 @@
  #include <rte_log.h>
  #include <rte_thread.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_memcfg.h"
  #include "eal_private.h"
  #include "eal_filesystem.h"
@@ -13809,14 +13831,14 @@ index 201973c5db..e6a7be2ba5 100644
  rte_mp_disable(void)
  {
 diff --git a/lib/eal/common/eal_common_string_fns.c b/lib/eal/common/eal_common_string_fns.c
-index 9ca2045b18..f6ca7320cb 100644
+index 9ca2045b18..020603fe8b 100644
 --- a/lib/eal/common/eal_common_string_fns.c
 +++ b/lib/eal/common/eal_common_string_fns.c
 @@ -7,10 +7,12 @@
  #include <stdio.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_errno.h>
  
@@ -13842,14 +13864,14 @@ index 9ca2045b18..f6ca7320cb 100644
  rte_str_to_size(const char *str)
  {
 diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
-index 56bb2bd91c..c54a4e8334 100644
+index 56bb2bd91c..47080d75ac 100644
 --- a/lib/eal/common/eal_common_tailqs.c
 +++ b/lib/eal/common/eal_common_tailqs.c
 @@ -11,6 +11,7 @@
  #include <rte_log.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_memcfg.h"
  
@@ -13878,14 +13900,14 @@ index 56bb2bd91c..c54a4e8334 100644
  rte_eal_tailq_register(struct rte_tailq_elem *t)
  {
 diff --git a/lib/eal/common/eal_common_thread.c b/lib/eal/common/eal_common_thread.c
-index a53bc639ae..34b44ee18d 100644
+index a53bc639ae..88b59ce0d9 100644
 --- a/lib/eal/common/eal_common_thread.c
 +++ b/lib/eal/common/eal_common_thread.c
 @@ -10,6 +10,7 @@
  #include <assert.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_errno.h>
  #include <rte_lcore.h>
@@ -13994,14 +14016,14 @@ index a53bc639ae..34b44ee18d 100644
  rte_thread_attr_get_affinity(rte_thread_attr_t *thread_attr,
  		rte_cpuset_t *cpuset)
 diff --git a/lib/eal/common/eal_common_timer.c b/lib/eal/common/eal_common_timer.c
-index e00be0a5c8..22b01a3363 100644
+index e00be0a5c8..bbf8b8b11b 100644
 --- a/lib/eal/common/eal_common_timer.c
 +++ b/lib/eal/common/eal_common_timer.c
 @@ -11,6 +11,7 @@
  #include <rte_pause.h>
  #include <rte_eal.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_memcfg.h"
  
@@ -14033,14 +14055,14 @@ index e00be0a5c8..22b01a3363 100644
  {
  	rte_delay_us = userfunc;
 diff --git a/lib/eal/common/eal_common_trace.c b/lib/eal/common/eal_common_trace.c
-index 918f49bf4f..c3751245cc 100644
+index 918f49bf4f..be1f78a68d 100644
 --- a/lib/eal/common/eal_common_trace.c
 +++ b/lib/eal/common/eal_common_trace.c
 @@ -14,9 +14,12 @@
  #include <rte_per_lcore.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_trace.h"
  
 +RTE_EXPORT_EXPERIMENTAL_SYMBOL(per_lcore_trace_point_sz, 20.05)
@@ -14154,14 +14176,14 @@ index 918f49bf4f..c3751245cc 100644
  __rte_trace_point_register(rte_trace_point_t *handle, const char *name,
  		void (*register_fn)(void))
 diff --git a/lib/eal/common/eal_common_trace_ctf.c b/lib/eal/common/eal_common_trace_ctf.c
-index 04c4f71462..b75ce972fa 100644
+index 04c4f71462..f089da22df 100644
 --- a/lib/eal/common/eal_common_trace_ctf.c
 +++ b/lib/eal/common/eal_common_trace_ctf.c
 @@ -12,6 +12,7 @@
  #include <rte_trace.h>
  #include <rte_version.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_trace.h"
  
  __rte_format_printf(2, 0)
@@ -14174,14 +14196,14 @@ index 04c4f71462..b75ce972fa 100644
  rte_trace_metadata_dump(FILE *f)
  {
 diff --git a/lib/eal/common/eal_common_trace_points.c b/lib/eal/common/eal_common_trace_points.c
-index 0f1240ea3a..b43c66d2c0 100644
+index 0f1240ea3a..0903f3c639 100644
 --- a/lib/eal/common/eal_common_trace_points.c
 +++ b/lib/eal/common/eal_common_trace_points.c
 @@ -6,42 +6,61 @@
  
  #include <rte_eal_trace.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  
 +RTE_EXPORT_EXPERIMENTAL_SYMBOL(__rte_eal_trace_generic_void, 20.05)
@@ -14240,14 +14262,14 @@ index 0f1240ea3a..b43c66d2c0 100644
  	lib.eal.generic.blob)
  
 diff --git a/lib/eal/common/eal_common_trace_utils.c b/lib/eal/common/eal_common_trace_utils.c
-index 7282715b11..16f6144779 100644
+index 7282715b11..e1996433b7 100644
 --- a/lib/eal/common/eal_common_trace_utils.c
 +++ b/lib/eal/common/eal_common_trace_utils.c
 @@ -11,6 +11,7 @@
  #include <rte_errno.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  #include "eal_private.h"
  #include "eal_trace.h"
@@ -14260,14 +14282,14 @@ index 7282715b11..16f6144779 100644
  rte_trace_save(void)
  {
 diff --git a/lib/eal/common/eal_common_uuid.c b/lib/eal/common/eal_common_uuid.c
-index 0a80bfbb38..379b1ba96a 100644
+index 0a80bfbb38..0e0924d08d 100644
 --- a/lib/eal/common/eal_common_uuid.c
 +++ b/lib/eal/common/eal_common_uuid.c
 @@ -8,6 +8,7 @@
  #include <stdlib.h>
  #include <ctype.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_uuid.h>
  
  /* UUID packed form */
@@ -14304,14 +14326,14 @@ index 0a80bfbb38..379b1ba96a 100644
  {
  	struct uuid uuid;
 diff --git a/lib/eal/common/rte_bitset.c b/lib/eal/common/rte_bitset.c
-index e25008519e..8be97502cf 100644
+index e25008519e..78001b1ee8 100644
 --- a/lib/eal/common/rte_bitset.c
 +++ b/lib/eal/common/rte_bitset.c
 @@ -7,8 +7,10 @@
  #include <stdint.h>
  #include <sys/types.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_bitset.h"
  
 +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bitset_to_str, 24.11)
@@ -14319,14 +14341,14 @@ index e25008519e..8be97502cf 100644
  rte_bitset_to_str(const uint64_t *bitset, size_t num_bits, char *buf, size_t capacity)
  {
 diff --git a/lib/eal/common/rte_keepalive.c b/lib/eal/common/rte_keepalive.c
-index 473d30dd13..68f17edc4a 100644
+index 473d30dd13..08a4d595da 100644
 --- a/lib/eal/common/rte_keepalive.c
 +++ b/lib/eal/common/rte_keepalive.c
 @@ -12,6 +12,7 @@
  #include <rte_keepalive.h>
  #include <rte_malloc.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  struct rte_keepalive {
@@ -14378,14 +14400,14 @@ index 473d30dd13..68f17edc4a 100644
  rte_keepalive_mark_sleep(struct rte_keepalive *keepcfg)
  {
 diff --git a/lib/eal/common/rte_malloc.c b/lib/eal/common/rte_malloc.c
-index 3eed4d4be6..afcdcc998b 100644
+index 3eed4d4be6..b6ee3b3329 100644
 --- a/lib/eal/common/rte_malloc.c
 +++ b/lib/eal/common/rte_malloc.c
 @@ -16,6 +16,7 @@
  #include <rte_common.h>
  #include <rte_spinlock.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  
  #include <rte_malloc.h>
@@ -14563,14 +14585,14 @@ index 3eed4d4be6..afcdcc998b 100644
  rte_malloc_heap_destroy(const char *heap_name)
  {
 diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
-index 9354358818..f7d73623b5 100644
+index 9354358818..576a32a46c 100644
 --- a/lib/eal/common/rte_random.c
 +++ b/lib/eal/common/rte_random.c
 @@ -16,6 +16,7 @@
  #include <rte_lcore_var.h>
  #include <rte_random.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  struct __rte_cache_aligned rte_rand_state {
@@ -14607,14 +14629,14 @@ index 9354358818..f7d73623b5 100644
  rte_drand(void)
  {
 diff --git a/lib/eal/common/rte_reciprocal.c b/lib/eal/common/rte_reciprocal.c
-index 87c67e6d49..1bfbebb3a0 100644
+index 87c67e6d49..99c54df141 100644
 --- a/lib/eal/common/rte_reciprocal.c
 +++ b/lib/eal/common/rte_reciprocal.c
 @@ -7,11 +7,13 @@
  #include <stdio.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_bitops.h>
  
@@ -14633,14 +14655,14 @@ index 87c67e6d49..1bfbebb3a0 100644
  rte_reciprocal_value_u64(uint64_t d)
  {
 diff --git a/lib/eal/common/rte_service.c b/lib/eal/common/rte_service.c
-index 1821746337..96ce2e0ceb 100644
+index 1821746337..d2ac9d3f14 100644
 --- a/lib/eal/common/rte_service.c
 +++ b/lib/eal/common/rte_service.c
 @@ -9,6 +9,7 @@
  #include <rte_service.h>
  #include <rte_service_component.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_lcore.h>
  #include <rte_lcore_var.h>
@@ -14892,14 +14914,14 @@ index 1821746337..96ce2e0ceb 100644
  rte_service_dump(FILE *f, uint32_t id)
  {
 diff --git a/lib/eal/common/rte_version.c b/lib/eal/common/rte_version.c
-index 4ae5d66c89..4e109db4da 100644
+index 4ae5d66c89..627b89d4a8 100644
 --- a/lib/eal/common/rte_version.c
 +++ b/lib/eal/common/rte_version.c
 @@ -2,26 +2,34 @@
   * Copyright(c) 2021 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_version.h>
  
 +RTE_EXPORT_SYMBOL(rte_version_prefix)
@@ -14931,14 +14953,14 @@ index 4ae5d66c89..4e109db4da 100644
  rte_version(void)
  {
 diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index d07cff8651..50da2e36c6 100644
+index d07cff8651..d6fffa2170 100644
 --- a/lib/eal/freebsd/eal.c
 +++ b/lib/eal/freebsd/eal.c
 @@ -44,6 +44,7 @@
  #include <malloc_heap.h>
  #include <telemetry_internal.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_thread.h"
  #include "eal_lcore_var.h"
@@ -15110,14 +15132,14 @@ index d07cff8651..50da2e36c6 100644
  rte_vfio_container_dma_unmap(__rte_unused int container_fd,
  			__rte_unused uint64_t vaddr,
 diff --git a/lib/eal/freebsd/eal_alarm.c b/lib/eal/freebsd/eal_alarm.c
-index 3680f5caba..94288c58c1 100644
+index 3680f5caba..28f285fdef 100644
 --- a/lib/eal/freebsd/eal_alarm.c
 +++ b/lib/eal/freebsd/eal_alarm.c
 @@ -12,6 +12,7 @@
  #include <time.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_alarm.h>
  #include <rte_cycles.h>
@@ -15138,14 +15160,14 @@ index 3680f5caba..94288c58c1 100644
  rte_eal_alarm_cancel(rte_eal_alarm_callback cb_fn, void *cb_arg)
  {
 diff --git a/lib/eal/freebsd/eal_dev.c b/lib/eal/freebsd/eal_dev.c
-index d8659cc7fc..b792264986 100644
+index d8659cc7fc..737d1040ea 100644
 --- a/lib/eal/freebsd/eal_dev.c
 +++ b/lib/eal/freebsd/eal_dev.c
 @@ -5,8 +5,10 @@
  #include <rte_log.h>
  #include <rte_dev.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
 +RTE_EXPORT_SYMBOL(rte_dev_event_monitor_start)
@@ -15177,14 +15199,14 @@ index d8659cc7fc..b792264986 100644
  rte_dev_hotplug_handle_disable(void)
  {
 diff --git a/lib/eal/freebsd/eal_interrupts.c b/lib/eal/freebsd/eal_interrupts.c
-index 23747babc2..3e2ce3ed40 100644
+index 23747babc2..5c3ab6699e 100644
 --- a/lib/eal/freebsd/eal_interrupts.c
 +++ b/lib/eal/freebsd/eal_interrupts.c
 @@ -8,6 +8,7 @@
  #include <sys/queue.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_errno.h>
  #include <rte_lcore.h>
@@ -15338,14 +15360,14 @@ index 23747babc2..3e2ce3ed40 100644
  {
  	return rte_thread_equal(intr_thread, rte_thread_self());
 diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index a6f3ba226e..33f6b74735 100644
+index a6f3ba226e..3b72e13506 100644
 --- a/lib/eal/freebsd/eal_memory.c
 +++ b/lib/eal/freebsd/eal_memory.c
 @@ -15,6 +15,7 @@
  #include <rte_log.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_internal_cfg.h"
  #include "eal_filesystem.h"
@@ -15374,14 +15396,14 @@ index a6f3ba226e..33f6b74735 100644
  rte_eal_using_phys_addrs(void)
  {
 diff --git a/lib/eal/freebsd/eal_thread.c b/lib/eal/freebsd/eal_thread.c
-index 77b7621908..1ff0ce9c42 100644
+index 77b7621908..7ed76ed796 100644
 --- a/lib/eal/freebsd/eal_thread.c
 +++ b/lib/eal/freebsd/eal_thread.c
 @@ -21,10 +21,12 @@
  #include <rte_eal.h>
  #include <rte_lcore.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_thread.h"
  
@@ -15399,14 +15421,14 @@ index 77b7621908..1ff0ce9c42 100644
  {
  	char truncated[RTE_THREAD_NAME_SIZE];
 diff --git a/lib/eal/freebsd/eal_timer.c b/lib/eal/freebsd/eal_timer.c
-index 4eba66eadb..b0e38d6014 100644
+index 4eba66eadb..d21ffa2694 100644
 --- a/lib/eal/freebsd/eal_timer.c
 +++ b/lib/eal/freebsd/eal_timer.c
 @@ -16,6 +16,7 @@
  #include <rte_eal.h>
  #include <rte_debug.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_internal_cfg.h"
  
@@ -15419,14 +15441,14 @@ index 4eba66eadb..b0e38d6014 100644
  
  uint64_t
 diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index b1e63e37fc..2efb4536f4 100644
+index b1e63e37fc..20f777b8b0 100644
 --- a/lib/eal/linux/eal.c
 +++ b/lib/eal/linux/eal.c
 @@ -43,6 +43,7 @@
  #include <rte_vfio.h>
  
  #include <telemetry_internal.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_thread.h"
  #include "eal_lcore_var.h"
@@ -15487,14 +15509,14 @@ index b1e63e37fc..2efb4536f4 100644
  rte_eal_vfio_get_vf_token(rte_uuid_t vf_token)
  {
 diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
-index 9fe14ade63..428e12d382 100644
+index 9fe14ade63..b216a007a3 100644
 --- a/lib/eal/linux/eal_alarm.c
 +++ b/lib/eal/linux/eal_alarm.c
 @@ -10,6 +10,7 @@
  #include <sys/time.h>
  #include <sys/timerfd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_interrupts.h>
  #include <rte_alarm.h>
@@ -15515,14 +15537,14 @@ index 9fe14ade63..428e12d382 100644
  rte_eal_alarm_cancel(rte_eal_alarm_callback cb_fn, void *cb_arg)
  {
 diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index be97f56424..5f27b7fb33 100644
+index be97f56424..33b78464d5 100644
 --- a/lib/eal/linux/eal_dev.c
 +++ b/lib/eal/linux/eal_dev.c
 @@ -18,6 +18,7 @@
  #include <rte_spinlock.h>
  #include <rte_errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  static struct rte_intr_handle *intr_handle;
@@ -15559,14 +15581,14 @@ index be97f56424..5f27b7fb33 100644
  rte_dev_hotplug_handle_disable(void)
  {
 diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-index 23039964fc..dd77c7e422 100644
+index 23039964fc..4ec78de82c 100644
 --- a/lib/eal/linux/eal_interrupts.c
 +++ b/lib/eal/linux/eal_interrupts.c
 @@ -15,6 +15,7 @@
  #include <assert.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <eal_trace_internal.h>
  #include <rte_common.h>
  #include <rte_interrupts.h>
@@ -15722,14 +15744,14 @@ index 23039964fc..dd77c7e422 100644
  {
  	return rte_thread_equal(intr_thread, rte_thread_self());
 diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
-index 9dda60c0e1..5985f213ed 100644
+index 9dda60c0e1..8c896379fe 100644
 --- a/lib/eal/linux/eal_memory.c
 +++ b/lib/eal/linux/eal_memory.c
 @@ -34,6 +34,7 @@
  #include <rte_lcore.h>
  #include <rte_common.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_memalloc.h"
  #include "eal_memcfg.h"
@@ -15758,14 +15780,14 @@ index 9dda60c0e1..5985f213ed 100644
  rte_eal_using_phys_addrs(void)
  {
 diff --git a/lib/eal/linux/eal_thread.c b/lib/eal/linux/eal_thread.c
-index 7051840cdf..ee36c71c8a 100644
+index 7051840cdf..c0056f825d 100644
 --- a/lib/eal/linux/eal_thread.c
 +++ b/lib/eal/linux/eal_thread.c
 @@ -13,14 +13,17 @@
  #include <rte_log.h>
  #include <rte_string_fns.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  /* require calling thread tid by gettid() */
@@ -15780,14 +15802,14 @@ index 7051840cdf..ee36c71c8a 100644
  {
  	int ret = ENOSYS;
 diff --git a/lib/eal/linux/eal_timer.c b/lib/eal/linux/eal_timer.c
-index 489732c116..63703ba7c2 100644
+index 489732c116..0e670a0af6 100644
 --- a/lib/eal/linux/eal_timer.c
 +++ b/lib/eal/linux/eal_timer.c
 @@ -16,8 +16,10 @@
  #include <rte_cycles.h>
  #include <rte_thread.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
 +RTE_EXPORT_SYMBOL(eal_timer_source)
@@ -15819,14 +15841,14 @@ index 489732c116..63703ba7c2 100644
  rte_eal_hpet_init(int make_default)
  {
 diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 7132e24cba..a9e8e779b0 100644
+index 7132e24cba..2f5f221a0d 100644
 --- a/lib/eal/linux/eal_vfio.c
 +++ b/lib/eal/linux/eal_vfio.c
 @@ -14,6 +14,7 @@
  #include <rte_eal_memconfig.h>
  #include <rte_vfio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_filesystem.h"
  #include "eal_memcfg.h"
  #include "eal_vfio.h"
@@ -15959,14 +15981,14 @@ index 7132e24cba..a9e8e779b0 100644
  rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
  		uint64_t len)
 diff --git a/lib/eal/loongarch/rte_cpuflags.c b/lib/eal/loongarch/rte_cpuflags.c
-index db9e28ef20..3299253d52 100644
+index db9e28ef20..19fbf37e3e 100644
 --- a/lib/eal/loongarch/rte_cpuflags.c
 +++ b/lib/eal/loongarch/rte_cpuflags.c
 @@ -3,6 +3,7 @@
   * Copyright(c) 2022 Loongson Technology Corporation Limited
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
  #include <elf.h>
@@ -15995,14 +16017,14 @@ index db9e28ef20..3299253d52 100644
  rte_cpu_get_intrinsics_support(struct rte_cpu_intrinsics *intrinsics)
  {
 diff --git a/lib/eal/loongarch/rte_hypervisor.c b/lib/eal/loongarch/rte_hypervisor.c
-index d044906f71..c9c6f19985 100644
+index d044906f71..7dd70fe90c 100644
 --- a/lib/eal/loongarch/rte_hypervisor.c
 +++ b/lib/eal/loongarch/rte_hypervisor.c
 @@ -2,8 +2,10 @@
   * Copyright(c) 2022 Loongson Technology Corporation Limited
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
 +RTE_EXPORT_SYMBOL(rte_hypervisor_get)
@@ -16010,14 +16032,14 @@ index d044906f71..c9c6f19985 100644
  rte_hypervisor_get(void)
  {
 diff --git a/lib/eal/loongarch/rte_power_intrinsics.c b/lib/eal/loongarch/rte_power_intrinsics.c
-index a8969c260e..8f5f8a5a69 100644
+index a8969c260e..e1a2b2d7ed 100644
 --- a/lib/eal/loongarch/rte_power_intrinsics.c
 +++ b/lib/eal/loongarch/rte_power_intrinsics.c
 @@ -4,11 +4,13 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_power_intrinsics.h"
  
  /**
@@ -16052,14 +16074,14 @@ index a8969c260e..8f5f8a5a69 100644
  rte_power_monitor_multi(const struct rte_power_monitor_cond pmc[],
  		const uint32_t num, const uint64_t tsc_timestamp)
 diff --git a/lib/eal/ppc/rte_cpuflags.c b/lib/eal/ppc/rte_cpuflags.c
-index d276c2cf88..719e4cd920 100644
+index d276c2cf88..a78a7d1b53 100644
 --- a/lib/eal/ppc/rte_cpuflags.c
 +++ b/lib/eal/ppc/rte_cpuflags.c
 @@ -3,6 +3,7 @@
   * Copyright (C) IBM Corporation 2014.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
  #include <elf.h>
@@ -16088,14 +16110,14 @@ index d276c2cf88..719e4cd920 100644
  rte_cpu_get_intrinsics_support(struct rte_cpu_intrinsics *intrinsics)
  {
 diff --git a/lib/eal/ppc/rte_hypervisor.c b/lib/eal/ppc/rte_hypervisor.c
-index 08a1c97d10..2088000602 100644
+index 08a1c97d10..51b224fb94 100644
 --- a/lib/eal/ppc/rte_hypervisor.c
 +++ b/lib/eal/ppc/rte_hypervisor.c
 @@ -2,8 +2,10 @@
   * Copyright 2017 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
 +RTE_EXPORT_SYMBOL(rte_hypervisor_get)
@@ -16103,14 +16125,14 @@ index 08a1c97d10..2088000602 100644
  rte_hypervisor_get(void)
  {
 diff --git a/lib/eal/ppc/rte_power_intrinsics.c b/lib/eal/ppc/rte_power_intrinsics.c
-index d6bdc58911..11bbf7cc05 100644
+index d6bdc58911..d9d8eb8d51 100644
 --- a/lib/eal/ppc/rte_power_intrinsics.c
 +++ b/lib/eal/ppc/rte_power_intrinsics.c
 @@ -4,11 +4,13 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_power_intrinsics.h"
  
  /**
@@ -16145,14 +16167,14 @@ index d6bdc58911..11bbf7cc05 100644
  rte_power_monitor_multi(const struct rte_power_monitor_cond pmc[],
  		const uint32_t num, const uint64_t tsc_timestamp)
 diff --git a/lib/eal/riscv/rte_cpuflags.c b/lib/eal/riscv/rte_cpuflags.c
-index eb4105c18b..67a6a59dd3 100644
+index eb4105c18b..4dec491b0d 100644
 --- a/lib/eal/riscv/rte_cpuflags.c
 +++ b/lib/eal/riscv/rte_cpuflags.c
 @@ -4,6 +4,7 @@
   * Copyright(c) 2022 Semihalf
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
  #include <elf.h>
@@ -16181,14 +16203,14 @@ index eb4105c18b..67a6a59dd3 100644
  rte_cpu_get_intrinsics_support(struct rte_cpu_intrinsics *intrinsics)
  {
 diff --git a/lib/eal/riscv/rte_hypervisor.c b/lib/eal/riscv/rte_hypervisor.c
-index 92b5435993..b647b4b147 100644
+index 92b5435993..73020f7753 100644
 --- a/lib/eal/riscv/rte_hypervisor.c
 +++ b/lib/eal/riscv/rte_hypervisor.c
 @@ -4,8 +4,10 @@
   * Copyright(c) 2022 Semihalf
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
 +RTE_EXPORT_SYMBOL(rte_hypervisor_get)
@@ -16196,14 +16218,14 @@ index 92b5435993..b647b4b147 100644
  rte_hypervisor_get(void)
  {
 diff --git a/lib/eal/riscv/rte_power_intrinsics.c b/lib/eal/riscv/rte_power_intrinsics.c
-index 1c86573c19..b51aa2fd17 100644
+index 1c86573c19..11eff53ff2 100644
 --- a/lib/eal/riscv/rte_power_intrinsics.c
 +++ b/lib/eal/riscv/rte_power_intrinsics.c
 @@ -6,11 +6,13 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_power_intrinsics.h"
  
  /**
@@ -16238,14 +16260,14 @@ index 1c86573c19..b51aa2fd17 100644
  rte_power_monitor_multi(const struct rte_power_monitor_cond pmc[],
  			const uint32_t num, const uint64_t tsc_timestamp)
 diff --git a/lib/eal/unix/eal_debug.c b/lib/eal/unix/eal_debug.c
-index 69ba3758c2..c2f5fd0946 100644
+index 69ba3758c2..e3689531e4 100644
 --- a/lib/eal/unix/eal_debug.c
 +++ b/lib/eal/unix/eal_debug.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  
  #ifdef RTE_BACKTRACE
@@ -16266,14 +16288,14 @@ index 69ba3758c2..c2f5fd0946 100644
  
  #endif /* RTE_BACKTRACE */
 diff --git a/lib/eal/unix/eal_filesystem.c b/lib/eal/unix/eal_filesystem.c
-index 6cd5f1492c..efd20134e3 100644
+index 6cd5f1492c..6b8451cd3e 100644
 --- a/lib/eal/unix/eal_filesystem.c
 +++ b/lib/eal/unix/eal_filesystem.c
 @@ -14,6 +14,7 @@
  
  #include <rte_log.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  #include "eal_filesystem.h"
  
@@ -16286,14 +16308,14 @@ index 6cd5f1492c..efd20134e3 100644
  {
  	FILE *f;
 diff --git a/lib/eal/unix/eal_firmware.c b/lib/eal/unix/eal_firmware.c
-index 0d69b1e3f0..381aa793a5 100644
+index 0d69b1e3f0..f2c16fb8a7 100644
 --- a/lib/eal/unix/eal_firmware.c
 +++ b/lib/eal/unix/eal_firmware.c
 @@ -13,6 +13,7 @@
  #include <rte_common.h>
  #include <rte_log.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_firmware.h"
  #include "eal_private.h"
  
@@ -16306,14 +16328,14 @@ index 0d69b1e3f0..381aa793a5 100644
  rte_firmware_read(const char *name, void **buf, size_t *bufsz)
  {
 diff --git a/lib/eal/unix/eal_unix_memory.c b/lib/eal/unix/eal_unix_memory.c
-index 97969a401b..287c645464 100644
+index 97969a401b..c540f1e838 100644
 --- a/lib/eal/unix/eal_unix_memory.c
 +++ b/lib/eal/unix/eal_unix_memory.c
 @@ -11,6 +11,7 @@
  #include <rte_errno.h>
  #include <rte_log.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "eal_private.h"
  
  #ifdef RTE_EXEC_ENV_LINUX
@@ -16349,14 +16371,14 @@ index 97969a401b..287c645464 100644
  rte_mem_lock(const void *virt, size_t size)
  {
 diff --git a/lib/eal/unix/eal_unix_timer.c b/lib/eal/unix/eal_unix_timer.c
-index e71602b3a1..6917c0ed2c 100644
+index e71602b3a1..3dbcf61e90 100644
 --- a/lib/eal/unix/eal_unix_timer.c
 +++ b/lib/eal/unix/eal_unix_timer.c
 @@ -5,8 +5,10 @@
  #include <errno.h>
  #include <time.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cycles.h>
  
 +RTE_EXPORT_SYMBOL(rte_delay_us_sleep)
@@ -16364,14 +16386,14 @@ index e71602b3a1..6917c0ed2c 100644
  rte_delay_us_sleep(unsigned int us)
  {
 diff --git a/lib/eal/unix/rte_thread.c b/lib/eal/unix/rte_thread.c
-index ea629c2065..2177f3d400 100644
+index ea629c2065..950c0848ba 100644
 --- a/lib/eal/unix/rte_thread.c
 +++ b/lib/eal/unix/rte_thread.c
 @@ -9,6 +9,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_log.h>
  #include <rte_thread.h>
@@ -16478,14 +16500,14 @@ index ea629c2065..2177f3d400 100644
  rte_thread_get_affinity_by_id(rte_thread_t thread_id,
  		rte_cpuset_t *cpuset)
 diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 5c7526f922..2b43e4a0ba 100644
+index 5c7526f922..cca0a0b1a3 100644
 --- a/lib/eal/windows/eal.c
 +++ b/lib/eal/windows/eal.c
 @@ -9,6 +9,7 @@
  #include <share.h>
  #include <sys/stat.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  #include <rte_bus.h>
  #include <rte_eal.h>
@@ -16567,14 +16589,14 @@ index 5c7526f922..2b43e4a0ba 100644
  rte_firmware_read(__rte_unused const char *name,
  			__rte_unused void **buf,
 diff --git a/lib/eal/windows/eal_alarm.c b/lib/eal/windows/eal_alarm.c
-index 5cd7b254a1..c4706bc809 100644
+index 5cd7b254a1..0b11d331dc 100644
 --- a/lib/eal/windows/eal_alarm.c
 +++ b/lib/eal/windows/eal_alarm.c
 @@ -6,6 +6,7 @@
  #include <stdbool.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_alarm.h>
  #include <rte_spinlock.h>
  
@@ -16595,14 +16617,14 @@ index 5cd7b254a1..c4706bc809 100644
  rte_eal_alarm_cancel(rte_eal_alarm_callback cb_fn, void *cb_arg)
  {
 diff --git a/lib/eal/windows/eal_debug.c b/lib/eal/windows/eal_debug.c
-index 4a6303a2a9..f294d98cf4 100644
+index 4a6303a2a9..a4549e1179 100644
 --- a/lib/eal/windows/eal_debug.c
 +++ b/lib/eal/windows/eal_debug.c
 @@ -3,6 +3,7 @@
   */
  
  #include <stdarg.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_debug.h>
  #include <rte_windows.h>
@@ -16615,14 +16637,14 @@ index 4a6303a2a9..f294d98cf4 100644
  rte_dump_stack(void)
  {
 diff --git a/lib/eal/windows/eal_dev.c b/lib/eal/windows/eal_dev.c
-index e0b8c54dc5..3e5c3a9a27 100644
+index e0b8c54dc5..9c7463edf2 100644
 --- a/lib/eal/windows/eal_dev.c
 +++ b/lib/eal/windows/eal_dev.c
 @@ -2,10 +2,12 @@
   * Copyright(c) 2021 Microsoft Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_dev.h>
  
  #include "eal_private.h"
@@ -16656,14 +16678,14 @@ index e0b8c54dc5..3e5c3a9a27 100644
  rte_dev_hotplug_handle_disable(void)
  {
 diff --git a/lib/eal/windows/eal_interrupts.c b/lib/eal/windows/eal_interrupts.c
-index c97118d231..432d899ae9 100644
+index c97118d231..5ff30c7631 100644
 --- a/lib/eal/windows/eal_interrupts.c
 +++ b/lib/eal/windows/eal_interrupts.c
 @@ -2,6 +2,7 @@
   * Copyright 2020 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_interrupts.h>
  
  #include "eal_private.h"
@@ -16814,14 +16836,14 @@ index c97118d231..432d899ae9 100644
  rte_intr_free_epoll_fd(struct rte_intr_handle *intr_handle)
  {
 diff --git a/lib/eal/windows/eal_memory.c b/lib/eal/windows/eal_memory.c
-index 8de92d4089..8bd59a89aa 100644
+index 8de92d4089..9f85191016 100644
 --- a/lib/eal/windows/eal_memory.c
 +++ b/lib/eal/windows/eal_memory.c
 @@ -5,6 +5,7 @@
  #include <inttypes.h>
  #include <io.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_paging.h>
  #include <rte_errno.h>
  
@@ -16882,14 +16904,14 @@ index 8de92d4089..8bd59a89aa 100644
  rte_mem_lock(const void *virt, size_t size)
  {
 diff --git a/lib/eal/windows/eal_mp.c b/lib/eal/windows/eal_mp.c
-index 76413f49a3..1f2c992421 100644
+index 76413f49a3..6703355318 100644
 --- a/lib/eal/windows/eal_mp.c
 +++ b/lib/eal/windows/eal_mp.c
 @@ -10,6 +10,7 @@
   * must document what requires success emulation.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_errno.h>
  
@@ -16942,14 +16964,14 @@ index 76413f49a3..1f2c992421 100644
  rte_mp_reply(struct rte_mp_msg *msg, const char *peer)
  {
 diff --git a/lib/eal/windows/eal_thread.c b/lib/eal/windows/eal_thread.c
-index 9e3df200b9..4a1dc422ec 100644
+index 9e3df200b9..3eeb94a589 100644
 --- a/lib/eal/windows/eal_thread.c
 +++ b/lib/eal/windows/eal_thread.c
 @@ -4,6 +4,7 @@
  
  #include <io.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_atomic.h>
  #include <rte_debug.h>
  #include <rte_launch.h>
@@ -16962,14 +16984,14 @@ index 9e3df200b9..4a1dc422ec 100644
  rte_sys_gettid(void)
  {
 diff --git a/lib/eal/windows/eal_timer.c b/lib/eal/windows/eal_timer.c
-index 020035c4cc..7d2cfe3921 100644
+index 020035c4cc..33cbac6a03 100644
 --- a/lib/eal/windows/eal_timer.c
 +++ b/lib/eal/windows/eal_timer.c
 @@ -4,6 +4,7 @@
  
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_windows.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
@@ -16982,14 +17004,14 @@ index 020035c4cc..7d2cfe3921 100644
  rte_delay_us_sleep(unsigned int us)
  {
 diff --git a/lib/eal/windows/rte_thread.c b/lib/eal/windows/rte_thread.c
-index 6f991dfa5d..4f0c6adf76 100644
+index 6f991dfa5d..85e5a57346 100644
 --- a/lib/eal/windows/rte_thread.c
 +++ b/lib/eal/windows/rte_thread.c
 @@ -6,6 +6,7 @@
  #include <errno.h>
  #include <wchar.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_common.h>
  #include <rte_errno.h>
@@ -17105,14 +17127,14 @@ index 6f991dfa5d..4f0c6adf76 100644
  rte_thread_get_affinity_by_id(rte_thread_t thread_id,
  		rte_cpuset_t *cpuset)
 diff --git a/lib/eal/x86/rte_cpuflags.c b/lib/eal/x86/rte_cpuflags.c
-index 90389c66fc..49a01d4e1d 100644
+index 90389c66fc..5d1f352e04 100644
 --- a/lib/eal/x86/rte_cpuflags.c
 +++ b/lib/eal/x86/rte_cpuflags.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2015 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
  #include <stdio.h>
@@ -17141,14 +17163,14 @@ index 90389c66fc..49a01d4e1d 100644
  rte_cpu_get_intrinsics_support(struct rte_cpu_intrinsics *intrinsics)
  {
 diff --git a/lib/eal/x86/rte_hypervisor.c b/lib/eal/x86/rte_hypervisor.c
-index 04fe76751a..8447733fd7 100644
+index 04fe76751a..0c649c1d41 100644
 --- a/lib/eal/x86/rte_hypervisor.c
 +++ b/lib/eal/x86/rte_hypervisor.c
 @@ -2,6 +2,7 @@
   * Copyright 2017 Mellanox Technologies, Ltd
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_hypervisor.h"
  
  #include <stdint.h>
@@ -17161,14 +17183,14 @@ index 04fe76751a..8447733fd7 100644
  rte_hypervisor_get(void)
  {
 diff --git a/lib/eal/x86/rte_power_intrinsics.c b/lib/eal/x86/rte_power_intrinsics.c
-index f7d558153e..73efc1ddc9 100644
+index f7d558153e..1cb2e908c0 100644
 --- a/lib/eal/x86/rte_power_intrinsics.c
 +++ b/lib/eal/x86/rte_power_intrinsics.c
 @@ -4,6 +4,7 @@
  
  #include <stdalign.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_lcore.h>
  #include <rte_lcore_var.h>
@@ -17205,14 +17227,14 @@ index f7d558153e..73efc1ddc9 100644
  rte_power_monitor_multi(const struct rte_power_monitor_cond pmc[],
  		const uint32_t num, const uint64_t tsc_timestamp)
 diff --git a/lib/eal/x86/rte_spinlock.c b/lib/eal/x86/rte_spinlock.c
-index 34890ea87c..68553f0e24 100644
+index 34890ea87c..da783919e5 100644
 --- a/lib/eal/x86/rte_spinlock.c
 +++ b/lib/eal/x86/rte_spinlock.c
 @@ -4,8 +4,10 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_cpuflags.h"
  
 +RTE_EXPORT_SYMBOL(rte_rtm_supported)
@@ -17220,14 +17242,14 @@ index 34890ea87c..68553f0e24 100644
  			      of the rte_cpu_get_flag_enabled function */
  
 diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index 3cbb3c2719..86117b2425 100644
+index 3cbb3c2719..b0e44e5c51 100644
 --- a/lib/efd/rte_efd.c
 +++ b/lib/efd/rte_efd.c
 @@ -9,6 +9,7 @@
  #include <errno.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cpuflags.h>
  #include <rte_string_fns.h>
  #include <rte_log.h>
@@ -17288,14 +17310,14 @@ index 3cbb3c2719..86117b2425 100644
  		const unsigned int socket_id, const int num_keys,
  		const void **key_list, efd_value_t * const value_list)
 diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index e1976db05f..5d20de7289 100644
+index e1976db05f..ec0c1e1176 100644
 --- a/lib/ethdev/ethdev_driver.c
 +++ b/lib/ethdev/ethdev_driver.c
 @@ -7,6 +7,7 @@
  #include <stdlib.h>
  #include <pthread.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_kvargs.h>
  #include <rte_malloc.h>
  
@@ -17492,14 +17514,14 @@ index e1976db05f..5d20de7289 100644
  rte_eth_get_restore_flags(struct rte_eth_dev *dev, enum rte_eth_dev_operation op)
  {
 diff --git a/lib/ethdev/ethdev_linux_ethtool.c b/lib/ethdev/ethdev_linux_ethtool.c
-index e792204b01..f9fd09f44d 100644
+index e792204b01..ec42d3054a 100644
 --- a/lib/ethdev/ethdev_linux_ethtool.c
 +++ b/lib/ethdev/ethdev_linux_ethtool.c
 @@ -2,6 +2,7 @@
   * Copyright (c) 2024 NVIDIA Corporation & Affiliates
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_bitops.h>
  
  #include "rte_ethdev.h"
@@ -17528,14 +17550,14 @@ index e792204b01..f9fd09f44d 100644
  rte_eth_link_speed_gset(uint32_t legacy_bitmap)
  {
 diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-index cc7fd97d4a..3a8d98ec6f 100644
+index cc7fd97d4a..b96d992ea1 100644
 --- a/lib/ethdev/ethdev_private.c
 +++ b/lib/ethdev/ethdev_private.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2018 Gaëtan Rivet
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  
  #include "rte_ethdev.h"
@@ -17556,14 +17578,14 @@ index cc7fd97d4a..3a8d98ec6f 100644
  rte_eth_call_tx_callbacks(uint16_t port_id, uint16_t queue_id,
  	struct rte_mbuf **tx_pkts, uint16_t nb_pkts, void *opaque)
 diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index cb99cf91fc..83e19e5c1a 100644
+index cb99cf91fc..071c508327 100644
 --- a/lib/ethdev/ethdev_trace_points.c
 +++ b/lib/ethdev/ethdev_trace_points.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2020 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include <ethdev_trace.h>
@@ -17599,14 +17621,14 @@ index cb99cf91fc..83e19e5c1a 100644
  	lib.ethdev.tx_queue_count)
  
 diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 85798d0ebc..8ce01db6d4 100644
+index 85798d0ebc..d4197322a0 100644
 --- a/lib/ethdev/rte_ethdev.c
 +++ b/lib/ethdev/rte_ethdev.c
 @@ -12,6 +12,7 @@
  #include <sys/queue.h>
  
  #include <bus_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_interrupts.h>
  #include <rte_kvargs.h>
@@ -18949,14 +18971,14 @@ index 85798d0ebc..8ce01db6d4 100644
 +RTE_EXPORT_SYMBOL(rte_eth_dev_logtype)
  RTE_LOG_REGISTER_DEFAULT(rte_eth_dev_logtype, INFO);
 diff --git a/lib/ethdev/rte_ethdev_cman.c b/lib/ethdev/rte_ethdev_cman.c
-index 73262ffc5f..0fec1492f3 100644
+index 73262ffc5f..a8460e6977 100644
 --- a/lib/ethdev/rte_ethdev_cman.c
 +++ b/lib/ethdev/rte_ethdev_cman.c
 @@ -4,6 +4,7 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include "rte_ethdev.h"
  #include "ethdev_driver.h"
@@ -18993,14 +19015,14 @@ index 73262ffc5f..0fec1492f3 100644
  rte_eth_cman_config_get(uint16_t port_id, struct rte_eth_cman_config *config)
  {
 diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 4a7735b5ab..704607709c 100644
+index 4a7735b5ab..9f8d8f3dc2 100644
 --- a/lib/ethdev/rte_flow.c
 +++ b/lib/ethdev/rte_flow.c
 @@ -9,6 +9,7 @@
  #include <stdint.h>
  #include <pthread.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_errno.h>
  #include <rte_branch_prediction.h>
@@ -19513,14 +19535,14 @@ index 4a7735b5ab..704607709c 100644
  	.async_create = rte_flow_dummy_async_create,
  	.async_create_by_index = rte_flow_dummy_async_create_by_index,
 diff --git a/lib/ethdev/rte_mtr.c b/lib/ethdev/rte_mtr.c
-index 900837bc09..33500cbf56 100644
+index 900837bc09..c6f0698ed3 100644
 --- a/lib/ethdev/rte_mtr.c
 +++ b/lib/ethdev/rte_mtr.c
 @@ -4,6 +4,7 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include "ethdev_trace.h"
  #include "rte_ethdev.h"
@@ -19693,14 +19715,14 @@ index 900837bc09..33500cbf56 100644
  rte_mtr_stats_read(uint16_t port_id,
  	uint32_t mtr_id,
 diff --git a/lib/ethdev/rte_tm.c b/lib/ethdev/rte_tm.c
-index 347dbb81f9..4be815d311 100644
+index 347dbb81f9..66b8934c3b 100644
 --- a/lib/ethdev/rte_tm.c
 +++ b/lib/ethdev/rte_tm.c
 @@ -4,6 +4,7 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include "ethdev_trace.h"
  #include "rte_ethdev.h"
@@ -19953,14 +19975,14 @@ index 347dbb81f9..4be815d311 100644
  	int mark_green,
  	int mark_yellow,
 diff --git a/lib/eventdev/eventdev_private.c b/lib/eventdev/eventdev_private.c
-index 6df129fc2d..a562f6ca24 100644
+index 6df129fc2d..dffd2c71d0 100644
 --- a/lib/eventdev/eventdev_private.c
 +++ b/lib/eventdev/eventdev_private.c
 @@ -3,6 +3,7 @@
   */
  
  #include "eventdev_pmd.h"
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_eventdev.h"
  
  static uint16_t
@@ -19981,14 +20003,14 @@ index 6df129fc2d..a562f6ca24 100644
  event_dev_fp_ops_set(struct rte_event_fp_ops *fp_op,
  		     const struct rte_eventdev *dev)
 diff --git a/lib/eventdev/eventdev_trace_points.c b/lib/eventdev/eventdev_trace_points.c
-index 8caf6353a1..8b58955774 100644
+index 8caf6353a1..ade6723b7b 100644
 --- a/lib/eventdev/eventdev_trace_points.c
 +++ b/lib/eventdev/eventdev_trace_points.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2020 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include "eventdev_trace.h"
@@ -20053,14 +20075,14 @@ index 8caf6353a1..8b58955774 100644
  	lib.eventdev.crypto.enq)
  
 diff --git a/lib/eventdev/rte_event_crypto_adapter.c b/lib/eventdev/rte_event_crypto_adapter.c
-index fc43e056d7..6a95df7f00 100644
+index fc43e056d7..b827a0ffd6 100644
 --- a/lib/eventdev/rte_event_crypto_adapter.c
 +++ b/lib/eventdev/rte_event_crypto_adapter.c
 @@ -5,6 +5,7 @@
  
  #include <string.h>
  #include <stdbool.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <dev_driver.h>
  #include <rte_errno.h>
@@ -20185,14 +20207,14 @@ index fc43e056d7..6a95df7f00 100644
  rte_event_crypto_adapter_vector_limits_get(
  	uint8_t dev_id, uint16_t cdev_id,
 diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-index d9a02a30f2..e2fd916af7 100644
+index d9a02a30f2..9ac6a4a205 100644
 --- a/lib/eventdev/rte_event_dma_adapter.c
 +++ b/lib/eventdev/rte_event_dma_adapter.c
 @@ -3,6 +3,7 @@
   */
  
  #include <eventdev_pmd.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_service_component.h>
  
  #include "rte_event_dma_adapter.h"
@@ -20317,14 +20339,14 @@ index d9a02a30f2..e2fd916af7 100644
  rte_event_dma_adapter_enqueue(uint8_t dev_id, uint8_t port_id, struct rte_event ev[],
  			      uint16_t nb_events)
 diff --git a/lib/eventdev/rte_event_eth_rx_adapter.c b/lib/eventdev/rte_event_eth_rx_adapter.c
-index ad832413d6..e347a5ac06 100644
+index ad832413d6..994f256322 100644
 --- a/lib/eventdev/rte_event_eth_rx_adapter.c
 +++ b/lib/eventdev/rte_event_eth_rx_adapter.c
 @@ -10,6 +10,7 @@
  #endif
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cycles.h>
  #include <rte_thread.h>
  #include <rte_common.h>
@@ -20513,14 +20535,14 @@ index ad832413d6..e347a5ac06 100644
  rte_event_eth_rx_adapter_runtime_params_get(uint8_t id,
  		struct rte_event_eth_rx_adapter_runtime_params *params)
 diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
-index 67fff8b7d6..5466a12c52 100644
+index 67fff8b7d6..83b6af0955 100644
 --- a/lib/eventdev/rte_event_eth_tx_adapter.c
 +++ b/lib/eventdev/rte_event_eth_tx_adapter.c
 @@ -1,6 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   * Copyright(c) 2018 Intel Corporation.
   */
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_spinlock.h>
  #include <rte_service_component.h>
  #include <ethdev_driver.h>
@@ -20661,14 +20683,14 @@ index 67fff8b7d6..5466a12c52 100644
  rte_event_eth_tx_adapter_queue_stop(uint16_t eth_dev_id, uint16_t tx_queue_id)
  {
 diff --git a/lib/eventdev/rte_event_ring.c b/lib/eventdev/rte_event_ring.c
-index b965970cf9..879fd2836a 100644
+index b965970cf9..5718985486 100644
 --- a/lib/eventdev/rte_event_ring.c
 +++ b/lib/eventdev/rte_event_ring.c
 @@ -4,9 +4,11 @@
   */
  
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_event_ring.h"
  #include "eventdev_trace.h"
  
@@ -20701,14 +20723,14 @@ index b965970cf9..879fd2836a 100644
  rte_event_ring_free(struct rte_event_ring *r)
  {
 diff --git a/lib/eventdev/rte_event_timer_adapter.c b/lib/eventdev/rte_event_timer_adapter.c
-index 5886965d14..6bedf406f0 100644
+index 5886965d14..b524dc3e55 100644
 --- a/lib/eventdev/rte_event_timer_adapter.c
 +++ b/lib/eventdev/rte_event_timer_adapter.c
 @@ -11,6 +11,7 @@
  #include <stdlib.h>
  #include <math.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memzone.h>
  #include <rte_errno.h>
  #include <rte_malloc.h>
@@ -20801,14 +20823,14 @@ index 5886965d14..6bedf406f0 100644
  rte_event_timer_remaining_ticks_get(
  			const struct rte_event_timer_adapter *adapter,
 diff --git a/lib/eventdev/rte_eventdev.c b/lib/eventdev/rte_eventdev.c
-index 43cd95d765..ba8623f135 100644
+index 43cd95d765..b66cbb4676 100644
 --- a/lib/eventdev/rte_eventdev.c
 +++ b/lib/eventdev/rte_eventdev.c
 @@ -11,6 +11,7 @@
  #include <stdint.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_log.h>
  #include <dev_driver.h>
@@ -21169,14 +21191,14 @@ index 43cd95d765..ba8623f135 100644
  event_dev_probing_finish(struct rte_eventdev *eventdev)
  {
 diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-index 49211fe3fa..faa7368dc9 100644
+index 49211fe3fa..2c05d46500 100644
 --- a/lib/fib/rte_fib.c
 +++ b/lib/fib/rte_fib.c
 @@ -7,6 +7,7 @@
  #include <string.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_errno.h>
  #include <rte_malloc.h>
@@ -21259,14 +21281,14 @@ index 49211fe3fa..faa7368dc9 100644
  rte_fib_rcu_qsbr_add(struct rte_fib *fib, struct rte_fib_rcu_config *cfg)
  {
 diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-index 9c7d4fde43..9fbd3c4696 100644
+index 9c7d4fde43..00647bdfa4 100644
 --- a/lib/fib/rte_fib6.c
 +++ b/lib/fib/rte_fib6.c
 @@ -7,6 +7,7 @@
  #include <string.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_tailq.h>
  #include <rte_errno.h>
@@ -21341,14 +21363,14 @@ index 9c7d4fde43..9fbd3c4696 100644
  rte_fib6_select_lookup(struct rte_fib6 *fib,
  	enum rte_fib6_lookup_type type)
 diff --git a/lib/gpudev/gpudev.c b/lib/gpudev/gpudev.c
-index 1c2011b856..30ea391dd4 100644
+index 1c2011b856..0473d9ffb3 100644
 --- a/lib/gpudev/gpudev.c
 +++ b/lib/gpudev/gpudev.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_tailq.h>
  #include <rte_string_fns.h>
@@ -21608,14 +21630,14 @@ index 1c2011b856..30ea391dd4 100644
  rte_gpu_comm_cleanup_list(struct rte_gpu_comm_list *comm_list_item)
  {
 diff --git a/lib/graph/graph.c b/lib/graph/graph.c
-index dff8e690a8..bdac9692f6 100644
+index dff8e690a8..fe12bd3753 100644
 --- a/lib/graph/graph.c
 +++ b/lib/graph/graph.c
 @@ -6,6 +6,7 @@
  #include <stdbool.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_debug.h>
  #include <rte_errno.h>
@@ -21746,14 +21768,14 @@ index dff8e690a8..bdac9692f6 100644
  rte_graph_max_count(void)
  {
 diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index 37088ce2cf..306b62708c 100644
+index 37088ce2cf..e3b8cccdc1 100644
 --- a/lib/graph/graph_debug.c
 +++ b/lib/graph/graph_debug.c
 @@ -5,6 +5,8 @@
  
  #include "graph_private.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  void
  graph_dump(FILE *f, struct graph *g)
@@ -21767,14 +21789,14 @@ index 37088ce2cf..306b62708c 100644
  rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
  {
 diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
-index 0bbbd9fb7c..e0f12ad25c 100644
+index 0bbbd9fb7c..eac73cbf71 100644
 --- a/lib/graph/graph_stats.c
 +++ b/lib/graph/graph_stats.c
 @@ -6,6 +6,7 @@
  #include <stdbool.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_errno.h>
  #include <rte_malloc.h>
@@ -21811,14 +21833,14 @@ index 0bbbd9fb7c..e0f12ad25c 100644
  rte_graph_cluster_stats_reset(struct rte_graph_cluster_stats *stat)
  {
 diff --git a/lib/graph/node.c b/lib/graph/node.c
-index 63db629da8..a09cfba4e9 100644
+index 63db629da8..101981ec24 100644
 --- a/lib/graph/node.c
 +++ b/lib/graph/node.c
 @@ -7,6 +7,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_debug.h>
  #include <rte_errno.h>
@@ -21909,14 +21931,14 @@ index 63db629da8..a09cfba4e9 100644
  rte_node_max_count(void)
  {
 diff --git a/lib/graph/rte_graph_model_mcore_dispatch.c b/lib/graph/rte_graph_model_mcore_dispatch.c
-index a590fc9497..4d8040dade 100644
+index a590fc9497..799b14e1eb 100644
 --- a/lib/graph/rte_graph_model_mcore_dispatch.c
 +++ b/lib/graph/rte_graph_model_mcore_dispatch.c
 @@ -3,6 +3,7 @@
   */
  
  #include "graph_private.h"
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_graph_model_mcore_dispatch.h"
  
  int
@@ -21945,14 +21967,14 @@ index a590fc9497..4d8040dade 100644
  rte_graph_model_mcore_dispatch_node_lcore_affinity_set(const char *name, unsigned int lcore_id)
  {
 diff --git a/lib/graph/rte_graph_worker.c b/lib/graph/rte_graph_worker.c
-index 7e2a918fae..e3f6172218 100644
+index 7e2a918fae..71f8fb44ca 100644
 --- a/lib/graph/rte_graph_worker.c
 +++ b/lib/graph/rte_graph_worker.c
 @@ -2,9 +2,11 @@
   * Copyright(C) 2023 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_graph_worker_common.h"
  #include "graph_private.h"
  
@@ -21977,14 +21999,14 @@ index 7e2a918fae..e3f6172218 100644
  rte_graph_worker_model_get(struct rte_graph *graph)
  {
 diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
-index 6d5aadf32a..7af123d192 100644
+index 6d5aadf32a..578cc9b801 100644
 --- a/lib/gro/rte_gro.c
 +++ b/lib/gro/rte_gro.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2017 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_cycles.h>
  #include <rte_ethdev.h>
@@ -22037,14 +22059,14 @@ index 6d5aadf32a..7af123d192 100644
  rte_gro_get_pkt_count(void *ctx)
  {
 diff --git a/lib/gso/rte_gso.c b/lib/gso/rte_gso.c
-index e29c7d884a..27d37c1065 100644
+index e29c7d884a..cbf7365702 100644
 --- a/lib/gso/rte_gso.c
 +++ b/lib/gso/rte_gso.c
 @@ -4,6 +4,7 @@
  
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_ethdev.h>
  
@@ -22057,14 +22079,14 @@ index e29c7d884a..27d37c1065 100644
  rte_gso_segment(struct rte_mbuf *pkt,
  		const struct rte_gso_ctx *gso_ctx,
 diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index e55e6e1c81..65901cf26d 100644
+index e55e6e1c81..2c92c51624 100644
 --- a/lib/hash/rte_cuckoo_hash.c
 +++ b/lib/hash/rte_cuckoo_hash.c
 @@ -9,6 +9,7 @@
  #include <stdio.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_prefetch.h>
@@ -22285,14 +22307,14 @@ index e55e6e1c81..65901cf26d 100644
  rte_hash_iterate(const struct rte_hash *h, const void **key, void **data, uint32_t *next)
  {
 diff --git a/lib/hash/rte_fbk_hash.c b/lib/hash/rte_fbk_hash.c
-index dacb7e8b09..1773d77c7b 100644
+index dacb7e8b09..38b15a14d1 100644
 --- a/lib/hash/rte_fbk_hash.c
 +++ b/lib/hash/rte_fbk_hash.c
 @@ -8,6 +8,7 @@
  #include <errno.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cpuflags.h>
  #include <rte_eal_memconfig.h>
  #include <rte_malloc.h>
@@ -22321,14 +22343,14 @@ index dacb7e8b09..1773d77c7b 100644
  rte_fbk_hash_free(struct rte_fbk_hash_table *ht)
  {
 diff --git a/lib/hash/rte_hash_crc.c b/lib/hash/rte_hash_crc.c
-index c037cdb0f0..3828ba0db1 100644
+index c037cdb0f0..9fe90d6425 100644
 --- a/lib/hash/rte_hash_crc.c
 +++ b/lib/hash/rte_hash_crc.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cpuflags.h>
  #include <rte_log.h>
  
@@ -22349,14 +22371,14 @@ index c037cdb0f0..3828ba0db1 100644
  rte_hash_crc_set_alg(uint8_t alg)
  {
 diff --git a/lib/hash/rte_thash.c b/lib/hash/rte_thash.c
-index 1f9700258d..92ab0bcd94 100644
+index 1f9700258d..6c662bf14f 100644
 --- a/lib/hash/rte_thash.c
 +++ b/lib/hash/rte_thash.c
 @@ -5,6 +5,7 @@
  #include <stdalign.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_thash.h>
  #include <rte_tailq.h>
  #include <rte_random.h>
@@ -22456,14 +22478,14 @@ index 1f9700258d..92ab0bcd94 100644
  rte_thash_gen_key(uint8_t *key, size_t key_len, size_t reta_sz_log,
  	uint32_t entropy_start, size_t entropy_sz)
 diff --git a/lib/hash/rte_thash_gf2_poly_math.c b/lib/hash/rte_thash_gf2_poly_math.c
-index 858884b4d4..8a01ce3de4 100644
+index 858884b4d4..ddf4dd863b 100644
 --- a/lib/hash/rte_thash_gf2_poly_math.c
 +++ b/lib/hash/rte_thash_gf2_poly_math.c
 @@ -1,6 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   * Copyright(c) 2024 Intel Corporation
   */
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_random.h>
  #include <rte_common.h>
  #include <rte_bitops.h>
@@ -22476,14 +22498,14 @@ index 858884b4d4..8a01ce3de4 100644
  thash_get_rand_poly(uint32_t poly_degree)
  {
 diff --git a/lib/hash/rte_thash_gfni.c b/lib/hash/rte_thash_gfni.c
-index c94640d30d..4982ed2a43 100644
+index c94640d30d..2003c7b3db 100644
 --- a/lib/hash/rte_thash_gfni.c
 +++ b/lib/hash/rte_thash_gfni.c
 @@ -4,6 +4,7 @@
  
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_thash_gfni.h>
  
@@ -22504,14 +22526,14 @@ index c94640d30d..4982ed2a43 100644
  rte_thash_gfni_bulk_stub(const uint64_t *mtrx __rte_unused,
  	int len __rte_unused, uint8_t *tuple[] __rte_unused,
 diff --git a/lib/ip_frag/rte_ip_frag_common.c b/lib/ip_frag/rte_ip_frag_common.c
-index 05f9e479c2..8f8f704288 100644
+index 05f9e479c2..ee9aa93027 100644
 --- a/lib/ip_frag/rte_ip_frag_common.c
 +++ b/lib/ip_frag/rte_ip_frag_common.c
 @@ -5,6 +5,7 @@
  #include <stddef.h>
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  
  RTE_LOG_REGISTER_DEFAULT(ipfrag_logtype, INFO);
@@ -22556,14 +22578,14 @@ index 05f9e479c2..8f8f704288 100644
  rte_ip_frag_table_del_expired_entries(struct rte_ip_frag_tbl *tbl,
  	struct rte_ip_frag_death_row *dr, uint64_t tms)
 diff --git a/lib/ip_frag/rte_ipv4_fragmentation.c b/lib/ip_frag/rte_ipv4_fragmentation.c
-index e04cf5738e..098e94d70e 100644
+index e04cf5738e..435a6e13bb 100644
 --- a/lib/ip_frag/rte_ipv4_fragmentation.c
 +++ b/lib/ip_frag/rte_ipv4_fragmentation.c
 @@ -5,6 +5,7 @@
  #include <stddef.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ether.h>
  
  #include "ip_frag_common.h"
@@ -22584,14 +22606,14 @@ index e04cf5738e..098e94d70e 100644
  rte_ipv4_fragment_copy_nonseg_packet(struct rte_mbuf *pkt_in,
  	struct rte_mbuf **pkts_out,
 diff --git a/lib/ip_frag/rte_ipv4_reassembly.c b/lib/ip_frag/rte_ipv4_reassembly.c
-index 5818f50f40..a3e53c61f4 100644
+index 5818f50f40..3c8ae113ba 100644
 --- a/lib/ip_frag/rte_ipv4_reassembly.c
 +++ b/lib/ip_frag/rte_ipv4_reassembly.c
 @@ -4,6 +4,7 @@
  
  #include <stddef.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  
  #include "ip_frag_common.h"
@@ -22604,14 +22626,14 @@ index 5818f50f40..a3e53c61f4 100644
  rte_ipv4_frag_reassemble_packet(struct rte_ip_frag_tbl *tbl,
  	struct rte_ip_frag_death_row *dr, struct rte_mbuf *mb, uint64_t tms,
 diff --git a/lib/ip_frag/rte_ipv6_fragmentation.c b/lib/ip_frag/rte_ipv6_fragmentation.c
-index 56696f32f8..2e1f628335 100644
+index 56696f32f8..c81f2402e3 100644
 --- a/lib/ip_frag/rte_ipv6_fragmentation.c
 +++ b/lib/ip_frag/rte_ipv6_fragmentation.c
 @@ -5,6 +5,7 @@
  #include <stddef.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memcpy.h>
  
  #include "ip_frag_common.h"
@@ -22624,14 +22646,14 @@ index 56696f32f8..2e1f628335 100644
  rte_ipv6_fragment_packet(struct rte_mbuf *pkt_in,
  	struct rte_mbuf **pkts_out,
 diff --git a/lib/ip_frag/rte_ipv6_reassembly.c b/lib/ip_frag/rte_ipv6_reassembly.c
-index 9471ce5333..c5dcb00b6f 100644
+index 9471ce5333..0e809a01e5 100644
 --- a/lib/ip_frag/rte_ipv6_reassembly.c
 +++ b/lib/ip_frag/rte_ipv6_reassembly.c
 @@ -4,6 +4,7 @@
  
  #include <stddef.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memcpy.h>
  
  #include "ip_frag_common.h"
@@ -22644,14 +22666,14 @@ index 9471ce5333..c5dcb00b6f 100644
  rte_ipv6_frag_reassemble_packet(struct rte_ip_frag_tbl *tbl,
  	struct rte_ip_frag_death_row *dr, struct rte_mbuf *mb, uint64_t tms,
 diff --git a/lib/ipsec/ipsec_sad.c b/lib/ipsec/ipsec_sad.c
-index 7e147e729c..d51f6fd38e 100644
+index 7e147e729c..15ea868f77 100644
 --- a/lib/ipsec/ipsec_sad.c
 +++ b/lib/ipsec/ipsec_sad.c
 @@ -4,6 +4,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_errno.h>
  #include <rte_hash.h>
@@ -22704,14 +22726,14 @@ index 7e147e729c..d51f6fd38e 100644
  rte_ipsec_sad_lookup(const struct rte_ipsec_sad *sad,
  		const union rte_ipsec_sad_key *keys[], void *sa[], uint32_t n)
 diff --git a/lib/ipsec/ipsec_telemetry.c b/lib/ipsec/ipsec_telemetry.c
-index 68a91108dd..0df08e3be1 100644
+index 68a91108dd..a9b6f05270 100644
 --- a/lib/ipsec/ipsec_telemetry.c
 +++ b/lib/ipsec/ipsec_telemetry.c
 @@ -3,6 +3,7 @@
   */
  
  #include <stdlib.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ipsec.h>
  #include <rte_telemetry.h>
  #include <rte_malloc.h>
@@ -22732,14 +22754,14 @@ index 68a91108dd..0df08e3be1 100644
  rte_ipsec_telemetry_sa_del(const struct rte_ipsec_sa *sa)
  {
 diff --git a/lib/ipsec/sa.c b/lib/ipsec/sa.c
-index 741e079831..c18e0e7f88 100644
+index 741e079831..4f589f3f3f 100644
 --- a/lib/ipsec/sa.c
 +++ b/lib/ipsec/sa.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2018-2020 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ipsec.h>
  #include <rte_esp.h>
  #include <rte_ip.h>
@@ -22776,14 +22798,14 @@ index 741e079831..c18e0e7f88 100644
  rte_ipsec_sa_init(struct rte_ipsec_sa *sa, const struct rte_ipsec_sa_prm *prm,
  	uint32_t size)
 diff --git a/lib/ipsec/ses.c b/lib/ipsec/ses.c
-index d9ab1e6d2b..5e0f74c11d 100644
+index d9ab1e6d2b..224e752d05 100644
 --- a/lib/ipsec/ses.c
 +++ b/lib/ipsec/ses.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2018-2020 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ipsec.h>
  #include "sa.h"
  
@@ -22796,14 +22818,14 @@ index d9ab1e6d2b..5e0f74c11d 100644
  rte_ipsec_session_prepare(struct rte_ipsec_session *ss)
  {
 diff --git a/lib/jobstats/rte_jobstats.c b/lib/jobstats/rte_jobstats.c
-index af565a14ea..9c9f1210d4 100644
+index af565a14ea..20a4f1391a 100644
 --- a/lib/jobstats/rte_jobstats.c
 +++ b/lib/jobstats/rte_jobstats.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
@@ -22919,14 +22941,14 @@ index af565a14ea..9c9f1210d4 100644
  rte_jobstats_reset(struct rte_jobstats *job)
  {
 diff --git a/lib/kvargs/rte_kvargs.c b/lib/kvargs/rte_kvargs.c
-index 1d355516bc..3935ebf1e0 100644
+index 1d355516bc..4e3198b33f 100644
 --- a/lib/kvargs/rte_kvargs.c
 +++ b/lib/kvargs/rte_kvargs.c
 @@ -7,6 +7,7 @@
  #include <stdlib.h>
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_os_shim.h>
  
  #include "rte_kvargs.h"
@@ -22995,14 +23017,14 @@ index 1d355516bc..3935ebf1e0 100644
  rte_kvargs_parse_delim(const char *args, const char * const valid_keys[],
  		       const char *valid_ends)
 diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
-index 6a261309f9..9143a2537e 100644
+index 6a261309f9..19a6f580cd 100644
 --- a/lib/latencystats/rte_latencystats.c
 +++ b/lib/latencystats/rte_latencystats.c
 @@ -4,6 +4,7 @@
  
  #include <math.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_mbuf_dyn.h>
  #include <rte_log.h>
@@ -23047,14 +23069,14 @@ index 6a261309f9..9143a2537e 100644
  rte_latencystats_get(struct rte_metric_value *values, uint16_t size)
  {
 diff --git a/lib/log/log.c b/lib/log/log.c
-index e1c18a8e53..9edee5bd89 100644
+index e1c18a8e53..8ad5250a13 100644
 --- a/lib/log/log.c
 +++ b/lib/log/log.c
 @@ -14,6 +14,7 @@
  #include <sys/queue.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_per_lcore.h>
@@ -23233,14 +23255,14 @@ index e1c18a8e53..9edee5bd89 100644
  rte_eal_log_cleanup(void)
  {
 diff --git a/lib/log/log_color.c b/lib/log/log_color.c
-index 04eb5aa485..8f9d837062 100644
+index 04eb5aa485..690a27f96e 100644
 --- a/lib/log/log_color.c
 +++ b/lib/log/log_color.c
 @@ -8,6 +8,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  
@@ -23253,14 +23275,14 @@ index 04eb5aa485..8f9d837062 100644
  eal_log_color(const char *mode)
  {
 diff --git a/lib/log/log_syslog.c b/lib/log/log_syslog.c
-index 6b34831bf3..a229bafb72 100644
+index 6b34831bf3..99d4132a55 100644
 --- a/lib/log/log_syslog.c
 +++ b/lib/log/log_syslog.c
 @@ -8,6 +8,7 @@
  #include <sys/types.h>
  #include <syslog.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  
@@ -23273,14 +23295,14 @@ index 6b34831bf3..a229bafb72 100644
  eal_log_syslog(const char *name)
  {
 diff --git a/lib/log/log_timestamp.c b/lib/log/log_timestamp.c
-index b4b0bca6a8..296a926175 100644
+index b4b0bca6a8..47b6f7cfc4 100644
 --- a/lib/log/log_timestamp.c
 +++ b/lib/log/log_timestamp.c
 @@ -9,6 +9,7 @@
  #include <string.h>
  #include <time.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_stdatomic.h>
  #include <rte_time.h>
@@ -23293,14 +23315,14 @@ index b4b0bca6a8..296a926175 100644
  eal_log_timestamp(const char *str)
  {
 diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
-index a5c9e7c9fc..2a6fecf935 100644
+index a5c9e7c9fc..7058be6918 100644
 --- a/lib/lpm/rte_lpm.c
 +++ b/lib/lpm/rte_lpm.c
 @@ -9,6 +9,7 @@
  #include <stdio.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
@@ -23369,14 +23391,14 @@ index a5c9e7c9fc..2a6fecf935 100644
  rte_lpm_delete_all(struct rte_lpm *lpm)
  {
 diff --git a/lib/lpm/rte_lpm6.c b/lib/lpm/rte_lpm6.c
-index 8beb394c47..a0021ee531 100644
+index 8beb394c47..e23c886766 100644
 --- a/lib/lpm/rte_lpm6.c
 +++ b/lib/lpm/rte_lpm6.c
 @@ -8,6 +8,7 @@
  #include <stdio.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
@@ -23461,14 +23483,14 @@ index 8beb394c47..a0021ee531 100644
  rte_lpm6_delete(struct rte_lpm6 *lpm, const struct rte_ipv6_addr *ip, uint8_t depth)
  {
 diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-index 559d5ad8a7..1f018f90ce 100644
+index 559d5ad8a7..9e7731a8a2 100644
 --- a/lib/mbuf/rte_mbuf.c
 +++ b/lib/mbuf/rte_mbuf.c
 @@ -9,6 +9,7 @@
  #include <inttypes.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  #include <rte_common.h>
  #include <rte_log.h>
@@ -23609,14 +23631,14 @@ index 559d5ad8a7..1f018f90ce 100644
  rte_get_tx_ol_flag_list(uint64_t mask, char *buf, size_t buflen)
  {
 diff --git a/lib/mbuf/rte_mbuf_dyn.c b/lib/mbuf/rte_mbuf_dyn.c
-index 1cfb329c3a..85b67f180a 100644
+index 1cfb329c3a..5987c9dee8 100644
 --- a/lib/mbuf/rte_mbuf_dyn.c
 +++ b/lib/mbuf/rte_mbuf_dyn.c
 @@ -7,6 +7,7 @@
  #include <stdint.h>
  #include <limits.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_eal.h>
  #include <rte_eal_memconfig.h>
@@ -23692,14 +23714,14 @@ index 1cfb329c3a..85b67f180a 100644
  rte_mbuf_dyn_tx_timestamp_register(int *field_offset, uint64_t *tx_flag)
  {
 diff --git a/lib/mbuf/rte_mbuf_pool_ops.c b/lib/mbuf/rte_mbuf_pool_ops.c
-index 8e93c6acbd..89ec8a4a4f 100644
+index 8e93c6acbd..219b364803 100644
 --- a/lib/mbuf/rte_mbuf_pool_ops.c
 +++ b/lib/mbuf/rte_mbuf_pool_ops.c
 @@ -3,6 +3,7 @@
   */
  
  #include <string.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_mbuf.h>
  #include <rte_errno.h>
@@ -23744,14 +23766,14 @@ index 8e93c6acbd..89ec8a4a4f 100644
  rte_mbuf_best_mempool_ops(void)
  {
 diff --git a/lib/mbuf/rte_mbuf_ptype.c b/lib/mbuf/rte_mbuf_ptype.c
-index ab180b3dda..f7a57a5763 100644
+index ab180b3dda..2c80294498 100644
 --- a/lib/mbuf/rte_mbuf_ptype.c
 +++ b/lib/mbuf/rte_mbuf_ptype.c
 @@ -4,10 +4,12 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_mbuf_ptype.h>
  
@@ -23817,14 +23839,14 @@ index ab180b3dda..f7a57a5763 100644
  {
  	int ret;
 diff --git a/lib/member/rte_member.c b/lib/member/rte_member.c
-index 57eb7affab..6598701a30 100644
+index 57eb7affab..5ff32f1e45 100644
 --- a/lib/member/rte_member.c
 +++ b/lib/member/rte_member.c
 @@ -4,6 +4,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_eal_memconfig.h>
  #include <rte_malloc.h>
@@ -23933,14 +23955,14 @@ index 57eb7affab..6598701a30 100644
  rte_member_reset(const struct rte_member_setsum *setsum)
  {
 diff --git a/lib/mempool/mempool_trace_points.c b/lib/mempool/mempool_trace_points.c
-index 307018094d..6eb9aa9aa2 100644
+index 307018094d..ec465780f4 100644
 --- a/lib/mempool/mempool_trace_points.c
 +++ b/lib/mempool/mempool_trace_points.c
 @@ -2,31 +2,40 @@
   * Copyright(C) 2020 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_trace_point_register.h>
  
  #include "mempool_trace.h"
@@ -23993,14 +24015,14 @@ index 307018094d..6eb9aa9aa2 100644
  	lib.mempool.cache.flush)
  
 diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 1e4f24783c..e06979c95d 100644
+index 1e4f24783c..1021ede0c2 100644
 --- a/lib/mempool/rte_mempool.c
 +++ b/lib/mempool/rte_mempool.c
 @@ -14,6 +14,7 @@
  #include <errno.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_debug.h>
@@ -24221,14 +24243,14 @@ index 1e4f24783c..e06979c95d 100644
  rte_mempool_event_callback_unregister(rte_mempool_event_callback *func,
  				      void *user_data)
 diff --git a/lib/mempool/rte_mempool_ops.c b/lib/mempool/rte_mempool_ops.c
-index 1b33380259..35b8d1508c 100644
+index 1b33380259..066bec36fc 100644
 --- a/lib/mempool/rte_mempool_ops.c
 +++ b/lib/mempool/rte_mempool_ops.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_mempool.h>
  #include <rte_errno.h>
@@ -24264,14 +24286,14 @@ index 1b33380259..35b8d1508c 100644
  rte_mempool_set_ops_byname(struct rte_mempool *mp, const char *name,
  	void *pool_config)
 diff --git a/lib/mempool/rte_mempool_ops_default.c b/lib/mempool/rte_mempool_ops_default.c
-index 22fccf9d76..bbfde038ed 100644
+index 22fccf9d76..d27d6fc473 100644
 --- a/lib/mempool/rte_mempool_ops_default.c
 +++ b/lib/mempool/rte_mempool_ops_default.c
 @@ -4,8 +4,10 @@
   * Copyright(c) 2018 Solarflare Communications Inc.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mempool.h>
  
 +RTE_EXPORT_SYMBOL(rte_mempool_op_calc_mem_size_helper)
@@ -24303,14 +24325,14 @@ index 22fccf9d76..bbfde038ed 100644
  rte_mempool_op_populate_default(struct rte_mempool *mp, unsigned int max_objs,
  				void *vaddr, rte_iova_t iova, size_t len,
 diff --git a/lib/meter/rte_meter.c b/lib/meter/rte_meter.c
-index 6545803d36..a0c0e44e44 100644
+index 6545803d36..ec76bec4cb 100644
 --- a/lib/meter/rte_meter.c
 +++ b/lib/meter/rte_meter.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <math.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cycles.h>
  
  #include "rte_meter.h"
@@ -24363,14 +24385,14 @@ index 6545803d36..a0c0e44e44 100644
  rte_meter_trtcm_rfc4115_config(
  	struct rte_meter_trtcm_rfc4115 *m,
 diff --git a/lib/metrics/rte_metrics.c b/lib/metrics/rte_metrics.c
-index 0ccdbabc04..eaf4207a72 100644
+index 0ccdbabc04..4cd4623b7a 100644
 --- a/lib/metrics/rte_metrics.c
 +++ b/lib/metrics/rte_metrics.c
 @@ -5,6 +5,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_common.h>
  #include <rte_string_fns.h>
@@ -24438,14 +24460,14 @@ index 0ccdbabc04..eaf4207a72 100644
  rte_metrics_get_values(int port_id,
  	struct rte_metric_value *values,
 diff --git a/lib/metrics/rte_metrics_telemetry.c b/lib/metrics/rte_metrics_telemetry.c
-index dc43611d29..8445686c03 100644
+index dc43611d29..f9ec556595 100644
 --- a/lib/metrics/rte_metrics_telemetry.c
 +++ b/lib/metrics/rte_metrics_telemetry.c
 @@ -3,6 +3,7 @@
   */
  
  #include <ethdev_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #ifdef RTE_LIB_TELEMETRY
  #include <telemetry_internal.h>
@@ -24538,14 +24560,14 @@ index dc43611d29..8445686c03 100644
  rte_metrics_tel_get_global_stats(struct telemetry_encode_param *ep)
  {
 diff --git a/lib/mldev/mldev_utils.c b/lib/mldev/mldev_utils.c
-index 13ac615e9f..bfd1f3ab25 100644
+index 13ac615e9f..b15f825158 100644
 --- a/lib/mldev/mldev_utils.c
 +++ b/lib/mldev/mldev_utils.c
 @@ -5,6 +5,7 @@
  #include <errno.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mldev.h>
  #include <rte_string_fns.h>
  
@@ -24566,14 +24588,14 @@ index 13ac615e9f..bfd1f3ab25 100644
  rte_ml_io_type_to_str(enum rte_ml_io_type type, char *str, int len)
  {
 diff --git a/lib/mldev/mldev_utils_neon.c b/lib/mldev/mldev_utils_neon.c
-index 8751a40863..6d7d72ab4a 100644
+index 8751a40863..0222bd7e15 100644
 --- a/lib/mldev/mldev_utils_neon.c
 +++ b/lib/mldev/mldev_utils_neon.c
 @@ -10,6 +10,8 @@
  
  #include <arm_neon.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* Description:
   * This file implements vector versions of Machine Learning utility functions used to convert data
@@ -24723,14 +24745,14 @@ index 8751a40863..6d7d72ab4a 100644
  rte_ml_io_float16_to_float32(const void *input, void *output, uint64_t nb_elements)
  {
 diff --git a/lib/mldev/mldev_utils_neon_bfloat16.c b/lib/mldev/mldev_utils_neon_bfloat16.c
-index b8e6853266..65c50ab52d 100644
+index b8e6853266..65cd73f880 100644
 --- a/lib/mldev/mldev_utils_neon_bfloat16.c
 +++ b/lib/mldev/mldev_utils_neon_bfloat16.c
 @@ -10,6 +10,8 @@
  
  #include <arm_neon.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* Description:
   * This file implements vector versions of Machine Learning utility functions used to convert data
@@ -24752,14 +24774,14 @@ index b8e6853266..65c50ab52d 100644
  rte_ml_io_bfloat16_to_float32(const void *input, void *output, uint64_t nb_elements)
  {
 diff --git a/lib/mldev/mldev_utils_scalar.c b/lib/mldev/mldev_utils_scalar.c
-index e1fefdec3b..422a8d4e46 100644
+index e1fefdec3b..a3aac3f92e 100644
 --- a/lib/mldev/mldev_utils_scalar.c
 +++ b/lib/mldev/mldev_utils_scalar.c
 @@ -4,11 +4,14 @@
  
  #include "mldev_utils_scalar.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* Description:
   * This file implements scalar versions of Machine Learning utility functions used to convert data
@@ -24907,14 +24929,14 @@ index e1fefdec3b..422a8d4e46 100644
  rte_ml_io_float16_to_float32(const void *input, void *output, uint64_t nb_elements)
  {
 diff --git a/lib/mldev/mldev_utils_scalar_bfloat16.c b/lib/mldev/mldev_utils_scalar_bfloat16.c
-index 3f93272518..2f7f3d42f9 100644
+index 3f93272518..a098d31526 100644
 --- a/lib/mldev/mldev_utils_scalar_bfloat16.c
 +++ b/lib/mldev/mldev_utils_scalar_bfloat16.c
 @@ -8,6 +8,8 @@
  
  #include "mldev_utils_scalar.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /* Description:
   * This file implements scalar versions of Machine Learning utility functions used to convert data
@@ -24936,14 +24958,14 @@ index 3f93272518..2f7f3d42f9 100644
  rte_ml_io_bfloat16_to_float32(const void *input, void *output, uint64_t nb_elements)
  {
 diff --git a/lib/mldev/rte_mldev.c b/lib/mldev/rte_mldev.c
-index a81ece07b6..71892c4d91 100644
+index a81ece07b6..b61e4be45c 100644
 --- a/lib/mldev/rte_mldev.c
 +++ b/lib/mldev/rte_mldev.c
 @@ -2,6 +2,7 @@
   * Copyright (c) 2022 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_log.h>
  #include <rte_mldev.h>
@@ -25239,14 +25261,14 @@ index a81ece07b6..71892c4d91 100644
 +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_logtype, 22.11)
  RTE_LOG_REGISTER_DEFAULT(rte_ml_dev_logtype, INFO);
 diff --git a/lib/mldev/rte_mldev_pmd.c b/lib/mldev/rte_mldev_pmd.c
-index 3169e5d4fa..568a55ab0a 100644
+index 3169e5d4fa..434360f2d3 100644
 --- a/lib/mldev/rte_mldev_pmd.c
 +++ b/lib/mldev/rte_mldev_pmd.c
 @@ -3,11 +3,13 @@
   */
  
  #include <dev_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal.h>
  #include <rte_malloc.h>
  
@@ -25265,14 +25287,14 @@ index 3169e5d4fa..568a55ab0a 100644
  rte_ml_dev_pmd_destroy(struct rte_ml_dev *dev)
  {
 diff --git a/lib/net/rte_arp.c b/lib/net/rte_arp.c
-index 22af519586..22375ba283 100644
+index 22af519586..3f8c69f69d 100644
 --- a/lib/net/rte_arp.c
 +++ b/lib/net/rte_arp.c
 @@ -2,9 +2,11 @@
   * Copyright(c) 2018 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_arp.h>
  
  #define RARP_PKT_SIZE	64
@@ -25281,14 +25303,14 @@ index 22af519586..22375ba283 100644
  rte_net_make_rarp_packet(struct rte_mempool *mpool,
  		const struct rte_ether_addr *mac)
 diff --git a/lib/net/rte_ether.c b/lib/net/rte_ether.c
-index f59c20289d..f5153e01cf 100644
+index f59c20289d..6703145fc5 100644
 --- a/lib/net/rte_ether.c
 +++ b/lib/net/rte_ether.c
 @@ -4,9 +4,11 @@
  
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ether.h>
  #include <rte_errno.h>
  
@@ -25313,14 +25335,14 @@ index f59c20289d..f5153e01cf 100644
  rte_ether_unformat_addr(const char *s, struct rte_ether_addr *ea)
  {
 diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-index 0c32e78a13..3e2eb67236 100644
+index 0c32e78a13..be24690fdf 100644
 --- a/lib/net/rte_net.c
 +++ b/lib/net/rte_net.c
 @@ -4,6 +4,7 @@
  
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_mbuf_ptype.h>
  #include <rte_byteorder.h>
@@ -25341,14 +25363,14 @@ index 0c32e78a13..3e2eb67236 100644
  	struct rte_net_hdr_lens *hdr_lens, uint32_t layers)
  {
 diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
-index b5a5dabd4f..4efb095bc4 100644
+index b5a5dabd4f..a762c8eef0 100644
 --- a/lib/net/rte_net_crc.c
 +++ b/lib/net/rte_net_crc.c
 @@ -5,6 +5,7 @@
  #include <stddef.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cpuflags.h>
  #include <rte_common.h>
  #include <rte_net_crc.h>
@@ -25361,14 +25383,14 @@ index b5a5dabd4f..4efb095bc4 100644
  {
  	rte_free(crc);
 diff --git a/lib/node/ethdev_ctrl.c b/lib/node/ethdev_ctrl.c
-index cd52e8be08..6628c0ae37 100644
+index cd52e8be08..dca7e817f9 100644
 --- a/lib/node/ethdev_ctrl.c
 +++ b/lib/node/ethdev_ctrl.c
 @@ -5,6 +5,7 @@
  #include <errno.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_graph.h>
  
@@ -25389,14 +25411,14 @@ index cd52e8be08..6628c0ae37 100644
  rte_node_ethdev_rx_next_update(rte_node_t id, const char *edge_name)
  {
 diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-index 0b474cd2bc..d618119d65 100644
+index 0b474cd2bc..604fcb267a 100644
 --- a/lib/node/ip4_lookup.c
 +++ b/lib/node/ip4_lookup.c
 @@ -5,6 +5,7 @@
  #include <arpa/inet.h>
  #include <sys/socket.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_ether.h>
  #include <rte_graph.h>
@@ -25409,14 +25431,14 @@ index 0b474cd2bc..d618119d65 100644
  rte_node_ip4_route_add(uint32_t ip, uint8_t depth, uint16_t next_hop,
  		       enum rte_node_ip4_lookup_next next_node)
 diff --git a/lib/node/ip4_reassembly.c b/lib/node/ip4_reassembly.c
-index eb5f391114..437bf97f93 100644
+index eb5f391114..493dafae9d 100644
 --- a/lib/node/ip4_reassembly.c
 +++ b/lib/node/ip4_reassembly.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <sys/socket.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cycles.h>
  #include <rte_debug.h>
  #include <rte_ethdev.h>
@@ -25429,14 +25451,14 @@ index eb5f391114..437bf97f93 100644
  rte_node_ip4_reassembly_configure(struct rte_node_ip4_reassembly_cfg *cfg, uint16_t cnt)
  {
 diff --git a/lib/node/ip4_rewrite.c b/lib/node/ip4_rewrite.c
-index 34a920df5e..0ec1943bbf 100644
+index 34a920df5e..a9ab5eaa57 100644
 --- a/lib/node/ip4_rewrite.c
 +++ b/lib/node/ip4_rewrite.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2020 Marvell International Ltd.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_ether.h>
  #include <rte_graph.h>
@@ -25449,14 +25471,14 @@ index 34a920df5e..0ec1943bbf 100644
  rte_node_ip4_rewrite_add(uint16_t next_hop, uint8_t *rewrite_data,
  			 uint8_t rewrite_len, uint16_t dst_port)
 diff --git a/lib/node/ip6_lookup.c b/lib/node/ip6_lookup.c
-index f378d2d064..654685a687 100644
+index f378d2d064..827fc2f379 100644
 --- a/lib/node/ip6_lookup.c
 +++ b/lib/node/ip6_lookup.c
 @@ -5,6 +5,7 @@
  #include <arpa/inet.h>
  #include <sys/socket.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_ether.h>
  #include <rte_graph.h>
@@ -25469,14 +25491,14 @@ index f378d2d064..654685a687 100644
  rte_node_ip6_route_add(const struct rte_ipv6_addr *ip, uint8_t depth, uint16_t next_hop,
  		       enum rte_node_ip6_lookup_next next_node)
 diff --git a/lib/node/ip6_rewrite.c b/lib/node/ip6_rewrite.c
-index 198d8d8820..750bef4838 100644
+index 198d8d8820..e157964c6a 100644
 --- a/lib/node/ip6_rewrite.c
 +++ b/lib/node/ip6_rewrite.c
 @@ -2,6 +2,7 @@
   * Copyright(C) 2023 Marvell.
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_ether.h>
  #include <rte_graph.h>
@@ -25489,14 +25511,14 @@ index 198d8d8820..750bef4838 100644
  rte_node_ip6_rewrite_add(uint16_t next_hop, uint8_t *rewrite_data,
  			 uint8_t rewrite_len, uint16_t dst_port)
 diff --git a/lib/node/udp4_input.c b/lib/node/udp4_input.c
-index bbcb2c70e7..d864e6b113 100644
+index bbcb2c70e7..5a74e28c85 100644
 --- a/lib/node/udp4_input.c
 +++ b/lib/node/udp4_input.c
 @@ -5,6 +5,7 @@
  #include <arpa/inet.h>
  #include <sys/socket.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ethdev.h>
  #include <rte_ether.h>
  #include <rte_graph.h>
@@ -25517,14 +25539,14 @@ index bbcb2c70e7..d864e6b113 100644
  rte_node_udp4_usr_node_add(const char *usr_node)
  {
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 16485b27cb..e0676b417a 100644
+index 16485b27cb..cacbefdc50 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
 @@ -16,6 +16,7 @@
  #endif
  
  #include <bus_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
  #include <dev_driver.h>
@@ -25585,14 +25607,14 @@ index 16485b27cb..e0676b417a 100644
  rte_pcapng_close(rte_pcapng_t *self)
  {
 diff --git a/lib/pci/rte_pci.c b/lib/pci/rte_pci.c
-index 1c5ef951d3..0ab471a05b 100644
+index 1c5ef951d3..e2f89a7f21 100644
 --- a/lib/pci/rte_pci.c
 +++ b/lib/pci/rte_pci.c
 @@ -8,6 +8,7 @@
  #include <stdlib.h>
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_debug.h>
  
  #include "rte_pci.h"
@@ -25621,14 +25643,14 @@ index 1c5ef951d3..0ab471a05b 100644
  rte_pci_addr_parse(const char *str, struct rte_pci_addr *addr)
  {
 diff --git a/lib/pdcp/rte_pdcp.c b/lib/pdcp/rte_pdcp.c
-index 1c076fb448..037d11b4ee 100644
+index 1c076fb448..d21df8ab43 100644
 --- a/lib/pdcp/rte_pdcp.c
 +++ b/lib/pdcp/rte_pdcp.c
 @@ -4,6 +4,7 @@
  
  #include <stdalign.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_pdcp.h>
  #include <rte_malloc.h>
@@ -25673,14 +25695,14 @@ index 1c076fb448..037d11b4ee 100644
  rte_pdcp_t_reordering_expiry_handle(const struct rte_pdcp_entity *entity, struct rte_mbuf *out_mb[])
  {
 diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index 0e6ffc167b..545ba888d8 100644
+index 0e6ffc167b..79b20ce59b 100644
 --- a/lib/pdump/rte_pdump.c
 +++ b/lib/pdump/rte_pdump.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_ethdev.h>
  #include <rte_lcore.h>
@@ -25757,14 +25779,14 @@ index 0e6ffc167b..545ba888d8 100644
  rte_pdump_stats(uint16_t port, struct rte_pdump_stats *stats)
  {
 diff --git a/lib/pipeline/rte_pipeline.c b/lib/pipeline/rte_pipeline.c
-index a09a89f746..8677eb0805 100644
+index a09a89f746..072bd739a4 100644
 --- a/lib/pipeline/rte_pipeline.c
 +++ b/lib/pipeline/rte_pipeline.c
 @@ -5,6 +5,7 @@
  #include <string.h>
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
@@ -25953,14 +25975,14 @@ index a09a89f746..8677eb0805 100644
  	struct rte_pipeline_table_stats *stats, int clear)
  {
 diff --git a/lib/pipeline/rte_port_in_action.c b/lib/pipeline/rte_port_in_action.c
-index 4127bd2cab..7ebe4a8b8d 100644
+index 4127bd2cab..2378e64de9 100644
 --- a/lib/pipeline/rte_port_in_action.c
 +++ b/lib/pipeline/rte_port_in_action.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  
@@ -26029,14 +26051,14 @@ index 4127bd2cab..7ebe4a8b8d 100644
  rte_port_in_action_free(struct rte_port_in_action *action)
  {
 diff --git a/lib/pipeline/rte_swx_ctl.c b/lib/pipeline/rte_swx_ctl.c
-index 857770d297..6b1e4116e9 100644
+index 857770d297..7066450f57 100644
 --- a/lib/pipeline/rte_swx_ctl.c
 +++ b/lib/pipeline/rte_swx_ctl.c
 @@ -8,6 +8,7 @@
  #include <sys/queue.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_byteorder.h>
  #include <rte_tailq.h>
@@ -26177,14 +26199,14 @@ index 857770d297..6b1e4116e9 100644
  rte_swx_ctl_pipeline_selector_fprintf(FILE *f,
  				      struct rte_swx_ctl_pipeline *ctl,
 diff --git a/lib/pipeline/rte_swx_ipsec.c b/lib/pipeline/rte_swx_ipsec.c
-index 17a9d2b98b..5720045a5e 100644
+index 17a9d2b98b..354754781d 100644
 --- a/lib/pipeline/rte_swx_ipsec.c
 +++ b/lib/pipeline/rte_swx_ipsec.c
 @@ -8,6 +8,7 @@
  #include <errno.h>
  #include <arpa/inet.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_random.h>
  #include <rte_ip.h>
@@ -26245,14 +26267,14 @@ index 17a9d2b98b..5720045a5e 100644
  rte_swx_ipsec_sa_delete(struct rte_swx_ipsec *ipsec,
  			uint32_t sa_id)
 diff --git a/lib/pipeline/rte_swx_pipeline.c b/lib/pipeline/rte_swx_pipeline.c
-index 6ba86bee1f..6ec7f506d8 100644
+index 6ba86bee1f..2193bc4ebf 100644
 --- a/lib/pipeline/rte_swx_pipeline.c
 +++ b/lib/pipeline/rte_swx_pipeline.c
 @@ -6,6 +6,7 @@
  #include <errno.h>
  #include <dlfcn.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_tailq.h>
  #include <rte_eal_memconfig.h>
  #include <rte_jhash.h>
@@ -26841,14 +26863,14 @@ index 6ba86bee1f..6ec7f506d8 100644
  rte_swx_pipeline_build_from_lib(struct rte_swx_pipeline **pipeline,
  				const char *name,
 diff --git a/lib/pipeline/rte_table_action.c b/lib/pipeline/rte_table_action.c
-index 3a408e81b8..099e6e3994 100644
+index 3a408e81b8..c990d7eb56 100644
 --- a/lib/pipeline/rte_table_action.c
 +++ b/lib/pipeline/rte_table_action.c
 @@ -4,6 +4,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_byteorder.h>
  #include <rte_cycles.h>
@@ -26981,14 +27003,14 @@ index 3a408e81b8..099e6e3994 100644
  rte_table_action_free(struct rte_table_action *action)
  {
 diff --git a/lib/port/rte_port_ethdev.c b/lib/port/rte_port_ethdev.c
-index d57f680e98..bcd01baed2 100644
+index d57f680e98..bdab2fbf6c 100644
 --- a/lib/port/rte_port_ethdev.c
 +++ b/lib/port/rte_port_ethdev.c
 @@ -4,6 +4,7 @@
  #include <string.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_ethdev.h>
  #include <rte_malloc.h>
@@ -27017,14 +27039,14 @@ index d57f680e98..bcd01baed2 100644
  	.f_create = rte_port_ethdev_writer_nodrop_create,
  	.f_free = rte_port_ethdev_writer_nodrop_free,
 diff --git a/lib/port/rte_port_eventdev.c b/lib/port/rte_port_eventdev.c
-index 6acf22998d..b5fcede557 100644
+index 6acf22998d..c3a287b834 100644
 --- a/lib/port/rte_port_eventdev.c
 +++ b/lib/port/rte_port_eventdev.c
 @@ -5,6 +5,7 @@
  #include <string.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  
@@ -27053,14 +27075,14 @@ index 6acf22998d..b5fcede557 100644
  	.f_create = rte_port_eventdev_writer_nodrop_create,
  	.f_free = rte_port_eventdev_writer_nodrop_free,
 diff --git a/lib/port/rte_port_fd.c b/lib/port/rte_port_fd.c
-index 281cba20c2..4542a80414 100644
+index 281cba20c2..dbc9efef1b 100644
 --- a/lib/port/rte_port_fd.c
 +++ b/lib/port/rte_port_fd.c
 @@ -5,6 +5,7 @@
  #include <stdint.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  
@@ -27089,14 +27111,14 @@ index 281cba20c2..4542a80414 100644
  	.f_create = rte_port_fd_writer_nodrop_create,
  	.f_free = rte_port_fd_writer_nodrop_free,
 diff --git a/lib/port/rte_port_frag.c b/lib/port/rte_port_frag.c
-index 0940f945bd..c55c46e685 100644
+index 0940f945bd..9444f5939c 100644
 --- a/lib/port/rte_port_frag.c
 +++ b/lib/port/rte_port_frag.c
 @@ -3,6 +3,7 @@
   */
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ip_frag.h>
  
  #include "rte_port_frag.h"
@@ -27117,14 +27139,14 @@ index 0940f945bd..c55c46e685 100644
  	.f_create = rte_port_ring_reader_ipv6_frag_create,
  	.f_free = rte_port_ring_reader_frag_free,
 diff --git a/lib/port/rte_port_ras.c b/lib/port/rte_port_ras.c
-index 42cf1ddf45..242980cb5f 100644
+index 42cf1ddf45..58ab7a1c5b 100644
 --- a/lib/port/rte_port_ras.c
 +++ b/lib/port/rte_port_ras.c
 @@ -3,6 +3,7 @@
   */
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_ip_frag.h>
  #include <rte_cycles.h>
  #include <rte_log.h>
@@ -27145,14 +27167,14 @@ index 42cf1ddf45..242980cb5f 100644
  	.f_create = rte_port_ring_writer_ipv6_ras_create,
  	.f_free = rte_port_ring_writer_ras_free,
 diff --git a/lib/port/rte_port_ring.c b/lib/port/rte_port_ring.c
-index 680d208f45..fff5a53245 100644
+index 680d208f45..307a576d65 100644
 --- a/lib/port/rte_port_ring.c
 +++ b/lib/port/rte_port_ring.c
 @@ -4,6 +4,7 @@
  #include <string.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_ring.h>
  #include <rte_malloc.h>
@@ -27205,14 +27227,14 @@ index 680d208f45..fff5a53245 100644
  	.f_create = rte_port_ring_multi_writer_nodrop_create,
  	.f_free = rte_port_ring_writer_nodrop_free,
 diff --git a/lib/port/rte_port_sched.c b/lib/port/rte_port_sched.c
-index da7a6240d7..a501172cf5 100644
+index da7a6240d7..3091078aa1 100644
 --- a/lib/port/rte_port_sched.c
 +++ b/lib/port/rte_port_sched.c
 @@ -3,6 +3,7 @@
   */
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  
  #include "rte_port_sched.h"
@@ -27233,14 +27255,14 @@ index da7a6240d7..a501172cf5 100644
  	.f_create = rte_port_sched_writer_create,
  	.f_free = rte_port_sched_writer_free,
 diff --git a/lib/port/rte_port_source_sink.c b/lib/port/rte_port_source_sink.c
-index a4486a7199..db41fb3c5c 100644
+index a4486a7199..0557e12506 100644
 --- a/lib/port/rte_port_source_sink.c
 +++ b/lib/port/rte_port_source_sink.c
 @@ -4,6 +4,7 @@
  #include <stdint.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_malloc.h>
  #include <rte_memcpy.h>
@@ -27261,14 +27283,14 @@ index a4486a7199..db41fb3c5c 100644
  	.f_create = rte_port_sink_create,
  	.f_free = rte_port_sink_free,
 diff --git a/lib/port/rte_port_sym_crypto.c b/lib/port/rte_port_sym_crypto.c
-index a68a2396a5..28b92565b6 100644
+index a68a2396a5..30c9d1283e 100644
 --- a/lib/port/rte_port_sym_crypto.c
 +++ b/lib/port/rte_port_sym_crypto.c
 @@ -3,6 +3,7 @@
   */
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  
@@ -27297,14 +27319,14 @@ index a68a2396a5..28b92565b6 100644
  	.f_create = rte_port_sym_crypto_writer_nodrop_create,
  	.f_free = rte_port_sym_crypto_writer_nodrop_free,
 diff --git a/lib/port/rte_swx_port_ethdev.c b/lib/port/rte_swx_port_ethdev.c
-index 7cb3c4dfb1..a6eb58beae 100644
+index 7cb3c4dfb1..de6d0e5bb3 100644
 --- a/lib/port/rte_swx_port_ethdev.c
 +++ b/lib/port/rte_swx_port_ethdev.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <stdint.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_ethdev.h>
  #include <rte_hexdump.h>
@@ -27325,14 +27347,14 @@ index 7cb3c4dfb1..a6eb58beae 100644
  	.create = writer_create,
  	.free = writer_free,
 diff --git a/lib/port/rte_swx_port_fd.c b/lib/port/rte_swx_port_fd.c
-index 4bbad2eaa7..acc7c2078d 100644
+index 4bbad2eaa7..72783d2b0f 100644
 --- a/lib/port/rte_swx_port_fd.c
 +++ b/lib/port/rte_swx_port_fd.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <unistd.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_hexdump.h>
  
@@ -27353,14 +27375,14 @@ index 4bbad2eaa7..acc7c2078d 100644
  	.create = writer_create,
  	.free = writer_free,
 diff --git a/lib/port/rte_swx_port_ring.c b/lib/port/rte_swx_port_ring.c
-index af541a2fa2..74c641217a 100644
+index af541a2fa2..3ac652ac09 100644
 --- a/lib/port/rte_swx_port_ring.c
 +++ b/lib/port/rte_swx_port_ring.c
 @@ -5,6 +5,7 @@
  #include <stdint.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_ring.h>
  #include <rte_hexdump.h>
@@ -27381,14 +27403,14 @@ index af541a2fa2..74c641217a 100644
  	.create = writer_create,
  	.free = writer_free,
 diff --git a/lib/port/rte_swx_port_source_sink.c b/lib/port/rte_swx_port_source_sink.c
-index 757a2c4a2e..572a3af74a 100644
+index 757a2c4a2e..af8b9ec68d 100644
 --- a/lib/port/rte_swx_port_source_sink.c
 +++ b/lib/port/rte_swx_port_source_sink.c
 @@ -9,6 +9,7 @@
  #endif
  #include <sys/time.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_mbuf.h>
  #include <rte_hexdump.h>
@@ -27417,14 +27439,14 @@ index 757a2c4a2e..572a3af74a 100644
  	.create = sink_create,
  	.free = sink_free,
 diff --git a/lib/power/power_common.c b/lib/power/power_common.c
-index e482f71c64..885c975b58 100644
+index e482f71c64..2da034e9d0 100644
 --- a/lib/power/power_common.c
 +++ b/lib/power/power_common.c
 @@ -7,12 +7,14 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_log.h>
  #include <rte_string_fns.h>
  #include <rte_lcore.h>
@@ -27492,14 +27514,14 @@ index e482f71c64..885c975b58 100644
  {
  	rte_cpuset_t lcore_cpus;
 diff --git a/lib/power/rte_power_cpufreq.c b/lib/power/rte_power_cpufreq.c
-index 3576017239..d4a134f261 100644
+index 3576017239..d4db03a4e5 100644
 --- a/lib/power/rte_power_cpufreq.c
 +++ b/lib/power/rte_power_cpufreq.c
 @@ -2,6 +2,7 @@
   * Copyright(c) 2010-2014 Intel Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_spinlock.h>
  #include <rte_debug.h>
  
@@ -27646,14 +27668,14 @@ index 3576017239..d4a134f261 100644
  rte_power_get_capabilities(unsigned int lcore_id,
  		struct rte_power_core_capabilities *caps)
 diff --git a/lib/power/rte_power_pmd_mgmt.c b/lib/power/rte_power_pmd_mgmt.c
-index 8ec925bd65..15eed2ae6b 100644
+index 8ec925bd65..6cacc562c2 100644
 --- a/lib/power/rte_power_pmd_mgmt.c
 +++ b/lib/power/rte_power_pmd_mgmt.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_lcore.h>
  #include <rte_lcore_var.h>
  #include <rte_cycles.h>
@@ -27735,14 +27757,14 @@ index 8ec925bd65..15eed2ae6b 100644
  rte_power_pmd_mgmt_get_scaling_freq_max(unsigned int lcore)
  {
 diff --git a/lib/power/rte_power_qos.c b/lib/power/rte_power_qos.c
-index 4dd0532b36..4e3005b533 100644
+index 4dd0532b36..be230d1c50 100644
 --- a/lib/power/rte_power_qos.c
 +++ b/lib/power/rte_power_qos.c
 @@ -6,6 +6,7 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_lcore.h>
  #include <rte_log.h>
  
@@ -27763,14 +27785,14 @@ index 4dd0532b36..4e3005b533 100644
  rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
  {
 diff --git a/lib/power/rte_power_uncore.c b/lib/power/rte_power_uncore.c
-index 741e067932..cea60b04ed 100644
+index 741e067932..30cd374127 100644
 --- a/lib/power/rte_power_uncore.c
 +++ b/lib/power/rte_power_uncore.c
 @@ -3,6 +3,7 @@
   * Copyright(c) 2023 AMD Corporation
   */
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_spinlock.h>
  #include <rte_debug.h>
  
@@ -27886,14 +27908,14 @@ index 741e067932..cea60b04ed 100644
  rte_power_uncore_get_num_dies(unsigned int pkg)
  {
 diff --git a/lib/rawdev/rte_rawdev.c b/lib/rawdev/rte_rawdev.c
-index 810e95a440..19491257f0 100644
+index 810e95a440..4da7956d5a 100644
 --- a/lib/rawdev/rte_rawdev.c
 +++ b/lib/rawdev/rte_rawdev.c
 @@ -10,6 +10,7 @@
  #include <stdint.h>
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_log.h>
  #include <dev_driver.h>
@@ -28137,14 +28159,14 @@ index 810e95a440..19491257f0 100644
  rte_rawdev_pmd_release(struct rte_rawdev *rawdev)
  {
 diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
-index dbf31501a6..58708952d5 100644
+index dbf31501a6..5f5762cbd4 100644
 --- a/lib/rcu/rte_rcu_qsbr.c
 +++ b/lib/rcu/rte_rcu_qsbr.c
 @@ -9,6 +9,7 @@
  #include <inttypes.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_memory.h>
@@ -28235,14 +28257,14 @@ index dbf31501a6..58708952d5 100644
 +RTE_EXPORT_SYMBOL(rte_rcu_log_type)
  RTE_LOG_REGISTER_DEFAULT(rte_rcu_log_type, ERR);
 diff --git a/lib/regexdev/rte_regexdev.c b/lib/regexdev/rte_regexdev.c
-index 431ed911a1..668f8ac82c 100644
+index 431ed911a1..8ba797b278 100644
 --- a/lib/regexdev/rte_regexdev.c
 +++ b/lib/regexdev/rte_regexdev.c
 @@ -5,6 +5,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_memzone.h>
  #include <rte_string_fns.h>
  
@@ -28452,14 +28474,14 @@ index 431ed911a1..668f8ac82c 100644
  rte_regexdev_dump(uint8_t dev_id, FILE *f)
  {
 diff --git a/lib/reorder/rte_reorder.c b/lib/reorder/rte_reorder.c
-index ae97e1a34d..0274ffb859 100644
+index ae97e1a34d..be06530860 100644
 --- a/lib/reorder/rte_reorder.c
 +++ b/lib/reorder/rte_reorder.c
 @@ -6,6 +6,7 @@
  #include <string.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_log.h>
  #include <rte_mbuf.h>
@@ -28551,14 +28573,14 @@ index ae97e1a34d..0274ffb859 100644
  rte_reorder_min_seqn_set(struct rte_reorder_buffer *b, rte_reorder_seqn_t min_seqn)
  {
 diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index b95d329c8b..8fa90bc650 100644
+index b95d329c8b..046db131ca 100644
 --- a/lib/rib/rte_rib.c
 +++ b/lib/rib/rte_rib.c
 @@ -7,6 +7,7 @@
  #include <stdint.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_errno.h>
  #include <rte_malloc.h>
@@ -28674,14 +28696,14 @@ index b95d329c8b..8fa90bc650 100644
  rte_rib_free(struct rte_rib *rib)
  {
 diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index 84c47fed6d..421a2d891e 100644
+index 84c47fed6d..ded5fd044f 100644
 --- a/lib/rib/rte_rib6.c
 +++ b/lib/rib/rte_rib6.c
 @@ -7,6 +7,7 @@
  #include <stdint.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_eal_memconfig.h>
  #include <rte_errno.h>
  #include <rte_log.h>
@@ -28797,14 +28819,14 @@ index 84c47fed6d..421a2d891e 100644
  rte_rib6_free(struct rte_rib6 *rib)
  {
 diff --git a/lib/ring/rte_ring.c b/lib/ring/rte_ring.c
-index a7d9d6b037..92c8261192 100644
+index a7d9d6b037..edd63aa535 100644
 --- a/lib/ring/rte_ring.c
 +++ b/lib/ring/rte_ring.c
 @@ -15,6 +15,7 @@
  #include <errno.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_memzone.h>
@@ -28897,14 +28919,14 @@ index a7d9d6b037..92c8261192 100644
  rte_ring_lookup(const char *name)
  {
 diff --git a/lib/ring/rte_soring.c b/lib/ring/rte_soring.c
-index 8cee926b11..b597550f18 100644
+index 8cee926b11..0d8abba69c 100644
 --- a/lib/ring/rte_soring.c
 +++ b/lib/ring/rte_soring.c
 @@ -4,6 +4,7 @@
  
  #include <inttypes.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "soring.h"
@@ -28933,14 +28955,14 @@ index 8cee926b11..b597550f18 100644
  rte_soring_init(struct rte_soring *r, const struct rte_soring_param *prm)
  {
 diff --git a/lib/ring/soring.c b/lib/ring/soring.c
-index 4fec7efae7..988c16197a 100644
+index 4fec7efae7..797484d6bf 100644
 --- a/lib/ring/soring.c
 +++ b/lib/ring/soring.c
 @@ -59,6 +59,8 @@
  
  #include "soring.h"
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
 +
  /*
   * Inline functions (fastpath) start here.
@@ -29074,14 +29096,14 @@ index 4fec7efae7..988c16197a 100644
  rte_soring_free_count(const struct rte_soring *r)
  {
 diff --git a/lib/sched/rte_approx.c b/lib/sched/rte_approx.c
-index edc8d9113b..5bf3f1a801 100644
+index edc8d9113b..86c7d1d3fb 100644
 --- a/lib/sched/rte_approx.c
 +++ b/lib/sched/rte_approx.c
 @@ -4,6 +4,7 @@
  
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_approx.h"
  
  /*
@@ -29094,14 +29116,14 @@ index edc8d9113b..5bf3f1a801 100644
  {
  	uint32_t alpha_num, d_num, denum;
 diff --git a/lib/sched/rte_pie.c b/lib/sched/rte_pie.c
-index a9f650e60f..6fbde3c5ca 100644
+index a9f650e60f..b5d8988894 100644
 --- a/lib/sched/rte_pie.c
 +++ b/lib/sched/rte_pie.c
 @@ -6,9 +6,11 @@
  #include <stdlib.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_sched_log.h"
  #include "rte_pie.h"
  
@@ -29118,14 +29140,14 @@ index a9f650e60f..6fbde3c5ca 100644
  rte_pie_config_init(struct rte_pie_config *pie_cfg,
  	const uint16_t qdelay_ref,
 diff --git a/lib/sched/rte_red.c b/lib/sched/rte_red.c
-index fa27a141ed..1ba86a193b 100644
+index fa27a141ed..d7534d0bee 100644
 --- a/lib/sched/rte_red.c
 +++ b/lib/sched/rte_red.c
 @@ -3,23 +3,28 @@
   */
  
  #include <math.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include "rte_red.h"
  #include <rte_random.h>
  #include <rte_common.h>
@@ -29167,14 +29189,14 @@ index fa27a141ed..1ba86a193b 100644
  rte_red_config_init(struct rte_red_config *red_cfg,
  	const uint16_t wq_log2,
 diff --git a/lib/sched/rte_sched.c b/lib/sched/rte_sched.c
-index d8ee4e7e91..69dfc04ae5 100644
+index d8ee4e7e91..c89ab9ca69 100644
 --- a/lib/sched/rte_sched.c
 +++ b/lib/sched/rte_sched.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_log.h>
  #include <rte_malloc.h>
@@ -29298,14 +29320,14 @@ index d8ee4e7e91..69dfc04ae5 100644
  rte_sched_port_dequeue(struct rte_sched_port *port, struct rte_mbuf **pkts, uint32_t n_pkts)
  {
 diff --git a/lib/security/rte_security.c b/lib/security/rte_security.c
-index 1e980343fe..41d6f4433a 100644
+index 1e980343fe..c47fe44da0 100644
 --- a/lib/security/rte_security.c
 +++ b/lib/security/rte_security.c
 @@ -8,6 +8,7 @@
  #include <ctype.h>
  #include <stdlib.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_cryptodev.h>
  #include <dev_driver.h>
  #include <rte_telemetry.h>
@@ -29459,14 +29481,14 @@ index 1e980343fe..41d6f4433a 100644
  rte_security_inb_pkt_rx_inject(void *ctx, struct rte_mbuf **pkts, void **sess,
  			       uint16_t nb_pkts)
 diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
-index 7261281dc1..ec9714c7d9 100644
+index 7261281dc1..4c78fe4b4b 100644
 --- a/lib/stack/rte_stack.c
 +++ b/lib/stack/rte_stack.c
 @@ -6,6 +6,7 @@
  #include <string.h>
  #include <sys/queue.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_eal_memconfig.h>
  #include <rte_errno.h>
@@ -29495,14 +29517,14 @@ index 7261281dc1..ec9714c7d9 100644
  rte_stack_lookup(const char *name)
  {
 diff --git a/lib/table/rte_swx_table_em.c b/lib/table/rte_swx_table_em.c
-index 2f042d74b3..8e7d03ddce 100644
+index 2f042d74b3..4ec54cb635 100644
 --- a/lib/table/rte_swx_table_em.c
 +++ b/lib/table/rte_swx_table_em.c
 @@ -5,6 +5,7 @@
  #include <stdio.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_prefetch.h>
  #include <rte_jhash.h>
@@ -29523,14 +29545,14 @@ index 2f042d74b3..8e7d03ddce 100644
  	.footprint_get = table_footprint,
  	.mailbox_size_get = table_mailbox_size_get,
 diff --git a/lib/table/rte_swx_table_learner.c b/lib/table/rte_swx_table_learner.c
-index 55a3645e06..59fc2162a5 100644
+index 55a3645e06..2d61bceeaf 100644
 --- a/lib/table/rte_swx_table_learner.c
 +++ b/lib/table/rte_swx_table_learner.c
 @@ -5,6 +5,7 @@
  #include <stdio.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
  #include <rte_prefetch.h>
@@ -29614,14 +29636,14 @@ index 55a3645e06..59fc2162a5 100644
  rte_swx_table_learner_delete(void *table __rte_unused,
  			     void *mailbox)
 diff --git a/lib/table/rte_swx_table_selector.c b/lib/table/rte_swx_table_selector.c
-index 18e021fe6f..c6310d411a 100644
+index 18e021fe6f..127c6c77f2 100644
 --- a/lib/table/rte_swx_table_selector.c
 +++ b/lib/table/rte_swx_table_selector.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <errno.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  
  #include "rte_swx_table_selector.h"
@@ -29673,14 +29695,14 @@ index 18e021fe6f..c6310d411a 100644
  rte_swx_table_selector_select(void *table,
  			      void *mailbox __rte_unused,
 diff --git a/lib/table/rte_swx_table_wm.c b/lib/table/rte_swx_table_wm.c
-index 58afb35d46..c3b5968afd 100644
+index 58afb35d46..c57738dda3 100644
 --- a/lib/table/rte_swx_table_wm.c
 +++ b/lib/table/rte_swx_table_wm.c
 @@ -5,6 +5,7 @@
  #include <string.h>
  #include <stdio.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
  #include <rte_acl.h>
@@ -29693,14 +29715,14 @@ index 58afb35d46..c3b5968afd 100644
  	.footprint_get = NULL,
  	.mailbox_size_get = table_mailbox_size_get,
 diff --git a/lib/table/rte_table_acl.c b/lib/table/rte_table_acl.c
-index 78779bbc4d..5029557955 100644
+index 78779bbc4d..74fa0145d8 100644
 --- a/lib/table/rte_table_acl.c
 +++ b/lib/table/rte_table_acl.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29713,14 +29735,14 @@ index 78779bbc4d..5029557955 100644
  	.f_create = rte_table_acl_create,
  	.f_free = rte_table_acl_free,
 diff --git a/lib/table/rte_table_array.c b/lib/table/rte_table_array.c
-index 84b5d67e90..6858daf840 100644
+index 84b5d67e90..55356e5999 100644
 --- a/lib/table/rte_table_array.c
 +++ b/lib/table/rte_table_array.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29733,14 +29755,14 @@ index 84b5d67e90..6858daf840 100644
  	.f_create = rte_table_array_create,
  	.f_free = rte_table_array_free,
 diff --git a/lib/table/rte_table_hash_cuckoo.c b/lib/table/rte_table_hash_cuckoo.c
-index 388eae918c..0f3221c57e 100644
+index 388eae918c..a2b920fa92 100644
 --- a/lib/table/rte_table_hash_cuckoo.c
 +++ b/lib/table/rte_table_hash_cuckoo.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29753,14 +29775,14 @@ index 388eae918c..0f3221c57e 100644
  	.f_create = rte_table_hash_cuckoo_create,
  	.f_free = rte_table_hash_cuckoo_free,
 diff --git a/lib/table/rte_table_hash_ext.c b/lib/table/rte_table_hash_ext.c
-index 91e5037b41..4ebc13a6f6 100644
+index 91e5037b41..86e8eeb4c8 100644
 --- a/lib/table/rte_table_hash_ext.c
 +++ b/lib/table/rte_table_hash_ext.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29773,14 +29795,14 @@ index 91e5037b41..4ebc13a6f6 100644
  	.f_create = rte_table_hash_ext_create,
  	.f_free = rte_table_hash_ext_free,
 diff --git a/lib/table/rte_table_hash_key16.c b/lib/table/rte_table_hash_key16.c
-index 67b77c16a0..f79eaa21d8 100644
+index 67b77c16a0..da24a7985d 100644
 --- a/lib/table/rte_table_hash_key16.c
 +++ b/lib/table/rte_table_hash_key16.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29801,14 +29823,14 @@ index 67b77c16a0..f79eaa21d8 100644
  	.f_create = rte_table_hash_create_key16_ext,
  	.f_free = rte_table_hash_free_key16_ext,
 diff --git a/lib/table/rte_table_hash_key32.c b/lib/table/rte_table_hash_key32.c
-index 1aa86c6a49..a4d9a1c18a 100644
+index 1aa86c6a49..297931a2a5 100644
 --- a/lib/table/rte_table_hash_key32.c
 +++ b/lib/table/rte_table_hash_key32.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29829,14 +29851,14 @@ index 1aa86c6a49..a4d9a1c18a 100644
  	.f_create = rte_table_hash_create_key32_ext,
  	.f_free = rte_table_hash_free_key32_ext,
 diff --git a/lib/table/rte_table_hash_key8.c b/lib/table/rte_table_hash_key8.c
-index c8d72b333d..e09af09fe0 100644
+index c8d72b333d..746863082f 100644
 --- a/lib/table/rte_table_hash_key8.c
 +++ b/lib/table/rte_table_hash_key8.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29857,14 +29879,14 @@ index c8d72b333d..e09af09fe0 100644
  	.f_create = rte_table_hash_create_key8_ext,
  	.f_free = rte_table_hash_free_key8_ext,
 diff --git a/lib/table/rte_table_hash_lru.c b/lib/table/rte_table_hash_lru.c
-index 801e48f5ba..57aa777620 100644
+index 801e48f5ba..548f5eebf2 100644
 --- a/lib/table/rte_table_hash_lru.c
 +++ b/lib/table/rte_table_hash_lru.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29877,14 +29899,14 @@ index 801e48f5ba..57aa777620 100644
  	.f_create = rte_table_hash_lru_create,
  	.f_free = rte_table_hash_lru_free,
 diff --git a/lib/table/rte_table_lpm.c b/lib/table/rte_table_lpm.c
-index 3e10c14d40..ad0d5560b7 100644
+index 3e10c14d40..6fd0c30f85 100644
 --- a/lib/table/rte_table_lpm.c
 +++ b/lib/table/rte_table_lpm.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_byteorder.h>
@@ -29897,14 +29919,14 @@ index 3e10c14d40..ad0d5560b7 100644
  	.f_create = rte_table_lpm_create,
  	.f_free = rte_table_lpm_free,
 diff --git a/lib/table/rte_table_lpm_ipv6.c b/lib/table/rte_table_lpm_ipv6.c
-index dea11130d3..d1ab39960d 100644
+index dea11130d3..9159784dfa 100644
 --- a/lib/table/rte_table_lpm_ipv6.c
 +++ b/lib/table/rte_table_lpm_ipv6.c
 @@ -6,6 +6,7 @@
  #include <stdio.h>
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -29917,14 +29939,14 @@ index dea11130d3..d1ab39960d 100644
  	.f_create = rte_table_lpm_ipv6_create,
  	.f_free = rte_table_lpm_ipv6_free,
 diff --git a/lib/table/rte_table_stub.c b/lib/table/rte_table_stub.c
-index 7147f7146e..52b2f9b189 100644
+index 7147f7146e..3d2ac55c49 100644
 --- a/lib/table/rte_table_stub.c
 +++ b/lib/table/rte_table_stub.c
 @@ -4,6 +4,7 @@
  
  #include <string.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  
  #include "rte_table_stub.h"
@@ -29937,14 +29959,14 @@ index 7147f7146e..52b2f9b189 100644
  	.f_create = rte_table_stub_create,
  	.f_free = NULL,
 diff --git a/lib/telemetry/telemetry.c b/lib/telemetry/telemetry.c
-index 31a2c91c06..1755922379 100644
+index 31a2c91c06..1cbbffbf3f 100644
 --- a/lib/telemetry/telemetry.c
 +++ b/lib/telemetry/telemetry.c
 @@ -15,6 +15,7 @@
  
  /* we won't link against libbsd, so just always use DPDKs-specific strlcpy */
  #undef RTE_USE_LIBBSD
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_common.h>
  #include <rte_spinlock.h>
@@ -29972,14 +29994,14 @@ index 31a2c91c06..1755922379 100644
  rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset)
  {
 diff --git a/lib/telemetry/telemetry_data.c b/lib/telemetry/telemetry_data.c
-index 3b1a2408df..e8285c1d7d 100644
+index 3b1a2408df..c120600622 100644
 --- a/lib/telemetry/telemetry_data.c
 +++ b/lib/telemetry/telemetry_data.c
 @@ -10,12 +10,14 @@
  #undef RTE_USE_LIBBSD
  #include <stdbool.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  
  #include "telemetry_data.h"
@@ -30116,14 +30138,14 @@ index 3b1a2408df..e8285c1d7d 100644
  rte_tel_data_free(struct rte_tel_data *data)
  {
 diff --git a/lib/telemetry/telemetry_legacy.c b/lib/telemetry/telemetry_legacy.c
-index 578230732c..f37c1fe9a7 100644
+index 578230732c..89ec750c09 100644
 --- a/lib/telemetry/telemetry_legacy.c
 +++ b/lib/telemetry/telemetry_legacy.c
 @@ -12,6 +12,7 @@
  
  /* we won't link against libbsd, so just always use DPDKs-specific strlcpy */
  #undef RTE_USE_LIBBSD
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_string_fns.h>
  #include <rte_common.h>
  #include <rte_spinlock.h>
@@ -30136,14 +30158,14 @@ index 578230732c..f37c1fe9a7 100644
  rte_telemetry_legacy_register(const char *cmd,
  		enum rte_telemetry_legacy_data_req data_req,
 diff --git a/lib/timer/rte_timer.c b/lib/timer/rte_timer.c
-index bb8b6a651d..e3973fe728 100644
+index bb8b6a651d..b349c2abbc 100644
 --- a/lib/timer/rte_timer.c
 +++ b/lib/timer/rte_timer.c
 @@ -8,6 +8,7 @@
  #include <inttypes.h>
  #include <assert.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_cycles.h>
  #include <rte_eal_memconfig.h>
@@ -30290,14 +30312,14 @@ index bb8b6a651d..e3973fe728 100644
  rte_timer_alt_dump_stats(uint32_t timer_data_id __rte_unused, FILE *f)
  {
 diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index 4c6c551c3d..26829296b2 100644
+index 4c6c551c3d..9b4f332f94 100644
 --- a/lib/vhost/socket.c
 +++ b/lib/vhost/socket.c
 @@ -14,6 +14,7 @@
  #include <errno.h>
  #include <fcntl.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_thread.h>
  #include <rte_log.h>
  
@@ -30430,14 +30452,14 @@ index 4c6c551c3d..26829296b2 100644
  rte_vhost_driver_start(const char *path)
  {
 diff --git a/lib/vhost/vdpa.c b/lib/vhost/vdpa.c
-index 329dd572b7..a9db812c11 100644
+index 329dd572b7..bc2dd8d2e1 100644
 --- a/lib/vhost/vdpa.c
 +++ b/lib/vhost/vdpa.c
 @@ -11,6 +11,7 @@
  #include <sys/queue.h>
  
  #include <dev_driver.h>
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_class.h>
  #include <rte_malloc.h>
  #include <rte_spinlock.h>
@@ -30530,14 +30552,14 @@ index 329dd572b7..a9db812c11 100644
  rte_vdpa_reset_stats(struct rte_vdpa_device *dev, uint16_t qid)
  {
 diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
-index f01ae6130e..3de4510c8a 100644
+index f01ae6130e..0353a04dc8 100644
 --- a/lib/vhost/vhost.c
 +++ b/lib/vhost/vhost.c
 @@ -12,6 +12,7 @@
  #include <numaif.h>
  #endif
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_errno.h>
  #include <rte_log.h>
  #include <rte_memory.h>
@@ -30870,14 +30892,14 @@ index f01ae6130e..3de4510c8a 100644
  rte_vhost_async_dma_unconfigure(int16_t dma_id, uint16_t vchan_id)
  {
 diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-index 3c6c5dc114..aaa18be107 100644
+index 3c6c5dc114..f78daf98d1 100644
 --- a/lib/vhost/vhost_crypto.c
 +++ b/lib/vhost/vhost_crypto.c
 @@ -1,6 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   * Copyright(c) 2017-2018 Intel Corporation
   */
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_malloc.h>
  #include <rte_hash.h>
  #include <rte_jhash.h>
@@ -30930,14 +30952,14 @@ index 3c6c5dc114..aaa18be107 100644
  rte_vhost_crypto_finalize_requests(struct rte_crypto_op **ops,
  		uint16_t nb_ops, int *callfds, uint16_t *nb_callfds)
 diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index 26dc0bde97..1745570564 100644
+index 26dc0bde97..ec950acf97 100644
 --- a/lib/vhost/vhost_user.c
 +++ b/lib/vhost/vhost_user.c
 @@ -41,6 +41,7 @@
  #define MEMFD_SUPPORTED
  #endif
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_common.h>
  #include <rte_malloc.h>
  #include <rte_log.h>
@@ -30958,14 +30980,14 @@ index 26dc0bde97..1745570564 100644
  {
  	struct virtio_net *dev;
 diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
-index 0348e8dac3..3ae26fc9a2 100644
+index 0348e8dac3..77545d0a4d 100644
 --- a/lib/vhost/virtio_net.c
 +++ b/lib/vhost/virtio_net.c
 @@ -6,6 +6,7 @@
  #include <stdbool.h>
  #include <linux/virtio_net.h>
  
-+#include <eal_symbol_exports.h>
++#include <eal_export.h>
  #include <rte_mbuf.h>
  #include <rte_memcpy.h>
  #include <rte_net.h>
@@ -31026,5 +31048,5 @@ index 0348e8dac3..3ae26fc9a2 100644
  rte_vhost_async_try_dequeue_burst(int vid, uint16_t queue_id,
  	struct rte_mempool *mbuf_pool, struct rte_mbuf **pkts, uint16_t count,
 -- 
-2.48.1
+2.49.0
 
