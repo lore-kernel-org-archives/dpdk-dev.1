@@ -2,70 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F031EC3600C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 14:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9612EC3600C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Apr 2025 16:58:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8353240DD7;
-	Thu,  3 Apr 2025 16:49:28 +0200 (CEST)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id 70927402CB
- for <dev@dpdk.org>; Thu,  3 Apr 2025 16:49:26 +0200 (CEST)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-476a304a8edso8810091cf.3
- for <dev@dpdk.org>; Thu, 03 Apr 2025 07:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1743691766; x=1744296566; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=/ROhPjTOZtv3ktSJt3S4g2poY4arg2i6us8IbWaAubI=;
- b=eGkA6kRo0O8pZ4amhWEU2pg18U8REv4JwdibYYJHKoefEpMJF0wAdB98DDZwUgHePa
- xFLVJlfF5HG1YmiySe+DoA1WvCvVHLvUu6gJAaZCOcxRLDwLj4yxFtlDcBRsSEmYqVbz
- lL58qvOd1HKUvYUX7H0Ek/cyvSJdRHIjyUhy9c6ycGGSjWRF04xwjhbPBcKT34j57fYp
- wqjV51N5T9y0cSgMI8gu4cBq8Ii3q1O4HFPT4w9Uh750BkIRCIrEcULoq12gtDlAY3ar
- 0CnjfULHUOLk4MH7xlRBa7ySSCE65JsX9zlKOO6MXEcU9e2ysOeOT/Tm3VfkDxrMiQJ0
- b0iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743691766; x=1744296566;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=/ROhPjTOZtv3ktSJt3S4g2poY4arg2i6us8IbWaAubI=;
- b=PPYSVzIhM98OBv6qc6aNwu6can9NOgHiaxOvOQABF14droQQJaQHer4E5j4cdV+j9M
- PuyeWo5GHOlyay0CqGulYIbWk77R8mTCIdwkbV2RdITAT13mNpsfrQTBQPB6yeve1Z54
- PNbTCM38C3z/NWEZp4RwmSX2KjPRJgD7hu4ZaiiYcsoAVdci9AzXX9TLKdzmsta45oCr
- BNQlF4Aj9q/Z8Qy9XCpSycutx9UmLcFiKZ2DNPFvh6KxUeQjKevlKyAsdZNz3k7WOoLE
- 7oISVpTvdA4JB9SJe/D/QX7jkEwtozK0vMOJGsyr1+jbPQcDyTHWVyf7hGEQpmzFwyAl
- nkCw==
-X-Gm-Message-State: AOJu0Yz9CSxKF8vqwkxkEIGUta++GK+1JDK3E9wm3zVdpPCwxMfvXSub
- aC9Yaa3h12GwJYm4+2vQ/YiO2KcznPK0I6kydLHT13uOmY8WDNLN3wYiU7Cm
-X-Gm-Gg: ASbGnctD/4zeB4lGm37ho6KkEb57eeXrUNCCOOP3yzrbKPPfX/LHC/JniDYimZnwnoA
- MP0O9ezUDmV09xQOsGU7is32/4kZ+jkDtl8QEKxsQ8v5AD2YFtyN1HjjFY0aRZunARLG7+r+kSC
- 6rJXTNIAMcRQPtIh+TwdEINk74ddRXft/moN9nKplSrzwNj9zDcWhH8oF/O+dasFltehA/8GZQb
- 1Z7l9DgvMYws+NolQyTW1MMM5xDgPlE8+GKh76fg6FB3nq8vfyFSePF+uONo7nAq1IGbSmJ8aXT
- 6D7D9huwbvJpRX5mpf+GQ6fn8dKsc1sjdhYeRDwJzkcYqdm6vr1sl9d3PTKBbMD5bBv+DBMQkQA
- NT2G0xw==
-X-Google-Smtp-Source: AGHT+IHNMXTW4iiSlN76jpM/mZp2WVyTCWaNM6zEVhoJDyGrASwtNjgZmcghkjfm4aCeZBJOTyzpnQ==
-X-Received: by 2002:a05:622a:1186:b0:477:1e83:184b with SMTP id
- d75a77b69052e-47909fa79aamr85767951cf.29.1743691765627; 
- Thu, 03 Apr 2025 07:49:25 -0700 (PDT)
-Received: from fedora.mshome.net (23-233-92-188.cpe.pppoe.ca. [23.233.92.188])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7c76e759a66sm85050785a.25.2025.04.03.07.49.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 03 Apr 2025 07:49:25 -0700 (PDT)
-From: LukeSeewald <luke.seewald@gmail.com>
-To: bruce.richardson@intel.com,
-	anatoly.burakov@intel.com
-Cc: dev@dpdk.org,
-	luke@aterlo.com,
-	LukeSeewald <luke.seewald@gmail.com>
-Subject: [PATCH] net/ice: enlarge limits to 64 bits (ice_stats_get)
-Date: Thu,  3 Apr 2025 10:49:21 -0400
-Message-ID: <20250403144921.1390510-1-luke.seewald@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	by mails.dpdk.org (Postfix) with ESMTP id 7613A402DF;
+	Thu,  3 Apr 2025 18:58:57 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A64D5402CB
+ for <dev@dpdk.org>; Thu,  3 Apr 2025 18:58:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1743699535;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=fc8WQDhdlNpfyImW50O5sQLy+/09tNDfcmm8wc2AQrs=;
+ b=SpD2FLO3hEvkNl5HQ74bTVRBiDY/idu53cxxVzmB3++7COpDIGCoeldQduZ7X9JAAeD7fz
+ Qie0RaJ9WdTLVByPVnEGOCBUAjGatrjFRRXg2nUZlvuFXZaTsstNDS6KKalVR0qa6kJ3sy
+ jBvvErx52AYazOHH1+6yUIOwL1kxJs8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-Np3irGWOOtOlwFP9X9OmMA-1; Thu,
+ 03 Apr 2025 12:58:52 -0400
+X-MC-Unique: Np3irGWOOtOlwFP9X9OmMA-1
+X-Mimecast-MFC-AGG-ID: Np3irGWOOtOlwFP9X9OmMA_1743699531
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C0B62195609E; Thu,  3 Apr 2025 16:58:50 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.228])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 9D85D180B489; Thu,  3 Apr 2025 16:58:48 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, bruce.richardson@intel.com,
+ andremue@linux.microsoft.com
+Subject: [PATCH v7 0/8] Symbol versioning and export rework
+Date: Thu,  3 Apr 2025 18:58:29 +0200
+Message-ID: <20250403165845.1315380-1-david.marchand@redhat.com>
+In-Reply-To: <20250305212349.2036410-1-david.marchand@redhat.com>
+References: <20250305212349.2036410-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: JIfSpFmJzhNjIsSmKhf5T_sC04CldGaVWYzBmZZuFhI_1743699531
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,255 +67,729 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are various counters/stats coming from ice_stats_get that appear
-to only use 32 or 40 bits and once it hits that limit it "overflows"
-and resets. This was causing large spikes (sudden 2^42 increase from
-one second to the next) in values of ibytes and obytes, while causing
-sudden drops in opackets and ipackets (as they "overflow" and reset).
-The sudden spike in bytes is due to the packets count being multiplied
-by 4 (crc bytes) and subtracted from the byte count. E.g. One second
-the packet count could be just under the 40 bit limit, subtracting a
-very large number from the byte count and then in the next second hit
-the limit, "overflow" and reset subtracting a very small number, thus
-causing the byte counts to appear as if there was a large increase in a
-single second.
+So far, each DPDK library (or driver) exposing symbols in an ABI had to
+maintain a version.map and use some macros for symbol versioning,
+specially crafted with the GNU linker in mind.
 
-This patch fixes the issue by enlarging the limitations of any counters
-or stats used by ice_stats_get to 64 bits, following the pattern of a
-previous patch -
-https://mails.dpdk.org/archives/stable/2020-July/023940.html
+This series proposes to rework the whole principle, and instead rely on
+marking the symbol exports in the source code itself, then let it to the
+build framework to produce a version script adapted to the linker in use
+(think GNU linker vs MSVC linker).
 
-Signed-off-by: LukeSeewald <luke.seewald@gmail.com>
----
- drivers/net/intel/ice/ice_ethdev.c | 103 +++++++++++++++++++++--------
- drivers/net/intel/ice/ice_ethdev.h |  44 ++++++++++--
- 2 files changed, 115 insertions(+), 32 deletions(-)
+This greatly simplifies versioning symbols: a developer does not need to
+know anything about version.map, or that a versioned symbol must be
+renamed with _v26, annotated with __vsym, exported in a header etc...
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 21d3795954..012b78a469 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -6061,6 +6061,37 @@ ice_stat_update_40(struct ice_hw *hw,
- 	*stat &= ICE_40_BIT_MASK;
- }
- 
-+/**
-+ * There are various counters that are bubbled up in uint64 values but do not make use of all
-+ * 64 bits, most commonly using only 32 or 40 bits. This function handles the "overflow" when
-+ * these counters hit their 32 or 40 bit limit to enlarge that limitation to 64 bits.
-+
-+ * @offset_loaded: refers to whether this function has been called before and old_value is known to
-+ * have a value, i.e. its possible that value has overflowed past its original limitation
-+ * @value_bit_limitation: refers to the number of bits the given value uses before overflowing
-+ * @value: is the current value with its original limitation (i.e. 32 or 40 bits)
-+ * @old_value: is expected to be the previous value of the given value with the overflow accounted
-+ * for (i.e. the full 64 bit previous value)
-+ *
-+ * This function will appropriately update both value and old_value, accounting for overflow
-+ */
-+static void
-+ice_handle_overflow(bool offset_loaded,
-+			uint8_t value_bit_limitation,
-+			uint64_t *value,
-+			uint64_t *old_value)
-+{
-+	uint64_t low_bit_mask = RTE_LEN2MASK(value_bit_limitation, uint64_t);
-+	uint64_t high_bit_mask = ~low_bit_mask;
-+
-+	if (offset_loaded) {
-+		if ((*old_value & low_bit_mask) > *value)
-+			*value += (uint64_t)1 << value_bit_limitation;
-+		*value += *old_value & high_bit_mask;
-+	}
-+	*old_value = *value;
-+}
-+
- /* Get all the statistics of a VSI */
- static void
- ice_update_vsi_stats(struct ice_vsi *vsi)
-@@ -6082,13 +6113,16 @@ ice_update_vsi_stats(struct ice_vsi *vsi)
- 	ice_stat_update_40(hw, GLV_BPRCH(idx), GLV_BPRCL(idx),
- 			   vsi->offset_loaded, &oes->rx_broadcast,
- 			   &nes->rx_broadcast);
--	/* enlarge the limitation when rx_bytes overflowed */
--	if (vsi->offset_loaded) {
--		if (ICE_RXTX_BYTES_LOW(vsi->old_rx_bytes) > nes->rx_bytes)
--			nes->rx_bytes += (uint64_t)1 << ICE_40_BIT_WIDTH;
--		nes->rx_bytes += ICE_RXTX_BYTES_HIGH(vsi->old_rx_bytes);
--	}
--	vsi->old_rx_bytes = nes->rx_bytes;
-+
-+	ice_handle_overflow(vsi->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &nes->rx_unicast, &vsi->old_get_stats_fields.rx_unicast);
-+	ice_handle_overflow(vsi->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &nes->rx_multicast, &vsi->old_get_stats_fields.rx_multicast);
-+	ice_handle_overflow(vsi->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &nes->rx_broadcast, &vsi->old_get_stats_fields.rx_broadcast);
-+	ice_handle_overflow(vsi->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &nes->rx_bytes, &vsi->old_get_stats_fields.rx_bytes);
-+
- 	/* exclude CRC bytes */
- 	nes->rx_bytes -= (nes->rx_unicast + nes->rx_multicast +
- 			  nes->rx_broadcast) * RTE_ETHER_CRC_LEN;
-@@ -6115,13 +6149,14 @@ ice_update_vsi_stats(struct ice_vsi *vsi)
- 	/* GLV_TDPC not supported */
- 	ice_stat_update_32(hw, GLV_TEPC(idx), vsi->offset_loaded,
- 			   &oes->tx_errors, &nes->tx_errors);
--	/* enlarge the limitation when tx_bytes overflowed */
--	if (vsi->offset_loaded) {
--		if (ICE_RXTX_BYTES_LOW(vsi->old_tx_bytes) > nes->tx_bytes)
--			nes->tx_bytes += (uint64_t)1 << ICE_40_BIT_WIDTH;
--		nes->tx_bytes += ICE_RXTX_BYTES_HIGH(vsi->old_tx_bytes);
--	}
--	vsi->old_tx_bytes = nes->tx_bytes;
-+
-+	ice_handle_overflow(vsi->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &nes->rx_discards, &vsi->old_get_stats_fields.rx_discards);
-+	ice_handle_overflow(vsi->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &nes->tx_errors, &vsi->old_get_stats_fields.tx_errors);
-+	ice_handle_overflow(vsi->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &nes->tx_bytes, &vsi->old_get_stats_fields.tx_bytes);
-+
- 	vsi->offset_loaded = true;
- 
- 	PMD_DRV_LOG(DEBUG, "************** VSI[%u] stats start **************",
-@@ -6169,13 +6204,11 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 	ice_stat_update_32(hw, PRTRPB_RDPC,
- 			   pf->offset_loaded, &os->eth.rx_discards,
- 			   &ns->eth.rx_discards);
--	/* enlarge the limitation when rx_bytes overflowed */
--	if (pf->offset_loaded) {
--		if (ICE_RXTX_BYTES_LOW(pf->old_rx_bytes) > ns->eth.rx_bytes)
--			ns->eth.rx_bytes += (uint64_t)1 << ICE_40_BIT_WIDTH;
--		ns->eth.rx_bytes += ICE_RXTX_BYTES_HIGH(pf->old_rx_bytes);
--	}
--	pf->old_rx_bytes = ns->eth.rx_bytes;
-+
-+	ice_handle_overflow(pf->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &ns->eth.rx_bytes, &pf->old_get_stats_fields.rx_bytes);
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->eth.rx_discards, &pf->old_get_stats_fields.rx_discards);
- 
- 	/* Workaround: CRC size should not be included in byte statistics,
- 	 * so subtract RTE_ETHER_CRC_LEN from the byte counter for each rx
-@@ -6206,13 +6239,16 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 			   GLPRT_BPTCL(hw->port_info->lport),
- 			   pf->offset_loaded, &os->eth.tx_broadcast,
- 			   &ns->eth.tx_broadcast);
--	/* enlarge the limitation when tx_bytes overflowed */
--	if (pf->offset_loaded) {
--		if (ICE_RXTX_BYTES_LOW(pf->old_tx_bytes) > ns->eth.tx_bytes)
--			ns->eth.tx_bytes += (uint64_t)1 << ICE_40_BIT_WIDTH;
--		ns->eth.tx_bytes += ICE_RXTX_BYTES_HIGH(pf->old_tx_bytes);
--	}
--	pf->old_tx_bytes = ns->eth.tx_bytes;
-+
-+	ice_handle_overflow(pf->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &ns->eth.tx_bytes, &pf->old_get_stats_fields.tx_bytes);
-+	ice_handle_overflow(pf->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &ns->eth.tx_unicast, &pf->old_get_stats_fields.tx_unicast);
-+	ice_handle_overflow(pf->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &ns->eth.tx_multicast, &pf->old_get_stats_fields.tx_multicast);
-+	ice_handle_overflow(pf->offset_loaded, ICE_40_BIT_WIDTH,
-+			   &ns->eth.tx_broadcast, &pf->old_get_stats_fields.tx_broadcast);
-+
- 	ns->eth.tx_bytes -= (ns->eth.tx_unicast + ns->eth.tx_multicast +
- 			     ns->eth.tx_broadcast) * RTE_ETHER_CRC_LEN;
- 
-@@ -6321,6 +6357,17 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 			   pf->offset_loaded, &os->tx_size_big,
- 			   &ns->tx_size_big);
- 
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->crc_errors, &pf->old_get_stats_fields.crc_errors);
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->rx_undersize, &pf->old_get_stats_fields.rx_undersize);
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->rx_fragments, &pf->old_get_stats_fields.rx_fragments);
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->rx_oversize, &pf->old_get_stats_fields.rx_oversize);
-+	ice_handle_overflow(pf->offset_loaded, ICE_32_BIT_WIDTH,
-+			   &ns->rx_jabber, &pf->old_get_stats_fields.rx_jabber);
-+
- 	/* GLPRT_MSPDC not supported */
- 	/* GLPRT_XEC not supported */
- 
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index afe8dae497..bfe093afca 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -260,6 +260,22 @@ struct ice_vsi_list {
- struct ice_rx_queue;
- struct ci_tx_queue;
- 
-+
-+/**
-+ * Used to store previous values of fields reported by ice_stats_get that can overflow
-+ * for the purpose of enlarging all their limitations to 64 bits rather than 32 or 40
-+ */
-+struct ice_vsi_get_stats_fields {
-+	uint64_t rx_bytes;
-+	uint64_t rx_unicast;
-+	uint64_t rx_multicast;
-+	uint64_t rx_broadcast;
-+	uint64_t rx_discards;
-+	uint64_t tx_errors;
-+	uint64_t tx_bytes;
-+};
-+
-+
- /**
-  * Structure that defines a VSI, associated with a adapter.
-  */
-@@ -307,8 +323,8 @@ struct ice_vsi {
- 	struct ice_eth_stats eth_stats_offset;
- 	struct ice_eth_stats eth_stats;
- 	bool offset_loaded;
--	uint64_t old_rx_bytes;
--	uint64_t old_tx_bytes;
-+	/* holds previous values so limitations can be enlarged to 64 bits */
-+	struct ice_vsi_get_stats_fields old_get_stats_fields;
- };
- 
- enum proto_xtr_type {
-@@ -495,6 +511,26 @@ struct ice_mbuf_stats {
- 	uint64_t tx_pkt_errors;
- };
- 
-+
-+/**
-+ * Used to store previous values of fields reported by ice_stats_get that can overflow
-+ * for the purpose of enlarging all their limitations to 64 bits rather than 32 or 40
-+ */
-+struct ice_pf_get_stats_fields {
-+	uint64_t rx_bytes;
-+	uint64_t rx_discards;
-+	uint64_t rx_undersize;
-+	uint64_t rx_fragments;
-+	uint64_t rx_oversize;
-+	uint64_t rx_jabber;
-+	uint64_t tx_unicast;
-+	uint64_t tx_multicast;
-+	uint64_t tx_broadcast;
-+	uint64_t tx_bytes;
-+	uint64_t crc_errors;
-+};
-+
-+
- struct ice_pf {
- 	struct ice_adapter *adapter; /* The adapter this PF associate to */
- 	struct ice_vsi *main_vsi; /* pointer to main VSI structure */
-@@ -533,8 +569,8 @@ struct ice_pf {
- 	struct ice_flow_list flow_list;
- 	rte_spinlock_t flow_ops_lock;
- 	bool init_link_up;
--	uint64_t old_rx_bytes;
--	uint64_t old_tx_bytes;
-+	/* holds previous values so limitations can be enlarged to 64 bits */
-+	struct ice_pf_get_stats_fields old_get_stats_fields;
- 	uint64_t supported_rxdid; /* bitmap for supported RXDID */
- 	uint64_t rss_hf;
- 	struct ice_tm_conf tm_conf;
+Checking symbol maps becomes unnecessary since generated by the build
+framework.
+
+Updating to a new ABI is just a matter of bumping the value in
+ABI_VERSION.
+
+
+
+-- 
+David Marchand
+
+Changes since v6:
+- used argparse in python scripts,
+- renamed eal_symbol_exports.h as eal_export.h,
+- renamed some base symbols export files,
+
+Changes since v5:
+- fixed Windows symbol exports for net/mlx5,
+
+Changes since RFC v4:
+- rebased on main, now that Bruce series is merged,
+- the export macros header has been moved to lib/eal/common/
+  and its inclusion is now mandatory (rather than an implicit -include),
+- reordered patches: symbol versioning is touched last and merged
+  in the export header (replacing the legacy rte_function_versioning.h),
+
+Changes since RFC v3:
+- fixed/simplified documentation,
+- rebased on top of Bruce series for common handling of AVX sources,
+
+Changes since RFC v2:
+- updated RTE_VERSION_SYMBOL() (and friends) so that only the fonction
+  signature is enclosed in the macro,
+- dropped invalid exports for some dead symbols or inline helpers,
+- updated documentation and tooling,
+- converted the whole tree (via a local script of mine),
+
+David Marchand (8):
+  lib: remove incorrect exported symbols
+  drivers: remove incorrect exported symbols
+  buildtools: display symbols version from map
+  build: generate symbol maps
+  build: mark exported symbols
+  build: use dynamically generated version maps
+  build: remove static version maps
+  eal: rework function versioning macros
+
+ .github/workflows/build.yml                   |   1 -
+ MAINTAINERS                                   |   9 +-
+ buildtools/check-symbols.sh                   |  33 +-
+ buildtools/gen-version-map.py                 | 133 ++++
+ buildtools/map-list-symbol.sh                 |  15 +-
+ buildtools/map_to_win.py                      |  41 --
+ buildtools/meson.build                        |   2 +-
+ devtools/check-spdx-tag.sh                    |   2 +-
+ devtools/check-symbol-change.py               | 108 ++++
+ devtools/check-symbol-change.sh               | 186 ------
+ devtools/check-symbol-maps.sh                 | 115 ----
+ devtools/checkpatches.sh                      |   6 +-
+ devtools/update-abi.sh                        |  46 --
+ devtools/update_version_map_abi.py            | 210 -------
+ doc/api/doxy-api-index.md                     |   1 -
+ doc/guides/contributing/abi_policy.rst        |  21 +-
+ doc/guides/contributing/abi_versioning.rst    | 415 +++----------
+ doc/guides/contributing/coding_style.rst      |   7 -
+ .../contributing/img/patch_cheatsheet.svg     | 303 +++++----
+ doc/guides/contributing/patches.rst           |   6 +-
+ doc/guides/rel_notes/release_25_07.rst        |   2 +
+ drivers/baseband/acc/rte_acc100_pmd.c         |   2 +
+ drivers/baseband/acc/version.map              |  10 -
+ .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |   2 +
+ drivers/baseband/fpga_5gnr_fec/version.map    |  11 -
+ drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |   2 +
+ drivers/baseband/fpga_lte_fec/version.map     |  10 -
+ drivers/bus/auxiliary/auxiliary_common.c      |   3 +
+ drivers/bus/auxiliary/version.map             |   8 -
+ drivers/bus/cdx/cdx.c                         |   5 +
+ drivers/bus/cdx/cdx_vfio.c                    |   5 +
+ drivers/bus/cdx/version.map                   |  14 -
+ drivers/bus/dpaa/dpaa_bus.c                   |  10 +
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c      | 100 +++
+ drivers/bus/dpaa/meson.build                  |   1 +
+ drivers/bus/dpaa/version.map                  | 109 ----
+ drivers/bus/fslmc/fslmc_bus.c                 |   5 +
+ drivers/bus/fslmc/fslmc_vfio.c                |  13 +
+ drivers/bus/fslmc/mc/dpbp.c                   |   8 +
+ drivers/bus/fslmc/mc/dpci.c                   |   5 +
+ drivers/bus/fslmc/mc/dpcon.c                  |   8 +
+ drivers/bus/fslmc/mc/dpdmai.c                 |  10 +
+ drivers/bus/fslmc/mc/dpio.c                   |  15 +
+ drivers/bus/fslmc/mc/dpmng.c                  |   4 +
+ drivers/bus/fslmc/mc/mc_sys.c                 |   2 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |   4 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |   3 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  12 +
+ drivers/bus/fslmc/qbman/qbman_debug.c         |   4 +
+ drivers/bus/fslmc/qbman/qbman_portal.c        |  43 ++
+ drivers/bus/fslmc/version.map                 | 129 ----
+ drivers/bus/ifpga/ifpga_bus.c                 |   4 +
+ drivers/bus/ifpga/version.map                 |   9 -
+ drivers/bus/pci/bsd/pci.c                     |  11 +
+ drivers/bus/pci/linux/pci.c                   |  11 +
+ drivers/bus/pci/pci_common.c                  |  11 +
+ drivers/bus/pci/version.map                   |  43 --
+ drivers/bus/pci/windows/pci.c                 |  11 +
+ drivers/bus/platform/platform.c               |   3 +
+ drivers/bus/platform/version.map              |  10 -
+ drivers/bus/uacce/uacce.c                     |  10 +
+ drivers/bus/uacce/version.map                 |  15 -
+ drivers/bus/vdev/vdev.c                       |   7 +
+ drivers/bus/vdev/version.map                  |  17 -
+ drivers/bus/vmbus/linux/vmbus_bus.c           |   7 +
+ drivers/bus/vmbus/version.map                 |  33 -
+ drivers/bus/vmbus/vmbus_channel.c             |  14 +
+ drivers/bus/vmbus/vmbus_common.c              |   4 +
+ drivers/common/cnxk/cnxk_security.c           |  13 +
+ drivers/common/cnxk/cnxk_utils.c              |   2 +
+ drivers/common/cnxk/meson.build               |   1 +
+ drivers/common/cnxk/roc_platform.c            |  19 +
+ .../common/cnxk/roc_platform_base_symbols.c   | 546 +++++++++++++++++
+ drivers/common/cnxk/roc_se.h                  |   1 -
+ drivers/common/cnxk/version.map               | 578 ------------------
+ drivers/common/cpt/cpt_fpm_tables.c           |   3 +
+ drivers/common/cpt/cpt_pmd_ops_helper.c       |   4 +
+ drivers/common/cpt/version.map                |  11 -
+ drivers/common/dpaax/caamflib.c               |   3 +
+ drivers/common/dpaax/dpaa_of.c                |  13 +
+ drivers/common/dpaax/dpaax_iova_table.c       |   7 +
+ drivers/common/dpaax/version.map              |  25 -
+ drivers/common/ionic/ionic_common_uio.c       |   5 +
+ drivers/common/ionic/version.map              |  10 -
+ .../common/mlx5/linux/mlx5_common_auxiliary.c |   2 +
+ drivers/common/mlx5/linux/mlx5_common_os.c    |  11 +
+ drivers/common/mlx5/linux/mlx5_common_verbs.c |   4 +
+ drivers/common/mlx5/linux/mlx5_glue.c         |   3 +
+ drivers/common/mlx5/linux/mlx5_nl.c           |  22 +
+ drivers/common/mlx5/mlx5_common.c             |  10 +
+ drivers/common/mlx5/mlx5_common_devx.c        |  10 +
+ drivers/common/mlx5/mlx5_common_mp.c          |   9 +
+ drivers/common/mlx5/mlx5_common_mr.c          |  12 +
+ drivers/common/mlx5/mlx5_common_pci.c         |   3 +
+ drivers/common/mlx5/mlx5_common_utils.c       |  12 +
+ drivers/common/mlx5/mlx5_devx_cmds.c          |  52 ++
+ drivers/common/mlx5/mlx5_malloc.c             |   5 +
+ drivers/common/mlx5/version.map               | 175 ------
+ drivers/common/mlx5/windows/mlx5_common_os.c  |   7 +
+ drivers/common/mlx5/windows/mlx5_glue.c       |   4 +-
+ drivers/common/mvep/mvep_common.c             |   3 +
+ drivers/common/mvep/version.map               |   8 -
+ drivers/common/nfp/nfp_common.c               |   9 +
+ drivers/common/nfp/nfp_common_pci.c           |   2 +
+ drivers/common/nfp/nfp_dev.c                  |   2 +
+ drivers/common/nfp/version.map                |  16 -
+ drivers/common/nitrox/nitrox_device.c         |   2 +
+ drivers/common/nitrox/nitrox_logs.c           |   2 +
+ drivers/common/nitrox/nitrox_qp.c             |   3 +
+ drivers/common/nitrox/version.map             |  10 -
+ drivers/common/octeontx/octeontx_mbox.c       |   7 +
+ drivers/common/octeontx/version.map           |  12 -
+ drivers/common/sfc_efx/meson.build            |   1 +
+ drivers/common/sfc_efx/sfc_base_symbols.c     | 276 +++++++++
+ drivers/common/sfc_efx/sfc_efx.c              |   3 +
+ drivers/common/sfc_efx/sfc_efx_mcdi.c         |   3 +
+ drivers/common/sfc_efx/version.map            | 302 ---------
+ drivers/crypto/cnxk/cn10k_cryptodev_ops.c     |   8 +
+ drivers/crypto/cnxk/cn9k_cryptodev_ops.c      |   3 +
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |   8 +
+ drivers/crypto/cnxk/version.map               |  30 -
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |   3 +
+ drivers/crypto/dpaa2_sec/version.map          |   8 -
+ drivers/crypto/dpaa_sec/dpaa_sec.c            |   3 +
+ drivers/crypto/dpaa_sec/version.map           |   8 -
+ drivers/crypto/octeontx/otx_cryptodev_ops.c   |   3 +
+ drivers/crypto/octeontx/version.map           |  12 -
+ .../scheduler/rte_cryptodev_scheduler.c       |  11 +
+ drivers/crypto/scheduler/version.map          |  16 -
+ drivers/dma/cnxk/cnxk_dmadev_fp.c             |   5 +
+ drivers/dma/cnxk/version.map                  |  10 -
+ drivers/event/cnxk/cnxk_worker.c              |   3 +
+ drivers/event/cnxk/version.map                |  11 -
+ drivers/event/dlb2/rte_pmd_dlb2.c             |   2 +
+ drivers/event/dlb2/version.map                |  10 -
+ drivers/mempool/cnxk/cn10k_hwpool_ops.c       |   4 +
+ drivers/mempool/cnxk/version.map              |  12 -
+ drivers/mempool/dpaa/dpaa_mempool.c           |   3 +
+ drivers/mempool/dpaa/version.map              |   8 -
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c      |   6 +
+ drivers/mempool/dpaa2/version.map             |  16 -
+ drivers/meson.build                           |  76 +--
+ drivers/net/atlantic/rte_pmd_atlantic.c       |   7 +
+ drivers/net/atlantic/version.map              |  15 -
+ drivers/net/bnxt/rte_pmd_bnxt.c               |  17 +
+ drivers/net/bnxt/version.map                  |  22 -
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |  13 +
+ drivers/net/bonding/rte_eth_bond_api.c        |  16 +
+ drivers/net/bonding/version.map               |  33 -
+ drivers/net/cnxk/cnxk_ethdev.c                |   4 +
+ drivers/net/cnxk/cnxk_ethdev_sec.c            |  10 +
+ drivers/net/cnxk/version.map                  |  27 -
+ drivers/net/dpaa/dpaa_ethdev.c                |   4 +
+ drivers/net/dpaa/version.map                  |  14 -
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |   2 +
+ drivers/net/dpaa2/base/dpaa2_tlu_hash.c       |   3 +
+ drivers/net/dpaa2/dpaa2_ethdev.c              |   8 +
+ drivers/net/dpaa2/dpaa2_mux.c                 |   4 +
+ drivers/net/dpaa2/dpaa2_rxtx.c                |   2 +
+ drivers/net/dpaa2/version.map                 |  35 --
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |  40 ++
+ drivers/net/intel/i40e/version.map            |  55 --
+ drivers/net/intel/iavf/iavf_base_symbols.c    |  14 +
+ drivers/net/intel/iavf/iavf_rxtx.c            |   9 +
+ drivers/net/intel/iavf/meson.build            |   1 +
+ drivers/net/intel/iavf/version.map            |  33 -
+ drivers/net/intel/ice/ice_diagnose.c          |   4 +
+ drivers/net/intel/ice/version.map             |  16 -
+ drivers/net/intel/idpf/idpf_common_device.c   |  11 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  25 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    |   3 +
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |   6 +
+ drivers/net/intel/idpf/idpf_common_virtchnl.c |  31 +
+ drivers/net/intel/idpf/version.map            |  80 ---
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.c      |   2 +
+ drivers/net/intel/ipn3ke/version.map          |   9 -
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  38 ++
+ drivers/net/intel/ixgbe/version.map           |  49 --
+ drivers/net/mlx5/mlx5.c                       |   2 +
+ drivers/net/mlx5/mlx5_flow.c                  |   5 +
+ drivers/net/mlx5/mlx5_rx.c                    |   3 +
+ drivers/net/mlx5/mlx5_rxq.c                   |   3 +
+ drivers/net/mlx5/mlx5_tx.c                    |   2 +
+ drivers/net/mlx5/mlx5_txq.c                   |   4 +
+ drivers/net/mlx5/version.map                  |  28 -
+ drivers/net/octeontx/octeontx_ethdev.c        |   2 +
+ drivers/net/octeontx/version.map              |   7 -
+ drivers/net/ring/rte_eth_ring.c               |   3 +
+ drivers/net/ring/version.map                  |   8 -
+ drivers/net/softnic/rte_eth_softnic.c         |   2 +
+ drivers/net/softnic/rte_eth_softnic_thread.c  |   2 +
+ drivers/net/softnic/version.map               |   8 -
+ drivers/net/vhost/rte_eth_vhost.c             |   3 +
+ drivers/net/vhost/version.map                 |   8 -
+ drivers/power/kvm_vm/guest_channel.c          |   3 +
+ drivers/power/kvm_vm/version.map              |   8 -
+ drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c         |  11 +
+ drivers/raw/cnxk_rvu_lf/version.map           |  16 -
+ drivers/raw/ifpga/rte_pmd_ifpga.c             |  12 +
+ drivers/raw/ifpga/version.map                 |  17 -
+ drivers/version.map                           |   3 -
+ lib/acl/acl_bld.c                             |   2 +
+ lib/acl/acl_run_scalar.c                      |   3 +
+ lib/acl/rte_acl.c                             |  12 +
+ lib/acl/version.map                           |  19 -
+ lib/argparse/rte_argparse.c                   |   3 +
+ lib/argparse/version.map                      |   9 -
+ lib/bbdev/bbdev_trace_points.c                |   3 +
+ lib/bbdev/rte_bbdev.c                         |  32 +
+ lib/bbdev/version.map                         |  47 --
+ lib/bitratestats/rte_bitrate.c                |   5 +
+ lib/bitratestats/version.map                  |  10 -
+ lib/bpf/bpf.c                                 |   3 +
+ lib/bpf/bpf_convert.c                         |   2 +
+ lib/bpf/bpf_dump.c                            |   2 +
+ lib/bpf/bpf_exec.c                            |   3 +
+ lib/bpf/bpf_load.c                            |   2 +
+ lib/bpf/bpf_load_elf.c                        |   2 +
+ lib/bpf/bpf_pkt.c                             |   5 +
+ lib/bpf/bpf_stub.c                            |   3 +
+ lib/bpf/version.map                           |  18 -
+ lib/cfgfile/rte_cfgfile.c                     |  18 +
+ lib/cfgfile/version.map                       |  23 -
+ lib/cmdline/cmdline.c                         |  10 +
+ lib/cmdline/cmdline_cirbuf.c                  |  21 +
+ lib/cmdline/cmdline_parse.c                   |   5 +
+ lib/cmdline/cmdline_parse_bool.c              |   2 +
+ lib/cmdline/cmdline_parse_etheraddr.c         |   4 +
+ lib/cmdline/cmdline_parse_ipaddr.c            |   4 +
+ lib/cmdline/cmdline_parse_num.c               |   4 +
+ lib/cmdline/cmdline_parse_portlist.c          |   4 +
+ lib/cmdline/cmdline_parse_string.c            |   6 +
+ lib/cmdline/cmdline_rdline.c                  |  17 +
+ lib/cmdline/cmdline_socket.c                  |   5 +
+ lib/cmdline/cmdline_vt100.c                   |   4 +
+ lib/cmdline/version.map                       |  82 ---
+ lib/compressdev/rte_comp.c                    |   7 +
+ lib/compressdev/rte_compressdev.c             |  26 +
+ lib/compressdev/rte_compressdev_pmd.c         |   4 +
+ lib/compressdev/version.map                   |  40 --
+ lib/cryptodev/cryptodev_pmd.c                 |   8 +
+ lib/cryptodev/cryptodev_trace_points.c        |   4 +
+ lib/cryptodev/rte_cryptodev.c                 |  84 +++
+ lib/cryptodev/version.map                     | 114 ----
+ lib/dispatcher/rte_dispatcher.c               |  14 +
+ lib/dispatcher/version.map                    |  20 -
+ lib/distributor/rte_distributor.c             |  10 +
+ lib/distributor/version.map                   |  15 -
+ lib/dmadev/rte_dmadev.c                       |  20 +
+ lib/dmadev/rte_dmadev_trace_points.c          |   8 +
+ lib/dmadev/version.map                        |  47 --
+ lib/eal/arm/rte_cpuflags.c                    |   4 +
+ lib/eal/arm/rte_hypervisor.c                  |   2 +
+ lib/eal/arm/rte_power_intrinsics.c            |   5 +
+ lib/eal/common/eal_common_bus.c               |  11 +
+ lib/eal/common/eal_common_class.c             |   5 +
+ lib/eal/common/eal_common_config.c            |   8 +
+ lib/eal/common/eal_common_cpuflags.c          |   2 +
+ lib/eal/common/eal_common_debug.c             |   3 +
+ lib/eal/common/eal_common_dev.c               |  20 +
+ lib/eal/common/eal_common_devargs.c           |  10 +
+ lib/eal/common/eal_common_errno.c             |   3 +
+ lib/eal/common/eal_common_fbarray.c           |  27 +
+ lib/eal/common/eal_common_hexdump.c           |   3 +
+ lib/eal/common/eal_common_hypervisor.c        |   2 +
+ lib/eal/common/eal_common_interrupts.c        |  28 +
+ lib/eal/common/eal_common_launch.c            |   6 +
+ lib/eal/common/eal_common_lcore.c             |  18 +
+ lib/eal/common/eal_common_lcore_var.c         |   2 +
+ lib/eal/common/eal_common_mcfg.c              |  21 +
+ lib/eal/common/eal_common_memory.c            |  30 +
+ lib/eal/common/eal_common_memzone.c           |  10 +
+ lib/eal/common/eal_common_options.c           |   5 +
+ lib/eal/common/eal_common_proc.c              |   9 +
+ lib/eal/common/eal_common_string_fns.c        |   4 +
+ lib/eal/common/eal_common_tailqs.c            |   4 +
+ lib/eal/common/eal_common_thread.c            |  15 +
+ lib/eal/common/eal_common_timer.c             |   5 +
+ lib/eal/common/eal_common_trace.c             |  16 +
+ lib/eal/common/eal_common_trace_ctf.c         |   2 +
+ lib/eal/common/eal_common_trace_points.c      |  19 +
+ lib/eal/common/eal_common_trace_utils.c       |   2 +
+ lib/eal/common/eal_common_uuid.c              |   5 +
+ lib/eal/common/eal_export.h                   |  79 +++
+ lib/eal/common/rte_bitset.c                   |   2 +
+ lib/eal/common/rte_keepalive.c                |   7 +
+ lib/eal/common/rte_malloc.c                   |  23 +
+ lib/eal/common/rte_random.c                   |   5 +
+ lib/eal/common/rte_reciprocal.c               |   3 +
+ lib/eal/common/rte_service.c                  |  32 +
+ lib/eal/common/rte_version.c                  |   8 +
+ lib/eal/freebsd/eal.c                         |  23 +
+ lib/eal/freebsd/eal_alarm.c                   |   3 +
+ lib/eal/freebsd/eal_dev.c                     |   5 +
+ lib/eal/freebsd/eal_interrupts.c              |  20 +
+ lib/eal/freebsd/eal_memory.c                  |   4 +
+ lib/eal/freebsd/eal_thread.c                  |   3 +
+ lib/eal/freebsd/eal_timer.c                   |   2 +
+ lib/eal/include/rte_function_versioning.h     |  99 ---
+ lib/eal/linux/eal.c                           |   8 +
+ lib/eal/linux/eal_alarm.c                     |   3 +
+ lib/eal/linux/eal_dev.c                       |   5 +
+ lib/eal/linux/eal_interrupts.c                |  20 +
+ lib/eal/linux/eal_memory.c                    |   4 +
+ lib/eal/linux/eal_thread.c                    |   3 +
+ lib/eal/linux/eal_timer.c                     |   5 +
+ lib/eal/linux/eal_vfio.c                      |  17 +
+ lib/eal/loongarch/rte_cpuflags.c              |   4 +
+ lib/eal/loongarch/rte_hypervisor.c            |   2 +
+ lib/eal/loongarch/rte_power_intrinsics.c      |   5 +
+ lib/eal/ppc/rte_cpuflags.c                    |   4 +
+ lib/eal/ppc/rte_hypervisor.c                  |   2 +
+ lib/eal/ppc/rte_power_intrinsics.c            |   5 +
+ lib/eal/riscv/rte_cpuflags.c                  |   4 +
+ lib/eal/riscv/rte_hypervisor.c                |   2 +
+ lib/eal/riscv/rte_power_intrinsics.c          |   5 +
+ lib/eal/unix/eal_debug.c                      |   3 +
+ lib/eal/unix/eal_filesystem.c                 |   2 +
+ lib/eal/unix/eal_firmware.c                   |   2 +
+ lib/eal/unix/eal_unix_memory.c                |   5 +
+ lib/eal/unix/eal_unix_timer.c                 |   2 +
+ lib/eal/unix/rte_thread.c                     |  14 +
+ lib/eal/version.map                           | 451 --------------
+ lib/eal/windows/eal.c                         |  12 +
+ lib/eal/windows/eal_alarm.c                   |   3 +
+ lib/eal/windows/eal_debug.c                   |   2 +
+ lib/eal/windows/eal_dev.c                     |   5 +
+ lib/eal/windows/eal_interrupts.c              |  20 +
+ lib/eal/windows/eal_memory.c                  |   8 +
+ lib/eal/windows/eal_mp.c                      |   7 +
+ lib/eal/windows/eal_thread.c                  |   2 +
+ lib/eal/windows/eal_timer.c                   |   2 +
+ lib/eal/windows/rte_thread.c                  |  15 +
+ lib/eal/x86/rte_cpuflags.c                    |   4 +
+ lib/eal/x86/rte_hypervisor.c                  |   2 +
+ lib/eal/x86/rte_power_intrinsics.c            |   5 +
+ lib/eal/x86/rte_spinlock.c                    |   2 +
+ lib/efd/rte_efd.c                             |   8 +
+ lib/efd/version.map                           |  13 -
+ lib/ethdev/ethdev_driver.c                    |  25 +
+ lib/ethdev/ethdev_linux_ethtool.c             |   4 +
+ lib/ethdev/ethdev_private.c                   |   3 +
+ lib/ethdev/ethdev_trace_points.c              |   7 +
+ lib/ethdev/rte_ethdev.c                       | 169 +++++
+ lib/ethdev/rte_ethdev_cman.c                  |   5 +
+ lib/ethdev/rte_flow.c                         |  65 ++
+ lib/ethdev/rte_mtr.c                          |  22 +
+ lib/ethdev/rte_tm.c                           |  32 +
+ lib/ethdev/version.map                        | 378 ------------
+ lib/eventdev/eventdev_private.c               |   3 +
+ lib/eventdev/eventdev_trace_points.c          |  12 +
+ lib/eventdev/rte_event_crypto_adapter.c       |  16 +
+ lib/eventdev/rte_event_dma_adapter.c          |  16 +
+ lib/eventdev/rte_event_eth_rx_adapter.c       |  24 +
+ lib/eventdev/rte_event_eth_tx_adapter.c       |  18 +
+ lib/eventdev/rte_event_ring.c                 |   5 +
+ lib/eventdev/rte_event_timer_adapter.c        |  12 +
+ lib/eventdev/rte_eventdev.c                   |  47 ++
+ lib/eventdev/version.map                      | 179 ------
+ lib/fib/rte_fib.c                             |  11 +
+ lib/fib/rte_fib6.c                            |  10 +
+ lib/fib/version.map                           |  31 -
+ lib/gpudev/gpudev.c                           |  33 +
+ lib/gpudev/version.map                        |  44 --
+ lib/graph/graph.c                             |  17 +
+ lib/graph/graph_debug.c                       |   3 +
+ lib/graph/graph_stats.c                       |   5 +
+ lib/graph/node.c                              |  12 +
+ lib/graph/rte_graph_model_mcore_dispatch.c    |   4 +
+ lib/graph/rte_graph_worker.c                  |   4 +
+ lib/graph/version.map                         |  61 --
+ lib/gro/rte_gro.c                             |   7 +
+ lib/gro/version.map                           |  12 -
+ lib/gso/rte_gso.c                             |   2 +
+ lib/gso/version.map                           |   7 -
+ lib/hash/rte_cuckoo_hash.c                    |  28 +
+ lib/hash/rte_fbk_hash.c                       |   4 +
+ lib/hash/rte_hash_crc.c                       |   3 +
+ lib/hash/rte_thash.c                          |  13 +
+ lib/hash/rte_thash_gf2_poly_math.c            |   2 +
+ lib/hash/rte_thash_gfni.c                     |   3 +
+ lib/hash/version.map                          |  66 --
+ lib/ip_frag/rte_ip_frag_common.c              |   6 +
+ lib/ip_frag/rte_ipv4_fragmentation.c          |   3 +
+ lib/ip_frag/rte_ipv4_reassembly.c             |   2 +
+ lib/ip_frag/rte_ipv6_fragmentation.c          |   2 +
+ lib/ip_frag/rte_ipv6_reassembly.c             |   2 +
+ lib/ip_frag/version.map                       |  16 -
+ lib/ipsec/ipsec_sad.c                         |   7 +
+ lib/ipsec/ipsec_telemetry.c                   |   3 +
+ lib/ipsec/sa.c                                |   5 +
+ lib/ipsec/ses.c                               |   2 +
+ lib/ipsec/version.map                         |  23 -
+ lib/jobstats/rte_jobstats.c                   |  15 +
+ lib/jobstats/version.map                      |  20 -
+ lib/kvargs/rte_kvargs.c                       |   9 +
+ lib/kvargs/version.map                        |  14 -
+ lib/latencystats/rte_latencystats.c           |   6 +
+ lib/latencystats/version.map                  |  11 -
+ lib/log/log.c                                 |  23 +
+ lib/log/log_color.c                           |   2 +
+ lib/log/log_internal.h                        |   3 -
+ lib/log/log_syslog.c                          |   2 +
+ lib/log/log_timestamp.c                       |   2 +
+ lib/log/version.map                           |  37 --
+ lib/lpm/rte_lpm.c                             |   9 +
+ lib/lpm/rte_lpm6.c                            |  11 +
+ lib/lpm/version.map                           |  24 -
+ lib/mbuf/rte_mbuf.c                           |  18 +
+ lib/mbuf/rte_mbuf_dyn.c                       |  10 +
+ lib/mbuf/rte_mbuf_pool_ops.c                  |   6 +
+ lib/mbuf/rte_mbuf_ptype.c                     |   9 +
+ lib/mbuf/version.map                          |  45 --
+ lib/member/rte_member.c                       |  14 +
+ lib/member/version.map                        |  19 -
+ lib/mempool/mempool_trace_points.c            |  11 +
+ lib/mempool/rte_mempool.c                     |  28 +
+ lib/mempool/rte_mempool_ops.c                 |   5 +
+ lib/mempool/rte_mempool_ops_default.c         |   5 +
+ lib/mempool/version.map                       |  65 --
+ lib/meson.build                               |  69 +--
+ lib/meter/rte_meter.c                         |   7 +
+ lib/meter/version.map                         |  12 -
+ lib/metrics/rte_metrics.c                     |   9 +
+ lib/metrics/rte_metrics_telemetry.c           |  12 +
+ lib/metrics/version.map                       |  26 -
+ lib/mldev/mldev_utils.c                       |   3 +
+ lib/mldev/mldev_utils_neon.c                  |  20 +
+ lib/mldev/mldev_utils_neon_bfloat16.c         |   4 +
+ lib/mldev/mldev_utils_scalar.c                |  20 +
+ lib/mldev/mldev_utils_scalar_bfloat16.c       |   4 +
+ lib/mldev/rte_mldev.c                         |  38 ++
+ lib/mldev/rte_mldev_pmd.c                     |   3 +
+ lib/mldev/version.map                         |  74 ---
+ lib/net/net_crc.h                             |  15 -
+ lib/net/rte_arp.c                             |   2 +
+ lib/net/rte_ether.c                           |   4 +
+ lib/net/rte_net.c                             |   3 +
+ lib/net/rte_net_crc.c                         |  31 +-
+ lib/net/version.map                           |  23 -
+ lib/node/ethdev_ctrl.c                        |   3 +
+ lib/node/ip4_lookup.c                         |   2 +
+ lib/node/ip4_reassembly.c                     |   2 +
+ lib/node/ip4_rewrite.c                        |   2 +
+ lib/node/ip6_lookup.c                         |   2 +
+ lib/node/ip6_rewrite.c                        |   2 +
+ lib/node/udp4_input.c                         |   3 +
+ lib/node/version.map                          |  25 -
+ lib/pcapng/rte_pcapng.c                       |   8 +
+ lib/pcapng/version.map                        |  13 -
+ lib/pci/rte_pci.c                             |   4 +
+ lib/pci/version.map                           |   9 -
+ lib/pdcp/rte_pdcp.c                           |   6 +
+ lib/pdcp/version.map                          |  16 -
+ lib/pdump/rte_pdump.c                         |  10 +
+ lib/pdump/version.map                         |  15 -
+ lib/pipeline/rte_pipeline.c                   |  24 +
+ lib/pipeline/rte_port_in_action.c             |   9 +
+ lib/pipeline/rte_swx_ctl.c                    |  18 +
+ lib/pipeline/rte_swx_ipsec.c                  |   8 +
+ lib/pipeline/rte_swx_pipeline.c               |  74 +++
+ lib/pipeline/rte_table_action.c               |  17 +
+ lib/pipeline/version.map                      | 172 ------
+ lib/port/rte_port_ethdev.c                    |   4 +
+ lib/port/rte_port_eventdev.c                  |   4 +
+ lib/port/rte_port_fd.c                        |   4 +
+ lib/port/rte_port_frag.c                      |   3 +
+ lib/port/rte_port_ras.c                       |   3 +
+ lib/port/rte_port_ring.c                      |   7 +
+ lib/port/rte_port_sched.c                     |   3 +
+ lib/port/rte_port_source_sink.c               |   3 +
+ lib/port/rte_port_sym_crypto.c                |   4 +
+ lib/port/rte_swx_port_ethdev.c                |   3 +
+ lib/port/rte_swx_port_fd.c                    |   3 +
+ lib/port/rte_swx_port_ring.c                  |   3 +
+ lib/port/rte_swx_port_source_sink.c           |   4 +
+ lib/port/version.map                          |  50 --
+ lib/power/power_common.c                      |   9 +
+ lib/power/rte_power_cpufreq.c                 |  19 +
+ lib/power/rte_power_pmd_mgmt.c                |  11 +
+ lib/power/rte_power_qos.c                     |   3 +
+ lib/power/rte_power_uncore.c                  |  15 +
+ lib/power/version.map                         |  71 ---
+ lib/rawdev/rte_rawdev.c                       |  31 +
+ lib/rawdev/version.map                        |  36 --
+ lib/rcu/rte_rcu_qsbr.c                        |  12 +
+ lib/rcu/version.map                           |  17 -
+ lib/regexdev/rte_regexdev.c                   |  27 +
+ lib/regexdev/version.map                      |  40 --
+ lib/reorder/rte_reorder.c                     |  12 +
+ lib/reorder/version.map                       |  27 -
+ lib/rib/rte_rib.c                             |  15 +
+ lib/rib/rte_rib6.c                            |  15 +
+ lib/rib/version.map                           |  34 --
+ lib/ring/rte_ring.c                           |  12 +
+ lib/ring/rte_soring.c                         |   4 +
+ lib/ring/soring.c                             |  18 +
+ lib/ring/version.map                          |  42 --
+ lib/sched/rte_approx.c                        |   2 +
+ lib/sched/rte_pie.c                           |   3 +
+ lib/sched/rte_red.c                           |   7 +
+ lib/sched/rte_sched.c                         |  16 +
+ lib/sched/version.map                         |  30 -
+ lib/security/rte_security.c                   |  21 +
+ lib/security/version.map                      |  37 --
+ lib/stack/rte_stack.c                         |   4 +
+ lib/stack/version.map                         |   9 -
+ lib/table/rte_swx_table_em.c                  |   3 +
+ lib/table/rte_swx_table_learner.c             |  11 +
+ lib/table/rte_swx_table_selector.c            |   7 +
+ lib/table/rte_swx_table_wm.c                  |   2 +
+ lib/table/rte_table_acl.c                     |   2 +
+ lib/table/rte_table_array.c                   |   2 +
+ lib/table/rte_table_hash_cuckoo.c             |   2 +
+ lib/table/rte_table_hash_ext.c                |   2 +
+ lib/table/rte_table_hash_key16.c              |   3 +
+ lib/table/rte_table_hash_key32.c              |   3 +
+ lib/table/rte_table_hash_key8.c               |   3 +
+ lib/table/rte_table_hash_lru.c                |   2 +
+ lib/table/rte_table_lpm.c                     |   2 +
+ lib/table/rte_table_lpm_ipv6.c                |   2 +
+ lib/table/rte_table_stub.c                    |   2 +
+ lib/table/version.map                         |  53 --
+ lib/telemetry/telemetry.c                     |   4 +
+ lib/telemetry/telemetry_data.c                |  18 +
+ lib/telemetry/telemetry_legacy.c              |   2 +
+ lib/telemetry/version.map                     |  40 --
+ lib/timer/rte_timer.c                         |  19 +
+ lib/timer/version.map                         |  24 -
+ lib/vhost/socket.c                            |  17 +
+ lib/vhost/vdpa.c                              |  12 +
+ lib/vhost/version.map                         | 111 ----
+ lib/vhost/vhost.c                             |  42 ++
+ lib/vhost/vhost_crypto.c                      |   7 +
+ lib/vhost/vhost_user.c                        |   3 +
+ lib/vhost/virtio_net.c                        |   8 +
+ 536 files changed, 5181 insertions(+), 6574 deletions(-)
+ create mode 100755 buildtools/gen-version-map.py
+ delete mode 100644 buildtools/map_to_win.py
+ create mode 100755 devtools/check-symbol-change.py
+ delete mode 100755 devtools/check-symbol-change.sh
+ delete mode 100755 devtools/check-symbol-maps.sh
+ delete mode 100755 devtools/update-abi.sh
+ delete mode 100755 devtools/update_version_map_abi.py
+ delete mode 100644 drivers/baseband/acc/version.map
+ delete mode 100644 drivers/baseband/fpga_5gnr_fec/version.map
+ delete mode 100644 drivers/baseband/fpga_lte_fec/version.map
+ delete mode 100644 drivers/bus/auxiliary/version.map
+ delete mode 100644 drivers/bus/cdx/version.map
+ create mode 100644 drivers/bus/dpaa/dpaa_bus_base_symbols.c
+ delete mode 100644 drivers/bus/dpaa/version.map
+ delete mode 100644 drivers/bus/fslmc/version.map
+ delete mode 100644 drivers/bus/ifpga/version.map
+ delete mode 100644 drivers/bus/pci/version.map
+ delete mode 100644 drivers/bus/platform/version.map
+ delete mode 100644 drivers/bus/uacce/version.map
+ delete mode 100644 drivers/bus/vdev/version.map
+ delete mode 100644 drivers/bus/vmbus/version.map
+ create mode 100644 drivers/common/cnxk/roc_platform_base_symbols.c
+ delete mode 100644 drivers/common/cnxk/version.map
+ delete mode 100644 drivers/common/cpt/version.map
+ delete mode 100644 drivers/common/dpaax/version.map
+ delete mode 100644 drivers/common/ionic/version.map
+ delete mode 100644 drivers/common/mlx5/version.map
+ delete mode 100644 drivers/common/mvep/version.map
+ delete mode 100644 drivers/common/nfp/version.map
+ delete mode 100644 drivers/common/nitrox/version.map
+ delete mode 100644 drivers/common/octeontx/version.map
+ create mode 100644 drivers/common/sfc_efx/sfc_base_symbols.c
+ delete mode 100644 drivers/common/sfc_efx/version.map
+ delete mode 100644 drivers/crypto/cnxk/version.map
+ delete mode 100644 drivers/crypto/dpaa2_sec/version.map
+ delete mode 100644 drivers/crypto/dpaa_sec/version.map
+ delete mode 100644 drivers/crypto/octeontx/version.map
+ delete mode 100644 drivers/crypto/scheduler/version.map
+ delete mode 100644 drivers/dma/cnxk/version.map
+ delete mode 100644 drivers/event/cnxk/version.map
+ delete mode 100644 drivers/event/dlb2/version.map
+ delete mode 100644 drivers/mempool/cnxk/version.map
+ delete mode 100644 drivers/mempool/dpaa/version.map
+ delete mode 100644 drivers/mempool/dpaa2/version.map
+ delete mode 100644 drivers/net/atlantic/version.map
+ delete mode 100644 drivers/net/bnxt/version.map
+ delete mode 100644 drivers/net/bonding/version.map
+ delete mode 100644 drivers/net/cnxk/version.map
+ delete mode 100644 drivers/net/dpaa/version.map
+ delete mode 100644 drivers/net/dpaa2/version.map
+ delete mode 100644 drivers/net/intel/i40e/version.map
+ create mode 100644 drivers/net/intel/iavf/iavf_base_symbols.c
+ delete mode 100644 drivers/net/intel/iavf/version.map
+ delete mode 100644 drivers/net/intel/ice/version.map
+ delete mode 100644 drivers/net/intel/idpf/version.map
+ delete mode 100644 drivers/net/intel/ipn3ke/version.map
+ delete mode 100644 drivers/net/intel/ixgbe/version.map
+ delete mode 100644 drivers/net/mlx5/version.map
+ delete mode 100644 drivers/net/octeontx/version.map
+ delete mode 100644 drivers/net/ring/version.map
+ delete mode 100644 drivers/net/softnic/version.map
+ delete mode 100644 drivers/net/vhost/version.map
+ delete mode 100644 drivers/power/kvm_vm/version.map
+ delete mode 100644 drivers/raw/cnxk_rvu_lf/version.map
+ delete mode 100644 drivers/raw/ifpga/version.map
+ delete mode 100644 drivers/version.map
+ delete mode 100644 lib/acl/version.map
+ delete mode 100644 lib/argparse/version.map
+ delete mode 100644 lib/bbdev/version.map
+ delete mode 100644 lib/bitratestats/version.map
+ delete mode 100644 lib/bpf/version.map
+ delete mode 100644 lib/cfgfile/version.map
+ delete mode 100644 lib/cmdline/version.map
+ delete mode 100644 lib/compressdev/version.map
+ delete mode 100644 lib/cryptodev/version.map
+ delete mode 100644 lib/dispatcher/version.map
+ delete mode 100644 lib/distributor/version.map
+ delete mode 100644 lib/dmadev/version.map
+ create mode 100644 lib/eal/common/eal_export.h
+ delete mode 100644 lib/eal/include/rte_function_versioning.h
+ delete mode 100644 lib/eal/version.map
+ delete mode 100644 lib/efd/version.map
+ delete mode 100644 lib/ethdev/version.map
+ delete mode 100644 lib/eventdev/version.map
+ delete mode 100644 lib/fib/version.map
+ delete mode 100644 lib/gpudev/version.map
+ delete mode 100644 lib/graph/version.map
+ delete mode 100644 lib/gro/version.map
+ delete mode 100644 lib/gso/version.map
+ delete mode 100644 lib/hash/version.map
+ delete mode 100644 lib/ip_frag/version.map
+ delete mode 100644 lib/ipsec/version.map
+ delete mode 100644 lib/jobstats/version.map
+ delete mode 100644 lib/kvargs/version.map
+ delete mode 100644 lib/latencystats/version.map
+ delete mode 100644 lib/log/version.map
+ delete mode 100644 lib/lpm/version.map
+ delete mode 100644 lib/mbuf/version.map
+ delete mode 100644 lib/member/version.map
+ delete mode 100644 lib/mempool/version.map
+ delete mode 100644 lib/meter/version.map
+ delete mode 100644 lib/metrics/version.map
+ delete mode 100644 lib/mldev/version.map
+ delete mode 100644 lib/net/version.map
+ delete mode 100644 lib/node/version.map
+ delete mode 100644 lib/pcapng/version.map
+ delete mode 100644 lib/pci/version.map
+ delete mode 100644 lib/pdcp/version.map
+ delete mode 100644 lib/pdump/version.map
+ delete mode 100644 lib/pipeline/version.map
+ delete mode 100644 lib/port/version.map
+ delete mode 100644 lib/power/version.map
+ delete mode 100644 lib/rawdev/version.map
+ delete mode 100644 lib/rcu/version.map
+ delete mode 100644 lib/regexdev/version.map
+ delete mode 100644 lib/reorder/version.map
+ delete mode 100644 lib/rib/version.map
+ delete mode 100644 lib/ring/version.map
+ delete mode 100644 lib/sched/version.map
+ delete mode 100644 lib/security/version.map
+ delete mode 100644 lib/stack/version.map
+ delete mode 100644 lib/table/version.map
+ delete mode 100644 lib/telemetry/version.map
+ delete mode 100644 lib/timer/version.map
+ delete mode 100644 lib/vhost/version.map
+
 -- 
 2.49.0
 
