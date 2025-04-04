@@ -2,34 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51624C36010
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Apr 2025 07:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6222EC36010
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Apr 2025 07:16:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88A7140E35;
-	Fri,  4 Apr 2025 09:16:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9776440E3B;
+	Fri,  4 Apr 2025 09:16:49 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 07ADD40DD7
- for <dev@dpdk.org>; Fri,  4 Apr 2025 09:16:05 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru A327341
+ by mails.dpdk.org (Postfix) with ESMTP id A8E5D40E35
+ for <dev@dpdk.org>; Fri,  4 Apr 2025 09:16:48 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 98AEE4A
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1743750963;
- bh=hyta9A+rc7SOOo55qkBao0b8Ngzv0IsKZEzElI4h+Wg=;
+ s=default; t=1743751007;
+ bh=EdsKcVZaiN/tpCxAxWR8bHeQKClijl2Kxvj5ZWZ4fQg=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Vy17wRZrY5Qa11GD7AsbnmhXeMPm0LSb7rN7Kdh59+GcBxVfyZE3mNTYjfa6Okbj0
- cL+xPvGGhe492YRPv1nN+bxfET2WS5AyjlvL6NeYVVS19sAWUb6jRZoZFpJAllRIsg
- L2pfZTBm486jDkyL0KyK3zoDF8kxekwd1f54nVBk=
+ b=HN/6oa3/G5bFHq1FTaGfqke+aIVlQJYvgn13c0qIbMkZhkKTAGO1Lay8Iig0oyrh7
+ wY9vzd8j7SrrgRpJ7NPS6AerTfWapqLTwW/+ioyukeUiOyIb6+FuJWvBaFH1mFSF+L
+ MwKBP0+llx4BSxWUZwV7Lu3Njvuyb+GfkeBOx6Zc=
 Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id A327341;
- Fri,  4 Apr 2025 10:16:03 +0300 (MSK)
-Message-ID: <4bf967f2-c652-4881-ab3b-384e7d42013d@oktetlabs.ru>
-Date: Fri, 4 Apr 2025 10:16:02 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 98AEE4A;
+ Fri,  4 Apr 2025 10:16:47 +0300 (MSK)
+Message-ID: <4905258b-783d-4f6c-adca-74e156592cd3@oktetlabs.ru>
+Date: Fri, 4 Apr 2025 10:16:47 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v7 5/8] build: mark exported symbols
-To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+To: Hemant Agrawal <hemant.agrawal@oss.nxp.com>,
+ David Marchand <david.marchand@redhat.com>, dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  andremue@linux.microsoft.com, Nicolas Chautru <nicolas.chautru@intel.com>,
  Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
@@ -99,10 +100,11 @@ Cc: thomas@monjalon.net, bruce.richardson@intel.com,
 References: <20250305212349.2036410-1-david.marchand@redhat.com>
  <20250403165845.1315380-1-david.marchand@redhat.com>
  <20250403165845.1315380-6-david.marchand@redhat.com>
-From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+ <ef319345-7e67-c539-4b03-39793caf311e@oss.nxp.com>
 Content-Language: en-US
+From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 Organization: OKTET Labs
-In-Reply-To: <20250403165845.1315380-6-david.marchand@redhat.com>
+In-Reply-To: <ef319345-7e67-c539-4b03-39793caf311e@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -118,14 +120,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/3/25 19:58, David Marchand wrote:
-> Annotate symbols with newly introduced export macros.
+On 4/4/25 08:48, Hemant Agrawal wrote:
+> for DPAA/FSLMC changes
 > 
-> For code not compiled via drivers/meson.build (think base drivers code),
-> the exported symbols are added in some new XX_base_symbols.c file added
-> to the sources variable so they get caught by drivers/meson.build.
+> Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 > 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+
 
 For common/sfc_efx:
 Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
