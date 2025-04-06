@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A95BC36002
-	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Apr 2025 16:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B1FC36002
+	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Apr 2025 16:09:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BECE140270;
-	Sun,  6 Apr 2025 18:08:59 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 435444026A
- for <dev@dpdk.org>; Sun,  6 Apr 2025 18:08:57 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-7376dd56f60so2497600b3a.3
- for <dev@dpdk.org>; Sun, 06 Apr 2025 09:08:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E426F40270;
+	Sun,  6 Apr 2025 18:09:44 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 4522B4026A
+ for <dev@dpdk.org>; Sun,  6 Apr 2025 18:09:42 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-af55b7d56a1so2430630a12.2
+ for <dev@dpdk.org>; Sun, 06 Apr 2025 09:09:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743955736;
- x=1744560536; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743955781;
+ x=1744560581; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5iNrjp+aFadP6HXHjq4mJDqsEj5Hg29WIgoZirAezKE=;
- b=xoDHKtjjIBuzWZaJ4WLzlF5IqL8u7D5+JpcvAP8pfVt/VepIIvlJirQ1F2sfMFTag9
- ssJQlnHS83vdegIPmo85o7ECqHk+Syc+Gc/Q84/OroPF+majvIyiDTdunWwqSE5NR2pT
- cXexJZwoV7X+xjrl5THs4ljgiNuxnzR1ti7IVHmIA4TYH5W4Imn8mc9+Imn+0gkOg/RG
- 9O0nNfspzhmLYD/z61v+p5cDX00NVTla9O4eHCG4V/TBnglY7t5gzNiayoxniu9RiI0d
- t0BrmR4FbKbD+dzwCNkKh+Ft/NcYa278hiYY98Z0cwYgJofjRNeuHVFKU+bxjlzx4YzQ
- TbFA==
+ bh=7bEbr8evGMM1goiCjPVue5P2UgseMgFHTSuQtrVq8/M=;
+ b=a61YaP2mW7h/4JduAoLNwiWwrUmXVRC/rczK2axz6gbgX9MB2PznLN/sEAJFbQ4tJG
+ VrVTPzT4wkLcgQ2jkL4if3GAepImFF/mCzgyWHz4o7BYkj+sgxIjhQOAruzfsS4UuXkD
+ MzNrHPMfAq0sWhAlOfmCzMo9hSsuoqfVZpEJsFYBYs0zcOxZoPz8jHlPOi+JwmRvzLtf
+ ifosIH8K/oGJ07wQIRp+CvBmRrDHGnh06GmdSwSJdg/jJ6w99s6/qCv76Wn4uwtOagdt
+ Bj3lkfGEYZgufl20CeR4GE1oHD/2tlKumrOGC8vbhdxNWzQaK8jZLWBLRWjwYMAZEltS
+ vHuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743955736; x=1744560536;
+ d=1e100.net; s=20230601; t=1743955781; x=1744560581;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5iNrjp+aFadP6HXHjq4mJDqsEj5Hg29WIgoZirAezKE=;
- b=tBQT2HzwPsYpCJ7bZ9iYMSaFSMgNlwAOk8h0AA1tyjddzh5sqWlCZWj6v5SJZZ/cTb
- aYEPv5F1gBn5zhwjEs7x3pvRUZqZavvHMxdKn9AWHPHsQKPlO1qJAG2djUGeeH3zCJbm
- iQ1xLZnC/XmHREpeWv5F48EWOJ4SKPlzP+ZcdF1mpR4x1d//ZKTK6qawsMHFTSV7FpCf
- oRqyDTv9gVZjmc5KKj/nqREFmAHk94oeQUXPQzj93rao7FlXvGdGGdDNWCMVCc+0WZph
- 20TettLV165o6b8f1KMzfWdTuHtjhGXSSFTS47h27VzgCnMJrntgpbig2L5Y/c66Z7Ug
- kC4Q==
+ bh=7bEbr8evGMM1goiCjPVue5P2UgseMgFHTSuQtrVq8/M=;
+ b=qNH7O24UAO7OO5uJDa2PT9f6851iHMBPGkSLP2+gY3SoETrLlMjEcPy9DJ/qPW2oQO
+ TlZ5LDshtSjY+oDYjay0dBQqzoZNh7xQhPBMmf5/RsFJ40VsCdPyBBhVvteFjWQsPbbd
+ pVLUjl1cr1dw6ngH/QulxaY0q5ePIJhP8H+mia+QoNa8iRXJTxVnyiDobVwKgKPoHFel
+ LGNhzTaPX+WY0Ilr8VW8A7B+UcbppXSGU6qm3K8DFzdsJFg2wrkAn/KvtTTNnLECdjvh
+ QM1oUJpx5/9l89vuvF0NEd09E/5HQlEQppUIsDbCgs5lKQex3u09Flp1h3UnvrCkZ5hB
+ To3A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWuRBBw7KSIHPzomgUqMryxSd3HB/flpyX/ocmmeoUBv8PO4SCwFWKkpV8OivCd32PJQjg=@dpdk.org
-X-Gm-Message-State: AOJu0Ywoqk+E9QszeyZIleUTaVnS1jpLsanfJAL412BUbJC41L7tgBgp
- HosTjX4fV8h9DSYibFQI31UgvIyV/mtbi0go9OVIyh8Pw1H72ENfbHvNbD5p1Oo=
-X-Gm-Gg: ASbGncuMaYCXaAuI4DoZAkbrFLZ3F6kbEBjNbQ8kXAaqXDF4xO8pMejS71xIQHUjUH0
- 7yfyBf0U/LiotewPsy197JHfTBHBzackWRtZtfDJoUplmcHFn09gQ2hWtOZHONl2FFRDy6opDMu
- 7n/+qeRFn88yhch1MH0PR4PvTSgLKHMUDVpVUCBsXJDKxO2TRLqTdvQ74Cd6vV36oj8ebZs51zZ
- aTS+hGmnmyG1rMXStSnGCn9U0qqsxVJlTN6JkIz5J8jfir7OH9noK8F1uWfuTRi/cV+3xgLo2gE
- Qk0wvXeZJE36XsNw7F4wLIxZRa5yYgwUDWlT3L68K5lfKRChZtsOFFCigBlSfLPgZafQoh6CS49
- SGzJhAoWevDZCTR/IL5Ow
-X-Google-Smtp-Source: AGHT+IFM1xsNWwS00k/g2Pe0Tu0zwoRk7tzSm+J23PV8l4YcDXRI/4nA5vk9ZQ6hm2+dGVR4Vl/vpw==
-X-Received: by 2002:a05:6a20:9c8a:b0:1f5:6e00:14db with SMTP id
- adf61e73a8af0-20107efeef3mr14788430637.14.1743955736125; 
- Sun, 06 Apr 2025 09:08:56 -0700 (PDT)
+ AJvYcCXQZXhirs2Hs8X20d9rEcgJqgm/wbsZUC+8+CXuakopVGmTHeiHYXD6Z5ru85dzJ2ElxvA=@dpdk.org
+X-Gm-Message-State: AOJu0Yzax6ENPEN9BzdlyeAqhw6oc0ya/0DWNw5nNGYSoPtJZMEr1CtO
+ fvmN+67ko4rwpzjOZ7NNgK176eUWw9fWMwVfPXegScnwKP96D/hz8g6hHNyQUOU=
+X-Gm-Gg: ASbGncu7Qm0P5d4V8KqUkr0ofYNWXCMupZksPsaV/q5ESapGXkXV14uPdG7jMwO6YZz
+ uHgdLq9TFXFj18caZkuQyY8ohpz3e3ms5Egb8NO55mM3GqUNEctVYXf9cGR2jyIP8nTtTeLZe7y
+ cHWnhylW1p3y1ptMd/48h5JPVAcOENzddYT2KJodwtKHFpzD5p24ykOEmjPZRsEL5AIrOSfbfaI
+ zdMgjZnMdnWh/bnUuo83Iua6AJrNaBd1g0xodYNkImfDO4z2zC9xVv820oP/G5sqRIbApO4DbR/
+ aqlCqxU/tu3k/gnUhqc5jaL+lfBEJcyRimV0NHPwoQyzAorK16myGvJvOG2xT/UIRdQfKDzCAoU
+ exRufLYrWi9mUK2l5GJm/O4HWlMFoJzc=
+X-Google-Smtp-Source: AGHT+IFDtQxwbYXbnTdsty9V72ibRHX4UE27m8clf9K+dUgf8czjfmXn6JTSbsjHYO90GoWvsABY6A==
+X-Received: by 2002:a17:90b:4d06:b0:305:2d68:8d91 with SMTP id
+ 98e67ed59e1d1-306a4b70ab9mr13732895a91.28.1743955781506; 
+ Sun, 06 Apr 2025 09:09:41 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-af9bc32fb83sm4843572a12.31.2025.04.06.09.08.55
+ 41be03b00d2f7-aff7d3c2a11sm95028a12.26.2025.04.06.09.09.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 06 Apr 2025 09:08:55 -0700 (PDT)
-Date: Sun, 6 Apr 2025 09:08:53 -0700
+ Sun, 06 Apr 2025 09:09:41 -0700 (PDT)
+Date: Sun, 6 Apr 2025 09:09:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: longli@linuxonhyperv.com
-Cc: Wei Hu <weh@microsoft.com>, dev@dpdk.org, Long Li <longli@microsoft.com>
-Subject: Re: [Patch v3 6/6] bus/vmbus: set event for channel without
- monitoring support
-Message-ID: <20250406090853.78499346@hermes.local>
-In-Reply-To: <1743813338-28238-7-git-send-email-longli@linuxonhyperv.com>
+Cc: Wei Hu <weh@microsoft.com>, dev@dpdk.org, root
+ <root@longli-arm1-vm1.lxficwa3xisuzeoisceafmmd3f.cdmx.internal.cloudapp.net>
+Subject: Re: [Patch v3 0/6] Support VMBUS channels without monitoring enabled
+Message-ID: <20250406090939.12fd9bd1@hermes.local>
+In-Reply-To: <1743813338-28238-1-git-send-email-longli@linuxonhyperv.com>
 References: <1743813338-28238-1-git-send-email-longli@linuxonhyperv.com>
- <1743813338-28238-7-git-send-email-longli@linuxonhyperv.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,52 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  4 Apr 2025 17:35:38 -0700
+On Fri,  4 Apr 2025 17:35:32 -0700
 longli@linuxonhyperv.com wrote:
 
-> diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
-> index bccef168d3..81e8096190 100644
-> --- a/drivers/bus/vmbus/vmbus_channel.c
-> +++ b/drivers/bus/vmbus/vmbus_channel.c
-> @@ -24,6 +24,19 @@ vmbus_sync_set_bit(volatile RTE_ATOMIC(uint32_t) *addr, uint32_t mask)
->  	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst);
->  }
->  
-> +static inline void
-> +vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t relid)
-> +{
-> +	RTE_ATOMIC(uint32_t) *int_addr;
-> +	uint32_t int_mask;
-> +
-> +	int_addr = (RTE_ATOMIC(uint32_t)*) (dev->int_page + relid / 32);
-> +	int_mask = 1u << (relid % 32);
-> +	vmbus_sync_set_bit(int_addr, int_mask);
-> +
-> +	vmbus_uio_irq_control(dev, 1);
-> +}
-> +
-
-This part doesn't look right. RTE_ATOMIC() is just a macro to add the _Atomic attribute.
-
-Can it be simplified like this?
+> From: root <root@longli-arm1-vm1.lxficwa3xisuzeoisceafmmd3f.cdmx.internal.cloudapp.net>
+> 
+> Hyperv may expose VMBUS channels without monitoring enabled. In this case,
+> it programs almost all the data traffic to VF.
+> 
+> This patchset enabled vmbus/netvsc to use channels without monitoring
+> enabled.
+> 
+> This needs to change the APIs exposed by drivers/bus/vmbus. Becuase those
+> APIs are used only by NetVSC PMD and not feasible for use by a DPDK
+> application, all VMBUS APIs are set to deprecate in upcoming 25.11 release.
+> 
+> The notice for deprecation is accepted in the following patch:
+> https://patchwork.dpdk.org/project/dpdk/patch/1742242184-19600-1-git-send-email-longli@linuxonhyperv.com/
 
 
-static inline void
-vmbus_sync_set_bit(RTE_ATOMIC(uint32_t *) addr, uint32_t mask)
-{
-	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst);
-}
-
-static inline void
-vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t relid)
-{
-	RTE_ATOMIC(uint32_t *) int_addr;
-	uint32_t int_mask;
-
-	int_addr = dev->int_page + relid / 32;
-	int_mask = 1u << (relid % 32);
-	vmbus_sync_set_bit(int_addr, int_mask);
-
-	vmbus_uio_irq_control(dev, 1);
-}
-
+Marking these patches as deferred until 25.11. Send new version if you
+want before then.
