@@ -2,69 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C39C36010
-	for <dpdk-dev@archiver.kernel.org>; Sat,  5 Apr 2025 15:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A95BC36002
+	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Apr 2025 16:09:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCE3840144;
-	Sat,  5 Apr 2025 17:36:37 +0200 (CEST)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id E598A400EF
- for <dev@dpdk.org>; Sat,  5 Apr 2025 17:36:36 +0200 (CEST)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-736c062b1f5so2430271b3a.0
- for <dev@dpdk.org>; Sat, 05 Apr 2025 08:36:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BECE140270;
+	Sun,  6 Apr 2025 18:08:59 +0200 (CEST)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
+ [209.85.210.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 435444026A
+ for <dev@dpdk.org>; Sun,  6 Apr 2025 18:08:57 +0200 (CEST)
+Received: by mail-pf1-f170.google.com with SMTP id
+ d2e1a72fcca58-7376dd56f60so2497600b3a.3
+ for <dev@dpdk.org>; Sun, 06 Apr 2025 09:08:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743867396;
- x=1744472196; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=2L2cBxBSuFLXuyUQsyuJWxLJPiJxQ3ZIw51aVollc+s=;
- b=E9Y3DJo9Ya6MoskFdWGZdse46iqFXBY4Psb9sNz8SIRALH2a8Pnlancc6gxHLjHQ84
- q+93B2bo9e69/pGQDdpQtiuQ7qBu0uF7g9j8RzfIJOpzxv0BXhZWZ2O6c+/+2J6UNeWZ
- PFgK/C+IjN0ChdSY5TJRLzhu5UkzaxZcVoGNd9gUQW97Ib6p1aZ8/6IhNzS0V7neghuu
- B4sLfOwNkjUKr1xct9kx531USJ6R46zNuy00ozQtTSg8wDEhiYOy+MTVzakAGf79lAKp
- RMREh20+6fTURnhIxaz4kdFO/cbA8/0QCoNQ7Ls1FLJUUOq7EuyRcIvLSxDNjJXUkxNP
- Hd1Q==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1743955736;
+ x=1744560536; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5iNrjp+aFadP6HXHjq4mJDqsEj5Hg29WIgoZirAezKE=;
+ b=xoDHKtjjIBuzWZaJ4WLzlF5IqL8u7D5+JpcvAP8pfVt/VepIIvlJirQ1F2sfMFTag9
+ ssJQlnHS83vdegIPmo85o7ECqHk+Syc+Gc/Q84/OroPF+majvIyiDTdunWwqSE5NR2pT
+ cXexJZwoV7X+xjrl5THs4ljgiNuxnzR1ti7IVHmIA4TYH5W4Imn8mc9+Imn+0gkOg/RG
+ 9O0nNfspzhmLYD/z61v+p5cDX00NVTla9O4eHCG4V/TBnglY7t5gzNiayoxniu9RiI0d
+ t0BrmR4FbKbD+dzwCNkKh+Ft/NcYa278hiYY98Z0cwYgJofjRNeuHVFKU+bxjlzx4YzQ
+ TbFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743867396; x=1744472196;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=2L2cBxBSuFLXuyUQsyuJWxLJPiJxQ3ZIw51aVollc+s=;
- b=jwpuKR1+oqG6tl/j1xhxixT7tLEAE39CPr6Ycyxu9bPtOXYqbaDOFlC7YhxjdAaZb9
- sYWfhKTkvfHiShAjn5/J+LEgoqQjfdWo2BRVJn7P79Nh3Zfb7hYd+9m7XfMZuK8qpV/B
- tHBZtFjaDk+agUhdrOswdCsJyUY2e9O0DBpKN8qpOlKg/0UTocXvRjhMZKx7UotTdXFq
- 7l4ciCg6/634oDD+3bO/PvsA96qRfSSWc74vFLWa/5EqBNEsn3fvgg/A5Tz8E0+BPeDX
- Ivb/nSI1tKbWNgW1tbPNdGgx76PvBvbudqJ6EqByG4OcxESEQT9SUQuJ2+2XZmtW8ORY
- jo5g==
-X-Gm-Message-State: AOJu0YzF7zZP9ojtdoz6mP858mxaO9PrXLr+nB04MaUDYOrCTc9T9RH7
- ONpR7inS/BFY5zM9AfgzLnqj9nGQAvnWF+LK/584jIjQbj6n4rFZn+QiHCaSJi8a/SM/a77Gd9i
- v
-X-Gm-Gg: ASbGnctDACf0jiRwzvvrUQVCrfgu+1m2xFBUVTjfWOjdn7EdMs4oacQtbAFNGgpX8Ij
- w9Aud3/SI8fJJxccTWZP7WXYemeHqsVFEb5ImGhAmsuxO0EDjhrFfAaefXp93Y0+8RXpsjNf/fR
- XuJE2ErqhIH8a+PYTtS4ZLk/I/BUmoUo/Yk2jXJfNMKNkNcs9wtEJk+QgKPvapz5msbkpxBzBEE
- yIMHk5KTxIbjJxylrm2yDRtPnZln9xJ4DEizPi048v/RmfH9HVUcT45WSrYdbHv7JKbHs+cb3fY
- bhnGt6KbG0z5rfbjQD0cAuCM7Uk7oElsH0mpcIxhSYY/Nik2FP30GyQqYTgxl2f937IB6gUChkE
- jjyYXWpudo8ZYsINg84EZ
-X-Google-Smtp-Source: AGHT+IE9eUoWs8GO3Z/E5r7T2gMG/8spUILEap4VjqHo6s8FSvgYq0itqxmmqB5b9tTJnngvUhtLhw==
-X-Received: by 2002:a05:6a20:438e:b0:1f5:535c:82d6 with SMTP id
- adf61e73a8af0-201081b193emr11064157637.35.1743867395930; 
- Sat, 05 Apr 2025 08:36:35 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1743955736; x=1744560536;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=5iNrjp+aFadP6HXHjq4mJDqsEj5Hg29WIgoZirAezKE=;
+ b=tBQT2HzwPsYpCJ7bZ9iYMSaFSMgNlwAOk8h0AA1tyjddzh5sqWlCZWj6v5SJZZ/cTb
+ aYEPv5F1gBn5zhwjEs7x3pvRUZqZavvHMxdKn9AWHPHsQKPlO1qJAG2djUGeeH3zCJbm
+ iQ1xLZnC/XmHREpeWv5F48EWOJ4SKPlzP+ZcdF1mpR4x1d//ZKTK6qawsMHFTSV7FpCf
+ oRqyDTv9gVZjmc5KKj/nqREFmAHk94oeQUXPQzj93rao7FlXvGdGGdDNWCMVCc+0WZph
+ 20TettLV165o6b8f1KMzfWdTuHtjhGXSSFTS47h27VzgCnMJrntgpbig2L5Y/c66Z7Ug
+ kC4Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWuRBBw7KSIHPzomgUqMryxSd3HB/flpyX/ocmmeoUBv8PO4SCwFWKkpV8OivCd32PJQjg=@dpdk.org
+X-Gm-Message-State: AOJu0Ywoqk+E9QszeyZIleUTaVnS1jpLsanfJAL412BUbJC41L7tgBgp
+ HosTjX4fV8h9DSYibFQI31UgvIyV/mtbi0go9OVIyh8Pw1H72ENfbHvNbD5p1Oo=
+X-Gm-Gg: ASbGncuMaYCXaAuI4DoZAkbrFLZ3F6kbEBjNbQ8kXAaqXDF4xO8pMejS71xIQHUjUH0
+ 7yfyBf0U/LiotewPsy197JHfTBHBzackWRtZtfDJoUplmcHFn09gQ2hWtOZHONl2FFRDy6opDMu
+ 7n/+qeRFn88yhch1MH0PR4PvTSgLKHMUDVpVUCBsXJDKxO2TRLqTdvQ74Cd6vV36oj8ebZs51zZ
+ aTS+hGmnmyG1rMXStSnGCn9U0qqsxVJlTN6JkIz5J8jfir7OH9noK8F1uWfuTRi/cV+3xgLo2gE
+ Qk0wvXeZJE36XsNw7F4wLIxZRa5yYgwUDWlT3L68K5lfKRChZtsOFFCigBlSfLPgZafQoh6CS49
+ SGzJhAoWevDZCTR/IL5Ow
+X-Google-Smtp-Source: AGHT+IFM1xsNWwS00k/g2Pe0Tu0zwoRk7tzSm+J23PV8l4YcDXRI/4nA5vk9ZQ6hm2+dGVR4Vl/vpw==
+X-Received: by 2002:a05:6a20:9c8a:b0:1f5:6e00:14db with SMTP id
+ adf61e73a8af0-20107efeef3mr14788430637.14.1743955736125; 
+ Sun, 06 Apr 2025 09:08:56 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-739da0b2cccsm5357070b3a.121.2025.04.05.08.36.35
+ 41be03b00d2f7-af9bc32fb83sm4843572a12.31.2025.04.06.09.08.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 05 Apr 2025 08:36:35 -0700 (PDT)
+ Sun, 06 Apr 2025 09:08:55 -0700 (PDT)
+Date: Sun, 6 Apr 2025 09:08:53 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] net/pcap: fix indentation and numa node
-Date: Sat,  5 Apr 2025 08:36:23 -0700
-Message-ID: <20250405153623.200771-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
+To: longli@linuxonhyperv.com
+Cc: Wei Hu <weh@microsoft.com>, dev@dpdk.org, Long Li <longli@microsoft.com>
+Subject: Re: [Patch v3 6/6] bus/vmbus: set event for channel without
+ monitoring support
+Message-ID: <20250406090853.78499346@hermes.local>
+In-Reply-To: <1743813338-28238-7-git-send-email-longli@linuxonhyperv.com>
+References: <1743813338-28238-1-git-send-email-longli@linuxonhyperv.com>
+ <1743813338-28238-7-git-send-email-longli@linuxonhyperv.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,47 +84,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The process private data allocation was indented incorrectly
-in the source code, and had unnecessary cast. It is better
-that the data be allocated on same numa node as the device
-structure.
+On Fri,  4 Apr 2025 17:35:38 -0700
+longli@linuxonhyperv.com wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/pcap/pcap_ethdev.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+> diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
+> index bccef168d3..81e8096190 100644
+> --- a/drivers/bus/vmbus/vmbus_channel.c
+> +++ b/drivers/bus/vmbus/vmbus_channel.c
+> @@ -24,6 +24,19 @@ vmbus_sync_set_bit(volatile RTE_ATOMIC(uint32_t) *addr, uint32_t mask)
+>  	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst);
+>  }
+>  
+> +static inline void
+> +vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t relid)
+> +{
+> +	RTE_ATOMIC(uint32_t) *int_addr;
+> +	uint32_t int_mask;
+> +
+> +	int_addr = (RTE_ATOMIC(uint32_t)*) (dev->int_page + relid / 32);
+> +	int_mask = 1u << (relid % 32);
+> +	vmbus_sync_set_bit(int_addr, int_mask);
+> +
+> +	vmbus_uio_irq_control(dev, 1);
+> +}
+> +
 
-diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 728ef85d53..aefa74c7be 100644
---- a/drivers/net/pcap/pcap_ethdev.c
-+++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -1208,10 +1208,8 @@ pmd_init_internals(struct rte_vdev_device *vdev,
- 	PMD_LOG(INFO, "Creating pcap-backed ethdev on numa socket %d",
- 		numa_node);
- 
--	pp = (struct pmd_process_private *)
--		rte_zmalloc(NULL, sizeof(struct pmd_process_private),
--				RTE_CACHE_LINE_SIZE);
--
-+	pp = rte_zmalloc_socket(NULL, sizeof(struct pmd_process_private),
-+				RTE_CACHE_LINE_SIZE, numa_node);
- 	if (pp == NULL) {
- 		PMD_LOG(ERR,
- 			"Failed to allocate memory for process private");
-@@ -1578,11 +1576,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		unsigned int i;
- 
- 		internal = eth_dev->data->dev_private;
--			pp = (struct pmd_process_private *)
--				rte_zmalloc(NULL,
--					sizeof(struct pmd_process_private),
--					RTE_CACHE_LINE_SIZE);
--
-+		pp = rte_zmalloc_socket(NULL, sizeof(struct pmd_process_private),
-+					RTE_CACHE_LINE_SIZE, dev->device.numa_node);
- 		if (pp == NULL) {
- 			PMD_LOG(ERR,
- 				"Failed to allocate memory for process private");
--- 
-2.47.2
+This part doesn't look right. RTE_ATOMIC() is just a macro to add the _Atomic attribute.
+
+Can it be simplified like this?
+
+
+static inline void
+vmbus_sync_set_bit(RTE_ATOMIC(uint32_t *) addr, uint32_t mask)
+{
+	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst);
+}
+
+static inline void
+vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t relid)
+{
+	RTE_ATOMIC(uint32_t *) int_addr;
+	uint32_t int_mask;
+
+	int_addr = dev->int_page + relid / 32;
+	int_mask = 1u << (relid % 32);
+	vmbus_sync_set_bit(int_addr, int_mask);
+
+	vmbus_uio_irq_control(dev, 1);
+}
 
