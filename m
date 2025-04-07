@@ -2,184 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B5CC36010
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 12:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C158BC3601E
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 12:47:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 213CC40156;
-	Mon,  7 Apr 2025 14:41:57 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 28D1040041
- for <dev@dpdk.org>; Mon,  7 Apr 2025 14:41:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D450E40156;
+	Mon,  7 Apr 2025 14:47:56 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 89CC140041;
+ Mon,  7 Apr 2025 14:47:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1744029717; x=1775565717;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=EV5c18viry3YBCrtLaotTqS5vRhU7X5KeQB5kcIpJHk=;
- b=Q4SwCb/9xW3pbRYWTRfZvuH2h0D14sMBQinKUjhoTNhLhbuFEGMk7Gk2
- FOYfUjv2e6nPqVKOOpMhFdIVOERJiMm7gpAKaNyUP8iThZEyiW4AKv66r
- QR0yGhSWL2KQH1hdqkyWl13VxRk5WrggrFilDr2t/rkCIJlEXgk+tiYZ+
- tmYW6FvbqwTiGkGeOy6MRuUv/oj1nW7nNv+NbVOQipENs32fAt3jC+K+H
- ajsSwpcwHeFwTmxxlCTTfU0losNfz8B1X4PrBLYA8MlXFiPwdHYc9OmGD
- rYegoZceO+WAHLOeqZc52iEiY0amvp7HoDljo8IEhWIT1WFr12ZG/xLc5 A==;
-X-CSE-ConnectionGUID: U09j8NiCTfm1T+okfRkvzQ==
-X-CSE-MsgGUID: JjDp52uBRzCb5gzIqcR7iQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56779208"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="56779208"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2025 05:41:55 -0700
-X-CSE-ConnectionGUID: aia3k7/9ShmV50IFiJruIw==
-X-CSE-MsgGUID: hShzg59NRF+iKOBT9dcauA==
+ t=1744030076; x=1775566076;
+ h=date:from:to:cc:subject:message-id:
+ content-transfer-encoding:mime-version;
+ bh=pL3BALvfC+QChhIf43tnAy82NjtYd7E9MyMKZ6TEoAw=;
+ b=LbZrSEzImXEUkJGqoPsWe7U9LZptqK0FMAfqEYKeQpmWB2HYraaT+FMi
+ Wky0qWm6EtdN33cpc2qPtNCsBlwdfyDLMOuEPOdPPqIKexUvN+t0glP2n
+ 9V+BDe7xAoA6Y26vGzZFrQXMtzc2GgLjnKkAEG2WuVZOVVyVg5Zf4C18P
+ 27a9Zs44+4u1jSL6HiVXH9vRvBMt0xGqOTifFNnx5hLgC9Eh0J7T70Mrw
+ qB9kx8kIrR5o5kG01U6FFgYTgIeFAfBEjjYpEfxCm7j9sVfH1y0+nlr4C
+ x0Xx4qmu30SG5bOcLGOTzsthABG34ggBqypLCR4SlL0Jgp3SKMJDGCDzz A==;
+X-CSE-ConnectionGUID: rqcXOUpfRdOtaZiloFLlZw==
+X-CSE-MsgGUID: 27o34U2jT1ebPB30lrd17w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48127646"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="48127646"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2025 05:47:55 -0700
+X-CSE-ConnectionGUID: ESB1JIpMT2izhE9VZuRJjg==
+X-CSE-MsgGUID: qVCMrr1OQd6v/vVHePbZ6w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="127807289"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2025 05:41:54 -0700
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="165148320"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2025 05:47:55 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 7 Apr 2025 05:47:54 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 7 Apr 2025 05:41:54 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.1544.14 via Frontend Transport; Mon, 7 Apr 2025 05:47:54 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 7 Apr 2025 05:41:54 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 7 Apr 2025 05:41:53 -0700
+ 15.1.2507.44; Mon, 7 Apr 2025 05:47:53 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rS++ObrixJzKbu4fhZAhmam+1yBVItMM/NchpsAjf3ipwaCyWCS76EAKE6X3+CJQrikS4VqmJxRnDHr4ESysG0msSynRxieJ2fYEo90RS759PzgzKhVn5n4Xg0LMOuUKdmv6zfz9U2M7owllMoCqw0ublYrlF5sbQypV0wcqwf65/toQcwXVm3DMla1UXDHXhWUIvUMxsNGk6oHv42VxlWAv7tQz0UCaFsXKfg6vSM1nYbuGCvR6lt53eva7LXs11kY2JFux57XNHXPtBHEnezBYTvdNzMc5kgaWkO5hC3jx42MPB1ezxfOmZW295grKMzQyLWfjbw8mPAamcsZJ6w==
+ b=HD1uMGoD9TqPUe4MNAL177woABNWuXDNilptkqdSvjz0hmpXwXqNZkeJ8u3znkrk+z+lYmvBL8ZmXb766ho2o1WcpnT9bKd7JyS1GbYwNmuge2jX0zSO8boIGSZZM+R3OLqG/Fl9tEW1B/mq7WgrHL8CxIscIJ5xvU1+/U0Mu8LCa8HwaFTZxgCgbIuaYHVBE0Odmf9Yip2BZ8ZesxoHhQN3w5CcX8H/Wey4+WnIWTNCscTaAf7HbSpmHKOa496ELyL0JqgXBzj2KImoyUEE+RZnhx6Mx5gveVL5NS4pOlrS7byuvIbr02x5QZKwPF5gR3JhPOzOO+F+pTqa3PWE9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qeznIbOJnJQ2OGSbxLkMmAZbB0ghnWgBKh2rzutxTB8=;
- b=iTMGEaFW1+hnjlTTUNyouq9M2RW8dvUN5dLTmo+kR+r+2cH88+nbllrO4C/zbAOlV9Q8xXCCQjhG5A3QijN4Dg7tnqlH+jo0ccf/bNVvXzvwORgdUtDLFFKRKRSjdbT84PvsS7ZetT+FcXsUAiwNQ1HlIzCH4bblSmC1blxgQ1KQYwHH9xzSjC3Bm/KSYP6ocEu+zNKLNHnD1udTqEHD5Ll/qr31bpkl+JKnOmA7fQPwXpt9mL/RRDnB5CuCWMWrBRQAgPSbLazCCOfptc0xe5tWFutJ8uVzLpkxg60NJvWIKDKUeKLXCNRhKf2NkdeB4x3eodlq/7e9T+AmzQY9jA==
+ bh=B1jdsYHZNwWyUqkeO7QVUc5pSKKsxJx2hLxmOtmXJhE=;
+ b=BUJK/WGuYHTOq1xEXEjGDgDq9WV740Pl0XHDLwThsvKpjVDBjP8X681+NTD19NbEaWG8Ir8xtxJjM6Js0qMHQwaQlz21ItwQNqCQI/ZtwMh6htucl3YOylZBSb09coAYV9KZSibsEAkJEA5gDRy7OUhCtuYu6+I4d0vYhMnS7+b0RmMMDVOLXrfe2d9rOLZrwNkMfFHmqemEmXKKiR031Et2AjytL1KthLQlUV0Fk1dl6572lHuOgnX5O4NZvyR3JmGsHk18tgjez+MQ6QjEr3PJE+pdixg86wdN1WvooIIOu95oftRo4epG3YOi+FcRVQf81Fren15kLK/8SsRNsQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB6472.namprd11.prod.outlook.com (2603:10b6:8:c0::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8606.33; Mon, 7 Apr 2025 12:41:46 +0000
+ by PH7PR11MB8009.namprd11.prod.outlook.com (2603:10b6:510:248::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.46; Mon, 7 Apr
+ 2025 12:47:51 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%6]) with mapi id 15.20.8606.029; Mon, 7 Apr 2025
- 12:41:46 +0000
-Date: Mon, 7 Apr 2025 13:41:40 +0100
+ 12:47:51 +0000
+Date: Mon, 7 Apr 2025 13:47:47 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v2 0/3] allow easier use of high lcore-ids
-Message-ID: <Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ger.corp.intel.com>
-References: <20250313113829.1480907-1-bruce.richardson@intel.com>
- <20250324173030.3733517-1-bruce.richardson@intel.com>
- <Z-vzAS8TXWn9WSV0@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8zcFU_K0feJMK=YEouyxYxwURUPQq7EGcacJ++RxoTuEw@mail.gmail.com>
- <Z_Ofcb4ktAmn2RqJ@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB99@smartserver.smartshare.dk>
- <Z_OrsVaV64pLREqv@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB9A@smartserver.smartshare.dk>
- <Z_O9Uq_Mg86yjKzi@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FB9E@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="utf-8"
+To: <dev@dpdk.org>
+CC: <techboard@dpdk.org>
+Subject: Tech Board Meeting Minutes - 2025-Apr-02
+Message-ID: <Z_PJczJAn2Rp1iPS@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB9E@smartserver.smartshare.dk>
-X-ClientProxiedBy: DUZPR01CA0190.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::8) To DS0PR11MB7309.namprd11.prod.outlook.com
+X-ClientProxiedBy: DB8PR06CA0064.eurprd06.prod.outlook.com
+ (2603:10a6:10:120::38) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB6472:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e2db4a2-a0d5-41e1-a5de-08dd75d18eb7
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB8009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65a2e8bd-ec20-4c1d-d796-08dd75d2687d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VWJwSlhkSmFiWWNqc2IwUjIzV2xxaG9neFp0RC9QYkpnQUlTUFpiMHdPQ2NK?=
- =?utf-8?B?TEsraVptTVpqeXFwM21RbDNVa3FMR0xjWlNncjJ4VXJDYzBiQVNXaUhJdlRy?=
- =?utf-8?B?UEtQb2RjM09vaHJvOUJFZklIRDd0NzN4ZGtQMGV5aEVqT0NwbExXVmhIQ2dB?=
- =?utf-8?B?elJuendkOWpKWlJWV2lER2hHakRzQVJTM21ycHluVlc5aVcrbDJUQkpuTFhH?=
- =?utf-8?B?VnVSV0VtNEtFMDRUVTJaQVJkbEIzQkpuL3lrbmgyYmRnaFJyTnJvNDhIMVFw?=
- =?utf-8?B?bUJ4NlZzTFM1a3dFYUw4R1lnV3pacnk4Q2txTHlDQmo1a3hvbklHbkpacTND?=
- =?utf-8?B?QlJ0WXdKb2ZvalN0bmtqL011WTBVT25ORnpMSnBrUkhGWWdueElHNnA5WTRt?=
- =?utf-8?B?WmRmSVRudzJDMHBvL3pQNGd6VVdyS2VqeWVKQzZLa0EzbjFZKzBNWUd1VXJr?=
- =?utf-8?B?ME42UFZQU2NJUDVFdU9MYVJtSG9GZnhrYStEbk1OZit0dnlVWjhsKzVrbzUr?=
- =?utf-8?B?dENnZnNZcTVyV0NkOS9yZnZuMndLZi85YXZ3L3ZmT1p0NDVZOEZ1SkZTUGRq?=
- =?utf-8?B?WTFsRlRlS2d6Q0tPS3lhMDVZU2ROYnlhbDZLMXhoK21TckpNM2ZIZlJtVTlH?=
- =?utf-8?B?UmxIU01xTkZQQlR1S2VpYmxrd04rUTJrOHdycHlWTjVOWmR2Z3o2OGhhVlA2?=
- =?utf-8?B?TmVaRWtRMGtTc2hJRWNHUUV0aVlsTVNENkZYdjNoUFp0NnZOU2MwM1dlU0Z2?=
- =?utf-8?B?YVpvSGhiT2pZZkRpSGI3RXAvRzlwOHZSMGpKSkZlT250Y0FucUFSa0paTFYx?=
- =?utf-8?B?bGNqaXJCcHM5WkpmRHRaN0xqOFNTdW9oUWpCVW1ZL2tjRTJ4SnZGZ0wvWnhy?=
- =?utf-8?B?MmhNMjV0K3JZeXNrUGR4NnJ2REh0MS90NHBhOUw1S1ZXalRoY3h0N241Wk04?=
- =?utf-8?B?SENKNThWSVVGaTRVTjQxZHV5VE40R2huajU5Qm0rcGNZUnBTRUM1TTRsN21Q?=
- =?utf-8?B?bndwcjI3VmJiU09iaWcraVVlOHVHM1RiUDFqNjhMeW1RSVNUS3Q5WnBVSVVK?=
- =?utf-8?B?ejk1R3VHTXluM3VSN2E3RFBpQm9nNkFpODRGZlpxRXRrMEhWSmlsMUYzZ0dP?=
- =?utf-8?B?QnFLdkQzdlFDcTB1YnNLS0NoM05GM3R5ZlBCR2l0QzV6QmU2SGhtcEVYeExP?=
- =?utf-8?B?TGFWbGc3TXFQYkluVHpja1pMMTAzbDY5ako3R0FOMWsvaCtnenUxL1c4U1Zn?=
- =?utf-8?B?WlZmOUY5enFLVjU1a1hkSFIzNlpvYzZoSjhnUkVGWTVTOFhrK0NpVDZmWFZR?=
- =?utf-8?B?Z0dFOHpicExQY0VENzBwa0pZRGlkdXMzLy9WTXBYeWk3Y2tNdkVhWGhWUEUy?=
- =?utf-8?B?KzAzMGZVbFhXWHRhRUhycXFSNzloUndCcVpiQm5hYmdxQnNMTGhEbCtXTjNF?=
- =?utf-8?B?KytTK0hNNWhlQmJ4WDRnVm1nQW85aG5zaGh4aGFKY1k2ZUhubkoraXdCQ1E0?=
- =?utf-8?B?eTgrcXNMMVJmbkh4MjMxc0txMXdpbnY1MFlMWWg3ZXNZVmgrUnltRVhHalIr?=
- =?utf-8?B?cGxrd2kzajI5Zm9rT2xRWms5Zytmb3VEd3hTclp4T3QvU3l6dWhIYlJ3S3E1?=
- =?utf-8?B?aWZ2TW9qVlptSDNBM1I2TXkyZitQaGlUNytveDAxOGU2SVhScWV6ZHdwZnlu?=
- =?utf-8?B?d2RpV2oxK0lqcTNsY0hVVERjdzZGMUZta2FBN1JKUkZKd0hPdlJYdTcxRmgy?=
- =?utf-8?B?d2t3UnZSM2FCUC93VlFBaWpCMEN2MzUwT0dhRnhrTFJScHdkeTN3U2QzT1Ry?=
- =?utf-8?B?SjZCNndJZHNJK0wzOS9jZz09?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?pkbnDhDY0Hhk9EhCQ74laTS0KxEy2a2JU8JtpiRSA8vrNyPzbV6YCQOrtW?=
+ =?iso-8859-1?Q?oLgKc3FuaZ3rcJ12ytlJ1S5t7lAj0Cbxy+9ztf8/F2+DxoeBRqSTmO061B?=
+ =?iso-8859-1?Q?ZUtOgxZOVkix+CTQ82af3jplp31b4UPzSRILYfU4YEfggSyEzMQEXyaIoz?=
+ =?iso-8859-1?Q?nUTiH4vd2rXiwrYxGY7nnZGrmChXYjINZiKEYL1s07LjtDl5o/tK41gQIC?=
+ =?iso-8859-1?Q?pItoK21U36SOhkHOBMk8FjDAyDL3qPjraQ22DPPVwsqWOmCXwBlioZS9LZ?=
+ =?iso-8859-1?Q?iPtXkpDM295Zsz5Uz5jKBV0In76VOW/N9v9nrhfgBtuccjxRtLi3V47iJt?=
+ =?iso-8859-1?Q?bgwH+DaXNs47c04/dnha99375p+x0GvBmG0bDDte/vwIW4+/XKH+Mpl/f7?=
+ =?iso-8859-1?Q?7WbnLyvIFiW6g5IAo1H0jeR5JbH8NxaQz3/1+cpu2cviq+FJMGm2UZ3kG4?=
+ =?iso-8859-1?Q?KLjsTGKEiOx1QrUm5flK1I7gDiyWUSgF1MT2Pj+v4MoMuLjXl3IwYZ5dOX?=
+ =?iso-8859-1?Q?C4uEuPQWTjTSHAVHsgA+FsDD2GYdR2NDXZOZHUrMB9KQMCjboV5axgO8ge?=
+ =?iso-8859-1?Q?udVZcVVlG5eBmXlBCAqadZNm6g+6TVWI8yR/xUcIVDOtcbvp/zAJwoeseH?=
+ =?iso-8859-1?Q?ed20swlDicShHhiN9+tcGF+Vlx3Pb30Ry924u9OmQNgSUfczluBQnJ/kkh?=
+ =?iso-8859-1?Q?KvSj49r23ofrRRigGZeDTkhLdIM8xKdEn3TX7g/Mom0wjH9TmKNK9j8tYg?=
+ =?iso-8859-1?Q?SxgHpW+wH3QWmvRFzTy2WECnojCsxiiXmB7l6fDttGD3Dkj6qTxAfNNCvs?=
+ =?iso-8859-1?Q?Q4pRI+1Bcg53iO9zLScsFDJVqhHpB3IIASsXeTmoae54pplGFZmmv6jVo0?=
+ =?iso-8859-1?Q?p+Caht+FgLPQsqgRRNpH0DH+umh5v5n678S9thmE1O3NKwUw7+n8LQzKu2?=
+ =?iso-8859-1?Q?XDgNY6kJ1MxdXn70bBxHGmNss0yfVqC6TgjEbFe/L7GnkMFyao54M2FURv?=
+ =?iso-8859-1?Q?n81A6w/fZ43WbsX+TP58e9i5KWEMiqUJIwllOfSFcQYEa7m65cdv4XglTV?=
+ =?iso-8859-1?Q?3pmcUWG4JJAoBqYD9aS9SNFQOCUCzrpAJUxFhvMHkkCcXuPkkhYI95PY52?=
+ =?iso-8859-1?Q?i4okT45DtvbJ+A3yIoQ+dCeWBLrrcfaPrlcwT0YMVijj7fnGDfoVzf8f2J?=
+ =?iso-8859-1?Q?uoUsC1hZnyYcHOJ8554qodnhATagqpAlzTQnbYxJ52KchvYBQ6QfIKbxlb?=
+ =?iso-8859-1?Q?mgJNpvk9f/x4cV3e/j2DR2adPj6gyvBxvLxRiNiS1/xfmrPvjgb5f8vXqe?=
+ =?iso-8859-1?Q?RFYh18/bmSgpWR+Y7AbatHqN64oWEpJOsqziCSQuI8YUFlUO4IZ/w1HLrV?=
+ =?iso-8859-1?Q?2sfZvaIyhi4yihptJ47bB8WaEFNZg9AUmwE4AHdmja78zlkBLRjkcSYwQq?=
+ =?iso-8859-1?Q?yg+BXUu7F2oW6YVE?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NDJUWVZ4VHg3dkxRUjBtdi9kZDZPVmhTSGpWKzJybW1BWm9mVDBqejBnZTlU?=
- =?utf-8?B?aDJ3bmMrQ2pEenNQZDhIQ05GWUtpMkt2R1ZLeEVOZXNmRkxTZUdmc25YOHhu?=
- =?utf-8?B?UEVXTDZMTzkyR1MyQjdxSmFNZkdGVmczcFJTemtQVWJCdTk1U1dVRWNNN25X?=
- =?utf-8?B?Unk3em5WbnpZd0dzVlZadEFpUHpWZ1hlczFhVmFuZHVIRklGeE9MdURUU2E2?=
- =?utf-8?B?M0dudU1QSm8zOEt4TGNtVWxOUTQwMUZScVd0dFlyNk5GNXhZNTAwa0xTMzI2?=
- =?utf-8?B?dm5qeEVvSGpEeUQ2TEE4YUp4Q3NwT3YrRTFheHdJcExrdHM5ZnpNSy9RMXll?=
- =?utf-8?B?aXc4YzFUK2h0Ri9pM0NWSlZHRlpwSlpJSllYSXNzT3crRWFJSnlLc096RkZp?=
- =?utf-8?B?YUI5akx2bW8rR0xZb1ZIVW9oY0ppb2ZrbDhRam5JZzJralNPMnRsdFNhUHRr?=
- =?utf-8?B?Nm5UTnNEWFcrYjVOZHlKMExvd0hVSDI2ZGJEZk1pMVNxWXQ2eWMzTFZNZ3Yy?=
- =?utf-8?B?RnBYRU1XdzNMQ2ZHcGVXOUt1Q25BNUFMSk1wbWZicmJDRjlFWmhJei9DQy9I?=
- =?utf-8?B?dmhlNm5PUitTcktuNU1EZ0pwZU1ocVd3QzBDN3lZNzcyckhLdXJYNktSbDY2?=
- =?utf-8?B?SlUyUzV0RHE3b2l0MFZQWnNVSDVxdUVia2pyNWMrOWhGRkhZQXp2STQ4Qjlq?=
- =?utf-8?B?WlJvKy9iQk9qTGljaVd6OEwyU2dxWE0xYXhwVFNnRzBUQjVwTlVibG40SXZS?=
- =?utf-8?B?NkR2NWkxa3B5Q1ZtM09MeTJKV1VYK0N0ZTJTU3RKVnJKaXJkYnF1L0hGZ3BQ?=
- =?utf-8?B?Z1BDWWloZGZOcFMzYlY3R3lTOEF3TWp4bkxiRTduc1N3MkJSdjFacE9Ueldw?=
- =?utf-8?B?dG9hUEJwTDZHSkljQzJFREIzVXYzS2pwZFZXVXNzdFZvUkMvdGFKWFVmU0lY?=
- =?utf-8?B?WEk2MzhxVXJyYUFGWG5ld3g3dHk2aTQrVWNsc2tzeTVoVjEydWM1ODY2ZE5m?=
- =?utf-8?B?ZFJCQVo0dUZySEVRV0tmZDViamVWWUh2VU04NEtIRUpYQ3RUejBXZ0VCM203?=
- =?utf-8?B?TFZsaUg3dkFORmp6Z1FzLzZkeDl2eWdHdi9halRBTFdtNGNUU0QzS3FQNDgx?=
- =?utf-8?B?NHh0bEszU1lUdGRkR002b3ZEeS9YcTlmbVYwenErMUI0QTN6WTJ6UjFQNStj?=
- =?utf-8?B?RTMzcWVDMnJxamt2bVh3ckQ3UGZSWVdaalFmZ29mclZGTFlxVE9xai9oK1Rw?=
- =?utf-8?B?WmNXTXlYSmRtNkpaTy9nWjBKVlZSVDc5Y0Vza2lLanluOFl0ajBJTWhUSUJr?=
- =?utf-8?B?YkxhTkNFUWhNTTZqbnp1a0pCM000Y2NmMTRUbGtiN3VJVG9tc2Q3NjhoQ0RY?=
- =?utf-8?B?QWorajM1MlkwQ3J2ZUVnV2M4R0twN0FYWE1qSmJPTUVhM1NEdmlNclJnUUxO?=
- =?utf-8?B?T2lERFdrV2Y5UmFrZDNLNUlIMTNycWlsYk1yRGRwb0NDR01EV2dBZC9ubGVZ?=
- =?utf-8?B?YkNTdGZydFFRWUtlZEJRTTVML3B1YmxxWlNrQ01PRVRtcTJ5K2N1TTZLaEFj?=
- =?utf-8?B?OGtrejhSK3BKbU51SnhoY2I4MFVWKytiTFhyYkIyUGtPbWhsNHJ2dDVlTElu?=
- =?utf-8?B?TG5JMVBHRC9YL0V2S1VZUytjRDdaT0ZYdXFRQTZMb05idkFnc2pydHdzcnR5?=
- =?utf-8?B?TU4zeVFtSHBycjMwci8xc0QxQTdVZ1RhVldSWEJoTWxzamxDeTRHSTE3OFM1?=
- =?utf-8?B?MXF0bkZsWUpCTnhwbHBBT09pMHVLbXExdU1QbWF3cEM5WFBpMldiVzlua1Z1?=
- =?utf-8?B?cHNsMGJSQytpL0FrWlhVQytIUFcwNU80M2cxUEtVc1NObWlTb0dGdFBSdVo2?=
- =?utf-8?B?MVp1SkhQMG5xN1dvS0pqcWFWM0NkM2pyRUdsd1RJdG5WbU5kbUg0RTJIa3FK?=
- =?utf-8?B?Y2JDZVBpSHVLMEFONkY0eEtOV1pyb3N0aEEwWEZDcHVMUFE2b2RWVGxmUmdH?=
- =?utf-8?B?NmNhRTE2US82a0VQT3NEV3VSekNvOS9tdy9kRkpLMHMrYVAyTVIyQjJ2eHdE?=
- =?utf-8?B?eTJsU2lqMnMyOHRuRWF0OHBRRURrSnRzaVUrR092VStnN0phSnVnZmZIS2R6?=
- =?utf-8?B?UzBabnVyQStrVFNWMFhsN2dhbVVnUWwwcFVUL2V2UWxGSWRubkFCVDlGcUdR?=
- =?utf-8?B?dWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2db4a2-a0d5-41e1-a5de-08dd75d18eb7
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?x6OsroA+VJWRnreQd17WA0xRPgTo98y9I+2YvYkKeMTCwg6ISY6FCxsqXN?=
+ =?iso-8859-1?Q?6eo2rrh9FyEqN5PtI4+zEh/Ics4d2Bvgyu0/wS6114iPcR1yJIRGCcUD+A?=
+ =?iso-8859-1?Q?sitTDMKDGCiG1NwZ/G0rMAr+mEEmmEv7tn8ol5sZ3SK0mis90VAOW3R2ag?=
+ =?iso-8859-1?Q?W61VbCENhBrTaMAl8qvgSst9GPWrMMWlBR2IJhJe+GGvjoj3UB9mKMq1hj?=
+ =?iso-8859-1?Q?js8is3KXbzsTNSly8BHBQAgjFmLRDPe07vsxTlHSgPd18Bip7KQo9je9yN?=
+ =?iso-8859-1?Q?mhQu5DNtDk16ajms+IK6lamejOrCZIIonGqYdGmKZpU/qod775shRfluHW?=
+ =?iso-8859-1?Q?tsyxLyUJcP9o5b3yiMj4CinnLByTqpuaKX/Fw35mQKxr4XtZSEBmbzUu9v?=
+ =?iso-8859-1?Q?fll3WV9eIOXF19ueCSVfmiQByuZs/oHAsCdcURo2RzExtLH1EFluQTxWZ5?=
+ =?iso-8859-1?Q?dIJV9O9yMWAZbWAYKD8mkbxv95+gDpHe+stRbVAn9O3kVO3vh5CAP5y05F?=
+ =?iso-8859-1?Q?4GokrjnckrccatQiGHFg/2YGjnD27ipAWAtzJSojSsxRxNyTzxnN8VJ4LD?=
+ =?iso-8859-1?Q?7vTs/QvRw8DIbPo5ZRJV8QDMb4MliyPoFaEkrFyQqpCTA0FOwGi4G0Is3+?=
+ =?iso-8859-1?Q?kAXlj7TDVAljJzhAHKMIbUyMdGwWF2/Vs+EW/QkggekpsxuMiPvRqKZknc?=
+ =?iso-8859-1?Q?uGOQCqxnrHVKlgM3HjzJH2CtwOqEgwwCYqTf7JoeD+Hdft9eMME2fC6Hto?=
+ =?iso-8859-1?Q?3Pz48iieASMrCe9Guu+QG1aZFesZUz/0MSDKXbI8v/+g/o4qZZxpmGNPv4?=
+ =?iso-8859-1?Q?eiUpp8FlVirNeT7r6q76LeExSRKy4tZSteY7KscP6mi4YOl6Q3Ng+q1s8k?=
+ =?iso-8859-1?Q?AcVtAKhwNr1lAwJbRuwGw+nTxlD5y05JbJh4o+QoxcsL6lqd3rA7IFvUr8?=
+ =?iso-8859-1?Q?RN72jL+OxvaSl77It60SStqlrUiBnnSd+hGOt2UOdrldSQj+h7O88vPNgs?=
+ =?iso-8859-1?Q?UiNqqoPilBo5gbMPDdcdydeY31Sg66wL5tzxdNmCbVfDAgz7snHYxh4AAd?=
+ =?iso-8859-1?Q?w6LSZfadVB1+tk4R3XRqI8SQaDBrx5PcjSFbqtnGyExJjzJB3CDQnKCLmA?=
+ =?iso-8859-1?Q?FjnLn//WUSwjatHl8iCW9lG0+g4jb7aKTRMqUSBO91YayUf2Ih8SkKLzKF?=
+ =?iso-8859-1?Q?cr97lIhk0hA/jo3MYTeuk8yHOBK/HjiIiiDDZ+VJiNhCNs7FtgH0FOltEE?=
+ =?iso-8859-1?Q?dWEuQX1/skOBsKsJLcX7vMML28SSWojJIkcRnyvyvYpnvsCxIrJnLeDdGI?=
+ =?iso-8859-1?Q?53fiqCL0WH3nVUnRJWJBuHXcEqnGACkrAi8L2fKfcP+eDu0aG0iwHnmkiE?=
+ =?iso-8859-1?Q?GeSZpa6SrnHPXCsEnG6OmnUJsrSHyGDHEGrEM04/xyhbgFrollgGmkI//g?=
+ =?iso-8859-1?Q?RHdPzbN6kPSXa5awgxh31hHXA7Wbhg84zC8jJsgxyCZ1lmZx7YlouLl8GS?=
+ =?iso-8859-1?Q?IojIBVJCNxQemB0TJG1cKiqxLqQObZhZCs3YrWAjpFT1JvozwdHxWdlvaQ?=
+ =?iso-8859-1?Q?7VtZSVEb7iYt2kc7OLQxYPJkfFipAT2l6p25kN4gjG3hX9pQ19oRnZ/H1Z?=
+ =?iso-8859-1?Q?e3tDVYSGUQ/vKytzgWF5ty78SGRoNLJAQoes8KNVDEHGNie7bLuuy5eA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65a2e8bd-ec20-4c1d-d796-08dd75d2687d
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 12:41:46.2381 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 12:47:51.5344 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NRQWOxkQuWVG5PInDplXxh/n2WSIBtuhBjERqNJoB26nCCJ838+VAMnYin7wPcp/CwB89Y2BsbUNub+yK0E4n7TMY6XcGL8DjzrBD+XSn+U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6472
+X-MS-Exchange-CrossTenant-UserPrincipalName: qUxP94AmdV4R9CH/vI3xFsQ8u3TXjFQXDUGR0XewAcpovLbbiUxu2x+ppa1OQmshCcurhrpsUEQJ0YNZfP6vHK8JXL0VmB5oSA6uL4nkDNs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8009
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -194,324 +169,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Apr 07, 2025 at 02:25:46PM +0200, Morten Brørup wrote:
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Monday, 7 April 2025 13.56
-> > 
-> > On Mon, Apr 07, 2025 at 01:32:59PM +0200, Morten Brørup wrote:
-> > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > Sent: Monday, 7 April 2025 12.41
-> > > >
-> > > > On Mon, Apr 07, 2025 at 12:15:13PM +0200, Morten Brørup wrote:
-> > > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent:
-> > > > > > Monday, 7 April 2025 11.49
-> > > > > >
-> > > > > > On Mon, Apr 07, 2025 at 09:04:05AM +0200, David Marchand wrote:
-> > > > > > > Hello Bruce,
-> > > > > > >
-> > > > > > > On Tue, Apr 1, 2025 at 4:08 PM Bruce Richardson
-> > > > > > > <bruce.richardson@intel.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Mar 24, 2025 at 05:30:26PM +0000, Bruce Richardson
-> > > > wrote:
-> > > > > > > > > Traditionally, DPDK has had a direct mapping of internal
-> > > > lcore-
-> > > > > > ids, to
-> > > > > > > > > the actual core numbers in use. With higher core count
-> > > > servers
-> > > > > > becoming
-> > > > > > > > > more prevalent the issue becomes one of increasing memory
-> > > > > > footprint when
-> > > > > > > > > using such a scheme, due to the need to have all arrays
-> > > > > > dimensioned for
-> > > > > > > > > all cores on the system, whether or not those cores are
-> > in
-> > > > use by
-> > > > > > the
-> > > > > > > > > app.
-> > > > > > > > >
-> > > > > > > > > Therefore, the decision was made in the past to not
-> > expand
-> > > > the
-> > > > > > > > > build-time RTE_MAX_LCORE value beyond 128. Instead, it
-> > was
-> > > > > > recommended
-> > > > > > > > > that users use the "--lcores" EAL parameter to take the
-> > high-
-> > > > > > numbered
-> > > > > > > > > cores they wish to use and map them to lcore-ids within
-> > the 0
-> > > > -
-> > > > > > 128
-> > > > > > > > > range. While this works, this is a little clunky as it
-> > means
-> > > > that
-> > > > > > > > > instead of just passing, for example, "-l 130-139", the
-> > user
-> > > > must
-> > > > > > > > > instead pass "--lcores 0@130,1@131,2@132,3@133,...."
-> > > > > > > > >
-> > > > > > > > > This patchset attempts to simplify the situation by
-> > adding a
-> > > > new
-> > > > > > flag to
-> > > > > > > > > do this mapping automatically. To use cores 130-139 and
-> > map
-> > > > them
-> > > > > > to ids
-> > > > > > > > > 0-9 internally, the EAL args now become: "-l 130-139 --
-> > map-
-> > > > lcore-
-> > > > > > ids",
-> > > > > > > > > or using the shorter "-M" version of the flag: "-Ml 130-
-> > 139".
-> > > > > > > > >
-> > > > > > > > > Adding this new parameter required some rework of the
-> > > > existing
-> > > > > > arg
-> > > > > > > > > parsing code, because in current DPDK the args are parsed
-> > and
-> > > > > > checked in
-> > > > > > > > > the order they appear on the commandline. This means that
-> > > > using
-> > > > > > the
-> > > > > > > > > example above, the core parameter 130-139 will be
-> > rejected
-> > > > > > immediately
-> > > > > > > > > before the "map-lcore-ids" parameter is seen. To work
-> > around
-> > > > > > this, the
-> > > > > > > > > core (and service core) parameters are not parsed when
-> > seen,
-> > > > > > instead
-> > > > > > > > > they are only saved off and parsed after all arguments
-> > are
-> > > > > > parsed. The
-> > > > > > > > > "-l" and "-c" parameters are converted into "--lcores"
-> > > > arguments,
-> > > > > > so all
-> > > > > > > > > assigning of lcore ids is done there in all cases.
-> > > > > > > > >
-> > > > > > > > > RFC->v2: * converted printf to DEBUG log * added "-M" as
-> > > > shorter
-> > > > > > > > > version of flag * added documentation * renamed internal
-> > API
-> > > > that
-> > > > > > > > > was changed to avoid any potential
-> > > > > > hidden
-> > > > > > > > >   runtime issues.
-> > > > > > > > >
-> > > > > > > > > Bruce Richardson (3): eal: centralize core parameter
-> > parsing
-> > > > eal:
-> > > > > > > > > convert core masks and lists to core sets eal: allow
-> > > > automatic
-> > > > > > > > > mapping of high lcore ids
-> > > > > > > > >
-> > > > > > > > Ping for review.
-> > > > > > > >
-> > > > > > > > At a high level, does this feature seem useful to users?
-> > > > > > >
-> > > > > > > This seems useful, though I am not I would touch the existing
-> > > > > > options.
-> > > > > > > I would have gone with a simple -L option (taking the same
-> > kind
-> > > > of
-> > > > > > > input than -l but with new behavior), and not combine a flag
-> > with
-> > > > > > > existing options.
-> > > > > > >
-> > > > > >
-> > > > > > That would be an easier patchset to do up. However, it would
-> > then
-> > > > mean
-> > > > > > that we have no less than 4 different ways to specify the cores
-> > to
-> > > > use:
-> > > > > > "- c", "-l", "-L", "--lcores" - and therefore need 4 different
-> > sets
-> > > > of
-> > > > > > parsing options for them, and more checks to ensure we have
-> > only
-> > > > one of
-> > > > > > the 4 specified in any run. That's why I chose the modifier
-> > option,
-> > > > and
-> > > > > > to try and consolidate the core setup a bit.
-> > > > > >
-> > > > > > However, if having a completely new option is preferred, I am
-> > happy
-> > > > > > enough to do up a different patchset for that.
-> > > > > >
-> > > > > > > I scanned through the series, not much to say.  Maybe add a
-> > unit
-> > > > test
-> > > > > > > for new cmdline option.
-> > > > > > >
-> > > > > > Sure. Once it's decided what approach (if any) to take, I'll do
-> > up
-> > > > a
-> > > > > > new patchset, taking into account any relevant feedback on this
-> > > > set.
-> > > > > >
-> > > > > > /Bruce
-> > > > >
-> > > > > Changing the EAL parameter parser to a "two pass parser" makes
-> > sense.
-> > > > I
-> > > > > think checking for existence of more than one lcore specification
-> > > > options
-> > > > > should suffice; we don't need to accept multiple lcore
-> > specification
-> > > > > options and check for conflicts.
-> > > > >
-> > > > > When remapping, do we need to support gaps in the "lcore"
-> > (logical
-> > > > cores)
-> > > > > array, e.g. for secondary processes, or can it be continuous from
-> > 0
-> > > > to
-> > > > > the number of specified lcores?
-> > > > >
-> > > > > And are new EAL parameters for this really beneficial?  Doesn't
-> > e.g.
-> > > > "-l
-> > > > > 0-9@130-139,100@140" suffice?
-> > > > >
-> > > > Actually, I believe "0-9@130-139"[1]  is not the same as
-> > > > "0@130,1@131,2@132,...". The latter affinities one thread to one
-> > core
-> > > > ten
-> > > > times over, while the former affinitizes 10 threads to 10 cores -
-> > > > leaving
-> > > > those threads free to move about within the 10 cores specified.
-> > >
-> > > Interesting. The documentation [GSG] isn't clear to me about this; a
-> > example there could help clarify.
-> > >
-> > > [GSG]:
-> > https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html#lcore-
-> > related-options
-> > >
-> > 
-> > Yep, agreed.
-> > 
-> > > If users are manually passing lcore parameters to the EAL, then I see
-> > why some sort of remapping shorthand is useful.
-> > > IMO, if the mappings are relatively exotic, it should be acceptable
-> > requiring an external script to build a long list of mapping parameters
-> > and then invoke the application with those script-generated EAL
-> > parameters.
-> > > This would reduce the scope to support relatively simple, common
-> > mappings.
-> > >
-> > > Could we expand the --lcores syntax to support common mappings?
-> > >
-> > > E.g. "0-9@130+" to do what I thought.
-> > > The lack of "()" treats the entries individually (not as a group),
-> > and the "+" indicates auto-increment.
-> > >
-> > > A more advanced example:
-> > > "0-9@(130-131)+", meaning lcore 0 gets cpus 130-131, lcore 1 gets
-> > cpus 132-133, etc.
-> > >
-> > 
-> > My issues with the above syntax idea is:
-> > * I think it's overly complicating the lcores parameter adding in the
-> >   support for the "+" symbol - especially in the advanced case example
-> > you
-> >   provide. I worry about code maintainability here.
-> > * More significantly for me, I think it's also getting things backwards
-> > in
-> >   that it is focusing more on the lcore ids visible to the app, rather
-> > than
-> >   the physical cores to be used. For the example above of 0-9@130+,
-> > what I
-> >   would expect is that the user is mainly thinking about the cores he
-> > wants
-> >   to use 130-139, which are then to be mapped to lower ids. If we had
-> > the
-> >   syntax reversed where the physical cores were first, I'd say it would
-> >   make more sense, e.g. 130-139@0+
-> 
-> I 100 % agree on the syntax being backwards.
-> A good reason for introducing a new parameter, rather than expanding on "--lcores".
-> 
+TB Members Attending
+---------------------
+Aaron Conole
+Bruce Richardson (chair)
+Hemant Agrawal
+Honnappa Nagarahalli
+Jerin Jacob
+Kevin Traynor
+Maxime Coquelin
+Morten Br�rup
+Stephen Hemminger
+Thomas Monjalon
 
-Yes and no.
-I agree with not expanding on --lcores, but I also don't think any new
-parameter added should attempt to reproduce all of what lcores does. I
-would leave --lcores as-is, as the power-tool for lcore config e.g. what
-you talk about below for mapping multiple lcores to the same physical cpu.
+NOTE: The technical board meetings are on every second Wednesday at 3pm UTC.
+Meetings are public, and DPDK community members are welcome to attend.
+Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
 
-> We should consider deprecating the old (backwards) syntax, so users don’t get confused about one EAL parameter being "backwards" of the other.
-> 
+Next meeting will be on Wednesday 2025-Apr-17 @ 3pm UTC, and will be
+chaired by Hemant.
 
-I disagree with this. I would be ok with deprecating the old "-c" coremask
-syntax - I think the time is long past when we should be dealing with
-masks. However, removing "-l" and "--lcores" flag is, to me anyway, too big
-and jarring a change for end users for us to consider.
+Agenda Items
+=============
 
-> > * finally, as I found out last month, there are systems on which the
-> > cores
-> >   are spread across numa-nodes on odd/even boundaries, so to have an
-> > app
-> >   running on socket 0, you need to give the core ids as a list i.e.
-> >   0,2,4,6, and cannot use ranges. [This also reenforces the point above
-> >   too, where again it's the internal ids we need to generalize, not the
-> >   physical cpus]
-> 
-> For this, we could use "/2" (like in subnets), or "+2" as increment parameter.
-> 
-> > 
-> > My thinking on the matter, and I'm happy to be corrected if I'm wrong
-> > here,
-> > is that end-users are unlikely to significantly care what the actual
-> > lcore
-> > ids are internally in the program, so long as they work and are unique.
-> 
-> Generally yes.
-> Note that we should allow the same physical CPU core to be assigned to multiple lcores...
-> If a CPU core is shared between multiple worker lcores, then it could be problematic, but with a mix of lcore roles, this might be handy for some applications. E.g. a virtual machine with only one CPU core could use that single CPU core as both main and worker lcore, or as main and service lcore.
-> Sharing an lcore between threads requires the developer to take special care of e.g. spinlocks, but the EAL parameter parser should not prohibit it. It might log a notice, though.
-> 
+Official Deprecation of Old Linux Distro Support
+-------------------------------------------------
 
-This is already taken care of via --lcores, so I don't see the need to
-reimplement it using a new flag also. Any new flags we add should be kept
-deliberately simple.
+* RHEL 7 and Centos 7 are no longer supported by DPDK
+  - Compiler version GCC 4.8.5 is too old to build DPDK
+  - Need to officially announce that it is no longer supported for new
+    DPDK releases
+  - Will still be maintained by older LTS releases, e.g. 21.11, 22.11
+  - [Action Item] Kevin to upstream doc patch for RHEL 7 support removal
+* With removal of RHEL 7, RHEL 8 becomes the oldest distro version
+  supported.
+  - This uses compiler versions GCC 8.2 and Clang 7
+  - [Action Item] Bruce to upstream doc patch to update our recommended
+    compiler versions to these
+* For minimum kernel version support:
+  - Patrick confirmed that the lab has just added an image with the
+    minimum supported kernel [4.19] on it for CI testing
+  - DPDK core does not have a particular dependency on recent kernels,
+    this is instead the oldest TESTED kernel version
+  - Other components, e.g. drivers, may have more up-to-date kernel
+    requirements
+  - [Action Item] Stephen to do a patch to update the docs to clarify
+    the above points
+  
+Events Update
+--------------
 
-> > What does matter is the physical cpus on which the code is to run.
-> > Therefore, my approach to this is to find the simplest possible
-> > solution
-> > whereby the user can just provide a list of cores and tell EAL to just
-> > map
-> > them to reasonable values. For the "reasonable" values, I would imagine
-> > that for the vast majority of cases starting "0" is what is wanted. For
-> > anything beyond that, we already have the existing --lcores syntax to
-> > be
-> > used.
-> 
-> Agree with all of the above. :-)
-> 
+Prague event
+- Reminder to register for this event
+- Preparations well underway - event "swag" all sorted :)
+- Technical board will hold an in-person meeting the day before the
+  conference
 
-Great. That still leaves us with the problem of what exactly to do as the
-best solution. Here are some alternatives that I see:
+US Event - Santa Clara
+- Planning is ongoing
+- Event will take place Sept 17-18th
 
-1. Add a modifier flag for -l and -c parameters to auto-remap the lcore ids
-   to zero, so user is just specifying physical CPU id's.
-2. Add a new flag for specifying physical cpu ids, which auto-remaps the
-   cores specified to zero.
-   2a. To simplify our code and user experience we could at the same time:
-       * deprecate "-c" flag for coremasks
-       * make "-l" and "--lcores" the same flag just in long and short
-         versions. This should not break anything as "-l" parameter is
-         just as subset of what "--lcores" provides.
-       * that would leave us with effectively two core flag paths:
-          - -l/--lcores, behaviour as now, full explicit control
-          - -L/--lcores-remapped, takes simplified core list (only "," and
-            "-" supported as with "-l" now), and maps them to zero-based.
+DPDK Support via Rust APIs
+---------------------------
 
-Third options? Any other feedback?
+Following discussion on the mailing list (see thread @[1]), open
+discussion was held on Rust support in DPDK.
 
-/Bruce
+Overview of some points raised:
+- Concern over level of rust expertise in community and in Tech-board
+- Want to ensure that rust support does not hold back the C project
+  itself, or impose limits on which C features or compiler features
+  can be used.
+- Suggestion that rust code in DPDK repository itself should be kept to
+  an absolute minimum
+  - rust examples potentially in a separate repository
+- Any rust support should not just be a bindgen wrapper around DPDK:
+  - been done many times before, value of that alone is questionable
+  - desire expressed to have a "rustic" or rust-style set of APIs not
+    just thin layer over C APIs
+  - From mailing list discussion, seems consensus on having low-level
+    API crate and higher-level API crate
+- Exposing DPDK APIs officially via rust seen as an expansion of scope
+  of DPDK project
+  - there is value in having maintained "official" rust APIs from DPDK
+    project
+- Discussion held over the scope of DPDK exposed via rust APIs
+  - limiting scope of what is exposed can reduce risk of C code breaking
+    Rust code, and reduce maintenance burden
+  - exposing more APIs via rust obviously increases what can be done by
+    end-users
+    - but problematic if only exposed in low-level C-style bindings
+      rather than any higher-level crate
+  - suggestion to have the bindgen-exposed APIs limited by what is
+    necessary for the higher-level APIs
+- More prototyping is likely necessary
+- No conclusions reached at this point. Discussion will continue on-list.
+ 
+
+[1] https://inbox.dpdk.org/dev/20250306133713.393057-1-getelson@nvidia.com/
