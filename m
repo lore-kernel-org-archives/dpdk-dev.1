@@ -2,46 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFA8C36010
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 15:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E0C36010
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 15:49:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2186B40A89;
-	Mon,  7 Apr 2025 17:47:35 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 14CF140273
- for <dev@dpdk.org>; Mon,  7 Apr 2025 17:47:34 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id E3EFC4652A; Mon,  7 Apr 2025 17:47:33 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id A5D2740A89;
+	Mon,  7 Apr 2025 17:49:22 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 4132540273
+ for <dev@dpdk.org>; Mon,  7 Apr 2025 17:49:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1744040962; x=1775576962;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=zlEmyRpjZox6bW6l2tmnh/ij6120JNQyUhMAdLXV9qE=;
+ b=KribpIRbqiW/5zoFvfnCFuSPH4tIiDmDlxgHY4mH21u1eDfpTy3ImHM8
+ Nm4hFArSvxhJrTCdZQBqAdhpiEL39kB3mijahIihBlCTyk3U1pxVyhxF/
+ tRookkEhgPI4j9IrPBKH7N6EOIeNEAJjZYYMPmSInEdzY3xDsav5gxyYn
+ SBJerZtNvcS2mSQjzeTbFktB7pi/9KlP0iDTrdU13Kuac9OOcvMrfX4t4
+ 64IzFuqdeJkxcVrjOustBD+RyGPTeEaJPtQXgDwh/3qSIP7v046I3DAuL
+ PPd3WoSQ4Twhhzkv/RpITIdQwD0AA6Z+Ij+GI6vyh7WsiRFxqkATpW2nU g==;
+X-CSE-ConnectionGUID: voWpTGWRQJ6B2NPea8f6TQ==
+X-CSE-MsgGUID: KhP+kfdBQ3+Y8w/r+bhPrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="49287252"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="49287252"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2025 08:49:21 -0700
+X-CSE-ConnectionGUID: HbzEGAiFRUKkGlYbISG8nQ==
+X-CSE-MsgGUID: Zbc1N66zTpOsnMTd9D4g7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="133149330"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
+ by fmviesa004.fm.intel.com with ESMTP; 07 Apr 2025 08:49:20 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1694] mlx5: ASAN reports memory leaks with
- send_to_kernel
-Date: Mon, 07 Apr 2025 15:47:33 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: brian90013@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1694-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17440408530.bCD0.3877941
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v2] doc: provide examples of using lcores EAL parameter
+Date: Mon,  7 Apr 2025 16:49:01 +0100
+Message-ID: <20250407154901.2206824-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250407132451.1101691-1-bruce.richardson@intel.com>
+References: <20250407132451.1101691-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,497 +61,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+The "--lcores" EAL parameter has a very powerful syntax that can be used
+to provide precise control over lcore mappings. The docs however, only
+provided a minimal description of what it can do. Augment the docs by
+providing some examples of use of the option, and what the resulting
+core mappings would be.
+
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ doc/guides/linux_gsg/eal_args.include.rst | 27 +++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 9cfbf7de84..aafe567bfa 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -29,6 +29,33 @@ Lcore-related options
+     The grouping ``()`` can be omitted for single element group.
+     The ``@`` can be omitted if cpus and lcores have the same value.
+ 
++    Examples:
++
++    ``--lcores=1-3``: Run threads on physical CPUs 1, 2 and 3,
++    with each thread having the same lcore id as the physical CPU id.
++
++    ``--lcores=1@(1,2)``: Run a single thread with lcore id 1,
++    but with that thread bound to both physical CPUs 1 and 2,
++    so it can run on either, as determined by the operating system.
++
++    ``--lcores='1@31,2@32,3@33'``: Run threads having internal lcore ids of 1, 2 and 3,
++    but with the threads being bound to physical CPUs 31, 32 and 33 respectively.
++
++    ``--lcores='(1-3)@(31-33)'``: Run three threads with lcore ids 1, 2 and 3.
++    Unlike the previous example above,
++    each of these threads is not bound to one specific physical CPU,
++    but rather, all three threads are instead bound to the three physical CPUs 31, 32 and 33.
++    This means that each of the three threads can move between the physical CPUs 31-33,
++    as decided by the OS as the application runs.
++
++    ``--lcores=(1-3)@20``: Run three threads, with lcore ids 1, 2 and 3,
++    where all three threads are bound to (can only run on) physical CPU 20.
++
++.. Note::
++    Binding multiple DPDK lcores to a single physical CPU can cause problems with poor performance
++    or deadlock when using DPDK rings or memory pools or spinlocks.
++    Such a configuration should only be used with care.
++
+ .. Note::
+     At a given instance only one core option ``--lcores``, ``-l`` or ``-c`` can
+     be used.
+-- 
+2.45.2
 
---17440408530.bCD0.3877941
-Date: Mon, 7 Apr 2025 17:47:33 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1694
-
-            Bug ID: 1694
-           Summary: mlx5: ASAN reports memory leaks with send_to_kernel
-           Product: DPDK
-           Version: 24.11
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: brian90013@gmail.com
-  Target Milestone: ---
-
-Hello,
-
-I am very pleased with the extensive DPDK flow support available with the m=
-lx5
-driver. However, when testing my own code compiled with ASAN, I notice many
-(limited to 5000) reports of indirect memory leaks from libmlx5.so whenever=
- the
-send_to_kernel action is used. I can use other actions like DROP, QUEUE, JU=
-MP,
-and COUNT without seeing any leaks. I've repeated the test multiple times w=
-ith
-the same total volume of leaked memory each time.
-
-Hardware:
-* 42:00.0 Ethernet controller: Mellanox Technologies MT2892 Family [Connect=
-X-6
-Dx]
-
-Software stack:
-* Debian 12.9 kernel 6.1.0-32-amd64
-* DOCA-roce 2.10.0=20
-* DPDK 24.11.1
-    * Configured with: meson build -Denable_kmods=3Dtrue -Db_sanitize=3Dadd=
-ress
--Db_lundef=3Dfalse -Dbuildtype=3Ddebug
-
-
-Test case:
-* Using flow rule described in commit:
-https://mails.dpdk.org/archives/dev/2022-September/251470.html
-
-$ sudo dpdk-testpmd --in-memory -- -i
-EAL: Detected CPU lcores: 48
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Selected IOVA mode 'VA'
-EAL: No free 2048 kB hugepages reported on node 0
-EAL: 16 hugepages of size 1073741824 reserved, but no mounted hugetlbfs fou=
-nd
-for that size
-Interactive-mode selected
-Warning: NUMA should be configured manually by using --port-numa-config and
---ring-numa-config parameters along with --numa.
-testpmd: Flow tunnel offload support might be limited or unavailable on por=
-t 0
-testpmd: Flow tunnel offload support might be limited or unavailable on por=
-t 1
-testpmd: create a new mbuf pool <mb_pool_0>: n=3D523456, size=3D2176, socke=
-t=3D0
-testpmd: preferred mempool ops selected: ring_mp_mc
-Configuring Port 0 (socket 0)
-Port 0: XX:XX:XX:XX:XX:XX
-Configuring Port 1 (socket 0)
-Port 1: XX:XX:XX:XX:XX:XX
-Checking link statuses...
-Done
-testpmd> flow create 0 ingress priority 0 group 1 pattern eth type spec 0x0=
-800
-type mask 0xffff / end actions send_to_kernel / end
-Flow rule #0 created
-testpmd> testpmd> quit
-
-Stopping port 0...
-Stopping ports...
-Done
-
-Stopping port 1...
-Stopping ports...
-Done
-
-Shutting down port 0...
-Closing ports...
-Port 0 is closed
-Done
-
-Shutting down port 1...
-Closing ports...
-Port 1 is closed
-Done
-
-Bye...
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D16057=3D=3DERROR: LeakSanitizer: detected memory leaks
-
-Too many leaks! Only the first 5000 leaks encountered will be reported.
-Indirect leak of 262184 byte(s) in 21 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350693e  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x2493e)
-
-Indirect leak of 4184 byte(s) in 21 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350698e  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x2498e)
-
-Indirect leak of 1792 byte(s) in 28 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143541fed  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5ffed)
-
-Indirect leak of 1536 byte(s) in 24 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350af81  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x28f81)
-
-Indirect leak of 672 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143540ebf  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5eebf)
-
-Indirect leak of 560 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f91435417a3  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5f7a3)
-    #2 0x7f9143523ab4  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41ab4)
-
-Indirect leak of 560 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f91435417a3  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5f7a3)
-    #2 0x7f9143523ade  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41ade)
-
-Indirect leak of 288 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524bae  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42bae)
-    #2 0x7ffc1f4f9bbf  ([stack]+0x1ebbf)
-
-Indirect leak of 288 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524ea6  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42ea6)
-
-Indirect leak of 256 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350b6b7  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x296b7)
-
-Indirect leak of 192 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143540ebf  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5eebf)
-    #2 0xbffffffff  (<unknown module>)
-
-Indirect leak of 112 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b7ffd in __interceptor_posix_memalign
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
-    #1 0x7f9143523a85  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41a85)
-
-Indirect leak of 72 byte(s) in 1 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524bae  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42bae)
-    #2 0x607000006f4f  (<unknown module>)
-
-
-.... text removed for length
-
-
-Indirect leak of 8 byte(s) in 1 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350f19e in mlx5dv_dr_domain_create
-(/lib/x86_64-linux-gnu/libmlx5.so.1+0x2d19e)
-
-SUMMARY: AddressSanitizer: 631608 byte(s) leaked in 5154 allocation(s).
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17440408530.bCD0.3877941
-Date: Mon, 7 Apr 2025 17:47:33 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - mlx5: ASAN reports memory leaks with send_to_kern=
-el"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1694">1694</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>mlx5: ASAN reports memory leaks with send_to_kernel
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>24.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>x86
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>brian90013&#64;gmail.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Hello,
-
-I am very pleased with the extensive DPDK flow support available with the m=
-lx5
-driver. However, when testing my own code compiled with ASAN, I notice many
-(limited to 5000) reports of indirect memory leaks from libmlx5.so whenever=
- the
-send_to_kernel action is used. I can use other actions like DROP, QUEUE, JU=
-MP,
-and COUNT without seeing any leaks. I've repeated the test multiple times w=
-ith
-the same total volume of leaked memory each time.
-
-Hardware:
-* 42:00.0 Ethernet controller: Mellanox Technologies MT2892 Family [Connect=
-X-6
-Dx]
-
-Software stack:
-* Debian 12.9 kernel 6.1.0-32-amd64
-* DOCA-roce 2.10.0=20
-* DPDK 24.11.1
-    * Configured with: meson build -Denable_kmods=3Dtrue -Db_sanitize=3Dadd=
-ress
--Db_lundef=3Dfalse -Dbuildtype=3Ddebug
-
-
-Test case:
-* Using flow rule described in commit:
-<a href=3D"https://mails.dpdk.org/archives/dev/2022-September/251470.html">=
-https://mails.dpdk.org/archives/dev/2022-September/251470.html</a>
-
-$ sudo dpdk-testpmd --in-memory -- -i
-EAL: Detected CPU lcores: 48
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Selected IOVA mode 'VA'
-EAL: No free 2048 kB hugepages reported on node 0
-EAL: 16 hugepages of size 1073741824 reserved, but no mounted hugetlbfs fou=
-nd
-for that size
-Interactive-mode selected
-Warning: NUMA should be configured manually by using --port-numa-config and
---ring-numa-config parameters along with --numa.
-testpmd: Flow tunnel offload support might be limited or unavailable on por=
-t 0
-testpmd: Flow tunnel offload support might be limited or unavailable on por=
-t 1
-testpmd: create a new mbuf pool &lt;mb_pool_0&gt;: n=3D523456, size=3D2176,=
- socket=3D0
-testpmd: preferred mempool ops selected: ring_mp_mc
-Configuring Port 0 (socket 0)
-Port 0: XX:XX:XX:XX:XX:XX
-Configuring Port 1 (socket 0)
-Port 1: XX:XX:XX:XX:XX:XX
-Checking link statuses...
-Done
-testpmd&gt; flow create 0 ingress priority 0 group 1 pattern eth type spec =
-0x0800
-type mask 0xffff / end actions send_to_kernel / end
-Flow rule #0 created
-testpmd&gt; testpmd&gt; quit
-
-Stopping port 0...
-Stopping ports...
-Done
-
-Stopping port 1...
-Stopping ports...
-Done
-
-Shutting down port 0...
-Closing ports...
-Port 0 is closed
-Done
-
-Shutting down port 1...
-Closing ports...
-Port 1 is closed
-Done
-
-Bye...
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D16057=3D=3DERROR: LeakSanitizer: detected memory leaks
-
-Too many leaks! Only the first 5000 leaks encountered will be reported.
-Indirect leak of 262184 byte(s) in 21 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350693e  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x2493e)
-
-Indirect leak of 4184 byte(s) in 21 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350698e  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x2498e)
-
-Indirect leak of 1792 byte(s) in 28 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143541fed  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5ffed)
-
-Indirect leak of 1536 byte(s) in 24 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350af81  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x28f81)
-
-Indirect leak of 672 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143540ebf  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5eebf)
-
-Indirect leak of 560 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f91435417a3  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5f7a3)
-    #2 0x7f9143523ab4  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41ab4)
-
-Indirect leak of 560 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f91435417a3  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5f7a3)
-    #2 0x7f9143523ade  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41ade)
-
-Indirect leak of 288 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524bae  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42bae)
-    #2 0x7ffc1f4f9bbf  ([stack]+0x1ebbf)
-
-Indirect leak of 288 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524ea6  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42ea6)
-
-Indirect leak of 256 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350b6b7  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x296b7)
-
-Indirect leak of 192 byte(s) in 4 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143540ebf  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x5eebf)
-    #2 0xbffffffff  (&lt;unknown module&gt;)
-
-Indirect leak of 112 byte(s) in 14 object(s) allocated from:
-    #0 0x7f91436b7ffd in __interceptor_posix_memalign
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
-    #1 0x7f9143523a85  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x41a85)
-
-Indirect leak of 72 byte(s) in 1 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f9143524bae  (/lib/x86_64-linux-gnu/libmlx5.so.1+0x42bae)
-    #2 0x607000006f4f  (&lt;unknown module&gt;)
-
-
-.... text removed for length
-
-
-Indirect leak of 8 byte(s) in 1 object(s) allocated from:
-    #0 0x7f91436b83b7 in __interceptor_calloc
-../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:77
-    #1 0x7f914350f19e in mlx5dv_dr_domain_create
-(/lib/x86_64-linux-gnu/libmlx5.so.1+0x2d19e)
-
-SUMMARY: AddressSanitizer: 631608 byte(s) leaked in 5154 allocation(s).
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1694">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17440408530.bCD0.3877941--
