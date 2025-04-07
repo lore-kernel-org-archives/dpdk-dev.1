@@ -2,79 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C0CC36010
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 11:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350C7C36010
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 12:25:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEE1440156;
-	Mon,  7 Apr 2025 13:56:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 60E7B40041
- for <dev@dpdk.org>; Mon,  7 Apr 2025 13:56:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1744026999; x=1775562999;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=bS0QXpu864T2kVfKdYcg3e+IO1GsK0SMoqPIXiW/UX4=;
- b=m8myYC6I0lcx5ywH5DbmgsFW2cbExA5qQA4wU6fwf3OOPWeFnTOkPAJE
- f1uYc01XodQLv70rqZNPKxq8J0BieV5GNuhavXCgcwAjhSsm3bmgkGZWv
- 6mK0cOgRgAZvemDMsExv5hX2dZamp82HB8rXdoX2W7MWQURG/fDiH2HvU
- skkXM8bEX1yGAfCOv3gQMZij7C5oEg/Fsn/TUWHtuKtYDFb2RdHlwm+jx
- GZNW7uNjEGfIOE5iRUUSF1GE4myG/nQTlDS5lZWVeMnbwUB4kKL5gZ3H0
- A3Yz2Jjr4wZt2UR/1hgfe/Scql900EfdSM9LKwKWlmjMBwSvMLGhkfBZH A==;
-X-CSE-ConnectionGUID: 1zae1dwbQ3ekgGVv8vmIIA==
-X-CSE-MsgGUID: Ly1KvDG+TgyVtsy7WLDF5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45298722"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="45298722"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2025 04:56:38 -0700
-X-CSE-ConnectionGUID: eH6fZBp2Stmp7E522tl7SA==
-X-CSE-MsgGUID: zIAbxkstTqaBNKYVVMZDCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; d="scan'208";a="128872237"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2025 04:56:38 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 7 Apr 2025 04:56:37 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 7 Apr 2025 04:56:37 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 7 Apr 2025 04:56:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jnU4wzmsriHg6DVRmHNx/MKrNsvJsEQF9WTMdQWXU3pWeK6xhWk4UUmRhMOf334joewKDV8719xZ2T9XTLOdt1d4InIjBYp9shwoKQABju7WJJDtis/olKAMtGW0Dn01iAF7evabwUZANoMH1kSrcpDfhevM9HHDG8lKFRJXTSCk35LQnP4jvRdfnTNJ0NTBDu4kjc1FOOO+IEHyx7SdhukteUyVfoJiFOYADuZWKYI+5WYkEsxieTtNe9LWDjqYSevlVQ8JxH0Z3LhEATVdd5++YzrN92z/dSTx3ckBLuzoDDTEf1n0p0wJyh3tvU9hvgkrxXMgwTDt99+U3r25wA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4j/PFR4o7Hj/UuT0a5+JXRQDoUCMiOT1fOeV/A6N6fk=;
- b=rvi23QwvmOunLiMrjam04sLUqvtN4M0vLYDG2jduLFrYYRo/6ETMhNecQQCZpwQNz5Jzrd3FY7V8ZGUdgFyAvwL/69QoXqsWQfNs1DsV4Q1VAJDoJp1J9I8qdo18MDqHtAEH46l7hIU5eTKVyBv1Ubfc8HLoM3Gqwna0ubebDx0oiVGjqVpz2v05XxY24Vlf/iVFEqkzLMsZq3SJWfsKso6+NveCBHxvVfSK48JgW11wFNtyAQO6v82kxHoCzZMP+1jxfZc67qYDOu8ul2lECSToYYmWlxvaLizHnveQknGUAv6JjJVBvfdAArVd2vQMSB+wEDsaQA6n2/+/LxZhTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB8017.namprd11.prod.outlook.com (2603:10b6:8:115::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Mon, 7 Apr
- 2025 11:56:07 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%6]) with mapi id 15.20.8606.029; Mon, 7 Apr 2025
- 11:56:07 +0000
-Date: Mon, 7 Apr 2025 12:56:02 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v2 0/3] allow easier use of high lcore-ids
-Message-ID: <Z_O9Uq_Mg86yjKzi@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6247E40156;
+	Mon,  7 Apr 2025 14:25:51 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 1902040041
+ for <dev@dpdk.org>; Mon,  7 Apr 2025 14:25:50 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BD87C20748;
+ Mon,  7 Apr 2025 14:25:49 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v2 0/3] allow easier use of high lcore-ids
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 7 Apr 2025 14:25:46 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FB9E@smartserver.smartshare.dk>
+In-Reply-To: <Z_O9Uq_Mg86yjKzi@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 0/3] allow easier use of high lcore-ids
+Thread-Index: AduntCGPqQ2tSM58RnW00k6E3zV6GgAAHqNg
 References: <20250313113829.1480907-1-bruce.richardson@intel.com>
  <20250324173030.3733517-1-bruce.richardson@intel.com>
  <Z-vzAS8TXWn9WSV0@bricha3-mobl1.ger.corp.intel.com>
@@ -83,103 +37,11 @@ References: <20250313113829.1480907-1-bruce.richardson@intel.com>
  <98CBD80474FA8B44BF855DF32C47DC35E9FB99@smartserver.smartshare.dk>
  <Z_OrsVaV64pLREqv@bricha3-mobl1.ger.corp.intel.com>
  <98CBD80474FA8B44BF855DF32C47DC35E9FB9A@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FB9A@smartserver.smartshare.dk>
-X-ClientProxiedBy: DB7PR02CA0021.eurprd02.prod.outlook.com
- (2603:10a6:10:52::34) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB8017:EE_
-X-MS-Office365-Filtering-Correlation-Id: d295b1a1-7d7c-4567-7aba-08dd75cb2e05
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?b2daeDh6dVFTd3EwQ2tDdnZ5aGpTamo5dE5TZlBIaHRiM3F1ZGkvTmhvcThz?=
- =?utf-8?B?N1AxSmgyTXkwSlNpUnZ2dEE4a1dkdHdhbzhWSVVzUExCWjhOdSs4OXJhSnZN?=
- =?utf-8?B?ZHNxZmZLZTQ4bElBYTZ1a1o4S2tHQXplWEgxTXgyUWRTdURIOUduT014V1lq?=
- =?utf-8?B?TE44UUE0SFNIT2FXKzNydE9ZcTJ4QnF5MEZDWjJrUzVDcEwxU21PTHJWSjht?=
- =?utf-8?B?eDNHdDR5YnRRamNzTVFwL3h3QnhLa2dOTVFuTERnSXExNURna1M3UkhFU3ZY?=
- =?utf-8?B?ZzFZdmJIMUZ4OHUrMTlFR0FQTXdCOGNwSlRWbEgyTHRZU1Q1UUxuUWR6OW1H?=
- =?utf-8?B?T2c2OFhRd0tvVUxrNDAzRS9HTzA4ZnJLdHUxMnVlZEJ6UEc4cjV4UTJHbFUr?=
- =?utf-8?B?djJjNVk1VmZwdEFvUit1QzRubkZuVE9CdCtJTk5KdGRwbFl6bTF0cjBmSXRL?=
- =?utf-8?B?VHcrS0FmYUVaTFBKdDlGajdrZFhManFwbm80S2lwQkxLckoxRGN5S2NrMmN5?=
- =?utf-8?B?b0VMRjJBOExUZ3I2WmlFMEtjV3FQUndFZU5POW8vR2h5NmpOMytiUElBempy?=
- =?utf-8?B?WGhZVGJpQW5aNXViYVRtMlVMdUg3ZS9FbVRWR0s4bUFjQ1pLdEFOZ1hNWk9N?=
- =?utf-8?B?ekRkYTBBNGR0OEpJNTNOUDcvWU0rb0Yzb3lhUVRyRXVmeVZjL0JBemp3azJH?=
- =?utf-8?B?eU40NXliRFpDZ1hMV2NsditLVUFtWGRDSytiMzh6RE9hOWdhTFQ1N2FnZWlF?=
- =?utf-8?B?bUhLVURXUE1lNzVHLzRMN3dBWEhjM21tcGVaanBvb3hjMzdGZ1BQdXVTMlo4?=
- =?utf-8?B?Kzl1QmR2WmhjRFAxTU5kWTlRclFCK0xDMU9IeG9sOXlwcndsekJOclpQRVJp?=
- =?utf-8?B?KzVhekxZUkljcFM3UGRqTVYyVEx4RldMNmhmK0Z0N3ZhQUsxNENMbmVtcDlZ?=
- =?utf-8?B?T25uWUVXZFN6TmRYRmM4WVBwUlBIM3JvUE9JZEQ5WHhPV25ZbjBpRlNKYW8y?=
- =?utf-8?B?K3VZaGhKVWlvSTZOcE1IL2pWUFUxYmlWOWY3KzJBUHArNzJES3gyUWJiNzdr?=
- =?utf-8?B?UEFoV2REUzl5S3RqTkhIR2hwbkVOaWVyQkwzS1hhcEl0UHRheXQyditCd2FC?=
- =?utf-8?B?alp3bHoxZTk0QUtJdmJjYW1jWHF2RTlIOXpNYWJnRk0vdENWOVR2NjJ3bk1y?=
- =?utf-8?B?cFRvQ0I0NUN1ZG9WUnlFNVViQWpYU0pHTHpPNU9kN2RoVHFSZ2gvaDRVTE1U?=
- =?utf-8?B?V0Z5Q2NxVVhpcitKNkwvZGVhWGlWUm8ybGhvU3hsZ3prd21KSlZ4aTRpNVo0?=
- =?utf-8?B?Tit5b2FIZGFhNXYxZm13WnlSa3lZVHZuYjJCSTVJZVlBN1pRUytXd1lIMDJ4?=
- =?utf-8?B?VVgrTHZnQjh2bjFkRmU2bVBZb01VQVh1MEQyZDFXS3VIRlI1TXE0N3hRYnhZ?=
- =?utf-8?B?cjNWeitsS096TENtU0lRaW9lVkxmTkxNeE5aRm9UdXlLK01lZk9Kc1dzL0RD?=
- =?utf-8?B?SEZPdmRzckthai83ZklCU1dkbVlCZEc1YXNKVlJ3R0J4OGtzM1p3L0FQSFpr?=
- =?utf-8?B?NjROUFpKeHNmR1UyVXdSL0I3eU1DTzRSSHEyVkJacFBFVStuSmp2MW9jcmdK?=
- =?utf-8?B?aUoremJIRVJKVXo3eU5reGNYalUzb3FlQjRoZWNjb1U2cmkyVlRTTGVTcWJG?=
- =?utf-8?B?R3R5T1pwMGNrb3kycDlrY1JzMzlZYWZoQnF2eXdsZjJ2WkYzUmNnSlMyYXpU?=
- =?utf-8?B?U1hiK2xWWkpjWHVwU3cxREpMalhmMDhPS1hqTXZRaDIzTkR4ZCswSmtrMTRK?=
- =?utf-8?B?aW56dmVRL2FzSkhvVERtZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MFAzRDk1RUovZG9acUROdXlOeXRPQXhNZkRwZElRcE9yWUxZNjNlcGpOOTFW?=
- =?utf-8?B?Q25DcHZlbHFFTzlBRHVWNjJOMG1aendyQlZjdmp1ZHY5eGFTL1dnQll5bnM4?=
- =?utf-8?B?RXlHV2lVc08zcEJXVXNycVhUcVFhcjUyT3dkYzNnUktmWWFOelFlRkNGd1R0?=
- =?utf-8?B?TVBaSFJTSUxZR2U1VDU4TFNDejV3em5SQThGbnhqbG1GWi9zWWRlZmU3WGJ6?=
- =?utf-8?B?dXNGYzZhTVFVMHhJdHhraUZ4UGI2amY5N2h3ODVtNFVSQW1FNmpRZlBWOXp5?=
- =?utf-8?B?SWpGUkMxNXpXa2cvSTFvWUNJckdVN0duMmxBZ1poaVd1M2pWT0FhNEhmK21k?=
- =?utf-8?B?VUIxcUY2c0twTHB1VTdnZndEZ0R4Si9LbVJPOWNhOXAwbEtRU2FpZzBvNjls?=
- =?utf-8?B?UFoxelVBbUd2dzB2TGF4NFo4NzZ4YkxrTjdhUmVTYk4rRk5zNVgreHphem9s?=
- =?utf-8?B?eGhNTkVUbXlza2dCaU9vZDhZWmVweUpLVFErUnU4NFVrR05LSkRQT255WU4r?=
- =?utf-8?B?T0gzNFQrQ1U3aXFYVEVIKzFYR3B6MGZxVzJQNWRYdmluOXkxcVgzV2dXakZn?=
- =?utf-8?B?eHVvcUVjT3BRclBZK3o0SXdjd05rU3czQ0doWWRJV3VxaXRGUkhhdk1GZHVF?=
- =?utf-8?B?aUZzNEk4cGFxbGtJTXBTRmowYVZpZi9sZy9ZV29VVXJBYXNYWnJkVWNxQzll?=
- =?utf-8?B?Nm1veVJ4Z1E3SEYzbzNVN0x5NnpTOVdBMTV5SFFTUS9pcVdmbDlPVC80UmpH?=
- =?utf-8?B?R29QTFUreGN6YXZjY1poMUx4NE8wM3pmSjBDV1NBNWdyWUFRRTB0ejJoYnVN?=
- =?utf-8?B?ZVhOMFZjL3ZvMmxtZFh3UW8zM3psWUFYemZGWTdtZHJTZ2ZVRzJYaGZZWkl0?=
- =?utf-8?B?UjNSR0llbU1HeVlaMlcxdnhYY0Y3Wm9ReHdSRFVDc1QwYTNvUi9UcitNWFJG?=
- =?utf-8?B?citET1B1Ymx3RDVHL05pT1FCY2tadXlvb0lnZnVyREEyQkhDMURQKzBPNDRY?=
- =?utf-8?B?WnlpNWtoNitDeitRZGxZSC9DQ2puT3RDa1I0ZDZUTkFNYzNjZ0NMVkh3cm4y?=
- =?utf-8?B?S29VWS8vOVJyYjNmRHFvK3pLVzZOL3JVWkNrdG9BTTRialNWcUdNb2RhZkhn?=
- =?utf-8?B?NHkyaCtGRlcyVC81UUFLMDI5RlN5Z29OUHBLdHl5L2dPNnZPNXAyRVlOOFVz?=
- =?utf-8?B?azUzODZHNTYzRm9TN2xlcWJuYWIrdDZLYktNUnNOeWUwcldDRE4vVHp3KzB3?=
- =?utf-8?B?YzNkemJscHFGM3p5cDJUeVR3NDNqRFNSNUFBdWZCM2JBSHhJdUE4NUg4K015?=
- =?utf-8?B?TzZWcThnNGJFSGRrOFBHMTB3WmFGU2FQOEtUZ1EvTjB2Zmo0WGdsUEtGMExL?=
- =?utf-8?B?UHhFb25XMUVvdFQ2cGpYVEw0QVVZeHUxNTBLZ2xaNnpDNnFRVzQzVzdTUG9q?=
- =?utf-8?B?MmRQZzg2QTQ5a3JBb1FwcUhVZXd4V2pscUN0cEg4c1Q4Vkp4bEZsNmpuN1Ev?=
- =?utf-8?B?S0N0dThNdFZxclU5MGNxTk5XekcrbTVtU1piUTl1ZnJiNDQwZnRwSElDOEFC?=
- =?utf-8?B?VkNieXBYczU3WWhDbjREZUFGMzlHaVV6TTNTVG5kUXN3bk9kWTZQUllqR3Bp?=
- =?utf-8?B?bmJMNHdERitFK3BuWS8rQ1kzVkdNZk1iTVpqUC8venRZYnE0OEJRdXc5ZGRk?=
- =?utf-8?B?ZEdDbmFNamNQcG1GcjRqNE5Sb0c1Z2FONGRUR3h2NEJrdDladjFTUmE1c3dX?=
- =?utf-8?B?b2pmYWp6VC9kWWJGOVlvVjdkaWVXMFN4TmFpRG8wYkFHOXh1dzZmWldORWFI?=
- =?utf-8?B?bGxGc1E5SVBrb3hrTml1bzdzS3JaN2U3T01kS0VqRHQyLysrREtpcG1EVndy?=
- =?utf-8?B?Nm9BNUU3Z0VzN01GQTJEKzNmYkpVSFpyQmZjYlc1THpJRDFMQnNsaVI5YUho?=
- =?utf-8?B?WXdQK0IxV295SGNENTMwZHg0VXpKWk45c1E2aTFudHBNdFdMZUkwNmpUODFW?=
- =?utf-8?B?QUVRUUJjeDlXSU5qR0ZEUDBneUluMlF5Vy9YTDFlS29iQWxNWUtBcW5NdW93?=
- =?utf-8?B?Ym1PMDN3VHNhTHNUam40Rk9MTDBCRWs1YTJ6RnRWVXlPWk94T0VBSkNyTFJt?=
- =?utf-8?B?T21hR3Rmd09xUE53KzBkNkxvaDVDc3U5NXdneFJxZWJTbG4zZWJQUjE4eDRK?=
- =?utf-8?B?YlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d295b1a1-7d7c-4567-7aba-08dd75cb2e05
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 11:56:07.0118 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 81Ae5Cf90+iTr24t/8M2LCfbYpEL1x5WVT4WpLKMcemj6EFsWQ2iG7j+6z1HMo2jVdFKPMPsygbWuPjvSSyUbMgIy85bViT9e6beFcJc4N4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8017
-X-OriginatorOrg: intel.com
+ <Z_O9Uq_Mg86yjKzi@bricha3-mobl1.ger.corp.intel.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "David Marchand" <david.marchand@redhat.com>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -193,209 +55,186 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Apr 07, 2025 at 01:32:59PM +0200, Morten Brørup wrote:
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Monday, 7 April 2025 12.41
-> > 
-> > On Mon, Apr 07, 2025 at 12:15:13PM +0200, Morten Brørup wrote:
-> > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com] Sent:
-> > > > Monday, 7 April 2025 11.49
-> > > >
-> > > > On Mon, Apr 07, 2025 at 09:04:05AM +0200, David Marchand wrote:
-> > > > > Hello Bruce,
-> > > > >
-> > > > > On Tue, Apr 1, 2025 at 4:08 PM Bruce Richardson
-> > > > > <bruce.richardson@intel.com> wrote:
-> > > > > >
-> > > > > > On Mon, Mar 24, 2025 at 05:30:26PM +0000, Bruce Richardson
-> > wrote:
-> > > > > > > Traditionally, DPDK has had a direct mapping of internal
-> > lcore-
-> > > > ids, to
-> > > > > > > the actual core numbers in use. With higher core count
-> > servers
-> > > > becoming
-> > > > > > > more prevalent the issue becomes one of increasing memory
-> > > > footprint when
-> > > > > > > using such a scheme, due to the need to have all arrays
-> > > > dimensioned for
-> > > > > > > all cores on the system, whether or not those cores are in
-> > use by
-> > > > the
-> > > > > > > app.
-> > > > > > >
-> > > > > > > Therefore, the decision was made in the past to not expand
-> > the
-> > > > > > > build-time RTE_MAX_LCORE value beyond 128. Instead, it was
-> > > > recommended
-> > > > > > > that users use the "--lcores" EAL parameter to take the high-
-> > > > numbered
-> > > > > > > cores they wish to use and map them to lcore-ids within the 0
-> > -
-> > > > 128
-> > > > > > > range. While this works, this is a little clunky as it means
-> > that
-> > > > > > > instead of just passing, for example, "-l 130-139", the user
-> > must
-> > > > > > > instead pass "--lcores 0@130,1@131,2@132,3@133,...."
-> > > > > > >
-> > > > > > > This patchset attempts to simplify the situation by adding a
-> > new
-> > > > flag to
-> > > > > > > do this mapping automatically. To use cores 130-139 and map
-> > them
-> > > > to ids
-> > > > > > > 0-9 internally, the EAL args now become: "-l 130-139 --map-
-> > lcore-
-> > > > ids",
-> > > > > > > or using the shorter "-M" version of the flag: "-Ml 130-139".
-> > > > > > >
-> > > > > > > Adding this new parameter required some rework of the
-> > existing
-> > > > arg
-> > > > > > > parsing code, because in current DPDK the args are parsed and
-> > > > checked in
-> > > > > > > the order they appear on the commandline. This means that
-> > using
-> > > > the
-> > > > > > > example above, the core parameter 130-139 will be rejected
-> > > > immediately
-> > > > > > > before the "map-lcore-ids" parameter is seen. To work around
-> > > > this, the
-> > > > > > > core (and service core) parameters are not parsed when seen,
-> > > > instead
-> > > > > > > they are only saved off and parsed after all arguments are
-> > > > parsed. The
-> > > > > > > "-l" and "-c" parameters are converted into "--lcores"
-> > arguments,
-> > > > so all
-> > > > > > > assigning of lcore ids is done there in all cases.
-> > > > > > >
-> > > > > > > RFC->v2: * converted printf to DEBUG log * added "-M" as
-> > shorter
-> > > > > > > version of flag * added documentation * renamed internal API
-> > that
-> > > > > > > was changed to avoid any potential
-> > > > hidden
-> > > > > > >   runtime issues.
-> > > > > > >
-> > > > > > > Bruce Richardson (3): eal: centralize core parameter parsing
-> > eal:
-> > > > > > > convert core masks and lists to core sets eal: allow
-> > automatic
-> > > > > > > mapping of high lcore ids
-> > > > > > >
-> > > > > > Ping for review.
-> > > > > >
-> > > > > > At a high level, does this feature seem useful to users?
-> > > > >
-> > > > > This seems useful, though I am not I would touch the existing
-> > > > options.
-> > > > > I would have gone with a simple -L option (taking the same kind
-> > of
-> > > > > input than -l but with new behavior), and not combine a flag with
-> > > > > existing options.
-> > > > >
-> > > >
-> > > > That would be an easier patchset to do up. However, it would then
-> > mean
-> > > > that we have no less than 4 different ways to specify the cores to
-> > use:
-> > > > "- c", "-l", "-L", "--lcores" - and therefore need 4 different sets
-> > of
-> > > > parsing options for them, and more checks to ensure we have only
-> > one of
-> > > > the 4 specified in any run. That's why I chose the modifier option,
-> > and
-> > > > to try and consolidate the core setup a bit.
-> > > >
-> > > > However, if having a completely new option is preferred, I am happy
-> > > > enough to do up a different patchset for that.
-> > > >
-> > > > > I scanned through the series, not much to say.  Maybe add a unit
-> > test
-> > > > > for new cmdline option.
-> > > > >
-> > > > Sure. Once it's decided what approach (if any) to take, I'll do up
-> > a
-> > > > new patchset, taking into account any relevant feedback on this
-> > set.
-> > > >
-> > > > /Bruce
-> > >
-> > > Changing the EAL parameter parser to a "two pass parser" makes sense.
-> > I
-> > > think checking for existence of more than one lcore specification
-> > options
-> > > should suffice; we don't need to accept multiple lcore specification
-> > > options and check for conflicts.
-> > >
-> > > When remapping, do we need to support gaps in the "lcore" (logical
-> > cores)
-> > > array, e.g. for secondary processes, or can it be continuous from 0
-> > to
-> > > the number of specified lcores?
-> > >
-> > > And are new EAL parameters for this really beneficial?  Doesn't e.g.
-> > "-l
-> > > 0-9@130-139,100@140" suffice?
-> > >
-> > Actually, I believe "0-9@130-139"[1]  is not the same as
-> > "0@130,1@131,2@132,...". The latter affinities one thread to one core
-> > ten
-> > times over, while the former affinitizes 10 threads to 10 cores -
-> > leaving
-> > those threads free to move about within the 10 cores specified.
-> 
-> Interesting. The documentation [GSG] isn't clear to me about this; a example there could help clarify.
-> 
-> [GSG]: https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html#lcore-related-options
-> 
-
-Yep, agreed.
-
-> If users are manually passing lcore parameters to the EAL, then I see why some sort of remapping shorthand is useful.
-> IMO, if the mappings are relatively exotic, it should be acceptable requiring an external script to build a long list of mapping parameters and then invoke the application with those script-generated EAL parameters.
-> This would reduce the scope to support relatively simple, common mappings.
-> 
-> Could we expand the --lcores syntax to support common mappings?
-> 
-> E.g. "0-9@130+" to do what I thought.
-> The lack of "()" treats the entries individually (not as a group), and the "+" indicates auto-increment.
-> 
-> A more advanced example:
-> "0-9@(130-131)+", meaning lcore 0 gets cpus 130-131, lcore 1 gets cpus 132-133, etc.
-> 
-
-My issues with the above syntax idea is:
-* I think it's overly complicating the lcores parameter adding in the
-  support for the "+" symbol - especially in the advanced case example you
-  provide. I worry about code maintainability here.
-* More significantly for me, I think it's also getting things backwards in
-  that it is focusing more on the lcore ids visible to the app, rather than
-  the physical cores to be used. For the example above of 0-9@130+, what I
-  would expect is that the user is mainly thinking about the cores he wants
-  to use 130-139, which are then to be mapped to lower ids. If we had the
-  syntax reversed where the physical cores were first, I'd say it would
-  make more sense, e.g. 130-139@0+
-* finally, as I found out last month, there are systems on which the cores
-  are spread across numa-nodes on odd/even boundaries, so to have an app
-  running on socket 0, you need to give the core ids as a list i.e.
-  0,2,4,6, and cannot use ranges. [This also reenforces the point above
-  too, where again it's the internal ids we need to generalize, not the
-  physical cpus]
-
-My thinking on the matter, and I'm happy to be corrected if I'm wrong here,
-is that end-users are unlikely to significantly care what the actual lcore
-ids are internally in the program, so long as they work and are unique.
-What does matter is the physical cpus on which the code is to run.
-Therefore, my approach to this is to find the simplest possible solution
-whereby the user can just provide a list of cores and tell EAL to just map
-them to reasonable values. For the "reasonable" values, I would imagine
-that for the vast majority of cases starting "0" is what is wanted. For
-anything beyond that, we already have the existing --lcores syntax to be
-used.
-
-My 2c.
-
-/Bruce
+PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
+b21dDQo+IFNlbnQ6IE1vbmRheSwgNyBBcHJpbCAyMDI1IDEzLjU2DQo+IA0KPiBPbiBNb24sIEFw
+ciAwNywgMjAyNSBhdCAwMTozMjo1OVBNICswMjAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4g
+PiA+IEZyb206IEJydWNlIFJpY2hhcmRzb24gW21haWx0bzpicnVjZS5yaWNoYXJkc29uQGludGVs
+LmNvbV0NCj4gPiA+IFNlbnQ6IE1vbmRheSwgNyBBcHJpbCAyMDI1IDEyLjQxDQo+ID4gPg0KPiA+
+ID4gT24gTW9uLCBBcHIgMDcsIDIwMjUgYXQgMTI6MTU6MTNQTSArMDIwMCwgTW9ydGVuIEJyw7hy
+dXAgd3JvdGU6DQo+ID4gPiA+ID4gRnJvbTogQnJ1Y2UgUmljaGFyZHNvbiBbbWFpbHRvOmJydWNl
+LnJpY2hhcmRzb25AaW50ZWwuY29tXQ0KPiBTZW50Og0KPiA+ID4gPiA+IE1vbmRheSwgNyBBcHJp
+bCAyMDI1IDExLjQ5DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBNb24sIEFwciAwNywgMjAyNSBh
+dCAwOTowNDowNUFNICswMjAwLCBEYXZpZCBNYXJjaGFuZCB3cm90ZToNCj4gPiA+ID4gPiA+IEhl
+bGxvIEJydWNlLA0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IE9uIFR1ZSwgQXByIDEsIDIwMjUg
+YXQgNDowOOKAr1BNIEJydWNlIFJpY2hhcmRzb24NCj4gPiA+ID4gPiA+IDxicnVjZS5yaWNoYXJk
+c29uQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IE9uIE1v
+biwgTWFyIDI0LCAyMDI1IGF0IDA1OjMwOjI2UE0gKzAwMDAsIEJydWNlIFJpY2hhcmRzb24NCj4g
+PiA+IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+IFRyYWRpdGlvbmFsbHksIERQREsgaGFzIGhhZCBh
+IGRpcmVjdCBtYXBwaW5nIG9mIGludGVybmFsDQo+ID4gPiBsY29yZS0NCj4gPiA+ID4gPiBpZHMs
+IHRvDQo+ID4gPiA+ID4gPiA+ID4gdGhlIGFjdHVhbCBjb3JlIG51bWJlcnMgaW4gdXNlLiBXaXRo
+IGhpZ2hlciBjb3JlIGNvdW50DQo+ID4gPiBzZXJ2ZXJzDQo+ID4gPiA+ID4gYmVjb21pbmcNCj4g
+PiA+ID4gPiA+ID4gPiBtb3JlIHByZXZhbGVudCB0aGUgaXNzdWUgYmVjb21lcyBvbmUgb2YgaW5j
+cmVhc2luZyBtZW1vcnkNCj4gPiA+ID4gPiBmb290cHJpbnQgd2hlbg0KPiA+ID4gPiA+ID4gPiA+
+IHVzaW5nIHN1Y2ggYSBzY2hlbWUsIGR1ZSB0byB0aGUgbmVlZCB0byBoYXZlIGFsbCBhcnJheXMN
+Cj4gPiA+ID4gPiBkaW1lbnNpb25lZCBmb3INCj4gPiA+ID4gPiA+ID4gPiBhbGwgY29yZXMgb24g
+dGhlIHN5c3RlbSwgd2hldGhlciBvciBub3QgdGhvc2UgY29yZXMgYXJlDQo+IGluDQo+ID4gPiB1
+c2UgYnkNCj4gPiA+ID4gPiB0aGUNCj4gPiA+ID4gPiA+ID4gPiBhcHAuDQo+ID4gPiA+ID4gPiA+
+ID4NCj4gPiA+ID4gPiA+ID4gPiBUaGVyZWZvcmUsIHRoZSBkZWNpc2lvbiB3YXMgbWFkZSBpbiB0
+aGUgcGFzdCB0byBub3QNCj4gZXhwYW5kDQo+ID4gPiB0aGUNCj4gPiA+ID4gPiA+ID4gPiBidWls
+ZC10aW1lIFJURV9NQVhfTENPUkUgdmFsdWUgYmV5b25kIDEyOC4gSW5zdGVhZCwgaXQNCj4gd2Fz
+DQo+ID4gPiA+ID4gcmVjb21tZW5kZWQNCj4gPiA+ID4gPiA+ID4gPiB0aGF0IHVzZXJzIHVzZSB0
+aGUgIi0tbGNvcmVzIiBFQUwgcGFyYW1ldGVyIHRvIHRha2UgdGhlDQo+IGhpZ2gtDQo+ID4gPiA+
+ID4gbnVtYmVyZWQNCj4gPiA+ID4gPiA+ID4gPiBjb3JlcyB0aGV5IHdpc2ggdG8gdXNlIGFuZCBt
+YXAgdGhlbSB0byBsY29yZS1pZHMgd2l0aGluDQo+IHRoZSAwDQo+ID4gPiAtDQo+ID4gPiA+ID4g
+MTI4DQo+ID4gPiA+ID4gPiA+ID4gcmFuZ2UuIFdoaWxlIHRoaXMgd29ya3MsIHRoaXMgaXMgYSBs
+aXR0bGUgY2x1bmt5IGFzIGl0DQo+IG1lYW5zDQo+ID4gPiB0aGF0DQo+ID4gPiA+ID4gPiA+ID4g
+aW5zdGVhZCBvZiBqdXN0IHBhc3NpbmcsIGZvciBleGFtcGxlLCAiLWwgMTMwLTEzOSIsIHRoZQ0K
+PiB1c2VyDQo+ID4gPiBtdXN0DQo+ID4gPiA+ID4gPiA+ID4gaW5zdGVhZCBwYXNzICItLWxjb3Jl
+cyAwQDEzMCwxQDEzMSwyQDEzMiwzQDEzMywuLi4uIg0KPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+
+ID4gPiA+ID4gVGhpcyBwYXRjaHNldCBhdHRlbXB0cyB0byBzaW1wbGlmeSB0aGUgc2l0dWF0aW9u
+IGJ5DQo+IGFkZGluZyBhDQo+ID4gPiBuZXcNCj4gPiA+ID4gPiBmbGFnIHRvDQo+ID4gPiA+ID4g
+PiA+ID4gZG8gdGhpcyBtYXBwaW5nIGF1dG9tYXRpY2FsbHkuIFRvIHVzZSBjb3JlcyAxMzAtMTM5
+IGFuZA0KPiBtYXANCj4gPiA+IHRoZW0NCj4gPiA+ID4gPiB0byBpZHMNCj4gPiA+ID4gPiA+ID4g
+PiAwLTkgaW50ZXJuYWxseSwgdGhlIEVBTCBhcmdzIG5vdyBiZWNvbWU6ICItbCAxMzAtMTM5IC0t
+DQo+IG1hcC0NCj4gPiA+IGxjb3JlLQ0KPiA+ID4gPiA+IGlkcyIsDQo+ID4gPiA+ID4gPiA+ID4g
+b3IgdXNpbmcgdGhlIHNob3J0ZXIgIi1NIiB2ZXJzaW9uIG9mIHRoZSBmbGFnOiAiLU1sIDEzMC0N
+Cj4gMTM5Ii4NCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IEFkZGluZyB0aGlzIG5l
+dyBwYXJhbWV0ZXIgcmVxdWlyZWQgc29tZSByZXdvcmsgb2YgdGhlDQo+ID4gPiBleGlzdGluZw0K
+PiA+ID4gPiA+IGFyZw0KPiA+ID4gPiA+ID4gPiA+IHBhcnNpbmcgY29kZSwgYmVjYXVzZSBpbiBj
+dXJyZW50IERQREsgdGhlIGFyZ3MgYXJlIHBhcnNlZA0KPiBhbmQNCj4gPiA+ID4gPiBjaGVja2Vk
+IGluDQo+ID4gPiA+ID4gPiA+ID4gdGhlIG9yZGVyIHRoZXkgYXBwZWFyIG9uIHRoZSBjb21tYW5k
+bGluZS4gVGhpcyBtZWFucyB0aGF0DQo+ID4gPiB1c2luZw0KPiA+ID4gPiA+IHRoZQ0KPiA+ID4g
+PiA+ID4gPiA+IGV4YW1wbGUgYWJvdmUsIHRoZSBjb3JlIHBhcmFtZXRlciAxMzAtMTM5IHdpbGwg
+YmUNCj4gcmVqZWN0ZWQNCj4gPiA+ID4gPiBpbW1lZGlhdGVseQ0KPiA+ID4gPiA+ID4gPiA+IGJl
+Zm9yZSB0aGUgIm1hcC1sY29yZS1pZHMiIHBhcmFtZXRlciBpcyBzZWVuLiBUbyB3b3JrDQo+IGFy
+b3VuZA0KPiA+ID4gPiA+IHRoaXMsIHRoZQ0KPiA+ID4gPiA+ID4gPiA+IGNvcmUgKGFuZCBzZXJ2
+aWNlIGNvcmUpIHBhcmFtZXRlcnMgYXJlIG5vdCBwYXJzZWQgd2hlbg0KPiBzZWVuLA0KPiA+ID4g
+PiA+IGluc3RlYWQNCj4gPiA+ID4gPiA+ID4gPiB0aGV5IGFyZSBvbmx5IHNhdmVkIG9mZiBhbmQg
+cGFyc2VkIGFmdGVyIGFsbCBhcmd1bWVudHMNCj4gYXJlDQo+ID4gPiA+ID4gcGFyc2VkLiBUaGUN
+Cj4gPiA+ID4gPiA+ID4gPiAiLWwiIGFuZCAiLWMiIHBhcmFtZXRlcnMgYXJlIGNvbnZlcnRlZCBp
+bnRvICItLWxjb3JlcyINCj4gPiA+IGFyZ3VtZW50cywNCj4gPiA+ID4gPiBzbyBhbGwNCj4gPiA+
+ID4gPiA+ID4gPiBhc3NpZ25pbmcgb2YgbGNvcmUgaWRzIGlzIGRvbmUgdGhlcmUgaW4gYWxsIGNh
+c2VzLg0KPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gUkZDLT52MjogKiBjb252ZXJ0
+ZWQgcHJpbnRmIHRvIERFQlVHIGxvZyAqIGFkZGVkICItTSIgYXMNCj4gPiA+IHNob3J0ZXINCj4g
+PiA+ID4gPiA+ID4gPiB2ZXJzaW9uIG9mIGZsYWcgKiBhZGRlZCBkb2N1bWVudGF0aW9uICogcmVu
+YW1lZCBpbnRlcm5hbA0KPiBBUEkNCj4gPiA+IHRoYXQNCj4gPiA+ID4gPiA+ID4gPiB3YXMgY2hh
+bmdlZCB0byBhdm9pZCBhbnkgcG90ZW50aWFsDQo+ID4gPiA+ID4gaGlkZGVuDQo+ID4gPiA+ID4g
+PiA+ID4gICBydW50aW1lIGlzc3Vlcy4NCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+
+IEJydWNlIFJpY2hhcmRzb24gKDMpOiBlYWw6IGNlbnRyYWxpemUgY29yZSBwYXJhbWV0ZXINCj4g
+cGFyc2luZw0KPiA+ID4gZWFsOg0KPiA+ID4gPiA+ID4gPiA+IGNvbnZlcnQgY29yZSBtYXNrcyBh
+bmQgbGlzdHMgdG8gY29yZSBzZXRzIGVhbDogYWxsb3cNCj4gPiA+IGF1dG9tYXRpYw0KPiA+ID4g
+PiA+ID4gPiA+IG1hcHBpbmcgb2YgaGlnaCBsY29yZSBpZHMNCj4gPiA+ID4gPiA+ID4gPg0KPiA+
+ID4gPiA+ID4gPiBQaW5nIGZvciByZXZpZXcuDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+
+IEF0IGEgaGlnaCBsZXZlbCwgZG9lcyB0aGlzIGZlYXR1cmUgc2VlbSB1c2VmdWwgdG8gdXNlcnM/
+DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhpcyBzZWVtcyB1c2VmdWwsIHRob3VnaCBJIGFt
+IG5vdCBJIHdvdWxkIHRvdWNoIHRoZSBleGlzdGluZw0KPiA+ID4gPiA+IG9wdGlvbnMuDQo+ID4g
+PiA+ID4gPiBJIHdvdWxkIGhhdmUgZ29uZSB3aXRoIGEgc2ltcGxlIC1MIG9wdGlvbiAodGFraW5n
+IHRoZSBzYW1lDQo+IGtpbmQNCj4gPiA+IG9mDQo+ID4gPiA+ID4gPiBpbnB1dCB0aGFuIC1sIGJ1
+dCB3aXRoIG5ldyBiZWhhdmlvciksIGFuZCBub3QgY29tYmluZSBhIGZsYWcNCj4gd2l0aA0KPiA+
+ID4gPiA+ID4gZXhpc3Rpbmcgb3B0aW9ucy4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+
+ID4gPiBUaGF0IHdvdWxkIGJlIGFuIGVhc2llciBwYXRjaHNldCB0byBkbyB1cC4gSG93ZXZlciwg
+aXQgd291bGQNCj4gdGhlbg0KPiA+ID4gbWVhbg0KPiA+ID4gPiA+IHRoYXQgd2UgaGF2ZSBubyBs
+ZXNzIHRoYW4gNCBkaWZmZXJlbnQgd2F5cyB0byBzcGVjaWZ5IHRoZSBjb3Jlcw0KPiB0bw0KPiA+
+ID4gdXNlOg0KPiA+ID4gPiA+ICItIGMiLCAiLWwiLCAiLUwiLCAiLS1sY29yZXMiIC0gYW5kIHRo
+ZXJlZm9yZSBuZWVkIDQgZGlmZmVyZW50DQo+IHNldHMNCj4gPiA+IG9mDQo+ID4gPiA+ID4gcGFy
+c2luZyBvcHRpb25zIGZvciB0aGVtLCBhbmQgbW9yZSBjaGVja3MgdG8gZW5zdXJlIHdlIGhhdmUN
+Cj4gb25seQ0KPiA+ID4gb25lIG9mDQo+ID4gPiA+ID4gdGhlIDQgc3BlY2lmaWVkIGluIGFueSBy
+dW4uIFRoYXQncyB3aHkgSSBjaG9zZSB0aGUgbW9kaWZpZXINCj4gb3B0aW9uLA0KPiA+ID4gYW5k
+DQo+ID4gPiA+ID4gdG8gdHJ5IGFuZCBjb25zb2xpZGF0ZSB0aGUgY29yZSBzZXR1cCBhIGJpdC4N
+Cj4gPiA+ID4gPg0KPiA+ID4gPiA+IEhvd2V2ZXIsIGlmIGhhdmluZyBhIGNvbXBsZXRlbHkgbmV3
+IG9wdGlvbiBpcyBwcmVmZXJyZWQsIEkgYW0NCj4gaGFwcHkNCj4gPiA+ID4gPiBlbm91Z2ggdG8g
+ZG8gdXAgYSBkaWZmZXJlbnQgcGF0Y2hzZXQgZm9yIHRoYXQuDQo+ID4gPiA+ID4NCj4gPiA+ID4g
+PiA+IEkgc2Nhbm5lZCB0aHJvdWdoIHRoZSBzZXJpZXMsIG5vdCBtdWNoIHRvIHNheS4gIE1heWJl
+IGFkZCBhDQo+IHVuaXQNCj4gPiA+IHRlc3QNCj4gPiA+ID4gPiA+IGZvciBuZXcgY21kbGluZSBv
+cHRpb24uDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+IFN1cmUuIE9uY2UgaXQncyBkZWNpZGVkIHdo
+YXQgYXBwcm9hY2ggKGlmIGFueSkgdG8gdGFrZSwgSSdsbCBkbw0KPiB1cA0KPiA+ID4gYQ0KPiA+
+ID4gPiA+IG5ldyBwYXRjaHNldCwgdGFraW5nIGludG8gYWNjb3VudCBhbnkgcmVsZXZhbnQgZmVl
+ZGJhY2sgb24gdGhpcw0KPiA+ID4gc2V0Lg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gL0JydWNlDQo+
+ID4gPiA+DQo+ID4gPiA+IENoYW5naW5nIHRoZSBFQUwgcGFyYW1ldGVyIHBhcnNlciB0byBhICJ0
+d28gcGFzcyBwYXJzZXIiIG1ha2VzDQo+IHNlbnNlLg0KPiA+ID4gSQ0KPiA+ID4gPiB0aGluayBj
+aGVja2luZyBmb3IgZXhpc3RlbmNlIG9mIG1vcmUgdGhhbiBvbmUgbGNvcmUgc3BlY2lmaWNhdGlv
+bg0KPiA+ID4gb3B0aW9ucw0KPiA+ID4gPiBzaG91bGQgc3VmZmljZTsgd2UgZG9uJ3QgbmVlZCB0
+byBhY2NlcHQgbXVsdGlwbGUgbGNvcmUNCj4gc3BlY2lmaWNhdGlvbg0KPiA+ID4gPiBvcHRpb25z
+IGFuZCBjaGVjayBmb3IgY29uZmxpY3RzLg0KPiA+ID4gPg0KPiA+ID4gPiBXaGVuIHJlbWFwcGlu
+ZywgZG8gd2UgbmVlZCB0byBzdXBwb3J0IGdhcHMgaW4gdGhlICJsY29yZSINCj4gKGxvZ2ljYWwN
+Cj4gPiA+IGNvcmVzKQ0KPiA+ID4gPiBhcnJheSwgZS5nLiBmb3Igc2Vjb25kYXJ5IHByb2Nlc3Nl
+cywgb3IgY2FuIGl0IGJlIGNvbnRpbnVvdXMgZnJvbQ0KPiAwDQo+ID4gPiB0bw0KPiA+ID4gPiB0
+aGUgbnVtYmVyIG9mIHNwZWNpZmllZCBsY29yZXM/DQo+ID4gPiA+DQo+ID4gPiA+IEFuZCBhcmUg
+bmV3IEVBTCBwYXJhbWV0ZXJzIGZvciB0aGlzIHJlYWxseSBiZW5lZmljaWFsPyAgRG9lc24ndA0K
+PiBlLmcuDQo+ID4gPiAiLWwNCj4gPiA+ID4gMC05QDEzMC0xMzksMTAwQDE0MCIgc3VmZmljZT8N
+Cj4gPiA+ID4NCj4gPiA+IEFjdHVhbGx5LCBJIGJlbGlldmUgIjAtOUAxMzAtMTM5IlsxXSAgaXMg
+bm90IHRoZSBzYW1lIGFzDQo+ID4gPiAiMEAxMzAsMUAxMzEsMkAxMzIsLi4uIi4gVGhlIGxhdHRl
+ciBhZmZpbml0aWVzIG9uZSB0aHJlYWQgdG8gb25lDQo+IGNvcmUNCj4gPiA+IHRlbg0KPiA+ID4g
+dGltZXMgb3Zlciwgd2hpbGUgdGhlIGZvcm1lciBhZmZpbml0aXplcyAxMCB0aHJlYWRzIHRvIDEw
+IGNvcmVzIC0NCj4gPiA+IGxlYXZpbmcNCj4gPiA+IHRob3NlIHRocmVhZHMgZnJlZSB0byBtb3Zl
+IGFib3V0IHdpdGhpbiB0aGUgMTAgY29yZXMgc3BlY2lmaWVkLg0KPiA+DQo+ID4gSW50ZXJlc3Rp
+bmcuIFRoZSBkb2N1bWVudGF0aW9uIFtHU0ddIGlzbid0IGNsZWFyIHRvIG1lIGFib3V0IHRoaXM7
+IGENCj4gZXhhbXBsZSB0aGVyZSBjb3VsZCBoZWxwIGNsYXJpZnkuDQo+ID4NCj4gPiBbR1NHXToN
+Cj4gaHR0cHM6Ly9kb2MuZHBkay5vcmcvZ3VpZGVzL2xpbnV4X2dzZy9saW51eF9lYWxfcGFyYW1l
+dGVycy5odG1sI2xjb3JlLQ0KPiByZWxhdGVkLW9wdGlvbnMNCj4gPg0KPiANCj4gWWVwLCBhZ3Jl
+ZWQuDQo+IA0KPiA+IElmIHVzZXJzIGFyZSBtYW51YWxseSBwYXNzaW5nIGxjb3JlIHBhcmFtZXRl
+cnMgdG8gdGhlIEVBTCwgdGhlbiBJIHNlZQ0KPiB3aHkgc29tZSBzb3J0IG9mIHJlbWFwcGluZyBz
+aG9ydGhhbmQgaXMgdXNlZnVsLg0KPiA+IElNTywgaWYgdGhlIG1hcHBpbmdzIGFyZSByZWxhdGl2
+ZWx5IGV4b3RpYywgaXQgc2hvdWxkIGJlIGFjY2VwdGFibGUNCj4gcmVxdWlyaW5nIGFuIGV4dGVy
+bmFsIHNjcmlwdCB0byBidWlsZCBhIGxvbmcgbGlzdCBvZiBtYXBwaW5nIHBhcmFtZXRlcnMNCj4g
+YW5kIHRoZW4gaW52b2tlIHRoZSBhcHBsaWNhdGlvbiB3aXRoIHRob3NlIHNjcmlwdC1nZW5lcmF0
+ZWQgRUFMDQo+IHBhcmFtZXRlcnMuDQo+ID4gVGhpcyB3b3VsZCByZWR1Y2UgdGhlIHNjb3BlIHRv
+IHN1cHBvcnQgcmVsYXRpdmVseSBzaW1wbGUsIGNvbW1vbg0KPiBtYXBwaW5ncy4NCj4gPg0KPiA+
+IENvdWxkIHdlIGV4cGFuZCB0aGUgLS1sY29yZXMgc3ludGF4IHRvIHN1cHBvcnQgY29tbW9uIG1h
+cHBpbmdzPw0KPiA+DQo+ID4gRS5nLiAiMC05QDEzMCsiIHRvIGRvIHdoYXQgSSB0aG91Z2h0Lg0K
+PiA+IFRoZSBsYWNrIG9mICIoKSIgdHJlYXRzIHRoZSBlbnRyaWVzIGluZGl2aWR1YWxseSAobm90
+IGFzIGEgZ3JvdXApLA0KPiBhbmQgdGhlICIrIiBpbmRpY2F0ZXMgYXV0by1pbmNyZW1lbnQuDQo+
+ID4NCj4gPiBBIG1vcmUgYWR2YW5jZWQgZXhhbXBsZToNCj4gPiAiMC05QCgxMzAtMTMxKSsiLCBt
+ZWFuaW5nIGxjb3JlIDAgZ2V0cyBjcHVzIDEzMC0xMzEsIGxjb3JlIDEgZ2V0cw0KPiBjcHVzIDEz
+Mi0xMzMsIGV0Yy4NCj4gPg0KPiANCj4gTXkgaXNzdWVzIHdpdGggdGhlIGFib3ZlIHN5bnRheCBp
+ZGVhIGlzOg0KPiAqIEkgdGhpbmsgaXQncyBvdmVybHkgY29tcGxpY2F0aW5nIHRoZSBsY29yZXMg
+cGFyYW1ldGVyIGFkZGluZyBpbiB0aGUNCj4gICBzdXBwb3J0IGZvciB0aGUgIisiIHN5bWJvbCAt
+IGVzcGVjaWFsbHkgaW4gdGhlIGFkdmFuY2VkIGNhc2UgZXhhbXBsZQ0KPiB5b3UNCj4gICBwcm92
+aWRlLiBJIHdvcnJ5IGFib3V0IGNvZGUgbWFpbnRhaW5hYmlsaXR5IGhlcmUuDQo+ICogTW9yZSBz
+aWduaWZpY2FudGx5IGZvciBtZSwgSSB0aGluayBpdCdzIGFsc28gZ2V0dGluZyB0aGluZ3MgYmFj
+a3dhcmRzDQo+IGluDQo+ICAgdGhhdCBpdCBpcyBmb2N1c2luZyBtb3JlIG9uIHRoZSBsY29yZSBp
+ZHMgdmlzaWJsZSB0byB0aGUgYXBwLCByYXRoZXINCj4gdGhhbg0KPiAgIHRoZSBwaHlzaWNhbCBj
+b3JlcyB0byBiZSB1c2VkLiBGb3IgdGhlIGV4YW1wbGUgYWJvdmUgb2YgMC05QDEzMCssDQo+IHdo
+YXQgSQ0KPiAgIHdvdWxkIGV4cGVjdCBpcyB0aGF0IHRoZSB1c2VyIGlzIG1haW5seSB0aGlua2lu
+ZyBhYm91dCB0aGUgY29yZXMgaGUNCj4gd2FudHMNCj4gICB0byB1c2UgMTMwLTEzOSwgd2hpY2gg
+YXJlIHRoZW4gdG8gYmUgbWFwcGVkIHRvIGxvd2VyIGlkcy4gSWYgd2UgaGFkDQo+IHRoZQ0KPiAg
+IHN5bnRheCByZXZlcnNlZCB3aGVyZSB0aGUgcGh5c2ljYWwgY29yZXMgd2VyZSBmaXJzdCwgSSdk
+IHNheSBpdCB3b3VsZA0KPiAgIG1ha2UgbW9yZSBzZW5zZSwgZS5nLiAxMzAtMTM5QDArDQoNCkkg
+MTAwICUgYWdyZWUgb24gdGhlIHN5bnRheCBiZWluZyBiYWNrd2FyZHMuDQpBIGdvb2QgcmVhc29u
+IGZvciBpbnRyb2R1Y2luZyBhIG5ldyBwYXJhbWV0ZXIsIHJhdGhlciB0aGFuIGV4cGFuZGluZyBv
+biAiLS1sY29yZXMiLg0KDQpXZSBzaG91bGQgY29uc2lkZXIgZGVwcmVjYXRpbmcgdGhlIG9sZCAo
+YmFja3dhcmRzKSBzeW50YXgsIHNvIHVzZXJzIGRvbuKAmXQgZ2V0IGNvbmZ1c2VkIGFib3V0IG9u
+ZSBFQUwgcGFyYW1ldGVyIGJlaW5nICJiYWNrd2FyZHMiIG9mIHRoZSBvdGhlci4NCg0KPiAqIGZp
+bmFsbHksIGFzIEkgZm91bmQgb3V0IGxhc3QgbW9udGgsIHRoZXJlIGFyZSBzeXN0ZW1zIG9uIHdo
+aWNoIHRoZQ0KPiBjb3Jlcw0KPiAgIGFyZSBzcHJlYWQgYWNyb3NzIG51bWEtbm9kZXMgb24gb2Rk
+L2V2ZW4gYm91bmRhcmllcywgc28gdG8gaGF2ZSBhbg0KPiBhcHANCj4gICBydW5uaW5nIG9uIHNv
+Y2tldCAwLCB5b3UgbmVlZCB0byBnaXZlIHRoZSBjb3JlIGlkcyBhcyBhIGxpc3QgaS5lLg0KPiAg
+IDAsMiw0LDYsIGFuZCBjYW5ub3QgdXNlIHJhbmdlcy4gW1RoaXMgYWxzbyByZWVuZm9yY2VzIHRo
+ZSBwb2ludCBhYm92ZQ0KPiAgIHRvbywgd2hlcmUgYWdhaW4gaXQncyB0aGUgaW50ZXJuYWwgaWRz
+IHdlIG5lZWQgdG8gZ2VuZXJhbGl6ZSwgbm90IHRoZQ0KPiAgIHBoeXNpY2FsIGNwdXNdDQoNCkZv
+ciB0aGlzLCB3ZSBjb3VsZCB1c2UgIi8yIiAobGlrZSBpbiBzdWJuZXRzKSwgb3IgIisyIiBhcyBp
+bmNyZW1lbnQgcGFyYW1ldGVyLg0KDQo+IA0KPiBNeSB0aGlua2luZyBvbiB0aGUgbWF0dGVyLCBh
+bmQgSSdtIGhhcHB5IHRvIGJlIGNvcnJlY3RlZCBpZiBJJ20gd3JvbmcNCj4gaGVyZSwNCj4gaXMg
+dGhhdCBlbmQtdXNlcnMgYXJlIHVubGlrZWx5IHRvIHNpZ25pZmljYW50bHkgY2FyZSB3aGF0IHRo
+ZSBhY3R1YWwNCj4gbGNvcmUNCj4gaWRzIGFyZSBpbnRlcm5hbGx5IGluIHRoZSBwcm9ncmFtLCBz
+byBsb25nIGFzIHRoZXkgd29yayBhbmQgYXJlIHVuaXF1ZS4NCg0KR2VuZXJhbGx5IHllcy4NCk5v
+dGUgdGhhdCB3ZSBzaG91bGQgYWxsb3cgdGhlIHNhbWUgcGh5c2ljYWwgQ1BVIGNvcmUgdG8gYmUg
+YXNzaWduZWQgdG8gbXVsdGlwbGUgbGNvcmVzLi4uDQpJZiBhIENQVSBjb3JlIGlzIHNoYXJlZCBi
+ZXR3ZWVuIG11bHRpcGxlIHdvcmtlciBsY29yZXMsIHRoZW4gaXQgY291bGQgYmUgcHJvYmxlbWF0
+aWMsIGJ1dCB3aXRoIGEgbWl4IG9mIGxjb3JlIHJvbGVzLCB0aGlzIG1pZ2h0IGJlIGhhbmR5IGZv
+ciBzb21lIGFwcGxpY2F0aW9ucy4gRS5nLiBhIHZpcnR1YWwgbWFjaGluZSB3aXRoIG9ubHkgb25l
+IENQVSBjb3JlIGNvdWxkIHVzZSB0aGF0IHNpbmdsZSBDUFUgY29yZSBhcyBib3RoIG1haW4gYW5k
+IHdvcmtlciBsY29yZSwgb3IgYXMgbWFpbiBhbmQgc2VydmljZSBsY29yZS4NClNoYXJpbmcgYW4g
+bGNvcmUgYmV0d2VlbiB0aHJlYWRzIHJlcXVpcmVzIHRoZSBkZXZlbG9wZXIgdG8gdGFrZSBzcGVj
+aWFsIGNhcmUgb2YgZS5nLiBzcGlubG9ja3MsIGJ1dCB0aGUgRUFMIHBhcmFtZXRlciBwYXJzZXIg
+c2hvdWxkIG5vdCBwcm9oaWJpdCBpdC4gSXQgbWlnaHQgbG9nIGEgbm90aWNlLCB0aG91Z2guDQoN
+Cj4gV2hhdCBkb2VzIG1hdHRlciBpcyB0aGUgcGh5c2ljYWwgY3B1cyBvbiB3aGljaCB0aGUgY29k
+ZSBpcyB0byBydW4uDQo+IFRoZXJlZm9yZSwgbXkgYXBwcm9hY2ggdG8gdGhpcyBpcyB0byBmaW5k
+IHRoZSBzaW1wbGVzdCBwb3NzaWJsZQ0KPiBzb2x1dGlvbg0KPiB3aGVyZWJ5IHRoZSB1c2VyIGNh
+biBqdXN0IHByb3ZpZGUgYSBsaXN0IG9mIGNvcmVzIGFuZCB0ZWxsIEVBTCB0byBqdXN0DQo+IG1h
+cA0KPiB0aGVtIHRvIHJlYXNvbmFibGUgdmFsdWVzLiBGb3IgdGhlICJyZWFzb25hYmxlIiB2YWx1
+ZXMsIEkgd291bGQgaW1hZ2luZQ0KPiB0aGF0IGZvciB0aGUgdmFzdCBtYWpvcml0eSBvZiBjYXNl
+cyBzdGFydGluZyAiMCIgaXMgd2hhdCBpcyB3YW50ZWQuIEZvcg0KPiBhbnl0aGluZyBiZXlvbmQg
+dGhhdCwgd2UgYWxyZWFkeSBoYXZlIHRoZSBleGlzdGluZyAtLWxjb3JlcyBzeW50YXggdG8NCj4g
+YmUNCj4gdXNlZC4NCg0KQWdyZWUgd2l0aCBhbGwgb2YgdGhlIGFib3ZlLiA6LSkNCg0KPiANCj4g
+TXkgMmMuDQo+IA0KPiAvQnJ1Y2UNCg==
