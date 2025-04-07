@@ -2,75 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2F7C3601A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 06:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD71C36010
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Apr 2025 06:37:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0540D40156;
-	Mon,  7 Apr 2025 08:02:07 +0200 (CEST)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com
- [209.85.222.43]) by mails.dpdk.org (Postfix) with ESMTP id C751F40150
- for <dev@dpdk.org>; Mon,  7 Apr 2025 08:02:05 +0200 (CEST)
-Received: by mail-ua1-f43.google.com with SMTP id
- a1e0cc1a2514c-86d2fba8647so3821946241.0
- for <dev@dpdk.org>; Sun, 06 Apr 2025 23:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1744005725; x=1744610525; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1djF7z2UUS0lxOQnvp0sFfmigHhkg+2QsoXVD0pjuVs=;
- b=UHorqLKeDtgGBYzUHXEQK8HDtiTLtProGobMSkhVmBS3flXL4Lt/xrFhfSdOPccLie
- By2Vz//rFmYtkNJ/wit6PBpLDtyV3Qo90iri0pWriEmABQkCqCBMaPW3kt5q3kk50G8j
- 6AqmTIvYxi1+uI8eoYWPwxcXgjzyW3APylvnD2aU/HOzT9beG7vpIH2iIAVSmJ1URPjm
- 0WS9VEK00Vn8UKwk10S+JEWPntcJDsbjiFBbzXcDUZ3B40HY1bH9oRY/eQ3O2IMbJbOR
- tKCT4R0p7G7C353B8wecmnJzTIVE8g1nzlNwXs6Pcj0qaQc5KRuXJiQ3cGdpYStPtrGh
- c5SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744005725; x=1744610525;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1djF7z2UUS0lxOQnvp0sFfmigHhkg+2QsoXVD0pjuVs=;
- b=sNn9EwJQ5D9A1bCmB6RU19C+xDxcwDflC3Y2WyckyToKVOR0LutVSwXJf0WysNAgX2
- IO32yIDCl/om2JuulevBq6rkP14lBRcbQYjAnIREs9Sd4Ym4r+Icxo0vsQ0hbAy+d5za
- TRrY7kPfgYbIKLs6UojfBTBN7mw8YNBEbn8uyCM2BULtrzextgrcKPWJYTqqPiolmoom
- XSyXRTzFXkOoEPckHPb4VD5dF+3kuT2warFB0YnreogwYHmhVh55JzrqDvYKDtTTwbtv
- L1O5sxgBAyVmYGySxAyc6vFCyjiVPctzGHZgC9olLcHuWHA+6TarICmsgyQ5EHjA0bZK
- XsEw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU8D87ocf/Jm2z5vy7C3M0aV9PkGSU/Wjq/TL75737rlWNbkMts+2Bb2fF4/c3bH4ODCdQ=@dpdk.org
-X-Gm-Message-State: AOJu0YwKU758GdxPYBVsmnMBT0tNo6KRwLcyjg638hlecEOSx4g7ly4i
- ZM+LAzwwdrdq/ieTH2Yys6KZEPjBfCIELohNyXNNF8wD/kq47iTbZQstEKixM1AjUiUhAWSWefU
- mE8y6xQNbAN4KkBLyYLti8aYQvvo=
-X-Gm-Gg: ASbGncv5szVn0EhpC1SlXmdDVzdL8zRzC8ujIZ1qWyuMTHuSWCoaR6ywaLLnMibQMs9
- GJky+wzRLmqfYSOj60/PHeece37+JwN5QQkOvl1N5ZaBixvR7Wm++ZzUxSvTQde39dwFFP3/mqB
- YqDzCrfW8fIZ++Zxywx07WrOoM
-X-Google-Smtp-Source: AGHT+IFRHKaGXpCqKHZVrbiTHYAjFwLfACWmE1nXX6KLzo0e0ldzkMkq1QcI6SBWdnTKo8pb0OCk1Th9s1vExdVJiDE=
-X-Received: by 2002:a05:6102:3e8a:b0:4c3:64bc:7d00 with SMTP id
- ada2fe7eead31-4c8637ae1dbmr5080468137.24.1744005725028; Sun, 06 Apr 2025
- 23:02:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250401042053.3518757-1-nsaxena@marvell.com>
- <20250401042053.3518757-2-nsaxena@marvell.com>
- <20250401071522.67cf34eb@hermes.local>
- <CAG6-93zdmJ0V=zFzj-r3GZtjEiygLpHbhE_8SW6odoocz5S-5A@mail.gmail.com>
- <PH0PR18MB40861D73C3869C46BCCB4410DEA92@PH0PR18MB4086.namprd18.prod.outlook.com>
- <20250404082138.11549962@hermes.local>
-In-Reply-To: <20250404082138.11549962@hermes.local>
-From: Nitin Saxena <nsaxena16@gmail.com>
-Date: Mon, 7 Apr 2025 11:31:53 +0530
-X-Gm-Features: ATxdqUE8-Sz5RKYplexKB5nsuA7zdvipnH9CUPmA09NOx9iIPyYCmFY9-aiFH0A
-Message-ID: <CAG6-93xN69Lzehnq3q=DpMxU11+qn-1a+q_ohhArQa+E=X8aow@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH 1/2] node: add global node mbuf dynfield
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>,
- Nitin Saxena <nsaxena@marvell.com>, 
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Robin Jarry <rjarry@redhat.com>, 
- Christophe Fontaine <cfontain@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>,
- Jerin Jacob <jerinj@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id A372940156;
+	Mon,  7 Apr 2025 08:37:04 +0200 (CEST)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net
+ (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+ by mails.dpdk.org (Postfix) with ESMTP id 11CE040150
+ for <dev@dpdk.org>; Mon,  7 Apr 2025 08:37:02 +0200 (CEST)
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+ by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwAHaT6KcvNnWRuBEw--.24669S2;
+ Mon, 07 Apr 2025 14:36:58 +0800 (CST)
+Received: from localhost.localdomain (unknown [218.76.62.144])
+ by mail (Coremail) with SMTP id AQAAfwBnbYmIcvNnf6BiAA--.4956S3;
+ Mon, 07 Apr 2025 14:36:56 +0800 (CST)
+From: liwencheng <liwencheng@phytium.com.cn>
+To: dev@dpdk.org
+Subject: [PATCH v5 0/4] 
+Date: Mon,  7 Apr 2025 06:36:52 +0000
+Message-Id: <1744007812-4708-1-git-send-email-liwencheng@phytium.com.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1743577112-119739-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1743577112-119739-1-git-send-email-liwencheng@phytium.com.cn>
+X-CM-TRANSID: AQAAfwBnbYmIcvNnf6BiAA--.4956S3
+X-CM-SenderInfo: polzv0xfkh0wo6sk53xlxphulrpou0/
+Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=liwencheng
+ @phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXr4xCF47uw4DJw18ArWDurg_yoWrGF4DpF
+ 4jyryavr4UJrW3tw4Sva18ZFyru3WxJryrK343u3s3WF97CFyDJF1jkFWjyr93Ka1UA3W0
+ vrn0vF13Grn8JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+ DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+ UUUUU
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,62 +47,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Stephen,
+v5:
+- Putting __rte_unused after the declaration.
+- Correct RX-bytes and TX-bytes statistics.
+- Initialize the mbuf_initializer.
+- Add driver based on 25.07.
+- Fixed some code style issues.
 
-Thanks,
-Nitin
+v4:
+- Fix tab errors in meson.build file.
+- Use RTE_LOG_LINE instead of rte_log.
+- Replace %l with %PRI*64.
+- Replace rte_smp_[r/w]mb with rte_[r/w]mb.
+- Do not use variadic arguments in macros.
+- Do not use variable-length array pkts[nb_bufs].
+- Use __rte_cache_aligned only for struct or union types alignment.
+- Support hardware Rx/Tx checksum offload.
+- Fixed some code style issues.
+v3:
+- Changed functions that always return 0 and whose return value
+is unused to void type, improving code simplicity and readability.
+- Fixed the implicit conversion issues in the
+macb_usxgmii_pcs_check_for_link and
+macb_usxgmii_pcs_check_for_link functions.
+- Added the missing SPDX license tags.
+- Added the missing mailmap entry.
+- Updated the MAINTAINERS file to include the missing information.
 
-On Fri, Apr 4, 2025 at 8:51=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Fri, 4 Apr 2025 08:11:07 +0000
-> Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com> wrote:
->
-> > > Hi Stephen,
-> > >
-> > > Thanks for commenting. See response inline.
-> > >
-> > > Regards,
-> > > Nitin
-> > >
-> > > On Tue, Apr 1, 2025 at 7:45=E2=80=AFPM Stephen Hemminger
-> > > <stephen@networkplumber.org> wrote:
-> > > >
-> > > > On Tue, 1 Apr 2025 09:50:46 +0530
-> > > > Nitin Saxena <nsaxena@marvell.com> wrote:
-> > > >
-> > > > > +int rte_node_mbuf_dynfield_register(void)
-> > > > > +{
-> > > > > +     struct node_mbuf_dynfield_mz *f =3D NULL;
-> > > > > +     const struct rte_memzone *mz =3D NULL;
-> > > > > +     int dyn_offset;
-> > > > > +
-> > > > > +     RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_dynfield_t) <
-> > > RTE_NODE_MBUF_DYNFIELD_SIZE);
-> > > > > +     RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_overload_fields_t) <
-> > > > > +                      RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE);
-> > > > > +
-> > > > > +     mz =3D
-> > > rte_memzone_lookup(NODE_MBUF_DYNFIELD_MEMZONE_NAME);
-> > > >
-> > > > Seems wasteful to have a whole memzone for this, the data is small.
-> > > > Is there a reason it could not just be a global variable like times=
-tamp.
-> > > >
-> > > Replaced usage of memzone with global variable in v2
-> >
-> > We need to use memzone to share the offset between primary and secondar=
-y
-> > processes I don=E2=80=99t see any other way.
->
->
-> Normally secondary just uses dynamic field lookup to find the offset.
+v2:
+- Split the driver into three logically independent patches,
+rather than one large patch.
+- Added conditional compilation to address the issue of
+macb_rxtx_vec_neon.c failing to compile in certain modes.
+- Fixed some code style issues.
 
-rte_node_mbuf_dynfield_register() is doing both: register_offset() +
-lookup_offset()
-Very first call to rte_node_mbuf_dynfield_register() actually
-registers dynamic offset for the buffer. All subsequent calls returns
-offset based on what was registered earlier
+v1:
+- updated net macb driver.
 
-Since secondary process support is required, should I bring back
-memzone based implementation? since global variable would not work
+*** BLURB HERE ***
+
+Wencheng Li (4):
+  usertools/dpdk-devbind: add platform devices support
+  net/macb: add new poll mode driver
+  net/macb: add NEON vectorized Rx/Tx
+  net/macb: add necessary docs and update related files
+
+ .mailmap                               |    1 +
+ MAINTAINERS                            |    6 +
+ doc/guides/nics/features/macb.ini      |   27 +
+ doc/guides/nics/index.rst              |    1 +
+ doc/guides/nics/macb.rst               |   26 +
+ doc/guides/rel_notes/release_25_07.rst |    4 +
+ drivers/net/macb/base/generic_phy.c    |  271 +++++
+ drivers/net/macb/base/generic_phy.h    |  202 ++++
+ drivers/net/macb/base/macb_common.c    |  670 ++++++++++++
+ drivers/net/macb/base/macb_common.h    |  253 +++++
+ drivers/net/macb/base/macb_errno.h     |   58 +
+ drivers/net/macb/base/macb_hw.h        | 1138 +++++++++++++++++++
+ drivers/net/macb/base/macb_type.h      |   23 +
+ drivers/net/macb/base/macb_uio.c       |  351 ++++++
+ drivers/net/macb/base/macb_uio.h       |   50 +
+ drivers/net/macb/base/meson.build      |   29 +
+ drivers/net/macb/macb_ethdev.c         | 1861 ++++++++++++++++++++++++++++++++
+ drivers/net/macb/macb_ethdev.h         |   91 ++
+ drivers/net/macb/macb_log.h            |   19 +
+ drivers/net/macb/macb_rxtx.c           | 1394 ++++++++++++++++++++++++
+ drivers/net/macb/macb_rxtx.h           |  325 ++++++
+ drivers/net/macb/macb_rxtx_vec_neon.c  |  675 ++++++++++++
+ drivers/net/macb/meson.build           |   23 +
+ drivers/net/meson.build                |    1 +
+ usertools/dpdk-devbind.py              |  131 ++-
+ 25 files changed, 7613 insertions(+), 17 deletions(-)
+ create mode 100644 doc/guides/nics/features/macb.ini
+ create mode 100644 doc/guides/nics/macb.rst
+ create mode 100644 drivers/net/macb/base/generic_phy.c
+ create mode 100644 drivers/net/macb/base/generic_phy.h
+ create mode 100644 drivers/net/macb/base/macb_common.c
+ create mode 100644 drivers/net/macb/base/macb_common.h
+ create mode 100644 drivers/net/macb/base/macb_errno.h
+ create mode 100644 drivers/net/macb/base/macb_hw.h
+ create mode 100644 drivers/net/macb/base/macb_type.h
+ create mode 100644 drivers/net/macb/base/macb_uio.c
+ create mode 100644 drivers/net/macb/base/macb_uio.h
+ create mode 100644 drivers/net/macb/base/meson.build
+ create mode 100644 drivers/net/macb/macb_ethdev.c
+ create mode 100644 drivers/net/macb/macb_ethdev.h
+ create mode 100644 drivers/net/macb/macb_log.h
+ create mode 100644 drivers/net/macb/macb_rxtx.c
+ create mode 100644 drivers/net/macb/macb_rxtx.h
+ create mode 100644 drivers/net/macb/macb_rxtx_vec_neon.c
+ create mode 100644 drivers/net/macb/meson.build
+
+-- 
+2.7.4
+
