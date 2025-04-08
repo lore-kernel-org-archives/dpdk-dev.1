@@ -2,79 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA51C3600C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 07:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B896C369A1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:18:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C052440A89;
-	Tue,  8 Apr 2025 09:58:14 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A5F824027F
- for <dev@dpdk.org>; Tue,  8 Apr 2025 09:58:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744099090;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=CDv4LvZeeYMrAaPzhKwBg03pg0YD9GHtrT8G1+FaPOo=;
- b=SJqqe6GdT6uL0LqurGRNGjgD6wsEt2ATTQmWvS4oQ4mw1Ub+oNjIng8mz0UyZMq6PxxJEl
- pQguuxpDdG3mcc8uBYS6SSsSJNHNtbR0FeKW1f2YAVQeQKvkhl6wAPaXmGs2wnvtgzVdEx
- j0m/iTw6mNxzhvobYNLuAkaxv6spaA0=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-218-p1bVjGKwO56t9aHQW41dgQ-1; Tue, 08 Apr 2025 03:58:08 -0400
-X-MC-Unique: p1bVjGKwO56t9aHQW41dgQ-1
-X-Mimecast-MFC-AGG-ID: p1bVjGKwO56t9aHQW41dgQ_1744099086
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-30bfd03cdf6so25555701fa.1
- for <dev@dpdk.org>; Tue, 08 Apr 2025 00:58:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744099086; x=1744703886;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=CDv4LvZeeYMrAaPzhKwBg03pg0YD9GHtrT8G1+FaPOo=;
- b=SwUOXGldgKYziNLKFSaOfeOsiFMSRKs2t9feje1XzCQuri3HiNoypq7RlRWGjzb7jo
- 6UnHmZgmSm+nqmLFNJ6T8dyafKVs3aRmATSEWwk7ZRdh+2zIDufarWwG7+3qpyDy0/Iz
- xKwe3Vg7MSGkrTUXSQKGBuOKk8NaMZnSZwLu8L75KYPI7xFI0xzl8bMp+266g3oOYbbC
- EI0DcC/U0vJJwCOGTq1IMqj1fr36Fg5y19oVQvx4/E4P/8ALzBbEEwne6Qd189TDHhNK
- vhmoBba3Ogi0zh4K33x57XmVyKNRmli2hLS9xtbXG77/P6EFYr7YfyIQ5OrG+XaiChoY
- spvQ==
-X-Gm-Message-State: AOJu0Yz9BynUjMSTefPTxsqLZWpbzK2rQkGCh2uNvF508t4gz/e54aOX
- Ea2acg7ZrCFjKpgFwYIL3grUCiakZw/wSrwC/FxuSr3Ey952my0/OReUc/YEVMRKJVu4DRePCTI
- 1x0FTOdYt/9XZy2mII/dooVOWcBbcWL8CIsRMfQDDdYzJjwLwaC3fwCcF8zbDmaLlhdUyVLVZOY
- F1iCkJxXuHLfd0TFY=
-X-Gm-Gg: ASbGncu1vQqN2hs6SoK0amICU9yxy6gESsQxAbxjjHeB887sSNgdnkAn6DqEri2TAT5
- Umhf/vN21chfkv6xfUNV5Ea+KLQ8+Yehs9YFC3/88tNPgStqqvvBIHRpONwQGam1rVGsSA9TWTi
- o=
-X-Received: by 2002:a05:6512:1328:b0:545:2eca:863 with SMTP id
- 2adb3069b0e04-54c29836e84mr3432484e87.42.1744099086405; 
- Tue, 08 Apr 2025 00:58:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTATnhS3F3QdRDqMQTGXMPyWONXBYhkiF5iq/ktRi4gzJvTiaeLCVjtU/bvnNKW0snQ8SpiQfr8/GhBxFoG6M=
-X-Received: by 2002:a05:6512:1328:b0:545:2eca:863 with SMTP id
- 2adb3069b0e04-54c29836e84mr3432479e87.42.1744099086099; Tue, 08 Apr 2025
- 00:58:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250408074718.1322823-1-thomas@monjalon.net>
-In-Reply-To: <20250408074718.1322823-1-thomas@monjalon.net>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 8 Apr 2025 09:57:53 +0200
-X-Gm-Features: ATxdqUE6g2Chkr3QMks4RKcMlPKXYpocgv75YR_HwIa8LlxJM-_SUkw17Alixgw
-Message-ID: <CAJFAV8z0dMFK0Vh8A=xxvQZnSJoJLz8e75bnsemwNwQoQUh9ZQ@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 60BFD40E4C;
+	Tue,  8 Apr 2025 10:18:08 +0200 (CEST)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C96440A89
+ for <dev@dpdk.org>; Tue,  8 Apr 2025 10:18:07 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal
+ [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 7D283254012C;
+ Tue,  8 Apr 2025 04:18:06 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Tue, 08 Apr 2025 04:18:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1744100286;
+ x=1744186686; bh=ZRuvuK3Fg7TK8VeWYoxeIjBtAF5nFp0MeWPfIIjl0aM=; b=
+ QUp3NZPRpQ9vF0gvh5fFQl/Xbo/S2zzNG4C0+aRQlAeDzhuZF5XrUTjI8M3WQPw/
+ qWJxMSceuNqKKLawu4CL1/r9gJveV3G/rQD0NAYQEPTsm1z/NSDRYOIQewq0/jRW
+ WD5sMMKb4odrmvz6TucCOT65NnIRniJ2s8E80DaJDGgV0bNz/6aeNT9NZW7Mv76Q
+ xHNJYDXVZroF6oCartBucA3CdlS8vlPkBEygtfzOuri0I7PEWM+FoH6UtVlWdVtE
+ u5hguqYeEqLf3rE9c+bt8qPPXt30cwAjfLuRU2yRcFmMfN/BGCYZ2kTm+/dC2pZt
+ vGKUU32nZmz3x4Eyz1pn5A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744100286; x=
+ 1744186686; bh=ZRuvuK3Fg7TK8VeWYoxeIjBtAF5nFp0MeWPfIIjl0aM=; b=h
+ aD5VBc3BcBQ+NQiw6zMNSUj9eplmX9RfhRaD154AEmmrgr31xzsmMyHBos8kOPY1
+ n4ZNdVuFQNLrgVVjZgJiqCbd/dtzEH6Bz2MWwNOeRrWKHy5QjwoOymZpDOdnaLZt
+ WbNii62pMm7JZircAsCIz7zyrBCjVDN3Q17Vc3PfTJ3LCvMnSHetiEUPyTZKpFXz
+ qPnwHoyqSl6GcgBYksYjJjOEUnPI+NyIiWBtddqjsA3kC46ybLMml+/N/OFvQ+Y5
+ 9kzGdVXPEKAxR/vGEDAHnpeDtQNsDf2xnuROO78hMuMLWZQiUNBuVrcpyr+f+lZc
+ xmvqNsHsEgQ+MZjn38IDQ==
+X-ME-Sender: <xms:vtv0Z9biaRPH7bhVtbo1nLmxaXn1I-3dqig7mr2WPtqmZplEiyL9Dg>
+ <xme:vtv0Z0b1H1_U674td07BNtqRfwEcvnEf6V36COay5jDEoUkxnCtU2oAaciziuNyGG
+ WYWZq7FX9-sM2fhOw>
+X-ME-Received: <xmr:vtv0Z_-q4P7wX3px1ruZ40CoiMK-zjsuFDYT_-Q0L1hfQybpbT5V_bOcvqC3JdltEIFbyWrryjga1iNK7LOvg7W4kQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvheekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddt
+ jeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonh
+ hjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdej
+ vedtheevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtne
+ curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
+ pdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlh
+ hirghlnhhusehnvhhiughirgdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghh
+ rghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpd
+ hrtghpthhtohepughsohhsnhhofihskhhisehnvhhiughirgdrtghomhdprhgtphhtthho
+ pehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthhopegsihhngh
+ iisehnvhhiughirgdrtghomhdprhgtphhtthhopehorhhikhgrsehnvhhiughirgdrtgho
+ mhdprhgtphhtthhopehsuhgrnhhmihhnghhmsehnvhhiughirgdrtghomhdprhgtphhtth
+ hopehmrghtrghnsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:vtv0Z7pUQWknBlb8xwopX24u6JeuKJrciIonOnS1_FwCdkWvFwW2zA>
+ <xmx:vtv0Z4rzqyYp4dU0MXrGxK-NEcAR0xC8i1dMcgM609cIrYxeaQXaoA>
+ <xmx:vtv0ZxRKI6SN7bL1FbvkBTah0CIy_LQZA_TT-ZU8PMNETj1XZJrY4w>
+ <xmx:vtv0ZwoUoqxXetoPcxH99MgBpHH5jcUlCbENLIoWeXAeXBdryTcfZw>
+ <xmx:vtv0Z3_a6ww7jC9_SLdCo6PnF_8N57DENcKXpgLsXaXHHcVoCGz5E5Ko>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Apr 2025 04:18:04 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Ali Alnubani <alialnu@nvidia.com>,
+ David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Matan Azrad <matan@nvidia.com>
 Subject: Re: [PATCH] common/mlx5: fix build on Linux in dlopen link mode
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Ali Alnubani <alialnu@nvidia.com>, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: A8epr-u0nivNRJ_SBCD_2Ms7hpMr-jYVT4ldr_TiW6k_1744099086
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 08 Apr 2025 10:18:03 +0200
+Message-ID: <4677053.GUh0CODmnK@thomas>
+In-Reply-To: <CAJFAV8z0dMFK0Vh8A=xxvQZnSJoJLz8e75bnsemwNwQoQUh9ZQ@mail.gmail.com>
+References: <20250408074718.1322823-1-thomas@monjalon.net>
+ <CAJFAV8z0dMFK0Vh8A=xxvQZnSJoJLz8e75bnsemwNwQoQUh9ZQ@mail.gmail.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,28 +98,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Apr 8, 2025 at 9:47=E2=80=AFAM Thomas Monjalon <thomas@monjalon.net=
-> wrote:
->
-> When using the Meson option "ibverbs_link=3Ddlopen",
-> a glue library is built.
->
-> After the recent change requiring eal_export.h,
-> the build stopped because the internal EAL include directory
-> was unknown to this glue library:
->
->         drivers/common/mlx5/linux/mlx5_glue.c:19:10: fatal error:
->         eal_export.h: No such file or directory
->
-> Fixes: c7020bb20fc7 ("build: mark exported symbols")
->
-> Reported-by: Ali Alnubani <alialnu@nvidia.com>
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+08/04/2025 09:57, David Marchand:
+> On Tue, Apr 8, 2025 at 9:47=E2=80=AFAM Thomas Monjalon <thomas@monjalon.n=
+et> wrote:
+> >
+> > When using the Meson option "ibverbs_link=3Ddlopen",
+> > a glue library is built.
+> >
+> > After the recent change requiring eal_export.h,
+> > the build stopped because the internal EAL include directory
+> > was unknown to this glue library:
+> >
+> >         drivers/common/mlx5/linux/mlx5_glue.c:19:10: fatal error:
+> >         eal_export.h: No such file or directory
+> >
+> > Fixes: c7020bb20fc7 ("build: mark exported symbols")
+> >
+> > Reported-by: Ali Alnubani <alialnu@nvidia.com>
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+>=20
+> lgtm.
+> Acked-by: David Marchand <david.marchand@redhat.com>
 
-lgtm.
-Acked-by: David Marchand <david.marchand@redhat.com>
+Applied quickly to fix the build.
 
 
---=20
-David Marchand
 
