@@ -2,19 +2,19 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BD8C3600C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3AFC3600C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43B0540E5E;
-	Tue,  8 Apr 2025 10:31:05 +0200 (CEST)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id 48D5F4027F
+	by mails.dpdk.org (Postfix) with ESMTP id 5819540E68;
+	Tue,  8 Apr 2025 10:31:06 +0200 (CEST)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B06640A89
  for <dev@dpdk.org>; Tue,  8 Apr 2025 10:31:04 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZWzj81kqNz2CdKK;
- Tue,  8 Apr 2025 16:27:40 +0800 (CST)
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZWznp5zFTz27hRP;
+ Tue,  8 Apr 2025 16:31:42 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id EBD131402C1;
+ by mail.maildlp.com (Postfix) with ESMTPS id 926E41402C1;
  Tue,  8 Apr 2025 16:31:02 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
@@ -24,9 +24,9 @@ From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <haijie1@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 3/7] net/hns3: fix extra waiting for link up
-Date: Tue, 8 Apr 2025 16:30:56 +0800
-Message-ID: <20250408083100.2845040-4-huangdengdui@huawei.com>
+Subject: [PATCH 2/7] net/hns3: fix memory leakage in failure path
+Date: Tue, 8 Apr 2025 16:30:55 +0800
+Message-ID: <20250408083100.2845040-3-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250408083100.2845040-1-huangdengdui@huawei.com>
 References: <20250408083100.2845040-1-huangdengdui@huawei.com>
@@ -49,48 +49,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If the link auto-negotiation of the NIC is disabled,
-or the flow control auto-negotiation is not supported,
-it's unnecessary to wait for link establishment.
+When the hns3_dfx_reg_fetch_data() function returns from processing
+failure, cmd_descs is not freed, which leads to leakage.
+This patch fit it.
 
-Fixes: 1f411e31a826 ("net/hns3: support flow control autoneg for copper port")
+By the way, this patch uses calloc to apply for heap memory instead
+of hugepage memory.
+
+Fixes: ef1fbd355451 ("net/hns3: add more registers to dump")
 Cc: stable@dpdk.org
 
 Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 ---
- drivers/net/hns3/hns3_ethdev.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/hns3/hns3_regs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/hns3/hns3_ethdev.c b/drivers/net/hns3/hns3_ethdev.c
-index 9f7119b734..20ad249b8b 100644
---- a/drivers/net/hns3/hns3_ethdev.c
-+++ b/drivers/net/hns3/hns3_ethdev.c
-@@ -5308,12 +5308,6 @@ hns3_get_current_fc_mode(struct rte_eth_dev *dev)
- 	struct hns3_pf *pf = HNS3_DEV_PRIVATE_TO_PF(dev->data->dev_private);
- 	struct hns3_mac *mac = &hw->mac;
+diff --git a/drivers/net/hns3/hns3_regs.c b/drivers/net/hns3/hns3_regs.c
+index 8a6ddbfe8c..5c74f9ae2e 100644
+--- a/drivers/net/hns3/hns3_regs.c
++++ b/drivers/net/hns3/hns3_regs.c
+@@ -1270,7 +1270,7 @@ hns3_get_dfx_regs(struct hns3_hw *hw, struct rte_dev_reg_info *regs, uint32_t mo
+ 	for (i = 0; i < opcode_num; i++)
+ 		max_bd_num = RTE_MAX(bd_num_list[i], max_bd_num);
  
--	/*
--	 * When the flow control mode is obtained, the device may not complete
--	 * auto-negotiation. It is necessary to wait for link establishment.
--	 */
--	(void)hns3_dev_link_update(dev, 1);
--
- 	/*
- 	 * If the link auto-negotiation of the nic is disabled, or the flow
- 	 * control auto-negotiation is not supported, the forced flow control
-@@ -5322,6 +5316,12 @@ hns3_get_current_fc_mode(struct rte_eth_dev *dev)
- 	if (mac->link_autoneg == 0 || !pf->support_fc_autoneg)
- 		return hw->requested_fc_mode;
+-	cmd_descs = rte_zmalloc(NULL, sizeof(*cmd_descs) * max_bd_num, 0);
++	cmd_descs = calloc(max_bd_num, sizeof(*cmd_descs));
+ 	if (cmd_descs == NULL)
+ 		return -ENOMEM;
  
-+	/*
-+	 * When the flow control mode is obtained, the device may not complete
-+	 * auto-negotiation. It is necessary to wait for link establishment.
-+	 */
-+	(void)hns3_dev_link_update(dev, 1);
-+
- 	return hns3_get_autoneg_fc_mode(hw);
+@@ -1290,13 +1290,14 @@ hns3_get_dfx_regs(struct hns3_hw *hw, struct rte_dev_reg_info *regs, uint32_t mo
+ 		if (regs_num !=  hns3_reg_lists[i].entry_num) {
+ 			hns3_err(hw, "Query register number differ from the list for module %s!",
+ 				 hns3_get_name_by_module(i));
++			free(cmd_descs);
+ 			return -EINVAL;
+ 		}
+ 		hns3_fill_dfx_regs_name(hw, regs, hns3_reg_lists[i].reg_list, regs_num);
+ 		regs->length += regs_num;
+ 		data += regs_num;
+ 	}
+-	rte_free(cmd_descs);
++	free(cmd_descs);
+ 
+ 	return ret;
  }
- 
 -- 
 2.33.0
 
