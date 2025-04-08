@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456A4C369A1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A937AC369A1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:24:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EFDDA40270;
-	Tue,  8 Apr 2025 23:24:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 141F84042E;
+	Tue,  8 Apr 2025 23:24:47 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 52AA84026B
+ by mails.dpdk.org (Postfix) with ESMTP id 5794040270
  for <dev@dpdk.org>; Tue,  8 Apr 2025 23:24:44 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 69CB82113E93; Tue,  8 Apr 2025 14:24:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 69CB82113E93
+ id 5C1172113E95; Tue,  8 Apr 2025 14:24:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5C1172113E95
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1744147483;
- bh=GXYlvGlqb5ImEtsVQ3NM2SId9ZnM4lBXqgyifEfmHaY=;
+ bh=FASmlFAHmiSUeNxoq4uh33HNOZO93KKd/50jwkkrSA8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=f2Kg0pLiJMnNZswpQsVsjQVDx1LsEr/4rSN1VaekdHsXjfRfcCPmCN9VIEfcpxKRb
- wlLTCpOLlRkxao0qQwSkYsUXyqj/OBeS+cgweK+YcMsjYca4qkiAcr8PHs4740ONLE
- jjM2pNUHG4U5X5bmHhG1Gb5aU7eNKFhODeX3lsPU=
+ b=C+NvvuouQzcEJ3x53VF5ZxdvDE8e4s5x0YHfYY95Pud2EMkcyEy/VP7TwdzNQ7WuE
+ RR+G+0zhoOErwVJ42VhBH0pBmtInFb7MaXkXqXFyEpNdG6EqVHdokxdnI2rFPgndNm
+ I8+WVM5KUIJSbSfBMXW2KJ0B2tXMXZtLM2pFW3Hw=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org
-Subject: [PATCH v4 1/1] mbuf: enable to be compiled with MSVC
-Date: Tue,  8 Apr 2025 14:24:37 -0700
-Message-Id: <1744147477-23715-2-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v4 0/1] mbuf: enable to be compiled with MSVC
+Date: Tue,  8 Apr 2025 14:24:36 -0700
+Message-Id: <1744147477-23715-1-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1744147477-23715-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
 References: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
- <1744147477-23715-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,51 +45,30 @@ Errors-To: dev-bounces@dpdk.org
 Now that the issues preventing this lib from being compiled with MSVC
 are fixed it can be included in the compilation.
 
-The "net" library will automatically get compiled as well as it
-has a dependency on "mbuf" which will now get fulfilled.
+v4:
+- removed all symbol-related changes, leaving only the change to enable
+  MSVC compilation.
+- only adding cflags '-mpclmul' and '-maes' when the compiler used
+  supports them.
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
----
+v3:
+- updated check-symbol-maps.sh to also handle ms_linker.map files.
+
+v2:
+- updated versioning macros so that the latest mbuf/net code can compile
+  with MSVC. V1 did not have these changes because by the time that series
+  was sent out the versioning problem had not surfaced yet.
+- for testing purposes, dpdk-test was build with msvc and crc_autotest
+  was run successfully. This test is known to call the versioned function
+  which raised the issue.
+
+Andre Muezerie (1):
+  mbuf: enable to be compiled with MSVC
+
  lib/mbuf/meson.build | 6 ------
  lib/net/meson.build  | 7 ++++++-
  2 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/lib/mbuf/meson.build b/lib/mbuf/meson.build
-index 2cee9057a5..0435c5e628 100644
---- a/lib/mbuf/meson.build
-+++ b/lib/mbuf/meson.build
-@@ -1,12 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
--if is_ms_compiler
--    build = false
--    reason = 'not supported building with Visual Studio Toolset'
--    subdir_done()
--endif
--
- sources = files(
-         'rte_mbuf.c',
-         'rte_mbuf_ptype.c',
-diff --git a/lib/net/meson.build b/lib/net/meson.build
-index 7a6c419f40..c528fcc9a2 100644
---- a/lib/net/meson.build
-+++ b/lib/net/meson.build
-@@ -43,7 +43,12 @@ use_function_versioning = true
- 
- if dpdk_conf.has('RTE_ARCH_X86_64')
-     sources += files('net_crc_sse.c')
--    cflags += ['-mpclmul', '-maes']
-+    cflags_options = ['-mpclmul', '-maes']
-+    foreach option:cflags_options
-+        if cc.has_argument(option)
-+            cflags += option
-+        endif
-+    endforeach
-     # only build AVX-512 support if we also have PCLMULQDQ support
-     if cc.has_argument('-mvpclmulqdq')
-         sources_avx512 += files('net_crc_avx512.c')
--- 
+--
 2.49.0.vfs.0.0
 
