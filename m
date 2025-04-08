@@ -2,70 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1695C369A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 13:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2DFC369A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 14:18:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2883740E3A;
-	Tue,  8 Apr 2025 15:45:41 +0200 (CEST)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com
- [209.85.128.175])
- by mails.dpdk.org (Postfix) with ESMTP id 16D2140264;
- Tue,  8 Apr 2025 15:45:39 +0200 (CEST)
-Received: by mail-yw1-f175.google.com with SMTP id
- 00721157ae682-6ff07872097so51239697b3.3; 
- Tue, 08 Apr 2025 06:45:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 23A9440E3A;
+	Tue,  8 Apr 2025 16:18:18 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 42F9440264
+ for <dev@dpdk.org>; Tue,  8 Apr 2025 16:18:17 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2279915e06eso53554425ad.1
+ for <dev@dpdk.org>; Tue, 08 Apr 2025 07:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744121896;
+ x=1744726696; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Kr/Jf9dIMahWx9c5IqpZBTHbaNtK2XdGcFPEx6q4Q0o=;
+ b=IXQ7TgrJ4ift/3kmm4sEI0wtw7Rds1p7atF3QT702aC+ghL0Z71DA6oDQwaGfhxRFU
+ dotA6y7tvLv9HOf7wG77p6WLminXljHQ0xzZEH+x9ch+7NN41DTlUhnsxJ17+uF2SBvy
+ c26J9IB3gzNAmrT7lzCh9wfTQTQR/ezth59i9biaUd2SS99pozBCRzmUHEVFCuBhVD7D
+ z72ecxpX8wJytIc2+uw1gaV9QSfoL+pqrjyOkf8PmbINTN5hAXfuNIA6Zz2Rs694v5ti
+ 3KdxIE2UVyv4F5aATdVjiehldNauE66whfW2PouS4Pgw8V2rUzJzjuhV/0Ny7FDAEX2x
+ ZB/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744119938; x=1744724738;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=b8x5BW99WjgCZxkEvrZK/jRALuNN+6kIaQ1d2vJrYDE=;
- b=EcWl9JAxH35NudbdZtWiysBcND/036nCaJD2z4Pcdx2yIDHjyBt8+doc+yS6Td+JA6
- YKrTDRQM2+Q+kBmCEl+XPBfJQ2zVnJpAsjfRfLNH9LKH3Cgc3tI4FRqiU34NYYXJ7LDN
- SvneQxWZQcChsZnmd7PG9R1t8YwclQuggl9+Y/pX/iv1LT0vXGbjXskLglqFKfSjQqgG
- DfbqHtjChZmRu2q9UslpNxEdh7OzYWYuiVtSrxPgcFsbRDLVi8OodvTUFeRkyjeoHNwq
- yLU8vwwIdF5/Qimb4oOl37YN+3jeas4SJJALERFxsTHs5EVoYQSzI2PNMITRsQvm6WVm
- iNUA==
+ d=1e100.net; s=20230601; t=1744121896; x=1744726696;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=Kr/Jf9dIMahWx9c5IqpZBTHbaNtK2XdGcFPEx6q4Q0o=;
+ b=KGYenLlIMaL0JEqIPl3ovaf0+6VVmQubL0yPCLvjoGxmKMTf9ecABXYRuued0bPVU6
+ 35zwrWDvOz89NhAsEaVDNbymAYrt1nfy1TV6Yk2ehX9iMP27qpaegshqJmCTTnafxRQn
+ k7TXTES25DM05TV81kKWv2OkaNIiu5pZWFw9HPu2J6pR43Fg1nasdIKvqD2QkBrqt3tv
+ kgmGXzI/BSVPRjXsz+hS1EeDt1LReFfNW9c+Yj2dMLQm2YJZ4DHr6D3agf+wFu1cTmaX
+ bKTNWZgcI1HHhAUmRgatESiCgolEpf0FZhRaLwAvBbNEV6elZiXJ79/LhKbw+O3zx4Bg
+ PplQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWdA8jC6THkMe+eXpOsIWdnmVD4ZW2GsRmqHnX2pQSSeCaWMqLQm1CSL2GhIepmU5sibmZH84s=@dpdk.org
-X-Gm-Message-State: AOJu0Ywk8VGmM8Av+10YCwLIMiDyVADpnCODlE6vInZ2T9VXCTnL0t44
- cxfyt1HDxHACZ8+Pge0qReOb3wIwxZ+WKiX6Z+gPuTkxSvZ7Ff8f6R7Wf5J/
-X-Gm-Gg: ASbGncs+YTCsKO8VtRntjrC5YuxUZBOi/aFbbEGayvSh1XqQhIhb5I13CxL1IDCUiiy
- /9vQ2FLfsLenu6t300EPROVtNILkjpLAi6olhfTaQAc1MZEEZEvJExREj3rzEm8T5z3qoLmqXZG
- SXQ3DOoArNac8t5cAnQrNAv1Qr2Pu4AFww2oDyXV8oo1TyuAp+mDO1801JSGCtfeMsVLFIbt+8W
- rJwHTxBorrG/7kitl8iZTK6OxsVsul0hNXqIQWXpUImkb/kzhnLYPBOEJaJsObPOvnRD+U00GbL
- kIBHulIab4pEny2qjWEIrkay0JEF4eLcnY0ps20naTHmZdsScSVSMkpqZCjuP6Imfdsox2J2kT6
- gOH+hTseSvj2nBpKj
-X-Google-Smtp-Source: AGHT+IHtSHd7NbcrDwB/GRV+bDLr3Vhg7t8m01w0/8zvPeNWHxkgeY6VcFGosUQnChpRMemokVtPWA==
-X-Received: by 2002:a05:690c:f82:b0:6f6:d01c:af1f with SMTP id
- 00721157ae682-703e15370demr286642167b3.16.1744119938263; 
- Tue, 08 Apr 2025 06:45:38 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com.
- [209.85.219.173]) by smtp.gmail.com with ESMTPSA id
- 00721157ae682-703d1e4e45csm30810647b3.33.2025.04.08.06.45.37
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 08 Apr 2025 06:45:37 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id
- 3f1490d57ef6-e6e2971f79fso2687544276.0; 
- Tue, 08 Apr 2025 06:45:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCXBGidhnf8z03Xe5CZX19+cB3/ZSxIcsfmWdpp/MwqwY3E0irWPfo0wl3uCLs6xDcD9HfV0w4I=@dpdk.org
-X-Received: by 2002:a05:6902:2513:b0:e65:f1b9:b102 with SMTP id
- 3f1490d57ef6-e6e1c223e6cmr27758510276.23.1744119937710; Tue, 08 Apr 2025
- 06:45:37 -0700 (PDT)
+ AJvYcCXdgP1mK1xA5+fx7iXHT5FHYKa5GoQIKonWBMTTAz8AN7Mb7QOghwFaWtN+l/Z9HF9k1CE=@dpdk.org
+X-Gm-Message-State: AOJu0YxogOKqgMn1Jok40SqWNRsITehkvE4mzZY33QxhWK91MxjS3kZJ
+ Qq2DeIBgQ4781ldBvYzplj+nnGuva8VAgj4hadYm1D4vyB+0xl9ApiGXH5LlA8Q=
+X-Gm-Gg: ASbGncu2Sx+vDRfd+IqpNsUkxNEqitfwVGFc4Aejf8q3+ZubWJrKdPcG3QX+6P9QXYD
+ GlwmSD0XRGIhyt5fF34C1RQnu+R8EHmL+5ajFKUYTZNfjN9KoNeeSRS9ugPnowFB9D1qWuk8Ao3
+ lN12UzzXvBTAiV+f2p4QmCTEDBL8HsTFhx+pImO01Xhnbq6fQB0U1U5irO6AsrsHP7xASOEKPFl
+ f+wDoPeYUSVrK2EBVD1rLY+9C/MGqEusOKr4Ed+gvYCbBfsChMVxV0b2Na8CFVTY+dhckWdZv0D
+ LLytBd8T6dl3fLanZjJolhvKhsqwYBihMnLLU484l/nsyy12JhyupYZmtbmN+FdaqYKOBDsox+L
+ ZQ0yWSncGiC8h+mdeUjP8
+X-Google-Smtp-Source: AGHT+IFYVdACkb7SCsePqeZxtn9K7u26VG1G9S9MSJFPIphsS7D/Nt+YezQAkC3e/9ePEFH8eQ6cIQ==
+X-Received: by 2002:a17:902:ecc4:b0:224:1eab:97b2 with SMTP id
+ d9443c01a7336-22a8a2da123mr252571095ad.53.1744121896199; 
+ Tue, 08 Apr 2025 07:18:16 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2297866e2absm100351255ad.179.2025.04.08.07.18.15
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 08 Apr 2025 07:18:16 -0700 (PDT)
+Date: Tue, 8 Apr 2025 07:18:13 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: longli@linuxonhyperv.com
+Cc: Wei Hu <weh@microsoft.com>, dev@dpdk.org, Long Li <longli@microsoft.com>
+Subject: Re: [patch v4 6/6] bus/vmbus: set event for channel without
+ monitoring support
+Message-ID: <20250408071813.680880e7@hermes.local>
+In-Reply-To: <1744065904-18455-7-git-send-email-longli@linuxonhyperv.com>
+References: <1744065904-18455-1-git-send-email-longli@linuxonhyperv.com>
+ <1744065904-18455-7-git-send-email-longli@linuxonhyperv.com>
 MIME-Version: 1.0
-References: <20250326115132.1444530-1-luca.boccassi@gmail.com>
-In-Reply-To: <20250326115132.1444530-1-luca.boccassi@gmail.com>
-From: Luca Boccassi <bluca@debian.org>
-Date: Tue, 8 Apr 2025 14:45:26 +0100
-X-Gmail-Original-Message-ID: <CAMw=ZnTOVHyvNxGbcFWRt2Xw0YqRXnKC9VjzVOsEn=utu+mrCw@mail.gmail.com>
-X-Gm-Features: ATxdqUGU67TK9g4zFoNOg_rMr_pebVOZkeoJzTN0bOc79glaZJueylZl3bIy5fg
-Message-ID: <CAMw=ZnTOVHyvNxGbcFWRt2Xw0YqRXnKC9VjzVOsEn=utu+mrCw@mail.gmail.com>
-Subject: Re: 22.11.8 patches review and test
-To: Ali Alnubani <alialnu@nvidia.com>, Raslan Darawsheh <rasland@nvidia.com>
-Cc: dev@dpdk.org, John McNamara <john.mcnamara@intel.com>, 
- Thomas Monjalon <thomas@monjalon.net>, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,26 +84,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 26 Mar 2025 at 11:51, <luca.boccassi@gmail.com> wrote:
->
-> Hi all,
->
-> Here is a list of patches targeted for stable release 22.11.8.
->
-> The planned date for the final release is 2025/04/10.
->
-> Please help with testing and validation of your use cases and report
-> any issues/results with reply-all to this mail. For the final release
-> the fixes and reported validations will be added to the release notes.
->
-> A release candidate tarball can be found at:
->
->     https://dpdk.org/browse/dpdk-stable/tag/?id=v22.11.8-rc1
->
-> These patches are located at branch 22.11 of dpdk-stable repo:
->     https://dpdk.org/browse/dpdk-stable/
+On Mon,  7 Apr 2025 15:45:04 -0700
+longli@linuxonhyperv.com wrote:
 
-Hi Ali and Raslan,
+> From: Long Li <longli@microsoft.com>
+> 
+> For vmbus channels without monitoring support, use kernel UIO interface
+> to indicate packet through interrupt page and UIO file handle.
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
 
-Will the NVIDIA validation team have bandwidth to run the tests for
-22.11 for this round? Thanks!
+Something is wrong, no longer applies cleanly.
+$ git am ~/Downloads/bundle-1421-vmbus.mbox
+Applying: net/netvsc: introduce private data for storing vmbus device for secondary process
+Applying: net/netvsc: introduce get_vmbus_device to get the vmbus device
+Applying: bus/vmbus: store UIO fd for secondary process
+Applying: bus/vmbus: support channels without monitoring enabled
+Applying: bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
+error: patch failed: drivers/bus/vmbus/vmbus_channel.c:80
+error: drivers/bus/vmbus/vmbus_channel.c: patch does not apply
+Patch failed at 0005 bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
