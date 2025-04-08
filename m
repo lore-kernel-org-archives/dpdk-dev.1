@@ -2,82 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A772C369A1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 07:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706FFC369A1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 07:47:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 367B040A89;
-	Tue,  8 Apr 2025 09:35:59 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 01BB44027F
- for <dev@dpdk.org>; Tue,  8 Apr 2025 09:35:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744097757;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=RtWZR6dI6gZBY0U+phYBRED1+k8mZv72pbWZwUhOLxo=;
- b=DsrSLtqrSaXSvcWks7/uzMAV1STD3KKHGsF9QKmKpI5ZKIdX5inYCIGRjYaotZMzrl967s
- 3a7lyj2IvszzOQRWrEOMkkf2mFx3TJWKFbL8WwG3EQod9qWaXmXWlnr43ZcwOibYHTJ1Hh
- LjTTB9RfO5zkD0OPBa6hJbCVZmTFrsg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-ficLTgrYP0C3qjohJWkKOg-1; Tue, 08 Apr 2025 03:35:54 -0400
-X-MC-Unique: ficLTgrYP0C3qjohJWkKOg-1
-X-Mimecast-MFC-AGG-ID: ficLTgrYP0C3qjohJWkKOg_1744097753
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5498879a3aeso2173861e87.1
- for <dev@dpdk.org>; Tue, 08 Apr 2025 00:35:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744097752; x=1744702552;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=RtWZR6dI6gZBY0U+phYBRED1+k8mZv72pbWZwUhOLxo=;
- b=NFgL3XYrsccsu0Kx6os9PAldLn6+aLxX2HpaAJ34wkJbpU3Nu+Ir1SxBOx4gPIDG2Y
- HbhxwBF2nKFm659jwiR6tIeG6bEKytFIQL+U28jhNI7vEnZhQf9ZgN9CtalsF3FnJ5Ji
- ahUuE/HdqTXDtwbeUKeObYHFIeRL3+MtdubbfsdJint5QLMdf3Q5MsLklGkdxjLVRNNz
- i1vavLSfnbQ/8IMl6sH7LJpeQZETmLtuWrkPuDwC38uEbiNMR0tvwYKmcTNFnAqxNQvf
- Vo6usxULCfp9tJNPZtBoLGd99v45YyWMeWzaTwrUpHWIZvk5SLsYsWdkDKSab4P1Tgot
- DbyQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUKWEt20AsbXwQsKAiU7llbGjN83CGJ2VWQgi0ANxijLdlPTpIPIf9eZu4KdGlciQpKO1s=@dpdk.org
-X-Gm-Message-State: AOJu0YxTUIPixbrgaNt5BvHxsoVE9a4QRstcIhzPP1v/N2zskJUbxwMb
- 30FoAmUsgIIORwbr/JiP4Ry2vey9wQ+jFGM8O7RmEMr5bNmP2X/M4ni2OyAGHFNa/IgkYwuZ2Ky
- 27pfZZq4CmmjBFkza6Ir2+CiwJcjiUBEubjRPZ03DgiODDOAkGhOKjbsimYO12yg3RdLDG+1Jsb
- y70kSQnQurdod+GzA=
-X-Gm-Gg: ASbGncshvkx4bnCU5X3uREb9kBF2XWzWJsZfqzwaDTVqjVaPANA/BqaoJ3hLhH2pZ0I
- zZMt0bSvbhEv0NVhNfQ4fibgL4rRze0X8S2y4pyvVOf61lB8y5Jekcc51Wpe6k8S3c90edo3wPx
- M=
-X-Received: by 2002:a05:6512:401f:b0:545:2d4d:36de with SMTP id
- 2adb3069b0e04-54c232f9ae4mr4718231e87.31.1744097752470; 
- Tue, 08 Apr 2025 00:35:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAIkg7ZUTWtWokCXs4mMJUWi6YrRuYegK/bdrVPu3xz1STGGjyU/RUKiAmCTOjyxtUXsr9hXuMjDY9L8lNxlc=
-X-Received: by 2002:a05:6512:401f:b0:545:2d4d:36de with SMTP id
- 2adb3069b0e04-54c232f9ae4mr4718225e87.31.1744097752114; Tue, 08 Apr 2025
- 00:35:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5BA5E40E43;
+	Tue,  8 Apr 2025 09:47:32 +0200 (CEST)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTP id BDB494027F
+ for <dev@dpdk.org>; Tue,  8 Apr 2025 09:47:30 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id D3CBE1140124;
+ Tue,  8 Apr 2025 03:47:29 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Tue, 08 Apr 2025 03:47:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm2; t=1744098449; x=1744184849; bh=8v3QBvfalmmv6rF7YsuKT
+ MemAc2WqkM1O0zl2ldTi3Y=; b=R5ti+ms40N3bQJQQCzAa8a8dTJ4RpiVQKkiRx
+ yffg3aEnQi9ED3rIIG6/z4oV7ZAirrZH+0bjjwIivpZ3CpExqIUItsAMbCFeIPWr
+ LRFDLF7iWHqjzt87o66NkE3f1LMTTrqHGWgbaN65DrmFU1v28TD3TK/LtXgnzPzD
+ PMClY25e14Hz1NUDbHqq33f8DWDza3/gQ/DbK1tHCASLQQMTG0v1orMRMXw3kq2I
+ jjt4WubAtxcp15mA90WvomfxBDKKBsI+3I+aQSq1SjG47LOYe8VZCpl1lWT3A3KG
+ hrsWr7vizE6a/T8/q+t8fYalgVActFhd+9XR7ZzGOLIBA+qYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1744098449; x=1744184849; bh=8v3QBvfalmmv6rF7YsuKTMemAc2WqkM1O0z
+ l2ldTi3Y=; b=Ncg+E0E8qzDEFhp/eLycrGC4U/XTig3h65ycaQ/VrT8Aa2l1lkD
+ 4UCnNmVzyY87M18DO3c580IVHpIsWkXDf88bDEb4Y+r1UN1OhKG9wwcYRmNchmYu
+ Itqx25HiJkusWWVHt8W41io+UFtVQlw8oc9B/pVY7pIeBtCXD3OjDQrpCf3RwbfX
+ soUSdqiizp/aI58xuj0Gf3dQiFQSNvRqQ7aanNDHaFy2vlssdyRZFsGfMVPeU2e+
+ d70G3bEcFe6Pmx684svmdF3/Zn+XSSbGT7NB31LgEfON7knbUNIKFSrzQPady7QP
+ zJGt2vRUAjivm8H/ms39RC3qd7DNom6ryHg==
+X-ME-Sender: <xms:kdT0Z2A2uEGWSJeNdfuiC4hk4ShvXis2frH7JXyo_4B37tbfPSdMlg>
+ <xme:kdT0ZwiDvyRlXTdi8bKXU_clhwlNi1pU6TJ5JxPh__1FI1UBJNR7Xr1a11zoqx_i4
+ ol71p0rP29MwqwOgA>
+X-ME-Received: <xmr:kdT0Z5lSBGjHi1L9O_FDti5Aqy7cInyM40SpmYF2fb4AeyFNn3Q89rtywFO5sD1GVG39tO-bjLAXjzKwxFih9XnGwgUCn9s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvhedvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+ pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+ gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeevveefveeiiefhtedukeegkeelieeg
+ ffeukeevudetueffieduveetiedukeefleenucevlhhushhtvghrufhiiigvpedtnecurf
+ grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
+ sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvse
+ guphgukhdrohhrghdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdrtghomhdp
+ rhgtphhtthhopegushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghpthhtoh
+ epvhhirggthhgvshhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghinhhg
+ iiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtoh
+ hmpdhrtghpthhtohepshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthht
+ ohepmhgrthgrnhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrh
+ gthhgrnhgusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:kdT0Z0wN_EPGJHuWa7xalIm05UYOyeNNq93csJJHGyqQskfJ0NyiTw>
+ <xmx:kdT0Z7S1l8zrTwoDRXrAQSeZqZAFhCPXc4AyX_eiZi7cWrOeOaMohQ>
+ <xmx:kdT0Z_axroTGl3R8AyYp6BKuDUy8tJOQQYLtmQOm1rdQHkfp-bDHhw>
+ <xmx:kdT0Z0RbqkeBfHvQ5U6u8A1axakiAK4WPfTFJ_VumvpSbDIvj0Iffg>
+ <xmx:kdT0Z3Gvolxdt-Sc9K09JIho_DW6YAk-dfR1jInfw-UuFCpWjcZgmfx5>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Apr 2025 03:47:27 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Ali Alnubani <alialnu@nvidia.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: [PATCH] common/mlx5: fix build on Linux in dlopen link mode
+Date: Tue,  8 Apr 2025 09:47:17 +0200
+Message-ID: <20250408074718.1322823-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
-References: <20250401042053.3518757-1-nsaxena@marvell.com>
- <20250407074800.1651203-1-nsaxena@marvell.com>
-In-Reply-To: <20250407074800.1651203-1-nsaxena@marvell.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 8 Apr 2025 09:35:40 +0200
-X-Gm-Features: ATxdqUHXCAiHYqh4lhivZYwfvw4WKfu1NRKxjx7FE2AiOvQp3dKWvV0I1JOIDIM
-Message-ID: <CAJFAV8wW5GFzGHJpSM4dcfys54=PD+RfWCr7AsbUqZqf0RZhQg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] node: add mbuf dynamic field for nodes
-To: Nitin Saxena <nsaxena@marvell.com>
-Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>, 
- Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
- dev@dpdk.org, 
- Jerin Jacob <jerinj@marvell.com>, Nitin Saxena <nsaxena16@gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: NxILXry9EkHTniKfJwR1UgKA9RAfgqSkHRZpyZsnHoY_1744097753
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,75 +94,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Nitin,
+When using the Meson option "ibverbs_link=dlopen",
+a glue library is built.
 
-On Mon, Apr 7, 2025 at 9:48=E2=80=AFAM Nitin Saxena <nsaxena@marvell.com> w=
-rote:
->
-> Currently each rte_node registers separate mbuf dynamic fields for their
-> own purpose. This leads to wastage of mbuf space as once mbuf get passed
-> a particular node, the registered dynamic field(by that node) is no
-> longer used.
->
-> This patch series adds a global/common mbuf dynamic field which is
-> reusable by all the nodes(including out-of-tree nodes). This helps to
-> repurpose same mbuf dynamic field for other nodes. It contains two types
-> of fields: (a) persistent (b) overloadable.
->
-> While persistent fields are those which does not often changes during a
-> graph walk such as rx/tx interface, buffer flags etc. Currently there
-> are no persistent fields added but they can be added later
->
-> Overloadable fields are those which can be overloaded by two adjacent
-> nodes. Overloadable fields can be repurposed by other two adjacent nodes.
->
-> This patch series also updates ip4/ip6 lookup/rewrite nodes to use
-> overlaodable mbuf dynamic fields.
->
-> Changes in v4
-> - Fix github CI
->
-> Changes in v3:
-> - Fix CI build error
->
-> Changes in v2:
-> - removed usage of memzone for saving mbuf dynfield [Stephen]
-> - fixed checkpatch issues
-> - redefine RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE to 8 byte which are
->   currently in use. Size can increase later based on the usage
->
->
-> Nitin Saxena (2):
->   node: add global node mbuf dynfield
->   node: use node mbuf dynfield in ip4 nodes
->
->  doc/api/doxy-api-index.md              |   3 +-
->  doc/guides/rel_notes/release_25_07.rst |   6 ++
->  lib/node/ip4_lookup.c                  |  14 +--
->  lib/node/ip4_rewrite.c                 |  15 ++-
->  lib/node/ip6_lookup.c                  |  15 ++-
->  lib/node/ip6_rewrite.c                 |  14 +--
->  lib/node/meson.build                   |   2 +
->  lib/node/node_mbuf_dynfield.c          |  44 ++++++++
->  lib/node/node_private.h                |  40 +------
->  lib/node/rte_node_mbuf_dynfield.h      | 141 +++++++++++++++++++++++++
->  lib/node/version.map                   |   3 +
+After the recent change requiring eal_export.h,
+the build stopped because the internal EAL include directory
+was unknown to this glue library:
 
-I did not review this series but I noticed some version.map update.
+	drivers/common/mlx5/linux/mlx5_glue.c:19:10: fatal error:
+	eal_export.h: No such file or directory
 
-When pulling main, you'll notice that exporting symbols must be done
-via RTE_EXPORT_*SYMBOL macros now.
-No version.map touching anymore, those files are generated at build
-time, so developers don't need to care about them.
+Fixes: c7020bb20fc7 ("build: mark exported symbols")
 
-In lib/node/node_mbuf_dynfield.c, you need to include eal_export.h and add:
+Reported-by: Ali Alnubani <alialnu@nvidia.com>
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ drivers/common/mlx5/linux/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_mbuf_dynfield_register, 25.07)
-+int rte_node_mbuf_dynfield_register(void)
-+{
-...
-
-
---=20
-David Marchand
+diff --git a/drivers/common/mlx5/linux/meson.build b/drivers/common/mlx5/linux/meson.build
+index 58d0328c6d..5548a56199 100644
+--- a/drivers/common/mlx5/linux/meson.build
++++ b/drivers/common/mlx5/linux/meson.build
+@@ -237,7 +237,7 @@ if dlopen_ibverbs
+     dlopen_sources = files('mlx5_glue.c')
+     dlopen_install_dir = [ eal_pmd_path + '-glue' ]
+     dlopen_includes = [global_inc]
+-    dlopen_includes += include_directories('../../../../lib/eal/include/generic')
++    dlopen_includes += include_directories('../../../../lib/eal/common')
+     dlopen_includes += include_directories('..')
+     shared_lib = shared_library(
+             dlopen_lib_name,
+-- 
+2.47.1
 
