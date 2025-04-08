@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A937AC369A1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A303FC36010
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:54:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 141F84042E;
-	Tue,  8 Apr 2025 23:24:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D84E402EE;
+	Tue,  8 Apr 2025 23:54:01 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5794040270
- for <dev@dpdk.org>; Tue,  8 Apr 2025 23:24:44 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 5C1172113E95; Tue,  8 Apr 2025 14:24:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5C1172113E95
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1744147483;
- bh=FASmlFAHmiSUeNxoq4uh33HNOZO93KKd/50jwkkrSA8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=C+NvvuouQzcEJ3x53VF5ZxdvDE8e4s5x0YHfYY95Pud2EMkcyEy/VP7TwdzNQ7WuE
- RR+G+0zhoOErwVJ42VhBH0pBmtInFb7MaXkXqXFyEpNdG6EqVHdokxdnI2rFPgndNm
- I8+WVM5KUIJSbSfBMXW2KJ0B2tXMXZtLM2pFW3Hw=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org
-Subject: [PATCH v4 0/1] mbuf: enable to be compiled with MSVC
-Date: Tue,  8 Apr 2025 14:24:36 -0700
-Message-Id: <1744147477-23715-1-git-send-email-andremue@linux.microsoft.com>
+ by mails.dpdk.org (Postfix) with ESMTP id ADA7140265
+ for <dev@dpdk.org>; Tue,  8 Apr 2025 23:53:59 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id B6DE42113E96; Tue,  8 Apr 2025 14:53:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B6DE42113E96
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+ s=default; t=1744149238;
+ bh=G1YtFP2p/DPedtTU3qDq2D7TtVZ4D4TlENF5b/FQPuk=;
+ h=From:To:Cc:Subject:Date:From;
+ b=JncfAUuq1iaGZbKllITn5BPgsctZXu7d+LL7yTy9BQ8gx1QK5Qj9uH01BivMY4cEj
+ EjWqHwCK789lRLwz+XzJugd/e5umfp0dzMEOALLu3fAMKm/uuZtqifj6xDCzij4QgJ
+ TWvwfrwcDJl9YGKaNLZ1RhkWsuAQ6CM4tzo8USlU=
+From: longli@linuxonhyperv.com
+To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
+Cc: dev@dpdk.org,
+	Long Li <longli@microsoft.com>
+Subject: [patch v5 0/6] Support VMBUS channels without monitoring enabled
+Date: Tue,  8 Apr 2025 14:53:50 -0700
+Message-Id: <1744149236-30264-1-git-send-email-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
-References: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,33 +41,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that the issues preventing this lib from being compiled with MSVC
-are fixed it can be included in the compilation.
+From: Long Li <longli@microsoft.com>
 
-v4:
-- removed all symbol-related changes, leaving only the change to enable
-  MSVC compilation.
-- only adding cflags '-mpclmul' and '-maes' when the compiler used
-  supports them.
+Hyperv may expose VMBUS channels without monitoring enabled. In this case,
+it programs almost all the data traffic to VF.
 
-v3:
-- updated check-symbol-maps.sh to also handle ms_linker.map files.
+This patchset enabled vmbus/netvsc to use channels without monitoring
+enabled.
 
-v2:
-- updated versioning macros so that the latest mbuf/net code can compile
-  with MSVC. V1 did not have these changes because by the time that series
-  was sent out the versioning problem had not surfaced yet.
-- for testing purposes, dpdk-test was build with msvc and crc_autotest
-  was run successfully. This test is known to call the versioned function
-  which raised the issue.
+This needs to change the APIs exposed by drivers/bus/vmbus. Because those
+APIs are used only by NetVSC PMD and not feasible for use by a DPDK
+application, all VMBUS APIs are set to deprecate in upcoming 25.11 release.
 
-Andre Muezerie (1):
-  mbuf: enable to be compiled with MSVC
+The notice for deprecation is accepted in the following patch:
+https://patchwork.dpdk.org/project/dpdk/patch/1742242184-19600-1-git-send-email-longli@linuxonhyperv.com/
 
- lib/mbuf/meson.build | 6 ------
- lib/net/meson.build  | 7 ++++++-
- 2 files changed, 6 insertions(+), 7 deletions(-)
+Change log:
+v3: Add in the comment on the VMBUS API deprecation notice
 
---
-2.49.0.vfs.0.0
+Long Li (6):
+  net/netvsc: introduce private data for storing vmbus device for
+    secondary process
+  net/netvsc: introduce get_vmbus_device to get the vmbus device
+  bus/vmbus: store UIO fd for secondary process
+  bus/vmbus: support channels without monitoring enabled
+  bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
+  bus/vmbus: set event for channel without monitoring support
+
+ drivers/bus/vmbus/linux/vmbus_bus.c  |  9 +++--
+ drivers/bus/vmbus/linux/vmbus_uio.c  |  6 +--
+ drivers/bus/vmbus/private.h          |  2 +-
+ drivers/bus/vmbus/rte_bus_vmbus.h    | 16 +++++---
+ drivers/bus/vmbus/vmbus_channel.c    | 57 ++++++++++++++++++++--------
+ drivers/bus/vmbus/vmbus_common_uio.c |  9 +++--
+ drivers/net/netvsc/hn_ethdev.c       | 44 ++++++++++++++++-----
+ drivers/net/netvsc/hn_nvs.c          | 33 +++++++++++-----
+ drivers/net/netvsc/hn_nvs.h          | 21 ++++++----
+ drivers/net/netvsc/hn_rndis.c        | 11 +++---
+ drivers/net/netvsc/hn_rxtx.c         | 16 ++++----
+ 11 files changed, 155 insertions(+), 69 deletions(-)
+
+-- 
+2.34.1
 
