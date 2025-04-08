@@ -2,32 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A303FC36010
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 182CDC369A1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 21:54:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D84E402EE;
-	Tue,  8 Apr 2025 23:54:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F8F74060C;
+	Tue,  8 Apr 2025 23:54:02 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id ADA7140265
- for <dev@dpdk.org>; Tue,  8 Apr 2025 23:53:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 070B840265
+ for <dev@dpdk.org>; Tue,  8 Apr 2025 23:54:01 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id B6DE42113E96; Tue,  8 Apr 2025 14:53:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B6DE42113E96
+ id 38BC82113E92; Tue,  8 Apr 2025 14:54:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 38BC82113E92
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1744149238;
- bh=G1YtFP2p/DPedtTU3qDq2D7TtVZ4D4TlENF5b/FQPuk=;
- h=From:To:Cc:Subject:Date:From;
- b=JncfAUuq1iaGZbKllITn5BPgsctZXu7d+LL7yTy9BQ8gx1QK5Qj9uH01BivMY4cEj
- EjWqHwCK789lRLwz+XzJugd/e5umfp0dzMEOALLu3fAMKm/uuZtqifj6xDCzij4QgJ
- TWvwfrwcDJl9YGKaNLZ1RhkWsuAQ6CM4tzo8USlU=
+ s=default; t=1744149240;
+ bh=2pzfn5ajydzrGV6QuOVia0h9CVtai9wH7uIisf1Ys+k=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=tPpfBDYtr0UnnclEHKx10QFYI+RgXwhALQ552xrn8lEyNNS9wSUWRQrVzGaZ6cwiE
+ k+9fb4agX5rTMdvEfDuiERZ96GBMVSsNjJJloMGm/uaZo0LipvNw5oSFXC4svztewE
+ CYOIGOScMb1hRoWaCgdsxnXf4HX9m4rN599I3WV4=
 From: longli@linuxonhyperv.com
 To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
 Cc: dev@dpdk.org,
 	Long Li <longli@microsoft.com>
-Subject: [patch v5 0/6] Support VMBUS channels without monitoring enabled
-Date: Tue,  8 Apr 2025 14:53:50 -0700
-Message-Id: <1744149236-30264-1-git-send-email-longli@linuxonhyperv.com>
+Subject: [patch v5 1/6] net/netvsc: introduce private data for storing vmbus
+ device for secondary process
+Date: Tue,  8 Apr 2025 14:53:51 -0700
+Message-Id: <1744149236-30264-2-git-send-email-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1744149236-30264-1-git-send-email-longli@linuxonhyperv.com>
+References: <1744149236-30264-1-git-send-email-longli@linuxonhyperv.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,44 +46,110 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-Hyperv may expose VMBUS channels without monitoring enabled. In this case,
-it programs almost all the data traffic to VF.
+To prepare for supporting to set hyperv event from secondary process
+when the channel has monitoring disable, introduce a private data
+region for storing the vmbus device. The secondary process will get
+access to its vmbus device in case it needs to signal the host.
 
-This patchset enabled vmbus/netvsc to use channels without monitoring
-enabled.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ drivers/net/netvsc/hn_ethdev.c | 44 +++++++++++++++++++++++++++-------
+ drivers/net/netvsc/hn_nvs.h    |  4 ++++
+ 2 files changed, 39 insertions(+), 9 deletions(-)
 
-This needs to change the APIs exposed by drivers/bus/vmbus. Because those
-APIs are used only by NetVSC PMD and not feasible for use by a DPDK
-application, all VMBUS APIs are set to deprecate in upcoming 25.11 release.
-
-The notice for deprecation is accepted in the following patch:
-https://patchwork.dpdk.org/project/dpdk/patch/1742242184-19600-1-git-send-email-longli@linuxonhyperv.com/
-
-Change log:
-v3: Add in the comment on the VMBUS API deprecation notice
-
-Long Li (6):
-  net/netvsc: introduce private data for storing vmbus device for
-    secondary process
-  net/netvsc: introduce get_vmbus_device to get the vmbus device
-  bus/vmbus: store UIO fd for secondary process
-  bus/vmbus: support channels without monitoring enabled
-  bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
-  bus/vmbus: set event for channel without monitoring support
-
- drivers/bus/vmbus/linux/vmbus_bus.c  |  9 +++--
- drivers/bus/vmbus/linux/vmbus_uio.c  |  6 +--
- drivers/bus/vmbus/private.h          |  2 +-
- drivers/bus/vmbus/rte_bus_vmbus.h    | 16 +++++---
- drivers/bus/vmbus/vmbus_channel.c    | 57 ++++++++++++++++++++--------
- drivers/bus/vmbus/vmbus_common_uio.c |  9 +++--
- drivers/net/netvsc/hn_ethdev.c       | 44 ++++++++++++++++-----
- drivers/net/netvsc/hn_nvs.c          | 33 +++++++++++-----
- drivers/net/netvsc/hn_nvs.h          | 21 ++++++----
- drivers/net/netvsc/hn_rndis.c        | 11 +++---
- drivers/net/netvsc/hn_rxtx.c         | 16 ++++----
- 11 files changed, 155 insertions(+), 69 deletions(-)
-
+diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
+index f848157b49..e5b052d569 100644
+--- a/drivers/net/netvsc/hn_ethdev.c
++++ b/drivers/net/netvsc/hn_ethdev.c
+@@ -1427,7 +1427,8 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ 			struct rte_vmbus_device *dev)
+ {
+ 	struct rte_eth_dev *eth_dev;
+-	int ret;
++	struct hn_nvs_process_priv *process_priv;
++	int ret = 0;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -1438,16 +1439,37 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ 	}
+ 
+ 	eth_dev = eth_dev_vmbus_allocate(dev, sizeof(struct hn_data));
+-	if (!eth_dev)
+-		return -ENOMEM;
++	if (!eth_dev) {
++		ret = -ENOMEM;
++		goto vmbus_alloc_failed;
++	}
+ 
+-	ret = eth_hn_dev_init(eth_dev);
+-	if (ret) {
+-		eth_dev_vmbus_release(eth_dev);
+-		rte_dev_event_monitor_stop();
+-	} else {
+-		rte_eth_dev_probing_finish(eth_dev);
++	process_priv = rte_zmalloc_socket("netvsc_proc_priv",
++					  sizeof(struct hn_nvs_process_priv),
++					  RTE_CACHE_LINE_SIZE,
++					  dev->device.numa_node);
++	if (!process_priv) {
++		ret = -ENOMEM;
++		goto priv_alloc_failed;
+ 	}
++	process_priv->vmbus_dev = dev;
++	eth_dev->process_private = process_priv;
++
++	ret = eth_hn_dev_init(eth_dev);
++	if (ret)
++		goto dev_init_failed;
++
++	rte_eth_dev_probing_finish(eth_dev);
++	return ret;
++
++dev_init_failed:
++	rte_free(process_priv);
++
++priv_alloc_failed:
++	eth_dev_vmbus_release(eth_dev);
++
++vmbus_alloc_failed:
++	rte_dev_event_monitor_stop();
+ 
+ 	return ret;
+ }
+@@ -1455,6 +1477,7 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ static int eth_hn_remove(struct rte_vmbus_device *dev)
+ {
+ 	struct rte_eth_dev *eth_dev;
++	struct hn_nvs_process_priv *process_priv;
+ 	int ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -1467,6 +1490,9 @@ static int eth_hn_remove(struct rte_vmbus_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	process_priv = eth_dev->process_private;
++	rte_free(process_priv);
++
+ 	eth_dev_vmbus_release(eth_dev);
+ 	rte_dev_event_monitor_stop();
+ 	return 0;
+diff --git a/drivers/net/netvsc/hn_nvs.h b/drivers/net/netvsc/hn_nvs.h
+index 2843ef7b96..3950749359 100644
+--- a/drivers/net/netvsc/hn_nvs.h
++++ b/drivers/net/netvsc/hn_nvs.h
+@@ -65,6 +65,10 @@
+ #define NVS_TYPE_SUBCH_RESP	133	/* same as SUBCH_REQ */
+ #define NVS_TYPE_TXTBL_NOTE	134	/* notification */
+ 
++/* Private data for primary/secondary processes */
++struct hn_nvs_process_priv {
++	struct rte_vmbus_device *vmbus_dev;
++};
+ 
+ /* NVS message common header */
+ struct __rte_packed_begin hn_nvs_hdr {
 -- 
 2.34.1
 
