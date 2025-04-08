@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3AFC3600C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F50C3600C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5819540E68;
-	Tue,  8 Apr 2025 10:31:06 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id 5B06640A89
+	by mails.dpdk.org (Postfix) with ESMTP id 5E1444027F;
+	Tue,  8 Apr 2025 10:31:07 +0200 (CEST)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+ by mails.dpdk.org (Postfix) with ESMTP id 6873640E4C
  for <dev@dpdk.org>; Tue,  8 Apr 2025 10:31:04 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZWznp5zFTz27hRP;
- Tue,  8 Apr 2025 16:31:42 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZWzmG6jZJz1d1Jd;
+ Tue,  8 Apr 2025 16:30:22 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 926E41402C1;
+ by mail.maildlp.com (Postfix) with ESMTPS id 4B576180104;
  Tue,  8 Apr 2025 16:31:02 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 8 Apr 2025 16:31:02 +0800
+ 15.2.1544.11; Tue, 8 Apr 2025 16:31:01 +0800
 From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <haijie1@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 2/7] net/hns3: fix memory leakage in failure path
-Date: Tue, 8 Apr 2025 16:30:55 +0800
-Message-ID: <20250408083100.2845040-3-huangdengdui@huawei.com>
+Subject: [PATCH 1/7] net/hns3: fix variable overflow
+Date: Tue, 8 Apr 2025 16:30:54 +0800
+Message-ID: <20250408083100.2845040-2-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250408083100.2845040-1-huangdengdui@huawei.com>
 References: <20250408083100.2845040-1-huangdengdui@huawei.com>
@@ -49,50 +49,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the hns3_dfx_reg_fetch_data() function returns from processing
-failure, cmd_descs is not freed, which leads to leakage.
-This patch fit it.
+The number of interrupt vector may exceed the range of uint8_t.
+So hns3_unmap_rx_interrupt() should use uint16_t for 'vec' variable.
 
-By the way, this patch uses calloc to apply for heap memory instead
-of hugepage memory.
-
-Fixes: ef1fbd355451 ("net/hns3: add more registers to dump")
+Fixes: 02a7b55657b2 ("net/hns3: support Rx interrupt")
 Cc: stable@dpdk.org
 
 Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 ---
- drivers/net/hns3/hns3_regs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/hns3/hns3_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/hns3/hns3_regs.c b/drivers/net/hns3/hns3_regs.c
-index 8a6ddbfe8c..5c74f9ae2e 100644
---- a/drivers/net/hns3/hns3_regs.c
-+++ b/drivers/net/hns3/hns3_regs.c
-@@ -1270,7 +1270,7 @@ hns3_get_dfx_regs(struct hns3_hw *hw, struct rte_dev_reg_info *regs, uint32_t mo
- 	for (i = 0; i < opcode_num; i++)
- 		max_bd_num = RTE_MAX(bd_num_list[i], max_bd_num);
+diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
+index 25a45212be..dc70bf3cff 100644
+--- a/drivers/net/hns3/hns3_common.c
++++ b/drivers/net/hns3/hns3_common.c
+@@ -882,8 +882,8 @@ hns3_unmap_rx_interrupt(struct rte_eth_dev *dev)
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct hns3_adapter *hns = dev->data->dev_private;
+ 	struct hns3_hw *hw = &hns->hw;
+-	uint8_t base = RTE_INTR_VEC_ZERO_OFFSET;
+-	uint8_t vec = RTE_INTR_VEC_ZERO_OFFSET;
++	uint16_t base = RTE_INTR_VEC_ZERO_OFFSET;
++	uint16_t vec = RTE_INTR_VEC_ZERO_OFFSET;
+ 	uint16_t q_id;
  
--	cmd_descs = rte_zmalloc(NULL, sizeof(*cmd_descs) * max_bd_num, 0);
-+	cmd_descs = calloc(max_bd_num, sizeof(*cmd_descs));
- 	if (cmd_descs == NULL)
- 		return -ENOMEM;
- 
-@@ -1290,13 +1290,14 @@ hns3_get_dfx_regs(struct hns3_hw *hw, struct rte_dev_reg_info *regs, uint32_t mo
- 		if (regs_num !=  hns3_reg_lists[i].entry_num) {
- 			hns3_err(hw, "Query register number differ from the list for module %s!",
- 				 hns3_get_name_by_module(i));
-+			free(cmd_descs);
- 			return -EINVAL;
- 		}
- 		hns3_fill_dfx_regs_name(hw, regs, hns3_reg_lists[i].reg_list, regs_num);
- 		regs->length += regs_num;
- 		data += regs_num;
- 	}
--	rte_free(cmd_descs);
-+	free(cmd_descs);
- 
- 	return ret;
- }
+ 	if (dev->data->dev_conf.intr_conf.rxq == 0)
 -- 
 2.33.0
 
