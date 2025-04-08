@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F50C3600C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1295EC3600C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Apr 2025 08:31:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E1444027F;
-	Tue,  8 Apr 2025 10:31:07 +0200 (CEST)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
- by mails.dpdk.org (Postfix) with ESMTP id 6873640E4C
+	by mails.dpdk.org (Postfix) with ESMTP id 532C740ED4;
+	Tue,  8 Apr 2025 10:31:08 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 85BE540E5E
  for <dev@dpdk.org>; Tue,  8 Apr 2025 10:31:04 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.19.162.254])
- by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZWzmG6jZJz1d1Jd;
- Tue,  8 Apr 2025 16:30:22 +0800 (CST)
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZWzhj1lCQzCs7J;
+ Tue,  8 Apr 2025 16:27:17 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 4B576180104;
- Tue,  8 Apr 2025 16:31:02 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id DD23A180104;
+ Tue,  8 Apr 2025 16:31:01 +0800 (CST)
 Received: from localhost.huawei.com (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -24,12 +24,10 @@ From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <haijie1@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 1/7] net/hns3: fix variable overflow
-Date: Tue, 8 Apr 2025 16:30:54 +0800
-Message-ID: <20250408083100.2845040-2-huangdengdui@huawei.com>
+Subject: [PATCH 0/7] net/hns3: bugfix for hns3
+Date: Tue, 8 Apr 2025 16:30:53 +0800
+Message-ID: <20250408083100.2845040-1-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250408083100.2845040-1-huangdengdui@huawei.com>
-References: <20250408083100.2845040-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -49,32 +47,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The number of interrupt vector may exceed the range of uint8_t.
-So hns3_unmap_rx_interrupt() should use uint16_t for 'vec' variable.
+This patchset fixes some bugs.
 
-Fixes: 02a7b55657b2 ("net/hns3: support Rx interrupt")
-Cc: stable@dpdk.org
+Dengdui Huang (7):
+  net/hns3: fix variable overflow
+  net/hns3: fix memory leakage in failure path
+  net/hns3: fix extra waiting for link up
+  net/hns3: fix memory leakage for indirect action
+  net/hns3: fix incorrect failed rollback
+  net/hns3: fix divide by zero
+  net/hns3: fix unrelease some resources on reset case
 
-Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
----
- drivers/net/hns3/hns3_common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/hns3/hns3_common.c |  4 +--
+ drivers/net/hns3/hns3_ethdev.c | 45 ++++++++++++++++++++++------------
+ drivers/net/hns3/hns3_flow.c   | 41 ++++++++++++++-----------------
+ drivers/net/hns3/hns3_flow.h   |  9 +++++--
+ drivers/net/hns3/hns3_regs.c   |  5 ++--
+ 5 files changed, 60 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
-index 25a45212be..dc70bf3cff 100644
---- a/drivers/net/hns3/hns3_common.c
-+++ b/drivers/net/hns3/hns3_common.c
-@@ -882,8 +882,8 @@ hns3_unmap_rx_interrupt(struct rte_eth_dev *dev)
- 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	struct hns3_adapter *hns = dev->data->dev_private;
- 	struct hns3_hw *hw = &hns->hw;
--	uint8_t base = RTE_INTR_VEC_ZERO_OFFSET;
--	uint8_t vec = RTE_INTR_VEC_ZERO_OFFSET;
-+	uint16_t base = RTE_INTR_VEC_ZERO_OFFSET;
-+	uint16_t vec = RTE_INTR_VEC_ZERO_OFFSET;
- 	uint16_t q_id;
- 
- 	if (dev->data->dev_conf.intr_conf.rxq == 0)
 -- 
 2.33.0
 
