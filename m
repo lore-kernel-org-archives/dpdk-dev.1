@@ -2,49 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE41C369A1
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 12:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C30C36002
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 13:42:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49AEC402E5;
-	Wed,  9 Apr 2025 14:57:37 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 50BA5402B7
- for <dev@dpdk.org>; Wed,  9 Apr 2025 14:57:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1744203457; x=1775739457;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=qrGzBN03gxiWoWnNJS2FMgL5IbkE+Eh99pOy4mXnwBc=;
- b=SnbFced2Z7VKx59ZANFhINM4Pan7ph/qcSHr/YcgI4sglwXDZhxW5cg9
- gJxyRz1idTT4ALGPHvd8V1oeXWTwjHnDIeRgBJgkCcpHPQKzNN63LugeK
- PIP3gErPi7q0xafkoD104kDfkhKx1liQhhAyQLRY9llkZ0Cjf02QEfFWX
- KxzduFmvNy9djLy0IgetwQKzZvRrxtxxzl8iw/prJfbxZ+2Rx77NrBEXO
- YQX962e4GBPA8+/aRTSTWvufCjXqvC2Kqb0rA7gdVpfAsHen7wCmBLCaE
- vExpEOo4n9+zlu+IOOyvaH6l2f+IG4nzrxFGDTXQf4Q7n6fDK2o1MguPo w==;
-X-CSE-ConnectionGUID: 6/8QvlpOSkCODVjFlsFFkA==
-X-CSE-MsgGUID: NQWpqILQRja7HX4QTEcqiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="49468703"
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; d="scan'208";a="49468703"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Apr 2025 05:54:49 -0700
-X-CSE-ConnectionGUID: szZ0NbibTVeC1DLjYeFopQ==
-X-CSE-MsgGUID: UTf2vKcMTFO3NKFUqVrj1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; d="scan'208";a="133450365"
-Received: from silpixa00401164.ir.intel.com (HELO
- silpixa00401164.ger.corp.intel.com) ([10.237.223.78])
- by orviesa003.jf.intel.com with ESMTP; 09 Apr 2025 05:54:46 -0700
-From: Praveen Shetty <praveen.shetty@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com
-Subject: [PATCH v1] net/idpf: avoid truncation of constant value
-Date: Wed,  9 Apr 2025 12:54:40 +0000
-Message-Id: <20250409125440.7103-1-praveen.shetty@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 9C97C402F0;
+	Wed,  9 Apr 2025 15:42:13 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F2B4402B7
+ for <dev@dpdk.org>; Wed,  9 Apr 2025 15:42:11 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id C81522027DE8; Wed,  9 Apr 2025 06:42:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C81522027DE8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1744206130;
+ bh=e9qqwvScndnXUWDw5hU0V1ae6NjGMziIOhVFT3elPfo=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=hE1L7MkYDMSAK5TPMVQkAkObo97PfOAQzJFNZbqECLzDalA6peQRz+xpcjc3LaPFz
+ lkQ87vuRNEY9ndNXYIPkL3GGzmrWW2ZZmZa/30mR+91lka094MKJvEIlLbZngiqNCs
+ rXjYZgXhQWHBe0UB69r3/PAShQ+J8X6SnAD5d3fU=
+Date: Wed, 9 Apr 2025 06:42:10 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v4 1/1] mbuf: enable to be compiled with MSVC
+Message-ID: <20250409134210.GA24610@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739224265-4158-1-git-send-email-andremue@linux.microsoft.com>
+ <1744147477-23715-1-git-send-email-andremue@linux.microsoft.com>
+ <1744147477-23715-2-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8xCqwbMEsf83Um-m=Kn1n=SU9k1bpB2jtuhjPFDQiJs3w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJFAV8xCqwbMEsf83Um-m=Kn1n=SU9k1bpB2jtuhjPFDQiJs3w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,30 +49,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Truncation of constant value compiler warning was reported in clang/msvc
-compiler for the VIRTCHNL2_CAP_OEM bit setting.This is due to 64 bit number
-is initialized in a 32 bit enum.VIRTCHNL2_CAP_OEM capability is not used in
-the present dpdk code,so removing this bit setting from the dpdk to avoid
-the truncation.
+On Wed, Apr 09, 2025 at 01:39:36PM +0200, David Marchand wrote:
+> On Tue, Apr 8, 2025 at 11:24 PM Andre Muezerie
+> <andremue@linux.microsoft.com> wrote:
+> > diff --git a/lib/net/meson.build b/lib/net/meson.build
+> > index 7a6c419f40..c528fcc9a2 100644
+> > --- a/lib/net/meson.build
+> > +++ b/lib/net/meson.build
+> > @@ -43,7 +43,12 @@ use_function_versioning = true
+> >
+> >  if dpdk_conf.has('RTE_ARCH_X86_64')
+> >      sources += files('net_crc_sse.c')
+> > -    cflags += ['-mpclmul', '-maes']
+> > +    cflags_options = ['-mpclmul', '-maes']
+> > +    foreach option:cflags_options
+> > +        if cc.has_argument(option)
+> > +            cflags += option
+> > +        endif
+> > +    endforeach
+> 
+> What guarantee do we have that MSVC builds with those instructions?
+> 
 
-Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
----
- drivers/net/intel/idpf/base/virtchnl2.h | 2 --
- 1 file changed, 2 deletions(-)
+The granularity msvc offers for extended instruction sets is different.
+I had sent a patch that allows DPDK code to benefit from those settings,
+but it likely needs to be updated after recent changes were merged. I'll
+revisit that in the next few days.
 
-diff --git a/drivers/net/intel/idpf/base/virtchnl2.h b/drivers/net/intel/idpf/base/virtchnl2.h
-index 3285a2b674..cf010c0504 100644
---- a/drivers/net/intel/idpf/base/virtchnl2.h
-+++ b/drivers/net/intel/idpf/base/virtchnl2.h
-@@ -265,8 +265,6 @@ enum virtchnl2_cap_other {
- 	 * if a reserved bit is set in a standard completion's tag.
- 	 */
- 	VIRTCHNL2_CAP_MISS_COMPL_TAG		= BIT_ULL(20),
--	/* This must be the last capability */
--	VIRTCHNL2_CAP_OEM			= BIT_ULL(63),
- };
- 
- /**
--- 
-2.34.1
+For reference, here is what the original patch series looked like:
+https://patches.dpdk.org/project/dpdk/list/?series=34803
 
+> >      # only build AVX-512 support if we also have PCLMULQDQ support
+> >      if cc.has_argument('-mvpclmulqdq')
+> >          sources_avx512 += files('net_crc_avx512.c')
+> 
+> 
+> -- 
+> David Marchand
