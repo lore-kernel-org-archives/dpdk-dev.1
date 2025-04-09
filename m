@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9249BC36002
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 03:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8354C36002
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 03:56:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E63C402EF;
-	Wed,  9 Apr 2025 05:54:21 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 491A3402EF
- for <dev@dpdk.org>; Wed,  9 Apr 2025 05:54:20 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-7340e6f3ce1so4954362b3a.0
- for <dev@dpdk.org>; Tue, 08 Apr 2025 20:54:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C6B340651;
+	Wed,  9 Apr 2025 05:56:02 +0200 (CEST)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 7802040612
+ for <dev@dpdk.org>; Wed,  9 Apr 2025 05:56:00 +0200 (CEST)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-736b0c68092so5221726b3a.0
+ for <dev@dpdk.org>; Tue, 08 Apr 2025 20:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744170859;
- x=1744775659; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=wKaJbR9uz2L7s1QBfIHx6bOgFoMx1nvhdKsDqO/EA2s=;
- b=TtydMc20AAElCClrePpWC6bkAiUXHC/1FIJ3kVPtvV1ku6Q60roYO4hmejbHBxJGP0
- ak9tUjBhJw9wdIy7sIhQ+e7lKEL55nr00kiTW5MoyVSUdGm7/ATS55QUmaws5VZeevQh
- niV1Bcp387nkrryLT8rRdvFqtlESiSS+2YiuDko/JG+/oHJphrIjUP+2j8cCNXqeD4QP
- fTFUZd1Pd0ERx8DY6jmEUjz4u+ikYpvjuZOdN495EEKDOxJxHBQCduE5QL7CIOwJlNqf
- vQJA20FaQE6KzWmJ/djKY9k321VkpXh5BXCisPEpBJ52msEq/GkhSxaVluyCQe7bdb/C
- f+fA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744170959;
+ x=1744775759; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nH63GZB5VNBG3Z86LPdIZW5fwkqmgYRH14Sd7g04vkU=;
+ b=i1co0llunN2b4iiBdF5VdpgWlNmbtc31CQVqd+AJNqhZp2Lk921+kXCuS1ZlvxQTGh
+ TBSo7cyknMDPRh0ni9faCyH6oazcEON5SGJltrISFWTHUIq+xXyUn0ofhcIr5TS+L3BP
+ KzOYi09y5IBM90uxrW7mXie7347Kg8gGr2cdrDHTaXyiYEQ6UQP8wnc6b3g9WLdYFIkS
+ if8qzxoO71/VZSmPlc9yoRS/xu97l5ot4tTRCQGaO+DWhT0ijYDP1VMtjHN3Y6PlOMh6
+ 1iDIhVLlaAKAK+WZ0VTFzzttdJWxheia1rRu6rConfRDfKbnhvZDwNV+nPPay2y5cxUO
+ 09lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744170859; x=1744775659;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=wKaJbR9uz2L7s1QBfIHx6bOgFoMx1nvhdKsDqO/EA2s=;
- b=f/gZZF8n+s+g+x1TpWMz7kNtRt/EfDdSo+W1c8pnUpKw7piuaeNSM/vb6JGO7rcFM4
- 10UeTMdBnuE1NGXWLhzZBZaGqNjdGb7v3Pi3yDAVtEioHl5l6ue2gZVDdOzo4d/dn/rQ
- CTOqA6UqmVD2OcX/0C6D0qvtJD/GeMYOWM5n8R27YOeXn1zyXkhriH++KYtReKmY3HwU
- HzhGtYIynRO80eh3g7N9ishjEEfrH5J7Tq3pbjAzB4K8o7FWTtAqQ0EHNnH2aEZ/zzwP
- zKmP+XQK5tfS9XMgLvPksV+/eOml6yJDfsz0TWq4B6SpmNpUw5HUSvaW6hDiso6+zfgx
- ebPw==
-X-Gm-Message-State: AOJu0Yyftof/5p2PdvjMQ4Zp7K3AvPozPau/jGosJOyjM0/b6vj5Ml/M
- 3J6XIFhW2UK8GtwoZB8FXReGyheqhh7HPFHc+MkyGOfpnGo3s7BiR5WenyfqqTmOHvIlML6yK+f
- 6
-X-Gm-Gg: ASbGncvqgcF0ORtC2/O6PbJQqtpNKEYZ9TXzJMsMbJH/HS3k/5hE70zZdUy+7C2QRNf
- LaFuHN61+/fEa6hG5ukhEWqUxTsA889SINWKvE52gdxRFWPFjh4wl4qZHussiMMnpehVMwHJsys
- IWUwSIH2Xg9UYBM5FmAo3uHVRonJuWujrt/trea02vNPkml2PagLh27O3h1hiAdjH1dUNgvJns+
- pZ0ErutUez/rA2PJ6D1bZkCn4u4nBkho+NcPnS+o5k/M612ejSuPFJsPpwlODI/fnF44LgdMitY
- 0SSDVuBykybN/Eip6U4nyOwOnhKZf1PJ4mYOqQ2MRIiCFVV1oW531bAtH0GxOnSN13fbjhCs15H
- VJk0zHe5b2KUV1pnMAo9O
-X-Google-Smtp-Source: AGHT+IFWR82C6YmiBHHdLCo3NUR2cXxlvh9GYElxR3Dd2QN9MavKk2tby2F9z9UM/o5KYnkOt2ikJw==
-X-Received: by 2002:a05:6a00:230d:b0:736:54c9:df2c with SMTP id
- d2e1a72fcca58-73bafd44c55mr909268b3a.15.1744170859233; 
- Tue, 08 Apr 2025 20:54:19 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1744170959; x=1744775759;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=nH63GZB5VNBG3Z86LPdIZW5fwkqmgYRH14Sd7g04vkU=;
+ b=cNm4UvSTr4/+wlDND4Q1PDrGQNcWi622uDwAZADgp7FJqxh7UN4xSEqig+v9mq/iYK
+ Q+tIRtbsU0qkta6L5iMIAR0UWAaEJRJrbzlnko4dsNZ8QolfLzP7C4a7Of4IuKC1opvw
+ nUTaOYLa4yumTCQoDea84Q4Q4d8BRrz/wI247wZK++PPjRXTHrQxh5qMia1WXDW8ftFB
+ POiFNAOfAl1t/6bpCsDx4ZnIlUZeJMdrVUj+PwSlnuIUcYoGtlBP6axB3iawbgM9Ec/t
+ jTicfu/x7tPJXPR3xQCJVIBDh1km35naEDLzG86uy29Gk1HJB1K1FdSG+X4NdulIA6Xw
+ knmw==
+X-Gm-Message-State: AOJu0YwpjLtVxr5onxusvSgt9cBOnXZNugv0h+ptvDhiTETj8NU6JEgj
+ XNT7gmSrodYqyriGke2/OEgNE2sL8cZWAG46N0A1wAxfeCSkYuT2YFmahtlqV14=
+X-Gm-Gg: ASbGncvlWYSi9NuUeTloZJ3kAMlT6mtcjyfYeRW28Z4sA7ppVmqD8sTNdWD8P/Vlu4j
+ YgEH9hzqIj8Vla9P6krfzA7JA5i3TU2kHbURKIeJ40k3TyCupxzG2yewTRNxHEE4VXLc9FxilGh
+ b+29UR3YDIaAVSb6F99xbJxLe4qDc/q1jAT37cOpeaDU/uP41Oi6Mq2EztJn9u8vc6nop9kWbyJ
+ 5+umwsaOVnNq0JdhSSrmSElQFDgHy89bcA55gJa+/iMUSXpGAi/2AfmBJ8vNYnh7geFISZwK2h3
+ 1sQXWsHpHOra9OhnuMNXlugXeAkYDSWzCyJUTOEjUNYEExmbJowC++EXblvd0YsHcXrqvEDzwpw
+ pN+JNh8zemIqgA8c6ZnAp
+X-Google-Smtp-Source: AGHT+IFWUyu7ejl6i0WkVVPnd/nMKNsJPvCP5bZXMKHoGqtW7OySTbHWlCqJsncSeMlePPFLb+TG6Q==
+X-Received: by 2002:a05:6a00:22d1:b0:736:5504:e8b4 with SMTP id
+ d2e1a72fcca58-73bae529febmr1784801b3a.19.1744170959510; 
+ Tue, 08 Apr 2025 20:55:59 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73bb1e4f85csm205221b3a.132.2025.04.08.20.54.18
+ d2e1a72fcca58-73bb1d2afa9sm212013b3a.22.2025.04.08.20.55.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 08 Apr 2025 20:54:18 -0700 (PDT)
+ Tue, 08 Apr 2025 20:55:59 -0700 (PDT)
+Date: Tue, 8 Apr 2025 20:55:57 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] doc: update kernel version requirement
-Date: Tue,  8 Apr 2025 20:50:07 -0700
-Message-ID: <20250409035408.199320-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
+To: Kaiwen Deng <kaiwenx.deng@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Ferruh Yigit <ferruh.yigit@intel.com>,
+ Alvin Zhang <alvinx.zhang@intel.com>
+Subject: Re: [PATCH] net/igc: fix xstats name
+Message-ID: <20250408205557.6152d29b@hermes.local>
+In-Reply-To: <20250409010711.761050-1-kaiwenx.deng@intel.com>
+References: <20250409010711.761050-1-kaiwenx.deng@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,44 +81,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The 4.19 kernel version was end of life in December 2024.
-Update to 5.4 and also add better description of what "not supported"
-means in this case.
+On Wed,  9 Apr 2025 09:07:11 +0800
+Kaiwen Deng <kaiwenx.deng@intel.com> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
- doc/guides/linux_gsg/sys_reqs.rst | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+> The xstats name needs to be changed correctly
+> tx_size_1023_to_max_packets should be tx_size_1024_to_max_packets.
+> 
+> Fixes: e6defdfddc3b ("net/igc: enable statistics")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Kaiwen Deng <kaiwenx.deng@intel.com>
+> ---
+>  drivers/net/intel/e1000/igc_ethdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+> index e712cfcf7c..68444e4fba 100644
+> --- a/drivers/net/intel/e1000/igc_ethdev.c
+> +++ b/drivers/net/intel/e1000/igc_ethdev.c
+> @@ -181,7 +181,7 @@ static const struct rte_igc_xstats_name_off rte_igc_stats_strings[] = {
+>  	{"tx_size_256_to_511_packets", offsetof(struct e1000_hw_stats, ptc511)},
+>  	{"tx_size_512_to_1023_packets", offsetof(struct e1000_hw_stats,
+>  		ptc1023)},
+> -	{"tx_size_1023_to_max_packets", offsetof(struct e1000_hw_stats,
+> +	{"tx_size_1024_to_max_packets", offsetof(struct e1000_hw_stats,
+>  		ptc1522)},
+>  	{"tx_multicast_packets", offsetof(struct e1000_hw_stats, mptc)},
+>  	{"tx_broadcast_packets", offsetof(struct e1000_hw_stats, bptc)},
 
-diff --git a/doc/guides/linux_gsg/sys_reqs.rst b/doc/guides/linux_gsg/sys_reqs.rst
-index 5a7d9e4a43..cab198134b 100644
---- a/doc/guides/linux_gsg/sys_reqs.rst
-+++ b/doc/guides/linux_gsg/sys_reqs.rst
-@@ -105,11 +105,18 @@ System Software
- 
- **Required:**
- 
--*   Kernel version >= 4.19
--
--    The kernel version required is based on the oldest long term stable kernel available
--    at kernel.org when the DPDK version is in development.
--    Compatibility for recent distribution kernels will be kept, notably RHEL/CentOS 7.
-+*   Kernel version >= 5.4
-+
-+    The Linux userspace API is compatible across releases but there are some
-+    restrictions. The oldest kernel tested by the DPDK testing infrastructure
-+    is the oldest maintained Long Term Stable (LTS) at time of release.
-+    The DPDK is likely to still work with older releases but it is not guaranteed.
-+    Compatibility for recent distribution kernels will be kept, notably RHEL, and Ubuntu.
-+    It may work on older distributions, past End Of Life (EOL) like RHEL7
-+    but this is no longer tested or guaranteed to work.
-+
-+    Some drivers and hardware support may require more recent kernels, check the
-+    documentation (e.g. :doc:`../nics/index`)
- 
-     The kernel version in use can be checked using the command::
- 
--- 
-2.47.2
 
+Please don't send same patch twice.
