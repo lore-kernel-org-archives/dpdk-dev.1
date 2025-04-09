@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3255C369A2
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 22:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B20AC369A2
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Apr 2025 22:42:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9C3C40672;
-	Thu, 10 Apr 2025 00:42:40 +0200 (CEST)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id 4AC664066F
- for <dev@dpdk.org>; Thu, 10 Apr 2025 00:42:38 +0200 (CEST)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-7c08f9d0ef3so13264685a.2
- for <dev@dpdk.org>; Wed, 09 Apr 2025 15:42:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C5FB40689;
+	Thu, 10 Apr 2025 00:42:43 +0200 (CEST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
+ [209.85.222.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 5160240671
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 00:42:40 +0200 (CEST)
+Received: by mail-qk1-f172.google.com with SMTP id
+ af79cd13be357-7c542ffec37so22226185a.2
+ for <dev@dpdk.org>; Wed, 09 Apr 2025 15:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1744238558; x=1744843358; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1744238559; x=1744843359; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Tl/Db0aW+5WTrf+gF9NpsQno0co+DwBztcSUNcxm8RM=;
- b=f+2+7aXnVQ4p6HWdpl1XhqxewlB2xaOBFuPbG4/s335c5yvIfIV/0yfK9BQfwO15G8
- JGi/I0CD16EHNhpl1kqdCio67XL8D0QHdseEEmD2v4CE5WhAZ8dTNAIvWetYIS+/Ip//
- DeO8t1eU/VYb/PaiBRrnvQOX/bz7v8+v1XaYo=
+ bh=IED+AQ2UwLK8KsCjbP9dtC8FhDuNS7lQiL1RBP6bwTE=;
+ b=HvGwJUa03YOTwA0i3O4ofOPtQKmSR8YCW5igzCk0a45oOk1qTMZvp6D2hQ78STdtEa
+ duiXqKQoTG4vqNfP45PNVfu9o8tDmbKKx08royuF1jGVcKRmcVKI6YVcBnwG/5IlEoqW
+ 866YopLoNuI4UH4hzqZZqne5AJ3/UGF0l7kEw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744238558; x=1744843358;
+ d=1e100.net; s=20230601; t=1744238559; x=1744843359;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Tl/Db0aW+5WTrf+gF9NpsQno0co+DwBztcSUNcxm8RM=;
- b=LKjrQk551T8id9Rf0RqfsWbTXw3l6AUyodUMT+dFSb05McI/cZUusFSR1FKKS450+3
- SrapYbkJhY3GPZkfAp+T6+mW7Kxzo/DbdIrFtwvNIHnrbkE/chJWWp/NA9yJmgTNabYc
- 9fgUsqajGcArUJfqXUdYeN9Y9WIqzm7nOJ2qseIFlyTLVW2LgItoWpLs5rcWJ+ajUYey
- yn5HOERKEYM+qeKf95014AwNrtzI9p4ObjPWrdzQRhmwTdTAxxoRbs3hi0kgsLsNPXWW
- F91ZRVweNZbt+CWzmbPpw6xWvNfw/X4Bs7H0T+EWKSKg/HMNKiFe9yGHU1/0jiO+W9g6
- fc+A==
+ bh=IED+AQ2UwLK8KsCjbP9dtC8FhDuNS7lQiL1RBP6bwTE=;
+ b=ZaR79W5ciT/cNypLSC5Y3iu19DWcQgH406DdCJRzkOAgtScKcn0Kd4VIrW99XS55wW
+ RHvME2EsEO40/mvt14PpJoI2r45fAiEiXEUpLYEvKnXfxxlhXgfNtXD31Zz25tpZeiPU
+ ygoIf3uuB6Q5jBgK8C5lT/M7CSyWksZvhhgoUoOaA9S2qCDAxW/6Okal10vHV+MLz6ea
+ 2hSGdwa4M7hKYsS2mjiU/L/1J00UrjflFcjUkzxyOkr5e2O7wNHa4xkLNmpyQ1LHLN8o
+ urH9prk8Ycsc0qw0SmI5Ho2oUIm92hSXpl7HZMcAEOg/CJKljEQVJUNjZ0Q7cRecwR79
+ 6QZQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWtmkdBNoy0yVZbPTh80b6u0UWKHbAmbi4pAJXvfbDu3hdIh+/lDY+0seqqlV4WZ2Fx9o8=@dpdk.org
-X-Gm-Message-State: AOJu0YynqG8LmlJTk2m7ErQOPmzVkWRYUPb45jzuN3PZTba6uxB3z/5Z
- xFdcwmIfxHAzmdxnYx6rTbPExw8W6iYYoiMB8BiURr9h05pIlGWFeLG+0gf5J0E=
-X-Gm-Gg: ASbGncuUrLZBG+8wnC0MVqYb7KlY45e7EqRCE8n+Q2DlRcXjX59p37wuFatdT2EnSmT
- MTGGZ3qR17/cqG5P3ksImsR1VcfuxfQ6KLp+Hkk46TwGo7Qk9yvQc+r92VPd6BFq/x3fSnqIf1c
- YcloUM/66qj2TTZLnVyF1JSdHxWe6m8cXXOJRYTMAD5oCotWwNLIQAhz/2T59AGUAvbS12eIWJg
- ku41MQuyt18WD251KX8mjFn4BD6IFZR5iwygKGlxsRPGlIW8ve9LMD0yWhPI1q5heinGCckSd4a
- qkX3njNtKxksLIcKrJbJLWVx1abjGmU9JlhBk88U9aMIQ5XWG7nwbnRSfaAvytZGJEc1FPVOJzA
- FQ6D7BMvaEpwXBHp3yLuODqnw
-X-Google-Smtp-Source: AGHT+IGVJBYI+Oon26eiDIslYUeDbZD8DOuiAoNCmy3qsL1d3XtCRKrHAjsuOYBv6pgAocBYeP3Dgg==
-X-Received: by 2002:a05:620a:3e82:b0:7c7:a604:d432 with SMTP id
- af79cd13be357-7c7a816dafbmr20251085a.30.1744238557933; 
- Wed, 09 Apr 2025 15:42:37 -0700 (PDT)
+ AJvYcCVegHnxQEnx37FxYUfTf8lct6GDfCfgaPWcl7QF5b6lOnm0BQ1rtHWZhpGbZ5atqt2GNnc=@dpdk.org
+X-Gm-Message-State: AOJu0YzKNDlflsLjUw0vj4Wy/JZgiVrBLHyDMHdNKWvVxu4EpGWtJAWT
+ xBWf/Cr7lVZxAyrTjQwxvON7dXCvC6TmzTKapBys5YWjWtxqEdrtw9SYKtccK2Y=
+X-Gm-Gg: ASbGnctveGgmTGnGaSGsEzSeKjkHukAse9S+tirSZEVxPOv+zm1s99RkhdAhVgB8j5o
+ r+D2Kz/MMp2Jnop0lxif2TA0Ft/lbPCQM+d+YtsgCXl7tx4Siu1RLoEaD7H05nJIIdoMTn8mmN9
+ 96Aaa1PMX3+limNOQXKpxBCJDXSuQ7YRv9JAL0lHyV7fgv1C/VHyh9D4bPKDlvq6ZkVuD/11SLb
+ yzHBm3N2iDGNfSC5MiuBqbKMoQTCKJuBPGGPYlYLjzvJLr/oFIu9Yoxxg6R9Iu8IBwaeEIua8Oi
+ jf6x+wOjTssAl3+QH0jIV7Xfu9O/AdecEL44XJDdn8kGnw2f+VI5ObB6Q8zeZ7AQrBSnxCVkxPS
+ MB9u5KcKtE4RwVg==
+X-Google-Smtp-Source: AGHT+IEy+vmGVOpKAKDbuHjWn1UVU+h0hr3MeFptfDsTgB6Gll2qnKnlpLVUOEH0Kb4ooHIvsQSfhQ==
+X-Received: by 2002:a05:620a:1a96:b0:7c7:a5b7:b288 with SMTP id
+ af79cd13be357-7c7a766e1f4mr79634185a.19.1744238559746; 
+ Wed, 09 Apr 2025 15:42:39 -0700 (PDT)
 Received: from patrick-laptop.iol.unh.edu
  ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7c7a11ca015sm125949985a.82.2025.04.09.15.42.37
+ af79cd13be357-7c7a11ca015sm125949985a.82.2025.04.09.15.42.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Apr 2025 15:42:37 -0700 (PDT)
+ Wed, 09 Apr 2025 15:42:39 -0700 (PDT)
 From: Patrick Robb <probb@iol.unh.edu>
 To: Paul.Szczepanek@arm.com
 Cc: probb@iol.unh.edu, Luca.Vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu,
  npratte@iol.unh.edu
-Subject: [PATCH 3/4] dts: default smoke tests to off
-Date: Wed,  9 Apr 2025 18:38:24 -0400
-Message-ID: <20250409223825.1579256-4-probb@iol.unh.edu>
+Subject: [PATCH 4/4] dts: extend meson fast tests timeout
+Date: Wed,  9 Apr 2025 18:38:25 -0400
+Message-ID: <20250409223825.1579256-5-probb@iol.unh.edu>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250409223825.1579256-1-probb@iol.unh.edu>
 References: <20250403023059.1762841-1-probb@iol.unh.edu>
@@ -81,28 +81,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Set smoke tests to false in the example config so that
-users will have to consciously decide whether the
-smoke tests will be run or not.
+The current timeout is insufficient for running
+fast tests on some systems which are running DTS.
+This timeout extension resolves the issue for the
+systems in question.
 
 Signed-off-by: Patrick Robb <probb@iol.unh.edu>
 ---
- dts/test_run.example.yaml | 2 +-
+ dts/tests/TestSuite_smoke_tests.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/dts/test_run.example.yaml b/dts/test_run.example.yaml
-index 330a31bb18..1bc436eed1 100644
---- a/dts/test_run.example.yaml
-+++ b/dts/test_run.example.yaml
-@@ -27,7 +27,7 @@ traffic_generator:
-   type: SCAPY
- perf: false # disable performance testing
- func: true # enable functional testing
--skip_smoke_tests: false # optional
-+skip_smoke_tests: true # optional
- # by removing the `test_suites` field, this test run will run every test suite available
- test_suites: # the following test suites will be run in their entirety
-   - hello_world
+diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
+index 9e4d06a1c4..72901e59d5 100644
+--- a/dts/tests/TestSuite_smoke_tests.py
++++ b/dts/tests/TestSuite_smoke_tests.py
+@@ -59,7 +59,7 @@ def test_unit_tests(self) -> None:
+             Run the ``fast-tests`` unit test suite through meson.
+         """
+         self.sut_node.main_session.send_command(
+-            f"meson test -C {self.dpdk_build_dir_path} --suite fast-tests -t 60",
++            f"meson test -C {self.dpdk_build_dir_path} --suite fast-tests -t 120",
+             480,
+             verify=True,
+             privileged=True,
 -- 
 2.48.1
 
