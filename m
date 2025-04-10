@@ -2,74 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26B4C3601E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 16:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9751C3601E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 17:05:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDA4D40693;
-	Thu, 10 Apr 2025 18:05:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 679DF402ED
- for <dev@dpdk.org>; Thu, 10 Apr 2025 18:05:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744301131;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=nMtJQ/+2rz4LKXWCxX9ATgEYUweHZ12KcwztLkKNGsc=;
- b=aBzU7UpdWz3HecmrkM46iVgLGf4K50iJDXsEJo8kL8YDTp9zIS4PeRd15EZ+tItD83eQ+Z
- UiPcrkp2eP2QZIEd/giwAEWKu6ov5YpbNnZMvgP0NDM64VsuR/UmvnTDLYzgbhofVm3Q64
- 4IqGRBSh/T4OEtHMnBGuEzFovQqLl3g=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-VJqSyv_YP4WeaDNUBzvJuQ-1; Thu, 10 Apr 2025 12:05:26 -0400
-X-MC-Unique: VJqSyv_YP4WeaDNUBzvJuQ-1
-X-Mimecast-MFC-AGG-ID: VJqSyv_YP4WeaDNUBzvJuQ_1744301125
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-30db3c4140fso5126141fa.2
- for <dev@dpdk.org>; Thu, 10 Apr 2025 09:05:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 85E8C40691;
+	Thu, 10 Apr 2025 19:05:08 +0200 (CEST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com
+ [209.85.219.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A26F402ED
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 19:05:06 +0200 (CEST)
+Received: by mail-yb1-f178.google.com with SMTP id
+ 3f1490d57ef6-e7040987879so868026276.2
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 10:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1744304706; x=1744909506; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=s+qhY5aVK3SUkUtNXROMc1SiRBWNLZ50N/+CQulkAMA=;
+ b=i0n1gzuDr/EjSKDJrh+lhgBtaO31MSwxqpxKOaiUq63WKViOkCqak7uq/WDngC3/tT
+ L0SAW+29gY/kAS/1TYntqAlCKhDWnziUY18OW8h+g/IRcERQMaVpRIfZORNoDcHSJaiT
+ 9HKqVETCsGrApGxA4Nd9uH88fWBxa5jta8FLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744301125; x=1744905925;
+ d=1e100.net; s=20230601; t=1744304706; x=1744909506;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=nMtJQ/+2rz4LKXWCxX9ATgEYUweHZ12KcwztLkKNGsc=;
- b=CMIye4/q+5hhJvn1McS4N+hduf8Mm8Z5vlMh+/t80sX58Qd+Q/UsaaRA98t6GHRsHh
- KWIMQAP+nlf5msZ8Z9eYhWVRT87p2Ufe8wZeR0Kf3XjM8jtmxE51Lq/z0DtyEgfYszQQ
- jlqX5MXBrNayulBO5OeoWN8gIvBaAmjqqc44/2ygDQFsd2b/6avqvRPgAdyfA4cIxLNM
- d+bcyoruw5zwe8LRIrTwEeY6E4qxl79rU2jQaEIrIF6vxcwJvLZGiOHkXOa+4waoRxSF
- zWAvx9zUdVri2NLrX89tTNTUwd6vc4+Ay9y/NDuwUj/TPLmnsRtJwrXhYA9XnyoPga1N
- HyZQ==
-X-Gm-Message-State: AOJu0Ywfp+cKjX6P+pSDq/2GKgWTfIazD4V3fcdNSER2i3U0Q/nQfiUR
- r+8omQCstgvPyR8J+d/sjyNc8wGMIiw4Zsy+pSZg7HP46sfLciZg/6MvmNaJIUW1z5RAVmj17kj
- ZHROpSSmROlf5ozSY8GZx4cs3jl8I04rF9ybUzSO14nJGsCsmwqCQjQZ1dIQrr+52FAExgU8d39
- xl+9C5jwnf0Ge2RHE=
-X-Gm-Gg: ASbGncue4Qv55SZGQcs4L3Eqk0wyc/Q3B9wucbe0W/dVDug1/801N8yCG9xa9Z6Y3qQ
- MZl+nQYsCGq5Jcj1pG5Ijs0wRa31G2F4Zsv90DOy2LYfyOZz8HIBmk/k4R8Ml1c5qUSSnDQA=
-X-Received: by 2002:a05:651c:3131:b0:30b:ba06:b6f9 with SMTP id
- 38308e7fff4ca-30facca4b2cmr14836861fa.26.1744301124617; 
- Thu, 10 Apr 2025 09:05:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE566rahEPa2xNb27EfvKnbZhc/0lY2O8NMX3lky5fvgp+tkFePYQyKGjiR+RV4/BR7I47UewJ/F7dFhL9ZMS4=
-X-Received: by 2002:a05:651c:3131:b0:30b:ba06:b6f9 with SMTP id
- 38308e7fff4ca-30facca4b2cmr14834661fa.26.1744301122445; Thu, 10 Apr 2025
- 09:05:22 -0700 (PDT)
+ bh=s+qhY5aVK3SUkUtNXROMc1SiRBWNLZ50N/+CQulkAMA=;
+ b=HdQPxLZI1GVqJ0HzyIdO2mZ1zB935cc/jb8tmwADPUMtR8NxC5EqVTgQ6c9VuHnnjp
+ TdURhlrPlWOzzsFG6FU81XPgmR2JBOmzIyjsawObv8URZ6Mx7mZG63cvwIborV24k06M
+ Xz3Tqv6a8m7tJOVke7Ip3ILpv64KvBQsIan7Dj1glZDXjWUtkmqmw8h7aJymBIVhs+aA
+ 0XA9ft/WKL8QNVQrVVF5UaNjph3pSZybPEt9AG5z87seB4dmSsRQmNW7sLfbA8nk+cyf
+ RaFUZXhz4xW6m6kt0tx9ZShlfHeWBDAWlngPIq0eOnopWUoC6N8+VVB8z9OfopHFUq98
+ YbvQ==
+X-Gm-Message-State: AOJu0YytgsEd9rEgQsiOvHo8vbsh2BHeIAB4maA2Ps5IXzouOqBRn4RT
+ cz75RKnFzAN64mZ0TBW3NHLDygkXWuoUwHj+Lv9ndxJbt+sKy4EzCslCj+0vUKHQC4DGtIIORem
+ DFRxiywYpFvyT56W81ypX8+7bJn9wVIVCDLgEBg==
+X-Gm-Gg: ASbGnctvb0TWHYABvUo2ejG3lFSjaGPEVvMEEPUV/e4yAN4Dfyw8vw1WYy6KePQALpE
+ UeEa8qdujDwhaogL45sLkTDxsZDXgC377oitIeqSzB9QkDcDRHXaAcwhWOd9VqUZ7iuOpzBWxQb
+ i2kVoC2xhhQRHqRSREuKFdSKqEaacLalA4qHI3JcoBmkg064bPnAxrN9Fn
+X-Google-Smtp-Source: AGHT+IFJ7lzcJtJkFuSpX2GqVMINsudotd496sBJ+AFVfSy56YQ/r35sigagieTrkilB/3ttwWgPYEsR+HhD5IAKu9A=
+X-Received: by 2002:a05:6902:228d:b0:e6d:df6b:60f8 with SMTP id
+ 3f1490d57ef6-e703e1e7298mr6120041276.33.1744304705898; Thu, 10 Apr 2025
+ 10:05:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740414265-12217-1-git-send-email-andremue@linux.microsoft.com>
- <1740414265-12217-6-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1740414265-12217-6-git-send-email-andremue@linux.microsoft.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 10 Apr 2025 18:05:10 +0200
-X-Gm-Features: ATxdqUG7BH_HQF6kOu_UUM2JJb9ivFX-0txYc7LZt-PEvXG6ZJn0Tqi6k2ydle8
-Message-ID: <CAJFAV8xqEk=qgJteUDv0TJ9W_UyRoOtjVSU7NjkHrUVvgrHgYg@mail.gmail.com>
-Subject: Re: [PATCH v6 05/10] test-pmd: avoid undefined behavior
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hHxVGH9UbzbX6nzcPzEoXl_BiSQq9La8zFX1aTPuXms_1744301125
-X-Mimecast-Originator: redhat.com
+References: <20250331155800.449823-1-thomas.wilks@arm.com>
+ <20250331155800.449823-2-thomas.wilks@arm.com>
+In-Reply-To: <20250331155800.449823-2-thomas.wilks@arm.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Thu, 10 Apr 2025 13:04:55 -0400
+X-Gm-Features: ATxdqUFhEl11WaUgEuWVKuUoceu79PJhStXgJN4Dt2lVphiZC0Jq-7gNfMZDsPU
+Message-ID: <CABD7UXOvafW16tvnz4oKX7u2LCCfyDebcPxZDcvYqoa2s5K=YQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dts: add packet capture test suite
+To: Thomas Wilks <thomas.wilks@arm.com>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>, 
+ Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -85,52 +72,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Feb 24, 2025 at 5:25=E2=80=AFPM Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
+On Mon, Mar 31, 2025 at 11:58=E2=80=AFAM Thomas Wilks <thomas.wilks@arm.com=
+> wrote:
 >
-> Compiling with MSVC results in warnings like below:
+> Add a test suite that tests the packet capture framework
+> through the use of dpdk-pdump.
 >
-> app/test-pmd/cmdline.c(9023): warning C5101: use of preprocessor
->     directive in function-like macro argument list is undefined behavior
->
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
+> Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
 > ---
->  app/test-pmd/cmdline.c | 12 ++++++++----
->  app/test-pmd/testpmd.h |  2 ++
->  2 files changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-> index 2afcf916c0..d0b47eac8f 100644
-> --- a/app/test-pmd/cmdline.c
-> +++ b/app/test-pmd/cmdline.c
-> @@ -8980,6 +8980,14 @@ dump_socket_mem(FILE *f)
->         last_total =3D total;
->  }
->
-> +#ifdef RTE_EXEC_ENV_WINDOWS
-> +int
-> +rte_trace_save(void)
-> +{
-> +       return TEST_SKIPPED;
-> +}
-> +#endif
-> +
+>  .../dts/tests.TestSuite_packet_capture.rst    |   8 +
+>  dts/tests/TestSuite_packet_capture.py         | 358 ++++++++++++++++++
+>  2 files changed, 366 insertions(+)
+>  create mode 100644 doc/api/dts/tests.TestSuite_packet_capture.rst
+>  create mode 100644 dts/tests/TestSuite_packet_capture.py
 
-- I don't like this fake declaration.
-It does not comply with this function documented API.
-And there are other stubs for the trace API in eal/windows, where this
-could be a better place.
+<snip>
 
-- TEST_SKIPPED 77 is some known error code when invoking unit test via
-meson, which does not make sense with testpmd.
+> +    device_id: str | None =3D None
+> +    port: int | None =3D None
+> +    queue: Union[int, Literal["*"]] =3D "*"
+> +    tx_dev: PurePath | str | None =3D None
+> +    rx_dev: PurePath | str | None =3D None
+> +    ring_size: int | None =3D None
+> +    mbuf_size: int | None =3D None
+> +    total_num_mbufs: int | None =3D None
 
+One small thing I noticed here is that you're using Union for the
+queue and pipes for the rest of the declarations. queue: int |
+Literal["*"] =3D "*" would be the same thing functionally, and it would
+save you an import.
 
-I sent a simpler fix, could you have a look?
-https://patchwork.dpdk.org/project/dpdk/patch/20250410160237.3067629-1-davi=
-d.marchand@redhat.com/
-
-
---=20
-David Marchand
-
+Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
