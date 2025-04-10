@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733C2C369A2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 15:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A12BC369A2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 15:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D65B4066F;
-	Thu, 10 Apr 2025 17:21:31 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id 5A858402ED
- for <dev@dpdk.org>; Thu, 10 Apr 2025 17:21:29 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-736dd9c4b40so1866581b3a.0
- for <dev@dpdk.org>; Thu, 10 Apr 2025 08:21:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D4A44067C;
+	Thu, 10 Apr 2025 17:37:25 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 09E78402ED
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 17:37:24 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2255003f4c6so11626385ad.0
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 08:37:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744298489;
- x=1744903289; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744299443;
+ x=1744904243; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=u8NtuJzdkIwO8yy8fWZw/CGso00uZnqEk89WvBBCSoY=;
- b=CYD83C50MWYYp4gkIWqqcxhiglpFFl3xrdqdQqGd/XLwWujjFzwZkG8yDWAJhCI0Ld
- OWCMmGeWRDWmyTaJYuIB3OdqW/pmUu6pEzzpcPd0mV1XROLL9pktnnUIZbCyW05timv2
- rlWaJRjKWSni0M0Hwo/swGMUFt4NQGB00dvCfVZ7gB2PTc5diNcW+pgzDkOGuTQh2HMN
- OhDtzBPclYdsfdz7XD5qcnB6wjiUUcCiwHGMHKMpEYHh5IhuvybZA5yBKak1DI8hlrm6
- 3V3R/swcJSxJX6krww28bRE93b1vAIjGEq8qio9bjuoe3SaRV65KXkBUHqWdwifeDkTL
- yqlw==
+ bh=nrbm+C6JiTEr7EUFwwv3ZGjKOrRVwCIVAfhIKZEDgPc=;
+ b=ffvYlNYxpvMQCWLwdFktQ0PijhRcDPvoF0+VflaKSLsXHFsb6BTT2ujJxqRwIP/IkK
+ POAwlTWgBRPU7Z2t0vPLxO4Jijqq2hG4541vc/nzjqLU9xMefqBcxHgP0wcyd2W6y/ed
+ p9raH/FtVrJwVcnX0QOWY/OEmG54vaXNeCe9nTqS3akTBV8ObRGweKOerPWJZBnETUju
+ sxgfHLoFlYBBgcRr9d/+uroxN0f1ksrXpAX2gO14YbGwwbiNdCZoyWSz1aT1dUDhX2xq
+ DkgIsR1PIDwDphXwRAtc6156mYcc/Xf8hPenvYAVMeLO6YyMoaHVUZsnjrZ4rxOfW6AI
+ 0eng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744298489; x=1744903289;
+ d=1e100.net; s=20230601; t=1744299443; x=1744904243;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=u8NtuJzdkIwO8yy8fWZw/CGso00uZnqEk89WvBBCSoY=;
- b=GkARCIZS+LX2NxYk7Mj8o+MSFIrgxEqS8Hz3CE0OgRV3KB5AF23YcetolnbUNZBUK4
- cIrhS7SkyZWrG/0s9/SQPxA0gn9BnxU+xi+KhDVmUQ7w/wZL6PJRVlE0CQy4I3q2AGmp
- 3xfpqPi7o7ryKhwyJBfew0VS8Y7sPFmaHWhK673D2PAUjeYkWEo4VYwIx6q7V4t++ze5
- aZcuZPpN056Z3ARbCRlVykp+pX3DqvcDorw+eo1rLM799/xi4NvthaI+97GseM+FXBZ5
- fgwT7L/ndJpmnAL/Nul/mdb6ZoCLfO01yMFUoq3XoAx+Qu5w88zdmsJ8QR5yvz1CEQcq
- sDTQ==
-X-Gm-Message-State: AOJu0YwGBEUM1uAq2FZX6imtOmGc9S1mffUvegcm5sKTtG5ZbxTJjcLD
- ROh7bCBy3wKUC8nPi7aZzME2e56sFSe8BMw5KNXN6+6o4MK7W00o8IPAsYfVrGZWks3WYgP6lp3
- /
-X-Gm-Gg: ASbGnctkFKSqXkC3tajszTyth6BnAg8PvWx2RKoOREv6bThmyE2f5SwmJUqgxPQcWnh
- YvfJI7rXhin4HwwgvESMG9M4hMQr2MtN5AqBxjbK/pRTW06A5C9IFQJoaF+ShsU8eq6YkkTZJ/o
- WPdwFIkJyhYARGEeY5kT0TlgbCqvrAq9lMx1zXdE9aFYvx1b7nchOncYVLYe4aVEWpcEYk3JG2Z
- XWtRkJH0F9QyEVJlE8bGfgjvYBei063bQ9uWEZ4OW9fbwPgV7UWJDX6q9+a4mE43sZ+PuxI2koz
- qzYzsg0waJp16QqDoVEILcFJWcfST2YHGBIwg4NGuIM3DK/LCpq+157YnOZjh9R3ZVvJvJ2PEjd
- V6ePgrEjXaPKKqgSJ
-X-Google-Smtp-Source: AGHT+IEeLzKADhGxP5P5mDMVDGdQV8iH6QkVbquEqK6eNupeAPATT98E7fAxrDT2dta426y87Tss4g==
-X-Received: by 2002:a05:6a00:39a2:b0:736:491b:5370 with SMTP id
- d2e1a72fcca58-73bbf97f68fmr4675631b3a.10.1744298488604; 
- Thu, 10 Apr 2025 08:21:28 -0700 (PDT)
+ bh=nrbm+C6JiTEr7EUFwwv3ZGjKOrRVwCIVAfhIKZEDgPc=;
+ b=EUlZWnzSJmBgdXWY2ELj8EFc15IqnDvqF7ZUfgxhzbIZa8TX22peGW7PMy0xW/HXCN
+ XZlT2Y7nDhPefBjzEphyNfAh36sQxTpHMO5G5h6EvKYiY9NJlKfEBUCbOKmyPKA42mZm
+ /wwauZiZZlBx3CnJ7l15eJVlE0pOTBozODYQIX5zGwhNrBscNhqrK07wY4NQ0xkNDlX9
+ rI1DWo0M3cJavDlGebkT0DUYZXKH84Dw+94iwQEsDxcEjd81spknNtwhRA14kVfqsTMz
+ nG9lPbSkRA4Z1MzEvDTl8m0s2jFOTsQPprRt18OinxA5ji9aCzKDshjcNt7jvlw4LxsN
+ 9RcA==
+X-Gm-Message-State: AOJu0YzM3SOJc5F11D5q8TwVCvUZqWL96Yvssq/GHL4KUa97I4kp8D+9
+ yp1tHaoMTy/9uHv4/j7S0RoCnb5qo8LWTfspjuBB8QnstmzHrArgjqDiTU2vB+Y=
+X-Gm-Gg: ASbGncvJaemKLguEn1+lBGSiJUjeHCoyOhKVlAHAtjviciE5g+gdGbakxaEXEU9k2tR
+ Rzo5j+0C2XDwfeLuM64rS6024IWvtUP/xZlXbUePx1fYZCzXKKvM3j1Pfj1OcWEO0g+KlfyIiu1
+ QyNYwy59N9nSicEQ36STZZj1Cg6z0U9F8Ki0c13x8a0KjZHpNMCREsRYDEXd5kDxVPsfvMwn0c5
+ u3c11ienjN3VcJ9rZ2/LDNJiKzyMq95DDAmOvyf090NuY+nQFVxPJl281/6BLfmf/4tUg/8ARMM
+ GWYSDkIFFIfvXxllVeFL1uUHUmyIJACZ2eAhQsuAqgdZ6dixdNRp/gbpi9RkAEH6tApzFnUJIb6
+ ICKohT8jMBXMG1YEZ
+X-Google-Smtp-Source: AGHT+IFivSy2Ksn9eBApUt8fj9OoioeNUaqypWwhgkNJ4dppHQGSumgKgRVkRzWgEKpz7NEtGJ84PA==
+X-Received: by 2002:a17:902:f684:b0:221:78a1:27fb with SMTP id
+ d9443c01a7336-22b2edaf06bmr49165025ad.11.1744299443167; 
+ Thu, 10 Apr 2025 08:37:23 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73bb1e517a7sm3497106b3a.146.2025.04.10.08.21.27
+ d9443c01a7336-22ac7c97207sm31945895ad.129.2025.04.10.08.37.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 10 Apr 2025 08:21:28 -0700 (PDT)
+ Thu, 10 Apr 2025 08:37:22 -0700 (PDT)
+Date: Thu, 10 Apr 2025 08:37:20 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v2] doc: update kernel version requirement
-Date: Thu, 10 Apr 2025 08:20:50 -0700
-Message-ID: <20250410152117.5822-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250409035408.199320-1-stephen@networkplumber.org>
-References: <20250409035408.199320-1-stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 00/10] centralise base code handling for drivers
+Message-ID: <20250410083720.07b762f5@hermes.local>
+In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
+References: <20250331161000.9886-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,48 +80,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The 4.19 kernel version was end of life in December 2024.
-Update to 5.4 and also add better description of what "not supported"
-means in this case.
+On Mon, 31 Mar 2025 17:09:49 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
-v2 - better wording
+> Many DPDK drivers use the same pattern for base code handling, having
+> a meson.build file in the base code directory which optionally defines
+> some custom cflags for the base code build, then builds the code as a
+> static library and extracts the objects from it. (The reason behind this
+> is that, in meson, cflags apply per-object, so we need to have a
+> separate build object for the base code to use custom flags)
+> 
+> This patchset deduplicates this logic by putting it into the
+> drivers/meson.build file, and allowing individual drivers to then just
+> specify values for "base_sources" and "base_cflags".
+> 
+> Depends-on: Series-34946 ("net/intel: clean up base code build")
+> 
+> Bruce Richardson (10):
+>   build: add generic support for base code in drivers
+>   common/sfc_efx: use common base code build handling
+>   net/hinic: use common base code build handling
+>   net/intel: use common base code build handling
+>   net/ngbe: use common base code build handling
+>   net/octeontx: use common base code build handling
+>   net/qede: use common base code build handling
+>   net/thunderx: use common base code build handling
+>   net/txgbe: use common base code build handling
+>   raw/ifpga: use common base code build handling
+> 
+>  drivers/common/sfc_efx/base/meson.build | 18 +++---------------
+>  drivers/common/sfc_efx/meson.build      |  3 ---
+>  drivers/meson.build                     | 20 ++++++++++++++++++++
+>  drivers/net/hinic/base/meson.build      | 16 +++++-----------
+>  drivers/net/hinic/meson.build           |  1 -
+>  drivers/net/intel/e1000/meson.build     |  3 ---
+>  drivers/net/intel/fm10k/meson.build     |  3 ---
+>  drivers/net/intel/i40e/meson.build      |  2 --
+>  drivers/net/intel/iavf/meson.build      |  1 -
+>  drivers/net/intel/ice/base/meson.build  | 22 +++++++---------------
+>  drivers/net/intel/ice/meson.build       |  2 --
+>  drivers/net/intel/idpf/meson.build      |  1 -
+>  drivers/net/intel/ixgbe/meson.build     |  3 ---
+>  drivers/net/ngbe/base/meson.build       | 12 ++----------
+>  drivers/net/ngbe/meson.build            |  3 ---
+>  drivers/net/octeontx/base/meson.build   | 19 +------------------
+>  drivers/net/octeontx/meson.build        |  3 ---
+>  drivers/net/qede/base/meson.build       | 17 +++++------------
+>  drivers/net/qede/meson.build            |  1 -
+>  drivers/net/thunderx/base/meson.build   | 10 +---------
+>  drivers/net/thunderx/meson.build        |  3 ---
+>  drivers/net/txgbe/base/meson.build      | 18 ++----------------
+>  drivers/net/txgbe/meson.build           |  3 ---
+>  drivers/raw/ifpga/base/meson.build      | 21 ++-------------------
+>  drivers/raw/ifpga/meson.build           | 15 ++++++++++++---
+>  25 files changed, 60 insertions(+), 160 deletions(-)
 
- doc/guides/linux_gsg/sys_reqs.rst | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/linux_gsg/sys_reqs.rst b/doc/guides/linux_gsg/sys_reqs.rst
-index 5a7d9e4a43..ba48b8afc0 100644
---- a/doc/guides/linux_gsg/sys_reqs.rst
-+++ b/doc/guides/linux_gsg/sys_reqs.rst
-@@ -105,11 +105,20 @@ System Software
- 
- **Required:**
- 
--*   Kernel version >= 4.19
--
--    The kernel version required is based on the oldest long term stable kernel available
--    at kernel.org when the DPDK version is in development.
--    Compatibility for recent distribution kernels will be kept, notably RHEL/CentOS 7.
-+*   Kernel version >= 5.4
-+
-+    The Linux userspace API is compatible across releases but there are some
-+    restrictions. The oldest kernel tested by the DPDK testing infrastructure
-+    is the oldest maintained Long Term Stable (LTS) at time of release.
-+    The DPDK is likely to still work with older releases but it is not guaranteed.
-+    Compatibility for recent distribution kernels will be kept, notably RHEL, and Ubuntu.
-+    It may work on older distributions, that are no longer under standard period
-+    but this is no longer but this is no longer tested or guaranteed to work.
-+    The following are outside the current support window: RHEL 7, SLES 15.5, Ubuntu 20.04
-+    and earlier.
-+
-+    Some drivers and hardware support may require more recent kernels, check the
-+    documentation (e.g. :doc:`../nics/index`)
- 
-     The kernel version in use can be checked using the command::
- 
--- 
-2.47.2
+Looks ok to me. Since depends on the Intel part, lets take this through next-intel tree.
 
+Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
