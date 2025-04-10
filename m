@@ -2,61 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB78C3601E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 18:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E774AC3601E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 18:09:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48BEF406B8;
-	Thu, 10 Apr 2025 20:05:53 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 9B88B406B7
- for <dev@dpdk.org>; Thu, 10 Apr 2025 20:05:51 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AI1dbn031051
- for <dev@dpdk.org>; Thu, 10 Apr 2025 11:05:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=RzGdYgzeqgwQyMg1OqQ+EmM
- eK0j6iEaS2gUvS5gWIPE=; b=hZ3JxwpmIiwzTT5zRGDbVILV5EcweUid0+y/A6v
- /Zq0fwijBtqNbZA9Uf5lUw0+qbg6tef11PtI6u1TorUObn3e7DMQynlNnUaCZ7cW
- nVeFTvIG32hi/CdMYwqKKhsQwwD5b4a5e0BuJsYfqpKBg6xWzqMTkgE6VcKnIrM0
- 70C+TuFUn02G0XOeyhC8GKCrOpSPYiZwOsajZrnSv/prv6auL5XbC4RrDlvJ1vGf
- OL9llzJhV2cF0q99kdC9/ciORkYv8tt+cUOAEiNPsPGR6JC9mALK4c1FJ0CFniZf
- cWUBeiwWB0BW8agalJp+TUL3fqyRG4HMb9eC66TorQQ1mVQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45unnb3eu6-2
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 10 Apr 2025 11:05:50 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 10 Apr 2025 11:05:50 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 10 Apr 2025 11:05:50 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (unknown [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 5D3B43F7069;
- Thu, 10 Apr 2025 11:05:48 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
- Thotton" <sthotton@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH] event/cnxk: update timer arm routine
-Date: Thu, 10 Apr 2025 23:35:44 +0530
-Message-ID: <20250410180544.10765-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3C66940A6E;
+	Thu, 10 Apr 2025 20:09:48 +0200 (CEST)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11021113.outbound.protection.outlook.com
+ [40.93.194.113]) by mails.dpdk.org (Postfix) with ESMTP id 6BA24406B7
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 20:09:47 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mfgyCE77HSFqRhmRR5J1ilwJesfqj6jbA3QGtCpJJttWNgofrJkAbx/u/wR1UKSjSvI26BombZGBmFaHj5t0LDfUX5qfYuywOyW44aEQEeBaxRZZky1uGDsOVkR3T9tffhIv9911qSWg4mu0WJGFmDsjar7OBLq3kzOLfn+2bRXGj3MzbG7isd1u429YVmzcxgt3lvBZVpYMsgNPLkHQGzgV+Qaae9jwVzf/WJ1pH5z7rPjr9gmgNHzH1rpgSnsc7o1F+mLgkph/AiwHfcPecp8D1hHcdsG0xZYUOuwNyJB+I4aANmsbUfPlkqe+jpjyFXPw2xHv5oNrhSLyW6gBPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+UCLjz3xomeCZH4feORXkeXynS4lLL0vsfBGs18kXB8=;
+ b=X1ndjxDBzdE0f4Vjd6kQ9HtGnBzM2nH4EbvcLYeKi/WY0iexso4G3J3UXG1Mmq2ah5CscWvdRFY6NMvoPm+dVNlSYjQvEB1iZreG3JMYpDYafB/Acg+R90PwnJGQI1x+h2cjNP+wSQZcVeb33kr0k2whLkHA39wlP5iVgNBnDh4c7xAG8ITjMS5JHl/X0sNFmvN6oFquzEqqmzd4wWGOFdCnVB1ED520d+s4bcHlNIuPJta+O4FkiDdEekn2aO6luM/Djj3VX0qFJfhgOER07ZKJ/Foq28T/ZtT7Ns04+pUkZ6U7IcTV0SQeM1XX7tZ0yD47D4nSXXAVZzR1fqlHHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+UCLjz3xomeCZH4feORXkeXynS4lLL0vsfBGs18kXB8=;
+ b=ZG62w02FfIGwmAGrREkpn1Y3oVjeXYogiiJcBa1ScCMIDAcy3P56COZj7XZ7yzik524uEzD9GaTt4DC0JwHJCASdsbFpNKxZlfmmaIbuHNGe6X7SDN9knqlNEo7E/Z/Jp6dkXKU0udmVxm6Z76cROqB9jkrFOvPDsKLhSvrrjUc=
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
+ by SA1PR21MB4032.namprd21.prod.outlook.com (2603:10b6:806:38f::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.3; Thu, 10 Apr
+ 2025 18:09:45 +0000
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff%6]) with mapi id 15.20.8632.011; Thu, 10 Apr 2025
+ 18:09:45 +0000
+From: Long Li <longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "longli@linuxonhyperv.com"
+ <longli@linuxonhyperv.com>
+CC: Wei Hu <weh@microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [Patch v3 6/6] bus/vmbus: set event for channel
+ without monitoring support
+Thread-Topic: [EXTERNAL] Re: [Patch v3 6/6] bus/vmbus: set event for channel
+ without monitoring support
+Thread-Index: AQHbpw41wZ6tLppZZU2QKZyIO8/F/rOdN6bA
+Date: Thu, 10 Apr 2025 18:09:45 +0000
+Message-ID: <SA6PR21MB42318E4CEA9E6897220F0736CEB72@SA6PR21MB4231.namprd21.prod.outlook.com>
+References: <1743813338-28238-1-git-send-email-longli@linuxonhyperv.com>
+ <1743813338-28238-7-git-send-email-longli@linuxonhyperv.com>
+ <20250406090853.78499346@hermes.local>
+In-Reply-To: <20250406090853.78499346@hermes.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=8be7ef7e-382b-4cfc-91ba-f5e320a7bbbe;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-04-10T18:03:36Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|SA1PR21MB4032:EE_
+x-ms-office365-filtering-correlation-id: 7cd59203-c2d7-4106-62f1-08dd785adfa4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?cjR8nMt46SnMjAdjUu1Tnzg0tYNq99hGOmPELKA4UW3HBeI+NwA/R190O1O7?=
+ =?us-ascii?Q?dTRDmMY8ikPEdjdFvF5G/xODco1kumviwXDf+KgERMVXVT8cM19C7RpiKDqO?=
+ =?us-ascii?Q?OWVG9tZ7ZXxo5PHypanL+/6rzdlJYIosSWo9w6sgok8UIrmeJZhoc3PL/BKZ?=
+ =?us-ascii?Q?LEpp2yfzux+fsPV4h8Ti91+LwOLN8IE/ZSuhCOzSSXpPkPxwb/ViR+URWzgL?=
+ =?us-ascii?Q?flwqVH8liCkA7jIz04WBgv8Q8Zfwfn8E8dSB3HwQGnVgqSLftud5GOgsEnIY?=
+ =?us-ascii?Q?y+4M1pYXeY/9kyFHw8UGcFWgK7pDnIe6FUhq4LY9w/QJoMRoRxpQdQX5IicV?=
+ =?us-ascii?Q?CZT3WMsG9RlOQ3xxx08mtW06fHD5VZ2EYqqqbNQ5lCUgpNKstLaoakQNIOOx?=
+ =?us-ascii?Q?PAWoXc7OjWasEL07iB6vXHngIwZr1ek1VyrjKT6SgHiZSIXN+GYbskmM8wgN?=
+ =?us-ascii?Q?g5KKHpreXdBaI2DHBKoiTmAMj7pvZY8Zkc44Pd3SwxS2sMHEZ1ENOnaoFloH?=
+ =?us-ascii?Q?3Yi3z2/P9RDJOPHapndyt0QDbq/0+vROJSat8JqfKyZTaRGd8CTlrqiJur9S?=
+ =?us-ascii?Q?Cw9TKVXjuMr27H/AMa+Nl3O1itrNRttAIRpDeQc0KXAr/rwwNcdRHw+vLXwC?=
+ =?us-ascii?Q?z06Pe5msva5gm+EynTbkAfma0wHndKvLbFl/aTqYNJ8tIbrFJ5e/oPnrzGzg?=
+ =?us-ascii?Q?8aQzD/piDxC5vD7laNpgZkHBRT7jss6lKnrBWEhOriyXrQf9z5bkbuOrh7fQ?=
+ =?us-ascii?Q?ozIOMBn/AukZOB6AanZ0zpgqKXgcYe4NyGZ/Qaf7qv0aZBTQkrWC3IRIeKUW?=
+ =?us-ascii?Q?6gf+aEXQkPddPeoBawpFR7vqAw4VSJtY1c0HrJIV5AmgBXK08X/NZH6DIAR0?=
+ =?us-ascii?Q?R7fZiO02SPy5jjvjytOgo/Hs0agEvF009ynbvXBdIj/NYiraofeVv7iOYJEc?=
+ =?us-ascii?Q?Wc/TqoeEgOJGuO91Bdae2YMMdOmPV5YTKLE58BpqXulBgAefRuytoq3BDr+7?=
+ =?us-ascii?Q?70GRjJALRvdj36VtXSJ4oKeFS33RhPMGEF/9x1MUgIasiWZGYVDhsiERos7p?=
+ =?us-ascii?Q?INWxF2YiEq2FXwkun+Qr9N//C2csU3D+uBYLsGDzCoai4FgC2b/pY6NKFHZJ?=
+ =?us-ascii?Q?sobdRTwGcGIi+rvL7o7+op3VpAQOf17a8H4fkHBdtKAPonxwDdeSGTGwcZnh?=
+ =?us-ascii?Q?xeB9x/5NbG2aezt5Q00Omjl1ZrIqSmEHmS7XMr24/b8vKQbXB1NrQcHNyPlu?=
+ =?us-ascii?Q?jg97EUc5eJt/DVj+LXmcV0PiJEWeuJqHrfjPUfjlpCABZ2FF1KPFmbLNRzgB?=
+ =?us-ascii?Q?BalHZnHYw8X3RkqtFGMFELCyiE0BvILOA+nQ22UVTxFdthVdw8UXp2Aozc40?=
+ =?us-ascii?Q?10/cgOXrkrkJcmZoJ0py3KZyzMUV6ij40KIB42fXreMCjPUl4sUiyVeUWIbj?=
+ =?us-ascii?Q?hDSEA2aXjfVFEGKfp5rOY5/lnoyeWNtG5AxeP8NoYOpNRRTNef1T9rkB1IMu?=
+ =?us-ascii?Q?WnZc0FblqZr/0n4=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA6PR21MB4231.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?A+2Loa6Afhi/PUnu6+hdurRiVLHG8XrXEUCf+zJx5K+e8PgpHs5xS/fp63DG?=
+ =?us-ascii?Q?DSIqjHmr+1Ih+oi2cyjT7MtL/4ln/nMGCE5SEbDvO7rLy42+60OVJwO6KYe3?=
+ =?us-ascii?Q?SlUYgVF1dTTnR00kGzuxYa7ltMdiruKmdOMAG+U8DJd3eYCVQxG19KAvjRj5?=
+ =?us-ascii?Q?4QqX3dmRBWVuB+J2hC2TDooiony8xeGNbGBRKzHz1WMHN0dawSf1GC07mXvm?=
+ =?us-ascii?Q?l2BDGigekNzEbtYS1TccahGQF8C8xnnJ9ilZYNGEG/Iu+ukpVpLSml/NZ+6F?=
+ =?us-ascii?Q?zV96lgvRf9e5V3sZTnBvxQZuRIaPb7vP4bwO+tSDgu1hlw6/kdgH20qdvAPo?=
+ =?us-ascii?Q?eOlxNms6efHEMd93DokvYHy+PhCqPX4YpAUkINV5RN4hdPX8b7mCnRQ4Qd2q?=
+ =?us-ascii?Q?TFJj3CgBPWbipYCQD35dAVhoivPjeXICwda64q1UIvSNCUnb7wik8CAzzifc?=
+ =?us-ascii?Q?7DP8gjhv5aSUwRHsS9kPlm6ILDrGFTXlgdfX8CGMgj5YOsFnNHSrhxCSQ+DH?=
+ =?us-ascii?Q?MvNb4XsGMO2mcH4pSPZ127KJuzmPTCI+rUMGdJV7ZE+T7WbCJQ7AFAVpFfMx?=
+ =?us-ascii?Q?xuTz9G68Et8Hj5eXsfjRMx/S585yWYeIdyyWC+OlCLZn3Ea85hN6LXeUYL8/?=
+ =?us-ascii?Q?9nrDM1GLedYHZVEoo18TVgvrREf7k2TvxERCj3EeCOcLq9+sS8NB5Xdi87Gb?=
+ =?us-ascii?Q?Q+eJx7d5qSuuAidza15g2wk0457vvcxz8ntkcQbganVBPzfDkJ1sfJ4QGQ82?=
+ =?us-ascii?Q?jCKotWxmYvibvAIp3KdPMFsJnIvU64y72GcRF67tawRVsahWtYx/gbp/+1D4?=
+ =?us-ascii?Q?b/yrLiNizHJCY66gfEtA21Fo5QF5OlyHR87SLzb4wQ77AK5ew7VGWViGcH7n?=
+ =?us-ascii?Q?VjNVVU7lbFvquITPXBdf4MEm/6gdYwGSXDTsmOeUSbYFxsdgvmu0DWA6pzmj?=
+ =?us-ascii?Q?E40wGkigU+orNe9l/Gfzj4T1QyzkJPn85R18drY2YK2ivlKDLHqR3Gs4ykU1?=
+ =?us-ascii?Q?6lYq4ygCbSQrPC4TgREqyOfL9BqS5VbZQEzsXqlUgvyE6YVeZXCVEEZhbSkI?=
+ =?us-ascii?Q?JDfKMrYqn3dazOoNAX/vrhg935pahR4HJ2DvviT/T5tB09v2co7JzBMOC62S?=
+ =?us-ascii?Q?BSkNaZHuTmeNlDfBqsTZP4Rwv5D0LomaqYU7pY6od9HwQt6ZLSyGYgJX1qfx?=
+ =?us-ascii?Q?TsO+qo/urMuWnD1/SxPUMdTS1sacVXwIp7jEecY6WasSMydbY/U5TH4LiODQ?=
+ =?us-ascii?Q?jEcGYohUyFFXg+d8M5WXgxufHeBIMphQ1xazmx5jeXfWbpfHJl3PzANKcs4+?=
+ =?us-ascii?Q?aTYntOEPlkXKQYTioxyFJJ9NMCie0HuL5rFiB+0Kjtd3jbeDsMAxf79QTLyx?=
+ =?us-ascii?Q?5TovnV0tLz8T8WMR1qFY8yzonfC4HmdQr/Ldv8vdm4AmBGxXhCty21JXpUQ+?=
+ =?us-ascii?Q?fk0CIeYaCdZKRaTh3akThS4R95pK5IE6Q63SQYFAJRLg+PqUVxi31Mwk1CTq?=
+ =?us-ascii?Q?M2uemMHNCjcxkjbThi2e2Ina6XbEHV/QKGkIudqnv/cNzrDBxogW12ci99CM?=
+ =?us-ascii?Q?zkTttg/jEf6f20EM0GIw+jhRBlADgtMaDv4t3Wfd?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 2_eCIblZv6B4l_GCu7l4esFSAds3fC3h
-X-Authority-Analysis: v=2.4 cv=E57Npbdl c=1 sm=1 tr=0 ts=67f8087e cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=sWKEhP36mHoA:10 a=M5GUcnROAAAA:8 a=1VQfcJWLNi9H73sON1wA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 2_eCIblZv6B4l_GCu7l4esFSAds3fC3h
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cd59203-c2d7-4106-62f1-08dd785adfa4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2025 18:09:45.0815 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WUzZlU/rB2AVbBWg8YLCg8IZln2gr2UeiCzYG0Xo9QbzC60dOCvn1pei7+wQuiC1JXBKZnYh4akF4pg0ZOLJSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB4032
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,259 +153,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> Subject: [EXTERNAL] Re: [Patch v3 6/6] bus/vmbus: set event for channel w=
+ithout
+> monitoring support
+>=20
+> On Fri,  4 Apr 2025 17:35:38 -0700
+> longli@linuxonhyperv.com wrote:
+>=20
+> > diff --git a/drivers/bus/vmbus/vmbus_channel.c
+> > b/drivers/bus/vmbus/vmbus_channel.c
+> > index bccef168d3..81e8096190 100644
+> > --- a/drivers/bus/vmbus/vmbus_channel.c
+> > +++ b/drivers/bus/vmbus/vmbus_channel.c
+> > @@ -24,6 +24,19 @@ vmbus_sync_set_bit(volatile RTE_ATOMIC(uint32_t)
+> *addr, uint32_t mask)
+> >  	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst);
+> > }
+> >
+> > +static inline void
+> > +vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t
+> > +relid) {
+> > +	RTE_ATOMIC(uint32_t) *int_addr;
+> > +	uint32_t int_mask;
+> > +
+> > +	int_addr =3D (RTE_ATOMIC(uint32_t)*) (dev->int_page + relid / 32);
+> > +	int_mask =3D 1u << (relid % 32);
+> > +	vmbus_sync_set_bit(int_addr, int_mask);
+> > +
+> > +	vmbus_uio_irq_control(dev, 1);
+> > +}
+> > +
+>=20
+> This part doesn't look right. RTE_ATOMIC() is just a macro to add the _At=
+omic
+> attribute.
+>=20
+> Can it be simplified like this?
+>=20
+>=20
+> static inline void
+> vmbus_sync_set_bit(RTE_ATOMIC(uint32_t *) addr, uint32_t mask) {
+> 	rte_atomic_fetch_or_explicit(addr, mask, rte_memory_order_seq_cst); }
+>=20
+> static inline void
+> vmbus_send_interrupt(const struct rte_vmbus_device *dev, uint32_t relid) =
+{
+> 	RTE_ATOMIC(uint32_t *) int_addr;
+> 	uint32_t int_mask;
+>=20
+> 	int_addr =3D dev->int_page + relid / 32;
+> 	int_mask =3D 1u << (relid % 32);
+> 	vmbus_sync_set_bit(int_addr, int_mask);
+>=20
+> 	vmbus_uio_irq_control(dev, 1);
+> }
 
-Add additional HW state checks in timer arm routine to ensure
-HW-SW synchronization.
+Hi Stephen,
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- drivers/event/cnxk/cnxk_tim_worker.h | 140 ++++++++++++++-------------
- 1 file changed, 73 insertions(+), 67 deletions(-)
+I need to go back to this version of the patch, as v5 doesn't compile succe=
+ssfully under clang with the following error:
 
-diff --git a/drivers/event/cnxk/cnxk_tim_worker.h b/drivers/event/cnxk/cnxk_tim_worker.h
-index 6a9ee2fd5284..09f84091abba 100644
---- a/drivers/event/cnxk/cnxk_tim_worker.h
-+++ b/drivers/event/cnxk/cnxk_tim_worker.h
-@@ -102,7 +102,7 @@ cnxk_tim_bkt_get_nent(uint64_t w1)
- static inline void
- cnxk_tim_bkt_inc_nent(struct cnxk_tim_bkt *bktp)
- {
--	rte_atomic_fetch_add_explicit(&bktp->nb_entry, 1, rte_memory_order_relaxed);
-+	rte_atomic_fetch_add_explicit(&bktp->nb_entry, 1, rte_memory_order_release);
- }
- 
- static inline void
-@@ -132,6 +132,33 @@ cnxk_tim_bkt_fast_mod(uint64_t n, uint64_t d, struct rte_reciprocal_u64 R)
- 	return (n - (d * rte_reciprocal_divide_u64(n, &R)));
- }
- 
-+static inline uint64_t
-+cnxk_tim_bkt_wait_hbt(struct cnxk_tim_bkt *bkt)
-+{
-+	uint64_t hbt_state;
-+
-+#ifdef RTE_ARCH_ARM64
-+	asm volatile(PLT_CPU_FEATURE_PREAMBLE
-+		     "		ldxr %[hbt], [%[w1]]	\n"
-+		     "		tbz %[hbt], 33, .Ldne%=	\n"
-+		     "		sevl			\n"
-+		     ".Lrty%=:	wfe			\n"
-+		     "		ldxr %[hbt], [%[w1]]	\n"
-+		     "		tbnz %[hbt], 33, .Lrty%=\n"
-+		     ".Ldne%=:				\n"
-+		     : [hbt] "=&r"(hbt_state)
-+		     : [w1] "r"((&bkt->w1))
-+		     : "memory");
-+#else
-+	do {
-+		hbt_state = rte_atomic_load_explicit(&bkt->w1,
-+						     rte_memory_order_relaxed);
-+	} while (hbt_state & BIT_ULL(33));
-+#endif
-+
-+	return hbt_state;
-+}
-+
- static inline void
- cnxk_tim_format_event(const struct rte_event_timer *const tim, struct cnxk_tim_ent *const entry)
- {
-@@ -265,31 +292,24 @@ cnxk_tim_add_entry_sp(struct cnxk_tim_ring *const tim_ring,
- 	/* Bucket related checks. */
- 	if (unlikely(cnxk_tim_bkt_get_hbt(lock_sema))) {
- 		if (cnxk_tim_bkt_get_nent(lock_sema) != 0) {
--			uint64_t hbt_state;
--#ifdef RTE_ARCH_ARM64
--			asm volatile(PLT_CPU_FEATURE_PREAMBLE
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbz %[hbt], 33, .Ldne%=	\n"
--				     "		sevl			\n"
--				     ".Lrty%=:	wfe			\n"
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbnz %[hbt], 33, .Lrty%=\n"
--				     ".Ldne%=:				\n"
--				     : [hbt] "=&r"(hbt_state)
--				     : [w1] "r"((&bkt->w1))
--				     : "memory");
--#else
--			do {
--				hbt_state = rte_atomic_load_explicit(&bkt->w1,
--								     rte_memory_order_relaxed);
--			} while (hbt_state & BIT_ULL(33));
--#endif
-+			uint64_t hbt_state = cnxk_tim_bkt_wait_hbt(bkt);
-+
-+			if (cnxk_tim_bkt_get_nent(lock_sema) != 0 &&
-+			    cnxk_tim_bkt_get_nent(hbt_state) == 0) {
-+				cnxk_tim_bkt_dec_lock(bkt);
-+				goto __retry;
-+			}
-+
-+			if (cnxk_tim_bkt_get_nent(hbt_state) != 0)
-+				hbt_state |= BIT_ULL(34);
- 
- 			if (!(hbt_state & BIT_ULL(34)) ||
- 			    !(hbt_state & GENMASK(31, 0))) {
- 				cnxk_tim_bkt_dec_lock(bkt);
- 				goto __retry;
- 			}
-+		} else {
-+			cnxk_tim_bkt_wait_hbt(bkt);
- 		}
- 	}
- 	/* Insert the work. */
-@@ -321,9 +341,9 @@ cnxk_tim_add_entry_sp(struct cnxk_tim_ring *const tim_ring,
- 
- 	tim->impl_opaque[0] = (uintptr_t)chunk;
- 	tim->impl_opaque[1] = (uintptr_t)bkt;
--	rte_atomic_store_explicit(&tim->state, RTE_EVENT_TIMER_ARMED, rte_memory_order_release);
-+	tim->state = RTE_EVENT_TIMER_ARMED;
- 	cnxk_tim_bkt_inc_nent(bkt);
--	cnxk_tim_bkt_dec_lock_relaxed(bkt);
-+	cnxk_tim_bkt_dec_lock(bkt);
- 
- 	return 0;
- }
-@@ -348,31 +368,24 @@ cnxk_tim_add_entry_mp(struct cnxk_tim_ring *const tim_ring,
- 	/* Bucket related checks. */
- 	if (unlikely(cnxk_tim_bkt_get_hbt(lock_sema))) {
- 		if (cnxk_tim_bkt_get_nent(lock_sema) != 0) {
--			uint64_t hbt_state;
--#ifdef RTE_ARCH_ARM64
--			asm volatile(PLT_CPU_FEATURE_PREAMBLE
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbz %[hbt], 33, .Ldne%=	\n"
--				     "		sevl			\n"
--				     ".Lrty%=:	wfe			\n"
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbnz %[hbt], 33, .Lrty%=\n"
--				     ".Ldne%=:				\n"
--				     : [hbt] "=&r"(hbt_state)
--				     : [w1] "r"((&bkt->w1))
--				     : "memory");
--#else
--			do {
--				hbt_state = rte_atomic_load_explicit(&bkt->w1,
--								     rte_memory_order_relaxed);
--			} while (hbt_state & BIT_ULL(33));
--#endif
-+			uint64_t hbt_state = cnxk_tim_bkt_wait_hbt(bkt);
-+
-+			if (cnxk_tim_bkt_get_nent(lock_sema) != 0 &&
-+			    cnxk_tim_bkt_get_nent(hbt_state) == 0) {
-+				cnxk_tim_bkt_dec_lock(bkt);
-+				goto __retry;
-+			}
-+
-+			if (cnxk_tim_bkt_get_nent(hbt_state) != 0)
-+				hbt_state |= BIT_ULL(34);
- 
- 			if (!(hbt_state & BIT_ULL(34)) ||
- 			    !(hbt_state & GENMASK(31, 0))) {
- 				cnxk_tim_bkt_dec_lock(bkt);
- 				goto __retry;
- 			}
-+		} else {
-+			cnxk_tim_bkt_wait_hbt(bkt);
- 		}
- 	}
- 
-@@ -412,13 +425,13 @@ cnxk_tim_add_entry_mp(struct cnxk_tim_ring *const tim_ring,
- 			cnxk_tim_bkt_dec_lock(bkt);
- 			return -ENOMEM;
- 		}
--		*chunk = *pent;
- 		if (cnxk_tim_bkt_fetch_lock(lock_sema)) {
- 			do {
- 				lock_sema = rte_atomic_load_explicit(&bkt->w1,
- 								     rte_memory_order_relaxed);
- 			} while (cnxk_tim_bkt_fetch_lock(lock_sema) - 1);
- 		}
-+		cnxk_tim_bkt_inc_nent(bkt);
- 		rte_atomic_thread_fence(rte_memory_order_acquire);
- 		mirr_bkt->current_chunk = (uintptr_t)chunk;
- 		rte_atomic_store_explicit(&bkt->chunk_remainder, tim_ring->nb_chunk_slots - 1,
-@@ -426,14 +439,14 @@ cnxk_tim_add_entry_mp(struct cnxk_tim_ring *const tim_ring,
- 	} else {
- 		chunk = (struct cnxk_tim_ent *)mirr_bkt->current_chunk;
- 		chunk += tim_ring->nb_chunk_slots - rem;
--		*chunk = *pent;
-+		cnxk_tim_bkt_inc_nent(bkt);
- 	}
- 
-+	*chunk = *pent;
- 	tim->impl_opaque[0] = (uintptr_t)chunk;
- 	tim->impl_opaque[1] = (uintptr_t)bkt;
--	rte_atomic_store_explicit(&tim->state, RTE_EVENT_TIMER_ARMED, rte_memory_order_release);
--	cnxk_tim_bkt_inc_nent(bkt);
--	cnxk_tim_bkt_dec_lock_relaxed(bkt);
-+	tim->state = RTE_EVENT_TIMER_ARMED;
-+	cnxk_tim_bkt_dec_lock(bkt);
- 
- 	return 0;
- }
-@@ -480,31 +493,24 @@ cnxk_tim_add_entry_brst(struct cnxk_tim_ring *const tim_ring,
- 	/* Bucket related checks. */
- 	if (unlikely(cnxk_tim_bkt_get_hbt(lock_sema))) {
- 		if (cnxk_tim_bkt_get_nent(lock_sema) != 0) {
--			uint64_t hbt_state;
--#ifdef RTE_ARCH_ARM64
--			asm volatile(PLT_CPU_FEATURE_PREAMBLE
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbz %[hbt], 33, .Ldne%=	\n"
--				     "		sevl			\n"
--				     ".Lrty%=:	wfe			\n"
--				     "		ldxr %[hbt], [%[w1]]	\n"
--				     "		tbnz %[hbt], 33, .Lrty%=\n"
--				     ".Ldne%=:				\n"
--				     : [hbt] "=&r"(hbt_state)
--				     : [w1] "r"((&bkt->w1))
--				     : "memory");
--#else
--			do {
--				hbt_state = rte_atomic_load_explicit(&bkt->w1,
--								     rte_memory_order_relaxed);
--			} while (hbt_state & BIT_ULL(33));
--#endif
-+			uint64_t hbt_state = cnxk_tim_bkt_wait_hbt(bkt);
-+
-+			if (cnxk_tim_bkt_get_nent(lock_sema) != 0 &&
-+			    cnxk_tim_bkt_get_nent(hbt_state) == 0) {
-+				cnxk_tim_bkt_dec_lock(bkt);
-+				goto __retry;
-+			}
-+
-+			if (cnxk_tim_bkt_get_nent(hbt_state) != 0)
-+				hbt_state |= BIT_ULL(34);
- 
- 			if (!(hbt_state & BIT_ULL(34)) ||
- 			    !(hbt_state & GENMASK(31, 0))) {
- 				cnxk_tim_bkt_dec_lock(bkt);
- 				goto __retry;
- 			}
-+		} else {
-+			cnxk_tim_bkt_wait_hbt(bkt);
- 		}
- 	}
- 
-@@ -553,7 +559,7 @@ cnxk_tim_add_entry_brst(struct cnxk_tim_ring *const tim_ring,
- 			chunk = cnxk_tim_insert_chunk(bkt, mirr_bkt, tim_ring);
- 
- 		if (unlikely(chunk == NULL)) {
--			cnxk_tim_bkt_dec_lock_relaxed(bkt);
-+			cnxk_tim_bkt_dec_lock(bkt);
- 			rte_errno = ENOMEM;
- 			tim[index]->state = RTE_EVENT_TIMER_ERROR;
- 			return index;
-@@ -575,7 +581,7 @@ cnxk_tim_add_entry_brst(struct cnxk_tim_ring *const tim_ring,
- 		cnxk_tim_bkt_add_nent(bkt, nb_timers);
- 	}
- 
--	cnxk_tim_bkt_dec_lock_relaxed(bkt);
-+	cnxk_tim_bkt_dec_lock(bkt);
- 
- 	return nb_timers;
- }
--- 
-2.49.0
+[459/3553] Compiling C object drivers/libtmp_rte_bus_vmbus.a.p/bus_vmbus
+ccache gcc -Idrivers/libtmp_rte_bus_vmbus.a.p -Idrivers -I../drivers -Idriv=
+ers/bus/vmbus -I../drivers/bus/vmbus -I../drivers/bus/vmbus/linux -Ilib/eal=
+/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include=
+ -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -I=
+lib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I=
+../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metric=
+s -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -fdiagnostics-color=
+=3Dalways -pipe -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werro=
+r -std=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-qual -Wdeprecated -W=
+format -Wformat-nonliteral -Wformat-security -Wmissing-declarations -Wmissi=
+ng-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith -Wsig=
+n-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-align=
+ed -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -march=3Dcorei7 -mrt=
+m -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation -Wno=
+-address-of-packed-member -DRTE_LOG_DEFAULT_LOGTYPE=3Dbus.vmbus -MD -MQ dri=
+vers/libtmp_rte_bus_vmbus.a.p/bus_vmbus_vmbus_channel.c.o -MF drivers/libtm=
+p_rte_bus_vmbus.a.p/bus_vmbus_vmbus_channel.c.o.d -o drivers/libtmp_rte_bus=
+_vmbus.a.p/bus_vmbus_vmbus_channel.c.o -c ../drivers/bus/vmbus/vmbus_channe=
+l.c
+../drivers/bus/vmbus/vmbus_channel.c: In function 'vmbus_set_monitor':
+../drivers/bus/vmbus/vmbus_channel.c:51:22: error: assignment to 'uint32_t =
+*' {aka 'unsigned int *'} from incompatible pointer type '_Atomic uint32_t =
+*' {aka '_Atomic unsigned int *'} [-Werror=3Dincompatible-pointer-types]
+   51 |         monitor_addr =3D &channel->monitor_page->trigs[trigger_inde=
+x].pending;
+      |                      ^
+cc1: all warnings being treated as errors
 
+I think it's okay to define those pointers as "RTE_ATOMIC(uint32_t) *". The=
+ pointers themselves are not atomic, but data in the addresses they point t=
+o are atomic.
+
+Do you think it is okay to proceed with this patch?
+
+Thanks,
+Long
