@@ -2,150 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9373BC369A4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 07:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61221C3601E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 09:39:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98F124066A;
-	Thu, 10 Apr 2025 09:54:08 +0200 (CEST)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
- (mail-am6eur05on2041.outbound.protection.outlook.com [40.107.22.41])
- by mails.dpdk.org (Postfix) with ESMTP id 54C0A402ED
- for <dev@dpdk.org>; Thu, 10 Apr 2025 09:54:07 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=osTFMOQE3WNhLJtfLtRyDfKpa0daU/W8G2gE17GIYsSKf9WyNI1RQB+LGq9HidJGmZCC8Ouf6s2ffYJmoK8TtBcJsB0kJ88TjHadyIw2Wg8LjV0xEbO02k62DKN2FbO5aJFu+1wsXCT5tp25siy5gFhAmthep+eqE/k2H0vCxcaSk8nR03rVo369li6Jgqg8Vh0zjIvQ/Onb0D6vD7Y+Kalef+8pFQglrkoZJwCZ4p5DC0UrBQoC5jONQWhdCHFBrqdkjLCdxlPdhjm3iD/VK/C1zPCoSs9g5Od8W3xEyL/wpGRckCRpXT9Vu44Pp5NJdOXf4hAULE54dC2uEKPzxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=55q1qBaVgNkDCoLMC60v3mJ4+KrmqDsgdlUUZznDBvY=;
- b=BJXct1h04o/m8LoTF3nGgjGgurtU7m/zYbo3RVEE95Sx7kdcv5gdtaBydf4QzbvMWfGvetf3KEN8g7x4kfQZCCIU+d8S0Vgjk+GIViirqs49i/lc3Vtq3SSJTUhb5+oHaifb0tduaVSCI49VUeTpJVCRPg6uGxnd3O7rw9lAwF+Eb48kWLHjLpGuPUNLGljjqfEEe453+COUndlcncls2Nvo6dOSDWThwrROD4IPMiJMBEQnZ6llJHhGnooLmVe4KLXhsb+/FHloQfwf1mehPakUBUJdBjfDUzV2HM2HBh46fprbaGL8xBnZTsZHbPRcLfRbhspnVLf3TYq3QdgqHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia-sbell.com; dmarc=pass action=none
- header.from=nokia-sbell.com; dkim=pass header.d=nokia-sbell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia-sbell.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=55q1qBaVgNkDCoLMC60v3mJ4+KrmqDsgdlUUZznDBvY=;
- b=E098KYBjQ5qUTf00DDyNOeb6LrY1gAJ7Vn37+T8aRF5PfqXUuErKIwW5jgxy2gkuonw/Z3FUMT/1Ya7LXNRzHUWOCpSBF/pt2Upkaz8cPexa7hiOJaMi05YohDG7gvo/j49GnV4akZn3yWFRUZD1QuXgT7940TojFRhyM9e6v34umd6xqw6YW9WbIYDVde5ULhh9qAFXBai8q/fGAAtRcxetqoZQpv5LHGYgdCJ+7Od7cRLBdRfXGv7oaysCc6XttEuuacWGq01+S54A5xiukncNTy/zJMmBjcALCEw8vNTqCRuHkW6ud6JYmWg+mmOq+c0HbtumAYfXLdcT2Vdx8A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nokia-sbell.com;
-Received: from VI1PR07MB9898.eurprd07.prod.outlook.com (2603:10a6:800:119::6)
- by PAXPR07MB8339.eurprd07.prod.outlook.com (2603:10a6:102:220::16)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.20; Thu, 10 Apr
- 2025 07:54:06 +0000
-Received: from VI1PR07MB9898.eurprd07.prod.outlook.com
- ([fe80::1928:4afb:4eee:1f21]) by VI1PR07MB9898.eurprd07.prod.outlook.com
- ([fe80::1928:4afb:4eee:1f21%3]) with mapi id 15.20.8606.029; Thu, 10 Apr 2025
- 07:54:06 +0000
-Message-ID: <59bb400d-5e49-4ecb-941e-2513894d6930@nokia-sbell.com>
-Date: Thu, 10 Apr 2025 15:53:59 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] net/mlx5: enhance log file path
-To: dev@dpdk.org
-Cc: bingz@nvidia.com, dsosnowski@nvidia.com, stephen@networkplumber.org,
- julien.meunier@nokia.com
-References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
- <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
- <20250321132750.4237-2-ming.1.yang@nokia-sbell.com>
-Content-Language: en-US
-From: Yang Ming <ming.1.yang@nokia-sbell.com>
-In-Reply-To: <20250321132750.4237-2-ming.1.yang@nokia-sbell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR06CA0004.apcprd06.prod.outlook.com
- (2603:1096:4:186::20) To VI1PR07MB9898.eurprd07.prod.outlook.com
- (2603:10a6:800:119::6)
+	by mails.dpdk.org (Postfix) with ESMTP id A374B40674;
+	Thu, 10 Apr 2025 11:39:15 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 79A4B40669
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 11:39:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1744277952;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=GbrHRpHRQRKk7Xd+EPnTWOuKtJKRwRnb8LRucgr0gsw=;
+ b=BCDSetP4aQY4sf8+/wRGhGh54C8aIdDjEv5JMYtJ5TNrSDouL0vOMvWgYfHj8eCrYbMRSg
+ mv9M+ZGTR3WsjdVG1YIVO5sJiO/03EKs4Y1rWzg4taBsYIzvZB9hqD59Nyps/QZm//P9Dk
+ YKYcb4zhKqoDhow3DNvvO3e+Hm5mEl4=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-oLqlduW8PRu_dNxMETYkCw-1; Thu, 10 Apr 2025 05:39:11 -0400
+X-MC-Unique: oLqlduW8PRu_dNxMETYkCw-1
+X-Mimecast-MFC-AGG-ID: oLqlduW8PRu_dNxMETYkCw_1744277950
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-30bf9ed6da1so2765071fa.2
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 02:39:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1744277950; x=1744882750;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=GbrHRpHRQRKk7Xd+EPnTWOuKtJKRwRnb8LRucgr0gsw=;
+ b=sl+AmmqEzvSZw8zrbZ8bENShAAshhSyqiGpMh3peM4Uaaxnbm6YtxDhyAa5d716uRw
+ jGMzoQK3e8tf/C41O3onjCd8vUhUHx3UeW4FIMTdkmV70Ypc/F29n0eWd3gE6NYgdoFE
+ CMMwMWRa3qqOK/+rI2wITTUeJvdQvIS5g+fi2PoBfzfa9FTRpcpEgBQs2tqn3nLIxFlY
+ VD1m+uHbL1jcSVrLZGMygTKaGMyfQWjCWzXYbUXCKCtHwEM6qxCH1vm/HuvqM2D16skz
+ xBeX5SH7UmSK1QqBzA92ami+tlCeCtqg4XFdJFQO9HQIy3rBrjapqfU/yYVKVOpOKYnN
+ qHdQ==
+X-Gm-Message-State: AOJu0YwvSHxr+7xuPv+Q+U7i2duaEiAYczfFa8mNAiBJLokOUN0+nwLA
+ waMfleGjmWN2ctQ18P5eI+xjylOaoj4v8lGRf6Odar8N7OfPv43jJRxsF7nrl5NoG34t7oMHRpd
+ QdwRsBIjaaS02d+WKQGoUB6/E2VVOyXz/GUkiai5zYRBzCI81d4VdTY50vV38FrCdEa2JuLYPmT
+ oe8iPi77pRf5kaW0w=
+X-Gm-Gg: ASbGncuNq36RaF9nbX8pBrfPJstrpqAr9iLjy0XHsj24ie3sJcT2sA6m8WrTYDM/7wZ
+ WTL9XA045PiiPNP89fBK36wTzN4RDWNm+XC6ZW6NJFtaXy+tMYdeJXZKtyjJ01xQ2ZqArJvU=
+X-Received: by 2002:a2e:bd05:0:b0:30b:b9e4:13c5 with SMTP id
+ 38308e7fff4ca-30fa41a55b1mr6736631fa.4.1744277949771; 
+ Thu, 10 Apr 2025 02:39:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH58iLdDzqdGntyE2VKnLoijlnQmAk7ttBrW2w43DvhiJHsiZDYkIrVlugmyYL5Ec5AwW0oA2vx0JLezD+2UN8=
+X-Received: by 2002:a2e:bd05:0:b0:30b:b9e4:13c5 with SMTP id
+ 38308e7fff4ca-30fa41a55b1mr6736461fa.4.1744277949318; Thu, 10 Apr 2025
+ 02:39:09 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR07MB9898:EE_|PAXPR07MB8339:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8a2ac0a-9594-4489-ab62-08dd7804de04
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dXhjZDc5dlBtYndsSXB0ZEdReVZUUmU1YUlrOVc4a01nejIzS053SnJ0T05W?=
- =?utf-8?B?TjFKNy9vblN2Y0ZBejNrYVVBNlNJeXE1V0g4WnBTdkN0OGV4RzU3cE9Wd2x5?=
- =?utf-8?B?ZmtNUmZOc0tzd09iaG1lS01iNEwvV0pDcDQwMFBVZjh2elhCMzNjRE51Y2FZ?=
- =?utf-8?B?M05hZ0FnREhrSmR5ZHBNMUJ6Vmxmbmh2WGk0L1ZvOU84L3ZlQzdGRVhBbURK?=
- =?utf-8?B?UnNxTkhRQjg0L0labzc5WEk3VWp5LzFZMU9UYTRyOFRyTFFWWXNDQVJ2REpx?=
- =?utf-8?B?Tyt5RTFmdnBRZWlBTU9IbHRVNDFzbUpaSXpxRjBsTUZQRmZTelZPTForeVpv?=
- =?utf-8?B?QzZRdEdCckUwOEhFRVF2UXJibUZMSS9lc2l5OFFrdWp5WXJRQnE3L0Q1MnJ3?=
- =?utf-8?B?RXJGNE9LTjI5MzRid3RkREZ0QUs3U2RiU2ZPb1Z0VU9kdzFOUjAyc1BaRzhu?=
- =?utf-8?B?cElydDNrT1pBTTViQlFuYWlPUTYrR2FtU0VwQUVwT1pFeUpBQ2pSQVc4WkM5?=
- =?utf-8?B?YlVOeTByYjZ2S1VXR095di9TNTltRHRsTytCR2toQUhYbzd4d2hjTGphTWZl?=
- =?utf-8?B?b1NIMEpNUW56ZEErUTVUbUh4WkhQWm5pUVVzWWd4SW1yYkwzODhZRlNDRHh3?=
- =?utf-8?B?RnB0clRORFR0d0prTnhaSmIxSW1ueWc4UWRhSVYzTnd1UlMwQUtUZFhVend5?=
- =?utf-8?B?bWc2RERmQ00yRWVMMXlkVDI5MU9oS2kwWmJxcUl2aDdDaUNwUWI5Q1Zmamlo?=
- =?utf-8?B?UkMrUHBGQjBOWG9VbDNReXp0MEc4dHNpRDd0bEx5TVlYeHFCeEdqUUVrTkhi?=
- =?utf-8?B?V0d3RFVVc1Y4VWtCWmM2SzNQVVhnU3Y2NDQveDBGR2NGaUo3TjhpeG1WODZl?=
- =?utf-8?B?dHF6SHNVRWI3QzFlZzF5REJ4ZWhXU0RQcXhUVVZaM0xrbzBKVkkrSXhNZWlC?=
- =?utf-8?B?MzZJTFRlVXNkOXFONnZ4a0RJSWlnMkhveWV0NmdNMXlaWDhrZktxb0FnQ0RR?=
- =?utf-8?B?WEhtWjZlZjAxZkZaVTdSS3BxRGhFdTVTTmJxZkNoM3N5VHJuMmpZT01RNjBa?=
- =?utf-8?B?MGRSYXppc2xCQ3JtdjUxWmRmK1NWQ2xOcGx3VDNOOFZYSTB5KzBSMWlyMS9s?=
- =?utf-8?B?UmV1STVQdzR0MFNFNEV0KzVhTlhzVU1ORUp6Z0IvUVViS2tZOG9uZ09qNmp5?=
- =?utf-8?B?MFpYeVZ6MGdZQmxxRzNlTW0rdVgxMTlZdmUvcTk0SDRUUHFuQkhWU3B1N25s?=
- =?utf-8?B?K0ZBUzRBR2ZsNVJwQktldUk4enhhZjQ5NmJqZW9mYzFxVkdndGNxTGtOS0ZS?=
- =?utf-8?B?dURVeXFRc0l2eTlJcUNoVkJ2UW5NbldEZkFoV0wyRGg1bGk5bXp4Tk1ZdkhQ?=
- =?utf-8?B?TU1EYVczcGdsUDFVSDdmNkJFSjVvbHBRNzVHdmJaellPVkcwNU5DaUpPVnF4?=
- =?utf-8?B?MEl1R1NFcGZGQWVxSm5nVlNmNExyeGNsTWtTZHgyaDJMWEdzKy9FYVpGMURl?=
- =?utf-8?B?SzJLWDlSSkNyYWVBdWpaM3JpRGRzaGVFMjd4eisxdE51LzlaZGxDdkF3T0py?=
- =?utf-8?B?a09HZlE2L2NrWlFHVGZ1ZlUrZXN1SDhKMmd5VVZ3MUUwMVJLWHJYekE0SzMv?=
- =?utf-8?B?RUZMTGgxQm1pWnNqV1pDRWExMWdQYkpnai85Q3d2MHp2MVBZcWhKSHFlSERp?=
- =?utf-8?B?dG93V21yWlNvcHRHQ1dGK3k5RnFMY284R2I3RXNzenJxU09jeDJKMjYyWDVQ?=
- =?utf-8?B?TURRVFhXd0JkVVhZZkNpbFhRQ2x5RjRTZUR2WUNFZTl0K00rUVFOMTJ2RVhP?=
- =?utf-8?B?a2lPVGtqcVdnNjF5bllmV0FmdnFuT05xVVlsMVRhMUZ3MEZ3Y3dWWWRSSmsw?=
- =?utf-8?B?QlVNeXd6NTRLb3R6T2NSaE9Uam5maUlyK1V3OUhWMVJHd0dOZWczZmVka0pP?=
- =?utf-8?Q?XIQlp2YIlqE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:VI1PR07MB9898.eurprd07.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aWZ4Q0V5TER1OHVQRDJHY0Y3QXp2dmdXY1FvR1NQNTBrV01uWU5DS0RsNkxz?=
- =?utf-8?B?WUJxbG5pb3YxTmV0L2I1MGcrd0g0QjBVb0VBMUxUcCsrL0dxYTRwaXdpNWxP?=
- =?utf-8?B?N1RoTjhyQk9oTmhIWlphM3c5M095b1Y3azZmL3NrU0JtckJ6YnpHOFhCSHZx?=
- =?utf-8?B?Rm1yRUZPL0l1QjM1WEdkcVdOcFNvUng2YnU5SkxPQlF1bUhXN0FoTTlVVzJn?=
- =?utf-8?B?OS8vOTVrVkg3bTNhTkQrUDg1YTZudnBISDhPNEhJYjM3SXlyaDhQOUFacTcz?=
- =?utf-8?B?L2g2YVh0Y3pZQnZEc2lRTjhQbGZQTFZJbHJRTmJjSVlnS3N3RnpBN0paa0NL?=
- =?utf-8?B?NW9icDRscnNKeW5IWSsvK1A3VzUvellWTGgva3QvUFBMMnBFTVZyWHE4YUdV?=
- =?utf-8?B?ejdUSXB5MXhGRXlCSWdWeTlkR255M1lnSnRkMnJTaDBOd05EWmxEdk5yVFBy?=
- =?utf-8?B?QWdRYkJFdmt1WjBxWVNRb3N1WDU0aU5jRFlIOXNXSjNZYkpJMW1FTHhkTWw0?=
- =?utf-8?B?dmptaExFNGMvRXhmVFVkbEg5aTNWSFhqSGllcW5BMkV2MVdMdGduNFdDM01V?=
- =?utf-8?B?U2ZYdDlSRXZWZEFISGhmWWtpWHROcnlJbWxZc0RrUEV3SVVzUkZBdmJjU0hn?=
- =?utf-8?B?aDZQWjA3cWVyZjVJUTZ4UnI0bEhtZ0M5ZWRadmZvZzFNVU9nbkhHTWRoNk1F?=
- =?utf-8?B?cmVCZjBUZDRzTGo0NTFZemdDTytpWE4zdEpmMkVSU0VXVWp1dkttNS9scWly?=
- =?utf-8?B?Rm1lcndXOU5ubEQzdFNjNUhSWXlqMllhSCsyL0NIK3pMWlcrdDFHMFpWWThW?=
- =?utf-8?B?VFlNblgwTlhBT0xhNFRJSDNUZlNCS2tJb1d4Q3B6dGNITnhYemFUM0Q1Z3Rn?=
- =?utf-8?B?d0ltcEVLYXdGSWExdXNLYUp4NFZtK2l0T1ZrNnc1WmhIWUVuS0tTUWhFYVR0?=
- =?utf-8?B?Z1Y2Vmcydmx5ekVmdXFCOC9RWjRNK0JpdGMyandsMEVBWDlkajc2WjBPZjVD?=
- =?utf-8?B?TFEzRDVyTDRwV0xySjBnTHg5SlU1YUMvWGJGMjJkby9KSTIzT3BWd1U3MVBI?=
- =?utf-8?B?dWQ5UTBJZmUyU0JMdlVQaUJzN3NsQVJyTUplcE1BUkFtUE9FYUx0TytaQ0ds?=
- =?utf-8?B?UFpmRnJORzB2Q0YxemIrYVV4N3I1QjJpSzNoVUppNGRhYndLK2xoRDhDd1JZ?=
- =?utf-8?B?NVpzTVM4T0hsanVVNlBtUXdFS0Y4MEEvT2E5OC9PaWFwNi96NlBzcGIvTWdO?=
- =?utf-8?B?d1pEd1NvZkUwRk1PTDl0Q2o0NXg5aXFXY3ZQMFpZd0hXekUwcEYwVGtWeENv?=
- =?utf-8?B?N205N1hlMkh3ZklPUTJZeWZpQ0dYRzJ0UVR2RC94R3NiVUR3Ym1DQWE5T0Y2?=
- =?utf-8?B?bHBzVHNzbjhKbVlnRFUvb2pmNVlTMmJsTzB2R3g2WTVKTDZGcDVETGZuUnk2?=
- =?utf-8?B?Zms2STI0Ykpwb3RvREs5dVJNNnlaV2FZdEt3U3ZYME9lL3RGZWJHa0I2dWs4?=
- =?utf-8?B?alVvS1AwQjljVVM0RGh5NGJOeittdS8wZVJVVWIrTmpEWlpRdzJKWE50TjZz?=
- =?utf-8?B?d3haVmZWK2RLV3FabE9qQ1U0Y3pKeG93QVpDNDh6eXMvUmVrY3Bka05qeGNh?=
- =?utf-8?B?TXZrUzNoNTNxbkRoaEhUZW1WUTJqZmpmSnRjK0t6bTcydHowdjUrWkFvWm9K?=
- =?utf-8?B?SnY4Y3YrVGpDc1MyaWF0SlNtbHYwWVA2dGtnbjVQZzMzdGdjZEk2eEZpdGNH?=
- =?utf-8?B?TGY3NEpOTVlGdTJiSHFMd3Ewbk16aDIzOC9UR013azZ2WVFuWDhRQ0lHVFBu?=
- =?utf-8?B?ODY5QnF1VDRwaXBLUE1FMGQzd2lzV1Z5Q0ZEWEtFdUpGODdyLzg2YkhxUWFI?=
- =?utf-8?B?YXNsYkNCRlpiZHdMWmxzNmtqOWVad3FZb1FlVER2cmpvMVRFSEJ6UzdXNkdm?=
- =?utf-8?B?R2NibnBnVTlFUGNOcXRMTEVUM3V3TVNZeW1XSjhwQUt2TnJ5U2lsNXJDR2Za?=
- =?utf-8?B?enhFTWNvREZLSjh4OFAzU3FpUmNPcVJ1SUlyczE2Zyt0V1VuOWlmTjdLTklO?=
- =?utf-8?B?ZkYyQ21Wcnd5LzRjblhoZmJxRkJhU0gzd2Z2MlcxUUlDOFUzOGFTVFlpNENj?=
- =?utf-8?B?czJDSzNiejNhNU9YYzRJT0dTd09TTXh3NkQrbE1KMlFHUmFYa0tJUUYrSUVz?=
- =?utf-8?B?V2c9PQ==?=
-X-OriginatorOrg: nokia-sbell.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8a2ac0a-9594-4489-ab62-08dd7804de04
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR07MB9898.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 07:54:05.8549 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Xu/JCCQVRwLaJJ9qIDirNs/kw7Iz7qL2SC7sDdDe/hcuiU+nvFdwYSx3NGv14dSHeEPA0nReD7qnHQsgY9Kupb99LR45eUu0EGm0WURxjPk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR07MB8339
+References: <20250326103928.1189243-1-david.marchand@redhat.com>
+ <Z-WTsS31MSnmXMU4@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <Z-WTsS31MSnmXMU4@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 10 Apr 2025 11:38:57 +0200
+X-Gm-Features: ATxdqUECMpOpWxu6x3EqUZi1oXPLs1VEkkvspkpEeEZ0QxRHkgCMQdv4T4j2i-E
+Message-ID: <CAJFAV8zRmKX7ArLdo5XCZH2MT91nw5BvPEPSnu=4oDKZvtFZng@mail.gmail.com>
+Subject: Re: [PATCH] acl: fix build with GCC 15 on aarch64
+To: David Marchand <dmarchan@redhat.com>
+Cc: dev@dpdk.org, bluca@debian.org, stable@dpdk.org, 
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ David Christensen <drc@linux.ibm.com>, 
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: dR2XxqfyNFdtbo9udR-2VUKPRMOkglb1lmtAXC7Vvls_1744277950
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -159,89 +88,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-On 2025/3/21 21:27, Yang Ming wrote:
-> The directory /var/log may not be writable in a container's
-> read-only mode. To address this issue, use the DPDK runtime
-> directory as an alternative when /var/log is not writable.
+On Thu, Mar 27, 2025 at 7:06=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> Cc: bingz@nvidia.com
-> Cc: dsosnowski@nvidia.com
-> Cc: stephen@networkplumber.org
-> Cc: julien.meunier@nokia.com
->
-> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
-> ---
->   drivers/net/mlx5/mlx5_rxtx.c | 33 ++++++++++++++++++++++++---------
->   1 file changed, 24 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
-> index 9c075f6a56..9e63d38524 100644
-> --- a/drivers/net/mlx5/mlx5_rxtx.c
-> +++ b/drivers/net/mlx5/mlx5_rxtx.c
-> @@ -6,12 +6,14 @@
->   #include <stdint.h>
->   #include <string.h>
->   #include <stdlib.h>
-> +#include <unistd.h>
->   
->   #include <rte_mbuf.h>
->   #include <rte_mempool.h>
->   #include <rte_prefetch.h>
->   #include <rte_common.h>
->   #include <rte_branch_prediction.h>
-> +#include <rte_eal.h>
->   #include <rte_ether.h>
->   #include <rte_cycles.h>
->   #include <rte_flow.h>
-> @@ -411,20 +413,33 @@ mlx5_dump_debug_information(const char *fname, const char *hex_title,
->   {
->   	FILE *fd;
->   
-> -	MKSTR(path, "%s/%s", MLX5_SYSTEM_LOG_DIR, fname);
-> -	fd = fopen(path, "a+");
-> -	if (!fd) {
-> -		DRV_LOG(WARNING, "cannot open %s for debug dump", path);
-> -		MKSTR(path2, "./%s", fname);
-> +	if (access(MLX5_SYSTEM_LOG_DIR, W_OK) == 0) {
-> +		MKSTR(path, "%s/%s", MLX5_SYSTEM_LOG_DIR, fname);
-> +		fd = fopen(path, "a+");
-> +		if (!fd)
-> +			DRV_LOG(WARNING, "cannot open %s for debug dump", path);
-> +		else
-> +			DRV_LOG(INFO, "New debug dump in file %s", path);
-> +	} else {
-> +		MKSTR(path2, "%s/%s", rte_eal_get_runtime_dir(), fname);
->   		fd = fopen(path2, "a+");
-> +		if (!fd)
-> +			DRV_LOG(WARNING, "cannot open %s for debug dump", path2);
-> +		else
-> +			DRV_LOG(INFO, "New debug dump in file %s", path2);
-> +	}
-> +
-> +	if (!fd) {
-> +		MKSTR(path3, "./%s", fname);
-> +		fd = fopen(path3, "a+");
->   		if (!fd) {
-> -			DRV_LOG(ERR, "cannot open %s for debug dump", path2);
-> +			DRV_LOG(ERR, "cannot open %s for debug dump", path3);
->   			return;
-> +		} else {
-> +			DRV_LOG(INFO, "New debug dump in file %s", path3);
->   		}
-> -		DRV_LOG(INFO, "New debug dump in file %s", path2);
-> -	} else {
-> -		DRV_LOG(INFO, "New debug dump in file %s", path);
->   	}
-> +
->   	if (hex_title)
->   		rte_hexdump(fd, hex_title, buf, hex_len);
->   	else
-Hi Experts,
+> On Wed, Mar 26, 2025 at 11:39:28AM +0100, David Marchand wrote:
+> > Caught in OBS for Fedora Rawhide on aarch64:
+> >
+> > [  198s] In file included from ../lib/acl/acl_run_neon.h:7,
+> > [  198s]                  from ../lib/acl/acl_run_neon.c:5:
+> > [  198s] In function =E2=80=98alloc_completion=E2=80=99,
+> > [  198s]     inlined from =E2=80=98acl_start_next_trie=E2=80=99 at
+> >       ../lib/acl/acl_run.h:140:24,
+> > [  198s]     inlined from =E2=80=98search_neon_4.isra=E2=80=99 at
+> >       ../lib/acl/acl_run_neon.h:239:20:
+> > [  198s] ../lib/acl/acl_run.h:93:25: error: =E2=80=98cmplt=E2=80=99 may=
+ be used
+> >       uninitialized [-Werror=3Dmaybe-uninitialized]
+> > [  198s]    93 |                 if (p[n].count =3D=3D 0) {
+> > [  198s]       |                     ~~~~^~~~~~
+> > [  198s] ../lib/acl/acl_run_neon.h: In function =E2=80=98search_neon_4.=
+isra=E2=80=99:
+> > [  198s] ../lib/acl/acl_run_neon.h:230:27: note: =E2=80=98cmplt=E2=80=
+=99 declared here
+> > [  198s]   230 |         struct completion cmplt[4];
+> > [  198s]       |                           ^~~~~
+> >
+> > The code was resetting sequentially cmpl[].count at the exact index tha=
+t
+> > later call to alloc_completion uses.
+> > While this code seems correct, GCC 15 does not understand this (probabl=
+y
+> > when applying some optimisations).
+> >
+> > Instead, reset cmpl[].count all at once in acl_set_flow, and cleanup th=
+e
+> > various vectorized implementations accordingly.
+> >
+> > Bugzilla ID: 1678
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-is there any chance to review and accept this patch?
+Applied as is, thanks.
 
-Brs,
 
-Yang Ming
+--=20
+David Marchand
 
