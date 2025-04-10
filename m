@@ -2,76 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC89DC3601E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 11:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2202FC369A6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 11:39:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 812CB4065B;
-	Thu, 10 Apr 2025 13:34:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0105640678;
+	Thu, 10 Apr 2025 13:39:59 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 54C00402ED
- for <dev@dpdk.org>; Thu, 10 Apr 2025 13:34:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C6370402ED
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 13:39:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744284883;
+ s=mimecast20190719; t=1744285197;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=E+yEwuhD0fde9BaI2ujrSgw6dQMbgHRbO/5k7SKnZ1s=;
- b=eum/Fm9CFUjHBRxuGI/b3jzlzqF4TH20ceX9TAx7g0RwiKFEg7ksbOvLfWgso+h6MbaKv+
- nYZebqduyVI7QP2xpVGN4k53ALAf3Lal46gyz4t9bQ+gdgaEKdHTM92FACSBxrYxlyxLQz
- xyb2apbeM+grWXpcf4ZN1siQUaJcAUE=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=VErcSBER2qlIEelzi+u9cCEljfeUocMoz+Jrgz72NlA=;
+ b=jLAWJGvJ7EKYbCx0uklthshjep/0fe848YIJeG9sjhbgH4TsN8XzWunZAh4DGpa0tea341
+ 84wsPvDK8eEQd54K9A31h8FbPnd+CAVPl0oJeiy0lTV8hl54FMMIHOmEZcFkXt7LLR7btd
+ H7CV3pp88xUNpI0SXt4/iOcHuNbiyYc=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692--M2z5slpPHSA9equv5PNLw-1; Thu, 10 Apr 2025 07:34:42 -0400
-X-MC-Unique: -M2z5slpPHSA9equv5PNLw-1
-X-Mimecast-MFC-AGG-ID: -M2z5slpPHSA9equv5PNLw_1744284881
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-54c2a5fd572so358848e87.1
- for <dev@dpdk.org>; Thu, 10 Apr 2025 04:34:41 -0700 (PDT)
+ us-mta-570-YIDfPP4NNRGdyG4EDTSPHg-1; Thu, 10 Apr 2025 07:39:56 -0400
+X-MC-Unique: YIDfPP4NNRGdyG4EDTSPHg-1
+X-Mimecast-MFC-AGG-ID: YIDfPP4NNRGdyG4EDTSPHg_1744285194
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-30d8de3f91eso3793861fa.3
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 04:39:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744284881; x=1744889681;
+ d=1e100.net; s=20230601; t=1744285194; x=1744889994;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=E+yEwuhD0fde9BaI2ujrSgw6dQMbgHRbO/5k7SKnZ1s=;
- b=vAK9JunTvoOyG36oYCGveWvpmMSTN20+fRyrOKUTAoWX6OrDN4HahJadF414u4q8UI
- Gujpw8PALd7mrkazJVTpx6/vTqNEQxbx5NtB8BVbFggDL+faLMgUPRV4eE4foAqakliP
- Nsn95AUqrF6NFRJUGZY82QTABmpH0kdDNZekawo5+psWfEXl+mY70peK9rEVVn1fbTWe
- uB56HaBLpzkqzXgY0dtfLfkzHvzL6TJzojZQ3KvV8hKyhQARUqDO33baS+gD8E+3T42b
- cIr+NrLwe30OsTa1fCrIPj82X9xbWfBs2zZ7OfMWBLZSsH+dDx7ZHfGUY/a62s+giLn7
- +MBQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX4JnsIzY1KO6CS8DyKqAgzHaDWIc/apWJ853G3wmdFWMtYnYYqgqvHE/WXIL1LUPfi3Ns=@dpdk.org
-X-Gm-Message-State: AOJu0YxEE7dVcXyBh1PsuQnHoFd94wnPPN1MBXMvjxBlB6kL8/i4FvNr
- asrvyyvHB5Quip8aYtz4bL31dHdAyhnGLoPdLrcbqDMgmTV2hmcYTyE4iWDcvZUG9NJmU6ugFsn
- GA7fq7HTiwW/UO3i4Bp+/njWT7Tu2AfxfQHMpn90nhsPjm0wYLgMuMMPOBB9++vtHBuqbcHyPpz
- sLei46LjMJMTZoiwg=
-X-Gm-Gg: ASbGncvqa7gSulr2wXL/WnR5weQg6+i2s5Snqu5zlxX9Ha47s8mZrTd7jCj/FKhuAIe
- gBDGJ64qk48fDDKbSJa/4pJT/GtZvsYgJfQJnj05qofIvi32F0mJDgggGTv5e73y8Ho7URx0=
-X-Received: by 2002:a05:6512:2350:b0:545:62c:4b13 with SMTP id
- 2adb3069b0e04-54cb6880bf5mr765724e87.40.1744284880681; 
- Thu, 10 Apr 2025 04:34:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF21iJa+Qc5zm6uUGhndXae+CcnLsE6g7/zdWk4GKQhWcBtrf6kvOSO5D4CQkhKoydpYJuSBP7+cYcZ1VLE4L0=
-X-Received: by 2002:a05:6512:2350:b0:545:62c:4b13 with SMTP id
- 2adb3069b0e04-54cb6880bf5mr765718e87.40.1744284880246; Thu, 10 Apr 2025
- 04:34:40 -0700 (PDT)
+ bh=VErcSBER2qlIEelzi+u9cCEljfeUocMoz+Jrgz72NlA=;
+ b=SKyGs2Capn3X9OZKdXulCyOgb7o2pjaVScNW4s5e/ysaelUCcS9rRH/rwtHrtZu+ZB
+ jLfAFKMJGbcJc/qT+7Q9MnXc0Gboc7LG0Wjin+YL6BVk4KrHV5/hB69Sr410hxJKpyKQ
+ 8ELmMAUHnAiJXw9iYUJ9tgoEZYOjwoTcu6t2upK6QLqjVl+6OQwcbfhG3d110L6JroCq
+ CZ6tei+FMHF9udvsLvbn5HC/BFVkm8jIcApsrZyTZutZ4uxLouzBDMHQI/gAW+6dnKbK
+ 4F93XUjWRB80gFqXfteeIkSJxRNO6eLcXfoAMz1vXPA3MYNSI3nf0E0BvWMKv4J0DkPy
+ oqcQ==
+X-Gm-Message-State: AOJu0YxYeScfNRK1WKLRMrIANOlRmzmyaLDyw2Ru8OPC4ZPqkM7lnXj2
+ mhnjUUhWTO/hhkdTxzaKU6w9eXZDuTm+JV7IaVTLd1TSg4PtRElPMsEyU4VyIXkLJoDGwRyIUAm
+ qSwO+bLhHFSlxSc3V7bm/DpJ3UfVybxGl0Nkv5TRUZMXxc4vqE96EtjqsTJlEObiFIJ4zkOi9Fu
+ Cx+T6I00yCPwBb79U=
+X-Gm-Gg: ASbGncuPU2wJ7JfdFIG2/CgQ+lzlyCwA/ajaZBAVhZLXejJ7cYMLUN27uXOiAiupBZx
+ cR7AUpYgwFr3PwFr0Jb723wfQQ68JsrUufPbv3G8B7tEymMT12kFrpSjfxa/uWSuPzE5XfQI=
+X-Received: by 2002:a05:651c:1594:b0:30b:d656:1485 with SMTP id
+ 38308e7fff4ca-30faccc0082mr9815131fa.32.1744285194525; 
+ Thu, 10 Apr 2025 04:39:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXzwnV8AYUEA8Jc1W9lcWOMNcu4NtXm3vnQNRXF1jbY0j+7tfMY1cU3FajUcu8i81t1xJlnAEuBueVpySvBsw=
+X-Received: by 2002:a05:651c:1594:b0:30b:d656:1485 with SMTP id
+ 38308e7fff4ca-30faccc0082mr9815061fa.32.1744285194226; Thu, 10 Apr 2025
+ 04:39:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <1741291408-26509-1-git-send-email-andremue@linux.microsoft.com>
- <1744161658-7874-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1744161658-7874-1-git-send-email-andremue@linux.microsoft.com>
+References: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 10 Apr 2025 13:34:28 +0200
-X-Gm-Features: ATxdqUHFTJ0AoaM-amq378eI9Oh0qHgWC68v06nWnGd3RXCpOZpUrvAT6cLwhWU
-Message-ID: <CAJFAV8zO2zPcbSPX5MV2r=RuaXoHFGPj6U6KQMM+QCo9601cXQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] fix how large numbers are printed by hash tests
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: bruce.richardson@intel.com, dev@dpdk.org, sameh.gobriel@intel.com, 
- vladimir.medvedkin@intel.com, yipeng1.wang@intel.com, 
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Date: Thu, 10 Apr 2025 13:39:42 +0200
+X-Gm-Features: ATxdqUGDUVea0_NmYX_nKKO0jbOICP7KkibuhTsOGFg1OI0rzZyBxHn9_cg6-bw
+Message-ID: <CAJFAV8wyJLOCxKsZRNjVXvXwkOULz4TmLkwgWU=Sdar6iAfqzg@mail.gmail.com>
+Subject: Re: [PATCH] rcu: remove VLAs
+To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+Cc: dev@dpdk.org, Andre Muezerie <andremue@linux.microsoft.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Oii4pm_M2xmgz9lSAL1l_T_NQXazDhBp9PFBXmbnQpg_1744284881
+X-Mimecast-MFC-PROC-ID: NoLJW0q4bT9PTqe9mFs9IpzVV95vjvZ1V_m4BFIHz8w_1744285194
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,47 +83,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Apr 9, 2025 at 3:21=E2=80=AFAM Andre Muezerie
+On Fri, Mar 7, 2025 at 2:40=E2=80=AFAM Andre Muezerie
 <andremue@linux.microsoft.com> wrote:
 >
-> v5:
->  - Rebased and updated to conform to new function versioning mechanism.
+> There are two lines that were using VLAs, which are not supported by
+> MSVC.
 >
-> v4:
->  - Added parameter "unit", which allows rte_size_to_str() to be smarter
->    about the need to append a space after the number. This keeps the
->    function easy to use and avoids the need for complex explanations
->    about the space that could be needed between number and multiple/unit.
->  - Changed the return type of rte_size_to_str() to be buf, or NULL on
->    error, allowing the function to be inlined.
->  - Removed a line wrap.
+> 1)
+> ../lib/rcu/rte_rcu_qsbr.c:326:12: warning: variable length array used [-W=
+vla]
+>   326 |         char data[dq->esize];
+>       |                   ^~~~~~~~~
+> 2)
+> ../lib/rcu/rte_rcu_qsbr.c:389:12: warning: variable length array used [-W=
+vla]
+>   389 |         char data[dq->esize];
+>       |                   ^~~~~~~~~
 >
->  v3:
->  - Added rte_size_to_str to version.map (marked experimental for 25.07) s=
-o
->    that symbol gets exported when building with -Ddefault_library=3Dshare=
-d
->  - Added sample outputs
->  - Added a space between the number and the postfix (if a postfix is
->    present)
+> The short-term fix is to use alloca, to allow progress with the msvc
+> compatibility work.
+> The long-term plan involves API changes and therefore can only be applied
+> with a new release. This long-term plan consists of introducing some
+> reasonable limitation on RCU DQ element size.
 >
-> Andre Muezerie (3):
->   eal: add function rte_size_to_str
->   hash_multiwriter_autotest: fix printf parameters
->   hash_readwrite_autotest: fix printf parameters
->
->  app/test/test_hash_multiwriter.c       | 14 +++++--
->  app/test/test_hash_readwrite.c         | 14 ++++++-
->  lib/eal/common/eal_common_string_fns.c | 54 ++++++++++++++++++++++++++
->  lib/eal/include/rte_common.h           | 34 ++++++++++++++++
->  4 files changed, 111 insertions(+), 5 deletions(-)
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
-It looks odd that string formatting helpers are declared in rte_common.h.
-I would move those declarations to rte_string_fns.h but this can wait
-a followup patch since other helper was already in rte_common.h.
+Honnappa, any objection?
 
 
-Series applied, thanks.
 
 --=20
 David Marchand
