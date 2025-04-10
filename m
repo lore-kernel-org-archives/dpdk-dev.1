@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80FCC369A9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 18:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A7CC3601E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 18:01:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF97B40A73;
-	Thu, 10 Apr 2025 20:01:21 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id E535640A6E
- for <dev@dpdk.org>; Thu, 10 Apr 2025 20:01:19 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AF39oK009187;
- Thu, 10 Apr 2025 11:01:19 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 80C7A40A77;
+	Thu, 10 Apr 2025 20:01:26 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 530D540A80
+ for <dev@dpdk.org>; Thu, 10 Apr 2025 20:01:25 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A8BKNH030927;
+ Thu, 10 Apr 2025 11:01:24 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
- NzC8IgDyqXBXCIiMDAqi3HjU6JSr1OdMR+cFjZkfWA=; b=UPHAWBgdQjFm7NND2
- AGtJbCqus22IcMvamW17dhYuRKt8hD0TzxttDOdF9TSvzIq/iSyU5MA+rItkGKYB
- IdDmH7VNxWtDOwyXqZHyQbomKFVtY2aTHkzY7y8fQnJ4L3vuQl0zROIwrBDe/bFv
- UdFm2vvSMbqozHSePfAmjS315n1MPQlt8z+NTxt86AJl92PHrH9MFlyfOY96FzLM
- lXK+5DlsgBGAmucHdgpuGvmgKeYfkourQSNA9VeyJbvMGLGdHbiwtvSupXoSRl/V
- OHPOEnks8pYjZLONNJ8OhQribZBDySz16Y9OLR3grQBMJDdKqMQPb8bnObzdUMm3
- ppjDQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45wp0c44sx-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=I
+ IbwGiGkztlOxrSODOlNFUxcwRxrv+dvoDx+A8Bjo8I=; b=Np1lNtFRual3ColUh
+ 5hwda57ufMaPnaGoVuPN82kJCBZlmEuZ5dSGuUXQ9YJdvjBoZwTAmMCHCcFUDqrb
+ okaea6GkN0Rb9HXGfNcMlsowZn5yzu9xYdktSYZTUthZt8+djsgZvqRwNDyTwU4X
+ F8KgAYM3UpMP2zPGv3EMmng2QJvSTsPvpB4ZFbMF8aEBMQK+k8fnx/KBKUmjOyhh
+ H7cXJyfJVmHEZdFA1fVIhyWaYQz+5jLBrSS4GUqtoFPYFW2b2W+yDokPza4fDfRS
+ Z0Ml9G878ygbM2D81LWxqJK/7qNa2BB8mAD2TTwMzy4ReQTAllzLmMaLNtt87Kai
+ cnp9Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45unnb3eg4-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 10 Apr 2025 11:01:18 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ Thu, 10 Apr 2025 11:01:23 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 10 Apr 2025 11:01:17 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 10 Apr 2025 11:01:17 -0700
+ 15.2.1544.4; Thu, 10 Apr 2025 11:01:22 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 10 Apr 2025 11:01:22 -0700
 Received: from MININT-80QBFE8.corp.innovium.com (unknown [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 5C9C13F7065;
- Thu, 10 Apr 2025 11:01:12 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id D7C213F708A;
+ Thu, 10 Apr 2025 11:01:17 -0700 (PDT)
 From: <pbhagavatula@marvell.com>
 To: <jerinj@marvell.com>, <pravin.pathak@intel.com>, <hemant.agrawal@nxp.com>, 
  <sachin.saxena@nxp.com>, <mattias.ronnblom@ericsson.com>,
@@ -46,9 +46,9 @@ To: <jerinj@marvell.com>, <pravin.pathak@intel.com>, <hemant.agrawal@nxp.com>,
  <abhinandan.gujjar@intel.com>, <amitprakashs@marvell.com>,
  <s.v.naga.harish.k@intel.com>, <anatoly.burakov@intel.com>
 CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: [PATCH 2/3] eventdev: add default software vector adapter
-Date: Thu, 10 Apr 2025 23:30:40 +0530
-Message-ID: <20250410180056.10368-3-pbhagavatula@marvell.com>
+Subject: [PATCH 3/3] app/eventdev: add vector adapter performance test
+Date: Thu, 10 Apr 2025 23:30:41 +0530
+Message-ID: <20250410180056.10368-4-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250410180056.10368-1-pbhagavatula@marvell.com>
 References: <20250326131441.5965-2-pbhagavatula@marvell.com>
@@ -56,12 +56,12 @@ References: <20250326131441.5965-2-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: z3rTGYkxotpIdr4g_P8M3HsYWiBcU11O
-X-Proofpoint-ORIG-GUID: z3rTGYkxotpIdr4g_P8M3HsYWiBcU11O
-X-Authority-Analysis: v=2.4 cv=H47bw/Yi c=1 sm=1 tr=0 ts=67f8076e cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=tdHoNQqk6jB-gyBn54MA:9
+X-Proofpoint-GUID: QiE3MsFrfS1j3K36sbhcwdFtinTup_pP
+X-Authority-Analysis: v=2.4 cv=E57Npbdl c=1 sm=1 tr=0 ts=67f80774 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=Z-f73vtj0jMIOVENMMQA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: QiE3MsFrfS1j3K36sbhcwdFtinTup_pP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
@@ -80,1182 +80,804 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-When event device PMD doesn't support vector adapter,
-the library will fallback to software implementation
-which relies on service core to check for timeouts
-and vectorizes the objects on enqueue.
+Add performance test for event vector adapter.
 
 Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- app/test/meson.build                    |   1 +
- app/test/test_event_vector_adapter.c    | 682 ++++++++++++++++++++++++
- lib/eventdev/eventdev_pmd.h             |   2 +
- lib/eventdev/rte_event_vector_adapter.c | 392 ++++++++++++++
- lib/eventdev/rte_eventdev.c             |   2 +
- 5 files changed, 1079 insertions(+)
- create mode 100644 app/test/test_event_vector_adapter.c
+ app/test-eventdev/evt_common.h         |   9 +-
+ app/test-eventdev/evt_options.c        |  14 ++
+ app/test-eventdev/evt_options.h        |   1 +
+ app/test-eventdev/test_perf_atq.c      |  61 +++++-
+ app/test-eventdev/test_perf_common.c   | 281 ++++++++++++++++++-------
+ app/test-eventdev/test_perf_common.h   |  13 +-
+ app/test-eventdev/test_perf_queue.c    |  66 +++++-
+ doc/guides/rel_notes/release_25_07.rst |   5 +
+ doc/guides/tools/testeventdev.rst      |   6 +
+ 9 files changed, 362 insertions(+), 94 deletions(-)
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index b6285a6b45..0686f3c1f2 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -79,6 +79,7 @@ source_file_deps = {
-     'test_event_eth_tx_adapter.c': ['bus_vdev', 'ethdev', 'net_ring', 'eventdev'],
-     'test_event_ring.c': ['eventdev'],
-     'test_event_timer_adapter.c': ['ethdev', 'eventdev', 'bus_vdev'],
-+    'test_event_vector_adapter.c': ['eventdev', 'bus_vdev'],
-     'test_eventdev.c': ['eventdev', 'bus_vdev'],
-     'test_external_mem.c': [],
-     'test_fbarray.c': [],
-diff --git a/app/test/test_event_vector_adapter.c b/app/test/test_event_vector_adapter.c
-new file mode 100644
-index 0000000000..8754789bef
---- /dev/null
-+++ b/app/test/test_event_vector_adapter.c
-@@ -0,0 +1,682 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Marvell International Ltd.
-+ */
-+
-+#include <string.h>
-+
-+#include <rte_common.h>
-+#include <rte_malloc.h>
-+#include <rte_mempool.h>
-+#include <rte_random.h>
-+
-+#include "test.h"
-+
-+#ifdef RTE_EXEC_ENV_WINDOWS
+diff --git a/app/test-eventdev/evt_common.h b/app/test-eventdev/evt_common.h
+index 74f9d187f3..ec824f2454 100644
+--- a/app/test-eventdev/evt_common.h
++++ b/app/test-eventdev/evt_common.h
+@@ -39,11 +39,12 @@
+ 
+ enum evt_prod_type {
+ 	EVT_PROD_TYPE_NONE,
+-	EVT_PROD_TYPE_SYNT,          /* Producer type Synthetic i.e. CPU. */
+-	EVT_PROD_TYPE_ETH_RX_ADPTR,  /* Producer type Eth Rx Adapter. */
++	EVT_PROD_TYPE_SYNT,		  /* Producer type Synthetic i.e. CPU. */
++	EVT_PROD_TYPE_ETH_RX_ADPTR,	  /* Producer type Eth Rx Adapter. */
+ 	EVT_PROD_TYPE_EVENT_TIMER_ADPTR,  /* Producer type Timer Adapter. */
+-	EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR,  /* Producer type Crypto Adapter. */
+-	EVT_PROD_TYPE_EVENT_DMA_ADPTR,  /* Producer type DMA Adapter. */
++	EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR, /* Producer type Crypto Adapter. */
++	EVT_PROD_TYPE_EVENT_DMA_ADPTR,	  /* Producer type DMA Adapter. */
++	EVT_PROD_TYPE_EVENT_VECTOR_ADPTR, /* Producer type Vector adapter. */
+ 	EVT_PROD_TYPE_MAX,
+ };
+ 
+diff --git a/app/test-eventdev/evt_options.c b/app/test-eventdev/evt_options.c
+index 323d1e724d..0e70c971eb 100644
+--- a/app/test-eventdev/evt_options.c
++++ b/app/test-eventdev/evt_options.c
+@@ -186,6 +186,13 @@ evt_parse_dma_adptr_mode(struct evt_options *opt, const char *arg)
+ 	return ret;
+ }
+ 
 +static int
-+test_event_vector_adapter(void)
++evt_parse_vector_prod_type(struct evt_options *opt,
++			   const char *arg __rte_unused)
 +{
-+	printf("event_vector_adapter not supported on Windows, skipping test\n");
-+	return TEST_SKIPPED;
++	opt->prod_type = EVT_PROD_TYPE_EVENT_VECTOR_ADPTR;
++	return 0;
 +}
-+
-+#else
-+
-+#include <rte_bus_vdev.h>
-+#include <rte_event_vector_adapter.h>
-+#include <rte_eventdev.h>
-+#include <rte_launch.h>
-+#include <rte_lcore.h>
-+#include <rte_mempool.h>
-+#include <rte_per_lcore.h>
-+#include <rte_random.h>
-+#include <rte_service.h>
-+#include <stdbool.h>
-+
-+#define MAX_VECTOR_SIZE 8
-+#define MAX_EVENTS	512
-+#define MAX_RETRIES	16
-+
-+static int sw_slcore = -1;
-+static int adapter_slcore = -1;
-+static uint8_t evdev;
-+static bool using_services;
-+static uint8_t vector_adptr_id;
-+static uint8_t evdev_max_queues;
-+static struct rte_mempool *vector_mp;
-+
-+static uint64_t objs[MAX_VECTOR_SIZE] = {0xDEADBEAF, 0xDEADBEEF, 0xDEADC0DE, 0xDEADCAFE,
-+					 0xDEADFACE, 0xDEADFADE, 0xDEADFAAA, 0xDEADFAAB};
-+
+ 
+ static int
+ evt_parse_crypto_prod_type(struct evt_options *opt,
+@@ -494,6 +501,7 @@ usage(char *program)
+ 		"\t                     in ns.\n"
+ 		"\t--prod_type_timerdev_burst : use timer device as producer\n"
+ 		"\t                             burst mode.\n"
++		"\t--prod_type_vector : use vector adapter as producer.\n"
+ 		"\t--nb_timers        : number of timers to arm.\n"
+ 		"\t--nb_timer_adptrs  : number of timer adapters to use.\n"
+ 		"\t--timer_tick_nsec  : timer tick interval in ns.\n"
+@@ -591,6 +599,7 @@ static struct option lgopts[] = {
+ 	{ EVT_PROD_CRYPTODEV,      0, 0, 0 },
+ 	{ EVT_PROD_TIMERDEV,       0, 0, 0 },
+ 	{ EVT_PROD_TIMERDEV_BURST, 0, 0, 0 },
++	{ EVT_PROD_VECTOR,         0, 0, 0 },
+ 	{ EVT_DMA_ADPTR_MODE,      1, 0, 0 },
+ 	{ EVT_CRYPTO_ADPTR_MODE,   1, 0, 0 },
+ 	{ EVT_CRYPTO_OP_TYPE,	   1, 0, 0 },
+@@ -642,6 +651,7 @@ evt_opts_parse_long(int opt_idx, struct evt_options *opt)
+ 		{ EVT_PROD_DMADEV, evt_parse_dma_prod_type},
+ 		{ EVT_PROD_TIMERDEV, evt_parse_timer_prod_type},
+ 		{ EVT_PROD_TIMERDEV_BURST, evt_parse_timer_prod_type_burst},
++		{ EVT_PROD_VECTOR, evt_parse_vector_prod_type },
+ 		{ EVT_DMA_ADPTR_MODE, evt_parse_dma_adptr_mode},
+ 		{ EVT_CRYPTO_ADPTR_MODE, evt_parse_crypto_adptr_mode},
+ 		{ EVT_CRYPTO_OP_TYPE, evt_parse_crypto_op_type},
+@@ -721,4 +731,8 @@ evt_options_dump(struct evt_options *opt)
+ 	evt_dump_end;
+ 	evt_dump_nb_flows(opt);
+ 	evt_dump_worker_dequeue_depth(opt);
++	if (opt->ena_vector || opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
++		evt_dump("vector_sz", "%d", opt->vector_size);
++		evt_dump("vector_tmo_ns", "%"PRIu64, opt->vector_tmo_nsec);
++	}
+ }
+diff --git a/app/test-eventdev/evt_options.h b/app/test-eventdev/evt_options.h
+index 18a893b704..4bf712bd19 100644
+--- a/app/test-eventdev/evt_options.h
++++ b/app/test-eventdev/evt_options.h
+@@ -38,6 +38,7 @@
+ #define EVT_PROD_DMADEV          ("prod_type_dmadev")
+ #define EVT_PROD_TIMERDEV        ("prod_type_timerdev")
+ #define EVT_PROD_TIMERDEV_BURST  ("prod_type_timerdev_burst")
++#define EVT_PROD_VECTOR          ("prod_type_vector")
+ #define EVT_DMA_ADPTR_MODE       ("dma_adptr_mode")
+ #define EVT_CRYPTO_ADPTR_MODE	 ("crypto_adptr_mode")
+ #define EVT_CRYPTO_OP_TYPE	 ("crypto_op_type")
+diff --git a/app/test-eventdev/test_perf_atq.c b/app/test-eventdev/test_perf_atq.c
+index 30c34edabd..b07b010af1 100644
+--- a/app/test-eventdev/test_perf_atq.c
++++ b/app/test-eventdev/test_perf_atq.c
+@@ -145,7 +145,7 @@ perf_atq_worker_burst(void *arg, const int enable_fwd_latency)
+ }
+ 
+ static int
+-perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
++perf_atq_worker_crypto_vector(void *arg, const int enable_fwd_latency)
+ {
+ 	uint16_t enq = 0, deq = 0;
+ 	struct rte_event ev;
+@@ -161,10 +161,8 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
+ 		if (!deq)
+ 			continue;
+ 
+-		if (ev.event_type == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
+-			if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
+-				continue;
+-		}
++		if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
++			continue;
+ 
+ 		stage = ev.sub_event_type % nb_stages;
+ 		/* First q in pipeline, mark timestamp to compute fwd latency */
+@@ -173,8 +171,8 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
+ 
+ 		/* Last stage in pipeline */
+ 		if (unlikely(stage == laststage)) {
+-			perf_process_vector_last_stage(pool, t->ca_op_pool, &ev, w,
+-							enable_fwd_latency);
++			perf_process_crypto_vector_last_stage(pool, t->ca_op_pool, &ev, w,
++							      enable_fwd_latency);
+ 		} else {
+ 			atq_fwd_event_vector(&ev, sched_type_list, nb_stages);
+ 			do {
+@@ -188,6 +186,53 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
+ 	return 0;
+ }
+ 
 +static int
-+test_event_vector_adapter_create_multi(void)
++perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
 +{
-+	struct rte_event_vector_adapter *adapter[RTE_EVENT_MAX_QUEUES_PER_DEV]
-+						[RTE_EVENT_VECTOR_ADAPTER_MAX_INSTANCE_PER_QUEUE];
-+	struct rte_event_vector_adapter_conf conf;
-+	struct rte_event_vector_adapter_info info;
-+	int ret, i, j;
++	uint16_t enq = 0, deq = 0;
++	struct rte_event ev;
++	PERF_WORKER_INIT;
 +
-+	memset(&conf, 0, sizeof(conf));
-+	memset(&info, 0, sizeof(info));
++	RTE_SET_USED(sz);
++	RTE_SET_USED(pe);
++	RTE_SET_USED(cnt);
++	RTE_SET_USED(prod_type);
++	RTE_SET_USED(prod_timer_type);
 +
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
++	while (t->done == false) {
++		deq = rte_event_dequeue_burst(dev, port, &ev, 1, 0);
++		if (!deq)
++			continue;
 +
-+	vector_mp = rte_event_vector_pool_create("vector_mp", MAX_EVENTS, 0, MAX_VECTOR_SIZE,
-+						 rte_socket_id());
++		if (ev.event_type != RTE_EVENT_TYPE_CPU_VECTOR) {
++			w->processed_pkts++;
++			continue;
++		}
 +
-+	TEST_ASSERT(vector_mp != NULL, "Failed to create mempool");
++		stage = ev.sub_event_type % nb_stages;
++		if (enable_fwd_latency && stage == 0)
++			/* first stage in pipeline, mark ts to compute fwd latency */
++			ev.vec->u64s[0] = rte_get_timer_cycles();
 +
-+	conf.event_dev_id = evdev;
-+	conf.socket_id = rte_socket_id();
-+	conf.vector_sz = RTE_MIN(MAX_VECTOR_SIZE, info.max_vector_sz);
-+	conf.vector_timeout_ns = info.max_vector_timeout_ns;
-+	conf.vector_mp = vector_mp;
++		/* Last stage in pipeline */
++		if (unlikely(stage == laststage)) {
++			w->processed_vecs++;
++			if (enable_fwd_latency)
++				w->latency += rte_get_timer_cycles() - ev.vec->u64s[0];
 +
-+	conf.ev.queue_id = 0;
-+	conf.ev.event_type = RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU;
-+	conf.ev.sched_type = RTE_SCHED_TYPE_PARALLEL;
-+
-+	for (i = 0; i < evdev_max_queues; i++) {
-+		for (j = 0; j < info.max_vector_adapters_per_event_queue; j++) {
-+			conf.ev.queue_id = j;
-+			adapter[i][j] = rte_event_vector_adapter_create(&conf);
-+			TEST_ASSERT(adapter[i][j] != NULL, "Failed to create event vector adapter");
++			rte_mempool_put(pool, ev.event_ptr);
++		} else {
++			atq_fwd_event_vector(&ev, sched_type_list, nb_stages);
++			do {
++				enq = rte_event_enqueue_burst(dev, port, &ev, 1);
++			} while (!enq && !t->done);
 +		}
 +	}
++	perf_worker_cleanup(pool, dev, port, &ev, enq, deq);
 +
-+	for (i = 0; i < evdev_max_queues; i++)
-+		for (j = 0; j < info.max_vector_adapters_per_event_queue; j++)
-+			TEST_ASSERT(adapter[i][j] == rte_event_vector_adapter_lookup(
-+							     adapter[i][j]->adapter_id),
-+				    "Failed to lookup event vector adapter");
-+
-+	for (i = 0; i < evdev_max_queues; i++)
-+		for (j = 0; j < info.max_vector_adapters_per_event_queue; j++)
-+			rte_event_vector_adapter_destroy(adapter[i][j]);
-+
-+	rte_mempool_free(vector_mp);
-+	vector_mp = NULL;
-+
-+	return TEST_SUCCESS;
++	return 0;
 +}
-+
-+static int
-+test_event_vector_adapter_create(void)
-+{
-+	struct rte_event_vector_adapter_conf conf;
-+	struct rte_event_vector_adapter_info info;
-+	struct rte_event_vector_adapter *adapter;
-+	uint32_t service_id;
-+	int ret;
-+
-+	memset(&conf, 0, sizeof(conf));
-+	memset(&info, 0, sizeof(info));
-+
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
-+
-+	vector_mp = rte_event_vector_pool_create("vector_mp", MAX_EVENTS, 0, MAX_VECTOR_SIZE,
-+						 rte_socket_id());
-+	TEST_ASSERT(vector_mp != NULL, "Failed to create mempool");
-+
-+	conf.event_dev_id = evdev;
-+	conf.socket_id = rte_socket_id();
-+	conf.vector_sz = RTE_MIN(MAX_VECTOR_SIZE, info.max_vector_sz);
-+	conf.vector_timeout_ns = info.max_vector_timeout_ns;
-+	conf.vector_mp = vector_mp;
-+
-+	conf.ev.queue_id = 0;
-+	conf.ev.event_type = RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU;
-+	conf.ev.sched_type = RTE_SCHED_TYPE_PARALLEL;
-+
-+	conf.ev_fallback.event_type = RTE_EVENT_TYPE_CPU;
-+	adapter = rte_event_vector_adapter_create(&conf);
-+	TEST_ASSERT(adapter != NULL, "Failed to create event vector adapter");
-+
-+	vector_adptr_id = adapter->adapter_id;
-+
-+	TEST_ASSERT(adapter == rte_event_vector_adapter_lookup(vector_adptr_id),
-+		    "Failed to lookup event vector adapter");
-+
-+	if (rte_event_vector_adapter_service_id_get(adapter, &service_id) == 0) {
-+		if (sw_slcore < 0) {
-+			adapter_slcore = rte_get_next_lcore(sw_slcore, 1, 0);
-+			TEST_ASSERT_SUCCESS(rte_service_lcore_add(adapter_slcore),
-+					    "Failed to add service core");
-+			TEST_ASSERT_SUCCESS(rte_service_lcore_start(adapter_slcore),
-+					    "Failed to start service core");
-+		} else
-+			adapter_slcore = sw_slcore;
-+		TEST_ASSERT(rte_service_map_lcore_set(service_id, adapter_slcore, 1) == 0,
-+			    "Failed to map adapter service");
-+		TEST_ASSERT(rte_service_runstate_set(service_id, 1) == 0,
-+			    "Failed to start adapter service");
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static void
-+test_event_vector_adapter_free(void)
-+{
-+	struct rte_event_vector_adapter *adapter;
-+	uint32_t service_id;
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+
-+	if (adapter != NULL) {
-+		if (rte_event_vector_adapter_service_id_get(adapter, &service_id) == 0) {
-+			rte_service_runstate_set(service_id, 0);
-+			rte_service_map_lcore_set(service_id, adapter_slcore, 0);
-+			if (adapter_slcore != sw_slcore) {
-+				rte_service_lcore_stop(adapter_slcore);
-+				rte_service_lcore_del(adapter_slcore);
-+			}
-+			adapter_slcore = -1;
-+		}
-+		rte_event_vector_adapter_destroy(adapter);
-+	}
-+	rte_mempool_free(vector_mp);
-+	vector_mp = NULL;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue(void)
-+{
-+	struct rte_event_vector_adapter *adapter;
-+	struct rte_event ev;
-+	int ret, i;
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, MAX_VECTOR_SIZE, 0);
-+	TEST_ASSERT((ret == MAX_VECTOR_SIZE), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+
-+	TEST_ASSERT((ev.vec->nb_elem == MAX_VECTOR_SIZE), "Incomplete event vector %d",
-+		    ev.vec->nb_elem);
-+	TEST_ASSERT((ev.queue_id == 0), "Invalid event type %d", ev.queue_id);
-+	TEST_ASSERT((ev.event_type == (RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU)),
-+		    "Invalid event type %d", ev.event_type);
-+	TEST_ASSERT((ev.sched_type == RTE_SCHED_TYPE_PARALLEL), "Invalid sched type %d",
-+		    ev.sched_type);
-+
-+	for (i = 0; i < MAX_VECTOR_SIZE; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[i]), "Invalid object in event vector %" PRIx64,
-+			    ev.vec->u64s[i]);
-+	rte_mempool_put(rte_mempool_from_obj(ev.vec), ev.vec);
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_tmo(void)
-+{
-+	struct rte_event_vector_adapter_info info;
-+	struct rte_event_vector_adapter *adapter;
-+	uint16_t vec_sz = MAX_VECTOR_SIZE - 4;
-+	struct rte_event ev;
-+	int ret, i;
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, vec_sz, 0);
-+	TEST_ASSERT((ret == vec_sz), "Failed to enqueue event vector %d", ret);
-+
-+	rte_delay_us(info.max_vector_timeout_ns / 1000);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+
-+	TEST_ASSERT((ev.vec->nb_elem == vec_sz), "Incomplete event vector %d", ev.vec->nb_elem);
-+	TEST_ASSERT((ev.queue_id == 0), "Invalid event type %d", ev.queue_id);
-+	TEST_ASSERT((ev.event_type == (RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU)),
-+		    "Invalid event type %d", ev.event_type);
-+	TEST_ASSERT((ev.sched_type == RTE_SCHED_TYPE_PARALLEL), "Invalid sched type %d",
-+		    ev.sched_type);
-+
-+	for (i = 0; i < vec_sz; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[i]), "Invalid object in event vector %" PRIx64,
-+			    ev.vec->u64s[i]);
-+	rte_mempool_put(rte_mempool_from_obj(ev.vec), ev.vec);
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_fallback(void)
-+{
-+	struct rte_event_vector_adapter *adapter;
-+	uint64_t vec[MAX_EVENTS];
-+	struct rte_event ev;
-+	int ret, i;
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_mempool_get_bulk(vector_mp, (void **)vec, MAX_EVENTS);
-+	TEST_ASSERT(ret == 0, "Failed to get mempool objects %d", ret);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, 1, 0);
-+	TEST_ASSERT((ret == 1), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.event_type == RTE_EVENT_TYPE_CPU), "Incorrect fallback event type %d",
-+		    ev.event_type);
-+	TEST_ASSERT((ev.sched_type == RTE_SCHED_TYPE_PARALLEL), "Invalid sched type %d",
-+		    ev.sched_type);
-+
-+	rte_mempool_put_bulk(vector_mp, (void **)vec, MAX_EVENTS);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_sov(void)
-+{
-+	struct rte_event_vector_adapter_info info;
-+	struct rte_event_vector_adapter *adapter;
-+	uint16_t vec_sz = MAX_VECTOR_SIZE - 4;
-+	struct rte_event ev;
-+	uint32_t caps;
-+	int ret, i;
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
-+
-+	caps = 0;
-+	ret = rte_event_vector_adapter_caps_get(evdev, &caps);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter caps");
-+
-+	if (!(caps & RTE_EVENT_VECTOR_ADAPTER_CAP_SOV_EOV)) {
-+		printf("SOV/EOV not supported, skipping test\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, vec_sz, 0);
-+	TEST_ASSERT((ret == vec_sz), "Failed to enqueue event vector %d", ret);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, &objs[vec_sz], 2, RTE_EVENT_VECTOR_ENQ_SOV);
-+	TEST_ASSERT((ret == 2), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	for (i = 0; i < vec_sz; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[i]), "Invalid object in event vector %" PRIx64,
-+			    ev.vec->u64s[i]);
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.vec->nb_elem == vec_sz), "Incorrect event vector %d", ev.vec->nb_elem);
-+
-+	rte_delay_us(info.max_vector_timeout_ns / 1000);
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.vec->nb_elem == 2), "Incorrect event vector %d", ev.vec->nb_elem);
-+
-+	for (i = 0; i < 2; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[vec_sz + i]),
-+			    "Invalid object in event vector %" PRIx64, ev.vec->u64s[i]);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_eov(void)
-+{
-+	struct rte_event_vector_adapter_info info;
-+	struct rte_event_vector_adapter *adapter;
-+	uint16_t vec_sz = MAX_VECTOR_SIZE - 4;
-+	struct rte_event ev;
-+	uint32_t caps;
-+	int ret, i;
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
-+
-+	caps = 0;
-+	ret = rte_event_vector_adapter_caps_get(evdev, &caps);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter caps");
-+
-+	if (!(caps & RTE_EVENT_VECTOR_ADAPTER_CAP_SOV_EOV)) {
-+		printf("SOV/EOV not supported, skipping test\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, vec_sz, 0);
-+	TEST_ASSERT((ret == vec_sz), "Failed to enqueue event vector %d", ret);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, &objs[vec_sz], 1, RTE_EVENT_VECTOR_ENQ_EOV);
-+	TEST_ASSERT((ret == 1), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.vec->nb_elem == vec_sz + 1), "Incorrect event vector %d", ev.vec->nb_elem);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, MAX_VECTOR_SIZE - 1, 0);
-+	TEST_ASSERT((ret == MAX_VECTOR_SIZE - 1), "Failed to enqueue event vector %d", ret);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, &objs[vec_sz], vec_sz,
-+					       RTE_EVENT_VECTOR_ENQ_EOV);
-+	TEST_ASSERT((ret == vec_sz), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.vec->nb_elem == MAX_VECTOR_SIZE), "Incorrect event vector %d",
-+		    ev.vec->nb_elem);
-+
-+	for (i = 0; i < MAX_VECTOR_SIZE - 1; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[i]), "Invalid object in event vector %" PRIx64,
-+			    ev.vec->u64s[i]);
-+
-+	TEST_ASSERT((ev.vec->u64s[MAX_VECTOR_SIZE - 1] == objs[vec_sz]),
-+		    "Invalid object in event vector %" PRIx64, ev.vec->u64s[MAX_VECTOR_SIZE - 1]);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.vec->nb_elem == vec_sz - 1), "Incorrect event vector %d", ev.vec->nb_elem);
-+
-+	for (i = 0; i < vec_sz - 1; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[vec_sz + i + 1]),
-+			    "Invalid object in event vector %" PRIx64, ev.vec->u64s[i]);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_sov_eov(void)
-+{
-+	struct rte_event_vector_adapter_info info;
-+	struct rte_event_vector_adapter *adapter;
-+	uint16_t vec_sz = MAX_VECTOR_SIZE - 4;
-+	struct rte_event ev;
-+	uint32_t caps;
-+	int ret, i;
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = rte_event_vector_adapter_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter info");
-+
-+	caps = 0;
-+	ret = rte_event_vector_adapter_caps_get(evdev, &caps);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event vector adapter caps");
-+
-+	if (!(caps & RTE_EVENT_VECTOR_ADAPTER_CAP_SOV_EOV)) {
-+		printf("SOV/EOV not supported, skipping test\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, vec_sz,
-+					       RTE_EVENT_VECTOR_ENQ_SOV | RTE_EVENT_VECTOR_ENQ_EOV);
-+	TEST_ASSERT((ret == vec_sz), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.event_type == (RTE_EVENT_TYPE_CPU | RTE_EVENT_TYPE_VECTOR)),
-+		    "Incorrect event type %d", ev.event_type);
-+	TEST_ASSERT((ev.vec->nb_elem == vec_sz), "Incorrect event vector %d", ev.vec->nb_elem);
-+
-+	for (i = 0; i < vec_sz; i++)
-+		TEST_ASSERT((ev.vec->u64s[i] == objs[i]), "Invalid object in event vector %" PRIx64,
-+			    ev.vec->u64s[i]);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, 1,
-+					       RTE_EVENT_VECTOR_ENQ_SOV | RTE_EVENT_VECTOR_ENQ_EOV);
-+	TEST_ASSERT((ret == 1), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	if (info.min_vector_sz > 1)
-+		TEST_ASSERT((ev.event_type == RTE_EVENT_TYPE_CPU), "Incorrect event type %d",
-+			    ev.event_type);
-+	else
-+		TEST_ASSERT((ev.event_type == (RTE_EVENT_TYPE_CPU | RTE_EVENT_TYPE_VECTOR)),
-+			    "Incorrect event type %d", ev.event_type);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_event_vector_adapter_enqueue_flush(void)
-+{
-+	struct rte_event_vector_adapter *adapter;
-+	struct rte_event ev;
-+	int ret, i;
-+
-+	adapter = rte_event_vector_adapter_lookup(vector_adptr_id);
-+	TEST_ASSERT(adapter != NULL, "Failed to lookup event vector adapter");
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, objs, MAX_VECTOR_SIZE - 1, 0);
-+	TEST_ASSERT((ret == MAX_VECTOR_SIZE - 1), "Failed to enqueue event vector %d", ret);
-+
-+	ret = rte_event_vector_adapter_enqueue(adapter, NULL, 0, RTE_EVENT_VECTOR_ENQ_FLUSH);
-+	TEST_ASSERT((ret == 0), "Failed to enqueue event vector %d", ret);
-+
-+	for (i = 0; i < MAX_RETRIES; i++) {
-+		ret = rte_event_dequeue_burst(evdev, 0, &ev, 1, 0);
-+		if (ret)
-+			break;
-+
-+		rte_delay_ms(1);
-+	}
-+
-+	TEST_ASSERT((ret == 1), "Failed to dequeue event vector %d", ret);
-+	TEST_ASSERT((ev.event_type == (RTE_EVENT_TYPE_CPU | RTE_EVENT_TYPE_VECTOR)), "Incorrect event type %d",
-+		    ev.event_type);
-+	TEST_ASSERT((ev.sched_type == RTE_SCHED_TYPE_PARALLEL), "Invalid sched type %d",
-+		    ev.sched_type);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static inline int
-+eventdev_setup(void)
-+{
-+	struct rte_event_queue_conf queue_conf;
-+	struct rte_event_dev_config conf;
-+	struct rte_event_dev_info info;
-+	uint32_t service_id;
-+	int ret, i;
-+
-+	ret = rte_event_dev_info_get(evdev, &info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get event dev info");
-+
-+	memset(&conf, 0, sizeof(conf));
-+	conf.nb_event_port_dequeue_depth = info.max_event_port_dequeue_depth;
-+	conf.nb_event_port_enqueue_depth = info.max_event_port_enqueue_depth;
-+	conf.nb_event_queue_flows = info.max_event_queue_flows;
-+	conf.dequeue_timeout_ns = info.min_dequeue_timeout_ns;
-+	conf.nb_events_limit = info.max_num_events;
-+	conf.nb_event_queues = info.max_event_queues;
-+	conf.nb_event_ports = 1;
-+
-+	ret = rte_event_dev_configure(evdev, &conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to configure eventdev");
-+
-+	ret = rte_event_queue_default_conf_get(evdev, 0, &queue_conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get default queue conf");
-+
-+	queue_conf.schedule_type = RTE_SCHED_TYPE_PARALLEL;
-+	for (i = 0; i < info.max_event_queues; i++) {
-+		ret = rte_event_queue_setup(evdev, i, &queue_conf);
-+		TEST_ASSERT_SUCCESS(ret, "Failed to setup queue=%d", i);
-+	}
-+
-+	/* Configure event port */
-+	ret = rte_event_port_setup(evdev, 0, NULL);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to setup port=%d", 0);
-+	ret = rte_event_port_link(evdev, 0, NULL, NULL, 0);
-+	TEST_ASSERT(ret >= 0, "Failed to link all queues port=%d", 0);
-+
-+	/* If this is a software event device, map and start its service */
-+	if (rte_event_dev_service_id_get(evdev, &service_id) == 0) {
-+		TEST_ASSERT_SUCCESS(rte_service_lcore_add(sw_slcore), "Failed to add service core");
-+		TEST_ASSERT_SUCCESS(rte_service_lcore_start(sw_slcore),
-+				    "Failed to start service core");
-+		TEST_ASSERT_SUCCESS(rte_service_map_lcore_set(service_id, sw_slcore, 1),
-+				    "Failed to map evdev service");
-+		TEST_ASSERT_SUCCESS(rte_service_runstate_set(service_id, 1),
-+				    "Failed to start evdev service");
-+	}
-+
-+	ret = rte_event_dev_start(evdev);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to start device");
-+
-+	evdev_max_queues = info.max_event_queues;
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+testsuite_setup(void)
-+{
-+	uint32_t service_id;
-+	uint32_t caps = 0;
-+
-+	rte_service_lcore_reset_all();
-+
-+	if (rte_event_dev_count() == 0) {
-+		RTE_LOG(DEBUG, EAL,
-+			"Failed to find a valid event device... "
-+			"testing with event_sw device\n");
-+		TEST_ASSERT_SUCCESS(rte_vdev_init("event_sw0", NULL), "Error creating eventdev");
-+		evdev = rte_event_dev_get_dev_id("event_sw0");
-+	}
-+
-+	rte_event_vector_adapter_caps_get(evdev, &caps);
-+
-+	if (rte_event_dev_service_id_get(evdev, &service_id) == 0)
-+		using_services = true;
-+
-+	if (using_services)
-+		sw_slcore = rte_get_next_lcore(-1, 1, 0);
-+
-+	return eventdev_setup();
-+}
-+
-+static void
-+testsuite_teardown(void)
-+{
-+	rte_event_dev_stop(evdev);
-+	rte_event_dev_close(evdev);
-+}
-+
-+static struct unit_test_suite functional_testsuite = {
-+	.suite_name = "Event vector adapter test suite",
-+	.setup = testsuite_setup,
-+	.teardown = testsuite_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(NULL, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_create),
-+		TEST_CASE_ST(NULL, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_create_multi),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_tmo),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_fallback),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_sov),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_eov),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_sov_eov),
-+		TEST_CASE_ST(test_event_vector_adapter_create, test_event_vector_adapter_free,
-+			     test_event_vector_adapter_enqueue_flush),
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
-+
-+static int
-+test_event_vector_adapter(void)
-+{
-+	return unit_test_suite_runner(&functional_testsuite);
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(event_vector_adapter_autotest, true, true, test_event_vector_adapter);
-diff --git a/lib/eventdev/eventdev_pmd.h b/lib/eventdev/eventdev_pmd.h
-index d03461316b..dda8ad82c9 100644
---- a/lib/eventdev/eventdev_pmd.h
-+++ b/lib/eventdev/eventdev_pmd.h
-@@ -87,6 +87,8 @@ extern int rte_event_logtype;
- #define RTE_EVENT_TIMER_ADAPTER_SW_CAP \
- 		RTE_EVENT_TIMER_ADAPTER_CAP_PERIODIC
- 
-+#define RTE_EVENT_VECTOR_ADAPTER_SW_CAP RTE_EVENT_VECTOR_ADAPTER_CAP_SOV_EOV
-+
- #define RTE_EVENTDEV_DETACHED  (0)
- #define RTE_EVENTDEV_ATTACHED  (1)
- 
-diff --git a/lib/eventdev/rte_event_vector_adapter.c b/lib/eventdev/rte_event_vector_adapter.c
-index ff6bc43b17..ad764e2882 100644
---- a/lib/eventdev/rte_event_vector_adapter.c
-+++ b/lib/eventdev/rte_event_vector_adapter.c
-@@ -23,6 +23,13 @@
- 
- #define MZ_NAME_MAX_LEN	    64
- #define DATA_MZ_NAME_FORMAT "vector_adapter_data_%d_%d_%d"
-+#define MAX_VECTOR_SIZE	    1024
-+#define MIN_VECTOR_SIZE	    1
-+#define MAX_VECTOR_NS	    1E9
-+#define MIN_VECTOR_NS	    1E5
-+#define SERVICE_RING_SZ	    1024
-+#define SERVICE_DEQ_SZ	    16
-+#define SERVICE_PEND_LIST   32
- 
- RTE_LOG_REGISTER_SUFFIX(ev_vector_logtype, adapter.vector, NOTICE);
- #define RTE_LOGTYPE_EVVEC ev_vector_logtype
-@@ -48,6 +55,9 @@ struct rte_event_vector_adapter *adapters[RTE_EVENT_MAX_DEVS][RTE_EVENT_MAX_QUEU
- 		}                                                                                  \
- 	} while (0)
- 
-+static const struct event_vector_adapter_ops sw_ops;
-+static const struct rte_event_vector_adapter_info sw_info;
 +
  static int
- validate_conf(const struct rte_event_vector_adapter_conf *conf,
- 	      struct rte_event_vector_adapter_info *info)
-@@ -222,6 +232,11 @@ rte_event_vector_adapter_create_ext(const struct rte_event_vector_adapter_conf *
- 		goto error;
- 	}
+ worker_wrapper(void *arg)
+ {
+@@ -199,6 +244,8 @@ worker_wrapper(void *arg)
  
-+	if (adapter->ops == NULL) {
-+		adapter->ops = &sw_ops;
-+		info = sw_info;
-+	}
+ 	/* allow compiler to optimize */
+ 	if (opt->ena_vector && opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR)
++		return perf_atq_worker_crypto_vector(arg, fwd_latency);
++	else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
+ 		return perf_atq_worker_vector(arg, fwd_latency);
+ 	else if (!burst && !fwd_latency)
+ 		return perf_atq_worker(arg, 0);
+diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
+index 627f07caa1..4709de8b07 100644
+--- a/app/test-eventdev/test_perf_common.c
++++ b/app/test-eventdev/test_perf_common.c
+@@ -102,16 +102,20 @@ perf_test_result(struct evt_test *test, struct evt_options *opt)
+ 	int i;
+ 	uint64_t total = 0;
+ 	struct test_perf *t = evt_test_priv(test);
++	uint8_t is_vec;
+ 
+ 	printf("Packet distribution across worker cores :\n");
++	is_vec = (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR);
+ 	for (i = 0; i < t->nb_workers; i++)
+-		total += t->worker[i].processed_pkts;
++		total += is_vec ? t->worker[i].processed_vecs : t->worker[i].processed_pkts;
+ 	for (i = 0; i < t->nb_workers; i++)
+-		printf("Worker %d packets: "CLGRN"%"PRIx64" "CLNRM"percentage:"
+-				CLGRN" %3.2f"CLNRM"\n", i,
+-				t->worker[i].processed_pkts,
+-				(((double)t->worker[i].processed_pkts)/total)
+-				* 100);
++		printf("Worker %d packets: " CLGRN "%" PRIx64 " " CLNRM "percentage:" CLGRN
++		       " %3.2f" CLNRM "\n",
++		       i, is_vec ? t->worker[i].processed_vecs : t->worker[i].processed_pkts,
++		       (((double)(is_vec ? t->worker[i].processed_vecs :
++					   t->worker[i].processed_pkts)) /
++			total) *
++			       100);
+ 
+ 	return t->result;
+ }
+@@ -887,6 +891,31 @@ perf_event_crypto_producer_burst(void *arg)
+ 	return 0;
+ }
+ 
++static int
++perf_event_vector_producer(struct prod_data *p)
++{
++	struct rte_event_vector_adapter *adptr = p->va.vector_adptr;
++	struct evt_options *opt = p->t->opt;
++	const struct test_perf *t = p->t;
++	uint64_t objs[BURST_SIZE];
++	uint16_t enq;
 +
- 	rc = validate_conf(conf, &info);
- 	if (rc < 0) {
- 		adapter->ops = NULL;
-@@ -347,6 +362,8 @@ rte_event_vector_adapter_lookup(uint32_t adapter_id)
- 			return NULL;
++	if (opt->verbose_level > 1)
++		printf("%s(): lcore %d vector adapter %p\n", __func__, rte_lcore_id(), adptr);
++
++	while (t->done == false) {
++		enq = rte_event_vector_adapter_enqueue(adptr, objs, BURST_SIZE, 0);
++		while (enq < BURST_SIZE) {
++			enq += rte_event_vector_adapter_enqueue(adptr, objs + enq, BURST_SIZE - enq,
++								0);
++			if (t->done)
++				break;
++			rte_pause();
++		}
++	}
++	return 0;
++}
++
+ static int
+ perf_producer_wrapper(void *arg)
+ {
+@@ -930,6 +959,8 @@ perf_producer_wrapper(void *arg)
+ 			return perf_event_crypto_producer(arg);
+ 	} else if (t->opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR)
+ 		return perf_event_dma_producer(arg);
++	else if (t->opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
++		return perf_event_vector_producer(p);
+ 
+ 	return 0;
+ }
+@@ -947,115 +978,103 @@ processed_pkts(struct test_perf *t)
+ }
+ 
+ static inline uint64_t
+-total_latency(struct test_perf *t)
++processed_vecs(struct test_perf *t)
+ {
+ 	uint8_t i;
+ 	uint64_t total = 0;
+ 
+ 	for (i = 0; i < t->nb_workers; i++)
+-		total += t->worker[i].latency;
++		total += t->worker[i].processed_vecs;
+ 
+ 	return total;
+ }
+ 
+-
+-int
+-perf_launch_lcores(struct evt_test *test, struct evt_options *opt,
+-		int (*worker)(void *))
++static inline uint64_t
++total_latency(struct test_perf *t)
+ {
+-	int ret, lcore_id;
+-	struct test_perf *t = evt_test_priv(test);
+-
+-	int port_idx = 0;
+-	/* launch workers */
+-	RTE_LCORE_FOREACH_WORKER(lcore_id) {
+-		if (!(opt->wlcores[lcore_id]))
+-			continue;
+-
+-		ret = rte_eal_remote_launch(worker,
+-				 &t->worker[port_idx], lcore_id);
+-		if (ret) {
+-			evt_err("failed to launch worker %d", lcore_id);
+-			return ret;
+-		}
+-		port_idx++;
+-	}
+-
+-	/* launch producers */
+-	RTE_LCORE_FOREACH_WORKER(lcore_id) {
+-		if (!(opt->plcores[lcore_id]))
+-			continue;
++	uint8_t i;
++	uint64_t total = 0;
+ 
+-		ret = rte_eal_remote_launch(perf_producer_wrapper,
+-				&t->prod[port_idx], lcore_id);
+-		if (ret) {
+-			evt_err("failed to launch perf_producer %d", lcore_id);
+-			return ret;
+-		}
+-		port_idx++;
+-	}
++	for (i = 0; i < t->nb_workers; i++)
++		total += t->worker[i].latency;
+ 
+-	const uint64_t total_pkts = t->outstand_pkts;
++	return total;
++}
+ 
+-	uint64_t dead_lock_cycles = rte_get_timer_cycles();
+-	int64_t dead_lock_remaining  =  total_pkts;
++static void
++check_work_status(struct test_perf *t, struct evt_options *opt)
++{
+ 	const uint64_t dead_lock_sample = rte_get_timer_hz() * 5;
+-
++	const uint64_t freq_mhz = rte_get_timer_hz() / 1000000;
++	uint64_t dead_lock_cycles = rte_get_timer_cycles();
++	const uint64_t perf_sample = rte_get_timer_hz();
+ 	uint64_t perf_cycles = rte_get_timer_cycles();
++	const uint64_t total_pkts = t->outstand_pkts;
++	int64_t dead_lock_remaining = total_pkts;
+ 	int64_t perf_remaining  = total_pkts;
+-	const uint64_t perf_sample = rte_get_timer_hz();
+-
+-	static float total_mpps;
+ 	static uint64_t samples;
++	static float total_mpps;
++	int64_t remaining;
++	uint8_t is_vec;
+ 
+-	const uint64_t freq_mhz = rte_get_timer_hz() / 1000000;
+-	int64_t remaining = t->outstand_pkts - processed_pkts(t);
++	is_vec = (t->opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR);
++	remaining = t->outstand_pkts - (is_vec ? processed_vecs(t) : processed_pkts(t));
+ 
+ 	while (t->done == false) {
+ 		const uint64_t new_cycles = rte_get_timer_cycles();
+ 
+ 		if ((new_cycles - perf_cycles) > perf_sample) {
+ 			const uint64_t latency = total_latency(t);
+-			const uint64_t pkts = processed_pkts(t);
++			const uint64_t pkts = is_vec ? processed_vecs(t) : processed_pkts(t);
++			uint64_t fallback_pkts = processed_pkts(t);
+ 
+ 			remaining = t->outstand_pkts - pkts;
+-			float mpps = (float)(perf_remaining-remaining)/1000000;
++			float mpps = (float)(perf_remaining - remaining) / 1E6;
+ 
+ 			perf_remaining = remaining;
+ 			perf_cycles = new_cycles;
+ 			total_mpps += mpps;
+ 			++samples;
++
+ 			if (opt->fwd_latency && pkts > 0) {
+-				printf(CLGRN"\r%.3f mpps avg %.3f mpps [avg fwd latency %.3f us] "CLNRM,
+-					mpps, total_mpps/samples,
+-					(float)(latency/pkts)/freq_mhz);
++				if (is_vec) {
++					printf(CLGRN
++					       "\r%.3f mvps avg %.3f mvps [avg fwd latency %.3f us] "
++					       "fallback mpps %.3f" CLNRM,
++					       mpps, total_mpps / samples,
++					       (float)(latency / pkts) / freq_mhz,
++					       fallback_pkts / 1E6);
++				} else {
++					printf(CLGRN
++					       "\r%.3f mpps avg %.3f mpps [avg fwd latency %.3f us] "
++					       CLNRM,
++					       mpps, total_mpps / samples,
++					       (float)(latency / pkts) / freq_mhz);
++				}
+ 			} else {
+-				printf(CLGRN"\r%.3f mpps avg %.3f mpps"CLNRM,
+-					mpps, total_mpps/samples);
++				if (is_vec) {
++					printf(CLGRN
++					       "\r%.3f mvps avg %.3f mvps fallback mpps %.3f" CLNRM,
++					       mpps, total_mpps / samples, fallback_pkts / 1E6);
++				} else {
++					printf(CLGRN "\r%.3f mpps avg %.3f mpps" CLNRM, mpps,
++					       total_mpps / samples);
++				}
+ 			}
+ 			fflush(stdout);
+ 
+ 			if (remaining <= 0) {
+ 				t->result = EVT_TEST_SUCCESS;
+-				if (opt->prod_type == EVT_PROD_TYPE_SYNT ||
+-				    opt->prod_type ==
+-					    EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
+-				    opt->prod_type ==
+-					    EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR ||
+-				    opt->prod_type ==
+-					    EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
++				if (opt->prod_type != EVT_PROD_TYPE_ETH_RX_ADPTR) {
+ 					t->done = true;
+ 					break;
+ 				}
+ 			}
+ 		}
+-
+ 		if (new_cycles - dead_lock_cycles > dead_lock_sample &&
+-		    (opt->prod_type == EVT_PROD_TYPE_SYNT ||
+-		     opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
+-		     opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR ||
+-		     opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR)) {
+-			remaining = t->outstand_pkts - processed_pkts(t);
++		    (opt->prod_type != EVT_PROD_TYPE_ETH_RX_ADPTR)) {
++			remaining =
++				t->outstand_pkts - (is_vec ? processed_vecs(t) : processed_pkts(t));
+ 			if (dead_lock_remaining == remaining) {
+ 				rte_event_dev_dump(opt->dev_id, stdout);
+ 				evt_err("No schedules for seconds, deadlock");
+@@ -1067,6 +1086,45 @@ perf_launch_lcores(struct evt_test *test, struct evt_options *opt,
  		}
  	}
-+	if (adapter->ops == NULL)
-+		adapter->ops = &sw_ops;
- 
- 	adapter->enqueue = adapter->ops->enqueue;
- 	adapter->adapter_id = adapter_id;
-@@ -408,6 +425,7 @@ rte_event_vector_adapter_info_get(uint8_t event_dev_id, struct rte_event_vector_
- 	if (dev->dev_ops->vector_adapter_info_get != NULL)
- 		return dev->dev_ops->vector_adapter_info_get(dev, info);
- 
-+	*info = sw_info;
+ 	printf("\n");
++}
++
++int
++perf_launch_lcores(struct evt_test *test, struct evt_options *opt, int (*worker)(void *))
++{
++	int ret, lcore_id;
++	struct test_perf *t = evt_test_priv(test);
++
++	int port_idx = 0;
++	/* launch workers */
++	RTE_LCORE_FOREACH_WORKER(lcore_id)
++	{
++		if (!(opt->wlcores[lcore_id]))
++			continue;
++
++		ret = rte_eal_remote_launch(worker, &t->worker[port_idx], lcore_id);
++		if (ret) {
++			evt_err("failed to launch worker %d", lcore_id);
++			return ret;
++		}
++		port_idx++;
++	}
++
++	/* launch producers */
++	RTE_LCORE_FOREACH_WORKER(lcore_id)
++	{
++		if (!(opt->plcores[lcore_id]))
++			continue;
++
++		ret = rte_eal_remote_launch(perf_producer_wrapper, &t->prod[port_idx], lcore_id);
++		if (ret) {
++			evt_err("failed to launch perf_producer %d", lcore_id);
++			return ret;
++		}
++		port_idx++;
++	}
++
++	check_work_status(t, opt);
++
  	return 0;
  }
  
-@@ -470,3 +488,377 @@ rte_event_vector_adapter_stats_reset(struct rte_event_vector_adapter *adapter)
+@@ -1564,6 +1622,70 @@ perf_event_dev_port_setup(struct evt_test *test, struct evt_options *opt,
  
- 	return 0;
- }
+ 			prod++;
+ 		}
++	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
++		struct rte_event_vector_adapter_conf conf;
++		struct rte_event_vector_adapter_info info;
 +
-+/* Software vector adapter implementation. */
++		ret = rte_event_vector_adapter_info_get(opt->dev_id, &info);
 +
-+struct sw_vector_adapter_service_data;
-+struct sw_vector_adapter_data {
-+	uint8_t dev_id;
-+	uint8_t port_id;
-+	uint16_t vector_sz;
-+	uint64_t timestamp;
-+	uint64_t event_meta;
-+	uint64_t vector_tmo_ticks;
-+	uint64_t fallback_event_meta;
-+	struct rte_mempool *vector_mp;
-+	struct rte_event_vector *vector;
-+	rte_spinlock_t lock;
-+	struct rte_event_vector_adapter *adapter;
-+	struct rte_event_vector_adapter_stats stats;
-+	struct sw_vector_adapter_service_data *service_data;
-+	RTE_TAILQ_ENTRY(sw_vector_adapter_data) next;
-+};
-+
-+struct sw_vector_adapter_service_data {
-+	uint8_t pend_list;
-+	uint32_t service_id;
-+	struct rte_ring *ring;
-+	struct sw_vector_adapter_data *pend[SERVICE_PEND_LIST];
-+};
-+
-+static inline struct sw_vector_adapter_data *
-+sw_vector_adapter_priv(const struct rte_event_vector_adapter *adapter)
-+{
-+	return adapter->data->adapter_priv;
-+}
-+
-+static int
-+sw_vector_adapter_flush(struct sw_vector_adapter_data *sw)
-+{
-+	struct rte_event ev;
-+
-+	if (sw->vector == NULL)
-+		return -ENOBUFS;
-+
-+	ev.event = sw->event_meta;
-+	ev.vec = sw->vector;
-+	if (rte_event_enqueue_burst(sw->dev_id, sw->port_id, &ev, 1) != 1)
-+		return -ENOSPC;
-+
-+	sw->vector = NULL;
-+	sw->timestamp = 0;
-+	return 0;
-+}
-+
-+static void
-+sw_vector_adapter_process_pend_list(struct sw_vector_adapter_service_data *service_data)
-+{
-+	struct sw_vector_adapter_data *sw;
-+	int i;
-+
-+	if (service_data->pend_list == 0)
-+		return;
-+	for (i = 0; i < SERVICE_PEND_LIST; i++) {
-+		if (service_data->pend_list == 0)
-+			break;
-+		if (service_data->pend[i] == NULL)
-+			continue;
-+
-+		sw = service_data->pend[i];
-+		if (sw->vector == NULL) {
-+			service_data->pend[i] = NULL;
-+			service_data->pend_list--;
-+			continue;
++		if (opt->vector_size < info.min_vector_sz ||
++		    opt->vector_size > info.max_vector_sz) {
++			evt_err("Vector size [%d] not within limits max[%d] min[%d]",
++				opt->vector_size, info.max_vector_sz, info.min_vector_sz);
++			return -EINVAL;
 +		}
 +
-+		rte_spinlock_lock(&sw->lock);
-+		if (rte_get_tsc_cycles() - sw->timestamp >= sw->vector_tmo_ticks) {
-+			if (sw_vector_adapter_flush(sw) != -ENOSPC) {
-+				service_data->pend[i] = NULL;
-+				service_data->pend_list--;
++		if (opt->vector_tmo_nsec > info.max_vector_timeout_ns ||
++		    opt->vector_tmo_nsec < info.min_vector_timeout_ns) {
++			evt_err("Vector timeout [%" PRIu64 "] not within limits "
++				"max[%" PRIu64 "] min[%" PRIu64 "]",
++				opt->vector_tmo_nsec, info.max_vector_timeout_ns,
++				info.min_vector_timeout_ns);
++			return -EINVAL;
++		}
++
++		memset(&conf, 0, sizeof(struct rte_event_vector_adapter_conf));
++		conf.event_dev_id = opt->dev_id;
++		conf.vector_sz = opt->vector_size;
++		conf.vector_timeout_ns = opt->vector_tmo_nsec;
++		conf.socket_id = opt->socket_id;
++		conf.vector_mp = t->pool;
++
++		conf.ev.sched_type = opt->sched_type_list[0];
++		conf.ev.event_type = RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU;
++
++		conf.ev_fallback.event_type = RTE_EVENT_TYPE_CPU;
++
++		prod = 0;
++		for (; port < perf_nb_event_ports(opt); port++) {
++			struct rte_event_vector_adapter *vector_adptr;
++			struct prod_data *p = &t->prod[port];
++			uint32_t service_id;
++
++			p->queue_id = prod * stride;
++			p->t = t;
++
++			conf.ev.queue_id = p->queue_id;
++
++			vector_adptr = rte_event_vector_adapter_create(&conf);
++			if (vector_adptr == NULL) {
++				evt_err("Failed to create vector adapter for port %d", port);
++				return -ENOMEM;
 +			}
-+		}
-+		rte_spinlock_unlock(&sw->lock);
-+	}
-+}
++			p->va.vector_adptr = vector_adptr;
++			prod++;
 +
-+static void
-+sw_vector_adapter_add_to_pend_list(struct sw_vector_adapter_service_data *service_data,
-+				   struct sw_vector_adapter_data *sw)
-+{
-+	int i, pos = SERVICE_PEND_LIST;
-+
-+	if (service_data->pend_list >= SERVICE_PEND_LIST) {
-+		EVVEC_LOG_ERR("pend list is full");
-+		return;
-+	}
-+	for (i = 0; i < SERVICE_PEND_LIST; i++) {
-+		if (service_data->pend[i] == sw)
-+			return;
-+		if (service_data->pend[i] == NULL)
-+			pos = i;
-+	}
-+	if (pos == SERVICE_PEND_LIST)
-+		return;
-+	service_data->pend[pos] = sw;
-+	service_data->pend_list++;
-+}
-+
-+static int
-+sw_vector_adapter_service_func(void *arg)
-+{
-+	struct sw_vector_adapter_service_data *service_data = arg;
-+	struct sw_vector_adapter_data *sw[SERVICE_DEQ_SZ];
-+	int n, i;
-+
-+	sw_vector_adapter_process_pend_list(service_data);
-+	/* Dequeue the adapter list and flush the vectors */
-+	n = rte_ring_dequeue_burst(service_data->ring, (void **)&sw, SERVICE_DEQ_SZ, NULL);
-+	for (i = 0; i < n; i++) {
-+
-+		if (sw[i]->vector == NULL)
-+			continue;
-+
-+		if (rte_get_tsc_cycles() - sw[i]->timestamp < sw[i]->vector_tmo_ticks) {
-+			sw_vector_adapter_add_to_pend_list(service_data, sw[i]);
-+		} else {
-+			if (!rte_spinlock_trylock(&sw[i]->lock)) {
-+				sw_vector_adapter_add_to_pend_list(service_data, sw[i]);
-+				continue;
-+			}
-+			if (sw_vector_adapter_flush(sw[i]) == -ENOSPC)
-+				sw_vector_adapter_add_to_pend_list(service_data, sw[i]);
-+			else
-+				sw[i]->stats.vectors_timedout++;
-+			rte_spinlock_unlock(&sw[i]->lock);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+sw_vector_adapter_service_init(struct sw_vector_adapter_data *sw)
-+{
-+#define SW_VECTOR_ADAPTER_SERVICE_FMT "sw_vector_adapter_service"
-+	struct sw_vector_adapter_service_data *service_data;
-+	struct rte_service_spec service;
-+	const struct rte_memzone *mz;
-+	struct rte_ring *ring;
-+	int ret;
-+
-+	mz = rte_memzone_lookup(SW_VECTOR_ADAPTER_SERVICE_FMT);
-+	if (mz == NULL) {
-+		mz = rte_memzone_reserve(SW_VECTOR_ADAPTER_SERVICE_FMT,
-+					 sizeof(struct sw_vector_adapter_service_data),
-+					 sw->adapter->data->socket_id, 0);
-+		if (mz == NULL) {
-+			EVVEC_LOG_DBG("failed to reserve memzone for service");
-+			return -ENOMEM;
-+		}
-+		service_data = (struct sw_vector_adapter_service_data *)mz->addr;
-+		memset(service_data, 0, sizeof(*service_data));
-+
-+		ring = rte_ring_create(SW_VECTOR_ADAPTER_SERVICE_FMT, SERVICE_RING_SZ,
-+				       sw->adapter->data->socket_id, 0);
-+		if (ring == NULL) {
-+			EVVEC_LOG_ERR("failed to create ring for service");
-+			rte_memzone_free(mz);
-+			return -ENOMEM;
-+		}
-+		service_data->ring = ring;
-+
-+		memset(&service, 0, sizeof(service));
-+		snprintf(service.name, RTE_SERVICE_NAME_MAX, "%s", SW_VECTOR_ADAPTER_SERVICE_FMT);
-+		service.callback = sw_vector_adapter_service_func;
-+		service.callback_userdata = service_data;
-+		service.socket_id = sw->adapter->data->socket_id;
-+
-+		ret = rte_service_component_register(&service, &service_data->service_id);
-+		if (ret < 0) {
-+			EVVEC_LOG_ERR("failed to register service %s with id %" PRIu32 ": err = %d",
-+				      service.name, service_data->service_id, ret);
-+			return -ENOTSUP;
-+		}
-+		ret = rte_service_component_runstate_set(service_data->service_id, 1);
-+		if (ret < 0) {
-+			EVVEC_LOG_ERR("failed to set service runstate with id %" PRIu32
-+				      ": err = %d",
-+				      service_data->service_id, ret);
-+			return -ENOTSUP;
-+		}
-+	}
-+	service_data = (struct sw_vector_adapter_service_data *)mz->addr;
-+
-+	sw->service_data = service_data;
-+	sw->adapter->data->unified_service_id = service_data->service_id;
-+	sw->adapter->data->service_inited = 1;
-+	return 0;
-+}
-+
-+static int
-+sw_vector_adapter_create(struct rte_event_vector_adapter *adapter)
-+{
-+#define NSEC2TICK(__ns, __freq) (((__ns) * (__freq)) / 1E9)
-+#define SW_VECTOR_ADAPTER_NAME	64
-+	char name[SW_VECTOR_ADAPTER_NAME];
-+	struct sw_vector_adapter_data *sw;
-+	struct rte_event ev;
-+
-+	snprintf(name, SW_VECTOR_ADAPTER_NAME, "sw_vector_%" PRIx32, adapter->data->id);
-+	sw = rte_zmalloc_socket(name, sizeof(*sw), RTE_CACHE_LINE_SIZE, adapter->data->socket_id);
-+	if (sw == NULL) {
-+		EVVEC_LOG_ERR("failed to allocate space for private data");
-+		rte_errno = ENOMEM;
-+		return -1;
-+	}
-+
-+	/* Connect storage to adapter instance */
-+	adapter->data->adapter_priv = sw;
-+	sw->adapter = adapter;
-+	sw->dev_id = adapter->data->event_dev_id;
-+	sw->port_id = adapter->data->event_port_id;
-+
-+	sw->vector_sz = adapter->data->conf.vector_sz;
-+	sw->vector_mp = adapter->data->conf.vector_mp;
-+	sw->vector_tmo_ticks = NSEC2TICK(adapter->data->conf.vector_timeout_ns, rte_get_timer_hz());
-+
-+	ev = adapter->data->conf.ev;
-+	ev.op = RTE_EVENT_OP_NEW;
-+	sw->event_meta = ev.event;
-+
-+	ev = adapter->data->conf.ev_fallback;
-+	ev.op = RTE_EVENT_OP_NEW;
-+	ev.priority = adapter->data->conf.ev.priority;
-+	ev.queue_id = adapter->data->conf.ev.queue_id;
-+	ev.sched_type = adapter->data->conf.ev.sched_type;
-+	sw->fallback_event_meta = ev.event;
-+
-+	rte_spinlock_init(&sw->lock);
-+	sw_vector_adapter_service_init(sw);
-+
-+	return 0;
-+}
-+
-+static int
-+sw_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
-+{
-+	struct sw_vector_adapter_data *sw = sw_vector_adapter_priv(adapter);
-+
-+	rte_free(sw);
-+	adapter->data->adapter_priv = NULL;
-+
-+	return 0;
-+}
-+
-+static int
-+sw_vector_adapter_flush_single_event(struct sw_vector_adapter_data *sw, uint64_t obj)
-+{
-+	struct rte_event ev;
-+
-+	ev.event = sw->fallback_event_meta;
-+	ev.u64 = obj;
-+	if (rte_event_enqueue_burst(sw->dev_id, sw->port_id, &ev, 1) != 1)
-+		return -ENOSPC;
-+
-+	return 0;
-+}
-+
-+static int
-+sw_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
-+			  uint16_t num_elem, uint64_t flags)
-+{
-+	struct sw_vector_adapter_data *sw = sw_vector_adapter_priv(adapter);
-+	uint16_t cnt = num_elem, n;
-+	int ret;
-+
-+	rte_spinlock_lock(&sw->lock);
-+	if (flags & RTE_EVENT_VECTOR_ENQ_FLUSH) {
-+		sw_vector_adapter_flush(sw);
-+		sw->stats.vectors_flushed++;
-+		rte_spinlock_unlock(&sw->lock);
-+		return 0;
-+	}
-+
-+	if (num_elem == 0) {
-+		rte_spinlock_unlock(&sw->lock);
-+		return 0;
-+	}
-+
-+	if (flags & RTE_EVENT_VECTOR_ENQ_SOV && sw->vector != NULL) {
-+		while (sw_vector_adapter_flush(sw) != 0)
-+			;
-+		sw->stats.vectors_flushed++;
-+	}
-+
-+	while (num_elem) {
-+		if (sw->vector == NULL) {
-+			ret = rte_mempool_get(sw->vector_mp, (void **)&sw->vector);
-+			if (ret) {
-+				if (sw_vector_adapter_flush_single_event(sw, *objs) == 0) {
-+					sw->stats.alloc_failures++;
-+					num_elem--;
-+					objs++;
-+					continue;
++			if (rte_event_vector_adapter_service_id_get(vector_adptr, &service_id) ==
++			    0) {
++				ret = evt_service_setup(service_id);
++				if (ret) {
++					evt_err("Failed to setup service core"
++						" for vector adapter\n");
++					return ret;
 +				}
-+				rte_errno = -ENOSPC;
-+				goto done;
++				rte_service_runstate_set(service_id, 1);
 +			}
-+			sw->vector->nb_elem = 0;
-+			sw->vector->attr_valid = 0;
-+			sw->vector->elem_offset = 0;
 +		}
-+		n = RTE_MIN(sw->vector_sz - sw->vector->nb_elem, num_elem);
-+		memcpy(&sw->vector->u64s[sw->vector->nb_elem], objs, n * sizeof(uint64_t));
-+		sw->vector->nb_elem += n;
-+		num_elem -= n;
-+		objs += n;
+ 	} else {
+ 		prod = 0;
+ 		for ( ; port < perf_nb_event_ports(opt); port++) {
+@@ -1728,6 +1850,20 @@ perf_eventdev_destroy(struct evt_test *test, struct evt_options *opt)
+ 		for (i = 0; i < opt->nb_timer_adptrs; i++)
+ 			rte_event_timer_adapter_stop(t->timer_adptr[i]);
+ 	}
 +
-+		if (sw->vector_sz == sw->vector->nb_elem) {
-+			ret = sw_vector_adapter_flush(sw);
-+			if (ret)
-+				goto done;
-+			sw->stats.vectorized++;
++	if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
++		for (i = 0; i < evt_nr_active_lcores(opt->plcores); i++) {
++			struct prod_data *p = &t->prod[i];
++			uint32_t service_id;
++
++			if (p->va.vector_adptr) {
++				if (rte_event_vector_adapter_service_id_get(p->va.vector_adptr,
++									    &service_id) == 0)
++					rte_service_runstate_set(service_id, 0);
++				rte_event_vector_adapter_destroy(p->va.vector_adptr);
++			}
 +		}
 +	}
+ 	rte_event_dev_stop(opt->dev_id);
+ 	rte_event_dev_close(opt->dev_id);
+ }
+@@ -2119,6 +2255,9 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
+ 					     cache_sz,		       /* cache size*/
+ 					     0, NULL, NULL, NULL,      /* obj constructor */
+ 					     NULL, opt->socket_id, 0); /* flags */
++	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
++		t->pool = rte_event_vector_pool_create(test->name, opt->pool_sz, cache_sz,
++						       opt->vector_size, opt->socket_id);
+ 	} else {
+ 		t->pool = rte_pktmbuf_pool_create(test->name, /* mempool name */
+ 				opt->pool_sz, /* number of elements*/
+diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
+index d7333ad390..99df008cc7 100644
+--- a/app/test-eventdev/test_perf_common.h
++++ b/app/test-eventdev/test_perf_common.h
+@@ -16,6 +16,7 @@
+ #include <rte_event_eth_rx_adapter.h>
+ #include <rte_event_eth_tx_adapter.h>
+ #include <rte_event_timer_adapter.h>
++#include <rte_event_vector_adapter.h>
+ #include <rte_eventdev.h>
+ #include <rte_lcore.h>
+ #include <rte_malloc.h>
+@@ -33,6 +34,7 @@ struct test_perf;
+ 
+ struct __rte_cache_aligned worker_data {
+ 	uint64_t processed_pkts;
++	uint64_t processed_vecs;
+ 	uint64_t latency;
+ 	uint8_t dev_id;
+ 	uint8_t port_id;
+@@ -50,12 +52,17 @@ struct dma_adptr_data {
+ 	uint16_t vchan_id;
+ };
+ 
++struct vector_adptr_data {
++	struct rte_event_vector_adapter *vector_adptr;
++};
 +
-+	if (flags & RTE_EVENT_VECTOR_ENQ_EOV && sw->vector != NULL) {
-+		while (sw_vector_adapter_flush(sw) != 0)
-+			;
-+		sw->stats.vectors_flushed++;
-+	}
-+
-+	if (sw->vector != NULL && sw->vector->nb_elem) {
-+		sw->timestamp = rte_get_timer_cycles();
-+		rte_ring_enqueue(sw->service_data->ring, sw);
-+	}
-+
-+done:
-+	rte_spinlock_unlock(&sw->lock);
-+	return cnt - num_elem;
-+}
-+
+ struct __rte_cache_aligned prod_data {
+ 	uint8_t dev_id;
+ 	uint8_t port_id;
+ 	uint8_t queue_id;
+ 	struct crypto_adptr_data ca;
+ 	struct dma_adptr_data da;
++	struct vector_adptr_data va;
+ 	struct test_perf *t;
+ };
+ 
+@@ -320,9 +327,9 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
+ }
+ 
+ static __rte_always_inline void
+-perf_process_vector_last_stage(struct rte_mempool *const pool,
+-		struct rte_mempool *const ca_pool, struct rte_event *const ev,
+-		struct worker_data *const w, const bool enable_fwd_latency)
++perf_process_crypto_vector_last_stage(struct rte_mempool *const pool,
++				      struct rte_mempool *const ca_pool, struct rte_event *const ev,
++				      struct worker_data *const w, const bool enable_fwd_latency)
+ {
+ 	struct rte_event_vector *vec = ev->vec;
+ 	struct rte_crypto_op *cop;
+diff --git a/app/test-eventdev/test_perf_queue.c b/app/test-eventdev/test_perf_queue.c
+index 58715a2537..36fe94e190 100644
+--- a/app/test-eventdev/test_perf_queue.c
++++ b/app/test-eventdev/test_perf_queue.c
+@@ -147,7 +147,7 @@ perf_queue_worker_burst(void *arg, const int enable_fwd_latency)
+ }
+ 
+ static int
+-perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
++perf_queue_worker_crypto_vector(void *arg, const int enable_fwd_latency)
+ {
+ 	uint16_t enq = 0, deq = 0;
+ 	struct rte_event ev;
+@@ -163,10 +163,8 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
+ 		if (!deq)
+ 			continue;
+ 
+-		if (ev.event_type == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
+-			if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
+-				continue;
+-		}
++		if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
++			continue;
+ 
+ 		stage = ev.queue_id % nb_stages;
+ 		/* First q in pipeline, mark timestamp to compute fwd latency */
+@@ -175,8 +173,8 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
+ 
+ 		/* Last stage in pipeline */
+ 		if (unlikely(stage == laststage)) {
+-			perf_process_vector_last_stage(pool, t->ca_op_pool, &ev, w,
+-						       enable_fwd_latency);
++			perf_process_crypto_vector_last_stage(pool, t->ca_op_pool, &ev, w,
++							      enable_fwd_latency);
+ 		} else {
+ 			fwd_event_vector(&ev, sched_type_list, nb_stages);
+ 			do {
+@@ -190,6 +188,52 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
+ 	return 0;
+ }
+ 
 +static int
-+sw_vector_adapter_stats_get(const struct rte_event_vector_adapter *adapter,
-+			    struct rte_event_vector_adapter_stats *stats)
++perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
 +{
-+	struct sw_vector_adapter_data *sw = sw_vector_adapter_priv(adapter);
++	uint16_t enq = 0, deq = 0;
++	struct rte_event ev;
++	PERF_WORKER_INIT;
 +
-+	*stats = sw->stats;
++	RTE_SET_USED(pe);
++	RTE_SET_USED(sz);
++	RTE_SET_USED(cnt);
++	RTE_SET_USED(prod_type);
++	RTE_SET_USED(prod_timer_type);
++
++	while (t->done == false) {
++		deq = rte_event_dequeue_burst(dev, port, &ev, 1, 0);
++		if (!deq)
++			continue;
++
++		if (ev.event_type != RTE_EVENT_TYPE_CPU_VECTOR) {
++			w->processed_pkts++;
++			continue;
++		}
++
++		stage = ev.sub_event_type % nb_stages;
++		if (enable_fwd_latency && stage == 0)
++			/* first stage in pipeline, mark ts to compute fwd latency */
++			ev.vec->u64s[0] = rte_get_timer_cycles();
++
++		/* Last stage in pipeline */
++		if (unlikely(stage == laststage)) {
++			w->processed_vecs++;
++			if (enable_fwd_latency)
++				w->latency += rte_get_timer_cycles() - ev.vec->u64s[0];
++			rte_mempool_put(pool, ev.event_ptr);
++		} else {
++			fwd_event_vector(&ev, sched_type_list, nb_stages);
++			do {
++				enq = rte_event_enqueue_burst(dev, port, &ev, 1);
++			} while (!enq && !t->done);
++		}
++	}
++	perf_worker_cleanup(pool, dev, port, &ev, enq, deq);
++
 +	return 0;
 +}
 +
-+static int
-+sw_vector_adapter_stats_reset(const struct rte_event_vector_adapter *adapter)
-+{
-+	struct sw_vector_adapter_data *sw = sw_vector_adapter_priv(adapter);
-+
-+	memset(&sw->stats, 0, sizeof(sw->stats));
-+	return 0;
-+}
-+
-+static const struct event_vector_adapter_ops sw_ops = {
-+	.create = sw_vector_adapter_create,
-+	.destroy = sw_vector_adapter_destroy,
-+	.enqueue = sw_vector_adapter_enqueue,
-+	.stats_get = sw_vector_adapter_stats_get,
-+	.stats_reset = sw_vector_adapter_stats_reset,
-+};
-+
-+static const struct rte_event_vector_adapter_info sw_info = {
-+	.min_vector_sz = MIN_VECTOR_SIZE,
-+	.max_vector_sz = MAX_VECTOR_SIZE,
-+	.min_vector_timeout_ns = MIN_VECTOR_NS,
-+	.max_vector_timeout_ns = MAX_VECTOR_NS,
-+	.log2_sz = 0,
-+};
-diff --git a/lib/eventdev/rte_eventdev.c b/lib/eventdev/rte_eventdev.c
-index 916bad6c2c..b921142d7b 100644
---- a/lib/eventdev/rte_eventdev.c
-+++ b/lib/eventdev/rte_eventdev.c
-@@ -272,6 +272,8 @@ rte_event_vector_adapter_caps_get(uint8_t dev_id, uint32_t *caps)
- 		return -EINVAL;
+ static int
+ worker_wrapper(void *arg)
+ {
+@@ -201,6 +245,8 @@ worker_wrapper(void *arg)
  
- 	if (dev->dev_ops->vector_adapter_caps_get == NULL)
-+		*caps = RTE_EVENT_VECTOR_ADAPTER_SW_CAP;
-+	else
- 		*caps = 0;
+ 	/* allow compiler to optimize */
+ 	if (opt->ena_vector && opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR)
++		return perf_queue_worker_crypto_vector(arg, fwd_latency);
++	else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
+ 		return perf_queue_worker_vector(arg, fwd_latency);
+ 	else if (!burst && !fwd_latency)
+ 		return perf_queue_worker(arg, 0);
+@@ -234,8 +280,10 @@ perf_queue_eventdev_setup(struct evt_test *test, struct evt_options *opt)
  
- 	return dev->dev_ops->vector_adapter_caps_get ?
+ 	nb_ports = evt_nr_active_lcores(opt->wlcores);
+ 	nb_ports += opt->prod_type == EVT_PROD_TYPE_ETH_RX_ADPTR ||
+-		opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ? 0 :
+-		evt_nr_active_lcores(opt->plcores);
++				    opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
++				    opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR ?
++			    0 :
++			    evt_nr_active_lcores(opt->plcores);
+ 
+ 	nb_queues = perf_queue_nb_event_queues(opt);
+ 
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index e6e84eeec6..a17ab13a00 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -61,6 +61,11 @@ New Features
+     model by introducing APIs that allow applications to offload creation of
+     event vectors.
+ 
++* **Added vector adapter producer mode in eventdev test.**
++
++  Added vector adapter producer mode to measure performance of event vector
++  adapter.
++
+ 
+ Removed Items
+ -------------
+diff --git a/doc/guides/tools/testeventdev.rst b/doc/guides/tools/testeventdev.rst
+index 58f373b867..c4e1047fbb 100644
+--- a/doc/guides/tools/testeventdev.rst
++++ b/doc/guides/tools/testeventdev.rst
+@@ -130,6 +130,10 @@ The following are the application command-line options:
+ 
+         Use DMA device as producer.
+ 
++* ``--prod_type_vector``
++
++        Use event vector adapter as producer.
++
+ * ``--timer_tick_nsec``
+ 
+        Used to dictate number of nano seconds between bucket traversal of the
+@@ -635,6 +639,7 @@ Supported application command line options are following::
+         --prod_type_timerdev
+         --prod_type_cryptodev
+         --prod_type_dmadev
++        --prod_type_vector
+         --prod_enq_burst_sz
+         --timer_tick_nsec
+         --max_tmo_nsec
+@@ -756,6 +761,7 @@ Supported application command line options are following::
+         --prod_type_timerdev
+         --prod_type_cryptodev
+         --prod_type_dmadev
++        --prod_type_vector
+         --timer_tick_nsec
+         --max_tmo_nsec
+         --expiry_nsec
 -- 
 2.43.0
 
