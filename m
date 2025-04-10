@@ -2,58 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 218CFC3601E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 12:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267FAC3601E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Apr 2025 14:41:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 933E340684;
-	Thu, 10 Apr 2025 14:29:02 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 7BD9540666
- for <dev@dpdk.org>; Thu, 10 Apr 2025 14:29:01 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-306b78ae2d1so694875a91.3
- for <dev@dpdk.org>; Thu, 10 Apr 2025 05:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1744288140; x=1744892940; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=ynvSHrhiRzlcA+M+J4qLXHtHHcRoMOs541ykS5G9rR8=;
- b=I6yBGXNDZncirYXWDXznKRE7tm2eOrbAnx5L20ROVuBGizPfuQW1U4YcI/r34Q3nia
- pOBq8g6/xlXPa1ikvhxtxdKEXu1SKGiVmNK64YVl3k6DfCqlAvUSSIbPn4MMsWxKsHo6
- rVEGqp98cwy+WQW5L1HVNVYgqarHdFn9oZ6kw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744288140; x=1744892940;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ynvSHrhiRzlcA+M+J4qLXHtHHcRoMOs541ykS5G9rR8=;
- b=aKNPlKh1ecq732Kjufbs72/NIQ7jtBHajLYDO6owvsImOWI5ytqBOgzsPWXYtYEDLR
- 5Zq/Wytj4XBI8kGW46Br7qTCsUIr5ddsXY410CUaOS9trl/8GSLJbxXJ5q5Y+bSWgGWy
- 4THZUG98iUaxtlq2ywAULabRgkEr3+ooWt3Xev07hDeP4B2grNIuExYH8G84pwlNoOsP
- CCHOIL2/tr5C7ss5CJnqSlDjsq4ynq6/bKiVXJxu+4CHNh6L3OTmV9wK7LnvaPmp6CNY
- mPhcxkcpxwHH5rzls6pc6iU8pLVqnNqzNe79V5ASK87FWpgAB+d00TMdHz+jSIMARyKk
- v0Ig==
-X-Gm-Message-State: AOJu0YywA4KiihFKctyrOAZMSlilypU9pizfNCRnYRrsXpQ0AghmoMad
- dBp3NSPE0Rt4Pj28vARnC03GoREpzscmDxRGcsYtc/7MxVyPjIEUV83RroQTXiWys9trxpX5o6Y
- 1a5DGqyve5CFTN7T0KPUl7CjDqgtJKyyau9MA3w==
-X-Gm-Gg: ASbGncuJklKxs6AUCWMVceqaJ9nwjrzrIVHORahKfqM1+cdb0U5XZ17sYiA7skx+LNb
- CPyIx+U8sQajTG2U56w2mYgZW/+UjLDCJZAzf0ReqCef443lsD11AQaBj4TTQHN31+jPuv2/iEw
- cWlM0pUICmmT8GzWXn6wllaTGfloGqiJBAmbTrkOeN330BCHFCd7/X1oM=
-X-Google-Smtp-Source: AGHT+IGzViJwRT8X6/VVXQqF3vYSzW+E9V9QQnl9oRebeRwyFuB1fTyZ9wAUz79TuMqE9w5h5EeSb8Znvoz6Ntz8lDA=
-X-Received: by 2002:a17:90b:2e42:b0:2f9:d9fe:e72e with SMTP id
- 98e67ed59e1d1-30718b8444dmr4556247a91.16.1744288140221; Thu, 10 Apr 2025
- 05:29:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F18C340666;
+	Thu, 10 Apr 2025 16:41:10 +0200 (CEST)
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam11on2047.outbound.protection.outlook.com [40.107.236.47])
+ by mails.dpdk.org (Postfix) with ESMTP id 52206402ED;
+ Thu, 10 Apr 2025 16:41:09 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NorxiTkBQY18hf/cJkyH8xHXk2I2TpYcHZis2qaqcIDv+F7qFvoYTlo2xAnJAeZKF4GoTGw8SUlGZkiDvGknHjp/z/IuPCTgRcBFwb9kGocYShVkKslP/lKtVu7BQURgCTZ7RRprgWkdJepRbQtzjc2KvoSudZB8OdR2VpEkGBI1kG6LFUt3EVIKNt9dOkxKxmPd70B6BUme1V6O6JcCV+dMeJJlbVybo9lEU9wzN7RlyTIc6TfIV/pwaohhMK6ZOniKOrKaT79AvezhDThVmRwsMd+SSMQZlXJcge2Tqd+xJLjLtbmRu9B2U1DdtOSlO+Us9GAkXdIgxke/b7k3BA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uh36Tmlkc8FyssYGTHxfa9LlkUHrUJuZtezWVZ1oTks=;
+ b=imPR7KMS6tvP3G4/OcuuOGsLf7x++wMX8ivdJgesSV4QNaKQQ8Fd8MiJNMK7K0Ho9DAdSOYViSjX7VmEiIJZw6rgMPNY8iK2+dpTm/3YlgkoB6A/0QUk6ePDMuFNPwVt80b06unBCM7lzkZBWi8pdd+P+rEAp2a6R2eJdJ0k1QzXwHPFCCyfee+cmBMePKwjpnM1JPbBZGYQyAeeO6MdU4kGfVeq8iYMcdYi+1DLWL7MfSLMgbZze7ztRoKDYhIR9t6KCziZ3UtJVNSnhukzmP71LeHf9XeUBGNH8QjiWeKpMUchl/UT55Q3NM4t7wsE0ny28512LZSVg2n4sfq6PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uh36Tmlkc8FyssYGTHxfa9LlkUHrUJuZtezWVZ1oTks=;
+ b=BJjYg0ybypzhviP7kkeX5H64vAhLxhskUGyfQKdxbgPKBnEknC+TWoHm8Sed6qY4NWhI0us/XvabyveKcjyeWAnuiRcbWtKzGjEFPs8S6q2rho/zI7V4VGuocktKGhCkV/zVrvSBge2if1KUYXp5whKIMud4FT0UP88RfIp3prJAGWsYcChhV0jTXPxP/O7hvDe3szx86izIkLW8Z6iaIT16+xy/Q9Cc8AnooZDR1LPDnHbtMX0glYGKFFWFgI2YdqHjBc1ofVhCQj1a4W6hW9+3A4mTV8LMjJpuE4CAPv0QkY80j7HERyD6LI2g0KRy1ql0UdimE/b6tZ0fMsz3oA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB9173.namprd12.prod.outlook.com (2603:10b6:510:2ee::9)
+ by MW4PR12MB6976.namprd12.prod.outlook.com (2603:10b6:303:20a::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Thu, 10 Apr
+ 2025 14:41:05 +0000
+Received: from PH7PR12MB9173.namprd12.prod.outlook.com
+ ([fe80::f397:98d7:65a7:3286]) by PH7PR12MB9173.namprd12.prod.outlook.com
+ ([fe80::f397:98d7:65a7:3286%4]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
+ 14:41:05 +0000
+Message-ID: <bcf9bb55-af24-4191-afb6-6ac01a2c89b3@nvidia.com>
+Date: Thu, 10 Apr 2025 17:40:54 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: 24.11.2 patches review and test
+To: Kevin Traynor <ktraynor@redhat.com>, stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Luca Boccassi <bluca@debian.org>,
+ Pei Zhang <pezhang@redhat.com>, Raslan Darawsheh <rasland@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>, yanghliu@redhat.com
+References: <20250328101435.250876-1-ktraynor@redhat.com>
+Content-Language: en-US
+From: Ali Alnubani <alialnu@nvidia.com>
+In-Reply-To: <20250328101435.250876-1-ktraynor@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0269.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e8::16) To PH7PR12MB9173.namprd12.prod.outlook.com
+ (2603:10b6:510:2ee::9)
 MIME-Version: 1.0
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 10 Apr 2025 08:24:50 -0400
-X-Gm-Features: ATxdqUEbTbBKU2y9FVrmVkWOmoe1BlnKmJD4p4sZ-2gxzX14XPbtXDE_obSOubY
-Message-ID: <CAJvnSUCB4wicXzKsgewF70dgaoE=AoFpCbzzPr0nABwYLvgU1g@mail.gmail.com>
-Subject: DTS 25.07 Roadmap
-To: Paul Szczepanek <Paul.Szczepanek@arm.com>
-Cc: dev <dev@dpdk.org>, ci@dpdk.org, Luca Vizzarro <Luca.Vizzarro@arm.com>, 
- Nicholas Pratte <npratte@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>, 
- Thomas Wilks <thomas.wilks@arm.com>, 
- "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
-Content-Type: multipart/alternative; boundary="000000000000fc01b606326bba8b"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB9173:EE_|MW4PR12MB6976:EE_
+X-MS-Office365-Filtering-Correlation-Id: 938ba5d3-c0c3-487c-5053-08dd783db8fb
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SnBlN3U4ODloZFVZSTB1dmx6SnU2K0ZWTnhGTElSTk5XWE1GUlh0ZUZZQkxr?=
+ =?utf-8?B?UENjclRoRDZJT2V6d3g4NVEzeURRNzVzVmRmazZTMzhLZmcrbURlTk00TThQ?=
+ =?utf-8?B?V0VDWExmaDBKelllTDhsUEdyUVE4RVhOSGRETDFHMnBNS2dibU5xaW1SVk1L?=
+ =?utf-8?B?V1pVSkxrRitReDh1dFZLMW8yYmRWc1pJd1NHeEk3eWZQUDQvazhHVHVqSjlC?=
+ =?utf-8?B?ZEgzcTVBLzQ3S0JCd0s3VDV2djVnY1J2d1d4bnNNOXoxbmozWHh5WUFFdysz?=
+ =?utf-8?B?K3hPWU9WR0kvZEp6eTVhVGZCSFNOeDBmQlgySHlDdkNSSkJJWjU4cmJWQ1RQ?=
+ =?utf-8?B?aUhxT0hvU3g5REx5YTkrQTJ3eUFYbGJocWtxNnA0Z3dUVlU2cjFhSERHR0ZT?=
+ =?utf-8?B?WjA1UTZNSm9qb2xxMDRuRTcvQlhScHJZVFAzZklHdlYrMjNUQ3Zzd2xkdklB?=
+ =?utf-8?B?WkF3dGREWHorZ3hIK1RqNEpwT1FhUEc3aDVPUG1aYysvb0diaGU4Z2ExVkxR?=
+ =?utf-8?B?b1AzRHBwTWV4MFNrTTgzWC9BWjl4dDFZdVZVNzI2OUYyTFRjYWNoN2hqK3dQ?=
+ =?utf-8?B?QTRnOGsrbkJ6NTFGRC82OVBuYnZsd1NMTDFLREhobm1wM2Z5RTdTeE5sSE91?=
+ =?utf-8?B?dHduUVRoOHBFQVM3bkNHcHg0bk4vU1BJbDRnWWp6V3R6VEd5OWxrbG5VOXk4?=
+ =?utf-8?B?emU2b1hwbzhBYmpEY2NrcWJ1b3FrMTJIUUhxaTBvM3loOGN5Ky8xcVBNQU82?=
+ =?utf-8?B?aityNXFHeUsyUXp5Q0FVc1JDWitEenB4Ui9UMk1tdEtkZnlUNTV5Ky9SVGN3?=
+ =?utf-8?B?M09yWHZCUGpsczNXWmUxVmRjajJYaEltSzhmRWhxQ3E5QTlsd2Vxc29Cd1Js?=
+ =?utf-8?B?c3VoVFpReS8vbFJYb2RaQ3NzaUtBaHNVSDVyZUxkbDFhYS85eGpNRDBXYVVs?=
+ =?utf-8?B?S0M2bmtNMVpaQXZCbHl2TmZndExTUDlFRmZYdjVwbEFLbjFsbm1RUHNJNWhk?=
+ =?utf-8?B?SkVQUDh3U3ZpQXBRRERGNTRFdVk1bTY2RUVQV1VWdnlUd3V3TmkvR3pvUk43?=
+ =?utf-8?B?UDBGWnBGbkg2Q0V6aUJnQmdWa25WdDB6aDlPZHp2aGxTLzdERzl3WVN3QTBj?=
+ =?utf-8?B?cDR5SEJqMUp6OTZRZ0lmK20xMnNucHltQThOeVMrTUhncnEvZjlJTVNQTllV?=
+ =?utf-8?B?a1V5ellYazdVUzNDQXFQQ0l0MlNZTHJad2NTbEZ6WlM3RXFSU2w4aVAwbFFi?=
+ =?utf-8?B?cHUvcFJQTXNDYnVhZlZQVXNNWnI2RDN6anpaTFhjYWpLSm83QmQ4Z2NvNkdJ?=
+ =?utf-8?B?Y1d5TDdCUkJZSkFRaE4xUnYwSS8vVHlJN0RBOWdCb1N4Nit2ek5ORUdFdjRi?=
+ =?utf-8?B?eWF5K0JLZmNNbHh1QlVPcFFOWFNVZGUrUGdjOWNWRTBnRTdrOFdLcUVqMTlm?=
+ =?utf-8?B?UHNZRkJUWC9MYnovZmRDelkrTC9BNWNmVzBVS2d4aFdvVHdZMVhYa0tHRWtP?=
+ =?utf-8?B?cnpqQ0lHSWViNzJSUTdyKzdkSFNiU3RXeEVJREw2dU83SDVBOXNkZTU0NXdT?=
+ =?utf-8?B?Ly9RdE5ZWkNvNUJtdXorUXZ0TWdyeHh6cW0rZUtqV0xNa25Eakk4TGxkNXRn?=
+ =?utf-8?B?M3pqT0lqbXhSUVg3R2FySjVBSzc3VGZXelYvMEZqS0Z4YW5qcm15ODM3WWRN?=
+ =?utf-8?B?SXovMy84SUF1aGVrOURVVHRUb1doN2NmdTBSZUlrMUxSZUpZMUFTNDF0TTlR?=
+ =?utf-8?B?TjdKSkI5aWY0Q0VQU2EvNStpVmh5ZDJJaWl6ems0ODJoKzhzempzTGFYbzk2?=
+ =?utf-8?B?MDFVaVpTc0lxZ1M3dTFpTVh2ZFhtVmw3ZDdGQlJwc0ZjY3daK0tLd05oYXFS?=
+ =?utf-8?Q?MdXD0oa7X7Fi7?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB9173.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(7416014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TDc5RjFBaVBUcSswTUR1ZDB2cFhXSWxYeEJiMlpYTGI5NGhxV3JtdE9tbU1w?=
+ =?utf-8?B?RGNMalgyREJnblhHdXlOdUhtejRKbUVPc0UxRlFwRFU3RU5PaXQ4aHBRUzlX?=
+ =?utf-8?B?b1R3Mjl5Yy9jSXpYZ1BTVUlVdklkdnVQRjFram4yWm9RbllmQS9ma0NIMWY2?=
+ =?utf-8?B?eVBGQUYwK0tGYk5VVFZrN1loc29oTmVITG5PdmRTY3RrQ25PVm9iS1YwZGpv?=
+ =?utf-8?B?d3R4V3JYVHFmNy9YWFlYNXpXUTVtZzYwcTJ6M1JITlZ4bFROdlY1RThMSjcr?=
+ =?utf-8?B?MG92Q0t1dUg1M3B4NXU3TTBhTnVscm9sUmE3NlMvUXp3eEF3ZThnL2UyTEoy?=
+ =?utf-8?B?MWlFdnJiS0dOL1EwRVdwR3Z6ZDh3VHpNQXJQb1F4WDBTRXcxRVlldUpiMm5h?=
+ =?utf-8?B?R1BTUlg4RkgrWTVqdWNxYTVqOGVFa0ozdHI3akdBWlM0ZjJOZkpYWTFGdytq?=
+ =?utf-8?B?YWZGWXpXTWtNZmh0ai9uWW0zRkpzTTQ4bFhkb3piWVBNL01JbDNNQnF0amJD?=
+ =?utf-8?B?SmhpNUJpZk1kajhTYkJzSmwwdjhiSHVldEx0NFRGMkxPdUxGMXJLRElGSkhq?=
+ =?utf-8?B?Q2puVkpCeldaa2trMFAwWGEwckhZRGhkUVFSdFhwZTlVNHpCUHVCdjZnQVh5?=
+ =?utf-8?B?QTc4dm5UeUg1cDZHMlVTaFFGUWsvRHBrU1FaRU1YclEyMWtMclJSMzBxWHFR?=
+ =?utf-8?B?cWdvc2MrbG5ubnFqMFNzM1I4c1F5czI3NGdUdzFaWmVic1BkQ1cwbkZ4aElM?=
+ =?utf-8?B?Rk50ZVlGWkRBejRBc21qdDJNbWgxTmE2SXUzbG55dkVmQ2JkSmY4MjMyNkF0?=
+ =?utf-8?B?WW05a3FsQmFQWTh5UmdqTjZCOFhKS2RyRkMxV05IN0o2VDYzVnV2M0ZMdDVz?=
+ =?utf-8?B?RnkyV2JpRVZib1EwTnNLWnpDNU82cS9KQ2p2UmdXTS9yQ0VOWW1IL3hVRmdK?=
+ =?utf-8?B?UUd0Vi95VjZYTDAzbzA0NzBVRHNvcnlMVFhmTElrVjRnalZWTFZ4ak1JTzVN?=
+ =?utf-8?B?bThpeGlxdytmYjRMUGdtZHl1aDh2MmREWUNNcVRleXV3cXY3c0VyNVlDcTl1?=
+ =?utf-8?B?U2RVYnVDM1BwYjRoQXNGWkk0Q1ZId2N6RFJucjVKVGs2ci9hSXBuZHpPY0Vl?=
+ =?utf-8?B?bVlCR1psTU5Nb0gvL2NhemR2c25aZFgzc2Q0cE9QVmQwanRkRjE0ZVVSSnZv?=
+ =?utf-8?B?U0NGMGhLM25IVVExUGFBMTlyRmUzMHc0eVMrb0FDMnVzT3B1emhQL0Y3OEF1?=
+ =?utf-8?B?QlFVeGhtT3dEZkdMMFZEZUFuOXh3Q3RjeXExOEczMUJDVFljQ3d6bTJiNGpP?=
+ =?utf-8?B?RGlIV2hTMk8xR3FxaExmMWJ0Z3hkOU1MK0I5OHIrNkx1NzRMR2lEVzZ1K1JD?=
+ =?utf-8?B?OGw1aVI3S0FZSVBSTjYzSWpYZ1N4WFc2L1NjM0JZQ1pZMnFBQXREWFlSd0k5?=
+ =?utf-8?B?R1h4MjVsWldZWHN6SHhieTVHNG1lV0ZJUW56Vi9oeTVOZy85YWEzd0N2V0ZN?=
+ =?utf-8?B?R0sxUm00YzNDZ0loOWRKU1o0ZWhLenIrNHdKbVlrWXM1WVphNWNOd2JQWVFZ?=
+ =?utf-8?B?R0xxTGszbjI4aGY1MVRLMmdvWU82N2kvMENlRDVsT2JSUFlYMzYxYkkyQUFI?=
+ =?utf-8?B?YWx1TUZGTFcrQTAwTHZ2NzhiTTdVb210TU9ZZU5jT3V2M2kxMTVLNlIrVDlj?=
+ =?utf-8?B?T0FaVzliT1F6dXFzTmpxSlNGM3FDd1RmU3VaMi9TdDdLaW0vMnhUcStUb1Er?=
+ =?utf-8?B?TWlubVVVaGhEWDFDbHVHNzMwSFo5UDB1OTh6NllpMHIxUGJKclFnNmd1ZlRU?=
+ =?utf-8?B?anY3ZHBGTkg2QlZqV3VXR24yK3ZjVFRhUVF6WW1iblQ5emNMSi83UVBHbUdN?=
+ =?utf-8?B?ZzRHWGFKNHAvRlVyNVdKZWJFNi9QMVJ4UWpQR1dDRGVialYzV29FcUJaK3g2?=
+ =?utf-8?B?YTJlZnd1NElZWDZNM1JPQUR2cDludTY0eFRjMlF1WmZUZEtIc3RsWTVxMEFz?=
+ =?utf-8?B?aFRudUcyK01BSkdKZy8zN1ByajdTY0kxMmwweENIanhpemhJWmxDN2Y5N0x1?=
+ =?utf-8?B?T0MxelJ4MjBHMVNiZjFTNXd6Y3hqTlhpRVpncmovWnM0RnB2NVMzVjZKVW9J?=
+ =?utf-8?Q?9GOE68jPiEA0nnEyOQSmDuoiL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 938ba5d3-c0c3-487c-5053-08dd783db8fb
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB9173.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 14:41:05.1427 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zQ3Cl2p9ylKjW2Ka+z692VFRG9QBztZl6EtSUlfIjw+W8i8hDQIUsM/CT9x7LBrHpiMGwYBKwVT7c3/vjexi3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6976
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,289 +161,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000fc01b606326bba8b
-Content-Type: text/plain; charset="UTF-8"
-
 Hello,
 
-The DTS group has met and drawn up a development roadmap for the 25.07
-release:
+On 3/28/25 1:14 PM, Kevin Traynor wrote:
 
+> Hi all,
+>
+> Here is a list of patches targeted for stable release 24.11.2.
+>
+> The planned date for the final release is 14 April.
+>
+> Please help with testing and validation of your use cases and report
+> any issues/results with reply-all to this mail. For the final release
+> the fixes and reported validations will be added to the release notes.
+>
+> A release candidate tarball can be found at:
+>
+>      https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.2-rc1
+>
+> These patches are located at branch 24.11 of dpdk-stable repo:
+>      https://dpdk.org/browse/dpdk-stable/
+>
+> Thanks.
+>
+> Kevin
+>
+> ---
 
-   1.
+We ran the following functional tests with Nvidia hardware on v24.11.2-rc1:
 
-   Performance tests traffic generator support:
-   1.
+- Basic functionality:
+   Send and receive multiple types of traffic.
+- testpmd xstats counter test.
+- testpmd timestamp test.
+- Changing/checking link status through testpmd.
+- rte_flow tests 
+(https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
+- RSS tests.
+- VLAN filtering, stripping, and insertion tests.
+- Checksum and TSO tests.
+- ptype tests.
+- link_status_interrupt example application tests.
+- l3fwd-power example application tests.
+- Multi-process example applications tests.
+- Hardware LRO tests.
+- Buffer Split tests.
+- Tx scheduling tests.
 
-      TG abstractions rework, testsuite API additions for perf workloads,
-      and TREX class implementation
-      2.
+Functional tests ran on:
+- NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver: 
+MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 22.43.2566
+- NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver: 
+MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 28.43.2566
+- DPU: BlueField-2 / DOCA SW version: 2.10.0 / Firmware: 24.44.1036
 
-   Testsuite additions:
-   1.
+Additionally, we ran build tests with multiple configurations on the 
+following OS/driver combinations (all passed):
+- Ubuntu 22.04 with MLNX_OFED_LINUX-24.10-2.1.8.0.
+- Ubuntu 24.04 with MLNX_OFED_LINUX-24.10-2.1.8.0.
+- Ubuntu 22.04 with rdma-core master (9e9a957).
+- Ubuntu 24.04 with rdma-core v50.0.
+- Fedora 41 with rdma-core v51.0.
+- Fedora 43 (Rawhide) with rdma-core v56.0.
+- OpenSUSE Leap 15.6 with rdma-core v49.1.
+- Windows Server 2022 with Clang 16.0.6.
 
-      Performance tests: Perf_single_core_fwd
-      2.
+We don't see new issues caused by the changes in this release.
 
-      Functional tests: rte_flow, Rx/Tx offload, port control, ethertype,
-      stats checks, RSS Reta, RSS hash, packet capture
-      3.
+Thanks,
+Ali
 
-   Virtual function support (VF creation and handling for tests)
-   1.
-
-      PW: https://patchwork.dpdk.org/project/dpdk/list/?series=34851
-      4.
-
-   DTS Docs review and updates for helping new user onboarding to DTS usage
-   5.
-
-   Rework packet send and receive functions in the Testsuite API towards
-   supporting IP networking in an L3 environment
-   6.
-
-   Add DPDK Testsuite API: This will provide a stable API which will not be
-   broken going forward (except at agreed upon intervals)
-   1.
-
-      Moving existing testsuite class functions (what is essentially the
-      current API) to the context hierarchy
-      7.
-
-   Add a dedicated file manager to handle passing files and artifacts
-   between the test engine and nodes in a path agnostic manner. This will be a
-   component of the new DPDK DTS API.
-   8.
-
-   Improved interactive shell data collection and logging.
-   1.
-
-      Add a log file which logs the shell interactions exclusively
-      9.
-
-   Update TestResult module in order to give a more human readable summary
-   of the testsuites
-   10.
-
-   Flexible port binding
-   1.
-
-      Give the opportunity to test suites to use all or part of the
-      supplied port topology with the kernel drivers (instead of DPDK).
-      11.
-
-   Add a pseudo-shell which handles background services.
-   1.
-
-      PW: https://patchwork.dpdk.org/project/dpdk/list/?series=34865
-      12.
-
-   Update certain functional tests in order to switch their packet matching
-   strategy from mac address comparison to L4 port # comparison:
-   1.
-
-      PW: https://patchwork.dpdk.org/project/dpdk/list/?series=34805
-
---000000000000fc01b606326bba8b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hello,<div><br></div><div>The DTS group has met and drawn =
-up a development roadmap for the 25.07 release:</div><div><br></div><div><s=
-pan id=3D"gmail-docs-internal-guid-3015275f-7fff-0e74-30e7-e3665e742bb3"><o=
-l style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-=
-style-type:decimal;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,=
-0,0);background-color:transparent;font-variant-numeric:normal;font-variant-=
-east-asian:normal;font-variant-alternates:normal;vertical-align:baseline;wh=
-ite-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;marg=
-in-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backgrou=
-nd-color:transparent;font-variant-numeric:normal;font-variant-east-asian:no=
-rmal;font-variant-alternates:normal;vertical-align:baseline">Performance te=
-sts traffic generator support:=C2=A0</span></p></li><ol style=3D"margin-top=
-:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:lower-alph=
-a;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-c=
-olor:transparent;font-variant-numeric:normal;font-variant-east-asian:normal=
-;font-variant-alternates:normal;vertical-align:baseline;white-space:pre"><p=
- dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" ro=
-le=3D"presentation"><span style=3D"font-size:11pt;background-color:transpar=
-ent;font-variant-numeric:normal;font-variant-east-asian:normal;font-variant=
--alternates:normal;vertical-align:baseline">TG abstractions rework, testsui=
-te API additions for perf workloads, and TREX class implementation</span></=
-p></li></ol><li dir=3D"ltr" style=3D"list-style-type:decimal;font-size:11pt=
-;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent=
-;font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-al=
-ternates:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" sty=
-le=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentati=
-on"><span style=3D"font-size:11pt;background-color:transparent;font-variant=
--numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norm=
-al;vertical-align:baseline">Testsuite additions:=C2=A0</span></p></li><ol s=
-tyle=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-sty=
-le-type:lower-alpha;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0=
-,0,0);background-color:transparent;font-variant-numeric:normal;font-variant=
--east-asian:normal;font-variant-alternates:normal;vertical-align:baseline;w=
-hite-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;mar=
-gin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backgro=
-und-color:transparent;font-variant-numeric:normal;font-variant-east-asian:n=
-ormal;font-variant-alternates:normal;vertical-align:baseline">Performance t=
-ests: Perf_single_core_fwd</span></p></li><li dir=3D"ltr" style=3D"list-sty=
-le-type:lower-alpha;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0=
-,0,0);background-color:transparent;font-variant-numeric:normal;font-variant=
--east-asian:normal;font-variant-alternates:normal;vertical-align:baseline;w=
-hite-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;mar=
-gin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backgro=
-und-color:transparent;font-variant-numeric:normal;font-variant-east-asian:n=
-ormal;font-variant-alternates:normal;vertical-align:baseline">Functional te=
-sts: rte_flow, Rx/Tx offload, port control, ethertype, stats checks, RSS Re=
-ta, RSS hash, packet capture</span></p></li></ol><li dir=3D"ltr" style=3D"l=
-ist-style-type:decimal;font-size:11pt;font-family:Arial,sans-serif;color:rg=
-b(0,0,0);background-color:transparent;font-variant-numeric:normal;font-vari=
-ant-east-asian:normal;font-variant-alternates:normal;vertical-align:baselin=
-e;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;=
-margin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;back=
-ground-color:transparent;font-variant-numeric:normal;font-variant-east-asia=
-n:normal;font-variant-alternates:normal;vertical-align:baseline">Virtual fu=
-nction support (VF creation and handling for tests)</span></p></li><ol styl=
-e=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-=
-type:lower-alpha;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,=
-0);background-color:transparent;font-variant-numeric:normal;font-variant-ea=
-st-asian:normal;font-variant-alternates:normal;vertical-align:baseline;whit=
-e-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin=
--bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background=
--color:transparent;font-variant-numeric:normal;font-variant-east-asian:norm=
-al;font-variant-alternates:normal;vertical-align:baseline">PW: <a href=3D"h=
-ttps://patchwork.dpdk.org/project/dpdk/list/?series=3D34851">https://patchw=
-ork.dpdk.org/project/dpdk/list/?series=3D34851</a></span></p></li></ol><li =
-dir=3D"ltr" style=3D"list-style-type:decimal;font-size:11pt;font-family:Ari=
-al,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant-nu=
-meric:normal;font-variant-east-asian:normal;font-variant-alternates:normal;=
-vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-heigh=
-t:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=
-=3D"font-size:11pt;background-color:transparent;font-variant-numeric:normal=
-;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-ali=
-gn:baseline">DTS Docs review and updates for helping new user onboarding to=
- DTS usage</span></p></li><li dir=3D"ltr" style=3D"list-style-type:decimal;=
-font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-col=
-or:transparent;font-variant-numeric:normal;font-variant-east-asian:normal;f=
-ont-variant-alternates:normal;vertical-align:baseline;white-space:pre"><p d=
-ir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=
-=3D"presentation"><span style=3D"font-size:11pt;background-color:transparen=
-t;font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-a=
-lternates:normal;vertical-align:baseline">Rework packet send and receive fu=
-nctions in the Testsuite API towards supporting IP networking in an L3 envi=
-ronment</span></p></li><li dir=3D"ltr" style=3D"list-style-type:decimal;fon=
-t-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:=
-transparent;font-variant-numeric:normal;font-variant-east-asian:normal;font=
--variant-alternates:normal;vertical-align:baseline;white-space:pre"><p dir=
-=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=
-=3D"presentation"><span style=3D"font-size:11pt;background-color:transparen=
-t;font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-a=
-lternates:normal;vertical-align:baseline">Add DPDK Testsuite API: This will=
- provide a stable API which will not be broken going forward (except at agr=
-eed upon intervals)</span></p></li><ol style=3D"margin-top:0px;margin-botto=
-m:0px"><li dir=3D"ltr" style=3D"list-style-type:lower-alpha;font-size:11pt;=
-font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;=
-font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-alt=
-ernates:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" styl=
-e=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentatio=
-n"><span style=3D"font-size:11pt;background-color:transparent;font-variant-=
-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norma=
-l;vertical-align:baseline">Moving existing testsuite class functions (what =
-is essentially the current API) to the context hierarchy</span></p></li></o=
-l><li dir=3D"ltr" style=3D"list-style-type:decimal;font-size:11pt;font-fami=
-ly:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-vari=
-ant-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:n=
-ormal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line=
--height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span =
-style=3D"font-size:11pt;background-color:transparent;font-variant-numeric:n=
-ormal;font-variant-east-asian:normal;font-variant-alternates:normal;vertica=
-l-align:baseline">Add a dedicated file manager to handle passing files and =
-artifacts between the test engine and nodes in a path agnostic manner. This=
- will be a component of the new DPDK DTS API.</span></p></li><li dir=3D"ltr=
-" style=3D"list-style-type:decimal;font-size:11pt;font-family:Arial,sans-se=
-rif;color:rgb(0,0,0);background-color:transparent;font-variant-numeric:norm=
-al;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-a=
-lign:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;mar=
-gin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"font-si=
-ze:11pt;background-color:transparent;font-variant-numeric:normal;font-varia=
-nt-east-asian:normal;font-variant-alternates:normal;vertical-align:baseline=
-">Improved interactive shell data collection and logging.</span></p></li><o=
-l style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-=
-style-type:lower-alpha;font-size:11pt;font-family:Arial,sans-serif;color:rg=
-b(0,0,0);background-color:transparent;font-variant-numeric:normal;font-vari=
-ant-east-asian:normal;font-variant-alternates:normal;vertical-align:baselin=
-e;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;=
-margin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;back=
-ground-color:transparent;font-variant-numeric:normal;font-variant-east-asia=
-n:normal;font-variant-alternates:normal;vertical-align:baseline">Add a log =
-file which logs the shell interactions exclusively</span></p></li></ol><li =
-dir=3D"ltr" style=3D"list-style-type:decimal;font-size:11pt;font-family:Ari=
-al,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant-nu=
-meric:normal;font-variant-east-asian:normal;font-variant-alternates:normal;=
-vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-heigh=
-t:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=
-=3D"font-size:11pt;background-color:transparent;font-variant-numeric:normal=
-;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-ali=
-gn:baseline">Update TestResult module in order to give a more human readabl=
-e summary of the testsuites</span></p></li><li dir=3D"ltr" style=3D"list-st=
-yle-type:decimal;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,=
-0);background-color:transparent;font-variant-numeric:normal;font-variant-ea=
-st-asian:normal;font-variant-alternates:normal;vertical-align:baseline;whit=
-e-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin=
--bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background=
--color:transparent;font-variant-numeric:normal;font-variant-east-asian:norm=
-al;font-variant-alternates:normal;vertical-align:baseline">Flexible port bi=
-nding</span></p></li><ol style=3D"margin-top:0px;margin-bottom:0px"><li dir=
-=3D"ltr" style=3D"list-style-type:lower-alpha;font-size:11pt;font-family:Ar=
-ial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant-n=
-umeric:normal;font-variant-east-asian:normal;font-variant-alternates:normal=
-;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-heig=
-ht:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=
-=3D"font-size:11pt;background-color:transparent;font-variant-numeric:normal=
-;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-ali=
-gn:baseline">Give the opportunity to test suites to use all or part of the =
-supplied port topology with the kernel drivers (instead of DPDK).</span></p=
-></li></ol><li dir=3D"ltr" style=3D"list-style-type:decimal;font-size:11pt;=
-font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;=
-font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-alt=
-ernates:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" styl=
-e=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentatio=
-n"><span style=3D"font-size:11pt;background-color:transparent;font-variant-=
-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norma=
-l;vertical-align:baseline">Add a pseudo-shell which handles background serv=
-ices.</span></p></li><ol style=3D"margin-top:0px;margin-bottom:0px"><li dir=
-=3D"ltr" style=3D"list-style-type:lower-alpha;font-size:11pt;font-family:Ar=
-ial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant-n=
-umeric:normal;font-variant-east-asian:normal;font-variant-alternates:normal=
-;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-heig=
-ht:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=
-=3D"font-size:11pt;background-color:transparent;font-variant-numeric:normal=
-;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-ali=
-gn:baseline">PW: </span><span style=3D"font-size:11pt;background-color:tran=
-sparent;font-variant-numeric:normal;font-variant-east-asian:normal;font-var=
-iant-alternates:normal;vertical-align:baseline"><a href=3D"https://patchwor=
-k.dpdk.org/project/dpdk/list/?series=3D34865">https://patchwork.dpdk.org/pr=
-oject/dpdk/list/?series=3D34865</a></span></p></li></ol><li dir=3D"ltr" sty=
-le=3D"list-style-type:decimal;font-size:11pt;font-family:Arial,sans-serif;c=
-olor:rgb(0,0,0);background-color:transparent;font-variant-numeric:normal;fo=
-nt-variant-east-asian:normal;font-variant-alternates:normal;vertical-align:=
-baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-t=
-op:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11=
-pt;background-color:transparent;font-variant-numeric:normal;font-variant-ea=
-st-asian:normal;font-variant-alternates:normal;vertical-align:baseline">Upd=
-ate certain functional tests in order to switch their packet matching strat=
-egy from mac address comparison to L4 port # comparison:</span></p></li><ol=
- style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-s=
-tyle-type:lower-alpha;font-size:11pt;font-family:Arial,sans-serif;color:rgb=
-(0,0,0);background-color:transparent;font-variant-numeric:normal;font-varia=
-nt-east-asian:normal;font-variant-alternates:normal;vertical-align:baseline=
-;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;m=
-argin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backg=
-round-color:transparent;font-variant-numeric:normal;font-variant-east-asian=
-:normal;font-variant-alternates:normal;vertical-align:baseline">PW: </span>=
-<span style=3D"font-size:11pt;background-color:transparent;font-variant-num=
-eric:normal;font-variant-east-asian:normal;font-variant-alternates:normal;v=
-ertical-align:baseline"><a href=3D"https://patchwork.dpdk.org/project/dpdk/=
-list/?series=3D34805">https://patchwork.dpdk.org/project/dpdk/list/?series=
-=3D34805</a></span></p></li></ol></ol><br></span></div></div>
-
---000000000000fc01b606326bba8b--
