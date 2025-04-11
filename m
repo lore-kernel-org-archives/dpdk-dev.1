@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48201C369A2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 08:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59568C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 08:11:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43A1A40B94;
-	Fri, 11 Apr 2025 10:10:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6818E40B8C;
+	Fri, 11 Apr 2025 10:10:40 +0200 (CEST)
 Received: from NAM12-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam12on2100.outbound.protection.outlook.com [40.107.244.100])
- by mails.dpdk.org (Postfix) with ESMTP id 8AB8740A67
- for <dev@dpdk.org>; Fri, 11 Apr 2025 10:10:36 +0200 (CEST)
+ (mail-mw2nam12on2130.outbound.protection.outlook.com [40.107.244.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BE6840B91
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 10:10:38 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=evxUkw5i/3a8LesYrojt10qDUyZ5FOSKeTGn+yA70PfDsPLTbrXVqbL46Vcbtg3fRipZRNpIiwUlwJvQ/DJh/+KG4LCy92LnHjye4oR7TAVrYvWwUK+N8ryUH9QaeZJN1+U890swOZbNGBycB3k6/aJI5yfPf92dy6mNA1j+0aitxrPcHH+Nz7oU7Sw+aJPlaBDtCITD+ATGqQXfKjaNG7wp8xlPWstNvRdJnYKRgrskjU8LAGp+WQs7W9lf6GwKxzNEo3Rk+VcfIqk6E/W5xtcpVLTLRj7rGOUzPhAH5PbD4MIQg1/M4DIYZNDyodUecIL5e7ecjMg9oL3Qlmoukg==
+ b=cuVpkcwPIaeEHmOBwSXJsMrnaDtJs64WES38zoea6K8G3S1hFlueIpp9dt96NDM05OpEeqMOVctMEsrYe2MlqjK+MQsT1F5pjlb5MXkGRR25MpEXoioJrSFe8dUrPrdtBwPX0z2hSKauxQmHyfmr5Kf22nw+kqzG0aPKLb+1JcR/BJAv1TWIZ88vGGsgsh6q1H43oEc7xpB7ioy50sitxFs66//nSAcYuPpUwbYb7ZuUkxboTNWQ+dxqN6Zn5lA+u4DKBXNSda+IT3GBbGu0c3mFVDXA3tmaCekzaDzG5zzEl6y0iBAcS2SzLLd2MdSX26wvRvFUkKQtBe72SbHm/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9sNP6t+qlEBEvdIu7XRr2j03o43W7uOMtloYTE4OGbo=;
- b=vGQZgv/D/dkZpdR8Cpf1gB4IahX5erQcit8lt+ibHF39JehwLbaauzePYiK0I4tteALk7zRbn01CZID+cBpQchZ/nDf76bXP5Er8T2DDnQSPpOElCjwmA+9GdQyBcXNZ8ZtoA96i+7czezdXILi2fEiehQS/hXnpBdyMHOFMj04g33BK5ww4LsRpP9Bu0kzQU0f93/4oFcwcRNObgIN4SbgAczABVDQCuj9HJ1cLUZJRxtxszzUF1iq2tEM2c86cecKjNyyDCCF/1VoxbVqiUdQyMHDUW33Cs4bQJijJjpaAfg6J4QXpfBkcY4Cnb0lJbqQrya0MByAC8Eec6F6b4Q==
+ bh=Q32/BBx0sUZHhWZPDxLqdOCEDe9ZYgqweJSCUCSy5uY=;
+ b=i3Madw8orTiS4In5Q2kCxVuS5WVs2A1XvvTSPQTl1ReoYNfTZeXyaQex2OGrZvBe1m0z+PaNSiCoPFnd1ly57s6NBz3DboQSqzPGJflX6VZv0oQE168GmDa5WQF72YzTt+fcv9r0Z9+Osj44XBqxl9e26aZkWPhV5L/w+BkgYaXc48eaCGJoHqOR6kDeo7waq/4Y1ccT67fBCeoMG0RRuuWZoieqq8ksYbCgcAhsbspBGmhR0UaCnoypE/JGFkQ1SXWrrj8pqoXz4GhydwcuvmPe57FsJ1HB+XPilsqmx0eM3K2Zal42ldXkT5RDTPpp8WS8EC9LF9yvFD2cwXqzAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
  dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9sNP6t+qlEBEvdIu7XRr2j03o43W7uOMtloYTE4OGbo=;
- b=d6Xe/Ai00Is4AK9vO4yDNWn/lnjBe6rCzHYVsS+OyjDbv/BUBW7YfHak67EC3lsFEYwbJ2u/JQ9dbKwDESQVj+9rmZGll+qI6K8hpZ+8laHrVHm8efe/NEoUy7mPh6c2k2A41RF8BfPQPaHccSLYD2LsyUry0tTyDbQpaanBs2U=
+ bh=Q32/BBx0sUZHhWZPDxLqdOCEDe9ZYgqweJSCUCSy5uY=;
+ b=mbbcmP2231Ack6iGaagjHHEx9qA1KrL+In8IjpI8eggYCcVXBJXdMAuYvE461NHLKRraESCIlwPzvW6CVJnVl7YwJoMEz8PVojbH08ZkySAW5bKzGfFxwtn96n2+gnjHHZEfu90bb9ra6tmPX6ggQYLYvgOD0ryMIIrbWilkq9M=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=corigine.com;
 Received: from SJ0PR13MB5545.namprd13.prod.outlook.com (2603:10b6:a03:424::5)
  by DM6PR13MB3940.namprd13.prod.outlook.com (2603:10b6:5:2a7::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Fri, 11 Apr
- 2025 08:10:34 +0000
+ 2025 08:10:36 +0000
 Received: from SJ0PR13MB5545.namprd13.prod.outlook.com
  ([fe80::b900:5f05:766f:833]) by SJ0PR13MB5545.namprd13.prod.outlook.com
  ([fe80::b900:5f05:766f:833%6]) with mapi id 15.20.8632.017; Fri, 11 Apr 2025
- 08:10:34 +0000
+ 08:10:36 +0000
 From: Chaoyong He <chaoyong.he@corigine.com>
 To: dev@dpdk.org
 Cc: oss-drivers@corigine.com, Long Wu <long.wu@corigine.com>,
  Chaoyong He <chaoyong.he@corigine.com>
-Subject: [PATCH 2/3] ethdev: retrieve VLAN filter configuration
-Date: Fri, 11 Apr 2025 16:10:04 +0800
-Message-ID: <20250411081005.1133509-3-chaoyong.he@corigine.com>
+Subject: [PATCH 3/3] app/testpmd: add a command to show VLAN filter IDs
+Date: Fri, 11 Apr 2025 16:10:05 +0800
+Message-ID: <20250411081005.1133509-4-chaoyong.he@corigine.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250411081005.1133509-1-chaoyong.he@corigine.com>
 References: <20250411081005.1133509-1-chaoyong.he@corigine.com>
@@ -55,78 +55,78 @@ X-ClientProxiedBy: SI2PR01CA0050.apcprd01.prod.exchangelabs.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ0PR13MB5545:EE_|DM6PR13MB3940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7825a9c3-765f-461d-3b49-08dd78d055e3
+X-MS-Office365-Filtering-Correlation-Id: 62fc0ba8-bca2-43f9-6b61-08dd78d0570a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|376014|52116014|1800799024|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7zY/EX49ZlKY5WErgTHhL2k+5gcb5V4TJoZEWTTNR7A53H7qgmPMGsYCqlv3?=
- =?us-ascii?Q?jOXSm7kfll+wkXFn8mEZrYMuwVr6PF8HeZVVcFTSLTOoBHy9W2bhOniktmbF?=
- =?us-ascii?Q?DiUS/7Higg41t4xJ/fk0kG/6JH754JI81OFhB0TFLgMgIJ/xwk1aK/sgBBYD?=
- =?us-ascii?Q?oqJEBlGx6/pGWkirvhaFVZ3uh2voEI4CTPm+aRR1ffUumsYS2bYcAC/N80/5?=
- =?us-ascii?Q?dByzka5nX5e6LwObuTU16Yl5kv+Nqz5XjA43j5VwZgP+H1vsM1u6T/aVFh82?=
- =?us-ascii?Q?A2d7D17qhLoVxDv1kb1OznvpDO2TVxt0GT5EKqEqwjXk0v7KSEUN5/NjABbx?=
- =?us-ascii?Q?2ccKKtPo1fE63SWq4mB/IvpcwOFQyHHQL2/hZVUX5jK481YwrLgaBH6Yryxx?=
- =?us-ascii?Q?m5PwKAGGSJM2ytKTFOywSYchWyIUoekKR2Srj5wnAXbUGuhcPdnEkURABZAs?=
- =?us-ascii?Q?BrbHt7+ZIiF9CButzFyrf1rsqJrHTqjUSRI+L68oPxnOFy2mAzO9bXAu9z4I?=
- =?us-ascii?Q?AsoUHoq8+woQlqk3iLo7NWygGYW48BBJyodfFfHs86VUfnUme5cHUpcLVLxX?=
- =?us-ascii?Q?AHo7862c1Lm+3sV119dS9Fksyt8KQ00GhazV2HdSUuzORSvuKAZE0MvrgaGV?=
- =?us-ascii?Q?PQUE+qgSsR3yisSOTemDiBOZwePx3yAjNTS0uIWzK5/Abcng2KKMCgwQfYyk?=
- =?us-ascii?Q?H5hF3btUYtkKo8px6frhnkjZIJiyTQSxdHkuJI3/sS7WQdR6WW5bn0H9fCUy?=
- =?us-ascii?Q?DbaNH0p4Xyqa2FAqL32k7RF1ueq8j3PqjdKtRaU62YWpxBhzPcNdwJDq1RKc?=
- =?us-ascii?Q?PNo61GFG5Xj3ajMmJL9DmvVXVf8kLTr8fJ3ZTtpHxxexoRj6Uc1jD0YoVka2?=
- =?us-ascii?Q?lKJt/eNnMCrO7pgtalYu4UAPon1MMvyAmHWO7sH1CenOT6bkb/l7jf/DY23n?=
- =?us-ascii?Q?L6aEhVQxA3tCK7N/xG3kPvPnpaqNRL8v4JAWYzbnma/YSrSKhl6vBn9MWgDb?=
- =?us-ascii?Q?fAdLDgdFSx4blq29bk6IfIyXCkmSLOfsBYOW3l0N2X32Z5aeQKUpgoQGVfw1?=
- =?us-ascii?Q?ML4AptqVZaSXE8XDCsX6iFvNyec6x5DYU5I3qQNP4qQg1UUB9OpVsFV64h7L?=
- =?us-ascii?Q?LUYv6d9A+YxQG15KxGsPSZyTjcs07UvmOwwdFSz8TRDGdjHiARco8t+rfq4l?=
- =?us-ascii?Q?d8cOdGd3iuENULOgIigBZhVZzqtGZjE19Px8xeYedbiuwRevhawlnaSQ+PoH?=
- =?us-ascii?Q?ykNCE+CME85ojsGGEC+3NnFgi62I5ag4uy3wSh8YRt6pP1x8OXoJVYwp5qOA?=
- =?us-ascii?Q?x7CwTR1tGwxQj6lTOwbzXuH+gNHLRJa0tf67s//jEEKsEgAlP08kDWzfgzAk?=
- =?us-ascii?Q?PR4ZM5YTWLWLfoGbKisrlPo64WvK0yOH/tE63DLAyb7a4w+mBI9gCcH/XbJF?=
- =?us-ascii?Q?/UTG7ykQH7U0x+x51/m84ztLbG4k4j4yQ/cLxZWstkHzpG9Tp1E6WQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?OyuPLtHDvN6+LYz3+S81JJbJUVyEAHXk0Xd3CbK03wz4xPNOITGeaHsn1PQi?=
+ =?us-ascii?Q?pLHcKhW1bkDRpzij/Dc0NAF8mkYmbPtfaB4fdmecsdMcGaLNtal3MVF0bWf+?=
+ =?us-ascii?Q?lTflH4SfMYjX9v1s+gs4J9WIjXFM3XsAvLxdDTgawiQAOkm2Q9pOeV0T9A0K?=
+ =?us-ascii?Q?vZxkPhOTN1+GuBqjIJuZsUey4nUkgwlW7TFjh8rTTuHfQPJU50DGOfxpZKyy?=
+ =?us-ascii?Q?jZPRnOlCZ3ewnLioRyMr+8MaP2i73A0DB2Zpb1F6JaD98ScUzy1YGgQYX/jl?=
+ =?us-ascii?Q?fbh4gyZ7VWf55k6YlFsPgaKC9YbDB4KL+hF6V5nKucktDhWyNMSXx8JwF81z?=
+ =?us-ascii?Q?r0MfMwkAjBsYVQEgnXq+dCAsI7T1CVaKDhKU3s1oAwNuwneZjM3ulbvwphID?=
+ =?us-ascii?Q?wog46r4VLbubj9KynNzF+jYu1jYJFxq68Gltc057eWFQ/6vPT7IlI+zggci6?=
+ =?us-ascii?Q?HQ46edgyc8lEZ8GA26yh9oHEl/doQvTKDwtNdEn/5AMcGBuWlhplpeeVw7Mu?=
+ =?us-ascii?Q?yiW/kBcdKBBL3jXh/vPvrFFRMZ+OUwkkEdYWHUtnpiQVlwmurmZGRgp1XLQY?=
+ =?us-ascii?Q?nhVrcHuxH1eU85DFEw7EbljR4dRSkH/jwksYw0Fq5NNjIVxCdz6GAHjL21Ib?=
+ =?us-ascii?Q?YMDix+gLVaPj3Krmf3tu8Wq9F7lKwEtKQjVUdwZYkijbv1qMIZvthHTcurTA?=
+ =?us-ascii?Q?vvXhH75PyT+24st2ltABWpOi+TVYPb/y+BhyPy5/r4omTSZWM+Z+ZrykwU1+?=
+ =?us-ascii?Q?vU7/A6R97S2NP4xP0MacIPK0ZDIHdPK6wJhbK/Trp5a3fVo5YvPycxps34Zf?=
+ =?us-ascii?Q?8zHCuqRu7Gy2yn7/QFYlPSU+VHjHULPps1g6vLYqIdQlvo7Syrks+i4TPBNC?=
+ =?us-ascii?Q?oXcRXBp7aLhPpm09zwhBHBlBAKXLh03gNOJlghqk8yefFztBB+eNwJd+Qg5F?=
+ =?us-ascii?Q?q/NLROzxtMb8DlbZWl4VY8Mj4IXpHD5WCRVejux2W5KvrcBniDPhErKhsqfF?=
+ =?us-ascii?Q?Ac5jwyduaqU59KhjKIeQN6QkwcmerPiizhG/IVi9tfncNHeXEjQ62wNP05DK?=
+ =?us-ascii?Q?yFmPttEsu5s+MR0hjLZFacOyvPR37oE2hFXZK7HwSiC05o8crdzU4tSCV9wN?=
+ =?us-ascii?Q?55V7UhwrQOBwTmGwaQPaW+BIjUsOgVIaEMT5N2WTis4mLYwiF/Wop0a8Vipn?=
+ =?us-ascii?Q?dq9oumcrWEpa6BYPZabA8MxCULFnNcARd5OwE9VD3JZGGHU7kLKqG0ETUqrt?=
+ =?us-ascii?Q?rSsyuU5jYXgqfvag6cF1x5dQMj/idlKUFvstfp2BZQttLbHPfcwWo2sbF8XJ?=
+ =?us-ascii?Q?LT81u4P8iRnlktJB+HpUWa+rIik4ucK5sWN//1IVKCovnx1ohI0JSXvWBjiT?=
+ =?us-ascii?Q?1VFpFZrs1s2/0eiQwvsdNK5s8GCweQs/ibnUEYke4WwMAZjwIO9AsqtUABBW?=
+ =?us-ascii?Q?Hp8R2Ghf4XCiomVc/ocSzDerlAUoVNDJrJoI0ndCdmP4a9wrsuo6bQ=3D=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SJ0PR13MB5545.namprd13.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014); DIR:OUT;
  SFP:1102; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?S/x1M85FseoOyOEX1bFIGbohSNlXyq0+CRevJdn8+1kWP+6oPXP1NNqml1Ys?=
- =?us-ascii?Q?xW8Jx81ba9+9rjGoEvVYUNoeywpbuNiWGbExk5nFGE02ygu4IGZvTCZsnMeN?=
- =?us-ascii?Q?WJulch969fMRLUHMdNNBDjhF4eQsFFsGH4MfhDCLsQdkr0/VTGvi9cXtAPEv?=
- =?us-ascii?Q?rP4JgRrdjAUWIqetWUemGE5Sdg3tHo9zOrrjYX725By8jNWr+gkJ06iMXbPF?=
- =?us-ascii?Q?vOkVv1DHJomR/4BT9RVKOUsrPiywsHcL64QmxSYHSPFKrSa8/u7Tg637dmFu?=
- =?us-ascii?Q?OS8AzA6ahHrsRkPXNuQcxpTOIYSNTrPH+DE4nVpqsdWucpuvq9LQY11HpjEt?=
- =?us-ascii?Q?fhZFUwqVhBE3JDmrXejiFkuZzmLElDbo4Q/Cz3DphqCJe6xxZ8IJltKYHgdU?=
- =?us-ascii?Q?5k1fKJVDqaIpr+9cU+wPSaq+wbECjtb1uuV4jV/eLavmfpOcg8MZ6jJW8yk0?=
- =?us-ascii?Q?mq7DjNXRwcL0hvyI0RGO2kW31oLSpR9sIREPWnLR0/qXzSAVguKu3Y8hEY4c?=
- =?us-ascii?Q?hPC9eu0rrOXtJjfpESPTStJf01hSVDso25mhSUk16hJQ6CEmOrSobzYXphYx?=
- =?us-ascii?Q?27SCoy56GvSx856WT1x21hBju8+EPHGseKn1hGnkR7mFu2+j4g439LB3BYXI?=
- =?us-ascii?Q?xxlYt7T1L/2mKUsIFac3vfZDQ6nfjCkf1PFr4+Z7R2citINK3jQFjWd0sIbA?=
- =?us-ascii?Q?9UBbhPNgYdi8XKpPZ0siYajYfS2sx6xFX0c/P3xQ3Hq34RvnljqH/6HbwHn9?=
- =?us-ascii?Q?wQG1rwIfa2GR+s+vjVyCxhvGUKly+2iocIwGZM9gjhbYi3yLVukPspLWvSNL?=
- =?us-ascii?Q?EUwYHKPbgDS47UNRcmx5Xy53CuBD5SjRoZzllkLF6uMAWOH2yrSlEtV/d9/U?=
- =?us-ascii?Q?CR5Y3pdL7X1bp6SHs1IlAyGXnTSW7lF+t+RK8m3MqJrbdkU/FbCV0BaesteP?=
- =?us-ascii?Q?DouBvwWRn1TBbddxEiuoYJA1Y2l/GH+waA32xL1sSuQU+nmdqUbSJvjvtIZp?=
- =?us-ascii?Q?CYq9v00Rc/QyK2046OxIiL9kXttIh/YFSz4cuhMszJ7NmRlwqTbl9zD+axs4?=
- =?us-ascii?Q?XdT4T7N1sj4RDD1PBSRKArMeI0T77mN2utV20jfbOEv4BuHqZClOcBRV5qWm?=
- =?us-ascii?Q?xa9UEcmRIKPKu1p+rplLIP03G0dLby6uCsCqLsLjUz93iHUpNLhWoe6Airof?=
- =?us-ascii?Q?S3Zd7/hsFZnwIMYa1bZxYFPUPmNfvvN+sdeKmb4uTkJ/SxNP9ungOEghSNyP?=
- =?us-ascii?Q?xfiQwHvVKNCyOS+WXB9XJDiyBbo1Wl5yA21cNXXgkhpxOMAI7tLVSTzv/eHm?=
- =?us-ascii?Q?oCS3NR2t2cYbCb137wh16VtCWU+2e2w9sXfuWtyK3cbbJjhIvTVnK2k3C2tb?=
- =?us-ascii?Q?Oja0hTl+2aLvHcB7FWnlhyqT+Vyzknlef7xO4RbKNsoSxcwKdeevJ8EZ2dXC?=
- =?us-ascii?Q?fiVSc5Q4ALfPJq0I/5mtOebj+tD4UeDc34Tgz7NsbUViyC6TaPZ85GfNQ5LA?=
- =?us-ascii?Q?sl9j2UB4y+Lp55HqCxhPSeWHfWzsC2wey0CvRnBG2Wbx//wG3pgEBiiaxpru?=
- =?us-ascii?Q?RYQB/xZ9MzFZqulCpE5QkMCxH5LUmrDb5ZDh587vwvMOazZ4pyZDajvD80B0?=
- =?us-ascii?Q?ig=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y9RW4fCZ400Zam22htdbzk2vzf6WVvIz3iVTOw9cQaIQiDW8+ZSfvTHZwQlF?=
+ =?us-ascii?Q?D8mk09WVSc8RfvFYFSC//l3pRciPVW2yTZK1x35VGFiEmo1+EN8owTUqr4BY?=
+ =?us-ascii?Q?zi1dCs+tpK+ZJmFxDcSKUdG0vxcyD070Nr5pvaHGrgRz3BMkX870is4Lpm1q?=
+ =?us-ascii?Q?oGjzImV8lfEohqC2w1i/g6Zydn5cqP4HExgK2YDX0bmBlCJOV1OC3/qENRZV?=
+ =?us-ascii?Q?qCQ462M0lRH0AsBOApPRGuzxpFb7pSjfjJM7YuypoXSr94ZntHEqtO5Uj0yy?=
+ =?us-ascii?Q?qJbmmMBYMH8znZ5fxt9jyd3or4/IVDpB1RgdvXLtJTCO9YdFy11C+U67Km9D?=
+ =?us-ascii?Q?qqPUlaY2rwZzSgMqRBFgdcdjhfX1PR6lhDLyVIWEnD9rT+4vKohBIA3SO34Z?=
+ =?us-ascii?Q?R9FTxmmqMKoyEX2PT4SsN0qIPKPCngMPsn1cNfnROZQDgZFePOarMR59upj3?=
+ =?us-ascii?Q?DXxQuIDbZ7OjcxXxgA5Gznau+1Wcn+ZzfX8DclnYsqyAE5cWxW8FaQ5RQtWo?=
+ =?us-ascii?Q?ER30oQn2yRpuGYIWtqRl9wzLZ6pxmY6nDnvQAkjvLfA7cI1uhNH3TvsJip20?=
+ =?us-ascii?Q?DQqJAseYCfCQziGjIuoiEQUV6YgurqW6eChwccnkTf1QxsageVvEDSCYWjKv?=
+ =?us-ascii?Q?kHhJlAIKQj2Xif7PAf+uGcZpVBirMTStoe9o2akRVjtkkbDTM6CzyzAiTkKD?=
+ =?us-ascii?Q?NDNnbEYGiZBukX3izNIXnJNn7r0WxOR0P/9eO+KsmsYCfRX5Glyhy2z08gd4?=
+ =?us-ascii?Q?ckGYLwmQCBu1F3X1aExVQBUWOFBhSpvC/0rwvJzA3oXjJTw/nAzZ92BOIO3F?=
+ =?us-ascii?Q?+n+9EX17Zz60kIj0wRNEGxsmVYgzx9XMxWuBd6tk1JQO2nrDMr7J/AEofHch?=
+ =?us-ascii?Q?GuDcy81i7zZUcuV1qsFaMgTvAm5b1/hRGjnY9DpqpxuSyz86mYqG4Rd70Ils?=
+ =?us-ascii?Q?vVz8qUBQqErdmLIn0K1sRE2UXYqIubyrl1X9BnKPpcWx8tXpcBWyZYxo2r8A?=
+ =?us-ascii?Q?zlhsRebzHks1GT/bl9oNlE87AVi44NI51fBoAEcQlvoNrLDOiEhSnk6FNlh3?=
+ =?us-ascii?Q?v4K1Ih7CWXtyisfsFmVbmeQqThr/9SitPVwwweHCVLBwSfGLmuoxKRYdrdDm?=
+ =?us-ascii?Q?dGvE5rjuHGDkiw15QHTiahHw5O5fAfKvUcp+0bDgfC+rVpYMyI53fvnWcKNr?=
+ =?us-ascii?Q?UDTfHkMUi8G+rs22CRu+kVEatEK+bts+6AlRKJdsnnr9nvQRwExlxfGbcxDE?=
+ =?us-ascii?Q?uBalm9DiNeE9zb2L/HIKrLtaunkaADMxR5le09Zm3jmGN4phsxKV2s4XS438?=
+ =?us-ascii?Q?ESJAYOvLPi4VVG6W47dbfh9FpOerveIooi7Kyl/UJ3foKUgbCYGJocEAWuZ6?=
+ =?us-ascii?Q?f8PDa1j5VX/t5T3xW451nvuDfDoLqnInniPLUCgACdrk7bfLPGcrofjpLGz4?=
+ =?us-ascii?Q?kHb25/yHm5ay54cosKJeSkkd4Po+oUMNqNDnFKOZMZRRfXzjvqmouMx7wCAA?=
+ =?us-ascii?Q?0OYtsMbOQfUnC3J6ePYhJE9kYLdAoAT9QpDffAFcRcOaK81SWGecm7Oycf9X?=
+ =?us-ascii?Q?+TBs+3RaNyx8oa8OBkxiNXenTe9UpJMvDFd0hmmo8a68aKh11J+Ld14ed8Ym?=
+ =?us-ascii?Q?xg=3D=3D?=
 X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7825a9c3-765f-461d-3b49-08dd78d055e3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62fc0ba8-bca2-43f9-6b61-08dd78d0570a
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR13MB5545.namprd13.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 08:10:34.7737 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 08:10:36.7954 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sItVkngr2DYvIiuakphsTImBKSdzhNH5L5WY9X2moHr+7bgLLkEaUmLNucsSnArn7rV5QIJ42JgVi1OT37I+9lbicMz5TBdshlgv/nondcQ=
+X-MS-Exchange-CrossTenant-UserPrincipalName: oEE3pCuyPOVBJ8FHVf7j1jKoyjHSPndbpQC1NaeF9+a9RpwGSolpS9xqSu7+meehhpvRNtIjMATSgKVXtD0Rdp/qthdMoRxpGbbY94Z45i8=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR13MB3940
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -143,133 +143,192 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Wu <long.wu@corigine.com>
 
-Added an API `rte_eth_dev_get_vlan_filter_conf()` to retrieve
-the VLAN filter configuration of an Ethernet device.
+Introduce a new command to show the VLAN identifiers
+filtered by a port.
+Usage example:
+testpmd> rx_vlan show port 0
+VLAN filter IDs:
+1,4-5,9,12,14,18,3864-3865,3869,3874,3878,4076-4091,4093,4095,
+testpmd>
 
 Signed-off-by: Long Wu <long.wu@corigine.com>
 Reviewed-by: Chaoyong He <chaoyong.he@corigine.com>
 ---
- doc/guides/rel_notes/release_25_07.rst |  5 +++++
- lib/ethdev/ethdev_trace.h              |  8 ++++++++
- lib/ethdev/ethdev_trace_points.c       |  3 +++
- lib/ethdev/rte_ethdev.c                | 24 ++++++++++++++++++++++++
- lib/ethdev/rte_ethdev.h                | 19 +++++++++++++++++++
- 5 files changed, 59 insertions(+)
+ app/test-pmd/cmdline.c                      | 46 +++++++++++++++
+ app/test-pmd/config.c                       | 64 +++++++++++++++++++++
+ app/test-pmd/testpmd.h                      |  1 +
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  7 +++
+ 4 files changed, 118 insertions(+)
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..81d4c36f77 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 5a627a9bc6..0ac50545b0 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -4718,6 +4718,51 @@ static cmdline_parse_inst_t cmd_rx_vlan_filter = {
+ 	},
+ };
  
-+* **Added an API to retrieve VLAN filter configuration.**
++/* *** SHOW VLAN IDENTIFIERS FROM A PORT VLAN RX FILTER *** */
++struct cmd_rx_vlan_filter_show_result {
++	cmdline_fixed_string_t rx_vlan;
++	cmdline_fixed_string_t show;
++	cmdline_fixed_string_t port;
++	portid_t port_id;
++};
 +
-+  Added an API ``rte_eth_dev_get_vlan_filter_conf`` to retrieve the VLAN filter
-+  configuration of an Ethernet device.
-+
- 
- Removed Items
- -------------
-diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
-index c65b78590a..ecea305c66 100644
---- a/lib/ethdev/ethdev_trace.h
-+++ b/lib/ethdev/ethdev_trace.h
-@@ -639,6 +639,14 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_int(ret);
- )
- 
-+RTE_TRACE_POINT(
-+	rte_ethdev_trace_vlan_filter_conf_get,
-+	RTE_TRACE_POINT_ARGS(uint16_t port_id,
-+			struct rte_vlan_filter_conf *vf_conf),
-+	rte_trace_point_emit_u16(port_id);
-+	rte_trace_point_emit_ptr(vf_conf);
-+)
-+
- RTE_TRACE_POINT(
- 	rte_ethdev_trace_set_vlan_strip_on_queue,
- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t rx_queue_id, int on),
-diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index 071c508327..913a99f8c0 100644
---- a/lib/ethdev/ethdev_trace_points.c
-+++ b/lib/ethdev/ethdev_trace_points.c
-@@ -266,6 +266,9 @@ RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_mtu,
- RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_vlan_filter,
- 	lib.ethdev.vlan_filter)
- 
-+RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_vlan_filter_conf_get,
-+	lib.ethdev.vlan_filter_conf_get)
-+
- RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_vlan_strip_on_queue,
- 	lib.ethdev.set_vlan_strip_on_queue)
- 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index d4197322a0..a2c05594ff 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -4433,6 +4433,30 @@ rte_eth_dev_vlan_filter(uint16_t port_id, uint16_t vlan_id, int on)
- 	return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_dev_get_vlan_filter_conf, 25.07)
-+int
-+rte_eth_dev_get_vlan_filter_conf(uint16_t port_id,
-+		struct rte_vlan_filter_conf *vf_conf)
++static void
++cmd_rx_vlan_filter_show_parsed(void *parsed_result,
++			       __rte_unused struct cmdline *cl,
++			       __rte_unused void *data)
 +{
-+	struct rte_eth_dev *dev;
++	struct cmd_rx_vlan_filter_show_result *res = parsed_result;
 +
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (vf_conf == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Cannot get ethdev port %u vlan filter configuration to NULL",
-+			port_id);
-+		return -EINVAL;
-+	}
-+
-+	memcpy(vf_conf, &dev->data->vlan_filter_conf, sizeof(struct rte_vlan_filter_conf));
-+
-+	rte_ethdev_trace_vlan_filter_conf_get(port_id, vf_conf);
-+
-+	return 0;
++	rx_vft_dump(res->port_id);
 +}
 +
- RTE_EXPORT_SYMBOL(rte_eth_dev_set_vlan_strip_on_queue)
- int
- rte_eth_dev_set_vlan_strip_on_queue(uint16_t port_id, uint16_t rx_queue_id,
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ea7f8c4a1a..190fd4d3a7 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -3709,6 +3709,25 @@ int rte_eth_dev_set_mtu(uint16_t port_id, uint16_t mtu);
-  */
- int rte_eth_dev_vlan_filter(uint16_t port_id, uint16_t vlan_id, int on);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Retrieve the VLAN filter configuration of an Ethernet device.
-+ *
-+ * @param port_id
-+ *   The port identifier of the Ethernet device.
-+ * @param vf_conf
-+ *   Location for Ethernet device VLAN filter configuration to be filled in.
-+ * @return
-+ *   - (0) if successful.
-+ *   - (-ENODEV) if *port_id* invalid.
-+ *   - (-EINVAL) if bad parameter.
-+ */
-+__rte_experimental
-+int rte_eth_dev_get_vlan_filter_conf(uint16_t port_id,
-+		struct rte_vlan_filter_conf *vf_conf);
++static cmdline_parse_token_string_t cmd_rx_vlan_filter_show_rx_vlan =
++	TOKEN_STRING_INITIALIZER(struct cmd_rx_vlan_filter_show_result,
++				rx_vlan, "rx_vlan");
++static cmdline_parse_token_string_t cmd_rx_vlan_filter_show_show =
++	TOKEN_STRING_INITIALIZER(struct cmd_rx_vlan_filter_show_result,
++				show, "show");
++static cmdline_parse_token_string_t cmd_rx_vlan_filter_show_port =
++	TOKEN_STRING_INITIALIZER(struct cmd_rx_vlan_filter_show_result,
++				port, "port");
++static cmdline_parse_token_num_t cmd_rx_vlan_filter_show_portid =
++	TOKEN_NUM_INITIALIZER(struct cmd_rx_vlan_filter_show_result,
++				port_id, RTE_UINT16);
++static cmdline_parse_inst_t cmd_rx_vlan_filter_show = {
++	.f = cmd_rx_vlan_filter_show_parsed,
++	.data = NULL,
++	.help_str = "rx_vlan show port <port_id>: "
++		"Show VLAN identifiers from the set of VLAN identifiers "
++		"filtered by a port",
++	.tokens = {
++		(void *)&cmd_rx_vlan_filter_show_rx_vlan,
++		(void *)&cmd_rx_vlan_filter_show_show,
++		(void *)&cmd_rx_vlan_filter_show_port,
++		(void *)&cmd_rx_vlan_filter_show_portid,
++		NULL,
++	},
++};
 +
- /**
-  * Enable/Disable hardware VLAN Strip by a Rx queue of an Ethernet device.
-  *
+ /* *** ENABLE HARDWARE INSERTION OF VLAN HEADER IN TX PACKETS *** */
+ struct cmd_tx_vlan_set_result {
+ 	cmdline_fixed_string_t tx_vlan;
+@@ -13756,6 +13801,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
+ 	&cmd_vlan_tpid,
+ 	&cmd_rx_vlan_filter_all,
+ 	&cmd_rx_vlan_filter,
++	&cmd_rx_vlan_filter_show,
+ 	&cmd_tx_vlan_set,
+ 	&cmd_tx_vlan_set_qinq,
+ 	&cmd_tx_vlan_reset,
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 61f93a9ca5..313d49812d 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -6676,6 +6676,70 @@ rx_vft_list_parse(uint16_t *vlan_id, char *vlan_id_list)
+ 	return count;
+ }
+ 
++static void
++rx_vft_dump_printf(int left, int right, int *c_count)
++{
++	if (left == right)
++		*c_count += printf("%d,", left);
++	else
++		*c_count += printf("%d-%d,", left, right);
++
++	if (*c_count >= 120) {
++		*c_count = 0;
++		printf("\n");
++	}
++}
++
++void
++rx_vft_dump(uint16_t port_id)
++{
++	int ret;
++	uint16_t vidx;
++	uint16_t vbit;
++	uint64_t vmap;
++	int left, right, c_count;
++	struct rte_vlan_filter_conf vfc;
++
++	ret = rte_eth_dev_get_vlan_filter_conf(port_id, &vfc);
++	if (ret != 0) {
++		fprintf(stderr,
++			"Get VLAN filter configuration from port %u failed, ret = %d\n",
++			port_id, ret);
++		return;
++	}
++
++	printf("VLAN filter IDs:\n");
++
++	left = -1;
++	right = -1;
++	c_count = 0;
++	for (vidx = 0; vidx < 64; vidx++) {
++		vmap = vfc.ids[vidx];
++		for (vbit = 0; vbit < 64; vbit++) {
++			if ((vmap & RTE_BIT64(vbit)) != 0) {
++				if (left == -1)
++					left = vidx * 64 + vbit;
++
++				continue;
++			}
++
++			if (left != -1) {
++				right = vidx * 64 + vbit - 1;
++				rx_vft_dump_printf(left, right, &c_count);
++				left = -1;
++				right = -1;
++			}
++		}
++	}
++
++	if (left != -1 && right == -1) {
++		right = 4095;
++		rx_vft_dump_printf(left, right, &c_count);
++	}
++
++	printf("\n");
++}
++
+ void
+ vlan_tpid_set(portid_t port_id, enum rte_vlan_type vlan_type, uint16_t tp_id)
+ {
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index ac4f716408..610e130c56 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -1104,6 +1104,7 @@ void rx_vlan_filter_set(portid_t port_id, int on);
+ void rx_vlan_all_filter_set(portid_t port_id, int on);
+ void rx_vlan_qinq_strip_set(portid_t port_id, int on);
+ int rx_vft_list_parse(uint16_t *vlan_id, char *vlan_id_list);
++void rx_vft_dump(uint16_t port_id);
+ int rx_vft_set(portid_t port_id, uint16_t vlan_id, int on);
+ void vlan_extend_set(portid_t port_id, int on);
+ void vlan_tpid_set(portid_t port_id, enum rte_vlan_type vlan_type,
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index b35722d2f5..0eb326e1d2 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -1064,6 +1064,13 @@ For example, to remove some VLAN identifiers filtered by port:
+ 
+    testpmd> rx_vlan rm 1,3-4,7 0
+ 
++rx_vlan show
++~~~~~~~~~~~~
++
++Show VLAN identifiers from the set of VLAN identifiers filtered by a port::
++
++   testpmd> rx_vlan show port (port_id)
++
+ rx_vlan add (for VF)
+ ~~~~~~~~~~~~~~~~~~~~
+ 
 -- 
 2.43.5
 
