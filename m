@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F337C369AE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 23:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F37C369AE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 23:50:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93D1340E0A;
-	Sat, 12 Apr 2025 01:49:45 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 23AE8402CE
- for <dev@dpdk.org>; Sat, 12 Apr 2025 01:49:42 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-af59c920d32so1926221a12.0
- for <dev@dpdk.org>; Fri, 11 Apr 2025 16:49:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B374340DF5;
+	Sat, 12 Apr 2025 01:49:46 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 2033F40DD3
+ for <dev@dpdk.org>; Sat, 12 Apr 2025 01:49:43 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-3081fe5987eso1880440a91.3
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 16:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744415381;
- x=1745020181; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744415382;
+ x=1745020182; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
- b=cEUiT41A8Ur9jQEnCxi0TjjmGl0visPS+zUX6n5cjBcf/HbpQ4dO1a3+u/pIqEeMZS
- scX+q3tbrobVhXKW9gtLsApSS2qpwT3ClIRFxCJjK9SOkv1/QujfeFnwlTU4s4D5/QVr
- fAymSQhsSPj5IPh0/7tsn6Qqv7G+IRbDZr9dN04VRK9/ZRf/0WqBLIgMjtyI1Wjay4pM
- BnCDuWM5ezQKhW1BYN9V5rIQ9OFOyA4vv90blBUMRlZj8MSacmEG1vaXYcTZ8MkRt4ym
- ZPVWM664RzN7ueJup2+bcCRvbJHhZ18YSm5G4lQMqSaBe6FXCp+Kezqo23QnUloI561C
- bjGw==
+ bh=8JBnpPYalxjvG7xml7r8CXLliDz8gCzqjgPTUVLzfGo=;
+ b=NDh0rcwjXlxBBkgEDyP1UDLNDgWOJTGGT+6xzRbFWsq0n1HZB+Yy74t2pJaKWrdVxH
+ Ibmc8StaAF2lmMyRKl9eiK+dgwgCYCQtny33mywETH8wFEuiuwHxLvFglxUiDgQ8tBrb
+ CR+SQV+/oFDWikBEm2UGIImQjqZaf3XxU6fa9wvFwfJdd9HCXxzHNT0SxGYeNS7Gz2rN
+ PniniBMxYDOVbmc2G8A0xSGuoAQCoy9eWBZO7R8KLxa2dy+8XU9UvV4H77x4T038cvHs
+ PzQjIRV2j//kZAu0ExVVPWiGY6v20vhtsjOJLrOEx2nY8D1Us1Rkl/2sB4BfRS5FEmEd
+ +lUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744415381; x=1745020181;
+ d=1e100.net; s=20230601; t=1744415382; x=1745020182;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
- b=K3/A2qpvTNEeAw9dgn5nV6BWxCSXPEXwjd9J5XYVdLP8jv70HiXenmYAi9lgEtAnUa
- 86U9HSc3uvRCoz+rY+UyD2lpnHsIomi4tpsiArPxVTma1CEBUI4KHuw53QEoUGT1tF97
- BW1TSpdHF+gkRH+KLaWImvumnwAWf20yXbB58AMzBGeioyKQLMittY/X7bbQhW+Xm9ic
- c+foT235RpnXE/maKn3ZlD+MK0QhqKZmpvh8dO96Fx0gEA18KPV+u+yK39FX3NapCCsv
- w5IzydtowmuB1MQ3M/TKHmDPGoGSiYdk5YFNDywSilaXXdZfjaf7V2+Vy5vC7b68KoSF
- NTnA==
-X-Gm-Message-State: AOJu0Yxz4VhWXEMNMCqbDnzEL9/nEdyJZO+NA+SN/XjaNYadVtIyFU6D
- bczoVH/F92pRY370+R91zx4+MCuJf2+uDjSV25eOqfimpkW81d/BuBonwqYWJhL6E2aJcs5bPmE
- r
-X-Gm-Gg: ASbGncvyCR4rfJIlZIRwsDWmBQMpMun0UzvPISSUNoRoMQn4oHccvfRingfyiFYMwAK
- +7zzZvFabVIHyrLjtQZmB0dlAZRp3LPokMdwyn8WlK8mUYjCf/Unxs20tXNt+nLqQipkv9CWgdA
- lU/t7jkAlFB9491vj94NU6ZfIbjWIvBFel8tGuHc9S+FIZKCnoV0HcdXXKBhXu2UW/eL92CoeEK
- efLRhLeI1DmzPdOSB84GV34JGk0CWbIkKEYIUnR1CCCrXwKRLcBDxfuA513wew1y3P5DIDdYmHn
- 1drrzDdO7fhkB/Nn10+vxhUb1ZXlXwh/ti2Z3VBF2+x0Uw6F/JYtFoFGehdJ7IJPTdjeCu5KxHH
- LpMOhLVt2uYDZHo4f
-X-Google-Smtp-Source: AGHT+IGyQ+oiokoZCg3p2vH3uel+uuSvAHetIm4hpu4f0BOIaVsyW7eAGeLDaB27CdkiqKI1bTSldQ==
-X-Received: by 2002:a17:90a:f944:b0:2f2:ab09:c256 with SMTP id
- 98e67ed59e1d1-308237cf269mr7575386a91.33.1744415381274; 
- Fri, 11 Apr 2025 16:49:41 -0700 (PDT)
+ bh=8JBnpPYalxjvG7xml7r8CXLliDz8gCzqjgPTUVLzfGo=;
+ b=BmYqZEgSccR1/CmfpgAbBUw69RDFPGuPJ5enmRiel/AmoK2ekgEeDHhySSdnXEm5xT
+ wuTtdEXHZIU4BvqCg4NLO8QnA6qFqCkWmui+0QjZ8z8N+xt+2LwbpJ/4zybpXb9kDKqc
+ yCAoC91I/s0gQ32tlcng4QHh4/k/G1glGPVdQ9ooUVsZhP1U1d0XwB2nGO2DH3Vr8xmR
+ g7FCFXlDyqy9snVtXMGdCusZW//alWD0dvksp+rKbUmhmngvOZZkBCsUUxRMhaOsFuLU
+ 1VBWT1ChBvAl8uwkScvrc6OIFCfq4TjwLMA/yG3+YQX+8ghrswRg5KhnYNQCLCBJ6Uh9
+ h5Cg==
+X-Gm-Message-State: AOJu0YwlVTIxNEgX2FlzhNtlPgzCfakQXNiMjOM1W7FW5AHRcIrGOFC/
+ jTTSD5R8YB2Pd29oW7orU3O8UEfon9PgSTdbqkHNXxtMHstRaSaMkUEmTS0nsP0Ec/80yrTu7qa
+ V
+X-Gm-Gg: ASbGncs868dlJZ7Nf4Z0LrmBdNuc/WbwSma66U/j9m8LJqM+yYC4HdLk2bzCn0gjCAA
+ gWrX9funowuGu+JBNT0/l7KblaUpqNdC6gPfS2E1A1wlib8QkizDeMOMypGNHeuZBiFnpXUyyCQ
+ xhCVnsZ5uEwpscdvxTdATkBJWY/QeavoZ57JV1wCVenFPFUdMcAVFhz+wqrNDcFigGEWg95qKLC
+ f+HSH/Qh3B8DhzI4ErWiQMV3LD+qEszYgwIITDCFAlrDK1Uxy0Hzcqa6GPLTuQ0qWcaXKSnevNY
+ HpouplrsYpRx4+zN/HRv7LwLvRJH+jnmB4II1jRhj3dFqsdFjKSOAJQe8sM6MdKG2ZLZ8QL2y1Y
+ YBZ6Or03uLaxy4aY+
+X-Google-Smtp-Source: AGHT+IFbyDTGmBmkZAqhaN1HZSq9pjzRJdjZgrOc534uxS7qclHAVzKrfvGHqSe4b3ipZES2ml/j4g==
+X-Received: by 2002:a17:90a:f946:b0:2ff:64a0:4a57 with SMTP id
+ 98e67ed59e1d1-30823672347mr5637543a91.26.1744415382212; 
+ Fri, 11 Apr 2025 16:49:42 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-306dd11e643sm6538661a91.12.2025.04.11.16.49.40
+ 98e67ed59e1d1-306dd11e643sm6538661a91.12.2025.04.11.16.49.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 11 Apr 2025 16:49:40 -0700 (PDT)
+ Fri, 11 Apr 2025 16:49:41 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [RFC 03/13] test: add test for hotplug and secondary process
- operations
-Date: Fri, 11 Apr 2025 16:44:40 -0700
-Message-ID: <20250411234927.114568-4-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC 04/13] net/ring: allow lockfree transmit if ring supports it
+Date: Fri, 11 Apr 2025 16:44:41 -0700
+Message-ID: <20250411234927.114568-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250411234927.114568-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -83,95 +81,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use null device to exercise ethdev start/stop in secondary process.
+Need to be able have multiple threads all using same
+transmit queue when using SPAN.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_mp_secondary.c | 51 +++++++++++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 3 deletions(-)
+ drivers/net/ring/rte_eth_ring.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/app/test/test_mp_secondary.c b/app/test/test_mp_secondary.c
-index f3694530a8..09611cc5c2 100644
---- a/app/test/test_mp_secondary.c
-+++ b/app/test/test_mp_secondary.c
-@@ -15,6 +15,9 @@
- #include <string.h>
- #include <unistd.h>
- 
-+#include <rte_ethdev.h>
-+#include <rte_bus_vdev.h>
-+
- #ifdef RTE_EXEC_ENV_WINDOWS
- int
- test_mp_secondary(void)
-@@ -204,6 +207,44 @@ run_object_creation_tests(void)
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index b1085bf390..966c64d9a5 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -177,6 +177,19 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
  	return 0;
  }
  
-+static int
-+run_ethdev_tests(void)
++static bool
++eth_tx_queue_lockfree(const struct pmd_internals *internals)
 +{
-+	char vdev_name[] = "net_null";
-+	struct rte_eth_conf dev_conf = { 0 };
-+	uint16_t port;
-+	int ret;
++	unsigned int i;
 +
-+	printf("### Testing hotplug and ethdev start/stop\n");
++	for (i = 0; i < internals->max_tx_queues; i++) {
++		const struct ring_queue *r = &internals->tx_ring_queues[i];
 +
-+	/* use hotplug to make a null vdev */
-+	ret = rte_eal_hotplug_add("vdev", vdev_name, "");
-+	TEST_ASSERT(ret == 0, "Hotplug add of '%s' failed", vdev_name);
-+
-+	printf("# Checked hotlug_add OK\n");
-+
-+	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
-+	TEST_ASSERT(ret == 0, "Lookup vdev '%s' failed", vdev_name);
-+
-+	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
-+	TEST_ASSERT(ret == 0, "Configure port %u failed", port);
-+
-+	ret = rte_eth_dev_start(port);
-+	TEST_ASSERT(ret == 0, "Start port %u failed", port);
-+
-+	printf("# Checked rte_eth_dev_start\n");
-+
-+	ret = rte_eth_dev_stop(port);
-+	TEST_ASSERT(ret == 0, "Stop port %u failed", port);
-+
-+	printf("# Checked rte_eth_dev_stop\n");
-+
-+	rte_eal_hotplug_remove("vdev", vdev_name);
-+
-+	printf("# Checked hotlug_remove OK\n");
-+	return 0;
++		if (r->rng->flags & RING_F_SP_ENQ)
++			return false;
++	}
++	return true;
 +}
+ 
+ static int
+ eth_dev_info(struct rte_eth_dev *dev,
+@@ -189,6 +202,10 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = (uint16_t)internals->max_rx_queues;
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
+ 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
 +
- /* if called in a primary process, just spawns off a secondary process to
-  * run validation tests - which brings us right back here again...
-  * if called in a secondary process, this runs a series of API tests to check
-@@ -212,15 +253,19 @@ run_object_creation_tests(void)
- int
- test_mp_secondary(void)
- {
--	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+	int ret;
++	if (eth_tx_queue_lockfree(internals))
++		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
 +
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
- 		return run_secondary_instances();
--	}
+ 	dev_info->max_tx_queues = (uint16_t)internals->max_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
  
- 	printf("IN SECONDARY PROCESS\n");
-+	ret = run_ethdev_tests();
-+	if (ret != 0)
-+		return ret;
- 
- 	return run_object_creation_tests();
- }
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_FAST_TEST(multiprocess_autotest, false, false, test_mp_secondary);
-+REGISTER_FAST_TEST(multiprocess_autotest, true, true, test_mp_secondary);
 -- 
 2.47.2
 
