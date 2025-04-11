@@ -2,74 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00EAC36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 16:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A932C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 16:29:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15ECA40B95;
-	Fri, 11 Apr 2025 18:27:08 +0200 (CEST)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 870E54025F
- for <dev@dpdk.org>; Fri, 11 Apr 2025 18:27:06 +0200 (CEST)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-72d3b48d2ffso2339464b3a.2
- for <dev@dpdk.org>; Fri, 11 Apr 2025 09:27:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5364D40B9A;
+	Fri, 11 Apr 2025 18:29:40 +0200 (CEST)
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com
+ [209.85.167.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 3CEFF4025F
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 18:29:39 +0200 (CEST)
+Received: by mail-oi1-f169.google.com with SMTP id
+ 5614622812f47-3fea67e64caso1245629b6e.2
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 09:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744388825;
- x=1744993625; darn=dpdk.org; 
+ d=gmail.com; s=20230601; t=1744388978; x=1744993778; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=18Nlnr+2TtQ2CfcnjCJmn9iYAejdpQ+S+7LZ3+fnCY8=;
- b=plJcVR6fQdOwaePt9AQY1XIzcAYzu0BVYZedDawc6Q4nE1tkQ/R1JUbyQ8M+8i1iwR
- L98xz4EO1hoAnvogPAIimZ+thLyKSTDoNbXnnpkaAsn8Zrka8Utx7Y0gu0+X+irjTJdF
- rvQVv7FsFTSkNZSQvnc/Dv6pURu3+hWjzIGb328Xc2QzePO+ZyjeVup3fKpXtYkE37mQ
- QZmszJfxXDg98W4QxB/JQkmMuvjdhFXp5jVJNztS2WdosejLKoVmGUzzyQMSYj4wJp7D
- 2qqMmnO4O41hnc32+NYAAFWzyc4ghT68ra3cUvDpLU3WzZv8tmAtQuu3GvUUsKhwh11U
- SaWw==
+ :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+ :reply-to; bh=NN/yhyMSHJiaxSI5my0GqxOYe7dFN6rlvyo1YSVt8Cs=;
+ b=BjDo/dr37SBm0uGe/K8MmIHeoalDwnIhP4FywGKUikGJcnlsJyHXjD5bhF+zVRgx+P
+ 5mIUXrkRrlYrWFjSrs+vDhX4OxBUQ8uzzB/UssC9MUR3WptlQWgCwsTBtmXXVkNlp4F2
+ Hi6+NFiyAQiMrT9FVDvPmegtGpSX3v70ump6Iwvbybt3hmVyf8L5yRG3VAv9SIAxbFU+
+ QRe7OLBXMsFWXiLi05RRbWUWCTlzD4FVxo1vtaNLH6wuZ1OXtKnFjxv8MX4S+dvFKMqF
+ Desyx2atp2uHp6Z/lXlnfu1TjsOBB99Vf1jZBkCfKViIzM35v12ArTTbSYe9+nQpPdJm
+ jHPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744388825; x=1744993625;
+ d=1e100.net; s=20230601; t=1744388978; x=1744993778;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=18Nlnr+2TtQ2CfcnjCJmn9iYAejdpQ+S+7LZ3+fnCY8=;
- b=hDfO2ilIeK+tmfgi2fFutb8TmTV/aSaAsqW5ARzKJ3GK4fXwQMwcQ5/+QZUDBotDz4
- BdtAK5Jnig8NCl63Ydrc2rcNDRA0Fu3eocz75pQjUL4d/HIATS/rCZpAoqAgutXC8Iyu
- uP1Hpp89o2iL0Gzn0TbNFdGsH6bKHLUkJ6ECm26AdAknxIWomt02xXQg6lKTWJNsyhc8
- 8x7q/soKcg6hhQg1rI3CUbjlI1as1WqL8dO/9EJdjIIGoQEXt0ygK2Wf+62C2ZH5dd99
- W59TWPnf3L8ke8kEnMScNUaaIWCbwiY+eePD5Ore+OQihTmMok4ws/qbWdIMx+JpUjYt
- pfVQ==
-X-Gm-Message-State: AOJu0YxjroClDnwQ6lHEFK6tmcECqBuY2qotn2y/2o4X4dvfsKV7MzCx
- 8qEqce2DOE7EXmgJsOkav2//YGL2AYaYVcxGRjmCa6SjrufPsrMdTXNb5/sVkwHNQxal8hSzmh/
- U
-X-Gm-Gg: ASbGnctECUDkiklvUSoiTW2znPzUCFXlzG8HjdE1DDiv8TgCnroC5mzbGFyB0MpnIOi
- 405IWwgF1zpPsQ5X0J/SugzgoVZ3DlL8FMqZrfQPtSlYKWDo6KJedK8vufq0+kwdb64uTv2Mgzp
- FvYS03CJx5sqbMWXjtia+G9uqjblFP2G+8sakUMFIlZ178cL30ddLjrLygMe4rJVlf75pwn5NYa
- l+TKpB+F5C3NfN3EREXU1TdoLnHCRUXwy0Hbh74ereeh8cpKtteBc/mksUa3+0LTZ0wEdlA/PE2
- GyMlpwmWw1e1eaM8KECWCUVvqeObfZWN7OT9II0PRjfjaRtSYJRW/uQeVCf7udm8tHeGiLCNJpW
- SHcg20xzwn2u3g/45
-X-Google-Smtp-Source: AGHT+IHIF6MSsAzgDapYewqmO5ySIPKmaw2D2dq7cVc76E5QtbdP0axTPXRvJrm8hWi8fgv/SY4Qyg==
-X-Received: by 2002:a05:6a00:3d46:b0:736:3449:f8ee with SMTP id
- d2e1a72fcca58-73bd1193f28mr4795383b3a.4.1744388825366; 
- Fri, 11 Apr 2025 09:27:05 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73bd2335294sm1807608b3a.176.2025.04.11.09.27.04
+ bh=NN/yhyMSHJiaxSI5my0GqxOYe7dFN6rlvyo1YSVt8Cs=;
+ b=iieq1kvLIprLzMOnTAAdawmoCiPqFma2/ObUyxAAe5UhGeH6A9V6aFJ8ZtTxzJP+OM
+ qhJA5b46081Qs51UuotBRkXrFcfDMKfNHSsggQqlmCtcLzuxGxunbfWjufLLPNHbYZR+
+ 4yWL3EJf5hfTB682GqYbZkb6G8ndb6mZhh8KsPu9MFK3OMvQyp8YrOMi+Au4ZUWCEU/7
+ GPZUFT2L7ok5zY5OlcZiolE1X+tGzHW+iaYeESPh80e/hRht5wTti+pBETgdNNev7hKO
+ ltYWXYk6gO9q8I2wKnjQik9TRNxlk42K90w5DajWRDcbdoTB3VSCp46jY/EEB36AMOQS
+ GQ5Q==
+X-Gm-Message-State: AOJu0YztONlwe9AA1x64x6tDPhaKVyEZN0HOpiVY53ZonY7EZkmPwcmv
+ nLjrLIlNyCq6yEHdRey2YDHhJiEii11S2U4/AhI+23zhXVAR32H2WmypxQ==
+X-Gm-Gg: ASbGncspCZ5vieAmcpkuPlT1wXJ/ZFZU7rIPI55IPu1QsmZ0DD6rPnNUn2FSuGTGHg9
+ 96NzxJ47mlbaza1zxoko6rd5NlZrArwcODJdBlpk+vmj8SM/uV0+qxiiLLiobrugoHvyCh1pT4R
+ FDeoiWOALy07CZDeXa+Mt8dafqsuCujVuLanjjl/kaZRfyQCPJt8yIzgoRMmiktRkmEjGbWLocD
+ HRVjruSA7f5vPviD+oxrYTil9sFyxF358AV/y7T/KD4PPPWLJz5id1mlxNfb7H7XidDE3ZA0lg8
+ Wj4sTN6dSaRWANz7IQY8EqrlQ4l8lOZ9j+buKM0PiCWJ+lwvxdgWHKEU1Son3ROna56B3A/k65w
+ akArzq+Um/6I+9S5qPf1p+zKfaP4FGUkhk073
+X-Google-Smtp-Source: AGHT+IHuHnH0pFfb9eYg+/Aj0BscjNlZUwUqc87dyH/0qpSkPhjD3WmLRWqwl9Vlf7NIqPCQdaBd3Q==
+X-Received: by 2002:a05:6808:2391:b0:400:8252:a645 with SMTP id
+ 5614622812f47-40085065ef8mr1917836b6e.21.1744388977745; 
+ Fri, 11 Apr 2025 09:29:37 -0700 (PDT)
+Received: from Ubuntu.guest.local (syn-097-105-091-146.biz.spectrum.com.
+ [97.105.91.146]) by smtp.gmail.com with ESMTPSA id
+ 5614622812f47-400763b6113sm990295b6e.44.2025.04.11.09.29.36
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 11 Apr 2025 09:27:05 -0700 (PDT)
-Date: Fri, 11 Apr 2025 09:27:03 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chaoyong He <chaoyong.he@corigine.com>
-Cc: dev@dpdk.org, oss-drivers@corigine.com, Long Wu <long.wu@corigine.com>
-Subject: Re: [PATCH 1/3] app/testpmd: add/remove multiple VLAN filter IDs at
- once
-Message-ID: <20250411092703.688a1b65@hermes.local>
-In-Reply-To: <20250411081005.1133509-2-chaoyong.he@corigine.com>
-References: <20250411081005.1133509-1-chaoyong.he@corigine.com>
- <20250411081005.1133509-2-chaoyong.he@corigine.com>
+ Fri, 11 Apr 2025 09:29:37 -0700 (PDT)
+From: Nandini Persad <nandinipersad361@gmail.com>
+To: dev@dpdk.org
+Subject: [PATCH v2] doc: reword contributor's guide for grammar/clarity
+Date: Fri, 11 Apr 2025 09:29:34 -0700
+Message-Id: <20250411162934.45148-1-nandinipersad361@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250401234545.32515-1-nandinipersad361@gmail.com>
+References: <20250401234545.32515-1-nandinipersad361@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,32 +79,262 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 11 Apr 2025 16:10:03 +0800
-Chaoyong He <chaoyong.he@corigine.com> wrote:
+Reviewing the Contributor Guidleines for grammar and
+comprehension.
 
-> From: Long Wu <long.wu@corigine.com>
-> 
-> The command of setting VLAN filter IDs can only set one VLAN filter
-> ID at once. For example:
-> testpmd> rx_vlan add 100 0  
-> 
-> This is very inefficient in some case because it forces the
-> user type this command as many times as the VLAN filter IDs
-> they want to set.
-> 
-> This patch supports the user set any number valid VLAN filter
-> IDs just through one command and it is also backwards compatible.
-> For example:
-> testpmd> rx_vlan add 100,102-103,200 0  
-> The VLAN filter IDs 100, 102, 103, 200 will be added to port 0.
-> 
-> Signed-off-by: Long Wu <long.wu@corigine.com>
-> Reviewed-by: Chaoyong He <chaoyong.he@corigine.com>
+Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
+---
+ doc/guides/contributing/coding_style.rst | 105 +++++++++++------------
+ doc/guides/contributing/design.rst       |   9 +-
+ doc/guides/contributing/new_library.rst  |  31 ++++---
+ 3 files changed, 77 insertions(+), 68 deletions(-)
 
-Not sure if this is really worth the effort.
-Testpmd is intended to exercise drivers, not as a production forwarding application
-though users have tendency to be lazy and use it for that.
+diff --git a/doc/guides/contributing/coding_style.rst b/doc/guides/contributing/coding_style.rst
+index 1ebc79ca3c..bc8021e767 100644
+--- a/doc/guides/contributing/coding_style.rst
++++ b/doc/guides/contributing/coding_style.rst
+@@ -15,14 +15,13 @@ It is based on the Linux Kernel coding guidelines and the FreeBSD 7.2 Kernel Dev
+ General Guidelines
+ ------------------
+ 
+-The rules and guidelines given in this document cannot cover every situation, so the following general guidelines should be used as a fallback:
++This document's rules and guidelines cannot cover every scenario, so the following general principles
++should be used as a fallback.
+ 
+-* The code style should be consistent within each individual file.
+-* In the case of creating new files, the style should be consistent within each file in a given directory or module.
+-* The primary reason for coding standards is to increase code readability and comprehensibility, therefore always use whatever option will make the code easiest to read.
+-
+-Line length is recommended to be not more than 80 characters, including comments.
+-[Tab stop size should be assumed to be 8-characters wide].
++* Maintain a consistent coding style within each file.
++* When creating new files, ensure consistency with other files in the same directory or module.
++* Prioritize readability and clarity. Choose the style that makes the code easiest to read.
++* Keep line length within 80 characters, including comments. Assume a tab stop size of 8 characters.
+ 
+ .. note::
+ 
+@@ -36,7 +35,7 @@ Usual Comments
+ ~~~~~~~~~~~~~~
+ 
+ These comments should be used in normal cases.
+-To document a public API, a doxygen-like format must be used: refer to :ref:`doxygen_guidelines`.
++To document a public API, a Doxygen-like format must be used. Refer to the :ref:`doxygen_guidelines`.
+ 
+ .. code-block:: c
+ 
+@@ -110,15 +109,19 @@ Headers should be protected against multiple inclusion with the usual:
+ Macros
+ ~~~~~~
+ 
+-Do not ``#define`` or declare names except with the standard DPDK prefix: ``RTE_``.
+-This is to ensure there are no collisions with definitions in the application itself.
++Use only the standard DPDK prefix (RTE_) when defining or declaring names
++to prevent conflicts with application definitions.
++
++Macro Naming:
++
++* "Unsafe" macros (those with side effects) and macros for manifest constants must be in uppercase.
++* Expression-like macros should either expand to a single token or be enclosed in outer parentheses.
++* If a macro inlines a function, use the lowercase function name and an uppercase macro name.
+ 
+-The names of "unsafe" macros (ones that have side effects), and the names of macros for manifest constants, are all in uppercase.
++Encapsulation:
+ 
+-The expansions of expression-like macros are either a single token or have outer parentheses.
+-If a macro is an inline expansion of a function, the function name is all in lowercase and the macro has the same name all in uppercase.
+-If the macro encapsulates a compound statement, enclose it in a do-while loop, so that it can be used safely in if statements.
+-Any final statement-terminating semicolon should be supplied by the macro invocation rather than the macro, to make parsing easier for pretty-printers and editors.
++* Macros that wrap compound statements should be enclosed in a do while loop to ensure safe use in "if" statements.
++* The semicolon terminating a statement should be provided by the macro invocation, not the macro itself, to improve readability for formatters and editors.
+ 
+ For example:
+ 
+@@ -138,38 +141,34 @@ Conditional Compilation
+ 
+ .. note::
+ 
+-   Conditional compilation should be used only when absolutely necessary,
+-   as it increases the number of target binaries that need to be built and tested.
+-   See below for details of some utility macros/defines available
+-   to allow ifdefs/macros to be replaced by C conditional in some cases.
+-
+-Some high-level guidelines on the use of conditional compilation:
+-
+-* If code can compile on all platforms/systems,
+-  but cannot run on some due to lack of support,
+-  then regular C conditionals, as described in the next section,
+-  should be used instead of conditional compilation.
+-* If the code in question cannot compile on all systems,
+-  but constitutes only a small fragment of a file,
+-  then conditional compilation should be used, as described in this section.
+-* If the code for conditional compilation implements an interface in an OS
+-  or platform-specific way, then create a file for each OS or platform
+-  and select the appropriate file using the Meson build system.
+-  In most cases, these environment-specific files should be created inside the EAL library,
+-  rather than having each library implement its own abstraction layer.
+-
+-Additional style guidance for the use of conditional compilation macros:
+-
+-* When code is conditionally compiled using ``#ifdef`` or ``#if``, a comment may be added following the matching
+-  ``#endif`` or ``#else`` to permit the reader to easily discern where conditionally compiled code regions end.
+-* This comment should be used only for (subjectively) long regions, regions greater than 20 lines, or where a series of nested ``#ifdef``'s may be confusing to the reader.
+-  Exceptions may be made for cases where code is conditionally not compiled for the purposes of lint(1), or other tools, even though the uncompiled region may be small.
+-* The comment should be separated from the ``#endif`` or ``#else`` by a single space.
+-* For short conditionally compiled regions, a closing comment should not be used.
+-* The comment for ``#endif`` should match the expression used in the corresponding ``#if`` or ``#ifdef``.
+-* The comment for ``#else`` and ``#elif`` should match the inverse of the expression(s) used in the preceding ``#if`` and/or ``#elif`` statements.
+-* In the comments, the subexpression ``defined(FOO)`` is abbreviated as "FOO".
+-  For the purposes of comments, ``#ifndef FOO`` is treated as ``#if !defined(FOO)``.
++   Use conditional compilation only when absolutely necessary
++   as it increases the number of binaries that must be built and tested.
++   Whenever possible, replace #ifdef macros with regular C conditionals
++   using the available utility macros and defines (see below for more details).
++
++Guidelines for Conditional Compilation:
++
++* If code can compile on all platforms but lacks runtime support on some,
++  use regular C conditionals instead of ``#ifdef`` or ``#if``.
++
++* If code cannot compile on all platforms but affects only a small fragment
++  of a file, use conditional compilation.
++
++* For platform specific implementations, create separate files for
++  each OS or platform and use Meson to select the appropriate one.
++  These files should generally reside in the EAL library to avoid
++  redundant abstraction layers in individual libraries.
++
++Style Guidelines for Conditional Compilation Macros:
++
++* For long or nested conditional compilation blocks (generally over 20 lines), add a comment
++  after ``#endif`` or ``#else`` to clarify where the block ends.
++* This is not necessary for short, straightforward sections.
++* The ``#endif`` comment should match the original ``#ifdef`` or ``#if`` condition.
++* The ``#else`` and ``#elif`` comments should indicate the inverse of the preceding condition.
++* In comments, ``defined(FOO)`` can be abbreviated as "FOO". Treat ``#ifndef FOO``
++  as ``#if !defined(FOO)``
++* Separate the comment from ``#endif`` or ``else`` with a single space.
+ 
+ .. code-block:: c
+ 
+@@ -850,13 +849,13 @@ Examples:
+ Specializations
+ ~~~~~~~~~~~~~~~
+ 
+-In addition to the above logging topic, any PMD or library can further split
+-logging output by using "specializations". A specialization could be the
+-difference between initialization code, and logs of events that occur at runtime.
++In addition to standard logging, PMDs and libraries can further categorize log
++output using specializations. Specializations help distinguish between different
++types of logs, such as initialization messages and runtime events.
+ 
+-An example could be the initialization log messages getting one
+-specialization, while another specialization handles mailbox command logging.
+-Each PMD, library or component can create as many specializations as required.
++For example, one specialization might handle initialization logs, while another is
++used for mailbox command logging. Each PMD, library, or component can define as many
++specializations as needed.
+ 
+ A specialization looks like this:
+ 
+diff --git a/doc/guides/contributing/design.rst b/doc/guides/contributing/design.rst
+index b724177ba1..7bf11ec2b6 100644
+--- a/doc/guides/contributing/design.rst
++++ b/doc/guides/contributing/design.rst
+@@ -72,17 +72,16 @@ like (non exhaustive): wide usage, performance, size.
+ Runtime Information - Logging, Tracing and Telemetry
+ ----------------------------------------------------
+ 
+-It is often desirable to provide information to the end-user
+-as to what is happening to the application at runtime.
+-DPDK provides a number of built-in mechanisms to provide this introspection:
++Providing runtime information to end-users is often necessary to understand the
++application’s behavior. DPDK offers several mechanisms for this introspection:
+ 
+ * :ref:`Logging <dynamic_logging>`
+ * :doc:`Tracing <../prog_guide/trace_lib>`
+ * :doc:`Telemetry <../prog_guide/telemetry_lib>`
+ 
+-Each of these has its own strengths and suitabilities for use within DPDK components.
++Each of these mechanisms has its strengths and is suited for specific use cases within DPDK components.
+ 
+-Below are some guidelines for when each should be used:
++Below are guidelines for when each should be used:
+ 
+ * For reporting error conditions, or other abnormal runtime issues, *logging* should be used.
+   Depending on the severity of the issue, the appropriate log level, for example,
+diff --git a/doc/guides/contributing/new_library.rst b/doc/guides/contributing/new_library.rst
+index 99890beb29..b9df9c901c 100644
+--- a/doc/guides/contributing/new_library.rst
++++ b/doc/guides/contributing/new_library.rst
+@@ -10,26 +10,34 @@ Process for approval in principle
+ Rationale
+ ~~~~~~~~~
+ 
+-Adding a new library to DPDK with proper RFC and then full patch-sets is a significant work.
+-In order to save effort, developers should get an early approval in principle,
+-or an early feedback in case the library is not suitable for various reasons.
++Adding a new library to DPDK, including the necessary RFC and full patch sets, is a substantial
++effort. To save time and resources, developers should seek early approval or feedback to determine
++if the library is suitable, especially if there are concerns about its compatibility or relevance.
++
+ 
+ Process
+ ~~~~~~~
+ 
+ #. When a contributor would like to add a new library to DPDK code base,
+-   the contributor must send the following items to DPDK mailing list
+-   for Technical Board approval-in-principle.
++   the contributor must send the following items to the DPDK mailing list
++   for Technical Board approval-in-principle:
++
+ 
+    * Purpose of the library.
++
+    * Scope of work: outline the various additional tasks planned for this library,
+      such as developing new test applications, adding new drivers,
+      and updating existing applications.
++
+    * Expected usage models of the library.
++
+    * Any licensing constraints.
++
+    * Justification for adding to DPDK.
++
+    * Any other implementations of the same functionality in other libraries/projects
+      and how this version differs.
++
+    * Public API specification header file as RFC.
+ 
+      * Optional and good to have.
+@@ -38,19 +46,22 @@ Process
+ 
+    * Any new library dependencies to DPDK.
+ 
+-#. Technical Board to schedule discussion on this in upcoming Technical Board meeting
+-   along with author.
+-   Based on the Technical Board schedule and/or author availability,
+-   Technical Board may need a maximum of **five** Technical Board meeting slots.
++
++#. The Technical Board will schedule a discussion on this in
++   an upcoming Technical Board meeting along with the author.
++   Based on the Technical Board schedule and/or the author availability,
++   the Technical Board may need a maximum of **five** Technical Board meeting slots.
++
+ 
+ #. Based on mailing list and Technical Board meeting discussions,
+-   Technical Board to vote and share the decision in the mailing list.
++   Technical Board will vote and share the decision in the mailing list.
+    The decision outcome can be any of the following:
+ 
+    * Approved in principle
+    * Not approved
+    * Further information needed
+ 
++
+ #. Once the Technical Board approves the library in principle,
+    it is safe to start working on the implementation.
+    However, the patches will need to meet the usual quality criteria
+-- 
+2.34.1
 
-If consensus is to implement this, then DPDK should really have a way to parse
-a range of values (already needed for cores). Then the library code could be used
-here, rather than special parsing code only for VLAN's in testpmd.
