@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE1BC369A2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 19:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEFEC369A2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 19:40:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38D3540C35;
-	Fri, 11 Apr 2025 21:39:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7892740DCB;
+	Fri, 11 Apr 2025 21:39:51 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 2CD1140A84
+ by mails.dpdk.org (Postfix) with ESMTP id 6F8974025F
  for <dev@dpdk.org>; Fri, 11 Apr 2025 21:39:46 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 512BD21165AB; Fri, 11 Apr 2025 12:39:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 512BD21165AB
+ id 784632116590; Fri, 11 Apr 2025 12:39:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 784632116590
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1744400385;
- bh=/p0pn9Zy0ZcJDddIFL+jY2SJiEx8FVw4rCXP3jqoRZo=;
+ bh=o2j/FqRuo30KpkN/z4Sucz8grAoJ7kOpm1bXwv8OTao=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=dbpB6+NV2MObw/X0CxgaEM71J5Eh3ahKKG+RFknSPRhHs9JFtemTeygE+htlZl/y3
- Z/NhEvU1QL9tHQcTyfKBffO72a7l8LuapGdfRqeAfAqP8vLdw2l6Nl1yabSz++XlWs
- PYgcDLonEk1Mq1fpnGcJiS7xdgpJWcf5oe/AK924=
+ b=tBRvfs67BCY/bQ0yieudr6c9OtTyolBiFxETIMONc8ujQsyZd5hMjLCpF6SI4Yxig
+ yfaWXnr9XYiSRIlo+vW5nfbnUslsexB8ziAfyK40zFDVcQ6k8vmw8rUO8aQqjTS9y+
+ bfvEziWekwT2c3wyEucn+PVmEdKjz+cpE37gBiFQ=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, Robin Jarry <rjarry@redhat.com>
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH 2/4] buildtools: use macro to embed information in binaries
-Date: Fri, 11 Apr 2025 12:39:31 -0700
-Message-Id: <1744400374-26620-3-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH 3/4] usertools: parse strings from PE images
+Date: Fri, 11 Apr 2025 12:39:32 -0700
+Message-Id: <1744400374-26620-4-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
 References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
@@ -43,93 +43,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The archiver tool from the MSVC toolset is lib.exe. It has different
-parameters then it's GNU counterpart "ar".
-
-buildtools\meson.build was updated to use lib.exe when MSVC compiler is
-used. This is to allow the code to be built without requiring GNU "ar"
-to be installed in that scenario.
-
-Script gen-pmdinfo-cfile.py was updated to use the correct parameters
-when using lib.exe.
-
-buildtools/meson.build was updated to require Python module "pefile" on
-Windows. This module is used to parse symbols on Windows images. Windows
-images are in PE format (opposed to ELF on Linux).
+Script usertools\dpdk-pmdinfo.py was enhanced to also be able to parse
+symbols from sections in PE images.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- buildtools/gen-pmdinfo-cfile.py | 6 +++++-
- buildtools/meson.build          | 8 ++++++--
- buildtools/pmdinfogen.py        | 5 +++--
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ usertools/dpdk-pmdinfo.py | 47 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 41 insertions(+), 6 deletions(-)
 
-diff --git a/buildtools/gen-pmdinfo-cfile.py b/buildtools/gen-pmdinfo-cfile.py
-index 5fbd51658a..9b4c2c48f8 100644
---- a/buildtools/gen-pmdinfo-cfile.py
-+++ b/buildtools/gen-pmdinfo-cfile.py
-@@ -10,7 +10,11 @@
- _, tmp_root, ar, archive, output, *pmdinfogen = sys.argv
- with tempfile.TemporaryDirectory(dir=tmp_root) as temp:
-     paths = []
--    for name in subprocess.run([ar, "t", archive], stdout=subprocess.PIPE,
-+    if ar == 'lib':
-+        ar_options = ['/LIST', '/NOLOGO']
+diff --git a/usertools/dpdk-pmdinfo.py b/usertools/dpdk-pmdinfo.py
+index 9189a2fdbc..77789c979c 100755
+--- a/usertools/dpdk-pmdinfo.py
++++ b/usertools/dpdk-pmdinfo.py
+@@ -40,6 +40,12 @@
+ import elftools
+ from elftools.elf.elffile import ELFError, ELFFile
+ 
++def is_windows():
++    return os.name == 'nt'
++
++if is_windows():
++    import pefile
++
+ 
+ # ----------------------------------------------------------------------------
+ def main() -> int:  # pylint: disable=missing-docstring
+@@ -114,18 +120,23 @@ def parse_pmdinfo(paths: Iterable[Path], search_plugins: bool) -> List[dict]:
+         A list of DPDK drivers info dictionaries.
+     """
+     binaries = set(paths)
+-    for p in paths:
+-        binaries.update(get_needed_libs(p))
+-    if search_plugins:
+-        # cast to list to avoid errors with update while iterating
+-        binaries.update(list(get_plugin_libs(binaries)))
++
++    if is_windows():
++        section_name = ".rdata"
 +    else:
-+        ar_options = ['t']
-+    for name in subprocess.run([ar] + ar_options + [archive], stdout=subprocess.PIPE,
-                                check=True).stdout.decode().splitlines():
-         if os.path.exists(name):
-             paths.append(name)
-diff --git a/buildtools/meson.build b/buildtools/meson.build
-index 1cd1ce02fd..c331be6b35 100644
---- a/buildtools/meson.build
-+++ b/buildtools/meson.build
-@@ -6,7 +6,9 @@ check_symbols = find_program('check-symbols.sh')
- ldflags_ibverbs_static = find_program('options-ibverbs-static.sh')
++        section_name = ".rodata"
++        for p in paths:
++            binaries.update(get_needed_libs(p))
++        if search_plugins:
++            # cast to list to avoid errors with update while iterating
++            binaries.update(list(get_plugin_libs(binaries)))
  
- python3_required_modules = []
--if host_machine.system() != 'windows'
-+if host_machine.system() == 'windows'
-+    python3_required_modules = ['pefile']
-+else
-     python3_required_modules = ['elftools']
- endif
- python3 = import('python').find_installation('python3', required: false, modules: python3_required_modules)
-@@ -37,7 +39,9 @@ install_data([
- pmdinfo = py3 + files('gen-pmdinfo-cfile.py') + [meson.current_build_dir()]
- pmdinfogen = py3 + files('pmdinfogen.py')
- if host_machine.system() == 'windows'
--    if cc.get_id() == 'gcc'
-+    if cc.get_id() == 'msvc'
-+        pmdinfo += 'lib'
-+    elif cc.get_id() == 'gcc'
-         pmdinfo += 'ar'
-     else
-         pmdinfo += 'llvm-ar'
-diff --git a/buildtools/pmdinfogen.py b/buildtools/pmdinfogen.py
-index dfb89500c0..8eddbb798c 100755
---- a/buildtools/pmdinfogen.py
-+++ b/buildtools/pmdinfogen.py
-@@ -192,7 +192,7 @@ def dump(self, file):
-         dumped = json.dumps(self.__dict__)
-         escaped = dumped.replace('"', '\\"')
-         print(
--            'const char %s_pmd_info[] __attribute__((used)) = "PMD_INFO_STRING= %s";'
-+            'RTE_INCLUDE(const char, %s_pmd_info)[] = "PMD_INFO_STRING= %s";'
-             % (self.name, escaped),
-             file=file,
-         )
-@@ -252,7 +252,8 @@ def open_output(path):
+     drivers = []
  
- def write_header(output):
-     output.write(
--        "static __attribute__((unused)) const char *generator = \"%s\";\n" % sys.argv[0]
-+        "#include <rte_common.h>\n"
-+        "static __rte_unused const char *generator = \"%s\";\n" % sys.argv[0]
-     )
+     for b in binaries:
+         logging.debug("analyzing %s", b)
+         try:
+-            for s in get_elf_strings(b, ".rodata", "PMD_INFO_STRING="):
++            for s in get_section_strings(b, section_name, "PMD_INFO_STRING="):
+                 try:
+                     info = json.loads(s)
+                     scrub_pci_ids(info)
+@@ -269,6 +280,30 @@ def get_elf_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
+         yield from find_strings(sec.data(), prefix)
  
  
++# ----------------------------------------------------------------------------
++def get_pe_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
++    """
++    Extract strings from a named PE section in a file.
++    """
++    pe = pefile.PE(path)
++    for sec in pe.sections:
++        section_name = sec.Name.decode().strip('\x00')
++        if section_name != section:
++            continue
++        yield from find_strings(sec.get_data(), prefix)
++
++
++# ----------------------------------------------------------------------------
++def get_section_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
++    """
++    Extract strings from a named section in an ELF or PE file.
++    """
++    if is_windows():
++        yield from get_pe_strings(path, section, prefix)
++    else:
++        yield from get_elf_strings(path, section, prefix)
++
++
+ # ----------------------------------------------------------------------------
+ LDD_LIB_RE = re.compile(
+     r"""
 -- 
 2.49.0.vfs.0.0
 
