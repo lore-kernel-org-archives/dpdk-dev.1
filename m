@@ -2,77 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80360C36010
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 13:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3064C36010
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 13:50:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67DD9406BC;
-	Fri, 11 Apr 2025 15:45:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3BED340A8A;
+	Fri, 11 Apr 2025 15:50:49 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0E5BC4025F
- for <dev@dpdk.org>; Fri, 11 Apr 2025 15:45:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 63EDE40A84
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 15:50:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744379105;
+ s=mimecast20190719; t=1744379448;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=u3z7pZIGajzaN6G0C/9zS98WDHtzWWIVWwjdy1bbpMg=;
- b=IA3lBtPXmQuR4arydBB3Fc3tegXN5T68eCDKnARwOHWU6lKBaE1pmnOTbaYBsz6D4Mjgv6
- iz62j6G8sdWU+c/F1K8FYgkBNw7bLlCmKKNrqjvbQnnhgkO/x7qRBfi4I8VidNRgjPv5Z3
- myYcGXy3u/QckOvwyfzMfVCJtScy77Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=LVX8CTaEsGG2H59yZV9LFMOcvYZdoAphfm9Il0Rra2Q=;
+ b=ejUX0gZF3mkQrM7wsIEz2pkci9AD9TXiiHku3enKN4WSNXrvEibXH5ber8LZnTIjIfEaXC
+ 0fJYRp3vwUfdsAqvG0t1q3x/GvTa7hTc9sNXHu0jzo9Q3k0BfFZfpzDR0fM3743Mjgpj/G
+ pv4JmfS2Ujob6UC8MSo/0YXnxa0Bjko=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-583-gV8nanLVPIW1L0UmoQASBg-1; Fri, 11 Apr 2025 09:45:04 -0400
-X-MC-Unique: gV8nanLVPIW1L0UmoQASBg-1
-X-Mimecast-MFC-AGG-ID: gV8nanLVPIW1L0UmoQASBg_1744379103
-Received: by mail-wm1-f69.google.com with SMTP id
- 5b1f17b1804b1-43cf446681cso14058085e9.1
- for <dev@dpdk.org>; Fri, 11 Apr 2025 06:45:04 -0700 (PDT)
+ us-mta-541-mftFE3hIMQSQhHT2gdW0aw-1; Fri, 11 Apr 2025 09:50:44 -0400
+X-MC-Unique: mftFE3hIMQSQhHT2gdW0aw-1
+X-Mimecast-MFC-AGG-ID: mftFE3hIMQSQhHT2gdW0aw_1744379444
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-43d0830c3f7so15650845e9.2
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 06:50:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744379103; x=1744983903;
+ d=1e100.net; s=20230601; t=1744379443; x=1744984243;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=u3z7pZIGajzaN6G0C/9zS98WDHtzWWIVWwjdy1bbpMg=;
- b=bDy3u4FN/ETYk11gWEkMlEWicPjCTY165dc6qEPhk4pewfOY3EPS3rJZ4pGAUEnfop
- 1VxyvA9owqd2iXHCrDADKbpaokywOcmNqP82HRk2rPuhBWyalUU0QOJDDiEsqBNVznNb
- kcqAsT0qZgdnHbtTFk9a85cSEC2pXQPl3VeJVG0gSHT5MaZfiJW9HrULE22LR+FZIRnT
- ScjVH1PsGmT4sGaBSd5jNwH7BR9pFcnksJqWlXfZVvwtcK+s0l5U+rttJFTzsWzHZgcx
- rC09fKaz2GAqn9jkwgzWFJAvBYZZZEmUtg8K1ELKUM5PJxERmmY16Lo1+SvznToAgNwV
- KBXA==
-X-Gm-Message-State: AOJu0YwOFQpW6UUyBymIW2tkSY9Z4plcDnla9BrPM7AM8hcjmsaYnDN0
- q84LdKtnuby64mIgV7UGsjvIC6dx/qL4GlDn6KE8XfGJB3dBYQd8X3lzotUGzfDjIDsCpWkcj4p
- rx8HX7CTTK7lWVpE0iAKCiSLUh0caOm9qsWoe82kN+cnAAPiO
-X-Gm-Gg: ASbGncs7Xg6ZjMiV+I1KfpV9qAu9KNq3UsWtSL0olND7BwFLsbhIWuhSpBZr+ujDHga
- vXTQh1iCXSugC+y+De7wWlqcrlDe8FXP1b3q1vgzdT7mp5FsgzvNoR3Lu/XPZBs3EQRpmb9HdBr
- SJiYjevPWK7KWwb8Btwq8DMSTD9FQsbppV4dSblqGwwToP5sO8hRwY6tlVxxHc9VVeCdtO4PSnp
- Opy611/1dce2UeIBc6eNSTmltypQAq9DX8UdIRF7yYr8UVbnm8R5xvt5Wf+IelBIk1+Yuqa1KZX
- 75qrnKG3l3W1
-X-Received: by 2002:a05:600c:c83:b0:43d:77c5:9c1a with SMTP id
- 5b1f17b1804b1-43f3a926c70mr26546395e9.4.1744379102885; 
- Fri, 11 Apr 2025 06:45:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGi221lKf4G+LqTq/v7xjcjjEr3f/+ewoIvnkWe9yMXVoKWlI3olGhMPf67rZW+TtV+vTf91g==
-X-Received: by 2002:a05:600c:c83:b0:43d:77c5:9c1a with SMTP id
- 5b1f17b1804b1-43f3a926c70mr26546135e9.4.1744379102507; 
- Fri, 11 Apr 2025 06:45:02 -0700 (PDT)
+ bh=LVX8CTaEsGG2H59yZV9LFMOcvYZdoAphfm9Il0Rra2Q=;
+ b=jVAB6OBCeNr/CTH6rJeKJcGXVGkrRCJj9eiVnxm4mdfVHAu9FZFAlgp7W7I1nCz+Ie
+ 5xirlaiB8YVW/85Ed1BY21pQJb68AzsYQ/7QRK+EZ7lsM74OK+VNrvc5ENaXkLmoFGwl
+ zVdf267isX4oS3eal12bM3vJxUayngnlGPOpQL//4f26M6kd04yVr4nzUuOhREwTsM2E
+ jnrF3v0CZqZ6eQXrsqcbH0DF9PnxYLxKiVpz16o096nVVpJ+HBVIIm5allaykxmHNblQ
+ AWrjE5QU06gwOd5sV6k+X89rOh3kRfk3nt5zXsk0NVFVVEjQg4Bma2PpWuhCGVyigHjJ
+ DArQ==
+X-Gm-Message-State: AOJu0Yy4WgH67WMEmzVB3C6qLwEDyeop80zSbNxIWfiGs+V7gudh3Lr3
+ IG7e3n67v3o02smYQYATh5Zr3ZSPgtdmfTvesJZ+T44Nbl1q7DYDjhRyBCLroxBm1Lg1WuvEshi
+ 211aiaE2a4IPJ3UBoERpCYj7UhUD9vBLDkg6b9HX/
+X-Gm-Gg: ASbGncuppQWNnM0pJlIy3pjp//gnXWiP4Bx3QQ/lhWBuuxpRLSqfxzCYQenaWVa/avp
+ 5viFU1nsKMutsOz6V6HQdgt+Nmd8bshSBv6mraHS+FFd64GBK5H4c8gM762WEywcItE/19DKmlI
+ gXPGPZKyxGDuofiRzBTKXk9lTRRbKPa9NSDgX+fZRugHj59emUCcXPFISwII3ekAwbdZiVbvNk9
+ VPck/vL2Gy7/IHZXEuMeRxIb3R3Zz3DAbDKIbAzKA1n3tnEO0xMKLEVHPnIqADQB34y1iiO89GM
+ rpR3WmycPPv1
+X-Received: by 2002:a05:600c:3849:b0:43c:ea1a:720c with SMTP id
+ 5b1f17b1804b1-43f3a95c115mr25918095e9.18.1744379443514; 
+ Fri, 11 Apr 2025 06:50:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqbwOFo4W/j2QmJatjiHdRLzxZNdyKpw1ClD0NrgDxhC+ghOAHVc7PpIK+GGXmhRDu24YrYw==
+X-Received: by 2002:a05:600c:3849:b0:43c:ea1a:720c with SMTP id
+ 5b1f17b1804b1-43f3a95c115mr25917885e9.18.1744379443174; 
+ Fri, 11 Apr 2025 06:50:43 -0700 (PDT)
 Received: from [192.168.0.56] ([78.16.128.39])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-43f2075fca5sm90988745e9.32.2025.04.11.06.45.00
+ 5b1f17b1804b1-43f207c8fb4sm88037625e9.35.2025.04.11.06.50.41
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Fri, 11 Apr 2025 06:45:01 -0700 (PDT)
-Message-ID: <51cac182-1eca-4a78-80ac-ce686d88ea47@redhat.com>
-Date: Fri, 11 Apr 2025 14:45:00 +0100
+ Fri, 11 Apr 2025 06:50:42 -0700 (PDT)
+Message-ID: <9b28fcd5-a793-4301-8eb7-cfe59dbbb621@redhat.com>
+Date: Fri, 11 Apr 2025 14:50:41 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: 24.11.2 patches review and test
-To: Ali Alnubani <alialnu@nvidia.com>, stable@dpdk.org
+To: stable@dpdk.org, John McNamara <john.mcnamara@intel.com>,
+ "Xu, HailinX" <hailinx.xu@intel.com>
 Cc: dev@dpdk.org, Luca Boccassi <bluca@debian.org>,
- Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>
+ Thomas Monjalon <thomas@monjalon.net>
 References: <20250328101435.250876-1-ktraynor@redhat.com>
- <bcf9bb55-af24-4191-afb6-6ac01a2c89b3@nvidia.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -117,13 +117,13 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <bcf9bb55-af24-4191-afb6-6ac01a2c89b3@nvidia.com>
+In-Reply-To: <20250328101435.250876-1-ktraynor@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: zmHjx9wOK5gHc3EkLRhcs_ExpqV4MA4PVP78GTysHC8_1744379103
+X-Mimecast-MFC-PROC-ID: FOwiW1dbkxHGwNo4LW15VIdGjmU1Z2lv8amKiPUzTPs_1744379444
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,55 +137,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/04/2025 15:40, Ali Alnubani wrote:
-> Hello,
+On 28/03/2025 10:14, Kevin Traynor wrote:
+> Hi all,
+> 
+> Here is a list of patches targeted for stable release 24.11.2.
+> 
+> The planned date for the final release is 14 April.
 > 
 
-> We ran the following functional tests with Nvidia hardware on v24.11.2-rc1:
-> 
-> - Basic functionality:
->    Send and receive multiple types of traffic.
-> - testpmd xstats counter test.
-> - testpmd timestamp test.
-> - Changing/checking link status through testpmd.
-> - rte_flow tests 
-> (https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
-> - RSS tests.
-> - VLAN filtering, stripping, and insertion tests.
-> - Checksum and TSO tests.
-> - ptype tests.
-> - link_status_interrupt example application tests.
-> - l3fwd-power example application tests.
-> - Multi-process example applications tests.
-> - Hardware LRO tests.
-> - Buffer Split tests.
-> - Tx scheduling tests.
-> 
-> Functional tests ran on:
-> - NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver: 
-> MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 22.43.2566
-> - NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver: 
-> MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 28.43.2566
-> - DPU: BlueField-2 / DOCA SW version: 2.10.0 / Firmware: 24.44.1036
-> 
-> Additionally, we ran build tests with multiple configurations on the 
-> following OS/driver combinations (all passed):
-> - Ubuntu 22.04 with MLNX_OFED_LINUX-24.10-2.1.8.0.
-> - Ubuntu 24.04 with MLNX_OFED_LINUX-24.10-2.1.8.0.
-> - Ubuntu 22.04 with rdma-core master (9e9a957).
-> - Ubuntu 24.04 with rdma-core v50.0.
-> - Fedora 41 with rdma-core v51.0.
-> - Fedora 43 (Rawhide) with rdma-core v56.0.
-> - OpenSUSE Leap 15.6 with rdma-core v49.1.
-> - Windows Server 2022 with Clang 16.0.6.
-> 
-> We don't see new issues caused by the changes in this release.
-> 
-> Thanks,
-> Ali
-> 
+Hi Hailin/John,
 
-Thanks Ali. I will add these to the release notes.
+Do you have any updates or ETA for testing on 24.11.2 ?
 
+If possible I would like to release by 15th otherwise it will need to be
+after the Easter holidays, but if you need more time that is ok too.
+
+thanks,
 Kevin.
+
+
+> Please help with testing and validation of your use cases and report
+> any issues/results with reply-all to this mail. For the final release
+> the fixes and reported validations will be added to the release notes.
+> 
+> A release candidate tarball can be found at:
+> 
+>     https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.2-rc1
+> 
+> These patches are located at branch 24.11 of dpdk-stable repo:
+>     https://dpdk.org/browse/dpdk-stable/
+> 
+> Thanks.
+> 
+> Kevin
+> 
+
 
