@@ -2,40 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185CAC3601E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 00:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2819C3601E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Apr 2025 00:27:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0474340687;
-	Fri, 11 Apr 2025 02:06:57 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3078340285
- for <dev@dpdk.org>; Fri, 11 Apr 2025 02:06:55 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 673C62114DAC; Thu, 10 Apr 2025 17:06:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 673C62114DAC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1744330014;
- bh=TMMIDzWco3FJXxgtluwDZJw+jzfVcdQBGhA8XqwrAVg=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=J9QtYRBKukxqeFFhN7UJq6W8PV1pcfX/D3uxBW6+1N2auKYxFp+kxxXeifzJhLsWc
- gu2F2ahB7JjYo4h03KHkSlwMUywsSI5ev2OJm1oiXxcsBM+gvw9IF6vVwNEyAF/Cyt
- QD7N6pjUGYZHxrwKpki2WC4wc1cXmTHXPv8NgtC0=
-Date: Thu, 10 Apr 2025 17:06:54 -0700
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH v6 05/10] test-pmd: avoid undefined behavior
-Message-ID: <20250411000654.GB10978@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1739311325-14425-1-git-send-email-andremue@linux.microsoft.com>
- <1740414265-12217-1-git-send-email-andremue@linux.microsoft.com>
- <1740414265-12217-6-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8xqEk=qgJteUDv0TJ9W_UyRoOtjVSU7NjkHrUVvgrHgYg@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9EBED402ED;
+	Fri, 11 Apr 2025 02:27:06 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 04C1940285
+ for <dev@dpdk.org>; Fri, 11 Apr 2025 02:27:04 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id D971246558; Fri, 11 Apr 2025 02:27:04 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1696] eth_dev_start can not be called by a
+ secondary process
+Date: Fri, 11 Apr 2025 00:27:04 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1696-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17443312240.D99d.2222391
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8xqEk=qgJteUDv0TJ9W_UyRoOtjVSU7NjkHrUVvgrHgYg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,54 +55,181 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Apr 10, 2025 at 06:05:10PM +0200, David Marchand wrote:
-> On Mon, Feb 24, 2025 at 5:25 PM Andre Muezerie
-> <andremue@linux.microsoft.com> wrote:
-> >
-> > Compiling with MSVC results in warnings like below:
-> >
-> > app/test-pmd/cmdline.c(9023): warning C5101: use of preprocessor
-> >     directive in function-like macro argument list is undefined behavior
-> >
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> > ---
-> >  app/test-pmd/cmdline.c | 12 ++++++++----
-> >  app/test-pmd/testpmd.h |  2 ++
-> >  2 files changed, 10 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-> > index 2afcf916c0..d0b47eac8f 100644
-> > --- a/app/test-pmd/cmdline.c
-> > +++ b/app/test-pmd/cmdline.c
-> > @@ -8980,6 +8980,14 @@ dump_socket_mem(FILE *f)
-> >         last_total = total;
-> >  }
-> >
-> > +#ifdef RTE_EXEC_ENV_WINDOWS
-> > +int
-> > +rte_trace_save(void)
-> > +{
-> > +       return TEST_SKIPPED;
-> > +}
-> > +#endif
-> > +
-> 
-> - I don't like this fake declaration.
-> It does not comply with this function documented API.
-> And there are other stubs for the trace API in eal/windows, where this
-> could be a better place.
-> 
-> - TEST_SKIPPED 77 is some known error code when invoking unit test via
-> meson, which does not make sense with testpmd.
-> 
-> 
-> I sent a simpler fix, could you have a look?
-> https://patchwork.dpdk.org/project/dpdk/patch/20250410160237.3067629-1-david.marchand@redhat.com/
-> 
 
-I like the solution you proposed. Thanks!
+--17443312240.D99d.2222391
+Date: Fri, 11 Apr 2025 02:27:04 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-> 
-> -- 
-> David Marchand
+https://bugs.dpdk.org/show_bug.cgi?id=3D1696
+
+            Bug ID: 1696
+           Summary: eth_dev_start can not be called by a secondary process
+           Product: DPDK
+           Version: 25.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
+
+The problem is that if secondary process calls eth_dev_start it doesn't end=
+ up
+impacting the primary process (or other secondary processes).
+
+Either:
+- eth_dev_start should not be allowed from secondary proces
+- or eth_dev_start needs to have MP hook and cause it to be proxied to prim=
+ary.
+
+Related to Bug # 73?
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17443312240.D99d.2222391
+Date: Fri, 11 Apr 2025 02:27:04 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - eth_dev_start can not be called by a secondary pr=
+ocess"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1696">1696</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>eth_dev_start can not be called by a secondary process
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>stephen&#64;networkplumber.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">The problem is that if secondary p=
+rocess calls eth_dev_start it doesn't end up
+impacting the primary process (or other secondary processes).
+
+Either:
+- eth_dev_start should not be allowed from secondary proces
+- or eth_dev_start needs to have MP hook and cause it to be proxied to prim=
+ary.
+
+Related to <a class=3D"bz_bug_link           bz_status_CONFIRMED "   title=
+=3D"CONFIRMED - Secondary processes can not set up ports: document limitati=
+on and return error in appropriate functions"   href=3D"show_bug.cgi?id=3D7=
+3">Bug # 73</a>?
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1696">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17443312240.D99d.2222391--
