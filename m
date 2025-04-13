@@ -2,38 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A0FC3601E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Apr 2025 09:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05455C3601E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Apr 2025 14:31:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 399CE40156;
-	Sun, 13 Apr 2025 11:26:12 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E209740041
- for <dev@dpdk.org>; Sun, 13 Apr 2025 11:26:09 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A6CBA208BD;
- Sun, 13 Apr 2025 11:26:09 +0200 (CEST)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [RFC 00/13] Packet capture using port mirroring
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Sun, 13 Apr 2025 11:26:04 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FBD2@smartserver.smartshare.dk>
-In-Reply-To: <20250412100442.0c48971a@hermes.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC 00/13] Packet capture using port mirroring
-Thread-Index: AdurzP+svVmnnnRrQY2QZ7ENx/NNRQAdMKVQ
-References: <20250411234927.114568-1-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35E9FBC9@smartserver.smartshare.dk>
- <20250412100442.0c48971a@hermes.local>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id A64464025D;
+	Sun, 13 Apr 2025 16:31:47 +0200 (CEST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
+ [209.85.210.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 0602D40156
+ for <dev@dpdk.org>; Sun, 13 Apr 2025 16:31:46 +0200 (CEST)
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-736a7e126c7so2981713b3a.3
+ for <dev@dpdk.org>; Sun, 13 Apr 2025 07:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744554706;
+ x=1745159506; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=u9p1tYlgaZdA+5SoW4OFgtFO4GR4IhqyD0fMjl6yfrg=;
+ b=E492z23xnFnPgCfVn6WmFUHCBCibWrTS4FBUYXbMx+OFofb2fSsB2yrKlBjpZ7s0sN
+ kM9uKd3rol8x37MnbVLd4WfldaWxaUz+3re16KwZ38JFF8VWuyjI47cs1AP4iV8isrr6
+ SolA9DXULir7ByYfqhYzrZ4xqbqYMb2Ee7Xo7VMzNLKGjIoZQoDJGUzg9MI/2ARQHBRL
+ tNxnfewa7LkETy2NeGMsE03oXPYY/EbkN3vXxrXp6B2c0rlglT22ll3IFO9HPedBKKJ1
+ PL1i/ppkwmRssHWd9/N7SjX55mhrEGmjSfopKCDTsGTotWsxSZ2zWXqGjvUEaRw4qODj
+ +hag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1744554706; x=1745159506;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=u9p1tYlgaZdA+5SoW4OFgtFO4GR4IhqyD0fMjl6yfrg=;
+ b=jczBzrjk1mx3f/WUFMt1e/xXAzQhVCfEuakCIiTrafSCyvDl9vIkMo9gxkUen13LEt
+ w6f6wgZMi5d5fdEvrpP/YbNanPXrhO2mp1Tu+r3QldrK+1FTgX8hWTbqDugQYCezEut1
+ 3moIcSJjpa/ufD7SV+sLkiHuwg7W+tjNB1oIHBCp86v28xrz+KCPhCbMflf5LGRr8SxK
+ G4ogeSVhwZsskeQuf2gLB7LDnZH7V41XAX1/6H1RkcDLMQloflIGOUJhihx2E/qv9w55
+ NNpQPUxp71OTfg3LOgEEcePT3MrN5opyhJTMccX0k+iC1GUkg3DPVmiy4wFJuerdJiH+
+ Dagw==
+X-Gm-Message-State: AOJu0Yy1ybQFYeJ5cP3eB6dkasTe+G0L0Mimw818x74rxLXc1Jh7pzgu
+ trdgQJ8WEOzhMYgNCaawVcEEhYWmL2/4Hw3H+I38lICHT+rFNyaTBdW3BYn9rYSkrwyz1KTIFBT
+ zXbQ=
+X-Gm-Gg: ASbGncs8Kqa0IbB9rIr1jNY4yml33aySMzKFRxuiFEQ7ZZ/D8h0uAX8bnkN3IWPQZa7
+ uJfynWdNspz3nJGZWsAqISHorLz1TrqaGR6Mc5Xyi9t2yAbrHZQUi7M2PZhl8bDOTzsn0sP87kh
+ JuHFxdrHYX4YVcGlU+E3/8lyCTNOo6bJnZKAEToMuTRRg+nrK04cn23E+xMi8wDZFiLZYYkeLlK
+ CsX3cdmazdl8PoLMRrSAu8Ljiz3P29ROfzDTOC8zwdhGfeabWxOIuMoBxosJvAGmL7PUFJSFub/
+ KPfeECuWA8gHzkmQpIaAXqPLfAVu/Kc3DD9wWiMh1va4JFCpNBo109mjhXKsCJFWs3NaxTaVkOS
+ dzgFONuIXWui+hPb5
+X-Google-Smtp-Source: AGHT+IHZS0vgEwTu3Nv8bTnlbENKVTLF5DwOLycpnkmzKzW6FIosLt1LQwfWziPlTQCjEDNxXv69Pg==
+X-Received: by 2002:a05:6a00:1886:b0:736:4bd3:ffab with SMTP id
+ d2e1a72fcca58-73bd129c5ebmr10958139b3a.17.1744554705658; 
+ Sun, 13 Apr 2025 07:31:45 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-73bd23342ccsm4959216b3a.167.2025.04.13.07.31.45
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 13 Apr 2025 07:31:45 -0700 (PDT)
+Date: Sun, 13 Apr 2025 07:31:42 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
 Cc: <dev@dpdk.org>
+Subject: Re: [RFC 08/13] mbuf: add fields for mirroring
+Message-ID: <20250413073142.452ca0f2@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FBD1@smartserver.smartshare.dk>
+References: <20250411234927.114568-1-stephen@networkplumber.org>
+ <20250411234927.114568-9-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FBC8@smartserver.smartshare.dk>
+ <20250412095659.5f5719e8@hermes.local>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FBD1@smartserver.smartshare.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,118 +85,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgMTIgQXByaWwgMjAyNSAxOS4wNQ0KPiANCj4gT24gU2F0
-LCAxMiBBcHIgMjAyNSAxMzowNjo1NSArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
-aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdl
-ciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnXQ0KPiA+ID4gU2VudDogU2F0dXJk
-YXksIDEyIEFwcmlsIDIwMjUgMDEuNDUNCj4gPiA+DQo+ID4gPiBUaGlzIGlzIGEgcmV3b3JrIG9m
-IGhvdyBwYWNrZXQgY2FwdHVyZSBpcyBkb25lIGluIERQREsuDQo+ID4gPiBUaGUgZXhpc3Rpbmcg
-bWVjaGFuaXNtIHVzaW5nIGNhbGxiYWNrcyBoYXMgYSBudW1iZXIgb2YgcHJvYmxlbXM7DQo+ID4g
-PiB0aGUgbWFpbiBvbmUgaXMgdGhhdCBhbnkgcGFja2V0cyBzZW50L3JlY2VpdmVkIGluIGEgc2Vj
-b25kYXJ5DQo+IHByb2Nlc3MNCj4gPiA+IGFyZSBub3QgdmlzaWJsZS4gVGhlIHJvb3QgY2F1c2Ug
-aXMgdGhhdCBjYWxsYmFja3MgY2FuIG5vdCBmdW5jdGlvbg0KPiA+ID4gYWNyb3NzIHByb2Nlc3Mg
-Ym91bmRhcmllcywgdGhleSBhcmUgc3BlY2lmaWMgdG8gdGhlIHJvbGUuDQo+ID4gPg0KPiA+ID4g
-VGhlIG5ldyBtZWNoYW5pc20gYnVpbGRzIG9uIHRoZSBjb25jZXB0IG9mIHBvcnQgbWlycm9yaW5n
-IHVzZWQNCj4gPiA+IGluIExpbnV4L0ZyZWVCU0QgYW5kIGFsc28gcm91dGVyIHZlbmRvcnMgKFNQ
-QU4gcG9ydHMpLiBUaGUNCj4gPiA+IGluZnJhc3RydWN0dXJlDQo+ID4gPiBpcyBidWlsdCBhcm91
-bmQgYSBuZXcgZXRoZGV2IGNhbGwgdG8gbWlycm9yIGEgcG9ydC4NCj4gPiA+DQo+ID4gPiBUaGUg
-aW50ZXJuYWxzIG9mIGR1bXBjYXAgYXJlIHJlZG9uZSBidXQgdGhlIHByb2dyYW0gY29tbWFuZA0K
-PiA+ID4gc3ludGF4IGlzIHVuY2hhbmdlZCAobm8gZG9jIGNoYW5nZSBuZWVkZWQpLiBVc2luZ3Ro
-ZSBuZXcgbWlycm9yDQo+ID4gPiBtZWNoYW5pc20sDQo+ID4gPiB0aGUgZHVtcGNhcCBwcm9ncmFt
-IGNyZWF0ZXMgYSBwb3J0IHVzaW5nIHJpbmcgUE1EIGFuZA0KPiA+ID4gdGhlbiBkaXJlY3RzIG1p
-cnJvciB0byB0aGF0LiBUaGVuIHRoZSBwYWNrZXRzIGFyZSBleHRyYWN0ZWQgZnJvbQ0KPiB0aGUN
-Cj4gPiA+IHJpbmcuDQo+ID4gPiBJZiBjYXB0dXJpbmcgb24gbXVsdGlwbGUgZGV2aWNlcywgdGhl
-eSBhbGwgZ2V0IG1pcnJvcmVkIHRvDQo+ID4gPiB0aGUgc2FtZSByaW5nIFBNRC4NCj4gPg0KPiA+
-IEhlcmUncyBzb21lIGdlbmVyYWwgZmVlZGJhY2suLi4NCj4gPg0KPiA+IEkgdmVyeSBtdWNoIGxp
-a2UgdGhlIGNvbmNlcHQgb2YgdXNpbmcgYSBzaGFyZWQgcmluZyBmb3IgY2FycnlpbmcgdGhlDQo+
-IG1pcnJvcmVkIHBhY2tldHMuDQo+ID4gSXQgYWxsb3dzIG90aGVyIHR5cGVzIG9mIGZ1dHVyZSBj
-b25zdW1lcnMgdG8gcHJvY2VzcyB0aGUgbWlycm9yZWQNCj4gcGFja2V0cywgZS5nLiBlbmNhcHN1
-bGF0aW5nIGFuZCBmb3J3YXJkaW5nIHRoZW0gaW50byBhbiBMMiBvciBMMw0KPiB0dW5uZWwsIG9y
-IFdpcmVzaGFyayByZW1vdGUgY2FwdHVyZS4NCj4gPg0KPiA+IFVzaW5nIGEgUmluZyBQTUQgaW5z
-dGVhZCBvZiBzZXR0aW5nIHVwIGEgZGVkaWNhdGVkIHJpbmcgYWxzbyBoYXMgc29tZQ0KPiBhZHZh
-bnRhZ2VzLCBzdWNoIGFzIHRoZSBhYmlsaXR5IHRvIHNldCB1cCBtdWx0aXBsZSBzZXBhcmF0ZSBt
-aXJyb3INCj4gdGFyZ2V0IGluc3RhbmNlcy4NCj4gPiBGb3IgcGVyZm9ybWFuY2UgcmVhc29ucywg
-d2Ugc2hvdWxkIGVuc3VyZSB0aGF0IGEgbGlnaHR3ZWlnaHQgUmluZyBQTUQNCj4gaXMgYXZhaWxh
-YmxlIGZvciBtaXJyb3JpbmcsIGluIGNhc2UgdGhlIFJpbmcgUE1EIGlzIGV4dGVuZGVkIHdpdGgg
-bmV3DQo+IGZlYXR1cmVzIGFmZmVjdGluZyBpdHMgcGVyZm9ybWFuY2UuDQo+ID4gT3IgbWF5YmUg
-Y3JlYXRlIGEgbmV3IHR5cGUgb2YgbWlycm9yL2NhcHR1cmUgdmlydHVhbCBQTUQuIFRoaXMgd291
-bGQNCj4gYWxsb3cgYXBwbGljYXRpb25zIHRvIGVucXVldWUgcGFja2V0cyBmcm9tIG5vbi1ldGhk
-ZXYgaW50ZXJmYWNlcyBpbnRvDQo+IGl0Lg0KPiANCj4gVGhlIG5ldyBtb2RpZmljYXRpb25zIGFy
-ZSBzaW1wbGUsIGFuZCBkbyBub3QgaW1wYWN0IHBlcmZvcm1hbmNlIG9mIHJpbmcNCj4gUE1ELg0K
-PiBXZSBkb24ndCBuZWVkIGFub3RoZXIgUE1EIGZvciB0aGlzLg0KDQpBZ3JlZTsgc28gbG9uZyBh
-cyB0aGUgUmluZyBQTUQgcmVtYWlucyBsaWdodHdlaWdodC4NCg0KVGhlIFJpbmcgUE1EIHNldHMg
-dGhlIG1idWYgInBvcnQiIGZpZWxkIG9uIFJYLCB0aGVyZWJ5IG92ZXJ3cml0aW5nIHRoZSBwb3J0
-IG9mIHRoZSBtaXJyb3JlZCBwYWNrZXQuDQpJbnN0ZWFkIG9mIGFkZGluZyBhIG5ldyBtYnVmIGZp
-ZWxkIGZvciB0aGUgbWlycm9yZWQgcGFja2V0IHRvIGhvbGQgdGhlIG9yaWdpbmFsIHBvcnQsIHlv
-dSBjb3VsZCBhZGQgYSAidHJhbnNwYXJlbnQiIGNvbmZpZ3VyYXRpb24gb3B0aW9uIHRvIHRoZSBS
-aW5nIFBNRCwgc28gaXQgZG9lc27igJl0IHRvdWNoIHRoZSB0cmFuc3BvcnRlZCBtYnVmLg0KRnVy
-dGhlcm1vcmUsIG5vdCBzZXR0aW5nIHRoZSBtYnVmICJwb3J0IiBmaWVsZCB3b3VsZCBzaWduaWZp
-Y2FudGx5IGltcHJvdmUgcGVyZm9ybWFuY2Ugb2YgdGhlIFJpbmcgUE1EOyB0aGlzIGlzIHRoZSBv
-bmx5IG1idWYgZmllbGQgd3JpdHRlbiBieSB0aGUgUmluZyBQTUQsIHNvIGEgbWVtb3J5IHdyaXRl
-IG9wZXJhdGlvbiBwZXIgcGFja2V0IGlzIGVsaW1pbmF0ZWQuDQoNCk1ldGFkYXRhIGFkZGVkIHRv
-IHRoZSBtaXJyb3JlZCBwYWNrZXQsIGUuZy4gdGhlIGVncmVzcyBwb3J0IChmb3IgcGFja2V0cyBt
-aXJyb3JlZCBhdCBlZ3Jlc3MpIGFuZCBtYXliZSB0aGUgcXVldWVfaWQgYW5kIGEgdGltZXN0YW1w
-IChvZiB0aGUgdGltZSBvZiBtaXJyb3JpbmcpLCBjb3VsZCBiZSBzdG9yZWQgaW4gYSBkZWRpY2F0
-ZWQgZHluZmllbGQgb3IgaW4gYSBwcmVwZW5kZWQgaGVhZGVyIChhcyB5b3UgYWxyZWFkeSBtZW50
-aW9uZWQpLg0KUHJlcGVuZGluZyBhIGhlYWRlciBhbHNvIHdvcmtzIGlmIHRoZXJlIGFyZSBubyBt
-b3JlIGR5bmZpZWxkcyBhdmFpbGFibGUuIEVzcGVjaWFsbHkgaWYgd2UgYWRkIGEgbG90IG9mIG1l
-dGFkYXRhLiBJIHRoaW5rIGEgcHJlcGVuZGVkIGhlYWRlciBpcyBtb3JlIGZ1dHVyZSBwcm9vZi4N
-Cg0KSG1tLi4uIGlmIHRoZSAicG9ydCIgZmllbGQgaXMgYWxzbyBzdG9yZWQgaW4gdGhlIG1ldGFk
-YXRhLCBteSBzdWdnZXN0ZWQgUmluZyBQTUQgInRyYW5zcGFyZW50IiBvcHRpb24gYmVjb21lcyBh
-IHBlcmZvcm1hbmNlIG9wdGltaXphdGlvbiBvbmx5Lg0KDQo+IEl0IGRpZCB1bmNvdmVyIHNvbWUg
-YnJva2VuIEFQSSdzIGluIHJpbmcgUE1ELCBidXQgdGhvc2UgY2FuIGJlIG1hcmtlZA0KPiBkZXBy
-ZWNhdGVkDQo+IGFuZCBkaXNhcHBlYXIgaW4gc29tZSBmdXR1cmUgdmVyc2lvbi4NCg0KKzENCg0K
-PiANCj4gPg0KPiA+IEknbSBub3QgY29udmluY2VkIHlvdSBzaG91bGQgdW5kbyB0aGUgVkxBTiBv
-ZmZsb2FkcyB3aGVuIGVucXVldWVpbmcgYQ0KPiBtaXJyb3IgcGFja2V0Li4uIElmIHlvdSBkbywg
-eW91IHNob3VsZCBhbHNvIHVuZG8gUWluUSBvZmZsb2Fkcy4gVW5kb2luZw0KPiBvZmZsb2FkcyBp
-cyBuZXZlciBnb2luZyB0byBlbmQuDQo+ID4gQW5kIGlmIHlvdSBjcmVhdGUgYSBkZWRpY2F0ZWQg
-UE1EIHR5cGUgZm9yIGNhcnJ5aW5nIG1pcnJvcmVkIHBhY2tldHMsDQo+IHlvdSBjYW4gZW5zdXJl
-IHRoYXQgdGhlIG9mZmxvYWQgZmllbGRzIHJlbWFpbiBpbnRhY3Qgb24gZGVxdWV1ZS4NCj4gDQo+
-IFZMQU4gbmVlZHMgdG8gYmUgdW5vZmZsb2FkZWQgYmVmb3JlIGZpbHRlcmluZyBhbmQgd3JpdGlu
-ZyB0byBmaWxlLg0KPiBDYW4gbW92ZSB0aGF0IGxvZ2ljIHRvIHRoZSBvdGhlciBlbmQgb2YgdGhl
-IHJpbmcgKGkuZSBpbiBkdW1wY2FwKS4NCg0KSWYgdGhlIGFwcGxpY2F0aW9uIGF0IHRoZSBkZXF1
-ZXVlaW5nIGVuZCBvZiB0aGUgcmluZyBpcyBub3QgZHVtcGNhcCwgYnV0IHNvbWUgb3RoZXIgYXBw
-bGljYXRpb24sIHRoaXMgb3RoZXIgYXBwbGljYXRpb24gbWlnaHQgcHJlZmVyIGdldHRpbmcgdGhl
-IG1idWZzIGFzIHJhdyBhcyBwb3NzaWJsZS4NCkkgdGhpbmsgbW92aW5nIHRoZSB1bm9mZmxvYWRp
-bmcgbG9naWMgdG8gdGhlIGRlcXVldWVpbmcgZW5kIG9mIHRoZSByaW5nIHdvdWxkIGJlIGJldHRl
-ci4NCg0KQlRXLCB1bm9mZmxvYWRpbmcgc2hvdWxkIHByb2JhYmx5IGJlIGEgcHVibGljIERQREsg
-bGlicmFyeSBmdW5jdGlvbiwgdG8gYXZvaWQgY29weS1wYXN0aW5nIGl0IGZyb20gZHVtcGNhcCB0
-byBvdGhlciBhcHBsaWNhdGlvbnMuDQoNCj4gDQo+IFRoZSBpc3N1ZSB3aXRoIGZpbHRlcmluZyBp
-cyB0aGF0IGN1cnJlbnQgRFBESyBCUEYgaGFzIG5vIHdheSB0bw0KPiByZWZlcmVuY2Ugb2ZmbG9h
-ZA0KPiBtZXRhIGRhdGEuIFRoZXJlIGlzIGEgd2F5IHRvIGRvIHRoYXQgd2l0aCBMaW51eCBrZXJu
-ZWwgQlBGICh2aWENCj4gbmVnYXRpdmUgb2Zmc2V0cykuDQo+IExvb2tlZCBpbnRvIGRvaW5nIHRo
-aXMgaW4gdGhlIERQREsgQlBGLCBidXQgdGhlcmUgYXJlIHNldmVyYWwgYmxvY2tlcnM6DQo+IG5v
-dCBhbGwNCj4gdGhlIG9mZmxvYWRzIGFyZSB0aGUgc2FtZSwgYW5kIG1vcmUgaW1wb3J0YW50bHkg
-dGhlIHBjYXAgbGlicmFyeSB0bw0KPiBidWlsZCBmaWx0ZXJzDQo+IChwY2FwX2NvbXBpbGUpIGhh
-cyBzb21lIGludGVybmFsIGlzc3Vlcy4gVGhlIHBjYXAgbGlicmFyeSAia25vd3MiIHdoZW4NCj4g
-aXQgaXMNCj4gYnVpbGQgYSBkaXJlY3QgTGludXggc29ja2V0IGZpbHRlciwgdmVyc3VzIGp1c3Qg
-Y2xhc3MgQlBGLiBGb3IgZXhhbXBsZSwNCj4gaWYgeW91IGNhbGwgcGNhcF9jb21waWxlKCkgd2l0
-aCAidmxhbiAxMyIsIGl0IHdpbGwgZ2VuZXJhdGUgZGlmZmVyZW50DQo+IGNvZGUNCj4gYmFzZWQg
-b24gd2hldGhlciBpdCBpcyBhIExpbnV4IGZpbHRlciBvciBub3QuDQo+IA0KPiA+IFlvdSBzaG91
-bGQgY29uc2lkZXIgc2FtcGxpbmcgYW5kIFZMQU4gZmlsdGVyaW5nIGFzIHR5cGljYWwgbWlycm9y
-aW5nDQo+IGZlYXR1cmVzLg0KPiA+IEl0IHdvdWxkIGltcHJvdmUgdGhlIHBlcmZvcm1hbmNlIGlm
-IHN1Y2ggZmlsdGVyaW5nIGlzIGRvbmUgYmVmb3JlDQo+IGNvcHlpbmcgdGhlIHBhY2tldHMuDQo+
-IA0KPiBUaGUgcHJvYmxlbSBpcyB0aGF0IGZpbHRlcmluZyBiZWZvcmUgZ29pbmcgaW50byB0aGUg
-cmluZyBsZWFkcyB0bw0KPiBjcmVhdGluZyBCUEYNCj4gZGVwZW5kZW5jeSBpbnNpZGUgZXRoZGV2
-IHdoaWNoIGlzIGEgYnVpbGQgbmlnaHRtYXJlLiBUcmllZCBpdCBhbmQgd2FzDQo+IG5vdCBzdWNj
-ZXNzZnVsLg0KDQpGaWx0ZXJpbmcgYmVmb3JlIGdvaW5nIGludG8gdGhlIHJpbmcgaXMgb25seSBh
-IHBlcmZvcm1hbmNlIG9wdGltaXphdGlvbi4NCkZ1bGwgQlBGIHdvdWxkIGJlIG5pY2UsIGJ1dCBh
-cHBhcmVudGx5IG5vdCBkb2FibGUuDQpWTEFOIGZpbHRlcmluZyAobWlycm9yaW5nIG9uZSBpbnRl
-cmVzdGluZyBWTEFOIG9ubHkpIGFuZCBzYW1wbGluZyAodG8gcmVkdWNlIHRoZSB0cmFmZmljIHZv
-bHVtZSkgaXMgY29tbW9uIGZvciBwb3J0IG1pcnJvcmluZy4gUGVyaGFwcyBqdXN0IG9mZmVyIHRo
-aXMgbGltaXRlZCBwcmUtZmlsdGVyaW5nIGFzIGEgcGVyZm9ybWFuY2Ugb3B0aW1pemF0aW9uLiBG
-dWxsIEJQRiByZW1haW5zIGluIGR1bXBjYXAuDQpBbnl3YXksIGxpbWl0ZWQgcHJlLWZpbHRlcmlu
-ZyBjYW4gYmUgYWRkZWQgbGF0ZXI7IGp1c3Qga2VlcCBpdCBpbiBtaW5kIGZvciBBUEkgZGVzaWdu
-IHB1cnBvc2VzLg0KDQpJZiBWTEFOIHByZS1maWx0ZXJpbmcgaXMgYWRkZWQgdG8gdGhlIGVucXVl
-dWVpbmcgZW5kIG9mIHRoZSByaW5nLCBpdCBvYnZpb3VzbHkgbmVlZHMgdG8gcGFyc2UgdGhlIG1i
-dWYvcGFja2V0IHRvIG9idGFpbiB0aGUgVkxBTjsgYnV0IEkgc3RpbGwgdGhpbmsgaXQgc2hvdWxk
-IG5vdCBtb2RpZnkgdGhlIHBhY2tldCwgaS5lLiB1bm9mZmxvYWRpbmcgdGhlIFZMQU4gdGFnIHN0
-aWxsIGJlbG9uZ3MgaW4gdGhlIGRlcXVldWVpbmcgZW5kIG9mIHRoZSByaW5nLg0KDQpBbm90aGVy
-IHRob3VnaHQgKG1vcmUgZmVhdHVyZSBjcmVlcCkuLi4NCkl0IHdvdWxkIGJlICJuaWNlIHRvIGhh
-dmUiIHRoZSBhYmlsaXR5IHRvIGF0dGFjaCBtdWx0aXBsZSBtaXJyb3JzIHRvIGEgcG9ydC4NCkUu
-Zy4gaWYgYW4gYXBwbGljYXRpb24gdXNlcyB0aGUgbWlycm9yIGZlYXR1cmUgZm9yIGl0cyBvd24g
-cHVycG9zZXMsIGR1bXBjYXAgY2FuIHN0aWxsIGF0dGFjaCBpdHMgb3duIG1pcnJvciB0byBwb3J0
-cyBhbHJlYWR5IGJlaW5nIG1pcnJvcmVkIGJ5IHRoZSBhcHBsaWNhdGlvbi4NCg0KPiANCj4gPg0K
-PiA+IFBTOiBJIGFncmVlIHdpdGggeW91ciBjaG9pY2Ugb2YgY29weWluZyAocmF0aGVyIHRoYW4g
-Y2xvbmluZyBieQ0KPiByZWZjb3VudCkgd2hlbiBtaXJyb3JpbmcgdGhlIHBhY2tldHMuDQo=
+On Sun, 13 Apr 2025 09:00:19 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+
+> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > Sent: Saturday, 12 April 2025 18.57
+> >=20
+> > On Sat, 12 Apr 2025 11:59:10 +0200
+> > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> >  =20
+> > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > Sent: Saturday, 12 April 2025 01.45
+> > > >
+> > > > Add field to union used for sched/event etc, for use when
+> > > > an mbuf is mirrored.
+> > > >
+> > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > > > ---
+> > > >  lib/mbuf/rte_mbuf_core.h | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/lib/mbuf/rte_mbuf_core.h b/lib/mbuf/rte_mbuf_core.h
+> > > > index a0df265b5d..1806dddd67 100644
+> > > > --- a/lib/mbuf/rte_mbuf_core.h
+> > > > +++ b/lib/mbuf/rte_mbuf_core.h
+> > > > @@ -589,6 +589,14 @@ struct __rte_cache_aligned rte_mbuf {
+> > > >  						 * @see
+> > > > rte_event_eth_tx_adapter_txq_set()
+> > > >  						 */
+> > > >  					} txadapter; /**< Eventdev ethdev Tx
+> > > > adapter */
+> > > > +					struct rte_mbuf_mirror {
+> > > > +						uint32_t orig_len;
+> > > > +						uint16_t queue_id;
+> > > > +						uint16_t direction;
+> > > > +						/**< Port mirroring uses this to
+> > > > store origin
+> > > > +						 * @see rte_eth_mirror()
+> > > > +						 */
+> > > > +					} mirror;
+> > > >  					uint32_t usr;
+> > > >  					/**< User defined tags. See
+> > > > rte_distributor_process() */
+> > > >  				} hash;                   /**< hash information =20
+> > >
+> > > Stop overloading the "hash" field!
+> > >
+> > > We now have dynfields. The mbuf structure's dedicated fields should =
+=20
+> > be limited to absolute core features. =20
+> > >
+> > > Long term, the "hash" field should be cleaned up.
+> > > E.g. if we get rid of the Flow Director and make the 8 byte "sched" =
+=20
+> > (Hierarchical Scheduler) a dynfield, the "hash" field can be reduced
+> > from 8 byte to 4 byte (RSS hash). =20
+> > >
+> > > I acknowledge that some mbuf fields can be overloaded and thus used =
+=20
+> > for multiple purposes - i.e. a value only used for ingress/forwarding
+> > (e.g. RSS hash) can share an mbuf field with a value only used for
+> > egress (e.g. Scheduler). =20
+> > >
+> > > The overloading of the "hash" field is too much already. E.g. can the=
+ =20
+> > Hierarchical Scheduler be used together with the Eventdev ethdev Tx
+> > adapter, or are they mutually exclusive due to sharing the same mbuf
+> > field? =20
+> > >
+> > > Going to the extreme, we would completely replace the "hash" field by=
+ =20
+> > dynfields. =20
+> > >
+> > > In short: Overloading the "hash" field with port mirror information =
+=20
+> > is a step in the wrong direction.
+> >=20
+> > Short answer: Dynamic Fields are hard to work with primary/secondary
+> > process model.
+> > The goal was to allow dumpcap to run and just work without
+> > modifications to the primary application.
+> > If secondary creates dynamic field, the primary doesn't see it. =20
+>=20
+> I skimmed the mbuf dynfield source code, and it looks like it is designed=
+ for primary/secondary process model.
+> If the primary process doesn't see a dynfield created in a secondary proc=
+ess, it is a bug in the mbuf dynfield library. I couldn't find such a bug i=
+n Bugzilla.
+> I would be much better to fix the bug than overloading the "hash" field.
+
+The problem is that if secondary makes a new field, the primary still has t=
+o lookup the offset.
+And don't want to do that in the packet path. Need to invoke a control path=
+ argument in the primary.
+If primary always makes the dynamic field, there really is not much point i=
+n it being dynamic.
+
