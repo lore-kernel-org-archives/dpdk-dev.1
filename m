@@ -2,72 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FBFC369AE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Apr 2025 17:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DAC3601E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Apr 2025 07:00:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B07A40285;
-	Sat, 12 Apr 2025 19:04:47 +0200 (CEST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
- [209.85.215.176])
- by mails.dpdk.org (Postfix) with ESMTP id 8A0D240041
- for <dev@dpdk.org>; Sat, 12 Apr 2025 19:04:46 +0200 (CEST)
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-af93cd64ef3so2123664a12.2
- for <dev@dpdk.org>; Sat, 12 Apr 2025 10:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744477485;
- x=1745082285; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=D5HL5TmvoPBnSvKPFhiP3fNFv35ggPuGW7BDw5qWEcc=;
- b=ZpBMZnUztBgMLwYlng7W1dNTzspK7FOTe5gqs3Oax8ERSa8ycWgjXW20BuoFnAOFeh
- wWmj9UcAA1AiOhn5NsY8IHw+X3WBUgeEx0LcIXMWCUYR/MZH2De5IjrjUEHcLa8ghS4v
- PXjUqw3jaTGXPxxkc/xxsNVBoEXS/fjlKhwFdR43Mg1Ar5aJ+3j2ZQ/u0Cy0fE4HlLch
- maCTbNWQQ+Mf9A0Ng/i8J/T5Fictw3cZX5RshhYBK4YM0ulZeC9Th/XRZpADvVNuPXmn
- RJKaRkFwai/vxbUVvGW/JeDp9CB4/+A5lYzIV8SLDdwTzhLSV+WhKFoPy3Mz8UqyIeDo
- AjHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744477485; x=1745082285;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=D5HL5TmvoPBnSvKPFhiP3fNFv35ggPuGW7BDw5qWEcc=;
- b=Iy5Cb7emSBf7n/eMnt284nBCAcv1rqMx/yRk15y7JWegC3+vfsQY5VXdEaFZGLJ9lj
- w0fu5sOwgDFr2Fuf+RVhwQi/hu7RToncjcaBuccipooEBJEvXoByMD+ehIevRD6WnZX2
- Pfi7pFL3ZBKSyu4F789E6dkro5ChOuWOtOZlA0/X9lWduh0++B4hHi1srxfEouUYesmn
- sTxkVFoK0F4eb/EPOo4i+K94iDiUTsLqFWjOQRxtAgkUmL29xY//mWqSYuym1mca46Zz
- A9BCqoYONZ5Jq9xeizuv2oqMqJt8TB5NGvs9aCX+BrEO4M3ZJtTILlfi2oIi9l3dB2P7
- aM6A==
-X-Gm-Message-State: AOJu0YywmtQZ3Ew31C9kXW/oR8ZQeQ0WA6XBsLahPpuBixK+Gxf9k8ei
- wT+sEGXzEcJyOrnCDbWWTTYuPFvAliT5BbQmE8cBnHr2PAWFF09AjWbAQKsL8/o=
-X-Gm-Gg: ASbGncseygmvMyZVtuvbsWEjXhngJ+9ppZ0dPcUFa5Y79aKXupsG/8xEZZFxfv6HjA2
- Jey6N+nGk6VWHg3PrjyI7Wbgn1iRgbKfl3PzKXuoEBam8QmNhvDXlRGuRLO3lMFnhyFWpKJi29t
- l/QSD4fxF+FuZ1wK9bWpplUr2a7AbTQ9/glg5etivX0ENBErLDf5M795Z0+xoRF8DiVA54vVIVl
- 4ryActG7m3mt1mjjK3YEATxEFof0UNRfOKfqSyTQqxUJ2GnwNRZnBOYr5vQY5DJ+Z5lpXm6OJ3g
- 8Y+BSI9fRqHmJJGgvmKLGHy3ZErO9QAazXBsQXEISdhgbAQhvhnLZ7iF7K898zA9lboM1cA7Hn6
- PtXtGh9pJJDf8vo7eQ/9odBhyA50=
-X-Google-Smtp-Source: AGHT+IEMXQYsa99N0/Qshd/MxiSR4jqgasR4IsjETt36DDe07bYLdGeE1YtCCFJ5o8SEYFisaFJ2/A==
-X-Received: by 2002:a17:903:2392:b0:21b:d2b6:ca7f with SMTP id
- d9443c01a7336-22bea4efffamr104649365ad.32.1744477485216; 
- Sat, 12 Apr 2025 10:04:45 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22ac7b62b70sm69608935ad.39.2025.04.12.10.04.44
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 12 Apr 2025 10:04:45 -0700 (PDT)
-Date: Sat, 12 Apr 2025 10:04:42 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [RFC 00/13] Packet capture using port mirroring
-Message-ID: <20250412100442.0c48971a@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FBC9@smartserver.smartshare.dk>
-References: <20250411234927.114568-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FBC9@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 8B2F540156;
+	Sun, 13 Apr 2025 09:00:23 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 2036540041
+ for <dev@dpdk.org>; Sun, 13 Apr 2025 09:00:23 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7D037208BD;
+ Sun, 13 Apr 2025 09:00:22 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [RFC 08/13] mbuf: add fields for mirroring
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sun, 13 Apr 2025 09:00:19 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FBD1@smartserver.smartshare.dk>
+In-Reply-To: <20250412095659.5f5719e8@hermes.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC 08/13] mbuf: add fields for mirroring
+Thread-Index: Adury+u724Q/2fb9SwuE98SF8sZVeQAdDdjA
+References: <20250411234927.114568-1-stephen@networkplumber.org><20250411234927.114568-9-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35E9FBC8@smartserver.smartshare.dk>
+ <20250412095659.5f5719e8@hermes.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,88 +47,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 12 Apr 2025 13:06:55 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Saturday, 12 April 2025 01.45
-> >=20
-> > This is a rework of how packet capture is done in DPDK.
-> > The existing mechanism using callbacks has a number of problems;
-> > the main one is that any packets sent/received in a secondary process
-> > are not visible. The root cause is that callbacks can not function
-> > across process boundaries, they are specific to the role.
-> >=20
-> > The new mechanism builds on the concept of port mirroring used
-> > in Linux/FreeBSD and also router vendors (SPAN ports). The
-> > infrastructure
-> > is built around a new ethdev call to mirror a port.
-> >=20
-> > The internals of dumpcap are redone but the program command
-> > syntax is unchanged (no doc change needed). Usingthe new mirror
-> > mechanism,
-> > the dumpcap program creates a port using ring PMD and
-> > then directs mirror to that. Then the packets are extracted from the
-> > ring.
-> > If capturing on multiple devices, they all get mirrored to
-> > the same ring PMD. =20
->=20
-> Here's some general feedback...
->=20
-> I very much like the concept of using a shared ring for carrying the mirr=
-ored packets.
-> It allows other types of future consumers to process the mirrored packets=
-, e.g. encapsulating and forwarding them into an L2 or L3 tunnel, or Wiresh=
-ark remote capture.
->=20
-> Using a Ring PMD instead of setting up a dedicated ring also has some adv=
-antages, such as the ability to set up multiple separate mirror target inst=
-ances.
-> For performance reasons, we should ensure that a lightweight Ring PMD is =
-available for mirroring, in case the Ring PMD is extended with new features=
- affecting its performance.
-> Or maybe create a new type of mirror/capture virtual PMD. This would allo=
-w applications to enqueue packets from non-ethdev interfaces into it.
-
-The new modifications are simple, and do not impact performance of ring PMD.
-We don't need another PMD for this.
-It did uncover some broken API's in ring PMD, but those can be marked depre=
-cated
-and disappear in some future version.
-
->=20
-> I'm not convinced you should undo the VLAN offloads when enqueueing a mir=
-ror packet... If you do, you should also undo QinQ offloads. Undoing offloa=
-ds is never going to end.
-> And if you create a dedicated PMD type for carrying mirrored packets, you=
- can ensure that the offload fields remain intact on dequeue.
-
-VLAN needs to be unoffloaded before filtering and writing to file.
-Can move that logic to the other end of the ring (i.e in dumpcap).
-
-The issue with filtering is that current DPDK BPF has no way to reference o=
-ffload
-meta data. There is a way to do that with Linux kernel BPF (via negative of=
-fsets).
-Looked into doing this in the DPDK BPF, but there are several blockers: not=
- all
-the offloads are the same, and more importantly the pcap library to build f=
-ilters
-(pcap_compile) has some internal issues. The pcap library "knows" when it is
-build a direct Linux socket filter, versus just class BPF. For example,
-if you call pcap_compile() with "vlan 13", it will generate different code
-based on whether it is a Linux filter or not.
-
-> You should consider sampling and VLAN filtering as typical mirroring feat=
-ures.
-> It would improve the performance if such filtering is done before copying=
- the packets.
-
-The problem is that filtering before going into the ring leads to creating =
-BPF
-dependency inside ethdev which is a build nightmare. Tried it and was not s=
-uccessful.
-
->=20
-> PS: I agree with your choice of copying (rather than cloning by refcount)=
- when mirroring the packets.
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgMTIgQXByaWwgMjAyNSAxOC41Nw0KPiANCj4gT24gU2F0
+LCAxMiBBcHIgMjAyNSAxMTo1OToxMCArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
+aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdl
+ciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnXQ0KPiA+ID4gU2VudDogU2F0dXJk
+YXksIDEyIEFwcmlsIDIwMjUgMDEuNDUNCj4gPiA+DQo+ID4gPiBBZGQgZmllbGQgdG8gdW5pb24g
+dXNlZCBmb3Igc2NoZWQvZXZlbnQgZXRjLCBmb3IgdXNlIHdoZW4NCj4gPiA+IGFuIG1idWYgaXMg
+bWlycm9yZWQuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBIZW1taW5nZXIg
+PHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiA+ID4gLS0tDQo+ID4gPiAgbGliL21idWYv
+cnRlX21idWZfY29yZS5oIHwgOCArKysrKysrKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGlu
+c2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvbGliL21idWYvcnRlX21idWZf
+Y29yZS5oIGIvbGliL21idWYvcnRlX21idWZfY29yZS5oDQo+ID4gPiBpbmRleCBhMGRmMjY1YjVk
+Li4xODA2ZGRkZDY3IDEwMDY0NA0KPiA+ID4gLS0tIGEvbGliL21idWYvcnRlX21idWZfY29yZS5o
+DQo+ID4gPiArKysgYi9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgNCj4gPiA+IEBAIC01ODksNiAr
+NTg5LDE0IEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9tYnVmIHsNCj4gPiA+ICAJ
+CQkJCQkgKiBAc2VlDQo+ID4gPiBydGVfZXZlbnRfZXRoX3R4X2FkYXB0ZXJfdHhxX3NldCgpDQo+
+ID4gPiAgCQkJCQkJICovDQo+ID4gPiAgCQkJCQl9IHR4YWRhcHRlcjsgLyoqPCBFdmVudGRldiBl
+dGhkZXYgVHgNCj4gPiA+IGFkYXB0ZXIgKi8NCj4gPiA+ICsJCQkJCXN0cnVjdCBydGVfbWJ1Zl9t
+aXJyb3Igew0KPiA+ID4gKwkJCQkJCXVpbnQzMl90IG9yaWdfbGVuOw0KPiA+ID4gKwkJCQkJCXVp
+bnQxNl90IHF1ZXVlX2lkOw0KPiA+ID4gKwkJCQkJCXVpbnQxNl90IGRpcmVjdGlvbjsNCj4gPiA+
+ICsJCQkJCQkvKio8IFBvcnQgbWlycm9yaW5nIHVzZXMgdGhpcyB0bw0KPiA+ID4gc3RvcmUgb3Jp
+Z2luDQo+ID4gPiArCQkJCQkJICogQHNlZSBydGVfZXRoX21pcnJvcigpDQo+ID4gPiArCQkJCQkJ
+ICovDQo+ID4gPiArCQkJCQl9IG1pcnJvcjsNCj4gPiA+ICAJCQkJCXVpbnQzMl90IHVzcjsNCj4g
+PiA+ICAJCQkJCS8qKjwgVXNlciBkZWZpbmVkIHRhZ3MuIFNlZQ0KPiA+ID4gcnRlX2Rpc3RyaWJ1
+dG9yX3Byb2Nlc3MoKSAqLw0KPiA+ID4gIAkJCQl9IGhhc2g7ICAgICAgICAgICAgICAgICAgIC8q
+KjwgaGFzaCBpbmZvcm1hdGlvbg0KPiA+DQo+ID4gU3RvcCBvdmVybG9hZGluZyB0aGUgImhhc2gi
+IGZpZWxkIQ0KPiA+DQo+ID4gV2Ugbm93IGhhdmUgZHluZmllbGRzLiBUaGUgbWJ1ZiBzdHJ1Y3R1
+cmUncyBkZWRpY2F0ZWQgZmllbGRzIHNob3VsZA0KPiBiZSBsaW1pdGVkIHRvIGFic29sdXRlIGNv
+cmUgZmVhdHVyZXMuDQo+ID4NCj4gPiBMb25nIHRlcm0sIHRoZSAiaGFzaCIgZmllbGQgc2hvdWxk
+IGJlIGNsZWFuZWQgdXAuDQo+ID4gRS5nLiBpZiB3ZSBnZXQgcmlkIG9mIHRoZSBGbG93IERpcmVj
+dG9yIGFuZCBtYWtlIHRoZSA4IGJ5dGUgInNjaGVkIg0KPiAoSGllcmFyY2hpY2FsIFNjaGVkdWxl
+cikgYSBkeW5maWVsZCwgdGhlICJoYXNoIiBmaWVsZCBjYW4gYmUgcmVkdWNlZA0KPiBmcm9tIDgg
+Ynl0ZSB0byA0IGJ5dGUgKFJTUyBoYXNoKS4NCj4gPg0KPiA+IEkgYWNrbm93bGVkZ2UgdGhhdCBz
+b21lIG1idWYgZmllbGRzIGNhbiBiZSBvdmVybG9hZGVkIGFuZCB0aHVzIHVzZWQNCj4gZm9yIG11
+bHRpcGxlIHB1cnBvc2VzIC0gaS5lLiBhIHZhbHVlIG9ubHkgdXNlZCBmb3IgaW5ncmVzcy9mb3J3
+YXJkaW5nDQo+IChlLmcuIFJTUyBoYXNoKSBjYW4gc2hhcmUgYW4gbWJ1ZiBmaWVsZCB3aXRoIGEg
+dmFsdWUgb25seSB1c2VkIGZvcg0KPiBlZ3Jlc3MgKGUuZy4gU2NoZWR1bGVyKS4NCj4gPg0KPiA+
+IFRoZSBvdmVybG9hZGluZyBvZiB0aGUgImhhc2giIGZpZWxkIGlzIHRvbyBtdWNoIGFscmVhZHku
+IEUuZy4gY2FuIHRoZQ0KPiBIaWVyYXJjaGljYWwgU2NoZWR1bGVyIGJlIHVzZWQgdG9nZXRoZXIg
+d2l0aCB0aGUgRXZlbnRkZXYgZXRoZGV2IFR4DQo+IGFkYXB0ZXIsIG9yIGFyZSB0aGV5IG11dHVh
+bGx5IGV4Y2x1c2l2ZSBkdWUgdG8gc2hhcmluZyB0aGUgc2FtZSBtYnVmDQo+IGZpZWxkPw0KPiA+
+DQo+ID4gR29pbmcgdG8gdGhlIGV4dHJlbWUsIHdlIHdvdWxkIGNvbXBsZXRlbHkgcmVwbGFjZSB0
+aGUgImhhc2giIGZpZWxkIGJ5DQo+IGR5bmZpZWxkcy4NCj4gPg0KPiA+IEluIHNob3J0OiBPdmVy
+bG9hZGluZyB0aGUgImhhc2giIGZpZWxkIHdpdGggcG9ydCBtaXJyb3IgaW5mb3JtYXRpb24NCj4g
+aXMgYSBzdGVwIGluIHRoZSB3cm9uZyBkaXJlY3Rpb24uDQo+IA0KPiBTaG9ydCBhbnN3ZXI6IER5
+bmFtaWMgRmllbGRzIGFyZSBoYXJkIHRvIHdvcmsgd2l0aCBwcmltYXJ5L3NlY29uZGFyeQ0KPiBw
+cm9jZXNzIG1vZGVsLg0KPiBUaGUgZ29hbCB3YXMgdG8gYWxsb3cgZHVtcGNhcCB0byBydW4gYW5k
+IGp1c3Qgd29yayB3aXRob3V0DQo+IG1vZGlmaWNhdGlvbnMgdG8gdGhlIHByaW1hcnkgYXBwbGlj
+YXRpb24uDQo+IElmIHNlY29uZGFyeSBjcmVhdGVzIGR5bmFtaWMgZmllbGQsIHRoZSBwcmltYXJ5
+IGRvZXNuJ3Qgc2VlIGl0Lg0KDQpJIHNraW1tZWQgdGhlIG1idWYgZHluZmllbGQgc291cmNlIGNv
+ZGUsIGFuZCBpdCBsb29rcyBsaWtlIGl0IGlzIGRlc2lnbmVkIGZvciBwcmltYXJ5L3NlY29uZGFy
+eSBwcm9jZXNzIG1vZGVsLg0KSWYgdGhlIHByaW1hcnkgcHJvY2VzcyBkb2Vzbid0IHNlZSBhIGR5
+bmZpZWxkIGNyZWF0ZWQgaW4gYSBzZWNvbmRhcnkgcHJvY2VzcywgaXQgaXMgYSBidWcgaW4gdGhl
+IG1idWYgZHluZmllbGQgbGlicmFyeS4gSSBjb3VsZG4ndCBmaW5kIHN1Y2ggYSBidWcgaW4gQnVn
+emlsbGEuDQpJIHdvdWxkIGJlIG11Y2ggYmV0dGVyIHRvIGZpeCB0aGUgYnVnIHRoYW4gb3Zlcmxv
+YWRpbmcgdGhlICJoYXNoIiBmaWVsZC4NCg0KPiANCj4gVGhlIGhhc2ggZmllbGQgaXMgbm90IGdv
+aW5nIGF3YXksIGZsb3cgZGlyZWN0b3IgaXMgc3R1Y2ssIGl0IGhhcyBiZWVuDQo+IHNjaGVkdWxl
+ZCBmb3IgcmVtb3ZhbA0KPiBmb3IgMyB5ZWFycyBhbmQgSW50ZWwgc3RpbGwgbmVlZHMgaXQuIE90
+aGVyIHVzZXMgc3VjaCBhcyBzdG9yaW5nDQo+IHJlY2VpdmVkIGhhc2ggdmFsdWUgYXJlDQo+IHN0
+aWxsIG5lZWRlZC4NCj4gDQo+IExvbmcgYW5zd2VyOg0KPiBJdCBtYXliZSBwb3NzaWJsZS4gVGhl
+IHBhdGNoc2V0IHdlbnQgdGhyb3VnaCBtYW55IHJldmlzaW9ucyBkdXJpbmcNCj4gZGV2ZWxvcG1l
+bnQuDQo+IEVuZGVkIHVwIGhhdmluZyB0byBoYXZlIE1QIHNlcnZlciBmb3Igc3RhcnQvc3RvcCwg
+YW5kIGlmIHRoYXQgY29kZSB3YXMNCj4gZXh0ZW5kZWQNCj4gdG8gYWxsb3cgc2Vjb25kYXJ5IHRv
+IHByb3h5IHNldHRpbmcgdXAgbWlycm9yLCB0aGVuIHRoZSBjb2RlIGluDQo+IGhhbmRsaW5nIG1p
+cnJvcigpIG9uDQo+IHByaW1hcnkgY291bGQgYWxzbyBzZXR1cCB0aGUgZHluYW1pYyBmaWVsZHMu
+IEJ1dCBhY2Nlc3NpbmcgZHluYW1pYw0KPiBmaWVsZHMgaXMgc2xvd2VyLA0KPiBub3QgdGhhdCBp
+dCBtYXR0ZXJzIHRoYXQgbXVjaCBpZiB3ZSBoYXZlIHRvIGNvcHkgbWJ1ZiBhbnl3YXkuIE90aGVy
+DQo+IG9wdGlvbg0KPiB3b3VsZCBiZSB0byBwcmUtcGVuZCBhIHBzZXVkbyBoZWFkZXIgdGhhdCBj
+YXB0dXJlIGNvdWxkIHRoZW4gdXNlLg0K
