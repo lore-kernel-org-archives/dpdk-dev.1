@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D70C369B5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 01:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6ED5C369B8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 01:22:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94F4340395;
-	Tue, 15 Apr 2025 03:21:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF7C640430;
+	Tue, 15 Apr 2025 03:21:55 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 2AC27402A1
+ by mails.dpdk.org (Postfix) with ESMTP id 3027B402D1
  for <dev@dpdk.org>; Tue, 15 Apr 2025 03:21:50 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 20FD5210C430; Mon, 14 Apr 2025 18:21:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 20FD5210C430
+ id 47EFA210C431; Mon, 14 Apr 2025 18:21:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 47EFA210C431
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1744680109;
- bh=fmyIEEpTYrawtKuMSmHNBxaRlcxem+t7kDkgtCQSHB8=;
+ bh=bec5lRXhEEcXJv+5hpMvXafitbIPd6cqtWYV2uByLeA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=O8tZAq7g8m0bUDbyjTjswNqOmQMo/62jcNFTPDqEyMUxw+Bfj9etpqIH/gRZo5J8x
- +UU4v89yUd4gDcH0sXtDI84OE7B1MrduK+c+PBPtwFqGr5yChOiy3eX9OR7UYcwVY9
- Dzl6Kne9IHyJSD7JtJaf2ODsscaoaeJmeAykq52Y=
+ b=sauSgA9ehFhzreYSfoyNWZl8gDQ6b+DI6uPlIaGMjL/XN0mDAICODVVmJpytqcTNJ
+ OoLF5lOLR51SOd8m3+9CZonRjAKrO1GiTbdHXrImhFgL82AHRiXVTLdl8Yrl0EHzh6
+ XYq80P47+B8yA2GU7imR2amG/9m0KGFMc34eDcgY=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: andremue@linux.microsoft.com
 Cc: dev@dpdk.org
-Subject: [PATCH v2 0/4] allow pmdinfo to be inserted and parsed using MSVC
-Date: Mon, 14 Apr 2025 18:21:32 -0700
-Message-Id: <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH v2 3/4] usertools: parse strings from PE images
+Date: Mon, 14 Apr 2025 18:21:35 -0700
+Message-Id: <1744680096-17683-4-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
 References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
+ <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,231 +43,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK uses GCC attribute "used" through macro __rte_used to indicate
-that a variable not referenced in the code should be assumed being
-used and therefore not be optimized away. This technique is used to embed
-information in the binaries, by having crafted information stored in
-them.
+Script usertools\dpdk-pmdinfo.py was enhanced to also be able to parse
+symbols from sections in PE images.
 
-MSVC offers similar functionality, but it differs significantly: MSVC
-requires a pragma to be used to send a command to the linker telling it
-explicitly the name of the symbol that should be included (even if not
-referenced). As a side-effect, variables called out to be included cannot
-be static, otherwise their symbols are not "seen" by the linker. This
-restriction requires some DPDK code to be refactored.
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ usertools/dpdk-pmdinfo.py | 55 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 45 insertions(+), 10 deletions(-)
 
-Macro RTE_INCLUDE is used in this patch to ensure these special variables
-make it to the final binaries.
-
-The elimination of "static" for some of these variables caused name
-clashes when __COUNTER__ predefined macro was used. As a workaround,
-predefined macro __LINE__ was used instead. However, when __COUNTER__
-was used directly from a header file, __LINE__ had to be used from the
-.c files, otherwise it would also not result in a unique symbol. This
-required a parameter to be added to some macros so that the __LINE__
-could be passed from the .c file to the macro defined in the header
-(which was originally using __COUNTER__).
-
-With this patchset commands like the one below provide the same JSON
-output as would be obtained on Linux.
-
-python usertools\dpdk-pmdinfo.py build\app\dpdk-testpmd.exe
-
-v2:
- - dpdk-pmdinfo.py: not importing elftools on Windows
- - not requiring "pefile" Python module during build
- - gen-pmdinfo-cfile.py: renamed "ar" to "archiver"
-
-Andre Muezerie (4):
-  eal: add macro to embed information in binaries
-  buildtools: use macro to embed information in binaries
-  usertools: parse strings from PE images
-  drivers: use macro to embed information in binaries
-
- buildtools/gen-pmdinfo-cfile.py               | 10 +++-
- buildtools/meson.build                        |  4 +-
- buildtools/pmdinfogen.py                      |  5 +-
- drivers/baseband/acc/rte_acc100_pmd.c         |  4 +-
- drivers/baseband/acc/rte_vrb_pmd.c            |  4 +-
- .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |  4 +-
- drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |  4 +-
- drivers/baseband/la12xx/bbdev_la12xx.c        |  2 +-
- drivers/baseband/null/bbdev_null.c            |  2 +-
- .../baseband/turbo_sw/bbdev_turbo_software.c  |  2 +-
- drivers/bus/auxiliary/bus_auxiliary_driver.h  |  4 +-
- drivers/bus/cdx/bus_cdx_driver.h              |  7 +--
- drivers/bus/dpaa/bus_dpaa_driver.h            |  4 +-
- drivers/bus/fslmc/bus_fslmc_driver.h          |  8 +--
- drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |  2 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  2 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  2 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dprc.c      |  2 +-
- drivers/bus/ifpga/bus_ifpga_driver.h          |  4 +-
- drivers/bus/pci/bus_pci_driver.h              |  4 +-
- drivers/bus/platform/bus_platform_driver.h    |  4 +-
- drivers/bus/uacce/bus_uacce_driver.h          |  4 +-
- drivers/bus/vdev/bus_vdev_driver.h            |  4 +-
- drivers/bus/vmbus/bus_vmbus_driver.h          |  4 +-
- drivers/common/mlx5/mlx5_common.c             |  2 +-
- drivers/common/mlx5/mlx5_common_pci.c         |  2 +-
- drivers/common/nitrox/nitrox_device.c         |  2 +-
- drivers/common/qat/qat_device.c               |  2 +-
- drivers/common/zsda/zsda_device.c             |  2 +-
- drivers/compress/isal/isal_compress_pmd.c     |  2 +-
- drivers/compress/mlx5/mlx5_compress.c         |  2 +-
- drivers/compress/octeontx/otx_zip_pmd.c       |  2 +-
- drivers/compress/uadk/uadk_compress_pmd.c     |  2 +-
- drivers/compress/zlib/zlib_pmd.c              |  2 +-
- drivers/crypto/armv8/rte_armv8_pmd.c          |  2 +-
- drivers/crypto/bcmfs/bcmfs_device.c           |  3 +-
- drivers/crypto/caam_jr/caam_jr.c              |  2 +-
- drivers/crypto/ccp/rte_ccp_pmd.c              |  2 +-
- drivers/crypto/cnxk/cn10k_cryptodev.c         |  2 +-
- drivers/crypto/cnxk/cn9k_cryptodev.c          |  2 +-
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  2 +-
- drivers/crypto/dpaa_sec/dpaa_sec.c            |  2 +-
- drivers/crypto/ionic/ionic_crypto_vdev.c      |  2 +-
- drivers/crypto/ipsec_mb/pmd_aesni_gcm.c       |  3 +-
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c        |  3 +-
- drivers/crypto/ipsec_mb/pmd_chacha_poly.c     |  3 +-
- drivers/crypto/ipsec_mb/pmd_kasumi.c          |  2 +-
- drivers/crypto/ipsec_mb/pmd_snow3g.c          |  2 +-
- drivers/crypto/ipsec_mb/pmd_zuc.c             |  2 +-
- drivers/crypto/mlx5/mlx5_crypto.c             |  2 +-
- drivers/crypto/mvsam/rte_mrvl_pmd.c           |  2 +-
- drivers/crypto/null/null_crypto_pmd.c         |  2 +-
- drivers/crypto/octeontx/otx_cryptodev.c       |  2 +-
- drivers/crypto/openssl/rte_openssl_pmd.c      |  3 +-
- drivers/crypto/scheduler/scheduler_pmd.c      |  3 +-
- drivers/crypto/uadk/uadk_crypto_pmd.c         |  2 +-
- drivers/crypto/virtio/virtio_cryptodev.c      |  2 +-
- drivers/crypto/virtio/virtio_user_cryptodev.c |  2 +-
- drivers/dma/cnxk/cnxk_dmadev.c                |  2 +-
- drivers/dma/dpaa/dpaa_qdma.c                  |  2 +-
- drivers/dma/dpaa2/dpaa2_qdma.c                |  2 +-
- drivers/dma/hisilicon/hisi_dmadev.c           |  2 +-
- drivers/dma/idxd/idxd_pci.c                   |  2 +-
- drivers/dma/ioat/ioat_dmadev.c                |  2 +-
- drivers/dma/odm/odm_dmadev.c                  |  2 +-
- drivers/dma/skeleton/skeleton_dmadev.c        |  2 +-
- drivers/event/cnxk/cn10k_eventdev.c           |  2 +-
- drivers/event/cnxk/cn20k_eventdev.c           |  2 +-
- drivers/event/cnxk/cn9k_eventdev.c            |  2 +-
- drivers/event/dlb2/pf/dlb2_pf.c               |  4 +-
- drivers/event/dpaa/dpaa_eventdev.c            |  2 +-
- drivers/event/dpaa2/dpaa2_eventdev.c          |  2 +-
- drivers/event/dpaa2/dpaa2_hw_dpcon.c          |  2 +-
- drivers/event/dsw/dsw_evdev.c                 |  2 +-
- drivers/event/octeontx/ssovf_evdev.c          |  3 +-
- drivers/event/octeontx/ssovf_probe.c          |  4 +-
- drivers/event/octeontx/timvf_probe.c          |  2 +-
- drivers/event/opdl/opdl_evdev.c               |  2 +-
- drivers/event/skeleton/skeleton_eventdev.c    |  4 +-
- drivers/event/sw/sw_evdev.c                   |  2 +-
- drivers/gpu/cuda/cuda.c                       |  2 +-
- drivers/mempool/cnxk/cnxk_mempool.c           |  2 +-
- drivers/mempool/octeontx/octeontx_fpavf.c     |  2 +-
- drivers/ml/cnxk/cn10k_ml_dev.c                |  2 +-
- drivers/ml/cnxk/mvtvm_ml_dev.c                |  2 +-
- drivers/net/af_packet/rte_eth_af_packet.c     |  2 +-
- drivers/net/af_xdp/rte_eth_af_xdp.c           |  2 +-
- drivers/net/ark/ark_ethdev.c                  |  2 +-
- drivers/net/atlantic/atl_ethdev.c             |  2 +-
- drivers/net/avp/avp_ethdev.c                  |  2 +-
- drivers/net/axgbe/axgbe_ethdev.c              |  2 +-
- drivers/net/bnx2x/bnx2x_ethdev.c              |  5 +-
- drivers/net/bnxt/bnxt_ethdev.c                |  2 +-
- drivers/net/bonding/rte_eth_bond_pmd.c        |  2 +-
- drivers/net/cnxk/cn10k_ethdev.c               |  2 +-
- drivers/net/cnxk/cn20k_ethdev.c               |  2 +-
- drivers/net/cnxk/cn9k_ethdev.c                |  2 +-
- drivers/net/cnxk/cnxk_eswitch.c               |  2 +-
- drivers/net/cnxk/cnxk_ethdev_sec.c            |  2 +-
- drivers/net/cxgbe/cxgbe_ethdev.c              |  2 +-
- drivers/net/cxgbe/cxgbevf_ethdev.c            |  2 +-
- drivers/net/dpaa/dpaa_ethdev.c                |  2 +-
- drivers/net/dpaa2/dpaa2_ethdev.c              |  2 +-
- drivers/net/dpaa2/dpaa2_mux.c                 |  2 +-
- drivers/net/dpaa2/dpaa2_ptp.c                 |  2 +-
- drivers/net/ena/ena_ethdev.c                  |  2 +-
- drivers/net/enetc/enetc_ethdev.c              |  2 +-
- drivers/net/enetfec/enet_ethdev.c             |  2 +-
- drivers/net/enic/enic_ethdev.c                |  2 +-
- drivers/net/failsafe/failsafe.c               |  2 +-
- drivers/net/gve/gve_ethdev.c                  |  2 +-
- drivers/net/hinic/hinic_pmd_ethdev.c          |  2 +-
- drivers/net/hns3/hns3_ethdev.c                |  2 +-
- drivers/net/hns3/hns3_ethdev_vf.c             |  2 +-
- drivers/net/intel/cpfl/cpfl_ethdev.c          |  2 +-
- drivers/net/intel/e1000/em_ethdev.c           |  2 +-
- drivers/net/intel/e1000/igb_ethdev.c          |  4 +-
- drivers/net/intel/e1000/igc_ethdev.c          |  2 +-
- drivers/net/intel/fm10k/fm10k_ethdev.c        |  2 +-
- drivers/net/intel/i40e/i40e_ethdev.c          |  2 +-
- drivers/net/intel/iavf/iavf_ethdev.c          |  2 +-
- drivers/net/intel/ice/ice_dcf_ethdev.c        |  2 +-
- drivers/net/intel/ice/ice_ethdev.c            |  2 +-
- drivers/net/intel/idpf/idpf_ethdev.c          |  2 +-
- drivers/net/intel/ipn3ke/ipn3ke_ethdev.c      |  2 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  4 +-
- drivers/net/ionic/ionic_dev_pci.c             |  2 +-
- drivers/net/ionic/ionic_dev_vdev.c            |  3 +-
- drivers/net/mana/mana.c                       |  2 +-
- drivers/net/memif/rte_eth_memif.c             |  2 +-
- drivers/net/mlx4/mlx4.c                       |  2 +-
- drivers/net/mlx5/mlx5.c                       |  2 +-
- drivers/net/mvneta/mvneta_ethdev.c            |  2 +-
- drivers/net/mvpp2/mrvl_ethdev.c               |  2 +-
- drivers/net/netvsc/hn_ethdev.c                |  2 +-
- drivers/net/nfb/nfb_ethdev.c                  |  2 +-
- drivers/net/nfp/nfp_ethdev.c                  |  2 +-
- drivers/net/ngbe/ngbe_ethdev.c                |  2 +-
- drivers/net/ngbe/ngbe_ethdev_vf.c             |  2 +-
- drivers/net/ntnic/ntnic_ethdev.c              |  2 +-
- drivers/net/null/rte_eth_null.c               |  2 +-
- drivers/net/octeon_ep/otx_ep_ethdev.c         |  2 +-
- drivers/net/octeontx/base/octeontx_pkivf.c    |  2 +-
- drivers/net/octeontx/base/octeontx_pkovf.c    |  2 +-
- drivers/net/octeontx/octeontx_ethdev.c        |  3 +-
- drivers/net/pcap/pcap_ethdev.c                |  2 +-
- drivers/net/pfe/pfe_ethdev.c                  |  2 +-
- drivers/net/qede/qede_ethdev.c                |  4 +-
- drivers/net/r8169/r8169_ethdev.c              |  2 +-
- drivers/net/ring/rte_eth_ring.c               |  2 +-
- drivers/net/sfc/sfc_ethdev.c                  |  2 +-
- drivers/net/softnic/rte_eth_softnic.c         |  2 +-
- drivers/net/tap/rte_eth_tap.c                 |  4 +-
- drivers/net/thunderx/nicvf_ethdev.c           |  2 +-
- drivers/net/txgbe/txgbe_ethdev.c              |  2 +-
- drivers/net/txgbe/txgbe_ethdev_vf.c           |  2 +-
- drivers/net/vdev_netvsc/vdev_netvsc.c         |  2 +-
- drivers/net/vhost/rte_eth_vhost.c             |  2 +-
- drivers/net/virtio/virtio_pci_ethdev.c        |  2 +-
- drivers/net/virtio/virtio_user_ethdev.c       |  2 +-
- drivers/net/vmxnet3/vmxnet3_ethdev.c          |  2 +-
- drivers/net/xsc/xsc_ethdev.c                  |  2 +-
- drivers/net/zxdh/zxdh_ethdev.c                |  2 +-
- drivers/raw/cnxk_bphy/cnxk_bphy.c             |  2 +-
- drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c         |  2 +-
- drivers/raw/cnxk_gpio/cnxk_gpio.c             |  2 +-
- drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c         |  2 +-
- drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c         |  2 +-
- drivers/raw/gdtc/gdtc_rawdev.c                |  2 +-
- drivers/raw/ifpga/afu_pmd_core.c              |  2 +-
- drivers/raw/ifpga/ifpga_rawdev.c              |  4 +-
- drivers/raw/ntb/ntb.c                         |  2 +-
- drivers/raw/skeleton/skeleton_rawdev.c        |  2 +-
- drivers/regex/cn9k/cn9k_regexdev.c            |  2 +-
- drivers/regex/mlx5/mlx5_regex.c               |  2 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c                 |  2 +-
- drivers/vdpa/mlx5/mlx5_vdpa.c                 |  2 +-
- drivers/vdpa/sfc/sfc_vdpa.c                   |  2 +-
- lib/eal/common/eal_common_options.c           |  2 +-
- lib/eal/include/rte_common.h                  |  6 ++
- lib/eal/include/rte_dev.h                     | 14 ++---
- usertools/dpdk-pmdinfo.py                     | 55 +++++++++++++++----
- 182 files changed, 276 insertions(+), 233 deletions(-)
-
---
+diff --git a/usertools/dpdk-pmdinfo.py b/usertools/dpdk-pmdinfo.py
+index 9189a2fdbc..9e1ae5b534 100755
+--- a/usertools/dpdk-pmdinfo.py
++++ b/usertools/dpdk-pmdinfo.py
+@@ -37,8 +37,14 @@
+ from pathlib import Path
+ from typing import Iterable, Iterator, List, Union
+ 
+-import elftools
+-from elftools.elf.elffile import ELFError, ELFFile
++def is_windows():
++    return os.name == 'nt'
++
++if is_windows():
++    import pefile
++else:
++    import elftools
++    from elftools.elf.elffile import ELFError, ELFFile
+ 
+ 
+ # ----------------------------------------------------------------------------
+@@ -114,18 +120,23 @@ def parse_pmdinfo(paths: Iterable[Path], search_plugins: bool) -> List[dict]:
+         A list of DPDK drivers info dictionaries.
+     """
+     binaries = set(paths)
+-    for p in paths:
+-        binaries.update(get_needed_libs(p))
+-    if search_plugins:
+-        # cast to list to avoid errors with update while iterating
+-        binaries.update(list(get_plugin_libs(binaries)))
++
++    if is_windows():
++        section_name = ".rdata"
++    else:
++        section_name = ".rodata"
++        for p in paths:
++            binaries.update(get_needed_libs(p))
++        if search_plugins:
++            # cast to list to avoid errors with update while iterating
++            binaries.update(list(get_plugin_libs(binaries)))
+ 
+     drivers = []
+ 
+     for b in binaries:
+         logging.debug("analyzing %s", b)
+         try:
+-            for s in get_elf_strings(b, ".rodata", "PMD_INFO_STRING="):
++            for s in get_section_strings(b, section_name, "PMD_INFO_STRING="):
+                 try:
+                     info = json.loads(s)
+                     scrub_pci_ids(info)
+@@ -232,8 +243,8 @@ def elftools_version():
+         return (0, 24)
+     return (int(match[1]), int(match[2]))
+ 
+-
+-ELFTOOLS_VERSION = elftools_version()
++if not is_windows():
++    ELFTOOLS_VERSION = elftools_version()
+ 
+ 
+ def from_elftools(s: Union[bytes, str]) -> str:
+@@ -269,6 +280,30 @@ def get_elf_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
+         yield from find_strings(sec.data(), prefix)
+ 
+ 
++# ----------------------------------------------------------------------------
++def get_pe_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
++    """
++    Extract strings from a named PE section in a file.
++    """
++    pe = pefile.PE(path)
++    for sec in pe.sections:
++        section_name = sec.Name.decode().strip('\x00')
++        if section_name != section:
++            continue
++        yield from find_strings(sec.get_data(), prefix)
++
++
++# ----------------------------------------------------------------------------
++def get_section_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
++    """
++    Extract strings from a named section in an ELF or PE file.
++    """
++    if is_windows():
++        yield from get_pe_strings(path, section, prefix)
++    else:
++        yield from get_elf_strings(path, section, prefix)
++
++
+ # ----------------------------------------------------------------------------
+ LDD_LIB_RE = re.compile(
+     r"""
+-- 
 2.49.0.vfs.0.0
 
