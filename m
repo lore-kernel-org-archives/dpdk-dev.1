@@ -2,75 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29103C369B5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 00:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71528C369B2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 01:21:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE0E4402A1;
-	Tue, 15 Apr 2025 02:19:46 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id 0BDDF40289
- for <dev@dpdk.org>; Tue, 15 Apr 2025 02:19:45 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-224019ad9edso63870195ad.1
- for <dev@dpdk.org>; Mon, 14 Apr 2025 17:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744676385;
- x=1745281185; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=h4+uHoXxIuggrw+bitzfRTPFvhaB6rBiF4IkysosnIw=;
- b=Whxt/b7YmvFzx0DZogZLKTWta82YBxbP9QTd9UupicdKNCpSeAPkCx+x0Q3lDkzWYa
- qPhO2guNiZ3uSPMuJL1SoI6u8s2koib+/WWhlF0Gao1op9PlGWFAC4cfl9gfR0WvWmbH
- yyqlpRG94pzjf2ymCPRLT8RxeqcD+ZwFIJw5cEDWHV1IV4bvSCrP5iU5Dq2cNhtMBcit
- j+HvFtN/3r4f7k+Og+x8QsbPQEmdXJ2XH7PVbC3DwfUv8joTrl8zxpqGexuDiKOZHCCh
- /mKGiVLFvVu4QuEbFxDFEPuNGAw5CiDGnsYFHeKEK9kmUecQWLTUU55kUKycPzP2UOWB
- tDjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744676385; x=1745281185;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=h4+uHoXxIuggrw+bitzfRTPFvhaB6rBiF4IkysosnIw=;
- b=ZYu6sP2c+Q9WjoT7LQdAKkP6giw1x1zJrOlMpWHzLBkgH4W7//I9EPYan95tBYgzYu
- oAcT3rLzkXH+l65qwQ+tVNlBriWQZGKHzpT6qTtVbex4PNxsFIdzzlML2K6YOIsJOuxN
- 6PNWLqzOWxRUcytyjUj5eSUdtBfJzHZx3YHA8iJYYi4mE2DLAQjIm0z7+sA9V5/w6AzS
- xpA9Yv7cfm0Jbj7BxOz0TAd/Sciuiwv4NRvA6cc91eSQjBEycJcSYm/DIudpwuG4XIS5
- HCnck3cEFCDLOAZ06gcJ/tPnlUqXKX2UfkJYlpGmRDf7lG8zYBBrDeFqvgwn3zKUYBUV
- e1pg==
-X-Gm-Message-State: AOJu0YzTT9B3sjhHoonsaAehxL/30rp7zk/LX0GtNG3vGVtT4tBoGCzt
- mmP+6yWb+vY3DBRR1h+Tk9K1Nd90BUYsZYJJnlmwSyuWZe8d6RqAWd7wqkVe1EoTrHMpuy+NYFR
- Wr9o=
-X-Gm-Gg: ASbGncuphgEE/tl3i7bYlUZExg+D/Q8n3Fof9p8/Rc/+DLsCnF0fmvqnoZfjfzYKeY7
- xag+zjAiCwUTOMyC9jNholSTGCBaK/lJ5px0TdsJ9SGRHiTtIqFxPOMVID5o850Vm/j0fnGQrKY
- gAUZrocNRuMXxhHAoz90hiY8vk+VGGhUCF9vbrKreA6zJoUL646d+5oMfkWFnpHpZXDe6ZxpyV+
- u+nAk/Bnf/UicX5x6vXjkx1xrpb3o1vhUerM9jQiVxr3hn5Jw1OPYEwsofXmOnA1TNQ7jXaTU02
- +04dM6QZ5kZFyDq9Xq8QnE/ixbRwukLgDASj8HBoPyWF9//ZiC+y7bhwK4AQ7zAFEPVMLI/Hdvr
- 051GmqkrFrCSJW1d0Q5Wg/5OKZ88=
-X-Google-Smtp-Source: AGHT+IGOPs1BrAlh8QfNjx5WL4fbjpjKGFHTGar78Ll1JkovcqsYtXIRxv+xfBvGUIXKt0EntlYmug==
-X-Received: by 2002:a17:902:d4cd:b0:224:1609:a747 with SMTP id
- d9443c01a7336-22bea4bd2c0mr185767705ad.31.1744676384703; 
- Mon, 14 Apr 2025 17:19:44 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22ac7b654a2sm106030755ad.49.2025.04.14.17.19.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Apr 2025 17:19:44 -0700 (PDT)
-Date: Mon, 14 Apr 2025 17:19:41 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit
- <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [RFC 02/13] ethdev: allow start/stop from secondary process
-Message-ID: <20250414171941.77636d94@hermes.local>
-In-Reply-To: <20250411234927.114568-3-stephen@networkplumber.org>
-References: <20250411234927.114568-1-stephen@networkplumber.org>
- <20250411234927.114568-3-stephen@networkplumber.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id 282C6402A1;
+	Tue, 15 Apr 2025 03:21:52 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 2096E40289
+ for <dev@dpdk.org>; Tue, 15 Apr 2025 03:21:50 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 3BB83210C426; Mon, 14 Apr 2025 18:21:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3BB83210C426
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1744680109;
+ bh=gA6a7psNm/4sG/U9rvsZy+FkLKM2ch3k/O2cgiJpJK8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=aUnX/6KW6Z097NuPr01Hf1dNQENlV/GRnRSiNzDvPKEXXLh/0t80JYyz1/SjSqMrX
+ uMgkhLZeA6xJplYekPMawm2SkBpENJC/nwSQ/2CeV6gNsKQr9E7O5CwSbe9OdMaToa
+ uhePD/Gg7P0Ez6euk7/c8kVaLhpvxiB415P1j0u4=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: andremue@linux.microsoft.com
+Cc: dev@dpdk.org
+Subject: [PATCH v2 2/4] buildtools: use macro to embed information in binaries
+Date: Mon, 14 Apr 2025 18:21:34 -0700
+Message-Id: <1744680096-17683-3-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
+References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
+ <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,33 +43,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 11 Apr 2025 16:44:39 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+The archiver tool from the MSVC toolset is lib.exe. It has different
+parameters then it's GNU counterpart "ar".
 
-> Before this patch if secondary process called start/stop
-> it would only impact the secondary process, the ethdev on the
-> primary process will still not be started.
-> 
-> With this patch, when start/stop is called from secondary,
-> it calls the primary and does the operation there. The design
-> is generic, and we can later add queue and other operations
-> as needed.
-> 
-> Bugzilla ID: 73
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
+buildtools\meson.build was updated to use lib.exe when MSVC compiler is
+used. This is to allow the code to be built without requiring GNU "ar"
+to be installed in that scenario.
 
-Wanted to expand this to other functions like rte_eth_dev_configure()
-but the structure rte_eth_conf has grown quite large
-According to pahole
-        /* size: 2280, cachelines: 36, members: 8 */
-	/* sum members: 2268, holes: 2, sum holes: 8 */
-	/* padding: 4 */
-	/* member types with holes: 3, total: 4, bit holes: 1, total: 1, bit paddings: 1, total: 29 bits */
- The biggest offender
-there is DCB and VMDQ both of which are features I doubt anyone ever uses,
-but unlikely to get that fixed.
+Script gen-pmdinfo-cfile.py was updated to use the correct parameters
+when using lib.exe.
 
-Because it is so large, it is impossible to pass rte_eth_conf over the mp
-primary/secondary API.
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ buildtools/gen-pmdinfo-cfile.py | 10 +++++++---
+ buildtools/meson.build          |  4 +++-
+ buildtools/pmdinfogen.py        |  5 +++--
+ 3 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/buildtools/gen-pmdinfo-cfile.py b/buildtools/gen-pmdinfo-cfile.py
+index 5fbd51658a..d1f1ea64fc 100644
+--- a/buildtools/gen-pmdinfo-cfile.py
++++ b/buildtools/gen-pmdinfo-cfile.py
+@@ -7,15 +7,19 @@
+ import sys
+ import tempfile
+ 
+-_, tmp_root, ar, archive, output, *pmdinfogen = sys.argv
++_, tmp_root, archiver, archive, output, *pmdinfogen = sys.argv
+ with tempfile.TemporaryDirectory(dir=tmp_root) as temp:
+     paths = []
+-    for name in subprocess.run([ar, "t", archive], stdout=subprocess.PIPE,
++    if archiver == 'lib':
++        archiver_options = ['/LIST', '/NOLOGO']
++    else:
++        archiver_options = ['t']
++    for name in subprocess.run([archiver] + archiver_options + [archive], stdout=subprocess.PIPE,
+                                check=True).stdout.decode().splitlines():
+         if os.path.exists(name):
+             paths.append(name)
+         else:
+-            subprocess.run([ar, "x", os.path.abspath(archive), name],
++            subprocess.run([archiver, "x", os.path.abspath(archive), name],
+                            check=True, cwd=temp)
+             paths.append(os.path.join(temp, name))
+     subprocess.run(pmdinfogen + paths + [output], check=True)
+diff --git a/buildtools/meson.build b/buildtools/meson.build
+index 1cd1ce02fd..11221f02ea 100644
+--- a/buildtools/meson.build
++++ b/buildtools/meson.build
+@@ -37,7 +37,9 @@ install_data([
+ pmdinfo = py3 + files('gen-pmdinfo-cfile.py') + [meson.current_build_dir()]
+ pmdinfogen = py3 + files('pmdinfogen.py')
+ if host_machine.system() == 'windows'
+-    if cc.get_id() == 'gcc'
++    if cc.get_id() == 'msvc'
++        pmdinfo += 'lib'
++    elif cc.get_id() == 'gcc'
+         pmdinfo += 'ar'
+     else
+         pmdinfo += 'llvm-ar'
+diff --git a/buildtools/pmdinfogen.py b/buildtools/pmdinfogen.py
+index dfb89500c0..8eddbb798c 100755
+--- a/buildtools/pmdinfogen.py
++++ b/buildtools/pmdinfogen.py
+@@ -192,7 +192,7 @@ def dump(self, file):
+         dumped = json.dumps(self.__dict__)
+         escaped = dumped.replace('"', '\\"')
+         print(
+-            'const char %s_pmd_info[] __attribute__((used)) = "PMD_INFO_STRING= %s";'
++            'RTE_INCLUDE(const char, %s_pmd_info)[] = "PMD_INFO_STRING= %s";'
+             % (self.name, escaped),
+             file=file,
+         )
+@@ -252,7 +252,8 @@ def open_output(path):
+ 
+ def write_header(output):
+     output.write(
+-        "static __attribute__((unused)) const char *generator = \"%s\";\n" % sys.argv[0]
++        "#include <rte_common.h>\n"
++        "static __rte_unused const char *generator = \"%s\";\n" % sys.argv[0]
+     )
+ 
+ 
+-- 
+2.49.0.vfs.0.0
+
