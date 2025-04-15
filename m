@@ -2,84 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BD5C369AB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 11:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C629C369AB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Apr 2025 12:11:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84AA9402A1;
-	Tue, 15 Apr 2025 13:19:25 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E185440289
- for <dev@dpdk.org>; Tue, 15 Apr 2025 13:19:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744715964;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ctvxcFYrWf0T9cfN2mNrrNZ2jSn0YVMXDHfazmopJ30=;
- b=M/3HMSSCShnDZ55oH1BQGWJ6wEJzFV53lCOpTNX0+pam+pKZTgkm86vEfmVFgSeTyg3Veb
- dCwCfZbfVsjtMTbdxXrJvg4upuwNaM7aDbY/k8/v3bknexQQoh5KpG5x49R8+2gb+SNUAe
- KS+h1s9oNWw6WrpSJUzVNUmkcS3E6Ok=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-siHEZ36CMK2jbpmnHFqWCQ-1; Tue, 15 Apr 2025 07:19:23 -0400
-X-MC-Unique: siHEZ36CMK2jbpmnHFqWCQ-1
-X-Mimecast-MFC-AGG-ID: siHEZ36CMK2jbpmnHFqWCQ_1744715962
-Received: by mail-wr1-f72.google.com with SMTP id
- ffacd0b85a97d-39c1b1c0969so3662040f8f.1
- for <dev@dpdk.org>; Tue, 15 Apr 2025 04:19:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744715961; x=1745320761;
- h=in-reply-to:references:user-agent:from:cc:subject:to:message-id
- :date:content-transfer-encoding:mime-version:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ctvxcFYrWf0T9cfN2mNrrNZ2jSn0YVMXDHfazmopJ30=;
- b=HAY2wx2ydNE6EuMgkPxI4qBOP2QNv7HloLG4teQON/7nUCElEOPGYybN4lhj/P4IBy
- jeiiATLNJrsNvQr/XeRBxDRJ4prZHAd79wmCb+RthClpxiXxFpoWNYvGC3IK40gW1Lhy
- kgyL1CR6ssFx1mCdiznPaph15u40mTYb97z6R1J5BdaCN0adbQopOrY965xfAu0MVpu0
- LBVQnJoVvFhoIo6kTnN/+yeydEABL3Dfh9vMfESi7+CIUXMyx5KPS78AMZULp9c9Avc8
- eFnR9CwGX1YGZNoWxAiG4LHOc4rFOhi61Zwxciw4w9ixqIkWZr8iefVlBQWuO9b+NrR7
- U2OQ==
-X-Gm-Message-State: AOJu0YzJARDlHDfdp8/0Z10mT4hlbFZy7jUg4zTT/BuSWBbuMKg0gSLR
- uTnAsLdoulg6mENS/Zt8/0j2R5iX/zcH9jhbYX0MapVdtoNPgvqHg7vh2W+SCChDV/UE+51OrDz
- VpZl7N7ns2tlQ2nf71HIEISNdsfFw0c09TkX+LKniX2PwTHNf
-X-Gm-Gg: ASbGncsIsa0f9vjUX27MCT0ZncdKkDt8KLr02RETPTIHsH23JGowFZ/wIRaBu01cofT
- l2x1MFH+MJr9kxkMxkYWDgD/ijG/uPJupMrkXxbzwDqA47UZs3JN+06XA0KJBMVLiYKK3CsuvDA
- 49iYS1uU717pFa3dmhIiAbXi3WEdM5ahC0jeIghiqKarG8N5f4p3oR4JRty+tPgvxet37aTzAZ9
- 8acoaFlBxKGCZpTtm5rmAZUMqMG2WHrB7Z8pMu+vyYehIWhYYJEw7EB1ZXseX8SlabRW1B7dPFw
- 1etCUDTSmY2HmVqTlaOAhciEl/Tej0saHoMqRJEE5H3OYUsylk8JJwxQfyWNdKLv/Pp6
-X-Received: by 2002:a5d:64e6:0:b0:391:2d76:baaa with SMTP id
- ffacd0b85a97d-39eaaec75cbmr13721798f8f.46.1744715961510; 
- Tue, 15 Apr 2025 04:19:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4nb6RJUPA44RcfhWMoTxDlvC0Se46NpAYFoXl48PNiJs17fLNTbM9IfLQQNujZgRlggIhcQ==
-X-Received: by 2002:a5d:64e6:0:b0:391:2d76:baaa with SMTP id
- ffacd0b85a97d-39eaaec75cbmr13721780f8f.46.1744715961133; 
- Tue, 15 Apr 2025 04:19:21 -0700 (PDT)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-39eae964089sm13953196f8f.15.2025.04.15.04.19.20
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 15 Apr 2025 04:19:20 -0700 (PDT)
-Mime-Version: 1.0
-Date: Tue, 15 Apr 2025 13:19:20 +0200
-Message-Id: <D9766V1IAZ3F.31NUXAK24Q8GI@redhat.com>
-To: "Andre Muezerie" <andremue@linux.microsoft.com>
-Subject: Re: [PATCH v2 3/4] usertools: parse strings from PE images
-Cc: <dev@dpdk.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-User-Agent: aerc/0.20.1-64-g7cb8e0e7ce24-dirty
-References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
- <1744680096-17683-1-git-send-email-andremue@linux.microsoft.com>
- <1744680096-17683-4-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1744680096-17683-4-git-send-email-andremue@linux.microsoft.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: knm1mb4Y5b3VHjbK6MWsLJZtFHXnccrA2ZzX6f4WrJ0_1744715962
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 50022402A1;
+	Tue, 15 Apr 2025 14:11:11 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 4ADF340289
+ for <dev@dpdk.org>; Tue, 15 Apr 2025 14:11:10 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F72q6P031484;
+ Tue, 15 Apr 2025 05:11:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=1Q56JZ2Na+jHQxlwwixjZwE
+ lbV6zNpg5X2ZoGL3bES8=; b=atqjYMbtsmRUC2xGsAewMzIhy10y/hPAFK0Pip8
+ oqxrOAGy2epfaLi/8INb526Wj81UmeGOO7sXJOOLrbdZkL8Un2JdoAbxX4tdmN4y
+ Wfjq/gVHjzby6rwneo+Y/a/cikV01fPYzI68qWYFZHIQGLlDvThpqrpa7oh95s9Z
+ 8SgATPx48+ItFj/UMnxd0Er5B1EvcRd+2GxUK67NmqcK/z8+/2JpOSoAKc4FUIey
+ 0pra2WS6NxHqrGmHZeyHjJAV5/gyrbzpwxT9SHAD6gbjmNbe/uEycmEMjEEEMfYd
+ 9O2aNKXSWEarjkkUL9ITEkBSSgucjcIubNwed9cL7aifCvw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 460cebn0a8-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 15 Apr 2025 05:11:09 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 15 Apr 2025 05:11:08 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 15 Apr 2025 05:11:08 -0700
+Received: from localhost.localdomain (unknown [10.28.36.185])
+ by maili.marvell.com (Postfix) with ESMTP id 5B66B67398;
+ Tue, 15 Apr 2025 05:11:05 -0700 (PDT)
+From: Ankur Dwivedi <adwivedi@marvell.com>
+To: <dev@dpdk.org>
+CC: <jerinj@marvell.com>, <vladimir.medvedkin@intel.com>,
+ <ndabilpuram@marvell.com>, <pbhagavatula@marvell.com>,
+ <skori@marvell.com>, <rkudurumalla@marvell.com>,
+ Ankur Dwivedi <adwivedi@marvell.com>
+Subject: [PATCH v1 00/12] add lookup fib nodes in graph library
+Date: Tue, 15 Apr 2025 17:40:40 +0530
+Message-ID: <20250415121052.1497155-1-adwivedi@marvell.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: T-abdqYma1dAbZvcWy_2Mw_QQf0TlX9_
+X-Authority-Analysis: v=2.4 cv=UJfdHDfy c=1 sm=1 tr=0 ts=67fe4cdd cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=XR8D0OoHHMoA:10 a=i4bR1e3tFpyGIuxOOCsA:9
+X-Proofpoint-GUID: T-abdqYma1dAbZvcWy_2Mw_QQf0TlX9_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,137 +71,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andre,
+This patch series adds two inbuilt nodes ip4_lookup_fib and
+ip6_lookup_fib in graph library. These nodes uses the existing
+Forwarding Information Base (FIB) library to create FIB, to do
+route addition and route lookup.
 
-Thanks for the respin. Could you format the code using ruff/black before
-sending a v3?
+Two new commands (for ipv4 and ipv6) for providing the lookup mode
+is added in the dpdk-graph application. fib or lpm can be given as
+lookup mode. If these new lookup mode commands are not given, the
+dpdk-graph uses lpm (Longest Prefix Match) or lpm6 by default.
+If fib is given as lookup mode then the ip4_lookup_fib or ip6_lookup_fib
+nodes are used by the application.
 
-Andre Muezerie, Apr 15, 2025 at 03:21:
-> Script usertools\dpdk-pmdinfo.py was enhanced to also be able to parse
-> symbols from sections in PE images.
->
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> ---
->  usertools/dpdk-pmdinfo.py | 55 ++++++++++++++++++++++++++++++++-------
->  1 file changed, 45 insertions(+), 10 deletions(-)
->
-> diff --git a/usertools/dpdk-pmdinfo.py b/usertools/dpdk-pmdinfo.py
-> index 9189a2fdbc..9e1ae5b534 100755
-> --- a/usertools/dpdk-pmdinfo.py
-> +++ b/usertools/dpdk-pmdinfo.py
-> @@ -37,8 +37,14 @@
->  from pathlib import Path
->  from typing import Iterable, Iterator, List, Union
-> =20
-> -import elftools
-> -from elftools.elf.elffile import ELFError, ELFFile
-> +def is_windows():
-> +    return os.name =3D=3D 'nt'
 
-Defining a function before imports is awkward and probably overkill.
-Can you replace all is_windows() calls with os.name =3D=3D "nt"?
+Ankur Dwivedi (12):
+  fib: move macro to header file
+  node: add IP4 lookup FIB node
+  node: add IP4 FIB route add
+  node: add process callback for IP4 FIB
+  node: add next node in packet classification
+  app/graph: add IP4 lookup mode command
+  fib: move macro to header file
+  node: add IP6 lookup FIB node
+  node: add IP6 FIB route add
+  node: add process callback for IP6 FIB
+  node: add next node in packet classification
+  app/graph: add IP6 lookup mode command
 
-> +
-> +if is_windows():
+ app/graph/commands.list     |   2 +
+ app/graph/ip4_route.c       |  34 +++-
+ app/graph/ip6_route.c       |  33 +++-
+ app/graph/l3fwd.c           |  24 +++
+ app/graph/module_api.h      |  13 ++
+ doc/guides/tools/graph.rst  |  24 ++-
+ lib/fib/rte_fib.c           |   3 -
+ lib/fib/rte_fib.h           |   3 +
+ lib/fib/rte_fib6.c          |  11 +-
+ lib/fib/rte_fib6.h          |   3 +
+ lib/node/ip4_lookup_fib.c   | 327 ++++++++++++++++++++++++++++++++++++
+ lib/node/ip6_lookup_fib.c   | 316 ++++++++++++++++++++++++++++++++++
+ lib/node/meson.build        |   4 +-
+ lib/node/pkt_cls.c          |   2 +
+ lib/node/pkt_cls_priv.h     |   2 +
+ lib/node/rte_node_ip4_api.h |  19 +++
+ lib/node/rte_node_ip6_api.h |  19 +++
+ 17 files changed, 812 insertions(+), 27 deletions(-)
+ create mode 100644 lib/node/ip4_lookup_fib.c
+ create mode 100644 lib/node/ip6_lookup_fib.c
 
-if os.name =3D=3D "nt":
-
-> +    import pefile
-> +else:
-> +    import elftools
-> +    from elftools.elf.elffile import ELFError, ELFFile
-> =20
-> =20
->  # ----------------------------------------------------------------------=
-------
-> @@ -114,18 +120,23 @@ def parse_pmdinfo(paths: Iterable[Path], search_plu=
-gins: bool) -> List[dict]:
->          A list of DPDK drivers info dictionaries.
->      """
->      binaries =3D set(paths)
-> -    for p in paths:
-> -        binaries.update(get_needed_libs(p))
-> -    if search_plugins:
-> -        # cast to list to avoid errors with update while iterating
-> -        binaries.update(list(get_plugin_libs(binaries)))
-> +
-> +    if is_windows():
-
-if os.name =3D=3D "nt":
-
-> +        section_name =3D ".rdata"
-> +    else:
-> +        section_name =3D ".rodata"
-> +        for p in paths:
-> +            binaries.update(get_needed_libs(p))
-> +        if search_plugins:
-> +            # cast to list to avoid errors with update while iterating
-> +            binaries.update(list(get_plugin_libs(binaries)))
-> =20
->      drivers =3D []
-> =20
->      for b in binaries:
->          logging.debug("analyzing %s", b)
->          try:
-> -            for s in get_elf_strings(b, ".rodata", "PMD_INFO_STRING=3D")=
-:
-> +            for s in get_section_strings(b, section_name, "PMD_INFO_STRI=
-NG=3D"):
->                  try:
->                      info =3D json.loads(s)
->                      scrub_pci_ids(info)
-> @@ -232,8 +243,8 @@ def elftools_version():
->          return (0, 24)
->      return (int(match[1]), int(match[2]))
-> =20
-> -
-> -ELFTOOLS_VERSION =3D elftools_version()
-> +if not is_windows():
-
-if os.name !=3D "nt":
-
-> +    ELFTOOLS_VERSION =3D elftools_version()
-> =20
-> =20
->  def from_elftools(s: Union[bytes, str]) -> str:
-> @@ -269,6 +280,30 @@ def get_elf_strings(path: Path, section: str, prefix=
-: str) -> Iterator[str]:
->          yield from find_strings(sec.data(), prefix)
-> =20
-> =20
-> +# ----------------------------------------------------------------------=
-------
-> +def get_pe_strings(path: Path, section: str, prefix: str) -> Iterator[st=
-r]:
-> +    """
-> +    Extract strings from a named PE section in a file.
-> +    """
-> +    pe =3D pefile.PE(path)
-> +    for sec in pe.sections:
-> +        section_name =3D sec.Name.decode().strip('\x00')
-> +        if section_name !=3D section:
-> +            continue
-> +        yield from find_strings(sec.get_data(), prefix)
-> +
-> +
-> +# ----------------------------------------------------------------------=
-------
-> +def get_section_strings(path: Path, section: str, prefix: str) -> Iterat=
-or[str]:
-> +    """
-> +    Extract strings from a named section in an ELF or PE file.
-> +    """
-> +    if is_windows():
-
-if os.name =3D=3D "nt":
-
-> +        yield from get_pe_strings(path, section, prefix)
-> +    else:
-> +        yield from get_elf_strings(path, section, prefix)
-> +
-> +
->  # ----------------------------------------------------------------------=
-------
->  LDD_LIB_RE =3D re.compile(
->      r"""
+-- 
+2.25.1
 
