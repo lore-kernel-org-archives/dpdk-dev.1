@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51738C369C2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69660C369C2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B791C40EE7;
-	Wed, 16 Apr 2025 16:00:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C499940FDE;
+	Wed, 16 Apr 2025 16:00:41 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 175D640E50
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 28E8E40E96
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:36 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 65EC0E0872;
- Wed, 16 Apr 2025 18:00:34 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 65EC0E0872
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 2CD5AE11BE;
+ Wed, 16 Apr 2025 18:00:35 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 2CD5AE11BE
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812034;
- bh=OMLvAoWXzMcwacdSq+nnLUf3LCgL1zvdxOJBpLa0Npc=;
+ s=default; t=1744812035;
+ bh=3EqBaRAbbFyAor70hj5U5YDlMpxIYEAObo7FsTSc2C0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=JwG2oxEn056vBRr+/9wVz7j8zBplyAXPKOspvJRkRaKNM1P0XrjhQWpXRBNqFXE1o
- NYrF3J4apAohFgXbSrVuTIHt/8yrh3M+6QUpL4GsfderYlZ+arKlEEiHR2lK8nuz0P
- A4e+fsd12b4CQL1xHIdpS6hg3FQrYW7AIfnnvxsLTPMCZSszhgVuG7/KVekvXM9b0j
- ruD+qFcJhPloWZQBTW7L4gA8qBNrrp01hDEXAkk001SJvunAl755bykPtFYTBfUSGP
- zk87tb9qc9zBVoTCjB9iAqPNOaIEDVOD/RcaAqQ43Iln5+hgs7FSMqZAUm1JSOU3gn
- knrng/AQ5ZDOg==
+ b=rI2ctIpG+ion0WWDl8Ss4s8+bCofsdULnZKcH4umavlNT3h+ga5D+d8iuK72owJhJ
+ o+QRxdcMbpKizueCpm9gPVXayxBg5SUsHsOprzJWm8hnw0VQIRQT+T13mkK6aKQpq5
+ MBwdljh3IZegJYICt5vB6sm4nbqZOxVWQUJ+8slxTqG6dQeEtO32ZlE+AasE9Fre07
+ Fe2NxvbiQLjy6/tMK5IduFMsBSUfcKEBzzC5+9By/4kw1vtpaeuEqmFdVv3oMBd/9Y
+ LxekPU2dZaamgXYKRGSe4oD8XqD5F8SXyF6N1pBrxBUaceZIG9yDvI2EswOjjo+J01
+ 7RFSv8fg1/XIg==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,9 +34,9 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 11/46] common/sfc_efx/base: add Medford4 support to Rx module
-Date: Wed, 16 Apr 2025 17:59:41 +0400
-Message-Id: <20250416140016.36127-12-ivan.malov@arknetworks.am>
+Subject: [PATCH 12/46] common/sfc_efx/base: add Medford4 support to Tx module
+Date: Wed, 16 Apr 2025 17:59:42 +0400
+Message-Id: <20250416140016.36127-13-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -57,25 +57,59 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
 
-Use common EF10 method table for that.
+Define and use Medford4 specific method table.
 
 Signed-off-by: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 ---
- drivers/common/sfc_efx/base/efx_rx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/common/sfc_efx/base/efx_tx.c | 33 ++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/common/sfc_efx/base/efx_rx.c b/drivers/common/sfc_efx/base/efx_rx.c
-index dce9ada55d..86dfc89ba4 100644
---- a/drivers/common/sfc_efx/base/efx_rx.c
-+++ b/drivers/common/sfc_efx/base/efx_rx.c
-@@ -261,6 +261,12 @@ efx_rx_init(
+diff --git a/drivers/common/sfc_efx/base/efx_tx.c b/drivers/common/sfc_efx/base/efx_tx.c
+index 6f61f937a1..d1021dea82 100644
+--- a/drivers/common/sfc_efx/base/efx_tx.c
++++ b/drivers/common/sfc_efx/base/efx_tx.c
+@@ -233,6 +233,33 @@ static const efx_tx_ops_t	__efx_tx_rhead_ops = {
+ #endif /* EFSYS_OPT_RIVERHEAD */
+ 
+ 
++#if EFSYS_OPT_MEDFORD4
++static const efx_tx_ops_t	__efx_tx_medford4_ops = {
++	ef10_tx_init,				/* etxo_init */
++	ef10_tx_fini,				/* etxo_fini */
++	ef10_tx_qcreate,			/* etxo_qcreate */
++	ef10_tx_qdestroy,			/* etxo_qdestroy */
++	ef10_tx_qpost,				/* etxo_qpost */
++	ef10_tx_qpush,				/* etxo_qpush */
++	ef10_tx_qpace,				/* etxo_qpace */
++	ef10_tx_qflush,				/* etxo_qflush */
++	ef10_tx_qenable,			/* etxo_qenable */
++	NULL,					/* etxo_qpio_enable */
++	NULL,					/* etxo_qpio_disable */
++	NULL,					/* etxo_qpio_write */
++	NULL,					/* etxo_qpio_post */
++	ef10_tx_qdesc_post,			/* etxo_qdesc_post */
++	ef10_tx_qdesc_dma_create,		/* etxo_qdesc_dma_create */
++	NULL,					/* etxo_qdesc_tso_create */
++	ef10_tx_qdesc_tso2_create,		/* etxo_qdesc_tso2_create */
++	ef10_tx_qdesc_vlantci_create,		/* etxo_qdesc_vlantci_create */
++	ef10_tx_qdesc_checksum_create,		/* etxo_qdesc_checksum_create */
++#if EFSYS_OPT_QSTATS
++	ef10_tx_qstats_update,			/* etxo_qstats_update */
++#endif
++};
++#endif /* EFSYS_OPT_MEDFORD4 */
++
+ 	__checkReturn	efx_rc_t
+ efx_tx_init(
+ 	__in		efx_nic_t *enp)
+@@ -284,6 +311,12 @@ efx_tx_init(
  		break;
  #endif /* EFSYS_OPT_RIVERHEAD */
  
 +#if EFSYS_OPT_MEDFORD4
 +	case EFX_FAMILY_MEDFORD4:
-+		erxop = &__efx_rx_ef10_ops;
++		etxop = &__efx_tx_medford4_ops;
 +		break;
 +#endif /* EFSYS_OPT_MEDFORD4 */
 +
