@@ -2,67 +2,167 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E4C369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 10:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52067C369C2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 10:26:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 721B940DF8;
-	Wed, 16 Apr 2025 12:10:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6D4CB40DD5;
+	Wed, 16 Apr 2025 12:26:52 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id E7D1240DD7
- for <dev@dpdk.org>; Wed, 16 Apr 2025 12:09:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 66A54406B8
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 12:26:50 +0200 (CEST)
 Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G8Vtwl006761;
- Wed, 16 Apr 2025 03:09:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=A
- UGmYdTeP1qOcArDKdHgVd/YLsY4yuZVdL6iOWWtt3g=; b=T2o1C5elL1dQSbpt5
- tnZsU9vPSBNkarXSNlR2HsaouSpjVpDWwDH+3Lcvk/2GRy3kWPTzE5xMoyiJ2EtE
- Cm/X47tA16UJDGB4myg7rYb26aus8FGonAXjwujreacgpkCTss2xfs/VIR2NKFDz
- X6KA8m6R6o5hMDk599/lhZplMonmUxinJ6Nzi9I06f4S5cAsXutYm5rzVjCCS26/
- y5XMitlmt2L408hzWe6cMzAvsJNQ+uIRAeDLHrJ/GwnaBptsFKwGHRJpntqzSsaf
- MN1+gDpLDyxnDw1YB7HusL5R4z9lWBYiL3bAnqfSywVh1eh3TUvBZHCNrcK6bv6E
- oqmyg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4620fdh4sv-1
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G8hgx8006591;
+ Wed, 16 Apr 2025 03:26:49 -0700
+Received: from nam12-bn8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4620fdh5vm-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 16 Apr 2025 03:09:58 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 16 Apr 2025 03:09:57 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 16 Apr 2025 03:09:57 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id B223D5B6943;
- Wed, 16 Apr 2025 03:09:52 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
- Vamsi Attunuru <vattunuru@marvell.com>
-CC: <g.singh@nxp.com>, <sachin.saxena@nxp.com>, <hemant.agrawal@nxp.com>,
- <fengchengwen@huawei.com>, <bruce.richardson@intel.com>,
- <kevin.laatz@intel.com>, <conor.walsh@intel.com>,
- <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
- <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Pavan
- Nikhilesh" <pbhagavatula@marvell.com>
-Subject: [25.11 PATCH 3/3] eventdev: refactor DMA adapter ops
-Date: Wed, 16 Apr 2025 15:39:31 +0530
-Message-ID: <20250416100931.6544-4-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250416100931.6544-1-pbhagavatula@marvell.com>
-References: <20250416100931.6544-1-pbhagavatula@marvell.com>
+ Wed, 16 Apr 2025 03:26:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e/R49ScInIY5+gnImgdGB6PL0toWMh5h5BU4v/LaL+RRpo7x5L9toK9Nj95jqWSkxHmUUNSDdVK2cSDlCFJhx7kLd/CMOB/bCPj9sKlpVCiL+I31Bqo5heKd/xcAtDUo16yqLJ0PiLuAftBpls1Q5NtYK7STQqqCKNNO9rxWaxxUl1mb5MzaoYk7NUOYOaHR0LxvTuFeZbea1di6o84XCHTixYPrjqh7iSiwq1BvRtwS/3fb+oDN0ErYyOJGIrrkLeO56jLFXvPYBvEtj6i03GL0Lst6dury6ogPXmb8++hBIFieJYpG8Py+2dCua5SfRzrv5zRW8Y7MbHDt0DAKfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HV1oURGTJxmS7/h1lnfNbgtdC7/ptsM6KJCknVtkhwk=;
+ b=fd7S4JL8EyxxycJt0ioOcYY1ZxXtd5xKFTm1njxXnlyeY/11mhDigkMUbXKcHtnEHxFtQyhzPI0yvU/xCgmepifHZrP8icb0qKrTDPFa8es/lt6YQ0KkUIFz9s8vSnrF/zmtrAw/vv/1v6GfnGsqyQHlABo6xcMoLC+2YwFmmojVfibK34dg61WdhV6m4mtOy6pVKA92Nbnwt9WznSumlH6ChSe/Xl9YYZ/70xXkaeFO9QwDxWZWHjPahwxBSskcPljAdwmDoRwOhJLFuBGkqzJ7K6yrN5qgUHM48MeAoZ7yccdMmwbD+dezFdhO8TWFdHsnTxx8Wm9h/RsUQpLhFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HV1oURGTJxmS7/h1lnfNbgtdC7/ptsM6KJCknVtkhwk=;
+ b=uI4mcXczCM1/PGcOAYUMQw8xsvwWup8eO2LPNzPHUKOrd4UUjqFlWJzaSylTh71giP0vddJuGpvRl+clX1LMM4SZxHVqih7swxQiEnYIWAIzMCb4opY7wBbqxDT2UyDULytv8nuyx/kvjZGkF0DVPNGREjMulFZvuTLwJkqkls0=
+Received: from BY1PR18MB6109.namprd18.prod.outlook.com (2603:10b6:a03:4a6::17)
+ by CH0PR18MB4290.namprd18.prod.outlook.com (2603:10b6:610:ba::16)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Wed, 16 Apr
+ 2025 10:26:45 +0000
+Received: from BY1PR18MB6109.namprd18.prod.outlook.com
+ ([fe80::8b06:27d0:59ed:cf27]) by BY1PR18MB6109.namprd18.prod.outlook.com
+ ([fe80::8b06:27d0:59ed:cf27%7]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
+ 10:26:45 +0000
+From: Ankur Dwivedi <adwivedi@marvell.com>
+To: Nitin Saxena <nsaxena16@gmail.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>,
+ "vladimir.medvedkin@intel.com" <vladimir.medvedkin@intel.com>, Nithin Kumar
+ Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh Bhagavatula
+ <pbhagavatula@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Rakesh
+ Kudurumalla <rkudurumalla@marvell.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v1 02/12] node: add IP4 lookup FIB node
+Thread-Topic: [EXTERNAL] Re: [PATCH v1 02/12] node: add IP4 lookup FIB node
+Thread-Index: AQHbrf+Fs3X6TSv5qUGx82844DNbWbOl51WAgAAjcaA=
+Date: Wed, 16 Apr 2025 10:26:45 +0000
+Message-ID: <BY1PR18MB61094FF515A07D28C1B3CA70DDBD2@BY1PR18MB6109.namprd18.prod.outlook.com>
+References: <20250415121052.1497155-1-adwivedi@marvell.com>
+ <20250415121052.1497155-3-adwivedi@marvell.com>
+ <CAG6-93x0TTnbE9sR81W4xRMmT1TPSG25OUK80ftEYf_65KqDJg@mail.gmail.com>
+In-Reply-To: <CAG6-93x0TTnbE9sR81W4xRMmT1TPSG25OUK80ftEYf_65KqDJg@mail.gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY1PR18MB6109:EE_|CH0PR18MB4290:EE_
+x-ms-office365-filtering-correlation-id: 8fdade87-36d2-49d2-86a2-08dd7cd13063
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?WWUya1JxQ1RpWmVNeE9LcWR1RWRXeGVNaytPUHhKMkdaYktwOEhqd0hhVFVU?=
+ =?utf-8?B?L2VPV29RU0xJcURxQUNUQk51enpMMjlVWGRpaUJvT2szbGZyOTV4eFBCZlQ4?=
+ =?utf-8?B?czYySDhoVE1oMTQ4RVVraE5ZSS84akVSbnBScFdvTVVpMklHcnRVd3Z3Mmtj?=
+ =?utf-8?B?YTZxTFo5RWo2MVlCM0xXdDNtYU4zcEo0WWhkK2ZQSnJ1cDhYaWhhVk4wcUln?=
+ =?utf-8?B?L0laa0wzV3NMOXIvQmo3NzVQQjc1L21rcEJMUDU5RktZS0pqVzQyMkNTclBM?=
+ =?utf-8?B?UkZhekVYMFJVblozek9tMjFjb3JReVI3UGhSVXFrZzJCSHZJN3hYUEhoRUV3?=
+ =?utf-8?B?ZUNkL0pyRUtzY2hUYllXVm13ck9rWVdUR2tOV05Ld1BGR0ZidHdMTHhBL3lP?=
+ =?utf-8?B?R2Y4MnZ5R3VMWDMrM3U3dmtuVnlWeTgwYXRKZlhKai9kY3YyeWpXSkxXbXFy?=
+ =?utf-8?B?UkdNUHBJTkQ2ejBDNnJkUkxodzY0aUhYQkdZZ2NGODRPVVlNRUVseDJZYVhm?=
+ =?utf-8?B?S2FHZFljY0YyQXRDc09oVTMxVThDbmx1Zk51OHJBZ3ZvYzhEM2xSNlJlcDR2?=
+ =?utf-8?B?d1FNdkxWTmpIY0JwcFBiaS9yZWRtNUFuR3Z1LzhXNkJlS3FUa1hQWHdQYXow?=
+ =?utf-8?B?WTVVOGFNejkzR2pBdVJNSEhUNnRMMjcvYmtuS09ZcWF6LyszVTNzT0dpZGpW?=
+ =?utf-8?B?cnZueUlEZTByVWc3VnBmQTdqcUtEWkYwMzRxM3lHczRld0xpRlpHeklxTkVn?=
+ =?utf-8?B?aENUQVFFT0NiU2dtWmI0ZmtnbWY1Rm14NmhiYlE0YmdGSE9sNzVPM3A5ZUNT?=
+ =?utf-8?B?R2h5NEZvaHArSTFxeUV4eXZBSm9oL0Rnc1ZQMmZWMHZsTkpvei9jRG5sQlRJ?=
+ =?utf-8?B?V3puZ0tUSmVHeGxzV1poM3NjOU5NNlU4SkFXd2x0NUZ2V1lsUUcrMUJLNUlM?=
+ =?utf-8?B?eVZURHJYY1l6cThrVDZuQXRqZkVZUHpJR0sydzNPS2xvVW1iVzZRc2JNd0JB?=
+ =?utf-8?B?NkhsRkE5RFFBZVZwekpYZEYwRFcxbmpyeGIvTjgxOEhSLzNPS2kwQVFYbWUv?=
+ =?utf-8?B?RnBqZDRWY2lMbnJ3ZFRKQ1kxV3RzcFBDa09qRmtUOHNQR1RYanI1WVRheDlr?=
+ =?utf-8?B?RlMrVy9hZGk0NDJGOFZxcVlpbE80WWc5a2lmTU1Rb3c4NHU5WnFjTGZUeXdv?=
+ =?utf-8?B?eCt6ajFTeC9lQWIzTWJia2FZV3l5bWFIZGt6UDhQRGtwZ1lyVXNEZloralRL?=
+ =?utf-8?B?NzA3UHgxem05RWZBQStTdUtxMlFyTTBBYllySEt5Mk5SNHRHaXlOd0RZbnlh?=
+ =?utf-8?B?aEN4N2s3b1NKM3plSkhLckt5V1VDQW41SDlsK1NXS1BISG5ienlzY1NJWTlm?=
+ =?utf-8?B?enhsU2VtYTlhS001ZFdkRXZPQ3IwUGx0N3pQdSs2Nlc4TytYZlpZaDI5b2FV?=
+ =?utf-8?B?Y0x1OHAwU2M0R2xMNmxoQk1LVlBYVEcvVzFZOUI1YlRqQUhKMTZvKzEvZ2lj?=
+ =?utf-8?B?NlpPUXk2YncyeFJlazBTTEhUQmgrS2FQa1cvNjlUdlBKQUVTZGpjbUV5bWNB?=
+ =?utf-8?B?aUxWcjFHcmRMREFMU0VBbUc1RklWcTB1c21YMVJTNU56aWpQVEJYL0x5UlR4?=
+ =?utf-8?B?UkQ2ZmFqbW5HaFltd1pRVGZMM1d1NXl6TDFnc1JTdEprQ1BoT1o4MXNjend4?=
+ =?utf-8?B?NWNUTTJqNUkxT1NxYXgrdFBUY3Y3SnVCL0R2VmRkSjhsT3NnWmNSRTNOY09V?=
+ =?utf-8?B?RmlseXFuSUtkVHRydE05M1o2VEpZSStSVTJSNjVxd1BZYnZiRWliOWFKOC9k?=
+ =?utf-8?B?MjJBSG5tU1I1NDlUQW9qbWJkK2hlcWxvZkJJbjRBcldCeU5yRm9oV1ZoNThW?=
+ =?utf-8?B?Y080dnpZZzhXY0VreUdDS1BCTExmY1hYSWE1bVdnVDI1NWtBdDdVOTg2MXhW?=
+ =?utf-8?Q?mkXtUqAL1TU=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:BY1PR18MB6109.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SmZTZjR4bWlpYVpvRjRsaHZPYWhteWh4MVZoa3dMdVUyVTVub210Mi9lT3V1?=
+ =?utf-8?B?NFluNkMvanEwa2ZUVHJaRWhZbjBvaHRTcTE0cGMzaXRrMmJyUE5TS2orZTdy?=
+ =?utf-8?B?SG1nY0FMdEVydEY3NTBWV1o5M0JqbXdQY2duUU1ZVy8zTmxpcnZYSFJpWldF?=
+ =?utf-8?B?M01JWXc2WFprRHBSNGpjcWdKUlpDYkJCeXc1RVdDei9lTVVLekpoT1FCTlRz?=
+ =?utf-8?B?MXk0dHpBWHJGZkFNY1d4K3dtUEFQSUxKbzR5SkNWNFRhZ0ZpcmE4Vno2bm12?=
+ =?utf-8?B?Vyt3WnJJNDJ0aS9pQTYySTF2OUNETWpyRC95U3ZKVjdvWVhNN2JVOWpPcE5X?=
+ =?utf-8?B?QWI5dFBnV2tIaVRmRWwrbjUwRkNjMjRLTis1cWJaMThWL0dMYWV4WGtmN05z?=
+ =?utf-8?B?Y1o4WkVVeGtBUXJWZTZsWUdYanVVMGZYUkVMSWQxT24xc2J4bEFScFZJd1hv?=
+ =?utf-8?B?dllEL2JSVlcwaUl1OFU2aDBMaEZlVC91YzMrKzVKbmhuNGxoNlhjWlBrL0lq?=
+ =?utf-8?B?V3FyZ1RPeFhSMThRMGtCSno3MGpaMDh1U2VSQ1NFMWNhRnFwVlZrRnF5YklD?=
+ =?utf-8?B?Y3N6OTFvYTRXWVpPQzlWd3NRYkQzYjJFTUNxaUZjdy85TEVnVlZUNzVZOWs3?=
+ =?utf-8?B?aXlBY0MycUlwV0dPY3dSM01sOWNVdHpJa2lQZXN0d21HOFJNdHpWMGZWSEN4?=
+ =?utf-8?B?TWtxVUFrTUR0VGtZeER4MHVCd0F0RWY1S3NyUi8rQ3JuNXlwNUJjay9yZEhI?=
+ =?utf-8?B?RysyMFpudGRtRVZsbzFwRkxRWEZPNjNZbEozSlJZb0gwckNmaUUwZHlXNWE0?=
+ =?utf-8?B?eFp3ci9WRTVncFJVQjZZOFNEYUxER28zN250N2tNMnM0QkJQTlIwMG4rQnlX?=
+ =?utf-8?B?WFZ5M1RUTnZZV1A0blNNaTZpQ0NWL0lKY1g2cjNOUkhocGgzbjRrMnVEYWJJ?=
+ =?utf-8?B?RldnQTlkWXQ2d2VOSk9xeWsxdjltVVIvVzdBcElld290Uk5TTUtHdDU1UHpk?=
+ =?utf-8?B?emJpSnlRZUlKd1F6ZnRNQmlMMFM1a2pESVVsd3NiRERNVVo4amw1Y01lbWQ0?=
+ =?utf-8?B?WjBRYi92Q0hYL0NFVnZWcmxwZGt5bTZMNHEwaEoraUpyS2xSOFZPNHZmWlVl?=
+ =?utf-8?B?elJLMHA0akdzTjg4U2lBVGNpLzI0R3Njam1iS2xTVXYwTFdoMXVJUnFZd25j?=
+ =?utf-8?B?N3p4TGdGT2pJWUEyUkFHcnVWK3c0a20rTzdDR0VlYkY4Zmc1c2RRWnVRcjN2?=
+ =?utf-8?B?bi94cTc1R1VaNlk5dnV5N1FhUzkzZSs0QzJMdkpiVWNjMnNoem1uZFFLR2dh?=
+ =?utf-8?B?YTRrNVFpbzYrdmNPSExNL296TzY2d205V2JzSGpjZE9JL0FkUHZZbzlxRis4?=
+ =?utf-8?B?Ynl5WW1aRTBIL1pjQ0YxL1VyTGIzd0FyekRtbXNFZEZvU2dtTVRyNkpDem1Q?=
+ =?utf-8?B?NXhTRjg4ZzdJb091VlhhUTRpR0M0M0lxY1ZOdXJuQ0xYdytLcnRiQVRVeHdC?=
+ =?utf-8?B?OTFqWlZSYjhlNGJBeXpUdExGNEpwU2FNVVVVb0RhMms5NWFUcnJveUlxVHcr?=
+ =?utf-8?B?QU00TGVzKzhhKzQ0TSs2WUdUcm5XOUdHTmRoRVd4NUtyRnFyYkJWVFAzOFh6?=
+ =?utf-8?B?Ymk4OUo3UEgzNm9TT0lVUHMzL3ltN2d2S2hWQXpYZndRaG5NTjJ2cndiQyts?=
+ =?utf-8?B?clJDZGJHRndveGJYRFhKUkIzYkZyTW1Zdkkxc3MyTDg5dGM3NVVvbkhGMkxD?=
+ =?utf-8?B?VGxITndLT3QyL0krR0NFQjJHenNhcTNucU5ZTStBcnVTQlBWaUdLM2V2aFky?=
+ =?utf-8?B?RGJQb0FsU3N4VHFlTWx3TTIwMFZGNEEzVlJqMGFzYkJEMWtjTmZxNmJIazZY?=
+ =?utf-8?B?TlZ3azIvU2VvYTRtc0wzYUphTDk2d0RwL1hpVjRvK2NnVHVZSFVEYVQvZ1Rh?=
+ =?utf-8?B?OTRqQUU1SjlEZXdtM3c4WWRPL0dJU3VEU0RzSUtQQXI1ZzZsaVpaWTZBNXhO?=
+ =?utf-8?B?UGlNOE9LVlZLS2VXaFpIWTJYbVhQVU9QaUZNUldUTjQyT0VaeTRnR3dyQkNu?=
+ =?utf-8?B?UkhkVFdXYzVlcXlXaVpRZnYyNmZXVWVYOHdhSmFrK2VJTi8xTkxzbzJGVWZw?=
+ =?utf-8?Q?9P8GBmd/tBiEPqvPZ4AFJwYZ9?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: DRQeP4IzDioBmWXrFLcCUT3exHpxihm-
-X-Proofpoint-ORIG-GUID: DRQeP4IzDioBmWXrFLcCUT3exHpxihm-
-X-Authority-Analysis: v=2.4 cv=ecA9f6EH c=1 sm=1 tr=0 ts=67ff81f6 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=CXDUBulTfovTYEl-0aIA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY1PR18MB6109.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fdade87-36d2-49d2-86a2-08dd7cd13063
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2025 10:26:45.8050 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jJYIrTMisrNXdiK+BpGgwGsuXkfby2SShanrTUpV5Wa4SBV+vJ4SWkGYwnux3bBcZxvOCGCnUnCMPkJbZf/sFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR18MB4290
+X-Proofpoint-GUID: -8rULJlmRy2lMcSS17vG9l8Umm0zPV0h
+X-Proofpoint-ORIG-GUID: -8rULJlmRy2lMcSS17vG9l8Umm0zPV0h
+X-Authority-Analysis: v=2.4 cv=ecA9f6EH c=1 sm=1 tr=0 ts=67ff85e9 cx=c_pps
+ a=2bhcDDF4uZIgm5IDeBgkqw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=XR8D0OoHHMoA:10 a=-AAbraWEqlQA:10 a=RpNjiQI2AAAA:8 a=ow5mY_OI36e9Zcnx37cA:9
+ a=QEXdDO2ut3YA:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-16_04,2025-04-15_01,2024-11-22_01
@@ -79,344 +179,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
-Migrate all invocations of rte_event_dma_adapter_op
-API to rte_dma_op.
-
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
----
- app/test-eventdev/test_perf_common.c          |  6 +-
- app/test-eventdev/test_perf_common.h          |  4 +-
- app/test/test_event_dma_adapter.c             |  6 +-
- .../prog_guide/eventdev/event_dma_adapter.rst |  6 +-
- drivers/dma/cnxk/cnxk_dmadev.c                |  2 +-
- drivers/dma/cnxk/cnxk_dmadev_fp.c             | 12 ++--
- lib/eventdev/rte_event_dma_adapter.c          | 18 +++---
- lib/eventdev/rte_event_dma_adapter.h          | 57 -------------------
- 8 files changed, 27 insertions(+), 84 deletions(-)
-
-diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
-index 627f07caa1..4e0109db52 100644
---- a/app/test-eventdev/test_perf_common.c
-+++ b/app/test-eventdev/test_perf_common.c
-@@ -562,11 +562,11 @@ crypto_adapter_enq_op_fwd(struct prod_data *p)
- static inline void
- dma_adapter_enq_op_fwd(struct prod_data *p)
- {
--	struct rte_event_dma_adapter_op *ops[BURST_SIZE] = {NULL};
-+	struct rte_dma_op *ops[BURST_SIZE] = {NULL};
- 	struct test_perf *t = p->t;
- 	const uint32_t nb_flows = t->nb_flows;
- 	const uint64_t nb_pkts = t->nb_pkts;
--	struct rte_event_dma_adapter_op op;
-+	struct rte_dma_op op;
- 	struct rte_event evts[BURST_SIZE];
- 	const uint8_t dev_id = p->dev_id;
- 	struct evt_options *opt = t->opt;
-@@ -2114,7 +2114,7 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
- 		t->pool = rte_mempool_create(test->name,   /* mempool name */
- 					     opt->pool_sz, /* number of elements*/
--					     sizeof(struct rte_event_dma_adapter_op) +
-+					     sizeof(struct rte_dma_op) +
- 						     (sizeof(struct rte_dma_sge) * 2),
- 					     cache_sz,		       /* cache size*/
- 					     0, NULL, NULL, NULL,      /* obj constructor */
-diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
-index d7333ad390..63078b0ee2 100644
---- a/app/test-eventdev/test_perf_common.h
-+++ b/app/test-eventdev/test_perf_common.h
-@@ -139,7 +139,7 @@ perf_mark_fwd_latency(enum evt_prod_type prod_type, struct rte_event *const ev)
- 		}
- 		pe->timestamp = rte_get_timer_cycles();
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
- 
- 		op->user_meta = rte_get_timer_cycles();
- 	} else {
-@@ -297,7 +297,7 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
- 		tstamp = pe->timestamp;
- 		rte_crypto_op_free(op);
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
- 
- 		to_free_in_bulk = op;
- 		tstamp = op->user_meta;
-diff --git a/app/test/test_event_dma_adapter.c b/app/test/test_event_dma_adapter.c
-index 9988d4fc7b..7f72a4e81d 100644
---- a/app/test/test_event_dma_adapter.c
-+++ b/app/test/test_event_dma_adapter.c
-@@ -234,7 +234,7 @@ test_op_forward_mode(void)
- {
- 	struct rte_mbuf *src_mbuf[TEST_MAX_OP];
- 	struct rte_mbuf *dst_mbuf[TEST_MAX_OP];
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct rte_event ev[TEST_MAX_OP];
- 	int ret, i;
- 
-@@ -266,7 +266,7 @@ test_op_forward_mode(void)
- 		op->vchan = TEST_DMA_VCHAN_ID;
- 		op->event_meta = dma_response_info.event;
- 
--		/* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+		/* Fill in event info and update event_ptr with rte_dma_op */
- 		memset(&ev[i], 0, sizeof(struct rte_event));
- 		ev[i].event = 0;
- 		ev[i].op = RTE_EVENT_OP_NEW;
-@@ -396,7 +396,7 @@ configure_dmadev(void)
- 						       rte_socket_id());
- 	RTE_TEST_ASSERT_NOT_NULL(params.dst_mbuf_pool, "Can't create DMA_DST_MBUFPOOL\n");
- 
--	elt_size = sizeof(struct rte_event_dma_adapter_op) + (sizeof(struct rte_dma_sge) * 2);
-+	elt_size = sizeof(struct rte_dma_op) + (sizeof(struct rte_dma_sge) * 2);
- 	params.op_mpool = rte_mempool_create("EVENT_DMA_OP_POOL", DMA_OP_POOL_SIZE, elt_size, 0,
- 					     0, NULL, NULL, NULL, NULL, rte_socket_id(), 0);
- 	RTE_TEST_ASSERT_NOT_NULL(params.op_mpool, "Can't create DMA_OP_POOL\n");
-diff --git a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-index e040d89e8b..e8437a3297 100644
---- a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-+++ b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-@@ -144,7 +144,7 @@ on which it enqueues events towards the DMA adapter using ``rte_event_enqueue_bu
-    uint32_t cap;
-    int ret;
- 
--   /* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+   /* Fill in event info and update event_ptr with rte_dma_op */
-    memset(&ev, 0, sizeof(ev));
-    .
-    .
-@@ -244,11 +244,11 @@ Set event response information
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- In the ``RTE_EVENT_DMA_ADAPTER_OP_FORWARD`` / ``RTE_EVENT_DMA_ADAPTER_OP_NEW`` mode,
--the application specifies the dmadev ID and vchan ID in ``struct rte_event_dma_adapter_op``
-+the application specifies the dmadev ID and vchan ID in ``struct rte_dma_op``
- and the event information (response information)
- needed to enqueue an event after the DMA operation has completed.
- The response information is specified in ``struct rte_event``
--and appended to the ``struct rte_event_dma_adapter_op``.
-+and appended to the ``struct rte_dma_op``.
- 
- 
- Start the adapter instance
-diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
-index 3e45ef7d02..666514bac0 100644
---- a/drivers/dma/cnxk/cnxk_dmadev.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev.c
-@@ -618,7 +618,7 @@ cnxk_dmadev_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_de
- 	rdpi = &dpivf->rdpi;
- 
- 	rdpi->pci_dev = pci_dev;
--	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_event_dma_adapter_op, impl_opaque));
-+	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_dma_op, impl_opaque));
- 	if (rc < 0)
- 		goto err_out_free;
- 
-diff --git a/drivers/dma/cnxk/cnxk_dmadev_fp.c b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-index 1e998af3d1..4655924555 100644
---- a/drivers/dma/cnxk/cnxk_dmadev_fp.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-@@ -451,7 +451,7 @@ uint16_t
- cn10k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *src, *dst;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn10k_sso_hws *work;
-@@ -511,7 +511,7 @@ uint16_t
- cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cn9k_sso_hws_dual *work;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
-@@ -527,7 +527,7 @@ cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_event
- 	for (count = 0; count < nb_events; count++) {
- 		op = ev[count].event_ptr;
- 		rsp_info = (struct rte_event *)((uint8_t *)op +
--						sizeof(struct rte_event_dma_adapter_op));
-+						sizeof(struct rte_dma_op));
- 		dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 		dpi_conf = &dpivf->conf[op->vchan];
- 
-@@ -582,7 +582,7 @@ uint16_t
- cn9k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn9k_sso_hws *work;
-@@ -649,11 +649,11 @@ RTE_EXPORT_INTERNAL_SYMBOL(cnxk_dma_adapter_dequeue)
- uintptr_t
- cnxk_dma_adapter_dequeue(uintptr_t get_work1)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 
--	op = (struct rte_event_dma_adapter_op *)get_work1;
-+	op = (struct rte_dma_op *)get_work1;
- 	dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 	dpi_conf = &dpivf->conf[op->vchan];
- 
-diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-index 9ac6a4a205..484cd50011 100644
---- a/lib/eventdev/rte_event_dma_adapter.c
-+++ b/lib/eventdev/rte_event_dma_adapter.c
-@@ -40,8 +40,8 @@ struct __rte_cache_aligned dma_ops_circular_buffer {
- 	/* Size of circular buffer */
- 	uint16_t size;
- 
--	/* Pointer to hold rte_event_dma_adapter_op for processing */
--	struct rte_event_dma_adapter_op **op_buffer;
-+	/* Pointer to hold rte_dma_op for processing */
-+	struct rte_dma_op **op_buffer;
- };
- 
- /* Vchan information */
-@@ -202,7 +202,7 @@ edma_circular_buffer_space_for_batch(struct dma_ops_circular_buffer *bufp)
- static inline int
- edma_circular_buffer_init(const char *name, struct dma_ops_circular_buffer *buf, uint16_t sz)
- {
--	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_event_dma_adapter_op *) * sz, 0);
-+	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_dma_op *) * sz, 0);
- 	if (buf->op_buffer == NULL)
- 		return -ENOMEM;
- 
-@@ -218,7 +218,7 @@ edma_circular_buffer_free(struct dma_ops_circular_buffer *buf)
- }
- 
- static inline int
--edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_event_dma_adapter_op *op)
-+edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_dma_op *op)
- {
- 	uint16_t *tail = &bufp->tail;
- 
-@@ -236,7 +236,7 @@ edma_circular_buffer_flush_to_dma_dev(struct event_dma_adapter *adapter,
- 				      struct dma_ops_circular_buffer *bufp, uint8_t dma_dev_id,
- 				      uint16_t vchan, uint16_t *nb_ops_flushed)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
- 	struct dma_vchan_info *tq;
-@@ -503,7 +503,7 @@ edma_enq_to_dma_dev(struct event_dma_adapter *adapter, struct rte_event *ev, uns
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_qinfo = NULL;
--	struct rte_event_dma_adapter_op *dma_op;
-+	struct rte_dma_op *dma_op;
- 	uint16_t vchan, nb_enqueued = 0;
- 	int16_t dma_dev_id;
- 	unsigned int i, n;
-@@ -646,7 +646,7 @@ edma_adapter_enq_run(struct event_dma_adapter *adapter, unsigned int max_enq)
- #define DMA_ADAPTER_MAX_EV_ENQ_RETRIES 100
- 
- static inline uint16_t
--edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_event_dma_adapter_op **ops,
-+edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_dma_op **ops,
- 		       uint16_t num)
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
-@@ -692,7 +692,7 @@ edma_circular_buffer_flush_to_evdev(struct event_dma_adapter *adapter,
- 				    struct dma_ops_circular_buffer *bufp,
- 				    uint16_t *enqueue_count)
- {
--	struct rte_event_dma_adapter_op **ops = bufp->op_buffer;
-+	struct rte_dma_op **ops = bufp->op_buffer;
- 	uint16_t n = 0, nb_ops_flushed;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
-@@ -741,7 +741,7 @@ edma_adapter_deq_run(struct event_dma_adapter *adapter, unsigned int max_deq)
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_info;
- 	struct dma_ops_circular_buffer *tq_buf;
--	struct rte_event_dma_adapter_op *ops;
-+	struct rte_dma_op *ops;
- 	uint16_t n, nb_deq, nb_enqueued, i;
- 	struct dma_device_info *dev_info;
- 	uint16_t vchan, num_vchan;
-diff --git a/lib/eventdev/rte_event_dma_adapter.h b/lib/eventdev/rte_event_dma_adapter.h
-index 5c480b82ff..453754d13b 100644
---- a/lib/eventdev/rte_event_dma_adapter.h
-+++ b/lib/eventdev/rte_event_dma_adapter.h
-@@ -151,63 +151,6 @@
- extern "C" {
- #endif
- 
--/**
-- * A structure used to hold event based DMA operation entry. All the information
-- * required for a DMA transfer shall be populated in "struct rte_event_dma_adapter_op"
-- * instance.
-- */
--struct rte_event_dma_adapter_op {
--	uint64_t flags;
--	/**< Flags related to the operation.
--	 * @see RTE_DMA_OP_FLAG_*
--	 */
--	struct rte_mempool *op_mp;
--	/**< Mempool from which op is allocated. */
--	enum rte_dma_status_code status;
--	/**< Status code for this operation. */
--	uint32_t rsvd;
--	/**< Reserved for future use. */
--	uint64_t impl_opaque[2];
--	/**< Implementation-specific opaque data.
--	 * An dma device implementation use this field to hold
--	 * implementation specific values to share between dequeue and enqueue
--	 * operations.
--	 * The application should not modify this field.
--	 */
--	uint64_t user_meta;
--	/**<  Memory to store user specific metadata.
--	 * The dma device implementation should not modify this area.
--	 */
--	uint64_t event_meta;
--	/**< Event metadata of DMA completion event.
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND is not
--	 * supported in OP_NEW mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_NEW
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND
--	 *
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD is not
--	 * supported in OP_FWD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD
--	 *
--	 * @see struct rte_event::event
--	 */
--	int16_t dma_dev_id;
--	/**< DMA device ID to be used with OP_FORWARD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t vchan;
--	/**< DMA vchan ID to be used with OP_FORWARD mode
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t nb_src;
--	/**< Number of source segments. */
--	uint16_t nb_dst;
--	/**< Number of destination segments. */
--	struct rte_dma_sge src_dst_seg[];
--	/**< Source and destination segments. */
--};
--
- /**
-  *  DMA event adapter mode
-  */
--- 
-2.43.0
-
+SGkgTml0aW4sDQo+PiAgbGliL25vZGUvaXA0X2xvb2t1cF9maWIuYyB8IDEyNw0KPisrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+PiAgbGliL25vZGUvbWVzb24uYnVpbGQg
+ICAgICB8ICAgMyArLQ0KPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTI5IGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkgIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPj4gbGliL25vZGUvaXA0X2xvb2t1cF9m
+aWIuYw0KPj4NCj4+IGRpZmYgLS1naXQgYS9saWIvbm9kZS9pcDRfbG9va3VwX2ZpYi5jIGIvbGli
+L25vZGUvaXA0X2xvb2t1cF9maWIuYyBuZXcNCj4+IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXggMDAw
+MDAwMDAwMC4uOWM3MTYxMDcxOA0KPj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvbGliL25vZGUv
+aXA0X2xvb2t1cF9maWIuYw0KPj4gQEAgLTAsMCArMSwxMjcgQEANCj4+ICsvKiBTUERYLUxpY2Vu
+c2UtSWRlbnRpZmllcjogQlNELTMtQ2xhdXNlDQo+PiArICogQ29weXJpZ2h0KEMpIDIwMjUgTWFy
+dmVsbC4NCj4+ICsgKi8NCj4+ICsNCj4+ICsjaW5jbHVkZSA8cnRlX2Vycm5vLmg+DQo+PiArI2lu
+Y2x1ZGUgPHJ0ZV9ldGhlci5oPg0KPj4gKyNpbmNsdWRlIDxydGVfZmliLmg+DQo+PiArI2luY2x1
+ZGUgPHJ0ZV9ncmFwaC5oPg0KPj4gKyNpbmNsdWRlIDxydGVfZ3JhcGhfd29ya2VyLmg+DQo+PiAr
+I2luY2x1ZGUgPHJ0ZV9pcC5oPg0KPj4gKw0KPj4gKyNpbmNsdWRlICJydGVfbm9kZV9pcDRfYXBp
+LmgiDQo+PiArDQo+PiArI2luY2x1ZGUgIm5vZGVfcHJpdmF0ZS5oIg0KPj4gKw0KPj4gKy8qIElQ
+NCBMb29rdXAgZ2xvYmFsIGRhdGEgc3RydWN0ICovDQo+PiArc3RydWN0IGlwNF9sb29rdXBfZmli
+X25vZGVfbWFpbiB7DQo+PiArICAgICAgIHN0cnVjdCBydGVfZmliICpmaWJbUlRFX01BWF9OVU1B
+X05PREVTXTsgfTsNCj4+ICsNCj4+ICtzdHJ1Y3QgaXA0X2xvb2t1cF9maWJfbm9kZV9jdHggew0K
+Pj4gKyAgICAgICAvKiBTb2NrZXQncyBGSUIgKi8NCj4+ICsgICAgICAgc3RydWN0IHJ0ZV9maWIg
+KmZpYjsNCj4+ICsgICAgICAgLyogRHluYW1pYyBvZmZzZXQgdG8gbWJ1ZiBwcml2MSAqLw0KPj4g
+KyAgICAgICBpbnQgbWJ1Zl9wcml2MV9vZmY7DQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgc3Ry
+dWN0IGlwNF9sb29rdXBfZmliX25vZGVfbWFpbiBpcDRfbG9va3VwX2ZpYl9ubTsNCj4+ICsNCj4+
+ICsjZGVmaW5lIEZJQl9NQVhfUk9VVEVTICgxIDw8IDE2KQ0KPj4gKyNkZWZpbmUgRklCX05VTV9U
+Qkw4ICAgKDEgPDwgMTUpDQo+PiArI2RlZmluZSBGSUJfREVGQVVMVF9OSCA5OTkNCj4NCj5UaGVz
+ZSBtYWNyb3MgbWF5IG5vdCBiZSByZXF1aXJlZCBpZiB3ZSBleHBvc2UgcHVibGljIHNldHVwX2Fw
+aSgpIHdpdGgNCj5hcmd1bWVudHMuIFNlZSBiZWxvdw0KPg0KPj4gKw0KPj4gKyNkZWZpbmUgSVA0
+X0xPT0tVUF9OT0RFX0ZJQihjdHgpIFwNCj4+ICsgICAgICAgKCgoc3RydWN0IGlwNF9sb29rdXBf
+ZmliX25vZGVfY3R4ICopY3R4KS0+ZmliKQ0KPj4gKw0KPj4gKyNkZWZpbmUgSVA0X0xPT0tVUF9O
+T0RFX1BSSVYxX09GRihjdHgpIFwNCj4+ICsgICAgICAgKCgoc3RydWN0IGlwNF9sb29rdXBfZmli
+X25vZGVfY3R4ICopY3R4KS0+bWJ1Zl9wcml2MV9vZmYpDQo+PiArDQo+PiArc3RhdGljIGludA0K
+Pj4gK3NldHVwX2ZpYih1bnNpZ25lZCBpbnQgc29ja2V0KQ0KPg0KPlNob3VsZCB3ZSBhZGQgcHVi
+bGljIEFQSSB0byBhbGxvdyBhcHBsaWNhdGlvbnMgdG8gY29udHJvbCBNQVhfUk9VVEVTPw0KPklu
+IGEgdHlwaWNhbCBzdGFjayBtdWx0aXBsZSBmaWJzIGNhbiBiZSBzZXQgdXAgZm9yIGVhY2ggVlJG
+ICh+fiBwb3J0X2lkKS4NCj4NCj5BIHB1YmxpYyBBUEk6DQo+DQo+aW50IHJ0ZV9pcDRfbG9va3Vw
+X2ZpYl9zZXR1cChpbnQgZmliX2luZGV4LCBpbnQgcG9ydF9pZCwgdWludDMyX3QNCj5tYXhfcm91
+dGVzKSB3aGVyZQ0KSWYgYSBwdWJsaWMgQVBJIGlzIHVzZWQsIHRoZW4gYXBhcnQgZnJvbSBtYXhf
+cm91dGVzIG90aGVyIGNvbmZpZyB2YWx1ZXMgY2FuIGFsc28gY29tZSBmcm9tIGFwcGxpY2F0aW9u
+Lg0KPg0KPkZvciBub3cgd2UgY2FuIGFzc3VtZSBmaWJfaW5kZXggPT0gMCwgaXMgZ2xvYmFsIGZp
+YiB0YWJsZSAoY2FuIGJlIGV4dGVuZGVkIHRvDQo+VlJGIGxhdGVyKS4gU29ja2V0X2lkIGNhbiBi
+ZSBkZXRlcm1pbmVkIGZyb20gcG9ydF9JZA0KPg0KPj4gK3sNCj4+ICsgICAgICAgc3RydWN0IGlw
+NF9sb29rdXBfZmliX25vZGVfbWFpbiAqbm0gPSAmaXA0X2xvb2t1cF9maWJfbm07DQo+PiArICAg
+ICAgIHN0cnVjdCBydGVfZmliX2NvbmYgY29uZjsNCj4+ICsgICAgICAgY2hhciBzW1JURV9GSUJf
+TkFNRVNJWkVdOw0KPj4gKw0KPj4gKyAgICAgICAvKiBPbmUgZmliIHBlciBzb2NrZXQgKi8NCj4+
+ICsgICAgICAgaWYgKG5tLT5maWJbc29ja2V0XSkNCj4+ICsgICAgICAgICAgICAgICByZXR1cm4g
+MDsNCj4+ICsNCj4+ICsgICAgICAgY29uZi50eXBlID0gUlRFX0ZJQl9ESVIyNF84Ow0KPj4gKyAg
+ICAgICBjb25mLmRlZmF1bHRfbmggPSBGSUJfREVGQVVMVF9OSDsNCj4NCj5GSUJfREVGQVVMVF9O
+SCBjYW4gYmUgZGVmaW5lZCBpbiBzdWNoIGEgd2F5LCBmYXN0IHBhdGggY2FuIGRlY29kZSBuZXh0
+X2VkZ2UNCj5mcm9tIHJldHVybiBvZiBydGVfZmliX2xvb2t1cF9idWxrKCkgTGlrZSB1bmlvbiB7
+DQo+ICAgc3RydWN0IHU2NDsNCj4gICBzdHJ1Y3Qgew0KPiAgICAgICB1aW50MzJfdCBuZXh0X2hv
+cF9pZDsNCj4gICAgICAgdWludDE2X3QgIG5leHRfZWRnZTsNCj4gICAgICAgdWludDE2X3QuIHJl
+c2VydmVkOw0KPiAgIH07DQo+fSBydGVfaXA0X2xvb2t1cF9maWJfbmV4dGhvcF90Ow0KPg0KPkZJ
+Ql9ERUZBVUxUX05IIHNob3VsZCBiZSBzZXQgYXMNCj4NCj5ydGVfaXA0X2xvb2t1cF9maWJfbmV4
+dGhvcF90IGRlZmF1bHRfbmV4dF9ob3AgPSB7Lm5leHRfZWRnZSA9DQo+SVA0X0ZJQl9MT09LVVBf
+TkVYVF9EUk9QfQ0KPg0KPlRoaXMgd2F5IGluIGZhc3QgcGF0aCBhIHJldHVybiBmcm9tIGZpYl9i
+dWxrKCkgY2FuIGJlIGRpcmVjdGx5IHVzZWQgdG8gc2VuZA0KPnBhY2tldCB0byBwa3RfZHJvcCBu
+b2RlDQo+DQo+PiArICAgICAgIGNvbmYubWF4X3JvdXRlcyA9IEZJQl9NQVhfUk9VVEVTOw0KPj4g
+KyAgICAgICBjb25mLnJpYl9leHRfc3ogPSAwOw0KPj4gKyAgICAgICBjb25mLmRpcjI0Xzgubmhf
+c3ogPSBSVEVfRklCX0RJUjI0XzhfNEI7DQo+PiArICAgICAgIGNvbmYuZGlyMjRfOC5udW1fdGJs
+OCA9IEZJQl9OVU1fVEJMODsNCj4+ICsgICAgICAgY29uZi5mbGFncyA9IDA7DQo+PiArICAgICAg
+IHNucHJpbnRmKHMsIHNpemVvZihzKSwgIklQVjRfTE9PS1VQX0ZJQl8lZCIsIHNvY2tldCk7DQo+
+PiArICAgICAgIG5tLT5maWJbc29ja2V0XSA9IHJ0ZV9maWJfY3JlYXRlKHMsIHNvY2tldCwgJmNv
+bmYpOw0KPj4gKyAgICAgICBpZiAobm0tPmZpYltzb2NrZXRdID09IE5VTEwpDQo+PiArICAgICAg
+ICAgICAgICAgcmV0dXJuIC1ydGVfZXJybm87DQo+PiArDQo+PiArICAgICAgIHJldHVybiAwOw0K
+Pj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50DQo+PiAraXA0X2xvb2t1cF9maWJfbm9kZV9pbml0
+KGNvbnN0IHN0cnVjdCBydGVfZ3JhcGggKmdyYXBoLCBzdHJ1Y3QNCj4+ICtydGVfbm9kZSAqbm9k
+ZSkgew0KPj4gKyAgICAgICBzdGF0aWMgdWludDhfdCBpbml0X29uY2U7DQo+PiArICAgICAgIHVu
+c2lnbmVkIGludCBzb2NrZXQ7DQo+PiArICAgICAgIHVpbnQxNl90IGxjb3JlX2lkOw0KPj4gKyAg
+ICAgICBpbnQgcmM7DQo+PiArDQo+PiArICAgICAgIFJURV9CVUlMRF9CVUdfT04oc2l6ZW9mKHN0
+cnVjdCBpcDRfbG9va3VwX2ZpYl9ub2RlX2N0eCkgPg0KPj4gKyBSVEVfTk9ERV9DVFhfU1opOw0K
+Pj4gKw0KPj4gKyAgICAgICBpZiAoIWluaXRfb25jZSkgew0KPj4gKyAgICAgICAgICAgICAgIG5v
+ZGVfbWJ1Zl9wcml2MV9keW5maWVsZF9vZmZzZXQgPSBydGVfbWJ1Zl9keW5maWVsZF9yZWdpc3Rl
+cigNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJm5vZGVfbWJ1Zl9wcml2MV9k
+eW5maWVsZF9kZXNjKTsNCj4+ICsgICAgICAgICAgICAgICBpZiAobm9kZV9tYnVmX3ByaXYxX2R5
+bmZpZWxkX29mZnNldCA8IDApDQo+PiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLXJ0
+ZV9lcnJubzsNCj4NCj5Zb3UgbWF5IG5lZWQgdG8gcmViYXNlIHRoaXMgcGF0Y2ggb24gdG9wIG9m
+DQo+aHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3YyL3VybD91PWh0dHBzLQ0KPjNB
+X19wYXRjaGVzLmRwZGsub3JnX3Byb2plY3RfZHBka19wYXRjaF8yMDI1MDQwOTEzNTU1NC4yMTgw
+MzkwLQ0KPjJEMi0yRG5zYXhlbmEtDQo+NDBtYXJ2ZWxsLmNvbV8mZD1Ed0lGYVEmYz1uS2pXZWMy
+YjZSMG1PeVBhejd4dGZRJnI9SUxqaU5GM0dGMjV5Ng0KPlFkSFpVeE1sNkpyU3RVME1JdUN0TzVk
+TXpuM1liayZtPTFoVUhNb0Frdy0NCj4xbFVsZzhxZ3liQTdJZmNuVk9sVkx4dG1zOEtkaHpzR3BI
+VjR2QWpTMm81bjdnLXJKLQ0KPjB4THUmcz1PQWtOZWdQNmhDSkEwZDNzd0k3RlozNEl6VlhFOERO
+NVFIa05qMTVfUzM4JmU9DQo+Zm9yIHVzaW5nIGdsb2JhbCBtYnVmIGZpZWxkDQpPay4NCj4NCj4+
+ICsNCj4+ICsgICAgICAgICAgICAgICAvKiBTZXR1cCBGSUIgZm9yIGFsbCBzb2NrZXRzICovDQo+
+PiArICAgICAgICAgICAgICAgUlRFX0xDT1JFX0ZPUkVBQ0gobGNvcmVfaWQpDQo+DQo+SW5zdGVh
+ZCBjYW4gYmUgdXNlIHJ0ZV9zb2NrZXRfY291bnQoKSB3aGljaCBhbGxvdyB0byBsb29wIGZvciBz
+b2NrZXQgaW5zdGVhZCBvZg0KPnBvcnQ/IElkZWFsbHkgd2UgbWF5IG5lZWQgdG8gYWRkIGZpYiBm
+b3IgdmlydHVhbCBpbnRlcmZhY2VzIG9yIFZSRiAobGF0ZXIpDQpPay4NCj4NCj4+ICsgICAgICAg
+ICAgICAgICB7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBzb2NrZXQgPSBydGVfbGNvcmVf
+dG9fc29ja2V0X2lkKGxjb3JlX2lkKTsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJjID0g
+c2V0dXBfZmliKHNvY2tldCk7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBpZiAocmMpIHsN
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbm9kZV9lcnIoImlwNF9sb29rdXBf
+ZmliIiwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIkZhaWxl
+ZCB0byBzZXR1cCBmaWIgZm9yIHNvY2sgJXUsIHJjPSVkIiwNCj4+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgc29ja2V0LCByYyk7DQo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHJldHVybiByYzsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIH0N
+Cj4+ICsgICAgICAgICAgICAgICB9DQo+PiArICAgICAgICAgICAgICAgaW5pdF9vbmNlID0gMTsN
+Cj4+ICsgICAgICAgfQ0KPj4gKw0KPj4gKyAgICAgICAvKiBVcGRhdGUgc29ja2V0J3MgRklCIGFu
+ZCBtYnVmIGR5biBwcml2MSBvZmZzZXQgaW4gbm9kZSBjdHggKi8NCj4+ICsgICAgICAgSVA0X0xP
+T0tVUF9OT0RFX0ZJQihub2RlLT5jdHgpID0gaXA0X2xvb2t1cF9maWJfbm0uZmliW2dyYXBoLQ0K
+Pj5zb2NrZXRdOw0KPj4gKyAgICAgICBJUDRfTE9PS1VQX05PREVfUFJJVjFfT0ZGKG5vZGUtPmN0
+eCkgPQ0KPj4gKyBub2RlX21idWZfcHJpdjFfZHluZmllbGRfb2Zmc2V0Ow0KPj4gKw0KPj4gKyAg
+ICAgICBub2RlX2RiZygiaXA0X2xvb2t1cF9maWIiLCAiSW5pdGlhbGl6ZWQgaXA0X2xvb2t1cF9m
+aWIgbm9kZSIpOw0KPj4gKw0KPj4gKyAgICAgICByZXR1cm4gMDsNCj4+ICt9DQo+PiArDQo+PiAr
+c3RhdGljIHN0cnVjdCBydGVfbm9kZV94c3RhdHMgaXA0X2xvb2t1cF9maWJfeHN0YXRzID0gew0K
+Pj4gKyAgICAgICAubmJfeHN0YXRzID0gMSwNCj4+ICsgICAgICAgLnhzdGF0X2Rlc2MgPSB7DQo+
+PiArICAgICAgICAgICAgICAgWzBdID0gImlwNF9sb29rdXBfZmliX2Vycm9yIiwNCj4+ICsgICAg
+ICAgfSwNCj4+ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBzdHJ1Y3QgcnRlX25vZGVfcmVnaXN0ZXIg
+aXA0X2xvb2t1cF9maWJfbm9kZSA9IHsNCj4+ICsgICAgICAgLm5hbWUgPSAiaXA0X2xvb2t1cF9m
+aWIiLA0KPj4gKw0KPj4gKyAgICAgICAuaW5pdCA9IGlwNF9sb29rdXBfZmliX25vZGVfaW5pdCwN
+Cj4+ICsgICAgICAgLnhzdGF0cyA9ICZpcDRfbG9va3VwX2ZpYl94c3RhdHMsDQo+PiArDQo+PiAr
+ICAgICAgIC5uYl9lZGdlcyA9IFJURV9OT0RFX0lQNF9MT09LVVBfTkVYVF9QS1RfRFJPUCArIDEs
+DQo+PiArICAgICAgIC5uZXh0X25vZGVzID0gew0KPj4gKyAgICAgICAgICAgICAgIFtSVEVfTk9E
+RV9JUDRfTE9PS1VQX05FWFRfSVA0X0xPQ0FMXSA9ICJpcDRfbG9jYWwiLA0KPj4gKyAgICAgICAg
+ICAgICAgIFtSVEVfTk9ERV9JUDRfTE9PS1VQX05FWFRfUkVXUklURV0gPSAiaXA0X3Jld3JpdGUi
+LA0KPj4gKyAgICAgICAgICAgICAgIFtSVEVfTk9ERV9JUDRfTE9PS1VQX05FWFRfUEtUX0RST1Bd
+ID0gInBrdF9kcm9wIiwNCj4+ICsgICAgICAgfSwNCj4+ICt9Ow0KPj4gKw0KPj4gK1JURV9OT0RF
+X1JFR0lTVEVSKGlwNF9sb29rdXBfZmliX25vZGUpOw0KPj4gZGlmZiAtLWdpdCBhL2xpYi9ub2Rl
+L21lc29uLmJ1aWxkIGIvbGliL25vZGUvbWVzb24uYnVpbGQgaW5kZXgNCj4+IDBiZWQ5N2E5NmMu
+LmQyMDExYzhmNTYgMTAwNjQ0DQo+PiAtLS0gYS9saWIvbm9kZS9tZXNvbi5idWlsZA0KPj4gKysr
+IGIvbGliL25vZGUvbWVzb24uYnVpbGQNCj4+IEBAIC0xMyw2ICsxMyw3IEBAIHNvdXJjZXMgPSBm
+aWxlcygNCj4+ICAgICAgICAgICdldGhkZXZfdHguYycsDQo+PiAgICAgICAgICAnaXA0X2xvY2Fs
+LmMnLA0KPj4gICAgICAgICAgJ2lwNF9sb29rdXAuYycsDQo+PiArICAgICAgICAnaXA0X2xvb2t1
+cF9maWIuYycsDQo+PiAgICAgICAgICAnaXA0X3JlYXNzZW1ibHkuYycsDQo+PiAgICAgICAgICAn
+aXA0X3Jld3JpdGUuYycsDQo+PiAgICAgICAgICAnaXA2X2xvb2t1cC5jJywNCj4+IEBAIC0zNCw0
+ICszNSw0IEBAIGhlYWRlcnMgPSBmaWxlcygNCj4+DQo+PiAgIyBTdHJpY3QtYWxpYXNpbmcgcnVs
+ZXMgYXJlIHZpb2xhdGVkIGJ5IHVpbnQ4X3RbXSB0byBjb250ZXh0IHNpemUgY2FzdHMuDQo+PiAg
+Y2ZsYWdzICs9ICctZm5vLXN0cmljdC1hbGlhc2luZycNCj4+IC1kZXBzICs9IFsnZ3JhcGgnLCAn
+bWJ1ZicsICdscG0nLCAnZXRoZGV2JywgJ21lbXBvb2wnLCAnY3J5cHRvZGV2JywNCj4+ICdpcF9m
+cmFnJ10NCj4+ICtkZXBzICs9IFsnZ3JhcGgnLCAnbWJ1ZicsICdscG0nLCAnZXRoZGV2JywgJ21l
+bXBvb2wnLCAnY3J5cHRvZGV2JywNCj4+ICsnaXBfZnJhZycsICdmaWInXQ0KPj4gLS0NCj4+IDIu
+MjUuMQ0KPj4NCg==
