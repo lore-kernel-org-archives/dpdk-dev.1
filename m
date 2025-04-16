@@ -2,46 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F31C369BA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 15:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5560C369BA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:02:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06FA5402E7;
-	Wed, 16 Apr 2025 17:39:10 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 508EF4025A
- for <dev@dpdk.org>; Wed, 16 Apr 2025 17:39:08 +0200 (CEST)
-Received: from debian (unknown [78.109.65.21])
+	by mails.dpdk.org (Postfix) with ESMTP id 661D7402E7;
+	Wed, 16 Apr 2025 18:02:51 +0200 (CEST)
+Received: from rcdn-iport-6.cisco.com (rcdn-iport-6.cisco.com [173.37.86.77])
+ by mails.dpdk.org (Postfix) with ESMTP id 904EC4025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 18:02:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cisco.com; i=@cisco.com; l=12540; q=dns/txt;
+ s=iport01; t=1744819369; x=1746028969;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=RWV6kGVIypDTMcaKjNnJhWE+8HxyLtIIia4x3aTsGKw=;
+ b=Pt3f6fCjngE6ZA7gYRvc1cpB8ZqSjWBO9QQxsHh7c3DUew6HizG+X8fr
+ KVTYZRrC9pP6kul5zbX+aD3/HBuSzcPwLSW6EKWuR2odZvIxaLKjiEFHl
+ GKsQ4MansVxY3obJKTroCWgN0k8YO1Fn2oACRcB5YuR/3cRDA+ntPufAn
+ QlmIXmD0b7Ib10DjLReArvZJ2pjAy/93U5F8uEelmzBVXgWmWxVntFQ+P
+ a9NVWL9p7Kk3u7rubKs8LbRaJXUqO6bv/tgXjqkJF9JyQLuuZl9Nit3zJ
+ TSGarjDyJSTJ8+Bjnuk3GTEEpt2nB45+qaMPdTbjytnlt0SoKnhILHb+j A==;
+X-CSE-ConnectionGUID: MTLPHusOSsGSstV+bXp+mQ==
+X-CSE-MsgGUID: JHzTTic+R/e7XBeCjT4N/g==
+X-IPAS-Result: =?us-ascii?q?A0ADAAAM1P9n/5UQJK1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
+ =?us-ascii?q?RIBAQEBAQEBAQEBAQGBfwQBAQEBAQsBgkp2WUNIjHCnahSBEQNWDwEBAQ8xE?=
+ =?us-ascii?q?wQBAYUHiywCJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFg?=
+ =?us-ascii?q?Q4ThXsNhl0rCwFGLl4yEoMCAYJkA7FPgXkzgQGEfNk4gW6BSAGNTIVnJxuBS?=
+ =?us-ascii?q?USEfYQphl4Egi2BF4RUkVeLH0iBIQNZLAFVEw0KCwcFgWwDKgsMCxIcFXE1H?=
+ =?us-ascii?q?YF6g3OFNoIRggSJE4RWLU+FPEADCxgNSBEsNxQbBj5uB5c2hBZaNYJcDJMrk?=
+ =?us-ascii?q?AWjJoQloUkaM4QDplMBmH4igjahc4RogWc8gVkzGggbFYMiCUkZD44tFoM/y?=
+ =?us-ascii?q?EAqMgI6AgcLAQEDCZFlAQE?=
+IronPort-Data: A9a23:c5oOAK6xl5YM4bXOA2XtFAxRtFfGchMFZxGqfqrLsTDasY5as4F+v
+ mYWXGqBaayNY2rxeYpzOYnkpEgGu5PVydVlHFM5q3xhZn8b8sCt6fZ1gavT04J+CuWZESqLO
+ u1HMoGowPgcFyGa/lH1dOC89RGQ7InQLpLkEunIJyttcgFtTSYlmHpLlvUw6mJSqYDR7zil5
+ 5Wr/qUzBHf/g2Qpaj5NtfrZwP9SlK2aVA0w7wRWic9j5Dcyp1FNZLoDKKe4KWfPQ4U8NoaSW
+ +bZwbilyXjS9hErB8nNuu6TnpoiG+O60aCm0xK6aoD66vRwjnVaPpUTaJLwXXxqZwChxLid/
+ jniWauYEm/FNoWU8AgUvoIx/ytWZcWq85efSZSzXFD6I0DuKxPRL/tS4E4eGLE8wsZqGkZ17
+ tMjMywzLRqzn6Gz+efuIgVsrpxLwMjDNYcbvDRkiDreF/tjGMqFSKTR7tge1zA17ixMNa+BP
+ IxCN3w2MlKZP0wn1lQ/UPrSmM+yg3T7bzpegFmUvqEwpWPUyWSd1ZC2bYeFI4zTHZQ9ckCwh
+ ELUw1j4CVIgc9HA+RCI2XCQ2smIknauMG4VPPjinhJwu3Wfy3I7BAUaVh28u/bRok+3XZREN
+ 0sX9zEGrK4u+UjtRd74NzWmpHeIvxsdQZxVHuEk5Q2Oy6z84gCFC2xCRTlEAOHKr+c/QTgsk
+ 1vMlNTzCHk26vueSGmW8fGfqjba1TUpEFLurBQsFWMti+QPaqlq5v4TZr6PyJKIs+A=
+IronPort-HdrOrdr: A9a23:VOvpVKCveHChjR/lHemn55DYdb4zR+YMi2TDGXofdfUzSL38qy
+ nAppUmPHPP5Qr5O0tQ++xoRpPhfZq0z/cciuMs1NyZMjUO1lHFEGgb1/qA/9UlcBeOkdK0Es
+ xbAsxDNOE=
+X-Talos-CUID: 9a23:JcRZgGBTroYIFMv6Ewxb0HY0B9sCSWby92zMHQyyOX4qTYTAHA==
+X-Talos-MUID: 9a23:e3ZjnQqzwumPYMfoV3oezxNCJvtU4q/tMgcAzqUstuKGCXBWfDjI2Q==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.15,216,1739836800"; d="scan'208";a="355818109"
+Received: from alln-l-core-12.cisco.com ([173.36.16.149])
+ by rcdn-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 16 Apr 2025 16:02:48 +0000
+Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
+ [172.18.47.81])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 496AFE08FA;
- Wed, 16 Apr 2025 19:39:06 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 496AFE08FA
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744817946;
- bh=m0REhYMS/1KGgMEKOQGaguuS5ej0ne6uSYyCF0XSLrc=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=H+Qc3Wgt4uhizH2mkbLj8LZ21TgNYsvQPrisUObDxdlkEouXy7X8Dv/bC3lxmZ3A3
- WbDVYgDsSlKb8zFOsjWjZG63TXx1NzzjhsUqOq2MA2v9+MMYbKmSL5ciAuHgRxKnBY
- BVZyjJ5KweE3f+QnzwDp2qmQKpDJneHKv4+CMFtUSW7hKvwlhBP2d7LpHcSm5XdCM5
- GN1s6rmmLSu+uffnWYWYHNM6xwupjl5/X7BFf7ysJzirpMv7bRo6Ija9SVbSFxS3pS
- 50x6nAjA6fN/3aQvu+4IE5dwm832K7/2KQMCO0EaTDZkfNkTuyzAwxHYaj5kZgnK+q
- EFPWmshZcDs9w==
-Date: Wed, 16 Apr 2025 19:38:58 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Stephen Hemminger <stephen@networkplumber.org>
-cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>, 
- Andy Moreton <andy.moreton@amd.com>, 
- Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>, 
- Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: Re: [PATCH 00/46] Support AMD Solarflare X45xx adaptors
-In-Reply-To: <20250416081454.6c9ea0e2@hermes.local>
-Message-ID: <e3a33af7-c896-c3ec-c46d-0f64fe182999@arknetworks.am>
-References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
- <20250416081454.6c9ea0e2@hermes.local>
+ by alln-l-core-12.cisco.com (Postfix) with ESMTPS id 0644A1800016C;
+ Wed, 16 Apr 2025 16:02:48 +0000 (GMT)
+Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
+ id A1FBD1406899; Wed, 16 Apr 2025 12:02:47 -0400 (EDT)
+From: Roger Melton <rmelton@cisco.com>
+To: ian.stokes@intel.com,
+	vladimir.medvedkin@intel.com
+Cc: dev@dpdk.org,
+	Roger Melton <rmelton@cisco.com>
+Subject: [PATCH] net/iavf: support Rx/Tx burst mode info
+Date: Wed, 16 Apr 2025 12:02:19 -0400
+Message-Id: <20250416160219.3841018-1-rmelton@cisco.com>
+X-Mailer: git-send-email 2.35.6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
+X-Outbound-Node: alln-l-core-12.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,138 +88,341 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 16 Apr 2025, Stephen Hemminger wrote:
+Return burst mode according to the selected Rx/Tx burst
+function name.
+Update 25.07 release notes with this information.
 
-> On Wed, 16 Apr 2025 17:59:30 +0400
-> Ivan Malov <ivan.malov@arknetworks.am> wrote:
->
->> New X4522 (dual port SFP56) and X4542 (dual port QSFP56) adaptors are
->> Medford4 (X4) chips that are based on EF10 architecture. An X4 NIC
->> supports multiple network engine types. This series provides support
->> only for the Medford2-alike, 'full-feature' (FF) network engine. This
->> shall not be confused with the concept of 'datapath FW variants': the
->> FF network engine supports both 'full-feature' and 'ultra-low-latency'
->> datapath FW variants, with corresponding Medford2-alike feature sets.
->>
->> The first part of the series provides general support for the adaptors,
->> whilst the second one adds support for the new management controller
->> interface for configuration of network port features (netport MCDI).
->>
->> For now, only support for physical functions (PFs) is concerned. There
->> is a small number of TODO and FIXME markings in the code. Those are
->> normal at this development stage and will be removed by future patches
->> when VF support has fleshed out.
->>
->>
->> Andy Moreton (3):
->>   common/sfc_efx/base: update X4 BAR layout and PCI IDs
->>   net/sfc: add Medford4 with only full feature datapath engine
->>   common/sfc_efx/base: add port mode for 8 port hardware
->>
->> Denis Pryazhennikov (15):
->>   common/sfc_efx/base: add Medford4 PCI IDs to common code
->>   common/sfc_efx/base: add efsys option for Medford4
->>   common/sfc_efx/base: add Medford4 support to NIC module
->>   common/sfc_efx/base: add Medford4 support to EV module
->>   common/sfc_efx/base: add Medford4 support to FILTER module
->>   common/sfc_efx/base: add Medford4 support to INTR module
->>   common/sfc_efx/base: add Medford4 support to MAC module
->>   common/sfc_efx/base: add Medford4 support to PHY module
->>   common/sfc_efx/base: add Medford4 support to TUNNEL module
->>   common/sfc_efx/base: add Medford4 support to MCDI module
->>   common/sfc_efx/base: add Medford4 support to Rx module
->>   common/sfc_efx/base: add Medford4 support to Tx module
->>   drivers: enable support for AMD Solarflare X4 adapter family
->>   common/sfc_efx/base: add new X4 port mode
->>   common/sfc_efx/base: extend list of supported X4 port modes
->>
->> Ivan Malov (28):
->>   common/sfc_efx/base: update MCDI headers
->>   common/sfc_efx/base: provide a stub for basic netport attach
->>   common/sfc_efx/base: provide defaults on netport attach path
->>   common/sfc_efx/base: obtain assigned netport handle from NIC
->>   common/sfc_efx/base: allow for const in MCDI struct accessor
->>   common/sfc_efx/base: get netport fixed capabilities on probe
->>   common/sfc_efx/base: decode netport link state on probe path
->>   common/sfc_efx/base: fill in loopback modes on netport probe
->>   common/sfc_efx/base: introduce Medford4 stub for PHY methods
->>   common/sfc_efx/base: refactor EF10 link mode decoding helper
->>   common/sfc_efx/base: provide PHY link get method on Medford4
->>   common/sfc_efx/base: implement PHY link control for Medford4
->>   common/sfc_efx/base: introduce Medford4 stub for MAC methods
->>   common/sfc_efx/base: add MAC reconfigure method for Medford4
->>   common/sfc_efx/base: fill in software LUT for MAC statistics
->>   common/sfc_efx/base: fill in MAC statistics mask on Medford4
->>   common/sfc_efx/base: support MAC statistics on Medford4 NICs
->>   common/sfc_efx/base: implement MAC PDU controls for Medford4
->>   common/sfc_efx/base: correct MAC PDU calculation on Medford4
->>   net/sfc: make use of generic EFX MAC PDU calculation helpers
->>   common/sfc_efx/base: ignore legacy link events on new boards
->>   common/sfc_efx/base: add link event processing on new boards
->>   net/sfc: query link status on link change events on new NICs
->>   common/sfc_efx/base: subscribe to netport link change events
->>   net/sfc: offer support for 200G link ability on new adaptors
->>   common/sfc_efx/base: support controls for netport lane count
->>   net/sfc: add support for control of physical port lane count
->>   doc: advertise support for AMD Solarflare X45xx adapters
->>
->>  .mailmap                                      |    3 +-
->>  doc/guides/nics/sfc_efx.rst                   |    9 +-
->>  doc/guides/rel_notes/release_25_07.rst        |    4 +
->>  drivers/common/sfc_efx/base/ef10_ev.c         |   39 +
->>  drivers/common/sfc_efx/base/ef10_impl.h       |   19 +
->>  drivers/common/sfc_efx/base/ef10_nic.c        |   98 +-
->>  drivers/common/sfc_efx/base/ef10_phy.c        |   43 +-
->>  drivers/common/sfc_efx/base/ef10_tlv_layout.h |    9 +-
->>  drivers/common/sfc_efx/base/efx.h             |   98 +-
->>  drivers/common/sfc_efx/base/efx_check.h       |   24 +-
->>  drivers/common/sfc_efx/base/efx_ev.c          |    6 +
->>  drivers/common/sfc_efx/base/efx_filter.c      |    6 +
->>  drivers/common/sfc_efx/base/efx_impl.h        |  115 +-
->>  drivers/common/sfc_efx/base/efx_intr.c        |    6 +
->>  drivers/common/sfc_efx/base/efx_mac.c         |   56 +-
->>  drivers/common/sfc_efx/base/efx_mcdi.c        |   18 +-
->>  drivers/common/sfc_efx/base/efx_mcdi.h        |    2 +-
->>  drivers/common/sfc_efx/base/efx_nic.c         |   60 +
->>  drivers/common/sfc_efx/base/efx_np.c          | 1625 +++++
->>  drivers/common/sfc_efx/base/efx_phy.c         |   88 +-
->>  drivers/common/sfc_efx/base/efx_port.c        |    1 +
->>  drivers/common/sfc_efx/base/efx_regs_mcdi.h   | 5868 ++++++++++++++++-
->>  drivers/common/sfc_efx/base/efx_rx.c          |    6 +
->>  drivers/common/sfc_efx/base/efx_tunnel.c      |   18 +-
->>  drivers/common/sfc_efx/base/efx_tx.c          |   33 +
->>  drivers/common/sfc_efx/base/medford4_impl.h   |  110 +
->>  drivers/common/sfc_efx/base/medford4_mac.c    |  299 +
->>  drivers/common/sfc_efx/base/medford4_phy.c    |  156 +
->>  drivers/common/sfc_efx/base/meson.build       |    3 +
->>  drivers/common/sfc_efx/efsys.h                |    2 +
->>  drivers/common/sfc_efx/sfc_base_symbols.c     |    2 +
->>  drivers/net/sfc/sfc.c                         |    5 +-
->>  drivers/net/sfc/sfc.h                         |    4 +
->>  drivers/net/sfc/sfc_dp_tx.h                   |    3 +
->>  drivers/net/sfc/sfc_ef10_tx.c                 |   13 +-
->>  drivers/net/sfc/sfc_ethdev.c                  |  186 +-
->>  drivers/net/sfc/sfc_ev.c                      |   51 +-
->>  drivers/net/sfc/sfc_port.c                    |   27 +-
->>  drivers/net/sfc/sfc_repr.c                    |    7 +-
->>  drivers/net/sfc/sfc_repr.h                    |    1 +
->>  drivers/net/sfc/sfc_tx.c                      |    2 +
->>  41 files changed, 9000 insertions(+), 125 deletions(-)
->>  create mode 100644 drivers/common/sfc_efx/base/efx_np.c
->>  create mode 100644 drivers/common/sfc_efx/base/medford4_impl.h
->>  create mode 100644 drivers/common/sfc_efx/base/medford4_mac.c
->>  create mode 100644 drivers/common/sfc_efx/base/medford4_phy.c
->>
->
-> Overall looks good but:
->  - need to fix build on FreeBSD, you are using an errno not available there.
->  - can you address some of the checkpatch warnings in the base code.
->
+Signed-off-by: Roger Melton <rmelton@cisco.com>
+---
+ doc/guides/rel_notes/release_25_07.rst |   3 +
+ drivers/net/intel/iavf/iavf.h          |   2 +
+ drivers/net/intel/iavf/iavf_ethdev.c   |   2 +
+ drivers/net/intel/iavf/iavf_rxtx.c     | 168 ++++++++++++++++++-------
+ drivers/net/intel/iavf/iavf_rxtx.h     |   7 +-
+ 5 files changed, 135 insertions(+), 47 deletions(-)
 
-I can fix the errno, yes. Thanks for catching this.
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..b83f911121 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -55,6 +55,9 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated Intel iavf driver.**
++
++  * Added support for rx_burst_mode_get and tx_burst_mode_get.
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 956c60ef45..97e6b243fb 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -321,6 +321,7 @@ struct iavf_devargs {
+ struct iavf_security_ctx;
+ 
+ enum iavf_rx_burst_type {
++	IAVF_RX_DISABLED,
+ 	IAVF_RX_DEFAULT,
+ 	IAVF_RX_FLEX_RXD,
+ 	IAVF_RX_BULK_ALLOC,
+@@ -349,6 +350,7 @@ enum iavf_rx_burst_type {
+ };
+ 
+ enum iavf_tx_burst_type {
++	IAVF_TX_DISABLED,
+ 	IAVF_TX_DEFAULT,
+ 	IAVF_TX_SSE,
+ 	IAVF_TX_AVX2,
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 2335746f04..b3dacbef84 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -239,6 +239,8 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
+ 	.rss_hash_conf_get          = iavf_dev_rss_hash_conf_get,
+ 	.rxq_info_get               = iavf_dev_rxq_info_get,
+ 	.txq_info_get               = iavf_dev_txq_info_get,
++	.rx_burst_mode_get          = iavf_rx_burst_mode_get,
++	.tx_burst_mode_get          = iavf_tx_burst_mode_get,
+ 	.mtu_set                    = iavf_dev_mtu_set,
+ 	.rx_queue_intr_enable       = iavf_dev_rx_queue_intr_enable,
+ 	.rx_queue_intr_disable      = iavf_dev_rx_queue_intr_disable,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 533e0c78a2..5411eb6897 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3688,66 +3688,142 @@ iavf_prep_pkts(__rte_unused void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return i;
+ }
+ 
+-static
+-const eth_rx_burst_t iavf_rx_pkt_burst_ops[] = {
+-	[IAVF_RX_DEFAULT] = iavf_recv_pkts,
+-	[IAVF_RX_FLEX_RXD] = iavf_recv_pkts_flex_rxd,
+-	[IAVF_RX_BULK_ALLOC] = iavf_recv_pkts_bulk_alloc,
+-	[IAVF_RX_SCATTERED] = iavf_recv_scattered_pkts,
+-	[IAVF_RX_SCATTERED_FLEX_RXD] = iavf_recv_scattered_pkts_flex_rxd,
++static uint16_t
++iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
++				uint16_t nb_pkts);
++static uint16_t
++iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
++				uint16_t nb_pkts);
++
++static const struct {
++	eth_rx_burst_t pkt_burst;
++	const char *info;
++} iavf_rx_pkt_burst_ops[] = {
++	[IAVF_RX_DISABLED] = {iavf_recv_pkts_no_poll, "Disabled"},
++	[IAVF_RX_DEFAULT] = {iavf_recv_pkts, "Scalar"},
++	[IAVF_RX_FLEX_RXD] = {iavf_recv_pkts_flex_rxd, "Scalar Flex"},
++	[IAVF_RX_BULK_ALLOC] = {iavf_recv_pkts_bulk_alloc,
++		"Scalar Bulk Alloc"},
++	[IAVF_RX_SCATTERED] = {iavf_recv_scattered_pkts,
++		"Scalar Scattered"},
++	[IAVF_RX_SCATTERED_FLEX_RXD] = {iavf_recv_scattered_pkts_flex_rxd,
++		"Scalar Scattered Flex"},
+ #ifdef RTE_ARCH_X86
+-	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
+-	[IAVF_RX_AVX2] = iavf_recv_pkts_vec_avx2,
+-	[IAVF_RX_AVX2_OFFLOAD] = iavf_recv_pkts_vec_avx2_offload,
+-	[IAVF_RX_SSE_FLEX_RXD] = iavf_recv_pkts_vec_flex_rxd,
+-	[IAVF_RX_AVX2_FLEX_RXD] = iavf_recv_pkts_vec_avx2_flex_rxd,
+-	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] =
++	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector SSE"},
++	[IAVF_RX_AVX2] = {iavf_recv_pkts_vec_avx2, "Vector AVX2"},
++	[IAVF_RX_AVX2_OFFLOAD] = {iavf_recv_pkts_vec_avx2_offload,
++		"Vector AVX2 Offload"},
++	[IAVF_RX_SSE_FLEX_RXD] = {iavf_recv_pkts_vec_flex_rxd,
++		"Vector Flex SSE"},
++	[IAVF_RX_AVX2_FLEX_RXD] = {iavf_recv_pkts_vec_avx2_flex_rxd,
++		"Vector AVX2 Flex"},
++	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_pkts_vec_avx2_flex_rxd_offload,
+-	[IAVF_RX_SSE_SCATTERED] = iavf_recv_scattered_pkts_vec,
+-	[IAVF_RX_AVX2_SCATTERED] = iavf_recv_scattered_pkts_vec_avx2,
+-	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] =
++			"Vector AVX2 Flex Offload"},
++	[IAVF_RX_SSE_SCATTERED] = {iavf_recv_scattered_pkts_vec,
++		"Vector Scattered SSE"},
++	[IAVF_RX_AVX2_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx2,
++		"Vector Scattered AVX2"},
++	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_offload,
+-	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] =
++		"Vector Scattered AVX2 offload"},
++	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_flex_rxd,
+-	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] =
++		"Vector Scattered SSE Flex"},
++	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd,
+-	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] =
++		"Vector Scattered AVX2 Flex"},
++	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload,
++		"Vector Scattered AVX2 Flex Offload"},
+ #ifdef CC_AVX512_SUPPORT
+-	[IAVF_RX_AVX512] = iavf_recv_pkts_vec_avx512,
+-	[IAVF_RX_AVX512_OFFLOAD] = iavf_recv_pkts_vec_avx512_offload,
+-	[IAVF_RX_AVX512_FLEX_RXD] = iavf_recv_pkts_vec_avx512_flex_rxd,
+-	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] =
++	[IAVF_RX_AVX512] = {iavf_recv_pkts_vec_avx512, "Vector AVX512"},
++	[IAVF_RX_AVX512_OFFLOAD] = {iavf_recv_pkts_vec_avx512_offload,
++		"Vector AVX512 Offload"},
++	[IAVF_RX_AVX512_FLEX_RXD] = {iavf_recv_pkts_vec_avx512_flex_rxd,
++		"Vector AVX512 Flex"},
++	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_pkts_vec_avx512_flex_rxd_offload,
+-	[IAVF_RX_AVX512_SCATTERED] = iavf_recv_scattered_pkts_vec_avx512,
+-	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] =
++		"Vector AVX512 Flex Offload"},
++	[IAVF_RX_AVX512_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx512,
++		"Vector Scattered AVX512"},
++	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_offload,
+-	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] =
++		"Vector Scattered AVX512 offload"},
++	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd,
+-	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] =
++		"Vector Scattered AVX512 Flex"},
++	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd_offload,
++		"Vector Scattered AVX512 Flex offload"},
+ #endif
+ #elif defined RTE_ARCH_ARM
+-	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
++	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector Neon"},
+ #endif
+ };
+ 
+-static
+-const eth_tx_burst_t iavf_tx_pkt_burst_ops[] = {
+-	[IAVF_TX_DEFAULT] = iavf_xmit_pkts,
++int
++iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
++		       __rte_unused uint16_t queue_id,
++		       struct rte_eth_burst_mode *mode)
++{
++	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
++	size_t i;
++
++	for (i = 0; i < RTE_DIM(iavf_rx_pkt_burst_ops); i++) {
++		if (pkt_burst == iavf_rx_pkt_burst_ops[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++				 iavf_rx_pkt_burst_ops[i].info);
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static const struct {
++	eth_tx_burst_t pkt_burst;
++	const char *info;
++} iavf_tx_pkt_burst_ops[] = {
++	[IAVF_TX_DISABLED] = {iavf_xmit_pkts_no_poll, "Disabled"},
++	[IAVF_TX_DEFAULT] = {iavf_xmit_pkts, "Scalar"},
+ #ifdef RTE_ARCH_X86
+-	[IAVF_TX_SSE] = iavf_xmit_pkts_vec,
+-	[IAVF_TX_AVX2] = iavf_xmit_pkts_vec_avx2,
+-	[IAVF_TX_AVX2_OFFLOAD] = iavf_xmit_pkts_vec_avx2_offload,
++	[IAVF_TX_SSE] = {iavf_xmit_pkts_vec, "Vector SSE"},
++	[IAVF_TX_AVX2] = {iavf_xmit_pkts_vec_avx2, "Vector AVX2"},
++	[IAVF_TX_AVX2_OFFLOAD] = {iavf_xmit_pkts_vec_avx2_offload,
++		"Vector AVX2 Offload"},
+ #ifdef CC_AVX512_SUPPORT
+-	[IAVF_TX_AVX512] = iavf_xmit_pkts_vec_avx512,
+-	[IAVF_TX_AVX512_OFFLOAD] = iavf_xmit_pkts_vec_avx512_offload,
+-	[IAVF_TX_AVX512_CTX] = iavf_xmit_pkts_vec_avx512_ctx,
+-	[IAVF_TX_AVX512_CTX_OFFLOAD] = iavf_xmit_pkts_vec_avx512_ctx_offload,
++	[IAVF_TX_AVX512] = {iavf_xmit_pkts_vec_avx512, "Vector AVX512"},
++	[IAVF_TX_AVX512_OFFLOAD] = {iavf_xmit_pkts_vec_avx512_offload,
++		"Vector AVX512 Offload"},
++	[IAVF_TX_AVX512_CTX] = {iavf_xmit_pkts_vec_avx512_ctx,
++		"Vector AVX512 Ctx"},
++	[IAVF_TX_AVX512_CTX_OFFLOAD] = {
++		iavf_xmit_pkts_vec_avx512_ctx_offload,
++		"Vector AVX512 Ctx Offload"},
+ #endif
+ #endif
+ };
+ 
++int
++iavf_tx_burst_mode_get(struct rte_eth_dev *dev,
++		       __rte_unused uint16_t queue_id,
++		       struct rte_eth_burst_mode *mode)
++{
++	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
++	size_t i;
++
++	for (i = 0; i < RTE_DIM(iavf_tx_pkt_burst_ops); i++) {
++		if (pkt_burst == iavf_tx_pkt_burst_ops[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++				 iavf_tx_pkt_burst_ops[i].info);
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
+ static uint16_t
+ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				uint16_t nb_pkts)
+@@ -3760,7 +3836,7 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 
+ 	rx_burst_type = rxq->vsi->adapter->rx_burst_type;
+ 
+-	return iavf_rx_pkt_burst_ops[rx_burst_type](rx_queue,
++	return iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst(rx_queue,
+ 								rx_pkts, nb_pkts);
+ }
+ 
+@@ -3776,7 +3852,7 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 
+ 	tx_burst_type = txq->iavf_vsi->adapter->tx_burst_type;
+ 
+-	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue,
++	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue,
+ 								tx_pkts, nb_pkts);
+ }
+ 
+@@ -3861,7 +3937,7 @@ iavf_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			return 0;
+ 	}
+ 
+-	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue, tx_pkts, good_pkts);
++	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
+ }
+ 
+ /* choose rx function*/
+@@ -4047,7 +4123,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 			adapter->rx_burst_type = rx_burst_type;
+ 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 		} else {
+-			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4069,7 +4145,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 			adapter->rx_burst_type = rx_burst_type;
+ 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 		} else {
+-			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4098,7 +4174,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 		adapter->rx_burst_type = rx_burst_type;
+ 		dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 	} else {
+-		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 	}
+ }
+ 
+@@ -4197,7 +4273,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 			adapter->tx_burst_type = tx_burst_type;
+ 			dev->tx_pkt_burst = iavf_xmit_pkts_check;
+ 		} else {
+-			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
++			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4215,7 +4291,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 		adapter->tx_burst_type = tx_burst_type;
+ 		dev->tx_pkt_burst = iavf_xmit_pkts_check;
+ 	} else {
+-		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
++		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 823a6efa9a..8bc87b8465 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -609,7 +609,12 @@ int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ int iavf_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id);
+ int iavf_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id);
+ void iavf_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
+-
++int iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
++			__rte_unused uint16_t queue_id,
++			struct rte_eth_burst_mode *mode);
++int iavf_tx_burst_mode_get(struct rte_eth_dev *dev,
++			__rte_unused uint16_t queue_id,
++			struct rte_eth_burst_mode *mode);
+ int iavf_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 			   uint16_t queue_idx,
+ 			   uint16_t nb_desc,
+-- 
+2.26.2.Cisco
 
-As for the checkpatch warnings in the base code -- unfortunately, that part does
-not follow DPDK style in general and has always triggered such warnings in DPDK.
-Should I try to fix some anyway? Which, for instance?
-
-Thank you.
