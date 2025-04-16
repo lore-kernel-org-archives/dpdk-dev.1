@@ -2,79 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D24C369BA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 17:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EDDC369BA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 17:24:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37487402E7;
-	Wed, 16 Apr 2025 19:12:30 +0200 (CEST)
-Received: from rcdn-iport-3.cisco.com (rcdn-iport-3.cisco.com [173.37.86.74])
- by mails.dpdk.org (Postfix) with ESMTP id 2EB664025A
- for <dev@dpdk.org>; Wed, 16 Apr 2025 19:12:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CDCC402E7;
+	Wed, 16 Apr 2025 19:24:49 +0200 (CEST)
+Received: from alln-iport-5.cisco.com (alln-iport-5.cisco.com [173.37.142.92])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DE724025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 19:24:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=cisco.com; i=@cisco.com; l=7519; q=dns/txt;
- s=iport01; t=1744823549; x=1746033149;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
+ s=iport01; t=1744824287; x=1746033887;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
  bh=/N6rjasb6MeoCYjvvYfLISDCdyKhCH2P/unD9Xygf5g=;
- b=H86xbv8ZMIhiYqCyM8MdOkYhe1JGZMAYgSaDpoLYtZ4pZrhJ7whZDKfK
- HR8J8WZGrcx1qzsCN/fCVaTF49rzY6MxYIyhocO53ubfjJI9QfI9dTETx
- sWOsAxH95ZOWhu4cf0y+CWuraC0jbhoN3ADMx/clMAgLnSFUQvNjvsObL
- mJvqoBmHxnZc534YVSgMqa/ye88iXc6fNaRAaT35q8MbODI53t86wXqGI
- DkJIIYObHhryD9f+AU4mLQlBgyzxUIIFK02DtQLBYJrkmyJZ7b39ZuDQY
- STv7LVXlIbTDjhl6nJ37u5bRpM+dTocNcEGzXHvS8m8BIUy3BYi5y3QA8 A==;
-X-CSE-ConnectionGUID: 1arxTr5NQVqycqL2CHwCjw==
-X-CSE-MsgGUID: 37K+W704Q9+5JPepQym+AA==
-X-IPAS-Result: =?us-ascii?q?A0AEAADM4/9n/5UQJK1aGQEBAQMDAQEBAQEBARYBAQEBA?=
- =?us-ascii?q?QEBAYIBBAEBAQ0BgkqBT0NIlkWeFRSBEQNWDwEBAQ9EBAEBhQeLLAImNAkOA?=
- =?us-ascii?q?QIEAQEBAQMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGCIZdKwsBRoEMM?=
- =?us-ascii?q?hKDAoJlA7EfgXkzgQGEfNk4gW6BSAGNTHCEdycbgUlEgRWBO4IthCkBRYYYB?=
- =?us-ascii?q?INEhFSRV4sgSIEhA1ksAVUTDQoLBwWBbAMqCwwLEhwVcTUdgXqDc4U2ghGCB?=
- =?us-ascii?q?IkThFYtT4VAQAMLGA1IESw3FBsGPm4HlziEF4EPgXhkDJMhCpAFoyaEJaFJG?=
- =?us-ascii?q?jOEA6ZUmH4igjahc4RogWc8gVkzGggbFYMiUhkPji0WyyIqMjwCBwsBAQMJk?=
- =?us-ascii?q?WUBAQ?=
-IronPort-Data: A9a23:CIxFCqLDpvOHL4MbFE+Ru5QlxSXFcZb7ZxGr2PjKsXjdYENS3mBRy
- mQZD26BOvfeYzHxct8kbdu+/R4PvJeHzNAwGVcd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
- 63yUvGZcoZsCCea/kr1WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVrQ0
- T/Oi5eHYgL9h2cqajh8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKqFIHvS3T
- vr017qw+GXU5X8FUrtJRZ6iLyXm6paLVeS/oiI+t5qK23CulQRuukoPD8fwXG8M49m/c3+d/
- /0W3XC4YV9B0qQhA43xWTEAe811FfUuFLMqvRFTvOTLp3AqfUcAzN03BVsmAZdF3N9JGHBF7
- NhCAxASRRKc0rfeLLKTEoGAh+wqKM3teYdasXZ6wHSAV7AtQIvIROPB4towMDUY358VW62AI
- ZNHL2MzPXwsYDUXUrsTIIg7keO0gX/XeDxDo1XTrq0yi4TW5FcsjuK1bIOMILRmQ+0OwWXbm
- T2eo12oQUw4DNGH8CuAsVuF07qncSTTHdh6+KeD3vJnnnWf3mAQThoMWjOTqP+wlkm6SpRVN
- lYd+S0whak06EGvCNL6WnWQvnqNsh8ZWsAWFuA29gyByavSywefGmUACDVGbbQbWNQeTDgu0
- BqN2tjuHzEq6efTQnOG/bDSpjS3UcQIEVI/ieY/ZVNty7HeTEsb13ojkv4L/HaJs+DI
-IronPort-HdrOrdr: A9a23:QXKxraODtZ58sMBcTsqjsMiBIKoaSvp037Dk7S9MoHtuA6mlfq
- +V/cjzuSWYtN9zYgBDpTn/Asm9qBrnnPYfi7X5Vo3NYOCJggeVxflZnOjfK/mKIVyYygabvp
- 0QF5RDNA==
-X-Talos-CUID: 9a23:b6W2h27eGBBbav9Tg9ssrUcOCvw/L1vk8m7BKFacU01JV5aXVgrF
-X-Talos-MUID: 9a23:38TVmghadB6s4ZOP9ElPxsMpb5hLoJvxUBw0wNZbmfGJLRVhPnS0pWHi
+ b=VQm4lfeZQfaGLYGFuDBmuruV71K5VCFvHv1d74ueItZuQvZKI/r1duON
+ 5zpnuol57OQjcVojVcRtnmjuDmz7ElAXuDSjLXydVngjawRsoki7NO296
+ jLj+wISDhay9K84iZBibyP9spm7xa2Gau1dzzjy9GSOQO+WgziIu+phA5
+ EO/rjPYfwd6szVPsIcXYUpUkedibC/iPwYlVWmwkdyRduOvmfxqG758eh
+ L5D8NvwwEOc3r41D3w9HKtWeR86VOZc5gBxh3+TH7CmBum6Hp5dN90Hoz
+ hsEQtSxjsRGZMVFNipMS8rZmnS+WY2UsWSGHA6nQIcGt3qS1vKjuHSrir g==;
+X-CSE-ConnectionGUID: VymjPC8ETr2TKbArGlSevA==
+X-CSE-MsgGUID: YTP4vr2nRPKIWwOpkQolTw==
+X-IPAS-Result: =?us-ascii?q?A0ADAACm5v9n/48QJK1aGQEBAQECAgEBAQEBAQEBARQBA?=
+ =?us-ascii?q?QEBAQEBAQEBggAEAQEBAQwBgkqBT0NIjHCJVZ4VFIERA1YPAQEBD0QEAQGFB?=
+ =?us-ascii?q?wKLKgImNAkOAQIEAQEBAQMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGC?=
+ =?us-ascii?q?IZbAgEDJwsBRhBRKysHEoMCgmUDsTeBeTOBAYR82TiBboFIAY1McIR3JxuBS?=
+ =?us-ascii?q?USBFYE7gi2EKQFFhhgEg0SEVJFXiyBIgSEDWSwBVRMNCgsHBYFsAyoLDAsSH?=
+ =?us-ascii?q?BVxNR2BeoNzhTaCEYIEiROEVi1PhUBAAwsYDUgRLDcUGwY+bgeXOIQXgQ+Be?=
+ =?us-ascii?q?GQMkyEKkAWjJoQloUkaM4QDplSYfiKCNqFzhGiBZzyBWTMaCBsVgyJSGQ+OL?=
+ =?us-ascii?q?RbLICoyPAIHCwEBAwmRZQEB?=
+IronPort-Data: A9a23:1nbfxKNobxc5KJjvrR3PlsFynXyQoLVcMsEvi/4bfWQNrUp20jMPx
+ msYXGiFM/rbYzD1ctEiOo/gp0kCvMfQzYdiSHM5pCpnJ55oRWUpJjg4wmPYZX76whjrFRo/h
+ ykmQoCeaphyFjmE+0/F3oHJ9RFUzbuPSqf3FNnKMyVwQR4MYCo6gHqPocZh6mJTqYb/Wl7lV
+ e/a+ZWFZQf5gmAsaAr41orawP9RlKWq0N8nlgRWicBj5Df2i3QTBZQDEqC9R1OQapVUBOOzW
+ 9HYx7i/+G7Dlz91Yj9yuu+mGqGiaue60Tmm0hK6aYD76vRxjnBaPpIACRYpQRw/ZwNlMDxG4
+ I4lWZSYEW/FN0BX8QgXe0Ew/ypWZcWq9FJbSJSymZT78qHIT5fj68t/CUMOFt01xvwtPUJE3
+ OY3LAsAcDnW0opawJrjIgVtrs0nKM+uOMYUvWttiGmHS/0nWpvEBa7N4Le03h9p2ZsIRqiYP
+ pRfMGY0BPjDS0Un1lM/EpczmPuvgFH0ciZTrxSeoq9fD237kFEuj+a1aoWFEjCMbfRpphqGv
+ DjAxVzaIy4FE8Sc8D2Bzm3504cjmgu+Aur+DoaQ+vN0qFGLym9VDwcZPXOyp/CljUqvHdhCM
+ UUX/TQGrK4u+UjtRd74NzWmpHeIvxsdQZxVHuEk5Q2Oy6z84gCFC2xCRTlEAOHKr+c/QTgsk
+ 1vMlNTzCHk37vueSGmW8fGfqjba1TUpEFLurBQsFWMti+QPaqlq5v4TZr6PyJKIs+A=
+IronPort-HdrOrdr: A9a23:bqDC6qM06aKaNcBcTsajsMiBIKoaSvp037Dk7S9MoHtuA6ulfq
+ +V/cjzuSWYtN9VYgBDpTniAtjlfZqjz/5ICOAqVN/INjUO+lHYSb2KhrGN/9SPIUHDH5ZmpM
+ Rdm2wUMqyIMbC85vyKhjWFLw==
+X-Talos-CUID: 9a23:dHnxt2yVmeHdYx39xnrUBgUqC8UnSlaN4UvKeXObA09zZ7muREG5rfY=
+X-Talos-MUID: =?us-ascii?q?9a23=3Ab1/5Eg0/0emi/9elUFd2cNNVszUj0piWVF4Xy5M?=
+ =?us-ascii?q?8g+qlCjNXIzSkizCLXdpy?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.15,216,1739836800"; d="scan'208";a="356204112"
-Received: from alln-l-core-12.cisco.com ([173.36.16.149])
- by rcdn-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 16 Apr 2025 17:12:27 +0000
+X-IronPort-AV: E=Sophos;i="6.15,216,1739836800"; d="scan'208";a="457760278"
+Received: from alln-l-core-06.cisco.com ([173.36.16.143])
+ by alln-iport-5.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 16 Apr 2025 17:24:46 +0000
 Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
  [172.18.47.81])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by alln-l-core-12.cisco.com (Postfix) with ESMTPS id 7A44B1800015A;
- Wed, 16 Apr 2025 17:12:27 +0000 (GMT)
+ by alln-l-core-06.cisco.com (Postfix) with ESMTPS id 7CAA418000119;
+ Wed, 16 Apr 2025 17:24:46 +0000 (GMT)
 Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
- id 1BDDC1406899; Wed, 16 Apr 2025 13:12:27 -0400 (EDT)
+ id 225B91406899; Wed, 16 Apr 2025 13:24:46 -0400 (EDT)
 From: Roger Melton <rmelton@cisco.com>
 To: vladimir.medvedkin@intel.com,
 	anatoly.burakov@intel.com
 Cc: dev@dpdk.org,
 	Roger Melton <rmelton@cisco.com>
-Subject: [PATCH v2] net/ixgbe: support Rx/Tx burst mode info
-Date: Wed, 16 Apr 2025 13:11:12 -0400
-Message-Id: <20250416171111.3094521-1-rmelton@cisco.com>
+Subject: [PATCH v3] net/ixgbe: support Rx/Tx burst mode info
+Date: Wed, 16 Apr 2025 13:23:11 -0400
+Message-Id: <20250416172310.82448-1-rmelton@cisco.com>
 X-Mailer: git-send-email 2.35.6
+In-Reply-To: <20250416171111.3094521-1-rmelton@cisco.com>
+References: <20250416171111.3094521-1-rmelton@cisco.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
-X-Outbound-Node: alln-l-core-12.cisco.com
+X-Outbound-Node: alln-l-core-06.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
