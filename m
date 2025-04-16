@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3267BC369C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B54C369C1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:38:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4946B40EE7;
-	Wed, 16 Apr 2025 18:38:44 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id A844440EDC
- for <dev@dpdk.org>; Wed, 16 Apr 2025 18:38:42 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-22423adf751so66843295ad.2
- for <dev@dpdk.org>; Wed, 16 Apr 2025 09:38:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 89C6E40FDE;
+	Wed, 16 Apr 2025 18:38:47 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 354C640EDC
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 18:38:44 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2295d78b433so73828005ad.2
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 09:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744821522;
- x=1745426322; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744821523;
+ x=1745426323; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fzhoibcd7zO5rEv2p1xVaEccGspwUuWM5it1wt2QFxE=;
- b=yTTyK6KizopcZ4V+JS8jkcFqFaCdVrssBv7B49oUuwLMkmong4bw9l2opRZvo1Gho8
- 1tuHQuAQAqMgSMnctlOVhZndVMU8nRfsufibeT84YC5MwFN2eC9poTfLuen2MRTh+V1P
- L5GqmBo3yL7jHcU/fTnBhXAWD45TYFAh4aWiDTlLd26PCQ2+bKzXnmEP2RI+yQVfaESr
- ekAa3LRAsWQkkVJJC+QCab0bLocIKtAxwLcqMb9B37TbVPR8ruUnv3RCoQXdPBw9R3eG
- mfimxBK1+rgfu7eEjH8tjoRFhyv+g9AMuonOt7qgS8SmAXEivgsQUJftHBAg4Zmrp086
- AAhQ==
+ bh=tKgvJNLSZxmeiV++yiML2j7rw0u4A9S9YSC8bf3Djzw=;
+ b=E++LYqlEaZZ9kte+CfGEzF5FrMyBQHRTMtxQhiXvbG2PeuwZQ48JSwRS/DJhv84dAZ
+ g0NYRrOfoEeEEdEL058JJoO+7AYpIu740arFY7bpI4hIru8orUgnsa8McqbSEqnEfOf8
+ nziIDLTC2KSSoU8ssjD1Gx4Ilzb1vZpz105FSxyCBtJubs5Oxmheg8UP2XsVwMZiehic
+ 52BDcuGzyaYCjWZ2u8CGnW6igXtb2z+5ymEk/3rEIzHnc8iH6mM3KKqoOx/xEmixvIMN
+ TG3ZoO7Ppk9bLBg8ihskIJbJ3bdQg4AkKFvI83J4fwel88Shw/8m/bGjx+QU9/4gJuN9
+ nBgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744821522; x=1745426322;
+ d=1e100.net; s=20230601; t=1744821523; x=1745426323;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=fzhoibcd7zO5rEv2p1xVaEccGspwUuWM5it1wt2QFxE=;
- b=n0ku5iXOdghfXn1/9uy1kNpeRaTa1UsOa/r7gMUtZNJur96Mk4AOmL0b39/KiQcnO9
- JZqJrKYF9EjJaB30oOI+6RNd/EinQRVeevgrklm1Y5zwKCFkBN8zYTdYSryeLAX8Vz6G
- 5196xK2BEK4gCFR86zTSYZuSjUItXLHTxYJbT4jmQbwZZHHKVQQg+Vaj9SO1Gki7jM5t
- 0souFKqcIXtB0V7kNRBHVl9ah/J0ylp44Q2cPMTepgIWrMRnMACRLMbEsKT7f8lZ6N4c
- sJEjsvE+sp26jP2MgpMWj3XFnUCWFXGWl7Ij0w+QTkgiBY4Drw1B8ytnhQR1cEUmrLEJ
- hmSg==
-X-Gm-Message-State: AOJu0YzLOqRRclCjJdKzAoi6iUD7L+Qge0G5G5MmADlLKEIy0b4jWLAm
- UYxb8opu1yu2xe+1jWBg2PPQMat1lsTxqbGMSpLUcb9eRjwIxleeEetbnCYBks5v0u1pU/bkLFh
- Aajo=
-X-Gm-Gg: ASbGnctx6F0TohVnh3AcMdFxn7K/LCl3R7hqwrvd49BeWZB5FYKxGYdLEuufTguVhIs
- aYgHKJz8DLMDH9bQRFJcYPG8vpZmn0QzsQEYa76jAnlhICuG8xk0dJK8oYuJ14rx8DxWrNe43wV
- IIHp0rrklqPLrTIvnz/qYaF05l0lQVQPosZY3l0TKl3C/cWAs0aDXuMjC7Wj6bz8jAjfp6k3w9V
- k640Dsc4kwcZGUpg18IRpyJt2ROqNhV9oGRK+zNU0U/smjrTwAe8tl8zhc48ECqeZ0vPHuLooSG
- jMLEVumKbzdbmPOwqp4TlZCIxJNbBVz+zIi6zIr3HxoCiIUvLTc8ZhnC2UtJI+cDh1QrDzZLOoY
- QCT3OmpwX6rUVl8nP
-X-Google-Smtp-Source: AGHT+IHvJMOF7v9vhFJk9kbvSloBwijw9R4Fn/26RUwmE5zqw/s9159cYntWnMeJ7qc1+TdAopRjXg==
-X-Received: by 2002:a17:902:e84b:b0:224:24d3:60f4 with SMTP id
- d9443c01a7336-22c358d8889mr40690025ad.15.1744821521812; 
- Wed, 16 Apr 2025 09:38:41 -0700 (PDT)
+ bh=tKgvJNLSZxmeiV++yiML2j7rw0u4A9S9YSC8bf3Djzw=;
+ b=mJD8irLaEnBN8QffMhXZ2UQClgjhW0Pn9Qi73I1h5K/jNFlvl17FKaZevI2MiV9K2M
+ 4me3dyyslnIZOJ/3O9WNhLMHah9y7hrDLNO2GeCQ9aDseZf7k4LyQSO9gXlvFv1XtiRw
+ 2wBArrrp7+s5juM8aV6Axn2xiHxIh2J0iqj2cKJBwdKfkHBb4Xk0hio1U814nJKf+hi+
+ HSfEDjciKvEyn9iPKJeLwCikoYbJk1oau0Ish40dhtJrr/shYWh7vb0mEEN36R68B6o/
+ ll8Z34izpvF0qlUdf9H9CBL56M/kIW/y++OKXBmZuPA+X4Zqc2CiofHfnNb5AB3pNmeF
+ Bxbg==
+X-Gm-Message-State: AOJu0YxD/7OubPncTqCa1846TIARdXmIzF9394LUHkzzCCD6Na2yZw+k
+ lBJdFz/9tj4fj761GRBCUPw84yGTV66027MKOiE4OUgpgMcXZNulcLpouhJ7o4Q=
+X-Gm-Gg: ASbGnctvzaHhKIBgVwtWye0xtrHc+XaQOCEFiFACxMNT8RYB6e+/5RQiAz0CVCBAQtI
+ QbdL56GDmyZw3WBiCAuKnFhDIctU9jGE6U8rXPx4wyQ++M+GuiH9PXzGUap2kGS54Q36xI06D1f
+ ARPZTy+qF6Etxif2GwBCY7BSZoe1cq6Y9LtZjbg0BphtYSfSXVNIJYldVyGBzn7z27OlW0p42PZ
+ MerTbS8BYM6F/t8qn/GWmT1MVLgQS5vRZJe64ckFd/3V2g+M7FxRAR2x/JN8dINo8NsOASaVLfB
+ vYikXt/TnuUxRR0UHXYrp2JizFrlnJgtx0f6U6wveVedQ2uHsq3M4Yn8El+p6liLTjFN+0Munu6
+ Wz0haL5wqq7eTCrpl
+X-Google-Smtp-Source: AGHT+IEBj1UHvN5x1iW6l32CpKlPJGbxkHhdfu+n/egE9x5A54axfNXa2LIPJsWWfoYqpk3UsVsFNw==
+X-Received: by 2002:a17:903:1a30:b0:224:93e:b5d7 with SMTP id
+ d9443c01a7336-22c35974260mr47944285ad.34.1744821523434; 
+ Wed, 16 Apr 2025 09:38:43 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22c33f1d414sm16413885ad.56.2025.04.16.09.38.41
+ d9443c01a7336-22c33f1d414sm16413885ad.56.2025.04.16.09.38.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Apr 2025 09:38:41 -0700 (PDT)
-Date: Wed, 16 Apr 2025 09:35:25 -0700
+ Wed, 16 Apr 2025 09:38:43 -0700 (PDT)
+Date: Wed, 16 Apr 2025 09:34:42 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liwencheng <liwencheng@phytium.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 4/4] net/macb: add necessary docs and update related
- files
-Message-ID: <20250416093525.50964d14@hermes.local>
-In-Reply-To: <1743577171-119901-1-git-send-email-liwencheng@phytium.com.cn>
-References: <1743577171-119901-1-git-send-email-liwencheng@phytium.com.cn>
+Subject: Re: [PATCH v4 2/4] net/macb: add new poll mode driver
+Message-ID: <20250416093442.7f0f2299@hermes.local>
+In-Reply-To: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,13 +80,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  2 Apr 2025 06:59:31 +0000
+On Wed,  2 Apr 2025 06:58:56 +0000
 liwencheng <liwencheng@phytium.com.cn> wrote:
 
-> Added missing documentation in doc/guides/nics,
-> mailmap entry, and updated MAINTAINERS file.
-> 
-> Signed-off-by: liwencheng <liwencheng@phytium.com.cn>
+> +int __rte_cold macb_rx_phyaddr_check(struct rte_eth_dev *dev)
+> +{
+> +
 
-Since driver used devargs those should be described in the
-documentation.
+Dont think you need the additional clutter of __rte_cold here.
