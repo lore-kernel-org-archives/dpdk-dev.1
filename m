@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEF1C369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4174AC369BD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:03:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C04D4270A;
-	Wed, 16 Apr 2025 16:00:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 37BC84275B;
+	Wed, 16 Apr 2025 16:00:54 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 0AD1B410DD
+ by mails.dpdk.org (Postfix) with ESMTP id C889740F16
  for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:44 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 57AE9E1149;
- Wed, 16 Apr 2025 18:00:43 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 57AE9E1149
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 1EB53E11BE;
+ Wed, 16 Apr 2025 18:00:44 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 1EB53E11BE
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812043;
- bh=AmMcLIDMK6QLWd3XA2z9G1T9AtRqKR7OorvLymB38fc=;
+ s=default; t=1744812044;
+ bh=9ZmCur6U75ZcTbs1P73mbeDZwOpud3wl7BMXiDbl+iM=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=RtingfNol43KLnB9DQXVCHLwYqetf7TQO5KGJdhvnzgO/6L4uDzejkz+K0FR4KBlE
- F4z4YPaDSnrSzwgmsFZq0yVBrK7Cu6CX8U0bqLthGETlppX4ipsTiByqZe8JyTEco2
- L39ex2JT63zaSE1k0dxDHOgfCi9hMISa+R7Te+U9nCw4W39kMyc+szQos2B1+4FiEb
- AOBsG4GixzwuCsf9m6i2pDBAz9zenskEFIN/p2cOvRkaZrcQC7LEUVXyygZSpRuaJD
- d3zTU5mtCUpe49Y+P24yFTTR0FjoELWmboOqXCu4JToWqNjvZNrla5lLD20f0FadRI
- rJJ88wZppxhzA==
+ b=KybbvNtpEvbemZI7MDn+52HKWSHIdCSzIocVAVlWWqPHxoealud3Xz6nYNy+5/TYy
+ mgbIQwjpBkKpDJXrAeEXDJFDkx14HO6xRJJ0wTM0ynV838Gzfn/Ez3xNayZHVpzIdg
+ sSPtiV00tmg+0QKBVSx59//NC7GXGqwQdJSoLbEpuOmygEKt9Lo7Ikpl+t1RmxjlDk
+ dySHdMoezhbfUoakHkFsSlvN4CCAWBQPOjUJmVGZnXntTBSGcokEOBOWx7h2v4XGDP
+ MY+uyJpOiM5iFygnncLsqhUGhlY8WGRgWSUdNWF5/KqUzYs451q6CfKeCi23K/JxKr
+ 1Ri6r+o1ara9w==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 21/46] common/sfc_efx/base: provide defaults on netport attach
- path
-Date: Wed, 16 Apr 2025 17:59:51 +0400
-Message-Id: <20250416140016.36127-22-ivan.malov@arknetworks.am>
+Subject: [PATCH 22/46] common/sfc_efx/base: obtain assigned netport handle
+ from NIC
+Date: Wed, 16 Apr 2025 17:59:52 +0400
+Message-Id: <20250416140016.36127-23-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,77 +56,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fill in some port information, including legacy Siena fields.
+Get an 'assigned' netport handle for the current MCDI entity.
+This handle will be used when sending other netport commands.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>
 ---
- drivers/common/sfc_efx/base/efx_np.c | 44 ++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/common/sfc_efx/base/efx_impl.h |  4 +++
+ drivers/common/sfc_efx/base/efx_np.c   | 50 ++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
+diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
+index 9ad973ded7..4952f45121 100644
+--- a/drivers/common/sfc_efx/base/efx_impl.h
++++ b/drivers/common/sfc_efx/base/efx_impl.h
+@@ -335,6 +335,8 @@ typedef struct efx_virtio_ops_s {
+ } efx_virtio_ops_t;
+ #endif /* EFSYS_OPT_VIRTIO */
+ 
++typedef uint32_t efx_np_handle_t;
++
+ typedef struct efx_port_s {
+ 	efx_mac_type_t		ep_mac_type;
+ 	uint32_t		ep_phy_type;
+@@ -378,6 +380,8 @@ typedef struct efx_port_s {
+ #endif
+ 	const efx_mac_ops_t	*ep_emop;
+ 	const efx_phy_ops_t	*ep_epop;
++
++	efx_np_handle_t		ep_np_handle;
+ } efx_port_t;
+ 
+ typedef struct efx_mon_ops_s {
 diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 432185f311..3200bc0a90 100644
+index 3200bc0a90..ec6a432623 100644
 --- a/drivers/common/sfc_efx/base/efx_np.c
 +++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -12,13 +12,57 @@ efx_np_supported(
- 	return (enp->en_family >= EFX_FAMILY_MEDFORD4) ? B_TRUE : B_FALSE;
+@@ -41,12 +41,53 @@ efx_np_assign_legacy_props(
+ 	encp->enc_port = 0;
  }
  
-+static				void
-+efx_np_assign_legacy_props(
-+	__in			efx_nic_t *enp)
++static	__checkReturn		efx_rc_t
++efx_np_get_assigned_handle(
++	__in			efx_nic_t *enp,
++	__out			efx_np_handle_t *nphp)
 +{
-+	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
++	EFX_MCDI_DECLARE_BUF(payload,
++	    MC_CMD_GET_ASSIGNED_PORT_HANDLE_IN_LEN,
++	    MC_CMD_GET_ASSIGNED_PORT_HANDLE_OUT_LEN);
++	efx_mcdi_req_t req;
++	efx_rc_t rc;
 +
-+	memset(encp->enc_phy_revision, 0, sizeof (encp->enc_phy_revision));
-+	encp->enc_phy_type = 0;
++	req.emr_out_length = MC_CMD_GET_ASSIGNED_PORT_HANDLE_OUT_LEN;
++	req.emr_in_length = MC_CMD_GET_ASSIGNED_PORT_HANDLE_IN_LEN;
++	req.emr_cmd = MC_CMD_GET_ASSIGNED_PORT_HANDLE;
++	req.emr_out_buf = payload;
++	req.emr_in_buf = payload;
 +
-+#if EFSYS_OPT_NAMES
-+	memset(encp->enc_phy_name, 0, sizeof (encp->enc_phy_name));
-+#endif /* EFSYS_OPT_NAMES */
++	efx_mcdi_execute(enp, &req);
 +
-+#if EFSYS_OPT_PHY_STATS
-+	encp->enc_mcdi_phy_stat_mask = 0;
-+#endif /* EFSYS_OPT_PHY_STATS */
++	if (req.emr_rc != 0) {
++		rc = req.emr_rc;
++		goto fail1;
++	}
 +
-+#if EFSYS_OPT_PHY_FLAGS
-+	encp->enc_phy_flags_mask = 0;
-+#endif /* EFSYS_OPT_PHY_FLAGS */
++	if (req.emr_out_length_used < MC_CMD_GET_ASSIGNED_PORT_HANDLE_OUT_LEN) {
++		rc = EMSGSIZE;
++		goto fail2;
++	}
 +
-+#if EFSYS_OPT_BIST
-+	encp->enc_bist_mask = 0;
-+#endif /* EFSYS_OPT_BIST */
++	*nphp = MCDI_OUT_DWORD(req, GET_ASSIGNED_PORT_HANDLE_OUT_PORT_HANDLE);
++	return (0);
 +
-+	encp->enc_mcdi_mdio_channel = 0;
-+	encp->enc_port = 0;
++fail2:
++	EFSYS_PROBE(fail2);
++
++fail1:
++	EFSYS_PROBE1(fail1, efx_rc_t, rc);
++	return (rc);
 +}
 +
  	__checkReturn	efx_rc_t
  efx_np_attach(
  	__in		efx_nic_t *enp)
  {
-+	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
-+	efx_port_t *epp = &(enp->en_port);
-+
+ 	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
+ 	efx_port_t *epp = &(enp->en_port);
++	efx_rc_t rc;
+ 
  	if (efx_np_supported(enp) == B_FALSE)
  		return (0);
+@@ -63,7 +104,16 @@ efx_np_attach(
  
-+	/*
-+	 * Some EFX properties are mostly leftover from Siena era
-+	 * and we prefer to initialise those to harmless defaults.
-+	 */
-+	efx_np_assign_legacy_props(enp);
+ 	epp->ep_fixed_port_type = EFX_PHY_MEDIA_INVALID;
+ 	epp->ep_module_type = EFX_PHY_MEDIA_INVALID;
 +
-+#if EFSYS_OPT_PHY_LED_CONTROL
-+	encp->enc_led_mask = 1U << EFX_PHY_LED_DEFAULT;
-+#endif /* EFSYS_OPT_PHY_LED_CONTROL */
++	rc = efx_np_get_assigned_handle(enp, &epp->ep_np_handle);
++	if (rc != 0)
++		goto fail1;
 +
-+	epp->ep_fixed_port_type = EFX_PHY_MEDIA_INVALID;
-+	epp->ep_module_type = EFX_PHY_MEDIA_INVALID;
  	return (0);
++
++fail1:
++	EFSYS_PROBE1(fail1, efx_rc_t, rc);
++	return (rc);
  }
  
+ 		void
 -- 
 2.39.5
 
