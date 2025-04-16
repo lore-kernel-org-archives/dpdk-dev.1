@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA07C369AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 02:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3B9C369B1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 06:12:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9546E40655;
-	Wed, 16 Apr 2025 04:44:25 +0200 (CEST)
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com
- [209.85.216.73]) by mails.dpdk.org (Postfix) with ESMTP id 0C87D40289
- for <dev@dpdk.org>; Wed, 16 Apr 2025 04:44:24 +0200 (CEST)
-Received: by mail-pj1-f73.google.com with SMTP id
- 98e67ed59e1d1-3055f2e1486so9109556a91.0
- for <dev@dpdk.org>; Tue, 15 Apr 2025 19:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1744771463; x=1745376263; darn=dpdk.org;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=R2MYsACSSeUB/BeXja/fxS60DG+8fNSWXIDU1gcUfFM=;
- b=iLUVDSdhEF62fYvcCZ+0RSZv7eI5xWrqLzM5bmZ1wzi3SNunAPHrG7PzxfvaR1cGOV
- rNHO+ec53YRFsWTciqOpQqdZgjvQtBkmjGAahplsxL7TE/TaEQgjG22IaMDAle2dSC/m
- seEvAzOcn6JHyhR88vM3jsL/AAXRn6gWtxfFAaJYE5oY2VCNzdmeOqB0Pjfuisob0W9E
- /U4+yONG3fya32e2Ufd2TlBZGUz5GFU4SwD3QrcmsMTmieAMSvNjFLE/zfBoChIMuOFm
- WoNuDkatTx/0v3v2DyTaiJOFVskbm3sYt/E7IwZt1RptPuKQuKDyxUtPeGLlDdR1svgJ
- M0rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744771463; x=1745376263;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=R2MYsACSSeUB/BeXja/fxS60DG+8fNSWXIDU1gcUfFM=;
- b=AzJG+yQjFpb8Z0AMi3CgaTADKqRcDTbrSsS7e8Mj40h2tWDjJkopmRXg095PlCzSkV
- ipcYZV/2zZZGuXuHL5DdXGPBHBVDmUaIZ1y2J/XSyFR0zjvluTEyWQO2yNNhR+0sAK6L
- NXAHB9wppbGklUk6jKXgknZQ05LlfYAvNsrsf8MiDRwzBdGqj3Pv5vKdI5FgUpi+j0o5
- PY0AgUBGuJ0tY26jdVg6IfDcJTSoigWb+EAEz+N6rzb4L+3zgl6R6ED+VjfHq/X3t2Nu
- hw8B+8T/BLXaejSwubn/m/SXdtqBA3p8dh+/fC4JXz5agoTYX75zKcm9eNPE0gttJXSw
- FiVg==
-X-Gm-Message-State: AOJu0YyYQWTecKKy1agUSPkz42dJjLtM6iuCpYuQuA5WI/sHD2QZXab5
- 6yHQmcuoaWZBKdSsuADY2OQTeFJvbfD7lbuj0ZCf0VSuMp3lMsV1pwjZ3V5EmvcSspwWf+LGh3k
- RDWuRbtdUOA==
-X-Google-Smtp-Source: AGHT+IE9R3+6JHd0kCc8Cv5BYEAuaWHRmgqgDJQb/MTvWObUJFBDCEOfnf6QrleysSUe2JZQ53PWh2q90rcndA==
-X-Received: from pjh15.prod.google.com ([2002:a17:90b:3f8f:b0:2fc:ccfe:368])
- (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:5483:b0:2ff:52e1:c49f with SMTP id
- 98e67ed59e1d1-3086415e1camr57000a91.26.1744771463184; 
- Tue, 15 Apr 2025 19:44:23 -0700 (PDT)
-Date: Tue, 15 Apr 2025 19:44:21 -0700
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250416024421.722135-1-joshwash@google.com>
-Subject: [PATCH] net/gve: support for gVNIC PCI revision 1 and later
-From: Joshua Washington <joshwash@google.com>
-To: Thomas Monjalon <thomas@monjalon.net>,
- Jeroen de Borst <jeroendb@google.com>, 
- Rushil Gupta <rushilg@google.com>, Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, Ziwei Xiao <ziweixiao@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 96D89406B8;
+	Wed, 16 Apr 2025 08:12:39 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E4F7340279
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 08:12:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1744783957;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=S1HgBlSUv7AK8C0dr3BLxOA+o071+pL7coWkCm/bZh0=;
+ b=OKUaEYRv7BvcqAa3ujTR7htYdVKva3kklUrSBsc8FwQNkN6wt5uKuTuLxLh+jOpr0DwM++
+ qgZxYBUGVEUSkVANdCY0gHYynWBzS9yPSI5jZtfFMGT29+vkJXkQXIwXYDx8lztZaS38B4
+ W7izo/zyBWU/h3Dm6Lcr2BTt8ACV/is=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-IDapRocQP3KaM6foKN-sAA-1; Wed,
+ 16 Apr 2025 02:12:31 -0400
+X-MC-Unique: IDapRocQP3KaM6foKN-sAA-1
+X-Mimecast-MFC-AGG-ID: IDapRocQP3KaM6foKN-sAA_1744783950
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A237C1800446; Wed, 16 Apr 2025 06:12:29 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.33.15])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id A7E7519560A3; Wed, 16 Apr 2025 06:12:25 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: joshwash@google.com, Chengwen Feng <fengchengwen@huawei.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>, Jie Hai <haijie1@huawei.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Gaetan Rivet <grive@u256.net>
+Subject: [PATCH] pci: define more standard register offsets
+Date: Wed, 16 Apr 2025 08:10:34 +0200
+Message-ID: <20250416061034.649607-1-david.marchand@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: B2kQvxHHHe5WHxgmVqON5U-4RTxOE31QNjlA4yiyzSE_1744783950
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,208 +68,283 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-gVNIC PCI revisions greater than 0 have support for setting the admin
-queue by its full address instead of using the PFN, which can be
-problematic if the system page size is not actually 4K as the device
-assumes. Beyond that, a new device/driver reset mechanism is introduced.
-Originally, a device reset was triggered by writing 0 to the admin queue
-PFN. Newer device reivisons set a status flag, instead.
+The PCI standard defines registers for:
+- subsystem id,
+- revision id,
+- status of the device,
+- vital product data,
 
-Signed-off-by: Joshua Washington <joshwash@google.com>
-Reviewed-by: Ziwei Xiao <ziweixiao@google.com>
+Add them to rte_pci.h and use in existing drivers.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- .mailmap                            |  1 +
- drivers/net/gve/base/gve.h          |  4 ++
- drivers/net/gve/base/gve_adminq.c   | 59 +++++++++++++++++++++++------
- drivers/net/gve/base/gve_osdep.h    | 18 +++++++++
- drivers/net/gve/base/gve_register.h | 10 +++++
- 5 files changed, 80 insertions(+), 12 deletions(-)
+ drivers/dma/hisilicon/hisi_dmadev.c |  3 +--
+ drivers/dma/hisilicon/hisi_dmadev.h |  1 -
+ drivers/net/bnxt/bnxt_ethdev.c      |  8 ++++----
+ drivers/net/bnxt/bnxt_util.h        |  2 --
+ drivers/net/cxgbe/base/adapter.h    | 17 +++++++++--------
+ drivers/net/hns3/hns3_common.c      |  5 ++---
+ drivers/net/hns3/hns3_ethdev.h      |  5 +----
+ drivers/net/intel/e1000/em_rxtx.c   | 17 ++++++-----------
+ drivers/raw/ntb/ntb_hw_intel.c      |  5 ++---
+ drivers/raw/ntb/ntb_hw_intel.h      |  3 ---
+ lib/pci/rte_pci.h                   | 10 ++++++++++
+ 11 files changed, 35 insertions(+), 41 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index d8439b79ce..f18f6eaefb 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1831,6 +1831,7 @@ Zhiyong Yang <zhiyong.yang@intel.com>
- Zhuobin Huang <zobin1999@gmail.com>
- Zi Hu <huzilucky@gmail.com>
- Zijie Pan <zijie.pan@6wind.com>
-+Ziwei Xiao <ziweixiao@google.com>
- Ziyang Xuan <xuanziyang2@huawei.com>
- Ziye Yang <ziye.yang@intel.com>
- Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@linaro.org>
-diff --git a/drivers/net/gve/base/gve.h b/drivers/net/gve/base/gve.h
-index 9c58fc4238..0c5f5e9ce4 100644
---- a/drivers/net/gve/base/gve.h
-+++ b/drivers/net/gve/base/gve.h
-@@ -14,6 +14,8 @@
- #endif
+diff --git a/drivers/dma/hisilicon/hisi_dmadev.c b/drivers/dma/hisilicon/hisi_dmadev.c
+index fdd2fa225f..019c4a8189 100644
+--- a/drivers/dma/hisilicon/hisi_dmadev.c
++++ b/drivers/dma/hisilicon/hisi_dmadev.c
+@@ -883,8 +883,7 @@ hisi_dma_check_revision(struct rte_pci_device *pci_dev, const char *name,
+ 	uint8_t revision;
+ 	int ret;
  
- #define GVE_DEV_ID		0x0042
-+#define GVE_PCI_REV_OFFSET	0x8
-+#define GVE_PCI_REV_SIZE	1
+-	ret = rte_pci_read_config(pci_dev, &revision, 1,
+-				  HISI_DMA_PCI_REVISION_ID_REG);
++	ret = rte_pci_read_config(pci_dev, &revision, 1, RTE_PCI_REVISION_ID);
+ 	if (ret != 1) {
+ 		HISI_DMA_LOG(ERR, "%s read PCI revision failed!", name);
+ 		return -EINVAL;
+diff --git a/drivers/dma/hisilicon/hisi_dmadev.h b/drivers/dma/hisilicon/hisi_dmadev.h
+index 786fe3cc0e..90301e6b00 100644
+--- a/drivers/dma/hisilicon/hisi_dmadev.h
++++ b/drivers/dma/hisilicon/hisi_dmadev.h
+@@ -24,7 +24,6 @@
  
- #define GVE_REG_BAR		0
- #define GVE_DB_BAR		2
-@@ -24,6 +26,8 @@
- /* PTYPEs are always 10 bits. */
- #define GVE_NUM_PTYPES		1024
+ #define PCI_VENDOR_ID_HUAWEI			0x19e5
+ #define HISI_DMA_DEVICE_ID			0xA122
+-#define HISI_DMA_PCI_REVISION_ID_REG		0x08
+ #define HISI_DMA_REVISION_HIP08B		0x21
  
-+#define GVE_ADMINQ_BUFFER_SIZE	4096
-+
- struct gve_irq_db {
- 	rte_be32_t id;
- } ____cacheline_aligned;
-diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index bcb983e4a0..2c5cfa2aa1 100644
---- a/drivers/net/gve/base/gve_adminq.c
-+++ b/drivers/net/gve/base/gve_adminq.c
-@@ -196,6 +196,16 @@ gve_process_device_options(struct gve_priv *priv,
- 	return 0;
+ #define HISI_DMA_MAX_HW_QUEUES			4
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 2f37f5aa10..8213ff9e4b 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -4585,10 +4585,10 @@ bnxt_check_fw_reset_done(struct bnxt *bp)
+ 	int rc;
+ 
+ 	do {
+-		rc = rte_pci_read_config(bp->pdev, &val, sizeof(val), PCI_SUBSYSTEM_ID_OFFSET);
++		rc = rte_pci_read_config(bp->pdev, &val, sizeof(val), RTE_PCI_SUBSYSTEM_ID);
+ 		if (rc < 0) {
+ 			PMD_DRV_LOG_LINE(ERR, "Failed to read PCI offset 0x%x",
+-				PCI_SUBSYSTEM_ID_OFFSET);
++				RTE_PCI_SUBSYSTEM_ID);
+ 			return rc;
+ 		}
+ 		if (val != 0xffff)
+@@ -4823,10 +4823,10 @@ void bnxt_dev_reset_and_resume(void *arg)
+ 	 * we can poll this config register immediately for the value to revert.
+ 	 */
+ 	if (bp->flags & BNXT_FLAG_FATAL_ERROR) {
+-		rc = rte_pci_read_config(bp->pdev, &val, sizeof(val), PCI_SUBSYSTEM_ID_OFFSET);
++		rc = rte_pci_read_config(bp->pdev, &val, sizeof(val), RTE_PCI_SUBSYSTEM_ID);
+ 		if (rc < 0) {
+ 			PMD_DRV_LOG_LINE(ERR, "Failed to read PCI offset 0x%x",
+-				PCI_SUBSYSTEM_ID_OFFSET);
++				RTE_PCI_SUBSYSTEM_ID);
+ 			return;
+ 		}
+ 		if (val == 0xffff) {
+diff --git a/drivers/net/bnxt/bnxt_util.h b/drivers/net/bnxt/bnxt_util.h
+index b265f5841b..416a6a2609 100644
+--- a/drivers/net/bnxt/bnxt_util.h
++++ b/drivers/net/bnxt/bnxt_util.h
+@@ -13,8 +13,6 @@
+ #define BIT_MASK(len) (BIT(len) - 1)
+ #endif /* BIT_MASK */
+ 
+-#define PCI_SUBSYSTEM_ID_OFFSET	0x2e
+-
+ int bnxt_check_zero_bytes(const uint8_t *bytes, int len);
+ void bnxt_eth_hw_addr_random(uint8_t *mac_addr);
+ uint8_t hweight32(uint32_t word32);
+diff --git a/drivers/net/cxgbe/base/adapter.h b/drivers/net/cxgbe/base/adapter.h
+index d490c6f158..207f3ecb88 100644
+--- a/drivers/net/cxgbe/base/adapter.h
++++ b/drivers/net/cxgbe/base/adapter.h
+@@ -512,14 +512,15 @@ static inline void t4_write_reg64(struct adapter *adapter, u32 reg_addr,
  }
  
-+static uint8_t
-+gve_get_pci_revision_id(struct gve_priv *priv)
-+{
-+	uint8_t rev_id;
+ #define PCI_CAP_ID_EXP          RTE_PCI_CAP_ID_EXP
+-#define PCI_EXP_DEVCTL          0x0008  /* Device control */
+-#define PCI_EXP_DEVCTL2         40      /* Device Control 2 */
+-#define PCI_EXP_DEVCTL_EXT_TAG  0x0100  /* Extended Tag Field Enable */
+-#define PCI_EXP_DEVCTL_PAYLOAD  0x00E0  /* Max payload */
+-#define PCI_CAP_ID_VPD          0x03    /* Vital Product Data */
+-#define PCI_VPD_ADDR            2       /* Address to access (15 bits!) */
+-#define PCI_VPD_ADDR_F          0x8000  /* Write 0, 1 indicates completion */
+-#define PCI_VPD_DATA            4       /* 32-bits of data returned here */
++#define PCI_EXP_DEVCTL          RTE_PCI_EXP_DEVCTL
++#define PCI_EXP_DEVCTL_EXT_TAG  RTE_PCI_EXP_DEVCTL_EXT_TAG
++#define PCI_EXP_DEVCTL_PAYLOAD  RTE_PCI_EXP_DEVCTL_PAYLOAD
++#define PCI_EXP_DEVCTL2         RTE_PCI_EXP_DEVCTL2
 +
-+	rte_pci_read_config(priv->pci_dev, &rev_id, GVE_PCI_REV_SIZE,
-+			    GVE_PCI_REV_OFFSET);
-+	return rev_id;
-+}
-+
- int gve_adminq_alloc(struct gve_priv *priv)
- {
- 	priv->adminq = gve_alloc_dma_mem(&priv->adminq_dma_mem, PAGE_SIZE);
-@@ -221,8 +231,19 @@ int gve_adminq_alloc(struct gve_priv *priv)
- 	priv->adminq_get_ptype_map_cnt = 0;
++#define PCI_CAP_ID_VPD          RTE_PCI_CAP_ID_VPD
++#define PCI_VPD_ADDR            RTE_PCI_VPD_ADDR
++#define PCI_VPD_ADDR_F          RTE_PCI_VPD_ADDR_F
++#define PCI_VPD_DATA            RTE_PCI_VPD_DATA
  
- 	/* Setup Admin queue with the device */
--	iowrite32be(priv->adminq_dma_mem.pa / PAGE_SIZE,
--		    &priv->reg_bar0->adminq_pfn);
-+	if (gve_get_pci_revision_id(priv) < 0x1) { /* Use AQ PFN. */
-+		iowrite32be(priv->adminq_dma_mem.pa / PAGE_SIZE,
-+			    &priv->reg_bar0->adminq_pfn);
-+	} else { /* Use full AQ address. */
-+		iowrite16be(GVE_ADMINQ_BUFFER_SIZE,
-+			    &priv->reg_bar0->adminq_length);
-+		iowrite32be(priv->adminq_dma_mem.pa >> 32,
-+			    &priv->reg_bar0->adminq_base_address_hi);
-+		iowrite32be(priv->adminq_dma_mem.pa,
-+			    &priv->reg_bar0->adminq_base_address_lo);
-+		iowrite32be(GVE_DRIVER_STATUS_RUN_MASK,
-+			    &priv->reg_bar0->driver_status);
-+	}
+ /**
+  * t4_os_pci_write_cfg4 - 32-bit write to PCI config space
+diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
+index 25a45212be..1ad04444d0 100644
+--- a/drivers/net/hns3/hns3_common.c
++++ b/drivers/net/hns3/hns3_common.c
+@@ -944,9 +944,8 @@ hns3_get_pci_revision_id(struct hns3_hw *hw, uint8_t *revision_id)
  
- 	gve_set_admin_queue_ok(priv);
- 	return 0;
-@@ -233,16 +254,30 @@ void gve_adminq_release(struct gve_priv *priv)
- 	int i = 0;
- 
- 	/* Tell the device the adminq is leaving */
--	iowrite32be(0x0, &priv->reg_bar0->adminq_pfn);
--	while (ioread32be(&priv->reg_bar0->adminq_pfn)) {
--		/* If this is reached the device is unrecoverable and still
--		 * holding memory. Continue looping to avoid memory corruption,
--		 * but WARN so it is visible what is going on.
--		 */
--		if (i == GVE_MAX_ADMINQ_RELEASE_CHECK)
--			PMD_DRV_LOG(WARNING, "Unrecoverable platform error!");
--		i++;
--		msleep(GVE_ADMINQ_SLEEP_LEN);
-+	if (gve_get_pci_revision_id(priv) < 0x1) {
-+		iowrite32be(0x0, &priv->reg_bar0->adminq_pfn);
-+		while (ioread32be(&priv->reg_bar0->adminq_pfn)) {
-+			/* If this is reached the device is unrecoverable and still
-+			 * holding memory. Continue looping to avoid memory corruption,
-+			 * but WARN so it is visible what is going on.
-+			 */
-+			if (i == GVE_MAX_ADMINQ_RELEASE_CHECK)
-+				PMD_DRV_LOG(WARNING,
-+					    "Unrecoverable platform error!");
-+			i++;
-+			msleep(GVE_ADMINQ_SLEEP_LEN);
-+		}
-+	} else {
-+		iowrite32be(GVE_DRIVER_STATUS_RESET_MASK,
-+			    &priv->reg_bar0->driver_status);
-+		while (!(ioread32be(&priv->reg_bar0->device_status)
-+			 & GVE_DEVICE_STATUS_DEVICE_IS_RESET)) {
-+			if (i == GVE_MAX_ADMINQ_RELEASE_CHECK)
-+				PMD_DRV_LOG(WARNING,
-+					    "Unrecoverable platform error!");
-+			i++;
-+			msleep(GVE_ADMINQ_SLEEP_LEN);
-+		}
+ 	eth_dev = &rte_eth_devices[hw->data->port_id];
+ 	pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
+-	ret = rte_pci_read_config(pci_dev, &revision, HNS3_PCI_REVISION_ID_LEN,
+-				  HNS3_PCI_REVISION_ID);
+-	if (ret != HNS3_PCI_REVISION_ID_LEN) {
++	ret = rte_pci_read_config(pci_dev, &revision, 1, RTE_PCI_REVISION_ID);
++	if (ret != 1) {
+ 		hns3_err(hw, "failed to read pci revision id, ret = %d", ret);
+ 		return -EIO;
  	}
- 	gve_clear_device_rings_ok(priv);
- 	gve_clear_device_resources_ok(priv);
-diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
-index d9c82c43e3..5eb33930cd 100644
---- a/drivers/net/gve/base/gve_osdep.h
-+++ b/drivers/net/gve/base/gve_osdep.h
-@@ -130,18 +130,36 @@ writeb(u8 value, volatile void *addr)
- 	rte_write8(value, addr);
+diff --git a/drivers/net/hns3/hns3_ethdev.h b/drivers/net/hns3/hns3_ethdev.h
+index 7824503bb8..085a83773f 100644
+--- a/drivers/net/hns3/hns3_ethdev.h
++++ b/drivers/net/hns3/hns3_ethdev.h
+@@ -32,10 +32,7 @@
+ #define HNS3_DEV_ID_100G_VF			0xA22E
+ #define HNS3_DEV_ID_100G_RDMA_PFC_VF		0xA22F
+ 
+-/* PCI Config offsets */
+-#define HNS3_PCI_REVISION_ID			0x08
+-#define HNS3_PCI_REVISION_ID_LEN		1
+-
++/* Revision IDs */
+ #define PCI_REVISION_ID_HIP08_B			0x21
+ #define PCI_REVISION_ID_HIP09_A			0x30
+ 
+diff --git a/drivers/net/intel/e1000/em_rxtx.c b/drivers/net/intel/e1000/em_rxtx.c
+index df5fbb7823..e3d8967a5c 100644
+--- a/drivers/net/intel/e1000/em_rxtx.c
++++ b/drivers/net/intel/e1000/em_rxtx.c
+@@ -59,11 +59,6 @@
+ #define E1000_TX_OFFLOAD_NOTSUP_MASK \
+ 		(RTE_MBUF_F_TX_OFFLOAD_MASK ^ E1000_TX_OFFLOAD_MASK)
+ 
+-/* PCI offset for querying configuration status register */
+-#define PCI_CFG_STATUS_REG                 0x06
+-#define FLUSH_DESC_REQUIRED               0x100
+-
+-
+ /**
+  * Structure associated with each descriptor of the RX ring of a RX queue.
+  */
+@@ -2107,26 +2102,26 @@ em_flush_desc_rings(struct rte_eth_dev *dev)
+ 			fextnvm11 | E1000_FEXTNVM11_DISABLE_MULR_FIX);
+ 	tdlen = E1000_READ_REG(hw, E1000_TDLEN(0));
+ 	ret = rte_pci_read_config(pci_dev, &pci_cfg_status,
+-		   sizeof(pci_cfg_status), PCI_CFG_STATUS_REG);
++		   sizeof(pci_cfg_status), RTE_PCI_STATUS);
+ 	if (ret < 0) {
+ 		PMD_DRV_LOG(ERR, "Failed to read PCI offset 0x%x",
+-			    PCI_CFG_STATUS_REG);
++			    RTE_PCI_STATUS);
+ 		return;
+ 	}
+ 
+ 	/* do nothing if we're not in faulty state, or if the queue is empty */
+-	if ((pci_cfg_status & FLUSH_DESC_REQUIRED) && tdlen) {
++	if ((pci_cfg_status & RTE_PCI_STATUS_PARITY) && tdlen) {
+ 		/* flush desc ring */
+ 		e1000_flush_tx_ring(dev);
+ 		ret = rte_pci_read_config(pci_dev, &pci_cfg_status,
+-				sizeof(pci_cfg_status), PCI_CFG_STATUS_REG);
++				sizeof(pci_cfg_status), RTE_PCI_STATUS);
+ 		if (ret < 0) {
+ 			PMD_DRV_LOG(ERR, "Failed to read PCI offset 0x%x",
+-					PCI_CFG_STATUS_REG);
++					RTE_PCI_STATUS);
+ 			return;
+ 		}
+ 
+-		if (pci_cfg_status & FLUSH_DESC_REQUIRED)
++		if (pci_cfg_status & RTE_PCI_STATUS_PARITY)
+ 			e1000_flush_rx_ring(dev);
+ 	}
  }
+diff --git a/drivers/raw/ntb/ntb_hw_intel.c b/drivers/raw/ntb/ntb_hw_intel.c
+index 9b4465176a..956f411ea3 100644
+--- a/drivers/raw/ntb/ntb_hw_intel.c
++++ b/drivers/raw/ntb/ntb_hw_intel.c
+@@ -145,9 +145,8 @@ intel_ntb4_check_ppd(struct ntb_hw *hw)
+ 	int ret;
  
-+static __rte_always_inline void
-+writew(u16 value, volatile void *addr)
-+{
-+	rte_write16(value, addr);
-+}
-+
- static __rte_always_inline void
- writel(u32 value, volatile void *addr)
- {
- 	rte_write32(value, addr);
- }
+ 	ret = rte_pci_read_config(hw->pci_dev, &revision_id,
+-				  NTB_PCI_DEV_REVISION_ID_LEN,
+-				  NTB_PCI_DEV_REVISION_ID_REG);
+-	if (ret != NTB_PCI_DEV_REVISION_ID_LEN) {
++				  1, RTE_PCI_REVISION_ID);
++	if (ret != 1) {
+ 		NTB_LOG(ERR, "Cannot get NTB PCI Device Revision ID.");
+ 		return -EIO;
+ 	}
+diff --git a/drivers/raw/ntb/ntb_hw_intel.h b/drivers/raw/ntb/ntb_hw_intel.h
+index 9587104f80..e6bf4a29d5 100644
+--- a/drivers/raw/ntb/ntb_hw_intel.h
++++ b/drivers/raw/ntb/ntb_hw_intel.h
+@@ -9,9 +9,6 @@
+ #define NTB_PCI_DEV_REVISION_ICX_MIN	0x02
+ #define NTB_PCI_DEV_REVISION_ICX_MAX	0x0F
  
-+static __rte_always_inline u16
-+ioread16be(const volatile void *addr)
-+{
-+	return rte_be_to_cpu_16(rte_read16(addr));
-+}
-+
- static __rte_always_inline u32
- ioread32be(const volatile void *addr)
- {
- 	return rte_be_to_cpu_32(rte_read32(addr));
- }
+-#define NTB_PCI_DEV_REVISION_ID_REG	0x08
+-#define NTB_PCI_DEV_REVISION_ID_LEN	1
+-
+ /* Ntb control and link status */
+ #define NTB_CTL_CFG_LOCK		1
+ #define NTB_CTL_DISABLE			2
+diff --git a/lib/pci/rte_pci.h b/lib/pci/rte_pci.h
+index 9a50a12142..9d04978a0f 100644
+--- a/lib/pci/rte_pci.h
++++ b/lib/pci/rte_pci.h
+@@ -35,7 +35,9 @@ extern "C" {
+ #define RTE_PCI_DEVICE_ID	0x02	/* 16 bits */
+ #define RTE_PCI_COMMAND		0x04	/* 16 bits */
+ #define RTE_PCI_STATUS		0x06	/* 16 bits */
++#define RTE_PCI_REVISION_ID	0x08	/* 8 bits */
+ #define RTE_PCI_BASE_ADDRESS_0	0x10	/* 32 bits */
++#define RTE_PCI_SUBSYSTEM_ID	0x2e	/* 32 bits */
+ #define RTE_PCI_CAPABILITY_LIST	0x34	/* 32 bits */
  
-+static __rte_always_inline void
-+iowrite16be(u16 value, volatile void *addr)
-+{
-+	writew(rte_cpu_to_be_16(value), addr);
-+}
-+
- static __rte_always_inline void
- iowrite32be(u32 value, volatile void *addr)
- {
-diff --git a/drivers/net/gve/base/gve_register.h b/drivers/net/gve/base/gve_register.h
-index c674167f31..d3be475744 100644
---- a/drivers/net/gve/base/gve_register.h
-+++ b/drivers/net/gve/base/gve_register.h
-@@ -19,11 +19,21 @@ struct gve_registers {
- 	__be32	adminq_event_counter;
- 	u8	reserved[3];
- 	u8	driver_version;
-+	__be32	adminq_base_address_hi;
-+	__be32	adminq_base_address_lo;
-+	__be16	adminq_length;
- };
+ /* PCI Command Register (RTE_PCI_COMMAND) */
+@@ -45,12 +47,14 @@ extern "C" {
  
- enum gve_device_status_flags {
- 	GVE_DEVICE_STATUS_RESET_MASK		= BIT(1),
- 	GVE_DEVICE_STATUS_LINK_STATUS_MASK	= BIT(2),
- 	GVE_DEVICE_STATUS_REPORT_STATS_MASK	= BIT(3),
-+	GVE_DEVICE_STATUS_DEVICE_IS_RESET	= BIT(4),
- };
+ /* PCI Status Register (RTE_PCI_STATUS) */
+ #define RTE_PCI_STATUS_CAP_LIST		0x10	/* Support Capability List */
++#define RTE_PCI_STATUS_PARITY		0x100	/* Detected parity error */
+ 
+ /* Base addresses (RTE_PCI_BASE_ADDRESS_*) */
+ #define RTE_PCI_BASE_ADDRESS_SPACE_IO	0x01
+ 
+ /* Capability registers (RTE_PCI_CAPABILITY_LIST) */
+ #define RTE_PCI_CAP_ID_PM		0x01	/* Power Management */
++#define RTE_PCI_CAP_ID_VPD		0x03	/* Vital Product Data */
+ #define RTE_PCI_CAP_ID_MSI		0x05	/* Message Signalled Interrupts */
+ #define RTE_PCI_CAP_ID_VNDR		0x09	/* Vendor-Specific */
+ #define RTE_PCI_CAP_ID_EXP		0x10	/* PCI Express */
+@@ -64,10 +68,16 @@ extern "C" {
+ #define RTE_PCI_PM_CTRL_PME_ENABLE	0x0100	/* PME pin enable */
+ #define RTE_PCI_PM_CTRL_PME_STATUS	0x8000	/* PME pin status */
+ 
++/* Vital Product Data (RTE_PCI_CAP_ID_VPD) */
++#define RTE_PCI_VPD_ADDR		2	/* Address to access (15 bits!) */
++#define RTE_PCI_VPD_ADDR_F		0x8000	/* Write 0, 1 indicates completion */
++#define RTE_PCI_VPD_DATA		4	/* 32-bits of data returned here */
 +
-+enum gve_driver_status_flags {
-+	GVE_DRIVER_STATUS_RUN_MASK		= BIT(0),
-+	GVE_DRIVER_STATUS_RESET_MASK		= BIT(1),
-+};
-+
- #endif /* _GVE_REGISTER_H_ */
+ /* PCI Express capability registers (RTE_PCI_CAP_ID_EXP) */
+ #define RTE_PCI_EXP_TYPE_RC_EC		0xa	/* Root Complex Event Collector */
+ #define RTE_PCI_EXP_DEVCTL		0x08	/* Device Control */
+ #define RTE_PCI_EXP_DEVCTL_PAYLOAD	0x00e0	/* Max_Payload_Size */
++#define RTE_PCI_EXP_DEVCTL_EXT_TAG	0x0100	/* Extended Tag Field Enable */
+ #define RTE_PCI_EXP_DEVCTL_READRQ	0x7000	/* Max_Read_Request_Size */
+ #define RTE_PCI_EXP_DEVCTL_BCR_FLR	0x8000	/* Bridge Configuration Retry / FLR */
+ #define RTE_PCI_EXP_DEVSTA		0x0a	/* Device Status */
 -- 
-2.49.0.604.gff1f9ca942-goog
+2.49.0
 
