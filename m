@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FDAC369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B29C369BD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:04:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0372C42798;
-	Wed, 16 Apr 2025 16:00:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D8DD41153;
+	Wed, 16 Apr 2025 16:00:59 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 368EF41148
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0272841156
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:51 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 83340E11AD;
- Wed, 16 Apr 2025 18:00:49 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 83340E11AD
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 4B958E1149;
+ Wed, 16 Apr 2025 18:00:50 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 4B958E1149
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
  s=default; t=1744812050;
- bh=2fmrBYMZuhoDc7Sfx7a82ve5IZ1dXkHq+oImsO9jhu4=;
+ bh=81Shlm5tXel93tA85MlmCfDCQvvqFwXbkqmm1DOIMmw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=6HL625jvO6zTmIgoYObBzTY/5wLzYtqhj9g2NiW1Zs9Z13QaDYYAsfRXKmc6TFzHa
- Sp0kX0+d/hsMKeeaTSaJN3qQiev1qzm7AI0+QhS+fDnukqiM+bwqmke731xmUADv8h
- 4ActT5Yzx75sibT38gR2vTyQW6bX9Fwt0+b3iacBy5/V4SesH/lLhahtcnSk+M+mzL
- rTZ00+jjx+HDRRW2wLu6PdPwr5FmmZYENu7JktQDtancqYcZPU5LnGYsgijxFAA5VS
- M56sPftz3CYRjIWPvFCXifYoSm6XGQ8CVJWQkdI2B3UP4HP4OYKLTRYgBizYdLLCDv
- LPKGam/mG+uJg==
+ b=LlNudo0DyQ+lxl5S2sV1NIirxYKL6Nlr8fbUYT+4vTctigc1aqIyH0dXWEi8hMv9O
+ JEm/XIvhoYuJOZjGIzeOb+e1JJuK6uRkvkllk3MVVJtrqTB6W503l8I2xIDLGSuPyl
+ Wtb3sOjIOc2qVLYU4OurmXdy61XUf41q/HkZQiOPgwGstFoGCa3hJUrLrQgcU2F4Pi
+ efztB3X1IYB3ka4f4Lp7gfi7SeJvIWKEj5RGaK/dlEO2lBB2PMlMUie8SJoFqd5Sa/
+ fgLE8TZa3qs8k1TQ20aZmVZSlbB68PcpO+UA2FbSw6XftKmdIX+3ku37raL9FXvQR8
+ JRbdzXVDz2PDQ==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 25/46] common/sfc_efx/base: decode netport link state on probe
- path
-Date: Wed, 16 Apr 2025 17:59:55 +0400
-Message-Id: <20250416140016.36127-26-ivan.malov@arknetworks.am>
+Subject: [PATCH 26/46] common/sfc_efx/base: fill in loopback modes on netport
+ probe
+Date: Wed, 16 Apr 2025 17:59:56 +0400
+Message-Id: <20250416140016.36127-27-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,134 +56,243 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Retrieved properties form the advertised PHY capability mask.
-The new code also helps to check support for autonegotiation.
+Indicate support for some of the loopback modes known to EFX.
+Such have been technology-dependent, but, on netport capable
+NICs, they are backed by new generic modes, that are tied to
+the stages in the processing chain where loopback can happen.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>
 ---
- drivers/common/sfc_efx/base/efx_impl.h | 12 +++++
- drivers/common/sfc_efx/base/efx_np.c   | 67 ++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
+ drivers/common/sfc_efx/base/efx.h      |   1 +
+ drivers/common/sfc_efx/base/efx_impl.h |   2 +
+ drivers/common/sfc_efx/base/efx_np.c   | 159 ++++++++++++++++++++++++-
+ 3 files changed, 160 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
+index 2c6af5f6b5..7ffa1f4cbd 100644
+--- a/drivers/common/sfc_efx/base/efx.h
++++ b/drivers/common/sfc_efx/base/efx.h
+@@ -655,6 +655,7 @@ typedef enum efx_link_mode_e {
+ 	EFX_LINK_25000FDX,
+ 	EFX_LINK_50000FDX,
+ 	EFX_LINK_100000FDX,
++	EFX_LINK_200000FDX,
+ 	EFX_LINK_NMODES
+ } efx_link_mode_t;
+ 
 diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
-index 4952f45121..a3e60fd19b 100644
+index a3e60fd19b..3a9c6fe3fd 100644
 --- a/drivers/common/sfc_efx/base/efx_impl.h
 +++ b/drivers/common/sfc_efx/base/efx_impl.h
-@@ -1899,6 +1899,18 @@ extern		void
- efx_np_detach(
- 	__in	efx_nic_t *enp);
+@@ -382,6 +382,8 @@ typedef struct efx_port_s {
+ 	const efx_phy_ops_t	*ep_epop;
  
-+typedef struct efx_np_link_state_s {
-+	uint32_t		enls_adv_cap_mask;
-+	boolean_t		enls_an_supported;
-+} efx_np_link_state_t;
-+
-+LIBEFX_INTERNAL
-+extern	__checkReturn	efx_rc_t
-+efx_np_link_state(
-+	__in		efx_nic_t *enp,
-+	__in		efx_np_handle_t nph,
-+	__out		efx_np_link_state_t *lsp);
-+
- #ifdef	__cplusplus
- }
- #endif
+ 	efx_np_handle_t		ep_np_handle;
++	efx_qword_t		ep_np_loopback_cap_mask;
++	uint8_t			ep_np_cap_data_raw[MC_CMD_ETH_AN_FIELDS_LEN];
+ } efx_port_t;
+ 
+ typedef struct efx_mon_ops_s {
 diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 6a36abf5c9..4d69e620d9 100644
+index 4d69e620d9..2e4cdcf863 100644
 --- a/drivers/common/sfc_efx/base/efx_np.c
 +++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -273,6 +273,61 @@ efx_np_get_fixed_port_props(
- fail2:
- 	EFSYS_PROBE(fail2);
+@@ -232,7 +232,9 @@ static	__checkReturn		efx_rc_t
+ efx_np_get_fixed_port_props(
+ 	__in			efx_nic_t *enp,
+ 	__in			efx_np_handle_t nph,
+-	__out_opt		uint32_t *sup_cap_maskp)
++	__out_opt		uint8_t *sup_cap_rawp,
++	__out_opt		uint32_t *sup_cap_maskp,
++	__out_opt		efx_qword_t *loopback_cap_maskp)
+ {
+ 	EFX_MCDI_DECLARE_BUF(payload,
+ 	    MC_CMD_GET_FIXED_PORT_PROPERTIES_IN_LEN,
+@@ -268,6 +270,18 @@ efx_np_get_fixed_port_props(
+ 	if (sup_cap_maskp != NULL)
+ 		efx_np_cap_hw_data_to_sw_mask(cap_data, sup_cap_maskp);
  
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
++	if (sup_cap_rawp != NULL) {
++		memcpy(sup_cap_rawp,
++		    MCDI_OUT2(req, const uint8_t,
++			    GET_FIXED_PORT_PROPERTIES_OUT_ABILITIES),
++		    MC_CMD_GET_FIXED_PORT_PROPERTIES_OUT_ABILITIES_LEN);
++	}
 +
-+	__checkReturn	efx_rc_t
-+efx_np_link_state(
-+	__in		efx_nic_t *enp,
-+	__in		efx_np_handle_t nph,
-+	__out		efx_np_link_state_t *lsp)
++	if (loopback_cap_maskp != NULL) {
++		*loopback_cap_maskp = *MCDI_OUT2(req, efx_qword_t,
++		    GET_FIXED_PORT_PROPERTIES_OUT_V2_LOOPBACK_MODES_MASK_V2);
++	}
++
+ 	return (0);
+ 
+ fail2:
+@@ -333,6 +347,141 @@ efx_np_link_state(
+ 	return (rc);
+ }
+ 
++#if EFSYS_OPT_LOOPBACK
++static	__checkReturn		efx_rc_t
++efx_np_sw_link_mode_to_cap(
++	__in			efx_link_mode_t link_mode,
++	__out			uint16_t *capp)
 +{
-+	EFX_MCDI_DECLARE_BUF(payload,
-+	    MC_CMD_LINK_STATE_IN_LEN,
-+	    MC_CMD_LINK_STATE_OUT_V3_LEN);
-+	efx_mcdi_req_t req;
-+	efx_rc_t rc;
-+
-+	req.emr_out_length = MC_CMD_LINK_STATE_OUT_V3_LEN;
-+	req.emr_in_length = MC_CMD_LINK_STATE_IN_LEN;
-+	req.emr_cmd = MC_CMD_LINK_STATE;
-+	req.emr_out_buf = payload;
-+	req.emr_in_buf = payload;
-+
-+	MCDI_IN_SET_DWORD(req, LINK_STATE_IN_PORT_HANDLE, nph);
-+
-+	efx_mcdi_execute(enp, &req);
-+
-+	if (req.emr_rc != 0) {
-+		rc = req.emr_rc;
-+		goto fail1;
++	switch (link_mode) {
++	case EFX_LINK_1000FDX:
++		*capp = EFX_PHY_CAP_1000FDX;
++		break;
++	case EFX_LINK_10000FDX:
++		*capp = EFX_PHY_CAP_10000FDX;
++		break;
++	case EFX_LINK_40000FDX:
++		*capp = EFX_PHY_CAP_40000FDX;
++		break;
++	case EFX_LINK_25000FDX:
++		*capp = EFX_PHY_CAP_25000FDX;
++		break;
++	case EFX_LINK_50000FDX:
++		*capp = EFX_PHY_CAP_50000FDX;
++		break;
++	case EFX_LINK_100000FDX:
++		*capp = EFX_PHY_CAP_100000FDX;
++		break;
++	case EFX_LINK_200000FDX:
++		*capp = EFX_PHY_CAP_200000FDX;
++		break;
++	default:
++		return (EINVAL);
 +	}
-+
-+	if (req.emr_out_length_used < MC_CMD_LINK_STATE_OUT_V3_LEN) {
-+		rc = EMSGSIZE;
-+		goto fail2;
-+	}
-+
-+	memset(lsp, 0, sizeof (*lsp));
-+
-+	if (MCDI_OUT_DWORD(req, LINK_STATE_OUT_V2_LOCAL_AN_SUPPORT) !=
-+	    MC_CMD_AN_NONE)
-+		lsp->enls_an_supported = B_TRUE;
-+
-+	if (lsp->enls_an_supported != B_FALSE)
-+		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
-+
-+	efx_np_cap_hw_data_to_sw_mask(
-+	    MCDI_OUT2(req, const uint8_t, LINK_STATE_OUT_ADVERTISED_ABILITIES),
-+	    &lsp->enls_adv_cap_mask);
 +
 +	return (0);
++}
 +
-+fail2:
-+	EFSYS_PROBE(fail2);
++static					void
++efx_np_cap_enum_sw_to_hw(
++	__in_ecount(hw_sw_map_nentries)	const struct efx_np_cap_map *hw_sw_map,
++	__in				unsigned int hw_sw_map_nentries,
++	__in_bcount(hw_cap_data_nbytes)	const uint8_t *hw_cap_data,
++	__in				size_t hw_cap_data_nbytes,
++	__in				uint16_t enum_sw,
++	__out				boolean_t *supportedp,
++	__out_opt			uint16_t *enum_hwp)
++{
++	FOREACH_SUP_CAP(hw_sw_map, hw_sw_map_nentries,
++	    hw_cap_data, hw_cap_data_nbytes) {
++		if (hw_sw_map->encm_sw != enum_sw)
++			continue;
 +
- fail1:
- 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
- 	return (rc);
-@@ -284,6 +339,7 @@ efx_np_attach(
- {
- 	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
- 	efx_port_t *epp = &(enp->en_port);
-+	efx_np_link_state_t ls;
- 	efx_rc_t rc;
- 
- 	if (efx_np_supported(enp) == B_FALSE)
-@@ -315,8 +371,19 @@ efx_np_attach(
++		if (enum_hwp != NULL)
++			*enum_hwp = hw_sw_map->encm_hw;
++
++		*supportedp = B_TRUE;
++		return;
++	}
++
++	*supportedp = B_FALSE;
++}
++
++/*
++ * Convert the given EFX PHY capability enum value to the HW counterpart,
++ * provided that the capability is supported by the HW, where the latter
++ * is detected from the given fraction of raw HW netport capability data.
++ *
++ * As the mapping of a capability from EFX to HW can be one to many, use
++ * the first supported HW capability bit, in accordance with the HW data.
++ */
++#define	EFX_NP_CAP_ENUM_SW_TO_HW(						\
++	    _hw_sw_cap_map, _hw_cap_section, _hw_cap_data,		\
++	    _enum_sw, _supportedp, _enum_hwp)				\
++	efx_np_cap_enum_sw_to_hw((_hw_sw_cap_map),			\
++	    EFX_ARRAY_SIZE(_hw_sw_cap_map),				\
++	    MCDI_STRUCT_MEMBER((_hw_cap_data), const uint8_t,		\
++		    MC_CMD_##_hw_cap_section),				\
++	    MC_CMD_##_hw_cap_section##_LEN, (_enum_sw),			\
++	    (_supportedp), (_enum_hwp))
++
++static				void
++efx_np_assign_loopback_props(
++	__in			efx_nic_t *enp)
++{
++	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
++	efx_port_t *epp = &(enp->en_port);
++	efx_qword_t lbm_off;
++	efx_qword_t lbm_sup;
++	unsigned int i;
++
++	EFX_ZERO_QWORD(lbm_off);
++	EFX_SET_QWORD_BIT(lbm_off, EFX_LOOPBACK_OFF);
++
++	/*
++	 * Netport MCDI capable NICs support loopback modes which are
++	 * generalisations of the existing modes that specify roughly
++	 * where in the processing chain the loopback occurs, without
++	 * the need to refer to the specific technology. Provide some
++	 * to users under the guise of older technology-specific ones.
++	 *
++	 * FIXME: correct this if need be and augment with more modes.
++	 */
++	EFX_ZERO_QWORD(lbm_sup);
++	EFX_SET_QWORD_BIT(lbm_sup, EFX_LOOPBACK_OFF);
++
++	if (EFX_TEST_QWORD_BIT(epp->ep_np_loopback_cap_mask,
++			    MC_CMD_LOOPBACK_V2_AUTO))
++		EFX_SET_QWORD_BIT(lbm_sup, EFX_LOOPBACK_DATA);
++
++	if (EFX_TEST_QWORD_BIT(epp->ep_np_loopback_cap_mask,
++			    MC_CMD_LOOPBACK_V2_POST_PCS))
++		EFX_SET_QWORD_BIT(lbm_sup, EFX_LOOPBACK_PCS);
++
++	for (i = 0; i < EFX_ARRAY_SIZE(encp->enc_loopback_types); ++i) {
++		boolean_t supported = B_FALSE;
++		uint16_t cap_enum_sw;
++		efx_rc_t rc;
++
++		rc = efx_np_sw_link_mode_to_cap(i, &cap_enum_sw);
++		if (rc != 0) {
++			/* No support for this link mode => no loopbacks. */
++			encp->enc_loopback_types[i] = lbm_off;
++			continue;
++		}
++
++		EFX_NP_CAP_ENUM_SW_TO_HW(efx_np_cap_map_tech,
++		    ETH_AN_FIELDS_TECH_MASK, epp->ep_np_cap_data_raw,
++		    cap_enum_sw, &supported, NULL);
++
++		if (supported != B_FALSE)
++			encp->enc_loopback_types[i] = lbm_sup;
++		else
++			encp->enc_loopback_types[i] = lbm_off;
++	}
++}
++#endif /* EFSYS_OPT_LOOPBACK */
++
+ 	__checkReturn	efx_rc_t
+ efx_np_attach(
+ 	__in		efx_nic_t *enp)
+@@ -367,7 +516,8 @@ efx_np_attach(
+ 	 * don't necessarily have access to these details.
+ 	 */
+ 	rc = efx_np_get_fixed_port_props(enp, epp->ep_np_handle,
+-		    &epp->ep_phy_cap_mask);
++		    epp->ep_np_cap_data_raw, &epp->ep_phy_cap_mask,
++		    &epp->ep_np_loopback_cap_mask);
  	if (rc != 0)
  		goto fail2;
  
-+	rc = efx_np_link_state(enp, epp->ep_np_handle, &ls);
-+	if (rc != 0)
-+		goto fail3;
+@@ -379,6 +529,11 @@ efx_np_attach(
+ 		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
+ 
+ 	epp->ep_adv_cap_mask = ls.enls_adv_cap_mask;
 +
-+	if (ls.enls_an_supported != B_FALSE)
-+		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
++#if EFSYS_OPT_LOOPBACK
++	efx_np_assign_loopback_props(enp);
++#endif /* EFSYS_OPT_LOOPBACK */
 +
-+	epp->ep_adv_cap_mask = ls.enls_adv_cap_mask;
  	return (0);
  
-+fail3:
-+	EFSYS_PROBE(fail3);
-+
- fail2:
- 	EFSYS_PROBE(fail2);
- 
+ fail3:
 -- 
 2.39.5
 
