@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349F7C369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78E2C369C2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE3BA410D3;
-	Wed, 16 Apr 2025 16:00:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CDE9410DF;
+	Wed, 16 Apr 2025 16:00:44 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id E5BEF40EAB
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A758A40ED9
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:37 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 394B5E1149;
+ by agw.arknetworks.am (Postfix) with ESMTPSA id F3A81E11BF;
  Wed, 16 Apr 2025 18:00:36 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 394B5E1149
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am F3A81E11BF
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812036;
- bh=8+zCDRtCSS/Gin0Zu3Dio3kSNl91F91LNKh2kYGJJ0Q=;
+ s=default; t=1744812037;
+ bh=9GqSQS6fYlxYjLWCwtIMMzwvqHrP90iCjpoISbzH3AA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=LH9ITWbMb3WGsRl5XRnMOqvXTWrADOPPnKjM+oZzNNWNIP3WUuyF4U19GccJWVIOk
- Yfv+LXeRF57qck0ZjgOcRiG2nO0lF0qMS8VLjseTAtOpzReKUERgNgqiRr5QRZZ4Hw
- L6e5V/0dE/LYN+YVzWNite/jvNTQNlRHOo9s3w1SnOK+GZHYfE2tigeFf0aSaUu/+v
- DEcjAA9wkBM0HZaKUrbGEtwzKbvalBOTZ6A/fT/S09EKXmJXafq5VIqgUsmLIgNPLV
- ClcdL+q/vgqeUickZInkt4bLvALKThvSaJlzAqKWuXK/FnZlpeKuDjh70j/+bFvzvC
- MijPnOEL57ucw==
+ b=U9lk34d35ovICuwvgPwzso6dZW3d/RkRTQ5ePnDq4PWvZcR4s+cF1nAozPFT5XvBi
+ 2391B7EGjad45dcKqR14YdBLsYIg06INjJ0EDHGH5tVqWSqCgaCCFvqx7bhvg2aV8l
+ /WL1MXb/dfBRH+RMRc3Uf/T0iak90owm7qBTC7ihg25wJF8CfrcWOVK9g2Vo0UeUHP
+ NVxd46CLiGmBVxfYiQeyLdTeMjEyeGbIpb6iBRom/KGTosMDHoxMz0z9uMqIwy10Lr
+ l1Wgrl+/sKoG6hlGCZUQ+kWwgTHEWl+cvwIPmi4zaeq21XWQV4I0eYoLO8y/0tlGVw
+ QKjev0Vhhvaaw==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,9 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 13/46] drivers: enable support for AMD Solarflare X4 adapter
- family
-Date: Wed, 16 Apr 2025 17:59:43 +0400
-Message-Id: <20250416140016.36127-14-ivan.malov@arknetworks.am>
+Subject: [PATCH 14/46] common/sfc_efx/base: update X4 BAR layout and PCI IDs
+Date: Wed, 16 Apr 2025 17:59:44 +0400
+Message-Id: <20250416140016.36127-15-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,53 +55,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
+From: Andy Moreton <andy.moreton@amd.com>
 
-Enable support for Medford4 (X4) adapters X4522 and X4542.
+The BAR layout on X4 has changed to put MSI-X (and CXL) in BAR0/1,
+and moved the main memory BAR to be BAR2/3. Update definitions to
+match the updated hardware and cmodel.
 
-Signed-off-by: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
-Reviewed-by: Andy Moreton <andy.moreton@amd.com>
+Also add PCI IDs used for functions which only have the full feature
+(X2 style) datapath engines, and do not support the low latency
+datapath engine.
+
+Signed-off-by: Andy Moreton <andy.moreton@amd.com>
+Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
 ---
- drivers/common/sfc_efx/efsys.h | 4 ++--
- drivers/net/sfc/sfc_ethdev.c   | 3 +++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/common/sfc_efx/base/efx.h     | 12 +++++++++---
+ drivers/common/sfc_efx/base/efx_nic.c |  2 ++
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/efsys.h b/drivers/common/sfc_efx/efsys.h
-index e63cbdbe8f..ea68d3bd1a 100644
---- a/drivers/common/sfc_efx/efsys.h
-+++ b/drivers/common/sfc_efx/efsys.h
-@@ -125,8 +125,8 @@ prefetch_read_once(const volatile void *addr)
- #define EFSYS_OPT_MEDFORD2 1
- /* Enable Riverhead support */
- #define EFSYS_OPT_RIVERHEAD 1
--/* Disable Medford4 support (not supported yet) */
--#define EFSYS_OPT_MEDFORD4 0
-+/* Enable Medford4 support */
-+#define EFSYS_OPT_MEDFORD4 1
+diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
+index 442dfa0830..a9ed3f423f 100644
+--- a/drivers/common/sfc_efx/base/efx.h
++++ b/drivers/common/sfc_efx/base/efx.h
+@@ -173,9 +173,15 @@ efx_family_probe_bar(
+ #define	EFX_PCI_DEVID_RIVERHEAD			0x0100
+ #define	EFX_PCI_DEVID_RIVERHEAD_VF		0x1100
  
- #ifdef RTE_DEBUG_COMMON_SFC_EFX
- #define EFSYS_OPT_CHECK_REG 1
-diff --git a/drivers/net/sfc/sfc_ethdev.c b/drivers/net/sfc/sfc_ethdev.c
-index 82fbdbae9c..3e57c902df 100644
---- a/drivers/net/sfc/sfc_ethdev.c
-+++ b/drivers/net/sfc/sfc_ethdev.c
-@@ -2829,6 +2829,7 @@ sfc_eth_dev_set_ops(struct rte_eth_dev *dev)
- 	case EFX_FAMILY_HUNTINGTON:
- 	case EFX_FAMILY_MEDFORD:
- 	case EFX_FAMILY_MEDFORD2:
-+	case EFX_FAMILY_MEDFORD4:
- 		avail_caps |= SFC_DP_HW_FW_CAP_EF10;
- 		avail_caps |= SFC_DP_HW_FW_CAP_RX_EFX;
- 		avail_caps |= SFC_DP_HW_FW_CAP_TX_EFX;
-@@ -3301,6 +3302,8 @@ static const struct rte_pci_id pci_id_sfc_efx_map[] = {
- 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD_VF) },
- 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD2) },
- 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD2_VF) },
-+	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4) },
-+	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4_VF) },
- 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_XILINX, EFX_PCI_DEVID_RIVERHEAD) },
- 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_XILINX, EFX_PCI_DEVID_RIVERHEAD_VF) },
- 	{ .vendor_id = 0 /* sentinel */ }
++/*
++ * Medford4 has low latency (LL) and full feature (FF) datapath engines.
++ * Some Medford4 functions have FF and LL datapath, others only have FF.
++ */
+ #define	EFX_PCI_DEVID_MEDFORD4_PF_UNINIT	0x0C13
+-#define	EFX_PCI_DEVID_MEDFORD4			0x0C03
+-#define	EFX_PCI_DEVID_MEDFORD4_VF		0x1C03
++#define	EFX_PCI_DEVID_MEDFORD4			0x0C03	/* X4 PF, FF+LL */
++#define	EFX_PCI_DEVID_MEDFORD4_VF		0x1C03	/* X4 VF, FF+LL */
++#define	EFX_PCI_DEVID_MEDFORD4_NO_LL		0x2C03	/* X4 PF, FF only */
++#define	EFX_PCI_DEVID_MEDFORD4_NO_LL_VF		0x3C03	/* X4 VF, FF only */
+ 
+ #define	EFX_MEM_BAR_SIENA			2
+ 
+@@ -190,7 +196,7 @@ efx_family_probe_bar(
+ /* FIXME Fix it when memory bar is fixed in FPGA image. It must be 0. */
+ #define	EFX_MEM_BAR_RIVERHEAD			2
+ 
+-#define	EFX_MEM_BAR_MEDFORD4			0
++#define	EFX_MEM_BAR_MEDFORD4			2
+ 
+ /* Error codes */
+ 
+diff --git a/drivers/common/sfc_efx/base/efx_nic.c b/drivers/common/sfc_efx/base/efx_nic.c
+index 5bcc0a04ff..1ec684da40 100644
+--- a/drivers/common/sfc_efx/base/efx_nic.c
++++ b/drivers/common/sfc_efx/base/efx_nic.c
+@@ -87,6 +87,8 @@ efx_family(
+ 			 */
+ 		case EFX_PCI_DEVID_MEDFORD4:
+ 		case EFX_PCI_DEVID_MEDFORD4_VF:
++		case EFX_PCI_DEVID_MEDFORD4_NO_LL:
++		case EFX_PCI_DEVID_MEDFORD4_NO_LL_VF:
+ 			*efp = EFX_FAMILY_MEDFORD4;
+ 			*membarp = EFX_MEM_BAR_MEDFORD4;
+ 			return (0);
 -- 
 2.39.5
 
