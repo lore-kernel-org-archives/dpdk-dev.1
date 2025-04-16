@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1FAC369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21ABC369BD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:04:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22272427AA;
-	Wed, 16 Apr 2025 16:01:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 196FC427A6;
+	Wed, 16 Apr 2025 16:01:03 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 7AF374278C
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 401F141149
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:56 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id C4F0AE0872;
- Wed, 16 Apr 2025 18:00:54 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am C4F0AE0872
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 8E68BE11BF;
+ Wed, 16 Apr 2025 18:00:55 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 8E68BE11BF
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812055;
- bh=H0nzR2XXV8nyD0hQcRZ8t5I0pcokaUPWxg1ndpdohCw=;
+ s=default; t=1744812056;
+ bh=KMHp9DKdxP/bZn3WcNMEs063LnbQz/ApYezCags3O0M=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=CH0ya7fRh9Dn+QakWXhLzAvdfYo5NBXoAHwE8OizGSg8loKM7P+ZnHHSoaNSNGU/0
- WWI1wwSUUUiwQvaHGwBJuDWzW0Xp5Lcjmg4s2oz99gEUQcpXOwx6LD/1Vz8sTfu/pS
- xm82Yllwrs42LoiU0ImWJzgbh+82wtj4mU59eL3pxvjEX0/SDxdig3eduYCbHK5/A6
- THKuyPTaXk1Bh8o1AX7FOColZzqtrDV9aAEqxUtlMnpJETMTsuaCw98ev21V7AZ0qi
- cuLc4N+cwYYoF2oIsiVIKtmBqrfywkdQ4k6pFupWXwZr/F7WdOay9nOJLEWQHn6v92
- 2Rdw9MTM7zZ8Q==
+ b=rlG7FQZO+WnYFrWMMKYcjhFcoeOB/KL0qn0qmXKIMGywKBrYHcbO71IBvup9oh6Tp
+ nwpZ26VbyhrzZ95j97VnXSqOwMHKNMYObVDfKIjYltqAkBEKEjWU5QKnTCya5jTtes
+ JCUU8Rc6R9VEx2rHE1OIT1/5krib/lAOlOjYevgOv9QN46a/GbvfCXNDgEKqNxA6is
+ aiY82WfCEln/ZwgwkaIdUcsjVqJpzuEHyfE0Oer1g/0DcmXC4+WckVymg48Et025+J
+ pw5UGd2NgBB1oL4qmbYuPVBH0UAdT2uvW2pDf3845BVBZItDfr0zuTX2zwIziU7xJt
+ iBok0kTjuJN/Q==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 29/46] common/sfc_efx/base: provide PHY link get method on
+Subject: [PATCH 30/46] common/sfc_efx/base: implement PHY link control for
  Medford4
-Date: Wed, 16 Apr 2025 17:59:59 +0400
-Message-Id: <20250416140016.36127-30-ivan.malov@arknetworks.am>
+Date: Wed, 16 Apr 2025 18:00:00 +0400
+Message-Id: <20250416140016.36127-31-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,342 +56,463 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-To do so, make use of new netport MCDI supported by Medford4.
+Use new MCDI to select loopback, speed, flow control and FEC.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>
 ---
- drivers/common/sfc_efx/base/ef10_phy.c      |  8 ++
- drivers/common/sfc_efx/base/efx.h           |  4 +-
- drivers/common/sfc_efx/base/efx_impl.h      | 19 ++++
- drivers/common/sfc_efx/base/efx_np.c        | 98 ++++++++++++++++++++-
- drivers/common/sfc_efx/base/efx_phy.c       |  2 +-
- drivers/common/sfc_efx/base/medford4_impl.h | 12 +++
- drivers/common/sfc_efx/base/medford4_phy.c  | 62 +++++++++++++
- 7 files changed, 202 insertions(+), 3 deletions(-)
+ drivers/common/sfc_efx/base/ef10_impl.h     |   6 +
+ drivers/common/sfc_efx/base/ef10_phy.c      |   2 +-
+ drivers/common/sfc_efx/base/efx_impl.h      |  11 +
+ drivers/common/sfc_efx/base/efx_np.c        | 277 ++++++++++++++++++++
+ drivers/common/sfc_efx/base/efx_phy.c       |   2 +-
+ drivers/common/sfc_efx/base/medford4_impl.h |   5 +
+ drivers/common/sfc_efx/base/medford4_phy.c  |  65 +++++
+ 7 files changed, 366 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/ef10_phy.c b/drivers/common/sfc_efx/base/ef10_phy.c
-index d458199c7a..8c3de273b4 100644
---- a/drivers/common/sfc_efx/base/ef10_phy.c
-+++ b/drivers/common/sfc_efx/base/ef10_phy.c
-@@ -118,6 +118,8 @@ mcdi_phy_decode_link_mode(
+diff --git a/drivers/common/sfc_efx/base/ef10_impl.h b/drivers/common/sfc_efx/base/ef10_impl.h
+index b872ec626c..df4fd77833 100644
+--- a/drivers/common/sfc_efx/base/ef10_impl.h
++++ b/drivers/common/sfc_efx/base/ef10_impl.h
+@@ -814,6 +814,12 @@ mcdi_phy_decode_link_mode(
+ 	__out			unsigned int *fcntlp,
+ 	__out			efx_phy_fec_type_t *fecp);
  
- 	if (!up)
- 		*link_modep = EFX_LINK_DOWN;
-+	else if (speed == 200000 && fd)
-+		*link_modep = EFX_LINK_200000FDX;
- 	else if (speed == 100000 && fd)
- 		*link_modep = EFX_LINK_100000FDX;
- 	else if (speed == 50000 && fd)
-@@ -160,6 +162,12 @@ mcdi_phy_decode_link_mode(
- 	case MC_CMD_FEC_RS:
- 		*fecp = EFX_PHY_FEC_RS;
- 		break;
-+	case MC_CMD_FEC_IEEE_RS_INT:
-+		*fecp = EFX_PHY_FEC_IEEE_RS_INT;
-+		break;
-+	case MC_CMD_FEC_ETCS_RS_LL:
-+		*fecp = EFX_PHY_FEC_ETCS_RS_LL;
-+		break;
- 	default:
- 		EFSYS_PROBE1(mc_pcol_error, int, fec);
- 		*fecp = EFX_PHY_FEC_NONE;
-diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
-index 7ffa1f4cbd..6ca108cffe 100644
---- a/drivers/common/sfc_efx/base/efx.h
-+++ b/drivers/common/sfc_efx/base/efx.h
-@@ -4010,7 +4010,9 @@ efx_nic_set_fw_subvariant(
- typedef enum efx_phy_fec_type_e {
- 	EFX_PHY_FEC_NONE = 0,
- 	EFX_PHY_FEC_BASER,
--	EFX_PHY_FEC_RS
-+	EFX_PHY_FEC_RS,
-+	EFX_PHY_FEC_IEEE_RS_INT,
-+	EFX_PHY_FEC_ETCS_RS_LL,
- } efx_phy_fec_type_t;
- 
- #define EFX_PHY_CAP_FEC_BIT(_fec_bit) (1U << EFX_PHY_CAP_##_fec_bit)
-diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
-index 16b7f7640d..63ff112194 100644
---- a/drivers/common/sfc_efx/base/efx_impl.h
-+++ b/drivers/common/sfc_efx/base/efx_impl.h
-@@ -1907,7 +1907,14 @@ efx_np_detach(
- 
- typedef struct efx_np_link_state_s {
- 	uint32_t		enls_adv_cap_mask;
-+	uint32_t		enls_lp_cap_mask;
-+	efx_loopback_type_t	enls_loopback;
-+	uint32_t		enls_speed;
-+	uint8_t			enls_fec;
-+
- 	boolean_t		enls_an_supported;
-+	boolean_t		enls_fd;
-+	boolean_t		enls_up;
- } efx_np_link_state_t;
- 
- LIBEFX_INTERNAL
-@@ -1917,6 +1924,18 @@ efx_np_link_state(
- 	__in		efx_np_handle_t nph,
- 	__out		efx_np_link_state_t *lsp);
- 
-+typedef struct efx_np_mac_state_s {
-+	uint32_t	enms_fcntl;
-+	boolean_t	enms_up;
-+} efx_np_mac_state_t;
-+
 +LIBEFX_INTERNAL
 +extern	__checkReturn	efx_rc_t
-+efx_np_mac_state(
++efx_mcdi_phy_set_led(
++	__in		efx_nic_t *enp,
++	__in		efx_phy_led_mode_t phy_led_mode);
++
+ #if EFSYS_OPT_BIST
+ 
+ LIBEFX_INTERNAL
+diff --git a/drivers/common/sfc_efx/base/ef10_phy.c b/drivers/common/sfc_efx/base/ef10_phy.c
+index 8c3de273b4..114543e156 100644
+--- a/drivers/common/sfc_efx/base/ef10_phy.c
++++ b/drivers/common/sfc_efx/base/ef10_phy.c
+@@ -473,7 +473,7 @@ efx_mcdi_phy_set_link(
+ 	return (rc);
+ }
+ 
+-static	__checkReturn	efx_rc_t
++	__checkReturn	efx_rc_t
+ efx_mcdi_phy_set_led(
+ 	__in		efx_nic_t *enp,
+ 	__in		efx_phy_led_mode_t phy_led_mode)
+diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
+index 63ff112194..15cf62506e 100644
+--- a/drivers/common/sfc_efx/base/efx_impl.h
++++ b/drivers/common/sfc_efx/base/efx_impl.h
+@@ -1936,6 +1936,17 @@ efx_np_mac_state(
+ 	__in		efx_np_handle_t nph,
+ 	__out		efx_np_mac_state_t *msp);
+ 
++LIBEFX_INTERNAL
++extern	__checkReturn	efx_rc_t
++efx_np_link_ctrl(
 +	__in		efx_nic_t *enp,
 +	__in		efx_np_handle_t nph,
-+	__out		efx_np_mac_state_t *msp);
++	__in		const uint8_t *cap_mask_sup_raw,
++	__in		efx_link_mode_t loopback_link_mode,
++	__in		efx_loopback_type_t loopback_mode,
++	__in		uint32_t cap_mask_sw,
++	__in		boolean_t fcntl_an);
 +
  #ifdef	__cplusplus
  }
  #endif
 diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 2e4cdcf863..1b67fd16aa 100644
+index 1b67fd16aa..03d49b9c78 100644
 --- a/drivers/common/sfc_efx/base/efx_np.c
 +++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -301,7 +301,9 @@ efx_np_link_state(
- 	EFX_MCDI_DECLARE_BUF(payload,
- 	    MC_CMD_LINK_STATE_IN_LEN,
- 	    MC_CMD_LINK_STATE_OUT_V3_LEN);
-+	uint32_t status_flags;
- 	efx_mcdi_req_t req;
-+	uint32_t v3_flags;
- 	efx_rc_t rc;
+@@ -650,3 +650,280 @@ efx_np_mac_state(
  
- 	req.emr_out_length = MC_CMD_LINK_STATE_OUT_V3_LEN;
-@@ -324,12 +326,44 @@ efx_np_link_state(
- 		goto fail2;
- 	}
- 
-+	status_flags = MCDI_OUT_DWORD(req, LINK_STATE_OUT_STATUS_FLAGS_LO);
-+	v3_flags = MCDI_OUT_DWORD(req, LINK_STATE_OUT_V3_FLAGS);
- 	memset(lsp, 0, sizeof (*lsp));
- 
--	if (MCDI_OUT_DWORD(req, LINK_STATE_OUT_V2_LOCAL_AN_SUPPORT) !=
-+	if (status_flags & (1U << MC_CMD_LINK_STATUS_FLAGS_AN_ABLE) &&
-+	    MCDI_OUT_DWORD(req, LINK_STATE_OUT_V2_LOCAL_AN_SUPPORT) !=
- 	    MC_CMD_AN_NONE)
- 		lsp->enls_an_supported = B_TRUE;
- 
-+	if (v3_flags & (1U << MC_CMD_LINK_STATE_OUT_V3_FULL_DUPLEX_LBN))
-+		lsp->enls_fd = B_TRUE;
-+
-+	if (status_flags & (1U << MC_CMD_LINK_STATUS_FLAGS_LINK_UP))
-+		lsp->enls_up = B_TRUE;
-+
-+	lsp->enls_speed = MCDI_OUT_DWORD(req, LINK_STATE_OUT_V3_LINK_SPEED);
-+	lsp->enls_fec = MCDI_OUT_BYTE(req, LINK_STATE_OUT_FEC_MODE);
-+
-+#if EFSYS_OPT_LOOPBACK
-+	/* FIXME: correct this if need be and augment with more modes. */
-+	switch (MCDI_OUT_BYTE(req, LINK_STATE_OUT_LOOPBACK)) {
-+	case MC_CMD_LOOPBACK_V2_NONE:
-+		lsp->enls_loopback = EFX_LOOPBACK_OFF;
-+		break;
-+	case MC_CMD_LOOPBACK_V2_AUTO:
-+		lsp->enls_loopback = EFX_LOOPBACK_DATA;
-+		break;
-+	case MC_CMD_LOOPBACK_V2_POST_PCS:
-+		lsp->enls_loopback = EFX_LOOPBACK_PCS;
-+		break;
-+	default:
-+		rc = EINVAL;
-+		goto fail3;
-+	}
-+#else /* ! EFSYS_OPT_LOOPBACK */
-+	_NOTE(ARGUNUSED(lbp))
-+#endif /* EFSYS_OPT_LOOPBACK */
-+
- 	if (lsp->enls_an_supported != B_FALSE)
- 		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
- 
-@@ -337,8 +371,21 @@ efx_np_link_state(
- 	    MCDI_OUT2(req, const uint8_t, LINK_STATE_OUT_ADVERTISED_ABILITIES),
- 	    &lsp->enls_adv_cap_mask);
- 
-+	if (lsp->enls_an_supported != B_FALSE)
-+		lsp->enls_lp_cap_mask |= 1U << EFX_PHY_CAP_AN;
-+
-+	efx_np_cap_hw_data_to_sw_mask(
-+	    MCDI_OUT2(req, const uint8_t,
-+		    LINK_STATE_OUT_LINK_PARTNER_ABILITIES),
-+	    &lsp->enls_lp_cap_mask);
-+
- 	return (0);
- 
-+#if EFSYS_OPT_LOOPBACK
-+fail3:
-+	EFSYS_PROBE(fail3);
-+#endif /* EFSYS_OPT_LOOPBACK */
-+
- fail2:
- 	EFSYS_PROBE(fail2);
- 
-@@ -554,3 +601,52 @@ efx_np_detach(
- 	if (efx_np_supported(enp) == B_FALSE)
- 		return;
+ 	return (rc);
  }
 +
++static					void
++efx_np_cap_mask_sw_to_hw(
++	__in_ecount(hw_sw_map_nentries)	const struct efx_np_cap_map *hw_sw_map,
++	__in				unsigned int hw_sw_map_nentries,
++	__in_bcount(hw_cap_data_nbytes)	const uint8_t *hw_cap_data,
++	__in				size_t hw_cap_data_nbytes,
++	__in				uint32_t mask_sw,
++	__out				uint8_t *mask_hwp)
++{
++	FOREACH_SUP_CAP(hw_sw_map, hw_sw_map_nentries,
++	    hw_cap_data, hw_cap_data_nbytes) {
++		uint32_t flag_sw = 1U << hw_sw_map->encm_sw;
++
++		if ((mask_sw & flag_sw) != flag_sw)
++			continue;
++
++		mask_hwp[CAP_BYTE(hw_sw_map)] |= CAP_FLAG(hw_sw_map);
++		mask_sw &= ~(flag_sw);
++	}
++}
++
++/*
++ * Convert the given EFX PHY capability mask to the HW representation.
++ *
++ * The mapping of a capability from EFX to HW can be one to many. Use
++ * the given fraction of raw HW netport capability data to choose the
++ * first supported HW capability bit encountered for a particular EFX
++ * one and proceed with handling the next EFX bit, if any, afterwards.
++ *
++ * Do not check the input mask for leftover bits (unknown to EFX), as
++ * inputs should have been validated by efx_phy_adv_cap_set() already.
++ */
++#define	EFX_NP_CAP_MASK_SW_TO_HW(					\
++	    _hw_sw_cap_map, _hw_cap_section, _hw_cap_data,		\
++	    _mask_sw, _mask_hwp)					\
++	efx_np_cap_mask_sw_to_hw((_hw_sw_cap_map),			\
++	    EFX_ARRAY_SIZE(_hw_sw_cap_map),				\
++	    MCDI_STRUCT_MEMBER((_hw_cap_data), const uint8_t,		\
++		    MC_CMD_##_hw_cap_section),				\
++	    MC_CMD_##_hw_cap_section##_LEN,				\
++	    (_mask_sw), (_mask_hwp))
++
++static					void
++efx_np_cap_sw_mask_to_hw_enum(
++	__in_ecount(hw_sw_map_nentries)	const struct efx_np_cap_map *hw_sw_map,
++	__in				unsigned int hw_sw_map_nentries,
++	__in_bcount(hw_cap_data_nbytes)	const uint8_t *hw_cap_data,
++	__in				size_t hw_cap_data_nbytes,
++	__in				uint32_t mask_sw,
++	__out				boolean_t *supportedp,
++	__out_opt			uint16_t *enum_hwp)
++{
++	unsigned int sw_nflags_req = 0;
++	unsigned int sw_nflags_sup = 0;
++	uint32_t sw_check_mask = 0;
++	unsigned int i;
++
++	for (i = 0; i < hw_sw_map_nentries; ++i) {
++		uint32_t flag_sw = 1U << hw_sw_map->encm_sw;
++		unsigned int byte_idx = CAP_BYTE(hw_sw_map);
++		uint8_t flag_hw = CAP_FLAG(hw_sw_map);
++
++		if (byte_idx >= hw_cap_data_nbytes) {
++			++(hw_sw_map);
++			continue;
++		}
++
++		if ((mask_sw & flag_sw) == flag_sw) {
++			if ((sw_check_mask & flag_sw) == 0)
++				++(sw_nflags_req);
++
++			sw_check_mask |= flag_sw;
++
++			if ((hw_cap_data[byte_idx] & flag_hw) == flag_hw) {
++				mask_sw &= ~(flag_sw);
++
++				if (enum_hwp != NULL)
++					*enum_hwp = hw_sw_map->encm_hw;
++			}
++		}
++
++		++(hw_sw_map);
++	}
++
++	/*
++	 * FIXME: in the absence of autonegotiation capability, drivers
++	 * may still pass multiple capability bits of the same category.
++	 * That is supposed to work on EF10; do not enforce below check.
++	 */
++#if 0
++	if (sw_nflags_req != 1) {
++		/*
++		 * The mask must contain exactly one relevant
++		 * flag which represents some specific choice.
++		 */
++		*supportedp = B_FALSE;
++		return;
++	}
++#endif
++
++	if (sw_check_mask != 0 && (mask_sw & sw_check_mask) == sw_check_mask) {
++		/* Failed to select the enum by at least one capability bit. */
++		*supportedp = B_FALSE;
++		return;
++	}
++
++	*supportedp = B_TRUE;
++}
++
++/*
++ * Convert (conceivably) the only EFX capability bit of the given mask to
++ * the HW enum value, provided that the capability is supported by the HW,
++ * where the latter follows from the given fraction of HW capability data.
++ */
++#define	EFX_NP_CAP_SW_MASK_TO_HW_ENUM(					\
++	    _hw_sw_cap_map, _hw_cap_section, _hw_cap_data,		\
++	    _mask_sw, _supportedp, _enum_hwp)				\
++	efx_np_cap_sw_mask_to_hw_enum((_hw_sw_cap_map),			\
++	    EFX_ARRAY_SIZE(_hw_sw_cap_map),				\
++	    MCDI_STRUCT_MEMBER((_hw_cap_data), const uint8_t,		\
++		    MC_CMD_##_hw_cap_section),				\
++	    MC_CMD_##_hw_cap_section##_LEN, (_mask_sw),			\
++	    (_supportedp), (_enum_hwp))
++
 +	__checkReturn	efx_rc_t
-+efx_np_mac_state(
++efx_np_link_ctrl(
 +	__in		efx_nic_t *enp,
 +	__in		efx_np_handle_t nph,
-+	__out		efx_np_mac_state_t *msp)
++	__in		const uint8_t *cap_data_raw,
++	__in		efx_link_mode_t loopback_link_mode,
++	__in		efx_loopback_type_t loopback_mode,
++	__in		uint32_t cap_mask_sw,
++	__in		boolean_t fcntl_an)
 +{
++	uint32_t flags = 1U << MC_CMD_LINK_FLAGS_IGNORE_MODULE_SEQ;
++	uint8_t loopback = MC_CMD_LOOPBACK_V2_NONE;
++	uint16_t link_tech = MC_CMD_ETH_TECH_NONE;
 +	EFX_MCDI_DECLARE_BUF(payload,
-+	    MC_CMD_MAC_STATE_IN_LEN,
-+	    MC_CMD_MAC_STATE_OUT_LEN);
++	    MC_CMD_LINK_CTRL_IN_LEN,
++	    MC_CMD_LINK_CTRL_OUT_LEN);
++	uint8_t *cap_mask_hw_pausep;
++	uint8_t *cap_mask_hw_techp;
++	uint16_t cap_enum_hw;
++	boolean_t supported;
 +	efx_mcdi_req_t req;
++	boolean_t phy_an;
 +	efx_rc_t rc;
++	uint8_t fec;
 +
-+	req.emr_out_length = MC_CMD_MAC_STATE_OUT_LEN;
-+	req.emr_in_length = MC_CMD_MAC_STATE_IN_LEN;
-+	req.emr_cmd = MC_CMD_MAC_STATE;
++	req.emr_out_length = MC_CMD_LINK_CTRL_OUT_LEN;
++	req.emr_in_length = MC_CMD_LINK_CTRL_IN_LEN;
++	req.emr_cmd = MC_CMD_LINK_CTRL;
 +	req.emr_out_buf = payload;
 +	req.emr_in_buf = payload;
 +
-+	MCDI_IN_SET_DWORD(req, MAC_STATE_IN_PORT_HANDLE, nph);
++	MCDI_IN_SET_DWORD(req, LINK_CTRL_IN_PORT_HANDLE, nph);
++
++	cap_mask_hw_pausep = MCDI_IN2(req, uint8_t,
++	    LINK_CTRL_IN_ADVERTISED_PAUSE_ABILITIES_MASK);
++
++	cap_mask_hw_techp = MCDI_IN2(req, uint8_t,
++	    LINK_CTRL_IN_ADVERTISED_TECH_ABILITIES_MASK);
++
++	/* FIXME: correct this if need be and augment with more modes. */
++	if (loopback_mode != EFX_LOOPBACK_OFF) {
++#if EFSYS_OPT_LOOPBACK
++		uint16_t cap_enum_sw;
++
++		switch (loopback_mode) {
++		case EFX_LOOPBACK_DATA:
++			loopback = MC_CMD_LOOPBACK_V2_AUTO;
++			break;
++		case EFX_LOOPBACK_PCS:
++			loopback = MC_CMD_LOOPBACK_V2_POST_PCS;
++			break;
++		default:
++			rc = ENOTSUP;
++			goto fail1;
++		}
++
++		rc = efx_np_sw_link_mode_to_cap(loopback_link_mode,
++					    &cap_enum_sw);
++		if (rc != 0)
++			goto fail2;
++
++		EFX_NP_CAP_ENUM_SW_TO_HW(efx_np_cap_map_tech,
++		    ETH_AN_FIELDS_TECH_MASK, cap_data_raw, cap_enum_sw,
++		    &supported, &link_tech);
++
++		if (supported == B_FALSE) {
++			rc = ENOTSUP;
++			goto fail3;
++		}
++#else /* ! EFSYS_OPT_LOOPBACK */
++		rc = ENOTSUP;
++		goto fail1;
++#endif /* EFSYS_OPT_LOOPBACK */
++	} else if (cap_mask_sw & (1U << EFX_PHY_CAP_AN)) {
++		EFX_NP_CAP_MASK_SW_TO_HW(efx_np_cap_map_tech,
++		    ETH_AN_FIELDS_TECH_MASK, cap_data_raw, cap_mask_sw,
++		    cap_mask_hw_techp);
++
++		if (fcntl_an != B_FALSE) {
++			EFX_NP_CAP_MASK_SW_TO_HW(efx_np_cap_map_pause,
++			    ETH_AN_FIELDS_PAUSE_MASK, cap_data_raw, cap_mask_sw,
++			    cap_mask_hw_pausep);
++		}
++
++		flags |= 1U << MC_CMD_LINK_FLAGS_AUTONEG_EN;
++		link_tech = MC_CMD_ETH_TECH_AUTO;
++	} else {
++		EFX_NP_CAP_SW_MASK_TO_HW_ENUM(efx_np_cap_map_tech,
++		    ETH_AN_FIELDS_TECH_MASK, cap_data_raw, cap_mask_sw,
++		    &supported, &link_tech);
++
++		if (supported == B_FALSE) {
++			rc = ENOTSUP;
++			goto fail4;
++		}
++	}
++
++	/* The software mask may have no requested FEC bits. Default is NONE. */
++	cap_enum_hw = MC_CMD_FEC_NONE;
++
++	/*
++	 * Compared to older EF10 interface, in netport MCDI, FEC mode is a
++	 * single enum choice. For compatibility, do not enforce only single
++	 * requested FEC bit in the original mask.
++	 *
++	 * No requested FEC bits in the original mask gives supported=TRUE.
++	 */
++	EFX_NP_CAP_SW_MASK_TO_HW_ENUM(efx_np_cap_map_fec_req,
++	    ETH_AN_FIELDS_FEC_REQ, cap_data_raw, cap_mask_sw,
++	    &supported, &cap_enum_hw);
++
++	if ((cap_mask_sw & EFX_PHY_CAP_FEC_MASK) != 0 && supported == B_FALSE) {
++		rc = ENOTSUP;
++		goto fail5;
++	}
++
++	EFSYS_ASSERT(cap_enum_hw <= UINT8_MAX);
++	fec = cap_enum_hw;
++
++	MCDI_IN_SET_WORD(req, LINK_CTRL_IN_LINK_TECHNOLOGY, link_tech);
++	MCDI_IN_SET_DWORD(req, LINK_CTRL_IN_CONTROL_FLAGS, flags);
++	MCDI_IN_SET_BYTE(req, LINK_CTRL_IN_LOOPBACK, loopback);
++	MCDI_IN_SET_BYTE(req, LINK_CTRL_IN_FEC_MODE, fec);
 +
 +	efx_mcdi_execute(enp, &req);
 +
 +	if (req.emr_rc != 0) {
 +		rc = req.emr_rc;
-+		goto fail1;
++		goto fail6;
 +	}
 +
-+	if (req.emr_out_length_used < MC_CMD_MAC_STATE_OUT_LEN) {
-+		rc = EMSGSIZE;
-+		goto fail2;
-+	}
-+
-+	memset(msp, 0, sizeof (*msp));
-+
-+	if (MCDI_OUT_DWORD(req, MAC_STATE_OUT_MAC_FAULT_FLAGS) == 0)
-+		msp->enms_up = B_TRUE;
-+
-+	msp->enms_fcntl = MCDI_OUT_DWORD(req, MAC_STATE_OUT_FCNTL);
 +	return (0);
++
++fail6:
++	EFSYS_PROBE(fail6);
++
++fail5:
++	EFSYS_PROBE(fail5);
++
++fail4:
++	EFSYS_PROBE(fail4);
++
++fail3:
++	EFSYS_PROBE(fail3);
 +
 +fail2:
 +	EFSYS_PROBE(fail2);
 +
 +fail1:
 +	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+
 +	return (rc);
 +}
 diff --git a/drivers/common/sfc_efx/base/efx_phy.c b/drivers/common/sfc_efx/base/efx_phy.c
-index 537865767a..0f748e32a4 100644
+index 0f748e32a4..e3b9d20d59 100644
 --- a/drivers/common/sfc_efx/base/efx_phy.c
 +++ b/drivers/common/sfc_efx/base/efx_phy.c
-@@ -75,7 +75,7 @@ static const efx_phy_ops_t	__efx_phy_medford4_ops = {
- 	ef10_phy_reconfigure,		/* epo_reconfigure */
+@@ -72,7 +72,7 @@ static const efx_phy_ops_t	__efx_phy_rhead_ops = {
+ static const efx_phy_ops_t	__efx_phy_medford4_ops = {
+ 	medford4_phy_power,		/* epo_power */
+ 	NULL,				/* epo_reset */
+-	ef10_phy_reconfigure,		/* epo_reconfigure */
++	medford4_phy_reconfigure,	/* epo_reconfigure */
  	medford4_phy_verify,		/* epo_verify */
  	ef10_phy_oui_get,		/* epo_oui_get */
--	ef10_phy_link_state_get,	/* epo_link_state_get */
-+	medford4_phy_link_state_get,	/* epo_link_state_get */
- #if EFSYS_OPT_PHY_STATS
- 	ef10_phy_stats_update,		/* epo_stats_update */
- #endif	/* EFSYS_OPT_PHY_STATS */
+ 	medford4_phy_link_state_get,	/* epo_link_state_get */
 diff --git a/drivers/common/sfc_efx/base/medford4_impl.h b/drivers/common/sfc_efx/base/medford4_impl.h
-index ec8b3cec86..f24c9d1e6c 100644
+index f24c9d1e6c..795fd45bd4 100644
 --- a/drivers/common/sfc_efx/base/medford4_impl.h
 +++ b/drivers/common/sfc_efx/base/medford4_impl.h
-@@ -22,6 +22,18 @@ extern	__checkReturn	efx_rc_t
- medford4_phy_verify(
- 	__in		efx_nic_t *enp);
+@@ -34,6 +34,11 @@ medford4_phy_link_state_get(
+ 	__in			efx_nic_t *enp,
+ 	__out			efx_phy_link_state_t *eplsp);
  
 +LIBEFX_INTERNAL
-+extern	__checkReturn	efx_rc_t
-+medford4_phy_get_link(
-+	__in		efx_nic_t *enp,
-+	__out		ef10_link_state_t *elsp);
-+
-+LIBEFX_INTERNAL
 +extern	__checkReturn		efx_rc_t
-+medford4_phy_link_state_get(
-+	__in			efx_nic_t *enp,
-+	__out			efx_phy_link_state_t *eplsp);
++medford4_phy_reconfigure(
++	__in			efx_nic_t *enp);
 +
  #ifdef	__cplusplus
  }
  #endif
 diff --git a/drivers/common/sfc_efx/base/medford4_phy.c b/drivers/common/sfc_efx/base/medford4_phy.c
-index 3e6080b4de..6a61645384 100644
+index 6a61645384..cc4e77587b 100644
 --- a/drivers/common/sfc_efx/base/medford4_phy.c
 +++ b/drivers/common/sfc_efx/base/medford4_phy.c
-@@ -25,4 +25,66 @@ medford4_phy_verify(
- 	_NOTE(ARGUNUSED(enp))
+@@ -83,6 +83,71 @@ medford4_phy_link_state_get(
+ 	*eplsp = els.epls;
  	return (0);
- }
-+
-+	__checkReturn	efx_rc_t
-+medford4_phy_get_link(
-+	__in		efx_nic_t *enp,
-+	__out		ef10_link_state_t *elsp)
-+{
-+	efx_np_handle_t nph = enp->en_port.ep_np_handle;
-+	efx_np_link_state_t ls;
-+	efx_np_mac_state_t ms;
-+	uint32_t fcntl;
-+	efx_rc_t rc;
-+
-+	rc = efx_np_link_state(enp, nph, &ls);
-+	if (rc != 0)
-+		goto fail1;
-+
-+	elsp->epls.epls_adv_cap_mask = ls.enls_adv_cap_mask;
-+	elsp->epls.epls_lp_cap_mask = ls.enls_lp_cap_mask;
-+	elsp->els_loopback = ls.enls_loopback;
-+
-+	rc = efx_np_mac_state(enp, nph, &ms);
-+	if (rc != 0)
-+		goto fail2;
-+
-+	elsp->els_mac_up = ms.enms_up;
-+
-+	mcdi_phy_decode_link_mode(enp, ls.enls_fd, ls.enls_up, ls.enls_speed,
-+			    ms.enms_fcntl, ls.enls_fec,
-+			    &elsp->epls.epls_link_mode,
-+			    &elsp->epls.epls_fcntl,
-+			    &elsp->epls.epls_fec);
-+
-+	elsp->epls.epls_ld_cap_mask = 0;
-+	return (0);
-+
-+fail2:
-+	EFSYS_PROBE(fail2);
-+
+ 
 +fail1:
 +	EFSYS_PROBE1(fail1, efx_rc_t, rc);
 +	return (rc);
 +}
 +
 +	__checkReturn		efx_rc_t
-+medford4_phy_link_state_get(
-+	__in			efx_nic_t *enp,
-+	__out			efx_phy_link_state_t *eplsp)
++medford4_phy_reconfigure(
++	__in			efx_nic_t *enp)
 +{
-+	ef10_link_state_t els;
++	efx_link_mode_t loopback_link_mode;
++	efx_port_t *epp = &(enp->en_port);
++	efx_loopback_type_t loopback;
++	efx_phy_led_mode_t led;
++	boolean_t supported;
 +	efx_rc_t rc;
 +
-+	rc = medford4_phy_get_link(enp, &els);
++	rc = efx_mcdi_link_control_supported(enp, &supported);
 +	if (rc != 0)
 +		goto fail1;
 +
-+	*eplsp = els.epls;
++	if (supported == B_FALSE)
++		goto exit;
++
++#if EFSYS_OPT_LOOPBACK
++	loopback_link_mode = epp->ep_loopback_link_mode;
++	loopback = epp->ep_loopback_type;
++#else /* ! EFSYS_OPT_LOOPBACK */
++	loopback_link_mode = EFX_LINK_UNKNOWN;
++	loopback = EFX_LOOPBACK_OFF;
++#endif /* EFSYS_OPT_LOOPBACK */
++
++	rc = efx_np_link_ctrl(enp, epp->ep_np_handle, epp->ep_np_cap_data_raw,
++		    loopback_link_mode, loopback, epp->ep_adv_cap_mask,
++		    epp->ep_fcntl_autoneg);
++	if (rc != 0)
++		goto fail2;
++
++#if EFSYS_OPT_PHY_LED_CONTROL
++	led = epp->ep_phy_led_mode;
++#else /* ! EFSYS_OPT_PHY_LED_CONTROL */
++	led = EFX_PHY_LED_DEFAULT;
++#endif /* EFSYS_OPT_PHY_LED_CONTROL */
++
++	rc = efx_mcdi_phy_set_led(enp, led);
++	if (rc != 0) {
++		/*
++		 * If LED control is not supported by firmware, we can
++		 * silently ignore default mode set failure
++		 * (see FWRIVERHD-198).
++		 */
++		if (rc == EOPNOTSUPP && led == EFX_PHY_LED_DEFAULT)
++			goto exit;
++
++		goto fail3;
++	}
++
++exit:
 +	return (0);
 +
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
- #endif	/* EFSYS_OPT_MEDFORD4 */
++fail3:
++	EFSYS_PROBE(fail3);
++
++fail2:
++	EFSYS_PROBE(fail2);
++
+ fail1:
+ 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
+ 	return (rc);
 -- 
 2.39.5
 
