@@ -2,79 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EBCC369BA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 17:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D20C369BA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 17:37:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 824AB402E7;
-	Wed, 16 Apr 2025 19:36:41 +0200 (CEST)
-Received: from alln-iport-2.cisco.com (alln-iport-2.cisco.com [173.37.142.89])
- by mails.dpdk.org (Postfix) with ESMTP id D4E914025A
- for <dev@dpdk.org>; Wed, 16 Apr 2025 19:36:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=4311; q=dns/txt;
- s=iport01; t=1744825000; x=1746034600;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=wW4CWRqJkKbp3DJMxXF+svZQaGyMxyjT6VSBrL9yljc=;
- b=Ngcr6guyFt4CXchYXPmS7dOC5Z2NA7VnVanmQM1Z2GA5UE2KsUDg66YD
- yZ7bOwZ5Sibutywz1mQXyvC4YoFOpexQ2z90xLjxgWQ2L8b1+tHDJ3HwQ
- ZGyTf3tVmDqRMpPb/4Rciry8B0RjjdDxlOu3G7KF+Yl5fooIlQVMMWqgi
- PeIurvN3tfyPoexH/Dx+ACnVTqYQDEZlW/l8bPYaF1PMW7lXrYxyKZR8n
- evXzAdHJgK8JP9M8YhMxVPbv9mB3uRSIPAfVUJbaOM6iZitqsKI8eQZww
- xkaBcQ3hjuhw1bpuVRbPBf8Jr3ncTC8xLsDHvj7uuCSnCOE0IsgD5gnGv A==;
-X-CSE-ConnectionGUID: KcLP20g4QeKq7wFhZhVGtQ==
-X-CSE-MsgGUID: vNgCgeZ+Tt23B4VJsbSNOA==
-X-IPAS-Result: =?us-ascii?q?A0AFAAB+6f9n/44QJK1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?RIBAQEBAQEBAQEBAQGCAAMBAQEBAQsBgkqBT0NItFoUgREDVg8BAQEPRAQBA?=
- =?us-ascii?q?YUHiywCJjUIDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFgQ4Th?=
- =?us-ascii?q?giGXSsLAUaBDDISgwKCZQOxO4F5M4EBhHzZOIFugUgBjUyFZycbgUlEgRWBO?=
- =?us-ascii?q?4IthCmGXgSCLYEXhFSRV4shSIEhA1ksAVUTDQoLBwWBbAMqCwwLEhwVcTUdg?=
- =?us-ascii?q?XqDc4U2ghGCBIkThFYtT4VBQAMLGA1IESw3FBsGPm4HlzmEF4EPgkQYDJMrk?=
- =?us-ascii?q?AWjJoQloUkaM4QDplMBmH4igjahc4RogWgBOoFZMxoIGxWDIlIZD44tFssJK?=
- =?us-ascii?q?jI8AgcLAQEDCZFlAQE?=
-IronPort-Data: A9a23:v7KUzqx0OUuU6K4cLQB6t+dUxyrEfRIJ4+MujC+fZmUNrF6WrkUFy
- GAeUWvXPamCYmqkc9tyYIrn8k0AuZXdmoVlQARu/lhgHilAwSbn6Xt1DatR0we6dJCroJdPt
- p1GAjX4BJlqCCea/lH1b+CJQUBUjcmgXqD7BPPPJhd/TAplTDZJoR94kobVuKYw6TSCK13L4
- I6aT/H3Ygf/hmYoazxMscpvlTs21BjMkGJA1rABTagjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
- evK0Iai9Wrf+Ro3Yvv9+losWhRXKlJ6FVHmZkt+A8BOsDAbzsAB+vpT2M4nVKtio27hc+adZ
- zl6ncfYpQ8BZsUgkQmGOvVSO3kW0aZuoNcrLZUj2CCe5xWuTpfi/xlhJGI9GbVCoukrOGxt7
- KMHBjA/bi6sm9vjldpXSsE07igiBMDvOIVavjRryivUSK57B5vCWK7No9Rf2V/chOgXQq2YP
- JRfMGQpNUiaC/FMEg9/5JYWhuKlgmX4dRVTqUmeouw85G27IAlZjOWxa4KPKoDWLSlTtli+q
- UnJ8la6Pg1Ab/bD9xie+EmKocaayEsXX6pXTtVU7MVCjFCN7mALBB5QUkG0ydGyikO4UdVPA
- 0oK+yYvpO4580nDZtz0Txy9rTiPuQcBVt5RFcUg5Q2Nw7aS6AGcblXoVRZIbNgg8ctzTjsw2
- xrRwpXiBCdkt/ueTnf1GqqokA5e8BM9dQcqDRLohyNcizU/iOnfVi7yc+s=
-IronPort-HdrOrdr: A9a23:fl97GqNpiVcKN8BcTsqjsMiBIKoaSvp037Dk7S9MoHtuA6mlfq
- +V/cjzuSWYtN9zYgBDpTn/Asm9qBrnnPYfi7X5Vo3NYOCJggeVxflZnOjfK/mKIVyYygabvp
- 0QF5RDNA==
-X-Talos-CUID: 9a23:cTdPgGMcTpPlFu5DeyJDzBRMFZwcf17Ek2j+I324N0l1cejA
-X-Talos-MUID: 9a23:v6/PZAh5SbnsH1MqK7aPMMMpKuFnyKujOgMxjc9dkZW6Fzd6ABG6pWHi
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.15,216,1739836800"; d="scan'208";a="454302844"
-Received: from alln-l-core-05.cisco.com ([173.36.16.142])
- by alln-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 16 Apr 2025 17:36:38 +0000
-Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
- [172.18.47.81])
+	by mails.dpdk.org (Postfix) with ESMTP id BC6AB410D5;
+	Wed, 16 Apr 2025 19:37:18 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 6B7FE4025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 19:37:17 +0200 (CEST)
+Received: from debian (unknown [78.109.75.189])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by alln-l-core-05.cisco.com (Postfix) with ESMTPS id E3FD918000153;
- Wed, 16 Apr 2025 17:36:38 +0000 (GMT)
-Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
- id 78BF81406899; Wed, 16 Apr 2025 13:36:38 -0400 (EDT)
-From: Roger Melton <rmelton@cisco.com>
-To: maxime.coquelin@redhat.com,
-	chenbox@nvidia.com
-Cc: dev@dpdk.org,
-	Roger Melton <rmelton@cisco.com>
-Subject: [PATCH] net/virtio: support Rx/Tx burst mode info
-Date: Wed, 16 Apr 2025 13:35:50 -0400
-Message-Id: <20250416173550.603338-1-rmelton@cisco.com>
-X-Mailer: git-send-email 2.35.6
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 90410E08FA;
+ Wed, 16 Apr 2025 21:37:16 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 90410E08FA
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1744825037;
+ bh=sBVSVz1/7uy0PVK0Cqryhn3J80UFQoOTjb1HIaRO684=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=fi9WovG1E79sZI/UL8eWNYSyaAKudeuEWtbuQaMwZdO8cA6eaueJQLQzmTQv7cS3W
+ VRXeCs4a/aXfPi3mDFDqXX+6XVhNPIQrcjBtB5vwdQ10OX7Sxj9W3iDe4g8mn4se/X
+ pM+CMcjv+evXdhWqGgeorOnzJGR7l9ouHYVGNs6GaSUFuSFfgLlht5kixev+vxR2FT
+ qSJhmefZtwIseSPeR8oKu/x5t7NLvnQqX2JNeITuONWm7lqDKIQudB1GSvecR/8Lw9
+ BmuPkIsm8a1CdzA4DF/kfmFiipP42M2CTplYLXUSKccjprlEXKBuIYkYlHE2/956C7
+ 9oaX+TD703DlA==
+Date: Wed, 16 Apr 2025 21:37:09 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Stephen Hemminger <stephen@networkplumber.org>
+cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
+ Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>, 
+ Andy Moreton <andy.moreton@amd.com>, 
+ Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>, 
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
+Subject: Re: [PATCH 00/46] Support AMD Solarflare X45xx adaptors
+In-Reply-To: <20250416093154.3c858f54@hermes.local>
+Message-ID: <33895804-98d3-57c6-0d3d-f2ab9e7c6b98@arknetworks.am>
+References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
+ <20250416081454.6c9ea0e2@hermes.local>
+ <e3a33af7-c896-c3ec-c46d-0f64fe182999@arknetworks.am>
+ <20250416093154.3c858f54@hermes.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
-X-Outbound-Node: alln-l-core-05.cisco.com
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,131 +57,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Return burst mode according to the selected Rx/Tx burst
-function name.
-Update 25.07 release notes with this information.
+On Wed, 16 Apr 2025, Stephen Hemminger wrote:
 
-Signed-off-by: Roger Melton <rmelton@cisco.com>
----
- doc/guides/rel_notes/release_25_07.rst |  3 +
- drivers/net/virtio/virtio_ethdev.c     | 76 ++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
+> On Wed, 16 Apr 2025 19:38:58 +0400 (+04)
+> Ivan Malov <ivan.malov@arknetworks.am> wrote:
+>
+>> On Wed, 16 Apr 2025, Stephen Hemminger wrote:
+>>
+>>> On Wed, 16 Apr 2025 17:59:30 +0400
+>>> Ivan Malov <ivan.malov@arknetworks.am> wrote:
+>>>
+>>>> New X4522 (dual port SFP56) and X4542 (dual port QSFP56) adaptors are
+>>>> Medford4 (X4) chips that are based on EF10 architecture. An X4 NIC
+>>>> supports multiple network engine types. This series provides support
+>>>> only for the Medford2-alike, 'full-feature' (FF) network engine. This
+>>>> shall not be confused with the concept of 'datapath FW variants': the
+>>>> FF network engine supports both 'full-feature' and 'ultra-low-latency'
+>>>> datapath FW variants, with corresponding Medford2-alike feature sets.
+>>>>
+>>>> The first part of the series provides general support for the adaptors,
+>>>> whilst the second one adds support for the new management controller
+>>>> interface for configuration of network port features (netport MCDI).
+>>>>
+>>>> For now, only support for physical functions (PFs) is concerned. There
+>>>> is a small number of TODO and FIXME markings in the code. Those are
+>>>> normal at this development stage and will be removed by future patches
+>>>> when VF support has fleshed out.
+>>>>
+>>>>
+>>>> Andy Moreton (3):
+>>>>   common/sfc_efx/base: update X4 BAR layout and PCI IDs
+>>>>   net/sfc: add Medford4 with only full feature datapath engine
+>>>>   common/sfc_efx/base: add port mode for 8 port hardware
+>>>>
+>>>> Denis Pryazhennikov (15):
+>>>>   common/sfc_efx/base: add Medford4 PCI IDs to common code
+>>>>   common/sfc_efx/base: add efsys option for Medford4
+>>>>   common/sfc_efx/base: add Medford4 support to NIC module
+>>>>   common/sfc_efx/base: add Medford4 support to EV module
+>>>>   common/sfc_efx/base: add Medford4 support to FILTER module
+>>>>   common/sfc_efx/base: add Medford4 support to INTR module
+>>>>   common/sfc_efx/base: add Medford4 support to MAC module
+>>>>   common/sfc_efx/base: add Medford4 support to PHY module
+>>>>   common/sfc_efx/base: add Medford4 support to TUNNEL module
+>>>>   common/sfc_efx/base: add Medford4 support to MCDI module
+>>>>   common/sfc_efx/base: add Medford4 support to Rx module
+>>>>   common/sfc_efx/base: add Medford4 support to Tx module
+>>>>   drivers: enable support for AMD Solarflare X4 adapter family
+>>>>   common/sfc_efx/base: add new X4 port mode
+>>>>   common/sfc_efx/base: extend list of supported X4 port modes
+>>>>
+>>>> Ivan Malov (28):
+>>>>   common/sfc_efx/base: update MCDI headers
+>>>>   common/sfc_efx/base: provide a stub for basic netport attach
+>>>>   common/sfc_efx/base: provide defaults on netport attach path
+>>>>   common/sfc_efx/base: obtain assigned netport handle from NIC
+>>>>   common/sfc_efx/base: allow for const in MCDI struct accessor
+>>>>   common/sfc_efx/base: get netport fixed capabilities on probe
+>>>>   common/sfc_efx/base: decode netport link state on probe path
+>>>>   common/sfc_efx/base: fill in loopback modes on netport probe
+>>>>   common/sfc_efx/base: introduce Medford4 stub for PHY methods
+>>>>   common/sfc_efx/base: refactor EF10 link mode decoding helper
+>>>>   common/sfc_efx/base: provide PHY link get method on Medford4
+>>>>   common/sfc_efx/base: implement PHY link control for Medford4
+>>>>   common/sfc_efx/base: introduce Medford4 stub for MAC methods
+>>>>   common/sfc_efx/base: add MAC reconfigure method for Medford4
+>>>>   common/sfc_efx/base: fill in software LUT for MAC statistics
+>>>>   common/sfc_efx/base: fill in MAC statistics mask on Medford4
+>>>>   common/sfc_efx/base: support MAC statistics on Medford4 NICs
+>>>>   common/sfc_efx/base: implement MAC PDU controls for Medford4
+>>>>   common/sfc_efx/base: correct MAC PDU calculation on Medford4
+>>>>   net/sfc: make use of generic EFX MAC PDU calculation helpers
+>>>>   common/sfc_efx/base: ignore legacy link events on new boards
+>>>>   common/sfc_efx/base: add link event processing on new boards
+>>>>   net/sfc: query link status on link change events on new NICs
+>>>>   common/sfc_efx/base: subscribe to netport link change events
+>>>>   net/sfc: offer support for 200G link ability on new adaptors
+>>>>   common/sfc_efx/base: support controls for netport lane count
+>>>>   net/sfc: add support for control of physical port lane count
+>>>>   doc: advertise support for AMD Solarflare X45xx adapters
+>>>>
+>>>>  .mailmap                                      |    3 +-
+>>>>  doc/guides/nics/sfc_efx.rst                   |    9 +-
+>>>>  doc/guides/rel_notes/release_25_07.rst        |    4 +
+>>>>  drivers/common/sfc_efx/base/ef10_ev.c         |   39 +
+>>>>  drivers/common/sfc_efx/base/ef10_impl.h       |   19 +
+>>>>  drivers/common/sfc_efx/base/ef10_nic.c        |   98 +-
+>>>>  drivers/common/sfc_efx/base/ef10_phy.c        |   43 +-
+>>>>  drivers/common/sfc_efx/base/ef10_tlv_layout.h |    9 +-
+>>>>  drivers/common/sfc_efx/base/efx.h             |   98 +-
+>>>>  drivers/common/sfc_efx/base/efx_check.h       |   24 +-
+>>>>  drivers/common/sfc_efx/base/efx_ev.c          |    6 +
+>>>>  drivers/common/sfc_efx/base/efx_filter.c      |    6 +
+>>>>  drivers/common/sfc_efx/base/efx_impl.h        |  115 +-
+>>>>  drivers/common/sfc_efx/base/efx_intr.c        |    6 +
+>>>>  drivers/common/sfc_efx/base/efx_mac.c         |   56 +-
+>>>>  drivers/common/sfc_efx/base/efx_mcdi.c        |   18 +-
+>>>>  drivers/common/sfc_efx/base/efx_mcdi.h        |    2 +-
+>>>>  drivers/common/sfc_efx/base/efx_nic.c         |   60 +
+>>>>  drivers/common/sfc_efx/base/efx_np.c          | 1625 +++++
+>>>>  drivers/common/sfc_efx/base/efx_phy.c         |   88 +-
+>>>>  drivers/common/sfc_efx/base/efx_port.c        |    1 +
+>>>>  drivers/common/sfc_efx/base/efx_regs_mcdi.h   | 5868 ++++++++++++++++-
+>>>>  drivers/common/sfc_efx/base/efx_rx.c          |    6 +
+>>>>  drivers/common/sfc_efx/base/efx_tunnel.c      |   18 +-
+>>>>  drivers/common/sfc_efx/base/efx_tx.c          |   33 +
+>>>>  drivers/common/sfc_efx/base/medford4_impl.h   |  110 +
+>>>>  drivers/common/sfc_efx/base/medford4_mac.c    |  299 +
+>>>>  drivers/common/sfc_efx/base/medford4_phy.c    |  156 +
+>>>>  drivers/common/sfc_efx/base/meson.build       |    3 +
+>>>>  drivers/common/sfc_efx/efsys.h                |    2 +
+>>>>  drivers/common/sfc_efx/sfc_base_symbols.c     |    2 +
+>>>>  drivers/net/sfc/sfc.c                         |    5 +-
+>>>>  drivers/net/sfc/sfc.h                         |    4 +
+>>>>  drivers/net/sfc/sfc_dp_tx.h                   |    3 +
+>>>>  drivers/net/sfc/sfc_ef10_tx.c                 |   13 +-
+>>>>  drivers/net/sfc/sfc_ethdev.c                  |  186 +-
+>>>>  drivers/net/sfc/sfc_ev.c                      |   51 +-
+>>>>  drivers/net/sfc/sfc_port.c                    |   27 +-
+>>>>  drivers/net/sfc/sfc_repr.c                    |    7 +-
+>>>>  drivers/net/sfc/sfc_repr.h                    |    1 +
+>>>>  drivers/net/sfc/sfc_tx.c                      |    2 +
+>>>>  41 files changed, 9000 insertions(+), 125 deletions(-)
+>>>>  create mode 100644 drivers/common/sfc_efx/base/efx_np.c
+>>>>  create mode 100644 drivers/common/sfc_efx/base/medford4_impl.h
+>>>>  create mode 100644 drivers/common/sfc_efx/base/medford4_mac.c
+>>>>  create mode 100644 drivers/common/sfc_efx/base/medford4_phy.c
+>>>>
+>>>
+>>> Overall looks good but:
+>>>  - need to fix build on FreeBSD, you are using an errno not available there.
+>>>  - can you address some of the checkpatch warnings in the base code.
+>>>
+>>
+>> I can fix the errno, yes. Thanks for catching this.
+>>
+>> As for the checkpatch warnings in the base code -- unfortunately, that part does
+>> not follow DPDK style in general and has always triggered such warnings in DPDK.
+>> Should I try to fix some anyway? Which, for instance?
+>
+> Mostly it is the use of BSD style parens on returns that clutters the warnings.
+> I.e
+> 	return (0);
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..ff2d81b400 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -55,6 +55,9 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated virtio driver.**
-+
-+  * Added support for rx_burst_mode_get and tx_burst_mode_get.
- 
- Removed Items
- -------------
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index 1d7d10575c..2d2635b669 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -98,6 +98,11 @@ static int virtio_dev_queue_stats_mapping_set(
- static void virtio_notify_peers(struct rte_eth_dev *dev);
- static void virtio_ack_link_announce(struct rte_eth_dev *dev);
- 
-+static int virtio_rx_burst_mode_get(struct rte_eth_dev *dev,
-+	__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
-+static int virtio_tx_burst_mode_get(struct rte_eth_dev *dev,
-+	__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
-+
- struct rte_virtio_xstats_name_off {
- 	char name[RTE_ETH_XSTATS_NAME_SIZE];
- 	unsigned offset;
-@@ -636,6 +641,8 @@ static const struct eth_dev_ops virtio_eth_dev_ops = {
- 	.rx_queue_intr_enable    = virtio_dev_rx_queue_intr_enable,
- 	.rx_queue_intr_disable   = virtio_dev_rx_queue_intr_disable,
- 	.tx_queue_setup          = virtio_dev_tx_queue_setup,
-+	.rx_burst_mode_get       = virtio_rx_burst_mode_get,
-+	.tx_burst_mode_get       = virtio_tx_burst_mode_get,
- 	.rss_hash_update         = virtio_dev_rss_hash_update,
- 	.rss_hash_conf_get       = virtio_dev_rss_hash_conf_get,
- 	.reta_update             = virtio_dev_rss_reta_update,
-@@ -1242,6 +1249,75 @@ virtio_interrupt_handler(void *param)
- 	}
- }
- 
-+static const struct {
-+	eth_tx_burst_t pkt_burst;
-+	const char *info;
-+} virtio_tx_burst_info[] = {
-+	{	virtio_xmit_pkts, "Scalar"},
-+	{	virtio_xmit_pkts_packed, "Scalar packed ring"},
-+	{	virtio_xmit_pkts_inorder, "Scalar in order"},
-+	{	virtio_xmit_pkts_packed_vec, "Vector packed ring"},
-+};
-+
-+static int
-+virtio_tx_burst_mode_get(struct rte_eth_dev *dev,
-+				__rte_unused uint16_t queue_id,
-+				struct rte_eth_burst_mode *mode)
-+{
-+	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(virtio_tx_burst_info); i++) {
-+		if (pkt_burst == virtio_tx_burst_info[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 virtio_tx_burst_info[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct {
-+	eth_rx_burst_t pkt_burst;
-+	const char *info;
-+} virtio_rx_burst_info[] = {
-+	{	virtio_recv_pkts, "Scalar"},
-+	{	virtio_recv_pkts_packed, "Scalar standard packed ring"},
-+	{	virtio_recv_pkts_inorder, "Scalar"},
-+	{	virtio_recv_mergeable_pkts, "Scalar mergeable"},
-+	{	virtio_recv_mergeable_pkts_packed, "Scalar mergeable packed ring"},
-+#ifdef RTE_ARCH_x86
-+	{	virtio_recv_pkts_vec, "Vector SSE"},
-+	{	virtio_recv_pkts_packed_vec, "Vector AVX512 packed ring"},
-+#elif defined(RTE_ARCH_ARM)
-+	{	virtio_recv_pkts_vec, "Vector NEON"},
-+	{	virtio_recv_pkts_packed_vec, "Vector NEON packed ring"},
-+#elif defined(RTE_ARCH_PPC_64)
-+	{	virtio_recv_pkts_vec, "Vector Altivec"},
-+	{	virtio_recv_pkts_packed_vec, "Vector Altivec packed ring"},
-+#endif
-+};
-+
-+static int
-+virtio_rx_burst_mode_get(struct rte_eth_dev *dev,
-+				__rte_unused uint16_t queue_id,
-+				struct rte_eth_burst_mode *mode)
-+{
-+	eth_tx_burst_t pkt_burst = dev->rx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(virtio_rx_burst_info); i++) {
-+		if (pkt_burst == virtio_rx_burst_info[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 virtio_rx_burst_info[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /* set rx and tx handlers according to what is supported */
- static void
- set_rxtx_funcs(struct rte_eth_dev *eth_dev)
--- 
-2.35.6
+I see. Unfortunately, this, as well as space character in 'sizeof ()', follows
+the base driver's own style and it has been so for a long time. May be it is
+acceptable to retain it. But I do care to comply with DPDK conventions in the
+SFC driver itself. So shall I fix ENODATA->ENODEV and send v2?
 
+Thank you.
