@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017ABC369C2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 12:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95D6C369C2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 12:34:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C480C40E1F;
-	Wed, 16 Apr 2025 14:34:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DF1FD40E24;
+	Wed, 16 Apr 2025 14:34:44 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5991D40E01
- for <dev@dpdk.org>; Wed, 16 Apr 2025 14:34:40 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 840BB40E1C
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 14:34:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1744806879;
+ s=mimecast20190719; t=1744806881;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=07lfb5YVecTYLJzudlV67d/Ap0MkXosuEoN0/Ber88A=;
- b=MyodGuw/qHRjZ8c/Ww29AHnqko55byfhsnWn3CyVkvSG61J1TJRrA/Cy4U0dxGQ43t6s6g
- 3oHkBkuhYfNrs0PjQ4Ng1zdgyl/F6/n/S8KkoWPnSVP3P6x3mh5izQQyxooczJrXdJhqZx
- T8GEB0vt2Vc1/oYZJsibjkWzn7vsb5Q=
+ bh=QKzoqZOuJyeY8cwxxPUSbKFY6MKja5JtGlYZk2PC9jU=;
+ b=YTtw8Akr6HeI73TA99yXxslsOMLHXTeQmMBbAHI4VXtomOxwN73WxmmFZtV/1pXdlk5Ge4
+ /MY8ZjzG5ZiS8TWJwW12lBdXLtGdu/QgTG5qAsokdimpUbF3Lb+JV6Mdia6djQVSuN7ktb
+ Q9ZnB3UCMbc5N231Bo+LDJkeMtOvlW0=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-EKzo5vOaPiyXHzxCUBTSYA-1; Wed,
- 16 Apr 2025 08:34:38 -0400
-X-MC-Unique: EKzo5vOaPiyXHzxCUBTSYA-1
-X-Mimecast-MFC-AGG-ID: EKzo5vOaPiyXHzxCUBTSYA_1744806877
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-EhOLb89-P-KrAo7N5ihW1w-1; Wed,
+ 16 Apr 2025 08:34:40 -0400
+X-MC-Unique: EhOLb89-P-KrAo7N5ihW1w-1
+X-Mimecast-MFC-AGG-ID: EhOLb89-P-KrAo7N5ihW1w_1744806879
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 778E4180049D; Wed, 16 Apr 2025 12:34:37 +0000 (UTC)
+ id 9D6CF1800446; Wed, 16 Apr 2025 12:34:39 +0000 (UTC)
 Received: from max-p1.redhat.com (unknown [10.44.22.20])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 6BBC81800362; Wed, 16 Apr 2025 12:34:35 +0000 (UTC)
+ id 02B661800362; Wed, 16 Apr 2025 12:34:37 +0000 (UTC)
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 To: dev@dpdk.org,
 	david.marchand@redhat.com,
 	thomas@monjalon.net
 Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH 2/4] uapi: import VDUSE header from v6.14 kernel
-Date: Wed, 16 Apr 2025 14:34:24 +0200
-Message-ID: <20250416123426.2638250-3-maxime.coquelin@redhat.com>
+Subject: [PATCH 3/4] vhost: use imported VDUSE uAPI header
+Date: Wed, 16 Apr 2025 14:34:25 +0200
+Message-ID: <20250416123426.2638250-4-maxime.coquelin@redhat.com>
 In-Reply-To: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
 References: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jURH3KwFzEplS54y4ukktwBTQsYs5opVdaCifziqo78_1744806877
+X-Mimecast-MFC-PROC-ID: QFz2mavgRdvp7sdQ2Z1fWkbNsF36uED9H0tEupljQc4_1744806879
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,381 +68,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This header will be used by the Vhost library.
+This patch makes use of the imported VDUSE uAPI header, and
+remove VDUSE build dependency on the presence of the VDUSE
+header on the system.
 
 Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 ---
- kernel/linux/uapi/linux/vduse.h | 353 ++++++++++++++++++++++++++++++++
- kernel/linux/uapi/version       |   2 +-
- 2 files changed, 354 insertions(+), 1 deletion(-)
- create mode 100644 kernel/linux/uapi/linux/vduse.h
+ lib/vhost/meson.build |  5 +----
+ lib/vhost/vduse.c     |  2 +-
+ lib/vhost/vduse.h     | 22 ----------------------
+ 3 files changed, 2 insertions(+), 27 deletions(-)
 
-diff --git a/kernel/linux/uapi/linux/vduse.h b/kernel/linux/uapi/linux/vduse.h
-new file mode 100644
-index 0000000000..68a627d04a
---- /dev/null
-+++ b/kernel/linux/uapi/linux/vduse.h
-@@ -0,0 +1,353 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+#ifndef _UAPI_VDUSE_H_
-+#define _UAPI_VDUSE_H_
-+
-+#include <linux/types.h>
-+
-+#define VDUSE_BASE	0x81
-+
-+/* The ioctls for control device (/dev/vduse/control) */
-+
-+#define VDUSE_API_VERSION	0
-+
-+/*
-+ * Get the version of VDUSE API that kernel supported (VDUSE_API_VERSION).
-+ * This is used for future extension.
-+ */
-+#define VDUSE_GET_API_VERSION	_IOR(VDUSE_BASE, 0x00, __u64)
-+
-+/* Set the version of VDUSE API that userspace supported. */
-+#define VDUSE_SET_API_VERSION	_IOW(VDUSE_BASE, 0x01, __u64)
-+
-+/**
-+ * struct vduse_dev_config - basic configuration of a VDUSE device
-+ * @name: VDUSE device name, needs to be NUL terminated
-+ * @vendor_id: virtio vendor id
-+ * @device_id: virtio device id
-+ * @features: virtio features
-+ * @vq_num: the number of virtqueues
-+ * @vq_align: the allocation alignment of virtqueue's metadata
-+ * @reserved: for future use, needs to be initialized to zero
-+ * @config_size: the size of the configuration space
-+ * @config: the buffer of the configuration space
-+ *
-+ * Structure used by VDUSE_CREATE_DEV ioctl to create VDUSE device.
-+ */
-+struct vduse_dev_config {
-+#define VDUSE_NAME_MAX	256
-+	char name[VDUSE_NAME_MAX];
-+	__u32 vendor_id;
-+	__u32 device_id;
-+	__u64 features;
-+	__u32 vq_num;
-+	__u32 vq_align;
-+	__u32 reserved[13];
-+	__u32 config_size;
-+	__u8 config[];
-+};
-+
-+/* Create a VDUSE device which is represented by a char device (/dev/vduse/$NAME) */
-+#define VDUSE_CREATE_DEV	_IOW(VDUSE_BASE, 0x02, struct vduse_dev_config)
-+
-+/*
-+ * Destroy a VDUSE device. Make sure there are no more references
-+ * to the char device (/dev/vduse/$NAME).
-+ */
-+#define VDUSE_DESTROY_DEV	_IOW(VDUSE_BASE, 0x03, char[VDUSE_NAME_MAX])
-+
-+/* The ioctls for VDUSE device (/dev/vduse/$NAME) */
-+
-+/**
-+ * struct vduse_iotlb_entry - entry of IOTLB to describe one IOVA region [start, last]
-+ * @offset: the mmap offset on returned file descriptor
-+ * @start: start of the IOVA region
-+ * @last: last of the IOVA region
-+ * @perm: access permission of the IOVA region
-+ *
-+ * Structure used by VDUSE_IOTLB_GET_FD ioctl to find an overlapped IOVA region.
-+ */
-+struct vduse_iotlb_entry {
-+	__u64 offset;
-+	__u64 start;
-+	__u64 last;
-+#define VDUSE_ACCESS_RO 0x1
-+#define VDUSE_ACCESS_WO 0x2
-+#define VDUSE_ACCESS_RW 0x3
-+	__u8 perm;
-+};
-+
-+/*
-+ * Find the first IOVA region that overlaps with the range [start, last]
-+ * and return the corresponding file descriptor. Return -EINVAL means the
-+ * IOVA region doesn't exist. Caller should set start and last fields.
-+ */
-+#define VDUSE_IOTLB_GET_FD	_IOWR(VDUSE_BASE, 0x10, struct vduse_iotlb_entry)
-+
-+/*
-+ * Get the negotiated virtio features. It's a subset of the features in
-+ * struct vduse_dev_config which can be accepted by virtio driver. It's
-+ * only valid after FEATURES_OK status bit is set.
-+ */
-+#define VDUSE_DEV_GET_FEATURES	_IOR(VDUSE_BASE, 0x11, __u64)
-+
-+/**
-+ * struct vduse_config_data - data used to update configuration space
-+ * @offset: the offset from the beginning of configuration space
-+ * @length: the length to write to configuration space
-+ * @buffer: the buffer used to write from
-+ *
-+ * Structure used by VDUSE_DEV_SET_CONFIG ioctl to update device
-+ * configuration space.
-+ */
-+struct vduse_config_data {
-+	__u32 offset;
-+	__u32 length;
-+	__u8 buffer[];
-+};
-+
-+/* Set device configuration space */
-+#define VDUSE_DEV_SET_CONFIG	_IOW(VDUSE_BASE, 0x12, struct vduse_config_data)
-+
-+/*
-+ * Inject a config interrupt. It's usually used to notify virtio driver
-+ * that device configuration space has changed.
-+ */
-+#define VDUSE_DEV_INJECT_CONFIG_IRQ	_IO(VDUSE_BASE, 0x13)
-+
-+/**
-+ * struct vduse_vq_config - basic configuration of a virtqueue
-+ * @index: virtqueue index
-+ * @max_size: the max size of virtqueue
-+ * @reserved: for future use, needs to be initialized to zero
-+ *
-+ * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
-+ */
-+struct vduse_vq_config {
-+	__u32 index;
-+	__u16 max_size;
-+	__u16 reserved[13];
-+};
-+
-+/*
-+ * Setup the specified virtqueue. Make sure all virtqueues have been
-+ * configured before the device is attached to vDPA bus.
-+ */
-+#define VDUSE_VQ_SETUP		_IOW(VDUSE_BASE, 0x14, struct vduse_vq_config)
-+
-+/**
-+ * struct vduse_vq_state_split - split virtqueue state
-+ * @avail_index: available index
-+ */
-+struct vduse_vq_state_split {
-+	__u16 avail_index;
-+};
-+
-+/**
-+ * struct vduse_vq_state_packed - packed virtqueue state
-+ * @last_avail_counter: last driver ring wrap counter observed by device
-+ * @last_avail_idx: device available index
-+ * @last_used_counter: device ring wrap counter
-+ * @last_used_idx: used index
-+ */
-+struct vduse_vq_state_packed {
-+	__u16 last_avail_counter;
-+	__u16 last_avail_idx;
-+	__u16 last_used_counter;
-+	__u16 last_used_idx;
-+};
-+
-+/**
-+ * struct vduse_vq_info - information of a virtqueue
-+ * @index: virtqueue index
-+ * @num: the size of virtqueue
-+ * @desc_addr: address of desc area
-+ * @driver_addr: address of driver area
-+ * @device_addr: address of device area
-+ * @split: split virtqueue state
-+ * @packed: packed virtqueue state
-+ * @ready: ready status of virtqueue
-+ *
-+ * Structure used by VDUSE_VQ_GET_INFO ioctl to get virtqueue's information.
-+ */
-+struct vduse_vq_info {
-+	__u32 index;
-+	__u32 num;
-+	__u64 desc_addr;
-+	__u64 driver_addr;
-+	__u64 device_addr;
-+	union {
-+		struct vduse_vq_state_split split;
-+		struct vduse_vq_state_packed packed;
-+	};
-+	__u8 ready;
-+};
-+
-+/* Get the specified virtqueue's information. Caller should set index field. */
-+#define VDUSE_VQ_GET_INFO	_IOWR(VDUSE_BASE, 0x15, struct vduse_vq_info)
-+
-+/**
-+ * struct vduse_vq_eventfd - eventfd configuration for a virtqueue
-+ * @index: virtqueue index
-+ * @fd: eventfd, -1 means de-assigning the eventfd
-+ *
-+ * Structure used by VDUSE_VQ_SETUP_KICKFD ioctl to setup kick eventfd.
-+ */
-+struct vduse_vq_eventfd {
-+	__u32 index;
-+#define VDUSE_EVENTFD_DEASSIGN -1
-+	int fd;
-+};
-+
-+/*
-+ * Setup kick eventfd for specified virtqueue. The kick eventfd is used
-+ * by VDUSE kernel module to notify userspace to consume the avail vring.
-+ */
-+#define VDUSE_VQ_SETUP_KICKFD	_IOW(VDUSE_BASE, 0x16, struct vduse_vq_eventfd)
-+
-+/*
-+ * Inject an interrupt for specific virtqueue. It's used to notify virtio driver
-+ * to consume the used vring.
-+ */
-+#define VDUSE_VQ_INJECT_IRQ	_IOW(VDUSE_BASE, 0x17, __u32)
-+
-+/**
-+ * struct vduse_iova_umem - userspace memory configuration for one IOVA region
-+ * @uaddr: start address of userspace memory, it must be aligned to page size
-+ * @iova: start of the IOVA region
-+ * @size: size of the IOVA region
-+ * @reserved: for future use, needs to be initialized to zero
-+ *
-+ * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
-+ * ioctls to register/de-register userspace memory for IOVA regions
-+ */
-+struct vduse_iova_umem {
-+	__u64 uaddr;
-+	__u64 iova;
-+	__u64 size;
-+	__u64 reserved[3];
-+};
-+
-+/* Register userspace memory for IOVA regions */
-+#define VDUSE_IOTLB_REG_UMEM	_IOW(VDUSE_BASE, 0x18, struct vduse_iova_umem)
-+
-+/* De-register the userspace memory. Caller should set iova and size field. */
-+#define VDUSE_IOTLB_DEREG_UMEM	_IOW(VDUSE_BASE, 0x19, struct vduse_iova_umem)
-+
-+/**
-+ * struct vduse_iova_info - information of one IOVA region
-+ * @start: start of the IOVA region
-+ * @last: last of the IOVA region
-+ * @capability: capability of the IOVA regsion
-+ * @reserved: for future use, needs to be initialized to zero
-+ *
-+ * Structure used by VDUSE_IOTLB_GET_INFO ioctl to get information of
-+ * one IOVA region.
-+ */
-+struct vduse_iova_info {
-+	__u64 start;
-+	__u64 last;
-+#define VDUSE_IOVA_CAP_UMEM (1 << 0)
-+	__u64 capability;
-+	__u64 reserved[3];
-+};
-+
-+/*
-+ * Find the first IOVA region that overlaps with the range [start, last]
-+ * and return some information on it. Caller should set start and last fields.
-+ */
-+#define VDUSE_IOTLB_GET_INFO	_IOWR(VDUSE_BASE, 0x1a, struct vduse_iova_info)
-+
-+/* The control messages definition for read(2)/write(2) on /dev/vduse/$NAME */
-+
-+/**
-+ * enum vduse_req_type - request type
-+ * @VDUSE_GET_VQ_STATE: get the state for specified virtqueue from userspace
-+ * @VDUSE_SET_STATUS: set the device status
-+ * @VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for
-+ *                      specified IOVA range via VDUSE_IOTLB_GET_FD ioctl
-+ */
-+enum vduse_req_type {
-+	VDUSE_GET_VQ_STATE,
-+	VDUSE_SET_STATUS,
-+	VDUSE_UPDATE_IOTLB,
-+};
-+
-+/**
-+ * struct vduse_vq_state - virtqueue state
-+ * @index: virtqueue index
-+ * @split: split virtqueue state
-+ * @packed: packed virtqueue state
-+ */
-+struct vduse_vq_state {
-+	__u32 index;
-+	union {
-+		struct vduse_vq_state_split split;
-+		struct vduse_vq_state_packed packed;
-+	};
-+};
-+
-+/**
-+ * struct vduse_dev_status - device status
-+ * @status: device status
-+ */
-+struct vduse_dev_status {
-+	__u8 status;
-+};
-+
-+/**
-+ * struct vduse_iova_range - IOVA range [start, last]
-+ * @start: start of the IOVA range
-+ * @last: last of the IOVA range
-+ */
-+struct vduse_iova_range {
-+	__u64 start;
-+	__u64 last;
-+};
-+
-+/**
-+ * struct vduse_dev_request - control request
-+ * @type: request type
-+ * @request_id: request id
-+ * @reserved: for future use
-+ * @vq_state: virtqueue state, only index field is available
-+ * @s: device status
-+ * @iova: IOVA range for updating
-+ * @padding: padding
-+ *
-+ * Structure used by read(2) on /dev/vduse/$NAME.
-+ */
-+struct vduse_dev_request {
-+	__u32 type;
-+	__u32 request_id;
-+	__u32 reserved[4];
-+	union {
-+		struct vduse_vq_state vq_state;
-+		struct vduse_dev_status s;
-+		struct vduse_iova_range iova;
-+		__u32 padding[32];
-+	};
-+};
-+
-+/**
-+ * struct vduse_dev_response - response to control request
-+ * @request_id: corresponding request id
-+ * @result: the result of request
-+ * @reserved: for future use, needs to be initialized to zero
-+ * @vq_state: virtqueue state
-+ * @padding: padding
-+ *
-+ * Structure used by write(2) on /dev/vduse/$NAME.
-+ */
-+struct vduse_dev_response {
-+	__u32 request_id;
-+#define VDUSE_REQ_RESULT_OK	0x00
-+#define VDUSE_REQ_RESULT_FAILED	0x01
-+	__u32 result;
-+	__u32 reserved[4];
-+	union {
-+		struct vduse_vq_state vq_state;
-+		__u32 padding[32];
-+	};
-+};
-+
-+#endif /* _UAPI_VDUSE_H_ */
-diff --git a/kernel/linux/uapi/version b/kernel/linux/uapi/version
-index d06407735c..3c68968f92 100644
---- a/kernel/linux/uapi/version
-+++ b/kernel/linux/uapi/version
-@@ -1 +1 @@
--v6.10
-+v6.14
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 33773b6d21..9c6325aa0e 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -33,16 +33,13 @@ sources = files(
+         'iotlb.c',
+         'socket.c',
+         'vdpa.c',
++        'vduse.c',
+         'vhost.c',
+         'vhost_crypto.c',
+         'vhost_user.c',
+         'virtio_net.c',
+         'virtio_net_ctrl.c',
+ )
+-if cc.has_header('linux/vduse.h')
+-    sources += files('vduse.c')
+-    cflags += '-DVHOST_HAS_VDUSE'
+-endif
+ headers = files(
+         'rte_vdpa.h',
+         'rte_vhost.h',
+diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+index 801674be42..a2a7d73388 100644
+--- a/lib/vhost/vduse.c
++++ b/lib/vhost/vduse.c
+@@ -8,7 +8,7 @@
+ #include <fcntl.h>
+ 
+ 
+-#include <linux/vduse.h>
++#include <uapi/linux/vduse.h>
+ #include <linux/virtio_net.h>
+ 
+ #include <sys/ioctl.h>
+diff --git a/lib/vhost/vduse.h b/lib/vhost/vduse.h
+index 0d8f3f1205..47ca97a064 100644
+--- a/lib/vhost/vduse.h
++++ b/lib/vhost/vduse.h
+@@ -9,29 +9,7 @@
+ 
+ #define VDUSE_NET_SUPPORTED_FEATURES VIRTIO_NET_SUPPORTED_FEATURES
+ 
+-#ifdef VHOST_HAS_VDUSE
+-
+ int vduse_device_create(const char *path, bool compliant_ol_flags);
+ int vduse_device_destroy(const char *path);
+ 
+-#else
+-
+-static inline int
+-vduse_device_create(const char *path, bool compliant_ol_flags)
+-{
+-	RTE_SET_USED(compliant_ol_flags);
+-
+-	VHOST_CONFIG_LOG(path, ERR, "VDUSE support disabled at build time");
+-	return -1;
+-}
+-
+-static inline int
+-vduse_device_destroy(const char *path)
+-{
+-	VHOST_CONFIG_LOG(path, ERR, "VDUSE support disabled at build time");
+-	return -1;
+-}
+-
+-#endif /* VHOST_HAS_VDUSE */
+-
+ #endif /* _VDUSE_H */
 -- 
 2.49.0
 
