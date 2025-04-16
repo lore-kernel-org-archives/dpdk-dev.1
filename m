@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95559C369C2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF870C369C2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:05:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD8EE427CE;
-	Wed, 16 Apr 2025 16:01:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 95196427D3;
+	Wed, 16 Apr 2025 16:01:09 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 2B3AD4279B
+ by mails.dpdk.org (Postfix) with ESMTP id EA4B34279F
  for <dev@dpdk.org>; Wed, 16 Apr 2025 16:01:00 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 71B8DE11AD;
- Wed, 16 Apr 2025 18:00:59 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 71B8DE11AD
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 3DCE4E11BF;
+ Wed, 16 Apr 2025 18:01:00 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 3DCE4E11BF
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
  s=default; t=1744812060;
- bh=xfleO3wcSiKkvR5hYWCKYawWdOFIQHtFdqBKKsI3Rsg=;
+ bh=3Ie4qIMmpEK+wSgJcBMum77GS++6jT7m/IV8enssNJs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=oxF9yKJ8arvbJEUvMkKyBGl58CMGsCIeW3AEzQQ0ijCB66JmBwpLdDhcbKz3DIm2V
- d8/1mgSpgcxSnNIgeiSV2Rh2n9dFpwaEYRYAz8fnfOeOWaU3hoezACv8FYv16AGupf
- 7fiIZhsqPzMcfBmjcE6o1delhNoPqQ9LsWR3lyAHJAnJ6N8nlcWFqjEomyatCTDJiW
- 4nWqYoN6MH4Naz0HxJjZQflZymDUrq5VFc6aBbOgcJXoH5rhjTSol0p5Q9HINyBUEr
- XwbF8DEHnH+D6XuQyYY/UZr20MxXfaD0iOeAi++nhcPToNQ/jCm2Z8DWBHnpdTtgNd
- JAVCPccHuR9ZA==
+ b=TcUn8DYT6G11SIlTEn6c8XsSyYN6C1jlZVPWQGF3Xd/+qCyam1YFfyY5yCYwuO86j
+ 7T2KbZNw4LRjLFB5Bi6g4E3mQUpOmpt5cOAtIiOFInuBtIuBes3t6edv2+0XqxkUNF
+ AKa1WYPiF10bcG6gHUgsovKNhIU+a/3p2xI0BRFlM9bNRnww4ESVsez8ghjYH2vCL+
+ BGd/eTUgcRt9pJ8zMJjkMjxtJixOd0jXF+t1z7hd6BJn3b+aPWvHvMQqaE1XIZ/uIR
+ nCLqpLnQZNZvktzp/Q5XJadhbiGztNNI8xWwKST+L4QpJrVFgHeUQJKalBxq/41CQN
+ 9uhR6crdyoKbg==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 35/46] common/sfc_efx/base: support MAC statistics on Medford4
- NICs
-Date: Wed, 16 Apr 2025 18:00:05 +0400
-Message-Id: <20250416140016.36127-36-ivan.malov@arknetworks.am>
+Subject: [PATCH 36/46] common/sfc_efx/base: implement MAC PDU controls for
+ Medford4
+Date: Wed, 16 Apr 2025 18:00:06 +0400
+Message-Id: <20250416140016.36127-37-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,387 +56,201 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Supply Medford4-specific methods to clear, upload and update
-MAC statistics, as well as the method to toggle periodic DMA
-updates. All of these leverage the same netport MCDI command.
+Leverage new netport MCDI to implement support for such APIs.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>
 ---
- drivers/common/sfc_efx/base/ef10_nic.c      |   4 +-
- drivers/common/sfc_efx/base/efx_impl.h      |  11 ++
- drivers/common/sfc_efx/base/efx_mac.c       |   8 +-
- drivers/common/sfc_efx/base/efx_mcdi.c      |  12 +-
- drivers/common/sfc_efx/base/efx_np.c        |  89 +++++++++++++
- drivers/common/sfc_efx/base/medford4_impl.h |  27 ++++
- drivers/common/sfc_efx/base/medford4_mac.c  | 138 ++++++++++++++++++++
- 7 files changed, 282 insertions(+), 7 deletions(-)
+ drivers/common/sfc_efx/base/efx_impl.h      |  4 ++
+ drivers/common/sfc_efx/base/efx_mac.c       |  4 +-
+ drivers/common/sfc_efx/base/efx_np.c        | 17 ++++++++
+ drivers/common/sfc_efx/base/medford4_impl.h | 11 ++++++
+ drivers/common/sfc_efx/base/medford4_mac.c  | 44 +++++++++++++++++++++
+ 5 files changed, 78 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/ef10_nic.c b/drivers/common/sfc_efx/base/ef10_nic.c
-index eb1b68b17e..31fcb361f2 100644
---- a/drivers/common/sfc_efx/base/ef10_nic.c
-+++ b/drivers/common/sfc_efx/base/ef10_nic.c
-@@ -2523,7 +2523,9 @@ ef10_nic_probe(
- 
- #if EFSYS_OPT_MAC_STATS
- 	/* Wipe the MAC statistics */
--	if ((rc = efx_mcdi_mac_stats_clear(enp)) != 0)
-+
-+	rc = efx_mcdi_mac_stats_clear(enp);
-+	if (rc != 0)
- 		goto fail6;
- #endif
- 
 diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
-index aafb2bf998..7dbad601ff 100644
+index 7dbad601ff..43964ccdba 100644
 --- a/drivers/common/sfc_efx/base/efx_impl.h
 +++ b/drivers/common/sfc_efx/base/efx_impl.h
-@@ -1968,6 +1968,17 @@ efx_np_mac_ctrl(
- 	__in		efx_np_handle_t nph,
- 	__in		const efx_np_mac_ctrl_t *mc);
+@@ -1934,6 +1934,7 @@ efx_np_link_state(
  
-+#if EFSYS_OPT_MAC_STATS
-+LIBEFX_INTERNAL
-+extern	__checkReturn	efx_rc_t
-+efx_np_mac_stats(
-+	__in		efx_nic_t *enp,
-+	__in		efx_np_handle_t nph,
-+	__in		efx_stats_action_t action,
-+	__in_opt	const efsys_mem_t *esmp,
-+	__in		uint16_t period_ms);
-+#endif /* EFSYS_OPT_MAC_STATS */
+ typedef struct efx_np_mac_state_s {
+ 	uint32_t	enms_fcntl;
++	uint32_t	enms_pdu;
+ 	boolean_t	enms_up;
+ } efx_np_mac_state_t;
+ 
+@@ -1956,9 +1957,12 @@ efx_np_link_ctrl(
+ 	__in		boolean_t fcntl_an);
+ 
+ typedef struct efx_np_mac_ctrl_s {
++	boolean_t	enmc_set_pdu_only;
 +
- #ifdef	__cplusplus
- }
- #endif
+ 	boolean_t	enmc_fcntl_autoneg;
+ 	boolean_t	enmc_include_fcs;
+ 	uint32_t	enmc_fcntl;
++	uint32_t	enmc_pdu;
+ } efx_np_mac_ctrl_t;
+ 
+ LIBEFX_INTERNAL
 diff --git a/drivers/common/sfc_efx/base/efx_mac.c b/drivers/common/sfc_efx/base/efx_mac.c
-index 6abe2046e8..f002cb838e 100644
+index f002cb838e..8712d7c5ef 100644
 --- a/drivers/common/sfc_efx/base/efx_mac.c
 +++ b/drivers/common/sfc_efx/base/efx_mac.c
-@@ -106,10 +106,10 @@ static const efx_mac_ops_t	__efx_mac_medford4_ops = {
- #endif	/* EFSYS_OPT_LOOPBACK */
- #if EFSYS_OPT_MAC_STATS
- 	medford4_mac_stats_get_mask,		/* emo_stats_get_mask */
--	efx_mcdi_mac_stats_clear,		/* emo_stats_clear */
--	efx_mcdi_mac_stats_upload,		/* emo_stats_upload */
--	efx_mcdi_mac_stats_periodic,		/* emo_stats_periodic */
--	ef10_mac_stats_update			/* emo_stats_update */
-+	medford4_mac_stats_clear,		/* emo_stats_clear */
-+	medford4_mac_stats_upload,		/* emo_stats_upload */
-+	medford4_mac_stats_periodic,		/* emo_stats_periodic */
-+	medford4_mac_stats_update		/* emo_stats_update */
- #endif	/* EFSYS_OPT_MAC_STATS */
- };
- #endif /* EFSYS_OPT_MEDFORD4 */
-diff --git a/drivers/common/sfc_efx/base/efx_mcdi.c b/drivers/common/sfc_efx/base/efx_mcdi.c
-index 0bd56dd84d..20051c7da9 100644
---- a/drivers/common/sfc_efx/base/efx_mcdi.c
-+++ b/drivers/common/sfc_efx/base/efx_mcdi.c
-@@ -2244,10 +2244,18 @@ efx_mcdi_mac_stats(
- efx_mcdi_mac_stats_clear(
- 	__in		efx_nic_t *enp)
- {
-+	efx_port_t *epp = &(enp->en_port);
- 	efx_rc_t rc;
- 
--	if ((rc = efx_mcdi_mac_stats(enp, enp->en_vport_id, NULL,
--			EFX_STATS_CLEAR, 0)) != 0)
-+	if (efx_np_supported(enp) != B_FALSE) {
-+		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
-+			    EFX_STATS_CLEAR, NULL, 0);
-+	} else {
-+		rc = efx_mcdi_mac_stats(enp, enp->en_vport_id, NULL,
-+				EFX_STATS_CLEAR, 0);
-+	}
-+
-+	if (rc != 0)
- 		goto fail1;
- 
- 	return (0);
+@@ -94,8 +94,8 @@ static const efx_mac_ops_t	__efx_mac_medford4_ops = {
+ 	medford4_mac_poll,			/* emo_poll */
+ 	medford4_mac_up,			/* emo_up */
+ 	ef10_mac_addr_set,			/* emo_addr_set */
+-	ef10_mac_pdu_set,			/* emo_pdu_set */
+-	ef10_mac_pdu_get,			/* emo_pdu_get */
++	medford4_mac_pdu_set,			/* emo_pdu_set */
++	medford4_mac_pdu_get,			/* emo_pdu_get */
+ 	medford4_mac_reconfigure,		/* emo_reconfigure */
+ 	ef10_mac_multicast_list_set,		/* emo_multicast_list_set */
+ 	ef10_mac_filter_default_rxq_set,	/* emo_filter_default_rxq_set */
 diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index d4ee17ffb4..df836f09a6 100644
+index df836f09a6..88e13f0df9 100644
 --- a/drivers/common/sfc_efx/base/efx_np.c
 +++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -1291,3 +1291,92 @@ efx_np_mac_ctrl(
- 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
- 	return (rc);
- }
-+
-+#if EFSYS_OPT_MAC_STATS
-+	__checkReturn	efx_rc_t
-+efx_np_mac_stats(
-+	__in		efx_nic_t *enp,
-+	__in		efx_np_handle_t nph,
-+	__in		efx_stats_action_t action,
-+	__in_opt	const efsys_mem_t *esmp,
-+	__in		uint16_t period_ms)
-+{
-+	EFX_MCDI_DECLARE_BUF(payload,
-+	    MC_CMD_GET_NETPORT_STATISTICS_IN_LEN,
-+	    MC_CMD_GET_NETPORT_STATISTICS_OUT_LENMIN);
-+	int enable = (action == EFX_STATS_ENABLE_NOEVENTS);
-+	int events = (action == EFX_STATS_ENABLE_EVENTS);
-+	int disable = (action == EFX_STATS_DISABLE);
-+	int upload = (action == EFX_STATS_UPLOAD);
-+	int clear = (action == EFX_STATS_CLEAR);
-+	efx_mcdi_req_t req;
-+	efx_rc_t rc;
-+
-+	req.emr_out_length = MC_CMD_GET_NETPORT_STATISTICS_OUT_LENMIN;
-+	req.emr_in_length = MC_CMD_GET_NETPORT_STATISTICS_IN_LEN;
-+	req.emr_cmd = MC_CMD_GET_NETPORT_STATISTICS;
-+	req.emr_out_buf = payload;
-+	req.emr_in_buf = payload;
-+
-+	MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_IN_PORT_HANDLE, nph);
-+
-+	MCDI_IN_POPULATE_DWORD_6(req, GET_NETPORT_STATISTICS_IN_CMD,
-+	    GET_NETPORT_STATISTICS_IN_DMA, upload,
-+	    GET_NETPORT_STATISTICS_IN_CLEAR, clear,
-+	    GET_NETPORT_STATISTICS_IN_PERIODIC_CHANGE,
-+		    enable | events | disable,
-+	    GET_NETPORT_STATISTICS_IN_PERIODIC_ENABLE, enable | events,
-+	    GET_NETPORT_STATISTICS_IN_PERIODIC_NOEVENT, !events,
-+	    GET_NETPORT_STATISTICS_IN_PERIOD_MS,
-+		    (enable | events) ? period_ms : 0);
-+
-+	if (enable || events || upload) {
-+		const efx_nic_cfg_t *encp = &enp->en_nic_cfg;
-+		uint32_t sz;
-+
-+		/* Periodic stats or stats upload require a DMA buffer */
-+		if (esmp == NULL) {
-+			rc = EINVAL;
-+			goto fail1;
-+		}
-+
-+		/* TODO: validate encp->enc_mac_stats_nstats */
-+		sz = encp->enc_mac_stats_nstats * sizeof (efx_qword_t);
-+
-+		if (EFSYS_MEM_SIZE(esmp) < sz) {
-+			/* DMA buffer too small */
-+			rc = ENOSPC;
-+			goto fail2;
-+		}
-+
-+		MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_IN_DMA_ADDR_LO,
-+		    EFSYS_MEM_ADDR(esmp) & 0xffffffff);
-+		MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_IN_DMA_ADDR_HI,
-+		    EFSYS_MEM_ADDR(esmp) >> 32);
-+		MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_IN_DMA_LEN, sz);
-+	}
-+
-+	efx_mcdi_execute(enp, &req);
-+
-+	if (req.emr_rc != 0) {
-+		/* EF10: Expect ENOENT if no DMA queues are initialised */
-+		if ((req.emr_rc != ENOENT) ||
-+		    (enp->en_rx_qcount + enp->en_tx_qcount != 0)) {
-+			rc = req.emr_rc;
-+			goto fail3;
-+		}
-+	}
-+
-+	return (0);
-+
-+fail3:
-+	EFSYS_PROBE(fail3);
-+
-+fail2:
-+	EFSYS_PROBE(fail2);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+#endif /* EFSYS_OPT_MAC_STATS */
-diff --git a/drivers/common/sfc_efx/base/medford4_impl.h b/drivers/common/sfc_efx/base/medford4_impl.h
-index 2fbf1495d1..cc45431a81 100644
---- a/drivers/common/sfc_efx/base/medford4_impl.h
-+++ b/drivers/common/sfc_efx/base/medford4_impl.h
-@@ -63,6 +63,33 @@ medford4_mac_stats_get_mask(
- 	__in			efx_nic_t *enp,
- 	__inout_bcount(sz)	uint32_t *maskp,
- 	__in			size_t sz);
-+
-+LIBEFX_INTERNAL
-+extern	__checkReturn		efx_rc_t
-+medford4_mac_stats_clear(
-+	__in			efx_nic_t *enp);
-+
-+LIBEFX_INTERNAL
-+extern	__checkReturn		efx_rc_t
-+medford4_mac_stats_upload(
-+	__in			efx_nic_t *enp,
-+	__in			efsys_mem_t *esmp);
-+
-+LIBEFX_INTERNAL
-+extern	__checkReturn		efx_rc_t
-+medford4_mac_stats_periodic(
-+	__in			efx_nic_t *enp,
-+	__in			efsys_mem_t *esmp,
-+	__in			uint16_t period_ms,
-+	__in			boolean_t events);
-+
-+LIBEFX_INTERNAL
-+extern	__checkReturn			efx_rc_t
-+medford4_mac_stats_update(
-+	__in				efx_nic_t *enp,
-+	__in				efsys_mem_t *esmp,
-+	__inout_ecount(EFX_MAC_NSTATS)	efsys_stat_t *stats,
-+	__inout_opt			uint32_t *generationp);
+@@ -816,6 +816,7 @@ efx_np_attach(
+ 	efx_nic_cfg_t *encp = &(enp->en_nic_cfg);
+ 	efx_port_t *epp = &(enp->en_port);
+ 	efx_np_link_state_t ls;
++	efx_np_mac_state_t ms;
+ 	efx_rc_t rc;
+ 
+ 	if (efx_np_supported(enp) == B_FALSE)
+@@ -867,8 +868,16 @@ efx_np_attach(
+ 		goto fail4;
  #endif /* EFSYS_OPT_MAC_STATS */
  
- #ifdef	__cplusplus
++	rc = efx_np_mac_state(enp, epp->ep_np_handle, &ms);
++	if (rc != 0)
++		goto fail5;
++
++	epp->ep_mac_pdu = ms.enms_pdu;
+ 	return (0);
+ 
++fail5:
++	EFSYS_PROBE(fail5);
++
+ #if EFSYS_OPT_MAC_STATS
+ fail4:
+ 	EFSYS_PROBE(fail4);
+@@ -930,6 +939,7 @@ efx_np_mac_state(
+ 	if (MCDI_OUT_DWORD(req, MAC_STATE_OUT_MAC_FAULT_FLAGS) == 0)
+ 		msp->enms_up = B_TRUE;
+ 
++	msp->enms_pdu = MCDI_OUT_DWORD(req, MAC_STATE_OUT_MAX_FRAME_LEN);
+ 	msp->enms_fcntl = MCDI_OUT_DWORD(req, MAC_STATE_OUT_FCNTL);
+ 	return (0);
+ 
+@@ -1242,6 +1252,12 @@ efx_np_mac_ctrl(
+ 
+ 	MCDI_IN_SET_DWORD(req, MAC_CTRL_IN_PORT_HANDLE, nph);
+ 
++	MCDI_IN_SET_DWORD(req, MAC_CTRL_IN_MAX_FRAME_LEN, mc->enmc_pdu);
++	cfg |= 1U << MC_CMD_MAC_CONFIG_OPTIONS_CFG_MAX_FRAME_LEN;
++
++	if (mc->enmc_set_pdu_only != B_FALSE)
++		goto skip_full_reconfigure;
++
+ 	cfg |= 1U << MC_CMD_MAC_CONFIG_OPTIONS_CFG_INCLUDE_FCS;
+ 	if (mc->enmc_include_fcs != B_FALSE)
+ 		flags |= 1U << MC_CMD_MAC_FLAGS_FLAG_INCLUDE_FCS;
+@@ -1273,6 +1289,7 @@ efx_np_mac_ctrl(
+ 	cfg |= 1U << MC_CMD_MAC_CONFIG_OPTIONS_CFG_FCNTL;
+ 	MCDI_IN_SET_DWORD(req, MAC_CTRL_IN_FCNTL, fcntl);
+ 
++skip_full_reconfigure:
+ 	MCDI_IN_SET_DWORD(req, MAC_CTRL_IN_V2_CONTROL_FLAGS, cfg);
+ 
+ 	efx_mcdi_execute(enp, &req);
+diff --git a/drivers/common/sfc_efx/base/medford4_impl.h b/drivers/common/sfc_efx/base/medford4_impl.h
+index cc45431a81..b9be5e4e82 100644
+--- a/drivers/common/sfc_efx/base/medford4_impl.h
++++ b/drivers/common/sfc_efx/base/medford4_impl.h
+@@ -51,6 +51,17 @@ medford4_mac_up(
+ 	__in		efx_nic_t *enp,
+ 	__out		boolean_t *mac_upp);
+ 
++LIBEFX_INTERNAL
++extern	__checkReturn	efx_rc_t
++medford4_mac_pdu_set(
++	__in		efx_nic_t *enp);
++
++LIBEFX_INTERNAL
++extern	__checkReturn	efx_rc_t
++medford4_mac_pdu_get(
++	__in		efx_nic_t *enp,
++	__out		size_t *pdup);
++
+ LIBEFX_INTERNAL
+ extern	__checkReturn		efx_rc_t
+ medford4_mac_reconfigure(
 diff --git a/drivers/common/sfc_efx/base/medford4_mac.c b/drivers/common/sfc_efx/base/medford4_mac.c
-index b8a5aade16..bc55604017 100644
+index bc55604017..1390752e1e 100644
 --- a/drivers/common/sfc_efx/base/medford4_mac.c
 +++ b/drivers/common/sfc_efx/base/medford4_mac.c
-@@ -113,5 +113,143 @@ medford4_mac_stats_get_mask(
+@@ -47,6 +47,49 @@ medford4_mac_up(
+ 	*mac_upp = els.els_mac_up;
+ 	return (0);
+ 
++fail1:
++	EFSYS_PROBE1(fail1, efx_rc_t, rc);
++	return (rc);
++}
++
++	__checkReturn	efx_rc_t
++medford4_mac_pdu_set(
++	__in		efx_nic_t *enp)
++{
++	efx_port_t *epp = &(enp->en_port);
++	efx_np_mac_ctrl_t mc = {0};
++	efx_rc_t rc;
++
++	mc.enmc_set_pdu_only = B_TRUE;
++	mc.enmc_pdu = epp->ep_mac_pdu;
++
++	rc = efx_np_mac_ctrl(enp, epp->ep_np_handle, &mc);
++	if (rc != 0)
++		goto fail1;
++
++	return (0);
++
++fail1:
++	EFSYS_PROBE1(fail1, efx_rc_t, rc);
++	return (rc);
++}
++
++	__checkReturn	efx_rc_t
++medford4_mac_pdu_get(
++	__in		efx_nic_t *enp,
++	__out		size_t *pdup)
++{
++	efx_port_t *epp = &(enp->en_port);
++	efx_np_mac_state_t ms;
++	efx_rc_t rc;
++
++	rc = efx_np_mac_state(enp, epp->ep_np_handle, &ms);
++	if (rc != 0)
++		goto fail1;
++
++	*pdup = ms.enms_pdu;
++	return (0);
++
+ fail1:
  	EFSYS_PROBE1(fail1, efx_rc_t, rc);
  	return (rc);
- }
-+
-+	__checkReturn		efx_rc_t
-+medford4_mac_stats_clear(
-+	__in			efx_nic_t *enp)
-+{
-+	efx_port_t *epp = &(enp->en_port);
-+	efx_rc_t rc;
-+
-+	rc = efx_np_mac_stats(enp, epp->ep_np_handle, EFX_STATS_CLEAR, NULL, 0);
-+	if (rc != 0)
-+		goto fail1;
-+
-+	return (0);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+
-+	__checkReturn		efx_rc_t
-+medford4_mac_stats_upload(
-+	__in			efx_nic_t *enp,
-+	__in			efsys_mem_t *esmp)
-+{
-+	efx_port_t *epp = &(enp->en_port);
-+	efx_rc_t rc;
-+
-+	rc = efx_np_mac_stats(enp,
-+		    epp->ep_np_handle, EFX_STATS_UPLOAD, esmp, 0);
-+	if (rc != 0)
-+		goto fail1;
-+
-+	return (0);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+
-+	__checkReturn		efx_rc_t
-+medford4_mac_stats_periodic(
-+	__in			efx_nic_t *enp,
-+	__in			efsys_mem_t *esmp,
-+	__in			uint16_t period_ms,
-+	__in			boolean_t events)
-+{
-+	efx_port_t *epp = &(enp->en_port);
-+	efx_rc_t rc;
-+
-+	if (period_ms == 0) {
-+		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
-+			    EFX_STATS_DISABLE, NULL, 0);
-+	} else if (events != B_FALSE) {
-+		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
-+			    EFX_STATS_ENABLE_EVENTS, esmp, period_ms);
-+	} else {
-+		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
-+			    EFX_STATS_ENABLE_NOEVENTS, esmp, period_ms);
-+	}
-+
-+	if (rc != 0)
-+		goto fail1;
-+
-+	return (0);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+
-+#define	MEDFORD4_MAC_STAT_READ(_esmp, _field, _eqp)			\
-+	EFSYS_MEM_READQ((_esmp), (_field) * sizeof (efx_qword_t), _eqp)
-+
-+	__checkReturn			efx_rc_t
-+medford4_mac_stats_update(
-+	__in				efx_nic_t *enp,
-+	__in				efsys_mem_t *esmp,
-+	__inout_ecount(EFX_MAC_NSTATS)	efsys_stat_t *stats,
-+	__inout_opt			uint32_t *generationp)
-+{
-+	const efx_nic_cfg_t *encp = &enp->en_nic_cfg;
-+	efx_port_t *epp = &(enp->en_port);
-+	efx_qword_t generation_start;
-+	efx_qword_t generation_end;
-+	unsigned int i;
-+	efx_rc_t rc;
-+
-+	/* TODO: validate encp->enc_mac_stats_nstats */
-+	if (EFSYS_MEM_SIZE(esmp) <
-+	    (encp->enc_mac_stats_nstats * sizeof (efx_qword_t))) {
-+		/* DMA buffer too small */
-+		rc = ENOSPC;
-+		goto fail1;
-+	}
-+
-+	/* Read END first so we don't race with the MC */
-+	EFSYS_DMA_SYNC_FOR_KERNEL(esmp, 0, EFSYS_MEM_SIZE(esmp));
-+	MEDFORD4_MAC_STAT_READ(esmp, (encp->enc_mac_stats_nstats - 1),
-+	    &generation_end);
-+	EFSYS_MEM_READ_BARRIER();
-+
-+	for (i = 0; i < EFX_ARRAY_SIZE(epp->ep_np_mac_stat_lut); ++i) {
-+		efx_qword_t value;
-+
-+		if (epp->ep_np_mac_stat_lut[i].ens_valid == B_FALSE)
-+			continue;
-+
-+		MEDFORD4_MAC_STAT_READ(esmp,
-+		    epp->ep_np_mac_stat_lut[i].ens_dma_fld, &value);
-+
-+		EFSYS_STAT_SET_QWORD(&(stats[i]), &value);
-+	}
-+
-+	/* TODO: care about VADAPTOR statistics */
-+
-+	/* Read START generation counter */
-+	EFSYS_DMA_SYNC_FOR_KERNEL(esmp, 0, EFSYS_MEM_SIZE(esmp));
-+	EFSYS_MEM_READ_BARRIER();
-+
-+	/* FIXME: we never parse marker descriptors; assume start is 0 offset */
-+	MEDFORD4_MAC_STAT_READ(esmp, 0, &generation_start);
-+
-+	/* Check that we didn't read the stats in the middle of a DMA */
-+	if (memcmp(&generation_start, &generation_end,
-+		    sizeof (generation_start)) != 0)
-+		return (EAGAIN);
-+
-+	if (generationp != NULL)
-+		*generationp = EFX_QWORD_FIELD(generation_start, EFX_DWORD_0);
-+
-+	return (0);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+
-+#undef MEDFORD4_MAC_STAT_READ
- #endif /* EFSYS_OPT_MAC_STATS */
- #endif /* EFSYS_OPT_MEDFORD4 */
+@@ -63,6 +106,7 @@ medford4_mac_reconfigure(
+ 	mc.enmc_fcntl_autoneg = epp->ep_fcntl_autoneg;
+ 	mc.enmc_include_fcs = epp->ep_include_fcs;
+ 	mc.enmc_fcntl = epp->ep_fcntl;
++	mc.enmc_pdu = epp->ep_mac_pdu;
+ 
+ 	rc = efx_np_mac_ctrl(enp, epp->ep_np_handle, &mc);
+ 	if (rc != 0)
 -- 
 2.39.5
 
