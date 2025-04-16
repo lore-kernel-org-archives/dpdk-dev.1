@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA18C369C7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 20:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB0AC369C9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 20:57:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F44D411F3;
-	Wed, 16 Apr 2025 22:57:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5AF9242709;
+	Wed, 16 Apr 2025 22:57:28 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id DEE5C4025A
- for <dev@dpdk.org>; Wed, 16 Apr 2025 22:57:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 989E64025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 22:57:24 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id E0AC8205250F; Wed, 16 Apr 2025 13:57:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E0AC8205250F
+ id EAF86205250D; Wed, 16 Apr 2025 13:57:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EAF86205250D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1744837042;
- bh=WV2TDwvRsMn5thrDCl0mOpcIjrHwp4o5VevAzW9dmEs=;
+ s=default; t=1744837043;
+ bh=X2dHpflaT4Rz0GLQrvcVprv4VMePe9ilb1jSxtNlJdo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=F7gctNm5YQLhvAFb+Q6LXtIk6wQtH4hDp058mXJ8QyMyQCq8FHmQ0ZL4OydbPgkS2
- CW9TdViT73r3x9w7nrW2lswycT/kdiYYmmQcNMdZdqXD7i5xooPzRG0iG0OTWNItLF
- uC+ycNu+7SzZQaI+1pJlrJ+tztGR9gIwaBlANqGk=
+ b=oWk1TP7yMgiDvS9sdoSmnMMhehYbCFx+dCBYPKX95ti7p6vlZS6Z0Mb56UKiZIk/V
+ uaxogBzlH145vr4I1Q6sYC2LtKciCVuHePhy/MyjGeWsDYLWxNlD0JIL3HXL76BGBS
+ 4XE4/CJMxQXEyaolEjkEkkHiimqdsBLnilMFQAf4=
 From: longli@linuxonhyperv.com
 To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
 Cc: dev@dpdk.org,
 	Long Li <longli@microsoft.com>
-Subject: [patch v6 3/6] bus/vmbus: store UIO fd for secondary process
-Date: Wed, 16 Apr 2025 13:57:15 -0700
-Message-Id: <1744837038-5387-4-git-send-email-longli@linuxonhyperv.com>
+Subject: [patch v6 4/6] bus/vmbus: support channels without monitoring enabled
+Date: Wed, 16 Apr 2025 13:57:16 -0700
+Message-Id: <1744837038-5387-5-git-send-email-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1744837038-5387-1-git-send-email-longli@linuxonhyperv.com>
 References: <1744837038-5387-1-git-send-email-longli@linuxonhyperv.com>
@@ -45,40 +45,70 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-Secondary process will get access to vmbus device and this UIO fd for
-signaling hyperv host on channels without monitoring support.
+Hyperv host may offer channels without monitor enabled. The max monitor
+ID it supports is 128. Over those channels without monitor enabled,
+Hyperv does not send or receive large amount of data traffic and almost all
+the data traffic is going over the VF.
+
+Change the code to not fail on creating channels without monitor enabled.
+Use UINT8_MAX (256) to indicate this channel have no monitoring.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/bus/vmbus/vmbus_common_uio.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/bus/vmbus/linux/vmbus_bus.c | 9 ++++++---
+ drivers/bus/vmbus/linux/vmbus_uio.c | 4 ++--
+ drivers/bus/vmbus/vmbus_channel.c   | 3 +++
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
-index 4d4613513c..d55aee6537 100644
---- a/drivers/bus/vmbus/vmbus_common_uio.c
-+++ b/drivers/bus/vmbus/vmbus_common_uio.c
-@@ -86,8 +86,11 @@ vmbus_uio_map_secondary(struct rte_vmbus_device *dev)
- 		return -1;
- 	}
+diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
+index ed18d4da96..9f95a107e2 100644
+--- a/drivers/bus/vmbus/linux/vmbus_bus.c
++++ b/drivers/bus/vmbus/linux/vmbus_bus.c
+@@ -283,9 +283,12 @@ vmbus_scan_one(const char *name)
  
--	/* fd is not needed in secondary process, close it */
--	close(fd);
-+	if (rte_intr_fd_set(dev->intr_handle, fd))
-+		return -1;
+ 	/* get monitor id */
+ 	snprintf(filename, sizeof(filename), "%s/monitor_id", dirname);
+-	if (eal_parse_sysfs_value(filename, &tmp) < 0)
+-		goto error;
+-	dev->monitor_id = tmp;
++	if (eal_parse_sysfs_value(filename, &tmp) >= 0) {
++		dev->monitor_id = tmp;
++	} else {
++		VMBUS_LOG(NOTICE, "monitor disabled on %s", name);
++		dev->monitor_id = UINT8_MAX;
++	}
+ 
+ 	/* get numa node (if present) */
+ 	snprintf(filename, sizeof(filename), "%s/numa_node",
+diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
+index 26edef342d..33edc151f6 100644
+--- a/drivers/bus/vmbus/linux/vmbus_uio.c
++++ b/drivers/bus/vmbus/linux/vmbus_uio.c
+@@ -451,9 +451,9 @@ int vmbus_uio_get_subchan(struct vmbus_channel *primary,
+ 		err = vmbus_uio_sysfs_read(subchan_path, "monitor_id",
+ 					   &monid, UINT8_MAX);
+ 		if (err) {
+-			VMBUS_LOG(NOTICE, "no monitor_id in %s:%s",
++			VMBUS_LOG(NOTICE, "no monitor_id in %s:%s use int mode",
+ 				  subchan_path, strerror(-err));
+-			goto fail;
++			monid = UINT8_MAX;
+ 		}
+ 
+ 		err = vmbus_chan_create(dev, relid, subid, monid, subchan);
+diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
+index a876c909dd..e7807abac3 100644
+--- a/drivers/bus/vmbus/vmbus_channel.c
++++ b/drivers/bus/vmbus/vmbus_channel.c
+@@ -54,6 +54,9 @@ rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
+ 		      const struct vmbus_channel *chan,
+ 		      uint32_t latency)
+ {
++	if (chan->monitor_id == UINT8_MAX)
++		return;
 +
-+	if (rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UIO_INTX))
-+		return -1;
- 
- 	/* Create and map primary channel */
- 	if (vmbus_chan_create(dev, dev->relid, 0,
-@@ -256,7 +259,7 @@ vmbus_uio_unmap_resource(struct rte_vmbus_device *dev)
- 	/* free uio resource */
- 	rte_free(uio_res);
- 
--	/* close fd if in primary process */
-+	/* close fd */
- 	if (rte_intr_fd_get(dev->intr_handle) >= 0)
- 		close(rte_intr_fd_get(dev->intr_handle));
+ 	uint32_t trig_idx = chan->monitor_id / VMBUS_MONTRIG_LEN;
+ 	uint32_t trig_offs = chan->monitor_id % VMBUS_MONTRIG_LEN;
  
 -- 
 2.34.1
