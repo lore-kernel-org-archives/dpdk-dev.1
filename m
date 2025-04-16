@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF117C369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26DCC369C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:06:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F64B4281D;
-	Wed, 16 Apr 2025 16:01:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E346242D27;
+	Wed, 16 Apr 2025 16:01:17 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 88C2842790
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:01:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 54972427B7
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:01:06 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id D47EBE0872;
- Wed, 16 Apr 2025 18:01:04 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D47EBE0872
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 9C84AE11AD;
+ Wed, 16 Apr 2025 18:01:05 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 9C84AE11AD
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812065;
- bh=EFFF/Jysx7jicjO09hfdk6hIg9jsfPSZI36+6kGxVP8=;
+ s=default; t=1744812066;
+ bh=yn7dgllXmp5w8IeKrzgNVUVAswXZbKQnfwpxhqQivB8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=6BqU8gEIMGhznodQhE0pFiNViSNE1EMI5gFWwB46zT7zriiQSmG+p/x3XfS1u9SLZ
- V8pV0ZIlvGA28JW0trMFeGIKDC6Q5WuJ805Ta/77BaOViQSR8gXrjCTe5Drn/rulK6
- IYqj8KrTdMQP5CyvV4Nza9oSibFxuny5No463WoF0z9oiR184UhAbI2kybAOmi2gsn
- qyNgnQ7mK5zhpyRFxGA+HhB03k6cYRSEa5tpOSgB2l0cegiMGpxXufeWeoDtoiHS7d
- SPuAnKjiyZzKxPZeyBzAfr7M0B+fqx7QmwExk88RX7Ss/sqTO5a0F3DnZ5/tHKhJMm
- eY3GuURRYLZIg==
+ b=EzmdeBbnGmqAOKRitqSp0CHaQcjz0k2m++ciL4YA3C/sBz3Oe0ax4QflurPiF6lqW
+ t7bfd3tojdcYl8ehSV5bcoWR9GW4/8ILYxelgbPb6+eTRqjtDODk8uTBo+Z4jGrmeB
+ 6Ii3Tj84k8lNUZXNzj94j6z6hfWHuF3tx4nMWLM6jeT2di39Y+6h5eKWAYCR/i3hwu
+ C6ePMepK4qmb5KzfXpI70syXtTfoJla83zaOShY6SvnESEzNRQ4q2XGLMTuqirXYqY
+ 947nrrWkYad0WtNEWpQyYZUKotmj6TnwlfjM2BuMCcZaaELQb4MCrjtiw4bM2zz2rX
+ IQf7M5vQq0ZEg==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,10 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 42/46] common/sfc_efx/base: subscribe to netport link change
- events
-Date: Wed, 16 Apr 2025 18:00:12 +0400
-Message-Id: <20250416140016.36127-43-ivan.malov@arknetworks.am>
+Subject: [PATCH 43/46] net/sfc: offer support for 200G link ability on new
+ adaptors
+Date: Wed, 16 Apr 2025 18:00:13 +0400
+Message-Id: <20250416140016.36127-44-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -56,100 +56,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Subscribe to the new link events on netport MCDI attach path.
+New adaptors (for instance, Medford4) can support 200G speed.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>
 ---
- drivers/common/sfc_efx/base/efx_np.c | 56 ++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ drivers/net/sfc/sfc.c        |  5 ++++-
+ drivers/net/sfc/sfc_ethdev.c | 15 +++++++++++++++
+ drivers/net/sfc/sfc_port.c   |  6 ++++++
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 88e13f0df9..73b022ac21 100644
---- a/drivers/common/sfc_efx/base/efx_np.c
-+++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -809,6 +809,48 @@ efx_np_stats_assign(
- }
- #endif /* EFSYS_OPT_MAC_STATS */
+diff --git a/drivers/net/sfc/sfc.c b/drivers/net/sfc/sfc.c
+index 938c967430..69747e49ae 100644
+--- a/drivers/net/sfc/sfc.c
++++ b/drivers/net/sfc/sfc.c
+@@ -126,7 +126,8 @@ sfc_phy_cap_from_link_speeds(uint32_t speeds)
+ 				(1 << EFX_PHY_CAP_25000FDX) |
+ 				(1 << EFX_PHY_CAP_40000FDX) |
+ 				(1 << EFX_PHY_CAP_50000FDX) |
+-				(1 << EFX_PHY_CAP_100000FDX);
++				(1 << EFX_PHY_CAP_100000FDX) |
++				(1 << EFX_PHY_CAP_200000FDX);
+ 	}
+ 	if (speeds & RTE_ETH_LINK_SPEED_1G)
+ 		phy_caps |= (1 << EFX_PHY_CAP_1000FDX);
+@@ -140,6 +141,8 @@ sfc_phy_cap_from_link_speeds(uint32_t speeds)
+ 		phy_caps |= (1 << EFX_PHY_CAP_50000FDX);
+ 	if (speeds & RTE_ETH_LINK_SPEED_100G)
+ 		phy_caps |= (1 << EFX_PHY_CAP_100000FDX);
++	if (speeds & RTE_ETH_LINK_SPEED_200G)
++		phy_caps |= (1 << EFX_PHY_CAP_200000FDX);
  
-+static	__checkReturn	efx_rc_t
-+efx_np_set_event_mask(
-+	__in		efx_nic_t *enp,
-+	__in		efx_np_handle_t nph,
-+	__in		boolean_t want_linkchange_events)
-+{
-+	EFX_MCDI_DECLARE_BUF(payload,
-+	    MC_CMD_SET_NETPORT_EVENTS_MASK_IN_LEN,
-+	    MC_CMD_SET_NETPORT_EVENTS_MASK_OUT_LEN);
-+	efx_mcdi_req_t req;
-+	efx_dword_t dword;
-+	efx_rc_t rc;
-+
-+	req.emr_out_length = MC_CMD_SET_NETPORT_EVENTS_MASK_OUT_LEN;
-+	req.emr_in_length = MC_CMD_SET_NETPORT_EVENTS_MASK_IN_LEN;
-+	req.emr_cmd = MC_CMD_SET_NETPORT_EVENTS_MASK;
-+	req.emr_out_buf = payload;
-+	req.emr_in_buf = payload;
-+
-+	EFX_ZERO_DWORD(dword);
-+
-+	if (want_linkchange_events != B_FALSE)
-+		EFX_SET_DWORD_BIT(dword, EVENT_MASK_PORT_LINKCHANGE);
-+
-+	MCDI_IN_SET_DWORD(req, SET_NETPORT_EVENTS_MASK_IN_PORT_HANDLE, nph);
-+	MCDI_IN_SET_DWORD(req, SET_NETPORT_EVENTS_MASK_IN_EVENT_MASK,
-+	    dword.ed_u32[0]);
-+
-+	efx_mcdi_execute(enp, &req);
-+
-+	if (req.emr_rc != 0) {
-+		rc = req.emr_rc;
-+		goto fail1;
+ 	return phy_caps;
+ }
+diff --git a/drivers/net/sfc/sfc_ethdev.c b/drivers/net/sfc/sfc_ethdev.c
+index 05933b1d39..80eb39e58d 100644
+--- a/drivers/net/sfc/sfc_ethdev.c
++++ b/drivers/net/sfc/sfc_ethdev.c
+@@ -117,6 +117,8 @@ sfc_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_50G;
+ 	if (sa->port.phy_adv_cap_mask & (1u << EFX_PHY_CAP_100000FDX))
+ 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100G;
++	if (sa->port.phy_adv_cap_mask & (1u << EFX_PHY_CAP_200000FDX))
++		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_200G;
+ 
+ 	dev_info->max_rx_queues = sa->rxq_max;
+ 	dev_info->max_tx_queues = sa->txq_max;
+@@ -2442,6 +2444,19 @@ sfc_fec_get_capa_speed_to_fec(uint32_t supported_caps,
+ 		}
+ 		num++;
+ 	}
++	if (supported_caps & (1u << EFX_PHY_CAP_200000FDX)) {
++		if (speed_fec_capa != NULL) {
++			speed_fec_capa[num].speed = RTE_ETH_SPEED_NUM_200G;
++			speed_fec_capa[num].capa =
++				RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC) |
++				RTE_ETH_FEC_MODE_CAPA_MASK(AUTO);
++			if (rs) {
++				speed_fec_capa[num].capa |=
++					RTE_ETH_FEC_MODE_CAPA_MASK(RS);
++			}
++		}
++		num++;
 +	}
-+
-+	return (0);
-+
-+fail1:
-+	EFSYS_PROBE1(fail1, efx_rc_t, rc);
-+	return (rc);
-+}
-+
- 	__checkReturn	efx_rc_t
- efx_np_attach(
- 	__in		efx_nic_t *enp)
-@@ -873,8 +915,17 @@ efx_np_attach(
- 		goto fail5;
  
- 	epp->ep_mac_pdu = ms.enms_pdu;
-+
-+	/* Subscribe to link change events. */
-+	rc = efx_np_set_event_mask(enp, epp->ep_np_handle, B_TRUE);
-+	if (rc != 0)
-+		goto fail6;
-+
- 	return (0);
- 
-+fail6:
-+	EFSYS_PROBE(fail6);
-+
- fail5:
- 	EFSYS_PROBE(fail5);
- 
-@@ -898,8 +949,13 @@ efx_np_attach(
- efx_np_detach(
- 	__in	efx_nic_t *enp)
- {
-+	efx_port_t *epp = &(enp->en_port);
-+
- 	if (efx_np_supported(enp) == B_FALSE)
- 		return;
-+
-+	/* Unsubscribe from link change events. */
-+	(void) efx_np_set_event_mask(enp, epp->ep_np_handle, B_FALSE);
+ 	return num;
  }
- 
- 	__checkReturn	efx_rc_t
+diff --git a/drivers/net/sfc/sfc_port.c b/drivers/net/sfc/sfc_port.c
+index 5e80003ca1..0a31a394d5 100644
+--- a/drivers/net/sfc/sfc_port.c
++++ b/drivers/net/sfc/sfc_port.c
+@@ -144,6 +144,8 @@ sfc_port_init_dev_link(struct sfc_adapter *sa)
+ static efx_link_mode_t
+ sfc_port_phy_caps_to_max_link_speed(uint32_t phy_caps)
+ {
++	if (phy_caps & (1u << EFX_PHY_CAP_200000FDX))
++		return EFX_LINK_200000FDX;
+ 	if (phy_caps & (1u << EFX_PHY_CAP_100000FDX))
+ 		return EFX_LINK_100000FDX;
+ 	if (phy_caps & (1u << EFX_PHY_CAP_50000FDX))
+@@ -649,6 +651,10 @@ sfc_port_link_mode_to_info(efx_link_mode_t link_mode,
+ 		link_info->link_speed  = RTE_ETH_SPEED_NUM_100G;
+ 		link_info->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+ 		break;
++	case EFX_LINK_200000FDX:
++		link_info->link_speed  = RTE_ETH_SPEED_NUM_200G;
++		link_info->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
+ 	default:
+ 		SFC_ASSERT(B_FALSE);
+ 		/* FALLTHROUGH */
 -- 
 2.39.5
 
