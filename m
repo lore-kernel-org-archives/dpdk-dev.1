@@ -2,81 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A3AC369BD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA725C369BA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:11:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B8604402E7;
-	Wed, 16 Apr 2025 18:10:02 +0200 (CEST)
-Received: from alln-iport-3.cisco.com (alln-iport-3.cisco.com [173.37.142.90])
- by mails.dpdk.org (Postfix) with ESMTP id 9E8154025A
- for <dev@dpdk.org>; Wed, 16 Apr 2025 18:10:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ED7AA402E7;
+	Wed, 16 Apr 2025 18:11:18 +0200 (CEST)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
+ [209.85.210.172])
+ by mails.dpdk.org (Postfix) with ESMTP id DE4814025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 18:11:17 +0200 (CEST)
+Received: by mail-pf1-f172.google.com with SMTP id
+ d2e1a72fcca58-736dd9c4b40so892885b3a.0
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 09:11:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=7479; q=dns/txt;
- s=iport01; t=1744819800; x=1746029400;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=dn/qCQScQN+LyCQtbN9olw8yrTpa/AP48ZEpYYkfxt0=;
- b=Ssl3NM6ZImvV0JoaYmohUpf1STb+Poj02Xk0PMhOXXd6J4rR37wZ1gso
- lxc+5qGq1TXgVTxZaMz8E5OjzC5S3fpVo/t+6WCk9I92Cq2OR/wIYcJPV
- EImmc8cOPgNfw/GRajBGh2E71npnGWDIY65FnWtyhhtiewhrOKDGsOAsU
- YUECn7QkCMEhi96nfKkJedbPEHRUE9CSW496MCmfYqUFu0t2m5vzybOpr
- nwZJpoBoXaXSNr3m/sFen0fn0tPX5P4hTpD9sXkTIMkukOYiP8tQldOga
- idlI4da4dHAsRt+blMupGuU7vCF//KxHXYv6HuG2sn8/LGAC6mbvKV7Xs Q==;
-X-CSE-ConnectionGUID: g3LnNtqfQzKFlyZXJDgo8g==
-X-CSE-MsgGUID: 4JzWQvC6TyaPjfNABeu7HQ==
-X-IPAS-Result: =?us-ascii?q?A0AHAAD91P9n/5L/Ja1aGQEBBAQBAQEBARgBAQEBAQGCA?=
- =?us-ascii?q?gQBAQ4Bgkp2WUNIlkWeFRSBEQNWDwEBAQ8xEwQBAYUHiywCJjQJDgECBAEBA?=
- =?us-ascii?q?QEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFgQ4ThXsNhl0rCwFGLl4yEoMCA?=
- =?us-ascii?q?YJkA7FOgXkzgQGEfNk4gW6BSAGNTIVnJxuBSUSBFYE7gi2EKQFFhhgEgi2BF?=
- =?us-ascii?q?4RUkVeLH0iBIQNZLAFVEw0KCwcFgWwDKgsMCxIcFXE1HYF6g3OFNoIRggSJE?=
- =?us-ascii?q?4RWLU+FPEADCxgNSBEsNxQbBj5uB5c2hBaBD4F4ZAyTIQqQBaMmhCWhSRozh?=
- =?us-ascii?q?AOmUwGYfiKCNqFzhGiBZzyBWTMaCBsVgyIJSRkPji0Wgz/IQyoyAjoCBwsBA?=
- =?us-ascii?q?QMJkWUBAQ?=
-IronPort-Data: A9a23:nynXkKmBPXx42pmzXCw4L47o5gz0J0RdPkR7XQ2eYbSJt1+Wr1Gzt
- xJMUG+PP/aINmKgeYx0bIjl9UsG75Pdy4JlGQpqr3s1FVtH+JHPbTi7wugcHM8zwunrFh8PA
- xA2M4GYRCwMZiaC4E/rav658CEUOZigHtLUEPTDNj16WThqQSIgjQMLs+Mii+aEu/Dha++2k
- Y20+pC31GONgWYubzpIsvzb8nuDgdyr0N8mlg1mDRx0lAe2e0k9VPo3Oay3Jn3kdYhYdsbSb
- /rD1ryw4lTC9B4rDN6/+p6jGqHdauePVeQmoiM+t5mK2nCulARrukoIHKZ0hXNsttm8t4sZJ
- OOhGnCHYVxB0qXkwIzxWvTDes10FfUuFLTveRBTvSEPpqHLWyOE/hlgMK05FYJD3uBRHXhAz
- O47BjQcXCChq+2xkL3uH4GAhux7RCXqFJkUtnclyXTSCuwrBMiSBa7L/tRfmjw3g6iiH96HO
- JFfMmUpNkmdJUQTZD/7C7pm9AusrmP6fjlEr1S9rqss6G+Vxwt0uFToGIaKIYLbGJgMwC50o
- Eqa3XbGOw8xauCOwAKH/FSFrOLSwgPCDdd6+LqQs6QCbEeo7mAeFjUaTVe45/6jhSaWUtRWN
- 0sQ62wksLI790u1Ztj7QxC85nWDu3Y0Rd5ZH+w/6RvLz6fY/QuVBWkCZj9HdNEi8sQxQFQXO
- kShhdjlA3lr9baSU3/YrubSpjKpMi9TJmgHDcMZcTY4DxDYiNlbpnryohxLScZZUvWd9enM/
- g23
-IronPort-HdrOrdr: A9a23:gfEpX688m8MfgpcL8x9uk+DTI+orL9Y04lQ7vn2ZhyY7TiX+rb
- HKoB11737JYVoqNU3I+urwWpVoP0m9yXcd2+B4Vt2ftWLd1ldAQrsP0WKb+UyCJ8U7ndQtsp
- uJtMNFebnNMWQ=
-X-Talos-CUID: =?us-ascii?q?9a23=3A9DUndWl63GbpIWJuSI+dfO3SdxrXOXKG6HH2P1a?=
- =?us-ascii?q?2MHRKZrmEe2+y1Kxjw8U7zg=3D=3D?=
-X-Talos-MUID: 9a23:FyGShgQc9jyC9vEeRXSwpiNdDdlDvZi/AXgPn7MvkcSZagxJbmI=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.15,216,1739836800"; d="scan'208";a="473695516"
-Received: from rcdn-l-core-09.cisco.com ([173.37.255.146])
- by alln-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 16 Apr 2025 16:09:59 +0000
-Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
- [172.18.47.81])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by rcdn-l-core-09.cisco.com (Postfix) with ESMTPS id 7A5E31800022E;
- Wed, 16 Apr 2025 16:09:59 +0000 (GMT)
-Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
- id D3F351406899; Wed, 16 Apr 2025 12:09:58 -0400 (EDT)
-From: Roger Melton <rmelton@cisco.com>
-To: vladimir.medvedkin@intel.com,
-	anatoly.burakov@intel.com
-Cc: dev@dpdk.org,
-	Roger Melton <rmelton@cisco.com>
-Subject: [PATCH] net/ixgbe: support Rx/Tx burst mode info
-Date: Wed, 16 Apr 2025 12:09:46 -0400
-Message-Id: <20250416160946.3963682-1-rmelton@cisco.com>
-X-Mailer: git-send-email 2.35.6
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744819877;
+ x=1745424677; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=x6yKSJ2H+1CSeqPep2yVGxVKqXOjWmIP4zA8rgBiDKc=;
+ b=wEwOvS9EcUagn5GHTtmHyz7mp8hspi0xrB6lTXrH0aVez3Ve/MWbbMX6Mv3DmBJK7B
+ s3ZlRObF4BHv81uw3aKM8wz8kExsi3OQ2x65nP3VM71EQr8rIbJ9TxuqLvD1uhIazAdX
+ d6jOn6HeeWPne89ws5EF7/VOvXP2TBi8opkkGwbb1Wjb74MdlsZvGG0Hp2TUi9T5jJy4
+ gJA+Q9y21/uCsqb7LBxTG+Y4W9e71QkqlcmVsmKdD3yqkDf0UN5La3+qUa94eHYYSbQz
+ Ccy2Xk4oKO838OmPli4Nkmir7Q/qzJkFRxS/uq0ByfYQHObI4urpu2SD18FXnuvR8g/I
+ 0yig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1744819877; x=1745424677;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=x6yKSJ2H+1CSeqPep2yVGxVKqXOjWmIP4zA8rgBiDKc=;
+ b=k2qA2MW44s24LLgt5V5jIRKokJ+5RI0ZEfI41i01MU0RrOtuJgVPWR66HOmAti3Ywj
+ Zud54ZpAS2CWay7yt1uCywhLwrAxjTSIMR5KJuHYPbWSJRB39MgRinMQPhf37DnTnAbx
+ MbRhx3tmK3j9364z9cC3aPG1ql44yZeioJVDp6ATB/bk6gAcgUE6ahvI0OsdChAViI5K
+ kEPoxwXqR34mKYybgG93Gl4/RdxBdV7XXzfsgIVod0flJ59ltaBPYSez5O26ZDdI4T45
+ 6yJ3uz11vbDz1IDUrb9t89vGe3PlKjAqwcAQJFQ6rJlkUqBbfvKSONn0ilCYBWj3AHMP
+ d6LA==
+X-Gm-Message-State: AOJu0YyVrzKNRaQCUBIq25IdYn/J20cN10Liz0vY5TxHMkntfziydj0M
+ ZbkGmEC5i7W0JKnz+MUU11WqPReyDHUVFYL5k1SPLiI+ha1MZVWcl0tDuGSUyT93C3Utoq/IruP
+ emwc=
+X-Gm-Gg: ASbGncvEy+e3I5dt1bHJR0TptikAvHSrT4zYnxlNi8VRtXwWwU0snUDcPlM3X2ph4kE
+ 7bk+WCZxOWzg2iE1IuOIz+nj9C3YIlrJzNAyED9oBaNX61phjw++wgEXi6BKiy33SmNQnkSYlKC
+ K4+52yxmA8BweDmoS8gwnJvmvUf0wMTpbOSwTly4tHy1wVJUFR+ir0Yml8EhynsNhdScaRfrsjz
+ uNE6yocJCIZYbbdlh5EkBlZtaUo5tfvoiIHz5z0hgPjZItTz/7TX21dJwaj9iDX7dzQ3DPkf1N3
+ V812urpQZJgy9pMhXbPf96zbcgKiqm2XahMPdTaL9NMR1TR8fCmOGXOeyLTSXbhMEehan7XcoCK
+ 4FU0/9o3lAGrzhXB8
+X-Google-Smtp-Source: AGHT+IE0eZw5jh28hOpSqLCVKtEgicYfUpl5CLUZx+vABO4hPf34Q98WqzKpRnISkSiFuvMwT3KCVg==
+X-Received: by 2002:a17:90b:5150:b0:2fa:42f3:e3e4 with SMTP id
+ 98e67ed59e1d1-3086d989d5cmr154930a91.3.1744819876704; 
+ Wed, 16 Apr 2025 09:11:16 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-308611f3f31sm1803612a91.16.2025.04.16.09.11.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 16 Apr 2025 09:11:16 -0700 (PDT)
+Date: Wed, 16 Apr 2025 08:27:42 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: liwencheng <liwencheng@phytium.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 0/3] net/macb: updated net macb driver.
+Message-ID: <20250416082742.0d99c75c@hermes.local>
+In-Reply-To: <1744093147-313646-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1744093147-313646-1-git-send-email-liwencheng@phytium.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
-X-Outbound-Node: rcdn-l-core-09.cisco.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,203 +81,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Return burst mode according to the selected Rx/Tx burst
-function name.
-Update 25.07 release notes with this information.
+On Tue,  8 Apr 2025 06:19:07 +0000
+liwencheng <liwencheng@phytium.com.cn> wrote:
 
-Signed-off-by: Roger Melton <rmelton@cisco.com>
----
- doc/guides/rel_notes/release_25_07.rst        |  4 ++
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  4 ++
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |  4 ++
- drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 70 +++++++++++++++++++
- drivers/net/intel/ixgbe/ixgbe_rxtx.h          |  4 ++
- .../net/intel/ixgbe/ixgbe_vf_representor.c    |  4 +-
- 6 files changed, 88 insertions(+), 2 deletions(-)
+> v6:
+> - Fixed build failures across different OS.
+> 
+> v5:
+> - Putting __rte_unused after the declaration.
+> - Correct RX-bytes and TX-bytes statistics.
+> - Initialize the mbuf_initializer.
+> - Add driver based on 25.07.
+> - Fixed some code style issues.
+> 
+> v4:
+> - Fix tab errors in meson.build file.
+> - Use RTE_LOG_LINE instead of rte_log.
+> - Replace %l with %PRI*64.
+> - Replace rte_smp_[r/w]mb with rte_[r/w]mb.
+> - Do not use variadic arguments in macros.
+> - Do not use variable-length array pkts[nb_bufs].
+> - Use __rte_cache_aligned only for struct or union types alignment.
+> - Support hardware Rx/Tx checksum offload.
+> - Fixed some code style issues.
+> v3:
+> - Changed functions that always return 0 and whose return value
+> is unused to void type, improving code simplicity and readability.
+> - Fixed the implicit conversion issues in the
+> macb_usxgmii_pcs_check_for_link and
+> macb_usxgmii_pcs_check_for_link functions.
+> - Added the missing SPDX license tags.
+> - Added the missing mailmap entry.
+> - Updated the MAINTAINERS file to include the missing information.
+> 
+> v2:
+> - Split the driver into three logically independent patches,
+> rather than one large patch.
+> - Added conditional compilation to address the issue of
+> macb_rxtx_vec_neon.c failing to compile in certain modes.
+> - Fixed some code style issues.
+> 
+> v1:
+> - updated net macb driver.
+> 
+> *** BLURB HERE ***
+> 
+> Wencheng Li (3):
+>   net/macb: add new poll mode driver
+>   net/macb: add NEON vectorized Rx/Tx
+>   net/macb: add necessary docs and update related files
+> 
+>  .mailmap                               |    1 +
+>  MAINTAINERS                            |    6 +
+>  doc/guides/nics/features/macb.ini      |   27 +
+>  doc/guides/nics/index.rst              |    1 +
+>  doc/guides/nics/macb.rst               |   26 +
+>  doc/guides/rel_notes/release_25_07.rst |    4 +
+>  drivers/net/macb/base/generic_phy.c    |  271 +++++
+>  drivers/net/macb/base/generic_phy.h    |  202 ++++
+>  drivers/net/macb/base/macb_common.c    |  670 ++++++++++++
+>  drivers/net/macb/base/macb_common.h    |  253 +++++
+>  drivers/net/macb/base/macb_errno.h     |   58 +
+>  drivers/net/macb/base/macb_hw.h        | 1138 +++++++++++++++++++
+>  drivers/net/macb/base/macb_type.h      |   23 +
+>  drivers/net/macb/base/macb_uio.c       |  351 ++++++
+>  drivers/net/macb/base/macb_uio.h       |   50 +
+>  drivers/net/macb/base/meson.build      |   25 +
+>  drivers/net/macb/macb_ethdev.c         | 1861 ++++++++++++++++++++++++++++++++
+>  drivers/net/macb/macb_ethdev.h         |   91 ++
+>  drivers/net/macb/macb_log.h            |   19 +
+>  drivers/net/macb/macb_rxtx.c           | 1394 ++++++++++++++++++++++++
+>  drivers/net/macb/macb_rxtx.h           |  325 ++++++
+>  drivers/net/macb/macb_rxtx_vec_neon.c  |  675 ++++++++++++
+>  drivers/net/macb/meson.build           |   22 +
+>  drivers/net/meson.build                |    1 +
+>  24 files changed, 7494 insertions(+)
+>  create mode 100644 doc/guides/nics/features/macb.ini
+>  create mode 100644 doc/guides/nics/macb.rst
+>  create mode 100644 drivers/net/macb/base/generic_phy.c
+>  create mode 100644 drivers/net/macb/base/generic_phy.h
+>  create mode 100644 drivers/net/macb/base/macb_common.c
+>  create mode 100644 drivers/net/macb/base/macb_common.h
+>  create mode 100644 drivers/net/macb/base/macb_errno.h
+>  create mode 100644 drivers/net/macb/base/macb_hw.h
+>  create mode 100644 drivers/net/macb/base/macb_type.h
+>  create mode 100644 drivers/net/macb/base/macb_uio.c
+>  create mode 100644 drivers/net/macb/base/macb_uio.h
+>  create mode 100644 drivers/net/macb/base/meson.build
+>  create mode 100644 drivers/net/macb/macb_ethdev.c
+>  create mode 100644 drivers/net/macb/macb_ethdev.h
+>  create mode 100644 drivers/net/macb/macb_log.h
+>  create mode 100644 drivers/net/macb/macb_rxtx.c
+>  create mode 100644 drivers/net/macb/macb_rxtx.h
+>  create mode 100644 drivers/net/macb/macb_rxtx_vec_neon.c
+>  create mode 100644 drivers/net/macb/meson.build
+> 
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index b83f911121..7e546a792b 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -59,6 +59,10 @@ New Features
- 
-   * Added support for rx_burst_mode_get and tx_burst_mode_get.
- 
-+* **Updated Intel ixgbe driver.**
-+
-+  * Added support for rx_burst_mode_get and tx_burst_mode_get.
-+
- Removed Items
- -------------
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 0fa4898aba..f1fd271a0a 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -532,6 +532,8 @@ static const struct eth_dev_ops ixgbe_eth_dev_ops = {
- 	.rx_queue_release     = ixgbe_dev_rx_queue_release,
- 	.tx_queue_setup       = ixgbe_dev_tx_queue_setup,
- 	.tx_queue_release     = ixgbe_dev_tx_queue_release,
-+	.rx_burst_mode_get    = ixgbe_rx_burst_mode_get,
-+	.tx_burst_mode_get    = ixgbe_tx_burst_mode_get,
- 	.dev_led_on           = ixgbe_dev_led_on,
- 	.dev_led_off          = ixgbe_dev_led_off,
- 	.flow_ctrl_get        = ixgbe_flow_ctrl_get,
-@@ -605,6 +607,8 @@ static const struct eth_dev_ops ixgbevf_eth_dev_ops = {
- 	.tx_queue_release     = ixgbe_dev_tx_queue_release,
- 	.rx_queue_intr_enable = ixgbevf_dev_rx_queue_intr_enable,
- 	.rx_queue_intr_disable = ixgbevf_dev_rx_queue_intr_disable,
-+	.rx_burst_mode_get    = ixgbe_rx_burst_mode_get,
-+	.tx_burst_mode_get    = ixgbe_tx_burst_mode_get,
- 	.mac_addr_add         = ixgbevf_add_mac_addr,
- 	.mac_addr_remove      = ixgbevf_remove_mac_addr,
- 	.set_mc_addr_list     = ixgbe_dev_set_mc_addr_list,
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 8ad841ea2c..7b1cfe0ea4 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -523,6 +523,10 @@ struct ixgbe_vf_representor {
- 
- int ixgbe_vf_representor_init(struct rte_eth_dev *ethdev, void *init_params);
- int ixgbe_vf_representor_uninit(struct rte_eth_dev *ethdev);
-+uint16_t ixgbe_vf_representor_rx_burst(__rte_unused void *rx_queue,
-+	__rte_unused struct rte_mbuf **rx_pkts, __rte_unused uint16_t nb_pkts);
-+uint16_t ixgbe_vf_representor_tx_burst(__rte_unused void *tx_queue,
-+	__rte_unused struct rte_mbuf **tx_pkts, __rte_unused uint16_t nb_pkts);
- 
- #define IXGBE_DEV_FDIR_CONF(dev) \
- 	(&((struct ixgbe_adapter *)(dev)->data->dev_private)->fdir_conf)
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 77773d56ef..209dbe6685 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2626,6 +2626,39 @@ static const struct ixgbe_txq_ops def_txq_ops = {
- 	.reset = ixgbe_reset_tx_queue,
- };
- 
-+static const struct {
-+	eth_tx_burst_t pkt_burst;
-+	const char *info;
-+} ixgbe_tx_burst_info[] = {
-+	{	ixgbe_xmit_pkts, "Scalar"},
-+	{	ixgbe_xmit_pkts_simple, "Scalar simple"},
-+	{       ixgbe_vf_representor_tx_burst, "Scalar representor"},
-+#ifdef RTE_ARCH_X86
-+	{	ixgbe_xmit_pkts_vec, "Vector SSE"},
-+#elif defined(RTE_ARCH_ARM)
-+	{	ixgbe_xmit_pkts_vec, "Vector NEON"},
-+#endif
-+};
-+
-+int
-+ixgbe_tx_burst_mode_get(struct rte_eth_dev *dev,
-+				__rte_unused uint16_t queue_id,
-+				struct rte_eth_burst_mode *mode)
-+{
-+	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(ixgbe_tx_burst_info); i++) {
-+		if (pkt_burst == ixgbe_tx_burst_info[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 ixgbe_tx_burst_info[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /* Takes an ethdev and a queue and sets up the tx function to be used based on
-  * the queue parameters. Used in tx_queue_setup by primary process and then
-  * in dev_init by secondary process when attaching to an existing ethdev.
-@@ -4939,6 +4972,43 @@ ixgbe_set_ivar(struct rte_eth_dev *dev, u8 entry, u8 vector, s8 type)
- 	}
- }
- 
-+static const struct {
-+	eth_rx_burst_t pkt_burst;
-+	const char *info;
-+} ixgbe_rx_burst_info[] = {
-+	{	ixgbe_recv_pkts, "Scalar"},
-+	{	ixgbe_recv_pkts_bulk_alloc, "Scalar bulk allod"},
-+	{	ixgbe_recv_pkts_lro_bulk_alloc, "Scalar LRO bulk alloc"},
-+	{	ixgbe_recv_pkts_lro_single_alloc, "Scalar LRO single alloc"},
-+	{       ixgbe_vf_representor_rx_burst, "Scalar representor"},
-+#ifdef RTE_ARCH_X86
-+	{	ixgbe_recv_pkts_vec, "Vector SSE"},
-+	{	ixgbe_recv_scattered_pkts_vec, "Vector SSE scattered"},
-+#elif defined(RTE_ARCH_ARM)
-+	{	ixgbe_recv_pkts_vec, "Vector NEON"},
-+	{	ixgbe_recv_scattered_pkts_vec, "Vector NEON scattered"},
-+#endif
-+};
-+
-+int
-+ixgbe_rx_burst_mode_get(struct rte_eth_dev *dev,
-+				__rte_unused uint16_t queue_id,
-+				struct rte_eth_burst_mode *mode)
-+{
-+	eth_tx_burst_t pkt_burst = dev->rx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(ixgbe_rx_burst_info); i++) {
-+		if (pkt_burst == ixgbe_rx_burst_info[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 ixgbe_rx_burst_info[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- void __rte_cold
- ixgbe_set_rx_function(struct rte_eth_dev *dev)
- {
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-index 54569c7ade..3487073d30 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-@@ -204,6 +204,8 @@ struct ixgbe_txq_ops {
-  * in dev_init by secondary process when attaching to an existing ethdev.
-  */
- void ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq);
-+int ixgbe_tx_burst_mode_get(struct rte_eth_dev *dev,
-+		__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
- 
- /**
-  * Sets the rx_pkt_burst callback in the ixgbe rte_eth_dev instance.
-@@ -220,6 +222,8 @@ void ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq);
-  * @dev rte_eth_dev handle
-  */
- void ixgbe_set_rx_function(struct rte_eth_dev *dev);
-+int ixgbe_rx_burst_mode_get(struct rte_eth_dev *dev,
-+		__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
- 
- int ixgbe_check_supported_loopback_mode(struct rte_eth_dev *dev);
- uint16_t ixgbe_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
-diff --git a/drivers/net/intel/ixgbe/ixgbe_vf_representor.c b/drivers/net/intel/ixgbe/ixgbe_vf_representor.c
-index bd528ff346..901d80e406 100644
---- a/drivers/net/intel/ixgbe/ixgbe_vf_representor.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_vf_representor.c
-@@ -157,14 +157,14 @@ static const struct eth_dev_ops ixgbe_vf_representor_dev_ops = {
- 	.mac_addr_set		= ixgbe_vf_representor_mac_addr_set,
- };
- 
--static uint16_t
-+uint16_t
- ixgbe_vf_representor_rx_burst(__rte_unused void *rx_queue,
- 	__rte_unused struct rte_mbuf **rx_pkts, __rte_unused uint16_t nb_pkts)
- {
- 	return 0;
- }
- 
--static uint16_t
-+uint16_t
- ixgbe_vf_representor_tx_burst(__rte_unused void *tx_queue,
- 	__rte_unused struct rte_mbuf **tx_pkts, __rte_unused uint16_t nb_pkts)
- {
--- 
-2.26.2.Cisco
+When using Developer's Certificate of Origin, it is important to use
+you legal name rather just the mail alias. If you send a follow up
+use:
+    Signed-off-by: Wencheng Li <liwencheng@phytium.com.cn>
 
+not:
+    Signed-off-by: liwencheng <liwencheng@phytium.com.cn>
+
+That is what is causing some check-git-log.sh warnings.
