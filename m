@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2605FC369C9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 20:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA18C369C7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 20:57:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F6D441144;
-	Wed, 16 Apr 2025 22:57:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F44D411F3;
+	Wed, 16 Apr 2025 22:57:27 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 837B6402E7
+ by mails.dpdk.org (Postfix) with ESMTP id DEE5C4025A
  for <dev@dpdk.org>; Wed, 16 Apr 2025 22:57:23 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 7C2F72052509; Wed, 16 Apr 2025 13:57:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7C2F72052509
+ id E0AC8205250F; Wed, 16 Apr 2025 13:57:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E0AC8205250F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
  s=default; t=1744837042;
- bh=D1fEFpf8PEyGMh2OMGcrsHwbi2g83KuBMrjRbwB1Wfo=;
+ bh=WV2TDwvRsMn5thrDCl0mOpcIjrHwp4o5VevAzW9dmEs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rl67eD7e6yGL4xldLYGyCXi8MKRvEMM3LBVj1/2Ndk0jUx7d7taxGoWVTMJ33ntXk
- aYMeYui4QeQIRHOYZPpZfq3ylF0HOK2x9ePrvrwG1fs47B19YxkXi3cZb28vawEWZD
- rkFXdVVa4eJnbyW1atlVOl5WPFKCm6f1Fbv7kdJk=
+ b=F7gctNm5YQLhvAFb+Q6LXtIk6wQtH4hDp058mXJ8QyMyQCq8FHmQ0ZL4OydbPgkS2
+ CW9TdViT73r3x9w7nrW2lswycT/kdiYYmmQcNMdZdqXD7i5xooPzRG0iG0OTWNItLF
+ uC+ycNu+7SzZQaI+1pJlrJ+tztGR9gIwaBlANqGk=
 From: longli@linuxonhyperv.com
 To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
 Cc: dev@dpdk.org,
 	Long Li <longli@microsoft.com>
-Subject: [patch v6 2/6] net/netvsc: introduce get_vmbus_device to get the
- vmbus device
-Date: Wed, 16 Apr 2025 13:57:14 -0700
-Message-Id: <1744837038-5387-3-git-send-email-longli@linuxonhyperv.com>
+Subject: [patch v6 3/6] bus/vmbus: store UIO fd for secondary process
+Date: Wed, 16 Apr 2025 13:57:15 -0700
+Message-Id: <1744837038-5387-4-git-send-email-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1744837038-5387-1-git-send-email-longli@linuxonhyperv.com>
 References: <1744837038-5387-1-git-send-email-longli@linuxonhyperv.com>
@@ -46,54 +45,41 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-Introduce a function get the vmbus device from hn_data. For secondary
-process, the vmbus device is in eth_dev's private region.
+Secondary process will get access to vmbus device and this UIO fd for
+signaling hyperv host on channels without monitoring support.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_nvs.c | 15 +++++++++++++++
- drivers/net/netvsc/hn_nvs.h |  2 ++
- 2 files changed, 17 insertions(+)
+ drivers/bus/vmbus/vmbus_common_uio.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/netvsc/hn_nvs.c b/drivers/net/netvsc/hn_nvs.c
-index 7db82af9f3..fd20e3d06d 100644
---- a/drivers/net/netvsc/hn_nvs.c
-+++ b/drivers/net/netvsc/hn_nvs.c
-@@ -44,6 +44,21 @@ static const uint32_t hn_nvs_version[] = {
- 	NVS_VERSION_1
- };
+diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
+index 4d4613513c..d55aee6537 100644
+--- a/drivers/bus/vmbus/vmbus_common_uio.c
++++ b/drivers/bus/vmbus/vmbus_common_uio.c
+@@ -86,8 +86,11 @@ vmbus_uio_map_secondary(struct rte_vmbus_device *dev)
+ 		return -1;
+ 	}
  
-+struct rte_vmbus_device *get_vmbus_device(struct hn_data *hv)
-+{
-+	struct rte_vmbus_device *vmbus = hv->vmbus;
+-	/* fd is not needed in secondary process, close it */
+-	close(fd);
++	if (rte_intr_fd_set(dev->intr_handle, fd))
++		return -1;
 +
-+	/* For secondary process, vmbus is in the eth_dev private */
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
-+		struct rte_eth_dev *dev = &rte_eth_devices[hv->port_id];
-+		struct hn_nvs_process_priv *process_priv = dev->process_private;
-+
-+		vmbus = process_priv->vmbus_dev;
-+	}
-+
-+	return vmbus;
-+}
-+
- static int hn_nvs_req_send(struct hn_data *hv,
- 			   void *req, uint32_t reqlen)
- {
-diff --git a/drivers/net/netvsc/hn_nvs.h b/drivers/net/netvsc/hn_nvs.h
-index 3950749359..0d8fe27b65 100644
---- a/drivers/net/netvsc/hn_nvs.h
-+++ b/drivers/net/netvsc/hn_nvs.h
-@@ -221,6 +221,8 @@ void	hn_nvs_handle_vfassoc(struct rte_eth_dev *dev,
- 			      const struct vmbus_chanpkt_hdr *hdr,
- 			      const void *data);
++	if (rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UIO_INTX))
++		return -1;
  
-+struct rte_vmbus_device *get_vmbus_device(struct hn_data *hv);
-+
- static inline int
- hn_nvs_send(struct vmbus_channel *chan, uint16_t flags,
- 	    void *nvs_msg, int nvs_msglen, uintptr_t sndc,
+ 	/* Create and map primary channel */
+ 	if (vmbus_chan_create(dev, dev->relid, 0,
+@@ -256,7 +259,7 @@ vmbus_uio_unmap_resource(struct rte_vmbus_device *dev)
+ 	/* free uio resource */
+ 	rte_free(uio_res);
+ 
+-	/* close fd if in primary process */
++	/* close fd */
+ 	if (rte_intr_fd_get(dev->intr_handle) >= 0)
+ 		close(rte_intr_fd_get(dev->intr_handle));
+ 
 -- 
 2.34.1
 
