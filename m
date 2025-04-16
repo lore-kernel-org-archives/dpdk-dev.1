@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78E2C369C2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87C8C369BD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 14:02:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CDE9410DF;
-	Wed, 16 Apr 2025 16:00:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 27E25410E7;
+	Wed, 16 Apr 2025 16:00:45 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id A758A40ED9
- for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6ED1C40EDF
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 16:00:38 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.65.89])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id F3A81E11BF;
- Wed, 16 Apr 2025 18:00:36 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am F3A81E11BF
+ by agw.arknetworks.am (Postfix) with ESMTPSA id BADAAE0872;
+ Wed, 16 Apr 2025 18:00:37 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am BADAAE0872
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1744812037;
- bh=9GqSQS6fYlxYjLWCwtIMMzwvqHrP90iCjpoISbzH3AA=;
+ s=default; t=1744812038;
+ bh=9vZZiUFCjcN9i3O1DEU0TsJRxz0oL36iVQmHPv3/vNs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=U9lk34d35ovICuwvgPwzso6dZW3d/RkRTQ5ePnDq4PWvZcR4s+cF1nAozPFT5XvBi
- 2391B7EGjad45dcKqR14YdBLsYIg06INjJ0EDHGH5tVqWSqCgaCCFvqx7bhvg2aV8l
- /WL1MXb/dfBRH+RMRc3Uf/T0iak90owm7qBTC7ihg25wJF8CfrcWOVK9g2Vo0UeUHP
- NVxd46CLiGmBVxfYiQeyLdTeMjEyeGbIpb6iBRom/KGTosMDHoxMz0z9uMqIwy10Lr
- l1Wgrl+/sKoG6hlGCZUQ+kWwgTHEWl+cvwIPmi4zaeq21XWQV4I0eYoLO8y/0tlGVw
- QKjev0Vhhvaaw==
+ b=WsSDiDlsJJ9NIb9eosEsQTKV9supTlYVM+ufTolCwZCAFGx+fLZTm0smQvLlC5P3K
+ Xk5gFkHNa8zOIGFHmjroXztaMT/4hWBpZQpDKfrIlVNnc4fG2Iysf/Q9pitXhLiJa+
+ exxsZKYen8BFbOsEhsVp/pl2aB5PobTPoMzGnnYgr6BXzaNDiB7pgNN5bj3wR/Pv+9
+ EH/cZUrgWAxAv02K8l7AJ5VXqJOK+R4/nR/U4K85x0kC0Ois5A4mr+xbU8eK9Mz2tT
+ cwr8AV/2T3OEtZz8XXD9o+6o0zqnahx8qV78wQvUeDImHBHg1CHS//2wmEkOIKEaOv
+ Kl9smSVzVZaWw==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
@@ -34,9 +34,10 @@ Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Subject: [PATCH 14/46] common/sfc_efx/base: update X4 BAR layout and PCI IDs
-Date: Wed, 16 Apr 2025 17:59:44 +0400
-Message-Id: <20250416140016.36127-15-ivan.malov@arknetworks.am>
+Subject: [PATCH 15/46] net/sfc: add Medford4 with only full feature datapath
+ engine
+Date: Wed, 16 Apr 2025 17:59:45 +0400
+Message-Id: <20250416140016.36127-16-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250416140016.36127-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -57,65 +58,28 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Andy Moreton <andy.moreton@amd.com>
 
-The BAR layout on X4 has changed to put MSI-X (and CXL) in BAR0/1,
-and moved the main memory BAR to be BAR2/3. Update definitions to
-match the updated hardware and cmodel.
-
-Also add PCI IDs used for functions which only have the full feature
-(X2 style) datapath engines, and do not support the low latency
-datapath engine.
+Add PCI IDs for Medford4 functions that only have the full feature
+datapath engine (no support for low latency datapath engine).
 
 Signed-off-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
 ---
- drivers/common/sfc_efx/base/efx.h     | 12 +++++++++---
- drivers/common/sfc_efx/base/efx_nic.c |  2 ++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/net/sfc/sfc_ethdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
-index 442dfa0830..a9ed3f423f 100644
---- a/drivers/common/sfc_efx/base/efx.h
-+++ b/drivers/common/sfc_efx/base/efx.h
-@@ -173,9 +173,15 @@ efx_family_probe_bar(
- #define	EFX_PCI_DEVID_RIVERHEAD			0x0100
- #define	EFX_PCI_DEVID_RIVERHEAD_VF		0x1100
- 
-+/*
-+ * Medford4 has low latency (LL) and full feature (FF) datapath engines.
-+ * Some Medford4 functions have FF and LL datapath, others only have FF.
-+ */
- #define	EFX_PCI_DEVID_MEDFORD4_PF_UNINIT	0x0C13
--#define	EFX_PCI_DEVID_MEDFORD4			0x0C03
--#define	EFX_PCI_DEVID_MEDFORD4_VF		0x1C03
-+#define	EFX_PCI_DEVID_MEDFORD4			0x0C03	/* X4 PF, FF+LL */
-+#define	EFX_PCI_DEVID_MEDFORD4_VF		0x1C03	/* X4 VF, FF+LL */
-+#define	EFX_PCI_DEVID_MEDFORD4_NO_LL		0x2C03	/* X4 PF, FF only */
-+#define	EFX_PCI_DEVID_MEDFORD4_NO_LL_VF		0x3C03	/* X4 VF, FF only */
- 
- #define	EFX_MEM_BAR_SIENA			2
- 
-@@ -190,7 +196,7 @@ efx_family_probe_bar(
- /* FIXME Fix it when memory bar is fixed in FPGA image. It must be 0. */
- #define	EFX_MEM_BAR_RIVERHEAD			2
- 
--#define	EFX_MEM_BAR_MEDFORD4			0
-+#define	EFX_MEM_BAR_MEDFORD4			2
- 
- /* Error codes */
- 
-diff --git a/drivers/common/sfc_efx/base/efx_nic.c b/drivers/common/sfc_efx/base/efx_nic.c
-index 5bcc0a04ff..1ec684da40 100644
---- a/drivers/common/sfc_efx/base/efx_nic.c
-+++ b/drivers/common/sfc_efx/base/efx_nic.c
-@@ -87,6 +87,8 @@ efx_family(
- 			 */
- 		case EFX_PCI_DEVID_MEDFORD4:
- 		case EFX_PCI_DEVID_MEDFORD4_VF:
-+		case EFX_PCI_DEVID_MEDFORD4_NO_LL:
-+		case EFX_PCI_DEVID_MEDFORD4_NO_LL_VF:
- 			*efp = EFX_FAMILY_MEDFORD4;
- 			*membarp = EFX_MEM_BAR_MEDFORD4;
- 			return (0);
+diff --git a/drivers/net/sfc/sfc_ethdev.c b/drivers/net/sfc/sfc_ethdev.c
+index 3e57c902df..05194918f9 100644
+--- a/drivers/net/sfc/sfc_ethdev.c
++++ b/drivers/net/sfc/sfc_ethdev.c
+@@ -3304,6 +3304,8 @@ static const struct rte_pci_id pci_id_sfc_efx_map[] = {
+ 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD2_VF) },
+ 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4) },
+ 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4_VF) },
++	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4_NO_LL) },
++	{ RTE_PCI_DEVICE(EFX_PCI_VENID_SFC, EFX_PCI_DEVID_MEDFORD4_NO_LL_VF) },
+ 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_XILINX, EFX_PCI_DEVID_RIVERHEAD) },
+ 	{ RTE_PCI_DEVICE(EFX_PCI_VENID_XILINX, EFX_PCI_DEVID_RIVERHEAD_VF) },
+ 	{ .vendor_id = 0 /* sentinel */ }
 -- 
 2.39.5
 
