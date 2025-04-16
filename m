@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183EAC369C1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D97CC369C1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Apr 2025 16:43:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E156410D5;
-	Wed, 16 Apr 2025 18:38:48 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 0503D40F35
- for <dev@dpdk.org>; Wed, 16 Apr 2025 18:38:45 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-22c33ac23edso12137825ad.0
- for <dev@dpdk.org>; Wed, 16 Apr 2025 09:38:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 40E59402E7;
+	Wed, 16 Apr 2025 18:43:17 +0200 (CEST)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 422CD4025A
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 18:43:15 +0200 (CEST)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-af6a315b491so6171946a12.1
+ for <dev@dpdk.org>; Wed, 16 Apr 2025 09:43:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744821525;
- x=1745426325; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744821794;
+ x=1745426594; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4cNjBeidnNhyNYn1ML6S6pVYrue8vDheyYSd7rbxbDI=;
- b=c4ixjOeBDVcRDnM1YvjfvLhs6AThZgYYDLxEKQMuht5CsZZRfzSeLu5pPuY6r6jVZY
- nXZxfRaB1n7GcCkxCBo3I2Z6tnyBhs6ijhy+TU0q9Xk+84RJ8kRYp/te9QsqVsAidGfa
- IvqQiZk9oRIXTHj4WypwinSC8mpiQiha8LfO9kfBA1ncdhc19FlnpjMYysS8DLAabP0P
- kxfFA2DSXuAMSKB/nLQxop6coizDGTy49K07hVGHYCC/5biAPDJuGDj2nHFLYlAu2yb0
- LBxmaOxTvYjKluyTgTzUFJ/9mckvigRJxpeifAvybWa9z+JStQGgZkT1lAyYEWorSRID
- u3Aw==
+ bh=/Xp7ivDIJlTfyI4zQZHZ9Mcn5Sj2tQx5OMWDX7fvMvk=;
+ b=aJzeSv2RLblan5CORlZYplrRoeRVGRRu+eM4ZED03LDIHvJLP/EZu/N5DRVLBcdRQw
+ vrsBbJo8RvnwOBmqIyZQldJORdt54Y8TJDuT/oFyPxkSxZfrzZTPe6EOHJkf0L5ZH6PM
+ yZoPf/aRjmsPUJS7py8dbRy3CdUZhoRMkPbMDA6QDQneyHb2ZCbEd/C9e6qo12wnaytw
+ M5E2oea+1OkZlGbdi1j5fUw0azsLkueZqyZAL1wJLAHjbYxIMNNsBBlU9umctDyVeV/t
+ GHQ0TIe/tkYxk2IEgFPQmxNbNTPeT2YG02irRPZxaoSmdQRV9ueMPkEJoVQCkD85P0Py
+ /Yfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744821525; x=1745426325;
+ d=1e100.net; s=20230601; t=1744821794; x=1745426594;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=4cNjBeidnNhyNYn1ML6S6pVYrue8vDheyYSd7rbxbDI=;
- b=OwNDcNQ6yyTmpEWKxoeRwLNdy44yP0unGgKTGfC9fwJZHeKpOdEaKQNg9xEp1fmQkn
- WqH8qnXclnxR0uSQYBkD/fPrOISyGyc2g8veGgayVFleg6QPs/sEu96b2HjoH1c8IpuE
- VJ1t8U7krMxjIrs5Xu0S6Skrsb20vbLk8LNurTPboL9s28roftMIzOQstvRz1TEbDHYt
- hwKD5gVv6/mZVQazmyWzcB+mi5kN1QudAefwEwy3SK6Bl3vToTVgspJkEVDGdT97bhm9
- iqDGuuQxaa5Ti6HtXxqZqQGgu/My+5bWGDk1JDkNDJuiJlSmyc0YWiunVDPSiRI1t87m
- 8HNA==
-X-Gm-Message-State: AOJu0YzWbx0oMJspoyZTiTJalArZtEXxmUxv3smURyq8qsAOD0O6ulSD
- SsuErv3dWujUR392OXyZz0kgTviu9bEDx40o3F7BXMJE7M3yiegxO3Gy1QwdXT+jHGWmT8zVTPf
- 9Smo=
-X-Gm-Gg: ASbGnct292xyvCH84Nv0QqRtcsczofUKzpL475eTV/sUY/m81CF0XaJyTNREbfellEG
- exyLl1MTmiry9z78SQevXifgcvtor3SBYRHL6PD2BRew7OOF2qR8DBKLOgQ4O0tFzoJ1siPgiSV
- fcEvjD9PUY5pkowNhAi02lTeRc6WincjxsNAARIeOaAYDmQ4iLRZF7hoX4gmO7/kDsgjMOdr+2Q
- xaC6JZFZqmO9fHiwWian5EWU+/POclkjkQNCZNwJmsT4i3/ca7fG2rQIEF6Sxe0C5fnjwB7iKX2
- RNZjpIVH43PcUU78Nb8FL6M9y7WFcE5JFiPeWAaw8be+07aF542qLEVnWLAkeZyeG/u36Msqce2
- NitvgEe3S1ZyPGgvW
-X-Google-Smtp-Source: AGHT+IFjGhAXJXHfTGCwbPoksGAyJSBhMvrYLM+mzX77S82ntZgoQgt3Yryr/bVg5w2l9cXmGXXh1Q==
-X-Received: by 2002:a17:902:ebc3:b0:220:fb23:48df with SMTP id
- d9443c01a7336-22c3596d747mr43312305ad.36.1744821525082; 
- Wed, 16 Apr 2025 09:38:45 -0700 (PDT)
+ bh=/Xp7ivDIJlTfyI4zQZHZ9Mcn5Sj2tQx5OMWDX7fvMvk=;
+ b=KILywo8bJw9fcMoN+eRTfl7A2HcJfl5mpSjnQnJ3o+XlT8WX4dVg0zQBI8LzbgI0mY
+ 7m9vHPVq2e53y3V1EjHgMyAI4FFV2weyPtRlTnhjOkmgJ6hMlGv8+s52HUyHgrgTdIAV
+ ls1HHLTmUm3RvV5T3LRY8/TY2AcMx/zoo6Gr1P9WDP9+IuFs6nx1GMctssyNEd8QY5UK
+ BbYmGHc7lDMoybItzOL/uqQEwFOm5kKpESUXflB6OPdFrILB8qa/9oX5o82u/YLDNRca
+ M3nCgzWO9TuB6akiJap3p8G/X0jWK9Llvx+y4v2ocYMaeu+Le+4dP/6s6jha2IlGtVqH
+ BvaA==
+X-Gm-Message-State: AOJu0YyiuxLuMV1n2olgBCOA+O0fZcK9wLVUuTwjRr0yXjG7GSwBOmS1
+ tfiUdybjkZqpTbpqtRHg9dQBRAcnvQvz4GRYffPw2WFjFvXhYLneBhLwp0zwsX4=
+X-Gm-Gg: ASbGncs74g6kUQQEx3Z2E/h2zujAOIgGSc5zjQcjM6MwrjbWnCh5DKV4WooNf7rMFXZ
+ E6CjDI6OXyKm/+tz33O7koetImsuTifrz/fp9TzuyRC9bCUxSql17VUBuIuPSQ16Ae/2L4ptric
+ 9U1zN22QLvrJifvXcilDCRO4J1qs1EenUxDC15RqpIhPst4gx+FcZ+GiDFHFWDwIMU41IKFV1RA
+ dDle7hcZPIbl5iutP2b5pvsH1XrrytAcBLL/rrzD9Zd9YlEFvBkNHXDTBz4D0YG4alhl8H6WjCf
+ f3GMgW/GpJFQ8tzPRqlnfj3gsL+lk3fPxDi7SLQ+a2qHPmGkkJyMGXs18FXOAcFsXP+ggl7rWbJ
+ Ez6s4V+sx2U9Ry6+y
+X-Google-Smtp-Source: AGHT+IGMSXnWQLTtwWQbrqZmZkylUvx3+xNpY3QBsG2t0ZCBnZhs7EKrQ4dWswFOXQrsz0HGPUZYtg==
+X-Received: by 2002:a17:90a:d64f:b0:2f9:cf97:56a6 with SMTP id
+ 98e67ed59e1d1-30863f19e0amr4341477a91.14.1744821794242; 
+ Wed, 16 Apr 2025 09:43:14 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22c33f1d414sm16413885ad.56.2025.04.16.09.38.44
+ 98e67ed59e1d1-308611f002esm1808265a91.15.2025.04.16.09.43.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Apr 2025 09:38:44 -0700 (PDT)
-Date: Wed, 16 Apr 2025 09:34:02 -0700
+ Wed, 16 Apr 2025 09:43:14 -0700 (PDT)
+Date: Wed, 16 Apr 2025 09:43:12 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liwencheng <liwencheng@phytium.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 2/4] net/macb: add new poll mode driver
-Message-ID: <20250416093402.0dd1609e@hermes.local>
-In-Reply-To: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
-References: <1743577136-119797-1-git-send-email-liwencheng@phytium.com.cn>
+Subject: Re: [PATCH v4 4/4] net/macb: add necessary docs and update related
+ files
+Message-ID: <20250416094312.5805259f@hermes.local>
+In-Reply-To: <1743577171-119901-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1743577171-119901-1-git-send-email-liwencheng@phytium.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,26 +81,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  2 Apr 2025 06:58:56 +0000
+On Wed,  2 Apr 2025 06:59:31 +0000
 liwencheng <liwencheng@phytium.com.cn> wrote:
 
+> +Features of the MACB PMD are:
 > +
-> +struct __rte_cache_aligned macb_rx_queue_stats {
-> +	union {
-> +		unsigned long first;
-> +		unsigned long rx_packets;
-> +	};
-> +	unsigned long rx_bytes;
-> +	unsigned long rx_dropped;
-> +};
-> +
-> +struct __rte_cache_aligned macb_tx_queue_stats {
-> +	unsigned long tx_packets;
-> +	unsigned long tx_bytes;
-> +	unsigned long tx_dropped;
-> +	unsigned long tx_start_packets;
-> +	unsigned long tx_start_bytes;
-> +};
-> +
+> +* Speed capabilities
+> +* Link status
+> +* Tx Queue start/stop
+> +* Multiple queues for TX and RX
+> +* CRC offload
+> +* Jumbo frames supported
 
-Doesn't really matter, but most drivers use uint64_t for stats.
+I see no operations functions for Tx queue/start stop
+in macb_ops. Obviously not tested.
+
+int
+rte_eth_dev_tx_queue_start(uint16_t port_id, uint16_t tx_queue_id)
+{
+	struct rte_eth_dev *dev;
+	int ret;
+
+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+	dev = &rte_eth_devices[port_id];
+
+	if (!dev->data->dev_started) {
+		RTE_ETHDEV_LOG_LINE(ERR,
+			"Port %u must be started before start any queue",
+			port_id);
+		return -EINVAL;
+	}
+
+	ret = eth_dev_validate_tx_queue(dev, tx_queue_id);
+	if (ret != 0)
+		return ret;
+
+	if (dev->dev_ops->tx_queue_start == NULL)
+		return -ENOTSUP;
