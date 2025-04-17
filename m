@@ -2,149 +2,154 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627FEC369B2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Apr 2025 05:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BC5C369B2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Apr 2025 05:46:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C04BD4025A;
-	Thu, 17 Apr 2025 07:08:19 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11013058.outbound.protection.outlook.com [40.107.159.58])
- by mails.dpdk.org (Postfix) with ESMTP id 46629400D5
- for <dev@dpdk.org>; Thu, 17 Apr 2025 07:08:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 675564025A;
+	Thu, 17 Apr 2025 07:46:48 +0200 (CEST)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com
+ [205.220.178.238])
+ by mails.dpdk.org (Postfix) with ESMTP id 0F267400D5
+ for <dev@dpdk.org>; Thu, 17 Apr 2025 07:46:45 +0200 (CEST)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+ by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H4jBll020250
+ for <dev@dpdk.org>; Thu, 17 Apr 2025 05:46:45 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10lp2041.outbound.protection.outlook.com [104.47.58.41])
+ by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45ydd1ntyb-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 17 Apr 2025 05:46:44 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nYLAb6ADXgEwwAYSNeMyD5yylXhEuTBHTBnroGMZIua1rm0p/R3FjTfwXs1ZRo9VVi1//6ObHnC8aykm/2Gwb9r4RFS/oE9rFdLttVP+zuXLNts2shgu1rknP8Ljmle9IjQ5GYrF0Ixec9IKDvKpRlb2mhmThgVqXFFZE8k2njD0spF7v/YmmlZdzOxjcJQDKDQ2u3cJEGpdQDjZWIx1vWNyw6whx4ULzbISL9+6+7tbMgNsbVfKtb/Bx6P7nCjWIyu/TZlaH5Ta9nhbcR21NOe+2uhiraHzD/Rv6bocUnl1B2SiyeDrlA2nknKqAXqNUwdHUnKUA09gQwsdAmPJXw==
+ b=Z1TSAtvsHQz5T14z3wv0b3J14vHyU+t5a8k7KkEyqJFSuagMVZaZG7l/ruYqc994ubdJywo3CeCdmlEHF5m4YG9ekcPWyOOhwK3wqtUHwP9FXE38KC8cUXAA5wgIryi38AE8cs7cRAAvQLJI4bpwagIEuwnf9h8tdZyVqz6M5baK008AdbsFR3H/mMZSHijYxfv6oP6XfPnZ6yNcABpMRJTAHhaCM15yqGTcjzg+2u+aiABqyRbqeJ/GP4TqI7um4nZD/D7dUwXNrTy5+MIDYQs9yFoRPR9y5i/9rp4GWuRiQLU4R3lb8Y0lUlDSUasSokvNQH6Fex0focMLdKUKag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y+MKrmV7CAv0qXW9TAh059f/hy17oti3oAK1XrhVZxw=;
- b=nzGpw6SmOfiP7LFoUgalfO9ljXKQHU2pdkH611k3rRk/SZKZMhqh9lW3FAq8eE7NK9+K6PZgawP/iSw1smdVcM6r42i9FF3ItZv8ktAkUnrsakwj+cQYLTgTlNsO5X41JBwgPlOsiSDIHlCRJSN/OisDhWOMIbec4Ya37ZqYWlWhtQKuDsceY5WckBBbTRc8FlM/OuUxZ5DBccYi+IpU+wGhzCCxwoVEPnqfaBWfxYGnTILpC/mZgwL0vJ8lEeMlowN/BJlTgGm+VW7u/GD53mg0JDUaad0D2Z2CRPaQ1cQaaFxgOg5CkrUlQ5Kh+H/vukSuiq924mo3ghn0gr3JOQ==
+ bh=kbdhuGbCCv/QMUu1dbrh1QIWgAQ6GE+3Hl8BuJfAzGk=;
+ b=xPFQ6mBCK47ih3CMWNo+XG8gdCRzJalEn1VOskm3TArhOxplGn+k7DWRpViLPnLsIP5AKj0KOkFYkyxqyO4BywJouDsqtzxuoEVYOmEGEBPrvvo4jtYCJDtVacGTu226Ya9UC3oJV8Ph0gU+Uf1vzXownLdWTkdQAcz/kh+P1/+xPkmUt1uqFTeqZU1PbewqOsqz0iwW9WM/+dCnKyCSXdEojC5f6/AEJda4rYbaFT22xTWf/nkpJW66EN7NZUm+ILdNtnom5+MSBeh9cR0Gu3TmaRQSIe2saKZ94sdvoI6AvXIouBsJad0RagEcz5u3yantk++d/kis2pfB6ahEkw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y+MKrmV7CAv0qXW9TAh059f/hy17oti3oAK1XrhVZxw=;
- b=pMEEdZmcsNfH+ytw7N+7RMeeXTyL++11sD7luhtYyO2jVPnEfu/JW2BTDHHkogRQ8eBG7VURqZ4qrdDJXEZuJm7ziPSUOg0UmgqxW7HME9auIbU6/EPreHOM2g/DZnR9ONk6F+ZXKQv8L6RrygocfSjdA07SNWXFeNBSlACtHN+UvtpbKTZ2p3P+b884vQTZ6xxhhW+HUj5tAda83S1+fwRpLdcRcuIZEQO9KChbRND/pVTXz38QzJY7XZGvucV1zqURj2SQrj2ko89001epEkbEa+A4Ceno+LMBKCpyS5egZ/RHIYqw1wjlkrzSZ1YmrnxRjPWFEMj6Rtmouw7ZUg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
- by DU2PR04MB8853.eurprd04.prod.outlook.com (2603:10a6:10:2e0::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Thu, 17 Apr
- 2025 05:08:16 +0000
-Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
- ([fe80::367:d59:375:fb87]) by PAXPR04MB9328.eurprd04.prod.outlook.com
- ([fe80::367:d59:375:fb87%7]) with mapi id 15.20.8632.035; Thu, 17 Apr 2025
- 05:08:16 +0000
-Message-ID: <3ffb4464-201f-e614-5fa9-a4cbb46e94b6@oss.nxp.com>
-Date: Thu, 17 Apr 2025 10:38:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH 1/4] license: add exception for Linux Kernel uAPI headers
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB7312.namprd11.prod.outlook.com (2603:10b6:8:11f::18)
+ by DS7PR11MB6248.namprd11.prod.outlook.com (2603:10b6:8:97::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Thu, 17 Apr
+ 2025 05:46:42 +0000
+Received: from DS0PR11MB7312.namprd11.prod.outlook.com
+ ([fe80::8436:b2d3:31a9:1c8c]) by DS0PR11MB7312.namprd11.prod.outlook.com
+ ([fe80::8436:b2d3:31a9:1c8c%3]) with mapi id 15.20.8655.021; Thu, 17 Apr 2025
+ 05:46:36 +0000
+From: "Li, Changqing" <Changqing.Li@windriver.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "Li, Changqing" <Changqing.Li@windriver.com>
+Subject: A compile failure related to "Y2038 Problem"
+Thread-Topic: A compile failure related to "Y2038 Problem"
+Thread-Index: AQHbr1wDb1pN6rNcv0W4+R44gljMnQ==
+Date: Thu, 17 Apr 2025 05:46:36 +0000
+Message-ID: <DS0PR11MB731286BF187EB3647769285982BC2@DS0PR11MB7312.namprd11.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-To: Maxime Coquelin <maxime.coquelin@redhat.com>, dev@dpdk.org,
- david.marchand@redhat.com, thomas@monjalon.net
-References: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
- <20250416123426.2638250-2-maxime.coquelin@redhat.com>
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <20250416123426.2638250-2-maxime.coquelin@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR06CA0016.apcprd06.prod.outlook.com
- (2603:1096:4:186::22) To PAXPR04MB9328.eurprd04.prod.outlook.com
- (2603:10a6:102:2b6::15)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB7312:EE_|DS7PR11MB6248:EE_
+x-ms-office365-filtering-correlation-id: 7ee66845-0ab4-4f8c-655e-08dd7d733779
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|8096899003|38070700018; 
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?HyfnpJ5M7+538f1dTS+9TK4SMBYuwbDEAUIAEbL4kp0hgNvHGW3Uy6a73/?=
+ =?iso-8859-1?Q?MsXjbg+b31v/f/DDN+L6gDDt5KKUoFLvvmt6w35VyKc5GZke4H7ay57Dk8?=
+ =?iso-8859-1?Q?I5hT8npzdb2bD76u9UTOoVqNDA/xaevHduGY7wa/qu50kENV+g9HGiDn/N?=
+ =?iso-8859-1?Q?svd1IZc0UaTyoyh4OdpcjQjcACFZaafhBbhjgOJ1gsMbWIAOj1DI60Sc1G?=
+ =?iso-8859-1?Q?vfy8E3jVmNuBao59il+eZkVmMKZpwr4nChqDOTbruhHn810S5qhNTnvqSD?=
+ =?iso-8859-1?Q?ed0CpSfVzy8Un2BCtLhZ1D3sTKxHcO8b/Uz2hu0wIjk6+avXl3AXkkVjmH?=
+ =?iso-8859-1?Q?ZhGmNM4VF4LDivMMz7bu2Q9b1hxJhNRTLZpCBOdzRw5nhQW5xZdwszwzTW?=
+ =?iso-8859-1?Q?dBsqetxtaHtrvApj3RbrTohNjI9CohrTzVnqvV2Kmy89G1jbGq2LA3SNtl?=
+ =?iso-8859-1?Q?lq0UrM3gYsG6SRjEy5l0xmFU2n04xWAmIPkeJ8a5gKje5PTqM/ExWWK7v6?=
+ =?iso-8859-1?Q?L2UxGtfCtXaLa/fAZm77rVJZoJTN1kxqnozX2VJnYi6OHlBZmZgVC2X7el?=
+ =?iso-8859-1?Q?bSm8Pma0m71wB3fDc+WC20KghUArxgIqNgw86+Rc+H9gf55n7caqRU1Tit?=
+ =?iso-8859-1?Q?pydPEbW5/1vtiVEz9ofcbu7SSSmgLB9BU1kurIjdwzyJQ63OVC5B5+6zEZ?=
+ =?iso-8859-1?Q?x6RbvmwUHoM+ogQKvgNbWUbdbkrpcC6cMY3Sw3S6bYKndH7fGrQST66xpc?=
+ =?iso-8859-1?Q?yLqfM+7BlXtRHmGBdGWpQ49yaJNRqYhuEAnM6KZB34r3oOkB5rpXl8I62U?=
+ =?iso-8859-1?Q?warhqifcAVGYHsH+Ooilqmf2vYbpQBdOQA9Hq1+6wU6qFPggUuU5rIIZXj?=
+ =?iso-8859-1?Q?rY/YwNBFpxAULcmvY5lY3FHnZxhefTv4iS/l6VkYcce17dcG2T/mQZ5EIV?=
+ =?iso-8859-1?Q?5HGudRSGKIKtydGnUA2hSDYFr0fb+MLwdXivLyXPPnQbBqh4NIJoOVzaF8?=
+ =?iso-8859-1?Q?OiukWae/AY4Lb41vxxMAsZclL4xJ1QXhPDHKZ/XriKkhhFSwLCWlrFydb4?=
+ =?iso-8859-1?Q?pvMGwRHOsDPHCm1zgq/T8vqiw7QZc/UHpeGlYreHqe/t/SxjxaKSiQ9i3S?=
+ =?iso-8859-1?Q?JRry1f1+w9nrBKc90fUx+UfSh2zbB1rYALimXpU6NE0ryjtpZ7ST4OKrtH?=
+ =?iso-8859-1?Q?zmUfQbj9ZsO3peC8udW4OQp3vpplFM1RhQ+ifmDoThRsN0ZXfABAWT4xE+?=
+ =?iso-8859-1?Q?tRIFvU22pH+MjGnKneb4U+0rOonAnGwZufL7FRYEmYmelGyItksYLvdF7P?=
+ =?iso-8859-1?Q?9VnFy2sArvUGpGloAxthI3mOZrPYTV6bG/GD58ISmWMFSZI4wQBn8Sl7h6?=
+ =?iso-8859-1?Q?X0ETxYMs2dqCz20vNP18vPLb6IAFfGWzbeEvEcnz7csJGRXEbLohH40xCg?=
+ =?iso-8859-1?Q?KVpwJElDOuTgrzUNJTHeDFNNfF4+EFZWHqAFU9RfkvIK/VTHsajl57y6zO?=
+ =?iso-8859-1?Q?Iq7SWdyVDvOoWnyfYsWCIY6Cx+tXlz0fBJgtFLUInGCSTMCZZL7Xfp7H99?=
+ =?iso-8859-1?Q?IQTTVjo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7312.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(8096899003)(38070700018); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?YkB2ZkEOgEx5Y6c1tbX7g3iDgy41YzxB5DOJzJP3rSkTBkte86qr54ZW3K?=
+ =?iso-8859-1?Q?wPJClYLa5kjGIsuKPW4jgAMY/VCFXpkXh1JAX8rXzK7e4XIz5wG7jmNJ9z?=
+ =?iso-8859-1?Q?RDBOZab6U5wLpFLLEV6z2rj2OSZ7P9WjL3i4EoioHFUacht74AbvGF9miA?=
+ =?iso-8859-1?Q?VhekbOUeWZv2zsZeXOh/Dc3vuC5JgSPINYwTDUiC4DFlk23ElzuinR85BX?=
+ =?iso-8859-1?Q?wYITmdXrMSzRpsWzp7gMV/5Q03qJywcJ0/mMc0KvPKcQzx0XEi7clsfxi5?=
+ =?iso-8859-1?Q?zw2SSUAx4MW0b4k7s5w9S6eM64/S1jk1QJMCy1tbKFD2VQxIxgKQSPSp2C?=
+ =?iso-8859-1?Q?ib8dfSUWalXvJuwrMfCcWN4grXtLG5DsN36gaCQSVeoq8NdxWzArNq3l7T?=
+ =?iso-8859-1?Q?p/QLaLEAn33D0sTA+/YPBuvW2Da6sGyHp7+4Jx4TXWp3JL+o1suUEoLqkn?=
+ =?iso-8859-1?Q?vyp9lpa5DZEQ+P0Oau8Q7vt2q/eczthE8nPoRYT7om97Hsr6slV/qMCKDv?=
+ =?iso-8859-1?Q?31lYTMNI/jY3Id+CDHmEOZuzRtB1cwnDIe1oS+R4XXUpMx4OPoPELaYL7u?=
+ =?iso-8859-1?Q?aGLrrK3RHCSeacamEWkf8OgZJgGM5HguDOqmhgyH07aWz7MjmumfI+9dzQ?=
+ =?iso-8859-1?Q?Of5+lcgR28nBREup0wk7PMpcN2DVB7Gi4jeG81yiV9XMC2x4K9SRG9v+KI?=
+ =?iso-8859-1?Q?idwH0hS+tFd+OfWLUO/sNL28T4joOmomZYOYCLkM0l965Am41CvEHROaC9?=
+ =?iso-8859-1?Q?U3W3ZKv1q6airpHPrh+ixwu43F7UtaQqBslO9Jmd5XvshnKGSC3Nt5Xr0N?=
+ =?iso-8859-1?Q?pH27UuFGvTOOvMUMaf9rMbPvPz62hueT7/0NGxAu5SEmcmgugThiZeOpiy?=
+ =?iso-8859-1?Q?N4QkcrPV4ZDEO5Um8+GkDJZ8jKxulUrh/vJRnFpKTPKEVDAa/G0uqq6+bp?=
+ =?iso-8859-1?Q?mAjbUcuoq4CrXWyA2h+Lcx1sZPXRGaZv92t8ZAryfPwv8ep9nHdQaQCW9s?=
+ =?iso-8859-1?Q?piiLT1P9xN6rqZWInkcYUsFm3ifmqdJL3osrucr1eUGfxs7VUo/+wWgmO4?=
+ =?iso-8859-1?Q?64HO0lP5M7Qg+AZojITcTcSD7wB2zzyafDDwzCd/JKaAMX+cnGW+hQwen/?=
+ =?iso-8859-1?Q?GEbwzm1wmVR/QMCVi8rtpshUML9jsL134l6dymCvGZlv1gSKwpNwmYLbfG?=
+ =?iso-8859-1?Q?lGShRWjNOc8NOaOUZ0FT6W4ekK37NRcgS34TIzLRP3j0UtA5ncmyLtuksW?=
+ =?iso-8859-1?Q?m7YkwqXWg0o6DYQXug03bpU+Vgr5G94CFnHDMRw6pekkf8XzawEuXdqOs4?=
+ =?iso-8859-1?Q?lrhERT/LQXU/3xHSV0rDCA85trBWX5+YPR5LqdMBdCBroci4xpl7qcpPFH?=
+ =?iso-8859-1?Q?AC6mz3ZwX/ckK2vtbkGRNCf8oU34gu8UUo7AB79LqP0caBzZz7ldJgbxut?=
+ =?iso-8859-1?Q?3X7J1RfU32OkE7WdobOBedLWu0jHuEobbAzddreo1q48vasDBIbe/Y2v3T?=
+ =?iso-8859-1?Q?rjfgQVWcXLOv1/+4qy/wBiT6NpAw4qDUzRsF3/YguUvENcQiyV5SW/8Plo?=
+ =?iso-8859-1?Q?5xNHaJjbhgiYr1+8ieY8KoEr/V5puta1DYTMPCbGwm9jaUWggc2UG4XJoq?=
+ =?iso-8859-1?Q?dqVM+q3KeZDW7edE+HjFWsACs77vsllB2+?=
+Content-Type: multipart/alternative;
+ boundary="_000_DS0PR11MB731286BF187EB3647769285982BC2DS0PR11MB7312namp_"
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|DU2PR04MB8853:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ec779d0-e9fd-441f-4a23-08dd7d6ddc4e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VDBob0QzeXlJdlZRU2tJZ1VVWDlqSHJsbC9Cc3F5YWt2Yi9HSUkwV3ZRRFJz?=
- =?utf-8?B?SUp0bU50SUNqRTNpWGc2a3hlV3pYemM4dzhLZ0pNcHJabmJzd0w3Zm9HNits?=
- =?utf-8?B?Q0tLYk5CMUY5VC85WUhIOWZPWThWYVlxUXo5NHBzUW8ySEltRTVjcGRkMVZF?=
- =?utf-8?B?eUptNVN1d3F1amtWVnRTV1hXRGdVYnMvNUYwUjJzTFA2M1A3bjAvUUFlSGVD?=
- =?utf-8?B?UUpNbkpmT214NzM3MzMyQ3Nic095OGswSnRoTFpDYlpFN2hoUitJT21XQ0Qz?=
- =?utf-8?B?OWE3Tnlvc0VnYXIrTGMyaGJMUlljVWRRK1o4TEVWWnIwMVVBR2tCeGc4VXow?=
- =?utf-8?B?RjFVdVVhOG1Dd3lsSkF1WkN3MmxraTR4U3R2MTEvSkpWV0piMkpaUjU5NUVG?=
- =?utf-8?B?UWxQVkRQTXAvQ29SRk9LdEp6ZkNZOXJ3bjRxWEozSXJHYysyeUJCejZ3a0VR?=
- =?utf-8?B?R1lpM3NzZGFUNjMxOEtmQmtSNURpZ1hSM01lSytwMm94Smx4WFQyNVNKSHRR?=
- =?utf-8?B?b09sRTV2SWNDam9RRkZmalJmNUo4cmprTWFhUE91dE50UUg1aU9rcjJzRm9R?=
- =?utf-8?B?UUNSd3JJVHJJeXdwYUdERmo3ZXVzTTAyRzdsRTd1TktWdmNtcHhmZGx1blJK?=
- =?utf-8?B?Wmd3U3dadkgrZFRrWmJ0dDRyRjNiSVlnbFZ2RUJQbitlSWNOMk5WbGUwRkFQ?=
- =?utf-8?B?Q2pPQ2NCaVhUWU9zd25mN1Mra3VWbEZHa09oZXpNbERBdHhpQlM4SE56SEJN?=
- =?utf-8?B?eUV5cVdzSVV5eGdzd09hQk9hNWovOGl1Z2IwdzNZWGVkTjZOeWRZQXlYd2J1?=
- =?utf-8?B?MlJTV0JidW1hbHBFbkFtd2dPMnBRYnV5ZGluQ0xNMFJrVDd4VkxOaXA1V2Ex?=
- =?utf-8?B?U3E0TlFCWUg4QzUwNU4zVmpTV1BmSDlUYVFYNmphbEJZalV4OGFxWU44ZTN0?=
- =?utf-8?B?dkMyZnk4YzhveUI5TFBTbFhlMTZTVzJsdmU4YU93Y05rZGVJRlFSNFJzZE5p?=
- =?utf-8?B?aE5QQThLZXQvQW15R2pKNEc3MTNoZWtQcGpXQUI1RjE2Qm0xbThhWVhKZktL?=
- =?utf-8?B?UmlEejUrZ3hzNy9ySk1BWlRIcGg1QkttZ2UweEJYVExSaThXaWZvTTVyamNE?=
- =?utf-8?B?MnluWXF1V0pySSs5U3ZlZ0NsNGpjUFg4M0IwaVc5TC9ZRlZWVEl4S2V6QXFC?=
- =?utf-8?B?TjZSV0hoTXI3clZ4czIvS25tVkIzQTk0d3FZMG55Z1NMR3U3a3g2cVB2WElP?=
- =?utf-8?B?aEkwaVdqaXdHamdFRnFHeXhUbmd0RlFqU1hhUUl2QmlIVDN0UXRMcnJUKzlP?=
- =?utf-8?B?SWdvNHdwbVEzdkVlZllpQmV5d20zV0dMNEV5LzJzaGlGay9ObkxmcWFreDlK?=
- =?utf-8?B?OEpXaXJxOEtqamdGd0lFYUdiQmwxbmJ0UTc4c3RETkphTGtHWE80R01Dam84?=
- =?utf-8?B?VjhBeTlNMmJRVHVPSmJoMUJidkVacVhQck56R1RqQ1hGazN5K1JKZUxVcTdB?=
- =?utf-8?B?OXI5ZlpMTVV2TWJoYjJ2N085NCtPY1RhV29HSFRLQ05KbFlldVpuVzhuZnBV?=
- =?utf-8?B?b1RMUGxoQjJqOGZhUFZGTjdDQ1k5K1BJTWlLT2tBdXZZUHVPV2FQdlZNeGlv?=
- =?utf-8?B?OVhNaXFwN1hWcDBKVEwvakxBcWd5L3RQKzlneE1YV1RCR2s2bG5yWG1wQ2lh?=
- =?utf-8?B?UmlPT0xHdzRYR1ZvcEtWQ25Sei8rMFNTVHFHaE9CckZjVmMvNFFmamo0czg0?=
- =?utf-8?B?NDE0Z1hVa2xJbWQ2TU5tb3Q5U2RneEpPMU1XWjhPQXdLTW9PMHQrMzg1LzR1?=
- =?utf-8?Q?luB/5j5VlBats/OnEWRPFrdVbzQvrzuWqla9E=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b2JOeGJvSGorSmpiYkV4QXZQRW9HT1R4VzU2TjVNSVNIeGRNYUpBZ3hsUE5T?=
- =?utf-8?B?VEVFcWl1dlZOM2xJTnowbEE0c3hNSTFSbmQ3ZzIrcFRqbmlES0NoTS9LNFlp?=
- =?utf-8?B?aDJRTHZNOGljYmkxQkFTdkNNWlFRc2FaTFd5WDdxbStVZnNVS0tidmZ5a3hE?=
- =?utf-8?B?SmVMZkY2MW05eVFKdFQyaExmUHROVXdMSSthVERodTFlYzdYQTgvQWpQcGc1?=
- =?utf-8?B?MUdkbzJRVWF3SjByU3FIMzJIbU5rZnBHMHIvSHZFSUZCY1FsZzBpTFFzNjFq?=
- =?utf-8?B?NjRJdmllSU5xMG96b3ZKWGV6MFdhVWNQMkN5OTl4ZW0yVWFqM2pJdDdYbC9U?=
- =?utf-8?B?STZxeGFhOGlpU3MwaTdMVkI4MU9VUDVTVlVuM2RTL1YvM01wUzdZRVJGNlBw?=
- =?utf-8?B?dkhSWWFzRDdkQk1UVkJWVE84dDVWOGQxdE1WT1d0ZUcrSG5KQzVPc1FNRGQr?=
- =?utf-8?B?TVExcnhISVRhZXp5bjdRUU1wSnBaMWVIVUhYWHdEUm5WUTUrazNDNVlvck9m?=
- =?utf-8?B?OWNaRUhFd00zYU5ITzFDdnVTTy9SN1pybGhaVG13ZEphdG13bUJTQ1MrWmFP?=
- =?utf-8?B?WVFLd3dpbStwb1JhektnclJUY25ORUN6eDdzekJTN3pvQTdkY1NYYnNibUxj?=
- =?utf-8?B?Q2JiMVBmMzU4SWdUeld4MFFuZUtZUzF6aVgrOFgwaWhNZHRIRFBDdGlyV1hN?=
- =?utf-8?B?YSsxSG9SdFhXUG5RNG44TkczZlRQUE1QS3BveGhaa0FWMkNSZVJwZzJScVdn?=
- =?utf-8?B?Y1hKZEpJMngzTEd5SnFGMklsdkNiL3RVM3UxL2tpWEZNNTE3aUlyRVk2LzBJ?=
- =?utf-8?B?ZW5oODFib0tncUh2QmVManY5UDB0VnlBMjlCSnFtWEs2NmJsTnNDdCtBVmZV?=
- =?utf-8?B?cVkyOWNBVzBqNzRVVHkxaC9QelVxaS9EenQ5Mlp3aHRPdkxWYkhaaXQ3blJL?=
- =?utf-8?B?aVQ3UkFuWndtYWhPSVFlT0hzZlFqN1hYNFN1WXJyTXdZcjBWUmtjOU1wTEQx?=
- =?utf-8?B?Vm91ZTZudWdueTc0WGJNcnhsTk1ueDRXNHJqam9EMXczVVliM1ZUaE1QdVdr?=
- =?utf-8?B?NmpWajJ5cjZ4Y3F1a3FheE1RYnhaNGRJaXlLYVQvS3duZE0zTU90MkJGQ3d6?=
- =?utf-8?B?RHZML0tHQmxxTVJpU25kK3Y2QWFsNE16ODdzTG50N0J6QUtzWXh4NFpReEFs?=
- =?utf-8?B?dXQxK245UTZ4OEtaZzJvdkR5VTFKWEVWaDI0TVMyMFZzd1lQMnZkaS8vWHN4?=
- =?utf-8?B?NUxMbnJxUGQrS2g2N3lMZ1c1WHloUzVkRHh3NCs0Ym5WdW5PZ0ozaEZpNmJP?=
- =?utf-8?B?VkV1UGhFRllMV3E0aWVLZ1hNeVhLcEtmb0cvdkd3TEMrb255d0o1aUt5Zisz?=
- =?utf-8?B?Vko0TjRqVjRoSzg4VVdyOFk4NDJ0NGRUL1UrZUFzU0IrdzBCZDBEc3JkVW1K?=
- =?utf-8?B?S2pKNlBrenhOL0JZTE9vVXlwNWlLdFNtUGk4QUx1YzU0RmdXak9tamlzZ3FH?=
- =?utf-8?B?Y2dKUkphYUJDMTdDQi9Fb1BBcVd0MzVjeFZkRmZXY3Q3TFVqZjNPVE9PRzB6?=
- =?utf-8?B?US83dmVGV0xpUTVwYndYUEI3TmFzdHJuQnUwZEI5Kzkva0gwQlU2V3VXWlc2?=
- =?utf-8?B?aHM3UjFlbDAyUGZ6a0hzb1JvZjVTcXhrK2ljTnFBeDNjN1BQZGRJT2NBcjZQ?=
- =?utf-8?B?QVdvTENkR2p4WEMyTHZVRHNPc0x5QkRLNnVYcWdINWF5dSs0OWRiNkswVUlx?=
- =?utf-8?B?TThnMzBqN1YwQnYwNi9pQnNVbk8wY3VHcG1DdURFeGVweU5tMW1hMlFka3R6?=
- =?utf-8?B?OWd4eTF1VlI3Ui9CTWJvQUpHU3J5Zm15NWJ6TUFXcTJOMmVYNGlLV1hiU3dF?=
- =?utf-8?B?UURjSkFqQVVZTFNhWTAzRHRCZzZVV1ZOVnBUc09xa0tzRXo1d1I1VndkTnVR?=
- =?utf-8?B?bTdybUNES2MrMjVLaGd6dzZISEhROTlLbnkrZ20rS1kvZU9jNFFGQTFiaTZ2?=
- =?utf-8?B?bWlPRnBXcDdBQWk4N2x5L0dSTS9qYVpVeTR4R1l6akNrbXVNQ3lGWkJVaUFB?=
- =?utf-8?B?cFdwWFFIbE42U0RZUVhuVTlMOXZveDV1UVRid2VIRFRIOTN0OHhMZ24wYjVO?=
- =?utf-8?B?MEpzVksxbXg2ZFZLL01mMlFkWE9qRExlY1dJSFpiSWNJNk9qMjlpcTBUbjZL?=
- =?utf-8?B?N3c9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ec779d0-e9fd-441f-4a23-08dd7d6ddc4e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-OriginatorOrg: windriver.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 05:08:16.1371 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z4xodXjhD7rGNUOYqJknKD9OSyR6h898PmSG8k8wcbv30LN7iBFo72HamEy2HfUyps2P3U5pa7oOHcVEQAaY3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8853
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7312.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee66845-0ab4-4f8c-655e-08dd7d733779
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2025 05:46:36.1301 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5HKaly67yUPPGCzqre5tzvKivpjPnsymQjYIeeeeuGdJXwg78CKu+VWARH/pBp2aSZvcwnELG8GSztuikECBKoMBHNR4N4gqV+EwTiq9sBw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6248
+X-Proofpoint-ORIG-GUID: M9FTqPzruahscsMRmzs4mIhJfFR_0WGr
+X-Proofpoint-GUID: M9FTqPzruahscsMRmzs4mIhJfFR_0WGr
+X-Authority-Analysis: v=2.4 cv=HecUTjE8 c=1 sm=1 tr=0 ts=680095c5 cx=c_pps
+ a=OnljjeCONrlUuPUItWmgXA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=XR8D0OoHHMoA:10
+ a=j3GQGqdAxXsBzQ3cLpUA:9 a=wPNLvfGTeEIA:10 a=ritLqX6MTKI1_YPHzy8A:9
+ a=ir3JTAPl7zx13AM1:21 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504170043
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,97 +163,258 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--_000_DS0PR11MB731286BF187EB3647769285982BC2DS0PR11MB7312namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-On 16-04-2025 18:04, Maxime Coquelin wrote:
-> As approved by both Technical and Governing boards, Linux
-> Kernel uAPI header files can now be imported into the
-> kernel/linux/uapi directory.
+Hi, Dear Maintainers
+
+I  met  the following compile failure  when I pass "-D_TIME_BITS=3D64 -D_FI=
+LE_OFFSET_BITS=3D64" to build  32bit  dpdk.  The key command like:
+gcc -m32  ...   -D_TIME_BITS=3D64 -D_FILE_OFFSET_BITS=3D64  ...  -o lib/lib=
+rte_ethdev.a.p/ethdev_ethdev_trace_points.c.o -c ../git/lib/ethdev/ethdev_t=
+race_points.c.
+
+../git/lib/ethdev/ethdev_trace.h: In function 'rte_eth_trace_timesync_write=
+_time':
+../git/lib/eal/include/rte_common.h:498:55: error: size of unnamed array is=
+ negative
+  498 | #define RTE_BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(con=
+dition)]))
+
+[snip]
+RTE_TRACE_POINT(
+    rte_eth_trace_timesync_write_time,
+    RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
+        int ret),
+    rte_trace_point_emit_u16(port_id);
+    rte_trace_point_emit_size_t(time->tv_sec);
+    rte_trace_point_emit_long(time->tv_nsec);
+    rte_trace_point_emit_int(ret);
+)
+[snip]
+
+In order to support Y2038,  "-D_TIME_BITS=3D64 -D_FILE_OFFSET_BITS=3D64"  i=
+s passed,  the time->tv_sec is 64bit,  but size_t is 32bits,  so the error =
+happend.
+if I understand right,  maybe it is possible that  some  codes  will  assig=
+n  time->tv_sec to a size_t variable, so this check is meanningful.  Maybe =
+what need to do
+is make sure the whole project supports Y2038, avoid code similar like  ass=
+ign  time->tv_sec to a size_t variable, and then change  rte_trace_point_em=
+it_size_t(time->tv_sec);
+to  like  rte_trace_point_emit_uint64_t(time->tv_sec);
+
+Could you please help to check if my understanding is correct , and could y=
+ou share if there is any plan to support Y2038?   Great Thanks!
+
+Regards
+Changqing
+
+
+
+--_000_DS0PR11MB731286BF187EB3647769285982BC2DS0PR11MB7312namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+Hi, Dear Maintainers</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+I&nbsp; met&nbsp; the following compile failure&nbsp; when I pass &quot;-D_=
+TIME_BITS=3D64 -D_FILE_OFFSET_BITS=3D64&quot; to build &nbsp;32bit&nbsp; dp=
+dk.&nbsp; The key command like:</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+gcc -m32&nbsp; ...&nbsp; &nbsp;-D_TIME_BITS=3D64 -D_FILE_OFFSET_BITS=3D64&n=
+bsp; ... &nbsp;-o lib/librte_ethdev.a.p/ethdev_ethdev_trace_points.c.o -c .=
+./git/lib/ethdev/ethdev_trace_points.c.</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+../git/lib/ethdev/ethdev_trace.h: In function 'rte_eth_trace_timesync_write=
+_time':</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+../git/lib/eal/include/rte_common.h:498:55: error: size of unnamed array is=
+ negative</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; 498 | #define RTE_BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!=
+!(condition)]))</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+[snip]</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+RTE_TRACE_POINT(</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; rte_eth_trace_timesync_write_time,</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec =
+*time,</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; int ret),</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; rte_trace_point_emit_u16(port_id);</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp;&nbsp;rte_trace_point_emit_size_t(time-&gt;tv_sec);</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; rte_trace_point_emit_long(time-&gt;tv_nsec);</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; rte_trace_point_emit_int(ret);</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+)</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+[snip]</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0);">
+In order to support Y2038,&nbsp; &quot;-D_TIME_BITS=3D64 -D_FILE_OFFSET_BIT=
+S=3D64&quot;&nbsp; is passed,&nbsp; the time-&gt;tv_sec&nbsp;is 64bit,&nbsp=
+; but size_t is 32bits,&nbsp; so the error happend.</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; color:=
+ rgb(0, 0, 0);">
+<span style=3D"font-size: 12pt;">if I understand right,&nbsp; maybe it is p=
+ossible that &nbsp;some&nbsp; codes&nbsp; will&nbsp; assign &nbsp;</span><s=
+pan style=3D"font-size: 16px; background-color: rgb(255, 255, 255);">time-&=
+gt;tv_sec to a size_t variable, so this check is meanningful.&nbsp; Maybe
+ what need to do</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; color:=
+ rgb(0, 0, 0);">
+<span style=3D"font-size: 16px; background-color: rgb(255, 255, 255);">is m=
+ake sure the whole project supports Y2038, avoid code similar like
+</span><span style=3D"font-size: 12pt; background-color: rgb(255, 255, 255)=
+;">&nbsp;assign &nbsp;</span><span style=3D"font-size: 16px; background-col=
+or: rgb(255, 255, 255);">time-&gt;tv_sec to a size_t variable, and then cha=
+nge&nbsp; rte_trace_point_emit_size_t(time-&gt;tv_sec);</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);">to&nbsp; like &nbsp;r=
+te_trace_point_emit_uint64_t(time-&gt;tv_sec);</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);"><br>
+</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);">Could you please help=
+ to check if my understanding is correct , and could you share if there&nbs=
+p;is any plan to support Y2038?&nbsp; &nbsp;Great Thanks!</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);"><br>
+</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);">Regards</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 16px; color: rgb(0, 0, 0);">
+<span style=3D"background-color: rgb(255, 255, 255);">Changqing</span></div=
 >
-> This patch also fix the SPDX tags checker script to take
-> into account dual-licensed files.
->
-> The process to import such headers is documented in
-> doc/guides/contributing/linux_uapi.rst
->
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> ---
->   devtools/check-spdx-tag.sh |  2 +-
->   license/Linux-syscall-note | 25 +++++++++++++++++++++++++
->   license/exceptions.txt     | 17 +++++++++--------
->   3 files changed, 35 insertions(+), 9 deletions(-)
->   create mode 100644 license/Linux-syscall-note
->
-> diff --git a/devtools/check-spdx-tag.sh b/devtools/check-spdx-tag.sh
-> index 1fd0d579d3..984825026e 100755
-> --- a/devtools/check-spdx-tag.sh
-> +++ b/devtools/check-spdx-tag.sh
-> @@ -48,7 +48,7 @@ check_licenses() {
->       fi
->       exceptions=$(build_exceptions_list)
->       git grep -l SPDX-License-Identifier: -- $no_license_list $exceptions |
-> -    xargs grep -L -E 'SPDX-License-Identifier:[[:space:]]*\(?BSD-3-Clause' > $tmpfile
-> +    xargs grep -L -E 'SPDX-License-Identifier:[[:space:]]*(\(?|.* OR )BSD-3-Clause' > $tmpfile
->   
->       wrong_license=$(wc -l < $tmpfile)
->       $quiet || cat $tmpfile
-> diff --git a/license/Linux-syscall-note b/license/Linux-syscall-note
-> new file mode 100644
-> index 0000000000..9abdad71fa
-> --- /dev/null
-> +++ b/license/Linux-syscall-note
-> @@ -0,0 +1,25 @@
-> +SPDX-Exception-Identifier: Linux-syscall-note
-> +SPDX-URL: https://spdx.org/licenses/Linux-syscall-note.html
-> +SPDX-Licenses: GPL-2.0, GPL-2.0+, GPL-1.0+, LGPL-2.0, LGPL-2.0+, LGPL-2.1, LGPL-2.1+, GPL-2.0-only, GPL-2.0-or-later
-> +Usage-Guide:
-> +  This exception is used together with one of the above SPDX-Licenses
-> +  to mark user space API (uapi) header files so they can be included
-> +  into non GPL compliant user space application code.
-> +  To use this exception add it with the keyword WITH to one of the
-> +  identifiers in the SPDX-Licenses tag:
-> +    SPDX-License-Identifier: <SPDX-License> WITH Linux-syscall-note
-> +License-Text:
-> +
-> +   NOTE! This copyright does *not* cover user programs that use kernel
-> + services by normal system calls - this is merely considered normal use
-> + of the kernel, and does *not* fall under the heading of "derived work".
-> + Also note that the GPL below is copyrighted by the Free Software
-> + Foundation, but the instance of code that it refers to (the Linux
-> + kernel) is copyrighted by me and others who actually wrote it.
-> +
-> + Also note that the only valid version of the GPL as far as the kernel
-> + is concerned is _this_ particular version of the license (ie v2, not
-> + v2.2 or v3.x or whatever), unless explicitly otherwise stated.
-> +
-> +			Linus Torvalds
-> +
-> diff --git a/license/exceptions.txt b/license/exceptions.txt
-> index d12fac2034..cf2034747d 100644
-> --- a/license/exceptions.txt
-> +++ b/license/exceptions.txt
-> @@ -9,11 +9,12 @@ Note that following licenses are not exceptions:-
->   	- BSD-3-Clause OR LGPL-2.1
->   	- GPL-2.0  (*Only for kernel code*)
->   
-> ----------------------------------------------------------------------------------------------------
-> -SPDX Identifier      | TB Approval Date | GB Approval Date | File name
-> ----------------------------------------------------------------------------------------------------
-> -MIT                  | 10/23/2019       | 02/10/2020       | lib/eal/windows/include/dirent.h
-> -BSD-2-Clause         | 10/23/2019       | 12/18/2019       | lib/eal/windows/include/getopt.h
-> -ISC AND BSD-2-Clause | 10/23/2019       | 12/18/2019       | lib/eal/windows/getopt.c
-> -MIT                  | 10/19/2022       | 10/18/2022       | drivers/net/gve/base/*
-> ----------------------------------------------------------------------------------------------------
-> +---------------------------------------------------------------------------------------------------------
-> +SPDX Identifier                 | TB Approval Date | GB Approval Date | File name
-> +---------------------------------------------------------------------------------------------------------
-> +MIT                             | 10/23/2019       | 02/10/2020       | lib/eal/windows/include/dirent.h
-> +BSD-2-Clause                    | 10/23/2019       | 12/18/2019       | lib/eal/windows/include/getopt.h
-> +ISC AND BSD-2-Clause            | 10/23/2019       | 12/18/2019       | lib/eal/windows/getopt.c
-> +MIT                             | 10/19/2022       | 10/18/2022       | drivers/net/gve/base/*
-> +GPL-2.0 WITH Linux-syscall-note | 12/11/2024       | 04/14/2025       | kernel/linux/uapi/linux/*
-> +---------------------------------------------------------------------------------------------------------
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
 
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-
-
-
+--_000_DS0PR11MB731286BF187EB3647769285982BC2DS0PR11MB7312namp_--
