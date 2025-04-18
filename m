@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EACC3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9165C3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:52:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54F3F40E36;
-	Mon,  5 May 2025 14:51:22 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTP id E99C1400D6
- for <dev@dpdk.org>; Fri, 18 Apr 2025 10:09:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CD21F40E34;
+	Mon,  5 May 2025 14:51:23 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CD35400D5
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 10:09:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
- MIME-Version; bh=62XEtH36pqsDlA4yBLNbSfDYkIBHjhGkC6oXhZ4z0eE=;
- b=RPXOwpueAf8UM4pT2IbISqvCChNfrQaf/syEkEkMxBmuMnG0PVaNXpYQxBi5PC
- rM8n9fCAzpmwxtBCVCSErNfSUn5ZEuns6fKk6zH/tKCp34lLutMSrUYsKbElsALl
- kuMHCo6HCohzrEddBNGgY3NgQGr1d8Mwrqqhe8QHP/bZo=
+ MIME-Version; bh=T28OTbY9qwQM43SHhWmrVm5d28EXGzSTofcENbBFJ5g=;
+ b=RwLfY7mIL4xap0kIAjtLy5TuWTOTqPKnrluy1T0T0ooEATwbF/Xg+YbVt0awzY
+ RntkaGzv7PLxJUkcs0gl+3FjNY9X1Il7VpranKokQe0zoZlKW+m9G+qL9zY7AYE6
+ 1IYPGVMphJIYuZW2j+Mc49xEj+qWXv1MO8oSQAYyEOamA=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgAXqpe1CAJoAsjFAg--.56413S6;
- Fri, 18 Apr 2025 16:09:31 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgAXqpe1CAJoAsjFAg--.56413S7;
+ Fri, 18 Apr 2025 16:09:32 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
  Feifei Wang <wangfeifei40@huawei.com>
-Subject: [RFC 02/18] net/hinic3: add basic header files
-Date: Fri, 18 Apr 2025 16:08:34 +0800
-Message-ID: <20250418080908.9447-3-wff_light@vip.163.com>
+Subject: [RFC 03/18] net/hinic3: add hardware interfaces of BAR operation
+Date: Fri, 18 Apr 2025 16:08:35 +0800
+Message-ID: <20250418080908.9447-4-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250418080908.9447-1-wff_light@vip.163.com>
 References: <20250418080908.9447-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAXqpe1CAJoAsjFAg--.56413S6
-X-Coremail-Antispam: 1Uf129KBjvAXoWfJw4DAryrZr43Ww18ZrW5Jrb_yoW8CFy5Xo
- W5uF43tr4rXryjka1q9397tFW8Zrs5Zr15t3y5CayIvFsrKry8J3y3Jw47XrWfXw4DXry3
- Cry5tF4Du3yFyrn7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVveQDUUUU
+X-CM-TRANSID: As8vCgAXqpe1CAJoAsjFAg--.56413S7
+X-Coremail-Antispam: 1Uf129KBjvAXoWfCFyDJr4DJr4DXrW8AFyfCrg_yoW5GFW3Zo
+ W7Gr45Kr4Fyr18CF4vvrZ7JFsrGrZ3uwn8Gaya9an2ga1Iqr98tasxKw1xXry0934DWr17
+ XF98Aw1qkr1Fywnrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVRRRUUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAw4zCmgB4rykOgAAsd
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBBAzCmgB4uqlIAAAsJ
 X-Mailman-Approved-At: Mon, 05 May 2025 14:51:05 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -52,647 +52,955 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Yi Chen <chenyi221@huawei.com>
 
-Add HW registers definition header file for SP series NIC.
-Add some headers that define commands and basic defines for
-use in the code.
+This patch adds some HW interfaces for bar operatioin interfaces,
+including: mapped bar address geeting, HW attributes getting,
+msi-x reg operation, function type getting and so on.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 ---
- drivers/net/hinic3/base/hinic3_cmd.h    | 231 ++++++++++++++++++++
- drivers/net/hinic3/base/hinic3_compat.h | 266 ++++++++++++++++++++++++
- drivers/net/hinic3/base/hinic3_csr.h    | 108 ++++++++++
- 3 files changed, 605 insertions(+)
- create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
- create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
- create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
+ drivers/net/hinic3/base/hinic3_hwif.c | 779 ++++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_hwif.h | 142 +++++
+ 2 files changed, 921 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
 
-diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/base/hinic3_hwif.c
 new file mode 100644
-index 0000000000..f0e200a944
+index 0000000000..7d075693f9
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_cmd.h
-@@ -0,0 +1,231 @@
++++ b/drivers/net/hinic3/base/hinic3_hwif.c
+@@ -0,0 +1,779 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_CMD_H_
-+#define _HINIC3_CMD_H_
++#include <rte_bus_pci.h>
++#include "hinic3_compat.h"
++#include "hinic3_csr.h"
++#include "hinic3_hwdev.h"
++#include "hinic3_hwif.h"
 +
-+#define NIC_RSS_TEMP_ID_TO_CTX_LT_IDX(tmp_id)	tmp_id
-+/* Begin of one temp tbl. */
-+#define NIC_RSS_TEMP_ID_TO_INDIR_LT_IDX(tmp_id)	((tmp_id) << 4)
-+/* 4 ctx in one entry. */
-+#define NIC_RSS_CTX_TBL_ENTRY_SIZE		0x10
-+/* Entry size = 16B, 16 entry/template. */
-+#define NIC_RSS_INDIR_TBL_ENTRY_SIZE		0x10
-+/* Entry size = 16B, so entry_num = 256B/16B. */
-+#define NIC_RSS_INDIR_TBL_ENTRY_NUM		0x10
++#define WAIT_HWIF_READY_TIMEOUT 10000
 +
-+#define NIC_UP_RSS_INVALID_TEMP_ID		0xFF
-+#define NIC_UP_RSS_INVALID_FUNC_ID		0xFFFF
-+#define NIC_UP_RSS_INVALID			0x00
-+#define NIC_UP_RSS_EN				0x01
-+#define NIC_UP_RSS_INVALID_GROUP_ID		0x7F
++#define DB_IDX(db, db_base) \
++	((u32)(((ulong)(db) - (ulong)(db_base)) / HINIC3_DB_PAGE_SIZE))
 +
-+#define NIC_RSS_CMD_TEMP_ALLOC			0x01
-+#define NIC_RSS_CMD_TEMP_FREE			0x02
++#define HINIC3_AF0_FUNC_GLOBAL_IDX_SHIFT 0
++#define HINIC3_AF0_P2P_IDX_SHIFT	 12
++#define HINIC3_AF0_PCI_INTF_IDX_SHIFT	 17
++#define HINIC3_AF0_VF_IN_PF_SHIFT	 20
++#define HINIC3_AF0_FUNC_TYPE_SHIFT	 28
 +
-+#define HINIC3_RSS_TYPE_VALID_SHIFT		23
-+#define HINIC3_RSS_TYPE_TCP_IPV6_EXT_SHIFT	24
-+#define HINIC3_RSS_TYPE_IPV6_EXT_SHIFT		25
-+#define HINIC3_RSS_TYPE_TCP_IPV6_SHIFT		26
-+#define HINIC3_RSS_TYPE_IPV6_SHIFT		27
-+#define HINIC3_RSS_TYPE_TCP_IPV4_SHIFT		28
-+#define HINIC3_RSS_TYPE_IPV4_SHIFT		29
-+#define HINIC3_RSS_TYPE_UDP_IPV6_SHIFT		30
-+#define HINIC3_RSS_TYPE_UDP_IPV4_SHIFT		31
-+#define HINIC3_RSS_TYPE_SET(val, member)	\
-+	(((u32)(val) & 0x1) << HINIC3_RSS_TYPE_##member##_SHIFT)
++#define HINIC3_AF0_FUNC_GLOBAL_IDX_MASK 0xFFF
++#define HINIC3_AF0_P2P_IDX_MASK		0x1F
++#define HINIC3_AF0_PCI_INTF_IDX_MASK	0x7
++#define HINIC3_AF0_VF_IN_PF_MASK	0xFF
++#define HINIC3_AF0_FUNC_TYPE_MASK	0x1
 +
-+#define HINIC3_RSS_TYPE_GET(val, member)	\
-+	(((u32)(val) >> HINIC3_RSS_TYPE_##member##_SHIFT) & 0x1)
++#define HINIC3_AF0_GET(val, member) \
++	(((val) >> HINIC3_AF0_##member##_SHIFT) & HINIC3_AF0_##member##_MASK)
 +
-+/* NIC CMDQ MODE. */
-+typedef enum hinic3_ucode_cmd {
-+	HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX = 0,
-+	HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT,
-+	HINIC3_UCODE_CMD_ARM_SQ,
-+	HINIC3_UCODE_CMD_ARM_RQ,
-+	HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE,
-+	HINIC3_UCODE_CMD_SET_RSS_CONTEXT_TABLE,
-+	HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE,
-+	HINIC3_UCODE_CMD_GET_RSS_CONTEXT_TABLE,
-+	HINIC3_UCODE_CMD_SET_IQ_ENABLE,
-+	HINIC3_UCODE_CMD_SET_RQ_FLUSH = 10,
-+	HINIC3_UCODE_CMD_MODIFY_VLAN_CTX,
-+} cmdq_nic_subtype_e;
++#define HINIC3_AF1_PPF_IDX_SHIFT	  0
++#define HINIC3_AF1_AEQS_PER_FUNC_SHIFT	  8
++#define HINIC3_AF1_MGMT_INIT_STATUS_SHIFT 30
++#define HINIC3_AF1_PF_INIT_STATUS_SHIFT	  31
 +
-+/* Commands between NIC to MPU. */
-+enum hinic3_nic_cmd {
-+	/* Only for PFD and VFD. */
-+	HINIC3_NIC_CMD_VF_REGISTER = 0,
++#define HINIC3_AF1_PPF_IDX_MASK		 0x3F
++#define HINIC3_AF1_AEQS_PER_FUNC_MASK	 0x3
++#define HINIC3_AF1_MGMT_INIT_STATUS_MASK 0x1
++#define HINIC3_AF1_PF_INIT_STATUS_MASK	 0x1
 +
-+	/* FUNC CFG */
-+	HINIC3_NIC_CMD_SET_FUNC_TBL = 5,
-+	HINIC3_NIC_CMD_SET_VPORT_ENABLE,
-+	HINIC3_NIC_CMD_SET_RX_MODE,
-+	HINIC3_NIC_CMD_SQ_CI_ATTR_SET,
-+	HINIC3_NIC_CMD_GET_VPORT_STAT,
-+	HINIC3_NIC_CMD_CLEAN_VPORT_STAT,
-+	HINIC3_NIC_CMD_CLEAR_QP_RESOURCE,
-+	HINIC3_NIC_CMD_CFG_FLEX_QUEUE,
-+	/* LRO CFG */
-+	HINIC3_NIC_CMD_CFG_RX_LRO,
-+	HINIC3_NIC_CMD_CFG_LRO_TIMER,
-+	HINIC3_NIC_CMD_FEATURE_NEGO,
++#define HINIC3_AF1_GET(val, member) \
++	(((val) >> HINIC3_AF1_##member##_SHIFT) & HINIC3_AF1_##member##_MASK)
 +
-+	/* MAC & VLAN CFG */
-+	HINIC3_NIC_CMD_GET_MAC = 20,
-+	HINIC3_NIC_CMD_SET_MAC,
-+	HINIC3_NIC_CMD_DEL_MAC,
-+	HINIC3_NIC_CMD_UPDATE_MAC,
-+	HINIC3_NIC_CMD_GET_ALL_DEFAULT_MAC,
++#define HINIC3_AF2_CEQS_PER_FUNC_SHIFT	   0
++#define HINIC3_AF2_DMA_ATTR_PER_FUNC_SHIFT 9
++#define HINIC3_AF2_IRQS_PER_FUNC_SHIFT	   16
 +
-+	HINIC3_NIC_CMD_CFG_FUNC_VLAN,
-+	HINIC3_NIC_CMD_SET_VLAN_FILTER_EN,
-+	HINIC3_NIC_CMD_SET_RX_VLAN_OFFLOAD,
++#define HINIC3_AF2_CEQS_PER_FUNC_MASK	  0x1FF
++#define HINIC3_AF2_DMA_ATTR_PER_FUNC_MASK 0x7
++#define HINIC3_AF2_IRQS_PER_FUNC_MASK	  0x7FF
 +
-+	/* SR-IOV */
-+	HINIC3_NIC_CMD_CFG_VF_VLAN = 40,
-+	HINIC3_NIC_CMD_SET_SPOOPCHK_STATE,
-+	/* RATE LIMIT */
-+	HINIC3_NIC_CMD_SET_MAX_MIN_RATE,
++#define HINIC3_AF2_GET(val, member) \
++	(((val) >> HINIC3_AF2_##member##_SHIFT) & HINIC3_AF2_##member##_MASK)
 +
-+	/* RSS CFG */
-+	HINIC3_NIC_CMD_RSS_CFG = 60,
-+	HINIC3_NIC_CMD_RSS_TEMP_MGR,
-+	HINIC3_NIC_CMD_GET_RSS_CTX_TBL,
-+	HINIC3_NIC_CMD_CFG_RSS_HASH_KEY,
-+	HINIC3_NIC_CMD_CFG_RSS_HASH_ENGINE,
-+	HINIC3_NIC_CMD_SET_RSS_CTX_TBL_INTO_FUNC,
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_SHIFT 0
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_SHIFT	16
 +
-+	/* FDIR */
-+	HINIC3_NIC_CMD_ADD_TC_FLOW = 80,
-+	HINIC3_NIC_CMD_DEL_TC_FLOW,
-+	HINIC3_NIC_CMD_GET_TC_FLOW,
-+	HINIC3_NIC_CMD_FLUSH_TCAM,
-+	HINIC3_NIC_CMD_CFG_TCAM_BLOCK,
-+	HINIC3_NIC_CMD_ENABLE_TCAM,
-+	HINIC3_NIC_CMD_GET_TCAM_BLOCK,
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_MASK 0xFFF
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_MASK     0xFFF
 +
-+	HINIC3_NIC_CMD_SET_FDIR_STATUS = 91,
++#define HINIC3_AF3_GET(val, member) \
++	(((val) >> HINIC3_AF3_##member##_SHIFT) & HINIC3_AF3_##member##_MASK)
 +
-+	/* PORT CFG */
-+	HINIC3_NIC_CMD_SET_PORT_ENABLE = 100,
-+	HINIC3_NIC_CMD_CFG_PAUSE_INFO,
++#define HINIC3_AF4_DOORBELL_CTRL_SHIFT 0
++#define HINIC3_AF4_DOORBELL_CTRL_MASK  0x1
 +
-+	HINIC3_NIC_CMD_SET_PORT_CAR,
-+	HINIC3_NIC_CMD_SET_ER_DROP_PKT,
++#define HINIC3_AF4_GET(val, member) \
++	(((val) >> HINIC3_AF4_##member##_SHIFT) & HINIC3_AF4_##member##_MASK)
 +
-+	HINIC3_NIC_CMD_VF_COS,
-+	HINIC3_NIC_CMD_SETUP_COS_MAPPING,
-+	HINIC3_NIC_CMD_SET_ETS,
-+	HINIC3_NIC_CMD_SET_PFC,
++#define HINIC3_AF4_SET(val, member) \
++	(((val) & HINIC3_AF4_##member##_MASK) << HINIC3_AF4_##member##_SHIFT)
 +
-+	/* MISC */
-+	HINIC3_NIC_CMD_BIOS_CFG = 120,
-+	HINIC3_NIC_CMD_SET_FIRMWARE_CUSTOM_PACKETS_MSG,
++#define HINIC3_AF4_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF4_##member##_MASK << HINIC3_AF4_##member##_SHIFT)))
 +
-+	/* DFX */
-+	HINIC3_NIC_CMD_GET_SM_TABLE = 140,
-+	HINIC3_NIC_CMD_RD_LINE_TBL,
++#define HINIC3_AF5_OUTBOUND_CTRL_SHIFT 0
++#define HINIC3_AF5_OUTBOUND_CTRL_MASK  0x1
 +
-+	HINIC3_NIC_CMD_SET_VHD_CFG = 161,
++#define HINIC3_AF5_GET(val, member) \
++	(((val) >> HINIC3_AF5_##member##_SHIFT) & HINIC3_AF5_##member##_MASK)
 +
-+	HINIC3_NIC_CMD_GET_PORT_STAT = 200,
-+	HINIC3_NIC_CMD_CLEAN_PORT_STAT,
++#define HINIC3_AF5_SET(val, member) \
++	(((val) & HINIC3_AF5_##member##_MASK) << HINIC3_AF5_##member##_SHIFT)
 +
-+	HINIC3_NIC_CMD_MAX = 256
-+};
++#define HINIC3_AF5_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF5_##member##_MASK << HINIC3_AF5_##member##_SHIFT)))
 +
-+/* COMM commands between driver to MPU. */
-+enum hinic3_mgmt_cmd {
-+	HINIC3_MGMT_CMD_FUNC_RESET = 0,
-+	HINIC3_MGMT_CMD_FEATURE_NEGO,
-+	HINIC3_MGMT_CMD_FLUSH_DOORBELL,
-+	HINIC3_MGMT_CMD_START_FLUSH,
-+	HINIC3_MGMT_CMD_SET_FUNC_FLR,
-+	HINIC3_MGMT_CMD_SET_FUNC_SVC_USED_STATE = 7,
++#define HINIC3_AF6_PF_STATUS_SHIFT 0
++#define HINIC3_AF6_PF_STATUS_MASK  0xFFFF
 +
-+	HINIC3_MGMT_CMD_CFG_MSIX_NUM = 10,
++#define HINIC3_AF6_FUNC_MAX_QUEUE_SHIFT 23
++#define HINIC3_AF6_FUNC_MAX_QUEUE_MASK	0x1FF
 +
-+	HINIC3_MGMT_CMD_SET_CMDQ_CTXT = 20,
-+	HINIC3_MGMT_CMD_SET_VAT,
-+	HINIC3_MGMT_CMD_CFG_PAGESIZE,
-+	HINIC3_MGMT_CMD_CFG_MSIX_CTRL_REG,
-+	HINIC3_MGMT_CMD_SET_CEQ_CTRL_REG,
-+	HINIC3_MGMT_CMD_SET_DMA_ATTR,
++#define HINIC3_AF6_MSIX_FLEX_EN_SHIFT 22
++#define HINIC3_AF6_MSIX_FLEX_EN_MASK  0x1
 +
-+	HINIC3_MGMT_CMD_GET_MQM_FIX_INFO = 40,
-+	HINIC3_MGMT_CMD_SET_MQM_CFG_INFO,
-+	HINIC3_MGMT_CMD_SET_MQM_SRCH_GPA,
-+	HINIC3_MGMT_CMD_SET_PPF_TMR,
-+	HINIC3_MGMT_CMD_SET_PPF_HT_GPA,
-+	HINIC3_MGMT_CMD_SET_FUNC_TMR_BITMAT,
++#define HINIC3_AF6_SET(val, member)                  \
++	((((u32)(val)) & HINIC3_AF6_##member##_MASK) \
++	 << HINIC3_AF6_##member##_SHIFT)
 +
-+	HINIC3_MGMT_CMD_GET_FW_VERSION = 60,
-+	HINIC3_MGMT_CMD_GET_BOARD_INFO,
-+	HINIC3_MGMT_CMD_SYNC_TIME,
-+	HINIC3_MGMT_CMD_GET_HW_PF_INFOS,
-+	HINIC3_MGMT_CMD_SEND_BDF_INFO,
++#define HINIC3_AF6_GET(val, member) \
++	(((val) >> HINIC3_AF6_##member##_SHIFT) & HINIC3_AF6_##member##_MASK)
 +
-+	HINIC3_MGMT_CMD_UPDATE_FW = 80,
-+	HINIC3_MGMT_CMD_ACTIVE_FW,
-+	HINIC3_MGMT_CMD_HOT_ACTIVE_FW,
-+	HINIC3_MGMT_CMD_HOT_ACTIVE_DONE_NOTICE,
-+	HINIC3_MGMT_CMD_SWITCH_CFG,
-+	HINIC3_MGMT_CMD_CHECK_FLASH,
-+	HINIC3_MGMT_CMD_CHECK_FLASH_RW,
-+	HINIC3_MGMT_CMD_RESOURCE_CFG,
-+	HINIC3_MGMT_CMD_UPDATE_BIOS,
++#define HINIC3_AF6_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF6_##member##_MASK << HINIC3_AF6_##member##_SHIFT)))
 +
-+	HINIC3_MGMT_CMD_FAULT_REPORT = 100,
-+	HINIC3_MGMT_CMD_WATCHDOG_INFO,
-+	HINIC3_MGMT_CMD_MGMT_RESET,
-+	HINIC3_MGMT_CMD_FFM_SET,
++#define HINIC3_PPF_ELECTION_IDX_SHIFT 0
 +
-+	HINIC3_MGMT_CMD_GET_LOG = 120,
-+	HINIC3_MGMT_CMD_TEMP_OP,
-+	HINIC3_MGMT_CMD_EN_AUTO_RST_CHIP,
-+	HINIC3_MGMT_CMD_CFG_REG,
-+	HINIC3_MGMT_CMD_GET_CHIP_ID,
-+	HINIC3_MGMT_CMD_SYSINFO_DFX,
-+	HINIC3_MGMT_CMD_PCIE_DFX_NTC,
-+};
++#define HINIC3_PPF_ELECTION_IDX_MASK 0x3F
 +
-+enum mag_cmd {
-+	SERDES_CMD_PROCESS = 0,
++#define HINIC3_PPF_ELECTION_SET(val, member)           \
++	(((val) & HINIC3_PPF_ELECTION_##member##_MASK) \
++	 << HINIC3_PPF_ELECTION_##member##_SHIFT)
 +
-+	MAG_CMD_SET_PORT_CFG      = 1,
-+	MAG_CMD_SET_PORT_ADAPT    = 2,
-+	MAG_CMD_CFG_LOOPBACK_MODE = 3,
++#define HINIC3_PPF_ELECTION_GET(val, member)               \
++	(((val) >> HINIC3_PPF_ELECTION_##member##_SHIFT) & \
++	 HINIC3_PPF_ELECTION_##member##_MASK)
 +
-+	MAG_CMD_GET_PORT_ENABLE   = 5,
-+	MAG_CMD_SET_PORT_ENABLE   = 6,
-+	MAG_CMD_GET_LINK_STATUS   = 7,
-+	MAG_CMD_SET_LINK_FOLLOW   = 8,
-+	MAG_CMD_SET_PMA_ENABLE    = 9,
-+	MAG_CMD_CFG_FEC_MODE      = 10,
++#define HINIC3_PPF_ELECTION_CLEAR(val, member)          \
++	((val) & (~(HINIC3_PPF_ELECTION_##member##_MASK \
++		    << HINIC3_PPF_ELECTION_##member##_SHIFT)))
 +
-+	/* PHY */
-+	MAG_CMD_GET_XSFP_INFO        = 60,
-+	MAG_CMD_SET_XSFP_ENABLE      = 61,
-+	MAG_CMD_GET_XSFP_PRESENT     = 62,
-+	/* sfp/qsfp single byte read/write, for equipment test. */
-+	MAG_CMD_SET_XSFP_RW          = 63,
-+	MAG_CMD_CFG_XSFP_TEMPERATURE = 64,
++#define HINIC3_MPF_ELECTION_IDX_SHIFT 0
 +
-+	MAG_CMD_WIRE_EVENT        = 100,
-+	MAG_CMD_LINK_ERR_EVENT    = 101,
++#define HINIC3_MPF_ELECTION_IDX_MASK 0x1F
 +
-+	MAG_CMD_EVENT_PORT_INFO   = 150,
-+	MAG_CMD_GET_PORT_STAT     = 151,
-+	MAG_CMD_CLR_PORT_STAT     = 152,
-+	MAG_CMD_GET_PORT_INFO     = 153,
-+	MAG_CMD_GET_PCS_ERR_CNT   = 154,
-+	MAG_CMD_GET_MAG_CNT       = 155,
-+	MAG_CMD_DUMP_ANTRAIN_INFO = 156,
++#define HINIC3_MPF_ELECTION_SET(val, member)           \
++	(((val) & HINIC3_MPF_ELECTION_##member##_MASK) \
++	 << HINIC3_MPF_ELECTION_##member##_SHIFT)
 +
-+	MAG_CMD_MAX = 0xFF
-+};
++#define HINIC3_MPF_ELECTION_GET(val, member)               \
++	(((val) >> HINIC3_MPF_ELECTION_##member##_SHIFT) & \
++	 HINIC3_MPF_ELECTION_##member##_MASK)
 +
-+#endif /* _HINIC3_CMD_H_ */
-diff --git a/drivers/net/hinic3/base/hinic3_compat.h b/drivers/net/hinic3/base/hinic3_compat.h
-new file mode 100644
-index 0000000000..ae2899d15c
---- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_compat.h
-@@ -0,0 +1,266 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Huawei Technologies Co., Ltd
-+ */
++#define HINIC3_MPF_ELECTION_CLEAR(val, member)          \
++	((val) & (~(HINIC3_MPF_ELECTION_##member##_MASK \
++		    << HINIC3_MPF_ELECTION_##member##_SHIFT)))
 +
-+#ifndef _HINIC3_COMPAT_H_
-+#define _HINIC3_COMPAT_H_
++#define HINIC3_GET_REG_FLAG(reg) ((reg) & (~(HINIC3_REGS_FLAG_MAKS)))
 +
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <sys/time.h>
-+#include <unistd.h>
-+#include <sys/syscall.h>
-+#include <pthread.h>
-+#include <ethdev_pci.h>
-+#include <eal_interrupts.h>
-+#include <rte_io.h>
-+#include <rte_atomic.h>
-+#include <rte_byteorder.h>
-+#include <rte_common.h>
-+#include <rte_config.h>
-+#include <rte_cycles.h>
-+#include <rte_log.h>
-+#include <rte_malloc.h>
-+#include <rte_memcpy.h>
-+#include <rte_memzone.h>
-+#include <rte_spinlock.h>
++#define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MAKS))
 +
-+typedef uint8_t  u8;
-+typedef int8_t   s8;
-+typedef uint16_t u16;
-+typedef uint32_t u32;
-+typedef int32_t  s32;
-+typedef uint64_t u64;
++#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id == HINIC3_DEV_ID_VF)
 +
-+#ifndef BIT
-+#define BIT(n) (1U << (n))
-+#endif
-+
-+#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
-+#define lower_32_bits(n) ((u32)(n))
-+
-+#define HINIC3_MEM_ALLOC_ALIGN_MIN 1
-+
-+extern int hinic3_logtype;
-+#define RTE_LOGTYPE_NET_HINIC3 hinic3_logtype
-+
-+#define PMD_DRV_LOG(level, ...) RTE_LOG_LINE(level, NET_HINIC3, __VA_ARGS__)
-+
-+/* Bit order interface. */
-+#define cpu_to_be16(o) rte_cpu_to_be_16(o)
-+#define cpu_to_be32(o) rte_cpu_to_be_32(o)
-+#define cpu_to_be64(o) rte_cpu_to_be_64(o)
-+#define cpu_to_le32(o) rte_cpu_to_le_32(o)
-+#define be16_to_cpu(o) rte_be_to_cpu_16(o)
-+#define be32_to_cpu(o) rte_be_to_cpu_32(o)
-+#define be64_to_cpu(o) rte_be_to_cpu_64(o)
-+#define le32_to_cpu(o) rte_le_to_cpu_32(o)
-+
-+#ifdef HW_CONVERT_ENDIAN
-+/* If csrs to enable endianness coverting are configed, hw will do the
-+ * endianness coverting for stateless SQ ci, the fields less than 4B for
-+ * doorbell, the fields less than 4B in the CQE data.
-+ */
-+#define hinic3_hw_be32(val)  (val)
-+#define hinic3_hw_cpu32(val) (val)
-+#define hinic3_hw_cpu16(val) (val)
-+#else
-+#define hinic3_hw_be32(val)  cpu_to_be32(val)
-+#define hinic3_hw_cpu32(val) be32_to_cpu(val)
-+#define hinic3_hw_cpu16(val) be16_to_cpu(val)
-+#endif
-+
-+#define ARRAY_LEN(arr) ((int)(sizeof(arr) / sizeof((arr)[0])))
-+
-+static inline void
-+hinic3_hw_be32_len(void *data, int len)
++u32
++hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg)
 +{
-+	int i, chunk_sz = sizeof(u32);
-+	u32 *mem = data;
-+
-+	if (!data)
-+		return;
-+
-+	len = len / chunk_sz;
-+
-+	for (i = 0; i < len; i++) {
-+		*mem = hinic3_hw_be32(*mem);
-+		mem++;
-+	}
++	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
++		return be32_to_cpu(rte_read32(hwif->mgmt_regs_base +
++					      HINIC3_GET_REG_ADDR(reg)));
++	else
++		return be32_to_cpu(rte_read32(hwif->cfg_regs_base +
++					      HINIC3_GET_REG_ADDR(reg)));
 +}
 +
-+static inline int
-+hinic3_get_bit(int nr, volatile unsigned long *addr)
++void
++hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val)
 +{
-+	RTE_ASSERT(nr < 0x20);
-+
-+	uint32_t mask = UINT32_C(1) << nr;
-+	return (*addr) & mask;
-+}
-+
-+static inline void
-+hinic3_set_bit(unsigned int nr, volatile unsigned long *addr)
-+{
-+	rte_atomic_fetch_or_explicit(addr, (1UL << nr),
-+				     rte_memory_order_seq_cst);
-+}
-+
-+static inline void
-+hinic3_clear_bit(int nr, volatile unsigned long *addr)
-+{
-+	rte_atomic_fetch_and_explicit(addr, ~(1UL << nr),
-+				      rte_memory_order_seq_cst);
-+}
-+
-+static inline int
-+hinic3_test_and_clear_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = (1UL << nr);
-+
-+	return (int)(rte_atomic_fetch_and_explicit(addr, ~mask,
-+						   rte_memory_order_seq_cst) &
-+		     mask);
-+}
-+
-+static inline int
-+hinic3_test_and_set_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = (1UL << nr);
-+
-+	return (int)(rte_atomic_fetch_or_explicit(addr, mask,
-+						  rte_memory_order_seq_cst) &
-+		     mask);
-+}
-+
-+#ifdef CLOCK_MONOTONIC_RAW /**< Defined in glibc bits/time.h . */
-+#define CLOCK_TYPE CLOCK_MONOTONIC_RAW
-+#else
-+#define CLOCK_TYPE CLOCK_MONOTONIC
-+#endif
-+
-+#define HINIC3_MUTEX_TIMEOUT 10
-+#define HINIC3_S_TO_MS_UNIT  1000
-+#define HINIC3_S_TO_NS_UNIT  1000000
-+
-+static inline unsigned long
-+clock_gettime_ms(void)
-+{
-+	struct timespec tv;
-+
-+	(void)clock_gettime(CLOCK_TYPE, &tv);
-+
-+	return (unsigned long)tv.tv_sec * HINIC3_S_TO_MS_UNIT +
-+	       (unsigned long)tv.tv_nsec / HINIC3_S_TO_NS_UNIT;
-+}
-+
-+#define jiffies		      clock_gettime_ms()
-+#define msecs_to_jiffies(ms)  (ms)
-+#define time_before(now, end) ((now) < (end))
-+
-+/**
-+ * Convert data to big endian 32 bit format.
-+ *
-+ * @param data
-+ * The data to convert.
-+ * @param len
-+ * Length of data to convert, must be Multiple of 4B.
-+ */
-+static inline void
-+hinic3_cpu_to_be32(void *data, int len)
-+{
-+	int i, chunk_sz = sizeof(u32);
-+	u32 *mem = data;
-+
-+	if (!data)
-+		return;
-+
-+	len = len / chunk_sz;
-+
-+	for (i = 0; i < len; i++) {
-+		*mem = cpu_to_be32(*mem);
-+		mem++;
-+	}
++	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
++		rte_write32(cpu_to_be32(val),
++			    hwif->mgmt_regs_base + HINIC3_GET_REG_ADDR(reg));
++	else
++		rte_write32(cpu_to_be32(val),
++			    hwif->cfg_regs_base + HINIC3_GET_REG_ADDR(reg));
 +}
 +
 +/**
-+ * Convert data from big endian 32 bit format.
++ * Judge whether HW initialization ok.
 + *
-+ * @param data
-+ * The data to convert.
-+ * @param len
-+ * Length of data to convert, must be Multiple of 4B.
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ * @return
++ * 0 on success, non-zero on failure.
 + */
-+static inline void
-+hinic3_be32_to_cpu(void *data, int len)
++static int
++hwif_ready(struct hinic3_hwdev *hwdev)
 +{
-+	int i, chunk_sz = sizeof(u32);
-+	u32 *mem = data;
++	u32 addr, attr1;
 +
-+	if (!data)
++	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
++	attr1 = hinic3_hwif_read_reg(hwdev->hwif, addr);
++	if (attr1 == HINIC3_PCIE_LINK_DOWN)
++		return -EBUSY;
++
++	if (!HINIC3_AF1_GET(attr1, MGMT_INIT_STATUS))
++		return -EBUSY;
++
++	return 0;
++}
++
++static int
++wait_hwif_ready(struct hinic3_hwdev *hwdev)
++{
++	ulong timeout = 0;
++
++	do {
++		if (!hwif_ready(hwdev))
++			return 0;
++
++		rte_delay_ms(1);
++		timeout++;
++	} while (timeout <= WAIT_HWIF_READY_TIMEOUT);
++
++	PMD_DRV_LOG(ERR, "Hwif is not ready");
++	return -EBUSY;
++}
++
++/**
++ * Set the attributes as members in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ * @param[in] attr0
++ * The first attribute that was read from the hw.
++ * @param[in] attr1
++ * The second attribute that was read from the hw.
++ * @param[in] attr2
++ * The third attribute that was read from the hw.
++ * @param[in] attr3
++ * The fourth attribute that was read from the hw.
++ */
++static void
++set_hwif_attr(struct hinic3_hwif *hwif, u32 attr0, u32 attr1, u32 attr2,
++	      u32 attr3)
++{
++	hwif->attr.func_global_idx = HINIC3_AF0_GET(attr0, FUNC_GLOBAL_IDX);
++	hwif->attr.port_to_port_idx = HINIC3_AF0_GET(attr0, P2P_IDX);
++	hwif->attr.pci_intf_idx = HINIC3_AF0_GET(attr0, PCI_INTF_IDX);
++	hwif->attr.vf_in_pf = HINIC3_AF0_GET(attr0, VF_IN_PF);
++	hwif->attr.func_type = HINIC3_AF0_GET(attr0, FUNC_TYPE);
++
++	hwif->attr.ppf_idx = HINIC3_AF1_GET(attr1, PPF_IDX);
++	hwif->attr.num_aeqs = BIT(HINIC3_AF1_GET(attr1, AEQS_PER_FUNC));
++
++	hwif->attr.num_ceqs = (u8)HINIC3_AF2_GET(attr2, CEQS_PER_FUNC);
++	hwif->attr.num_irqs = HINIC3_AF2_GET(attr2, IRQS_PER_FUNC);
++	hwif->attr.num_dma_attr = BIT(HINIC3_AF2_GET(attr2, DMA_ATTR_PER_FUNC));
++
++	hwif->attr.global_vf_id_of_pf =
++		HINIC3_AF3_GET(attr3, GLOBAL_VF_ID_OF_PF);
++}
++
++/**
++ * Read and set the attributes as members in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++get_hwif_attr(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr0, attr1, attr2, attr3;
++
++	addr = HINIC3_CSR_FUNC_ATTR0_ADDR;
++	attr0 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
++	attr1 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR2_ADDR;
++	attr2 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR3_ADDR;
++	attr3 = hinic3_hwif_read_reg(hwif, addr);
++
++	set_hwif_attr(hwif, attr0, attr1, attr2, attr3);
++}
++
++/**
++ * Update message signaled interrupt information.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++void
++hinic3_update_msix_info(struct hinic3_hwif *hwif)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++	hwif->attr.num_queue = HINIC3_AF6_GET(attr6, FUNC_MAX_QUEUE);
++	hwif->attr.msix_flex_en = HINIC3_AF6_GET(attr6, MSIX_FLEX_EN);
++	PMD_DRV_LOG(INFO, "msix_flex_en: %u, queue msix: %u",
++		    hwif->attr.msix_flex_en, hwif->attr.num_queue);
++}
++
++void
++hinic3_set_pf_status(struct hinic3_hwif *hwif, enum hinic3_pf_status status)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++
++	attr6 = HINIC3_AF6_CLEAR(attr6, PF_STATUS);
++	attr6 |= HINIC3_AF6_SET(status, PF_STATUS);
++
++	if (hwif->attr.func_type == TYPE_VF)
 +		return;
 +
-+	len = len / chunk_sz;
++	hinic3_hwif_write_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR, attr6);
++}
 +
-+	for (i = 0; i < len; i++) {
-+		*mem = be32_to_cpu(*mem);
-+		mem++;
++enum hinic3_pf_status
++hinic3_get_pf_status(struct hinic3_hwif *hwif)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++
++	return HINIC3_AF6_GET(attr6, PF_STATUS);
++}
++
++static enum hinic3_doorbell_ctrl
++hinic3_get_doorbell_ctrl_status(struct hinic3_hwif *hwif)
++{
++	u32 attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
++
++	return HINIC3_AF4_GET(attr4, DOORBELL_CTRL);
++}
++
++static enum hinic3_outbound_ctrl
++hinic3_get_outbound_ctrl_status(struct hinic3_hwif *hwif)
++{
++	u32 attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
++
++	return HINIC3_AF5_GET(attr5, OUTBOUND_CTRL);
++}
++
++void
++hinic3_enable_doorbell(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr4;
++
++	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
++	attr4 = hinic3_hwif_read_reg(hwif, addr);
++
++	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
++	attr4 |= HINIC3_AF4_SET(ENABLE_DOORBELL, DOORBELL_CTRL);
++
++	hinic3_hwif_write_reg(hwif, addr, attr4);
++}
++
++void
++hinic3_disable_doorbell(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr4;
++
++	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
++	attr4 = hinic3_hwif_read_reg(hwif, addr);
++
++	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
++	attr4 |= HINIC3_AF4_SET(DISABLE_DOORBELL, DOORBELL_CTRL);
++
++	hinic3_hwif_write_reg(hwif, addr, attr4);
++}
++
++/**
++ * Try to set hwif as ppf and set the type of hwif in this case.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device
++ */
++static void
++set_ppf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 addr, val, ppf_election;
++
++	addr = HINIC3_CSR_PPF_ELECTION_ADDR;
++
++	val = hinic3_hwif_read_reg(hwif, addr);
++	val = HINIC3_PPF_ELECTION_CLEAR(val, IDX);
++
++	ppf_election = HINIC3_PPF_ELECTION_SET(attr->func_global_idx, IDX);
++	val |= ppf_election;
++
++	hinic3_hwif_write_reg(hwif, addr, val);
++
++	/* Check PPF. */
++	val = hinic3_hwif_read_reg(hwif, addr);
++
++	attr->ppf_idx = HINIC3_PPF_ELECTION_GET(val, IDX);
++	if (attr->ppf_idx == attr->func_global_idx)
++		attr->func_type = TYPE_PPF;
++}
++
++/**
++ * Get the mpf index from the hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++get_mpf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 mpf_election, addr;
++
++	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
++
++	mpf_election = hinic3_hwif_read_reg(hwif, addr);
++	attr->mpf_idx = HINIC3_MPF_ELECTION_GET(mpf_election, IDX);
++}
++
++/**
++ * Try to set hwif as mpf and set the mpf idx in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++set_mpf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 addr, val, mpf_election;
++
++	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
++
++	val = hinic3_hwif_read_reg(hwif, addr);
++
++	val = HINIC3_MPF_ELECTION_CLEAR(val, IDX);
++	mpf_election = HINIC3_MPF_ELECTION_SET(attr->func_global_idx, IDX);
++
++	val |= mpf_election;
++	hinic3_hwif_write_reg(hwif, addr, val);
++}
++
++int
++hinic3_alloc_db_addr(void *hwdev, void **db_base,
++		     enum hinic3_db_type queue_type)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev || !db_base)
++		return -EINVAL;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++	*db_base = hwif->db_base + queue_type * HINIC3_DB_PAGE_SIZE;
++
++	return 0;
++}
++
++void
++hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
++				enum hinic3_msix_auto_mask flag)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 mask_bits;
++	u32 addr;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	if (flag)
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_SET);
++	else
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_CLR);
++
++	mask_bits = mask_bits |
++		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, mask_bits);
++}
++
++/**
++ * Set msix state.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @param[in] msix_idx
++ * MSIX(Message Signaled Interrupts) index.
++ * @param[in] flag
++ * MSIX state flag, 0-enable, 1-disable.
++ */
++void
++hinic3_set_msix_state(void *hwdev, u16 msix_idx, enum hinic3_msix_state flag)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 mask_bits;
++	u32 addr;
++	u8 int_msk = 1;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	if (flag)
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_SET);
++	else
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_CLR);
++	mask_bits = mask_bits |
++		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, mask_bits);
++}
++
++static void
++disable_all_msix(struct hinic3_hwdev *hwdev)
++{
++	u16 num_irqs = hwdev->hwif->attr.num_irqs;
++	u16 i;
++
++	for (i = 0; i < num_irqs; i++)
++		hinic3_set_msix_state(hwdev, i, HINIC3_MSIX_DISABLE);
++}
++
++/**
++ * Clear msix resend bit.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @param[in] msix_idx
++ * MSIX(Message Signaled Interrupts) index
++ * @param[in] clear_resend_en
++ * Clear resend en flag, 1-clear.
++ */
++void
++hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx, u8 clear_resend_en)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 msix_ctrl = 0, addr;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	msix_ctrl = HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX) |
++		    HINIC3_MSI_CLR_INDIR_SET(clear_resend_en, RESEND_TIMER_CLR);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, msix_ctrl);
++}
++
++#ifdef HINIC3_RELEASE
++static int
++wait_until_doorbell_flush_states(struct hinic3_hwif *hwif,
++				 enum hinic3_doorbell_ctrl states)
++{
++	enum hinic3_doorbell_ctrl db_ctrl;
++	u32 cnt = 0;
++
++	if (!hwif)
++		return -EINVAL;
++
++	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
++		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
++		if (db_ctrl == states)
++			return 0;
++
++		rte_delay_ms(1);
++		cnt++;
 +	}
++
++	return -EFAULT;
 +}
++#endif
 +
-+static inline u16
-+ilog2(u32 n)
++static int
++wait_until_doorbell_and_outbound_enabled(struct hinic3_hwif *hwif)
 +{
-+	u16 res = 0;
++	enum hinic3_doorbell_ctrl db_ctrl;
++	enum hinic3_outbound_ctrl outbound_ctrl;
++	u32 cnt = 0;
 +
-+	while (n > 1) {
-+		n >>= 1;
-+		res++;
++	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
++		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
++		outbound_ctrl = hinic3_get_outbound_ctrl_status(hwif);
++		if (outbound_ctrl == ENABLE_OUTBOUND &&
++		    db_ctrl == ENABLE_DOORBELL)
++			return 0;
++
++		rte_delay_ms(1);
++		cnt++;
 +	}
 +
-+	return res;
++	return -EFAULT;
 +}
 +
-+static inline int
-+hinic3_mutex_init(pthread_mutex_t *pthreadmutex,
-+		  const pthread_mutexattr_t *mattr)
++static int
++hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)
 +{
-+	int err;
++	struct rte_pci_device *pci_dev = hwdev->pci_dev;
++	struct hinic3_hwif *hwif = hwdev->hwif;
++	void *cfg_regs_base = NULL;
++	void *mgmt_reg_base = NULL;
++	void *db_base = NULL;
++	int cfg_bar;
 +
-+	err = pthread_mutex_init(pthreadmutex, mattr);
-+	if (unlikely(err))
-+		PMD_DRV_LOG(ERR, "Initialize mutex failed, error: %d", err);
++	cfg_bar = HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR
++					    : HINIC3_PF_PCI_CFG_REG_BAR;
++
++	cfg_regs_base = pci_dev->mem_resource[cfg_bar].addr;
++	if (!HINIC3_IS_VF_DEV(pci_dev)) {
++		mgmt_reg_base =
++			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;
++		if (mgmt_reg_base == NULL) {
++			PMD_DRV_LOG(ERR, "mgmt_reg_base addr is null");
++			return -EFAULT;
++		}
++	}
++	db_base = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].addr;
++	if (cfg_regs_base == NULL) {
++		PMD_DRV_LOG(ERR,
++			    "mem_resource addr is null, cfg_regs_base is NULL");
++		return -EFAULT;
++	} else if (db_base == NULL) {
++		PMD_DRV_LOG(ERR, "mem_resource addr is null, db_base is NULL");
++		return -EFAULT;
++	}
++
++	/* If function is VF, mgmt_regs_base will be NULL. */
++	if (!mgmt_reg_base)
++		hwif->cfg_regs_base =
++			(u8 *)cfg_regs_base + HINIC3_VF_CFG_REG_OFFSET;
++	else
++		hwif->cfg_regs_base = cfg_regs_base;
++	hwif->mgmt_regs_base = mgmt_reg_base;
++	hwif->db_base = db_base;
++	hwif->db_dwqe_len = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].len;
++
++	return 0;
++}
++
++/**
++ * Initialize the hw interface.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_init_hwif(void *dev)
++{
++	struct hinic3_hwdev *hwdev = NULL;
++	struct hinic3_hwif *hwif;
++	int err;
++	u32 attr4, attr5;
++
++	hwif = rte_zmalloc("hinic_hwif", sizeof(struct hinic3_hwif),
++			   RTE_CACHE_LINE_SIZE);
++	if (!hwif)
++		return -ENOMEM;
++
++	hwdev = (struct hinic3_hwdev *)dev;
++	hwdev->hwif = hwif;
++
++	err = hinic3_get_bar_addr(hwdev);
++	if (err != 0) {
++		PMD_DRV_LOG(ERR, "get bar addr fail");
++		goto hwif_ready_err;
++	}
++
++	err = wait_hwif_ready(hwdev);
++	if (err != 0) {
++		PMD_DRV_LOG(ERR, "Chip status is not ready");
++		goto hwif_ready_err;
++	}
++
++	get_hwif_attr(hwif);
++
++	err = wait_until_doorbell_and_outbound_enabled(hwif);
++	if (err != 0) {
++		attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
++		attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
++		PMD_DRV_LOG(ERR,
++			    "Hw doorbell/outbound is disabled, attr4 0x%x "
++			    "attr5 0x%x",
++			    attr4, attr5);
++		goto hwif_ready_err;
++	}
++
++	if (!HINIC3_IS_VF(hwdev)) {
++		set_ppf(hwif);
++
++		if (HINIC3_IS_PPF(hwdev))
++			set_mpf(hwif);
++
++		get_mpf(hwif);
++	}
++
++	disable_all_msix(hwdev);
++	/* Disable mgmt cpu reporting any event. */
++	hinic3_set_pf_status(hwdev->hwif, HINIC3_PF_STATUS_INIT);
++
++	PMD_DRV_LOG(INFO,
++		    "global_func_idx: %d, func_type: %d, host_id: %d, ppf: %d, "
++		    "mpf: %d",
++		    hwif->attr.func_global_idx, hwif->attr.func_type,
++		    hwif->attr.pci_intf_idx, hwif->attr.ppf_idx,
++		    hwif->attr.mpf_idx);
++
++	return 0;
++
++hwif_ready_err:
++	rte_free(hwdev->hwif);
++	hwdev->hwif = NULL;
 +
 +	return err;
 +}
 +
-+static inline int
-+hinic3_mutex_destroy(pthread_mutex_t *pthreadmutex)
++/**
++ * Free the hw interface.
++ *
++ * @param[in] dev
++ * The pointer to the private hardware device.
++ */
++void
++hinic3_free_hwif(void *dev)
 +{
-+	int err;
++	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
 +
-+	err = pthread_mutex_destroy(pthreadmutex);
-+	if (unlikely(err))
-+		PMD_DRV_LOG(ERR, "Destroy mutex failed, error: %d", err);
-+
-+	return err;
++	rte_free(hwdev->hwif);
 +}
 +
-+static inline int
-+hinic3_mutex_lock(pthread_mutex_t *pthreadmutex)
++u16
++hinic3_global_func_id(void *hwdev)
 +{
-+	int err;
++	struct hinic3_hwif *hwif = NULL;
 +
-+	err = pthread_mutex_lock(pthreadmutex);
-+	if (err)
-+		PMD_DRV_LOG(ERR, "Mutex lock failed, err: %d", err);
++	if (!hwdev)
++		return 0;
 +
-+	return err;
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.func_global_idx;
 +}
 +
-+static inline int
-+hinic3_mutex_unlock(pthread_mutex_t *pthreadmutex)
++u8
++hinic3_pf_id_of_vf(void *hwdev)
 +{
-+	return pthread_mutex_unlock(pthreadmutex);
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.port_to_port_idx;
 +}
 +
-+#endif /* _HINIC3_COMPAT_H_ */
-diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base/hinic3_csr.h
++u8
++hinic3_pcie_itf_id(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.pci_intf_idx;
++}
++
++enum func_type
++hinic3_func_type(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.func_type;
++}
++
++u16
++hinic3_glb_pf_vf_offset(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.global_vf_id_of_pf;
++}
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.h b/drivers/net/hinic3/base/hinic3_hwif.h
 new file mode 100644
-index 0000000000..8579794c8d
+index 0000000000..97d2ed99df
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_csr.h
-@@ -0,0 +1,108 @@
++++ b/drivers/net/hinic3/base/hinic3_hwif.h
+@@ -0,0 +1,142 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_CSR_H_
-+#define _HINIC3_CSR_H_
++#ifndef _HINIC3_HWIF_H_
++#define _HINIC3_HWIF_H_
 +
-+#ifdef CONFIG_SP_VID_DID
-+#define PCI_VENDOR_ID_SPNIC    0x1F3F
-+#define HINIC3_DEV_ID_STANDARD 0x9020
-+#define HINIC3_DEV_ID_VF       0x9001
-+#else
-+#define PCI_VENDOR_ID_HUAWEI   0x19e5
-+#define HINIC3_DEV_ID_STANDARD 0x0222
-+#define HINIC3_DEV_ID_VF       0x375F
-+#endif
++#define HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT 60000
++#define HINIC3_PCIE_LINK_DOWN			  0xFFFFFFFF
 +
-+/*
-+ * Bit30/bit31 for bar index flag.
-+ * 00: bar0
-+ * 01: bar1
-+ * 10: bar2
-+ * 11: bar3
-+ */
-+#define HINIC3_CFG_REGS_FLAG 0x40000000
++/* PCIe bar space. */
++#define HINIC3_VF_PCI_CFG_REG_BAR 0
++#define HINIC3_PF_PCI_CFG_REG_BAR 1
 +
-+#define HINIC3_MGMT_REGS_FLAG 0xC0000000
++#define HINIC3_PCI_INTR_REG_BAR 2
++#define HINIC3_PCI_MGMT_REG_BAR 3 /**< Only PF has mgmt bar. */
++#define HINIC3_PCI_DB_BAR	4
 +
-+#define HINIC3_REGS_FLAG_MAKS 0x3FFFFFFF
++/* Doorbell or direct wqe page size is 4K. */
++#define HINIC3_DB_PAGE_SIZE 0x00001000ULL
++#define HINIC3_DWQE_OFFSET  0x00000800ULL
 +
-+#define HINIC3_VF_CFG_REG_OFFSET 0x2000
++enum func_type { TYPE_PF, TYPE_VF, TYPE_PPF, TYPE_UNKNOWN };
++#define MSIX_RESEND_TIMER_CLEAR 1
 +
-+#define HINIC3_HOST_CSR_BASE_ADDR   (HINIC3_MGMT_REGS_FLAG + 0x6000)
-+#define HINIC3_CSR_GLOBAL_BASE_ADDR (HINIC3_MGMT_REGS_FLAG + 0x6400)
++/* Message signaled interrupt status. */
++enum hinic3_msix_state { HINIC3_MSIX_ENABLE, HINIC3_MSIX_DISABLE };
 +
-+/* HW interface registers. */
-+#define HINIC3_CSR_FUNC_ATTR0_ADDR (HINIC3_CFG_REGS_FLAG + 0x0)
-+#define HINIC3_CSR_FUNC_ATTR1_ADDR (HINIC3_CFG_REGS_FLAG + 0x4)
-+#define HINIC3_CSR_FUNC_ATTR2_ADDR (HINIC3_CFG_REGS_FLAG + 0x8)
-+#define HINIC3_CSR_FUNC_ATTR3_ADDR (HINIC3_CFG_REGS_FLAG + 0xC)
-+#define HINIC3_CSR_FUNC_ATTR4_ADDR (HINIC3_CFG_REGS_FLAG + 0x10)
-+#define HINIC3_CSR_FUNC_ATTR5_ADDR (HINIC3_CFG_REGS_FLAG + 0x14)
-+#define HINIC3_CSR_FUNC_ATTR6_ADDR (HINIC3_CFG_REGS_FLAG + 0x18)
++enum hinic3_msix_auto_mask {
++	HINIC3_CLR_MSIX_AUTO_MASK,
++	HINIC3_SET_MSIX_AUTO_MASK,
++};
 +
-+#define HINIC3_FUNC_CSR_MAILBOX_DATA_OFF       0x80
-+#define HINIC3_FUNC_CSR_MAILBOX_CONTROL_OFF    (HINIC3_CFG_REGS_FLAG + 0x0100)
-+#define HINIC3_FUNC_CSR_MAILBOX_INT_OFFSET_OFF (HINIC3_CFG_REGS_FLAG + 0x0104)
-+#define HINIC3_FUNC_CSR_MAILBOX_RESULT_H_OFF   (HINIC3_CFG_REGS_FLAG + 0x0108)
-+#define HINIC3_FUNC_CSR_MAILBOX_RESULT_L_OFF   (HINIC3_CFG_REGS_FLAG + 0x010C)
++struct hinic3_func_attr {
++	u16 func_global_idx;
++	u8 port_to_port_idx;
++	u8 pci_intf_idx;
++	u8 vf_in_pf;
++	enum func_type func_type;
 +
-+#define HINIC3_PPF_ELECTION_OFFSET 0x0
-+#define HINIC3_MPF_ELECTION_OFFSET 0x20
++	u8 mpf_idx;
 +
-+#define HINIC3_CSR_PPF_ELECTION_ADDR \
-+	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_PPF_ELECTION_OFFSET)
++	u8 ppf_idx;
 +
-+#define HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR \
-+	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_MPF_ELECTION_OFFSET)
++	u16 num_irqs; /**< Max: 2 ^ 15. */
++	u8 num_aeqs;  /**< Max: 2 ^ 3. */
++	u8 num_ceqs;  /**< Max: 2 ^ 7. */
 +
-+#define HINIC3_CSR_DMA_ATTR_TBL_ADDR	   (HINIC3_CFG_REGS_FLAG + 0x380)
-+#define HINIC3_CSR_DMA_ATTR_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x390)
++	u16 num_queue;	 /**< Max: 2 ^ 8. */
++	u8 num_dma_attr; /**< Max: 2 ^ 6. */
++	u8 msix_flex_en;
 +
-+/* MSI-X registers. */
-+#define HINIC3_CSR_MSIX_INDIR_IDX_ADDR	(HINIC3_CFG_REGS_FLAG + 0x310)
-+#define HINIC3_CSR_MSIX_CTRL_ADDR	(HINIC3_CFG_REGS_FLAG + 0x300)
-+#define HINIC3_CSR_MSIX_CNT_ADDR	(HINIC3_CFG_REGS_FLAG + 0x304)
-+#define HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR (HINIC3_CFG_REGS_FLAG + 0x58)
++	u16 global_vf_id_of_pf;
++};
 +
-+#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_SHIFT 0
-+#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_SHIFT	    1
-+#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_SHIFT	    2
-+#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_SHIFT	    3
-+#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_SHIFT	    4
-+#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_SHIFT 22
++/* Structure for hardware interface. */
++struct hinic3_hwif {
++	/* Configure virtual address, PF is bar1, VF is bar0/1. */
++	u8 *cfg_regs_base;
++	/* For PF bar3 virtual address, if function is VF should set NULL. */
++	u8 *mgmt_regs_base;
++	u8 *db_base;
++	u64 db_dwqe_len;
 +
-+#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_MASK 0x1U
-+#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_MASK	   0x1U
-+#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_MASK	   0x1U
-+#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_MASK	   0x1U
-+#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_MASK	   0x1U
-+#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_MASK 0x3FFU
++	struct hinic3_func_attr attr;
 +
-+#define HINIC3_MSI_CLR_INDIR_SET(val, member)           \
-+	(((val) & HINIC3_MSI_CLR_INDIR_##member##_MASK) \
-+	 << HINIC3_MSI_CLR_INDIR_##member##_SHIFT)
++	void *pdev;
++};
 +
-+/* EQ registers. */
-+#define HINIC3_AEQ_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x210)
++enum hinic3_outbound_ctrl { ENABLE_OUTBOUND = 0x0, DISABLE_OUTBOUND = 0x1 };
 +
-+#define HINIC3_AEQ_MTT_OFF_BASE_ADDR (HINIC3_CFG_REGS_FLAG + 0x240)
++enum hinic3_doorbell_ctrl { ENABLE_DOORBELL = 0x0, DISABLE_DOORBELL = 0x1 };
 +
-+#define HINIC3_CSR_EQ_PAGE_OFF_STRIDE 8
++enum hinic3_pf_status {
++	HINIC3_PF_STATUS_INIT = 0x0,
++	HINIC3_PF_STATUS_ACTIVE_FLAG = 0x11,
++	HINIC3_PF_STATUS_FLR_START_FLAG = 0x12,
++	HINIC3_PF_STATUS_FLR_FINISH_FLAG = 0x13
++};
 +
-+#define HINIC3_AEQ_HI_PHYS_ADDR_REG(pg_num) \
-+	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
-+	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE)
++/* Type of doorbell. */
++enum hinic3_db_type {
++	HINIC3_DB_TYPE_CMDQ = 0x0,
++	HINIC3_DB_TYPE_SQ = 0x1,
++	HINIC3_DB_TYPE_RQ = 0x2,
++	HINIC3_DB_TYPE_MAX = 0x3
++};
 +
-+#define HINIC3_AEQ_LO_PHYS_ADDR_REG(pg_num) \
-+	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
-+	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE + 4)
++/* Get the attributes of the hardware interface. */
++#define HINIC3_HWIF_NUM_AEQS(hwif)	   ((hwif)->attr.num_aeqs)
++#define HINIC3_HWIF_NUM_IRQS(hwif)	   ((hwif)->attr.num_irqs)
++#define HINIC3_HWIF_GLOBAL_IDX(hwif)	   ((hwif)->attr.func_global_idx)
++#define HINIC3_HWIF_GLOBAL_VF_OFFSET(hwif) ((hwif)->attr.global_vf_id_of_pf)
++#define HINIC3_HWIF_PPF_IDX(hwif)	   ((hwif)->attr.ppf_idx)
++#define HINIC3_PCI_INTF_IDX(hwif)	   ((hwif)->attr.pci_intf_idx)
 +
-+#define HINIC3_CSR_AEQ_CTRL_0_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x200)
-+#define HINIC3_CSR_AEQ_CTRL_1_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x204)
-+#define HINIC3_CSR_AEQ_CONS_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x208)
-+#define HINIC3_CSR_AEQ_PROD_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x20C)
-+#define HINIC3_CSR_AEQ_CI_SIMPLE_INDIR_ADDR (HINIC3_CFG_REGS_FLAG + 0x50)
++/* Func type judgment. */
++#define HINIC3_FUNC_TYPE(dev) ((dev)->hwif->attr.func_type)
++#define HINIC3_IS_PF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_PF)
++#define HINIC3_IS_VF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_VF)
++#define HINIC3_IS_PPF(dev)    (HINIC3_FUNC_TYPE(dev) == TYPE_PPF)
 +
-+#endif /* _HINIC3_CSR_H_ */
++u32 hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg);
++
++void hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val);
++
++void hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
++				     enum hinic3_msix_auto_mask flag);
++
++void hinic3_set_msix_state(void *hwdev, u16 msix_idx,
++			   enum hinic3_msix_state flag);
++
++void hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx,
++				       u8 clear_resend_en);
++
++u16 hinic3_global_func_id(void *hwdev);
++
++u8 hinic3_pf_id_of_vf(void *hwdev);
++
++u8 hinic3_pcie_itf_id(void *hwdev);
++
++enum func_type hinic3_func_type(void *hwdev);
++
++u16 hinic3_glb_pf_vf_offset(void *hwdev);
++void hinic3_update_msix_info(struct hinic3_hwif *hwif);
++void hinic3_set_pf_status(struct hinic3_hwif *hwif,
++			  enum hinic3_pf_status status);
++
++enum hinic3_pf_status hinic3_get_pf_status(struct hinic3_hwif *hwif);
++
++int hinic3_alloc_db_addr(void *hwdev, void **db_base,
++			 enum hinic3_db_type queue_type);
++
++void hinic3_disable_doorbell(struct hinic3_hwif *hwif);
++
++void hinic3_enable_doorbell(struct hinic3_hwif *hwif);
++
++int hinic3_init_hwif(void *dev);
++
++void hinic3_free_hwif(void *dev);
++
++#endif /**< _HINIC3_HWIF_H_ */
 -- 
 2.47.0.windows.2
 
