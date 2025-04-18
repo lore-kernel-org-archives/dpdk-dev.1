@@ -2,43 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BB4C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67F4C3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:55:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98A46410DC;
-	Mon,  5 May 2025 14:51:43 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTP id 067ED400D6
- for <dev@dpdk.org>; Fri, 18 Apr 2025 10:09:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 33547410E3;
+	Mon,  5 May 2025 14:51:45 +0200 (CEST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id BC6EA402E6
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 23:52:45 +0200 (CEST)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-22c33ac23edso25165395ad.0
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 14:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
- MIME-Version; bh=cMUet+Nv//nH4B3Wr8uTxoP+VGoJA9c/IKt2iqBRRwY=;
- b=SVT7/jkrnvOupMD5aZfS0yAxvgwy+QxSDIZ5eet07p07BAJk/TrUSLcqi/Lf7Q
- S8//7nX0s2e9cR34Xu0zyNJvb9+o7gAqG0JrqDuyEFqPTFjkTPdyCeG6OkOVb0Ok
- dg34GNs6rxdiDApFbJhcChIm/tf6Mrk+W7gFI+ey8rS2o=
-Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgAXqpe1CAJoAsjFAg--.56413S22;
- Fri, 18 Apr 2025 16:09:53 +0800 (CST)
-From: Feifei Wang <wff_light@vip.163.com>
-To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-Subject: [RFC 18/18] drivers/net: add hinic3 PMD build and doc files
-Date: Fri, 18 Apr 2025 16:08:50 +0800
-Message-ID: <20250418080908.9447-19-wff_light@vip.163.com>
-X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250418080908.9447-1-wff_light@vip.163.com>
-References: <20250418080908.9447-1-wff_light@vip.163.com>
+ d=gmail.com; s=20230601; t=1745013164; x=1745617964; darn=dpdk.org;
+ h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=eWusS/glQaa515iVw/H9/OX9pMl0WTYHmHcs2R2tUg4=;
+ b=fJoLTGVUE/rhfOJTbVm53Hz2ZjihGlSPIFqZVoGdN1Em4025CwmI8c3es2DxRnzodj
+ lQStVrdixFxUBmxKSyzJ09FHpGDq7rgKYcUG63hl83fxS1XeShAfsgHOW2M8nausfKiv
+ iFSONyaepnXJRnBSakDWpB0jyRlOArZjinvVmb2AyFqAw5tq6N/O7mWaNJDWiIa5cttu
+ 23FaQOXJP8lQ3nxWZYuMBT5W1//khQ/+MSkClHZcc4TgROEeWwv0E7b0Dh5wHCMwlx0M
+ 1TD+96E5PGWH2xkIgRRoR8EJde+uZ/nd26SLA4P+XggLsCbQULRPHpbYLnb5Onphoq2a
+ R7+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745013165; x=1745617965;
+ h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=eWusS/glQaa515iVw/H9/OX9pMl0WTYHmHcs2R2tUg4=;
+ b=jYYkMxslVH1Q8EO+viXcoa48GXp4ed7biYfnfEfu5mtESTbV0Rs8RmAJ6fUTvFS9K/
+ b1FUolbgMsVW6/6+R8SBRSSsD0vzUnD4UoJkwXLx4CPjBo9L9yzGKHTLB3fbXQr7PTgj
+ iquCQpepUSaKGDA8MqIsGgkDi+aTeA/QDjRh+Qyk/GbNjCmwJ4TfwS9+9mCH9VY3L7yV
+ nX3r39qO4CzDU/9ZEOsUxOWIT7kZ5hlI29of7LOYKmVeS5QhSOF8kLX7K6tZHxn+yE9K
+ TV68MFvW36eudWF7rorq0tNmHSv+PQrfL6jFJa5qE0AJQonv9f8yXAS6y44fTVKJBNUp
+ ++Ug==
+X-Gm-Message-State: AOJu0YwaRmJPZlQlrj+/zaA0QqL2cTxx+QV/MqNgP8XJUb4q5Uyu/h6/
+ 9jDvKDp3MILZkZp5uejBD40Ex2tTl5PxL7k2IRBT8y3fRu4ePpHPRxB3oH8fui6OboFNpabe7Og
+ ISuHH+sliQz+59W0WIP2X0dqTl855Lady
+X-Gm-Gg: ASbGncvB9eK+tJXZYGptMIrLHpOm37xERfmOnFhf3UTMHEKY/iv8B2ViI5olXoKyxZm
+ jvHc6XyfvnYSu5dO3ppgacmSE/gOB2LJsTXRP4giCvHLaw/rebRPR4+dpClqafGAN8cbhxln5ZV
+ xahc17HJcQXUqENB18ZU2ILW5NyD95Gw==
+X-Google-Smtp-Source: AGHT+IGM4F8nuApr6kqyiwYV852R+P3XiwC0A8yiOAU3iXJQ4P8v+uO+QDq5NTc6c/nnaDeXg+r4pRQpeXw52iBQbI8=
+X-Received: by 2002:a17:902:d488:b0:223:fbc7:25f4 with SMTP id
+ d9443c01a7336-22c53596a3cmr52886295ad.14.1745013164539; Fri, 18 Apr 2025
+ 14:52:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAXqpe1CAJoAsjFAg--.56413S22
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCry7tr1UGw17KrW7Aw4fXwb_yoWrXrW8pa
- 18Ga4S9r48Xr4xt3Z3A3WxAF4Fya18Ca4jkw13Ca4rZryDAFy5A3y8KFW8Kr97tw1IyF1f
- uFnxu3sxKFs8tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jSXdUUUUUU=
-X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHgAzCmgB80ZlFgAAsI
-X-Mailman-Approved-At: Mon, 05 May 2025 14:51:05 +0200
+From: vivekanandi <v.o.s.openbook@gmail.com>
+Date: Fri, 18 Apr 2025 14:52:33 -0700
+X-Gm-Features: ATxdqUHsfc3J11gMNzNJrFoYLM9yYttUNEDTY4kN2qY__yZtjq_RtvHKK9F38hU
+Message-ID: <CAEmGFk9v4-QWRy1-N+jMkdM=iVv69xPRaKUzuxkTuD9OYJa5cQ@mail.gmail.com>
+Subject: Addressing ninja build error message
+To: dev@dpdk.org
+Content-Type: multipart/mixed; boundary="000000000000cd2769063314898d"
+X-Mailman-Approved-At: Mon, 05 May 2025 14:51:06 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,157 +68,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Yi Chen <chenyi221@huawei.com>
+--000000000000cd2769063314898d
+Content-Type: multipart/alternative; boundary="000000000000cd2766063314898b"
 
-The meson.build file is added to this patch to enable
-the hinic3 compilation function.
+--000000000000cd2766063314898b
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
----
- doc/guides/nics/features/hinic3.ini |  9 ++++++
- drivers/net/hinic3/base/meson.build | 50 +++++++++++++++++++++++++++++
- drivers/net/hinic3/meson.build      | 44 +++++++++++++++++++++++++
- drivers/net/meson.build             |  1 +
- 4 files changed, 104 insertions(+)
- create mode 100644 doc/guides/nics/features/hinic3.ini
- create mode 100644 drivers/net/hinic3/base/meson.build
- create mode 100644 drivers/net/hinic3/meson.build
+Hello,
+My name is Vivek. I'm a Computer Science major from Canada.
 
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-new file mode 100644
-index 0000000000..8bafd49090
---- /dev/null
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -0,0 +1,9 @@
-+;
-+; Supported features of the 'hinic3' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Linux                = Y
-+x86-64               = Y
-+ARMv8                = Y
-diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
-new file mode 100644
-index 0000000000..948f5efac2
---- /dev/null
-+++ b/drivers/net/hinic3/base/meson.build
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+sources = files(
-+    'hinic3_cmdq.c',
-+    'hinic3_eqs.c',
-+    'hinic3_hw_cfg.c',
-+    'hinic3_hw_comm.c',
-+    'hinic3_hwdev.c',
-+    'hinic3_hwif.c',
-+    'hinic3_mbox.c',
-+    'hinic3_mgmt.c',
-+    'hinic3_nic_cfg.c',
-+    'hinic3_nic_event.c',
-+    'hinic3_wq.c',
-+)
-+
-+extra_flags = []
-+
-+# The driver runs only on arch64 machine, remove 32bit warnings
-+if not dpdk_conf.get('RTE_ARCH_64')
-+    extra_flags += [
-+        '-Wno-int-to-pointer-cast',
-+        '-Wno-pointer-to-int-cast',
-+    ]
-+endif
-+
-+foreach flag: extra_flags
-+    if cc.has_argument(flag)
-+        cflags += flag
-+    endif
-+endforeach
-+
-+deps += ['hash']
-+c_args = cflags
-+includes += include_directories('../')
-+
-+base_lib = static_library(
-+    'spnic_base',
-+    sources,
-+    dependencies: [
-+        static_rte_eal,
-+        static_rte_ethdev,
-+        static_rte_bus_pci,
-+        static_rte_hash,
-+    ],
-+    include_directories: includes,
-+    c_args: c_args,
-+)
-+base_objs = base_lib.extract_all_objects()
-diff --git a/drivers/net/hinic3/meson.build b/drivers/net/hinic3/meson.build
-new file mode 100644
-index 0000000000..231e966b36
---- /dev/null
-+++ b/drivers/net/hinic3/meson.build
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+    subdir_done()
-+endif
-+
-+if (arch_subdir != 'x86' and arch_subdir != 'arm'
-+        or not dpdk_conf.get('RTE_ARCH_64'))
-+    build = false
-+    reason = 'only supported on x86_64 and aarch64'
-+    subdir_done()
-+endif
-+
-+cflags += [
-+    '-DHW_CONVERT_ENDIAN',
-+    '-D__HINIC_HUAWEI_SECUREC__',
-+    '-fPIC',
-+    '-fstack-protector-strong',
-+]
-+
-+subdir('base')
-+subdir('mml')
-+objs = [base_objs] + [mml_objs]
-+
-+sources = files(
-+    'hinic3_ethdev.c',
-+    'hinic3_fdir.c',
-+    'hinic3_flow.c',
-+    'hinic3_nic_io.c',
-+    'hinic3_rx.c',
-+    'hinic3_tx.c',
-+)
-+
-+if arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
-+    cflags += ['-D__ARM64_NEON__']
-+else
-+    cflags += ['-D__X86_64_SSE__']
-+endif
-+
-+includes += include_directories('base')
-+includes += include_directories('mml')
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 460eb69e5b..b5442349d4 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -23,6 +23,7 @@ drivers = [
-         'failsafe',
-         'gve',
-         'hinic',
-+        'hinic3',
-         'hns3',
-         'intel/e1000',
-         'intel/fm10k',
--- 
-2.47.0.windows.2
+I was trying to install DPDK but encountered this error. I am familiar with
+BPF programming so tried to look into the compat.h file but the
+build/af_xdp directory was empty after I got the error message. I've
+attached a txt file that shows the terminal output
 
+I ran the following scripts:
+meson build
+ninja -C build
+
+Could you please direct me to the right direction for building DPDK
+properly? I am on Linux Mint. Are there dependencies that I should've
+instaslled?
+
+Best Regards,
+V
+
+--000000000000cd2766063314898b
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Hello, <br></div><div>My name is Vivek. I&#39;m a Com=
+puter Science major from Canada. <br></div><div><br></div><div>I was trying=
+ to install DPDK but encountered this error. I am familiar with BPF program=
+ming so tried to look into the compat.h file but the build/af_xdp directory=
+ was empty after I got the error message. I&#39;ve attached a txt file that=
+ shows the terminal output<br><br></div><div>I ran the following scripts:<b=
+r></div><div>meson build <br></div><div>ninja -C build=C2=A0<br><br></div><=
+div>Could you please direct me to the right direction for building DPDK pro=
+perly? I am on Linux Mint. Are there dependencies that I should&#39;ve inst=
+aslled?<br><br></div><div>Best Regards,<br></div><div>V</div></div>
+
+--000000000000cd2766063314898b--
+
+--000000000000cd2769063314898d
+Content-Type: text/plain; charset="UTF-8"; name="error-msg-ninja.txt"
+Content-Disposition: attachment; filename="error-msg-ninja.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m9nbr34g0>
+X-Attachment-Id: f_m9nbr34g0
+
+WzEvMTg1M10gTGlua2luZyBzdGF0aWMgdGFyZ2V0IGRyaXZlcnMvbGlidG1wX3J0ZV9uZXRfYXZw
+LmEKWzIvMTg1M10gTGlua2luZyBzdGF0aWMgdGFyZ2V0IGRyaXZlcnMvbGlidG1wX3J0ZV9uZXRf
+YXhnYmUuYQpbMy8xODUzXSBHZW5lcmF0aW5nIGRyaXZlcnMvcnRlX25ldF9heGdiZS5wbWQuYyB3
+aXRoIGEgY3VzdG9tIGNvbW1hbmQKWzQvMTg1M10gR2VuZXJhdGluZyBkcml2ZXJzL3J0ZV9uZXRf
+YXZwLnBtZC5jIHdpdGggYSBjdXN0b20gY29tbWFuZApbNS8xODUzXSBDb21waWxpbmcgQyBvYmpl
+Y3QgZHJpdmVycy9saWJydGVfbmV0X2F4Z2JlLmEucC9tZXNvbi1nZW5lcmF0ZWRfLi5fcnRlX25l
+dF9heGdiZS5wbWQuYy5vCls2LzE4NTNdIENvbXBpbGluZyBDIG9iamVjdCBkcml2ZXJzL2xpYnJ0
+ZV9uZXRfYXZwLmEucC9tZXNvbi1nZW5lcmF0ZWRfLi5fcnRlX25ldF9hdnAucG1kLmMubwpbNy8x
+ODUzXSBMaW5raW5nIHN0YXRpYyB0YXJnZXQgZHJpdmVycy9saWJydGVfbmV0X2F2cC5hCls4LzE4
+NTNdIExpbmtpbmcgc3RhdGljIHRhcmdldCBkcml2ZXJzL2xpYnJ0ZV9uZXRfYXhnYmUuYQpbOS8x
+ODUzXSBDb21waWxpbmcgQyBvYmplY3QgZHJpdmVycy9saWJydGVfbmV0X2F4Z2JlLnNvLjI1LjAu
+cC9tZXNvbi1nZW5lcmF0ZWRfLi5fcnRlX25ldF9heGdiZS5wbWQuYy5vClsxMC8xODUzXSBDb21w
+aWxpbmcgQyBvYmplY3QgZHJpdmVycy9saWJydGVfbmV0X2F2cC5zby4yNS4wLnAvbWVzb24tZ2Vu
+ZXJhdGVkXy4uX3J0ZV9uZXRfYXZwLnBtZC5jLm8KWzExLzE4NTNdIExpbmtpbmcgdGFyZ2V0IGRy
+aXZlcnMvbGlicnRlX25ldF9heGdiZS5zby4yNS4wClsxMi8xODUzXSBMaW5raW5nIHRhcmdldCBk
+cml2ZXJzL2xpYnJ0ZV9uZXRfYXZwLnNvLjI1LjAKWzEzLzE4NTNdIENvbXBpbGluZyBDIG9iamVj
+dCBkcml2ZXJzL2xpYnRtcF9ydGVfbmV0X2FmX3hkcC5hLnAvbmV0X2FmX3hkcF9ydGVfZXRoX2Fm
+X3hkcC5jLm8KRkFJTEVEOiBkcml2ZXJzL2xpYnRtcF9ydGVfbmV0X2FmX3hkcC5hLnAvbmV0X2Fm
+X3hkcF9ydGVfZXRoX2FmX3hkcC5jLm8gCmNjIC1JZHJpdmVycy9saWJ0bXBfcnRlX25ldF9hZl94
+ZHAuYS5wIC1JZHJpdmVycyAtSS4uL2RyaXZlcnMgLUlkcml2ZXJzL25ldC9hZl94ZHAgLUkuLi9k
+cml2ZXJzL25ldC9hZl94ZHAgLUlsaWIvZXRoZGV2IC1JLi4vbGliL2V0aGRldiAtSS4gLUkuLiAt
+SWNvbmZpZyAtSS4uL2NvbmZpZyAtSWxpYi9lYWwvaW5jbHVkZSAtSS4uL2xpYi9lYWwvaW5jbHVk
+ZSAtSWxpYi9lYWwvbGludXgvaW5jbHVkZSAtSS4uL2xpYi9lYWwvbGludXgvaW5jbHVkZSAtSWxp
+Yi9lYWwveDg2L2luY2x1ZGUgLUkuLi9saWIvZWFsL3g4Ni9pbmNsdWRlIC1JLi4va2VybmVsL2xp
+bnV4IC1JbGliL2VhbC9jb21tb24gLUkuLi9saWIvZWFsL2NvbW1vbiAtSWxpYi9lYWwgLUkuLi9s
+aWIvZWFsIC1JbGliL2t2YXJncyAtSS4uL2xpYi9rdmFyZ3MgLUlsaWIvbG9nIC1JLi4vbGliL2xv
+ZyAtSWxpYi9tZXRyaWNzIC1JLi4vbGliL21ldHJpY3MgLUlsaWIvdGVsZW1ldHJ5IC1JLi4vbGli
+L3RlbGVtZXRyeSAtSWxpYi9uZXQgLUkuLi9saWIvbmV0IC1JbGliL21idWYgLUkuLi9saWIvbWJ1
+ZiAtSWxpYi9tZW1wb29sIC1JLi4vbGliL21lbXBvb2wgLUlsaWIvcmluZyAtSS4uL2xpYi9yaW5n
+IC1JbGliL21ldGVyIC1JLi4vbGliL21ldGVyIC1JZHJpdmVycy9idXMvcGNpIC1JLi4vZHJpdmVy
+cy9idXMvcGNpIC1JLi4vZHJpdmVycy9idXMvcGNpL2xpbnV4IC1JbGliL3BjaSAtSS4uL2xpYi9w
+Y2kgLUlkcml2ZXJzL2J1cy92ZGV2IC1JLi4vZHJpdmVycy9idXMvdmRldiAtSS91c3IvbG9jYWwv
+aW5jbHVkZSAtZmRpYWdub3N0aWNzLWNvbG9yPWFsd2F5cyAtRF9GSUxFX09GRlNFVF9CSVRTPTY0
+IC1XYWxsIC1XaW52YWxpZC1wY2ggLVdleHRyYSAtc3RkPWMxMSAtTzMgLWluY2x1ZGUgcnRlX2Nv
+bmZpZy5oIC1XY2FzdC1xdWFsIC1XZGVwcmVjYXRlZCAtV2Zvcm1hdCAtV2Zvcm1hdC1ub25saXRl
+cmFsIC1XZm9ybWF0LXNlY3VyaXR5IC1XbWlzc2luZy1kZWNsYXJhdGlvbnMgLVdtaXNzaW5nLXBy
+b3RvdHlwZXMgLVduZXN0ZWQtZXh0ZXJucyAtV29sZC1zdHlsZS1kZWZpbml0aW9uIC1XcG9pbnRl
+ci1hcml0aCAtV3NpZ24tY29tcGFyZSAtV3N0cmljdC1wcm90b3R5cGVzIC1XdW5kZWYgLVd3cml0
+ZS1zdHJpbmdzIC1Xbm8tcGFja2VkLW5vdC1hbGlnbmVkIC1Xbm8tbWlzc2luZy1maWVsZC1pbml0
+aWFsaXplcnMgLURfR05VX1NPVVJDRSAtZlBJQyAtbWFyY2g9bmF0aXZlIC1tcnRtIC1EQUxMT1df
+RVhQRVJJTUVOVEFMX0FQSSAtREFMTE9XX0lOVEVSTkFMX0FQSSAtV25vLWZvcm1hdC10cnVuY2F0
+aW9uIC1Xbm8tYWRkcmVzcy1vZi1wYWNrZWQtbWVtYmVyIC1EUlRFX05FVF9BRl9YRFBfTElCWERQ
+IC1EUlRFX05FVF9BRl9YRFBfU0hBUkVEX1VNRU0gLURFVEhfQUZfWERQX1VQREFURV9YU0tNQVAg
+LURSVEVfTE9HX0RFRkFVTFRfTE9HVFlQRT1wbWQubmV0LmFmX3hkcCAtTUQgLU1RIGRyaXZlcnMv
+bGlidG1wX3J0ZV9uZXRfYWZfeGRwLmEucC9uZXRfYWZfeGRwX3J0ZV9ldGhfYWZfeGRwLmMubyAt
+TUYgZHJpdmVycy9saWJ0bXBfcnRlX25ldF9hZl94ZHAuYS5wL25ldF9hZl94ZHBfcnRlX2V0aF9h
+Zl94ZHAuYy5vLmQgLW8gZHJpdmVycy9saWJ0bXBfcnRlX25ldF9hZl94ZHAuYS5wL25ldF9hZl94
+ZHBfcnRlX2V0aF9hZl94ZHAuYy5vIC1jIC4uL2RyaXZlcnMvbmV0L2FmX3hkcC9ydGVfZXRoX2Fm
+X3hkcC5jCkluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9kcml2ZXJzL25ldC9hZl94ZHAvcnRlX2V0
+aF9hZl94ZHAuYzo0MjoKLi4vZHJpdmVycy9uZXQvYWZfeGRwL2NvbXBhdC5oOiBJbiBmdW5jdGlv
+biDigJhsb2FkX3Byb2dyYW3igJk6Ci4uL2RyaXZlcnMvbmV0L2FmX3hkcC9jb21wYXQuaDoxMDg6
+Mjk6IGVycm9yOiBpbmNvbXBhdGlibGUgdHlwZSBmb3IgYXJndW1lbnQgMSBvZiDigJhicGZfcHJv
+Z19sb2Fk4oCZCiAgMTA4IHwgICAgICAgICByZXQgPSBicGZfcHJvZ19sb2FkKHByb2dfcGF0aCwg
+QlBGX1BST0dfVFlQRV9YRFAsIG9iaiwgJnByb2dfZmQpOwogICAgICB8ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBefn5+fn5+fn4KICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfAogICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICoKSW4g
+ZmlsZSBpbmNsdWRlZCBmcm9tIC4uL2RyaXZlcnMvbmV0L2FmX3hkcC9jb21wYXQuaDoxMCwKICAg
+ICAgICAgICAgICAgICBmcm9tIC4uL2RyaXZlcnMvbmV0L2FmX3hkcC9ydGVfZXRoX2FmX3hkcC5j
+OjQyOgovdXNyL2luY2x1ZGUvYnBmL2JwZi5oOjEwOTo0OTogbm90ZTogZXhwZWN0ZWQg4oCYZW51
+bSBicGZfcHJvZ190eXBl4oCZIGJ1dCBhcmd1bWVudCBpcyBvZiB0eXBlIOKAmGNvbnN0IGNoYXIg
+KuKAmQogIDEwOSB8IExJQkJQRl9BUEkgaW50IGJwZl9wcm9nX2xvYWQoZW51bSBicGZfcHJvZ190
+eXBlIHByb2dfdHlwZSwKICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH5+fn5+
+fn5+fn5+fn5+fn5+fn5efn5+fn5+fn4KSW4gZmlsZSBpbmNsdWRlZCBmcm9tIC4uL2RyaXZlcnMv
+bmV0L2FmX3hkcC9ydGVfZXRoX2FmX3hkcC5jOjQyOgouLi9kcml2ZXJzL25ldC9hZl94ZHAvY29t
+cGF0Lmg6MTA4OjQwOiB3YXJuaW5nOiBwYXNzaW5nIGFyZ3VtZW50IDIgb2Yg4oCYYnBmX3Byb2df
+bG9hZOKAmSBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3aXRob3V0IGEgY2FzdCBbLVdpbnQt
+Y29udmVyc2lvbl0KICAxMDggfCAgICAgICAgIHJldCA9IGJwZl9wcm9nX2xvYWQocHJvZ19wYXRo
+LCBCUEZfUFJPR19UWVBFX1hEUCwgb2JqLCAmcHJvZ19mZCk7CiAgICAgIHwgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn4KICAgICAgfCAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8CiAgICAgIHwgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50CkluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9k
+cml2ZXJzL25ldC9hZl94ZHAvY29tcGF0Lmg6MTAsCiAgICAgICAgICAgICAgICAgZnJvbSAuLi9k
+cml2ZXJzL25ldC9hZl94ZHAvcnRlX2V0aF9hZl94ZHAuYzo0MjoKL3Vzci9pbmNsdWRlL2JwZi9i
+cGYuaDoxMTA6NDI6IG5vdGU6IGV4cGVjdGVkIOKAmGNvbnN0IGNoYXIgKuKAmSBidXQgYXJndW1l
+bnQgaXMgb2YgdHlwZSDigJhpbnTigJkKICAxMTAgfCAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGNvbnN0IGNoYXIgKnByb2dfbmFtZSwgY29uc3QgY2hhciAqbGljZW5zZSwKICAgICAgfCAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIH5+fn5+fn5+fn5+fl5+fn5+fn5+fgpJbiBmaWxl
+IGluY2x1ZGVkIGZyb20gLi4vZHJpdmVycy9uZXQvYWZfeGRwL3J0ZV9ldGhfYWZfeGRwLmM6NDI6
+Ci4uL2RyaXZlcnMvbmV0L2FmX3hkcC9jb21wYXQuaDoxMDg6NTk6IHdhcm5pbmc6IHBhc3Npbmcg
+YXJndW1lbnQgMyBvZiDigJhicGZfcHJvZ19sb2Fk4oCZIGZyb20gaW5jb21wYXRpYmxlIHBvaW50
+ZXIgdHlwZSBbLVdpbmNvbXBhdGlibGUtcG9pbnRlci10eXBlc10KICAxMDggfCAgICAgICAgIHJl
+dCA9IGJwZl9wcm9nX2xvYWQocHJvZ19wYXRoLCBCUEZfUFJPR19UWVBFX1hEUCwgb2JqLCAmcHJv
+Z19mZCk7CiAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIF5+fgogICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8CiAgICAgIHwgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBicGZfb2JqZWN0
+ICoqCkluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9kcml2ZXJzL25ldC9hZl94ZHAvY29tcGF0Lmg6
+MTAsCiAgICAgICAgICAgICAgICAgZnJvbSAuLi9kcml2ZXJzL25ldC9hZl94ZHAvcnRlX2V0aF9h
+Zl94ZHAuYzo0MjoKL3Vzci9pbmNsdWRlL2JwZi9icGYuaDoxMTA6NjU6IG5vdGU6IGV4cGVjdGVk
+IOKAmGNvbnN0IGNoYXIgKuKAmSBidXQgYXJndW1lbnQgaXMgb2YgdHlwZSDigJhzdHJ1Y3QgYnBm
+X29iamVjdCAqKuKAmQogIDExMCB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qg
+Y2hhciAqcHJvZ19uYW1lLCBjb25zdCBjaGFyICpsaWNlbnNlLAogICAgICB8ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB+fn5+fn5+fn5+fn5efn5+
+fn5+CkluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9kcml2ZXJzL25ldC9hZl94ZHAvcnRlX2V0aF9h
+Zl94ZHAuYzo0MjoKLi4vZHJpdmVycy9uZXQvYWZfeGRwL2NvbXBhdC5oOjEwODo2NDogd2Fybmlu
+ZzogcGFzc2luZyBhcmd1bWVudCA0IG9mIOKAmGJwZl9wcm9nX2xvYWTigJkgZnJvbSBpbmNvbXBh
+dGlibGUgcG9pbnRlciB0eXBlIFstV2luY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzXQogIDEwOCB8
+ICAgICAgICAgcmV0ID0gYnBmX3Byb2dfbG9hZChwcm9nX3BhdGgsIEJQRl9QUk9HX1RZUEVfWERQ
+LCBvYmosICZwcm9nX2ZkKTsKICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+fn5+fgogICAgICB8ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwK
+ICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBpbnQgKgpJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vZHJpdmVycy9uZXQv
+YWZfeGRwL2NvbXBhdC5oOjEwLAogICAgICAgICAgICAgICAgIGZyb20gLi4vZHJpdmVycy9uZXQv
+YWZfeGRwL3J0ZV9ldGhfYWZfeGRwLmM6NDI6Ci91c3IvaW5jbHVkZS9icGYvYnBmLmg6MTExOjUz
+OiBub3RlOiBleHBlY3RlZCDigJhjb25zdCBzdHJ1Y3QgYnBmX2luc24gKuKAmSBidXQgYXJndW1l
+bnQgaXMgb2YgdHlwZSDigJhpbnQgKuKAmQogIDExMSB8ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgY29uc3Qgc3RydWN0IGJwZl9pbnNuICppbnNucywgc2l6ZV90IGluc25fY250LAogICAg
+ICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5e
+fn5+fgpJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vZHJpdmVycy9uZXQvYWZfeGRwL3J0ZV9ldGhf
+YWZfeGRwLmM6NDI6Ci4uL2RyaXZlcnMvbmV0L2FmX3hkcC9jb21wYXQuaDoxMDg6MTU6IGVycm9y
+OiB0b28gZmV3IGFyZ3VtZW50cyB0byBmdW5jdGlvbiDigJhicGZfcHJvZ19sb2Fk4oCZCiAgMTA4
+IHwgICAgICAgICByZXQgPSBicGZfcHJvZ19sb2FkKHByb2dfcGF0aCwgQlBGX1BST0dfVFlQRV9Y
+RFAsIG9iaiwgJnByb2dfZmQpOwogICAgICB8ICAgICAgICAgICAgICAgXn5+fn5+fn5+fn5+fgpJ
+biBmaWxlIGluY2x1ZGVkIGZyb20gLi4vZHJpdmVycy9uZXQvYWZfeGRwL2NvbXBhdC5oOjEwLAog
+ICAgICAgICAgICAgICAgIGZyb20gLi4vZHJpdmVycy9uZXQvYWZfeGRwL3J0ZV9ldGhfYWZfeGRw
+LmM6NDI6Ci91c3IvaW5jbHVkZS9icGYvYnBmLmg6MTA5OjE2OiBub3RlOiBkZWNsYXJlZCBoZXJl
+CiAgMTA5IHwgTElCQlBGX0FQSSBpbnQgYnBmX3Byb2dfbG9hZChlbnVtIGJwZl9wcm9nX3R5cGUg
+cHJvZ190eXBlLAogICAgICB8ICAgICAgICAgICAgICAgIF5+fn5+fn5+fn5+fn4KLi4vZHJpdmVy
+cy9uZXQvYWZfeGRwL3J0ZV9ldGhfYWZfeGRwLmM6IEluIGZ1bmN0aW9uIOKAmGxpbmtfeGRwX3By
+b2dfd2l0aF9kZXbigJk6Ci4uL2RyaXZlcnMvbmV0L2FmX3hkcC9ydGVfZXRoX2FmX3hkcC5jOjk2
+MjoxNjogd2FybmluZzogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYYnBmX3Nl
+dF9saW5rX3hkcF9mZOKAmTsgZGlkIHlvdSBtZWFuIOKAmGJwZl9saW5rX19mZOKAmT8gWy1XaW1w
+bGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCiAgOTYyIHwgICAgICAgICByZXR1cm4gYnBmX3Nl
+dF9saW5rX3hkcF9mZChpZmluZGV4LCBmZCwgZmxhZ3MpOwogICAgICB8ICAgICAgICAgICAgICAg
+IF5+fn5+fn5+fn5+fn5+fn5+fn4KICAgICAgfCAgICAgICAgICAgICAgICBicGZfbGlua19fZmQK
+Li4vZHJpdmVycy9uZXQvYWZfeGRwL3J0ZV9ldGhfYWZfeGRwLmM6OTYyOjE2OiB3YXJuaW5nOiBu
+ZXN0ZWQgZXh0ZXJuIGRlY2xhcmF0aW9uIG9mIOKAmGJwZl9zZXRfbGlua194ZHBfZmTigJkgWy1X
+bmVzdGVkLWV4dGVybnNdCi4uL2RyaXZlcnMvbmV0L2FmX3hkcC9ydGVfZXRoX2FmX3hkcC5jOiBJ
+biBmdW5jdGlvbiDigJhyZW1vdmVfeGRwX3Byb2dyYW3igJk6Ci4uL2RyaXZlcnMvbmV0L2FmX3hk
+cC9ydGVfZXRoX2FmX3hkcC5jOjk3MToxNTogd2FybmluZzogaW1wbGljaXQgZGVjbGFyYXRpb24g
+b2YgZnVuY3Rpb24g4oCYYnBmX2dldF9saW5rX3hkcF9pZOKAmSBbLVdpbXBsaWNpdC1mdW5jdGlv
+bi1kZWNsYXJhdGlvbl0KICA5NzEgfCAgICAgICAgIHJldCA9IGJwZl9nZXRfbGlua194ZHBfaWQo
+aW50ZXJuYWxzLT5pZl9pbmRleCwgJmN1cnJfcHJvZ19pZCwKICAgICAgfCAgICAgICAgICAgICAg
+IF5+fn5+fn5+fn5+fn5+fn5+fn4KLi4vZHJpdmVycy9uZXQvYWZfeGRwL3J0ZV9ldGhfYWZfeGRw
+LmM6OTcxOjE1OiB3YXJuaW5nOiBuZXN0ZWQgZXh0ZXJuIGRlY2xhcmF0aW9uIG9mIOKAmGJwZl9n
+ZXRfbGlua194ZHBfaWTigJkgWy1XbmVzdGVkLWV4dGVybnNdClsxNC8xODUzXSBDb21waWxpbmcg
+QyBvYmplY3QgZHJpdmVycy9saWJ0bXBfcnRlX25ldF9ibngyeC5hLnAvbmV0X2JueDJ4X2JueDJ4
+X3ZmcGYuYy5vClsxNS8xODUzXSBDb21waWxpbmcgQyBvYmplY3QgZHJpdmVycy9saWJ0bXBfcnRl
+X25ldF9ibngyeC5hLnAvbmV0X2JueDJ4X2JueDJ4X2V0aGRldi5jLm8KWzE2LzE4NTNdIENvbXBp
+bGluZyBDIG9iamVjdCBkcml2ZXJzL2xpYnRtcF9ydGVfbmV0X2JueDJ4LmEucC9uZXRfYm54Mnhf
+Ym54Mnhfcnh0eC5jLm8KWzE3LzE4NTNdIENvbXBpbGluZyBDIG9iamVjdCBkcml2ZXJzL2xpYnRt
+cF9ydGVfbmV0X2JueHQuYS5wL25ldF9ibnh0X2JueHRfY3ByLmMubwpbMTgvMTg1M10gQ29tcGls
+aW5nIEMgb2JqZWN0IGRyaXZlcnMvbGlidG1wX3J0ZV9uZXRfYm54MnguYS5wL25ldF9ibngyeF9l
+Y29yZV9zcC5jLm8KWzE5LzE4NTNdIENvbXBpbGluZyBDIG9iamVjdCBkcml2ZXJzL25ldC9ibnh0
+L2xpYmJueHRfYXZ4Ml9saWIuYS5wL2JueHRfcnh0eF92ZWNfYXZ4Mi5jLm8KWzIwLzE4NTNdIENv
+bXBpbGluZyBDIG9iamVjdCBkcml2ZXJzL2xpYnRtcF9ydGVfbmV0X2JueDJ4LmEucC9uZXRfYm54
+MnhfYm54Mnhfc3RhdHMuYy5vClsyMS8xODUzXSBDb21waWxpbmcgQyBvYmplY3QgZHJpdmVycy9s
+aWJ0bXBfcnRlX25ldF9ibngyeC5hLnAvbmV0X2JueDJ4X2JueDJ4LmMubwpbMjIvMTg1M10gQ29t
+cGlsaW5nIEMgb2JqZWN0IGRyaXZlcnMvbGlidG1wX3J0ZV9uZXRfYm54MnguYS5wL25ldF9ibngy
+eF9lbGluay5jLm8KbmluamE6IGJ1aWxkIHN0b3BwZWQ6IHN1YmNvbW1hbmQgZmFpbGVkLgo=
+--000000000000cd2769063314898d--
