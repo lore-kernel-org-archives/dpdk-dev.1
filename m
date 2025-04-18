@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A94DC369AB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 09:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5420C369AB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 09:09:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12EB340A75;
-	Fri, 18 Apr 2025 11:07:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BC1DA40B9E;
+	Fri, 18 Apr 2025 11:07:50 +0200 (CEST)
 Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
- by mails.dpdk.org (Postfix) with ESMTP id 75631406BC
- for <dev@dpdk.org>; Fri, 18 Apr 2025 11:07:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C37A9409FA
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 11:07:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
- MIME-Version; bh=73FaSADbQiSm8MxFA5at+i8JA5fQ2Zd7VNZyZBeQZ3Y=;
- b=g/yFGv3Y97uZmr8VfueNLVpqZwvyApoqf41Us0PzqgkfeVGv8Y8UUbFEi29qKh
- nnc05lA8sSkcjXQm2CocfHMJAizYfaJR1IgMRYg2xDgLgBIzY2zTNzbLrQNFxuZB
- KCOKyIpzIZ2Xcw9gwpC3TcAR42Iewa76mMXPcBKN+vz4o=
+ MIME-Version; bh=n6GF8LjQg6eSPUoayvYQLCptz+QsaJxBtnkt2rLlBhI=;
+ b=MmiDp9FbGSm25M4U2JGfZTv2iXpMXNXt3pdUdgLlcTXR+pCl4npx1yYYKQFz39
+ JLoPc1xrxX1lR44GC1cz9WjRI9edVuWQ8JuXmQzfYyEQh3rIYu/xz8ZaAnraTMm9
+ 0ysM4oNebjJe9jpHGsES4LVgrDaG2t5TYRaTYiWym576Y=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDXqJVFFgJorqzGAg--.15042S19;
- Fri, 18 Apr 2025 17:07:40 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDXqJVFFgJorqzGAg--.15042S21;
+ Fri, 18 Apr 2025 17:07:42 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>
-Subject: [RFC 15/18] net/hinic3: add MML and EEPROM access feature
-Date: Fri, 18 Apr 2025 17:06:01 +0800
-Message-ID: <20250418090621.9638-16-wff_light@vip.163.com>
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [RFC 17/18] net/hinic3: add FDIR flow control module
+Date: Fri, 18 Apr 2025 17:06:03 +0800
+Message-ID: <20250418090621.9638-18-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDXqJVFFgJorqzGAg--.15042S19
-X-Coremail-Antispam: 1Uf129KBjvAXoWkXFWUJF45uryUWr18WFyUZFb_yoW3CFWfJo
- WfW3ZxGr1kJryrG3ykKF10kF1a9FWDAa9xuwsYvrZ3WFn7JF1aqFySvw15Wa42vr48tasr
- ZFWFqFyfJws7Jw1fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUISoGDUUUU
+X-CM-TRANSID: As8vCgDXqJVFFgJorqzGAg--.15042S21
+X-Coremail-Antispam: 1Uf129KBjvtXoWkGF4DWFWkWF1rtw4DZr48Xrb_yoW8Jr1UJF
+ X_ury0qw1UWw1UCrs7Ga4FkFnxCrZYgay2g3WfZayvkF97Jw1DXw1fuF1xWrn5ta9Yqw1j
+ vF15Wrn2g34qy3s09jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-
+ sFnT9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Vc_3UUUUU==
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiKgozCmgCALtf9gAAsh
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiKhgzCmgCALtgBAAAs+
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,2847 +51,3787 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Yi Chen <chenyi221@huawei.com>
 
-Add man-machine language support and implements the get eeprom method.
+Added support for flow director filters, including ethertype, IPv4,
+IPv6, and tunnel VXLAN. In addition, user can add or delete filters.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c        |  13 +
- drivers/net/hinic3/mml/hinic3_dbg.c       | 171 +++++
- drivers/net/hinic3/mml/hinic3_dbg.h       | 160 +++++
- drivers/net/hinic3/mml/hinic3_mml_cmd.c   | 375 +++++++++++
- drivers/net/hinic3/mml/hinic3_mml_cmd.h   | 131 ++++
- drivers/net/hinic3/mml/hinic3_mml_ioctl.c | 215 +++++++
- drivers/net/hinic3/mml/hinic3_mml_lib.c   | 136 ++++
- drivers/net/hinic3/mml/hinic3_mml_lib.h   | 275 ++++++++
- drivers/net/hinic3/mml/hinic3_mml_main.c  | 167 +++++
- drivers/net/hinic3/mml/hinic3_mml_queue.c | 749 ++++++++++++++++++++++
- drivers/net/hinic3/mml/hinic3_mml_queue.h | 256 ++++++++
- drivers/net/hinic3/mml/meson.build        |  62 ++
- 12 files changed, 2710 insertions(+)
- create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.h
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.h
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_ioctl.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.h
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_main.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.c
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.h
- create mode 100644 drivers/net/hinic3/mml/meson.build
+ drivers/net/hinic3/hinic3_ethdev.c |   82 ++
+ drivers/net/hinic3/hinic3_ethdev.h |   17 +
+ drivers/net/hinic3/hinic3_fdir.c   | 1394 +++++++++++++++++++++++
+ drivers/net/hinic3/hinic3_fdir.h   |  398 +++++++
+ drivers/net/hinic3/hinic3_flow.c   | 1700 ++++++++++++++++++++++++++++
+ drivers/net/hinic3/hinic3_flow.h   |   80 ++
+ 6 files changed, 3671 insertions(+)
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.c
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.h
+ create mode 100644 drivers/net/hinic3/hinic3_flow.c
+ create mode 100644 drivers/net/hinic3/hinic3_flow.h
 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 7cd101e5c3..9c5decb867 100644
+index 9d2dcf95f7..2b8d2dc7a7 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -21,6 +21,7 @@
- #include "base/hinic3_hw_comm.h"
- #include "base/hinic3_nic_cfg.h"
- #include "base/hinic3_nic_event.h"
-+#include "mml/hinic3_mml_lib.h"
- #include "hinic3_nic_io.h"
- #include "hinic3_tx.h"
- #include "hinic3_rx.h"
-@@ -2276,6 +2277,16 @@ hinic3_dev_allmulticast_disable(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
+@@ -2369,6 +2369,84 @@ hinic3_dev_promiscuous_disable(struct rte_eth_dev *dev)
+  * @return
+  * 0 on success, non-zero on failure.
+  */
 +static int
-+hinic3_get_eeprom(__rte_unused struct rte_eth_dev *dev,
-+		  struct rte_dev_eeprom_info *info)
++hinic3_dev_flow_ctrl_get(struct rte_eth_dev *dev,
++			 struct rte_eth_fc_conf *fc_conf)
 +{
-+#define MAX_BUF_OUT_LEN 2048
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct nic_pause_config nic_pause;
++	int err;
 +
-+	return hinic3_pmd_mml_lib(info->data, info->offset, info->data,
-+				  &info->length, MAX_BUF_OUT_LEN);
++	err = hinic3_mutex_lock(&nic_dev->pause_mutuex);
++	if (err)
++		return err;
++
++	memset(&nic_pause, 0, sizeof(nic_pause));
++	err = hinic3_get_pause_info(nic_dev->hwdev, &nic_pause);
++	if (err) {
++		(void)hinic3_mutex_unlock(&nic_dev->pause_mutuex);
++		return err;
++	}
++
++	if (nic_dev->pause_set || !nic_pause.auto_neg) {
++		nic_pause.rx_pause = nic_dev->nic_pause.rx_pause;
++		nic_pause.tx_pause = nic_dev->nic_pause.tx_pause;
++	}
++
++	fc_conf->autoneg = nic_pause.auto_neg;
++
++	if (nic_pause.tx_pause && nic_pause.rx_pause)
++		fc_conf->mode = RTE_ETH_FC_FULL;
++	else if (nic_pause.tx_pause)
++		fc_conf->mode = RTE_ETH_FC_TX_PAUSE;
++	else if (nic_pause.rx_pause)
++		fc_conf->mode = RTE_ETH_FC_RX_PAUSE;
++	else
++		fc_conf->mode = RTE_ETH_FC_NONE;
++
++	(void)hinic3_mutex_unlock(&nic_dev->pause_mutuex);
++	return 0;
 +}
++
++static int
++hinic3_dev_flow_ctrl_set(struct rte_eth_dev *dev,
++			 struct rte_eth_fc_conf *fc_conf)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct nic_pause_config nic_pause;
++	int err;
++
++	err = hinic3_mutex_lock(&nic_dev->pause_mutuex);
++	if (err)
++		return err;
++
++	memset(&nic_pause, 0, sizeof(nic_pause));
++	if ((fc_conf->mode & RTE_ETH_FC_FULL) == RTE_ETH_FC_FULL ||
++	    (fc_conf->mode & RTE_ETH_FC_TX_PAUSE))
++		nic_pause.tx_pause = true;
++
++	if ((fc_conf->mode & RTE_ETH_FC_FULL) == RTE_ETH_FC_FULL ||
++	    (fc_conf->mode & RTE_ETH_FC_RX_PAUSE))
++		nic_pause.rx_pause = true;
++
++	err = hinic3_set_pause_info(nic_dev->hwdev, nic_pause);
++	if (err) {
++		(void)hinic3_mutex_unlock(&nic_dev->pause_mutuex);
++		return err;
++	}
++
++	nic_dev->pause_set = true;
++	nic_dev->nic_pause.rx_pause = nic_pause.rx_pause;
++	nic_dev->nic_pause.tx_pause = nic_pause.tx_pause;
++
++	PMD_DRV_LOG(INFO,
++		    "Just support set tx or rx pause info, tx: %s, rx: %s",
++		    nic_pause.tx_pause ? "on" : "off",
++		    nic_pause.rx_pause ? "on" : "off");
++
++	(void)hinic3_mutex_unlock(&nic_dev->pause_mutuex);
++	return 0;
++}
+ 
+ /**
+  * Update the RSS hash key and RSS hash type.
+@@ -3252,6 +3330,8 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
+ 	.promiscuous_enable            = hinic3_dev_promiscuous_enable,
+ 	.promiscuous_disable           = hinic3_dev_promiscuous_disable,
++	.flow_ctrl_get                 = hinic3_dev_flow_ctrl_get,
++	.flow_ctrl_set                 = hinic3_dev_flow_ctrl_set,
+ 	.rss_hash_update               = hinic3_rss_hash_update,
+ 	.rss_hash_conf_get             = hinic3_rss_conf_get,
+ 	.reta_update                   = hinic3_rss_reta_update,
+@@ -3269,6 +3349,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.mac_addr_remove               = hinic3_mac_addr_remove,
+ 	.mac_addr_add                  = hinic3_mac_addr_add,
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
++	.flow_ops_get                  = hinic3_dev_filter_ctrl,
+ 	.get_reg                       = hinic3_get_reg,
+ };
+ 
+@@ -3313,6 +3394,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.mac_addr_remove               = hinic3_mac_addr_remove,
+ 	.mac_addr_add                  = hinic3_mac_addr_add,
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
++	.flow_ops_get                  = hinic3_dev_filter_ctrl,
+ };
+ 
+ /**
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index 5dd7c7821a..07e24e971c 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -8,6 +8,8 @@
+ #include <rte_ethdev.h>
+ #include <rte_ethdev_core.h>
+ 
++#include "hinic3_fdir.h"
++
+ #define HINIC3_PMD_DRV_VERSION "B106"
+ 
+ #define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
+@@ -83,6 +85,9 @@ enum nic_feature_cap {
+ 
+ #define DEFAULT_DRV_FEATURE 0x3FFF
+ 
++TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
++TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
++
+ struct hinic3_nic_dev {
+ 	struct hinic3_hwdev *hwdev; /**< Hardware device. */
+ 	struct hinic3_txq **txqs;
+@@ -114,14 +119,26 @@ struct hinic3_nic_dev {
+ 
+ 	unsigned long dev_status;
+ 
++	u8 pause_set; /**< Flag of PAUSE frame setting. */
++	pthread_mutex_t pause_mutuex;
++	struct nic_pause_config nic_pause;
++
+ 	struct rte_ether_addr default_addr;
+ 	struct rte_ether_addr *mc_list;
+ 
+ 	char dev_name[HINIC3_DEV_NAME_LEN];
+ 	u64 feature_cap;
+ 	u32 vfta[HINIC3_VFTA_SIZE]; /**< VLAN bitmap. */
++
++	u16 tcam_rule_nums;
++	u16 ethertype_rule_nums;
++	struct hinic3_tcam_info tcam;
++	struct hinic3_ethertype_filter_list filter_ethertype_list;
++	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
+ };
+ 
++extern const struct rte_flow_ops hinic3_flow_ops;
 +
  /**
-  * Get device generic statistics.
+  * Enable interrupt for the specified RX queue.
   *
-@@ -2879,6 +2890,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.vlan_offload_set              = hinic3_vlan_offload_set,
- 	.allmulticast_enable           = hinic3_dev_allmulticast_enable,
- 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
-+	.get_eeprom                    = hinic3_get_eeprom,
- 	.stats_get                     = hinic3_dev_stats_get,
- 	.stats_reset                   = hinic3_dev_stats_reset,
- 	.xstats_get                    = hinic3_dev_xstats_get,
-@@ -2919,6 +2931,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.vlan_offload_set              = hinic3_vlan_offload_set,
- 	.allmulticast_enable           = hinic3_dev_allmulticast_enable,
- 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
-+	.get_eeprom                    = hinic3_get_eeprom,
- 	.stats_get                     = hinic3_dev_stats_get,
- 	.stats_reset                   = hinic3_dev_stats_reset,
- 	.xstats_get                    = hinic3_dev_xstats_get,
-diff --git a/drivers/net/hinic3/mml/hinic3_dbg.c b/drivers/net/hinic3/mml/hinic3_dbg.c
+diff --git a/drivers/net/hinic3/hinic3_fdir.c b/drivers/net/hinic3/hinic3_fdir.c
 new file mode 100644
-index 0000000000..7525b68dee
+index 0000000000..e36050f263
 --- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_dbg.c
-@@ -0,0 +1,171 @@
++++ b/drivers/net/hinic3/hinic3_fdir.c
+@@ -0,0 +1,1394 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#include "hinic3_compat.h"
-+#include "hinic3_hwif.h"
-+#include "hinic3_hwdev.h"
-+#include "hinic3_wq.h"
-+#include "hinic3_nic_cfg.h"
-+#include "hinic3_ethdev.h"
-+#include "hinic3_rx.h"
-+#include "hinic3_tx.h"
-+#include "hinic3_nic_io.h"
-+#include "hinic3_dbg.h"
-+
-+#define DB_IDX(db, db_base) \
-+	((u32)(((ulong)(db) - (ulong)(db_base)) / HINIC3_DB_PAGE_SIZE))
-+
-+int
-+hinic3_dbg_get_rq_info(void *hwdev, uint16_t q_id,
-+		       struct hinic3_dbg_rq_info *rq_info, u16 *msg_size)
-+{
-+	struct hinic3_hwdev *dev = (struct hinic3_hwdev *)hwdev;
-+	struct hinic3_nic_dev *nic_dev =
-+		(struct hinic3_nic_dev *)dev->dev_handle;
-+	struct hinic3_rxq *rxq = NULL;
-+
-+	if (q_id >= nic_dev->num_rqs) {
-+		PMD_DRV_LOG(ERR, "Invalid rx queue id, q_id: %d, num_rqs: %d",
-+			    q_id, nic_dev->num_rqs);
-+		return -EINVAL;
-+	}
-+
-+	rq_info->q_id = q_id;
-+	rxq = nic_dev->rxqs[q_id];
-+
-+	rq_info->hw_pi = (u16)cpu_to_be16(*rxq->pi_virt_addr);
-+	rq_info->ci = rxq->cons_idx & rxq->q_mask;
-+	rq_info->sw_pi = rxq->prod_idx & rxq->q_mask;
-+	rq_info->wqebb_size = HINIC3_SQ_WQEBB_SIZE;
-+	rq_info->q_depth = rxq->q_depth;
-+	rq_info->buf_len = rxq->buf_len;
-+	rq_info->ci_wqe_page_addr = rxq->queue_buf_vaddr;
-+	rq_info->ci_cla_tbl_addr = NULL;
-+	rq_info->msix_idx = 0;
-+	rq_info->msix_vector = 0;
-+
-+	*msg_size = sizeof(*rq_info);
-+
-+	return 0;
-+}
-+
-+int
-+hinic3_dbg_get_rx_cqe_info(void *hwdev, uint16_t q_id, uint16_t idx,
-+			   void *buf_out, uint16_t *out_size)
-+{
-+	struct hinic3_hwdev *dev = (struct hinic3_hwdev *)hwdev;
-+	struct hinic3_nic_dev *nic_dev =
-+		(struct hinic3_nic_dev *)dev->dev_handle;
-+
-+	if (q_id >= nic_dev->num_rqs || idx >= nic_dev->rxqs[q_id]->q_depth)
-+		return -EFAULT;
-+
-+	(void)memcpy(buf_out, (void *)&nic_dev->rxqs[q_id]->rx_cqe[idx],
-+		     sizeof(struct hinic3_rq_cqe));
-+	*out_size = sizeof(struct hinic3_rq_cqe);
-+
-+	return 0;
-+}
-+
-+int
-+hinic3_dbg_get_sq_info(void *dev, u16 q_id, struct hinic3_dbg_sq_info *sq_info,
-+		       u16 *msg_size)
-+{
-+	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
-+	struct hinic3_nic_dev *nic_dev =
-+		(struct hinic3_nic_dev *)hwdev->dev_handle;
-+	struct hinic3_txq *txq = NULL;
-+
-+	if (q_id >= nic_dev->num_sqs) {
-+		PMD_DRV_LOG(ERR,
-+			    "Inputting tx queue id is larger than actual tx "
-+			    "queue number, qid: %d, num_sqs: %d",
-+			    q_id, nic_dev->num_sqs);
-+		return -EINVAL;
-+	}
-+
-+	sq_info->q_id = q_id;
-+	txq = nic_dev->txqs[q_id];
-+
-+	sq_info->pi = txq->prod_idx & txq->q_mask;
-+	sq_info->ci = txq->cons_idx & txq->q_mask;
-+	sq_info->fi = (*(u16 *)txq->ci_vaddr_base) & txq->q_mask;
-+	sq_info->q_depth = txq->q_depth;
-+	sq_info->weqbb_size = HINIC3_SQ_WQEBB_SIZE;
-+	sq_info->ci_addr =
-+		(volatile u16 *)HINIC3_CI_VADDR(txq->ci_vaddr_base, q_id);
-+	sq_info->cla_addr = txq->queue_buf_paddr;
-+	sq_info->db_addr.phy_addr = (u64 *)txq->db_addr;
-+	sq_info->pg_idx = DB_IDX(txq->db_addr, hwdev->hwif->db_base);
-+
-+	*msg_size = sizeof(*sq_info);
-+
-+	return 0;
-+}
-+
-+int
-+hinic3_dbg_get_sq_wqe_info(void *dev, u16 q_id, u16 idx, u16 wqebb_cnt, u8 *wqe,
-+			   u16 *wqe_size)
-+{
-+	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
-+	struct hinic3_nic_dev *nic_dev =
-+		(struct hinic3_nic_dev *)hwdev->dev_handle;
-+	struct hinic3_txq *txq = NULL;
-+	void *src_wqe = NULL;
-+	u32 offset;
-+
-+	if (q_id >= nic_dev->num_sqs) {
-+		PMD_DRV_LOG(ERR,
-+			    "Inputting tx queue id is larger than actual tx "
-+			    "queue number, qid: %d, num_sqs: %d",
-+			    q_id, nic_dev->num_sqs);
-+		return -EINVAL;
-+	}
-+
-+	txq = nic_dev->txqs[q_id];
-+	if (idx + wqebb_cnt > txq->q_depth)
-+		return -EFAULT;
-+
-+	src_wqe = (void *)txq->queue_buf_vaddr;
-+	offset = (u32)idx << txq->wqebb_shift;
-+
-+	(void)memcpy((void *)wqe, (void *)((u8 *)src_wqe + offset),
-+		     (size_t)((u32)wqebb_cnt << txq->wqebb_shift));
-+
-+	*wqe_size = (u16)((u32)wqebb_cnt << txq->wqebb_shift);
-+	return 0;
-+}
-+
-+int
-+hinic3_dbg_get_rq_wqe_info(void *dev, u16 q_id, u16 idx, u16 wqebb_cnt, u8 *wqe,
-+			   u16 *wqe_size)
-+{
-+	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
-+	struct hinic3_nic_dev *nic_dev =
-+		(struct hinic3_nic_dev *)hwdev->dev_handle;
-+	struct hinic3_rxq *rxq = NULL;
-+	void *src_wqe = NULL;
-+	u32 offset;
-+
-+	if (q_id >= nic_dev->num_rqs) {
-+		PMD_DRV_LOG(ERR,
-+			    "Inputting rx queue id is larger than actual rx "
-+			    "queue number, qid: %d, num_rqs: %d",
-+			    q_id, nic_dev->num_rqs);
-+		return -EINVAL;
-+	}
-+
-+	rxq = nic_dev->rxqs[q_id];
-+	if (idx + wqebb_cnt > rxq->q_depth)
-+		return -EFAULT;
-+
-+	src_wqe = (void *)rxq->queue_buf_vaddr;
-+	offset = (u32)idx << rxq->wqebb_shift;
-+
-+	(void)memcpy((void *)wqe, (void *)((u8 *)src_wqe + offset),
-+		     (size_t)((u32)wqebb_cnt << rxq->wqebb_shift));
-+
-+	*wqe_size = (u16)((u32)wqebb_cnt << rxq->wqebb_shift);
-+	return 0;
-+}
-diff --git a/drivers/net/hinic3/mml/hinic3_dbg.h b/drivers/net/hinic3/mml/hinic3_dbg.h
-new file mode 100644
-index 0000000000..bac96c84a0
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_dbg.h
-@@ -0,0 +1,160 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#ifndef _HINIC3_MML_DBG_H
-+#define _HINIC3_MML_DBG_H
-+
-+/* nic_tool */
-+struct hinic3_tx_hw_page {
-+	u64 *phy_addr;
-+	u64 *map_addr;
-+};
-+
-+/* nic_tool */
-+struct hinic3_dbg_sq_info {
-+	u16 q_id;
-+	u16 pi;
-+	u16 ci; /**< sw_ci */
-+	u16 fi; /**< hw_ci */
-+
-+	u32 q_depth;
-+	u16 weqbb_size;
-+
-+	volatile u16 *ci_addr;
-+	u64 cla_addr;
-+
-+	struct hinic3_tx_hw_page db_addr;
-+	u32 pg_idx;
-+};
-+
-+/* nic_tool */
-+struct hinic3_dbg_rq_info {
-+	u16 q_id;
-+	u16 hw_pi;
-+	u16 ci; /**< sw_ci */
-+	u16 sw_pi;
-+	u16 wqebb_size;
-+	u16 q_depth;
-+	u16 buf_len;
-+
-+	void *ci_wqe_page_addr;
-+	void *ci_cla_tbl_addr;
-+	u16 msix_idx;
-+	u32 msix_vector;
-+};
-+
-+void *hinic3_dbg_get_sq_wq_handle(void *hwdev, u16 q_id);
-+
-+void *hinic3_dbg_get_rq_wq_handle(void *hwdev, u16 q_id);
-+
-+void *hinic3_dbg_get_sq_ci_addr(void *hwdev, u16 q_id);
-+
-+u16 hinic3_dbg_get_global_qpn(void *hwdev);
-+
-+/**
-+ * Get details of specified RX queue and store in `rq_info`.
-+ *
-+ * @param[in] hwdev
-+ * Pointer to the hardware device.
-+ * @param[in] q_id
-+ * RX queue ID.
-+ * @param[out] rq_info
-+ * Structure to store RX queue information.
-+ * @param[out] msg_size
-+ * Size of the message.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+int hinic3_dbg_get_rq_info(void *hwdev, uint16_t q_id,
-+			   struct hinic3_dbg_rq_info *rq_info, u16 *msg_size);
-+
-+/**
-+ * Get the RX CQE at the specified index from the given RX queue.
-+ *
-+ * @param[in] hwdev
-+ * Pointer to hardware device structure.
-+ * @param[in] q_id
-+ * RX queue ID.
-+ * @param[in] idx
-+ * Index of the CQE.
-+ * @param[out] buf_out
-+ * Buffer to store the CQE.
-+ * @param[out] out_size
-+ * Size of the CQE.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+int hinic3_dbg_get_rx_cqe_info(void *hwdev, uint16_t q_id, uint16_t idx,
-+			       void *buf_out, uint16_t *out_size);
-+
-+/**
-+ * Get SQ information for debugging.
-+ *
-+ * @param[in] dev
-+ * Pointer to ethernet device structure.
-+ * @param[in] q_id
-+ * ID of SQ to retrieve information for.
-+ * @param[out] sq_info
-+ * Pointer to the structure where the SQ information will be stored.
-+ * @param[out] msg_size
-+ * The size (in bytes) of the `sq_info` structure.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - -EINVAL if the queue ID is invalid.
-+ */
-+int hinic3_dbg_get_sq_info(void *hwdev, u16 q_id,
-+			   struct hinic3_dbg_sq_info *sq_info, u16 *msg_size);
-+
-+/**
-+ * Get WQE information from a send queue.
-+ *
-+ * @param[in] dev
-+ * Pointer to ethernet device structure.
-+ * @param[in] q_id
-+ * The ID of the send queue from which to retrieve WQE information.
-+ * @param[in] idx
-+ * The index of the first WQE to retrieve.
-+ * @param[in] wqebb_cnt
-+ * The number of WQEBBs to retrieve.
-+ * @param[out] wqe
-+ * Pointer to the buffer where the WQE data will be stored.
-+ * @param[out] wqe_size
-+ * The size (in bytes) of the retrieved WQE data.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - -EINVAL if queue ID invalid.
-+ * - -EFAULT if index invalid.
-+ */
-+int hinic3_dbg_get_sq_wqe_info(void *hwdev, u16 q_id, u16 idx, u16 wqebb_cnt,
-+			       u8 *wqe, u16 *wqe_size);
-+
-+/**
-+ * Get WQE information from a receive queue.
-+ *
-+ * @param[in] dev
-+ * Pointer to the device structure.
-+ * @param[in] q_id
-+ * The ID of the receive queue from which to retrieve WQE information.
-+ * @param[in] idx
-+ * The index of the first WQE to retrieve.
-+ * @param[in] wqebb_cnt
-+ * The number of WQEBBs to retrieve.
-+ * @param[out] wqe
-+ * Pointer to the buffer where the WQE data will be stored.
-+ * @param[out] wqe_size
-+ * The size (in bytes) of the retrieved WQE data.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - -EINVAL if queue ID invalid.
-+ * - -EFAULT if index invalid.
-+ */
-+int hinic3_dbg_get_rq_wqe_info(void *hwdev, u16 q_id, u16 idx, u16 wqebb_cnt,
-+			       u8 *wqe, u16 *wqe_size);
-+
-+#endif /* _HINIC3_MML_DBG_H */
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_cmd.c b/drivers/net/hinic3/mml/hinic3_mml_cmd.c
-new file mode 100644
-index 0000000000..06d20a62bd
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_cmd.c
-@@ -0,0 +1,375 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#include "hinic3_mml_lib.h"
-+#include "hinic3_compat.h"
-+#include "hinic3_hwdev.h"
-+#include "hinic3_nic_cfg.h"
-+#include "hinic3_ethdev.h"
-+#include "hinic3_mml_cmd.h"
-+
-+/**
-+ * Compares two strings for equality.
-+ *
-+ * @param[in] command
-+ * The first string to compare.
-+ * @param[in] argument
-+ * The second string to compare.
-+ *
-+ * @return
-+ * UDA_TRUE if the strings are equal, otherwise UDA_FALSE.
-+ */
-+static int
-+string_cmp(const char *command, const char *argument)
-+{
-+	const char *cmd = command;
-+	const char *arg = argument;
-+
-+	if (!cmd || !arg)
-+		return UDA_FALSE;
-+
-+	if (strlen(cmd) != strlen(arg))
-+		return UDA_FALSE;
-+
-+	do {
-+		if (*cmd != *arg)
-+			return UDA_FALSE;
-+		cmd++;
-+		arg++;
-+	} while (*cmd != '\0');
-+
-+	return UDA_TRUE;
-+}
-+
-+static void
-+show_tool_version(cmd_adapter_t *adapter)
-+{
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+			   "hinic3 pmd version %s", HINIC3_PMD_DRV_VERSION);
-+}
-+
-+static void
-+show_tool_help(cmd_adapter_t *adapter)
-+{
-+	int i;
-+	major_cmd_t *major_cmd = NULL;
-+
-+	if (!adapter)
-+		return;
-+
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+			   "\n Usage:evsadm exec dump-hinic-status <major_cmd> "
-+			   "[option]\n");
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+			   "	-h, --help show help information");
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+			   "	-v, --version show version information");
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+			   "\n Major Commands:\n");
-+
-+	for (i = 0; i < adapter->major_cmds; i++) {
-+		major_cmd = adapter->p_major_cmd[i];
-+		hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+				   "	%-23s %s", major_cmd->name,
-+				   major_cmd->description);
-+	}
-+	hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len, "");
-+}
-+
-+void
-+major_command_option(major_cmd_t *major_cmd, const char *little,
-+		     const char *large, uint32_t have_param,
-+		     command_record_t record)
-+{
-+	cmd_option_t *option = NULL;
-+
-+	if (major_cmd == NULL || (little == NULL && large == NULL) || !record) {
-+		PMD_DRV_LOG(ERR, "Invalid input parameter.");
-+		return;
-+	}
-+
-+	if (major_cmd->option_count >= COMMAND_MAX_OPTIONS) {
-+		PMD_DRV_LOG(ERR, "Do not support more than %d options",
-+			    COMMAND_MAX_OPTIONS);
-+		return;
-+	}
-+
-+	option = &major_cmd->options[major_cmd->option_count];
-+	major_cmd->options_repeat_flag[major_cmd->option_count] = 0;
-+	major_cmd->option_count++;
-+
-+	option->record = record;
-+	option->little = little;
-+	option->large = large;
-+	option->have_param = have_param;
-+}
-+
-+void
-+major_command_register(cmd_adapter_t *adapter, major_cmd_t *major_cmd)
-+{
-+	int i = 0;
-+
-+	if (adapter == NULL || major_cmd == NULL) {
-+		PMD_DRV_LOG(ERR, "Invalid input parameter.");
-+		return;
-+	}
-+
-+	if (adapter->major_cmds >= COMMAND_MAX_MAJORS) {
-+		PMD_DRV_LOG(ERR, "Major Commands is full");
-+		return;
-+	}
-+	while (adapter->p_major_cmd[i] != NULL)
-+		i++;
-+	adapter->p_major_cmd[i] = major_cmd;
-+	adapter->major_cmds++;
-+	major_cmd->adapter = adapter;
-+	major_cmd->err_no = UDA_SUCCESS;
-+	(void)memset(major_cmd->err_str, 0, sizeof(major_cmd->err_str));
-+}
-+
-+static int
-+is_help_version(cmd_adapter_t *adapter, int argc, char *arg)
-+{
-+	if (COMMAND_HELP_POSTION(argc) &&
-+	    (string_cmp("-h", arg) || string_cmp("--help", arg))) {
-+		show_tool_help(adapter);
-+		return UDA_TRUE;
-+	}
-+
-+	if (COMMAND_VERSION_POSTION(argc) &&
-+	    (string_cmp("-v", arg) || string_cmp("--version", arg))) {
-+		show_tool_version(adapter);
-+		return UDA_TRUE;
-+	}
-+
-+	return UDA_FALSE;
-+}
-+
-+static int
-+check_command_length(int argc, char **argv)
-+{
-+	int i;
-+	unsigned long long str_len = 0;
-+
-+	for (i = 1; i < argc; i++)
-+		str_len += strlen(argv[i]);
-+
-+	if (str_len > COMMAND_MAX_STRING)
-+		return -UDA_EINVAL;
-+
-+	return UDA_SUCCESS;
-+}
-+
-+static inline int
-+char_check(const char cmd)
-+{
-+	if (cmd >= 'a' && cmd <= 'z')
-+		return UDA_SUCCESS;
-+
-+	if (cmd >= 'A' && cmd <= 'Z')
-+		return UDA_SUCCESS;
-+	return UDA_FAIL;
-+}
-+
-+static int
-+major_command_check_param(cmd_option_t *option, char *arg)
-+{
-+	if (!option)
-+		return -UDA_EINVAL;
-+	if (option->have_param != 0) {
-+		if (!arg || ((arg[0] == '-') && char_check(arg[1])))
-+			return -UDA_EINVAL;
-+		return UDA_SUCCESS;
-+	}
-+
-+	return -UDA_ENOOBJ;
-+}
-+
-+static int
-+major_cmd_repeat_option_set(major_cmd_t *major_cmd, const cmd_option_t *option,
-+			    u32 *options_repeat_flag)
-+{
-+	int err;
-+
-+	if (*options_repeat_flag != 0) {
-+		major_cmd->err_no = -UDA_EINVAL;
-+		err = snprintf(major_cmd->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Repeated option %s|%s.", option->little,
-+			       option->large);
-+		if (err <= 0) {
-+			PMD_DRV_LOG(ERR,
-+				"snprintf cmd repeat option failed, err: %d.",
-+				err);
-+		}
-+		return -UDA_EINVAL;
-+	}
-+	*options_repeat_flag = 1;
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+major_cmd_option_check(major_cmd_t *major_cmd, char **argv, int *index)
-+{
-+	int j, ret, err, option_ok, intermediate_var;
-+	cmd_option_t *option = NULL;
-+	char *arg = argv[*index];
-+
-+	/* Find command. */
-+	for (j = 0; j < major_cmd->option_count; j++) {
-+		option = &major_cmd->options[j];
-+		option_ok = (((option->little != NULL) &&
-+			      string_cmp(option->little, arg)) ||
-+			     ((option->large != NULL) &&
-+			      string_cmp(option->large, arg)));
-+		if (!option_ok)
-+			continue;
-+		/* Find same option. */
-+		ret = major_cmd_repeat_option_set(major_cmd,
-+			option, &major_cmd->options_repeat_flag[j]);
-+		if (ret != UDA_SUCCESS)
-+			return ret;
-+
-+		arg = NULL;
-+		/* If this option need parameters. */
-+		intermediate_var = (*index) + 1;
-+		ret = major_command_check_param(option, argv[intermediate_var]);
-+		if (ret == UDA_SUCCESS) {
-+			(*index)++;
-+			arg = argv[*index];
-+		} else if (ret == -UDA_EINVAL) {
-+			major_cmd->err_no = -UDA_EINVAL;
-+			err = snprintf(major_cmd->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "%s|%s option need parameter.",
-+				       option->little, option->large);
-+			if (err <= 0) {
-+				PMD_DRV_LOG(ERR,
-+					    "snprintf cmd option need para "
-+					    "failed, err: %d.",
-+					    err);
-+			}
-+			return -UDA_EINVAL;
-+		}
-+
-+		/* Record messages. */
-+		ret = option->record(major_cmd, arg);
-+		if (ret != UDA_SUCCESS)
-+			return ret;
-+		break;
-+	}
-+
-+	/* Illegal option. */
-+	if (j == major_cmd->option_count) {
-+		major_cmd->err_no = -UDA_EINVAL;
-+		err = snprintf(major_cmd->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "%s is not option needed.", arg);
-+		if (err <= 0) {
-+			PMD_DRV_LOG(ERR,
-+				"snprintf cmd option invalid failed, err: %d.",
-+				err);
-+		}
-+		return -UDA_EINVAL;
-+	}
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+major_command_parse(major_cmd_t *major_cmd, int argc, char **argv)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < argc; i++) {
-+		err = major_cmd_option_check(major_cmd, argv, &i);
-+		if (err != UDA_SUCCESS)
-+			return err;
-+	}
-+
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+copy_reslut_to_buffer(void *buf_out, char *reslut, int len)
-+{
-+	int ret;
-+
-+	ret = snprintf(buf_out, len - 1, "%s", reslut);
-+	if (ret <= 0)
-+		return 0;
-+
-+	return ret + 1;
-+}
-+
-+void
-+command_parse(cmd_adapter_t *adapter, int argc, char **argv, void *buf_out,
-+	      uint32_t *out_len)
-+{
-+	int i;
-+	major_cmd_t *major_cmd = NULL;
-+	char *arg = argv[1];
-+
-+	if (is_help_version(adapter, argc, arg) == UDA_TRUE) {
-+		*out_len = (u32)copy_reslut_to_buffer(buf_out,
-+			adapter->show_str, MAX_SHOW_STR_LEN);
-+		return;
-+	}
-+
-+	for (i = 0; i < adapter->major_cmds; i++) {
-+		major_cmd = adapter->p_major_cmd[i];
-+
-+		/* Find major command. */
-+		if (!string_cmp(major_cmd->name, arg))
-+			continue;
-+		if (check_command_length(argc, argv) != UDA_SUCCESS) {
-+			major_cmd->err_no = -UDA_EINVAL;
-+			(void)snprintf(major_cmd->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "Command input too long.");
-+			break;
-+		}
-+
-+		/* Deal sub command. */
-+		if (argc > SUB_COMMAND_OFFSET) {
-+			if (major_command_parse(major_cmd,
-+				    argc - SUB_COMMAND_OFFSET,
-+				    argv + SUB_COMMAND_OFFSET) != UDA_SUCCESS) {
-+				goto PARSE_OUT;
-+			}
-+		}
-+
-+		/* Command exec. */
-+		major_cmd->execute(major_cmd);
-+		break;
-+	}
-+
-+	/* Not find command. */
-+	if (i == adapter->major_cmds) {
-+		hinic3_pmd_mml_log(adapter->show_str, &adapter->show_len,
-+				   "Unknown major command, assign 'evsadm exec "
-+				   "dump-hinic-status -h' for help.");
-+		*out_len = (u32)copy_reslut_to_buffer(buf_out,
-+			adapter->show_str, MAX_SHOW_STR_LEN);
-+		return;
-+	}
-+
-+PARSE_OUT:
-+	if (major_cmd->err_no != UDA_SUCCESS &&
-+	    major_cmd->err_no != -UDA_CANCEL) {
-+		PMD_DRV_LOG(ERR, "%s command error(%d): %s", major_cmd->name,
-+			    major_cmd->err_no, major_cmd->err_str);
-+
-+		hinic3_pmd_mml_log(major_cmd->show_str, &major_cmd->show_len,
-+				   "%s command error(%d): %s",
-+				   major_cmd->name, major_cmd->err_no,
-+				   major_cmd->err_str);
-+	}
-+	*out_len = (u32)copy_reslut_to_buffer(buf_out, major_cmd->show_str,
-+					      MAX_SHOW_STR_LEN);
-+}
-+
-+void
-+tool_target_init(int *bus_num, char *dev_name, int len)
-+{
-+	*bus_num = TRGET_UNKNOWN_BUS_NUM;
-+	(void)memset(dev_name, 0, len);
-+}
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_cmd.h b/drivers/net/hinic3/mml/hinic3_mml_cmd.h
-new file mode 100644
-index 0000000000..0e1ece38f0
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_cmd.h
-@@ -0,0 +1,131 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#ifndef _HINIC3_MML_CMD
-+#define _HINIC3_MML_CMD
-+
++#include <errno.h>
 +#include <stdint.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
 +
-+#define COMMAND_HELP_POSTION(argc)            \
-+	({                                    \
-+		typeof(argc) __argc = (argc); \
-+		(__argc == 1 || __argc == 2); \
-+	})
-+#define COMMAND_VERSION_POSTION(argc) ((argc) == 2)
-+#define SUB_COMMAND_OFFSET	      2
-+
-+#define COMMAND_MAX_MAJORS	 128
-+#define COMMAND_MAX_OPTIONS	 64
-+#define PARAM_MAX_STRING	 128
-+#define COMMAND_MAX_STRING	 512
-+#define COMMANDER_ERR_MAX_STRING 128
-+
-+#define MAX_NAME_LEN	 32
-+#define MAX_DES_LEN	 128
-+#define MAX_SHOW_STR_LEN 2048
-+
-+struct tag_major_cmd_t;
-+struct tag_cmd_adapter_t;
-+
-+typedef int (*command_record_t)(struct tag_major_cmd_t *major, char *param);
-+typedef void (*command_executeute_t)(struct tag_major_cmd_t *major);
-+
-+typedef struct {
-+	const char *little;
-+	const char *large;
-+	unsigned int have_param;
-+	command_record_t record;
-+} cmd_option_t;
-+
-+/* Major command structure for save command details and options. */
-+typedef struct tag_major_cmd_t {
-+	struct tag_cmd_adapter_t *adapter;
-+	char name[MAX_NAME_LEN];
-+	int option_count;
-+	cmd_option_t options[COMMAND_MAX_OPTIONS];
-+	uint32_t options_repeat_flag[COMMAND_MAX_OPTIONS];
-+	command_executeute_t execute;
-+	int err_no;
-+	char err_str[COMMANDER_ERR_MAX_STRING];
-+	char show_str[MAX_SHOW_STR_LEN];
-+	int show_len;
-+	char description[MAX_DES_LEN];
-+	void *cmd_st; /**< Command show queue state structure. */
-+} major_cmd_t;
-+
-+typedef struct tag_cmd_adapter_t {
-+	const char *name;
-+	const char *version;
-+	major_cmd_t *p_major_cmd[COMMAND_MAX_MAJORS];
-+	int major_cmds;
-+	char show_str[MAX_SHOW_STR_LEN];
-+	int show_len;
-+	char *cmd_buf;
-+} cmd_adapter_t;
-+
-+/**
-+ * Add an option to a major command.
-+ *
-+ * This function adds a command option with its short and long forms, whether it
-+ * requires a parameter, and the function to handle it.
-+ *
-+ * @param[in] major_cmd
-+ * Pointer to the major command structure.
-+ * @param[in] little
-+ * Short form of the option.
-+ * @param[in] large
-+ * Long form of the option.
-+ * @param[in] have_param
-+ * Flag indicating whether the option requires a parameter.
-+ * @param[in] record
-+ * Function to handle the option's action.
-+ */
-+void major_command_option(major_cmd_t *major_cmd, const char *little,
-+			  const char *large, uint32_t have_param,
-+			  command_record_t record);
-+
-+/**
-+ * Register a major command with adapter.
-+ *
-+ * @param[in] adapter
-+ * Pointer to command adapter.
-+ * @param[in] major_cmd
-+ * The major command to be registered with the adapter.
-+ */
-+void major_command_register(cmd_adapter_t *adapter, major_cmd_t *major_cmd);
-+
-+/**
-+ * Parse and execute commands.
-+ *
-+ * @param[in] adapter
-+ * Pointer to command adapter.
-+ * @param[in] argc
-+ * The number of command arguments.
-+ * @param[in] argv
-+ * The array of command arguments.
-+ * @param[out] buf_out
-+ * The buffer used to store the output result.
-+ * @param[out] out_len
-+ * The length (in bytes) of the output result.
-+ */
-+void command_parse(cmd_adapter_t *adapter, int argc, char **argv, void *buf_out,
-+		   uint32_t *out_len);
-+
-+/**
-+ * Initialize the target bus number and device name.
-+ *
-+ * @param[out] bus_num
-+ * Pointer to the bus number, which will be set to a default unknown value.
-+ * @param[out] dev_name
-+ * Pointer to the device name buffer, which will be cleared (set to zeros).
-+ * @param[in] len
-+ * The length of the device name buffer.
-+ */
-+void tool_target_init(int *bus_num, char *dev_name, int len);
-+
-+int cmd_show_q_init(cmd_adapter_t *adapter);
-+int cmd_show_xstats_init(cmd_adapter_t *adapter);
-+int cmd_show_dump_init(cmd_adapter_t *adapter);
-+
-+#endif /* _HINIC3_MML_CMD */
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_ioctl.c b/drivers/net/hinic3/mml/hinic3_mml_ioctl.c
-new file mode 100644
-index 0000000000..0fd6b97f5e
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_ioctl.c
-@@ -0,0 +1,215 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+#include <rte_ethdev.h>
-+#include <rte_pci.h>
-+#include <rte_bus_pci.h>
++#include <rte_byteorder.h>
 +#include <rte_common.h>
++#include <rte_ethdev.h>
 +#include <rte_ether.h>
-+#include <rte_ethdev_core.h>
-+#include "hinic3_mml_lib.h"
-+#include "hinic3_dbg.h"
-+#include "hinic3_compat.h"
-+#include "hinic3_csr.h"
-+#include "hinic3_hwdev.h"
-+#include "hinic3_nic_cfg.h"
++#include <rte_flow.h>
++#include <rte_flow_driver.h>
++#include <rte_malloc.h>
++
++#include "base/hinic3_compat.h"
++#include "base/hinic3_hwdev.h"
++#include "base/hinic3_hwif.h"
++#include "base/hinic3_nic_cfg.h"
 +#include "hinic3_ethdev.h"
++#include "hinic3_fdir.h"
 +
-+static int
-+get_tx_info(struct rte_eth_dev *dev, void *buf_in, uint16_t in_size,
-+	    void *buf_out, uint16_t *out_size)
++#define HINIC3_UINT1_MAX  0x1
++#define HINIC3_UINT4_MAX  0xf
++#define HINIC3_UINT15_MAX 0x7fff
++
++#define HINIC3_DEV_PRIVATE_TO_TCAM_INFO(nic_dev) \
++	(&((struct hinic3_nic_dev *)(nic_dev))->tcam)
++
++/**
++ * Perform a bitwise AND operation on the input key value and mask, and stores
++ * the result in the key_y array.
++ *
++ * @param[out] key_y
++ * Array for storing results.
++ * @param[in] src_input
++ * Input key array.
++ * @param[in] mask
++ * Mask array.
++ * @param[in] len
++ * Length of the key value and mask.
++ */
++static void
++tcam_translate_key_y(u8 *key_y, u8 *src_input, u8 *mask, u8 len)
 +{
-+	uint16_t q_id = *((uint16_t *)buf_in);
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	u8 idx;
 +
-+	if (in_size != sizeof(int))
-+		return -UDA_EINVAL;
-+
-+	return hinic3_dbg_get_sq_info(nic_dev->hwdev, q_id, buf_out, out_size);
++	for (idx = 0; idx < len; idx++)
++		key_y[idx] = src_input[idx] & mask[idx];
 +}
 +
-+static int
-+get_tx_wqe_info(struct rte_eth_dev *dev, void *buf_in, uint16_t in_size,
-+		void *buf_out, uint16_t *out_size)
++/**
++ * Convert key_y to key_x using the exclusive OR operation.
++ *
++ * @param[out] key_x
++ * Array for storing results.
++ * @param[in] key_y
++ * Input key array.
++ * @param[in] mask
++ * Mask array.
++ * @param[in] len
++ * Length of the key value and mask.
++ */
++static void
++tcam_translate_key_x(u8 *key_x, u8 *key_y, u8 *mask, u8 len)
 +{
-+	struct hinic_wqe_info *wqe_info = (struct hinic_wqe_info *)buf_in;
-+	uint16_t q_id = (uint16_t)wqe_info->q_id;
-+	uint16_t idx = (uint16_t)wqe_info->wqe_id;
-+	uint16_t wqebb_cnt = (uint16_t)wqe_info->wqebb_cnt;
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	u8 idx;
 +
-+	if (in_size != sizeof(struct hinic_wqe_info))
-+		return -UDA_EINVAL;
-+
-+	return hinic3_dbg_get_sq_wqe_info(nic_dev->hwdev, q_id, idx, wqebb_cnt,
-+					  buf_out, out_size);
++	for (idx = 0; idx < len; idx++)
++		key_x[idx] = key_y[idx] ^ mask[idx];
 +}
 +
-+static int
-+get_rx_info(struct rte_eth_dev *dev, void *buf_in, uint16_t in_size,
-+	    void *buf_out, uint16_t *out_size)
++static void
++tcam_key_calculate(struct hinic3_tcam_key *tcam_key,
++		   struct hinic3_tcam_cfg_rule *fdir_tcam_rule)
 +{
-+	uint16_t q_id = *((uint16_t *)buf_in);
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+
-+	if (in_size != sizeof(int))
-+		return -UDA_EINVAL;
-+
-+	return hinic3_dbg_get_rq_info(nic_dev->hwdev, q_id, buf_out, out_size);
++	tcam_translate_key_y(fdir_tcam_rule->key.y, (u8 *)(&tcam_key->key_info),
++			     (u8 *)(&tcam_key->key_mask),
++			     HINIC3_TCAM_FLOW_KEY_SIZE);
++	tcam_translate_key_x(fdir_tcam_rule->key.x, fdir_tcam_rule->key.y,
++			     (u8 *)(&tcam_key->key_mask),
++			     HINIC3_TCAM_FLOW_KEY_SIZE);
 +}
 +
-+static int
-+get_rx_wqe_info(struct rte_eth_dev *dev, void *buf_in, uint16_t in_size,
-+		void *buf_out, uint16_t *out_size)
++static void
++hinic3_fdir_tcam_ipv4_init(struct hinic3_fdir_filter *rule,
++			   struct hinic3_tcam_key *tcam_key)
 +{
-+	struct hinic_wqe_info *wqe_info = (struct hinic_wqe_info *)buf_in;
-+	uint16_t q_id = (uint16_t)wqe_info->q_id;
-+	uint16_t idx = (uint16_t)wqe_info->wqe_id;
-+	uint16_t wqebb_cnt = (uint16_t)wqe_info->wqebb_cnt;
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	/* Fill type of ip. */
++	tcam_key->key_mask.ip_type = HINIC3_UINT1_MAX;
++	tcam_key->key_info.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
 +
-+	if (in_size != sizeof(struct hinic_wqe_info))
-+		return -UDA_EINVAL;
++	/* Fill src IPv4. */
++	tcam_key->key_mask.sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv4.src_ip);
++	tcam_key->key_mask.sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv4.src_ip);
++	tcam_key->key_info.sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv4.src_ip);
++	tcam_key->key_info.sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv4.src_ip);
 +
-+	return hinic3_dbg_get_rq_wqe_info(nic_dev->hwdev, q_id, idx, wqebb_cnt,
-+					  buf_out, out_size);
++	/* Fill dst IPv4. */
++	tcam_key->key_mask.dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv4.dst_ip);
++	tcam_key->key_mask.dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv4.dst_ip);
++	tcam_key->key_info.dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv4.dst_ip);
++	tcam_key->key_info.dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv4.dst_ip);
 +}
 +
-+static int
-+get_rx_cqe_info(struct rte_eth_dev *dev, void *buf_in, uint16_t in_size,
-+		void *buf_out, uint16_t *out_size)
++static void
++hinic3_fdir_tcam_ipv6_init(struct hinic3_fdir_filter *rule,
++			   struct hinic3_tcam_key *tcam_key)
 +{
-+	struct hinic_wqe_info *wqe_info = (struct hinic_wqe_info *)buf_in;
-+	uint16_t q_id = (uint16_t)wqe_info->q_id;
-+	uint16_t idx = (uint16_t)wqe_info->wqe_id;
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	/* Fill type of ip. */
++	tcam_key->key_mask_ipv6.ip_type = HINIC3_UINT1_MAX;
++	tcam_key->key_info_ipv6.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
 +
-+	if (in_size != sizeof(struct hinic_wqe_info))
-+		return -UDA_EINVAL;
++	/* Fill src IPv6. */
++	tcam_key->key_mask_ipv6.sipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0]);
++	tcam_key->key_mask_ipv6.sipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0]);
++	tcam_key->key_mask_ipv6.sipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x1]);
++	tcam_key->key_mask_ipv6.sipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x1]);
++	tcam_key->key_mask_ipv6.sipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x2]);
++	tcam_key->key_mask_ipv6.sipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x2]);
++	tcam_key->key_mask_ipv6.sipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x3]);
++	tcam_key->key_mask_ipv6.sipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x3]);
++	tcam_key->key_info_ipv6.sipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0]);
++	tcam_key->key_info_ipv6.sipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0]);
++	tcam_key->key_info_ipv6.sipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x1]);
++	tcam_key->key_info_ipv6.sipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x1]);
++	tcam_key->key_info_ipv6.sipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x2]);
++	tcam_key->key_info_ipv6.sipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x2]);
++	tcam_key->key_info_ipv6.sipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x3]);
++	tcam_key->key_info_ipv6.sipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x3]);
 +
-+	return hinic3_dbg_get_rx_cqe_info(nic_dev->hwdev, q_id, idx, buf_out,
-+					  out_size);
++	/* Fill dst IPv6. */
++	tcam_key->key_mask_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0]);
++	tcam_key->key_mask_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0]);
++	tcam_key->key_mask_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x3]);
++	tcam_key->key_mask_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x3]);
++	tcam_key->key_info_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0]);
++	tcam_key->key_info_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0]);
++	tcam_key->key_info_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x1]);
++	tcam_key->key_info_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x1]);
++	tcam_key->key_info_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x2]);
++	tcam_key->key_info_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x2]);
++	tcam_key->key_info_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x3]);
++	tcam_key->key_info_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x3]);
 +}
 +
-+typedef int (*nic_drv_module)(struct rte_eth_dev *dev, void *buf_in,
-+			      uint16_t in_size, void *buf_out,
-+			      uint16_t *out_size);
-+
-+struct nic_drv_module_handle {
-+	enum driver_cmd_type drv_cmd_name;
-+	nic_drv_module drv_func;
-+};
-+
-+const struct nic_drv_module_handle g_nic_drv_module_cmd_handle[] = {
-+	{TX_INFO, get_tx_info},		{TX_WQE_INFO, get_tx_wqe_info},
-+	{RX_INFO, get_rx_info},		{RX_WQE_INFO, get_rx_wqe_info},
-+	{RX_CQE_INFO, get_rx_cqe_info},
-+};
-+
-+static int
-+send_to_nic_driver(struct rte_eth_dev *dev, struct msg_module *nt_msg)
++/**
++ * Set the TCAM information in notunnel scenario.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] rule
++ * Pointer to the filtering rule.
++ * @param[in] tcam_key
++ * Pointer to the TCAM key.
++ */
++static void
++hinic3_fdir_tcam_notunnel_init(struct rte_eth_dev *dev,
++			       struct hinic3_fdir_filter *rule,
++			       struct hinic3_tcam_key *tcam_key)
 +{
-+	int index;
-+	int err = 0;
-+	enum driver_cmd_type cmd_type =
-+		(enum driver_cmd_type)nt_msg->msg_formate;
-+	int num_cmds = sizeof(g_nic_drv_module_cmd_handle) /
-+		       sizeof(g_nic_drv_module_cmd_handle[0]);
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
 +
-+	for (index = 0; index < num_cmds; index++) {
-+		if (cmd_type ==
-+		    g_nic_drv_module_cmd_handle[index].drv_cmd_name) {
-+			err = g_nic_drv_module_cmd_handle[index].drv_func(dev,
-+				nt_msg->in_buf,
-+				(uint16_t)nt_msg->buf_in_size, nt_msg->out_buf,
-+				(uint16_t *)&nt_msg->buf_out_size);
-+			break;
-+		}
++	/* Fill tcam_key info. */
++	tcam_key->key_mask.sport = rule->key_mask.src_port;
++	tcam_key->key_info.sport = rule->key_spec.src_port;
++
++	tcam_key->key_mask.dport = rule->key_mask.dst_port;
++	tcam_key->key_info.dport = rule->key_spec.dst_port;
++
++	tcam_key->key_mask.tunnel_type = HINIC3_UINT4_MAX;
++	tcam_key->key_info.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++
++	tcam_key->key_mask.function_id = HINIC3_UINT15_MAX;
++	tcam_key->key_info.function_id = hinic3_global_func_id(nic_dev->hwdev) &
++					 HINIC3_UINT15_MAX;
++
++	tcam_key->key_mask.ip_proto = rule->key_mask.proto;
++	tcam_key->key_info.ip_proto = rule->key_spec.proto;
++
++	if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV4)
++		hinic3_fdir_tcam_ipv4_init(rule, tcam_key);
++	else if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV6)
++		hinic3_fdir_tcam_ipv6_init(rule, tcam_key);
++}
++
++static void
++hinic3_fdir_tcam_vxlan_ipv4_init(struct hinic3_fdir_filter *rule,
++				 struct hinic3_tcam_key *tcam_key)
++{
++	/* Fill type of ip. */
++	tcam_key->key_mask.ip_type = HINIC3_UINT1_MAX;
++	tcam_key->key_info.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++
++	/* Fill src ipv4. */
++	tcam_key->key_mask.sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv4.src_ip);
++	tcam_key->key_mask.sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv4.src_ip);
++	tcam_key->key_info.sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv4.src_ip);
++	tcam_key->key_info.sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv4.src_ip);
++
++	/* Fill dst ipv4. */
++	tcam_key->key_mask.dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv4.dst_ip);
++	tcam_key->key_mask.dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv4.dst_ip);
++	tcam_key->key_info.dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv4.dst_ip);
++	tcam_key->key_info.dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv4.dst_ip);
++}
++
++static void
++hinic3_fdir_tcam_vxlan_ipv6_init(struct hinic3_fdir_filter *rule,
++				 struct hinic3_tcam_key *tcam_key)
++{
++	/* Fill type of ip. */
++	tcam_key->key_mask_vxlan_ipv6.ip_type = HINIC3_UINT1_MAX;
++	tcam_key->key_info_vxlan_ipv6.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++
++	/* Use inner dst ipv6 to fill the dst ipv6 of tcam_key. */
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x3]);
++	tcam_key->key_mask_vxlan_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.inner_ipv6.dst_ip[0x3]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x1]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x1]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x2]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x2]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x3]);
++	tcam_key->key_info_vxlan_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.inner_ipv6.dst_ip[0x3]);
++}
++
++static void
++hinic3_fdir_tcam_outer_ipv6_init(struct hinic3_fdir_filter *rule,
++				 struct hinic3_tcam_key *tcam_key)
++{
++	tcam_key->key_mask_ipv6.sipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0]);
++	tcam_key->key_mask_ipv6.sipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0]);
++	tcam_key->key_mask_ipv6.sipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x1]);
++	tcam_key->key_mask_ipv6.sipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x1]);
++	tcam_key->key_mask_ipv6.sipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x2]);
++	tcam_key->key_mask_ipv6.sipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x2]);
++	tcam_key->key_mask_ipv6.sipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0x3]);
++	tcam_key->key_mask_ipv6.sipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.src_ip[0x3]);
++	tcam_key->key_info_ipv6.sipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0]);
++	tcam_key->key_info_ipv6.sipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0]);
++	tcam_key->key_info_ipv6.sipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x1]);
++	tcam_key->key_info_ipv6.sipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x1]);
++	tcam_key->key_info_ipv6.sipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x2]);
++	tcam_key->key_info_ipv6.sipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x2]);
++	tcam_key->key_info_ipv6.sipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.src_ip[0x3]);
++	tcam_key->key_info_ipv6.sipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x3]);
++
++	tcam_key->key_mask_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0]);
++	tcam_key->key_mask_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0]);
++	tcam_key->key_mask_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x1]);
++	tcam_key->key_mask_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x2]);
++	tcam_key->key_mask_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0x3]);
++	tcam_key->key_mask_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv6.dst_ip[0x3]);
++	tcam_key->key_info_ipv6.dipv6_key0 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0]);
++	tcam_key->key_info_ipv6.dipv6_key1 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0]);
++	tcam_key->key_info_ipv6.dipv6_key2 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x1]);
++	tcam_key->key_info_ipv6.dipv6_key3 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x1]);
++	tcam_key->key_info_ipv6.dipv6_key4 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x2]);
++	tcam_key->key_info_ipv6.dipv6_key5 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x2]);
++	tcam_key->key_info_ipv6.dipv6_key6 =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv6.dst_ip[0x3]);
++	tcam_key->key_info_ipv6.dipv6_key7 =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x3]);
++}
++
++static void
++hinic3_fdir_tcam_ipv6_vxlan_init(struct rte_eth_dev *dev,
++				 struct hinic3_fdir_filter *rule,
++				 struct hinic3_tcam_key *tcam_key)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++
++	tcam_key->key_mask_ipv6.ip_proto = rule->key_mask.proto;
++	tcam_key->key_info_ipv6.ip_proto = rule->key_spec.proto;
++
++	tcam_key->key_mask_ipv6.tunnel_type = HINIC3_UINT4_MAX;
++	tcam_key->key_info_ipv6.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++
++	tcam_key->key_mask_ipv6.outer_ip_type = HINIC3_UINT1_MAX;
++	tcam_key->key_info_ipv6.outer_ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++
++	tcam_key->key_mask_ipv6.function_id = HINIC3_UINT15_MAX;
++	tcam_key->key_info_ipv6.function_id =
++		hinic3_global_func_id(nic_dev->hwdev) & HINIC3_UINT15_MAX;
++
++	tcam_key->key_mask_ipv6.dport = rule->key_mask.dst_port;
++	tcam_key->key_info_ipv6.dport = rule->key_spec.dst_port;
++
++	tcam_key->key_mask_ipv6.sport = rule->key_mask.src_port;
++	tcam_key->key_info_ipv6.sport = rule->key_spec.src_port;
++
++	if (rule->ip_type == HINIC3_FDIR_IP_TYPE_ANY)
++		hinic3_fdir_tcam_outer_ipv6_init(rule, tcam_key);
++}
++
++/**
++ * Sets the TCAM information in the VXLAN scenario.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] rule
++ * Pointer to the filtering rule.
++ * @param[in] tcam_key
++ * Pointer to the TCAM key.
++ */
++static void
++hinic3_fdir_tcam_vxlan_init(struct rte_eth_dev *dev,
++			    struct hinic3_fdir_filter *rule,
++			    struct hinic3_tcam_key *tcam_key)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++
++	if (rule->outer_ip_type == HINIC3_FDIR_IP_TYPE_IPV6) {
++		hinic3_fdir_tcam_ipv6_vxlan_init(dev, rule, tcam_key);
++		return;
 +	}
 +
-+	if (index == num_cmds) {
-+		PMD_DRV_LOG(ERR, "Unknown nic driver cmd: %d", cmd_type);
-+		err = -UDA_EINVAL;
-+	}
++	tcam_key->key_mask.ip_proto = rule->key_mask.proto;
++	tcam_key->key_info.ip_proto = rule->key_spec.proto;
 +
-+	return err;
++	tcam_key->key_mask.sport = rule->key_mask.src_port;
++	tcam_key->key_info.sport = rule->key_spec.src_port;
++
++	tcam_key->key_mask.dport = rule->key_mask.dst_port;
++	tcam_key->key_info.dport = rule->key_spec.dst_port;
++
++	tcam_key->key_mask.outer_sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv4.src_ip);
++	tcam_key->key_mask.outer_sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv4.src_ip);
++	tcam_key->key_info.outer_sipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv4.src_ip);
++	tcam_key->key_info.outer_sipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv4.src_ip);
++
++	tcam_key->key_mask.outer_dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv4.dst_ip);
++	tcam_key->key_mask.outer_dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.ipv4.dst_ip);
++	tcam_key->key_info.outer_dipv4_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.ipv4.dst_ip);
++	tcam_key->key_info.outer_dipv4_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv4.dst_ip);
++
++	tcam_key->key_mask.vni_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_mask.tunnel.tunnel_id);
++	tcam_key->key_mask.vni_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_mask.tunnel.tunnel_id);
++	tcam_key->key_info.vni_h =
++		HINIC3_32_UPPER_16_BITS(rule->key_spec.tunnel.tunnel_id);
++	tcam_key->key_info.vni_l =
++		HINIC3_32_LOWER_16_BITS(rule->key_spec.tunnel.tunnel_id);
++
++	tcam_key->key_mask.tunnel_type = HINIC3_UINT4_MAX;
++	tcam_key->key_info.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++
++	tcam_key->key_mask.function_id = HINIC3_UINT15_MAX;
++	tcam_key->key_info.function_id = hinic3_global_func_id(nic_dev->hwdev) &
++					 HINIC3_UINT15_MAX;
++
++	if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV4)
++		hinic3_fdir_tcam_vxlan_ipv4_init(rule, tcam_key);
++
++	else if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV6)
++		hinic3_fdir_tcam_vxlan_ipv6_init(rule, tcam_key);
 +}
 +
-+static int
-+hinic3_msg_handle(struct rte_eth_dev *dev, struct msg_module *nt_msg)
++static void
++hinic3_fdir_tcam_info_init(struct rte_eth_dev *dev,
++			   struct hinic3_fdir_filter *rule,
++			   struct hinic3_tcam_key *tcam_key,
++			   struct hinic3_tcam_cfg_rule *fdir_tcam_rule)
 +{
-+	int err;
++	/* Initialize the TCAM based on the tunnel type. */
++	if (rule->tunnel_type == HINIC3_FDIR_TUNNEL_MODE_NORMAL)
++		hinic3_fdir_tcam_notunnel_init(dev, rule, tcam_key);
++	else
++		hinic3_fdir_tcam_vxlan_init(dev, rule, tcam_key);
 +
-+	switch (nt_msg->module) {
-+	case SEND_TO_NIC_DRIVER:
-+		err = send_to_nic_driver(dev, nt_msg);
-+		if (err != 0)
-+			PMD_DRV_LOG(ERR, "Send message to driver failed");
-+		break;
-+	default:
-+		PMD_DRV_LOG(ERR, "Unknown message module: %d", nt_msg->module);
-+		err = -UDA_EINVAL;
-+		break;
-+	}
-+
-+	return err;
++	/* Set the queue index. */
++	fdir_tcam_rule->data.qid = rule->rq_index;
++	/* Calculate key of TCAM. */
++	tcam_key_calculate(tcam_key, fdir_tcam_rule);
 +}
 +
-+static struct rte_eth_dev *
-+get_eth_dev_by_pci_addr(char *pci_addr, __rte_unused int len)
++/**
++ * Find filter in given ethertype filter list.
++ *
++ * @param[in] filter_list
++ * Point to the Ether filter list.
++ * @param[in] key
++ * The tcam key to find.
++ * @return
++ * If a matching filter is found, the filter is returned, otherwise
++ * RTE_ETH_FILTER_NONE.
++ */
++static inline uint16_t
++hinic3_ethertype_filter_lookup(struct hinic3_ethertype_filter_list *ethertype_list,
++			       uint16_t type)
 +{
-+	uint32_t i;
-+	struct rte_eth_dev *eth_dev = NULL;
-+	struct rte_pci_device *pci_dev = NULL;
-+	int ret;
-+	uint32_t bus, devid, function;
++	struct rte_flow *it;
++	struct hinic3_filter_t *filter_rules;
 +
-+	ret = sscanf(pci_addr, "%02x:%02x.%x", &bus, &devid, &function);
-+	if (ret <= 0) {
-+		PMD_DRV_LOG(ERR,
-+			    "Get pci bus devid and function id fail, err: %d",
-+			    ret);
-+		return NULL;
++	TAILQ_FOREACH(it, ethertype_list, node) {
++		filter_rules = it->rule;
++		if (type == filter_rules->ethertype_filter.ether_type)
++			return filter_rules->ethertype_filter.ether_type;
 +	}
 +
-+	for (i = 0; i < RTE_MAX_ETHPORTS; i++) {
-+		eth_dev = &rte_eth_devices[i];
-+		if (eth_dev->state != RTE_ETH_DEV_ATTACHED)
-+			continue;
++	return RTE_ETH_FILTER_NONE;
++}
 +
-+		pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++/**
++ * Find the filter that matches the given key in the TCAM filter list.
++ *
++ * @param[in] filter_list
++ * Point to the tcam filter list.
++ * @param[in] key
++ * The tcam key to find.
++ * @return
++ * If a matching filter is found, the filter is returned, otherwise NULL.
++ */
++static inline struct hinic3_tcam_filter *
++hinic3_tcam_filter_lookup(struct hinic3_tcam_filter_list *filter_list,
++			  struct hinic3_tcam_key *key)
++{
++	struct hinic3_tcam_filter *it;
 +
-+#ifdef CONFIG_SP_VID_DID
-+		if (pci_dev->id.vendor_id == PCI_VENDOR_ID_SPNIC &&
-+		    (pci_dev->id.device_id == HINIC3_DEV_ID_STANDARD ||
-+		     pci_dev->id.device_id == HINIC3_DEV_ID_VF) &&
-+#else
-+		if (pci_dev->id.vendor_id == PCI_VENDOR_ID_HUAWEI &&
-+		    (pci_dev->id.device_id == HINIC3_DEV_ID_STANDARD ||
-+		     pci_dev->id.device_id == HINIC3_DEV_ID_VF) &&
-+#endif
-+		    pci_dev->addr.bus == bus && pci_dev->addr.devid == devid &&
-+		    pci_dev->addr.function == function) {
-+			return eth_dev;
++	TAILQ_FOREACH(it, filter_list, entries) {
++		if (memcmp(key, &it->tcam_key,
++			   sizeof(struct hinic3_tcam_key)) == 0) {
++			return it;
 +		}
 +	}
 +
 +	return NULL;
 +}
-+
-+int
-+hinic3_pmd_mml_ioctl(void *msg)
-+{
-+	struct msg_module *nt_msg = msg;
-+	struct rte_eth_dev *dev;
-+
-+	dev = get_eth_dev_by_pci_addr(nt_msg->device_name,
-+				      sizeof(nt_msg->device_name));
-+	if (!dev) {
-+		PMD_DRV_LOG(ERR, "Can not get the device %s correctly",
-+			    nt_msg->device_name);
-+		return UDA_FAIL;
-+	}
-+
-+	return hinic3_msg_handle(dev, nt_msg);
-+}
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_lib.c b/drivers/net/hinic3/mml/hinic3_mml_lib.c
-new file mode 100644
-index 0000000000..dae2efc54b
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_lib.c
-@@ -0,0 +1,136 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
++/**
++ * Allocate memory for dynamic blocks and then add them to the queue.
++ *
++ * @param[in] tcam_info
++ * Point to TCAM information.
++ * @param[in] dynamic_block_id
++ * Indicate the ID of a dynamic block.
++ * @return
++ * Return the pointer to the dynamic block, or NULL if the allocation fails.
 + */
-+#include "hinic3_compat.h"
-+#include "hinic3_mml_lib.h"
-+
-+int
-+tool_get_valid_target(char *name, struct tool_target *target)
++static struct hinic3_tcam_dynamic_block *
++hinic3_alloc_dynamic_block_resource(struct hinic3_tcam_info *tcam_info,
++				    u16 dynamic_block_id)
 +{
-+	int ret = UDA_SUCCESS;
++	struct hinic3_tcam_dynamic_block *dynamic_block_ptr = NULL;
 +
-+	if (strlen(name) >= MAX_DEV_LEN) {
++	dynamic_block_ptr =
++		rte_zmalloc("hinic3_tcam_dynamic_mem",
++			    sizeof(struct hinic3_tcam_dynamic_block), 0);
++	if (dynamic_block_ptr == NULL) {
 +		PMD_DRV_LOG(ERR,
-+			    "Input parameter of device name is too long.");
-+		ret = -UDA_ELEN;
-+	} else {
-+		(void)memcpy(target->dev_name, name, strlen(name));
-+		target->bus_num = 0;
++			    "Alloc fdir filter dynamic block index %d memory "
++			    "failed!",
++			    dynamic_block_id);
++		return NULL;
 +	}
 +
-+	return ret;
++	dynamic_block_ptr->dynamic_block_id = dynamic_block_id;
++
++	/* Add new block to the end of the TCAM dynamic block list. */
++	TAILQ_INSERT_TAIL(&tcam_info->tcam_dynamic_info.tcam_dynamic_list,
++			  dynamic_block_ptr, entries);
++
++	tcam_info->tcam_dynamic_info.dynamic_block_cnt++;
++
++	return dynamic_block_ptr;
 +}
 +
 +static void
-+fill_ioctl_msg_hd(struct msg_module *msg, unsigned int module,
-+		  unsigned int msg_formate, unsigned int in_buff_len,
-+		  unsigned int out_buff_len, char *dev_name, int bus_num)
++hinic3_free_dynamic_block_resource(struct hinic3_tcam_info *tcam_info,
++				   struct hinic3_tcam_dynamic_block *dynamic_block_ptr)
 +{
-+	(void)memcpy(msg->device_name, dev_name, strlen(dev_name) + 1);
++	if (dynamic_block_ptr == NULL)
++		return;
 +
-+	msg->module = module;
-+	msg->msg_formate = msg_formate;
-+	msg->buf_in_size = in_buff_len;
-+	msg->buf_out_size = out_buff_len;
-+	msg->bus_num = bus_num;
-+}
++	/* Remove the incoming dynamic block from the TCAM dynamic list. */
++	TAILQ_REMOVE(&tcam_info->tcam_dynamic_info.tcam_dynamic_list,
++		     dynamic_block_ptr, entries);
++	rte_free(dynamic_block_ptr);
 +
-+static int
-+lib_ioctl(struct msg_module *in_buf, void *out_buf)
-+{
-+	in_buf->out_buf = out_buf;
-+
-+	return hinic3_pmd_mml_ioctl(in_buf);
-+}
-+
-+int
-+lib_tx_sq_info_get(struct tool_target target, struct nic_sq_info *sq_info,
-+		   int sq_id)
-+{
-+	struct msg_module msg_to_kernel;
-+
-+	(void)memset(&msg_to_kernel, 0, sizeof(msg_to_kernel));
-+	fill_ioctl_msg_hd(&msg_to_kernel, SEND_TO_NIC_DRIVER, TX_INFO,
-+			  (unsigned int)sizeof(int),
-+			  (unsigned int)sizeof(struct nic_sq_info),
-+			  target.dev_name, target.bus_num);
-+	msg_to_kernel.in_buf = (void *)&sq_id;
-+
-+	return lib_ioctl(&msg_to_kernel, sq_info);
-+}
-+
-+int
-+lib_tx_wqe_info_get(struct tool_target target, struct nic_sq_info *sq_info,
-+		    int sq_id, int wqe_id, void *nwqe, int nwqe_size)
-+{
-+	struct msg_module msg_to_kernel;
-+	struct hinic_wqe_info wqe = {0};
-+
-+	wqe.wqe_id = wqe_id;
-+	wqe.q_id = sq_id;
-+	wqe.wqebb_cnt = nwqe_size / sq_info->sq_wqebb_size;
-+
-+	(void)memset(&msg_to_kernel, 0, sizeof(msg_to_kernel));
-+	fill_ioctl_msg_hd(&msg_to_kernel, SEND_TO_NIC_DRIVER, TX_WQE_INFO,
-+			  (unsigned int)(sizeof(struct hinic_wqe_info)),
-+			  nwqe_size, target.dev_name, target.bus_num);
-+	msg_to_kernel.in_buf = (void *)&wqe;
-+
-+	return lib_ioctl(&msg_to_kernel, nwqe);
-+}
-+
-+int
-+lib_rx_rq_info_get(struct tool_target target, struct nic_rq_info *rq_info,
-+		   int rq_id)
-+{
-+	struct msg_module msg_to_kernel;
-+
-+	(void)memset(&msg_to_kernel, 0, sizeof(msg_to_kernel));
-+	fill_ioctl_msg_hd(&msg_to_kernel, SEND_TO_NIC_DRIVER, RX_INFO,
-+			  (unsigned int)(sizeof(int)),
-+			  (unsigned int)sizeof(struct nic_rq_info),
-+			  target.dev_name, target.bus_num);
-+	msg_to_kernel.in_buf = &rq_id;
-+
-+	return lib_ioctl(&msg_to_kernel, rq_info);
-+}
-+
-+int
-+lib_rx_wqe_info_get(struct tool_target target, struct nic_rq_info *rq_info,
-+		    int rq_id, int wqe_id, void *nwqe, int nwqe_size)
-+{
-+	struct msg_module msg_to_kernel;
-+	struct hinic_wqe_info wqe = {0};
-+
-+	wqe.wqe_id = wqe_id;
-+	wqe.q_id = rq_id;
-+	wqe.wqebb_cnt = nwqe_size / rq_info->rq_wqebb_size;
-+
-+	(void)memset(&msg_to_kernel, 0, sizeof(msg_to_kernel));
-+	fill_ioctl_msg_hd(&msg_to_kernel, SEND_TO_NIC_DRIVER, RX_WQE_INFO,
-+			  (unsigned int)(sizeof(struct hinic_wqe_info)),
-+			  nwqe_size, target.dev_name, target.bus_num);
-+	msg_to_kernel.in_buf = (void *)&wqe;
-+
-+	return lib_ioctl(&msg_to_kernel, nwqe);
-+}
-+
-+int
-+lib_rx_cqe_info_get(struct tool_target target,
-+		    __rte_unused struct nic_rq_info *rq_info, int rq_id,
-+		    int wqe_id, void *nwqe, int nwqe_size)
-+{
-+	struct msg_module msg_to_kernel;
-+	struct hinic_wqe_info wqe = {0};
-+
-+	wqe.wqe_id = wqe_id;
-+	wqe.q_id = rq_id;
-+
-+	(void)memset(&msg_to_kernel, 0, sizeof(msg_to_kernel));
-+	fill_ioctl_msg_hd(&msg_to_kernel, SEND_TO_NIC_DRIVER, RX_CQE_INFO,
-+			  (unsigned int)(sizeof(struct hinic_wqe_info)),
-+			  nwqe_size, target.dev_name, target.bus_num);
-+	msg_to_kernel.in_buf = (void *)&wqe;
-+
-+	return lib_ioctl(&msg_to_kernel, nwqe);
-+}
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_lib.h b/drivers/net/hinic3/mml/hinic3_mml_lib.h
-new file mode 100644
-index 0000000000..42c365922f
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_lib.h
-@@ -0,0 +1,275 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#ifndef _HINIC3_MML_LIB
-+#define _HINIC3_MML_LIB
-+
-+#include <string.h>
-+#include <stdint.h>
-+
-+#include "hinic3_mml_cmd.h"
-+#include "hinic3_compat.h"
-+#include "hinic3_mgmt.h"
-+
-+#define MAX_DEV_LEN	      16
-+#define TRGET_UNKNOWN_BUS_NUM (-1)
-+
-+#ifndef DEV_NAME_LEN
-+#define DEV_NAME_LEN 64
-+#endif
-+
-+enum {
-+	UDA_SUCCESS = 0x0,
-+	UDA_FAIL,
-+	UDA_ENXIO,
-+	UDA_ENONMEM,
-+	UDA_EBUSY,
-+	UDA_ECRC,
-+	UDA_EINVAL,
-+	UDA_EFAULT,
-+	UDA_ELEN,
-+	UDA_ECMD,
-+	UDA_ENODRIVER,
-+	UDA_EXIST,
-+	UDA_EOVERSTEP,
-+	UDA_ENOOBJ,
-+	UDA_EOBJ,
-+	UDA_ENOMATCH,
-+	UDA_ETIMEOUT,
-+
-+	UDA_CONTOP,
-+
-+	UDA_REBOOT = 0xFD,
-+	UDA_CANCEL = 0xFE,
-+	UDA_KILLED = 0xFF,
-+};
-+
-+#define PARAM_NEED     1
-+#define PARAM_NOT_NEED 0
-+
-+#define BASE_ALL 0
-+#define BASE_8	 8
-+#define BASE_10	 10
-+#define BASE_16	 16
-+
-+enum module_name {
-+	SEND_TO_NPU = 1,
-+	SEND_TO_MPU,
-+	SEND_TO_SM,
-+
-+	SEND_TO_HW_DRIVER,
-+	SEND_TO_NIC_DRIVER,
-+	SEND_TO_OVS_DRIVER,
-+	SEND_TO_ROCE_DRIVER,
-+	SEND_TO_TOE_DRIVER,
-+	SEND_TO_IWAP_DRIVER,
-+	SEND_TO_FC_DRIVER,
-+	SEND_FCOE_DRIVER,
-+};
-+
-+enum driver_cmd_type {
-+	TX_INFO = 1,
-+	Q_NUM,
-+	TX_WQE_INFO,
-+	TX_MAPPING,
-+	RX_INFO,
-+	RX_WQE_INFO,
-+	RX_CQE_INFO
-+};
-+
-+struct tool_target {
-+	int bus_num;
-+	char dev_name[MAX_DEV_LEN];
-+	void *pri;
-+};
-+
-+struct nic_tx_hw_page {
-+	long long phy_addr;
-+	long long *map_addr;
-+};
-+
-+struct nic_sq_info {
-+	unsigned short q_id;
-+	unsigned short pi; /**< Ring buffer queue producer point. */
-+	unsigned short ci; /**< Ring buffer queue consumer point. */
-+	unsigned short fi; /**< Ring buffer queue complete point. */
-+	unsigned int sq_depth;
-+	unsigned short sq_wqebb_size;
-+	unsigned short *ci_addr;
-+	unsigned long long cla_addr;
-+
-+	struct nic_tx_hw_page doorbell;
-+	unsigned int page_idx;
-+};
-+
-+struct comm_info_l2nic_sq_ci_attr {
-+	struct mgmt_msg_head msg_head;
-+
-+	uint16_t func_idx;
-+	uint8_t dma_attr_off;
-+	uint8_t pending_limit;
-+
-+	uint8_t coalescing_time;
-+	uint8_t int_en;
-+	uint16_t int_offset;
-+
-+	uint32_t l2nic_sqn;
-+	uint32_t rsv;
-+	uint64_t ci_addr;
-+};
-+
-+struct nic_rq_info {
-+	unsigned short q_id; /**< Queue id in current function, 0, 1, 2... */
-+
-+	unsigned short hw_pi; /**< Where pkt buf allocated. */
-+	unsigned short ci;    /**< Where hw pkt received, owned by hw. */
-+	unsigned short sw_pi; /**< Where driver begin receive pkt. */
-+	unsigned short rq_wqebb_size; /**< wqebb size, default to 32 bytes. */
-+
-+	unsigned short rq_depth;
-+	unsigned short buf_len; /**< 2K. */
-+	void *ci_wqe_page_addr; /**< For queue context init. */
-+	void *ci_cla_tbl_addr;
-+	unsigned short int_num;	  /**< RSS support should consider int_num. */
-+	unsigned int msix_vector; /**< For debug. */
-+};
-+
-+struct hinic_wqe_info {
-+	int q_id;
-+	void *slq_handle;
-+	uint32_t wqe_id;
-+	uint32_t wqebb_cnt;
-+};
-+
-+struct npu_cmd_st {
-+	uint32_t mod : 8;
-+	uint32_t cmd : 8;
-+	uint32_t ack_type : 3;
-+	uint32_t direct_resp : 1;
-+	uint32_t len : 12;
-+};
-+
-+struct mpu_cmd_st {
-+	uint32_t api_type : 8;
-+	uint32_t mod : 8;
-+	uint32_t cmd : 16;
-+};
-+
-+struct msg_module {
-+	char device_name[DEV_NAME_LEN];
-+	uint32_t module;
-+	union {
-+		uint32_t msg_formate; /**< For driver. */
-+		struct npu_cmd_st npu_cmd;
-+		struct mpu_cmd_st mpu_cmd;
-+	};
-+	uint32_t timeout; /**< For mpu/npu cmd. */
-+	uint32_t func_idx;
-+	uint32_t buf_in_size;
-+	uint32_t buf_out_size;
-+	void *in_buf;
-+	void *out_buf;
-+	int bus_num;
-+	uint32_t rsvd2[5];
-+};
-+
-+/**
-+ * Convert the provided string into `uint32_t` according to the specified base.
-+ *
-+ * @param[in] nptr
-+ * The string to be converted.
-+ * @param[in] base
-+ * The base to use for conversion (e.g., 10 for decimal, 16 for hexadecimal).
-+ * @param[out] value
-+ * The output variable where the converted `uint32_t` value will be stored.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - -UDA_EINVAL if the string is invalid or the value is out of range.
-+ */
-+static inline int
-+string_toui(const char *nptr, int base, uint32_t *value)
-+{
-+	char *endptr = NULL;
-+	long tmp_value;
-+
-+	tmp_value = strtol(nptr, &endptr, base);
-+	if ((*endptr != 0) || tmp_value >= 0x7FFFFFFF || tmp_value < 0)
-+		return -UDA_EINVAL;
-+	*value = (uint32_t)tmp_value;
-+	return UDA_SUCCESS;
-+}
-+
-+#define UDA_TRUE  1
-+#define UDA_FALSE 0
-+
-+/**
-+ * Format and append a log message to a string buffer.
-+ *
-+ * @param[out] show_str
-+ * The string buffer where the formatted message will be appended.
-+ * @param[out] show_len
-+ * The current length of the string in the buffer. It is updated after
-+ * appending.
-+ * @param[in] fmt
-+ * The format string that specifies how to format the log message.
-+ * @param[in] args
-+ * The variable arguments to be formatted according to the format string.
-+ */
-+static inline void
-+hinic3_pmd_mml_log(char *show_str, int *show_len, const char *fmt, ...)
-+{
-+	va_list args;
-+	int ret = 0;
-+
-+	va_start(args, fmt);
-+	ret = vsprintf(show_str + *show_len, fmt, args);
-+	va_end(args);
-+
-+	if (ret > 0) {
-+		*show_len += ret;
-+	} else {
-+		PMD_DRV_LOG(ERR, "MML show string snprintf failed, err: %d",
-+			    ret);
-+	}
++	tcam_info->tcam_dynamic_info.dynamic_block_cnt--;
 +}
 +
 +/**
-+ * Get a valid target device based on the given name.
++ * Check whether there are free positions in the dynamic TCAM filter.
 + *
-+ * This function checks if the device name is valid (within the length limit)
-+ * and then stores it in the target structure. The bus number is initialized to
-+ * 0.
-+ *
-+ * @param[in] name
-+ * The device name to be validated and stored.
-+ * @param[out] target
-+ * The structure where the device name and bus number will be stored.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] fdir_tcam_rule
++ * Indicate the filtering rule to be searched for.
++ * @param[in] tcam_info
++ * Ternary Content-Addressable Memory (TCAM) information.
++ * @param[in] tcam_filter
++ * Point to the TCAM filter.
++ * @param[out] tcam_index
++ * Indicate the TCAM index to be searched for.
++ * @result
++ * Pointer to the TCAM dynamic block. If the search fails, NULL is returned.
 + */
-+int tool_get_valid_target(char *name, struct tool_target *target);
-+
-+int hinic3_pmd_mml_ioctl(void *msg);
-+
-+int lib_tx_sq_info_get(struct tool_target target, struct nic_sq_info *sq_info,
-+		       int sq_id);
-+
-+int lib_tx_wqe_info_get(struct tool_target target, struct nic_sq_info *sq_info,
-+			int sq_id, int wqe_id, void *nwqe, int nwqe_size);
-+
-+int lib_rx_rq_info_get(struct tool_target target, struct nic_rq_info *rq_info,
-+		       int rq_id);
-+
-+int lib_rx_wqe_info_get(struct tool_target target, struct nic_rq_info *rq_info,
-+			int rq_id, int wqe_id, void *nwqe, int nwqe_size);
-+
-+int lib_rx_cqe_info_get(struct tool_target target, struct nic_rq_info *rq_info,
-+			int rq_id, int wqe_id, void *nwqe, int nwqe_size);
-+
-+int hinic3_pmd_mml_lib(const char *buf_in, uint32_t in_size, char *buf_out,
-+		       uint32_t *out_len, uint32_t max_buf_out_len);
-+
-+#endif /* _HINIC3_MML_LIB */
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_main.c b/drivers/net/hinic3/mml/hinic3_mml_main.c
-new file mode 100644
-index 0000000000..7830df479e
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_main.c
-@@ -0,0 +1,167 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#include "hinic3_mml_lib.h"
-+#include "hinic3_mml_cmd.h"
-+
-+#define MAX_ARGC 20
-+
-+/**
-+ * Free all memory associated with the command adapter, including the command
-+ * states and command buffer.
-+ *
-+ * @param[in] adapter
-+ * Pointer to command adapter.
-+ */
-+static void
-+cmd_deinit(cmd_adapter_t *adapter)
++static struct hinic3_tcam_dynamic_block *
++hinic3_dynamic_lookup_tcam_filter(struct rte_eth_dev *dev,
++				  struct hinic3_tcam_cfg_rule *fdir_tcam_rule,
++				  struct hinic3_tcam_info *tcam_info,
++				  struct hinic3_tcam_filter *tcam_filter,
++				  u16 *tcam_index)
 +{
-+	int i;
-+
-+	for (i = 0; i < COMMAND_MAX_MAJORS; i++) {
-+		if (adapter->p_major_cmd[i]) {
-+			if (adapter->p_major_cmd[i]->cmd_st) {
-+				free(adapter->p_major_cmd[i]->cmd_st);
-+				adapter->p_major_cmd[i]->cmd_st = NULL;
-+			}
-+
-+			free(adapter->p_major_cmd[i]);
-+			adapter->p_major_cmd[i] = NULL;
-+		}
-+	}
-+
-+	if (adapter->cmd_buf) {
-+		free(adapter->cmd_buf);
-+		adapter->cmd_buf = NULL;
-+	}
-+}
-+
-+static int
-+cmd_init(cmd_adapter_t *adapter)
-+{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	u16 block_cnt = tcam_info->tcam_dynamic_info.dynamic_block_cnt;
++	struct hinic3_tcam_dynamic_block *dynamic_block_ptr = NULL;
++	struct hinic3_tcam_dynamic_block *tmp = NULL;
++	u16 rule_nums = nic_dev->tcam_rule_nums;
++	int block_alloc_flag = 0;
++	u16 dynamic_block_id = 0;
++	u16 index;
 +	int err;
 +
-+	err = cmd_show_q_init(adapter);
-+	if (err != 0) {
-+		PMD_DRV_LOG(ERR, "Init cmd show queue fail");
++	/*
++	 * Check whether the number of filtering rules reaches the maximum
++	 * capacity of dynamic TCAM blocks.
++	 */
++	if (rule_nums >= block_cnt * HINIC3_TCAM_DYNAMIC_BLOCK_SIZE) {
++		if (block_cnt >= (HINIC3_TCAM_DYNAMIC_MAX_FILTERS /
++				  HINIC3_TCAM_DYNAMIC_BLOCK_SIZE)) {
++			PMD_DRV_LOG(ERR,
++				"Dynamic tcam block is full, alloc failed!");
++			goto failed;
++		}
++		/*
++		 * The TCAM blocks are insufficient.
++		 * Apply for a new TCAM block.
++		 */
++		err = hinic3_alloc_tcam_block(nic_dev->hwdev,
++					      &dynamic_block_id);
++		if (err) {
++			PMD_DRV_LOG(ERR,
++				"Fdir filter dynamic tcam alloc block failed!");
++			goto failed;
++		}
++
++		block_alloc_flag = 1;
++
++		/* Applying for Memory. */
++		dynamic_block_ptr =
++			hinic3_alloc_dynamic_block_resource(tcam_info,
++							    dynamic_block_id);
++		if (dynamic_block_ptr == NULL) {
++			PMD_DRV_LOG(ERR, "Fdir filter dynamic alloc block "
++					 "memory failed!");
++			goto block_alloc_failed;
++		}
++	}
++
++	/*
++	 * Find the first dynamic TCAM block that meets dynamci_index_cnt <
++	 * HINIC3_TCAM_DYNAMIC_BLOCK_SIZE.
++	 */
++	TAILQ_FOREACH(tmp, &tcam_info->tcam_dynamic_info.tcam_dynamic_list,
++		      entries) {
++		if (tmp->dynamic_index_cnt < HINIC3_TCAM_DYNAMIC_BLOCK_SIZE)
++			break;
++	}
++
++	if (tmp == NULL ||
++	    tmp->dynamic_index_cnt >= HINIC3_TCAM_DYNAMIC_BLOCK_SIZE) {
++		PMD_DRV_LOG(ERR,
++			    "Fdir filter dynamic lookup for index failed!");
++		goto look_up_failed;
++	}
++
++	for (index = 0; index < HINIC3_TCAM_DYNAMIC_BLOCK_SIZE; index++) {
++		if (tmp->dynamic_index[index] == 0)
++			break;
++	}
++
++	/* Find the first free position. */
++	if (index == HINIC3_TCAM_DYNAMIC_BLOCK_SIZE) {
++		PMD_DRV_LOG(ERR,
++			    "tcam block 0x%x supports filter rules is full!",
++			    tmp->dynamic_block_id);
++		goto look_up_failed;
++	}
++
++	tcam_filter->dynamic_block_id = tmp->dynamic_block_id;
++	tcam_filter->index = index;
++	*tcam_index = index;
++
++	fdir_tcam_rule->index =
++		HINIC3_PKT_TCAM_DYNAMIC_INDEX_START(tmp->dynamic_block_id) +
++		index;
++
++	return tmp;
++
++look_up_failed:
++	if (dynamic_block_ptr != NULL)
++		hinic3_free_dynamic_block_resource(tcam_info,
++						   dynamic_block_ptr);
++
++block_alloc_failed:
++	if (block_alloc_flag == 1)
++		(void)hinic3_free_tcam_block(nic_dev->hwdev, &dynamic_block_id);
++
++failed:
++	return NULL;
++}
++
++/**
++ * Add a TCAM filter.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] tcam_key
++ * Pointer to the TCAM key.
++ * @param[in] fdir_tcam_rule
++ * Pointer to the  TCAM filtering rule.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_add_tcam_filter(struct rte_eth_dev *dev,
++		       struct hinic3_tcam_key *tcam_key,
++		       struct hinic3_tcam_cfg_rule *fdir_tcam_rule)
++{
++	struct hinic3_tcam_info *tcam_info =
++		HINIC3_DEV_PRIVATE_TO_TCAM_INFO(dev->data->dev_private);
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct hinic3_tcam_dynamic_block *dynamic_block_ptr = NULL;
++	struct hinic3_tcam_dynamic_block *tmp = NULL;
++	struct hinic3_tcam_filter *tcam_filter;
++	u16 tcam_block_index = 0;
++	u16 index = 0;
++	int err;
++
++	/* Alloc TCAM filter memory. */
++	tcam_filter = rte_zmalloc("hinic3_fdir_filter",
++				  sizeof(struct hinic3_tcam_filter), 0);
++	if (tcam_filter == NULL)
++		return -ENOMEM;
++	(void)rte_memcpy(&tcam_filter->tcam_key, tcam_key,
++			 sizeof(struct hinic3_tcam_key));
++	tcam_filter->queue = (u16)(fdir_tcam_rule->data.qid);
++
++	/* Add new TCAM rules. */
++	if (nic_dev->tcam_rule_nums == 0) {
++		err = hinic3_alloc_tcam_block(nic_dev->hwdev,
++					      &tcam_block_index);
++		if (err) {
++			PMD_DRV_LOG(ERR,
++				    "Fdir filter tcam alloc block failed!");
++			goto failed;
++		}
++
++		dynamic_block_ptr =
++			hinic3_alloc_dynamic_block_resource(tcam_info,
++							    tcam_block_index);
++		if (dynamic_block_ptr == NULL) {
++			PMD_DRV_LOG(ERR, "Fdir filter alloc dynamic first "
++					 "block memory failed!");
++			goto alloc_block_failed;
++		}
++	}
++
++	/*
++	 * Look for an available index in the dynamic block to store the new
++	 * TCAM filter.
++	 */
++	tmp = hinic3_dynamic_lookup_tcam_filter(dev, fdir_tcam_rule, tcam_info,
++						tcam_filter, &index);
++	if (tmp == NULL) {
++		PMD_DRV_LOG(ERR, "Dynamic lookup tcam filter failed!");
++		goto lookup_tcam_index_failed;
++	}
++
++	/* Add a new TCAM rule to the network device. */
++	err = hinic3_add_tcam_rule(nic_dev->hwdev, fdir_tcam_rule,
++				   TCAM_RULE_FDIR_TYPE);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Fdir_tcam_rule add failed!");
++		goto add_tcam_rules_failed;
++	}
++
++	/* If there are no rules, TCAM filtering is enabled. */
++	if (!(nic_dev->ethertype_rule_nums + nic_dev->tcam_rule_nums)) {
++		err = hinic3_set_fdir_tcam_rule_filter(nic_dev->hwdev, true);
++		if (err)
++			goto enable_failed;
++	}
++
++	/* Add a filter to the end of the queue. */
++	TAILQ_INSERT_TAIL(&tcam_info->tcam_list, tcam_filter, entries);
++
++	/* Update dynamic index. */
++	tmp->dynamic_index[index] = 1;
++	tmp->dynamic_index_cnt++;
++
++	nic_dev->tcam_rule_nums++;
++
++	PMD_DRV_LOG(INFO,
++		    "Add fdir tcam rule, function_id: 0x%x, "
++		    "tcam_block_id: %d, local_index: %d, global_index: %d, "
++		    "queue: %d, "
++		    "tcam_rule_nums: %d succeed",
++		    hinic3_global_func_id(nic_dev->hwdev),
++		    tcam_filter->dynamic_block_id, index, fdir_tcam_rule->index,
++		    fdir_tcam_rule->data.qid, nic_dev->tcam_rule_nums);
++
++	return 0;
++
++enable_failed:
++	(void)hinic3_del_tcam_rule(nic_dev->hwdev, fdir_tcam_rule->index,
++				   TCAM_RULE_FDIR_TYPE);
++
++add_tcam_rules_failed:
++lookup_tcam_index_failed:
++	if (nic_dev->tcam_rule_nums == 0 && dynamic_block_ptr != NULL)
++		hinic3_free_dynamic_block_resource(tcam_info,
++						   dynamic_block_ptr);
++
++alloc_block_failed:
++	if (nic_dev->tcam_rule_nums == 0)
++		(void)hinic3_free_tcam_block(nic_dev->hwdev, &tcam_block_index);
++
++failed:
++	rte_free(tcam_filter);
++	return -EFAULT;
++}
++
++/**
++ * Delete a TCAM filter.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] tcam_filter
++ * TCAM Filters to Delete.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_del_dynamic_tcam_filter(struct rte_eth_dev *dev,
++			       struct hinic3_tcam_filter *tcam_filter)
++{
++	struct hinic3_tcam_info *tcam_info =
++		HINIC3_DEV_PRIVATE_TO_TCAM_INFO(dev->data->dev_private);
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	u16 dynamic_block_id = tcam_filter->dynamic_block_id;
++	struct hinic3_tcam_dynamic_block *tmp = NULL;
++	u32 index = 0;
++	int err;
++
++	/* Traverse to find the block that matches the given ID. */
++	TAILQ_FOREACH(tmp, &tcam_info->tcam_dynamic_info.tcam_dynamic_list,
++		      entries) {
++		if (tmp->dynamic_block_id == dynamic_block_id)
++			break;
++	}
++
++	if (tmp == NULL || tmp->dynamic_block_id != dynamic_block_id) {
++		PMD_DRV_LOG(ERR,
++			    "Fdir filter del dynamic lookup for block failed!");
++		return -EINVAL;
++	}
++	/* Calculate TCAM index. */
++	index = HINIC3_PKT_TCAM_DYNAMIC_INDEX_START(tmp->dynamic_block_id) +
++		tcam_filter->index;
++
++	/* Delete a specified rule. */
++	err = hinic3_del_tcam_rule(nic_dev->hwdev, index, TCAM_RULE_FDIR_TYPE);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Fdir tcam rule del failed!");
++		return -EFAULT;
++	}
++
++	PMD_DRV_LOG(INFO,
++		    "Del fdir_tcam_dynamic_rule function_id: 0x%x, "
++		    "tcam_block_id: %d, local_index: %d, global_index: %d, "
++		    "local_rules_nums: %d, global_rule_nums: %d succeed",
++		    hinic3_global_func_id(nic_dev->hwdev), dynamic_block_id,
++		    tcam_filter->index, index, tmp->dynamic_index_cnt - 1,
++		    nic_dev->tcam_rule_nums - 1);
++
++	tmp->dynamic_index[tcam_filter->index] = 0;
++	tmp->dynamic_index_cnt--;
++	nic_dev->tcam_rule_nums--;
++	if (tmp->dynamic_index_cnt == 0) {
++		(void)hinic3_free_tcam_block(nic_dev->hwdev, &dynamic_block_id);
++
++		hinic3_free_dynamic_block_resource(tcam_info, tmp);
++	}
++
++	/* If the number of rules is 0, the TCAM filter is disabled. */
++	if (!(nic_dev->ethertype_rule_nums + nic_dev->tcam_rule_nums))
++		(void)hinic3_set_fdir_tcam_rule_filter(nic_dev->hwdev, false);
++
++	return 0;
++}
++
++static int
++hinic3_del_tcam_filter(struct rte_eth_dev *dev,
++		       struct hinic3_tcam_filter *tcam_filter)
++{
++	struct hinic3_tcam_info *tcam_info =
++		HINIC3_DEV_PRIVATE_TO_TCAM_INFO(dev->data->dev_private);
++	int err;
++
++	err = hinic3_del_dynamic_tcam_filter(dev, tcam_filter);
++	if (err < 0) {
++		PMD_DRV_LOG(ERR, "Del dynamic tcam filter failed!");
 +		return err;
 +	}
 +
-+	return UDA_SUCCESS;
++	/* Remove the filter from the TCAM list. */
++	TAILQ_REMOVE(&tcam_info->tcam_list, tcam_filter, entries);
++
++	rte_free(tcam_filter);
++
++	return 0;
 +}
 +
 +/**
-+ * Separate the input command string into arguments.
++ * Add or deletes an fdir filter rule. This is the core function for operating
++ * filters.
 + *
-+ * @param[in] adapter
-+ * Pointer to command adapter.
-+ * @param[in] buf_in
-+ * The input command string.
-+ * @param[in] in_size
-+ * The size of the input command string.
-+ * @param[out] argv
-+ * The array to store separated arguments.
-+ *
-+ * @return
-+ * The number of arguments on success, a negative error code otherwise.
-+ */
-+static int
-+cmd_separate(cmd_adapter_t *adapter, const char *buf_in, uint32_t in_size,
-+	     char **argv)
-+{
-+	char *cmd_buf = NULL;
-+	char *tmp = NULL;
-+	char *saveptr = NULL;
-+	int i;
-+
-+	cmd_buf = calloc(1, in_size + 1);
-+	if (!cmd_buf) {
-+		PMD_DRV_LOG(ERR, "Failed to allocate cmd_buf");
-+		return -UDA_ENONMEM;
-+	}
-+
-+	(void)memcpy(cmd_buf, buf_in, in_size);
-+
-+	tmp = cmd_buf;
-+	for (i = 1; i < MAX_ARGC; i++) {
-+		argv[i] = strtok_r(tmp, " ", &saveptr);
-+		if (!argv[i])
-+			break;
-+		tmp = NULL;
-+	}
-+
-+	if (i == MAX_ARGC) {
-+		PMD_DRV_LOG(ERR, "Parameters is too many");
-+		free(cmd_buf);
-+		return -UDA_FAIL;
-+	}
-+
-+	adapter->cmd_buf = cmd_buf;
-+	return i;
-+}
-+
-+/**
-+ * Process the input command string, parse arguments, and return the result.
-+ *
-+ * @param[in] buf_in
-+ * The input command string.
-+ * @param[in] in_size
-+ * The size of the input command string.
-+ * @param[out] buf_out
-+ * The output buffer to store the command result.
-+ * @param[out] out_len
-+ * The length of the output buffer.
-+ * @param[in] max_buf_out_len
-+ * The maximum size of the output buffer.
-+ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] fdir_filter
++ * Pointer to the fdir filter.
++ * @param[in] add
++ * This is a Boolean value (of the bool type) indicating whether the action to
++ * be performed is to add (true) or delete (false) the filter rule.
 + * @return
 + * 0 on success, non-zero on failure.
 + */
 +int
-+hinic3_pmd_mml_lib(const char *buf_in, uint32_t in_size, char *buf_out,
-+		   uint32_t *out_len, uint32_t max_buf_out_len)
++hinic3_flow_add_del_fdir_filter(struct rte_eth_dev *dev,
++				struct hinic3_fdir_filter *fdir_filter,
++				bool add)
 +{
-+	cmd_adapter_t *adapter = NULL;
-+	char *argv[MAX_ARGC];
-+	int argc;
-+	int err = -UDA_EINVAL;
-+
-+	if (!buf_in || !in_size) {
-+		PMD_DRV_LOG(ERR, "Invalid param, buf_in: %d, in_size: 0x%x",
-+			    !!buf_in, in_size);
-+		return err;
-+	}
-+
-+	if (!buf_out || max_buf_out_len < MAX_SHOW_STR_LEN) {
-+		PMD_DRV_LOG(ERR,
-+			"Invalid param, buf_out: %d, max_buf_out_len: 0x%x",
-+			!!buf_out, max_buf_out_len);
-+		return err;
-+	}
-+
-+	adapter = calloc(1, sizeof(cmd_adapter_t));
-+	if (!adapter) {
-+		PMD_DRV_LOG(ERR, "Failed to allocate cmd adapter");
-+		return -UDA_ENONMEM;
-+	}
-+
-+	err = cmd_init(adapter);
-+	if (err != 0)
-+		goto parse_cmd_fail;
-+
-+	argc = cmd_separate(adapter, buf_in, in_size, argv);
-+	if (argc < 0) {
-+		err = -UDA_FAIL;
-+		goto parse_cmd_fail;
-+	}
-+
-+	(void)memset(buf_out, 0, max_buf_out_len);
-+	command_parse(adapter, argc, argv, buf_out, out_len);
-+
-+parse_cmd_fail:
-+	cmd_deinit(adapter);
-+	free(adapter);
-+
-+	return err;
-+}
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_queue.c b/drivers/net/hinic3/mml/hinic3_mml_queue.c
-new file mode 100644
-index 0000000000..7d29c7ea52
---- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_queue.c
-@@ -0,0 +1,749 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ */
-+
-+#include "hinic3_mml_lib.h"
-+#include "hinic3_mml_cmd.h"
-+#include "hinic3_mml_queue.h"
-+
-+#define ADDR_HI_BIT 32
-+
-+/**
-+ * This function perform similar operations as `hinic3_pmd_mml_log`, but it
-+ * return a code.
-+ *
-+ * @param[out] show_str
-+ * The string buffer where the formatted message will be appended.
-+ * @param[out] show_len
-+ * The current length of the string in the buffer. It is updated after
-+ * appending.
-+ * @param[in] fmt
-+ * The format string that specifies how to format the log message.
-+ * @param[in] args
-+ * The variable arguments to be formatted according to the format string.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - `-UDA_EINVAL` if an error occurs during the formatting process.
-+ *
-+ * @see hinic3_pmd_mml_log
-+ */
-+static int
-+hinic3_pmd_mml_log_ret(char *show_str, int *show_len, const char *fmt, ...)
-+{
-+	va_list args;
-+	int ret = 0;
-+
-+	va_start(args, fmt);
-+	ret = vsprintf(show_str + *show_len, fmt, args);
-+	va_end(args);
-+
-+	if (ret > 0) {
-+		*show_len += ret;
-+	} else {
-+		PMD_DRV_LOG(ERR, "MML show string snprintf failed, err: %d",
-+			    ret);
-+		return -UDA_EINVAL;
-+	}
-+
-+	return UDA_SUCCESS;
-+}
-+
-+/**
-+ * Format and log the information about the RQ by appending details such as
-+ * queue ID, ci, sw pi, RQ depth, RQ WQE buffer size, buffer length, interrupt
-+ * number, and MSIX vector to the output buffer.
-+ *
-+ * @param[in] self
-+ * Pointer to major command structure.
-+ * @param[in] rq_info
-+ * The receive queue information to be displayed, which includes various
-+ * properties like queue ID, depth, interrupt number, etc.
-+ */
-+static void
-+rx_show_rq_info(major_cmd_t *self, struct nic_rq_info *rq_info)
-+{
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "Receive queue information:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "queue_id:%u",
-+			   rq_info->q_id);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "ci:%u",
-+			   rq_info->ci);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "sw_pi:%u",
-+			   rq_info->sw_pi);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rq_depth:%u",
-+			   rq_info->rq_depth);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "rq_wqebb_size:%u", rq_info->rq_wqebb_size);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "buf_len:%u",
-+			   rq_info->buf_len);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "int_num:%u",
-+			   rq_info->int_num);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "msix_vector:%u",
-+			   rq_info->msix_vector);
-+}
-+
-+static void
-+rx_show_wqe(major_cmd_t *self, nic_rq_wqe *wqe)
-+{
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "Rx buffer section information:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "buf_addr:0x%" PRIx64,
-+		(((uint64_t)wqe->buf_desc.pkt_buf_addr_high) << ADDR_HI_BIT) |
-+			wqe->buf_desc.pkt_buf_addr_low);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "buf_len:%u",
-+			   wqe->buf_desc.len);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd0:%u",
-+			   wqe->rsvd0);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "Cqe buffer section information:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "buf_hi:0x%" PRIx64,
-+		(((uint64_t)wqe->cqe_sect.pkt_buf_addr_high) << ADDR_HI_BIT) |
-+			wqe->cqe_sect.pkt_buf_addr_low);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "buf_len:%u",
-+			   wqe->cqe_sect.len);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd1:%u",
-+			   wqe->rsvd1);
-+}
-+
-+static void
-+rx_show_cqe_info(major_cmd_t *self, struct tag_l2nic_rx_cqe *wqe_cs)
-+{
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "Rx cqe info:");
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw0:0x%08x",
-+			   wqe_cs->dw0.value);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rx_done:0x%x",
-+			   wqe_cs->dw0.bs.rx_done);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "bp_en:0x%x",
-+			   wqe_cs->dw0.bs.bp_en);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "decry_pkt:0x%x",
-+			   wqe_cs->dw0.bs.decry_pkt);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "flush:0x%x",
-+			   wqe_cs->dw0.bs.flush);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "spec_flags:0x%x",
-+			   wqe_cs->dw0.bs.spec_flags);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd0:0x%x",
-+			   wqe_cs->dw0.bs.rsvd0);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "lro_num:0x%x",
-+			   wqe_cs->dw0.bs.lro_num);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "checksum_err:0x%x", wqe_cs->dw0.bs.checksum_err);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw1:0x%08x",
-+			   wqe_cs->dw1.value);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "length:%u",
-+			   wqe_cs->dw1.bs.length);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "vlan:0x%x",
-+			   wqe_cs->dw1.bs.vlan);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw2:0x%08x",
-+			   wqe_cs->dw2.value);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rss_type:0x%x",
-+			   wqe_cs->dw2.bs.rss_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd0:0x%x",
-+			   wqe_cs->dw2.bs.rsvd0);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "vlan_offload_en:0x%x",
-+			   wqe_cs->dw2.bs.vlan_offload_en);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "umbcast:0x%x",
-+			   wqe_cs->dw2.bs.umbcast);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd1:0x%x",
-+			   wqe_cs->dw2.bs.rsvd1);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "pkt_types:0x%x",
-+			   wqe_cs->dw2.bs.pkt_types);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "rss_hash_value:0x%08x",
-+			   wqe_cs->dw3.bs.rss_hash_value);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw4:0x%08x",
-+			   wqe_cs->dw4.value);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw5:0x%08x",
-+			   wqe_cs->dw5.value);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "mac_type:0x%x",
-+			   wqe_cs->dw5.ovs_bs.mac_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "l3_type:0x%x",
-+			   wqe_cs->dw5.ovs_bs.l3_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "l4_type:0x%x",
-+			   wqe_cs->dw5.ovs_bs.l4_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd0:0x%x",
-+			   wqe_cs->dw5.ovs_bs.rsvd0);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "traffic_type:0x%x",
-+			   wqe_cs->dw5.ovs_bs.traffic_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "traffic_from:0x%x",
-+			   wqe_cs->dw5.ovs_bs.traffic_from);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "cs_dw6:0x%08x",
-+			   wqe_cs->dw6.value);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "localtag:0x%08x",
-+			   wqe_cs->dw7.ovs_bs.localtag);
-+}
-+
-+#define HINIC3_PMD_MML_LOG_RET(fmt, ...)                             \
-+	hinic3_pmd_mml_log_ret(self->show_str, &self->show_len, fmt, \
-+			       ##__VA_ARGS__)
-+
-+/**
-+ * Display help information for queue command.
-+ *
-+ * @param[in] self
-+ * Pointer to major command structure.
-+ * @param[in] argc
-+ * A string representing the value associated with the command option (unused_).
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+cmd_queue_help(major_cmd_t *self, __rte_unused char *argc)
-+{
++	struct hinic3_tcam_info *tcam_info =
++		HINIC3_DEV_PRIVATE_TO_TCAM_INFO(dev->data->dev_private);
++	struct hinic3_tcam_filter *tcam_filter;
++	struct hinic3_tcam_cfg_rule fdir_tcam_rule;
++	struct hinic3_tcam_key tcam_key;
 +	int ret;
-+	ret = HINIC3_PMD_MML_LOG_RET("") ||
-+	      HINIC3_PMD_MML_LOG_RET(" Usage: %s %s", self->name,
-+				     "-i <device> -d <tx or rx> -t <type> "
-+				     "-q <queue id> [-w <wqe id>]") ||
-+	      HINIC3_PMD_MML_LOG_RET("\n %s", self->description) ||
-+	      HINIC3_PMD_MML_LOG_RET("\n Options:\n") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-h", "--help",
-+				     "display this help and exit") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-i",
-+				     "--device=<device>",
-+				     "device target, e.g. 08:00.0") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-d", "--direction",
-+				     "tx or rx") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "  ", "", "0: tx") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "  ", "", "1: rx") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-t", "--type", "") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "  ", "",
-+				     "0: queue info") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "  ", "",
-+				     "1: wqe info") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "  ", "",
-+				     "2: cqe info(only for rx)") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-q", "--queue_id",
-+				     "") ||
-+	      HINIC3_PMD_MML_LOG_RET("	%s, %-25s %s", "-w", "--wqe_id", "") ||
-+	      HINIC3_PMD_MML_LOG_RET("");
++
++	memset(&fdir_tcam_rule, 0, sizeof(struct hinic3_tcam_cfg_rule));
++	memset((void *)&tcam_key, 0, sizeof(struct hinic3_tcam_key));
++
++	hinic3_fdir_tcam_info_init(dev, fdir_filter, &tcam_key,
++				   &fdir_tcam_rule);
++	/* Search for a filter. */
++	tcam_filter =
++		hinic3_tcam_filter_lookup(&tcam_info->tcam_list, &tcam_key);
++	if (tcam_filter != NULL && add) {
++		PMD_DRV_LOG(ERR, "Filter exists.");
++		return -EEXIST;
++	}
++	if (tcam_filter == NULL && !add) {
++		PMD_DRV_LOG(ERR, "Filter doesn't exist.");
++		return -ENOENT;
++	}
++
++	/*
++	 * If the value of Add is true, the system performs the adding
++	 * operation.
++	 */
++	if (add) {
++		ret = hinic3_add_tcam_filter(dev, &tcam_key, &fdir_tcam_rule);
++		if (ret)
++			goto cfg_tcam_filter_err;
++
++		fdir_filter->tcam_index = (int)(fdir_tcam_rule.index);
++	} else {
++		PMD_DRV_LOG(INFO, "begin to del tcam filter");
++		ret = hinic3_del_tcam_filter(dev, tcam_filter);
++		if (ret)
++			goto cfg_tcam_filter_err;
++	}
++
++	return 0;
++
++cfg_tcam_filter_err:
 +
 +	return ret;
 +}
 +
-+static void
-+tx_show_sq_info(major_cmd_t *self, struct nic_sq_info *sq_info)
-+{
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "Send queue information:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "queue_id:%u",
-+			   sq_info->q_id);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "pi:%u",
-+			   sq_info->pi);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "ci:%u",
-+			   sq_info->ci);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "fi:%u",
-+			   sq_info->fi);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "sq_depth:%u",
-+			   sq_info->sq_depth);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "sq_wqebb_size:%u", sq_info->sq_wqebb_size);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "cla_addr:0x%" PRIu64,
-+			   sq_info->cla_addr);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "doorbell phy_addr:0x%" PRId64,
-+			   (uintptr_t)sq_info->doorbell.phy_addr);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "page_idx:%u",
-+			   sq_info->page_idx);
-+}
-+
-+static void
-+tx_show_wqe(major_cmd_t *self, struct nic_tx_wqe_desc *wqe)
-+{
-+	struct nic_tx_ctrl_section *control = NULL;
-+	struct nic_tx_task_section *task = NULL;
-+	unsigned int *val = (unsigned int *)wqe;
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw0:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw1:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw2:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw3:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw4:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw5:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw6:0x%08x",
-+			   *(val++));
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "dw7:0x%08x",
-+			   *(val++));
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "\nWqe may analyse as follows:");
-+	control = &wqe->control;
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "\nInformation about wqe control section:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "ctrl_format:0x%08x", control->ctrl_format);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "owner:%u",
-+			   control->ctrl_sec.o);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "extended_compact:%u", control->ctrl_sec.ec);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "direct_normal:%u", control->ctrl_sec.dn);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "inline_sgl:%u",
-+			   control->ctrl_sec.df);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "ts_size:%u",
-+			   control->ctrl_sec.tss);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "bds_len:%u",
-+			   control->ctrl_sec.bdsl);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd:%u",
-+			   control->ctrl_sec.r);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "1st_buf_len:%u",
-+			   control->ctrl_sec.len);
-+
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "queue_info:0x%08x", control->queue_info);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "pri:%u",
-+			   control->qsf.pri);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "uc:%u",
-+			   control->qsf.uc);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "sctp:%u",
-+			   control->qsf.sctp);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "mss:%u",
-+			   control->qsf.mss);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "tcp_udp_cs:%u",
-+			   control->qsf.tcp_udp_cs);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "tso:%u",
-+			   control->qsf.tso);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "ufo:%u",
-+			   control->qsf.ufo);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "payload_offset:%u", control->qsf.payload_offset);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "pkt_type:%u",
-+			   control->qsf.pkt_type);
-+
-+	/* First buffer section. */
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "bd0_hi_addr:0x%08x", wqe->bd0_hi_addr);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "bd0_lo_addr:0x%08x", wqe->bd0_lo_addr);
-+
-+	/* Show the task section. */
-+	task = &wqe->task;
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "\nInformation about wqe task section:");
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "vport_id:%u",
-+			   task->bs2.vport_id);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "vport_type:%u",
-+			   task->bs2.vport_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "traffic_type:%u",
-+			   task->bs2.traffic_type);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+			   "slave_port_id:%u", task->bs2.slave_port_id);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "rsvd0:%u",
-+			   task->bs2.rsvd0);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "crypto_en:%u",
-+			   task->bs2.crypto_en);
-+	hinic3_pmd_mml_log(self->show_str, &self->show_len, "pkt_type:%u",
-+			   task->bs2.pkt_type);
-+}
-+
-+static int
-+cmd_queue_target(major_cmd_t *self, char *argc)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	int ret;
-+
-+	if (tool_get_valid_target(argc, &show_q->target) != UDA_SUCCESS) {
-+		self->err_no = -UDA_EINVAL;
-+		ret = snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Unknown device %s.", argc);
-+		if (ret <= 0) {
-+			PMD_DRV_LOG(ERR,
-+				    "snprintf queue err msg failed, ret: %d",
-+				    ret);
-+		}
-+		return -UDA_EINVAL;
-+	}
-+
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+get_queue_type(major_cmd_t *self, char *argc)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	unsigned int num = 0;
-+
-+	if (string_toui(argc, BASE_10, &num) != UDA_SUCCESS) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Unknown queuetype %u.", num);
-+		return -UDA_EINVAL;
-+	}
-+
-+	show_q->qobj = (int)num;
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+get_queue_id(major_cmd_t *self, char *argc)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	unsigned int num = 0;
-+
-+	if (string_toui(argc, BASE_10, &num) != UDA_SUCCESS) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Invalid queue id.");
-+		return -UDA_EINVAL;
-+	}
-+
-+	show_q->q_id = (int)num;
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+get_q_wqe_id(major_cmd_t *self, char *argc)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	unsigned int num = 0;
-+
-+	if (string_toui(argc, BASE_10, &num) != UDA_SUCCESS) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Invalid wqe id.");
-+		return -UDA_EINVAL;
-+	}
-+
-+	show_q->wqe_id = (int)num;
-+	return UDA_SUCCESS;
-+}
-+
 +/**
-+ * Set direction for queue query.
++ * Enable or disable the TCAM filter for the receive queue.
 + *
-+ * @param[in] self
-+ * Pointer to major command structure.
-+ * @param[in] argc
-+ * The input argument representing the direction (as a string).
-+ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] able
++ * Flag to enable or disable the filter.
 + * @return
 + * 0 on success, non-zero on failure.
-+ * - -UDA_EINVAL If the input is invalid (not a number or out of range), it sets
-+ * an error in `err_no` and `err_str`.
-+ */
-+static int
-+get_direction(major_cmd_t *self, char *argc)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	unsigned int num = 0;
-+
-+	if (string_toui(argc, BASE_10, &num) != UDA_SUCCESS || num > 1) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Unknown mode.");
-+		return -UDA_EINVAL;
-+	}
-+
-+	show_q->direction = (int)num;
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+rx_param_check(major_cmd_t *self, struct cmd_show_q_st *rx_param)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+
-+	if (rx_param->target.bus_num == TRGET_UNKNOWN_BUS_NUM) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Need device name.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->qobj > OBJ_CQE_INFO || show_q->qobj < OBJ_Q_INFO) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Unknown queue type.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->q_id == -1) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Need queue id.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->qobj != OBJ_Q_INFO && show_q->wqe_id == -1) {
-+		self->err_no = -UDA_FAIL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get cqe_info or wqe_info, must set wqeid.");
-+		return -UDA_FAIL;
-+	}
-+
-+	if (show_q->qobj == OBJ_Q_INFO && show_q->wqe_id != -1) {
-+		self->err_no = -UDA_FAIL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get queue info, need not set wqeid.");
-+		return -UDA_FAIL;
-+	}
-+
-+	return UDA_SUCCESS;
-+}
-+
-+static int
-+tx_param_check(major_cmd_t *self, struct cmd_show_q_st *tx_param)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+
-+	if (tx_param->target.bus_num == TRGET_UNKNOWN_BUS_NUM) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Need device name.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->qobj > OBJ_WQE_INFO || show_q->qobj < OBJ_Q_INFO) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Unknown queue type.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->q_id == -1) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Need queue id.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->qobj == OBJ_WQE_INFO && show_q->wqe_id == -1) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get wqe_info, must set wqeid.");
-+		return self->err_no;
-+	}
-+
-+	if (show_q->qobj != OBJ_WQE_INFO && show_q->wqe_id != -1) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get queue info, need not set wqeid.");
-+		return self->err_no;
-+	}
-+
-+	return UDA_SUCCESS;
-+}
-+
-+static void
-+cmd_tx_execute(major_cmd_t *self)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+	int ret;
-+	struct nic_sq_info sq_info = {0};
-+	struct nic_tx_wqe_desc nwqe;
-+
-+	if (tx_param_check(self, show_q) != UDA_SUCCESS)
-+		return;
-+
-+	if (show_q->qobj == OBJ_Q_INFO || show_q->qobj == OBJ_WQE_INFO) {
-+		ret = lib_tx_sq_info_get(show_q->target, (void *)&sq_info,
-+					 show_q->q_id);
-+		if (ret != UDA_SUCCESS) {
-+			self->err_no = ret;
-+			(void)snprintf(self->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "Get tx sq_info failed.");
-+			return;
-+		}
-+
-+		if (show_q->qobj == OBJ_Q_INFO) {
-+			tx_show_sq_info(self, &sq_info);
-+			return;
-+		}
-+
-+		if (show_q->wqe_id >= (int)sq_info.sq_depth) {
-+			self->err_no = -UDA_EINVAL;
-+			(void)snprintf(self->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "Max wqe id is %u.",
-+				       sq_info.sq_depth - 1);
-+			return;
-+		}
-+
-+		(void)memset(&nwqe, 0, sizeof(nwqe));
-+		ret = lib_tx_wqe_info_get(show_q->target, &sq_info,
-+					  show_q->q_id, show_q->wqe_id,
-+					  (void *)&nwqe, sizeof(nwqe));
-+		if (ret != UDA_SUCCESS) {
-+			self->err_no = ret;
-+			(void)snprintf(self->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "Get tx wqe_info failed.");
-+			return;
-+		}
-+
-+		tx_show_wqe(self, &nwqe);
-+		return;
-+	}
-+}
-+
-+static void
-+cmd_rx_execute(major_cmd_t *self)
-+{
-+	int ret;
-+	struct nic_rq_info rq_info = {0};
-+	struct tag_l2nic_rx_cqe cqe;
-+	nic_rq_wqe wqe;
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+
-+	if (rx_param_check(self, show_q) != UDA_SUCCESS)
-+		return;
-+
-+	ret = lib_rx_rq_info_get(show_q->target, &rq_info, show_q->q_id);
-+	if (ret != UDA_SUCCESS) {
-+		self->err_no = ret;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get rx rq_info failed.");
-+		return;
-+	}
-+
-+	if (show_q->qobj == OBJ_Q_INFO) {
-+		rx_show_rq_info(self, &rq_info);
-+		return;
-+	}
-+
-+	if ((uint32_t)show_q->wqe_id >= rq_info.rq_depth) {
-+		self->err_no = -UDA_EINVAL;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Max wqe id is %u.", rq_info.rq_depth - 1);
-+		return;
-+	}
-+
-+	if (show_q->qobj == OBJ_WQE_INFO) {
-+		(void)memset(&wqe, 0, sizeof(wqe));
-+		ret = lib_rx_wqe_info_get(show_q->target, &rq_info,
-+					  show_q->q_id, show_q->wqe_id,
-+					  (void *)&wqe, sizeof(wqe));
-+		if (ret != UDA_SUCCESS) {
-+			self->err_no = ret;
-+			(void)snprintf(self->err_str,
-+				       COMMANDER_ERR_MAX_STRING - 1,
-+				       "Get rx wqe_info failed.");
-+			return;
-+		}
-+
-+		rx_show_wqe(self, &wqe);
-+		return;
-+	}
-+
-+	/* OBJ_CQE_INFO */
-+	(void)memset(&cqe, 0, sizeof(cqe));
-+	ret = lib_rx_cqe_info_get(show_q->target, &rq_info, show_q->q_id,
-+				  show_q->wqe_id, (void *)&cqe, sizeof(cqe));
-+	if (ret != UDA_SUCCESS) {
-+		self->err_no = ret;
-+		(void)snprintf(self->err_str, COMMANDER_ERR_MAX_STRING - 1,
-+			       "Get rx cqe_info failed.");
-+		return;
-+	}
-+
-+	rx_show_cqe_info(self, &cqe);
-+}
-+
-+/**
-+ * Execute the NIC queue query command based on the direction.
-+ *
-+ * @param[in] self
-+ * Pointer to major command structure.
-+ */
-+static void
-+cmd_nic_queue_execute(major_cmd_t *self)
-+{
-+	struct cmd_show_q_st *show_q = self->cmd_st;
-+
-+	if (show_q->direction == -1) {
-+		hinic3_pmd_mml_log(self->show_str, &self->show_len,
-+				   "Need -d parameter.");
-+		return;
-+	}
-+
-+	if (show_q->direction == 0)
-+		cmd_tx_execute(self);
-+	else
-+		cmd_rx_execute(self);
-+}
-+
-+/**
-+ * Initialize and register the queue query command.
-+ *
-+ * @param[in] adapter
-+ * The command adapter, which holds the registered commands and their states.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ * - -UDA_ENONMEM if memory allocation fail or an error occur.
 + */
 +int
-+cmd_show_q_init(cmd_adapter_t *adapter)
++hinic3_enable_rxq_fdir_filter(struct rte_eth_dev *dev, u32 queue_id, u32 able)
 +{
-+	struct cmd_show_q_st *show_q = NULL;
-+	major_cmd_t *show_q_cmd;
++	struct hinic3_tcam_info *tcam_info =
++		HINIC3_DEV_PRIVATE_TO_TCAM_INFO(dev->data->dev_private);
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct hinic3_tcam_filter *it;
++	struct hinic3_tcam_cfg_rule fdir_tcam_rule;
++	int ret;
++	u32 queue_res;
++	uint16_t index;
 +
-+	show_q_cmd = calloc(1, sizeof(*show_q_cmd));
-+	if (!show_q_cmd) {
-+		PMD_DRV_LOG(ERR, "Failed to allocate queue cmd");
-+		return -UDA_ENONMEM;
++	memset(&fdir_tcam_rule, 0, sizeof(struct hinic3_tcam_cfg_rule));
++
++	if (able) {
++		TAILQ_FOREACH(it, &tcam_info->tcam_list, entries) {
++			if (queue_id == it->queue) {
++				index = (u16)(HINIC3_PKT_TCAM_DYNAMIC_INDEX_START
++					      (it->dynamic_block_id) + it->index);
++
++				/*
++				 * When the rxq is start, find invalid rxq_id
++				 * and delete the fdir rule from the tcam.
++				 */
++				ret = hinic3_del_tcam_rule(nic_dev->hwdev,
++							   index,
++							   TCAM_RULE_FDIR_TYPE);
++				if (ret) {
++					PMD_DRV_LOG(ERR, "del invalid tcam "
++							 "rule failed!");
++					return -EFAULT;
++				}
++
++				fdir_tcam_rule.index = index;
++				fdir_tcam_rule.data.qid = queue_id;
++				tcam_key_calculate(&it->tcam_key,
++						   &fdir_tcam_rule);
++
++				/* To enable a rule, add a rule. */
++				ret = hinic3_add_tcam_rule(nic_dev->hwdev,
++							   &fdir_tcam_rule,
++							   TCAM_RULE_FDIR_TYPE);
++				if (ret) {
++					PMD_DRV_LOG(ERR, "add correct tcam "
++							 "rule failed!");
++					return -EFAULT;
++				}
++			}
++		}
++	} else {
++		queue_res = HINIC3_INVALID_QID_BASE | queue_id;
++
++		TAILQ_FOREACH(it, &tcam_info->tcam_list, entries) {
++			if (queue_id == it->queue) {
++				index = (u16)(HINIC3_PKT_TCAM_DYNAMIC_INDEX_START
++					      (it->dynamic_block_id) + it->index);
++
++				/*
++				 * When the rxq is stop, delete the fdir rule
++				 * from the tcam and add the corret fdir rule
++				 * from the tcam.
++				 */
++				ret = hinic3_del_tcam_rule(nic_dev->hwdev,
++							   index,
++							   TCAM_RULE_FDIR_TYPE);
++				if (ret) {
++					PMD_DRV_LOG(ERR, "del correct tcam "
++							 "rule failed!");
++					return -EFAULT;
++				}
++
++				fdir_tcam_rule.index = index;
++				fdir_tcam_rule.data.qid = queue_res;
++				tcam_key_calculate(&it->tcam_key,
++						   &fdir_tcam_rule);
++
++				/* Add the corret fdir rule from the tcam. */
++				ret = hinic3_add_tcam_rule(nic_dev->hwdev,
++							   &fdir_tcam_rule,
++							   TCAM_RULE_FDIR_TYPE);
++				if (ret) {
++					PMD_DRV_LOG(ERR, "add invalid tcam "
++							 "rule failed!");
++					return -EFAULT;
++				}
++			}
++		}
 +	}
 +
-+	(void)snprintf(show_q_cmd->name, MAX_NAME_LEN - 1, "%s", "nic_queue");
-+	(void)snprintf(show_q_cmd->description,
-+		MAX_DES_LEN - 1, "%s",
-+		"Query the rx/tx queue information of a specified pci_addr");
-+
-+	show_q_cmd->option_count = 0;
-+	show_q_cmd->execute = cmd_nic_queue_execute;
-+
-+	show_q = calloc(1, sizeof(*show_q));
-+	if (!show_q) {
-+		free(show_q_cmd);
-+		PMD_DRV_LOG(ERR, "Failed to allocate show queue");
-+		return -UDA_ENONMEM;
-+	}
-+
-+	show_q->qobj = -1;
-+	show_q->q_id = -1;
-+	show_q->wqe_id = -1;
-+	show_q->direction = -1;
-+
-+	show_q_cmd->cmd_st = show_q;
-+
-+	tool_target_init(&show_q->target.bus_num, show_q->target.dev_name,
-+			 MAX_DEV_LEN);
-+
-+	major_command_option(show_q_cmd, "-h", "--help", PARAM_NOT_NEED,
-+			     cmd_queue_help);
-+	major_command_option(show_q_cmd, "-i", "--device", PARAM_NEED,
-+			     cmd_queue_target);
-+	major_command_option(show_q_cmd, "-t", "--type", PARAM_NEED,
-+			     get_queue_type);
-+	major_command_option(show_q_cmd, "-q", "--queue_id", PARAM_NEED,
-+			     get_queue_id);
-+	major_command_option(show_q_cmd, "-w", "--wqe_id", PARAM_NEED,
-+			     get_q_wqe_id);
-+	major_command_option(show_q_cmd, "-d", "--direction", PARAM_NEED,
-+			     get_direction);
-+
-+	major_command_register(adapter, show_q_cmd);
-+
-+	return UDA_SUCCESS;
++	return ret;
 +}
-diff --git a/drivers/net/hinic3/mml/hinic3_mml_queue.h b/drivers/net/hinic3/mml/hinic3_mml_queue.h
++
++void
++hinic3_free_fdir_filter(struct rte_eth_dev *dev)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++
++	(void)hinic3_set_fdir_tcam_rule_filter(nic_dev->hwdev, false);
++
++	(void)hinic3_flush_tcam_rule(nic_dev->hwdev);
++}
++
++static int
++hinic3_flow_set_arp_filter(struct rte_eth_dev *dev,
++			   struct rte_eth_ethertype_filter *ethertype_filter,
++			   bool add)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	int ret;
++
++	/* Setting the ARP Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_ARP,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s fdir ethertype rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		return ret;
++	}
++
++	/* Setting the ARP Request Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_ARP_REQ,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s arp request rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		goto set_arp_req_failed;
++	}
++
++	/* Setting the ARP Response Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_ARP_REP,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s arp response rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		goto set_arp_rep_failed;
++	}
++
++	return 0;
++
++set_arp_rep_failed:
++	(void)hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_ARP_REQ,
++					       ethertype_filter->queue, !add);
++
++set_arp_req_failed:
++	(void)hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_ARP,
++					       ethertype_filter->queue, !add);
++
++	return ret;
++}
++
++static int
++hinic3_flow_set_slow_filter(struct rte_eth_dev *dev,
++			    struct rte_eth_ethertype_filter *ethertype_filter,
++			    bool add)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	int ret;
++
++	/* Setting the LACP Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_LACP,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s lacp fdir rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		return ret;
++	}
++
++	/* Setting the OAM Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_OAM,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s oam rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		goto set_arp_oam_failed;
++	}
++
++	return 0;
++
++set_arp_oam_failed:
++	(void)hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_LACP,
++					       ethertype_filter->queue, !add);
++
++	return ret;
++}
++
++static int
++hinic3_flow_set_lldp_filter(struct rte_eth_dev *dev,
++			    struct rte_eth_ethertype_filter *ethertype_filter,
++			    bool add)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	int ret;
++
++	/* Setting the LLDP Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_LLDP,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s lldp fdir rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		return ret;
++	}
++
++	/* Setting the CDCP Filter. */
++	ret = hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_CDCP,
++					       ethertype_filter->queue, add);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s cdcp fdir rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		goto set_arp_cdcp_failed;
++	}
++
++	return 0;
++
++set_arp_cdcp_failed:
++	(void)hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++					       HINIC3_PKT_TYPE_LLDP,
++					       ethertype_filter->queue, !add);
++
++	return ret;
++}
++
++static int
++hinic3_flow_add_del_ethertype_filter_rule(struct rte_eth_dev *dev,
++					  struct rte_eth_ethertype_filter *ethertype_filter,
++					  bool add)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct hinic3_ethertype_filter_list *ethertype_list =
++		&nic_dev->filter_ethertype_list;
++
++	/* Check whether the transferred rule exists. */
++	if (hinic3_ethertype_filter_lookup(ethertype_list,
++					   ethertype_filter->ether_type)) {
++		if (add) {
++			PMD_DRV_LOG(ERR,
++				"The rule already exists, can not to be added");
++			return -EPERM;
++		}
++	} else {
++		if (!add) {
++			PMD_DRV_LOG(ERR,
++				"The rule not exists, can not to be delete");
++			return -EPERM;
++		}
++	}
++	/* Create a filter based on the protocol type. */
++	switch (ethertype_filter->ether_type) {
++	case RTE_ETHER_TYPE_ARP:
++		return hinic3_flow_set_arp_filter(dev, ethertype_filter, add);
++	case RTE_ETHER_TYPE_RARP:
++		return hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++			HINIC3_PKT_TYPE_RARP, ethertype_filter->queue, add);
++
++	case RTE_ETHER_TYPE_SLOW:
++		return hinic3_flow_set_slow_filter(dev, ethertype_filter, add);
++
++	case RTE_ETHER_TYPE_LLDP:
++		return hinic3_flow_set_lldp_filter(dev, ethertype_filter, add);
++
++	case RTE_ETHER_TYPE_CNM:
++		return hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++			HINIC3_PKT_TYPE_CNM, ethertype_filter->queue, add);
++
++	case RTE_ETHER_TYPE_ECP:
++		return hinic3_set_fdir_ethertype_filter(nic_dev->hwdev,
++			HINIC3_PKT_TYPE_ECP, ethertype_filter->queue, add);
++
++	default:
++		PMD_DRV_LOG(ERR, "Unknown ethertype %d queue_id %d",
++			    ethertype_filter->ether_type,
++			    ethertype_filter->queue);
++		return -EPERM;
++	}
++}
++
++static int
++hinic3_flow_ethertype_rule_nums(struct rte_eth_ethertype_filter *ethertype_filter)
++{
++	switch (ethertype_filter->ether_type) {
++	case RTE_ETHER_TYPE_ARP:
++		return HINIC3_ARP_RULE_NUM;
++	case RTE_ETHER_TYPE_RARP:
++		return HINIC3_RARP_RULE_NUM;
++	case RTE_ETHER_TYPE_SLOW:
++		return HINIC3_SLOW_RULE_NUM;
++	case RTE_ETHER_TYPE_LLDP:
++		return HINIC3_LLDP_RULE_NUM;
++	case RTE_ETHER_TYPE_CNM:
++		return HINIC3_CNM_RULE_NUM;
++	case RTE_ETHER_TYPE_ECP:
++		return HINIC3_ECP_RULE_NUM;
++
++	default:
++		PMD_DRV_LOG(ERR, "Unknown ethertype %d",
++			    ethertype_filter->ether_type);
++		return 0;
++	}
++}
++
++/**
++ * Add or delete an Ethernet type filter rule.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] ethertype_filter
++ * Pointer to ethertype filter.
++ * @param[in] add
++ * This is a Boolean value (of the bool type) indicating whether the action to
++ * be performed is to add (true) or delete (false) the Ethernet type filter
++ * rule.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_flow_add_del_ethertype_filter(struct rte_eth_dev *dev,
++				     struct rte_eth_ethertype_filter *ethertype_filter,
++				     bool add)
++{
++	/* Get dev private info. */
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	int ret;
++	/* Add or remove an Ethernet type filter rule. */
++	ret = hinic3_flow_add_del_ethertype_filter_rule(dev, ethertype_filter,
++							add);
++
++	if (ret) {
++		PMD_DRV_LOG(ERR, "%s fdir ethertype rule failed, err: %d",
++			    add ? "Add" : "Del", ret);
++		return ret;
++	}
++	/*
++	 * If a rule is added and the rule is the first rule, rule filtering is
++	 * enabled. If a rule is deleted and the rule is the last one, rule
++	 * filtering is disabled.
++	 */
++	if (add) {
++		if (nic_dev->ethertype_rule_nums == 0) {
++			ret = hinic3_set_fdir_tcam_rule_filter(nic_dev->hwdev,
++							       true);
++			if (ret) {
++				PMD_DRV_LOG(ERR,
++					    "enable fdir rule failed, err: %d",
++					    ret);
++				goto enable_fdir_failed;
++			}
++		}
++		nic_dev->ethertype_rule_nums =
++			nic_dev->ethertype_rule_nums +
++			hinic3_flow_ethertype_rule_nums(ethertype_filter);
++	} else {
++		nic_dev->ethertype_rule_nums =
++			nic_dev->ethertype_rule_nums -
++			hinic3_flow_ethertype_rule_nums(ethertype_filter);
++
++		if (!(nic_dev->ethertype_rule_nums + nic_dev->tcam_rule_nums)) {
++			ret = hinic3_set_fdir_tcam_rule_filter(nic_dev->hwdev,
++							       false);
++			if (ret) {
++				PMD_DRV_LOG(ERR,
++					    "disable fdir rule failed, err: %d",
++					    ret);
++			}
++		}
++	}
++
++	return 0;
++
++enable_fdir_failed:
++	(void)hinic3_flow_add_del_ethertype_filter_rule(dev, ethertype_filter,
++							!add);
++	return ret;
++}
+diff --git a/drivers/net/hinic3/hinic3_fdir.h b/drivers/net/hinic3/hinic3_fdir.h
 new file mode 100644
-index 0000000000..633b1db50c
+index 0000000000..fbb2461a44
 --- /dev/null
-+++ b/drivers/net/hinic3/mml/hinic3_mml_queue.h
-@@ -0,0 +1,256 @@
++++ b/drivers/net/hinic3/hinic3_fdir.h
+@@ -0,0 +1,398 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-+ * Description   : hinic3 mml for queue
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_MML_QUEUE
-+#define _HINIC3_MML_QUEUE
++#ifndef _HINIC3_FDIR_H_
++#define _HINIC3_FDIR_H_
 +
-+#define OBJ_Q_INFO   0
-+#define OBJ_WQE_INFO 1
-+#define OBJ_CQE_INFO 2
++#define HINIC3_FLOW_MAX_PATTERN_NUM 16
 +
-+/* TX. */
-+struct nic_tx_ctrl_section {
++#define HINIC3_TCAM_DYNAMIC_BLOCK_SIZE 16
++
++#define HINIC3_TCAM_DYNAMIC_MAX_FILTERS 1024
++
++#define HINIC3_PKT_TCAM_DYNAMIC_INDEX_START(block_index) \
++	(HINIC3_TCAM_DYNAMIC_BLOCK_SIZE * (block_index))
++
++/* Indicate a traffic filtering rule. */
++struct rte_flow {
++	TAILQ_ENTRY(rte_flow) node;
++	enum rte_filter_type filter_type;
++	void *rule;
++};
++
++struct hinic3_fdir_rule_key {
++	struct rte_eth_ipv4_flow ipv4;
++	struct rte_eth_ipv6_flow ipv6;
++	struct rte_eth_ipv4_flow inner_ipv4;
++	struct rte_eth_ipv6_flow inner_ipv6;
++	struct rte_eth_tunnel_flow tunnel;
++	uint16_t src_port;
++	uint16_t dst_port;
++	uint8_t proto;
++};
++
++struct hinic3_fdir_filter {
++	int tcam_index;
++	uint8_t ip_type; /**< Inner ip type. */
++	uint8_t outer_ip_type;
++	uint8_t tunnel_type;
++	struct hinic3_fdir_rule_key key_mask;
++	struct hinic3_fdir_rule_key key_spec;
++	uint32_t rq_index; /**< Queue assigned when matched. */
++};
++
++/* This structure is used to describe a basic filter type. */
++struct hinic3_filter_t {
++	u16 filter_rule_nums;
++	enum rte_filter_type filter_type;
++	struct rte_eth_ethertype_filter ethertype_filter;
++	struct hinic3_fdir_filter fdir_filter;
++};
++
++enum hinic3_fdir_tunnel_mode {
++	HINIC3_FDIR_TUNNEL_MODE_NORMAL = 0,
++	HINIC3_FDIR_TUNNEL_MODE_VXLAN = 1,
++};
++
++enum hinic3_fdir_ip_type {
++	HINIC3_FDIR_IP_TYPE_IPV4 = 0,
++	HINIC3_FDIR_IP_TYPE_IPV6 = 1,
++	HINIC3_FDIR_IP_TYPE_ANY = 2,
++};
++
++/* Describe the key structure of the TCAM. */
++struct hinic3_tcam_key_mem {
++#if (RTE_BYTE_ORDER == RTE_BIG_ENDIAN)
++	u32 rsvd0 : 16;
++	u32 ip_proto : 8;
++	u32 tunnel_type : 4;
++	u32 rsvd1 : 4;
++
++	u32 function_id : 15;
++	u32 ip_type : 1;
++
++	u32 sipv4_h : 16;
++	u32 sipv4_l : 16;
++
++	u32 dipv4_h : 16;
++	u32 dipv4_l : 16;
++	u32 rsvd2 : 16;
++
++	u32 rsvd3;
++
++	u32 rsvd4 : 16;
++	u32 dport : 16;
++
++	u32 sport : 16;
++	u32 rsvd5 : 16;
++
++	u32 rsvd6 : 16;
++	u32 outer_sipv4_h : 16;
++	u32 outer_sipv4_l : 16;
++
++	u32 outer_dipv4_h : 16;
++	u32 outer_dipv4_l : 16;
++	u32 vni_h : 16;
++
++	u32 vni_l : 16;
++	u32 rsvd7 : 16;
++#else
++	u32 rsvd1 : 4;
++	u32 tunnel_type : 4;
++	u32 ip_proto : 8;
++	u32 rsvd0 : 16;
++
++	u32 sipv4_h : 16;
++	u32 ip_type : 1;
++	u32 function_id : 15;
++
++	u32 dipv4_h : 16;
++	u32 sipv4_l : 16;
++
++	u32 rsvd2 : 16;
++	u32 dipv4_l : 16;
++
++	u32 rsvd3;
++
++	u32 dport : 16;
++	u32 rsvd4 : 16;
++
++	u32 rsvd5 : 16;
++	u32 sport : 16;
++
++	u32 outer_sipv4_h : 16;
++	u32 rsvd6 : 16;
++
++	u32 outer_dipv4_h : 16;
++	u32 outer_sipv4_l : 16;
++
++	u32 vni_h : 16;
++	u32 outer_dipv4_l : 16;
++
++	u32 rsvd7 : 16;
++	u32 vni_l : 16;
++#endif
++};
++
++/*
++ * Define the IPv6-related TCAM key data structure in common
++ * scenarios or IPv6 tunnel scenarios.
++ */
++struct hinic3_tcam_key_ipv6_mem {
++#if (RTE_BYTE_ORDER == RTE_BIG_ENDIAN)
++	u32 rsvd0 : 16;
++	/* Indicates the normal IPv6 nextHdr or inner IPv4/IPv6 next proto. */
++	u32 ip_proto : 8;
++	u32 tunnel_type : 4;
++	u32 outer_ip_type : 1;
++	u32 rsvd1 : 3;
++
++	u32 function_id : 15;
++	u32 ip_type : 1;
++	u32 sipv6_key0 : 16;
++
++	u32 sipv6_key1 : 16;
++	u32 sipv6_key2 : 16;
++
++	u32 sipv6_key3 : 16;
++	u32 sipv6_key4 : 16;
++
++	u32 sipv6_key5 : 16;
++	u32 sipv6_key6 : 16;
++
++	u32 sipv6_key7 : 16;
++	u32 dport : 16;
++
++	u32 sport : 16;
++	u32 dipv6_key0 : 16;
++
++	u32 dipv6_key1 : 16;
++	u32 dipv6_key2 : 16;
++
++	u32 dipv6_key3 : 16;
++	u32 dipv6_key4 : 16;
++
++	u32 dipv6_key5 : 16;
++	u32 dipv6_key6 : 16;
++
++	u32 dipv6_key7 : 16;
++	u32 rsvd2 : 16;
++#else
++	u32 rsvd1 : 3;
++	u32 outer_ip_type : 1;
++	u32 tunnel_type : 4;
++	u32 ip_proto : 8;
++	u32 rsvd0 : 16;
++
++	u32 sipv6_key0 : 16;
++	u32 ip_type : 1;
++	u32 function_id : 15;
++
++	u32 sipv6_key2 : 16;
++	u32 sipv6_key1 : 16;
++
++	u32 sipv6_key4 : 16;
++	u32 sipv6_key3 : 16;
++
++	u32 sipv6_key6 : 16;
++	u32 sipv6_key5 : 16;
++
++	u32 dport : 16;
++	u32 sipv6_key7 : 16;
++
++	u32 dipv6_key0 : 16;
++	u32 sport : 16;
++
++	u32 dipv6_key2 : 16;
++	u32 dipv6_key1 : 16;
++
++	u32 dipv6_key4 : 16;
++	u32 dipv6_key3 : 16;
++
++	u32 dipv6_key6 : 16;
++	u32 dipv6_key5 : 16;
++
++	u32 rsvd2 : 16;
++	u32 dipv6_key7 : 16;
++#endif
++};
++
++/*
++ * Define the tcam key value data structure related to IPv6 in
++ * the VXLAN scenario.
++ */
++struct hinic3_tcam_key_vxlan_ipv6_mem {
++#if (RTE_BYTE_ORDER == RTE_BIG_ENDIAN)
++	u32 rsvd0 : 16;
++	u32 ip_proto : 8;
++	u32 tunnel_type : 4;
++	u32 rsvd1 : 4;
++
++	u32 function_id : 15;
++	u32 ip_type : 1;
++	u32 dipv6_key0 : 16;
++
++	u32 dipv6_key1 : 16;
++	u32 dipv6_key2 : 16;
++
++	u32 dipv6_key3 : 16;
++	u32 dipv6_key4 : 16;
++
++	u32 dipv6_key5 : 16;
++	u32 dipv6_key6 : 16;
++
++	u32 dipv6_key7 : 16;
++	u32 dport : 16;
++
++	u32 sport : 16;
++	u32 rsvd2 : 16;
++
++	u32 rsvd3 : 16;
++	u32 outer_sipv4_h : 16;
++
++	u32 outer_sipv4_l : 16;
++	u32 outer_dipv4_h : 16;
++
++	u32 outer_dipv4_l : 16;
++	u32 vni_h : 16;
++
++	u32 vni_l : 16;
++	u32 rsvd4 : 16;
++#else
++	u32 rsvd1 : 4;
++	u32 tunnel_type : 4;
++	u32 ip_proto : 8;
++	u32 rsvd0 : 16;
++
++	u32 dipv6_key0 : 16;
++	u32 ip_type : 1;
++	u32 function_id : 15;
++
++	u32 dipv6_key2 : 16;
++	u32 dipv6_key1 : 16;
++
++	u32 dipv6_key4 : 16;
++	u32 dipv6_key3 : 16;
++
++	u32 dipv6_key6 : 16;
++	u32 dipv6_key5 : 16;
++
++	u32 dport : 16;
++	u32 dipv6_key7 : 16;
++
++	u32 rsvd2 : 16;
++	u32 sport : 16;
++
++	u32 outer_sipv4_h : 16;
++	u32 rsvd3 : 16;
++
++	u32 outer_dipv4_h : 16;
++	u32 outer_sipv4_l : 16;
++
++	u32 vni_h : 16;
++	u32 outer_dipv4_l : 16;
++
++	u32 rsvd4 : 16;
++	u32 vni_l : 16;
++#endif
++};
++
++/*
++ * TCAM key structure. The two unions indicate the key and mask respectively.
++ * The TCAM key is consistent with the TCAM entry.
++ */
++struct hinic3_tcam_key {
 +	union {
-+		struct {
-+			unsigned int len : 18;
-+			unsigned int r : 1;
-+			unsigned int bdsl : 8;
-+			unsigned int tss : 1;
-+			unsigned int df : 1;
-+			unsigned int dn : 1;
-+			unsigned int ec : 1;
-+			unsigned int o : 1;
-+		} ctrl_sec;
-+		unsigned int ctrl_format;
++		struct hinic3_tcam_key_mem key_info;
++		struct hinic3_tcam_key_ipv6_mem key_info_ipv6;
++		struct hinic3_tcam_key_vxlan_ipv6_mem key_info_vxlan_ipv6;
 +	};
 +	union {
-+		struct {
-+			unsigned int pkt_type : 2;
-+			unsigned int payload_offset : 8;
-+			unsigned int ufo : 1;
-+			unsigned int tso : 1;
-+			unsigned int tcp_udp_cs : 1;
-+			unsigned int mss : 14;
-+			unsigned int sctp : 1;
-+			unsigned int uc : 1;
-+			unsigned int pri : 3;
-+		} qsf;
-+		unsigned int queue_info;
++		struct hinic3_tcam_key_mem key_mask;
++		struct hinic3_tcam_key_ipv6_mem key_mask_ipv6;
++		struct hinic3_tcam_key_vxlan_ipv6_mem key_mask_vxlan_ipv6;
 +	};
 +};
 +
-+struct nic_tx_task_section {
-+	unsigned int dw0;
-+	unsigned int dw1;
-+
-+	/* dw2. */
-+	union {
-+		struct {
-+			/*
-+			 * When TX direct, output bond id;
-+			 * when RX direct, output function id.
-+			 */
-+			unsigned int vport_id : 12;
-+			unsigned int vport_type : 4;
-+			unsigned int traffic_type : 6;
-+			/*
-+			 * Only used in TX direct, ctrl pkt(LACP\LLDP) output
-+			 * port id.
-+			 */
-+			unsigned int slave_port_id : 2;
-+			unsigned int rsvd0 : 6;
-+			unsigned int crypto_en : 1;
-+			unsigned int pkt_type : 1;
-+		} bs2;
-+		unsigned int dw2;
-+	};
-+
-+	unsigned int dw3;
++/* Structure indicates the TCAM filter. */
++struct hinic3_tcam_filter {
++	TAILQ_ENTRY(hinic3_tcam_filter)
++	entries; /**< Filter entry, used for linked list operations. */
++	uint16_t dynamic_block_id;	 /**< Dynamic block ID. */
++	uint16_t index;			 /**< TCAM index. */
++	struct hinic3_tcam_key tcam_key; /**< Indicate TCAM key. */
++	uint16_t queue;			 /**< Allocated RX queue. */
 +};
 +
-+struct nic_tx_sge {
-+	union {
-+		struct {
-+			unsigned int length : 31; /**< SGE length. */
-+			unsigned int rsvd : 1;
-+		} bs0;
-+		unsigned int dw0;
-+	};
++/* Define a linked list header for storing hinic3_tcam_filter data. */
++TAILQ_HEAD(hinic3_tcam_filter_list, hinic3_tcam_filter);
 +
-+	union {
-+		struct {
-+			/* Key or unused. */
-+			unsigned int key : 30;
-+			/* 0:normal, 1:pointer to next SGE. */
-+			unsigned int extension : 1;
-+			/* 0:list, 1:last. */
-+			unsigned int list : 1;
-+		} bs1;
-+		unsigned int dw1;
-+	};
-+
-+	unsigned int dma_addr_high;
-+	unsigned int dma_addr_low;
++struct hinic3_tcam_dynamic_block {
++	TAILQ_ENTRY(hinic3_tcam_dynamic_block) entries;
++	u16 dynamic_block_id;
++	u16 dynamic_index_cnt;
++	u8 dynamic_index[HINIC3_TCAM_DYNAMIC_BLOCK_SIZE];
 +};
 +
-+struct nic_tx_wqe_desc {
-+	struct nic_tx_ctrl_section control;
-+	struct nic_tx_task_section task;
-+	unsigned int bd0_hi_addr;
-+	unsigned int bd0_lo_addr;
++/* Define a linked list header for storing hinic3_tcam_dynamic_block data. */
++TAILQ_HEAD(hinic3_tcam_dynamic_filter_list, hinic3_tcam_dynamic_block);
++
++/* Indicate TCAM dynamic block info. */
++struct hinic3_tcam_dynamic_block_info {
++	struct hinic3_tcam_dynamic_filter_list tcam_dynamic_list;
++	u16 dynamic_block_cnt;
 +};
 +
-+/* RX. */
-+typedef struct tag_l2nic_rx_cqe {
-+	union {
-+		struct {
-+			unsigned int checksum_err : 16;
-+			unsigned int lro_num : 8;
-+			unsigned int rsvd0 : 1;
-+			unsigned int spec_flags : 3;
-+			unsigned int flush : 1;
-+			unsigned int decry_pkt : 1;
-+			unsigned int bp_en : 1;
-+			unsigned int rx_done : 1;
-+		} bs;
-+		unsigned int value;
-+	} dw0;
-+
-+	union {
-+		struct {
-+			unsigned int vlan : 16;
-+			unsigned int length : 16;
-+		} bs;
-+		unsigned int value;
-+	} dw1;
-+
-+	union {
-+		struct {
-+			unsigned int pkt_types : 12;
-+			unsigned int rsvd1 : 7;
-+			unsigned int umbcast : 2;
-+			unsigned int vlan_offload_en : 1;
-+			unsigned int rsvd0 : 2;
-+			unsigned int rss_type : 8;
-+		} bs;
-+		unsigned int value;
-+	} dw2;
-+
-+	union {
-+		struct {
-+			unsigned int rss_hash_value;
-+		} bs;
-+		unsigned int value;
-+	} dw3;
-+
-+	/* dw4~dw7 field for nic/ovs multipexing. */
-+	union {
-+		struct { /**< For nic. */
-+			unsigned int tx_ts_seq : 16;
-+			unsigned int msg_1588_offset : 8;
-+			unsigned int msg_1588_type : 4;
-+			unsigned int rsvd : 1;
-+			unsigned int if_rx_ts : 1;
-+			unsigned int if_tx_ts : 1;
-+			unsigned int if_1588 : 1;
-+		} bs;
-+
-+		struct { /**< For ovs. */
-+			unsigned int reserved;
-+		} ovs_bs;
-+
-+		struct {
-+			unsigned int xid;
-+		} crypt_bs;
-+
-+		unsigned int value;
-+	} dw4;
-+
-+	union {
-+		struct { /**< For nic. */
-+			unsigned int msg_1588_ts;
-+		} bs;
-+
-+		struct { /**< For ovs. */
-+			unsigned int traffic_from : 16;
-+			unsigned int traffic_type : 6;
-+			unsigned int rsvd0 : 2;
-+			unsigned int l4_type : 3;
-+			unsigned int l3_type : 3;
-+			unsigned int mac_type : 2;
-+		} ovs_bs;
-+
-+		struct { /**< For crypt. */
-+			unsigned int esp_next_head : 8;
-+			unsigned int decrypt_status : 8;
-+			unsigned int rsvd : 16;
-+		} crypt_bs;
-+
-+		unsigned int value;
-+	} dw5;
-+
-+	union {
-+		struct { /**< For nic. */
-+			unsigned int lro_ts;
-+		} bs;
-+
-+		struct { /**< For ovs. */
-+			unsigned int reserved;
-+		} ovs_bs;
-+
-+		unsigned int value;
-+	} dw6;
-+
-+	union {
-+		struct { /**< For nic. */
-+			/* Data len of the first or middle pkt size. */
-+			unsigned int first_len : 13;
-+			/* Data len of the last pkt size. */
-+			unsigned int last_len : 13;
-+			/* The number of packet. */
-+			unsigned int pkt_num : 5;
-+			/* Only this bit = 1, other dw fields is valid. */
-+			unsigned int super_cqe_en : 1;
-+		} bs;
-+
-+		struct { /**< For ovs. */
-+			unsigned int localtag;
-+		} ovs_bs;
-+
-+		unsigned int value;
-+	} dw7;
-+} l2nic_rx_cqe_s;
-+
-+struct nic_rq_bd_sec {
-+	unsigned int pkt_buf_addr_high; /**< Packet buffer address high. */
-+	unsigned int pkt_buf_addr_low;	/**< Packet buffer address low. */
-+	unsigned int len;
++/* Structure is used to store TCAM information. */
++struct hinic3_tcam_info {
++	struct hinic3_tcam_filter_list tcam_list;
++	struct hinic3_tcam_dynamic_block_info tcam_dynamic_info;
 +};
 +
-+typedef struct _nic_rq_wqe {
-+	/* RX buffer SGE. Notes, buf_desc.len limit in bit 0~13. */
-+	struct nic_rq_bd_sec buf_desc;
-+	/* Reserved field 0 for 16B align. */
-+	unsigned int rsvd0;
-+	/*
-+	 * CQE buffer SGE. Notes, cqe_sect.len is in unit of 16B and limit in
-+	 * bit 0~4.
-+	 */
-+	struct nic_rq_bd_sec cqe_sect;
-+	/* Reserved field 1 for unused. */
-+	unsigned int rsvd1;
-+} nic_rq_wqe;
++/* Obtain the upper and lower 16 bits. */
++#define HINIC3_32_UPPER_16_BITS(n) ((((n) >> 16)) & 0xffff)
++#define HINIC3_32_LOWER_16_BITS(n) ((n) & 0xffff)
 +
-+/* CMD. */
-+struct cmd_show_q_st {
-+	struct tool_target target;
++/* Number of protocol rules */
++#define HINIC3_ARP_RULE_NUM  3
++#define HINIC3_RARP_RULE_NUM 1
++#define HINIC3_SLOW_RULE_NUM 2
++#define HINIC3_LLDP_RULE_NUM 2
++#define HINIC3_CNM_RULE_NUM  1
++#define HINIC3_ECP_RULE_NUM  2
 +
-+	int qobj;
-+	int q_id;
-+	int wqe_id;
-+	int direction;
++/* Define Ethernet type. */
++#define RTE_ETHER_TYPE_CNM 0x22e7
++#define RTE_ETHER_TYPE_ECP 0x8940
++
++/* Protocol type of the data packet. */
++enum hinic3_ether_type {
++	HINIC3_PKT_TYPE_ARP = 1,
++	HINIC3_PKT_TYPE_ARP_REQ,
++	HINIC3_PKT_TYPE_ARP_REP,
++	HINIC3_PKT_TYPE_RARP,
++	HINIC3_PKT_TYPE_LACP,
++	HINIC3_PKT_TYPE_LLDP,
++	HINIC3_PKT_TYPE_OAM,
++	HINIC3_PKT_TYPE_CDCP,
++	HINIC3_PKT_TYPE_CNM,
++	HINIC3_PKT_TYPE_ECP = 10,
++
++	HINIC3_PKT_UNKNOWN = 31,
 +};
 +
-+#endif /* _HINIC3_MML_QUEUE */
-diff --git a/drivers/net/hinic3/mml/meson.build b/drivers/net/hinic3/mml/meson.build
++int hinic3_flow_add_del_fdir_filter(struct rte_eth_dev *dev,
++				    struct hinic3_fdir_filter *fdir_filter,
++				    bool add);
++int hinic3_flow_add_del_ethertype_filter(struct rte_eth_dev *dev,
++					 struct rte_eth_ethertype_filter *ethertype_filter,
++					 bool add);
++
++void hinic3_free_fdir_filter(struct rte_eth_dev *dev);
++int hinic3_enable_rxq_fdir_filter(struct rte_eth_dev *dev, u32 queue_id,
++				  u32 able);
++int hinic3_flow_parse_attr(const struct rte_flow_attr *attr,
++			   struct rte_flow_error *error);
++
++#endif /**< _HINIC3_FDIR_H_ */
+diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
 new file mode 100644
-index 0000000000..f8d2650d8d
+index 0000000000..b310848530
 --- /dev/null
-+++ b/drivers/net/hinic3/mml/meson.build
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
++++ b/drivers/net/hinic3/hinic3_flow.c
+@@ -0,0 +1,1700 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
 +
-+sources = files(
-+    'hinic3_dbg.c',
-+    'hinic3_mml_cmd.c',
-+    'hinic3_mml_ioctl.c',
-+    'hinic3_mml_lib.c',
-+    'hinic3_mml_main.c',
-+    'hinic3_mml_queue.c',
-+)
++#include <errno.h>
++#include <stdio.h>
++#include <stdint.h>
++#include <string.h>
++#include <unistd.h>
 +
-+extra_flags = [
-+    '-Wno-cast-qual',
-+    '-Wno-format',
-+    '-Wno-format-nonliteral',
-+    '-Wno-format-security',
-+    '-Wno-missing-braces',
-+    '-Wno-missing-field-initializers',
-+    '-Wno-missing-prototypes',
-+    '-Wno-pointer-sign',
-+    '-Wno-pointer-to-int-cast',
-+    '-Wno-sign-compare',
-+    '-Wno-strict-aliasing',
-+    '-Wno-unused-parameter',
-+    '-Wno-unused-value',
-+    '-Wno-unused-variable',
-+]
++#include <rte_byteorder.h>
++#include <rte_common.h>
++#include <rte_ether.h>
++#include <rte_ethdev.h>
++#include <rte_flow.h>
++#include <rte_flow_driver.h>
++#include <rte_malloc.h>
 +
-+# The driver runs only on arch64 machine, remove 32bit warnings
-+if not dpdk_conf.get('RTE_ARCH_64')
-+    extra_flags += [
-+        '-Wno-int-to-pointer-cast',
-+        '-Wno-pointer-to-int-cast',
-+    ]
-+endif
++#include "base/hinic3_compat.h"
++#include "base/hinic3_hwdev.h"
++#include "base/hinic3_nic_cfg.h"
++#include "hinic3_ethdev.h"
++#include "hinic3_fdir.h"
++#include "hinic3_flow.h"
 +
-+foreach flag: extra_flags
-+    if cc.has_argument(flag)
-+        cflags += flag
-+    endif
-+endforeach
++#define HINIC3_UINT8_MAX 0xff
 +
-+deps += ['hash']
++/* Indicate the type of the IPv4 ICPM matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_icmp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_ICMP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
 +
-+c_args = cflags
-+includes += include_directories('../')
-+includes += include_directories('../base/')
++/* Indicate the type of the IPv4 any protocol matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_any[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_ANY,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
 +
-+mml_lib = static_library(
-+    'hinic3_mml',
-+    sources,
-+    dependencies: [
-+        static_rte_eal,
-+        static_rte_ethdev,
-+        static_rte_bus_pci,
-+        static_rte_hash,
-+    ],
-+    include_directories: includes,
-+    c_args: c_args,
-+)
-+mml_objs = mml_lib.extract_all_objects()
++/* Indicate the type of the Ether matching pattern. */
++static enum rte_flow_item_type pattern_ethertype[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the TCP matching pattern. */
++static enum rte_flow_item_type pattern_ethertype_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_TCP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the UDP matching pattern. */
++static enum rte_flow_item_type pattern_ethertype_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_UDP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan any protocol matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_any[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ANY, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_TCP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv4 matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv4 TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_TCP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv4 UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv6 matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv6 TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_TCP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 vxlan IPv6 UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 matching pattern. */
++static enum rte_flow_item_type pattern_ipv4[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_UDP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv4 TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv4_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV4,
++	HINIC3_FLOW_ITEM_TYPE_TCP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 matching pattern. */
++static enum rte_flow_item_type pattern_ipv6[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH,
++	HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_TCP,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_vxlan[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 VXLAN any protocol matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_vxlan_any[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_ANY, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 VXLAN TCP matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_vxlan_tcp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_TCP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++/* Indicate the type of the IPv6 VXLAN UDP matching pattern. */
++static enum rte_flow_item_type pattern_ipv6_vxlan_udp[] = {
++	HINIC3_FLOW_ITEM_TYPE_ETH, HINIC3_FLOW_ITEM_TYPE_IPV6,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_VXLAN,
++	HINIC3_FLOW_ITEM_TYPE_UDP, HINIC3_FLOW_ITEM_TYPE_END,
++};
++
++typedef int (*hinic3_parse_filter_t)(struct rte_eth_dev *dev,
++				     const struct rte_flow_attr *attr,
++				     const struct rte_flow_item pattern[],
++				     const struct rte_flow_action actions[],
++				     struct rte_flow_error *error,
++				     struct hinic3_filter_t *filter);
++
++/* Indicate valid filter mode . */
++struct hinic3_valid_pattern {
++	enum rte_flow_item_type *items;
++	hinic3_parse_filter_t parse_filter;
++};
++
++static int hinic3_flow_parse_fdir_filter(struct rte_eth_dev *dev,
++					 const struct rte_flow_attr *attr,
++					 const struct rte_flow_item pattern[],
++					 const struct rte_flow_action actions[],
++					 struct rte_flow_error *error,
++					 struct hinic3_filter_t *filter);
++
++static int hinic3_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
++					      const struct rte_flow_attr *attr,
++					      const struct rte_flow_item pattern[],
++					      const struct rte_flow_action actions[],
++					      struct rte_flow_error *error,
++					      struct hinic3_filter_t *filter);
++
++static int hinic3_flow_parse_fdir_vxlan_filter(struct rte_eth_dev *dev,
++					       const struct rte_flow_attr *attr,
++					       const struct rte_flow_item pattern[],
++					       const struct rte_flow_action actions[],
++					       struct rte_flow_error *error,
++					       struct hinic3_filter_t *filter);
++
++/*
++ * Define a supported pattern array, including the matching patterns of
++ * various network protocols and corresponding parsing functions.
++ */
++static const struct hinic3_valid_pattern hinic3_supported_patterns[] = {
++	/* Support ethertype. */
++	{pattern_ethertype, hinic3_flow_parse_ethertype_filter},
++	/* Support ipv4 but not tunnel, and any field can be masked. */
++	{pattern_ipv4, hinic3_flow_parse_fdir_filter},
++	{pattern_ipv4_any, hinic3_flow_parse_fdir_filter},
++	/* Support ipv4 + l4 but not tunnel, and any field can be masked. */
++	{pattern_ipv4_udp, hinic3_flow_parse_fdir_filter},
++	{pattern_ipv4_tcp, hinic3_flow_parse_fdir_filter},
++	/* Support ipv4 + icmp not tunnel, and any field can be masked. */
++	{pattern_ipv4_icmp, hinic3_flow_parse_fdir_filter},
++
++	/* Support ipv4 + l4 but not tunnel, and any field can be masked. */
++	{pattern_ethertype_udp, hinic3_flow_parse_fdir_filter},
++	{pattern_ethertype_tcp, hinic3_flow_parse_fdir_filter},
++
++	/* Support ipv4 + vxlan + any, and any field can be masked. */
++	{pattern_ipv4_vxlan, hinic3_flow_parse_fdir_vxlan_filter},
++	/* Support ipv4 + vxlan + ipv4, and any field can be masked. */
++	{pattern_ipv4_vxlan_ipv4, hinic3_flow_parse_fdir_vxlan_filter},
++	/* Support ipv4 + vxlan + ipv4 + l4, and any field can be masked. */
++	{pattern_ipv4_vxlan_ipv4_tcp, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv4_vxlan_ipv4_udp, hinic3_flow_parse_fdir_vxlan_filter},
++	/* Support ipv4 + vxlan + ipv6, and any field can be masked. */
++	{pattern_ipv4_vxlan_ipv6, hinic3_flow_parse_fdir_vxlan_filter},
++	/* Support ipv4 + vxlan + ipv6 + l4, and any field can be masked. */
++	{pattern_ipv4_vxlan_ipv6_tcp, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv4_vxlan_ipv6_udp, hinic3_flow_parse_fdir_vxlan_filter},
++	/* Support ipv4 + vxlan + l4, and any field can be masked. */
++	{pattern_ipv4_vxlan_tcp, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv4_vxlan_udp, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv4_vxlan_any, hinic3_flow_parse_fdir_vxlan_filter},
++
++	/* Support ipv6 but not tunnel, and any field can be masked. */
++	{pattern_ipv6, hinic3_flow_parse_fdir_filter},
++	/* Support ipv6 + l4 but not tunnel, and any field can be masked. */
++	{pattern_ipv6_udp, hinic3_flow_parse_fdir_filter},
++	{pattern_ipv6_tcp, hinic3_flow_parse_fdir_filter},
++
++	/* Support ipv6 + vxlan + any, and any field can be masked. */
++	{pattern_ipv6_vxlan, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv6_vxlan_any, hinic3_flow_parse_fdir_vxlan_filter},
++
++	/* Support ipv6 + vxlan + l4, and any field can be masked. */
++	{pattern_ipv6_vxlan_tcp, hinic3_flow_parse_fdir_vxlan_filter},
++	{pattern_ipv6_vxlan_udp, hinic3_flow_parse_fdir_vxlan_filter},
++
++};
++
++static inline void
++net_addr_to_host(uint32_t *dst, const uint32_t *src, size_t len)
++{
++	size_t i;
++	for (i = 0; i < len; i++)
++		dst[i] = rte_be_to_cpu_32(src[i]);
++}
++
++static bool
++hinic3_match_pattern(enum rte_flow_item_type *item_array,
++		     const struct rte_flow_item *pattern)
++{
++	const struct rte_flow_item *item = pattern;
++
++	/* skip the first void item. */
++	while (item->type == HINIC3_FLOW_ITEM_TYPE_VOID)
++		item++;
++
++	/* Find no void item. */
++	while (((*item_array == item->type) &&
++		(*item_array != HINIC3_FLOW_ITEM_TYPE_END)) ||
++	       (item->type == HINIC3_FLOW_ITEM_TYPE_VOID)) {
++		if (item->type == HINIC3_FLOW_ITEM_TYPE_VOID) {
++			item++;
++		} else {
++			item_array++;
++			item++;
++		}
++	}
++
++	return (*item_array == HINIC3_FLOW_ITEM_TYPE_END &&
++		item->type == HINIC3_FLOW_ITEM_TYPE_END);
++}
++
++/**
++ * Find matching parsing filter functions.
++ *
++ * @param[in] pattern
++ * Pattern to match.
++ * @return
++ * Matched resolution filter. If no resolution filter is found, return NULL.
++ */
++static hinic3_parse_filter_t
++hinic3_find_parse_filter_func(const struct rte_flow_item *pattern)
++{
++	hinic3_parse_filter_t parse_filter = NULL;
++	uint8_t i;
++	/* Traverse all supported patterns. */
++	for (i = 0; i < RTE_DIM(hinic3_supported_patterns); i++) {
++		if (hinic3_match_pattern(hinic3_supported_patterns[i].items,
++					 pattern)) {
++			parse_filter =
++				hinic3_supported_patterns[i].parse_filter;
++			break;
++		}
++	}
++
++	return parse_filter;
++}
++
++/**
++ * Action for parsing and processing Ethernet types.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, its used to store and manipulate packet filtering rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse_action(struct rte_eth_dev *dev,
++			 const struct rte_flow_action *actions,
++			 struct rte_flow_error *error,
++			 struct hinic3_filter_t *filter)
++{
++	const struct rte_flow_action_queue *act_q;
++	const struct rte_flow_action *act = actions;
++
++	/* skip the first void item. */
++	while (act->type == RTE_FLOW_ACTION_TYPE_VOID)
++		act++;
++
++	switch (act->type) {
++	case RTE_FLOW_ACTION_TYPE_QUEUE:
++		act_q = (const struct rte_flow_action_queue *)act->conf;
++		filter->fdir_filter.rq_index = act_q->index;
++		if (filter->fdir_filter.rq_index >= dev->data->nb_rx_queues) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ACTION, act,
++					   "Invalid action param.");
++			return -rte_errno;
++		}
++		break;
++	default:
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ACTION,
++				   act, "Invalid action type.");
++		return -rte_errno;
++	}
++
++	return 0;
++}
++
++int
++hinic3_flow_parse_attr(const struct rte_flow_attr *attr,
++		       struct rte_flow_error *error)
++{
++	/* Not supported. */
++	if (!attr->ingress || attr->egress || attr->priority || attr->group) {
++		rte_flow_error_set(error, EINVAL,
++				   HINIC3_FLOW_ERROR_TYPE_UNSPECIFIED, attr,
++				   "Only support ingress.");
++		return -rte_errno;
++	}
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_ipv4(const struct rte_flow_item *flow_item,
++		      struct hinic3_filter_t *filter,
++		      struct rte_flow_error *error)
++{
++	const struct rte_flow_item_ipv4 *spec_ipv4, *mask_ipv4;
++
++	mask_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->mask;
++	spec_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->spec;
++	if (!mask_ipv4 || !spec_ipv4) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter ipv4 mask or spec");
++		return -rte_errno;
++	}
++
++	/*
++	 * Only support src address , dst addresses, proto,
++	 * others should be masked.
++	 */
++	if (mask_ipv4->hdr.version_ihl || mask_ipv4->hdr.type_of_service ||
++	    mask_ipv4->hdr.total_length || mask_ipv4->hdr.packet_id ||
++	    mask_ipv4->hdr.fragment_offset || mask_ipv4->hdr.time_to_live ||
++	    mask_ipv4->hdr.hdr_checksum) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Not supported by fdir filter, ipv4 only "
++				   "support src ip, dst ip, proto");
++		return -rte_errno;
++	}
++
++	/* Set the filter information. */
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++	filter->fdir_filter.key_mask.ipv4.src_ip =
++		rte_be_to_cpu_32(mask_ipv4->hdr.src_addr);
++	filter->fdir_filter.key_spec.ipv4.src_ip =
++		rte_be_to_cpu_32(spec_ipv4->hdr.src_addr);
++	filter->fdir_filter.key_mask.ipv4.dst_ip =
++		rte_be_to_cpu_32(mask_ipv4->hdr.dst_addr);
++	filter->fdir_filter.key_spec.ipv4.dst_ip =
++		rte_be_to_cpu_32(spec_ipv4->hdr.dst_addr);
++	filter->fdir_filter.key_mask.proto = mask_ipv4->hdr.next_proto_id;
++	filter->fdir_filter.key_spec.proto = spec_ipv4->hdr.next_proto_id;
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_ipv6(const struct rte_flow_item *flow_item,
++		      struct hinic3_filter_t *filter,
++		      struct rte_flow_error *error)
++{
++	const struct rte_flow_item_ipv6 *spec_ipv6, *mask_ipv6;
++
++	mask_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->mask;
++	spec_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->spec;
++	if (!mask_ipv6 || !spec_ipv6) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter ipv6 mask or spec");
++		return -rte_errno;
++	}
++
++	/* Only support dst addresses, src addresses, proto. */
++	if (mask_ipv6->hdr.vtc_flow || mask_ipv6->hdr.payload_len ||
++	    mask_ipv6->hdr.hop_limits) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Not supported by fdir filter, ipv6 only "
++				   "support src ip, dst ip, proto");
++		return -rte_errno;
++	}
++
++	/* Set the filter information. */
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++	net_addr_to_host(filter->fdir_filter.key_mask.ipv6.src_ip,
++			 (const uint32_t *)mask_ipv6->hdr.src_addr.a, 4);
++	net_addr_to_host(filter->fdir_filter.key_spec.ipv6.src_ip,
++			 (const uint32_t *)spec_ipv6->hdr.src_addr.a, 4);
++	net_addr_to_host(filter->fdir_filter.key_mask.ipv6.dst_ip,
++			 (const uint32_t *)mask_ipv6->hdr.dst_addr.a, 4);
++	net_addr_to_host(filter->fdir_filter.key_spec.ipv6.dst_ip,
++			 (const uint32_t *)spec_ipv6->hdr.dst_addr.a, 4);
++	filter->fdir_filter.key_mask.proto = mask_ipv6->hdr.proto;
++	filter->fdir_filter.key_spec.proto = spec_ipv6->hdr.proto;
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_tcp(const struct rte_flow_item *flow_item,
++		     struct hinic3_filter_t *filter,
++		     struct rte_flow_error *error)
++{
++	const struct rte_flow_item_tcp *spec_tcp, *mask_tcp;
++
++	mask_tcp = (const struct rte_flow_item_tcp *)flow_item->mask;
++	spec_tcp = (const struct rte_flow_item_tcp *)flow_item->spec;
++
++	filter->fdir_filter.key_mask.proto = HINIC3_UINT8_MAX;
++	filter->fdir_filter.key_spec.proto = IPPROTO_TCP;
++
++	if (!mask_tcp && !spec_tcp)
++		return 0;
++
++	if (!mask_tcp || !spec_tcp) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter tcp mask or spec");
++		return -rte_errno;
++	}
++
++	/* Only support src, dst ports, others should be masked. */
++	if (mask_tcp->hdr.sent_seq || mask_tcp->hdr.recv_ack ||
++	    mask_tcp->hdr.data_off || mask_tcp->hdr.rx_win ||
++	    mask_tcp->hdr.tcp_flags || mask_tcp->hdr.cksum ||
++	    mask_tcp->hdr.tcp_urp) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Not supported by fdir filter, tcp only "
++				   "support src port, dst port");
++		return -rte_errno;
++	}
++
++	/* Set the filter information. */
++	filter->fdir_filter.key_mask.src_port =
++		(u16)rte_be_to_cpu_16(mask_tcp->hdr.src_port);
++	filter->fdir_filter.key_spec.src_port =
++		(u16)rte_be_to_cpu_16(spec_tcp->hdr.src_port);
++	filter->fdir_filter.key_mask.dst_port =
++		(u16)rte_be_to_cpu_16(mask_tcp->hdr.dst_port);
++	filter->fdir_filter.key_spec.dst_port =
++		(u16)rte_be_to_cpu_16(spec_tcp->hdr.dst_port);
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_udp(const struct rte_flow_item *flow_item,
++		     struct hinic3_filter_t *filter,
++		     struct rte_flow_error *error)
++{
++	const struct rte_flow_item_udp *spec_udp, *mask_udp;
++
++	mask_udp = (const struct rte_flow_item_udp *)flow_item->mask;
++	spec_udp = (const struct rte_flow_item_udp *)flow_item->spec;
++
++	filter->fdir_filter.key_mask.proto = HINIC3_UINT8_MAX;
++	filter->fdir_filter.key_spec.proto = IPPROTO_UDP;
++
++	if (!mask_udp && !spec_udp)
++		return 0;
++
++	if (!mask_udp || !spec_udp) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter udp mask or spec");
++		return -rte_errno;
++	}
++
++	/* Set the filter information. */
++	filter->fdir_filter.key_mask.src_port =
++		(u16)rte_be_to_cpu_16(mask_udp->hdr.src_port);
++	filter->fdir_filter.key_spec.src_port =
++		(u16)rte_be_to_cpu_16(spec_udp->hdr.src_port);
++	filter->fdir_filter.key_mask.dst_port =
++		(u16)rte_be_to_cpu_16(mask_udp->hdr.dst_port);
++	filter->fdir_filter.key_spec.dst_port =
++		(u16)rte_be_to_cpu_16(spec_udp->hdr.dst_port);
++
++	return 0;
++}
++
++/**
++ * Parse the pattern of network traffic and apply the parsing result to the
++ * traffic filter.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, Its used to store and manipulate packet filtering rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse_fdir_pattern(__rte_unused struct rte_eth_dev *dev,
++			       const struct rte_flow_item *pattern,
++			       struct rte_flow_error *error,
++			       struct hinic3_filter_t *filter)
++{
++	const struct rte_flow_item *flow_item = pattern;
++	enum rte_flow_item_type type;
++	int err;
++
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_ANY;
++	/* Traverse all modes until HINIC3_FLOW_ITEM_TYPE_END is reached. */
++	for (; flow_item->type != HINIC3_FLOW_ITEM_TYPE_END; flow_item++) {
++		if (flow_item->last) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item, "Not support range");
++			return -rte_errno;
++		}
++		type = flow_item->type;
++		switch (type) {
++		case HINIC3_FLOW_ITEM_TYPE_ETH:
++			if (flow_item->spec || flow_item->mask) {
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "Not supported by fdir "
++						   "filter, not support mac");
++				return -rte_errno;
++			}
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_IPV4:
++			err = hinic3_flow_fdir_ipv4(flow_item, filter, error);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_IPV6:
++			err = hinic3_flow_fdir_ipv6(flow_item, filter, error);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_TCP:
++			err = hinic3_flow_fdir_tcp(flow_item, filter, error);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_UDP:
++			err = hinic3_flow_fdir_udp(flow_item, filter, error);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		default:
++			break;
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * Resolve rules for network traffic filters.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] attr
++ * Indicates the attribute of a flow rule.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, Its used to store and manipulate packet filtering rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse_fdir_filter(struct rte_eth_dev *dev,
++			      const struct rte_flow_attr *attr,
++			      const struct rte_flow_item pattern[],
++			      const struct rte_flow_action actions[],
++			      struct rte_flow_error *error,
++			      struct hinic3_filter_t *filter)
++{
++	int ret;
++
++	ret = hinic3_flow_parse_fdir_pattern(dev, pattern, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_action(dev, actions, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_attr(attr, error);
++	if (ret)
++		return ret;
++
++	filter->filter_type = RTE_ETH_FILTER_FDIR;
++
++	return 0;
++}
++
++/**
++ * Parse and process the actions of the Ethernet type.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, Its used to store and manipulate packet filtering rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse_ethertype_action(struct rte_eth_dev *dev,
++				   const struct rte_flow_action *actions,
++				   struct rte_flow_error *error,
++				   struct hinic3_filter_t *filter)
++{
++	const struct rte_flow_action *act = actions;
++	const struct rte_flow_action_queue *act_q;
++
++	/* Skip the firset void item. */
++	while (act->type == RTE_FLOW_ACTION_TYPE_VOID)
++		act++;
++
++	switch (act->type) {
++	case RTE_FLOW_ACTION_TYPE_QUEUE:
++		act_q = (const struct rte_flow_action_queue *)act->conf;
++		filter->ethertype_filter.queue = act_q->index;
++		if (filter->ethertype_filter.queue >= dev->data->nb_rx_queues) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ACTION, act,
++					   "Invalid action param.");
++			return -rte_errno;
++		}
++		break;
++
++	default:
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ACTION,
++				   act, "Invalid action type.");
++		return -rte_errno;
++	}
++
++	return 0;
++}
++
++static int
++hinic3_flow_parse_ethertype_pattern(__rte_unused struct rte_eth_dev *dev,
++				    const struct rte_flow_item *pattern,
++				    struct rte_flow_error *error,
++				    struct hinic3_filter_t *filter)
++{
++	const struct rte_flow_item_eth *ether_spec, *ether_mask;
++	const struct rte_flow_item *flow_item = pattern;
++	enum rte_flow_item_type type;
++
++	/* Traverse all modes until HINIC3_FLOW_ITEM_TYPE_END is reached. */
++	for (; flow_item->type != HINIC3_FLOW_ITEM_TYPE_END; flow_item++) {
++		if (flow_item->last) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item, "Not support range");
++			return -rte_errno;
++		}
++		type = flow_item->type;
++		switch (type) {
++		case HINIC3_FLOW_ITEM_TYPE_ETH:
++			/* Obtaining Ethernet Specifications and Masks. */
++			ether_spec = (const struct rte_flow_item_eth *)
++					     flow_item->spec;
++			ether_mask = (const struct rte_flow_item_eth *)
++					     flow_item->mask;
++			if (!ether_spec || !ether_mask) {
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "NULL ETH spec/mask");
++				return -rte_errno;
++			}
++
++			/*
++			 * Mask bits of source MAC address must be full of 0.
++			 * Mask bits of destination MAC address must be full 0.
++			 * Filters traffic based on the type of Ethernet.
++			 */
++			if (!rte_is_zero_ether_addr(&ether_mask->src) ||
++			    (!rte_is_zero_ether_addr(&ether_mask->dst))) {
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "Invalid ether address mask");
++				return -rte_errno;
++			}
++
++			if ((ether_mask->type & UINT16_MAX) != UINT16_MAX) {
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "Invalid ethertype mask");
++				return -rte_errno;
++			}
++
++			filter->ethertype_filter.ether_type =
++				(u16)rte_be_to_cpu_16(ether_spec->type);
++
++			switch (filter->ethertype_filter.ether_type) {
++			case RTE_ETHER_TYPE_SLOW:
++				break;
++
++			case RTE_ETHER_TYPE_ARP:
++				break;
++
++			case RTE_ETHER_TYPE_RARP:
++				break;
++
++			case RTE_ETHER_TYPE_LLDP:
++				break;
++
++			default:
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "Unsupported ether_type in"
++						   " control packet filter.");
++				return -rte_errno;
++			}
++			break;
++
++		default:
++			break;
++		}
++	}
++
++	return 0;
++}
++
++static int
++hinic3_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
++				   const struct rte_flow_attr *attr,
++				   const struct rte_flow_item pattern[],
++				   const struct rte_flow_action actions[],
++				   struct rte_flow_error *error,
++				   struct hinic3_filter_t *filter)
++{
++	int ret;
++
++	ret = hinic3_flow_parse_ethertype_pattern(dev, pattern, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_ethertype_action(dev, actions, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_attr(attr, error);
++	if (ret)
++		return ret;
++
++	filter->filter_type = RTE_ETH_FILTER_ETHERTYPE;
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
++			     struct hinic3_filter_t *filter,
++			     const struct rte_flow_item *flow_item,
++			     enum hinic3_fdir_tunnel_mode tunnel_mode)
++{
++	const struct rte_flow_item_ipv4 *spec_ipv4, *mask_ipv4;
++	mask_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->mask;
++	spec_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->spec;
++
++	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++		filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++
++		if (!mask_ipv4 && !spec_ipv4)
++			return 0;
++
++		if (!mask_ipv4 || !spec_ipv4) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item,
++					   "Invalid fdir filter, vxlan outer "
++					   "ipv4 mask or spec");
++			return -rte_errno;
++		}
++
++		/*
++		 * Only support src address , dst addresses, others should be
++		 * masked.
++		 */
++		if (mask_ipv4->hdr.version_ihl ||
++		    mask_ipv4->hdr.type_of_service ||
++		    mask_ipv4->hdr.total_length || mask_ipv4->hdr.packet_id ||
++		    mask_ipv4->hdr.fragment_offset ||
++		    mask_ipv4->hdr.time_to_live ||
++		    mask_ipv4->hdr.next_proto_id ||
++		    mask_ipv4->hdr.hdr_checksum) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item,
++					   "Not supported by fdir filter, "
++					   "vxlan outer ipv4 only support "
++					   "src ip, dst ip");
++			return -rte_errno;
++		}
++
++		/* Set the filter information. */
++		filter->fdir_filter.key_mask.ipv4.src_ip =
++			rte_be_to_cpu_32(mask_ipv4->hdr.src_addr);
++		filter->fdir_filter.key_spec.ipv4.src_ip =
++			rte_be_to_cpu_32(spec_ipv4->hdr.src_addr);
++		filter->fdir_filter.key_mask.ipv4.dst_ip =
++			rte_be_to_cpu_32(mask_ipv4->hdr.dst_addr);
++		filter->fdir_filter.key_spec.ipv4.dst_ip =
++			rte_be_to_cpu_32(spec_ipv4->hdr.dst_addr);
++	} else {
++		filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++
++		if (!mask_ipv4 && !spec_ipv4)
++			return 0;
++
++		if (!mask_ipv4 || !spec_ipv4) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item,
++					   "Invalid fdir filter, vxlan inner "
++					   "ipv4 mask or spec");
++			return -rte_errno;
++		}
++
++		/*
++		 * Only support src addr , dst addr, ip proto, others should be
++		 * masked.
++		 */
++		if (mask_ipv4->hdr.version_ihl ||
++		    mask_ipv4->hdr.type_of_service ||
++		    mask_ipv4->hdr.total_length || mask_ipv4->hdr.packet_id ||
++		    mask_ipv4->hdr.fragment_offset ||
++		    mask_ipv4->hdr.time_to_live ||
++		    mask_ipv4->hdr.hdr_checksum) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item,
++					   "Not supported by fdir filter, "
++					   "vxlan inner ipv4 only support "
++					   "src ip, dst ip, proto");
++			return -rte_errno;
++		}
++
++		/* Set the filter information. */
++		filter->fdir_filter.key_mask.inner_ipv4.src_ip =
++			rte_be_to_cpu_32(mask_ipv4->hdr.src_addr);
++		filter->fdir_filter.key_spec.inner_ipv4.src_ip =
++			rte_be_to_cpu_32(spec_ipv4->hdr.src_addr);
++		filter->fdir_filter.key_mask.inner_ipv4.dst_ip =
++			rte_be_to_cpu_32(mask_ipv4->hdr.dst_addr);
++		filter->fdir_filter.key_spec.inner_ipv4.dst_ip =
++			rte_be_to_cpu_32(spec_ipv4->hdr.dst_addr);
++		filter->fdir_filter.key_mask.proto =
++			mask_ipv4->hdr.next_proto_id;
++		filter->fdir_filter.key_spec.proto =
++			spec_ipv4->hdr.next_proto_id;
++	}
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_tunnel_ipv6(struct rte_flow_error *error,
++			     struct hinic3_filter_t *filter,
++			     const struct rte_flow_item *flow_item,
++			     enum hinic3_fdir_tunnel_mode tunnel_mode)
++{
++	const struct rte_flow_item_ipv6 *spec_ipv6, *mask_ipv6;
++
++	mask_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->mask;
++	spec_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->spec;
++
++	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++		filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++
++		if (!mask_ipv6 && !spec_ipv6)
++			return 0;
++
++		if (!mask_ipv6 || !spec_ipv6) {
++			rte_flow_error_set(error, EINVAL,
++				HINIC3_FLOW_ERROR_TYPE_ITEM, flow_item,
++				"Invalid fdir filter ipv6 mask or spec");
++			return -rte_errno;
++		}
++
++		/* Only support dst addresses, src addresses. */
++		if (mask_ipv6->hdr.vtc_flow || mask_ipv6->hdr.payload_len ||
++		    mask_ipv6->hdr.hop_limits || mask_ipv6->hdr.proto) {
++			rte_flow_error_set(error, EINVAL,
++				HINIC3_FLOW_ERROR_TYPE_ITEM, flow_item,
++				"Not supported by fdir filter, ipv6 only "
++				"support src ip, dst ip, proto");
++			return -rte_errno;
++		}
++
++		net_addr_to_host(filter->fdir_filter.key_mask.ipv6.src_ip,
++				 (const uint32_t *)mask_ipv6->hdr.src_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_spec.ipv6.src_ip,
++				 (const uint32_t *)spec_ipv6->hdr.src_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_mask.ipv6.dst_ip,
++				 (const uint32_t *)mask_ipv6->hdr.dst_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_spec.ipv6.dst_ip,
++				 (const uint32_t *)spec_ipv6->hdr.dst_addr.a, 4);
++	} else {
++		filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++
++		if (!mask_ipv6 && !spec_ipv6)
++			return 0;
++
++		if (!mask_ipv6 || !spec_ipv6) {
++			rte_flow_error_set(error, EINVAL,
++				HINIC3_FLOW_ERROR_TYPE_ITEM, flow_item,
++				"Invalid fdir filter ipv6 mask or spec");
++			return -rte_errno;
++		}
++
++		/* Only support dst addresses, src addresses, proto. */
++		if (mask_ipv6->hdr.vtc_flow || mask_ipv6->hdr.payload_len ||
++		    mask_ipv6->hdr.hop_limits) {
++			rte_flow_error_set(error, EINVAL,
++				HINIC3_FLOW_ERROR_TYPE_ITEM, flow_item,
++				"Not supported by fdir filter, ipv6 only "
++				"support src ip, dst ip, proto");
++			return -rte_errno;
++		}
++
++		net_addr_to_host(filter->fdir_filter.key_mask.inner_ipv6.src_ip,
++				 (const uint32_t *)mask_ipv6->hdr.src_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_spec.inner_ipv6.src_ip,
++				 (const uint32_t *)spec_ipv6->hdr.src_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_mask.inner_ipv6.dst_ip,
++				 (const uint32_t *)mask_ipv6->hdr.dst_addr.a, 4);
++		net_addr_to_host(filter->fdir_filter.key_spec.inner_ipv6.dst_ip,
++				 (const uint32_t *)spec_ipv6->hdr.dst_addr.a, 4);
++
++		filter->fdir_filter.key_mask.proto = mask_ipv6->hdr.proto;
++		filter->fdir_filter.key_spec.proto = spec_ipv6->hdr.proto;
++	}
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_tunnel_tcp(struct rte_flow_error *error,
++			    struct hinic3_filter_t *filter,
++			    enum hinic3_fdir_tunnel_mode tunnel_mode,
++			    const struct rte_flow_item *flow_item)
++{
++	const struct rte_flow_item_tcp *spec_tcp, *mask_tcp;
++
++	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Not supported by fdir filter, vxlan only "
++				   "support inner tcp");
++		return -rte_errno;
++	}
++
++	filter->fdir_filter.key_mask.proto = HINIC3_UINT8_MAX;
++	filter->fdir_filter.key_spec.proto = IPPROTO_TCP;
++
++	mask_tcp = (const struct rte_flow_item_tcp *)flow_item->mask;
++	spec_tcp = (const struct rte_flow_item_tcp *)flow_item->spec;
++	if (!mask_tcp && !spec_tcp)
++		return 0;
++	if (!mask_tcp || !spec_tcp) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter tcp mask or spec");
++		return -rte_errno;
++	}
++
++	/* Only support src, dst ports, others should be masked. */
++	if (mask_tcp->hdr.sent_seq || mask_tcp->hdr.recv_ack ||
++	    mask_tcp->hdr.data_off || mask_tcp->hdr.rx_win ||
++	    mask_tcp->hdr.tcp_flags || mask_tcp->hdr.cksum ||
++	    mask_tcp->hdr.tcp_urp) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Not supported by fdir filter, vxlan inner "
++				   "tcp only support src port,dst port");
++		return -rte_errno;
++	}
++
++	/* Set the filter information. */
++	filter->fdir_filter.key_mask.src_port =
++		(u16)rte_be_to_cpu_16(mask_tcp->hdr.src_port);
++	filter->fdir_filter.key_spec.src_port =
++		(u16)rte_be_to_cpu_16(spec_tcp->hdr.src_port);
++	filter->fdir_filter.key_mask.dst_port =
++		(u16)rte_be_to_cpu_16(mask_tcp->hdr.dst_port);
++	filter->fdir_filter.key_spec.dst_port =
++		(u16)rte_be_to_cpu_16(spec_tcp->hdr.dst_port);
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_tunnel_udp(struct rte_flow_error *error,
++			    struct hinic3_filter_t *filter,
++			    enum hinic3_fdir_tunnel_mode tunnel_mode,
++			    const struct rte_flow_item *flow_item)
++{
++	const struct rte_flow_item_udp *spec_udp, *mask_udp;
++
++	mask_udp = (const struct rte_flow_item_udp *)flow_item->mask;
++	spec_udp = (const struct rte_flow_item_udp *)flow_item->spec;
++
++	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++		/*
++		 * UDP is used to describe protocol,
++		 * spec and mask should be NULL.
++		 */
++		if (flow_item->spec || flow_item->mask) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item, "Invalid UDP item");
++			return -rte_errno;
++		}
++	} else {
++		filter->fdir_filter.key_mask.proto = HINIC3_UINT8_MAX;
++		filter->fdir_filter.key_spec.proto = IPPROTO_UDP;
++		if (!mask_udp && !spec_udp)
++			return 0;
++
++		if (!mask_udp || !spec_udp) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item,
++					   "Invalid fdir filter vxlan inner "
++					   "udp mask or spec");
++			return -rte_errno;
++		}
++
++		/* Set the filter information. */
++		filter->fdir_filter.key_mask.src_port =
++			(u16)rte_be_to_cpu_16(mask_udp->hdr.src_port);
++		filter->fdir_filter.key_spec.src_port =
++			(u16)rte_be_to_cpu_16(spec_udp->hdr.src_port);
++		filter->fdir_filter.key_mask.dst_port =
++			(u16)rte_be_to_cpu_16(mask_udp->hdr.dst_port);
++		filter->fdir_filter.key_spec.dst_port =
++			(u16)rte_be_to_cpu_16(spec_udp->hdr.dst_port);
++	}
++
++	return 0;
++}
++
++static int
++hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
++		       struct hinic3_filter_t *filter,
++		       const struct rte_flow_item *flow_item)
++{
++	const struct rte_flow_item_vxlan *spec_vxlan, *mask_vxlan;
++	uint32_t vxlan_vni_id = 0;
++
++	spec_vxlan = (const struct rte_flow_item_vxlan *)flow_item->spec;
++	mask_vxlan = (const struct rte_flow_item_vxlan *)flow_item->mask;
++
++	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++
++	if (!spec_vxlan && !mask_vxlan) {
++		return 0;
++	} else if (filter->fdir_filter.outer_ip_type == HINIC3_FDIR_IP_TYPE_IPV6) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter vxlan mask or spec, "
++				   "ipv6 vxlan, don't support vni");
++		return -rte_errno;
++	}
++
++	if (!spec_vxlan || !mask_vxlan) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   flow_item,
++				   "Invalid fdir filter vxlan mask or spec");
++		return -rte_errno;
++	}
++
++	rte_memcpy(((uint8_t *)&vxlan_vni_id + 1), spec_vxlan->vni, 3);
++	filter->fdir_filter.key_mask.tunnel.tunnel_id =
++		rte_be_to_cpu_32(vxlan_vni_id);
++	return 0;
++}
++
++static int
++hinic3_flow_parse_fdir_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
++				     const struct rte_flow_item *pattern,
++				     struct rte_flow_error *error,
++				     struct hinic3_filter_t *filter)
++{
++	const struct rte_flow_item *flow_item = pattern;
++	enum hinic3_fdir_tunnel_mode tunnel_mode =
++		HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++	enum rte_flow_item_type type;
++	int err;
++
++	/* Inner and outer ip type, set it to any by default */
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_ANY;
++	filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_ANY;
++
++	for (; flow_item->type != HINIC3_FLOW_ITEM_TYPE_END; flow_item++) {
++		if (flow_item->last) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_ITEM,
++					   flow_item, "Not support range");
++			return -rte_errno;
++		}
++
++		type = flow_item->type;
++		switch (type) {
++		case HINIC3_FLOW_ITEM_TYPE_ETH:
++			/* All should be masked. */
++			if (flow_item->spec || flow_item->mask) {
++				rte_flow_error_set(error, EINVAL,
++						   HINIC3_FLOW_ERROR_TYPE_ITEM,
++						   flow_item,
++						   "Not supported by fdir "
++						   "filter, not support mac");
++				return -rte_errno;
++			}
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_IPV4:
++			err = hinic3_flow_fdir_tunnel_ipv4(error,
++				filter, flow_item, tunnel_mode);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_IPV6:
++			err = hinic3_flow_fdir_tunnel_ipv6(error,
++				filter, flow_item, tunnel_mode);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_TCP:
++			err = hinic3_flow_fdir_tunnel_tcp(error,
++				filter, tunnel_mode, flow_item);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_UDP:
++			err = hinic3_flow_fdir_tunnel_udp(error,
++				filter, tunnel_mode, flow_item);
++			if (err != 0)
++				return -rte_errno;
++			break;
++
++		case HINIC3_FLOW_ITEM_TYPE_VXLAN:
++			err = hinic3_flow_fdir_vxlan(error, filter, flow_item);
++			if (err != 0)
++				return -rte_errno;
++			tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++			break;
++
++		default:
++			break;
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * Resolve VXLAN Filters in Flow Filters.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] attr
++ * Indicates the attribute of a flow rule.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, its used to store and manipulate packet filterig rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse_fdir_vxlan_filter(struct rte_eth_dev *dev,
++				    const struct rte_flow_attr *attr,
++				    const struct rte_flow_item pattern[],
++				    const struct rte_flow_action actions[],
++				    struct rte_flow_error *error,
++				    struct hinic3_filter_t *filter)
++{
++	int ret;
++
++	ret = hinic3_flow_parse_fdir_vxlan_pattern(dev, pattern, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_action(dev, actions, error, filter);
++	if (ret)
++		return ret;
++
++	ret = hinic3_flow_parse_attr(attr, error);
++	if (ret)
++		return ret;
++
++	filter->filter_type = RTE_ETH_FILTER_FDIR;
++
++	return 0;
++}
++
++/**
++ * Parse patterns and actions of network traffic.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] attr
++ * Indicates the attribute of a flow rule.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @param[out] filter
++ * Filter information, its used to store and manipulate packet filterig rules.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_parse(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
++		  const struct rte_flow_item pattern[],
++		  const struct rte_flow_action actions[],
++		  struct rte_flow_error *error, struct hinic3_filter_t *filter)
++{
++	hinic3_parse_filter_t parse_filter;
++	uint32_t pattern_num = 0;
++	int ret = 0;
++	/* Check whether the parameter is valid. */
++	if (!pattern || !actions || !attr) {
++		rte_flow_error_set(error, EINVAL,
++				   HINIC3_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				   "NULL param.");
++		return -rte_errno;
++	}
++
++	while ((pattern + pattern_num)->type != HINIC3_FLOW_ITEM_TYPE_END) {
++		pattern_num++;
++		if (pattern_num > HINIC3_FLOW_MAX_PATTERN_NUM) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_MAX_PATTERN_NUM, NULL,
++					   "Too many patterns.");
++			return -rte_errno;
++		}
++	}
++	/*
++	 * The corresponding filter is returned. If the filter is not found,
++	 * NULL is returned.
++	 */
++	parse_filter = hinic3_find_parse_filter_func(pattern);
++	if (!parse_filter) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_ITEM,
++				   pattern, "Unsupported pattern");
++		return -rte_errno;
++	}
++	/* Parsing with filters. */
++	ret = parse_filter(dev, attr, pattern, actions, error, filter);
++
++	return ret;
++}
++
++/**
++ * Check whether the traffic rule provided by the user is valid.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] attr
++ * Indicates the attribute of a flow rule.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_validate(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
++		     const struct rte_flow_item pattern[],
++		     const struct rte_flow_action actions[],
++		     struct rte_flow_error *error)
++{
++	struct hinic3_filter_t filter_rules = {0};
++
++	return hinic3_flow_parse(dev, attr, pattern, actions, error,
++				 &filter_rules);
++}
++
++/**
++ * Create a flow item.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] attr
++ * Indicates the attribute of a flow rule.
++ * @param[in] pattern
++ * Indicates the pattern or matching condition of a traffic rule.
++ * @param[in] actions
++ * Indicates the action to be taken on the matched traffic.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @return
++ * If the operation is successful, the created flow is returned. Otherwise, NULL
++ * is returned.
++ *
++ */
++static struct rte_flow *
++hinic3_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
++		   const struct rte_flow_item pattern[],
++		   const struct rte_flow_action actions[],
++		   struct rte_flow_error *error)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct hinic3_filter_t *filter_rules = NULL;
++	struct rte_flow *flow = NULL;
++	int ret;
++
++	filter_rules =
++		rte_zmalloc("filter_rules", sizeof(struct hinic3_filter_t), 0);
++	if (!filter_rules) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL,
++				   "Failed to allocate filter rules memory.");
++		return NULL;
++	}
++
++	flow = rte_zmalloc("hinic3_rte_flow", sizeof(struct rte_flow), 0);
++	if (!flow) {
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL, "Failed to allocate flow memory.");
++		rte_free(filter_rules);
++		return NULL;
++	}
++	/* Parses the flow rule to be created and generates a filter. */
++	ret = hinic3_flow_parse(dev, attr, pattern, actions, error,
++				filter_rules);
++	if (ret < 0)
++		goto free_flow;
++
++	switch (filter_rules->filter_type) {
++	case RTE_ETH_FILTER_ETHERTYPE:
++		ret = hinic3_flow_add_del_ethertype_filter(dev,
++			&filter_rules->ethertype_filter, true);
++		if (ret) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_HANDLE, NULL,
++					   "Create ethertype filter failed.");
++			goto free_flow;
++		}
++
++		flow->rule = filter_rules;
++		flow->filter_type = filter_rules->filter_type;
++		TAILQ_INSERT_TAIL(&nic_dev->filter_ethertype_list, flow, node);
++		break;
++
++	case RTE_ETH_FILTER_FDIR:
++		ret = hinic3_flow_add_del_fdir_filter(dev,
++			&filter_rules->fdir_filter, true);
++		if (ret) {
++			rte_flow_error_set(error, EINVAL,
++					   HINIC3_FLOW_ERROR_TYPE_HANDLE, NULL,
++					   "Create fdir filter failed.");
++			goto free_flow;
++		}
++
++		flow->rule = filter_rules;
++		flow->filter_type = filter_rules->filter_type;
++		TAILQ_INSERT_TAIL(&nic_dev->filter_fdir_rule_list, flow, node);
++		break;
++	default:
++		PMD_DRV_LOG(ERR, "Filter type %d not supported",
++			    filter_rules->filter_type);
++		rte_flow_error_set(error, EINVAL, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL, "Unsupport filter type.");
++		goto free_flow;
++	}
++
++	return flow;
++
++free_flow:
++	rte_free(flow);
++	rte_free(filter_rules);
++
++	return NULL;
++}
++
++static int
++hinic3_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *flow,
++		    struct rte_flow_error *error)
++{
++	int ret = -EINVAL;
++	enum rte_filter_type type;
++	struct hinic3_filter_t *rules = NULL;
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++
++	if (!flow) {
++		PMD_DRV_LOG(ERR, "Invalid flow parameter!");
++		return -EPERM;
++	}
++
++	type = flow->filter_type;
++	rules = (struct hinic3_filter_t *)flow->rule;
++	/* Perform operations based on the type. */
++	switch (type) {
++	case RTE_ETH_FILTER_ETHERTYPE:
++		ret = hinic3_flow_add_del_ethertype_filter(dev,
++			&rules->ethertype_filter, false);
++		if (!ret)
++			TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow,
++				     node);
++
++		flow->rule = rules;
++		flow->filter_type = rules->filter_type;
++		TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
++		break;
++
++	case RTE_ETH_FILTER_FDIR:
++		ret = hinic3_flow_add_del_fdir_filter(dev, &rules->fdir_filter,
++						      false);
++		if (!ret)
++			TAILQ_REMOVE(&nic_dev->filter_fdir_rule_list, flow,
++				     node);
++		break;
++	default:
++		PMD_DRV_LOG(WARNING, "Filter type %d not supported", type);
++		ret = -EINVAL;
++		break;
++	}
++
++	/* Deleted successfully. Resources are released. */
++	if (!ret) {
++		rte_free(rules);
++		rte_free(flow);
++	} else {
++		rte_flow_error_set(error, -ret, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL, "Failed to destroy flow.");
++	}
++
++	return ret;
++}
++
++/**
++ * Clear all fdir type flow rules on the network device.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_flush_fdir_filter(struct rte_eth_dev *dev)
++{
++	int ret = 0;
++	struct hinic3_filter_t *filter_rules = NULL;
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_flow *flow;
++
++	while (true) {
++		flow = TAILQ_FIRST(&nic_dev->filter_fdir_rule_list);
++		if (flow == NULL)
++			break;
++		filter_rules = (struct hinic3_filter_t *)flow->rule;
++
++		/* Delete flow rules. */
++		ret = hinic3_flow_add_del_fdir_filter(dev,
++			&filter_rules->fdir_filter, false);
++
++		if (ret)
++			return ret;
++
++		TAILQ_REMOVE(&nic_dev->filter_fdir_rule_list, flow, node);
++		rte_free(filter_rules);
++		rte_free(flow);
++	}
++
++	return ret;
++}
++
++/**
++ * Clear all ether type flow rules on the network device.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_flush_ethertype_filter(struct rte_eth_dev *dev)
++{
++	struct hinic3_filter_t *filter_rules = NULL;
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_flow *flow;
++	int ret = 0;
++
++	while (true) {
++		flow = TAILQ_FIRST(&nic_dev->filter_ethertype_list);
++		if (flow == NULL)
++			break;
++		filter_rules = (struct hinic3_filter_t *)flow->rule;
++
++		/* Delete flow rules. */
++		ret = hinic3_flow_add_del_ethertype_filter(dev,
++			&filter_rules->ethertype_filter, false);
++
++		if (ret)
++			return ret;
++
++		TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
++		rte_free(filter_rules);
++		rte_free(flow);
++	}
++
++	return ret;
++}
++
++/**
++ * Clear all flow rules on the network device.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[out] error
++ * Structure that contains error information, such as error code and error
++ * description.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *error)
++{
++	int ret;
++
++	ret = hinic3_flow_flush_fdir_filter(dev);
++	if (ret) {
++		rte_flow_error_set(error, -ret, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL, "Failed to flush fdir flows.");
++		return -rte_errno;
++	}
++
++	ret = hinic3_flow_flush_ethertype_filter(dev);
++	if (ret) {
++		rte_flow_error_set(error, -ret, HINIC3_FLOW_ERROR_TYPE_HANDLE,
++				   NULL, "Failed to flush ethertype flows.");
++		return -rte_errno;
++	}
++	return ret;
++}
++
++/* Structure for managing flow table operations. */
++const struct rte_flow_ops hinic3_flow_ops = {
++	.validate = hinic3_flow_validate,
++	.create = hinic3_flow_create,
++	.destroy = hinic3_flow_destroy,
++	.flush = hinic3_flow_flush,
++};
+diff --git a/drivers/net/hinic3/hinic3_flow.h b/drivers/net/hinic3/hinic3_flow.h
+new file mode 100644
+index 0000000000..9104337544
+--- /dev/null
++++ b/drivers/net/hinic3/hinic3_flow.h
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_FLOW_H_
++#define _HINIC3_FLOW_H_
++
++#include <rte_flow.h>
++
++/* Flow item type. */
++#define HINIC3_FLOW_ITEM_TYPE_END                  RTE_FLOW_ITEM_TYPE_END
++#define HINIC3_FLOW_ITEM_TYPE_VOID                 RTE_FLOW_ITEM_TYPE_VOID
++#define HINIC3_FLOW_ITEM_TYPE_INVERT               RTE_FLOW_ITEM_TYPE_INVERT
++#define HINIC3_FLOW_ITEM_TYPE_ANY                  RTE_FLOW_ITEM_TYPE_ANY
++#define HINIC3_FLOW_ITEM_TYPE_PF                   RTE_FLOW_ITEM_TYPE_PF
++#define HINIC3_FLOW_ITEM_TYPE_VF                   RTE_FLOW_ITEM_TYPE_VF
++#define HINIC3_FLOW_ITEM_TYPE_PHY_PORT             RTE_FLOW_ITEM_TYPE_PHY_PORT
++#define HINIC3_FLOW_ITEM_TYPE_PORT_ID              RTE_FLOW_ITEM_TYPE_PORT_ID
++#define HINIC3_FLOW_ITEM_TYPE_RAW                  RTE_FLOW_ITEM_TYPE_RAW
++#define HINIC3_FLOW_ITEM_TYPE_ETH                  RTE_FLOW_ITEM_TYPE_ETH
++#define HINIC3_FLOW_ITEM_TYPE_VLAN                 RTE_FLOW_ITEM_TYPE_VLAN
++#define HINIC3_FLOW_ITEM_TYPE_IPV4                 RTE_FLOW_ITEM_TYPE_IPV4
++#define HINIC3_FLOW_ITEM_TYPE_IPV6                 RTE_FLOW_ITEM_TYPE_IPV6
++#define HINIC3_FLOW_ITEM_TYPE_ICMP                 RTE_FLOW_ITEM_TYPE_ICMP
++#define HINIC3_FLOW_ITEM_TYPE_UDP                  RTE_FLOW_ITEM_TYPE_UDP
++#define HINIC3_FLOW_ITEM_TYPE_TCP                  RTE_FLOW_ITEM_TYPE_TCP
++#define HINIC3_FLOW_ITEM_TYPE_SCTP                 RTE_FLOW_ITEM_TYPE_SCTP
++#define HINIC3_FLOW_ITEM_TYPE_VXLAN                RTE_FLOW_ITEM_TYPE_VXLAN
++#define HINIC3_FLOW_ITEM_TYPE_E_TAG                RTE_FLOW_ITEM_TYPE_E_TAG
++#define HINIC3_FLOW_ITEM_TYPE_NVGRE                RTE_FLOW_ITEM_TYPE_NVGRE
++#define HINIC3_FLOW_ITEM_TYPE_MPLS                 RTE_FLOW_ITEM_TYPE_MPLS
++#define HINIC3_FLOW_ITEM_TYPE_GRE                  RTE_FLOW_ITEM_TYPE_GRE
++#define HINIC3_FLOW_ITEM_TYPE_FUZZY                RTE_FLOW_ITEM_TYPE_FUZZY
++#define HINIC3_FLOW_ITEM_TYPE_GTP                  RTE_FLOW_ITEM_TYPE_GTP
++#define HINIC3_FLOW_ITEM_TYPE_GTPC                 RTE_FLOW_ITEM_TYPE_GTPC
++#define HINIC3_FLOW_ITEM_TYPE_GTPU                 RTE_FLOW_ITEM_TYPE_GTPU
++#define HINIC3_FLOW_ITEM_TYPE_ESP                  RTE_FLOW_ITEM_TYPE_ESP
++#define HINIC3_FLOW_ITEM_TYPE_GENEVE               RTE_FLOW_ITEM_TYPE_GENEVE
++#define HINIC3_FLOW_ITEM_TYPE_VXLAN_GPE            RTE_FLOW_ITEM_TYPE_VXLAN_GPE
++#define HINIC3_FLOW_ITEM_TYPE_ARP_ETH_IPV4         RTE_FLOW_ITEM_TYPE_ARP_ETH_IPV4
++#define HINIC3_FLOW_ITEM_TYPE_IPV6_EXT             RTE_FLOW_ITEM_TYPE_IPV6_EXT
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6                RTE_FLOW_ITEM_TYPE_ICMP6
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6_ND_NS          RTE_FLOW_ITEM_TYPE_ICMP6_ND_NS
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6_ND_NA          RTE_FLOW_ITEM_TYPE_ICMP6_ND_NA
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6_ND_OPT         RTE_FLOW_ITEM_TYPE_ICMP6_ND_OPT
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6_ND_OPT_SLA_ETH RTE_FLOW_ITEM_TYPE_ICMP6_ND_OPT_SLA_ETH
++#define HINIC3_FLOW_ITEM_TYPE_ICMP6_ND_OPT_TLA_ETH RTE_FLOW_ITEM_TYPE_ICMP6_ND_OPT_TLA_ETH
++#define HINIC3_FLOW_ITEM_TYPE_MARK                 RTE_FLOW_ITEM_TYPE_MARK
++#define HINIC3_FLOW_ITEM_TYPE_META                 RTE_FLOW_ITEM_TYPE_META
++#define HINIC3_FLOW_ITEM_TYPE_GRE_KEY              RTE_FLOW_ITEM_TYPE_GRE_KEY
++#define HINIC3_FLOW_ITEM_TYPE_GTP_PSC              RTE_FLOW_ITEM_TYPE_GTP_PSC
++#define HINIC3_FLOW_ITEM_TYPE_PPPOES               RTE_FLOW_ITEM_TYPE_PPPOES
++#define HINIC3_FLOW_ITEM_TYPE_PPPOED               RTE_FLOW_ITEM_TYPE_PPPOED
++#define HINIC3_FLOW_ITEM_TYPE_PPPOE_PROTO_ID       RTE_FLOW_ITEM_TYPE_PPPOE_PROTO_ID
++#define HINIC3_FLOW_ITEM_TYPE_NSH                  RTE_FLOW_ITEM_TYPE_NSH
++#define HINIC3_FLOW_ITEM_TYPE_IGMP                 RTE_FLOW_ITEM_TYPE_IGMP
++#define HINIC3_FLOW_ITEM_TYPE_AH                   RTE_FLOW_ITEM_TYPE_AH
++#define HINIC3_FLOW_ITEM_TYPE_HIGIG2               RTE_FLOW_ITEM_TYPE_HIGIG2
++#define HINIC3_FLOW_ITEM_TYPE_TAG                  RTE_FLOW_ITEM_TYPE_TAG
++
++/* Flow error type. */
++#define HINIC3_FLOW_ERROR_TYPE_NONE                RTE_FLOW_ERROR_TYPE_NONE
++#define HINIC3_FLOW_ERROR_TYPE_UNSPECIFIED         RTE_FLOW_ERROR_TYPE_UNSPECIFIED
++#define HINIC3_FLOW_ERROR_TYPE_HANDLE              RTE_FLOW_ERROR_TYPE_HANDLE
++#define HINIC3_FLOW_ERROR_TYPE_ATTR_GROUP          RTE_FLOW_ERROR_TYPE_ATTR_GROUP
++#define HINIC3_FLOW_ERROR_TYPE_ATTR_PRIORITY       RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY
++#define HINIC3_FLOW_ERROR_TYPE_ATTR_INGRESS        RTE_FLOW_ERROR_TYPE_ATTR_INGRESS
++#define HINIC3_FLOW_ERROR_TYPE_ATTR_EGRESS         RTE_FLOW_ERROR_TYPE_ATTR_EGRESS
++#define HINIC3_FLOW_ERROR_TYPE_ATTR_TRANSFER       RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER
++#define HINIC3_FLOW_ERROR_TYPE_ATTR                RTE_FLOW_ERROR_TYPE_ATTR
++#define HINIC3_FLOW_ERROR_TYPE_ITEM_NUM            RTE_FLOW_ERROR_TYPE_ITEM_NUM
++#define HINIC3_FLOW_ERROR_TYPE_ITEM_SPEC           RTE_FLOW_ERROR_TYPE_ITEM_SPEC
++#define HINIC3_FLOW_ERROR_TYPE_ITEM_LAST           RTE_FLOW_ERROR_TYPE_ITEM_LAST
++#define HINIC3_FLOW_ERROR_TYPE_ITEM_MASK           RTE_FLOW_ERROR_TYPE_ITEM_MASK
++#define HINIC3_FLOW_ERROR_TYPE_ITEM                RTE_FLOW_ERROR_TYPE_ITEM
++#define HINIC3_FLOW_ERROR_TYPE_ACTION_NUM          RTE_FLOW_ERROR_TYPE_ACTION_NUM
++#define HINIC3_FLOW_ERROR_TYPE_ACTION_CONF         RTE_FLOW_ERROR_TYPE_ACTION_CONF
++#define HINIC3_FLOW_ERROR_TYPE_ACTION              RTE_FLOW_ERROR_TYPE_ACTION
++
++#endif /**< _HINIC3_FLOW_H_ */
 -- 
 2.47.0.windows.2
 
