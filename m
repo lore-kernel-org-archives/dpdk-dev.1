@@ -2,135 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0325C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD32BC3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:51:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7474C4026C;
-	Mon,  5 May 2025 14:14:55 +0200 (CEST)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05on2134.outbound.protection.outlook.com [40.107.20.134])
- by mails.dpdk.org (Postfix) with ESMTP id 1B9A34025D
- for <dev@dpdk.org>; Mon,  5 May 2025 14:14:54 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lplNWRLXD+ep9Ci+IzcQMaGwLmXckeDMT7tkLqCNg6op2e2y1hBixx+NBHrZdQBXLqu+ROFzylmatZZrXEiVyEiNwGvRv8tyWmhcCrKaeMIZSsY8DEB+rdoprIhCIPBZ+LTntUFGsyLLYaBDh6/i6z4nw/lvnBG/PZWhkO2v3Dyae0tzewVlQsUPQQh/9vP8SvMUceo44I6B8Wuc0LTypLjLXInf4KasmLvP9mGteOvw3CnquZuW4s59EN65dym4TV10gikSHEY7zDW4AL4lrRbYjUflk+qHTEUYF10ZXlxDBsVLgkJ8xExG58ucpGYXYh0MbwHDaleZN1tV0zA9Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/6wfnZCF43ukpVwI9WOnbj4jCAExCKtFQJmsztdmi4Q=;
- b=Y7Uc3LkvOEy5tdiBdrMHR9daUD84gVN76QAQqgF3whJCsSjtoC5fLpCaZi4tGrJsqq5NshbgV6VbRM4e73WDilzrGS5PzKoWeb5OGij5iXBXOPUx1mGJjxc6gnw+yfBfjuRg7g6msI6otgJLu4MC3hKb/KFWOYQTfQyiOOo5D55z9N0AcF0K5MQfDuFl5KivTJhsHmRl1LkR59+NgIsa0s2SpWXvKICFbb7NxGmno5UjZ7WtlSUqNMOcIr5YbXApwvISEk4QjsuLjbE2zU1kJXxun7NabLyE3qjVpv1toS93ax38Pf4gy/m4TVu3zUzx7wq1M76qEfbjgUx1WOfBXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cgstowernetworks.com; dmarc=pass action=none
- header.from=cgstowernetworks.com; dkim=pass header.d=cgstowernetworks.com;
- arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 41D8A4026C;
+	Mon,  5 May 2025 14:51:07 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id C251B400D5
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 09:03:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cgstowernetworks.onmicrosoft.com;
- s=selector2-cgstowernetworks-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/6wfnZCF43ukpVwI9WOnbj4jCAExCKtFQJmsztdmi4Q=;
- b=ZHW7baaRv2XnzXxpjDAtuGUodb5h893HPswOgxhCl3XKjoL4LqPzBifui6OvhB8t8RgyYyHmKLtk3krqj6eLxFj8c6AFxK5350/1A4wgaiSIjUZ7n6jFZ0OmW37cMIaCSIX6bikUfn362ucKhuGGgBU0hoyY7Bx6gMOo1oUT38k=
-Received: from DU2PR09MB5486.eurprd09.prod.outlook.com (2603:10a6:10:27b::22)
- by DU0PR09MB6299.eurprd09.prod.outlook.com (2603:10a6:10:416::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 5 May
- 2025 12:14:51 +0000
-Received: from DU2PR09MB5486.eurprd09.prod.outlook.com
- ([fe80::a8b7:d0b7:ce2a:24fc]) by DU2PR09MB5486.eurprd09.prod.outlook.com
- ([fe80::a8b7:d0b7:ce2a:24fc%4]) with mapi id 15.20.8699.019; Mon, 5 May 2025
- 12:14:51 +0000
-From: Yogev Chaimovich <yogev@cgstowernetworks.com>
-To: "dsosnowski@nvidia.com" <dsosnowski@nvidia.com>, "viacheslavo@nvidia.com"
- <viacheslavo@nvidia.com>, "bingz@nvidia.com" <bingz@nvidia.com>,
- "orika@nvidia.com" <orika@nvidia.com>, "suanmingm@nvidia.com"
- <suanmingm@nvidia.com>, "matan@nvidia.com" <matan@nvidia.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Yogev Chaimovich
- <yogev@cgstowernetworks.com>
-Subject: [PATCH] net/mlx5: fix transceiver warning when not exist
-Thread-Topic: [PATCH] net/mlx5: fix transceiver warning when not exist
-Thread-Index: AQHbvbYIS6Ux7qfBtUOA8dJvuvvxhQ==
-Date: Mon, 5 May 2025 12:14:51 +0000
-Message-ID: <DU2PR09MB5486574FE72A43A09A323DCDD68E2@DU2PR09MB5486.eurprd09.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cgstowernetworks.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU2PR09MB5486:EE_|DU0PR09MB6299:EE_
-x-ms-office365-filtering-correlation-id: 07e60cca-2724-40fa-caa6-08dd8bce6fc2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|38070700018|8096899003|4053099003; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?bRUFganDpAQNeP+Utusys6MsATOgL/JKeG0GaBCdBNrfgap/yFX5R3ZM4L?=
- =?iso-8859-1?Q?oVXWHujxmslHVjawdsgcbTe5ur1AAubFA9eSJ8jHR75UKC0+v2zrD3Xvtv?=
- =?iso-8859-1?Q?NnAjhn/ztr0Gyr12raB0IwjrT4J0Hi9ycDW6GSWX13yF/fztxbUnJETsmp?=
- =?iso-8859-1?Q?/jmkxgQxFN3h54d42xKcMU14jww7cE66Ea7N0nkOfbsr8xZu1vzBxF7lHY?=
- =?iso-8859-1?Q?utfupjWtblQOXrbQAM6m4c8R7NZW2zDsRZ9d+Wl+Cusn7pc4/R6BGdJogP?=
- =?iso-8859-1?Q?GorqF/uesdqk+hQYfeqfjjORP+MCk/UL1TgQkIstI6POGr9SCZmKu5Ieji?=
- =?iso-8859-1?Q?QCNe8oZlBCxLuhoDHD3XAgNtQAE4+VBeQ05S2kEytnMoAP4v+Yd/VGeUXg?=
- =?iso-8859-1?Q?Hzk4hopAvCiH1TSIyHE5oFtaEq7hJVRrqOYHIKLkQqaJyYgbGrlce2gLUZ?=
- =?iso-8859-1?Q?A3f9wvHpK537cjrc6iPuX9RrMY6laEkaNRVBCX2owK4B2kGp4IJuYqHX6/?=
- =?iso-8859-1?Q?hx15LGoBFG5OXZMIedtwguVCFZc+CydDlVL/2IfTX8d5JlEHF31hEL5eWt?=
- =?iso-8859-1?Q?QEuCxzGZrHALCgsvpOXfHKl1bQcRy1ml4xe1eYV5TjuuITkDQI9R+Rt+/b?=
- =?iso-8859-1?Q?FDttv7SVAkwj8m9o28bq971/zpDkA6caXycm7JVj2DMUUluxHfIRtXoki7?=
- =?iso-8859-1?Q?9LS6CrffEs1Kw5tWidJgFCLR76D6jpIuEe5aT92LDYU1rKKdENDpJxPzvo?=
- =?iso-8859-1?Q?oHGjtkrYTU/gnUPOy9wLptoipz9JXlqbqCJxUbtMecG0riUct880AHOvg/?=
- =?iso-8859-1?Q?UX3vnbdme0FtEKYNUlmyaSJS+DfXNRaQvpsjQdylP7/xJ2v/ZeWphFB2FB?=
- =?iso-8859-1?Q?/mJbh2GN/ZbGtzWBWipEl5uAnCxh8eKmawvDKXd6uI7s7CROlVSPuvb/o7?=
- =?iso-8859-1?Q?Bva2nlnRVI+UDSR69Gd2I0vBK6RLuIt3uG9CYR93l8hjpJ8KWCB2emf1Vk?=
- =?iso-8859-1?Q?7Dy3dp0QZAYgIBdIWlUO6FhXvKc0MKbddh0QNB+nrdUM4lydnBUXpRDiMb?=
- =?iso-8859-1?Q?csGJ1WT1bQffwy9sBaRgECvKeWdv7PzQo29IB6o/yBhoZxs+MPlG+YPUel?=
- =?iso-8859-1?Q?Y4jj9Zn1d2rkMR9HDBVdJxxX2bQ876PQmGCVj3vTbV/CXINchRiZTvFOLT?=
- =?iso-8859-1?Q?Msf1K4T20djDXv9itNU8OATt6ADBIudgxykGUEKdH6AY0S80VtaLgB/TVD?=
- =?iso-8859-1?Q?HD/3xvSu6p/Mq5gLV+wQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DU2PR09MB5486.eurprd09.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018)(8096899003)(4053099003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?u/+p4PPQ9cp+WS4MoHzyXlV4KYJZX1ueWPFxrZIxi0CBuAPYV4YAxvza+X?=
- =?iso-8859-1?Q?I0ALdibqfqOGE46b5btS6LfHYR2qsy0gJsvmytu5T1SpIk0m604FtHvO3V?=
- =?iso-8859-1?Q?4ixktSMd3e/FDgzHWa3plLPdjgg+XvsgCwuGhnnwpcIqoFioboxmDJ9LPp?=
- =?iso-8859-1?Q?1vfhI+7BVKa+wSuIQ92HpSN3TyDvJjYg0K8nbQhTzKuRWd8MMe36OcaIKU?=
- =?iso-8859-1?Q?Vmr13RYG+wWch/zEezQr0BlM9w68zlhgqa7csc+YxgIUJ6tyIDxaJaxUjq?=
- =?iso-8859-1?Q?SBXdt/cG+fn5AnW8oMG3syU/Kpk4oOAWwwQwUn++lKxi5lKgzWB4NHrCVB?=
- =?iso-8859-1?Q?dG8JN5mxrlCX1KIFEYrq2fSB9T9jtgj3XHNMVCugBZ1h9wvi5qfHlUdde+?=
- =?iso-8859-1?Q?9oWhL9ZZwAya03kKJIoOc2qN8O2JhltyhJAHK6AqsZqRqLUYaO6FQlj77s?=
- =?iso-8859-1?Q?w7aNCoL1peXHVpTWhswgFI2D8SOX1cvD1nILH1a0KpcbS0ko/dVpmx0nTK?=
- =?iso-8859-1?Q?0IQO9p1ruAzyV61mNMV9c8zF9tHkVpnOpd9YkMPArNvC4+rpoPdVmlML0h?=
- =?iso-8859-1?Q?UjyWW6ivkivZupQv69ALDj3MJOcucOzBrIi8aaPtL6Etl+KcT+ATwGM587?=
- =?iso-8859-1?Q?IC/4GqGhSvXNrcNa86oAfhFwtVPLZbvpE6LnGnkJSfxToJ+VFyS4XxcRZa?=
- =?iso-8859-1?Q?fM7uj6enr2M9b/kP0KAm78mRx9obdvY53CrcRziGx8UpRULeuMVQwuOpP6?=
- =?iso-8859-1?Q?fMX2FR6yuvAqWQlDuzCFEenwswKAsEYb2KiSh7Ri4DlGPReTNldksmEls8?=
- =?iso-8859-1?Q?0u7DwNm4LQ9FRhHFwkcGHEBCHQUadHj34y9tDRgoIPP6IpHkYTEPWri2JN?=
- =?iso-8859-1?Q?/B20pW6vuuIgDj3/vGdrt5s5rUof+cWOyHAVIf+RaOWrU4ErrqT6s+G/2W?=
- =?iso-8859-1?Q?mFBxwT3RkrhQ4b5nNDDuZA5rdTgpj7hFZpyIk23rPHAw7Jw5tWVUCS6AR9?=
- =?iso-8859-1?Q?NJJowJkn/RflSiWEiprxgY6m9Pp5HIl1lOIwE5RQPmc8nneL7vEeJKe6Xd?=
- =?iso-8859-1?Q?+zZjPd90hwhnfhCJyNlL7A3BJ0psd3LYI5NMC16+HuunpxZjmIDmyW/dYi?=
- =?iso-8859-1?Q?gyGkMeVjJz+7TKGuvFgsqj/RsxCtv9ZO7vof23y9Wv9eIPyWIxpXHdX0k6?=
- =?iso-8859-1?Q?vWJv0hyizX4+cjG6FmDChZSDrkIKi6+jdd96w3VQaJ2Z9P0jFwTucc9yqm?=
- =?iso-8859-1?Q?Xb0FvFhojlTwdcuQ13SAm9jRPZ+BK0LuCdPTVy/1YQ7YngaDWsbp4l7i3y?=
- =?iso-8859-1?Q?elpkMFlGAYzSTfACg6nsnQ6vUKcFmzNoYDSYGEWGroVSiYM5Rbw7LP8B8g?=
- =?iso-8859-1?Q?YnoPzbLaRle0ABVOFpm97KPEbUOv0lrpmAaPniYGok8R+O4OBDrX0H9G/o?=
- =?iso-8859-1?Q?PiDzFM8OD6LBqmED8FOQ3RSno+/DgTsLmMc2F0FShU2FQ32bkq1xMoEcGS?=
- =?iso-8859-1?Q?tHSB/2pu3GxW7ENg5+st2zglTSduR9m6i4+NzWj6ObkEi5CeOsbNxzPnqj?=
- =?iso-8859-1?Q?qaxOjJwV91CtoAu6UHc0k2wW5fiU/rSy3ztEIW3Lj2UjRVKR02eIW1wMCw?=
- =?iso-8859-1?Q?StpFR8dnP7DCS+urXbY7HfcM8vYQOTkI8/?=
-Content-Type: multipart/mixed;
- boundary="_004_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_"
+ d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
+ MIME-Version; bh=uycyTxGIMY5qw9d5NP5KCl292bEJ4youk3+xi9KRG1Y=;
+ b=JeWQAKkHiyBJ69QTuk2aIcfwz+ukP8gNxXp8KwYbgnqhlZzEpdUkQQtpcwG19P
+ 3zaPYB4YZClG3FDygapf4Zvm8IiI7ZqGZTthTn3OadxjdhUtu7Tr2gqmLf8PZYRn
+ v9d6cecYnxc33JQD9exalcLfNg+9JEbpO0N0OtKIID8FI=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgA3M_dJ+QFobKvFAg--.64861S4;
+ Fri, 18 Apr 2025 15:03:39 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Subject: [RFC 00/18] add hinic3 PMD driver
+Date: Fri, 18 Apr 2025 15:02:38 +0800
+Message-ID: <20250418070306.9290-1-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
 MIME-Version: 1.0
-X-OriginatorOrg: cgstowernetworks.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR09MB5486.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07e60cca-2724-40fa-caa6-08dd8bce6fc2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2025 12:14:51.0888 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fc9e9498-07e8-4b82-b4cf-365bba23cbbf
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pADmTWY9eZKevEsiqmIPicnvjnnxzC/+Igut5278WDIMBOixdt1Nh0zK4SaeF7tnV1l3Tmc5Tt07znsda1iVsSSdin2i19M8mhG8y/e9BRw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR09MB6299
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Ac8vCgA3M_dJ+QFobKvFAg--.64861S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ar1rAr13JFWUtrWDCrWUCFg_yoWxKF4UpF
+ 4UC3y3Ar4DKrW7tw1kGw4xAa45X3WxG343K3W5Z3ZYvr97ZFy5A34UGFW8Ar9xtr17JF12
+ vFs09rWqg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joeHhUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAg8zCmgB4ZdcBwAAsw
+X-Mailman-Approved-At: Mon, 05 May 2025 14:51:04 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -144,72 +48,145 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_004_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_
-Content-Type: multipart/alternative;
-	boundary="_000_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_"
+*** BLURB HERE ***
+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
 
---_000_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Feifei Wang (3):
+  net/hinic3: add intro doc for hinic3
+  net/hinic3: add dev ops
+  net/hinic3: add Rx/Tx functions
 
+Xin Wang (7):
+  net/hinic3: add basic header files
+  net/hinic3: add support for cmdq mechanism
+  net/hinic3: add NIC event module
+  net/hinic3: add context and work queue support
+  net/hinic3: add device initailization
+  net/hinic3: add MML and EEPROM access feature
+  net/hinic3: add RSS promiscuous ops
 
+Yi Chen (8):
+  net/hinic3: add hardware interfaces of BAR operation
+  net/hinic3: add eq mechanism function code
+  net/hinic3: add mgmt module function code
+  net/hinic3: add module about hardware operation
+  net/hinic3: add a NIC business configuration module
+  net/hinic3: add a mailbox communication module
+  net/hinic3: add FDIR flow control module
+  drivers/net: add hinic3 PMD build and doc files
 
---_000_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ .mailmap                                   |    4 +-
+ MAINTAINERS                                |    6 +
+ doc/guides/nics/features/hinic3.ini        |    9 +
+ doc/guides/nics/hinic3.rst                 |   52 +
+ doc/guides/nics/index.rst                  |    1 +
+ doc/guides/rel_notes/release_25_07.rst     |   32 +-
+ drivers/net/hinic3/base/hinic3_cmd.h       |  231 ++
+ drivers/net/hinic3/base/hinic3_cmdq.c      |  975 +++++
+ drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++
+ drivers/net/hinic3/base/hinic3_compat.h    |  266 ++
+ drivers/net/hinic3/base/hinic3_csr.h       |  108 +
+ drivers/net/hinic3/base/hinic3_eqs.c       |  719 ++++
+ drivers/net/hinic3/base/hinic3_eqs.h       |   98 +
+ drivers/net/hinic3/base/hinic3_hw_cfg.c    |  240 ++
+ drivers/net/hinic3/base/hinic3_hw_cfg.h    |  121 +
+ drivers/net/hinic3/base/hinic3_hw_comm.c   |  452 +++
+ drivers/net/hinic3/base/hinic3_hw_comm.h   |  366 ++
+ drivers/net/hinic3/base/hinic3_hwdev.c     |  573 +++
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  177 +
+ drivers/net/hinic3/base/hinic3_hwif.c      |  779 ++++
+ drivers/net/hinic3/base/hinic3_hwif.h      |  142 +
+ drivers/net/hinic3/base/hinic3_mbox.c      | 1392 +++++++
+ drivers/net/hinic3/base/hinic3_mbox.h      |  199 +
+ drivers/net/hinic3/base/hinic3_mgmt.c      |  392 ++
+ drivers/net/hinic3/base/hinic3_mgmt.h      |  121 +
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1828 +++++++++
+ drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1527 ++++++++
+ drivers/net/hinic3/base/hinic3_nic_event.c |  433 +++
+ drivers/net/hinic3/base/hinic3_nic_event.h |   39 +
+ drivers/net/hinic3/base/hinic3_wq.c        |  148 +
+ drivers/net/hinic3/base/hinic3_wq.h        |  109 +
+ drivers/net/hinic3/base/meson.build        |   50 +
+ drivers/net/hinic3/hinic3_ethdev.c         | 3866 ++++++++++++++++++++
+ drivers/net/hinic3/hinic3_ethdev.h         |  167 +
+ drivers/net/hinic3/hinic3_fdir.c           | 1394 +++++++
+ drivers/net/hinic3/hinic3_fdir.h           |  398 ++
+ drivers/net/hinic3/hinic3_flow.c           | 1700 +++++++++
+ drivers/net/hinic3/hinic3_flow.h           |   80 +
+ drivers/net/hinic3/hinic3_nic_io.c         |  827 +++++
+ drivers/net/hinic3/hinic3_nic_io.h         |  169 +
+ drivers/net/hinic3/hinic3_rx.c             | 1096 ++++++
+ drivers/net/hinic3/hinic3_rx.h             |  356 ++
+ drivers/net/hinic3/hinic3_tx.c             | 1028 ++++++
+ drivers/net/hinic3/hinic3_tx.h             |  315 ++
+ drivers/net/hinic3/meson.build             |   44 +
+ drivers/net/hinic3/mml/hinic3_dbg.c        |  171 +
+ drivers/net/hinic3/mml/hinic3_dbg.h        |  160 +
+ drivers/net/hinic3/mml/hinic3_mml_cmd.c    |  375 ++
+ drivers/net/hinic3/mml/hinic3_mml_cmd.h    |  131 +
+ drivers/net/hinic3/mml/hinic3_mml_ioctl.c  |  215 ++
+ drivers/net/hinic3/mml/hinic3_mml_lib.c    |  136 +
+ drivers/net/hinic3/mml/hinic3_mml_lib.h    |  275 ++
+ drivers/net/hinic3/mml/hinic3_mml_main.c   |  167 +
+ drivers/net/hinic3/mml/hinic3_mml_queue.c  |  749 ++++
+ drivers/net/hinic3/mml/hinic3_mml_queue.h  |  256 ++
+ drivers/net/hinic3/mml/meson.build         |   62 +
+ drivers/net/meson.build                    |    1 +
+ 57 files changed, 25926 insertions(+), 31 deletions(-)
+ create mode 100644 doc/guides/nics/features/hinic3.ini
+ create mode 100644 doc/guides/nics/hinic3.rst
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.h
+ create mode 100644 drivers/net/hinic3/base/meson.build
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.c
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.h
+ create mode 100644 drivers/net/hinic3/hinic3_flow.c
+ create mode 100644 drivers/net/hinic3/hinic3_flow.h
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.c
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.h
+ create mode 100644 drivers/net/hinic3/hinic3_rx.c
+ create mode 100644 drivers/net/hinic3/hinic3_rx.h
+ create mode 100644 drivers/net/hinic3/hinic3_tx.c
+ create mode 100644 drivers/net/hinic3/hinic3_tx.h
+ create mode 100644 drivers/net/hinic3/meson.build
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_ioctl.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_main.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.h
+ create mode 100644 drivers/net/hinic3/mml/meson.build
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-</body>
-</html>
+-- 
+2.47.0.windows.2
 
---_000_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_--
-
---_004_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_
-Content-Type: application/octet-stream;
-	name="0001-net-mlx5-fix-transceiver-warning-when-not-exist.patch"
-Content-Description:  0001-net-mlx5-fix-transceiver-warning-when-not-exist.patch
-Content-Disposition: attachment;
-	filename="0001-net-mlx5-fix-transceiver-warning-when-not-exist.patch";
-	size=1252; creation-date="Mon, 05 May 2025 12:09:02 GMT";
-	modification-date="Mon, 05 May 2025 12:11:47 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSBmZmU2NjYyOTFiYzUzMWI4OTYyMGNjMjhhN2I0NWZhMjA5NzAwZjM1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiB5b2dldiA8eW9nZXZAY2dzdG93ZXJuZXR3b3Jrcy5jb20+CkRh
-dGU6IFN1biwgNCBNYXkgMjAyNSAyMzoxMTo0NiArMDMwMApTdWJqZWN0OiBbUEFUQ0hdIG5ldC9t
-bHg1OiBmaXggdHJhbnNjZWl2ZXIgd2FybmluZyB3aGVuIG5vdCBleGlzdAoKSW4gY2FzZSBubyB0
-cmFuc2NlaXZlciBleGlzdCB3aGVuIHRyeWluZyB0byBnZXQgdGhlIHRyYW5zY2VpdmVyJ3MgaW5m
-bwpUaGVyZSBzaG91bGQgbm90IGJlIGFuIGVycm9yIG1lc3NhZ2UgZnJvbSB0aGUgbGlicmFyeS4K
-VGhlIGNhbGxlciBtYXkgcHJpbnQgYW4gYXBwcm9wcmlhdGUgZXJyb3IgbWVzc2FnZSB1c2luZyB0
-aGUgcmVsZXZhbnQgcnRlX2Vycm5vIGlmIHJlcXVpcmVkLgoKU2lnbmVkLW9mZi1ieTogeW9nZXYg
-PHlvZ2V2QGNnc3Rvd2VybmV0d29ya3MuY29tPgotLS0KIGRyaXZlcnMvbmV0L21seDUvbGludXgv
-bWx4NV9ldGhkZXZfb3MuYyB8IDYgKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
-KCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L21seDUvbGludXgv
-bWx4NV9ldGhkZXZfb3MuYyBiL2RyaXZlcnMvbmV0L21seDUvbGludXgvbWx4NV9ldGhkZXZfb3Mu
-YwppbmRleCBlMTkyZjY5OGQ4Li5iYTVmZDJkMjUzIDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC9t
-bHg1L2xpbnV4L21seDVfZXRoZGV2X29zLmMKKysrIGIvZHJpdmVycy9uZXQvbWx4NS9saW51eC9t
-bHg1X2V0aGRldl9vcy5jCkBAIC0xMjUzLDggKzEyNTMsMTAgQEAgbWx4NV9nZXRfbW9kdWxlX2lu
-Zm8oc3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsCiAJfQogCXJldCA9IG1seDVfaWZyZXEoZGV2LCBT
-SU9DRVRIVE9PTCwgJmlmcik7CiAJaWYgKHJldCkgewotCQlEUlZfTE9HKFdBUk5JTkcsICJwb3J0
-ICV1IGlvY3RsKFNJT0NFVEhUT09MKSBmYWlsZWQ6ICVzIiwKLQkJCWRldi0+ZGF0YS0+cG9ydF9p
-ZCwgc3RyZXJyb3IocnRlX2Vycm5vKSk7CisJCWlmIChydGVfZXJybm8gIT0gRUlPKSB7CisJCQlE
-UlZfTE9HKFdBUk5JTkcsICJwb3J0ICV1IGlvY3RsKFNJT0NFVEhUT09MKSBmYWlsZWQ6ICVzIiwK
-KwkJCQlkZXYtPmRhdGEtPnBvcnRfaWQsIHN0cmVycm9yKHJ0ZV9lcnJubykpOworCQl9CiAJCXJl
-dHVybiByZXQ7CiAJfQogCW1vZGluZm8tPnR5cGUgPSBpbmZvLnR5cGU7Ci0tIAoyLjM0LjEKCg==
-
---_004_DU2PR09MB5486574FE72A43A09A323DCDD68E2DU2PR09MB5486eurp_--
