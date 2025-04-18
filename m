@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE61C369C9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 09:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6332DC369AB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 09:07:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59DFF40430;
-	Fri, 18 Apr 2025 11:07:27 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id C5E93400D5
- for <dev@dpdk.org>; Fri, 18 Apr 2025 11:07:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CA2840611;
+	Fri, 18 Apr 2025 11:07:28 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
+ by mails.dpdk.org (Postfix) with ESMTP id 54925402DD
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 11:07:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
- MIME-Version; bh=AaLamSrmZZWEXPHKKYhoQuffvUbRVLmYzWGJT3eVBlg=;
- b=nKnuaJ1OLJHmZYs58H5ATnbt5ryXcf2r+vcQr3O27fnj+xdjldgst/pPo01Ux5
- L/lI0iYR2sB/iLzQY0lFA17vysZ/hmjRrrG/FN/si/Vp5cWcIeUP9z4vk+gKuWI2
- +0VjWVh0gCkj3La2XY0bRAX7/drklP4RjXUL5QGkIJyOw=
+ MIME-Version; bh=62XEtH36pqsDlA4yBLNbSfDYkIBHjhGkC6oXhZ4z0eE=;
+ b=V3cGyD47goYUKhdbg+BtDvOQd7Ph8Y4v5fAGv/cDJhYEoy1TDHhHPqFABDyM6J
+ UPm140rxb+XdhTT2GUOHv+f+L222STe5CGc+dFldfEccN7c/D55J2kcMIsZ2nDmB
+ OrP3oGk5HD9BZIb0sLMn2ReQpEKFqIG/1i3BTxRRJqE/c=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDXqJVFFgJorqzGAg--.15042S5;
- Fri, 18 Apr 2025 17:07:21 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDXqJVFFgJorqzGAg--.15042S6;
+ Fri, 18 Apr 2025 17:07:24 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>,
- Xin Wang <wangxin679@h-partners.com>
-Subject: [RFC 01/18] net/hinic3: add intro doc for hinic3
-Date: Fri, 18 Apr 2025 17:05:47 +0800
-Message-ID: <20250418090621.9638-2-wff_light@vip.163.com>
+Cc: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [RFC 02/18] net/hinic3: add basic header files
+Date: Fri, 18 Apr 2025 17:05:48 +0800
+Message-ID: <20250418090621.9638-3-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDXqJVFFgJorqzGAg--.15042S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JF47ZrW7CFW7tF4rXr1kZrb_yoW7tFyfp3
- Z3CrWfKF98G34xurnIy3WUZr1rA3WrC3yUZay8t34rZFn8Cr10vw48KFWIy3yDGFy0va4f
- Zr1jgry3C3WjgrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jgmi_UUUUU=
+X-CM-TRANSID: As8vCgDXqJVFFgJorqzGAg--.15042S6
+X-Coremail-Antispam: 1Uf129KBjvAXoWfJw4DAryrZr43Ww18ZrW5Jrb_yoW8CFy5Xo
+ W5uF43tr4rXryjka1q9397tFW8Zrs5Zr15t3y5CayIvFsrKry8J3y3Jw47XrWfXw4DXry3
+ Cry5tF4Du3yFyrn7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVveQDUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiKg8zCmgCALtfrQAAs-
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBgczCmgB4nHmPQAAsZ
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,182 +51,647 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Feifei Wang <wangfeifei40@huawei.com>
+From: Xin Wang <wangxin679@h-partners.com>
 
-This patch adds some basic files to describe the hinic3 driver.
+Add HW registers definition header file for SP series NIC.
+Add some headers that define commands and basic defines for
+use in the code.
 
-Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
+Signed-off-by: Xin Wang <wangxin679@h-partners.com>
+Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 ---
- .mailmap                               |  4 +-
- MAINTAINERS                            |  6 +++
- doc/guides/nics/hinic3.rst             | 52 ++++++++++++++++++++++++++
- doc/guides/nics/index.rst              |  1 +
- doc/guides/rel_notes/release_25_07.rst | 32 +---------------
- 5 files changed, 64 insertions(+), 31 deletions(-)
- create mode 100644 doc/guides/nics/hinic3.rst
+ drivers/net/hinic3/base/hinic3_cmd.h    | 231 ++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_compat.h | 266 ++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_csr.h    | 108 ++++++++++
+ 3 files changed, 605 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
 
-diff --git a/.mailmap b/.mailmap
-index d8439b79ce..8c1341e783 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -429,7 +429,7 @@ Fang TongHao <fangtonghao@sangfor.com.cn>
- Fan Zhang <fanzhang.oss@gmail.com> <roy.fan.zhang@intel.com>
- Farah Smith <farah.smith@broadcom.com>
- Fei Chen <chenwei.0515@bytedance.com>
--Feifei Wang <feifei.wang2@arm.com> <feifei.wang@arm.com>
-+Feifei Wang <wangfeifei40@huawei.com> <feifei.wang1218@gmail.com> <feifei.wang2@arm.com> <feifei.wang@arm.com> <wff_light@vip.163.com>
- Fei Qin <fei.qin@corigine.com>
- Fengjiang Liu <liufengjiang.0426@bytedance.com>
- Fengnan Chang <changfengnan@bytedance.com>
-@@ -1718,6 +1718,7 @@ Xingguang He <xingguang.he@intel.com>
- Xingyou Chen <niatlantice@gmail.com>
- Xing Wang <xing_wang@realsil.com.cn>
- Xinying Yu <xinying.yu@corigine.com>
-+Xin Wang <wangxin679@h-partners.com>
- Xin Long <longxin.xl@alibaba-inc.com>
- Xi Zhang <xix.zhang@intel.com>
- Xuan Ding <xuan.ding@intel.com>
-@@ -1750,6 +1751,7 @@ Yelena Krivosheev <yelena@marvell.com>
- Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
- Yevgeny Kliteynik <kliteyn@nvidia.com>
- Yicai Lu <luyicai@huawei.com>
-+Yi Chen <chenyi221@huawei.com>
- Yiding Zhou <yidingx.zhou@intel.com>
- Yi Li <liyi1@chinatelecom.cn>
- Yi Liu <yi.liu@nxp.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 167cc74a15..f96a27210d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -773,6 +773,12 @@ F: drivers/net/hinic/
- F: doc/guides/nics/hinic.rst
- F: doc/guides/nics/features/hinic.ini
- 
-+Huawei hinic3
-+M: Feifei Wang <wangfeifei40@huawei.com>
-+F: drivers/net/hinic3/
-+F: doc/guides/nics/hinic3.rst
-+F: doc/guides/nics/features/hinic3.ini
-+
- Intel Network Common Code
- M: Bruce Richardson <bruce.richardson@intel.com>
- T: git://dpdk.org/next/dpdk-next-net-intel
-diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
 new file mode 100644
-index 0000000000..c7080c8c1d
+index 0000000000..f0e200a944
 --- /dev/null
-+++ b/doc/guides/nics/hinic3.rst
-@@ -0,0 +1,52 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2025 Huawei Technologies Co., Ltd
++++ b/drivers/net/hinic3/base/hinic3_cmd.h
+@@ -0,0 +1,231 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
 +
++#ifndef _HINIC3_CMD_H_
++#define _HINIC3_CMD_H_
 +
-+HINIC Poll Mode Driver
-+======================
++#define NIC_RSS_TEMP_ID_TO_CTX_LT_IDX(tmp_id)	tmp_id
++/* Begin of one temp tbl. */
++#define NIC_RSS_TEMP_ID_TO_INDIR_LT_IDX(tmp_id)	((tmp_id) << 4)
++/* 4 ctx in one entry. */
++#define NIC_RSS_CTX_TBL_ENTRY_SIZE		0x10
++/* Entry size = 16B, 16 entry/template. */
++#define NIC_RSS_INDIR_TBL_ENTRY_SIZE		0x10
++/* Entry size = 16B, so entry_num = 256B/16B. */
++#define NIC_RSS_INDIR_TBL_ENTRY_NUM		0x10
 +
-+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
++#define NIC_UP_RSS_INVALID_TEMP_ID		0xFF
++#define NIC_UP_RSS_INVALID_FUNC_ID		0xFFFF
++#define NIC_UP_RSS_INVALID			0x00
++#define NIC_UP_RSS_EN				0x01
++#define NIC_UP_RSS_INVALID_GROUP_ID		0x7F
 +
-+Features
-+--------
++#define NIC_RSS_CMD_TEMP_ALLOC			0x01
++#define NIC_RSS_CMD_TEMP_FREE			0x02
 +
-+- Multi arch support: x86_64, ARMv8.
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- flow filtering
-+- Checksum offload
-+- TSO offload
-+- Promiscuous mode
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Scattered and gather for TX and RX
-+- Allmulticast mode
-+- MTU update
-+- Multicast MAC filter
-+- Flow API
-+- Set Link down or up
-+- VLAN filter and VLAN offload
-+- SR-IOV - Partially supported at this point, VFIO only
-+- FW version
-+- LRO
++#define HINIC3_RSS_TYPE_VALID_SHIFT		23
++#define HINIC3_RSS_TYPE_TCP_IPV6_EXT_SHIFT	24
++#define HINIC3_RSS_TYPE_IPV6_EXT_SHIFT		25
++#define HINIC3_RSS_TYPE_TCP_IPV6_SHIFT		26
++#define HINIC3_RSS_TYPE_IPV6_SHIFT		27
++#define HINIC3_RSS_TYPE_TCP_IPV4_SHIFT		28
++#define HINIC3_RSS_TYPE_IPV4_SHIFT		29
++#define HINIC3_RSS_TYPE_UDP_IPV6_SHIFT		30
++#define HINIC3_RSS_TYPE_UDP_IPV4_SHIFT		31
++#define HINIC3_RSS_TYPE_SET(val, member)	\
++	(((u32)(val) & 0x1) << HINIC3_RSS_TYPE_##member##_SHIFT)
 +
-+Prerequisites
-+-------------
++#define HINIC3_RSS_TYPE_GET(val, member)	\
++	(((u32)(val) >> HINIC3_RSS_TYPE_##member##_SHIFT) & 0x1)
 +
-+- Learning about Huawei Hi1823 Series Intelligent NICs using
-+  `<https://www.hikunpeng.com/compute/component/nic>`_.
++/* NIC CMDQ MODE. */
++typedef enum hinic3_ucode_cmd {
++	HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX = 0,
++	HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT,
++	HINIC3_UCODE_CMD_ARM_SQ,
++	HINIC3_UCODE_CMD_ARM_RQ,
++	HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE,
++	HINIC3_UCODE_CMD_SET_RSS_CONTEXT_TABLE,
++	HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE,
++	HINIC3_UCODE_CMD_GET_RSS_CONTEXT_TABLE,
++	HINIC3_UCODE_CMD_SET_IQ_ENABLE,
++	HINIC3_UCODE_CMD_SET_RQ_FLUSH = 10,
++	HINIC3_UCODE_CMD_MODIFY_VLAN_CTX,
++} cmdq_nic_subtype_e;
 +
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
++/* Commands between NIC to MPU. */
++enum hinic3_nic_cmd {
++	/* Only for PFD and VFD. */
++	HINIC3_NIC_CMD_VF_REGISTER = 0,
 +
++	/* FUNC CFG */
++	HINIC3_NIC_CMD_SET_FUNC_TBL = 5,
++	HINIC3_NIC_CMD_SET_VPORT_ENABLE,
++	HINIC3_NIC_CMD_SET_RX_MODE,
++	HINIC3_NIC_CMD_SQ_CI_ATTR_SET,
++	HINIC3_NIC_CMD_GET_VPORT_STAT,
++	HINIC3_NIC_CMD_CLEAN_VPORT_STAT,
++	HINIC3_NIC_CMD_CLEAR_QP_RESOURCE,
++	HINIC3_NIC_CMD_CFG_FLEX_QUEUE,
++	/* LRO CFG */
++	HINIC3_NIC_CMD_CFG_RX_LRO,
++	HINIC3_NIC_CMD_CFG_LRO_TIMER,
++	HINIC3_NIC_CMD_FEATURE_NEGO,
 +
-+Driver compilation and testing
-+------------------------------
++	/* MAC & VLAN CFG */
++	HINIC3_NIC_CMD_GET_MAC = 20,
++	HINIC3_NIC_CMD_SET_MAC,
++	HINIC3_NIC_CMD_DEL_MAC,
++	HINIC3_NIC_CMD_UPDATE_MAC,
++	HINIC3_NIC_CMD_GET_ALL_DEFAULT_MAC,
 +
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
++	HINIC3_NIC_CMD_CFG_FUNC_VLAN,
++	HINIC3_NIC_CMD_SET_VLAN_FILTER_EN,
++	HINIC3_NIC_CMD_SET_RX_VLAN_OFFLOAD,
 +
-+Limitations or Known issues
-+---------------------------
-+X86-32, Windows, and BSD are not supported yet.
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 10a2eca3b0..5ae4021ccb 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -33,6 +33,7 @@ Network Interface Controller Drivers
-     fm10k
-     gve
-     hinic
-+    hinic3
-     hns3
-     i40e
-     ice
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..1d65cf7829 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -24,37 +24,9 @@ DPDK Release 25.07
- New Features
- ------------
- 
--.. This section should contain new features added in this release.
--   Sample format:
--
--   * **Add a title in the past tense with a full stop.**
--
--     Add a short 1-2 sentence description in the past tense.
--     The description should be enough to allow someone scanning
--     the release notes to understand the new feature.
--
--     If the feature adds a lot of sub-features you can use a bullet list
--     like this:
--
--     * Added feature foo to do something.
--     * Enhanced feature bar to do something else.
--
--     Refer to the previous release notes for examples.
--
--     Suggested order in release notes items:
--     * Core libs (EAL, mempool, ring, mbuf, buses)
--     * Device abstraction libs and PMDs (ordered alphabetically by vendor name)
--       - ethdev (lib, PMDs)
--       - cryptodev (lib, PMDs)
--       - eventdev (lib, PMDs)
--       - etc
--     * Other libs
--     * Apps, Examples, Tools (if significant)
--
--     This section is a comment. Do not overwrite or remove it.
--     Also, make sure to start the actual text at the margin.
--     =======================================================
-+* **Added Huawei hinic3 net driver [EXPERIMENTAL].**
- 
-+  * Added network driver for the Huawei SPx series Network Adapters.
- 
- Removed Items
- -------------
++	/* SR-IOV */
++	HINIC3_NIC_CMD_CFG_VF_VLAN = 40,
++	HINIC3_NIC_CMD_SET_SPOOPCHK_STATE,
++	/* RATE LIMIT */
++	HINIC3_NIC_CMD_SET_MAX_MIN_RATE,
++
++	/* RSS CFG */
++	HINIC3_NIC_CMD_RSS_CFG = 60,
++	HINIC3_NIC_CMD_RSS_TEMP_MGR,
++	HINIC3_NIC_CMD_GET_RSS_CTX_TBL,
++	HINIC3_NIC_CMD_CFG_RSS_HASH_KEY,
++	HINIC3_NIC_CMD_CFG_RSS_HASH_ENGINE,
++	HINIC3_NIC_CMD_SET_RSS_CTX_TBL_INTO_FUNC,
++
++	/* FDIR */
++	HINIC3_NIC_CMD_ADD_TC_FLOW = 80,
++	HINIC3_NIC_CMD_DEL_TC_FLOW,
++	HINIC3_NIC_CMD_GET_TC_FLOW,
++	HINIC3_NIC_CMD_FLUSH_TCAM,
++	HINIC3_NIC_CMD_CFG_TCAM_BLOCK,
++	HINIC3_NIC_CMD_ENABLE_TCAM,
++	HINIC3_NIC_CMD_GET_TCAM_BLOCK,
++
++	HINIC3_NIC_CMD_SET_FDIR_STATUS = 91,
++
++	/* PORT CFG */
++	HINIC3_NIC_CMD_SET_PORT_ENABLE = 100,
++	HINIC3_NIC_CMD_CFG_PAUSE_INFO,
++
++	HINIC3_NIC_CMD_SET_PORT_CAR,
++	HINIC3_NIC_CMD_SET_ER_DROP_PKT,
++
++	HINIC3_NIC_CMD_VF_COS,
++	HINIC3_NIC_CMD_SETUP_COS_MAPPING,
++	HINIC3_NIC_CMD_SET_ETS,
++	HINIC3_NIC_CMD_SET_PFC,
++
++	/* MISC */
++	HINIC3_NIC_CMD_BIOS_CFG = 120,
++	HINIC3_NIC_CMD_SET_FIRMWARE_CUSTOM_PACKETS_MSG,
++
++	/* DFX */
++	HINIC3_NIC_CMD_GET_SM_TABLE = 140,
++	HINIC3_NIC_CMD_RD_LINE_TBL,
++
++	HINIC3_NIC_CMD_SET_VHD_CFG = 161,
++
++	HINIC3_NIC_CMD_GET_PORT_STAT = 200,
++	HINIC3_NIC_CMD_CLEAN_PORT_STAT,
++
++	HINIC3_NIC_CMD_MAX = 256
++};
++
++/* COMM commands between driver to MPU. */
++enum hinic3_mgmt_cmd {
++	HINIC3_MGMT_CMD_FUNC_RESET = 0,
++	HINIC3_MGMT_CMD_FEATURE_NEGO,
++	HINIC3_MGMT_CMD_FLUSH_DOORBELL,
++	HINIC3_MGMT_CMD_START_FLUSH,
++	HINIC3_MGMT_CMD_SET_FUNC_FLR,
++	HINIC3_MGMT_CMD_SET_FUNC_SVC_USED_STATE = 7,
++
++	HINIC3_MGMT_CMD_CFG_MSIX_NUM = 10,
++
++	HINIC3_MGMT_CMD_SET_CMDQ_CTXT = 20,
++	HINIC3_MGMT_CMD_SET_VAT,
++	HINIC3_MGMT_CMD_CFG_PAGESIZE,
++	HINIC3_MGMT_CMD_CFG_MSIX_CTRL_REG,
++	HINIC3_MGMT_CMD_SET_CEQ_CTRL_REG,
++	HINIC3_MGMT_CMD_SET_DMA_ATTR,
++
++	HINIC3_MGMT_CMD_GET_MQM_FIX_INFO = 40,
++	HINIC3_MGMT_CMD_SET_MQM_CFG_INFO,
++	HINIC3_MGMT_CMD_SET_MQM_SRCH_GPA,
++	HINIC3_MGMT_CMD_SET_PPF_TMR,
++	HINIC3_MGMT_CMD_SET_PPF_HT_GPA,
++	HINIC3_MGMT_CMD_SET_FUNC_TMR_BITMAT,
++
++	HINIC3_MGMT_CMD_GET_FW_VERSION = 60,
++	HINIC3_MGMT_CMD_GET_BOARD_INFO,
++	HINIC3_MGMT_CMD_SYNC_TIME,
++	HINIC3_MGMT_CMD_GET_HW_PF_INFOS,
++	HINIC3_MGMT_CMD_SEND_BDF_INFO,
++
++	HINIC3_MGMT_CMD_UPDATE_FW = 80,
++	HINIC3_MGMT_CMD_ACTIVE_FW,
++	HINIC3_MGMT_CMD_HOT_ACTIVE_FW,
++	HINIC3_MGMT_CMD_HOT_ACTIVE_DONE_NOTICE,
++	HINIC3_MGMT_CMD_SWITCH_CFG,
++	HINIC3_MGMT_CMD_CHECK_FLASH,
++	HINIC3_MGMT_CMD_CHECK_FLASH_RW,
++	HINIC3_MGMT_CMD_RESOURCE_CFG,
++	HINIC3_MGMT_CMD_UPDATE_BIOS,
++
++	HINIC3_MGMT_CMD_FAULT_REPORT = 100,
++	HINIC3_MGMT_CMD_WATCHDOG_INFO,
++	HINIC3_MGMT_CMD_MGMT_RESET,
++	HINIC3_MGMT_CMD_FFM_SET,
++
++	HINIC3_MGMT_CMD_GET_LOG = 120,
++	HINIC3_MGMT_CMD_TEMP_OP,
++	HINIC3_MGMT_CMD_EN_AUTO_RST_CHIP,
++	HINIC3_MGMT_CMD_CFG_REG,
++	HINIC3_MGMT_CMD_GET_CHIP_ID,
++	HINIC3_MGMT_CMD_SYSINFO_DFX,
++	HINIC3_MGMT_CMD_PCIE_DFX_NTC,
++};
++
++enum mag_cmd {
++	SERDES_CMD_PROCESS = 0,
++
++	MAG_CMD_SET_PORT_CFG      = 1,
++	MAG_CMD_SET_PORT_ADAPT    = 2,
++	MAG_CMD_CFG_LOOPBACK_MODE = 3,
++
++	MAG_CMD_GET_PORT_ENABLE   = 5,
++	MAG_CMD_SET_PORT_ENABLE   = 6,
++	MAG_CMD_GET_LINK_STATUS   = 7,
++	MAG_CMD_SET_LINK_FOLLOW   = 8,
++	MAG_CMD_SET_PMA_ENABLE    = 9,
++	MAG_CMD_CFG_FEC_MODE      = 10,
++
++	/* PHY */
++	MAG_CMD_GET_XSFP_INFO        = 60,
++	MAG_CMD_SET_XSFP_ENABLE      = 61,
++	MAG_CMD_GET_XSFP_PRESENT     = 62,
++	/* sfp/qsfp single byte read/write, for equipment test. */
++	MAG_CMD_SET_XSFP_RW          = 63,
++	MAG_CMD_CFG_XSFP_TEMPERATURE = 64,
++
++	MAG_CMD_WIRE_EVENT        = 100,
++	MAG_CMD_LINK_ERR_EVENT    = 101,
++
++	MAG_CMD_EVENT_PORT_INFO   = 150,
++	MAG_CMD_GET_PORT_STAT     = 151,
++	MAG_CMD_CLR_PORT_STAT     = 152,
++	MAG_CMD_GET_PORT_INFO     = 153,
++	MAG_CMD_GET_PCS_ERR_CNT   = 154,
++	MAG_CMD_GET_MAG_CNT       = 155,
++	MAG_CMD_DUMP_ANTRAIN_INFO = 156,
++
++	MAG_CMD_MAX = 0xFF
++};
++
++#endif /* _HINIC3_CMD_H_ */
+diff --git a/drivers/net/hinic3/base/hinic3_compat.h b/drivers/net/hinic3/base/hinic3_compat.h
+new file mode 100644
+index 0000000000..ae2899d15c
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_compat.h
+@@ -0,0 +1,266 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_COMPAT_H_
++#define _HINIC3_COMPAT_H_
++
++#include <stdint.h>
++#include <stdbool.h>
++#include <sys/time.h>
++#include <unistd.h>
++#include <sys/syscall.h>
++#include <pthread.h>
++#include <ethdev_pci.h>
++#include <eal_interrupts.h>
++#include <rte_io.h>
++#include <rte_atomic.h>
++#include <rte_byteorder.h>
++#include <rte_common.h>
++#include <rte_config.h>
++#include <rte_cycles.h>
++#include <rte_log.h>
++#include <rte_malloc.h>
++#include <rte_memcpy.h>
++#include <rte_memzone.h>
++#include <rte_spinlock.h>
++
++typedef uint8_t  u8;
++typedef int8_t   s8;
++typedef uint16_t u16;
++typedef uint32_t u32;
++typedef int32_t  s32;
++typedef uint64_t u64;
++
++#ifndef BIT
++#define BIT(n) (1U << (n))
++#endif
++
++#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
++#define lower_32_bits(n) ((u32)(n))
++
++#define HINIC3_MEM_ALLOC_ALIGN_MIN 1
++
++extern int hinic3_logtype;
++#define RTE_LOGTYPE_NET_HINIC3 hinic3_logtype
++
++#define PMD_DRV_LOG(level, ...) RTE_LOG_LINE(level, NET_HINIC3, __VA_ARGS__)
++
++/* Bit order interface. */
++#define cpu_to_be16(o) rte_cpu_to_be_16(o)
++#define cpu_to_be32(o) rte_cpu_to_be_32(o)
++#define cpu_to_be64(o) rte_cpu_to_be_64(o)
++#define cpu_to_le32(o) rte_cpu_to_le_32(o)
++#define be16_to_cpu(o) rte_be_to_cpu_16(o)
++#define be32_to_cpu(o) rte_be_to_cpu_32(o)
++#define be64_to_cpu(o) rte_be_to_cpu_64(o)
++#define le32_to_cpu(o) rte_le_to_cpu_32(o)
++
++#ifdef HW_CONVERT_ENDIAN
++/* If csrs to enable endianness coverting are configed, hw will do the
++ * endianness coverting for stateless SQ ci, the fields less than 4B for
++ * doorbell, the fields less than 4B in the CQE data.
++ */
++#define hinic3_hw_be32(val)  (val)
++#define hinic3_hw_cpu32(val) (val)
++#define hinic3_hw_cpu16(val) (val)
++#else
++#define hinic3_hw_be32(val)  cpu_to_be32(val)
++#define hinic3_hw_cpu32(val) be32_to_cpu(val)
++#define hinic3_hw_cpu16(val) be16_to_cpu(val)
++#endif
++
++#define ARRAY_LEN(arr) ((int)(sizeof(arr) / sizeof((arr)[0])))
++
++static inline void
++hinic3_hw_be32_len(void *data, int len)
++{
++	int i, chunk_sz = sizeof(u32);
++	u32 *mem = data;
++
++	if (!data)
++		return;
++
++	len = len / chunk_sz;
++
++	for (i = 0; i < len; i++) {
++		*mem = hinic3_hw_be32(*mem);
++		mem++;
++	}
++}
++
++static inline int
++hinic3_get_bit(int nr, volatile unsigned long *addr)
++{
++	RTE_ASSERT(nr < 0x20);
++
++	uint32_t mask = UINT32_C(1) << nr;
++	return (*addr) & mask;
++}
++
++static inline void
++hinic3_set_bit(unsigned int nr, volatile unsigned long *addr)
++{
++	rte_atomic_fetch_or_explicit(addr, (1UL << nr),
++				     rte_memory_order_seq_cst);
++}
++
++static inline void
++hinic3_clear_bit(int nr, volatile unsigned long *addr)
++{
++	rte_atomic_fetch_and_explicit(addr, ~(1UL << nr),
++				      rte_memory_order_seq_cst);
++}
++
++static inline int
++hinic3_test_and_clear_bit(int nr, volatile unsigned long *addr)
++{
++	unsigned long mask = (1UL << nr);
++
++	return (int)(rte_atomic_fetch_and_explicit(addr, ~mask,
++						   rte_memory_order_seq_cst) &
++		     mask);
++}
++
++static inline int
++hinic3_test_and_set_bit(int nr, volatile unsigned long *addr)
++{
++	unsigned long mask = (1UL << nr);
++
++	return (int)(rte_atomic_fetch_or_explicit(addr, mask,
++						  rte_memory_order_seq_cst) &
++		     mask);
++}
++
++#ifdef CLOCK_MONOTONIC_RAW /**< Defined in glibc bits/time.h . */
++#define CLOCK_TYPE CLOCK_MONOTONIC_RAW
++#else
++#define CLOCK_TYPE CLOCK_MONOTONIC
++#endif
++
++#define HINIC3_MUTEX_TIMEOUT 10
++#define HINIC3_S_TO_MS_UNIT  1000
++#define HINIC3_S_TO_NS_UNIT  1000000
++
++static inline unsigned long
++clock_gettime_ms(void)
++{
++	struct timespec tv;
++
++	(void)clock_gettime(CLOCK_TYPE, &tv);
++
++	return (unsigned long)tv.tv_sec * HINIC3_S_TO_MS_UNIT +
++	       (unsigned long)tv.tv_nsec / HINIC3_S_TO_NS_UNIT;
++}
++
++#define jiffies		      clock_gettime_ms()
++#define msecs_to_jiffies(ms)  (ms)
++#define time_before(now, end) ((now) < (end))
++
++/**
++ * Convert data to big endian 32 bit format.
++ *
++ * @param data
++ * The data to convert.
++ * @param len
++ * Length of data to convert, must be Multiple of 4B.
++ */
++static inline void
++hinic3_cpu_to_be32(void *data, int len)
++{
++	int i, chunk_sz = sizeof(u32);
++	u32 *mem = data;
++
++	if (!data)
++		return;
++
++	len = len / chunk_sz;
++
++	for (i = 0; i < len; i++) {
++		*mem = cpu_to_be32(*mem);
++		mem++;
++	}
++}
++
++/**
++ * Convert data from big endian 32 bit format.
++ *
++ * @param data
++ * The data to convert.
++ * @param len
++ * Length of data to convert, must be Multiple of 4B.
++ */
++static inline void
++hinic3_be32_to_cpu(void *data, int len)
++{
++	int i, chunk_sz = sizeof(u32);
++	u32 *mem = data;
++
++	if (!data)
++		return;
++
++	len = len / chunk_sz;
++
++	for (i = 0; i < len; i++) {
++		*mem = be32_to_cpu(*mem);
++		mem++;
++	}
++}
++
++static inline u16
++ilog2(u32 n)
++{
++	u16 res = 0;
++
++	while (n > 1) {
++		n >>= 1;
++		res++;
++	}
++
++	return res;
++}
++
++static inline int
++hinic3_mutex_init(pthread_mutex_t *pthreadmutex,
++		  const pthread_mutexattr_t *mattr)
++{
++	int err;
++
++	err = pthread_mutex_init(pthreadmutex, mattr);
++	if (unlikely(err))
++		PMD_DRV_LOG(ERR, "Initialize mutex failed, error: %d", err);
++
++	return err;
++}
++
++static inline int
++hinic3_mutex_destroy(pthread_mutex_t *pthreadmutex)
++{
++	int err;
++
++	err = pthread_mutex_destroy(pthreadmutex);
++	if (unlikely(err))
++		PMD_DRV_LOG(ERR, "Destroy mutex failed, error: %d", err);
++
++	return err;
++}
++
++static inline int
++hinic3_mutex_lock(pthread_mutex_t *pthreadmutex)
++{
++	int err;
++
++	err = pthread_mutex_lock(pthreadmutex);
++	if (err)
++		PMD_DRV_LOG(ERR, "Mutex lock failed, err: %d", err);
++
++	return err;
++}
++
++static inline int
++hinic3_mutex_unlock(pthread_mutex_t *pthreadmutex)
++{
++	return pthread_mutex_unlock(pthreadmutex);
++}
++
++#endif /* _HINIC3_COMPAT_H_ */
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base/hinic3_csr.h
+new file mode 100644
+index 0000000000..8579794c8d
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_csr.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_CSR_H_
++#define _HINIC3_CSR_H_
++
++#ifdef CONFIG_SP_VID_DID
++#define PCI_VENDOR_ID_SPNIC    0x1F3F
++#define HINIC3_DEV_ID_STANDARD 0x9020
++#define HINIC3_DEV_ID_VF       0x9001
++#else
++#define PCI_VENDOR_ID_HUAWEI   0x19e5
++#define HINIC3_DEV_ID_STANDARD 0x0222
++#define HINIC3_DEV_ID_VF       0x375F
++#endif
++
++/*
++ * Bit30/bit31 for bar index flag.
++ * 00: bar0
++ * 01: bar1
++ * 10: bar2
++ * 11: bar3
++ */
++#define HINIC3_CFG_REGS_FLAG 0x40000000
++
++#define HINIC3_MGMT_REGS_FLAG 0xC0000000
++
++#define HINIC3_REGS_FLAG_MAKS 0x3FFFFFFF
++
++#define HINIC3_VF_CFG_REG_OFFSET 0x2000
++
++#define HINIC3_HOST_CSR_BASE_ADDR   (HINIC3_MGMT_REGS_FLAG + 0x6000)
++#define HINIC3_CSR_GLOBAL_BASE_ADDR (HINIC3_MGMT_REGS_FLAG + 0x6400)
++
++/* HW interface registers. */
++#define HINIC3_CSR_FUNC_ATTR0_ADDR (HINIC3_CFG_REGS_FLAG + 0x0)
++#define HINIC3_CSR_FUNC_ATTR1_ADDR (HINIC3_CFG_REGS_FLAG + 0x4)
++#define HINIC3_CSR_FUNC_ATTR2_ADDR (HINIC3_CFG_REGS_FLAG + 0x8)
++#define HINIC3_CSR_FUNC_ATTR3_ADDR (HINIC3_CFG_REGS_FLAG + 0xC)
++#define HINIC3_CSR_FUNC_ATTR4_ADDR (HINIC3_CFG_REGS_FLAG + 0x10)
++#define HINIC3_CSR_FUNC_ATTR5_ADDR (HINIC3_CFG_REGS_FLAG + 0x14)
++#define HINIC3_CSR_FUNC_ATTR6_ADDR (HINIC3_CFG_REGS_FLAG + 0x18)
++
++#define HINIC3_FUNC_CSR_MAILBOX_DATA_OFF       0x80
++#define HINIC3_FUNC_CSR_MAILBOX_CONTROL_OFF    (HINIC3_CFG_REGS_FLAG + 0x0100)
++#define HINIC3_FUNC_CSR_MAILBOX_INT_OFFSET_OFF (HINIC3_CFG_REGS_FLAG + 0x0104)
++#define HINIC3_FUNC_CSR_MAILBOX_RESULT_H_OFF   (HINIC3_CFG_REGS_FLAG + 0x0108)
++#define HINIC3_FUNC_CSR_MAILBOX_RESULT_L_OFF   (HINIC3_CFG_REGS_FLAG + 0x010C)
++
++#define HINIC3_PPF_ELECTION_OFFSET 0x0
++#define HINIC3_MPF_ELECTION_OFFSET 0x20
++
++#define HINIC3_CSR_PPF_ELECTION_ADDR \
++	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_PPF_ELECTION_OFFSET)
++
++#define HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR \
++	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_MPF_ELECTION_OFFSET)
++
++#define HINIC3_CSR_DMA_ATTR_TBL_ADDR	   (HINIC3_CFG_REGS_FLAG + 0x380)
++#define HINIC3_CSR_DMA_ATTR_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x390)
++
++/* MSI-X registers. */
++#define HINIC3_CSR_MSIX_INDIR_IDX_ADDR	(HINIC3_CFG_REGS_FLAG + 0x310)
++#define HINIC3_CSR_MSIX_CTRL_ADDR	(HINIC3_CFG_REGS_FLAG + 0x300)
++#define HINIC3_CSR_MSIX_CNT_ADDR	(HINIC3_CFG_REGS_FLAG + 0x304)
++#define HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR (HINIC3_CFG_REGS_FLAG + 0x58)
++
++#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_SHIFT 0
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_SHIFT	    1
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_SHIFT	    2
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_SHIFT	    3
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_SHIFT	    4
++#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_SHIFT 22
++
++#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_MASK 0x1U
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_MASK 0x3FFU
++
++#define HINIC3_MSI_CLR_INDIR_SET(val, member)           \
++	(((val) & HINIC3_MSI_CLR_INDIR_##member##_MASK) \
++	 << HINIC3_MSI_CLR_INDIR_##member##_SHIFT)
++
++/* EQ registers. */
++#define HINIC3_AEQ_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x210)
++
++#define HINIC3_AEQ_MTT_OFF_BASE_ADDR (HINIC3_CFG_REGS_FLAG + 0x240)
++
++#define HINIC3_CSR_EQ_PAGE_OFF_STRIDE 8
++
++#define HINIC3_AEQ_HI_PHYS_ADDR_REG(pg_num) \
++	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
++	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE)
++
++#define HINIC3_AEQ_LO_PHYS_ADDR_REG(pg_num) \
++	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
++	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE + 4)
++
++#define HINIC3_CSR_AEQ_CTRL_0_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x200)
++#define HINIC3_CSR_AEQ_CTRL_1_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x204)
++#define HINIC3_CSR_AEQ_CONS_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x208)
++#define HINIC3_CSR_AEQ_PROD_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x20C)
++#define HINIC3_CSR_AEQ_CI_SIMPLE_INDIR_ADDR (HINIC3_CFG_REGS_FLAG + 0x50)
++
++#endif /* _HINIC3_CSR_H_ */
 -- 
 2.47.0.windows.2
 
