@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06949C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F576C3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:53:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF7FF40E4C;
-	Mon,  5 May 2025 14:51:27 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id 03C1C400D5
- for <dev@dpdk.org>; Fri, 18 Apr 2025 10:09:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C7D740E5E;
+	Mon,  5 May 2025 14:51:29 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 2DAA0400D5
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 10:09:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
- MIME-Version; bh=SN0kJsm0hl4uI9b4cwGrRSnS5jcfSrjE3ZwV3kXEpCc=;
- b=AOkEmjdafvbkozVdMGfzeEHMdU4dgjMUs/6lx68CseC3cvsyrrRzUrJdOUyQgp
- M0TKHBByZBspxbwcEc8bwvRkDyYqeiWav8j9SUnOSbu3CnOdW7V2tj0lxnCH+KOD
- s8DcaCeicaJ5leQ5NkBqiw8Mvn6iZb2Q7u7oG7w1aBKgM=
+ MIME-Version; bh=F5YN+4GUBC3PudwzCn4srlHjXYeiHEGAxSq7IsJvbpw=;
+ b=bjuLaQ+EM+GbzEcSlz62uJzQn7BKfz8a9sFIWZkUgfzOj9OwFG2iJqIYw8ch6R
+ nSv3J4LtMt0Z/uBPuOmnukALTlPtbLlnZyEJtM7oIM4qoWf3fPMWG37LJeuRFE93
+ mQcYs22XD6M71YkWsTUZoc9RxogGjT2kjvENzpPe/Vqqw=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgAXqpe1CAJoAsjFAg--.56413S9;
- Fri, 18 Apr 2025 16:09:35 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgAXqpe1CAJoAsjFAg--.56413S11;
+ Fri, 18 Apr 2025 16:09:38 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
  Feifei Wang <wangfeifei40@huawei.com>
-Subject: [RFC 05/18] net/hinic3: add NIC event module
-Date: Fri, 18 Apr 2025 16:08:37 +0800
-Message-ID: <20250418080908.9447-6-wff_light@vip.163.com>
+Subject: [RFC 07/18] net/hinic3: add mgmt module function code
+Date: Fri, 18 Apr 2025 16:08:39 +0800
+Message-ID: <20250418080908.9447-8-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250418080908.9447-1-wff_light@vip.163.com>
 References: <20250418080908.9447-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAXqpe1CAJoAsjFAg--.56413S9
-X-Coremail-Antispam: 1Uf129KBjvAXoW3ur1UKw47uF47AFWkAw4UCFg_yoW8Xry7Ao
- WSqw45WrnYqryxCay0qFn7GFZ7ZrWvgFZ5t3yYyFW3Gw17X34jqayfXr4Yva40gr4YkrW3
- A3WDtayIyw45Jwn3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIv38UUUUU
+X-CM-TRANSID: As8vCgAXqpe1CAJoAsjFAg--.56413S11
+X-Coremail-Antispam: 1Uf129KBjvAXoWfGF4rCFW5Ar4rWry8XrW3Awb_yoW8Xr4DKo
+ WxJF4aqr1kZrn5Aa4293srJF97A393urnxtrs3Cws3XF1UAryFg3WUGr1fZ3WxX3y8Cry7
+ uF90ga1fKw4xJw1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVv31DUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBgYzCmgB4nGqCgAAsj
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHhYzCmgB80ZkrwAAsm
 X-Mailman-Approved-At: Mon, 05 May 2025 14:51:05 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -52,506 +52,548 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Yi Chen <chenyi221@huawei.com>
 
-Currently, there are two types of events: pf/vf connection status
-and port information printing. This patch contains related data
-structures and function codes.
+Mgmt module is a kind of administration module for the chip.
+It is responsible for handling administration command from host.
+It mainly uses aeq to implement. This patch adds related data
+structures, packaged interfaces and function codes.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 ---
- drivers/net/hinic3/base/hinic3_nic_event.c | 433 +++++++++++++++++++++
- drivers/net/hinic3/base/hinic3_nic_event.h |  39 ++
- 2 files changed, 472 insertions(+)
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+ drivers/net/hinic3/base/hinic3_mgmt.c | 392 ++++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_mgmt.h | 121 ++++++++
+ 2 files changed, 513 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
+diff --git a/drivers/net/hinic3/base/hinic3_mgmt.c b/drivers/net/hinic3/base/hinic3_mgmt.c
 new file mode 100644
-index 0000000000..14cf6f10ea
+index 0000000000..a755c5aa97
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.c
-@@ -0,0 +1,433 @@
++++ b/drivers/net/hinic3/base/hinic3_mgmt.c
+@@ -0,0 +1,392 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
++#include <rte_ethdev.h>
 +
 +#include "hinic3_compat.h"
-+#include "hinic3_cmd.h"
-+#include "hinic3_hwif.h"
-+#include "hinic3_nic_cfg.h"
 +#include "hinic3_hwdev.h"
++#include "hinic3_mbox.h"
++#include "hinic3_mgmt.h"
 +#include "hinic3_nic_event.h"
-+#include "hinic3_ethdev.h"
 +
-+static const char *g_hw_to_char_fec[HILINK_FEC_MAX_TYPE] = {
-+	"not set", "rsfec", "basefec", "nofec", "llrsfec",
-+};
-+static const char *g_hw_to_speed_info[PORT_SPEED_UNKNOWN] = {
-+	"not set", "10MB", "100MB", "1GB",   "10GB",
-+	"25GB",	   "40GB", "50GB",  "100GB", "200GB",
-+};
-+static const char *g_hw_to_an_state_info[PORT_CFG_AN_OFF + 1] = {
-+	"not set",
-+	"on",
-+	"off",
-+};
++#define HINIC3_MSG_TO_MGMT_MAX_LEN 2016
 +
-+struct port_type_table {
-+	u32 port_type;
-+	const char *port_type_name;
-+};
++#define MAX_PF_MGMT_BUF_SIZE 2048UL
++#define SEGMENT_LEN	     48
++#define ASYNC_MSG_FLAG	     0x20
++#define MGMT_MSG_MAX_SEQ_ID \
++	(RTE_ALIGN(HINIC3_MSG_TO_MGMT_MAX_LEN, SEGMENT_LEN) / SEGMENT_LEN)
 +
-+void
-+get_port_info(struct hinic3_hwdev *hwdev, u8 link_state,
-+	      struct rte_eth_link *link)
-+{
-+	uint32_t port_speed[LINK_SPEED_LEVELS] = {
-+		RTE_ETH_SPEED_NUM_NONE, RTE_ETH_SPEED_NUM_10M,
-+		RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_1G,
-+		RTE_ETH_SPEED_NUM_10G,	RTE_ETH_SPEED_NUM_25G,
-+		RTE_ETH_SPEED_NUM_40G,	RTE_ETH_SPEED_NUM_50G,
-+		RTE_ETH_SPEED_NUM_100G, RTE_ETH_SPEED_NUM_200G,
-+	};
-+	struct nic_port_info port_info = {0};
-+	int err;
++#define BUF_OUT_DEFAULT_SIZE 1
 +
-+	if (!link_state) {
-+		link->link_status = RTE_ETH_LINK_DOWN;
-+		link->link_speed = RTE_ETH_SPEED_NUM_NONE;
-+		link->link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
-+		link->link_autoneg = RTE_ETH_LINK_FIXED;
-+	} else {
-+		link->link_status = RTE_ETH_LINK_UP;
++#define MGMT_MSG_SIZE_MIN     20
++#define MGMT_MSG_SIZE_STEP    16
++#define MGMT_MSG_RSVD_FOR_DEV 8
 +
-+		err = hinic3_get_port_info(hwdev, &port_info);
-+		if (err) {
-+			link->link_speed = RTE_ETH_SPEED_NUM_NONE;
-+			link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+			link->link_autoneg = RTE_ETH_LINK_FIXED;
-+		} else {
-+			link->link_speed =
-+				port_speed[port_info.speed % LINK_SPEED_LEVELS];
-+			link->link_duplex = port_info.duplex;
-+			link->link_autoneg = port_info.autoneg_state;
-+		}
-+	}
-+}
++#define SYNC_MSG_ID_MASK  0x1F
++#define ASYNC_MSG_ID_MASK 0x1F
 +
-+static void
-+hinic3_link_event_stats(void *dev, u8 link)
-+{
-+	struct hinic3_hwdev *hwdev = dev;
++#define SYNC_FLAG  0
++#define ASYNC_FLAG 1
 +
-+	if (link)
-+		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_up_stats,
-+			1, rte_memory_order_seq_cst);
-+	else
-+		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_down_stats,
-+			1, rte_memory_order_seq_cst);
-+}
++#define MSG_NO_RESP 0xFFFF
 +
-+static void
-+hinic3_set_vport_state(struct hinic3_hwdev *hwdev,
-+		       struct hinic3_cmd_link_state *link_state)
-+{
-+	struct hinic3_nic_dev *nic_dev = NULL;
-+	int err = 0;
++#define MGMT_MSG_TIMEOUT 5000 /**< Millisecond. */
 +
-+	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV((struct rte_eth_dev *)(hwdev->eth_dev));
-+
-+	if (link_state->state) {
-+		if (hinic3_get_bit(HINIC3_DEV_START, &nic_dev->dev_status))
-+			err = hinic3_set_vport_enable(hwdev, true);
-+	} else {
-+		err = hinic3_set_vport_enable(hwdev, false);
-+	}
-+
-+	if (err)
-+		PMD_DRV_LOG(ERR, "Set vport status failed");
-+}
-+
-+static void
-+link_status_event_handler(void *hwdev, void *buf_in, __rte_unused u16 in_size,
-+			  __rte_unused void *buf_out,
-+			  __rte_unused u16 *out_size)
-+{
-+	struct hinic3_cmd_link_state *link_status = NULL;
-+	struct rte_eth_link link;
-+	struct hinic3_hwdev *dev = hwdev;
-+	int err;
-+
-+	link_status = buf_in;
-+	PMD_DRV_LOG(INFO,
-+		    "Link status report received, func_id: %d, status: %d(%s)",
-+		    hinic3_global_func_id(hwdev), link_status->state,
-+		    link_status->state ? "UP" : "DOWN");
-+
-+	hinic3_link_event_stats(hwdev, link_status->state);
-+
-+	hinic3_set_vport_state(dev, link_status);
-+
-+	/* Link event reported only after set vport enable. */
-+	get_port_info(dev, link_status->state, &link);
-+	err = rte_eth_linkstatus_set((struct rte_eth_dev *)(dev->eth_dev),
-+				     &link);
-+	if (!err)
-+		rte_eth_dev_callback_process(dev->eth_dev,
-+					     RTE_ETH_EVENT_INTR_LSC, NULL);
-+}
-+
-+static const char *
-+get_port_type_name(u32 type)
-+{
-+	int i;
-+	const struct port_type_table port_optical_type_table_s[] = {
-+		{LINK_PORT_UNKNOWN, "UNKNOWN"},
-+		{LINK_PORT_OPTICAL_MM, "optical_sr"},
-+		{LINK_PORT_OPTICAL_SM, "optical_lr"},
-+		{LINK_PORT_PAS_COPPER, "copper"},
-+		{LINK_PORT_ACC, "ACC"},
-+		{LINK_PORT_BASET, "baset"},
-+		{LINK_PORT_AOC, "AOC"},
-+		{LINK_PORT_ELECTRIC, "electric"},
-+		{LINK_PORT_BACKBOARD_INTERFACE, "interface"},
-+	};
-+
-+	for (i = 0; i < ARRAY_LEN(port_optical_type_table_s); i++) {
-+		if (type == port_optical_type_table_s[i].port_type)
-+			return port_optical_type_table_s[i].port_type_name;
-+	}
-+	return "UNKNOWN TYPE";
-+}
-+
-+static void
-+get_port_type(struct mag_cmd_event_port_info *port_info, const char **port_type)
-+{
-+	if (port_info->port_type <= LINK_PORT_BACKBOARD_INTERFACE)
-+		*port_type = get_port_type_name(port_info->port_type);
-+	else
-+		PMD_DRV_LOG(INFO, "Unknown port type: %u",
-+			    port_info->port_type);
-+}
-+
-+static int
-+get_port_temperature_power(struct mag_cmd_event_port_info *info, char *str)
-+{
-+	char arr[CAP_INFO_MAX_LEN];
-+
-+	snprintf(arr, CAP_INFO_MAX_LEN - 1, "%s, %s, Temperature: %u", str,
-+		 info->sfp_type ? "QSFP" : "SFP", info->cable_temp);
-+	if (info->sfp_type)
-+		snprintf(str, CAP_INFO_MAX_LEN - 1,
-+			 "%s, rx power: %uuw %uuW %uuW %uuW", arr,
-+			 info->power[0x0], info->power[0x1], info->power[0x2],
-+			 info->power[0x3]);
-+	else
-+		snprintf(str, CAP_INFO_MAX_LEN - 1,
-+			 "%s, rx power: %uuW, tx power: %uuW", arr,
-+			 info->power[0x0], info->power[0x1]);
-+
-+	return 0;
-+}
-+
-+static void
-+print_cable_info(struct mag_cmd_event_port_info *port_info)
-+{
-+	char tmp_str[CAP_INFO_MAX_LEN] = {0};
-+	char tmp_vendor[VENDOR_MAX_LEN] = {0};
-+	const char *port_type = "Unknown port type";
-+	int i;
-+	int err = 0;
-+	if (port_info->gpio_insert) {
-+		PMD_DRV_LOG(INFO, "Cable unpresent");
-+		return;
-+	}
-+
-+	get_port_type(port_info, &port_type);
-+
-+	for (i = (int)sizeof(port_info->vendor_name) - 1; i >= 0; i--) {
-+		if (port_info->vendor_name[i] == ' ')
-+			port_info->vendor_name[i] = '\0';
-+		else
-+			break;
-+	}
-+
-+	memcpy(tmp_vendor, port_info->vendor_name,
-+	       sizeof(port_info->vendor_name));
-+	(void)snprintf(tmp_str, CAP_INFO_MAX_LEN - 1,
-+		       "Vendor: %s, %s, length: %um, max_speed: %uGbps",
-+		       tmp_vendor, port_type, port_info->cable_length,
-+		       port_info->max_speed);
-+
-+	if (port_info->port_type == LINK_PORT_OPTICAL_MM ||
-+	    port_info->port_type == LINK_PORT_AOC) {
-+		err = get_port_temperature_power(port_info, tmp_str);
-+		if (err)
-+			return;
-+	}
-+
-+	PMD_DRV_LOG(INFO, "Cable information: %s", tmp_str);
-+}
-+
-+static void
-+print_link_info(struct mag_cmd_event_port_info *port_info)
-+{
-+	const char *fec = "None";
-+	const char *speed = "None";
-+	const char *an_state = "None";
-+
-+	if (port_info->fec < HILINK_FEC_MAX_TYPE)
-+		fec = g_hw_to_char_fec[port_info->fec];
-+	else
-+		PMD_DRV_LOG(INFO, "Unknown fec type: %u", port_info->fec);
-+
-+	if (port_info->an_state > PORT_CFG_AN_OFF) {
-+		PMD_DRV_LOG(INFO, "an_state %u is invalid",
-+			    port_info->an_state);
-+		return;
-+	}
-+
-+	an_state = g_hw_to_an_state_info[port_info->an_state];
-+
-+	if (port_info->speed >= PORT_SPEED_UNKNOWN) {
-+		PMD_DRV_LOG(INFO, "speed %u is invalid", port_info->speed);
-+		return;
-+	}
-+
-+	speed = g_hw_to_speed_info[port_info->speed];
-+	PMD_DRV_LOG(INFO, "Link information: speed %s, %s, autoneg %s", speed,
-+		    fec, an_state);
-+}
-+
-+static void
-+print_port_info(void *hwdev, struct mag_cmd_event_port_info *port_info, u8 type)
-+{
-+	print_cable_info(port_info);
-+
-+	print_link_info(port_info);
-+
-+	if (type == RTE_ETH_LINK_UP)
-+		return;
-+
-+	PMD_DRV_LOG(INFO, "Function %d link down msg:",
-+		    hinic3_global_func_id(hwdev));
-+
-+	PMD_DRV_LOG(INFO,
-+		    "PMA ctrl: %s, tx %s, rx %s, PMA fifo reg: 0x%x, "
-+		    "PMA signal ok reg: 0x%x, RF/LF status reg: 0x%x",
-+		    port_info->pma_ctrl == 1 ? "off" : "on",
-+		    port_info->tx_enable ? "enable" : "disable",
-+		    port_info->rx_enable ? "enable" : "disable",
-+		    port_info->pma_fifo_reg, port_info->pma_signal_ok_reg,
-+		    port_info->rf_lf);
-+	PMD_DRV_LOG(INFO,
-+		    "alos: %u, rx_los: %u, PCS 64 66b reg: 0x%x, "
-+		    "PCS link: 0x%x, MAC link: 0x%x, PCS_err_cnt: 0x%x",
-+		    port_info->alos, port_info->rx_los,
-+		    port_info->pcs_64_66b_reg, port_info->pcs_link,
-+		    port_info->pcs_mac_link, port_info->pcs_err_cnt);
-+	PMD_DRV_LOG(INFO,
-+		    "his_link_machine_state = 0x%08x, "
-+		    "cur_link_machine_state = 0x%08x",
-+		    port_info->his_link_machine_state,
-+		    port_info->cur_link_machine_state);
-+}
-+
-+static void
-+port_info_event_printf(void *hwdev, void *buf_in, __rte_unused u16 in_size,
-+		       __rte_unused void *buf_out, __rte_unused u16 *out_size)
-+{
-+	struct mag_cmd_event_port_info *port_info = buf_in;
-+	((struct mag_cmd_event_port_info *)buf_out)->head.status = 0;
-+	enum hinic3_nic_event_type type = port_info->event_type;
-+	if (type < RTE_ETH_LINK_DOWN || type > RTE_ETH_LINK_UP) {
-+		PMD_DRV_LOG(ERR, "Invalid hilink info report, type: %d",
-+			    type);
-+		return;
-+	}
-+
-+	print_port_info(hwdev, port_info, type);
-+}
-+
-+struct nic_event_handler {
-+	u16 cmd;
-+	void (*handler)(void *hwdev, void *buf_in, u16 in_size, void *buf_out,
-+			u16 *out_size);
-+};
-+
-+static const struct nic_event_handler nic_cmd_handler[] = {};
-+
-+/**
-+ * Handle NIC event based on the provided command.
-+ *
-+ * @param[in] hwdev
-+ * Pointer to hardware device structure.
-+ * @param[in] cmd
-+ * The command associated with the NIC event to be handled.
-+ * @param[in] buf_in
-+ * The input buffer containing the event data.
-+ * @param[in] in_size
-+ * The size of the input buffer.
-+ * @param[out] buf_out
-+ * The output buffer to store the event response.
-+ * @param[out] out_size
-+ * The size of the output data stored in the output buffer.
-+ */
-+static void
-+nic_event_handler(void *hwdev, u16 cmd, void *buf_in, u16 in_size,
-+		  void *buf_out, u16 *out_size)
-+{
-+	u32 i, size = ARRAY_LEN(nic_cmd_handler);
-+
-+	if (!hwdev)
-+		return;
-+
-+	*out_size = 0;
-+
-+	for (i = 0; i < size; i++) {
-+		if (cmd == nic_cmd_handler[i].cmd) {
-+			nic_cmd_handler[i].handler(hwdev, buf_in, in_size,
-+						   buf_out, out_size);
-+			break;
-+		}
-+	}
-+
-+	if (i == size)
-+		PMD_DRV_LOG(WARNING, "Unsupported nic event cmd(%d) to process",
-+			    cmd);
-+}
-+
-+/*
-+ * VF handler mbox msg from ppf/pf.
-+ * VF link change event.
-+ */
 +int
-+hinic3_vf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
-+			void *buf_in, u16 in_size, void *buf_out, u16 *out_size)
++hinic3_msg_to_mgmt_sync(void *hwdev, enum hinic3_mod_type mod, u16 cmd,
++			void *buf_in, u16 in_size, void *buf_out, u16 *out_size,
++			u32 timeout)
 +{
-+	nic_event_handler(hwdev, cmd, buf_in, in_size, buf_out, out_size);
-+	return 0;
-+}
-+
-+/* NIC event of PF/PPF handler reported by mgmt cpu. */
-+void
-+hinic3_pf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
-+			void *buf_in, u16 in_size, void *buf_out, u16 *out_size)
-+{
-+	nic_event_handler(hwdev, cmd, buf_in, in_size, buf_out, out_size);
-+}
-+
-+static const struct nic_event_handler mag_cmd_handler[] = {
-+	{
-+		.cmd = MAG_CMD_GET_LINK_STATUS,
-+		.handler = link_status_event_handler,
-+	},
-+	{
-+		.cmd = MAG_CMD_EVENT_PORT_INFO,
-+		.handler = port_info_event_printf,
-+	},
-+};
-+
-+static int
-+hinic3_mag_event_handler(void *hwdev, u16 cmd, void *buf_in, u16 in_size,
-+			 void *buf_out, u16 *out_size)
-+{
-+	u32 size = ARRAY_LEN(mag_cmd_handler);
-+	u32 i;
++	int err;
 +
 +	if (!hwdev)
 +		return -EINVAL;
 +
-+	*out_size = 0;
-+	for (i = 0; i < size; i++) {
-+		if (cmd == mag_cmd_handler[i].cmd) {
-+			mag_cmd_handler[i].handler(hwdev, buf_in, in_size,
-+						   buf_out, out_size);
-+			break;
-+		}
-+	}
-+
-+	/* Can't find this event cmd. */
-+	if (i == size)
-+		PMD_DRV_LOG(ERR, "Unsupported mag event, cmd: %u", cmd);
-+
-+	return 0;
++	/* Send a mailbox message to the management. */
++	err = hinic3_send_mbox_to_mgmt(hwdev, mod, cmd, buf_in, in_size,
++				       buf_out, out_size, timeout);
++	return err;
 +}
 +
 +int
-+hinic3_vf_mag_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
-+			    void *buf_in, u16 in_size, void *buf_out,
-+			    u16 *out_size)
++hinic3_msg_to_mgmt_no_ack(void *hwdev, enum hinic3_mod_type mod, u16 cmd,
++			  void *buf_in, u16 in_size)
 +{
-+	return hinic3_mag_event_handler(hwdev, cmd, buf_in, in_size, buf_out,
-+					out_size);
++	if (!hwdev)
++		return -EINVAL;
++
++	return hinic3_send_mbox_to_mgmt_no_ack(hwdev, mod, cmd, buf_in,
++					       in_size);
 +}
 +
-+/* pf/ppf handler mgmt cpu report hilink event. */
-+void
-+hinic3_pf_mag_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
-+			    void *buf_in, u16 in_size, void *buf_out,
-+			    u16 *out_size)
++static void
++send_mgmt_ack(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt,
++	      enum hinic3_mod_type mod, u16 cmd, void *buf_in, u16 in_size,
++	      u16 msg_id)
 +{
-+	hinic3_mag_event_handler(hwdev, cmd, buf_in, in_size, buf_out,
-+				 out_size);
++	u16 buf_size;
++
++	if (!in_size)
++		buf_size = BUF_OUT_DEFAULT_SIZE;
++	else
++		buf_size = in_size;
++
++	hinic3_response_mbox_to_mgmt(pf_to_mgmt->hwdev, mod, cmd, buf_in,
++				     buf_size, msg_id);
 +}
 +
-+u8
-+hinic3_nic_sw_aeqe_handler(__rte_unused void *hwdev, u8 event, u8 *data)
++static bool
++check_mgmt_seq_id_and_seg_len(struct hinic3_recv_msg *recv_msg, u8 seq_id,
++			      u8 seg_len, u16 msg_id)
 +{
-+	PMD_DRV_LOG(ERR,
-+		    "Received nic ucode aeq event type: 0x%x, data: %" PRIu64,
-+		    event, *((u64 *)data));
++	if (seq_id > MGMT_MSG_MAX_SEQ_ID || seg_len > SEGMENT_LEN)
++		return false;
++
++	if (seq_id == 0) {
++		recv_msg->seq_id = seq_id;
++		recv_msg->msg_id = msg_id;
++	} else {
++		if ((seq_id != recv_msg->seq_id + 1) ||
++		    msg_id != recv_msg->msg_id) {
++			recv_msg->seq_id = 0;
++			return false;
++		}
++
++		recv_msg->seq_id = seq_id;
++	}
++
++	return true;
++}
++
++static void
++hinic3_mgmt_recv_msg_handler(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt,
++			     struct hinic3_recv_msg *recv_msg,
++			     __rte_unused void *param)
++{
++	void *buf_out = pf_to_mgmt->mgmt_ack_buf;
++	bool ack_first = false;
++	u16 out_size = 0;
++
++	memset(buf_out, 0, MAX_PF_MGMT_BUF_SIZE);
++
++	/* Select the corresponding processing function according to the mod. */
++	switch (recv_msg->mod) {
++	case HINIC3_MOD_COMM:
++		pf_handle_mgmt_comm_event(pf_to_mgmt->hwdev,
++			pf_to_mgmt, recv_msg->cmd,
++			recv_msg->msg, recv_msg->msg_len, buf_out, &out_size);
++		break;
++	case HINIC3_MOD_L2NIC:
++		hinic3_pf_event_handler(pf_to_mgmt->hwdev, pf_to_mgmt,
++					recv_msg->cmd, recv_msg->msg,
++					recv_msg->msg_len, buf_out, &out_size);
++		break;
++	case HINIC3_MOD_HILINK:
++		hinic3_pf_mag_event_handler(pf_to_mgmt->hwdev,
++			pf_to_mgmt, recv_msg->cmd,
++			recv_msg->msg, recv_msg->msg_len, buf_out, &out_size);
++		break;
++
++	default:
++		PMD_DRV_LOG(ERR,
++			    "Not support mod, maybe need to response, mod: %d",
++			    recv_msg->mod);
++		break;
++	}
++
++	if (!ack_first && !recv_msg->async_mgmt_to_pf)
++		/* Mgmt sends async msg, sends the response. */
++		send_mgmt_ack(pf_to_mgmt, recv_msg->mod, recv_msg->cmd, buf_out,
++			      out_size, recv_msg->msg_id);
++}
++
++/**
++ * Handler a recv message from mgmt channel.
++ *
++ * @param[in] pf_to_mgmt
++ * PF to mgmt channel.
++ * @param[in] recv_msg
++ * Received message details.
++ * @param[in] param
++ * Customized parameter.
++ * @return
++ * 0 : When aeqe is response message.
++ * -1 : Default result, when wrong message or not last message.
++ */
++static int
++recv_mgmt_msg_handler(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt, u8 *header,
++		      struct hinic3_recv_msg *recv_msg, void *param)
++{
++	u64 mbox_header = *((u64 *)header);
++	void *msg_body = header + sizeof(mbox_header);
++	u8 seq_id, seq_len;
++	u32 offset;
++	u8 front_id;
++	u16 msg_id;
++
++	/* Don't need to get anything from hw when cmd is async. */
++	if (HINIC3_MSG_HEADER_GET(mbox_header, DIRECTION) ==
++	    HINIC3_MSG_RESPONSE)
++		return 0;
++
++	seq_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
++	seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
++	msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++	front_id = recv_msg->seq_id;
++
++	/* Check the consistency between seq_id and seg_len. */
++	if (!check_mgmt_seq_id_and_seg_len(recv_msg, seq_id, seq_len, msg_id)) {
++		PMD_DRV_LOG(ERR,
++			    "Mgmt msg sequence id and segment length check "
++			    "failed, front seq_id: 0x%x, current seq_id: 0x%x,"
++			    " seg len: 0x%x front msg_id: %d, cur msg_id: %d",
++			    front_id, seq_id, seq_len, recv_msg->msg_id,
++			    msg_id);
++		/* Set seq_id to invalid seq_id. */
++		recv_msg->seq_id = MGMT_MSG_MAX_SEQ_ID;
++		return HINIC3_MSG_HANDLER_RES;
++	}
++
++	offset = seq_id * SEGMENT_LEN;
++	memcpy((u8 *)recv_msg->msg + offset, msg_body, seq_len);
++
++	if (!HINIC3_MSG_HEADER_GET(mbox_header, LAST))
++		return HINIC3_MSG_HANDLER_RES;
++	/* Setting the message receiving information. */
++	recv_msg->cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
++	recv_msg->mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
++	recv_msg->async_mgmt_to_pf = HINIC3_MSG_HEADER_GET(mbox_header, NO_ACK);
++	recv_msg->msg_len = HINIC3_MSG_HEADER_GET(mbox_header, MSG_LEN);
++	recv_msg->msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++	recv_msg->seq_id = MGMT_MSG_MAX_SEQ_ID;
++
++	hinic3_mgmt_recv_msg_handler(pf_to_mgmt, recv_msg, param);
++
++	return HINIC3_MSG_HANDLER_RES;
++}
++
++/**
++ * Handler for a aeqe from mgmt channel.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ * @param[in] header
++ * The header of the message.
++ * @param[in] size
++ * Indicate size.
++ * @param[in] param
++ * Customized parameter.
++ * @return
++ * zero: When aeqe is response message
++ * negative: When wrong message or not last message.
++ */
++int
++hinic3_mgmt_msg_aeqe_handler(void *hwdev, u8 *header, u8 size, void *param)
++{
++	struct hinic3_hwdev *dev = (struct hinic3_hwdev *)hwdev;
++	struct hinic3_msg_pf_to_mgmt *pf_to_mgmt = NULL;
++	struct hinic3_recv_msg *recv_msg = NULL;
++	bool is_send_dir = false;
++
++	/* For mbox messgae, invoke the mailbox processing function. */
++	if ((HINIC3_MSG_HEADER_GET(*(u64 *)header, SOURCE) ==
++	     HINIC3_MSG_FROM_MBOX)) {
++		return hinic3_mbox_func_aeqe_handler(hwdev, header, size,
++						     param);
++	}
++
++	pf_to_mgmt = dev->pf_to_mgmt;
++
++	is_send_dir = (HINIC3_MSG_HEADER_GET(*(u64 *)header, DIRECTION) ==
++		       HINIC3_MSG_DIRECT_SEND) ? true : false;
++
++	/* Determine whether a message is received or responsed. */
++	recv_msg = is_send_dir ? &pf_to_mgmt->recv_msg_from_mgmt
++			       : &pf_to_mgmt->recv_resp_msg_from_mgmt;
++
++	return recv_mgmt_msg_handler(pf_to_mgmt, header, recv_msg, param);
++}
++
++/**
++ * Allocate received message memory.
++ *
++ * @param[in] recv_msg
++ * Pointer that will hold the allocated data.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++alloc_recv_msg(struct hinic3_recv_msg *recv_msg)
++{
++	recv_msg->seq_id = MGMT_MSG_MAX_SEQ_ID;
++
++	recv_msg->msg = rte_zmalloc("recv_msg", MAX_PF_MGMT_BUF_SIZE,
++				    HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!recv_msg->msg)
++		return -ENOMEM;
 +
 +	return 0;
 +}
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.h b/drivers/net/hinic3/base/hinic3_nic_event.h
++
++static void
++free_recv_msg(struct hinic3_recv_msg *recv_msg)
++{
++	rte_free(recv_msg->msg);
++}
++
++/**
++ * Allocate all the message buffers of PF to mgmt channel.
++ *
++ * @param[in] pf_to_mgmt
++ * PF to mgmt channel.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++alloc_msg_buf(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt)
++{
++	int err;
++
++	err = alloc_recv_msg(&pf_to_mgmt->recv_msg_from_mgmt);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Allocate recv msg failed");
++		return err;
++	}
++
++	err = alloc_recv_msg(&pf_to_mgmt->recv_resp_msg_from_mgmt);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Allocate resp recv msg failed");
++		goto alloc_msg_for_resp_err;
++	}
++
++	pf_to_mgmt->mgmt_ack_buf = rte_zmalloc("mgmt_ack_buf",
++					       MAX_PF_MGMT_BUF_SIZE,
++					       HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!pf_to_mgmt->mgmt_ack_buf) {
++		err = -ENOMEM;
++		goto ack_msg_buf_err;
++	}
++
++	return 0;
++
++ack_msg_buf_err:
++	free_recv_msg(&pf_to_mgmt->recv_resp_msg_from_mgmt);
++
++alloc_msg_for_resp_err:
++	free_recv_msg(&pf_to_mgmt->recv_msg_from_mgmt);
++	return err;
++}
++
++/**
++ * Free all the message buffers of PF to mgmt channel.
++ *
++ * @param[in] pf_to_mgmt
++ * PF to mgmt channel.
++ */
++static void
++free_msg_buf(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt)
++{
++	rte_free(pf_to_mgmt->mgmt_ack_buf);
++	free_recv_msg(&pf_to_mgmt->recv_resp_msg_from_mgmt);
++	free_recv_msg(&pf_to_mgmt->recv_msg_from_mgmt);
++}
++
++/**
++ * Initialize PF to mgmt channel.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_pf_to_mgmt_init(struct hinic3_hwdev *hwdev)
++{
++	struct hinic3_msg_pf_to_mgmt *pf_to_mgmt;
++	int err;
++
++	pf_to_mgmt = rte_zmalloc("pf_to_mgmt", sizeof(*pf_to_mgmt),
++				 HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!pf_to_mgmt)
++		return -ENOMEM;
++
++	hwdev->pf_to_mgmt = pf_to_mgmt;
++	pf_to_mgmt->hwdev = hwdev;
++
++	err = hinic3_mutex_init(&pf_to_mgmt->sync_msg_mutex, NULL);
++	if (err)
++		goto mutex_init_err;
++
++	err = alloc_msg_buf(pf_to_mgmt);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Allocate msg buffers failed");
++		goto alloc_msg_buf_err;
++	}
++
++	return 0;
++
++alloc_msg_buf_err:
++	hinic3_mutex_destroy(&pf_to_mgmt->sync_msg_mutex);
++
++mutex_init_err:
++	rte_free(pf_to_mgmt);
++
++	return err;
++}
++
++/**
++ * Free PF to mgmt channel.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ */
++void
++hinic3_pf_to_mgmt_free(struct hinic3_hwdev *hwdev)
++{
++	struct hinic3_msg_pf_to_mgmt *pf_to_mgmt = hwdev->pf_to_mgmt;
++
++	free_msg_buf(pf_to_mgmt);
++	hinic3_mutex_destroy(&pf_to_mgmt->sync_msg_mutex);
++	rte_free(pf_to_mgmt);
++}
+diff --git a/drivers/net/hinic3/base/hinic3_mgmt.h b/drivers/net/hinic3/base/hinic3_mgmt.h
 new file mode 100644
-index 0000000000..6a792e6af5
+index 0000000000..23454773b9
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.h
-@@ -0,0 +1,39 @@
++++ b/drivers/net/hinic3/base/hinic3_mgmt.h
+@@ -0,0 +1,121 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_NIC_EVENT_H_
-+#define _HINIC3_NIC_EVENT_H_
++#ifndef _HINIC3_MGMT_H_
++#define _HINIC3_MGMT_H_
 +
-+/**
-+ * Get the Ethernet port link information based on the link state.
-+ *
-+ * @param[in] hwdev
-+ * The hardware device context.
-+ * @param[in] link_state
-+ * The current link state (0 = down, non-zero = up).
-+ * @param[out] link
-+ * Pointer to the `rte_eth_link` structure.
-+ */
-+void get_port_info(struct hinic3_hwdev *hwdev, u8 link_state,
-+		   struct rte_eth_link *link);
++#define HINIC3_MSG_HANDLER_RES (-1)
 +
-+int hinic3_vf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
++struct mgmt_msg_head {
++	u8 status;
++	u8 version;
++	u8 rsvd0[6];
++};
++
++/* Cmdq module type. */
++enum hinic3_mod_type {
++	HINIC3_MOD_COMM = 0,  /**< HW communication module. */
++	HINIC3_MOD_L2NIC = 1, /**< L2NIC module. */
++	HINIC3_MOD_ROCE = 2,
++	HINIC3_MOD_PLOG = 3,
++	HINIC3_MOD_TOE = 4,
++	HINIC3_MOD_FLR = 5,
++	HINIC3_MOD_FC = 6,
++	HINIC3_MOD_CFGM = 7, /**< Configuration module. */
++	HINIC3_MOD_CQM = 8,
++	HINIC3_MOD_VSWITCH = 9,
++	COMM_MOD_FC = 10,
++	HINIC3_MOD_OVS = 11,
++	HINIC3_MOD_DSW = 12,
++	HINIC3_MOD_MIGRATE = 13,
++	HINIC3_MOD_HILINK = 14,
++	HINIC3_MOD_CRYPT = 15,	/**< Secure crypto module. */
++	HINIC3_MOD_HW_MAX = 16, /**< Hardware max module id. */
++
++	HINIC3_MOD_SW_FUNC = 17, /**< SW module for PF/VF and multi-host. */
++	HINIC3_MOD_IOE = 18,
++	HINIC3_MOD_MAX
++};
++
++typedef enum {
++	RES_TYPE_FLUSH_BIT = 0,
++	RES_TYPE_MQM,
++	RES_TYPE_SMF,
++
++	RES_TYPE_COMM = 10,
++	/* Clear mbox and aeq, The RES_TYPE_COMM bit must be set. */
++	RES_TYPE_COMM_MGMT_CH,
++	/* Clear cmdq and ceq, The RES_TYPE_COMM bit must be set. */
++	RES_TYPE_COMM_CMD_CH,
++	RES_TYPE_NIC,
++	RES_TYPE_OVS,
++	RES_TYPE_VBS,
++	RES_TYPE_ROCE,
++	RES_TYPE_FC,
++	RES_TYPE_TOE,
++	RES_TYPE_IPSEC,
++	RES_TYPE_MAX,
++} func_reset_flag_e;
++
++#define HINIC3_COMM_RES                                 \
++	((1 << RES_TYPE_COMM) | (1 << RES_TYPE_FLUSH_BIT) | \
++	 (1 << RES_TYPE_MQM) | (1 << RES_TYPE_SMF) |        \
++	 (1 << RES_TYPE_COMM_CMD_CH))
++#define HINIC3_NIC_RES	 (1 << RES_TYPE_NIC)
++#define HINIC3_OVS_RES	 (1 << RES_TYPE_OVS)
++#define HINIC3_VBS_RES	 (1 << RES_TYPE_VBS)
++#define HINIC3_ROCE_RES	 (1 << RES_TYPE_ROCE)
++#define HINIC3_FC_RES	 (1 << RES_TYPE_FC)
++#define HINIC3_TOE_RES	 (1 << RES_TYPE_TOE)
++#define HINIC3_IPSEC_RES (1 << RES_TYPE_IPSEC)
++
++struct hinic3_recv_msg {
++	void *msg;
++
++	u16 msg_len;
++	enum hinic3_mod_type mod;
++	u16 cmd;
++	u8 seq_id;
++	u16 msg_id;
++	int async_mgmt_to_pf;
++};
++
++/* Indicate the event status in pf-to-management communication. */
++enum comm_pf_to_mgmt_event_state {
++	SEND_EVENT_UNINIT = 0,
++	SEND_EVENT_START,
++	SEND_EVENT_SUCCESS,
++	SEND_EVENT_FAIL,
++	SEND_EVENT_TIMEOUT,
++	SEND_EVENT_END
++};
++
++struct hinic3_msg_pf_to_mgmt {
++	struct hinic3_hwdev *hwdev;
++
++	/* Mutex for sync message. */
++	pthread_mutex_t sync_msg_mutex;
++
++	void *mgmt_ack_buf;
++
++	struct hinic3_recv_msg recv_msg_from_mgmt;
++	struct hinic3_recv_msg recv_resp_msg_from_mgmt;
++
++	u16 sync_msg_id;
++};
++
++int hinic3_mgmt_msg_aeqe_handler(void *hwdev, u8 *header, u8 size, void *param);
++
++int hinic3_pf_to_mgmt_init(struct hinic3_hwdev *hwdev);
++
++void hinic3_pf_to_mgmt_free(struct hinic3_hwdev *hwdev);
++
++int hinic3_msg_to_mgmt_sync(void *hwdev, enum hinic3_mod_type mod, u16 cmd,
 +			    void *buf_in, u16 in_size, void *buf_out,
-+			    u16 *out_size);
++			    u16 *out_size, u32 timeout);
 +
-+void hinic3_pf_event_handler(void *hwdev, __rte_unused void *pri_handle,
-+			     u16 cmd, void *buf_in, u16 in_size, void *buf_out,
-+			     u16 *out_size);
++int hinic3_msg_to_mgmt_no_ack(void *hwdev, enum hinic3_mod_type mod, u16 cmd,
++			      void *buf_in, u16 in_size);
 +
-+int hinic3_vf_mag_event_handler(void *hwdev, void *pri_handle, u16 cmd,
-+				void *buf_in, u16 in_size, void *buf_out,
-+				u16 *out_size);
-+
-+void hinic3_pf_mag_event_handler(void *hwdev, void *pri_handle, u16 cmd,
-+				 void *buf_in, u16 in_size, void *buf_out,
-+				 u16 *out_size);
-+
-+u8 hinic3_nic_sw_aeqe_handler(__rte_unused void *hwdev, u8 event, u8 *data);
-+
-+#endif /* _HINIC3_NIC_EVENT_H_ */
++#endif /**< _HINIC3_MGMT_H_ */
 -- 
 2.47.0.windows.2
 
