@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4767C369AB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 18:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F95C369AB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 18:31:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8F9D3402E2;
-	Fri, 18 Apr 2025 20:30:40 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id DE185402D3
- for <dev@dpdk.org>; Fri, 18 Apr 2025 20:30:38 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-736e52948ebso2447025b3a.1
- for <dev@dpdk.org>; Fri, 18 Apr 2025 11:30:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DE4A40430;
+	Fri, 18 Apr 2025 20:31:20 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 42A28402D3
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 20:31:19 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-b07d607dc83so1641343a12.1
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 11:31:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745001038;
- x=1745605838; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745001078;
+ x=1745605878; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vy9f0afmihYhlORAO00bT7ZM7JiQdAGbrQwd5lX8mhU=;
- b=MhGhC0AI3jGDRCycNY8iWTsO780mZkBHwd5Z0vUmHqQgY82zLIIessArfgdFCEB0qv
- LqfwqI2KuQIa/erR9JBnTsKMY9rgu8Xk4EZox8YC3t/mOYg+TcU+SUR9AeYU2LZklRmd
- eCBJ2VycB6WuoWTv394vqUwCD0W7cAys1IMU16kbn7Ck2FEN9/hK7eq6kMAd+V0NvrcZ
- V6+/NBnNEJVabjbzh17YWHpRaZTkkyi94DG5lX2yj7zqPq1r8TYhzvR6nd+yChg/Q421
- boOVe9p5hB9IWMxi730Xxx9hagJ8s0QvhGCUbQscFo6iqqql3F1h2G3DKHSw3LvhXdLq
- kBtg==
+ bh=1WoPv5sgYCmVtlv7mOg5JZ/5ZKVqAkfEW6zmiXj9rUg=;
+ b=eDqnihpOV/zcI9kjPkDpjZa4QoPvIr1T9A+kUDltKX1DTfnisoeEM64kXBAVWg93RO
+ 9bxCJVq/OPon7Rodcfb9++D3/qvIIoD5gnf4HyFHTFCqJwB1ZTUQnVZmxIGb86KxsOU4
+ bVziobfX3Af1oasLHCD7T03t5ADqdHtxM3e1OOUYogEyPv+oOk2c2VL4x3Xzhm+8+ZCT
+ 6B1wrINogUXKrf5TNvQ7J60ccKZETFT0qSpxd2aBPqHCSpvt/Kx+zLjDLFSAzAT4jaXd
+ VhxprVUzptG3S1SEAQB4lZCeglS+hCP4lY/QMQOupc8fRT5VReLUC7O9uTQZSKYPv92a
+ F7+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745001038; x=1745605838;
+ d=1e100.net; s=20230601; t=1745001078; x=1745605878;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=vy9f0afmihYhlORAO00bT7ZM7JiQdAGbrQwd5lX8mhU=;
- b=lPTBxLn9hggT44xFFphgifbYNnLRiQaBURwJORjrDweDheJxvjoTIDWQ08lJztQqC4
- hR8j3kZ0/VLZr3kybriIzWjc7eRrgBjrrkGXuivtzKtNDmn287fjsRhOsNSusBinX6Vj
- BT13G6eI5v4vNnMwj5ypV8B0GhLnVhb8jb+94iUYs8+ZBSZt+Zou1obkdWPIyLwBOEKt
- g0ulQu1M3t1jXF3dtT/Shkg9uIvz2Pr8y29NCt7/1SUmHFtMXANKCuI7huOE8NMGE1hB
- n1Bbiish3G0LkA03+KwlSCYtMjIjuh2YJCtGcO7vQ/NYKvSU6G7nADVXQiZm7bv4MEQp
- q4kQ==
-X-Gm-Message-State: AOJu0YyJYayxmvgCUV/GaSMqzrgAubfeRJqTkpJfuWnQBOoRVWCd0CiE
- CSl4RVO9s33ZPY+6LIubKR3G3VMo6PZs0xQGlWA4o7ODsoKdkfBfUA+U/TLbyCk=
-X-Gm-Gg: ASbGncsIORvI/LaufRwERA9PyCCP8UjagiFdVuj23APtJEAN1SaEqLs5r0UhRuF/xFG
- S8FU46gSXaKnIHoXOX5yWq+ZaVxMs7hukUB8y5k9vuqG8+MfCfdR2SYNtelqTsT0U05JQzbByXY
- yHGB2CjNQe2M8EJJVAlgE+k4+CZcyUsgYKhQHGRSYp0csXlwtuGlCUdOgpicysyFtZmudzcI8Z8
- RvtwvoyYQwSyMqlZeRPpZE0Sxrke9ZhrPMKXAFV37+nmma+2cVwCf8NtQjlj8uTU3561KkHaZav
- xISKzpfLQwcwHdD2nkQeMT5ROzc1abaD33dxD8RYXm6wMiWlKnnfG3qevVdmHusB1oBB9JPmdsN
- mEuioC5a64VAgsPC2L3FIOYgYT+Q=
-X-Google-Smtp-Source: AGHT+IHAnG6ZKTRtvuizoD7TrjJDvH7ilK7mnnYInNVghj1d88xub6jic53rOTaFDWVpgLWTh5OQ7g==
-X-Received: by 2002:a05:6a00:1d9d:b0:736:ab49:a6e4 with SMTP id
- d2e1a72fcca58-73dc144d83emr5158437b3a.1.1745001037860; 
- Fri, 18 Apr 2025 11:30:37 -0700 (PDT)
+ bh=1WoPv5sgYCmVtlv7mOg5JZ/5ZKVqAkfEW6zmiXj9rUg=;
+ b=sQdMFYNJdwvdJuUgPL2IL7tW1HQdWjiF9rScnhgwScij3EKM6h78mmE0jcfxT3zjFF
+ MBH89R7wQFBBt/fjWQYlcDCT/FbB5VVnWOVfxLpAOCVdhWPy2hnuG6cKO9yOjMzY04Ry
+ tLohLQNrR3pmilptpOumn4im19uC1a6tUTQV9YXm5+EP1CkHjAPMgyZQDDWPPHCMS9Db
+ UQcnvHKCA1frS1fUaXKovquFyPhXUcUNvsVjh6D2NZQ+RZcmQ9bHv7YsgDVbXEbzFcYi
+ qyOd+Ca/Xn8+xytGwhg6ooOa5Hr6pV+300UexDENJiaAINfAcbQfL/wplbWbLVRrKe8t
+ ZNtA==
+X-Gm-Message-State: AOJu0YwFhCcDqF09dzqvN/M7d/JSANhlg3ytYg+lOgHCpaqE91HEGzd/
+ fgnzO70mR1ys0qb9VLo8COuHXkhRAmHw7ttV1KpNO5JZp9rslB6Xnt1qb9YmkbXnZirC/BokDdL
+ +
+X-Gm-Gg: ASbGnctaHvXqE77XX3z+VEPmwEbdx66Y5J8i64fCpysKTh9WQ+nGtThfJTEay5Zr431
+ 5mdwksy7NSBMdZg2N25+t4XNjOpbMEjkjxMIyDeZwzGK7h52n8VB2UUPNES4acD7GnXRISiDb/s
+ ryKpyRZW9euSXLTdrJnYdtSC+xA+BMImUdzTscHzH2ylDInMMQXLwUYpxS8f7wWPQA0a2CQ4RIk
+ xCR53Egd9YbM+rAD8bXYpFl/i/wFpUV5mxC9Iqz09xf/FnbjdJ8bNYd1ZA26T37ijI6hydtEous
+ EfSihM0K8iKW5JRWDoWPXQiSTeu74bsBvzz0QS1pEyBMeNXut+KeIwLuw1GUpGXsMND1855g3bG
+ 1vTw0Cqr46mPL/7/cUILArT385RM=
+X-Google-Smtp-Source: AGHT+IHqjA0FqMxW0BgG+nxBodlcwojsYdFGeMgkFxqa8GrFzl9gG4vCt7Z3zc6DWhb1Sbzg3TSpUA==
+X-Received: by 2002:a17:90b:5184:b0:2ff:618c:a1e9 with SMTP id
+ 98e67ed59e1d1-3087bbbb8a0mr4809822a91.23.1745001078431; 
+ Fri, 18 Apr 2025 11:31:18 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73dbfab289asm1895746b3a.153.2025.04.18.11.30.37
+ 98e67ed59e1d1-3087df1cc9asm1554745a91.22.2025.04.18.11.31.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 18 Apr 2025 11:30:37 -0700 (PDT)
-Date: Fri, 18 Apr 2025 11:30:36 -0700
+ Fri, 18 Apr 2025 11:31:18 -0700 (PDT)
+Date: Fri, 18 Apr 2025 11:28:04 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Feifei Wang <wff_light@vip.163.com>
 Cc: dev@dpdk.org, Yi Chen <chenyi221@huawei.com>, Xin Wang
  <wangxin679@h-partners.com>, Feifei Wang <wangfeifei40@huawei.com>
 Subject: Re: [RFC 17/18] net/hinic3: add FDIR flow control module
-Message-ID: <20250418113036.2963a25c@hermes.local>
+Message-ID: <20250418112804.51c698ce@hermes.local>
 In-Reply-To: <20250418090621.9638-18-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250418090621.9638-18-wff_light@vip.163.com>
@@ -85,18 +86,14 @@ Errors-To: dev-bounces@dpdk.org
 On Fri, 18 Apr 2025 17:06:03 +0800
 Feifei Wang <wff_light@vip.163.com> wrote:
 
-> +	/* Alloc TCAM filter memory. */
-> +	tcam_filter = rte_zmalloc("hinic3_fdir_filter",
-> +				  sizeof(struct hinic3_tcam_filter), 0);
-> +	if (tcam_filter == NULL)
-> +		return -ENOMEM;
-> +	(void)rte_memcpy(&tcam_filter->tcam_key, tcam_key,
-> +			 sizeof(struct hinic3_tcam_key));
+> From: Yi Chen <chenyi221@huawei.com>
+> 
+> Added support for flow director filters, including ethertype, IPv4,
+> IPv6, and tunnel VXLAN. In addition, user can add or delete filters.
+> 
+> Signed-off-by: Yi Chen <chenyi221@huawei.com>
+> Reviewed-by: Xin Wang <wangxin679@h-partners.com>
+> Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 
-This line has three issues.
-  1. Don't use (void) cast, that is old BSD lint style.
-  2. Don't use rte_memcpy() for simple fixed size things, use memcpy instead.
-  3. Don't use memcpy when structure assignment would work.
-
-
-
+Flow director is deprecated in DPDK and planned for removal.
+Pleas support rte_flow instead.
