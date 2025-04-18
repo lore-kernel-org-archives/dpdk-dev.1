@@ -2,52 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36C0C369AB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 07:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC09C369C9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 09:07:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B61F8400D6;
-	Fri, 18 Apr 2025 09:45:05 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id F332C400D5;
- Fri, 18 Apr 2025 09:45:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1744962305; x=1776498305;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=lUzHfu8Jlw8wgDAVrQykCpBKA0K69ZuVQlC/MEw4ksg=;
- b=OZwRQ5LZRgQ1nAvs7xD3OUso1TQoTqn+DVIqlCMZHmr1NXw0QTowJNSX
- Iw3cEAb71Nge9K1LjVoM5oZI43z4IGPB1QkCKgOGsIp7Zqu19Ibonp/mW
- ++7YLGkzmRMvHIBB9eS1K/Xqg6nMj9D0H0NVcT+kZKwydtb3QJ2oaqSqc
- NnbYXbi9ZVRnLOX8L5TORQ6NjSoInltCO22MSd5bvwMr27rL+vAi3VHAw
- RIuP3BVkgYukNi1FoWR7N1qukEmNinAs7XXMiwf3LJQqy0DnE5SOe5rjr
- 5iTlphMhbMS7VcqR08C76oDmvsBlU1uqnFIGHgOHA8vDM323N42FKopGx Q==;
-X-CSE-ConnectionGUID: f2KltSX4TTmT8Nik5Rh7EQ==
-X-CSE-MsgGUID: exXlIf15RTOmvpiOwdj/xQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="71974818"
-X-IronPort-AV: E=Sophos;i="6.15,221,1739865600"; d="scan'208";a="71974818"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Apr 2025 00:45:03 -0700
-X-CSE-ConnectionGUID: RZMGX52xR6GPiHaKPPX9PA==
-X-CSE-MsgGUID: LUY8M8IUTYigl3/13Z7R3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,221,1739865600"; d="scan'208";a="132033378"
-Received: from unknown (HELO localhost.localdomain) ([10.239.252.210])
- by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Apr 2025 00:45:00 -0700
-From: Yuan Wang <yuanx.wang@intel.com>
-To: anatoly.burakov@intel.com,
-	vladimir.medvedkin@intel.com,
-	dev@dpdk.org
-Cc: Yuan Wang <yuanx.wang@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ixgbe: fix port mask default value in flow director
-Date: Fri, 18 Apr 2025 15:43:09 +0800
-Message-ID: <20250418074309.705337-1-yuanx.wang@intel.com>
-X-Mailer: git-send-email 2.47.1
+	by mails.dpdk.org (Postfix) with ESMTP id ED883402D2;
+	Fri, 18 Apr 2025 11:07:25 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTP id A41AB400D5
+ for <dev@dpdk.org>; Fri, 18 Apr 2025 11:07:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:Subject:Date:Message-ID:
+ MIME-Version; bh=uycyTxGIMY5qw9d5NP5KCl292bEJ4youk3+xi9KRG1Y=;
+ b=g2QddcrvySaM7xtFspn1GFszS5BevYr0C8GKfGIqEVd5fxWcDzNAcdNHxk3MIF
+ mWOwD59zyXPTxsaXu8n0P7cV5yBWPzrcJhHAJzRVgbd06jeOodXRIN+IQVS9cChC
+ L5JdIMjzoy214WXVOAXAno03Mx3MdSxW3A+8cdLPYCm24=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDXqJVFFgJorqzGAg--.15042S4;
+ Fri, 18 Apr 2025 17:07:20 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Subject: [RFC 00/18] add hinic3 PMD driver
+Date: Fri, 18 Apr 2025 17:05:46 +0800
+Message-ID: <20250418090621.9638-1-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: As8vCgDXqJVFFgJorqzGAg--.15042S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ar1rAr13JFWUtrWDCrWUCFg_yoWxKF4UpF
+ 4UC3y3Ar4DKrW7tw1kGw4xAa45X3WxG343K3W5Z3ZYvr97ZFy5A34UGFW8Ar9xtr17JF12
+ vFs09rWqg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwb1bUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAxYzCmgB4rzgzgAAs1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,33 +47,145 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The fdir filter should mask L4 protocol in order to process raw IP packets.
-However, the initial value of port mask is 0xFF and the filter will not
-process raw IP packets if the flow rule does not change it.
+*** BLURB HERE ***
+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
 
-Fixed by setting the default value to 0.
+Feifei Wang (3):
+  net/hinic3: add intro doc for hinic3
+  net/hinic3: add dev ops
+  net/hinic3: add Rx/Tx functions
 
-Fixes: 444505f933f1 (net/ixgbe: fix IPv6 mask in flow director)
-Cc: stable@dpdk.org
+Xin Wang (7):
+  net/hinic3: add basic header files
+  net/hinic3: add support for cmdq mechanism
+  net/hinic3: add NIC event module
+  net/hinic3: add context and work queue support
+  net/hinic3: add device initailization
+  net/hinic3: add MML and EEPROM access feature
+  net/hinic3: add RSS promiscuous ops
 
-Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
----
- drivers/net/intel/ixgbe/ixgbe_flow.c | 2 ++
- 1 file changed, 2 insertions(+)
+Yi Chen (8):
+  net/hinic3: add hardware interfaces of BAR operation
+  net/hinic3: add eq mechanism function code
+  net/hinic3: add mgmt module function code
+  net/hinic3: add module about hardware operation
+  net/hinic3: add a NIC business configuration module
+  net/hinic3: add a mailbox communication module
+  net/hinic3: add FDIR flow control module
+  drivers/net: add hinic3 PMD build and doc files
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 33da2f47ec..1e3804bb15 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -1644,6 +1644,8 @@ ixgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev,
- 	memset(&rule->mask, 0xFF, sizeof(struct ixgbe_hw_fdir_mask));
- 	rule->mask.vlan_tci_mask = 0;
- 	rule->mask.flex_bytes_mask = 0;
-+	rule->mask.dst_port_mask = 0;
-+	rule->mask.src_port_mask = 0;
- 
- 	/**
- 	 * The first not void item should be
+ .mailmap                                   |    4 +-
+ MAINTAINERS                                |    6 +
+ doc/guides/nics/features/hinic3.ini        |    9 +
+ doc/guides/nics/hinic3.rst                 |   52 +
+ doc/guides/nics/index.rst                  |    1 +
+ doc/guides/rel_notes/release_25_07.rst     |   32 +-
+ drivers/net/hinic3/base/hinic3_cmd.h       |  231 ++
+ drivers/net/hinic3/base/hinic3_cmdq.c      |  975 +++++
+ drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++
+ drivers/net/hinic3/base/hinic3_compat.h    |  266 ++
+ drivers/net/hinic3/base/hinic3_csr.h       |  108 +
+ drivers/net/hinic3/base/hinic3_eqs.c       |  719 ++++
+ drivers/net/hinic3/base/hinic3_eqs.h       |   98 +
+ drivers/net/hinic3/base/hinic3_hw_cfg.c    |  240 ++
+ drivers/net/hinic3/base/hinic3_hw_cfg.h    |  121 +
+ drivers/net/hinic3/base/hinic3_hw_comm.c   |  452 +++
+ drivers/net/hinic3/base/hinic3_hw_comm.h   |  366 ++
+ drivers/net/hinic3/base/hinic3_hwdev.c     |  573 +++
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  177 +
+ drivers/net/hinic3/base/hinic3_hwif.c      |  779 ++++
+ drivers/net/hinic3/base/hinic3_hwif.h      |  142 +
+ drivers/net/hinic3/base/hinic3_mbox.c      | 1392 +++++++
+ drivers/net/hinic3/base/hinic3_mbox.h      |  199 +
+ drivers/net/hinic3/base/hinic3_mgmt.c      |  392 ++
+ drivers/net/hinic3/base/hinic3_mgmt.h      |  121 +
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1828 +++++++++
+ drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1527 ++++++++
+ drivers/net/hinic3/base/hinic3_nic_event.c |  433 +++
+ drivers/net/hinic3/base/hinic3_nic_event.h |   39 +
+ drivers/net/hinic3/base/hinic3_wq.c        |  148 +
+ drivers/net/hinic3/base/hinic3_wq.h        |  109 +
+ drivers/net/hinic3/base/meson.build        |   50 +
+ drivers/net/hinic3/hinic3_ethdev.c         | 3866 ++++++++++++++++++++
+ drivers/net/hinic3/hinic3_ethdev.h         |  167 +
+ drivers/net/hinic3/hinic3_fdir.c           | 1394 +++++++
+ drivers/net/hinic3/hinic3_fdir.h           |  398 ++
+ drivers/net/hinic3/hinic3_flow.c           | 1700 +++++++++
+ drivers/net/hinic3/hinic3_flow.h           |   80 +
+ drivers/net/hinic3/hinic3_nic_io.c         |  827 +++++
+ drivers/net/hinic3/hinic3_nic_io.h         |  169 +
+ drivers/net/hinic3/hinic3_rx.c             | 1096 ++++++
+ drivers/net/hinic3/hinic3_rx.h             |  356 ++
+ drivers/net/hinic3/hinic3_tx.c             | 1028 ++++++
+ drivers/net/hinic3/hinic3_tx.h             |  315 ++
+ drivers/net/hinic3/meson.build             |   44 +
+ drivers/net/hinic3/mml/hinic3_dbg.c        |  171 +
+ drivers/net/hinic3/mml/hinic3_dbg.h        |  160 +
+ drivers/net/hinic3/mml/hinic3_mml_cmd.c    |  375 ++
+ drivers/net/hinic3/mml/hinic3_mml_cmd.h    |  131 +
+ drivers/net/hinic3/mml/hinic3_mml_ioctl.c  |  215 ++
+ drivers/net/hinic3/mml/hinic3_mml_lib.c    |  136 +
+ drivers/net/hinic3/mml/hinic3_mml_lib.h    |  275 ++
+ drivers/net/hinic3/mml/hinic3_mml_main.c   |  167 +
+ drivers/net/hinic3/mml/hinic3_mml_queue.c  |  749 ++++
+ drivers/net/hinic3/mml/hinic3_mml_queue.h  |  256 ++
+ drivers/net/hinic3/mml/meson.build         |   62 +
+ drivers/net/meson.build                    |    1 +
+ 57 files changed, 25926 insertions(+), 31 deletions(-)
+ create mode 100644 doc/guides/nics/features/hinic3.ini
+ create mode 100644 doc/guides/nics/hinic3.rst
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.h
+ create mode 100644 drivers/net/hinic3/base/meson.build
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.c
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.h
+ create mode 100644 drivers/net/hinic3/hinic3_flow.c
+ create mode 100644 drivers/net/hinic3/hinic3_flow.h
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.c
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.h
+ create mode 100644 drivers/net/hinic3/hinic3_rx.c
+ create mode 100644 drivers/net/hinic3/hinic3_rx.h
+ create mode 100644 drivers/net/hinic3/hinic3_tx.c
+ create mode 100644 drivers/net/hinic3/hinic3_tx.h
+ create mode 100644 drivers/net/hinic3/meson.build
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_ioctl.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.h
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_main.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.c
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.h
+ create mode 100644 drivers/net/hinic3/mml/meson.build
+
 -- 
-2.47.1
+2.47.0.windows.2
 
