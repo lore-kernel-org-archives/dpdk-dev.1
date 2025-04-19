@@ -2,35 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFC3C369AB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Apr 2025 19:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6D8C369AB
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Apr 2025 02:45:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 186EC40673;
-	Fri, 18 Apr 2025 21:33:16 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 60BF340653;
- Fri, 18 Apr 2025 21:33:14 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id C4D7A20BCAD3; Fri, 18 Apr 2025 12:33:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C4D7A20BCAD3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1745004793;
- bh=Ss1IyKsUsbiEw54Pz/F1OAODUfMCht252RQwHw4MSPE=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=P+U9pG1YQH3syA16xfyaKUjv5crd2dwgzMhiT4Lm02eGgKLpvORD0y8ux4cTivMQ4
- LqklYAfa1jIu1hyApff5DUW7nBS9iGwl8AQ29aHXwSiORro37ojJoWMn3VXmEVBm0l
- R/xeGpoppGrFDgCsIpz8UBh7n5+dF6Poq67ikBfM=
-From: longli@linuxonhyperv.com
-To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>,
-	stable@dpdk.org
-Subject: [PATCH 4/4] net/netvsc: Use Hyper-V page size for the driver
-Date: Fri, 18 Apr 2025 12:32:50 -0700
-Message-Id: <1745004770-9795-5-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1745004770-9795-1-git-send-email-longli@linuxonhyperv.com>
-References: <1745004770-9795-1-git-send-email-longli@linuxonhyperv.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 515294028B;
+	Sat, 19 Apr 2025 04:45:04 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 8AA154027A
+ for <dev@dpdk.org>; Sat, 19 Apr 2025 04:45:02 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZfbY63yt3zQwR7;
+ Sat, 19 Apr 2025 10:43:38 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6CCBB18047E;
+ Sat, 19 Apr 2025 10:45:00 +0800 (CST)
+Received: from kwepemn200007.china.huawei.com (7.202.194.130) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Apr 2025 10:45:00 +0800
+Received: from kwepemn500008.china.huawei.com (7.202.194.149) by
+ kwepemn200007.china.huawei.com (7.202.194.130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Apr 2025 10:44:59 +0800
+Received: from kwepemn500008.china.huawei.com ([7.202.194.149]) by
+ kwepemn500008.china.huawei.com ([7.202.194.149]) with mapi id 15.02.1544.011; 
+ Sat, 19 Apr 2025 10:44:59 +0800
+From: "wangfeifei (J)" <wangfeifei40@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, Feifei Wang
+ <wff_light@vip.163.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: =?gb2312?B?u9i4tDogW1JGQyAwMC8xOF0gYWRkIGhpbmljMyBQTUQgZHJpdmVy?=
+Thread-Topic: [RFC 00/18] add hinic3 PMD driver
+Thread-Index: AQHbsEFdKM8u4uunWkekFJQ+/7jQv7OpNfSAgAETcaA=
+Date: Sat, 19 Apr 2025 02:44:59 +0000
+Message-ID: <2560aa847b1f48aa9e3e335f7c15780e@huawei.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250418111831.09717389@hermes.local>
+In-Reply-To: <20250418111831.09717389@hermes.local>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.40.191]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,137 +60,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
-
-The driver should always use Hyper-V page size for implementing RNDIS and
-calculating PFN (Page Frame Number) for communicating with Hyper-V VSP.
-
-It should not use system page size as it may be different to the Hyper-V
-page size.
-
-Fixes: 4e9c73e96e ("net/netvsc: add Hyper-V network device")
-Cc: stable@dpdk.org
-Signed-off-by: Long Li <longli@microsoft.com>
----
- drivers/net/netvsc/hn_rndis.c | 14 +++++++-------
- drivers/net/netvsc/hn_rxtx.c  | 16 ++++++++--------
- drivers/net/netvsc/hn_var.h   |  4 ----
- 3 files changed, 15 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/net/netvsc/hn_rndis.c b/drivers/net/netvsc/hn_rndis.c
-index 12bea33e37..7c54eebcef 100644
---- a/drivers/net/netvsc/hn_rndis.c
-+++ b/drivers/net/netvsc/hn_rndis.c
-@@ -67,7 +67,7 @@ hn_rndis_rid(struct hn_data *hv)
- 
- static void *hn_rndis_alloc(size_t size)
- {
--	return rte_zmalloc("RNDIS", size, rte_mem_page_size());
-+	return rte_zmalloc("RNDIS", size, HYPERV_PAGE_SIZE);
- }
- 
- #ifdef RTE_LIBRTE_NETVSC_DEBUG_DUMP
-@@ -266,17 +266,17 @@ static int hn_nvs_send_rndis_ctrl(struct hn_data *hv,
- 		return -EINVAL;
- 	}
- 
--	if (unlikely(reqlen > rte_mem_page_size())) {
-+	if (unlikely(reqlen > HYPERV_PAGE_SIZE)) {
- 		PMD_DRV_LOG(ERR, "RNDIS request %u greater than page size",
- 			    reqlen);
- 		return -EINVAL;
- 	}
- 
--	sg.page = addr / rte_mem_page_size();
--	sg.ofs  = addr & PAGE_MASK;
-+	sg.page = addr / HYPERV_PAGE_SIZE;
-+	sg.ofs  = addr & HYPERV_PAGE_MASK;
- 	sg.len  = reqlen;
- 
--	if (sg.ofs + reqlen >  rte_mem_page_size()) {
-+	if (sg.ofs + reqlen >  HYPERV_PAGE_SIZE) {
- 		PMD_DRV_LOG(ERR, "RNDIS request crosses page boundary");
- 		return -EINVAL;
- 	}
-@@ -481,7 +481,7 @@ hn_rndis_query(struct hn_data *hv, uint32_t oid,
- 		return -ENOMEM;
- 
- 	comp_len = sizeof(*comp) + odlen;
--	comp = rte_zmalloc("QUERY", comp_len, rte_mem_page_size());
-+	comp = rte_zmalloc("QUERY", comp_len, HYPERV_PAGE_SIZE);
- 	if (!comp) {
- 		error = -ENOMEM;
- 		goto done;
-@@ -738,7 +738,7 @@ hn_rndis_set(struct hn_data *hv, uint32_t oid, const void *data, uint32_t dlen)
- 	int error;
- 
- 	reqlen = sizeof(*req) + dlen;
--	req = rte_zmalloc("RNDIS_SET", reqlen, rte_mem_page_size());
-+	req = rte_zmalloc("RNDIS_SET", reqlen, HYPERV_PAGE_SIZE);
- 	if (!req)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/netvsc/hn_rxtx.c b/drivers/net/netvsc/hn_rxtx.c
-index ffa6937ce2..44faf22da7 100644
---- a/drivers/net/netvsc/hn_rxtx.c
-+++ b/drivers/net/netvsc/hn_rxtx.c
-@@ -1432,10 +1432,10 @@ static unsigned int hn_get_slots(const struct rte_mbuf *m)
- 
- 	while (m) {
- 		unsigned int size = rte_pktmbuf_data_len(m);
--		unsigned int offs = rte_mbuf_data_iova(m) & PAGE_MASK;
-+		unsigned int offs = rte_mbuf_data_iova(m) & HYPERV_PAGE_MASK;
- 
--		slots += (offs + size + rte_mem_page_size() - 1) /
--				rte_mem_page_size();
-+		slots += (offs + size + HYPERV_PAGE_SIZE - 1) /
-+				HYPERV_PAGE_SIZE;
- 		m = m->next;
- 	}
- 
-@@ -1450,13 +1450,13 @@ static unsigned int hn_fill_sg(struct vmbus_gpa *sg,
- 
- 	while (m) {
- 		rte_iova_t addr = rte_mbuf_data_iova(m);
--		unsigned int page = addr / rte_mem_page_size();
--		unsigned int offset = addr & PAGE_MASK;
-+		unsigned int page = addr / HYPERV_PAGE_SIZE;
-+		unsigned int offset = addr & HYPERV_PAGE_MASK;
- 		unsigned int len = rte_pktmbuf_data_len(m);
- 
- 		while (len > 0) {
- 			unsigned int bytes = RTE_MIN(len,
--					rte_mem_page_size() - offset);
-+					HYPERV_PAGE_SIZE - offset);
- 
- 			sg[segs].page = page;
- 			sg[segs].ofs = offset;
-@@ -1499,8 +1499,8 @@ static int hn_xmit_sg(struct hn_tx_queue *txq,
- 	addr = txq->tx_rndis_iova +
- 		((char *)txd->rndis_pkt - (char *)txq->tx_rndis);
- 
--	sg[0].page = addr / rte_mem_page_size();
--	sg[0].ofs = addr & PAGE_MASK;
-+	sg[0].page = addr / HYPERV_PAGE_SIZE;
-+	sg[0].ofs = addr & HYPERV_PAGE_MASK;
- 	sg[0].len = RNDIS_PACKET_MSG_OFFSET_ABS(hn_rndis_pktlen(txd->rndis_pkt));
- 	segs = 1;
- 
-diff --git a/drivers/net/netvsc/hn_var.h b/drivers/net/netvsc/hn_var.h
-index 0f638bc5fd..f946b3d8ef 100644
---- a/drivers/net/netvsc/hn_var.h
-+++ b/drivers/net/netvsc/hn_var.h
-@@ -31,10 +31,6 @@
- 
- #define HN_RX_EXTMBUF_ENABLE	0
- 
--#ifndef PAGE_MASK
--#define PAGE_MASK (rte_mem_page_size() - 1)
--#endif
--
- struct hn_data;
- struct hn_txdesc;
- 
--- 
-2.34.1
-
+DQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhl
+bkBuZXR3b3JrcGx1bWJlci5vcmc+IA0Kt6LLzcqxvOQ6IDIwMjXE6jTUwjE5yNUgMjoxOQ0KytW8
+/sjLOiBGZWlmZWkgV2FuZyA8d2ZmX2xpZ2h0QHZpcC4xNjMuY29tPg0Ks63LzTogZGV2QGRwZGsu
+b3JnDQrW98ziOiBSZTogW1JGQyAwMC8xOF0gYWRkIGhpbmljMyBQTUQgZHJpdmVyDQoNCk9uIEZy
+aSwgMTggQXByIDIwMjUgMTc6MDU6NDYgKzA4MDANCkZlaWZlaSBXYW5nIDx3ZmZfbGlnaHRAdmlw
+LjE2My5jb20+IHdyb3RlOg0KDQo+ICoqKiBCTFVSQiBIRVJFICoqKg0KPiBUaGUgaGluaWMzIFBN
+RCAoKipsaWJydGVfbmV0X2hpbmljMyoqKSBwcm92aWRlcyBwb2xsIG1vZGUgZHJpdmVyIA0KPiBz
+dXBwb3J0IGZvciAyNUdicHMvMTAwR2Jwcy8yMDBHYnBzIEh1YXdlaSBTUHggc2VyaWVzIE5ldHdv
+cmsgQWRhcHRlcnMuDQoNCg0KWW91IGFyZSBzdXBwb3NlZCB0byByZW1vdmUgdGhlICIqKiogQkxV
+UkIgSEVSRSAqKioiIHdoZW4gZWRpdGluZyB0aGUgY29tbWl0IG1lc3NhZ2UuDQpbRmVpZmVpXSBT
+b3JyeSwgV2UgaWdub3JlIHRoaXMsIHRoZSBuZXh0IHZlcnNpb24gd2lsbCBmaXggaXQuDQo=
