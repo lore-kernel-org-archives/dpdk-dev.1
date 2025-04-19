@@ -2,49 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E4EC369AB
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Apr 2025 03:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC40C369BD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Apr 2025 07:11:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 016BD4028B;
-	Sat, 19 Apr 2025 05:30:31 +0200 (CEST)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
- by mails.dpdk.org (Postfix) with ESMTP id 380E74027A
- for <dev@dpdk.org>; Sat, 19 Apr 2025 05:30:28 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZfcZ30CBfz1GDfJ;
- Sat, 19 Apr 2025 11:29:31 +0800 (CST)
-Received: from kwepemf500016.china.huawei.com (unknown [7.202.181.3])
- by mail.maildlp.com (Postfix) with ESMTPS id 540B818006C;
- Sat, 19 Apr 2025 11:30:24 +0800 (CST)
-Received: from kwepemn500008.china.huawei.com (7.202.194.149) by
- kwepemf500016.china.huawei.com (7.202.181.3) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id E210640156;
+	Sat, 19 Apr 2025 09:10:59 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 291DE400D7
+ for <dev@dpdk.org>; Sat, 19 Apr 2025 09:10:58 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53J5cAhN018996;
+ Sat, 19 Apr 2025 00:10:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
+ 2PASHm4JbyIKPvv+K/loX8ug5KeTHZp/BWbSv39ibo=; b=ferS+fNEwD+w7OOHV
+ SBLXyr/sV1K/5xcWrvr95ggs8kJHZ+8Xu8tqGGych0DtfRxah30oTRnq6n7l8px0
+ wz5lWMTboAZbamu7Vc7L5WtpNNOAl+sCdRJ4kMQNEcCKD/hYmDZsjyjyaduJLFJG
+ 5aoiucNAEU3ekTs5Y/mpi5yO0uiIl0bMIzmp8UnJOstdgsf5tYF1/yCGQ8UHtlLJ
+ 0CLgk+/Azm8AWjC33WB7i9JQmLlKXjE6FHSx6mh5toI356MfAuQI8+RfZe+Yz83l
+ 5jDSEJj4r4B/E2Ww6/NnDNSvdwWdCO7+DfpLy7YyWhQMuddycTZxPH5YvI9u0vIZ
+ EGhCw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 461pg79nwm-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sat, 19 Apr 2025 00:10:53 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 19 Apr 2025 11:30:23 +0800
-Received: from kwepemn500008.china.huawei.com ([7.202.194.149]) by
- kwepemn500008.china.huawei.com ([7.202.194.149]) with mapi id 15.02.1544.011; 
- Sat, 19 Apr 2025 11:30:23 +0800
-From: "wangfeifei (J)" <wangfeifei40@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, Feifei Wang
- <wff_light@vip.163.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, zengweiliang zengweiliang
- <zengweiliang.zengweiliang@huawei.com>, "Dumin(Dumin,KunPeng)"
- <dumin3@huawei.com>
-Subject: =?gb2312?B?u9i4tDogW1JGQyAwMC8xOF0gYWRkIGhpbmljMyBQTUQgZHJpdmVy?=
-Thread-Topic: [RFC 00/18] add hinic3 PMD driver
-Thread-Index: AQHbsEFdKM8u4uunWkekFJQ+/7jQv7OpOc2AgAEUVbA=
-Date: Sat, 19 Apr 2025 03:30:23 +0000
-Message-ID: <1451f95907d947a58d7a6d76e3ea635a@huawei.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250418113217.43dcd6f1@hermes.local>
-In-Reply-To: <20250418113217.43dcd6f1@hermes.local>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.40.191]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+ 15.2.1544.4; Sat, 19 Apr 2025 00:10:53 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sat, 19 Apr 2025 00:10:53 -0700
+Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
+ by maili.marvell.com (Postfix) with ESMTP id 2D2813F71C0;
+ Sat, 19 Apr 2025 00:10:49 -0700 (PDT)
+From: Nitin Saxena <nsaxena@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
+ <yanzhirun_163@163.com>, Robin Jarry <rjarry@redhat.com>,
+ Christophe Fontaine <cfontain@redhat.com>
+CC: <dev@dpdk.org>, Nitin Saxena <nsaxena16@gmail.com>
+Subject: [PATCH v7 0/5] add feature arc in rte_graph
+Date: Sat, 19 Apr 2025 12:40:40 +0530
+Message-ID: <20250419071047.1334983-1-nsaxena@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250103060612.2671836-1-nsaxena@marvell.com>
+References: <20250103060612.2671836-1-nsaxena@marvell.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: duca3e8XVSiCAvRSOcPQGq6EwG7Se-WM
+X-Proofpoint-ORIG-GUID: duca3e8XVSiCAvRSOcPQGq6EwG7Se-WM
+X-Authority-Analysis: v=2.4 cv=Gp1C+l1C c=1 sm=1 tr=0 ts=68034c7d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=XR8D0OoHHMoA:10 a=NEAV23lmAAAA:8 a=0A_AvAqZAcpRaedzLnUA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-19_02,2025-04-17_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,146 +74,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhl
-bkBuZXR3b3JrcGx1bWJlci5vcmc+IA0Kt6LLzcqxvOQ6IDIwMjXE6jTUwjE5yNUgMjozMg0KytW8
-/sjLOiBGZWlmZWkgV2FuZyA8d2ZmX2xpZ2h0QHZpcC4xNjMuY29tPg0Ks63LzTogZGV2QGRwZGsu
-b3JnDQrW98ziOiBSZTogW1JGQyAwMC8xOF0gYWRkIGhpbmljMyBQTUQgZHJpdmVyDQoNCk9uIEZy
-aSwgMTggQXByIDIwMjUgMTc6MDU6NDYgKzA4MDANCkZlaWZlaSBXYW5nIDx3ZmZfbGlnaHRAdmlw
-LjE2My5jb20+IHdyb3RlOg0KDQo+ICoqKiBCTFVSQiBIRVJFICoqKg0KPiBUaGUgaGluaWMzIFBN
-RCAoKipsaWJydGVfbmV0X2hpbmljMyoqKSBwcm92aWRlcyBwb2xsIG1vZGUgZHJpdmVyIA0KPiBz
-dXBwb3J0IGZvciAyNUdicHMvMTAwR2Jwcy8yMDBHYnBzIEh1YXdlaSBTUHggc2VyaWVzIE5ldHdv
-cmsgQWRhcHRlcnMuDQo+IA0KPiBGZWlmZWkgV2FuZyAoMyk6DQo+ICAgbmV0L2hpbmljMzogYWRk
-IGludHJvIGRvYyBmb3IgaGluaWMzDQo+ICAgbmV0L2hpbmljMzogYWRkIGRldiBvcHMNCj4gICBu
-ZXQvaGluaWMzOiBhZGQgUngvVHggZnVuY3Rpb25zDQo+IA0KPiBYaW4gV2FuZyAoNyk6DQo+ICAg
-bmV0L2hpbmljMzogYWRkIGJhc2ljIGhlYWRlciBmaWxlcw0KPiAgIG5ldC9oaW5pYzM6IGFkZCBz
-dXBwb3J0IGZvciBjbWRxIG1lY2hhbmlzbQ0KPiAgIG5ldC9oaW5pYzM6IGFkZCBOSUMgZXZlbnQg
-bW9kdWxlDQo+ICAgbmV0L2hpbmljMzogYWRkIGNvbnRleHQgYW5kIHdvcmsgcXVldWUgc3VwcG9y
-dA0KPiAgIG5ldC9oaW5pYzM6IGFkZCBkZXZpY2UgaW5pdGFpbGl6YXRpb24NCj4gICBuZXQvaGlu
-aWMzOiBhZGQgTU1MIGFuZCBFRVBST00gYWNjZXNzIGZlYXR1cmUNCj4gICBuZXQvaGluaWMzOiBh
-ZGQgUlNTIHByb21pc2N1b3VzIG9wcw0KPiANCj4gWWkgQ2hlbiAoOCk6DQo+ICAgbmV0L2hpbmlj
-MzogYWRkIGhhcmR3YXJlIGludGVyZmFjZXMgb2YgQkFSIG9wZXJhdGlvbg0KPiAgIG5ldC9oaW5p
-YzM6IGFkZCBlcSBtZWNoYW5pc20gZnVuY3Rpb24gY29kZQ0KPiAgIG5ldC9oaW5pYzM6IGFkZCBt
-Z210IG1vZHVsZSBmdW5jdGlvbiBjb2RlDQo+ICAgbmV0L2hpbmljMzogYWRkIG1vZHVsZSBhYm91
-dCBoYXJkd2FyZSBvcGVyYXRpb24NCj4gICBuZXQvaGluaWMzOiBhZGQgYSBOSUMgYnVzaW5lc3Mg
-Y29uZmlndXJhdGlvbiBtb2R1bGUNCj4gICBuZXQvaGluaWMzOiBhZGQgYSBtYWlsYm94IGNvbW11
-bmljYXRpb24gbW9kdWxlDQo+ICAgbmV0L2hpbmljMzogYWRkIEZESVIgZmxvdyBjb250cm9sIG1v
-ZHVsZQ0KPiAgIGRyaXZlcnMvbmV0OiBhZGQgaGluaWMzIFBNRCBidWlsZCBhbmQgZG9jIGZpbGVz
-DQo+IA0KPiAgLm1haWxtYXAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAg
-NCArLQ0KPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAg
-NiArDQo+ICBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvaGluaWMzLmluaSAgICAgICAgfCAgICA5
-ICsNCj4gIGRvYy9ndWlkZXMvbmljcy9oaW5pYzMucnN0ICAgICAgICAgICAgICAgICB8ICAgNTIg
-Kw0KPiAgZG9jL2d1aWRlcy9uaWNzL2luZGV4LnJzdCAgICAgICAgICAgICAgICAgIHwgICAgMSAr
-DQo+ICBkb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzA3LnJzdCAgICAgfCAgIDMyICst
-DQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21kLmggICAgICAgfCAgMjMxICsr
-DQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21kcS5jICAgICAgfCAgOTc1ICsr
-KysrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21kcS5oICAgICAgfCAgMjMw
-ICsrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY29tcGF0LmggICAgfCAgMjY2
-ICsrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY3NyLmggICAgICAgfCAgMTA4
-ICsNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19lcXMuYyAgICAgICB8ICA3MTkg
-KysrKw0KPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2Vxcy5oICAgICAgIHwgICA5
-OCArDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdfY2ZnLmMgICAgfCAgMjQw
-ICsrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdfY2ZnLmggICAgfCAgMTIx
-ICsNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od19jb21tLmMgICB8ICA0NTIg
-KysrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdfY29tbS5oICAgfCAgMzY2
-ICsrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdkZXYuYyAgICAgfCAgNTcz
-ICsrKw0KPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3ZGV2LmggICAgIHwgIDE3
-NyArDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdpZi5jICAgICAgfCAgNzc5
-ICsrKysNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od2lmLmggICAgICB8ICAx
-NDIgKw0KPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX21ib3guYyAgICAgIHwgMTM5
-MiArKysrKysrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfbWJveC5oICAgICAg
-fCAgMTk5ICsNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19tZ210LmMgICAgICB8
-ICAzOTIgKysNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19tZ210LmggICAgICB8
-ICAxMjEgKw0KPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX25pY19jZmcuYyAgIHwg
-MTgyOCArKysrKysrKysNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19uaWNfY2Zn
-LmggICB8IDE1MjcgKysrKysrKysNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19u
-aWNfZXZlbnQuYyB8ICA0MzMgKysrDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNf
-bmljX2V2ZW50LmggfCAgIDM5ICsNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM193
-cS5jICAgICAgICB8ICAxNDggKw0KPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX3dx
-LmggICAgICAgIHwgIDEwOSArDQo+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9tZXNvbi5idWls
-ZCAgICAgICAgfCAgIDUwICsNCj4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZXRoZGV2LmMg
-ICAgICAgICB8IDM4NjYgKysrKysrKysrKysrKysrKysrKysNCj4gIGRyaXZlcnMvbmV0L2hpbmlj
-My9oaW5pYzNfZXRoZGV2LmggICAgICAgICB8ICAxNjcgKw0KPiAgZHJpdmVycy9uZXQvaGluaWMz
-L2hpbmljM19mZGlyLmMgICAgICAgICAgIHwgMTM5NCArKysrKysrDQo+ICBkcml2ZXJzL25ldC9o
-aW5pYzMvaGluaWMzX2ZkaXIuaCAgICAgICAgICAgfCAgMzk4ICsrDQo+ICBkcml2ZXJzL25ldC9o
-aW5pYzMvaGluaWMzX2Zsb3cuYyAgICAgICAgICAgfCAxNzAwICsrKysrKysrKw0KPiAgZHJpdmVy
-cy9uZXQvaGluaWMzL2hpbmljM19mbG93LmggICAgICAgICAgIHwgICA4MCArDQo+ICBkcml2ZXJz
-L25ldC9oaW5pYzMvaGluaWMzX25pY19pby5jICAgICAgICAgfCAgODI3ICsrKysrDQo+ICBkcml2
-ZXJzL25ldC9oaW5pYzMvaGluaWMzX25pY19pby5oICAgICAgICAgfCAgMTY5ICsNCj4gIGRyaXZl
-cnMvbmV0L2hpbmljMy9oaW5pYzNfcnguYyAgICAgICAgICAgICB8IDEwOTYgKysrKysrDQo+ICBk
-cml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX3J4LmggICAgICAgICAgICAgfCAgMzU2ICsrDQo+ICBk
-cml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX3R4LmMgICAgICAgICAgICAgfCAxMDI4ICsrKysrKw0K
-PiAgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM190eC5oICAgICAgICAgICAgIHwgIDMxNSArKw0K
-PiAgZHJpdmVycy9uZXQvaGluaWMzL21lc29uLmJ1aWxkICAgICAgICAgICAgIHwgICA0NCArDQo+
-ICBkcml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19kYmcuYyAgICAgICAgfCAgMTcxICsNCj4g
-IGRyaXZlcnMvbmV0L2hpbmljMy9tbWwvaGluaWMzX2RiZy5oICAgICAgICB8ICAxNjAgKw0KPiAg
-ZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1sX2NtZC5jICAgIHwgIDM3NSArKw0KPiAg
-ZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1sX2NtZC5oICAgIHwgIDEzMSArDQo+ICBk
-cml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19tbWxfaW9jdGwuYyAgfCAgMjE1ICsrDQo+ICBk
-cml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19tbWxfbGliLmMgICAgfCAgMTM2ICsNCj4gIGRy
-aXZlcnMvbmV0L2hpbmljMy9tbWwvaGluaWMzX21tbF9saWIuaCAgICB8ICAyNzUgKysNCj4gIGRy
-aXZlcnMvbmV0L2hpbmljMy9tbWwvaGluaWMzX21tbF9tYWluLmMgICB8ICAxNjcgKw0KPiAgZHJp
-dmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1sX3F1ZXVlLmMgIHwgIDc0OSArKysrICANCj4g
-ZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1sX3F1ZXVlLmggIHwgIDI1NiArKw0KPiAg
-ZHJpdmVycy9uZXQvaGluaWMzL21tbC9tZXNvbi5idWlsZCAgICAgICAgIHwgICA2MiArDQo+ICBk
-cml2ZXJzL25ldC9tZXNvbi5idWlsZCAgICAgICAgICAgICAgICAgICAgfCAgICAxICsNCj4gIDU3
-IGZpbGVzIGNoYW5nZWQsIDI1OTI2IGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKSAgY3Jl
-YXRlIG1vZGUgDQo+IDEwMDY0NCBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvaGluaWMzLmluaQ0K
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRvYy9ndWlkZXMvbmljcy9oaW5pYzMucnN0ICBjcmVhdGUg
-bW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWQuaA0KPiAg
-Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWRxLmMN
-Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21k
-cS5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMz
-X2NvbXBhdC5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2Uv
-aGluaWMzX2Nzci5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jh
-c2UvaGluaWMzX2Vxcy5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMz
-L2Jhc2UvaGluaWMzX2Vxcy5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGlu
-aWMzL2Jhc2UvaGluaWMzX2h3X2NmZy5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9u
-ZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3X2NmZy5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
-dmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3X2NvbW0uYw0KPiAgY3JlYXRlIG1vZGUgMTAw
-NjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od19jb21tLmgNCj4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdkZXYuYw0KPiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od2Rldi5oDQo+
-ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3aWYu
-Yw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19o
-d2lmLmgNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5p
-YzNfbWJveC5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2Uv
-aGluaWMzX21ib3guaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9i
-YXNlL2hpbmljM19tZ210LmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5p
-YzMvYmFzZS9oaW5pYzNfbWdtdC5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQv
-aGluaWMzL2Jhc2UvaGluaWMzX25pY19jZmcuYw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
-cnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19uaWNfY2ZnLmgNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfbmljX2V2ZW50LmMNCj4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfbmljX2V2ZW50LmgNCj4g
-IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfd3EuYw0K
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM193cS5o
-DQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvbWVzb24uYnVp
-bGQNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2V0aGRl
-di5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19ldGhk
-ZXYuaA0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZmRp
-ci5jICBjcmVhdGUgbW9kZSANCj4gMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZmRp
-ci5oICBjcmVhdGUgbW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZmxv
-dy5jICBjcmVhdGUgbW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZmxv
-dy5oICBjcmVhdGUgbW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfbmlj
-X2lvLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX25p
-Y19pby5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19y
-eC5jICBjcmVhdGUgbW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfcngu
-aCAgY3JlYXRlIG1vZGUgMTAwNjQ0IA0KPiBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX3R4LmMg
-IGNyZWF0ZSBtb2RlIDEwMDY0NCANCj4gZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM190eC5oICBj
-cmVhdGUgbW9kZSAxMDA2NDQgDQo+IGRyaXZlcnMvbmV0L2hpbmljMy9tZXNvbi5idWlsZCAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IA0KPiBkcml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19kYmcuYw0K
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9tbWwvaGluaWMzX2RiZy5o
-DQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1s
-X2NtZC5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5p
-YzNfbW1sX2NtZC5oDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL21t
-bC9oaW5pYzNfbW1sX2lvY3RsLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9o
-aW5pYzMvbW1sL2hpbmljM19tbWxfbGliLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
-L25ldC9oaW5pYzMvbW1sL2hpbmljM19tbWxfbGliLmgNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
-cml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19tbWxfbWFpbi5jDQo+ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL21tbC9oaW5pYzNfbW1sX3F1ZXVlLmMNCj4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvbW1sL2hpbmljM19tbWxfcXVldWUuaA0K
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9tbWwvbWVzb24uYnVpbGQN
-Cj4gDQoNCg0KRml4IHRoZSBidWlsZCBhbiBvdGhlciBsaXR0bGUgdGhpbmdzLCBhbmQgcmVzdWJt
-aXQuDQpUaGVyZSBpcyBsb3RzIG1vcmUgaGVyZSwgZG9uJ3QgZXhwZWN0IGl0IHRvIGJlIG1lcmdl
-ZCBmb3Igc2V2ZXJhbCBtb3JlIHJldmlzaW9ucy4NCltGZWlmZWldICBUaGFua3MgZm9yIHRoZSBy
-ZXZpZXdpbmcuIEtub3cgYWJvdXQgdGhpcywgdGhpcyB2ZXJzaW9uIGlzIGEgUkZDIHByb3Bvc2Fs
-IGJlZm9yZSA0LjIwLg0KSW4gdGhlIG5leHQsIHdlIHdpbGwgZml4IGFib3ZlIGVycm9yLg0K
+Feature arc represents an ordered list of features/protocols at a given
+networking layer. It is a high level abstraction to express relationship
+between rte_graph nodes, as feature nodes, and allow packets steering
+across these nodes in a simplified manner.
+
+Features (or feature nodes) are nodes which handles partial or complete
+handling of a protocol in fast path. Like ipv4-rewrite node, which adds
+rewrite data to an outgoing IPv4 packet.
+
+However in above example, outgoing interface(say "eth0") may have
+outbound IPsec policy enabled, hence packets must be steered from
+ipv4-rewrite node to outbound-IPsec-policy node. On the other hand,
+packets routed to another interface (say eth1) must ot be sent to
+IPsec node, as IPsec feature is disabled on eth1. Feature-arc allows
+rte_graph applications to manage such constraints easily
+
+Feature arc abstraction allows rte_graph based application to
+
+1. Runtime enable/disable features on an index (like interface), so that
+if a feature is enabled at runtime, only then packets associated with
+that interface will steer to corresponding feature node. Control plane
+enables/disables features. Features enabled on one interface may not be
+enabled on another interface with in a same feature arc.
+
+2. Single feature arc represents a hook point at a network layer in an
+given direction. Multiple feature arcs can be added in desginated nodes
+to add various hook points in stack. Likt IPv4-output, IPv4-input,
+IPv6-output, IPv6-input, ethernet-input, mpls-input, mpls-output etc.
+
+3. Hook custom/out-of-tree nodes to DPDK in-built nodes and allow packet
+steering from in-built node to custom node without requiring changes to
+in-built fast path function
+
+4. Express features in a particular sequential order so that
+packets are steered in an ordered way across nodes in fast path. For
+eg: if IPsec and IPv4 features are enabled on an ingress interface,
+packets must be sent to IPsec inbound policy node first and then to ipv4
+lookup node.
+
+This patch series adds feature arc library in rte_graph and also adds
+"ipv4-output" feature arc handling in "ipv4-rewrite" node.
+
+Changes in v7:
+- Rebased to latest main for DPDK-25.07
+- Added override_index_cb() in RTE_GRAPH_FEATURE_REGISTER() to allow
+  features to take control of "max_index" (passed to
+  rte_graph_feature_arc_create())
+- Streamlined fast path APIs to make them more simpler
+- Added quad_loop in "if_tx_feature" node
+- Added functional test cases and fixed bugs
+- Based on feedback from Redhat on v6 patches, it was tried to move
+  feature arc APIs inside rte_graph library (to reduce node burden) but
+  it was adding 4% performance regression for L3fwd usecase. For
+  interested users: https://github.com/nsaxena16/dpdk/pull/2
+
+Changes in v6:
+- Rebased to latest main for DPDK-25.03
+- Added constructor based feature arc/feature registration
+- Changed design to handle fast path synchronization via RCU mechanism
+  when any feature is enabled or disabled
+- Added feature arc specific mbuf dynamic field to carry feature data
+  across nodes
+- Added feature arc example in app/graph
+- Programming guide and functional test cases in future versions
+
+Nitin Saxena (5):
+  graph: add API to override node process function
+  graph: add feature arc abstraction
+  ip4: add ip4 output feature arc
+  app/graph: add custom feature nodes for ip4 output arc
+  test/graph_feature_arc: add functional tests
+
+ app/graph/commands.list                  |    6 +
+ app/graph/feature.c                      |  141 ++
+ app/graph/feature.h                      |   13 +
+ app/graph/graph.c                        |    4 +
+ app/graph/ip4_output_hook.c              |  174 ++
+ app/graph/main.c                         |   15 +-
+ app/graph/meson.build                    |    2 +
+ app/graph/module_api.h                   |    2 +
+ app/test/meson.build                     |    1 +
+ app/test/test_graph_feature_arc.c        | 1374 +++++++++++++++
+ doc/api/doxy-api-index.md                |    2 +
+ doc/guides/rel_notes/release_25_07.rst   |   10 +
+ lib/graph/graph_feature_arc.c            | 2050 ++++++++++++++++++++++
+ lib/graph/graph_private.h                |   15 +
+ lib/graph/meson.build                    |    4 +-
+ lib/graph/node.c                         |   23 +
+ lib/graph/rte_graph_feature_arc.h        |  628 +++++++
+ lib/graph/rte_graph_feature_arc_worker.h |  607 +++++++
+ lib/node/ethdev_ctrl.c                   |    8 +
+ lib/node/interface_tx_feature.c          |  213 +++
+ lib/node/interface_tx_feature_priv.h     |   33 +
+ lib/node/ip4_rewrite.c                   |  286 ++-
+ lib/node/meson.build                     |    1 +
+ lib/node/node_private.h                  |    1 +
+ lib/node/rte_node_ip4_api.h              |    4 +
+ 25 files changed, 5608 insertions(+), 9 deletions(-)
+ create mode 100644 app/graph/feature.c
+ create mode 100644 app/graph/feature.h
+ create mode 100644 app/graph/ip4_output_hook.c
+ create mode 100644 app/test/test_graph_feature_arc.c
+ create mode 100644 lib/graph/graph_feature_arc.c
+ create mode 100644 lib/graph/rte_graph_feature_arc.h
+ create mode 100644 lib/graph/rte_graph_feature_arc_worker.h
+ create mode 100644 lib/node/interface_tx_feature.c
+ create mode 100644 lib/node/interface_tx_feature_priv.h
+
+2.43.0
+
