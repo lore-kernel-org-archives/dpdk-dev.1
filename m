@@ -2,67 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DB1C369BD
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Apr 2025 10:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369D3C369CA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Apr 2025 18:14:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10EE040658;
-	Sat, 19 Apr 2025 12:11:56 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2EF584065C
- for <dev@dpdk.org>; Sat, 19 Apr 2025 12:11:54 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53J9xadZ021858;
- Sat, 19 Apr 2025 03:11:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=m
- 0pt7fpuKSDHRRm5MIM2hdUQ7M5/z0owxCC/hXke0M4=; b=A0gzGbDXSYZu3gCV0
- ETUiB+KU5h2U5UYRcO/c3FV6pR1Ya/2tbH+w9+wjgsF0njFNIa4G7hUfAzpRbBao
- q3OywhljMA6lf2YrJjVIefUNkrAonzdKOx/EhcwkbQXOMyDyJpBGiQfPPG14bLtm
- DPKtnjky/jQu7+USPhGBiAErAc0/eBura0JbiN6JtrCoUOBjw6DGEs4dnryWak09
- f4MiiMp6lkdb+fldC+GQsA3xEa4KSpdFf1Xeb7Dd1YZptlpbCA8GvIwM2TDUPLW0
- 0BpYsR21apbKSk4MP2nXsLvK1gPC5dMbkwx/mQj84OpR8DqwN62pCIitRsxmlbNm
- ULYDA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46496q816t-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 19 Apr 2025 03:11:50 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sat, 19 Apr 2025 03:11:49 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sat, 19 Apr 2025 03:11:49 -0700
-Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
- by maili.marvell.com (Postfix) with ESMTP id F17BB5E6891;
- Sat, 19 Apr 2025 03:11:46 -0700 (PDT)
-From: Nitin Saxena <nsaxena@marvell.com>
-To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
- <yanzhirun_163@163.com>, Robin Jarry <rjarry@redhat.com>,
- Christophe Fontaine <cfontain@redhat.com>
-CC: <dev@dpdk.org>, Nitin Saxena <nsaxena16@gmail.com>
-Subject: [PATCH v8 5/5] test/graph_feature_arc: add functional tests
-Date: Sat, 19 Apr 2025 15:41:22 +0530
-Message-ID: <20250419101124.1410233-6-nsaxena@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250419101124.1410233-1-nsaxena@marvell.com>
-References: <20250103060612.2671836-1-nsaxena@marvell.com>
- <20250419101124.1410233-1-nsaxena@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F1CAF40265;
+	Sat, 19 Apr 2025 20:14:54 +0200 (CEST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id B4C5D40156
+ for <dev@dpdk.org>; Sat, 19 Apr 2025 20:14:52 +0200 (CEST)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-5e5dce099f4so3418516a12.1
+ for <dev@dpdk.org>; Sat, 19 Apr 2025 11:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1745086492; x=1745691292; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=ETGE8iJRNA9lyHnBauvebKAGkNderi6JaE/y8z153EU=;
+ b=aufADbuKcHwbABAV3vn5B2btPr7gd+mGlXDBALdawACqFh/uj2fT+5RDhy3jIEl3if
+ ns5PQQss4vfveSRdx8i1GXNAFrhnxLA2+waOBSWoZ1u38DzX3DJ6+khkaUwGc+fSbEGV
+ wjgeNR6BLN9PacYnxJh7YIbcjBY6jQ9uvUi+iD+96NObVIFEHPXcbt0yovIf+xFRl69I
+ yA2OgYERhPElkYXn3URlEAEtXoLiiQCtk03Uv1ty5zHI3T7DY70k1YbxbcSoPr4KJmq9
+ fnXLy1W4NtUo2rDrthem+UwHPd99gyUYgCOUVut4MdyUvAVIHIPNJaTmm744T5wQgKjf
+ KQYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745086492; x=1745691292;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=ETGE8iJRNA9lyHnBauvebKAGkNderi6JaE/y8z153EU=;
+ b=Rscj06UBwN4QuAluOObbKdOjU2wp/oLhy4bf40THmsTi3vaRnZKVJmLz3Eb7GkE0JH
+ hmJEeUcyMuyOydIN5ZEemex5QVbYUfvzrR0nnLywUeA17PVPrr3HbBNT3bsAT0NPnoDj
+ k9yeKoXZAv2HL8ZAwS/5MQyH8s5RQGV/pmXU76DgCZlFCCJuKlbGhJ8h3rbwl45GAff1
+ oruRH55hpQqIN/LEr90TI1ukuvl5otlP84GeqywD6wrmOxbVc1pRiVCFSHblljs9fRTo
+ sHGyLyN5nn1Nz1FkXdjOFaMWNXXuOyjSdvFNcrW5UHpCJo+N1Z7c3e6Ki/tRbVdZvdDY
+ ULyg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUEVj8pjWHUZZHrS2TvW/yIanw/vqQixL+UCTybmgx3ysdSjft2WTdBAsEM8tVz8J2ZyyI=@dpdk.org
+X-Gm-Message-State: AOJu0YyKxphVXk/zmSwpuI4VxpWdCVsynW3Gj9WWSbH01Qowb//KMaGu
+ pYuoSHL6szSpPEnRhQj7LYNYuEYstAt1YcexJSsaMwUAvKypj3QDvcQ6lGboFfK1KL6gTUUBWy/
+ I4TQgQyi9dqeqcWe5Q+Cx3QlMqes=
+X-Gm-Gg: ASbGnctVgPRO+tLdoLk8ARhgrPP79QhgiMhy/r1fLHdRq4CFl303Ft8xry3ixwOdjmJ
+ 7Un2MT56qnSz0QrAbDbYVPqtIu60C5CI1KbjZSuAqyjd7YvqP15r/99UlHBPAT4YCzTdD552+6y
+ trqzgclV+/AFr4l2y8/KQH/g==
+X-Google-Smtp-Source: AGHT+IFuwvsrg8d51NEi+DnIxEvljkkA/wcbvGp2Dx2QDPLRP4n/+d9hZLEsaPxKQ7uDJpi93ZsSdvrl8+gmcpZ+W/o=
+X-Received: by 2002:a17:907:2cc4:b0:acb:5583:6fdd with SMTP id
+ a640c23a62f3a-acb74aac4a2mr527407066b.11.1745086491907; Sat, 19 Apr 2025
+ 11:14:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: g1-q6hdMO2o-1YkZInBhHbUhgXZRUakW
-X-Authority-Analysis: v=2.4 cv=LoiSymdc c=1 sm=1 tr=0 ts=680376e6 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=GOki7qIE3wekRYxQ8yUA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: g1-q6hdMO2o-1YkZInBhHbUhgXZRUakW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-19_04,2025-04-17_01,2024-11-22_01
+References: <20250415121052.1497155-1-adwivedi@marvell.com>
+ <20250415121052.1497155-5-adwivedi@marvell.com>
+ <380238cf-085c-48ff-800c-a876edc96dea@intel.com>
+ <BY1PR18MB61094E892CA9C0E65883260EDDBF2@BY1PR18MB6109.namprd18.prod.outlook.com>
+In-Reply-To: <BY1PR18MB61094E892CA9C0E65883260EDDBF2@BY1PR18MB6109.namprd18.prod.outlook.com>
+From: Vladimir Medvedkin <medvedkinv@gmail.com>
+Date: Sat, 19 Apr 2025 19:14:40 +0100
+X-Gm-Features: ATxdqUF0d81koylmEKuk275uyuyhRCRVIjwcL0ZlKnCtCoZ_aJ6Y0yCeGLWZz_8
+Message-ID: <CANDrEHnPsoiNwwiuCursBKoqGo+e0EXSg20sg5oS4KwwNrdB5A@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1 04/12] node: add process callback for
+ IP4 FIB
+To: Ankur Dwivedi <adwivedi@marvell.com>
+Cc: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
+ Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, 
+ Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Content-Type: multipart/alternative; boundary="00000000000073e0250633259cdd"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,1411 +81,736 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added functional unit test case for verifying feature arc control plane
-and fast path APIs
+--00000000000073e0250633259cdd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-How to run:
-$ echo "graph_feature_arc_autotest" | ./bin/dpdk-test
+Hi Ankur,
 
-Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
----
- app/test/meson.build              |    1 +
- app/test/test_graph_feature_arc.c | 1374 +++++++++++++++++++++++++++++
- 2 files changed, 1375 insertions(+)
- create mode 100644 app/test/test_graph_feature_arc.c
+=D0=BF=D1=82, 18 =D0=B0=D0=BF=D1=80. 2025=E2=80=AF=D0=B3. =D0=B2 15:45, Ank=
+ur Dwivedi <adwivedi@marvell.com>:
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index b6285a6b45..acb0d36c6b 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -90,6 +90,7 @@ source_file_deps = {
-     'test_func_reentrancy.c': ['hash', 'lpm'],
-     'test_graph.c': ['graph'],
-     'test_graph_perf.c': ['graph'],
-+    'test_graph_feature_arc.c': ['graph'],
-     'test_hash.c': ['net', 'hash'],
-     'test_hash_functions.c': ['hash'],
-     'test_hash_multiwriter.c': ['hash'],
-diff --git a/app/test/test_graph_feature_arc.c b/app/test/test_graph_feature_arc.c
-new file mode 100644
-index 0000000000..b46ab4457e
---- /dev/null
-+++ b/app/test/test_graph_feature_arc.c
-@@ -0,0 +1,1374 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2024 Marvell International Ltd.
-+ */
-+
-+#include "test.h"
-+
-+#include <assert.h>
-+#include <inttypes.h>
-+#include <signal.h>
-+#include <stdalign.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <rte_errno.h>
-+
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+#include <rte_graph.h>
-+#include <rte_graph_worker.h>
-+#include <rte_mbuf.h>
-+#include <rte_mbuf_dyn.h>
-+#include <rte_random.h>
-+#include <rte_graph_feature_arc.h>
-+#include <rte_graph_feature_arc_worker.h>
-+
-+#define MBUF_NUM 256
-+#define TEST_ARC1_NAME "arc1"
-+#define TEST_ARC2_NAME "arc2"
-+#define TEST_FAILED_ARC "failed_arc"
-+#define MAX_INDEXES 10
-+#define OVERRIDE_MAX_INDEX MBUF_NUM
-+#define MAX_FEATURES 5
-+
-+#define dbg(...)
-+
-+#define SOURCE1 "arc_source1_node"
-+#define INPUT_STATIC "arc_input_static_node"
-+#define OUTPUT_STATIC "arc_output_static_node"
-+#define PKT_FREE_STATIC "arc_pkt_free_static_node"
-+#define ARC1_FEATURE1 "arc1_feature1_node"
-+#define ARC1_FEATURE2 "arc1_feature2_node"
-+#define ARC2_FEATURE1 "arc2_feature1_node"
-+#define ARC2_FEATURE2 "arc2_feature2_node"
-+#define ARC2_FEATURE3 "arc2_feature3_node"
-+#define DUMMY1_STATIC "arc_dummy1_static_node"
-+#define DUMMY2_STATIC "arc_dummy2_static_node"
-+
-+#define feature_cast(x) ((rte_graph_feature_t)(x))
-+
-+/* (Node index, Node Name, feature app_cookie base */
-+#define FOREACH_TEST_NODE_ARC {			\
-+		R(0, SOURCE1, 64)		\
-+		R(1, INPUT_STATIC, 128)		\
-+		R(2, OUTPUT_STATIC, 256)	\
-+		R(3, PKT_FREE_STATIC, 512)	\
-+		R(4, ARC1_FEATURE1, 1024)	\
-+		R(5, ARC1_FEATURE2, 2048)	\
-+		R(6, ARC2_FEATURE1, 4096)	\
-+		R(7, ARC2_FEATURE2, 8192)	\
-+		R(8, ARC2_FEATURE3, 16384)	\
-+		R(9, DUMMY1_STATIC, 32768)	\
-+		R(10, DUMMY2_STATIC, 65536)	\
-+	}
-+
-+/**
-+ * ARC1: Feature arc on ingress interface
-+ * ARC2: Feature arc on egress interface
-+ * XX_static: Static nodes
-+ * XX_featureX: Feature X on arc
-+ *
-+ *            -----> ARC1_FEATURE1
-+ *           |        |         |
-+ *           |        |         v
-+ *           |        |   ARC1_FEATURE2
-+ *           |        |         |
-+ *           |        v         v
-+ *  SOURCE1 ->-----> INPUT_STATIC --> OUTPUT_STATIC -----> PKT_FREE_STATIC
-+ *                                     |   |  |             ^      ^     ^
-+ *                                     |   |  |             |      |     |
-+ *                                     |   |   --> ARC2_FEATURE1   |     |
-+ *                                     |   |          ^     ^      |     |
-+ *                                     |   |          |     |      |     |
-+ *                                     |    ----------c-> ARC2_FEATURE2  |
-+ *                                     |              |     ^            |
-+ *                                     |              |     |            |
-+ *                                      ----------> ARC2_FEATURE3 -------
-+ */
-+const char *node_names_feature_arc[] = {
-+	SOURCE1, INPUT_STATIC, OUTPUT_STATIC, PKT_FREE_STATIC,
-+	ARC1_FEATURE1, ARC1_FEATURE2, ARC2_FEATURE1, ARC2_FEATURE2, ARC2_FEATURE3,
-+	DUMMY1_STATIC, DUMMY2_STATIC
-+};
-+
-+const char *arc_names[] = {
-+	TEST_ARC1_NAME, TEST_ARC2_NAME,
-+};
-+
-+const char *arc1_feature_seq[] = {
-+	ARC1_FEATURE1, ARC1_FEATURE2, INPUT_STATIC,
-+};
-+
-+const char *arc2_feature_seq[] = {
-+	ARC2_FEATURE1, ARC2_FEATURE2, ARC2_FEATURE3, PKT_FREE_STATIC,
-+};
-+
-+#define MAX_NODES  RTE_DIM(node_names_feature_arc)
-+
-+typedef enum {
-+	START_NODE,
-+	INTERMEDIATE_FEATURE,
-+	END_FEATURE,
-+} fp_node_type_t;
-+
-+static int fp_test_case_result_failed;
-+static const char *fp_error_node;
-+static uint64_t fp_end_feature_counters;
-+static uint64_t sp_enable_counters, sp_enable_cb_counters;
-+static uint64_t sp_disable_counters, sp_disable_cb_counters;
-+
-+/* Function declarations */
-+static uint16_t
-+source1_fn(struct rte_graph *graph, struct rte_node *node,
-+	   void **objs, uint16_t nb_objs);
-+static uint16_t
-+input_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+	    void **objs, uint16_t nb_objs);
-+static uint16_t
-+output_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+	     void **objs, uint16_t nb_objs);
-+static uint16_t
-+pkt_free_fn(struct rte_graph *graph, struct rte_node *node,
-+	    void **objs, uint16_t nb_objs);
-+static uint16_t
-+pkt_free_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+	       void **objs, uint16_t nb_objs);
-+static uint16_t
-+dummy1_fn(struct rte_graph *graph, struct rte_node *node,
-+	  void **objs, uint16_t nb_objs);
-+static uint16_t
-+dummy2_fn(struct rte_graph *graph, struct rte_node *node,
-+	  void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc1_feature1_fn(struct rte_graph *graph, struct rte_node *node,
-+		 void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc1_feature1_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc1_feature2_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc2_feature1_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc2_feature2_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs);
-+static uint16_t
-+arc2_feature3_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs);
-+static int
-+common_arc1_init(const struct rte_graph *graph, struct rte_node *node);
-+static int
-+common_arc2_init(const struct rte_graph *graph, struct rte_node *node);
-+static uint16_t
-+common_process_fn(struct rte_graph *graph, struct rte_node *node,
-+		  void **objs, uint16_t nb_objs, uint16_t max_indexes,
-+		  uint16_t mbuf_arr_offset, fp_node_type_t type);
-+
-+typedef struct test_node_priv {
-+	int stop_enqueue;
-+
-+	/* rte_graph node id */
-+	uint32_t node_id;
-+
-+	rte_graph_feature_arc_t arc;
-+} test_node_priv_t;
-+
-+typedef struct {
-+	rte_graph_feature_t feature;
-+	uint16_t egress_interface;
-+	uint16_t ingress_interface;
-+} graph_dynfield_t;
-+
-+#define MAX_FEATURE_ARCS 4
-+static rte_graph_feature_arc_t arcs[MAX_FEATURE_ARCS];
-+static struct rte_mbuf mbufs[MAX_NODES + 1][MBUF_NUM];
-+static void *mbuf_p[MAX_NODES + 1][MBUF_NUM];
-+static rte_graph_t graph_id = RTE_GRAPH_ID_INVALID;
-+
-+static uint16_t
-+compute_unique_user_data(const char *parent, const char *child, uint32_t interface_index)
-+{
-+	uint16_t user_data = interface_index;
-+
-+	RTE_SET_USED(parent);
-+#define R(idx, node, node_cookie) {				\
-+		if (!strcmp(child, node)) {			\
-+			user_data += node_cookie + idx;		\
-+		}						\
-+	}
-+
-+	FOREACH_TEST_NODE_ARC
-+#undef R
-+
-+	return user_data;
-+}
-+
-+static  void update_sp_counters(const char *arc_name, const char *feature_name,
-+				rte_node_t feature_node_id, uint32_t index,
-+				bool enable_disable, uint16_t app_cookie)
-+
-+{
-+	RTE_SET_USED(feature_node_id);
-+
-+	if (app_cookie != UINT16_MAX) {
-+		if (app_cookie != compute_unique_user_data(arc_name, feature_name, index)) {
-+			printf("cb():%s/%s/%u: app_cookie mismatch %u != %u\n",
-+			       arc_name, feature_name, index, app_cookie,
-+			       compute_unique_user_data(arc_name, feature_name, index));
-+			sp_enable_counters = UINT16_MAX;
-+			sp_disable_counters = UINT16_MAX;
-+		}
-+	}
-+	if (enable_disable)
-+		sp_enable_cb_counters++;
-+	else
-+		sp_disable_cb_counters++;
-+}
-+
-+
-+
-+static int
-+get_edge(struct rte_node_register *parent_node,
-+	 struct rte_node_register *child_node, rte_edge_t *_edge)
-+{
-+	char **next_edges = NULL;
-+	uint32_t count, i;
-+
-+	count = rte_node_edge_get(parent_node->id, NULL);
-+
-+	if (!count)
-+		return -1;
-+
-+	next_edges = malloc(count);
-+
-+	if (!next_edges)
-+		return -1;
-+
-+	count = rte_node_edge_get(parent_node->id, next_edges);
-+	for (i = 0; i < count; i++) {
-+		if (strstr(child_node->name, next_edges[i])) {
-+			if (_edge)
-+				*_edge = (rte_edge_t)i;
-+
-+			free(next_edges);
-+			return 0;
-+		}
-+	}
-+	free(next_edges);
-+
-+	return -1;
-+}
-+
-+int
-+common_arc1_init(const struct rte_graph *graph, struct rte_node *node)
-+{
-+	test_node_priv_t *priv = (test_node_priv_t *)node->ctx;
-+
-+	RTE_SET_USED(graph);
-+
-+	priv->node_id = node->id;
-+	priv->stop_enqueue = 0;
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC1_NAME, &priv->arc) < 0)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+int
-+common_arc2_init(const struct rte_graph *graph, struct rte_node *node)
-+{
-+	test_node_priv_t *priv = (test_node_priv_t *)node->ctx;
-+
-+	RTE_SET_USED(graph);
-+
-+	priv->node_id = node->id;
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC2_NAME, &priv->arc) < 0)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+uint16_t
-+common_process_fn(struct rte_graph *graph, struct rte_node *node,
-+		  void **objs, uint16_t nb_objs, uint16_t max_indexes,
-+		  uint16_t mbuf_arr_offset,
-+		  fp_node_type_t ndtype)
-+{
-+	test_node_priv_t *priv = (test_node_priv_t *)node->ctx;
-+	struct rte_graph_feature_arc *arc =
-+		rte_graph_feature_arc_get(priv->arc);
-+	struct rte_graph_feature_arc_mbuf_dynfields *mbfields = NULL;
-+	struct rte_mbuf *bufs[MBUF_NUM];
-+	rte_edge_t edges[MBUF_NUM];
-+	uint32_t i, idx;
-+
-+	RTE_SET_USED(objs);
-+	if (priv->stop_enqueue)
-+		return 0;
-+
-+	if (ndtype == START_NODE)
-+		nb_objs = MBUF_NUM;
-+
-+	for (i = 0; i < nb_objs; i++) {
-+		switch (ndtype) {
-+		case START_NODE:
-+			edges[i] = UINT16_MAX;
-+			bufs[i] = mbuf_p[mbuf_arr_offset][i];
-+			break;
-+		case INTERMEDIATE_FEATURE:
-+			edges[i] = UINT16_MAX;
-+			bufs[i] = (struct rte_mbuf *)objs[i];
-+			break;
-+		default:
-+			edges[i] = 0;
-+			bufs[i] = (struct rte_mbuf *)objs[i];
-+			break;
-+		}
-+		mbfields = rte_graph_feature_arc_mbuf_dynfields_get(bufs[i], arc->mbuf_dyn_offset);
-+		if (ndtype == START_NODE) {
-+			idx = i % max_indexes;
-+			if (!rte_graph_feature_data_first_feature_get(arc, idx,
-+								      &mbfields->feature_data,
-+								      &edges[i])) {
-+				fp_test_case_result_failed = 1;
-+				fp_error_node = node->name;
-+				priv->stop_enqueue = 1;
-+				return i;
-+			}
-+		} else if (ndtype == INTERMEDIATE_FEATURE) {
-+			if (!rte_graph_feature_data_next_feature_get(arc,
-+								     &mbfields->feature_data,
-+								     &edges[i])) {
-+				fp_test_case_result_failed = 1;
-+				fp_error_node = node->name;
-+				return i;
-+			}
-+		} else {
-+			/* Send pkts from arc1_end to arc2_start*/
-+			if (mbuf_arr_offset == 0)
-+				edges[i] = 0;
-+			fp_end_feature_counters++;
-+		}
-+		if (edges[i] == UINT16_MAX)
-+			RTE_VERIFY(0);
-+	}
-+	if (ndtype == START_NODE)
-+		priv->stop_enqueue = 1;
-+
-+	if (!fp_test_case_result_failed && (!mbuf_arr_offset || (ndtype != END_FEATURE)))
-+		rte_node_enqueue_next(graph, node, edges, (void **)bufs, nb_objs);
-+
-+	return nb_objs;
-+}
-+
-+uint16_t
-+source1_fn(struct rte_graph *graph, struct rte_node *node,
-+	   void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs, MAX_INDEXES, 0, START_NODE);
-+}
-+
-+static struct rte_node_register node_source1 = {
-+	.name = SOURCE1,
-+	.process = source1_fn,
-+	.flags = RTE_NODE_SOURCE_F,
-+	.nb_edges = 3,
-+	.init = common_arc1_init,
-+	.next_nodes = {INPUT_STATIC, DUMMY1_STATIC, DUMMY2_STATIC},
-+};
-+RTE_NODE_REGISTER(node_source1);
-+
-+uint16_t
-+input_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs, MAX_INDEXES, 0, END_FEATURE);
-+}
-+
-+static struct rte_node_register node_input = {
-+	.name = INPUT_STATIC,
-+	.process = input_fa_fn,
-+	.nb_edges = 2,
-+	.init = common_arc1_init,
-+	.next_nodes = {OUTPUT_STATIC, DUMMY1_STATIC},
-+};
-+RTE_NODE_REGISTER(node_input);
-+
-+struct rte_graph_feature_register arc1_end_feature = {
-+	.feature_name = INPUT_STATIC,
-+	.arc_name = TEST_ARC1_NAME,
-+	.feature_process_fn = input_fa_fn,
-+	.feature_node = &node_input,
-+	.notifier_cb = update_sp_counters,
-+};
-+
-+static struct rte_graph_feature_arc_register arc1_input = {
-+	.arc_name = TEST_ARC1_NAME,
-+	.max_indexes = MAX_INDEXES,
-+	.max_features = MAX_FEATURES,
-+	.start_node = &node_source1,
-+	.start_node_feature_process_fn = source1_fn,
-+	.end_feature = &arc1_end_feature,
-+};
-+
-+uint16_t
-+output_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+	     void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 OVERRIDE_MAX_INDEX, 1, START_NODE);
-+}
-+
-+static struct rte_node_register node_output = {
-+	.name = OUTPUT_STATIC,
-+	.process = output_fa_fn,
-+	.nb_edges = 3,
-+	.init = common_arc2_init,
-+	.next_nodes = {DUMMY1_STATIC, PKT_FREE_STATIC, DUMMY2_STATIC},
-+};
-+RTE_NODE_REGISTER(node_output);
-+
-+uint16_t
-+pkt_free_fn(struct rte_graph *graph, struct rte_node *node,
-+		void **objs, uint16_t nb_objs)
-+{
-+	RTE_SET_USED(graph);
-+	RTE_SET_USED(node);
-+	RTE_SET_USED(objs);
-+	RTE_SET_USED(nb_objs);
-+
-+	fp_test_case_result_failed = 1;
-+	fp_error_node = node->name;
-+	return 0;
-+}
-+
-+uint16_t
-+pkt_free_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+	       void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 OVERRIDE_MAX_INDEX, 1, END_FEATURE);
-+}
-+
-+static struct rte_node_register node_pkt_free = {
-+	.name = PKT_FREE_STATIC,
-+	.process = pkt_free_fn,
-+	.nb_edges = 1,
-+	.init = common_arc2_init,
-+	.next_nodes = {DUMMY1_STATIC},
-+};
-+RTE_NODE_REGISTER(node_pkt_free);
-+
-+static uint16_t override_arc2_index(void)
-+{
-+	return OVERRIDE_MAX_INDEX;
-+}
-+
-+struct rte_graph_feature_register arc2_end_feature = {
-+	.feature_name = PKT_FREE_STATIC,
-+	.arc_name = TEST_ARC2_NAME,
-+	.feature_process_fn = pkt_free_fa_fn,
-+	.feature_node = &node_pkt_free,
-+	.notifier_cb = update_sp_counters,
-+};
-+
-+static struct rte_graph_feature_arc_register arc2_output = {
-+	.arc_name = TEST_ARC2_NAME,
-+	.max_indexes = 1, /* Let feature override with bigger value */
-+	/* max_features not provided. End feature is a feature hence should work*/
-+	.start_node = &node_output,
-+	.start_node_feature_process_fn = output_fa_fn,
-+	.end_feature = &arc2_end_feature,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(arc2_output);
-+
-+/** Dummy nodes */
-+uint16_t
-+dummy1_fn(struct rte_graph *graph, struct rte_node *node,
-+	  void **objs, uint16_t nb_objs)
-+{
-+	RTE_SET_USED(graph);
-+	RTE_SET_USED(node);
-+	RTE_SET_USED(objs);
-+	RTE_SET_USED(nb_objs);
-+	return 0;
-+}
-+
-+static struct rte_node_register dummy1 = {
-+	.name = DUMMY1_STATIC,
-+	.process = dummy1_fn,
-+	.nb_edges = 0,
-+	.init = common_arc2_init,
-+};
-+RTE_NODE_REGISTER(dummy1);
-+
-+uint16_t
-+dummy2_fn(struct rte_graph *graph, struct rte_node *node,
-+	  void **objs, uint16_t nb_objs)
-+{
-+	RTE_SET_USED(graph);
-+	RTE_SET_USED(node);
-+	RTE_SET_USED(objs);
-+	RTE_SET_USED(nb_objs);
-+	return 0;
-+}
-+
-+static struct rte_node_register dummy2 = {
-+	.name = DUMMY2_STATIC,
-+	.process = dummy2_fn,
-+	.nb_edges = 5,
-+	.init = common_arc2_init,
-+	.next_nodes = { ARC1_FEATURE1, ARC1_FEATURE2, ARC2_FEATURE1,
-+			ARC2_FEATURE2, ARC2_FEATURE3},
-+};
-+RTE_NODE_REGISTER(dummy2);
-+
-+/** Failed registrations */
-+
-+struct rte_graph_feature_register sink_valid_feature = {
-+	.feature_name = "sink_valid_feature",
-+	.arc_name = TEST_FAILED_ARC,
-+	.feature_process_fn = dummy2_fn,
-+	.feature_node = &dummy2,
-+};
-+
-+struct rte_graph_feature_register sink_mismatch_arc_name = {
-+	.feature_name = "sink_mismatch_arc_name",
-+	.arc_name = "mismatch_arc_name",
-+	.feature_process_fn = dummy2_fn,
-+	.feature_node = &dummy2,
-+};
-+
-+struct rte_graph_feature_register sink_no_feature_node = {
-+	.feature_name = "sink_no_feature_node",
-+	.arc_name = TEST_FAILED_ARC,
-+	.feature_process_fn = dummy2_fn,
-+};
-+
-+struct rte_graph_feature_register sink_no_feature_fn = {
-+	.feature_name = "sink_no_feature_fn",
-+	.arc_name = TEST_FAILED_ARC,
-+	.feature_node = &dummy2,
-+};
-+
-+/* failed_arc1
-+ *  - max_features not provided
-+ *  - end_feature not provided
-+ */
-+static struct rte_graph_feature_arc_register failed_arc1 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.max_indexes = 1, /* Let features override it*/
-+	/* max_features field is missing */
-+	/* end_feature missing */
-+	.start_node = &dummy1,
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc1);
-+
-+/* failed_arc2
-+ * - max_indexes not provided
-+ */
-+static struct rte_graph_feature_arc_register failed_arc2 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_valid_feature,
-+	/* max_index not provided and neither override_index_cb() in any feature */
-+	.start_node = &dummy1,
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc2);
-+
-+/* failed_arc3
-+ * - start_node not provided
-+ */
-+static struct rte_graph_feature_arc_register failed_arc3 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_valid_feature,
-+	.max_indexes = 1,
-+	/* start_node not provided */
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc3)
-+
-+/* failed_arc4
-+ * - start_node not provided
-+ */
-+static struct rte_graph_feature_arc_register failed_arc4 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_valid_feature,
-+	.max_indexes = 5,
-+	.start_node = &dummy1,
-+	/* start_node fn not provided */
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc4);
-+
-+/* failed_arc5
-+ * - end_feature has mismatch arc_name
-+ */
-+static struct rte_graph_feature_arc_register failed_arc5 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_mismatch_arc_name,
-+	.max_indexes = 5,
-+	.start_node = &dummy1,
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc5);
-+
-+/* failed_arc6
-+ * - end_feature does not have feature_node
-+ */
-+static struct rte_graph_feature_arc_register failed_arc6 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_no_feature_node,
-+	.max_indexes = 5,
-+	.start_node = &dummy1,
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc6);
-+
-+/* failed_arc7
-+ * - end_feature does not have feature_fn
-+ */
-+static struct rte_graph_feature_arc_register failed_arc7 = {
-+	.arc_name = TEST_FAILED_ARC,
-+	.end_feature = &sink_no_feature_fn,
-+	.max_indexes = 5,
-+	.start_node = &dummy1,
-+	.start_node_feature_process_fn = dummy1_fn,
-+};
-+RTE_GRAPH_FEATURE_ARC_REGISTER(failed_arc7);
-+
-+uint16_t
-+arc1_feature1_fn(struct rte_graph *graph, struct rte_node *node,
-+		 void **objs, uint16_t nb_objs)
-+{
-+	RTE_SET_USED(graph);
-+	RTE_SET_USED(node);
-+	RTE_SET_USED(objs);
-+	RTE_SET_USED(nb_objs);
-+
-+	/* Feature on an arc cannot be called if feature arc is disabled */
-+	fp_test_case_result_failed = 1;
-+	fp_error_node = node->name;
-+	return 0;
-+}
-+
-+uint16_t
-+arc1_feature1_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 MAX_INDEXES, 0, INTERMEDIATE_FEATURE);
-+}
-+
-+static struct rte_node_register arc1_feature1 = {
-+	.name = ARC1_FEATURE1,
-+	.process = arc1_feature1_fn,
-+	.nb_edges = 0,
-+	.init = common_arc1_init,
-+};
-+RTE_NODE_REGISTER(arc1_feature1);
-+
-+static struct rte_graph_feature_register feat_arc1_feature1 = {
-+	.feature_name = ARC1_FEATURE1,
-+	.arc_name = TEST_ARC1_NAME,
-+	.feature_process_fn = arc1_feature1_fa_fn,
-+	.feature_node = &arc1_feature1,
-+	.override_index_cb = override_arc2_index,
-+	.notifier_cb = update_sp_counters,
-+};
-+RTE_GRAPH_FEATURE_REGISTER(feat_arc1_feature1);
-+
-+uint16_t
-+arc1_feature2_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 MAX_INDEXES, 0, INTERMEDIATE_FEATURE);
-+}
-+
-+static struct rte_node_register arc1_feature2 = {
-+	.name = ARC1_FEATURE2,
-+	.process = arc1_feature2_fa_fn,
-+	.nb_edges = 0,
-+	.init = common_arc1_init,
-+};
-+RTE_NODE_REGISTER(arc1_feature2);
-+
-+/* add arc1_feature2 later using rte_graph_feature_add()*/
-+static struct rte_graph_feature_register feat_arc1_feature2 = {
-+	.feature_name = ARC1_FEATURE2,
-+	.arc_name = TEST_ARC1_NAME,
-+	.feature_process_fn = arc1_feature2_fa_fn,
-+	.feature_node = &arc1_feature2,
-+	.runs_after = ARC1_FEATURE1,
-+	.notifier_cb = update_sp_counters,
-+};
-+
-+uint16_t
-+arc2_feature1_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 OVERRIDE_MAX_INDEX, 1, INTERMEDIATE_FEATURE);
-+}
-+
-+static struct rte_node_register arc2_feature1 = {
-+	.name = ARC2_FEATURE1,
-+	.process = arc2_feature1_fa_fn,
-+	.nb_edges = 0,
-+	.init = common_arc2_init,
-+};
-+RTE_NODE_REGISTER(arc2_feature1);
-+
-+static struct rte_graph_feature_register feat_arc2_feature1 = {
-+	.feature_name = ARC2_FEATURE1,
-+	.arc_name = TEST_ARC2_NAME,
-+	.feature_process_fn = arc2_feature1_fa_fn,
-+	.feature_node = &arc2_feature1,
-+	.notifier_cb = update_sp_counters,
-+};
-+RTE_GRAPH_FEATURE_REGISTER(feat_arc2_feature1);
-+
-+uint16_t
-+arc2_feature2_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		    void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 OVERRIDE_MAX_INDEX, 1, INTERMEDIATE_FEATURE);
-+}
-+
-+static struct rte_node_register arc2_feature2 = {
-+	.name = ARC2_FEATURE2,
-+	.process = arc2_feature2_fa_fn,
-+	.nb_edges = 0,
-+	.init = common_arc2_init,
-+};
-+RTE_NODE_REGISTER(arc2_feature2);
-+
-+static struct rte_graph_feature_register feat_arc2_feature2 = {
-+	.feature_name = ARC2_FEATURE2,
-+	.arc_name = TEST_ARC2_NAME,
-+	.feature_process_fn = arc2_feature2_fa_fn,
-+	.feature_node = &arc2_feature2,
-+	.runs_after = ARC2_FEATURE1,
-+	.runs_before = ARC2_FEATURE3,
-+	.override_index_cb = override_arc2_index,
-+	.notifier_cb = update_sp_counters,
-+};
-+RTE_GRAPH_FEATURE_REGISTER(feat_arc2_feature2);
-+
-+uint16_t
-+arc2_feature3_fa_fn(struct rte_graph *graph, struct rte_node *node,
-+		 void **objs, uint16_t nb_objs)
-+{
-+	return common_process_fn(graph, node, objs, nb_objs,
-+				 OVERRIDE_MAX_INDEX, 1, INTERMEDIATE_FEATURE);
-+}
-+
-+static struct rte_node_register arc2_feature3 = {
-+	.name = ARC2_FEATURE3,
-+	.process = arc2_feature3_fa_fn,
-+	.nb_edges = 0,
-+	.init = common_arc2_init,
-+};
-+RTE_NODE_REGISTER(arc2_feature3);
-+
-+static struct rte_graph_feature_register feat_arc2_feature3 = {
-+	.feature_name = ARC2_FEATURE3,
-+	.arc_name = TEST_ARC2_NAME,
-+	.feature_process_fn = arc2_feature3_fa_fn,
-+	.feature_node = &arc2_feature3,
-+	.runs_after = ARC2_FEATURE1,
-+	.notifier_cb = update_sp_counters,
-+};
-+RTE_GRAPH_FEATURE_REGISTER(feat_arc2_feature3);
-+
-+static int
-+create_graph(void)
-+{
-+	struct rte_graph_param gconf = {
-+		.socket_id = SOCKET_ID_ANY,
-+		.nb_node_patterns = RTE_DIM(node_names_feature_arc),
-+		.node_patterns = node_names_feature_arc,
-+	};
-+
-+	graph_id = rte_graph_create("worker0", &gconf);
-+	if (graph_id == RTE_GRAPH_ID_INVALID) {
-+		printf("Graph creation failed with error = %d\n", rte_errno);
-+		return TEST_FAILED;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+destroy_graph(void)
-+{
-+	if (graph_id != RTE_GRAPH_ID_INVALID) {
-+		rte_graph_destroy(graph_id);
-+		graph_id = RTE_GRAPH_ID_INVALID;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int test_perf(uint64_t end_feature_counters)
-+{
-+	struct rte_graph *graph = NULL;
-+	int i;
-+
-+	fp_test_case_result_failed = 0;
-+	fp_error_node = NULL;
-+	fp_end_feature_counters = 0;
-+
-+	if (create_graph() < 0) {
-+		printf("Graph creation failed while walk\n");
-+		return TEST_FAILED;
-+	}
-+	graph = rte_graph_lookup("worker0");
-+	if (graph) {
-+		for (i = 0; i < 10; i++)
-+			rte_graph_walk(graph);
-+	}
-+	if (destroy_graph() < 0) {
-+		printf("Graph destroy failed while walk\n");
-+		return TEST_FAILED;
-+	}
-+	if (fp_test_case_result_failed) {
-+		printf("Feature arc test failed for node %s\n", fp_error_node);
-+		return TEST_FAILED;
-+	}
-+
-+	if (sp_enable_counters &&
-+	    (sp_enable_cb_counters != sp_enable_counters)) {
-+		printf("sp_enable_cb_counters mismatch %"PRIu64" != %"PRIu64"\n",
-+		       sp_enable_cb_counters, sp_enable_counters);
-+		return TEST_FAILED;
-+	}
-+	if (sp_disable_counters &&
-+	    (sp_disable_cb_counters != sp_disable_counters)) {
-+		printf("sp_disable_cb_counters mismatch %"PRIu64" != %"PRIu64"\n",
-+		       sp_disable_cb_counters, sp_disable_counters);
-+		return TEST_FAILED;
-+	}
-+	if (fp_end_feature_counters != end_feature_counters) {
-+		printf("end_bufs_counters mismatch %"PRIu64" != %"PRIu64"\n",
-+		       fp_end_feature_counters, end_feature_counters);
-+		return TEST_FAILED;
-+	}
-+	sp_enable_counters = 0;
-+	sp_enable_cb_counters = 0;
-+	sp_disable_counters = 0;
-+	sp_disable_cb_counters = 0;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+__test_create_feature_arc(rte_graph_feature_arc_t *arcs, uint16_t max_arcs)
-+{
-+	struct rte_graph_feature_arc_register reg;
-+	struct rte_graph_feature_register feat;
-+	rte_graph_feature_arc_t arc;
-+	const char *sample_arc_name = "sample_arc";
-+	char arc_name[256];
-+	int n_arcs;
-+
-+	if (rte_graph_feature_arc_init(max_arcs) < 0) {
-+		printf("Feature arc creation failed for arc: %u\n", max_arcs);
-+		return TEST_FAILED;
-+	}
-+
-+	feat.feature_name = DUMMY2_STATIC;
-+	feat.feature_process_fn = dummy2_fn;
-+	feat.feature_node = &dummy2;
-+	feat.feature_node_id = dummy2.id;
-+	feat.runs_after = NULL;
-+	feat.runs_before = NULL;
-+
-+	reg.max_indexes = MAX_INDEXES;
-+	reg.max_features = 3;
-+	reg.start_node = &dummy1;
-+	reg.start_node_feature_process_fn = dummy1_fn;
-+	reg.end_feature = &feat;
-+	for (n_arcs = 0; n_arcs < max_arcs; n_arcs++) {
-+		snprintf(arc_name, sizeof(arc_name), "%s-%u", sample_arc_name, n_arcs);
-+		feat.arc_name = arc_name;
-+		reg.arc_name = arc_name;
-+		if (rte_graph_feature_arc_create(&reg, &arcs[n_arcs]) < 0) {
-+			printf("%s: Test failed for creating arc at index %u\n", arc_name, n_arcs);
-+			return TEST_FAILED;
-+		}
-+	}
-+
-+	if (rte_graph_feature_arc_create(&arc2_output, NULL) == 0) {
-+		printf("Failure: Feature arc %s should have already been created\n",
-+		       arc2_output.arc_name);
-+		return TEST_FAILED;
-+	}
-+	/* Verify feature arc created more than max_arcs must fail */
-+	for (n_arcs = 0; n_arcs < max_arcs; n_arcs++) {
-+		snprintf(arc_name, sizeof(arc_name), "%s-%u", sample_arc_name, n_arcs);
-+		arc = RTE_GRAPH_FEATURE_ARC_INITIALIZER;
-+		if (rte_graph_feature_arc_lookup_by_name(arc_name, &arc) == 0) {
-+			if (arc != arcs[n_arcs]) {
-+				printf("%s: Feature arc lookup mismatch for arc [%u, exp: %u]\n",
-+				       arc_name, arc, arcs[n_arcs]);
-+				return TEST_FAILED;
-+			}
-+			dbg("Feature arc lookup %s succeeded\n", arc_name);
-+		} else {
-+			printf("Feature arc lookup %s failed after creation\n", arc_name);
-+			return TEST_FAILED;
-+		}
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_graph_feature_arc_create(void)
-+{
-+	int ret = 0;
-+
-+	ret = __test_create_feature_arc(arcs, MAX_FEATURE_ARCS);
-+	if (ret) {
-+		printf("Feature arc creation test failed for %u number of arc create\n",
-+		       MAX_FEATURE_ARCS);
-+		goto test_failed;
-+	}
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_FAILED_ARC, NULL) == 0) {
-+		printf("Feature arc %s should not have been created\n", TEST_FAILED_ARC);
-+		goto test_failed;
-+	}
-+
-+	/* Cleanup to verify recreation */
-+	rte_graph_feature_arc_cleanup();
-+
-+	dbg("Feature arc cleanup done\n");
-+
-+	return TEST_SUCCESS;
-+
-+test_failed:
-+	return TEST_FAILED;
-+}
-+
-+static int
-+graph_feature_arc_setup(void)
-+{
-+	unsigned long i, j;
-+
-+	for (i = 0; i <= MAX_NODES; i++) {
-+		for (j = 0; j < MBUF_NUM; j++)
-+			mbuf_p[i][j] = &mbufs[i][j];
-+	}
-+
-+	return TEST_SUCCESS;
-+
-+}
-+static int
-+test_graph_feature_arc_features_add(void)
-+{
-+	struct rte_graph_feature_arc *arc = NULL;
-+	rte_graph_feature_t temp;
-+
-+	if (rte_graph_feature_arc_init(1) < 0) {
-+		printf("Feature arc creation failed just for adding features\n");
-+		return TEST_FAILED;
-+	}
-+
-+	/* see if duplicates fails */
-+	if (rte_graph_feature_add(&feat_arc2_feature1) == 0) {
-+		printf("%s: Feature add failed for adding feature %s\n",
-+		       feat_arc2_feature1.arc_name, feat_arc2_feature1.feature_name);
-+		goto test_failed;
-+	}
-+
-+	/* Create new arc1 */
-+	arc1_input.end_feature->feature_node_id = arc1_input.end_feature->feature_node->id;
-+	if (rte_graph_feature_arc_create(&arc1_input, &arcs[0]) < 0) {
-+		printf("%s: Feature arc creation failed\n", TEST_ARC2_NAME);
-+		goto test_failed;
-+	}
-+
-+	/* Add features to arc1 */
-+	feat_arc1_feature1.feature_node_id = feat_arc1_feature1.feature_node->id;
-+	if (rte_graph_feature_add(&feat_arc1_feature1) < 0) {
-+		printf("%s: Feature add failed for adding feature %s\n",
-+		       feat_arc1_feature1.arc_name, feat_arc1_feature1.feature_name);
-+		goto test_failed;
-+	}
-+
-+	feat_arc1_feature2.feature_node_id = feat_arc1_feature2.feature_node->id;
-+	if (rte_graph_feature_add(&feat_arc1_feature2) < 0) {
-+		printf("%s: Feature add failed for adding feature %s\n",
-+		       feat_arc1_feature2.arc_name, feat_arc1_feature2.feature_name);
-+	}
-+
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC2_NAME, &arcs[1]) < 0) {
-+		printf("%s: Feature arc lookup failed while adding features\n",
-+		       TEST_ARC2_NAME);
-+		goto test_failed;
-+	}
-+
-+	arc = rte_graph_feature_arc_get(arcs[1]);
-+	if (!arc) {
-+		printf("%s: Feature arc ptr cannot be NULL\n",
-+		       TEST_ARC2_NAME);
-+		goto test_failed;
-+	}
-+
-+	/* Make sure number of indexes are overridden by feature*/
-+	if (arc->max_indexes < OVERRIDE_MAX_INDEX) {
-+		printf("%s: Feature arc max_indexes mismatch %u < %u\n",
-+		       TEST_ARC2_NAME, arc->max_indexes, OVERRIDE_MAX_INDEX);
-+		goto test_failed;
-+	}
-+
-+	/* arc1_feature1 must be first feature to arcs[0] */
-+	if (!strstr(ARC1_FEATURE1,
-+		    rte_graph_feature_arc_feature_to_name(arcs[0],
-+							  feature_cast(0)))) {
-+		printf("%s: %s is not the first feature instead %s\n",
-+		       TEST_ARC1_NAME, ARC1_FEATURE1,
-+		       rte_graph_feature_arc_feature_to_name(arcs[0], feature_cast(0)));
-+		goto test_failed;
-+	}
-+
-+	/* arc1_feature2 must be second feature to arcs[0] */
-+	if (!strstr(ARC1_FEATURE2,
-+		    rte_graph_feature_arc_feature_to_name(arcs[0],
-+							  feature_cast(1)))) {
-+		printf("%s: %s is not the second feature instead %s\n",
-+		       TEST_ARC1_NAME, ARC1_FEATURE2,
-+		       rte_graph_feature_arc_feature_to_name(arcs[0], feature_cast(1)));
-+		goto test_failed;
-+	}
-+
-+	/* Make sure INPUT_STATIC is the last feature in arcs[0] */
-+	temp = rte_graph_feature_arc_num_features(arcs[0]);
-+	if (!strstr(INPUT_STATIC,
-+		    rte_graph_feature_arc_feature_to_name(arcs[0],
-+							  temp - feature_cast(1)))) {
-+		printf("%s: %s is not the last feature instead %s\n",
-+		       TEST_ARC1_NAME, INPUT_STATIC,
-+		       rte_graph_feature_arc_feature_to_name(arcs[0],
-+							     temp - feature_cast(1)));
-+		goto test_failed;
-+	}
-+
-+	/* arc2_feature1 must be first feature to arcs[1] */
-+	if (!strstr(ARC2_FEATURE1,
-+		    rte_graph_feature_arc_feature_to_name(arcs[1],
-+							  feature_cast(0)))) {
-+		printf("%s: %s is not the first feature instead %s\n",
-+		       TEST_ARC2_NAME, ARC2_FEATURE1,
-+		       rte_graph_feature_arc_feature_to_name(arcs[1], feature_cast(0)));
-+		goto test_failed;
-+	}
-+
-+	/* arc2_feature2 must be second feature to arcs[1] */
-+	if (!strstr(ARC2_FEATURE2,
-+		    rte_graph_feature_arc_feature_to_name(arcs[1],
-+							  feature_cast(1)))) {
-+		printf("%s: %s is not the second feature instead %s\n",
-+		       TEST_ARC2_NAME, ARC2_FEATURE2,
-+		       rte_graph_feature_arc_feature_to_name(arcs[1], feature_cast(1)));
-+		goto test_failed;
-+	}
-+
-+	/* arc2_feature3 must be third feature to arcs[1] */
-+	if (!strstr(ARC2_FEATURE3,
-+		    rte_graph_feature_arc_feature_to_name(arcs[1],
-+							  feature_cast(2)))) {
-+		printf("%s: %s is not the third feature instead %s\n",
-+		       TEST_ARC2_NAME, ARC2_FEATURE3,
-+		       rte_graph_feature_arc_feature_to_name(arcs[1], feature_cast(2)));
-+		goto test_failed;
-+	}
-+
-+	/* Make sure PKT_FREE is the last feature in arcs[1] */
-+	temp = rte_graph_feature_arc_num_features(arcs[1]);
-+	if (!strstr(PKT_FREE_STATIC,
-+		    rte_graph_feature_arc_feature_to_name(arcs[1],
-+							  temp - feature_cast(1)))) {
-+		printf("%s: %s is not the last feature instead %s\n",
-+		       TEST_ARC2_NAME, PKT_FREE_STATIC,
-+		       rte_graph_feature_arc_feature_to_name(arcs[1],
-+							     temp - feature_cast(1)));
-+		goto test_failed;
-+	}
-+
-+	/* Make sure feature is connected to end feature */
-+	if (get_edge(&arc2_feature1, &node_pkt_free, NULL)) {
-+		printf("%s: Edge not found between %s and %s\n",
-+		       TEST_ARC2_NAME, ARC2_FEATURE1, PKT_FREE_STATIC);
-+		goto test_failed;
-+	}
-+
-+	if (create_graph() < 0) {
-+		printf("Graph creation failed while adding features\n");
-+		goto test_failed;
-+	}
-+	if (destroy_graph() < 0) {
-+		printf("Graph destroy failed while adding features\n");
-+		goto test_failed;
-+	}
-+	return TEST_SUCCESS;
-+test_failed:
-+	rte_graph_feature_arc_cleanup();
-+	return TEST_FAILED;
-+}
-+
-+static int
-+test_graph_feature_arc_feature_enable(void)
-+{
-+	uint32_t  n_indexes, n_features, count = 0;
-+	struct rte_node_register *parent, *child;
-+	struct rte_graph_feature_arc *arc;
-+	rte_graph_feature_data_t fdata;
-+	char *feature_name = NULL;
-+	rte_edge_t edge1, edge2;
-+	uint16_t user_data;
-+
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC1_NAME, &arcs[0]) < 0) {
-+		printf("%s: Feature arc lookup failed while adding features\n",
-+		       TEST_ARC1_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	arc = rte_graph_feature_arc_get(arcs[0]);
-+
-+	if (rte_graph_feature_arc_is_any_feature_enabled(arc)) {
-+		printf("%s: Feature arc should not have any feature enabled by now\n",
-+		       TEST_ARC1_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	if (rte_graph_feature_arc_num_enabled_features(arcs[0])) {
-+		printf("%s: Feature arc should not have any_feature() enabled by now\n",
-+		       TEST_ARC1_NAME);
-+		return TEST_FAILED;
-+	}
-+	/*
-+	 * On interface 0, enable feature 0,
-+	 * On interface 1, enable feature 1 and so on so forth
-+	 *
-+	 * later verify first feature on every interface index is unique
-+	 * and check [rte_edge, user_data] retrieved via fast path APIs
-+	 */
-+	for (n_indexes = 0; n_indexes < arc->max_indexes; n_indexes++) {
-+		n_features = n_indexes % RTE_DIM(arc1_feature_seq);
-+		feature_name = rte_graph_feature_arc_feature_to_name(arcs[0], n_features);
-+		if (strncmp(feature_name, arc1_feature_seq[n_features],
-+			    RTE_GRAPH_NAMESIZE)) {
-+			printf("%s: Feature(%u) seq mismatch [found: %s, exp: %s]\n",
-+			       TEST_ARC1_NAME, n_features, feature_name,
-+			       arc1_feature_seq[n_features]);
-+			return TEST_FAILED;
-+		}
-+		user_data = compute_unique_user_data(arc->start_node->name, feature_name,
-+						     n_indexes);
-+		/* negative test case. enable feature on invalid index */
-+		if (!n_indexes && (rte_graph_feature_enable(arcs[0], 65535, feature_name,
-+							    user_data, NULL) == 0)) {
-+			printf("%s: Feature %s should not be enabled on invalid index\n",
-+			       TEST_ARC1_NAME, feature_name);
-+			return TEST_FAILED;
-+		}
-+		if (rte_graph_feature_enable(arcs[0], n_indexes, feature_name,
-+					 user_data, NULL) < 0) {
-+			printf("%s: Feature enable failed for %s on index %u\n",
-+			       TEST_ARC1_NAME, feature_name, n_indexes);
-+			return TEST_FAILED;
-+		}
-+		sp_enable_counters++;
-+		/* has any feature should be valid */
-+		if (!rte_graph_feature_arc_is_any_feature_enabled(arc)) {
-+			printf("%s: Feature arc should have any_feature enabled by now\n",
-+			       TEST_ARC1_NAME);
-+			return TEST_FAILED;
-+		}
-+		if ((count + 1) != rte_graph_feature_arc_num_enabled_features(arcs[0])) {
-+			printf("%s: Number of enabled mismatches [found: %u, exp: %u]\n",
-+			       TEST_ARC1_NAME,
-+			       rte_graph_feature_arc_num_enabled_features(arcs[0]),
-+			       count + 1);
-+			return TEST_FAILED;
-+		}
-+		count++;
-+	}
-+	/* Negative test case */
-+	user_data = compute_unique_user_data(arc->start_node->name, ARC2_FEATURE1, 1);
-+	if (!rte_graph_feature_enable(arcs[0], 1 /* index */, ARC2_FEATURE1, user_data, NULL)) {
-+		printf("%s: Invalid feature %s is enabled on index 1\n",
-+		       TEST_ARC1_NAME, ARC2_FEATURE1);
-+		return TEST_FAILED;
-+	}
-+	/* Duplicate enable */
-+	if (!rte_graph_feature_enable(arcs[0], 1 /* index */, ARC1_FEATURE2, user_data, NULL)) {
-+		printf("%s: Duplicate feature %s shouldn't be enabled again on index 1\n",
-+		       TEST_ARC1_NAME, ARC1_FEATURE2);
-+		return TEST_FAILED;
-+	}
-+	for (n_indexes = 0; n_indexes < arc->max_indexes; n_indexes++) {
-+		if (!rte_graph_feature_data_first_feature_get(arc, n_indexes, &fdata, &edge2)) {
-+			printf("%s: FP first feature data get failed for index %u\n",
-+			       TEST_ARC1_NAME, n_indexes);
-+			return TEST_FAILED;
-+		}
-+		parent = arc->start_node;
-+		if (0 == (n_indexes % RTE_DIM(arc1_feature_seq)))
-+			child = &arc1_feature1;
-+		else if (1 == (n_indexes % RTE_DIM(arc1_feature_seq)))
-+			child = &arc1_feature2;
-+		else
-+			child = &node_input;
-+
-+		if (get_edge(parent, child, &edge1)) {
-+			printf("%s: Edge not found between %s and %s\n",
-+			       TEST_ARC1_NAME, parent->name, child->name);
-+			return TEST_FAILED;
-+		}
-+		if (edge1 != edge2) {
-+			printf("%s: Edge mismatch for first feature on index %u [%u, exp: %u]\n",
-+			       TEST_ARC1_NAME, n_indexes, edge2, edge1);
-+			return TEST_FAILED;
-+		}
-+		if (compute_unique_user_data(parent->name, child->name, n_indexes) !=
-+		    rte_graph_feature_data_app_cookie_get(arc, fdata)) {
-+			printf("%s/idx: %u: Cookie mismatch for first feature [%u, exp: %u]\n",
-+			       TEST_ARC1_NAME, n_indexes,
-+			       rte_graph_feature_data_app_cookie_get(arc, fdata),
-+			       compute_unique_user_data(parent->name, child->name, n_indexes));
-+			return TEST_FAILED;
-+		}
-+	}
-+	arc = rte_graph_feature_arc_get(arcs[1]);
-+	for (n_indexes = 0; n_indexes < arc->max_indexes; n_indexes++) {
-+		n_features = n_indexes % RTE_DIM(arc2_feature_seq);
-+		feature_name = rte_graph_feature_arc_feature_to_name(arcs[1], n_features);
-+		if (strncmp(feature_name, arc2_feature_seq[n_features],
-+			    RTE_GRAPH_NAMESIZE)) {
-+			printf("%s: Feature(%u) seq mismatch [found: %s, exp: %s]\n",
-+			       arc->feature_arc_name, n_features, feature_name,
-+			       arc2_feature_seq[n_features]);
-+			return TEST_FAILED;
-+		}
-+		user_data = compute_unique_user_data(arc->start_node->name, feature_name,
-+						     n_indexes);
-+		if (rte_graph_feature_enable(arcs[1], n_indexes, feature_name,
-+					 user_data, NULL) < 0) {
-+			printf("%s: Feature enable failed for %s on index %u\n",
-+			       TEST_ARC2_NAME, feature_name, n_indexes);
-+			return TEST_FAILED;
-+		}
-+		sp_enable_counters++;
-+	}
-+
-+	return test_perf((2 * MBUF_NUM));
-+}
-+
-+static int
-+test_graph_feature_arc_feature_disable(void)
-+{
-+	struct rte_graph_feature_arc *arc;
-+	uint32_t  n_indexes, n_features;
-+	char *feature_name = NULL;
-+
-+	arc = rte_graph_feature_arc_get(arcs[0]);
-+	for (n_indexes = 0; n_indexes < arc->max_indexes; n_indexes++) {
-+		n_features = n_indexes % RTE_DIM(arc1_feature_seq);
-+		feature_name = rte_graph_feature_arc_feature_to_name(arcs[0], n_features);
-+		if (rte_graph_feature_disable(arcs[0], n_indexes, feature_name, NULL)) {
-+			printf("%s: feature disable failed for %s on index %u\n",
-+			       arc->feature_arc_name, feature_name, n_indexes);
-+			return TEST_FAILED;
-+		}
-+		sp_disable_counters++;
-+	}
-+
-+	arc = rte_graph_feature_arc_get(arcs[1]);
-+	for (n_indexes = 0; n_indexes < arc->max_indexes; n_indexes++) {
-+		n_features = n_indexes % RTE_DIM(arc2_feature_seq);
-+		feature_name = rte_graph_feature_arc_feature_to_name(arcs[1], n_features);
-+		if (rte_graph_feature_disable(arcs[1], n_indexes, feature_name, NULL)) {
-+			printf("%s: feature disable failed for %s on index %u\n",
-+			       arc->feature_arc_name, feature_name, n_indexes);
-+			return TEST_FAILED;
-+		}
-+		sp_disable_counters++;
-+	}
-+	/* All packets should exit */
-+	return test_perf((2 * MBUF_NUM));
-+}
-+
-+static int
-+test_graph_feature_arc_destroy(void)
-+{
-+	rte_graph_feature_arc_t arc;
-+
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC1_NAME, &arc)) {
-+		printf("Feature arc lookup failed for %s\n", TEST_ARC1_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	if (arc != arcs[0]) {
-+		printf("Feature arc lookup mismatch for %s [%u, exp: %u]\n",
-+		       TEST_ARC1_NAME, arc, arcs[0]);
-+		return TEST_FAILED;
-+	}
-+
-+	if (rte_graph_feature_arc_destroy(arc)) {
-+		printf("Feature arc destroy failed for %s\n", TEST_ARC1_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	if (rte_graph_feature_arc_lookup_by_name(TEST_ARC2_NAME, &arc)) {
-+		printf("Feature arc lookup success after destroy for %s\n", TEST_ARC2_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	if (arc != arcs[1]) {
-+		printf("Feature arc lookup mismatch for %s [%u, exp: %u]\n",
-+		       TEST_ARC2_NAME, arc, arcs[1]);
-+		return TEST_FAILED;
-+	}
-+	if (rte_graph_feature_arc_destroy(arc)) {
-+		printf("Feature arc destroy failed for %s\n", TEST_ARC2_NAME);
-+		return TEST_FAILED;
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static void
-+graph_feature_arc_teardown(void)
-+{
-+	if (graph_id != RTE_GRAPH_ID_INVALID)
-+		rte_graph_destroy(graph_id);
-+
-+	rte_graph_feature_arc_cleanup();
-+}
-+
-+static struct unit_test_suite graph_feature_arc_testsuite = {
-+	.suite_name = "Graph Feature arc library test suite",
-+	.setup = graph_feature_arc_setup,
-+	.teardown = graph_feature_arc_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE(test_graph_feature_arc_create),
-+		TEST_CASE(test_graph_feature_arc_features_add),
-+		TEST_CASE(test_graph_feature_arc_feature_enable),
-+		TEST_CASE(test_graph_feature_arc_feature_disable),
-+		TEST_CASE(test_graph_feature_arc_destroy),
-+		TEST_CASES_END(), /**< NULL terminate unit test array */
-+	},
-+};
-+
-+static int
-+graph_feature_arc_autotest_fn(void)
-+{
-+	return unit_test_suite_runner(&graph_feature_arc_testsuite);
-+}
-+
-+REGISTER_FAST_TEST(graph_feature_arc_autotest, true, true, graph_feature_arc_autotest_fn);
-+#endif /* !RTE_EXEC_ENV_WINDOWS */
---
-2.43.0
+>
+> Hi Vladimir,
+> >> diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c
+> >> index e87864e672..c535b191f8 100644
+> >> --- a/lib/node/ip4_lookup_fib.c
+> >> +++ b/lib/node/ip4_lookup_fib.c
+> >> @@ -40,6 +40,169 @@ static struct ip4_lookup_fib_node_main
+> >ip4_lookup_fib_nm;
+> >>   #define IP4_LOOKUP_NODE_PRIV1_OFF(ctx) \
+> >>      (((struct ip4_lookup_fib_node_ctx *)ctx)->mbuf_priv1_off)
+> >>
+> >> +static uint16_t
+> >> +ip4_lookup_fib_node_process(struct rte_graph *graph, struct rte_node
+> >*node, void **objs,
+> >> +                        uint16_t nb_objs)
+> >> +{
+> >> +    struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3, **pkts;
+> >> +    struct rte_fib *fib =3D IP4_LOOKUP_NODE_FIB(node->ctx);
+> >> +    const int dyn =3D IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
+> >> +    struct rte_ipv4_hdr *ipv4_hdr;
+> >> +    uint64_t next_hop[nb_objs];
+> >> +    uint16_t lookup_err =3D 0;
+> >> +    void **to_next, **from;
+> >> +    uint16_t last_spec =3D 0;
+> >> +    rte_edge_t next_index;
+> >> +    uint16_t n_left_from;
+> >> +    uint32_t ip[nb_objs];
+> >> +    uint16_t held =3D 0;
+> >> +    uint32_t drop_nh;
+> >> +    uint16_t next;
+> >> +    int i, rc;
+> >> +
+> >> +    /* Speculative next */
+> >> +    next_index =3D RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
+> >> +    /* Drop node */
+> >> +    drop_nh =3D ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) <<
+> >16;
+> >> +
+> >> +    pkts =3D (struct rte_mbuf **)objs;
+> >> +    from =3D objs;
+> >> +    n_left_from =3D nb_objs;
+> >> +
+> >> +    /* Get stream for the speculated next node */
+> >> +    to_next =3D rte_node_next_stream_get(graph, node, next_index,
+> >> +nb_objs);
+> >> +
+> >> +    for (i =3D OBJS_PER_CLINE; i < RTE_GRAPH_BURST_SIZE; i +=3D
+> >OBJS_PER_CLINE)
+> >> +            rte_prefetch0(&objs[i]);
+> >
+> >Does this prefetching loop make any sense? Unless objs are not passed
+> across
+> >threads this array likely to be in the cache already.
+> >
+> >And if objs are passed across threads, then why do you start prefetching
+> from
+> >the next cache line instead of the first, and why don't you stop at
+> nb_objs?
+> For example if cache size is 64 bytes. Then there will be 8 pointers to
+> mbuf per cache line (if address size is 8 bytes). If nb_objs is 256, then
+> the remaining pointers needs to be prefetched to cache. This loop helps t=
+o
+> prefetch nb_objs pointers to cache.
+>
 
+My comment was about necessity. I'll rephrase and enumerate my questions to
+be more clear:
+1. Are mbuf pointers contained in the objs array not in cache? My
+assumptions here are:
+    - If you run graph in RTC mode, objs array is very likely already be in
+your L1 cache (since some previous node/nodes just put packets there)
+    - In dispatch mode it doesn't make much sense to run this lookup node i=
+n
+an another thread separately from the remaining nodes processing IPv4
+
+2. if you still thing this prefetching loop is required here, then:
+
+> The loop can be changed to stop at nb_objs.
+> for (i =3D OBJS_PER_CLINE; i < nb_objs; i +=3D OBJS_PER_CLINE) { }
+>
+>
+  why you start from the OBJS_PER_CLINE (second cache line of the objs
+array)
+
+3. "i < nb_objs". Should be "i < RTE_ALIGN_CEIL(nb_objs, OBJS_PER_CLINE) /
+OBJS_PER_CLINE"
+
+>
+> >> +
+> >> +#if RTE_GRAPH_BURST_SIZE > 64
+> >> +    for (i =3D 0; i < 4 && i < n_left_from; i++) {
+> >> +            rte_prefetch0(pkts[i]);
+> >> +            rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[i], void *,
+> >> +                                    sizeof(struct rte_ether_hdr)));
+> >
+> >This construction does not make sense to me. Same as similar constructio=
+ns
+> >below
+> >
+> >The second prefetch has memory dependency of the data, that will be
+> >prefetched by the first one. Does removing this prefetch affects
+> performance?
+> The first prefetches the data at mbuf address. The second prefetch is for
+> the address containing ipv4 header. Both can be in separate cache lines, =
+as
+> ipv4 starts at mbuf->buf_addr + mbuf->data_off + sizeof(ethernet header).
+> data_off is generally 64 bytes or 128 bytes depending on cache line size.
+> >
+>
+
+Indeed, both of them are in separate cache lines. But my point here is
+about data dependency for the second prefetch. In order to issue the
+prefetch instruction for the cache line containing the ipv4 header you must
+know the address. You calculate this address by:
+rte_pktmbuf_mtod_offset(pkts[i], void *, sizeof(struct rte_ether_hdr))
+rte_pktmbuf_mtod_offset is accessing mbuf->buf_addr and mbuf->data_off , as
+you mentioned. But, these fields are not in your L1 cache at the moment,
+because you just asked to prefetch them with the previous instruction.
+So my suggestion here would be to look at how it is done in
+ipv4_lookup_sse.c:ip4_lookup_node_process_vec()
+Simplifying, in a run loop it prefetches mbuf + 2, then prefetches CL with
+the v4 header of the mbuf + 1 (assuming in a previous invocation mbuf CL
+was already fetched into L1), and finally does processing of the mbuf + 0
+(again, assuming the previous iteration ipv4 CL was fetched).
+
+
+> >> +    }
+> >> +#endif
+> >> +
+> >> +    i =3D 0;
+> >> +    while (n_left_from >=3D 4) {
+> >> +#if RTE_GRAPH_BURST_SIZE > 64
+> >> +            if (likely(n_left_from > 7)) {
+> >> +                    rte_prefetch0(pkts[4]);
+> >> +                    rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[4], vo=
+id
+> >*,
+> >> +                                    sizeof(struct rte_ether_hdr)));
+> >> +                    rte_prefetch0(pkts[5]);
+> >> +                    rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[5], vo=
+id
+> >*,
+> >> +                                    sizeof(struct rte_ether_hdr)));
+> >> +                    rte_prefetch0(pkts[6]);
+> >> +                    rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[6], vo=
+id
+> >*,
+> >> +                                    sizeof(struct rte_ether_hdr)));
+> >> +                    rte_prefetch0(pkts[7]);
+> >> +                    rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[7], vo=
+id
+> >*,
+> >> +                                    sizeof(struct rte_ether_hdr)));
+> >> +            }
+> >> +#endif
+> >> +
+> >> +            mbuf0 =3D pkts[0];
+> >> +            mbuf1 =3D pkts[1];
+> >> +            mbuf2 =3D pkts[2];
+> >> +            mbuf3 =3D pkts[3];
+> >> +            pkts +=3D 4;
+> >> +            n_left_from -=3D 4;
+> >> +            /* Extract DIP of mbuf0 */
+> >> +            ipv4_hdr =3D rte_pktmbuf_mtod_offset(mbuf0, struct
+> >rte_ipv4_hdr *,
+> >> +                            sizeof(struct rte_ether_hdr));
+> >> +            /* Extract cksum, ttl as ipv4 hdr is in cache */
+> >> +            node_mbuf_priv1(mbuf0, dyn)->cksum =3D ipv4_hdr-
+> >>hdr_checksum;
+> >> +            node_mbuf_priv1(mbuf0, dyn)->ttl =3D ipv4_hdr->time_to_li=
+ve;
+> >> +
+> >> +            ip[i++] =3D rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+> >> +
+> >> +            /* Extract DIP of mbuf1 */
+> >> +            ipv4_hdr =3D rte_pktmbuf_mtod_offset(mbuf1, struct
+> >rte_ipv4_hdr *,
+> >> +                            sizeof(struct rte_ether_hdr));
+> >> +            /* Extract cksum, ttl as ipv4 hdr is in cache */
+> >> +            node_mbuf_priv1(mbuf1, dyn)->cksum =3D ipv4_hdr-
+> >>hdr_checksum;
+> >> +            node_mbuf_priv1(mbuf1, dyn)->ttl =3D ipv4_hdr->time_to_li=
+ve;
+> >> +
+> >> +            ip[i++] =3D rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+> >> +
+> >> +            /* Extract DIP of mbuf2 */
+> >> +            ipv4_hdr =3D rte_pktmbuf_mtod_offset(mbuf2, struct
+> >rte_ipv4_hdr *,
+> >> +                            sizeof(struct rte_ether_hdr));
+> >> +            /* Extract cksum, ttl as ipv4 hdr is in cache */
+> >> +            node_mbuf_priv1(mbuf2, dyn)->cksum =3D ipv4_hdr-
+> >>hdr_checksum;
+> >> +            node_mbuf_priv1(mbuf2, dyn)->ttl =3D ipv4_hdr->time_to_li=
+ve;
+> >> +
+> >> +            ip[i++] =3D rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+> >> +
+> >> +            /* Extract DIP of mbuf3 */
+> >> +            ipv4_hdr =3D rte_pktmbuf_mtod_offset(mbuf3, struct
+> >rte_ipv4_hdr *,
+> >> +                            sizeof(struct rte_ether_hdr));
+> >> +
+> >> +            /* Extract cksum, ttl as ipv4 hdr is in cache */
+> >> +            node_mbuf_priv1(mbuf3, dyn)->cksum =3D ipv4_hdr-
+> >>hdr_checksum;
+> >> +            node_mbuf_priv1(mbuf3, dyn)->ttl =3D ipv4_hdr->time_to_li=
+ve;
+> >> +
+> >> +            ip[i++] =3D rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+> >> +    }
+> >> +    while (n_left_from > 0) {
+> >> +            mbuf0 =3D pkts[0];
+> >> +            pkts +=3D 1;
+> >> +            n_left_from -=3D 1;
+> >> +
+> >> +            /* Extract DIP of mbuf0 */
+> >> +            ipv4_hdr =3D rte_pktmbuf_mtod_offset(mbuf0, struct
+> >rte_ipv4_hdr *,
+> >> +                            sizeof(struct rte_ether_hdr));
+> >> +            /* Extract cksum, ttl as ipv4 hdr is in cache */
+> >> +            node_mbuf_priv1(mbuf0, dyn)->cksum =3D ipv4_hdr-
+> >>hdr_checksum;
+> >> +            node_mbuf_priv1(mbuf0, dyn)->ttl =3D ipv4_hdr->time_to_li=
+ve;
+> >> +
+> >> +            ip[i++] =3D rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+> >> +    }
+> >> +
+> >> +    rc =3D rte_fib_lookup_bulk(fib, ip, next_hop, nb_objs);
+> >> +    if (unlikely(rc !=3D 0))
+> >> +            return 0;
+> >> +
+> >> +    for (i =3D 0; i < nb_objs; i++) {
+> >> +            if (unlikely(next_hop[i] =3D=3D FIB_DEFAULT_NH)) {
+> >> +                    next_hop[i] =3D drop_nh;
+> >maybe it is worth just do define FIB_DEFAULT_NH as a drop_nh vaue to omi=
+t
+> >these next_hop reassignments?
+> Ack.
+> >> +                    lookup_err +=3D 1;
+> >> +            }
+> >> +
+> >> +            mbuf0 =3D (struct rte_mbuf *)objs[i];
+> >> +            node_mbuf_priv1(mbuf0, dyn)->nh =3D (uint16_t)next_hop[i]=
+;
+> >> +            next =3D (uint16_t)(next_hop[i] >> 16);
+> >> +
+> >> +            if (unlikely(next_index ^ next)) {
+> >> +                    /* Copy things successfully speculated till now *=
+/
+> >> +                    rte_memcpy(to_next, from, last_spec *
+> >sizeof(from[0]));
+> >> +                    from +=3D last_spec;
+> >> +                    to_next +=3D last_spec;
+> >> +                    held +=3D last_spec;
+> >> +                    last_spec =3D 0;
+> >> +
+> >> +                    rte_node_enqueue_x1(graph, node, next, from[0]);
+> >> +                    from +=3D 1;
+> >> +            } else {
+> >> +                    last_spec +=3D 1;
+> >> +            }
+> >> +    }
+> >> +
+> >> +    /* !!! Home run !!! */
+> >> +    if (likely(last_spec =3D=3D nb_objs)) {
+> >> +            rte_node_next_stream_move(graph, node, next_index);
+> >> +            return nb_objs;
+> >> +    }
+> >> +
+> >> +    NODE_INCREMENT_XSTAT_ID(node, 0, lookup_err !=3D 0, lookup_err);
+> >> +    held +=3D last_spec;
+> >> +    rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
+> >> +    rte_node_next_stream_put(graph, node, next_index, held);
+> >> +
+> >> +    return nb_objs;
+> >> +}
+> >> +
+> >>   RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip4_fib_route_add, 25.07)
+> >>   int
+> >>   rte_node_ip4_fib_route_add(uint32_t ip, uint8_t depth, uint16_t
+> >> next_hop, @@ -147,6 +310,7 @@ static struct rte_node_xstats
+> >ip4_lookup_fib_xstats =3D {
+> >>   };
+> >>
+> >>   static struct rte_node_register ip4_lookup_fib_node =3D {
+> >> +    .process =3D ip4_lookup_fib_node_process,
+> >>      .name =3D "ip4_lookup_fib",
+> >>
+> >>      .init =3D ip4_lookup_fib_node_init,
+> >
+> >--
+> >Regards,
+> >Vladimir
+>
+>
+
+--=20
+Regards,
+Vladimir
+
+--00000000000073e0250633259cdd
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr">Hi Ankur,</div><br><div class=3D"gmail_qu=
+ote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">=D0=BF=D1=
+=82, 18 =D0=B0=D0=BF=D1=80. 2025=E2=80=AF=D0=B3. =D0=B2 15:45, Ankur Dwived=
+i &lt;<a href=3D"mailto:adwivedi@marvell.com">adwivedi@marvell.com</a>&gt;:=
+<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8=
+ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
+Hi Vladimir,<br>
+&gt;&gt; diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c=
+<br>
+&gt;&gt; index e87864e672..c535b191f8 100644<br>
+&gt;&gt; --- a/lib/node/ip4_lookup_fib.c<br>
+&gt;&gt; +++ b/lib/node/ip4_lookup_fib.c<br>
+&gt;&gt; @@ -40,6 +40,169 @@ static struct ip4_lookup_fib_node_main<br>
+&gt;ip4_lookup_fib_nm;<br>
+&gt;&gt;=C2=A0 =C2=A0#define IP4_LOOKUP_NODE_PRIV1_OFF(ctx) \<br>
+&gt;&gt;=C2=A0 =C2=A0 =C2=A0 (((struct ip4_lookup_fib_node_ctx *)ctx)-&gt;m=
+buf_priv1_off)<br>
+&gt;&gt;<br>
+&gt;&gt; +static uint16_t<br>
+&gt;&gt; +ip4_lookup_fib_node_process(struct rte_graph *graph, struct rte_n=
+ode<br>
+&gt;*node, void **objs,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 uint16_t nb_objs)<br>
+&gt;&gt; +{<br>
+&gt;&gt; +=C2=A0 =C2=A0 struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3, **p=
+kts;<br>
+&gt;&gt; +=C2=A0 =C2=A0 struct rte_fib *fib =3D IP4_LOOKUP_NODE_FIB(node-&g=
+t;ctx);<br>
+&gt;&gt; +=C2=A0 =C2=A0 const int dyn =3D IP4_LOOKUP_NODE_PRIV1_OFF(node-&g=
+t;ctx);<br>
+&gt;&gt; +=C2=A0 =C2=A0 struct rte_ipv4_hdr *ipv4_hdr;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint64_t next_hop[nb_objs];<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint16_t lookup_err =3D 0;<br>
+&gt;&gt; +=C2=A0 =C2=A0 void **to_next, **from;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint16_t last_spec =3D 0;<br>
+&gt;&gt; +=C2=A0 =C2=A0 rte_edge_t next_index;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint16_t n_left_from;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint32_t ip[nb_objs];<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint16_t held =3D 0;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint32_t drop_nh;<br>
+&gt;&gt; +=C2=A0 =C2=A0 uint16_t next;<br>
+&gt;&gt; +=C2=A0 =C2=A0 int i, rc;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 /* Speculative next */<br>
+&gt;&gt; +=C2=A0 =C2=A0 next_index =3D RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;<br=
+>
+&gt;&gt; +=C2=A0 =C2=A0 /* Drop node */<br>
+&gt;&gt; +=C2=A0 =C2=A0 drop_nh =3D ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT=
+_DROP) &lt;&lt;<br>
+&gt;16;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 pkts =3D (struct rte_mbuf **)objs;<br>
+&gt;&gt; +=C2=A0 =C2=A0 from =3D objs;<br>
+&gt;&gt; +=C2=A0 =C2=A0 n_left_from =3D nb_objs;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 /* Get stream for the speculated next node */<br>
+&gt;&gt; +=C2=A0 =C2=A0 to_next =3D rte_node_next_stream_get(graph, node, n=
+ext_index,<br>
+&gt;&gt; +nb_objs);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 for (i =3D OBJS_PER_CLINE; i &lt; RTE_GRAPH_BURST_S=
+IZE; i +=3D<br>
+&gt;OBJS_PER_CLINE)<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_prefetch0(&amp;objs=
+[i]);<br>
+&gt;<br>
+&gt;Does this prefetching loop make any sense? Unless objs are not passed a=
+cross<br>
+&gt;threads this array likely to be in the cache already.<br>
+&gt;<br>
+&gt;And if objs are passed across threads, then why do you start prefetchin=
+g from<br>
+&gt;the next cache line instead of the first, and why don&#39;t you stop at=
+ nb_objs?<br>
+For example if cache size is 64 bytes. Then there will be 8 pointers to mbu=
+f per cache line (if address size is 8 bytes). If nb_objs is 256, then the =
+remaining pointers needs to be prefetched to cache. This loop helps to pref=
+etch nb_objs pointers to cache. <br></blockquote><div><br></div><div>My com=
+ment was about necessity. I&#39;ll rephrase and enumerate my questions to b=
+e more clear:</div><div>1. Are mbuf pointers contained in the objs array no=
+t in cache? My assumptions here are:</div><div>=C2=A0=C2=A0=C2=A0 - If you =
+run graph in RTC mode,=C2=A0objs array is very likely already be in your L1=
+ cache (since some previous node/nodes just put packets there)</div><div>=
+=C2=A0=C2=A0=C2=A0 - In dispatch mode<span style=3D"white-space:pre-wrap"> =
+it </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:p=
+re-wrap">doesn</span><span style=3D"white-space:pre-wrap">&#39;t make </spa=
+n><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap"=
+>much</span><span style=3D"white-space:pre-wrap"> </span><span class=3D"gma=
+il-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">sense</span><span s=
+tyle=3D"white-space:pre-wrap"> to </span><span class=3D"gmail-aNeGP0gI0B9AV=
+8JaHPyH" style=3D"white-space:pre-wrap">run</span><span style=3D"white-spac=
+e:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"whi=
+te-space:pre-wrap">this</span><span style=3D"white-space:pre-wrap"> lookup<=
+/span><span style=3D"white-space:pre-wrap"> </span><span class=3D"gmail-aNe=
+GP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">node</span><span style=3D=
+"white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" s=
+tyle=3D"white-space:pre-wrap">in</span><span style=3D"white-space:pre-wrap"=
+> an another</span><span style=3D"white-space:pre-wrap"> </span><span class=
+=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">thread</span=
+><span style=3D"white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI=
+0B9AV8JaHPyH" style=3D"white-space:pre-wrap">separately</span><span style=
+=3D"white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH=
+" style=3D"white-space:pre-wrap">from</span><span style=3D"white-space:pre-=
+wrap"> the </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white=
+-space:pre-wrap">remaining</span><span style=3D"white-space:pre-wrap"> </sp=
+an><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap=
+">nodes</span><span style=3D"white-space:pre-wrap"> </span><span class=3D"g=
+mail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">processing</span>=
+<span style=3D"white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0=
+B9AV8JaHPyH" style=3D"white-space:pre-wrap">IPv4</span></div><div><br></div=
+><div>2. if you still thing this prefetching loop is required here, then: <=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+The loop can be changed to stop at nb_objs.<br>
+for (i =3D OBJS_PER_CLINE; i &lt; nb_objs; i +=3D OBJS_PER_CLINE) { }<br>=
+=C2=A0 <br></blockquote><div>=C2=A0 why you start from the OBJS_PER_CLINE (=
+second cache line of the objs array)</div><div>=C2=A0=C2=A0</div><div>3. &q=
+uot;i &lt; nb_objs&quot;. Should be &quot;i &lt; RTE_ALIGN_CEIL(nb_objs, OB=
+JS_PER_CLINE) / OBJS_PER_CLINE&quot;</div><div><br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">
+&gt;<br>
+&gt;&gt; +<br>
+&gt;&gt; +#if RTE_GRAPH_BURST_SIZE &gt; 64<br>
+&gt;&gt; +=C2=A0 =C2=A0 for (i =3D 0; i &lt; 4 &amp;&amp; i &lt; n_left_fro=
+m; i++) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_prefetch0(pkts[i]);=
+<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_prefetch0(rte_pktmb=
+uf_mtod_offset(pkts[i], void *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struc=
+t rte_ether_hdr)));<br>
+&gt;<br>
+&gt;This construction does not make sense to me. Same as similar constructi=
+ons<br>
+&gt;below<br>
+&gt;<br>
+&gt;The second prefetch has memory dependency of the data, that will be<br>
+&gt;prefetched by the first one. Does removing this prefetch affects perfor=
+mance?<br>
+The first prefetches the data at mbuf address. The second prefetch is for t=
+he address containing ipv4 header. Both can be in separate cache lines, as =
+ipv4 starts at mbuf-&gt;buf_addr + mbuf-&gt;data_off + sizeof(ethernet head=
+er). data_off is generally 64 bytes or 128 bytes depending on cache line si=
+ze.<br>
+&gt;<br></blockquote><div><br></div><div><span class=3D"gmail-aNeGP0gI0B9AV=
+8JaHPyH" style=3D"white-space:pre-wrap">Indeed</span><span class=3D"gmail-a=
+NeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">,</span><span style=3D"=
+white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" st=
+yle=3D"white-space:pre-wrap">both</span><span style=3D"white-space:pre-wrap=
+"> of </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-spac=
+e:pre-wrap">them</span><span style=3D"white-space:pre-wrap"> </span><span c=
+lass=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">are</spa=
+n><span style=3D"white-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0g=
+I0B9AV8JaHPyH" style=3D"white-space:pre-wrap">in</span><span style=3D"white=
+-space:pre-wrap"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=
+=3D"white-space:pre-wrap">separate</span><span style=3D"white-space:pre-wra=
+p"> </span><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:=
+pre-wrap">cache</span><span style=3D"white-space:pre-wrap"> </span><span cl=
+ass=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap">lines</sp=
+an><span class=3D"gmail-aNeGP0gI0B9AV8JaHPyH" style=3D"white-space:pre-wrap=
+">. But my point here is about data dependency for the second prefetch. In =
+order to issue the prefetch instruction for the cache line containing the i=
+pv4 header you must know the address. You calculate this address by:</span>=
+</div><div>rte_pktmbuf_mtod_offset(pkts[i], void *, sizeof(struct rte_ether=
+_hdr))</div><div>rte_pktmbuf_mtod_offset is accessing mbuf-&gt;buf_addr and=
+ mbuf-&gt;data_off , as you mentioned. But, these fields are not in your L1=
+ cache at the moment, because you just asked to prefetch them with the prev=
+ious instruction.</div><div>So my suggestion here would be to look at how i=
+t is done in ipv4_lookup_sse.c:ip4_lookup_node_process_vec()</div><div>Simp=
+lifying, in a run loop it prefetches mbuf + 2, then prefetches CL with the =
+v4 header of the mbuf + 1 (assuming in a previous invocation mbuf CL was al=
+ready fetched into L1), and finally does processing of the mbuf=C2=A0+ 0 (a=
+gain, assuming the previous iteration ipv4 CL was fetched).</div><div>=C2=
+=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+&gt;&gt; +=C2=A0 =C2=A0 }<br>
+&gt;&gt; +#endif<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 i =3D 0;<br>
+&gt;&gt; +=C2=A0 =C2=A0 while (n_left_from &gt;=3D 4) {<br>
+&gt;&gt; +#if RTE_GRAPH_BURST_SIZE &gt; 64<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (likely(n_left_from =
+&gt; 7)) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(pkts[4]);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[4], void<br>
+&gt;*,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struc=
+t rte_ether_hdr)));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(pkts[5]);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[5], void<br>
+&gt;*,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struc=
+t rte_ether_hdr)));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(pkts[6]);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[6], void<br>
+&gt;*,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struc=
+t rte_ether_hdr)));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(pkts[7]);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[7], void<br>
+&gt;*,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struc=
+t rte_ether_hdr)));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
+&gt;&gt; +#endif<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf0 =3D pkts[0];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf1 =3D pkts[1];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf2 =3D pkts[2];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf3 =3D pkts[3];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pkts +=3D 4;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_left_from -=3D 4;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract DIP of mbuf0=
+ */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ipv4_hdr =3D rte_pktmbu=
+f_mtod_offset(mbuf0, struct<br>
+&gt;rte_ipv4_hdr *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struct rte_ether_hdr));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract cksum, ttl a=
+s ipv4 hdr is in cache */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf0, =
+dyn)-&gt;cksum =3D ipv4_hdr-<br>
+&gt;&gt;hdr_checksum;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf0, =
+dyn)-&gt;ttl =3D ipv4_hdr-&gt;time_to_live;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ip[i++] =3D rte_be_to_c=
+pu_32(ipv4_hdr-&gt;dst_addr);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract DIP of mbuf1=
+ */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ipv4_hdr =3D rte_pktmbu=
+f_mtod_offset(mbuf1, struct<br>
+&gt;rte_ipv4_hdr *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struct rte_ether_hdr));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract cksum, ttl a=
+s ipv4 hdr is in cache */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf1, =
+dyn)-&gt;cksum =3D ipv4_hdr-<br>
+&gt;&gt;hdr_checksum;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf1, =
+dyn)-&gt;ttl =3D ipv4_hdr-&gt;time_to_live;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ip[i++] =3D rte_be_to_c=
+pu_32(ipv4_hdr-&gt;dst_addr);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract DIP of mbuf2=
+ */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ipv4_hdr =3D rte_pktmbu=
+f_mtod_offset(mbuf2, struct<br>
+&gt;rte_ipv4_hdr *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struct rte_ether_hdr));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract cksum, ttl a=
+s ipv4 hdr is in cache */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf2, =
+dyn)-&gt;cksum =3D ipv4_hdr-<br>
+&gt;&gt;hdr_checksum;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf2, =
+dyn)-&gt;ttl =3D ipv4_hdr-&gt;time_to_live;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ip[i++] =3D rte_be_to_c=
+pu_32(ipv4_hdr-&gt;dst_addr);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract DIP of mbuf3=
+ */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ipv4_hdr =3D rte_pktmbu=
+f_mtod_offset(mbuf3, struct<br>
+&gt;rte_ipv4_hdr *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struct rte_ether_hdr));<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract cksum, ttl a=
+s ipv4 hdr is in cache */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf3, =
+dyn)-&gt;cksum =3D ipv4_hdr-<br>
+&gt;&gt;hdr_checksum;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf3, =
+dyn)-&gt;ttl =3D ipv4_hdr-&gt;time_to_live;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ip[i++] =3D rte_be_to_c=
+pu_32(ipv4_hdr-&gt;dst_addr);<br>
+&gt;&gt; +=C2=A0 =C2=A0 }<br>
+&gt;&gt; +=C2=A0 =C2=A0 while (n_left_from &gt; 0) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf0 =3D pkts[0];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pkts +=3D 1;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_left_from -=3D 1;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract DIP of mbuf0=
+ */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ipv4_hdr =3D rte_pktmbu=
+f_mtod_offset(mbuf0, struct<br>
+&gt;rte_ipv4_hdr *,<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(struct rte_ether_hdr));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Extract cksum, ttl a=
+s ipv4 hdr is in cache */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf0, =
+dyn)-&gt;cksum =3D ipv4_hdr-<br>
+&gt;&gt;hdr_checksum;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf0, =
+dyn)-&gt;ttl =3D ipv4_hdr-&gt;time_to_live;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ip[i++] =3D rte_be_to_c=
+pu_32(ipv4_hdr-&gt;dst_addr);<br>
+&gt;&gt; +=C2=A0 =C2=A0 }<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 rc =3D rte_fib_lookup_bulk(fib, ip, next_hop, nb_ob=
+js);<br>
+&gt;&gt; +=C2=A0 =C2=A0 if (unlikely(rc !=3D 0))<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return 0;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 for (i =3D 0; i &lt; nb_objs; i++) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (unlikely(next_hop[i=
+] =3D=3D FIB_DEFAULT_NH)) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 next_hop[i] =3D drop_nh;<br>
+&gt;maybe it is worth just do define FIB_DEFAULT_NH as a drop_nh vaue to om=
+it<br>
+&gt;these next_hop reassignments?<br>
+Ack.<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 lookup_err +=3D 1;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf0 =3D (struct rte_m=
+buf *)objs[i];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 node_mbuf_priv1(mbuf0, =
+dyn)-&gt;nh =3D (uint16_t)next_hop[i];<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 next =3D (uint16_t)(nex=
+t_hop[i] &gt;&gt; 16);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (unlikely(next_index=
+ ^ next)) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 /* Copy things successfully speculated till now */<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_memcpy(to_next, from, last_spec *<br>
+&gt;sizeof(from[0]));<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 from +=3D last_spec;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 to_next +=3D last_spec;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 held +=3D last_spec;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 last_spec =3D 0;<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 rte_node_enqueue_x1(graph, node, next, from[0]);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 from +=3D 1;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 last_spec +=3D 1;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
+&gt;&gt; +=C2=A0 =C2=A0 }<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 /* !!! Home run !!! */<br>
+&gt;&gt; +=C2=A0 =C2=A0 if (likely(last_spec =3D=3D nb_objs)) {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_node_next_stream_mo=
+ve(graph, node, next_index);<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return nb_objs;<br>
+&gt;&gt; +=C2=A0 =C2=A0 }<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 NODE_INCREMENT_XSTAT_ID(node, 0, lookup_err !=3D 0,=
+ lookup_err);<br>
+&gt;&gt; +=C2=A0 =C2=A0 held +=3D last_spec;<br>
+&gt;&gt; +=C2=A0 =C2=A0 rte_memcpy(to_next, from, last_spec * sizeof(from[0=
+]));<br>
+&gt;&gt; +=C2=A0 =C2=A0 rte_node_next_stream_put(graph, node, next_index, h=
+eld);<br>
+&gt;&gt; +<br>
+&gt;&gt; +=C2=A0 =C2=A0 return nb_objs;<br>
+&gt;&gt; +}<br>
+&gt;&gt; +<br>
+&gt;&gt;=C2=A0 =C2=A0RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip4_fib_route_=
+add, 25.07)<br>
+&gt;&gt;=C2=A0 =C2=A0int<br>
+&gt;&gt;=C2=A0 =C2=A0rte_node_ip4_fib_route_add(uint32_t ip, uint8_t depth,=
+ uint16_t<br>
+&gt;&gt; next_hop, @@ -147,6 +310,7 @@ static struct rte_node_xstats<br>
+&gt;ip4_lookup_fib_xstats =3D {<br>
+&gt;&gt;=C2=A0 =C2=A0};<br>
+&gt;&gt;<br>
+&gt;&gt;=C2=A0 =C2=A0static struct rte_node_register ip4_lookup_fib_node =
+=3D {<br>
+&gt;&gt; +=C2=A0 =C2=A0 .process =3D ip4_lookup_fib_node_process,<br>
+&gt;&gt;=C2=A0 =C2=A0 =C2=A0 .name =3D &quot;ip4_lookup_fib&quot;,<br>
+&gt;&gt;<br>
+&gt;&gt;=C2=A0 =C2=A0 =C2=A0 .init =3D ip4_lookup_fib_node_init,<br>
+&gt;<br>
+&gt;--<br>
+&gt;Regards,<br>
+&gt;Vladimir<br>
+<br>
+</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
+iv dir=3D"ltr"><div>Regards,<br></div>Vladimir<br></div></div></div>
+
+--00000000000073e0250633259cdd--
