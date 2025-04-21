@@ -2,171 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AA2C369AB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Apr 2025 06:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099A1C369AB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Apr 2025 06:46:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0325040156;
-	Mon, 21 Apr 2025 08:18:22 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 0C61B40151;
- Mon, 21 Apr 2025 08:18:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1745216300; x=1776752300;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=wIexAO/dvlto+K7efdHqW2438eR87jFMqZvcG7pAYrY=;
- b=Wfdlzn4rzYJGa0ATlouC9SO6o7AnD6q5Y6bPODxRnFauJ7fNrcbKFyoM
- m1jaj1uQzBV00GsoZL3QaTukVO875L285pe6LwxT8kS9pWcw8PB+ZatqT
- SnnctR/jJq+pzjc5GE+06grnR9XzdO1KH8JiNQwVoEZcamE6yjqebjwZE
- C51gyIdL+HuufhIMLYTK20doXZiFHj7wdD4TViBwqFwIg2DzVE9EBm/Di
- fDlq5QoqGW5E8QoUmsxcU5lK/zhAm7gnSq9rTsBHMjcC0m0qADjj9Ql1u
- EjaugOpKAgPKwctoErA7oTxxeZwBkRmx3xq16s2za2k/AuobDJzgnZVCj w==;
-X-CSE-ConnectionGUID: ecre12FQQvaxg/iCNjdwGw==
-X-CSE-MsgGUID: +cou7zsGSdeGKpj10AFQLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11409"; a="46915252"
-X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; d="scan'208";a="46915252"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Apr 2025 23:18:18 -0700
-X-CSE-ConnectionGUID: fPqZ9nmqTAWYVmTwvY8zOg==
-X-CSE-MsgGUID: 5d68Eb3FT5icP0Izux3lOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; d="scan'208";a="162681317"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Apr 2025 23:18:18 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id BDE6A40156;
+	Mon, 21 Apr 2025 08:46:39 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 7282640151
+ for <dev@dpdk.org>; Mon, 21 Apr 2025 08:46:38 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53KNadHm002108;
+ Sun, 20 Apr 2025 23:46:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=g2ZGT9lGsaJ6O5O6CJvMdq5
+ By2+aZE/gJlZV/UZHl4c=; b=S8hsCXfJa8JFhQR6jJGXTniYLelf4yxKFIsEfL/
+ Ha3/OBXO+wi69wf8BuUw7zyI8Jo6aZfjmb032/HipBf/r2J+D5Llr/u9g2XIxn0n
+ 2TfKugqJhNjVisoT7Si/fKIjectwEVS21qR83HrcJc/r/8FWgOtLP7RUHj5AfO62
+ k+wWEJWK/Di2KRcoEQLiHCQOcPKa7PgJtgxH467dHcdWMMEOiQIiqSP+GH2JPZDy
+ YyOxpkFIK+1ovCxv52fB5RaSUtFvSvwg5TBjxfWhkRO+AfE4PfIcLfOrvunUpwgI
+ J87s2ADz09t51bgfqprqTeKDO2NK2jGC8FTrMDdDgtizZfQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46496qaj61-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 20 Apr 2025 23:46:37 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Sun, 20 Apr 2025 23:18:17 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Sun, 20 Apr 2025 23:18:17 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Sun, 20 Apr 2025 23:18:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=umkRwzs0gCAp2MF3ATk/iRsv0DDYO1piCR4pGJXPO682DANqwBl9kfsqrfVuDLwTnMmUrhOSNoNFugFOhSPoS5vewV015FJN1Xs10wS9cRKfvFqK6wDFijIlBLhjxkIv1mftHfhynOVpNiDntcc35bHO1AZTyKxpnpU5noGltHHYm757jV2WicsB0NAgddfD7Wa2H3KaB5emb6jAd5jt9Gk2l/or1Znaxc4HhidPWcLQ6xiQk9bSemrgiTbzGgNjcIxAYxch0DsRgL9Rt+TwsuxyYz161Y2GjCfBOLGSU2aXKtFH5GsWYhy0/Uq2pRTSxMX2Lb8jKuFnvhXZ9jtXQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1cbyGK961EYxxsbEolcY1tun1U5CG58NBeJm7lkZTk4=;
- b=X3ZTK55T1hjhTXUjFT6R4jwnH1yhAJ51T1W6Db4OWgAC1mW8vpZDGqnaOzRf49LQ4SUlJeCd+bIURpcahIvVmB+kKV5UmkvMV7joLWD48smtgcIH62LOV7lMz7c2WIGmAdSBH357wsHrtTCX2KSEwuw2oaKYesuuqasAZUxjHb8m9O5Bp3s/2oOldG5FedsuA+8nbEN7vvV/mEbkiVw/iymkDv9RpxSxRf82zIxN1OZTT+gSOVq+0FVk6oO5fyfnfyNohzJapGHlOe285Vmz7YnUkwOkZ+68xmDMiMNP2PXcr28SXxcyLh6kC3jSmTLfuN2odEiC5bMrbCphpluvEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SA1PR11MB5924.namprd11.prod.outlook.com (2603:10b6:806:23b::14)
- by SJ0PR11MB5868.namprd11.prod.outlook.com (2603:10b6:a03:42b::6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.27; Mon, 21 Apr
- 2025 06:18:13 +0000
-Received: from SA1PR11MB5924.namprd11.prod.outlook.com
- ([fe80::468a:436e:8691:6d66]) by SA1PR11MB5924.namprd11.prod.outlook.com
- ([fe80::468a:436e:8691:6d66%2]) with mapi id 15.20.8655.024; Mon, 21 Apr 2025
- 06:18:13 +0000
-From: "Xu, HailinX" <hailinx.xu@intel.com>
-To: Kevin Traynor <ktraynor@redhat.com>, "stable@dpdk.org" <stable@dpdk.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Abhishek Marathe
- <Abhishek.Marathe@microsoft.com>, Ali Alnubani <alialnu@nvidia.com>, "David
- Christensen" <drc@linux.vnet.ibm.com>, Hemant Agrawal
- <hemant.agrawal@nxp.com>, "Stokes, Ian" <ian.stokes@intel.com>, Jerin Jacob
- <jerinj@marvell.com>, "Mcnamara, John" <john.mcnamara@intel.com>, "Ju-Hyoung
- Lee" <juhlee@microsoft.com>, Luca Boccassi <bluca@debian.org>, Pei Zhang
- <pezhang@redhat.com>, Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon
- <thomas@monjalon.net>, "yanghliu@redhat.com" <yanghliu@redhat.com>
-Subject: RE: 24.11.2 patches review and test
-Thread-Topic: 24.11.2 patches review and test
-Thread-Index: AQHbn8pY7zK3+jluS0S1GAc81wQs97OtyVcg
-Date: Mon, 21 Apr 2025 06:18:13 +0000
-Message-ID: <SA1PR11MB5924B25AAEBE0D441AC306779FB82@SA1PR11MB5924.namprd11.prod.outlook.com>
-References: <20250328101435.250876-1-ktraynor@redhat.com>
-In-Reply-To: <20250328101435.250876-1-ktraynor@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB5924:EE_|SJ0PR11MB5868:EE_
-x-ms-office365-filtering-correlation-id: 74f73b40-4caf-4d00-ad88-08dd809c4c05
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|7416014|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?aSslYB3Uo9V7cmybkfuUyJyrraI8h8keaikuWjlVapSWQAA4nw3zTfeZV+r7?=
- =?us-ascii?Q?p/0WJrfwP3kw8XbqT/os7i16F8Xwr+zTsl9scan1mxjMURtwRGczNMqo0E97?=
- =?us-ascii?Q?ZrrewfszD7hlA7+OdKSimP9Hz638IKD58+vcDa86jv+Wpd1sUjZQH5za7kqO?=
- =?us-ascii?Q?drfdTAdNdFMtfDSuler6dR3pwSrEam3FRLtnB8VjsGiQ05VIMDrRNmKlLx+2?=
- =?us-ascii?Q?SKEpI6YJPMkGRg/FhzTAsC9br2FLs0Nb8ISLiP+pS3ojHDEAlsmZwQq67vKz?=
- =?us-ascii?Q?PC9QeLjRXP/ahFkkp2N2I6CaTLi8Ifr2CXUFkAoKdQlPOkonw5WUrsgOz7Pw?=
- =?us-ascii?Q?YQeR59v18WYH4abMZszC4E+Yn7mkUSV+443iqtEzvY4Eq9hdn9seHJqBHmqe?=
- =?us-ascii?Q?PX1nJ+do3FrgZBa/cBw9TLKCB0xFxkxhmmx4eJDsa84aUdfjPzVewR4t1A5x?=
- =?us-ascii?Q?n+nHhI2LKfCwnuOy8+nuSnc1Ne+/R+DmmB8uQnEAK3aiTDLb0Z5l7snrLR8V?=
- =?us-ascii?Q?WPp+W+nWF4p//Q9V2/t9r7bhlXG1JIE+ikrBxUnlfIdGu8obp+7xbvzHF7NA?=
- =?us-ascii?Q?R8IJAffkf4gpYMH0YIdrElfHk+wVfqgoYf800xbofhdyPGNi2Ao6xiHl5IRx?=
- =?us-ascii?Q?zwCKyuTL73JpFFJD9wFC08et73V64iscg7JcERyoDN2zhsPXojzBQxTmkNMQ?=
- =?us-ascii?Q?BwwBIcwMSSIhfXyi2Cs8QTD3ngL+YPZ1eeSAjs6Ohrbdz7L5mReNXQ6PlWIq?=
- =?us-ascii?Q?1ceQ9nhBBQ+eshsS99F4mE8bnDAV6Zn3BlOfO9HkxRcF9vMNswx1LM/JKkoc?=
- =?us-ascii?Q?iBdiPTIXUQCreLQeZDzl+tWgiLjQnQm1AJZi9LdGUPGrLaV/2HbW8r0WmWcS?=
- =?us-ascii?Q?zfT9tWkuLUD0jw4e3eSwGniPum4ltrZwXn+nN4Af5ANDlIrliyARmRAAFq4H?=
- =?us-ascii?Q?dK3raji+25fO9O8bCZi0ItwIQW2luGAwFrCdrVUTFvruviefpzsLZ+R8yIPe?=
- =?us-ascii?Q?UcbZKUNs3hLHKl9KoZaN3fgaXPT8dZGFTddhrRmlg2XHlwHpnyKtJAE5oO8U?=
- =?us-ascii?Q?bQ5ypmuIUtnjFV5sPy1nPP+nPLqBzmbV5s7WWY7ti40tBEcA3DS6O7YRF0Ne?=
- =?us-ascii?Q?KPvTPX4rPxeooZQMTIFQcv4c5XLeqX22K/ef4Ht8IbIWdT2tlYIoRRyGtdPu?=
- =?us-ascii?Q?dJ5h7TCVSQEAvcx0MhnqhnV5WhoaveNJOhc2Bcvi2zIhmF/oLnpf2Tcyw7/Q?=
- =?us-ascii?Q?qiToS1jHF1U3nZhUukHmc0JzLEtpchesB80aJmd0eJplgFpdQtcuP5AALuXt?=
- =?us-ascii?Q?fIKdPV0YfqwDN2rWbFN502PkLy9sCYMOkSgTGh8Lkc3/wEj8J/OMZeA+fNS+?=
- =?us-ascii?Q?A4OshAQn9uhm+Bmscf2QPLnp2B3MNaieFn0QnqBTldYEE44eUfa25dU7tz71?=
- =?us-ascii?Q?1z84EtSvzwRi1MaUK4TBJWsoYpR33RS+?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR11MB5924.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7RiCxkBRQKioPVX2SsKc0ox6oJxP7km19t24oVcy14vUusz8oCxlZwU4WQFS?=
- =?us-ascii?Q?3LMb2aXyGbqaVZDuqhxw5DSyTU0Puw2Fz0KdtbDslgMpFBMiwEF1Sz8DBI6i?=
- =?us-ascii?Q?vvTKkZkQt4Vi4iK/+yKHxBf/IP5BS+U24we4oBpaE3yGjjConz8Wlp/3ArcX?=
- =?us-ascii?Q?GYHbECTh3NlIFUJ/RL4q335WWO/r4ue/DMJPkwIZ/Ak7Qt6vKMVJt/+cRG1v?=
- =?us-ascii?Q?0/+/KLj44jnm9az0zXYO1EPTXQ/Q37JzbqoKDsxePkRofxs2VyRNwl+qfSPd?=
- =?us-ascii?Q?Lm8hfHZ+ZWRfMlKix6MiTg2WcwELz33lTa+MtBX82M+pl+yscvD1sg5VM55z?=
- =?us-ascii?Q?cMKvSHgvpxHx615dsUlGCDqX1ta+5UWFKKBY6jSPc2S23NUZuJBa13Lm1ye6?=
- =?us-ascii?Q?ulU07rwqzrJRBceYbLZfnv8ZAwmGkXwrf1ic9NXNmEkEyVG3xOdVzbfLEBip?=
- =?us-ascii?Q?vy3e0BYhBGBTYi2Wo5ABxkQP5m18WWkMK2Iu+CPQh3PofvXZEBsilIqyCd7L?=
- =?us-ascii?Q?rybyz1ZNVh32wAiW4WBCgrDYO7xM2XjiYw1Fo9LITt4H8wicedd2OhO4DC5N?=
- =?us-ascii?Q?ud6V/+ZfI3D0Pb21QWO3xnZ/54OCKlSYPEfx3ttQZ4YxvgboFoMIF3luC6Ec?=
- =?us-ascii?Q?nguV542cjEIlpoKfRjafOZ+d+cXcYTbiELdO06iDDG5xYMi1U2CcEKox0PcA?=
- =?us-ascii?Q?53aXsQCySPuddQqFo53DIfgfU5R6BXnKODqYU1blvQkoSG2vgNoAiyztPcJ9?=
- =?us-ascii?Q?ChVpVCw/jntfrE9BAvToIzDYFfJjPz2MwXR2u/soPN4L3mI6eYzw+NnOLJDf?=
- =?us-ascii?Q?eQ+NIMccZSBOKDkKpRw3akDbj1EA6KiNzrxwVUjiEmvloY78iUMSWIXZUfUh?=
- =?us-ascii?Q?HjAnlAJBGS4aiAjfr/YThbIZFU7Eqe5gMF1Ym1tdBSFPToWR6FpVrNh2fRpJ?=
- =?us-ascii?Q?DvXmV9e1EjrxVTzDtjSH3Xuro335o2dkreCzFVnzMxdRIn0EVxrbM3EVqDXa?=
- =?us-ascii?Q?KaCCSjgENeypX5zIqq8CAzrIgXuGP+dExe24/1I37rkLz+d9g5GNmKInvsXF?=
- =?us-ascii?Q?o0NJSILBwEbA57ISVC+wfW6InNi3fi45CwSjsRFe90rgw6AQt4NSQk2jOPdu?=
- =?us-ascii?Q?AwpTiuUmP+2ggVMhdjCF/UkDagNyhxd4/3jN/nLKOl0Y/NLc5t38D5DyQaYN?=
- =?us-ascii?Q?uil/3lzikolG6Y9KJEIh71YndvckP4C/6Ghnt6XqWKAYv1ftoT7maRCMKH04?=
- =?us-ascii?Q?ohOjhxnB6Z6K3MWIeQYULpxNzbbyauQv+epbC8tiClbyLsowHA5Wfuq4fZBd?=
- =?us-ascii?Q?5eVKKnRFCwtU2zkUmhh2HSAc5akAjGfvmWegVf8fJGDy1hQ2Vh7gqDHRAiAx?=
- =?us-ascii?Q?EfydiFpa9PjFTLl0lUc5C9J9mhkbroxKBIjjqhNZYrrypRvbQII7CktyFUP6?=
- =?us-ascii?Q?iAd7Imtluy460ZXOHcBwkz2AgOQHYaKKUuYH+2JvGMpGYDsDglkcsPFXSWe9?=
- =?us-ascii?Q?OfeNpRFxWyopgU/5KKhCPZMPL3TB/Q6uTCm0c4aBZzo7FShUlFgdZXQmxN2e?=
- =?us-ascii?Q?+f6NenxYPVFtGdeuznAndK9uf+4M1JYd6XoBr+Xs?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.1544.4; Sun, 20 Apr 2025 23:46:35 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 20 Apr 2025 23:46:35 -0700
+Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
+ [10.28.163.68])
+ by maili.marvell.com (Postfix) with ESMTP id A5A743F70A8;
+ Sun, 20 Apr 2025 23:46:33 -0700 (PDT)
+From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>
+CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+Subject: [PATCH] test/crypto: add test case for modex group 24
+Date: Mon, 21 Apr 2025 12:16:25 +0530
+Message-ID: <20250421064629.1743-1-gmuthukrishn@marvell.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB5924.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74f73b40-4caf-4d00-ad88-08dd809c4c05
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2025 06:18:13.4896 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: J/4GGSqwSxsT8l2DIXrpFGk6vVTuVO07Vec7r6pcoQTY7H0K86IMpmiyZJT6ZDJORzSXA3F1pytpFn1tDPh51Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5868
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: PkQ-kfR9Cg--a3gvWt72hYK9Hl0sTOuu
+X-Authority-Analysis: v=2.4 cv=LoiSymdc c=1 sm=1 tr=0 ts=6805e9cd cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=KHJLsCZVwz955OL4HWQA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: PkQ-kfR9Cg--a3gvWt72hYK9Hl0sTOuu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-21_03,2025-04-17_01,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -180,91 +71,286 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Kevin Traynor <ktraynor@redhat.com>
-> Sent: Friday, March 28, 2025 6:15 PM
-> To: stable@dpdk.org
-> Cc: dev@dpdk.org; Abhishek Marathe <Abhishek.Marathe@microsoft.com>;
-> Ali Alnubani <alialnu@nvidia.com>; David Christensen
-> <drc@linux.vnet.ibm.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
-> Stokes, Ian <ian.stokes@intel.com>; Jerin Jacob <jerinj@marvell.com>;
-> Mcnamara, John <john.mcnamara@intel.com>; Ju-Hyoung Lee
-> <juhlee@microsoft.com>; Kevin Traynor <ktraynor@redhat.com>; Luca
-> Boccassi <bluca@debian.org>; Pei Zhang <pezhang@redhat.com>; Raslan
-> Darawsheh <rasland@nvidia.com>; Thomas Monjalon
-> <thomas@monjalon.net>; yanghliu@redhat.com
-> Subject: 24.11.2 patches review and test
->=20
-> Hi all,
->=20
-> Here is a list of patches targeted for stable release 24.11.2.
->=20
-> The planned date for the final release is 14 April.
->=20
-> Please help with testing and validation of your use cases and report any
-> issues/results with reply-all to this mail. For the final release the fix=
-es and
-> reported validations will be added to the release notes.
->=20
-> A release candidate tarball can be found at:
->=20
->     https://dpdk.org/browse/dpdk-stable/tag/?id=3Dv24.11.2-rc1
->=20
-> These patches are located at branch 24.11 of dpdk-stable repo:
->     https://dpdk.org/browse/dpdk-stable/
->=20
-> Thanks.
->=20
-> Kevin
->=20
-> ---
-Update the test status for Intel part. dpdk24.11.2-rc1 all validation test =
-done. no new issue is found.
+Add test case for modex group 24.
 
-known issues: fix patch has been merged into main, but they not merged 24.1=
-1 LTS, so this issue still exists in 24.11.2-rc1
-  1. Bug 1606 - flow_filtering/flow_filtering_mismatch_rule: Some mismatch =
-rule packets match the rule.
-     - has fix patch: https://patches.dpdk.org/project/dpdk/patch/202501120=
-75200.5020-1-shperetz@nvidia.com/
-  2. Linkville vfs can't forward packets
-     - has fix patches: https://patches.dpdk.org/project/dpdk/list/?series=
-=3D34939&archive=3Dboth&state=3D*
+Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+---
+ app/test/test_cryptodev_asym.c             |  16 ++
+ app/test/test_cryptodev_mod_test_vectors.h | 227 +++++++++++++++++++++
+ 2 files changed, 243 insertions(+)
 
-* Build & CFLAG compile: cover the build test with latest GCC/Clang version=
- on the following OS(all passed)
-  - Ubuntu24.10/Ubuntu24.04.1
-  - RHEL9.4/RHEL9.5/RHEL10 beta
-  - Fedora41
-  - FreeBSD14.2
-  - SUSE15.6
-  - OpenAnolis8.9
-  - AzureLinux3.0
+diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
+index 2377a18c72..6b74dd9a73 100644
+--- a/app/test/test_cryptodev_asym.c
++++ b/app/test/test_cryptodev_asym.c
+@@ -3923,6 +3923,14 @@ static struct unit_test_suite cryptodev_openssl_asym_testsuite  = {
+ 			"Modex Group 18 test",
+ 			ut_setup_asym, ut_teardown_asym,
+ 			modular_exponentiation, &modex_group_test_cases[5]),
++		TEST_CASE_NAMED_WITH_DATA(
++			"Modex Group 24 test",
++			ut_setup_asym, ut_teardown_asym,
++			modular_exponentiation, &modex_group_test_cases[6]),
++		TEST_CASE_NAMED_WITH_DATA(
++			"Modex Group 24 subgroup test",
++			ut_setup_asym, ut_teardown_asym,
++			modular_exponentiation, &modex_group_test_cases[7]),
+ 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_eddsa_sign_verify_all_curve),
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+ 	}
+@@ -4010,6 +4018,14 @@ static struct unit_test_suite cryptodev_octeontx_asym_testsuite  = {
+ 			"Modex Group 18 test",
+ 			ut_setup_asym, ut_teardown_asym,
+ 			modular_exponentiation, &modex_group_test_cases[5]),
++		TEST_CASE_NAMED_WITH_DATA(
++			"Modex Group 24 test",
++			ut_setup_asym, ut_teardown_asym,
++			modular_exponentiation, &modex_group_test_cases[6]),
++		TEST_CASE_NAMED_WITH_DATA(
++			"Modex Group 24 subgroup test",
++			ut_setup_asym, ut_teardown_asym,
++			modular_exponentiation, &modex_group_test_cases[7]),
+ 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
+ 			     test_ecdsa_sign_verify_all_curve),
+ 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_sign),
+diff --git a/app/test/test_cryptodev_mod_test_vectors.h b/app/test/test_cryptodev_mod_test_vectors.h
+index 34af2d73b7..5b4b795635 100644
+--- a/app/test/test_cryptodev_mod_test_vectors.h
++++ b/app/test/test_cryptodev_mod_test_vectors.h
+@@ -1319,6 +1319,233 @@ modex_test_data modex_group_test_cases[] = {
+ 		.len = 1024
+ 	},
+ },
++{
++	/*
++	 * Referenced from RFC 5114 for checking g^a mod p = A.
++	 * base and modulus data are from Section 2.3.
++	 * exponent and reminder data are from Appendix A.3.
++	 */
++	.description = "Modular Exponentiation tests for Group 24",
++	.xform_type = RTE_CRYPTO_ASYM_XFORM_MODEX,
++	.base = {
++		.data = {
++			0x3F, 0xB3, 0x2C, 0x9B, 0x73, 0x13, 0x4D, 0x0B,
++			0x2E, 0x77, 0x50, 0x66, 0x60, 0xED, 0xBD, 0x48,
++			0x4C, 0xA7, 0xB1, 0x8F, 0x21, 0xEF, 0x20, 0x54,
++			0x07, 0xF4, 0x79, 0x3A, 0x1A, 0x0B, 0xA1, 0x25,
++			0x10, 0xDB, 0xC1, 0x50, 0x77, 0xBE, 0x46, 0x3F,
++			0xFF, 0x4F, 0xED, 0x4A, 0xAC, 0x0B, 0xB5, 0x55,
++			0xBE, 0x3A, 0x6C, 0x1B, 0x0C, 0x6B, 0x47, 0xB1,
++			0xBC, 0x37, 0x73, 0xBF, 0x7E, 0x8C, 0x6F, 0x62,
++			0x90, 0x12, 0x28, 0xF8, 0xC2, 0x8C, 0xBB, 0x18,
++			0xA5, 0x5A, 0xE3, 0x13, 0x41, 0x00, 0x0A, 0x65,
++			0x01, 0x96, 0xF9, 0x31, 0xC7, 0x7A, 0x57, 0xF2,
++			0xDD, 0xF4, 0x63, 0xE5, 0xE9, 0xEC, 0x14, 0x4B,
++			0x77, 0x7D, 0xE6, 0x2A, 0xAA, 0xB8, 0xA8, 0x62,
++			0x8A, 0xC3, 0x76, 0xD2, 0x82, 0xD6, 0xED, 0x38,
++			0x64, 0xE6, 0x79, 0x82, 0x42, 0x8E, 0xBC, 0x83,
++			0x1D, 0x14, 0x34, 0x8F, 0x6F, 0x2F, 0x91, 0x93,
++			0xB5, 0x04, 0x5A, 0xF2, 0x76, 0x71, 0x64, 0xE1,
++			0xDF, 0xC9, 0x67, 0xC1, 0xFB, 0x3F, 0x2E, 0x55,
++			0xA4, 0xBD, 0x1B, 0xFF, 0xE8, 0x3B, 0x9C, 0x80,
++			0xD0, 0x52, 0xB9, 0x85, 0xD1, 0x82, 0xEA, 0x0A,
++			0xDB, 0x2A, 0x3B, 0x73, 0x13, 0xD3, 0xFE, 0x14,
++			0xC8, 0x48, 0x4B, 0x1E, 0x05, 0x25, 0x88, 0xB9,
++			0xB7, 0xD2, 0xBB, 0xD2, 0xDF, 0x01, 0x61, 0x99,
++			0xEC, 0xD0, 0x6E, 0x15, 0x57, 0xCD, 0x09, 0x15,
++			0xB3, 0x35, 0x3B, 0xBB, 0x64, 0xE0, 0xEC, 0x37,
++			0x7F, 0xD0, 0x28, 0x37, 0x0D, 0xF9, 0x2B, 0x52,
++			0xC7, 0x89, 0x14, 0x28, 0xCD, 0xC6, 0x7E, 0xB6,
++			0x18, 0x4B, 0x52, 0x3D, 0x1D, 0xB2, 0x46, 0xC3,
++			0x2F, 0x63, 0x07, 0x84, 0x90, 0xF0, 0x0E, 0xF8,
++			0xD6, 0x47, 0xD1, 0x48, 0xD4, 0x79, 0x54, 0x51,
++			0x5E, 0x23, 0x27, 0xCF, 0xEF, 0x98, 0xC5, 0x82,
++			0x66, 0x4B, 0x4C, 0x0F, 0x6C, 0xC4, 0x16, 0x59,
++		},
++		.len = 256
++	},
++	.exponent = {
++		.data = {
++			0x08, 0x81, 0x38, 0x2C, 0xDB, 0x87, 0x66, 0x0C,
++			0x6D, 0xC1, 0x3E, 0x61, 0x49, 0x38, 0xD5, 0xB9,
++			0xC8, 0xB2, 0xF2, 0x48, 0x58, 0x1C, 0xC5, 0xE3,
++			0x1B, 0x35, 0x45, 0x43, 0x97, 0xFC, 0xE5, 0x0E,
++		},
++		.len = 32
++	},
++	.reminder = {
++		.data = {
++			0x2E, 0x93, 0x80, 0xC8, 0x32, 0x3A, 0xF9, 0x75,
++			0x45, 0xBC, 0x49, 0x41, 0xDE, 0xB0, 0xEC, 0x37,
++			0x42, 0xC6, 0x2F, 0xE0, 0xEC, 0xE8, 0x24, 0xA6,
++			0xAB, 0xDB, 0xE6, 0x6C, 0x59, 0xBE, 0xE0, 0x24,
++			0x29, 0x11, 0xBF, 0xB9, 0x67, 0x23, 0x5C, 0xEB,
++			0xA3, 0x5A, 0xE1, 0x3E, 0x4E, 0xC7, 0x52, 0xBE,
++			0x63, 0x0B, 0x92, 0xDC, 0x4B, 0xDE, 0x28, 0x47,
++			0xA9, 0xC6, 0x2C, 0xB8, 0x15, 0x27, 0x45, 0x42,
++			0x1F, 0xB7, 0xEB, 0x60, 0xA6, 0x3C, 0x0F, 0xE9,
++			0x15, 0x9F, 0xCC, 0xE7, 0x26, 0xCE, 0x7C, 0xD8,
++			0x52, 0x3D, 0x74, 0x50, 0x66, 0x7E, 0xF8, 0x40,
++			0xE4, 0x91, 0x91, 0x21, 0xEB, 0x5F, 0x01, 0xC8,
++			0xC9, 0xB0, 0xD3, 0xD6, 0x48, 0xA9, 0x3B, 0xFB,
++			0x75, 0x68, 0x9E, 0x82, 0x44, 0xAC, 0x13, 0x4A,
++			0xF5, 0x44, 0x71, 0x1C, 0xE7, 0x9A, 0x02, 0xDC,
++			0xC3, 0x42, 0x26, 0x68, 0x47, 0x80, 0xDD, 0xDC,
++			0xB4, 0x98, 0x59, 0x41, 0x06, 0xC3, 0x7F, 0x5B,
++			0xC7, 0x98, 0x56, 0x48, 0x7A, 0xF5, 0xAB, 0x02,
++			0x2A, 0x2E, 0x5E, 0x42, 0xF0, 0x98, 0x97, 0xC1,
++			0xA8, 0x5A, 0x11, 0xEA, 0x02, 0x12, 0xAF, 0x04,
++			0xD9, 0xB4, 0xCE, 0xBC, 0x93, 0x7C, 0x3C, 0x1A,
++			0x3E, 0x15, 0xA8, 0xA0, 0x34, 0x2E, 0x33, 0x76,
++			0x15, 0xC8, 0x4E, 0x7F, 0xE3, 0xB8, 0xB9, 0xB8,
++			0x7F, 0xB1, 0xE7, 0x3A, 0x15, 0xAF, 0x12, 0xA3,
++			0x0D, 0x74, 0x6E, 0x06, 0xDF, 0xC3, 0x4F, 0x29,
++			0x0D, 0x79, 0x7C, 0xE5, 0x1A, 0xA1, 0x3A, 0xA7,
++			0x85, 0xBF, 0x66, 0x58, 0xAF, 0xF5, 0xE4, 0xB0,
++			0x93, 0x00, 0x3C, 0xBE, 0xAF, 0x66, 0x5B, 0x3C,
++			0x2E, 0x11, 0x3A, 0x3A, 0x4E, 0x90, 0x52, 0x69,
++			0x34, 0x1D, 0xC0, 0x71, 0x14, 0x26, 0x68, 0x5F,
++			0x4E, 0xF3, 0x7E, 0x86, 0x8A, 0x81, 0x26, 0xFF,
++			0x3F, 0x22, 0x79, 0xB5, 0x7C, 0xA6, 0x7E, 0x29,
++		},
++		.len = 256
++	},
++	.modulus = {
++		.data = {
++			0x87, 0xA8, 0xE6, 0x1D, 0xB4, 0xB6, 0x66, 0x3C,
++			0xFF, 0xBB, 0xD1, 0x9C, 0x65, 0x19, 0x59, 0x99,
++			0x8C, 0xEE, 0xF6, 0x08, 0x66, 0x0D, 0xD0, 0xF2,
++			0x5D, 0x2C, 0xEE, 0xD4, 0x43, 0x5E, 0x3B, 0x00,
++			0xE0, 0x0D, 0xF8, 0xF1, 0xD6, 0x19, 0x57, 0xD4,
++			0xFA, 0xF7, 0xDF, 0x45, 0x61, 0xB2, 0xAA, 0x30,
++			0x16, 0xC3, 0xD9, 0x11, 0x34, 0x09, 0x6F, 0xAA,
++			0x3B, 0xF4, 0x29, 0x6D, 0x83, 0x0E, 0x9A, 0x7C,
++			0x20, 0x9E, 0x0C, 0x64, 0x97, 0x51, 0x7A, 0xBD,
++			0x5A, 0x8A, 0x9D, 0x30, 0x6B, 0xCF, 0x67, 0xED,
++			0x91, 0xF9, 0xE6, 0x72, 0x5B, 0x47, 0x58, 0xC0,
++			0x22, 0xE0, 0xB1, 0xEF, 0x42, 0x75, 0xBF, 0x7B,
++			0x6C, 0x5B, 0xFC, 0x11, 0xD4, 0x5F, 0x90, 0x88,
++			0xB9, 0x41, 0xF5, 0x4E, 0xB1, 0xE5, 0x9B, 0xB8,
++			0xBC, 0x39, 0xA0, 0xBF, 0x12, 0x30, 0x7F, 0x5C,
++			0x4F, 0xDB, 0x70, 0xC5, 0x81, 0xB2, 0x3F, 0x76,
++			0xB6, 0x3A, 0xCA, 0xE1, 0xCA, 0xA6, 0xB7, 0x90,
++			0x2D, 0x52, 0x52, 0x67, 0x35, 0x48, 0x8A, 0x0E,
++			0xF1, 0x3C, 0x6D, 0x9A, 0x51, 0xBF, 0xA4, 0xAB,
++			0x3A, 0xD8, 0x34, 0x77, 0x96, 0x52, 0x4D, 0x8E,
++			0xF6, 0xA1, 0x67, 0xB5, 0xA4, 0x18, 0x25, 0xD9,
++			0x67, 0xE1, 0x44, 0xE5, 0x14, 0x05, 0x64, 0x25,
++			0x1C, 0xCA, 0xCB, 0x83, 0xE6, 0xB4, 0x86, 0xF6,
++			0xB3, 0xCA, 0x3F, 0x79, 0x71, 0x50, 0x60, 0x26,
++			0xC0, 0xB8, 0x57, 0xF6, 0x89, 0x96, 0x28, 0x56,
++			0xDE, 0xD4, 0x01, 0x0A, 0xBD, 0x0B, 0xE6, 0x21,
++			0xC3, 0xA3, 0x96, 0x0A, 0x54, 0xE7, 0x10, 0xC3,
++			0x75, 0xF2, 0x63, 0x75, 0xD7, 0x01, 0x41, 0x03,
++			0xA4, 0xB5, 0x43, 0x30, 0xC1, 0x98, 0xAF, 0x12,
++			0x61, 0x16, 0xD2, 0x27, 0x6E, 0x11, 0x71, 0x5F,
++			0x69, 0x38, 0x77, 0xFA, 0xD7, 0xEF, 0x09, 0xCA,
++			0xDB, 0x09, 0x4A, 0xE9, 0x1E, 0x1A, 0x15, 0x97,
++		},
++		.len = 256
++	},
++},
++{
++	/*
++	 * Referenced from RFC 5114 for checking A^q mod p = 1.
++	 * base is yA from Appendix A.3.
++	 * exponent and modulus data are from Section 2.3.
++	 */
++	.description = "Modular Exponentiation tests for Group 24 subgroup",
++	.xform_type = RTE_CRYPTO_ASYM_XFORM_MODEX,
++	.base = {
++		.data = {
++			0x2E, 0x93, 0x80, 0xC8, 0x32, 0x3A, 0xF9, 0x75,
++			0x45, 0xBC, 0x49, 0x41, 0xDE, 0xB0, 0xEC, 0x37,
++			0x42, 0xC6, 0x2F, 0xE0, 0xEC, 0xE8, 0x24, 0xA6,
++			0xAB, 0xDB, 0xE6, 0x6C, 0x59, 0xBE, 0xE0, 0x24,
++			0x29, 0x11, 0xBF, 0xB9, 0x67, 0x23, 0x5C, 0xEB,
++			0xA3, 0x5A, 0xE1, 0x3E, 0x4E, 0xC7, 0x52, 0xBE,
++			0x63, 0x0B, 0x92, 0xDC, 0x4B, 0xDE, 0x28, 0x47,
++			0xA9, 0xC6, 0x2C, 0xB8, 0x15, 0x27, 0x45, 0x42,
++			0x1F, 0xB7, 0xEB, 0x60, 0xA6, 0x3C, 0x0F, 0xE9,
++			0x15, 0x9F, 0xCC, 0xE7, 0x26, 0xCE, 0x7C, 0xD8,
++			0x52, 0x3D, 0x74, 0x50, 0x66, 0x7E, 0xF8, 0x40,
++			0xE4, 0x91, 0x91, 0x21, 0xEB, 0x5F, 0x01, 0xC8,
++			0xC9, 0xB0, 0xD3, 0xD6, 0x48, 0xA9, 0x3B, 0xFB,
++			0x75, 0x68, 0x9E, 0x82, 0x44, 0xAC, 0x13, 0x4A,
++			0xF5, 0x44, 0x71, 0x1C, 0xE7, 0x9A, 0x02, 0xDC,
++			0xC3, 0x42, 0x26, 0x68, 0x47, 0x80, 0xDD, 0xDC,
++			0xB4, 0x98, 0x59, 0x41, 0x06, 0xC3, 0x7F, 0x5B,
++			0xC7, 0x98, 0x56, 0x48, 0x7A, 0xF5, 0xAB, 0x02,
++			0x2A, 0x2E, 0x5E, 0x42, 0xF0, 0x98, 0x97, 0xC1,
++			0xA8, 0x5A, 0x11, 0xEA, 0x02, 0x12, 0xAF, 0x04,
++			0xD9, 0xB4, 0xCE, 0xBC, 0x93, 0x7C, 0x3C, 0x1A,
++			0x3E, 0x15, 0xA8, 0xA0, 0x34, 0x2E, 0x33, 0x76,
++			0x15, 0xC8, 0x4E, 0x7F, 0xE3, 0xB8, 0xB9, 0xB8,
++			0x7F, 0xB1, 0xE7, 0x3A, 0x15, 0xAF, 0x12, 0xA3,
++			0x0D, 0x74, 0x6E, 0x06, 0xDF, 0xC3, 0x4F, 0x29,
++			0x0D, 0x79, 0x7C, 0xE5, 0x1A, 0xA1, 0x3A, 0xA7,
++			0x85, 0xBF, 0x66, 0x58, 0xAF, 0xF5, 0xE4, 0xB0,
++			0x93, 0x00, 0x3C, 0xBE, 0xAF, 0x66, 0x5B, 0x3C,
++			0x2E, 0x11, 0x3A, 0x3A, 0x4E, 0x90, 0x52, 0x69,
++			0x34, 0x1D, 0xC0, 0x71, 0x14, 0x26, 0x68, 0x5F,
++			0x4E, 0xF3, 0x7E, 0x86, 0x8A, 0x81, 0x26, 0xFF,
++			0x3F, 0x22, 0x79, 0xB5, 0x7C, 0xA6, 0x7E, 0x29,
++		},
++		.len = 256
++	},
++	.exponent = {
++		.data = {
++			0x8C, 0xF8, 0x36, 0x42, 0xA7, 0x09, 0xA0, 0x97,
++			0xB4, 0x47, 0x99, 0x76, 0x40, 0x12, 0x9D, 0xA2,
++			0x99, 0xB1, 0xA4, 0x7D, 0x1E, 0xB3, 0x75, 0x0B,
++			0xA3, 0x08, 0xB0, 0xFE, 0x64, 0xF5, 0xFB, 0xD3,
++		},
++		.len = 32
++	},
++	.reminder = {
++		.data = {
++			0x1
++		},
++		.len = 1
++	},
++	.modulus = {
++		.data = {
++			0x87, 0xA8, 0xE6, 0x1D, 0xB4, 0xB6, 0x66, 0x3C,
++			0xFF, 0xBB, 0xD1, 0x9C, 0x65, 0x19, 0x59, 0x99,
++			0x8C, 0xEE, 0xF6, 0x08, 0x66, 0x0D, 0xD0, 0xF2,
++			0x5D, 0x2C, 0xEE, 0xD4, 0x43, 0x5E, 0x3B, 0x00,
++			0xE0, 0x0D, 0xF8, 0xF1, 0xD6, 0x19, 0x57, 0xD4,
++			0xFA, 0xF7, 0xDF, 0x45, 0x61, 0xB2, 0xAA, 0x30,
++			0x16, 0xC3, 0xD9, 0x11, 0x34, 0x09, 0x6F, 0xAA,
++			0x3B, 0xF4, 0x29, 0x6D, 0x83, 0x0E, 0x9A, 0x7C,
++			0x20, 0x9E, 0x0C, 0x64, 0x97, 0x51, 0x7A, 0xBD,
++			0x5A, 0x8A, 0x9D, 0x30, 0x6B, 0xCF, 0x67, 0xED,
++			0x91, 0xF9, 0xE6, 0x72, 0x5B, 0x47, 0x58, 0xC0,
++			0x22, 0xE0, 0xB1, 0xEF, 0x42, 0x75, 0xBF, 0x7B,
++			0x6C, 0x5B, 0xFC, 0x11, 0xD4, 0x5F, 0x90, 0x88,
++			0xB9, 0x41, 0xF5, 0x4E, 0xB1, 0xE5, 0x9B, 0xB8,
++			0xBC, 0x39, 0xA0, 0xBF, 0x12, 0x30, 0x7F, 0x5C,
++			0x4F, 0xDB, 0x70, 0xC5, 0x81, 0xB2, 0x3F, 0x76,
++			0xB6, 0x3A, 0xCA, 0xE1, 0xCA, 0xA6, 0xB7, 0x90,
++			0x2D, 0x52, 0x52, 0x67, 0x35, 0x48, 0x8A, 0x0E,
++			0xF1, 0x3C, 0x6D, 0x9A, 0x51, 0xBF, 0xA4, 0xAB,
++			0x3A, 0xD8, 0x34, 0x77, 0x96, 0x52, 0x4D, 0x8E,
++			0xF6, 0xA1, 0x67, 0xB5, 0xA4, 0x18, 0x25, 0xD9,
++			0x67, 0xE1, 0x44, 0xE5, 0x14, 0x05, 0x64, 0x25,
++			0x1C, 0xCA, 0xCB, 0x83, 0xE6, 0xB4, 0x86, 0xF6,
++			0xB3, 0xCA, 0x3F, 0x79, 0x71, 0x50, 0x60, 0x26,
++			0xC0, 0xB8, 0x57, 0xF6, 0x89, 0x96, 0x28, 0x56,
++			0xDE, 0xD4, 0x01, 0x0A, 0xBD, 0x0B, 0xE6, 0x21,
++			0xC3, 0xA3, 0x96, 0x0A, 0x54, 0xE7, 0x10, 0xC3,
++			0x75, 0xF2, 0x63, 0x75, 0xD7, 0x01, 0x41, 0x03,
++			0xA4, 0xB5, 0x43, 0x30, 0xC1, 0x98, 0xAF, 0x12,
++			0x61, 0x16, 0xD2, 0x27, 0x6E, 0x11, 0x71, 0x5F,
++			0x69, 0x38, 0x77, 0xFA, 0xD7, 0xEF, 0x09, 0xCA,
++			0xDB, 0x09, 0x4A, 0xE9, 0x1E, 0x1A, 0x15, 0x97,
++		},
++		.len = 256
++	},
++},
+ };
+ 
+ #endif /* TEST_CRYPTODEV_MOD_TEST_VECTORS_H__ */
+-- 
+2.25.1
 
-* Function tests: All test done and there are two known issues.
-  - i40E-(XXV710, X722) PF/VF: test scenarios including basic/RTE_FLOW/TSO/=
-Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc.=20
-  - IXGBE-(82599, E610) PF/VF: test scenarios including basic/RTE_FLOW/TSO/=
-Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc.=20
-  - ICE-(E810, E830, E2100) PF/VF: test scenarios including basic/Switch/Pa=
-ckage Management/Flow Director/Advanced Tx/Advanced RSS/ACL/DCF/Flexible De=
-scriptor, etc.
-  - IPsec: test scenarios including ipsec/ipsec-gw/ipsec library basic test=
- - QAT&SW/FIB library, etc.
-  - Virtio: both function and performance test are covered. Such as PVP/Vir=
-tio_loopback/virtio-user loopback/virtio-net VM2VM perf testing/VMAWARE ESX=
-I 8.0, etc.
-  - Cryptodev: test scenarios including Cryptodev API testing/CompressDev I=
-SA-L/QAT/ZLIB PMD Testing/FIPS, etc.
-  - DLB: test scenarios including DLB2.0 and DLB2.5
-  - Other: test scenarios including AF_XDP, Power, CBDMA, DSA
-
-* Performance test: All test done and passed
-  - Thoughput Performance
-  - Cryptodev Latency
-  - PF/VF NIC single core
-  - XXV710/E810 NIC Performance
-
-
-Regards,
-Xu, Hailin
