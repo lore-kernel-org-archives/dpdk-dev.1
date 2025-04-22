@@ -2,41 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A218CC369CB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 05:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84714C369C2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 05:53:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DBE1402A9;
-	Tue, 22 Apr 2025 07:47:30 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5154C40299
- for <dev@dpdk.org>; Tue, 22 Apr 2025 07:47:29 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M5WMkk005328;
- Mon, 21 Apr 2025 22:47:27 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 7DFC2402A9;
+	Tue, 22 Apr 2025 07:53:44 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CEC8A40299
+ for <dev@dpdk.org>; Tue, 22 Apr 2025 07:53:42 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LMNXag019718;
+ Mon, 21 Apr 2025 22:53:41 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=aCZ6qbqkCfT5n4Q/t+STTYw
- 0GH9ZHoMpa2i4v/TCX1A=; b=CWonO6k3db1onCWJUyaFwGK//n9p5z4voJC1JDg
- a3XTGx3VJTK0fHkWf61v+DHg/eE+ivq64XJnbk71BbW43sMYCboRMN/G2eE7ue2a
- mlWlAAkz5tq2XHb5pQmfM3mqioudaIyg2Qtowgrg29gxACTP2I1w4K378Ei4gTXu
- ree0Oy3nnoVwB/iKwzS+n7xoZ3q67Hoeup81hbvpiFRlhVDYy1hjkNqy+wS4Wmdk
- LGlkOdpKPpk4jqE0DkjmmSyBJAwpD+09FC2yYUZ7Tej7/Xk/ye4/QeeXfLXUGbpz
- qLNTD1JB+LheTV3VYKeU1Y55fBG/DMmx2iQoqiypkcb2f1Q==
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=a
+ CZ6qbqkCfT5n4Q/t+STTYw0GH9ZHoMpa2i4v/TCX1A=; b=cbfawssiMKA99AxLT
+ GqICwojqyx06nMZQuI0PM7jhyYxDmroxbzWfyGkntBZbJYnkmqYUy84Uep0DTcZE
+ jjSTwInWS5k/fyNg5SnUUYFHFHpanE/Z3WE23pq5vY8CbJzi6e1jHwFPzEuHkIiu
+ dPUzX5bEjuqDOrQh+wIYmVHBNNLmTPaOIaxiQEvs7+GvElkPYhpyeYuAuZw8oidg
+ SK/6sbAVfJ4G8tau2OyUNwtzIG9TCiQ5HOFV4/kAxfmqfs3l+f8H9zG4yUWO5sDu
+ FBcEGNC9BTTuTH/kF3FYgAN0RywrIOYMKLiXNaD5wRA7JyrqLFZkNfiKuA0gP9n6
+ tk0Qw==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46652100qw-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 464vkb3mb6-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 21 Apr 2025 22:47:27 -0700 (PDT)
+ Mon, 21 Apr 2025 22:53:40 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 21 Apr 2025 22:47:26 -0700
+ 15.2.1544.4; Mon, 21 Apr 2025 22:53:40 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 21 Apr 2025 22:47:26 -0700
+ Transport; Mon, 21 Apr 2025 22:53:40 -0700
 Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 8A8A83F7071;
- Mon, 21 Apr 2025 22:47:23 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 7774D3F7077;
+ Mon, 21 Apr 2025 22:53:37 -0700 (PDT)
 From: <kirankumark@marvell.com>
 To: Ori Kam <orika@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
  "Thomas Monjalon" <thomas@monjalon.net>,
@@ -44,18 +45,20 @@ To: Ori Kam <orika@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
  "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 CC: <dev@dpdk.org>, Kiran Kumar K <kirankumark@marvell.com>
 Subject: [PATCH v2] ethdev: add support for flow action pop E-tag
-Date: Tue, 22 Apr 2025 11:17:17 +0530
-Message-ID: <20250422054717.1253650-1-kirankumark@marvell.com>
+Date: Tue, 22 Apr 2025 11:23:30 +0530
+Message-ID: <20250422055331.1270825-1-kirankumark@marvell.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250421115134.841719-1-kirankumark@marvell.com>
+References: <20250421115134.841719-1-kirankumark@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: gvKkEi5nYPtWRVpczcKWUSnTUQJsPOPf
-X-Authority-Analysis: v=2.4 cv=T7GMT+KQ c=1 sm=1 tr=0 ts=68072d6f cx=c_pps
+X-Authority-Analysis: v=2.4 cv=JLU7s9Kb c=1 sm=1 tr=0 ts=68072ee4 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=iA0zb9gljxoUgJvkE7MA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: gvKkEi5nYPtWRVpczcKWUSnTUQJsPOPf
+X-Proofpoint-ORIG-GUID: y2WJD9Dh17wACw5VmcbKjK0GCakc6kJA
+X-Proofpoint-GUID: y2WJD9Dh17wACw5VmcbKjK0GCakc6kJA
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
