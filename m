@@ -2,66 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84714C369C2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 05:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AC8C369C2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 06:40:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7DFC2402A9;
-	Tue, 22 Apr 2025 07:53:44 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id CEC8A40299
- for <dev@dpdk.org>; Tue, 22 Apr 2025 07:53:42 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LMNXag019718;
- Mon, 21 Apr 2025 22:53:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=a
- CZ6qbqkCfT5n4Q/t+STTYw0GH9ZHoMpa2i4v/TCX1A=; b=cbfawssiMKA99AxLT
- GqICwojqyx06nMZQuI0PM7jhyYxDmroxbzWfyGkntBZbJYnkmqYUy84Uep0DTcZE
- jjSTwInWS5k/fyNg5SnUUYFHFHpanE/Z3WE23pq5vY8CbJzi6e1jHwFPzEuHkIiu
- dPUzX5bEjuqDOrQh+wIYmVHBNNLmTPaOIaxiQEvs7+GvElkPYhpyeYuAuZw8oidg
- SK/6sbAVfJ4G8tau2OyUNwtzIG9TCiQ5HOFV4/kAxfmqfs3l+f8H9zG4yUWO5sDu
- FBcEGNC9BTTuTH/kF3FYgAN0RywrIOYMKLiXNaD5wRA7JyrqLFZkNfiKuA0gP9n6
- tk0Qw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 464vkb3mb6-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 21 Apr 2025 22:53:40 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 21 Apr 2025 22:53:40 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 21 Apr 2025 22:53:40 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 7774D3F7077;
- Mon, 21 Apr 2025 22:53:37 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: Ori Kam <orika@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
- "Thomas Monjalon" <thomas@monjalon.net>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-CC: <dev@dpdk.org>, Kiran Kumar K <kirankumark@marvell.com>
-Subject: [PATCH v2] ethdev: add support for flow action pop E-tag
-Date: Tue, 22 Apr 2025 11:23:30 +0530
-Message-ID: <20250422055331.1270825-1-kirankumark@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250421115134.841719-1-kirankumark@marvell.com>
-References: <20250421115134.841719-1-kirankumark@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7C0CE402A9;
+	Tue, 22 Apr 2025 08:40:00 +0200 (CEST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
+ [209.85.208.54])
+ by mails.dpdk.org (Postfix) with ESMTP id BFAEC40299;
+ Tue, 22 Apr 2025 08:39:58 +0200 (CEST)
+Received: by mail-ed1-f54.google.com with SMTP id
+ 4fb4d7f45d1cf-5ec9d24acfbso10156878a12.0; 
+ Mon, 21 Apr 2025 23:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1745303998; x=1745908798; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=4COOiqkXPyhFsucYecwPz+Z+96d9a0IarEUJKAYI9PQ=;
+ b=TBWyyY0IW6LHGAi20PqHGnzdiIahgTbxLiUHwjlUGDzHNssbuw0fSuxT7w2ItykPyB
+ 39Oxf5RnEN1UbthPRmJuWw9sSkNWSZqYVsmX3+UJS5C4c3gdZl0wVBd/lFTifH1oSPQA
+ +akSomPPMPTnUZZwLEzSONeAhDzqyNobUONjGyl9QhsKEIchPqpRZnbI8NgXEW7bBgDp
+ gVnuiuyUBEN6WpUW5V+jrd4DzGlrpJxFfMvauN1ds7Ynnmm7XMR34SjhdJtmz8pgmE7f
+ ndsso4ELLH2bPJtLJ5gy7DPPUaEJYvPhlMCTs2NIRX/aEsMA/yFPXlC+g+6DOd0hw0xy
+ YO2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745303998; x=1745908798;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=4COOiqkXPyhFsucYecwPz+Z+96d9a0IarEUJKAYI9PQ=;
+ b=IrqT19JQoMRFraY2ZBGXTR8up7vZMo1RoDk1qXl381QBd5d9yOuUiv5RzbQ7O998QP
+ EQgOu+CCimz9MrwxGuwA++U6DUYCutv2JPCG+lnmEHjdZ2vuo9d42+WCtM5bk39sabLc
+ egEPz+MdNT6UD7k7a/hT70Pc5eAMywkWj/6ZKEz9fOeBWYrp+26+HjpPvOEqR6zoZsJ5
+ NoLi8+x05RRBDM4SppG/4qxFtQPXkpDCTV93nxKf2CjcWE+i6fZF2G2jXD5jxZGqBn+q
+ 5Zt9n9YcqtXIF3KsnMnaIUFwSeUVl/AtKjhf+OZq0czKbzn0iQM7niYBx7+k/FVGUTDF
+ GgMg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUCi+rKoP3Pde4MbZUfqvTiL+R0uIRIKeNghoiB1iL0LjPcdQhWDWPaE9WZkTVBcwjpIQtKwMA=@dpdk.org
+X-Gm-Message-State: AOJu0Yz6JCpK+CVR9ZSCLEcR63ROoLAcUZ/ezGr8yeAX/YawBFqsdUEK
+ GX9Q8xixYOrZRGsl0OSlVX8N/mC0rq9FgsTP+F4jx5KBCjnn/oON
+X-Gm-Gg: ASbGncvMj3wCRcUK+1At532exRY/GnJLGxxtZwApnl2vvOook7W/VwuonSAJOTMML/E
+ PXorwTFcODlHzpSGMABGc29hPDPnaxlUQa+HdzikCbsri42Xoo92le/XO4GaVwJ6vRy9D7N3xJG
+ fpwfYdcnQjNdEJGSnwvSag7nmVYiVsv6kg2lQ1bVXRRPr2enIyb/U8eTTO/q4tR2Z0IlSTAV/Wr
+ dMlJJ0hy7oiquh343TR7+fQ+wmoejJ8RUBNvJHZ+uP4KrIkHOHFhMvl4PepJG5pxXzhym7IkGC4
+ G5hbD6iiOKOH+Oosjkg6lA7bI9x/aweGP3x3rAdgJdGRsdbiKwd37hHalp9EqhxZpSG7/Jd99un
+ HUIX+mQsLkg8Ok0idSWg=
+X-Google-Smtp-Source: AGHT+IFtab4HfwwBDCeRaKMuK91D/Q2XZFhNlZSTBOadH9jBhyDx+xOfUvl2cQUiazRFUwi40P2wTA==
+X-Received: by 2002:a17:907:d17:b0:ac7:981d:b137 with SMTP id
+ a640c23a62f3a-acb6ee24847mr1063728466b.22.1745303998035; 
+ Mon, 21 Apr 2025 23:39:58 -0700 (PDT)
+Received: from localhost.localdomain (apn-78-30-81-147.dynamic.gprs.plus.pl.
+ [78.30.81.147]) by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-acb94140bb8sm430433766b.17.2025.04.21.23.39.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 21 Apr 2025 23:39:57 -0700 (PDT)
+From: patrykochal@gmail.com
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Yongseok Koh <yskoh@mellanox.com>
+Cc: dev@dpdk.org, "Patryk Ochal (Redge Technologies)" <patrykochal@gmail.com>,
+ stable@dpdk.org
+Subject: [PATCH] net/mlx5: fix out-of-bounds write in Rx software ring
+Date: Tue, 22 Apr 2025 08:37:54 +0200
+Message-Id: <20250422063754.3429965-1-patrykochal@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=JLU7s9Kb c=1 sm=1 tr=0 ts=68072ee4 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=iA0zb9gljxoUgJvkE7MA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: y2WJD9Dh17wACw5VmcbKjK0GCakc6kJA
-X-Proofpoint-GUID: y2WJD9Dh17wACw5VmcbKjK0GCakc6kJA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,96 +83,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kiran Kumar K <kirankumark@marvell.com>
+From: "Patryk Ochal (Redge Technologies)" <patrykochal@gmail.com>
 
-Add support for the following OpenFlow-defined action.
+If the vectorized Rx burst function runs short on available mbufs,
+the CQ processing may write past the end of the RX software ring.
 
-RTE_FLOW_ACTION_TYPE_OF_POP_ETAG: Pop E-tag from the packet.
+This happens because `rxq_cq_process_v()` populates the software ring
+and accesses mbufs before validating the associated CQEs. If the number
+of available mbufs is insufficient, this can result in out-of-bounds
+access.
 
-Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
+This patch adds a limit to ensure CQ processing does not exceed the
+number of mbufs that have actually been replenished and posted.
+
+Fixes: 03e0868b4cd7 ("net/mlx5: fix deadlock due to buffered slots in Rx SW ring")
+Cc: yskoh@mellanox.com
+Cc: stable@dpdk.org
+
+Signed-off-by: Patryk Ochal (Redge Technologies) <patrykochal@gmail.com>
 ---
-*V2 Changes:
-- Address comment related to order of enum values
+ drivers/net/mlx5/mlx5_rxtx_vec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- app/test-pmd/cmdline_flow.c |  9 +++++++++
- lib/ethdev/rte_flow.c       |  1 +
- lib/ethdev/rte_flow.h       | 10 +++++++++-
- 3 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 998527590f..b486bfd348 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -651,6 +651,7 @@ enum index {
- 	ACTION_METER_COLOR_MODE,
- 	ACTION_METER_STATE,
- 	ACTION_OF_DEC_NW_TTL,
-+	ACTION_OF_POP_ETAG,
- 	ACTION_OF_POP_VLAN,
- 	ACTION_OF_PUSH_VLAN,
- 	ACTION_OF_PUSH_VLAN_ETHERTYPE,
-@@ -2274,6 +2275,7 @@ static const enum index next_action[] = {
- 	ACTION_METER_MARK,
- 	ACTION_METER_MARK_CONF,
- 	ACTION_OF_DEC_NW_TTL,
-+	ACTION_OF_POP_ETAG,
- 	ACTION_OF_POP_VLAN,
- 	ACTION_OF_PUSH_VLAN,
- 	ACTION_OF_SET_VLAN_VID,
-@@ -6925,6 +6927,13 @@ static const struct token token_list[] = {
- 		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
- 		.call = parse_vc,
- 	},
-+	[ACTION_OF_POP_ETAG] = {
-+		.name = "of_pop_etag",
-+		.help = "OpenFlow's OFPAT_POP_ETAG",
-+		.priv = PRIV_ACTION(OF_POP_ETAG, 0),
-+		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
-+		.call = parse_vc,
-+	},
- 	[ACTION_OF_POP_VLAN] = {
- 		.name = "of_pop_vlan",
- 		.help = "OpenFlow's OFPAT_POP_VLAN",
-diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 9f8d8f3dc2..3d227f3bc5 100644
---- a/lib/ethdev/rte_flow.c
-+++ b/lib/ethdev/rte_flow.c
-@@ -212,6 +212,7 @@ static const struct rte_flow_desc_data rte_flow_desc_action[] = {
- 	MK_FLOW_ACTION(METER, sizeof(struct rte_flow_action_meter)),
- 	MK_FLOW_ACTION(SECURITY, sizeof(struct rte_flow_action_security)),
- 	MK_FLOW_ACTION(OF_DEC_NW_TTL, 0),
-+	MK_FLOW_ACTION(OF_POP_ETAG, 0),
- 	MK_FLOW_ACTION(OF_POP_VLAN, 0),
- 	MK_FLOW_ACTION(OF_PUSH_VLAN,
- 		       sizeof(struct rte_flow_action_of_push_vlan)),
-diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
-index 3d2ccdeb92..fb4f4bf9b7 100644
---- a/lib/ethdev/rte_flow.h
-+++ b/lib/ethdev/rte_flow.h
-@@ -3201,7 +3201,7 @@ enum rte_flow_action_type {
- 	 * @see struct rte_flow_query_quota
- 	 * @see struct rte_flow_update_quota
- 	 */
--	 RTE_FLOW_ACTION_TYPE_QUOTA,
-+	RTE_FLOW_ACTION_TYPE_QUOTA,
-
- 	/**
- 	 * Skip congestion management configuration.
-@@ -3263,6 +3263,14 @@ enum rte_flow_action_type {
- 	 * @see struct rte_flow_action_jump_to_table_index.
- 	 */
- 	RTE_FLOW_ACTION_TYPE_JUMP_TO_TABLE_INDEX,
-+
-+	/**
-+	 * Implements POP_ETAG ("pop the outer 802.1BR Etag") as defined
-+	 * by the OpenFlow Switch Specification.
-+	 *
-+	 * No associated configuration structure.
-+	 */
-+	RTE_FLOW_ACTION_TYPE_OF_POP_ETAG,
- };
-
- /**
---
-2.48.1
+diff --git a/drivers/net/mlx5/mlx5_rxtx_vec.c b/drivers/net/mlx5/mlx5_rxtx_vec.c
+index 2363d7ed27..67a1e168d8 100644
+--- a/drivers/net/mlx5/mlx5_rxtx_vec.c
++++ b/drivers/net/mlx5/mlx5_rxtx_vec.c
+@@ -320,8 +320,10 @@ rxq_burst_v(struct mlx5_rxq_data *rxq, struct rte_mbuf **pkts,
+ 	}
+ 	elts_idx = rxq->rq_pi & e_mask;
+ 	elts = &(*rxq->elts)[elts_idx];
++	/* Not to move past the allocated mbufs. */
++	pkts_n = RTE_MIN(pkts_n - rcvd_pkt, rxq->rq_ci - rxq->rq_pi);
+ 	/* Not to overflow pkts array. */
+-	pkts_n = RTE_ALIGN_FLOOR(pkts_n - rcvd_pkt, MLX5_VPMD_DESCS_PER_LOOP);
++	pkts_n = RTE_ALIGN_FLOOR(pkts_n, MLX5_VPMD_DESCS_PER_LOOP);
+ 	/* Not to cross queue end. */
+ 	pkts_n = RTE_MIN(pkts_n, q_n - elts_idx);
+ 	pkts_n = RTE_MIN(pkts_n, q_n - cq_idx);
+-- 
+2.30.2
 
