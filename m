@@ -2,62 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA7EC369C2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 05:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A218CC369CB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 05:47:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E9DE402A9;
-	Tue, 22 Apr 2025 07:15:11 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 5DEFC40299
- for <dev@dpdk.org>; Tue, 22 Apr 2025 07:15:10 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LLI8hT030803;
- Mon, 21 Apr 2025 22:15:07 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9DBE1402A9;
+	Tue, 22 Apr 2025 07:47:30 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 5154C40299
+ for <dev@dpdk.org>; Tue, 22 Apr 2025 07:47:29 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M5WMkk005328;
+ Mon, 21 Apr 2025 22:47:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=9S2DWOjMZMJmST6YQ1T9lXz
- DfEx0RgW5mB6Td83UPHQ=; b=cXgJNz466VkYoNuagjaSHzmAxatoPBRNikWKGis
- 66MCMfV22/tD0dV/qrKOUeXw92IIxMSbE8cYh8CgThpQ/feD/aOQBxwinyUPc8N9
- mv1lY2UJ8jT8Bf1c+dHjNbJF+5plmxkC0gFtgKBuEP+sGFnHpFsMhoF7GHS1u/z9
- seT16ygwJfzzcLsAHTbvkE3MW+TmjFF1cItHCBhK4fto4OCjtl2OWqdLNir6fhlF
- Q7SzQS+gbGYNtey+NiwEKZKRAFNgNxDjpewU2VdCLSjoS//AAafT/vVu9JliWZ4T
- kMBPEgOHHk3ykekrgaWDENTAbERliM4m4+vD2bcXyouqF8g==
+ :mime-version:subject:to; s=pfpt0220; bh=aCZ6qbqkCfT5n4Q/t+STTYw
+ 0GH9ZHoMpa2i4v/TCX1A=; b=CWonO6k3db1onCWJUyaFwGK//n9p5z4voJC1JDg
+ a3XTGx3VJTK0fHkWf61v+DHg/eE+ivq64XJnbk71BbW43sMYCboRMN/G2eE7ue2a
+ mlWlAAkz5tq2XHb5pQmfM3mqioudaIyg2Qtowgrg29gxACTP2I1w4K378Ei4gTXu
+ ree0Oy3nnoVwB/iKwzS+n7xoZ3q67Hoeup81hbvpiFRlhVDYy1hjkNqy+wS4Wmdk
+ LGlkOdpKPpk4jqE0DkjmmSyBJAwpD+09FC2yYUZ7Tej7/Xk/ye4/QeeXfLXUGbpz
+ qLNTD1JB+LheTV3VYKeU1Y55fBG/DMmx2iQoqiypkcb2f1Q==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 464vkb3js0-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46652100qw-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 21 Apr 2025 22:15:07 -0700 (PDT)
+ Mon, 21 Apr 2025 22:47:27 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 21 Apr 2025 22:15:06 -0700
+ 15.2.1544.4; Mon, 21 Apr 2025 22:47:26 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 21 Apr 2025 22:15:06 -0700
+ Transport; Mon, 21 Apr 2025 22:47:26 -0700
 Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id F1EF63F7077;
- Mon, 21 Apr 2025 22:15:03 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 8A8A83F7071;
+ Mon, 21 Apr 2025 22:47:23 -0700 (PDT)
 From: <kirankumark@marvell.com>
-To: Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+To: Ori Kam <orika@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
+ "Thomas Monjalon" <thomas@monjalon.net>,
+ Ferruh Yigit <ferruh.yigit@amd.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 CC: <dev@dpdk.org>, Kiran Kumar K <kirankumark@marvell.com>
-Subject: [PATCH] ethdev: support RSS based on RoCEv2 header
-Date: Tue, 22 Apr 2025 10:44:59 +0530
-Message-ID: <20250422051459.661395-1-kirankumark@marvell.com>
+Subject: [PATCH v2] ethdev: add support for flow action pop E-tag
+Date: Tue, 22 Apr 2025 11:17:17 +0530
+Message-ID: <20250422054717.1253650-1-kirankumark@marvell.com>
 X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=JLU7s9Kb c=1 sm=1 tr=0 ts=680725db cx=c_pps
+X-Proofpoint-GUID: gvKkEi5nYPtWRVpczcKWUSnTUQJsPOPf
+X-Authority-Analysis: v=2.4 cv=T7GMT+KQ c=1 sm=1 tr=0 ts=68072d6f cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=I1CpvfTFgTJrL32t2ygA:9
+ a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=iA0zb9gljxoUgJvkE7MA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: zCFMhQdPV8aYQh5ZhbHEnDXSenw9sfOZ
-X-Proofpoint-GUID: zCFMhQdPV8aYQh5ZhbHEnDXSenw9sfOZ
+X-Proofpoint-ORIG-GUID: gvKkEi5nYPtWRVpczcKWUSnTUQJsPOPf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_02,2025-04-21_02,2024-11-22_01
+ definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,49 +74,94 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kiran Kumar K <kirankumark@marvell.com>
 
-On supporting hardware, RoCEv2 header can be used to
-perform RSS in the ingress path.
+Add support for the following OpenFlow-defined action.
+
+RTE_FLOW_ACTION_TYPE_OF_POP_ETAG: Pop E-tag from the packet.
 
 Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
 ---
- app/test-pmd/config.c   | 4 +++-
- lib/ethdev/rte_ethdev.h | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+*V2 Changes:
+- Address comment related to order of enum values
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index e89af21cec..b6c7f032b0 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -92,7 +92,8 @@ const struct rss_type_info rss_type_table[] = {
- 	{ "all", RTE_ETH_RSS_ETH | RTE_ETH_RSS_VLAN | RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP |
- 		RTE_ETH_RSS_UDP | RTE_ETH_RSS_SCTP | RTE_ETH_RSS_L2_PAYLOAD |
- 		RTE_ETH_RSS_L2TPV3 | RTE_ETH_RSS_ESP | RTE_ETH_RSS_AH | RTE_ETH_RSS_PFCP |
--		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS | RTE_ETH_RSS_L2TPV2},
-+		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS | RTE_ETH_RSS_L2TPV2 |
-+		RTE_ETH_RSS_ROCEV2},
- 	{ "none", 0 },
- 	{ "ip", RTE_ETH_RSS_IP },
- 	{ "udp", RTE_ETH_RSS_UDP },
-@@ -149,6 +150,7 @@ const struct rss_type_info rss_type_table[] = {
- 	{ "l3-dst-only", RTE_ETH_RSS_L3_DST_ONLY },
- 	{ "l3-src-only", RTE_ETH_RSS_L3_SRC_ONLY },
- 	{ "ipv6-flow-label", RTE_ETH_RSS_IPV6_FLOW_LABEL },
-+	{ "rocev2", RTE_ETH_RSS_ROCEV2},
- 	{ NULL, 0},
+ app/test-pmd/cmdline_flow.c |  9 +++++++++
+ lib/ethdev/rte_flow.c       |  1 +
+ lib/ethdev/rte_flow.h       | 10 +++++++++-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index 998527590f..b486bfd348 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -651,6 +651,7 @@ enum index {
+ 	ACTION_METER_COLOR_MODE,
+ 	ACTION_METER_STATE,
+ 	ACTION_OF_DEC_NW_TTL,
++	ACTION_OF_POP_ETAG,
+ 	ACTION_OF_POP_VLAN,
+ 	ACTION_OF_PUSH_VLAN,
+ 	ACTION_OF_PUSH_VLAN_ETHERTYPE,
+@@ -2274,6 +2275,7 @@ static const enum index next_action[] = {
+ 	ACTION_METER_MARK,
+ 	ACTION_METER_MARK_CONF,
+ 	ACTION_OF_DEC_NW_TTL,
++	ACTION_OF_POP_ETAG,
+ 	ACTION_OF_POP_VLAN,
+ 	ACTION_OF_PUSH_VLAN,
+ 	ACTION_OF_SET_VLAN_VID,
+@@ -6925,6 +6927,13 @@ static const struct token token_list[] = {
+ 		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+ 		.call = parse_vc,
+ 	},
++	[ACTION_OF_POP_ETAG] = {
++		.name = "of_pop_etag",
++		.help = "OpenFlow's OFPAT_POP_ETAG",
++		.priv = PRIV_ACTION(OF_POP_ETAG, 0),
++		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
++		.call = parse_vc,
++	},
+ 	[ACTION_OF_POP_VLAN] = {
+ 		.name = "of_pop_vlan",
+ 		.help = "OpenFlow's OFPAT_POP_VLAN",
+diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+index 9f8d8f3dc2..3d227f3bc5 100644
+--- a/lib/ethdev/rte_flow.c
++++ b/lib/ethdev/rte_flow.c
+@@ -212,6 +212,7 @@ static const struct rte_flow_desc_data rte_flow_desc_action[] = {
+ 	MK_FLOW_ACTION(METER, sizeof(struct rte_flow_action_meter)),
+ 	MK_FLOW_ACTION(SECURITY, sizeof(struct rte_flow_action_security)),
+ 	MK_FLOW_ACTION(OF_DEC_NW_TTL, 0),
++	MK_FLOW_ACTION(OF_POP_ETAG, 0),
+ 	MK_FLOW_ACTION(OF_POP_VLAN, 0),
+ 	MK_FLOW_ACTION(OF_PUSH_VLAN,
+ 		       sizeof(struct rte_flow_action_of_push_vlan)),
+diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
+index 3d2ccdeb92..fb4f4bf9b7 100644
+--- a/lib/ethdev/rte_flow.h
++++ b/lib/ethdev/rte_flow.h
+@@ -3201,7 +3201,7 @@ enum rte_flow_action_type {
+ 	 * @see struct rte_flow_query_quota
+ 	 * @see struct rte_flow_update_quota
+ 	 */
+-	 RTE_FLOW_ACTION_TYPE_QUOTA,
++	RTE_FLOW_ACTION_TYPE_QUOTA,
+
+ 	/**
+ 	 * Skip congestion management configuration.
+@@ -3263,6 +3263,14 @@ enum rte_flow_action_type {
+ 	 * @see struct rte_flow_action_jump_to_table_index.
+ 	 */
+ 	RTE_FLOW_ACTION_TYPE_JUMP_TO_TABLE_INDEX,
++
++	/**
++	 * Implements POP_ETAG ("pop the outer 802.1BR Etag") as defined
++	 * by the OpenFlow Switch Specification.
++	 *
++	 * No associated configuration structure.
++	 */
++	RTE_FLOW_ACTION_TYPE_OF_POP_ETAG,
  };
- 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ea7f8c4a1a..e29a3c876d 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -602,6 +602,7 @@ struct rte_eth_rss_conf {
- 
- #define RTE_ETH_RSS_L2TPV2             RTE_BIT64(36)
- #define RTE_ETH_RSS_IPV6_FLOW_LABEL    RTE_BIT64(37)
-+#define RTE_ETH_RSS_ROCEV2    RTE_BIT64(38)
- 
- /*
-  * We use the following macros to combine with above RTE_ETH_RSS_* for
--- 
+
+ /**
+--
 2.48.1
 
