@@ -2,74 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AC8C369C2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 06:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4400DC369C2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 08:54:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C0CE402A9;
-	Tue, 22 Apr 2025 08:40:00 +0200 (CEST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
- [209.85.208.54])
- by mails.dpdk.org (Postfix) with ESMTP id BFAEC40299;
- Tue, 22 Apr 2025 08:39:58 +0200 (CEST)
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-5ec9d24acfbso10156878a12.0; 
- Mon, 21 Apr 2025 23:39:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0300E402E7;
+	Tue, 22 Apr 2025 10:54:18 +0200 (CEST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
+ [209.85.128.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 55C97402E6;
+ Tue, 22 Apr 2025 10:54:16 +0200 (CEST)
+Received: by mail-yw1-f178.google.com with SMTP id
+ 00721157ae682-6fedefb1c9cso34074337b3.0; 
+ Tue, 22 Apr 2025 01:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745303998; x=1745908798; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=4COOiqkXPyhFsucYecwPz+Z+96d9a0IarEUJKAYI9PQ=;
- b=TBWyyY0IW6LHGAi20PqHGnzdiIahgTbxLiUHwjlUGDzHNssbuw0fSuxT7w2ItykPyB
- 39Oxf5RnEN1UbthPRmJuWw9sSkNWSZqYVsmX3+UJS5C4c3gdZl0wVBd/lFTifH1oSPQA
- +akSomPPMPTnUZZwLEzSONeAhDzqyNobUONjGyl9QhsKEIchPqpRZnbI8NgXEW7bBgDp
- gVnuiuyUBEN6WpUW5V+jrd4DzGlrpJxFfMvauN1ds7Ynnmm7XMR34SjhdJtmz8pgmE7f
- ndsso4ELLH2bPJtLJ5gy7DPPUaEJYvPhlMCTs2NIRX/aEsMA/yFPXlC+g+6DOd0hw0xy
- YO2w==
+ d=gmail.com; s=20230601; t=1745312055; x=1745916855; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=X/BBgDZTH+b1nAtj7cYVhQ7sZ5AJ+m2R/p/2UTSXNGU=;
+ b=iOPNKT0uqU37X7Y3zoCIFREaP48X0hf6yYNB60++dvjCFwmI/r6FHZ4VYDDTlKsuet
+ MjGTW4uJs+FFGlWRJmZRGcWttTmQSVpSiN8OoO1T5gOSpFiw06EwHEmgMtHVZtdxRLp5
+ vlb3Ju8OgQ3826T92qVoTDSEZnMUC1zt4+xd6u1RW0Bt5OzJL9oXqGBDDHJ4kgb3UKNI
+ LNw5/YIJnq2cHTUgHF14HDLyoASzoaD2VhTL3QOsC+R+nMVWQT2+xqcbq23h5e8f5jAx
+ I9xHRY8NDBHh0GUWcU16yJ+RVSrUvwScYe+CZVu3E22Ec/pJ//58QIGI2htAMlEbHKiS
+ gTNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745303998; x=1745908798;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ d=1e100.net; s=20230601; t=1745312055; x=1745916855;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=4COOiqkXPyhFsucYecwPz+Z+96d9a0IarEUJKAYI9PQ=;
- b=IrqT19JQoMRFraY2ZBGXTR8up7vZMo1RoDk1qXl381QBd5d9yOuUiv5RzbQ7O998QP
- EQgOu+CCimz9MrwxGuwA++U6DUYCutv2JPCG+lnmEHjdZ2vuo9d42+WCtM5bk39sabLc
- egEPz+MdNT6UD7k7a/hT70Pc5eAMywkWj/6ZKEz9fOeBWYrp+26+HjpPvOEqR6zoZsJ5
- NoLi8+x05RRBDM4SppG/4qxFtQPXkpDCTV93nxKf2CjcWE+i6fZF2G2jXD5jxZGqBn+q
- 5Zt9n9YcqtXIF3KsnMnaIUFwSeUVl/AtKjhf+OZq0czKbzn0iQM7niYBx7+k/FVGUTDF
- GgMg==
+ bh=X/BBgDZTH+b1nAtj7cYVhQ7sZ5AJ+m2R/p/2UTSXNGU=;
+ b=Oa+lKuUkN78DZdWdnxQ2hRZyZG62QAVSDhzWKSVim7KC3Rnl0SLoIIhGUGjcZepBMb
+ WcIBaLr7DtSrlJPEwCF7aaFGbG35oYVXg6MUAufiXVV5BzU5dzPdsCGxLfkYamWkmygn
+ Zstjkf+lQsh4A0I35pjY8atHO1vOEd0kl3ApkJU74BRHlioTiip05PA+GBJl2RreeWVE
+ xQxvX/0OABbd2cG1R2Kz72WKCA8gfCl0bhTuRbkPMj2ihf0uUFP3gHTZvtvU8T4B1VLd
+ H+YmsdWddabdFASqOpChysoKWfNR91PTX9bSQC5n8vzcipo+yOaXQIrnd+cTj3ps9JDk
+ dhjA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUCi+rKoP3Pde4MbZUfqvTiL+R0uIRIKeNghoiB1iL0LjPcdQhWDWPaE9WZkTVBcwjpIQtKwMA=@dpdk.org
-X-Gm-Message-State: AOJu0Yz6JCpK+CVR9ZSCLEcR63ROoLAcUZ/ezGr8yeAX/YawBFqsdUEK
- GX9Q8xixYOrZRGsl0OSlVX8N/mC0rq9FgsTP+F4jx5KBCjnn/oON
-X-Gm-Gg: ASbGncvMj3wCRcUK+1At532exRY/GnJLGxxtZwApnl2vvOook7W/VwuonSAJOTMML/E
- PXorwTFcODlHzpSGMABGc29hPDPnaxlUQa+HdzikCbsri42Xoo92le/XO4GaVwJ6vRy9D7N3xJG
- fpwfYdcnQjNdEJGSnwvSag7nmVYiVsv6kg2lQ1bVXRRPr2enIyb/U8eTTO/q4tR2Z0IlSTAV/Wr
- dMlJJ0hy7oiquh343TR7+fQ+wmoejJ8RUBNvJHZ+uP4KrIkHOHFhMvl4PepJG5pxXzhym7IkGC4
- G5hbD6iiOKOH+Oosjkg6lA7bI9x/aweGP3x3rAdgJdGRsdbiKwd37hHalp9EqhxZpSG7/Jd99un
- HUIX+mQsLkg8Ok0idSWg=
-X-Google-Smtp-Source: AGHT+IFtab4HfwwBDCeRaKMuK91D/Q2XZFhNlZSTBOadH9jBhyDx+xOfUvl2cQUiazRFUwi40P2wTA==
-X-Received: by 2002:a17:907:d17:b0:ac7:981d:b137 with SMTP id
- a640c23a62f3a-acb6ee24847mr1063728466b.22.1745303998035; 
- Mon, 21 Apr 2025 23:39:58 -0700 (PDT)
-Received: from localhost.localdomain (apn-78-30-81-147.dynamic.gprs.plus.pl.
- [78.30.81.147]) by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-acb94140bb8sm430433766b.17.2025.04.21.23.39.56
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Apr 2025 23:39:57 -0700 (PDT)
-From: patrykochal@gmail.com
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Yongseok Koh <yskoh@mellanox.com>
-Cc: dev@dpdk.org, "Patryk Ochal (Redge Technologies)" <patrykochal@gmail.com>,
- stable@dpdk.org
-Subject: [PATCH] net/mlx5: fix out-of-bounds write in Rx software ring
-Date: Tue, 22 Apr 2025 08:37:54 +0200
-Message-Id: <20250422063754.3429965-1-patrykochal@gmail.com>
-X-Mailer: git-send-email 2.30.2
+ AJvYcCX/KNWJtTmdTlpK/a/yacHkY+6xiyJBMSa1ODT1CkPWOG7L0ozVMPm2z3CWpmU9nh62+pRODzs=@dpdk.org
+X-Gm-Message-State: AOJu0YzHh3zc7f9Yic7NKkFhzlXZg8NbV/Lk5Qg+1l67aC+Lf4TUImBE
+ RYbfjhSGhsFTZVV5nX3W43TQjYXbBcP4zTAD+lpnN252ucXfnU5kVIU5LQ2oec4sN05zs8MZ09X
+ ANUQzjfCxn27cOb5clkriAtBCpGc=
+X-Gm-Gg: ASbGncvoIKJ4DNdWP5xxFJNMMY1HCfAUDNz5iWUnNnV7EDiN4v63s1NNveLBcIrG+54
+ V5i52LvLdcSWyoUO/z7eFbs6Poyuswu3dXnO2CAMTHwYoZnCO4wg6UT4LkeD3zG4oMfgqFM4Atp
+ RzcXQ5ehJ2LpeO373/U2l8RJUdED+h1CM=
+X-Google-Smtp-Source: AGHT+IEfIc5tR4X548AWUX8iaapA/s9iW6334s8iH8D3s4DJx5UpX37REvXqMTt9Lj02cemNXYtZwi6aV6dw2qEhRwY=
+X-Received: by 2002:a05:690c:4b0b:b0:702:52fb:4629 with SMTP id
+ 00721157ae682-706ccdb6573mr172705297b3.23.1745312055454; Tue, 22 Apr 2025
+ 01:54:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250422063754.3429965-1-patrykochal@gmail.com>
+In-Reply-To: <20250422063754.3429965-1-patrykochal@gmail.com>
+From: patryk ochal <patrykochal@gmail.com>
+Date: Tue, 22 Apr 2025 10:54:04 +0200
+X-Gm-Features: ATxdqUGNNQlOgPNmni4BUUc1enwFLC0dDr7Hyw3FesmyllJiPQMnCZ1mN-CW1LY
+Message-ID: <CAO7mW7D__pXqSwMCjtoowCRqzHth3Y2qJrWA5zh7XsoEJ6nNpQ@mail.gmail.com>
+Subject: [PATCH WITHDRAW] net/mlx5: fix out-of-bounds write in Rx software ring
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Yongseok Koh <yskoh@mellanox.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000016729d06335a2157"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,44 +77,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: "Patryk Ochal (Redge Technologies)" <patrykochal@gmail.com>
+--00000000000016729d06335a2157
+Content-Type: text/plain; charset="UTF-8"
 
-If the vectorized Rx burst function runs short on available mbufs,
-the CQ processing may write past the end of the RX software ring.
+Hi,
 
-This happens because `rxq_cq_process_v()` populates the software ring
-and accesses mbufs before validating the associated CQEs. If the number
-of available mbufs is insufficient, this can result in out-of-bounds
-access.
+Please withdraw this patch. It was submitted prematurely as the fix for the
+issue is already included here
+https://mails.dpdk.org/archives/stable/2025-February/051616.html
 
-This patch adds a limit to ensure CQ processing does not exceed the
-number of mbufs that have actually been replenished and posted.
+Apologies for the confusion.
 
-Fixes: 03e0868b4cd7 ("net/mlx5: fix deadlock due to buffered slots in Rx SW ring")
-Cc: yskoh@mellanox.com
-Cc: stable@dpdk.org
+Thanks,
+Patryk Ochal
 
-Signed-off-by: Patryk Ochal (Redge Technologies) <patrykochal@gmail.com>
----
- drivers/net/mlx5/mlx5_rxtx_vec.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+--00000000000016729d06335a2157
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/mlx5/mlx5_rxtx_vec.c b/drivers/net/mlx5/mlx5_rxtx_vec.c
-index 2363d7ed27..67a1e168d8 100644
---- a/drivers/net/mlx5/mlx5_rxtx_vec.c
-+++ b/drivers/net/mlx5/mlx5_rxtx_vec.c
-@@ -320,8 +320,10 @@ rxq_burst_v(struct mlx5_rxq_data *rxq, struct rte_mbuf **pkts,
- 	}
- 	elts_idx = rxq->rq_pi & e_mask;
- 	elts = &(*rxq->elts)[elts_idx];
-+	/* Not to move past the allocated mbufs. */
-+	pkts_n = RTE_MIN(pkts_n - rcvd_pkt, rxq->rq_ci - rxq->rq_pi);
- 	/* Not to overflow pkts array. */
--	pkts_n = RTE_ALIGN_FLOOR(pkts_n - rcvd_pkt, MLX5_VPMD_DESCS_PER_LOOP);
-+	pkts_n = RTE_ALIGN_FLOOR(pkts_n, MLX5_VPMD_DESCS_PER_LOOP);
- 	/* Not to cross queue end. */
- 	pkts_n = RTE_MIN(pkts_n, q_n - elts_idx);
- 	pkts_n = RTE_MIN(pkts_n, q_n - cq_idx);
--- 
-2.30.2
+<div dir=3D"ltr"><div dir=3D"ltr">Hi,<br><br>Please withdraw this patch. It=
+ was submitted prematurely as the fix for the issue is already included her=
+e <a href=3D"https://mails.dpdk.org/archives/stable/2025-February/051616.ht=
+ml">https://mails.dpdk.org/archives/stable/2025-February/051616.html</a><br=
+><br>Apologies for the confusion.<br><br>Thanks,<br></div><div>Patryk Ochal=
+</div></div>
 
+--00000000000016729d06335a2157--
