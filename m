@@ -2,68 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4400DC369C2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 08:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90119C369C2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Apr 2025 11:35:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0300E402E7;
-	Tue, 22 Apr 2025 10:54:18 +0200 (CEST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
- [209.85.128.178])
- by mails.dpdk.org (Postfix) with ESMTP id 55C97402E6;
- Tue, 22 Apr 2025 10:54:16 +0200 (CEST)
-Received: by mail-yw1-f178.google.com with SMTP id
- 00721157ae682-6fedefb1c9cso34074337b3.0; 
- Tue, 22 Apr 2025 01:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745312055; x=1745916855; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=X/BBgDZTH+b1nAtj7cYVhQ7sZ5AJ+m2R/p/2UTSXNGU=;
- b=iOPNKT0uqU37X7Y3zoCIFREaP48X0hf6yYNB60++dvjCFwmI/r6FHZ4VYDDTlKsuet
- MjGTW4uJs+FFGlWRJmZRGcWttTmQSVpSiN8OoO1T5gOSpFiw06EwHEmgMtHVZtdxRLp5
- vlb3Ju8OgQ3826T92qVoTDSEZnMUC1zt4+xd6u1RW0Bt5OzJL9oXqGBDDHJ4kgb3UKNI
- LNw5/YIJnq2cHTUgHF14HDLyoASzoaD2VhTL3QOsC+R+nMVWQT2+xqcbq23h5e8f5jAx
- I9xHRY8NDBHh0GUWcU16yJ+RVSrUvwScYe+CZVu3E22Ec/pJ//58QIGI2htAMlEbHKiS
- gTNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745312055; x=1745916855;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=X/BBgDZTH+b1nAtj7cYVhQ7sZ5AJ+m2R/p/2UTSXNGU=;
- b=Oa+lKuUkN78DZdWdnxQ2hRZyZG62QAVSDhzWKSVim7KC3Rnl0SLoIIhGUGjcZepBMb
- WcIBaLr7DtSrlJPEwCF7aaFGbG35oYVXg6MUAufiXVV5BzU5dzPdsCGxLfkYamWkmygn
- Zstjkf+lQsh4A0I35pjY8atHO1vOEd0kl3ApkJU74BRHlioTiip05PA+GBJl2RreeWVE
- xQxvX/0OABbd2cG1R2Kz72WKCA8gfCl0bhTuRbkPMj2ihf0uUFP3gHTZvtvU8T4B1VLd
- H+YmsdWddabdFASqOpChysoKWfNR91PTX9bSQC5n8vzcipo+yOaXQIrnd+cTj3ps9JDk
- dhjA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX/KNWJtTmdTlpK/a/yacHkY+6xiyJBMSa1ODT1CkPWOG7L0ozVMPm2z3CWpmU9nh62+pRODzs=@dpdk.org
-X-Gm-Message-State: AOJu0YzHh3zc7f9Yic7NKkFhzlXZg8NbV/Lk5Qg+1l67aC+Lf4TUImBE
- RYbfjhSGhsFTZVV5nX3W43TQjYXbBcP4zTAD+lpnN252ucXfnU5kVIU5LQ2oec4sN05zs8MZ09X
- ANUQzjfCxn27cOb5clkriAtBCpGc=
-X-Gm-Gg: ASbGncvoIKJ4DNdWP5xxFJNMMY1HCfAUDNz5iWUnNnV7EDiN4v63s1NNveLBcIrG+54
- V5i52LvLdcSWyoUO/z7eFbs6Poyuswu3dXnO2CAMTHwYoZnCO4wg6UT4LkeD3zG4oMfgqFM4Atp
- RzcXQ5ehJ2LpeO373/U2l8RJUdED+h1CM=
-X-Google-Smtp-Source: AGHT+IEfIc5tR4X548AWUX8iaapA/s9iW6334s8iH8D3s4DJx5UpX37REvXqMTt9Lj02cemNXYtZwi6aV6dw2qEhRwY=
-X-Received: by 2002:a05:690c:4b0b:b0:702:52fb:4629 with SMTP id
- 00721157ae682-706ccdb6573mr172705297b3.23.1745312055454; Tue, 22 Apr 2025
- 01:54:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C65E402E7;
+	Tue, 22 Apr 2025 13:35:28 +0200 (CEST)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com
+ [205.220.178.238])
+ by mails.dpdk.org (Postfix) with ESMTP id 3F05B402E6
+ for <dev@dpdk.org>; Tue, 22 Apr 2025 13:35:26 +0200 (CEST)
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+ by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M5A64E022725
+ for <dev@dpdk.org>; Tue, 22 Apr 2025 11:35:26 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com
+ [147.11.82.252])
+ by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4642t8tvph-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <dev@dpdk.org>; Tue, 22 Apr 2025 11:35:25 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 22 Apr 2025 04:35:24 -0700
+Received: from pek-lpg-core6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 22 Apr 2025 04:35:24 -0700
+From: <changqing.li@windriver.com>
+To: <dev@dpdk.org>
+Subject: [PATCH] ethdev_trace.h: Update the trace point function when
+ _TIME_BITS=64
+Date: Tue, 22 Apr 2025 19:35:23 +0800
+Message-ID: <20250422113523.867473-1-changqing.li@windriver.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20250422063754.3429965-1-patrykochal@gmail.com>
-In-Reply-To: <20250422063754.3429965-1-patrykochal@gmail.com>
-From: patryk ochal <patrykochal@gmail.com>
-Date: Tue, 22 Apr 2025 10:54:04 +0200
-X-Gm-Features: ATxdqUGNNQlOgPNmni4BUUc1enwFLC0dDr7Hyw3FesmyllJiPQMnCZ1mN-CW1LY
-Message-ID: <CAO7mW7D__pXqSwMCjtoowCRqzHth3Y2qJrWA5zh7XsoEJ6nNpQ@mail.gmail.com>
-Subject: [PATCH WITHDRAW] net/mlx5: fix out-of-bounds write in Rx software ring
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, 
- Matan Azrad <matan@nvidia.com>, Yongseok Koh <yskoh@mellanox.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000016729d06335a2157"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: vhXq6o44ip5_Eowc_P988P8ioPUvcR1s
+X-Proofpoint-GUID: vhXq6o44ip5_Eowc_P988P8ioPUvcR1s
+X-Authority-Analysis: v=2.4 cv=TJ9FS0la c=1 sm=1 tr=0 ts=68077efe cx=c_pps
+ a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17
+ a=XR8D0OoHHMoA:10 a=t7CeM3EgAAAA:8 a=q8yi_ZPvUVNFa_hMH0IA:9
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_05,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 mlxlogscore=844
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504220087
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,29 +66,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000016729d06335a2157
-Content-Type: text/plain; charset="UTF-8"
+From: Changqing Li <changqing.li@windriver.com>
 
-Hi,
+To support Y2038 issue, for 32bit system, -D_TIME_BITS=64 is passed to
+gcc, struct timespec time->tv_sec is 64bit, but size_t is 32bits, so
+dpdk will compile failed with error:
+../git/lib/ethdev/ethdev_trace.h: In function 'rte_eth_trace_timesync_write_time':
+../git/lib/eal/include/rte_common.h:498:55: error: size of unnamed array is negative
+  498 | #define RTE_BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
-Please withdraw this patch. It was submitted prematurely as the fix for the
-issue is already included here
-https://mails.dpdk.org/archives/stable/2025-February/051616.html
+Update the trace point function to fix above issue
 
-Apologies for the confusion.
+Signed-off-by: Changqing Li <changqing.li@windriver.com>
+---
+ lib/ethdev/ethdev_trace.h | 57 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 53 insertions(+), 4 deletions(-)
 
-Thanks,
-Patryk Ochal
+diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+index c65b78590a..20390140dd 100644
+--- a/lib/ethdev/ethdev_trace.h
++++ b/lib/ethdev/ethdev_trace.h
+@@ -1116,15 +1116,27 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_int(ret);
+ )
+ 
++#if defined(_TIME_BITS) && _TIME_BITS == 64
+ RTE_TRACE_POINT(
+ 	rte_eth_trace_timesync_write_time,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
+ 		int ret),
+ 	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_size_t(time->tv_sec);
++	rte_trace_point_emit_u64(time->tv_sec);
+ 	rte_trace_point_emit_long(time->tv_nsec);
+ 	rte_trace_point_emit_int(ret);
+ )
++#else
++RTE_TRACE_POINT(
++    rte_eth_trace_timesync_write_time,
++    RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
++        int ret),
++    rte_trace_point_emit_u16(port_id);
++    rte_trace_point_emit_size_t(time->tv_sec);
++    rte_trace_point_emit_long(time->tv_nsec);
++    rte_trace_point_emit_int(ret);
++)
++#endif
+ 
+ RTE_TRACE_POINT(
+ 	rte_eth_trace_read_clock,
+@@ -2146,38 +2158,75 @@ RTE_TRACE_POINT_FP(
+ )
+ 
+ /* Called in loop in examples/ptpclient */
++#if defined(_TIME_BITS) && _TIME_BITS == 64
+ RTE_TRACE_POINT_FP(
+ 	rte_eth_trace_timesync_read_rx_timestamp,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
+ 		uint32_t flags, int ret),
+ 	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_size_t(timestamp->tv_sec);
++	rte_trace_point_emit_u64(timestamp->tv_sec);
+ 	rte_trace_point_emit_long(timestamp->tv_nsec);
+ 	rte_trace_point_emit_u32(flags);
+ 	rte_trace_point_emit_int(ret);
+ )
++#else
++RTE_TRACE_POINT_FP(
++    rte_eth_trace_timesync_read_rx_timestamp,
++    RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
++        uint32_t flags, int ret),
++    rte_trace_point_emit_u16(port_id);
++    rte_trace_point_emit_size_t(timestamp->tv_sec);
++    rte_trace_point_emit_long(timestamp->tv_nsec);
++    rte_trace_point_emit_u32(flags);
++    rte_trace_point_emit_int(ret);
++)
++#endif
+ 
+ /* Called in loop in examples/ptpclient */
++#if defined(_TIME_BITS) && _TIME_BITS == 64
+ RTE_TRACE_POINT_FP(
+ 	rte_eth_trace_timesync_read_tx_timestamp,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
+ 		int ret),
+ 	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_size_t(timestamp->tv_sec);
++	rte_trace_point_emit_u64(timestamp->tv_sec);
+ 	rte_trace_point_emit_long(timestamp->tv_nsec);
+ 	rte_trace_point_emit_int(ret);
+ )
++#else
++RTE_TRACE_POINT_FP(
++    rte_eth_trace_timesync_read_tx_timestamp,
++    RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
++        int ret),
++    rte_trace_point_emit_u16(port_id);
++    rte_trace_point_emit_size_t(timestamp->tv_sec);
++    rte_trace_point_emit_long(timestamp->tv_nsec);
++    rte_trace_point_emit_int(ret);
++)
++#endif
+ 
+ /* Called in loop in examples/ptpclient */
++#if defined(_TIME_BITS) && _TIME_BITS == 64
+ RTE_TRACE_POINT_FP(
+ 	rte_eth_trace_timesync_read_time,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
+ 		int ret),
+ 	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_size_t(time->tv_sec);
++	rte_trace_point_emit_u64(time->tv_sec);
+ 	rte_trace_point_emit_long(time->tv_nsec);
+ 	rte_trace_point_emit_int(ret);
+ )
++#else
++RTE_TRACE_POINT_FP(
++    rte_eth_trace_timesync_read_time,
++    RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
++        int ret),
++    rte_trace_point_emit_u16(port_id);
++    rte_trace_point_emit_size_t(time->tv_sec);
++    rte_trace_point_emit_long(time->tv_nsec);
++    rte_trace_point_emit_int(ret);
++)
++#endif
+ 
+ /* Called in loop in examples/ptpclient */
+ RTE_TRACE_POINT_FP(
+-- 
+2.34.1
 
---00000000000016729d06335a2157
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Hi,<br><br>Please withdraw this patch. It=
- was submitted prematurely as the fix for the issue is already included her=
-e <a href=3D"https://mails.dpdk.org/archives/stable/2025-February/051616.ht=
-ml">https://mails.dpdk.org/archives/stable/2025-February/051616.html</a><br=
-><br>Apologies for the confusion.<br><br>Thanks,<br></div><div>Patryk Ochal=
-</div></div>
-
---00000000000016729d06335a2157--
