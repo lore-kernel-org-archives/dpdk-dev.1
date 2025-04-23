@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39312C369CB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 15:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DC9C369D1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 15:31:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE35F4025E;
-	Wed, 23 Apr 2025 17:24:57 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id D6589400D5
- for <dev@dpdk.org>; Wed, 23 Apr 2025 17:24:55 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-22c336fcdaaso73356095ad.3
- for <dev@dpdk.org>; Wed, 23 Apr 2025 08:24:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 39AA34025E;
+	Wed, 23 Apr 2025 17:30:59 +0200 (CEST)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 64691400D5
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 17:30:57 +0200 (CEST)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-736b98acaadso6381338b3a.1
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 08:30:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745421894;
- x=1746026694; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745422256;
+ x=1746027056; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5kOTDVdsRR0AUv1/Vh847eb8IuHCQ6kesOQYOG2axUM=;
- b=y4uBJBELhQ3DvqapdoLElAajFAQxhweRh9vu+/ZW4ESw2ZAA0ILkBRTkCgw3FHUfm1
- DaW+wPJOwOsB0eQql0uuydISiRFREF6yM9CyqvXBSJWqckTFYxr1MrrKVzduuzEyTPYo
- fV02YQ/aFh2M7pFQ0X+ahM6Wl6TrkWQgvNDa/JbRYszlxVuaqoOr9PB/X21ITJZBBhZ6
- WNH6i9P4ExOj8y+43AG4s83gV71Ti8SxyYk+Bx4/Nnia2UY0QYWw7+RqQbz4OOJwA0yu
- kztrH1YDljkz9EJoFRBVcY5mMi1YcGk6dTYS6xO0n4dzYYHtsD5rwFmc8+P1BsjuYeeH
- hXKQ==
+ bh=wy9HVV3Q99t8kht3GwH/nGT6iTMaupsS3DneBA+H2DI=;
+ b=XTon0EFevB0tfba5maQZSqJAn46KRi3y2gevrYhHhk1OZngmSukIfmiR8BZXKGJ5FA
+ JAlvwa7qtOvNHH9jSl/a6MeoY0WTxP931JYsMavpdvgt5r+H6kelGlSGJuo41QI6sx2j
+ dgmfCxCaBzoTjhdKV/uwyCU2hECLJX/lVbAg+SLV/6GvSwKu7t12e0df7PwtxzQcK1Ls
+ BaOppFxAodg7gag2vChvzeX1rL6puZ2sZJwfdZYmlUqfzlVXzZxMN7Pj4rZbiBPCcgfj
+ mj/gZa74TwWXSeAgwwIwWo1YD2aNpdkkm4ioLi4a5Mvq3hvOLuEXcAHMULyR/XuJDvG6
+ LLDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745421894; x=1746026694;
+ d=1e100.net; s=20230601; t=1745422256; x=1746027056;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5kOTDVdsRR0AUv1/Vh847eb8IuHCQ6kesOQYOG2axUM=;
- b=dpBDzzpB5F+qtgoInnUjV7bSv39HNZuTxBSlInyzreIT6KMjUF4ISAznkaEDS95zbG
- z3ORI18n3qJBwEyj7yIEnGuJnJHuGU3LDB/MqZzBNJ/wYJeNUQ9dQ2tQJvne0BFQw7Dk
- GZ7jwfA7S9WrqAUcFEIQbr7qF50LGzTQzUPx9xXz3di86PLzll+dC1ARwX0NZ11t6qlq
- CcUnZ7wWZNlOWDRGV+WYhGDHixPfOqUuI++H6DbYY+oee041n6Iye/l43iv3aAsDAxhd
- mkykgc30h7D55WZgyQoxPEadoLBRVjpo0BUXoBu7XkqevlQu6KxWVzLjBYaNa67+WO4q
- rJjg==
-X-Gm-Message-State: AOJu0Yyn2hYBKFXJWgbZZrJ51AIa74NmNclB7DgfPtojIDJgo21zT0Eo
- 7um5c+en7WP2hYGw+39B6G5Z5hVRAehO7UYFIGulS5OgJ7hujOfM2ty71eeuhec=
-X-Gm-Gg: ASbGncuSdIqfxteW8SzHv0GlrGg3xQ6AzPrIIFusau3kVQkQGJAo5zAdWPkbmyahu8s
- yEdSdbzu5e8l6jR1UqHW99HfyOVufsKj4qIa784OewHTU6nxvYELQdS1DF7uXhzRHmFR6PyaeB9
- 8UBMfq2s9dkQ/Du1oh3xiWSrFCIlNJaaKCej4ZFfCodEJjpdBVOutbVux2c2LCyXf6ITRQvmIPp
- kl+kyu9xNNKB0XP+UnSuYK2oQH39iOcpLB8p1BC/PJtBOf9HQto0EJQ3H6HcYwfZ1+BIk/r9fW7
- 9VfTu2zgV/8RcalajZJVjHIGcDAvPvJ4IilI6yMpSqze38Idv5U45XCGfzLn6qOwwlbaDgPIt+v
- J2MS3duPQfd1Kp2Kp
-X-Google-Smtp-Source: AGHT+IGZGQoMaj1ugTuwHxY3cBWqjrvJ8UzyGPcMGf8c2e7zAod6qp+ys0kPGImYVob9p8BAM4gfXg==
-X-Received: by 2002:a17:902:ce11:b0:223:5ca1:3b0b with SMTP id
- d9443c01a7336-22c5361105amr332380555ad.40.1745421894512; 
- Wed, 23 Apr 2025 08:24:54 -0700 (PDT)
+ bh=wy9HVV3Q99t8kht3GwH/nGT6iTMaupsS3DneBA+H2DI=;
+ b=E31vV3rteMU/ElZzSajsJK/E5aaExcDKtq5cBwjjlCZTFZk+/+qdSQRgWpSvQEtQF3
+ xPQQg7gRoJ7SciW/easAU/HA77D4x+TO7FC8/QPH6yzybZ59w5AdhYOgM72g2wijlCf3
+ IaZeHo8WCeV7LzSyDs5nOPU3g4+ABitMCKPlSYUAQiAUPn2ImZ13HGgKS0wcmQQ0Ljmk
+ SxUCe5+Nm4+2od+X8pL1nENUYgZUqKPa+cRFZMqllSX6Rq/K0juEBO7+3MVmymhW6iIm
+ O9BmD5dMXZeNGTECe/ZjJ82dkgtzymZdG3gN/AW6R0gusR7RSc+HXu1nkFwFJoJ6rfzX
+ AnxA==
+X-Gm-Message-State: AOJu0YyHrpYQUMEDiwjq7mBLm7z99EjJ1t7z+BzuEKp7leOAUBhpFwG4
+ +HUNnV5kwJn3zP2P8ry387C71QXcvm/6UrWBqxsE28EVutZHo4NKnHfwnVe8kE4=
+X-Gm-Gg: ASbGncsSxq9KNN7DvtLI+Vg9DraAk23TwiWYccvz3zu0LOojGJWA81/UEeTEfcEF+HM
+ GsYCQrrv74Q2qIdxbJQojo4xGODZKRU9EAAW/7C21qeydE+HDOsga+UKA8EfJ/ioAAdaf0ICrew
+ mIIfuUt3kaWWW4a+kMr47uCDotWzWF1I7z7ebp3W/jxUYKvMNZMw1q4Wf5awLn0INsqxe7sLTMm
+ mOwGOdg9BSLJPE28eblkurWBHjc3mKuVmkZDX9v2yq33rhS1NGhAEXT1Q/blUZ86t1Gm68OUFj7
+ 8VnO44+2bbzLgAA35nnGYIBNu55AyCD79pDnXhr1nLH5JRBjRocfG++R+YyiEVVqQDOsVqFs3CV
+ +eCdFVXgjsdhx9/dy
+X-Google-Smtp-Source: AGHT+IFWELCRXXGPf9cW3vaZlVd5WPVStHIMxH060Zk6yGWcFp5qlQBqPClQWkqzVNG6uOu7tRyE9g==
+X-Received: by 2002:a17:90b:2801:b0:2fe:99cf:f566 with SMTP id
+ 98e67ed59e1d1-3087bb573d8mr27645986a91.13.1745422256222; 
+ Wed, 23 Apr 2025 08:30:56 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22c50eb6718sm105321165ad.153.2025.04.23.08.24.53
+ d9443c01a7336-22c50fe0460sm106215385ad.255.2025.04.23.08.30.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Apr 2025 08:24:54 -0700 (PDT)
-Date: Wed, 23 Apr 2025 08:24:50 -0700
+ Wed, 23 Apr 2025 08:30:56 -0700 (PDT)
+Date: Wed, 23 Apr 2025 08:30:52 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <matan@nvidia.com>,
- <suanmingm@nvidia.com>, <dsosnowski@nvidia.com>
-Subject: Re: [PATCH] net/mlx5: mitigate the Tx queue parameter adjustment
-Message-ID: <20250423082450.5eb6cdee@hermes.local>
-In-Reply-To: <20250423122807.121990-1-viacheslavo@nvidia.com>
-References: <20250423122807.121990-1-viacheslavo@nvidia.com>
+To: edwin.brossette@6wind.com
+Cc: dev@dpdk.org, olivier.matz@6wind.com, didier.pallard@6wind.com,
+ lauren.hardy@6wind.com, dsinghrawat@marvell.com, palok@marvell.com,
+ stable@dpdk.org
+Subject: Re: [PATCH 2/5] net/qede: fix bad sanity check on Rx queue release
+Message-ID: <20250423083052.63bed101@hermes.local>
+In-Reply-To: <20250422155143.3893525-2-edwin.brossette@6wind.com>
+References: <CANDF9xDNq9Yy+FujvGcc3r1ycjbJDJmnP4_ih+LEm-07=jHDcA@mail.gmail.com>
+ <20250422155143.3893525-1-edwin.brossette@6wind.com>
+ <20250422155143.3893525-2-edwin.brossette@6wind.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,13 +84,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 23 Apr 2025 15:28:07 +0300
-Viacheslav Ovsiienko <viacheslavo@nvidia.com> wrote:
+On Tue, 22 Apr 2025 17:51:40 +0200
+edwin.brossette@6wind.com wrote:
 
-> +		DRV_LOG(WARNING,
-> +			"tso header inline requirements (%u) are not satisfied (%u) on port %u,"
-> +			" the Tx queue capacity (%d) may not be guaranteed",
-> +			MLX5_MAX_TSO_HEADER, max_inline, priv->dev_data->port_id, desc);
+> From: Edwin Brossette <edwin.brossette@6wind.com>
+> 
+> As per the rte_mbuf API: the driver is responsible of initializing all
+> the required fields. This is not done at qede alloc, meaning there can
+> be garbage data in mbufs memory, although this garbage data should be
+> overwritten when the mbufs are used. Since a sanity check is done when
+> freeing the queues, its possible some remaining garbage data causes a
+> panic when trying to release the queues if some mbufs are being
+> processed.
+> 
+> Use rte_pktmbuf_raw_free() instead of rte_pktmbuf_free() as the sanity
+> check is more relaxed.
+> 
+> Fixes: 2ea6f76aff40 ("qede: add core driver")
+> CC: stable@dpdk.org
 
-If your messages are so long they can't fit on a single line, then they are too wordy.
-Please be more terse.
+Patch looks fine, but DPDK is trying to follow the inclusive naming
+guidelines. The term "sanity check" is on the not allowed list.
+
+I will reword the commit message.
+
+https://inclusivenaming.org/word-lists/tier-2/sanity-check/
