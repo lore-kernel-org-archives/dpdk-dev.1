@@ -2,46 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E4BC369D5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B33CC369D5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:40:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7971240156;
-	Wed, 23 Apr 2025 21:21:49 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id DE45B400D5
- for <dev@dpdk.org>; Wed, 23 Apr 2025 21:21:47 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id C785546610; Wed, 23 Apr 2025 21:21:47 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1697] Add TREX Traffic Generator Functionality &
- Single Core Performance Test.
-Date: Wed, 23 Apr 2025 19:21:47 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: DTS
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: npratte@iol.unh.edu
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter cc
- target_milestone
-Message-ID: <bug-1697-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17454361070.C11ab4.3369351
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 2C3BA40156;
+	Wed, 23 Apr 2025 21:40:17 +0200 (CEST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CA69C400D5
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 21:40:15 +0200 (CEST)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-47681cda32eso193461cf.3
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 12:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1745437215; x=1746042015; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=KTYq7BiKFpeP6Lm06aDKkT1RNV+liNT51dyUweUpILA=;
+ b=ALWijdjhOQvUn7s/nESLzMwGLvczCroWdjSW66NMpPiwj4dov9Ru4S9UwSYnp8kTLn
+ +HItFOCmq49a0mezYSNSTJO4mlSnj6EsVdZWLohDJFupmzf6QLuZ7zvlNhN25HZQKx/n
+ quVs6Xhjt2mQPcMHxLV8G4R3fB5pFfYhszqo4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745437215; x=1746042015;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=KTYq7BiKFpeP6Lm06aDKkT1RNV+liNT51dyUweUpILA=;
+ b=A3gHVi+bwjwOiX+SiGtdzVU/WQj/74La267jml3ARqSJ8FZN/pOVHAE9JV3YI1uxn+
+ rJyXQg1ALA7j/7YPwqTACyLf5ZtnjgpVbUEfEoo8TBDj+v+JhXUniZFriwRAtB4Z2Gse
+ d08X5SIjI3nbmCtvTHphMKLxwihbMsZVTRYLNlNAsl06grBN94uWBkyO+FomI5u/Rq9M
+ WagOEZCgEMqB7eIWySls58o+LaV5mvP7kW67WOmpnNWpA1DCrfQn2bVWK77s1un3hlYk
+ MN69qcfBPOQCQlAR4ZmXKP6YNlADjwKKrJsMNGu/VrhLGV7V7q48ZwKwMhyPcESfaYLO
+ KbrQ==
+X-Gm-Message-State: AOJu0YwfKdoBR0eBYgegIC8APmQIh36+r8iE98rjx2aObtL/yojDidUb
+ /UHvyDPIQILR1lMtqnD3GAbduRPFyQwNJfasIOT0kcDR+J+wPlwPuiflmVa0x8I=
+X-Gm-Gg: ASbGncsgjuIsKDMhIXT58I2DPoJh+A7V0Zi1pD9VsqYZAZs7gsfPH76/FBJtVeI/FEd
+ +/TPd/P3gg9buPfAKS2PvIc0d0E54GLXvrNpIw0Qkvs6uFg2nobu0ph9SOvMrSgmQhT4HfGswvP
+ 2ZPuA09PRIBUo5X0zSdc3J4tJaOiYuQOvpS2x5vVGEEHGtL6uAdYmJ8oC1s7oV+v2lAjxIaarkd
+ Lr/SyPmh8MVgsBNomawqsP6kSu+aR1wnmfqbQKFTafjCRlpDzFHuhtkcxcjLdGpjO7ZYeVAe6gl
+ VkOc7DKVCBOOd06R5sJlbB+pget3VVxuJlOIMPbMOUOUZJU1sQtV79V9fX1GAz8c9U+fSjHlGo3
+ RANYAWw==
+X-Google-Smtp-Source: AGHT+IHSsm181ObYZOiBLR4dY5TPjvgJUFRgM3yiI+8uOpBISt6MTYG1NVDFrWXHWcbu8k2g8eAgPQ==
+X-Received: by 2002:a05:622a:206:b0:475:876:ac3d with SMTP id
+ d75a77b69052e-47aec4c34demr115564181cf.13.1745437214913; 
+ Wed, 23 Apr 2025 12:40:14 -0700 (PDT)
+Received: from localhost.unh.edu ([2606:4100:3880:1271:e2f8:4ec3:8bf3:864c])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-47ae9cf9f7dsm71635691cf.74.2025.04.23.12.40.14
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 23 Apr 2025 12:40:14 -0700 (PDT)
+From: Nicholas Pratte <npratte@iol.unh.edu>
+To: ian.stokes@intel.com, yoan.picchi@foss.arm.com, probb@iol.unh.edu,
+ paul.szczepanek@arm.com, Honnappa.Nagarahalli@arm.com, thomas@monjalon.net,
+ luca.vizzarro@arm.com, thomas.wilks@arm.com, dmarx@iol.unh.edu,
+ stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Nicholas Pratte <npratte@iol.unh.edu>
+Subject: [RFC Patch v1 0/5] Add TREX Traffic Generator to DTS Framework
+Date: Wed, 23 Apr 2025 15:40:06 -0400
+Message-ID: <20250423194011.1447679-1-npratte@iol.unh.edu>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,163 +77,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Included in a semi-complete, RFC implementation for a would-be
+implementation of the TREX traffic generator, in addition to a
+mock implementation of a single core performance test suite,
+leveraging newly added performance test API functionality.
 
---17454361070.C11ab4.3369351
-Date: Wed, 23 Apr 2025 21:21:47 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Code is incomplete with a handful of typing issues, but does execute
+without errors on my system.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1697
+Nicholas Pratte (5):
+  dts: rework config module to support perf TGs
+  dts: rework traffic generator inheritance structure.
+  dts: add asychronous support to ssh sessions.
+  dts: add trex traffic generator to dts framework
+  dts: add performance test functions to test suite api
 
-            Bug ID: 1697
-           Summary: Add TREX Traffic Generator Functionality & Single Core
-                    Performance Test.
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: DTS
-          Assignee: dev@dpdk.org
-          Reporter: npratte@iol.unh.edu
-                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
-  Target Milestone: ---
+ dts/{ => configurations}/nodes.example.yaml   |   0
+ .../test_run.example.yaml                     |   8 +-
+ .../tests_config.example.yaml                 |   0
+ .../trex_configs/intel_40g.yaml               |  18 ++
+ dts/framework/config/test_run.py              |  20 +-
+ dts/framework/context.py                      |  11 +-
+ dts/framework/remote_session/ssh_session.py   |  17 ++
+ dts/framework/settings.py                     |   6 +-
+ dts/framework/test_run.py                     |  28 +-
+ dts/framework/test_suite.py                   |  33 +-
+ .../traffic_generator/__init__.py             |  22 +-
+ .../capturing_traffic_generator.py            |  34 +++
+ .../performance_traffic_generator.py          |  62 ++++
+ .../traffic_generator/traffic_generator.py    |  43 +--
+ .../testbed_model/traffic_generator/trex.py   | 287 ++++++++++++++++++
+ dts/tests/TestSuite_single_core_perf.py       |  24 ++
+ 16 files changed, 550 insertions(+), 63 deletions(-)
+ rename dts/{ => configurations}/nodes.example.yaml (100%)
+ rename dts/{ => configurations}/test_run.example.yaml (82%)
+ rename dts/{ => configurations}/tests_config.example.yaml (100%)
+ create mode 100644 dts/configurations/trex_configs/intel_40g.yaml
+ create mode 100644 dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
+ create mode 100644 dts/framework/testbed_model/traffic_generator/trex.py
+ create mode 100644 dts/tests/TestSuite_single_core_perf.py
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+-- 
+2.47.1
 
---17454361070.C11ab4.3369351
-Date: Wed, 23 Apr 2025 21:21:47 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Add TREX Traffic Generator Functionality &amp; Si=
-ngle Core Performance Test."
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1697">1697</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>Add TREX Traffic Generator Functionality &amp; Single Core Pe=
-rformance Test.
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>unspecified
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>DTS
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>npratte&#64;iol.unh.edu
-          </td>
-        </tr>
-
-        <tr>
-          <th>CC</th>
-          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1697">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17454361070.C11ab4.3369351--
