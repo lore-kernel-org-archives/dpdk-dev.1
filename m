@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEDEC369D5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADA8C369D5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:41:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68F4E40609;
-	Wed, 23 Apr 2025 21:40:50 +0200 (CEST)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
- [209.85.222.170])
- by mails.dpdk.org (Postfix) with ESMTP id 653CC402EA
- for <dev@dpdk.org>; Wed, 23 Apr 2025 21:40:48 +0200 (CEST)
-Received: by mail-qk1-f170.google.com with SMTP id
- af79cd13be357-7c5f20d512fso2793385a.2
- for <dev@dpdk.org>; Wed, 23 Apr 2025 12:40:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6CE844060F;
+	Wed, 23 Apr 2025 21:40:53 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 0F519402C8
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 21:40:50 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-7c549d9ecc6so2734585a.1
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 12:40:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745437248; x=1746042048; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1745437249; x=1746042049; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Ntl08QIQUvBPgBWHW5L9gNTdGmhbbpIst+z7VPU9BZg=;
- b=XrPV9Cm8KbsFwxjVZUBQG7sUatsZJQh6Xk7aVI2adb6oQufrXP94bGAI9tvWW7s2gx
- /S3EoQEEkToPYa70C4vDdWQuHxeIX3N6CsJeExZmQ1GusvQNE0FPwuYoMc8igGdY7oRM
- PbEciw8ou/wGSEh++bZ/IkO8YGMJ/SsbwJgNA=
+ bh=hX/zkwUIi+o5VdyOXg5WJ/tLF/kD0P3k8l0yBGi4yOU=;
+ b=EL7fwkyMtVTyeAcPtRL/rl74lXSthH+yd1xS/jSWM+yVBxtyxgEvX76OxkbvDCX/Nc
+ dAAgm93GecAlMk7Ubezfiq9CKLXFjP4ql2NquBGcv4EXXwPaiFO3iQ1DgpIWS4GxvM24
+ SWSVXPyl986RSNoWsHOfzEazdJeZrvcBN13es=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745437248; x=1746042048;
+ d=1e100.net; s=20230601; t=1745437249; x=1746042049;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Ntl08QIQUvBPgBWHW5L9gNTdGmhbbpIst+z7VPU9BZg=;
- b=l7+WL1riMDk7dIgjbyaYXvOUxqyKId9JOtokwxUjeSiqJ4eGLw4r+mspWVjRIDz9uu
- mMN5aJ3dN6QHlUHCyG0LdG88+/EMrgd6YSA15ODg2KjA1F5iPc+R1a1iocfaKwg03ESQ
- FyMdWV/ePnUrIeBHmx1ArGWbtBLAQaO69JQ77ako001P/rODilzqxxzocyINelJFPDvE
- CcgWZE9sLC3WQehnBS/34zo73On7yiVYmTXGViYO4KXRRnIwCaXngHbgVexINGulY03N
- XUk587mZ2GOeCIPX9/5p0XT6c4aiP555ViIsPT2NJQNdQtMiD/scRVxiziEr1tpi4V9H
- qD4Q==
-X-Gm-Message-State: AOJu0YynHjsVK3/zZXWgh9g50hHPkHl+9twfKkfn+e5tFIwLUVA9Y6tz
- eEqVpd0xH9nTsOc4OirlgIFuerR0ysUzQn1tE8s8LIUY67dDpHUgMsyLbDo9LTY=
-X-Gm-Gg: ASbGncsGBaSQNkdB4LexAyEw2qIfxHU9/ea3Yfz1ZvMdnJ9kzSxL6pyuWJ1PZQRMYSk
- aKZSNVPjNXdz+tnU6sqQCBhRhoqWsHqQ0LbEhwV/nkQTLrRWda82sCJp2Zd/nlPDEaxojqpqjv6
- KQOFHmxuHx80iCT7OBCDKo1rdOrbQcmZEUSCF/mgZdstCYXrh/Jeoon+A6NJXIeivW+b2VcJ5Fq
- 473n3i/5w2TyeAO396gapGWVcEivKKRURokxcGffRledOEaKsXjUba9obJTYQO65Z5XI4WSgun5
- MGo/jFe6eAM80+58nabbSxpMiMYlbe/YeeUFRzg7rR/iDOX7iwAgJIj3MWCMxisQGNQod7int/j
- lEJaWhg==
-X-Google-Smtp-Source: AGHT+IHlr8roTMn2cuGoGonMhHc/ACX3Nst0NP0ep1MvcWk9Nc5UTYta77aRfrdasOXwnKrqueXqNA==
-X-Received: by 2002:a05:620a:4244:b0:7c0:bb63:5375 with SMTP id
- af79cd13be357-7c956eb119cmr3839285a.4.1745437247437; 
- Wed, 23 Apr 2025 12:40:47 -0700 (PDT)
+ bh=hX/zkwUIi+o5VdyOXg5WJ/tLF/kD0P3k8l0yBGi4yOU=;
+ b=SHLaZuqIhz7aZjY4tGo1GnkieyUy4Y+ZeKuRZaD3MiBeI51DgFgVBmSO69TpG3a7CR
+ HsgWKuja5kLdg1OFe7yw2Bmc6kzxOk3UNG3yFO0pwRaydgnI90ca8gSl+aTeI5GmnFKD
+ n/wN0ZVYoDYgOGQS5/5ubbXGsDUk0FzkiV2L5vNOUbiJG5R3kPfB9xkOXShbeseoN+n2
+ 9W6GtabDS8lgiEHa5re4nv5TI6HvyDzStDRKT/QzT4hIog6Eesb5nPc1yP8+5X+KD99M
+ lQJ2kXclx7EWw+55z2Q2AdrPDqoE/XPFQSDNi4QE6Z2aAAvOlGvTIk26ky577Lil5gSz
+ zcvw==
+X-Gm-Message-State: AOJu0YwmN/VD9YW3CGJCBu2OGwjeCbQrm/dO44hDqxnsak6RjwdNpdf5
+ rLrANf5KqQvXjBI4ljhMFvZnpyM13axNlUcw9WYPKJJslktfSXH4FYlJfIny9zk=
+X-Gm-Gg: ASbGnct3L/BMu0iLeuXWXDLqZS1lBdY7O88p/qtRD7sf6jlOWFVuMlcziQg1LaCKfnH
+ 0i89rtMF/nMa33pQ5rm258sOw116bWaR9qHfvC95wsqn1M/3FSWvStybxAEv4oFZoeV16b1d5Kf
+ ya/iEY2IFBC6KTmOR74EG5w0yne3AgIB8PC1SkECakfPGsbJRz+ujHv6M6F9to8nTq1SotO+jX0
+ hnd/BDejWVDS+10wxvTZ4TJIylN7JwczG27PFbp88bkAqhHp0K3eglk+VRI05NVGwx+stmHnrAb
+ XChxoifkAtWd/XUu6efA3I2HIt+TD7PNAdD4qt90OES/RNIdz9dIVSsDTjGS3mfF4vTyyq+0L81
+ naXcmWw==
+X-Google-Smtp-Source: AGHT+IF20eoZ6sJNlE3L7Ai66xTNssMlfy/IeKnq0rsbV4xgkjGcEajU2d5jgEyW4wBqFo7aPZasmw==
+X-Received: by 2002:ac8:578b:0:b0:471:f08e:d65d with SMTP id
+ d75a77b69052e-47d1bd83ccdmr24830581cf.6.1745437249386; 
+ Wed, 23 Apr 2025 12:40:49 -0700 (PDT)
 Received: from localhost.unh.edu ([2606:4100:3880:1271:e2f8:4ec3:8bf3:864c])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-47ae9cf9f7dsm71635691cf.74.2025.04.23.12.40.46
+ d75a77b69052e-47ae9cf9f7dsm71635691cf.74.2025.04.23.12.40.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Apr 2025 12:40:47 -0700 (PDT)
+ Wed, 23 Apr 2025 12:40:49 -0700 (PDT)
 From: Nicholas Pratte <npratte@iol.unh.edu>
 To: ian.stokes@intel.com, yoan.picchi@foss.arm.com, probb@iol.unh.edu,
  paul.szczepanek@arm.com, Honnappa.Nagarahalli@arm.com, thomas@monjalon.net,
@@ -59,10 +59,9 @@ To: ian.stokes@intel.com, yoan.picchi@foss.arm.com, probb@iol.unh.edu,
  stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Nicholas Pratte <npratte@iol.unh.edu>
-Subject: [RFC Patch v1 2/5] dts: rework traffic generator inheritance
- structure.
-Date: Wed, 23 Apr 2025 15:40:08 -0400
-Message-ID: <20250423194011.1447679-3-npratte@iol.unh.edu>
+Subject: [RFC Patch v1 3/5] dts: add asychronous support to ssh sessions.
+Date: Wed, 23 Apr 2025 15:40:09 -0400
+Message-ID: <20250423194011.1447679-4-npratte@iol.unh.edu>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250423194011.1447679-1-npratte@iol.unh.edu>
 References: <20250423194011.1447679-1-npratte@iol.unh.edu>
@@ -81,198 +80,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rework TG class hierarchy to include performance traffic generators, in
-addition to capturing traffic generators. As such, methods garnered
-to capturing traffic have been moved to the CapturingTrafficGenerator
-subclass.
+Execution of the TREX server process requires an SSH session rework to
+support asynchronous process management. Allowing access to asynchronous
+functionality allows developers to execute processes without hijacking
+the SSH session being used. In doing so, both timeout and runtime errors
+may be avoided. This functionality leverages Fabric's Promise class,
+which provides a join method to terminate the process when the process
+is done being used, providing more secure process control.
 
 Bugzilla ID: 1697
 Signed-off-by: Nicholas Pratte <npratte@iol.unh.edu>
 ---
- .../capturing_traffic_generator.py            | 34 ++++++++++
- .../performance_traffic_generator.py          | 62 +++++++++++++++++++
- .../traffic_generator/traffic_generator.py    | 43 +------------
- 3 files changed, 97 insertions(+), 42 deletions(-)
- create mode 100644 dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
+ dts/framework/remote_session/ssh_session.py | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py b/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-index e31ba2a9b7..41b70f7f48 100644
---- a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-+++ b/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-@@ -63,6 +63,40 @@ def is_capturing(self) -> bool:
-         """This traffic generator can capture traffic."""
-         return True
+diff --git a/dts/framework/remote_session/ssh_session.py b/dts/framework/remote_session/ssh_session.py
+index e6e4704bc2..185905f701 100644
+--- a/dts/framework/remote_session/ssh_session.py
++++ b/dts/framework/remote_session/ssh_session.py
+@@ -13,6 +13,7 @@
+     ThreadException,
+     UnexpectedExit,
+ )
++from invoke.runners import Promise
+ from paramiko.ssh_exception import (
+     AuthenticationException,
+     BadHostKeyException,
+@@ -99,6 +100,22 @@ def _send_command(self, command: str, timeout: float, env: dict | None) -> Comma
  
-+    def send_packet(self, packet: Packet, port: Port) -> None:
-+        """Send `packet` and block until it is fully sent.
-+
-+        Send `packet` on `port`, then wait until `packet` is fully sent.
-+
-+        Args:
-+            packet: The packet to send.
-+            port: The egress port on the TG node.
-+        """
-+        self.send_packets([packet], port)
-+
-+    def send_packets(self, packets: list[Packet], port: Port) -> None:
-+        """Send `packets` and block until they are fully sent.
-+
-+        Send `packets` on `port`, then wait until `packets` are fully sent.
-+
-+        Args:
-+            packets: The packets to send.
-+            port: The egress port on the TG node.
-+        """
-+        self._logger.info(f"Sending packet{'s' if len(packets) > 1 else ''}.")
-+        self._logger.debug(get_packet_summaries(packets))
-+        self._send_packets(packets, port)
-+
-+    @abstractmethod
-+    def _send_packets(self, packets: list[Packet], port: Port) -> None:
-+        """The implementation of :method:`send_packets`.
-+
-+        The subclasses must implement this method which sends `packets` on `port`.
-+        The method should block until all `packets` are fully sent.
-+
-+        What fully sent means is defined by the traffic generator.
-+        """
-+
-     def send_packets_and_capture(
-         self,
-         packets: list[Packet],
-diff --git a/dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py b/dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
-new file mode 100644
-index 0000000000..7a384cf6e0
---- /dev/null
-+++ b/dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
-@@ -0,0 +1,62 @@
-+"""Performance testing capable traffic generatiors."""
-+
-+from abc import ABC, abstractmethod
-+from dataclasses import dataclass
-+from typing import Callable
-+
-+from scapy.packet import Packet
-+
-+from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
-+
-+
-+@dataclass(slots=True)
-+class PerformanceTrafficStats(ABC):
-+    """Data structure for stats offered by a given traffic generator."""
-+
-+    frame_size: int
-+
-+
-+class PerformanceTrafficGenerator(TrafficGenerator):
-+    """An Abstract Base Class for all performance-oriented traffic generators.
-+
-+    Provides an intermediary interface for performance-based traffic generator.
-+    """
-+
-+    _test_stats: list[PerformanceTrafficStats]
-+
-+    @property
-+    def is_capturing(self) -> bool:
-+        """Used for synchronization."""
-+        return False
-+
-+    @property
-+    def last_results(self) -> PerformanceTrafficStats | None:
-+        """Get the latest set of results from TG instance.
-+
-+        Returns:
-+            The most recent set of traffic statistics.
-+        """
-+        return self._test_stats.pop(0)
-+
-+    def generate_traffic_and_stats(
-+        self,
-+        packet: Packet,
-+        duration: float,  # Default of 60 (in seconds).
-+    ) -> PerformanceTrafficStats:
-+        """Send packet traffic and acquire associated statistics."""
-+        return self._calculate_traffic_stats(packet, duration, self._generate_traffic)
-+
-+    def setup(self, ports):
-+        """Preliminary port setup prior to TG execution."""
-+        for port in self._tg_node.ports:
-+            self._tg_node.main_session.configure_port_mtu(2000, port)
-+
-+    @abstractmethod
-+    def _calculate_traffic_stats(
-+        self, packet: Packet, duration: float, traffic_gen_callback: Callable[[Packet, float], str]
-+    ) -> PerformanceTrafficStats:
-+        """Calculate packet traffic stats based on TG output."""
-+
-+    @abstractmethod
-+    def _generate_traffic(self, packet: Packet, duration: float) -> str:
-+        """Implementation for :method:`generate_traffic_and_stats`."""
-diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-index 804662e114..12b9568d1a 100644
---- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-+++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-@@ -11,13 +11,11 @@
- from abc import ABC, abstractmethod
- from typing import Iterable
+         return CommandResult(self.name, command, output.stdout, output.stderr, output.return_code)
  
--from scapy.packet import Packet
--
- from framework.config.test_run import TrafficGeneratorConfig
- from framework.logger import DTSLogger, get_dts_logger
- from framework.testbed_model.node import Node
- from framework.testbed_model.port import Port
--from framework.utils import MultiInheritanceBaseClass, get_packet_summaries
-+from framework.utils import MultiInheritanceBaseClass
- 
- 
- class TrafficGenerator(MultiInheritanceBaseClass, ABC):
-@@ -56,45 +54,6 @@ def setup(self, ports: Iterable[Port]):
-     def teardown(self, ports: Iterable[Port]):
-         """Teardown the traffic generator."""
- 
--    def send_packet(self, packet: Packet, port: Port) -> None:
--        """Send `packet` and block until it is fully sent.
--
--        Send `packet` on `port`, then wait until `packet` is fully sent.
--
--        Args:
--            packet: The packet to send.
--            port: The egress port on the TG node.
--        """
--        self.send_packets([packet], port)
--
--    def send_packets(self, packets: list[Packet], port: Port) -> None:
--        """Send `packets` and block until they are fully sent.
--
--        Send `packets` on `port`, then wait until `packets` are fully sent.
--
--        Args:
--            packets: The packets to send.
--            port: The egress port on the TG node.
--        """
--        self._logger.info(f"Sending packet{'s' if len(packets) > 1 else ''}.")
--        self._logger.debug(get_packet_summaries(packets))
--        self._send_packets(packets, port)
--
--    @abstractmethod
--    def _send_packets(self, packets: list[Packet], port: Port) -> None:
--        """The implementation of :method:`send_packets`.
--
--        The subclasses must implement this method which sends `packets` on `port`.
--        The method should block until all `packets` are fully sent.
--
--        What fully sent means is defined by the traffic generator.
--        """
--
--    @property
--    def is_capturing(self) -> bool:
--        """This traffic generator can't capture traffic."""
--        return False
--
-     @abstractmethod
-     def close(self) -> None:
-         """Free all resources used by the traffic generator."""
++    def _send_async_command(self, command: str, timeout: float, env: dict | None) -> Promise:
++        try:
++            promise = self.session.run(
++                command, env=env, warn=True, hide=True, timeout=timeout, asynchronous=True
++            )
++
++        except (UnexpectedExit, ThreadException) as e:
++            self._logger.exception(e)
++            raise SSHSessionDeadError(self.hostname) from e
++
++        except CommandTimedOut as e:
++            self._logger.exception(e)
++            raise SSHTimeoutError(command) from e
++
++        return promise
++
+     def is_alive(self) -> bool:
+         """Overrides :meth:`~.remote_session.RemoteSession.is_alive`."""
+         return self.session.is_connected
 -- 
 2.47.1
 
