@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978E1C369CB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32CFC369D5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 19:15:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C9AC40156;
-	Wed, 23 Apr 2025 21:15:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D0614042F;
+	Wed, 23 Apr 2025 21:15:16 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 39330400D5
- for <dev@dpdk.org>; Wed, 23 Apr 2025 21:15:06 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 4456241
+ by mails.dpdk.org (Postfix) with ESMTP id B4533400D5
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 21:15:14 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 287BE4A
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1745435705;
- bh=MK8y754jkzPOx3OnjGqzxlpD2EZ9C1PKycyFAYUPgdY=;
+ s=default; t=1745435714;
+ bh=gGJ55jzWrON3UPBM0ZN7iz+rTj3KbDU0Y0sbwKJie6w=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=CFxyg8KkN7V9WbIG8WusKK70wgA12ajC7UURQC4AB357pQKsKTQqmZy9vlojurTmR
- nG+sdFEtDOIwKZiVCCv4zV9EOAEjIHkIQUDp9BdAJgwUQ8OhwmoDwMBMrQsWaMhgdc
- mauehUr723DN9IuXaUnOrExov3zKHMEupl14YmJM=
+ b=bWYr7c+bnfOi1ozzaZFns4CGIiUJR6oYuxJoJSv8QrBTI9fB9PxDNEHX9JtJDEpLp
+ RFmJAPFKlMqwjCyj+Ex1Xb64W/kkv3se8JAMyCqzGJZz6P+JZs8dunQOkZzvA0HZgU
+ lN6INahc5U+xjTQSts3zZv44I9OMw99kQyNfKRRc=
 Received: from [192.168.1.41] (unknown [188.242.176.176])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 4456241;
- Wed, 23 Apr 2025 22:15:05 +0300 (MSK)
-Message-ID: <b21dd3d8-5377-4716-8fb4-ac3ae63d6599@oktetlabs.ru>
-Date: Wed, 23 Apr 2025 22:15:05 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 287BE4A;
+ Wed, 23 Apr 2025 22:15:14 +0300 (MSK)
+Message-ID: <2abe7a87-1083-4ec3-a3d4-50f2c00c4a59@oktetlabs.ru>
+Date: Wed, 23 Apr 2025 22:15:13 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 45/45] doc: advertise support for AMD Solarflare X45xx
- adapters
+Subject: Re: [PATCH v2 08/45] common/sfc_efx/base: add Medford4 support to PHY
+ module
 To: Ivan Malov <ivan.malov@arknetworks.am>, dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
- Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
+ Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
  <20250423160002.35706-1-ivan.malov@arknetworks.am>
- <20250423160002.35706-46-ivan.malov@arknetworks.am>
+ <20250423160002.35706-9-ivan.malov@arknetworks.am>
 Content-Language: en-US
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-In-Reply-To: <20250423160002.35706-46-ivan.malov@arknetworks.am>
+In-Reply-To: <20250423160002.35706-9-ivan.malov@arknetworks.am>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -56,58 +57,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/23/25 19:00, Ivan Malov wrote:
-> The two NICs, X4522 and X4542, are based on EF10 architecture.
+On 4/23/25 18:59, Ivan Malov wrote:
+> From: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
 > 
-> Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
+> Use common EF10 method table for that.
+> 
+> Signed-off-by: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
+> Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 > ---
->   doc/guides/nics/sfc_efx.rst            | 9 ++++++++-
->   doc/guides/rel_notes/release_25_07.rst | 4 ++++
->   2 files changed, 12 insertions(+), 1 deletion(-)
+>   drivers/common/sfc_efx/base/efx_phy.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> diff --git a/doc/guides/nics/sfc_efx.rst b/doc/guides/nics/sfc_efx.rst
-> index eafb88191a..4bd9f8c441 100644
-> --- a/doc/guides/nics/sfc_efx.rst
-> +++ b/doc/guides/nics/sfc_efx.rst
-> @@ -10,7 +10,8 @@ Solarflare libefx-based Poll Mode Driver
+> diff --git a/drivers/common/sfc_efx/base/efx_phy.c b/drivers/common/sfc_efx/base/efx_phy.c
+> index d55becae18..3d792f20b8 100644
+> --- a/drivers/common/sfc_efx/base/efx_phy.c
+> +++ b/drivers/common/sfc_efx/base/efx_phy.c
+> @@ -114,6 +114,12 @@ efx_phy_probe(
+>   		break;
+>   #endif	/* EFSYS_OPT_MEDFORD2 */
 >   
->   The SFC EFX PMD (**librte_net_sfc_efx**) provides poll mode driver support
->   for **Solarflare SFN7xxx and SFN8xxx** family of 10/40 Gbps adapters,
-> -**Solarflare XtremeScale X2xxx** family of 10/25/40/50/100 Gbps adapters and
-> +**Solarflare XtremeScale X2xxx** family of 10/25/40/50/100 Gbps adapters,
-> +**Solarflare X45xx** family of 10/25/40/50/100 Gbps adapters and
+> +#if EFSYS_OPT_MEDFORD4
+> +	case EFX_FAMILY_MEDFORD4:
+> +		epop = &__efx_phy_ef10_ops;
+> +	break;
 
-Shouldn't 200 be added above?
+Strange location of break
 
->   **Alveo SN1000 SmartNICs** family of 10/25/40/50/100 Gbps adapters.
->   SFC EFX PMD has support for the latest Linux and FreeBSD operating systems.
->   
-> @@ -21,6 +22,12 @@ More information can be found at `Solarflare Communications website
->   Supported NICs
->   --------------
->   
-> +- AMD Solarflare Adapters:
+> +#endif	/* EFSYS_OPT_MEDFORD4 */
 > +
-> +   - AMD Solarflare X4522 Dual Port SFP56 Adapter
-> +
-> +   - AMD Solarflare X4542 Dual Port QSFP56 Adapter
-> +
->   - Xilinx Adapters:
->   
->      - Alveo SN1022 SmartNIC
-> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-> index b8b56510f8..467536fe05 100644
-> --- a/doc/guides/rel_notes/release_25_07.rst
-> +++ b/doc/guides/rel_notes/release_25_07.rst
-> @@ -60,6 +60,10 @@ New Features
->     Added a new network PMD which supports Mucse 10 Gigabit Ethernet NICs.
->     See the :doc:`../nics/rnp` for more details.
->   
-> +* **Updated Solarflare network PMD.**
-> +
-> +  Added support for AMD Solarflare X45xx adapters.
-> +
->   
->   Removed Items
->   -------------
+>   	default:
+>   		rc = ENOTSUP;
+>   		goto fail1;
 
