@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A472BC369CB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 16:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1105C369D1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Apr 2025 16:00:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56E1B40430;
-	Wed, 23 Apr 2025 18:00:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 38B1C40611;
+	Wed, 23 Apr 2025 18:00:17 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 8F230400D5
- for <dev@dpdk.org>; Wed, 23 Apr 2025 18:00:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5BA1E400D5
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 18:00:13 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.72.186])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id C668FE0142;
- Wed, 23 Apr 2025 20:00:11 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am C668FE0142
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 9B95BE0159;
+ Wed, 23 Apr 2025 20:00:12 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 9B95BE0159
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1745424012;
- bh=2o0OGhqUlSYiSDFeiC6Du2wnhNfqW2Gkznvu0fb+qyU=;
+ s=default; t=1745424013;
+ bh=E2vMFQhQRwYTbYAXkwNuvdmFampNWM6BD7H/hKU+4Jc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=2KP2xP/8wUij19DlUk6de6axdyhwoybl94svbF2NHc5qX4/tzYONW6doyYk5L0AUg
- e+kQxFyJdpAjcL4a4SE2twd321klVJPlSEEn6ZqP1JgwG7sGFEJRPEMq6HKPqd/wAz
- gg3gS/tnArOjNClPVdiqz3cMqEQbPu1brMtg3Izvs+FxBiO3wysHBtMowL6+d+qvrc
- vb9nUwfZJY2it7aNQGWCxJkL46mMdb1Rc1pQodM2xn8y72cQC/Vb4epBcQi04iCck3
- g2KSmG6x+vtw0VYe0Bw/S32Vd6RU7D4SzjUX6vifdxNNQSx8WzDwogEqlB1UQLJHFh
- zpneHR9XfQYuw==
+ b=KH+V14mN6tef1qBtqxsy+pMvwzTAd1EZWTfQjYXP/Pw2m3uWqRlXegyPDGtEGmf2r
+ 65kmPv7DepE+nYSlQg0Ia59DbZPKHi3sjDwEM0YEb2LFRsduowng3KdbRmQERaPlX/
+ a9eW3SnSAXsFPIL3uC/W5z/UyT3RZBZMjfYWyF/0LCnlq3g2pSpdMPr7ysApesyiZY
+ TuuRwqkpl43P8fUYDrMymktL0/cJlMFCugb8jm5Nmfb6JBVWUjdDU45ceGStA0nRSQ
+ DnuOCmW5EDdRPYDPdJI/zx05FTw19zOjWKpFIM9gnoQgbJQa5RL799/VzofyUtEz6+
+ 8DkuWWQkyCw0Q==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
@@ -35,10 +35,9 @@ Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
  Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
-Subject: [PATCH v2 01/45] common/sfc_efx/base: add Medford4 PCI IDs to common
- code
-Date: Wed, 23 Apr 2025 19:59:18 +0400
-Message-Id: <20250423160002.35706-2-ivan.malov@arknetworks.am>
+Subject: [PATCH v2 02/45] common/sfc_efx/base: add efsys option for Medford4
+Date: Wed, 23 Apr 2025 19:59:19 +0400
+Message-Id: <20250423160002.35706-3-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250423160002.35706-1-ivan.malov@arknetworks.am>
 References: <20250416140016.36127-1-ivan.malov@arknetworks.am>
@@ -63,40 +62,92 @@ From: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
 Later patches will use this to implement support for Medford4.
 
 Signed-off-by: Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
-Signed-off-by: Andy Moreton <andy.moreton@amd.com>
+Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 ---
- drivers/common/sfc_efx/base/efx.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/common/sfc_efx/base/efx_check.h | 25 ++++++++++++++-----------
+ drivers/common/sfc_efx/efsys.h          |  2 ++
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
-index 5773cb00b3..635b44ab37 100644
---- a/drivers/common/sfc_efx/base/efx.h
-+++ b/drivers/common/sfc_efx/base/efx.h
-@@ -64,6 +64,7 @@ typedef enum efx_family_e {
- 	EFX_FAMILY_MEDFORD,
- 	EFX_FAMILY_MEDFORD2,
- 	EFX_FAMILY_RIVERHEAD,
-+	EFX_FAMILY_MEDFORD4,
- 	EFX_FAMILY_NTYPES
- } efx_family_t;
+diff --git a/drivers/common/sfc_efx/base/efx_check.h b/drivers/common/sfc_efx/base/efx_check.h
+index 66b38eeae0..0035ff732b 100644
+--- a/drivers/common/sfc_efx/base/efx_check.h
++++ b/drivers/common/sfc_efx/base/efx_check.h
+@@ -32,7 +32,8 @@
  
-@@ -172,6 +173,16 @@ efx_family_probe_bar(
- #define	EFX_PCI_DEVID_RIVERHEAD			0x0100
- #define	EFX_PCI_DEVID_RIVERHEAD_VF		0x1100
+ /* Check family options for EF10 architecture controllers. */
+ #define	EFX_OPTS_EF10()	\
+-	(EFSYS_OPT_HUNTINGTON || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2)
++	(EFSYS_OPT_HUNTINGTON || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2 || \
++	EFSYS_OPT_MEDFORD4)
  
-+/*
-+ * Medford4 has low latency (LL) and full feature (FF) datapath engines.
-+ * Some Medford4 functions have FF and LL datapath, others only have FF.
-+ */
-+#define	EFX_PCI_DEVID_MEDFORD4_PF_UNINIT	0x0C13
-+#define	EFX_PCI_DEVID_MEDFORD4			0x0C03	/* X4 PF, FF+LL */
-+#define	EFX_PCI_DEVID_MEDFORD4_VF		0x1C03	/* X4 VF, FF+LL */
-+#define	EFX_PCI_DEVID_MEDFORD4_NO_LL		0x2C03	/* X4 PF, FF only */
-+#define	EFX_PCI_DEVID_MEDFORD4_NO_LL_VF		0x3C03	/* X4 VF, FF only */
-+
- #define	EFX_MEM_BAR_SIENA			2
+ #ifdef EFSYS_OPT_FALCON
+ # error "FALCON is obsolete and is not supported."
+@@ -197,8 +198,8 @@
  
- #define	EFX_MEM_BAR_HUNTINGTON_PF		2
+ #if EFSYS_OPT_IMAGE_LAYOUT
+ /* Support signed image layout handling */
+-# if !(EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2)
+-#  error "IMAGE_LAYOUT requires MEDFORD or MEDFORD2"
++# if !(EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2 || EFSYS_OPT_MEDFORD4)
++#  error "IMAGE_LAYOUT requires MEDFORD or MEDFORD2 or MEDFORD4"
+ # endif
+ #endif /* EFSYS_OPT_IMAGE_LAYOUT */
+ 
+@@ -338,8 +339,9 @@
+ 
+ #if EFSYS_OPT_ALLOW_UNCONFIGURED_NIC
+ /* Support adapters with missing static config (for factory use only) */
+-# if !(EFSYS_OPT_RIVERHEAD || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2)
+-#  error "ALLOW_UNCONFIGURED_NIC requires RIVERHEAD or MEDFORD or MEDFORD2"
++# if !(EFSYS_OPT_RIVERHEAD || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2 || \
++	EFSYS_OPT_MEDFORD4)
++#  error "ALLOW_UNCONFIGURED_NIC requires RIVERHEAD or MEDFORD or MEDFORD2 or MEDFORD4"
+ # endif
+ #endif /* EFSYS_OPT_ALLOW_UNCONFIGURED_NIC */
+ 
+@@ -352,22 +354,23 @@
+ 
+ #if EFSYS_OPT_RX_ES_SUPER_BUFFER
+ /* Support equal stride super-buffer mode */
+-# if !(EFSYS_OPT_MEDFORD2)
+-#  error "ES_SUPER_BUFFER requires MEDFORD2"
++# if !(EFSYS_OPT_MEDFORD2 || EFSYS_OPT_MEDFORD4)
++#  error "ES_SUPER_BUFFER requires MEDFORD2 or MEDFORD4"
+ # endif
+ #endif
+ 
+ /* Support hardware assistance for tunnels */
+ #if EFSYS_OPT_TUNNEL
+-# if !(EFSYS_OPT_RIVERHEAD || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2)
+-#  error "TUNNEL requires RIVERHEAD or MEDFORD or MEDFORD2"
++# if !(EFSYS_OPT_RIVERHEAD || EFSYS_OPT_MEDFORD || EFSYS_OPT_MEDFORD2 || \
++	EFSYS_OPT_MEDFORD4)
++#  error "TUNNEL requires RIVERHEAD or MEDFORD or MEDFORD2 or MEDFORD4"
+ # endif
+ #endif /* EFSYS_OPT_TUNNEL */
+ 
+ #if EFSYS_OPT_FW_SUBVARIANT_AWARE
+ /* Advertise that the driver is firmware subvariant aware */
+-# if !(EFSYS_OPT_MEDFORD2)
+-#  error "FW_SUBVARIANT_AWARE requires MEDFORD2"
++# if !(EFSYS_OPT_MEDFORD2 || EFSYS_OPT_MEDFORD4)
++#  error "FW_SUBVARIANT_AWARE requires MEDFORD2 or MEDFORD4"
+ # endif
+ #endif
+ 
+diff --git a/drivers/common/sfc_efx/efsys.h b/drivers/common/sfc_efx/efsys.h
+index 41fa3da762..e63cbdbe8f 100644
+--- a/drivers/common/sfc_efx/efsys.h
++++ b/drivers/common/sfc_efx/efsys.h
+@@ -125,6 +125,8 @@ prefetch_read_once(const volatile void *addr)
+ #define EFSYS_OPT_MEDFORD2 1
+ /* Enable Riverhead support */
+ #define EFSYS_OPT_RIVERHEAD 1
++/* Disable Medford4 support (not supported yet) */
++#define EFSYS_OPT_MEDFORD4 0
+ 
+ #ifdef RTE_DEBUG_COMMON_SFC_EFX
+ #define EFSYS_OPT_CHECK_REG 1
 -- 
 2.39.5
 
