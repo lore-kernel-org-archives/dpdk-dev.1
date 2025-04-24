@@ -2,46 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649A9C369AB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 09:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7CDC369AB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 12:12:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F226840156;
-	Thu, 24 Apr 2025 11:46:04 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id AEF7D400D5
- for <dev@dpdk.org>; Thu, 24 Apr 2025 11:46:03 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8392A4661D; Thu, 24 Apr 2025 11:46:03 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/examples Bug 1698] rte_eth_rx_burst causes segmentation fault
- when encountered in a Secondary process
-Date: Thu, 24 Apr 2025 09:46:03 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: examples
-X-Bugzilla-Version: 23.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: critical
-X-Bugzilla-Who: reuben.koshy@vvdntech.in
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1698-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17454879630.73FcBe.3987226
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 2D5F4400D7;
+	Thu, 24 Apr 2025 14:12:38 +0200 (CEST)
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
+ [209.85.215.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 27B61400D5
+ for <dev@dpdk.org>; Thu, 24 Apr 2025 14:12:37 +0200 (CEST)
+Received: by mail-pg1-f169.google.com with SMTP id
+ 41be03b00d2f7-af908bb32fdso790391a12.1
+ for <dev@dpdk.org>; Thu, 24 Apr 2025 05:12:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1745496756; x=1746101556; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=wiS01noUWgHKjrvB5GS4zSs5KTykl8MWAto3WaUsjsM=;
+ b=QD1PE7aI53k54GveR+wcZJ9NDMk51G/vOf7ChMgltmx3B74GJxd0iCoWrbCcrk/Jnu
+ 40vhlLv7gzcUBXCh07W0droEs8mgUrG2Qs/1/sOyONkeNWH4JtCtpbTzz4JkGb1KwGIZ
+ m3mcS9f0v7jmQ4aZ6SbaQV7zWqh3CqdLvLc0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745496756; x=1746101556;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=wiS01noUWgHKjrvB5GS4zSs5KTykl8MWAto3WaUsjsM=;
+ b=gpTCGSqKQfRecgVudm4dGCuc68Qzy8iEGs1zOcoz4DBGkDhGRPgLWf9EE++6HUsLKQ
+ uSVndIUBjfAzjEkjdlt8R1ouKxZ8OMYptvYlmAK+mDyTvL8OuM16g2UEi4kPxX7y5Dt/
+ uLTuFY2+HwJye9mf/20YhjRubq5HsyZw6iuH4k2RTr9PkUbT8OhF2r3P9ohIwb2VJ89s
+ Zj1EtmFYJHodRQlI7zncv7zOlGtYYT/vq4g5VgVKyV4s8/bn6pHBIDRnCV0rJYKCMWHK
+ p6fMOW0cYWXVUfZGBtEWSF+LBaaxhu3Nl2rRrPmH+vuQ2ES2s0luwmIeC0DEbg5vZT2k
+ rYGg==
+X-Gm-Message-State: AOJu0Yy8U3bKRN9ka6eawWBSPF29liTVdNcLuX5WC+i9LzldD7gNS7xm
+ fjmCMXVf/tKoUzPM/tPoTrZjBByAQYpk4xQzbeGtUz6JYSSrPJtZFeI/7QHbI0r18x1qUOTHTR9
+ kevi928UUGaG6mypdALfVycb1OfLh/yh2zbuMQQ==
+X-Gm-Gg: ASbGncuuQiKCCpVgsqchCcNynNP0C5BxTdz0Ml1PMOSBaxDcVauG5xewwuSEWWIm5q6
+ OYfwLIzBxrNQQZHPRL1lORNHfhgMPdPwWCtYjWNrsXlsYCHwbLNv+JAFVJkGsADH4bmyVXi0zJU
+ 2XlW5kEBbTuqNGIMEAhPRzYxzYfMHSrP3SovNbxai9R58XD8yk3KK+n3Q=
+X-Google-Smtp-Source: AGHT+IF1GY6LP34z0DInAggeKuhYnK/djYngbX5OZB5d4IKF9ud5t8RiTuvVH3A2NHqUolm24xCi1/eQdY21PXaq1Bg=
+X-Received: by 2002:a17:90a:8a87:b0:309:f46e:a67c with SMTP id
+ 98e67ed59e1d1-309f46ea6a6mr1496a91.11.1745496755915; Thu, 24 Apr 2025
+ 05:12:35 -0700 (PDT)
 MIME-Version: 1.0
+References: <20240814182005.12251-1-jspewock@iol.unh.edu>
+ <20250424014412.3849896-1-probb@iol.unh.edu>
+ <20250424014412.3849896-3-probb@iol.unh.edu>
+In-Reply-To: <20250424014412.3849896-3-probb@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 24 Apr 2025 08:08:14 -0400
+X-Gm-Features: ATxdqUHKBYOJ6ZjXC4YgH1GJpxKIDXRk7-NelM3QEkXi00geSpFHCRECO2rF1Pk
+Message-ID: <CAJvnSUDUQ7Hi6zmwyqTdL2A4ZNdbL11OeTkW=O2cag+7q2-6vQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dts: add port control testing suite
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu, 
+ thomas.wilks@arm.com, dmarx@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000017e1b50633852200"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,214 +71,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17454879630.73FcBe.3987226
-Date: Thu, 24 Apr 2025 11:46:03 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+--00000000000017e1b50633852200
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1698
+On Wed, Apr 23, 2025 at 9:48=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wr=
+ote:
 
-            Bug ID: 1698
-           Summary: rte_eth_rx_burst causes segmentation fault when
-                    encountered in a Secondary process
-           Product: DPDK
-           Version: 23.11
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: critical
-          Priority: Normal
-         Component: examples
-          Assignee: dev@dpdk.org
-          Reporter: reuben.koshy@vvdntech.in
-  Target Milestone: ---
+> From: Jeremy Spewock <jspewock@iol.unh.edu>
+>
+Should add:
+@requires(topology_type=3DTopologyType.two_links)
 
-Created attachment 311
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D311&action=3Dedit
-This is the screenshot of the log that appears when the secondary process=20
-tries to execute tx_burst
+> +class TestPortControl(TestSuite):
+> +    """DPDK Port Control Testing Suite."""
+> +
+> +    def send_packets_and_verify(self) -> None:
+> +        """Send 100 packets and verify that all packets were forwarded
+> back.
+> +
+> +        Packets sent are identical and are all ethernet frames with a
+> payload of 30 "X" characters.
+> +        This payload is used to differentiate noise on the wire from
+> packets sent by this
+> +        framework.
+>
+>
 
-I took a copy of the simple_mp main program from multi_process within the D=
-PDK
-examples and modified it by adding bonding and allowing it to send dummy
-packets.=20
-
-Two bonds are created, both are under the Active backup mode. This is done =
-by
-the primary process.=20
-
-Once the bonds are created, configured and started, the transmisssion of du=
-mmy
-packets starts. When tx_burst is run for the primary process, the transmiss=
-ion
-of packets occur without any issue.=20
-
-However, when the tx_burst is encountered during the Secondary process with=
- the
-primary process running in another terminal, a segmentation error occurs.
-
-DPDK Version : 23.11
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17454879630.73FcBe.3987226
-Date: Thu, 24 Apr 2025 11:46:03 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
+--00000000000017e1b50633852200
+Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - rte_eth_rx_burst causes segmentation fault when e=
-ncountered in a Secondary process"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1698">1698</a>
-          </td>
-        </tr>
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Apr 23,=
+ 2025 at 9:48=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.e=
+du">probb@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_qu=
+ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
+4);padding-left:1ex">From: Jeremy Spewock &lt;<a href=3D"mailto:jspewock@io=
+l.unh.edu" target=3D"_blank">jspewock@iol.unh.edu</a>&gt;<br></blockquote><=
+div>Should add:</div><div>@requires(topology_type=3DTopologyType.two_links)=
+</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex">
++class TestPortControl(TestSuite):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;DPDK Port Control Testing Suite.&quot;&quo=
+t;&quot;<br>
++<br>
++=C2=A0 =C2=A0 def send_packets_and_verify(self) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Send 100 packets and verify =
+that all packets were forwarded back.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Packets sent are identical and are all etherne=
+t frames with a payload of 30 &quot;X&quot; characters.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 This payload is used to differentiate noise on=
+ the wire from packets sent by this<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 framework.<br><br>
+</blockquote></div></div>
 
-        <tr>
-          <th>Summary</th>
-          <td>rte_eth_rx_burst causes segmentation fault when encountered i=
-n a Secondary process
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>23.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>x86
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>critical
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>examples
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>reuben.koshy&#64;vvdntech.in
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D311" name=3D"attach_311" title=3D"This is the scree=
-nshot of the log that appears when the secondary process  tries to execute =
-tx_burst">attachment 311</a> <a href=3D"attachment.cgi?id=3D311&amp;action=
-=3Dedit" title=3D"This is the screenshot of the log that appears when the s=
-econdary process  tries to execute tx_burst">[details]</a></span>
-This is the screenshot of the log that appears when the secondary process=20
-tries to execute tx_burst
-
-I took a copy of the simple_mp main program from multi_process within the D=
-PDK
-examples and modified it by adding bonding and allowing it to send dummy
-packets.=20
-
-Two bonds are created, both are under the Active backup mode. This is done =
-by
-the primary process.=20
-
-Once the bonds are created, configured and started, the transmisssion of du=
-mmy
-packets starts. When tx_burst is run for the primary process, the transmiss=
-ion
-of packets occur without any issue.=20
-
-However, when the tx_burst is encountered during the Secondary process with=
- the
-primary process running in another terminal, a segmentation error occurs.
-
-DPDK Version : 23.11
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1698">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17454879630.73FcBe.3987226--
+--00000000000017e1b50633852200--
