@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC484C369D1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 07:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649A9C369AB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 09:46:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BBFF240156;
-	Thu, 24 Apr 2025 09:01:31 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 2A2B1400D5
- for <dev@dpdk.org>; Thu, 24 Apr 2025 09:01:29 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.194])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZjmxT6bq8zvWvw;
- Thu, 24 Apr 2025 14:57:17 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 79C781402CD;
- Thu, 24 Apr 2025 15:01:27 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Apr 2025 15:01:26 +0800
-Message-ID: <b296e45a-131e-4956-a9dd-260d7a120996@huawei.com>
-Date: Thu, 24 Apr 2025 15:01:26 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [25.11 PATCH 1/3] dmadev: add enqueue dequeue operations
-To: <pbhagavatula@marvell.com>, <jerinj@marvell.com>, Kevin Laatz
- <kevin.laatz@intel.com>, Bruce Richardson <bruce.richardson@intel.com>,
- Gagandeep Singh <g.singh@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-CC: <vattunuru@marvell.com>, <conor.walsh@intel.com>,
- <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
- <anatoly.burakov@intel.com>, <dev@dpdk.org>
-References: <20250416100931.6544-1-pbhagavatula@marvell.com>
- <20250416100931.6544-2-pbhagavatula@marvell.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250416100931.6544-2-pbhagavatula@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id F226840156;
+	Thu, 24 Apr 2025 11:46:04 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id AEF7D400D5
+ for <dev@dpdk.org>; Thu, 24 Apr 2025 11:46:03 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 8392A4661D; Thu, 24 Apr 2025 11:46:03 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/examples Bug 1698] rte_eth_rx_burst causes segmentation fault
+ when encountered in a Secondary process
+Date: Thu, 24 Apr 2025 09:46:03 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: examples
+X-Bugzilla-Version: 23.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: reuben.koshy@vvdntech.in
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone attachments.created
+Message-ID: <bug-1698-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17454879630.73FcBe.3987226
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,44 +55,214 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Pavan,
 
-On 2025/4/16 18:09, pbhagavatula@marvell.com wrote:
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> 
-> Add enqueue/dequeue operations that use struct rte_dma_op
-> to communicate with the dma device.
-> These operations need to be enabled at dma device configuration
-> time by setting the flag rte_dma_conf::enable_enq_deq if the
-> device supports RTE_DMA_CAPA_OPS_ENQ_DEQ capability.
-> The enqueue dequeue operations are not compatible with
-> rte_dma_copy, rte_dma_copy_sg, rte_dma_fill, rte_dma_submit,
-> rte_dma_completed, rte_dma_completed_status range of APIs.
-> 
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> ---
->  app/test/test_dmadev.c               | 160 +++++++++++++++++++++++++++
->  app/test/test_dmadev_api.c           |  78 +++++++++++--
->  doc/guides/prog_guide/dmadev.rst     |  34 ++++++
->  drivers/dma/dpaa/dpaa_qdma.c         |   2 +-
->  drivers/dma/dpaa2/dpaa2_qdma.c       |   2 +-
->  lib/dmadev/rte_dmadev.c              |  30 ++++-
->  lib/dmadev/rte_dmadev.h              | 155 ++++++++++++++++++++++++--
->  lib/dmadev/rte_dmadev_core.h         |  10 ++
->  lib/dmadev/rte_dmadev_trace.h        |   2 +-
->  lib/dmadev/rte_dmadev_trace_fp.h     |  20 ++++
->  lib/dmadev/rte_dmadev_trace_points.c |   6 +
->  11 files changed, 477 insertions(+), 22 deletions(-)
+--17454879630.73FcBe.3987226
+Date: Thu, 24 Apr 2025 11:46:03 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-It seemed this API couldn't use at the same time with original API. Could you describe this explicitly?
-I'm inferring that this feature is added mainly for performance. and we traded it off when design the API.
-So could you share the performance gain when use this API compared with original API?
+https://bugs.dpdk.org/show_bug.cgi?id=3D1698
 
-You have show the programming model for the enqueue/dequeue operations at cover letter, that's nice,
-but I want to know the higher level: how the library API interact with Application. so that I can
-understand why the rte_dma_op contain so such fields.
+            Bug ID: 1698
+           Summary: rte_eth_rx_burst causes segmentation fault when
+                    encountered in a Secondary process
+           Product: DPDK
+           Version: 23.11
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: critical
+          Priority: Normal
+         Component: examples
+          Assignee: dev@dpdk.org
+          Reporter: reuben.koshy@vvdntech.in
+  Target Milestone: ---
 
-And also, please split this commit to at least two: one for library, one for UT.
+Created attachment 311
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D311&action=3Dedit
+This is the screenshot of the log that appears when the secondary process=20
+tries to execute tx_burst
 
-Thanks
+I took a copy of the simple_mp main program from multi_process within the D=
+PDK
+examples and modified it by adding bonding and allowing it to send dummy
+packets.=20
 
+Two bonds are created, both are under the Active backup mode. This is done =
+by
+the primary process.=20
+
+Once the bonds are created, configured and started, the transmisssion of du=
+mmy
+packets starts. When tx_burst is run for the primary process, the transmiss=
+ion
+of packets occur without any issue.=20
+
+However, when the tx_burst is encountered during the Secondary process with=
+ the
+primary process running in another terminal, a segmentation error occurs.
+
+DPDK Version : 23.11
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17454879630.73FcBe.3987226
+Date: Thu, 24 Apr 2025 11:46:03 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - rte_eth_rx_burst causes segmentation fault when e=
+ncountered in a Secondary process"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1698">1698</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>rte_eth_rx_burst causes segmentation fault when encountered i=
+n a Secondary process
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>23.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>critical
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>examples
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>reuben.koshy&#64;vvdntech.in
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
+=3D"attachment.cgi?id=3D311" name=3D"attach_311" title=3D"This is the scree=
+nshot of the log that appears when the secondary process  tries to execute =
+tx_burst">attachment 311</a> <a href=3D"attachment.cgi?id=3D311&amp;action=
+=3Dedit" title=3D"This is the screenshot of the log that appears when the s=
+econdary process  tries to execute tx_burst">[details]</a></span>
+This is the screenshot of the log that appears when the secondary process=20
+tries to execute tx_burst
+
+I took a copy of the simple_mp main program from multi_process within the D=
+PDK
+examples and modified it by adding bonding and allowing it to send dummy
+packets.=20
+
+Two bonds are created, both are under the Active backup mode. This is done =
+by
+the primary process.=20
+
+Once the bonds are created, configured and started, the transmisssion of du=
+mmy
+packets starts. When tx_burst is run for the primary process, the transmiss=
+ion
+of packets occur without any issue.=20
+
+However, when the tx_burst is encountered during the Secondary process with=
+ the
+primary process running in another terminal, a segmentation error occurs.
+
+DPDK Version : 23.11
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1698">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17454879630.73FcBe.3987226--
