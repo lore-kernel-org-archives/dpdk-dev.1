@@ -2,63 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA907C369CB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 00:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30550C369CB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Apr 2025 01:48:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E6A140156;
-	Thu, 24 Apr 2025 02:05:39 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id 578C7400D5
- for <dev@dpdk.org>; Thu, 24 Apr 2025 02:05:38 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-af50f56b862so237114a12.1
- for <dev@dpdk.org>; Wed, 23 Apr 2025 17:05:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E555940156;
+	Thu, 24 Apr 2025 03:48:38 +0200 (CEST)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
+ [209.85.160.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 36173400D5
+ for <dev@dpdk.org>; Thu, 24 Apr 2025 03:48:37 +0200 (CEST)
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-4768f90bf36so5802601cf.0
+ for <dev@dpdk.org>; Wed, 23 Apr 2025 18:48:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745453137; x=1746057937; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=fRNyMldiDPuHa4B1Vh3hA59KipPWPXBoIu/G4hEdLYI=;
- b=HCKfoYju8zfL2wub/fxcoAFFnLAK6bdVZEGifeDnSw6FT2khmPEMW5KcesbKzMgTxM
- MnI0l8pNNm0lqaF68enpOCeTFb65THjsPBvoSt03CYUWmbCkncHYgj+ZSPVIk/PCFBDv
- iTxngISuL0nfdpV1oVOhxxtvi+hqQ+eDSyKGM=
+ d=iol.unh.edu; s=unh-iol; t=1745459316; x=1746064116; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tq4j125bUgVq3Up9+ppQP33F3jQzIiyFHvKorMNWi98=;
+ b=ThBUsULDBfUg0WvGAb0TuG3G9sLPcHp3tAZl+hd5cI6vlG0gKB9JSDNwylEh3LSs6N
+ VtM/+YFzd322SYjhdrc8dOTEw0EDYkhsrjuM2iXt0T2PDVc3Vau+zBo6Iw+DGdmdZGOh
+ eNUGoEYLG/iYsXKxtpbqwUIperkuZEi4QpZHM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745453137; x=1746057937;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=fRNyMldiDPuHa4B1Vh3hA59KipPWPXBoIu/G4hEdLYI=;
- b=r6V4mr+wYW9D6FkX3mVub/UVSgXJvw+ok7KYacoVFMKMlmnaLkTKewoFiPqIxFzLRS
- QOsixu5m/1zn0ODY8kvtMZnJgvQVmGJwrpfrQdMHIimzSM4O9SK5FaymmHAEcqvBy6tX
- qZymjlky0mCEpY3O1ywp0huiF6Cx+T9vjnhUjr61jSGjj/ENEWU05lJMeEK2XpK61aAa
- LtGO6PXrSFXlRJokqrOK8rOPNGIRxgWFasMCjXryLtcamh3c09aAlEI1bogTYmlhcDsI
- qfMRTnrtVMVa6ow6lJd4+7UiLsPNdHSJdJIKMzlbXZ4B+YKb2qgV3UivomjXvl7lb7TJ
- 26wQ==
-X-Gm-Message-State: AOJu0YznUUM3pbHUGXkmU3/cBlYPMhzQiHnERzJV7yAO9eG9N5DTbVup
- sTjzTOOr6yhpnj8CmyPDHQLpBaHSVSQy4J5K4YeK6+zrNhUtekBIKU8+cjFX/4r5+xdAcz98pj/
- bJrq2SoQd13jKVZJe2kf8w2iTbh5JLN4IGqCHGA==
-X-Gm-Gg: ASbGncuWNBDWrjGLoJzheulK0OXWi5meA6JAGjcnDAx4k2CVj3ZcaQb6VKP0OZ5yGIH
- lVmOAGRS4Xsc5k0gTcLaSXey/cKEwwkOoPRRWyTvK/qiKqVfFu/AwikieQOuFoXzALdajvdmCv7
- 2NmUhZVXGtPHGFSnTyWoL8dfBTdVfHe5JjOm55GO/kGC1ZWas=
-X-Google-Smtp-Source: AGHT+IH9/1aLIb95tZ8PIzd2kaVXcvLAytI2QYCq+iaPBqsprZVOQ0EQ7FrP5Y6li/3BmbmphcV7duDlPaPVsGlz5rI=
-X-Received: by 2002:a17:90b:2f0c:b0:2ff:4bac:6fbf with SMTP id
- 98e67ed59e1d1-309ed26ac20mr1141935a91.7.1745453137096; Wed, 23 Apr 2025
- 17:05:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250103060612.2671836-1-nsaxena@marvell.com>
- <20250421151718.2172470-1-nsaxena@marvell.com>
- <20250421151718.2172470-5-nsaxena@marvell.com>
- <CAJvnSUD+DWK3CmzgBxUDe63U6BfeHGnBBPAZaxHuUhewRs-FdQ@mail.gmail.com>
-In-Reply-To: <CAJvnSUD+DWK3CmzgBxUDe63U6BfeHGnBBPAZaxHuUhewRs-FdQ@mail.gmail.com>
+ d=1e100.net; s=20230601; t=1745459316; x=1746064116;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=tq4j125bUgVq3Up9+ppQP33F3jQzIiyFHvKorMNWi98=;
+ b=FjHXmN0L1HBhIPQOFQBmiQMgV2FGMb/ep1E+xDID4pHu3LJGfzS+rNZZXQTWaFRr9e
+ QqycMCwLYafr9heyxYKDuT2Qn7Od11Evm0VY1FW9SwkY7SvtTXKaPjvTucmzIliJnuie
+ PXnEKfDdNf0veBmSdelTyPIRMDiAKqv4FTLfPNu4l648/VbjyjUB8wgR2nusxl0BszeJ
+ mKLkvN4DNB9lTBbf7toJoWvJhd20MJJZ/VjczgexsdMbYErd7uDN4rLqO7anQ9w00FVu
+ TvBfws+7nzBvgbdP6mJqgLDKNhGS5oOY7WByqNe7r9bMrfKFpYv4MBuxDbvLhVoP5pLe
+ lAwg==
+X-Gm-Message-State: AOJu0YzX0chNWLTD5ux4B6KfwXecYheoCK+qsYEFZ4Rd2QmF2IP4PVQj
+ KMt8cAi5f/Zd4oqt1GqIolV32kHuPXVWGPMr7NlfBhR9HEiZHfLdWQWipMKiiGs=
+X-Gm-Gg: ASbGncvwoJhTbSe/oAmUqD/r9IHoDdtn78/PPNqeuq7UlLLa6ZEbiyUZb3X3XTASdy+
+ CvGJlSPO4f8XWNfsKCHAhCWKmZEUSf27Crkf2fMF4G5pkop4eJya1DNu9DHFaC6aR6keZ4qrr3c
+ UlHNWvwSbNClMiNfPKhpH4tueiKHcZ4VVxj1oIdP45SgJshXGKysHuFXWFsgDVpST4m+eQPsmUR
+ izN1rr5hjUu4DqOXcagpZ28UBrHZKt2Dn30svL9TMWj7uLIZtpupdjTOD1017Oqo6Nne2QmCMKA
+ BLHQxeZVZncYZg8N5IDpeCghky1vxrTWwACQR3ggvzsyJskHxFtOORlQ+DZCESmqcMCep4I=
+X-Google-Smtp-Source: AGHT+IGGGCdRdxvtZMG/IXf+k5xQ5OdDYSavJdS2R/MU61DcdwBYzT7dvBndtXnY0b9fuoUql/rMQQ==
+X-Received: by 2002:a05:622a:13:b0:47a:e616:caba with SMTP id
+ d75a77b69052e-47eb29a056cmr10595581cf.14.1745459316424; 
+ Wed, 23 Apr 2025 18:48:36 -0700 (PDT)
+Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::224])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-47ea1ba2868sm4317411cf.74.2025.04.23.18.48.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 23 Apr 2025 18:48:35 -0700 (PDT)
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 23 Apr 2025 20:01:15 -0400
-X-Gm-Features: ATxdqUEtIIFH3Dvw_mZR7U-oxLPLRx7XqRpucnyqOSFiybit_7vRNxjpAGSMBGM
-Message-ID: <CAJvnSUDeD7+jmcEU_wEPXxqsZh3mHAXE-UK=bk2H+2AOc7Dhig@mail.gmail.com>
-Subject: Re: [PATCH v9 4/5] app/graph: add custom feature nodes for ip4 output
- arc
-To: Nitin Saxena <nsaxena@marvell.com>
-Cc: dev@dpdk.org, Nitin Saxena <nsaxena16@gmail.com>
-Content-Type: multipart/alternative; boundary="000000000000358e7b06337afa9c"
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu,
+ thomas.wilks@arm.com, dmarx@iol.unh.edu, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH 0/2] dts: port over port_control testing suite
+Date: Wed, 23 Apr 2025 21:44:10 -0400
+Message-ID: <20250424014412.3849896-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20240814182005.12251-1-jspewock@iol.unh.edu>
+References: <20240814182005.12251-1-jspewock@iol.unh.edu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,50 +76,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000358e7b06337afa9c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This series ports over most of the test coverage provided from the
+port_control testing suite in the Old DTS framework. The only
+functionality that is missing is testing port functions in a VM through
+QEMU and testing the support of resetting ports. Since we have no
+method of handling virtual machines in the new framework and have yet
+to express interest in adding it, these test cases were omitted from
+this suite. Additionally the ability to reset a port is not something
+that is supported by all devices and devices do not seem to expose
+information regarding whether they support resetting ports through
+testpmd.
 
-All tests are passing now:
-https://lab.dpdk.org/results/dashboard/patchsets/33044/
+v2:
+ * apply to next-dts
 
-Again, sorry about the oversight.
+v3
+ * rebase on next-dts and minor reworks
 
-On Wed, Apr 23, 2025 at 4:40=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wr=
-ote:
+Jeremy Spewock (2):
+  dts: add method for closing ports to testpmd
+  dts: add port control testing suite
 
-> Hi Nitin,
->
-> At the DPDK Community Lab, we inadvertently let CI testing on your patch
-> run concurrently with some system maintenance we were doing on testbeds
-> yesterday, and I think the testing on your patch was affected (so you got=
- a
-> couple fails when you should not have). I'm going to put in some retests
-> which will correct the record within the next couple hours.
->
-> Recheck-request: iol-intel-Functional, iol-unit-arm64-testing
->
+ dts/framework/config/conf_yaml_schema.json    |   0
+ dts/framework/remote_session/testpmd_shell.py |  18 +++
+ dts/tests/TestSuite_port_control.py           | 105 ++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ delete mode 100644 dts/framework/config/conf_yaml_schema.json
+ create mode 100644 dts/tests/TestSuite_port_control.py
 
---000000000000358e7b06337afa9c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+-- 
+2.48.1
 
-<div dir=3D"ltr">All tests are passing now:=C2=A0<a href=3D"https://lab.dpd=
-k.org/results/dashboard/patchsets/33044/">https://lab.dpdk.org/results/dash=
-board/patchsets/33044/</a><div><br></div><div>Again, sorry about the oversi=
-ght.</div></div><br><div class=3D"gmail_quote gmail_quote_container"><div d=
-ir=3D"ltr" class=3D"gmail_attr">On Wed, Apr 23, 2025 at 4:40=E2=80=AFPM Pat=
-rick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt=
-; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
- 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div di=
-r=3D"ltr"><div dir=3D"ltr">Hi Nitin,<div><br></div><div>At the DPDK Communi=
-ty Lab, we inadvertently let CI testing on your patch run concurrently with=
- some system maintenance we were doing on testbeds yesterday, and I think t=
-he testing on your patch was affected (so you got a couple fails when you s=
-hould not have). I&#39;m going to put in some retests which will correct th=
-e=C2=A0record within the next couple hours.=C2=A0</div><div><br></div><div>=
-Recheck-request:=C2=A0iol-intel-Functional,=C2=A0iol-unit-arm64-testing</di=
-v></div></div>
-</blockquote></div>
-
---000000000000358e7b06337afa9c--
