@@ -2,59 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0F2C3ABB0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C753C3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:55:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9E0B410EE;
-	Mon,  5 May 2025 14:51:46 +0200 (CEST)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id 247E14029D
- for <dev@dpdk.org>; Wed, 23 Apr 2025 07:52:53 +0200 (CEST)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-af6a315b491so5276933a12.1
- for <dev@dpdk.org>; Tue, 22 Apr 2025 22:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745387571; x=1745992371; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=2EMMhzytbNCQTegxKrAHqkXUhwEwMEIP5s4QYgbpGms=;
- b=B+7G7zGF5E3GDE1bimVO8P4FoAfk4YLnsYJsckOiYxOh2LmqM3fheLHym0tIM0Gxk5
- HoEyYlU1GVQKYGOWEYBquj8whStFvJGM6q29F4YWBMZkY2z7Hk/Wrj7+pX7C/shxpy7p
- iIn6L0IMEjxHGswCRQFekEz6xatT52vtyiFA90Mxo6y/Slx97j6y7M+tEUxAZ/MYRs1+
- NzvjoA1qH2Ef0343jIbY3yfh056xxcbMOP7R/DCpY7Q2vgEI9UC4lOWsXagLSP8/oVd9
- Twypi1JG04VBvEbMBFH0Dm1Iv4QAJZfmW06NpNS+aQIGkTwou2mp9FzAMid6AXS5LxQz
- 94DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745387571; x=1745992371;
- h=to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=2EMMhzytbNCQTegxKrAHqkXUhwEwMEIP5s4QYgbpGms=;
- b=LQf2zocCeyserxIk9kVxaIaoeqxstQntn2ymMM+xEPwP5wU6ThuUpiXNZ11H3ShdUq
- VL3UXaQFPlMwlL2EQO6SsxxqwstgH34cDnbwpFCSbhcPIOUM6HYPS6MMgIneH48T+1r4
- rYqfnFJEPa10EopbdWkCYMlIjZisVEfks1pjy1Z7NHDa2xeExPFNxXYj92UXtoHx25Lx
- QfhevT8hPk06nAyTg0q+B7phMBRsURuJMBvghbjfHpCD3sIUwjLWoKFByRj1RcIHYwU+
- uZLsrnwsNjK11yKntsrermO6dUS9w7v83yuUUhecsPn0n0vhof9qUxy7/zWFKGgd1cIt
- JGhA==
-X-Gm-Message-State: AOJu0Yy05AtQyPJ5mzKH3TjUAORsnwmkoC6afDyUZiufKryOFMgyV+vU
- rm59EYZ7R8sxmZgcFTWIflnZ1dyzJ7PyXLEqVJodG6tZCNk47DytKhtMThgc+n8ObdRYWfJ5KWe
- bI/Xp1F53Z5eH3HA6QaUgq4z/fXNdzvDIBG8=
-X-Gm-Gg: ASbGnctQiErmXE0prm2r2kPN0cb9W1M6hbtuN5LhNZPbEI3YcDahGnLnoKJb9P9iT+5
- 3GEODLw5ot1cjAl5VBMzLrAKVw9uWjLavWfAs9qlUTXl40SLqYgrp9VVZTearhRwI9X0gnp9lV3
- anuCpsO9oTFV1aMzejl26yOg==
-X-Google-Smtp-Source: AGHT+IHDYjmtLwRMZ0F6X83zW3Fa9vYy9GdAlEd/ETmD8nBPM6k/fBs5PxkRVtnf3LGkwyjZca1OCvVNByhz/bVwWzA=
-X-Received: by 2002:a17:90b:5690:b0:306:b593:4557 with SMTP id
- 98e67ed59e1d1-3087bb40083mr27661014a91.4.1745387570890; Tue, 22 Apr 2025
- 22:52:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 49254410F9;
+	Mon,  5 May 2025 14:51:48 +0200 (CEST)
+Received: from out28-112.mail.aliyun.com (out28-112.mail.aliyun.com
+ [115.124.28.112])
+ by mails.dpdk.org (Postfix) with ESMTP id B2FB7400D5
+ for <dev@dpdk.org>; Thu, 24 Apr 2025 13:49:28 +0200 (CEST)
+Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
+ fp:SMTPD_---.cVdove4_1745495364 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 24 Apr 2025 19:49:25 +0800
+From: Kyo Liu <kyo.liu@nebula-matrix.com>
+To: kyo.liu@nebula-matrix.com
+Cc: dev@dpdk.org
+Subject: [PATCH 1/1] net/nbl add doc and minimun nbl build framework
+Date: Thu, 24 Apr 2025 11:49:19 +0000
+Message-ID: <20250424114919.10349-1-kyo.liu@nebula-matrix.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-From: nan he <nhe295771@gmail.com>
-Date: Wed, 23 Apr 2025 13:52:39 +0800
-X-Gm-Features: ATxdqUEzCyqStBwoeDPew8fKUJ3q7TLEQixdeX5TES24oTZsKU2jQmAVywXrtdM
-Message-ID: <CAFohB5uoG8Sx5LXiX8F8QihT=ov2yR5rzgbaVNeodmYedy5S5g@mail.gmail.com>
-Subject: [Bug Report] KNI Module Causes Loopback Interface to Have Incorrect
- ifindex in Linux 5.4.46
-To: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000288df706336bb611"
+Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Mon, 05 May 2025 14:51:06 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -69,132 +37,210 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000288df706336bb611
-Content-Type: text/plain; charset="UTF-8"
+Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
+---
+ .mailmap                         |  5 ++++
+ MAINTAINERS                      |  9 +++++++
+ doc/guides/nics/features/nbl.ini | 23 +++++++++++++++++
+ doc/guides/nics/index.rst        |  1 +
+ doc/guides/nics/nbl.rst          | 42 ++++++++++++++++++++++++++++++++
+ drivers/net/meson.build          |  1 +
+ drivers/net/nbl/meson.build      | 11 +++++++++
+ drivers/net/nbl/nbl_ethdev.c     |  3 +++
+ 8 files changed, 95 insertions(+)
+ create mode 100644 doc/guides/nics/features/nbl.ini
+ create mode 100644 doc/guides/nics/nbl.rst
+ create mode 100644 drivers/net/nbl/meson.build
+ create mode 100644 drivers/net/nbl/nbl_ethdev.c
 
-Dear DPDK Developers,
+diff --git a/.mailmap b/.mailmap
+index 624aef9083..5ff829cd8b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -361,6 +361,7 @@ Diana Wang <na.wang@corigine.com>
+ Didier Pallard <didier.pallard@6wind.com>
+ Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
+ Dima Ruinskiy <dima.ruinskiy@intel.com>
++Dimon Zhao <dimon.zhao@nebula-matrix.com>
+ Ding Zhi <zhi.ding@6wind.com>
+ Diogo Behrens <diogo.behrens@huawei.com>
+ Dirk-Holger Lenz <dirk.lenz@ng4t.com>
+@@ -830,6 +831,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+@@ -844,6 +846,7 @@ Lei Gong <arei.gonglei@huawei.com>
+ Lei Ji <jilei8@huawei.com>
+ Lei Yao <lei.a.yao@intel.com>
+ Leonid Myravjev <myravjev@amicon.ru>
++Leon Yu <leon.yu@nebula-matrix.com>
+ Leo Xu <yongquanx@nvidia.com>
+ Leszek Zygo <leszek.zygo@intel.com>
+ Levend Sayar <levendsayar@gmail.com>
+@@ -1344,6 +1347,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+ Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
+ Salem Sol <salems@nvidia.com>
+ Sam Andrew <samandrew@microsoft.com>
++Sam Chen <sam.chen@nebula-matrix.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
+ Sam Grove <sam.grove@sifive.com>
+ Samik Gupta <samik.gupta@broadcom.com>
+@@ -1839,3 +1843,4 @@ Ziye Yang <ziye.yang@intel.com>
+ Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@linaro.org>
+ Zorik Machulsky <zorik@amazon.com>
+ Zyta Szpak <zyta@marvell.com> <zr@semihalf.com> <zyta.szpak@semihalf.com>
++Leon Yu <leon.yu@nebula-matrix.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9b8bb60023..4cf891a312 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1020,6 +1020,15 @@ F: drivers/net/sfc/
+ F: doc/guides/nics/sfc_efx.rst
+ F: doc/guides/nics/features/sfc.ini
+ 
++nebulamatrix nbl
++M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
++M: Kyo Liu<kyo.liu@nebula-matrix.com>
++M: Leon Yu <leon.yu@nebula-matrix.com>
++M: Sam Chen <sam.chen@nebula-matrix.com>
++F: drivers/net/nbl
++F: doc/guides/nics/nbl.rst
++F: doc/guides/nics/features/nbl.ini
++
+ Wangxun ngbe
+ M: Jiawen Wu <jiawenwu@trustnetic.com>
+ F: drivers/net/ngbe/
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+new file mode 100644
+index 0000000000..d716ffce02
+--- /dev/null
++++ b/doc/guides/nics/features/nbl.ini
+@@ -0,0 +1,23 @@
++;
++; Supported features of the 'nbl' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Features]
++Link status          = Y
++Link status event    = Y
++Queue start/stop     = Y
++MTU update           = Y
++TSO                  = Y
++Promiscuous mode     = Y
++RSS hash             = Y
++RSS reta update      = Y
++Basic stats          = Y
++Extended stats       = Y
++Stats per queue      = Y
++FW version           = Y
++EEPROM dump          = Y
++Module EEPROM dump   = Y
++Linux                = Y
++ARMv8                = Y
++x86-64               = Y
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index 618c52d618..a82dfcf5c7 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -50,6 +50,7 @@ Network Interface Controller Drivers
+     mvneta
+     mvpp2
+     netvsc
++    nbl
+     nfb
+     nfp
+     ngbe
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+new file mode 100644
+index 0000000000..6cd09fe97f
+--- /dev/null
++++ b/doc/guides/nics/nbl.rst
+@@ -0,0 +1,42 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++   Copyright 2025 Nebulamatrix Technology Co., Ltd
++
++NBL Poll Mode Driver
++====================
++
++The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
++10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
++
++
++Supported NICs
++--------------
++
++The following Nebulamatrix device models are supported by the same nbl driver:
++
++  - S1205CQ-A00CHT
++  - S1105AS-A00CHT
++  - S1055AS-A00CHT
++  - S1052AS-A00CHT
++  - S1051AS-A00CHT
++  - S1045XS-A00CHT
++  - S1205CQ-A00CSP
++  - S1055AS-A00CSP
++  - S1052AS-A00CSP
++
++
++Prerequisites
++-------------
++
++- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
++  to setup the basic DPDK environment.
++
++- Learn about `Nebulamatrix Series NICs
++  <https://www.nebula-matrix.com/main>`_.
++
++
++Limitations or Known Issues
++---------------------------
++
++32-bit architectures are not supported.
++
++Windows and BSD are not supported yet.
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 61f8cddb30..517e78d18b 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -40,6 +40,7 @@ drivers = [
+         'mlx5',
+         'mvneta',
+         'mvpp2',
++        'nbl',
+         'netvsc',
+         'nfb',
+         'nfp',
+diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+new file mode 100644
+index 0000000000..740789e3ba
+--- /dev/null
++++ b/drivers/net/nbl/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2025 Yunsilicon Technology Co., Ltd.
++
++if not is_linux
++    build = false
++    reason = 'only supported on Linux'
++endif
++
++sources = files(
++        'nbl_ethdev.c',
++)
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+new file mode 100644
+index 0000000000..3ad8e4033a
+--- /dev/null
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -0,0 +1,3 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
+-- 
+2.43.0
 
-I am reporting an issue encountered in an environment running Linux kernel
-version 5.4.46 with DPDK 19.11. When attempting to run Docker containers in
-bridge mode, the container creation fails consistently. The kmsg indicate a
-crash during the initialization of the loopback device within a new
-*net_namespace*, specifically due to the loopback interface not being
-assigned the expected ifindex of 1.
-
-*Issue Description:*
-
-During the creation of a  net_namespace, the kernel initializes network
-devices in a specific order. It is expected that the loopback interface is
-the first to be initialized, thereby receiving an ifindex of 1. This
-assumption is enforced in the kernel code, where a BUG_ON check ensures
-that the loopback interface has *ifindex == 1.* However, with the DPDK KNI
-module loaded, this assumption fails, resulting in a kernel panic during
-container creation.
-
-*Root Cause Analysis:*
-
-Upon investigation, it appears that the KNI module registers its network
-operations using the *register_pernet_subsys()* function. This registration
-method places the KNI initialization function before the loopback device's
-initialization in *pernet_list*. Consequently, when a new * net_namespace*
-is created, the KNI interface is initialized before the loopback interface,
-causing the KNI interface to receive ifindex 1 and the loopback interface
-to receive ifindex 2. This order violates the kernel's expectation and
-triggers the BUG_ON check.
-
-*Environment Details:*
-
-   -
-
-   DPDK Version: 19.11
-   -
-
-   Kernel Version: 5.4.46
-   -
-
-   Operating System:  Linux
-   - Architecture: x86_64
-
-*Reproduction Steps:*
-
-   1.
-
-   Load the DPDK KNI module.
-   2.
-
-   Use Docker to create a new container in bridge mode.
-   3.
-
-   Observe the kernel panic due to the loopback interface not having ifindex
-   1.
-
-*Additional Information:*
-
-We would appreciate it if the DPDK development team could review this issue
-and consider incorporating the proposed change into future releases. Please
-let us know if further information or testing is required from our side.
-
-Best regards,
-
---000000000000288df706336bb611
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">
-<p class=3D"gmail-">Dear DPDK Developers,</p>
-<p class=3D"gmail-">I am reporting an issue encountered in an environment r=
-unning Linux kernel version 5.4.46 with DPDK 19.11. When attempting to run =
-Docker containers in bridge mode, the container creation fails consistently=
-. The kmsg indicate a crash during the initialization of the loopback devic=
-e within a new <b>net_namespace</b>, specifically due to the loopback inter=
-face not being assigned the expected <code>ifindex</code> of 1.</p>
-<p class=3D"gmail-"><strong>Issue Description:</strong></p>
-<p class=3D"gmail-">During the creation of a=C2=A0
-net_namespace, the kernel initializes network devices in a specific order. =
-It is expected that the loopback interface is the first to be initialized, =
-thereby receiving an <code>ifindex</code> of 1. This assumption is enforced=
- in the kernel code, where a <code>BUG_ON</code> check ensures that the loo=
-pback interface has <b><code>ifindex =3D=3D 1</code>.</b> However, with the=
- DPDK KNI module loaded, this assumption fails, resulting in a kernel panic=
- during container creation.</p>
-<p class=3D"gmail-"><strong>Root Cause Analysis:</strong></p>
-<p class=3D"gmail-">Upon investigation, it appears that the KNI module regi=
-sters its network operations using the <code><b>register_pernet_subsys()</b=
-></code> function. This registration method places the KNI initialization f=
-unction before the loopback device&#39;s initialization in=C2=A0<span style=
-=3D"font-family:monospace"><b>pernet_list</b></span>. Consequently, when a =
-new
-<b>
-net_namespace</b>
-
- is created, the KNI interface is initialized before the loopback interface=
-, causing the KNI interface to receive <code>ifindex</code> 1 and the loopb=
-ack interface to receive <code>ifindex</code> 2. This order violates the ke=
-rnel&#39;s expectation and triggers the <code>BUG_ON</code> check.</p><p cl=
-ass=3D"gmail-"><strong>Environment Details:</strong></p>
-<ul><li class=3D"gmail-">
-<p class=3D"gmail-">DPDK Version: 19.11</p>
-</li><li class=3D"gmail-">
-<p class=3D"gmail-">Kernel Version: 5.4.46</p></li><li class=3D"gmail-">
-<p class=3D"gmail-">Operating System:=C2=A0
-Linux</p></li><li class=3D"gmail-">Architecture: x86_64</li></ul>
-<p class=3D"gmail-"><strong>Reproduction Steps:</strong></p>
-<ol><li class=3D"gmail-">
-<p class=3D"gmail-">Load the DPDK KNI module.</p>
-</li><li class=3D"gmail-">
-<p class=3D"gmail-">Use Docker to create a new container in bridge mode.</p=
->
-</li><li class=3D"gmail-">
-<p class=3D"gmail-">Observe the kernel panic due to the loopback interface =
-not having <code>ifindex</code> 1.</p>
-</li></ol>
-<p class=3D"gmail-"><strong>Additional Information:</strong></p><p class=3D=
-"gmail-">We would appreciate it if the DPDK development team could review t=
-his issue and consider incorporating the proposed change into future releas=
-es. Please let us know if further information or testing is required from o=
-ur side.</p>
-<p class=3D"gmail-">Best regards,</p>
-
-<br></div>
-
---000000000000288df706336bb611--
