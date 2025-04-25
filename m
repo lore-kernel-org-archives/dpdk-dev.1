@@ -2,46 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A31C369C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 11:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0674C369C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 14:15:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC9BB4042F;
-	Fri, 25 Apr 2025 13:54:59 +0200 (CEST)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 0799140279
- for <dev@dpdk.org>; Fri, 25 Apr 2025 13:54:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1745582097;
- bh=MpxmhfLQxcZNpOp6yPir0XWqpwBW9N4KqJDX5Fsk1Zw=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To;
- b=ecMxYSjFcI6jydm6WstVLQ4pIeghZ38MLKvoCn1ssVKdI0fJZh5ZfUSBcjehwdg9H
- q4pO2LVqb2VJ24WL54D1TI/TQU97zR+LO+6R3oUgA++CE7TFokLlMWgmqJ5pqlFJ3k
- P0WH3FbFpjXmle/CwZXLhQf7xpPzkedFG2t7p+R8E954Jyp98qGpx3aITeFdmY2u0a
- dAnH53XI1E0XPhR222UQ4XL6N5MAuY4Qq/vuCIoevs19wQW6TBoyQ7vxUoE4LdXHch
- oO/sEcZi4O7TPiJa3b3Fz6myeO9oH3LENC1JPrRlnePLmfWkIeP+Y1LjAQDqMlDC5O
- fx9497vuu+BtQ==
-Received: from [IPV6:2001:718:811:7000::334] (unknown
- [IPv6:2001:718:811:7000::334])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id A8C4B1180078;
- Fri, 25 Apr 2025 13:54:47 +0200 (CEST)
-Message-ID: <a7d47175-214e-41c8-9312-712add4517dc@cesnet.cz>
-Date: Fri, 25 Apr 2025 13:54:47 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 7CEB140279;
+	Fri, 25 Apr 2025 16:15:16 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id BF7D64025E
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 16:15:14 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-2ff784dc055so2212599a91.1
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 07:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1745590514; x=1746195314; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=BLAZhfBrrCDYt/bee7wb6b9V0OTjMfOyzjv9HDIvuRk=;
+ b=NbHXtonLV6ZHKv3LRwpBYAWIIq65+NMWfw7vi2nrNZ+N+5wV3OQFDE2Zq7zo1+Xzso
+ uyowi9xolHjkggx3tTAujayn6l3caLygFvQN8XbJPv6jTcqVd6KNU04UnkSTCVAXovHv
+ U0H+SZwlDLiXhLxKiTv2x1MYBvQdEyfLfqlv4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745590514; x=1746195314;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=BLAZhfBrrCDYt/bee7wb6b9V0OTjMfOyzjv9HDIvuRk=;
+ b=J+YJUkfqBAI3HNxAhqNVdvPWl5WBW43ZGKjgCIuHXIBXj50g0z6MUfbKwGH+3kOEUu
+ 0HRyIto3iRBrwAgELgw2T+XgmrCN5QTz+NP5wwcyKCEjb9zvscWqW2Zv/mZMYmpznfxP
+ NZSWj6H7yL3/0eFEkVyUVhh1ZY6D7lGTaLbgLBAqR7j/gIuyppVkxqNq0dUVHDeHyesd
+ oroBUdxJyZB9Vu2Dv3OWuf07ht9KR79ZuesEQgnuqEXhdL1MulSLJ23TeGW7oFDUfBrj
+ mYHeLK2f8JocvtHeqXk6FiA4SytMmHP0Je+CdR9uU+BNScGmvCexCPeukUWIlvc5aTZo
+ JL2w==
+X-Gm-Message-State: AOJu0Yxb0RQxe7PDbORTgAaDF1sUXoZCkA6uIXOqwsaM9QpyrFm/T4Q4
+ Pdsn9uN1SAEoJZ6fmyrB+e4vZoPdPDxAt8dqjvsAaKUMv43/aNVpFrjms1/7HhumIlsLSB1+Aan
+ XJqWCGC+I5ydYzHYDc6T79W1FolCGwV6kFLSXWKcqxvRD0fXmGpQ=
+X-Gm-Gg: ASbGncupqVmu6qOjgmv85VMygnjR+DuDbM8mMSyr0KHIQjUZnjLqXf1Xs60U4UOshmC
+ 1YqCBZWmS8Nr34Nz05bNZoPC4yDAb3VVD8C4PpC1y4rqrYv2Fx/kHm1ciTUjlLRt4S1J+ev/GaS
+ Xwkcpc73O7KyZn1l0WwlXDGIt7CE59g+qs998Y/i47GMMWzFBpvu4yTntQf5x5C7A7SQ==
+X-Google-Smtp-Source: AGHT+IH//unro5/XJ83QFKuHDkFY37lxAKNs5s5urGI5z8aR6r/YgWR+65DmhvsXk+lepf43aucfflyAo1zSJOzoJAQ=
+X-Received: by 2002:a17:90b:524f:b0:2ff:4e90:3c55 with SMTP id
+ 98e67ed59e1d1-309f7e67d73mr4035939a91.27.1745590512956; Fri, 25 Apr 2025
+ 07:15:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/mlx5: mitigate the Tx queue parameter adjustment
-To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, dev@dpdk.org
-Cc: rasland@nvidia.com, matan@nvidia.com, suanmingm@nvidia.com,
- dsosnowski@nvidia.com
-References: <<20250423082450.5eb6cdee@hermes.local>
- <20250424133128.133900-1-viacheslavo@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@cesnet.cz>
-In-Reply-To: <20250424133128.133900-1-viacheslavo@nvidia.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="------------ms030603000609000608040207"
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 25 Apr 2025 10:10:48 -0400
+X-Gm-Features: ATxdqUH-jGfaSFEbTE4-9wvvfOH_iSLeeeMIkZW1wd6BNrCj3Np7V5o5MdFvW7Q
+Message-ID: <CAJvnSUB-rDP66K4a5_ZRAbW6_BvEXQLTtT2BH7CXxhUZ7TqjgA@mail.gmail.com>
+Subject: Community CI Meeting Minutes - April 17, 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="00000000000072d81306339af6ea"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,293 +64,258 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a cryptographically signed message in MIME format.
+--00000000000072d81306339af6ea
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---------------ms030603000609000608040207
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+#####################################################################
+April 17, 2025
+Attendees
+1. Patrick Robb
+2. Paul Szczepanek
+3. Luca Vizzarro
+4. Aaron Conole
+5. Manit Mahajan
 
-SGVsbG8gYWxsLA0KDQpJIHRlc3RlZCB2MSBwYXRjaCBvbiBDWC00IGNhcmQgYW5kIEkgY2Fu
-IGNvbmZpcm0gbXkgYXBwbGljYXRpb24gYm9vdHMgbm93IQ0KRm9yIHRyYWNlYWJpbGl0eSBJ
-IGFtIGFkZGluZyB0aGUgb3JpZ2luYWwgZGlzY3Vzc2lvbiB0aHJlYWQ6DQpodHRwczovL21h
-aWxzLmRwZGsub3JnL2FyY2hpdmVzL3VzZXJzLzIwMjUtQXByaWwvMDA4MjQyLmh0bWwNCg0K
-UHJvYmFibHkgYSBzb21lIG90aGVyIHByb2JsZW0sIGJ1dCBpdCBzdGlsbCBvdXRwdXRzIHRo
-ZXNlIGxvZ3M6DQoNCkNvbmZpZzogZHBkazogMDAwMDpiMzowMC4wOiBzZXR0aW5nIHVwIFRY
-IHF1ZXVlIDA6IHR4X2Rlc2M6IDMyNzY4IHR4OiANCm9mZmxvYWRzOiAweDEwMDAwIGh0aHJl
-c2g6IDAgcHRocmVzaDogMCB3dGhyZXNoOiAwIHR4X2ZyZWVfdGhyZXNoOiAwIA0KdHhfcnNf
-dGhyZXNoOiAwIHR4cV9kZWZlcnJlZF9zdGFydDogMCANCltEZXZpY2VDb25maWd1cmVRdWV1
-ZXM6cnVubW9kZS1kcGRrLmM6MTQ4N10NCm1seDVfbmV0OiBhZGp1c3QgdHhxX2lubGluZV9t
-YXggKDI5MC0+MTgpIGR1ZSB0byBsYXJnZSBUeCBxdWV1ZSBvbiBwb3J0IDENCkNvbmZpZzog
-ZHBkazogMDAwMDpiMzowMC4wOiBzZXR0aW5nIHVwIFRYIHF1ZXVlIDE6IHR4X2Rlc2M6IDMy
-NzY4IHR4OiANCm9mZmxvYWRzOiAweDEwMDAwIGh0aHJlc2g6IDAgcHRocmVzaDogMCB3dGhy
-ZXNoOiAwIHR4X2ZyZWVfdGhyZXNoOiAwIA0KdHhfcnNfdGhyZXNoOiAwIHR4cV9kZWZlcnJl
-ZF9zdGFydDogMCANCltEZXZpY2VDb25maWd1cmVRdWV1ZXM6cnVubW9kZS1kcGRrLmM6MTQ4
-N10NCm1seDVfbmV0OiBhZGp1c3QgdHhxX2lubGluZV9tYXggKDI5MC0+MTgpIGR1ZSB0byBs
-YXJnZSBUeCBxdWV1ZSBvbiBwb3J0IDENCkNvbmZpZzogZHBkazogMDAwMDpiMzowMC4wOiBz
-ZXR0aW5nIHVwIFRYIHF1ZXVlIDI6IHR4X2Rlc2M6IDMyNzY4IHR4OiANCm9mZmxvYWRzOiAw
-eDEwMDAwIGh0aHJlc2g6IDAgcHRocmVzaDogMCB3dGhyZXNoOiAwIHR4X2ZyZWVfdGhyZXNo
-OiAwIA0KdHhfcnNfdGhyZXNoOiAwIHR4cV9kZWZlcnJlZF9zdGFydDogMCANCltEZXZpY2VD
-b25maWd1cmVRdWV1ZXM6cnVubW9kZS1kcGRrLmM6MTQ4N10NCm1seDVfbmV0OiBhZGp1c3Qg
-dHhxX2lubGluZV9tYXggKDI5MC0+MTgpIGR1ZSB0byBsYXJnZSBUeCBxdWV1ZSBvbiBwb3J0
-IDENCg0KSXMgdGhlcmUgYW55IHdheSBob3cgSSBjYW4gYXZvaWQgdGhlc2UgbG9ncz8NCg0K
-VGhhbmsgeW91Lg0KDQpMdWthcw0KDQpPbiA0LzI0LzI1IDE1OjMxLCBWaWFjaGVzbGF2IE92
-c2lpZW5rbyB3cm90ZToNCj4gaGUgRFBESyBBUEkgcnRlX2V0aF90eF9xdWV1ZV9zZXR1cCgp
-IGhhcyBhIHBhcmFtZXRlciBuYl90eF9kZXNjDQo+IHNwZWNpZnlpbmcgdGhlIGRlc2lyZWQg
-cXVldWUgY2FwYWNpdHksIG1lYXN1cmVkIGluIHBhY2tldHMuDQo+DQo+IFRoZSBDb25uZWN0
-WCBOSUMgc2VyaWVzIGhhcyBhIGhhcmR3YXJlLWltcG9zZWQgcXVldWUgc2l6ZQ0KPiBsaW1p
-dCBvZiAzMksgV1FFcyAocGFja2V0IGhhcmR3YXJlIGRlc2NyaXB0b3JzKS4gVHlwaWNhbGx5
-LA0KPiBvbmUgcGFja2V0IHJlcXVpcmVzIG9uZSBXUUUgdG8gYmUgc2VudC4NCj4NCj4gVGhl
-cmUgaXMgYSBzcGVjaWFsIG9mZmxvYWQgb3B0aW9uLCBkYXRhLWlubGluaW5nLCB0byBpbXBy
-b3ZlDQo+IHBlcmZvcm1hbmNlIGZvciBzbWFsbCBwYWNrZXRzLiBBbHNvLCBOSUNzIGluIHNv
-bWUgY29uZmlndXJhdGlvbnMNCj4gcmVxdWlyZSBhIG1pbmltdW0gYW1vdW50IG9mIGlubGlu
-ZSBkYXRhIGZvciB0aGUgc3RlZXJpbmcgZW5naW5lDQo+IHRvIG9wZXJhdGUgY29ycmVjdGx5
-Lg0KPg0KPiBJbiB0aGUgY2FzZSBvZiBpbmxpbmUgZGF0YSwgbW9yZSB0aGFuIG9uZSBXUUVz
-IG1pZ2h0IGJlIHJlcXVpcmVkDQo+IHRvIHNlbmQgYSBzaW5nbGUgcGFja2V0LiBUaGUgbWx4
-NSBQTUQgdGFrZXMgdGhpcyBpbnRvIGFjY291bnQNCj4gYW5kIGFkanVzdHMgdGhlIG51bWJl
-ciBvZiBxdWV1ZSBXUUVzIGFjY29yZGluZ2x5Lg0KPg0KPiBJZiB0aGUgcmVxdWVzdGVkIHF1
-ZXVlIGNhcGFjaXR5IGNhbid0IGJlIHNhdGlzZmllZCBkdWUgdG8NCj4gdGhlIGhhcmR3YXJl
-IHF1ZXVlIHNpemUgbGltaXQsIHRoZSBtbHg1IFBNRCByZWplY3RlZCB0aGUgcXVldWUNCj4g
-Y3JlYXRpb24sIGNhdXNpbmcgdW5yZXNvbHZhYmxlIGFwcGxpY2F0aW9uIGZhaWx1cmUuDQo+
-DQo+IFRoZSBwYXRjaCBwcm92aWRlcyB0aGUgZm9sbG93aW5nOg0KPg0KPiAtIGZpeGVzIHRo
-ZSBjYWxjdWxhdGlvbiBvZiB0aGUgbnVtYmVyIG9mIHJlcXVpcmVkIFdRRXMNCj4gICAgdG8g
-c2VuZCBhIHNpbmdsZSBwYWNrZXQgd2l0aCBpbmxpbmUgZGF0YSwgbWFraW5nIGl0IG1vcmUg
-cHJlY2lzZQ0KPiAgICBhbmQgZXh0ZW5kaW5nIHRoZSBwYWlubGVzcyBvcGVyYXRpbmcgcmFu
-Z2UuDQo+DQo+IC0gSWYgdGhlIHJlcXVlc3RlZCBxdWV1ZSBjYXBhY2l0eSBjYW4ndCBiZSBz
-YXRpc2ZpZWQgZHVlIHRvIFdRRQ0KPiAgICBudW1iZXIgYWRqdXN0bWVudCBmb3IgaW5saW5l
-IGRhdGEsIGl0IG5vIGxvbmdlciBjYXVzZXMgYSBzZXZlcmUNCj4gICAgZXJyb3IuIEluc3Rl
-YWQsIGEgd2FybmluZyBtZXNzYWdlIGlzIGVtaXR0ZWQsIGFuZCB0aGUgcXVldWUNCj4gICAg
-aXMgY3JlYXRlZCB3aXRoIHRoZSBtYXhpbXVtIGF2YWlsYWJsZSBzaXplLCB3aXRoIGEgcmVw
-b3J0ZWQgc3VjY2Vzcy4NCj4NCj4gICAgUGxlYXNlIG5vdGUgdGhhdCB0aGUgaW5saW5lIGRh
-dGEgc2l6ZSBkZXBlbmRzIG9uIG1hbnkgb3B0aW9ucw0KPiAgICAoTklDIGNvbmZpZ3VyYXRp
-b24sIHF1ZXVlIG9mZmxvYWQgZmxhZ3MsIHBhY2tldCBvZmZsb2FkIGZsYWdzLA0KPiAgICAg
-cGFja2V0IHNpemUsIGV0Yy4pLCBzbyB0aGUgYWN0dWFsIHF1ZXVlIGNhcGFjaXR5IG1pZ2h0
-IG5vdCBiZQ0KPiAgICAgaW1wYWN0ZWQgYXQgYWxsLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBW
-aWFjaGVzbGF2IE92c2lpZW5rbyA8dmlhY2hlc2xhdm9AbnZpZGlhLmNvbT4NCj4gQWNrZWQt
-Ynk6IERhcml1c3ogU29zbm93c2tpIDxkc29zbm93c2tpQG52aWRpYS5jb20+DQo+DQo+IC0t
-LQ0KPiB2MjogZGlhZ25vc3RpY3MgbWVzc2FnZXMgbWFkZSBsZXNzIHdvcmR5DQo+IC0tLQ0K
-PiAgIGRyaXZlcnMvbmV0L21seDUvbWx4NV90eHEuYyB8IDc0ICsrKysrKysrKysrLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9u
-cygrKSwgNTIgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9t
-bHg1L21seDVfdHhxLmMgYi9kcml2ZXJzL25ldC9tbHg1L21seDVfdHhxLmMNCj4gaW5kZXgg
-M2U5MzUxNzMyMy4uZWViZjNjMjUzNCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvbWx4
-NS9tbHg1X3R4cS5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L21seDUvbWx4NV90eHEuYw0KPiBA
-QCAtNzMxLDcgKzczMSw3IEBAIHR4cV9jYWxjX2lubGluZV9tYXgoc3RydWN0IG1seDVfdHhx
-X2N0cmwgKnR4cV9jdHJsKQ0KPiAgIAlpZiAoIXdxZV9zaXplKQ0KPiAgIAkJcmV0dXJuIDA7
-DQo+ICAgCS8qDQo+IC0JICogVGhpcyBjYWxjdWxhdGlvbiBpcyBkZXJpdmVkIGZyb20gdHRo
-ZSBzb3VyY2Ugb2YNCj4gKwkgKiBUaGlzIGNhbGN1bGF0aW9uIGlzIGRlcml2ZWQgZnJvbSB0
-aGUgc291cmNlIG9mDQo+ICAgCSAqIG1seDVfY2FsY19zZW5kX3dxZSgpIGluIHJkbWFfY29y
-ZSBsaWJyYXJ5Lg0KPiAgIAkgKi8NCj4gICAJd3FlX3NpemUgPSB3cWVfc2l6ZSAqIE1MWDVf
-V1FFX1NJWkUgLQ0KPiBAQCAtNzM5LDcgKzczOSw3IEBAIHR4cV9jYWxjX2lubGluZV9tYXgo
-c3RydWN0IG1seDVfdHhxX2N0cmwgKnR4cV9jdHJsKQ0KPiAgIAkJICAgTUxYNV9XUUVfRVNF
-R19TSVpFIC0NCj4gICAJCSAgIE1MWDVfV1NFR19TSVpFIC0NCj4gICAJCSAgIE1MWDVfV1NF
-R19TSVpFICsNCj4gLQkJICAgTUxYNV9EU0VHX01JTl9JTkxJTkVfU0laRTsNCj4gKwkJICAg
-TUxYNV9FU0VHX01JTl9JTkxJTkVfU0laRTsNCj4gICAJcmV0dXJuIHdxZV9zaXplOw0KPiAg
-IH0NCj4gICANCj4gQEAgLTk2NCwxMSArOTY0LDggQEAgdHhxX3NldF9wYXJhbXMoc3RydWN0
-IG1seDVfdHhxX2N0cmwgKnR4cV9jdHJsKQ0KPiAgICAqDQo+ICAgICogQHBhcmFtIHR4cV9j
-dHJsDQo+ICAgICogICBQb2ludGVyIHRvIFR4IHF1ZXVlIGNvbnRyb2wgc3RydWN0dXJlLg0K
-PiAtICoNCj4gLSAqIEByZXR1cm4NCj4gLSAqICAgWmVybyBvbiBzdWNjZXNzLCBvdGhlcndp
-c2UgdGhlIHBhcmFtZXRlcnMgY2FuIG5vdCBiZSBhZGp1c3RlZC4NCj4gICAgKi8NCj4gLXN0
-YXRpYyBpbnQNCj4gK3N0YXRpYyB2b2lkDQo+ICAgdHhxX2FkanVzdF9wYXJhbXMoc3RydWN0
-IG1seDVfdHhxX2N0cmwgKnR4cV9jdHJsKQ0KPiAgIHsNCj4gICAJc3RydWN0IG1seDVfcHJp
-diAqcHJpdiA9IHR4cV9jdHJsLT5wcml2Ow0KPiBAQCAtOTgxLDgyICs5NzgsNTYgQEAgdHhx
-X2FkanVzdF9wYXJhbXMoc3RydWN0IG1seDVfdHhxX2N0cmwgKnR4cV9jdHJsKQ0KPiAgIAkJ
-ICogSW5saW5lIGRhdGEgZmVhdHVyZSBpcyBub3QgZW5nYWdlZCBhdCBhbGwuDQo+ICAgCQkg
-KiBUaGVyZSBpcyBub3RoaW5nIHRvIGFkanVzdC4NCj4gICAJCSAqLw0KPiAtCQlyZXR1cm4g
-MDsNCj4gKwkJcmV0dXJuOw0KPiAgIAl9DQo+ICAgCWlmICh0eHFfY3RybC0+bWF4X2lubGlu
-ZV9kYXRhIDw9IG1heF9pbmxpbmUpIHsNCj4gICAJCS8qDQo+ICAgCQkgKiBUaGUgcmVxdWVz
-dGVkIGlubGluZSBkYXRhIGxlbmd0aCBkb2VzIG5vdA0KPiAgIAkJICogZXhjZWVkIHF1ZXVl
-IGNhcGFiaWxpdGllcy4NCj4gICAJCSAqLw0KPiAtCQlyZXR1cm4gMDsNCj4gKwkJcmV0dXJu
-Ow0KPiAgIAl9DQo+ICAgCWlmICh0eHFfY3RybC0+dHhxLmlubGVuX21vZGUgPiBtYXhfaW5s
-aW5lKSB7DQo+IC0JCURSVl9MT0coRVJSLA0KPiAtCQkJIm1pbmltYWwgZGF0YSBpbmxpbmUg
-cmVxdWlyZW1lbnRzICgldSkgYXJlIG5vdCINCj4gLQkJCSIgc2F0aXNmaWVkICgldSkgb24g
-cG9ydCAldSwgdHJ5IHRoZSBzbWFsbGVyIg0KPiAtCQkJIiBUeCBxdWV1ZSBzaXplICglZCki
-LA0KPiAtCQkJdHhxX2N0cmwtPnR4cS5pbmxlbl9tb2RlLCBtYXhfaW5saW5lLA0KPiAtCQkJ
-cHJpdi0+ZGV2X2RhdGEtPnBvcnRfaWQsIHByaXYtPnNoLT5kZXZfY2FwLm1heF9xcF93cik7
-DQo+IC0JCWdvdG8gZXJyb3I7DQo+ICsJCURSVl9MT0coV0FSTklORywNCj4gKwkJCSJtaW5p
-bWFsIGRhdGEgaW5saW5lIHJlcXVpcmVtZW50cyAoJXUpIGFyZSBub3Qgc2F0aXNmaWVkICgl
-dSkgb24gcG9ydCAldSIsDQo+ICsJCQl0eHFfY3RybC0+dHhxLmlubGVuX21vZGUsIG1heF9p
-bmxpbmUsIHByaXYtPmRldl9kYXRhLT5wb3J0X2lkKTsNCj4gICAJfQ0KPiAgIAlpZiAodHhx
-X2N0cmwtPnR4cS5pbmxlbl9zZW5kID4gbWF4X2lubGluZSAmJg0KPiAgIAkgICAgY29uZmln
-LT50eHFfaW5saW5lX21heCAhPSBNTFg1X0FSR19VTlNFVCAmJg0KPiAgIAkgICAgY29uZmln
-LT50eHFfaW5saW5lX21heCA+IChpbnQpbWF4X2lubGluZSkgew0KPiAtCQlEUlZfTE9HKEVS
-UiwNCj4gLQkJCSJ0eHFfaW5saW5lX21heCByZXF1aXJlbWVudHMgKCV1KSBhcmUgbm90Ig0K
-PiAtCQkJIiBzYXRpc2ZpZWQgKCV1KSBvbiBwb3J0ICV1LCB0cnkgdGhlIHNtYWxsZXIiDQo+
-IC0JCQkiIFR4IHF1ZXVlIHNpemUgKCVkKSIsDQo+IC0JCQl0eHFfY3RybC0+dHhxLmlubGVu
-X3NlbmQsIG1heF9pbmxpbmUsDQo+IC0JCQlwcml2LT5kZXZfZGF0YS0+cG9ydF9pZCwgcHJp
-di0+c2gtPmRldl9jYXAubWF4X3FwX3dyKTsNCj4gLQkJZ290byBlcnJvcjsNCj4gKwkJRFJW
-X0xPRyhXQVJOSU5HLA0KPiArCQkJInR4cV9pbmxpbmVfbWF4IHJlcXVpcmVtZW50cyAoJXUp
-IGFyZSBub3Qgc2F0aXNmaWVkICgldSkgb24gcG9ydCAldSIsDQo+ICsJCQl0eHFfY3RybC0+
-dHhxLmlubGVuX3NlbmQsIG1heF9pbmxpbmUsIHByaXYtPmRldl9kYXRhLT5wb3J0X2lkKTsN
-Cj4gICAJfQ0KPiAgIAlpZiAodHhxX2N0cmwtPnR4cS5pbmxlbl9lbXB3ID4gbWF4X2lubGlu
-ZSAmJg0KPiAgIAkgICAgY29uZmlnLT50eHFfaW5saW5lX21wdyAhPSBNTFg1X0FSR19VTlNF
-VCAmJg0KPiAgIAkgICAgY29uZmlnLT50eHFfaW5saW5lX21wdyA+IChpbnQpbWF4X2lubGlu
-ZSkgew0KPiAtCQlEUlZfTE9HKEVSUiwNCj4gLQkJCSJ0eHFfaW5saW5lX21wdyByZXF1aXJl
-bWVudHMgKCV1KSBhcmUgbm90Ig0KPiAtCQkJIiBzYXRpc2ZpZWQgKCV1KSBvbiBwb3J0ICV1
-LCB0cnkgdGhlIHNtYWxsZXIiDQo+IC0JCQkiIFR4IHF1ZXVlIHNpemUgKCVkKSIsDQo+IC0J
-CQl0eHFfY3RybC0+dHhxLmlubGVuX2VtcHcsIG1heF9pbmxpbmUsDQo+IC0JCQlwcml2LT5k
-ZXZfZGF0YS0+cG9ydF9pZCwgcHJpdi0+c2gtPmRldl9jYXAubWF4X3FwX3dyKTsNCj4gLQkJ
-Z290byBlcnJvcjsNCj4gKwkJRFJWX0xPRyhXQVJOSU5HLA0KPiArCQkJInR4cV9pbmxpbmVf
-bXB3IHJlcXVpcmVtZW50cyAoJXUpIGFyZSBub3Qgc2F0aXNmaWVkICgldSkgb24gcG9ydCAl
-dSIsDQo+ICsJCQl0eHFfY3RybC0+dHhxLmlubGVuX2VtcHcsIG1heF9pbmxpbmUsIHByaXYt
-PmRldl9kYXRhLT5wb3J0X2lkKTsNCj4gICAJfQ0KPiAgIAlpZiAodHhxX2N0cmwtPnR4cS50
-c29fZW4gJiYgbWF4X2lubGluZSA8IE1MWDVfTUFYX1RTT19IRUFERVIpIHsNCj4gLQkJRFJW
-X0xPRyhFUlIsDQo+IC0JCQkidHNvIGhlYWRlciBpbmxpbmUgcmVxdWlyZW1lbnRzICgldSkg
-YXJlIG5vdCINCj4gLQkJCSIgc2F0aXNmaWVkICgldSkgb24gcG9ydCAldSwgdHJ5IHRoZSBz
-bWFsbGVyIg0KPiAtCQkJIiBUeCBxdWV1ZSBzaXplICglZCkiLA0KPiAtCQkJTUxYNV9NQVhf
-VFNPX0hFQURFUiwgbWF4X2lubGluZSwNCj4gLQkJCXByaXYtPmRldl9kYXRhLT5wb3J0X2lk
-LCBwcml2LT5zaC0+ZGV2X2NhcC5tYXhfcXBfd3IpOw0KPiAtCQlnb3RvIGVycm9yOw0KPiAr
-CQlEUlZfTE9HKFdBUk5JTkcsDQo+ICsJCQkidHNvIGhlYWRlciBpbmxpbmUgcmVxdWlyZW1l
-bnRzICgldSkgYXJlIG5vdCBzYXRpc2ZpZWQgKCV1KSBvbiBwb3J0ICV1IiwNCj4gKwkJCU1M
-WDVfTUFYX1RTT19IRUFERVIsIG1heF9pbmxpbmUsIHByaXYtPmRldl9kYXRhLT5wb3J0X2lk
-KTsNCj4gICAJfQ0KPiAgIAlpZiAodHhxX2N0cmwtPnR4cS5pbmxlbl9zZW5kID4gbWF4X2lu
-bGluZSkgew0KPiAgIAkJRFJWX0xPRyhXQVJOSU5HLA0KPiAtCQkJImFkanVzdCB0eHFfaW5s
-aW5lX21heCAoJXUtPiV1KSINCj4gLQkJCSIgZHVlIHRvIGxhcmdlIFR4IHF1ZXVlIG9uIHBv
-cnQgJXUiLA0KPiAtCQkJdHhxX2N0cmwtPnR4cS5pbmxlbl9zZW5kLCBtYXhfaW5saW5lLA0K
-PiAtCQkJcHJpdi0+ZGV2X2RhdGEtPnBvcnRfaWQpOw0KPiArCQkJImFkanVzdCB0eHFfaW5s
-aW5lX21heCAoJXUtPiV1KSBkdWUgdG8gbGFyZ2UgVHggcXVldWUgb24gcG9ydCAldSIsDQo+
-ICsJCQl0eHFfY3RybC0+dHhxLmlubGVuX3NlbmQsIG1heF9pbmxpbmUsIHByaXYtPmRldl9k
-YXRhLT5wb3J0X2lkKTsNCj4gICAJCXR4cV9jdHJsLT50eHEuaW5sZW5fc2VuZCA9IG1heF9p
-bmxpbmU7DQo+ICAgCX0NCj4gICAJaWYgKHR4cV9jdHJsLT50eHEuaW5sZW5fZW1wdyA+IG1h
-eF9pbmxpbmUpIHsNCj4gICAJCURSVl9MT0coV0FSTklORywNCj4gLQkJCSJhZGp1c3QgdHhx
-X2lubGluZV9tcHcgKCV1LT4ldSkiDQo+IC0JCQkiZHVlIHRvIGxhcmdlIFR4IHF1ZXVlIG9u
-IHBvcnQgJXUiLA0KPiAtCQkJdHhxX2N0cmwtPnR4cS5pbmxlbl9lbXB3LCBtYXhfaW5saW5l
-LA0KPiAtCQkJcHJpdi0+ZGV2X2RhdGEtPnBvcnRfaWQpOw0KPiArCQkJImFkanVzdCB0eHFf
-aW5saW5lX21wdyAoJXUtPiV1KSBkdWUgdG8gbGFyZ2UgVHggcXVldWUgb24gcG9ydCAldSIs
-DQo+ICsJCQl0eHFfY3RybC0+dHhxLmlubGVuX2VtcHcsIG1heF9pbmxpbmUsIHByaXYtPmRl
-dl9kYXRhLT5wb3J0X2lkKTsNCj4gICAJCXR4cV9jdHJsLT50eHEuaW5sZW5fZW1wdyA9IG1h
-eF9pbmxpbmU7DQo+ICAgCX0NCj4gICAJdHhxX2N0cmwtPm1heF9pbmxpbmVfZGF0YSA9IFJU
-RV9NQVgodHhxX2N0cmwtPnR4cS5pbmxlbl9zZW5kLA0KPiAgIAkJCQkJICAgIHR4cV9jdHJs
-LT50eHEuaW5sZW5fZW1wdyk7DQo+IC0JTUxYNV9BU1NFUlQodHhxX2N0cmwtPm1heF9pbmxp
-bmVfZGF0YSA8PSBtYXhfaW5saW5lKTsNCj4gLQlNTFg1X0FTU0VSVCh0eHFfY3RybC0+dHhx
-LmlubGVuX21vZGUgPD0gbWF4X2lubGluZSk7DQo+ICAgCU1MWDVfQVNTRVJUKHR4cV9jdHJs
-LT50eHEuaW5sZW5fbW9kZSA8PSB0eHFfY3RybC0+dHhxLmlubGVuX3NlbmQpOw0KPiAgIAlN
-TFg1X0FTU0VSVCh0eHFfY3RybC0+dHhxLmlubGVuX21vZGUgPD0gdHhxX2N0cmwtPnR4cS5p
-bmxlbl9lbXB3IHx8DQo+ICAgCQkgICAgIXR4cV9jdHJsLT50eHEuaW5sZW5fZW1wdyk7DQo+
-IC0JcmV0dXJuIDA7DQo+IC1lcnJvcjoNCj4gLQlydGVfZXJybm8gPSBFTk9NRU07DQo+IC0J
-cmV0dXJuIC1FTk9NRU07DQo+ICAgfQ0KPiAgIA0KPiAgIC8qKg0KPiBAQCAtMTEwNSw4ICsx
-MDc2LDcgQEAgbWx4NV90eHFfbmV3KHN0cnVjdCBydGVfZXRoX2RldiAqZGV2LCB1aW50MTZf
-dCBpZHgsIHVpbnQxNl90IGRlc2MsDQo+ICAgCXRtcGwtPnR4cS5wb3J0X2lkID0gZGV2LT5k
-YXRhLT5wb3J0X2lkOw0KPiAgIAl0bXBsLT50eHEuaWR4ID0gaWR4Ow0KPiAgIAl0eHFfc2V0
-X3BhcmFtcyh0bXBsKTsNCj4gLQlpZiAodHhxX2FkanVzdF9wYXJhbXModG1wbCkpDQo+IC0J
-CWdvdG8gZXJyb3I7DQo+ICsJdHhxX2FkanVzdF9wYXJhbXModG1wbCk7DQo+ICAgCWlmICh0
-eHFfY2FsY193cWViYl9jbnQodG1wbCkgPg0KPiAgIAkgICAgcHJpdi0+c2gtPmRldl9jYXAu
-bWF4X3FwX3dyKSB7DQo+ICAgCQlEUlZfTE9HKEVSUiwNCg==
+#####################################################################
+Minutes
 
---------------ms030603000609000608040207
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+* DPDK Summit Prague is May 8-9
+   * Patrick will share out his presentation to the DTS group when its read=
+y
+   * Aaron has the metrics he needs for his presentation
 
-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
-VQQDDBFMdWvDocWhIMWgacWhbWnFoTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AIYjV/QwJbJj3C5WpRO3kOru0hGrrdFHQywBGTowDWLYzrLYDIdj9Mj4BruCM1rIw2mkjDs/
-Igeb2IAjZ65XhvRiLHEnFhNfWTSEDnhaEVY9f1vXq1W2T9ayjAMxiL79ZlZsNCPaOBV/YvP6
-uhHHqmzaXqryWYC3Kl+KOVwEuI/oVOdqW81zSdKFp/vyFfRI/SgmOilaKeor/wcdJLILMY5i
-VjXxY5kuw3LUP1TpzUFl9RtQprkWoLIo2fnSHnF2Pn++sEB0c009NDaE/RqkVRNmBRW1mpIr
-WJQcJB5Q4A7rkTohElnJFYWiO/4p8ZvkQfKgcxfX5cQcwIQuSYRgE6sCAwEAAaOCAcYwggHC
-MB8GA1UdIwQYMBaAFGkAocchWPjgxRsgsArdp1G/E9nkMB0GA1UdDgQWBBRy6YIe/EKtTKXE
-vjA6c+W4oURcuDAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggr
-BgEFBQcDBAYIKwYBBQUHAwIwUAYDVR0gBEkwRzA6BgwrBgEEAbIxAQIBCgQwKjAoBggrBgEF
-BQcCARYcaHR0cHM6Ly9zZWN0aWdvLmNvbS9TTUlNRUNQUzAJBgdngQwBBQMCMEIGA1UdHwQ7
-MDkwN6A1oDOGMWh0dHA6Ly9HRUFOVC5jcmwuc2VjdGlnby5jb20vR0VBTlRQZXJzb25hbENB
-NC5jcmwweAYIKwYBBQUHAQEEbDBqMD0GCCsGAQUFBzAChjFodHRwOi8vR0VBTlQuY3J0LnNl
-Y3RpZ28uY29tL0dFQU5UUGVyc29uYWxDQTQuY3J0MCkGCCsGAQUFBzABhh1odHRwOi8vR0VB
-TlQub2NzcC5zZWN0aWdvLmNvbTAzBgNVHREELDAqgRZMdWthcy5TaXNtaXNAY2VzbmV0LmN6
-gRBzaXNtaXNAY2VzbmV0LmN6MA0GCSqGSIb3DQEBDAUAA4ICAQAUruvh/0xaYOuFuIb5DxaL
-wU9162yIq0yfVn4genAF8EPfW6tPmZBgS6n/ZDRd2AMMlMczUI4PDkkXqcubNv/59ry5xD3t
-344cVoxEYXch+kXzbN/mgguuzsghyN8cvN7etv4ZRRrvjBC6U++GYpAzHooAYsBc/JYCyEiN
-jsDZldJbOWEuFZ0H7DQwDXcN53TqM2Nq7+DwkwLby7ZjesdUKwg83HgqSOSNpHwRtKmMEzmb
-e/vFE/MvH/GWvWk1AwwN559+eGXu5k0c0i8G+bR+vt4fyekmq/PREvsHKvpCkEWrOengsmHV
-l8z22uoFfLRSCus5scmw5FRAG/iwNvgDsju19W5HoP3iU/OyIYr9yyn6FQPZl4fktVJJLyrT
-wE07Ze9Ybpy5kHmO0WvGeybloszs8+zos0uQNWi34ABWnZcStLsh+DnUghSqYNjNfmVaOo0i
-NubUM5egWEAVeQEHMntQaeyNnsOSbN1r5SBwRj3VYlwSbKa5FG23Lz4H5JhLuJR+HGCTH3+T
-JuDzOKddWXUAI5s9811r8sJo9StMBlEnoOkCJ3jyN8eKZLg1w3BmA1zvW+sAXn9qPU81J38n
-mpKr5OkPrDfQG7hL2/mPwQo9amFWTfZ8I5279GqdnIivNnK+OvEHeDRdBb5iFjT5x71doVON
-6apyxSX1oIohIzCCBuYwggTOoAMCAQICEDECcNQ1vpskmvhW0OHihUkwDQYJKoZIhvcNAQEM
-BQAwgYgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpOZXcgSmVyc2V5MRQwEgYDVQQHEwtKZXJz
-ZXkgQ2l0eTEeMBwGA1UEChMVVGhlIFVTRVJUUlVTVCBOZXR3b3JrMS4wLAYDVQQDEyVVU0VS
-VHJ1c3QgUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4XDTIwMDIxODAwMDAwMFoXDTMz
-MDUwMTIzNTk1OVowRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcx
-HDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAw
-ggIKAoICAQCzSuIiXidb6QRbFAQ1MiAUrrTSMUDGzVDAHqFEyq+eSmF/LZDeYpszai2kQsqW
-ATz/cBA9gGjunvJ45G48ycC4D6gwZFvbBt5JotxlunBeB8K+crGar3v+RCQ4VfvToX07v+HT
-J6EeEONR3IzJPTMyzgAwENGsAWf9va9HePQFJiChCzXqhKpp0zen53S+8f9itEy06GS8aku7
-Mvyb4tMBBa9An3Y3ALIqIeymg/iYs8m9WkSkMyekNtFRB1+1KlnNUpM05G8+sY9EucnQQRUI
-dHzYsvqjP3XlaSuB4Jj0ia66UGfi5Wx31mm5sKAz8Re9UGVWIqq6wKFKxkSfuO4iwYiIPJoi
-GEux3dqabwFLduAroDF1IxE40PqGIdPXzYuZ/wL6BEfFAb0xy8bfm5S9G7y/ts9mIlFpPtkL
-Z/nQ/iVOWdsu9ale/nK/uGF47xsxeW2LIvB4sH5U2+D4ad8vpNbcCrXIXXKtkBnNHgxumNNZ
-0R1Isq/Pz7TALCxxDzWdsM7AO32/Jn7R4ldtGRZmKpJyfACDn8HU1QPhOtiWsjifrMWnanJh
-Q6K7M/5qz8BmfPrca+MUrr1Y4NHZb9MrgPtWKQQyGDXy+G5F/iHGdZk7LS+F8NH+Ddolt2wZ
-pz52JqGMTDPIH5Qok4LLO95wbxtn+79Tw+wQxmDTuIg+LwIDAQABo4IBizCCAYcwHwYDVR0j
-BBgwFoAUU3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFGkAocchWPjgxRsgsArdp1G/
-E9nkMA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsG
-AQUFBwMCBggrBgEFBQcDBDA4BgNVHSAEMTAvMC0GBFUdIAAwJTAjBggrBgEFBQcCARYXaHR0
-cHM6Ly9zZWN0aWdvLmNvbS9DUFMwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsG
-AQUFBwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJU
-cnVzdFJTQUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1
-c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAKBU57DY8fEzkA/W/sYsbD7e0XquMBzHjcP0eX
-XXRD4EAEAGCWSs+QRL9XIxmx+52zx9wMa8YTejlR+NKejiyKPTF0q63zMxrO/z/hUwo8IDcR
-RLS0NSgvTW6AN2rCXJe5iLN5fIfYgIBB9cy1L6trPuZ/vjUJm87nQ7ExQzGqWN5F9U8MlAk0
-c5iLanG7GCMoNjHiF1n0baj6guUeG7n5qcwOQTyDS19+NEqfwjUPUGasN1ZH8h1sE6PrzvRp
-ti+rKzWpiU+i2/k3l2b5fFDy+Wu9jv6R9BoBh47es/UMzwEZ2kSrIVVr4jSukk+FpmR5Zbtw
-iYNAV6sdb1srMGsILzXlrdasSE2nGHvZklk2zUdgn7b01MHq67g0mNozGmT6Dam41Kbhv25W
-MFs871XqwVIb4gGoT1yRf/VePMm1jwauqijhKJFvrNweGnebGPeipaLxIo2iEA4qdRztEg/q
-yzWGogXK/TFdmivg322fMPQWjQkMhRGMM8SCjlZN22L8x0ZOYoVA2rHJm5P25IjZe+HPyn7i
-kJiSJmqlqFmUeowXF3D1dFlCCs/5yC06RYRqI2REFu+28t2nswIvY6xCFAR0RtS8Mz2yXNld
-0js2MmiRUGrc7imWzdUPbPcv9sdUF7SsERGPIzYL8dIiHzit+YCoGCSXMg6peF37hHNp1TGC
-BCgwggQkAgEBMFswRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcx
-HDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEQC/Y2YvY/AU1z9zfvc7WYidMA0GCWCG
-SAFlAwQCAQUAoIICnjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-Fw0yNTA0MjUxMTU0NDdaMC8GCSqGSIb3DQEJBDEiBCDRxwMZFRtmFk10niElttIZjOOb/fHN
-wA2QVM05kRS0YzBqBgkrBgEEAYI3EAQxXTBbMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBH
-RUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhEAv2NmL2Pw
-FNc/c373O1mInTBsBgsqhkiG9w0BCRACCzFdoFswRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoT
-EEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEQC/Y2Yv
-Y/AU1z9zfvc7WYidMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQwCwYJYIZIAWUDBAEqMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTANBggqhkiG9w0DAgIBBTAHBgUr
-DgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgBZQMEAgEwCwYJYIZIAWUDBAIC
-MAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUDBAIHMAsGCWCGSAFlAwQCCDAL
-BglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEBATALBgkrgQUQhkg/AAIwCAYG
-K4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsDMAsGCSuBBRCGSD8AAzAIBgYr
-gQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMwDQYJKoZIhvcNAQEBBQAEggEA
-eX05lcsTXshr/o9+n+xKoWSRln08anyNplo/eumo4hZzW0CxrjRV5Ml3Dsii9ug3eNY5cIfK
-YLz+j9UsbTsVKhhYGofrhTu8dwqSMEQjv5zU7Wl2M/22i053gVIjGtB201cndU7NFYQxxJl1
-3QKP6m4l/8LJIvtKVDvmxjcO+TT0RuvJfWw0wRYhNRU3+DkJOKpX/rxGBd07bJfkJX7lVTIf
-lmNlJqBBjJBeC84laXBAgEevb66tvuhuuymU9TaEw6dpA/C6GZdaEXk+dOfvjWk3hM7pfH1u
-BKkExewsytzqd/Mc0rnkTWWsCA2obXy3UJQp7aClUz0TbOAjJ9J0pwAAAAAAAA==
---------------ms030603000609000608040207--
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CI Status
+
+---------------------------------------------------------------------
+UNH-IOL Community Lab
+* Intel Quickassist crypto tests: John McNamara gave us a contact for this
+- Kai Ji (who is the quickassist maintainer for DPDK). UNH still needs to
+pull together the performance metrics to share with Kai before we turn on
+the reporting for this test.
+* Environment info for reports:
+   * There was some discussion on Slack about what environment information
+is reported alongside tests, and what can be seen from the dashboard. Some
+basic info (distro, kernel, compiler version) is included on the test
+report emails, and can also be found on the dashboard like:
+https://lab.dpdk.org/results/dashboard/test-matrix/105/
+   * But, there are some improvements the lab can do, like extending the
+amount of environment information included (so far Bruce suggested
+including libc version) and also automatically updating the environment
+info more frequently
+   * Manit is working on running a python script on Jenkins every 48 hours
+which will collect system info for a test environment and update the
+respective environment=E2=80=99s fields in our database
+   * We can also start inserting more environment info directly into the
+top of the test log files which our dashboard hosts for download/view on
+test results. This will be a follow up task.
+*  Baremetal updates:
+   * Cody is working on updates to our testbeds, either on a software level
+or moving some NICs to new systems.
+* UNH will perform a Jenkins migration in the next couple weeks which will
+likely result in a few hours of lab downtime. This will be communicated
+ahead of time.
+* DTS:
+   * Dean is adding some new network cards, and has made some small
+improvements to our jenkins scripting which handles starting the DTS
+execution and handling the output etc. We will be able to talk about this
+some at the DTS presentation at DPDK Prague.
+* Patch depends-on support:
+   * The patchwork server series is approved and will be in the next releas=
+e
+   * The associated git-pw patch is also merged now:
+https://github.com/getpatchwork/git-pw/pull/77
+   * So we are on track to use this once the next patchwork patch is
+released and we upgrade the dpdk.org patchwork instance
+      * Patrick should email Ali now to start this conversation
+
+---------------------------------------------------------------------
+Intel Lab
+* Patrick will have to schedule a sync with the people that touch these
+testbeds in the Summer to help them setup the DTS framework on their
+systems.
+
+---------------------------------------------------------------------
+Github Actions
+* None
+
+---------------------------------------------------------------------
+AWS
+* They have been running their Build and Unit tests on x86 and ARM systems
+for 2 weeks, and sending test reports to an external email (not the dpdk
+test report mailing list). They are scheduled to begin sending the reports
+to the dpdk test report mailing list this week.
+
+---------------------------------------------------------------------
+Loongarch Lab
+* None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+* Thomas M has provided some feedback on the rte_flow testsuite,
+identifying what are the most common items and actions the rules tested
+should be based on: https://inbox.dpdk.org/dev/5050697.TLnPLrj5Ze@thomas/
+   *  Items:
+      * - RTE_FLOW_ITEM_TYPE_ETH
+      * - RTE_FLOW_ITEM_TYPE_IPV4 / RTE_FLOW_ITEM_TYPE_IPV6
+      * - RTE_FLOW_ITEM_TYPE_UDP
+      * - RTE_FLOW_ITEM_TYPE_TCP
+      * - RTE_FLOW_ITEM_TYPE_VLAN
+   * Actions:
+      * - RTE_FLOW_ACTION_TYPE_QUEUE
+      * - RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT
+      * - RTE_FLOW_ACTION_TYPE_RSS (Dean make sure you check which RSS
+rules are validated from the RSS testsuites which are currently under
+review)
+      * - RTE_FLOW_ACTION_TYPE_DROP
+* Reviews needed:
+   * Shell improvements:
+https://patchwork.dpdk.org/project/dpdk/list/?series=3D34865
+      * Patrick and Nick please see this series
+   * RSS functions:
+      * Partial review from Patrick. Looks pretty good so far except for
+some syntax errors and we need to agree where the RSS functions should be
+kept (in a dedicated file to be imported to testsuites, or just in the
+testsuite class)
+   * Smoke tests:
+      * Paul will do a review
+   * Old patches from UNH: Various patches need to be rebased and
+resubmitted. Patrick needs to mark these as rework required on Patchwork
+* ICMP filtering:
+   * Looks good, can be merged
+* Thomas submitted a patch about creating dirs on nodes
+* Packet capture test suite:
+   *
+https://patchwork.dpdk.org/project/dpdk/patch/20250331155800.449823-2-thoma=
+s.wilks@arm.com/
+   * Stephen has raised that dpdk-pdump is deprecated, and this testsuite
+should be rewritten from dpdk-dumpcap which is its replacement
+* There will be =E2=80=9Cbirds of a feather=E2=80=9D sessions at DPDK Pragu=
+e for discussion
+on various subjects, and it would be ideal if we can have a discussion for
+DTS interested people
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Any other business
+* Next Meeting May 1, 2025
+
+--00000000000072d81306339af6ea
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>#####################################################=
+################</div><div>April 17, 2025<br>Attendees<br>1. Patrick Robb<b=
+r>2. Paul Szczepanek<br>3. Luca Vizzarro<br>4. Aaron Conole<br>5. Manit Mah=
+ajan</div><div><br></div><div>#############################################=
+########################<br>Minutes</div><div><br></div><div>=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Announcements<br>*=
+ DPDK Summit Prague is May 8-9<br>=C2=A0 =C2=A0* Patrick will share out his=
+ presentation to the DTS group when its ready<br>=C2=A0 =C2=A0* Aaron has t=
+he metrics he needs for his presentation</div><div><br></div><div>=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>CI Status</div><div><br=
+></div><div>---------------------------------------------------------------=
+------<br>UNH-IOL Community Lab<br>* Intel Quickassist crypto tests: John M=
+cNamara gave us a contact for this - Kai Ji (who is the quickassist maintai=
+ner for DPDK). UNH still needs to pull together the performance metrics to =
+share with Kai before we turn on the reporting for this test.<br>* Environm=
+ent info for reports:<br>=C2=A0 =C2=A0* There was some discussion on Slack =
+about what environment information is reported alongside tests, and what ca=
+n be seen from the dashboard. Some basic info (distro, kernel, compiler ver=
+sion) is included on the test report emails, and can also be found on the d=
+ashboard like: <a href=3D"https://lab.dpdk.org/results/dashboard/test-matri=
+x/105/">https://lab.dpdk.org/results/dashboard/test-matrix/105/</a><br>=C2=
+=A0 =C2=A0* But, there are some improvements the lab can do, like extending=
+ the amount of environment information included (so far Bruce suggested inc=
+luding libc version) and also automatically updating the environment info m=
+ore frequently<br>=C2=A0 =C2=A0* Manit is working on running a python scrip=
+t on Jenkins every 48 hours which will collect system info for a test envir=
+onment and update the respective environment=E2=80=99s fields in our databa=
+se<br>=C2=A0 =C2=A0* We can also start inserting more environment info dire=
+ctly into the top of the test log files which our dashboard hosts for downl=
+oad/view on test results. This will be a follow up task.<br>* =C2=A0Baremet=
+al updates:<br>=C2=A0 =C2=A0* Cody is working on updates to our testbeds, e=
+ither on a software level or moving some NICs to new systems.<br>* UNH will=
+ perform a Jenkins migration in the next couple weeks which will likely res=
+ult in a few hours of lab downtime. This will be communicated ahead of time=
+.<br>* DTS:<br>=C2=A0 =C2=A0* Dean is adding some new network cards, and ha=
+s made some small improvements to our jenkins scripting which handles start=
+ing the DTS execution and handling the output etc. We will be able to talk =
+about this some at the DTS presentation at DPDK Prague.<br>* Patch depends-=
+on support:<br>=C2=A0 =C2=A0* The patchwork server series is approved and w=
+ill be in the next release<br>=C2=A0 =C2=A0* The associated git-pw patch is=
+ also merged now: <a href=3D"https://github.com/getpatchwork/git-pw/pull/77=
+">https://github.com/getpatchwork/git-pw/pull/77</a><br>=C2=A0 =C2=A0* So w=
+e are on track to use this once the next patchwork patch is released and we=
+ upgrade the <a href=3D"http://dpdk.org">dpdk.org</a> patchwork instance<br=
+>=C2=A0 =C2=A0 =C2=A0 * Patrick should email Ali now to start this conversa=
+tion<br><br></div><div>----------------------------------------------------=
+-----------------</div><div>Intel Lab<br>* Patrick will have to schedule a =
+sync with the people that touch these testbeds in the Summer to help them s=
+etup the DTS framework on their systems.</div><div><br></div><div>---------=
+------------------------------------------------------------<br>Github Acti=
+ons<br>* None</div><div><br></div><div>------------------------------------=
+---------------------------------<br>AWS<br>* They have been running their =
+Build and Unit tests on x86 and ARM systems for 2 weeks, and sending test r=
+eports to an external email (not the dpdk test report mailing list). They a=
+re scheduled to begin sending the reports to the dpdk test report mailing l=
+ist this week.</div><div><br></div><div>-----------------------------------=
+----------------------------------<br>Loongarch Lab<br>* None</div><div><br=
+></div><div>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DT=
+S Improvements &amp; Test Development<br>* Thomas M has provided some feedb=
+ack on the rte_flow testsuite, identifying what are the most common items a=
+nd actions the rules tested should be based on: <a href=3D"https://inbox.dp=
+dk.org/dev/5050697.TLnPLrj5Ze@thomas/">https://inbox.dpdk.org/dev/5050697.T=
+LnPLrj5Ze@thomas/</a><br>=C2=A0 =C2=A0* =C2=A0Items: =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0<br>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_ITEM_TYPE_ETH<br>=C2=A0 =C2=A0 =
+=C2=A0 * - RTE_FLOW_ITEM_TYPE_IPV4 / RTE_FLOW_ITEM_TYPE_IPV6<br>=C2=A0 =C2=
+=A0 =C2=A0 * - RTE_FLOW_ITEM_TYPE_UDP<br>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_=
+ITEM_TYPE_TCP<br>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_ITEM_TYPE_VLAN<br>=C2=A0=
+ =C2=A0* Actions:<br>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_ACTION_TYPE_QUEUE<br=
+>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT<br>=C2=A0 =
+=C2=A0 =C2=A0 * - RTE_FLOW_ACTION_TYPE_RSS (Dean make sure you check which =
+RSS rules are validated from the RSS testsuites which are currently under r=
+eview)<br>=C2=A0 =C2=A0 =C2=A0 * - RTE_FLOW_ACTION_TYPE_DROP<br>* Reviews n=
+eeded:<br>=C2=A0 =C2=A0* Shell improvements: <a href=3D"https://patchwork.d=
+pdk.org/project/dpdk/list/?series=3D34865">https://patchwork.dpdk.org/proje=
+ct/dpdk/list/?series=3D34865</a><br>=C2=A0 =C2=A0 =C2=A0 * Patrick and Nick=
+ please see this series<br>=C2=A0 =C2=A0* RSS functions:<br>=C2=A0 =C2=A0 =
+=C2=A0 * Partial review from Patrick. Looks pretty good so far except for s=
+ome syntax errors and we need to agree where the RSS functions should be ke=
+pt (in a dedicated file to be imported to testsuites, or just in the testsu=
+ite class)<br>=C2=A0 =C2=A0* Smoke tests:<br>=C2=A0 =C2=A0 =C2=A0 * Paul wi=
+ll do a review<br>=C2=A0 =C2=A0* Old patches from UNH: Various patches need=
+ to be rebased and resubmitted. Patrick needs to mark these as rework requi=
+red on Patchwork<br>* ICMP filtering:<br>=C2=A0 =C2=A0* Looks good, can be =
+merged<br>* Thomas submitted a patch about creating dirs on nodes<br>* Pack=
+et capture test suite:<br>=C2=A0 =C2=A0* <a href=3D"https://patchwork.dpdk.=
+org/project/dpdk/patch/20250331155800.449823-2-thomas.wilks@arm.com/">https=
+://patchwork.dpdk.org/project/dpdk/patch/20250331155800.449823-2-thomas.wil=
+ks@arm.com/</a><br>=C2=A0 =C2=A0* Stephen has raised that dpdk-pdump is dep=
+recated, and this testsuite should be rewritten from dpdk-dumpcap which is =
+its replacement<br>* There will be =E2=80=9Cbirds of a feather=E2=80=9D ses=
+sions at DPDK Prague for discussion on various subjects, and it would be id=
+eal if we can have a discussion for DTS interested people</div><div><br></d=
+iv><div>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any o=
+ther business<br>* Next Meeting May 1, 2025<br><br></div><div><br></div></d=
+iv>
+
+--00000000000072d81306339af6ea--
