@@ -2,59 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD86C369D1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 03:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABA1C369C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 08:22:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EAE4D400D7;
-	Fri, 25 Apr 2025 05:53:30 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 299F6400D5
- for <dev@dpdk.org>; Fri, 25 Apr 2025 05:53:30 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-3012a0c8496so1423858a91.2
- for <dev@dpdk.org>; Thu, 24 Apr 2025 20:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745553209; x=1746158009; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=/pEhgiw0kR6h9a2izDNFzNb+QV5osw2qyGN1GIur7rI=;
- b=ZhgH8hJcTl+MASwS3y5QolKql7DfTHSojL1uwf6+YXwHoQuhNWnTY7Y6jgw80PKe1J
- y/9eSJoj4db6Xz/dXIGWSkJJaXY8QxOJLQ2rEt1aaI4y+pweFW2Q9xKQPdcqQLib1RK/
- Z2+iT2HM7W7RHeHBQYZOXtUPWxKsVFI3kNHjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745553209; x=1746158009;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=/pEhgiw0kR6h9a2izDNFzNb+QV5osw2qyGN1GIur7rI=;
- b=QH8UK3TLpWUPhybxHFxElIiNIoxNSEeNY0Jwg3stO+BUwzeLXT9o1+oYeGXqED4otd
- hBhwmSscmJlazPcifgNZCxIO31GK4Am+Yl2Wno695UIhXTu4n/gQhGqWcymz+cTVN2qn
- 7N0NSi6OcM4IdlSMoUJGIx94sriHJ0+FNIz0PRgbyU3sX8K3xtGClULoMlJCy/WVPwN4
- FJOh92FkAVIyTlbOVe4bQsPuL+tsQylBepRIde39Dtdy6up+L8EVCZ6CVSn+wZaY1g3r
- fM2JppNq9hFtQpU0zgK3ezCMpk7CxmFUwKTaDOfxg/oO9/buKkaOHM9mF4Kaq7uVYB6z
- Fb/w==
-X-Gm-Message-State: AOJu0YwehMOqVGG0oQgps5agYm4maEcYMfeGyFy32Ztc/UbtjFEurkxK
- KbJQc/w8n0tvEf7tQCu8Xqr68LulFxMAosrRE2YX7jKM4l4QGO6YYCSaics4cqDR36XNvd4P6Pb
- ELlo+nS2+CfoyYejWhsINI9UKMjONZsaNkEENtw==
-X-Gm-Gg: ASbGnctaabolZpIybAn24397kTOEfnfqOVGcivvtjGi1VvqA5UlhvskPNMarX36QI52
- nlqxX74Mxt0CqvFOYonJYrzW7/KQ+U4ycrltPptaCPqpEd/txI+9oewQFNAWP/lRIIt+3LwZgtt
- BdAwrc2BDC+2yGHc+UrYcuAnfvj4B+Za01Y/l5lw==
-X-Google-Smtp-Source: AGHT+IHjQyvBuaF/sS068wD+yhDssdxCXWwkKgPS1vJKqI2onT8lEO+UZNm8cVvQ/ZrfYjXGKWK9Z7p2m+pF8N3JnnA=
-X-Received: by 2002:a17:90b:1b48:b0:308:539d:7577 with SMTP id
- 98e67ed59e1d1-309f7c70113mr2072194a91.0.1745553208813; Thu, 24 Apr 2025
- 20:53:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D6F2400D7;
+	Fri, 25 Apr 2025 10:22:37 +0200 (CEST)
+Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com
+ [115.124.28.145])
+ by mails.dpdk.org (Postfix) with ESMTP id 025B7400D5
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 10:22:34 +0200 (CEST)
+Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
+ fp:SMTPD_---.cWPS3LK_1745569350 cluster:ay29) by smtp.aliyun-inc.com;
+ Fri, 25 Apr 2025 16:22:31 +0800
+From: Kyo Liu <kyo.liu@nebula-matrix.com>
+To: kyo.liu@nebula-matrix.com,
+	dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>, Chenbo Xia <chenbox@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>
+Subject: [PATCH] bus/pci: introduce get_iova_mode for pci dev
+Date: Fri, 25 Apr 2025 08:22:28 +0000
+Message-ID: <20250425082228.5423-1-kyo.liu@nebula-matrix.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <20241220172337.2194523-1-luca.vizzarro@arm.com>
- <20250314131857.1298247-1-luca.vizzarro@arm.com>
-In-Reply-To: <20250314131857.1298247-1-luca.vizzarro@arm.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 24 Apr 2025 23:49:06 -0400
-X-Gm-Features: ATxdqUHVxezheRUCo8W-MC1bFliW32XeiugFoC0ILe5sco3rroa35yq10xhHUgM
-Message-ID: <CAJvnSUBH_LQD6hoaMLXoY3=51gK4cCiEAbZLEH=41a1zSKzaKA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] dts: shell improvements
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>
-Content-Type: multipart/alternative; boundary="000000000000f2c20d06339246f3"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,56 +39,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f2c20d06339246f3
-Content-Type: text/plain; charset="UTF-8"
+I propose this patch for DPDK to enable coexistence between
+DPDK and kernel drivers for regular NICs.This solution requires
+adding a new pci_ops in rte_pci_driver, through which DPDK will
+retrieve the required IOVA mode from the vendor driver.
+This mechanism is necessary to handle different IOMMU
+configurations and operating modes. Below is a detailed
+analysis of various scenarios:
 
-Thanks for this series Luca. Dean did a review earlier and I have just done
-one so we're almost good to proceed. I should probably apply it and do a
-testrun before merging, which should be possible tomorrow (Friday).
+1. When IOMMU is enabled:
+1.1 With PT (Pass-Through) enabled:
+In this case, the domain type is IOMMU_DOMAIN_IDENTITY,
+which prevents vendor drivers from setting IOVA->PA mapping tables.
+Therefore, DPDK must use PA mode. To achieve this:
+The vendor kernel driver will register a character device (cdev) to
+communicate with DPDK. This cdev handles device operations
+(open, mmap, etc.) and ultimately
+programs the hardware registers.
 
-I will flag that when I tried to apply the series, git complained of a sha1
-issue:
+1.2 With PT disabled:
+Here, the vendor driver doesn't enforce specific IOVA mode requirements.
+Our implementation will:
+Integrate a mediated device (mdev) in the vendor driver.
+This mdev interacts with DPDK and manages IOVA->PA mapping configurations.
 
-Applying: dts: escape single quotes
-Applying: dts: add blocking dpdk app class
-Applying: dts: add shells pool
-Applying: dts: revert back to a single InteractiveShell
-error: sha1 information is lacking or useless
-(dts/framework/remote_session/testpmd_shell.py).
-error: could not build fake ancestor
-Patch failed at 0004 dts: revert back to a single InteractiveShell
+2. When IOMMU is disabled:
+The vendor driver mandates PA mode (consistent with DPDK's PA mode
+requirement in this scenario).
+A character device (cdev) will similarly be registered for DPDK
+communication.
 
-From a quick google, it sounds like this can happen when sharing
-commits/patches across related repos, when one of the repos has rewritten
-history. Maybe this is because sometimes dpdk mainline rewords commits and
-then we hard reset off of that... or some other reason - not sure right
-now. But in any case it sounds like it's benign and there are some
-tricks/workarounds to apply it so it probably won't be an issue. If it is
-I'll let you know. :)
+Summary:
+The solution leverages multiple technologies:
+mdev for IOVA management when IOMMU is partially enabled.
+VFIO for device passthrough operations.
+cdev for register programming coordination.
+A new pci_ops interface in DPDK to dynamically determine IOVA modes.
+This architecture enables clean coexistence by establishing standardized
+communication channels between DPDK and vendor drivers across different
+IOMMU configurations.
 
-Thanks.
+Motivation for the Patch:
+This patch is introduced to prepare for the upcoming open-source
+contribution of our NebulaMatrix SNIC driver to DPDK. We aim to
+ensure that our SNIC can seamlessly coexist with kernel drivers
+using this mechanism. By adopting the proposed
+architecture—leveraging dynamic IOVA mode negotiation via pci_ops,
+mediated devices (mdev), and character device (cdev)
+interactions—we enable our SNIC to operate in hybrid environments
+here both DPDK and kernel drivers may manage the same hardware.
+This design aligns with DPDK’s scalability goals and ensures
+compatibility across diverse IOMMU configurations, which is critical
+for real-world deployment scenarios.
 
---000000000000f2c20d06339246f3
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
+---
+ .mailmap                               |  2 ++
+ doc/guides/rel_notes/release_25_07.rst |  4 ++++
+ drivers/bus/pci/bus_pci_driver.h       | 11 +++++++++++
+ drivers/bus/pci/linux/pci.c            |  2 ++
+ 4 files changed, 19 insertions(+)
 
-<div dir=3D"ltr">Thanks for this series Luca. Dean did a review earlier and=
- I have just done one so we&#39;re almost good to proceed. I should probabl=
-y apply it and do a testrun before merging, which should be possible tomorr=
-ow (Friday).<div><br></div><div>I will flag that when I tried to apply the =
-series, git complained of a sha1 issue:=C2=A0</div><div><br></div><div>Appl=
-ying: dts: escape single quotes<br>Applying: dts: add blocking dpdk app cla=
-ss<br>Applying: dts: add shells pool<br>Applying: dts: revert back to a sin=
-gle InteractiveShell<br>error: sha1 information is lacking or useless (dts/=
-framework/remote_session/testpmd_shell.py).<br>error: could not build fake =
-ancestor<br>Patch failed at 0004 dts: revert back to a single InteractiveSh=
-ell<br><br></div><div>From a quick google, it sounds like this can happen w=
-hen sharing commits/patches across related repos, when one of the repos has=
- rewritten history. Maybe this is because sometimes dpdk mainline rewords=
-=C2=A0commits and then we hard reset off of that... or some other reason - =
-not sure right now. But in any case it sounds like it&#39;s benign and ther=
-e are some tricks/workarounds to apply it so it probably won&#39;t be an is=
-sue. If it is I&#39;ll let you know. :)</div><div><br></div><div>Thanks.</d=
-iv><div><br></div></div>
+diff --git a/.mailmap b/.mailmap
+index d8439b79ce..509ff9a16f 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -78,6 +78,7 @@ Allen Hubbe <allen.hubbe@amd.com>
+ Alok Makhariya <alok.makhariya@nxp.com>
+ Alok Prasad <palok@marvell.com>
+ Alvaro Karsz <alvaro.karsz@solid-run.com>
++Alvin Wang<alvin.wang@nebula-matrix.com>
+ Alvin Zhang <alvinx.zhang@intel.com>
+ Aman Singh <aman.deep.singh@intel.com>
+ Amaranath Somalapuram <asomalap@amd.com>
+@@ -829,6 +830,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..e220b3883f 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -54,6 +54,10 @@ New Features
+      This section is a comment. Do not overwrite or remove it.
+      Also, make sure to start the actual text at the margin.
+      =======================================================
++* **Added get_iova_mode for rte_pci_driver.**
++
++  Introduce `pci_get_iova_mode` rte_pci_ops for `pci_get_iova_mode`
++  to PCI bus so that PCI drivers could get their wanted iova_mode
+ 
+ 
+ Removed Items
+diff --git a/drivers/bus/pci/bus_pci_driver.h b/drivers/bus/pci/bus_pci_driver.h
+index 2cc1119072..c57244d467 100644
+--- a/drivers/bus/pci/bus_pci_driver.h
++++ b/drivers/bus/pci/bus_pci_driver.h
+@@ -125,6 +125,16 @@ typedef int (pci_dma_map_t)(struct rte_pci_device *dev, void *addr,
+ typedef int (pci_dma_unmap_t)(struct rte_pci_device *dev, void *addr,
+ 			      uint64_t iova, size_t len);
+ 
++/**
++ * retrieve the required IOVA mode from the vendor driver
++ *
++ * @param dev
++ *   Pointer to the PCI device.
++ * @return
++ *   - rte_iova_mode
++ */
++typedef enum rte_iova_mode (pci_get_iova_mode)(const struct rte_pci_device *pdev);
++
+ /**
+  * A structure describing a PCI driver.
+  */
+@@ -136,6 +146,7 @@ struct rte_pci_driver {
+ 	pci_dma_map_t *dma_map;		   /**< device dma map function. */
+ 	pci_dma_unmap_t *dma_unmap;	   /**< device dma unmap function. */
+ 	const struct rte_pci_id *id_table; /**< ID table, NULL terminated. */
++	pci_get_iova_mode *get_iova_mode;  /**< Device get iova_mode function */
+ 	uint32_t drv_flags;                /**< Flags RTE_PCI_DRV_*. */
+ };
+ 
+diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
+index c20d159218..fd69a02989 100644
+--- a/drivers/bus/pci/linux/pci.c
++++ b/drivers/bus/pci/linux/pci.c
+@@ -624,6 +624,8 @@ pci_device_iova_mode(const struct rte_pci_driver *pdrv,
+ 	default:
+ 		if ((pdrv->drv_flags & RTE_PCI_DRV_NEED_IOVA_AS_VA) != 0)
+ 			iova_mode = RTE_IOVA_VA;
++		else if (pdrv->get_iova_mode)
++			iova_mode = pdrv->get_iova_mode(pdev);
+ 		break;
+ 	}
+ 	return iova_mode;
+-- 
+2.43.0
 
---000000000000f2c20d06339246f3--
