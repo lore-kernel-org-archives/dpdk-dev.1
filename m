@@ -2,30 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABA1C369C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 08:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4F5C369C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 11:53:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D6F2400D7;
-	Fri, 25 Apr 2025 10:22:37 +0200 (CEST)
-Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com
- [115.124.28.145])
- by mails.dpdk.org (Postfix) with ESMTP id 025B7400D5
- for <dev@dpdk.org>; Fri, 25 Apr 2025 10:22:34 +0200 (CEST)
-Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
- fp:SMTPD_---.cWPS3LK_1745569350 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 25 Apr 2025 16:22:31 +0800
-From: Kyo Liu <kyo.liu@nebula-matrix.com>
-To: kyo.liu@nebula-matrix.com,
-	dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>, Chenbo Xia <chenbox@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH] bus/pci: introduce get_iova_mode for pci dev
-Date: Fri, 25 Apr 2025 08:22:28 +0000
-Message-ID: <20250425082228.5423-1-kyo.liu@nebula-matrix.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id BB6F84028C;
+	Fri, 25 Apr 2025 13:53:00 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 0407A40279
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 13:52:59 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 539482064E;
+ Fri, 25 Apr 2025 13:52:58 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: rte_eth_stats_get seems slow
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 25 Apr 2025 13:52:55 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC02@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: rte_eth_stats_get seems slow
+Thread-Index: Adu12JTg+rpJS3OCRReKlbG9wgVtRg==
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <bruce.richardson@intel.com>
+Cc: "Ian Stokes" <ian.stokes@intel.com>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -39,144 +45,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I propose this patch for DPDK to enable coexistence between
-DPDK and kernel drivers for regular NICs.This solution requires
-adding a new pci_ops in rte_pci_driver, through which DPDK will
-retrieve the required IOVA mode from the vendor driver.
-This mechanism is necessary to handle different IOMMU
-configurations and operating modes. Below is a detailed
-analysis of various scenarios:
+Bruce,
 
-1. When IOMMU is enabled:
-1.1 With PT (Pass-Through) enabled:
-In this case, the domain type is IOMMU_DOMAIN_IDENTITY,
-which prevents vendor drivers from setting IOVA->PA mapping tables.
-Therefore, DPDK must use PA mode. To achieve this:
-The vendor kernel driver will register a character device (cdev) to
-communicate with DPDK. This cdev handles device operations
-(open, mmap, etc.) and ultimately
-programs the hardware registers.
+rte_eth_stats_get() on Intel NICs seems slow to me.
 
-1.2 With PT disabled:
-Here, the vendor driver doesn't enforce specific IOVA mode requirements.
-Our implementation will:
-Integrate a mediated device (mdev) in the vendor driver.
-This mdev interacts with DPDK and manages IOVA->PA mapping configurations.
+E.g. getting the stats on a single port takes ~132 us (~451,000 CPU =
+cycles) using the igb driver, and ~50 us using the i40e driver.
 
-2. When IOMMU is disabled:
-The vendor driver mandates PA mode (consistent with DPDK's PA mode
-requirement in this scenario).
-A character device (cdev) will similarly be registered for DPDK
-communication.
+Referring to the igb driver source code [1], it's 44 calls to =
+E1000_READ_REG(), so the math says that each one takes 3 us (~10,000 CPU =
+cycles).
 
-Summary:
-The solution leverages multiple technologies:
-mdev for IOVA management when IOMMU is partially enabled.
-VFIO for device passthrough operations.
-cdev for register programming coordination.
-A new pci_ops interface in DPDK to dynamically determine IOVA modes.
-This architecture enables clean coexistence by establishing standardized
-communication channels between DPDK and vendor drivers across different
-IOMMU configurations.
+Is this expected behavior?
 
-Motivation for the Patch:
-This patch is introduced to prepare for the upcoming open-source
-contribution of our NebulaMatrix SNIC driver to DPDK. We aim to
-ensure that our SNIC can seamlessly coexist with kernel drivers
-using this mechanism. By adopting the proposed
-architecture—leveraging dynamic IOVA mode negotiation via pci_ops,
-mediated devices (mdev), and character device (cdev)
-interactions—we enable our SNIC to operate in hybrid environments
-here both DPDK and kernel drivers may manage the same hardware.
-This design aligns with DPDK’s scalability goals and ensures
-compatibility across diverse IOMMU configurations, which is critical
-for real-world deployment scenarios.
+It adds up, e.g. it takes a full millisecond to fetch the stats from =
+eight ports using the igb driver.
 
-Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
----
- .mailmap                               |  2 ++
- doc/guides/rel_notes/release_25_07.rst |  4 ++++
- drivers/bus/pci/bus_pci_driver.h       | 11 +++++++++++
- drivers/bus/pci/linux/pci.c            |  2 ++
- 4 files changed, 19 insertions(+)
+[1]: =
+https://elixir.bootlin.com/dpdk/v24.11.1/source/drivers/net/e1000/igb_eth=
+dev.c#L1724
 
-diff --git a/.mailmap b/.mailmap
-index d8439b79ce..509ff9a16f 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -78,6 +78,7 @@ Allen Hubbe <allen.hubbe@amd.com>
- Alok Makhariya <alok.makhariya@nxp.com>
- Alok Prasad <palok@marvell.com>
- Alvaro Karsz <alvaro.karsz@solid-run.com>
-+Alvin Wang<alvin.wang@nebula-matrix.com>
- Alvin Zhang <alvinx.zhang@intel.com>
- Aman Singh <aman.deep.singh@intel.com>
- Amaranath Somalapuram <asomalap@amd.com>
-@@ -829,6 +830,7 @@ Kumar Amber <kumar.amber@intel.com>
- Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
- Kumar Sanghvi <kumaras@chelsio.com>
- Kyle Larose <klarose@sandvine.com>
-+Kyo Liu <kyo.liu@nebula-matrix.com>
- Lance Richardson <lance.richardson@broadcom.com>
- Laszlo Ersek <lersek@redhat.com>
- Laura Stroe <laura.stroe@intel.com>
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..e220b3883f 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -54,6 +54,10 @@ New Features
-      This section is a comment. Do not overwrite or remove it.
-      Also, make sure to start the actual text at the margin.
-      =======================================================
-+* **Added get_iova_mode for rte_pci_driver.**
-+
-+  Introduce `pci_get_iova_mode` rte_pci_ops for `pci_get_iova_mode`
-+  to PCI bus so that PCI drivers could get their wanted iova_mode
- 
- 
- Removed Items
-diff --git a/drivers/bus/pci/bus_pci_driver.h b/drivers/bus/pci/bus_pci_driver.h
-index 2cc1119072..c57244d467 100644
---- a/drivers/bus/pci/bus_pci_driver.h
-+++ b/drivers/bus/pci/bus_pci_driver.h
-@@ -125,6 +125,16 @@ typedef int (pci_dma_map_t)(struct rte_pci_device *dev, void *addr,
- typedef int (pci_dma_unmap_t)(struct rte_pci_device *dev, void *addr,
- 			      uint64_t iova, size_t len);
- 
-+/**
-+ * retrieve the required IOVA mode from the vendor driver
-+ *
-+ * @param dev
-+ *   Pointer to the PCI device.
-+ * @return
-+ *   - rte_iova_mode
-+ */
-+typedef enum rte_iova_mode (pci_get_iova_mode)(const struct rte_pci_device *pdev);
-+
- /**
-  * A structure describing a PCI driver.
-  */
-@@ -136,6 +146,7 @@ struct rte_pci_driver {
- 	pci_dma_map_t *dma_map;		   /**< device dma map function. */
- 	pci_dma_unmap_t *dma_unmap;	   /**< device dma unmap function. */
- 	const struct rte_pci_id *id_table; /**< ID table, NULL terminated. */
-+	pci_get_iova_mode *get_iova_mode;  /**< Device get iova_mode function */
- 	uint32_t drv_flags;                /**< Flags RTE_PCI_DRV_*. */
- };
- 
-diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index c20d159218..fd69a02989 100644
---- a/drivers/bus/pci/linux/pci.c
-+++ b/drivers/bus/pci/linux/pci.c
-@@ -624,6 +624,8 @@ pci_device_iova_mode(const struct rte_pci_driver *pdrv,
- 	default:
- 		if ((pdrv->drv_flags & RTE_PCI_DRV_NEED_IOVA_AS_VA) != 0)
- 			iova_mode = RTE_IOVA_VA;
-+		else if (pdrv->get_iova_mode)
-+			iova_mode = pdrv->get_iova_mode(pdev);
- 		break;
- 	}
- 	return iova_mode;
--- 
-2.43.0
+
+Med venlig hilsen / Kind regards,
+-Morten Br=F8rup
 
