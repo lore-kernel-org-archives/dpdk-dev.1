@@ -2,63 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802E3C369C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 16:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2A2C369C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Apr 2025 17:47:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B5384025E;
-	Fri, 25 Apr 2025 18:56:22 +0200 (CEST)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 5E9EF4021F
- for <dev@dpdk.org>; Fri, 25 Apr 2025 18:56:21 +0200 (CEST)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-2ff67f44fcaso239826a91.3
- for <dev@dpdk.org>; Fri, 25 Apr 2025 09:56:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E0234025E;
+	Fri, 25 Apr 2025 19:47:43 +0200 (CEST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
+ [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id D3F5F4021F
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 19:47:41 +0200 (CEST)
+Received: by mail-ej1-f54.google.com with SMTP id
+ a640c23a62f3a-ac79fa6e1c2so38933066b.1
+ for <dev@dpdk.org>; Fri, 25 Apr 2025 10:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745600180; x=1746204980; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hvxXHfQcB7+2Dl1MLavZEEtuO3BnPc0iS8HhvU+8TzY=;
- b=VVO5waPTNmXm4rSb8TESWF4wC/UX+iFTluIyHaf01ziB+t0oYoOhSo8U5UJAZZ4MBu
- bg6SFHWVCFvnAgGPsfTHR2JFOnb+R1dg5c7PA9XrKnsymrIVl9CfJUgOOBmZb+9ppmbp
- dPGL5bhpg/9b+jN/Vg7OxkSTUKC4JSgT8m7ww=
+ d=gmail.com; s=20230601; t=1745603261; x=1746208061; darn=dpdk.org;
+ h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=D/mTflLV6Dm+YyMAAFWO10UdndzeGTE1iC1hZrjAaaU=;
+ b=mm1BymiNxW7E4PHkYClxhosFnfSmTPOSrUZ0Znq9xRv/HAK8YFlLAsCl6PnSkooap/
+ i03mCRsgBOsWWoCdGqJqrAulXHZV1vE5tPWRWAczjN5VY/GpHfb8uOX1tGRar0fAkORx
+ oY5LieDdScVC4hwZiYOH9azojJPH28a3vNpBFKh00i00koRvX93SYjJMoFG1FuaIdbUB
+ reXpZymnk1Kh9lO2ImAWa1TfLK5JaKEvH/F64H90l1zACePrAtfhJFh6dc8SnX+6s9po
+ HYFk6vNCcJ3inTtRbeUZrlr6vj4vwtBOJHXNO7kdJj6jZPyKUaobSAEGt9v0RlVQBUbU
+ DZ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745600180; x=1746204980;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=hvxXHfQcB7+2Dl1MLavZEEtuO3BnPc0iS8HhvU+8TzY=;
- b=KmINCkqa7xRiFzikVX7g0EolBULfBFHMN2tNEoZrOeAKVgaTftHzZjoEFp7vgsYsvu
- BjKIlMGcCKPB0N2yVGKnIZVbOxHjjPATornc2boQu9vu9nNgzDAlRlgtganMiD0FZuma
- 6WbtlY3mMln6mmbG3+7Zch7oEEwlM/0utkEBPVXmnXYJbTa546ZV8YYzaCKhFm2qWjuC
- i+MA+YHqHv6JjrL4ioUOI2vF3DmJPIiOOQ7EQPkG5CzETlXZl9I3Co5U8io4gYH6UD2m
- 9df9qmAjaRr+sV4sXc9D4iBYUOUWBDG+AHUyVnwk7hE8Mbz0ZVrLbWT2zOErJaQ+jPyO
- Se3Q==
-X-Gm-Message-State: AOJu0Yw5upuIbvEvPVY15iypuIEPtP6M+QLufpakCEnOJocijLsDXid2
- uo7mrlRMBMGaADb8ynUSYHWQgALqyW1eaVH9TGY1YfttqgiT9DWr8iShQpYPHSjPc06UvVQjay2
- MmY0ZrdCZX8Uzrndcuw6fqNgd5JEgPqcNIEtuQQ==
-X-Gm-Gg: ASbGncuc8McGJSDa4Wdppu0e2musW/cXBWHs/8AVWVVqXUL4g/S8c4qdGSggQuZUvkr
- SGVRoC3UiUzn3ERN8DT+RjdbN0QkQfyggN66PylP2h00bOHPIqu8Liatss4Thd06JrxVvOLyFj0
- hQ5l2K0Z53o9yjqOyWQgBpdIpWvI3JhmP+jbeJwvzf9DCPAznt4KZKCGsN
-X-Google-Smtp-Source: AGHT+IEmJRjYCuFiZCmlEnEJJBSAAJBWljEb4+YdmcZiRswExOQxgLUAksCj5W5QoXSp6Ps5NfL18ibKSt77wm4LBHU=
-X-Received: by 2002:a17:90b:3e85:b0:301:1c11:aa7a with SMTP id
- 98e67ed59e1d1-309f7e8f5e5mr1722255a91.3.1745600180108; Fri, 25 Apr 2025
- 09:56:20 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1745603261; x=1746208061;
+ h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=D/mTflLV6Dm+YyMAAFWO10UdndzeGTE1iC1hZrjAaaU=;
+ b=iK87IZswnZQOG9qy4+o/inUKqtZBrG0IVg7tTU7o98nvGKmox7SCQX8N494h74Xn9D
+ 0JOgFbxBz35NODIN1LIj1IqL2myXux4An7XgZtmCLTh1i3qso/jBtls1M+xIzKpQwbUT
+ 1572Yx7+NvhiWq6ZiulWZwKcmuQcIA2BxJKSmO8fJHVS01toATuF86Gc45HGtgJ62Qsi
+ DtH8eXqeWD8sjCKRrwlMNOb1SftwLpnWdtzmD7j7QYXSucjgBHJtP7+2kuc01I+av55b
+ tpViUujYpJQ8E51y1cA8AEIm+T7q3d0bvT+TXWkh3ctwn+3xHlLXJMwBRiITD7MuGrqi
+ 6NCg==
+X-Gm-Message-State: AOJu0YyPc9wQGDJZ+hzU1FD3oiljldqU4ISyP57zMGZ8ehairRoWN2y3
+ QGcibXMl8rlj/umAZvnmLNrMgIA23F0+DZnuUW+sXue1VBeJGga6hF5mI2Hee/bHv/RKZhdIV91
+ BDCJc2qGHpt+iS7+6azAhjyqkaN0w7ygG
+X-Gm-Gg: ASbGncv13tZrNyJzLd3kU6ecUo11zhpY5VgqYO/iJt5VxA1mWGIdel8/EJdzLHA+8vy
+ Snu54ThJRg0CT8NS0imdt2u1YqQUItwL/uhXrrGEScm8eKjHO9fJnLD1y6XxARSVK8U6JNBlhsN
+ bajTx+5Y07Y2iBcp77kn0NtrBOddlKd1XpyR0bjL0QZv+h3sYmxbrCH4/8
+X-Google-Smtp-Source: AGHT+IHggSlMiMv5HEM/SDqonNrK+SpkasnfBgpjhWOQZhttwMhTtiJsImcqpgj8lUJMnWAm/ikPBQdoagiE5hcAiwM=
+X-Received: by 2002:a17:907:d91:b0:abf:689a:ed2c with SMTP id
+ a640c23a62f3a-ace7108051dmr99192366b.6.1745603260855; Fri, 25 Apr 2025
+ 10:47:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20241220172337.2194523-1-luca.vizzarro@arm.com>
- <20250314131857.1298247-1-luca.vizzarro@arm.com>
- <20250314131857.1298247-3-luca.vizzarro@arm.com>
-In-Reply-To: <20250314131857.1298247-3-luca.vizzarro@arm.com>
-From: Nicholas Pratte <npratte@iol.unh.edu>
-Date: Fri, 25 Apr 2025 12:56:07 -0400
-X-Gm-Features: ATxdqUEji9Z3KhvACz_9PYef-aH4g2dRxgp3YZ75gKBT6YyNkQBwnyLWgtNAlLI
-Message-ID: <CAKXZ7eiHuZeGL-E46Hh-SPNxLhYCnVrGDN8DvLeUr9SrifoUpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dts: add blocking dpdk app class
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>,
- Patrick Robb <probb@iol.unh.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Prashant Upadhyaya <praupadhyaya@gmail.com>
+Date: Fri, 25 Apr 2025 23:17:30 +0530
+X-Gm-Features: ATxdqUGL1VtPERtWE5rGW3sIGuwuBHPhaCL2damdtlq2lYv4b1Tvhdp9Vt4wMjE
+Message-ID: <CAPBAu3WOch_LYAUp_R47-=Uaos1yJLKgpRBM1ewJ+vaRysCDCQ@mail.gmail.com>
+Subject: Regarding Mellanox bifurcated driver on Azure
+To: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000483d8c06339deed4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,232 +66,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is perfect for my TREX implementation!
+--000000000000483d8c06339deed4
+Content-Type: text/plain; charset="UTF-8"
 
-Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
+Hi,
 
-On Fri, Mar 14, 2025 at 9:19=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
-m> wrote:
->
-> Add BlockingDPDKApp class. Some non-interactive applications are
-> blocking and run until the user interrupts them. As their main intended
-> usage is to be kept running in the background, this class exploits
-> InteractiveShell to spawn a dedicated shell to keep the blocking
-> application running, while detaching from it.
->
-> This class works by providing the `wait_until_ready` and `close`
-> methods. The former starts up the application and returns only when the
-> application readiness output ends in the string provided as an argument
-> to the same method. Whereas the latter works by simulating a Ctrl+C
-> keystroke, therefore sending a SIGINT to the app.
->
-> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
-> Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
-> ---
->  dts/framework/remote_session/dpdk_app.py      | 73 +++++++++++++++++++
->  dts/framework/remote_session/dpdk_shell.py    |  3 +-
->  .../single_active_interactive_shell.py        | 12 ++-
->  dts/framework/remote_session/testpmd_shell.py |  2 +-
->  4 files changed, 85 insertions(+), 5 deletions(-)
->  create mode 100644 dts/framework/remote_session/dpdk_app.py
->
-> diff --git a/dts/framework/remote_session/dpdk_app.py b/dts/framework/rem=
-ote_session/dpdk_app.py
-> new file mode 100644
-> index 0000000000..c9945f302d
-> --- /dev/null
-> +++ b/dts/framework/remote_session/dpdk_app.py
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2025 Arm Limited
-> +
-> +"""Class to run blocking DPDK apps in the background.
-> +
-> +The class won't automatically start the app. The start-up is done as par=
-t of the
-> +:meth:`BlockingDPDKApp.wait_until_ready` method, which will return execu=
-tion to the caller only
-> +when the desired stdout has been returned by the app. Usually this is us=
-ed to detect when the app
-> +has been loaded and ready to be used.
-> +
-> +Example:
-> +    ..code:: python
-> +
-> +        pdump =3D BlockingDPDKApp(
-> +            PurePath("app/dpdk-pdump"),
-> +            app_params=3D"--pdump 'port=3D0,queue=3D*,rx-dev=3D/tmp/rx-d=
-ev.pcap'"
-> +        )
-> +        pdump.wait_until_ready("65535") # start app
-> +
-> +        # pdump is now ready to capture
-> +
-> +        pdump.close() # stop/close app
-> +"""
-> +
-> +from pathlib import PurePath
-> +
-> +from framework.params.eal import EalParams
-> +from framework.remote_session.dpdk_shell import DPDKShell
-> +
-> +
-> +class BlockingDPDKApp(DPDKShell):
-> +    """Class to manage blocking DPDK apps."""
-> +
-> +    def __init__(
-> +        self,
-> +        path: PurePath,
-> +        name: str | None =3D None,
-> +        privileged: bool =3D True,
-> +        app_params: EalParams | str =3D "",
-> +    ) -> None:
-> +        """Constructor.
-> +
-> +        Overrides :meth:`~.dpdk_shell.DPDKShell.__init__`.
-> +
-> +        Args:
-> +            path: Path relative to the DPDK build to the executable.
-> +            name: Name to identify this application.
-> +            privileged: Run as privileged user.
-> +            app_params: The application parameters. If a string or an in=
-complete :class:`EalParams`
-> +                object are passed, the EAL params are computed based on =
-the current context.
-> +        """
-> +        if isinstance(app_params, str):
-> +            eal_params =3D EalParams()
-> +            eal_params.append_str(app_params)
-> +            app_params =3D eal_params
-> +
-> +        super().__init__(name, privileged, path, app_params)
-> +
-> +    def wait_until_ready(self, end_token: str) -> None:
-> +        """Start app and wait until ready.
-> +
-> +        Args:
-> +            end_token: The string at the end of a line that indicates th=
-e app is ready.
-> +        """
-> +        self._start_application(end_token)
-> +
-> +    def close(self) -> None:
-> +        """Close the application.
-> +
-> +        Sends a SIGINT to close the application.
-> +        """
-> +        self.send_command("\x03")
-> +        self._close()
-> diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/r=
-emote_session/dpdk_shell.py
-> index 0962414876..f7ea2588ca 100644
-> --- a/dts/framework/remote_session/dpdk_shell.py
-> +++ b/dts/framework/remote_session/dpdk_shell.py
-> @@ -65,13 +65,14 @@ def __init__(
->          self,
->          name: str | None =3D None,
->          privileged: bool =3D True,
-> +        path: PurePath | None =3D None,
->          app_params: EalParams =3D EalParams(),
->      ) -> None:
->          """Extends :meth:`~.interactive_shell.InteractiveShell.__init__`=
-."""
->          app_params =3D compute_eal_params(app_params)
->          node =3D get_ctx().sut_node
->
-> -        super().__init__(node, name, privileged, app_params)
-> +        super().__init__(node, name, privileged, path, app_params)
->
->      def _update_real_path(self, path: PurePath) -> None:
->          """Extends :meth:`~.interactive_shell.InteractiveShell._update_r=
-eal_path`.
-> diff --git a/dts/framework/remote_session/single_active_interactive_shell=
-.py b/dts/framework/remote_session/single_active_interactive_shell.py
-> index c1369ef77e..2257b6156b 100644
-> --- a/dts/framework/remote_session/single_active_interactive_shell.py
-> +++ b/dts/framework/remote_session/single_active_interactive_shell.py
-> @@ -92,6 +92,7 @@ def __init__(
->          node: Node,
->          name: str | None =3D None,
->          privileged: bool =3D False,
-> +        path: PurePath | None =3D None,
->          app_params: Params =3D Params(),
->          **kwargs,
->      ) -> None:
-> @@ -105,6 +106,7 @@ def __init__(
->              name: Name for the interactive shell to use for logging. Thi=
-s name will be appended to
->                  the name of the underlying node which it is running on.
->              privileged: Enables the shell to run as superuser.
-> +            path: Path to the executable. If :data:`None`, then the clas=
-s' path attribute is used.
->              app_params: The command line parameters to be passed to the =
-application on startup.
->              **kwargs: Any additional arguments if any.
->          """
-> @@ -116,7 +118,7 @@ def __init__(
->          self._privileged =3D privileged
->          self._timeout =3D SETTINGS.timeout
->          # Ensure path is properly formatted for the host
-> -        self._update_real_path(self.path)
-> +        self._update_real_path(path or self.path)
->          super().__init__(**kwargs)
->
->      def _setup_ssh_channel(self):
-> @@ -133,7 +135,7 @@ def _make_start_command(self) -> str:
->              start_command =3D self._node.main_session._get_privileged_co=
-mmand(start_command)
->          return start_command
->
-> -    def _start_application(self) -> None:
-> +    def _start_application(self, prompt: str | None =3D None) -> None:
->          """Starts a new interactive application based on the path to the=
- app.
->
->          This method is often overridden by subclasses as their process f=
-or starting may look
-> @@ -141,6 +143,10 @@ def _start_application(self) -> None:
->          `self._init_attempts` - 1 times. This is done because some DPDK =
-applications need slightly
->          more time after exiting their script to clean up EAL before othe=
-rs can start.
->
-> +        Args:
-> +            prompt: When starting up the application, expect this string=
- at the end of stdout when
-> +                the application is ready. If :data:`None`, the class' de=
-fault prompt will be used.
-> +
->          Raises:
->              InteractiveCommandExecutionError: If the application fails t=
-o start within the allotted
->                  number of retries.
-> @@ -151,7 +157,7 @@ def _start_application(self) -> None:
->          self.is_alive =3D True
->          for attempt in range(self._init_attempts):
->              try:
-> -                self.send_command(start_command)
-> +                self.send_command(start_command, prompt)
->                  break
->              except InteractiveSSHTimeoutError:
->                  self._logger.info(
-> diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framewor=
-k/remote_session/testpmd_shell.py
-> index 1f291fcb68..db1bfaa9d1 100644
-> --- a/dts/framework/remote_session/testpmd_shell.py
-> +++ b/dts/framework/remote_session/testpmd_shell.py
-> @@ -1540,7 +1540,7 @@ def __init__(
->          """Overrides :meth:`~.dpdk_shell.DPDKShell.__init__`. Changes ap=
-p_params to kwargs."""
->          if "port_topology" not in app_params and get_ctx().topology.type=
- is TopologyType.one_link:
->              app_params["port_topology"] =3D PortTopology.loop
-> -        super().__init__(name, privileged, TestPmdParams(**app_params))
-> +        super().__init__(name, privileged, app_params=3DTestPmdParams(**=
-app_params))
->          self.ports_started =3D not self._app_params.disable_device_start
->          self._ports =3D None
->
-> --
-> 2.43.0
->
+I am having a VM on Azure where I have got two 'accelerated networking'
+interfaces of Mellanox
+# lspci -nn|grep -i ether
+6561:00:02.0 Ethernet controller [0200]: Mellanox Technologies MT27710
+Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
+f08c:00:02.0 Ethernet controller [0200]: Mellanox Technologies MT27710
+Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
+
+I have a DPDK application which needs to obtain 'all' packets from the NIC.
+I installed the drivers, compiled DPDK24.11 (Ubuntu20.04), my app starts
+and is able to detect the NIC's.
+Everything looks good
+myapp.out -c 0x07 -a f08c:00:02.0 -a 6561:00:02.0
+EAL: Detected CPU lcores: 8
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'PA'
+EAL: VFIO support initialized
+mlx5_net: Default miss action is not supported.
+mlx5_net: Default miss action is not supported.
+All Ports initialized
+Port 0 is UP (50000 Mbps)
+Port 1 is UP (50000 Mbps)
+
+The trouble is that the ARP packets are not being picked up by my DPDK
+application, I see them being delivered to the kernel via the eth interface
+corresponding to the port (MLX is a bifurcated driver, you don't really
+bind to the NIC, so you still see the eth interfaces at linux level and can
+run tcpdump on those, I see ARP packets in the tcpdump there on the
+interface)
+I can receive UDP packets in my DPDK app though.
+
+My application is not setting any rte_flow rules etc. so I was expecting
+that by default my dpdk app would get all the packets as is normally the
+case with other NIC's
+Is there something I need to configure for Mellanox NIC somewhere such that
+I get 'all' the packets including ARP packets in my DPDK app ?
+
+Regards
+-Prashant
+
+--000000000000483d8c06339deed4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi,<div><br></div><div>I am having a VM on Azure where I h=
+ave got two &#39;accelerated networking&#39; interfaces of Mellanox</div><d=
+iv># lspci -nn|grep -i ether<br>
+6561:00:02.0 Ethernet controller [0200]: Mellanox Technologies MT27710 Fami=
+ly [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)<br>f08c:00:02.0 Et=
+hernet controller [0200]: Mellanox Technologies MT27710 Family [ConnectX-4 =
+Lx Virtual Function] [15b3:1016] (rev 80)</div><div><br></div><div>I have a=
+ DPDK application which needs to obtain &#39;all&#39; packets from the NIC.=
+</div><div>I installed the drivers, compiled DPDK24.11 (Ubuntu20.04), my ap=
+p starts and is able to detect the NIC&#39;s.</div><div>Everything looks go=
+od</div><div>myapp.out -c 0x07 -a f08c:00:02.0 -a 6561:00:02.0<br>
+EAL: Detected CPU lcores: 8<br>
+EAL: Detected NUMA nodes: 1<br>
+EAL: Detected shared linkage of DPDK<br>
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket<br>
+EAL: Selected IOVA mode &#39;PA&#39;<br>
+EAL: VFIO support initialized<br>
+mlx5_net: Default miss action is not supported.<br>
+mlx5_net: Default miss action is not supported.<br>
+All Ports initialized<br>
+Port 0 is UP (50000 Mbps)<br>
+Port 1 is UP (50000 Mbps)</div><div><br></div><div>The trouble is that the =
+ARP packets are not being picked up by my DPDK application, I see them bein=
+g delivered to the kernel via the eth interface corresponding to the port (=
+MLX is a bifurcated driver, you don&#39;t really bind to the NIC, so you st=
+ill see the eth interfaces at linux level and can run tcpdump on those, I s=
+ee ARP packets in the tcpdump there on the interface)</div><div>I can recei=
+ve UDP packets in my DPDK app though.</div><div><br></div><div>My applicati=
+on is not setting any rte_flow rules etc. so I was expecting that by defaul=
+t my dpdk app would get all the packets as is normally the case with other =
+NIC&#39;s</div><div>Is there something I need to configure for Mellanox NIC=
+ somewhere such that I get &#39;all&#39; the packets including ARP packets =
+in my DPDK app ?</div><div><br></div><div>Regards</div><div>-Prashant</div>=
+<div><br></div></div>
+
+--000000000000483d8c06339deed4--
